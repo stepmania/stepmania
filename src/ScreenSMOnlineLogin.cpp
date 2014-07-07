@@ -118,7 +118,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 		LOG->Trace("[ScreenSMOnlineLogin::HandleScreenMessage] SMOnlinePack");
 		if(!GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer))
 		{
-			LOG->Warn("Invalid player number: %i", m_iPlayer);
+			LuaHelpers::ReportScriptErrorFmt("Invalid player number: %i", m_iPlayer);
 			return;
 		}
 

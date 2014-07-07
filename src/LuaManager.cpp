@@ -789,7 +789,7 @@ bool LuaHelpers::LoadScript( Lua *L, const RString &sScript, const RString &sNam
 	return true;
 }
 
-void LuaHelpers::ReportScriptError(RString const& Error)
+void LuaHelpers::ReportScriptError(RString const& Error, RString ErrorType)
 {
 	size_t line_break_pos= Error.find('\n');
 	RString short_error;
@@ -803,6 +803,17 @@ void LuaHelpers::ReportScriptError(RString const& Error)
 	}
 	SCREENMAN->SystemMessage(short_error);
 	LOG->Warn(Error.c_str());
+	Dialog::OK(Error, ErrorType);
+}
+
+// For convenience when replacing uses of LOG->Warn.
+void LuaHelpers::ReportScriptErrorFmt(const char *fmt, ...)
+{
+	va_list	va;
+	va_start( va, fmt );
+	RString Buff = vssprintf( fmt, va );
+	va_end( va );
+	ReportScriptError(Buff);
 }
 
 bool LuaHelpers::RunScriptOnStack( Lua *L, RString &Error, int Args, int ReturnValues, bool ReportError )
@@ -862,11 +873,9 @@ bool LuaHelpers::RunScript( Lua *L, const RString &Script, const RString &Name, 
 
 bool LuaHelpers::RunExpression( Lua *L, const RString &sExpression, const RString &sName )
 {
-	RString sError;
-	if( !LuaHelpers::RunScript(L, "return " + sExpression, sName.empty()? RString("in"):sName, sError, 0, 1) )
+	RString sError= ssprintf("Lua runtime error parsing \"%s\": ", sName.size()? sName.c_str():sExpression.c_str());
+	if(!LuaHelpers::RunScript(L, "return " + sExpression, sName.empty()? RString("in"):sName, sError, 0, 1, true))
 	{
-		sError = ssprintf( "Lua runtime error parsing \"%s\": %s", sName.size()? sName.c_str():sExpression.c_str(), sError.c_str() );
-		Dialog::OK( sError, "LUA_ERROR" );
 		return false;
 	}
 	return true;

@@ -58,12 +58,14 @@ void ScreenOptionsMaster::Init()
 
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( cmds );
 		if( pHand == NULL )
-			RageException::Throw( "Invalid OptionRowHandler \"%s\" in \"%s::Line%i\".", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), i );
-		OptionRowHandlers.push_back( pHand );
+		{
+			LuaHelpers::ReportScriptErrorFmt("Invalid OptionRowHandler \"%s\" in \"%s::Line%i\".", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), i);
+		}
+		else
+		{
+			OptionRowHandlers.push_back( pHand );
+		}
 	}
-
-	ASSERT( OptionRowHandlers.size() == asLineNames.size() );
-
 	InitMenu( OptionRowHandlers );
 }
 

@@ -24,7 +24,7 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 	RageFile input;
 	if( !input.Open(sPath) )
 	{
-		LOG->Warn("Error opening file '%s' for reading: %s", sPath.c_str(), input.GetError().c_str() );
+		LuaHelpers::ReportScriptErrorFmt("Error opening file '%s' for reading: %s", sPath.c_str(), input.GetError().c_str() );
 		return false;
 	}
 
@@ -40,7 +40,7 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 			break;
 		if( ret == -1 )
 		{
-			LOG->Warn("Error reading %s: %s", input.GetPath().c_str(), input.GetError().c_str() );
+			LuaHelpers::ReportScriptErrorFmt("Error reading %s: %s", input.GetPath().c_str(), input.GetError().c_str() );
 			break;
 		}
 

@@ -92,7 +92,7 @@ static void RemoveStepsTypes( vector<StepsType>& inout, RString sStepsTypesToRem
 		StepsType st = GAMEMAN->StringToStepsType(*i);
 		if( st == StepsType_Invalid )
 		{
-			LOG->Warn( "Invalid StepsType value '%s' in '%s'", i->c_str(), sStepsTypesToRemove.c_str() );
+			LuaHelpers::ReportScriptErrorFmt( "Invalid StepsType value '%s' in '%s'", i->c_str(), sStepsTypesToRemove.c_str() );
 			continue;
 		}
 

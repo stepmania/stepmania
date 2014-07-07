@@ -824,7 +824,7 @@ public:
 	{
 		if(m_pLuaTable->GetLuaType() != LUA_TTABLE)
 		{
-			LOG->Warn("LUA_ERROR:  Result of \"%s\" is not a table.", RowName.c_str());
+			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  Result of \"%s\" is not a table.", RowName.c_str());
 			return false;
 		}
 		m_pLuaTable->PushSelf(L);
@@ -832,7 +832,7 @@ public:
 		const char *pStr = lua_tostring(L, -1);
 		if( pStr == NULL )
 		{
-			LOG->Warn("LUA_ERROR:  \"%s\" \"Name\" entry is not a string.", RowName.c_str());
+			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"Name\" entry is not a string.", RowName.c_str());
 			return false;
 		}
 		lua_pop(L, 1);
@@ -841,7 +841,7 @@ public:
 		pStr = lua_tostring(L, -1);
 		if(pStr == NULL || StringToLayoutType(pStr) == LayoutType_Invalid)
 		{
-			LOG->Warn("LUA_ERROR:  \"%s\" \"LayoutType\" entry is not a string.", RowName.c_str());
+			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"LayoutType\" entry is not a string.", RowName.c_str());
 			return false;
 		}
 		lua_pop(L, 1);
@@ -850,7 +850,7 @@ public:
 		pStr = lua_tostring(L, -1);
 		if(pStr == NULL || StringToSelectType(pStr) == SelectType_Invalid)
 		{
-			LOG->Warn("LUA_ERROR:  \"%s\" \"SelectType\" entry is not a string.", RowName.c_str());
+			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"SelectType\" entry is not a string.", RowName.c_str());
 			return false;
 		}
 		lua_pop(L, 1);
@@ -858,12 +858,12 @@ public:
 		lua_getfield(L, -1, "Choices");
 		if(!lua_istable(L, -1))
 		{
-			LOG->Warn("LUA_ERROR:  \"%s\" \"Choices\" is not a table.", RowName.c_str());
+			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"Choices\" is not a table.", RowName.c_str());
 			return false;
 		}
 		if(!TableContainsOnlyStrings(L, lua_gettop(L)))
 		{
-			LOG->Warn("LUA_ERROR:  \"%s\" \"Choices\" table contains a non-string.", RowName.c_str());
+			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"Choices\" table contains a non-string.", RowName.c_str());
 			return false;
 		}
 		lua_pop(L, 1);
@@ -873,7 +873,7 @@ public:
 		{
 			if(!lua_isfunction(L, -1))
 			{
-				LOG->Warn("LUA_ERROR:  \"%s\" \"EnabledForPlayers\" is not a function.", RowName.c_str());
+				LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"EnabledForPlayers\" is not a function.", RowName.c_str());
 				return false;
 			}
 			m_pLuaTable->PushSelf( L );
@@ -881,7 +881,7 @@ public:
 			LuaHelpers::RunScriptOnStack(L, error, 1, 1, true);
 			if(!lua_istable(L, -1))
 			{
-				LOG->Warn("LUA_ERROR:  \"%s\" \"EnabledForPlayers\" did not return a table.", RowName.c_str());
+				LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"EnabledForPlayers\" did not return a table.", RowName.c_str());
 				return false;
 			}
 			lua_pushnil(L);
@@ -890,7 +890,7 @@ public:
 				PlayerNumber pn= Enum::Check<PlayerNumber>(L, -1, true, true);
 				if(pn == PlayerNumber_Invalid)
 				{
-					LOG->Warn("LUA_ERROR:  \"%s\" \"EnabledForPlayers\" contains a non-PlayerNumber.", RowName.c_str());
+					LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"EnabledForPlayers\" contains a non-PlayerNumber.", RowName.c_str());
 					return false;
 				}
 				lua_pop(L, 1);
@@ -903,12 +903,12 @@ public:
 		{
 			if(!lua_istable(L, -1))
 			{
-				LOG->Warn("LUA_ERROR:  \"%s\" \"ReloadRowMessages\" is not a table.", RowName.c_str());
+				LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"ReloadRowMessages\" is not a table.", RowName.c_str());
 				return false;
 			}
 			if(!TableContainsOnlyStrings(L, lua_gettop(L)))
 			{
-				LOG->Warn("LUA_ERROR:  \"%s\" \"ReloadRowMessages\" table contains a non-string.", RowName.c_str());
+				LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"ReloadRowMessages\" table contains a non-string.", RowName.c_str());
 				return false;
 			}
 		}
@@ -917,7 +917,7 @@ public:
 		lua_getfield(L, -1, "LoadSelections");
 		if(!lua_isfunction(L, -1))
 		{
-			LOG->Warn("LUA_ERROR:  \"%s\" \"LoadSelections\" entry is not a function.", RowName.c_str());
+			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"LoadSelections\" entry is not a function.", RowName.c_str());
 			return false;
 		}
 		lua_pop(L, 1);
@@ -925,7 +925,7 @@ public:
 		lua_getfield(L, -1, "SaveSelections");
 		if(!lua_isfunction(L, -1))
 		{
-			LOG->Warn("LUA_ERROR:  \"%s\" \"SaveSelections\" entry is not a function.", RowName.c_str());
+			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"SaveSelections\" entry is not a function.", RowName.c_str());
 			return false;
 		}
 		lua_pop(L, 1);
@@ -933,7 +933,7 @@ public:
 		lua_getfield(L, -1, "NotifyOfSelection");
 		if(!lua_isnil(L, -1) && !lua_isfunction(L, -1))
 		{
-			LOG->Warn("LUA_ERROR:  \"%s\" \"NotifyOfSelection\" entry is not a function.", RowName.c_str());
+			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"NotifyOfSelection\" entry is not a function.", RowName.c_str());
 			return false;
 		}
 		lua_pop(L, 1);
@@ -1278,7 +1278,7 @@ public:
 		ConfOption *pConfOption = ConfOption::Find( sParam );
 		if( pConfOption == NULL )
 		{
-			LOG->Warn( "Invalid Conf type \"%s\"", sParam.c_str() );
+			LuaHelpers::ReportScriptErrorFmt( "Invalid Conf type \"%s\"", sParam.c_str() );
 			pConfOption = ConfOption::Find( "Invalid" );
 			ASSERT_M( pConfOption != NULL, "ConfOption::Find(Invalid)" );
 		}

@@ -106,7 +106,7 @@ RString UnlockManager::FindEntryID( const RString &sName ) const
 
 	if( pEntry == NULL )
 	{
-		LOG->Warn( "Couldn't find locked entry \"%s\"", sName.c_str() );
+		LuaHelpers::ReportScriptErrorFmt( "Couldn't find locked entry \"%s\"", sName.c_str() );
 		return "";
 	}
 
@@ -578,20 +578,20 @@ void UnlockManager::Load()
 		case UnlockRewardType_Song:
 			e->m_Song.FromSong( SONGMAN->FindSong( e->m_cmd.GetArg(0).s ) );
 			if( !e->m_Song.IsValid() )
-				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
+				LuaHelpers::ReportScriptErrorFmt( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
 			break;
 		case UnlockRewardType_Steps:
 			e->m_Song.FromSong( SONGMAN->FindSong( e->m_cmd.GetArg(0).s ) );
 			if( !e->m_Song.IsValid() )
 			{
-				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
+				LuaHelpers::ReportScriptErrorFmt( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
 				break;
 			}
 
 			e->m_dc = StringToDifficulty( e->m_cmd.GetArg(1).s );
 			if( e->m_dc == Difficulty_Invalid )
 			{
-				LOG->Warn( "Unlock: Invalid difficulty \"%s\"", e->m_cmd.GetArg(1).s.c_str() );
+				LuaHelpers::ReportScriptErrorFmt( "Unlock: Invalid difficulty \"%s\"", e->m_cmd.GetArg(1).s.c_str() );
 				break;
 			}
 
@@ -601,21 +601,21 @@ void UnlockManager::Load()
 			e->m_Song.FromSong( SONGMAN->FindSong( e->m_cmd.GetArg(0).s ) );
 			if( !e->m_Song.IsValid() )
 			{
-				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
+				LuaHelpers::ReportScriptErrorFmt( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
 				break;
 			}
 			
 			e->m_dc = StringToDifficulty( e->m_cmd.GetArg(1).s );
 			if( e->m_dc == Difficulty_Invalid )
 			{
-				LOG->Warn( "Unlock: Invalid difficulty \"%s\"", e->m_cmd.GetArg(1).s.c_str() );
+				LuaHelpers::ReportScriptErrorFmt( "Unlock: Invalid difficulty \"%s\"", e->m_cmd.GetArg(1).s.c_str() );
 				break;
 			}
 			
 			e->m_StepsType = GAMEMAN->StringToStepsType(e->m_cmd.GetArg(2).s);
 			if (e->m_StepsType == StepsType_Invalid)
 			{
-				LOG->Warn( "Unlock: Invalid steps type \"%s\"", e->m_cmd.GetArg(2).s.c_str() );
+				LuaHelpers::ReportScriptErrorFmt( "Unlock: Invalid steps type \"%s\"", e->m_cmd.GetArg(2).s.c_str() );
 				break;
 			}
 			break;
@@ -623,7 +623,7 @@ void UnlockManager::Load()
 		case UnlockRewardType_Course:
 			e->m_Course.FromCourse( SONGMAN->FindCourse(e->m_cmd.GetArg(0).s) );
 			if( !e->m_Course.IsValid() )
-				LOG->Warn( "Unlock: Cannot find course matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
+				LuaHelpers::ReportScriptErrorFmt( "Unlock: Cannot find course matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
 			break;
 		case UnlockRewardType_Modifier:
 			// nothing to cache

@@ -224,7 +224,7 @@ void ActorFrame::DrawPrimitives()
 {
 	if( m_bClearZBuffer )
 	{
-		LOG->Warn( "ClearZBuffer not supported on ActorFrames" );
+		LuaHelpers::ReportScriptErrorFmt( "ClearZBuffer not supported on ActorFrames" );
 		m_bClearZBuffer = false;
 	}
 
@@ -238,7 +238,7 @@ void ActorFrame::DrawPrimitives()
 		m_DrawFunction.PushSelf( L );
 		if( lua_isnil(L, -1) )
 		{
-			LOG->Warn( "Error compiling DrawFunction" );
+			LuaHelpers::ReportScriptErrorFmt( "Error compiling DrawFunction" );
 			return;
 		}
 		this->PushSelf( L );
@@ -478,7 +478,7 @@ void ActorFrame::UpdateInternal( float fDeltaTime )
 		m_UpdateFunction.PushSelf( L );
 		if( lua_isnil(L, -1) )
 		{
-			LOG->Warn( "Error compiling UpdateFunction" );
+			LuaHelpers::ReportScriptErrorFmt( "Error compiling UpdateFunction" );
 			return;
 		}
 		this->PushSelf( L );
