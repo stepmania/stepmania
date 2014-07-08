@@ -400,6 +400,10 @@ if WINDOWS
 if HAVE_PARALLEL_PORT
   Lights += arch/Lights/LightsDriver_Win32Parallel.cpp arch/Lights/LightsDriver_Win32Parallel.h
 endif
+
+if HAVE_MINIMAID
+  Lights += arch/Lights/LightsDriver_Win32Minimaid.cpp arch/Lights/LightsDriver_Win32Minimaid.h
+endif
  
 if !HAVE_PTHREAD
   Threads += arch/Threads/Threads_Win32.cpp arch/Threads/Threads_Win32.h
