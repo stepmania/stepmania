@@ -242,6 +242,7 @@ ScreenManager::ScreenManager()
 
 	g_pSharedBGA = new Actor;
 
+	m_bReloadOverlayScreensAfterInput= false;
 	m_bZeroNextUpdate = false;
 	m_PopTopScreen = SM_Invalid;
 	m_OnDonePreparingScreen = SM_Invalid;
@@ -328,6 +329,11 @@ void ScreenManager::ReloadOverlayScreens()
 	}
 
 	this->RefreshCreditsMessages();
+}
+
+void ScreenManager::ReloadOverlayScreensAfterInputFinishes()
+{
+	m_bReloadOverlayScreensAfterInput= true;
 }
 
 Screen *ScreenManager::GetTopScreen()
@@ -514,7 +520,14 @@ void ScreenManager::Input( const InputEventPlus &input )
 		// because anybody setting an input callback is probably doing it to
 		// do something in addition to whatever the screen does.
 		if(pScreen->PassInputToLua(input) || handled)
+		{
+			if(m_bReloadOverlayScreensAfterInput)
+			{
+				ReloadOverlayScreens();
+				m_bReloadOverlayScreensAfterInput= false;
+			}
 			return;
+		}
 	}
 
 	// Pass input to the topmost screen.  If we have a new top screen pending, don't
