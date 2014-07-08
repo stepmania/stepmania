@@ -170,8 +170,17 @@ void InputFilter::ButtonPressed( const DeviceInput &di )
 	if( di.ts.IsZero() )
 		LOG->Warn( "InputFilter::ButtonPressed: zero timestamp is invalid" );
 
-	ASSERT_M( di.device < NUM_InputDevice, ssprintf("Invalid device %i", di.device) );
-	ASSERT_M( di.button < NUM_DeviceButton, ssprintf("Invalid button %i", di.button) );
+	// Filter out input that is beyond the range of the current system.
+	if(di.device >= NUM_InputDevice)
+	{
+		LOG->Trace("InputFilter::ButtonPressed: Invalid device %i", di.device);
+		return;
+	}
+	if(di.button >= NUM_DeviceButton)
+	{
+		LOG->Trace("InputFilter::ButtonPressed: Invalid button %i", di.button);
+		return;
+	}
 
 	ButtonState &bs = GetButtonState( di );
 
