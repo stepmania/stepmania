@@ -2431,6 +2431,14 @@
 						>
 					</File>
 					<File
+						RelativePath="arch\Lights\LightsDriver_Win32Minimaid.cpp"
+						>
+					</File>
+					<File
+						RelativePath="arch\Lights\LightsDriver_Win32Minimaid.h"
+						>
+					</File>
+					<File
 						RelativePath="arch\Lights\LightsDriver_Win32Parallel.cpp"
 						>
 					</File>

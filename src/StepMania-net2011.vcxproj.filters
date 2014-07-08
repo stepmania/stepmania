@@ -735,6 +735,9 @@
     <ClCompile Include="arch\Lights\LightsDriver_SystemMessage.cpp">
       <Filter>StepMania\arch\Lights</Filter>
     </ClCompile>
+    <ClCompile Include="arch\Lights\LightsDriver_Win32Minimaid.cpp">
+      <Filter>StepMania\arch\Lights</Filter>
+    </ClCompile>
     <ClCompile Include="arch\Lights\LightsDriver_Win32Parallel.cpp">
       <Filter>StepMania\arch\Lights</Filter>
     </ClCompile>
@@ -2106,6 +2109,9 @@
       <Filter>StepMania\arch\Lights</Filter>
     </ClInclude>
     <ClInclude Include="arch\Lights\LightsDriver_SystemMessage.h">
+      <Filter>StepMania\arch\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\Lights\LightsDriver_Win32Minimaid.h">
       <Filter>StepMania\arch\Lights</Filter>
     </ClInclude>
     <ClInclude Include="arch\Lights\LightsDriver_Win32Parallel.h">
