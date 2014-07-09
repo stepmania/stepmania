@@ -97,7 +97,10 @@ ITween *ITween::CreateFromStack( Lua *L, int iStackPos )
 		luaL_checktype( L, iStackPos+1, LUA_TTABLE );
 		int iArgs = lua_objlen( L, iStackPos+1 );
 		if( iArgs != 4 && iArgs != 8 )
-			RageException::Throw( "CreateFromStack: table argument must have 4 or 8 entries" );
+		{
+			LuaHelpers::ReportScriptErrorFmt("Tween::CreateFromStack: table argument must have 4 or 8 entries");
+			return NULL;
+		}
 
 		float fC[8];
 		for( int i = 0; i < iArgs; ++i )
