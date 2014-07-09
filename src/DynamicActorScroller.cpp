@@ -18,7 +18,15 @@ void DynamicActorScroller::LoadFromNode( const XNode *pNode )
 	 *
 	 * Make one extra copy if masking is enabled. */
 	if( m_SubActors.size() != 1 )
-		RageException::Throw( "%s: DynamicActorScroller: loaded %i nodes; require exactly one", ActorUtil::GetWhere(pNode).c_str(), (int)m_SubActors.size() );
+	{
+		LuaHelpers::ReportScriptErrorFmt("%s: DynamicActorScroller: loaded %i nodes; require exactly one", ActorUtil::GetWhere(pNode).c_str(), (int)m_SubActors.size());
+		// Remove all but one.
+		for( size_t i=1; i<m_SubActors.size(); i++ )
+		{
+			delete m_SubActors[i];
+		}
+		m_SubActors.resize(1);
+	}
 
 	int iNumCopies = (int) m_fNumItemsToDraw;
 	if( m_quadMask.GetVisible() )

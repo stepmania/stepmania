@@ -153,7 +153,10 @@ public:
 			// Parse the basic configuration metric.
 			Commands lCmds = ParseCommands( ENTRY(sParam) );
 			if( lCmds.v.size() < 1 )
-				RageException::Throw( "Parse error in \"ScreenOptionsMaster::%s\".", sParam.c_str() );
+			{
+				LuaHelpers::ReportScriptErrorFmt("Parse error in \"ScreenOptionsMaster::%s\".", sParam.c_str());
+				lCmds= ParseCommands("0");
+			}
 
 			m_Def.m_bOneChoiceForAllPlayers = false;
 			const int NumCols = StringToInt( lCmds.v[0].m_vsArgs[0] );
@@ -195,10 +198,20 @@ public:
 				}
 				else
 				{
-					RageException::Throw( "Unkown row flag \"%s\".", sName.c_str() );
+					LuaHelpers::ReportScriptErrorFmt( "Unkown row flag \"%s\".", sName.c_str() );
 				}
 			}
 
+			if(NumCols < 1)
+			{
+				LuaHelpers::ReportScriptErrorFmt(sParam + " has %d choices.", NumCols);
+				GameCommand mc;
+				mc.ApplyCommitsScreens( false );
+				mc.Load( 0, ParseCommands("name,Error") );
+				m_aListEntries.push_back(mc);
+				RString sChoice = mc.m_sName;
+				m_Def.m_vsChoices.push_back( sChoice );
+			}
 			for( int col = 0; col < NumCols; ++col )
 			{
 				GameCommand mc;
@@ -209,17 +222,19 @@ public:
 				if( mc.m_sName == "" && NumCols == 1 )
 					mc.m_sName = sParam;
 				if( mc.m_sName == "" )
-					RageException::Throw( "List \"%s\", col %i has no name.", sParam.c_str(), col );
+				{
+					LuaHelpers::ReportScriptErrorFmt("List \"%s\", col %i has no name.", sParam.c_str(), col);
+					mc.m_sName= "";
+				}
 
 				if( !mc.IsPlayable() )
 				{
-					LOG->Trace( "\"%s\" is not playable.", sParam.c_str() );
+					LuaHelpers::ReportScriptErrorFmt("\"%s\" is not playable.", sParam.c_str());
 					continue;
 				}
 
 				m_aListEntries.push_back( mc );
 
-				RString sName = mc.m_sName;
 				RString sChoice = mc.m_sName;
 				m_Def.m_vsChoices.push_back( sChoice );
 			}
@@ -543,7 +558,7 @@ public:
 		}
 		else
 		{
-			RageException::Throw( "Invalid StepsType param \"%s\".", sParam.c_str() );
+			LuaHelpers::ReportScriptErrorFmt("Invalid StepsType param \"%s\".", sParam.c_str());
 		}
 		
 		m_Def.m_sName = sParam;

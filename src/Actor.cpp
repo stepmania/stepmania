@@ -1458,7 +1458,10 @@ public:
 			return 0;
 		}
 		ITween *pTween = ITween::CreateFromStack( L, 2 );
-		p->BeginTweening(fTime, pTween);
+		if(pTween != NULL)
+		{
+			p->BeginTweening(fTime, pTween);
+		}
 		return 0;
 	}
 	static int stoptweening( T* p, lua_State * )		{ p->StopTweening(); return 0; }

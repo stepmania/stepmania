@@ -11,7 +11,7 @@
 #include "Command.h"
 #include "RageLog.h"
 #include "RageTypes.h"
-#include "ScreenManager.h"
+#include "MessageManager.h"
 
 #include <sstream> // conversion for lua functions.
 #include <csetjmp>
@@ -801,7 +801,9 @@ void LuaHelpers::ReportScriptError(RString const& Error, RString ErrorType)
 	{
 		short_error= Error.substr(0, line_break_pos);
 	}
-	SCREENMAN->SystemMessage(short_error);
+	Message msg("ScriptError");
+	msg.SetParam("Message", short_error);
+	MESSAGEMAN->Broadcast(msg);
 	LOG->Warn(Error.c_str());
 	Dialog::OK(Error, ErrorType);
 }
