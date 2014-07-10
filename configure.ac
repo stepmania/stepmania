@@ -175,6 +175,10 @@ powerpc*)
 esac
 AM_CONDITIONAL(HAVE_PARALLEL_PORT, test "${have_parallel_port-yes}" = "yes")
 
+# Minimaid support flag
+AC_ARG_WITH(minimaid, AS_HELP_STRING([--with-minimaid],[Enable Minimaid support]), with_minimaid=$withval, with_minimaid=no)
+AM_CONDITIONAL(HAVE_MINIMAID, test "$with_minimaid" = "yes")
+
 AC_C_BIGENDIAN(
 	AC_DEFINE(ENDIAN_BIG, 1, [Big endian]),
 	AC_DEFINE(ENDIAN_LITTLE, 1, [Little endian]),
