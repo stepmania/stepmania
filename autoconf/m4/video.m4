@@ -7,6 +7,7 @@ AC_ARG_WITH(static-ffmpeg, AS_HELP_STRING([--with-static-ffmpeg],[Statically lin
 AM_CONDITIONAL(STATIC_FFMPEG, test "$with_static_ffmpeg" = "yes")
 AC_ARG_WITH(system-ffmpeg, AS_HELP_STRING([--with-system-ffmpeg], [Use system instead of bundled ffmpeg (UNSUPPORTED)]), system_ffmpeg=yes, system_ffmpeg=no)
 AM_CONDITIONAL(SYSTEM_FFMPEG, test "$system_ffmpeg" = "yes")
+AM_CONDITIONAL(WITHOUT_FFMPEG, test "$with_ffmpeg" != "yes")
 
 VIDEO_CFLAGS=
 VIDEO_LIBS=
