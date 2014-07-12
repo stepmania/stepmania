@@ -47,6 +47,8 @@ namespace LuaHelpers
 	template<> bool FromStack<float>( Lua *L, float &Object, int iOffset );
 	template<> bool FromStack<int>( Lua *L, int &Object, int iOffset );
 	template<> bool FromStack<RString>( Lua *L, RString &Object, int iOffset );
+
+	bool InReportScriptError= false;
 }
 
 void LuaManager::SetGlobal( const RString &sName, int val )
@@ -789,7 +791,14 @@ bool LuaHelpers::LoadScript( Lua *L, const RString &sScript, const RString &sNam
 	return true;
 }
 
-void LuaHelpers::ReportScriptError(RString const& Error, RString ErrorType)
+void LuaHelpers::ScriptErrorMessage(RString const& Error)
+{
+	Message msg("ScriptError");
+	msg.SetParam("Message", Error);
+	MESSAGEMAN->Broadcast(msg);
+}
+
+Dialog::Result LuaHelpers::ReportScriptError(RString const& Error, RString ErrorType, bool UseAbort)
 {
 	size_t line_break_pos= Error.find('\n');
 	RString short_error;
@@ -801,11 +810,21 @@ void LuaHelpers::ReportScriptError(RString const& Error, RString ErrorType)
 	{
 		short_error= Error.substr(0, line_break_pos);
 	}
-	Message msg("ScriptError");
-	msg.SetParam("Message", short_error);
-	MESSAGEMAN->Broadcast(msg);
+	// Protect from a recursion loop resulting from a mistake in the error reporting lua.
+	if(!InReportScriptError)
+	{
+		InReportScriptError= true;
+		ScriptErrorMessage(short_error);
+		InReportScriptError= false;
+	}
 	LOG->Warn(Error.c_str());
+	if(UseAbort)
+	{
+		RString with_correct= Error + "  Correct this and click Retry, or Cancel to break.";
+		return Dialog::AbortRetryIgnore(with_correct, ErrorType);
+	}
 	Dialog::OK(Error, ErrorType);
+	return Dialog::ok;
 }
 
 // For convenience when replacing uses of LOG->Warn.

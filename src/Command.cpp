@@ -83,7 +83,13 @@ RString Commands::GetOriginalCommandString() const
 {
 	RString s;
 	FOREACH_CONST( Command, v, c )
+	{
+		if(s != "")
+		{
+			s += ";";
+		}
 		s += c->GetOriginalCommandString();
+	}
 	return s;
 }
 

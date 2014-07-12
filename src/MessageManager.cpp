@@ -5,6 +5,7 @@
 #include "RageThreads.h"
 #include "EnumHelper.h"
 #include "LuaManager.h"
+#include "RageLog.h"
 
 #include <set>
 #include <map>
@@ -148,6 +149,7 @@ void Message::SetParamFromStack( lua_State *L, const RString &sName )
 
 MessageManager::MessageManager()
 {
+	m_Logging= false;
 	// Register with Lua.
 	{
 		Lua *L = LUA->Get();
@@ -198,6 +200,11 @@ void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, MessageID m )
 
 void MessageManager::Broadcast( Message &msg ) const
 {
+	// GAMESTATE is created before MESSAGEMAN, and has several BroadcastOnChangePtr members, so they all broadcast when they're initialized.
+	if(this != NULL && m_Logging)
+	{
+		LOG->Trace("MESSAGEMAN:Broadcast: %s", msg.GetName().c_str());
+	}
 	msg.SetBroadcast(true);
 
 	LockMut(g_Mutex);
@@ -295,10 +302,16 @@ public:
 		p->Broadcast( msg );
 		return 0;
 	}
+	static int SetLogging(T* p, lua_State *L)
+	{
+		p->SetLogging(lua_toboolean(L, -1));
+		return 0;
+	}
 
 	LunaMessageManager()
 	{
 		ADD_METHOD( Broadcast );
+		ADD_METHOD( SetLogging );
 	}
 };
 

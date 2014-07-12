@@ -26,7 +26,9 @@ void CourseContentsList::LoadFromNode( const XNode* pNode )
 
 	const XNode *pDisplayNode = pNode->GetChild( "Display" );
 	if( pDisplayNode == NULL )
-		RageException::Throw( "%s: CourseContentsList: missing the Display child", ActorUtil::GetWhere(pNode).c_str() );
+	{
+		LuaHelpers::ReportScriptErrorFmt("%s: CourseContentsList: missing the Display child", ActorUtil::GetWhere(pNode).c_str());
+	}
 
 	for( int i=0; i<iMaxSongs; i++ )
 	{

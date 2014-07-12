@@ -218,7 +218,10 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( cmds );
 		if( pHand == NULL )
-			RageException::Throw( "Invalid OptionRowHandler '%s' in %s::Line%s", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), sLineName.c_str() );
+		{
+			LuaHelpers::ReportScriptErrorFmt("Invalid OptionRowHandler '%s' in %s::Line%s", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), sLineName.c_str());
+			continue;
+		}
 
 		m_Rows[sLineName] = pHand;
 		m_asLoadedRows.push_back( sLineName );

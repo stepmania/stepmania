@@ -29,7 +29,9 @@ void ScreenOptionsMaster::Init()
 	vector<RString> asLineNames;
 	split( LINE_NAMES, ",", asLineNames );
 	if( asLineNames.empty() )
-		RageException::Throw( "\"%s::LineNames\" is empty.", m_sName.c_str() );
+	{
+		LuaHelpers::ReportScriptErrorFmt("\"%s:LineNames\" is empty.", m_sName.c_str());
+	}
 
 	if( FORCE_ALL_PLAYERS )
 	{
@@ -59,7 +61,7 @@ void ScreenOptionsMaster::Init()
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( cmds );
 		if( pHand == NULL )
 		{
-			LuaHelpers::ReportScriptErrorFmt("Invalid OptionRowHandler \"%s\" in \"%s::Line%i\".", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), i);
+			LuaHelpers::ReportScriptErrorFmt("Invalid OptionRowHandler \"%s\" in \"%s:Line:%s\".", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), sLineName.c_str());
 		}
 		else
 		{

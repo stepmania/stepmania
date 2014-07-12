@@ -198,6 +198,9 @@ public:
 	bool IsSubscribedToMessage( IMessageSubscriber* pSubscriber, const RString &sMessage ) const;
 	inline bool IsSubscribedToMessage( IMessageSubscriber* pSubscriber, MessageID message ) const { return IsSubscribedToMessage( pSubscriber, MessageIDToString(message) ); }
 
+	void SetLogging(bool set) { m_Logging= set; }
+	bool m_Logging;
+
 	// Lua
 	void PushSelf( lua_State *L );
 };

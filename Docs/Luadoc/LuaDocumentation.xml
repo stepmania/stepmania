@@ -2769,6 +2769,9 @@ save yourself some time, copy this for undocumented things:
 		second argument is an optional table of parameters. It may be omitted or explicitly
 		set to <code>nil</code>.
 	</Function>
+	<Function name='SetLogging' return='void' arguments='bool log'>
+		Sets whether logging of messages is enabled.  If log is true, all messages that pass through Broadcast (from the engine for from the theme or from anywhere else), will be logged with Trace.
+	</Function>
 </Class>
 <Class name='MeterDisplay'>
 	<Function name='SetStreamWidth' return='void' arguments='float fWidth'>

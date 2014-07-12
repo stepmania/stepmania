@@ -294,9 +294,12 @@ void ScreenManager::ThemeChanged()
 	for( unsigned i=0; i<asOverlays.size(); i++ )
 	{
 		Screen *pScreen = MakeNewScreen( asOverlays[i] );
-		LuaThreadVariable var2( "LoadingScreen", pScreen->GetName() );
-		pScreen->BeginScreen();
-		g_OverlayScreens.push_back( pScreen );
+		if(pScreen)
+		{
+			LuaThreadVariable var2( "LoadingScreen", pScreen->GetName() );
+			pScreen->BeginScreen();
+			g_OverlayScreens.push_back( pScreen );
+		}
 	}
 
 	// reload song manager colors (to avoid crashes) -aj
@@ -323,9 +326,12 @@ void ScreenManager::ReloadOverlayScreens()
 	for( unsigned i=0; i<asOverlays.size(); i++ )
 	{
 		Screen *pScreen = MakeNewScreen( asOverlays[i] );
-		LuaThreadVariable var2( "LoadingScreen", pScreen->GetName() );
-		pScreen->BeginScreen();
-		g_OverlayScreens.push_back( pScreen );
+		if(pScreen)
+		{
+			LuaThreadVariable var2( "LoadingScreen", pScreen->GetName() );
+			pScreen->BeginScreen();
+			g_OverlayScreens.push_back( pScreen );
+		}
 	}
 
 	this->RefreshCreditsMessages();
@@ -552,7 +558,10 @@ Screen* ScreenManager::MakeNewScreen( const RString &sScreenName )
 
 	map<RString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
 	if( iter == g_pmapRegistrees->end() )
-		RageException::Throw( "Screen \"%s\" has an invalid class \"%s\".", sScreenName.c_str(), sClassName.c_str() );
+	{
+		LuaHelpers::ReportScriptErrorFmt("Screen \"%s\" has an invalid class \"%s\".", sScreenName.c_str(), sClassName.c_str());
+		return NULL;
+	}
 
 	this->ZeroNextUpdate();
 
@@ -571,6 +580,10 @@ void ScreenManager::PrepareScreen( const RString &sScreenName )
 		return;
 
 	Screen* pNewScreen = MakeNewScreen(sScreenName);
+	if(pNewScreen == NULL)
+	{
+		return;
+	}
 
 	{
 		LoadedScreen ls;

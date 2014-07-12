@@ -51,8 +51,13 @@ void StepsDisplayList::LoadFromNode( const XNode* pNode )
 	{
 		const XNode *pChild = pNode->GetChild( ssprintf("CursorP%i",pn+1) );
 		if( pChild == NULL )
-			RageException::Throw( "%s: StepsDisplayList: missing the node \"CursorP%d\"", ActorUtil::GetWhere(pNode).c_str(), pn+1 );
-		m_Cursors[pn].LoadActorFromNode( pChild, this );
+		{
+			LuaHelpers::ReportScriptErrorFmt("%s: StepsDisplayList: missing the node \"CursorP%d\"", ActorUtil::GetWhere(pNode).c_str(), pn+1);
+		}
+		else
+		{
+			m_Cursors[pn].LoadActorFromNode( pChild, this );
+		}
 
 		/* Hack: we need to tween cursors both up to down (cursor motion) and visible to
 		 * invisible (fading).  Cursor motion needs to stoptweening, so multiple motions
@@ -62,10 +67,15 @@ void StepsDisplayList::LoadFromNode( const XNode* pNode )
 		 * colors; I think we do need a diffuse color stack ... */
 		pChild = pNode->GetChild( ssprintf("CursorP%iFrame",pn+1) );
 		if( pChild == NULL )
-			RageException::Throw( "%s: StepsDisplayList: missing the node \"CursorP%dFrame\"", ActorUtil::GetWhere(pNode).c_str(), pn+1 );
-		m_CursorFrames[pn].LoadFromNode( pChild );
-		m_CursorFrames[pn].AddChild( m_Cursors[pn] );
-		this->AddChild( &m_CursorFrames[pn] );
+		{
+			LuaHelpers::ReportScriptErrorFmt("%s: StepsDisplayList: missing the node \"CursorP%dFrame\"", ActorUtil::GetWhere(pNode).c_str(), pn+1);
+		}
+		else
+		{
+			m_CursorFrames[pn].LoadFromNode( pChild );
+			m_CursorFrames[pn].AddChild( m_Cursors[pn] );
+			this->AddChild( &m_CursorFrames[pn] );
+		}
 	}
 
 	for( unsigned m = 0; m < m_Lines.size(); ++m )

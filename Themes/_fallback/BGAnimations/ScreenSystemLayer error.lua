@@ -77,7 +77,6 @@ function SetErrorMessageTime(which, t)
 					" time to below minimum of " .. min_message_time[which] .. "."})
 		return
 	end
-	Trace("Setting error message " .. which .. " time to " .. t)
 	message_time[which]= t
 end
 
@@ -113,7 +112,11 @@ local frame_args= {
 				if i > 1 and text_actors[i-1] then
 					text_actors[i]:settext(text_actors[i-1]:GetText())
 				else
-					text_actors[i]:settext(params.Message)
+					-- Someone long ago decided that it was a good idea for "::" to be
+					-- a synonym for "\n", so that strings in metrics could have line
+					-- breaks.
+					-- So replace "::" with ":" so we don't have unwanted line breaks.
+					text_actors[i]:settext(params.Message:gsub("::", ":"))
 				end
 				width_clip_limit_text(text_actors[i], line_width)
 			end
