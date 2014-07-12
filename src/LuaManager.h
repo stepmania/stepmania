@@ -15,6 +15,9 @@ extern "C"
 #include "../extern/lua-5.1/src/lauxlib.h"
 }
 
+// For Dialog::Result
+#include "arch/Dialog/Dialog.h"
+
 class LuaManager
 {
 public:
@@ -58,8 +61,14 @@ namespace LuaHelpers
 	 * and the stack is unchanged. */
 	bool LoadScript( Lua *L, const RString &sScript, const RString &sName, RString &sError );
 
-	/* Report the error through the log and on the screen. */
-	void ReportScriptError(RString const& Error, RString ErrorType= "LUA_ERROR");
+	/* Report the error three ways:  Broadcast message, Warn, and Dialog. */
+	/* If UseAbort is true, reports the error through Dialog::AbortRetryIgnore
+		 and returns the result. */
+	/* If UseAbort is false, reports the error through Dialog::OK and returns
+		 Dialog::ok. */
+	Dialog::Result ReportScriptError(RString const& Error, RString ErrorType= "LUA_ERROR", bool UseAbort= false);
+	// Just the broadcast message part, for things that need to do the rest differently.
+	void ScriptErrorMessage(RString const& Error);
 	// For convenience when replacing uses of LOG->Warn.
 	void ReportScriptErrorFmt(const char *fmt, ...);
 

@@ -222,7 +222,10 @@ void GameState::ApplyGameCommand( const RString &sCommand, PlayerNumber pn )
 
 	RString sWhy;
 	if( !m.IsPlayable(&sWhy) )
-		RageException::Throw( "Can't apply mode \"%s\": %s", sCommand.c_str(), sWhy.c_str() );
+	{
+		LuaHelpers::ReportScriptErrorFmt("Can't apply mode \"%s\": %s", sCommand.c_str(), sWhy.c_str());
+		return;
+	}
 
 	if( pn == PLAYER_INVALID )
 		m.ApplyToAllPlayers();

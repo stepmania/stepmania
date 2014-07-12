@@ -175,7 +175,7 @@ void Sprite::LoadFromNode( const XNode* pNode )
 
 				pFrame->GetAttrValue( "Frame", iFrameIndex );
 				if( iFrameIndex >= m_pTexture->GetNumFrames() )
-					RageException::Throw( "%s: State #%i is frame %d, but the texture \"%s\" only has %d frames",
+					LuaHelpers::ReportScriptErrorFmt( "%s: State #%i is frame %d, but the texture \"%s\" only has %d frames",
 						ActorUtil::GetWhere(pNode).c_str(), i, iFrameIndex, sPath.c_str(), m_pTexture->GetNumFrames() );
 				newState.rect = *m_pTexture->GetTextureCoordRect( iFrameIndex );
 
@@ -210,7 +210,7 @@ void Sprite::LoadFromNode( const XNode* pNode )
 			if( !pNode->GetAttrValue(sFrameKey, iFrameIndex) )
 				break;
 			if( iFrameIndex >= m_pTexture->GetNumFrames() )
-				RageException::Throw( "%s: %s is %d, but the texture \"%s\" only has %d frames",
+				LuaHelpers::ReportScriptErrorFmt( "%s: %s is %d, but the texture \"%s\" only has %d frames",
 					ActorUtil::GetWhere(pNode).c_str(), sFrameKey.c_str(), iFrameIndex, sPath.c_str(), m_pTexture->GetNumFrames() );
 
 			newState.rect = *m_pTexture->GetTextureCoordRect( iFrameIndex );

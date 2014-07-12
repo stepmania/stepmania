@@ -251,7 +251,7 @@ void GameCommand::LoadOne( const Command& cmd )
 		if( m_pSong == NULL )
 		{
 			m_sInvalidReason = ssprintf( "Song \"%s\" not found", sValue.c_str() );
-			m_bInvalid |= true;
+			m_bInvalid = true;
 		}
 	}
 
@@ -265,17 +265,23 @@ void GameCommand::LoadOne( const Command& cmd )
 			Song *pSong = (m_pSong != NULL)? m_pSong:GAMESTATE->m_pCurSong;
 			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->GetCurrentStyle();
 			if( pSong == NULL || pStyle == NULL )
-				RageException::Throw( "Must set Song and Style to set Steps." );
-
-			Difficulty dc = StringToDifficulty( sSteps );
-			if( dc != Difficulty_Edit )
-				m_pSteps = SongUtil::GetStepsByDifficulty( pSong, pStyle->m_StepsType, dc );
-			else
-				m_pSteps = SongUtil::GetStepsByDescription( pSong, pStyle->m_StepsType, sSteps );
-			if( m_pSteps == NULL )
 			{
-				m_sInvalidReason = "steps not found";
-				m_bInvalid |= true;
+				LuaHelpers::ReportScriptError("Must set Song and Style to set Steps.");
+				m_sInvalidReason = "Song or Style not set";
+				m_bInvalid = true;
+			}
+			else
+			{
+				Difficulty dc = StringToDifficulty( sSteps );
+				if( dc != Difficulty_Edit )
+				m_pSteps = SongUtil::GetStepsByDifficulty( pSong, pStyle->m_StepsType, dc );
+				else
+				m_pSteps = SongUtil::GetStepsByDescription( pSong, pStyle->m_StepsType, sSteps );
+				if( m_pSteps == NULL )
+				{
+					m_sInvalidReason = "steps not found";
+					m_bInvalid = true;
+				}
 			}
 		}
 	}
@@ -286,7 +292,7 @@ void GameCommand::LoadOne( const Command& cmd )
 		if( m_pCourse == NULL )
 		{
 			m_sInvalidReason = ssprintf( "Course \"%s\" not found", sValue.c_str() );
-			m_bInvalid |= true;
+			m_bInvalid = true;
 		}
 	}
 	
@@ -300,16 +306,22 @@ void GameCommand::LoadOne( const Command& cmd )
 			Course *pCourse = (m_pCourse != NULL)? m_pCourse:GAMESTATE->m_pCurCourse;
 			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->GetCurrentStyle();
 			if( pCourse == NULL || pStyle == NULL )
-				RageException::Throw( "Must set Course and Style to set Steps." );
-
-			const CourseDifficulty cd = StringToDifficulty( sTrail );
-			ASSERT_M( cd != Difficulty_Invalid, ssprintf("Invalid difficulty '%s'", sTrail.c_str()) );
-
-			m_pTrail = pCourse->GetTrail( pStyle->m_StepsType, cd );
-			if( m_pTrail == NULL )
 			{
-				m_sInvalidReason = "trail not found";
-				m_bInvalid |= true;
+				LuaHelpers::ReportScriptError("Must set Course and Style to set Trail.");
+				m_sInvalidReason = "Course or Style not set";
+				m_bInvalid = true;
+			}
+			else
+			{
+				const CourseDifficulty cd = StringToDifficulty( sTrail );
+				ASSERT_M( cd != Difficulty_Invalid, ssprintf("Invalid difficulty '%s'", sTrail.c_str()) );
+
+				m_pTrail = pCourse->GetTrail( pStyle->m_StepsType, cd );
+				if( m_pTrail == NULL )
+				{
+					m_sInvalidReason = "trail not found";
+					m_bInvalid = true;
+				}
 			}
 		}
 	}
@@ -331,7 +343,7 @@ void GameCommand::LoadOne( const Command& cmd )
 		if( m_SortOrder == SortOrder_Invalid )
 		{
 			m_sInvalidReason = ssprintf( "SortOrder \"%s\" is not valid.", sValue.c_str() );
-			m_bInvalid |= true;
+			m_bInvalid = true;
 		}
 	}
 
@@ -406,7 +418,7 @@ void GameCommand::LoadOne( const Command& cmd )
 			if( pPref == NULL )
 			{
 				m_sInvalidReason = ssprintf("unknown preference \"%s\"", cmd.m_vsArgs[1].c_str() );
-				m_bInvalid |= true;
+				m_bInvalid = true;
 			}
 			pPref->FromString(cmd.m_vsArgs[2]);
 		}

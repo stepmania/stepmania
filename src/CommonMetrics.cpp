@@ -44,8 +44,13 @@ void ThemeMetricDifficultiesToShow::Read()
 	{
 		Difficulty d = StringToDifficulty( *i );
 		if( d == Difficulty_Invalid )
-			RageException::Throw( "Unknown difficulty \"%s\" in CourseDifficultiesToShow.", i->c_str() );
-		m_v.push_back( d );
+		{
+			LuaHelpers::ReportScriptErrorFmt("Unknown difficulty \"%s\" in CourseDifficultiesToShow.", i->c_str());
+		}
+		else
+		{
+			m_v.push_back( d );
+		}
 	}
 }
 const vector<Difficulty>& ThemeMetricDifficultiesToShow::GetValue() const { return m_v; }
@@ -74,8 +79,13 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 	{
 		CourseDifficulty d = StringToDifficulty( *i );
 		if( d == Difficulty_Invalid )
-			RageException::Throw( "Unknown CourseDifficulty \"%s\" in CourseDifficultiesToShow.", i->c_str() );
-		m_v.push_back( d );
+		{
+			LuaHelpers::ReportScriptErrorFmt("Unknown CourseDifficulty \"%s\" in CourseDifficultiesToShow.", i->c_str());
+		}
+		else
+		{
+			m_v.push_back( d );
+		}
 	}
 }
 const vector<CourseDifficulty>& ThemeMetricCourseDifficultiesToShow::GetValue() const { return m_v; }

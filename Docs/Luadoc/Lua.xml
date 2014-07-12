@@ -927,6 +927,7 @@
 		</Class>
 		<Class name='MessageManager'>
 			<Function name='Broadcast'/>
+			<Function name='SetLogging'/>
 		</Class>
 		<Class base='ActorFrame' name='MeterDisplay'>
 			<Function name='SetStreamWidth'/>
