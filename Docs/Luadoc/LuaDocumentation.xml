@@ -2173,6 +2173,12 @@ save yourself some time, copy this for undocumented things:
 	<Function name='StepsTypeToLocalizedString' return='string' arguments='StepsType st'>
 		Return the localized string representation of <code>st</code>.
 	</Function>
+	<Function name='GetEnabledGames' return='{string}'>
+		Returns a table of all selectable games.
+	</Function>
+	<Function name='SetGame' return='void' arguments='string Game, string Theme' >
+		Sets the current game to <code>Game</code>. The second argument is optional, and if provided will determine which theme is loaded when the game changes. If Stepmania was run with a commandline argument setting the theme, that will override the second argument of this function.
+	</Function>
 </Class>
 <Class name='GameSoundManager'>
 	<Function name='DimMusic' return='void' arguments='float fVolume, float fDuration'>
