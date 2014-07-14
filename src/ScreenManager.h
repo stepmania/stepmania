@@ -39,6 +39,8 @@ public:
 	Screen *GetScreen( int iPosition );
 	bool AllowOperatorMenuButton() const;
 
+	bool IsScreenNameValid(RString const& name) const;
+
 	// System messages
 	void SystemMessage( const RString &sMessage );
 	void SystemMessageNoAnimate( const RString &sMessage );

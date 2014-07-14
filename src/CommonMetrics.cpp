@@ -38,7 +38,11 @@ void ThemeMetricDifficultiesToShow::Read()
 
 	vector<RString> v;
 	split( ThemeMetric<RString>::GetValue(), ",", v );
-	ASSERT( v.size() > 0 );
+	if(v.empty())
+	{
+		LuaHelpers::ReportScriptError("DifficultiesToShow must have at least one entry.");
+		return;
+	}
 
 	FOREACH_CONST( RString, v, i )
 	{
@@ -73,7 +77,11 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 
 	vector<RString> v;
 	split( ThemeMetric<RString>::GetValue(), ",", v );
-	ASSERT( v.size() > 0 );
+	if(v.empty())
+	{
+		LuaHelpers::ReportScriptError("CourseDifficultiesToShow must have at least one entry.");
+		return;
+	}
 
 	FOREACH_CONST( RString, v, i )
 	{

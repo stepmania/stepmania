@@ -367,6 +367,12 @@ bool ScreenManager::AllowOperatorMenuButton() const
 	return true;
 }
 
+bool ScreenManager::IsScreenNameValid(RString const& name) const
+{
+	RString ClassName = THEME->GetMetric(name,"Class");
+	return g_pmapRegistrees->find(ClassName) != g_pmapRegistrees->end();
+}
+
 bool ScreenManager::IsStackedScreen( const Screen *pScreen ) const
 {
 	// True if the screen is in the screen stack, but not the first.
