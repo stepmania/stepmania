@@ -434,7 +434,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 			m_Def.m_vsChoices.push_back( "" );
 			m_aListEntries.push_back( GameCommand() );
 		}
-		else if( GAMESTATE->IsCourseMode() && GAMESTATE->m_pCurCourse )   // playing a course
+		else if(GAMESTATE->GetCurrentStyle() && GAMESTATE->IsCourseMode() && GAMESTATE->m_pCurCourse)   // playing a course
 		{
 			m_Def.m_bOneChoiceForAllPlayers = (bool)PREFSMAN->m_bLockCourseDifficulties;
 			m_Def.m_layoutType = StringToLayoutType( STEPS_ROW_LAYOUT_TYPE );
@@ -453,7 +453,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 				m_aListEntries.push_back( mc );
 			}
 		}
-		else if( GAMESTATE->m_pCurSong ) // playing a song
+		else if(GAMESTATE->GetCurrentStyle() && GAMESTATE->m_pCurSong) // playing a song
 		{
 			m_Def.m_layoutType = StringToLayoutType( STEPS_ROW_LAYOUT_TYPE );
 
@@ -634,26 +634,31 @@ public:
 			{
 				unsigned i = iter - m_vSteps.begin();
 				vbSelOut[i] = true;
-				return;
+				continue;
 			}
 			// look for matching difficulty
+			bool matched= false;
 			if( m_pDifficultyToFill )
 			{
 				FOREACH_CONST( Difficulty, m_vDifficulties, d )
 				{
 					unsigned i = d - m_vDifficulties.begin();
-					if( *d == GAMESTATE->m_PreferredDifficulty[0] )
+					if( *d == GAMESTATE->m_PreferredDifficulty[p] )
 					{
 						vbSelOut[i] = true;
+						matched= true;
 						vector<PlayerNumber> v;
 						v.push_back( p );
 						ExportOption( v, vbSelectedOut );	// current steps changed
-						continue;
+						break;
 					}
 				}
 			}
-			// default to 1st
-			vbSelOut[0] = true;
+			if(!matched)
+			{
+				// default to 1st
+				vbSelOut[0] = true;
+			}
 		}
 	}
 	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const

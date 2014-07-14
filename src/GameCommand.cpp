@@ -175,31 +175,40 @@ void GameCommand::LoadOne( const Command& cmd )
 		sValue += cmd.m_vsArgs[i];
 	}
 
+#define MAKE_INVALID(expr) \
+	m_sInvalidReason= (expr);																							\
+	LuaHelpers::ReportScriptError(m_sInvalidReason, "INVALID_GAME_COMMAND"); \
+	m_bInvalid= true;
+
+#define CHECK_INVALID_COND(member, value, cond, message) \
+	if(cond) \
+	{ \
+		MAKE_INVALID(message); \
+	} \
+	else \
+	{ \
+		member= value; \
+	}
+
+#define CHECK_INVALID_VALUE(member, value, invalid_value, value_name) \
+	CHECK_INVALID_COND(member, value, (value == invalid_value), ssprintf("Invalid "#value_name" \"%s\".", sValue.c_str()));
+
 	if( sName == "style" )
 	{
 		const Style* style = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_pCurGame, sValue );
-		if( style )
-			m_pStyle = style;
-		else
-			m_bInvalid = true;
+		CHECK_INVALID_VALUE(m_pStyle, style, NULL, style);
 	}
 
 	else if( sName == "playmode" )
 	{
 		PlayMode pm = StringToPlayMode( sValue );
-		if( pm != PlayMode_Invalid )
-			m_pm = pm;
-		else
-			m_bInvalid = true;
+		CHECK_INVALID_VALUE(m_pm, pm, PlayMode_Invalid, playmode);
 	}
 
 	else if( sName == "difficulty" )
 	{
 		Difficulty dc = StringToDifficulty( sValue );
-		if( dc != Difficulty_Invalid )
-			m_dc = dc;
-		else
-			m_bInvalid = true;
+		CHECK_INVALID_VALUE(m_dc, dc, Difficulty_Invalid, difficulty);
 	}
 
 	else if( sName == "announcer" )
@@ -236,23 +245,20 @@ void GameCommand::LoadOne( const Command& cmd )
 		m_LuaFunction.SetFromExpression( sValue );
 		if(m_LuaFunction.IsNil())
 		{
-			LuaHelpers::ReportScriptError("Lua error in game command: \"" + sValue + "\" evaluated to nil");
+			MAKE_INVALID("Lua error in game command: \"" + sValue + "\" evaluated to nil");
 		}
 	}
 
 	else if( sName == "screen" )
 	{
-		m_sScreen = sValue;
+		CHECK_INVALID_COND(m_sScreen, sValue, (!SCREENMAN->IsScreenNameValid(sValue)), ("Screen \"" + sValue + "\" has invalid class."));
 	}
 
 	else if( sName == "song" )
 	{
-		m_pSong = SONGMAN->FindSong( sValue );
-		if( m_pSong == NULL )
-		{
-			m_sInvalidReason = ssprintf( "Song \"%s\" not found", sValue.c_str() );
-			m_bInvalid = true;
-		}
+		CHECK_INVALID_COND(m_pSong, SONGMAN->FindSong(sValue),
+			(SONGMAN->FindSong(sValue) == NULL),
+			(ssprintf("Song \"%s\" not found", sValue.c_str()))); 
 	}
 
 	else if( sName == "steps" )
@@ -266,34 +272,31 @@ void GameCommand::LoadOne( const Command& cmd )
 			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->GetCurrentStyle();
 			if( pSong == NULL || pStyle == NULL )
 			{
-				LuaHelpers::ReportScriptError("Must set Song and Style to set Steps.");
-				m_sInvalidReason = "Song or Style not set";
-				m_bInvalid = true;
+				MAKE_INVALID("Must set Song and Style to set Steps.");
 			}
 			else
 			{
 				Difficulty dc = StringToDifficulty( sSteps );
-				if( dc != Difficulty_Edit )
-				m_pSteps = SongUtil::GetStepsByDifficulty( pSong, pStyle->m_StepsType, dc );
-				else
-				m_pSteps = SongUtil::GetStepsByDescription( pSong, pStyle->m_StepsType, sSteps );
-				if( m_pSteps == NULL )
+				Steps* st;
+				if( dc < Difficulty_Edit )
 				{
-					m_sInvalidReason = "steps not found";
-					m_bInvalid = true;
+					st = SongUtil::GetStepsByDifficulty( pSong, pStyle->m_StepsType, dc );
 				}
+				else
+				{
+					st = SongUtil::GetStepsByDescription( pSong, pStyle->m_StepsType, sSteps );
+				}
+				CHECK_INVALID_COND(m_pSteps, st, (st == NULL),
+					(ssprintf("Steps \"%s\" not found", sSteps.c_str())));
 			}
 		}
 	}
 
 	else if( sName == "course" )
 	{
-		m_pCourse = SONGMAN->FindCourse( "", sValue );
-		if( m_pCourse == NULL )
-		{
-			m_sInvalidReason = ssprintf( "Course \"%s\" not found", sValue.c_str() );
-			m_bInvalid = true;
-		}
+		CHECK_INVALID_COND(m_pCourse, SONGMAN->FindCourse("", sValue),
+			(SONGMAN->FindCourse("", sValue) == NULL),
+			(ssprintf( "Course \"%s\" not found", sValue.c_str())));
 	}
 	
 	else if( sName == "trail" )
@@ -307,20 +310,20 @@ void GameCommand::LoadOne( const Command& cmd )
 			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->GetCurrentStyle();
 			if( pCourse == NULL || pStyle == NULL )
 			{
-				LuaHelpers::ReportScriptError("Must set Course and Style to set Trail.");
-				m_sInvalidReason = "Course or Style not set";
-				m_bInvalid = true;
+				MAKE_INVALID("Must set Course and Style to set Trail.");
 			}
 			else
 			{
 				const CourseDifficulty cd = StringToDifficulty( sTrail );
-				ASSERT_M( cd != Difficulty_Invalid, ssprintf("Invalid difficulty '%s'", sTrail.c_str()) );
-
-				m_pTrail = pCourse->GetTrail( pStyle->m_StepsType, cd );
-				if( m_pTrail == NULL )
+				if(cd == Difficulty_Invalid)
 				{
-					m_sInvalidReason = "trail not found";
-					m_bInvalid = true;
+					MAKE_INVALID(ssprintf("Invalid difficulty '%s'", sTrail.c_str()));
+				}
+				else
+				{
+					Trail* tr = pCourse->GetTrail(pStyle->m_StepsType, cd);
+					CHECK_INVALID_COND(m_pTrail, tr, (tr == NULL),
+						("Trail \"" + sTrail + "\" not found."));
 				}
 			}
 		}
@@ -328,23 +331,28 @@ void GameCommand::LoadOne( const Command& cmd )
 	
 	else if( sName == "setenv" )
 	{
-		if( cmd.m_vsArgs.size() == 3 )
-			m_SetEnv[ cmd.m_vsArgs[1] ] = cmd.m_vsArgs[2];
+		if((cmd.m_vsArgs.size() - 1) % 2 != 0)
+		{
+			MAKE_INVALID("Arguments to setenv game command must be key,value pairs.");
+		}
+		else
+		{
+			for(size_t i= 1; i < cmd.m_vsArgs.size(); i+= 2)
+			{
+				m_SetEnv[cmd.m_vsArgs[i]]= cmd.m_vsArgs[i+1];
+			}
+		}
 	}
 	
 	else if( sName == "songgroup" )
 	{
-		m_sSongGroup = sValue;
+		CHECK_INVALID_COND(m_sSongGroup, sValue, (!SONGMAN->DoesSongGroupExist(sValue)), ("Song group \"" + sValue + "\" does not exist."));
 	}
 
 	else if( sName == "sort" )
 	{
-		m_SortOrder = StringToSortOrder( sValue );
-		if( m_SortOrder == SortOrder_Invalid )
-		{
-			m_sInvalidReason = ssprintf( "SortOrder \"%s\" is not valid.", sValue.c_str() );
-			m_bInvalid = true;
-		}
+		SortOrder so= StringToSortOrder(sValue);
+		CHECK_INVALID_VALUE(m_SortOrder, so, SortOrder_Invalid, sortorder);
 	}
 
 	else if( sName == "weight" )
@@ -359,7 +367,8 @@ void GameCommand::LoadOne( const Command& cmd )
 
 	else if( sName == "goaltype" )
 	{
-		m_GoalType = StringToGoalType( sValue );
+		GoalType go= StringToGoalType(sValue);
+		CHECK_INVALID_VALUE(m_GoalType, go, GoalType_Invalid, goaltype);
 	}
 
 	else if( sName == "profileid" )
@@ -412,15 +421,23 @@ void GameCommand::LoadOne( const Command& cmd )
 
 	else if( sName == "setpref" )
 	{
-		if( cmd.m_vsArgs.size() == 3 )
+		if((cmd.m_vsArgs.size() - 1) % 2 != 0)
 		{
-			IPreference *pPref = IPreference::GetPreferenceByName( cmd.m_vsArgs[1] );
-			if( pPref == NULL )
+			MAKE_INVALID("Arguments to setpref game command must be key,value pairs.");
+		}
+		else
+		{
+			for(size_t i= 1; i < cmd.m_vsArgs.size(); i+= 2)
 			{
-				m_sInvalidReason = ssprintf("unknown preference \"%s\"", cmd.m_vsArgs[1].c_str() );
-				m_bInvalid = true;
+				if(IPreference::GetPreferenceByName(cmd.m_vsArgs[i]) == NULL)
+				{
+					MAKE_INVALID("Unknown preference \"" + cmd.m_vsArgs[i] + "\".");
+				}
+				else
+				{
+					m_SetPref[cmd.m_vsArgs[i]]= cmd.m_vsArgs[i+1];
+				}
 			}
-			pPref->FromString(cmd.m_vsArgs[2]);
 		}
 	}
 
@@ -432,13 +449,19 @@ void GameCommand::LoadOne( const Command& cmd )
 			m_fMusicFadeOutVolume = static_cast<float>(atof( cmd.m_vsArgs[1] ));
 			m_fMusicFadeOutSeconds = static_cast<float>(atof( cmd.m_vsArgs[2] ));
 		}
+		else
+		{
+			MAKE_INVALID("Wrong number of args to fademusic.");
+		}
 	}
 
 	else
 	{
-		RString sWarning = ssprintf( "Command '%s' is not valid.", cmd.GetOriginalCommandString().c_str() );
-		LuaHelpers::ReportScriptError(sWarning, "INVALID_GAME_COMMAND");
+		MAKE_INVALID(ssprintf( "Command '%s' is not valid.", cmd.GetOriginalCommandString().c_str()));
 	}
+#undef CHECK_INVALID_VALUE
+#undef CHECK_INVALID_COND
+#undef MAKE_INVALID
 }
 
 int GetNumCreditsPaid()
@@ -457,8 +480,8 @@ int GetCreditsRequiredToPlayStyle( const Style *style )
 {
 	// GameState::GetCoinsNeededToJoin returns 0 if the coin mode isn't
 	// CoinMode_Pay, which means the theme can't make sure that there are
-	// enough credits available.  GameCommand::IsPlayable will cause a crash
-	// if there aren't enough credits.  So we have to check the coin mode here
+	// enough credits available.
+	// So we have to check the coin mode here
 	// and return 0 if the player doesn't have to pay.
 	if( GAMESTATE->GetCoinMode() != CoinMode_Pay )
 	{
@@ -692,7 +715,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			}
 			break;
 		default:
-			FAIL_M(ssprintf("Invalid StyleType: %i", m_pStyle->m_StyleType));
+			LuaHelpers::ReportScriptError("Invalid StyleType: " + m_pStyle->m_StyleType);
 		}
 	}
 	if( m_dc != Difficulty_Invalid )
@@ -753,6 +776,14 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		lua_settable( L, -3 );
 		lua_pop( L, 1 );
 		LUA->Release(L);
+	}
+	for(map<RString,RString>::const_iterator setting= m_SetPref.begin(); setting != m_SetPref.end(); ++setting)
+	{
+		IPreference* pref= IPreference::GetPreferenceByName(setting->first);
+		if(pref != NULL)
+		{
+			pref->FromString(setting->second);
+		}
 	}
 	if( !m_sSongGroup.empty() )
 		GAMESTATE->m_sPreferredSongGroup.Set( m_sSongGroup );

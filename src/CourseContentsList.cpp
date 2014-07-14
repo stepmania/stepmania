@@ -28,6 +28,7 @@ void CourseContentsList::LoadFromNode( const XNode* pNode )
 	if( pDisplayNode == NULL )
 	{
 		LuaHelpers::ReportScriptErrorFmt("%s: CourseContentsList: missing the Display child", ActorUtil::GetWhere(pNode).c_str());
+		return;
 	}
 
 	for( int i=0; i<iMaxSongs; i++ )
