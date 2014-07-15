@@ -722,7 +722,7 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 			"Verify that this redirect is correct.",
 			sPath.c_str(), sNewFileName.c_str());
 
-	switch( LuaHelpers::ReportScriptError(sMessage) )
+	switch(LuaHelpers::ReportScriptError(sMessage, "", true))
 	{
 	case Dialog::retry:
 		ReloadMetrics();
@@ -815,11 +815,12 @@ try_element_again:
 		goto try_element_again;
 	case Dialog::ignore:
 		{
-			RString error= ssprintf(sCategory + '/' + sFileName,
-				"could not be found in \"%s\" or \"%s\".",
-				GetThemeDirFromName(m_sCurThemeName).c_str(),
-				GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str() );
+			RString error= sCategory + '/' + sFileName +
+				" could not be found in \"" +
+				GetThemeDirFromName(m_sCurThemeName).c_str() + "\" or \"" +
+				GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str() + "\".";
 			LOG->UserLog("Theme element", "%s", error.c_str());
+			LOG->Warn(error.c_str());
 			LuaHelpers::ScriptErrorMessage(error);
 		}
 

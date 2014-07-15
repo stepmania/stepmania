@@ -55,7 +55,7 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName )
 		if( asPaths.empty() )
 		{
 			RString sError = ssprintf( "%s: references a file \"%s\" which doesn't exist", sName.c_str(), sPath.c_str() );
-			switch( Dialog::AbortRetryIgnore( sError, "BROKEN_FILE_REFERENCE" ) )
+			switch(LuaHelpers::ReportScriptError(sError, "BROKEN_FILE_REFERENCE", true))
 			{
 			case Dialog::abort:
 				RageException::Throw( "%s", sError.c_str() ); 
@@ -76,7 +76,7 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName )
 		{
 			RString sError = ssprintf( "%s: references a file \"%s\" which has multiple matches", sName.c_str(), sPath.c_str() );
 			sError += "\n" + join( "\n", asPaths );
-			switch( Dialog::AbortRetryIgnore( sError, "BROKEN_FILE_REFERENCE" ) )
+			switch(LuaHelpers::ReportScriptError(sError, "BROKEN_FILE_REFERENCE", true))
 			{
 			case Dialog::abort:
 				RageException::Throw( "%s", sError.c_str() ); 
