@@ -145,6 +145,13 @@ namespace
 
 		StepMania::ResetGame();
 		SCREENMAN->ThemeChanged();
+		// Not all themes use the same screen names!  Check whether the new
+		// screen is valid in the new theme before setting it.  Use the
+		// InitialScreen metric if it's not.
+		if(!SCREENMAN->IsScreenNameValid(g_sNewScreen))
+		{
+			g_sNewScreen= THEME->GetMetric("Common", "InitialScreen");
+		}
 		SCREENMAN->SetNewScreen( g_sNewScreen );
 
 		g_sNewTheme = RString();

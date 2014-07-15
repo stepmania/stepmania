@@ -112,7 +112,11 @@ void NoteSkinManager::LoadNoteSkinDataRecursive( const RString &sNoteSkinName_, 
 	while(1)
 	{
 		++iDepth;
-		ASSERT_M( iDepth < 20, "Circular NoteSkin fallback references detected." );
+		if(iDepth >= 20)
+		{
+			LuaHelpers::ReportScriptError("Circular NoteSkin fallback references detected.", "NOTESKIN_ERROR");
+			return;
+		}
 
 		RString sDir = SpecialFiles::NOTESKINS_DIR + m_pCurGame->m_szName + "/" + sNoteSkinName + "/";
 		if( !FILEMAN->IsADirectory(sDir) )
@@ -120,8 +124,9 @@ void NoteSkinManager::LoadNoteSkinDataRecursive( const RString &sNoteSkinName_, 
 			sDir = GLOBAL_BASE_DIR + sNoteSkinName + "/";
 			if( !FILEMAN->IsADirectory(sDir) )
 			{
-				LOG->Trace( "NoteSkin \"%s\" references skin \"%s\" that is not present",
-					data_out.sName.c_str(), sNoteSkinName.c_str() );
+				LuaHelpers::ReportScriptError("NoteSkin \"" + data_out.sName +
+					"\" references skin \"" + sNoteSkinName + "\" that is not present",
+					"NOTESKIN_ERROR");
 				return;
 			}
 		}
@@ -234,7 +239,11 @@ void NoteSkinManager::GetAllNoteSkinNamesForGame( const Game *pGame, vector<RStr
 
 RString NoteSkinManager::GetMetric( const RString &sButtonName, const RString &sValue )
 {
-	ASSERT( !m_sCurrentNoteSkin.empty() );
+	if(m_sCurrentNoteSkin.empty())
+	{
+		LuaHelpers::ReportScriptError("NOTESKIN:GetMetric: No noteskin currently set.", "NOTESKIN_ERROR");
+		return "";
+	}
 	RString sNoteSkinName = m_sCurrentNoteSkin;
 	sNoteSkinName.MakeLower();
 	map<RString,NoteSkinData>::const_iterator it = g_mapNameToData.find(sNoteSkinName);
@@ -245,8 +254,12 @@ RString NoteSkinManager::GetMetric( const RString &sButtonName, const RString &s
 	if( data.metrics.GetValue( sButtonName, sValue, sReturn ) )
 		return sReturn;
 	if( !data.metrics.GetValue( "NoteDisplay", sValue, sReturn ) )
-		RageException::Throw( "Could not read metric \"%s::%s\" or \"NoteDisplay::%s\" in \"%s\".",
-				      sButtonName.c_str(), sValue.c_str(), sValue.c_str(), sNoteSkinName.c_str() );
+	{
+		LuaHelpers::ReportScriptError("Could not read metric \"" + sButtonName +
+			"::" + sValue + "\" or \"NoteDisplay::" + sValue + "\" in \"" +
+			sNoteSkinName + "\".", "NOTESKIN_ERROR");
+		return "";
+	}
 	return sReturn;
 }
 
@@ -320,15 +333,18 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 			sButtonName.c_str(), sElement.c_str(), 
 			sPaths.c_str() );
 
-		if( Dialog::AbortRetryIgnore(message) == Dialog::retry )
+		switch(LuaHelpers::ReportScriptError(message, "NOTESKIN_ERROR", true))
 		{
-			FOREACH_CONST( RString, data.vsDirSearchOrder, dir )
-				FILEMAN->FlushDirCache( *dir );
-			g_PathCache.clear();
-			return GetPath( sButtonName, sElement );
+			case Dialog::retry:
+				FOREACH_CONST(RString, data.vsDirSearchOrder, dir)
+					FILEMAN->FlushDirCache(*dir);
+				g_PathCache.clear();
+				return GetPath(sButtonName, sElement);
+			case Dialog::abort:
+				RageException::Throw("%s", message.c_str());
+			case Dialog::ignore:
+				return "";
 		}
-		
-		RageException::Throw( "%s", message.c_str() ); 
 	}
 
 	int iLevel = 0;
@@ -355,15 +371,18 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 					"Verify that this redirect is correct.",
 					sPath.c_str(), sNewFileName.c_str());
 
-			if( Dialog::AbortRetryIgnore(message) == Dialog::retry )
+			switch(LuaHelpers::ReportScriptError(message, "NOTESKIN_ERROR", true))
 			{
-				FOREACH_CONST( RString, data.vsDirSearchOrder, dir )
-					FILEMAN->FlushDirCache( *dir );
-				g_PathCache.clear();
-				return GetPath( sButtonName, sElement );
+				case Dialog::retry:
+					FOREACH_CONST(RString, data.vsDirSearchOrder, dir)
+						FILEMAN->FlushDirCache(*dir);
+					g_PathCache.clear();
+					return GetPath(sButtonName, sElement);
+				case Dialog::abort:
+					RageException::Throw("%s", message.c_str());
+				case Dialog::ignore:
+					return "";
 			}
-
-			RageException::Throw( "%s", message.c_str() ); 
 		}
 		
 		sPath = sRealPath;
@@ -376,7 +395,11 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 bool NoteSkinManager::PushActorTemplate( Lua *L, const RString &sButton, const RString &sElement, bool bSpriteOnly )
 {
 	map<RString,NoteSkinData>::const_iterator iter = g_mapNameToData.find( m_sCurrentNoteSkin );
-	ASSERT( iter != g_mapNameToData.end() );
+	if(iter == g_mapNameToData.end())
+	{
+		LuaHelpers::ReportScriptError("No current noteskin set!", "NOTESKIN_ERROR");
+		return false;
+	}
 	const NoteSkinData &data = iter->second;
 
 	LuaThreadVariable varPlayer( "Player", LuaReference::Create(m_PlayerNumber) );
@@ -385,7 +408,11 @@ bool NoteSkinManager::PushActorTemplate( Lua *L, const RString &sButton, const R
 	LuaThreadVariable varElement( "Element", sElement );
 	LuaThreadVariable varSpriteOnly( "SpriteOnly", LuaReference::Create(bSpriteOnly) );
 
-	ASSERT( !data.m_Loader.IsNil() );
+	if(data.m_Loader.IsNil())
+	{
+		LuaHelpers::ReportScriptError("No loader for noteskin!", "NOTESKIN_ERROR");
+		return false;
+	}
 	data.m_Loader.PushSelf( L );
 	lua_remove( L, -2 );
 	lua_getfield( L, -1, "Load" );
@@ -437,7 +464,7 @@ RString NoteSkinManager::GetPathFromDirAndFile( const RString &sDir, const RStri
 	if( matches.size() > 1 )
 	{
 		RString sError = "Multiple files match '"+sDir+sFileName+"'.  Please remove all but one of these files.";
-		Dialog::OK( sError );
+		LuaHelpers::ReportScriptError(sError, "NOTESKIN_ERROR");
 	}
 	
 	return matches[0];
@@ -469,7 +496,12 @@ public:
 	static int x ## ForNoteSkin( T* p, lua_State *L ) \
 	{ \
 		const RString sOldNoteSkin = p->GetCurrentNoteSkin(); \
-		p->SetCurrentNoteSkin( SArg(n+1) ); \
+		RString nsname= SArg(n+1); \
+		if(!p->DoesNoteSkinExist(nsname)) \
+		{ \
+			luaL_error(L, "Noteskin \"%s\" does not exist.", nsname.c_str()); \
+		} \
+		p->SetCurrentNoteSkin( nsname ); \
 		x( p, L ); \
 		p->SetCurrentNoteSkin( sOldNoteSkin ); \
 		return 1; \

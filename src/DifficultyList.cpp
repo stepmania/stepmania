@@ -37,7 +37,11 @@ void StepsDisplayList::LoadFromNode( const XNode* pNode )
 {
 	ActorFrame::LoadFromNode( pNode );
 
-	ASSERT_M( !m_sName.empty(), "StepsDisplayList must have a Name" );
+	if(m_sName.empty())
+	{
+		LuaHelpers::ReportScriptError("StepsDisplayList must have a Name");
+		return;
+	}
 
 	ITEMS_SPACING_Y.Load( m_sName, "ItemsSpacingY" );
 	NUM_SHOWN_ITEMS.Load( m_sName, "NumShownItems" );
