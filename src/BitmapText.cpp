@@ -126,21 +126,23 @@ void BitmapText::LoadFromNode( const XNode* pNode )
 	ThemeManager::EvaluateString( sAltText );
 
 	RString sFont;
-	// The short circuiting loading condition that was here before wasn't short circuiting correctly on all platforms.
-	if(!ActorUtil::GetAttrPath(pNode, "Font", sFont))
+	// Allow the Font attribute to be either a path or simply the name of a font.
+	// If it's a path, it will have a slash in it.
+	// Also allow it to be set through either "Font" or through "File".
+	if(!pNode->GetAttrValue("Font", sFont) && !pNode->GetAttrValue("File", sFont))
 	{
-		if(!ActorUtil::GetAttrPath(pNode, "File", sFont))
-		{
-			if( !pNode->GetAttrValue("Font", sFont) &&
-				!pNode->GetAttrValue("File", sFont) ) // accept "File" for backward compatibility
-			{
-				LuaHelpers::ReportScriptErrorFmt( "%s: BitmapText: Font or File attribute not found",
-					ActorUtil::GetWhere(pNode).c_str() );
-				sFont = "Common Normal";
-			}
-		}
+		LuaHelpers::ReportScriptErrorFmt("%s: BitmapText: Font or File attribute not found",
+			ActorUtil::GetWhere(pNode).c_str());
+		sFont = "Common Normal";
 	}
-	sFont = THEME->GetPathF( "", sFont );
+	if(sFont.find("/") == RString::npos)
+	{
+		sFont= THEME->GetPathF("", sFont);
+	}
+	else if(!ActorUtil::ResolvePath(sFont, ActorUtil::GetWhere(pNode)))
+	{
+		sFont= THEME->GetPathF("", "Common Normal");
+	}
 
 	LoadFromFont( sFont );
 
