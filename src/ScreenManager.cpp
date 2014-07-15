@@ -722,6 +722,11 @@ void ScreenManager::LoadDelayedScreen()
 {
 	RString sScreenName = m_sDelayedScreen;
 	m_sDelayedScreen = "";
+	if(!IsScreenNameValid(sScreenName))
+	{
+		LuaHelpers::ReportScriptError("Tried to go to invalid screen: " + sScreenName, "INVALID_SCREEN");
+		return;
+	}
 
 	// Pop the top screen, if any.
 	ScreenMessage SM = PopTopScreenInternal();
