@@ -100,7 +100,11 @@ namespace
 			switch( GAMESTATE->GetCoinMode() )
 			{
 			case CoinMode_Home:
-				return CREDITS_PRESS_START.GetValue();
+				if( GAMESTATE->PlayersCanJoin() )
+					return CREDITS_PRESS_START.GetValue();
+				else
+					return CREDITS_NOT_PRESENT.GetValue();
+
 			case CoinMode_Pay:
 			// GCC is picky and needs this to be bracketed
 			{
@@ -119,8 +123,8 @@ namespace
 			default: // CoinMode_Free
 				if( GAMESTATE->PlayersCanJoin() )
 					return CREDITS_FREE_PLAY.GetValue();
-				// TODO: What should be displayed if players
-				// can't join in free mode?
+				// TODO: What should be displayed if players can't join in free mode?
+				// Probably something like "Please Wait" or "Cannot Join"? -freem
 			}
 		}
 		return RString();
