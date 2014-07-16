@@ -291,7 +291,14 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 	if( it != g_PathCache.end() )
 		return it->second;
 
-	map<RString,NoteSkinData>::const_iterator iter = g_mapNameToData.find( m_sCurrentNoteSkin );
+	if(m_sCurrentNoteSkin.empty())
+	{
+		LuaHelpers::ReportScriptError("NOTESKIN:GetPath: No noteskin currently set.", "NOTESKIN_ERROR");
+		return "";
+	}
+	RString sNoteSkinName = m_sCurrentNoteSkin;
+	sNoteSkinName.MakeLower();
+	map<RString,NoteSkinData>::const_iterator iter = g_mapNameToData.find( sNoteSkinName );
 	ASSERT( iter != g_mapNameToData.end() );
 	const NoteSkinData &data = iter->second;
 
@@ -351,8 +358,12 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 	while( GetExtension(sPath) == "redir" )
 	{
 		iLevel++;
-		ASSERT_M( iLevel < 100, ssprintf("Infinite recursion while looking up %s - %s", sButtonName.c_str(), sElement.c_str()) );
-			
+		if(iLevel >= 100)
+		{
+			LuaHelpers::ReportScriptError("Infinite recursion while looking up " +
+				sButtonName + " - " + sElement, "NOTESKIN_ERROR");
+			return "";
+		}
 		RString sNewFileName;
 		GetFileContents( sPath, sNewFileName, true );
 		RString sRealPath;
@@ -434,6 +445,10 @@ Actor *NoteSkinManager::LoadActor( const RString &sButton, const RString &sEleme
 	if( pNode.get() == NULL )
 	{
 		// XNode will warn about the error
+		if(bSpriteOnly)
+		{
+			return new Sprite;
+		}
 		return new Actor;
 	}
 
@@ -446,7 +461,11 @@ Actor *NoteSkinManager::LoadActor( const RString &sButton, const RString &sEleme
 		// Make sure pActor is a Sprite (or something derived from Sprite).
 		Sprite *pSprite = dynamic_cast<Sprite *>( pRet );
 		if( pSprite == NULL )
-			LuaHelpers::ReportScriptErrorFmt( "%s: %s %s must be a Sprite", m_sCurrentNoteSkin.c_str(), sButton.c_str(), sElement.c_str() );
+		{
+			LuaHelpers::ReportScriptErrorFmt("%s: %s %s must be a Sprite", m_sCurrentNoteSkin.c_str(), sButton.c_str(), sElement.c_str());
+			delete pRet;
+			return new Sprite;
+		}
 	}
 
 	return pRet;
@@ -463,7 +482,12 @@ RString NoteSkinManager::GetPathFromDirAndFile( const RString &sDir, const RStri
 
 	if( matches.size() > 1 )
 	{
-		RString sError = "Multiple files match '"+sDir+sFileName+"'.  Please remove all but one of these files.";
+		RString sError = "Multiple files match '"+sDir+sFileName+"'.  Please remove all but one of these files: ";
+		sError+= matches[1];
+		for(size_t n= 1; n < matches.size(); ++n)
+		{
+			sError+= ", " + matches[n];
+		}
 		LuaHelpers::ReportScriptError(sError, "NOTESKIN_ERROR");
 	}
 	

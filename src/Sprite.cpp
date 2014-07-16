@@ -32,6 +32,9 @@ Sprite::Sprite()
 
 	m_fTexCoordVelocityX = 0;
 	m_fTexCoordVelocityY = 0;
+
+	// An uninitialized sprite should be valid to display. -Kyz
+	Load(TEXTUREMAN->GetDefaultTextureID());
 }
 
 
