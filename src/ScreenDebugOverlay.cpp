@@ -1054,7 +1054,7 @@ class DebugLineToggleErrors : public IDebugLine
 	virtual RString GetPageName() const { return "Theme"; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
-		Message msg("ToggleErrors");
+		Message msg("ToggleScriptError");
 		MESSAGEMAN->Broadcast(msg);
 		IDebugLine::DoAndLog(sMessageOut);
 	}
@@ -1068,7 +1068,7 @@ class DebugLineClearErrors : public IDebugLine
 	virtual RString GetPageName() const { return "Theme"; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
-		Message msg("ClearErrors");
+		Message msg("ClearScriptError");
 		MESSAGEMAN->Broadcast(msg);
 		IDebugLine::DoAndLog(sMessageOut);
 	}
