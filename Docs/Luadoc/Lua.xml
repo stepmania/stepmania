@@ -1824,6 +1824,7 @@
 			<Function name='Flush'/>
 			<Function name='GetThreadVariable'/>
 			<Function name='ReadFile'/>
+			<Function name='ReportScriptError'/>
 			<Function name='RunWithThreadVariables'/>
 			<Function name='Trace'/>
 			<Function name='Warn'/>

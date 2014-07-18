@@ -794,27 +794,17 @@ bool LuaHelpers::LoadScript( Lua *L, const RString &sScript, const RString &sNam
 void LuaHelpers::ScriptErrorMessage(RString const& Error)
 {
 	Message msg("ScriptError");
-	msg.SetParam("Message", Error);
+	msg.SetParam("message", Error);
 	MESSAGEMAN->Broadcast(msg);
 }
 
 Dialog::Result LuaHelpers::ReportScriptError(RString const& Error, RString ErrorType, bool UseAbort)
 {
-	size_t line_break_pos= Error.find('\n');
-	RString short_error;
-	if(line_break_pos == RString::npos)
-	{
-		short_error= Error;
-	}
-	else
-	{
-		short_error= Error.substr(0, line_break_pos);
-	}
 	// Protect from a recursion loop resulting from a mistake in the error reporting lua.
 	if(!InReportScriptError)
 	{
 		InReportScriptError= true;
-		ScriptErrorMessage(short_error);
+		ScriptErrorMessage(Error);
 		InReportScriptError= false;
 	}
 	LOG->Warn(Error.c_str());
@@ -1154,6 +1144,22 @@ namespace
 		return 1;
 	}
 
+	static int ReportScriptError(lua_State* L)
+	{
+		RString error= "Script error occurred.";
+		RString error_type= "LUA_ERROR";
+		if(lua_isstring(L, 1))
+		{
+			error= SArg(1);
+		}
+		if(lua_isstring(L, 2))
+		{
+			error_type= SArg(2);
+		}
+		LuaHelpers::ReportScriptError(error, error_type);
+		return 0;
+	}
+
 	const luaL_Reg luaTable[] =
 	{
 		LIST_METHOD( Trace ),
@@ -1163,6 +1169,7 @@ namespace
 		LIST_METHOD( ReadFile ),
 		LIST_METHOD( RunWithThreadVariables ),
 		LIST_METHOD( GetThreadVariable ),
+		LIST_METHOD( ReportScriptError ),
 		{ NULL, NULL }
 	};
 }
