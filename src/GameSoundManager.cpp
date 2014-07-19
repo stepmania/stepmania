@@ -728,7 +728,7 @@ void GameSoundManager::PlayMusic( PlayMusicParams params, PlayMusicParams Fallba
 	ToPlay.fFadeInLengthSeconds = params.fFadeInLengthSeconds;
 	ToPlay.fFadeOutLengthSeconds = params.fFadeOutLengthSeconds;
 	ToPlay.bAlignBeat = params.bAlignBeat;
-	ToPlay.bApplyMusicRate = params.bApplyMusicRate;
+x	ToPlay.bApplyMusicRate = params.bApplyMusicRate;
 
 	/* Add the MusicToPlay to the g_MusicsToPlay queue. */
 	g_Mutex->Lock();
@@ -835,25 +835,25 @@ public:
 		bool loop= false;
 		bool applyRate= false;
 		bool alignBeat= true;
-		if (lua_gettop(L) >= 4 && !lua_isnil(L,4))
+		if(!lua_isnoneornil(L, 4))
 		{
 			fadeIn = FArg(4);
-			if (lua_gettop(L) >= 5 && !lua_isnil(L,5))
-			{
-				fadeOut = FArg(5);
-				if (lua_gettop(L) >= 6 && !lua_isnil(L,6))
-				{
-					loop = BArg(6);
-					if (lua_gettop(L) >= 7 && !lua_isnil(L,7))
-					{
-						applyRate = BArg(7);
-						if (lua_gettop(L) >= 8 && !lua_isnil(L,8))
-						{
-							alignBeat = BArg(8);
-						}
-					}
-				}
-			}
+		}
+		if(!lua_isnoneornil(L, 5))
+		{
+			fadeOut = FArg(5);
+		}
+		if(!lua_isnoneornil(L, 6))
+		{
+			loop = BArg(6);
+		}
+		if(!lua_isnoneornil(L, 7))
+		{
+			applyRate = BArg(7);
+		}
+		if(!lua_isnoneornil(L, 8))
+		{
+			alignBeat = BArg(8);
 		}
 		p->PlayMusic(musicPath, NULL, loop, musicStart, musicLength,
 			fadeIn, fadeOut, alignBeat, applyRate);

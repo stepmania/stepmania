@@ -6,9 +6,7 @@
 
 int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const char *szType, bool bAllowInvalid, bool bAllowAnything )
 {
-	luaL_checkany( L, iPos );
-
-	if( lua_isnil(L, iPos) )
+	if( lua_isnoneornil(L, iPos) )
 	{
 		if( bAllowInvalid )
 			return iInvalid;
