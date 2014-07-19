@@ -49,6 +49,7 @@ local log_args= {
 	Name= "ScriptError",
 	ReplaceLinesWhenHidden= true,
 	Times= message_time,
+	Font= "Common Error",
 }
 
 Trace("Loaded error layer.")
