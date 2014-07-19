@@ -438,18 +438,14 @@ Actor *NoteSkinManager::LoadActor( const RString &sButton, const RString &sEleme
 	if( !PushActorTemplate(L, sButton, sElement, bSpriteOnly) )
 	{
 		// ActorUtil will warn about the error
-		return new Actor;
+		return new Sprite;
 	}
 
 	auto_ptr<XNode> pNode( XmlFileUtil::XNodeFromTable(L) );
 	if( pNode.get() == NULL )
 	{
 		// XNode will warn about the error
-		if(bSpriteOnly)
-		{
-			return new Sprite;
-		}
-		return new Actor;
+		return new Sprite;
 	}
 
 	LUA->Release( L );
