@@ -18,7 +18,15 @@ void DynamicActorScroller::LoadFromNode( const XNode *pNode )
 	 *
 	 * Make one extra copy if masking is enabled. */
 	if( m_SubActors.size() != 1 )
-		RageException::Throw( "%s: DynamicActorScroller: loaded %i nodes; require exactly one", ActorUtil::GetWhere(pNode).c_str(), (int)m_SubActors.size() );
+	{
+		LuaHelpers::ReportScriptErrorFmt("%s: DynamicActorScroller: loaded %i nodes; require exactly one", ActorUtil::GetWhere(pNode).c_str(), (int)m_SubActors.size());
+		// Remove all but one.
+		for( size_t i=1; i<m_SubActors.size(); i++ )
+		{
+			delete m_SubActors[i];
+		}
+		m_SubActors.resize(1);
+	}
 
 	int iNumCopies = (int) m_fNumItemsToDraw;
 	if( m_quadMask.GetVisible() )
@@ -44,9 +52,8 @@ void DynamicActorScroller::LoadFromNode( const XNode *pNode )
 		lua_pushnil( L );
 		lua_pushnil( L );
 
-		RString sError;
-		if( !LuaHelpers::RunScriptOnStack(L, sError, 2, 1) ) // 2 args, 1 result
-			LOG->Warn( "Error running LoadFunction: %s", sError.c_str() );
+		RString Error= "Error running LoadFunction: ";
+		LuaHelpers::RunScriptOnStack(L, Error, 2, 1, true); // 2 args, 1 result
 
 		m_iNumItems = (int) luaL_checknumber( L, -1 );
 		lua_pop( L, 1 );
@@ -119,9 +126,8 @@ void DynamicActorScroller::ConfigureActor( Actor *pActor, int iItem )
 	pActor->PushSelf( L );
 	LuaHelpers::Push( L, iItem );
 
-	RString sError;
-	if( !LuaHelpers::RunScriptOnStack(L, sError, 2, 0) ) // 2 args, 0 results
-		LOG->Warn( "Error running LoadFunction: %s", sError.c_str() );
+	RString Error= "Error running LoadFunction: ";
+	LuaHelpers::RunScriptOnStack(L, Error, 2, 0, true); // 2 args, 0 results
 
 	LUA->Release(L);
 }

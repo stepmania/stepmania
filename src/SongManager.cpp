@@ -935,7 +935,7 @@ void SongManager::InitRandomAttacks()
 		MsdFile msd;
 
 		if( !msd.ReadFile( ATTACK_FILE, true ) )
-			LOG->Warn( "Error opening file '%s' for reading: %s.", ATTACK_FILE.c_str(), msd.GetError().c_str() );
+			LuaHelpers::ReportScriptErrorFmt( "Error opening file '%s' for reading: %s.", ATTACK_FILE.c_str(), msd.GetError().c_str() );
 		else
 		{
 			for( unsigned i=0; i<msd.GetNumValues(); i++ )
@@ -947,13 +947,13 @@ void SongManager::InitRandomAttacks()
 
 				if( iNumParams > 2 )
 				{
-					LOG->Warn( "Got \"%s:%s\" tag with too many parameters", sType.c_str(), sAttack.c_str() );
+					LuaHelpers::ReportScriptErrorFmt( "Got \"%s:%s\" tag with too many parameters", sType.c_str(), sAttack.c_str() );
 					continue;
 				}
 
 				if( !sType.EqualsNoCase("ATTACK") )
 				{
-					LOG->Warn( "Got \"%s:%s\" tag with wrong declaration", sType.c_str(), sAttack.c_str() );
+					LuaHelpers::ReportScriptErrorFmt( "Got \"%s:%s\" tag with wrong declaration", sType.c_str(), sAttack.c_str() );
 					continue;
 				}
 
@@ -1219,7 +1219,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 		if( GAMESTATE->m_pCurSong == NULL )
 		{
 			// This normally shouldn't happen, but it's helpful to permit it for testing.
-			LOG->Warn( "GetExtraStageInfo() called in GROUP_ALL, but GAMESTATE->m_pCurSong == NULL" );
+			LuaHelpers::ReportScriptErrorFmt( "GetExtraStageInfo() called in GROUP_ALL, but GAMESTATE->m_pCurSong == NULL" );
 			GAMESTATE->m_pCurSong.Set( GetRandomSong() );
 		}
 		sGroup = GAMESTATE->m_pCurSong->m_sGroupName;
@@ -1737,7 +1737,7 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 	
 	if( (int) vsFiles.size() > MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded )
 	{
-		LOG->Warn("Profile %s has too many edits; some have been skipped.", ProfileSlotToString( slot ).c_str() );
+		LuaHelpers::ReportScriptErrorFmt("Profile %s has too many edits; some have been skipped.", ProfileSlotToString( slot ).c_str() );
 		return;
 	}
 
@@ -1779,7 +1779,7 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 			
 			if( (int) vsEdits.size() > MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded )
 			{
-				LOG->Warn("Profile %s has too many edits; some have been skipped.", ProfileSlotToString( slot ).c_str() );
+				LuaHelpers::ReportScriptErrorFmt("Profile %s has too many edits; some have been skipped.", ProfileSlotToString( slot ).c_str() );
 				return;
 			}
 			

@@ -117,6 +117,18 @@ int OptionRowHandlerUtil::GetOneSelection( const vector<bool> &vbSelected )
 
 static LocalizedString OFF ( "OptionRowHandler", "Off" );
 
+#define ROW_INVALID_IF(condition, message, retval) \
+	if(condition) \
+	{ \
+		LuaHelpers::ReportScriptError("Parse error in option row: " message); \
+		return retval; \
+	}
+
+#define CHECK_WRONG_NUM_ARGS(num) \
+	ROW_INVALID_IF(command.m_vsArgs.size() != num, "Wrong number of args to option row.", false);
+#define CHECK_BLANK_ARG \
+	ROW_INVALID_IF(sParam.size() == 0, "Blank arg to Steps row.", false);
+
 // begin OptionRow handlers
 class OptionRowHandlerList : public OptionRowHandler
 {
@@ -135,28 +147,24 @@ public:
 		m_bUseModNameForIcon = false;
 		m_vsBroadcastOnExport.clear();
 	}
-	virtual void LoadInternal( const Commands &cmds )
+	virtual bool LoadInternal( const Commands &cmds )
 	{
-		ASSERT( cmds.v.size() == 1 );
 		const Command &command = cmds.v[0];
 		RString sParam = command.GetArg(1).s;
-		ASSERT( command.m_vsArgs.size() == 2 );
-		ASSERT( sParam.size() != 0 );
 
 		m_bUseModNameForIcon = true;
-
 		m_Def.m_sName = sParam;
-
 		m_Default.Load( -1, ParseCommands(ENTRY_DEFAULT(sParam)) );
 
 		{
 			// Parse the basic configuration metric.
 			Commands lCmds = ParseCommands( ENTRY(sParam) );
-			if( lCmds.v.size() < 1 )
-				RageException::Throw( "Parse error in \"ScreenOptionsMaster::%s\".", sParam.c_str() );
+			ROW_INVALID_IF(lCmds.v.size() < 1, "Row command is empty.", false);
 
 			m_Def.m_bOneChoiceForAllPlayers = false;
+			ROW_INVALID_IF(lCmds.v[0].m_vsArgs.size() != 1, "Row command has invalid args to number of entries.", false);
 			const int NumCols = StringToInt( lCmds.v[0].m_vsArgs[0] );
+			ROW_INVALID_IF(NumCols < 1, "Not enough entries in list.", false);
 			for( unsigned i=1; i<lCmds.v.size(); i++ )
 			{
 				const Command &cmd = lCmds.v[i];
@@ -195,10 +203,9 @@ public:
 				}
 				else
 				{
-					RageException::Throw( "Unkown row flag \"%s\".", sName.c_str() );
+					LuaHelpers::ReportScriptErrorFmt("Unkown row flag \"%s\".", sName.c_str());
 				}
 			}
-
 			for( int col = 0; col < NumCols; ++col )
 			{
 				GameCommand mc;
@@ -209,17 +216,20 @@ public:
 				if( mc.m_sName == "" && NumCols == 1 )
 					mc.m_sName = sParam;
 				if( mc.m_sName == "" )
-					RageException::Throw( "List \"%s\", col %i has no name.", sParam.c_str(), col );
-
-				if( !mc.IsPlayable() )
 				{
-					LOG->Trace( "\"%s\" is not playable.", sParam.c_str() );
+					LuaHelpers::ReportScriptErrorFmt("List \"%s\", choice %i has no name.", sParam.c_str(), col+1);
+					mc.m_sName= "";
+				}
+
+				RString why;
+				if( !mc.IsPlayable(&why) )
+				{
+					LuaHelpers::ReportScriptErrorFmt("\"%s\" choice %d is not playable: %s", sParam.c_str(), col, why.c_str());
 					continue;
 				}
 
 				m_aListEntries.push_back( mc );
 
-				RString sName = mc.m_sName;
 				RString sChoice = mc.m_sName;
 				m_Def.m_vsChoices.push_back( sChoice );
 			}
@@ -234,6 +244,7 @@ public:
 					m_Def.m_iDefault = e;
 			}
 		}
+		return true;
 	}
 	void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
@@ -373,7 +384,7 @@ static void SortNoteSkins( vector<RString> &asSkinNames )
 
 class OptionRowHandlerListNoteSkins : public OptionRowHandlerList
 {
-	virtual void LoadInternal( const Commands & )
+	virtual bool LoadInternal( const Commands & )
 	{
 		m_Def.m_sName = "NoteSkins";
 		m_Def.m_bOneChoiceForAllPlayers = false;
@@ -393,13 +404,14 @@ class OptionRowHandlerListNoteSkins : public OptionRowHandlerList
 			m_aListEntries.push_back( mc );
 			m_Def.m_vsChoices.push_back( arraySkinNames[skin] );
 		}
+		return true;
 	}
 };
 
 // XXX: very similar to OptionRowHandlerSteps
 class OptionRowHandlerListSteps : public OptionRowHandlerList
 {
-	virtual void LoadInternal( const Commands & )
+	virtual bool LoadInternal( const Commands & )
 	{
 		m_Def.m_sName = "Steps";
 		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
@@ -408,6 +420,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 
 		// don't call default
 		// OptionRowHandlerList::LoadInternal( cmds );
+		return true;
 	}
 
 	virtual ReloadChanged Reload()
@@ -421,7 +434,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 			m_Def.m_vsChoices.push_back( "" );
 			m_aListEntries.push_back( GameCommand() );
 		}
-		else if( GAMESTATE->IsCourseMode() && GAMESTATE->m_pCurCourse )   // playing a course
+		else if(GAMESTATE->GetCurrentStyle() && GAMESTATE->IsCourseMode() && GAMESTATE->m_pCurCourse)   // playing a course
 		{
 			m_Def.m_bOneChoiceForAllPlayers = (bool)PREFSMAN->m_bLockCourseDifficulties;
 			m_Def.m_layoutType = StringToLayoutType( STEPS_ROW_LAYOUT_TYPE );
@@ -440,7 +453,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 				m_aListEntries.push_back( mc );
 			}
 		}
-		else if( GAMESTATE->m_pCurSong ) // playing a song
+		else if(GAMESTATE->GetCurrentStyle() && GAMESTATE->m_pCurSong) // playing a song
 		{
 			m_Def.m_layoutType = StringToLayoutType( STEPS_ROW_LAYOUT_TYPE );
 
@@ -518,13 +531,12 @@ public:
 		m_vDifficulties.clear();
 	}
 
-	virtual void LoadInternal( const Commands &cmds )
+	virtual bool LoadInternal( const Commands &cmds )
 	{
-		ASSERT( cmds.v.size() == 1 );
 		const Command &command = cmds.v[0];
 		RString sParam = command.GetArg(1).s;
-		ASSERT( command.m_vsArgs.size() == 2 );
-		ASSERT( sParam.size() != 0 );
+		CHECK_WRONG_NUM_ARGS(2);
+		CHECK_BLANK_ARG;
 
 		if( sParam == "EditSteps" )
 		{
@@ -543,7 +555,7 @@ public:
 		}
 		else
 		{
-			RageException::Throw( "Invalid StepsType param \"%s\".", sParam.c_str() );
+			ROW_INVALID_IF(true, "Invalid StepsType param \"" + sParam + "\".", false);
 		}
 		
 		m_Def.m_sName = sParam;
@@ -605,6 +617,7 @@ public:
 		if( m_pDifficultyToFill )
 			m_pDifficultyToFill->Set( m_vDifficulties[0] );
 		m_ppStepsToFill->Set( m_vSteps[0] );
+		return true;
 	}
 	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
@@ -621,26 +634,31 @@ public:
 			{
 				unsigned i = iter - m_vSteps.begin();
 				vbSelOut[i] = true;
-				return;
+				continue;
 			}
 			// look for matching difficulty
+			bool matched= false;
 			if( m_pDifficultyToFill )
 			{
 				FOREACH_CONST( Difficulty, m_vDifficulties, d )
 				{
 					unsigned i = d - m_vDifficulties.begin();
-					if( *d == GAMESTATE->m_PreferredDifficulty[0] )
+					if( *d == GAMESTATE->m_PreferredDifficulty[p] )
 					{
 						vbSelOut[i] = true;
+						matched= true;
 						vector<PlayerNumber> v;
 						v.push_back( p );
 						ExportOption( v, vbSelectedOut );	// current steps changed
-						continue;
+						break;
 					}
 				}
 			}
-			// default to 1st
-			vbSelOut[0] = true;
+			if(!matched)
+			{
+				// default to 1st
+				vbSelOut[0] = true;
+			}
 		}
 	}
 	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
@@ -664,7 +682,7 @@ public:
 
 class OptionRowHandlerListCharacters: public OptionRowHandlerList
 {
-	virtual void LoadInternal( const Commands & )
+	virtual bool LoadInternal( const Commands & )
 	{
 		m_Def.m_bOneChoiceForAllPlayers = false;
 		m_Def.m_bAllowThemeItems = false;
@@ -692,12 +710,13 @@ class OptionRowHandlerListCharacters: public OptionRowHandlerList
 			mc.m_pCharacter = pCharacter;
 			m_aListEntries.push_back( mc );
 		}
+		return true;
 	}
 };
 
 class OptionRowHandlerListStyles: public OptionRowHandlerList
 {
-	virtual void LoadInternal( const Commands & )
+	virtual bool LoadInternal( const Commands & )
 	{
 		m_Def.m_bOneChoiceForAllPlayers = true;
 		m_Def.m_sName = "Style";
@@ -715,12 +734,13 @@ class OptionRowHandlerListStyles: public OptionRowHandlerList
 		}
 
 		m_Default.m_pStyle = vStyles[0];
+		return true;
 	}
 };
 
 class OptionRowHandlerListGroups: public OptionRowHandlerList
 {
-	virtual void LoadInternal( const Commands & )
+	virtual bool LoadInternal( const Commands & )
 	{
 		m_Def.m_bOneChoiceForAllPlayers = true;
 		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
@@ -745,12 +765,13 @@ class OptionRowHandlerListGroups: public OptionRowHandlerList
 			mc.m_sSongGroup = *g;
 			m_aListEntries.push_back( mc );
 		}
+		return true;
 	}
 };
 
 class OptionRowHandlerListDifficulties: public OptionRowHandlerList
 {
-	virtual void LoadInternal( const Commands & )
+	virtual bool LoadInternal( const Commands & )
 	{
 		m_Def.m_bOneChoiceForAllPlayers = true;
 		m_Def.m_sName = "Difficulty";
@@ -775,13 +796,14 @@ class OptionRowHandlerListDifficulties: public OptionRowHandlerList
 			mc.m_dc = *d;
 			m_aListEntries.push_back( mc );
 		}
+		return true;
 	}
 };
 
 // XXX: very similar to OptionRowHandlerSongChoices
 class OptionRowHandlerListSongsInCurrentSongGroup: public OptionRowHandlerList
 {
-	virtual void LoadInternal( const Commands & )
+	virtual bool LoadInternal( const Commands & )
 	{
 		const vector<Song*> &vpSongs = SONGMAN->GetSongs( GAMESTATE->m_sPreferredSongGroup );
 
@@ -800,6 +822,7 @@ class OptionRowHandlerListSongsInCurrentSongGroup: public OptionRowHandlerList
 			mc.m_pSong = *p;
 			m_aListEntries.push_back( mc );
 		}
+		return true;
 	}
 };
 
@@ -824,7 +847,7 @@ public:
 	{
 		if(m_pLuaTable->GetLuaType() != LUA_TTABLE)
 		{
-			LOG->Warn("LUA_ERROR:  Result of \"%s\" is not a table.", RowName.c_str());
+			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  Result of \"%s\" is not a table.", RowName.c_str());
 			return false;
 		}
 		m_pLuaTable->PushSelf(L);
@@ -832,7 +855,7 @@ public:
 		const char *pStr = lua_tostring(L, -1);
 		if( pStr == NULL )
 		{
-			LOG->Warn("LUA_ERROR:  \"%s\" \"Name\" entry is not a string.", RowName.c_str());
+			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"Name\" entry is not a string.", RowName.c_str());
 			return false;
 		}
 		lua_pop(L, 1);
@@ -841,7 +864,7 @@ public:
 		pStr = lua_tostring(L, -1);
 		if(pStr == NULL || StringToLayoutType(pStr) == LayoutType_Invalid)
 		{
-			LOG->Warn("LUA_ERROR:  \"%s\" \"LayoutType\" entry is not a string.", RowName.c_str());
+			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"LayoutType\" entry is not a string.", RowName.c_str());
 			return false;
 		}
 		lua_pop(L, 1);
@@ -850,7 +873,7 @@ public:
 		pStr = lua_tostring(L, -1);
 		if(pStr == NULL || StringToSelectType(pStr) == SelectType_Invalid)
 		{
-			LOG->Warn("LUA_ERROR:  \"%s\" \"SelectType\" entry is not a string.", RowName.c_str());
+			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"SelectType\" entry is not a string.", RowName.c_str());
 			return false;
 		}
 		lua_pop(L, 1);
@@ -858,12 +881,12 @@ public:
 		lua_getfield(L, -1, "Choices");
 		if(!lua_istable(L, -1))
 		{
-			LOG->Warn("LUA_ERROR:  \"%s\" \"Choices\" is not a table.", RowName.c_str());
+			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"Choices\" is not a table.", RowName.c_str());
 			return false;
 		}
 		if(!TableContainsOnlyStrings(L, lua_gettop(L)))
 		{
-			LOG->Warn("LUA_ERROR:  \"%s\" \"Choices\" table contains a non-string.", RowName.c_str());
+			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"Choices\" table contains a non-string.", RowName.c_str());
 			return false;
 		}
 		lua_pop(L, 1);
@@ -873,14 +896,15 @@ public:
 		{
 			if(!lua_isfunction(L, -1))
 			{
-				LOG->Warn("LUA_ERROR:  \"%s\" \"EnabledForPlayers\" is not a function.", RowName.c_str());
+				LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"EnabledForPlayers\" is not a function.", RowName.c_str());
 				return false;
 			}
 			m_pLuaTable->PushSelf( L );
-			lua_call( L, 1, 1 ); // call function with 1 argument and 1 result
+			RString error= RowName + " \"EnabledForPlayers\": ";
+			LuaHelpers::RunScriptOnStack(L, error, 1, 1, true);
 			if(!lua_istable(L, -1))
 			{
-				LOG->Warn("LUA_ERROR:  \"%s\" \"EnabledForPlayers\" did not return a table.", RowName.c_str());
+				LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"EnabledForPlayers\" did not return a table.", RowName.c_str());
 				return false;
 			}
 			lua_pushnil(L);
@@ -889,7 +913,7 @@ public:
 				PlayerNumber pn= Enum::Check<PlayerNumber>(L, -1, true, true);
 				if(pn == PlayerNumber_Invalid)
 				{
-					LOG->Warn("LUA_ERROR:  \"%s\" \"EnabledForPlayers\" contains a non-PlayerNumber.", RowName.c_str());
+					LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"EnabledForPlayers\" contains a non-PlayerNumber.", RowName.c_str());
 					return false;
 				}
 				lua_pop(L, 1);
@@ -902,12 +926,12 @@ public:
 		{
 			if(!lua_istable(L, -1))
 			{
-				LOG->Warn("LUA_ERROR:  \"%s\" \"ReloadRowMessages\" is not a table.", RowName.c_str());
+				LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"ReloadRowMessages\" is not a table.", RowName.c_str());
 				return false;
 			}
 			if(!TableContainsOnlyStrings(L, lua_gettop(L)))
 			{
-				LOG->Warn("LUA_ERROR:  \"%s\" \"ReloadRowMessages\" table contains a non-string.", RowName.c_str());
+				LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"ReloadRowMessages\" table contains a non-string.", RowName.c_str());
 				return false;
 			}
 		}
@@ -916,7 +940,7 @@ public:
 		lua_getfield(L, -1, "LoadSelections");
 		if(!lua_isfunction(L, -1))
 		{
-			LOG->Warn("LUA_ERROR:  \"%s\" \"LoadSelections\" entry is not a function.", RowName.c_str());
+			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"LoadSelections\" entry is not a function.", RowName.c_str());
 			return false;
 		}
 		lua_pop(L, 1);
@@ -924,7 +948,7 @@ public:
 		lua_getfield(L, -1, "SaveSelections");
 		if(!lua_isfunction(L, -1))
 		{
-			LOG->Warn("LUA_ERROR:  \"%s\" \"SaveSelections\" entry is not a function.", RowName.c_str());
+			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"SaveSelections\" entry is not a function.", RowName.c_str());
 			return false;
 		}
 		lua_pop(L, 1);
@@ -932,7 +956,7 @@ public:
 		lua_getfield(L, -1, "NotifyOfSelection");
 		if(!lua_isnil(L, -1) && !lua_isfunction(L, -1))
 		{
-			LOG->Warn("LUA_ERROR:  \"%s\" \"NotifyOfSelection\" entry is not a function.", RowName.c_str());
+			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"NotifyOfSelection\" entry is not a function.", RowName.c_str());
 			return false;
 		}
 		lua_pop(L, 1);
@@ -960,7 +984,8 @@ public:
 		// Argument 1 (self):
 		m_pLuaTable->PushSelf( L );
 
-		lua_call( L, 1, 1 ); // call function with 1 argument and 1 result
+		RString error= "EnabledForPlayers: ";
+		LuaHelpers::RunScriptOnStack( L, error, 1, 1, true );
 		m_Def.m_vEnabledForPlayers.clear();	// and fill in with supplied PlayerNumbers below
 
 		lua_pushnil( L );
@@ -978,45 +1003,25 @@ public:
 		LUA->Release(L);
 	}
 
-	virtual void LoadInternal( const Commands &cmds )
+	virtual bool LoadInternal( const Commands &cmds )
 	{
-		ASSERT( cmds.v.size() == 1 );
 		const Command &command = cmds.v[0];
-		ASSERT( command.m_vsArgs.size() == 2 );
-		RString sLuaFunction = command.m_vsArgs[1];
-		ASSERT( sLuaFunction.size() != 0 );
+		RString sParam = command.GetArg(1).s;
+		CHECK_WRONG_NUM_ARGS(2);
+		CHECK_BLANK_ARG;
 
 		m_Def.m_bAllowThemeItems = false;	// Lua options are always dynamic and can theme themselves.
 
 		Lua *L = LUA->Get();
 
 		// Run the Lua expression.  It should return a table.
-		m_pLuaTable->SetFromExpression( sLuaFunction );
-		m_TableIsSane= SanityCheckTable(L, sLuaFunction);
+		m_pLuaTable->SetFromExpression( sParam );
+		m_TableIsSane= SanityCheckTable(L, sParam);
 		if(!m_TableIsSane)
 		{
-			m_pLuaTable->PushSelf(L);
-			lua_getfield(L, -1, "Name");
-			const char *pStr = lua_tostring( L, -1 );
-			if(pStr == NULL)
-			{
-				m_Def.m_sName = "Invalid";
-			}
-			else
-			{
-				m_Def.m_sName = pStr;
-			}
-			lua_pop( L, 1 );
-			// Add a fake choice so that there won't be a crash.
-			// This is so that a themer that makes a mistake doesn't have to
-			// completely restart and can just reload scripts.
-			m_Def.m_vsChoices.push_back("Error in row.");
-			// Set m_selectType to SELECT_MULTIPLE so we won't hit the assert in
-			// VerifySelected.
-			m_Def.m_selectType= SELECT_MULTIPLE;
 			lua_settop(L, 0); // Release has an assert that forces a clear stack.
 			LUA->Release(L);
-			return;
+			return false;
 		}
 		m_pLuaTable->PushSelf(L);
 
@@ -1084,6 +1089,7 @@ public:
 		ASSERT( lua_gettop(L) == 0 );
 
 		LUA->Release(L);
+		return m_TableIsSane;
 	}
 
 	virtual ReloadChanged Reload()
@@ -1135,7 +1141,8 @@ public:
 
 			ASSERT( lua_gettop(L) == 6 ); // vbSelectedOut, m_iLuaTable, function, self, arg, arg
 
-			lua_call( L, 3, 0 ); // call function with 3 arguments and 0 results
+			RString error= "LoadSelections: ";
+			LuaHelpers::RunScriptOnStack( L, error, 3, 0, true );
 			ASSERT( lua_gettop(L) == 2 );
 
 			lua_pop( L, 1 ); // pop option table
@@ -1190,7 +1197,8 @@ public:
 
 			ASSERT( lua_gettop(L) == 6 ); // vbSelectedOut, m_iLuaTable, function, self, arg, arg
 
-			lua_call( L, 3, 0 ); // call function with 3 arguments and 0 results
+			RString error= "SaveSelections: ";
+			LuaHelpers::RunScriptOnStack( L, error, 3, 0, true );
 			ASSERT( lua_gettop(L) == 2 );
 
 			lua_pop( L, 1 ); // pop option table
@@ -1221,7 +1229,8 @@ public:
 			LuaHelpers::Push(L, pn);
 			// Convert choice to a lua index so it matches up with the Choices table.
 			lua_pushinteger(L, choice+1);
-			lua_call(L, 3, 1);
+			RString error= "NotifyOfSelection: ";
+			LuaHelpers::RunScriptOnStack(L, error, 3, 1, true);
 			if(lua_toboolean(L, -1))
 			{
 				lua_pop(L, 1);
@@ -1257,13 +1266,12 @@ public:
 		OptionRowHandler::Init();
 		m_pOpt = NULL;
 	}
-	virtual void LoadInternal( const Commands &cmds )
+	virtual bool LoadInternal( const Commands &cmds )
 	{
-		ASSERT( cmds.v.size() == 1 );
 		const Command &command = cmds.v[0];
 		RString sParam = command.GetArg(1).s;
-		ASSERT( command.m_vsArgs.size() == 2 );
-		ASSERT( sParam.size() != 0 );
+		CHECK_WRONG_NUM_ARGS(2);
+		CHECK_BLANK_ARG;
 
 		Init();
 
@@ -1271,12 +1279,7 @@ public:
 		m_Def.m_bOneChoiceForAllPlayers = true;
 
 		ConfOption *pConfOption = ConfOption::Find( sParam );
-		if( pConfOption == NULL )
-		{
-			LOG->Warn( "Invalid Conf type \"%s\"", sParam.c_str() );
-			pConfOption = ConfOption::Find( "Invalid" );
-			ASSERT_M( pConfOption != NULL, "ConfOption::Find(Invalid)" );
-		}
+		ROW_INVALID_IF(pConfOption == NULL, "Invalid Conf type \"" + sParam + "\".", false);
 
 		pConfOption->UpdateAvailableOptions();
 
@@ -1286,6 +1289,7 @@ public:
 		m_Def.m_bAllowThemeItems = m_pOpt->m_bAllowThemeItems;
 
 		m_Def.m_sName = m_pOpt->name;
+		return true;
 	}
 	virtual void ImportOption( OptionRow *, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
@@ -1341,13 +1345,12 @@ public:
 		m_vStepsTypesToShow.clear();
 	}
 
-	virtual void LoadInternal( const Commands &cmds )
+	virtual bool LoadInternal( const Commands &cmds )
 	{
-		ASSERT( cmds.v.size() == 1 );
 		const Command &command = cmds.v[0];
 		RString sParam = command.GetArg(1).s;
-		ASSERT( command.m_vsArgs.size() == 2 );
-		ASSERT( sParam.size() != 0 );
+		CHECK_WRONG_NUM_ARGS(2);
+		CHECK_BLANK_ARG;
 
 		if( sParam == "EditStepsType" )
 		{
@@ -1363,7 +1366,7 @@ public:
 		}
 		else
 		{
-			RageException::Throw( "Invalid StepsType param \"%s\".", sParam.c_str() );
+			ROW_INVALID_IF(true, "Invalid StepsType param \"" + sParam + "\".", false);
 		}
 
 		m_Def.m_sName = sParam;
@@ -1384,6 +1387,7 @@ public:
 
 		if( *m_pstToFill == StepsType_Invalid )
 			m_pstToFill->Set( m_vStepsTypesToShow[0] );
+		return true;
 	}
 
 	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
@@ -1435,19 +1439,20 @@ public:
 		m_gc.Init();
 		m_gc.ApplyCommitsScreens( false );
 	}
-	virtual void LoadInternal( const Commands &cmds )
+	virtual bool LoadInternal( const Commands &cmds )
 	{
-		ASSERT( cmds.v.size() > 1 );
+		ROW_INVALID_IF(cmds.v.size() <= 1, "No args to construct GameCommand.", false);
 
 		Commands temp = cmds;
 		temp.v.erase( temp.v.begin() );
 		m_gc.Load( 0, temp );
-		ASSERT( !m_gc.m_sName.empty() );
+		ROW_INVALID_IF(m_gc.m_sName.empty(), "GameCommand row has no name.", false);
 		m_Def.m_sName = m_gc.m_sName;
 		m_Def.m_bOneChoiceForAllPlayers = true;
 		m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		m_Def.m_selectType = SELECT_NONE;
 		m_Def.m_vsChoices.push_back( "" );
+		return true;
 	}
 	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
@@ -1481,20 +1486,21 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 {
 	OptionRowHandler* pHand = NULL;
 
-	if( cmds.v.size() == 0 )
-		return NULL;
-
+	ROW_INVALID_IF(cmds.v.size() == 0, "No commands for constructing row.", NULL);
 	const RString &name = cmds.v[0].GetName();
+	ROW_INVALID_IF(name != "gamecommand" && cmds.v.size() != 1,
+		"Row must be constructed from single command.", NULL);
 
-#define MAKE( type )	{ type *p = new type; p->Load( cmds ); pHand = p; }
+	bool load_succeeded= false;
+#define MAKE( type )	{ type *p = new type; load_succeeded= p->Load( cmds ); pHand = p; }
 
 	// XXX: merge these, and merge "Steps" and "list,Steps"
 	if( name == "list" )
 	{
 		const Command &command = cmds.v[0];
 		RString sParam = command.GetArg(1).s;
-		if( command.m_vsArgs.size() != 2 || !sParam.size() )
-			return NULL;
+		ROW_INVALID_IF(command.m_vsArgs.size() != 2 || !sParam.size(),
+			"list row command must be 'list,name' or 'list,type'.", NULL);
 
 		if(	 sParam.CompareNoCase("NoteSkins")==0 )		MAKE( OptionRowHandlerListNoteSkins )
 		else if( sParam.CompareNoCase("Steps")==0 )		MAKE( OptionRowHandlerListSteps )
@@ -1515,16 +1521,29 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 	else if( name == "stepstype" )		MAKE( OptionRowHandlerStepsType )
 	else if( name == "steps" )		MAKE( OptionRowHandlerSteps )
 	else if( name == "gamecommand" )	MAKE( OptionRowHandlerGameCommand )
+	else
+	{
+		ROW_INVALID_IF(true, "Invalid row type.", NULL);
+	}
 
-	return pHand;
+	if(load_succeeded)
+	{
+		return pHand;
+	}
+	return NULL;
 }
 
 OptionRowHandler* OptionRowHandlerUtil::MakeNull()
 {
 	OptionRowHandler* pHand = NULL;
+	bool load_succeeded= false; // Part of the MAKE macro, but unused.
 	Commands cmds;
 	MAKE( OptionRowHandlerNull )
-	return pHand;
+	if(load_succeeded) // Just to get rid of the warning for not using it.
+	{
+		return pHand;
+	}
+	return NULL;
 }
 
 OptionRowHandler* OptionRowHandlerUtil::MakeSimple( const MenuRowDef &mr )

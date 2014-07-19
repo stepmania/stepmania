@@ -70,7 +70,7 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 		{
 			RString errmsg;
 			LuaHelpers::Pop(L, errmsg);
-			LOG->Warn(errmsg.c_str());
+			LuaHelpers::ReportScriptError(errmsg);
 			lua_pop(L, 2);
 			return iInvalid;
 		}

@@ -150,15 +150,15 @@ public:
 		m_Def.Init();
 		m_vsReloadRowMessages.clear();
 	}
-	void Load( const Commands &cmds )
+	bool Load( const Commands &cmds )
 	{
 		Init();
-		this->LoadInternal( cmds );
+		return this->LoadInternal( cmds );
 	}
 	RString OptionTitle() const;
 	RString GetThemedItemText( int iChoice ) const;
 
-	virtual void LoadInternal( const Commands & ) { }
+	virtual bool LoadInternal( const Commands & ) { return true; }
 
 	/* We may re-use OptionRowHandlers. This is called before each use. If the
 	 * contents of the row are dependent on external state (for example, the

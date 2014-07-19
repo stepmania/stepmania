@@ -159,8 +159,10 @@ void ScreenSystemLayer::Init()
 {
 	Screen::Init();
 
-	m_sprOverlay.Load( THEME->GetPathB("ScreenSystemLayer", "overlay") );
+	m_sprOverlay.Load( THEME->GetPathB(m_sName, "overlay") );
 	this->AddChild( m_sprOverlay );
+	m_errLayer.Load( THEME->GetPathB(m_sName, "error") );
+	this->AddChild( m_errLayer );
 }
 
 /*

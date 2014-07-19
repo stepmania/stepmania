@@ -52,8 +52,10 @@ void ScreenSelect::Init()
 		}
 	}
 
-	if( !m_aGameCommands.size() )
-		RageException::Throw( "Screen \"%s\" does not set any choices.", m_sName.c_str() );
+	if(m_aGameCommands.empty())
+	{
+		LuaHelpers::ReportScriptErrorFmt("Screen \"%s\" does not set any choices.", m_sName.c_str());
+	}
 }
 
 void ScreenSelect::BeginScreen()
@@ -157,25 +159,27 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 			}
 		}
 
-		if( bAllPlayersChoseTheSame )
+		if(!m_aGameCommands.empty())
 		{
-			const GameCommand &gc = m_aGameCommands[iMastersIndex];
-			m_sNextScreen = gc.m_sScreen;
-			if( !gc.m_bInvalid )
-				gc.ApplyToAllPlayers();
-		}
-		else
-		{
-			FOREACH_HumanPlayer( p )
+			if( bAllPlayersChoseTheSame )
 			{
-				int iIndex = this->GetSelectionIndex(p);
-				const GameCommand &gc = m_aGameCommands[iIndex];
+				const GameCommand &gc = m_aGameCommands[iMastersIndex];
 				m_sNextScreen = gc.m_sScreen;
 				if( !gc.m_bInvalid )
+				gc.ApplyToAllPlayers();
+			}
+			else
+			{
+				FOREACH_HumanPlayer( p )
+				{
+					int iIndex = this->GetSelectionIndex(p);
+					const GameCommand &gc = m_aGameCommands[iIndex];
+					m_sNextScreen = gc.m_sScreen;
+					if( !gc.m_bInvalid )
 					gc.Apply( p );
+				}
 			}
 		}
-
 		StopTimer();
 
 		SCREENMAN->RefreshCreditsMessages();

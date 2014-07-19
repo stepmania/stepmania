@@ -41,23 +41,41 @@ void PlayerAI::InitFromDisk()
 	{
 		RString sKey = ssprintf("Skill%d", i);
 		XNode* pNode = ini.GetChild(sKey);
-		if( pNode == NULL )
-			RageException::Throw( "AI.ini: \"%s\" doesn't exist.", sKey.c_str() );
-
 		TapScoreDistribution& dist = g_Distributions[i];
-		dist.fPercent[TNS_None] = 0;
-		bSuccess = pNode->GetAttrValue( "WeightMiss", dist.fPercent[TNS_Miss] );
-		ASSERT( bSuccess );
-		bSuccess = pNode->GetAttrValue( "WeightW5", dist.fPercent[TNS_W5] );
-		ASSERT( bSuccess );
-		bSuccess = pNode->GetAttrValue( "WeightW4", dist.fPercent[TNS_W4] );
-		ASSERT( bSuccess );
-		bSuccess = pNode->GetAttrValue( "WeightW3", dist.fPercent[TNS_W3] );
-		ASSERT( bSuccess );
-		bSuccess = pNode->GetAttrValue( "WeightW2", dist.fPercent[TNS_W2] );
-		ASSERT( bSuccess );
-		bSuccess = pNode->GetAttrValue( "WeightW1", dist.fPercent[TNS_W1] );
-		ASSERT( bSuccess );
+		if( pNode == NULL )
+		{
+			LuaHelpers::ReportScriptErrorFmt("AI.ini: \"%s\" doesn't exist.", sKey.c_str());
+			dist.fPercent[TNS_None] = 0;
+			dist.fPercent[TNS_Miss] = 1;
+			dist.fPercent[TNS_W5] = 0;
+			dist.fPercent[TNS_W4] = 0;
+			dist.fPercent[TNS_W3] = 0;
+			dist.fPercent[TNS_W2] = 0;
+			dist.fPercent[TNS_W1] = 0;
+		}
+		else
+		{
+#define SET_MALF_IF(condition, tns) \
+			if(condition) \
+			{ \
+				LuaHelpers::ReportScriptError("AI weight for " #tns " not set."); \
+				dist.fPercent[tns]= 0; \
+			}
+			dist.fPercent[TNS_None] = 0;
+			bSuccess = pNode->GetAttrValue( "WeightMiss", dist.fPercent[TNS_Miss] );
+			SET_MALF_IF(!bSuccess, TNS_Miss);
+			bSuccess = pNode->GetAttrValue( "WeightW5", dist.fPercent[TNS_W5] );
+			SET_MALF_IF(!bSuccess, TNS_W5);
+			bSuccess = pNode->GetAttrValue( "WeightW4", dist.fPercent[TNS_W4] );
+			SET_MALF_IF(!bSuccess, TNS_W4);
+			bSuccess = pNode->GetAttrValue( "WeightW3", dist.fPercent[TNS_W3] );
+			SET_MALF_IF(!bSuccess, TNS_W3);
+			bSuccess = pNode->GetAttrValue( "WeightW2", dist.fPercent[TNS_W2] );
+			SET_MALF_IF(!bSuccess, TNS_W2);
+			bSuccess = pNode->GetAttrValue( "WeightW1", dist.fPercent[TNS_W1] );
+			SET_MALF_IF(!bSuccess, TNS_W1);
+#undef SET_MALF_IF
+		}
 
 		float fSum = 0;
 		for( int j=0; j<NUM_TapNoteScore; j++ )

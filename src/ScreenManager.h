@@ -39,6 +39,8 @@ public:
 	Screen *GetScreen( int iPosition );
 	bool AllowOperatorMenuButton() const;
 
+	bool IsScreenNameValid(RString const& name) const;
+
 	// System messages
 	void SystemMessage( const RString &sMessage );
 	void SystemMessageNoAnimate( const RString &sMessage );
@@ -51,6 +53,7 @@ public:
 	void RefreshCreditsMessages();
 	void ThemeChanged();
 	void ReloadOverlayScreens();
+	void ReloadOverlayScreensAfterInputFinishes();
 
 	/**
 	 * @brief Is this Screen in the main Screen stack, but not the bottommost Screen?
@@ -78,6 +81,10 @@ private:
 	// Set this to true anywhere we create of delete objects.  These 
 	// operations take a long time, and will cause a skip on the next update.
 	bool		m_bZeroNextUpdate;
+
+	// This exists so the debug overlay can reload the overlay screens without seg faulting.
+	// It's "AfterInput" because the debug overlay carries out actions in Input.
+	bool m_bReloadOverlayScreensAfterInput;
 
 	Screen *MakeNewScreen( const RString &sName );
 	void LoadDelayedScreen();

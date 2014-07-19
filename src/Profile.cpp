@@ -846,9 +846,8 @@ void Profile::LoadCustomFunction( RString sDir )
 	LuaHelpers::Push(L, sDir);
 
 	// Run it
-	RString sError;
-	if (!LuaHelpers::RunScriptOnStack(L, sError, 2, 0))
-		LOG->Warn("Error running CustomLoadFunction: %s", sError.c_str());
+	RString Error= "Error running CustomLoadFunction: ";
+	LuaHelpers::RunScriptOnStack(L, Error, 2, 0, true);
 
 	LUA->Release(L);
 }
@@ -906,7 +905,7 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 		int iBytes = pFile->GetFileSize();
 		if( iBytes > MAX_PLAYER_STATS_XML_SIZE_BYTES )
 		{
-			LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
+			LuaHelpers::ReportScriptErrorFmt( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
 			return ProfileLoadResult_FailedTampered;
 		}
 	}
@@ -920,7 +919,7 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 		// verify the stats.xml signature with the "don't share" file
 		if( !CryptManager::VerifyFileWithFile(sStatsXmlSigFile, sDontShareFile) )
 		{
-			LOG->Warn( "The don't share check for '%s' failed.  Data will be ignored.", sStatsXmlSigFile.c_str() );
+			LuaHelpers::ReportScriptErrorFmt( "The don't share check for '%s' failed.  Data will be ignored.", sStatsXmlSigFile.c_str() );
 			return ProfileLoadResult_FailedTampered;
 		}
 		LOG->Trace( "Done." );
@@ -929,7 +928,7 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 		LOG->Trace( "Verifying stats.xml signature" );
 		if( !CryptManager::VerifyFileWithFile(fn, sStatsXmlSigFile) )
 		{
-			LOG->Warn( "The signature check for '%s' failed.  Data will be ignored.", fn.c_str() );
+			LuaHelpers::ReportScriptErrorFmt( "The signature check for '%s' failed.  Data will be ignored.", fn.c_str() );
 			return ProfileLoadResult_FailedTampered;
 		}
 		LOG->Trace( "Done." );
@@ -1029,9 +1028,8 @@ bool Profile::SaveAllToDir( RString sDir, bool bSignData ) const
 	LuaHelpers::Push(L, sDir);
 
 	// Run it
-	RString sError;
-	if (!LuaHelpers::RunScriptOnStack(L, sError, 2, 0))
-		LOG->Warn("Error running CustomSaveFunction: %s", sError.c_str());
+	RString Error= "Error running CustomSaveFunction: ";
+	LuaHelpers::RunScriptOnStack(L, Error, 2, 0, true);
 
 	LUA->Release(L);
 
@@ -1067,7 +1065,7 @@ bool Profile::SaveStatsXmlToDir( RString sDir, bool bSignData ) const
 		RageFile f;
 		if( !f.Open(fn, RageFile::WRITE) )
 		{
-			LOG->Warn( "Couldn't open %s for writing: %s", fn.c_str(), f.GetError().c_str() );
+			LuaHelpers::ReportScriptErrorFmt( "Couldn't open %s for writing: %s", fn.c_str(), f.GetError().c_str() );
 			return false;
 		}
 
@@ -1290,7 +1288,7 @@ ProfileLoadResult Profile::LoadEditableDataFromDir( RString sDir )
 	int iBytes = FILEMAN->GetFileSizeInBytes( fn );
 	if( iBytes > MAX_EDITABLE_INI_SIZE_BYTES )
 	{
-		LOG->Warn( "The file '%s' is unreasonably large. It won't be loaded.", fn.c_str() );
+		LuaHelpers::ReportScriptErrorFmt( "The file '%s' is unreasonably large. It won't be loaded.", fn.c_str() );
 		return ProfileLoadResult_FailedTampered;
 	}
 

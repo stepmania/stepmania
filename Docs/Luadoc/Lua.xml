@@ -925,6 +925,7 @@
 		</Class>
 		<Class name='MessageManager'>
 			<Function name='Broadcast'/>
+			<Function name='SetLogging'/>
 		</Class>
 		<Class base='ActorFrame' name='MeterDisplay'>
 			<Function name='SetStreamWidth'/>
@@ -1821,6 +1822,7 @@
 			<Function name='Flush'/>
 			<Function name='GetThreadVariable'/>
 			<Function name='ReadFile'/>
+			<Function name='ReportScriptError'/>
 			<Function name='RunWithThreadVariables'/>
 			<Function name='Trace'/>
 			<Function name='Warn'/>

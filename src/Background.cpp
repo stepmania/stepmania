@@ -328,7 +328,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 		switch( ft )
 		{
 		default:
-			LOG->Warn( "CreateBackground() Unknown file type '%s'", vsResolved[0].c_str() );
+			LuaHelpers::ReportScriptErrorFmt( "CreateBackground() Unknown file type '%s'", vsResolved[0].c_str() );
 			// fall through
 		case FT_Bitmap:
 		case FT_Sprite:
@@ -364,12 +364,12 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 		BackgroundUtil::GetBackgroundEffects( sEffect, vsPaths, vsThrowAway );
 		if( vsPaths.empty() )
 		{
-			LOG->Warn( "BackgroundEffect '%s' is missing.",sEffect.c_str() );
+			LuaHelpers::ReportScriptErrorFmt( "BackgroundEffect '%s' is missing.",sEffect.c_str() );
 			sEffect = SBE_Centered;
 		}
 		else if( vsPaths.size() > 1 )
 		{
-			LOG->Warn( "BackgroundEffect '%s' has more than one match.",sEffect.c_str() );
+			LuaHelpers::ReportScriptErrorFmt( "BackgroundEffect '%s' has more than one match.",sEffect.c_str() );
 			sEffect = SBE_Centered;
 		}
 		else
@@ -744,7 +744,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 			XNode *pNode = change.m_def.CreateNode();
 			RString xml = XmlFileUtil::GetXML( pNode );
 			Trim( xml );
-			LOG->Warn( "Tried to switch to a background that was never loaded:\n%s", xml.c_str() );
+			LuaHelpers::ReportScriptErrorFmt( "Tried to switch to a background that was never loaded:\n%s", xml.c_str() );
 			SAFE_DELETE( pNode );
 			return;
 		}

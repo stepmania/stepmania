@@ -548,6 +548,9 @@ static LocalizedString RELOAD			( "ScreenDebugOverlay", "Reload" );
 static LocalizedString RESTART			( "ScreenDebugOverlay", "Restart" );
 static LocalizedString SCREEN_ON		( "ScreenDebugOverlay", "Send On To Screen" );
 static LocalizedString SCREEN_OFF		( "ScreenDebugOverlay", "Send Off To Screen" );
+static LocalizedString RELOAD_OVERLAY_SCREENS( "ScreenDebugOverlay", "Reload Overlay Screens" );
+static LocalizedString TOGGLE_ERRORS( "ScreenDebugOverlay", "Toggle Errors" );
+static LocalizedString CLEAR_ERRORS( "ScreenDebugOverlay", "Clear Errors" );
 static LocalizedString RELOAD_THEME_AND_TEXTURES( "ScreenDebugOverlay", "Reload Theme and Textures" );
 static LocalizedString WRITE_PROFILES	( "ScreenDebugOverlay", "Write Profiles" );
 static LocalizedString WRITE_PREFERENCES	( "ScreenDebugOverlay", "Write Preferences" );
@@ -1030,6 +1033,47 @@ class DebugLineReloadTheme : public IDebugLine
 	}
 };
 
+class DebugLineReloadOverlayScreens : public IDebugLine
+{
+	virtual RString GetDisplayTitle() { return RELOAD_OVERLAY_SCREENS.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
+	virtual bool IsEnabled() { return true; }
+	virtual RString GetPageName() const { return "Theme"; }
+	virtual void DoAndLog( RString &sMessageOut )
+	{
+		SCREENMAN->ReloadOverlayScreensAfterInputFinishes();
+		IDebugLine::DoAndLog(sMessageOut);
+	}
+};
+
+class DebugLineToggleErrors : public IDebugLine
+{
+	virtual RString GetDisplayTitle() { return TOGGLE_ERRORS.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
+	virtual bool IsEnabled() { return true; }
+	virtual RString GetPageName() const { return "Theme"; }
+	virtual void DoAndLog( RString &sMessageOut )
+	{
+		Message msg("ToggleScriptError");
+		MESSAGEMAN->Broadcast(msg);
+		IDebugLine::DoAndLog(sMessageOut);
+	}
+};
+
+class DebugLineClearErrors : public IDebugLine
+{
+	virtual RString GetDisplayTitle() { return CLEAR_ERRORS.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
+	virtual bool IsEnabled() { return true; }
+	virtual RString GetPageName() const { return "Theme"; }
+	virtual void DoAndLog( RString &sMessageOut )
+	{
+		Message msg("ClearScriptError");
+		MESSAGEMAN->Broadcast(msg);
+		IDebugLine::DoAndLog(sMessageOut);
+	}
+};
+
 class DebugLineWriteProfiles : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return WRITE_PROFILES.GetValue(); }
@@ -1212,6 +1256,9 @@ DECLARE_ONE( DebugLineRestartCurrentScreen );
 DECLARE_ONE( DebugLineCurrentScreenOn );
 DECLARE_ONE( DebugLineCurrentScreenOff );
 DECLARE_ONE( DebugLineReloadTheme );
+DECLARE_ONE( DebugLineReloadOverlayScreens );
+DECLARE_ONE( DebugLineToggleErrors );
+DECLARE_ONE( DebugLineClearErrors );
 DECLARE_ONE( DebugLineWriteProfiles );
 DECLARE_ONE( DebugLineWritePreferences );
 DECLARE_ONE( DebugLineMenuTimer );

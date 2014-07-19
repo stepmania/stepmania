@@ -749,6 +749,10 @@ save yourself some time, copy this for undocumented things:
 		Tries to read the file at <code>sPath</code>. If successful, it returns the file's contents.
 		If unsuccessful, it returns two values: <code>nil</code> and <code>"error"</code>.
 	</Function>
+	<Function name='ReportScriptError' return='' arguments= 'string error, string error_type'>
+		Reports the error through the error reporting system.  error_type is the type used for the dialog that is presented, a dialog will not appear for a type the user has chosen to ignore.<br/>
+		error is optional an defaults to "Script error occurred.".  error_type is optional and defaults to "LUA_ERROR".
+	</Function>
 	<Function name='RunWithThreadVariables' return='int' arguments='function func, table t, ...'>
 		Calls <code>func(...)</code> with two LuaThreadVariables set, and returns the return values of <code>func()</code>.
 	</Function>
@@ -2768,6 +2772,9 @@ save yourself some time, copy this for undocumented things:
 		Broadcast the message to all listeners subscribed to <code>sMessage</code>. The
 		second argument is an optional table of parameters. It may be omitted or explicitly
 		set to <code>nil</code>.
+	</Function>
+	<Function name='SetLogging' return='void' arguments='bool log'>
+		Sets whether logging of messages is enabled.  If log is true, all messages that pass through Broadcast (from the engine for from the theme or from anywhere else), will be logged with Trace.
 	</Function>
 </Class>
 <Class name='MeterDisplay'>

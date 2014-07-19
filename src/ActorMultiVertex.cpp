@@ -358,13 +358,13 @@ void ActorMultiVertex::AMV_TweenState::SetDrawState( DrawMode dm, int first, int
 {
 	if(first >= (int)vertices.size() && vertices.size() > 0)
 	{
-		LOG->Warn("ActorMultiVertex:SetDrawState: FirstToDraw > vertices.size(), %d > %u", FirstToDraw + 1, (unsigned int)vertices.size() );
+		LuaHelpers::ReportScriptErrorFmt("ActorMultiVertex:SetDrawState: FirstToDraw > vertices.size(), %d > %u", FirstToDraw + 1, (unsigned int)vertices.size() );
 		return;
 	}
 	int safe_num= GetSafeNumToDraw( dm, num );
 	if( num != safe_num && num != -1 )
 	{
-		LOG->Warn("ActorMultiVertex:SetDrawState: NumToDraw %d is not valid for %u vertices with DrawMode %s", num, (unsigned int)vertices.size(), DrawModeNames[dm] );
+		LuaHelpers::ReportScriptErrorFmt("ActorMultiVertex:SetDrawState: NumToDraw %d is not valid for %u vertices with DrawMode %s", num, (unsigned int)vertices.size(), DrawModeNames[dm] );
 		return;
 	}
 	_DrawMode= dm;
@@ -416,7 +416,7 @@ public:
 		// Use the number of arguments to determine which property a table is for
 		if(lua_type(L, DataStackIndex) != LUA_TTABLE)
 		{
-			LOG->Warn("ActorMultiVertex::SetVertex: non-table parameter supplied. Table of tables of vertex data expected.");
+			LuaHelpers::ReportScriptErrorFmt("ActorMultiVertex::SetVertex: non-table parameter supplied. Table of tables of vertex data expected.");
 			return;
 		}
 		size_t NumDataParts = lua_objlen(L, DataStackIndex);
@@ -428,7 +428,7 @@ public:
 			size_t DataPieceElements = lua_objlen(L, DataPieceIndex);
 			if(lua_type(L, DataPieceIndex) != LUA_TTABLE)
 			{
-				LOG->Warn( "ActorMultiVertex::SetVertex: non-table parameter %u supplied inside table of parameters, table expected.", (unsigned int)i );
+				LuaHelpers::ReportScriptErrorFmt( "ActorMultiVertex::SetVertex: non-table parameter %u supplied inside table of parameters, table expected.", (unsigned int)i );
 				return;
 			}
 			int pushes = 1;
@@ -462,7 +462,7 @@ public:
 			}
 			else
 			{
-				LOG->Warn( "ActorMultiVertex::SetVertex: Parameter %u has %u elements supplied. 2, 3, or 4 expected.", (unsigned int)i, (unsigned int)DataPieceElements );
+				LuaHelpers::ReportScriptErrorFmt( "ActorMultiVertex::SetVertex: Parameter %u has %u elements supplied. 2, 3, or 4 expected.", (unsigned int)i, (unsigned int)DataPieceElements );
 
 			}
 			// Avoid a stack underflow by only popping the amount we pushed.
@@ -477,7 +477,7 @@ public:
 		int Index = IArg(1)-1;
 		if( Index < 0 )
 		{
-			LOG->Warn( "ActorMultiVertex::SetVertex: index %d provided, cannot set Index < 1", Index+1 );
+			LuaHelpers::ReportScriptErrorFmt( "ActorMultiVertex::SetVertex: index %d provided, cannot set Index < 1", Index+1 );
 			return 0;
 		}
 		else if( Index == (int) p->GetNumVertices() )
@@ -486,7 +486,7 @@ public:
 		}
 		else if( Index > (int) p->GetNumVertices() )
 		{
-			LOG->Warn( "ActorMultiVertex::SetVertex: Cannot set vertex %d if there is no vertex %d, only %u vertices.", Index+1 , Index, (unsigned int)p->GetNumVertices() );
+			LuaHelpers::ReportScriptErrorFmt( "ActorMultiVertex::SetVertex: Cannot set vertex %d if there is no vertex %d, only %u vertices.", Index+1 , Index, (unsigned int)p->GetNumVertices() );
 			return 0;
 		}
 		SetVertexFromStack(p, L, Index, lua_gettop(L));
@@ -504,7 +504,7 @@ public:
 			First = IArg(1)-1;
 			if( First < 0 )
 			{
-				LOG->Warn( "ActorMultiVertex::SetVertices: index %d provided, cannot set Index < 1", First+1 );
+				LuaHelpers::ReportScriptErrorFmt( "ActorMultiVertex::SetVertices: index %d provided, cannot set Index < 1", First+1 );
 				return 0;
 			}
 		}
@@ -542,7 +542,7 @@ public:
 		float Width = FArg(1);
 		if( Width < 0 )
 		{
-			LOG->Warn( "ActorMultiVertex::SetLineWidth: cannot set negative width." );
+			LuaHelpers::ReportScriptErrorFmt( "ActorMultiVertex::SetLineWidth: cannot set negative width." );
 			return 0;
 		}
 		p->SetLineWidth(Width);
@@ -557,7 +557,7 @@ public:
 		int ArgsIndex= 1;
 		if( !lua_istable(L, ArgsIndex) )
 		{
-			LOG->Warn( "ActorMultiVertex:SetDrawState: Table expected, something else recieved.  Doing nothing.");
+			LuaHelpers::ReportScriptErrorFmt( "ActorMultiVertex:SetDrawState: Table expected, something else recieved.  Doing nothing.");
 			return 0;
 		}
 		// Fetch the draw mode, if provided.

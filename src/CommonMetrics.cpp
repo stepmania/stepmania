@@ -38,14 +38,23 @@ void ThemeMetricDifficultiesToShow::Read()
 
 	vector<RString> v;
 	split( ThemeMetric<RString>::GetValue(), ",", v );
-	ASSERT( v.size() > 0 );
+	if(v.empty())
+	{
+		LuaHelpers::ReportScriptError("DifficultiesToShow must have at least one entry.");
+		return;
+	}
 
 	FOREACH_CONST( RString, v, i )
 	{
 		Difficulty d = StringToDifficulty( *i );
 		if( d == Difficulty_Invalid )
-			RageException::Throw( "Unknown difficulty \"%s\" in CourseDifficultiesToShow.", i->c_str() );
-		m_v.push_back( d );
+		{
+			LuaHelpers::ReportScriptErrorFmt("Unknown difficulty \"%s\" in CourseDifficultiesToShow.", i->c_str());
+		}
+		else
+		{
+			m_v.push_back( d );
+		}
 	}
 }
 const vector<Difficulty>& ThemeMetricDifficultiesToShow::GetValue() const { return m_v; }
@@ -68,14 +77,23 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 
 	vector<RString> v;
 	split( ThemeMetric<RString>::GetValue(), ",", v );
-	ASSERT( v.size() > 0 );
+	if(v.empty())
+	{
+		LuaHelpers::ReportScriptError("CourseDifficultiesToShow must have at least one entry.");
+		return;
+	}
 
 	FOREACH_CONST( RString, v, i )
 	{
 		CourseDifficulty d = StringToDifficulty( *i );
 		if( d == Difficulty_Invalid )
-			RageException::Throw( "Unknown CourseDifficulty \"%s\" in CourseDifficultiesToShow.", i->c_str() );
-		m_v.push_back( d );
+		{
+			LuaHelpers::ReportScriptErrorFmt("Unknown CourseDifficulty \"%s\" in CourseDifficultiesToShow.", i->c_str());
+		}
+		else
+		{
+			m_v.push_back( d );
+		}
 	}
 }
 const vector<CourseDifficulty>& ThemeMetricCourseDifficultiesToShow::GetValue() const { return m_v; }
@@ -92,7 +110,7 @@ static void RemoveStepsTypes( vector<StepsType>& inout, RString sStepsTypesToRem
 		StepsType st = GAMEMAN->StringToStepsType(*i);
 		if( st == StepsType_Invalid )
 		{
-			LOG->Warn( "Invalid StepsType value '%s' in '%s'", i->c_str(), sStepsTypesToRemove.c_str() );
+			LuaHelpers::ReportScriptErrorFmt( "Invalid StepsType value '%s' in '%s'", i->c_str(), sStepsTypesToRemove.c_str() );
 			continue;
 		}
 

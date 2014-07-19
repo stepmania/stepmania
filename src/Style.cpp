@@ -132,7 +132,7 @@ public:
 		int iCol = IArg(2) - 1;
 		if( iCol < 0 || iCol >= p->m_iColsPerPlayer )
 		{
-			LOG->Warn( "Style:GetColumnDrawOrder(): column %i out of range( 1 to %i )", iCol+1, p->m_iColsPerPlayer );
+			LuaHelpers::ReportScriptErrorFmt( "Style:GetColumnDrawOrder(): column %i out of range( 1 to %i )", iCol+1, p->m_iColsPerPlayer );
 			return 0;
 		}
 
@@ -153,7 +153,7 @@ public:
 		int iCol = IArg(1) - 1;
 		if( iCol < 0 || iCol >= p->m_iColsPerPlayer*NUM_PLAYERS )
 		{
-			LOG->Warn( "Style:GetColumnDrawOrder(): column %i out of range( 1 to %i )", iCol+1, p->m_iColsPerPlayer*NUM_PLAYERS );
+			LuaHelpers::ReportScriptErrorFmt( "Style:GetColumnDrawOrder(): column %i out of range( 1 to %i )", iCol+1, p->m_iColsPerPlayer*NUM_PLAYERS );
 			return 0;
 		}
 		lua_pushnumber( L, p->m_iColumnDrawOrder[iCol]+1 );

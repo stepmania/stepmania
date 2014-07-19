@@ -6,6 +6,7 @@
 #include "FontCharAliases.h"
 #include "RageFile.h"
 #include "Foreach.h"
+#include "LuaManager.h"
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
 
@@ -62,7 +63,7 @@ void TitleTrans::LoadFromNode( const XNode* pNode )
 		else if( sKeyName == "ArtistTransTo")		Replacement.ArtistTranslit	= sValue;
 		else if( sKeyName == "SubtitleTransTo")		Replacement.SubtitleTranslit	= sValue;
 		else
-			LOG->Warn( "Unknown TitleSubst tag: \"%s\"", sKeyName.c_str() );
+			LuaHelpers::ReportScriptErrorFmt( "Unknown TitleSubst tag: \"%s\"", sKeyName.c_str() );
 	}
 }
 

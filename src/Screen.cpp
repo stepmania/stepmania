@@ -234,7 +234,17 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 		if( SCREENMAN->IsStackedScreen(this) )
 			SCREENMAN->PopTopScreen( m_smSendOnPop );
 		else
-			SCREENMAN->SetNewScreen( SM == SM_GoToNextScreen? GetNextScreenName():GetPrevScreen() );
+		{
+			RString ToScreen= (SM == SM_GoToNextScreen? GetNextScreenName():GetPrevScreen());
+			if(ToScreen == "")
+			{
+				LuaHelpers::ReportScriptError("Error:  Tried to go to empty screen.");
+			}
+			else
+			{
+				SCREENMAN->SetNewScreen(ToScreen);
+			}
+		}
 	}
 	else if( SM == SM_GainFocus )
 	{
@@ -337,11 +347,8 @@ bool Screen::PassInputToLua(const InputEventPlus& input)
 	{
 		callback->second.PushSelf(L);
 		lua_pushvalue(L, -2);
-		RString error;
-		if(!LuaHelpers::RunScriptOnStack(L, error, 1, 1))
-		{
-			LOG->Warn("Error running input callback: %s", error.c_str());
-		}
+		RString error= "Error running input callback: ";
+		LuaHelpers::RunScriptOnStack(L, error, 1, 1, true);
 		handled= lua_toboolean(L, -1);
 		lua_pop(L, 1);
 	}

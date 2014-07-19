@@ -27,8 +27,10 @@ void HoldJudgment::Load( const RString &sPath )
 void HoldJudgment::LoadFromNode( const XNode* pNode )
 {
 	RString sFile;
-	if( ActorUtil::GetAttrPath(pNode, "File", sFile) )
-		RageException::Throw( "%s: HoldJudgment: missing the attribute \"File\"", ActorUtil::GetWhere(pNode).c_str() );
+	if(!ActorUtil::GetAttrPath(pNode, "File", sFile))
+	{
+		LuaHelpers::ReportScriptErrorFmt("%s: HoldJudgment: missing the attribute \"File\"", ActorUtil::GetWhere(pNode).c_str());
+	}
 
 	CollapsePath( sFile );
 

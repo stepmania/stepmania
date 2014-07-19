@@ -6,7 +6,6 @@
 #include "Steps.h"
 #include "GameState.h"
 #include "RageDisplay.h"
-#include "arch/Dialog/Dialog.h"
 #include "Trail.h"
 #include "ActorUtil.h"
 #include "XmlFile.h"
@@ -35,7 +34,7 @@ bool DifficultyIcon::Load( RString sPath )
 			NUM_Difficulty,
 			NUM_Difficulty*2,
 			iStates );
-		Dialog::OK( sError );
+		LuaHelpers::ReportScriptError(sError);
 	}
 	StopAnimating();
 	return true;
@@ -45,7 +44,9 @@ void DifficultyIcon::LoadFromNode( const XNode* pNode )
 {
 	RString sFile;
 	if( !ActorUtil::GetAttrPath(pNode, "File", sFile) )
-		RageException::Throw( "%s: DifficultyIcon: missing the \"File\" attribute.", ActorUtil::GetWhere(pNode).c_str() );
+	{
+		LuaHelpers::ReportScriptErrorFmt("%s: DifficultyIcon: missing the \"File\" attribute.", ActorUtil::GetWhere(pNode).c_str());
+	}
 
 	Load( sFile );
 

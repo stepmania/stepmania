@@ -10,7 +10,6 @@
 #include "RageTexture.h"
 #include "RageUtil.h"
 #include "ActorUtil.h"
-#include "arch/Dialog/Dialog.h"
 #include "Foreach.h"
 #include "LuaBinding.h"
 #include "LuaManager.h"
@@ -33,6 +32,9 @@ Sprite::Sprite()
 
 	m_fTexCoordVelocityX = 0;
 	m_fTexCoordVelocityY = 0;
+
+	// An uninitialized sprite should be valid to display. -Kyz
+	Load(TEXTUREMAN->GetDefaultTextureID());
 }
 
 
@@ -176,7 +178,7 @@ void Sprite::LoadFromNode( const XNode* pNode )
 
 				pFrame->GetAttrValue( "Frame", iFrameIndex );
 				if( iFrameIndex >= m_pTexture->GetNumFrames() )
-					RageException::Throw( "%s: State #%i is frame %d, but the texture \"%s\" only has %d frames",
+					LuaHelpers::ReportScriptErrorFmt( "%s: State #%i is frame %d, but the texture \"%s\" only has %d frames",
 						ActorUtil::GetWhere(pNode).c_str(), i, iFrameIndex, sPath.c_str(), m_pTexture->GetNumFrames() );
 				newState.rect = *m_pTexture->GetTextureCoordRect( iFrameIndex );
 
@@ -211,7 +213,7 @@ void Sprite::LoadFromNode( const XNode* pNode )
 			if( !pNode->GetAttrValue(sFrameKey, iFrameIndex) )
 				break;
 			if( iFrameIndex >= m_pTexture->GetNumFrames() )
-				RageException::Throw( "%s: %s is %d, but the texture \"%s\" only has %d frames",
+				LuaHelpers::ReportScriptErrorFmt( "%s: %s is %d, but the texture \"%s\" only has %d frames",
 					ActorUtil::GetWhere(pNode).c_str(), sFrameKey.c_str(), iFrameIndex, sPath.c_str(), m_pTexture->GetNumFrames() );
 
 			newState.rect = *m_pTexture->GetTextureCoordRect( iFrameIndex );
@@ -743,7 +745,7 @@ void Sprite::SetState( int iNewState )
 			else
 				sError = ssprintf("A Sprite (\"%s\") tried to set state index %d, but no texture is loaded.", 
 					this->m_sName.c_str(), iNewState );
-			Dialog::OK( sError, "SPRITE_INVALID_FRAME" );
+			LuaHelpers::ReportScriptError(sError, "SPRITE_INVALID_FRAME");
 		}
 	}
 

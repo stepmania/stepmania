@@ -9,7 +9,6 @@
 #include "GameSoundManager.h"
 #include "MemoryCardDisplay.h"
 #include "InputEventPlus.h"
-#include "arch/Dialog/Dialog.h" // wow I import this for JUST ONE THING. -aj
 
 #define TIMER_STEALTH				THEME->GetMetricB(m_sName,"TimerStealth")
 #define SHOW_STAGE_DISPLAY			THEME->GetMetricB(m_sName,"ShowStageDisplay")
@@ -194,17 +193,15 @@ void ScreenWithMenuElements::StartPlayingMusic()
 		 */
 		if( ft == FT_Lua )
 		{
-			RString sScript;
-			RString sError;
-			if( GetFileContents(m_sPathToMusic, sScript) )
+			RString Script;
+			RString Error= "Lua runtime error: ";
+			if( GetFileContents(m_sPathToMusic, Script) )
 			{
 				Lua *L = LUA->Get();
 
-				if( !LuaHelpers::RunScript(L, sScript, "@"+m_sPathToMusic, sError, 0, 1) )
+				if( !LuaHelpers::RunScript(L, Script, "@"+m_sPathToMusic, Error, 0, 1, true) )
 				{
 					LUA->Release( L );
-					sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
-					Dialog::OK( sError, "LUA_ERROR" );
 					return;
 				}
 				else

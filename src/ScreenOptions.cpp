@@ -554,7 +554,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		// If options set a NextScreen or one is specified in metrics, then fade out
 		if( GetNextScreenName() == "" )
 		{
-			LOG->Warn( "%s::HandleScreenMessage: Tried to fade out, but we have no next screen", m_sName.c_str() );
+			LuaHelpers::ReportScriptErrorFmt( "%s::HandleScreenMessage: Tried to fade out, but we have no next screen", m_sName.c_str() );
 			return;
 		}
 

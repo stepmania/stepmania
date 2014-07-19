@@ -239,7 +239,14 @@ void ScreenSelectMusic::BeginScreen()
 	}
 
 	if( GAMESTATE->GetCurrentStyle() == NULL )
-		RageException::Throw( "The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic." );
+	{
+		LuaHelpers::ReportScriptError("The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic.");
+		// Instead of crashing, set the first compatible style.
+		vector<StepsType> vst;
+		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vst );
+		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), vst[0] );
+		GAMESTATE->SetCurrentStyle( pStyle );
+	}
 
 	if( GAMESTATE->m_PlayMode == PlayMode_Invalid )
 	{

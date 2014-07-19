@@ -535,7 +535,7 @@ public:
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
 		if( pPref == NULL )
 		{
-			LOG->Warn( "GetPreference: unknown preference \"%s\"", sName.c_str() );
+			LuaHelpers::ReportScriptErrorFmt( "GetPreference: unknown preference \"%s\"", sName.c_str() );
 			lua_pushnil( L );
 			return 1;
 		}
@@ -550,7 +550,7 @@ public:
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
 		if( pPref == NULL )
 		{
-			LOG->Warn( "SetPreference: unknown preference \"%s\"", sName.c_str() );
+			LuaHelpers::ReportScriptErrorFmt( "SetPreference: unknown preference \"%s\"", sName.c_str() );
 			return 0;
 		}
 
@@ -565,7 +565,7 @@ public:
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
 		if( pPref == NULL )
 		{
-			LOG->Warn( "SetPreferenceToDefault: unknown preference \"%s\"", sName.c_str() );
+			LuaHelpers::ReportScriptErrorFmt( "SetPreferenceToDefault: unknown preference \"%s\"", sName.c_str() );
 			return 0;
 		}
 

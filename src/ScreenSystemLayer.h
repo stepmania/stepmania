@@ -13,6 +13,7 @@ public:
 
 private:
 	AutoActor m_sprOverlay;
+	AutoActor m_errLayer;
 };
 
 

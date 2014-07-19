@@ -9,7 +9,9 @@
 #include "arch/Dialog/Dialog.h"
 #include "XmlFile.h"
 #include "Command.h"
+#include "RageLog.h"
 #include "RageTypes.h"
+#include "MessageManager.h"
 
 #include <sstream> // conversion for lua functions.
 #include <csetjmp>
@@ -45,6 +47,8 @@ namespace LuaHelpers
 	template<> bool FromStack<float>( Lua *L, float &Object, int iOffset );
 	template<> bool FromStack<int>( Lua *L, int &Object, int iOffset );
 	template<> bool FromStack<RString>( Lua *L, RString &Object, int iOffset );
+
+	bool InReportScriptError= false;
 }
 
 void LuaManager::SetGlobal( const RString &sName, int val )
@@ -787,52 +791,102 @@ bool LuaHelpers::LoadScript( Lua *L, const RString &sScript, const RString &sNam
 	return true;
 }
 
-bool LuaHelpers::RunScriptOnStack( Lua *L, RString &sError, int iArgs, int iReturnValues )
+void LuaHelpers::ScriptErrorMessage(RString const& Error)
+{
+	Message msg("ScriptError");
+	msg.SetParam("message", Error);
+	MESSAGEMAN->Broadcast(msg);
+}
+
+Dialog::Result LuaHelpers::ReportScriptError(RString const& Error, RString ErrorType, bool UseAbort)
+{
+	// Protect from a recursion loop resulting from a mistake in the error reporting lua.
+	if(!InReportScriptError)
+	{
+		InReportScriptError= true;
+		ScriptErrorMessage(Error);
+		InReportScriptError= false;
+	}
+	LOG->Warn(Error.c_str());
+	if(UseAbort)
+	{
+		RString with_correct= Error + "  Correct this and click Retry, or Cancel to break.";
+		return Dialog::AbortRetryIgnore(with_correct, ErrorType);
+	}
+	Dialog::OK(Error, ErrorType);
+	return Dialog::ok;
+}
+
+// For convenience when replacing uses of LOG->Warn.
+void LuaHelpers::ReportScriptErrorFmt(const char *fmt, ...)
+{
+	va_list	va;
+	va_start( va, fmt );
+	RString Buff = vssprintf( fmt, va );
+	va_end( va );
+	ReportScriptError(Buff);
+}
+
+bool LuaHelpers::RunScriptOnStack( Lua *L, RString &Error, int Args, int ReturnValues, bool ReportError )
 {
 	lua_pushcfunction( L, GetLuaStack );
 
 	// move the error function above the function and params
-	int iErrFunc = lua_gettop(L) - iArgs - 1;
-	lua_insert( L, iErrFunc );
+	int ErrFunc = lua_gettop(L) - Args - 1;
+	lua_insert( L, ErrFunc );
 
 	// evaluate
-	int ret = lua_pcall( L, iArgs, iReturnValues, iErrFunc );
+	int ret = lua_pcall( L, Args, ReturnValues, ErrFunc );
 	if( ret )
 	{
-		LuaHelpers::Pop( L, sError );
-		lua_remove( L, iErrFunc );
-		for( int i = 0; i < iReturnValues; ++i )
+		if(ReportError)
+		{
+			RString lerror;
+			LuaHelpers::Pop( L, lerror );
+			Error+= lerror;
+			ReportScriptError(Error);
+		}
+		else
+		{
+			LuaHelpers::Pop( L, Error );
+		}
+		lua_remove( L, ErrFunc );
+		for( int i = 0; i < ReturnValues; ++i )
 			lua_pushnil( L );
 		return false;
 	}
 
-	lua_remove( L, iErrFunc );
+	lua_remove( L, ErrFunc );
 	return true;
 }
 
-bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName, RString &sError, int iArgs, int iReturnValues )
+bool LuaHelpers::RunScript( Lua *L, const RString &Script, const RString &Name, RString &Error, int Args, int ReturnValues, bool ReportError )
 {
-	if( !LoadScript(L, sScript, sName, sError) )
+	RString lerror;
+	if( !LoadScript(L, Script, Name, lerror) )
 	{
-		lua_pop( L, iArgs );
-		for( int i = 0; i < iReturnValues; ++i )
+		Error+= lerror;
+		if(ReportError)
+		{
+			ReportScriptError(Error);
+		}
+		lua_pop( L, Args );
+		for( int i = 0; i < ReturnValues; ++i )
 			lua_pushnil( L );
 		return false;
 	}
 
 	// move the function above the params
-	lua_insert( L, lua_gettop(L) - iArgs );
+	lua_insert( L, lua_gettop(L) - Args );
 
-	return LuaHelpers::RunScriptOnStack( L, sError, iArgs, iReturnValues );
+	return LuaHelpers::RunScriptOnStack( L, Error, Args, ReturnValues, ReportError );
 }
 
 bool LuaHelpers::RunExpression( Lua *L, const RString &sExpression, const RString &sName )
 {
-	RString sError;
-	if( !LuaHelpers::RunScript(L, "return " + sExpression, sName.empty()? RString("in"):sName, sError, 0, 1) )
+	RString sError= ssprintf("Lua runtime error parsing \"%s\": ", sName.size()? sName.c_str():sExpression.c_str());
+	if(!LuaHelpers::RunScript(L, "return " + sExpression, sName.empty()? RString("in"):sName, sError, 0, 1, true))
 	{
-		sError = ssprintf( "Lua runtime error parsing \"%s\": %s", sName.size()? sName.c_str():sExpression.c_str(), sError.c_str() );
-		Dialog::OK( sError, "LUA_ERROR" );
 		return false;
 	}
 	return true;
@@ -1090,6 +1144,22 @@ namespace
 		return 1;
 	}
 
+	static int ReportScriptError(lua_State* L)
+	{
+		RString error= "Script error occurred.";
+		RString error_type= "LUA_ERROR";
+		if(lua_isstring(L, 1))
+		{
+			error= SArg(1);
+		}
+		if(lua_isstring(L, 2))
+		{
+			error_type= SArg(2);
+		}
+		LuaHelpers::ReportScriptError(error, error_type);
+		return 0;
+	}
+
 	const luaL_Reg luaTable[] =
 	{
 		LIST_METHOD( Trace ),
@@ -1099,6 +1169,7 @@ namespace
 		LIST_METHOD( ReadFile ),
 		LIST_METHOD( RunWithThreadVariables ),
 		LIST_METHOD( GetThreadVariable ),
+		LIST_METHOD( ReportScriptError ),
 		{ NULL, NULL }
 	};
 }

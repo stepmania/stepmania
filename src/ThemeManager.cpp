@@ -669,10 +669,15 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 
 		RString message = ssprintf( 
 			"ThemeManager:  There is more than one theme element that matches "
-			"'%s/%s/%s'.  Please remove all but one of these matches.",
+			"'%s/%s/%s'.  Please remove all but one of these matches: ",
 			sThemeName.c_str(), sCategory.c_str(), MetricsGroupAndElementToFileName(sMetricsGroup,sElement).c_str() );
+		message+= asElementPaths[1];
+		for(size_t i= 1; i < asElementPaths.size(); ++i)
+		{
+			message+= ", " + asElementPaths[i];
+		}
 
-		switch( Dialog::AbortRetryIgnore(message) )
+		switch( LuaHelpers::ReportScriptError(message, "", true) )
 		{
 		case Dialog::abort:
 			RageException::Throw( "%s", message.c_str() ); 
@@ -717,7 +722,7 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 			"Verify that this redirect is correct.",
 			sPath.c_str(), sNewFileName.c_str());
 
-	switch( Dialog::AbortRetryIgnore(sMessage) )
+	switch(LuaHelpers::ReportScriptError(sMessage, "", true))
 	{
 	case Dialog::retry:
 		ReloadMetrics();
@@ -753,11 +758,9 @@ bool ThemeManager::GetPathInfoToAndFallback( PathInfo &out, ElementCategory cate
 			return false;
 	}
 
-	RageException::Throw( "Infinite recursion looking up theme element \"%s\"",
-		MetricsGroupAndElementToFileName(sMetricsGroup, sElement).c_str() );
-	/* Not really reached, but Appple's gcc 4 can't figure that out without
-	 * optimization even though RE:Throw() is correctly annotated. */
-	while( true ) {}
+	LuaHelpers::ReportScriptErrorFmt("Infinite recursion looking up theme element \"%s\"",
+		MetricsGroupAndElementToFileName(sMetricsGroup, sElement).c_str());
+	return false;
 }
 
 bool ThemeManager::GetPathInfo( PathInfo &out, ElementCategory category, const RString &sMetricsGroup_, const RString &sElement_, bool bOptional ) 
@@ -811,10 +814,15 @@ try_element_again:
 		ReloadMetrics();
 		goto try_element_again;
 	case Dialog::ignore:
-		LOG->UserLog( "Theme element", sCategory + '/' + sFileName,
-					"could not be found in \"%s\" or \"%s\".",
-					GetThemeDirFromName(m_sCurThemeName).c_str(), 
-					GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str() );
+		{
+			RString error= sCategory + '/' + sFileName +
+				" could not be found in \"" +
+				GetThemeDirFromName(m_sCurThemeName).c_str() + "\" or \"" +
+				GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str() + "\".";
+			LOG->UserLog("Theme element", "%s", error.c_str());
+			LOG->Warn(error.c_str());
+			LuaHelpers::ScriptErrorMessage(error);
+		}
 
 		// Err?
 		if( sFileName == "_missing" )
@@ -918,7 +926,8 @@ bool ThemeManager::GetMetricRawRecursive( const IniFile &ini, const RString &sMe
 			return false;
 	}
 
-	RageException::Throw( "Infinite recursion looking up theme metric \"%s::%s\".", sMetricsGroup.c_str(), sValueName.c_str() );
+	LuaHelpers::ReportScriptErrorFmt("Infinite recursion looking up theme metric \"%s::%s\".", sMetricsGroup.c_str(), sValueName.c_str());
+	return false;
 }
 
 RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sMetricsGroup_, const RString &sValueName_ )
@@ -945,12 +954,12 @@ RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sMetricsG
 		else
 			FAIL_M("");
 		
-		RString sMessage = ssprintf( "%s \"%s::%s\" is missing.  Correct this and click Retry, or Cancel to break.",
-			sType.c_str(), 
-			sMetricsGroup.c_str(), 
+		RString sMessage = ssprintf( "%s \"%s::%s\" is missing.",
+			sType.c_str(),
+			sMetricsGroup.c_str(),
 			sValueName.c_str() );
 			
-		switch( Dialog::AbortRetryIgnore(sMessage) )
+		switch( LuaHelpers::ReportScriptError(sMessage, "", true) )
 		{
 			case Dialog::abort:
 				{

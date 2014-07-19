@@ -55,7 +55,7 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName )
 		if( asPaths.empty() )
 		{
 			RString sError = ssprintf( "%s: references a file \"%s\" which doesn't exist", sName.c_str(), sPath.c_str() );
-			switch( Dialog::AbortRetryIgnore( sError, "BROKEN_FILE_REFERENCE" ) )
+			switch(LuaHelpers::ReportScriptError(sError, "BROKEN_FILE_REFERENCE", true))
 			{
 			case Dialog::abort:
 				RageException::Throw( "%s", sError.c_str() ); 
@@ -76,7 +76,7 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName )
 		{
 			RString sError = ssprintf( "%s: references a file \"%s\" which has multiple matches", sName.c_str(), sPath.c_str() );
 			sError += "\n" + join( "\n", asPaths );
-			switch( Dialog::AbortRetryIgnore( sError, "BROKEN_FILE_REFERENCE" ) )
+			switch(LuaHelpers::ReportScriptError(sError, "BROKEN_FILE_REFERENCE", true))
 			{
 			case Dialog::abort:
 				RageException::Throw( "%s", sError.c_str() ); 
@@ -246,7 +246,7 @@ namespace
 		{
 			LUA->Release( L );
 			sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
-			Dialog::OK( sError, "LUA_ERROR" );
+			LuaHelpers::ReportScriptError(sError);
 			return NULL;
 		}
 
@@ -268,12 +268,10 @@ bool ActorUtil::LoadTableFromStackShowErrors( Lua *L )
 	lua_pushvalue( L, -1 );
 	func.SetFromStack( L );
 
-	RString sError;
-	if( !LuaHelpers::RunScriptOnStack(L, sError, 0, 1) )
+	RString Error= "Lua runtime error: ";
+	if( !LuaHelpers::RunScriptOnStack(L, Error, 0, 1, true) )
 	{
 		lua_pop( L, 1 );
-		sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
-		Dialog::OK( sError, "LUA_ERROR" );
 		return false;
 	}
 
@@ -285,9 +283,9 @@ bool ActorUtil::LoadTableFromStackShowErrors( Lua *L )
 		lua_Debug debug;
 		lua_getinfo( L, ">nS", &debug );
 
-		sError = ssprintf( "%s: must return a table", debug.short_src );
+		Error = ssprintf( "%s: must return a table", debug.short_src );
 
-		Dialog::OK( sError, "LUA_ERROR" );
+		LuaHelpers::ReportScriptError(Error, "LUA_ERROR");
 		return false;
 	}
 	return true;

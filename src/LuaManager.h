@@ -15,6 +15,9 @@ extern "C"
 #include "../extern/lua-5.1/src/lauxlib.h"
 }
 
+// For Dialog::Result
+#include "arch/Dialog/Dialog.h"
+
 class LuaManager
 {
 public:
@@ -58,15 +61,30 @@ namespace LuaHelpers
 	 * and the stack is unchanged. */
 	bool LoadScript( Lua *L, const RString &sScript, const RString &sName, RString &sError );
 
+	/* Report the error three ways:  Broadcast message, Warn, and Dialog. */
+	/* If UseAbort is true, reports the error through Dialog::AbortRetryIgnore
+		 and returns the result. */
+	/* If UseAbort is false, reports the error through Dialog::OK and returns
+		 Dialog::ok. */
+	Dialog::Result ReportScriptError(RString const& Error, RString ErrorType= "LUA_ERROR", bool UseAbort= false);
+	// Just the broadcast message part, for things that need to do the rest differently.
+	void ScriptErrorMessage(RString const& Error);
+	// For convenience when replacing uses of LOG->Warn.
+	void ReportScriptErrorFmt(const char *fmt, ...);
+
 	/* Run the function with arguments at the top of the stack, with the given
 	 * number of arguments. The specified number of return values are left on
 	 * the Lua stack. On error, nils are left on the stack, sError is set and 
-	 * false is returned. */
-	bool RunScriptOnStack( Lua *L, RString &sError, int iArgs = 0, int iReturnValues = 0 );
+	 * false is returned.
+	 * If ReportError is true, Error should contain the string to prepend
+	 * when reporting.  The error is reported through LOG->Warn and
+	 * SCREENMAN->SystemMessage.
+	 */
+	bool RunScriptOnStack( Lua *L, RString &Error, int Args = 0, int ReturnValues = 0, bool ReportError = false );
 
 	/* LoadScript the given script, and RunScriptOnStack it.
 	 * iArgs arguments are at the top of the stack. */
-	bool RunScript( Lua *L, const RString &sScript, const RString &sName, RString &sError, int iArgs = 0, int iReturnValues = 0 );
+	bool RunScript( Lua *L, const RString &Script, const RString &Name, RString &Error, int Args = 0, int ReturnValues = 0, bool ReportError = false );
 
 	/* Run the given expression, returning a single value, and leave the return
 	 * value on the stack.  On error, push nil. */

@@ -195,7 +195,7 @@ void ScreenSelectMaster::Init()
 			int from, to;
 			if( sscanf( parts[part], "%d:%d", &from, &to ) != 2 )
 			{
-				LOG->Warn( "%s::OptionOrder%s parse error", m_sName.c_str(), MenuDirToString(dir).c_str() );
+				LuaHelpers::ReportScriptErrorFmt( "%s::OptionOrder%s parse error", m_sName.c_str(), MenuDirToString(dir).c_str() );
 				continue;
 			}
 
@@ -369,7 +369,7 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 	 * If any options are playable, make sure one is selected. */
 	FOREACH_HumanPlayer( p )
 	{
-		if( !m_aGameCommands[m_iChoice[p]].IsPlayable() )
+		if(!m_aGameCommands.empty() && !m_aGameCommands[m_iChoice[p]].IsPlayable())
 			Move( p, MenuDir_Auto );
 	}
 }
@@ -402,7 +402,7 @@ bool ScreenSelectMaster::Move( PlayerNumber pn, MenuDir dir )
 		if( seen.find(iSwitchToIndex) != seen.end() )
 			return false; // went full circle and none found
 		seen.insert( iSwitchToIndex );
-	} while( !m_aGameCommands[iSwitchToIndex].IsPlayable() && !DO_SWITCH_ANYWAYS );
+	} while(!m_aGameCommands.empty() && !m_aGameCommands[iSwitchToIndex].IsPlayable() && !DO_SWITCH_ANYWAYS);
 
 	return ChangeSelection( pn, dir, iSwitchToIndex );
 }
@@ -821,22 +821,28 @@ bool ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 		return true;
 	}
 
-	const GameCommand &mc = m_aGameCommands[m_iChoice[pn]];
+	GameCommand empty_mc;
+	// This is so we can avoid having problems when the GameCommands in the choices were all invalid or didn't load or similar. -Kyz
+	GameCommand *mc= &empty_mc;
+	if(!m_aGameCommands.empty())
+	{
+		mc = &(m_aGameCommands[m_iChoice[pn]]);
+	}
 
 	/* If no options are playable, then we're just waiting for one to become available.
 	 * If any options are playable, then the selection must be playable. */
 	if( !AnyOptionsArePlayable() )
 		return false;
 
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(), mc.m_sName.c_str())) );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(), mc->m_sName.c_str())) );
 
 	// Play a copy of the sound, so it'll finish playing even if we leave the screen immediately.
-	if( mc.m_sSoundPath.empty() && !m_bDoubleChoiceNoSound )
+	if( mc->m_sSoundPath.empty() && !m_bDoubleChoiceNoSound )
 		m_soundStart.PlayCopy();
 
-	if( mc.m_sScreen.empty() )
+	if( mc->m_sScreen.empty() )
 	{
-		mc.ApplyToAllPlayers();
+		mc->ApplyToAllPlayers();
 		// We want to be able to broadcast a Start message to the theme, in
 		// case a themer wants to handle something. -aj
 		Message msg( MessageIDToString((MessageID)(Message_MenuStartP1+pn)) );

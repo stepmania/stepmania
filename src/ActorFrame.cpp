@@ -224,7 +224,7 @@ void ActorFrame::DrawPrimitives()
 {
 	if( m_bClearZBuffer )
 	{
-		LOG->Warn( "ClearZBuffer not supported on ActorFrames" );
+		LuaHelpers::ReportScriptErrorFmt( "ClearZBuffer not supported on ActorFrames" );
 		m_bClearZBuffer = false;
 	}
 
@@ -238,13 +238,12 @@ void ActorFrame::DrawPrimitives()
 		m_DrawFunction.PushSelf( L );
 		if( lua_isnil(L, -1) )
 		{
-			LOG->Warn( "Error compiling DrawFunction" );
+			LuaHelpers::ReportScriptErrorFmt( "Error compiling DrawFunction" );
 			return;
 		}
 		this->PushSelf( L );
-		RString sError;
-		if( !LuaHelpers::RunScriptOnStack(L, sError, 1, 0) ) // 1 arg, 0 results
-			LOG->Warn( "Error running DrawFunction: %s", sError.c_str() );
+		RString Error= "Error running DrawFunction: ";
+		LuaHelpers::RunScriptOnStack(L, Error, 1, 0, true); // 1 arg, 0 results
 		LUA->Release(L);
 		return;
 	}
@@ -302,6 +301,8 @@ static int IdenticalChildrenSingleApplier(lua_State* L)
 	lua_pushvalue(L, lua_upvalueindex(1)); // stack: table, obj, args, func
 	lua_insert(L, 2); // stack: table, func, obj, args
 	int args_count= lua_gettop(L) - 2;
+	// Not using RunScriptOnStack because we're inside a lua call already and
+	// we want an error to propagate up.
 	lua_call(L, args_count, LUA_MULTRET); // stack: table, return_values
 	return lua_gettop(L) - 1;
 }
@@ -477,15 +478,13 @@ void ActorFrame::UpdateInternal( float fDeltaTime )
 		m_UpdateFunction.PushSelf( L );
 		if( lua_isnil(L, -1) )
 		{
-			LOG->Warn( "Error compiling UpdateFunction" );
+			LuaHelpers::ReportScriptErrorFmt( "Error compiling UpdateFunction" );
 			return;
 		}
 		this->PushSelf( L );
 		lua_pushnumber( L, fDeltaTime );
-		RString sError;
-
-		if( !LuaHelpers::RunScriptOnStack(L, sError, 2, 0) ) // 1 args, 0 results
-			LOG->Warn( "Error running m_UpdateFunction: %s", sError.c_str() );
+		RString Error= "Error running UpdateFunction: ";
+		LuaHelpers::RunScriptOnStack(L, Error, 2, 0, true); // 1 args, 0 results
 		LUA->Release(L);
 	}
 }

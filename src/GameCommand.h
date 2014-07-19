@@ -34,7 +34,7 @@ public:
 		m_sAnnouncer(""), m_sPreferredModifiers(""),
 		m_sStageModifiers(""), m_sScreen(""), m_LuaFunction(),
 		m_pSong(NULL), m_pSteps(NULL), m_pCourse(NULL),
-		m_pTrail(NULL), m_pCharacter(NULL), m_SetEnv(),
+		m_pTrail(NULL), m_pCharacter(NULL), m_SetEnv(), m_SetPref(),
 		m_sSongGroup(""), m_SortOrder(SortOrder_Invalid),
 		m_sSoundPath(""), m_vsScreensToPrepare(), m_iWeightPounds(-1),
 		m_iGoalCalories(-1), m_GoalType(GoalType_Invalid),
@@ -92,6 +92,7 @@ public:
 	Trail*		m_pTrail;
 	Character*	m_pCharacter;
 	std::map<RString,RString> m_SetEnv;
+	std::map<RString,RString> m_SetPref;
 	RString		m_sSongGroup;
 	SortOrder	m_SortOrder;
 	RString		m_sSoundPath;	// "" for no sound

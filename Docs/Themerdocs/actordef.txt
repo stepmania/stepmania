@@ -26,6 +26,7 @@ GrooveRadar
 HelpDisplay
 HoldJudgment
 InputList
+LogDisplay
 MemoryCardDisplay
 MeterDisplay
 Model
