@@ -834,6 +834,7 @@ public:
 		float fadeOut = 0;
 		bool loop= false;
 		bool applyRate= false;
+		bool alignBeat= true;
 		if (lua_gettop(L) >= 4 && !lua_isnil(L,4))
 		{
 			fadeIn = FArg(4);
@@ -846,16 +847,21 @@ public:
 					if (lua_gettop(L) >= 7 && !lua_isnil(L,7))
 					{
 						applyRate = BArg(7);
+						if (lua_gettop(L) >= 8 && !lua_isnil(L,8))
+						{
+							alignBeat = BArg(8);
+						}
 					}
 				}
 			}
 		}
 		p->PlayMusic(musicPath, NULL, loop, musicStart, musicLength,
-			fadeIn, fadeOut, applyRate);
+			fadeIn, fadeOut, alignBeat, applyRate);
 		return 0;
 	}
 
-	static int StopMusic( T* p, lua_State *L ) { p->StopMusic(); return 0; }
+	static int StopMusic( T* p, lua_State *L )			{ p->StopMusic(); return 0; }
+	static int IsTimingDelayed( T* p, lua_State *L )	{ lua_pushboolean( L, g_Playing->m_bTimingDelayed ); return 1; }
 	
 	LunaGameSoundManager()
 	{
@@ -865,6 +871,7 @@ public:
 		ADD_METHOD( GetPlayerBalance );
 		ADD_METHOD( PlayMusicPart );
 		ADD_METHOD( StopMusic );
+		ADD_METHOD( IsTimingDelayed );
 	}
 };
 

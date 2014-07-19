@@ -731,6 +731,7 @@
 			<Function name='PlayMusicPart'/>
 			<Function name='PlayOnce'/>
 			<Function name='StopMusic'/>
+			<Function name='IsTimingDelayed'/>
 		</Class>
 		<Class name='GameState'>
 			<Function name='AddStageToPlayer'/>
