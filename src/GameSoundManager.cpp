@@ -728,7 +728,7 @@ void GameSoundManager::PlayMusic( PlayMusicParams params, PlayMusicParams Fallba
 	ToPlay.fFadeInLengthSeconds = params.fFadeInLengthSeconds;
 	ToPlay.fFadeOutLengthSeconds = params.fFadeOutLengthSeconds;
 	ToPlay.bAlignBeat = params.bAlignBeat;
-x	ToPlay.bApplyMusicRate = params.bApplyMusicRate;
+	ToPlay.bApplyMusicRate = params.bApplyMusicRate;
 
 	/* Add the MusicToPlay to the g_MusicsToPlay queue. */
 	g_Mutex->Lock();
