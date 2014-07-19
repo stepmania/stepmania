@@ -247,7 +247,7 @@ function SpeedMods()
 end
 
 local default_speed_increment= 25
-local default_speed_inc_multiple= 4
+local default_speed_inc_large= 100
 
 local function get_speed_increment()
 	local increment= default_speed_increment
@@ -259,14 +259,14 @@ local function get_speed_increment()
 	return increment
 end
 
-local function get_speed_multiple()
-	local multiple= default_speed_inc_multiple
-	if ReadGamePrefFromFile("SpeedMultiple") then
-		multiple= tonumber(GetGamePref("SpeedMultiple")) or default_speed_inc_multiple
+local function get_speed_inc_large()
+	local inc_large= default_speed_inc_large
+	if ReadGamePrefFromFile("SpeedIncLarge") then
+		inc_large= tonumber(GetGamePref("SpeedIncLarge")) or default_speed_inc_large
 	else
-		WriteGamePrefToFile("SpeedMultiple", multiple)
+		WriteGamePrefToFile("SpeedIncLarge", inc_large)
 	end
-	return multiple
+	return inc_large
 end
 
 function SpeedModIncSize()
@@ -305,12 +305,12 @@ function SpeedModIncSize()
 	return ret
 end
 
-function SpeedModIncMultiple()
+function SpeedModIncLarge()
 	-- An option row for controlling the size of the increment used by
 	-- ArbitrarySpeedMods.
-	local multiple= get_speed_multiple()
+	local inc_large= get_speed_inc_large()
 	local ret= {
-		Name= "Speed Multiple",
+		Name= "Speed Increment Large",
 		LayoutType= "ShowAllInRow",
 		SelectType= "SelectMultiple",
 		OneChoiceForAllPlayers= true,
@@ -319,22 +319,22 @@ function SpeedModIncMultiple()
 			list[1]= true
 		end,
 		SaveSelections= function(self, list, pn)
-			WriteGamePrefToFile("SpeedMultiple", multiple)
+			WriteGamePrefToFile("SpeedIncLarge", inc_large)
 		end,
 		NotifyOfSelection= function(self, pn, choice)
 			-- return true even though we didn't actually change anything so that
 			-- the underlines will stay correct.
 			if choice == 1 then return true end
-			local incs= {5, 1, -1, -5}
-			local new_val= multiple + incs[choice-1]
+			local incs= {10, 1, -1, -10}
+			local new_val= inc_large + incs[choice-1]
 			if new_val > 0 then
-				multiple= new_val
+				inc_large= new_val
 			end
 			self:GenChoices()
 			return true
 		end,
 		GenChoices= function(self)
-			self.Choices= {tostring(multiple), "+5", "+1", "-1", "-5"}
+			self.Choices= {tostring(inc_large), "+10", "+1", "-1", "-10"}
 		end
 	}
 	ret:GenChoices()
@@ -344,7 +344,7 @@ end
 function ArbitrarySpeedMods()
 	-- If players are allowed to join while this option row is active, problems will probably occur.
 	local increment= get_speed_increment()
-	local multiple= get_speed_multiple()
+	local inc_large= get_speed_inc_large()
 	local ret= {
 		Name= "Speed",
 		LayoutType= "ShowAllInRow",
@@ -391,8 +391,7 @@ function ArbitrarySpeedMods()
 			if real_choice < 1 then return true end
 			local val= self.CurValues[pn]
 			if real_choice < 5 then
-				local big_inc= increment * multiple
-				local incs= {big_inc, increment, -increment, -big_inc}
+				local incs= {inc_large, increment, -increment, -inc_large}
 				local new_val= val.speed + incs[real_choice]
 				if new_val > 0 then
 					val.speed= math.round(new_val)
@@ -412,7 +411,7 @@ function ArbitrarySpeedMods()
 					show_x_incs= true
 				end
 			end
-			local big_inc= increment * multiple
+			local big_inc= inc_large
 			local small_inc= increment
 			if show_x_incs then
 				big_inc= tostring(big_inc / 100)
