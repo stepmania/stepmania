@@ -723,6 +723,8 @@
 			<Function name='GetFirstStepsTypeForGame'/>
 			<Function name='IsGameEnabled'/>
 			<Function name='StepsTypeToLocalizedString'/>
+			<Function name='SetGame'/>
+			<Function name='GetEnabledGames'/>
 		</Class>
 		<Class name='GameSoundManager'>
 			<Function name='DimMusic'/>

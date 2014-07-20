@@ -15,7 +15,7 @@ namespace StepMania
 	void ResetGame();
 	RString GetInitialScreen();
 	RString GetSelectMusicScreen();
-	void ChangeCurrentGame( const Game* g );
+	void ChangeCurrentGame( const Game* g, RString Theme = "" );
 
 	// If successful, return filename of screenshot in sDir, else return ""
 	RString SaveScreenshot( RString Dir, bool SaveCompressed, bool MakeSignature, RString NamePrefix, RString NameSuffix );

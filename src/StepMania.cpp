@@ -808,7 +808,7 @@ static void SwitchToLastPlayedGame()
 	StepMania::ChangeCurrentGame( pGame );
 }
 
-void StepMania::ChangeCurrentGame( const Game* g )
+void StepMania::ChangeCurrentGame( const Game* g, RString Theme )
 {
 	ASSERT( g != NULL );
 	ASSERT( GAMESTATE != NULL );
@@ -825,7 +825,9 @@ void StepMania::ChangeCurrentGame( const Game* g )
 		sAnnouncer = GAMESTATE->GetCurrentGame()->m_szName;
 	if( sTheme.empty() )
 		sTheme = GAMESTATE->GetCurrentGame()->m_szName;
-
+	if( Theme.size() )
+		sTheme = Theme;
+		
 	// process theme and language command line arguments;
 	// these change the preferences in order for transparent loading -aj
 	RString argTheme;
