@@ -1,9 +1,10 @@
 #include "global.h"
-#include "Stepmania.h"
+#include "StepMania.h"
 #include "arch/Dialog/Dialog.h"
 #include "GameManager.h"
 #include "GameConstantsAndTypes.h"
 #include "GameInput.h"	// for GameButton constants
+#include "GameLoop.h"  // for ChangeGame
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "NoteSkinManager.h"
@@ -3176,22 +3177,22 @@ public:
 	
 	static int SetGame( T* p, lua_State *L )
 	{
-		const Game *pGame = p->StringToGame(SArg(1));
-		RString sTheme;
+		RString game_name= SArg(1);
+		const Game *pGame = p->StringToGame(game_name);
+		if(!pGame)
+		{
+			luaL_error(L, "SetGame: Invalid Game: '%s'", game_name.c_str());
+		}
+		RString theme;
 		if( lua_gettop(L) >= 2 && !lua_isnil(L, 2) )
 		{
-			sTheme = SArg(2);
+			theme = SArg(2);
+			if(!THEME->IsThemeSelectable(theme))
+			{
+				luaL_error(L, "SetGame: Invalid Theme: '%s'", theme.c_str());
+			}
 		}
-		if( pGame )
-		{
-			StepMania::ChangeCurrentGame( pGame, sTheme );
-			THEME->ReloadMetrics();	
-		}
-		else
-		{
-			LOG->Warn( "SetGame: Invalid Game, %s", pGame->m_szName );
-			Dialog::OK( "SetGame: Invalid Game, %s", pGame->m_szName );		
-		}
+		GameLoop::ChangeGame(game_name, theme);
 		return 0;
 	}
 	

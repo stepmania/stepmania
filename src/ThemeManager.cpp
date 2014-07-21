@@ -17,6 +17,7 @@
 #include "ActorUtil.h"
 #endif
 #include "Foreach.h"
+#include "GameLoop.h" // For ChangeTheme
 #include "ThemeMetric.h"
 #include "SubscriptionManager.h"
 #include "LuaManager.h"
@@ -1341,6 +1342,17 @@ public:
 		return 1;
 	}
 
+	static int SetTheme(T* p, lua_State* L)
+	{
+		RString theme_name= SArg(1);
+		if(!p->IsThemeSelectable(theme_name))
+		{
+			luaL_error(L, "SetTheme: Invalid Theme: '%s'", theme_name.c_str());
+		}
+		GameLoop::ChangeTheme(theme_name);
+		return 0;
+	}
+
 	LunaThemeManager()
 	{
 		ADD_METHOD( ReloadMetrics );
@@ -1367,6 +1379,7 @@ public:
 		ADD_METHOD( HasString );
 		ADD_METHOD( GetMetricNamesInGroup );
 		ADD_METHOD( GetStringNamesInGroup );
+		ADD_METHOD( SetTheme );
 	}
 };
 
