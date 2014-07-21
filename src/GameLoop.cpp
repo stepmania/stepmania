@@ -114,17 +114,24 @@ static void CheckFocus()
 }
 
 // On the next update, change themes, and load sNewScreen.
-static RString g_sNewTheme;
-static RString g_sNewScreen;
+static RString g_NewTheme;
 static bool g_bForceThemeReload;
-void GameLoop::ChangeTheme( const RString &sNewTheme, const RString &sNewScreen, bool bForced )
+static RString g_NewGame;
+void GameLoop::ChangeTheme( const RString &sNewTheme, bool bForced )
 {
-	g_sNewTheme = sNewTheme;
-	g_sNewScreen = sNewScreen;
+	g_NewTheme = sNewTheme;
 	g_bForceThemeReload = bForced;
 }
 
+void GameLoop::ChangeGame(const RString& new_game, const RString& new_theme)
+{
+	g_NewGame= new_game;
+	g_NewTheme= new_theme;
+}
+
 #include "StepMania.h" // XXX
+#include "GameManager.h"
+#include "Game.h"
 namespace
 {
 	void DoChangeTheme()
@@ -135,8 +142,8 @@ namespace
 		// In case the previous theme overloaded class bindings, reinitialize them.
 		LUA->RegisterTypes();
 
-		THEME->SwitchThemeAndLanguage( g_sNewTheme, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize, g_bForceThemeReload );
-		PREFSMAN->m_sTheme.Set( g_sNewTheme );
+		THEME->SwitchThemeAndLanguage( g_NewTheme, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize, g_bForceThemeReload );
+		PREFSMAN->m_sTheme.Set( g_NewTheme );
 
 		// Apply the new window title, icon and aspect ratio.
 		StepMania::ApplyGraphicOptions();
@@ -145,19 +152,97 @@ namespace
 
 		StepMania::ResetGame();
 		SCREENMAN->ThemeChanged();
-		// Not all themes use the same screen names!  Check whether the new
-		// screen is valid in the new theme before setting it.  Use the
-		// InitialScreen metric if it's not.
-		if(!SCREENMAN->IsScreenNameValid(g_sNewScreen))
+		// The previous system for changing the theme fetched the "NextScreen"
+		// metric from the current theme, then changed the theme, then tried to
+		// set the new screen to the name that had been fetched.
+		// If the new screen didn't exist in the new theme, there would be a
+		// crash.
+		// So now the correct thing to do is for a theme to specify its entry
+		// point after a theme change, ensuring that we are going to a valid
+		// screen and not crashing. -Kyz
+		RString new_screen= THEME->GetMetric("Common", "InitialScreen");
+		if(THEME->HasMetric("Common", "AfterThemeChangeScreen"))
 		{
-			g_sNewScreen= THEME->GetMetric("Common", "InitialScreen");
+			RString after_screen= THEME->GetMetric("Common", "AfterThemeChangeScreen");
+			if(SCREENMAN->IsScreenNameValid(after_screen))
+			{
+				new_screen= after_screen;
+			}
 		}
-		SCREENMAN->SetNewScreen( g_sNewScreen );
+		SCREENMAN->SetNewScreen(new_screen);
 
-		g_sNewTheme = RString();
-		g_sNewScreen = RString();
+		g_NewTheme = RString();
 	}
 
+	void DoChangeGame()
+	{
+		const Game* g= GAMEMAN->StringToGame(g_NewGame);
+		ASSERT(g != NULL);
+		GAMESTATE->SetCurGame(g);
+
+		bool theme_changing= false;
+		// The prefs allow specifying a different default theme to use for each
+		// game type.  So if a theme name isn't passed in, fetch from the prefs.
+		if(g_NewTheme.empty())
+		{
+			g_NewTheme= PREFSMAN->m_sTheme;
+		}
+		if(g_NewTheme != THEME->GetCurThemeName() && THEME->IsThemeSelectable(g_NewTheme))
+		{
+			theme_changing= true;
+		}
+
+		if(theme_changing)
+		{
+			SAFE_DELETE(SCREENMAN);
+			TEXTUREMAN->DoDelayedDelete();
+			LUA->RegisterTypes();
+			THEME->SwitchThemeAndLanguage(g_NewTheme, THEME->GetCurLanguage(),
+				PREFSMAN->m_bPseudoLocalize);
+			PREFSMAN->m_sTheme.Set(g_NewTheme);
+			StepMania::ApplyGraphicOptions();
+			SCREENMAN= new ScreenManager();
+		}
+		StepMania::ResetGame();
+		RString new_screen= THEME->GetMetric("Common", "InitialScreen");
+		RString after_screen;
+		if(theme_changing)
+		{
+			SCREENMAN->ThemeChanged();
+			if(THEME->HasMetric("Common", "AfterGameAndThemeChangeScreen"))
+			{
+				after_screen= THEME->GetMetric("Common", "AfterGameAndThemeChangeScreen");
+			}
+		}
+		else
+		{
+			if(THEME->HasMetric("Common", "AfterGameChangeScreen"))
+			{
+				after_screen= THEME->GetMetric("Common", "AfterGameChangeScreen");
+			}
+		}
+		if(SCREENMAN->IsScreenNameValid(after_screen))
+		{
+			new_screen= after_screen;
+		}
+		SCREENMAN->SetNewScreen(new_screen);
+
+		// Set the input scheme for the new game, and load keymaps.
+		if( INPUTMAPPER )
+		{
+			INPUTMAPPER->SetInputScheme(&g->m_InputScheme);
+			INPUTMAPPER->ReadMappingsFromDisk();
+		}
+		// aj's comment transplanted from ScreenOptionsMasterPrefs.cpp:GameSel. -Kyz
+		/* Reload metrics to force a refresh of CommonMetrics::DIFFICULTIES_TO_SHOW,
+		 * mainly if we're not switching themes. I'm not sure if this was the
+		 * case going from theme to theme, but if it was, it should be fixed
+		 * now. There's probably be a better way to do it, but I'm not sure
+		 * what it'd be. -aj */
+		THEME->ReloadMetrics();
+		g_NewGame= RString();
+		g_NewTheme= RString();
+	}
 }
 
 void GameLoop::RunGameLoop()
@@ -169,8 +254,14 @@ void GameLoop::RunGameLoop()
 
 	while( !ArchHooks::UserQuit() )
 	{
-		if( !g_sNewTheme.empty() )
+		if(!g_NewGame.empty())
+		{
+			DoChangeGame();
+		}
+		if(!g_NewTheme.empty())
+		{
 			DoChangeTheme();
+		}
 
 		// Update
 		float fDeltaTime = g_GameplayTimer.GetDeltaTime();

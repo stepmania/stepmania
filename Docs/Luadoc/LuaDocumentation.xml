@@ -2181,7 +2181,10 @@ save yourself some time, copy this for undocumented things:
 		Returns a table of all selectable games.
 	</Function>
 	<Function name='SetGame' return='void' arguments='string Game, string Theme' >
-		Sets the current game to <code>Game</code>. The second argument is optional, and if provided will determine which theme is loaded when the game changes. If Stepmania was run with a commandline argument setting the theme, that will override the second argument of this function.
+		Sets the current game to <code>Game</code>. The second argument is optional, and if provided will determine which theme is loaded when the game changes.  If the second argument is not provided, the default theme from the preferences for the new game type will be loaded.<br />
+		If only the game changes, the screen specified by the Common::AfterGameChangeScreen metric will be loaded.<br />
+		If the game and the theme both change, the screen specified by the Common::AfterGameAndThemeChangeScreen metric will be loaded.<br />
+		The Common::InitialScreen metric will be used if the appropriate metric for the change is blank or invalid.
 	</Function>
 </Class>
 <Class name='GameSoundManager'>
@@ -4677,6 +4680,11 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='RunLuaScripts' return='void' arguments='string sMask'>
 		
+	</Function>
+	<Function name='SetTheme' return='void' arguments='string theme'>
+		Changes the current theme.<br />
+		After the theme changes, the screen specified by the Common::AfterThemeChangeScreen metric will be loaded.<br />
+		The Common::InitialScreen metric will be used if Common::AfterThemeChangeScreen is blank or invalid.
 	</Function>
 </Class>
 <Class name='TimingData'>

@@ -1661,6 +1661,7 @@
 			<Function name='IsThemeSelectable'/>
 			<Function name='ReloadMetrics'/>
 			<Function name='RunLuaScripts'/>
+			<Function name='SetTheme'/>
 		</Class>
 		<Class name='TimingData'>
 			<Function name='GetActualBPM'/>

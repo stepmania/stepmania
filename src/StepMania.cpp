@@ -805,10 +805,11 @@ static void SwitchToLastPlayedGame()
 
 	ASSERT( GAMEMAN->IsGameEnabled(pGame) );
 
-	StepMania::ChangeCurrentGame( pGame );
+	StepMania::InitializeCurrentGame( pGame );
 }
 
-void StepMania::ChangeCurrentGame( const Game* g, RString Theme )
+// This function is meant to only be called during start up.
+void StepMania::InitializeCurrentGame( const Game* g )
 {
 	ASSERT( g != NULL );
 	ASSERT( GAMESTATE != NULL );
@@ -823,11 +824,9 @@ void StepMania::ChangeCurrentGame( const Game* g, RString Theme )
 
 	if( sAnnouncer.empty() )
 		sAnnouncer = GAMESTATE->GetCurrentGame()->m_szName;
-	if( sTheme.empty() )
-		sTheme = GAMESTATE->GetCurrentGame()->m_szName;
-	if( Theme.size() )
-		sTheme = Theme;
-		
+	// It doesn't matter if sTheme is blank or invalid, THEME->STAL will set
+	// a selectable theme for us. -Kyz
+
 	// process theme and language command line arguments;
 	// these change the preferences in order for transparent loading -aj
 	RString argTheme;
@@ -1115,7 +1114,7 @@ int main(int argc, char* argv[])
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
 
-	StepMania::ChangeCurrentGame( GAMESTATE->GetCurrentGame() );
+	StepMania::InitializeCurrentGame( GAMESTATE->GetCurrentGame() );
 
 	INPUTQUEUE	= new InputQueue;
 	SONGINDEX	= new SongCacheIndex;
