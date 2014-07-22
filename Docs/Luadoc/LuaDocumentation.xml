@@ -3302,6 +3302,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetPreferenceToDefault' return='void' arguments='string sPreference'>
 		Reset preference <code>sPreference</code> to the default value.
 	</Function>
+	<Function name='SavePreferences' return='void' arguments=''>
+		Saves preferences to disk.
+	</Function>
 </Class>
 <Class name='Profile'>
 	<Function name='AddCaloriesToDailyTotal' return='void' arguments='float cals'>
