@@ -586,13 +586,16 @@ public:
 		lua_pushboolean( L, true );
 		return 1;
 	}
-
+	
+	static int SavePreferences( T* p, lua_State *L ) { p->SavePrefsToDisk(); return 0; }
+	
 	LunaPrefsManager()
 	{
 		ADD_METHOD( GetPreference );
 		ADD_METHOD( SetPreference );
 		ADD_METHOD( SetPreferenceToDefault );
 		ADD_METHOD( PreferenceExists );
+		ADD_METHOD( SavePreferences );
 	}
 };
 
