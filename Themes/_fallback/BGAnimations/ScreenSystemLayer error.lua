@@ -48,6 +48,7 @@ end
 local log_args= {
 	Name= "ScriptError",
 	ReplaceLinesWhenHidden= true,
+	IgnoreIdentical= true,
 	Times= message_time,
 	Font= "Common Error",
 }
