@@ -1150,6 +1150,7 @@
 			<Function name='PreferenceExists'/>
 			<Function name='SetPreference'/>
 			<Function name='SetPreferenceToDefault'/>
+			<Function name='SavePreferences'/>
 		</Class>
 		<Class name='Profile'>
 			<Function name='AddCaloriesToDailyTotal'/>
