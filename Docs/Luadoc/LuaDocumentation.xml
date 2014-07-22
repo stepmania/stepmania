@@ -372,6 +372,9 @@ save yourself some time, copy this for undocumented things:
 		<code>next</code> returns the next index of the table and its associated value."
 		See the Lua manual for more details.
 	</Function>
+	<Function name='OldStyleStringToDifficulty' return='Difficulty' arguments='string dc'>
+		Converts a string such as 'oni' or 'expert' or 'trick' to the appropriate difficulty.
+	</Function>
 	<Function name='OptionRowProTiming' theme='default' return='LuaOptionRow' arguments=''>
 		[03 ThemePrefs.lua] Returns a Lua option row for ProTiming.
 	</Function>

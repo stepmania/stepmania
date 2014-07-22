@@ -72,6 +72,8 @@ Difficulty OldStyleStringToDifficulty( const RString& sDC )
 	else							return Difficulty_Invalid;
 }
 
+LuaFunction( OldStyleStringToDifficulty, OldStyleStringToDifficulty(SArg(1)) );
+
 static ThemeMetric<RString> NAMES("CustomDifficulty","Names");
 
 RString GetCustomDifficulty( StepsType st, Difficulty dc, CourseType ct )

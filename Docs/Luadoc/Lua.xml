@@ -115,6 +115,7 @@
 		<Function name='MonthToString'/>
 		<Function name='MultiPlayerToLocalizedString'/>
 		<Function name='MultiPlayerToString'/>
+		<Function name='OldStyleStringToDifficulty'/>
 		<Function name='OptionRowProTiming'/>
 		<Function name='OptionRowScreenFilter'/>
 		<Function name='OptionsRandomJukebox'/>
