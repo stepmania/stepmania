@@ -823,9 +823,24 @@ bool Course::GetTotalSeconds( StepsType st, float& fSecondsOut ) const
 	if( !AllSongsAreFixed() )
 		return false;
 
-	Trail* pTrail = GetTrail( st, Difficulty_Medium );
+	Trail* trail = GetTrail( st, Difficulty_Medium );
+	if(!trail)
+	{
+		for(int cd= 0; cd < NUM_CourseDifficulty; ++cd)
+		{
+			trail= GetTrail(st, (CourseDifficulty)cd);
+			if(trail)
+			{
+				break;
+			}
+		}
+		if(!trail)
+		{
+			return false;
+		}
+	}
 
-	fSecondsOut = pTrail->GetLengthSeconds();
+	fSecondsOut = trail->GetLengthSeconds();
 	return true;
 }
 
