@@ -47,7 +47,12 @@ public:
 	const_iterator lower_bound( int iTrack, int iRow ) const	{ return m_TapNotes[iTrack].lower_bound( iRow ); }
 	iterator upper_bound( int iTrack, int iRow )			{ return m_TapNotes[iTrack].upper_bound( iRow ); }
 	const_iterator upper_bound( int iTrack, int iRow ) const	{ return m_TapNotes[iTrack].upper_bound( iRow ); }
-	void swap( NoteData &nd )					{ m_TapNotes.swap( nd.m_TapNotes ); }
+	void swap( NoteData &nd )
+	{
+		m_TapNotes.swap(nd.m_TapNotes);
+		m_atis.swap(nd.m_atis);
+		m_const_atis.swap(nd.m_const_atis);
+	}
 
 
 	// This is ugly to make it templated but I don't want to have to write the same class twice.
@@ -65,10 +70,18 @@ public:
 		int		m_iTrack;
 		bool		m_bReverse;
 
+		// These exist so that the iterator can be revalidated if the NoteData is
+		// transformed during this iterator's lifetime.
+		vector<int> m_PrevCurrentRows;
+		bool m_Inclusive;
+		int m_StartRow;
+		int m_EndRow;
+
 		void Find( bool bReverse );
 	public:
 		_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, bool bReverse, bool bInclusive );
 		_all_tracks_iterator( const _all_tracks_iterator &other );
+		~_all_tracks_iterator();
 		_all_tracks_iterator &operator++();		// preincrement
 		_all_tracks_iterator operator++( int dummy );	// postincrement
 		//_all_tracks_iterator &operator--();		// predecrement
@@ -81,11 +94,15 @@ public:
 		inline TN *operator->()			{ DEBUG_ASSERT( !IsAtEnd() ); return &m_vCurrentIters[m_iTrack]->second; }
 		inline const TN &operator*() const	{ DEBUG_ASSERT( !IsAtEnd() ); return m_vCurrentIters[m_iTrack]->second; }
 		inline const TN *operator->() const	{ DEBUG_ASSERT( !IsAtEnd() ); return &m_vCurrentIters[m_iTrack]->second; }
+		// Use when transforming the NoteData.
+		void Revalidate(ND* notedata, vector<int> const& added_or_removed_tracks, bool added);
 	};
 	typedef _all_tracks_iterator<NoteData, NoteData::iterator, TapNote> 			all_tracks_iterator;
 	typedef _all_tracks_iterator<const NoteData, NoteData::const_iterator, const TapNote>	all_tracks_const_iterator;
 	typedef all_tracks_iterator								all_tracks_reverse_iterator;
 	typedef all_tracks_const_iterator							all_tracks_const_reverse_iterator;
+	friend class _all_tracks_iterator<NoteData, NoteData::iterator, TapNote>;
+	friend class _all_tracks_iterator<const NoteData, NoteData::const_iterator, const TapNote>;
 private:
 	// There's no point in inserting empty notes into the map.
 	// Any blank space in the map is defined to be empty.
@@ -129,7 +146,17 @@ private:
 	pair<int, int> GetNumRowsWithSimultaneousTapsTwoPlayer(int minTaps = 2,
 														   int startRow = 0,
 														   int endRow = MAX_NOTE_ROW) const;
-	
+
+	// These exist so that they can be revalidated when something that transforms
+	// the NoteData occurs. -Kyz
+	mutable set<all_tracks_iterator*> m_atis;
+	mutable set<all_tracks_const_iterator*> m_const_atis;
+
+	void AddATIToList(all_tracks_iterator* iter) const;
+	void AddATIToList(all_tracks_const_iterator* iter) const;
+	void RemoveATIFromList(all_tracks_iterator* iter) const;
+	void RemoveATIFromList(all_tracks_const_iterator* iter) const;
+
 public:
 	void Init();
 
@@ -195,6 +222,10 @@ public:
 	{
 		return all_tracks_const_iterator(*this, iStartRow, iEndRow, true, bInclusive );
 	}
+
+	// Call this after using any transform that changes the NoteData.
+	void RevalidateATIs(vector<int> const& added_or_removed_tracks, bool added);
+	void TransferATIs(NoteData& to);
 
 	/* Return an iterator range include iStartRow to iEndRow.  Extend the range to include
 	 * hold notes overlapping the boundary. */

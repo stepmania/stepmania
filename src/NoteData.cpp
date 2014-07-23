@@ -1176,6 +1176,48 @@ void NoteData::LoadFromNode( const XNode* pNode )
 	FAIL_M("NoteData::LoadFromNode() not implemented");
 }
 
+void NoteData::AddATIToList(all_tracks_iterator* iter) const
+{
+	m_atis.insert(iter);
+}
+
+void NoteData::AddATIToList(all_tracks_const_iterator* iter) const
+{
+	m_const_atis.insert(iter);
+}
+
+void NoteData::RemoveATIFromList(all_tracks_iterator* iter) const
+{
+	set<all_tracks_iterator*>::iterator pos= m_atis.find(iter);
+	if(pos != m_atis.end())
+	{
+		m_atis.erase(pos);
+	}
+}
+
+void NoteData::RemoveATIFromList(all_tracks_const_iterator* iter) const
+{
+	set<all_tracks_const_iterator*>::iterator pos= m_const_atis.find(iter);
+	if(pos != m_const_atis.end())
+	{
+		m_const_atis.erase(pos);
+	}
+}
+
+void NoteData::RevalidateATIs(vector<int> const& added_or_removed_tracks, bool added)
+{
+	for(set<all_tracks_iterator*>::iterator cur= m_atis.begin();
+			cur != m_atis.end(); ++cur)
+	{
+		(*cur)->Revalidate(this, added_or_removed_tracks, added);
+	}
+	for(set<all_tracks_const_iterator*>::iterator cur= m_const_atis.begin();
+			cur != m_const_atis.end(); ++cur)
+	{
+		(*cur)->Revalidate(this, added_or_removed_tracks, added);
+	}
+}
+
 template<typename ND, typename iter, typename TN>
 void NoteData::_all_tracks_iterator<ND, iter, TN>::Find( bool bReverse )
 {
@@ -1213,14 +1255,18 @@ void NoteData::_all_tracks_iterator<ND, iter, TN>::Find( bool bReverse )
 }
 
 template<typename ND, typename iter, typename TN>
-NoteData::_all_tracks_iterator<ND, iter, TN>::_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, bool bReverse, bool bInclusive ) :
+	NoteData::_all_tracks_iterator<ND, iter, TN>::_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, bool bReverse, bool bInclusive ) :
 	m_pNoteData(&nd), m_iTrack(0), m_bReverse(bReverse)
 {
 	ASSERT( m_pNoteData->GetNumTracks() > 0 );
 
+	m_StartRow= iStartRow;
+	m_EndRow= iEndRow;
+
 	for( int iTrack = 0; iTrack < m_pNoteData->GetNumTracks(); ++iTrack )
 	{
 		iter begin, end;
+		m_Inclusive= bInclusive;
 		if( bInclusive )
 			m_pNoteData->GetTapNoteRangeInclusive( iTrack, iStartRow, iEndRow, begin, end );
 		else
@@ -1228,6 +1274,7 @@ NoteData::_all_tracks_iterator<ND, iter, TN>::_all_tracks_iterator( ND &nd, int 
 
 		m_vBeginIters.push_back( begin );
 		m_vEndIters.push_back( end );
+		m_PrevCurrentRows.push_back(0);
 
 		iter cur;
 		if( m_bReverse )
@@ -1242,6 +1289,7 @@ NoteData::_all_tracks_iterator<ND, iter, TN>::_all_tracks_iterator( ND &nd, int 
 		}
 		m_vCurrentIters.push_back( cur );
 	}
+	m_pNoteData->AddATIToList(this);
 
 	Find( bReverse );
 }
@@ -1254,14 +1302,28 @@ NoteData::_all_tracks_iterator<ND, iter, TN>::_all_tracks_iterator( const _all_t
 	COPY_OTHER( m_vCurrentIters ),
 	COPY_OTHER( m_vEndIters ),
 	COPY_OTHER( m_iTrack ),
-	COPY_OTHER( m_bReverse )
+	COPY_OTHER( m_bReverse ),
+	COPY_OTHER( m_PrevCurrentRows ),
+	COPY_OTHER( m_StartRow ),
+	COPY_OTHER( m_EndRow )
 #undef COPY_OTHER
 {
+	m_pNoteData->AddATIToList(this);
+}
+
+template<typename ND, typename iter, typename TN>
+	NoteData::_all_tracks_iterator<ND, iter, TN>::~_all_tracks_iterator()
+{
+	if(m_pNoteData != NULL)
+	{
+		m_pNoteData->RemoveATIFromList(this);
+	}
 }
 
 template<typename ND, typename iter, typename TN>
 NoteData::_all_tracks_iterator<ND, iter, TN> &NoteData::_all_tracks_iterator<ND, iter, TN>::operator++() // preincrement
 {
+	m_PrevCurrentRows[m_iTrack]= Row();
 	if( m_bReverse )
 	{
 		if( m_vCurrentIters[m_iTrack] == m_vBeginIters[m_iTrack] )
@@ -1284,6 +1346,71 @@ NoteData::_all_tracks_iterator<ND, iter, TN> NoteData::_all_tracks_iterator<ND, 
 	operator++();
 	return ret;
 }
+
+template<typename ND, typename iter, typename TN>
+	void NoteData::_all_tracks_iterator<ND, iter, TN>::Revalidate(
+		ND* notedata, vector<int> const& added_or_removed_tracks, bool added)
+{
+	m_pNoteData= notedata;
+	ASSERT( m_pNoteData->GetNumTracks() > 0 );
+	if(!added_or_removed_tracks.empty())
+	{
+		if(added)
+		{
+			int avg_row= 0;
+			for(size_t p= 0; p < m_PrevCurrentRows.size(); ++p)
+			{
+				avg_row+= m_PrevCurrentRows[p];
+			}
+			avg_row/= m_PrevCurrentRows.size();
+			for(size_t a= 0; a < added_or_removed_tracks.size(); ++a)
+			{
+				int track_id= added_or_removed_tracks[a];
+				m_PrevCurrentRows.insert(m_PrevCurrentRows.begin()+track_id, avg_row);
+			}
+			m_vBeginIters.resize(m_pNoteData->GetNumTracks());
+			m_vCurrentIters.resize(m_pNoteData->GetNumTracks());
+			m_vEndIters.resize(m_pNoteData->GetNumTracks());
+		}
+		else
+		{
+			for(size_t a= 0; a < added_or_removed_tracks.size(); ++a)
+			{
+				int track_id= added_or_removed_tracks[a];
+				m_PrevCurrentRows.erase(m_PrevCurrentRows.begin()+track_id);
+			}
+			m_vBeginIters.resize(m_pNoteData->GetNumTracks());
+			m_vCurrentIters.resize(m_pNoteData->GetNumTracks());
+			m_vEndIters.resize(m_pNoteData->GetNumTracks());
+		}
+	}
+	for(int track= 0; track < m_pNoteData->GetNumTracks(); ++track)
+	{
+		iter begin, end;
+		if(m_Inclusive)
+		{
+			m_pNoteData->GetTapNoteRangeInclusive(track, m_StartRow, m_EndRow, begin, end);
+		}
+		else
+		{
+			m_pNoteData->GetTapNoteRange(track, m_StartRow, m_EndRow, begin, end);
+		}
+		m_vBeginIters[track]= begin;
+		m_vEndIters[track]= end;
+		iter cur;
+		if(m_bReverse)
+		{
+			cur= m_pNoteData->upper_bound(track, m_PrevCurrentRows[track]);
+		}
+		else
+		{
+			cur= m_pNoteData->lower_bound(track, m_PrevCurrentRows[track]);
+		}
+		m_vCurrentIters[track]= cur;
+	}
+	Find(m_bReverse);
+}
+
 /* XXX: This doesn't satisfy the requirements that ++iter; --iter; is a no-op so it cannot be bidirectional for now. */
 #if 0
 template<typename ND, typename iter, typename TN>
