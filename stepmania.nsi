@@ -643,6 +643,10 @@ Function PreInstall
 
 		old_nsis_not_installed:
 
+		; todo: this needs to be updated for DirectX 9.0c
+		; HKEY_LOCAL_MACHINE "Software\Microsoft\DirectX" "Version"
+		; 9.0c is "4.09.00.0904"
+
 		; Check for DirectX 8.0 (to be moved to the right section later)
 		; We only use this for sound.  Actually, I could probably make the sound
 		; work with an earlier one; I'm not sure if that's needed or not.  For one
