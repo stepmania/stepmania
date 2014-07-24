@@ -1958,7 +1958,7 @@ void ScreenGameplay::UpdateHasteRate()
 	{
 		if( !GAMESTATE->IsHumanPlayer(pi->m_pn) )
 			continue;
-                fMaxLife = max( fMaxLife, pi->m_pLifeMeter->GetLife() );
+		fMaxLife = max( fMaxLife, pi->m_pLifeMeter->GetLife() );
 	}
 	if( fMaxLife <= m_fHasteLifeSwitchPoint )
 		GAMESTATE->m_fHasteRate = SCALE( fMaxLife, 0.0f, m_fHasteLifeSwitchPoint, -1.0f, 0.0f );
