@@ -32,11 +32,19 @@ Sprite::Sprite()
 
 	m_fTexCoordVelocityX = 0;
 	m_fTexCoordVelocityY = 0;
-
-	// An uninitialized sprite should be valid to display. -Kyz
-	Load(TEXTUREMAN->GetDefaultTextureID());
 }
 
+// NoteSkinManager needs a sprite with a texture set to return in cases where
+// the noteskin doesn't return a valid actor.  I would really prefer to make
+// Sprite::Sprite load the default texture, but that causes problems for
+// banners on ScreenSelectMusic and videos on ScreenGameplay.  So rather than
+// dig through either of those, NoteSkinManager uses this special function.
+Sprite* Sprite::NewBlankSprite()
+{
+	Sprite* news= new Sprite;
+	news->Load(TEXTUREMAN->GetDefaultTextureID());
+	return news;
+}
 
 Sprite::~Sprite()
 {
