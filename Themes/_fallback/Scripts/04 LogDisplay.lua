@@ -150,16 +150,8 @@ local log_display_mt= {
 					-- and hardcoded it into BitmapText.
 					local message= tostring(mess.message):gsub("::", ":")
 					if params.IgnoreIdentical then
-						-- Use only the first line for comparison because the rest is
-						-- probably stack trace, with args that might vary uselessly.
-						self.width_tester:settext(message)
-						local lines= convert_text_to_indented_lines(
-							self.width_tester, self.indent, self.line_width, self.text_zoom)
 						for i, prevmess in ipairs(self.message_log) do
-							self.width_tester:settext(prevmess)
-							local prevlines= convert_text_to_indented_lines(
-								self.width_tester, self.indent, self.line_width, self.text_zoom)
-							if lines[1][2] == prevmess[1][2] then return end
+							if message == prevmess then return end
 						end
 					end
 					if params.ReplaceLinesWhenHidden and self.hidden then

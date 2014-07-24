@@ -438,14 +438,14 @@ Actor *NoteSkinManager::LoadActor( const RString &sButton, const RString &sEleme
 	if( !PushActorTemplate(L, sButton, sElement, bSpriteOnly) )
 	{
 		// ActorUtil will warn about the error
-		return new Sprite;
+		return Sprite::NewBlankSprite();
 	}
 
 	auto_ptr<XNode> pNode( XmlFileUtil::XNodeFromTable(L) );
 	if( pNode.get() == NULL )
 	{
 		// XNode will warn about the error
-		return new Sprite;
+		return Sprite::NewBlankSprite();
 	}
 
 	LUA->Release( L );
@@ -460,7 +460,7 @@ Actor *NoteSkinManager::LoadActor( const RString &sButton, const RString &sEleme
 		{
 			LuaHelpers::ReportScriptErrorFmt("%s: %s %s must be a Sprite", m_sCurrentNoteSkin.c_str(), sButton.c_str(), sElement.c_str());
 			delete pRet;
-			return new Sprite;
+			return Sprite::NewBlankSprite();
 		}
 	}
 
