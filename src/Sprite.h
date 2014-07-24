@@ -15,6 +15,9 @@ public:
 	Sprite( const Sprite &cpy );
 	virtual ~Sprite();
 	
+	// See explanation in source.
+	static Sprite* NewBlankSprite();
+
 	virtual void InitState();
 
 	void LoadFromNode( const XNode* pNode );
