@@ -8346,10 +8346,8 @@
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
 				OBJROOT = "$(SRCROOT)/build";
 				OTHER_CPLUSPLUSFLAGS = (
-					"-finline-limit=300",
 					"-fconstant-cfstrings",
 					"-fno-exceptions",
-					"-falign-loops=16",
 				);
 				OTHER_LDFLAGS = "-lbz2";
 				PRODUCT_NAME = "StepMania (Debug)";
@@ -8360,6 +8358,7 @@
 		AA0AA9000963CF7700427F4D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -8390,7 +8389,7 @@
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				SDKROOT = "";
+				SDKROOT = macosx10.6;
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = "non-global";
@@ -8651,8 +8650,6 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				FPM = "";
-				"FPM[arch=i386]" = FPM_INTEL;
 				GCC_MODEL_TUNING = G5;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"HAVE_ASSERT_H=1",
@@ -8664,7 +8661,7 @@
 					"HAVE_MEMORY_H=1",
 					"HAVE_WAITPID=1",
 					"SIZEOF_LONG=4",
-					"$(FPM)",
+					"FPM_INTEL=1",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
@@ -8683,8 +8680,6 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				FPM = "";
-				"FPM[arch=i386]" = FPM_INTEL;
 				GCC_MODEL_TUNING = G5;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"HAVE_ASSERT_H=1",
@@ -8696,7 +8691,7 @@
 					"HAVE_MEMORY_H=1",
 					"HAVE_WAITPID=1",
 					"SIZEOF_LONG=4",
-					"$(FPM)",
+					"FPM_INTEL=1",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
@@ -8715,8 +8710,6 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
-				FPM = "";
-				"FPM[arch=i386]" = FPM_INTEL;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -8729,7 +8722,7 @@
 					"HAVE_MEMORY_H=1",
 					"HAVE_WAITPID=1",
 					"SIZEOF_LONG=4",
-					"$(FPM)",
+					"FPM_INTEL=1",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
@@ -8746,6 +8739,7 @@
 		AABF4DBA0CD37960005A3060 /* PerformanceDebug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				DEAD_CODE_STRIPPING = YES;
 				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch *.xcode* (*) CVS .svn .hg .git";
@@ -8776,7 +8770,7 @@
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				SDKROOT = "";
+				SDKROOT = macosx10.6;
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_STYLE = "non-global";
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include $(PROJECT_DIR)/../extern/vorbis";
@@ -8821,10 +8815,8 @@
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
 				OBJROOT = "$(SRCROOT)/build";
 				OTHER_CPLUSPLUSFLAGS = (
-					"-finline-limit=300",
 					"-fconstant-cfstrings",
 					"-fno-exceptions",
-					"-falign-loops=16",
 				);
 				OTHER_LDFLAGS = "-lbz2";
 				PRODUCT_NAME = "StepMania (Performance-Debug)";
@@ -9040,10 +9032,8 @@
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
 				OBJROOT = "$(SRCROOT)/build";
 				OTHER_CPLUSPLUSFLAGS = (
-					"-finline-limit=300",
 					"-fconstant-cfstrings",
 					"-fno-exceptions",
-					"-falign-loops=16",
 				);
 				OTHER_LDFLAGS = "-lbz2";
 				PRODUCT_NAME = StepMania;
@@ -9054,6 +9044,7 @@
 		AAC845150856A19700A9FEAB /* Native */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				DEAD_CODE_STRIPPING = YES;
 				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch *.xcode* (*) CVS .svn .hg .git";
@@ -9084,7 +9075,7 @@
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				SDKROOT = "";
+				SDKROOT = macosx10.6;
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_STYLE = "non-global";
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include $(PROJECT_DIR)/../extern/vorbis";
