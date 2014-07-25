@@ -94,8 +94,8 @@ void ScreenHowToPlay::Init()
 	if( (bool)USE_CHARACTER && vpCharacters.size() && HaveAllCharAnimations() )
 	{
 		Character* displayChar;
-		if( !CHARACTER_NAME.GetValue().empty() && CHARMAN->GetCharacterFromID(CHARACTER_NAME) )
-			displayChar = CHARMAN->GetCharacterFromID(CHARACTER_NAME);
+		if( !CHARACTER_NAME.GetValue().empty() && CHARMAN->GetCharacterFromID(CHARACTER_NAME.GetValue()) )
+			displayChar = CHARMAN->GetCharacterFromID(CHARACTER_NAME.GetValue());
 		else
 			displayChar = CHARMAN->GetRandomCharacter();
 
