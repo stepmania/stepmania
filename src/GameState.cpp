@@ -998,7 +998,7 @@ void GameState::ResetStageStatistics()
 	m_iStageSeed = rand();
 }
 
-void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp, bool bUpdatePlayers )
+void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp )
 {
 	/* It's not uncommon to get a lot of duplicated positions from the sound
 	 * driver, like so: 13.120953,13.130975,13.130975,13.130975,13.140998,...
@@ -1017,15 +1017,12 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 
 	m_Position.UpdateSongPosition( fPositionSeconds, timing, timestamp );
 
-	if( bUpdatePlayers )
+	FOREACH_EnabledPlayer( pn )
 	{
-		FOREACH_EnabledPlayer( pn )
+		if( m_pCurSteps[pn] )
 		{
-			if( m_pCurSteps[pn] )
-			{
-				m_pPlayerState[pn]->m_Position.UpdateSongPosition( fPositionSeconds, *m_pCurSteps[pn]->GetTimingData(), timestamp );
-				Actor::SetPlayerBGMBeat( pn, m_pPlayerState[pn]->m_Position.m_fSongBeatVisible, m_pPlayerState[pn]->m_Position.m_fSongBeatNoOffset );
-			}
+			m_pPlayerState[pn]->m_Position.UpdateSongPosition( fPositionSeconds, *m_pCurSteps[pn]->GetTimingData(), timestamp );
+			Actor::SetPlayerBGMBeat( pn, m_pPlayerState[pn]->m_Position.m_fSongBeatVisible, m_pPlayerState[pn]->m_Position.m_fSongBeatNoOffset );
 		}
 	}
 	Actor::SetBGMTime( GAMESTATE->m_Position.m_fMusicSecondsVisible, GAMESTATE->m_Position.m_fSongBeatVisible, fPositionSeconds, GAMESTATE->m_Position.m_fSongBeatNoOffset );
