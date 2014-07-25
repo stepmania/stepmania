@@ -439,21 +439,23 @@ function ArbitrarySpeedMods()
 		NumPlayers= 0 -- for ease when adjusting for the status elements.
 	}
 	for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
-		local poptions= GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred")
-		local speed= nil
-		local mode= nil
-		if poptions:MaxScrollBPM() > 0 then
-			mode= "m"
-			speed= math.round(poptions:MaxScrollBPM())
-		elseif poptions:TimeSpacing() > 0 then
-			mode= "C"
-			speed= math.round(poptions:ScrollBPM())
-		else
-			mode= "x"
-			speed= math.round(poptions:ScrollSpeed() * 100)
+		if GAMESTATE:IsHumanPlayer(pn) then
+			local poptions= GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred")
+			local speed= nil
+			local mode= nil
+			if poptions:MaxScrollBPM() > 0 then
+				mode= "m"
+				speed= math.round(poptions:MaxScrollBPM())
+			elseif poptions:TimeSpacing() > 0 then
+				mode= "C"
+				speed= math.round(poptions:ScrollBPM())
+			else
+				mode= "x"
+				speed= math.round(poptions:ScrollSpeed() * 100)
+			end
+			ret.CurValues[pn]= {mode= mode, speed= speed}
+			ret.NumPlayers= ret.NumPlayers + 1
 		end
-		ret.CurValues[pn]= {mode= mode, speed= speed}
-		ret.NumPlayers= ret.NumPlayers + 1
 	end
 	ret:GenChoices()
 	return ret

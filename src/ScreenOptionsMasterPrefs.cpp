@@ -711,6 +711,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "AutoPlay",			MovePref<PlayerController>, "Off","On","CPU-Controlled" ) );
 	ADD( ConfOption( "DelayedBack",			MovePref<bool>,		"Instant","Hold" ) );
 	ADD( ConfOption( "ArcadeOptionsNavigation",	MovePref<bool>,		"StepMania Style","Arcade Style" ) );
+	ADD( ConfOption( "ThreeKeyNavigation", MovePref<bool>, "Five Key Menu", "Three Key Menu" ) );
 	ADD( ConfOption( "MusicWheelSwitchSpeed",	MusicWheelSwitchSpeed,	"Slow","Normal","Fast","Really Fast" ) );
 
 	// Gameplay options

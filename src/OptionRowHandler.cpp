@@ -833,8 +833,9 @@ public:
 	LuaReference m_EnabledForPlayersFunc;
 
 	bool m_TableIsSane;
+	bool m_GoToFirstOnStart;
 
-	OptionRowHandlerLua(): m_TableIsSane(false)
+	OptionRowHandlerLua(): m_TableIsSane(false), m_GoToFirstOnStart(false)
 	{ m_pLuaTable = new LuaReference; Init(); }
 	virtual ~OptionRowHandlerLua() { delete m_pLuaTable; }
 	void Init()
@@ -1029,6 +1030,10 @@ public:
 		const char *pStr = lua_tostring( L, -1 );
 		m_Def.m_sName = pStr;
 		lua_pop( L, 1 );
+
+		lua_getfield(L, -1, "GoToFirstOnStart");
+		m_GoToFirstOnStart= lua_toboolean(L, -1);
+		lua_pop(L, 1);
 
 		lua_getfield(L, -1, "OneChoiceForAllPlayers"); 
 		m_Def.m_bOneChoiceForAllPlayers = lua_toboolean( L, -1 );
@@ -1252,6 +1257,10 @@ public:
 		lua_settop(L, 0); // Release has an assert that forces a clear stack.
 		LUA->Release(L);
 		return changed;
+	}
+	virtual bool GoToFirstOnStart()
+	{
+		return m_GoToFirstOnStart;
 	}
 };
 

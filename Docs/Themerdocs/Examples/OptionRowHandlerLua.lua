@@ -18,13 +18,18 @@
 -- The function "FooMods" returns a table containing all the information the
 -- option row handler needs to build the option row.
 function FooMods()
-  return {
+	return {
 		-- A string with the name of the row.  This name will be localized using
 		-- the entry in the "OptionTitles" section of the language file.
-    Name= "Foo",
+		Name= "Foo",
+
+		-- A boolean that controls whether this row goes to the "next row"
+		-- element when NavigationMode for the screen is "toggle" and the
+		-- ArcadeOptionsNavigation preference is 1.
+		GoToFirstOnStart= false,
 
 		-- A boolean controlling whether the choice affects all players.
-    OneChoiceForAllPlayers= false,
+		OneChoiceForAllPlayers= false,
 
 		-- A boolean controlling whether SaveSelections is called after every
 		-- change.  If this is true, SaveSelections will be called every time
@@ -35,12 +40,12 @@ function FooMods()
 		-- "ShowOneInRow" shows only the choice with focus is shown.
 		-- "ShowOneInRow" is forced if there are enough choices that they would go
 		-- off screen.
-    LayoutType= "ShowAllInRow",
+		LayoutType= "ShowAllInRow",
 
 		-- A SelectType enum value.  "SelectOne" allows only one choice to be
 		-- selected.  "SelectMultiple" allows multiple to be selected.
 		-- "SelectNone" allows none to be selected.
-    SelectType= "SelectMultiple",
+		SelectType= "SelectMultiple",
 
 		-- Optional function.  If non-nil, this function must return a table of
 		-- PlayerNumbers that are allowed to use the row.
@@ -56,7 +61,7 @@ function FooMods()
 
 		-- A table of strings that are the names of choices.  Choice names are not
 		-- localized.
-    Choices= {"a", "b", "c", "d"},
+		Choices= {"a", "b", "c", "d"},
 
 		-- Optional table.  If non-nil, this table must contain a list of messages
 		-- this row should listen for.  If one of the messages is recieved, the
@@ -68,31 +73,31 @@ function FooMods()
 		-- on the row the player has selected.
 		-- self is the table returned by the original function used to create the
 		-- option row. (the table being created right now).
-	  -- list is a table of bools, all initially false.  Set them to true to
+		-- list is a table of bools, all initially false.  Set them to true to
 		-- indicate which options are on.
 		-- pn is the PlayerNumber of the player the selections are for.
-    LoadSelections= function(self, list, pn)
+		LoadSelections= function(self, list, pn)
 			Trace("FooMods:LoadSelections(" .. pn .. ")")
-      for i, choice in ipairs(self.Choices) do
+			for i, choice in ipairs(self.Choices) do
 				-- Randomly set some to true just for an example.
 				if math.random(0, 1) == 1 then
 					Trace(choice .. " (" .. i .. ")" .. " set to true.")
 					list[i]= true
 				end
-      end
-    end,
+			end
+		end,
 
 		-- SaveSelections should examine the list of what the player has selected
 		-- and apply the appropriate modifiers to the player.
 		-- Same args as LoadSelections.
-    SaveSelections= function(self, list, pn)
+		SaveSelections= function(self, list, pn)
 			Trace("FooMods:SaveSelections(" .. pn .. ")")
-      for i, choice in ipairs(self.Choices) do
-        if list[i] then
+			for i, choice in ipairs(self.Choices) do
+				if list[i] then
 					Trace(choice .. " (" .. i .. ")" .. " set to true.")
 				end
-      end
-    end,
+			end
+		end,
 
 		-- Optional function.  If non-nil, this function must take 3 parameters
 		-- (self, pn, choice), and return a bool.  It is called when a player
@@ -137,5 +142,5 @@ function FooMods()
 			end
 			return change >= 2
 		end
-  }
+	}
 end

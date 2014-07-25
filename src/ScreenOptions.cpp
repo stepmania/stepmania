@@ -916,7 +916,7 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 		msg.SetParam( "Selected", bSelected );
 		MESSAGEMAN->Broadcast( msg );
 
-		if( row.GetFirstItemGoesDown() )
+		if(row.GetFirstItemGoesDown() && row.GoToFirstOnStart())
 		{
 			// move to the first choice in the row
 			ChangeValueInRowRelative( m_iCurrentRow[pn], pn, -row.GetChoiceInRowWithFocus(pn), input.type != IET_FIRST_PRESS );
