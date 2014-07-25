@@ -27,8 +27,8 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 		const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( c, pn );
 		NOTESKIN->SetGameController( GameI.controller );
 
-		m_bHoldShowing.push_back( TapNote::SubType_Invalid );
-		m_bLastHoldShowing.push_back( TapNote::SubType_Invalid );
+		m_bHoldShowing.push_back( TapNoteSubType_Invalid );
+		m_bLastHoldShowing.push_back( TapNoteSubType_Invalid );
 
 		m_Ghost.push_back( NOTESKIN->LoadActor(sButton, "Explosion", this) );
 		m_Ghost[c]->SetName( "GhostArrow" );
@@ -67,26 +67,26 @@ void GhostArrowRow::Update( float fDeltaTime )
 	{
 		if( m_bLastHoldShowing[i] != m_bHoldShowing[i] )
 		{
-			if( m_bLastHoldShowing[i] == TapNote::hold_head_hold )
+			if( m_bLastHoldShowing[i] == TapNoteSubType_Hold )
 				m_Ghost[i]->PlayCommand( "HoldingOff" );
-			else if( m_bLastHoldShowing[i] == TapNote::hold_head_roll )
+			else if( m_bLastHoldShowing[i] == TapNoteSubType_Roll )
 				m_Ghost[i]->PlayCommand( "RollOff" );
 			/*
-			else if( m_bLastHoldShowing[i] == TapNote::hold_head_mine )
+			else if( m_bLastHoldShowing[i] == TapNoteSubType_Mine )
 				m_Ghost[i]->PlayCommand( "MinefieldOff" );
 			*/
 
-			if( m_bHoldShowing[i] == TapNote::hold_head_hold )
+			if( m_bHoldShowing[i] == TapNoteSubType_Hold )
 				m_Ghost[i]->PlayCommand( "HoldingOn" );
-			else if( m_bHoldShowing[i] == TapNote::hold_head_roll )
+			else if( m_bHoldShowing[i] == TapNoteSubType_Roll )
 				m_Ghost[i]->PlayCommand( "RollOn" );
 			/*
-			else if( m_bHoldShowing[i] == TapNote::hold_head_mine )
+			else if( m_bHoldShowing[i] == TapNoteSubType_Mine )
 				m_Ghost[i]->PlayCommand( "MinefieldOn" );
 			*/
 			m_bLastHoldShowing[i] = m_bHoldShowing[i];
 		}
-		m_bHoldShowing[i] = TapNote::SubType_Invalid;
+		m_bHoldShowing[i] = TapNoteSubType_Invalid;
 	}
 }
 

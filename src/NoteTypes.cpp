@@ -5,18 +5,51 @@
 #include "XmlFile.h"
 #include "LocalizedString.h"
 
-TapNote TAP_EMPTY			( TapNote::empty,	TapNote::SubType_Invalid,	TapNote::original, "", 0, -1 );
-TapNote TAP_ORIGINAL_TAP		( TapNote::tap,		TapNote::SubType_Invalid,	TapNote::original, "", 0, -1 );
-TapNote TAP_ORIGINAL_LIFT		( TapNote::lift,	TapNote::SubType_Invalid,	TapNote::original, "", 0, -1 );
-TapNote TAP_ORIGINAL_HOLD_HEAD		( TapNote::hold_head,	TapNote::hold_head_hold,	TapNote::original, "", 0, -1 );
-TapNote TAP_ORIGINAL_ROLL_HEAD		( TapNote::hold_head,	TapNote::hold_head_roll,	TapNote::original, "", 0, -1 );
-TapNote TAP_ORIGINAL_MINE		( TapNote::mine,	TapNote::SubType_Invalid,	TapNote::original, "", 0, -1 );
-TapNote TAP_ORIGINAL_ATTACK		( TapNote::attack,	TapNote::SubType_Invalid,	TapNote::original, "", 0, -1 );
-TapNote TAP_ORIGINAL_AUTO_KEYSOUND	( TapNote::autoKeysound,TapNote::SubType_Invalid,	TapNote::original, "", 0, -1 );
-TapNote TAP_ORIGINAL_FAKE		( TapNote::fake,	TapNote::SubType_Invalid,	TapNote::original, "", 0, -1 );
-//TapNote TAP_ORIGINAL_MINE_HEAD	( TapNote::mine_head,	TapNote::hold_head_mine,	TapNote::original, "", 0, -1 );
-TapNote TAP_ADDITION_TAP		( TapNote::tap,		TapNote::SubType_Invalid,	TapNote::addition, "", 0, -1 );
-TapNote TAP_ADDITION_MINE		( TapNote::mine,	TapNote::SubType_Invalid,	TapNote::addition, "", 0, -1 );
+TapNote TAP_EMPTY    ( TapNoteType_Empty,    TapNoteSubType_Invalid,    TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_TAP    ( TapNoteType_Tap,    TapNoteSubType_Invalid,    TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_LIFT    ( TapNoteType_Lift,    TapNoteSubType_Invalid,    TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_HOLD_HEAD    ( TapNoteType_HoldHead,    TapNoteSubType_Hold,    TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_ROLL_HEAD    ( TapNoteType_HoldHead,    TapNoteSubType_Roll,    TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_MINE    ( TapNoteType_Mine,    TapNoteSubType_Invalid,    TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_ATTACK    ( TapNoteType_Attack,    TapNoteSubType_Invalid,    TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_AUTO_KEYSOUND    ( TapNoteType_AutoKeysound,TapNoteSubType_Invalid,    TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_FAKE    ( TapNoteType_Fake,    TapNoteSubType_Invalid,    TapNoteSource_Original, "", 0, -1 );
+//TapNote TAP_ORIGINAL_MINE_HEAD ( TapNoteType_HoldHead, TapNoteSubType_Mine, TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ADDITION_TAP    ( TapNoteType_Tap,    TapNoteSubType_Invalid,    TapNoteSource_Addition, "", 0, -1 );
+TapNote TAP_ADDITION_MINE    ( TapNoteType_Mine,    TapNoteSubType_Invalid,    TapNoteSource_Addition, "", 0, -1 );
+
+
+static const char *TapNoteTypeNames[] = {
+    "Empty",
+    "Tap",
+    "HoldHead",
+    "HoldTail",
+    "Mine",
+    "Lift",
+    "Attack",
+    "AutoKeySound",
+    "Fake",
+};
+XToString( TapNoteType );
+XToLocalizedString( TapNoteType );
+LuaXType( TapNoteType );
+
+static const char *TapNoteSubTypeNames[] = {
+    "Hold",
+    "Roll",
+    //"Mine",
+};
+XToString( TapNoteSubType );
+XToLocalizedString( TapNoteSubType );
+LuaXType( TapNoteSubType );
+
+static const char *TapNoteSourceNames[] = {
+    "Original",
+    "Addition",
+};
+XToString( TapNoteSource );
+XToLocalizedString( TapNoteSource );
+LuaXType( TapNoteSource );
 
 static const char *NoteTypeNames[] = {
 	"4th",

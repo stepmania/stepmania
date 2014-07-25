@@ -75,43 +75,59 @@ struct HoldNoteResult
 	void LoadFromNode( const XNode* pNode );
 };
 
+/** @brief What is the TapNote's core type? */
+enum TapNoteType
+{
+	TapNoteType_Empty, 		/**< There is no note here. */
+	TapNoteType_Tap,		/**< The player simply steps on this. */
+	TapNoteType_HoldHead,	/**< This is graded like the Tap type, but should be held. */
+	TapNoteType_HoldTail,	/**< In 2sand3s mode, holds are deleted and hold_tail is added. */
+	TapNoteType_Mine,		/**< In most modes, it is suggested to not step on these mines. */
+	TapNoteType_Lift,		/**< Lift your foot up when it crosses the target area. */
+	TapNoteType_Attack,		/**< Hitting this note causes an attack to take place. */
+	TapNoteType_AutoKeysound,	/**< A special sound is played when this note crosses the target area. */
+	TapNoteType_Fake,		/**< This arrow can't be scored for or against the player. */
+    NUM_TapNoteType,
+    TapNoteType_Invalid
+};
+const RString& TapNoteTypeToString( TapNoteType tnt );
+const RString& TapNoteTypeToLocalizedString( TapNoteType tnt );
+LuaDeclareType( TapNoteType );
+
+/** @brief The list of a TapNote's sub types. */
+enum TapNoteSubType
+{
+    TapNoteSubType_Hold, /**< The start of a traditional hold note. */
+    TapNoteSubType_Roll, /**< The start of a roll note that must be hit repeatedly. */
+    //TapNoteSubType_Mine,
+    NUM_TapNoteSubType,
+    TapNoteSubType_Invalid
+};
+const RString& TapNoteSubTypeToString( TapNoteSubType tnst );
+const RString& TapNoteSubTypeToLocalizedString( TapNoteSubType tnst );
+LuaDeclareType( TapNoteSubType );
+
+/** @brief The different places a TapNote could come from. */
+enum TapNoteSource
+{
+    TapNoteSource_Original,    /**< This note is part of the original NoteData. */
+    TapNoteSource_Addition,    /**< This note is additional note added by a transform. */
+    NUM_TapNoteSource,
+    TapNoteSource_Invalid
+};
+const RString& TapNoteSourceToString( TapNoteSource tns );
+const RString& TapNoteSourceToLocalizedString( TapNoteSource tns );
+LuaDeclareType( TapNoteSource );
+
 /** @brief The various properties of a tap note. */
 struct TapNote
 {
-	/** @brief What is the TapNote's core type? */
-	enum Type
-	{ 
-		empty, 		/**< There is no note here. */
-		tap,		/**< The player simply steps on this. */
-		hold_head,	/**< This is graded like the Tap type, but should be held. */
-		hold_tail,	/**< In 2sand3s mode, holds are deleted and hold_tail is added. */
-		mine,		/**< In most modes, it is suggested to not step on these mines. */
-		lift,		/**< Lift your foot up when it crosses the target area. */
-		attack,		/**< Hitting this note causes an attack to take place. */
-		autoKeysound,	/**< A special sound is played when this note crosses the target area. */
-		fake,		/**< This arrow can't be scored for or against the player. */
- 	};
-	/** @brief The list of a TapNote's sub types. */
-	enum SubType
-	{
-		hold_head_hold, /**< The start of a traditional hold note. */
-		hold_head_roll, /**< The start of a roll note that must be hit repeatedly. */
-		//hold_head_mine,
-		NUM_SubType,
-		SubType_Invalid
-	};
-	/** @brief The different places a TapNote could come from. */
-	enum Source
-	{
-		original,	/**< This note is part of the original NoteData. */
-		addition,	/**< This note is additional note added by a transform. */
-	};
 	/** @brief The core note type that is about to cross the target area. */
-	Type		type;
+	TapNoteType		type;
 	/** @brief The sub type of the note. This is only used if the type is hold_head. */
-	SubType		subType;
+	TapNoteSubType		subType;
 	/** @brief The originating source of the TapNote. */
-	Source		source;
+	TapNoteSource		source;
 	/** @brief The result of hitting or missing the TapNote. */
 	TapNoteResult	result;
 	/** @brief The Player that is supposed to hit this note. This is mainly for Routine Mode. */
@@ -134,15 +150,15 @@ struct TapNote
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
 
-	TapNote(): type(empty), subType(SubType_Invalid), source(original),
-		result(), pn(PLAYER_INVALID), bHopoPossible(false), 
-		sAttackModifiers(""), fAttackDurationSeconds(0), 
+	TapNote(): type(TapNoteType_Empty), subType(TapNoteSubType_Invalid),
+		source(TapNoteSource_Original),	result(), pn(PLAYER_INVALID), 
+		bHopoPossible(false), sAttackModifiers(""), fAttackDurationSeconds(0), 
 		iKeysoundIndex(-1), iDuration(0), HoldResult() {}
 	void Init()
 	{
-		type = empty;
-		subType = SubType_Invalid; 
-		source = original; 
+		type = TapNoteType_Empty;
+		subType = TapNoteSubType_Invalid; 
+		source = TapNoteSource_Original; 
 		pn = PLAYER_INVALID, 
 		bHopoPossible = false;
 		fAttackDurationSeconds = 0.f; 
@@ -150,9 +166,9 @@ struct TapNote
 		iDuration = 0;
 	}
 	TapNote( 
-		Type type_,
-		SubType subType_,
-		Source source_, 
+		TapNoteType type_,
+		TapNoteSubType subType_,
+		TapNoteSource source_, 
 		RString sAttackModifiers_,
 		float fAttackDurationSeconds_,
 		int iKeysoundIndex_ ):
@@ -162,10 +178,10 @@ struct TapNote
 		fAttackDurationSeconds(fAttackDurationSeconds_),
 		iKeysoundIndex(iKeysoundIndex_), iDuration(0), HoldResult()
 	{
-		if (type_ > TapNote::fake )
+		if (type_ > TapNoteType_Fake )
 		{
-			LOG->Trace("Invalid tap note type %d (most likely) due to random vanish issues. Assume it doesn't need judging.", (int)type_ );
-			type = TapNote::empty;
+			LOG->Trace("Invalid tap note type %d (most likely) due to random vanish issues. Assume it doesn't need judging.", TapNoteTypeToString(type_).c_str() );
+			type = TapNoteType_Empty;
 		}
 	}
 
@@ -206,39 +222,6 @@ extern TapNote TAP_ORIGINAL_FAKE;		// 'F'
 //extern TapNote TAP_ORIGINAL_MINE_HEAD;	// 'N' (tentative, we'll see when iDance gets ripped.)
 extern TapNote TAP_ADDITION_TAP;
 extern TapNote TAP_ADDITION_MINE;
-
-/**
- * @brief Retrieve the string representing the TapNote Type.
- *
- * TODO: Find a way to standardize this with the other enum string calls.
- * @param tn the TapNote's type.
- * @return the intended string. */
-inline const RString TapNoteTypeToString( TapNote::Type tn )
-{
-	switch( tn )
-	{
-		case TapNote::empty:
-			return RString("empty");
-		case TapNote::tap:
-			return RString("tap");
-		case TapNote::hold_head:
-			return RString("hold_head");
-		case TapNote::hold_tail:
-			return RString("hold_tail");
-		case TapNote::mine:	
-			return RString("mine");
-		case TapNote::lift:	
-			return RString("lift");
-		case TapNote::attack:
-			return RString("attack");
-		case TapNote::autoKeysound:
-			return RString("autoKeysound");
-		case TapNote::fake:
-			return RString("fake");
-		default:
-			return RString("");
-	}
-}
 
 /**
  * @brief The number of tracks allowed.

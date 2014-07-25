@@ -25,8 +25,8 @@ protected:
 	const PlayerState* m_pPlayerState;
 
 	vector<Actor *> 	m_Ghost;
-	vector<TapNote::SubType> m_bHoldShowing;
-	vector<TapNote::SubType> m_bLastHoldShowing;
+	vector<TapNoteSubType> m_bHoldShowing;
+	vector<TapNoteSubType> m_bLastHoldShowing;
 };
 
 

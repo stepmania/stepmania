@@ -1214,7 +1214,7 @@ void NoteField::DrawPrimitives()
 			for( ; begin != end; ++begin )
 			{
 				const TapNote &tn = begin->second; //m_pNoteData->GetTapNote(c, j);
-				if( tn.type != TapNote::hold_head )
+				if( tn.type != TapNoteType_HoldHead )
 					continue; // skip
 
 				const HoldNoteResult &Result = tn.HoldResult;
@@ -1243,7 +1243,7 @@ void NoteField::DrawPrimitives()
 					continue;	// skip
 				}
 
-				bool bIsAddition = (tn.source == TapNote::addition);
+				bool bIsAddition = (tn.source == TapNoteSource_Addition);
 				bool bIsHopoPossible = (tn.bHopoPossible);
 				bool bUseAdditionColoring = bIsAddition || bIsHopoPossible;
 				const bool bHoldGhostShowing = tn.HoldResult.bActive  &&  tn.HoldResult.fLife > 0;
@@ -1280,13 +1280,13 @@ void NoteField::DrawPrimitives()
 			// Fixes hold head overlapping issue, but not the rolls.
 			switch( tn.type )
 			{
-				case TapNote::empty: // no note here
+				case TapNoteType_Empty: // no note here
 				{
 					continue;
 				}
-				case TapNote::hold_head:
+				case TapNoteType_HoldHead:
 				{
-					//if (tn.subType == TapNote::hold_head_roll)
+					//if (tn.subType == TapNoteSubType_Roll)
 						continue; // skip
 				}
 				default: break;
@@ -1313,8 +1313,8 @@ void NoteField::DrawPrimitives()
 				for( int c2=0; c2<m_pNoteData->GetNumTracks(); c2++ )
 				{
 					const TapNote &tmp = m_pNoteData->GetTapNote(c2, q);
-					if(tmp.type == TapNote::hold_head &&
-					   tmp.subType == TapNote::hold_head_hold)
+					if(tmp.type == TapNoteType_HoldHead &&
+					   tmp.subType == TapNoteSubType_Hold)
 					{
 						bHoldNoteBeginsOnThisBeat = true;
 						break;
@@ -1329,8 +1329,8 @@ void NoteField::DrawPrimitives()
 				for( int c2=0; c2<m_pNoteData->GetNumTracks(); c2++ )
 				{
 					const TapNote &tmp = m_pNoteData->GetTapNote(c2, q);
-					if(tmp.type == TapNote::hold_head &&
-					   tmp.subType == TapNote::hold_head_roll)
+					if(tmp.type == TapNoteType_HoldHead &&
+					   tmp.subType == TapNoteSubType_Roll)
 					{
 						bRollNoteBeginsOnThisBeat = true;
 						break;
@@ -1342,7 +1342,7 @@ void NoteField::DrawPrimitives()
 			if( m_iBeginMarker!=-1 && m_iEndMarker!=-1 )
 				bIsInSelectionRange = m_iBeginMarker<=q && q<m_iEndMarker;
 
-			bool bIsAddition = (tn.source == TapNote::addition);
+			bool bIsAddition = (tn.source == TapNoteSource_Addition);
 			bool bIsHopoPossible = (tn.bHopoPossible);
 			bool bUseAdditionColoring = bIsAddition || bIsHopoPossible;
 			NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
