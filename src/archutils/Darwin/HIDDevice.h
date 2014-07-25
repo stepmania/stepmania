@@ -45,6 +45,7 @@ inline Boolean LongValue( CFTypeRef o, long &n )
 
 namespace __gnu_cxx
 {
+#ifndef __LP64__
 	template<>
 	struct hash<IOHIDElementCookie> : private hash<uintptr_t>
 	{
@@ -53,6 +54,7 @@ namespace __gnu_cxx
 			return hash<unsigned long>::operator()( uintptr_t(cookie) );
 		}
 	};
+#endif
 }
 
 /* This is just awful, these aren't objects, treating them as such
