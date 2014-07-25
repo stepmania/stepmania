@@ -14,7 +14,7 @@ public:
 	Sprite();
 	Sprite( const Sprite &cpy );
 	virtual ~Sprite();
-	
+
 	// See explanation in source.
 	static Sprite* NewBlankSprite();
 

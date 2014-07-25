@@ -112,6 +112,7 @@ public:
 	// ScreenOptions calls positions m_FrameDestination, then m_Frame tween to that same TweenState.
 	unsigned GetTextItemsSize() const { return m_textItems.size(); }
 	bool GetFirstItemGoesDown() const { return m_bFirstItemGoesDown; }
+	bool GoToFirstOnStart();
 
 	RString GetThemedItemText( int iChoice ) const;
 

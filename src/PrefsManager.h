@@ -191,6 +191,7 @@ public:
 	Preference<bool>	m_bShowCaution;
 	Preference<bool>	m_bShowNativeLanguage;
 	Preference<int>	m_iArcadeOptionsNavigation;
+	Preference<bool>	m_ThreeKeyNavigation;
 	Preference<MusicWheelUsesSections>		m_MusicWheelUsesSections;
 	Preference<int>	m_iMusicWheelSwitchSpeed;
 	Preference<AllowW1>	m_AllowW1; // this should almost always be on, given use cases. -aj
