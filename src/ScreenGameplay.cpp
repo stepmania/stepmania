@@ -1958,7 +1958,15 @@ void ScreenGameplay::UpdateHasteRate()
 	{
 		if( !GAMESTATE->IsHumanPlayer(pi->m_pn) )
 			continue;
-		fMaxLife = max( fMaxLife, pi->m_pLifeMeter->GetLife() );
+		// In Battle/Rave mode, the players don't have life meters.
+		if(pi->m_pLifeMeter)
+		{
+			fMaxLife= max(fMaxLife, pi->m_pLifeMeter->GetLife());
+		}
+		else
+		{
+			fMaxLife= 1;
+		}
 	}
 	if( fMaxLife <= m_fHasteLifeSwitchPoint )
 		GAMESTATE->m_fHasteRate = SCALE( fMaxLife, 0.0f, m_fHasteLifeSwitchPoint, -1.0f, 0.0f );
@@ -3008,7 +3016,16 @@ LUA_REGISTER_DERIVED_CLASS( ScreenGameplay, ScreenWithMenuElements )
 class LunaPlayerInfo: public Luna<PlayerInfo>
 {
 public:
-	static int GetLifeMeter( T* p, lua_State *L ) { p->m_pLifeMeter->PushSelf(L); return 1; }
+	static int GetLifeMeter( T* p, lua_State *L )
+	{
+		if(p->m_pLifeMeter)
+		{
+			p->m_pLifeMeter->PushSelf(L);
+			return 1;
+		}
+		return 0;
+	}
+		
 	static int GetStepsQueueWrapped( T* p, lua_State *L )
 	{
 		int iIndex = IArg(1);
