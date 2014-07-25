@@ -537,16 +537,16 @@ static bool NeedsTapJudging( const TapNote &tn )
 	switch( tn.type )
 	{
 	DEFAULT_FAIL( tn.type );
-	case TapNote::tap:
-	case TapNote::hold_head:
-	case TapNote::mine:
-	case TapNote::lift:
+	case TapNoteType_Tap:
+	case TapNoteType_HoldHead:
+	case TapNoteType_Mine:
+	case TapNoteType_Lift:
 		return tn.result.tns == TNS_None;
-	case TapNote::hold_tail:
-	case TapNote::attack:
-	case TapNote::autoKeysound:
-	case TapNote::fake:
-	case TapNote::empty:
+	case TapNoteType_HoldTail:
+	case TapNoteType_Attack:
+	case TapNoteType_AutoKeysound:
+	case TapNoteType_Fake:
+	case TapNoteType_Empty:
 		return false;
 	}
 }
@@ -560,16 +560,16 @@ static bool NeedsHoldJudging( const TapNote &tn )
 	switch( tn.type )
 	{
 	DEFAULT_FAIL( tn.type );
-	case TapNote::hold_head:
+	case TapNoteType_HoldHead:
 		return tn.HoldResult.hns == HNS_None;
-	case TapNote::tap:
-	case TapNote::hold_tail:
-	case TapNote::mine:
-	case TapNote::lift:
-	case TapNote::attack:
-	case TapNote::autoKeysound:
-	case TapNote::fake:
-	case TapNote::empty:
+	case TapNoteType_Tap:
+	case TapNoteType_HoldTail:
+	case TapNoteType_Mine:
+	case TapNoteType_Lift:
+	case TapNoteType_Attack:
+	case TapNoteType_AutoKeysound:
+	case TapNoteType_Fake:
+	case TapNoteType_Empty:
 		return false;
 	}
 }
@@ -947,7 +947,7 @@ void Player::Update( float fDeltaTime )
 				iHeadRow = iSongRow;
 
 			const TapNote &tn = m_NoteData.GetTapNote( iTrack, iHeadRow );
-			if( tn.type != TapNote::hold_head || tn.subType != TapNote::hold_head_roll )
+			if( tn.type != TapNoteType_HoldHead || tn.subType != TapNoteSubType_Roll )
 				continue;
 			if( tn.HoldResult.hns != HNS_None )
 				continue;
@@ -981,7 +981,7 @@ void Player::Update( float fDeltaTime )
 		for( ; !iter.IsAtEnd() &&  iter.Row() <= iSongRow; ++iter )
 		{
 			TapNote &tn = *iter;
-			if( tn.type != TapNote::hold_head )
+			if( tn.type != TapNoteType_HoldHead )
 				continue;
 
 			int iTrack = iter.Track();
@@ -994,9 +994,9 @@ void Player::Update( float fDeltaTime )
 			switch( tn.subType )
 			{
 			DEFAULT_FAIL( tn.subType );
-			case TapNote::hold_head_hold:
+			case TapNoteSubType_Hold:
 				break;
-			case TapNote::hold_head_roll:
+			case TapNoteSubType_Roll:
 				{
 					vector<TrackRowTapNote> v;
 					v.push_back( trtn );
@@ -1005,7 +1005,7 @@ void Player::Update( float fDeltaTime )
 				continue;	// don't process this below
 			}
 			/*
-			case TapNote::hold_head_mine:
+			case TapNoteSubType_Mine:
 				break;
 			*/
 
@@ -1088,14 +1088,14 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	int iMaxEndRow = INT_MIN;
 	int iFirstTrackWithMaxEndRow = -1;
 
-	TapNote::SubType subType = TapNote::SubType_Invalid;
+	TapNoteSubType subType = TapNoteSubType_Invalid;
 	FOREACH( TrackRowTapNote, vTN, trtn )
 	{
 		int iTrack = trtn->iTrack;
 		ASSERT( iStartRow == trtn->iRow );
 		TapNote &tn = *trtn->pTN;
 		int iEndRow = iStartRow + tn.iDuration;
-		if( subType == TapNote::SubType_Invalid )
+		if( subType == TapNoteSubType_Invalid )
 			subType = tn.subType;
 
 		/* All holds must be of the same subType because fLife is handled 
@@ -1250,7 +1250,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	{
 		switch( subType )
 		{
-		case TapNote::hold_head_hold:
+		case TapNoteSubType_Hold:
 			FOREACH( TrackRowTapNote, vTN, trtn )
 			{
 				TapNote &tn = *trtn->pTN;
@@ -1296,7 +1296,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 				}
 			}
 			break;
-		case TapNote::hold_head_roll:
+		case TapNoteSubType_Roll:
 			FOREACH( TrackRowTapNote, vTN, trtn )
 			{
 				TapNote &tn = *trtn->pTN;
@@ -1311,7 +1311,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			fLife = max( fLife, 0 );	// clamp
 			break;
 		/*
-		case TapNote::hold_head_mine:
+		case TapNoteSubType_Mine:
 			break;
 		*/
 		default:
@@ -1353,14 +1353,14 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		switch( subType )
 		{
 		DEFAULT_FAIL( subType );
-		case TapNote::hold_head_hold:
+		case TapNoteSubType_Hold:
 			bAllowHoldCheckpoints = true;
 			break;
-		case TapNote::hold_head_roll:
+		case TapNoteSubType_Roll:
 			bAllowHoldCheckpoints = false;
 			break;
 		/*
-		case TapNote::hold_head_mine:
+		case TapNoteSubType_Mine:
 			bAllowHoldCheckpoints = true;
 			break;
 		*/
@@ -1454,7 +1454,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 
 			if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 			{
-				float factor = (tn.subType == TapNote::hold_head_roll ? 2.0f * fLifeFraction : 10.0f * fLifeFraction - 8.5f);
+				float factor = (tn.subType == TapNoteSubType_Roll ? 2.0f * fLifeFraction : 10.0f * fLifeFraction - 8.5f);
 				m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", max(0.0f, min(1.0f, factor)) * fVol);
 			}
 		}
@@ -1667,7 +1667,7 @@ int Player::GetClosestNoteDirectional( int col, int iStartRow, int iEndRow, bool
 			if (!m_Timing->IsJudgableAtRow( begin->first ))
 				break;
 			// unsure if autoKeysounds should be excluded. -Wolfman2000
-			if( tn.type == TapNote::empty || tn.type == TapNote::autoKeysound )
+			if( tn.type == TapNoteType_Empty || tn.type == TapNoteType_AutoKeysound )
 				break;
 			if( !bAllowGraded && tn.result.tns != TNS_None )
 				break;
@@ -1974,7 +1974,7 @@ void Player::PlayKeysound( const TapNote &tn, TapNoteScore score )
 	if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 	{
 		// handle a case for hold notes
-		if( tn.type == TapNote::hold_head )
+		if( tn.type == TapNoteType_HoldHead )
 		{
 			// if the hold is not already held
 			if( tn.HoldResult.hns == HNS_None )
@@ -2046,15 +2046,15 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		for( ; begin != end; ++begin )
 		{
 			TapNote &tn = begin->second;
-			if( tn.type != TapNote::hold_head )
+			if( tn.type != TapNoteType_HoldHead )
 				continue;
 
 			switch( tn.subType )
 			{
 			DEFAULT_FAIL( tn.subType );
-			case TapNote::hold_head_hold:
+			case TapNoteSubType_Hold:
 				continue;
-			case TapNote::hold_head_roll:
+			case TapNoteSubType_Roll:
 				break;
 			}
 
@@ -2240,18 +2240,18 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		case PC_HUMAN:
 			switch( pTN->type )
 			{
-			case TapNote::mine:
+			case TapNoteType_Mine:
 				// Stepped too close to mine?
 				if( !bRelease && ( REQUIRE_STEP_ON_MINES == !bHeld ) && 
 				   fSecondsFromExact <= GetWindowSeconds(TW_Mine) &&
 				   m_Timing->IsJudgableAtRow(iSongRow))
 					score = TNS_HitMine;   
 				break;
-			case TapNote::attack:
+			case TapNoteType_Attack:
 				if( !bRelease && fSecondsFromExact <= GetWindowSeconds(TW_Attack) && !pTN->result.bHidden )
 					score = AllowW1() ? TNS_W1 : TNS_W2; // sentinel
 				break;
-			case TapNote::hold_head:
+			case TapNoteType_HoldHead:
 				// oh wow, this was causing the trigger before the hold heads
 				// bug. (It was fNoteOffset > 0.f before) -DaisuMaster
 				if( !REQUIRE_STEP_ON_HOLD_HEADS && ( fNoteOffset <= GetWindowSeconds( TW_W5 ) && GetWindowSeconds( TW_W5 ) != 0 ) )
@@ -2261,7 +2261,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				}
 				// Fall through to default.
 			default:
-				if( (pTN->type == TapNote::lift) == bRelease )
+				if( (pTN->type == TapNoteType_Lift) == bRelease )
 				{
 					if(	 fSecondsFromExact <= GetWindowSeconds(TW_W1) )	score = TNS_W1;
 					else if( fSecondsFromExact <= GetWindowSeconds(TW_W2) )	score = TNS_W2;
@@ -2292,14 +2292,14 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 
 			// TRICKY:  We're asking the AI to judge mines. Consider TNS_W4 and
 			// below as "mine was hit" and everything else as "mine was avoided"
-			if( pTN->type == TapNote::mine )
+			if( pTN->type == TapNoteType_Mine )
 			{
 				// The CPU hits a lot of mines. Only consider hitting the
 				// first mine for a row. We know we're the first mine if 
 				// there are are no mines to the left of us.
 				for( int t=0; t<col; t++ )
 				{
-					if( m_NoteData.GetTapNote(t,iRowOfOverlappingNoteOrRow).type == TapNote::mine )	// there's a mine to the left of us
+					if( m_NoteData.GetTapNote(t,iRowOfOverlappingNoteOrRow).type == TapNoteType_Mine )	// there's a mine to the left of us
 						return;	// avoid
 				}
 
@@ -2314,7 +2314,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 					score = TNS_HitMine;
 			}
 
-			if( pTN->type == TapNote::attack && score > TNS_W4 )
+			if( pTN->type == TapNoteType_Attack && score > TNS_W4 )
 				score = TNS_W2; // sentinel
 
 			/* AI will generate misses here. Don't handle a miss like a regular
@@ -2405,7 +2405,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				for( int i=0; i<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; i++ )
 				{
 					const TapNote &tn = m_NoteData.GetTapNote( i, iRowOfOverlappingNoteOrRow );
-					bool bIsNote = (tn.type != TapNote::empty);
+					bool bIsNote = (tn.type != TapNoteType_Empty);
 					if( iFirstNoteCol == -1  &&  bIsNote )
 						iFirstNoteCol = i;
 
@@ -2432,7 +2432,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 					for( int i=GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer-1; i>=0; i-- )
 					{
 						const TapNote &tn = m_NoteData.GetTapNote( i, iRowOfOverlappingNoteOrRow );
-						bool bIsNote = (tn.type != TapNote::empty);
+						bool bIsNote = (tn.type != TapNoteType_Empty);
 						if( bIsNote )
 						{
 							iLastNoteCol = i;
@@ -2462,7 +2462,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				}
 
 				const TapNote &tn = m_NoteData.GetTapNote( col, iRowOfOverlappingNoteOrRow );
-				ASSERT( tn.type != TapNote::empty );
+				ASSERT( tn.type != TapNoteType_Empty );
 
 				int iRowsAgoLastNote = 100000;	// TODO: find more reasonable value based on HOPO_CHAIN_SECONDS?
 				NoteData::all_tracks_reverse_iterator iter = m_NoteData.GetTapNoteRangeAllTracksReverse( iRowsAgoLastNote-iRowsAgoLastNote, iRowOfOverlappingNoteOrRow-1 );
@@ -2489,7 +2489,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		}
 
 		// handle attack notes
-		if( pTN->type == TapNote::attack && score == TNS_W2 )
+		if( pTN->type == TapNoteType_Attack && score == TNS_W2 )
 		{
 			score = TNS_None;	// don't score this as anything
 
@@ -2514,7 +2514,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 			{
 				const TapNote &tn = m_NoteData.GetTapNote( t, iRowOfOverlappingNoteOrRow );
-				if( tn.type == TapNote::attack )
+				if( tn.type == TapNoteType_Attack )
 					HideNote( t, iRowOfOverlappingNoteOrRow );
 			}
 		}
@@ -2537,7 +2537,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 				{
 					TapNote tn = m_NoteData.GetTapNote( t, iRowOfOverlappingNoteOrRow );
-					if( tn.type != TapNote::empty )
+					if( tn.type != TapNoteType_Empty )
 					{
 						tn.result.tns = score;
 						tn.result.fTapNoteOffset = -fNoteOffset;
@@ -2556,7 +2556,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		m_LastTapNoteScore = score;
 		if( GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately )
 		{
-			if( pTN->type != TapNote::mine )
+			if( pTN->type != TapNoteType_Mine )
 			{
 				const bool bBlind = (m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind != 0);
 				// XXX: This is the wrong combo for shared players.
@@ -2734,7 +2734,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		if (!m_Timing->IsJudgableAtRow(iter.Row()))
 			continue;
 
-		if( tn.type == TapNote::mine )
+		if( tn.type == TapNoteType_Mine )
 		{
 			tn.result.tns = TNS_AvoidMine;
 
@@ -2793,9 +2793,9 @@ void Player::UpdateJudgedRows()
 					for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
 					{
 						const TapNote &tn = m_NoteData.GetTapNote( iTrack, iRow );
-						if (tn.type == TapNote::empty ||
-							tn.type == TapNote::mine ||
-							tn.type == TapNote::autoKeysound) continue;
+						if (tn.type == TapNoteType_Empty ||
+							tn.type == TapNoteType_Mine ||
+							tn.type == TapNoteType_AutoKeysound) continue;
 						SetJudgment( tn.result.tns, iTrack, tn.result.fTapNoteOffset );
 					}
 				}
@@ -2805,8 +2805,8 @@ void Player::UpdateJudgedRows()
 					for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
 					{
 						const TapNote &tn = m_NoteData.GetTapNote( iTrack, iRow );
-						if (tn.type == TapNote::tap || tn.type == TapNote::lift ||
-						( tn.type == TapNote::hold_head && REQUIRE_STEP_ON_HOLD_HEADS ) )
+						if (tn.type == TapNoteType_Tap || tn.type == TapNoteType_Lift ||
+						( tn.type == TapNoteType_HoldHead && REQUIRE_STEP_ON_HOLD_HEADS ) )
 						{
 							viColsWithTaps.push_back( iTrack );
 						};
@@ -2841,7 +2841,7 @@ void Player::UpdateJudgedRows()
 					*m_pIterUnjudgedMineRows = iter;
 			}
 
-			bool bMineNotHidden = tn.type == TapNote::mine && !tn.result.bHidden;
+			bool bMineNotHidden = tn.type == TapNoteType_Mine && !tn.result.bHidden;
 			if( !bMineNotHidden )
 				continue;
 
@@ -2916,7 +2916,7 @@ void Player::FlashGhostRow( int iRow )
 	{
 		const TapNote &tn = m_NoteData.GetTapNote( iTrack, iRow );
 
-		if( tn.type == TapNote::empty || tn.type == TapNote::mine || tn.type == TapNote::fake )
+		if( tn.type == TapNoteType_Empty || tn.type == TapNoteType_Mine || tn.type == TapNoteType_Fake )
 			continue;
 		if( m_pNoteField )
 			m_pNoteField->DidTapNote( iTrack, lastTNS, bBright );
@@ -2939,7 +2939,7 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 		int iTrack = iter.Track();
 		switch( tn.type )
 		{
-			case TapNote::hold_head:
+			case TapNoteType_HoldHead:
 			{
 				tn.HoldResult.fLife = INITIAL_HOLD_LIFE;
 				if( !REQUIRE_STEP_ON_HOLD_HEADS )
@@ -2959,7 +2959,7 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				}
 				break;
 			}
-			case TapNote::mine:
+			case TapNoteType_Mine:
 			{
 				// Hold the panel while crossing a mine will cause the mine to explode
 				// TODO: Remove use of PlayerNumber.
@@ -2984,9 +2984,9 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 		// check to see if there's a note at the crossed row
 		if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 		{
-			if (tn.type != TapNote::empty &&
-				tn.type != TapNote::fake &&
-				tn.type != TapNote::autoKeysound &&
+			if (tn.type != TapNoteType_Empty &&
+				tn.type != TapNoteType_Fake &&
+				tn.type != TapNoteType_AutoKeysound &&
 				tn.result.tns == TNS_None &&
 				this->m_Timing->IsJudgableAtRow(iRow) )
 			{
@@ -3013,7 +3013,7 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				for (int t = 0; t < m_NoteData.GetNumTracks(); ++t)
 				{
 					const TapNote &tap = m_NoteData.GetTapNote(t, iRow);
-					if (tap.type == TapNote::autoKeysound)
+					if (tap.type == TapNoteType_AutoKeysound)
 					{
 						PlayKeysound(tap, TNS_None);
 					}
@@ -3047,7 +3047,7 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				for( ; !nIter.IsAtEnd(); ++nIter )
 				{
 					TapNote &tn = *nIter;
-					if( tn.type != TapNote::hold_head )
+					if( tn.type != TapNoteType_HoldHead )
 						continue;
 
 					int iTrack = nIter.Track();
@@ -3109,10 +3109,10 @@ void Player::HandleTapRowScore( unsigned row )
 	{
 		const TapNote &tn = m_NoteData.GetTapNote( track, row );
 		// Mines cannot be handled here.
-		if (tn.type == TapNote::empty ||
-			tn.type == TapNote::fake ||
-			tn.type == TapNote::mine ||
-			tn.type == TapNote::autoKeysound)
+		if (tn.type == TapNoteType_Empty ||
+			tn.type == TapNoteType_Fake ||
+			tn.type == TapNoteType_Mine ||
+			tn.type == TapNoteType_AutoKeysound)
 			continue;
 		if( m_pPrimaryScoreKeeper )
 			m_pPrimaryScoreKeeper->HandleTapScore( tn );

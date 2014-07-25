@@ -90,7 +90,7 @@ namespace NoteDataUtil
 	 * @param tn the TapNote Type to remove.
 	 * @param iStartIndex the starting point for transforming.
 	 * @param iEndIndex the ending point for transforming. */
-	void RemoveSpecificTapNotes( NoteData &inout, TapNote::Type tn, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void RemoveSpecificTapNotes( NoteData &inout, TapNoteType tn, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	/**
 	 * @brief Remove all of the mines from the chart.
 	 * @param inout the Notedata to be transformed.
@@ -187,8 +187,8 @@ namespace NoteDataUtil
 	void InsertRows( NoteData &nd, int iStartIndex, int iRowsToShift );
 	void DeleteRows( NoteData &nd, int iStartIndex, int iRowsToShift );
 
-	void RemoveAllTapsOfType( NoteData& ndInOut, TapNote::Type typeToRemove );
-	void RemoveAllTapsExceptForType( NoteData& ndInOut, TapNote::Type typeToKeep );
+	void RemoveAllTapsOfType( NoteData& ndInOut, TapNoteType typeToRemove );
+	void RemoveAllTapsExceptForType( NoteData& ndInOut, TapNoteType typeToKeep );
 
 	int GetMaxNonEmptyTrack( const NoteData& in );
 	bool AnyTapsAndHoldsInTrackRange( const NoteData& in, int iTrack, int iStart, int iEnd );

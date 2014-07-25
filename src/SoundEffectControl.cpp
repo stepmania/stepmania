@@ -97,7 +97,7 @@ void SoundEffectControl::HoldsBeingHeld( int iRow, int &iHoldsHeld, int &iHoldsL
 			continue;
 
 		const TapNote &tn = begin->second;
-		if( tn.type != TapNote::hold_head )
+		if( tn.type != TapNoteType_HoldHead )
 			continue;
 		if( tn.HoldResult.bActive )
 			++iHoldsHeld;

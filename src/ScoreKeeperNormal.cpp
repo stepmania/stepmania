@@ -337,7 +337,7 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 {
 	TapNoteScore tns = tn.result.tns;
 
-	if( tn.type == TapNote::mine )
+	if( tn.type == TapNoteType_Mine )
 	{
 		if( tns == TNS_HitMine )
 		{
@@ -463,7 +463,7 @@ void ScoreKeeperNormal::GetRowCounts( const NoteData &nd, int iRow,
 	{
 		const TapNote &tn = nd.GetTapNote( track, iRow );
 
-		if( tn.type != TapNote::tap && tn.type != TapNote::hold_head && tn.type != TapNote::lift )
+		if( tn.type != TapNoteType_Tap && tn.type != TapNoteType_HoldHead && tn.type != TapNoteType_Lift )
 			continue;
 		TapNoteScore tns = tn.result.tns;
 		if( tns >= m_MinScoreToContinueCombo )

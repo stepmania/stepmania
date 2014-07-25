@@ -657,7 +657,7 @@ void GameSoundManager::Update( float fDeltaTime )
 			// Otherwise, for each index we crossed since the last update:
 			FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( lights, cl, r, iRowLastCrossed+1, iSongRow+1 )
 			{
-				if( lights.GetTapNote( cl, r ).type != TapNote::empty )
+				if( lights.GetTapNote( cl, r ).type != TapNoteType_Empty )
 				{
 					LIGHTSMAN->BlinkCabinetLight( cl );
 					break;
