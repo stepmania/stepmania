@@ -1,4 +1,6 @@
 #include "global.h"
+#include "Stepmania.h"
+#include "arch/Dialog/Dialog.h"
 #include "GameManager.h"
 #include "GameConstantsAndTypes.h"
 #include "GameInput.h"	// for GameButton constants
@@ -3157,11 +3159,49 @@ public:
 		return 1;
 	}
 
+	static int GetEnabledGames( T* p, lua_State *L )
+	{
+		vector<const Game*> aGames;
+		GAMEMAN->GetEnabledGames( aGames );		
+
+		vector<RString> vsGames;
+		FOREACH( const Game*, aGames, g )
+		{
+			RString sGameName = (*g)->m_szName;
+			vsGames.push_back( sGameName );
+		}
+		LuaHelpers::CreateTableFromArray<RString>( vsGames, L );
+		return 1;	
+	}
+	
+	static int SetGame( T* p, lua_State *L )
+	{
+		const Game *pGame = p->StringToGame(SArg(1));
+		RString sTheme;
+		if( lua_gettop(L) >= 2 && !lua_isnil(L, 2) )
+		{
+			sTheme = SArg(2);
+		}
+		if( pGame )
+		{
+			StepMania::ChangeCurrentGame( pGame, sTheme );
+			THEME->ReloadMetrics();	
+		}
+		else
+		{
+			LOG->Warn( "SetGame: Invalid Game, %s", pGame->m_szName );
+			Dialog::OK( "SetGame: Invalid Game, %s", pGame->m_szName );		
+		}
+		return 0;
+	}
+	
 	LunaGameManager()
 	{
 		ADD_METHOD( StepsTypeToLocalizedString );
 		ADD_METHOD( GetFirstStepsTypeForGame );
 		ADD_METHOD( IsGameEnabled );
+		ADD_METHOD( GetEnabledGames );
+		ADD_METHOD( SetGame );
 	};
 };
 
