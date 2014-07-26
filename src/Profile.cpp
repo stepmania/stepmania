@@ -1541,36 +1541,36 @@ float Profile::CalculateCaloriesFromHeartRate(float HeartRate, float Duration)
 
 	// Names for the constants in the equations.
 	// Assumes male and unknown voomax.
-	float gender_factor= -55.0969;
-	float heart_factor= 0.6309;
-	float voo_factor= 0;
-	float weight_factor= 0.1988;
-	float age_factor= 0.2017;
+	float gender_factor= -55.0969f;
+	float heart_factor= 0.6309f;
+	float voo_factor= 0.0f;
+	float weight_factor= 0.1988f;
+	float age_factor= 0.2017f;
 	if(m_Voomax > 0)
 	{
 		if(m_IsMale)
 		{
-			gender_factor= -95.7735;
-			heart_factor= 0.634;
-			voo_factor= 0.404;
-			weight_factor= 0.394;
-			age_factor= 0.271;
+			gender_factor= -95.7735f;
+			heart_factor= 0.634f;
+			voo_factor= 0.404f;
+			weight_factor= 0.394f;
+			age_factor= 0.271f;
 		}
 		else
 		{
-			gender_factor= -59.3954;
-			heart_factor= 0.45;
-			voo_factor= 0.380;
-			weight_factor= 0.103;
-			age_factor= 0.274;
+			gender_factor= -59.3954f;
+			heart_factor= 0.45f;
+			voo_factor= 0.380f;
+			weight_factor= 0.103f;
+			age_factor= 0.274f;
 		}
 	}
 	else if(!m_IsMale)
 	{
-		gender_factor= -20.4022;
-		heart_factor= 0.6309;
-		weight_factor= 0.1988;
-		age_factor= 0.2017;
+		gender_factor= -20.4022f;
+		heart_factor= 0.6309f;
+		weight_factor= 0.1988f;
+		age_factor= 0.2017f;
 	}
 	return ((gender_factor + (heart_factor * HeartRate) +
 			(voo_factor * m_Voomax) + (weight_factor * kilos) + (age_factor + age))
