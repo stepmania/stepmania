@@ -205,7 +205,19 @@ void ActorScroller::UpdateInternal( float fDeltaTime )
 		m_fPauseCountdownSeconds = m_fSecondsPauseBetweenItems;
 
 	if( m_bLoop )
-		m_fCurrentItem = fmodf( m_fCurrentItem, (float) m_iNumItems );
+	{	
+		if( m_fCurrentItem < static_cast<float>(m_iNumItems) * -1 && m_fDestinationItem < static_cast<float>(m_iNumItems) * -1 )
+		{
+			m_fCurrentItem += m_iNumItems;
+			m_fDestinationItem += m_iNumItems;
+		}
+		else if( m_fCurrentItem > static_cast<float>(m_iNumItems) && m_fDestinationItem > static_cast<float>(m_iNumItems) )
+		{
+			m_fCurrentItem -= m_iNumItems;
+			m_fDestinationItem -= m_iNumItems;
+		}
+	}
+		
 }
 
 void ActorScroller::DrawPrimitives()
