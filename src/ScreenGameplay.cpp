@@ -356,15 +356,15 @@ void ScreenGameplay::Init()
 	m_HasteTurningPoints.clear();
 	m_HasteTurningPoints.push_back(-1);
 	m_HasteTurningPoints.push_back(0);
-	m_HasteTurningPoints.push_back(.3);
+	m_HasteTurningPoints.push_back(0.3f);
 	m_HasteTurningPoints.push_back(1);
 	m_HasteAddAmounts.clear();
-	m_HasteAddAmounts.push_back(-.5);
+	m_HasteAddAmounts.push_back(-0.5f);
 	m_HasteAddAmounts.push_back(0);
-	m_HasteAddAmounts.push_back(.2);
-	m_HasteAddAmounts.push_back(.5);
+	m_HasteAddAmounts.push_back(0.2f);
+	m_HasteAddAmounts.push_back(0.5f);
 	m_fHasteTimeBetweenUpdates= 4;
-	m_fHasteLifeSwitchPoint= .5;
+	m_fHasteLifeSwitchPoint= 0.5f;
 	m_fCurrHasteRate= 1; // Should this be in BeginSong?  Not sure whether it should carry over between songs.
 
 	if( UseSongBackgroundAndForeground() )
