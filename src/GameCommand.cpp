@@ -251,7 +251,27 @@ void GameCommand::LoadOne( const Command& cmd )
 
 	else if( sName == "screen" )
 	{
-		CHECK_INVALID_COND(m_sScreen, sValue, (!SCREENMAN->IsScreenNameValid(sValue)), ("Screen \"" + sValue + "\" has invalid class."));
+		// OptionsList uses the screen command to push onto its stack.
+		// OptionsList "screen"s are OptionRow entries in ScreenOptionsMaster.
+		// So if the metric exists in ScreenOptionsMaster, consider it valid.
+		// Additionally, the screen value can be used to create an OptionRow.
+		// When used to create an OptionRow, it pulls a metric from OptionsList.
+		// -Kyz
+
+		if(!THEME->HasMetric("ScreenOptionsMaster", sValue))
+		{
+			if(!THEME->HasMetric("OptionsList", "Line" + sValue))
+			{
+				if(!SCREENMAN->IsScreenNameValid(sValue))
+				{
+					MAKE_INVALID("screen arg '" + sValue + "' is not a screen name, ScreenOptionsMaster list or OptionsList entry.");
+				}
+			}
+		}
+		if(!m_bInvalid)
+		{
+			m_sScreen= sValue;
+		}
 	}
 
 	else if( sName == "song" )
