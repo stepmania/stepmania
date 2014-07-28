@@ -36,7 +36,7 @@ static ThemeMetric<bool> USE_STATIC_BG		("Background","UseStaticBackground");
 static Preference<bool>	g_bShowDanger( "ShowDanger", true );
 static Preference<float> g_fBGBrightness( "BGBrightness", 0.7f );
 static Preference<RandomBackgroundMode> g_RandomBackgroundMode( "RandomBackgroundMode",	BGMODE_RANDOMMOVIES );
-static Preference<int> g_iNumBackgrounds( "NumBackgrounds", 8 );
+static Preference<int> g_iNumBackgrounds( "NumBackgrounds", 10 );
 static Preference<bool> g_bSongBackgrounds( "SongBackgrounds", true );
 
 // Width of the region separating the left and right brightness areas:
