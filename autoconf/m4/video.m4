@@ -3,6 +3,7 @@ AC_DEFUN([SM_VIDEO], [
 AC_REQUIRE([SM_STATIC])
 
 AC_ARG_WITH(ffmpeg, AS_HELP_STRING([--without-ffmpeg],[Disable ffmpeg support]), with_ffmpeg=$withval, with_ffmpeg=yes)
+AC_ARG_WITH(ffmpeg-rpath, AS_HELP_STRING([--with-ffmpeg-rpath],[Specify RPATH for ffmpeg]), ffmpeg_rpath=$withval, ffmpeg_rpath=no)
 AC_ARG_WITH(static-ffmpeg, AS_HELP_STRING([--with-static-ffmpeg],[Statically link ffmpeg libraries]), with_static_ffmpeg=$withval, with_static_ffmpeg=no)
 AM_CONDITIONAL(STATIC_FFMPEG, test "$with_static_ffmpeg" = "yes")
 AC_ARG_WITH(system-ffmpeg, AS_HELP_STRING([--with-system-ffmpeg], [Use system instead of bundled ffmpeg (UNSUPPORTED)]), system_ffmpeg=yes, system_ffmpeg=no)
@@ -94,7 +95,11 @@ dnl It's NOT autoconf-based, so AC_CONFIG_SUBDIRS does not work.
 		CFLAGS="$CFLAGS -I$PWD/bundle/ffmpeg"
 		CXXFLAGS="$CXXFLAGS -I$PWD/bundle/ffmpeg"
 dnl Make the binary find our bundled libs
-		LDFLAGS="$LDFLAGS -Wl,-rpath=. -Wl,-rpath=bundle/ffmpeg/libavutil,-rpath=bundle/ffmpeg/libavformat,-rpath=bundle/ffmpeg/libavcodec,-rpath=bundle/ffmpeg/libswscale"
+		if test "$ffmpeg_rpath" = "no"; then
+			LDFLAGS="$LDFLAGS -Wl,-rpath=. -Wl,-rpath=bundle/ffmpeg/libavutil,-rpath=bundle/ffmpeg/libavformat,-rpath=bundle/ffmpeg/libavcodec,-rpath=bundle/ffmpeg/libswscale"
+		else
+			LDFLAGS="$LDFLAGS -Wl,-rpath=$ffmpeg_rpath"
+		fi
 dnl Classic autoconf. This CANNOT be broken across multiple lines.
 		VIDEO_LIBS="-L$PWD/bundle/ffmpeg/libavutil -lavutil -L$PWD/bundle/ffmpeg/libavformat -lavformat -L$PWD/bundle/ffmpeg/libavcodec -lavcodec -L$PWD/bundle/ffmpeg/libswscale -lswscale"
 		have_ffmpeg=yes
