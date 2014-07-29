@@ -40,7 +40,7 @@ void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
 /* Resolves actor paths a la LoadActor("..."), with autowildcarding and .redir
  * files.  Returns a path *within* the Rage filesystem, unlike the FILEMAN
  * function of the same name. */
-bool ActorUtil::ResolvePath( RString &sPath, const RString &sName )
+bool ActorUtil::ResolvePath( RString &sPath, const RString &sName, bool optional )
 {
 	CollapsePath( sPath );
 
@@ -54,6 +54,10 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName )
 
 		if( asPaths.empty() )
 		{
+			if(optional)
+			{
+				return false;
+			}
 			RString sError = ssprintf( "%s: references a file \"%s\" which doesn't exist", sName.c_str(), sPath.c_str() );
 			switch(LuaHelpers::ReportScriptError(sError, "BROKEN_FILE_REFERENCE", true))
 			{
@@ -402,7 +406,7 @@ RString ActorUtil::GetWhere( const XNode *pNode )
 	return sPath;
 }
 
-bool ActorUtil::GetAttrPath( const XNode *pNode, const RString &sName, RString &sOut )
+bool ActorUtil::GetAttrPath( const XNode *pNode, const RString &sName, RString &sOut, bool optional )
 {
 	if( !pNode->GetAttrValue(sName, sOut) )
 		return false;
@@ -419,7 +423,7 @@ bool ActorUtil::GetAttrPath( const XNode *pNode, const RString &sName, RString &
 		sOut = sDir+sOut;
 	}
 
-	return ActorUtil::ResolvePath( sOut, ActorUtil::GetWhere(pNode) );
+	return ActorUtil::ResolvePath( sOut, ActorUtil::GetWhere(pNode), optional );
 }
 
 apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands, const RString &sName )

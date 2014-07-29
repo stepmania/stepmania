@@ -115,39 +115,37 @@ BitmapText::BitmapText( const BitmapText &cpy ):
 	*this = cpy;
 }
 
-void BitmapText::LoadFromNode( const XNode* pNode )
+void BitmapText::LoadFromNode( const XNode* node )
 {
-	RString sText;
-	pNode->GetAttrValue( "Text", sText );
-	RString sAltText;
-	pNode->GetAttrValue( "AltText", sAltText );
+	RString text;
+	node->GetAttrValue("Text", text);
+	RString alt_text;
+	node->GetAttrValue("AltText", alt_text);
 
-	ThemeManager::EvaluateString( sText );
-	ThemeManager::EvaluateString( sAltText );
+	ThemeManager::EvaluateString(text);
+	ThemeManager::EvaluateString(alt_text);
 
-	RString sFont;
-	// Allow the Font attribute to be either a path or simply the name of a font.
-	// If it's a path, it will have a slash in it.
-	// Also allow it to be set through either "Font" or through "File".
-	if(!pNode->GetAttrValue("Font", sFont) && !pNode->GetAttrValue("File", sFont))
+	RString font;
+	// Pass optional= true so that an error will not be reported if the path
+	// doesn't resolve to a file.  This way, a font can be either a path or the
+	// name of a font to look up in Fonts/.  -Kyz
+	if(!ActorUtil::GetAttrPath(node, "Font", font, true) &&
+		!ActorUtil::GetAttrPath(node, "File", font, true))
 	{
-		LuaHelpers::ReportScriptErrorFmt("%s: BitmapText: Font or File attribute not found",
-			ActorUtil::GetWhere(pNode).c_str());
-		sFont = "Common Normal";
-	}
-	if(sFont.find("/") == RString::npos)
-	{
-		sFont= THEME->GetPathF("", sFont);
-	}
-	else if(!ActorUtil::ResolvePath(sFont, ActorUtil::GetWhere(pNode)))
-	{
-		sFont= THEME->GetPathF("", "Common Normal");
+		if(!node->GetAttrValue("Font", font) &&
+			!node->GetAttrValue("File", font)) // accept "File" for backward compatibility
+		{
+			LuaHelpers::ReportScriptErrorFmt("%s: BitmapText: Font or File attribute"
+				" not found", ActorUtil::GetWhere(node).c_str());
+			font = "Common Normal";
+		}
+		font = THEME->GetPathF("", font);
 	}
 
-	LoadFromFont( sFont );
+	LoadFromFont(font);
 
-	SetText( sText, sAltText );
-	Actor::LoadFromNode( pNode );
+	SetText(text, alt_text);
+	Actor::LoadFromNode(node);
 }
 
 bool BitmapText::LoadFromFont( const RString& sFontFilePath )
