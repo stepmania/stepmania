@@ -31,6 +31,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Alpha' theme='_fallback' return='color' arguments='color c, float percent'>
 		[02 Colors.lua] Returns a <code>color</code> with the specified alpha.
 	</Function>
+	<Function name='ArbitrarySpeedMods' theme='_fallback' return='LuaOptionRow' arguments=''>
+		[03 CustomSpeedMods.lua]
+	</Function>
 	<Function name='AreStagePlayerModsForced' theme='_fallback' return='bool' arguments=''>
 		[02 StageMods.lua]
 	</Function>
@@ -1571,6 +1574,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetNumItems' return='int' arguments=''>
 		Returns the number of items in the ActorScroller.
+	</Function>
+	<Function name='GetSecondsPauseBetweenItems' return='float' arguments=''>
+		Returns the number of seconds the scroller pauses between items.
 	</Function>
 	<Function name='GetSecondsToDestination' renamed='true' return='float' arguments=''>
 		Returns the number of seconds until the scroller reaches its destination.
@@ -3191,6 +3197,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetGrade' return='Grade' arguments=''>
 		Returns the player's grade.
 	</Function>
+	<Function name='GetHighScore' return='HighScore' arguments=''>
+		Returns the player's HighScore.
+	</Function>
 	<Function name='GetHoldNoteScores' return='int' arguments='HoldNoteScore hns'>
 		Returns the number of judgments for a specified HoldNoteScore.
 	</Function>
@@ -3589,7 +3598,7 @@ save yourself some time, copy this for undocumented things:
 		Return the width of the display.
 	</Function>
 	<Function name='GetFPS' return='int' arguments=''>
-		Return the FPS.
+		Return the number of frames per second.
 	</Function>
 	<Function name='GetVPF' return='int' arguments=''>
 		Return the VPF.
@@ -3685,6 +3694,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='RageTexture'>
+	<Function name='GetNumFrames' return='int' arguments=''>
+		Returns the number of frames in this texture.
+	</Function>
 	<Function name='GetTextureCoordRect' return='{float}' arguments=''>
 		Return the texture coordinate rectangle as <code>{left, top, right, bottom}</code>.
 	</Function>
@@ -3961,6 +3973,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Cancel' return='void' arguments=''>
 		Tells the screen to go to the previous screen.
 	</Function>
+	<Function name='IsTransitioning' return='bool' arguments=''>
+		Returns <code>true</code> if the screen is currently transitioning.
+	</Function>
 	<Function name='StartTransitioningScreen' return='void' arguments='string sScreenMsg'>
 		Tells the screen to go to play its Out transition, and then posts the ScreenMessage <code>sScreenMsg</code>. To go to the next screen, use "SM_GoToNextScreen" as the argument.
 	</Function>
@@ -4049,6 +4064,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetSongFilePath' return='string' arguments=''>
 		Returns the songfile path.
+	</Function>
+	<Function name='GetStageCost' theme='_fallback' return='int' arguments=''>
+		[02 Other.lua] Returns the number of stages this song costs.
 	</Function>
 	<Function name='GetStepsByStepsType' return='{Steps}' arguments='StepsType st'>
 		Returns a table of Steps that have StepsType <code>st</code>.
