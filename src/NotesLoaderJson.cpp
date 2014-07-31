@@ -89,11 +89,11 @@ static void Deserialize(BackgroundChange &o, const Json::Value &root )
 
 static void Deserialize( TapNote &o, const Json::Value &root )
 {
-	//if( o.type != TapNote::tap )
+	//if( o.type != TapNoteType_Tap )
 	if( root.isInt() )
-		o.type = (TapNote::Type)root["Type"].asInt();
-	//if( o.type == TapNote::hold_head )
-		o.subType = (TapNote::SubType)root["SubType"].asInt();
+		o.type = (TapNoteType)root["Type"].asInt();
+	//if( o.type == TapNoteType_HoldHead )
+		o.subType = (TapNoteSubType)root["SubType"].asInt();
 	//root["Source"] = (int)source;
 	//if( !o.sAttackModifiers.empty() )
 		o.sAttackModifiers = root["AttackModifiers"].asString();

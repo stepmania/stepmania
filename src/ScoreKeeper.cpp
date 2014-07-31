@@ -19,7 +19,7 @@ void ScoreKeeper::GetScoreOfLastTapInRow( const NoteData &nd, int iRow,
 	{
 		const TapNote &tn = nd.GetTapNote( track, iRow );
 
-		if( tn.type != TapNote::tap && tn.type != TapNote::hold_head )
+		if( tn.type != TapNoteType_Tap && tn.type != TapNoteType_HoldHead )
 			continue;
 		++iNum;
 	}

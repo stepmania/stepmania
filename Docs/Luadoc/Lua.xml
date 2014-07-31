@@ -2404,6 +2404,25 @@
 			<EnumValue name='&apos;TapNoteScoreJudgeType_MinimumScore&apos;' value='0'/>
 			<EnumValue name='&apos;TapNoteScoreJudgeType_LastScore&apos;' value='1'/>
 		</Enum>
+		<Enum name='TapNoteType'>
+			<EnumValue name='&apos;TapNoteType_Empty&apos;' value='0'/>
+			<EnumValue name='&apos;TapNoteType_Tap&apos;' value='1'/>
+			<EnumValue name='&apos;TapNoteType_HoldHead&apos;' value='2'/>
+			<EnumValue name='&apos;TapNoteType_HoldTail&apos;' value='3'/>
+			<EnumValue name='&apos;TapNoteType_Mine&apos;' value='4'/>
+			<EnumValue name='&apos;TapNoteType_Lift&apos;' value='5'/>
+			<EnumValue name='&apos;TapNoteType_Attack&apos;' value='6'/>
+			<EnumValue name='&apos;TapNoteType_AutoKeysound&apos;' value='7'/>
+			<EnumValue name='&apos;TapNoteType_Fake&apos;' value='8'/>
+		</Enum>
+		<Enum name='TapNoteSubType'>
+			<EnumValue name='&apos;TapNoteSubType_Hold&apos;' value='0'/>
+			<EnumValue name='&apos;TapNoteSubType_Roll&apos;' value='1'/>
+		</Enum>
+		<Enum name='TapNoteSource'>
+			<EnumValue name='&apos;TapNoteSource_Original&apos;' value='0'/>
+			<EnumValue name='&apos;TapNoteSource_Addition&apos;' value='1'/>
+		</Enum>
 		<Enum name='TextGlowMode'>
 			<EnumValue name='&apos;TextGlowMode_Inner&apos;' value='0'/>
 			<EnumValue name='&apos;TextGlowMode_Stroke&apos;' value='1'/>

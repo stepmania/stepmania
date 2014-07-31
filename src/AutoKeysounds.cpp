@@ -88,7 +88,7 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 				pn = GetNextEnabledPlayer(pn);
 				while( pn != PLAYER_INVALID )
 				{
-					if( tn[pn].type != TapNote::autoKeysound || tn[pn].iKeysoundIndex != tap.iKeysoundIndex )
+					if( tn[pn].type != TapNoteType_AutoKeysound || tn[pn].iKeysoundIndex != tap.iKeysoundIndex )
 						bSoundIsGlobal = false;
 					pn = GetNextEnabledPlayer(pn);
 				}
@@ -99,7 +99,7 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 				if( tn[pn] == TAP_EMPTY )
 					continue;
 
-				ASSERT( tn[pn].type == TapNote::autoKeysound );
+				ASSERT( tn[pn].type == TapNoteType_AutoKeysound );
 				if( tn[pn].iKeysoundIndex >= 0 )
 				{
 					RString sKeysoundFilePath = sSongDir + pSong->m_vsKeysoundFile[tn[pn].iKeysoundIndex];
@@ -351,7 +351,7 @@ void AutoKeysounds::Update( float fDelta )
 				FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( nd, t, r, iRowLastCrossed+1, iRowNow )
 				{
 					const TapNote &tn = nd.GetTapNote( t, r );
-					ASSERT( tn.type == TapNote::autoKeysound );
+					ASSERT( tn.type == TapNoteType_AutoKeysound );
 					if( tn.bKeysound )
 						m_vKeysounds[tn.iKeysoundIndex].Play();
 				}

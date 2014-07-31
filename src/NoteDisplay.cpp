@@ -519,24 +519,24 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 			   float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
 	vector<Sprite*> vpSprTop;
-	Sprite *pSpriteTop = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, fBeat, tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
+	Sprite *pSpriteTop = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, fBeat, tn.subType == TapNoteSubType_Roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
 	vpSprTop.push_back( pSpriteTop );
 
 	vector<Sprite*> vpSprBody;
-	Sprite *pSpriteBody = GetHoldSprite( m_HoldBody, NotePart_HoldBody, fBeat, tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
+	Sprite *pSpriteBody = GetHoldSprite( m_HoldBody, NotePart_HoldBody, fBeat, tn.subType == TapNoteSubType_Roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
 	vpSprBody.push_back( pSpriteBody );
 
 	vector<Sprite*> vpSprBottom;
-	Sprite *pSpriteBottom = GetHoldSprite( m_HoldBottomCap, NotePart_HoldBottomCap, fBeat, tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
+	Sprite *pSpriteBottom = GetHoldSprite( m_HoldBottomCap, NotePart_HoldBottomCap, fBeat, tn.subType == TapNoteSubType_Roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
 	vpSprBottom.push_back( pSpriteBottom );
 
 	if( bIsBeingHeld && cache->m_bHoldActiveIsAddLayer )
 	{
-		Sprite *pSprTop = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, fBeat, tn.subType == TapNote::hold_head_roll, true );
+		Sprite *pSprTop = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, fBeat, tn.subType == TapNoteSubType_Roll, true );
 		vpSprTop.push_back( pSprTop );
-		Sprite *pSprBody = GetHoldSprite( m_HoldBody, NotePart_HoldBody, fBeat, tn.subType == TapNote::hold_head_roll, true );
+		Sprite *pSprBody = GetHoldSprite( m_HoldBody, NotePart_HoldBody, fBeat, tn.subType == TapNoteSubType_Roll, true );
 		vpSprBody.push_back( pSprBody );
-		Sprite *pSprBottom = GetHoldSprite( m_HoldBottomCap, NotePart_HoldBottomCap, fBeat, tn.subType == TapNote::hold_head_roll, true );
+		Sprite *pSprBottom = GetHoldSprite( m_HoldBottomCap, NotePart_HoldBottomCap, fBeat, tn.subType == TapNoteSubType_Roll, true );
 		vpSprBottom.push_back( pSprBottom );
 	}
 
@@ -659,12 +659,12 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	/*
 	if( !cache->m_bHoldHeadIsAboveWavyParts )
 	{
-		Actor *pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
+		Actor *pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, NoteRowToBeat(iRow), tn.subType == TapNoteSubType_Roll, bIsBeingHeld );
 		DrawActor( tn, pActor, NotePart_HoldHead, iCol, bFlipHeadAndTail ? fEndYOffset : fStartYOffset, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, fColorScale, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	}
 	if( !cache->m_bHoldTailIsAboveWavyParts )
 	{
-		Actor *pActor = GetHoldActor( m_HoldTail, NotePart_HoldTail, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
+		Actor *pActor = GetHoldActor( m_HoldTail, NotePart_HoldTail, NoteRowToBeat(iRow), tn.subType == TapNoteSubType_Roll, bIsBeingHeld );
 		DrawActor( tn, pActor, NotePart_HoldTail, iCol, bFlipHeadAndTail ? fStartYOffset : fEndYOffset, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, fColorScale, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	}
 	*/
@@ -677,19 +677,19 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	// of the head and tail. Perhaps make this a theme/noteskin metric? -aj
 	if( cache->m_bHoldTailIsAboveWavyParts )
 	{
-		Actor *pActor = GetHoldActor( m_HoldTail, NotePart_HoldTail, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
+		Actor *pActor = GetHoldActor( m_HoldTail, NotePart_HoldTail, NoteRowToBeat(iRow), tn.subType == TapNoteSubType_Roll, bIsBeingHeld );
 		DrawActor( tn, pActor, NotePart_HoldTail, iCol, bFlipHeadAndTail ? fStartYOffset : fEndYOffset, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, fColorScale, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	}
 	if( cache->m_bHoldHeadIsAboveWavyParts )
 	{
-		Actor *pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
+		Actor *pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, NoteRowToBeat(iRow), tn.subType == TapNoteSubType_Roll, bIsBeingHeld );
 		DrawActor( tn, pActor, NotePart_HoldHead, iCol, bFlipHeadAndTail ? fEndYOffset : fStartYOffset, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, fColorScale, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	}
 }
 
 void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, int iCol, float fYOffset, float fBeat, bool bIsAddition, float fPercentFadeToFail, float fReverseOffsetPixels, float fColorScale, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
-	if (tn.type == TapNote::autoKeysound && !GAMESTATE->m_bInStepEditor) return;
+	if (tn.type == TapNoteType_AutoKeysound && !GAMESTATE->m_bInStepEditor) return;
 	if( fYOffset < fDrawDistanceAfterTargetsPixels || fYOffset > fDrawDistanceBeforeTargetsPixels )
 		return;
 	const float fY		= ArrowEffects::GetYPos(	m_pPlayerState, iCol, fYOffset, fReverseOffsetPixels );
@@ -702,8 +702,8 @@ void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, in
 	float fRotationX	= 0, fRotationZ	= 0;
 	const float fRotationY = ArrowEffects::GetRotationY( m_pPlayerState, fYOffset );
 
-	bool bIsHoldHead = tn.type == tn.hold_head;
-	bool bIsHoldCap = bIsHoldHead || tn.type == tn.hold_tail;
+	bool bIsHoldHead = tn.type == TapNoteType_HoldHead;
+	bool bIsHoldCap = bIsHoldHead || tn.type == TapNoteType_HoldTail;
 	
 	fRotationZ = ArrowEffects::GetRotationZ( m_pPlayerState, fBeat, bIsHoldHead );
 	if( !bIsHoldCap )
@@ -711,7 +711,7 @@ void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, in
 		fRotationX = ArrowEffects::GetRotationX( m_pPlayerState, fYOffset );
 	}
 
-	if( tn.type != tn.hold_head )
+	if( tn.type != TapNoteType_HoldHead )
 		fColorScale		*= ArrowEffects::GetBrightness(	m_pPlayerState, fBeat );
 
 	pActor->SetRotationX( fRotationX );
@@ -752,23 +752,23 @@ void NoteDisplay::DrawTap(const TapNote& tn, int iCol, float fBeat,
 	Actor* pActor = NULL;
 	NotePart part = NotePart_Tap;
 	/*
-	if( tn.source == TapNote::addition )
+	if( tn.source == TapNoteSource_Addition )
 	{
 		pActor = GetTapActor( m_TapAddition, NotePart_Addition, fBeat );
 		part = NotePart_Addition;
 	}
 	*/
-	if( tn.type == TapNote::lift )
+	if( tn.type == TapNoteType_Lift )
 	{
 		pActor = GetTapActor( m_TapLift, NotePart_Lift, fBeat );
 		part = NotePart_Lift;
 	}
-	else if( tn.type == TapNote::mine )
+	else if( tn.type == TapNoteType_Mine )
 	{
 		pActor = GetTapActor( m_TapMine, NotePart_Mine, fBeat );
 		part = NotePart_Mine;
 	}
-	else if( tn.type == TapNote::fake )
+	else if( tn.type == TapNoteType_Fake )
 	{
 		pActor = GetTapActor( m_TapFake, NotePart_Fake, fBeat );
 		part = NotePart_Fake;
@@ -812,7 +812,7 @@ void NoteDisplay::DrawTap(const TapNote& tn, int iCol, float fBeat,
 		pActor = GetTapActor( m_TapNote, NotePart_Tap, fBeat );
 	}
 
-	if( tn.type == TapNote::attack )
+	if( tn.type == TapNoteType_Attack )
 	{
 		Message msg( "SetAttack" );
 		msg.SetParam( "Modifiers", tn.sAttackModifiers );
@@ -823,7 +823,7 @@ void NoteDisplay::DrawTap(const TapNote& tn, int iCol, float fBeat,
 	// this is the line that forces the (1,1,1,x) part of the noteskin diffuse -aj
 	DrawActor( tn, pActor, part, iCol, fYOffset, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, 1.0f, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 
-	if( tn.type == TapNote::attack )
+	if( tn.type == TapNoteType_Attack )
 		pActor->PlayCommand( "UnsetAttack" );
 }
 
