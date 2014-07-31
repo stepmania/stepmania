@@ -251,7 +251,7 @@ void ScreenHowToPlay::Update( float fDelta )
 	if( GAMESTATE->m_pCurSong != NULL )
 	{
 		RageTimer tm;
-		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong, GAMESTATE->m_pCurSong->m_SongTiming, tm, true );
+		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong, GAMESTATE->m_pCurSong->m_SongTiming, tm );
 		m_fFakeSecondsIntoSong += fDelta;
 
 		static int iLastNoteRowCounted = 0;
