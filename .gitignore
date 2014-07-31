@@ -63,8 +63,10 @@ src/build-*
 src/Release-*
 src/libtomcrypt/build-*
 src/libtomcrypt/Release-*
+src/libtomcrypt/Debug
 src/libtommath/build-*
 src/libtommath/Release-*
+src/libtommath/Debug
 src/*.old
 */.deps
 */.dirstamp
