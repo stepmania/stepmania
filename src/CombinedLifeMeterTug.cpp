@@ -14,7 +14,7 @@ static void TugMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOu
 	switch( i )
 	{
 	default:
-		FAIL_M(ssprintf("Invalid ScoreEvent: %i", i));
+		FAIL_M(ssprintf("Invalid ScoreEvent: %i", static_cast<int>(i)));
 	case SE_W1:			defaultValueOut = +0.010f;	break;
 	case SE_W2:			defaultValueOut = +0.008f;	break;
 	case SE_W3:			defaultValueOut = +0.004f;	break;

@@ -108,7 +108,7 @@ void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, RString &sNameOut, floa
 	switch( i )
 	{
 	default:
-		FAIL_M(ssprintf("Invalid timing window: %i", i));
+		FAIL_M(ssprintf("Invalid timing window: %i", static_cast<int>(i)));
 	case TW_W1:	defaultValueOut = 0.0225f;	break;
 	case TW_W2:	defaultValueOut = 0.045f;	break;
 	case TW_W3:	defaultValueOut = 0.090f;	break;

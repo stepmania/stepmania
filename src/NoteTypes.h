@@ -180,7 +180,7 @@ struct TapNote
 	{
 		if (type_ > TapNoteType_Fake )
 		{
-			LOG->Trace("Invalid tap note type %d (most likely) due to random vanish issues. Assume it doesn't need judging.", TapNoteTypeToString(type_).c_str() );
+			LOG->Trace("Invalid tap note type %s (most likely) due to random vanish issues. Assume it doesn't need judging.", TapNoteTypeToString(type_).c_str() );
 			type = TapNoteType_Empty;
 		}
 	}
