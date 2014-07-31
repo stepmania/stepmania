@@ -2837,6 +2837,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='ChangeSort' return='bool' arguments='SortOrder so'>
 		Changes the sort order of the wheel.  Returns <code>true</code> if the order was changed.
 	</Function>
+	<Function name='GetSelectedSection' return='string' arguments=''>
+		Returns the name of the currently selected section.
+	</Function>
 	<Function name='IsRouletting' return='bool' arguments=''>
 		Returns <code>true</code> if the MusicWheel is currently handling Roulette selection.
 	</Function>
