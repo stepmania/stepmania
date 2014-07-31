@@ -724,6 +724,8 @@
 			<Function name='GetFirstStepsTypeForGame'/>
 			<Function name='IsGameEnabled'/>
 			<Function name='StepsTypeToLocalizedString'/>
+			<Function name='SetGame'/>
+			<Function name='GetEnabledGames'/>
 		</Class>
 		<Class name='GameSoundManager'>
 			<Function name='DimMusic'/>
@@ -1661,6 +1663,7 @@
 			<Function name='IsThemeSelectable'/>
 			<Function name='ReloadMetrics'/>
 			<Function name='RunLuaScripts'/>
+			<Function name='SetTheme'/>
 		</Class>
 		<Class name='TimingData'>
 			<Function name='GetActualBPM'/>

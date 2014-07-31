@@ -177,7 +177,7 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 	if( ToSel )
 	{
-		const RString sCurGameName = GAMESTATE->m_pCurGame->m_szName;
+		const RString sCurGameName = PREFSMAN->GetCurrentGame();
 
 		sel = 0;
 		for(unsigned i = 0; i < choices.size(); ++i)
@@ -186,13 +186,7 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 	} else {
 		vector<const Game*> aGames;
 		GAMEMAN->GetEnabledGames( aGames );
-		StepMania::ChangeCurrentGame( aGames[sel] );
-		/* Reload metrics to force a refresh of CommonMetrics::DIFFICULTIES_TO_SHOW,
-		 * mainly if we're not switching themes. I'm not sure if this was the
-		 * case going from theme to theme, but if it was, it should be fixed
-		 * now. There's probably be a better way to do it, but I'm not sure
-		 * what it'd be. -aj */
-		THEME->ReloadMetrics();
+		PREFSMAN->SetCurrentGame(aGames[sel]->m_szName);
 	}
 }
 
@@ -663,7 +657,7 @@ static void InitializeConfOptions()
 #define ADD(x) g_ConfOptions.push_back( x )
 	// Select game
 	ADD( ConfOption( "Game",			GameSel,		GameChoices ) );
-	g_ConfOptions.back().m_iEffects = OPT_RESET_GAME;
+	g_ConfOptions.back().m_iEffects = OPT_CHANGE_GAME;
 
 	// Appearance options
 	ADD( ConfOption( "Language",			Language,		LanguageChoices ) );
