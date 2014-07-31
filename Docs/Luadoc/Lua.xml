@@ -948,6 +948,7 @@
 		</Class>
 		<Class base='WheelBase' name='MusicWheel'>
 			<Function name='ChangeSort'/>
+			<Function name='GetSelectedSection'/>
 			<Function name='IsRouletting'/>
 			<Function name='SelectCourse'/>
 			<Function name='SelectSong'/>
