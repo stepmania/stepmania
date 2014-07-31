@@ -261,6 +261,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 			begin = next;
 		}
 	}
+	out.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, const RString &sSMNoteData_, bool bComposite )
@@ -311,6 +312,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, const RString &sSMNo
 		LoadFromSMNoteDataStringWithPlayer( nd, sSMNoteData, start, size, pn, iNumTracks );
 	}
 	CombineCompositeNoteData( out, vParts );
+	out.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::InsertHoldTails( NoteData &inout )
@@ -487,6 +489,7 @@ void NoteDataUtil::CombineCompositeNoteData( NoteData &out, const vector<NoteDat
 			}
 		}
 	}
+	out.RevalidateATIs(vector<int>(), false);
 }
 
 
@@ -557,6 +560,7 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 			out.SetTapNote( iNewTrack, r, tn );
 		}
 	}
+	out.RevalidateATIs(vector<int>(), false);
 }
 
 void PlaceAutoKeysound( NoteData &out, int row, TapNote akTap )
@@ -672,6 +676,7 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 			PlaceAutoKeysound( out, row, tnFrom );
 		}
 	}
+	out.RevalidateATIs(vector<int>(), false);
 }
 
 int FindLongestOverlappingHoldNoteForAnyTrack( const NoteData &in, int iRow )
@@ -981,6 +986,7 @@ void NoteDataUtil::RemoveHoldNotes( NoteData &in, int iStartIndex, int iEndIndex
 			begin->second.type = TapNote::tap;
 		}
 	}
+	in.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::ChangeRollsToHolds( NoteData &in, int iStartIndex, int iEndIndex )
@@ -997,6 +1003,7 @@ void NoteDataUtil::ChangeRollsToHolds( NoteData &in, int iStartIndex, int iEndIn
 			begin->second.subType = TapNote::hold_head_hold;
 		}
 	}
+	in.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::ChangeHoldsToRolls( NoteData &in, int iStartIndex, int iEndIndex )
@@ -1013,6 +1020,7 @@ void NoteDataUtil::ChangeHoldsToRolls( NoteData &in, int iStartIndex, int iEndIn
 			begin->second.subType = TapNote::hold_head_roll;
 		}
 	}
+	in.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, int iStartIndex, int iEndIndex )
@@ -1051,6 +1059,7 @@ void NoteDataUtil::RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, 
 			}
 		}
 	}
+	in.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::RemoveJumps( NoteData &inout, int iStartIndex, int iEndIndex )
@@ -1074,6 +1083,7 @@ void NoteDataUtil::RemoveSpecificTapNotes( NoteData &inout, TapNote::Type tn, in
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( inout, t, r, iStartIndex, iEndIndex ) 
 			if( inout.GetTapNote(t,r).type == tn )
 				inout.SetTapNote( t, r, TAP_EMPTY );
+	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::RemoveMines( NoteData &inout, int iStartIndex, int iEndIndex )
@@ -1110,6 +1120,7 @@ void NoteDataUtil::RemoveAllButOneTap( NoteData &inout, int row )
 		if( iter != inout.end(track) && iter->second.type == TapNote::tap )
 			inout.RemoveTapNote( track, iter );
 	}
+	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::RemoveAllButPlayer( NoteData &inout, PlayerNumber pn )
@@ -1126,6 +1137,7 @@ void NoteDataUtil::RemoveAllButPlayer( NoteData &inout, PlayerNumber pn )
 				++i;
 		}
 	}
+	inout.RevalidateATIs(vector<int>(), false);
 }
 
 // TODO: Perform appropriate matrix calculations for everything instead.
@@ -1536,6 +1548,7 @@ void NoteDataUtil::Turn( NoteData &inout, StepsType st, TrackMapping tt, int iSt
 		SuperShuffleTaps( tempNoteData, iStartIndex, iEndIndex );
 
 	inout.CopyAll( tempNoteData );
+	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::Backwards( NoteData &inout )
@@ -1560,6 +1573,7 @@ void NoteDataUtil::Backwards( NoteData &inout )
 	}
 
 	inout.swap( out );
+	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::SwapSides( NoteData &inout )
@@ -1575,6 +1589,7 @@ void NoteDataUtil::SwapSides( NoteData &inout )
 
 	NoteData orig( inout );
 	inout.LoadTransformed( orig, orig.GetNumTracks(), iOriginalTrackToTakeFrom );
+	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::Little( NoteData &inout, int iStartIndex, int iEndIndex )
@@ -1589,6 +1604,7 @@ void NoteDataUtil::Little( NoteData &inout, int iStartIndex, int iEndIndex )
 			inout.SetTapNote( t, i, TAP_EMPTY );
 		}
 	}
+	inout.RevalidateATIs(vector<int>(), false);
 }
 
 // Make all quarter notes into jumps.
@@ -1641,6 +1657,7 @@ void NoteDataUtil::Wide( NoteData &inout, int iStartIndex, int iEndIndex )
 		}
 		inout.SetTapNote(iTrackToAdd, i, TAP_ADDITION_TAP);
 	}
+	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::Big( NoteData &inout, int iStartIndex, int iEndIndex )
@@ -1747,6 +1764,7 @@ void NoteDataUtil::InsertIntelligentTaps(
 
 		inout.SetTapNote(iTrackOfNoteToAdd, iRowToAdd, TAP_ADDITION_TAP);
 	}
+	inout.RevalidateATIs(vector<int>(), false);
 }
 #if 0
 class TrackIterator
@@ -1873,6 +1891,7 @@ void NoteDataUtil::AddMines( NoteData &inout, int iStartIndex, int iEndIndex )
 			iRowCount = 0;
 		}
 	}
+	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::Echo( NoteData &inout, int iStartIndex, int iEndIndex )
@@ -1927,6 +1946,7 @@ void NoteDataUtil::Echo( NoteData &inout, int iStartIndex, int iEndIndex )
 
 		inout.SetTapNote( iEchoTrack, iRowEcho, TAP_ADDITION_TAP );
 	}
+	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::Planted( NoteData &inout, int iStartIndex, int iEndIndex )
@@ -1999,7 +2019,7 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, 
 			}
 		}
 	}
-
+	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::Stomp( NoteData &inout, StepsType st, int iStartIndex, int iEndIndex )
@@ -2042,6 +2062,7 @@ void NoteDataUtil::Stomp( NoteData &inout, StepsType st, int iStartIndex, int iE
 			}
 		}
 	}		
+	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::SnapToNearestNoteType( NoteData &inout, NoteType nt1, NoteType nt2, int iStartIndex, int iEndIndex )
@@ -2088,6 +2109,7 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &inout, NoteType nt1, NoteTyp
 			inout.SetTapNote( c, iNewIndex, tnNew );
 		}
 	}
+	inout.RevalidateATIs(vector<int>(), false);
 }
 
 
@@ -2254,6 +2276,7 @@ void NoteDataUtil::RemoveStretch( NoteData &inout, StepsType st, int iStartIndex
 		if( !bPassedOneMask )
 			RemoveAllButOneTap( inout, r );
 	}
+	inout.RevalidateATIs(vector<int>(), false);
 }
 
 bool NoteDataUtil::RowPassesValidMask( NoteData &inout, int row, const bool bValidMask[] )
@@ -2277,6 +2300,7 @@ void NoteDataUtil::ConvertAdditionsToRegular( NoteData &inout )
 				tn.source = TapNote::original;
 				inout.SetTapNote( t, r, tn );
 			}
+	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::TransformNoteData( NoteData &nd, const AttackArray &aa, StepsType st, Song* pSong )
@@ -2373,6 +2397,7 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 			-1 );
 		nd.SetTapNote( iTrack, BeatToNoteRow(fBeat), tn );
 	}
+	nd.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::Scale( NoteData &nd, float fScale )
@@ -2395,6 +2420,7 @@ void NoteDataUtil::Scale( NoteData &nd, float fScale )
 	}
 	
 	nd.swap( ndOut );
+	nd.RevalidateATIs(vector<int>(), false);
 }
 
 /* XXX: move this to an appropriate place, same place as NoteRowToBeat perhaps? */
@@ -2430,6 +2456,7 @@ void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, int iStartIndex, int
 	}
 	
 	nd.swap( ndOut );
+	nd.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::InsertRows( NoteData &nd, int iStartIndex, int iRowsToAdd )
@@ -2441,6 +2468,7 @@ void NoteDataUtil::InsertRows( NoteData &nd, int iStartIndex, int iRowsToAdd )
 	temp.CopyRange( nd, iStartIndex, MAX_NOTE_ROW );
 	nd.ClearRange( iStartIndex, MAX_NOTE_ROW );
 	nd.CopyRange( temp, 0, MAX_NOTE_ROW, iStartIndex + iRowsToAdd );		
+	nd.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::DeleteRows( NoteData &nd, int iStartIndex, int iRowsToDelete )
@@ -2452,6 +2480,7 @@ void NoteDataUtil::DeleteRows( NoteData &nd, int iStartIndex, int iRowsToDelete 
 	temp.CopyRange( nd, iStartIndex + iRowsToDelete, MAX_NOTE_ROW );
 	nd.ClearRange( iStartIndex, MAX_NOTE_ROW );
 	nd.CopyRange( temp, 0, MAX_NOTE_ROW, iStartIndex );		
+	nd.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::RemoveAllTapsOfType( NoteData& ndInOut, TapNote::Type typeToRemove )
@@ -2470,6 +2499,7 @@ void NoteDataUtil::RemoveAllTapsOfType( NoteData& ndInOut, TapNote::Type typeToR
 				++iter;
 		}
 	}
+	ndInOut.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::RemoveAllTapsExceptForType( NoteData& ndInOut, TapNote::Type typeToKeep )
@@ -2485,6 +2515,7 @@ void NoteDataUtil::RemoveAllTapsExceptForType( NoteData& ndInOut, TapNote::Type 
 				++iter;
 		}
 	}
+	ndInOut.RevalidateATIs(vector<int>(), false);
 }
 
 int NoteDataUtil::GetMaxNonEmptyTrack( const NoteData& in )
