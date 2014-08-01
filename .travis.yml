@@ -25,4 +25,5 @@ before_script:
     - sudo apt-get install libxtst-dev libxrandr-dev
     - sudo apt-get install libglu1-mesa-dev
     - sudo apt-get install mesa-common-dev
+    - sudo apt-get install libglew-dev
     - ./autogen.sh
