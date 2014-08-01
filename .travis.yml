@@ -6,6 +6,7 @@ compiler:
 
 notifications:
     email: false
+    irc: "chat.freenode.net#stepmania-devs"
 
 before_script:
     - sudo apt-get install nasm
@@ -26,4 +27,7 @@ before_script:
     - sudo apt-get install libglu1-mesa-dev
     - sudo apt-get install mesa-common-dev
     - sudo apt-get install libglew-dev
+
+script:
     - ./autogen.sh
+    - ./configure && make
