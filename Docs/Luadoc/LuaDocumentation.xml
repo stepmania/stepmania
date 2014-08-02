@@ -2189,6 +2189,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetEnabledGames' return='{string}'>
 		Returns a table of all selectable games.
 	</Function>
+	<Function name='GetStylesForGame' return='{style}' arguments='string game'>
+		Returns a table of all the styles for the that exist for <code>game</code>.
+	</Function>
 	<Function name='SetGame' return='void' arguments='string Game, string Theme' >
 		Sets the current game to <code>Game</code>. The second argument is optional, and if provided will determine which theme is loaded when the game changes.  If the second argument is not provided, the default theme from the preferences for the new game type will be loaded.<br />
 		If only the game changes, the screen specified by the Common::AfterGameChangeScreen metric will be loaded.<br />
