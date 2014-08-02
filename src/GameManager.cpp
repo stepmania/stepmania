@@ -3160,10 +3160,28 @@ public:
 		return 1;
 	}
 
+	static int GetStylesForGame( T* p, lua_State *L )
+	{
+		RString game_name= SArg(1);
+		const Game *pGame = p->StringToGame(game_name);
+		if(!pGame)
+		{
+			luaL_error(L, "GetStylesForGame: Invalid Game: '%s'", game_name.c_str());
+		}
+		vector<Style*> aStyles;
+		for( int s=0; pGame->m_apStyles[s]; ++s ) 
+		{
+			Style *pStyle = const_cast<Style *>( pGame->m_apStyles[s] );
+			aStyles.push_back( pStyle );
+		}		
+		LuaHelpers::CreateTableFromArray<Style*>( aStyles, L );
+		return 1;
+	}
+
 	static int GetEnabledGames( T* p, lua_State *L )
 	{
 		vector<const Game*> aGames;
-		GAMEMAN->GetEnabledGames( aGames );		
+		p->GetEnabledGames( aGames );		
 
 		vector<RString> vsGames;
 		FOREACH( const Game*, aGames, g )
@@ -3201,6 +3219,7 @@ public:
 		ADD_METHOD( StepsTypeToLocalizedString );
 		ADD_METHOD( GetFirstStepsTypeForGame );
 		ADD_METHOD( IsGameEnabled );
+		ADD_METHOD( GetStylesForGame );
 		ADD_METHOD( GetEnabledGames );
 		ADD_METHOD( SetGame );
 	};
