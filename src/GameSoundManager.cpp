@@ -555,7 +555,7 @@ void GameSoundManager::Update( float fDeltaTime )
 	{
 		/* There's no song playing.  Fake it. */
 		CHECKPOINT_M( ssprintf("%f, delta %f", GAMESTATE->m_Position.m_fMusicSeconds, fDeltaTime) );
-		GAMESTATE->UpdateSongPosition( GAMESTATE->m_Position.m_fMusicSeconds + fDeltaTime, g_Playing->m_Timing );
+		GAMESTATE->UpdateSongPosition( GAMESTATE->m_Position.m_fMusicSeconds + fDeltaTime * g_Playing->m_Music->GetPlaybackRate() , g_Playing->m_Timing );
 		return;
 	}
 
@@ -567,9 +567,7 @@ void GameSoundManager::Update( float fDeltaTime )
 	RageTimer tm;
 	const float fSeconds = g_Playing->m_Music->GetPositionSeconds( &m_bApproximate, &tm );
 
-	//
 	// Check for song timing skips.
-	//
 	if( PREFSMAN->m_bLogSkips && !g_Playing->m_bTimingDelayed )
 	{
 		const float fExpectedTimePassed = (tm - GAMESTATE->m_Position.m_LastBeatUpdate) * g_Playing->m_Music->GetPlaybackRate();
@@ -586,10 +584,8 @@ void GameSoundManager::Update( float fDeltaTime )
 		sLastFile = ThisFile;
 	}
 
-	//
 	// If g_Playing->m_bTimingDelayed, we're waiting for the new music to actually start
 	// playing.
-	//
 	if( g_Playing->m_bTimingDelayed && !m_bApproximate )
 	{
 		/* Load up the new timing data. */
@@ -608,10 +604,7 @@ void GameSoundManager::Update( float fDeltaTime )
 		GAMESTATE->UpdateSongPosition( fSeconds + fAdjust, g_Playing->m_Timing, tm + fAdjust );
 	}
 
-
-	//
 	// Send crossed messages
-	//
 	if( GAMESTATE->m_pCurSong )
 	{
 		static int iBeatLastCrossed = 0;
@@ -633,10 +626,7 @@ void GameSoundManager::Update( float fDeltaTime )
 		iBeatLastCrossed = iBeatNow;
 	}
 
-
-	//
 	// Update lights
-	//
 	NoteData &lights = g_Playing->m_Lights;
 	if( lights.GetNumTracks() > 0 )	// lights data was loaded
 	{
