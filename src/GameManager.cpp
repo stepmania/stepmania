@@ -3169,12 +3169,13 @@ public:
 			luaL_error(L, "GetStylesForGame: Invalid Game: '%s'", game_name.c_str());
 		}
 		vector<Style*> aStyles;
+		lua_createtable(L, 0, 0);
 		for( int s=0; pGame->m_apStyles[s]; ++s ) 
 		{
 			Style *pStyle = const_cast<Style *>( pGame->m_apStyles[s] );
-			aStyles.push_back( pStyle );
+			pStyle->PushSelf(L);
+			lua_rawseti(L, -2, s);
 		}		
-		LuaHelpers::CreateTableFromArray<Style*>( aStyles, L );
 		return 1;
 	}
 
