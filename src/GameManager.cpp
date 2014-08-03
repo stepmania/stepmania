@@ -3174,7 +3174,7 @@ public:
 		{
 			Style *pStyle = const_cast<Style *>( pGame->m_apStyles[s] );
 			pStyle->PushSelf(L);
-			lua_rawseti(L, -2, s);
+			lua_rawseti(L, -2, s+1);
 		}		
 		return 1;
 	}
