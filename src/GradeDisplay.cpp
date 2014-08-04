@@ -47,7 +47,7 @@ public:
 	}
 	static int SetGrade( T* p, lua_State *L )
 	{
-		Grade g = Enum::Check<Grade>(L, 2);
+		Grade g = Enum::Check<Grade>(L, 1);
 		p->SetGrade( g );
 		return 0;
 	}
