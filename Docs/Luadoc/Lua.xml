@@ -726,6 +726,7 @@
 			<Function name='StepsTypeToLocalizedString'/>
 			<Function name='SetGame'/>
 			<Function name='GetEnabledGames'/>
+			<Function name='GetStylesForGame'/>
 		</Class>
 		<Class name='GameSoundManager'>
 			<Function name='DimMusic'/>

@@ -72,7 +72,7 @@ void RollingNumbers::DrawPrimitives()
 
 void RollingNumbers::Update( float fDeltaTime )
 {
-	if( m_fCurrentNumber != m_fTargetNumber )
+	if(m_fCurrentNumber != m_fTargetNumber && m_fScoreVelocity > 0)
 	{
 		fapproach( m_fCurrentNumber, m_fTargetNumber, fabsf(m_fScoreVelocity) * fDeltaTime );
 		UpdateText();
@@ -86,7 +86,15 @@ void RollingNumbers::SetTargetNumber( float fTargetNumber )
 	if( fTargetNumber == m_fTargetNumber ) // no change
 		return;
 	m_fTargetNumber = fTargetNumber;
-	m_fScoreVelocity = (m_fTargetNumber-m_fCurrentNumber) / APPROACH_SECONDS.GetValue();
+	float approach_secs= APPROACH_SECONDS.GetValue();
+	if(approach_secs > 0)
+	{
+		m_fScoreVelocity= (m_fTargetNumber-m_fCurrentNumber) / approach_secs;
+	}
+	else
+	{
+		m_fScoreVelocity= (m_fTargetNumber-m_fCurrentNumber);
+	}
 }
 
 void RollingNumbers::UpdateText()
