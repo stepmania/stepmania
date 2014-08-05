@@ -152,15 +152,10 @@ private:
 	mutable set<all_tracks_iterator*> m_atis;
 	mutable set<all_tracks_const_iterator*> m_const_atis;
 
-	// mapconv crashes on windows an apparently this function is the cause.
-	// So windows will still crash on courses that use transform mods until
-	// mapconv can be fixed. -Kyz
-#ifndef WIN32
 	void AddATIToList(all_tracks_iterator* iter) const;
 	void AddATIToList(all_tracks_const_iterator* iter) const;
 	void RemoveATIFromList(all_tracks_iterator* iter) const;
 	void RemoveATIFromList(all_tracks_const_iterator* iter) const;
-#endif
 
 public:
 	void Init();
