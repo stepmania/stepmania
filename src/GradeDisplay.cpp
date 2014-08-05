@@ -25,11 +25,18 @@ void GradeDisplay::Load( RString sMetricsGroup )
 
 void GradeDisplay::SetGrade( Grade grade )
 {
-	int i = 0;
+	size_t i = 0;
 	FOREACH_PossibleGrade( g )
 	{
-		m_vSpr[i]->SetVisible( g == grade );
-		i++;
+		if(i >= m_vSpr.size())
+		{
+			LuaHelpers::ReportScriptError("GradeDisplay:SetGrade: No actor loaded for grade " + GradeToString(g));
+		}
+		else
+		{
+			m_vSpr[i]->SetVisible( g == grade );
+			i++;
+		}
 	}
 }
 
