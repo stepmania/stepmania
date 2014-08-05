@@ -1176,21 +1176,18 @@ void NoteData::LoadFromNode( const XNode* pNode )
 	FAIL_M("NoteData::LoadFromNode() not implemented");
 }
 
+// mapconv crashes on windows an apparently this function is the cause.
+// So windows will still crash on courses that use transform mods until
+// mapconv can be fixed. -Kyz
+#ifndef WIN32
 void NoteData::AddATIToList(all_tracks_iterator* iter) const
 {
-	// mapconv crashes on windows an apparently this function is the cause.
-	// So windows will still crash on courses that use transform mods until
-	// mapconv can be fixed. -Kyz
-#ifndef WIN32
 	m_atis.insert(iter);
-#endif
 }
 
 void NoteData::AddATIToList(all_tracks_const_iterator* iter) const
 {
-#ifndef WIN32
 	m_const_atis.insert(iter);
-#endif
 }
 
 void NoteData::RemoveATIFromList(all_tracks_iterator* iter) const
@@ -1210,6 +1207,7 @@ void NoteData::RemoveATIFromList(all_tracks_const_iterator* iter) const
 		m_const_atis.erase(pos);
 	}
 }
+#endif
 
 void NoteData::RevalidateATIs(vector<int> const& added_or_removed_tracks, bool added)
 {
@@ -1296,8 +1294,9 @@ template<typename ND, typename iter, typename TN>
 		}
 		m_vCurrentIters.push_back( cur );
 	}
+#ifndef WIN32
 	m_pNoteData->AddATIToList(this);
-
+#endif
 	Find( bReverse );
 }
 
@@ -1315,7 +1314,9 @@ NoteData::_all_tracks_iterator<ND, iter, TN>::_all_tracks_iterator( const _all_t
 	COPY_OTHER( m_EndRow )
 #undef COPY_OTHER
 {
+#ifndef WIN32
 	m_pNoteData->AddATIToList(this);
+#endif
 }
 
 template<typename ND, typename iter, typename TN>
@@ -1323,7 +1324,9 @@ template<typename ND, typename iter, typename TN>
 {
 	if(m_pNoteData != NULL)
 	{
+#ifndef WIN32
 		m_pNoteData->RemoveATIFromList(this);
+#endif
 	}
 }
 
