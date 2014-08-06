@@ -30,6 +30,7 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 	MINES_SUBTRACT_LIVES.Load(sType, "MinesSubtractLives");
 	HELD_ADD_LIVES.Load(sType, "HeldAddLives");
 	LET_GO_SUBTRACT_LIVES.Load(sType, "LetGoSubtractLives");
+	COURSE_SONG_REWARD_LIVES.Load(sType, "CourseSongRewardLives");
 
 	LIVES_FORMAT.Load(sType, "NumLivesFormat");
 
@@ -89,7 +90,17 @@ void LifeMeterBattery::OnSongEnded()
 		if( pCourse && pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()].iGainLives > -1 )
 			m_iLivesLeft += pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()].iGainLives;
 		else
-			m_iLivesLeft += ( GAMESTATE->m_pCurSteps[pn]->GetMeter()>=8 ? 2 : 1 );
+		{
+			Lua *L= LUA->Get();
+			COURSE_SONG_REWARD_LIVES.PushSelf(L);
+			PushSelf(L);
+			LuaHelpers::Push(L, pn);
+			RString error= "Error running CourseSongRewardLives callback: ";
+			LuaHelpers::RunScriptOnStack(L, error, 1, 1, true);
+			m_iLivesLeft += luaL_optnumber(L, -1, 0);
+			lua_settop(L, 0);
+			LUA->Release(L);
+		}
 		m_iLivesLeft = min( m_iLivesLeft, GAMESTATE->m_SongOptions.GetSong().m_iBatteryLives );
 
 		if( m_iTrailingLivesLeft < m_iLivesLeft )
