@@ -14,6 +14,8 @@ StepMania current development
   P2's lifemeter.  Use LifeMeterChangedP2.  "Life" and "StepsSecond" are passed
   in the params table for the message.
 * [LifeMeterBattery] CourseSongRewardLives metric added.
+* [LifeMeter] LifeType, DrainType, and BatteryLives moved to PlayerOptions so
+  the players can have different settings.
 
 2013/10/09
 ----------

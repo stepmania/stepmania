@@ -32,6 +32,7 @@ public:
 
 	void Refresh();
 	int GetLivesLeft() { return m_iLivesLeft; }
+	int GetTotalLives();
 	void ChangeLives(int iLifeDiff);
 
 	// Lua

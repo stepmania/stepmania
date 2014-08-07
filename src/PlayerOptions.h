@@ -11,6 +11,31 @@ struct lua_State;
 
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
+
+enum LifeType
+{
+	LifeType_Bar,
+	LifeType_Battery,
+	LifeType_Time,
+	NUM_LifeType,
+	LifeType_Invalid
+};
+const RString& LifeTypeToString( LifeType cat );
+const RString& LifeTypeToLocalizedString( LifeType cat );
+LuaDeclareType( LifeType );
+
+enum DrainType
+{
+	DrainType_Normal,
+	DrainType_NoRecover,
+	DrainType_SuddenDeath,
+	NUM_DrainType,
+	DrainType_Invalid
+};
+const RString& DrainTypeToString( DrainType cat );
+const RString& DrainTypeToLocalizedString( DrainType cat );
+LuaDeclareType( DrainType );
+
 /** @brief Per-player options that are not saved between sessions. */
 class PlayerOptions
 {
@@ -19,7 +44,9 @@ public:
 	 * @brief Set up the PlayerOptions with some reasonable defaults.
 	 *
 	 * This code was taken from Init() to use proper initialization. */
-	PlayerOptions(): m_bSetScrollSpeed(false),
+	PlayerOptions(): m_LifeType(LifeType_Bar), m_DrainType(DrainType_Normal),
+		m_BatteryLives(4),
+		m_bSetScrollSpeed(false),
 		m_fTimeSpacing(0), m_SpeedfTimeSpacing(1.0f),
 		m_fMaxScrollBPM(0), m_SpeedfMaxScrollBPM(1.0f),
 		m_fScrollSpeed(1.0f), m_SpeedfScrollSpeed(1.0f),
@@ -154,6 +181,9 @@ public:
 
 	float GetReversePercentForColumn( int iCol ) const; // accounts for all Directions
 
+	LifeType m_LifeType;
+	DrainType m_DrainType;	// only used with LifeBar
+	int m_BatteryLives;
 	/* All floats have a corresponding speed setting, which determines how fast
 	 * PlayerOptions::Approach approaches. */
 	bool	m_bSetScrollSpeed;				// true if the scroll speed was set by FromString

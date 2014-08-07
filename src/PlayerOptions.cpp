@@ -12,6 +12,24 @@
 #include "CommonMetrics.h"
 #include <float.h>
 
+static const char *LifeTypeNames[] = {
+	"Bar",
+	"Battery",
+	"Time",
+};
+XToString( LifeType );
+XToLocalizedString( LifeType );
+LuaXType( LifeType );
+
+static const char *DrainTypeNames[] = {
+	"Normal",
+	"NoRecover",
+	"SuddenDeath",
+};
+XToString( DrainType );
+XToLocalizedString( DrainType );
+LuaXType( DrainType );
+
 void NextFloat( float fValues[], int size );
 void NextBool( bool bValues[], int size );
 
@@ -31,6 +49,9 @@ static const float CMOD_DEFAULT= 200.0f;
 
 void PlayerOptions::Init()
 {
+	m_LifeType = LifeType_Bar;
+	m_DrainType = DrainType_Normal;
+	m_BatteryLives = 4;
 	m_bSetScrollSpeed = false;
 	m_fMaxScrollBPM = 0;		m_SpeedfMaxScrollBPM = 1.0f;
 	m_fTimeSpacing = 0;		m_SpeedfTimeSpacing = 1.0f;
@@ -64,6 +85,9 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 #define DO_COPY( x ) \
 	x = other.x;
 
+	DO_COPY( m_LifeType );
+	DO_COPY( m_DrainType );
+	DO_COPY( m_BatteryLives );
 	APPROACH( fTimeSpacing );
 	APPROACH( fScrollSpeed );
 	APPROACH( fMaxScrollBPM );
@@ -119,6 +143,26 @@ RString PlayerOptions::GetString( bool bForceNoteSkin ) const
 void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 {
 	//RString sReturn;
+
+	switch(m_LifeType)
+	{
+		case LifeType_Bar:
+			switch(m_DrainType)
+			{
+				case DrainType_Normal:						break;
+				case DrainType_NoRecover:		AddTo.push_back("NoRecover");	break;
+				case DrainType_SuddenDeath:	AddTo.push_back("SuddenDeath");	break;
+			}
+			break;
+		case LifeType_Battery:
+			AddTo.push_back(ssprintf("%dLives", m_BatteryLives));
+			break;
+		case LifeType_Time:
+			AddTo.push_back("LifeTime");
+			break;
+		default:
+			FAIL_M(ssprintf("Invalid LifeType: %i", m_LifeType));
+	}
 
 	if( !m_fTimeSpacing )
 	{
@@ -390,6 +434,17 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		level= CMOD_DEFAULT;
 		SET_FLOAT(fScrollBPM)
 	}
+	else if( sBit == "life" || sBit == "lives" )
+	{
+		// level is a percentage for every other option, so multiply by 100. -Kyz
+		m_BatteryLives= level * 100.0f;
+	}
+	else if( sBit == "bar" ) { m_LifeType= LifeType_Bar; }
+	else if( sBit == "battery" ) { m_LifeType= LifeType_Battery; }
+	else if( sBit == "lifetime" ) { m_LifeType= LifeType_Time; }
+	else if( sBit == "norecover" || sBit == "power-drop" ) { m_DrainType= DrainType_NoRecover; }
+	else if( sBit == "suddendeath" || sBit == "death" ) { m_DrainType= DrainType_SuddenDeath; }
+	else if( sBit == "normal-drain" ) { m_DrainType= DrainType_Normal; }
 	else if( sBit == "boost" )				SET_FLOAT( fAccels[ACCEL_BOOST] )
 	else if( sBit == "brake" || sBit == "land" )		SET_FLOAT( fAccels[ACCEL_BRAKE] )
 	else if( sBit == "wave" )				SET_FLOAT( fAccels[ACCEL_WAVE] )
@@ -688,6 +743,9 @@ float PlayerOptions::GetReversePercentForColumn( int iCol ) const
 bool PlayerOptions::operator==( const PlayerOptions &other ) const
 {
 #define COMPARE(x) { if( x != other.x ) return false; }
+	COMPARE(m_LifeType);
+	COMPARE(m_DrainType);
+	COMPARE(m_BatteryLives);
 	COMPARE(m_fTimeSpacing);
 	COMPARE(m_fScrollSpeed);
 	COMPARE(m_fScrollBPM);
@@ -889,6 +947,9 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	case saved_prefs_invalid_for_course:
 		break;
 	}
+	CPY(m_LifeType);
+	CPY(m_DrainType);
+	CPY(m_BatteryLives);
 
 	CPY( m_fPerspectiveTilt );
 	CPY( m_bTransforms[TRANSFORM_NOHOLDS] );
@@ -932,6 +993,9 @@ public:
 
 	// Direct control functions, for themes that can handle it.
 
+	ENUM_INTERFACE(LifeSetting, LifeType, LifeType);
+	ENUM_INTERFACE(DrainSetting, DrainType, DrainType);
+	INT_INTERFACE(BatteryLives, BatteryLives);
 	FLOAT_INTERFACE(TimeSpacing, TimeSpacing, true);
 	FLOAT_INTERFACE(MaxScrollBPM, MaxScrollBPM, true);
 	FLOAT_INTERFACE(ScrollSpeed, ScrollSpeed, true);
@@ -1298,6 +1362,9 @@ public:
 		ADD_METHOD( IsEasierForSongAndSteps );
 		ADD_METHOD( IsEasierForCourseAndTrail );
 
+		ADD_METHOD(LifeSetting);
+		ADD_METHOD(DrainSetting);
+		ADD_METHOD(BatteryLives);
 		ADD_METHOD(TimeSpacing);
 		ADD_METHOD(MaxScrollBPM);
 		ADD_METHOD(ScrollSpeed);

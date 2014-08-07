@@ -2983,117 +2983,101 @@ save yourself some time, copy this for undocumented things:
 		Enum type options are almost identical to bool type.  They take and return an enum value.<br />
 		For brevity, the functions are only given a description if the option requires careful handling or does not follow the float or bool interfaces.<br />
 	</Description>
+	<Function name='Alternate' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='AttackMines' return='bool' arguments='bool value'> </Function>
+	<Function name='BatteryLives' return='int' arguments='int num'>	</Function>
+	<Function name='Backwards' return='bool' arguments='bool value'> </Function>
+	<Function name='Beat' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Big' return='bool' arguments='bool value'> </Function>
+	<Function name='Blink' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Blind' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BMRize' return='bool' arguments='bool value'> </Function>
+	<Function name='Boomerang' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Boost' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Brake' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Bumpy' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Centered' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='CMod' return='float, float' arguments='float value, float approach_speed'>
+		If the player has a CMod set, returns the value of that CMod and its associated approach speed.  Returns nil otherwise.<br />
+		If the optional first argument is passed, sets the CMod to the value and disables any XMod or MMod that is set.<br />
+		If the optional second argument is passed, sets the speed at which the transition occurs.
+	</Function>
+	<Function name='Confusion' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Cover' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Cross' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Dark' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Dizzy' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Distant' return='float, float' arguments='float value, float approach_speed'>
+		If the player is using Distant (zero skew and positive tilt), returns the value of tilt and its approach_speed.<br />
+		Returns nil otherwise.<br />
+		If the optional first argument is passed, sets tilt to value and skew to zero.<br />
+		If the optional second argument is passed, sets the approach_speed for skew and tilt to it.
+	</Function>
+	<Function name='DrainSetting' return= 'DrainType' arguments='DrainType type'>	</Function>
+	<Function name='Drunk' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Echo' return='bool' arguments='bool value'> </Function>
+	<Function name='Expand' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='FailSetting' return='FailType' arguments='FailType'>
+		Sets the <Link class='ENUM' function='FailType' /> for the player, if the optional argument is provided.  Returns the <Link class='ENUM' function='FailType' /> that was previously set.
+	</Function>
+	<Function name='Flip' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Floored' return='bool' arguments='bool value'> </Function>
+	<Function name='GetStepAttacks' return='bool' argument=''>
+		Returns true if step attacks or random attacks are enabled.
+	</Function>
 	<Function name='IsEasierForCourseAndTrail' return='bool' arguments='Course c, Trail t'>
 		Returns <code>true</code> if the current PlayerOptions makes the current Course/Trail easier.
 	</Function>
 	<Function name='IsEasierForSongAndSteps' return='bool' arguments='Song so, Steps st'>
 		Returns <code>true</code> if the current PlayerOptions makes the current Song/Steps easier.
 	</Function>
-	<Function name='TimeSpacing' return='float, float' arguments='float value, float approach_speed'>
-		TimeSpacing is one of the variables for controlling the speed mod.<br />
-		Use CMod, XMod, or MMod to set the speed mod unless you have a good reason not to.<br />
-		It controls whether the speed mod is in X mode or C mode.  It should only be set to 0 or 1, and is only a float value to allow tweening between the two states.
+	<Function name='Hallway' return='float, float' arguments='float value, float approach_speed'>
+		If the player is using Hallway (zero skew and negative tilt), returns the value of tilt and its approach_speed.<br />
+		Returns nil otherwise.<br />
+		If the optional first argument is passed, sets tilt to negative value and skew to zero.<br />
+		Pass in a positive value for the familiar meaning of Hallway.<br />
+		If the optional second argument is passed, sets the approach_speed for skew and tilt to it.
 	</Function>
+	<Function name='Hidden' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='HiddenOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='HoldRolls' return='bool' arguments='bool value'> </Function>
+	<Function name='Incoming' return='float, float' arguments='float value, float approach_speed'>
+		If the player is using Incoming ((positive skew and negative tilt) or (negative skew and positive tilt)), returns the value of skew and its approach_speed.<br />
+		Returns nil otherwise.<br />
+		If the optional first argument is passed, sets tilt to negative value and skew to value.<br />
+		Pass in a positive value for the familiar meaning of Incoming.<br />
+		If the optional second argument is passed, sets the approach_speed for skew and tilt to it.
+	</Function>
+	<Function name='Invert' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Left' return='bool' arguments='bool value'> </Function>
+	<Function name='LifeSetting' return='LifeType' arguments='LifeType type'>	</Function>
+	<Function name='Little' return='bool' arguments='bool value'> </Function>
 	<Function name='MaxScrollBPM' return='float, float' arguments='float value, float approach_speed'>
 		MaxScrollBPM is one of the variables for controlling the speed mod.<br />
 		Use CMod, XMod, or MMod to set the speed mod unless you have a good reason not to.<br />
 		It is the setting for the MMod.<br />
 		MMods are not tweenable or settable on ScreenGameplay.  Use XMods if you need such an effect.
 	</Function>
-	<Function name='ScrollSpeed' return='float, float' arguments='float value, float approach_speed'>
-		ScrollSpeed is one of the variables for controlling the speed mod.<br />
-		Use CMod, XMod, or MMod to set the speed mod unless you have a good reason not to.<br />
-		It is the setting for the XMod.
-	</Function>
-	<Function name='ScrollBPM' return='float, float' arguments='float value, float approach_speed'>
-		ScrollBPM is one of the variables for controlling the speed mod.<br />
-		Use CMod, XMod, or MMod to set the speed mod unless you have a good reason not to.<br />
-		It is the setting for the CMod.
-	</Function>
-	<Function name='Boost' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Brake' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Wave' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Expand' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Boomerang' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Drunk' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Dizzy' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Confusion' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Mini' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Tiny' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Flip' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Invert' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Tornado' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Tipsy' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Bumpy' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Beat' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Xmode' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Twirl' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Roll' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Hidden' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='HiddenOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Sudden' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='SuddenOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Stealth' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Blink' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='RandomVanish' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Reverse' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Split' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Alternate' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Cross' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Centered' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Dark' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Blind' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Cover' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='RandAttack' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='NoAttack' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='PlayerAutoPlay' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Tilt' return='float, float' arguments='float value, float approach_speed'>
-		Tilt is one of the mods for controlling the perspective.  Use Overhead, Distant, Incoming, Space, Distant, or Hallway for controlling the perspective in the old way.<br />
-		Tilt tilts the note field forward and back.
-	</Function>
-	<Function name='Skew' return='float, float' arguments='float value, float approach_speed'>
-		Skew is one of the mods for controlling the perspective.  Use Overhead, Distant, Incoming, Space, Distant, or Hallway for controlling the perspective in the old way.<br />
-		Skew moves the vanishing point for the note field away from the center of the screen.<br />
-		Skew has no effect in single mode if Center1Player is true.<br />
-		Skew has no effect in double mode.<br />
-	</Function>
-	<Function name='Passmark' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='RandomSpeed' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='TurnNone' return='bool' arguments='bool value'> </Function>
-	<Function name='Mirror' return='bool' arguments='bool value'> </Function>
-	<Function name='Backwards' return='bool' arguments='bool value'> </Function>
-	<Function name='Left' return='bool' arguments='bool value'> </Function>
-	<Function name='Right' return='bool' arguments='bool value'> </Function>
-	<Function name='Shuffle' return='bool' arguments='bool value'> </Function>
-	<Function name='SoftShuffle' return='bool' arguments='bool value'> </Function>
-	<Function name='SuperShuffle' return='bool' arguments='bool value'> </Function>
-	<Function name='NoHolds' return='bool' arguments='bool value'> </Function>
-	<Function name='NoRolls' return='bool' arguments='bool value'> </Function>
-	<Function name='NoMines' return='bool' arguments='bool value'> </Function>
-	<Function name='Little' return='bool' arguments='bool value'> </Function>
-	<Function name='Wide' return='bool' arguments='bool value'> </Function>
-	<Function name='Big' return='bool' arguments='bool value'> </Function>
-	<Function name='Quick' return='bool' arguments='bool value'> </Function>
-	<Function name='BMRize' return='bool' arguments='bool value'> </Function>
-	<Function name='Skippy' return='bool' arguments='bool value'> </Function>
 	<Function name='Mines' return='bool' arguments='bool value'> </Function>
-	<Function name='AttackMines' return='bool' arguments='bool value'> </Function>
-	<Function name='Echo' return='bool' arguments='bool value'> </Function>
-	<Function name='Stomp' return='bool' arguments='bool value'> </Function>
-	<Function name='Planted' return='bool' arguments='bool value'> </Function>
-	<Function name='Floored' return='bool' arguments='bool value'> </Function>
-	<Function name='Twister' return='bool' arguments='bool value'> </Function>
-	<Function name='HoldRolls' return='bool' arguments='bool value'> </Function>
+	<Function name='Mini' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Mirror' return='bool' arguments='bool value'> </Function>
+	<Function name='MMod' return='float, float' arguments='float value, float approach_speed'>
+		If the player has a MMod set, returns the value of that MMod and its associated approach speed.  Returns nil otherwise.<br />
+		If the optional first argument is passed, sets the MMod to the value and disables any CMod or XMod that is set.<br />
+		If the optional second argument is passed, sets the speed at which the transition occurs.<br />
+		MMods are not tweenable or settable on ScreenGameplay.  Use XMods if you need such an effect.
+	</Function>
+	<Function name='MuteOnError' return='bool' arguments='bool value'> </Function>
+	<Function name='NoAttack' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='NoFakes' return='bool' arguments='bool value'> </Function>
+	<Function name='NoHolds' return='bool' arguments='bool value'> </Function>
 	<Function name='NoJumps' return='bool' arguments='bool value'> </Function>
 	<Function name='NoHands' return='bool' arguments='bool value'> </Function>
 	<Function name='NoLifts' return='bool' arguments='bool value'> </Function>
-	<Function name='NoFakes' return='bool' arguments='bool value'> </Function>
 	<Function name='NoQuads' return='bool' arguments='bool value'> </Function>
 	<Function name='NoStretch' return='bool' arguments='bool value'> </Function>
-	<Function name='MuteOnError' return='bool' arguments='bool value'> </Function>
-	<Function name='UsingReverse' return='bool' arguments=''>
-		Returns <code>true</code> if the player is using reverse. (equivalent to <code>GetReverse() == 1.0</code>)
-	</Function>
+	<Function name='NoMines' return='bool' arguments='bool value'> </Function>
+	<Function name='NoRolls' return='bool' arguments='bool value'> </Function>
 	<Function name='NoteSkin' return='string, bool' arguments='string name'>
 		Sets the NoteSkin to the named noteskin, unless name is nil or the noteskin does not exist.  Returns the name of the previous noteskin and whether the set attempt succeeded.<br />
 		Changing the noteskin during a song is not supported.<br />
@@ -3101,58 +3085,77 @@ save yourself some time, copy this for undocumented things:
 		note_name= options:NoteSkin() -- Sets note_name to the player's current noteskin.<br />
 		prev_note_name, succeeded= options:NoteSkin("cel") -- Sets prev_note_name to the noteskin the player had set, changes the current noteskin to "cel", sets succeeded to true if the the "cel" noteskin exists.<br />
 	</Function>
-	<Function name='FailSetting' return='FailType' arguments='FailType'>
-		Sets the <Link class='ENUM' function='FailType' /> for the player, if the optional argument is provided.  Returns the <Link class='ENUM' function='FailType' /> that was previously set.
+	<Function name='Overhead' return='bool' arguments='bool'>
+		If the player is using Overhead (0 tilt, 0 skew), returns true.<br />
+		If true is passed, sets the tilt and skew to 0.
 	</Function>
-			<Function name='CMod' return='float, float' arguments='float value, float approach_speed'>
-				If the player has a CMod set, returns the value of that CMod and its associated approach speed.  Returns nil otherwise.<br />
-				If the optional first argument is passed, sets the CMod to the value and disables any XMod or MMod that is set.<br />
-				If the optional second argument is passed, sets the speed at which the transition occurs.
-			</Function>
-			<Function name='XMod' return='float, float' arguments='float value, float approach_speed'>
-				If the player has a XMod set, returns the value of that XMod and its associated approach speed.  Returns nil otherwise.<br />
-				If the optional first argument is passed, sets the XMod to the value and disables any CMod or MMod that is set.<br />
-				If the optional second argument is passed, sets the speed at which the transition occurs.
-			</Function>
-			<Function name='MMod' return='float, float' arguments='float value, float approach_speed'>
-				If the player has a MMod set, returns the value of that MMod and its associated approach speed.  Returns nil otherwise.<br />
-				If the optional first argument is passed, sets the MMod to the value and disables any CMod or XMod that is set.<br />
-				If the optional second argument is passed, sets the speed at which the transition occurs.<br />
-				MMods are not tweenable or settable on ScreenGameplay.  Use XMods if you need such an effect.
-			</Function>
-			<Function name='Overhead' return='bool' arguments='bool'>
-				If the player is using Overhead (0 tilt, 0 skew), returns true.<br />
-				If true is passed, sets the tilt and skew to 0.
-			</Function>
-			<Function name='Incoming' return='float, float' arguments='float value, float approach_speed'>
-				If the player is using Incoming ((positive skew and negative tilt) or (negative skew and positive tilt)), returns the value of skew and its approach_speed.<br />
-				Returns nil otherwise.<br />
-				If the optional first argument is passed, sets tilt to negative value and skew to value.<br />
-				Pass in a positive value for the familiar meaning of Incoming.<br />
-				If the optional second argument is passed, sets the approach_speed for skew and tilt to it.
-			</Function>
-			<Function name='Space' return='float, float' arguments='float value, float approach_speed'>
-				If the player is using Space ((positive skew and positive tilt) or (negative skew and negative tilt)), returns the value of skew and its approach_speed.<br />
-				Returns nil otherwise.<br />
-				If the optional first argument is passed, sets tilt to value and skew to value.<br />
-				If the optional second argument is passed, sets the approach_speed for skew and tilt to it.
-			</Function>
-			<Function name='Hallway' return='float, float' arguments='float value, float approach_speed'>
-				If the player is using Hallway (zero skew and negative tilt), returns the value of tilt and its approach_speed.<br />
-				Returns nil otherwise.<br />
-				If the optional first argument is passed, sets tilt to negative value and skew to zero.<br />
-				Pass in a positive value for the familiar meaning of Hallway.<br />
-				If the optional second argument is passed, sets the approach_speed for skew and tilt to it.
-			</Function>
-			<Function name='Distant' return='float, float' arguments='float value, float approach_speed'>
-				If the player is using Distant (zero skew and positive tilt), returns the value of tilt and its approach_speed.<br />
-				Returns nil otherwise.<br />
-				If the optional first argument is passed, sets tilt to value and skew to zero.<br />
-				If the optional second argument is passed, sets the approach_speed for skew and tilt to it.
-			</Function>
-			<Function name='GetStepAttacks' return='bool' argument=''>
-				Returns true if step attacks or random attacks are enabled.
-			</Function>
+	<Function name='Passmark' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Planted' return='bool' arguments='bool value'> </Function>
+	<Function name='PlayerAutoPlay' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Quick' return='bool' arguments='bool value'> </Function>
+	<Function name='RandAttack' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='RandomSpeed' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='RandomVanish' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Reverse' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Right' return='bool' arguments='bool value'> </Function>
+	<Function name='Roll' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ScrollBPM' return='float, float' arguments='float value, float approach_speed'>
+		ScrollBPM is one of the variables for controlling the speed mod.<br />
+		Use CMod, XMod, or MMod to set the speed mod unless you have a good reason not to.<br />
+		It is the setting for the CMod.
+	</Function>
+	<Function name='ScrollSpeed' return='float, float' arguments='float value, float approach_speed'>
+		ScrollSpeed is one of the variables for controlling the speed mod.<br />
+		Use CMod, XMod, or MMod to set the speed mod unless you have a good reason not to.<br />
+		It is the setting for the XMod.
+	</Function>
+	<Function name='Shuffle' return='bool' arguments='bool value'> </Function>
+	<Function name='Skew' return='float, float' arguments='float value, float approach_speed'>
+		Skew is one of the mods for controlling the perspective.  Use Overhead, Distant, Incoming, Space, Distant, or Hallway for controlling the perspective in the old way.<br />
+		Skew moves the vanishing point for the note field away from the center of the screen.<br />
+		Skew has no effect in single mode if Center1Player is true.<br />
+		Skew has no effect in double mode.<br />
+	</Function>
+	<Function name='Skippy' return='bool' arguments='bool value'> </Function>
+	<Function name='SoftShuffle' return='bool' arguments='bool value'> </Function>
+	<Function name='Space' return='float, float' arguments='float value, float approach_speed'>
+		If the player is using Space ((positive skew and positive tilt) or (negative skew and negative tilt)), returns the value of skew and its approach_speed.<br />
+		Returns nil otherwise.<br />
+		If the optional first argument is passed, sets tilt to value and skew to value.<br />
+		If the optional second argument is passed, sets the approach_speed for skew and tilt to it.
+	</Function>
+	<Function name='Split' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Stealth' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Stomp' return='bool' arguments='bool value'> </Function>
+	<Function name='Sudden' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='SuddenOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='SuperShuffle' return='bool' arguments='bool value'> </Function>
+	<Function name='TimeSpacing' return='float, float' arguments='float value, float approach_speed'>
+		TimeSpacing is one of the variables for controlling the speed mod.<br />
+		Use CMod, XMod, or MMod to set the speed mod unless you have a good reason not to.<br />
+		It controls whether the speed mod is in X mode or C mode.  It should only be set to 0 or 1, and is only a float value to allow tweening between the two states.
+	</Function>
+	<Function name='Tilt' return='float, float' arguments='float value, float approach_speed'>
+		Tilt is one of the mods for controlling the perspective.  Use Overhead, Distant, Incoming, Space, Distant, or Hallway for controlling the perspective in the old way.<br />
+		Tilt tilts the note field forward and back.
+	</Function>
+	<Function name='Tiny' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Tipsy' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Tornado' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='TurnNone' return='bool' arguments='bool value'> </Function>
+	<Function name='Twirl' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Twister' return='bool' arguments='bool value'> </Function>
+	<Function name='UsingReverse' return='bool' arguments=''>
+		Returns <code>true</code> if the player is using reverse. (equivalent to <code>GetReverse() == 1.0</code>)
+	</Function>
+	<Function name='Wave' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Wide' return='bool' arguments='bool value'> </Function>
+	<Function name='XMod' return='float, float' arguments='float value, float approach_speed'>
+		If the player has a XMod set, returns the value of that XMod and its associated approach speed.  Returns nil otherwise.<br />
+		If the optional first argument is passed, sets the XMod to the value and disables any CMod or MMod that is set.<br />
+		If the optional second argument is passed, sets the speed at which the transition occurs.
+	</Function>
+	<Function name='Xmode' return='float, float' arguments='float value, float approach_speed'> </Function>
 </Class>
 <Class name='PlayerStageStats'>
 	<Function name='FailPlayer' return='bool' arguments=''>
@@ -3788,6 +3791,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Center1Player' return='bool' arguments=''>
 		Returns <code>true</code> if a single <Link class='Player' /> has its NoteField centered.
 	</Function>
+	<Function name='FailFadeRemovePlayer' return='void' arguments='PlayerNumber pn'>
+		Removes the notes for the specified player.
+	</Function>
 	<Function name='GetDummyPlayerInfo' return='PlayerInfo' arguments='int index'>
 		Returns a dummy PlayerInfo for the specified index.
 	</Function>
@@ -4300,13 +4306,7 @@ save yourself some time, copy this for undocumented things:
 	<Description>
 		See the description for PlayerOptions.  The functions follow the same design.
 	</Description>
-	<Function name='LifeSetting' return='LifeType' arguments='LifeType type'>
-	</Function>
-	<Function name='DrainSetting' return= 'DrainType' arguments='DrainType type'>
-	</Function>
 	<Function name='AutosyncSetting' return='AutosyncType' arguments='AutosyncType type'>
-	</Function>
-	<Function name='BatteryLives' return='int' arguments='int num'>
 	</Function>
 	<Function name='AssistClap' return='bool' arguments='bool b'>
 	</Function>
