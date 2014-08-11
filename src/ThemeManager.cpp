@@ -864,12 +864,20 @@ RString ThemeManager::GetMetricsIniPath( const RString &sThemeName )
 bool ThemeManager::HasMetric( const RString &sMetricsGroup, const RString &sValueName )
 {
 	RString sThrowAway;
+	if(sMetricsGroup == "" || sValueName == "")
+	{
+		return false;
+	}
 	return GetMetricRawRecursive( g_pLoadedThemeData->iniMetrics, sMetricsGroup, sValueName, sThrowAway );
 }
 
 bool ThemeManager::HasString( const RString &sMetricsGroup, const RString &sValueName )
 {
 	RString sThrowAway;
+	if(sMetricsGroup == "" || sValueName == "")
+	{
+		return false;
+	}
 	return GetMetricRawRecursive( g_pLoadedThemeData->iniStrings, sMetricsGroup, sValueName, sThrowAway );
 }
 
@@ -1045,6 +1053,11 @@ LuaReference ThemeManager::GetMetricR( const RString &sMetricsGroup, const RStri
 
 void ThemeManager::PushMetric( Lua *L, const RString &sMetricsGroup, const RString &sValueName )
 {
+	if(sMetricsGroup == "" || sValueName == "")
+	{
+		LuaHelpers::ReportScriptError("PushMetric:  Attempted to fetch metric with empty group name or empty value name.");
+		return;
+	}
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sMetricsGroup, sValueName );
 
 	RString sName = ssprintf( "%s::%s", sMetricsGroup.c_str(), sValueName.c_str() );
@@ -1179,6 +1192,11 @@ static RString PseudoLocalize( RString s )
 RString ThemeManager::GetString( const RString &sMetricsGroup, const RString &sValueName_ )
 {
 	RString sValueName = sValueName_;
+	if(sMetricsGroup == "" || sValueName == "")
+	{
+		LuaHelpers::ReportScriptError("PushMetric:  Attempted to fetch metric with empty group name or empty value name.");
+		return "";
+	}
 
 	// TODO: Handle escaping = with \=
 	DEBUG_ASSERT( sValueName.find('=') == sValueName.npos );
@@ -1267,9 +1285,29 @@ public:
 	static int ReloadMetrics( T* p, lua_State *L )		{ p->ReloadMetrics(); return 0; }
 
 	static int HasMetric( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasMetric(SArg(1),SArg(2))); return 1; }
-	static int GetMetric( T* p, lua_State *L )		{ p->PushMetric( L, SArg(1),SArg(2) ); return 1; }
+	static int GetMetric( T* p, lua_State *L )
+	{
+		RString group= SArg(1);
+		RString name= SArg(2);
+		if(group == "" || name == "")
+		{
+			luaL_error(L, "Cannot fetch metric with empty group name or empty value name.");
+		}
+		p->PushMetric(L, group, name);
+		return 1;
+	}
 	static int HasString( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasString(SArg(1),SArg(2))); return 1; }
-	static int GetString( T* p, lua_State *L )		{ lua_pushstring(L, p->GetString(SArg(1),SArg(2)) ); return 1; }
+	static int GetString( T* p, lua_State *L )
+	{
+		RString group= SArg(1);
+		RString name= SArg(2);
+		if(group == "" || name == "")
+		{
+			luaL_error(L, "Cannot fetch string with empty group name or empty value name.");
+		}
+		lua_pushstring(L, p->GetString(group, name));
+		return 1;
+	}
 	static int GetPathInfoB( T* p, lua_State *L )
 	{
 		ThemeManager::PathInfo pi;
