@@ -12,6 +12,8 @@ Def.ActorScroller{
 	-- Transforms the ActorScroller's children. Usually used for scrolling.
 	-- The most important part of an ActorScroller.
 	-- This example spaces each item out 32 pixels vertically.
+
+	-- "offset" represents the offset from the center of the scroller.
 	TransformFunction=function(self,offset,itemIndex,numItems)
 		self:y(32*offset)
 	end,
@@ -28,15 +30,13 @@ Def.ActorScroller{
 	--MaskWidth=0,
 	--MaskHeight=0,
 
-	-- (float) possibly unused?
-	--QuantizePixels=0,
-
 	-- children (items to scroll)
 	-- CAVEAT: BitmapTexts have to be wrapped in ActorFrames in order to be colored.
+	-- This is a long standing issue (ITG? ITG2?)
 	Def.ActorFrame{
 		Def.BitmapText{
 			Name="ScrollItem1",
-			File=THEME:GetPathF("Common","normal"),
+			Font="Common normal",
 			Text="Scroll Item 1",
 			InitCommand=cmd(diffuse,color("#FF0000")),
 		},
@@ -44,14 +44,14 @@ Def.ActorScroller{
 	Def.ActorFrame{
 		Def.BitmapText{
 			Name="ScrollItem2",
-			File=THEME:GetPathF("Common","normal"),
+			Font="Common normal",
 			Text="Scroll Item 2",
 			InitCommand=cmd(glow,color("#00FF0088")),
 		},
 	},
 	Def.BitmapText{
 		Name="ScrollItem3",
-		File=THEME:GetPathF("Common","normal"),
+		Font="Common normal",
 		Text="Scroll Item 3",
 		InitCommand=cmd(bob;effectmagnitude,8,0,4),
 	},
