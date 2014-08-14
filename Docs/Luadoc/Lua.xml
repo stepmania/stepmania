@@ -837,8 +837,10 @@
 			<Function name='SaveProfiles'/>
 			<Function name='SetCharacter'/>
 			<Function name='SetCurrentCourse'/>
+			<Function name='SetCurrentPlayMode'/>
 			<Function name='SetCurrentSong'/>
 			<Function name='SetCurrentSteps'/>
+			<Function name='SetCurrentStyle'/>
 			<Function name='SetCurrentTrail'/>
 			<Function name='SetFailTypeExplicitlySet'/>
 			<Function name='SetJukeboxUsesModifiers'/>
