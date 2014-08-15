@@ -376,7 +376,11 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		m_fTimeSpacing = 0;
 	}
 
-	else if( sBit == "clearall" )				Init();
+	else if( sBit == "clearall" )
+	{
+		Init();
+		m_sNoteSkin= NOTESKIN->GetDefaultNoteSkinName();
+	}
 	else if( sBit == "resetspeed" )
 	{
 		/* level is set to the values from Init() because all speed related

@@ -53,6 +53,4 @@ local log_args= {
 	Font= "Common Error",
 }
 
-Trace("Loaded error layer.")
-
 return Def.LogDisplay(log_args)
