@@ -151,8 +151,40 @@ function Actor:FullScreen()
 	self:stretchto( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT )
 end
 
+bg_fit_functions= {
+	BackgroundFitMode_CoverDistort= function(self, width, height)
+		local xscale= width / self:GetWidth()
+		local yscale= height / self:GetHeight()
+		self:zoomx(xscale)
+		self:zoomy(yscale)
+	end,
+	BackgroundFitMode_CoverPreserve= function(self, width, height)
+		local xscale= width / self:GetWidth()
+		local yscale= height / self:GetHeight()
+		self:zoom(math.max(xscale, yscale))
+	end,
+	BackgroundFitMode_FitInside= function(self, width, height)
+		local xscale= width / self:GetWidth()
+		local yscale= height / self:GetHeight()
+		self:zoom(math.min(xscale, yscale))
+	end,
+	BackgroundFitMode_FitInsideAvoidLetter= function(self, width, height)
+		local yscale= height / self:GetHeight()
+		self:zoom(yscale)
+	end,
+	BackgroundFitMode_FitInsideAvoidPillar= function(self, width, height)
+		local xscale= width / self:GetWidth()
+		self:zoom(xscale)
+	end
+}
+
 function Actor:scale_or_crop_background()
-	self:scaletocover(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+	local fit_mode= PREFSMAN:GetPreference("BackgroundFitMode")
+	if bg_fit_functions[fit_mode] then
+		bg_fit_functions[fit_mode](self, SCREEN_WIDTH, SCREEN_HEIGHT)
+	else
+		self:scaletocover(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+	end
 end
 
 function Actor:CenterX() self:x(SCREEN_CENTER_X) end

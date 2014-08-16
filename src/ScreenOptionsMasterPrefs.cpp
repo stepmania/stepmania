@@ -692,7 +692,8 @@ static void InitializeConfOptions()
 	g_ConfOptions.back().m_sPrefName = "BGBrightness";
 	ADD( ConfOption( "BGBrightnessOrStatic",	BGBrightnessOrStatic,	"Disabled","25% Bright","50% Bright","75% Bright" ) );
 	g_ConfOptions.back().m_sPrefName = "BGBrightness";
-	ADD( ConfOption( "StretchBackgrounds",			MovePref<bool>,		"Off","On" ) );
+	ADD( ConfOption( "StretchBackgrounds",			MovePref<bool>,		"Off","On" ) ); // Deprecated, unused by default/_fallback. -Kyz
+	ADD( ConfOption( "BackgroundFitMode", MovePref<BackgroundFitMode>, "CoverDistort", "CoverPreserve", "FitInside", "FitInsideAvoidLetter", "FitInsideAvoidPillar") );
 
 	ADD( ConfOption( "ShowDanger",			MovePref<bool>,		"Hide","Show" ) );
 	ADD( ConfOption( "ShowDancingCharacters",	MovePref<ShowDancingCharacters>, "Default to Off","Default to Random","Select" ) );
