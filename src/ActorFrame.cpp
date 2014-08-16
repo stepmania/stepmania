@@ -632,6 +632,15 @@ public:
 	static int SetDrawByZPosition( T* p, lua_State *L )	{ p->SetDrawByZPosition( BArg(1) ); return 1; }
 	static int SetDrawFunction( T* p, lua_State *L )
 	{
+		if(lua_isnil(L,1))
+		{
+			LuaReference ref;
+			lua_pushnil( L );
+			ref.SetFromStack( L );
+			p->SetDrawFunction( ref );
+			return 0;
+		}
+		
 		luaL_checktype( L, 1, LUA_TFUNCTION );
 
 		LuaReference ref;
@@ -647,6 +656,15 @@ public:
 	}
 	static int SetUpdateFunction( T* p, lua_State *L )
 	{
+		if(lua_isnil(L,1))
+		{
+			LuaReference ref;
+			lua_pushnil( L );
+			ref.SetFromStack( L );
+			p->SetUpdateFunction( ref );
+			return 0;
+		}
+		
 		luaL_checktype( L, 1, LUA_TFUNCTION );
 
 		LuaReference ref;
