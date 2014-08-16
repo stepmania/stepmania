@@ -659,10 +659,20 @@ void BitmapText::DrawPrimitives()
 				iEnd = min( iEnd, m_aVertices.size() );
 				for( ; i < iEnd; i += 4 )
 				{
-					m_aVertices[i+0].c = attr.diffuse[0];	// top left
-					m_aVertices[i+1].c = attr.diffuse[2];	// bottom left
-					m_aVertices[i+2].c = attr.diffuse[3];	// bottom right
-					m_aVertices[i+3].c = attr.diffuse[1];	// top right
+					if( m_internalDiffuse != RageColor(1, 1, 1, 1) )
+					{
+						m_aVertices[i+0].c = attr.diffuse[0] * m_internalDiffuse;
+						m_aVertices[i+1].c = attr.diffuse[2] * m_internalDiffuse;
+						m_aVertices[i+2].c = attr.diffuse[3] * m_internalDiffuse;
+						m_aVertices[i+3].c = attr.diffuse[1] * m_internalDiffuse;
+					}
+					else
+					{
+						m_aVertices[i+0].c = attr.diffuse[0];	// top left
+						m_aVertices[i+1].c = attr.diffuse[2];	// bottom left
+						m_aVertices[i+2].c = attr.diffuse[3];	// bottom right
+						m_aVertices[i+3].c = attr.diffuse[1];	// top right
+					}
 				}
 			}
 		}
@@ -729,7 +739,16 @@ void BitmapText::DrawPrimitives()
 				iEnd = i + attr.length*4;
 			iEnd = min( iEnd, m_aVertices.size() );
 			for( ; i < iEnd; ++i )
-				m_aVertices[i].c = attr.glow;
+			{
+				if( m_internalGlow.a > 0 )
+				{
+					m_aVertices[i].c = attr.glow * m_internalGlow;
+				}
+				else
+				{
+					m_aVertices[i].c = attr.glow;
+				}
+			}
 		}
 		/* Draw glow using the base texture and the glow texture. Otherwise,
 		 * glow looks too tame on BitmapText that has a stroke. - Chris Danford */
