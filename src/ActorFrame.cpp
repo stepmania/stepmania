@@ -248,6 +248,9 @@ void ActorFrame::DrawPrimitives()
 		return;
 	}
 
+	RageColor diffuse = m_pTempState->diffuse[0];
+	RageColor glow = m_pTempState->glow;
+
 	// draw all sub-ActorFrames while we're in the ActorFrame's local coordinate space
 	if( m_bDrawByZPosition )
 	{
@@ -255,8 +258,8 @@ void ActorFrame::DrawPrimitives()
 		ActorUtil::SortByZPosition( subs );
 		for( unsigned i=0; i<subs.size(); i++ )
 		{
-			subs[i]->SetInternalDiffuse(m_pTempState->diffuse[0]);
-			subs[i]->SetInternalGlow(m_pTempState->glow);
+			subs[i]->SetInternalDiffuse( diffuse );
+			subs[i]->SetInternalGlow( glow );
 			subs[i]->Draw();
 		}
 	}
@@ -264,8 +267,8 @@ void ActorFrame::DrawPrimitives()
 	{
 		for( unsigned i=0; i<m_SubActors.size(); i++ )
 		{
-			m_SubActors[i]->SetInternalDiffuse(m_pTempState->diffuse[0]);
-			m_SubActors[i]->SetInternalGlow(m_pTempState->glow);
+			m_SubActors[i]->SetInternalDiffuse( diffuse );
+			m_SubActors[i]->SetInternalGlow( glow );
 			m_SubActors[i]->Draw();
 		}
 	}
