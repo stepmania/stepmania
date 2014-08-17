@@ -19,11 +19,17 @@ t[#t+1] = Def.ActorFrame {
 	LoadActor(THEME:GetPathB("_frame","3x3"),"rounded black",64,16);
 	LoadFont("Common Normal") .. {
 		InitCommand=cmd(y,-1;shadowlength,1;playcommand,"Set");
+		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
+		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
+		CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
+		CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
+		CurrentTraiP1ChangedMessageCommand=cmd(playcommand,"Set");
+		CurrentTraiP2ChangedMessageCommand=cmd(playcommand,"Set");
 		SetCommand=function(self)
-			if GAMESTATE:GetCurrentCourse() then
-				self:settext( GAMESTATE:GetCurrentStageIndex()+1 .. " / " .. GAMESTATE:GetCurrentCourse():GetEstimatedNumStages() );
-			elseif GAMESTATE:IsEventMode() then
+			if GAMESTATE:IsEventMode() then
 				self:settextf("Stage %s", curStageIndex+1);
+			elseif GAMESTATE:GetPlayMode() == 'PlayMode_Endless' or 'PlayMode_Oni' or 'Nonstop' then
+				self:settextf("%i / %i", curStageIndex , GAMESTATE:GetCurrentCourse():GetEstimatedNumStages());
 			else
 				if THEME:GetMetric(curScreen,"StageDisplayUseShortString") then
 					self:settextf("%s", ToEnumShortString(curStage));

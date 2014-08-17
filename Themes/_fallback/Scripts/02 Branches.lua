@@ -42,7 +42,7 @@ Branch = {
 	end,
 	NoiseTrigger = function()
 		local hour = Hour()
-		return hour > 3 and hour < 6 and "ScreenNoise" or "ScreenInit"
+		return hour > 3 and hour < 6 and "ScreenNoise" or "ScreenHighScores"
 	end,
 	TitleMenu = function()
 		-- home mode is the most assumed use of sm-ssc.
