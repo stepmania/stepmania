@@ -73,22 +73,17 @@ Scores.SetCommand=function(self, params)
 			if CurrentItem then
 				local hsl = pProfile:GetHighScoreList(Current, CurrentItem);
 				local hs = hsl and hsl:GetHighScores();
-				--[[Warn( tostring(CurrentItem:GetStepsType()) .. ", " ..
-					tostring(CurrentItem:GetDifficulty()) .. ": " ..
-					tostring(hsl) .. ", " ..
-					tostring(#hs) );]]
+
 				local name = c[idx .. "Name"];
 				local score = c[idx .. "Score"];
 				local filled = c[idx .. "Filled"];
 				local empty = c[idx .. "Empty"];
-
-				--assert( c[sNameType], sNameType );
-				--assert( c[sScoreType], sScoreType );
-
+				
 				name:visible( true );
 				score:visible( true );
 				filled:visible( true );
 				empty:visible( false );
+				
 				if hs and #hs > 0 then
 					name:settext( hs[1]:GetName() );
 					score:settext( FormatPercentScore( hs[1]:GetPercentDP() ) );
