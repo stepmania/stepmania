@@ -156,11 +156,6 @@ void LuaBinding::Register( lua_State *L )
 
 void LuaBinding::CreateMethodsTable( lua_State *L, const RString &sName )
 {
-	lua_getfield( L, LUA_GLOBALSINDEX, sName );
-	if( !lua_isnil(L, -1) )
-		return;
-
-	lua_pop( L, 1 );
 	lua_newtable( L );
 	lua_pushvalue( L, -1 );
 	lua_setfield( L, LUA_GLOBALSINDEX, sName );
