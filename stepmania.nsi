@@ -54,7 +54,9 @@
 	; I think it may need actual admin privs for writing to the registry... -aj
 	;RequestExecutionLevel user
 
-	InstallDir "C:\Games\${PRODUCT_ID}"
+	; $INSTDIR is defined in .onInit below. Old line is left here just in case.
+	;InstallDir "C:\Games\${PRODUCT_ID}"
+	InstallDir "${INSTDIR}"
 	InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}" ""
 
 	; DirShow show ; (make this hide to not let the user change it)
@@ -688,6 +690,11 @@ Function .onInit
 	; Force show language selection for debugging
 	;!define MUI_LANGDLL_ALWAYSSHOW
 	!insertmacro MUI_LANGDLL_DISPLAY
+
+	; determine root drive where Windows was installed, and suggest a
+	; reasonable directory for installation.
+	StrCpy $0 "$WINDIR" 2
+	StrCpy $INSTDIR "$0\Games\${PRODUCT_ID}"
 
 !ifdef SHOW_AUTORUN
 	;
