@@ -3791,9 +3791,6 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Center1Player' return='bool' arguments=''>
 		Returns <code>true</code> if a single <Link class='Player' /> has its NoteField centered.
 	</Function>
-	<Function name='FailFadeRemovePlayer' return='void' arguments='PlayerNumber pn'>
-		Removes the notes for the specified player.
-	</Function>
 	<Function name='GetDummyPlayerInfo' return='PlayerInfo' arguments='int index'>
 		Returns a dummy PlayerInfo for the specified index.
 	</Function>

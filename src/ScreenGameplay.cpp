@@ -71,6 +71,7 @@
 static ThemeMetric<float> INITIAL_BACKGROUND_BRIGHTNESS	("ScreenGameplay","InitialBackgroundBrightness");
 static ThemeMetric<float> SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 static ThemeMetric<RString> SCORE_KEEPER_CLASS		("ScreenGameplay","ScoreKeeperClass");
+static ThemeMetric<bool> FORCE_IMMEDIATE_FAIL_FOR_BATTERY("ScreenGameplay", "ForceImmediateFailForBattery");
 
 AutoScreenMessage( SM_PlayGo );
 
@@ -1095,13 +1096,15 @@ void ScreenGameplay::LoadNextSong()
 	// No need to do this here.  We do it in SongFinished().
 	//GAMESTATE->RemoveAllActiveAttacks();
 
-	/* If we're in battery mode, force FailImmediate. We assume in Player::Step
-	 * that failed players can't step. */
-	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+	// Force immediate fail behavior changed to theme metric by Kyz.
+	if(FORCE_IMMEDIATE_FAIL_FOR_BATTERY)
 	{
-		if(pi->GetPlayerState()->m_PlayerOptions.GetStage().m_LifeType == LifeType_Battery)
+		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
-			PO_GROUP_ASSIGN(pi->GetPlayerState()->m_PlayerOptions, ModsLevel_Song, m_FailType, FailType_Immediate);
+			if(pi->GetPlayerState()->m_PlayerOptions.GetStage().m_LifeType == LifeType_Battery)
+			{
+				PO_GROUP_ASSIGN(pi->GetPlayerState()->m_PlayerOptions, ModsLevel_Song, m_FailType, FailType_Immediate);
+			}
 		}
 	}
 
@@ -1652,7 +1655,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 				FailType ft = GAMESTATE->GetPlayerFailType( pi->GetPlayerState() );
 				LifeType lt = pi->GetPlayerState()->m_PlayerOptions.GetStage().m_LifeType;
-
 				if( ft == FailType_Off || ft == FailType_EndOfSong )
 					continue;
 
@@ -1820,10 +1822,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 						if( !GAMESTATE->IsCpuPlayer(pi->m_pn) )
 							continue;
 
-						SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
-						pi->ShowOniGameOver();
-						pi->m_NoteData.Init(); // remove all notes and scoring
-						pi->m_pPlayer->FadeToFail(); // tell the NoteField to fade to white
+						FailFadeRemovePlayer(&*pi);
 					}
 				}
 			}
@@ -1924,14 +1923,6 @@ void ScreenGameplay::FailFadeRemovePlayer(PlayerInfo* pi)
 	pi->m_NoteData.Init();		// remove all notes and scoring
 	pi->m_NoteData.SetNumTracks(tracks); // reset the number of tracks.
 	pi->m_pPlayer->FadeToFail();	// tell the NoteField to fade to white
-}
-
-void ScreenGameplay::FailFadeRemovePlayer(PlayerNumber pn)
-{
-	if(pn < m_vPlayerInfo.size())
-	{
-		FailFadeRemovePlayer(&m_vPlayerInfo[pn]);
-	}
 }
 
 float ScreenGameplay::GetHasteRate()
@@ -3004,12 +2995,6 @@ public:
 		lua_pushnumber(L, true_bps);
 		return 1;
 	}
-	static int FailFadeRemovePlayer(T* p, lua_State* L)
-	{
-		PlayerNumber pn= Enum::Check<PlayerNumber>(L, 1);
-		p->FailFadeRemovePlayer(pn);
-		return 0;
-	}
 	
 	LunaScreenGameplay()
 	{
@@ -3027,7 +3012,6 @@ public:
 		ADD_METHOD( HasteTimeBetweenUpdates );
 		ADD_METHOD( HasteLifeSwitchPoint );
 		ADD_METHOD( GetTrueBPS );
-		ADD_METHOD( FailFadeRemovePlayer );
 	}
 };
 

@@ -1326,7 +1326,6 @@
 		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenGameplay'>
 			<Function name='Center1Player'/>
-			<Function name='FailFadeRemovePlayer'/>
 			<Function name='GetDummyPlayerInfo'/>
 			<Function name='GetHasteRate'/>
 			<Function name='GetLifeMeter'/>
