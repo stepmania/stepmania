@@ -2556,11 +2556,17 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetCurrentCourse' return='void' arguments='Course course'>
 		Sets the current Course to <code>course</code>.
 	</Function>
+	<Function name='SetCurrentPlayMode' return='void' arguments='PlayMode pm'>
+		Sets the current PlayMode to <code>pm</code>.
+	</Function>
 	<Function name='SetCurrentSong' return='void' arguments='Song song'>
 		Sets the current Song to <code>song</code>.
 	</Function>
 	<Function name='SetCurrentSteps' return='void' arguments='PlayerNumber pn, Steps steps'>
 		Sets Player <code>pn</code>'s current Steps to <code>steps</code>.
+	</Function>
+	<Function name='SetCurrentStyle' return='void' arguments='Style style or string sStyle'>
+		Sets current Style to the provided style. Either a style object or a style string can be provided. If current steps for either player are not valid in the new style, they will be cleared.
 	</Function>
 	<Function name='SetCurrentTrail' return='void' arguments='Trail trail'>
 		Sets the current Trail to <code>trail</code>.

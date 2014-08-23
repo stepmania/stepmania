@@ -2643,6 +2643,97 @@ public:
 	DEFINE_METHOD( HaveProfileToLoad, HaveProfileToLoad() )
 	DEFINE_METHOD( HaveProfileToSave, HaveProfileToSave() )
 
+	static bool AreStyleAndPlayModeCompatible( T* p, lua_State* L, const Style *style, PlayMode pm )
+	{
+		if( pm != PLAY_MODE_BATTLE && pm != PLAY_MODE_RAVE )
+		{
+			return true;
+		}
+
+		// Do not allow styles with StepsTypes with shared sides or that are one player only with Battle or Rave.
+		if( style->m_StyleType != StyleType_TwoPlayersSharedSides )
+		{
+			vector<const Style*> vpStyles;
+			GAMEMAN->GetCompatibleStyles( p->m_pCurGame, 2, vpStyles );
+			FOREACH_CONST( const Style*, vpStyles, s )
+			{
+				if( (*s)->m_StepsType == style->m_StepsType )
+				{
+					return true;
+				}
+			}
+		}
+		luaL_error( L, "Style %s is incompatible with PlayMode %s",
+			style->m_szName, PlayModeToString( pm ).c_str() );
+		return false;
+	}
+
+	static void ClearIncompatibleStepsAndTrails( T *p, lua_State* L )
+	{
+		const Style *style = p->m_pCurStyle;
+		FOREACH_HumanPlayer( pn )
+		{
+			if( p->m_pCurSteps[pn] && ( !style || style->m_StepsType != p->m_pCurSteps[pn]->m_StepsType ) )
+			{
+				p->m_pCurSteps[pn].Set( NULL );
+			}
+			if( p->m_pCurTrail[pn] && ( !style || style->m_StepsType != p->m_pCurTrail[pn]->m_StepsType ) )
+			{
+				p->m_pCurTrail[pn].Set( NULL );
+			}
+		}
+	}
+
+	static int SetCurrentStyle( T* p, lua_State *L )
+	{
+		const Style* pStyle = NULL;
+		if( lua_isstring(L,1) )
+		{
+			RString style = SArg(1);
+			pStyle = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_pCurGame, style );
+			if( !pStyle )
+			{
+				luaL_error( L, "SetCurrentStyle: %s is not a valid style.", style.c_str() );
+			}
+		}
+		else
+		{
+			pStyle = Luna<Style>::check(L,1);
+		}
+
+		StyleType st = pStyle->m_StyleType;
+		if( p->GetNumSidesJoined() == 2 && 
+			( st == StyleType_OnePlayerOneSide || st == StyleType_OnePlayerTwoSides ) )
+		{
+			luaL_error( L, "Too many sides joined for style %s", pStyle->m_szName );
+		}
+		else if( p->GetNumSidesJoined() == 1 && 
+			( st == StyleType_TwoPlayersTwoSides || st == StyleType_TwoPlayersSharedSides ) )
+		{
+			luaL_error( L, "Too few sides joined for style %s", pStyle->m_szName );
+		}
+
+		if( !AreStyleAndPlayModeCompatible( p, L, pStyle, p->m_PlayMode ) )
+		{ 
+			return 0;
+		}
+	
+		p->SetCurrentStyle( pStyle );
+		ClearIncompatibleStepsAndTrails( p, L );
+
+		return 0;
+	}
+
+	static int SetCurrentPlayMode( T* p, lua_State *L )
+	{
+		PlayMode pm = Enum::Check<PlayMode>( L, 1 );
+		if( AreStyleAndPlayModeCompatible( p, L, p->m_pCurStyle, pm ) )
+		{
+			p->m_PlayMode.Set( pm );
+		}
+		return 0;
+	}
+
 	LunaGameState()
 	{
 		ADD_METHOD( IsPlayerEnabled );
@@ -2760,6 +2851,8 @@ public:
 		ADD_METHOD( HaveProfileToSave );
 		ADD_METHOD( SetFailTypeExplicitlySet );
 		ADD_METHOD( StoreRankingName );
+		ADD_METHOD( SetCurrentStyle );
+		ADD_METHOD( SetCurrentPlayMode );
 	}
 };
 
