@@ -172,6 +172,9 @@ public:
 	bool IsPaused() const { return m_bPaused; }
 	float GetHasteRate();
 
+	void FailFadeRemovePlayer(PlayerInfo* pi);
+	void FailFadeRemovePlayer(PlayerNumber pn);
+
 	vector<float> m_HasteTurningPoints; // Values at which the meaning of GAMESTATE->m_fHasteRate changes.
 	vector<float> m_HasteAddAmounts; // Amounts that are added to speed depending on what turning point has been passed.
 	float m_fHasteTimeBetweenUpdates; // Seconds between haste updates.

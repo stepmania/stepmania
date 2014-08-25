@@ -53,10 +53,10 @@
 	static int func_name(T* p, lua_State* L) \
 	{ \
 		DefaultNilArgs(L, 1); \
-		lua_pushnumber(L, p->m_i ## member); \
+		lua_pushnumber(L, p->m_ ## member); \
 		if(lua_isnumber(L, 1)) \
 		{ \
-			p->m_i ## member = IArg(1); \
+			p->m_ ## member = IArg(1); \
 		} \
 		return 1; \
 	}

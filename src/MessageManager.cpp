@@ -102,6 +102,13 @@ Message::Message( const RString &s )
 	m_bBroadcast = false;
 }
 
+Message::Message(const MessageID id)
+{
+	m_sName= MessageIDToString(id);
+	m_pParams = new LuaTable;
+	m_bBroadcast = false;
+}
+
 Message::Message( const RString &s, const LuaReference &params )
 {
 	m_sName = s;

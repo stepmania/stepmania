@@ -25,8 +25,12 @@ const float LESSON_PASS_THRESHOLD = 0.8f;
 
 Grade GetGradeFromPercent( float fPercent );
 
-void PlayerStageStats::Init()
+void PlayerStageStats::InternalInit()
 {
+	m_for_multiplayer= false;
+	m_player_number= PLAYER_1;
+	m_multiplayer_number= MultiPlayer_P1;
+
   m_bPlayerCanAchieveFullCombo = true;
 	m_bJoined = false;
 	m_vpPossibleSteps.clear();
@@ -65,6 +69,18 @@ void PlayerStageStats::Init()
 	m_bDisqualified = false;
 	m_rc = RankingCategory_Invalid;
 	m_HighScore = HighScore();
+}
+
+void PlayerStageStats::Init(PlayerNumber pn)
+{
+	m_for_multiplayer= false;
+	m_player_number= pn;
+}
+
+void PlayerStageStats::Init(MultiPlayer pn)
+{
+	m_for_multiplayer= true;
+	m_multiplayer_number= pn;
 }
 
 void PlayerStageStats::AddStats( const PlayerStageStats& other )
@@ -353,7 +369,10 @@ void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 	// fSecond will always be greater than any value already in the map.
 	m_fLifeRecord[fStepsSecond] = fLife;
 
-	MESSAGEMAN->Broadcast( Message_LifeMeterChangedP1 );
+	Message msg(static_cast<MessageID>(Message_LifeMeterChangedP1+m_player_number));
+	msg.SetParam("Life", fLife);
+	msg.SetParam("StepsSecond", fStepsSecond);
+	MESSAGEMAN->Broadcast(msg);
 
 	// Memory optimization:
 	// If we have three consecutive records A, B, and C all with the same fLife,
