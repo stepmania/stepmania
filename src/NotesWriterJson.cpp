@@ -100,7 +100,7 @@ static void Serialize( const RadarValues &o, Json::Value &root )
 {
 	FOREACH_ENUM( RadarCategory, rc )
 	{
-		root[ RadarCategoryToString(rc) ] = o.m_Values.f[rc];
+		root[ RadarCategoryToString(rc) ] = o[rc];
 	}
 }
 

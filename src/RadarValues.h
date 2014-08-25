@@ -12,29 +12,13 @@ struct lua_State;
 /** @brief Cached song statistics. */
 struct RadarValues
 {
-	union Values
-	{
-		struct
-		{
-			float fStream;
-			float fVoltage;
-			float fAir;
-			float fFreeze;
-			float fChaos;
-			float fNumTapsAndHolds;
-			float fNumJumps;
-			float fNumHolds;
-			float fNumMines;
-			float fNumHands;
-			float fNumRolls;
-			float fNumLifts;
-			float fNumFakes;
-		} v;
-		float f[NUM_RadarCategory];
-	} m_Values;
-
-	operator const float* () const	{ return m_Values.f; };
-	operator float* ()		{ return m_Values.f; };
+private:
+	float m_Values[NUM_RadarCategory];
+public:
+	float operator[](RadarCategory cat) const { return m_Values[cat]; }
+	float& operator[](RadarCategory cat) { return m_Values[cat]; }
+	float operator[](int cat) const { return m_Values[cat]; }
+	float& operator[](int cat) { return m_Values[cat]; }
 
 	RadarValues();
 	void MakeUnknown();
@@ -48,7 +32,9 @@ struct RadarValues
 	RadarValues& operator+=( const RadarValues& other )
 	{
 		FOREACH_ENUM( RadarCategory, rc )
-			m_Values.f[rc] += other.m_Values.f[rc];
+		{
+			(*this)[rc] += other[rc];
+		}
 		return *this;
 	}
 	/**
@@ -60,8 +46,10 @@ struct RadarValues
 	{
 		FOREACH_ENUM( RadarCategory, rc )
 		{
-			if( m_Values.f[rc] != other.m_Values.f[rc] )
+			if((*this)[rc] != other[rc])
+			{
 				return false;
+			}
 		}
 		return true;
 	}

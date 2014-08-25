@@ -128,7 +128,7 @@ static void Deserialize( RadarValues &o, const Json::Value &root )
 {
 	FOREACH_ENUM( RadarCategory, rc )
 	{
-		o.m_Values.f[rc] = (float)root[ RadarCategoryToString(rc) ].asDouble();
+		o[rc] = (float)root[ RadarCategoryToString(rc) ].asDouble();
 	}
 }
 
