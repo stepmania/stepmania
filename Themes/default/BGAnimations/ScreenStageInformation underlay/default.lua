@@ -38,11 +38,7 @@ else
 		InitCommand=cmd(Center;diffusealpha,0);
 		BeginCommand=cmd(LoadFromCurrentSongBackground);
 		OnCommand=function(self)
-			if PREFSMAN:GetPreference("StretchBackgrounds") then
-				self:SetSize(SCREEN_WIDTH,SCREEN_HEIGHT)
-			else
-				self:scale_or_crop_background()
-			end
+			self:scale_or_crop_background()
 			self:sleep(0.5)
 			self:linear(0.50)
 			self:diffusealpha(1)

@@ -1,6 +1,5 @@
 local Color1 = color(Var "Color1");
 local Color2 = color(Var "Color2");
-local stretchBG = PREFSMAN:GetPreference("StretchBackgrounds")
 
 local t = Def.ActorFrame {};
 

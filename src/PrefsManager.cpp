@@ -125,6 +125,17 @@ XToString( CourseSortOrders );
 StringToX( CourseSortOrders );
 LuaXType( CourseSortOrders );
 
+static const char *BackgroundFitModeNames[] = {
+	"CoverDistort",
+	"CoverPreserve",
+	"FitInside",
+	"FitInsideAvoidLetter",
+	"FitInsideAvoidPillar",
+};
+XToString( BackgroundFitMode );
+StringToX( BackgroundFitMode );
+LuaXType( BackgroundFitMode );
+
 bool g_bAutoRestart = false;
 #ifdef DEBUG
 # define TRUE_IF_DEBUG true
@@ -162,6 +173,7 @@ PrefsManager::PrefsManager() :
 	m_iTextureColorDepth	( "TextureColorDepth",		16 ),
 	m_iMovieColorDepth	( "MovieColorDepth",		16 ),
 	m_bStretchBackgrounds	( "StretchBackgrounds",		false ),
+	m_BGFitMode("BackgroundFitMode", BFM_CoverPreserve),
 	m_HighResolutionTextures	( "HighResolutionTextures",	HighResolutionTextures_Auto ),
 	m_iMaxTextureResolution	( "MaxTextureResolution",	2048 ),
 	m_iRefreshRate		( "RefreshRate",		REFRESH_DEFAULT ),
