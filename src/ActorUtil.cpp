@@ -417,7 +417,10 @@ bool ActorUtil::GetAttrPath( const XNode *pNode, const RString &sName, RString &
 		RString sDir;
 		if( !pNode->GetAttrValue("_Dir", sDir) )
 		{
-			LOG->Warn( "Relative path \"%s\", but path is unknown", sOut.c_str() );
+			if(!optional)
+			{
+				LOG->Warn( "Relative path \"%s\", but path is unknown", sOut.c_str() );
+			}
 			return false;
 		}
 		sOut = sDir+sOut;

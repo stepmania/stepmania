@@ -46,7 +46,7 @@ function BGFitChoiceExample(params)
 					{{-hw, -hh, 0}, params.soutline_color},
 				}
 				self:SetVertices(verts)
-				self:SetLineWidth(1)
+				self:SetLineWidth(2)
 				self:SetDrawState{Mode= "DrawMode_LineStrip"}
 			end
 		},
