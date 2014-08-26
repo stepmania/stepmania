@@ -116,7 +116,7 @@ t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayFrameP2","PaneDisplayFr
 t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayTextP1","PaneDisplayTextP1");
 t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayTextP2","PaneDisplayTextP2");
 t[#t+1] = StandardDecorationFromFileOptional("DifficultyList","DifficultyList");
-t[#t+1] = StandardDecorationFromFileOptional("CourseContentsList","CourseContentsList");
+
 t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("BPMLabel","BPMLabel");
 t[#t+1] = StandardDecorationFromFileOptional("SegmentDisplay","SegmentDisplay");
@@ -231,6 +231,25 @@ if not GAMESTATE:IsCourseMode() then
 end;
 
 if GAMESTATE:IsCourseMode() then
+	t[#t+1] = Def.ActorFrame {
+		Def.Quad {
+			InitCommand=cmd(
+				x,THEME:GetMetric(Var "LoadingScreen","CourseContentsListX");
+				y,THEME:GetMetric(Var "LoadingScreen","CourseContentsListY") - 118;
+				zoomto,256+32,192;
+			);
+			OnCommand=cmd(diffuse,Color.Green;MaskSource);
+		};
+		Def.Quad {
+			InitCommand=cmd(
+				x,THEME:GetMetric(Var "LoadingScreen","CourseContentsListX");
+				y,THEME:GetMetric(Var "LoadingScreen","CourseContentsListY") + 186;
+				zoomto,256+32,64;
+			);
+			OnCommand=cmd(diffuse,Color.Blue;MaskSource);
+		};
+	};
+	t[#t+1] = StandardDecorationFromFileOptional("CourseContentsList","CourseContentsList");
 	t[#t+1] = StandardDecorationFromFileOptional("NumCourseSongs","NumCourseSongs")..{
 		InitCommand=cmd(horizalign,right);
 		SetCommand=function(self)

@@ -92,6 +92,7 @@ ThemePrefs =
 
 		-- create the section if it doesn't exist
 		local section = GetThemeName()
+		Trace( ("ThemePrefs.Init: Theme name is \"%s\""):format(section) )
 		PrefsTable[section] = PrefsTable[section] and PrefsTable[section] or { }
 
 		--Trace( "Using section " .. section )
@@ -104,7 +105,7 @@ ThemePrefs =
 			end
 		end
 
-		--PrintTable( PrefsTable[section] )
+		PrintTable( PrefsTable[section] )
 	end,
 
 	Load = function()

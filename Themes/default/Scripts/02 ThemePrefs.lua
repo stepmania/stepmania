@@ -78,13 +78,6 @@ local Prefs =
 		Choices = { OptionNameString('Off'), OptionNameString('On') },
 		Values = { false, true }
 	},
-
-	--[[
-	ProtimingP1,
-	ProtimingP2,
-
-	UserPrefScoringMode = 'DDR Extreme'
-	--]]
 }
 
 ThemePrefs.InitAll(Prefs)

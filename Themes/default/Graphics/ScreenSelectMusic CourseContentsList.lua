@@ -1,19 +1,21 @@
+local transform = function(self,offsetFromCenter,itemIndex,numitems)
+	self:y( offsetFromCenter * 44 );
+end
 return Def.CourseContentsList {
-	MaxSongs = 4;
+	MaxSongs = 10;
     NumItemsToDraw = 8;
 	ShowCommand=cmd(bouncebegin,0.3;zoomy,1);
 	HideCommand=cmd(linear,0.3;zoomy,0);
 	SetCommand=function(self)
 		self:SetFromGameState();
-		self:PositionItems();
-		self:SetTransformFromHeight(44);
 		self:SetCurrentAndDestinationItem(0);
+		self:SetPauseCountdownSeconds(1);
+		self:SetSecondsPauseBetweenItems( 0.25 );
+		self:SetTransformFromFunction(transform);
 		--
-		MESSAGEMAN:Broadcast("SystemMessage",{ Text ="Test" });
-		--
-		self:SetDestinationItem(4);
+		self:SetDestinationItem( math.max(0,self:GetNumItems() - 4) );
 		self:SetLoop(false);
-		self:SetMask(270,44*4);
+		self:SetMask(0,0);
 	end;
 	CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
 	CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
