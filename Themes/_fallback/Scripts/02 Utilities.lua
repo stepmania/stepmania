@@ -210,6 +210,11 @@ function IsFreePlay()
 	return IsArcade() and (GAMESTATE:GetCoinMode() == 'CoinMode_Free') or false
 end
 
+function IsCourse()
+	local pm = GAMESTATE:GetPlayMode();
+	return pm == "PlayMode_Nonstop" or "PlayMode_Oni" or "PlayMode_Endless"
+end
+
 function ArgsIfPlayerJoinedOrNil(arg1,arg2)
 	if arg1==nil then arg1=arg2
 	elseif arg2==nil then arg2=arg1 end

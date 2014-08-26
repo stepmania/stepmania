@@ -26,8 +26,14 @@ local t = Def.ActorFrame {
 		CurrentTraiP1ChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentTraiP2ChangedMessageCommand=cmd(playcommand,"Set");
 		SetCommand=function(self)
-			if playMode ~= 'PlayMode_Regular' and playMode ~= 'PlayMode_Battle' and playMode ~= 'PlayMode_Rave' then
-				self:settextf("%i / %i", tonumber(curStageIndex) + 1, GAMESTATE:GetCurrentCourse():GetEstimatedNumStages());
+			if IsCourse() then
+				local stats = STATSMAN:GetCurStageStats()
+				if not stats then
+					return
+				end
+				local mpStats = stats:GetPlayerStageStats( GAMESTATE:GetMasterPlayerNumber() )
+				local songsPlayed = mpStats:GetSongsPassed() + 1
+				self:settextf("%i / %i", songsPlayed, GAMESTATE:GetCurrentCourse():GetEstimatedNumStages());
 			else
 				if GAMESTATE:IsEventMode() then
 					self:settextf("Stage %s", curStageIndex+1);

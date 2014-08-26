@@ -121,9 +121,7 @@ Branch = {
 		elseif STATSMAN:GetCurStageStats():AllFailed() then
 			return "ScreenGameOver"
 		elseif GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer() == 0 then
-			if GAMESTATE:GetPlayMode() ~= "PlayMode_Regular" 
-			and GAMESTATE:GetPlayMode() ~= "PlayMode_Battle"
-			and GAMESTATE:GetPlayMode() ~= "PlayMode_Rave" then
+			if IsCourse() then
 				return "ScreenEvaluationSummary"
 			else
 				return "ScreenGameOver"
