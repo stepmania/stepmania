@@ -30,6 +30,7 @@ public:
 	virtual ActorScroller *Copy() const;
 
 	void SetLoop( bool bLoop )						{ m_bLoop = bLoop; }
+	void SetWrap( bool bWrap )						{ m_bWrap = bWrap; }
 	void SetNumItemsToDraw( float fNumItemsToDraw )		{ m_fNumItemsToDraw = fNumItemsToDraw; }
 	void SetDestinationItem( float fItemIndex )			{ m_fDestinationItem = fItemIndex; }
 	void SetCurrentAndDestinationItem( float fItemIndex )	{ m_fCurrentItem = m_fDestinationItem = fItemIndex; }
@@ -74,6 +75,7 @@ protected:
 	float	m_fNumItemsToDraw;
 	int		m_iFirstSubActorIndex;
 	bool	m_bLoop; 
+	bool	m_bWrap; 
 	bool	m_bFastCatchup; 
 	bool	m_bFunctionDependsOnPositionOffset;
 	bool	m_bFunctionDependsOnItemIndex;
