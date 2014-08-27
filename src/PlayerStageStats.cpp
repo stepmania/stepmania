@@ -115,8 +115,12 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	m_fLifeRemainingSeconds = other.m_fLifeRemainingSeconds;	// don't accumulate
 	m_bDisqualified |= other.m_bDisqualified;
 
-	const float fOtherFirstSecond = other.m_fFirstSecond + m_fLastSecond;
-	const float fOtherLastSecond = other.m_fLastSecond + m_fLastSecond;
+	// FirstSecond is always 0, and last second is the time of the last step,
+	// so add 1 second between the stages so that the last element of this
+	// stage's record isn't overwritten by the first element of the other
+	// stage's record. -Kyz
+	const float fOtherFirstSecond = other.m_fFirstSecond + m_fLastSecond + 1.0f;
+	const float fOtherLastSecond = other.m_fLastSecond + m_fLastSecond + 1.0f;
 	m_fLastSecond = fOtherLastSecond;
 
 	map<float,float>::const_iterator it;
