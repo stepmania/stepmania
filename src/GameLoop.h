@@ -5,7 +5,7 @@ namespace GameLoop
 {
 	void RunGameLoop();
 	void SetUpdateRate( float fUpdateRate );
-	void ChangeTheme( const RString &sNewTheme, bool bForced = false );
+	void ChangeTheme(const RString &sNewTheme);
 	void ChangeGame(const RString& new_game, const RString& new_theme= "");
 	void StartConcurrentRendering();
 	void FinishConcurrentRendering();

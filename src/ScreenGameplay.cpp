@@ -71,6 +71,7 @@
 static ThemeMetric<float> INITIAL_BACKGROUND_BRIGHTNESS	("ScreenGameplay","InitialBackgroundBrightness");
 static ThemeMetric<float> SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 static ThemeMetric<RString> SCORE_KEEPER_CLASS		("ScreenGameplay","ScoreKeeperClass");
+static ThemeMetric<bool> FORCE_IMMEDIATE_FAIL_FOR_BATTERY("ScreenGameplay", "ForceImmediateFailForBattery");
 
 AutoScreenMessage( SM_PlayGo );
 
@@ -135,7 +136,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int
 			break;
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
-			if( GAMESTATE->m_SongOptions.GetStage().m_LifeType == LifeType_Time )
+			if( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetStage().m_LifeType == LifeType_Time )
 				m_pPrimaryScoreDisplay = new ScoreDisplayLifeTime;
 			else
 				m_pPrimaryScoreDisplay = new ScoreDisplayOni;
@@ -573,7 +574,7 @@ void ScreenGameplay::Init()
 				if( !GAMESTATE->IsPlayerEnabled(pi->m_pn) && !SHOW_LIFE_METER_FOR_DISABLED_PLAYERS )
 					continue;	// skip
 
-				pi->m_pLifeMeter = LifeMeter::MakeLifeMeter( GAMESTATE->m_SongOptions.GetStage().m_LifeType );
+				pi->m_pLifeMeter = LifeMeter::MakeLifeMeter( pi->GetPlayerState()->m_PlayerOptions.GetStage().m_LifeType );
 				pi->m_pLifeMeter->Load( pi->GetPlayerState(), pi->GetPlayerStageStats() );
 				pi->m_pLifeMeter->SetName( ssprintf("Life%s",pi->GetName().c_str()) );
 				LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_pLifeMeter );
@@ -585,7 +586,7 @@ void ScreenGameplay::Init()
 				// not 100% sure of that. -freem
 				if( !GAMESTATE->IsPlayerEnabled(pi->m_pn) && SHOW_LIFE_METER_FOR_DISABLED_PLAYERS )
 				{
-					if(GAMESTATE->m_SongOptions.GetStage().m_LifeType == LifeType_Bar)
+					if(pi->GetPlayerState()->m_PlayerOptions.GetStage().m_LifeType == LifeType_Bar)
 						static_cast<LifeMeterBar*>(pi->m_pLifeMeter)->ChangeLife(-1.0f);
 				}
 			}
@@ -1095,12 +1096,16 @@ void ScreenGameplay::LoadNextSong()
 	// No need to do this here.  We do it in SongFinished().
 	//GAMESTATE->RemoveAllActiveAttacks();
 
-	/* If we're in battery mode, force FailImmediate. We assume in Player::Step
-	 * that failed players can't step. */
-	if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType == LifeType_Battery )
+	// Force immediate fail behavior changed to theme metric by Kyz.
+	if(FORCE_IMMEDIATE_FAIL_FOR_BATTERY)
 	{
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
-			PO_GROUP_ASSIGN( pi->GetPlayerState()->m_PlayerOptions, ModsLevel_Song, m_FailType, FailType_Immediate );
+		{
+			if(pi->GetPlayerState()->m_PlayerOptions.GetStage().m_LifeType == LifeType_Battery)
+			{
+				PO_GROUP_ASSIGN(pi->GetPlayerState()->m_PlayerOptions, ModsLevel_Song, m_FailType, FailType_Immediate);
+			}
+		}
 	}
 
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetCurrent().GetString() );
@@ -1133,10 +1138,10 @@ void ScreenGameplay::LoadNextSong()
 		// reset oni game over graphic
 		SET_XY_AND_ON_COMMAND( pi->m_sprOniGameOver );
 
-		if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType==LifeType_Battery && pi->GetPlayerStageStats()->m_bFailed )	// already failed
+		if(pi->GetPlayerState()->m_PlayerOptions.GetStage().m_LifeType==LifeType_Battery && pi->GetPlayerStageStats()->m_bFailed)	// already failed
 			pi->ShowOniGameOver();
 
-		if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType==LifeType_Bar && pi->m_pLifeMeter )
+		if(pi->GetPlayerState()->m_PlayerOptions.GetStage().m_LifeType==LifeType_Bar && pi->m_pLifeMeter )
 			pi->m_pLifeMeter->UpdateNonstopLifebar();
 
 		if( pi->m_pStepsDisplay )
@@ -1649,8 +1654,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 				PlayerNumber pn = pi->GetStepsAndTrailIndex();
 
 				FailType ft = GAMESTATE->GetPlayerFailType( pi->GetPlayerState() );
-				LifeType lt = GAMESTATE->m_SongOptions.GetCurrent().m_LifeType;
-
+				LifeType lt = pi->GetPlayerState()->m_PlayerOptions.GetStage().m_LifeType;
 				if( ft == FailType_Off || ft == FailType_EndOfSong )
 					continue;
 
@@ -1683,12 +1687,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 					if( !STATSMAN->m_CurStageStats.AllFailed() )	// if not the last one to fail
 					{
 						// kill them!
-						SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
-						pi->ShowOniGameOver();
-						int tracks = pi->m_NoteData.GetNumTracks();
-						pi->m_NoteData.Init();		// remove all notes and scoring
-						pi->m_NoteData.SetNumTracks(tracks); // reset the number of tracks.
-						pi->m_pPlayer->FadeToFail();	// tell the NoteField to fade to white
+						FailFadeRemovePlayer(&*pi);
 					}
 				}
 			}
@@ -1823,10 +1822,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 						if( !GAMESTATE->IsCpuPlayer(pi->m_pn) )
 							continue;
 
-						SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
-						pi->ShowOniGameOver();
-						pi->m_NoteData.Init(); // remove all notes and scoring
-						pi->m_pPlayer->FadeToFail(); // tell the NoteField to fade to white
+						FailFadeRemovePlayer(&*pi);
 					}
 				}
 			}
@@ -1917,6 +1913,16 @@ void ScreenGameplay::Update( float fDeltaTime )
 				if( m_bShowScoreboard && NSMAN->ChangedScoreboard(cn) && GAMESTATE->GetFirstDisabledPlayer() != PLAYER_INVALID )
 					m_Scoreboard[cn].SetText( NSMAN->m_Scoreboard[cn] );
 	}
+}
+
+void ScreenGameplay::FailFadeRemovePlayer(PlayerInfo* pi)
+{
+	SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
+	pi->ShowOniGameOver();
+	int tracks = pi->m_NoteData.GetNumTracks();
+	pi->m_NoteData.Init();		// remove all notes and scoring
+	pi->m_NoteData.SetNumTracks(tracks); // reset the number of tracks.
+	pi->m_pPlayer->FadeToFail();	// tell the NoteField to fade to white
 }
 
 float ScreenGameplay::GetHasteRate()

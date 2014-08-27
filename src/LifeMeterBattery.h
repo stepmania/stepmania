@@ -32,6 +32,7 @@ public:
 
 	void Refresh();
 	int GetLivesLeft() { return m_iLivesLeft; }
+	int GetTotalLives();
 	void ChangeLives(int iLifeDiff);
 
 	// Lua
@@ -52,6 +53,7 @@ private:
 	ThemeMetric<int>	MINES_SUBTRACT_LIVES;
 	ThemeMetric<int>	HELD_ADD_LIVES;
 	ThemeMetric<int>	LET_GO_SUBTRACT_LIVES;
+	ThemeMetric<LuaReference> COURSE_SONG_REWARD_LIVES;
 	ThemeMetric<RString> LIVES_FORMAT;
 
 	AutoActor	m_sprFrame;

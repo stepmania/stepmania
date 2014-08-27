@@ -4,7 +4,7 @@
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 #include "ActorFrame.h"
-#include "SongOptions.h"
+#include "PlayerOptions.h"
 
 class PlayerState;
 class PlayerStageStats;

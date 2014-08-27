@@ -111,6 +111,16 @@ enum CourseSortOrders
 	NUM_CourseSortOrders,
 	CourseSortOrders_Invalid
 };
+enum BackgroundFitMode
+{
+	BFM_CoverDistort,
+	BFM_CoverPreserve,
+	BFM_FitInside,
+	BFM_FitInsideAvoidLetter,
+	BFM_FitInsideAvoidPillar,
+	NUM_BackgroundFitMode,
+	BackgroundFitMode_Invalid
+};
 
 /** @brief Holds user-chosen preferences that are saved between sessions. */
 class PrefsManager
@@ -154,6 +164,7 @@ public:
 	Preference<int>	m_iTextureColorDepth;
 	Preference<int>	m_iMovieColorDepth;
 	Preference<bool>	m_bStretchBackgrounds;
+	Preference<BackgroundFitMode> m_BGFitMode;
 	Preference<HighResolutionTextures>	m_HighResolutionTextures;
 	Preference<int>	m_iMaxTextureResolution;
 	Preference<int>	m_iRefreshRate;

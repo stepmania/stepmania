@@ -115,12 +115,10 @@ static void CheckFocus()
 
 // On the next update, change themes, and load sNewScreen.
 static RString g_NewTheme;
-static bool g_bForceThemeReload;
 static RString g_NewGame;
-void GameLoop::ChangeTheme( const RString &sNewTheme, bool bForced )
+void GameLoop::ChangeTheme(const RString &sNewTheme)
 {
 	g_NewTheme = sNewTheme;
-	g_bForceThemeReload = bForced;
 }
 
 void GameLoop::ChangeGame(const RString& new_game, const RString& new_theme)
@@ -142,7 +140,9 @@ namespace
 		// In case the previous theme overloaded class bindings, reinitialize them.
 		LUA->RegisterTypes();
 
-		THEME->SwitchThemeAndLanguage( g_NewTheme, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize, g_bForceThemeReload );
+		// We always need to force the theme to reload because we cleared the lua
+		// state by calling RegisterTypes so the scripts in Scripts/ need to run.
+		THEME->SwitchThemeAndLanguage( g_NewTheme, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize, true );
 		PREFSMAN->m_sTheme.Set( g_NewTheme );
 
 		// Apply the new window title, icon and aspect ratio.

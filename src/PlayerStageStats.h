@@ -13,8 +13,10 @@ class PlayerStageStats
 {
 public:
 	/** @brief Set up the PlayerStageStats with default values. */
-	PlayerStageStats() { Init(); }
-	void Init();
+	PlayerStageStats() { InternalInit(); }
+	void InternalInit();
+	void Init(PlayerNumber pn);
+	void Init(MultiPlayer pn);
 
 	/**
 	 * @brief Add stats from one PlayerStageStats to another.
@@ -30,6 +32,10 @@ public:
 	int GetLessonScoreActual() const;
 	int GetLessonScoreNeeded() const;
 	void ResetScoreForLesson();
+
+	bool m_for_multiplayer;
+	PlayerNumber m_player_number;
+	MultiPlayer m_multiplayer_number;
 
 	bool		m_bJoined;
   bool    m_bPlayerCanAchieveFullCombo;

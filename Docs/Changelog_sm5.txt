@@ -8,6 +8,15 @@ ________________________________________________________________________________
 StepMania current development
 --------------------------------------------------------------------------------
 
+2014/08/06
+----------
+* [ScreenGameplay] LifeMeterChangedP1 message is no longer broadcast for for
+  P2's lifemeter.  Use LifeMeterChangedP2.  "Life" and "StepsSecond" are passed
+  in the params table for the message.
+* [LifeMeterBattery] CourseSongRewardLives metric added.
+* [LifeMeter] LifeType, DrainType, and BatteryLives moved to PlayerOptions so
+  the players can have different settings.
+
 2013/10/09
 ----------
 * [CombinedLifeMeterTug] Added names and commands to Separator and Frame items.

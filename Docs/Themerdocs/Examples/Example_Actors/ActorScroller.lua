@@ -36,7 +36,7 @@ Def.ActorScroller{
 	Def.ActorFrame{
 		Def.BitmapText{
 			Name="ScrollItem1",
-			Font="Common normal",
+			Font="Common Normal",
 			Text="Scroll Item 1",
 			InitCommand=cmd(diffuse,color("#FF0000")),
 		},
@@ -44,14 +44,14 @@ Def.ActorScroller{
 	Def.ActorFrame{
 		Def.BitmapText{
 			Name="ScrollItem2",
-			Font="Common normal",
+			Font="Common Normal",
 			Text="Scroll Item 2",
 			InitCommand=cmd(glow,color("#00FF0088")),
 		},
 	},
 	Def.BitmapText{
 		Name="ScrollItem3",
-		Font="Common normal",
+		Font="Common Normal",
 		Text="Scroll Item 3",
 		InitCommand=cmd(bob;effectmagnitude,8,0,4),
 	},

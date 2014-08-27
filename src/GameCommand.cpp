@@ -868,11 +868,14 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	}
 	// HACK: Set life type to BATTERY just once here so it happens once and 
 	// we don't override the user's changes if they back out.
-	if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI && 
-		GAMESTATE->m_PlayMode != OldPlayMode &&
-		GAMESTATE->m_SongOptions.GetStage().m_LifeType == LifeType_Bar )
+	FOREACH_PlayerNumber(pn)
 	{
-		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, LifeType_Battery );
+		if(GAMESTATE->m_PlayMode == PLAY_MODE_ONI &&
+			GAMESTATE->m_PlayMode != OldPlayMode &&
+			GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetStage().m_LifeType ==LifeType_Bar)
+		{
+			PO_GROUP_ASSIGN(GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Stage, m_LifeType, LifeType_Battery);
+		}
 	}
 }
 
