@@ -1178,19 +1178,12 @@ void NoteData::LoadFromNode( const XNode* pNode )
 
 void NoteData::AddATIToList(all_tracks_iterator* iter) const
 {
-	// mapconv crashes on windows an apparently this function is the cause.
-	// So windows will still crash on courses that use transform mods until
-	// mapconv can be fixed. -Kyz
-#ifndef WIN32
 	m_atis.insert(iter);
-#endif
 }
 
 void NoteData::AddATIToList(all_tracks_const_iterator* iter) const
 {
-#ifndef WIN32
 	m_const_atis.insert(iter);
-#endif
 }
 
 void NoteData::RemoveATIFromList(all_tracks_iterator* iter) const

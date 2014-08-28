@@ -136,7 +136,7 @@ function PlayerScoreColor( pn )
 	return color("1,1,1,1")
 end
 
-function CustomDifficultyToColor( sCustomDifficulty ) 
+function CustomDifficultyToColor( sCustomDifficulty )
 	return GameColor.Difficulty[sCustomDifficulty]
 end
 

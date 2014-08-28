@@ -3181,13 +3181,12 @@ public:
 	{
 		vector<const Game*> aGames;
 		p->GetEnabledGames( aGames );
-		vector<RString> vsGames;
-		FOREACH( const Game*, aGames, g )
+		lua_createtable(L, aGames.size(), 0);
+		for(size_t i= 0; i < aGames.size(); ++i)
 		{
-			RString sGameName = (*g)->m_szName;
-			vsGames.push_back( sGameName );
+			lua_pushstring(L, aGames[i]->m_szName);
+			lua_rawseti(L, -2, i+1);
 		}
-		LuaHelpers::CreateTableFromArray<RString>( vsGames, L );
 		return 1;	
 	}
 	

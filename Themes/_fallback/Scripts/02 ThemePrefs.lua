@@ -82,17 +82,17 @@ ThemePrefs =
 		-- If we don't have IniFile, we can't read/write from/to disk
 		if not IniFile then Warn( GetString("IniFileMissing") ) end
 
-		Trace( ("ThemePrefs.Init(prefs, %s)"):format(tostring(bLoadFromDisk)) )
+--		Trace( ("ThemePrefs.Init(prefs, %s)"):format(tostring(bLoadFromDisk)) )
 		if bLoadFromDisk then
 			Trace( "ThemePrefs.Init: loading from disk" )
 			if not ThemePrefs.Load() then return false end
 		end
 
-		Trace( "ThemePrefs.Init: not loading from disk" )
+--		Trace( "ThemePrefs.Init: not loading from disk" )
 
 		-- create the section if it doesn't exist
 		local section = GetThemeName()
-		Trace( ("ThemePrefs.Init: Theme name is \"%s\""):format(section) )
+--		Trace( ("ThemePrefs.Init: Theme name is \"%s\""):format(section) )
 		PrefsTable[section] = PrefsTable[section] and PrefsTable[section] or { }
 
 		--Trace( "Using section " .. section )
@@ -105,7 +105,7 @@ ThemePrefs =
 			end
 		end
 
-		PrintTable( PrefsTable[section] )
+--		PrintTable( PrefsTable[section] )
 	end,
 
 	Load = function()
@@ -115,7 +115,7 @@ ThemePrefs =
 	end,
 
 	Save = function()
-		Trace( "ThemePrefs.Save" )
+--		Trace( "ThemePrefs.Save" )
 		if not IniFile then return false end
 		if not NeedsSaved then return end
 		NeedsSaved = false
