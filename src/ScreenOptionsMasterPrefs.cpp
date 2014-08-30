@@ -441,6 +441,7 @@ static void TimingWindowScale( int &sel, bool ToSel, const ConfOption *pConfOpti
 {
 	// StepMania 5 values (implemented 2008/03/12)
 	//const float mapping[] = { 2.0f,1.66f,1.33f,1.00f,0.75f,0.50f,0.25f };
+
 	// StepMania 3.9 and 4.0 values:
 	const float mapping[] = { 1.50f,1.33f,1.16f,1.00f,0.84f,0.66f,0.50f,0.33f,0.20f };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
@@ -449,12 +450,13 @@ static void TimingWindowScale( int &sel, bool ToSel, const ConfOption *pConfOpti
 /** @brief Life Difficulty scale */
 static void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	// StepMania 5 values (implemented 2008/03/12)
+	// original StepMania 5 values (implemented 2008/03/12)
 	//const float mapping[] = { 2.0f,1.50f,1.00f,0.66f,0.33f };
+	// 3.9 modified so that L6 is L4 (in SM5 some time after)
+	//const float mapping[] = { 1.20f,1.00f,0.80f,0.60f,0.40f,0.33f,0.25f };
+
 	// StepMania 3.9 and 4.0 values:
-	//const float mapping[] = { 1.60f,1.40f,1.20f,1.00f,0.80f,0.60f,0.40f };
-	// 3.9 modified so that L6 is L4
-	const float mapping[] = { 1.20f,1.00f,0.80f,0.60f,0.40f,0.33f,0.25f };
+	const float mapping[] = { 1.60f,1.40f,1.20f,1.00f,0.80f,0.60f,0.40f };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
@@ -732,7 +734,7 @@ static void InitializeConfOptions()
 
 	ADD( ConfOption( "EventMode",			MovePref<bool>,		"Off","On (recommended)" ) );
 	ADD( ConfOption( "TimingWindowScale",		TimingWindowScale,	"|1","|2","|3","|4","|5","|6","|7","|8","Justice" ) );
-	ADD( ConfOption( "LifeDifficulty",		LifeDifficulty,		"|1.2","|1.0","|0.8","|0.6","|0.4","|0.33","|0.25" ) );
+	ADD( ConfOption( "LifeDifficulty",		LifeDifficulty,		"|1","|2","|3","|4","|5","|6","|7" ) );
 	g_ConfOptions.back().m_sPrefName = "LifeDifficultyScale";
 	ADD( ConfOption( "ProgressiveLifebar",		MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8") );
 	ADD( ConfOption( "ProgressiveStageLifebar",	MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
