@@ -442,6 +442,7 @@ public:
 		modify_keysounds_at_row, /**< Modify the keysounds at this row. */
 		NUM_AREA_MENU_CHOICES
 	};
+	void HandleArbitraryRemapping(RString const& mapstr);
 	void HandleAlterMenuChoice(AlterMenuChoice c,
 				   const vector<int> &iAnswers,
 				   bool bAllowUndo = true);
@@ -502,6 +503,7 @@ public:
 		shift_left,
 		shift_right,
 		swap_up_down,
+		arbitrary_remap,
 		NUM_ALTER_TYPES 
 	};
 	enum TempoType 

@@ -418,6 +418,9 @@ RString IntToString( const int &iNum );
 float StringToFloat( const RString &sString );
 RString FloatToString( const float &num );
 bool StringToFloat( const RString &sString, float &fOut );
+// Better than IntToString because you can check for success.
+bool operator>>(const RString& lhs, int& rhs);
+bool operator>>(const RString& lhs, float& rhs);
 
 RString WStringToRString( const wstring &sString );
 RString WcharToUTF8( wchar_t c );

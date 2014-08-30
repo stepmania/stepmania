@@ -2274,6 +2274,14 @@ void NoteDataUtil::SwapUpDown(NoteData& inout, StepsType st)
 	inout.RevalidateATIs(vector<int>(), false);
 }
 
+void NoteDataUtil::ArbitraryRemap(NoteData& inout, int* mapping)
+{
+	NoteData tempND;
+	tempND.LoadTransformed(inout, inout.GetNumTracks(), mapping);
+	inout.CopyAll(tempND);
+	inout.RevalidateATIs(vector<int>(), false);
+}
+
 
 struct ValidRow
 {

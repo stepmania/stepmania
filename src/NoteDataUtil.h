@@ -167,6 +167,7 @@ namespace NoteDataUtil
 	void ShiftLeft( NoteData &inout );
 	void ShiftRight( NoteData &inout );
 	void SwapUpDown( NoteData &inout, StepsType st );
+	void ArbitraryRemap( NoteData &inout, int* mapping );
 
 	void SnapToNearestNoteType( NoteData &inout, NoteType nt1, NoteType nt2, int iStartIndex, int iEndIndex );
 
