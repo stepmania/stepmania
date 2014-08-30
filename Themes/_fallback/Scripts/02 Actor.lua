@@ -178,13 +178,18 @@ bg_fit_functions= {
 	end
 }
 
-function Actor:scale_or_crop_background()
+function Actor:scale_or_crop_background_no_move()
 	local fit_mode= PREFSMAN:GetPreference("BackgroundFitMode")
 	if bg_fit_functions[fit_mode] then
 		bg_fit_functions[fit_mode](self, SCREEN_WIDTH, SCREEN_HEIGHT)
 	else
 		self:scaletocover(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 	end
+end
+
+function Actor:scale_or_crop_background()
+	self:scale_or_crop_background_no_move()
+	self:xy(SCREEN_CENTER_X, SCREEN_CENTER_Y)
 end
 
 function Actor:CenterX() self:x(SCREEN_CENTER_X) end

@@ -149,7 +149,7 @@ local log_display_mt= {
 					-- Long ago, someone decided that "::" should be an alias for "\n"
 					-- and hardcoded it into BitmapText.
 					local message= tostring(mess.message):gsub("::", ":")
-					if params.IgnoreIdentical then
+					if params.IgnoreIdentical and not self.hidden then
 						for i, prevmess in ipairs(self.message_log) do
 							if message == prevmess then return end
 						end
