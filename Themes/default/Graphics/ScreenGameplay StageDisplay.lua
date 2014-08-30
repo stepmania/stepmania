@@ -26,7 +26,7 @@ local t = Def.ActorFrame {
 		CurrentTraiP1ChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentTraiP2ChangedMessageCommand=cmd(playcommand,"Set");
 		SetCommand=function(self)
-			if IsCourse() then
+			if GAMESTATE:IsCourseMode() then
 				local stats = STATSMAN:GetCurStageStats()
 				if not stats then
 					return
@@ -52,3 +52,4 @@ local t = Def.ActorFrame {
 	};
 };
 return t
+
