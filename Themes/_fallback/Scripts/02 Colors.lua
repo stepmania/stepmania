@@ -12,7 +12,7 @@ Color = {
 	Yellow		=	color("#fff200"),
 	Orange		=	color("#f7941d"),
 	Purple		=	color("#92278f"),
-	Outline		=	color("0,0,0,0.5"),
+	Outline		=	color("0,0,0,0.675"),
 	Invisible	=	color("1,1,1,0"),
 	Stealth		=	color("0,0,0,0"),
 -- Android Design Stencil Colors

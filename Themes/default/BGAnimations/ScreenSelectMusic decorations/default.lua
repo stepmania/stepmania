@@ -273,15 +273,7 @@ if GAMESTATE:IsCourseMode() then
 end
 
 t[#t+1] = StandardDecorationFromFileOptional("DifficultyDisplay","DifficultyDisplay");
-t[#t+1] = StandardDecorationFromFileOptional("SortOrderFrame","SortOrderFrame") .. {
---[[ 	BeginCommand=cmd(playcommand,"Set");
-	SortOrderChangedMessageCommand=cmd(playcommand,"Set";);
-	SetCommand=function(self)
-		local s = SortOrderToLocalizedString( GAMESTATE:GetSortOrder() );
-		self:settext( s );
-		self:playcommand("Sort");
-	end; --]]
-};
+
 t[#t+1] = StandardDecorationFromFileOptional("SortOrder","SortOrderText") .. {
 	BeginCommand=cmd(playcommand,"Set");
 	SortOrderChangedMessageCommand=cmd(playcommand,"Set";);
@@ -291,6 +283,7 @@ t[#t+1] = StandardDecorationFromFileOptional("SortOrder","SortOrderText") .. {
 		self:playcommand("Sort");
 	end;
 };
+
 t[#t+1] = StandardDecorationFromFileOptional("SongOptionsFrame","SongOptionsFrame") .. {
 	ShowPressStartForOptionsCommand=THEME:GetMetric(Var "LoadingScreen","SongOptionsFrameShowCommand");
 	ShowEnteringOptionsCommand=THEME:GetMetric(Var "LoadingScreen","SongOptionsFrameEnterCommand");
