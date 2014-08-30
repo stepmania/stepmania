@@ -60,6 +60,8 @@ namespace {
 
 	bool SetLight(const char *filename, bool on)
 	{
+		if (filename == NULL)
+			return true;
 		FILE *f = fopen(filename, "w");
 		if (f == NULL)
 		{
