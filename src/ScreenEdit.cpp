@@ -616,7 +616,7 @@ static MenuDef g_AlterMenu(
 	MenuRowDef(ScreenEdit::alter,			"Alter",				true, 
 	      EditMode_Practice, true, true, 0, "Autogen To Fill Width","Backwards","Swap Sides",
 	      "Copy Left To Right","Copy Right To Left","Clear Left","Clear Right",
-	      "Collapse To One","Collapse Left","Shift Left","Shift Right" ),
+		"Collapse To One","Collapse Left","Shift Left","Shift Right", "Swap Up/Down" ),
 	MenuRowDef(ScreenEdit::tempo,			"Tempo",				true, 
 	      EditMode_Full, true, true, 0, "Compress 2x","Compress 3->2",
 	      "Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x" ),
@@ -4676,6 +4676,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 				case collapse_left:		NoteDataUtil::CollapseLeft( m_Clipboard );		break;
 				case shift_left:		NoteDataUtil::ShiftLeft( m_Clipboard );			break;
 				case shift_right:		NoteDataUtil::ShiftRight( m_Clipboard );		break;
+				case swap_up_down: NoteDataUtil::SwapUpDown(m_Clipboard, GAMESTATE->m_pCurSteps[0]->m_StepsType); break;
 			}
 			
 			HandleAreaMenuChoice( paste_at_begin_marker, false );

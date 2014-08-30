@@ -491,16 +491,17 @@ public:
 	enum AlterType 
 	{
 		autogen_to_fill_width,
-		backwards, 
-		swap_sides, 
-		copy_left_to_right, 
-		copy_right_to_left, 
-		clear_left, 
-		clear_right, 
-		collapse_to_one, 
-		collapse_left, 
-		shift_left, 
-		shift_right, 
+		backwards,
+		swap_sides,
+		copy_left_to_right,
+		copy_right_to_left,
+		clear_left,
+		clear_right,
+		collapse_to_one,
+		collapse_left,
+		shift_left,
+		shift_right,
+		swap_up_down,
 		NUM_ALTER_TYPES 
 	};
 	enum TempoType 
