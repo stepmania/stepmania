@@ -14,47 +14,47 @@ REGISTER_SOUND_DRIVER_CLASS2(PIUIO_Leds, Linux_PIUIO_Leds);
 
 namespace {
 	const char *cabinet_leds[NUM_CabinetLight] = {
-		"/sys/class/leds/piuio::output23",
-		"/sys/class/leds/piuio::output26",
-		"/sys/class/leds/piuio::output25",
-		"/sys/class/leds/piuio::output24",
-		"/sys/class/leds/piuio::output10",
-		"/sys/class/leds/piuio::output10",
+		"/sys/class/leds/piuio::output23/brightness",
+		"/sys/class/leds/piuio::output26/brightness",
+		"/sys/class/leds/piuio::output25/brightness",
+		"/sys/class/leds/piuio::output24/brightness",
+		"/sys/class/leds/piuio::output10/brightness",
+		"/sys/class/leds/piuio::output10/brightness",
 	};
 
 	const char *dance_leds[NUM_GameController][NUM_GameButton] = {
 		{
 			NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-			"/sys/class/leds/piuio::output20",
-			"/sys/class/leds/piuio::output21",
-			"/sys/class/leds/piuio::output18",
-			"/sys/class/leds/piuio::output19",
+			"/sys/class/leds/piuio::output20/brightness",
+			"/sys/class/leds/piuio::output21/brightness",
+			"/sys/class/leds/piuio::output18/brightness",
+			"/sys/class/leds/piuio::output19/brightness",
 		},
 		{
 			NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-			"/sys/class/leds/piuio::output4",
-			"/sys/class/leds/piuio::output5",
-			"/sys/class/leds/piuio::output2",
-			"/sys/class/leds/piuio::output3",
+			"/sys/class/leds/piuio::output4/brightness",
+			"/sys/class/leds/piuio::output5/brightness",
+			"/sys/class/leds/piuio::output2/brightness",
+			"/sys/class/leds/piuio::output3/brightness",
 		},
 	};
 
 	const char *pump_leds[NUM_GameController][NUM_GameButton] = {
 		{
 			NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-			"/sys/class/leds/piuio::output2",
-			"/sys/class/leds/piuio::output3",
-			"/sys/class/leds/piuio::output4",
-			"/sys/class/leds/piuio::output5",
-			"/sys/class/leds/piuio::output6",
+			"/sys/class/leds/piuio::output2/brightness",
+			"/sys/class/leds/piuio::output3/brightness",
+			"/sys/class/leds/piuio::output4/brightness",
+			"/sys/class/leds/piuio::output5/brightness",
+			"/sys/class/leds/piuio::output6/brightness",
 		},
 		{
 			NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-			"/sys/class/leds/piuio::output18",
-			"/sys/class/leds/piuio::output19",
-			"/sys/class/leds/piuio::output20",
-			"/sys/class/leds/piuio::output21",
-			"/sys/class/leds/piuio::output22",
+			"/sys/class/leds/piuio::output18/brightness",
+			"/sys/class/leds/piuio::output19/brightness",
+			"/sys/class/leds/piuio::output20/brightness",
+			"/sys/class/leds/piuio::output21/brightness",
+			"/sys/class/leds/piuio::output22/brightness",
 		},
 	};
 
