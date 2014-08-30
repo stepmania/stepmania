@@ -51,9 +51,10 @@ public:
 
 	RageColor m_colorLocked;
 
-	const RString GetText(){ return m_pData->m_sText; }
-	const RageColor GetColor(){ return m_pData->m_color; }
-	WheelItemDataType GetType(){ return m_pData->m_Type; }
+	const RString GetText(){ ASSERT(m_pData != NULL); return m_pData->m_sText; }
+	const RageColor GetColor(){ ASSERT(m_pData != NULL); return m_pData->m_color; }
+	WheelItemDataType GetType(){ ASSERT(m_pData != NULL); return m_pData->m_Type; }
+	bool IsLoaded(){ return m_pData != NULL; }
 
 	// Lua
 	void PushSelf( lua_State *L );
