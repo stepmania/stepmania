@@ -182,7 +182,7 @@ if not GAMESTATE:IsCourseMode() then
 			cdtitle:visible(false);
 		end;
 		
-		self:zoom(scale(height,48,128,0.8,1.0))
+		self:zoom(scale(height,32,480,1,32/480))
 	end;
 	t[#t+1] = Def.ActorFrame {
 		OnCommand=cmd(draworder,105;x,SCREEN_CENTER_X-256;y,SCREEN_CENTER_Y-84;zoom,0;sleep,0.5;decelerate,0.25;zoom,1;SetUpdateFunction,CDTitleUpdate);

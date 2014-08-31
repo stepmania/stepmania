@@ -3,7 +3,7 @@ local t = Def.ActorFrame {};
 local function Update(self)
 	local c = self:GetChildren();
 	local bps = GAMESTATE:GetSongBPS() or 1
-	c.TextureStripe:texcoordvelocity(bps,0);
+	c.TextureStripe:texcoordvelocity(bps/3,0);
 end
 
 local function IsVisible()

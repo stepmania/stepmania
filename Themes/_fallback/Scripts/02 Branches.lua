@@ -59,6 +59,13 @@ Branch = {
 			return "ScreenTitleJoin"
 		end
 	end,
+	AfterTitleMenu = function()
+		if PREFSMAN:GetPreference("ShowCaution") then
+			return "ScreenCaution"
+		else
+			return Branch.StartGame()
+		end
+	end,
 	StartGame = function()
 		-- Check to see if there are 0 songs installed. Also make sure to check
 		-- that the additional song count is also 0, because there is
