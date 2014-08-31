@@ -119,12 +119,12 @@ Branch = {
 		if GAMESTATE:IsEventMode() then
 			return SelectMusicOrCourse()
 		elseif STATSMAN:GetCurStageStats():AllFailed() then
-			return "ScreenGameOver"
+			return "ScreenContinue"
 		elseif GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer() == 0 then
-			if IsCourse() then
+			if not GAMESTATE:IsCourseMode() then
 				return "ScreenEvaluationSummary"
 			else
-				return "ScreenGameOver"
+				return "ScreenContinue"
 			end
 		else
 			return SelectMusicOrCourse()
@@ -215,8 +215,19 @@ Branch = {
 		return IsNetConnected() and "ScreenTitleMenu" or "ScreenTitleMenu"
 	end,
  	AfterSaveSummary = function()
-		return "ScreenGameOver"
+		return "ScreenContinue"
 --		[[ Enable when Finished ]]
 -- 		return GAMESTATE:AnyPlayerHasRankingFeats() and "ScreenNameEntryTraditional" or "ScreenGameOver"
 	end,
+	AfterContinue = function()
+		if GAMESTATE:GetNumPlayersEnabled() == 0 then
+			return "ScreenGameOver"
+		end
+
+		if STATSMAN:GetStagesPlayed() == 0 then
+			return "ScreenSelectPlayMode"
+		end
+
+		return "ScreenProfileLoad"
+	end
 }

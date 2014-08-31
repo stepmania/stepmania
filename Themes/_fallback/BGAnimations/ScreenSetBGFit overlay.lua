@@ -34,7 +34,8 @@ function BGFitNormalExampleText(w, h)
 			-- This positions the text underneath its corresponding example.
 			self:y(mini_screen_h * .5 + 9)
 			self:zoom(.375)
-		end
+		end,
+		OnCommand=cmd(shadowlength,1)
 	}
 end
 
@@ -60,7 +61,8 @@ for i, mode in ipairs(BackgroundFitMode) do
 				-- Position the label above the topmost example.
 				self:y(mini_screen_h * -2.5)
 				self:zoom(.75)
-			end
+			end,
+			OnCommand=cmd(diffusebottomedge,color("0.875,0.875,0.875");shadowlength,1)
 		},
 		-- BGFitChoiceExample is a function that creates an example to show how
 		-- a bg with a given aspect ratio is affected by the fitting mode for
@@ -127,16 +129,16 @@ local function LoseFocus(self)
 	-- suddenly reaching the end tween state.
 	self:stoptweening()
 	-- .25 seconds is a fine time for changing zoom size.
-	self:linear(.25)
+	self:smooth(.125)
 	-- Unfocused choices are normal size.
 	self:zoom(1)
 end
 
 local function GainFocus(self)
 	self:stoptweening()
-	self:linear(.25)
+	self:smooth(.125)
 	-- The choice with focus is 1.5 size.
-	self:zoom(1.5)
+	self:zoom(1.25)
 end
 
 -- BGFitInputActor returns the actor that will handle input from the player
