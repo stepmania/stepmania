@@ -24,16 +24,16 @@ t[#t+1] = Def.ActorFrame {
 		LoadFont("Common Normal") .. {
 			Text=ProductID();
 			InitCommand=cmd(y,-20;zoom,0.75);
-			OnCommand=cmd(diffuse,color("0,0,0,1");strokecolor,color("#f7941d"));
+			OnCommand=cmd(diffuse,color("0,0,0,1"));
 		};
 		LoadFont("Common Normal") .. {
 			Text=THEME:GetThemeDisplayName();
-			OnCommand=cmd(diffuse,color("0,0,0,1");strokecolor,color("#f7941d"));
+			OnCommand=cmd(diffuse,color("0,0,0,1"));
 		};
 		LoadFont("Common Normal") .. {
 			Text="Created by " .. THEME:GetThemeAuthor();
 			InitCommand=cmd(y,24;zoom,0.75);
-			OnCommand=cmd(diffuse,color("0,0,0,1");strokecolor,color("#f7941d"));
+			OnCommand=cmd(diffuse,color("0,0,0,1"));
 		};
 	};
 };

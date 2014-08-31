@@ -1,5 +1,8 @@
 local function GraphDisplay( pn )
 	local t = Def.ActorFrame {
+		LoadActor( THEME:GetPathG("_GraphDisplay","overlay")) .. {
+			InitCommand=cmd(y,6);
+		};
 		Def.GraphDisplay {
 			InitCommand=cmd(Load,"GraphDisplay";);
 			BeginCommand=function(self)

@@ -28,7 +28,7 @@ for i=1,NumColumns do
 			OnCommand=cmd(diffuse,CustomDifficultyToDarkColor(s);diffusealpha,0.5);
 		};
 		LoadActor(THEME:GetPathB("_frame","3x1"),"rounded gloss", 18) .. {
-			OnCommand=cmd(diffuse,CustomDifficultyToColor(s);diffusealpha,0.35);
+			OnCommand=cmd(diffuse,CustomDifficultyToColor(s);diffusealpha,0.125);
 		};
 		LoadFont("Common Normal") .. {
 			InitCommand=cmd(uppercase,true;settext,CustomDifficultyToLocalizedString(s));
@@ -39,7 +39,7 @@ end
 
 t[#t+1] = LoadFont("Common Bold") .. {
 	InitCommand=cmd(settext,stString;x,SCREEN_CENTER_X-220;y,SCREEN_CENTER_Y-168);
-	OnCommand=cmd(zoom,0.675;skewx,-0.125;shadowlength,1);
+	OnCommand=cmd(skewx,-0.125;diffusebottomedge,color("0.75,0.75,0.75");shadowlength,2);
 };
 
 t.OnCommand=cmd(draworder,105);
