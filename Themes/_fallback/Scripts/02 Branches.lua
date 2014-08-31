@@ -121,7 +121,7 @@ Branch = {
 		elseif STATSMAN:GetCurStageStats():AllFailed() then
 			return "ScreenContinue"
 		elseif GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer() == 0 then
-			if IsCourse() then
+			if not GAMESTATE:IsCourseMode() then
 				return "ScreenEvaluationSummary"
 			else
 				return "ScreenContinue"
