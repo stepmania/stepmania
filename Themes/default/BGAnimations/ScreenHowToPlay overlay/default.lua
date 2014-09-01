@@ -49,43 +49,46 @@ return Def.ActorFrame {
 		Text=ScreenString("How To Play StepMania"),
 		InitCommand=cmd(zbuffer,1;z,20;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;shadowlength,1;strokecolor,Color("Outline"));
 		BeginCommand=function(self)
-			self:AddAttribute(12, {Length=9, Diffuse=Color.Blue});
+			self:AddAttribute(12, {Length=9, Diffuse=Color.White});
 		end;
 		OnCommand=cmd(skewx,-0.125;diffuse,color("#ffd400");shadowlength,2;shadowcolor,BoostColor(color("#ffd40077"),0.25);diffusealpha,0;zoom,4;sleep,0.0;linear,0.3;diffusealpha,1;zoom,1;sleep,1.8;linear,0.3;zoom,0.75;x,170;y,60);
 	};
 	LoadActor("_howtoplay feet") .. {
-		InitCommand=cmd(shadowlength,1;strokecolor,Color.Outline);
-		OnCommand=cmd(z,20;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;addx,-SCREEN_WIDTH;sleep,2.4;decelerate,0.3;addx,SCREEN_WIDTH;sleep,2;linear,0.3;zoomy,0);
+			InitCommand=cmd(shadowlength,1;strokecolor,Color.Outline);
+			OnCommand=cmd(z,20;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;addx,-SCREEN_WIDTH;sleep,2.4;decelerate,0.3;addx,SCREEN_WIDTH;sleep,2;linear,0.3;zoomy,0);
 	};
-
-	LoadActor("_howtoplay tap")..{
-		InitCommand=cmd(x,SCREEN_CENTER_X+160;y,SCREEN_CENTER_Y+40;diffusealpha,0;);
-		ShowCommand=cmd(linear,0;diffusealpha,1;sleep,2;linear,0;diffusealpha,0);
-		OnCommand=cmd(sleep,6;queuecommand,"Show");
-	};
-	LoadActor("_howtoplay tap")..{
-		InitCommand=cmd(x,SCREEN_CENTER_X+160;y,SCREEN_CENTER_Y+40;diffusealpha,0;);
-		ShowCommand=cmd(linear,0;diffusealpha,1;sleep,2;linear,0;diffusealpha,0);
-		OnCommand=cmd(sleep,9.7;queuecommand,"Show");
-	};
-	LoadActor("_howtoplay tap")..{
-		InitCommand=cmd(x,SCREEN_CENTER_X+160;y,SCREEN_CENTER_Y+40;diffusealpha,0;);
-		ShowCommand=cmd(linear,0;diffusealpha,1;sleep,2;linear,0;diffusealpha,0);
-		OnCommand=cmd(sleep,12.7;queuecommand,"Show");
-	};
-	LoadActor("_howtoplay tap")..{
-		InitCommand=cmd(x,SCREEN_CENTER_X+160;y,SCREEN_CENTER_Y+40;diffusealpha,0;);
-		ShowCommand=cmd(linear,0;diffusealpha,1;sleep,2;linear,0;diffusealpha,0);
-		OnCommand=cmd(sleep,15.7;queuecommand,"Show");
-	};
-	LoadActor("_howtoplay jump")..{
-		InitCommand=cmd(x,SCREEN_CENTER_X+160;y,SCREEN_CENTER_Y+40;diffusealpha,0;);
-		ShowCommand=cmd(linear,0;diffusealpha,1;sleep,2;linear,0;diffusealpha,0);
-		OnCommand=cmd(sleep,18.7;queuecommand,"Show");
-	};
-	LoadActor("_howtoplay miss")..{
-		InitCommand=cmd(x,SCREEN_CENTER_X+160;y,SCREEN_CENTER_Y+40;diffusealpha,0;);
-		ShowCommand=cmd(linear,0;diffusealpha,1;sleep,2;linear,0;diffusealpha,0);
-		OnCommand=cmd(sleep,22.7;queuecommand,"Show");
+	Def.ActorFrame {
+		InitCommand=cmd(x,SCREEN_CENTER_X+120;y,SCREEN_CENTER_Y+40);
+		
+		LoadActor("_howtoplay tap")..{
+			InitCommand=cmd(diffusealpha,0);
+			ShowCommand=cmd(linear,0;diffusealpha,1;sleep,2;linear,0;diffusealpha,0);
+			OnCommand=cmd(sleep,6;queuecommand,"Show");
+		};
+		LoadActor("_howtoplay tap")..{
+			InitCommand=cmd(diffusealpha,0);
+			ShowCommand=cmd(linear,0;diffusealpha,1;sleep,2;linear,0;diffusealpha,0);
+			OnCommand=cmd(sleep,9.7;queuecommand,"Show");
+		};
+		LoadActor("_howtoplay tap")..{
+			InitCommand=cmd(diffusealpha,0);
+			ShowCommand=cmd(linear,0;diffusealpha,1;sleep,2;linear,0;diffusealpha,0);
+			OnCommand=cmd(sleep,12.7;queuecommand,"Show");
+		};
+		LoadActor("_howtoplay tap")..{
+			InitCommand=cmd(diffusealpha,0);
+			ShowCommand=cmd(linear,0;diffusealpha,1;sleep,2;linear,0;diffusealpha,0);
+			OnCommand=cmd(sleep,15.7;queuecommand,"Show");
+		};
+		LoadActor("_howtoplay jump")..{
+			InitCommand=cmd(diffusealpha,0);
+			ShowCommand=cmd(linear,0;diffusealpha,1;sleep,2;linear,0;diffusealpha,0);
+			OnCommand=cmd(sleep,18.7;queuecommand,"Show");
+		};
+		LoadActor("_howtoplay miss")..{
+			InitCommand=cmd(diffusealpha,0);
+			ShowCommand=cmd(linear,0;diffusealpha,1;sleep,2;linear,0;diffusealpha,0);
+			OnCommand=cmd(sleep,22.7;queuecommand,"Show");
+		};
 	};
 };
