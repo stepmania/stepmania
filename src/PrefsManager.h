@@ -175,6 +175,7 @@ public:
 
 	Preference<bool>	m_bHiddenSongs;
 	Preference<bool>	m_bVsync;
+	Preference<bool>	m_FastNoteRendering;
 	Preference<bool>	m_bInterlaced;
 	Preference<bool>	m_bPAL;
 	Preference<bool>	m_bDelayedTextureDelete;

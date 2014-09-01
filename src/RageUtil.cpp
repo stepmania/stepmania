@@ -1751,6 +1751,16 @@ void MakeLower( wchar_t *p, size_t iLen )
 	UnicodeUpperLower( p, iLen, g_LowerCase );
 }
 
+bool operator>>(const RString& lhs, int& rhs)
+{
+	return istringstream(lhs) >> rhs;
+}
+
+bool operator>>(const RString& lhs, float& rhs)
+{
+	return istringstream(lhs) >> rhs;
+}
+
 int StringToInt( const RString &sString )
 {
 	int ret;

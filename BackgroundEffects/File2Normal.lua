@@ -11,9 +11,9 @@ t[#t+1] = LoadActor(Var "File1") .. {
 
 if Var("File2") ~= nil then
 	t[#t+1] = LoadActor(Var("File2")) .. {
-	OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;scale_or_crop_background;diffuse,Color1;effectclock,"music");
-	GainFocusCommand=cmd(play);
-	LoseFocusCommand=cmd(pause);
+		OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;scale_or_crop_background;diffuse,Color1;effectclock,"music");
+		GainFocusCommand=cmd(play);
+		LoseFocusCommand=cmd(pause);
 	};
 end;
 
