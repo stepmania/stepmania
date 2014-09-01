@@ -15,7 +15,7 @@ local t = Def.ActorFrame {
 };
 --
 for i=1,#num_players do
-	t[#t+1] = Def.ActorFrame {
+	local f = Def.ActorFrame {
 		InitCommand=cmd(x,-128+PositionItem(i,#num_players));
 		UnchosenCommand=cmd(finishtweening;bounceend,0.25;zoom,1);
 		ChosenCommand=cmd(stoptweening;bouncebegin,0.3;zoom,0);
@@ -28,10 +28,6 @@ for i=1,#num_players do
 			if param.Player ~= num_players[i] then return end;
 			self:playcommand("Unchosen");
 		end;
-		--
-		LoadActor( NOTESKIN:GetPathForNoteSkin("Center","Tap","cmd") ) .. {
-			InitCommand=cmd(y,20);
-		};
 		Def.Quad {
 			InitCommand=cmd(y,-35);
 			OnCommand=cmd(diffuse,PlayerColor(num_players[i]);shadowlength,1;linear,0.25;zoomtowidth,80;fadeleft,0.5;faderight,0.5);
@@ -52,6 +48,13 @@ for i=1,#num_players do
 			OnCommand=cmd(shadowlength,1;zoom,0.75);
 		};
 	};
+	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
+		local ns = num_players[i] == PLAYER_1 and RoutineSkinP1() or RoutineSkinP2()
+		f[#f+1] = LoadActor( NOTESKIN:GetPathForNoteSkin("Center","Tap",ns) ) .. {
+			InitCommand=cmd(y,20);
+		}
+	end
+	t[#t+1] = f;
 end
 -- Lock input for half a second so that players don't accidentally start a song
 t[#t+1] = Def.Actor { 
