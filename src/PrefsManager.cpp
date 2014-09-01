@@ -184,6 +184,7 @@ PrefsManager::PrefsManager() :
 
 	m_bHiddenSongs		( "HiddenSongs",		false ),
 	m_bVsync		( "Vsync",			true ),
+	m_FastNoteRendering("FastNoteRendering", false),
 	m_bInterlaced		( "Interlaced",			false ),
 	m_bPAL			( "PAL",			false ),
 	m_bDelayedTextureDelete	( "DelayedTextureDelete",	false ),

@@ -36,8 +36,11 @@ static ThemeMetric<float> FADE_FAIL_TIME( "NoteField", "FadeFailTime" );
 static RString RoutineNoteSkinName( size_t i ) { return ssprintf("RoutineNoteSkinP%i",int(i+1)); }
 static ThemeMetric1D<RString> ROUTINE_NOTESKIN( "NoteField", RoutineNoteSkinName, NUM_PLAYERS );
 
+static bool FAST_NOTE_RENDERING_PREF_CACHED= false;
+
 NoteField::NoteField()
 {
+	FAST_NOTE_RENDERING_PREF_CACHED= PREFSMAN->m_FastNoteRendering;
 	m_pNoteData = NULL;
 	m_pCurDisplay = NULL;
 
@@ -1355,7 +1358,10 @@ void NoteField::DrawPrimitives()
 			bool bNoteIsUpcoming = NoteRowToBeat(q) > m_pPlayerState->GetDisplayedPosition().m_fSongBeat;
 			bAnyUpcomingInThisCol |= bNoteIsUpcoming;
 
-			DISPLAY->ClearZBuffer();
+			if(!FAST_NOTE_RENDERING_PREF_CACHED)
+			{
+				DISPLAY->ClearZBuffer();
+			}
 		}
 
 		cur->m_ReceptorArrowRow.SetNoteUpcoming( c, bAnyUpcomingInThisCol );
