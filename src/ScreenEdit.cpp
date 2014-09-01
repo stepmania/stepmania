@@ -4538,6 +4538,10 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 }
 
 static LocalizedString ENTER_ARBITRARY_MAPPING( "ScreenEdit", "Enter the new track mapping." );
+static LocalizedString TOO_MANY_TRACKS("ScreenEdit", "Too many tracks specified.");
+static LocalizedString NOT_A_TRACK("ScreenEdit", "'%s' is not a track id.");
+static LocalizedString OUT_OF_RANGE_ID("ScreenEdit", "Entry %d, '%d', is out of range 1 to %d.");
+
 static bool ConvertMappingInputToMapping(RString const& mapstr, int* mapping, RString& error)
 {
 	vector<RString> mapping_input;
@@ -4545,7 +4549,7 @@ static bool ConvertMappingInputToMapping(RString const& mapstr, int* mapping, RS
 	int tracks_for_type= GAMEMAN->GetStepsTypeInfo(GAMESTATE->m_pCurSteps[0]->m_StepsType).iNumTracks;
 	if(mapping_input.size() > tracks_for_type)
 	{
-		error= "Too many tracks specified.";
+		error= TOO_MANY_TRACKS;
 		return false;
 	}
 	// mapping_input.size() < tracks_for_type is not checked because
@@ -4554,20 +4558,23 @@ static bool ConvertMappingInputToMapping(RString const& mapstr, int* mapping, RS
 	// track will be used for filling in the unspecified part of the mapping.
 	for(; track < mapping_input.size(); ++track)
 	{
-		if(mapping_input[track].empty())
+		if(mapping_input[track].empty() || mapping_input[track] == " ")
 		{
-			mapping[track]= track;
+			// This allows blank entries to mean "pass through".
+			mapping[track]= track+1;
 		}
 		else if(!(mapping_input[track] >> mapping[track]))
 		{
-			error= "'" + mapping_input[track] + "' is not a track id.";
+			error= ssprintf(NOT_A_TRACK.GetValue(), mapping_input[track].c_str());
 			return false;
 		}
-		if(mapping[track] < 0 || mapping[track] >= tracks_for_type)
+		if(mapping[track] < 1 || mapping[track] > tracks_for_type)
 		{
-			error= ssprintf("Entry %d, '%s', '%d' is out of range 0 to %d.", track, mapping_input[track].c_str(), mapping[track], tracks_for_type-1);
+			error= ssprintf(OUT_OF_RANGE_ID.GetValue(), track+1, mapping[track], tracks_for_type);
 			return false;
 		}
+		// Simpler for the user if they input track ids starting at 1.
+		--mapping[track];
 	}
 	for(; track < tracks_for_type; ++track)
 	{
@@ -4745,7 +4752,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 				case arbitrary_remap:
 					ScreenTextEntry::TextEntry(
 						SM_BackFromArbitraryRemap, ENTER_ARBITRARY_MAPPING,
-						"0, 1, 2, 3", MAX_NOTE_TRACKS * 4,
+						"1, 2, 3, 4", MAX_NOTE_TRACKS * 4,
 						// 2 chars for digit, one for comma, one for space.
 						ArbitraryRemapValidate
 				);
