@@ -51,10 +51,13 @@ local contrib = {
 	"Chris Eldridge (kurisu)", -- dance-threepanel stepstype support
 	"Christophe Goulet-LeBlanc (Kommisar)", -- songs
 	"corec", -- various fixes
+	"cybik", -- Android port
 	"galopin", -- piu PlayStation2 usb mat support
 	"gholms", -- automake 1.11 support
 	"juanelote", -- SongManager:GetSongGroupByIndex, JumpToNext/PrevGroup logic mods
 	"Kaox", -- pump/default noteskin
+	"Kyzentun",
+	"Mad Matt",
 	"NitroX72", -- pump/frame noteskin
 	"Petriform", -- default theme music
 	"桜為小鳩/Sakurana-Kobato (@sakuraponila)", -- custom scoring fixes
