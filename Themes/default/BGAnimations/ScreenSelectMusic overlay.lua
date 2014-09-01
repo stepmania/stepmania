@@ -1,3 +1,10 @@
+local num_players = GAMESTATE:GetHumanPlayers();
+local function PositionItem(i,max)
+	local x_spacing = 128; 
+	return x_spacing * (i-(max-1)/2);
+end
+
+
 local t = Def.ActorFrame {
 	FOV=90;
 	--
@@ -5,21 +12,49 @@ local t = Def.ActorFrame {
 		InitCommand=cmd(zoomto,SCREEN_CENTER_X+80,SCREEN_HEIGHT);
 		OnCommand=cmd(diffuse,Color.Black;diffusealpha,0.75;fadeleft,32/SCREEN_CENTER_X;faderight,32/SCREEN_CENTER_X);
 	};
-	LoadActor( NOTESKIN:GetPathForNoteSkin("Center","Tap","cmd") ) .. {
-		InitCommand=cmd(y,20);
-	};
-	LoadFont("Common Bold") .. {
-		Text="PRESS";
-		InitCommand=cmd(y,-20);
-		OnCommand=cmd(shadowlength,1;pulse;effectmagnitude,1,1.125,1;effectperiod,0.5);
-	};
-	LoadFont("Common Bold") .. {
-		Text="TO START";
-		InitCommand=cmd(y,58);
-		OnCommand=cmd(shadowlength,1;zoom,0.875);
-	};
 };
+--
+for i=1,#num_players do
+	t[#t+1] = Def.ActorFrame {
+		InitCommand=cmd(x,-128+PositionItem(i,#num_players));
+		UnchosenCommand=cmd(finishtweening;bounceend,0.25;zoom,1);
+		ChosenCommand=cmd(stoptweening;bouncebegin,0.3;zoom,0);
+		--
+		StepsChosenMessageCommand=function( self, param ) 
+			if param.Player ~= num_players[i] then return end;
+			self:playcommand("Chosen");
+		end;
+		StepsUnchosenMessageCommand=function( self, param ) 
+			if param.Player ~= num_players[i] then return end;
+			self:playcommand("Unchosen");
+		end;
+		--
+		LoadActor( NOTESKIN:GetPathForNoteSkin("Center","Tap","cmd") ) .. {
+			InitCommand=cmd(y,20);
+		};
+		Def.Quad {
+			InitCommand=cmd(y,-35);
+			OnCommand=cmd(diffuse,PlayerColor(num_players[i]);shadowlength,1;linear,0.25;zoomtowidth,80;fadeleft,0.5;faderight,0.5);
+		};
+		LoadFont("Common Bold") .. {
+			Text=ToEnumShortString(num_players[i]);
+			InitCommand=cmd(y,-48);
+			OnCommand=cmd(shadowlength,1;diffuse,PlayerColor(num_players[i]));
+		};
+		LoadFont("Common Bold") .. {
+			Text="PRESS";
+			InitCommand=cmd(y,-20);
+			OnCommand=cmd(shadowlength,1;pulse;effectmagnitude,1,1.125,1;effectperiod,0.5);
+		};
+		LoadFont("Common Normal") .. {
+			Text="TO START";
+			InitCommand=cmd(y,58);
+			OnCommand=cmd(shadowlength,1;zoom,0.75);
+		};
+	};
+end
 
+--
 t.InitCommand=cmd(Center;x,SCREEN_CENTER_X*1.5;visible,false;diffusealpha,0);
 t.StartSelectingStepsMessageCommand=cmd(linear,0.2;visible,true;diffusealpha,1);
 t.StartSelectingSongMessageCommand=cmd(linear,0.2;visible,true;diffusealpha,0);
