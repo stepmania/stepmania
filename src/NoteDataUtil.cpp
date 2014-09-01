@@ -1453,6 +1453,49 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 			break;
 		}
 		break;
+	case NoteDataUtil::swap_up_down:
+		switch(st)
+		{
+			case StepsType_dance_single:
+			case StepsType_dance_double:
+			case StepsType_dance_couple:
+			case StepsType_dance_routine:
+				iTakeFromTrack[0]= 0;
+				iTakeFromTrack[1]= 2;
+				iTakeFromTrack[2]= 1;
+				iTakeFromTrack[3]= 3;
+				iTakeFromTrack[4]= 4;
+				iTakeFromTrack[5]= 6;
+				iTakeFromTrack[6]= 5;
+				iTakeFromTrack[7]= 7;
+				break;
+			case StepsType_pump_single:
+			case StepsType_pump_double:
+			case StepsType_pump_couple:
+			case StepsType_pump_routine:
+				iTakeFromTrack[0]= 1;
+				iTakeFromTrack[1]= 0;
+				iTakeFromTrack[2]= 2;
+				iTakeFromTrack[3]= 4;
+				iTakeFromTrack[4]= 3;
+				iTakeFromTrack[5]= 6;
+				iTakeFromTrack[6]= 5;
+				iTakeFromTrack[7]= 7;
+				iTakeFromTrack[8]= 9;
+				iTakeFromTrack[9]= 8;
+				break;
+			case StepsType_pump_halfdouble:
+				iTakeFromTrack[0]= 0;
+				iTakeFromTrack[1]= 2;
+				iTakeFromTrack[2]= 1;
+				iTakeFromTrack[3]= 4;
+				iTakeFromTrack[4]= 3;
+				iTakeFromTrack[5]= 5;
+				break;
+			default:
+				break;
+		}
+		break;
 	default:
 		ASSERT(0);
 	}
@@ -2219,6 +2262,24 @@ void NoteDataUtil::ShiftLeft( NoteData &inout )
 void NoteDataUtil::ShiftRight( NoteData &inout )
 {
 	ShiftTracks( inout, +1 );
+}
+
+void NoteDataUtil::SwapUpDown(NoteData& inout, StepsType st)
+{
+	int TakeFrom[MAX_NOTE_TRACKS];
+	GetTrackMapping(st, NoteDataUtil::swap_up_down, inout.GetNumTracks(), TakeFrom);
+	NoteData tempND;
+	tempND.LoadTransformed(inout, inout.GetNumTracks(), TakeFrom);
+	inout.CopyAll(tempND);
+	inout.RevalidateATIs(vector<int>(), false);
+}
+
+void NoteDataUtil::ArbitraryRemap(NoteData& inout, int* mapping)
+{
+	NoteData tempND;
+	tempND.LoadTransformed(inout, inout.GetNumTracks(), mapping);
+	inout.CopyAll(tempND);
+	inout.RevalidateATIs(vector<int>(), false);
 }
 
 

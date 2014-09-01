@@ -62,6 +62,7 @@ AutoScreenMessage( SM_UpdateTextInfo );
 AutoScreenMessage( SM_BackFromMainMenu );
 AutoScreenMessage( SM_BackFromAreaMenu );
 AutoScreenMessage( SM_BackFromAlterMenu );
+AutoScreenMessage( SM_BackFromArbitraryRemap );
 AutoScreenMessage( SM_BackFromStepsInformation );
 AutoScreenMessage( SM_BackFromStepsData );
 AutoScreenMessage( SM_BackFromOptions );
@@ -616,7 +617,7 @@ static MenuDef g_AlterMenu(
 	MenuRowDef(ScreenEdit::alter,			"Alter",				true, 
 	      EditMode_Practice, true, true, 0, "Autogen To Fill Width","Backwards","Swap Sides",
 	      "Copy Left To Right","Copy Right To Left","Clear Left","Clear Right",
-	      "Collapse To One","Collapse Left","Shift Left","Shift Right" ),
+		"Collapse To One","Collapse Left","Shift Left","Shift Right", "Swap Up/Down", "Arbitrary Remap Columns" ),
 	MenuRowDef(ScreenEdit::tempo,			"Tempo",				true, 
 	      EditMode_Full, true, true, 0, "Compress 2x","Compress 3->2",
 	      "Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x" ),
@@ -3285,6 +3286,10 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		HandleAlterMenuChoice( (AlterMenuChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
 	}
+	else if( SM == SM_BackFromArbitraryRemap )
+	{
+		HandleArbitraryRemapping(ScreenTextEntry::s_sLastAnswer);
+	}
 	else if( SM == SM_BackFromStepsInformation )
 	{
 		HandleStepsInformationChoice( (StepsInformationChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
@@ -4532,6 +4537,66 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 	GAMESTATE->SetProcessedTimingData(NULL);
 }
 
+static LocalizedString ENTER_ARBITRARY_MAPPING( "ScreenEdit", "Enter the new track mapping." );
+static bool ConvertMappingInputToMapping(RString const& mapstr, int* mapping, RString& error)
+{
+	vector<RString> mapping_input;
+	split(mapstr, ",", mapping_input);
+	int tracks_for_type= GAMEMAN->GetStepsTypeInfo(GAMESTATE->m_pCurSteps[0]->m_StepsType).iNumTracks;
+	if(mapping_input.size() > tracks_for_type)
+	{
+		error= "Too many tracks specified.";
+		return false;
+	}
+	// mapping_input.size() < tracks_for_type is not checked because
+	// unspecified tracks are mapped directly. -Kyz
+	size_t track= 0;
+	// track will be used for filling in the unspecified part of the mapping.
+	for(; track < mapping_input.size(); ++track)
+	{
+		if(mapping_input[track].empty())
+		{
+			mapping[track]= track;
+		}
+		else if(!(mapping_input[track] >> mapping[track]))
+		{
+			error= "'" + mapping_input[track] + "' is not a track id.";
+			return false;
+		}
+		if(mapping[track] < 0 || mapping[track] >= tracks_for_type)
+		{
+			error= ssprintf("Entry %d, '%s', '%d' is out of range 0 to %d.", track, mapping_input[track].c_str(), mapping[track], tracks_for_type-1);
+			return false;
+		}
+	}
+	for(; track < tracks_for_type; ++track)
+	{
+		mapping[track]= track;
+	}
+	return true;
+}
+
+static bool ArbitraryRemapValidate(const RString& answer, RString& error_out)
+{
+	int mapping[MAX_NOTE_TRACKS];
+	return ConvertMappingInputToMapping(answer, mapping, error_out);
+}
+
+void ScreenEdit::HandleArbitraryRemapping(RString const& mapstr)
+{
+	const NoteData OldClipboard( m_Clipboard );
+	HandleAlterMenuChoice( cut, false );
+	int mapping[MAX_NOTE_TRACKS];
+	RString error;
+	// error is actually reported by the validate function, and unused here.
+	if(ConvertMappingInputToMapping(mapstr, mapping, error))
+	{
+		NoteDataUtil::ArbitraryRemap(m_Clipboard, mapping);
+	}
+	HandleAreaMenuChoice( paste_at_begin_marker, false );
+	m_Clipboard = OldClipboard;
+}
+
 void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo)
 {
 	ASSERT_M(m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1,
@@ -4676,6 +4741,15 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 				case collapse_left:		NoteDataUtil::CollapseLeft( m_Clipboard );		break;
 				case shift_left:		NoteDataUtil::ShiftLeft( m_Clipboard );			break;
 				case shift_right:		NoteDataUtil::ShiftRight( m_Clipboard );		break;
+				case swap_up_down: NoteDataUtil::SwapUpDown(m_Clipboard, GAMESTATE->m_pCurSteps[0]->m_StepsType); break;
+				case arbitrary_remap:
+					ScreenTextEntry::TextEntry(
+						SM_BackFromArbitraryRemap, ENTER_ARBITRARY_MAPPING,
+						"0, 1, 2, 3", MAX_NOTE_TRACKS * 4,
+						// 2 chars for digit, one for comma, one for space.
+						ArbitraryRemapValidate
+				);
+					break;
 			}
 			
 			HandleAreaMenuChoice( paste_at_begin_marker, false );

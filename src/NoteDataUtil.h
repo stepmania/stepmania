@@ -124,6 +124,7 @@ namespace NoteDataUtil
 		soft_shuffle,
 		super_shuffle,
 		stomp,
+		swap_up_down,
 		NUM_TRACK_MAPPINGS
 	};
 	void Turn( NoteData &inout, StepsType st, TrackMapping tt, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
@@ -165,6 +166,8 @@ namespace NoteDataUtil
 	void ShiftTracks( NoteData &inout, int iShiftBy );
 	void ShiftLeft( NoteData &inout );
 	void ShiftRight( NoteData &inout );
+	void SwapUpDown( NoteData &inout, StepsType st );
+	void ArbitraryRemap( NoteData &inout, int* mapping );
 
 	void SnapToNearestNoteType( NoteData &inout, NoteType nt1, NoteType nt2, int iStartIndex, int iEndIndex );
 
