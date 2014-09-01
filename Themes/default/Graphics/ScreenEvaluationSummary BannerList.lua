@@ -5,13 +5,11 @@ local function GetList()
 		stats = STATSMAN:GetPlayedStageStats(i);
 		
 		if not stats then
-			MESSAGEMAN:Broadcast("SystemMessage",{ Message="List break (" .. i .. ")" });
 			break
 		end
 		
 		l[#l+1] = stats;
 	end
-	MESSAGEMAN:Broadcast("SystemMessage",{ Message=tostring(#l) });
 	return l
 end
 

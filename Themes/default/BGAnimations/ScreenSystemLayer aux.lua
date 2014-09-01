@@ -41,8 +41,8 @@ t[#t+1] = Def.ActorFrame {
     bOpen = not bOpen;
     if bOpen then self:playcommand("Show") else self:playcommand("Hide") end
   end;
-  InitCommand=cmd(x,SCREEN_RIGHT-50;y,10;zoomy,0);
-  ShowCommand=cmd(finishtweening;zoomx,1;zoomy,0;bounceend,0.125;zoomy,1);
-  HideCommand=cmd(finishtweening;zoom,1;bouncebegin,0.125;zoomy,0);
+  InitCommand=cmd(x,SCREEN_RIGHT-50;y,10;visible,false);
+  ShowCommand=cmd(finishtweening;visible,true);
+  HideCommand=cmd(finishtweening;visible,false);
 };
 return t;

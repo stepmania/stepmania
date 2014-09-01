@@ -2,7 +2,6 @@ local t = Def.ActorFrame{
 	InitCommand=cmd(fov,70);
 	LoadActor("_arrow")..{
 		InitCommand=cmd(x,225;);
-		OnCommand=cmd(wag;effectmagnitude,0,0,16;effectperiod,2.5;);
 	};
 	LoadActor("_text");
 	LoadActor("_text")..{

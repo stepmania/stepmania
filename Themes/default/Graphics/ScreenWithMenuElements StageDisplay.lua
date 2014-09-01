@@ -4,7 +4,6 @@ local curStageIndex = GAMESTATE:GetCurrentStageIndex();
 local t = Def.ActorFrame {};
 
 t[#t+1] = Def.ActorFrame {
-	LoadActor(THEME:GetPathB("_frame","3x3"),"rounded black",64,12);
 	LoadFont("Common Normal") .. {
 		InitCommand=cmd(y,-1;shadowlength,1;);
 		BeginCommand=function(self)

@@ -170,7 +170,6 @@ if not GAMESTATE:IsCourseMode() then
 		local song = GAMESTATE:GetCurrentSong();
 		local cdtitle = self:GetChild("CDTitle");
 		local height = cdtitle:GetHeight();
-		local width = cdtitle:GetWidth();
 		
 		if song then
 			if song:HasCDTitle() then
@@ -183,27 +182,15 @@ if not GAMESTATE:IsCourseMode() then
 			cdtitle:visible(false);
 		end;
 		
-		if height >= 60 and width >= 80 then
-			if height*(80/60) >= width then
-			cdtitle:zoom(60/height);
-			else
-			cdtitle:zoom(80/width);
-			end;
-		elseif height >= 60 then
-			cdtitle:zoom(60/height);
-		elseif width >= 80 then
-			cdtitle:zoom(80/width);
-		else 
-			cdtitle:zoom(1);
-		end;
+		self:zoom(scale(height,32,480,1,32/480))
 	end;
 	t[#t+1] = Def.ActorFrame {
-		OnCommand=cmd(draworder,105;x,SCREEN_CENTER_X-76;y,SCREEN_CENTER_Y-72;zoomy,0;sleep,0.5;decelerate,0.25;zoomy,1;SetUpdateFunction,CDTitleUpdate);
+		OnCommand=cmd(draworder,105;x,SCREEN_CENTER_X-256;y,SCREEN_CENTER_Y-84;zoom,0;sleep,0.5;decelerate,0.25;zoom,1;SetUpdateFunction,CDTitleUpdate);
 		OffCommand=cmd(bouncebegin,0.15;zoomx,0);
 		Def.Sprite {
 			Name="CDTitle";
-			InitCommand=cmd(y,19);
-			--OnCommand=cmd(draworder,106;shadowlength,1;zoom,0.75;diffusealpha,1;zoom,0;bounceend,0.35;zoom,0.75;spin;effectmagnitude,0,180,0);
+			OnCommand=cmd(draworder,106;shadowlength,1;zoom,0.75;diffusealpha,1;zoom,0;bounceend,0.35;zoom,0.75;spin;effectperiod,2;effectmagnitude,0,180,0);
+			BackCullCommand=cmd(diffuse,color("0.5,0.5,0.5,1"));
 		};	
 	};
 	t[#t+1] = StandardDecorationFromFileOptional("NewSong","NewSong") .. {
@@ -273,24 +260,22 @@ if GAMESTATE:IsCourseMode() then
 end
 
 t[#t+1] = StandardDecorationFromFileOptional("DifficultyDisplay","DifficultyDisplay");
-t[#t+1] = StandardDecorationFromFileOptional("SortOrderFrame","SortOrderFrame") .. {
---[[ 	BeginCommand=cmd(playcommand,"Set");
-	SortOrderChangedMessageCommand=cmd(playcommand,"Set";);
-	SetCommand=function(self)
-		local s = SortOrderToLocalizedString( GAMESTATE:GetSortOrder() );
-		self:settext( s );
-		self:playcommand("Sort");
-	end; --]]
-};
+
 t[#t+1] = StandardDecorationFromFileOptional("SortOrder","SortOrderText") .. {
 	BeginCommand=cmd(playcommand,"Set");
-	SortOrderChangedMessageCommand=cmd(playcommand,"Set";);
+	SortOrderChangedMessageCommand=cmd(playcommand,"Set");
 	SetCommand=function(self)
-		local s = SortOrderToLocalizedString( GAMESTATE:GetSortOrder() );
-		self:settext( s );
-		self:playcommand("Sort");
+		local s = GAMESTATE:GetSortOrder()
+		if s ~= nil then
+			local s = SortOrderToLocalizedString( s )
+			self:settext( s )
+			self:playcommand("Sort")
+		else
+			return
+		end
 	end;
 };
+
 t[#t+1] = StandardDecorationFromFileOptional("SongOptionsFrame","SongOptionsFrame") .. {
 	ShowPressStartForOptionsCommand=THEME:GetMetric(Var "LoadingScreen","SongOptionsFrameShowCommand");
 	ShowEnteringOptionsCommand=THEME:GetMetric(Var "LoadingScreen","SongOptionsFrameEnterCommand");
