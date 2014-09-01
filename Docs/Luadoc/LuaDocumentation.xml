@@ -4995,6 +4995,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetType' return='WheelItemDataType' arguments=''>
 		Returns the type of this wheel item.
 	</Function>
+	<Function name='IsLoaded' return='bool' arguments=''>
+		Returns whether the wheel item has been loaded yet.  If this function returns false, calling any other WheelItemBase function will result in an error. <br />
+		A specific case where this is known to happen is commands that trigger on CurrentSongChanged because the music wheel clears the current song before it finishes loading if the current song is longer than the number of stages remaining.
+	</Function>
 </Class>
 <Class name='WorkoutGraph'>
 	<Function name='SetFromCurrentWorkout' return='void' arguments=''>

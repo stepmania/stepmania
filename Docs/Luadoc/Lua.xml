@@ -1770,6 +1770,7 @@
 			<Function name='GetColor'/>
 			<Function name='GetText'/>
 			<Function name='GetType'/>
+			<Function name='IsLoaded'/>
 		</Class>
 		<Class base='ActorFrame' name='WorkoutGraph'>
 			<Function name='SetFromCurrentWorkout'/>
