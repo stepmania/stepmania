@@ -810,6 +810,8 @@
 			<Function name='HasEarnedExtraStage'/>
 			<Function name='HaveProfileToLoad'/>
 			<Function name='HaveProfileToSave'/>
+			<Function name='InsertCoin'/>
+			<Function name='InsertCredit'/>
 			<Function name='InStepEditor'/>
 			<Function name='IsAnExtraStage'/>
 			<Function name='IsAnyHumanPlayerUsingMemoryCard'/>

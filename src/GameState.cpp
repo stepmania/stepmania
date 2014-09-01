@@ -32,6 +32,7 @@
 #include "SongManager.h"
 #include "SongUtil.h"
 #include "StatsManager.h"
+#include "StepMania.h"
 #include "Steps.h"
 #include "Style.h"
 #include "ThemeManager.h"
@@ -396,7 +397,7 @@ void GameState::JoinPlayer( PlayerNumber pn )
 		// dance-threepanel, popn-nine). -aj
 		// XXX?: still shows joined player as "Insert Card". May not be an issue? -aj
 		if( m_pCurStyle->m_StyleType == StyleType_OnePlayerTwoSides ||
-			m_pCurStyle->m_StepsType == StepsType_dance_solo || 
+			m_pCurStyle->m_StepsType == StepsType_dance_solo ||
 			m_pCurStyle->m_StepsType == StepsType_dance_threepanel ||
 			m_pCurStyle->m_StepsType == StepsType_popn_nine )
 			pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, 1, m_pCurStyle->m_StepsType );
@@ -2221,7 +2222,7 @@ MultiPlayer GetNextEnabledMultiPlayer( MultiPlayer mp )
 #include "LuaBinding.h"
 #include "Game.h"
 
-/** @brief Allow Lua to have access to the GameState. */ 
+/** @brief Allow Lua to have access to the GameState. */
 class LunaGameState: public Luna<GameState>
 {
 public:
@@ -2531,7 +2532,7 @@ public:
 			vEP.push_back( pn );
 		LuaHelpers::CreateTableFromArray( vEP, L );
 		return 1;
-	}  
+	}
 	static int GetCurrentStyle( T* p, lua_State *L )
 	{
 		Style *pStyle = const_cast<Style *> (p->GetCurrentStyle());
@@ -2550,9 +2551,9 @@ public:
 		return 1;
 	}
 	static int GetNumStagesForCurrentSongAndStepsOrCourse( T* , lua_State *L )
-	{ 
+	{
 		lua_pushnumber(L, GAMESTATE->GetNumStagesForCurrentSongAndStepsOrCourse() );
-		return 1; 
+		return 1;
 	}
 	static int GetNumStagesLeft( T* p, lua_State *L )
 	{
@@ -2589,20 +2590,29 @@ public:
 	}
 	static int GetExpandedSectionName( T* p, lua_State *L )				{ lua_pushstring(L, p->sExpandedSectionName); return 1; }
 	static int AddStageToPlayer( T* p, lua_State *L )				{ p->AddStageToPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
+	static int InsertCoin( T* p, lua_State *L )
+	{
+		int numCoins = lua_tointeger(L, 1);
+		StepMania::InsertCoin(numCoins, false);
+	}
+	static int InsertCredit( T* p, lua_State *L )
+	{
+		StepMania::InsertCredit();
+	}
 	static int CurrentOptionsDisqualifyPlayer( T* p, lua_State *L )	{ lua_pushboolean(L, p->CurrentOptionsDisqualifyPlayer(Enum::Check<PlayerNumber>(L, 1))); return 1; }
-	
+
 	static int ResetPlayerOptions( T* p, lua_State *L )
 	{
 		p->ResetPlayerOptions(Enum::Check<PlayerNumber>(L, 1));
 		return 0;
 	}
-	
+
 	static int RefreshNoteSkinData( T* p, lua_State *L )
 	{
 		NOTESKIN->RefreshNoteSkinData(p->m_pCurGame);
 		return 0;
 	}
-	
+
 	static int Dopefish( T* p, lua_State *L )
 	{
 		lua_pushboolean(L, p->m_bDopefish);
@@ -2620,7 +2630,7 @@ public:
 		SCREENMAN->ZeroNextUpdate();
 		return 0;
 	}
-	
+
 	static int SaveProfiles( T* p, lua_State *L )
 	{
 		p->SavePlayerProfiles();
@@ -2702,22 +2712,22 @@ public:
 		}
 
 		StyleType st = pStyle->m_StyleType;
-		if( p->GetNumSidesJoined() == 2 && 
+		if( p->GetNumSidesJoined() == 2 &&
 			( st == StyleType_OnePlayerOneSide || st == StyleType_OnePlayerTwoSides ) )
 		{
 			luaL_error( L, "Too many sides joined for style %s", pStyle->m_szName );
 		}
-		else if( p->GetNumSidesJoined() == 1 && 
+		else if( p->GetNumSidesJoined() == 1 &&
 			( st == StyleType_TwoPlayersTwoSides || st == StyleType_TwoPlayersSharedSides ) )
 		{
 			luaL_error( L, "Too few sides joined for style %s", pStyle->m_szName );
 		}
 
 		if( !AreStyleAndPlayModeCompatible( p, L, pStyle, p->m_PlayMode ) )
-		{ 
+		{
 			return 0;
 		}
-	
+
 		p->SetCurrentStyle( pStyle );
 		ClearIncompatibleStepsAndTrails( p, L );
 
@@ -2841,6 +2851,8 @@ public:
 		ADD_METHOD( SetCharacter );
 		ADD_METHOD( GetExpandedSectionName );
 		ADD_METHOD( AddStageToPlayer );
+		ADD_METHOD( InsertCoin );
+		ADD_METHOD( InsertCredit );
 		ADD_METHOD( CurrentOptionsDisqualifyPlayer );
 		ADD_METHOD( ResetPlayerOptions );
 		ADD_METHOD( RefreshNoteSkinData );

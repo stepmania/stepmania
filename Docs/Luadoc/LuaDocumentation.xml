@@ -2478,6 +2478,13 @@ save yourself some time, copy this for undocumented things:
 		editing portion. If in recording or playing mode, this will return
 		<code>false</code>.
 	</Function>
+	<Function name='InsertCoin' return='void' arguments='int iCoins'>
+		Inserts <code>iCoins</code> number of coins.  <code>iCoins</code> can be negative or positive.
+	</Function>
+	<Function name='InsertCredit' return='void' arguments=''>
+		Inserts one credit.  To deduct a credit, pass a negative integer representing the number
+		of coins per credit to <Link class='GameState' function='InsertCoin'>InsertCoin</Link>.
+	</Function>
 	<Function name='IsAnExtraStage' return='bool' arguments=''>
 		Returns <code>true</code> if this is an extra stage.
 	</Function>
