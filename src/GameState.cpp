@@ -2594,14 +2594,18 @@ public:
 	{
 		int numCoins = IArg(1);
 		if (GAMESTATE->m_iCoins + numCoins >= 0)
+		{
 			StepMania::InsertCoin(numCoins, false);
-		else
+		} else {
+			// Warn themers if they attempt to set credits to a negative value.
 			luaL_error( L, "Credits may not be negative." );
-
+		}
+		return 0;
 	}
 	static int InsertCredit( T* p, lua_State *L )
 	{
 		StepMania::InsertCredit();
+		return 0;
 	}
 	static int CurrentOptionsDisqualifyPlayer( T* p, lua_State *L )	{ lua_pushboolean(L, p->CurrentOptionsDisqualifyPlayer(Enum::Check<PlayerNumber>(L, 1))); return 1; }
 

@@ -1243,22 +1243,28 @@ void StepMania::InsertCoin( int iNum, bool bCountInBookkeeping )
 
 	// Don't allow GAMESTATE's coin count to become negative.
 	if (GAMESTATE->m_iCoins + iNum >= 0)
+	{
 		GAMESTATE->m_iCoins.Set( GAMESTATE->m_iCoins + iNum );
-
+	}
+	
 	int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
 	bool bMaxCredits = iCredits >= MAX_NUM_CREDITS;
 	if( bMaxCredits )
+	{
 		GAMESTATE->m_iCoins.Set( MAX_NUM_CREDITS * PREFSMAN->m_iCoinsPerCredit );
-
+	}
+	
 	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins.Get(), PREFSMAN->m_iCoinsPerCredit.Get() );
 
 	// If inserting coins, play an appropriate sound; if deducting coins, don't play anything.
 	if (iNum > 0)
 	{
 		if( iNumCoinsOld != GAMESTATE->m_iCoins )
+		{
 			SCREENMAN->PlayCoinSound();
-		else
+		} else {
 			SCREENMAN->PlayInvalidSound();
+		}
 	}
 
 	/* If AutoJoin and a player is already joined, then try to join a player.
