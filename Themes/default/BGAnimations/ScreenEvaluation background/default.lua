@@ -1,7 +1,6 @@
 local t = Def.ActorFrame {};
 
 t[#t+1] = Def.ActorFrame {
-	InitCommand=cmd(Center);
 	Def.Sprite {
 		OnCommand=function(self)
 			if GAMESTATE:GetCurrentSong() then
@@ -20,7 +19,7 @@ t[#t+1] = Def.ActorFrame {
 		end;
 	};
 	Def.Quad {
-		InitCommand=cmd(scaletoclipped,SCREEN_WIDTH+1,SCREEN_HEIGHT);
+		InitCommand=cmd(Center;scaletoclipped,SCREEN_WIDTH+1,SCREEN_HEIGHT);
 		OnCommand=cmd(diffuse,color("#FFCB05");diffusebottomedge,color("#F0BA00");diffusealpha,0.45);
 	};
 };
