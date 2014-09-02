@@ -268,6 +268,11 @@ RString Screen::GetNextScreenName() const
 	return NEXT_SCREEN;
 }
 
+void Screen::SetNextScreenName(RString const& name)
+{
+	m_sNextScreen= name;
+}
+
 RString Screen::GetPrevScreen() const
 {
 	if( !m_sPrevScreen.empty() )
@@ -403,6 +408,7 @@ class LunaScreen: public Luna<Screen>
 {
 public:
 	static int GetNextScreenName( T* p, lua_State *L ) { lua_pushstring(L, p->GetNextScreenName() ); return 1; }
+	static int SetNextScreenName( T* p, lua_State *L ) { p->SetNextScreenName(SArg(1)); return 0; }
 	static int GetPrevScreenName( T* p, lua_State *L ) { lua_pushstring(L, p->GetPrevScreen() ); return 1; }
 	static int lockinput( T* p, lua_State *L ) { p->SetLockInputSecs(FArg(1)); return 0; }
 	DEFINE_METHOD( GetScreenType,	GetScreenType() )
@@ -438,6 +444,7 @@ public:
 	LunaScreen()
 	{
 		ADD_METHOD( GetNextScreenName );
+		ADD_METHOD( SetNextScreenName );
 		ADD_METHOD( GetPrevScreenName );
 		ADD_METHOD( PostScreenMessage );
 		ADD_METHOD( lockinput );

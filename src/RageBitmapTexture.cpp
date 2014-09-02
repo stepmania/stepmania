@@ -65,7 +65,15 @@ void RageBitmapTexture::Create()
 
 	/* Load the image into a RageSurface. */
 	RString error;
-	RageSurface *pImg = RageSurfaceUtils::LoadFile( actualID.filename, error );
+	RageSurface *pImg= NULL;
+	if(actualID.filename == TEXTUREMAN->GetScreenTextureID().filename)
+	{
+		pImg= TEXTUREMAN->GetScreenSurface();
+	}
+	else
+	{
+		pImg= RageSurfaceUtils::LoadFile(actualID.filename, error);
+	}
 
 	/* Tolerate corrupt/unknown images. */
 	if( pImg == NULL )
@@ -122,7 +130,7 @@ void RageBitmapTexture::Create()
 	m_iSourceWidth = pImg->w;
 	m_iSourceHeight = pImg->h;
 
-	/* in-game imsage dimensions are the same as the source graphic */
+	/* in-game image dimensions are the same as the source graphic */
 	m_iImageWidth = m_iSourceWidth;
 	m_iImageHeight = m_iSourceHeight;
 

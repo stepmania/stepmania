@@ -75,6 +75,7 @@ public:
 	void FinishTweening();
 	
 	void SetTexture( RageTexture *Texture );
+	RageTexture* GetTexture() { return _Texture; };
 	void LoadFromTexture( RageTextureID ID );
 
 	void UnloadTexture();

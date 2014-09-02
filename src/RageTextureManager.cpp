@@ -100,6 +100,17 @@ RageTextureID RageTextureManager::GetDefaultTextureID()
 	return RageTextureID( g_sDefaultTextureName );
 }
 
+static const RString g_ScreenTextureName = "__screen__";
+RageTextureID RageTextureManager::GetScreenTextureID()
+{
+	return RageTextureID(g_ScreenTextureName);
+}
+
+RageSurface* RageTextureManager::GetScreenSurface()
+{
+	return DISPLAY->CreateScreenshot();
+}
+
 class RageTexture_Default: public RageTexture
 {
 public:
@@ -141,11 +152,19 @@ RageTexture* RageTextureManager::LoadTextureInternal( RageTextureID ID )
 
 	RageTexture* pTexture;
 	if( ID.filename == g_sDefaultTextureName )
+	{
 		pTexture = new RageTexture_Default;
-	else if( sExt == "ogv" || sExt == "avi" || sExt == "mpg" || sExt == "mpeg" || sExt == "mp4" || sExt == "mkv" || sExt == "mov" || sExt == "flv" || sExt == "f4v")
+	}
+	else if(sExt == "ogv" || sExt == "avi" || sExt == "mpg" ||
+		sExt == "mpeg" || sExt == "mp4" || sExt == "mkv" || sExt == "mov" ||
+		sExt == "flv" || sExt == "f4v")
+	{
 		pTexture = RageMovieTexture::Create( ID );
+	}
 	else
+	{
 		pTexture = new RageBitmapTexture( ID );
+	}
 
 	m_mapPathToTexture[ID] = pTexture;
 
