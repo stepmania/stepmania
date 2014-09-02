@@ -1,4 +1,4 @@
-﻿StepMania 5 Changelog
+StepMania 5 Changelog
 ________________________________________________________________________________
 The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
@@ -7,6 +7,10 @@ ________________________________________________________________________________
 ================================================================================
 StepMania current development
 --------------------------------------------------------------------------------
+
+2014/09/02
+----------
+* Changed ES/OMES speed mod to 2x from 1.5x.
 
 2014/08/06
 ----------
@@ -582,7 +586,7 @@ StepMania 5.0 alpha 1 | 20120108
 * [ScreenManager] Made AddScreenToTop take a second (optional) parameter for
   posting a ScreenMessage on screen pop. [AJ]
 * Only read certain tags during first load; makes song loading faster. [theDtTvB]
-  
+
 2012/01/07
 ----------
 * Fix Portable.ini not working on Mac OS X. [shakesoda]
@@ -691,8 +695,8 @@ StepMania 5.0 alpha 1 | 20120108
 2011/11/15
 ----------
 * [LifeMeterBar] Added the ForceLifeDifficultyOnExtraStage metric and
-  the ExtraStageLifeDifficulty metric. Let the themer decide if extra stages 
-  should have their own life bar behavior. Note that this metric does NOT 
+  the ExtraStageLifeDifficulty metric. Let the themer decide if extra stages
+  should have their own life bar behavior. Note that this metric does NOT
   change the lifebar to the battery style. [Wolfman2000/FSX]
 
 2011/11/14
@@ -1237,7 +1241,7 @@ StepMania 5.0 Preview 2 | 20110703
 2011/06/12
 ----------
 * [ScreenNetSelectMusic] Add PlayerOptionsScreen metric. [AJ]
-* [ScreenEdit] Restore the old PageUp/PageDown behavior, added Control + 
+* [ScreenEdit] Restore the old PageUp/PageDown behavior, added Control +
   PageUp/PageDown to use recent time signature behavior. Laptop users, that
   includes you guys too: semicolon and apostrophe are still good. [Wolfman2000]
 
@@ -1376,7 +1380,7 @@ StepMania 5.0 Preview 1 | 20110529
 ----------
 * [ScreenGameplay] Removed hardcoded commands for Debug (give up text) and
   replace them with DebugStartOnCommand, DebugBackOnCommand, and
-  DebugTweenOffCommand. [AJ] 
+  DebugTweenOffCommand. [AJ]
 * Added #SPEEDS to the SSC format. This multiplies your scrolling speed during
   gameplay, not replaces it (see mod attacks for replacing). [Wolfman2000]
 
