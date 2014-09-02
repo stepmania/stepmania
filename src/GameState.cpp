@@ -2592,8 +2592,12 @@ public:
 	static int AddStageToPlayer( T* p, lua_State *L )				{ p->AddStageToPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
 	static int InsertCoin( T* p, lua_State *L )
 	{
-		int numCoins = lua_tointeger(L, 1);
-		StepMania::InsertCoin(numCoins, false);
+		int numCoins = IArg(1);
+		if (GAMESTATE->m_iCoins + numCoins >= 0)
+			StepMania::InsertCoin(numCoins, false);
+		else
+			luaL_error( L, "Credits may not be negative." );
+
 	}
 	static int InsertCredit( T* p, lua_State *L )
 	{

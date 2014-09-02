@@ -1252,7 +1252,7 @@ void StepMania::InsertCoin( int iNum, bool bCountInBookkeeping )
 
 	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins.Get(), PREFSMAN->m_iCoinsPerCredit.Get() );
 
-	// If inserting coins, play the appropriate sound; if deducting coins, don't.
+	// If inserting coins, play an appropriate sound; if deducting coins, don't play anything.
 	if (iNum > 0)
 	{
 		if( iNumCoinsOld != GAMESTATE->m_iCoins )
