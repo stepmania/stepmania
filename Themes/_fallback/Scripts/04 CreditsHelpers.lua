@@ -64,12 +64,14 @@ local stepmania_credits= {
 		"Christophe Goulet-LeBlanc (Kommisar)", -- songs
 		"corec", -- various fixes
 		"cybik", -- Android port
+		"dbk2", -- mac builds, a couple actor behavior fixes, new lua bindings
+		"djpohly", -- piuio kernel module, XML compatibility, other useful stuff
 		"galopin", -- piu PlayStation2 usb mat support
 		"gholms", -- automake 1.11 support
 		"juanelote", -- SongManager:GetSongGroupByIndex, JumpToNext/PrevGroup logic mods
 		"Kaox", -- pump/default noteskin
 		-- Add Graphics/CreditsLogo name.png and change your entry to a table like this to look super pro.
-		{logo= "kyzentun", name= "Kyzentun"}, -- new lua bindings
+		{logo= "kyzentun", name= "Kyzentun"}, -- new lua bindings, theme documentation
 		"Mad Matt", -- new lua bindings
 		"NitroX72", -- pump/frame noteskin
 		"Petriform", -- default theme music
@@ -84,7 +86,6 @@ local stepmania_credits= {
 		"A Pseudonymous Coder", -- support
 		"Bill Shillito (DM Ashura)", -- Music (not yet though)
 		"cpubasic13", -- testing (a lot)
-		"dbk2", -- mac builds, a couple actor behavior fixes
 		"Dreamwoods",
 		"Jason Bolt (LightningXCE)",
 		"Jousway", -- Noteskins
@@ -97,7 +98,7 @@ local stepmania_credits= {
 	{
 		name= "Shoutouts",
 		"The Lua team", -- lua project lead or some shit. super nerdy but oh hell.
-		"Mojang AB", -- minecraft forever -freem
+		{logo= "mojang", name= "Mojang AB"}, -- minecraft forever -freem
 		"Wolfire Games", -- piles of inspiration
 		"NAKET Coder",
 		"Ciera Boyd", -- you bet your ass I'm putting my girlfriend in the credits -shakesoda
@@ -111,6 +112,7 @@ local kyzentuns_fancy_value= 16
 
 local special_logos= {
 	kyzentun= Def.ActorMultiVertex{
+		Name= "logo",
 		Texture= THEME:GetPathG("CreditsLogo", "kyzentun"),
 		OnCommand= function(self)
 			self:SetDrawState{Mode= "DrawMode_Quads"}
@@ -161,6 +163,12 @@ local special_logos= {
 			self:queuecommand("normal_state")
 		end,
 	},
+	mojang= Def.Actor{
+		Name= "logo",
+		OnCommand= function(self)
+			self:GetParent():GetChild("name"):distort(.25) -- minecraft is broken, -kyz
+		end
+	}
 }
 
 -- Go through the credits and swap in the special logos.
