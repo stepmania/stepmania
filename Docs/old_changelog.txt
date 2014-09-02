@@ -90,7 +90,7 @@ r111 | 20091122 10:21:30
 ------------------------
 * [ArchHooks_Unix] Follow user's system language as default.
   [David Santamaría Rogado (howl)]
-  See http://www.stepmania.com/forums/showthread.php?t=21471 for more info.
+  See http://old.stepmania.com/forums/showthread.php?t=21471 for more info.
 
 r110 | 20091120 14:03:17
 ------------------------
@@ -119,7 +119,7 @@ r106 | 20091115 21:33:28
 ------------------------
 * Prevent focus lost at Fullscreen on X11, fix windowed->fullscreen resolution
   changes so that they save [David Santamaría Rogado (howl)]
-  (http://www.stepmania.com/forums/showthread.php?t=21430)
+  (http://old.stepmania.com/forums/showthread.php?t=21430)
 
 r105 | 20091114 15:07:58
 ------------------------
@@ -153,7 +153,7 @@ r102 | 20091111 04:00:46
 r101 | 20091109 19:33:55
 ------------------------
 * Implemented David Santamaría Rogado (howl)'s patch for loading Splash.png instead of an .xpm
-(http://www.stepmania.com/forums/showpost.php?p=157340&postcount=3)
+(http://old.stepmania.com/forums/showpost.php?p=157340&postcount=3)
 
 r089-100 | 20091103 01:45:01 - 20091109 04:01:31
 ------------------------------------------------
@@ -176,7 +176,7 @@ Okay let's just say it's r089 to r100 and call it a week.
  * r28221: "allow overriding, like PRODUCT_ID" [Glenn Maynard]
  * r28222-28223: "adding support for pms files" [GRIM657]
  * The pulseaudio patch [David Santamaría Rogado (howl), OndÅ™ej HoÅ¡ek, Damien ThÃ©bault]
-   (see http://www.stepmania.com/forums/showthread.php?t=21348)
+   (see http://old.stepmania.com/forums/showthread.php?t=21348)
  * Greg Nadja's OpenGL/Windows patch
 
 * sm-ssc Changes:
@@ -784,7 +784,7 @@ r1136 | 20091115 20:43:48
 [Modified /sm-ssc3/src/arch/LowLevelWindow/LowLevelWindowX11.cpp]
 -------------------------
 howl did it
-http://www.stepmania.com/forums/showthread.php?p=157603#post157603
+http://old.stepmania.com/forums/showthread.php?p=157603#post157603
 
 r1137 | 20091115 21:05:36
 [Modified /sm-ssc3/src/arch/LowLevelWindow/LowLevelWindowX11.cpp]
