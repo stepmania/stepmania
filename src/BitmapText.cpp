@@ -513,35 +513,28 @@ void BitmapText::UnSetDistortion()
 
 void BitmapText::UpdateBaseZoom()
 {
-	if( m_fMaxWidth == 0 )
-	{
-		this->SetBaseZoomX( 1 );
-	}
-	else
-	{
-		const float fWidth = GetUnzoomedWidth();
-		if( fWidth != 0 ) // don't divide by 0
-		{
-			// Never decrease the zoom.
-			const float fZoom = min( 1, m_fMaxWidth/fWidth );
-			this->SetBaseZoomX( fZoom );
-		}
+	// don't divide by 0
+	// Never apply a zoom greater than 1.
+	// Factor in the non-base zoom so that maxwidth will be in terms of theme
+	// pixels when zoom is used.
+#define APPLY_DIMENSION_ZOOM(dimension_max, dimension_get, dimension_zoom_get, base_zoom_set) \
+	if(dimension_max == 0) \
+	{ \
+		base_zoom_set(1); \
+	} \
+	else \
+	{ \
+		const float dimension= dimension_get() / dimension_zoom_get(); \
+		if(dimension != 0) \
+		{ \
+			const float zoom= min(1, dimension_max / dimension); \
+			base_zoom_set(zoom); \
+		} \
 	}
 
-	if( m_fMaxHeight == 0 )
-	{
-		this->SetBaseZoomY( 1 );
-	}
-	else
-	{
-		const float fHeight = GetUnzoomedHeight();
-		if( fHeight != 0 ) // don't divide by 0
-		{
-			// Never decrease the zoom.
-			const float fZoom = min( 1, m_fMaxHeight/fHeight );
-			this->SetBaseZoomY( fZoom );
-		}
-	}
+	APPLY_DIMENSION_ZOOM(m_fMaxWidth, GetUnzoomedWidth, GetZoomX, SetBaseZoomX);
+	APPLY_DIMENSION_ZOOM(m_fMaxHeight, GetUnzoomedHeight, GetZoomY, SetBaseZoomY);
+#undef APPLY_DIMENSION_ZOOM
 }
 
 bool BitmapText::StringWillUseAlternate( const RString& sText, const RString& sAlternateText ) const
