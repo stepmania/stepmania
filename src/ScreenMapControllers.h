@@ -39,10 +39,10 @@ private:
 	void SetCursorFromSetListCurrent();
 	void StartWaitingForPress();
 	
-	int m_iCurController;
-	int m_iCurButton;
-	int m_iCurSlot;
-	int m_MaxDestItem;
+	unsigned int m_CurController;
+	unsigned int m_CurButton;
+	unsigned int m_CurSlot;
+	unsigned int m_MaxDestItem;
 
 	bool m_ChangeOccurred;
 
@@ -61,11 +61,11 @@ private:
 	BitmapText m_textDevices;
 
 	BitmapText m_textLabel[NUM_GameController];
-	BitmapText m_headerCenter;
-	BitmapText m_headerLabels[NUM_GameController][NUM_SHOWN_GAME_TO_DEVICE_SLOTS];
+	BitmapText m_ListHeaderCenter;
+	BitmapText m_ListHeaderLabels[NUM_GameController][NUM_SHOWN_GAME_TO_DEVICE_SLOTS];
 
 	float m_AutoDismissWarningSecs;
-	AutoActor m_sprWarning;
+	AutoActor m_Warning;
 
 	float m_AutoDismissNoSetListPromptSecs;
 	AutoActor m_NoSetListPrompt;
