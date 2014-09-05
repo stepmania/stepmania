@@ -429,33 +429,28 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 			}
 			break;
 		case KEY_LEFT: // Move the selection left, wrapping up.
-			if(CursorOnAction())
+			if(!CursorCanGoLeft())
 			{
 				break;
 			}
-			if( m_CurSlot == 0 && m_CurController == 0 )
-			{
-				break;	// can't go left any more
-			}
 			BeforeChangeFocus();
-			m_CurSlot--;
-			if( m_CurSlot < 0 )
+			if(m_CurSlot == 0)
 			{
 				m_CurSlot = NUM_CHANGABLE_SLOTS-1;
-				m_CurController--;
+				--m_CurController;
+			}
+			else
+			{
+				--m_CurSlot;
 			}
 			AfterChangeFocus();
 			m_soundChange.Play();
 			bHandled = true;
 			break;
 		case KEY_RIGHT:	// Move the selection right, wrapping down.
-			if(CursorOnAction())
+			if(!CursorCanGoRight())
 			{
 				break;
-			}
-			if( m_CurSlot == NUM_CHANGABLE_SLOTS-1 && m_CurController == NUM_GameController-1 )
-			{
-				break;	// can't go right any more
 			}
 			BeforeChangeFocus();
 			m_CurSlot++;
@@ -623,6 +618,17 @@ bool ScreenMapControllers::CursorCanGoUp()
 bool ScreenMapControllers::CursorCanGoDown()
 {
 	return m_CurButton < m_KeysToMap.size() + m_Actions.size();
+}
+
+bool ScreenMapControllers::CursorCanGoLeft()
+{
+	return !CursorOnAction() && (m_CurSlot > 0 || m_CurController > 0);
+}
+
+bool ScreenMapControllers::CursorCanGoRight()
+{
+	return !CursorOnAction() && (m_CurSlot < NUM_CHANGABLE_SLOTS-1 ||
+		m_CurController < NUM_GameController-1);
 }
 
 int ScreenMapControllers::CurKeyIndex()

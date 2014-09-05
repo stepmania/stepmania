@@ -25,10 +25,10 @@ t[#t+1] = LoadActor("Header") .. {
 };
 
 t[#t+1] = LoadFont("Common Bold") .. {
-	Name="HeaderText";
+	Name="HeaderShadow";
 	Text=Screen.String("HeaderText");
-	InitCommand=cmd(x,-SCREEN_CENTER_X+24;y,26;zoom,1;horizalign,left;shadowlength,0;maxwidth,200);
-	OnCommand=cmd(visible,IsVisible();skewx,-0.125;diffuse,color("#ffd400");shadowlength,2;shadowcolor,BoostColor(color("#ffd40077"),0.25));
+	InitCommand=cmd(x,-SCREEN_CENTER_X+26;y,28;zoom,1;horizalign,left;maxwidth,200);
+	OnCommand=cmd(visible,IsVisible();skewx,-0.125;diffuse,BoostColor(color("#ffd40077"),0.375););
 	UpdateScreenHeaderMessageCommand=function(self,param)
 		self:settext(param.Header);
 	end;
@@ -38,6 +38,16 @@ t[#t+1] = Def.Quad {
 	Name="Underline";
 	InitCommand=cmd(x,-SCREEN_CENTER_X+24;y,36;horizalign,left);
 	OnCommand=cmd(diffuse,color("#ffd400");shadowlength,2;shadowcolor,BoostColor(color("#ffd40077"),0.25);linear,0.25;zoomtowidth,192;faderight,0.5);
+};
+
+t[#t+1] = LoadFont("Common Bold") .. {
+	Name="HeaderText";
+	Text=Screen.String("HeaderText");
+	InitCommand=cmd(x,-SCREEN_CENTER_X+24;y,26;zoom,1;horizalign,left;shadowlength,0;maxwidth,200);
+	OnCommand=cmd(visible,IsVisible();skewx,-0.125;diffuse,color("#ffd400"););
+	UpdateScreenHeaderMessageCommand=function(self,param)
+		self:settext(param.Header);
+	end;
 };
 
 t.BeginCommand=function(self)
