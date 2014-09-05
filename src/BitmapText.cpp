@@ -872,6 +872,7 @@ public:
 	static int max_dimension_use_zoom(T* p, lua_State* L)
 	{
 		p->SetMaxDimUseZoom(lua_toboolean(L, 1));
+		return 0;
 	}
 	static int vertspacing( T* p, lua_State *L )		{ p->SetVertSpacing( IArg(1) ); return 0; }
 	static int settext( T* p, lua_State *L )
