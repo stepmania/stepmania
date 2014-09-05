@@ -84,6 +84,11 @@ public:
 		lua_pushnumber(L, p->GetNumFrames());
 		return 1;
 	}
+	static int Reload(T* p, lua_State* L)
+	{
+		p->Reload();
+		return 0;
+	}
 
 	LunaRageTexture()
 	{
@@ -92,6 +97,7 @@ public:
 		ADD_METHOD( rate );
 		ADD_METHOD( GetTextureCoordRect );
 		ADD_METHOD( GetNumFrames );
+		ADD_METHOD( Reload );
 	}
 };
 

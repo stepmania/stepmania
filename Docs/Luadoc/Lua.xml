@@ -490,6 +490,7 @@
 			<Function name='GetDestFirstToDraw'/>
 			<Function name='GetDestNumToDraw'/>
 			<Function name='GetNumVertices'/>
+			<Function name='GetTexture'/>
 			<Function name='LoadTexture'/>
 			<Function name='SetDrawState'/>
 			<Function name='SetEffectMode'/>
@@ -1299,6 +1300,7 @@
 			<Function name='loop'/>
 			<Function name='position'/>
 			<Function name='rate'/>
+			<Function name='Reload'/>
 		</Class>
 		<Class base='RageTexture' name='RageTextureRenderTarget'>
 			<Function name='BeginRenderingTo'/>
@@ -1318,6 +1320,7 @@
 			<Function name='Metric'/>
 			<Function name='PostScreenMessage'/>
 			<Function name='RemoveInputCallback'/>
+			<Function name='SetNextScreenName'/>
 			<Function name='String'/>
 			<Function name='lockinput'/>
 		</Class>
