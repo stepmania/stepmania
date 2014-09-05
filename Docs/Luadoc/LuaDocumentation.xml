@@ -1538,6 +1538,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetCurrNumToDraw' return='int' arguments='void'>
 		Get the NumToDraw of the current tween state.
 	</Function>
+	<Function name='GetTexture' return='RageTexture' arguments=''>
+		Returns the ActorMultiVertex's texture.
+	</Function>
 	<Function name='SetEffectMode' return='void' arguments='EffectMode em'>
 		Sets the <Link class='ENUM' function='EffectMode'>EffectMode</Link> of the ActorMultiVertex.
 	</Function>
@@ -2477,6 +2480,13 @@ save yourself some time, copy this for undocumented things:
 		Returns <code>true</code> if we are specifically in the Step Editor's
 		editing portion. If in recording or playing mode, this will return
 		<code>false</code>.
+	</Function>
+	<Function name='InsertCoin' return='void' arguments='int iCoins'>
+		Inserts <code>iCoins</code> number of coins.  <code>iCoins</code> can be negative or positive.
+	</Function>
+	<Function name='InsertCredit' return='void' arguments=''>
+		Inserts one credit.  To deduct a credit, pass a negative integer representing the number
+		of coins per credit to <Link class='GameState' function='InsertCoin'>InsertCoin</Link>.
 	</Function>
 	<Function name='IsAnExtraStage' return='bool' arguments=''>
 		Returns <code>true</code> if this is an extra stage.
@@ -3724,6 +3734,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='rate' return='void' arguments='float fRate'>
 		Sets the animation or movie playback rate to <code>fRate</code>.
 	</Function>
+	<Function name='Reload' return='void' arguments=''>
+		Reloads the texture.
+	</Function>
 </Class>
 <Class name='RollingNumbers'>
 	<Function name='Load' return='void' arguments='string sGroupName'>
@@ -3778,6 +3791,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='RemoveInputCallback' return='void' arguments='function callback'>
 		This removes the callback from the list.
+	</Function>
+	<Function name='SetNextScreenName' return='void' arguments='string name'>
+		Sets the NextScreen value to name.
 	</Function>
 	<Function name='String' theme='_fallback' return='string' arguments='string sName'>
 		[02 Other.lua] Gets a string from the current Screen in the current language.

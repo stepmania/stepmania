@@ -874,7 +874,7 @@ sm-ssc v1.0 Release Candidate 1 | 20100627
 * [Screen] add GetScreenType() Lua binding.
 * howl's patch for fixing LowLevelWindow
   (stepmania4-fullscreen-focus-lost-and-restore-resolution2.patch)
-  http://www.stepmania.com/forums/showthread.php?t=23693
+  http://old.stepmania.com/forums/showthread.php?t=23693
 
 20100608
 --------
@@ -1564,7 +1564,7 @@ Theme-related additions/bugfixes aren't listed here, usually.
 --------
 * (smpackage) sm4svn r28243: "fix for FlushDirCache" [Chris Danford]
 * Fix Beginner Helper rest location [sy567]
- (see http://www.stepmania.com/forums/showpost.php?p=158721&postcount=12)
+ (see http://old.stepmania.com/forums/showpost.php?p=158721&postcount=12)
 
 20091211
 --------
@@ -1596,7 +1596,7 @@ the gametype causes the DifficultyList/StepsDisplayList to not show anything.
 20091206
 --------
 Implement a patch to support modern versions of ffmpeg.
-(See http://www.stepmania.com/forums/showthread.php?t=21434 for more info.)
+(See http://old.stepmania.com/forums/showthread.php?t=21434 for more info.)
 
 Petr Baudis (3):
 	video.m4: Add libswscale checks.
@@ -1681,7 +1681,7 @@ changes are from baseline StepMania 4 SVN, in order to keep compatibility.
 --------
 * [ArchHooks_Unix] Follow user's system language as default.
   [David Santamaría Rogado (howl)]
-  See http://www.stepmania.com/forums/showthread.php?t=21471 for more info.
+  See http://old.stepmania.com/forums/showthread.php?t=21471 for more info.
 
 20091120
 --------
@@ -1707,7 +1707,7 @@ changes are from baseline StepMania 4 SVN, in order to keep compatibility.
 --------
 * Prevent focus lost at Fullscreen on X11, fix windowed->fullscreen resolution
   changes so that they save [David Santamaría Rogado (howl)]
-  (http://www.stepmania.com/forums/showthread.php?t=21430)
+  (http://old.stepmania.com/forums/showthread.php?t=21430)
 
 20091114
 --------
@@ -1754,10 +1754,10 @@ changes are from baseline StepMania 4 SVN, in order to keep compatibility.
  * r28221: "allow overriding, like PRODUCT_ID" [Glenn Maynard]
  * r28222-28223: "adding support for pms files" [GRIM657]
  * The pulseaudio patch [David Santamaría Rogado (howl), Ondřej Hošek, Damien Thébault]
-   (see http://www.stepmania.com/forums/showthread.php?t=21348)
+   (see http://old.stepmania.com/forums/showthread.php?t=21348)
  * Greg Nadja's OpenGL/Windows patch
  * Load Splash.png instead of an .xpm [David Santamaría Rogado (howl)]
-   (http://www.stepmania.com/forums/showpost.php?p=157340&postcount=3)
+   (http://old.stepmania.com/forums/showpost.php?p=157340&postcount=3)
 
 * sm-ssc Changes:
  * [ScreenSelectMusic.cpp] Add SelectMenuInputMessage, has params Player and

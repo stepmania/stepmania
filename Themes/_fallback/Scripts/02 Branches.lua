@@ -232,7 +232,7 @@ Branch = {
 		end
 
 		if STATSMAN:GetStagesPlayed() == 0 then
-			return "ScreenSelectPlayMode"
+			return "ScreenSelectStyle"
 		end
 
 		return "ScreenProfileLoad"

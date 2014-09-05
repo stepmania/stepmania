@@ -30,5 +30,5 @@ The Credentials section seems to be optional, but is useful to know about:
 from the web site to StepMania for things like in-game uploads (instead of going
 to stepmaniashare.com)"[1]
 __________________________________________________________
-[1] http://www.stepmania.com/forums/showthread.php?t=24203
-[2] http://www.stepmania.com/test.smxml
+[1] http://old.stepmania.com/forums/showthread.php?t=24203
+[2] http://old.stepmania.com/test.smxml

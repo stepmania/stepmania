@@ -654,6 +654,13 @@ void InputMapper::SaveMappingsToDisk()
 	m_mappings.WriteMappings( m_pInputScheme, SpecialFiles::KEYMAPS_PATH );
 }
 
+void InputMapper::ResetMappingsToDefault()
+{
+	m_mappings.Clear();
+	UpdateTempDItoGI();
+	AddDefaultMappingsForCurrentGameIfUnmapped();
+}
+
 static LocalizedString CONNECTED			( "InputMapper", "Connected" );
 static LocalizedString DISCONNECTED			( "InputMapper", "Disconnected" );
 static LocalizedString AUTOMAPPING_ALL_JOYSTICKS	( "InputMapper", "Auto-mapping all joysticks." );

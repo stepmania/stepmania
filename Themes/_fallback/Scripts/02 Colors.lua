@@ -12,7 +12,7 @@ Color = {
 	Yellow		=	color("#fff200"),
 	Orange		=	color("#f7941d"),
 	Purple		=	color("#92278f"),
-	Outline		=	color("0,0,0,0.675"),
+	Outline		=	color("0,0,0,0.5"),
 	Invisible	=	color("1,1,1,0"),
 	Stealth		=	color("0,0,0,0"),
 -- Android Design Stencil Colors
@@ -47,8 +47,12 @@ setmetatable(Color, { __call = function(self, c) return self[c] end })
 
 GameColor = {
 	PlayerColors = {
-		PLAYER_1 = color("#ef403d"),
-		PLAYER_2 = color("#0089cf"),
+		PLAYER_1 = color("#ed5565"),
+		PLAYER_2 = color("#5d9cec"),
+	},
+	PlayerDarkColors = {
+		PLAYER_1 = color("#da4453"),
+		PLAYER_2 = color("#4a89dc"),
 	},
 	Difficulty = {
 		--[[ These are for 'Custom' Difficulty Ranks. It can be very  useful
@@ -126,13 +130,18 @@ function ColorDarkTone(c)
 end
 
 function PlayerColor( pn )
-	if pn == PLAYER_1 then return color("#ef403d") end -- pink-red
-	if pn == PLAYER_2 then return color("#0089cf") end -- sea-blue
+	if pn == PLAYER_1 then return GameColor.PlayerColors["PLAYER_1"] end
+	if pn == PLAYER_2 then return GameColor.PlayerColors["PLAYER_2"] end
 	return color("1,1,1,1")
 end
+
 function PlayerScoreColor( pn )
-	if pn == PLAYER_1 then return color("#ef403d") end -- pink-red
-	if pn == PLAYER_2 then return color("#0089cf") end -- sea-blue
+	return PlayerColor( pn );
+end
+
+function PlayerDarkColor( pn )
+	if pn == PLAYER_1 then return GameColor.PlayerDarkColors["PLAYER_1"] end 
+	if pn == PLAYER_2 then return GameColor.PlayerDarkColors["PLAYER_2"] end
 	return color("1,1,1,1")
 end
 

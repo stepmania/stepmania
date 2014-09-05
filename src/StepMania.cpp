@@ -124,10 +124,10 @@ static RString GetActualGraphicOptionsString()
 	RString sLog = ssprintf( sFormat,
 		DISPLAY->GetApiDescription().c_str(),
 		(params.windowed? WINDOWED : FULLSCREEN).GetValue().c_str(),
-		(int)params.width, 
-		(int)params.height, 
-		(int)params.bpp, 
-		(int)PREFSMAN->m_iTextureColorDepth, 
+		(int)params.width,
+		(int)params.height,
+		(int)params.bpp,
+		(int)PREFSMAN->m_iTextureColorDepth,
 		(int)params.rate,
 		(params.vsync? VSYNC : NO_VSYNC).GetValue().c_str(),
 		(PREFSMAN->m_bSmoothLines? SMOOTH_LINES : NO_SMOOTH_LINES).GetValue().c_str() );
@@ -142,7 +142,7 @@ static void StoreActualGraphicOptions()
 	const VideoModeParams &params = DISPLAY->GetActualVideoModeParams();
 	PREFSMAN->m_bWindowed.Set( params.windowed );
 
-	/* If we're windowed, we may have tweaked the width based on the aspect ratio.  
+	/* If we're windowed, we may have tweaked the width based on the aspect ratio.
 	 * Don't save this new value over the preferred value. */
 	if( !PREFSMAN->m_bWindowed )
 	{
@@ -184,17 +184,17 @@ static void StartDisplay()
 	DISPLAY = CreateDisplay();
 
 	DISPLAY->ChangeCentering(
-		PREFSMAN->m_iCenterImageTranslateX, 
+		PREFSMAN->m_iCenterImageTranslateX,
 		PREFSMAN->m_iCenterImageTranslateY,
 		PREFSMAN->m_fCenterImageAddWidth,
 		PREFSMAN->m_fCenterImageAddHeight );
 
 	TEXTUREMAN	= new RageTextureManager;
-	TEXTUREMAN->SetPrefs( 
-		RageTextureManagerPrefs( 
-			PREFSMAN->m_iTextureColorDepth, 
+	TEXTUREMAN->SetPrefs(
+		RageTextureManagerPrefs(
+			PREFSMAN->m_iTextureColorDepth,
 			PREFSMAN->m_iMovieColorDepth,
-			PREFSMAN->m_bDelayedTextureDelete, 
+			PREFSMAN->m_bDelayedTextureDelete,
 			PREFSMAN->m_iMaxTextureResolution,
 			StepMania::GetHighResolutionTextures(),
 			PREFSMAN->m_bForceMipMaps
@@ -202,15 +202,15 @@ static void StartDisplay()
 		);
 
 	MODELMAN	= new ModelManager;
-	MODELMAN->SetPrefs( 
+	MODELMAN->SetPrefs(
 		ModelManagerPrefs(
-			PREFSMAN->m_bDelayedModelDelete 
+			PREFSMAN->m_bDelayedModelDelete
 			)
 		);
 }
 
 void StepMania::ApplyGraphicOptions()
-{ 
+{
 	bool bNeedReload = false;
 
 	VideoModeParams params;
@@ -220,25 +220,25 @@ void StepMania::ApplyGraphicOptions()
 		RageException::Throw( "%s", sError.c_str() );
 
 	DISPLAY->ChangeCentering(
-		PREFSMAN->m_iCenterImageTranslateX, 
+		PREFSMAN->m_iCenterImageTranslateX,
 		PREFSMAN->m_iCenterImageTranslateY,
 		PREFSMAN->m_fCenterImageAddWidth,
 		PREFSMAN->m_fCenterImageAddHeight );
 
-	bNeedReload |= TEXTUREMAN->SetPrefs( 
-		RageTextureManagerPrefs( 
-			PREFSMAN->m_iTextureColorDepth, 
+	bNeedReload |= TEXTUREMAN->SetPrefs(
+		RageTextureManagerPrefs(
+			PREFSMAN->m_iTextureColorDepth,
 			PREFSMAN->m_iMovieColorDepth,
-			PREFSMAN->m_bDelayedTextureDelete, 
+			PREFSMAN->m_bDelayedTextureDelete,
 			PREFSMAN->m_iMaxTextureResolution,
 			StepMania::GetHighResolutionTextures(),
 			PREFSMAN->m_bForceMipMaps
 			)
 		);
 
-	bNeedReload |= MODELMAN->SetPrefs( 
+	bNeedReload |= MODELMAN->SetPrefs(
 		ModelManagerPrefs(
-			PREFSMAN->m_bDelayedModelDelete 
+			PREFSMAN->m_bDelayedModelDelete
 			)
 		);
 
@@ -371,14 +371,14 @@ static void AdjustForChangedSystemCapabilities()
 
 	if( g_iLastSeenMemory == Memory )
 		return;
-	
+
 	LOG->Trace( "Memory changed from %i to %i; settings changed", g_iLastSeenMemory.Get(), Memory );
 	g_iLastSeenMemory.Set( Memory );
 
 	// is this assumption outdated? -aj
 	/* Let's consider 128-meg systems low-memory, and 256-meg systems high-memory.
 	 * Cut off at 192. This is pretty conservative; many 128-meg systems can
-	 * deal with higher memory profile settings, but some can't. 
+	 * deal with higher memory profile settings, but some can't.
 	 *
 	 * Actually, Windows lops off a meg or two; cut off a little lower to treat
 	 * 192-meg systems as high-memory. */
@@ -452,7 +452,7 @@ struct VideoCardDefaults
 		iTextureSize = iTextureSize_;
 		bSmoothLines = bSmoothLines_;
 	}
-} const g_VideoCardDefaults[] = 
+} const g_VideoCardDefaults[] =
 {
 	VideoCardDefaults(
 		"Voodoo *5",
@@ -505,7 +505,7 @@ struct VideoCardDefaults
 	VideoCardDefaults(
 		"Savage",
 		"d3d",
-			// OpenGL is unusable on my Savage IV with even the latest drivers.  
+			// OpenGL is unusable on my Savage IV with even the latest drivers.
 			// It draws 30 frames of gibberish then crashes. This happens even with
 			// simple NeHe demos. -Chris
 		640,480,
@@ -516,8 +516,8 @@ struct VideoCardDefaults
 	VideoCardDefaults(
 		"XPERT@PLAY|IIC|RAGE PRO|RAGE LT PRO",	// Rage Pro chip, Rage IIC chip
 		"d3d",
-			// OpenGL is not hardware accelerated, despite the fact that the 
-			// drivers come with an ICD.  Also, the WinXP driver performance 
+			// OpenGL is not hardware accelerated, despite the fact that the
+			// drivers come with an ICD.  Also, the WinXP driver performance
 			// is terrible and supports only 640. The ATI driver is usable.
 			// -Chris
 		320,240,	// lower resolution for 60fps. In-box WinXP driver doesn't support 400x300.
@@ -651,7 +651,7 @@ bool CheckVideoDefaultSettings()
 		bSetDefaultVideoParams = true;
 		LOG->Trace( "Applying defaults for %s.", sVideoDriver.c_str() );
 	}
-	else if( PREFSMAN->m_sLastSeenVideoDriver.Get() != sVideoDriver ) 
+	else if( PREFSMAN->m_sLastSeenVideoDriver.Get() != sVideoDriver )
 	{
 		bSetDefaultVideoParams = true;
 		LOG->Trace( "Video card has changed from %s to %s.  Applying new defaults.", PREFSMAN->m_sLastSeenVideoDriver.Get().c_str(), sVideoDriver.c_str() );
@@ -723,7 +723,7 @@ RageDisplay *CreateDisplay()
 	VideoModeParams params;
 	StepMania::GetPreferredVideoModeParams( params );
 
-	RString error = ERROR_INITIALIZING_CARD.GetValue()+"\n\n"+ 
+	RString error = ERROR_INITIALIZING_CARD.GetValue()+"\n\n"+
 		ERROR_DONT_FILE_BUG.GetValue()+"\n\n"
 		VIDEO_TROUBLESHOOTING_URL "\n\n"+
 		ssprintf(ERROR_VIDEO_DRIVER.GetValue(), GetVideoDriverName().c_str())+"\n\n";
@@ -954,11 +954,11 @@ int main(int argc, char* argv[])
 	// Almost everything uses this to read and write files.  Load this early.
 	FILEMAN = new RageFileManager( argv[0] );
 	FILEMAN->MountInitialFilesystems();
-	
+
 	bool bPortable = DoesFileExist("Portable.ini");
 	if( !bPortable )
 		FILEMAN->MountUserFilesystems();
-	
+
 	// Set this up next. Do this early, since it's needed for RageException::Throw.
 	LOG		= new RageLog;
 
@@ -1240,18 +1240,32 @@ void StepMania::InsertCoin( int iNum, bool bCountInBookkeeping )
 		BOOKKEEPER->CoinInserted();
 	}
 	int iNumCoinsOld = GAMESTATE->m_iCoins;
-	GAMESTATE->m_iCoins.Set( GAMESTATE->m_iCoins + iNum );
 
+	// Don't allow GAMESTATE's coin count to become negative.
+	if (GAMESTATE->m_iCoins + iNum >= 0)
+	{
+		GAMESTATE->m_iCoins.Set( GAMESTATE->m_iCoins + iNum );
+	}
+	
 	int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
 	bool bMaxCredits = iCredits >= MAX_NUM_CREDITS;
 	if( bMaxCredits )
+	{
 		GAMESTATE->m_iCoins.Set( MAX_NUM_CREDITS * PREFSMAN->m_iCoinsPerCredit );
-
+	}
+	
 	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins.Get(), PREFSMAN->m_iCoinsPerCredit.Get() );
-	if( iNumCoinsOld != GAMESTATE->m_iCoins )
-		SCREENMAN->PlayCoinSound();
-	else
-		SCREENMAN->PlayInvalidSound();
+
+	// If inserting coins, play an appropriate sound; if deducting coins, don't play anything.
+	if (iNum > 0)
+	{
+		if( iNumCoinsOld != GAMESTATE->m_iCoins )
+		{
+			SCREENMAN->PlayCoinSound();
+		} else {
+			SCREENMAN->PlayInvalidSound();
+		}
+	}
 
 	/* If AutoJoin and a player is already joined, then try to join a player.
 	 * (If no players are joined, they'll join on the first JoinInput.) */
@@ -1299,7 +1313,7 @@ static LocalizedString RELOADED_OVERLAY_SCREENS( "ThemeManager", "Reloaded overl
 bool HandleGlobalInputs( const InputEventPlus &input )
 {
 	// None of the globals keys act on types other than FIRST_PRESS
-	if( input.type != IET_FIRST_PRESS ) 
+	if( input.type != IET_FIRST_PRESS )
 		return false;
 
 	switch( input.MenuI )
@@ -1403,21 +1417,21 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	}
 #endif
 
-	bool bDoScreenshot = 
+	bool bDoScreenshot =
 #if defined(MACOSX)
 	// Notebooks don't have F13. Use cmd-F12 as well.
 		input.DeviceI == DeviceInput( DEVICE_KEYBOARD, KEY_PRTSC ) ||
 		input.DeviceI == DeviceInput( DEVICE_KEYBOARD, KEY_F13 ) ||
-		( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F12) && 
+		( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F12) &&
 		  (INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LMETA), &input.InputList) ||
 		   INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RMETA), &input.InputList)) );
 #else
 	/* The default Windows message handler will capture the desktop window upon
 	 * pressing PrntScrn, or will capture the foreground with focus upon pressing
-	 * Alt+PrntScrn. Windows will do this whether or not we save a screenshot 
+	 * Alt+PrntScrn. Windows will do this whether or not we save a screenshot
 	 * ourself by dumping the frame buffer. */
 	// "if pressing PrintScreen and not pressing Alt"
-		input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_PRTSC) && 
+		input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_PRTSC) &&
 		!INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT), &input.InputList) &&
 		!INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RALT), &input.InputList);
 #endif

@@ -54,6 +54,7 @@ BitmapText::BitmapText()
 	m_fMaxWidth = 0;
 	m_fMaxHeight = 0;
 	m_iVertSpacing = 0;
+	m_MaxDimensionUsesZoom= false;
 	m_bHasGlowAttribute = false;
 	// We'd be better off not adding strokes to things we can't control
 	// themewise (ScreenDebugOverlay for example). -Midiman
@@ -492,6 +493,11 @@ void BitmapText::SetMaxHeight( float fMaxHeight )
 	UpdateBaseZoom();
 }
 
+void BitmapText::SetMaxDimUseZoom(bool use)
+{
+	m_MaxDimensionUsesZoom= use;
+}
+
 void BitmapText::SetUppercase( bool b )
 {
 	m_bUppercase = b;
@@ -513,35 +519,32 @@ void BitmapText::UnSetDistortion()
 
 void BitmapText::UpdateBaseZoom()
 {
-	if( m_fMaxWidth == 0 )
-	{
-		this->SetBaseZoomX( 1 );
-	}
-	else
-	{
-		const float fWidth = GetUnzoomedWidth();
-		if( fWidth != 0 ) // don't divide by 0
-		{
-			// Never decrease the zoom.
-			const float fZoom = min( 1, m_fMaxWidth/fWidth );
-			this->SetBaseZoomX( fZoom );
-		}
+	// don't divide by 0
+	// Never apply a zoom greater than 1.
+	// Factor in the non-base zoom so that maxwidth will be in terms of theme
+	// pixels when zoom is used.
+#define APPLY_DIMENSION_ZOOM(dimension_max, dimension_get, dimension_zoom_get, base_zoom_set) \
+	if(dimension_max == 0) \
+	{ \
+		base_zoom_set(1); \
+	} \
+	else \
+	{ \
+		float dimension= dimension_get(); \
+		if(m_MaxDimensionUsesZoom) \
+		{ \
+			dimension/= dimension_zoom_get(); \
+		} \
+		if(dimension != 0) \
+		{ \
+			const float zoom= min(1, dimension_max / dimension); \
+			base_zoom_set(zoom); \
+		} \
 	}
 
-	if( m_fMaxHeight == 0 )
-	{
-		this->SetBaseZoomY( 1 );
-	}
-	else
-	{
-		const float fHeight = GetUnzoomedHeight();
-		if( fHeight != 0 ) // don't divide by 0
-		{
-			// Never decrease the zoom.
-			const float fZoom = min( 1, m_fMaxHeight/fHeight );
-			this->SetBaseZoomY( fZoom );
-		}
-	}
+	APPLY_DIMENSION_ZOOM(m_fMaxWidth, GetUnzoomedWidth, GetZoomX, SetBaseZoomX);
+	APPLY_DIMENSION_ZOOM(m_fMaxHeight, GetUnzoomedHeight, GetZoomY, SetBaseZoomY);
+#undef APPLY_DIMENSION_ZOOM
 }
 
 bool BitmapText::StringWillUseAlternate( const RString& sText, const RString& sAlternateText ) const
@@ -860,8 +863,16 @@ class LunaBitmapText: public Luna<BitmapText>
 {
 public:
 	static int wrapwidthpixels( T* p, lua_State *L )	{ p->SetWrapWidthPixels( IArg(1) ); return 0; }
-	static int maxwidth( T* p, lua_State *L )		{ p->SetMaxWidth( FArg(1) ); return 0; }
-	static int maxheight( T* p, lua_State *L )		{ p->SetMaxHeight( FArg(1) ); return 0; }
+#define MAX_DIMENSION(maxdimension, SetMaxDimension) \
+	static int maxdimension( T* p, lua_State *L ) \
+	{ p->SetMaxDimension(FArg(1)); return 0; }
+	MAX_DIMENSION(maxwidth, SetMaxWidth);
+	MAX_DIMENSION(maxheight, SetMaxHeight);
+#undef MAX_DIMENSION
+	static int max_dimension_use_zoom(T* p, lua_State* L)
+	{
+		p->SetMaxDimUseZoom(lua_toboolean(L, 1));
+	}
 	static int vertspacing( T* p, lua_State *L )		{ p->SetVertSpacing( IArg(1) ); return 0; }
 	static int settext( T* p, lua_State *L )
 	{
@@ -909,6 +920,7 @@ public:
 		ADD_METHOD( wrapwidthpixels );
 		ADD_METHOD( maxwidth );
 		ADD_METHOD( maxheight );
+		ADD_METHOD( max_dimension_use_zoom );
 		ADD_METHOD( vertspacing );
 		ADD_METHOD( settext );
 		ADD_METHOD( rainbowscroll );
