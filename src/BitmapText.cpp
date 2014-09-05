@@ -54,6 +54,7 @@ BitmapText::BitmapText()
 	m_fMaxWidth = 0;
 	m_fMaxHeight = 0;
 	m_iVertSpacing = 0;
+	m_MaxDimensionUsesZoom= false;
 	m_bHasGlowAttribute = false;
 	// We'd be better off not adding strokes to things we can't control
 	// themewise (ScreenDebugOverlay for example). -Midiman
@@ -492,6 +493,11 @@ void BitmapText::SetMaxHeight( float fMaxHeight )
 	UpdateBaseZoom();
 }
 
+void BitmapText::SetMaxDimUseZoom(bool use)
+{
+	m_MaxDimensionUsesZoom= true;
+}
+
 void BitmapText::SetUppercase( bool b )
 {
 	m_bUppercase = b;
@@ -524,7 +530,11 @@ void BitmapText::UpdateBaseZoom()
 	} \
 	else \
 	{ \
-		const float dimension= dimension_get() / dimension_zoom_get(); \
+		float dimension= dimension_get(); \
+		if(m_MaxDimensionUsesZoom) \
+		{ \
+			dimension/= dimension_zoom_get(); \
+		} \
 		if(dimension != 0) \
 		{ \
 			const float zoom= min(1, dimension_max / dimension); \
@@ -853,8 +863,16 @@ class LunaBitmapText: public Luna<BitmapText>
 {
 public:
 	static int wrapwidthpixels( T* p, lua_State *L )	{ p->SetWrapWidthPixels( IArg(1) ); return 0; }
-	static int maxwidth( T* p, lua_State *L )		{ p->SetMaxWidth( FArg(1) ); return 0; }
-	static int maxheight( T* p, lua_State *L )		{ p->SetMaxHeight( FArg(1) ); return 0; }
+#define MAX_DIMENSION(maxdimension, SetMaxDimension) \
+	static int maxdimension( T* p, lua_State *L ) \
+	{ p->SetMaxDimension(FArg(1)); return 0; }
+	MAX_DIMENSION(maxwidth, SetMaxWidth);
+	MAX_DIMENSION(maxheight, SetMaxHeight);
+#undef MAX_DIMENSION
+	static int max_dimension_use_zoom(T* p, lua_State* L)
+	{
+		p->SetMaxDimUseZoom(lua_toboolean(L, 1));
+	}
 	static int vertspacing( T* p, lua_State *L )		{ p->SetVertSpacing( IArg(1) ); return 0; }
 	static int settext( T* p, lua_State *L )
 	{
@@ -902,6 +920,7 @@ public:
 		ADD_METHOD( wrapwidthpixels );
 		ADD_METHOD( maxwidth );
 		ADD_METHOD( maxheight );
+		ADD_METHOD( max_dimension_use_zoom );
 		ADD_METHOD( vertspacing );
 		ADD_METHOD( settext );
 		ADD_METHOD( rainbowscroll );
