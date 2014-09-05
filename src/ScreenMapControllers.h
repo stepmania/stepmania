@@ -34,6 +34,8 @@ private:
 	bool CursorOnKey();
 	bool CursorCanGoUp();
 	bool CursorCanGoDown();
+	bool CursorCanGoLeft();
+	bool CursorCanGoRight();
 	int CurKeyIndex();
 	int CurActionIndex();
 	void SetCursorFromSetListCurrent();
