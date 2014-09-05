@@ -187,8 +187,8 @@ RString RageSoundDriver_OSS::Init()
 		return ssprintf( "RageSoundDriver_OSS: Wanted %i channels, got %i instead", channels, i );
 		
 	i = 44100;
-	if(ioctl(fd, SOUND_PCM_WRITE_RATE, &i) == -1 )
-		return ssprintf( "RageSoundDriver_OSS: ioctl(SOUND_PCM_WRITE_RATE, %i): %s", i, strerror(errno) );
+	if(ioctl(fd, SNDCTL_DSP_SPEED, &i) == -1 )
+		return ssprintf( "RageSoundDriver_OSS: ioctl(SNDCTL_DSP_SPEED, %i): %s", i, strerror(errno) );
 	samplerate = i;
 	LOG->Trace("RageSoundDriver_OSS: sample rate %i", samplerate);
 	i = (num_chunks << 16) + chunk_order;
