@@ -150,6 +150,7 @@ public:
 
 	void ReadMappingsFromDisk();
 	void SaveMappingsToDisk();
+	void ResetMappingsToDefault();
 
 	void ClearAllMappings();
 

@@ -221,7 +221,7 @@ Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 		// sClass is invalid
 		RString sError = ssprintf( "%s: invalid Class \"%s\"",
 			ActorUtil::GetWhere(&node).c_str(), sClass.c_str() );
-		Dialog::OK( sError );
+		LuaHelpers::ReportScriptError(sError);
 		return new Actor;	// Return a dummy object so that we don't crash in AutoActor later.
 	}
 
