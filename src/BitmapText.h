@@ -78,7 +78,7 @@ protected:
 	int			m_iWrapWidthPixels;		// -1 = no wrap
 	float		m_fMaxWidth;			// 0 = no max
 	float		m_fMaxHeight;			// 0 = no max
-	bool m_MaxDimensionUsesZoom;
+	bool		m_MaxDimensionUsesZoom;
 	bool		m_bRainbowScroll;
 	bool		m_bJitter;
 	bool		m_bUsingDistortion;

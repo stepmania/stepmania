@@ -495,7 +495,7 @@ void BitmapText::SetMaxHeight( float fMaxHeight )
 
 void BitmapText::SetMaxDimUseZoom(bool use)
 {
-	m_MaxDimensionUsesZoom= true;
+	m_MaxDimensionUsesZoom= use;
 }
 
 void BitmapText::SetUppercase( bool b )
