@@ -1464,7 +1464,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	{
 		//LOG->Trace("tap note scoring time.");
 		TapNote &tn = *vTN[0].pTN;
-		SetHoldJudgment( tn.result.tns, tn.HoldResult.hns, iFirstTrackWithMaxEndRow );
+		SetHoldJudgment( tn, iFirstTrackWithMaxEndRow );
 		HandleHoldScore( tn );
 		//LOG->Trace("hold result = %s",StringConversion::ToString(tn.HoldResult.hns).c_str());
 	}
@@ -1914,7 +1914,6 @@ void Player::DoTapScoreNone()
 
 	SendComboMessages( iOldCombo, iOldMissCombo );
 
-
 	if( m_pLifeMeter )
 		m_pLifeMeter->HandleTapScoreNone();
 	// TODO: Remove use of PlayerNumber
@@ -1924,7 +1923,7 @@ void Player::DoTapScoreNone()
 
 	if( PENALIZE_TAP_SCORE_NONE )
 	{
-		SetJudgment( TNS_Miss, -1, 0 );
+		SetJudgment( BeatToNoteRow( m_pPlayerState->m_Position.m_fSongBeat ), -1, TAP_EMPTY, TNS_Miss, 0 );
 		// the ScoreKeeper will subtract points later.
 	}
 }
@@ -1960,7 +1959,7 @@ void Player::ScoreAllActiveHoldsLetGo()
 					tn.HoldResult.hns = HNS_LetGo;
 					tn.HoldResult.fLife = 0;
 
-					SetHoldJudgment( tn.result.tns, tn.HoldResult.hns, iTrack );
+					SetHoldJudgment( tn, iTrack );
 					HandleHoldScore( tn );
 				}
 			}
@@ -2796,23 +2795,14 @@ void Player::UpdateJudgedRows()
 						if (tn.type == TapNoteType_Empty ||
 							tn.type == TapNoteType_Mine ||
 							tn.type == TapNoteType_AutoKeysound) continue;
-						SetJudgment( tn.result.tns, iTrack, tn.result.fTapNoteOffset );
+						SetJudgment( iRow, iTrack, tn );
 					}
 				}
 				else
 				{
-					vector<int> viColsWithTaps;
-					for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
-					{
-						const TapNote &tn = m_NoteData.GetTapNote( iTrack, iRow );
-						if (tn.type == TapNoteType_Tap || tn.type == TapNoteType_Lift ||
-						( tn.type == TapNoteType_HoldHead && REQUIRE_STEP_ON_HOLD_HEADS ) )
-						{
-							viColsWithTaps.push_back( iTrack );
-						};
-					}
-					SetJudgment( lastTNR.tns, m_NoteData.GetFirstTrackWithTapOrHoldHead(iRow), lastTNR.fTapNoteOffset, viColsWithTaps );
+					SetJudgment( iRow, m_NoteData.GetFirstTrackWithTapOrHoldHead(iRow), NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow ) );
 				}
+				HandleTapRowScore( iRow );
 				HandleTapRowScore( iRow );
 			}
 		}
@@ -3245,7 +3235,7 @@ void Player::HandleHoldCheckpoint(int iRow,
 
 	ChangeLife( iNumHoldsMissedThisRow == 0? TNS_CheckpointHit:TNS_CheckpointMiss );
 
-	SetJudgment( iNumHoldsMissedThisRow == 0? TNS_CheckpointHit:TNS_CheckpointMiss, viColsWithHold[0], 0 );
+	SetJudgment( iRow, viColsWithHold[0], TAP_EMPTY, iNumHoldsMissedThisRow == 0? TNS_CheckpointHit:TNS_CheckpointMiss, 0 );
 }
 
 void Player::HandleHoldScore( const TapNote &tn )
@@ -3330,7 +3320,7 @@ void Player::SetMineJudgment( TapNoteScore tns , int iTrack )
 	}
 }
 
-void Player::SetJudgment( TapNoteScore tns, int iTrack, float fTapNoteOffset, vector<int> viCols )
+void Player::SetJudgment( int iRow, int iTrack, const TapNote &tn, TapNoteScore tns, float fTapNoteOffset )
 {
 	if( m_bSendJudgmentAndComboMessages )
 	{
@@ -3340,17 +3330,44 @@ void Player::SetJudgment( TapNoteScore tns, int iTrack, float fTapNoteOffset, ve
 		msg.SetParam( "FirstTrack", iTrack );
 		msg.SetParam( "TapNoteScore", tns );
 		msg.SetParam( "Early", fTapNoteOffset < 0.0f );
-		msg.SetParam( "TapNoteOffset", fTapNoteOffset );
-		msg.SetParam( "Tracks" , viCols );
+		msg.SetParam( "TapNoteOffset", tn.result.fTapNoteOffset );
+
+		Lua* L= LUA->Get();
+		lua_createtable( L, 0, m_NoteData.GetNumTracks() ); // TapNotes this row
+		lua_createtable( L, 0, m_NoteData.GetNumTracks() ); // HoldHeads of tracks held at this row.
+
+		for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
+		{
+			NoteData::iterator tn = m_NoteData.FindTapNote(iTrack, iRow);
+			if( tn != m_NoteData.end(iTrack) )
+			{
+				tn->second.PushSelf(L);
+				lua_rawseti(L, -3, iTrack + 1);
+			}
+			else
+			{
+				int iHeadRow;
+				if( m_NoteData.IsHoldNoteAtRow( iTrack, iRow, &iHeadRow ) )
+				{
+					NoteData::iterator hold = m_NoteData.FindTapNote(iTrack, iHeadRow);
+					hold->second.PushSelf(L);
+					lua_rawseti(L, -2, iTrack + 1);
+				}
+			}
+		}
+		msg.SetParamFromStack( L, "Holds" );
+		msg.SetParamFromStack( L, "Notes" );
+
+		LUA->Release( L );
 		MESSAGEMAN->Broadcast( msg );
 	}
 }
 
-void Player::SetHoldJudgment( TapNoteScore tns, HoldNoteScore hns, int iTrack )
+void Player::SetHoldJudgment( TapNote &tn, int iTrack )
 {
 	ASSERT( iTrack < (int)m_vpHoldJudgment.size() );
 	if( m_vpHoldJudgment[iTrack] )
-		m_vpHoldJudgment[iTrack]->SetHoldJudgment( hns );
+		m_vpHoldJudgment[iTrack]->SetHoldJudgment( tn.HoldResult.hns );
 
 	if( m_bSendJudgmentAndComboMessages )
 	{
@@ -3359,8 +3376,13 @@ void Player::SetHoldJudgment( TapNoteScore tns, HoldNoteScore hns, int iTrack )
 		msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
 		msg.SetParam( "FirstTrack", iTrack );
 		msg.SetParam( "NumTracks", (int)m_vpHoldJudgment.size() );
-		msg.SetParam( "TapNoteScore", tns );
-		msg.SetParam( "HoldNoteScore", hns );
+		msg.SetParam( "TapNoteScore", tn.result.tns );
+		msg.SetParam( "HoldNoteScore", tn.HoldResult.hns );
+
+		Lua* L = LUA->Get();
+		tn.PushSelf(L);
+		msg.SetParamFromStack( L, "TapNote" );
+
 		MESSAGEMAN->Broadcast( msg );
 	}
 }

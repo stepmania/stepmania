@@ -4634,6 +4634,75 @@ save yourself some time, copy this for undocumented things:
 		Returns <code>true</code> if the Style needs to be zoomed out with two players.
 	</Function>
 </Class>
+<Class name='TapNote'>
+	<Function name='GetTapNoteType' return='TapNoteType' arguments=''>
+		Returns the <Link class='TapNoteType'/> of the Tap Note.
+	</Function>
+	<Function name='GetTapNoteSubType' return='TapNoteSubType' arguments=''>
+		Returns the <Link class='TapNoteSubType'/> of the Tap Note.
+	</Function>
+	<Function name='GetTapNoteSource' return='TapNoteSource' arguments=''>
+		Returns the <Link class='TapNoteSource'/> of the Tap Note.
+	</Function>
+	<Function name='GetTapNoteResult' return='TapNoteResult' arguments=''>
+		Returns the <Link class='TapNoteResult'/> of the Tap Note.
+	</Function>
+	<Function name='GetPlayerNumber' return='PlayerNumber' arguments=''>
+		Returns the <Link class='PlayerNumber'/> of the Tap Note. Relevant for routine steps.
+	</Function>
+	<Function name='GetAttackModifiers' return='string' arguments=''>
+		Returns the Attack Modifiers of the Tap Note.
+	</Function>
+	<Function name='GetAttackDuration' return='float' arguments=''>
+		Returns the Attack Duration of the Tap Note in seconds.
+	</Function>
+	<Function name='GetKeysoundIndex' return='int' arguments=''>
+		Returns the Keysound Index of the Tap Note.
+	</Function>
+	<Function name='GetHoldDuration' return='float' arguments=''>
+		Returns the Hold Duration of the Tap Note in beats.
+	</Function>
+	<Function name='GetHoldNoteResult' return='HoldNoteResult' arguments=''>
+		Returns the <Link class='HoldNoteResult'/> of the Tap Note.
+	</Function>
+</Class>
+<Class name='TapNoteResult'>
+	<Function name='GetTapNoteScore' return='TapNoteScore' arguments=''>
+		Returns the <Link class='TapNoteScore'> of the Tap Note.
+	</Function>
+	<Function name='GetTapNoteOffset' return='float' arguments=''>
+		Returns the TapNotOffset of the Tap Note.
+	</Function>
+	<Function name='GetHidden' return='bool' arguments=''>
+		Returns true if the Tap Note was judged with a result that would stop it from drawing.
+	</Function>
+</Class>
+<Class name='HoldNoteResult'>
+	<Function name='GetHoldNoteScore'>
+		Returns the <Link class='HoldNoteScore'> of the Hold Note.
+	</Function>
+	<Function name='GetLife' return='float' arguments=''>
+		Returns the life of the Hold Note.
+	</Function>
+	<Function name='GetOverlappedTime' return='float' arguments=''>
+		Returns the amount of time the hold has overlapped the target.
+	</Function>
+	<Function name='GetLastHeldBeat' return='float' arguments=''>
+		Returns the last beat the Hold Note was held.
+	</Function>
+	<Function name='GetCheckpointsHit' return='int' arguments=''>
+		Returns the number of checkpoints hit.
+	</Function>
+	<Function name='GetCheckpointsMissed' return='int' arguments=''>
+		Returns the number of checkpoints missed.
+	</Function>
+	<Function name='GetHeld' return='bool' arguments=''>
+		Returns true if the note was initiated and is being held.
+	</Function>
+	<Function name='GetActive' return='bool' arguments=''>
+		Returns true if the note was initiated.
+	</Function>
+</Class>
 <Class name='TextBanner'>
 	<Function name='Load' return='void' arguments='string sMetricsGroup'>
 		Loads the TextBanner from the specified metrics group.

@@ -1638,6 +1638,33 @@
 			<Function name='LockedDifficulty'/>
 			<Function name='NeedsZoomOutWith2Players'/>
 		</Class>
+		<Class name='TapNote'>
+			<Function name='GetTapNoteType'/>
+			<Function name='GetTapNoteSubType'/>
+			<Function name='GetTapNoteSource'/>
+			<Function name='GetTapNoteResult'/>
+			<Function name='GetPlayerNumber'/>
+			<Function name='GetAttackModifiers'/>
+			<Function name='GetAttackDuration'/>
+			<Function name='GetKeysoundIndex'/>
+			<Function name='GetHoldDuration'/>
+			<Function name='GetHoldNoteResult'/>
+		</Class>
+		<Class name='TapNoteResult'>
+			<Function name='GetTapNoteScore'/>
+			<Function name='GetTapNoteOffset'/>
+			<Function name='GetHidden'/>
+		</Class>
+		<Class name='HoldNoteResult'>
+			<Function name='GetHoldNoteScore'/>
+			<Function name='GetLife'/>
+			<Function name='GetOverlappedTime'/>
+			<Function name='GetLastHeldBeat'/>
+			<Function name='GetCheckpointsHit'/>
+			<Function name='GetCheckpointsMissed'/>
+			<Function name='GetHeld'/>
+			<Function name='GetActive'/>
+		</Class>
 		<Class base='ActorFrame' name='TextBanner'>
 			<Function name='Load'/>
 			<Function name='SetFromSong'/>
