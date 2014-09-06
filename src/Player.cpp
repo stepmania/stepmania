@@ -2803,7 +2803,6 @@ void Player::UpdateJudgedRows()
 					SetJudgment( iRow, m_NoteData.GetFirstTrackWithTapOrHoldHead(iRow), NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow ) );
 				}
 				HandleTapRowScore( iRow );
-				HandleTapRowScore( iRow );
 			}
 		}
 	}
