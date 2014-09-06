@@ -245,6 +245,7 @@ public:
 	Preference<bool>	m_bAllowMultipleHighScoreWithSameName;
 	Preference<bool>	m_bCelShadeModels;
 	Preference<bool>	m_bPreferredSortUsesGroups;
+	Preference<bool>	m_bDebounceCoinInput; // allow users to not debounce input for coins
 
 	// Number of seconds it takes for a button on the controller to release
 	// after pressed.
