@@ -325,6 +325,7 @@ ScreenGameplay::ScreenGameplay()
 	m_pSongBackground = NULL;
 	m_pSongForeground = NULL;
 	m_bForceNoNetwork = false;
+	GAMESTATE->m_AdjustTokensBySongCostForFinalStageCheck= false;
 }
 
 void ScreenGameplay::Init()
@@ -928,6 +929,7 @@ void ScreenGameplay::InitSongQueues()
 
 ScreenGameplay::~ScreenGameplay()
 {
+	GAMESTATE->m_AdjustTokensBySongCostForFinalStageCheck= true;
 	if( this->IsFirstUpdate() )
 	{
 		/* We never received any updates. That means we were deleted without being

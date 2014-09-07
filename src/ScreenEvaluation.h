@@ -49,6 +49,8 @@ enum DetailLine
 class ScreenEvaluation : public ScreenWithMenuElements
 {
 public:
+	ScreenEvaluation();
+	virtual ~ScreenEvaluation();
 	virtual void Init();
 	virtual bool Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );

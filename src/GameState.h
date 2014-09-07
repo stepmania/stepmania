@@ -202,6 +202,9 @@ public:
 	 *
 	 * This resets whenever a player joins or continues. */
 	int				m_iPlayerStageTokens[NUM_PLAYERS];
+	// This is necessary so that IsFinalStageForEveryHumanPlayer knows to
+	// adjust for the current song cost.
+	bool m_AdjustTokensBySongCostForFinalStageCheck;
 
 	RString sExpandedSectionName;
 
@@ -216,6 +219,7 @@ public:
 	int			GetNumStagesLeft( PlayerNumber pn ) const;
 	int			GetSmallestNumStagesLeftForAnyHumanPlayer() const;
 	bool		IsFinalStageForAnyHumanPlayer() const;
+	bool		IsFinalStageForEveryHumanPlayer() const;
 	bool		IsAnExtraStage() const;
 	bool		IsAnExtraStageAndSelectionLocked() const;
 	bool		IsExtraStage() const;

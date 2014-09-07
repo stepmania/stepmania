@@ -1317,11 +1317,21 @@ public:
 		lua_pushstring(L, pi.sMatchingElement);
 		return 3;
 	}
-	static int GetPathF( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathF(SArg(1),SArg(2)) ); return 1; }
-	static int GetPathG( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathG(SArg(1),SArg(2)) ); return 1; }
-	static int GetPathB( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathB(SArg(1),SArg(2)) ); return 1; }
-	static int GetPathS( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathS(SArg(1),SArg(2)) ); return 1; }
-	static int GetPathO( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathO(SArg(1),SArg(2)) ); return 1; }
+	// GENERAL_GET_PATH uses lua_toboolean instead of BArg because that makes
+	// it optional. -Kyz
+#define GENERAL_GET_PATH(get_path_name) \
+	static int get_path_name(T* p, lua_State* L) \
+	{ \
+		lua_pushstring(L, p->get_path_name( \
+				SArg(1), SArg(2), lua_toboolean(L, 3))); \
+		return 1; \
+	}
+	GENERAL_GET_PATH(GetPathF);
+	GENERAL_GET_PATH(GetPathG);
+	GENERAL_GET_PATH(GetPathB);
+	GENERAL_GET_PATH(GetPathS);
+	GENERAL_GET_PATH(GetPathO);
+#undef GENERAL_GET_PATH
 	
 	static int RunLuaScripts( T* p, lua_State *L )			{ p->RunLuaScripts(SArg(1)); return 1; }
 
