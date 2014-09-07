@@ -1,6 +1,7 @@
 #include "global.h"
 #include "Screen.h"
 #include "PrefsManager.h"
+#include "RageInput.h"
 #include "RageSound.h"
 #include "RageLog.h"
 #include "ThemeManager.h"
@@ -328,6 +329,8 @@ bool Screen::PassInputToLua(const InputEventPlus& input)
 		lua_setfield(L, -2, "is_joystick");
 		lua_pushboolean(L, input.DeviceI.IsMouse());
 		lua_setfield(L, -2, "is_mouse");
+		lua_pushstring(L, WStringToRString( wstring()+INPUTMAN->DeviceInputToChar(input.DeviceI,true) ) ); 
+		lua_setfield(L, -2, "character");
 	}
 	lua_setfield(L, -2, "DeviceInput");
 	Enum::Push(L, input.GameI.controller);
