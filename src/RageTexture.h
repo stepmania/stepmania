@@ -61,7 +61,7 @@ public:
 	// The ID that we were asked to load:
 	const RageTextureID &GetID() const { return m_ID; }
 
-	static void GetFrameDimensionsFromFileName( RString sPath, int* puFramesWide, int* puFramesHigh );
+	static void GetFrameDimensionsFromFileName( RString sPath, int* puFramesWide, int* puFramesHigh, int source_width= 0, int source_height= 0 );
 
 	// Lua
 	virtual void PushSelf( lua_State *L );
