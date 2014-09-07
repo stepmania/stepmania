@@ -22,7 +22,7 @@ RageTexture::~RageTexture()
 
 void RageTexture::CreateFrameRects()
 {
-	GetFrameDimensionsFromFileName( GetID().filename, &m_iFramesWide, &m_iFramesHigh );
+	GetFrameDimensionsFromFileName( GetID().filename, &m_iFramesWide, &m_iFramesHigh, m_iSourceWidth, m_iSourceHeight );
 
 	// Fill in the m_FrameRects with the bounds of each frame in the animation.
 	m_TextureCoordRects.clear();
@@ -42,7 +42,7 @@ void RageTexture::CreateFrameRects()
 	}
 }
 
-void RageTexture::GetFrameDimensionsFromFileName( RString sPath, int* piFramesWide, int* piFramesHigh )
+void RageTexture::GetFrameDimensionsFromFileName( RString sPath, int* piFramesWide, int* piFramesHigh, int source_width, int source_height )
 {
 	static Regex match( " ([0-9]+)x([0-9]+)([\\. ]|$)" );
         vector<RString> asMatch;
@@ -51,8 +51,27 @@ void RageTexture::GetFrameDimensionsFromFileName( RString sPath, int* piFramesWi
 		*piFramesWide = *piFramesHigh = 1;
 		return;
 	}
-	*piFramesWide = StringToInt(asMatch[0]);
-	*piFramesHigh = StringToInt(asMatch[1]);
+	// Check for nonsense values.  Some people might not intend the hint. -Kyz
+	int maybe_width= StringToInt(asMatch[0]);
+	int maybe_height= StringToInt(asMatch[1]);
+	if(maybe_width <= 0 || maybe_height <= 0)
+	{
+		*piFramesWide = *piFramesHigh = 1;
+		return;
+	}
+	// Font.cpp uses this function, but can't pass in a texture size.  Other
+	// textures can pass in a size though, and having more frames than pixels
+	// makes no sense. -Kyz
+	if(source_width > 0 && source_height > 0)
+	{
+		if(maybe_width > source_width || maybe_height > source_height)
+		{
+			*piFramesWide = *piFramesHigh = 1;
+			return;
+		}
+	}
+	*piFramesWide = maybe_width;
+	*piFramesHigh = maybe_height;
 }
 
 const RectF *RageTexture::GetTextureCoordRect( int iFrameNo ) const
