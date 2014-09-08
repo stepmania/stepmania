@@ -807,7 +807,7 @@ Dialog::Result LuaHelpers::ReportScriptError(RString const& Error, RString Error
 		ScriptErrorMessage(Error);
 		InReportScriptError= false;
 	}
-	LOG->Warn(Error.c_str());
+	LOG->Warn( "%s", Error.c_str());
 	if(UseAbort)
 	{
 		RString with_correct= Error + "  Correct this and click Retry, or Cancel to break.";
