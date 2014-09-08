@@ -31,8 +31,8 @@ install-exec-hook:
 	$(INSTALL) $(installFiles) "$(DESTDIR)$(prefix)/$(productID)"
 
 install-data-local:
-	cp -r -t "$(DESTDIR)$(prefix)/$(productID)" $(installData)
 	mkdir -p "$(DESTDIR)$(prefix)/$(productID)/Songs"
+	cp -r -t "$(DESTDIR)$(prefix)/$(productID)" $(installData)
 
 uninstall-hook:
 	rm -f "$(DESTDIR)$(prefix)/$(productID)/stepmania"
