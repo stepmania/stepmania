@@ -6,7 +6,8 @@ ACLOCAL_AMFLAGS = -I autoconf/m4
 ## Black magic (read: sed) for getting the product ID as defined in code, not by the autotools.
 ## Quotes are making vim's highlighting of this even worse, so just escape everything,
 ## including the escapes. Make it lowercase to match ArchHooks::MountInitialFileSystems().
-productID := $(shell sed -nr /define\\s+PRODUCT_ID_BARE/\{s/.*define\\s+PRODUCT_ID_BARE\\s+\(.+\)/\\1/\;y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/\;p\;q\} $(srcdir)/src/ProductInfo.h)
+## Replace space with - so package build tools won't choke on the installation directory.
+productID := $(shell sed -nr /define\\s+PRODUCT_ID_BARE/\{s/.*define\\s+PRODUCT_ID_BARE\\s+\(.+\)/\\1/\;y/ABCDEFGHIJKLMNOPQRSTUVWXYZ\ /abcdefghijklmnopqrstuvwxyz-/\;p\;q\} $(srcdir)/src/ProductInfo.h)
 
 installFiles = src/stepmania
 if HAVE_GTK
