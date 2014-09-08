@@ -816,12 +816,12 @@ try_element_again:
 		goto try_element_again;
 	case Dialog::ignore:
 		{
-			RString error= sCategory + '/' + sFileName +
-				" could not be found in \"" +
-				GetThemeDirFromName(m_sCurThemeName).c_str() + "\" or \"" +
-				GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str() + "\".";
-			LOG->UserLog("Theme element", "%s", error.c_str());
-			LOG->Warn(error.c_str());
+			RString element = sCategory + '/' + sFileName;
+			RString error = "could not be found in \"" +
+				GetThemeDirFromName(m_sCurThemeName) + "\" or \"" +
+				GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME) + "\".";
+			LOG->UserLog("Theme element", element.c_str(), "%s", error.c_str());
+			LOG->Warn( "%s %s", element.c_str(), error.c_str());
 			LuaHelpers::ScriptErrorMessage(error);
 		}
 
