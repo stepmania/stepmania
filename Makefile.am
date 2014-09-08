@@ -27,14 +27,14 @@ dist-hook: SMData
 	cp -r -t "$(distdir)" $(installFiles)
 
 install-exec-hook:
-	mkdir -p "$(prefix)/$(productID)"
-	$(INSTALL) $(installFiles) "$(prefix)/$(productID)"
+	mkdir -p "$(DESTDIR)$(prefix)/$(productID)"
+	$(INSTALL) $(installFiles) "$(DESTDIR)$(prefix)/$(productID)"
 
 install-data-local:
-	cp -r -t "$(prefix)/$(productID)" $(installData)
-	mkdir -p "$(prefix)/$(productID)/Songs"
+	cp -r -t "$(DESTDIR)$(prefix)/$(productID)" $(installData)
+	mkdir -p "$(DESTDIR)$(prefix)/$(productID)/Songs"
 
 uninstall-hook:
-	rm -f "$(prefix)/$(productID)/stepmania"
-	rm -f "$(prefix)/$(productID)/GtkModule.so"
+	rm -f "$(DESTDIR)$(prefix)/$(productID)/stepmania"
+	rm -f "$(DESTDIR)$(prefix)/$(productID)/GtkModule.so"
 # todo: properly remove data
