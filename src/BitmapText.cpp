@@ -90,6 +90,7 @@ BitmapText & BitmapText::operator=(const BitmapText &cpy)
 	CPY( m_fDistortion );
 	CPY( m_bUsingDistortion );
 	CPY( m_iVertSpacing );
+	CPY( m_MaxDimensionUsesZoom );
 	CPY( m_aVertices );
 	CPY( m_vpFontPageTextures );
 	CPY( m_mAttributes );
