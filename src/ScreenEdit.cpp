@@ -4546,7 +4546,7 @@ static bool ConvertMappingInputToMapping(RString const& mapstr, int* mapping, RS
 {
 	vector<RString> mapping_input;
 	split(mapstr, ",", mapping_input);
-	int tracks_for_type= GAMEMAN->GetStepsTypeInfo(GAMESTATE->m_pCurSteps[0]->m_StepsType).iNumTracks;
+	size_t tracks_for_type= GAMEMAN->GetStepsTypeInfo(GAMESTATE->m_pCurSteps[0]->m_StepsType).iNumTracks;
 	if(mapping_input.size() > tracks_for_type)
 	{
 		error= TOO_MANY_TRACKS;
@@ -4568,7 +4568,7 @@ static bool ConvertMappingInputToMapping(RString const& mapstr, int* mapping, RS
 			error= ssprintf(NOT_A_TRACK.GetValue(), mapping_input[track].c_str());
 			return false;
 		}
-		if(mapping[track] < 1 || mapping[track] > tracks_for_type)
+		if(mapping[track] < 1 || mapping[track] > static_cast<int>(tracks_for_type))
 		{
 			error= ssprintf(OUT_OF_RANGE_ID.GetValue(), track+1, mapping[track], tracks_for_type);
 			return false;
