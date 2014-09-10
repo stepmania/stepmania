@@ -3,6 +3,7 @@
 #include "PrefsManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "ThemeManager.h"
 #include "NoteTypes.h"
 #include "Foreach.h"
 #include <float.h>
@@ -991,6 +992,8 @@ vector<RString> TimingData::ToVectorString(TimingSegmentType tst, int dec) const
 // lua start
 #include "LuaBinding.h"
 
+#define TIMING_DATA_RETURNS_NUMBERS THEME->GetMetricB("TimingData", "GetReturnsNumbers")
+
 // This breaks encapsulation just as much as TimingData::ToVectorString does.
 // But, it exists solely for the purpose of providing lua access, so it's as okay as all the other lua stuff that reaches past the encapsulation.
 void TimingSegmentSetToLuaTable(TimingData* td, TimingSegmentType tst, lua_State *L);
@@ -1039,51 +1042,32 @@ public:
 	static int HasFakes( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasFakes()); return 1; }
 	static int HasSpeedChanges( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasSpeedChanges()); return 1; }
 	static int HasScrollChanges( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasScrollChanges()); return 1; }
-	static int GetWarps( T* p, lua_State *L )
-	{
-		TimingSegmentSetToLuaTable(p, SEGMENT_WARP, L);
-		return 1;
+#define GET_FUNCTION(get_name, segment_name) \
+	static int get_name(T* p, lua_State* L) \
+	{ \
+		if(TIMING_DATA_RETURNS_NUMBERS) \
+		{ \
+			TimingSegmentSetToLuaTable(p, segment_name, L); \
+		} \
+		else \
+		{ \
+			LuaHelpers::CreateTableFromArray(p->ToVectorString(segment_name), L); \
+		} \
+		return 1; \
 	}
-	static int GetFakes( T* p, lua_State *L )
-	{
-		TimingSegmentSetToLuaTable(p, SEGMENT_FAKE, L);
-		return 1;
-	}
-	static int GetScrolls( T* p, lua_State *L )
-	{
-		TimingSegmentSetToLuaTable(p, SEGMENT_SCROLL, L);
-		return 1;
-	}
-	static int GetSpeeds( T* p, lua_State *L )
-	{
-		TimingSegmentSetToLuaTable(p, SEGMENT_SPEED, L);
-		return 1;
-	}
-	static int GetTimeSignatures( T* p, lua_State *L )
-	{
-		TimingSegmentSetToLuaTable(p, SEGMENT_TIME_SIG, L);
-		return 1;
-	}
-	static int GetCombos( T* p, lua_State *L )
-	{
-		TimingSegmentSetToLuaTable(p, SEGMENT_COMBO, L);
-		return 1;
-	}
-	static int GetTickcounts( T* p, lua_State *L )
-	{
-		TimingSegmentSetToLuaTable(p, SEGMENT_TICKCOUNT, L);
-		return 1;
-	}
-	static int GetStops( T* p, lua_State *L )
-	{
-		TimingSegmentSetToLuaTable(p, SEGMENT_STOP, L);
-		return 1;
-	}
-	static int GetDelays( T* p, lua_State *L )
-	{
-		TimingSegmentSetToLuaTable(p, SEGMENT_DELAY, L);
-		return 1;
-	}
+
+	GET_FUNCTION(GetWarps, SEGMENT_WARP);
+	GET_FUNCTION(GetFakes, SEGMENT_FAKE);
+	GET_FUNCTION(GetScrolls, SEGMENT_SCROLL);
+	GET_FUNCTION(GetSpeeds, SEGMENT_SPEED);
+	GET_FUNCTION(GetTimeSignatures, SEGMENT_TIME_SIG);
+	GET_FUNCTION(GetCombos, SEGMENT_COMBO);
+	GET_FUNCTION(GetTickcounts, SEGMENT_TICKCOUNT);
+	GET_FUNCTION(GetStops, SEGMENT_STOP);
+	GET_FUNCTION(GetDelays, SEGMENT_DELAY);
+	GET_FUNCTION(GetLabels, SEGMENT_LABEL);
+	GET_FUNCTION(GetBPMsAndTimes, SEGMENT_BPM);
+#undef GET_FUNCTION
 	static int GetBPMs( T* p, lua_State *L )
 	{
 		vector<float> vBPMs;
@@ -1093,16 +1077,6 @@ public:
 			vBPMs.push_back( ToBPM(bpms[i])->GetBPM() );
 
 		LuaHelpers::CreateTableFromArray(vBPMs, L);
-		return 1;
-	}
-	static int GetLabels( T* p, lua_State *L )
-	{
-		TimingSegmentSetToLuaTable(p, SEGMENT_LABEL, L);
-		return 1;
-	}
-	static int GetBPMsAndTimes( T* p, lua_State *L )
-	{
-		TimingSegmentSetToLuaTable(p, SEGMENT_BPM, L);
 		return 1;
 	}
 	static int GetActualBPM( T* p, lua_State *L )
