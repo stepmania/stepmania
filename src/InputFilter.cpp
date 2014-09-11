@@ -7,6 +7,8 @@
 #include "RageThreads.h"
 #include "Preference.h"
 #include "Foreach.h"
+#include "GameInput.h"
+#include "InputMapper.h"
 // for mouse stuff: -aj
 #include "PrefsManager.h"
 #include "ScreenDimensions.h"
@@ -229,12 +231,26 @@ void InputFilter::CheckButtonChange( ButtonState &bs, DeviceInput di, const Rage
 {
 	if( bs.m_BeingHeld == bs.m_bLastReportedHeld )
 		return;
+	
+	GameInput gi;
 
-	/* If the last IET_FIRST_PRESS or IET_RELEASE event was sent too recently,
-	 * wait a while before sending it. */
-	if( now - bs.m_LastReportTime < g_fInputDebounceTime )
-		return;
-
+	/* Possibly apply debounce,
+	 * If the input was coin, possibly apply distinct coin debounce in the else below. */
+	if (! INPUTMAPPER->DeviceToGame(di, gi) || gi.button != GAME_BUTTON_COIN )
+	{
+		/* If the last IET_FIRST_PRESS or IET_RELEASE event was sent too recently,
+		 * wait a while before sending it. */
+		if( now - bs.m_LastReportTime < g_fInputDebounceTime )
+		{
+			return;
+		}
+	} else {
+		if( now - bs.m_LastReportTime < PREFSMAN->m_fDebounceCoinInputTime )
+		{
+			return;
+		}
+	}
+	
 	bs.m_LastReportTime = now;
 	bs.m_bLastReportedHeld = bs.m_BeingHeld;
 	bs.m_fSecsHeld = 0;
