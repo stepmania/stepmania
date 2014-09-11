@@ -2618,6 +2618,72 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				pi->m_pLifeMeter->OnSongEnded();
 		}
 
+		// If this is a repeating course, and we're at the end of it, repick and
+		// add new songs to the players' step and song queues.
+		if(GAMESTATE->IsCourseMode() && GAMESTATE->m_pCurCourse &&
+			GAMESTATE->m_pCurCourse->m_bRepeat &&
+			GAMESTATE->GetCourseSongIndex() >= (int)m_apSongsQueue.size()-1)
+		{
+			Course* course= GAMESTATE->m_pCurCourse;
+			ASSERT(course != NULL);
+			// Need to store these so they can be used to refetch the players'
+			// trails after they're invalidated.
+			vector<StepsType> trail_sts;
+			vector<CourseDifficulty> trail_cds;
+			FOREACH_EnabledPlayerInfo(m_vPlayerInfo, pi)
+			{
+				Trail* trail= GAMESTATE->m_pCurTrail[pi->GetStepsAndTrailIndex()];
+				ASSERT(trail != NULL);
+				trail_sts.push_back(trail->m_StepsType);
+				trail_cds.push_back(trail->m_CourseDifficulty);
+			}
+			// Set a new stage seed so the order will be different.
+			GAMESTATE->SetNewStageSeed();
+			course->InvalidateTrailCache();
+			course->RegenerateNonFixedTrails();
+			size_t info_id= 0; // Can't use the player number in the playerinfo
+			// because it won't match up in 2-player.
+			FOREACH_EnabledPlayerInfo(m_vPlayerInfo, pi)
+			{
+				Trail* trail= course->GetTrail(trail_sts[info_id], trail_cds[info_id]);
+				ASSERT(trail != NULL);
+				GAMESTATE->m_pCurTrail[pi->m_pn].Set(trail);
+				++info_id;
+			}
+			PlayerNumber master_pn = GAMESTATE->GetMasterPlayerNumber();
+			Trail *master_trail= GAMESTATE->m_pCurTrail[master_pn];
+			ASSERT(master_trail != NULL);
+			FOREACH_CONST(TrailEntry, master_trail->m_vEntries, entry)
+			{
+				ASSERT(entry->pSong != NULL);
+				m_apSongsQueue.push_back(entry->pSong);
+				STATSMAN->m_CurStageStats.m_vpPossibleSongs.push_back(entry->pSong);
+			}
+			FOREACH_EnabledPlayerInfo(m_vPlayerInfo, pi)
+			{
+				Trail* trail= GAMESTATE->m_pCurTrail[pi->GetStepsAndTrailIndex()];
+				ASSERT(trail != NULL);
+				FOREACH_CONST(TrailEntry, trail->m_vEntries, entry)
+				{
+					ASSERT(entry->pSteps != NULL);
+					pi->m_vpStepsQueue.push_back(entry->pSteps);
+					AttackArray a;
+					entry->GetAttackArray(a);
+					pi->m_asModifiersQueue.push_back(a);
+					pi->GetPlayerStageStats()->m_vpPossibleSteps.push_back(entry->pSteps);
+				}
+				// In a survival course, override stored mods
+				if(course->GetCourseType() == COURSE_TYPE_SURVIVAL &&
+					SURVIVAL_MOD_OVERRIDE)
+				{
+					pi->GetPlayerState()->m_PlayerOptions.FromString(ModsLevel_Stage, 
+						"clearall," + CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue() +
+						"," + CommonMetrics::DEFAULT_MODIFIERS.GetValue());
+					pi->GetPlayerState()->RebuildPlayerOptionsFromActiveAttacks();
+				}
+			}
+		}
+
 		GAMESTATE->m_bLoadingNextSong = true;
 		MESSAGEMAN->Broadcast( "BeforeLoadingNextCourseSong" );
 		m_NextSong.Reset();

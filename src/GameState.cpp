@@ -2109,6 +2109,11 @@ Difficulty GameState::GetHardestStepsDifficulty() const
 	return dc;
 }
 
+void GameState::SetNewStageSeed()
+{
+	m_iStageSeed= rand();
+}
+
 bool GameState::IsEventMode() const
 {
 	return m_bTemporaryEventMode || PREFSMAN->m_bEventMode;
