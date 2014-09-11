@@ -31,6 +31,9 @@ struct TapNoteResult
 	// XML
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
+
+	// Lua
+	void PushSelf( lua_State *L );
 };
 /** @brief The result of holding (or letting go of) a hold note. */
 struct HoldNoteResult
@@ -73,6 +76,9 @@ struct HoldNoteResult
 	// XML
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
+
+	// Lua
+	void PushSelf( lua_State *L );
 };
 
 /** @brief What is the TapNote's core type? */
@@ -87,8 +93,8 @@ enum TapNoteType
 	TapNoteType_Attack,		/**< Hitting this note causes an attack to take place. */
 	TapNoteType_AutoKeysound,	/**< A special sound is played when this note crosses the target area. */
 	TapNoteType_Fake,		/**< This arrow can't be scored for or against the player. */
-    NUM_TapNoteType,
-    TapNoteType_Invalid
+	NUM_TapNoteType,
+	TapNoteType_Invalid
 };
 const RString& TapNoteTypeToString( TapNoteType tnt );
 const RString& TapNoteTypeToLocalizedString( TapNoteType tnt );
@@ -97,11 +103,11 @@ LuaDeclareType( TapNoteType );
 /** @brief The list of a TapNote's sub types. */
 enum TapNoteSubType
 {
-    TapNoteSubType_Hold, /**< The start of a traditional hold note. */
-    TapNoteSubType_Roll, /**< The start of a roll note that must be hit repeatedly. */
-    //TapNoteSubType_Mine,
-    NUM_TapNoteSubType,
-    TapNoteSubType_Invalid
+	TapNoteSubType_Hold, /**< The start of a traditional hold note. */
+	TapNoteSubType_Roll, /**< The start of a roll note that must be hit repeatedly. */
+	//TapNoteSubType_Mine,
+	NUM_TapNoteSubType,
+	TapNoteSubType_Invalid
 };
 const RString& TapNoteSubTypeToString( TapNoteSubType tnst );
 const RString& TapNoteSubTypeToLocalizedString( TapNoteSubType tnst );
@@ -110,10 +116,10 @@ LuaDeclareType( TapNoteSubType );
 /** @brief The different places a TapNote could come from. */
 enum TapNoteSource
 {
-    TapNoteSource_Original,    /**< This note is part of the original NoteData. */
-    TapNoteSource_Addition,    /**< This note is additional note added by a transform. */
-    NUM_TapNoteSource,
-    TapNoteSource_Invalid
+	TapNoteSource_Original,	/**< This note is part of the original NoteData. */
+	TapNoteSource_Addition,	/**< This note is additional note added by a transform. */
+	NUM_TapNoteSource,
+	TapNoteSource_Invalid
 };
 const RString& TapNoteSourceToString( TapNoteSource tns );
 const RString& TapNoteSourceToLocalizedString( TapNoteSource tns );
@@ -145,10 +151,13 @@ struct TapNote
 	// also used for hold_head only:
 	int		iDuration;
 	HoldNoteResult	HoldResult;
-
+	
 	// XML
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 	TapNote(): type(TapNoteType_Empty), subType(TapNoteSubType_Invalid),
 		source(TapNoteSource_Original),	result(), pn(PLAYER_INVALID), 
@@ -301,7 +310,7 @@ inline float NoteRowToBeat( int iRow )			{ return iRow / (float)ROWS_PER_BEAT; }
  * @brief Convert the note row to note row (returns itself).
  * @param row the row to convert.
  */
-static inline int ToNoteRow(int row)    { return row; }
+static inline int ToNoteRow(int row)	{ return row; }
 
 /**
  * @brief Convert the beat to note row.
@@ -313,7 +322,7 @@ static inline int ToNoteRow(float beat) { return BeatToNoteRow(beat); }
  * @brief Convert the note row to beat.
  * @param row the row to convert.
  */
-static inline float ToBeat(int row)    { return NoteRowToBeat(row); }
+static inline float ToBeat(int row)	{ return NoteRowToBeat(row); }
 
 /**
  * @brief Convert the beat row to beat (return itself).

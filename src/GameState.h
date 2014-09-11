@@ -117,6 +117,8 @@ public:
 	int			m_iGameSeed, m_iStageSeed;
 	RString		m_sStageGUID;
 
+	void SetNewStageSeed();
+
 	/**
 	 * @brief Determine if a second player can join in at this time.
 	 * @return true if a player can still enter the game, false otherwise. */

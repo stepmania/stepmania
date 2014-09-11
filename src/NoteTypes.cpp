@@ -5,47 +5,47 @@
 #include "XmlFile.h"
 #include "LocalizedString.h"
 
-TapNote TAP_EMPTY    ( TapNoteType_Empty,    TapNoteSubType_Invalid,    TapNoteSource_Original, "", 0, -1 );
-TapNote TAP_ORIGINAL_TAP    ( TapNoteType_Tap,    TapNoteSubType_Invalid,    TapNoteSource_Original, "", 0, -1 );
-TapNote TAP_ORIGINAL_LIFT    ( TapNoteType_Lift,    TapNoteSubType_Invalid,    TapNoteSource_Original, "", 0, -1 );
-TapNote TAP_ORIGINAL_HOLD_HEAD    ( TapNoteType_HoldHead,    TapNoteSubType_Hold,    TapNoteSource_Original, "", 0, -1 );
-TapNote TAP_ORIGINAL_ROLL_HEAD    ( TapNoteType_HoldHead,    TapNoteSubType_Roll,    TapNoteSource_Original, "", 0, -1 );
-TapNote TAP_ORIGINAL_MINE    ( TapNoteType_Mine,    TapNoteSubType_Invalid,    TapNoteSource_Original, "", 0, -1 );
-TapNote TAP_ORIGINAL_ATTACK    ( TapNoteType_Attack,    TapNoteSubType_Invalid,    TapNoteSource_Original, "", 0, -1 );
-TapNote TAP_ORIGINAL_AUTO_KEYSOUND    ( TapNoteType_AutoKeysound,TapNoteSubType_Invalid,    TapNoteSource_Original, "", 0, -1 );
-TapNote TAP_ORIGINAL_FAKE    ( TapNoteType_Fake,    TapNoteSubType_Invalid,    TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_EMPTY	( TapNoteType_Empty,	TapNoteSubType_Invalid,	TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_TAP	( TapNoteType_Tap,	TapNoteSubType_Invalid,	TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_LIFT	( TapNoteType_Lift,	TapNoteSubType_Invalid,	TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_HOLD_HEAD	( TapNoteType_HoldHead,	TapNoteSubType_Hold,	TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_ROLL_HEAD	( TapNoteType_HoldHead,	TapNoteSubType_Roll,	TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_MINE	( TapNoteType_Mine,	TapNoteSubType_Invalid,	TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_ATTACK	( TapNoteType_Attack,	TapNoteSubType_Invalid,	TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_AUTO_KEYSOUND	( TapNoteType_AutoKeysound,TapNoteSubType_Invalid,	TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_FAKE	( TapNoteType_Fake,	TapNoteSubType_Invalid,	TapNoteSource_Original, "", 0, -1 );
 //TapNote TAP_ORIGINAL_MINE_HEAD ( TapNoteType_HoldHead, TapNoteSubType_Mine, TapNoteSource_Original, "", 0, -1 );
-TapNote TAP_ADDITION_TAP    ( TapNoteType_Tap,    TapNoteSubType_Invalid,    TapNoteSource_Addition, "", 0, -1 );
-TapNote TAP_ADDITION_MINE    ( TapNoteType_Mine,    TapNoteSubType_Invalid,    TapNoteSource_Addition, "", 0, -1 );
+TapNote TAP_ADDITION_TAP	( TapNoteType_Tap,	TapNoteSubType_Invalid,	TapNoteSource_Addition, "", 0, -1 );
+TapNote TAP_ADDITION_MINE	( TapNoteType_Mine,	TapNoteSubType_Invalid,	TapNoteSource_Addition, "", 0, -1 );
 
 
 static const char *TapNoteTypeNames[] = {
-    "Empty",
-    "Tap",
-    "HoldHead",
-    "HoldTail",
-    "Mine",
-    "Lift",
-    "Attack",
-    "AutoKeySound",
-    "Fake",
+	"Empty",
+	"Tap",
+	"HoldHead",
+	"HoldTail",
+	"Mine",
+	"Lift",
+	"Attack",
+	"AutoKeySound",
+	"Fake",
 };
 XToString( TapNoteType );
 XToLocalizedString( TapNoteType );
 LuaXType( TapNoteType );
 
 static const char *TapNoteSubTypeNames[] = {
-    "Hold",
-    "Roll",
-    //"Mine",
+	"Hold",
+	"Roll",
+	//"Mine",
 };
 XToString( TapNoteSubType );
 XToLocalizedString( TapNoteSubType );
 LuaXType( TapNoteSubType );
 
 static const char *TapNoteSourceNames[] = {
-    "Original",
-    "Addition",
+	"Original",
+	"Addition",
 };
 XToString( TapNoteSource );
 XToLocalizedString( TapNoteSource );
@@ -127,7 +127,7 @@ static const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;
  * @return the quantized NoteType. */
 NoteType GetNoteType( int row )
 { 
-	if(      row % (ROWS_PER_MEASURE/4) == 0)	return NOTE_TYPE_4TH;
+	if(	  row % (ROWS_PER_MEASURE/4) == 0)	return NOTE_TYPE_4TH;
 	else if( row % (ROWS_PER_MEASURE/8) == 0)	return NOTE_TYPE_8TH;
 	else if( row % (ROWS_PER_MEASURE/12) == 0)	return NOTE_TYPE_12TH;
 	else if( row % (ROWS_PER_MEASURE/16) == 0)	return NOTE_TYPE_16TH;
@@ -199,6 +199,84 @@ float HoldNoteResult::GetLastHeldBeat() const
 {
 	return NoteRowToBeat(iLastHeldRow);
 }
+
+// lua start
+#include "LuaBinding.h"
+
+/** @brief Allow Lua to have access to the TapNoteResult. */
+class LunaTapNoteResult: public Luna<TapNoteResult>
+{
+public:
+	DEFINE_METHOD(GetTapNoteScore, tns);
+	DEFINE_METHOD(GetTapNoteOffset, fTapNoteOffset);
+	DEFINE_METHOD(GetHidden, bHidden);
+
+	LunaTapNoteResult()
+	{
+		ADD_METHOD( GetTapNoteScore );
+		ADD_METHOD( GetTapNoteOffset );
+		ADD_METHOD( GetHidden );
+	}
+};
+LUA_REGISTER_CLASS( TapNoteResult )
+
+/** @brief Allow Lua to have access to the HoldNoteResult. */
+class LunaHoldNoteResult: public Luna<HoldNoteResult>
+{
+public:
+	DEFINE_METHOD(GetHoldNoteScore, hns);
+	DEFINE_METHOD(GetLife, fLife);
+	DEFINE_METHOD(GetOverlappedTime, fOverlappedTime);
+	DEFINE_METHOD(GetLastHeldBeat, GetLastHeldBeat() );
+	DEFINE_METHOD(GetCheckpointsHit, iCheckpointsHit );
+	DEFINE_METHOD(GetCheckpointsMissed, iCheckpointsMissed );
+	DEFINE_METHOD(GetHeld, bHeld );
+	DEFINE_METHOD(GetActive, bActive );
+
+	LunaHoldNoteResult()
+	{
+		ADD_METHOD( GetHoldNoteScore );
+		ADD_METHOD( GetLife );
+		ADD_METHOD( GetOverlappedTime );
+		ADD_METHOD( GetLastHeldBeat );
+		ADD_METHOD( GetCheckpointsHit );
+		ADD_METHOD( GetCheckpointsMissed );
+		ADD_METHOD( GetHeld );
+		ADD_METHOD( GetActive );
+	}
+};
+LUA_REGISTER_CLASS( HoldNoteResult )
+
+/** @brief Allow Lua to have access to the TapNote. */
+class LunaTapNote: public Luna<TapNote>
+{
+public:
+	DEFINE_METHOD( GetTapNoteType, type );
+	DEFINE_METHOD( GetTapNoteSubType, subType );
+	DEFINE_METHOD( GetTapNoteSource, source );
+	DEFINE_METHOD( GetPlayerNumber, pn );
+	DEFINE_METHOD( GetAttackModifiers, sAttackModifiers );
+	DEFINE_METHOD( GetAttackDuration, fAttackDurationSeconds );
+	DEFINE_METHOD( GetKeysoundIndex, iKeysoundIndex );
+	static int GetHoldDuration( T* p, lua_State* L )		{ lua_pushnumber(L, NoteRowToBeat(p->iDuration)); return 1; }
+	static int GetTapNoteResult( T* p, lua_State* L )		{ p->result.PushSelf(L); return 1; }
+	static int GetHoldNoteResult( T* p, lua_State* L )		{ p->HoldResult.PushSelf(L); return 1; }
+
+	LunaTapNote()
+	{
+		ADD_METHOD( GetTapNoteType );
+		ADD_METHOD( GetTapNoteSubType );
+		ADD_METHOD( GetTapNoteSource );
+		ADD_METHOD( GetTapNoteResult );
+		ADD_METHOD( GetPlayerNumber );
+		ADD_METHOD( GetAttackModifiers );
+		ADD_METHOD( GetAttackDuration );
+		ADD_METHOD( GetKeysoundIndex );
+		ADD_METHOD( GetHoldDuration );
+		ADD_METHOD( GetHoldNoteResult );
+	}
+};
+LUA_REGISTER_CLASS( TapNote )
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard

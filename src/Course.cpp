@@ -404,6 +404,9 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	trail.Init();
 
 	// XXX: Why are beginner and challenge excluded here? -Wolfman2000
+	// No idea, probably an obsolete design decision from ITG, removing
+	// exclusion here, but there's some other area that prevents it too. -Kyz
+	/*
 	switch( cd )
 	{
 		case Difficulty_Beginner:
@@ -412,6 +415,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			return false;
 		default: break;
 	}
+	*/
 
 	// Construct a new Trail, add it to the cache, then return it.
 	// Different seed for each course, but the same for the whole round:
@@ -848,9 +852,9 @@ bool Course::CourseHasBestOrWorst() const
 {
 	FOREACH_CONST( CourseEntry, m_vEntries, e )
 	{
-		if( e->iChooseIndex == SongSort_MostPlays  &&  e->iChooseIndex != -1 )
+		if( e->songSort == SongSort_MostPlays  &&  e->iChooseIndex != -1 )
 			return true;
-		if( e->iChooseIndex == SongSort_FewestPlays  &&  e->iChooseIndex != -1 )
+		if( e->songSort == SongSort_FewestPlays  &&  e->iChooseIndex != -1 )
 			return true;
 	}
 
