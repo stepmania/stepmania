@@ -267,6 +267,10 @@ public:
 	float	m_fLastHasteUpdateMusicSeconds;
 	float	m_fAccumulatedHasteSeconds;
 
+	// used by themes that support heart rate entry.
+	RageTimer m_DanceStartTime;
+	float m_DanceDuration;
+
 	// Random Attacks & Attack Mines
 	vector<RString>		m_RandomAttacks;
 

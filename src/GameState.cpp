@@ -2406,6 +2406,7 @@ public:
 		p->m_Position.PushSelf(L);
 		return 1;
 	}
+	DEFINE_METHOD( GetLastGameplayDuration, m_DanceDuration )
 	DEFINE_METHOD( GetGameplayLeadIn,		m_bGameplayLeadIn )
 	DEFINE_METHOD( GetCoins,			m_iCoins )
 	DEFINE_METHOD( IsSideJoined,			m_bSideIsJoined[Enum::Check<PlayerNumber>(L, 1)] )
@@ -2815,6 +2816,7 @@ public:
 		ADD_METHOD( GetSongFreeze );
 		ADD_METHOD( GetSongDelay );*/
 		ADD_METHOD( GetSongPosition );
+		ADD_METHOD( GetLastGameplayDuration );
 		ADD_METHOD( GetGameplayLeadIn );
 		ADD_METHOD( GetCoins );
 		ADD_METHOD( IsSideJoined );

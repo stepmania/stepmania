@@ -182,14 +182,34 @@ Branch = {
 	GameplayScreen = function()
 		return IsRoutine() and "ScreenGameplayShared" or "ScreenGameplay"
 	end,
-	AfterGameplay = function()
-		-- pick an evaluation screen based on settings.
+	EvaluationScreen= function()
 		if IsNetSMOnline() then
 			return "ScreenNetEvaluation"
 		else
 			-- todo: account for courses etc?
 			return "ScreenEvaluationNormal"
 		end
+	end,
+	AfterGameplay = function()
+		-- pick an evaluation screen based on settings.
+		if THEME:GetMetric("ScreenHeartEntry", "HeartEntryEnabled") then
+			local go_to_heart= false
+			for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
+				local profile= PROFILEMAN:GetProfile(pn)
+				if profile and profile:GetIgnoreStepCountCalories() then
+					go_to_heart= true
+				end
+			end
+			if go_to_heart then
+				return "ScreenHeartEntry"
+			end
+			return Branch.EvaluationScreen()
+		else
+			return Branch.EvaluationScreen()
+		end
+	end,
+	AfterHeartEntry= function()
+		return Branch.EvaluationScreen()
 	end,
 	AfterEvaluation = function()
 		if GAMESTATE:IsCourseMode() then
