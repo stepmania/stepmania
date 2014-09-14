@@ -8,7 +8,7 @@ This has nothing to do with the server versions (see below)
 (NETPROTOCOLVERSION in NetworkSyncManager.h)
 1: StepMania 3.9 (SMLan?)
 2: StepMania 3.95
-3: StepMania 4 alphas/sm-ssc v1.0 RC1-Final
+3: StepMania 4 alphas, sm-ssc v1.0-v1.2.5, StepMania 5
 
 ==Server Versions==
   1: SMLan (old)
@@ -31,8 +31,8 @@ Commands C2S 012-001 and 012-001: when there is no password the 'password' field
 The default port is 8765/tcp, though this is actually assigned to Ultraseek HTTP
 by the IANA (see http://www.iana.org/assignments/port-numbers).
 
-A sm-ssc version of a online server for StepMania will use the currently
-unassigned port 48040/tcp (and/or udp if the need arises).
+A modern/official online server for StepMania will use the currently unassigned
+port 48040/tcp (and/or udp if the need arises). (Port number subject to change.)
 
 The protocol is packaged in "EzSockets Data Packets".
 

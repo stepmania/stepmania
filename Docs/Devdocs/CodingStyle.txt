@@ -1,6 +1,6 @@
-sm-ssc/SM5 Code Style Guidelines
+StepMania 5 Code Style Guidelines
 --------------------------------------------------------------------------------
-The sm-ssc/SM5 code style guidelines are as follows:
+The StepMania 5 code style guidelines are as follows:
 
 1) Follow the current coding conventions set forth in the source code.
 This means use tabs. AJ prefers tabs have a width of 4. Visual Studio and web
@@ -34,8 +34,9 @@ if( anotherCondition )
 	lotsofstuff();
 }
 
-Variable naming conventions seem to be Hungarian, with m_ being used for
-class member variables.
+Variable naming conventions are largely Hungarian, with m_ being used for
+class member variables. Some newer code is forgoing the use of Hungarian
+prefixes.
 
 2) Remove any unnecessary whitespace. "Unnecessary" whitespace includes tabs
 at the end of } characters, tabs that lead nowhere, like this one:
@@ -69,7 +70,7 @@ inclusion.)
  * in that instance. All new copyright notices should follow this style as well,
  * for consistency's sake.
  */
- 
+
 /* use of long comments for one line is discouraged (with exceptions) */
 // usually, it will will get cleaned up into this style, but there are exceptions:
 

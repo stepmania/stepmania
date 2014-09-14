@@ -1,34 +1,12 @@
-Recommended Practices when theming for sm-ssc
----------------------------------------------
-1) Use the --theme= command line parameter to switch between themes quickly.
+Recommended Practices when theming for StepMania
+------------------------------------------------
+1) Use the --theme= command line parameter to load StepMania with a specific theme.
 This way, you don't have to deal with the theme switch and all the possible
 nonsense errors that might come up (due to you having a different amount of
 song group colors, timer warning states, etc.), and you can quickly switch
 themes if you work on many of them at once.
 
-2) If you want to create a theme that targets both regular StepMania 4 and
-sm-ssc, there are a few precautions to take care of.
-
-2a) First, decide if you want to develop it on sm-ssc first or SM4 first. It is
-usually easier to deal with making the theme in normal SM4 and using _portKit-SM4
-to get the theme running up in sm-ssc.
-
-If you do decide to make the theme for sm-ssc first, be prepared to fill in a lot
-of files that sm-ssc _fallback makes empty for you, as the metrics, graphics, and
-BGAnimations from SM4's default theme will be loaded instead of sm-ssc's _fallback.
-
-2b) sm-ssc's _fallback theme defines a variable, SSC, like so:
-[code]SSC = (ProductID() == "sm-ssc");[/code]
-This will return true if it's sm-ssc, or false if it's SM4.
-You should define this in a script (00 themeInfo.lua is a good place), so that
-SM4 will be able to recognize it.
-
-With this "SSC guard" in place, you can now wrap things in "if SSC then"
-statements if they won't work on SM4. You can also provide alternatives if the
-player isn't using sm-ssc, since sometimes SM4 will have an approximation or
-alternate way to get the data.
-
-3) When dealing with frame size errors or theme code errors, don't just hide the
+2) When dealing with frame size errors or theme code errors, don't just hide the
 dialog and pretend they don't exist. Good themers fix these problems instead of
 releasing the theme and saying "oh, just play it in fullscreen mode".
 
@@ -36,15 +14,15 @@ If you have hidden the error dialogs, you'll need to modify Preferences.ini.
 Find the IgnoredDialogs= line and remove everything after the = sign. You will
 now recieve the error messages in windowed mode again.
 
-4) While this is a SSC-specific practice, having a themeInfo file set up in
-your theme's Scripts directory is a good way to store information about the
-theme (e.g. version number, date, product code, etc.)
+3) While this is not required, having a themeInfo file set up in your theme's
+Scripts directory is a good way to store information about the theme (e.g.
+version number, date, product code, etc.)
 
 An example of a themeInfo script:
 [code]
 themeInfo = {
-	Name = "your theme's name",
+	Name = "Theme Name",
 	Version = "v1.0", -- typically a float or string. floats are easier to compare.
-	Date = "20100426 1115",
+	Date = "20140914 1902",
 };
 [/code]

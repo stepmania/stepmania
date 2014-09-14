@@ -1,17 +1,19 @@
-sm-ssc has a few compile flags that are helpful to know, as well as ones
-inherited from StepMania.
+StepMania has a few compile flags that are helpful to know, as well as one
+inherited from sm-ssc that should be nuked.
+
 ================================================================================
 stepmania:
 ================================================================================
 WITHOUT_NETWORKING
-Disables all networking stuff (SMO).
+Disables all networking stuff (e.g. StepMania Online).
+--------------------------------------------------------------------------------
+HAVE_VERSION_INFO
+If this isn't defined, passing in --version will only show the name of the
+current StepMania version, no build number or date.
+Please define HAVE_VERSION_INFO if you can when building StepMania.
+
 ================================================================================
 sm-ssc:
 ================================================================================
 SSC_FUTURES
-{todo}
---------------------------------------------------------------------------------
-HAVE_VERSION_INFO
-If this isn't defined, passing in --version will only show the name of the
-current sm-ssc version, no build number or date.
-Please define HAVE_VERSION_INFO if you can when building sm-ssc.
+A highly deprecated thing. Anything related to this flag should be removed.

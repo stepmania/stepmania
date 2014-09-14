@@ -58,7 +58,7 @@ Def.Actor{
 		self:playcommand("Tera", {foo= 1, bar= 2})
 	end,
 	TeraCommand= function(self, params)
-		Trace("Exa command running for " .. self:GetName() .. ": " .. params.foo .. ", " .. params.bar)
+		Trace("Tera command running for " .. self:GetName() .. ": " .. params.foo .. ", " .. params.bar)
 		-- Broadcast a message that will execute the Giga command for every actor
 		--   that has it.
 		MESSAGEMAN:Broadcast("Giga", {foo= 1, bar= 2})
