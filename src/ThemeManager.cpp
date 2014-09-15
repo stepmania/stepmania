@@ -1056,6 +1056,7 @@ void ThemeManager::PushMetric( Lua *L, const RString &sMetricsGroup, const RStri
 	if(sMetricsGroup == "" || sValueName == "")
 	{
 		LuaHelpers::ReportScriptError("PushMetric:  Attempted to fetch metric with empty group name or empty value name.");
+		lua_pushnil(L);
 		return;
 	}
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sMetricsGroup, sValueName );

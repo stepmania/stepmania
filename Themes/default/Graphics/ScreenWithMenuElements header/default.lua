@@ -36,8 +36,8 @@ t[#t+1] = LoadFont("Common Bold") .. {
 
 t[#t+1] = Def.Quad {
 	Name="Underline";
-	InitCommand=cmd(x,-SCREEN_CENTER_X+24;y,36;horizalign,left);
-	OnCommand=cmd(visible,IsVisible();diffuse,color("#ffd400");shadowlength,1;linear,0.25;zoomtowidth,192;faderight,0.5);
+	InitCommand=cmd(x,-SCREEN_CENTER_X+24-4;y,36;horizalign,left);
+	OnCommand=cmd(diffuse,color("#ffd400");shadowlength,2;shadowcolor,BoostColor(color("#ffd40077"),0.25);linear,0.25;zoomtowidth,192;fadeleft,8/192;faderight,0.5);
 };
 
 t[#t+1] = LoadFont("Common Bold") .. {
@@ -53,6 +53,5 @@ t[#t+1] = LoadFont("Common Bold") .. {
 t.BeginCommand=function(self)
 	self:SetUpdateFunction( Update );
 end
-
 
 return t

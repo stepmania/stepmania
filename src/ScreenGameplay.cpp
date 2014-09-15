@@ -2509,6 +2509,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		else
 			SOUND->PlayOnceFromAnnouncer( "gameplay here we go normal" );
 
+		GAMESTATE->m_DanceStartTime.Touch();
+
 		m_Go.StartTransitioning( SM_None );
 		GAMESTATE->m_bGameplayLeadIn.Set( false );
 		m_DancingState = STATE_DANCING; // STATE CHANGE!  Now the user is allowed to press Back
@@ -2558,6 +2560,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_LeaveGameplay )
 	{
+		GAMESTATE->m_DanceDuration= GAMESTATE->m_DanceStartTime.Ago();
 		// update dancing characters for win / lose
 		DancingCharacters *pDancers = NULL;
 		if( m_pSongBackground )
