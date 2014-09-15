@@ -19,13 +19,6 @@ function SongMeterDisplayCommand(pn)
 	end
 end
 
-function thify_number(n)
-	if n >= 10 and n < 20 then return n .. "th" end
-	local th_suffixes= {"st", "nd", "rd"}
-	local end_digit= n % 10
-	return n .. (th_suffixes[end_digit] or "th")
-end
-
 local numbered_stages= {
 	Stage_1st= true,
 	Stage_2nd= true,
@@ -45,7 +38,7 @@ function thified_curstage_index(on_eval)
 		adjust= 0
 	end
 	if numbered_stages[cur_stage] then
-		return thify_number(GAMESTATE:GetCurrentStageIndex() + adjust)
+		return FormatNumberAndSuffix(GAMESTATE:GetCurrentStageIndex() + adjust)
 	else
 		return ToEnumShortString(cur_stage)
 	end
