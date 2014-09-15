@@ -314,6 +314,8 @@ void GameState::Reset()
 	m_iGameSeed = rand();
 	m_iStageSeed = rand();
 
+	m_AdjustTokensBySongCostForFinalStageCheck= true;
+
 	m_pCurSong.Set( GetDefaultSong() );
 	m_pPreferredSong = NULL;
 	m_pCurCourse.Set( NULL );
@@ -1061,6 +1063,36 @@ bool GameState::IsFinalStageForAnyHumanPlayer() const
 	return GetSmallestNumStagesLeftForAnyHumanPlayer() == 1;
 }
 
+bool GameState::IsFinalStageForEveryHumanPlayer() const
+{
+	int song_cost= 1;
+	if(m_pCurSong != NULL)
+	{
+		if(m_pCurSong->IsLong())
+		{
+			song_cost= 2;
+		}
+		else if(m_pCurSong->IsMarathon())
+		{
+			song_cost= 3;
+		}
+	}
+	// If we're on gameplay or evaluation, they set this to false because those
+	// screens have already had the stage tokens subtracted.
+	song_cost*= m_AdjustTokensBySongCostForFinalStageCheck;
+	int num_on_final= 0;
+	int num_humans= 0;
+	FOREACH_HumanPlayer(p)
+	{
+		if(m_iPlayerStageTokens[p] - song_cost <= 0)
+		{
+			++num_on_final;
+		}
+		++num_humans;
+	}
+	return num_on_final >= num_humans;
+}
+
 bool GameState::IsAnExtraStage() const
 {
 	if( this->GetMasterPlayerNumber() == PlayerNumber_Invalid )
@@ -1098,10 +1130,11 @@ Stage GameState::GetCurrentStage() const
 	else if( m_PlayMode == PLAY_MODE_ENDLESS )	return Stage_Endless;
 	else if( IsExtraStage() )			return Stage_Extra1;
 	else if( IsExtraStage2() )			return Stage_Extra2;
-	//else if( IsFinalStageForAnyHumanPlayer() )	return Stage_Final;
-	// above function behaves weirdly, it will always return final stage if any player is
-	// on final stage, rather than the last remaining player. The below method seems to make a bit more sense.
-	else if(m_iPlayerStageTokens[PLAYER_1] == 0 && m_iPlayerStageTokens[PLAYER_2] == 0) return Stage_Final;
+	// Previous logic did not factor in current song length, or the fact that
+	// players aren't allowed to start a song with 0 tokens.  This new
+	// function also has logic for handling the Gameplay and Evaluation cases
+	// which used to require workarounds on the theme side. -Kyz
+	else if(IsFinalStageForEveryHumanPlayer()) return Stage_Final;
 	else
 	{
 		switch( this->m_iCurrentStageIndex )

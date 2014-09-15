@@ -1,19 +1,7 @@
 local curScreen = Var "LoadingScreen";
 local curStage = GAMESTATE:GetCurrentStage();
-local curStageIndex = GAMESTATE:GetCurrentStageIndex();
+local curStageIndex = GAMESTATE:GetCurrentStageIndex() + 1;
 local playMode = GAMESTATE:GetPlayMode();
-
-local tRemap = {
-	Stage_1st		= 1,
-	Stage_2nd		= 2,
-	Stage_3rd		= 3,
-	Stage_4th		= 4,
-	Stage_5th		= 5,
-	Stage_6th		= 6,
-};
-if tRemap[curStage] == PREFSMAN:GetPreference("SongsPerPlay") then
-	curStage = "Stage_Final";
-end
 
 local t = Def.ActorFrame {
 	LoadActor(THEME:GetPathB("_frame","3x3"),"rounded black",64,16);
@@ -36,12 +24,13 @@ local t = Def.ActorFrame {
 				self:settextf("%i / %i", songsPlayed, GAMESTATE:GetCurrentCourse():GetEstimatedNumStages());
 			else
 				if GAMESTATE:IsEventMode() then
-					self:settextf("Stage %s", curStageIndex+1);
+					self:settextf("Stage %s", curStageIndex);
 				else
+					local thed_stage= thified_curstage_index(false)
 					if THEME:GetMetric(curScreen,"StageDisplayUseShortString") then
-						self:settextf("%s", ToEnumShortString(curStage));
+						self:settextf(thed_stage)
 					else
-						self:settextf("%s Stage", ToEnumShortString(curStage));
+						self:settextf("%s Stage", thed_stage)
 					end
 				end
 			end;

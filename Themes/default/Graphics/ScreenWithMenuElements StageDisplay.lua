@@ -21,18 +21,12 @@ t[#t+1] = Def.ActorFrame {
 			elseif GAMESTATE:IsEventMode() then
 				self:settextf("Stage %s", curStageIndex);
 			else
-				-- hack: ScreenEvaluation shows the current stage, but it needs to
-				-- show the last stage instead. PlayedStageStats has the right one.
-				if string.find(curScreen,"Evaluation") then
-					local stageStats = STATSMAN:GetPlayedStageStats(1)
-					curStage = stageStats:GetStage()
-				end
-
+				local thed_stage= thified_curstage_index(curScreen:find("Evaluation"))
 				if THEME:GetMetric(curScreen,"StageDisplayUseShortString") then
-					self:settextf("%s", ToEnumShortString(curStage));
+					self:settext(thed_stage)
 					self:zoom(0.75);
 				else
-					self:settextf("%s Stage", ToEnumShortString(curStage));
+					self:settextf("%s Stage", thed_stage);
 					self:zoom(1);
 				end;
 			end;

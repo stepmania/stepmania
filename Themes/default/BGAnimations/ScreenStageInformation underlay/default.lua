@@ -7,26 +7,6 @@ if playMode ~= 'PlayMode_Regular' and playMode ~= 'PlayMode_Rave' and playMode ~
   sStage = playMode;
 end;
 
-if not (GAMESTATE:IsCourseMode() or GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2()) then
-	local tRemap = {
-		Stage_Event		= 0,
-		Stage_1st		= 1,
-		Stage_2nd		= 2,
-		Stage_3rd		= 3,
-		Stage_4th		= 4,
-		Stage_5th		= 5,
-		Stage_6th		= 6,
-	};
-
-	local nSongCount = tRemap[sStage] + (GAMESTATE:GetCurrentSong():GetStageCost()-1);
-
-	if nSongCount >= PREFSMAN:GetPreference("SongsPerPlay") then
-	sStage = "Stage_Final";
-	else
-		sStage = sStage;
-	end;
-end;
-
 local t = Def.ActorFrame {};
 t[#t+1] = Def.Quad {
 	InitCommand=cmd(Center;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,Color("Black"));
@@ -47,11 +27,28 @@ else
 	};
 end
 
+local stage_num_actor= THEME:GetPathG("ScreenStageInformation", "Stage " .. ToEnumShortString(sStage), true)
+if stage_num_actor ~= "" and FILEMAN:DoesFileExist(stage_num_actor) then
+	stage_num_actor= LoadActor(stage_num_actor)
+else
+	-- Midiman:  We need a "Stage Next" actor or something for stages after
+	-- the 6th. -Kyz
+	local curStage = GAMESTATE:GetCurrentStage();
+	stage_num_actor= Def.BitmapText{
+		Font= "Common Normal",  Text= thified_curstage_index(false) .. " Stage",
+		InitCommand= function(self)
+			self:zoom(1.5)
+			self:strokecolor(Color.Black)
+			self:diffuse(StageToColor(curStage));
+			self:diffusetopedge(ColorLightTone(StageToColor(curStage)));
+		end
+	}
+end
+
 t[#t+1] = Def.ActorFrame {
 	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
 	OnCommand=cmd(stoptweening;zoom,1.25;decelerate,3;zoom,1);
-	
-	LoadActor( THEME:GetPathG("ScreenStageInformation", "Stage " .. ToEnumShortString(sStage) ) ) .. {
+	stage_num_actor .. {
 		OnCommand=cmd(diffusealpha,0;linear,0.25;diffusealpha,1;sleep,1.75;linear,0.5;zoomy,0;zoomx,2;diffusealpha,0);
 	};
 };
