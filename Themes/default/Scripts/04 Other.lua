@@ -36,17 +36,6 @@ local numbered_stages= {
 	Stage_Next= true,
 }
 
-function is_stage_final()
-	-- The correct way to determine whether the player has reached Final Stage
-	-- is to check the number of stages left.
-	-- If you use the SongsPerPlay preference, you become incorrect after a
-	-- continue occurs.
-	local master_player= GAMESTATE:GetMasterPlayerNumber()
-	local stages_left= GAMESTATE:GetNumStagesLeft(master_player)
-	local stage_cost= GAMESTATE:GetCurrentSong():GetStageCost()
-	return (stages_left - stage_cost) < 1
-end
-
 function thified_curstage_index(on_eval)
 	local cur_stage= GAMESTATE:GetCurrentStage()
 	local adjust= 1
