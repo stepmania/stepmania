@@ -43,7 +43,7 @@ for i=1,#statList do
 			OnCommand=cmd(zoomto,80,18;diffuse,Color.Black;diffusealpha,0.5;fadeleft,0.5);
 		};
 		LoadFont("Common Normal") .. {
-			Text=thify_number(statList[j]:GetStageIndex()+1);
+			Text=FormatNumberAndSuffix(statList[j]:GetStageIndex()+1);
 			InitCommand=cmd(x,128-4;y,40-4;horizalign,right;vertalign,bottom);
 			OnCommand=cmd(diffuse,StageToColor(statList[j]:GetStage());zoom,0.675;shadowlength,1);
 		};
