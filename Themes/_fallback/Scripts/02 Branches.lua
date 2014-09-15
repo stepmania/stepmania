@@ -26,6 +26,14 @@ function SelectMusicOrCourse()
 	end
 end
 
+function GameOverOrContinue()
+	if THEME:GetMetric("ScreenContinue", "ContinueEnabled") then
+		return "ScreenContinue"
+	else
+		return "ScreenGameOver"
+	end
+end
+
 -- functions used for Routine mode
 function IsRoutine()
 	return GAMESTATE:GetCurrentStyle() and GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_TwoPlayersSharedSides"
@@ -126,12 +134,12 @@ Branch = {
 		if GAMESTATE:IsEventMode() then
 			return SelectMusicOrCourse()
 		elseif STATSMAN:GetCurStageStats():AllFailed() then
-			return "ScreenContinue"
+			return GameOverOrContinue()
 		elseif GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer() == 0 then
 			if not GAMESTATE:IsCourseMode() then
 				return "ScreenEvaluationSummary"
 			else
-				return "ScreenContinue"
+				return GameOverOrContinue()
 			end
 		else
 			return SelectMusicOrCourse()
@@ -242,7 +250,7 @@ Branch = {
 		return IsNetConnected() and "ScreenTitleMenu" or "ScreenTitleMenu"
 	end,
  	AfterSaveSummary = function()
-		return "ScreenContinue"
+		return GameOverOrContinue()
 --		[[ Enable when Finished ]]
 -- 		return GAMESTATE:AnyPlayerHasRankingFeats() and "ScreenNameEntryTraditional" or "ScreenGameOver"
 	end,

@@ -408,7 +408,7 @@ DrawOrder = {
 
 -- deprecated aliases:
 function Actor:hidden(bHide)
-	Warn("hidden is deprecated, use visible instead. (used on ".. self:GetName() ..")")
+	lua.ReportScriptError("hidden is deprecated, use visible instead. (used on ".. self:GetName() ..")")
 	self:visible(not bHide)
 end
 
