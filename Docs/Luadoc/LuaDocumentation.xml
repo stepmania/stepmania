@@ -1781,6 +1781,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='jitter' return='void' arguments='bool bJitter'>
 		If <code>bJitter</code> is <code>true</code>, move each character of the string around by a small random amount.
 	</Function>
+	<Function name='max_dimension_use_zoom' return='void' arguments='bool use_zoom'>
+		If use_zoom is true, this BitmapText will use the zoom that has been applied to it when calculating to change its base zoom from maxheight or maxwidth.
+	</Function>
 	<Function name='maxheight' return='void' arguments='float fHeight'>
 		Set the maximum height of the unzoomed text to <code>fHeight</code>. If <code>fHeight</code> is <code>0</code>, then there is no maximum height.
 	</Function>

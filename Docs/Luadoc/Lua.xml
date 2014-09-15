@@ -586,6 +586,7 @@
 			<Function name='Stroke'/>
 			<Function name='distort'/>
 			<Function name='jitter'/>
+			<Function name='max_dimension_use_zoom'/>
 			<Function name='maxheight'/>
 			<Function name='maxwidth'/>
 			<Function name='rainbowscroll'/>
