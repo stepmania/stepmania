@@ -164,7 +164,7 @@
 --   -- positions provided in button_positions.
 --   -- GainFocus, LoseFocus, and Press are optional commands for handling
 --   -- their respective events.
---   button_actor= Def.BitmapText{
+--   button= Def.BitmapText{
 --     InitCommand= cmd(diffuse, Color.White),
 --     -- SetCommand is executed after InitCommand to set the value for the
 --     -- button.  param is a table containing a value from button_values.
@@ -188,7 +188,7 @@
 --   value_color= Color.White,
 --   -- Optional.  The actor used for displaying the value the player has
 --   -- entered so far.  Default is a simple BitmapText.
---   value_actor= Def.BitmapText{
+--   value= Def.BitmapText{
 --     Font= "Common Normal",
 --     -- InitCommand should set the position you want if you pass a custom
 --     -- actor.
@@ -208,9 +208,17 @@
 --   -- Optional.  The text used by the default prompt actor.  Default is "".
 --   prompt_text= "",
 --   -- Optional.  The actor to use for displaying the prompt.  Any actor you
---   -- want.  No commands are required, and it must position and initialize
---   -- itself.
---   prompt= Def.Actor{},
+--   -- want.  It should support a Set command if the NumPadEntry is on a
+--   -- screen where it will be reused for different numbers.
+--   prompt= Def.BitmapText{
+--     Font= "Common Normal",
+--     -- InitCommand should set the position you want if you pass a custom
+--     -- actor.
+--     InitCommand= cmd(xy, 0, -48),
+--     -- SetCommand will be executed when a button is pressed and the value
+--     -- is changed.  param is a table containing the new value.
+--     SetCommand= function(self, param) self:settext(param[1]) end
+--   },
 -- }
 
 local function noop() end
@@ -258,7 +266,8 @@ local numpad_entry_mt= {
 			end
 			local default_start= cr_to_pos(
 				{math.ceil(self.columns/2), math.ceil(self.rows/2)}, self.columns)
-			self.cursor_pos= params.cursor_start or default_start
+			self.cursor_start= params.cursor_start or default_start
+			self.cursor_pos= self.cursor_start
 			self.done_text= params.done_text or "&start;"
 			self.back_text= params.back_text or "&leftarrow;"
 			self.button_values= params.button_values or
@@ -363,7 +372,7 @@ local numpad_entry_mt= {
 				end,
 				SetCommand= function(subself, param) subself:settext(param[1]) end}
 			local va_template= params.value or default_vat
-			if not va_template.SetCommand then va_template.SetCommand= noop end
+			add_default_commands_to_actor({"SetCommand"}, va_template)
 			local vainit= va_template.InitCommand or noop
 			va_template.InitCommand= function(subself)
 				self.value_actor= subself
@@ -377,8 +386,16 @@ local numpad_entry_mt= {
 				Font= params.prompt_font or params.Font or "Common Normal",
 				InitCommand= cmd(xy, prompt_pos[1], prompt_pos[2];
 					diffuse, params.prompt_color or Color.White),
-				Text= params.prompt_text or ""}
-			args[#args+1]= params.prompt or default_prompt
+				Text= params.prompt_text or "",
+				SetCommand= function(subself, param) subself:settext(param[1]) end}
+			local prompt_template= params.prompt or default_prompt
+			local prompt_init= prompt_template.InitCommand or noop
+			add_default_commands_to_actor({"SetCommand"}, prompt_template)
+			prompt_template.InitCommand= function(subself)
+				self.prompt_actor= subself
+				prompt_init(subself)
+			end
+			args[#args+1]= prompt_template
 			if params.cursor_draw == "last" then
 				args[#args+1]= cursor_template
 			end

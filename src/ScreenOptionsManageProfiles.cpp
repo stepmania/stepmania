@@ -113,7 +113,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 		Profile *pProfile = PROFILEMAN->GetLocalProfile( *s );
 		ASSERT( pProfile != NULL );
 
-		RString sCommand = ssprintf( "gamecommand;screen,ScreenOptionsEditProfile;profileid,%s;name,dummy", s->c_str() );
+		RString sCommand = ssprintf( "gamecommand;screen,ScreenOptionsCustomizeProfile;profileid,%s;name,dummy", s->c_str() );
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands(sCommand) );
 		OptionRowDefinition &def = pHand->m_Def;
 		def.m_layoutType = LAYOUT_SHOW_ALL_IN_ROW;
@@ -380,7 +380,7 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus & )
 		}
 		else
 		{
-			//ADD_ACTION( ProfileAction_Edit );
+			ADD_ACTION( ProfileAction_Edit );
 			ADD_ACTION( ProfileAction_Rename );
 			ADD_ACTION( ProfileAction_Delete );
 		}

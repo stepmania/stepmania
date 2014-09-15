@@ -13,8 +13,6 @@ for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
 		heart_entries[pn]= new_numpad_entry{
 			Name= pn .. "_heart_entry",
 			InitCommand= cmd(xy, heart_xs[pn], SCREEN_CENTER_Y+48),
-			value_pos = { 0, -64 },
-			value_color= PlayerColor(pn),
 			value = LoadFont("Common Large") .. {
 				InitCommand=cmd(xy,0,-62),
 				OnCommand=cmd(zoom,0.75;diffuse,PlayerColor(pn);strokecolor,ColorDarkTone(PlayerColor(pn)));
@@ -66,7 +64,6 @@ for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
 				}
 			},
 			cursor_draw= "first",
-			cursor_color= PlayerDarkColor(pn),
 			prompt = LoadFont("Common Bold") .. {
 				Name="prompt",
 				Text=THEME:GetString("ScreenHeartEntry", "Heart Rate"),
@@ -84,7 +81,7 @@ local function input(event)
 	if not pn then return end
 	if event.type == "InputEventType_Release" then return end
 	if not heart_entries[pn] then return end
-	local done= heart_entries[pn]:handle_input(event.button)
+	local done= heart_entries[pn]:handle_input(event.GameButton)
 	if done then
 		SOUND:PlayOnce(THEME:GetPathS("Common", "Start"))
 		local all_done= true
