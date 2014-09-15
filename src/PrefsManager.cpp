@@ -285,6 +285,7 @@ PrefsManager::PrefsManager() :
 	m_sCoursesToShowRanking		( "CoursesToShowRanking",		"" ),
 
 	m_bQuirksMode		( "QuirksMode",		false ),
+	m_DefaultFailType("DefaultFailtype", FailType_ImmediateContinue),
 
 	/* Debug: */
 	m_bLogToDisk			( "LogToDisk",		true ),

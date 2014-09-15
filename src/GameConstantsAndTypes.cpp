@@ -499,6 +499,7 @@ static const char *FailTypeNames[] = {
 };
 XToString( FailType );
 XToLocalizedString( FailType );
+StringToX( FailType );
 LuaXType( FailType );
 
 /*
