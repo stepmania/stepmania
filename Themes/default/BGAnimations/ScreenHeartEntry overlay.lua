@@ -50,7 +50,7 @@ for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
 				) .. {
 					OnCommand=cmd(diffuse,PlayerDarkColor(pn)),
 					FitCommand=function(self, param)
-						self:playcommand("SetSize",{ Width=param:GetWidth()+cursor_width_padding, tween=cmd(decelerate,0.125)})
+						self:playcommand("SetSize",{ Width=param:GetWidth()+cursor_width_padding, tween=cmd(stoptweening;decelerate,0.15)})
 					end,
 				},
 				LoadActor( THEME:GetPathG("_frame", "1D"),
@@ -59,7 +59,7 @@ for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
 				) .. {
 					OnCommand=cmd(diffuse,PlayerColor(pn)),
 					FitCommand=function(self, param)
-						self:playcommand("SetSize",{ Width=param:GetWidth()+cursor_width_padding, tween=cmd(decelerate,0.125)})
+						self:playcommand("SetSize",{ Width=param:GetWidth()+cursor_width_padding, tween=cmd(stoptweening;decelerate,0.15)})
 					end,
 				}
 			},
