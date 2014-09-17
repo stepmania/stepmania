@@ -32,7 +32,7 @@ t[#t+1] = Def.Actor {
 	end;
 	CodeMessageCommand=function(self,param)
 		if param.Name == "Enter" then
-			SCREENMAN:GetTopScreen():Finish(pn);
+			SCREENMAN:GetTopScreen():Finish(param.PlayerNumber);
 		end
 	end
 };
