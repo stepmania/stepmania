@@ -457,7 +457,7 @@ local numpad_entry_mt= {
 					end
 					if cr_pos[1] > self.columns then
 						cr_pos[1]= 1
-						if button == "MenuLeft" then
+						if button == "MenuRight" then
 							cr_pos[2]= cr_pos[2] + 1
 						end
 					end
