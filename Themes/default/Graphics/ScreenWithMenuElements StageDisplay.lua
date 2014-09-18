@@ -1,5 +1,4 @@
 local curScreen = Var "LoadingScreen";
-local curStage = GAMESTATE:GetCurrentStage();
 local curStageIndex = GAMESTATE:GetCurrentStageIndex();
 local t = Def.ActorFrame {};
 
@@ -15,7 +14,9 @@ t[#t+1] = Def.ActorFrame {
 			end
 			self:playcommand("Set")
 		end;
+		CurrentSongChangedMessageCommand= cmd(playcommand,"Set"),
 		SetCommand=function(self)
+			local curStage = GAMESTATE:GetCurrentStage();
 			if GAMESTATE:GetCurrentCourse() then
 				self:settext( curStageIndex+1 .. " / " .. GAMESTATE:GetCurrentCourse():GetEstimatedNumStages() );
 			elseif GAMESTATE:IsEventMode() then

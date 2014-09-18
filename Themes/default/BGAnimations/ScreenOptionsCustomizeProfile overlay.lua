@@ -9,7 +9,7 @@ local cursor_spacing_value = 30
 
 local number_entry= new_numpad_entry{
 	Name= "number_entry",
-	InitCommand= cmd(diffusealpha, 0; xy, _screen.cx*1.5, _screen.cy),
+	InitCommand= cmd(diffusealpha, 0; xy, _screen.cx, _screen.cy * 1.5),
 	value = LoadFont("Common Large") .. {
 		InitCommand=cmd(xy,0,-62),
 		OnCommand=cmd(zoom,0.75;diffuse,PlayerColor(PLAYER_1);strokecolor,ColorDarkTone(PlayerColor(PLAYER_1)));
@@ -102,9 +102,9 @@ local menu_items= {
 
 local menu_cursor
 local menu_pos= 1
-local menu_start= 72
-local menu_x= 32
-local value_x= 300
+local menu_start= SCREEN_TOP + 80
+local menu_x= SCREEN_CENTER_X * 0.25
+local value_x= ( SCREEN_CENTER_X * 0.25 ) + 256
 local fader
 local cursor_on_menu= true
 local menu_item_actors= {}
@@ -112,7 +112,7 @@ local menu_values= {}
 
 local function fade_actor_to(actor, alf)
 	actor:stoptweening()
-	actor:linear(.2)
+	actor:smooth(.15)
 	actor:diffusealpha(alf)
 end
 
@@ -135,7 +135,7 @@ local function input(event)
 				menu_values[menu_pos]:settext(item_value_to_text(item, value))
 				Profile[item.set](profile, value)
 			elseif item.item_type == "number" then
-				fade_actor_to(fader, .8)
+				--fade_actor_to(fader, .8)
 				fade_actor_to(number_entry.container, 1)
 				number_entry.value= Profile[item.get](profile)
 				number_entry.value_actor:playcommand("Set", {number_entry.value})
@@ -164,7 +164,7 @@ local function input(event)
 			local item= menu_items[menu_pos]
 			Profile[item.set](profile, number_entry.value)
 			menu_values[menu_pos]:settext(item_value_to_text(item, number_entry.value))
-			fade_actor_to(fader, 0)
+			--fade_actor_to(fader, 0)
 			fade_actor_to(number_entry.container, 0)
 			cursor_on_menu= true
 		end
@@ -201,7 +201,7 @@ local args= {
 		) .. {
 			OnCommand=cmd(diffuse,PlayerDarkColor(PLAYER_1)),
 			FitCommand=function(self, param)
-				self:playcommand("SetSize",{ Width=param:GetWidth()+cursor_width_padding, tween=cmd(decelerate,0.125)})
+				self:playcommand("SetSize",{ Width=param:GetWidth()+cursor_width_padding, tween=cmd(stoptweening;decelerate,0.15)})
 			end,
 				 },
 		LoadActor( THEME:GetPathG("_frame", "1D"),
@@ -210,7 +210,7 @@ local args= {
 		) .. {
 			OnCommand=cmd(diffuse,PlayerColor(PLAYER_1)),
 			FitCommand=function(self, param)
-				self:playcommand("SetSize",{ Width=param:GetWidth()+cursor_width_padding, tween=cmd(decelerate,0.125)})
+				self:playcommand("SetSize",{ Width=param:GetWidth()+cursor_width_padding, tween=cmd(stoptweening;decelerate,0.15)})
 			end,
 				 }
 	},
@@ -243,15 +243,14 @@ for i, item in ipairs(menu_items) do
 	end
 end
 
-args[#args+1]= Def.Quad{
+local _height = (#menu_items) * 24
+args[#args+1]= LoadActor(THEME:GetPathB("_frame", "3x3"),"rounded black",474,_height) .. {
 	Name= "fader", InitCommand= function(self)
 		fader= self
-		self:setsize(270, #menu_items * 24)
-		self:horizalign(left)
-		self:vertalign(top)
-		self:xy(menu_x-10, menu_start-12)
+		self:draworder(-20)
+		self:xy(menu_x + 474/2, menu_start + _height/2 - 12)
 		self:diffuse(Color.Black)
-		self:diffusealpha(0)
+		self:diffusealpha(0.75)
 	end
 }
 

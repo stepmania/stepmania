@@ -1,5 +1,4 @@
 local curScreen = Var "LoadingScreen";
-local curStage = GAMESTATE:GetCurrentStage();
 local curStageIndex = GAMESTATE:GetCurrentStageIndex() + 1;
 local playMode = GAMESTATE:GetPlayMode();
 
@@ -14,6 +13,7 @@ local t = Def.ActorFrame {
 		CurrentTraiP1ChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentTraiP2ChangedMessageCommand=cmd(playcommand,"Set");
 		SetCommand=function(self)
+			local curStage = GAMESTATE:GetCurrentStage();
 			if GAMESTATE:IsCourseMode() then
 				local stats = STATSMAN:GetCurStageStats()
 				if not stats then
