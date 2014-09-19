@@ -126,6 +126,7 @@ end
 -- Uncomment this section if you need to test the behavior of actors in the
 -- character list but don't have any duncing characters to test with.
 --[=[
+
 local fake_profile_mt= {__index= {}}
 local val_list= {}
 local function get_set_pair(name, default)
@@ -160,7 +161,7 @@ char_list= {
 	{setting= "mad", display_name= "matt"},
 	{setting= "db", display_name= "k2"},
 }
---]=]
+]=]
 
 local menu_items= {
 	{name= "weight", get= "GetWeightPounds", set= "SetWeightPounds",
@@ -425,28 +426,21 @@ for i, item in ipairs(menu_items) do
 			-- value changes and checks the new width to position itself.
 			-- Show/Hide is only played when the indicator changes state.
 			-- Command execution order: Set, Show/Hide (if change occurred), Press
-			value_args[#value_args+1]= Def.ActorMultiVertex{
+			value_args[#value_args+1]= LoadActor(THEME:GetPathG("_StepsDisplayListRow","arrow")) .. {
 				InitCommand= function(self)
-					self:SetVertices{
-						{{-5, 0, 0}, Color.White}, {{0, -10, 0}, Color.White},
-						{{0, 10, 0}, Color.White}}
-					self:SetDrawState{Mode= "DrawMode_Triangles"}
+					self:rotationy(-180)
 					self:x(-8)
 					self:visible(false)
 					self:playcommand("Set", {value_text})
 				end,
 				ShowLeftCommand= cmd(visible, true),
 				HideLeftCommand= cmd(visible, false),
-				PressLeftCommand= cmd(stoptweening; linear, .2; zoom, 2; linear, .2;
-															zoom, 1),
+				PressLeftCommand= cmd(finishtweening;zoom,1.5;smooth,0.25;zoom,1),
 			}
-			value_args[#value_args+1]= Def.ActorMultiVertex{
+			value_args[#value_args+1]= LoadActor(THEME:GetPathG("_StepsDisplayListRow","arrow")) .. {
 				InitCommand= function(self)
-					self:SetVertices{
-						{{5, 0, 0}, Color.White}, {{0, -10, 0}, Color.White},
-						{{0, 10, 0}, Color.White}}
-					self:SetDrawState{Mode= "DrawMode_Triangles"}
 					self:visible(false)
+					self:playcommand("Set", {value_text})
 				end,
 				SetCommand= function(self)
 					local valw= self:GetParent():GetChild("val"):GetWidth()
@@ -454,8 +448,7 @@ for i, item in ipairs(menu_items) do
 				end,
 				ShowRightCommand= cmd(visible, true),
 				HideRightCommand= cmd(visible, false),
-				PressRightCommand= cmd(stoptweening; linear, .2; zoom, 2; linear, .2;
-															zoom, 1),
+				PressRightCommand= cmd(finishtweening;zoom,1.5;smooth,0.25;zoom,1),
 			}
 		end
 		args[#args+1]= Def.ActorFrame(value_args)
