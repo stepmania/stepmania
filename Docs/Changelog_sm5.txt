@@ -41,6 +41,7 @@ To reduce the number of entries in this file, entries are dated to the Saturday 
 2014/08/30
 ----------
 * [ActorScroller] wrap parameter added for controlling looping behavior better.
+* Life difficulty matches StepMania 3.9's again.
 
 2014/08/16
 ----------
@@ -73,6 +74,8 @@ To reduce the number of entries in this file, entries are dated to the Saturday 
 * [PrefsManager] SavePreferences lua function added.
 	ThreeKeyNavigation preference added.
 * [SoundManager] IsTimingDelayed lua function added.
+* [ThemeManager] SetTheme lua function added.
+* [ScreenHowToPlay] CharacterName metric works again.
 
 2014/07/18
 ----------
@@ -101,7 +104,7 @@ To reduce the number of entries in this file, entries are dated to the Saturday 
 ----------
 * [ScreenSelectMusic] SelectMenuInput message is now always sent when Select is pressed.
 
-2014/05/10
+2014/05/17
 ----------
 * [GameState] StoreRankingName lua function added.  Ranking names now allow lowercase.
 * [Profile] SetLastUsedHighScoreName and GetHighScoreListIfExists lua functions added.
@@ -119,6 +122,7 @@ To reduce the number of entries in this file, entries are dated to the Saturday 
 * [NoteSkinManager] GetMetric function added.
 * [PlayerOptions] Entirely new API for setting player options.  Superior alternative to ApplyGameCommand.
 * [SongOptions] Entirely new API for setting song options.  Same design as new PlayerOptions API.
+* [NoteField] NoteField Board can now use any AutoActor class instead of just Sprite/Sprite-derived ones.
 
 2014/04/26
 ----------
@@ -138,6 +142,10 @@ To reduce the number of entries in this file, entries are dated to the Saturday 
 2014/03/22
 ----------
 * [Player] HoldNoteScore_MissedHold added.
+
+2014/03/05
+----------
+* [ScreenNetSelectBase] Fix colors when unicode characters are in chat box.
 
 2014/03/08
 ----------
