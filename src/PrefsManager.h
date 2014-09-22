@@ -2,6 +2,7 @@
 #define PREFSMANAGER_H
 
 #include "Preference.h"
+#include "GameConstantsAndTypes.h"
 
 class IniFile;
 
@@ -245,6 +246,7 @@ public:
 	Preference<bool>	m_bAllowMultipleHighScoreWithSameName;
 	Preference<bool>	m_bCelShadeModels;
 	Preference<bool>	m_bPreferredSortUsesGroups;
+	Preference<float>	m_fDebounceCoinInputTime; // allow users to apply a distinct debounce to coin input
 
 	// Number of seconds it takes for a button on the controller to release
 	// after pressed.
@@ -292,7 +294,7 @@ public:
 
 	/** @brief Enable some quirky behavior used by some older versions of StepMania. */
 	Preference<bool>	m_bQuirksMode;
-	// Preference<RString> m_sDefaultFailType; // XXX: Fix fail bug?
+	Preference<FailType> m_DefaultFailType;
 
 	// Debug:
 	Preference<bool>	m_bLogToDisk;

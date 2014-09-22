@@ -91,45 +91,38 @@ local function CreateSegments(Player)
 				end;
 
 				for i=2,#bpms do
-					local data = split("=",bpms[i]);
-					bpmFrame[#bpmFrame+1] = CreateLine(data[1], 0,
+					bpmFrame[#bpmFrame+1] = CreateLine(bpms[i][1], 0,
 						"#00808077", "#00808077", "#00808077", "#FF634777", "#FF000077");
 				end;
 
 				for i=1,#delays do
-					local data = split("=",delays[i]);
-					delayFrame[#delayFrame+1] = CreateLine(data[1], data[2],
+					delayFrame[#delayFrame+1] = CreateLine(delays[i][1], delays[i][2],
 						"#FFFF0077", "#FFFF0077", "#FFFF0077", "#00FF0077", "#FF000077");
 				end;
 
 				for i=1,#stops do
-					local data = split("=",stops[i]);
-					stopFrame[#stopFrame+1] = CreateLine(data[1], data[2],
+					stopFrame[#stopFrame+1] = CreateLine(stops[i][1], stops[i][2],
 						"#FFFFFF77", "#FFFFFF77", "#FFFFFF77", "#FFA50077", "#FF000077");
 				end;
 
 				for i=1,#scrolls do
-					local data = split("=",scrolls[i]);
-					scrollFrame[#scrollFrame+1] = CreateLine(data[1], 0,
+					scrollFrame[#scrollFrame+1] = CreateLine(scrolls[i][1], 0,
 						"#4169E177", "#4169E177", "#4169E177", "#0000FF77", "#FF000077");
 				end;
 
 				for i=1,#speeds do
-					local data = split("=",speeds[i]);
 					-- TODO: Turn beats into seconds for this calculation?
-					speedFrame[#speedFrame+1] = CreateLine(data[1], 0,
+					speedFrame[#speedFrame+1] = CreateLine(speeds[i][1], 0,
 						"#ADFF2F77", "#ADFF2F77", "#ADFF2F77", "#7CFC0077", "#FF000077");
 				end;
 
 				for i=1,#warps do
-					local data = split("=",warps[i]);
-					warpFrame[#warpFrame+1] = CreateLine(data[1], 0,
+					warpFrame[#warpFrame+1] = CreateLine(warps[i][1], 0,
 						"#CC00CC77", "#CC00CC77", "#CC00CC77", "#FF33CC77", "#FF000077");
 				end;
 
 				for i=1,#fakes do
-					local data = split("=",fakes[i]);
-					fakeFrame[#fakeFrame+1] = CreateLine(data[1], 0,
+					fakeFrame[#fakeFrame+1] = CreateLine(fakes[i][1], 0,
 						"#BC8F8F77", "#BC8F8F77", "#BC8F8F77", "#F4A46077", "#FF000077");
 				end;
 			end;
