@@ -4809,6 +4809,22 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='TimingData'>
+	<Description>
+		GetBPMsAndTimes, GetStops, GetDelays, GetLabels, GetWarps, GetCombos, GetTimeSignatures, GetTickcounts, GetFakes, GetScrolls, and GetSpeeds all have two different modes.<br />
+		If the metric TimingData:GetReturnsNumbers is false (the default), they return tables of strings.  The strings are numbers separated by '='.<br />
+		If the metric TimingData:GetReturnsNumbers is true, they return tables of tables, and the inner tables contain numbers as described for each function.<br />
+		The first form is kept around and is the default for compatibility with older themes.  The advantage of the second form is that you no longer need to have a bit of code in your theme to transform the string into a table of numbers before you can use it.<br />
+		Example:<br />
+		local bpmsand= timing_data:GetBPMsAndTimes()<br />
+		for i, s in ipairs(bpmsand) do<br />
+		local sand= split("=", s)<br />
+		bpmsand[i]= {tonumber(sand[1]), tonumber(sand[2])}<br />
+		end<br />
+		-- do something that looks at all the bpms and times. <br />
+		Becomes:<br />
+		local bpmsand= timing_data:GetBPMsAndTimes()<br />
+		-- do something that looks at all the bpms and times. <br />
+	</Description>
 	<Function name='GetActualBPM' return='{float}' arguments=''>
 		Returns the minimum and maximum BPM of the song in a table (in that order).
 	</Function>
@@ -4818,44 +4834,44 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetBPMAtBeat' return='float' arguments='float fBeat'>
 		Returns the BPM at <code>fBeat</code>.
 	</Function>
-	<Function name='GetBPMs' return='{string}' arguments=''>
-		Returns a table of the BPMs as strings.
+	<Function name='GetBPMs' return='{float}' arguments=''>
+		Returns a table of the BPMs as floats.
 	</Function>
-	<Function name='GetBPMsAndTimes' return='{string}' arguments=''>
-		Returns a table of the BPMs and the times they happen as strings with the format "<code>beat=BPM</code>".
+	<Function name='GetBPMsAndTimes' return='{{float, float}}' arguments=''>
+		Returns a table of the BPMs and the times they happen as tables.  The first value is the beat.  The second value is the bpm.
 	</Function>
 	<Function name='GetElapsedTimeFromBeat' return='float' arguments='float fBeat'>
 		Returns the elapsed time from <code>fBeat</code>.
 	</Function>
-	<Function name='GetStops' return='{string}' arguments=''>
-		Returns a table of the Stops and the times they happen as strings with the format "<code>beat=stop seconds</code>".
+	<Function name='GetStops' return='{{float, float}}' arguments=''>
+		Returns a table of the Stops and the times they happen as tables.  The first value is the beat.  The second value is the length.
 	</Function>
-	<Function name='GetDelays' return='{string}' arguments=''>
-		Returns a table of the Delays and the times they happen as strings with the format "<code>beat=stop seconds</code>".
+	<Function name='GetDelays' return='{{float, float}}' arguments=''>
+		Returns a table of the Delays and the times they happen as tables.  The first value is the beat.  The second value is the length.
 	</Function>
-	<Function name='GetLabels' return='{string}' arguments=''>
-		Returns a table of the Labels and the times they happen as strings with the format "<code>beat=label name</code>."
+	<Function name='GetLabels' return='{{float, string}}' arguments=''>
+		Returns a table of the Labels and the times they happen as tables.  The first value is the beat.  The second value is the label.
 	</Function>
-	<Function name='GetWarps' return='{string}' arguments=''>
-		Returns a table of the Warps and the times they happen as strings with the format "<code>beat=number of beats warped over</code>."
+	<Function name='GetWarps' return='{{float, float}}' arguments=''>
+		Returns a table of the Warps and the times they happen as tables.  The first value is the beat.  The second value is the number of beats to warp over.
 	</Function>
-	<Function name='GetCombos' return='{string}' arguments=''>
-		Returns a table of the Combos and the times they happen as strings with the format "<code>beat=combo value</code>."
+	<Function name='GetCombos' return='{{float, float, float}}' arguments=''>
+		Returns a table of the Combos and the times they happen as tables.  The first value is the beat.  The second value is the combo.  The third value is the miss combo.
 	</Function>
-	<Function name='GetTimeSignatures' return='{string}' arguments=''>
-		Returns a table of the Time Signatures and the times they happen as strings with the format "<code>beat=beats per measure (numerator)=denominator</code>."
+	<Function name='GetTimeSignatures' return='{{float, float, float}}' arguments=''>
+		Returns a table of the Time Signatures and the times they happen as tables.  The first value is the beat.  The second value is the numerator.  The third value is the denominator.
 	</Function>
-	<Function name='GetTickcounts' return='{string}' arguments=''>
-		Returns a table of the Tickcountss and the times they happen as strings with the format "<code>beat=number of ticks per beat</code>."
+	<Function name='GetTickcounts' return='{{float, float}}' arguments=''>
+		Returns a table of the Tickcounts and the times they happen as tables.  The first value is the beat.  The second value is the number of ticks per beat.
 	</Function>
-	<Function name='GetFakes' return='{string}' arguments=''>
-		Returns a table of the Fakes and the times they happen as strings with the format "<code>beat=number of beats to not judge</code>."
+	<Function name='GetFakes' return='{{float, float}}' arguments=''>
+		Returns a table of the Fakes and the times they happen as tables.  The first value is the beat.  The second value is the number of beats to not judge.
 	</Function>
-	<Function name='GetScrolls' return='{string}' arguments=''>
-		Returns a table of the Scrolls and the times they happen as strings with the format "<code>beat=scroll rate ratio</code>."
+	<Function name='GetScrolls' return='{{float, float}}' arguments=''>
+		Returns a table of the Scrolls and the times they happen as tables.  The first value is the beat.  The second value is the scroll rate ratio.
 	</Function>
-	<Function name='GetSpeeds' return='{string}' arguments=''>
-		Returns a table of the Speeds and the times they happen as strings with the format "<code>beat=scroll rate ratio=length of time to fully activate=unit of activation (0 for beats, 1 for seconds)</code>."
+	<Function name='GetSpeeds' return='{{float, float}}' arguments=''>
+		Returns a table of the Speeds and the times they happen as tables.  The first value is the beat.  The second value is the scroll rate ratio.  The third value is the length of time to fully activate.  The fourth value is the unit of activation (0 for beats, 1 for seconds).
 	</Function>
 	<Function name='HasBPMChanges' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains BPM changes.
