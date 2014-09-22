@@ -480,37 +480,6 @@ static int GetLifeDifficulty()
 LuaFunction( GetLifeDifficulty, GetLifeDifficulty() );
 
 
-static void DefaultFailType( int &sel, bool ToSel, const ConfOption *pConfOption )
-{
-	if( ToSel )
-	{
-		PlayerOptions po;
-		po.FromString( PREFSMAN->m_sDefaultModifiers );
-		sel = po.m_FailType;
-	}
-	else
-	{
-		PlayerOptions po;
-		SongOptions so;
-		GetPrefsDefaultModifiers( po, so );
-
-		switch( sel )
-		{
-			case 0:	po.m_FailType = FailType_Immediate; break;
-			case 1:	po.m_FailType = FailType_ImmediateContinue; break;
-			case 2:	po.m_FailType = FailType_EndOfSong; break;
-			case 3:	po.m_FailType = FailType_Off; break;
-			default:
-			{
-				LOG->Warn("Invalid fail type %d! Going to use the default...", sel);
-				po.m_FailType = FailType_Immediate; break;
-			}
-		}
-
-		SetPrefsDefaultModifiers( po, so );
-	}
-}
-
 // Graphic options
 struct res_t
 {
@@ -739,7 +708,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ProgressiveLifebar",		MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8") );
 	ADD( ConfOption( "ProgressiveStageLifebar",	MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
 	ADD( ConfOption( "ProgressiveNonstopLifebar",	MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
-	ADD( ConfOption( "DefaultFailType",		DefaultFailType,	"Immediate","ImmediateContinue","EndOfSong","Off" ) );	
+	ADD( ConfOption( "DefaultFailType", MovePref<FailType>, "Immediate","ImmediateContinue","EndOfSong","Off" ) );
 	ADD( ConfOption( "CoinsPerCredit",		CoinsPerCredit,		"|1","|2","|3","|4","|5","|6","|7","|8","|9","|10","|11","|12","|13","|14","|15","|16" ) );
 	ADD( ConfOption( "Premium",			MovePref<Premium>,	"Off","Double for 1 Credit","2 Players for 1 Credit" ) );
 	ADD( ConfOption( "JointPremium",		JointPremium,		"Off","2 Players for 1 Credit" ) );

@@ -2,6 +2,7 @@
 #define PREFSMANAGER_H
 
 #include "Preference.h"
+#include "GameConstantsAndTypes.h"
 
 class IniFile;
 
@@ -293,7 +294,7 @@ public:
 
 	/** @brief Enable some quirky behavior used by some older versions of StepMania. */
 	Preference<bool>	m_bQuirksMode;
-	// Preference<RString> m_sDefaultFailType; // XXX: Fix fail bug?
+	Preference<FailType> m_DefaultFailType;
 
 	// Debug:
 	Preference<bool>	m_bLogToDisk;
