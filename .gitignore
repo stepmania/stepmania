@@ -57,6 +57,7 @@ src/stamp-h1
 Docs/doxygen
 PBProject/build
 Xcode/build
+Xcode/*.xcodeproj/xcuserdata/
 *.xcodeproj/xcuserdata
 *.xcodeproj/project.xcworkspace
 src/build-*
