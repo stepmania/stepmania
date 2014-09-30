@@ -5,7 +5,7 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania current development
+StepMania 5.0 beta 4 | 20140930
 --------------------------------------------------------------------------------
 
 To reduce the number of entries in this file, entries are dated to the Saturday after they occurred.
