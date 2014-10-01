@@ -36,7 +36,8 @@ end;
 			OnCommand=cmd(diffuse,PlayerColor(PlayerNumber);fadebottom,1);
 		};
 	};
-	t[#t+1] = LoadFont("Common","Normal") .. {
+	t[#t+1] = Def.BitmapText{
+		Font="Common Normal";
 		Name = "PlayerText";
 		InitCommand=cmd(x,-60;maxwidth,80/0.5;zoom,0.5;queuecommand,"On");
 		OnCommand=cmd(playcommand,"Set");
@@ -70,7 +71,8 @@ t[#t+1] = Def.ActorFrame {
 		OnCommand=cmd(finishtweening;diffusealpha,0.85;);
 		OffCommand=cmd(sleep,3;linear,0.5;diffusealpha,0;);
 	};
-	LoadFont("Common","Normal") .. {
+	Def.BitmapText{
+		Font="Common Normal";
 		Name="Text";
 		InitCommand=cmd(maxwidth,750;horizalign,left;vertalign,top;y,SCREEN_TOP+10;x,SCREEN_LEFT+10;shadowlength,1;diffusealpha,0;);
 		OnCommand=cmd(finishtweening;diffusealpha,1;zoom,0.5);
