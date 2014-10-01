@@ -183,6 +183,8 @@
 --   -- is a table of x, y, and optional z.  Unused if you pass in a custom
 --   -- value actor.
 --   value_pos= {0, -48},
+--   -- Optional.  The font to use for the default value actor.
+--   value_font= "Common Normal",
 --   -- Optional.  The color for the default value text.  Unused if you pass
 --   -- in a custom value actor.  Default is White.
 --   value_color= Color.White,
