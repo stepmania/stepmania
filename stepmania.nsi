@@ -474,6 +474,7 @@ Section "Main Section" SecMain
 	File "Docs\Changelog_SSCformat.txt"
 	File "Docs\CommandLineArgs.txt"
 	File "Docs\CourseFormat.txt"
+	File "Docs\Userdocs\sm5_beginner.txt"
 	File /r /x CVS /x .svn "Docs\license-ext"
 	File /r /x CVS /x .svn "Docs\Luadoc"
 	File /r /x CVS /x .svn "Docs\Themerdocs"
