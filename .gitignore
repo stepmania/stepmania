@@ -105,6 +105,8 @@ Cache/
 Save/
 Logs/
 Screenshots/
+*CSCoverGraphics/
+*CSDataSave/
 portable.ini
 *.sublime-project
 *.sublime-workspace
