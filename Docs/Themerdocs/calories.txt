@@ -6,6 +6,7 @@ The first system simply uses the weight of the player and adds a small amount fo
 The second system uses age, gender, weight, heart rate, and song duration to calculate the amount used during a song.  This requires a theme to support it, and the relevant parts of Editable.ini to be set for the profile.
 
 Editable.ini fields:
+The default theme provides a profile editing screen for setting these fields in Stepmania without needing to edit Editable.ini by hand.
 BirthYear, -- defaults to 1995
 IgnoreStepCountCalories, -- Must be set to 1 to use the second system.
 IsMale, -- Defaults to 1.  Set to 0 for females.
@@ -29,22 +30,9 @@ CalculateCaloriesFromHeartRate()
 
 Intended usage:
 A theme that supports heart rate calorie calculation should take the following steps:
-1.  Create a new screen that the player will be able to use to enter their heart rate.  It shall be called "ScreenHeartEntry" in this list, though a theme can name it anything.
-2.  During ScreenGameplay, track the amount of time that the player is hitting steps for.  This duration must be in seconds.
-3.  When proceeding from ScreenGameplay:
-3a.  Check whether GetIgnoreStepCountCalories returns true for either player's profile.
-3b.  If it returns true for either player, go to ScreenHeartEntry instead of ScreenEvaluationNormal.
-3c.  This means changing the NextScreen metric for ScreenGameplay to use a function that checks the profiles and returns the correct screen.
-4.  On ScreenHeartEntry:
-4a.  Provide a timer that the players can watch while measuring their pulse.
-4b.  Provide a way for the players to enter their heart rate in beats per minute.
-4c.  When a player enters their heart rate, use Profile:CalculateCaloriesFromHeartRate().
-4d.  Do not add calories to a profile if Profile:IgnoreStepCountCalories() returns false for that profile.
-4e.  Pass the heart rate and the duration from ScreenGameplay to Profile:CalculateCaloriesFromHeartRate() and store its return value.
-4f.  Pass the return value of Profile:CalculateCaloriesFromHeartRate() to Profile:AddCaloriesToDailyTotal() to add them to the total for that player's profile.
-4g.  When all active players have finished entering their heart rate, proceed to ScreenEvaluationNormal.
-5.  This concludes the special steps required for theme support of heart rate calorie calculation.
+1.  Create ScreenHeartEntry as described in Themerdocs/Examples/Example_Screens/ScreenHeartEntry.lua.  _fallback's branching logic will take care of checking whether the screen should be used.
 
 Side notes:
 CalculateCaloriesFromHeartRate and AddCaloriesToDailyTotal are separate functions so that a theme can display or use the calorie amount in other ways easily.
 If IgnoreStepCountCalories is true for a profile, but the theme in use does not provide support using the steps listed above, that profile will not accumulate calories.
+Note that calories will not accumulate during gameplay for a profile that has IgnoreStepCountCalories set to true.  PlayerStageStats:GetCaloriesBurned() will also return 0 for that player.  You'll have to store the value returned by CalculateCaloriesFromHeartRate in a global variable if you want to display it later on ScreenEvaluation.
