@@ -25,7 +25,7 @@ void InputHandler_MacOSX_HID::QueueCallback( void *target, int result, void *ref
 	IOHIDQueueInterface **queue = (IOHIDQueueInterface **)sender;
 	IOHIDEventStruct event;
 	AbsoluteTime zeroTime = { 0, 0 };
-	HIDDevice *dev = This->m_vDevices[int( refcon )];
+	HIDDevice *dev = This->m_vDevices[size_t( refcon )];
 	vector<DeviceInput> vPresses;
 
 	while( (result = CALL(queue, getNextEvent, &event, zeroTime, 0)) == kIOReturnSuccess )
@@ -402,71 +402,17 @@ wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool b
 			return L'\0';
 	}
 
-	// Find the USB key code for this DeviceButton
+	// Use Quartz to translate device button to char
 	UInt8 iMacVirtualKey;
 	if( KeyboardDevice::DeviceButtonToMacVirtualKey( button, iMacVirtualKey ) )
 	{
-		UInt32 modifiers = 0;
-		if( bUseCurrentKeyModifiers )
-			modifiers = GetCurrentKeyModifiers();
-
-		// todo: handle Caps Lock -freem
-
-		SInt16 iCurrentKeyScript = GetScriptManagerVariable( smKeyScript );
-		SInt16 iCurrentKeyLayoutID = GetScriptVariable( iCurrentKeyScript, smScriptKeys );
-		static SInt16 iLastKeyLayoutID = !iCurrentKeyLayoutID; // Just be different.
-		static UInt32 iDeadKeyState;
-		static UCKeyboardLayout **KeyLayout;
-
-		if( iCurrentKeyLayoutID != iLastKeyLayoutID )
+		CGEventRef event = CGEventCreateKeyboardEvent( NULL, (CGKeyCode)iMacVirtualKey, true );
+		UniChar string[1];
+		UniCharCount length;
+		CGEventKeyboardGetUnicodeString( event, 1, &length, string );
+		if( length > 0 )
 		{
-			iDeadKeyState = 0;
-			KeyLayout = (UCKeyboardLayout **)GetResource( 'uchr', iCurrentKeyLayoutID );
-			iLastKeyLayoutID = iCurrentKeyLayoutID;
-		}
-		if( KeyLayout )
-		{
-			UInt32 keyboardType = LMGetKbdType();
-			UInt32 nModifiers = bUseCurrentKeyModifiers ? GetCurrentKeyModifiers() : 0;
-			UniChar unicodeInputString[4];
-			UniCharCount length;
-			OSStatus status = UCKeyTranslate( *KeyLayout, iMacVirtualKey, kUCKeyActionDown, nModifiers,
-							  keyboardType, 0, &iDeadKeyState, ARRAYLEN(unicodeInputString),
-							  &length, unicodeInputString );
-
-			if( status )
-				return L'\0';
-
-			CFStringRef inputString = CFStringCreateWithCharacters( NULL, unicodeInputString, length );
-			char utf8InputString[7]; // Max size is 6 (although really only 4 are used) + null.
-
-			if( !CFStringGetCString(inputString, utf8InputString, 7, kCFStringEncodingUTF8) )
-			{
-				CFRelease( inputString );
-				return L'\0';
-			}
-
-			wchar_t ch = utf8_get_char( utf8InputString );
-
-			CFRelease( inputString );
-			return ch == INVALID_CHAR ? L'\0' : ch;
-
-		}
-		else
-		{
-			// Fall back on the 'KCHR' resource.
-			static unsigned long state = 0;
-			static Ptr keymap = NULL;
-			Ptr new_keymap;
-
-			new_keymap = (Ptr)GetScriptManagerVariable(smKCHRCache);
-			if( new_keymap != keymap )
-			{
-				keymap = new_keymap;
-				state = 0;
-			}
-			// XXX: Only returns ascii. é will be returned as e.
-			return KeyTranslate( keymap, UInt16(iMacVirtualKey)|modifiers, &state ) & 0xFF;
+			return string[0];
 		}
 	}
 
