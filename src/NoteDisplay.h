@@ -24,6 +24,17 @@ enum NotePart
 	NotePart_Invalid
 };
 
+/** @brief the color type of a Note. */
+enum NoteColorType
+{
+	NoteColorType_Denominator, /**< Color by note type. */
+	NoteColorType_Progress, /**< Color by progress. */
+	NUM_NoteColorType,
+	NoteColorType_Invalid
+};
+const RString& NoteColorTypeToString( NoteColorType nct );
+NoteColorType StringToNoteColorType( const RString& s );
+
 struct NoteResource;
 
 struct NoteColorActor
