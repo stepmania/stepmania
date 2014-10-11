@@ -32,6 +32,14 @@ static const char *NotePartNames[] = {
 XToString( NotePart );
 LuaXType( NotePart );
 
+static const char *NoteColorTypeNames[] = {
+	"Denominator",
+	"Progress",
+};
+XToString( NoteColorType );
+StringToX( NoteColorType );
+LuaXType( NoteColorType );
+
 static bool IsVectorZero( const RageVector2 &v )
 {
 	return v.x == 0  &&  v.y == 0;
@@ -52,6 +60,9 @@ struct NoteMetricCache_t
 	bool m_bAnimationIsVivid[NUM_NotePart];
 	RageVector2 m_fAdditionTextureCoordOffset[NUM_NotePart];
 	RageVector2 m_fNoteColorTextureCoordSpacing[NUM_NotePart];
+
+	int m_iNoteColorCount[NUM_NotePart];
+	NoteColorType m_NoteColorType[NUM_NotePart];
 
 	//For animation based on beats or seconds -DaisuMaster
 	bool m_bAnimationBasedOnBeats;
@@ -82,6 +93,10 @@ void NoteMetricCache_t::Load( const RString &sButton )
 		m_fAdditionTextureCoordOffset[p].y = NOTESKIN->GetMetricF(sButton,s+"AdditionTextureCoordOffsetY");
 		m_fNoteColorTextureCoordSpacing[p].x = NOTESKIN->GetMetricF(sButton,s+"NoteColorTextureCoordSpacingX");
 		m_fNoteColorTextureCoordSpacing[p].y = NOTESKIN->GetMetricF(sButton,s+"NoteColorTextureCoordSpacingY");
+		m_iNoteColorCount[p] = NOTESKIN->GetMetricI(sButton,s+"NoteColorCount");
+
+		RString ct = NOTESKIN->GetMetric(sButton,s+"NoteColorType");
+		m_NoteColorType[p] = StringToNoteColorType(ct);
 	}
 	//I was here -DaisuMaster
 	m_bAnimationBasedOnBeats = NOTESKIN->GetMetricB(sButton,"AnimationIsBeatBased");
@@ -728,9 +743,20 @@ void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, in
 	if( bNeedsTranslate )
 	{
 		DISPLAY->TexturePushMatrix();
-		NoteType nt = BeatToNoteType( fBeat );
-		ENUM_CLAMP( nt, (NoteType)0, MAX_DISPLAY_NOTE_TYPE );
-		DISPLAY->TextureTranslate( (bIsAddition ? cache->m_fAdditionTextureCoordOffset[part] : RageVector2(0,0)) + cache->m_fNoteColorTextureCoordSpacing[part]*(float)nt );
+		float color = 0.0f;
+		switch( cache->m_NoteColorType[part] )
+		{
+		case NoteColorType_Denominator:
+			color = float( BeatToNoteType( fBeat ) );
+			color = clamp( color, 0, (cache->m_iNoteColorCount[part]-1) );
+			break;
+		case NoteColorType_Progress:
+			color = fmodf( ceilf( fBeat * cache->m_iNoteColorCount[part] ), (float)cache->m_iNoteColorCount[part] );
+			break;
+		default:
+			FAIL_M(ssprintf("Invalid NoteColorType: %i", cache->m_NoteColorType[part]));
+		}
+		DISPLAY->TextureTranslate( (bIsAddition ? cache->m_fAdditionTextureCoordOffset[part] : RageVector2(0,0)) + cache->m_fNoteColorTextureCoordSpacing[part]*color );
 	}
 
 	pActor->Draw();
