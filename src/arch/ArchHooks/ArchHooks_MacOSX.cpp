@@ -223,15 +223,13 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 	// Get system version
 	RString sSystemVersion;
 	{
-		long major = 0, minor = 0, bugFix = 0;
-
-		Gestalt( gestaltSystemVersionMajor, &major );
-		Gestalt( gestaltSystemVersionMinor, &minor );
-		Gestalt( gestaltSystemVersionBugFix, &bugFix );
-		if( bugFix )
-			sSystemVersion = ssprintf( "Mac OS X %ld.%ld.%ld", major, minor, bugFix );
+		char osrelease[256];
+		size_t size = sizeof(osrelease);
+		
+		if( sysctlbyname( "kern.osrelease", osrelease, &size, NULL, 0 ) )
+			sSystemVersion = ssprintf( "Mac OS X %s", osrelease );
 		else
-			sSystemVersion = ssprintf( "Mac OS X %ld.%ld", major, minor );
+			sSystemVersion = ssprintf( "Mac OS X Unknown" );
 	}
 
 	size_t size;
