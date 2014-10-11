@@ -446,12 +446,16 @@ wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool b
 			return L'\0';
 	}
 
-	// Use Quartz to translate device button to char
+	// Use Text Input Source services to convert the key code to character code.
 	UInt8 iMacVirtualKey;
 	if( KeyboardDevice::DeviceButtonToMacVirtualKey( button, iMacVirtualKey ) )
 	{
 		UInt32 nModifiers = bUseCurrentKeyModifiers ? GetCurrentKeyModifiers() : 0;
-		return KeyCodeToChar( iMacVirtualKey, nModifiers );
+		wchar_t sCharCode = KeyCodeToChar( iMacVirtualKey, nModifiers );
+		if( sCharCode != 0 )
+		{
+			return sCharCode;
+		}
 	}
 
 	return InputHandler::DeviceButtonToChar( button, bUseCurrentKeyModifiers );
