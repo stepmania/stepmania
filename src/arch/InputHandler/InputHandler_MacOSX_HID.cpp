@@ -402,20 +402,6 @@ wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool b
 			return L'\0';
 	}
 
-	// Use Quartz to translate device button to char
-	UInt8 iMacVirtualKey;
-	if( KeyboardDevice::DeviceButtonToMacVirtualKey( button, iMacVirtualKey ) )
-	{
-		CGEventRef event = CGEventCreateKeyboardEvent( NULL, (CGKeyCode)iMacVirtualKey, true );
-		UniChar string[1];
-		UniCharCount length;
-		CGEventKeyboardGetUnicodeString( event, 1, &length, string );
-		if( length > 0 )
-		{
-			return string[0];
-		}
-	}
-
 	return InputHandler::DeviceButtonToChar( button, bUseCurrentKeyModifiers );
 }
 
