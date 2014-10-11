@@ -117,6 +117,8 @@ public:
 	int			m_iGameSeed, m_iStageSeed;
 	RString		m_sStageGUID;
 
+	void SetNewStageSeed();
+
 	/**
 	 * @brief Determine if a second player can join in at this time.
 	 * @return true if a player can still enter the game, false otherwise. */
@@ -202,6 +204,9 @@ public:
 	 *
 	 * This resets whenever a player joins or continues. */
 	int				m_iPlayerStageTokens[NUM_PLAYERS];
+	// This is necessary so that IsFinalStageForEveryHumanPlayer knows to
+	// adjust for the current song cost.
+	bool m_AdjustTokensBySongCostForFinalStageCheck;
 
 	RString sExpandedSectionName;
 
@@ -216,6 +221,7 @@ public:
 	int			GetNumStagesLeft( PlayerNumber pn ) const;
 	int			GetSmallestNumStagesLeftForAnyHumanPlayer() const;
 	bool		IsFinalStageForAnyHumanPlayer() const;
+	bool		IsFinalStageForEveryHumanPlayer() const;
 	bool		IsAnExtraStage() const;
 	bool		IsAnExtraStageAndSelectionLocked() const;
 	bool		IsExtraStage() const;
@@ -254,7 +260,7 @@ public:
 	static const float MUSIC_SECONDS_INVALID;
 
 	void ResetMusicStatistics();	// Call this when it's time to play a new song.  Clears the values above.
-	void UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp = RageZeroTimer, bool bUpdatePlayers = false );
+	void UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp = RageZeroTimer );
 	float GetSongPercent( float beat ) const;
 
 	bool AllAreInDangerOrWorse() const;
@@ -264,6 +270,10 @@ public:
 	float	m_fHasteRate; // [-1,+1]; 0 = normal speed
 	float	m_fLastHasteUpdateMusicSeconds;
 	float	m_fAccumulatedHasteSeconds;
+
+	// used by themes that support heart rate entry.
+	RageTimer m_DanceStartTime;
+	float m_DanceDuration;
 
 	// Random Attacks & Attack Mines
 	vector<RString>		m_RandomAttacks;

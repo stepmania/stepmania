@@ -2,4 +2,4 @@
 
 Scoring={}
 
-setmetatable(Scoring,{__index=function() return function() Warn("Lua scoring unimplemented") end end})
+setmetatable(Scoring,{__index=function() return function() lua.ReportScriptError("Lua scoring unimplemented") end end})

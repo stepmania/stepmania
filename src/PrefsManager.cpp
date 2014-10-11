@@ -125,6 +125,17 @@ XToString( CourseSortOrders );
 StringToX( CourseSortOrders );
 LuaXType( CourseSortOrders );
 
+static const char *BackgroundFitModeNames[] = {
+	"CoverDistort",
+	"CoverPreserve",
+	"FitInside",
+	"FitInsideAvoidLetter",
+	"FitInsideAvoidPillar",
+};
+XToString( BackgroundFitMode );
+StringToX( BackgroundFitMode );
+LuaXType( BackgroundFitMode );
+
 bool g_bAutoRestart = false;
 #ifdef DEBUG
 # define TRUE_IF_DEBUG true
@@ -158,10 +169,11 @@ PrefsManager::PrefsManager() :
 	m_iDisplayWidth		( "DisplayWidth",		854 ),
 	m_iDisplayHeight	( "DisplayHeight",		480 ),
 	m_fDisplayAspectRatio	( "DisplayAspectRatio",		16/9.f, ValidateDisplayAspectRatio ),
-	m_iDisplayColorDepth	( "DisplayColorDepth",		16 ),
-	m_iTextureColorDepth	( "TextureColorDepth",		16 ),
-	m_iMovieColorDepth	( "MovieColorDepth",		16 ),
+	m_iDisplayColorDepth	( "DisplayColorDepth",		32 ),
+	m_iTextureColorDepth	( "TextureColorDepth",		32 ),
+	m_iMovieColorDepth	( "MovieColorDepth",		32 ),
 	m_bStretchBackgrounds	( "StretchBackgrounds",		false ),
+	m_BGFitMode("BackgroundFitMode", BFM_CoverPreserve),
 	m_HighResolutionTextures	( "HighResolutionTextures",	HighResolutionTextures_Auto ),
 	m_iMaxTextureResolution	( "MaxTextureResolution",	2048 ),
 	m_iRefreshRate		( "RefreshRate",		REFRESH_DEFAULT ),
@@ -172,6 +184,7 @@ PrefsManager::PrefsManager() :
 
 	m_bHiddenSongs		( "HiddenSongs",		false ),
 	m_bVsync		( "Vsync",			true ),
+	m_FastNoteRendering("FastNoteRendering", false),
 	m_bInterlaced		( "Interlaced",			false ),
 	m_bPAL			( "PAL",			false ),
 	m_bDelayedTextureDelete	( "DelayedTextureDelete",	false ),
@@ -199,6 +212,7 @@ PrefsManager::PrefsManager() :
 	m_bShowCaution			( "ShowCaution",		true ),
 	m_bShowNativeLanguage		( "ShowNativeLanguage",		true ),
 	m_iArcadeOptionsNavigation	( "ArcadeOptionsNavigation",	0 ),
+	m_ThreeKeyNavigation("ThreeKeyNavigation", false),
 	m_MusicWheelUsesSections	( "MusicWheelUsesSections",	MusicWheelUsesSections_ALWAYS ),
 	m_iMusicWheelSwitchSpeed	( "MusicWheelSwitchSpeed",	15 ),
 	m_AllowW1			( "AllowW1",			ALLOW_W1_EVERYWHERE ),
@@ -240,6 +254,7 @@ PrefsManager::PrefsManager() :
 	m_bAllowMultipleHighScoreWithSameName	( "AllowMultipleHighScoreWithSameName",	true ),
 	m_bCelShadeModels		( "CelShadeModels",			false ),	// Work-In-Progress.. disable by default.
 	m_bPreferredSortUsesGroups	( "PreferredSortUsesGroups",		true ),
+	m_fDebounceCoinInputTime	( "DebounceCoinInputTime",		0 ),
 
 	m_fPadStickSeconds		( "PadStickSeconds",			0 ),
 	m_bForceMipMaps			( "ForceMipMaps",			false ),
@@ -271,6 +286,7 @@ PrefsManager::PrefsManager() :
 	m_sCoursesToShowRanking		( "CoursesToShowRanking",		"" ),
 
 	m_bQuirksMode		( "QuirksMode",		false ),
+	m_DefaultFailType("DefaultFailtype", FailType_ImmediateContinue),
 
 	/* Debug: */
 	m_bLogToDisk			( "LogToDisk",		true ),

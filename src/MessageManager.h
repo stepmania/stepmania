@@ -90,6 +90,7 @@ const RString& MessageIDToString( MessageID m );
 struct Message
 {
 	explicit Message( const RString &s );
+	explicit Message(const MessageID id);
 	Message( const RString &s, const LuaReference &params );
 	~Message();
 

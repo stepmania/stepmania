@@ -6,7 +6,10 @@
 
 void AutoActor::Unload()
 {
-	delete m_pActor;
+	if(m_pActor != NULL)
+	{
+		delete m_pActor;
+	}
 	m_pActor=NULL;
 }
 

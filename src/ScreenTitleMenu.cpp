@@ -54,10 +54,12 @@ bool ScreenTitleMenu::Input( const InputEventPlus &input )
 	if( input.type == IET_FIRST_PRESS )
 	{
 		// detect codes
+		// Theme changing pad codes are marked as deprecated in _fallback's
+		// metrics.ini, remove them after SM5? -Kyz
 		if( CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_THEME) ||
 			CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_THEME2) )
 		{
-			GameLoop::ChangeTheme( THEME->GetNextSelectableTheme(), m_sName );
+			GameLoop::ChangeTheme(THEME->GetNextSelectableTheme());
 			bHandled = true;
 		}
 		if( CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_ANNOUNCER) ||

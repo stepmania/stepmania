@@ -282,34 +282,14 @@ void ScreenManager::ThemeChanged()
 	m_soundInvalid.Load( THEME->GetPathS("Common","invalid") );
 	m_soundScreenshot.Load( THEME->GetPathS("Common","screenshot") );
 
-	// unload overlay screens
-	for( unsigned i=0; i<g_OverlayScreens.size(); i++ )
-		SAFE_DELETE( g_OverlayScreens[i] );
-	g_OverlayScreens.clear();
-
-	// reload overlay screens
-	RString sOverlays = THEME->GetMetric( "Common","OverlayScreens" );
-	vector<RString> asOverlays;
-	split( sOverlays, ",", asOverlays );
-	for( unsigned i=0; i<asOverlays.size(); i++ )
-	{
-		Screen *pScreen = MakeNewScreen( asOverlays[i] );
-		if(pScreen)
-		{
-			LuaThreadVariable var2( "LoadingScreen", pScreen->GetName() );
-			pScreen->BeginScreen();
-			g_OverlayScreens.push_back( pScreen );
-		}
-	}
-
 	// reload song manager colors (to avoid crashes) -aj
 	SONGMAN->ResetGroupColors();
+
+	ReloadOverlayScreens();
 
 	// force recreate of new BGA
 	SAFE_DELETE( g_pSharedBGA );
 	g_pSharedBGA = new Actor;
-
-	this->RefreshCreditsMessages();
 }
 
 void ScreenManager::ReloadOverlayScreens()
@@ -369,7 +349,11 @@ bool ScreenManager::AllowOperatorMenuButton() const
 
 bool ScreenManager::IsScreenNameValid(RString const& name) const
 {
-	RString ClassName = THEME->GetMetric(name,"Class");
+	if(name.empty() || !THEME->HasMetric(name, "Class"))
+	{
+		return false;
+	}
+	RString ClassName = THEME->GetMetric(name, "Class");
 	return g_pmapRegistrees->find(ClassName) != g_pmapRegistrees->end();
 }
 

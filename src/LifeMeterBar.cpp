@@ -31,21 +31,6 @@ LifeMeterBar::LifeMeterBar()
 
 	m_pPlayerState = NULL;
 
-	DrainType dtype = GAMESTATE->m_SongOptions.GetStage().m_DrainType;
-	switch( dtype )
-	{
-	case DrainType_Normal:
-		m_fLifePercentage = INITIAL_VALUE;
-		break;
-
-	/* These types only go down, so they always start at full. */
-	case DrainType_NoRecover:
-	case DrainType_SuddenDeath:
-		m_fLifePercentage = 1.0f;	break;
-	default:
-		FAIL_M(ssprintf("Invalid DrainType: %i", dtype));
-	}
-
 	const RString sType = "LifeMeterBar";
 
 	m_fPassingAlpha = 0;
@@ -97,6 +82,20 @@ void LifeMeterBar::Load( const PlayerState *pPlayerState, PlayerStageStats *pPla
 
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 
+	DrainType dtype = pPlayerState->m_PlayerOptions.GetStage().m_DrainType;
+	switch( dtype )
+	{
+		case DrainType_Normal:
+			m_fLifePercentage = INITIAL_VALUE;
+			break;
+			/* These types only go down, so they always start at full. */
+		case DrainType_NoRecover:
+		case DrainType_SuddenDeath:
+			m_fLifePercentage = 1.0f;	break;
+		default:
+			FAIL_M(ssprintf("Invalid DrainType: %i", dtype));
+	}
+
 	// Change life difficulty to really easy if merciful beginner on
 	m_bMercifulBeginnerInEffect = 
 		GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR  &&  
@@ -129,9 +128,9 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	if( IsHot()  &&  fDeltaLife < 0 )
 		fDeltaLife = min( fDeltaLife, -0.10f );		// make it take a while to get back to "hot"
 
-	switch( GAMESTATE->m_SongOptions.GetSong().m_DrainType )
+	switch(m_pPlayerState->m_PlayerOptions.GetSong().m_DrainType)
 	{
-	DEFAULT_FAIL( GAMESTATE->m_SongOptions.GetSong().m_DrainType );
+	DEFAULT_FAIL(m_pPlayerState->m_PlayerOptions.GetSong().m_DrainType);
 	case DrainType_Normal:
 		break;
 	case DrainType_NoRecover:
@@ -151,7 +150,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 {
 	float fDeltaLife=0.f;
-	DrainType dtype = GAMESTATE->m_SongOptions.GetSong().m_DrainType;
+	DrainType dtype = m_pPlayerState->m_PlayerOptions.GetSong().m_DrainType;
 	switch( dtype )
 	{
 	case DrainType_Normal:
@@ -219,7 +218,7 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	if( m_pPlayerStageStats->m_bFailed )
 		return;
 
-	switch( GAMESTATE->m_SongOptions.GetSong().m_DrainType )
+	switch(m_pPlayerState->m_PlayerOptions.GetSong().m_DrainType)
 	{
 		case DrainType_Normal:
 		case DrainType_NoRecover:

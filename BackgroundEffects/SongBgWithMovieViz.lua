@@ -1,15 +1,12 @@
 local Color1 = color(Var "Color1");
 local Color2 = color(Var "Color2");
-local stretchBG = PREFSMAN:GetPreference("StretchBackgrounds")
 
 local t = Def.ActorFrame {
 	Def.Sprite {
 		OnCommand=function(self)
 			self:LoadFromCurrentSongBackground()
 			self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y)
-			if stretchBG then self:SetSize(SCREEN_WIDTH,SCREEN_HEIGHT)
-			else self:scale_or_crop_background();
-			end
+			self:scale_or_crop_background();
 			self:diffuse(Color1)
 			self:effectclock("music")
 		end;

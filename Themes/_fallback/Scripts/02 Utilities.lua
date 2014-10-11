@@ -210,6 +210,11 @@ function IsFreePlay()
 	return IsArcade() and (GAMESTATE:GetCoinMode() == 'CoinMode_Free') or false
 end
 
+function IsCourse()
+	local pm = GAMESTATE:GetPlayMode();
+	return pm == "PlayMode_Nonstop" or "PlayMode_Oni" or "PlayMode_Endless"
+end
+
 function ArgsIfPlayerJoinedOrNil(arg1,arg2)
 	if arg1==nil then arg1=arg2
 	elseif arg2==nil then arg2=arg1 end
@@ -429,10 +434,12 @@ function convert_text_to_indented_lines(text, indent, width, text_zoom)
 			if sub_lines > 0 then
 				indent_mult= 2
 			end
-			local usable_width= width - (indent * indent_mult)
-			if text:GetWidth() * text_zoom > usable_width * 2 then
+			-- On larger resolutions, the font can be squished a bit to fit more on a line.
+			local resolution_width_mult= math.max(1, DISPLAY:GetDisplayHeight() / 720)
+			local usable_width= (width - (indent * indent_mult)) * resolution_width_mult
+			if text:GetWidth() * text_zoom > usable_width then
 				clipped= true
-				width_clip_text(text, usable_width * 2)
+				width_clip_text(text, usable_width)
 			end
 			indented_lines[#indented_lines+1]= {
 				indent_mult, text:GetText()}

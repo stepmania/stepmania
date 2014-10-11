@@ -170,10 +170,12 @@ public:
 	bool IsLoaded() const	{ return m_Value.IsSet(); }
 
 	// Hacks for VC6 for all boolean operators.
-	// todo: get rid of these -aj
-	bool operator ! () const { return !GetValue(); }
-	bool operator && ( const T& input ) const { return GetValue() && input; }
-	bool operator || ( const T& input ) const { return GetValue() || input; }
+	// These three no longer appear to be required:
+	//bool operator ! () const { return !GetValue(); }
+	//bool operator && ( const T& input ) const { return GetValue() && input; }
+	//bool operator || ( const T& input ) const { return GetValue() || input; }
+
+	// This one is still required in at least Visual Studio 2008:
 	bool operator == ( const T& input ) const { return GetValue() == input; }
 };
 

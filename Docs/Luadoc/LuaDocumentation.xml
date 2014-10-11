@@ -31,6 +31,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Alpha' theme='_fallback' return='color' arguments='color c, float percent'>
 		[02 Colors.lua] Returns a <code>color</code> with the specified alpha.
 	</Function>
+	<Function name='ArbitrarySpeedMods' theme='_fallback' return='LuaOptionRow' arguments=''>
+		[03 CustomSpeedMods.lua]
+	</Function>
 	<Function name='AreStagePlayerModsForced' theme='_fallback' return='bool' arguments=''>
 		[02 StageMods.lua]
 	</Function>
@@ -450,7 +453,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Saturation' theme='_fallback' return='color' arguments='color c, float percent'>
 		[02 Colors.lua] Modifies the saturation of the specified color
 	</Function>
-	<Function name='SaveScreenshot' return= 'bool, string' arguments='PlayerNumber pn, bool compress, bool sign, string prefix, string suffix'>
+	<Function name='SaveScreenshot' return='bool, string' arguments='PlayerNumber pn, bool compress, bool sign, string prefix, string suffix'>
 		Saves a screenshot.  If pn is nil, saves to the machine's Screenshots dir, otherwise saves to the profile's Screenshots dir.  Saves as jpg if compress is true, or png if compress is false.  The screenshot is signed if sign is true.  prefix and suffix are optional strings to add to the beginning and end of the filename.<br/>
 		Returns success and full path of the resulting screenshot.
 	</Function>
@@ -645,56 +648,56 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Update' return='void' arguments=''>
 		Updates ArrowEffects, which sets current values for Tornado, Invert, and Beat.
 	</Function>
-	<Function name='GetYOffset' return='float fYOffset' arguments='PlayerState ps, int iCol, float fNoteBeat'>
+	<Function name='GetYOffset' return='float' arguments='PlayerState ps, int iCol, float fNoteBeat'>
 		Returns the Y Offset of a note in column <code>iCol</code> at beat <code>fNoteBeat</code> for the provided PlayerState. Y Offset is affected by Speed mods and Accel mods, and impacts most other arrow effects.
 	</Function>
-	<Function name='GetYPos' return='float fYPos' arguments='PlayerState ps, int iCol, float fYOffset, float fYReverseOffsetPixels'>
+	<Function name='GetYPos' return='float' arguments='PlayerState ps, int iCol, float fYOffset, float fYReverseOffsetPixels'>
 		Returns the Y position of a note in column <code>iCol</code> with a Y offset of <code>fYOffset</code> for the provided PlayerState.<br/>
 		<code>fYReverseOffsetPixels</code> is the separation between targets with and without reverse. This argument is optional and will pull defaults from the metrics for <code>[Player]</code>
 	</Function>
-	<Function name='GetYOffsetFromYPos' return='float fYOffset' arguments='PlayerState ps, int iCol, float fYPos, float fYReverseOffsetPixels'>
+	<Function name='GetYOffsetFromYPos' return='float' arguments='PlayerState ps, int iCol, float fYPos, float fYReverseOffsetPixels'>
 		Returns the Y offset of a note in column <code>iCol</code> with a Y position of <code>fYPos</code> for the provided PlayerState.<br/>
 		<code>fYReverseOffsetPixels</code> is the separation between targets with and without reverse. This argument is optional and will pull defaults from the metrics for <code>[Player]</code>
 	</Function>
-	<Function name='GetXPos' return='float fXPos' arguments='PlayerState ps, int iCol, float fYOffset'>
+	<Function name='GetXPos' return='float' arguments='PlayerState ps, int iCol, float fYOffset'>
 		Returns the X position of a note in column <code>iCol</code> with a Y offset of <code>fYOffset</code> for the provided PlayerState.
 	</Function>
-	<Function name='GetZPos' return='float fZPos' arguments='PlayerState ps, int iCol, float fYOffset'>
+	<Function name='GetZPos' return='float' arguments='PlayerState ps, int iCol, float fYOffset'>
 		Returns the Z position of a note in column <code>iCol</code> with a Y offset of <code>fYOffset</code> for the provided PlayerState.
 	</Function>
-	<Function name='GetRotationX' return='float fRotationX' arguments='PlayerState ps, float fYOffset'>
+	<Function name='GetRotationX' return='float' arguments='PlayerState ps, float fYOffset'>
 		Returns the X rotation of a note with a Y offset of <code>fYOffset</code> for the provided PlayerState.
 	</Function>
-	<Function name='GetRotationY' return='float fRotationY' arguments='PlayerState ps, float fYOffset'>
+	<Function name='GetRotationY' return='float' arguments='PlayerState ps, float fYOffset'>
 		Returns the Y rotation of a note with a Y offset of <code>fYOffset</code> for the provided PlayerState.
 	</Function>
-	<Function name='GetRotationZ' return='float fRotationZ' arguments='PlayerState ps, float fNoteBeat, bool bIsHoldHead'>
+	<Function name='GetRotationZ' return='float' arguments='PlayerState ps, float fNoteBeat, bool bIsHoldHead'>
 		Returns the Z rotation of a note at beat <code>fNoteBeat</code> for the provided PlayerState.<br/>
 		<code>bIsHoldHead</code> is an optional argument which defaults to false. If true, this function will return <code>0</code> if the [ArrowEffects] metric <code>DizzyHoldHeads</code> is false.
 	</Function>
-	<Function name='ReceptorGetRotationZ' return='float fRotationZ' arguments='PlayerState ps'>
+	<Function name='ReceptorGetRotationZ' return='float' arguments='PlayerState ps'>
 		Returns the Z rotation of the receptors for the provided PlayerState.
 	</Function>
-	<Function name='GetAlpha' return='float fAlpha' arguments='PlayerState ps, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar'>
+	<Function name='GetAlpha' return='float' arguments='PlayerState ps, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar'>
 		Returns the Alpha of a note in column <code>iCol</code> with a Y offset of <code>fYOffset</code> for the provided PlayerState.<br/>
 		<code>fPercentFadeToFail</code> is optional and defaults to -1.<br/>
 		<code>fYReverseOffsetPixels</code> is the separation between targets with and without reverse. This argument is optional and will pull defaults from the metrics for <code>[Player]</code><br/>
 		<code>fDrawDistanceBeforeTargetsPixels</code> is optional and will pull defaults from the <code>[Player]</code> metric <code>DrawDistanceBeforeTargetsPixels</code><br/>
 		<code>fFadeInPercentOfDrawFar</code> is optional and will pull defaults from the <code>[NoteField]</code> metric <code>FadeBeforeTargetsPercent</code><br/>
 	</Function>
-	<Function name='GetGlow' return='float fGlow' arguments='PlayerState ps, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar'>
+	<Function name='GetGlow' return='float' arguments='PlayerState ps, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar'>
 		Returns the Glow of a note in column <code>iCol</code> with a Y offset of <code>fYOffset</code> for the provided PlayerState. The arguments are the same as for GetAlpha.
 	</Function>
-	<Function name='GetBrightness' return='float fBrightness' arguments='PlayerState ps, float fNoteBeat'>
+	<Function name='GetBrightness' return='float' arguments='PlayerState ps, float fNoteBeat'>
 		Returns the brightness of a note at beat <code>fNoteBeat</code> for the provided PlayerState.
 	</Function>
-	<Function name='NeedZBuffer' return='bool bNeedZBuffer' arguments='PlayerState ps'>
+	<Function name='NeedZBuffer' return='bool' arguments='PlayerState ps'>
 		Returns true if any arrow effects for the provided PlayerState require the z buffer.
 	</Function>
-	<Function name='GetZoom' return='float fZoom' arguments='PlayerState ps'>
+	<Function name='GetZoom' return='float' arguments='PlayerState ps'>
 		Returns the zoom of a note for the provided PlayerState.
 	</Function>
-	<Function name='GetFrameWidthScale' return='float fFameWidthScale' arguments='PlayerState ps, float fYOffset, fOverlappedTime'>
+	<Function name='GetFrameWidthScale' return='float' arguments='PlayerState ps, float fYOffset, fOverlappedTime'>
 		Returns the FrameWidthScale of a hold part with a Y offset of <code>fYOffset</code> for the provided PlayerState.<br/> <code>fOverlappedTime</code> is optional and will default to 0.
 	</Function>
 </Namespace>
@@ -752,7 +755,7 @@ save yourself some time, copy this for undocumented things:
 		Tries to read the file at <code>sPath</code>. If successful, it returns the file's contents.
 		If unsuccessful, it returns two values: <code>nil</code> and <code>"error"</code>.
 	</Function>
-	<Function name='ReportScriptError' return='' arguments= 'string error, string error_type'>
+	<Function name='ReportScriptError' return='void' arguments='string error, string error_type'>
 		Reports the error through the error reporting system.  error_type is the type used for the dialog that is presented, a dialog will not appear for a type the user has chosen to ignore.<br/>
 		error is optional an defaults to "Script error occurred.".  error_type is optional and defaults to "LUA_ERROR".
 	</Function>
@@ -1535,6 +1538,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetCurrNumToDraw' return='int' arguments='void'>
 		Get the NumToDraw of the current tween state.
 	</Function>
+	<Function name='GetTexture' return='RageTexture' arguments=''>
+		Returns the ActorMultiVertex's texture.
+	</Function>
 	<Function name='SetEffectMode' return='void' arguments='EffectMode em'>
 		Sets the <Link class='ENUM' function='EffectMode'>EffectMode</Link> of the ActorMultiVertex.
 	</Function>
@@ -1571,6 +1577,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetNumItems' return='int' arguments=''>
 		Returns the number of items in the ActorScroller.
+	</Function>
+	<Function name='GetSecondsPauseBetweenItems' return='float' arguments=''>
+		Returns the number of seconds the scroller pauses between items.
 	</Function>
 	<Function name='GetSecondsToDestination' renamed='true' return='float' arguments=''>
 		Returns the number of seconds until the scroller reaches its destination.
@@ -1771,6 +1780,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='jitter' return='void' arguments='bool bJitter'>
 		If <code>bJitter</code> is <code>true</code>, move each character of the string around by a small random amount.
+	</Function>
+	<Function name='max_dimension_use_zoom' return='void' arguments='bool use_zoom'>
+		If use_zoom is true, this BitmapText will use the zoom that has been applied to it when calculating to change its base zoom from maxheight or maxwidth.
 	</Function>
 	<Function name='maxheight' return='void' arguments='float fHeight'>
 		Set the maximum height of the unzoomed text to <code>fHeight</code>. If <code>fHeight</code> is <code>0</code>, then there is no maximum height.
@@ -2180,6 +2192,18 @@ save yourself some time, copy this for undocumented things:
 	<Function name='StepsTypeToLocalizedString' return='string' arguments='StepsType st'>
 		Return the localized string representation of <code>st</code>.
 	</Function>
+	<Function name='GetEnabledGames' return='{string}'>
+		Returns a table of all selectable games.
+	</Function>
+	<Function name='GetStylesForGame' return='{style}' arguments='string game'>
+		Returns a table of all the styles for the that exist for <code>game</code>.
+	</Function>
+	<Function name='SetGame' return='void' arguments='string Game, string Theme' >
+		Sets the current game to <code>Game</code>. The second argument is optional, and if provided will determine which theme is loaded when the game changes.  If the second argument is not provided, the default theme from the preferences for the new game type will be loaded.<br />
+		If only the game changes, the screen specified by the Common::AfterGameChangeScreen metric will be loaded.<br />
+		If the game and the theme both change, the screen specified by the Common::AfterGameAndThemeChangeScreen metric will be loaded.<br />
+		The Common::InitialScreen metric will be used if the appropriate metric for the change is blank or invalid.
+	</Function>
 </Class>
 <Class name='GameSoundManager'>
 	<Function name='DimMusic' return='void' arguments='float fVolume, float fDuration'>
@@ -2460,6 +2484,13 @@ save yourself some time, copy this for undocumented things:
 		editing portion. If in recording or playing mode, this will return
 		<code>false</code>.
 	</Function>
+	<Function name='InsertCoin' return='void' arguments='int iCoins'>
+		Inserts <code>iCoins</code> number of coins.  <code>iCoins</code> can be negative or positive.
+	</Function>
+	<Function name='InsertCredit' return='void' arguments=''>
+		Inserts one credit.  To deduct a credit, pass a negative integer representing the number
+		of coins per credit to <Link class='GameState' function='InsertCoin'>InsertCoin</Link>.
+	</Function>
 	<Function name='IsAnExtraStage' return='bool' arguments=''>
 		Returns <code>true</code> if this is an extra stage.
 	</Function>
@@ -2538,11 +2569,17 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetCurrentCourse' return='void' arguments='Course course'>
 		Sets the current Course to <code>course</code>.
 	</Function>
+	<Function name='SetCurrentPlayMode' return='void' arguments='PlayMode pm'>
+		Sets the current PlayMode to <code>pm</code>.
+	</Function>
 	<Function name='SetCurrentSong' return='void' arguments='Song song'>
 		Sets the current Song to <code>song</code>.
 	</Function>
 	<Function name='SetCurrentSteps' return='void' arguments='PlayerNumber pn, Steps steps'>
 		Sets Player <code>pn</code>'s current Steps to <code>steps</code>.
+	</Function>
+	<Function name='SetCurrentStyle' return='void' arguments='Style style or string sStyle'>
+		Sets current Style to the provided style. Either a style object or a style string can be provided. If current steps for either player are not valid in the new style, they will be cleared.
 	</Function>
 	<Function name='SetCurrentTrail' return='void' arguments='Trail trail'>
 		Sets the current Trail to <code>trail</code>.
@@ -2822,6 +2859,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='ChangeSort' return='bool' arguments='SortOrder so'>
 		Changes the sort order of the wheel.  Returns <code>true</code> if the order was changed.
 	</Function>
+	<Function name='GetSelectedSection' return='string' arguments=''>
+		Returns the name of the currently selected section.
+	</Function>
 	<Function name='IsRouletting' return='bool' arguments=''>
 		Returns <code>true</code> if the MusicWheel is currently handling Roulette selection.
 	</Function>
@@ -2962,117 +3002,101 @@ save yourself some time, copy this for undocumented things:
 		Enum type options are almost identical to bool type.  They take and return an enum value.<br />
 		For brevity, the functions are only given a description if the option requires careful handling or does not follow the float or bool interfaces.<br />
 	</Description>
+	<Function name='Alternate' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='AttackMines' return='bool' arguments='bool value'> </Function>
+	<Function name='BatteryLives' return='int' arguments='int num'>	</Function>
+	<Function name='Backwards' return='bool' arguments='bool value'> </Function>
+	<Function name='Beat' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Big' return='bool' arguments='bool value'> </Function>
+	<Function name='Blink' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Blind' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='BMRize' return='bool' arguments='bool value'> </Function>
+	<Function name='Boomerang' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Boost' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Brake' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Bumpy' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Centered' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='CMod' return='float, float' arguments='float value, float approach_speed'>
+		If the player has a CMod set, returns the value of that CMod and its associated approach speed.  Returns nil otherwise.<br />
+		If the optional first argument is passed, sets the CMod to the value and disables any XMod or MMod that is set.<br />
+		If the optional second argument is passed, sets the speed at which the transition occurs.
+	</Function>
+	<Function name='Confusion' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Cover' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Cross' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Dark' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Dizzy' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Distant' return='float, float' arguments='float value, float approach_speed'>
+		If the player is using Distant (zero skew and positive tilt), returns the value of tilt and its approach_speed.<br />
+		Returns nil otherwise.<br />
+		If the optional first argument is passed, sets tilt to value and skew to zero.<br />
+		If the optional second argument is passed, sets the approach_speed for skew and tilt to it.
+	</Function>
+	<Function name='DrainSetting' return= 'DrainType' arguments='DrainType type'>	</Function>
+	<Function name='Drunk' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Echo' return='bool' arguments='bool value'> </Function>
+	<Function name='Expand' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='FailSetting' return='FailType' arguments='FailType'>
+		Sets the <Link class='ENUM' function='FailType' /> for the player, if the optional argument is provided.  Returns the <Link class='ENUM' function='FailType' /> that was previously set.
+	</Function>
+	<Function name='Flip' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Floored' return='bool' arguments='bool value'> </Function>
+	<Function name='GetStepAttacks' return='bool' argument=''>
+		Returns true if step attacks or random attacks are enabled.
+	</Function>
 	<Function name='IsEasierForCourseAndTrail' return='bool' arguments='Course c, Trail t'>
 		Returns <code>true</code> if the current PlayerOptions makes the current Course/Trail easier.
 	</Function>
 	<Function name='IsEasierForSongAndSteps' return='bool' arguments='Song so, Steps st'>
 		Returns <code>true</code> if the current PlayerOptions makes the current Song/Steps easier.
 	</Function>
-	<Function name='TimeSpacing' return='float, float' arguments='float value, float approach_speed'>
-		TimeSpacing is one of the variables for controlling the speed mod.<br />
-		Use CMod, XMod, or MMod to set the speed mod unless you have a good reason not to.<br />
-		It controls whether the speed mod is in X mode or C mode.  It should only be set to 0 or 1, and is only a float value to allow tweening between the two states.
+	<Function name='Hallway' return='float, float' arguments='float value, float approach_speed'>
+		If the player is using Hallway (zero skew and negative tilt), returns the value of tilt and its approach_speed.<br />
+		Returns nil otherwise.<br />
+		If the optional first argument is passed, sets tilt to negative value and skew to zero.<br />
+		Pass in a positive value for the familiar meaning of Hallway.<br />
+		If the optional second argument is passed, sets the approach_speed for skew and tilt to it.
 	</Function>
+	<Function name='Hidden' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='HiddenOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='HoldRolls' return='bool' arguments='bool value'> </Function>
+	<Function name='Incoming' return='float, float' arguments='float value, float approach_speed'>
+		If the player is using Incoming ((positive skew and negative tilt) or (negative skew and positive tilt)), returns the value of skew and its approach_speed.<br />
+		Returns nil otherwise.<br />
+		If the optional first argument is passed, sets tilt to negative value and skew to value.<br />
+		Pass in a positive value for the familiar meaning of Incoming.<br />
+		If the optional second argument is passed, sets the approach_speed for skew and tilt to it.
+	</Function>
+	<Function name='Invert' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Left' return='bool' arguments='bool value'> </Function>
+	<Function name='LifeSetting' return='LifeType' arguments='LifeType type'>	</Function>
+	<Function name='Little' return='bool' arguments='bool value'> </Function>
 	<Function name='MaxScrollBPM' return='float, float' arguments='float value, float approach_speed'>
 		MaxScrollBPM is one of the variables for controlling the speed mod.<br />
 		Use CMod, XMod, or MMod to set the speed mod unless you have a good reason not to.<br />
 		It is the setting for the MMod.<br />
 		MMods are not tweenable or settable on ScreenGameplay.  Use XMods if you need such an effect.
 	</Function>
-	<Function name='ScrollSpeed' return='float, float' arguments='float value, float approach_speed'>
-		ScrollSpeed is one of the variables for controlling the speed mod.<br />
-		Use CMod, XMod, or MMod to set the speed mod unless you have a good reason not to.<br />
-		It is the setting for the XMod.
-	</Function>
-	<Function name='ScrollBPM' return='float, float' arguments='float value, float approach_speed'>
-		ScrollBPM is one of the variables for controlling the speed mod.<br />
-		Use CMod, XMod, or MMod to set the speed mod unless you have a good reason not to.<br />
-		It is the setting for the CMod.
-	</Function>
-	<Function name='Boost' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Brake' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Wave' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Expand' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Boomerang' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Drunk' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Dizzy' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Confusion' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Mini' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Tiny' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Flip' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Invert' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Tornado' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Tipsy' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Bumpy' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Beat' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Xmode' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Twirl' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Roll' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Hidden' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='HiddenOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Sudden' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='SuddenOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Stealth' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Blink' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='RandomVanish' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Reverse' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Split' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Alternate' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Cross' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Centered' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Dark' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Blind' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Cover' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='RandAttack' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='NoAttack' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='PlayerAutoPlay' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='Tilt' return='float, float' arguments='float value, float approach_speed'>
-		Tilt is one of the mods for controlling the perspective.  Use Overhead, Distant, Incoming, Space, Distant, or Hallway for controlling the perspective in the old way.<br />
-		Tilt tilts the note field forward and back.
-	</Function>
-	<Function name='Skew' return='float, float' arguments='float value, float approach_speed'>
-		Skew is one of the mods for controlling the perspective.  Use Overhead, Distant, Incoming, Space, Distant, or Hallway for controlling the perspective in the old way.<br />
-		Skew moves the vanishing point for the note field away from the center of the screen.<br />
-		Skew has no effect in single mode if Center1Player is true.<br />
-		Skew has no effect in double mode.<br />
-	</Function>
-	<Function name='Passmark' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='RandomSpeed' return='float, float' arguments='float value, float approach_speed'> </Function>
-	<Function name='TurnNone' return='bool' arguments='bool value'> </Function>
-	<Function name='Mirror' return='bool' arguments='bool value'> </Function>
-	<Function name='Backwards' return='bool' arguments='bool value'> </Function>
-	<Function name='Left' return='bool' arguments='bool value'> </Function>
-	<Function name='Right' return='bool' arguments='bool value'> </Function>
-	<Function name='Shuffle' return='bool' arguments='bool value'> </Function>
-	<Function name='SoftShuffle' return='bool' arguments='bool value'> </Function>
-	<Function name='SuperShuffle' return='bool' arguments='bool value'> </Function>
-	<Function name='NoHolds' return='bool' arguments='bool value'> </Function>
-	<Function name='NoRolls' return='bool' arguments='bool value'> </Function>
-	<Function name='NoMines' return='bool' arguments='bool value'> </Function>
-	<Function name='Little' return='bool' arguments='bool value'> </Function>
-	<Function name='Wide' return='bool' arguments='bool value'> </Function>
-	<Function name='Big' return='bool' arguments='bool value'> </Function>
-	<Function name='Quick' return='bool' arguments='bool value'> </Function>
-	<Function name='BMRize' return='bool' arguments='bool value'> </Function>
-	<Function name='Skippy' return='bool' arguments='bool value'> </Function>
 	<Function name='Mines' return='bool' arguments='bool value'> </Function>
-	<Function name='AttackMines' return='bool' arguments='bool value'> </Function>
-	<Function name='Echo' return='bool' arguments='bool value'> </Function>
-	<Function name='Stomp' return='bool' arguments='bool value'> </Function>
-	<Function name='Planted' return='bool' arguments='bool value'> </Function>
-	<Function name='Floored' return='bool' arguments='bool value'> </Function>
-	<Function name='Twister' return='bool' arguments='bool value'> </Function>
-	<Function name='HoldRolls' return='bool' arguments='bool value'> </Function>
+	<Function name='Mini' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Mirror' return='bool' arguments='bool value'> </Function>
+	<Function name='MMod' return='float, float' arguments='float value, float approach_speed'>
+		If the player has a MMod set, returns the value of that MMod and its associated approach speed.  Returns nil otherwise.<br />
+		If the optional first argument is passed, sets the MMod to the value and disables any CMod or XMod that is set.<br />
+		If the optional second argument is passed, sets the speed at which the transition occurs.<br />
+		MMods are not tweenable or settable on ScreenGameplay.  Use XMods if you need such an effect.
+	</Function>
+	<Function name='MuteOnError' return='bool' arguments='bool value'> </Function>
+	<Function name='NoAttack' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='NoFakes' return='bool' arguments='bool value'> </Function>
+	<Function name='NoHolds' return='bool' arguments='bool value'> </Function>
 	<Function name='NoJumps' return='bool' arguments='bool value'> </Function>
 	<Function name='NoHands' return='bool' arguments='bool value'> </Function>
 	<Function name='NoLifts' return='bool' arguments='bool value'> </Function>
-	<Function name='NoFakes' return='bool' arguments='bool value'> </Function>
 	<Function name='NoQuads' return='bool' arguments='bool value'> </Function>
 	<Function name='NoStretch' return='bool' arguments='bool value'> </Function>
-	<Function name='MuteOnError' return='bool' arguments='bool value'> </Function>
-	<Function name='UsingReverse' return='bool' arguments=''>
-		Returns <code>true</code> if the player is using reverse. (equivalent to <code>GetReverse() == 1.0</code>)
-	</Function>
+	<Function name='NoMines' return='bool' arguments='bool value'> </Function>
+	<Function name='NoRolls' return='bool' arguments='bool value'> </Function>
 	<Function name='NoteSkin' return='string, bool' arguments='string name'>
 		Sets the NoteSkin to the named noteskin, unless name is nil or the noteskin does not exist.  Returns the name of the previous noteskin and whether the set attempt succeeded.<br />
 		Changing the noteskin during a song is not supported.<br />
@@ -3080,58 +3104,77 @@ save yourself some time, copy this for undocumented things:
 		note_name= options:NoteSkin() -- Sets note_name to the player's current noteskin.<br />
 		prev_note_name, succeeded= options:NoteSkin("cel") -- Sets prev_note_name to the noteskin the player had set, changes the current noteskin to "cel", sets succeeded to true if the the "cel" noteskin exists.<br />
 	</Function>
-	<Function name='FailSetting' return='FailType' arguments='FailType'>
-		Sets the <Link class='ENUM' function='FailType' /> for the player, if the optional argument is provided.  Returns the <Link class='ENUM' function='FailType' /> that was previously set.
+	<Function name='Overhead' return='bool' arguments='bool'>
+		If the player is using Overhead (0 tilt, 0 skew), returns true.<br />
+		If true is passed, sets the tilt and skew to 0.
 	</Function>
-			<Function name='CMod' return='float, float' arguments='float value, float approach_speed'>
-				If the player has a CMod set, returns the value of that CMod and its associated approach speed.  Returns nil otherwise.<br />
-				If the optional first argument is passed, sets the CMod to the value and disables any XMod or MMod that is set.<br />
-				If the optional second argument is passed, sets the speed at which the transition occurs.
-			</Function>
-			<Function name='XMod' return='float, float' arguments='float value, float approach_speed'>
-				If the player has a XMod set, returns the value of that XMod and its associated approach speed.  Returns nil otherwise.<br />
-				If the optional first argument is passed, sets the XMod to the value and disables any CMod or MMod that is set.<br />
-				If the optional second argument is passed, sets the speed at which the transition occurs.
-			</Function>
-			<Function name='MMod' return='float, float' arguments='float value, float approach_speed'>
-				If the player has a MMod set, returns the value of that MMod and its associated approach speed.  Returns nil otherwise.<br />
-				If the optional first argument is passed, sets the MMod to the value and disables any CMod or XMod that is set.<br />
-				If the optional second argument is passed, sets the speed at which the transition occurs.<br />
-				MMods are not tweenable or settable on ScreenGameplay.  Use XMods if you need such an effect.
-			</Function>
-			<Function name='Overhead' return='bool' arguments='bool'>
-				If the player is using Overhead (0 tilt, 0 skew), returns true.<br />
-				If true is passed, sets the tilt and skew to 0.
-			</Function>
-			<Function name='Incoming' return='float, float' arguments='float value, float approach_speed'>
-				If the player is using Incoming ((positive skew and negative tilt) or (negative skew and positive tilt)), returns the value of skew and its approach_speed.<br />
-				Returns nil otherwise.<br />
-				If the optional first argument is passed, sets tilt to negative value and skew to value.<br />
-				Pass in a positive value for the familiar meaning of Incoming.<br />
-				If the optional second argument is passed, sets the approach_speed for skew and tilt to it.
-			</Function>
-			<Function name='Space' return='float, float' arguments='float value, float approach_speed'>
-				If the player is using Space ((positive skew and positive tilt) or (negative skew and negative tilt)), returns the value of skew and its approach_speed.<br />
-				Returns nil otherwise.<br />
-				If the optional first argument is passed, sets tilt to value and skew to value.<br />
-				If the optional second argument is passed, sets the approach_speed for skew and tilt to it.
-			</Function>
-			<Function name='Hallway' return='float, float' arguments='float value, float approach_speed'>
-				If the player is using Hallway (zero skew and negative tilt), returns the value of tilt and its approach_speed.<br />
-				Returns nil otherwise.<br />
-				If the optional first argument is passed, sets tilt to negative value and skew to zero.<br />
-				Pass in a positive value for the familiar meaning of Hallway.<br />
-				If the optional second argument is passed, sets the approach_speed for skew and tilt to it.
-			</Function>
-			<Function name='Distant' return='float, float' arguments='float value, float approach_speed'>
-				If the player is using Distant (zero skew and positive tilt), returns the value of tilt and its approach_speed.<br />
-				Returns nil otherwise.<br />
-				If the optional first argument is passed, sets tilt to value and skew to zero.<br />
-				If the optional second argument is passed, sets the approach_speed for skew and tilt to it.
-			</Function>
-			<Function name='GetStepAttacks' return='bool' argument=''>
-				Returns true if step attacks or random attacks are enabled.
-			</Function>
+	<Function name='Passmark' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Planted' return='bool' arguments='bool value'> </Function>
+	<Function name='PlayerAutoPlay' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Quick' return='bool' arguments='bool value'> </Function>
+	<Function name='RandAttack' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='RandomSpeed' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='RandomVanish' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Reverse' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Right' return='bool' arguments='bool value'> </Function>
+	<Function name='Roll' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='ScrollBPM' return='float, float' arguments='float value, float approach_speed'>
+		ScrollBPM is one of the variables for controlling the speed mod.<br />
+		Use CMod, XMod, or MMod to set the speed mod unless you have a good reason not to.<br />
+		It is the setting for the CMod.
+	</Function>
+	<Function name='ScrollSpeed' return='float, float' arguments='float value, float approach_speed'>
+		ScrollSpeed is one of the variables for controlling the speed mod.<br />
+		Use CMod, XMod, or MMod to set the speed mod unless you have a good reason not to.<br />
+		It is the setting for the XMod.
+	</Function>
+	<Function name='Shuffle' return='bool' arguments='bool value'> </Function>
+	<Function name='Skew' return='float, float' arguments='float value, float approach_speed'>
+		Skew is one of the mods for controlling the perspective.  Use Overhead, Distant, Incoming, Space, Distant, or Hallway for controlling the perspective in the old way.<br />
+		Skew moves the vanishing point for the note field away from the center of the screen.<br />
+		Skew has no effect in single mode if Center1Player is true.<br />
+		Skew has no effect in double mode.<br />
+	</Function>
+	<Function name='Skippy' return='bool' arguments='bool value'> </Function>
+	<Function name='SoftShuffle' return='bool' arguments='bool value'> </Function>
+	<Function name='Space' return='float, float' arguments='float value, float approach_speed'>
+		If the player is using Space ((positive skew and positive tilt) or (negative skew and negative tilt)), returns the value of skew and its approach_speed.<br />
+		Returns nil otherwise.<br />
+		If the optional first argument is passed, sets tilt to value and skew to value.<br />
+		If the optional second argument is passed, sets the approach_speed for skew and tilt to it.
+	</Function>
+	<Function name='Split' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Stealth' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Stomp' return='bool' arguments='bool value'> </Function>
+	<Function name='Sudden' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='SuddenOffset' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='SuperShuffle' return='bool' arguments='bool value'> </Function>
+	<Function name='TimeSpacing' return='float, float' arguments='float value, float approach_speed'>
+		TimeSpacing is one of the variables for controlling the speed mod.<br />
+		Use CMod, XMod, or MMod to set the speed mod unless you have a good reason not to.<br />
+		It controls whether the speed mod is in X mode or C mode.  It should only be set to 0 or 1, and is only a float value to allow tweening between the two states.
+	</Function>
+	<Function name='Tilt' return='float, float' arguments='float value, float approach_speed'>
+		Tilt is one of the mods for controlling the perspective.  Use Overhead, Distant, Incoming, Space, Distant, or Hallway for controlling the perspective in the old way.<br />
+		Tilt tilts the note field forward and back.
+	</Function>
+	<Function name='Tiny' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Tipsy' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Tornado' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='TurnNone' return='bool' arguments='bool value'> </Function>
+	<Function name='Twirl' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Twister' return='bool' arguments='bool value'> </Function>
+	<Function name='UsingReverse' return='bool' arguments=''>
+		Returns <code>true</code> if the player is using reverse. (equivalent to <code>GetReverse() == 1.0</code>)
+	</Function>
+	<Function name='Wave' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='Wide' return='bool' arguments='bool value'> </Function>
+	<Function name='XMod' return='float, float' arguments='float value, float approach_speed'>
+		If the player has a XMod set, returns the value of that XMod and its associated approach speed.  Returns nil otherwise.<br />
+		If the optional first argument is passed, sets the XMod to the value and disables any CMod or MMod that is set.<br />
+		If the optional second argument is passed, sets the speed at which the transition occurs.
+	</Function>
+	<Function name='Xmode' return='float, float' arguments='float value, float approach_speed'> </Function>
 </Class>
 <Class name='PlayerStageStats'>
 	<Function name='FailPlayer' return='bool' arguments=''>
@@ -3181,6 +3224,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetGrade' return='Grade' arguments=''>
 		Returns the player's grade.
+	</Function>
+	<Function name='GetHighScore' return='HighScore' arguments=''>
+		Returns the player's HighScore.
 	</Function>
 	<Function name='GetHoldNoteScores' return='int' arguments='HoldNoteScore hns'>
 		Returns the number of judgments for a specified HoldNoteScore.
@@ -3580,7 +3626,7 @@ save yourself some time, copy this for undocumented things:
 		Return the width of the display.
 	</Function>
 	<Function name='GetFPS' return='int' arguments=''>
-		Return the FPS.
+		Return the number of frames per second.
 	</Function>
 	<Function name='GetVPF' return='int' arguments=''>
 		Return the VPF.
@@ -3676,6 +3722,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='RageTexture'>
+	<Function name='GetNumFrames' return='int' arguments=''>
+		Returns the number of frames in this texture.
+	</Function>
 	<Function name='GetTextureCoordRect' return='{float}' arguments=''>
 		Return the texture coordinate rectangle as <code>{left, top, right, bottom}</code>.
 	</Function>
@@ -3687,6 +3736,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='rate' return='void' arguments='float fRate'>
 		Sets the animation or movie playback rate to <code>fRate</code>.
+	</Function>
+	<Function name='Reload' return='void' arguments=''>
+		Reloads the texture.
 	</Function>
 </Class>
 <Class name='RollingNumbers'>
@@ -3742,6 +3794,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='RemoveInputCallback' return='void' arguments='function callback'>
 		This removes the callback from the list.
+	</Function>
+	<Function name='SetNextScreenName' return='void' arguments='string name'>
+		Sets the NextScreen value to name.
 	</Function>
 	<Function name='String' theme='_fallback' return='string' arguments='string sName'>
 		[02 Other.lua] Gets a string from the current Screen in the current language.
@@ -3952,6 +4007,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Cancel' return='void' arguments=''>
 		Tells the screen to go to the previous screen.
 	</Function>
+	<Function name='IsTransitioning' return='bool' arguments=''>
+		Returns <code>true</code> if the screen is currently transitioning.
+	</Function>
 	<Function name='StartTransitioningScreen' return='void' arguments='string sScreenMsg'>
 		Tells the screen to go to play its Out transition, and then posts the ScreenMessage <code>sScreenMsg</code>. To go to the next screen, use "SM_GoToNextScreen" as the argument.
 	</Function>
@@ -4040,6 +4098,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetSongFilePath' return='string' arguments=''>
 		Returns the songfile path.
+	</Function>
+	<Function name='GetStageCost' theme='_fallback' return='int' arguments=''>
+		[02 Other.lua] Returns the number of stages this song costs.
 	</Function>
 	<Function name='GetStepsByStepsType' return='{Steps}' arguments='StepsType st'>
 		Returns a table of Steps that have StepsType <code>st</code>.
@@ -4267,13 +4328,7 @@ save yourself some time, copy this for undocumented things:
 	<Description>
 		See the description for PlayerOptions.  The functions follow the same design.
 	</Description>
-	<Function name='LifeSetting' return='LifeType' arguments='LifeType type'>
-	</Function>
-	<Function name='DrainSetting' return= 'DrainType' arguments='DrainType type'>
-	</Function>
 	<Function name='AutosyncSetting' return='AutosyncType' arguments='AutosyncType type'>
-	</Function>
-	<Function name='BatteryLives' return='int' arguments='int num'>
 	</Function>
 	<Function name='AssistClap' return='bool' arguments='bool b'>
 	</Function>
@@ -4578,7 +4633,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetStyleType' return='StyleType' arguments=''>
 		Returns the StyleType for this Style.
 	</Function>
-	<Function name='GetColumnInfo' return='{Track= int, XOffset= int, Name= string}' arguments='int column'>
+	<Function name='GetColumnInfo' return='{int, int, string}' arguments='int column'>
 		Returns a table containing the Track, XOffset, and Name of the column.
 	</Function>
 	<Function name='GetColumnDrawOrder' return='int' arguments='int column'>
@@ -4589,6 +4644,75 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='NeedsZoomOutWith2Players' return='bool' arguments=''>
 		Returns <code>true</code> if the Style needs to be zoomed out with two players.
+	</Function>
+</Class>
+<Class name='TapNote'>
+	<Function name='GetTapNoteType' return='TapNoteType' arguments=''>
+		Returns the <Link class='TapNoteType' /> of the Tap Note.
+	</Function>
+	<Function name='GetTapNoteSubType' return='TapNoteSubType' arguments=''>
+		Returns the <Link class='TapNoteSubType' /> of the Tap Note.
+	</Function>
+	<Function name='GetTapNoteSource' return='TapNoteSource' arguments=''>
+		Returns the <Link class='TapNoteSource' /> of the Tap Note.
+	</Function>
+	<Function name='GetTapNoteResult' return='TapNoteResult' arguments=''>
+		Returns the <Link class='TapNoteResult' /> of the Tap Note.
+	</Function>
+	<Function name='GetPlayerNumber' return='PlayerNumber' arguments=''>
+		Returns the <Link class='PlayerNumber' /> of the Tap Note. Relevant for routine steps.
+	</Function>
+	<Function name='GetAttackModifiers' return='string' arguments=''>
+		Returns the Attack Modifiers of the Tap Note.
+	</Function>
+	<Function name='GetAttackDuration' return='float' arguments=''>
+		Returns the Attack Duration of the Tap Note in seconds.
+	</Function>
+	<Function name='GetKeysoundIndex' return='int' arguments=''>
+		Returns the Keysound Index of the Tap Note.
+	</Function>
+	<Function name='GetHoldDuration' return='float' arguments=''>
+		Returns the Hold Duration of the Tap Note in beats.
+	</Function>
+	<Function name='GetHoldNoteResult' return='HoldNoteResult' arguments=''>
+		Returns the <Link class='HoldNoteResult' /> of the Tap Note.
+	</Function>
+</Class>
+<Class name='TapNoteResult'>
+	<Function name='GetTapNoteScore' return='TapNoteScore' arguments=''>
+		Returns the <Link class='TapNoteScore' /> of the Tap Note.
+	</Function>
+	<Function name='GetTapNoteOffset' return='float' arguments=''>
+		Returns the TapNotOffset of the Tap Note.
+	</Function>
+	<Function name='GetHidden' return='bool' arguments=''>
+		Returns true if the Tap Note was judged with a result that would stop it from drawing.
+	</Function>
+</Class>
+<Class name='HoldNoteResult'>
+	<Function name='GetHoldNoteScore'>
+		Returns the <Link class='HoldNoteScore' /> of the Hold Note.
+	</Function>
+	<Function name='GetLife' return='float' arguments=''>
+		Returns the life of the Hold Note.
+	</Function>
+	<Function name='GetOverlappedTime' return='float' arguments=''>
+		Returns the amount of time the hold has overlapped the target.
+	</Function>
+	<Function name='GetLastHeldBeat' return='float' arguments=''>
+		Returns the last beat the Hold Note was held.
+	</Function>
+	<Function name='GetCheckpointsHit' return='int' arguments=''>
+		Returns the number of checkpoints hit.
+	</Function>
+	<Function name='GetCheckpointsMissed' return='int' arguments=''>
+		Returns the number of checkpoints missed.
+	</Function>
+	<Function name='GetHeld' return='bool' arguments=''>
+		Returns true if the note was initiated and is being held.
+	</Function>
+	<Function name='GetActive' return='bool' arguments=''>
+		Returns true if the note was initiated.
 	</Function>
 </Class>
 <Class name='TextBanner'>
@@ -4678,8 +4802,29 @@ save yourself some time, copy this for undocumented things:
 	<Function name='RunLuaScripts' return='void' arguments='string sMask'>
 		
 	</Function>
+	<Function name='SetTheme' return='void' arguments='string theme'>
+		Changes the current theme.<br />
+		After the theme changes, the screen specified by the Common::AfterThemeChangeScreen metric will be loaded.<br />
+		The Common::InitialScreen metric will be used if Common::AfterThemeChangeScreen is blank or invalid.
+	</Function>
 </Class>
 <Class name='TimingData'>
+	<Description>
+		GetBPMsAndTimes, GetStops, GetDelays, GetLabels, GetWarps, GetCombos, GetTimeSignatures, GetTickcounts, GetFakes, GetScrolls, and GetSpeeds all have two different modes.<br />
+		If the metric TimingData:GetReturnsNumbers is false (the default), they return tables of strings.  The strings are numbers separated by '='.<br />
+		If the metric TimingData:GetReturnsNumbers is true, they return tables of tables, and the inner tables contain numbers as described for each function.<br />
+		The first form is kept around and is the default for compatibility with older themes.  The advantage of the second form is that you no longer need to have a bit of code in your theme to transform the string into a table of numbers before you can use it.<br />
+		Example:<br />
+		local bpmsand= timing_data:GetBPMsAndTimes()<br />
+		for i, s in ipairs(bpmsand) do<br />
+		local sand= split("=", s)<br />
+		bpmsand[i]= {tonumber(sand[1]), tonumber(sand[2])}<br />
+		end<br />
+		-- do something that looks at all the bpms and times. <br />
+		Becomes:<br />
+		local bpmsand= timing_data:GetBPMsAndTimes()<br />
+		-- do something that looks at all the bpms and times. <br />
+	</Description>
 	<Function name='GetActualBPM' return='{float}' arguments=''>
 		Returns the minimum and maximum BPM of the song in a table (in that order).
 	</Function>
@@ -4689,44 +4834,44 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetBPMAtBeat' return='float' arguments='float fBeat'>
 		Returns the BPM at <code>fBeat</code>.
 	</Function>
-	<Function name='GetBPMs' return='{string}' arguments=''>
-		Returns a table of the BPMs as strings.
+	<Function name='GetBPMs' return='{float}' arguments=''>
+		Returns a table of the BPMs as floats.
 	</Function>
-	<Function name='GetBPMsAndTimes' return='{string}' arguments=''>
-		Returns a table of the BPMs and the times they happen as strings with the format "<code>beat=BPM</code>".
+	<Function name='GetBPMsAndTimes' return='{{float, float}}' arguments=''>
+		Returns a table of the BPMs and the times they happen as tables.  The first value is the beat.  The second value is the bpm.
 	</Function>
 	<Function name='GetElapsedTimeFromBeat' return='float' arguments='float fBeat'>
 		Returns the elapsed time from <code>fBeat</code>.
 	</Function>
-	<Function name='GetStops' return='{string}' arguments=''>
-		Returns a table of the Stops and the times they happen as strings with the format "<code>beat=stop seconds</code>".
+	<Function name='GetStops' return='{{float, float}}' arguments=''>
+		Returns a table of the Stops and the times they happen as tables.  The first value is the beat.  The second value is the length.
 	</Function>
-	<Function name='GetDelays' return='{string}' arguments=''>
-		Returns a table of the Delays and the times they happen as strings with the format "<code>beat=stop seconds</code>".
+	<Function name='GetDelays' return='{{float, float}}' arguments=''>
+		Returns a table of the Delays and the times they happen as tables.  The first value is the beat.  The second value is the length.
 	</Function>
-	<Function name='GetLabels' return='{string}' arguments=''>
-		Returns a table of the Labels and the times they happen as strings with the format "<code>beat=label name</code>."
+	<Function name='GetLabels' return='{{float, string}}' arguments=''>
+		Returns a table of the Labels and the times they happen as tables.  The first value is the beat.  The second value is the label.
 	</Function>
-	<Function name='GetWarps' return='{string}' arguments=''>
-		Returns a table of the Warps and the times they happen as strings with the format "<code>beat=number of beats warped over</code>."
+	<Function name='GetWarps' return='{{float, float}}' arguments=''>
+		Returns a table of the Warps and the times they happen as tables.  The first value is the beat.  The second value is the number of beats to warp over.
 	</Function>
-	<Function name='GetCombos' return='{string}' arguments=''>
-		Returns a table of the Combos and the times they happen as strings with the format "<code>beat=combo value</code>."
+	<Function name='GetCombos' return='{{float, float, float}}' arguments=''>
+		Returns a table of the Combos and the times they happen as tables.  The first value is the beat.  The second value is the combo.  The third value is the miss combo.
 	</Function>
-	<Function name='GetTimeSignatures' return='{string}' arguments=''>
-		Returns a table of the Time Signatures and the times they happen as strings with the format "<code>beat=beats per measure (numerator)=denominator</code>."
+	<Function name='GetTimeSignatures' return='{{float, float, float}}' arguments=''>
+		Returns a table of the Time Signatures and the times they happen as tables.  The first value is the beat.  The second value is the numerator.  The third value is the denominator.
 	</Function>
-	<Function name='GetTickcounts' return='{string}' arguments=''>
-		Returns a table of the Tickcountss and the times they happen as strings with the format "<code>beat=number of ticks per beat</code>."
+	<Function name='GetTickcounts' return='{{float, float}}' arguments=''>
+		Returns a table of the Tickcounts and the times they happen as tables.  The first value is the beat.  The second value is the number of ticks per beat.
 	</Function>
-	<Function name='GetFakes' return='{string}' arguments=''>
-		Returns a table of the Fakes and the times they happen as strings with the format "<code>beat=number of beats to not judge</code>."
+	<Function name='GetFakes' return='{{float, float}}' arguments=''>
+		Returns a table of the Fakes and the times they happen as tables.  The first value is the beat.  The second value is the number of beats to not judge.
 	</Function>
-	<Function name='GetScrolls' return='{string}' arguments=''>
-		Returns a table of the Scrolls and the times they happen as strings with the format "<code>beat=scroll rate ratio</code>."
+	<Function name='GetScrolls' return='{{float, float}}' arguments=''>
+		Returns a table of the Scrolls and the times they happen as tables.  The first value is the beat.  The second value is the scroll rate ratio.
 	</Function>
-	<Function name='GetSpeeds' return='{string}' arguments=''>
-		Returns a table of the Speeds and the times they happen as strings with the format "<code>beat=scroll rate ratio=length of time to fully activate=unit of activation (0 for beats, 1 for seconds)</code>."
+	<Function name='GetSpeeds' return='{{float, float}}' arguments=''>
+		Returns a table of the Speeds and the times they happen as tables.  The first value is the beat.  The second value is the scroll rate ratio.  The third value is the length of time to fully activate.  The fourth value is the unit of activation (0 for beats, 1 for seconds).
 	</Function>
 	<Function name='HasBPMChanges' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains BPM changes.
@@ -4953,6 +5098,10 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetType' return='WheelItemDataType' arguments=''>
 		Returns the type of this wheel item.
+	</Function>
+	<Function name='IsLoaded' return='bool' arguments=''>
+		Returns whether the wheel item has been loaded yet.  If this function returns false, calling any other WheelItemBase function will result in an error. <br />
+		A specific case where this is known to happen is commands that trigger on CurrentSongChanged because the music wheel clears the current song before it finishes loading if the current song is longer than the number of stages remaining.
 	</Function>
 </Class>
 <Class name='WorkoutGraph'>

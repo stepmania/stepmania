@@ -240,6 +240,7 @@ static void GetWindowsVersionDebugInfo()
 			*/
 		}
 		else if(ovi.dwMajorVersion == 6 && ovi.dwMinorVersion == 1)
+		{
 			Ver += "Win7";
 			// todo: make this check work
 			/*
@@ -248,6 +249,18 @@ static void GetWindowsVersionDebugInfo()
 			else
 				Ver += "WinServer2008 R2";
 			*/
+		}
+		else if(ovi.dwMajorVersion == 6 && ovi.dwMinorVersion == 2)
+		{
+			Ver += "Win8";
+			// todo: make this check work
+			/*
+			if(ovi.wProductType == VER_NT_WORKSTATION)
+				Ver += "Win7";
+			else
+				Ver += "WinServer2008 R2";
+			*/
+		}
 		else
 			Ver += "unknown NT-based";
 	} else Ver += "???";

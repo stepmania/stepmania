@@ -54,6 +54,7 @@ BitmapText::BitmapText()
 	m_fMaxWidth = 0;
 	m_fMaxHeight = 0;
 	m_iVertSpacing = 0;
+	m_MaxDimensionUsesZoom= false;
 	m_bHasGlowAttribute = false;
 	// We'd be better off not adding strokes to things we can't control
 	// themewise (ScreenDebugOverlay for example). -Midiman
@@ -89,6 +90,7 @@ BitmapText & BitmapText::operator=(const BitmapText &cpy)
 	CPY( m_fDistortion );
 	CPY( m_bUsingDistortion );
 	CPY( m_iVertSpacing );
+	CPY( m_MaxDimensionUsesZoom );
 	CPY( m_aVertices );
 	CPY( m_vpFontPageTextures );
 	CPY( m_mAttributes );
@@ -115,39 +117,37 @@ BitmapText::BitmapText( const BitmapText &cpy ):
 	*this = cpy;
 }
 
-void BitmapText::LoadFromNode( const XNode* pNode )
+void BitmapText::LoadFromNode( const XNode* node )
 {
-	RString sText;
-	pNode->GetAttrValue( "Text", sText );
-	RString sAltText;
-	pNode->GetAttrValue( "AltText", sAltText );
+	RString text;
+	node->GetAttrValue("Text", text);
+	RString alt_text;
+	node->GetAttrValue("AltText", alt_text);
 
-	ThemeManager::EvaluateString( sText );
-	ThemeManager::EvaluateString( sAltText );
+	ThemeManager::EvaluateString(text);
+	ThemeManager::EvaluateString(alt_text);
 
-	RString sFont;
-	// Allow the Font attribute to be either a path or simply the name of a font.
-	// If it's a path, it will have a slash in it.
-	// Also allow it to be set through either "Font" or through "File".
-	if(!pNode->GetAttrValue("Font", sFont) && !pNode->GetAttrValue("File", sFont))
+	RString font;
+	// Pass optional= true so that an error will not be reported if the path
+	// doesn't resolve to a file.  This way, a font can be either a path or the
+	// name of a font to look up in Fonts/.  -Kyz
+	if(!ActorUtil::GetAttrPath(node, "Font", font, true) &&
+		!ActorUtil::GetAttrPath(node, "File", font, true))
 	{
-		LuaHelpers::ReportScriptErrorFmt("%s: BitmapText: Font or File attribute not found",
-			ActorUtil::GetWhere(pNode).c_str());
-		sFont = "Common Normal";
-	}
-	if(sFont.find("/") == RString::npos)
-	{
-		sFont= THEME->GetPathF("", sFont);
-	}
-	else if(!ActorUtil::ResolvePath(sFont, ActorUtil::GetWhere(pNode)))
-	{
-		sFont= THEME->GetPathF("", "Common Normal");
+		if(!node->GetAttrValue("Font", font) &&
+			!node->GetAttrValue("File", font)) // accept "File" for backward compatibility
+		{
+			LuaHelpers::ReportScriptErrorFmt("%s: BitmapText: Font or File attribute"
+				" not found", ActorUtil::GetWhere(node).c_str());
+			font = "Common Normal";
+		}
+		font = THEME->GetPathF("", font);
 	}
 
-	LoadFromFont( sFont );
+	LoadFromFont(font);
 
-	SetText( sText, sAltText );
-	Actor::LoadFromNode( pNode );
+	SetText(text, alt_text);
+	Actor::LoadFromNode(node);
 }
 
 bool BitmapText::LoadFromFont( const RString& sFontFilePath )
@@ -494,6 +494,11 @@ void BitmapText::SetMaxHeight( float fMaxHeight )
 	UpdateBaseZoom();
 }
 
+void BitmapText::SetMaxDimUseZoom(bool use)
+{
+	m_MaxDimensionUsesZoom= use;
+}
+
 void BitmapText::SetUppercase( bool b )
 {
 	m_bUppercase = b;
@@ -515,35 +520,32 @@ void BitmapText::UnSetDistortion()
 
 void BitmapText::UpdateBaseZoom()
 {
-	if( m_fMaxWidth == 0 )
-	{
-		this->SetBaseZoomX( 1 );
-	}
-	else
-	{
-		const float fWidth = GetUnzoomedWidth();
-		if( fWidth != 0 ) // don't divide by 0
-		{
-			// Never decrease the zoom.
-			const float fZoom = min( 1, m_fMaxWidth/fWidth );
-			this->SetBaseZoomX( fZoom );
-		}
+	// don't divide by 0
+	// Never apply a zoom greater than 1.
+	// Factor in the non-base zoom so that maxwidth will be in terms of theme
+	// pixels when zoom is used.
+#define APPLY_DIMENSION_ZOOM(dimension_max, dimension_get, dimension_zoom_get, base_zoom_set) \
+	if(dimension_max == 0) \
+	{ \
+		base_zoom_set(1); \
+	} \
+	else \
+	{ \
+		float dimension= dimension_get(); \
+		if(m_MaxDimensionUsesZoom) \
+		{ \
+			dimension/= dimension_zoom_get(); \
+		} \
+		if(dimension != 0) \
+		{ \
+			const float zoom= min(1, dimension_max / dimension); \
+			base_zoom_set(zoom); \
+		} \
 	}
 
-	if( m_fMaxHeight == 0 )
-	{
-		this->SetBaseZoomY( 1 );
-	}
-	else
-	{
-		const float fHeight = GetUnzoomedHeight();
-		if( fHeight != 0 ) // don't divide by 0
-		{
-			// Never decrease the zoom.
-			const float fZoom = min( 1, m_fMaxHeight/fHeight );
-			this->SetBaseZoomY( fZoom );
-		}
-	}
+	APPLY_DIMENSION_ZOOM(m_fMaxWidth, GetUnzoomedWidth, GetZoomX, SetBaseZoomX);
+	APPLY_DIMENSION_ZOOM(m_fMaxHeight, GetUnzoomedHeight, GetZoomY, SetBaseZoomY);
+#undef APPLY_DIMENSION_ZOOM
 }
 
 bool BitmapText::StringWillUseAlternate( const RString& sText, const RString& sAlternateText ) const
@@ -661,10 +663,20 @@ void BitmapText::DrawPrimitives()
 				iEnd = min( iEnd, m_aVertices.size() );
 				for( ; i < iEnd; i += 4 )
 				{
-					m_aVertices[i+0].c = attr.diffuse[0];	// top left
-					m_aVertices[i+1].c = attr.diffuse[2];	// bottom left
-					m_aVertices[i+2].c = attr.diffuse[3];	// bottom right
-					m_aVertices[i+3].c = attr.diffuse[1];	// top right
+					if( m_internalDiffuse != RageColor(1, 1, 1, 1) )
+					{
+						m_aVertices[i+0].c = attr.diffuse[0] * m_internalDiffuse;
+						m_aVertices[i+1].c = attr.diffuse[2] * m_internalDiffuse;
+						m_aVertices[i+2].c = attr.diffuse[3] * m_internalDiffuse;
+						m_aVertices[i+3].c = attr.diffuse[1] * m_internalDiffuse;
+					}
+					else
+					{
+						m_aVertices[i+0].c = attr.diffuse[0];	// top left
+						m_aVertices[i+1].c = attr.diffuse[2];	// bottom left
+						m_aVertices[i+2].c = attr.diffuse[3];	// bottom right
+						m_aVertices[i+3].c = attr.diffuse[1];	// top right
+					}
 				}
 			}
 		}
@@ -731,7 +743,16 @@ void BitmapText::DrawPrimitives()
 				iEnd = i + attr.length*4;
 			iEnd = min( iEnd, m_aVertices.size() );
 			for( ; i < iEnd; ++i )
-				m_aVertices[i].c = attr.glow;
+			{
+				if( m_internalGlow.a > 0 )
+				{
+					m_aVertices[i].c = attr.glow * m_internalGlow;
+				}
+				else
+				{
+					m_aVertices[i].c = attr.glow;
+				}
+			}
 		}
 		/* Draw glow using the base texture and the glow texture. Otherwise,
 		 * glow looks too tame on BitmapText that has a stroke. - Chris Danford */
@@ -843,8 +864,17 @@ class LunaBitmapText: public Luna<BitmapText>
 {
 public:
 	static int wrapwidthpixels( T* p, lua_State *L )	{ p->SetWrapWidthPixels( IArg(1) ); return 0; }
-	static int maxwidth( T* p, lua_State *L )		{ p->SetMaxWidth( FArg(1) ); return 0; }
-	static int maxheight( T* p, lua_State *L )		{ p->SetMaxHeight( FArg(1) ); return 0; }
+#define MAX_DIMENSION(maxdimension, SetMaxDimension) \
+	static int maxdimension( T* p, lua_State *L ) \
+	{ p->SetMaxDimension(FArg(1)); return 0; }
+	MAX_DIMENSION(maxwidth, SetMaxWidth);
+	MAX_DIMENSION(maxheight, SetMaxHeight);
+#undef MAX_DIMENSION
+	static int max_dimension_use_zoom(T* p, lua_State* L)
+	{
+		p->SetMaxDimUseZoom(lua_toboolean(L, 1));
+		return 0;
+	}
 	static int vertspacing( T* p, lua_State *L )		{ p->SetVertSpacing( IArg(1) ); return 0; }
 	static int settext( T* p, lua_State *L )
 	{
@@ -892,6 +922,7 @@ public:
 		ADD_METHOD( wrapwidthpixels );
 		ADD_METHOD( maxwidth );
 		ADD_METHOD( maxheight );
+		ADD_METHOD( max_dimension_use_zoom );
 		ADD_METHOD( vertspacing );
 		ADD_METHOD( settext );
 		ADD_METHOD( rainbowscroll );

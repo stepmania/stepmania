@@ -43,9 +43,9 @@ int GetNumNWithScore( const NoteData &in, TapNoteScore tns, int MinTaps, int iSt
 	return iNumSuccessfulDoubles;
 }
 
-int GetNumHoldNotesWithScore( const NoteData &in, TapNote::SubType subType, HoldNoteScore hns )
+int GetNumHoldNotesWithScore( const NoteData &in, TapNoteSubType subType, HoldNoteScore hns )
 {
-	ASSERT( subType != TapNote::SubType_Invalid );
+	ASSERT( subType != TapNoteSubType_Invalid );
 
 	int iNumSuccessfulHolds = 0;
 	for( int t=0; t<in.GetNumTracks(); ++t )
@@ -56,7 +56,7 @@ int GetNumHoldNotesWithScore( const NoteData &in, TapNote::SubType subType, Hold
 		for( ; begin != end; ++begin )
 		{
 			const TapNote &tn = begin->second;
-			if( tn.type != TapNote::hold_head )
+			if( tn.type != TapNoteType_HoldHead )
 				continue;
 			if( tn.subType != subType )
 				continue;
@@ -74,7 +74,7 @@ int GetSuccessfulMines( const NoteData &in, int iStartIndex = 0, int iEndIndex =
 	NoteData::all_tracks_const_iterator iter = in.GetTapNoteRangeAllTracks( iStartIndex, iEndIndex );
 	for( ; !iter.IsAtEnd(); ++iter )
 	{
-		if( iter->type == TapNote::mine && iter->result.tns == TNS_AvoidMine )
+		if( iter->type == TapNoteType_Mine && iter->result.tns == TNS_AvoidMine )
 			++iNumSuccessfulMinesNotes;
 	}
 	return iNumSuccessfulMinesNotes;
@@ -93,11 +93,11 @@ int GetSuccessfulHands( const NoteData &in, int iStartIndex = 0, int iEndIndex =
 		for( int t=0; t<in.GetNumTracks(); t++ )
 		{
 			const TapNote &tn = in.GetTapNote(t, i);
-			if( tn.type == TapNote::empty )
+			if( tn.type == TapNoteType_Empty )
 				continue;
-			if( tn.type == TapNote::mine ) // mines don't count
+			if( tn.type == TapNoteType_Mine ) // mines don't count
 				continue;
-			if (tn.type == TapNote::fake ) // fake arrows don't count
+			if (tn.type == TapNoteType_Fake ) // fake arrows don't count
 				continue;
 			if( tn.result.tns <= TNS_W5 )
 				Missed = true;
@@ -136,7 +136,7 @@ int GetSuccessfulLifts( const NoteData &in, TapNoteScore tns, int iStartIndex = 
 	NoteData::all_tracks_const_iterator iter = in.GetTapNoteRangeAllTracks( iStartIndex, iEndIndex );
 	for( ; !iter.IsAtEnd(); ++iter )
 	{
-		if( iter->type == TapNote::lift && iter->result.tns >= tns )
+		if( iter->type == TapNoteType_Lift && iter->result.tns >= tns )
 			++iNumSuccessfulLiftNotes;
 	}
 	return iNumSuccessfulLiftNotes;
@@ -153,10 +153,10 @@ int LastTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
 	{
 		/* Skip empty tracks and mines */
 		const TapNote &tn = in.GetTapNote( t, iRow );
-		if (tn.type == TapNote::empty ||
-			tn.type == TapNote::mine ||
-			tn.type == TapNote::fake ||
-			tn.type == TapNote::autoKeysound) 
+		if (tn.type == TapNoteType_Empty ||
+			tn.type == TapNoteType_Mine ||
+			tn.type == TapNoteType_Fake ||
+			tn.type == TapNoteType_AutoKeysound) 
 			continue;
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn && pn != PLAYER_INVALID )
 			continue;
@@ -190,10 +190,10 @@ int MinTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
 	{
 		// Skip empty tracks and mines
 		const TapNote &tn = in.GetTapNote( t, iRow );
-		if (tn.type == TapNote::empty ||
-			tn.type == TapNote::mine ||
-			tn.type == TapNote::fake ||
-			tn.type == TapNote::autoKeysound) 
+		if (tn.type == TapNoteType_Empty ||
+			tn.type == TapNoteType_Mine ||
+			tn.type == TapNoteType_Fake ||
+			tn.type == TapNoteType_AutoKeysound) 
 			continue;
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn && pn != PLAYER_INVALID )
 			continue;
@@ -256,10 +256,10 @@ TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned 
 	{
 		// Ignore mines (and fake arrows), or the score will always be TNS_None.
 		const TapNote &tn = in.GetTapNote( t, row );
-		if (tn.type == TapNote::empty ||
-			tn.type == TapNote::mine ||
-			tn.type == TapNote::fake ||
-			tn.type == TapNote::autoKeysound ||
+		if (tn.type == TapNoteType_Empty ||
+			tn.type == TapNoteType_Mine ||
+			tn.type == TapNoteType_Fake ||
+			tn.type == TapNoteType_AutoKeysound ||
 			( plnum != PlayerNumber_Invalid && tn.pn != plnum ) )
 			continue;
 		score = min( score, tn.result.tns );
@@ -332,8 +332,8 @@ float GetActualFreezeRadarValue( const NoteData &in, float fSongSeconds )
 		return 1.0f;
 
 	const int ActualHolds = 
-		GetNumHoldNotesWithScore( in, TapNote::hold_head_hold, HNS_Held ) +
-		GetNumHoldNotesWithScore( in, TapNote::hold_head_roll, HNS_Held );
+		GetNumHoldNotesWithScore( in, TapNoteSubType_Hold, HNS_Held ) +
+		GetNumHoldNotesWithScore( in, TapNoteSubType_Roll, HNS_Held );
 	return clamp( float(ActualHolds) / iTotalHolds, 0.0f, 1.0f );
 }
 
@@ -355,13 +355,13 @@ void NoteDataWithScoring::GetActualRadarValues( const NoteData &in, const Player
 		case RadarCategory_Chaos:		out[rc] = GetActualChaosRadarValue( in, fSongSeconds, pss );				break;
 		case RadarCategory_TapsAndHolds:	out[rc] = (float) GetNumNWithScore( in, TNS_W4, 1 );					break;
 		case RadarCategory_Jumps:		out[rc] = (float) GetNumNWithScore( in, TNS_W4, 2 );					break;
-		case RadarCategory_Holds:		out[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_hold, HNS_Held );	break;
+		case RadarCategory_Holds:		out[rc] = (float) GetNumHoldNotesWithScore( in, TapNoteSubType_Hold, HNS_Held );	break;
 		case RadarCategory_Mines:		out[rc] = (float) GetSuccessfulMines( in );						break;
 		case RadarCategory_Hands:		out[rc] = (float) GetSuccessfulHands( in );						break;
-		case RadarCategory_Rolls:		out[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_roll, HNS_Held );	break;
+		case RadarCategory_Rolls:		out[rc] = (float) GetNumHoldNotesWithScore( in, TapNoteSubType_Roll, HNS_Held );	break;
 		case RadarCategory_Lifts:		out[rc] = (float) GetSuccessfulLifts( in, MIN_SCORE_TO_MAINTAIN_COMBO );					break;
 		case RadarCategory_Fakes:		out[rc] = (float) in.GetNumFakes();							break;
-		//case RadarCategory_Minefields:	out[rc] = (float) GetNumMinefieldsWithScore( in, TapNote::hold_head_mine, HNS_Held );	break;
+		//case RadarCategory_Minefields:	out[rc] = (float) GetNumMinefieldsWithScore( in, TapNoteSubType_Mine, HNS_Held );	break;
 		DEFAULT_FAIL( rc );
 		}
 	}

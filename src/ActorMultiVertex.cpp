@@ -645,6 +645,19 @@ public:
 		p->SetTexture( Texture );
 		return 0;
 	}
+	static int GetTexture(T* p, lua_State *L)
+	{
+		RageTexture *texture = p->GetTexture();
+		if(texture != NULL)
+		{
+			texture->PushSelf(L);
+		}
+		else
+		{
+			lua_pushnil(L);
+		}
+		return 1;
+	}
 
 	LunaActorMultiVertex()
 	{
@@ -668,6 +681,7 @@ public:
 
 		// Copy from RageTexture
 		ADD_METHOD( SetTexture );
+		ADD_METHOD( GetTexture );
 		// Load from file path
 		ADD_METHOD( LoadTexture );
 	}

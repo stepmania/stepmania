@@ -5,30 +5,6 @@
 
 #include "EnumHelper.h"
 
-enum LifeType
-{
-	LifeType_Bar,
-	LifeType_Battery,
-	LifeType_Time,
-	NUM_LifeType,
-	LifeType_Invalid
-};
-const RString& LifeTypeToString( LifeType cat );
-const RString& LifeTypeToLocalizedString( LifeType cat );
-LuaDeclareType( LifeType );
-
-enum DrainType
-{
-	DrainType_Normal,
-	DrainType_NoRecover,
-	DrainType_SuddenDeath,
-	NUM_DrainType,
-	DrainType_Invalid
-};
-const RString& DrainTypeToString( DrainType cat );
-const RString& DrainTypeToLocalizedString( DrainType cat );
-LuaDeclareType( DrainType );
-
 enum AutosyncType
 {
 	AutosyncType_Off,
@@ -57,9 +33,6 @@ LuaDeclareType( SoundEffectType );
 class SongOptions
 {
 public:
-	LifeType m_LifeType;
-	DrainType m_DrainType;	// only used with LifeBar
-	int m_iBatteryLives;
 	bool m_bAssistClap;
 	bool m_bAssistMetronome;
 	float m_fMusicRate,	m_SpeedfMusicRate;
@@ -76,8 +49,7 @@ public:
 	 *
 	 * This is taken from Init(), but uses the intended
 	 * initialization lists. */
-	SongOptions(): m_LifeType(LifeType_Bar), m_DrainType(DrainType_Normal),
-		m_iBatteryLives(4), m_bAssistClap(false),
+	SongOptions(): m_bAssistClap(false),
 		m_bAssistMetronome(false), m_fMusicRate(1.0f),
 		m_SpeedfMusicRate(1.0f), m_fHaste(0.0f),
 		m_SpeedfHaste(1.0f), m_AutosyncType(AutosyncType_Off),

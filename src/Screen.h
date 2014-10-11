@@ -123,6 +123,7 @@ protected:
 public:
 	RString GetNextScreenName() const;
 	RString GetPrevScreen() const;
+	void SetNextScreenName(RString const& name);
 
 	bool PassInputToLua(const InputEventPlus& input);
 	void AddInputCallbackFromStack(lua_State* L);

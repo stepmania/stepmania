@@ -1,5 +1,5 @@
 StepMania 5 Beginner's Guide
-Written and edited by the spinal shark collective
+Written and edited by the StepMania team
 --------------------------------------------------------------------------------
 Table of Contents
 1       Introduction
@@ -8,6 +8,7 @@ Table of Contents
   2.1.1 Notable StepMania Versions
   2.1.2 StepMania Components
  2.2    StepMania Configuration
+  2.2.0 Configuring Keys
   2.2.1 Frequently Asked Questions that can be
         Solved by Changing the Configuration
  2.3.   Installing Content
@@ -15,6 +16,8 @@ Table of Contents
   2.3.2 Installing Noteskins/New Gametypes
   2.3.3 Installing Themes
 3.      StepMania 5
+ 3.1 Frequently Asked Questions about StepMania 5
+4.      Reporting problems
 ================================================================================
 Chapter 1: Introduction
 ================================================================================
@@ -28,11 +31,9 @@ skip ahead to Chapter 3: StepMania 5. Otherwise, read on.
 Chapter 2: StepMania
 ================================================================================
 StepMania is an open-source rhythm game/engine, used by many projects, both
-commercial and free. It is the software from which sm-ssc is derived, and as
-a result, must be learned before using sm-ssc if you're not already familiar
-with how it works.
+commercial and free.
 
-Some of the things an average sm-ssc user is expected to know includes the
+Some of the things an average StepMania 5 user is expected to know include the
 meanings/"proper names" of certain things, as well as how to install content
 and configure the program to suit your playing style.
 
@@ -51,10 +52,13 @@ Knowing the versions of StepMania is helpful, as it will help you deduce what
 you can and can not install. (Most songs are version-agnostic, though the
 background animations may not be. Themes, Noteskins, etc. are tied to
 specific versions.)
+StepMania 5.0 is the only version actively supported by the StepMania developers.
+All older versions have various problems and/or limitations that make them too
+burdensome to continue supporting.
 
 * StepMania 3.9
-StepMania 3.9 is currently considered the stable version of StepMania. It dates
-back to 2005, and is the version for which the bulk of content is produced.
+StepMania 3.9 is the previous stable version of StepMania. It dates back to
+2005, and is the version for which the bulk of content is produced.
 
 * StepMania 3.9 Plus/StepMania 3.9 Plus Redux
 3.9 Plus/Redux is a fork of StepMania 3.9 that adds features from
@@ -76,10 +80,31 @@ up until January 2008, when the last build that could be categorized as "CVS"
 was released.
 
 * StepMania 4.0 SVN/alpha
-The current development version of StepMania. This is the version that sm-ssc
-is forked off of. If you wish to port something to sm-ssc, it had better work
-for this version first, unless you like working hard to port the theme past
-various generations and default theme assumptions.
+A development version of StepMania. This is the version that sm-ssc was forked
+off of.  This version is no longer supported and should not be used.
+
+* StepMania 4.0 Beta
+Various betas were released for StepMania 4. They are no longer supported, had
+various problems, and should not be used.
+
+* sm-ssc
+sm-ssc was originally created to provide more theming functionality, as well as
+keep the Lua-based StepMania alive (at that point in time, there were plans to
+release a version of StepMania based on the old CVS codebase, circa ITG PC).
+It eventually became StepMania 5.
+
+* StepMania 5.0 beta 3
+The previous beta release of StepMania 5. Includes many features from sm-ssc
+and StepMania 4.0 as well as many new features. Any content that works in beta
+3 will work in future releases in StepMania 5 (caveat:  Many themes made for
+beta 3 are full of mistakes, they will not work in beta 4)
+
+* StepMania 5.0 beta 4
+The current beta release of StepMania 5. This version has many additional
+theming features and bug/crash fixes.
+If you wish to port something to StepMania 5, or make a theme for StepMania 5,
+it had better work for this version, because it will report your theme
+mistakes to you on screen.
 
 --------------------------------------------------------------------------------
 2.1.2: StepMania Components
@@ -111,9 +136,9 @@ you may see in StepMania communities and online.
    decide to quit. Like Nonstop courses, they have a normal lifebar as well.
 --------------------------------------------------------------------------------
 * Event Mode
-  Typically used during events, this disables the concept of stages and lets you
-  play songs until you decide to stop. It is quite useful in Home Mode, and this
-  guide recommends you enable it.
+  Designed to be used during events, this disables the concept of "stages per
+  game" and lets you play songs until you decide to stop. It is quite useful in 
+  Home Mode, and this guide recommends you enable it.
 
 * Gametypes
   Gametypes are the different game modes StepMania can play. They generally
@@ -142,6 +167,8 @@ you may see in StepMania communities and online.
 * Themes
   Themes are skins for StepMania. They change the look and feel, and in post-3.9
   versions, can also change elements of gameplay (scoring, grading) as well.
+  StepMania 5.0 adds many features to extend the limits of what a theme can
+  change.
 
 --------------------------------------------------------------------------------
 2.2: StepMania Configuration
@@ -151,7 +178,14 @@ Learning how to properly configure StepMania can save you headaches.
 
 Most themes will have the Options menu in plain sight on the Title Menu.
 From there, it depends on which version of StepMania you have, as the options
-menus were re-shuffled around for the StepMania 4 alphas.
+menus were re-shuffled around for the StepMania 4 alphas and later versions.
+This is also known as the Service Options menu.  In all versions on
+StepMania 5, this can be reached by pressing the Scroll Lock key at any time.
+The key set as the "Operator" key in Config Key/Joy Mappings will also bring
+up the Service Options menu.  Some people also call this the "service button".
+Note that in StepMania 5, the theme can control what options appear on this
+screen.  The information below applies only to the default theme and themes
+that choose to present the same options.
 
 The typical StepMania 3.9 Options Menu:
 * Appearance Options
@@ -180,9 +214,71 @@ The StepMania 4.0 alpha 4 Options Menu:
 * Profiles
 * Reload Songs/Courses
 
-sm-ssc changes this up again, making the "Options" item on the Title Menu go
+sm-ssc changed this up again, making the "Options" item on the Title Menu go
 to System Direction (mostly-used options), leaving the normal options menu to
 the Scroll Lock key. Blame Midiman. :)
+
+The StepMania 5.0 beta 4 Options Menu:
+* Calibrate Audio Sync
+* Select Game
+* Config Key/Joy Mappings
+* Test Input
+* Input Options
+* Reload Songs/Courses
+* Arcade Options
+* Appearance Options
+* Set BG Fit Mode
+* Graphics/Sound Options
+* Profiles
+* Network Options
+* UI Options
+* Advanced Options
+* Stepmania Credits
+
+--------------------------------------------------------------------------------
+2.2.0: Configuring Keys
+--------------------------------------------------------------------------------
+Controller mappings in StepMania are configured in the Config Key/Joy Mappings
+screen. To reach it, hit the Operator key (Scroll Lock) and select Config Key/Joy
+Mappings from the menu.
+
+The first thing you will see will be a warning telling you not to unmap important
+keys, such as the arrow keys and the enter key. This is because those keys are
+necessary for navigating the menus, and unmapping them will leave you unable to
+navigate the menus. If you accidentally unmap one of the important keys, you can
+reset your key configuration to the default by using the "Clear To Default" action.
+The warning will be dismissable after 2.5 seconds and will dismiss itself after 5
+seconds. (time controlled by theme) After the warning disappears, you will see
+the current keybindings, arranged into columns.
+
+Each player has their own three columns. "Primary" and "Secondary" are the two
+columns you can configure. "Default" is the column you cannot configure.
+
+The key your cursor is currently on will be flashing between black and white.
+(or whatever the theme set it to do)
+
+To set an individual key, move your cursor to the slot you want to set and hit
+Enter. The next key you hit will be set in that slot.
+
+To set multiple keys in order, and save time going back and forth between the pad
+and the keyboard, move your cursor to a slot and hit 'm'. This marks the slot,
+adding it to a list. Hitting 'm' again will remove it from the list. When you have
+marked all the slots you want to set, select the "Assign List" option. The screen
+will then automatically move through the list of slots in the order they appear
+on the screen, setting each one as you press the button for it.
+
+("Assign List" requires you to mark the keys you want because having preset lists
+for you to pick from for every game type and the common combinations of what people
+will want to set in one go would be more work than it's worth.)
+
+Any changes you make will only be saved when you choose "Save To Disk".
+You can reload the settings from the disk with "Reload From Disk".
+
+If you try to leave the screen after changing a key without saving, you will be
+prompted to save. Choosing "Yes" will save the settings to the disk and leave the
+screen. Choosing "No" will reload the settings from the disk, undoing your change,
+and leave the screen. Choosing "Cancel" will do neither, leaving you on the screen.
+
 --------------------------------------------------------------------------------
 2.2.1: Frequently Asked Questions that can be Solved by Changing the Configuration
 --------------------------------------------------------------------------------
@@ -194,12 +290,14 @@ A: Where you go depends on the version of StepMania you use.
 [3.9] Machine Options
 [4.0 alphas] Advanced Options
 It will be the first option on each.
+[5.0] UI Options, third option from the top.
 
 Q: How do I play forever, without game overs?
 A: Turn on Event Mode. Where you go depends on the version of StepMania you use.
 
 [3.9] Coin Options
 [4.0 alphas] Advanced Options, a bit down the page.
+[5.0] Arcade Options, bottom of the page.
 
 Q: What the heck is this thing that says "Toasty" and how do I get rid of it?
 A: It's a reference to Mortal Kombat 2, where Dan Forden would pop out from
@@ -212,6 +310,7 @@ As for turning it off, turn Easter Eggs off.
 It appears in different locations between StepMania versions:
 [3.9] Gameplay Options
 [4.0 alphas] Advanced Options, a bit down the page.
+[5.0] Advanced Options, 8th option from the top.
 
 --------------------------------------------------------------------------------
 2.3: Installing Content
@@ -222,36 +321,44 @@ completely, as you have other things to do.
 
 Before we touch on the specifics, there are a few skills you should learn.
 
-* Mac Users of StepMania 4.0
-Most of the game content is packaged in a file called StepMania.smzip. This has
-the pros of not cluttering things up, but the con is that people don't know
-where to put things.
+Previous versions of StepMania had instructions to install things in the main
+StepMania folder. This caused problems with UAC on Windows and went against
+convention on Linux and OS X.  Because of those problems, installing content in
+the main StepMania folder is no longer the correct thing to do.
 
-Wherever you have StepMania installed, make the following folders:
+The correct place to install content on StepMania 5 is the User Data folder.
+The exact location is different for each platform.
+Windows:  %APPDATA%/StepMania 5.0/
+Linux:  ~/.stepmania-5.0/
+OS X:  ~/Library/Application Support/StepMania 5/
+Wherever you see the name "User Data folder", this is the folder it refers to.
+OS X additionally has ~/Library/Preferences/StepMania 5/ for storing preferences.
+
+Inside the User Data folder you can install content by placing it in the following folders:
  * Songs
  * Themes
- * Noteskins
+ * NoteSkins
   (and the various gametype folders, which are optional. You need at least one
   non-lights gametype in order to play.)
-  * Noteskins/dance
-  * Noteskins/pump
-  * Noteskins/para
-  * Noteskins/techno
-  * Noteskins/beat
-  * Noteskins/popn
-  * Noteskins/ez2
+  * NoteSkins/dance
+  * NoteSkins/pump
+  * NoteSkins/para
+  * NoteSkins/techno
+  * NoteSkins/beat
+  * NoteSkins/popn
+  * NoteSkins/ez2
  * Announcers
-   (but at this point, no SM4 announcers have been released)
+   (finding announcers made for SM5 is an exercise left for the reader)
  * Packages
-   (optional, but recommended)
 
-and then you can follow the rest of this guide.
+If one of the folders listed above does not exist, do not worry. You only need
+to create a folder if you need to install a piece of content that belongs in it.
 
 * Not on Windows and want to deal with .smzip files?
 There are multiple ways to deal this.
  1) Put the SMZip file in the Packages folder.
  2) Rename the file to have an extension of .zip and extract in the root
-    StepMania folder.
+    User Data folder.
  3) Pass the smzip's filename to StepMania on the command line/terminal.
     Dragging and dropping the .smzip may or may not work; we have not tested it.
     Also, this may or may not exist in your version of StepMania.
@@ -266,7 +373,7 @@ For .smzip files, the section "Not on Windows and want to deal with .smzip
 files?" details all possible ways of installing .smzip files, but the most
 common ways are as follows:
 
-1) For operating systems with a filetype handler (Windows), you can double
+1) For operating systems with a filetype handler (Windows and OS X), you can double
    click on the .smzip file and the StepMania tools will handle it.
 2) Putting the .smzip file in the Packages folder, where it will be automatically
    read by StepMania.
@@ -304,7 +411,7 @@ of a pack that exhibits this behavior.)
 
 Overall, the setup should look something like this:
 
-StepMania\
+User Data folder\
  Songs\
   Song Group 1\
   Song Group 2\
@@ -323,7 +430,7 @@ NoteSkins change the appearance of the arrows. They are also linked with getting
 other gametypes supported in StepMania.
 
 The noteskin installation process looks something like this:
-StepMania\
+User Data folder\
  NoteSkins\
   (gametype)\
    (noteskin for gametype)\
@@ -346,7 +453,7 @@ kb7 (6 or 7 keys depending on when you try to use it)
 Depending on if the theme is packaged in a SMZip or not, you have a few options.
 
 If it is in a .smzip, you can put it in the Packages directory:
-StepMania/
+User Data folder/
  Packages/
   MyTheme.smzip
 and StepMania will automatically read it.
@@ -354,22 +461,27 @@ On Windows, you can double click on the .smzip file to install it in your user
 packages directory. THIS IS NOT RECOMMENDED BECAUSE IT CAUSES CONFUSION.
 
 Since .smzip files are really .zip files, you could also extract them in the
-StepMania root folder.
+User Data folder.
 
 If the themer has not packaged the theme in a .smzip, then you have to look
 inside the archive to see how the directory layout looks.
 1) Themes folder
-   If it has a themes folder when you open it up, extract in the StepMania root
+   If it has a themes folder when you open it up, extract in the User Data
    folder, like you would a .smzip file.
 2) Theme name as a folder
    This one will have to be extracted in the Themes directory. You will get a
    new folder with the files.
 3) A bunch of folders + metrics.ini
    The themer was lazy; you're going to have to make a folder in the Themes
-   directory and extract the theme in there.
+   directory and extract the theme in there. Then go tell the themer that they're a bad person.
 
 When in doubt, read any documentation that comes with the theme for proper
 installation instructions.
+
+Do not attempt to use any theme made for a StepMania version older than StepMania 5.
+It will not work at all. Only use a theme made for StepMania 5 beta 1, or beta 2
+if you are a themer and you are working on that theme to make it work with
+StepMania 5 beta 4.
 
 ================================================================================
 Chapter 3: StepMania 5
@@ -378,3 +490,100 @@ The modern StepMania 5 originally began life as sm-ssc, a fork of StepMania 4
 alpha 5 (later renamed to StepMania 5 after the reboot of SM4). sm-ssc was a fork
 focused on adding features for theming, but also tried to make the process of
 dealing with StepMania a little easier.
+
+--------------------------------------------------------------------------------
+3.1: Frequently Asked Questions about StepMania 5
+--------------------------------------------------------------------------------
+
+Q:  How do I keep my background videos/images from being stretched/distorted?
+A:  StepMania 5 has a preference for this, the "Set BG Fit Mode" option on the
+Service Options screen.
+Each column on that screen is a possible setting for the preference.
+Each column shows how a background with each of the 3 most common aspect ratios
+will look with that setting. The green rectangle in each example shows where the
+edge of the screen will cut off the background, and area not covered by the
+background will be black. Themes that change the contents of the Service Options
+menu might not have Set BG Fit Mode in the Service Options menu, so it is
+recommended to change to the default theme to set this option if you do not see
+it in the Service Options menu for the theme you are using.
+
+Q:  I'm a themer, how do I change the way ScreenSetBGFit looks?
+A:  First, make sure your metrics allow it to be accessed. If your theme sets the
+LineNames metric in the ScreenOptionsService section, add "BGFit" to that metric.
+
+Second, open Themes/_fallback/BGAnimations/ScreenSetBGFit overlay.lua and read
+everything in there.
+
+Third, create the screen in your theme using the knowledge gained from step two.
+
+Q:  I run multiple versions of StepMania and I don't want to copy all my songs to the new install location.
+A:  Close stepmania.  Look in your User Data folder for Save/Preferences.ini.
+On OS X Save/ will actually be under ~/Library/Preferences/StepMania 5/.
+Open that file in a text editor. Add the full path to your Songs folder to the
+"AdditionalSongFolders" setting. If the folder your songs are in is anywhere
+under Program Files or anywhere else that UAC interferes with, you will probably
+have problems when editing simfiles.
+
+Q:  I have thousands of scores in StepMania 3.9, how can I copy them to StepMania 5?
+A:  Create a new profile in StepMania 5. The profile's folder will be
+"User Data folder/Save/LocalProfiles/000000/" (000000 is the first profile created,
+if the new profile is the second profile, the folder name will be 000001, and so forth).
+Place your Stats.xml from StepMania 3.9 into the folder for the new profile,
+replacing any Stats.xml that is currently there.
+
+Q:  I have some scores in one profile and some other scores in another profile, how do I merge them?
+A:  Hopefully, this feature will be added soon.
+
+Q:  I want to make a theme, why do I have to learn Lua? Isn't making a theme just making graphics?
+A:  Themes are far more powerful in StepMania 5 than in previous versions.
+Themes are more than just image files and can change every part of interacting
+with StepMania. With this power comes the requirement of knowing how to use it.
+If the thought of learning Lua and using it as a language frightens you, spend
+more time reading the documentation and asking questions so you can learn to
+understand how to use it.
+
+================================================================================
+Chapter 4: Reporting Problems
+================================================================================
+http://www.stepmania.com/forums/ is the official StepMania forum.
+Use this for asking questions and generally posting about StepMania.
+Please search the forums for threads that cover your question before making a
+new thread.
+
+https://github.com/stepmania/stepmania/issues is the bug tracker list.
+Use this only for reporting problems or requesting features.
+Please search the list before reporting a new issue.
+
+#stepmania-devs on irc.freenode.net is the IRC channel where the devs hang out.
+Use this to chat with the devs and discuss StepMania related things.
+
+When reporting issues on the bug tracker:
+1:  Make the title of your issue short and informative.
+"Crash report" is a bad title because it doesn't contain any context.
+"Crash while juggling kittens" is a good title because it shows vaguely where the
+problem is.
+
+2:  Include explicit steps for reproducing your problem.
+If you can't explain how you encountered the problem, we can't fix it.
+
+3:  If you have new information to add to an existing issue, please comment on
+that issue with the information you have.
+
+4:  Developers have limited time, issues will not be fixed or responded to
+immediately. Responses may take a week or two, so be patient and be prepared to
+go through a couple requests for more information.
+
+5:  It is important to include the name of the theme you are using with any issue
+report. If the problem is not an outright crash and cannot be reproduced in the
+default theme, it is likely a problem with the theme and should be reported to
+the author of that theme. The main StepMania issue tracker is not the place to
+report problems with any theme other than the default theme.
+
+Requesting features on the bug tracker:
+If you are a themer requesting a new theme API feature, be prepared to describe
+very explicitly what you want. Same as for reporting bugs, be prepared to wait.
+Spending time in the developer IRC channel discussing issues can help a lot.
+
+If you are a skilled programmer, implementing the feature and submitting a pull
+request is a good way to get it added to StepMania 5. See github's instructions
+on forking a repository and submitting a pull request.

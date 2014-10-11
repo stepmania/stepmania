@@ -2,6 +2,7 @@
 #define PREFSMANAGER_H
 
 #include "Preference.h"
+#include "GameConstantsAndTypes.h"
 
 class IniFile;
 
@@ -111,6 +112,16 @@ enum CourseSortOrders
 	NUM_CourseSortOrders,
 	CourseSortOrders_Invalid
 };
+enum BackgroundFitMode
+{
+	BFM_CoverDistort,
+	BFM_CoverPreserve,
+	BFM_FitInside,
+	BFM_FitInsideAvoidLetter,
+	BFM_FitInsideAvoidPillar,
+	NUM_BackgroundFitMode,
+	BackgroundFitMode_Invalid
+};
 
 /** @brief Holds user-chosen preferences that are saved between sessions. */
 class PrefsManager
@@ -154,6 +165,7 @@ public:
 	Preference<int>	m_iTextureColorDepth;
 	Preference<int>	m_iMovieColorDepth;
 	Preference<bool>	m_bStretchBackgrounds;
+	Preference<BackgroundFitMode> m_BGFitMode;
 	Preference<HighResolutionTextures>	m_HighResolutionTextures;
 	Preference<int>	m_iMaxTextureResolution;
 	Preference<int>	m_iRefreshRate;
@@ -164,6 +176,7 @@ public:
 
 	Preference<bool>	m_bHiddenSongs;
 	Preference<bool>	m_bVsync;
+	Preference<bool>	m_FastNoteRendering;
 	Preference<bool>	m_bInterlaced;
 	Preference<bool>	m_bPAL;
 	Preference<bool>	m_bDelayedTextureDelete;
@@ -191,6 +204,7 @@ public:
 	Preference<bool>	m_bShowCaution;
 	Preference<bool>	m_bShowNativeLanguage;
 	Preference<int>	m_iArcadeOptionsNavigation;
+	Preference<bool>	m_ThreeKeyNavigation;
 	Preference<MusicWheelUsesSections>		m_MusicWheelUsesSections;
 	Preference<int>	m_iMusicWheelSwitchSpeed;
 	Preference<AllowW1>	m_AllowW1; // this should almost always be on, given use cases. -aj
@@ -232,6 +246,7 @@ public:
 	Preference<bool>	m_bAllowMultipleHighScoreWithSameName;
 	Preference<bool>	m_bCelShadeModels;
 	Preference<bool>	m_bPreferredSortUsesGroups;
+	Preference<float>	m_fDebounceCoinInputTime; // allow users to apply a distinct debounce to coin input
 
 	// Number of seconds it takes for a button on the controller to release
 	// after pressed.
@@ -279,7 +294,7 @@ public:
 
 	/** @brief Enable some quirky behavior used by some older versions of StepMania. */
 	Preference<bool>	m_bQuirksMode;
-	// Preference<RString> m_sDefaultFailType; // XXX: Fix fail bug?
+	Preference<FailType> m_DefaultFailType;
 
 	// Debug:
 	Preference<bool>	m_bLogToDisk;

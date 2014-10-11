@@ -90,29 +90,11 @@ static StageStats AccumPlayedStageStats( const vector<StageStats>& vss )
 void StatsManager::GetFinalEvalStageStats( StageStats& statsOut ) const
 {
 	statsOut.Init();
-
 	vector<StageStats> vssToCount;
-
-	// Show stats only for the latest 3 normal songs + passed extra stages
-	int PassedRegularSongsLeft = 3;
-	for( int i = (int)m_vPlayedStageStats.size()-1; i >= 0; --i )
+	for(size_t i= 0; i < m_vPlayedStageStats.size(); ++i)
 	{
-		const StageStats &ss = m_vPlayedStageStats[i];
-
-		if( !ss.OnePassed() )
-			continue;
-
-		if( ss.m_Stage != Stage_Extra1 && ss.m_Stage != Stage_Extra2 )
-		{
-			if( PassedRegularSongsLeft == 0 )
-				break;
-
-			--PassedRegularSongsLeft;
-		}
-
-		vssToCount.push_back( ss );
+		vssToCount.push_back(m_vPlayedStageStats[i]);
 	}
-
 	statsOut = AccumPlayedStageStats( vssToCount );
 }
 

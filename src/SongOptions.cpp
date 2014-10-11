@@ -4,24 +4,6 @@
 #include "GameState.h"
 #include "CommonMetrics.h"
 
-static const char *LifeTypeNames[] = {
-	"Bar",
-	"Battery",
-	"Time",
-};
-XToString( LifeType );
-XToLocalizedString( LifeType );
-LuaXType( LifeType );
-
-static const char *DrainTypeNames[] = {
-	"Normal",
-	"NoRecover",
-	"SuddenDeath",
-};
-XToString( DrainType );
-XToLocalizedString( DrainType );
-LuaXType( DrainType );
-
 static const char *AutosyncTypeNames[] = {
 	"Off",
 	"Song",
@@ -43,9 +25,6 @@ LuaXType( SoundEffectType );
 
 void SongOptions::Init() 
 {
-	m_LifeType = LifeType_Bar;
-	m_DrainType = DrainType_Normal;
-	m_iBatteryLives = 4;
 	m_bAssistClap = false;
 	m_bAssistMetronome = false;
 	m_fMusicRate = 1.0f;
@@ -67,9 +46,6 @@ void SongOptions::Approach( const SongOptions& other, float fDeltaSeconds )
 #define DO_COPY( x ) \
 	x = other.x;
 
-	DO_COPY( m_LifeType );
-	DO_COPY( m_DrainType );
-	DO_COPY( m_iBatteryLives );
 	APPROACH( fMusicRate );
 	APPROACH( fHaste );
 	DO_COPY( m_bAssistClap );
@@ -96,27 +72,6 @@ static void AddPart( vector<RString> &AddTo, float level, RString name )
 
 void SongOptions::GetMods( vector<RString> &AddTo ) const
 {
-	switch( m_LifeType )
-	{
-	case LifeType_Bar:		
-		switch( m_DrainType )
-		{
-		case DrainType_Normal:						break;
-		case DrainType_NoRecover:		AddTo.push_back("NoRecover");	break;
-		case DrainType_SuddenDeath:	AddTo.push_back("SuddenDeath");	break;
-		}
-		break;
-	case LifeType_Battery:
-		AddTo.push_back( ssprintf( "%dLives", m_iBatteryLives ) );
-		break;
-	case LifeType_Time:
-		AddTo.push_back( "LifeTime" );
-		break;
-	default:
-		FAIL_M(ssprintf("Invalid LifeType: %i", m_LifeType));
-	}
-
-
 	if( m_fMusicRate != 1 )
 	{
 		RString s = ssprintf( "%2.2f", m_fMusicRate );
@@ -210,12 +165,6 @@ bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 	}
 
 	matches.clear();
-	Regex lives("^([0-9]+) ?(lives|life)$");
-	if( lives.Compare(sBit, matches) )
-	{
-		m_iBatteryLives = StringToInt( matches[0] );
-		return true;
-	}
 
 	vector<RString> asParts;
 	split( sBit, " ", asParts, true );
@@ -227,12 +176,7 @@ bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 			on = false;
 	}
 
-	if(	 sBit == "norecover" )				m_DrainType = DrainType_NoRecover;
-	else if( sBit == "suddendeath" || sBit == "death" )	m_DrainType = DrainType_SuddenDeath;
-	else if( sBit == "power-drop" )				m_DrainType = DrainType_NoRecover;
-	else if( sBit == "normal-drain" )			m_DrainType = DrainType_Normal;
-
-	else if( sBit == "clap" )				m_bAssistClap = on;
+	if( sBit == "clap" )				m_bAssistClap = on;
 	else if( sBit == "metronome" )				m_bAssistMetronome = on;
 	else if( sBit == "autosync" || sBit == "autosyncsong" )	m_AutosyncType = on ? AutosyncType_Song : AutosyncType_Off;
 	else if( sBit == "autosyncmachine" )			m_AutosyncType = on ? AutosyncType_Machine : AutosyncType_Off; 
@@ -244,9 +188,6 @@ bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 	else if( sBit == "randombg" )				m_bRandomBGOnly = on;
 	else if( sBit == "savescore" )				m_bSaveScore = on;
 	else if( sBit == "savereplay" )			m_bSaveReplay = on;
-	else if( sBit == "bar" )				m_LifeType = LifeType_Bar;
-	else if( sBit == "battery" )				m_LifeType = LifeType_Battery;
-	else if( sBit == "lifetime" )				m_LifeType = LifeType_Time;
 	else if( sBit == "haste" )				m_fHaste = on? 1.0f:0.0f;
 	else
 		return false;
@@ -257,9 +198,6 @@ bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 bool SongOptions::operator==( const SongOptions &other ) const
 {
 #define COMPARE(x) { if( x != other.x ) return false; }
-	COMPARE( m_LifeType );
-	COMPARE( m_DrainType );
-	COMPARE( m_iBatteryLives );
 	COMPARE( m_fMusicRate );
 	COMPARE( m_fHaste );
 	COMPARE( m_bAssistClap );
@@ -283,12 +221,9 @@ class LunaSongOptions: public Luna<SongOptions>
 {
 public:
 
-	ENUM_INTERFACE(LifeSetting, LifeType, LifeType);
-	ENUM_INTERFACE(DrainSetting, DrainType, DrainType);
 	ENUM_INTERFACE(AutosyncSetting, AutosyncType, AutosyncType);
 	//ENUM_INTERFACE(SoundEffectSetting, SoundEffectType, SoundEffectType);
 	// Broken, SoundEffectType_Speed disables rate mod, other settings have no effect. -Kyz
-	INT_INTERFACE(BatteryLives, BatteryLives);
 	BOOL_INTERFACE(AssistClap, AssistClap);
 	BOOL_INTERFACE(AssistMetronome, AssistMetronome);
 	BOOL_INTERFACE(StaticBackground, StaticBackground);
@@ -300,11 +235,8 @@ public:
 
 	LunaSongOptions()
 	{
-		ADD_METHOD(LifeSetting);
-		ADD_METHOD(DrainSetting);
 		ADD_METHOD(AutosyncSetting);
 		//ADD_METHOD(SoundEffectSetting);
-		ADD_METHOD(BatteryLives);
 		ADD_METHOD(AssistClap);
 		ADD_METHOD(AssistMetronome);
 		ADD_METHOD(StaticBackground);

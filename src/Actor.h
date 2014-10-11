@@ -244,6 +244,8 @@ public:
 	virtual bool EarlyAbortDraw() const { return false; }
 	/** @brief Calculate values that may be needed  for drawing. */
 	virtual void PreDraw();
+	/** @brief Reset internal diffuse and glow. */
+	virtual void PostDraw();
 	/** @brief Start the drawing and push the transform on the world matrix stack. */
 	virtual void BeginDraw();
 	/**

@@ -170,6 +170,14 @@ RString ComboSegment::ToString(int dec) const
 	return ssprintf(str.c_str(), GetBeat(), GetCombo(), GetMissCombo());
 }
 
+vector<float> ComboSegment::GetValues() const
+{
+	vector<float> ret;
+	ret.push_back(GetCombo());
+	ret.push_back(GetMissCombo());
+	return ret;
+}
+
 RString LabelSegment::ToString(int dec) const
 {
 	const RString str = "%.0" + IntToString(dec) + "f=%s";
@@ -189,6 +197,14 @@ RString TimeSignatureSegment::ToString(int dec) const
 	return ssprintf(str.c_str(), GetBeat(), GetNum(), GetDen());
 }
 
+vector<float> TimeSignatureSegment::GetValues() const
+{
+	vector<float> ret;
+	ret.push_back(GetNum());
+	ret.push_back(GetDen());
+	return ret;
+}
+
 RString SpeedSegment::ToString(int dec) const
 {
 	const RString str = "%.0" + IntToString(dec)
@@ -196,6 +212,15 @@ RString SpeedSegment::ToString(int dec) const
 		+ IntToString(dec) + "f=%u";
 	return ssprintf(str.c_str(), GetBeat(), GetRatio(),
 					GetDelay(), GetUnit());
+}
+
+vector<float> SpeedSegment::GetValues() const
+{
+	vector<float> ret;
+	ret.push_back(GetRatio());
+	ret.push_back(GetDelay());
+	ret.push_back(GetUnit());
+	return ret;
 }
 
 void SpeedSegment::Scale( int start, int oldLength, int newLength )

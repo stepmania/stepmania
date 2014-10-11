@@ -352,7 +352,7 @@ void BeginnerHelper::Update( float fDeltaTime )
 			int iStep = 0;
 			const int iNumTracks = m_NoteData[pn].GetNumTracks(); 
 			for( int t=0; t<iNumTracks; t++ )
-				if( m_NoteData[pn].GetTapNote(t,iRow).type == TapNote::tap )
+				if( m_NoteData[pn].GetTapNote(t,iRow).type == TapNoteType_Tap )
 					iStep |= 1 << t;
 
 			// Assign new data

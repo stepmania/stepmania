@@ -12,7 +12,7 @@ local t = Def.ActorFrame {
 		BeginCommand=function(self,param)
 			local screen = SCREENMAN:GetTopScreen();
 			local glifemeter = screen:GetLifeMeter(player);
-				self:setstate(glifemeter:GetTotalLives()-1);
+				self:setstate(clamp(glifemeter:GetTotalLives()-1,0,9));
 				
 				if glifemeter:GetTotalLives() <= 4 then
 					self:zoomx(barWidth/(4*64));
@@ -26,14 +26,14 @@ local t = Def.ActorFrame {
 				if param.LivesLeft == 0 then
 					self:visible(false)
 				else
-					self:setstate( math.max(param.LivesLeft-1,0) )
+					self:setstate( clamp(param.LivesLeft-1,0,9) )
 					self:visible(true)
 				end
 			end
 		end;
 		StartCommand=function(self,param)
 			if param.Player == player then
-				self:setstate( math.max(param.LivesLeft-1,0) );			
+				self:setstate( clamp(param.LivesLeft-1,0,9) );			
 			end			
 		end;
 		FinishCommand=cmd(playcommand,"Start");

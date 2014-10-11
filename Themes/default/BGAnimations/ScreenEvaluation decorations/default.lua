@@ -1,5 +1,8 @@
 local function GraphDisplay( pn )
 	local t = Def.ActorFrame {
+		LoadActor( THEME:GetPathG("_GraphDisplay","overlay")) .. {
+			InitCommand=cmd(y,6);
+		};
 		Def.GraphDisplay {
 			InitCommand=cmd(Load,"GraphDisplay";);
 			BeginCommand=function(self)
@@ -67,13 +70,13 @@ local t = LoadFallbackB();
 
 t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
 
-if ShowStandardDecoration("GraphDisplay") then
+if ShowStandardDecoration("GraphDisplay") and not GAMESTATE:GetPlayMode() == "PlayMode_Rave" then
 	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 		t[#t+1] = StandardDecorationFromTable( "GraphDisplay" .. ToEnumShortString(pn), GraphDisplay(pn) );
 	end
 end
 
-if ShowStandardDecoration("ComboGraph") then
+if ShowStandardDecoration("ComboGraph") and not GAMESTATE:GetPlayMode() == "PlayMode_Rave" then
 	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 		t[#t+1] = StandardDecorationFromTable( "ComboGraph" .. ToEnumShortString(pn), ComboGraph(pn) );
 	end

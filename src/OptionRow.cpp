@@ -803,7 +803,7 @@ bool OptionRow::SetSelected( PlayerNumber pn, int iChoice, bool b )
 
 bool OptionRow::NotifyHandlerOfSelection(PlayerNumber pn, int choice)
 {
-	bool changed= m_pHand->NotifyOfSelection(pn, choice);
+	bool changed= m_pHand->NotifyOfSelection(pn, choice - m_bFirstItemGoesDown);
 	if(changed)
 	{
 		ChoicesChanged(m_RowType, false);
@@ -818,6 +818,11 @@ bool OptionRow::NotifyHandlerOfSelection(PlayerNumber pn, int choice)
 		UpdateEnabledDisabled();
 	}
 	return changed;
+}
+
+bool OptionRow::GoToFirstOnStart()
+{
+	return m_pHand->GoToFirstOnStart();
 }
 
 void OptionRow::SetExitText( RString sExitText )

@@ -55,9 +55,9 @@ static void Serialize( const TapNote &o, Json::Value &root )
 {
 	root = Json::Value(Json::objectValue);
 
-	if( o.type != TapNote::tap )
+	if( o.type != TapNoteType_Tap )
 		root["Type"] = (int)o.type;
-	if( o.type == TapNote::hold_head )
+	if( o.type == TapNoteType_HoldHead )
 		root["SubType"] = (int)o.subType;
 	//root["Source"] = (int)source;
 	if( !o.sAttackModifiers.empty() )
@@ -100,7 +100,7 @@ static void Serialize( const RadarValues &o, Json::Value &root )
 {
 	FOREACH_ENUM( RadarCategory, rc )
 	{
-		root[ RadarCategoryToString(rc) ] = o.m_Values.f[rc];
+		root[ RadarCategoryToString(rc) ] = o[rc];
 	}
 }
 

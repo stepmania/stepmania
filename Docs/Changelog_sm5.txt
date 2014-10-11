@@ -1,12 +1,211 @@
-﻿StepMania 5 Changelog
+StepMania 5 Changelog
 ________________________________________________________________________________
 The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
-StepMania current development
+StepMania 5.0 beta 4 | 20140930
 --------------------------------------------------------------------------------
+
+To reduce the number of entries in this file, entries are dated to the Saturday after they occurred.
+
+2014/09/27
+----------
+* [Preferences] DebounceCoinInput time pref added for machines that need a
+  different debounce time for coin input.
+* [Preferences] DefaultFailtype preference reinstated to resolve default fail
+  type problems.
+* [TimingData] TimingData::GetReturnsNumbers metric added to make TimingData
+  functions return tables of numbers instead of strings.
+
+2014/09/20
+----------
+* [ScreenOptionsCustomizeProfile] New screen added for setting profile stats.
+
+2014/09/13
+----------
+* [Endless] Songs are repicked on each repeat of the course.
+* [GameState] GetCurrentStage logic fixed to correctly return Stage_Final in
+  all cases where it should.
+* [JudgmentMessage] Tracks parameter replaced with Notes and Holds parameters.
+* [NumPadEntry] New customizable lua class for custom screens.
+* [ScreenHeartEntry] New screen added to default.
+* [TapNote] Class exposed to lua through JudgmentMessage with all data on the
+  TapNote.
+
+2014/09/06
+----------
+* Changed ES/OMES speed mod to 2x from 1.5x.
+* [ActorMultiVertex] GetTexture lua function added.
+* [BitmapText] max_dimension_use_zoom lua function added.
+* [Edit Mode] Swap Up/Down and Arbitrary Remap added to Alter menu.
+* [GameState] InsertCoin and InsertCredit lua functions added.
+* [PrefsManager] FastNoteRendering preference added.
+* [RageTexture] Reload lua function added.
+* [RageTexture?] "__screen__" added as special screenshot texture name.
+  Causes a skip.
+* [Screen] SetNextScreenName lua function added.
+* [ScreenCredits] New ScreenCredits.  Please update your theme if you applied
+  theme changes to this screen.
+* [ScreenMapControllers] Massively changed to make it not suck.  New elements,
+  new metrics, new actions.
+* [WheelItemBase] IsLoaded lua function added.
+
+2014/08/30
+----------
+* [ActorScroller] wrap parameter added for controlling looping behavior better.
+* Life difficulty matches StepMania 3.9's again.
+
+2014/08/16
+----------
+* [ActorFrame] Internal diffuse and glow now apply to BitmapText children.
+* [GameState] SetCurrentPlayMode and SetCurrentStyle lua functions added.
+* [PrefsManager] BackgroundFitMode preference added to settle all problems
+  with how backgrounds are stretched or fit.
+* [ScreenSetBGFit] New screen for presenting the BackgroundFitMode preference.
+  See _fallback/BGAnimations/ScreenSetBGFitMode overlay.lua for documentation.
+* [ThemeManager] HasMetric/String now return false when the group name or
+  metric name is an empty string.
+
+2014/08/09
+----------
+* [GameManager] GetStylesForGame lua function added.
+* [LifeMeterBattery] CourseSongRewardLives metric added.
+* [LifeMeter] LifeType, DrainType, and BatteryLives moved to PlayerOptions so
+  the players can have different settings.
+* [ScreenGameplay] LifeMeterChangedP1 message is no longer broadcast for for
+  P2's lifemeter.  Use LifeMeterChangedP2.  "Life" and "StepsSecond" are passed
+  in the params table for the message.
+
+2014/08/02
+----------
+* [MusicWheel] Added GetSelectedSection lua function.
+
+2014/07/26
+----------
+* [ActorScroller] Accidental "permanent loop" bug fixed.
+* [Common metrics] AfterThemeChangeScreen, AfterGameChangeScreen, and
+  AfterGameAndThemeChangeScreen optional metrics added to Common section.
+* [GameManager] SetGame lua function added.
+* [Globals] OldStyleStringToDifficulty lua function added.
+* [PrefsManager] SavePreferences lua function added.
+  ThreeKeyNavigation preference added.
+* [SoundManager] IsTimingDelayed lua function added.
+* [ThemeManager] SetTheme lua function added.
+* [ScreenHowToPlay] CharacterName metric works again.
+
+2014/07/18
+----------
+* [BitmapText] LoadFont is now obsolete.  Set the Font attribute of the
+  BitmapText instead.
+* [ErrorReporting] New system that reports theme errors through dialogs and
+  an on screen display.  (Sorry guys, your themes are all full of errors, and
+  you should fix them)
+* [LogDisplay] New actor class used by ErrorReporting, possibly useful more
+  widely.  See _fallback/Scripts/04 LogDisplay.lua for docs.
+
+2014/07/05
+----------
+* [Actor] GetDestX/Y/Z lua functions added.
+* [Profile] Lua functions for calculating calories based on heart rate added.
+  See ThemerDocs/calories.txt
+
+2014/06/28
+----------
+* [ArrowEffects] New namespace of lua functions.
+* [Screen] AddInputCallback and RemoveInputCallback lua functions added.
+
+2014/06/21
+----------
+* [Gameplay] CMods and MMods now automatically compensate for music rate.
+* [Globals] SaveScreenshot lua function added.
+* [ScreenPlayerOptions] ArbitrarySpeedMods system added.
+* [ScreenSelectMusic] Pad codes that set modifiers disabled.
+
+2014/06/07
+----------
+* [ScreenSelectMusic] SelectMenuInput message is now always sent when Select
+  is pressed.
+
+2014/05/17
+----------
+* [GameState] StoreRankingName lua function added.  Ranking names now allow
+  lowercase.
+* [Profile] SetLastUsedHighScoreName and GetHighScoreListIfExists lua
+  functions added.
+
+2014/05/10
+----------
+* [Player] Tracks param added to JudgmentMessageCommand. (will change before
+  beta 4)
+* [ScreenGameplay] Themable haste system added.
+  GetTrueBPS lua function added.
+* [ThemeManager] GetMetricNamesInGroup and GetStringNamesInGroup lua functions
+  added.
+
+2014/05/03
+----------
+* [ActorFrame] GetChild and GetChildren modified, see Lua.xml.
+* [NoteSkinManager] GetMetric function added.
+* [PlayerOptions] Entirely new API for setting player options.  Superior
+  alternative to ApplyGameCommand.
+* [SongOptions] Entirely new API for setting song options.  Same design as new
+  PlayerOptions API.
+* [NoteField] NoteField Board can now use any AutoActor class instead of just
+  Sprite/Sprite-derived ones.
+
+2014/04/26
+----------
+* [Style] GetColumnInfo and GetColumnDrawOrder lua functions added.
+
+2014/04/19
+----------
+* [ActorMultiVertex] New actor class added.
+* [ScreenGameplay] GetHasteRate lua function added.  GiveUpSeconds metric added.
+* [SoundManager] StopMusic lua function added.
+
+2014/04/05
+----------
+* [GameState] HaveProfileToLoad/Save and Load/SaveProfiles lua functions added.
+* [ScreenWithMenuElements] StartTransitioningScreen lua function added.
+
+2014/03/22
+----------
+* [Player] HoldNoteScore_MissedHold added.
+
+2014/03/05
+----------
+* [ScreenNetSelectBase] Fix colors when unicode characters are in chat box.
+
+2014/03/08
+----------
+* [ActorScroller] DrawByZPosition fixed for looping ActorScrollers.
+* [Globals?] GetTimeSinceStart global lua function added.
+* [Player] FirstTrack parameter added to JudgmentMessageCommand.  (will change
+  before beta 4)
+
+================================================================================
+StepMania 5.0 beta 3 | 20140224
+--------------------------------------------------------------------------------
+
+2014/02/22
+----------
+* [Actor] texturetranslate lua function added.
+* [BitmapText] distort lua function added.
+* [ComboGraph] Added BodyHeight metric.
+* [GameState] JoinInput lua function added.
+* [PlayerOptions] "resetspeed" mod added.
+* [PlayerStageStats] GetComboList and GetLifeRecord lua functions added.
+* [Preferences] ComboContinuesBetweenSongs preference added.
+* [ScreenWithMenuElements] SetAllowLateJoin lua function added.
+* [SoundManager] loop and applyRate args added to PlayMusicPart lua function.
+* [Sprite] SetCustomPosCoords lua function added.
+* [Utils] XML backwards compatibility added.
+
+2014/02/08
+----------
+* [Actor] Added heading, pitch, and roll lua functions.
 
 2013/10/09
 ----------
@@ -573,7 +772,7 @@ StepMania 5.0 alpha 1 | 20120108
 * [ScreenManager] Made AddScreenToTop take a second (optional) parameter for
   posting a ScreenMessage on screen pop. [AJ]
 * Only read certain tags during first load; makes song loading faster. [theDtTvB]
-  
+
 2012/01/07
 ----------
 * Fix Portable.ini not working on Mac OS X. [shakesoda]
@@ -682,8 +881,8 @@ StepMania 5.0 alpha 1 | 20120108
 2011/11/15
 ----------
 * [LifeMeterBar] Added the ForceLifeDifficultyOnExtraStage metric and
-  the ExtraStageLifeDifficulty metric. Let the themer decide if extra stages 
-  should have their own life bar behavior. Note that this metric does NOT 
+  the ExtraStageLifeDifficulty metric. Let the themer decide if extra stages
+  should have their own life bar behavior. Note that this metric does NOT
   change the lifebar to the battery style. [Wolfman2000/FSX]
 
 2011/11/14
@@ -1228,7 +1427,7 @@ StepMania 5.0 Preview 2 | 20110703
 2011/06/12
 ----------
 * [ScreenNetSelectMusic] Add PlayerOptionsScreen metric. [AJ]
-* [ScreenEdit] Restore the old PageUp/PageDown behavior, added Control + 
+* [ScreenEdit] Restore the old PageUp/PageDown behavior, added Control +
   PageUp/PageDown to use recent time signature behavior. Laptop users, that
   includes you guys too: semicolon and apostrophe are still good. [Wolfman2000]
 
@@ -1367,7 +1566,7 @@ StepMania 5.0 Preview 1 | 20110529
 ----------
 * [ScreenGameplay] Removed hardcoded commands for Debug (give up text) and
   replace them with DebugStartOnCommand, DebugBackOnCommand, and
-  DebugTweenOffCommand. [AJ] 
+  DebugTweenOffCommand. [AJ]
 * Added #SPEEDS to the SSC format. This multiplies your scrolling speed during
   gameplay, not replaces it (see mod attacks for replacing). [Wolfman2000]
 

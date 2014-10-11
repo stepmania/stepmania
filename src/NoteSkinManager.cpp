@@ -200,14 +200,23 @@ void NoteSkinManager::GetNoteSkinNames( const Game* pGame, vector<RString> &AddT
 	GetAllNoteSkinNamesForGame( pGame, AddTo );
 }
 
+bool NoteSkinManager::NoteSkinNameInList(const RString name, vector<RString> name_list)
+{
+	for(size_t i= 0; i < name_list.size(); ++i)
+	{
+		if(0 == stricmp(name, name_list[i]))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 bool NoteSkinManager::DoesNoteSkinExist( const RString &sSkinName )
 {
 	vector<RString> asSkinNames;
 	GetAllNoteSkinNamesForGame( GAMESTATE->m_pCurGame, asSkinNames );
-	for( unsigned i=0; i<asSkinNames.size(); i++ )
-		if( 0==stricmp(sSkinName, asSkinNames[i]) )
-			return true;
-	return false;
+	return NoteSkinNameInList(sSkinName, asSkinNames);
 }
 
 bool NoteSkinManager::DoNoteSkinsExistForGame( const Game *pGame )
@@ -215,6 +224,26 @@ bool NoteSkinManager::DoNoteSkinsExistForGame( const Game *pGame )
 	vector<RString> asSkinNames;
 	GetAllNoteSkinNamesForGame( pGame, asSkinNames );
 	return !asSkinNames.empty();
+}
+
+RString NoteSkinManager::GetDefaultNoteSkinName()
+{
+	RString name= THEME->GetMetric("Common", "DefaultNoteSkinName");
+	vector<RString> all_names;
+	GetAllNoteSkinNamesForGame(GAMESTATE->m_pCurGame, all_names);
+	if(all_names.empty())
+	{
+		return "";
+	}
+	if(!NoteSkinNameInList(name, all_names))
+	{
+		name= "default";
+		if(!NoteSkinNameInList(name, all_names))
+		{
+			name= all_names[1];
+		}
+	}
+	return name;
 }
 
 void NoteSkinManager::GetAllNoteSkinNamesForGame( const Game *pGame, vector<RString> &AddTo )

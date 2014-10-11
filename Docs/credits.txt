@@ -89,7 +89,7 @@ Macgravel
 
 hanubeki (@803832, formerly sy567)
  * Small beginner helper fix
- (http://www.stepmania.com/forums/showpost.php?p=158721&postcount=12)
+ (http://old.stepmania.com/forums/showpost.php?p=158721&postcount=12)
  * Lots of code changes from hanubeki-modified-sm-ssc:
  http://code.google.com/r/hanubeki-modified-sm-ssc/
 

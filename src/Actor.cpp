@@ -288,7 +288,7 @@ void Actor::Draw()
 	
 	this->PreDraw();
 	ASSERT( m_pTempState != NULL );
-	if( m_pTempState->diffuse[0].a != 0 || m_pTempState->diffuse[1].a != 0 || m_pTempState->diffuse[2].a != 0 || m_pTempState->diffuse[3].a != 0 || m_pTempState->glow.a != 0 ) // This Actor is not fully transparent
+	if( m_pTempState->diffuse[0].a > 0 || m_pTempState->diffuse[1].a > 0 || m_pTempState->diffuse[2].a > 0 || m_pTempState->diffuse[3].a > 0 || m_pTempState->glow.a > 0 ) // This Actor is not fully transparent
 	{	
 		// call the most-derived versions
 		this->BeginDraw();	
@@ -296,7 +296,14 @@ void Actor::Draw()
 		this->EndDraw();
 	}
 	
+	this->PostDraw();
 	m_pTempState = NULL;
+}
+
+void Actor::PostDraw() // reset internal diffuse and glow
+{
+	m_internalDiffuse = RageColor(1, 1, 1, 1);
+	m_internalGlow.a = 0;
 }
 
 void Actor::PreDraw() // calculate actor properties
@@ -468,7 +475,6 @@ void Actor::PreDraw() // calculate actor properties
 		{
 			tempState.diffuse[i] *= m_internalDiffuse;
 		}
-		m_internalDiffuse = RageColor(1, 1, 1, 1);
 	}
 
 	if( m_internalGlow.a > 0 )
@@ -481,10 +487,9 @@ void Actor::PreDraw() // calculate actor properties
 
 		// Blend using Screen mode
 		tempState.glow = tempState.glow + m_internalGlow - m_internalGlow * tempState.glow;
-		m_internalGlow.a = 0;
 	}
 }
-	
+
 void Actor::BeginDraw() // set the world matrix
 {
 	DISPLAY->PushMatrix();

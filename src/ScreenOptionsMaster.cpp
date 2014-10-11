@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "ThemeManager.h"
+#include "GameManager.h"
 #include "GameState.h"
 #include "ScreenManager.h"
 #include "SongManager.h"
@@ -126,9 +127,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 			/* If the resolution or aspect ratio changes, always reload the theme.
 			 * Otherwise, only reload it if it changed. */
 			RString sNewTheme = PREFSMAN->m_sTheme.Get();
-			bool bForceThemeReload = !!(m_iChangeMask & OPT_APPLY_ASPECT_RATIO) || !!(m_iChangeMask & OPT_APPLY_GRAPHICS);
-			GameLoop::ChangeTheme( sNewTheme, this->GetNextScreenName(), bForceThemeReload );
-			StepMania::ApplyGraphicOptions();
+			GameLoop::ChangeTheme(sNewTheme);
 		}
 
 		if( m_iChangeMask & OPT_SAVE_PREFERENCES )
@@ -138,10 +137,9 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 			PREFSMAN->SavePrefsToDisk();
 		}
 
-		if( m_iChangeMask & OPT_RESET_GAME )
+		if( m_iChangeMask & OPT_CHANGE_GAME )
 		{
-			StepMania::ResetGame();
-			m_sNextScreen = StepMania::GetInitialScreen();
+			GameLoop::ChangeGame(PREFSMAN->GetCurrentGame());
 		}
 
 		if( m_iChangeMask & OPT_APPLY_SOUND )

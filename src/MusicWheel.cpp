@@ -1640,6 +1640,7 @@ public:
 		}
 		return 1;
 	}
+	DEFINE_METHOD(GetSelectedSection, GetSelectedSection());
 	static int IsRouletting( T* p, lua_State *L ){ lua_pushboolean( L, p->IsRouletting() ); return 1; }
 	static int SelectSong( T* p, lua_State *L )
 	{
@@ -1666,6 +1667,7 @@ public:
 	LunaMusicWheel()
 	{
 		ADD_METHOD( ChangeSort );
+		ADD_METHOD( GetSelectedSection );
 		ADD_METHOD( IsRouletting );
 		ADD_METHOD( SelectSong );
 		ADD_METHOD( SelectCourse );

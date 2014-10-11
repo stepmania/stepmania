@@ -1,5 +1,20 @@
 -- how to connect to a server with the new ScreenTextEntry Lua bindings
 -- (this is the base code; I'll come up with a full tutorial later.)
+
+-- possible text entry settings:
+local teSettings = {
+	SendOnPop = "",			-- ScreenMessage to send on pop (optional, "SM_None" if omitted)
+	Question = "",			-- The question to display
+	InitialAnswer = "",		-- Initial answer text
+	MaxInputLength = 0,		-- Maximum amount of characters
+	Password = false,		-- Mask character input (optional)
+	Validate = nil,			-- Validation function; function(answer, errorOut), must return boolean, string.
+	OnOK = nil,				-- On OK; function(answer)
+	OnCancel = nil,			-- On Cancel; function()
+	ValidateAppend = nil,	-- Validate appending a character; function(answer,append), must return boolean
+	FormatAnswerForDisplay = nil	-- Format answer for display; function(answer), must return string
+};
+
 SCREENMAN:AddNewScreenToTop("ScreenTextEntry");
 local serverSettings = {
 	Question = "Connect to server:",

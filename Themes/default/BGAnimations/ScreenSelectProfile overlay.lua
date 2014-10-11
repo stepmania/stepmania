@@ -193,51 +193,65 @@ function UpdateInternal3(self, Player)
 	end;
 end;
 
+-- Will be set to the main ActorFrame for the screen in its OnCommand.
+local main_frame= false
+
+local function input(event)
+	if event.type == "InputEventType_Release" then return end
+	local pn= event.PlayerNumber
+	local code= event.GameButton
+	if not pn or not code then return end
+	local input_functions= {
+		Start= function()
+			MESSAGEMAN:Broadcast("StartButton")
+			if not GAMESTATE:IsHumanPlayer(pn) then
+				SCREENMAN:GetTopScreen():SetProfileIndex(pn, -1)
+			else
+				SCREENMAN:GetTopScreen():Finish()
+			end
+		end,
+		Back= function()
+			if GAMESTATE:GetNumPlayersEnabled()==0 then
+				SCREENMAN:GetTopScreen():Cancel()
+			else
+				MESSAGEMAN:Broadcast("BackButton")
+				SCREENMAN:GetTopScreen():SetProfileIndex(pn, -2)
+			end
+		end,
+		MenuUp= function()
+			if GAMESTATE:IsHumanPlayer(pn) then
+				local ind = SCREENMAN:GetTopScreen():GetProfileIndex(pn)
+				if ind > 1 then
+					if SCREENMAN:GetTopScreen():SetProfileIndex(pn, ind - 1) then
+						MESSAGEMAN:Broadcast("DirectionButton")
+						main_frame:queuecommand('UpdateInternal2')
+					end
+				end
+			end
+		end,
+		MenuDown= function()
+			if GAMESTATE:IsHumanPlayer(pn) then
+				local ind = SCREENMAN:GetTopScreen():GetProfileIndex(pn)
+				if ind > 0 then
+					if SCREENMAN:GetTopScreen():SetProfileIndex(pn, ind + 1) then
+						MESSAGEMAN:Broadcast("DirectionButton")
+						main_frame:queuecommand('UpdateInternal2')
+					end
+				end
+			end
+		end
+	}
+	input_functions.MenuLeft= input_functions.MenuUp
+	input_functions.MenuRight= input_functions.MenuDown
+	if input_functions[code] then
+		input_functions[code]()
+	end
+end
+
 local t = Def.ActorFrame {
 
 	StorageDevicesChangedMessageCommand=function(self, params)
 		self:queuecommand('UpdateInternal2');
-	end;
-
-	CodeMessageCommand = function(self, params)
-		if params.Name == 'Start' or params.Name == 'Center' then
-			MESSAGEMAN:Broadcast("StartButton");
-			if not GAMESTATE:IsHumanPlayer(params.PlayerNumber) then
-				SCREENMAN:GetTopScreen():SetProfileIndex(params.PlayerNumber, -1);
-			else
-				SCREENMAN:GetTopScreen():Finish();
-			end;
-		end;
-		if params.Name == 'Up' or params.Name == 'Up2' or params.Name == 'DownLeft' then
-			if GAMESTATE:IsHumanPlayer(params.PlayerNumber) then
-				local ind = SCREENMAN:GetTopScreen():GetProfileIndex(params.PlayerNumber);
-				if ind > 1 then
-					if SCREENMAN:GetTopScreen():SetProfileIndex(params.PlayerNumber, ind - 1 ) then
-						MESSAGEMAN:Broadcast("DirectionButton");
-						self:queuecommand('UpdateInternal2');
-					end;
-				end;
-			end;
-		end;
-		if params.Name == 'Down' or params.Name == 'Down2' or params.Name == 'DownRight' then
-			if GAMESTATE:IsHumanPlayer(params.PlayerNumber) then
-				local ind = SCREENMAN:GetTopScreen():GetProfileIndex(params.PlayerNumber);
-				if ind > 0 then
-					if SCREENMAN:GetTopScreen():SetProfileIndex(params.PlayerNumber, ind + 1 ) then
-						MESSAGEMAN:Broadcast("DirectionButton");
-						self:queuecommand('UpdateInternal2');
-					end;
-				end;
-			end;
-		end;
-		if params.Name == 'Back' then
-			if GAMESTATE:GetNumPlayersEnabled()==0 then
-				SCREENMAN:GetTopScreen():Cancel();
-			else
-				MESSAGEMAN:Broadcast("BackButton");
-				SCREENMAN:GetTopScreen():SetProfileIndex(params.PlayerNumber, -2);
-			end;
-		end;
 	end;
 
 	PlayerJoinedMessageCommand=function(self, params)
@@ -249,6 +263,8 @@ local t = Def.ActorFrame {
 	end;
 
 	OnCommand=function(self, params)
+		main_frame= self:GetParent()
+		SCREENMAN:GetTopScreen():AddInputCallback(input)
 		self:queuecommand('UpdateInternal2');
 	end;
 

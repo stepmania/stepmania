@@ -29,6 +29,14 @@ StageStats::StageStats()
 	m_fGameplaySeconds = 0;
 	m_fStepsSeconds = 0;
 	m_fMusicRate = 1;
+	FOREACH_PlayerNumber(pn)
+	{
+		m_player[pn].Init(pn);
+	}
+	FOREACH_MultiPlayer(pn)
+	{
+		m_multiPlayer[pn].Init(pn);
+	}
 }
 
 void StageStats::Init()

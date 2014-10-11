@@ -26,13 +26,13 @@ t[#t+1] = Def.ActorFrame {
 --
 t[#t+1] = Def.Actor {
 	MenuTimerExpiredMessageCommand = function(self, param)
-		for pn in ivalues(Players) do
+		for pn in ivalues(PlayerNumber) do
 			SCREENMAN:GetTopScreen():Finish(pn);
 		end
 	end;
 	CodeMessageCommand=function(self,param)
 		if param.Name == "Enter" then
-			SCREENMAN:GetTopScreen():Finish(pn);
+			SCREENMAN:GetTopScreen():Finish(param.PlayerNumber);
 		end
 	end
 };

@@ -62,6 +62,7 @@ AutoScreenMessage( SM_UpdateTextInfo );
 AutoScreenMessage( SM_BackFromMainMenu );
 AutoScreenMessage( SM_BackFromAreaMenu );
 AutoScreenMessage( SM_BackFromAlterMenu );
+AutoScreenMessage( SM_BackFromArbitraryRemap );
 AutoScreenMessage( SM_BackFromStepsInformation );
 AutoScreenMessage( SM_BackFromStepsData );
 AutoScreenMessage( SM_BackFromOptions );
@@ -616,7 +617,7 @@ static MenuDef g_AlterMenu(
 	MenuRowDef(ScreenEdit::alter,			"Alter",				true, 
 	      EditMode_Practice, true, true, 0, "Autogen To Fill Width","Backwards","Swap Sides",
 	      "Copy Left To Right","Copy Right To Left","Clear Left","Clear Right",
-	      "Collapse To One","Collapse Left","Shift Left","Shift Right" ),
+		"Collapse To One","Collapse Left","Shift Left","Shift Right", "Swap Up/Down", "Arbitrary Remap Columns" ),
 	MenuRowDef(ScreenEdit::tempo,			"Tempo",				true, 
 	      EditMode_Full, true, true, 0, "Compress 2x","Compress 3->2",
 	      "Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x" ),
@@ -1345,7 +1346,7 @@ void ScreenEdit::Update( float fDeltaTime )
 	{
 		RageTimer tm;
 		const float fSeconds = m_pSoundMusic->GetPositionSeconds( NULL, &tm );
-		GAMESTATE->UpdateSongPosition( fSeconds, GAMESTATE->m_pCurSong->m_SongTiming, tm, true );
+		GAMESTATE->UpdateSongPosition( fSeconds, GAMESTATE->m_pCurSong->m_SongTiming, tm );
 	}
 
 	if( m_EditState == STATE_RECORDING  )	
@@ -1825,7 +1826,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				m_NoteDataEdit.SetTapNote( iCol, iHeadRow, TAP_EMPTY );
 				// Don't CheckNumberOfNotesAndUndo.  We don't want to revert any change that removes notes.
 			}
-			else if( m_NoteDataEdit.GetTapNote(iCol, iSongIndex).type != TapNote::empty )
+			else if( m_NoteDataEdit.GetTapNote(iCol, iSongIndex).type != TapNoteType_Empty )
 			{
 				m_soundRemoveNote.Play();
 				SetDirty( true );
@@ -1855,10 +1856,10 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		{
 			switch ( m_selectedTap.type )
 			{
-				case TapNote::tap:	m_selectedTap = TAP_ORIGINAL_FAKE;	break;
-				case TapNote::mine:	m_selectedTap = TAP_ORIGINAL_TAP;	break;
-				case TapNote::lift:	m_selectedTap = TAP_ORIGINAL_MINE;	break;
-				case TapNote::fake:	m_selectedTap = TAP_ORIGINAL_LIFT;	break;
+				case TapNoteType_Tap:	m_selectedTap = TAP_ORIGINAL_FAKE;	break;
+				case TapNoteType_Mine:	m_selectedTap = TAP_ORIGINAL_TAP;	break;
+				case TapNoteType_Lift:	m_selectedTap = TAP_ORIGINAL_MINE;	break;
+				case TapNoteType_Fake:	m_selectedTap = TAP_ORIGINAL_LIFT;	break;
 				DEFAULT_FAIL( m_selectedTap.type );
 			}
 			return true;
@@ -1867,10 +1868,10 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		{
 			switch ( m_selectedTap.type )
 			{
-				case TapNote::tap:	m_selectedTap = TAP_ORIGINAL_MINE;	break;
-				case TapNote::mine:	m_selectedTap = TAP_ORIGINAL_LIFT;	break;
-				case TapNote::lift:	m_selectedTap = TAP_ORIGINAL_FAKE;	break;
-				case TapNote::fake:	m_selectedTap = TAP_ORIGINAL_TAP;	break;
+				case TapNoteType_Tap:	m_selectedTap = TAP_ORIGINAL_MINE;	break;
+				case TapNoteType_Mine:	m_selectedTap = TAP_ORIGINAL_LIFT;	break;
+				case TapNoteType_Lift:	m_selectedTap = TAP_ORIGINAL_FAKE;	break;
+				case TapNoteType_Fake:	m_selectedTap = TAP_ORIGINAL_TAP;	break;
 				DEFAULT_FAIL( m_selectedTap.type );
 			}
 			return true;
@@ -3037,7 +3038,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		/* Give a 1 second lead-in.  If we're loading Player, this must be done first.
 		 * Also be sure to get the right timing. */
 		float fSeconds = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_iStartPlayingAt) ) - 1;
-		GAMESTATE->UpdateSongPosition( fSeconds, GetAppropriateTiming(), RageZeroTimer, true );
+		GAMESTATE->UpdateSongPosition( fSeconds, GetAppropriateTiming(), RageZeroTimer );
 
 		GAMESTATE->m_bGameplayLeadIn.Set( false );
 		
@@ -3285,6 +3286,10 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		HandleAlterMenuChoice( (AlterMenuChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
 	}
+	else if( SM == SM_BackFromArbitraryRemap )
+	{
+		HandleArbitraryRemapping(ScreenTextEntry::s_sLastAnswer);
+	}
 	else if( SM == SM_BackFromStepsInformation )
 	{
 		HandleStepsInformationChoice( (StepsInformationChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
@@ -3501,18 +3506,18 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 				// set note at this row to use this keysound file.
 				// if it's empty, make it an auto keysound.
 				newNote.iKeysoundIndex = sound;
-				if (newNote.type == TapNote::empty)
+				if (newNote.type == TapNoteType_Empty)
 				{
-					newNote.type = TapNote::autoKeysound; // keysounds need something non empty.
+					newNote.type = TapNoteType_AutoKeysound; // keysounds need something non empty.
 				}
 			}
 			else // sound > kses.size()
 			{
 				// remove the sound. if it's an auto keysound, make it empty.
 				newNote.iKeysoundIndex = -1;
-				if (newNote.type == TapNote::autoKeysound)
+				if (newNote.type == TapNoteType_AutoKeysound)
 				{
-					newNote.type = TapNote::empty; // autoKeysound with no sound is pointless.
+					newNote.type = TapNoteType_Empty; // autoKeysound with no sound is pointless.
 				}
 			}
 			m_NoteDataEdit.SetTapNote(track, row, newNote);
@@ -3530,8 +3535,8 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 					if (newNote.iKeysoundIndex == static_cast<int>(sound))
 					{
 						newNote.iKeysoundIndex = -1;
-						if (newNote.type == TapNote::autoKeysound)
-							newNote.type = TapNote::empty;
+						if (newNote.type == TapNoteType_AutoKeysound)
+							newNote.type = TapNoteType_Empty;
 					}
 					else if (newNote.iKeysoundIndex > static_cast<int>(sound))
 						newNote.iKeysoundIndex--;
@@ -3560,8 +3565,8 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		{
 			newNote.iKeysoundIndex = pos;
 		}
-		if (newNote.type == TapNote::empty)
-			newNote.type = TapNote::autoKeysound; // keysounds need something non empty.
+		if (newNote.type == TapNoteType_Empty)
+			newNote.type = TapNoteType_AutoKeysound; // keysounds need something non empty.
 		m_NoteDataEdit.SetTapNote(track, row, newNote);
 		SetDirty(true);
 	}
@@ -3588,9 +3593,9 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		const int row = BeatToNoteRow( GAMESTATE->m_Position.m_fSongBeat );
 
 		TapNote tn(
-			TapNote::attack, 
-			TapNote::SubType_Invalid,
-			TapNote::original, 
+			TapNoteType_Attack, 
+			TapNoteSubType_Invalid,
+			TapNoteSource_Original, 
 			sMods,
 			g_fLastInsertAttackDurationSeconds, 
 			-1 );
@@ -4532,6 +4537,73 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 	GAMESTATE->SetProcessedTimingData(NULL);
 }
 
+static LocalizedString ENTER_ARBITRARY_MAPPING( "ScreenEdit", "Enter the new track mapping." );
+static LocalizedString TOO_MANY_TRACKS("ScreenEdit", "Too many tracks specified.");
+static LocalizedString NOT_A_TRACK("ScreenEdit", "'%s' is not a track id.");
+static LocalizedString OUT_OF_RANGE_ID("ScreenEdit", "Entry %d, '%d', is out of range 1 to %d.");
+
+static bool ConvertMappingInputToMapping(RString const& mapstr, int* mapping, RString& error)
+{
+	vector<RString> mapping_input;
+	split(mapstr, ",", mapping_input);
+	size_t tracks_for_type= GAMEMAN->GetStepsTypeInfo(GAMESTATE->m_pCurSteps[0]->m_StepsType).iNumTracks;
+	if(mapping_input.size() > tracks_for_type)
+	{
+		error= TOO_MANY_TRACKS;
+		return false;
+	}
+	// mapping_input.size() < tracks_for_type is not checked because
+	// unspecified tracks are mapped directly. -Kyz
+	size_t track= 0;
+	// track will be used for filling in the unspecified part of the mapping.
+	for(; track < mapping_input.size(); ++track)
+	{
+		if(mapping_input[track].empty() || mapping_input[track] == " ")
+		{
+			// This allows blank entries to mean "pass through".
+			mapping[track]= track+1;
+		}
+		else if(!(mapping_input[track] >> mapping[track]))
+		{
+			error= ssprintf(NOT_A_TRACK.GetValue(), mapping_input[track].c_str());
+			return false;
+		}
+		if(mapping[track] < 1 || mapping[track] > static_cast<int>(tracks_for_type))
+		{
+			error= ssprintf(OUT_OF_RANGE_ID.GetValue(), track+1, mapping[track], tracks_for_type);
+			return false;
+		}
+		// Simpler for the user if they input track ids starting at 1.
+		--mapping[track];
+	}
+	for(; track < tracks_for_type; ++track)
+	{
+		mapping[track]= track;
+	}
+	return true;
+}
+
+static bool ArbitraryRemapValidate(const RString& answer, RString& error_out)
+{
+	int mapping[MAX_NOTE_TRACKS];
+	return ConvertMappingInputToMapping(answer, mapping, error_out);
+}
+
+void ScreenEdit::HandleArbitraryRemapping(RString const& mapstr)
+{
+	const NoteData OldClipboard( m_Clipboard );
+	HandleAlterMenuChoice( cut, false );
+	int mapping[MAX_NOTE_TRACKS];
+	RString error;
+	// error is actually reported by the validate function, and unused here.
+	if(ConvertMappingInputToMapping(mapstr, mapping, error))
+	{
+		NoteDataUtil::ArbitraryRemap(m_Clipboard, mapping);
+	}
+	HandleAreaMenuChoice( paste_at_begin_marker, false );
+	m_Clipboard = OldClipboard;
+}
+
 void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo)
 {
 	ASSERT_M(m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1,
@@ -4676,6 +4748,15 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 				case collapse_left:		NoteDataUtil::CollapseLeft( m_Clipboard );		break;
 				case shift_left:		NoteDataUtil::ShiftLeft( m_Clipboard );			break;
 				case shift_right:		NoteDataUtil::ShiftRight( m_Clipboard );		break;
+				case swap_up_down: NoteDataUtil::SwapUpDown(m_Clipboard, GAMESTATE->m_pCurSteps[0]->m_StepsType); break;
+				case arbitrary_remap:
+					ScreenTextEntry::TextEntry(
+						SM_BackFromArbitraryRemap, ENTER_ARBITRARY_MAPPING,
+						"1, 2, 3, 4", MAX_NOTE_TRACKS * 4,
+						// 2 chars for digit, one for comma, one for space.
+						ArbitraryRemapValidate
+				);
+					break;
 			}
 			
 			HandleAreaMenuChoice( paste_at_begin_marker, false );
@@ -4829,7 +4910,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 				for (int t = 0; t < nd.GetNumTracks(); t++)
 				{
 					const TapNote &tn = nd.GetTapNote(t, r);
-					if (tn.type != TapNote::empty)
+					if (tn.type != TapNoteType_Empty)
 					{
 						TapNote nTap = tn;
 						nTap.pn = (tn.pn == PLAYER_1 ?
@@ -4858,7 +4939,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 				for (int t = 0; t < tracks; t++)
 				{
 					const TapNote &tn = nd.GetTapNote(t, r);
-					if (tn.type != TapNote::empty && tn.pn == oPN)
+					if (tn.type != TapNoteType_Empty && tn.pn == oPN)
 					{
 						TapNote nTap = tn;
 						nTap.pn = nPN;

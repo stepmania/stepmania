@@ -942,8 +942,8 @@ bool BMSChartReader::ReadNoteData()
 			{
 				// this object is the end of the hold note.
 				TapNote tn = nd.GetTapNote(track, holdStart[track]);
-				tn.type = TapNote::hold_head;
-				tn.subType = TapNote::hold_head_hold;
+				tn.type = TapNoteType_HoldHead;
+				tn.subType = TapNoteSubType_Hold;
 				nd.AddHoldNote( track, holdStart[track], row, tn );
 				holdStart[track] = -1;
 				lastNote[track] = -1;
@@ -953,8 +953,8 @@ bool BMSChartReader::ReadNoteData()
 				// this object is the end of the hold note.
 				// lnobj: set last note to hold head.
 				TapNote tn = nd.GetTapNote(track, lastNote[track]);
-				tn.type = TapNote::hold_head;
-				tn.subType = TapNote::hold_head_hold;
+				tn.type = TapNoteType_HoldHead;
+				tn.subType = TapNoteSubType_Hold;
 				nd.AddHoldNote( track, lastNote[track], row, tn );
 				holdStart[track] = -1;
 				lastNote[track] = -1;

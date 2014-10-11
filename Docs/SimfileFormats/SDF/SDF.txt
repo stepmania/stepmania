@@ -1,4 +1,4 @@
-Used by Pocket DDR (http://www.stepmania.com/forums/showthread.php?t=6621).
+Used by Pocket DDR (http://old.stepmania.com/forums/showthread.php?t=6621).
 Basically a compressed version of a .SM that includes the banner and background
 in the file as well.
 

@@ -16,13 +16,17 @@ RadarValues::RadarValues()
 void RadarValues::MakeUnknown()
 {
 	FOREACH_ENUM( RadarCategory, rc )
-		m_Values.f[rc] = RADAR_VAL_UNKNOWN;
+	{
+		(*this)[rc] = RADAR_VAL_UNKNOWN;
+	}
 }
 
 void RadarValues::Zero()
 {
 	FOREACH_ENUM( RadarCategory, rc )
-		m_Values.f[rc] = 0;
+	{
+		(*this)[rc] = 0;
+	}
 }
 
 XNode* RadarValues::CreateNode( bool bIncludeSimpleValues, bool bIncludeComplexValues ) const
@@ -35,12 +39,16 @@ XNode* RadarValues::CreateNode( bool bIncludeSimpleValues, bool bIncludeComplexV
 		if( rc >= RadarCategory_TapsAndHolds )
 		{
 			if( bIncludeSimpleValues )
-				pNode->AppendChild( RadarCategoryToString(rc),	(int)m_Values.f[rc] );
+			{
+				pNode->AppendChild(RadarCategoryToString(rc),	(int)((*this)[rc]));
+			}
 		}
 		else
 		{
 			if( bIncludeComplexValues )
-				pNode->AppendChild( RadarCategoryToString(rc),	m_Values.f[rc] );
+			{
+				pNode->AppendChild(RadarCategoryToString(rc),	(*this)[rc]);
+			}
 		}
 	}
 
@@ -54,7 +62,9 @@ void RadarValues::LoadFromNode( const XNode* pNode )
 	Zero();
 
 	FOREACH_ENUM( RadarCategory, rc )
-		pNode->GetChildValue( RadarCategoryToString(rc),	m_Values.f[rc] );
+	{
+		pNode->GetChildValue( RadarCategoryToString(rc),	(*this)[rc] );
+	}
 }
 
 /* iMaxValues is only used for writing compatibility fields in non-cache
@@ -67,7 +77,9 @@ RString RadarValues::ToString( int iMaxValues ) const
 
 	vector<RString> asRadarValues;
 	for( int r=0; r < iMaxValues; r++ )
-		asRadarValues.push_back( ssprintf("%.3f", m_Values.f[r]) );
+	{
+		asRadarValues.push_back(ssprintf("%.3f", (*this)[r]));
+	}
 
 	return join( ",",asRadarValues );
 }
@@ -84,7 +96,9 @@ void RadarValues::FromString( RString sRadarValues )
 	}
 
 	FOREACH_ENUM( RadarCategory, rc )
-		m_Values.f[rc] = StringToFloat( saValues[rc] );
+	{
+		(*this)[rc] = StringToFloat(saValues[rc]);
+	}
     
 }
 

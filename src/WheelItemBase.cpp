@@ -87,11 +87,36 @@ void WheelItemBase::DrawPrimitives()
 class LunaWheelItemBase: public Luna<WheelItemBase>
 {
 public:
-	DEFINE_METHOD( GetColor, GetColor() )
-	DEFINE_METHOD( GetText, GetText() )
+#define IS_LOADED_CHECK \
+	if(!p->IsLoaded()) \
+	{ \
+		luaL_error(L, "Wheel item is not loaded yet.  Use WheelItem:IsLoaded() to check."); \
+	}
+
+	static int GetColor(T* p, lua_State *L)
+	{
+		IS_LOADED_CHECK;
+		LuaHelpers::Push(L, p->GetColor());
+		return 1;
+	}
+
+	static int GetText(T* p, lua_State *L)
+	{
+		IS_LOADED_CHECK;
+		LuaHelpers::Push(L, p->GetText());
+		return 1;
+	}
 	
-	static int GetType( T* p, lua_State *L ) {
-		lua_pushnumber( L, p->GetType() );
+	static int GetType(T* p, lua_State *L)
+	{
+		IS_LOADED_CHECK;
+		lua_pushnumber(L, p->GetType());
+		return 1;
+	}
+
+	static int IsLoaded(T* p, lua_State *L)
+	{
+		lua_pushboolean(L, p->IsLoaded());
 		return 1;
 	}
 
@@ -100,6 +125,7 @@ public:
 		ADD_METHOD( GetColor );
 		ADD_METHOD( GetText );
 		ADD_METHOD( GetType );
+		ADD_METHOD( IsLoaded );
 	}
 };
 LUA_REGISTER_DERIVED_CLASS( WheelItemBase, ActorFrame )

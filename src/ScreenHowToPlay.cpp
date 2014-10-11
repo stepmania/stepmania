@@ -94,8 +94,8 @@ void ScreenHowToPlay::Init()
 	if( (bool)USE_CHARACTER && vpCharacters.size() && HaveAllCharAnimations() )
 	{
 		Character* displayChar;
-		if( !CHARACTER_NAME.GetValue().empty() && CHARMAN->GetCharacterFromID(CHARACTER_NAME) )
-			displayChar = CHARMAN->GetCharacterFromID(CHARACTER_NAME);
+		if( !CHARACTER_NAME.GetValue().empty() && CHARMAN->GetCharacterFromID(CHARACTER_NAME.GetValue()) )
+			displayChar = CHARMAN->GetCharacterFromID(CHARACTER_NAME.GetValue());
 		else
 			displayChar = CHARMAN->GetRandomCharacter();
 
@@ -221,7 +221,7 @@ void ScreenHowToPlay::Step()
 	{
 		const int iNumTracks = m_NoteData.GetNumTracks();
 		for( int k=0; k<iNumTracks; k++ )
-			if( m_NoteData.GetTapNote(k, iNoteRow).type == TapNote::tap )
+			if( m_NoteData.GetTapNote(k, iNoteRow).type == TapNoteType_Tap )
 				iStep |= 1 << k;
 
 		switch( iStep )
@@ -251,7 +251,7 @@ void ScreenHowToPlay::Update( float fDelta )
 	if( GAMESTATE->m_pCurSong != NULL )
 	{
 		RageTimer tm;
-		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong, GAMESTATE->m_pCurSong->m_SongTiming, tm, true );
+		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong, GAMESTATE->m_pCurSong->m_SongTiming, tm );
 		m_fFakeSecondsIntoSong += fDelta;
 
 		static int iLastNoteRowCounted = 0;

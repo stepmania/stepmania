@@ -1,7 +1,10 @@
 #include "global.h"
+#include "StepMania.h"
+#include "arch/Dialog/Dialog.h"
 #include "GameManager.h"
 #include "GameConstantsAndTypes.h"
 #include "GameInput.h"	// for GameButton constants
+#include "GameLoop.h"  // for ChangeGame
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "NoteSkinManager.h"
@@ -3156,12 +3159,66 @@ public:
 
 		return 1;
 	}
-
+	static int GetStylesForGame( T* p, lua_State *L )
+	{
+		RString game_name= SArg(1);
+		const Game *pGame = p->StringToGame(game_name);
+		if(!pGame)
+		{
+			luaL_error(L, "GetStylesForGame: Invalid Game: '%s'", game_name.c_str());
+		}
+		vector<Style*> aStyles;
+		lua_createtable(L, 0, 0);
+		for( int s=0; pGame->m_apStyles[s]; ++s ) 
+		{
+			Style *pStyle = const_cast<Style *>( pGame->m_apStyles[s] );
+			pStyle->PushSelf(L);
+			lua_rawseti(L, -2, s+1);
+		}		
+		return 1;
+	}
+	static int GetEnabledGames( T* p, lua_State *L )
+	{
+		vector<const Game*> aGames;
+		p->GetEnabledGames( aGames );
+		lua_createtable(L, aGames.size(), 0);
+		for(size_t i= 0; i < aGames.size(); ++i)
+		{
+			lua_pushstring(L, aGames[i]->m_szName);
+			lua_rawseti(L, -2, i+1);
+		}
+		return 1;	
+	}
+	
+	static int SetGame( T* p, lua_State *L )
+	{
+		RString game_name= SArg(1);
+		const Game *pGame = p->StringToGame(game_name);
+		if(!pGame)
+		{
+			luaL_error(L, "SetGame: Invalid Game: '%s'", game_name.c_str());
+		}
+		RString theme;
+		if( lua_gettop(L) >= 2 && !lua_isnil(L, 2) )
+		{
+			theme = SArg(2);
+			if(!THEME->IsThemeSelectable(theme))
+			{
+				luaL_error(L, "SetGame: Invalid Theme: '%s'", theme.c_str());
+			}
+		}
+		GameLoop::ChangeGame(game_name, theme);
+		return 0;
+	}
+	
 	LunaGameManager()
 	{
 		ADD_METHOD( StepsTypeToLocalizedString );
 		ADD_METHOD( GetFirstStepsTypeForGame );
 		ADD_METHOD( IsGameEnabled );
+		ADD_METHOD( GetStylesForGame );
+		ADD_METHOD( GetEnabledGames );
+		ADD_METHOD( SetGame );
 	};
 };
 
