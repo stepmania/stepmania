@@ -1,6 +1,10 @@
+build/
+Debug/
 .dirstamp
 .deps
 *.orig
+*.ilk
+*.aps
 *.rej
 *~
 *.o
