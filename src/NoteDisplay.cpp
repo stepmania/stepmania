@@ -114,16 +114,28 @@ void NoteMetricCache_t::Load( const RString &sButton )
 
 struct NoteSkinAndPath
 {
-	NoteSkinAndPath( const RString sNoteSkin_, const RString sPath_ ) : sNoteSkin(sNoteSkin_), sPath(sPath_) { }
+	NoteSkinAndPath( const RString sNoteSkin_, const RString sPath_, const PlayerNumber pn_, const GameController gc_ ) : sNoteSkin(sNoteSkin_), sPath(sPath_), pn(pn_), gc(gc_) { }
 	RString sNoteSkin;
 	RString sPath;
+	PlayerNumber pn;
+	GameController gc;
 	bool operator<( const NoteSkinAndPath &other ) const
 	{
 		int cmp = strcmp(sNoteSkin, other.sNoteSkin);
 		if( cmp < 0 )
 			return true;
 		else if( cmp == 0 )
-			return sPath < other.sPath;
+			if( sPath < other.sPath )
+				return true;
+			else if( sPath == other.sPath )
+				if ( pn < other.pn )
+					return true;
+				else if ( pn == other.pn )
+					return gc < other.gc;
+				else
+					return false;
+			else
+				return false;
 		else
 			return false;
 	}
@@ -149,15 +161,18 @@ struct NoteResource
 
 static map<NoteSkinAndPath, NoteResource *> g_NoteResource;
 
-static NoteResource *MakeNoteResource( const RString &sButton, const RString &sElement, bool bSpriteOnly )
+static NoteResource *MakeNoteResource( const RString &sButton, const RString &sElement, PlayerNumber pn, GameController gc, bool bSpriteOnly )
 {
 	RString sElementAndType = ssprintf( "%s, %s", sButton.c_str(), sElement.c_str() );
-	NoteSkinAndPath nsap( NOTESKIN->GetCurrentNoteSkin(), sElementAndType );
+	NoteSkinAndPath nsap( NOTESKIN->GetCurrentNoteSkin(), sElementAndType, pn, gc );
 
 	map<NoteSkinAndPath, NoteResource *>::iterator it = g_NoteResource.find( nsap );
 	if( it == g_NoteResource.end() )
 	{
 		NoteResource *pRes = new NoteResource( nsap );
+
+		NOTESKIN->SetPlayerNumber( pn );
+		NOTESKIN->SetGameController( gc );
 
 		pRes->m_pActor = NOTESKIN->LoadActor( sButton, sElement, NULL, bSpriteOnly );
 		ASSERT( pRes->m_pActor != NULL );
@@ -197,9 +212,9 @@ NoteColorActor::~NoteColorActor()
 		DeleteNoteResource( m_p );
 }
 
-void NoteColorActor::Load( const RString &sButton, const RString &sElement )
+void NoteColorActor::Load( const RString &sButton, const RString &sElement, PlayerNumber pn, GameController gc )
 {
-	m_p = MakeNoteResource( sButton, sElement, false );
+	m_p = MakeNoteResource( sButton, sElement, pn, gc, false );
 }
 
 
@@ -221,9 +236,9 @@ NoteColorSprite::~NoteColorSprite()
 		DeleteNoteResource( m_p );
 }
 
-void NoteColorSprite::Load( const RString &sButton, const RString &sElement )
+void NoteColorSprite::Load( const RString &sButton, const RString &sElement, PlayerNumber pn, GameController gc )
 {
-	m_p = MakeNoteResource( sButton, sElement, true );
+	m_p = MakeNoteResource( sButton, sElement, pn, gc, true );
 }
 
 Sprite *NoteColorSprite::Get()
@@ -263,30 +278,28 @@ void NoteDisplay::Load( int iColNum, const PlayerState* pPlayerState, float fYRe
 
 	const PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iColNum, pn );
-	NOTESKIN->SetPlayerNumber( pn );
-	NOTESKIN->SetGameController( GameI.controller );
 
 	const RString &sButton = GAMESTATE->GetCurrentStyle()->ColToButtonName( iColNum );
 
 	cache->Load( sButton );
 
 	// "normal" note types
-	m_TapNote.Load(		sButton, "Tap Note" );
-	//m_TapAdd.Load(		sButton, "Tap Addition" );
-	m_TapMine.Load(		sButton, "Tap Mine" );
-	m_TapLift.Load(		sButton, "Tap Lift" );
-	m_TapFake.Load(		sButton, "Tap Fake" );
+	m_TapNote.Load(		sButton, "Tap Note", pn, GameI.controller );
+	//m_TapAdd.Load(		sButton, "Tap Addition", pn, GameI.controller );
+	m_TapMine.Load(		sButton, "Tap Mine", pn, GameI.controller );
+	m_TapLift.Load(		sButton, "Tap Lift", pn, GameI.controller );
+	m_TapFake.Load(		sButton, "Tap Fake", pn, GameI.controller );
 
 	// hold types
 	FOREACH_HoldType( ht )
 	{
 		FOREACH_ActiveType( at )
 		{
-			m_HoldHead[ht][at].Load(	sButton, HoldTypeToString(ht)+" Head "+ActiveTypeToString(at) );
-			m_HoldTopCap[ht][at].Load(	sButton, HoldTypeToString(ht)+" Topcap "+ActiveTypeToString(at) );
-			m_HoldBody[ht][at].Load(	sButton, HoldTypeToString(ht)+" Body "+ActiveTypeToString(at) );
-			m_HoldBottomCap[ht][at].Load(	sButton, HoldTypeToString(ht)+" Bottomcap "+ActiveTypeToString(at) );
-			m_HoldTail[ht][at].Load(	sButton, HoldTypeToString(ht)+" Tail "+ActiveTypeToString(at) );
+			m_HoldHead[ht][at].Load(	sButton, HoldTypeToString(ht)+" Head "+ActiveTypeToString(at), pn, GameI.controller );
+			m_HoldTopCap[ht][at].Load(	sButton, HoldTypeToString(ht)+" Topcap "+ActiveTypeToString(at), pn, GameI.controller );
+			m_HoldBody[ht][at].Load(	sButton, HoldTypeToString(ht)+" Body "+ActiveTypeToString(at), pn, GameI.controller );
+			m_HoldBottomCap[ht][at].Load(	sButton, HoldTypeToString(ht)+" Bottomcap "+ActiveTypeToString(at), pn, GameI.controller );
+			m_HoldTail[ht][at].Load(	sButton, HoldTypeToString(ht)+" Tail "+ActiveTypeToString(at), pn, GameI.controller );
 		}
 	}
 }
