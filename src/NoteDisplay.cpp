@@ -122,22 +122,35 @@ struct NoteSkinAndPath
 	bool operator<( const NoteSkinAndPath &other ) const
 	{
 		int cmp = strcmp(sNoteSkin, other.sNoteSkin);
+
 		if( cmp < 0 )
+		{
 			return true;
+		}
 		else if( cmp == 0 )
+		{
 			if( sPath < other.sPath )
+			{
 				return true;
+			}
 			else if( sPath == other.sPath )
+			{
 				if ( pn < other.pn )
 					return true;
 				else if ( pn == other.pn )
 					return gc < other.gc;
 				else
 					return false;
+			}
 			else
+			{
 				return false;
+			}
+		}
 		else
+		{
 			return false;
+		}
 	}
 };
 
