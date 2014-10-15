@@ -5,6 +5,23 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 ================================================================================
+StepMania 5.0 beta 4b | 20141015
+--------------------------------------------------------------------------------
+
+2014/10/13
+----------
+* [NoteDisplay] Var Player and Var Controller work for non-rceptor arrows.
+* [Mac OS X] Allow StepMania to be built and run in Yosemite.
+
+2014/10/11
+----------
+* [NoteDisplay] Add two noteskin metrics, {PartName}NoteColorType and
+{PartName}NoteColorCount. View https://github.com/stepmania/stepmania/pull/328
+for more information.
+* [Steps] If an unrecognized step type is saved, preserve that step instead of
+deleting it. A warning will be placed in the log file during song load.
+
+================================================================================
 StepMania 5.0 beta 4 | 20140930
 --------------------------------------------------------------------------------
 
