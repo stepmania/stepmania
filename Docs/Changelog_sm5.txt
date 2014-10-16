@@ -10,7 +10,7 @@ StepMania 5.0 beta 4b | 20141015
 
 2014/10/13
 ----------
-* [NoteDisplay] Var Player and Var Controller work for non-rceptor arrows.
+* [NoteDisplay] Var Player and Var Controller work for non-receptor arrows.
 * [Mac OS X] Allow StepMania to be built and run in Yosemite.
 
 2014/10/11
