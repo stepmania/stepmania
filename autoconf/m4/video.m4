@@ -101,7 +101,7 @@ dnl Make the binary find our bundled libs
 			LDFLAGS="$LDFLAGS -Wl,-rpath=$ffmpeg_rpath"
 		fi
 dnl Classic autoconf. This CANNOT be broken across multiple lines.
-		VIDEO_LIBS="-L$PWD/bundle/ffmpeg/libavutil -lavutil -L$PWD/bundle/ffmpeg/libavformat -lavformat -L$PWD/bundle/ffmpeg/libavcodec -lavcodec -L$PWD/bundle/ffmpeg/libswscale -lswscale"
+		VIDEO_LIBS="-L$PWD/bundle/ffmpeg/libavformat -lavformat -L$PWD/bundle/ffmpeg/libavcodec -lavcodec -L$PWD/bundle/ffmpeg/libswscale -lswscale -L$PWD/bundle/ffmpeg/libavutil -lavutil"
 		have_ffmpeg=yes
 	fi
 fi
