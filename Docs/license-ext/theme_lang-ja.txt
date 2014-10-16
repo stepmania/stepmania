@@ -1,23 +1,18 @@
-Stepmania 5系本体用　日本語化セット10(2012/04/22)
+Stepmania 5系本体用　日本語化セット15(2014/10/01)
 作者：ナイラー
 -----------
 Stepmania5系本体では従来の日本語テーマ、および日本語ランゲージファイルが使用できなくなっています。
 個人的に日本語が見えているほうが安心できるので、とりあえずファイルを製作してみました。
 -----------
 以下のファイルが同梱されています。
-・fallbackja.ini(_fallbackテーマ用日本語ランゲージファイル) Ver 1.06-E
-・themeja.ini(デフォルトテーマ用日本語ランゲージファイル) Ver 1.04-B
+・fallback20141002.ini(_fallbackテーマ用日本語ランゲージファイルVer 2)
+・default20141002.ini(デフォルトテーマ用日本語ランゲージファイルVer 2)
 -----------
 今回の更新点
-☆今回からalpha 2対応。むしろalpha 1a以下非対応のほうが正確か。
-fallbackja.iniに対して
-・エディット画面の左ペインを書き換え。
-　・Vキーでお邪魔設定に入ることはできなくなった模様。
-・グルーブレーダーの各要素の日本語を書き換え。
-・その他、エディット関連をわかりやすい日本語に変えたつもり。
-themeja.iniに対して
-・バージョンアップなし。
-(Stepmania用小夏、今回はなし。パッケージングするには重い。)
+・beta 4での追加オプションを補完。
+　(おじゃま周りとプロファイル周りはまだ手が回ってないです)
+・Speedmodの新仕様に対応しました。
+・その他、一部のおかしかった部分を修正したり。
 
 -----------
 それぞれのファイルは、次の場所に配置してください。
@@ -40,6 +35,7 @@ themeja.iniに対して
 
 ----------
 For international Stepmania distributors and players:
+
 My Japanese language pack (means "fallbackja.ini" and "themeja.ini") has no interception for your use.
 You can redistribute these or remake from these two file(Included in Themes or Stepmania(s) is also OK).
 If you made a bit change at least,you can redistribute them fixed files on your own license(s).
@@ -48,8 +44,9 @@ If not,you must keep their original license(redistributable,remakable) when you 
 Sorry for my POOR English X(
 
 ----------
-何かありましたらTwitterの@Niler_jp、
+何かありましたらhttp://alumivision.blog.shinobi.jp/
 またはniler_jpn@live.jpまで。
 
-You can contact me on twitter(@Niler_jp),
+You can contact me on http://alumivision.blog.shinobi.jp/,
 or my mail-address:niler_jpn@live.jp.
+
