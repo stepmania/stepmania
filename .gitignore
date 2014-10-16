@@ -47,6 +47,8 @@ lib*_link.a
 *.sdf
 *.opensdf
 *.suo
+*.exp
+*.ilk
 
 # Windows General Files
 Thumbs.db
@@ -134,7 +136,6 @@ tests/*.err
 *.ipch
 *.dep
 *.idb
-*.exp
 *.user
 *.mode1v3
 *.vdi
