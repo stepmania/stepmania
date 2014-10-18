@@ -1,0 +1,14 @@
+# Inspired by Jeremy Tregunna's cmake work <jeremy.tregunna@me.com>
+#
+# Find libvorbisfile.
+
+FIND_PATH(VORBISFILE_INCLUDE_DIR vorbis/vorbisfile.h)
+
+SET(VORBISFILE_NAMES ${VORBISFILE_NAMES} vorbisfile libvorbisfile)
+FIND_LIBRARY(VORBISFILE_LIBRARY NAMES ${VORBISFILE_NAMES} PATH)
+
+include(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(VORBISFILE DEFAULT_MSG VORBISFILE_LIBRARY VORBISFILE_INCLUDE_DIR)
+
+mark_as_advanced(VORBISFILE_LIBRARY VORBISFILE_INCLUDE_DIR)
+

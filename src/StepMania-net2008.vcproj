@@ -1929,6 +1929,10 @@
 				>
 			</File>
 			<File
+				RelativePath="Main.cpp"
+				>
+			</File>
+			<File
 				RelativePath="ProductInfo.h"
 				>
 			</File>
