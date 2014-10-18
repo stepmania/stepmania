@@ -28,7 +28,7 @@
 #include "ver.h"
 
 #if defined(_MSC_VER)
-#pragma comment(lib, "archutils/Win32/ddk/dbghelp.lib")
+#pragma comment(lib, "dbghelp.lib")
 #endif
 
 // XXX: What happens when we *don't* have version info? Does that ever actually happen?
