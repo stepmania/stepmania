@@ -743,6 +743,8 @@ if !WITHOUT_GLES2
  main_SOURCES += RageDisplay_GLES2.cpp RageDisplay_GLES2.h
 endif
 
+main_SOURCES += Main.cpp
+
 main_LDADD = \
 		$(VIDEO_LIBS) \
 		$(AUDIO_LIBS) \
