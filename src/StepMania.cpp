@@ -29,6 +29,11 @@
 #include "Game.h"
 #include "RageSurface.h"
 #include "RageSurface_Load.h"
+
+#ifdef CMAKE_POWERED
+#include "verdata.hpp"
+#endif
+
 #include "CommandLineActions.h"
 
 #if !defined(SUPPORT_OPENGL) && !defined(SUPPORT_D3D)
@@ -938,7 +943,7 @@ static void ApplyLogPreferences()
 
 static LocalizedString COULDNT_OPEN_LOADING_WINDOW( "LoadingWindow", "Couldn't open any loading windows." );
 
-int main(int argc, char* argv[])
+int sm_main(int argc, char* argv[])
 {
 	RageThreadRegister thread( "Main thread" );
 	RageException::SetCleanupHandler( HandleException );

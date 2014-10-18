@@ -77,7 +77,7 @@ static void LuaInformation()
 	delete pNode;
 }
 
-#if defined(HAVE_VERSION_INFO)
+#if defined(HAVE_VERSION_INFO) && !defined(CMAKE_POWERED)
 extern unsigned long version_num;
 extern const char *const version_date;
 extern const char *const version_time;
