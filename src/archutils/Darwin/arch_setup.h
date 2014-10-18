@@ -2,8 +2,7 @@
 #define ARCH_SETUP_DARWIN_H
 
 // Replace the main function.
-extern "C" int SM_main( int argc, char *argv[] );
-#define main(x,y) SM_main(x,y)
+extern "C" int sm_main( int argc, char *argv[] );
 
 #define HAVE_VERSION_INFO
 #define HAVE_CXA_DEMANGLE
