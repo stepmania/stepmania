@@ -237,10 +237,12 @@ Threads = arch/Threads/Threads.h
 # ===================================
 # (Potentially) multiplatform drivers
 # ===================================
-InputHandler += arch/InputHandler/InputHandler_MonkeyKeyboard.cpp arch/InputHandler/InputHandler_MonkeyKeyboard.h
+InputHandler += arch/InputHandler/InputHandler_MonkeyKeyboard.cpp arch/InputHandler/InputHandler_MonkeyKeyboard.h \
+	arch/InputHandler/InputHandler_SextetStream.cpp arch/InputHandler/InputHandler_SextetStream.h
 
 Lights += arch/Lights/LightsDriver_Export.cpp arch/Lights/LightsDriver_Export.h \
-	arch/Lights/LightsDriver_SystemMessage.cpp arch/Lights/LightsDriver_SystemMessage.h
+	arch/Lights/LightsDriver_SystemMessage.cpp arch/Lights/LightsDriver_SystemMessage.h \
+	arch/Lights/LightsDriver_SextetStream.cpp arch/Lights/LightsDriver_SextetStream.h
 
 LoadingWindow += arch/LoadingWindow/LoadingWindow_Null.h
 
