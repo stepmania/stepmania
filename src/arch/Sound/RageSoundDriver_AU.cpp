@@ -45,16 +45,6 @@ RageSoundDriver_AU::RageSoundDriver_AU() : m_OutputUnit(NULL), m_iSampleRate(0),
 {
 }
 
-
-void RageSoundDriver_AU::NameHALThread( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *inRefCon )
-{
-	RageSoundDriver_AU *This = (RageSoundDriver_AU *)inRefCon;
-	CFRunLoopObserverInvalidate( observer );
-	CFRelease( observer );
-	This->m_pNotificationThread = new RageThreadRegister( "HAL notification thread" );
-	This->m_Semaphore.Post();
-}
-
 static void SetSampleRate( AudioUnit au, Float64 desiredRate )
 {
 	AudioDeviceID OutputDevice;
@@ -199,22 +189,6 @@ RString RageSoundDriver_AU::Init()
 		return ERROR( "Could not initialize the AudioUnit", error );
 	
 	StartDecodeThread();
-	
-	// Get the HAL's runloop and attach an observer.
-	{
-		CFRunLoopObserverRef observerRef;
-		CFRunLoopRef runLoopRef;
-		CFRunLoopObserverContext context = { 0, this, NULL, NULL, NULL };
-		UInt32 size = sizeof( CFRunLoopRef );
-
-		if( (error = AudioHardwareGetProperty(kAudioHardwarePropertyRunLoop, &size, &runLoopRef)) )
-			return ERROR( "Couldn't get the HAL's run loop", error);
-		
-		observerRef = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopAllActivities, false, 0, NameHALThread, &context );
-		CFRunLoopAddObserver( runLoopRef, observerRef, kCFRunLoopDefaultMode );
-		CFRunLoopWakeUp( runLoopRef );
-		m_Semaphore.Wait();
-	}
 
 	if( (error = AudioOutputUnitStart(m_OutputUnit)) )
 		return ERROR( "Could not start the AudioUnit", error );
