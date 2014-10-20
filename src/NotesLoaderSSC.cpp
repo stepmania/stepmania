@@ -643,6 +643,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				if( sValueName=="STEPSTYPE" )
 				{
 					pNewNotes->m_StepsType = GAMEMAN->StringToStepsType( sParams[1] );
+					pNewNotes->m_StepsTypeStr= sParams[1];
 				}
 
 				else if( sValueName=="CHARTSTYLE" )
@@ -965,6 +966,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 		if( sValueName=="STEPSTYPE" )
 		{
 			pNewNotes->m_StepsType = GAMEMAN->StringToStepsType( sParams[1] );
+			pNewNotes->m_StepsTypeStr= sParams[1];
 			bSSCFormat = true;
 		}
 

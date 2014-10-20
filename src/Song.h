@@ -447,6 +447,8 @@ private:
 	vector<Steps*> m_vpSteps;
 	/** @brief the Steps of a particular StepsType that belong to this Song. */
 	vector<Steps*> m_vpStepsByType[NUM_StepsType];
+	/** @brief the Steps that are of unrecognized Styles. */
+	vector<Steps*> m_UnknownStyleSteps;
 };
 
 #endif
