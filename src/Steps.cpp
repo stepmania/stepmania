@@ -497,6 +497,7 @@ void Steps::CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds 
 void Steps::CreateBlank( StepsType ntTo )
 {
 	m_StepsType = ntTo;
+	m_StepsTypeStr= GAMEMAN->GetStepsTypeInfo(ntTo).szName;
 	NoteData noteData;
 	noteData.SetNumTracks( GAMEMAN->GetStepsTypeInfo(ntTo).iNumTracks );
 	this->SetNoteData( noteData );
