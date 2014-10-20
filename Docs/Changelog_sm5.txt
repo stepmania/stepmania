@@ -8,6 +8,10 @@ ________________________________________________________________________________
 StepMania 5.0 beta 4a | 20141015
 --------------------------------------------------------------------------------
 
+2014/10/19
+----------
+* [BackgroundEffects] Fix error reporting messages coming up unnecessarily.
+
 2014/10/13
 ----------
 * [NoteDisplay] Var Player and Var Controller work for non-receptor arrows.
