@@ -2464,6 +2464,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetStageIndex' return='int' arguments=''>
 		Returns the current stage index.
 	</Function>
+	<Function name='GetStepsSeconds' return='float' arguments=''>
+		Returns the current StepsSeconds, which is the time value used to set the samples in a player's life record.
+	</Function>
 	<Function name='GetStageSeed' return='int' arguments=''>
 		Return the random seed for the current stage.
 	</Function>

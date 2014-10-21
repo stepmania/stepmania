@@ -1584,6 +1584,7 @@
 			<Function name='GetPossibleSongs'/>
 			<Function name='GetStage'/>
 			<Function name='GetStageIndex'/>
+			<Function name='GetStepsSeconds'/>
 			<Function name='OnePassed'/>
 			<Function name='PlayerHasHighScore'/>
 		</Class>
