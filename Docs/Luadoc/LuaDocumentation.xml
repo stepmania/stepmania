@@ -31,6 +31,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Alpha' theme='_fallback' return='color' arguments='color c, float percent'>
 		[02 Colors.lua] Returns a <code>color</code> with the specified alpha.
 	</Function>
+	<Function name='approach' return='float' arguments='float current, float goal, float speed'>
+		Use this to make a current value approach a goal value at the given speed.  Speed must not be negative.  The value will not overshoot the goal.<br />
+		Note:  When you see the error "approach: speed 1 is negative." it means that the speed value passed was negative.  The 1 is there because approach and multiapproach use the same internal function and can be ignored when using approach.
+	</Function>
 	<Function name='ArbitrarySpeedMods' theme='_fallback' return='LuaOptionRow' arguments=''>
 		[03 CustomSpeedMods.lua]
 	</Function>
@@ -136,7 +140,7 @@ save yourself some time, copy this for undocumented things:
 		[03 Gameplay.lua]
 	</Function>
 	<Function name='fapproach' theme='_fallback' return='float' arguments='float val, float other_val, float to_move'>
-		[02 Utilities.lua]
+		[02 Utilities.lua] Old name for approach.
 	</Function>
 	<Function name='FindSelection' theme='_fallback' return='int' arguments='table list'>
 		[02 Utilities.lua] Return the index of a true value in <code>list</code>.
@@ -327,6 +331,12 @@ save yourself some time, copy this for undocumented things:
 	<Function name='JudgmentLineToStrokeColor' theme='_fallback' return='color' arguments='JudgmentLine jl'>
 		[02 Colors.lua]
 	</Function>
+	<Function name='lerp' return='float' arguments='float percent, float start, float end'>
+		Returns a number linearly interpolated between start and end by percent.
+	</Function>
+	<Function name='lerp_color' return='color' arguments='float percent, color start, color end'>
+		Same as lerp, but for colors.  All channels will reach the end of the interpolation at the same time.
+	</Function>
 	<Function name='LoadActor' return='ActorDef' arguments='string sPath, ...'>
 		Returns an Actor definition for the actor at <code>sPath</code>. If <code>sPath</code> points to a Lua file, any additional arguments will be passed to that script.
 	</Function>
@@ -368,6 +378,11 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='MonthToString' return='string' arguments='Month m'>
 		Returns Month <code>m</code> as a string.
+	</Function>
+	<Function name='multiapproach' return='table' arguments='table currents, table goals, table speeds'>
+		Similar to approach, but operates on tables of values instead of single values.  This will modify the contents of <code>currents</code> in place, as well as returning <code>currents</code>.<br />
+		<code>currents</code>, <code>goals</code>, and <code>speeds</code> must all be the same size and contain only numbers.<br />
+		Note:  When you see the error "approach: speed 1 is negative." it means that a speed value passed was negative.  The 1 tells you which entry in the table was invalid.
 	</Function>
 	<Function name='next' return='void' arguments='table t, int index'>
 		"Allows a program to traverse all fields of a table. Its first argument is a

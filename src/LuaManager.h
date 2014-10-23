@@ -266,6 +266,11 @@ void LuaFunc_Register_##func( lua_State *L ); \
 void LuaFunc_Register_##func( lua_State *L ) { lua_register( L, #func, LuaFunc_##func ); } \
 REGISTER_WITH_LUA_FUNCTION( LuaFunc_Register_##func );
 
+#define LUAFUNC_REGISTER_COMMON(func_name) \
+void LuaFunc_Register_##func_name(lua_State* L); \
+void LuaFunc_Register_##func_name(lua_State* L) { lua_register(L, #func_name, LuaFunc_##func_name); } \
+REGISTER_WITH_LUA_FUNCTION(LuaFunc_Register_##func_name);
+
 #endif
 
 /*
