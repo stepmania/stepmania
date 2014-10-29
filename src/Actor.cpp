@@ -785,7 +785,7 @@ RString Actor::GetLineage() const
 	
 	if( m_pParent )
 		sPath = m_pParent->GetLineage() + '/';
-	sPath += ssprintf( "<%s> %s", typeid(*this).name(), m_sName.c_str() );
+	sPath += ssprintf( "<type %s> %s", typeid(*this).name(), m_sName.c_str() );
 	return sPath;
 }
 
@@ -1130,7 +1130,7 @@ void Actor::RunCommands( const LuaReference& cmds, const LuaReference *pParamTab
 {
 	if( !cmds.IsSet() || cmds.IsNil() )
 	{
-		LuaHelpers::ReportScriptError("RunCommands: command is unset or nil");
+		LuaHelpers::ReportScriptErrorFmt("RunCommands: commands for %s are unset or nil", GetLineage().c_str());
 		return;
 	}
 
@@ -1140,7 +1140,7 @@ void Actor::RunCommands( const LuaReference& cmds, const LuaReference *pParamTab
 	cmds.PushSelf( L );
 	if( lua_isnil(L, -1) )
 	{
-		LuaHelpers::ReportScriptError("Error compiling commands");
+		LuaHelpers::ReportScriptErrorFmt("RunCommands: Error compiling commands for %s", GetLineage().c_str());
 		LUA->Release(L);
 		return;
 	}
@@ -1155,7 +1155,7 @@ void Actor::RunCommands( const LuaReference& cmds, const LuaReference *pParamTab
 		pParamTable->PushSelf( L );
 
 	// call function with 2 arguments and 0 results
-	RString Error= "Error playing command: ";
+	RString Error= "Error playing command:";
 	LuaHelpers::RunScriptOnStack(L, Error, 2, 0, true);
 
 	LUA->Release(L);
