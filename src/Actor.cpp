@@ -889,7 +889,7 @@ void Actor::ScaleTo( const RectF &rect, StretchType st )
 void Actor::SetEffectClockString( const RString &s )
 {
 	if     (s.EqualsNoCase("timer"))	this->SetEffectClock( CLOCK_TIMER );
-	if     (s.EqualsNoCase("timerglobal"))	this->SetEffectClock( CLOCK_TIMER_GLOBAL );
+	else if(s.EqualsNoCase("timerglobal"))	this->SetEffectClock( CLOCK_TIMER_GLOBAL );
 	else if(s.EqualsNoCase("beat"))		this->SetEffectClock( CLOCK_BGM_BEAT );
 	else if(s.EqualsNoCase("music"))	this->SetEffectClock( CLOCK_BGM_TIME );
 	else if(s.EqualsNoCase("bgm"))		this->SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
@@ -899,9 +899,13 @@ void Actor::SetEffectClockString( const RString &s )
 	{
 		CabinetLight cl = StringToCabinetLight( s );
 		if( cl == CabinetLight_Invalid )
-			FAIL_M(ssprintf("Invalid cabinet light: %s", s.c_str()));
-
-		this->SetEffectClock( (EffectClock) (cl + CLOCK_LIGHT_1) );
+		{
+			LuaHelpers::ReportScriptErrorFmt("String '%s' is not an effect clock string or the name of a cabinet light.", s.c_str());
+		}
+		else
+		{
+			this->SetEffectClock(static_cast<EffectClock>(cl + CLOCK_LIGHT_1));
+		}
 	}
 }
 
