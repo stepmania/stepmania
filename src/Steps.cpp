@@ -258,8 +258,16 @@ float Steps::PredictMeter() const
 
 void Steps::TidyUpData()
 {
+	// Don't set the StepsType to dance single if it's invalid.  That just
+	// causes unrecognized charts to end up where they don't belong.
+	// Leave it as StepsType_Invalid so the Song can handle it specially.  This
+	// is a forwards compatibility feature, so that if a future version adds a
+	// new style, editing a simfile with unrecognized Steps won't silently
+	// delete them. -Kyz
 	if( m_StepsType == StepsType_Invalid )
-		m_StepsType = StepsType_dance_single;
+	{
+		LOG->Warn("Detected steps with unknown style '%s' in '%s'", m_StepsTypeStr.c_str(), m_pSong->m_sSongFileName.c_str());
+	}
 
 	if( GetDifficulty() == Difficulty_Invalid )
 		SetDifficulty( StringToDifficulty(GetDescription()) );
@@ -465,12 +473,14 @@ void Steps::AutogenFrom( const Steps *parent_, StepsType ntTo )
 {
 	parent = parent_;
 	m_StepsType = ntTo;
+	m_StepsTypeStr= GAMEMAN->GetStepsTypeInfo(ntTo).szName;
 	m_Timing = parent->m_Timing;
 }
 
 void Steps::CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds )	// pSource does not have to be of the same StepsType
 {
 	m_StepsType = ntTo;
+	m_StepsTypeStr= GAMEMAN->GetStepsTypeInfo(ntTo).szName;
 	NoteData noteData;
 	pSource->GetNoteData( noteData );
 	noteData.SetNumTracks( GAMEMAN->GetStepsTypeInfo(ntTo).iNumTracks );
@@ -489,6 +499,7 @@ void Steps::CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds 
 void Steps::CreateBlank( StepsType ntTo )
 {
 	m_StepsType = ntTo;
+	m_StepsTypeStr= GAMEMAN->GetStepsTypeInfo(ntTo).szName;
 	NoteData noteData;
 	noteData.SetNumTracks( GAMEMAN->GetStepsTypeInfo(ntTo).iNumTracks );
 	this->SetNoteData( noteData );

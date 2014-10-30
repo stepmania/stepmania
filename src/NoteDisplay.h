@@ -1,6 +1,9 @@
 #ifndef NOTE_DISPLAY_H
 #define NOTE_DISPLAY_H
 
+#include "PlayerNumber.h"
+#include "GameInput.h"
+
 class Actor;
 class Sprite;
 class Model;
@@ -24,13 +27,24 @@ enum NotePart
 	NotePart_Invalid
 };
 
+/** @brief the color type of a Note. */
+enum NoteColorType
+{
+	NoteColorType_Denominator, /**< Color by note type. */
+	NoteColorType_Progress, /**< Color by progress. */
+	NUM_NoteColorType,
+	NoteColorType_Invalid
+};
+const RString& NoteColorTypeToString( NoteColorType nct );
+NoteColorType StringToNoteColorType( const RString& s );
+
 struct NoteResource;
 
 struct NoteColorActor
 {
 	NoteColorActor();
 	~NoteColorActor();
-	void Load( const RString &sButton, const RString &sElement );
+	void Load( const RString &sButton, const RString &sElement, PlayerNumber, GameController );
 	Actor *Get();
 private:
 	NoteResource *m_p;
@@ -40,7 +54,7 @@ struct NoteColorSprite
 {
 	NoteColorSprite();
 	~NoteColorSprite();
-	void Load( const RString &sButton, const RString &sElement );
+	void Load( const RString &sButton, const RString &sElement, PlayerNumber, GameController );
 	Sprite *Get();
 private:
 	NoteResource *m_p;

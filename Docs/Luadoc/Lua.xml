@@ -203,6 +203,7 @@
 		<Function name='WriteGamePrefToFile'/>
 		<Function name='WritePrefToFile'/>
 		<Function name='Year'/>
+		<Function name='approach'/>
 		<Function name='assert'/>
 		<Function name='clamp'/>
 		<Function name='class'/>
@@ -219,11 +220,14 @@
 		<Function name='ipairs'/>
 		<Function name='ivalues'/>
 		<Function name='join'/>
+		<Function name='lerp'/>
+		<Function name='lerp_color'/>
 		<Function name='load'/>
 		<Function name='loadfile'/>
 		<Function name='loadstring'/>
 		<Function name='mbstrlen'/>
 		<Function name='module'/>
+		<Function name='multiapproach'/>
 		<Function name='newproxy'/>
 		<Function name='next'/>
 		<Function name='pairs'/>
@@ -1584,6 +1588,7 @@
 			<Function name='GetPossibleSongs'/>
 			<Function name='GetStage'/>
 			<Function name='GetStageIndex'/>
+			<Function name='GetStepsSeconds'/>
 			<Function name='OnePassed'/>
 			<Function name='PlayerHasHighScore'/>
 		</Class>

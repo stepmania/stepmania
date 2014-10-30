@@ -377,6 +377,7 @@ public:
 	static int AllFailed( T* p, lua_State *L )		{ lua_pushboolean(L, p->AllFailed()); return 1; }
 	static int GetStage( T* p, lua_State *L )		{ LuaHelpers::Push( L, p->m_Stage ); return 1; }
 	DEFINE_METHOD( GetStageIndex,				m_iStageIndex )
+	DEFINE_METHOD(GetStepsSeconds, m_fStepsSeconds)
 	static int PlayerHasHighScore( T* p, lua_State *L )
 	{
 		lua_pushboolean(L, p->PlayerHasHighScore(Enum::Check<PlayerNumber>(L, 1)));
@@ -395,6 +396,7 @@ public:
 		ADD_METHOD( AllFailed );
 		ADD_METHOD( GetStage );
 		ADD_METHOD( GetStageIndex );
+		ADD_METHOD( GetStepsSeconds );
 		ADD_METHOD( PlayerHasHighScore );
 		ADD_METHOD( GetEarnedExtraStage );
 	}
