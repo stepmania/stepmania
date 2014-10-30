@@ -984,7 +984,7 @@ save yourself some time, copy this for undocumented things:
 		Sets the Actor's alpha level to <code>fAlpha</code>, where <code>fAlpha</code> is in the range 0..1.
 	</Function>
 	<Function name='diffuseblink' return='void' arguments=''>
-		Makes the Actor switch between two colors immediately.
+		Makes the Actor switch between two colors immediately.  See Themerdocs/effect_colors.txt for an example.
 	</Function>
 	<Function name='diffusebottomedge' return='void' arguments=''>
 		Sets the Actor's bottom edge color to <code>c</code>.
@@ -1002,13 +1002,13 @@ save yourself some time, copy this for undocumented things:
 		Sets the Actor's lower right corner color to <code>c</code>.
 	</Function>
 	<Function name='diffuseramp' return='void' arguments=''>
-		Makes the Actor switch between two colors, jumping back to the first after reaching the second.
+		Makes the Actor switch between two colors, jumping back to the first after reaching the second.  See Themerdocs/effect_colors.txt for an example.
 	</Function>
 	<Function name='diffuserightedge' return='void' arguments='color c'>
 		Sets the Actor's right edge color to <code>c</code>.
 	</Function>
 	<Function name='diffuseshift' return='void' arguments=''>
-		Makes the Actor shift between two colors smoothly.
+		Makes the Actor shift between two colors smoothly.  See Themerdocs/effect_colors.txt for an example.
 	</Function>
 	<Function name='diffusetopedge' return='void' arguments='color c'>
 		Sets the Actor's top edge color to <code>c</code>.
@@ -1144,13 +1144,13 @@ save yourself some time, copy this for undocumented things:
 		Sets the Actor's glow color.
 	</Function>
 	<Function name='glowblink' return='void' arguments=''>
-		Makes the Actor glow between two colors immediately.
+		Makes the Actor glow between two colors immediately.  See Themerdocs/effect_colors.txt for an example.
 	</Function>
 	<Function name='glowramp' return='void' arguments=''>
-		Makes the Actor glow between two colors smoothly, jumping back to the first at the end.
+		Makes the Actor glow between two colors smoothly, jumping back to the first at the end.  See Themerdocs/effect_colors.txt for an example.
 	</Function>
 	<Function name='glowshift' return='void' arguments=''>
-		Makes the Actor glow between two colors smoothly.
+		Makes the Actor glow between two colors smoothly.  See Themerdocs/effect_colors.txt for an example.
 	</Function>
 	<Function name='halign' return='void' arguments='float fAlign'>
 		Set the fractional horizontal alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is left aligned while an alignment of 1 is right aligned. See <Link function='horizalign' /> for the common case.
@@ -1207,7 +1207,7 @@ save yourself some time, copy this for undocumented things:
 		Basically creates a command named <code>!sMessageName</code> (Note the ! at the beginning. The source code says this: "Hack: use "!" as a marker to broadcast a command, instead of playing a command, so we don't have to add yet another element to every tween state for this rarely-used command.")
 	</Function>
 	<Function name='rainbow' return='void' arguments=''>
-		Makes the Actor change colors continually using colors of the rainbow.
+		Makes the Actor change colors continually using colors of the rainbow.  Each channel follows a cosine wave, red starts at 0, green starts at 2pi/3, and blue starts at 4pi/3.
 	</Function>
 	<Function name='roll' return='void' arguments='float fRoll'>
 		Sets the roll of this Actor to <code>fRoll</code>.
