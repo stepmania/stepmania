@@ -25,10 +25,25 @@ void RollingNumbers::Load( const RString &sMetricsGroup )
 	UpdateText();
 }
 
+void RollingNumbers::DrawPart(RageColor const& diffuse, RageColor const& stroke,
+	float crop_left, float crop_right)
+{
+	for(int i= 0; i < 4; ++i)
+	{
+		m_pTempState->diffuse[i]= diffuse;
+	}
+	SetStrokeColor(stroke);
+	m_pTempState->crop.left= crop_left;
+	m_pTempState->crop.right= crop_right;
+	BitmapText::DrawPrimitives();
+}
+
 void RollingNumbers::DrawPrimitives()
 {
 	RageColor c_orig = this->GetDiffuse();
 	RageColor c2_orig = this->GetStrokeColor();
+	float original_crop_left= m_pTempState->crop.left;
+	float original_crop_right= m_pTempState->crop.right;
 
 	RageColor c = this->GetDiffuse();
 	c *= LEADING_ZERO_MULTIPLY_COLOR;
@@ -53,21 +68,13 @@ void RollingNumbers::DrawPrimitives()
 	float f = i / (float)s.length();
 
 	// draw leading part
-	SetDiffuse( c );
-	SetStrokeColor( c2 );
-	SetCropLeft( 0 );
-	SetCropRight( 1-f );
-	BitmapText::DrawPrimitives();
-
+	DrawPart(c, c2, max(0, original_crop_left), max(1-f, original_crop_right));
 	// draw regular color part
-	SetDiffuse( c_orig );
-	SetStrokeColor( c2_orig );
-	SetCropLeft( f );
-	SetCropRight( 0 );
-	BitmapText::DrawPrimitives();
+	DrawPart(c_orig, c2_orig, max(f, original_crop_left),
+		max(0, original_crop_right));
 
-	SetCropLeft( 0 );
-	SetCropRight( 0 );
+	m_pTempState->crop.left= original_crop_left;
+	m_pTempState->crop.right= original_crop_right;
 }
 
 void RollingNumbers::Update( float fDeltaTime )

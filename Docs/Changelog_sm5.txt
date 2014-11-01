@@ -4,6 +4,10 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2014/11/01
+----------
+* [RollingNumbers] Cropping and color during tweens fixed.
+
 2014/10/23
 ----------
 * [Global] approach, multiapproach, lerp, and lerp_color lua functions added.
