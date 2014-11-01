@@ -25,12 +25,12 @@ void RollingNumbers::Load( const RString &sMetricsGroup )
 	UpdateText();
 }
 
-void RollingNumbers::DrawPart(RageColor const& diffuse, RageColor const& stroke,
+void RollingNumbers::DrawPart(RageColor const* diffuse, RageColor const& stroke,
 	float crop_left, float crop_right)
 {
-	for(int i= 0; i < 4; ++i)
+	for(int i= 0; i < NUM_DIFFUSE_COLORS; ++i)
 	{
-		m_pTempState->diffuse[i]= diffuse;
+		m_pTempState->diffuse[i]= diffuse[i];
 	}
 	SetStrokeColor(stroke);
 	m_pTempState->crop.left= crop_left;
@@ -40,15 +40,17 @@ void RollingNumbers::DrawPart(RageColor const& diffuse, RageColor const& stroke,
 
 void RollingNumbers::DrawPrimitives()
 {
-	RageColor c_orig = this->GetDiffuse();
-	RageColor c2_orig = this->GetStrokeColor();
+	RageColor diffuse_orig[NUM_DIFFUSE_COLORS];
+	RageColor diffuse_temp[NUM_DIFFUSE_COLORS];
+	RageColor stroke_orig= GetStrokeColor();
+	RageColor stroke_temp= GetStrokeColor() * LEADING_ZERO_MULTIPLY_COLOR;
+	for(int i= 0; i < NUM_DIFFUSE_COLORS; ++i)
+	{
+		diffuse_orig[i]= m_pTempState->diffuse[i];
+		diffuse_temp[i]= m_pTempState->diffuse[i] * LEADING_ZERO_MULTIPLY_COLOR;
+	}
 	float original_crop_left= m_pTempState->crop.left;
 	float original_crop_right= m_pTempState->crop.right;
-
-	RageColor c = this->GetDiffuse();
-	c *= LEADING_ZERO_MULTIPLY_COLOR;
-	RageColor c2 = this->GetStrokeColor();
-	c2 *= LEADING_ZERO_MULTIPLY_COLOR;
 
 	RString s = this->GetText();
 	int i;
@@ -68,10 +70,11 @@ void RollingNumbers::DrawPrimitives()
 	float f = i / (float)s.length();
 
 	// draw leading part
-	DrawPart(c, c2, max(0, original_crop_left), max(1-f, original_crop_right));
+	DrawPart(diffuse_temp, stroke_temp,
+		max(0, original_crop_left), max(1-f, original_crop_right));
 	// draw regular color part
-	DrawPart(c_orig, c2_orig, max(f, original_crop_left),
-		max(0, original_crop_right));
+	DrawPart(diffuse_orig, stroke_orig,
+		max(f, original_crop_left), max(0, original_crop_right));
 
 	m_pTempState->crop.left= original_crop_left;
 	m_pTempState->crop.right= original_crop_right;

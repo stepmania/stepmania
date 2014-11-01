@@ -370,21 +370,21 @@ void Actor::PreDraw() // calculate actor properties
 			/* XXX: Should diffuse_blink and diffuse_shift multiply the tempState color? 
 			 * (That would have the same effect with 1,1,1,1, and allow tweening the diffuse
 			 * while blinking and shifting.) */
-			for(int i=0; i<4; i++)
+			for(int i=0; i<NUM_DIFFUSE_COLORS; i++)
 			{
 				tempState.diffuse[i] = bBlinkOn ? m_effectColor1 : m_effectColor2;
 				tempState.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
 			}
 			break;
 		case diffuse_shift:
-			for(int i=0; i<4; i++)
+			for(int i=0; i<NUM_DIFFUSE_COLORS; i++)
 			{
 				tempState.diffuse[i] = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
 				tempState.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
 			}
 			break;
 		case diffuse_ramp:
-			for(int i=0; i<4; i++)
+			for(int i=0; i<NUM_DIFFUSE_COLORS; i++)
 			{
 				tempState.diffuse[i] = m_effectColor1*fPercentThroughEffect + m_effectColor2*(1.0f-fPercentThroughEffect);
 				tempState.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
@@ -408,7 +408,7 @@ void Actor::PreDraw() // calculate actor properties
 				RageFastCos( fPercentBetweenColors*2*PI + PI * 2.0f / 3.0f ) * 0.5f + 0.5f,
 				RageFastCos( fPercentBetweenColors*2*PI + PI * 4.0f / 3.0f) * 0.5f + 0.5f,
 				fOriginalAlpha );
-			for( int i=1; i<4; i++ )
+			for( int i=1; i<NUM_DIFFUSE_COLORS; i++ )
 				tempState.diffuse[i] = tempState.diffuse[0];
 			break;
 		case wag:
@@ -471,7 +471,7 @@ void Actor::PreDraw() // calculate actor properties
 			tempState = m_current;
 		}
 
-		for( int i=0; i<4; i++ )
+		for( int i=0; i<NUM_DIFFUSE_COLORS; i++ )
 		{
 			tempState.diffuse[i] *= m_internalDiffuse;
 		}
@@ -1186,7 +1186,7 @@ float Actor::GetTweenTimeLeft() const
  * being manipulated, which would add overhead ... */
 void Actor::SetGlobalDiffuseColor( RageColor c )
 {
-	for( int i=0; i<4; i++ ) // color, not alpha
+	for( int i=0; i<NUM_DIFFUSE_COLORS; i++ ) // color, not alpha
 	{
 		for( unsigned ts = 0; ts < m_Tweens.size(); ++ts )
 		{
@@ -1205,7 +1205,7 @@ void Actor::SetGlobalDiffuseColor( RageColor c )
 
 void Actor::SetDiffuseColor( RageColor c )
 {
-	for( int i=0; i<4; i++ )
+	for( int i=0; i<NUM_DIFFUSE_COLORS; i++ )
 	{
 		DestTweenState().diffuse[i].r = c.r;
 		DestTweenState().diffuse[i].g = c.g;
@@ -1224,7 +1224,7 @@ void Actor::TweenState::Init()
 	fSkewY = 0;
 	crop = RectF( 0,0,0,0 );
 	fade = RectF( 0,0,0,0 );
-	for( int i=0; i<4; i++ )
+	for( int i=0; i<NUM_DIFFUSE_COLORS; i++ )
 		diffuse[i] = RageColor( 1, 1, 1, 1 );
 	glow = RageColor( 1, 1, 1, 0 );
 	aux = 0;
@@ -1268,7 +1268,7 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 	average_out.fade.right	= lerp( fPercentBetween, ts1.fade.right,  ts2.fade.right );
 	average_out.fade.bottom	= lerp( fPercentBetween, ts1.fade.bottom, ts2.fade.bottom );
 
-	for( int i=0; i<4; ++i )
+	for( int i=0; i<NUM_DIFFUSE_COLORS; ++i )
 		average_out.diffuse[i] = lerp( fPercentBetween, ts1.diffuse[i], ts2.diffuse[i] );
 
 	average_out.glow	= lerp( fPercentBetween, ts1.glow,        ts2.glow );
