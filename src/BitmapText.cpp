@@ -56,9 +56,6 @@ BitmapText::BitmapText()
 	m_iVertSpacing = 0;
 	m_MaxDimensionUsesZoom= false;
 	m_bHasGlowAttribute = false;
-	// We'd be better off not adding strokes to things we can't control
-	// themewise (ScreenDebugOverlay for example). -Midiman
-	m_StrokeColor = RageColor(0,0,0,0);
 	// Never, this way we dont have awkward settings between themes. -Midiman
 	SetShadowLength( 0 );
 	// SM4SVN r28328, "draw glow using stroke texture" forces the BitmapText to
@@ -95,7 +92,9 @@ BitmapText & BitmapText::operator=(const BitmapText &cpy)
 	CPY( m_vpFontPageTextures );
 	CPY( m_mAttributes );
 	CPY( m_bHasGlowAttribute );
-	CPY( m_StrokeColor );
+	CPY( BMT_Tweens );
+	CPY( BMT_current );
+	CPY( BMT_start );
 #undef CPY
 
 	if( m_pFont )
@@ -115,6 +114,60 @@ BitmapText::BitmapText( const BitmapText &cpy ):
 	m_pFont = NULL;
 
 	*this = cpy;
+}
+
+void BitmapText::SetCurrentTweenStart()
+{
+	BMT_start= BMT_current;
+}
+
+void BitmapText::EraseHeadTween()
+{
+	BMT_current= BMT_Tweens[0];
+	BMT_Tweens.erase(BMT_Tweens.begin());
+}
+
+void BitmapText::UpdatePercentThroughTween(float between)
+{
+	BMT_TweenState::MakeWeightedAverage(BMT_current, BMT_start, BMT_Tweens[0],
+		between);
+}
+
+void BitmapText::BeginTweening(float time, ITween* interp)
+{
+	Actor::BeginTweening(time, interp);
+	if(!BMT_Tweens.empty())
+	{
+		BMT_Tweens.push_back(BMT_Tweens.back());
+	}
+	else
+	{
+		BMT_Tweens.push_back(BMT_current);
+	}
+}
+
+void BitmapText::StopTweening()
+{
+	BMT_Tweens.clear();
+	Actor::StopTweening();
+}
+
+void BitmapText::FinishTweening()
+{
+	if(!BMT_Tweens.empty())
+	{
+		BMT_current= BMT_DestTweenState();
+	}
+	Actor::FinishTweening();
+}
+
+void BitmapText::BMT_TweenState::MakeWeightedAverage(BMT_TweenState& out,
+	BMT_TweenState const& from, BMT_TweenState const& to, float between)
+{
+	out.m_stroke_color.b= lerp(between, from.m_stroke_color.b, to.m_stroke_color.b);
+	out.m_stroke_color.g= lerp(between, from.m_stroke_color.g, to.m_stroke_color.g);
+	out.m_stroke_color.r= lerp(between, from.m_stroke_color.r, to.m_stroke_color.r);
+	out.m_stroke_color.a= lerp(between, from.m_stroke_color.a, to.m_stroke_color.a);
 }
 
 void BitmapText::LoadFromNode( const XNode* node )
@@ -613,12 +666,12 @@ void BitmapText::DrawPrimitives()
 		}
 
 		// render the stroke
-		if( m_StrokeColor.a > 0 )
+		RageColor stroke_color= GetCurrStrokeColor();
+		if( stroke_color.a > 0 )
 		{
-			RageColor c = m_StrokeColor;
-			c.a *= m_pTempState->diffuse[0].a;
+			stroke_color.a *= m_pTempState->diffuse[0].a;
 			for( unsigned i=0; i<m_aVertices.size(); i++ )
-				m_aVertices[i].c = c;
+				m_aVertices[i].c = stroke_color;
 			DrawChars( true );
 		}
 
@@ -914,6 +967,7 @@ public:
 	}
 	static int ClearAttributes( T* p, lua_State * )	{ p->ClearAttributes(); return 0; }
 	static int strokecolor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetStrokeColor( c ); return 0; }
+	DEFINE_METHOD(getstrokecolor, GetStrokeColor());
 	static int uppercase( T* p, lua_State *L )		{ p->SetUppercase( BArg(1) ); return 0; }
 	static int textglowmode( T* p, lua_State *L )	{ p->SetTextGlowMode( Enum::Check<TextGlowMode>(L, 1) ); return 0; }
 
@@ -933,6 +987,7 @@ public:
 		ADD_METHOD( AddAttribute );
 		ADD_METHOD( ClearAttributes );
 		ADD_METHOD( strokecolor );
+		ADD_METHOD( getstrokecolor );
 		ADD_METHOD( uppercase );
 		ADD_METHOD( textglowmode );
 		//ADD_METHOD( LoadFromFont );
