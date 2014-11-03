@@ -32,7 +32,7 @@ void RollingNumbers::DrawPart(RageColor const* diffuse, RageColor const& stroke,
 	{
 		m_pTempState->diffuse[i]= diffuse[i];
 	}
-	SetStrokeColor(stroke);
+	SetCurrStrokeColor(stroke);
 	m_pTempState->crop.left= crop_left;
 	m_pTempState->crop.right= crop_right;
 	BitmapText::DrawPrimitives();
@@ -42,8 +42,8 @@ void RollingNumbers::DrawPrimitives()
 {
 	RageColor diffuse_orig[NUM_DIFFUSE_COLORS];
 	RageColor diffuse_temp[NUM_DIFFUSE_COLORS];
-	RageColor stroke_orig= GetStrokeColor();
-	RageColor stroke_temp= GetStrokeColor() * LEADING_ZERO_MULTIPLY_COLOR;
+	RageColor stroke_orig= GetCurrStrokeColor();
+	RageColor stroke_temp= stroke_orig * LEADING_ZERO_MULTIPLY_COLOR;
 	for(int i= 0; i < NUM_DIFFUSE_COLORS; ++i)
 	{
 		diffuse_orig[i]= m_pTempState->diffuse[i];

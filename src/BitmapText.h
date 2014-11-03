@@ -19,6 +19,41 @@ public:
 	virtual void LoadFromNode( const XNode* pNode );
 	virtual BitmapText *Copy() const;
 
+	struct BMT_TweenState
+	{
+		// We'd be better off not adding strokes to things we can't control
+		// themewise (ScreenDebugOverlay for example). -Midiman
+		BMT_TweenState(): m_stroke_color(RageColor(0,0,0,0)) {}
+		static void MakeWeightedAverage(BMT_TweenState& out,
+			BMT_TweenState const& from, BMT_TweenState const& to, float between);
+		bool operator==(BMT_TweenState const& other) const;
+		bool operator!=(BMT_TweenState const& other) const { return !operator==(other); }
+		void SetStrokeColor(RageColor const& c) { m_stroke_color= c; }
+		RageColor const& GetStrokeColor() { return m_stroke_color; }
+	private:
+		RageColor m_stroke_color;
+	};
+
+	BMT_TweenState& BMT_DestTweenState()
+	{
+		if(BMT_Tweens.empty())
+		{ return BMT_current; }
+		else
+		{ return BMT_Tweens.back(); }
+	}
+	BMT_TweenState const& BMT_DestTweenState() const { return const_cast<BitmapText*>(this)->BMT_DestTweenState(); }
+
+	virtual void SetCurrentTweenStart();
+	virtual void EraseHeadTween();
+	virtual void UpdatePercentThroughTween(float between);
+	virtual void BeginTweening(float time, ITween* interp);
+	// This function exists because the compiler tried to connect a call of
+	// "BeginTweening(1.2f)" to the function above. -Kyz
+	virtual void BeginTweening(float time, TweenType tt = TWEEN_LINEAR)
+	{ Actor::BeginTweening(time, tt); }
+	virtual void StopTweening();
+	virtual void FinishTweening();
+
 	bool LoadFromFont( const RString& sFontName );
 	bool LoadFromTextureAndChars( const RString& sTexturePath, const RString& sChars );
 	virtual void SetText( const RString& sText, const RString& sAlternateText = "", int iWrapWidthPixels = -1 );
@@ -40,8 +75,10 @@ public:
 
 	void SetHorizAlign( float f );
 
-	void SetStrokeColor( RageColor c )	{ m_StrokeColor = c; }
-	RageColor GetStrokeColor()		{ return m_StrokeColor; }
+	void SetStrokeColor(RageColor c) { BMT_DestTweenState().SetStrokeColor(c); }
+	RageColor const& GetStrokeColor()		{ return BMT_DestTweenState().GetStrokeColor(); }
+	void SetCurrStrokeColor(RageColor c) { BMT_current.SetStrokeColor(c); }
+	RageColor const& GetCurrStrokeColor() { return BMT_current.GetStrokeColor(); }
 
 	void SetTextGlowMode( TextGlowMode tgm )	{ m_TextGlowMode = tgm; }
 
@@ -91,7 +128,6 @@ protected:
 	map<size_t, Attribute>		m_mAttributes;
 	bool				m_bHasGlowAttribute;
 
-	RageColor		m_StrokeColor;
 	TextGlowMode	m_TextGlowMode;
 
 	// recalculate the items in SetText()
@@ -101,6 +137,9 @@ protected:
 
 private:
 	void SetTextInternal();
+	vector<BMT_TweenState> BMT_Tweens;
+	BMT_TweenState BMT_current;
+	BMT_TweenState BMT_start;
 };
 
 #endif
