@@ -66,7 +66,12 @@ void ScreenPrompt::Init()
 	for( int i=0; i<NUM_PromptAnswer; i++ )
 	{
 		m_textAnswer[i].LoadFromFont( THEME->GetPathF(m_sName,"answer") );
-		LOAD_ALL_COMMANDS( m_textAnswer[i] );
+		// The name of the actor isn't set because it is not known at this point
+		// how many answers there will be, and the name depends on the number of
+		// answers as a clumsy way of letting the themer set different positions
+		// for different answer groups.  The name is set in BeginScreen, and
+		// then the commands are loaded. -Kyz (At least, that seems like the
+		// explanation to me, reading the code years after the author left)
 		this->AddChild( &m_textAnswer[i] );
 	}
 
@@ -90,6 +95,9 @@ void ScreenPrompt::BeginScreen()
 	{
 		RString sElem = ssprintf("Answer%dOf%d", i+1, g_PromptType+1);
 		m_textAnswer[i].SetName( sElem );
+		LOAD_ALL_COMMANDS(m_textAnswer[i]);
+		// Side note:  Because LOAD_ALL_COMMANDS occurs here, InitCommand will
+		// not be run for the actors.  People can just use OnCommand instead.
 		RString sAnswer = PromptAnswerToString( (PromptAnswer)i );
 		// FRAGILE
 		if( g_PromptType == PROMPT_OK )

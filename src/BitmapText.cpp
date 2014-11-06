@@ -885,7 +885,7 @@ void BitmapText::Attribute::FromStack( lua_State *L, int iPos )
 	lua_getfield( L, iTab, "Diffuses" );
 	if( !lua_isnil(L, -1) )
 	{
-		for( int i = 1; i <= 4; ++i )
+		for( int i = 1; i <= NUM_DIFFUSE_COLORS; ++i )
 		{
 			lua_rawgeti( L, -i, i );
 			diffuse[i-1].FromStack( L, -1 );

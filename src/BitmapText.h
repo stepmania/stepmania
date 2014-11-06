@@ -93,7 +93,7 @@ public:
 	{
 		Attribute() : length(-1), glow() { }
 		int		length;
-		RageColor	diffuse[4];
+		RageColor	diffuse[NUM_DIFFUSE_COLORS];
 		RageColor	glow;
 
 		void FromStack( lua_State *L, int iPos );
