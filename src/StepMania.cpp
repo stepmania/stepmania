@@ -67,6 +67,7 @@
 #include "GameLoop.h"
 #include "SpecialFiles.h"
 #include "Profile.h"
+#include "ActorUtil.h"
 
 #if defined(WIN32)
 #include <windows.h>
@@ -950,6 +951,10 @@ int main(int argc, char* argv[])
 	HOOKS->Init();
 
 	LUA		= new LuaManager;
+
+	// Initialize the file extension type lists so everything can ask ActorUtil
+	// what the type of a file is.
+	ActorUtil::InitFileTypeLists();
 
 	// Almost everything uses this to read and write files.  Load this early.
 	FILEMAN = new RageFileManager( argv[0] );

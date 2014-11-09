@@ -30,15 +30,16 @@ Actor *CreateActor() { return new T; }
 
 enum FileType
 {
-	FT_Bitmap, 
+	FT_Bitmap,
 	FT_Sprite,
-	FT_Sound, 
-	FT_Movie, 
-	FT_Directory, 
+	FT_Sound,
+	FT_Movie,
+	FT_Directory,
 	FT_Xml,
-	FT_Model, 
-	FT_Lua, 
-	NUM_FileType, 
+	FT_Model,
+	FT_Lua,
+	FT_Ini,
+	NUM_FileType,
 	FileType_Invalid
 };
 const RString& FileTypeToString( FileType ft );
@@ -46,6 +47,10 @@ const RString& FileTypeToString( FileType ft );
 /** @brief Utility functions for creating and manipulating Actors. */
 namespace ActorUtil
 {
+	void InitFileTypeLists();
+	vector<RString> const& GetTypeExtensionList(FileType ft);
+	void AddTypeExtensionsToList(FileType ft, vector<RString>& add_to);
+
 	// Every screen should register its class at program initialization.
 	void Register( const RString& sClassName, CreateActorFn pfn );
 

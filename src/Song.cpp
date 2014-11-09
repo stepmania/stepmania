@@ -32,6 +32,7 @@
 #include "NotesWriterSSC.h"
 #include "UnlockManager.h"
 #include "LyricsLoader.h"
+#include "ActorUtil.h"
 
 #include <time.h>
 #include <set>
@@ -516,10 +517,8 @@ void Song::TidyUpData( bool fromCache, bool /* duringCache */ )
 	if( !HasMusic() )
 	{
 		vector<RString> arrayPossibleMusic;
-		GetDirListing( m_sSongDir + RString("*.mp3"), arrayPossibleMusic );
-		GetDirListing( m_sSongDir + RString("*.oga"), arrayPossibleMusic );
-		GetDirListing( m_sSongDir + RString("*.ogg"), arrayPossibleMusic );
-		GetDirListing( m_sSongDir + RString("*.wav"), arrayPossibleMusic );
+		FILEMAN->GetDirListingWithMultipleExtensions(m_sSongDir,
+			ActorUtil::GetTypeExtensionList(FT_Sound), arrayPossibleMusic);
 
 		if( !arrayPossibleMusic.empty() )
 		{
@@ -854,15 +853,8 @@ void Song::TidyUpData( bool fromCache, bool /* duringCache */ )
 	if( (!HasBGChanges() && !fromCache) )
 	{
 		vector<RString> arrayPossibleMovies;
-		GetDirListing( m_sSongDir + RString("*.ogv"), arrayPossibleMovies );
-		GetDirListing( m_sSongDir + RString("*.avi"), arrayPossibleMovies );
-		GetDirListing( m_sSongDir + RString("*.mpg"), arrayPossibleMovies );
-		GetDirListing( m_sSongDir + RString("*.mpeg"), arrayPossibleMovies );
-		GetDirListing( m_sSongDir + RString("*.mp4"), arrayPossibleMovies );
-		GetDirListing( m_sSongDir + RString("*.mkv"), arrayPossibleMovies );
-		GetDirListing( m_sSongDir + RString("*.flv"), arrayPossibleMovies );
-		GetDirListing( m_sSongDir + RString("*.f4v"), arrayPossibleMovies );
-		GetDirListing( m_sSongDir + RString("*.mov"), arrayPossibleMovies );
+		FILEMAN->GetDirListingWithMultipleExtensions(m_sSongDir,
+			ActorUtil::GetTypeExtensionList(FT_Movie), arrayPossibleMovies);
 
 		/* Use this->GetBeatFromElapsedTime(0) instead of 0 to start when the
 		 * music starts. */
