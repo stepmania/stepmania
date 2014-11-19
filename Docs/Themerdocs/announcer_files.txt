@@ -1,0 +1,84 @@
+This could use a bit nicer formatting, and something else should explain screen inheritance, but here's everything I was able to find on announcers from searching the source.
+Each entry lists the event that triggers it, then the name of the folder that is searched for a sound to play.
+
+
+Screen inheritance note:
+The screen names listed below are actually the names of screen classes. Every screen has a class type, and some screen class types inherit from others. You can find the class type of a screen by looking at the metrics for the theme and reading the Class metric in a screen's metric group.
+So sound names with "<screen name>" in them will actually occur on any screen that inherits from that class type, and the actual name of the screen will be inserted into the string when the announcer system goes to play the sound.
+
+
+ScreenNameEntry
+(entering screen) "name entry"
+
+ScreenEnding
+(entering screen) "music scroll"
+
+ScreenEvaluation
+(entering screen): (only one will occur, listed in order of precedence)
+"evaluation new record"
+"evaluation full combo W1"
+"evaluation full combo W2"
+grade string values: "AAAA" (tier 1), "AAA" (tier 2), "AA" (tier 3), "A" (tier 4), "B" (tier 5), "C" (tier 6), "D" (tier 7), "E" (tier failed), "N" (tier nodata)
+"evaluation final <grade string>" (only in course mode on summary screen)
+"evaluation win" (only in battle mode)
+"evaluation lose" (only in battle mode)
+"evaluation <grade string>" (only in non-course, non-battle)
+(after CheerDelaySeconds) "evaluation cheer"
+
+ScreenPlayerOptions
+(entering screen) "player options intro"
+
+ScreenSelectCharacter
+(entering screen) "select group intro"
+
+ScreenSelectMaster
+(ScreenSelectMaster is the name of the class type of several different screens, so these will actually occur on any of the following: "ScreenTitleMenu", "ScreenSelectLanguage", "ScreenUnlockBrowse", "ScreenSelectStyle", "ScreenSelectPlayMode", "ScreenGameInformation", or any other screen that has "ScreenSelectMaster" as its Class metric)
+(on moving to second page) "select difficulty challenge"
+(side note: choices on ScreenSelectMaster are split into two pages, all choices after the amount set by the NumChoicesOnPage1 metric are on the second page. Default is 1024, so this will never play unless the theme sets the metric lower to have a second page)
+(on picking a choice) "<screen name> comment <choice name>"
+(<screen name> will be the full name of the screen, <choice name> will be the name field of the gamecommand that defines the choice, so this could be literally anything the themer feels like)
+
+ScreenSelect
+(every IdleCommentSeconds) "<screen name> IdleComment"
+
+ScreenTitleMenu
+(entering screen) "title menu game name"
+
+ScreenWithMenuElements
+(entering screen) "<screen name> intro"
+
+ScreenSelectMusic
+(entering screen) "select music intro"
+(every IdleCommentSeconds) "<screen name> IdleComment"
+(on picking a song played already this round) "select music comment repeat"
+(on picking a song never played before) "select music comment new"
+(on picking a song with a meter >= 10) "select music comment hard"
+(on picking a song that is not one of the above) "select music comment general"
+(on picking a course) "select course comment general"
+
+ScreenGameplay
+(entering screen) "gameplay intro"
+(after fading in) "gameplay ready"
+(on song start extra stage) "gameplay here we go extra"
+(on song start final stage) "gameplay here we go final"
+(on song start non-final non-extra stage) "gameplay here we go normal"
+(on enemy death in battle mode?) "gameplay battle damage level3"
+(on finishing gameplay, earned extra) "gameplay extra"
+(on finishing gameplay, not earned extra) "gameplay cleared"
+(when failing over halfway through course) "gameplay oni failed halfway"
+(when failing less than halfway through course) "gameplay oni failed"
+(when failing non-course) "gameplay failed"
+(following separated by SecondsBetweenComments metric)
+(when one life meter is hot) "gameplay comment hot"
+(when one life meter is in danger) "gameplay comment danger"
+(when neither of the above two) "gameplay comment good"
+(in nonstop, oni, or endless mode) "gameplay comment oni"
+(every hundred combos) "gameplay <amount> combo" (<amount> ranges from 100 to 1000)
+(combo stopped) "gameplay combo stopped"
+(combo continuing (every hundred over 1k)) "gameplay combo overflow"
+(when a battle trick occurs) "gameplay battle trick level<n>" (<n> can be 1, 2, or 3)
+(when battle damage occurs) "gameplay battle damage level<n>" (<n> can be 1, 2, or 3)
+
+(when a menu timer runs low) "hurry up"
+
+(whenever the theme calls SOUND:PlayAnnouncer("<anything>")) "<anything>"
