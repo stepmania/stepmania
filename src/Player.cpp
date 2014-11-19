@@ -2563,7 +2563,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				const bool bBright = ( m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > int(BRIGHT_GHOST_COMBO_THRESHOLD) ) || bBlind;
 				if( m_pNoteField )
 					m_pNoteField->DidTapNote( col, bBlind? TNS_W1:score, bBright );
-				if( score >= TNS_W3 || bBlind )
+				if( score >= PREFSMAN->m_MinTNSToHideNotes || bBlind )
 					HideNote( col, iRowOfOverlappingNoteOrRow );
 			}
 		}
@@ -2909,7 +2909,7 @@ void Player::FlashGhostRow( int iRow )
 			continue;
 		if( m_pNoteField )
 			m_pNoteField->DidTapNote( iTrack, lastTNS, bBright );
-		if( lastTNS >= TNS_W3 || bBlind )
+		if( lastTNS >= PREFSMAN->m_MinTNSToHideNotes || bBlind )
 			HideNote( iTrack, iRow );
 	}
 }

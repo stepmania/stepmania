@@ -744,6 +744,8 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ShowSongOptions",		MovePref<Maybe>,	"Ask", "Hide","Show" ) );
 	ADD( ConfOption( "PercentageScoring",	MovePref<bool>,	"Off","On" ) );
 	ADD( ConfOption( "GetRankingName",		MovePref<GetRankingName>, "Off", "On", "Ranking Songs" ) );
+	ADD( ConfOption( "MinTNSToHideNotes", MovePref<TapNoteScore>, "TNS_None", "TNS_HitMine", "TNS_AvoidMine", "TNS_CheckpointMiss", "TNS_Miss", "TNS_W5", "TNS_W4", "TNS_W3", "TNS_W2", "TNS_W1", "TNS_CheckpointHit"));
+
 
 	// Graphic options
 	ADD( ConfOption( "Windowed",			MovePref<bool>,		"Full Screen", "Windowed" ) );
