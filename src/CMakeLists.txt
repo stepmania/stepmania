@@ -3,8 +3,8 @@ add_subdirectory(version_updater)
 
 # This part may move to a different file: it's the SM Data project.
 add_custom_command(
-  OUTPUT ${SM_SRC_DIR}/verdata.hpp
-  COMMAND VersionUpdater ${SM_SRC_DIR}/verdata.hpp
+  OUTPUT ${SM_SRC_DIR}/verstub.cpp
+  COMMAND VersionUpdater ${SM_SRC_DIR}/verstub.cpp
   DEPENDS VersionUpdater
 )
 
@@ -43,7 +43,7 @@ else() # Unix/Linux
   find_package(GTK2 2.0 REQUIRED gtk)
 endif()
 
-source_group("Generated Files" FILES ${SM_SRC_DIR}/verdata.hpp)
+source_group("Generated Files" FILES ${SM_SRC_DIR}/verstub.cpp)
 
 # Main project is below.
 
@@ -150,6 +150,7 @@ list(APPEND SMDATA_FILE_TYPES_HPP
 source_group("File Types" FILES ${SMDATA_FILE_TYPES_SRC} ${SMDATA_FILE_TYPES_HPP})
 
 list(APPEND SMDATA_ALL_FILES_SRC
+  ${SM_SRC_DIR}/verstub.cpp
   ${SMDATA_GLOBAL_FILES_SRC}
   ${SMDATA_GLOBAL_SINGLETON_SRC}
   ${SMDATA_ALL_ACTORS_SRC}
@@ -161,7 +162,6 @@ list(APPEND SMDATA_ALL_FILES_SRC
   ${SMDATA_FILE_TYPES_SRC}
 )
 list(APPEND SMDATA_ALL_FILES_HPP
-  ${SM_SRC_DIR}/verdata.hpp
   ${SMDATA_GLOBAL_FILES_HPP}
   ${SMDATA_GLOBAL_SINGLETON_HPP}
   ${SMDATA_ALL_ACTORS_HPP}

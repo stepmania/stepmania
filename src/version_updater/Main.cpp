@@ -57,9 +57,9 @@ int main(int argc, char *argv[]) {
   std::ofstream versionDataFile(argv[1], std::ios::out);
   if (versionDataFile.is_open()) {
     versionDataFile << "unsigned long version_num = " << build << ";" << std::endl;
-    versionDataFile << "char const * const version_date = \"" << strdate << "\";" << std::endl;
-    versionDataFile << "char const * const version_time = \"" << strtime << "\";" << std::endl;
-    versionDataFile.close();
+    versionDataFile << "extern char const * const version_date = \"" << strdate << "\";" << std::endl;
+    versionDataFile << "extern char const * const version_time = \"" << strtime << "\";" << std::endl;
+	versionDataFile.close();
   }
 
   return 0;

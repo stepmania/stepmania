@@ -29,11 +29,6 @@
 #include "Game.h"
 #include "RageSurface.h"
 #include "RageSurface_Load.h"
-
-#ifdef CMAKE_POWERED
-#include "verdata.hpp"
-#endif
-
 #include "CommandLineActions.h"
 
 #if !defined(SUPPORT_OPENGL) && !defined(SUPPORT_D3D)
@@ -894,8 +889,8 @@ static void MountTreeOfZips( const RString &dir )
 
 #if defined(HAVE_VERSION_INFO)
 extern unsigned long version_num;
-extern const char *const version_date;
-extern const char *const version_time;
+extern char const * const version_time;
+extern char const * const version_date;
 #endif
 
 static void WriteLogHeader()
