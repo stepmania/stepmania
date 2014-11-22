@@ -61,7 +61,8 @@ public:
 		m_fSkew(0), m_SpeedfSkew(1.0f),
 		m_fPassmark(0), m_SpeedfPassmark(1.0f),
 		m_fRandomSpeed(0), m_SpeedfRandomSpeed(1.0f),
-		m_bMuteOnError(false), m_FailType(FailType_Immediate)
+		m_bMuteOnError(false), m_FailType(FailType_Immediate),
+		m_MinTNSToHideNotes(TNS_W3)
 	{
 		m_sNoteSkin = "";
 		ZERO( m_fAccels );	ONE( m_SpeedfAccels );
@@ -215,6 +216,7 @@ public:
 	bool		m_bMuteOnError;
 	/** @brief The method for which a player can fail a song. */
 	FailType m_FailType;
+	TapNoteScore m_MinTNSToHideNotes;
 
 	/**
 	 * @brief The Noteskin to use.
