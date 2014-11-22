@@ -639,7 +639,7 @@ const InputScheme *InputMapper::GetInputScheme() const
 	return m_pInputScheme;
 }
 
-static const RString DEVICE_INPUT_SEPARATOR = ":";	// this isn't used in any key names
+const RString DEVICE_INPUT_SEPARATOR = ":";	// this isn't used in any key names
 
 void InputMapper::ReadMappingsFromDisk()
 {
