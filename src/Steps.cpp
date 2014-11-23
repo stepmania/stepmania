@@ -268,6 +268,10 @@ void Steps::TidyUpData()
 	{
 		LOG->Warn("Detected steps with unknown style '%s' in '%s'", m_StepsTypeStr.c_str(), m_pSong->m_sSongFileName.c_str());
 	}
+	else if(m_StepsTypeStr == "")
+	{
+		m_StepsTypeStr= GAMEMAN->GetStepsTypeInfo(m_StepsType).szName;
+	}
 
 	if( GetDifficulty() == Difficulty_Invalid )
 		SetDifficulty( StringToDifficulty(GetDescription()) );
