@@ -3097,6 +3097,7 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='Mines' return='bool' arguments='bool value'> </Function>
 	<Function name='Mini' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='MinTNSToHideNotes' return='TapNoteScore' arguments='TapNoteScore tns'> Sets the min TapNoteScore required for the notes to disappear after being hit. </Function>
 	<Function name='Mirror' return='bool' arguments='bool value'> </Function>
 	<Function name='MMod' return='float, float' arguments='float value, float approach_speed'>
 		If the player has a MMod set, returns the value of that MMod and its associated approach speed.  Returns nil otherwise.<br />
