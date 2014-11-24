@@ -16,6 +16,10 @@ namespace SpecialFiles
 	 * This is not the user packages directory. */
 	extern const RString PACKAGES_DIR;
 	extern const RString KEYMAPS_PATH;
+	/** @brief Edit Mode keymaps are separate from standard keymaps because
+	 * it should not change with the gametype, and to avoid possible
+	 * interference with the normal keymaps system. -Kyz */
+	extern const RString EDIT_MODE_KEYMAPS_PATH;
 	extern const RString PREFERENCES_INI_PATH;
 	/** @brief The directory that contains the themes. */
 	extern const RString THEMES_DIR;

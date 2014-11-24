@@ -30,10 +30,12 @@ static void GetPrefsDefaultModifiers( PlayerOptions &po, SongOptions &so )
 static void SetPrefsDefaultModifiers( const PlayerOptions &po, const SongOptions &so )
 {
 	vector<RString> as;
-	if( po.GetString() != "" )
-		as.push_back( po.GetString() );
-	if( so.GetString() != "" )
-		as.push_back( so.GetString() );
+#define remove_empty_back() if(as.back() == "") { as.pop_back(); }
+	as.push_back(po.GetString());
+	remove_empty_back();
+	as.push_back(so.GetString());
+	remove_empty_back();
+#undef remove_empty_back
 
 	PREFSMAN->m_sDefaultModifiers.Set( join(", ",as) );
 }
@@ -333,6 +335,32 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 		GetPrefsDefaultModifiers( po, so );
 		po.m_sNoteSkin = choices[sel];
 		SetPrefsDefaultModifiers( po, so );
+	}
+}
+
+static void DefaultFailChoices(vector<RString>& out)
+{
+	out.push_back("Immediate");
+	out.push_back("ImmediateContinue");
+	out.push_back("EndOfSong");
+	out.push_back("Off");
+}
+
+static void DefaultFailType(int& sel, bool to_sel, const ConfOption* conf_option)
+{
+	if(to_sel)
+	{
+		PlayerOptions po;
+		po.FromString(PREFSMAN->m_sDefaultModifiers);
+		sel= po.m_FailType;
+	}
+	else
+	{
+		PlayerOptions po;
+		SongOptions so;
+		GetPrefsDefaultModifiers(po, so);
+		po.m_FailType= static_cast<FailType>(sel);
+		SetPrefsDefaultModifiers(po, so);
 	}
 }
 
@@ -708,7 +736,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ProgressiveLifebar",		MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8") );
 	ADD( ConfOption( "ProgressiveStageLifebar",	MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
 	ADD( ConfOption( "ProgressiveNonstopLifebar",	MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
-	ADD( ConfOption( "DefaultFailType", MovePref<FailType>, "Immediate","ImmediateContinue","EndOfSong","Off" ) );
+	ADD( ConfOption( "DefaultFailType", DefaultFailType, DefaultFailChoices ) );
 	ADD( ConfOption( "CoinsPerCredit",		CoinsPerCredit,		"|1","|2","|3","|4","|5","|6","|7","|8","|9","|10","|11","|12","|13","|14","|15","|16" ) );
 	ADD( ConfOption( "Premium",			MovePref<Premium>,	"Off","Double for 1 Credit","2 Players for 1 Credit" ) );
 	ADD( ConfOption( "JointPremium",		JointPremium,		"Off","2 Players for 1 Credit" ) );

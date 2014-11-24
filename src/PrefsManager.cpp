@@ -221,7 +221,7 @@ PrefsManager::PrefsManager() :
 	m_iSongsPerPlay			( "SongsPerPlay",		3, ValidateSongsPerPlay ),
 	m_bDelayedCreditsReconcile	( "DelayedCreditsReconcile",	false ),
 	m_bComboContinuesBetweenSongs	( "ComboContinuesBetweenSongs",	false ),
-	m_ShowSongOptions		( "ShowSongOptions",		Maybe_YES ),
+	m_ShowSongOptions		( "ShowSongOptions",		Maybe_NO ),
 	m_bDancePointsForOni		( "DancePointsForOni",		true ),
 	m_bPercentageScoring		( "PercentageScoring",		false ),
 	m_fMinPercentageForMachineSongHighScore		( "MinPercentageForMachineSongHighScore",	0.0001f ), // This is for home, who cares how bad you do?
@@ -286,7 +286,6 @@ PrefsManager::PrefsManager() :
 	m_sCoursesToShowRanking		( "CoursesToShowRanking",		"" ),
 
 	m_bQuirksMode		( "QuirksMode",		false ),
-	m_DefaultFailType("DefaultFailtype", FailType_ImmediateContinue),
 
 	/* Debug: */
 	m_bLogToDisk			( "LogToDisk",		true ),

@@ -66,6 +66,8 @@ function wrap(val,n)
 end
 
 function fapproach(val, other_val, to_move)
+	-- This does not use the (faster) C++ side version of approach because I
+	-- don't want to find out how many themes pass a negative speed. -Kyz
 	if val == other_val then
 		return val -- already done!
 	end

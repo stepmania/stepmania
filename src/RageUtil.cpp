@@ -2329,6 +2329,76 @@ LuaFunction( PrettyPercent, PrettyPercent( FArg(1), FArg(2) ) );
 //LuaFunction( IsHexVal, IsHexVal( SArg(1) ) );
 static bool UndocumentedFeature( RString s ){ sm_crash(s); return true; }
 LuaFunction( UndocumentedFeature, UndocumentedFeature(SArg(1)) );
+LuaFunction( lerp, lerp(FArg(1), FArg(2), FArg(3)) );
+
+void luafunc_approach_internal(lua_State* L, int valind, int goalind, int speedind);
+void luafunc_approach_internal(lua_State* L, int valind, int goalind, int speedind, int process_index)
+{
+#define TONUMBER_NICE(dest, num_name, index) \
+	if(!lua_isnumber(L, index)) \
+	{ \
+		luaL_error(L, "approach: " #num_name " for approach %d is not a number.", process_index); \
+	} \
+	dest= lua_tonumber(L, index);
+	float val= 0;
+	float goal= 0;
+	float speed= 0;
+	TONUMBER_NICE(val, current, valind);
+	TONUMBER_NICE(goal, goal, goalind);
+	TONUMBER_NICE(speed, speed, speedind);
+#undef TONUMBER_NICE
+	if(speed < 0)
+	{
+		luaL_error(L, "approach: speed %d is negative.", process_index);
+	}
+	fapproach(val, goal, speed);
+	lua_pushnumber(L, val);
+}
+
+int LuaFunc_approach(lua_State* L);
+int LuaFunc_approach(lua_State* L)
+{
+	// Args:  current, goal, speed
+	// Returns:  new_current
+	luafunc_approach_internal(L, 1, 2, 3, 1);
+	return 1;
+}
+LUAFUNC_REGISTER_COMMON(approach);
+
+int LuaFunc_multiapproach(lua_State* L);
+int LuaFunc_multiapproach(lua_State* L)
+{
+	// Args:  {currents}, {goals}, {speeds}
+	// Returns:  {currents}
+	// Modifies the values in {currents} in place.
+	if(lua_gettop(L) != 3)
+	{
+		luaL_error(L, "multiapproach:  A table of current values, a table of goal values, and a table of speeds must be passed.");
+	}
+	size_t currents_len= lua_objlen(L, 1);
+	size_t goals_len= lua_objlen(L, 2);
+	size_t speeds_len= lua_objlen(L, 3);
+	if(currents_len != goals_len || currents_len != speeds_len)
+	{
+		luaL_error(L, "multiapproach:  There must be the same number of current values, goal values, and speeds.");
+	}
+	if(!lua_istable(L, 1) || !lua_istable(L, 2) || !lua_istable(L, 3))
+	{
+		luaL_error(L, "multiapproach:  current, goal, and speed must all be tables.");
+	}
+	for(size_t i= 1; i <= currents_len; ++i)
+	{
+		lua_rawgeti(L, 1, i);
+		lua_rawgeti(L, 2, i);
+		lua_rawgeti(L, 3, i);
+		luafunc_approach_internal(L, -3, -2, -1, i);
+		lua_rawseti(L, 1, i);
+		lua_pop(L, 3);
+	}
+	lua_pushvalue(L, 1);
+	return 1;
+}
+LUAFUNC_REGISTER_COMMON(multiapproach);
 
 /*
  * Copyright (c) 2001-2005 Chris Danford, Glenn Maynard

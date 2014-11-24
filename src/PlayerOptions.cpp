@@ -74,7 +74,6 @@ void PlayerOptions::Init()
 	ZERO( m_bTurns );
 	ZERO( m_bTransforms );
 	m_bMuteOnError = false;
-	m_FailType = PREFSMAN->m_DefaultFailType;
 	m_sNoteSkin = "";
 }
 

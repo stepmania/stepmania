@@ -1,0 +1,16 @@
+General note on functions that use effect colors:
+diffuseblink, diffuseramp, diffuseshift, glowblink, glowramp, and glowshift all use the two effect colors.
+They set the effect colors to white when called, so you should call effectcolor1 and effectcolor2 afterwards to set the effect colors to the colors you want.
+You should also call effectperiod to set the effect period if you don't want the default of 1.
+
+Example:
+Def.Quad{
+	Name= "glow quad test", InitCommand= function(self)
+		self:setsize(40, 40)
+		self:glowshift()
+		self:effectcolor1(color("#dc322f"))
+		self:effectcolor2(color("#2aa198"))
+		self:effectperiod(4)
+		self:xy(_screen.cx, _screen.cy)
+	end
+}

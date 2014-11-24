@@ -289,6 +289,13 @@ void RageBitmapTexture::Create()
 		if( !TEXTUREMAN->GetOddDimensionWarning() )
 			bRunCheck = false;
 
+		// Don't check if this is the screen texture, the theme can't do anything
+		// about it. -Kyz
+		if(actualID == TEXTUREMAN->GetScreenTextureID())
+		{
+			bRunCheck= false;
+		}
+
 		if( bRunCheck  )
 		{
 			float fFrameWidth = this->GetSourceWidth() / (float)this->GetFramesWide();

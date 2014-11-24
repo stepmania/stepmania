@@ -54,7 +54,9 @@ void Foreground::LoadFromSong( const Song *pSong )
 		if( bga.m_bga == NULL )
 			continue;
 		bga.m_bga->SetName( sBGName );
-		bga.m_bga->PlayCommand( "Init" );
+		// ActorUtil::MakeActor calls LoadFromNode to load the actor, and
+		// LoadFromNode takes care of running the InitCommand, so do not run the
+		// InitCommand here. -Kyz
 		bga.m_fStartBeat = change.m_fStartBeat;
 		bga.m_bFinished = false;
 

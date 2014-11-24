@@ -9,6 +9,7 @@ struct Game;
 const int NUM_GAME_TO_DEVICE_SLOTS	= 5;	// five device inputs may map to one game input
 const int NUM_SHOWN_GAME_TO_DEVICE_SLOTS = 3;
 const int NUM_USER_GAME_TO_DEVICE_SLOTS = 2;
+extern const RString DEVICE_INPUT_SEPARATOR;
 
 struct AutoMappingEntry
 {

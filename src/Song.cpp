@@ -42,7 +42,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 220;
+const int FILE_CACHE_VERSION = 222;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -89,6 +89,11 @@ Song::~Song()
 	FOREACH( Steps*, m_vpSteps, s )
 		SAFE_DELETE( *s );
 	m_vpSteps.clear();
+	FOREACH(Steps*, m_UnknownStyleSteps, s)
+	{
+		SAFE_DELETE(*s);
+	}
+	m_UnknownStyleSteps.clear();
 	
 	// It's the responsibility of the owner of this Song to make sure
 	// that all pointers to this Song and its Steps are invalidated.
@@ -99,6 +104,7 @@ void Song::DetachSteps()
 	m_vpSteps.clear();
 	FOREACH_ENUM( StepsType, st )
 		m_vpStepsByType[st].clear();
+	m_UnknownStyleSteps.clear();
 }
 
 float Song::GetFirstSecond() const
@@ -154,6 +160,11 @@ void Song::Reset()
 	m_vpSteps.clear();
 	FOREACH_ENUM( StepsType, st )
 		m_vpStepsByType[st].clear();
+	FOREACH(Steps*, m_UnknownStyleSteps, s)
+	{
+		SAFE_DELETE(*s);
+	}
+	m_UnknownStyleSteps.clear();
 
 	Song empty;
 	*this = empty;
@@ -1023,6 +1034,10 @@ bool Song::SaveToSMFile()
 		
 		vpStepsToSave.push_back( pSteps );
 	}
+	FOREACH_CONST(Steps*, m_UnknownStyleSteps, s)
+	{
+		vpStepsToSave.push_back(*s);
+	}
 	
 	return NotesWriterSM::Write( sPath, *this, vpStepsToSave );
 
@@ -1054,6 +1069,10 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache )
 		if (!bSavingCache)
 			pSteps->SetFilename(path);
 		vpStepsToSave.push_back( pSteps );
+	}
+	FOREACH_CONST(Steps*, m_UnknownStyleSteps, s)
+	{
+		vpStepsToSave.push_back(*s);
 	}
 	
 	if (bSavingCache)
@@ -1504,9 +1523,19 @@ RString Song::GetTranslitFullTitle() const
 
 void Song::AddSteps( Steps* pSteps )
 {
-	m_vpSteps.push_back( pSteps );
-	ASSERT_M( pSteps->m_StepsType < NUM_StepsType, ssprintf("%i", pSteps->m_StepsType) );
-	m_vpStepsByType[pSteps->m_StepsType].push_back( pSteps );
+	// Songs of unknown stepstype are saved as a forwards compatibility feature
+	// so that editing a simfile made by a future version that has a new style
+	// won't delete those steps. -Kyz
+	if(pSteps->m_StepsType != StepsType_Invalid)
+	{
+		m_vpSteps.push_back( pSteps );
+		ASSERT_M( pSteps->m_StepsType < NUM_StepsType, ssprintf("%i", pSteps->m_StepsType) );
+		m_vpStepsByType[pSteps->m_StepsType].push_back( pSteps );
+	}
+	else
+	{
+		m_UnknownStyleSteps.push_back(pSteps);
+	}
 }
 
 void Song::DeleteSteps( const Steps* pSteps, bool bReAutoGen )
