@@ -88,8 +88,12 @@ struct HighScore
 
 	void Unset();
 
-	bool operator>=( const HighScore& other ) const;
-	bool operator==( const HighScore& other ) const;
+	bool operator<(HighScore const& other) const;
+	bool operator>(HighScore const& other) const;
+	bool operator<=(HighScore const& other) const;
+	bool operator>=(HighScore const& other) const;
+	bool operator==(HighScore const& other) const;
+	bool operator!=(HighScore const& other) const;
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
@@ -131,6 +135,8 @@ public:
 	void RemoveAllButOneOfEachName();
 	void ClampSize( bool bIsMachine );
 
+	void MergeFromOtherHSL(HighScoreList& other, bool is_machine);
+
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
 
@@ -158,6 +164,15 @@ struct Screenshot
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
+	bool operator<(Screenshot const& rhs) const
+	{
+		return highScore.GetDateTime() < rhs.highScore.GetDateTime();
+	}
+
+	bool operator==(Screenshot const& rhs) const
+	{
+		return sFileName == rhs.sFileName;
+	}
 };
 
 #endif

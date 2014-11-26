@@ -71,6 +71,8 @@ public:
 	 * @brief Set up the Profile with default values.
 	 *
 	 * Note: there are probably a lot of variables. */
+	// When adding new score related data, add logic for handling it to
+	// MergeScoresFromOtherProfile. -Kyz
 	Profile(): m_sDisplayName(""), m_sCharacterID(""),
 		m_sLastUsedHighScoreName(""), m_iWeightPounds(0),
 		m_Voomax(0), m_BirthYear(0), m_IgnoreStepCountCalories(false),
@@ -276,6 +278,9 @@ public:
 	void IncrementCoursePlayCount( const Course* pCourse, const Trail* pTrail );
 
 	void GetAllUsedHighScoreNames(std::set<RString>& names);
+
+	void MergeScoresFromOtherProfile(Profile* other, bool skip_totals,
+		RString const& from_dir, RString const& to_dir);
 
 	// Category high scores
 	HighScoreList m_CategoryHighScores[NUM_StepsType][NUM_RankingCategory];

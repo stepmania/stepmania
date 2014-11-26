@@ -620,6 +620,29 @@ const Profile* ProfileManager::GetProfile( ProfileSlot slot ) const
 	}
 }
 
+void ProfileManager::MergeLocalProfiles(RString const& from_id, RString const& to_id)
+{
+	Profile* from= GetLocalProfile(from_id);
+	Profile* to= GetLocalProfile(to_id);
+	if(from == NULL || to == NULL)
+	{
+		return;
+	}
+	to->MergeScoresFromOtherProfile(from, false,
+		LocalProfileIDToDir(from_id), LocalProfileIDToDir(to_id));
+}
+
+void ProfileManager::MergeLocalProfileIntoMachine(RString const& from_id, bool skip_totals)
+{
+	Profile* from= GetLocalProfile(from_id);
+	if(from == NULL)
+	{
+		return;
+	}
+	GetMachineProfile()->MergeScoresFromOtherProfile(from, skip_totals,
+		LocalProfileIDToDir(from_id), MACHINE_PROFILE_DIR);
+}
+
 //
 // General
 //

@@ -30,6 +30,10 @@ enum ProfileAction
 	ProfileAction_Rename,
 	ProfileAction_Delete,
 	ProfileAction_Clear,
+	ProfileAction_MergeToMachine,
+	ProfileAction_MergeToMachineSkipTotal,
+	ProfileAction_MergeToP1,
+	ProfileAction_MergeToP2,
 	NUM_ProfileAction
 };
 static const char *ProfileActionNames[] = {
@@ -39,6 +43,10 @@ static const char *ProfileActionNames[] = {
 	"Rename",
 	"Delete",
 	"Clear",
+	"MergeToMachine",
+	"MergeToMachineSkipTotal",
+	"MergeToP1",
+	"MergeToP2",
 };
 XToString( ProfileAction );
 XToLocalizedString( ProfileAction );
@@ -309,6 +317,22 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 					ScreenPrompt::Prompt( SM_BackFromClearConfirm, sMessage, PROMPT_YES_NO );
 				}
 				break;
+			case ProfileAction_MergeToMachine:
+				PROFILEMAN->MergeLocalProfileIntoMachine(
+					GetLocalProfileIDWithFocus(), false);
+				break;
+			case ProfileAction_MergeToMachineSkipTotal:
+				PROFILEMAN->MergeLocalProfileIntoMachine(
+					GetLocalProfileIDWithFocus(), true);
+				break;
+			case ProfileAction_MergeToP1:
+				PROFILEMAN->MergeLocalProfiles(GetLocalProfileIDWithFocus(),
+					ProfileManager::m_sDefaultLocalProfileID[PLAYER_1].Get());
+				break;
+			case ProfileAction_MergeToP2:
+				PROFILEMAN->MergeLocalProfiles(GetLocalProfileIDWithFocus(),
+					ProfileManager::m_sDefaultLocalProfileID[PLAYER_2].Get());
+				break;
 			}
 		}
 	}
@@ -383,6 +407,10 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus & )
 			ADD_ACTION( ProfileAction_Edit );
 			ADD_ACTION( ProfileAction_Rename );
 			ADD_ACTION( ProfileAction_Delete );
+			ADD_ACTION( ProfileAction_MergeToMachine );
+			ADD_ACTION( ProfileAction_MergeToMachineSkipTotal );
+			ADD_ACTION( ProfileAction_MergeToP1 );
+			ADD_ACTION( ProfileAction_MergeToP2 );
 		}
 
 		int iWidth, iX, iY;

@@ -52,6 +52,9 @@ public:
 	bool SaveLocalProfile( RString sProfileID );
 	void UnloadProfile( PlayerNumber pn );
 
+	void MergeLocalProfiles(RString const& from_id, RString const& to_id);
+	void MergeLocalProfileIntoMachine(RString const& from_id, bool skip_totals);
+
 	// General data
 	void IncrementToastiesCount( PlayerNumber pn );
 	void AddStepTotals( PlayerNumber pn, int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumRolls, int iNumMines, int iNumHands, int iNumLifts, float fCaloriesBurned );

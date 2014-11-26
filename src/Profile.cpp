@@ -26,6 +26,8 @@
 #include "CharacterManager.h"
 #include "Character.h"
 
+#include <algorithm>
+
 const RString STATS_XML            = "Stats.xml";
 const RString STATS_XML_GZ         = "Stats.xml.gz";
 /** @brief The filename for where one can edit their personal profile information. */
@@ -547,7 +549,7 @@ Song *Profile::GetMostPopularSong() const
 	FOREACHM_CONST( SongID, HighScoresForASong, m_SongHighScores, i )
 	{
 		int iNumTimesPlayed = i->second.GetNumTimesPlayed();
-		if( iNumTimesPlayed > iMaxNumTimesPlayed )
+		if(i->first.ToSong() != NULL && iNumTimesPlayed > iMaxNumTimesPlayed)
 		{
 			id = i->first;
 			iMaxNumTimesPlayed = iNumTimesPlayed;
@@ -564,7 +566,7 @@ Course *Profile::GetMostPopularCourse() const
 	FOREACHM_CONST( CourseID, HighScoresForACourse, m_CourseHighScores, i )
 	{
 		int iNumTimesPlayed = i->second.GetNumTimesPlayed();
-		if( iNumTimesPlayed > iMaxNumTimesPlayed )
+		if(i->first.ToCourse() != NULL && iNumTimesPlayed > iMaxNumTimesPlayed)
 		{
 			id = i->first;
 			iMaxNumTimesPlayed = iNumTimesPlayed;
@@ -783,6 +785,140 @@ void Profile::GetAllUsedHighScoreNames(std::set<RString>& names)
 	GET_NAMES_FROM_MAP(m_SongHighScores, SongID, HighScoresForASong, m_StepsHighScores, StepsID, HighScoresForASteps);
 	GET_NAMES_FROM_MAP(m_CourseHighScores, CourseID, HighScoresForACourse, m_TrailHighScores, TrailID, HighScoresForATrail);
 #undef GET_NAMES_FROM_MAP
+}
+
+// MergeScoresFromOtherProfile has three intended use cases:
+// 1.  Restoring scores to the machine profile that were deleted because the
+//   songs were not loaded.
+// 2.  Migrating a profile from an older version of Stepmania, and adding its
+//   scores to the machine profile.
+// 3.  Merging two profiles that were separate together.
+// In case 1, the various total numbers are still correct, so they should be
+//   skipped.  This is why the skip_totals arg exists.
+// -Kyz
+void Profile::MergeScoresFromOtherProfile(Profile* other, bool skip_totals,
+	RString const& from_dir, RString const& to_dir)
+{
+	if(!skip_totals)
+	{
+#define MERGE_FIELD(field_name) field_name+= other->field_name;
+		MERGE_FIELD(m_iTotalSessions);
+		MERGE_FIELD(m_iTotalSessionSeconds);
+		MERGE_FIELD(m_iTotalGameplaySeconds);
+		MERGE_FIELD(m_fTotalCaloriesBurned);
+		MERGE_FIELD(m_iTotalDancePoints);
+		MERGE_FIELD(m_iNumExtraStagesPassed);
+		MERGE_FIELD(m_iNumExtraStagesFailed);
+		MERGE_FIELD(m_iNumToasties);
+		MERGE_FIELD(m_iTotalTapsAndHolds);
+		MERGE_FIELD(m_iTotalJumps);
+		MERGE_FIELD(m_iTotalHolds);
+		MERGE_FIELD(m_iTotalRolls);
+		MERGE_FIELD(m_iTotalMines);
+		MERGE_FIELD(m_iTotalHands);
+		MERGE_FIELD(m_iTotalLifts);
+		FOREACH_ENUM(PlayMode, i)
+		{
+			MERGE_FIELD(m_iNumSongsPlayedByPlayMode[i]);
+			MERGE_FIELD(m_iNumStagesPassedByPlayMode[i]);
+		}
+		FOREACH_ENUM(Difficulty, i)
+		{
+			MERGE_FIELD(m_iNumSongsPlayedByDifficulty[i]);
+		}
+		for(int i= 0; i < MAX_METER; ++i)
+		{
+			MERGE_FIELD(m_iNumSongsPlayedByMeter[i]);
+		}
+		MERGE_FIELD(m_iNumTotalSongsPlayed);
+		FOREACH_ENUM(Grade, i)
+		{
+			MERGE_FIELD(m_iNumStagesPassedByGrade[i]);
+		}
+#undef MERGE_FIELD
+		for(map<DateTime, Calories>::iterator other_cal=
+					other->m_mapDayToCaloriesBurned.begin();
+				other_cal != other->m_mapDayToCaloriesBurned.end(); ++other_cal)
+		{
+			map<DateTime, Calories>::iterator this_cal=
+				m_mapDayToCaloriesBurned.find(other_cal->first);
+			if(this_cal == m_mapDayToCaloriesBurned.end())
+			{
+				m_mapDayToCaloriesBurned[other_cal->first]= other_cal->second;
+			}
+			else
+			{
+				this_cal->second.fCals+= other_cal->second.fCals;
+			}
+		}
+	}
+#define MERGE_SCORES_IN_MEMBER(main_member, main_key_type, main_value_type, sub_member, sub_key_type, sub_value_type) \
+	for(std::map<main_key_type, main_value_type>::iterator main_entry= \
+				other->main_member.begin(); main_entry != other->main_member.end(); \
+			++main_entry) \
+	{ \
+		std::map<main_key_type, main_value_type>::iterator this_entry= \
+			main_member.find(main_entry->first); \
+		if(this_entry == main_member.end()) \
+		{ \
+			main_member[main_entry->first]= main_entry->second; \
+		} \
+		else \
+		{ \
+			for(std::map<sub_key_type, sub_value_type>::iterator sub_entry= \
+						main_entry->second.sub_member.begin(); \
+					sub_entry != main_entry->second.sub_member.end(); ++sub_entry) \
+			{ \
+				std::map<sub_key_type, sub_value_type>::iterator this_sub= \
+					this_entry->second.sub_member.find(sub_entry->first); \
+				if(this_sub == this_entry->second.sub_member.end()) \
+				{ \
+					this_entry->second.sub_member[sub_entry->first]= sub_entry->second; \
+				} \
+				else \
+				{ \
+					this_sub->second.hsl.MergeFromOtherHSL(sub_entry->second.hsl, IsMachine()); \
+				} \
+			} \
+		} \
+	}
+	MERGE_SCORES_IN_MEMBER(m_SongHighScores, SongID, HighScoresForASong, m_StepsHighScores, StepsID, HighScoresForASteps);
+	MERGE_SCORES_IN_MEMBER(m_CourseHighScores, CourseID, HighScoresForACourse, m_TrailHighScores, TrailID, HighScoresForATrail);
+#undef MERGE_SCORES_IN_MEMBER
+	// I think the machine profile should not have screenshots merged into it
+	// because the intended use case is someone whose profile scores were
+	// deleted off the machine by mishap, or a profile being migrated from an
+	// older version of Stepmania.  Either way, the screenshots should stay
+	// with the profile they came from.
+	// In the case where two local profiles are being merged together, the user
+	// is probably planning to delete the old profile after the merge, so we
+	// want to copy the screenshots over. -Kyz
+	if(!IsMachine())
+	{
+		// The old screenshot count is stored so we know where to start in the
+		// list when copying the screenshot images.
+		size_t old_count= m_vScreenshots.size();
+		m_vScreenshots.insert(m_vScreenshots.end(),
+			other->m_vScreenshots.begin(), other->m_vScreenshots.end());
+		for(size_t sid= old_count; sid < m_vScreenshots.size(); ++sid)
+		{
+			RString old_path= from_dir + "Screenshots/" + m_vScreenshots[sid].sFileName;
+			RString new_path= to_dir + "Screenshots/" + m_vScreenshots[sid].sFileName;
+			// Only move the old screenshot over if it exists and won't stomp an
+			// existing screenshot.
+			if(FILEMAN->DoesFileExist(old_path) && (!FILEMAN->DoesFileExist(new_path)))
+			{
+				FILEMAN->Move(old_path, new_path);
+			}
+		}
+		// The screenshots are kept sorted by date for ease of use, and
+		// duplicates are removed because they come from the user mistakenly
+		// merging a second time. -Kyz
+		std::sort(m_vScreenshots.begin(), m_vScreenshots.end());
+		vector<Screenshot>::iterator unique_end=
+			std::unique(m_vScreenshots.begin(), m_vScreenshots.end());
+		m_vScreenshots.erase(unique_end, m_vScreenshots.end());
+	}
 }
 
 // Category high scores
@@ -1634,8 +1770,10 @@ void Profile::LoadSongScoresFromNode( const XNode* pSongScores )
 
 		SongID songID;
 		songID.LoadFromNode( pSong );
-		if( !songID.IsValid() )
-			continue;
+		// Allow invalid songs so that scores aren't deleted for people that use
+		// AdditionalSongsFolders and change it frequently. -Kyz
+		//if( !songID.IsValid() )
+		//	continue;
 
 		FOREACH_CONST_Child( pSong, pSteps )
 		{
@@ -1714,8 +1852,10 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 
 		CourseID courseID;
 		courseID.LoadFromNode( pCourse );
-		if( !courseID.IsValid() )
-			WARN_AND_CONTINUE;
+		// Allow invalid courses so that scores aren't deleted for people that use
+		// AdditionalCoursesFolders and change it frequently. -Kyz
+		//if( !courseID.IsValid() )
+		//	WARN_AND_CONTINUE;
 
 
 		// Backward compatability hack to fix importing scores of old style 

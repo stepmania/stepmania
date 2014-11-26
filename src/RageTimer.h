@@ -51,6 +51,10 @@ private:
 
 extern const RageTimer RageZeroTimer;
 
+// For profiling how long some chunk of code takes. -Kyz
+#define START_TIME(name) float name##_start_time= RageTimer::GetTimeSinceStartFast();
+#define END_TIME(name) float name##_end_time= RageTimer::GetTimeSinceStartFast();  LOG->Warn(#name " time: %f", name##_end_time - name##_start_time);
+
 #endif
 
 /*
