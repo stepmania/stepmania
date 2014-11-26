@@ -4,10 +4,6 @@
 
 #include <limits.h>
 
-bool RageSurfaceColor::operator== ( const RageSurfaceColor &rhs ) const
-{
-	return rhs.r == r && rhs.g == g && rhs.b == b && rhs.a == a;
-}
 
 int32_t RageSurfacePalette::FindColor( const RageSurfaceColor &color ) const
 {

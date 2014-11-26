@@ -27,8 +27,17 @@ struct StepsTypeAndDifficulty
 	Difficulty cd;
 
 	StepsTypeAndDifficulty( const StepsType &s, const Difficulty &d ) : st( s ), cd( d ) { }
-	bool operator==( const StepsTypeAndDifficulty &stad ) const { return st == stad.st && cd == stad.cd; }
 };
+
+inline bool operator==(StepsTypeAndDifficulty const &lhs, StepsTypeAndDifficulty const &rhs)
+{
+	return lhs.st == rhs.st && lhs.cd == rhs.cd;
+}
+inline bool operator!=(StepsTypeAndDifficulty const &lhs, StepsTypeAndDifficulty const &rhs)
+{
+	return !operator==(lhs,rhs);
+}
+
 static void SetNextCombination()
 {
 	vector<StepsTypeAndDifficulty> v;

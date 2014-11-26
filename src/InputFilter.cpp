@@ -51,13 +51,28 @@ struct DeviceButtonPair
 	InputDevice device;
 	DeviceButton button;
 	DeviceButtonPair( InputDevice d, DeviceButton b ): device(d), button(b){ }
-	bool operator<( const DeviceButtonPair &other ) const
-	{ 
-		if( device != other.device )
-			return device < other.device;
-		return button < other.button;
-	}
 };
+
+inline bool operator<(DeviceButtonPair const &lhs, DeviceButtonPair const &rhs)
+{
+	if (lhs.device != rhs.device)
+	{
+		return lhs.device < rhs.device;
+	}
+	return lhs.button < rhs.button;
+}
+inline bool operator>(DeviceButtonPair const &lhs, DeviceButtonPair const &rhs)
+{
+	return operator<(rhs, lhs);
+}
+inline bool operator<=(DeviceButtonPair const &lhs, DeviceButtonPair const &rhs)
+{
+	return !operator<(rhs, lhs);
+}
+inline bool operator>=(DeviceButtonPair const &lhs, DeviceButtonPair const &rhs)
+{
+	return !operator<(lhs, rhs);
+}
 
 namespace
 {

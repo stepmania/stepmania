@@ -136,17 +136,40 @@ struct BMSObject
 	float position;
 	bool flag;
 	RString value;
-	bool operator<(const BMSObject &other) const
-	{
-		if( measure < other.measure ) return true;
-		if( measure > other.measure ) return false;
-		if( position < other.position ) return true;
-		if( position > other.position ) return false;
-		if( channel == 1 ) return false;
-		if( other.channel == 1 ) return true;
-		return channel < other.channel;
-	}
 };
+
+inline bool operator<(BMSObject const &lhs, BMSObject const &rhs)
+{
+	if (lhs.measure != rhs.measure)
+	{
+		return lhs.measure < rhs.measure;
+	}
+	if (lhs.position != rhs.position)
+	{
+		return lhs.position < rhs.position;
+	}
+	if (lhs.channel == 1)
+	{
+		return false;
+	}
+	if (rhs.channel == 1)
+	{
+		return true;
+	}
+	return lhs.channel < rhs.channel;
+}
+inline bool operator>(BMSObject const &lhs, BMSObject const &rhs)
+{
+	return operator<(rhs, lhs);
+}
+inline bool operator<=(BMSObject const &lhs, BMSObject const &rhs)
+{
+	return !operator<(rhs, lhs);
+}
+inline bool operator>=(BMSObject const &lhs, BMSObject const &rhs)
+{
+	return !operator<(lhs, rhs);
+}
 
 struct BMSMeasure
 {
