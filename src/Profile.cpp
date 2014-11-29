@@ -32,6 +32,8 @@ const RString STATS_XML            = "Stats.xml";
 const RString STATS_XML_GZ         = "Stats.xml.gz";
 /** @brief The filename for where one can edit their personal profile information. */
 const RString EDITABLE_INI         = "Editable.ini";
+/** @brief A tiny file containing the type and list priority. */
+const RString TYPE_INI             = "Type.ini";
 /** @brief The filename containing the signature for STATS_XML's signature. */
 const RString DONT_SHARE_SIG       = "DontShare.sig";
 const RString PUBLIC_KEY_FILE      = "public.key";
@@ -59,6 +61,15 @@ const float DEFAULT_BIRTH_YEAR= 1995;
 #if defined(_MSC_VER)
 #pragma warning (disable : 4706) // assignment within conditional expression
 #endif
+
+static const char* ProfileTypeNames[] = {
+	"Guest",
+	"Normal",
+	"Test",
+};
+XToString(ProfileType);
+StringToX(ProfileType);
+LuaXType(ProfileType);
 
 
 int Profile::HighScoresForASong::GetNumTimesPlayed() const
@@ -921,6 +932,64 @@ void Profile::MergeScoresFromOtherProfile(Profile* other, bool skip_totals,
 	}
 }
 
+void Profile::swap(Profile& other)
+{
+	// Type is skipped because this is meant to be used only on matching types,
+	// to move profiles after the priorities have been assigned. -Kyz
+	// A bit of a misnomer, since it actually works on any type that has its
+	// own swap function, which includes the standard containers.
+#define SWAP_STR_MEMBER(member_name) member_name.swap(other.member_name)
+#define SWAP_GENERAL(member_name) std::swap(member_name, other.member_name)
+	SWAP_GENERAL(m_ListPriority);
+	SWAP_STR_MEMBER(m_sDisplayName);
+	SWAP_STR_MEMBER(m_sCharacterID);
+	SWAP_STR_MEMBER(m_sLastUsedHighScoreName);
+	SWAP_GENERAL(m_iWeightPounds);
+	SWAP_GENERAL(m_Voomax);
+	SWAP_GENERAL(m_BirthYear);
+	SWAP_GENERAL(m_IgnoreStepCountCalories);
+	SWAP_GENERAL(m_IsMale);
+	SWAP_STR_MEMBER(m_sGuid);
+	SWAP_GENERAL(m_iCurrentCombo);
+	SWAP_GENERAL(m_iTotalSessions);
+	SWAP_GENERAL(m_iTotalSessionSeconds);
+	SWAP_GENERAL(m_iTotalGameplaySeconds);
+	SWAP_GENERAL(m_fTotalCaloriesBurned);
+	SWAP_GENERAL(m_GoalType);
+	SWAP_GENERAL(m_iGoalCalories);
+	SWAP_GENERAL(m_iGoalSeconds);
+	SWAP_GENERAL(m_iTotalDancePoints);
+	SWAP_GENERAL(m_iNumExtraStagesPassed);
+	SWAP_GENERAL(m_iNumExtraStagesFailed);
+	SWAP_GENERAL(m_iNumToasties);
+	SWAP_GENERAL(m_iTotalTapsAndHolds);
+	SWAP_GENERAL(m_iTotalJumps);
+	SWAP_GENERAL(m_iTotalHolds);
+	SWAP_GENERAL(m_iTotalRolls);
+	SWAP_GENERAL(m_iTotalMines);
+	SWAP_GENERAL(m_iTotalHands);
+	SWAP_GENERAL(m_iTotalLifts);
+	SWAP_GENERAL(m_bNewProfile);
+	SWAP_STR_MEMBER(m_UnlockedEntryIDs);
+	SWAP_STR_MEMBER(m_sLastPlayedMachineGuid);
+	SWAP_GENERAL(m_LastPlayedDate);
+	SWAP_GENERAL(m_iNumSongsPlayedByPlayMode);
+	SWAP_STR_MEMBER(m_iNumSongsPlayedByStyle);
+	SWAP_GENERAL(m_iNumSongsPlayedByDifficulty);
+	SWAP_GENERAL(m_iNumSongsPlayedByMeter);
+	SWAP_GENERAL(m_iNumTotalSongsPlayed);
+	SWAP_GENERAL(m_iNumStagesPassedByPlayMode);
+	SWAP_GENERAL(m_iNumStagesPassedByGrade);
+	SWAP_GENERAL(m_UserTable);
+	SWAP_STR_MEMBER(m_SongHighScores);
+	SWAP_STR_MEMBER(m_CourseHighScores);
+	SWAP_GENERAL(m_CategoryHighScores);
+	SWAP_STR_MEMBER(m_vScreenshots);
+	SWAP_STR_MEMBER(m_mapDayToCaloriesBurned);
+#undef SWAP_STR_MEMBER
+#undef SWAP_GENERAL
+}
+
 // Category high scores
 void Profile::AddCategoryHighScore( StepsType st, RankingCategory rc, HighScore hs, int &iIndexOut )
 {
@@ -998,6 +1067,7 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 
 	InitAll();
 
+	LoadTypeFromDir(sDir);
 	// Not critical if this fails
 	LoadEditableDataFromDir( sDir );
 
@@ -1085,6 +1155,34 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 	return ProfileLoadResult_Success;
 }
 
+void Profile::LoadTypeFromDir(RString dir)
+{
+	m_Type= ProfileType_Normal;
+	m_ListPriority= 0;
+	RString fn= dir + TYPE_INI;
+	if(FILEMAN->DoesFileExist(fn))
+	{
+		IniFile ini;
+		if(ini.ReadFile(fn))
+		{
+			XNode const* data= ini.GetChild("ListPosition");
+			if(data != NULL)
+			{
+				RString type_str;
+				if(data->GetAttrValue("Type", type_str))
+				{
+					m_Type= StringToProfileType(type_str);
+					if(m_Type >= NUM_ProfileType)
+					{
+						m_Type= ProfileType_Normal;
+					}
+				}
+				data->GetAttrValue("Priority", m_ListPriority);
+			}
+		}
+	}
+}
+
 ProfileLoadResult Profile::LoadStatsXmlFromNode( const XNode *xml, bool bIgnoreEditable )
 {
 	/* The placeholder stats.xml file has an <html> tag. Don't load it,
@@ -1135,6 +1233,7 @@ bool Profile::SaveAllToDir( RString sDir, bool bSignData ) const
 	m_sLastPlayedMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
 	m_LastPlayedDate = DateTime::GetNowDate();
 
+	SaveTypeToDir(sDir);
 	// Save editable.ini
 	SaveEditableDataToDir( sDir );
 
@@ -1241,6 +1340,14 @@ bool Profile::SaveStatsXmlToDir( RString sDir, bool bSignData ) const
 	}
 
 	return true;
+}
+
+void Profile::SaveTypeToDir(RString dir) const
+{
+	IniFile ini;
+	ini.SetValue("ListPosition", "Type", ProfileTypeToString(m_Type));
+	ini.SetValue("ListPosition", "Priority", m_ListPriority);
+	ini.WriteFile(dir + TYPE_INI);
 }
 
 void Profile::SaveEditableDataToDir( RString sDir ) const
@@ -2289,6 +2396,8 @@ public:
 		p->AddScreenshot(screenshot);
 		return 0;
 	}
+	DEFINE_METHOD(GetType, m_Type);
+	DEFINE_METHOD(GetPriority, m_ListPriority);
 
 	static int GetDisplayName( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sDisplayName ); return 1; }
 	static int SetDisplayName( T* p, lua_State *L )
@@ -2511,6 +2620,8 @@ public:
 	LunaProfile()
 	{
 		ADD_METHOD( AddScreenshot );
+		ADD_METHOD( GetType );
+		ADD_METHOD( GetPriority );
 		ADD_METHOD( GetDisplayName );
 		ADD_METHOD( SetDisplayName );
 		ADD_METHOD( GetLastUsedHighScoreName );

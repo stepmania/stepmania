@@ -34,6 +34,11 @@ enum ProfileAction
 	ProfileAction_MergeToMachineSkipTotal,
 	ProfileAction_MergeToP1,
 	ProfileAction_MergeToP2,
+	ProfileAction_ChangeToGuest,
+	ProfileAction_ChangeToNormal,
+	ProfileAction_ChangeToTest,
+	ProfileAction_MoveUp,
+	ProfileAction_MoveDown,
 	NUM_ProfileAction
 };
 static const char *ProfileActionNames[] = {
@@ -47,6 +52,11 @@ static const char *ProfileActionNames[] = {
 	"MergeToMachineSkipTotal",
 	"MergeToP1",
 	"MergeToP2",
+	"ChangeToGuest",
+	"ChangeToNormal",
+	"ChangeToTest",
+	"MoveUp",
+	"MoveDown",
 };
 XToString( ProfileAction );
 XToLocalizedString( ProfileAction );
@@ -333,6 +343,29 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 				PROFILEMAN->MergeLocalProfiles(GetLocalProfileIDWithFocus(),
 					ProfileManager::m_sDefaultLocalProfileID[PLAYER_2].Get());
 				break;
+			case ProfileAction_ChangeToGuest:
+				PROFILEMAN->ChangeProfileType(GetLocalProfileIndexWithFocus(),
+					ProfileType_Guest);
+				SCREENMAN->SetNewScreen(this->m_sName); // reload
+				break;
+			case ProfileAction_ChangeToNormal:
+				PROFILEMAN->ChangeProfileType(GetLocalProfileIndexWithFocus(),
+					ProfileType_Normal);
+				SCREENMAN->SetNewScreen(this->m_sName); // reload
+				break;
+			case ProfileAction_ChangeToTest:
+				PROFILEMAN->ChangeProfileType(GetLocalProfileIndexWithFocus(),
+					ProfileType_Test);
+				SCREENMAN->SetNewScreen(this->m_sName); // reload
+				break;
+			case ProfileAction_MoveUp:
+				PROFILEMAN->MoveProfilePriority(GetLocalProfileIndexWithFocus(), true);
+				SCREENMAN->SetNewScreen(this->m_sName); // reload
+				break;
+			case ProfileAction_MoveDown:
+				PROFILEMAN->MoveProfilePriority(GetLocalProfileIndexWithFocus(), false);
+				SCREENMAN->SetNewScreen(this->m_sName); // reload
+				break;
 			}
 		}
 	}
@@ -411,6 +444,11 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus & )
 			ADD_ACTION( ProfileAction_MergeToMachineSkipTotal );
 			ADD_ACTION( ProfileAction_MergeToP1 );
 			ADD_ACTION( ProfileAction_MergeToP2 );
+			ADD_ACTION( ProfileAction_ChangeToGuest );
+			ADD_ACTION( ProfileAction_ChangeToNormal );
+			ADD_ACTION( ProfileAction_ChangeToTest );
+			ADD_ACTION( ProfileAction_MoveUp );
+			ADD_ACTION( ProfileAction_MoveDown );
 		}
 
 		int iWidth, iX, iY;

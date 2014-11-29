@@ -1200,6 +1200,7 @@
 			<Function name='GetMostPopularSong'/>
 			<Function name='GetNumToasties'/>
 			<Function name='GetNumTotalSongsPlayed'/>
+			<Function name='GetPriority'/>
 			<Function name='GetSongNumTimesPlayed'/>
 			<Function name='GetSongsActual'/>
 			<Function name='GetSongsAndCoursesPercentCompleteAllDifficulties'/>
@@ -1219,6 +1220,7 @@
 			<Function name='GetTotalStepsWithTopGrade'/>
 			<Function name='GetTotalTapsAndHolds'/>
 			<Function name='GetTotalTrailsWithTopGrade'/>
+			<Function name='GetType'/>
 			<Function name='GetUserTable'/>
 			<Function name='GetVoomax'/>
 			<Function name='GetWeightPounds'/>
@@ -2269,6 +2271,11 @@
 			<EnumValue name='&apos;ProfileSlot_Player1&apos;' value='0'/>
 			<EnumValue name='&apos;ProfileSlot_Player2&apos;' value='1'/>
 			<EnumValue name='&apos;ProfileSlot_Machine&apos;' value='2'/>
+		</Enum>
+		<Enum name='ProfileType'>
+			<EnumValue name='&apos;ProfileType_Guest&apos;' value='0'/>
+			<EnumValue name='&apos;ProfileType_Normal&apos;' value='1'/>
+			<EnumValue name='&apos;ProfileType_Test&apos;' value='2'/>
 		</Enum>
 		<Enum name='RadarCategory'>
 			<EnumValue name='&apos;RadarCategory_Stream&apos;' value='0'/>

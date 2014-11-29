@@ -4,6 +4,18 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+
+2014/11/28
+----------
+* [Profile] Guest and Test profile types added.  All existing and new
+  profiles are Normal.  If a profile is changed to Guest through the profile
+  management screen, it will always show at the top of the list.  A profile
+  set to Test will always be at the bottom of the list.  Profiles can be
+  moved around in the list.
+  GetType and GetPriority lua functions added to Profile.
+  Bug that caused a crash when a profile dir was renamed to a non-number and
+  a new profile was created fixed. [kyzentun]
+
 2014/11/15
 ----------
 * [Preferences] Default Fail Type preference mechanism changed internally again.

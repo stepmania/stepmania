@@ -60,6 +60,18 @@ class Song;
 class Steps;
 class Course;
 struct Game;
+
+// Profile types exist for sorting the list of profiles.
+// Guest profiles at the top, test at the bottom.
+enum ProfileType
+{
+	ProfileType_Guest,
+	ProfileType_Normal,
+	ProfileType_Test,
+	NUM_ProfileType,
+	ProfileType_Invalid
+};
+
 /** 
  * @brief Player data that persists between sessions. 
  *
@@ -73,7 +85,12 @@ public:
 	 * Note: there are probably a lot of variables. */
 	// When adding new score related data, add logic for handling it to
 	// MergeScoresFromOtherProfile. -Kyz
-	Profile(): m_sDisplayName(""), m_sCharacterID(""),
+	// When adding any new fields, add them to SwapExceptPriority.  Anything not
+	// added to SwapExceptPriority won't be swapped correctly when the user
+	// changes the list priority of a profile. -Kyz
+	Profile():
+	m_Type(ProfileType_Normal), m_ListPriority(0),
+		m_sDisplayName(""), m_sCharacterID(""),
 		m_sLastUsedHighScoreName(""), m_iWeightPounds(0),
 		m_Voomax(0), m_BirthYear(0), m_IgnoreStepCountCalories(false),
 		m_IsMale(true),
@@ -148,6 +165,10 @@ public:
 	float CalculateCaloriesFromHeartRate(float HeartRate, float Duration);
 
 	bool IsMachine() const;
+
+	ProfileType m_Type;
+	// Profiles of the same type and priority are sorted by dir name.
+	int m_ListPriority;
 
 	// Editable data
 	RString m_sDisplayName;
@@ -366,8 +387,11 @@ public:
 	void InitCalorieData(); 
 	void ClearStats();
 
+	void swap(Profile& other);
+
 	// Loading and saving
 	ProfileLoadResult LoadAllFromDir( RString sDir, bool bRequireSignature );
+	void LoadTypeFromDir(RString dir);
 	void LoadCustomFunction( RString sDir );
 	bool SaveAllToDir( RString sDir, bool bSignData ) const;
 
@@ -380,6 +404,7 @@ public:
 	void LoadScreenshotDataFromNode( const XNode* pNode );
 	void LoadCalorieDataFromNode( const XNode* pNode );
 
+	void SaveTypeToDir(RString dir) const;
 	void SaveEditableDataToDir( RString sDir ) const;
 	bool SaveStatsXmlToDir( RString sDir, bool bSignData ) const;
 	XNode* SaveStatsXmlCreateNode() const;
