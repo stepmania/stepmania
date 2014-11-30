@@ -962,6 +962,7 @@ class DebugLineResetKeyMapping : public IDebugLine
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		INPUTMAPPER->ResetMappingsToDefault();
+		INPUTMAPPER->SaveMappingsToDisk();
 		IDebugLine::DoAndLog( sMessageOut );
 	}
 };
