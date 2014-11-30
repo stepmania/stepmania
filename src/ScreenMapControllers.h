@@ -72,6 +72,9 @@ private:
 	float m_AutoDismissNoSetListPromptSecs;
 	AutoActor m_NoSetListPrompt;
 
+	float m_AutoDismissSanitySecs;
+	AutoActor m_SanityMessage;
+
 	struct SetListEntry
 	{
 		int m_button;
@@ -111,6 +114,7 @@ private:
 	void SaveToDisk();
 	void SetListMode();
 	void ExitAction();
+	bool SanityCheckWrapper();
 
 	vector<ActionRow> m_Actions;
 

@@ -200,6 +200,10 @@ void ScreenMapControllers::Init()
 	m_NoSetListPrompt->SetName("NoSetListPrompt");
 	this->AddChild(m_NoSetListPrompt);
 
+	m_SanityMessage.Load(THEME->GetPathG(m_sName, "sanitymessage"));
+	m_SanityMessage->SetName("SanityMessage");
+	this->AddChild(m_SanityMessage);
+
 	m_Warning.Load(THEME->GetPathG(m_sName, "warning"));
 	m_Warning->SetName("Warning");
 	m_Warning->SetDrawOrder(DRAW_ORDER_TRANSITIONS);
@@ -222,6 +226,7 @@ void ScreenMapControllers::BeginScreen()
 	m_fLockInputSecs= THEME->GetMetricF(m_sName, "LockInputSecs");
 	m_AutoDismissWarningSecs= THEME->GetMetricF(m_sName, "AutoDismissWarningSecs");
 	m_AutoDismissNoSetListPromptSecs= 0.0f;
+	m_AutoDismissSanitySecs= 0.0f;
 	m_Warning->PlayCommand("TweenOn");
 }
 
@@ -245,6 +250,14 @@ void ScreenMapControllers::Update( float fDeltaTime )
 		if(m_AutoDismissNoSetListPromptSecs <= 0.0f)
 		{
 			m_NoSetListPrompt->PlayCommand("TweenOff");
+		}
+	}
+	if(m_AutoDismissSanitySecs > 0.0f)
+	{
+		m_AutoDismissSanitySecs-= fDeltaTime;
+		if(m_AutoDismissSanitySecs <= 0.0f)
+		{
+			m_SanityMessage->PlayCommand("TweenOff");
 		}
 	}
 	
@@ -346,6 +359,18 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 		{
 			m_AutoDismissNoSetListPromptSecs = 0.0f;
 			m_NoSetListPrompt->PlayCommand("TweenOff");
+		}
+		return false;
+	}
+
+	if(m_AutoDismissSanitySecs > 0.0f)
+	{
+		if(input.type == IET_FIRST_PRESS &&
+			input.DeviceI.device == DEVICE_KEYBOARD &&
+			input.DeviceI.button == KEY_ENTER)
+		{
+			m_AutoDismissSanitySecs = 0.0f;
+			m_SanityMessage->PlayCommand("TweenOff");
 		}
 		return false;
 	}
@@ -706,8 +731,11 @@ void ScreenMapControllers::ReloadFromDisk()
 
 void ScreenMapControllers::SaveToDisk()
 {
-	INPUTMAPPER->SaveMappingsToDisk();
-	m_ChangeOccurred= false;
+	if(SanityCheckWrapper())
+	{
+		INPUTMAPPER->SaveMappingsToDisk();
+		m_ChangeOccurred= false;
+	}
 }
 
 void ScreenMapControllers::SetListMode()
@@ -732,13 +760,42 @@ void ScreenMapControllers::ExitAction()
 {
 	if(m_ChangeOccurred)
 	{
-		ScreenPrompt::Prompt(SM_DoSaveAndExit, SAVE_PROMPT, PROMPT_YES_NO_CANCEL,
-			ANSWER_YES);
+		// If the current mapping doesn't pass the sanity check, then the user
+		// can't navigate the prompt screen to pick a choice. -Kyz
+		if(SanityCheckWrapper())
+		{
+			ScreenPrompt::Prompt(SM_DoSaveAndExit, SAVE_PROMPT,
+				PROMPT_YES_NO_CANCEL, ANSWER_YES);
+		}
 	}
 	else
 	{
 		SCREENMAN->PlayStartSound();
 		StartTransitioningScreen(SM_GoToNextScreen);
+	}
+}
+
+bool ScreenMapControllers::SanityCheckWrapper()
+{
+	vector<RString> reasons_not_sane;
+	INPUTMAPPER->SanityCheckMappings(reasons_not_sane);
+	if(reasons_not_sane.empty())
+	{
+		return true;
+	}
+	else
+	{
+		FOREACH(RString, reasons_not_sane, reason)
+		{
+			*reason= THEME->GetString("ScreenMapControllers", *reason);
+		}
+		RString joined_reasons= join("\n", reasons_not_sane);
+		joined_reasons= THEME->GetString("ScreenMapControllers", "VitalButtons") + "\n" + joined_reasons;
+		Message msg("SetText");
+		msg.SetParam("Text", joined_reasons);
+		m_SanityMessage->HandleMessage(msg);
+		m_AutoDismissSanitySecs= THEME->GetMetricF(m_sName, "AutoDismissSanitySecs");
+		return false;
 	}
 }
 

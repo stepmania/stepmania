@@ -152,6 +152,8 @@ public:
 	void ReadMappingsFromDisk();
 	void SaveMappingsToDisk();
 	void ResetMappingsToDefault();
+	void CheckButtonAndAddToReason(GameButton menu, vector<RString>& full_reason, RString const& sub_reason);
+	void SanityCheckMappings(vector<RString>& reason);
 
 	void ClearAllMappings();
 
