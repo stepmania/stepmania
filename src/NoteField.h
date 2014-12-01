@@ -36,10 +36,20 @@ public:
 	void CacheAllUsedNoteSkins();
 	void FadeToFail();
 
-	void Step( int iCol, TapNoteScore score );
-	void SetPressed( int iCol );
-	void DidTapNote( int iCol, TapNoteScore score, bool bBright );
-	void DidHoldNote( int iCol, HoldNoteScore score, bool bBright );
+	void Step(int col, TapNoteScore score, bool from_lua= false);
+	void SetPressed(int col, bool from_lua= false);
+	void DidTapNote(int col, TapNoteScore score, bool bright, bool from_lua= false);
+	void DidHoldNote(int col, HoldNoteScore score, bool bright, bool from_lua= false);
+
+	virtual void PushSelf( lua_State *L );
+
+	// Allows the theme to modify the parameters to Step, SetPressed,
+	// DidTapNote, and DidHoldNote before they pass on to the ghost arrows or
+	// receptors. -Kyz
+	LuaReference m_StepCallback;
+	LuaReference m_SetPressedCallback;
+	LuaReference m_DidTapNoteCallback;
+	LuaReference m_DidHoldNoteCallback;
 
 	const PlayerState *GetPlayerState() const { return m_pPlayerState; }
 

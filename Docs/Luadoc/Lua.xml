@@ -964,6 +964,16 @@
 			<Function name='SelectCourse'/>
 			<Function name='SelectSong'/>
 		</Class>
+		<Class base='ActorFrame' name='NoteField'>
+			<Function name='DidHoldNote'/>
+			<Function name='DidTapNote'/>
+			<Function name='SetPressed'/>
+			<Function name='SetDidHoldNoteCallback'/>
+			<Function name='SetDidTapNoteCallback'/>
+			<Function name='SetSetPressedCallback'/>
+			<Function name='SetStepCallback'/>
+			<Function name='Step'/>
+		</Class>
 		<Class name='NoteSkinManager'>
 			<Function name='DoesNoteSkinExist'/>
 			<Function name='GetMetric'/>

@@ -4,6 +4,11 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2014/11/30
+----------
+* [NoteField] New functions added for controlling the receptor and ghost arrow
+  (explosion) flashes. [kyzentun]
+
 2014/11/15
 ----------
 * [Preferences] Default Fail Type preference mechanism changed internally again.
