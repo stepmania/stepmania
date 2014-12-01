@@ -48,9 +48,6 @@ struct RageTextureID
 	// These hints will be used in addition to any in the filename.
 	RString AdditionalTextureHints;
 
-	bool operator< (const RageTextureID &rhs) const;
-	bool operator== (const RageTextureID &rhs) const;
-
 	/* Used by RageTextureManager. Order is important; see RageTextureManager.cpp.
 	 * Note that this property is not considered for ordering/equality. Loading
 	 * a texture with a different loading policy will reuse the same texture with
@@ -70,6 +67,60 @@ struct RageTextureID
 		Policy(TEX_DEFAULT) { Init(); SetFilename(fn); }
 	void SetFilename( const RString &fn );
 };
+
+inline bool operator==(RageTextureID const &lhs, RageTextureID const &rhs)
+{
+#define EQUAL(a) (lhs.a==rhs.a)
+  return
+		EQUAL(filename) &&
+		EQUAL(iMaxSize) &&
+		EQUAL(bMipMaps) &&
+		EQUAL(iAlphaBits) &&
+		EQUAL(iGrayscaleBits) &&
+		EQUAL(iColorDepth) &&
+		EQUAL(bDither) &&
+		EQUAL(bStretch) &&
+		EQUAL(bHotPinkColorKey) &&
+		EQUAL(AdditionalTextureHints);
+		// EQUAL(Policy); // don't do this
+#undef EQUAL
+}
+
+inline bool operator!=(RageTextureID const &lhs, RageTextureID const &rhs)
+{
+  return !operator==(lhs, rhs);
+}
+
+inline bool operator<(RageTextureID const &lhs, RageTextureID const &rhs)
+{
+#define COMP(a) if(lhs.a<rhs.a) return true; if(lhs.a>rhs.a) return false;
+  COMP(filename);
+  COMP(iMaxSize);
+  COMP(bMipMaps);
+  COMP(iAlphaBits);
+  COMP(iGrayscaleBits);
+  COMP(iColorDepth);
+  COMP(bDither);
+  COMP(bStretch);
+  COMP(bHotPinkColorKey);
+  COMP(AdditionalTextureHints);
+  // COMP(Policy); // don't do this
+#undef COMP
+  return false;
+}
+
+inline bool operator>(RageTextureID const &lhs, RageTextureID const &rhs)
+{
+  return operator<(rhs, lhs);
+}
+inline bool operator<=(RageTextureID const &lhs, RageTextureID const &rhs)
+{
+  return !operator<(rhs, lhs);
+}
+inline bool operator>=(RageTextureID const &lhs, RageTextureID const &rhs)
+{
+  return !operator<(lhs, rhs);
+}
 
 #endif
 

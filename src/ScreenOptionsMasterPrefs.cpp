@@ -514,21 +514,44 @@ struct res_t
 	int w, h;
 	res_t(): w(0), h(0) { }
 	res_t( int w_, int h_ ): w(w_), h(h_) { }
-	res_t operator-( const res_t &rhs ) const
-	{
-		return res_t( w-rhs.w, h-rhs.h );
-	}
-
-	bool operator<( const res_t &rhs ) const
-	{
-		if( w != rhs.w )
-			return w < rhs.w;
-		return h < rhs.h;
+	
+	res_t& operator-=( res_t const &rhs) {
+		w -= rhs.w;
+		h -= rhs.h;
+		return *this;
 	}
 
 	// Ugly: allow convert to a float for FindClosestEntry.
 	operator float() const { return w * 5000.0f + h; }
 };
+
+inline bool operator<(res_t const &lhs, res_t const &rhs)
+{
+	if( lhs.w != rhs.w )
+	{
+		return lhs.w < rhs.w;
+	
+	}
+	return lhs.h < rhs.h;
+}
+inline bool operator>(res_t const &lhs, res_t const &rhs)
+{
+	return operator<(rhs, lhs);
+}
+inline bool operator<=(res_t const &lhs, res_t const &rhs)
+{
+	return !operator<(rhs, lhs);
+}
+inline bool operator>=(res_t const &lhs, res_t const &rhs)
+{
+	return !operator<(lhs, rhs);
+}
+
+inline res_t operator-(res_t lhs, res_t const &rhs)
+{
+	lhs -= rhs;
+	return lhs;
+}
 
 static void DisplayResolutionM( int &sel, bool ToSel, const ConfOption *pConfOption )
 {

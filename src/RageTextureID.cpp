@@ -17,41 +17,6 @@ void RageTextureID::Init()
 	Policy = TEXTUREMAN->GetDefaultTexturePolicy();
 }
 
-bool RageTextureID::operator<(const RageTextureID &rhs) const
-{
-#define COMP(a) if(a<rhs.a) return true; if(a>rhs.a) return false;
-	COMP(filename);
-	COMP(iMaxSize);
-	COMP(bMipMaps);
-	COMP(iAlphaBits);
-	COMP(iGrayscaleBits);
-	COMP(iColorDepth);
-	COMP(bDither);
-	COMP(bStretch);
-	COMP(bHotPinkColorKey);
-	COMP(AdditionalTextureHints);
-	// COMP(Policy); // don't do this
-#undef COMP
-	return false;
-}
-
-bool RageTextureID::operator==(const RageTextureID &rhs) const
-{
-#define EQUAL(a) (a==rhs.a)
-	return 
-		EQUAL(filename) &&
-		EQUAL(iMaxSize) &&
-		EQUAL(bMipMaps) &&
-		EQUAL(iAlphaBits) &&
-		EQUAL(iGrayscaleBits) &&
-		EQUAL(iColorDepth) &&
-		EQUAL(bDither) &&
-		EQUAL(bStretch) &&
-		EQUAL(bHotPinkColorKey) &&
-		EQUAL(AdditionalTextureHints);
-		// EQUAL(Policy); // don't do this
-}
-
 void RageTextureID::SetFilename( const RString &fn )
 {
 	filename = fn;
