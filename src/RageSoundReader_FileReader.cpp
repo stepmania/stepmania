@@ -2,6 +2,7 @@
 #include "RageSoundReader_FileReader.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "ActorUtil.h"
 
 #include <set>
 #ifndef NO_WAV_SUPPORT
@@ -122,10 +123,12 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
 		}
 	}
 	set<RString> FileTypes;
-	FileTypes.insert("oga");
-	FileTypes.insert("ogg");
-	FileTypes.insert("mp3");
-	FileTypes.insert("wav");
+	vector<RString> const& sound_exts= ActorUtil::GetTypeExtensionList(FT_Sound);
+	for(vector<RString>::const_iterator curr= sound_exts.begin();
+			curr != sound_exts.end(); ++curr)
+	{
+		FileTypes.insert(*curr);
+	}
 
 	RString format = GetExtension( filename );
 	format.MakeLower();

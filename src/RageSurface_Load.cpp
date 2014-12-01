@@ -1,4 +1,5 @@
 #include "global.h"
+#include "ActorUtil.h"
 #include "RageSurface_Load.h"
 #include "RageSurface_Load_PNG.h"
 #include "RageSurface_Load_JPEG.h"
@@ -85,11 +86,12 @@ RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, b
 	}
 
 	set<RString> FileTypes;
-	FileTypes.insert("png");
-	FileTypes.insert("jpg");
-	FileTypes.insert("jpeg");
-	FileTypes.insert("gif");
-	FileTypes.insert("bmp");
+	vector<RString> const& exts= ActorUtil::GetTypeExtensionList(FT_Bitmap);
+	for(vector<RString>::const_iterator curr= exts.begin();
+			curr != exts.end(); ++curr)
+	{
+		FileTypes.insert(*curr);
+	}
 
 	RString format = GetExtension(sPath);
 	format.MakeLower();

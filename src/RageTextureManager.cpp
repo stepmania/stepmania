@@ -26,6 +26,7 @@
 #include "RageLog.h"
 #include "RageDisplay.h"
 #include "Foreach.h"
+#include "ActorUtil.h"
 
 #include <map>
 
@@ -147,17 +148,13 @@ RageTexture* RageTextureManager::LoadTextureInternal( RageTextureID ID )
 	}
 
 	// The texture is not already loaded.  Load it.
-	RString sExt = GetExtension( ID.filename );
-	sExt.MakeLower();
 
 	RageTexture* pTexture;
 	if( ID.filename == g_sDefaultTextureName )
 	{
 		pTexture = new RageTexture_Default;
 	}
-	else if(sExt == "ogv" || sExt == "avi" || sExt == "mpg" ||
-		sExt == "mpeg" || sExt == "mp4" || sExt == "mkv" || sExt == "mov" ||
-		sExt == "flv" || sExt == "f4v")
+	else if(ActorUtil::GetFileType(ID.filename) == FT_Movie)
 	{
 		pTexture = RageMovieTexture::Create( ID );
 	}
