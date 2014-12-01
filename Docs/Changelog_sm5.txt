@@ -4,28 +4,33 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2014/11/22
+----------
+* [Preferences] MinTNSToHideNotes preference added. [kyzentun]
+* [PlayerOptions] MinTNSToHideNotes mod added. [kyzentun]
+
 2014/11/15
 ----------
 * [Preferences] Default Fail Type preference mechanism changed internally again.
-  Set your Default Fail Type preference again.
+  Set your Default Fail Type preference again. [kyzentun]
 
 2014/11/05
 ----------
-* [ScreenPrompt] Answer OnCommand metrics fixed to actually work.
+* [ScreenPrompt] Answer OnCommand metrics fixed to actually work. [kyzentun]
 
 2014/11/01
 ----------
-* [RollingNumbers] Cropping and color during tweens fixed.
+* [RollingNumbers] Cropping and color during tweens fixed. [kyzentun]
 
 2014/10/23
 ----------
-* [Global] approach, multiapproach, lerp, and lerp_color lua functions added.
+* [Global] approach, multiapproach, lerp, and lerp_color lua functions added. [kyzentun]
 
 2014/10/20
 ----------
-* [StageStats] GetStepsSeconds function added.
+* [StageStats] GetStepsSeconds function added. [kyzentun]
 * [Steps] If an unrecognized step type is saved, preserve that step instead of
-  deleting it. A warning will be placed in the log file during song load.
+  deleting it. A warning will be placed in the log file during song load.  [kyzentun]
 
 ================================================================================
 StepMania 5.0 beta 4a | 20141015

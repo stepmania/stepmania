@@ -1053,6 +1053,7 @@
 			<Function name='MaxScrollBPM'/>
 			<Function name='Mines'/>
 			<Function name='Mini'/>
+			<Function name='MinTNSToHideNotes' />
 			<Function name='Mirror'/>
 			<Function name='MMod'/>
 			<Function name='MuteOnError'/>

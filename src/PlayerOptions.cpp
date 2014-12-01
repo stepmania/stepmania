@@ -52,6 +52,7 @@ void PlayerOptions::Init()
 	m_LifeType = LifeType_Bar;
 	m_DrainType = DrainType_Normal;
 	m_BatteryLives = 4;
+	m_MinTNSToHideNotes= PREFSMAN->m_MinTNSToHideNotes;
 	m_bSetScrollSpeed = false;
 	m_fMaxScrollBPM = 0;		m_SpeedfMaxScrollBPM = 1.0f;
 	m_fTimeSpacing = 0;		m_SpeedfTimeSpacing = 1.0f;
@@ -117,6 +118,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 		DO_COPY( m_bTransforms[i] );
 	DO_COPY( m_bMuteOnError );
 	DO_COPY( m_FailType );
+	DO_COPY( m_MinTNSToHideNotes );
 	DO_COPY( m_sNoteSkin );
 #undef APPROACH
 #undef DO_COPY
@@ -755,6 +757,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fMaxScrollBPM);
 	COMPARE(m_fRandomSpeed);
 	COMPARE(m_FailType);
+	COMPARE(m_MinTNSToHideNotes);
 	COMPARE(m_bMuteOnError);
 	COMPARE(m_fDark);
 	COMPARE(m_fBlind);
@@ -953,6 +956,7 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	CPY(m_LifeType);
 	CPY(m_DrainType);
 	CPY(m_BatteryLives);
+	CPY(m_MinTNSToHideNotes);
 
 	CPY( m_fPerspectiveTilt );
 	CPY( m_bTransforms[TRANSFORM_NOHOLDS] );
@@ -1077,6 +1081,7 @@ public:
 	BOOL_INTERFACE(NoStretch, Transforms[PlayerOptions::TRANSFORM_NOSTRETCH]);
 	BOOL_INTERFACE(MuteOnError, MuteOnError);
 	ENUM_INTERFACE(FailSetting, FailType, FailType);
+	ENUM_INTERFACE(MinTNSToHideNotes, MinTNSToHideNotes, TapNoteScore);
 
 	// NoteSkins
 	static int NoteSkin(T* p, lua_State* L)
@@ -1448,6 +1453,7 @@ public:
 
 		ADD_METHOD(NoteSkin);
 		ADD_METHOD(FailSetting);
+		ADD_METHOD(MinTNSToHideNotes);
 
 		// Speed
 		ADD_METHOD( CMod );
