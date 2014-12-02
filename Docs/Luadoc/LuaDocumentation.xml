@@ -4830,8 +4830,8 @@ save yourself some time, copy this for undocumented things:
 <Class name='TimingData'>
 	<Description>
 		GetBPMsAndTimes, GetStops, GetDelays, GetLabels, GetWarps, GetCombos, GetTimeSignatures, GetTickcounts, GetFakes, GetScrolls, and GetSpeeds all have two different modes.<br />
-		If the metric TimingData:GetReturnsNumbers is false (the default), they return tables of strings.  The strings are numbers separated by '='.<br />
-		If the metric TimingData:GetReturnsNumbers is true, they return tables of tables, and the inner tables contain numbers as described for each function.<br />
+		If false (or nothing) is the argument to these functions, they return tables of strings.  The strings are numbers separated by '='.<br />
+		If the argument is true, they return tables of tables, and the inner tables contain numbers as described for each function.<br />
 		The first form is kept around and is the default for compatibility with older themes.  The advantage of the second form is that you no longer need to have a bit of code in your theme to transform the string into a table of numbers before you can use it.<br />
 		Example:<br />
 		local bpmsand= timing_data:GetBPMsAndTimes()<br />
@@ -4841,7 +4841,7 @@ save yourself some time, copy this for undocumented things:
 		end<br />
 		-- do something that looks at all the bpms and times. <br />
 		Becomes:<br />
-		local bpmsand= timing_data:GetBPMsAndTimes()<br />
+		local bpmsand= timing_data:GetBPMsAndTimes(true)<br />
 		-- do something that looks at all the bpms and times. <br />
 	</Description>
 	<Function name='GetActualBPM' return='{float}' arguments=''>
