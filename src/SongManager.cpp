@@ -1920,13 +1920,13 @@ public:
 	static int SetPreferredSongs( T* p, lua_State *L )
 	{
 		p->UpdatePreferredSort( SArg(1), "PreferredCourses.txt" );
-		return 0; 
+		COMMON_RETURN_SELF;
 	}
 
 	static int SetPreferredCourses( T* p, lua_State *L )
 	{
 		p->UpdatePreferredSort( "PreferredSongs.txt", SArg(1) );
-		return 0; 
+		COMMON_RETURN_SELF;
 	}
 	static int GetAllSongs( T* p, lua_State *L )
 	{

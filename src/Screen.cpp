@@ -408,9 +408,9 @@ class LunaScreen: public Luna<Screen>
 {
 public:
 	static int GetNextScreenName( T* p, lua_State *L ) { lua_pushstring(L, p->GetNextScreenName() ); return 1; }
-	static int SetNextScreenName( T* p, lua_State *L ) { p->SetNextScreenName(SArg(1)); return 0; }
+	static int SetNextScreenName( T* p, lua_State *L ) { p->SetNextScreenName(SArg(1)); COMMON_RETURN_SELF; }
 	static int GetPrevScreenName( T* p, lua_State *L ) { lua_pushstring(L, p->GetPrevScreen() ); return 1; }
-	static int lockinput( T* p, lua_State *L ) { p->SetLockInputSecs(FArg(1)); return 0; }
+	static int lockinput( T* p, lua_State *L ) { p->SetLockInputSecs(FArg(1)); COMMON_RETURN_SELF; }
 	DEFINE_METHOD( GetScreenType,	GetScreenType() )
 
 	static int PostScreenMessage( T* p, lua_State *L )
@@ -418,7 +418,7 @@ public:
 		RString sMessage = SArg(1);
 		ScreenMessage SM = ScreenMessageHelpers::ToScreenMessage( sMessage );
 		p->PostScreenMessage( SM, IArg(2) );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int AddInputCallback(T* p, lua_State* L)
@@ -428,7 +428,7 @@ public:
 			luaL_error(L, "Input callback must be a function.");
 		}
 		p->AddInputCallbackFromStack(L);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int RemoveInputCallback(T* p, lua_State* L)
@@ -438,7 +438,7 @@ public:
 			luaL_error(L, "Input callback must be a function.");
 		}
 		p->RemoveInputCallback(L);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	LunaScreen()

@@ -795,19 +795,19 @@ public:
 		float fVolume = FArg(1);
 		float fDurationSeconds = FArg(2);
 		p->DimMusic( fVolume, fDurationSeconds );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int PlayOnce( T* p, lua_State *L )
 	{
 		RString sPath = SArg(1);
 		p->PlayOnce( sPath );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int PlayAnnouncer( T* p, lua_State *L )
 	{
 		RString sPath = SArg(1);
 		p->PlayOnceFromAnnouncer( sPath );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int GetPlayerBalance( T* p, lua_State *L )
 	{
@@ -847,10 +847,10 @@ public:
 		}
 		p->PlayMusic(musicPath, NULL, loop, musicStart, musicLength,
 			fadeIn, fadeOut, alignBeat, applyRate);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
-	static int StopMusic( T* p, lua_State *L )			{ p->StopMusic(); return 0; }
+	static int StopMusic( T* p, lua_State *L )			{ p->StopMusic(); COMMON_RETURN_SELF; }
 	static int IsTimingDelayed( T* p, lua_State *L )	{ lua_pushboolean( L, g_Playing->m_bTimingDelayed ); return 1; }
 	
 	LunaGameSoundManager()

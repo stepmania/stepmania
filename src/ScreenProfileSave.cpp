@@ -35,7 +35,7 @@ public:
 		LUA->YieldLua();
 		p->Continue();
 		LUA->UnyieldLua();
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int HaveProfileToSave( T* p, lua_State *L )
 	{

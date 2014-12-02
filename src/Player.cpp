@@ -3492,13 +3492,13 @@ public:
 	{ 
 		Actor *pActor = Luna<Actor>::check(L, 1); 
 		p->SetActorWithJudgmentPosition(pActor); 
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetActorWithComboPosition( T* p, lua_State *L )
 	{ 
 		Actor *pActor = Luna<Actor>::check(L, 1); 
 		p->SetActorWithComboPosition(pActor); 
-		return 0; 
+		COMMON_RETURN_SELF;
 	}
 	static int GetPlayerTimingData( T* p, lua_State *L )
 	{

@@ -184,7 +184,7 @@ void ModIconRow::SetFromGameState()
 class LunaModIconRow: public Luna<ModIconRow>
 {
 public:
-	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1), Enum::Check<PlayerNumber>(L, 2) ); return 0; }
+	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1), Enum::Check<PlayerNumber>(L, 2) ); COMMON_RETURN_SELF; }
 
 	LunaModIconRow()
 	{

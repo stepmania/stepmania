@@ -4,6 +4,12 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2014/12/01
+----------
+* [Everything] Actor and singleton functions that formerly returned nothing now
+  return the actor or singleton. Example (set zoom, x, y, and diffuse in one):
+	self:zoom(.5):xy(_screen.cx, _screen.h-60):diffuse(color("#dc322f"))
+
 2014/11/22
 ----------
 * [Preferences] MinTNSToHideNotes preference added. [kyzentun]

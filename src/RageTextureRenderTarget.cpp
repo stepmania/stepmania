@@ -83,9 +83,9 @@ public:
 	{
 		bool bPreserveTexture = !!luaL_opt( L, lua_toboolean, 1, false );
 		p->BeginRenderingTo( bPreserveTexture );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
-	static int FinishRenderingTo( T* p, lua_State *L )	{ p->FinishRenderingTo(); return 0; }
+	static int FinishRenderingTo( T* p, lua_State *L )	{ p->FinishRenderingTo(); COMMON_RETURN_SELF; }
 
 	LunaRageTextureRenderTarget()
 	{

@@ -294,7 +294,7 @@ void PaneDisplay::SetFromGameState()
 class LunaPaneDisplay: public Luna<PaneDisplay>
 {
 public:
-	static int SetFromGameState( T* pc, lua_State *L )	{ pc->SetFromGameState(); return 0; }
+	static int SetFromGameState( T* p, lua_State *L )	{ p->SetFromGameState(); COMMON_RETURN_SELF; }
 
 	LunaPaneDisplay()
 	{

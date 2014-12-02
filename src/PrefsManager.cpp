@@ -567,12 +567,12 @@ public:
 		if( pPref == NULL )
 		{
 			LuaHelpers::ReportScriptErrorFmt( "SetPreference: unknown preference \"%s\"", sName.c_str() );
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 
 		lua_pushvalue( L, 2 );
 		pPref->SetFromStack( L );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetPreferenceToDefault( T* p, lua_State *L )
 	{
@@ -582,12 +582,12 @@ public:
 		if( pPref == NULL )
 		{
 			LuaHelpers::ReportScriptErrorFmt( "SetPreferenceToDefault: unknown preference \"%s\"", sName.c_str() );
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 
 		pPref->LoadDefault();
 		LOG->Trace( "Restored preference \"%s\" to default \"%s\"", sName.c_str(), pPref->ToString().c_str() );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int PreferenceExists( T* p, lua_State *L )
 	{
@@ -603,7 +603,7 @@ public:
 		return 1;
 	}
 	
-	static int SavePreferences( T* p, lua_State *L ) { p->SavePrefsToDisk(); return 0; }
+	static int SavePreferences( T* p, lua_State *L ) { p->SavePrefsToDisk(); COMMON_RETURN_SELF; }
 	
 	LunaPrefsManager()
 	{

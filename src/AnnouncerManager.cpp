@@ -195,8 +195,13 @@ public:
 	{
 		RString s = p->GetCurAnnouncerName();
 		if( s.empty() )
-			return 0;
-		lua_pushstring(L, s );
+		{
+			lua_pushnil(L);
+		}
+		else
+		{
+			lua_pushstring(L, s );
+		}
 		return 1;
 	}
 	static int SetCurrentAnnouncer( T* p, lua_State *L )
@@ -205,7 +210,7 @@ public:
 		// only bother switching if the announcer exists. -aj
 		if(p->DoesAnnouncerExist(s))
 			p->SwitchAnnouncer(s);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	LunaAnnouncerManager()

@@ -268,37 +268,37 @@ void FadingBanner::LoadCustom( RString sBanner )
 class LunaFadingBanner: public Luna<FadingBanner>
 {
 public:
-	static int scaletoclipped( T* p, lua_State *L )			{ p->ScaleToClipped(FArg(1),FArg(2)); return 0; }
-	static int ScaleToClipped( T* p, lua_State *L )			{ p->ScaleToClipped(FArg(1),FArg(2)); return 0; }
+	static int scaletoclipped( T* p, lua_State *L )			{ p->ScaleToClipped(FArg(1),FArg(2)); COMMON_RETURN_SELF; }
+	static int ScaleToClipped( T* p, lua_State *L )			{ p->ScaleToClipped(FArg(1),FArg(2)); COMMON_RETURN_SELF; }
 	static int LoadFromSong( T* p, lua_State *L )
 	{ 
 		if( lua_isnil(L,1) ) { p->LoadFromSong( NULL ); }
 		else { Song *pS = Luna<Song>::check(L,1); p->LoadFromSong( pS ); }
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int LoadFromCourse( T* p, lua_State *L )
 	{ 
 		if( lua_isnil(L,1) ) { p->LoadFromCourse( NULL ); }
 		else { Course *pC = Luna<Course>::check(L,1); p->LoadFromCourse( pC ); }
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int LoadIconFromCharacter( T* p, lua_State *L )
 	{ 
 		if( lua_isnil(L,1) ) { p->LoadIconFromCharacter( NULL ); }
 		else { Character *pC = Luna<Character>::check(L,1); p->LoadIconFromCharacter( pC ); }
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int LoadCardFromCharacter( T* p, lua_State *L )
 	{ 
 		if( lua_isnil(L,1) ) { p->LoadIconFromCharacter( NULL ); }
 		else { Character *pC = Luna<Character>::check(L,1); p->LoadIconFromCharacter( pC ); }
-		return 0;
+		COMMON_RETURN_SELF;
 	}
-	static int LoadFromSongGroup( T* p, lua_State *L )	{ p->LoadFromSongGroup( SArg(1) ); return 0; }
-	static int LoadRandom( T* p, lua_State *L ) { p->LoadRandom(); return 0; }
-	static int LoadRoulette( T* p, lua_State *L ) { p->LoadRoulette(); return 0; }
-	static int LoadCourseFallback( T* p, lua_State *L ) { p->LoadCourseFallback(); return 0; }
-	static int LoadFallback( T* p, lua_State *L ) { p->LoadFallback(); return 0; }
+	static int LoadFromSongGroup( T* p, lua_State *L )	{ p->LoadFromSongGroup( SArg(1) ); COMMON_RETURN_SELF; }
+	static int LoadRandom( T* p, lua_State *L ) { p->LoadRandom(); COMMON_RETURN_SELF; }
+	static int LoadRoulette( T* p, lua_State *L ) { p->LoadRoulette(); COMMON_RETURN_SELF; }
+	static int LoadCourseFallback( T* p, lua_State *L ) { p->LoadCourseFallback(); COMMON_RETURN_SELF; }
+	static int LoadFallback( T* p, lua_State *L ) { p->LoadFallback(); COMMON_RETURN_SELF; }
 	static int LoadFromSortOrder( T* p, lua_State *L )
 	{
 		if( lua_isnil(L,1) ) { p->LoadFromSortOrder( SortOrder_Invalid ); }
@@ -307,7 +307,7 @@ public:
 			SortOrder so = Enum::Check<SortOrder>(L, 1);
 			p->LoadFromSortOrder( so );
 		}
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int GetLatestIndex( T* p, lua_State *L ){ lua_pushnumber( L, p->GetLatestIndex() ); return 1; }
 

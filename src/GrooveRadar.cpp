@@ -224,7 +224,7 @@ public:
 			RadarValues *pRV = Luna<RadarValues>::check(L,2);
 			p->SetFromRadarValues( pn, *pRV );
 		}
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetFromValues( T* p, lua_State *L )
 	{
@@ -239,9 +239,9 @@ public:
 			LuaHelpers::ReadArrayFromTable( vals, L );
 			p->SetFromValues(pn, vals);
 		}
-		return 0;
+		COMMON_RETURN_SELF;
 	}
-	static int SetEmpty( T* p, lua_State *L )		{ p->SetEmpty( Enum::Check<PlayerNumber>(L, 1) ); return 0; }
+	static int SetEmpty( T* p, lua_State *L )		{ p->SetEmpty( Enum::Check<PlayerNumber>(L, 1) ); COMMON_RETURN_SELF; }
 
 	LunaGrooveRadar()
 	{

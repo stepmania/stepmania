@@ -50,10 +50,10 @@ void ActorSound::LoadFromNode( const XNode* pNode )
 class LunaActorSound: public Luna<ActorSound>
 {
 public:
-	static int load( T* p, lua_State *L )			{ p->Load(SArg(1)); return 0; }
-	static int play( T* p, lua_State *L )			{ p->Play(); return 0; }
-	static int pause( T* p, lua_State *L )			{ p->Pause(BArg(1)); return 0; }
-	static int stop( T* p, lua_State *L )			{ p->Stop(); return 0; }
+	static int load( T* p, lua_State *L )			{ p->Load(SArg(1)); COMMON_RETURN_SELF; }
+	static int play( T* p, lua_State *L )			{ p->Play(); COMMON_RETURN_SELF; }
+	static int pause( T* p, lua_State *L )			{ p->Pause(BArg(1)); COMMON_RETURN_SELF; }
+	static int stop( T* p, lua_State *L )			{ p->Stop(); COMMON_RETURN_SELF; }
 	static int get( T* p, lua_State *L )			{ p->PushSound( L ); return 1; }
 
 	LunaActorSound()

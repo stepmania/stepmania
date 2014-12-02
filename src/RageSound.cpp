@@ -642,7 +642,7 @@ public:
 		RageSoundParams params( p->GetParams() );
 		params.m_fPitch = FArg(1);
 		p->SetParams( params );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int speed( T* p, lua_State *L )
@@ -650,7 +650,7 @@ public:
 		RageSoundParams params( p->GetParams() );
 		params.m_fSpeed = FArg(1);
 		p->SetParams( params );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int volume( T* p, lua_State *L )
@@ -658,7 +658,7 @@ public:
 		RageSoundParams params( p->GetParams() );
 		params.m_Volume = FArg(1);
 		p->SetParams( params );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int SetProperty( T* p, lua_State *L )
@@ -682,7 +682,7 @@ public:
 		else if( val == "Volume" ) params.m_Volume = FArg(2);
 
 		p->SetParams( params );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	/*

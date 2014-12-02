@@ -288,7 +288,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 class LunaStepsDisplay: public Luna<StepsDisplay>
 {
 public:
-	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1), NULL ); return 0; }
+	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1), NULL ); COMMON_RETURN_SELF; }
 	static int SetFromSteps( T* p, lua_State *L )
 	{ 
 		if( lua_isnil(L,1) )
@@ -300,7 +300,7 @@ public:
 			Steps *pS = Luna<Steps>::check(L,1);
 			p->SetFromSteps( pS );
 		}
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetFromTrail( T* p, lua_State *L )
 	{ 
@@ -313,13 +313,13 @@ public:
 			Trail *pT = Luna<Trail>::check(L,1);
 			p->SetFromTrail( pT );
 		}
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetFromGameState( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		p->SetFromGameState( pn );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	LunaStepsDisplay()

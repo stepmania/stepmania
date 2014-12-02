@@ -916,19 +916,19 @@ void BitmapText::Attribute::FromStack( lua_State *L, int iPos )
 class LunaBitmapText: public Luna<BitmapText>
 {
 public:
-	static int wrapwidthpixels( T* p, lua_State *L )	{ p->SetWrapWidthPixels( IArg(1) ); return 0; }
+	static int wrapwidthpixels( T* p, lua_State *L )	{ p->SetWrapWidthPixels( IArg(1) ); COMMON_RETURN_SELF; }
 #define MAX_DIMENSION(maxdimension, SetMaxDimension) \
 	static int maxdimension( T* p, lua_State *L ) \
-	{ p->SetMaxDimension(FArg(1)); return 0; }
+	{ p->SetMaxDimension(FArg(1)); COMMON_RETURN_SELF; }
 	MAX_DIMENSION(maxwidth, SetMaxWidth);
 	MAX_DIMENSION(maxheight, SetMaxHeight);
 #undef MAX_DIMENSION
 	static int max_dimension_use_zoom(T* p, lua_State* L)
 	{
 		p->SetMaxDimUseZoom(lua_toboolean(L, 1));
-		return 0;
+		COMMON_RETURN_SELF;
 	}
-	static int vertspacing( T* p, lua_State *L )		{ p->SetVertSpacing( IArg(1) ); return 0; }
+	static int vertspacing( T* p, lua_State *L )		{ p->SetVertSpacing( IArg(1) ); COMMON_RETURN_SELF; }
 	static int settext( T* p, lua_State *L )
 	{
 		RString s = SArg(1);
@@ -949,12 +949,12 @@ public:
 		}
 
 		p->SetText( s, sAlt );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
-	static int rainbowscroll( T* p, lua_State *L )		{ p->SetRainbowScroll( BArg(1) ); return 0; }
-	static int jitter( T* p, lua_State *L )			{ p->SetJitter( BArg(1) ); return 0; }
-	static int distort( T* p, lua_State *L) { p->SetDistortion( FArg(1) ); return 0; }
-	static int undistort( T* p, lua_State *L) { p->UnSetDistortion(); return 0; }
+	static int rainbowscroll( T* p, lua_State *L )		{ p->SetRainbowScroll( BArg(1) ); COMMON_RETURN_SELF; }
+	static int jitter( T* p, lua_State *L )			{ p->SetJitter( BArg(1) ); COMMON_RETURN_SELF; }
+	static int distort( T* p, lua_State *L) { p->SetDistortion( FArg(1) ); COMMON_RETURN_SELF; }
+	static int undistort( T* p, lua_State *L) { p->UnSetDistortion(); COMMON_RETURN_SELF; }
 	static int GetText( T* p, lua_State *L )		{ lua_pushstring( L, p->GetText() ); return 1; }
 	static int AddAttribute( T* p, lua_State *L )
 	{
@@ -963,13 +963,13 @@ public:
 
 		attr.FromStack( L, 2 );
 		p->AddAttribute( iPos, attr );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
-	static int ClearAttributes( T* p, lua_State * )	{ p->ClearAttributes(); return 0; }
-	static int strokecolor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetStrokeColor( c ); return 0; }
+	static int ClearAttributes( T* p, lua_State *L )	{ p->ClearAttributes(); COMMON_RETURN_SELF; }
+	static int strokecolor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetStrokeColor( c ); COMMON_RETURN_SELF; }
 	DEFINE_METHOD(getstrokecolor, GetStrokeColor());
-	static int uppercase( T* p, lua_State *L )		{ p->SetUppercase( BArg(1) ); return 0; }
-	static int textglowmode( T* p, lua_State *L )	{ p->SetTextGlowMode( Enum::Check<TextGlowMode>(L, 1) ); return 0; }
+	static int uppercase( T* p, lua_State *L )		{ p->SetUppercase( BArg(1) ); COMMON_RETURN_SELF; }
+	static int textglowmode( T* p, lua_State *L )	{ p->SetTextGlowMode( Enum::Check<TextGlowMode>(L, 1) ); COMMON_RETURN_SELF; }
 
 	LunaBitmapText()
 	{

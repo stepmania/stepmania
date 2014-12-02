@@ -324,32 +324,32 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 class LunaActorScroller: public Luna<ActorScroller>
 {
 public:
-	static int PositionItems( T* p, lua_State *L )	{ p->PositionItems(); return 0; }
+	static int PositionItems( T* p, lua_State *L )	{ p->PositionItems(); COMMON_RETURN_SELF; }
 	static int SetTransformFromFunction( T* p, lua_State *L )
 	{
 		LuaReference ref;
 		LuaHelpers::FromStack( L, ref, 1 );
 		p->SetTransformFromReference( ref );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
-	static int SetTransformFromHeight( T* p, lua_State *L )		{ p->SetTransformFromHeight(FArg(1)); return 0; }
-	static int SetTransformFromWidth( T* p, lua_State *L )		{ p->SetTransformFromWidth(FArg(1)); return 0; }
-	static int SetCurrentAndDestinationItem( T* p, lua_State *L )	{ p->SetCurrentAndDestinationItem( FArg(1) ); return 0; }
-	static int SetDestinationItem( T* p, lua_State *L )		{ p->SetDestinationItem( FArg(1) ); return 0; }
+	static int SetTransformFromHeight( T* p, lua_State *L )		{ p->SetTransformFromHeight(FArg(1)); COMMON_RETURN_SELF; }
+	static int SetTransformFromWidth( T* p, lua_State *L )		{ p->SetTransformFromWidth(FArg(1)); COMMON_RETURN_SELF; }
+	static int SetCurrentAndDestinationItem( T* p, lua_State *L )	{ p->SetCurrentAndDestinationItem( FArg(1) ); COMMON_RETURN_SELF; }
+	static int SetDestinationItem( T* p, lua_State *L )		{ p->SetDestinationItem( FArg(1) ); COMMON_RETURN_SELF; }
 	static int GetSecondsToDestination( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetSecondsToDestination() ); return 1; }
-	static int SetSecondsPerItem( T* p, lua_State *L )		{ p->SetSecondsPerItem(FArg(1)); return 0; }
+	static int SetSecondsPerItem( T* p, lua_State *L )		{ p->SetSecondsPerItem(FArg(1)); COMMON_RETURN_SELF; }
 	static int GetSecondsPauseBetweenItems( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetSecondsPauseBetweenItems() ); return 1; }
-	static int SetSecondsPauseBetweenItems( T* p, lua_State *L )	{ p->SetSecondsPauseBetweenItems(FArg(1)); return 0; }
-	static int SetPauseCountdownSeconds( T* p, lua_State *L )	{ p->SetPauseCountdownSeconds(FArg(1)); return 0; }
-	static int SetNumSubdivisions( T* p, lua_State *L )		{ p->SetNumSubdivisions(IArg(1)); return 0; }
-	static int ScrollThroughAllItems( T* p, lua_State *L )		{ p->ScrollThroughAllItems(); return 0; }
-	static int ScrollWithPadding( T* p, lua_State *L )		{ p->ScrollWithPadding(FArg(1),FArg(2)); return 0; }
-	static int SetFastCatchup( T* p, lua_State *L )			{ p->SetFastCatchup(BArg(1)); return 0; }
-	static int SetLoop( T* p, lua_State *L )			{ p->SetLoop(BArg(1)); return 0; }
-	static int SetWrap( T* p, lua_State *L )			{ p->SetWrap(BArg(1)); return 0; }
-	static int SetMask( T* p, lua_State *L )			{ p->EnableMask(FArg(1), FArg(2)); return 0; }
+	static int SetSecondsPauseBetweenItems( T* p, lua_State *L )	{ p->SetSecondsPauseBetweenItems(FArg(1)); COMMON_RETURN_SELF; }
+	static int SetPauseCountdownSeconds( T* p, lua_State *L )	{ p->SetPauseCountdownSeconds(FArg(1)); COMMON_RETURN_SELF; }
+	static int SetNumSubdivisions( T* p, lua_State *L )		{ p->SetNumSubdivisions(IArg(1)); COMMON_RETURN_SELF; }
+	static int ScrollThroughAllItems( T* p, lua_State *L )		{ p->ScrollThroughAllItems(); COMMON_RETURN_SELF; }
+	static int ScrollWithPadding( T* p, lua_State *L )		{ p->ScrollWithPadding(FArg(1),FArg(2)); COMMON_RETURN_SELF; }
+	static int SetFastCatchup( T* p, lua_State *L )			{ p->SetFastCatchup(BArg(1)); COMMON_RETURN_SELF; }
+	static int SetLoop( T* p, lua_State *L )			{ p->SetLoop(BArg(1)); COMMON_RETURN_SELF; }
+	static int SetWrap( T* p, lua_State *L )			{ p->SetWrap(BArg(1)); COMMON_RETURN_SELF; }
+	static int SetMask( T* p, lua_State *L )			{ p->EnableMask(FArg(1), FArg(2)); COMMON_RETURN_SELF; }
 
-	static int SetNumItemsToDraw( T* p, lua_State *L )		{ p->SetNumItemsToDraw(FArg(1)); return 0; }
+	static int SetNumItemsToDraw( T* p, lua_State *L )		{ p->SetNumItemsToDraw(FArg(1)); COMMON_RETURN_SELF; }
 	static int GetFullScrollLengthSeconds( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetSecondsForCompleteScrollThrough() ); return 1; }
 	static int GetCurrentItem( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetCurrentItem() ); return 1; }
 	static int GetDestinationItem( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetDestinationItem() ); return 1; }

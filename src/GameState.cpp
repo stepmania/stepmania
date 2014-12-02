@@ -2272,7 +2272,7 @@ public:
 	static int SetMultiplayer( T* p, lua_State *L )
 	{
 		p->m_bMultiplayer = BArg(1);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	DEFINE_METHOD( InStepEditor,			m_bInStepEditor );
 	DEFINE_METHOD( GetNumMultiplayerNoteFields,	m_iNumMultiplayerNoteFields )
@@ -2281,7 +2281,7 @@ public:
 	static int SetNumMultiplayerNoteFields( T* p, lua_State *L )
 	{
 		p->m_iNumMultiplayerNoteFields = IArg(1);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int GetPlayerState( T* p, lua_State *L )
 	{
@@ -2310,14 +2310,14 @@ public:
 			pn = Enum::Check<PlayerNumber>(L, 2);
 		}
 		p->ApplyGameCommand(SArg(1),pn);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int GetCurrentSong( T* p, lua_State *L )			{ if(p->m_pCurSong) p->m_pCurSong->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int SetCurrentSong( T* p, lua_State *L )
 	{
 		if( lua_isnil(L,1) ) { p->m_pCurSong.Set( NULL ); }
 		else { Song *pS = Luna<Song>::check( L, 1, true ); p->m_pCurSong.Set( pS ); }
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static void SetCompatibleStyleOrError(T* p, lua_State* L, StepsType stype)
 	{
@@ -2351,14 +2351,14 @@ public:
 			SetCompatibleStyleOrError(p, L, pS->m_StepsType);
 			p->m_pCurSteps[pn].Set(pS);
 		}
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int GetCurrentCourse( T* p, lua_State *L )		{ if(p->m_pCurCourse) p->m_pCurCourse->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int SetCurrentCourse( T* p, lua_State *L )
 	{
 		if( lua_isnil(L,1) ) { p->m_pCurCourse.Set( NULL ); }
 		else { Course *pC = Luna<Course>::check(L,1); p->m_pCurCourse.Set( pC ); }
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int GetCurrentTrail( T* p, lua_State *L )
 	{
@@ -2381,16 +2381,16 @@ public:
 			SetCompatibleStyleOrError(p, L, pS->m_StepsType);
 			p->m_pCurTrail[pn].Set(pS);
 		}
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int GetPreferredSong( T* p, lua_State *L )		{ if(p->m_pPreferredSong) p->m_pPreferredSong->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int SetPreferredSong( T* p, lua_State *L )
 	{
 		if( lua_isnil(L,1) ) { p->m_pPreferredSong = NULL; }
 		else { Song *pS = Luna<Song>::check(L,1); p->m_pPreferredSong = pS; }
-		return 0;
+		COMMON_RETURN_SELF;
 	}
-	static int SetTemporaryEventMode( T* p, lua_State *L )	{ p->m_bTemporaryEventMode = BArg(1); return 0; }
+	static int SetTemporaryEventMode( T* p, lua_State *L )	{ p->m_bTemporaryEventMode = BArg(1); COMMON_RETURN_SELF; }
 	static int Env( T* p, lua_State *L )	{ p->m_Environment->PushSelf(L); return 1; }
 	static int GetEditSourceSteps( T* p, lua_State *L )
 	{
@@ -2404,7 +2404,7 @@ public:
 		PlayerNumber pn = Enum::Check<PlayerNumber>( L, 1 );
 		Difficulty dc = Enum::Check<Difficulty>( L, 2 );
 		p->m_PreferredDifficulty[pn].Set( dc );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	DEFINE_METHOD( GetPreferredDifficulty,		m_PreferredDifficulty[Enum::Check<PlayerNumber>(L, 1)] )
 	DEFINE_METHOD( AnyPlayerHasRankingFeats,	AnyPlayerHasRankingFeats() )
@@ -2473,17 +2473,17 @@ public:
 	static int ApplyStageModifiers( T* p, lua_State *L )
 	{
 		p->ApplyStageModifiers( Enum::Check<PlayerNumber>(L, 1), SArg(2) );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int ApplyPreferredModifiers( T* p, lua_State *L )
 	{
 		p->ApplyPreferredModifiers( Enum::Check<PlayerNumber>(L, 1), SArg(2) );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int ClearStageModifiersIllegalForCourse( T* p, lua_State *L )
 	{
 		p->ClearStageModifiersIllegalForCourse();
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetSongOptions( T* p, lua_State *L )
 	{
@@ -2493,7 +2493,7 @@ public:
 
 		so.FromString( SArg(2) );
 		p->m_SongOptions.Assign( m, so );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int GetStageResult( T* p, lua_State *L )
 	{
@@ -2511,7 +2511,6 @@ public:
 		lua_pushboolean(L, p->GetStageResult(PLAYER_1)==RESULT_DRAW); return 1;
 	}
 	static int GetCurrentGame( T* p, lua_State *L )			{ const_cast<Game*>(p->GetCurrentGame())->PushSelf( L ); return 1; }
-	//static int SetCurrentGame( T* p, lua_State *L )			{ p->SetCurrentGame( GAMEMAN->StringToGame( SArg(1) ) ); return 0; }
 	DEFINE_METHOD( GetEditCourseEntryIndex,		m_iEditCourseEntryIndex )
 	DEFINE_METHOD( GetEditLocalProfileID,		m_sEditLocalProfileID.Get() )
 	static int GetEditLocalProfile( T* p, lua_State *L )
@@ -2554,7 +2553,7 @@ public:
 		return vpStepsToShow.size()*2;
 	}
 
-	static int SetPreferredSongGroup( T* p, lua_State *L ) { p->m_sPreferredSongGroup.Set( SArg(1) ); return 0; }
+	static int SetPreferredSongGroup( T* p, lua_State *L ) { p->m_sPreferredSongGroup.Set( SArg(1) ); COMMON_RETURN_SELF; }
 	DEFINE_METHOD( GetPreferredSongGroup, m_sPreferredSongGroup.Get() );
 	static int GetHumanPlayers( T* p, lua_State *L )
 	{
@@ -2602,15 +2601,15 @@ public:
 	}
 	static int GetGameSeed( T* p, lua_State *L )			{ LuaHelpers::Push( L, p->m_iGameSeed ); return 1; }
 	static int GetStageSeed( T* p, lua_State *L )			{ LuaHelpers::Push( L, p->m_iStageSeed ); return 1; }
-	static int SaveLocalData( T* p, lua_State *L )			{ p->SaveLocalData(); return 0; }
+	static int SaveLocalData( T* p, lua_State *L )			{ p->SaveLocalData(); COMMON_RETURN_SELF; }
 
 	static int SetJukeboxUsesModifiers( T* p, lua_State *L )
 	{
-		p->m_bJukeboxUsesModifiers = BArg(1); return 0;
+		p->m_bJukeboxUsesModifiers = BArg(1); COMMON_RETURN_SELF;
 	}
-	static int Reset( T* p, lua_State *L )				{ p->Reset(); return 0; }
-	static int JoinPlayer( T* p, lua_State *L )				{ p->JoinPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
-	static int UnjoinPlayer( T* p, lua_State *L )				{ p->UnjoinPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
+	static int Reset( T* p, lua_State *L )				{ p->Reset(); COMMON_RETURN_SELF; }
+	static int JoinPlayer( T* p, lua_State *L )				{ p->JoinPlayer(Enum::Check<PlayerNumber>(L, 1)); COMMON_RETURN_SELF; }
+	static int UnjoinPlayer( T* p, lua_State *L )				{ p->UnjoinPlayer(Enum::Check<PlayerNumber>(L, 1)); COMMON_RETURN_SELF; }
 	static int JoinInput( T* p, lua_State *L )
 	{
 		lua_pushboolean(L, p->JoinInput(Enum::Check<PlayerNumber>(L, 1)));
@@ -2625,10 +2624,10 @@ public:
 		Character* c = CHARMAN->GetCharacterFromID(SArg(2));
 		if (c)
 			p->m_pCurCharacters[Enum::Check<PlayerNumber>(L, 1)] = c;
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int GetExpandedSectionName( T* p, lua_State *L )				{ lua_pushstring(L, p->sExpandedSectionName); return 1; }
-	static int AddStageToPlayer( T* p, lua_State *L )				{ p->AddStageToPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
+	static int AddStageToPlayer( T* p, lua_State *L )				{ p->AddStageToPlayer(Enum::Check<PlayerNumber>(L, 1)); COMMON_RETURN_SELF; }
 	static int InsertCoin( T* p, lua_State *L )
 	{
 		int numCoins = IArg(1);
@@ -2639,25 +2638,25 @@ public:
 			// Warn themers if they attempt to set credits to a negative value.
 			luaL_error( L, "Credits may not be negative." );
 		}
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int InsertCredit( T* p, lua_State *L )
 	{
 		StepMania::InsertCredit();
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int CurrentOptionsDisqualifyPlayer( T* p, lua_State *L )	{ lua_pushboolean(L, p->CurrentOptionsDisqualifyPlayer(Enum::Check<PlayerNumber>(L, 1))); return 1; }
 
 	static int ResetPlayerOptions( T* p, lua_State *L )
 	{
 		p->ResetPlayerOptions(Enum::Check<PlayerNumber>(L, 1));
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int RefreshNoteSkinData( T* p, lua_State *L )
 	{
 		NOTESKIN->RefreshNoteSkinData(p->m_pCurGame);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int Dopefish( T* p, lua_State *L )
@@ -2675,26 +2674,26 @@ public:
 		}
 		p->LoadProfiles( LoadEdits );
 		SCREENMAN->ZeroNextUpdate();
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int SaveProfiles( T* p, lua_State *L )
 	{
 		p->SavePlayerProfiles();
 		SCREENMAN->ZeroNextUpdate();
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int SetFailTypeExplicitlySet(T* p, lua_State* L)
 	{
 		p->m_bFailTypeWasExplicitlySet= true;
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int StoreRankingName( T* p, lua_State *L )
 	{
 		p->StoreRankingName(Enum::Check<PlayerNumber>(L, 1), SArg(2));
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	DEFINE_METHOD( HaveProfileToLoad, HaveProfileToLoad() )
@@ -2772,13 +2771,13 @@ public:
 
 		if( !AreStyleAndPlayModeCompatible( p, L, pStyle, p->m_PlayMode ) )
 		{
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 
 		p->SetCurrentStyle( pStyle );
 		ClearIncompatibleStepsAndTrails( p, L );
 
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int SetCurrentPlayMode( T* p, lua_State *L )
@@ -2788,7 +2787,7 @@ public:
 		{
 			p->m_PlayMode.Set( pm );
 		}
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	LunaGameState()

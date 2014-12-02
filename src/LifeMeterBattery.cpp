@@ -268,7 +268,7 @@ class LunaLifeMeterBattery: public Luna<LifeMeterBattery>
 public:
 	static int GetLivesLeft( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetLivesLeft() ); return 1; }
 	static int GetTotalLives( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetTotalLives()); return 1; }
-	static int ChangeLives( T* p, lua_State *L )	{ p->ChangeLives(IArg(1)); return 0; }
+	static int ChangeLives( T* p, lua_State *L )	{ p->ChangeLives(IArg(1)); COMMON_RETURN_SELF; }
 
 	LunaLifeMeterBattery()
 	{

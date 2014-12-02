@@ -203,14 +203,14 @@ void MenuTimer::SetText( float fSeconds )
 class LunaMenuTimer: public Luna<MenuTimer>
 {
 public:
-	static int SetSeconds( T* p, lua_State *L )	{ p->SetSeconds(FArg(1)); return 0; }
+	static int SetSeconds( T* p, lua_State *L )	{ p->SetSeconds(FArg(1)); COMMON_RETURN_SELF; }
 	static int GetSeconds( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetSeconds() ); return 1; }
-	static int start( T* p, lua_State *L )		{ p->Start(); return 0; }
-	static int pause( T* p, lua_State *L )		{ p->Pause(); return 0; }
-	static int stop( T* p, lua_State *L )			{ p->Stop(); return 0; }
-	static int disable( T* p, lua_State *L )		{ p->Disable(); return 0; }
-	static int silent( T* p, lua_State *L )		{ p->EnableSilent(BArg(1)); return 0; }
-	static int stealth( T* p, lua_State *L )		{ p->EnableStealth(BArg(1)); return 0; }
+	static int start( T* p, lua_State *L )		{ p->Start(); COMMON_RETURN_SELF; }
+	static int pause( T* p, lua_State *L )		{ p->Pause(); COMMON_RETURN_SELF; }
+	static int stop( T* p, lua_State *L )			{ p->Stop(); COMMON_RETURN_SELF; }
+	static int disable( T* p, lua_State *L )		{ p->Disable(); COMMON_RETURN_SELF; }
+	static int silent( T* p, lua_State *L )		{ p->EnableSilent(BArg(1)); COMMON_RETURN_SELF; }
+	static int stealth( T* p, lua_State *L )		{ p->EnableStealth(BArg(1)); COMMON_RETURN_SELF; }
 
 	LunaMenuTimer()
 	{

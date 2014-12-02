@@ -407,7 +407,7 @@ public:
 	static int SetNumVertices( T* p, lua_State *L )
 	{
 		p->SetNumVertices( IArg(1) );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int GetNumVertices( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumVertices() ); return 1; }
 
@@ -478,7 +478,7 @@ public:
 		if( Index < 0 )
 		{
 			LuaHelpers::ReportScriptErrorFmt( "ActorMultiVertex::SetVertex: index %d provided, cannot set Index < 1", Index+1 );
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 		else if( Index == (int) p->GetNumVertices() )
 		{
@@ -487,10 +487,10 @@ public:
 		else if( Index > (int) p->GetNumVertices() )
 		{
 			LuaHelpers::ReportScriptErrorFmt( "ActorMultiVertex::SetVertex: Cannot set vertex %d if there is no vertex %d, only %u vertices.", Index+1 , Index, (unsigned int)p->GetNumVertices() );
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 		SetVertexFromStack(p, L, Index, lua_gettop(L));
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int SetVertices(T* p, lua_State* L)
@@ -505,7 +505,7 @@ public:
 			if( First < 0 )
 			{
 				LuaHelpers::ReportScriptErrorFmt( "ActorMultiVertex::SetVertices: index %d provided, cannot set Index < 1", First+1 );
-				return 0;
+				COMMON_RETURN_SELF;
 			}
 		}
 		int Last = First + lua_objlen(L, StackIndex );
@@ -520,21 +520,21 @@ public:
 			SetVertexFromStack(p, L, n, lua_gettop(L));
 			lua_pop(L, 1);
 		}
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int SetEffectMode( T* p, lua_State *L )
 	{
 		EffectMode em = Enum::Check<EffectMode>(L, 1);
 		p->SetEffectMode( em );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int SetTextureMode( T* p, lua_State *L )
 	{
 		TextureMode tm = Enum::Check<TextureMode>(L, 1);
 		p->SetTextureMode( tm );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int SetLineWidth( T* p, lua_State *L )
@@ -543,10 +543,10 @@ public:
 		if( Width < 0 )
 		{
 			LuaHelpers::ReportScriptErrorFmt( "ActorMultiVertex::SetLineWidth: cannot set negative width." );
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 		p->SetLineWidth(Width);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int SetDrawState( T* p, lua_State* L )
@@ -558,7 +558,7 @@ public:
 		if( !lua_istable(L, ArgsIndex) )
 		{
 			LuaHelpers::ReportScriptErrorFmt( "ActorMultiVertex:SetDrawState: Table expected, something else recieved.  Doing nothing.");
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 		// Fetch the draw mode, if provided.
 		lua_getfield(L, ArgsIndex, "Mode");
@@ -583,7 +583,7 @@ public:
 		}
 		lua_pop(L, 1);
 		p->SetDrawState(dm, first, num);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int GetDestDrawMode( T* p, lua_State* L )
@@ -635,7 +635,7 @@ public:
 			RageTextureID ID( SArg(1) );
 			p->LoadFromTexture( ID );
 		}
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int SetTexture( T* p, lua_State *L )
@@ -643,7 +643,7 @@ public:
 		RageTexture *Texture = Luna<RageTexture>::check(L, 1);
 		Texture = TEXTUREMAN->CopyTexture( Texture );
 		p->SetTexture( Texture );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int GetTexture(T* p, lua_State *L)
 	{

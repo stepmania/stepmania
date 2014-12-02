@@ -591,8 +591,8 @@ void ActorFrame::SetDrawByZPosition( bool b )
 class LunaActorFrame : public Luna<ActorFrame>
 {
 public:
-	static int playcommandonchildren( T* p, lua_State *L )		{ p->PlayCommandOnChildren(SArg(1)); return 0; }
-	static int playcommandonleaves( T* p, lua_State *L )		{ p->PlayCommandOnLeaves(SArg(1)); return 0; }
+	static int playcommandonchildren( T* p, lua_State *L )		{ p->PlayCommandOnChildren(SArg(1)); COMMON_RETURN_SELF; }
+	static int playcommandonleaves( T* p, lua_State *L )		{ p->PlayCommandOnLeaves(SArg(1)); COMMON_RETURN_SELF; }
 	static int runcommandsonleaves( T* p, lua_State *L )
 	{
 		luaL_checktype( L, 1, LUA_TFUNCTION );
@@ -600,7 +600,7 @@ public:
 		cmds.SetFromStack( L );
 
 		p->RunCommandsOnLeaves( cmds );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int RunCommandsOnChildren( T* p, lua_State *L )
 	{
@@ -614,13 +614,13 @@ public:
 		cmds.SetFromStack( L );
 
 		p->RunCommandsOnChildren( cmds, &ParamTable );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
-	static int propagate( T* p, lua_State *L )			{ p->SetPropagateCommands( BIArg(1) ); return 0; }
-	static int fov( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); return 0; }
-	static int SetUpdateRate( T* p, lua_State *L )			{ p->SetUpdateRate( FArg(1) ); return 0; }
-	static int SetFOV( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); return 0; }
-	static int vanishpoint( T* p, lua_State *L )			{ p->SetVanishPoint( FArg(1), FArg(2) ); return 0; }
+	static int propagate( T* p, lua_State *L )			{ p->SetPropagateCommands( BIArg(1) ); COMMON_RETURN_SELF; }
+	static int fov( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); COMMON_RETURN_SELF; }
+	static int SetUpdateRate( T* p, lua_State *L )			{ p->SetUpdateRate( FArg(1) ); COMMON_RETURN_SELF; }
+	static int SetFOV( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); COMMON_RETURN_SELF; }
+	static int vanishpoint( T* p, lua_State *L )			{ p->SetVanishPoint( FArg(1), FArg(2) ); COMMON_RETURN_SELF; }
 	static int GetChild( T* p, lua_State *L )
 	{
 		p->PushChildTable(L, SArg(1));
@@ -641,7 +641,7 @@ public:
 			lua_pushnil( L );
 			ref.SetFromStack( L );
 			p->SetDrawFunction( ref );
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 		
 		luaL_checktype( L, 1, LUA_TFUNCTION );
@@ -650,7 +650,7 @@ public:
 		lua_pushvalue( L, 1 );
 		ref.SetFromStack( L );
 		p->SetDrawFunction( ref );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int GetDrawFunction( T* p, lua_State *L )
 	{
@@ -665,7 +665,7 @@ public:
 			lua_pushnil( L );
 			ref.SetFromStack( L );
 			p->SetUpdateFunction( ref );
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 		
 		luaL_checktype( L, 1, LUA_TFUNCTION );
@@ -674,14 +674,14 @@ public:
 		lua_pushvalue( L, 1 );
 		ref.SetFromStack( L );
 		p->SetUpdateFunction( ref );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
-	static int SortByDrawOrder( T* p, lua_State *L )		{ p->SortByDrawOrder(); return 0; }
+	static int SortByDrawOrder( T* p, lua_State *L )		{ p->SortByDrawOrder(); COMMON_RETURN_SELF; }
 
-	//static int CustomLighting( T* p, lua_State *L )			{ p->SetCustomLighting(BArg(1)); return 0; }
-	static int SetAmbientLightColor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetAmbientLightColor( c ); return 0; }
-	static int SetDiffuseLightColor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLightColor( c ); return 0; }
-	static int SetSpecularLightColor( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetSpecularLightColor( c ); return 0; }
+	//static int CustomLighting( T* p, lua_State *L )			{ p->SetCustomLighting(BArg(1)); COMMON_RETURN_SELF; }
+	static int SetAmbientLightColor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetAmbientLightColor( c ); COMMON_RETURN_SELF; }
+	static int SetDiffuseLightColor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLightColor( c ); COMMON_RETURN_SELF; }
+	static int SetSpecularLightColor( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetSpecularLightColor( c ); COMMON_RETURN_SELF; }
 	static int SetLightDirection( T* p, lua_State *L )
 	{
 		luaL_checktype( L, 1, LUA_TTABLE );
@@ -695,7 +695,7 @@ public:
 		}
 		RageVector3 vTmp = RageVector3( coords[0], coords[1], coords[2] );
 		p->SetLightDirection( vTmp );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int AddChildFromPath( T* p, lua_State *L )
@@ -721,7 +721,7 @@ public:
 			lua_pushnil( L );
 		return 1;
 	}
-	static int RemoveAllChildren( T* p, lua_State *L )				{ p->RemoveAllChildren( ); return 0; }
+	static int RemoveAllChildren( T* p, lua_State *L )				{ p->RemoveAllChildren( ); COMMON_RETURN_SELF; }
 
 	LunaActorFrame()
 	{

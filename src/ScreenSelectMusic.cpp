@@ -1937,7 +1937,7 @@ public:
 		p->GetMusicWheel()->PushSelf(L);
 		return 1;
 	}
-	static int OpenOptionsList( T* p, lua_State *L ) { PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);  p->OpenOptionsList(pn); return 0; }
+	static int OpenOptionsList( T* p, lua_State *L ) { PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);  p->OpenOptionsList(pn); COMMON_RETURN_SELF; }
 
 	LunaScreenSelectMusic()
 	{

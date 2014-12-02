@@ -161,6 +161,8 @@ public:
 #define DEFINE_METHOD( method_name, expr ) \
 	static int method_name( T* p, lua_State *L ) { LuaHelpers::Push( L, p->expr ); return 1; }
 
+#define COMMON_RETURN_SELF p->PushSelf(L); return 1;
+
 #define ADD_METHOD( method_name ) \
 	AddMethod( #method_name, method_name )
 
