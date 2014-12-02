@@ -316,7 +316,7 @@ static int IdenticalChildrenIndexLayer(lua_State* L)
 {
 	if(lua_isnumber(L, 2))
 	{
-		lua_gettable(L, 1);
+		lua_rawget(L, 1);
 	}
 	else
 	{
