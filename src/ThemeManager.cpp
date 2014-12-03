@@ -649,6 +649,7 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 								break;
 							}
 						}
+						matches= category == EC_BGANIMATIONS || category == EC_GRAPHICS;
 						break;
 					case FT_Sound:
 						matches= category == EC_SOUNDS;
