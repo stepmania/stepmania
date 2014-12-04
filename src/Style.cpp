@@ -82,8 +82,12 @@ int Style::GameInputToColumn( const GameInput &GameI ) const
 		return Column_Invalid;
 
 	for( int i = 0; i <= iColumnIndex; ++i )
+	{
 		if( m_iInputColumn[GameI.controller][i] == END_MAPPING )
+		{
 			return Column_Invalid;
+		}
+	}
 
 	return m_iInputColumn[GameI.controller][iColumnIndex];
 }

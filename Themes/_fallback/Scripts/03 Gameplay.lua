@@ -22,6 +22,7 @@ function GetExtraColorThreshold()
 		para = 10,
 		techno = 10,
 		lights = 10, -- lights shouldn't be playable
+		kickbox= 100, -- extra color is lame
 	}
 	return Modes[CurGameName()] or 10
 end
@@ -51,7 +52,8 @@ function GameCompatibleModes()
 		maniax = "Single,Double,Versus",
 		-- todo: add versus modes for technomotion
 		techno = "Single4,Single5,Single8,Double4,Double5,Double8",
-		lights = "Single" -- lights shouldn't be playable
+		lights = "Single", -- lights shouldn't be playable
+		kickbox= "Human,Quadarm,Insect,Arachnid",
 	}
 	return Modes[CurGameName()]
 end
