@@ -82,16 +82,16 @@ namespace
 
 void ArrowEffects::Update()
 {
-	const Style* pStyle = GAMESTATE->GetCurrentStyle();
-
 	static float fLastTime = 0;
 	float fTime = RageTimer::GetTimeSinceStartFast();
 	
 	FOREACH_EnabledPlayer( pn )
 	{
+		const Style* pStyle = GAMESTATE->GetCurrentStyle(pn);
 		const Style::ColumnInfo* pCols = pStyle->m_ColumnInfo[pn];
 		const SongPosition &position = GAMESTATE->m_bIsUsingStepTiming
 		? GAMESTATE->m_pPlayerState[pn]->m_Position : GAMESTATE->m_Position;
+		const float field_zoom= GAMESTATE->m_pPlayerState[pn]->m_NotefieldZoom;
 
 		PerPlayerData &data = g_EffectData[pn];
 		
@@ -127,8 +127,8 @@ void ArrowEffects::Update()
 
 			for( int i=iStartCol; i<=iEndCol; i++ )
 			{
-				data.m_fMinTornadoX[iColNum] = min( data.m_fMinTornadoX[iColNum], pCols[i].fXOffset );
-				data.m_fMaxTornadoX[iColNum] = max( data.m_fMaxTornadoX[iColNum], pCols[i].fXOffset );
+				data.m_fMinTornadoX[iColNum] = min( data.m_fMinTornadoX[iColNum], pCols[i].fXOffset * field_zoom );
+				data.m_fMaxTornadoX[iColNum] = max( data.m_fMaxTornadoX[iColNum], pCols[i].fXOffset * field_zoom);
 			}
 		}
 
@@ -439,7 +439,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 {
 	float fPixelOffsetFromCenter = 0; // fill this in below
 
-	const Style* pStyle = GAMESTATE->GetCurrentStyle();
+	const Style* pStyle = GAMESTATE->GetCurrentStyle(pPlayerState->m_PlayerNumber);
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 
 	// TODO: Don't index by PlayerNumber.
@@ -448,7 +448,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 	if( fEffects[PlayerOptions::EFFECT_TORNADO] != 0 )
 	{
-		const float fRealPixelOffset = pCols[iColNum].fXOffset;
+		const float fRealPixelOffset = pCols[iColNum].fXOffset * pPlayerState->m_NotefieldZoom;
 		const float fPositionBetween = SCALE( fRealPixelOffset, data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum], 
 						     TORNADO_POSITION_SCALE_TO_LOW, TORNADO_POSITION_SCALE_TO_HIGH );
 		float fRads = acosf( fPositionBetween );
@@ -469,8 +469,8 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		const int iFirstCol = 0;
 		const int iLastCol = pStyle->m_iColsPerPlayer-1;
 		const int iNewCol = SCALE( iColNum, iFirstCol, iLastCol, iLastCol, iFirstCol );
-		const float fOldPixelOffset = pCols[iColNum].fXOffset;
-		const float fNewPixelOffset = pCols[iNewCol].fXOffset;
+		const float fOldPixelOffset = pCols[iColNum].fXOffset * pPlayerState->m_NotefieldZoom;
+		const float fNewPixelOffset = pCols[iNewCol].fXOffset * pPlayerState->m_NotefieldZoom;
 		const float fDistance = fNewPixelOffset - fOldPixelOffset;
 		fPixelOffsetFromCenter += fDistance * fEffects[PlayerOptions::EFFECT_FLIP];
 	}
@@ -515,7 +515,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		}
 	}
 
-	fPixelOffsetFromCenter += pCols[iColNum].fXOffset;
+	fPixelOffsetFromCenter += pCols[iColNum].fXOffset * pPlayerState->m_NotefieldZoom;
 
 	if( fEffects[PlayerOptions::EFFECT_TINY] != 0 )
 	{
@@ -764,10 +764,11 @@ bool ArrowEffects::NeedZBuffer( const PlayerState* pPlayerState )
 float ArrowEffects::GetZoom( const PlayerState* pPlayerState )
 {
 	float fZoom = 1.0f;
-	// FIXME: Move the zoom values into Style
-	if( GAMESTATE->GetCurrentStyle()->m_bNeedsZoomOutWith2Players &&
-		(GAMESTATE->GetNumSidesJoined()==2 || GAMESTATE->AnyPlayersAreCpu()) )
-		fZoom *= 0.6f;
+	// Design change:  Instead of having a flag in the style that toggles a
+	// fixed zoom (0.6) that is only applied to the columns, ScreenGameplay now
+	// calculates a zoom factor to apply to the notefield and puts it in the
+	// PlayerState. -Kyz
+	fZoom*= pPlayerState->m_NotefieldZoom;
 
 	float fTinyPercent = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_TINY];
 	if( fTinyPercent != 0 )

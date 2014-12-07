@@ -22,7 +22,7 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	virtual void Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels );
+	virtual void Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels, bool use_states_zoom= true );
 	virtual void Load( 
 		const NoteData* pNoteData, 
 		int iDrawDistanceAfterTargetsPixels, 

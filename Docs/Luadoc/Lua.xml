@@ -702,6 +702,7 @@
 			<Function name='CountNotesSeparately'/>
 			<Function name='GetMapJudgmentTo'/>
 			<Function name='GetName'/>
+			<Function name='GetSeparateStyles'/>
 		</Class>
 		<Class name='GameCommand'>
 			<Function name='GetAnnouncer'/>
@@ -750,6 +751,7 @@
 			<Function name='ApplyPreferredModifiers'/>
 			<Function name='ApplyPreferredSongOptionsToOtherLevels'/>
 			<Function name='ApplyStageModifiers'/>
+			<Function name='CanSafelyEnterGameplay'/>
 			<Function name='ClearStageModifiersIllegalForCourse'/>
 			<Function name='CurrentOptionsDisqualifyPlayer'/>
 			<Function name='Dopefish'/>
@@ -1659,6 +1661,7 @@
 			<Function name='GetName'/>
 			<Function name='GetStepsType'/>
 			<Function name='GetStyleType'/>
+			<Function name='GetWidth'/>
 			<Function name='LockedDifficulty'/>
 			<Function name='NeedsZoomOutWith2Players'/>
 		</Class>

@@ -290,9 +290,9 @@ void NoteDisplay::Load( int iColNum, const PlayerState* pPlayerState, float fYRe
 	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
 
 	const PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-	const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iColNum, pn );
+	const GameInput GameI = GAMESTATE->GetCurrentStyle(pPlayerState->m_PlayerNumber)->StyleInputToGameInput( iColNum, pn );
 
-	const RString &sButton = GAMESTATE->GetCurrentStyle()->ColToButtonName( iColNum );
+	const RString &sButton = GAMESTATE->GetCurrentStyle(pPlayerState->m_PlayerNumber)->ColToButtonName( iColNum );
 
 	cache->Load( sButton );
 

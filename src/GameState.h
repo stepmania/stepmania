@@ -73,6 +73,8 @@ public:
 	void SaveCurrentSettingsToProfile( PlayerNumber pn );
 	Song* GetDefaultSong() const;
 
+	bool CanSafelyEnterGameplay(RString& reason);
+
 	void Update( float fDelta );
 
 	// Main state info
@@ -85,7 +87,11 @@ public:
 	 * @param pGame the game to start using. */
 	void SetCurGame( const Game *pGame );
 	BroadcastOnChangePtr<const Game>	m_pCurGame;
+	private: // DO NOT access directly.  Use Get/SetCurrentStyle.
 	BroadcastOnChangePtr<const Style>	m_pCurStyle;
+	// Only used if the Game specifies that styles are separate.
+	Style const* m_SeparatedStyles[NUM_PlayerNumber];
+	public:
 	/** @brief Determine which side is joined.
 	 *
 	 * The left side is player 1, and the right side is player 2. */
@@ -127,10 +133,10 @@ public:
 	bool	EnoughCreditsToJoin() const { return m_iCoins >= GetCoinsNeededToJoin(); }
 	int		GetNumSidesJoined() const;
 
-	const Game*	GetCurrentGame();
-	const Style*	GetCurrentStyle() const;
-	void	SetCurrentStyle( const Style *pStyle );
-	bool SetCompatibleStyle(StepsType stype);
+	const Game*	GetCurrentGame() const;
+	const Style*	GetCurrentStyle(PlayerNumber pn) const;
+	void	SetCurrentStyle(const Style *style, PlayerNumber pn);
+	bool SetCompatibleStyle(StepsType stype, PlayerNumber pn);
 
 	void GetPlayerInfo( PlayerNumber pn, bool& bIsEnabledOut, bool& bIsHumanOut );
 	bool IsPlayerEnabled( PlayerNumber pn ) const;

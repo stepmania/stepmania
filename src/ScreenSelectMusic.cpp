@@ -66,7 +66,7 @@ void ScreenSelectMusic::Init()
 	if( PREFSMAN->m_sTestInitialScreen.Get() == m_sName )
 	{
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus") );
+		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus"), PLAYER_INVALID );
 		GAMESTATE->JoinPlayer( PLAYER_1 );
 		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 	}
@@ -235,17 +235,17 @@ void ScreenSelectMusic::BeginScreen()
 		vector<StepsType> vst;
 		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vst );
 		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), vst[0] );
-		GAMESTATE->SetCurrentStyle( pStyle );
+		GAMESTATE->SetCurrentStyle( pStyle, PLAYER_INVALID );
 	}
 
-	if( GAMESTATE->GetCurrentStyle() == NULL )
+	if( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) == NULL )
 	{
 		LuaHelpers::ReportScriptError("The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic.");
 		// Instead of crashing, set the first compatible style.
 		vector<StepsType> vst;
 		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vst );
 		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), vst[0] );
-		GAMESTATE->SetCurrentStyle( pStyle );
+		GAMESTATE->SetCurrentStyle( pStyle, PLAYER_INVALID );
 	}
 
 	if( GAMESTATE->m_PlayMode == PlayMode_Invalid )
@@ -1457,7 +1457,7 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 				vector<StepsType> vst;
 				pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), stCurrent );
 			}
-			GAMESTATE->SetCurrentStyle( pStyle );
+			GAMESTATE->SetCurrentStyle( pStyle, PLAYER_INVALID );
 		}
 
 		/* If we're currently waiting on song assets, abort all except the music
@@ -1846,7 +1846,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		if( CommonMetrics::AUTO_SET_STYLE )
 			pStyle = pCourse->GetCourseStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined() );
 		if( pStyle == NULL )
-			pStyle = GAMESTATE->GetCurrentStyle();
+			pStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
 		lCourse->GetTrails( m_vpTrails, pStyle->m_StepsType );
 
 		m_sSampleMusicToPlay = m_sCourseMusicPath;

@@ -16,7 +16,7 @@
 
 static void GetStepsForSong( Song *pSong, vector<Steps*> &vpStepsOut )
 {
-	SongUtil::GetSteps( pSong, vpStepsOut, GAMESTATE->GetCurrentStyle()->m_StepsType );
+	SongUtil::GetSteps( pSong, vpStepsOut, GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType );
 	// xxx: If the StepsType isn't valid for the current game, this will cause
 	// a crash when changing songs. -aj
 	StepsUtil::RemoveLockedSteps( pSong, vpStepsOut );

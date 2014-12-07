@@ -100,9 +100,9 @@ void NoteField::CacheNoteSkin( const RString &sNoteSkin_ )
 	LockNoteSkin l( sNoteSkinLower );
 
 	LOG->Trace("NoteField::CacheNoteSkin: cache %s", sNoteSkinLower.c_str() );
-	NoteDisplayCols *nd = new NoteDisplayCols( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
+	NoteDisplayCols *nd = new NoteDisplayCols( GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer );
 
-	for( int c=0; c<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; c++ ) 
+	for( int c=0; c<GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer; c++ )
 		nd->display[c].Load( c, m_pPlayerState, m_fYReverseOffsetPixels );
 	nd->m_ReceptorArrowRow.Load( m_pPlayerState, m_fYReverseOffsetPixels );
 	nd->m_GhostArrowRow.Load( m_pPlayerState, m_fYReverseOffsetPixels );
@@ -124,7 +124,7 @@ void NoteField::UncacheNoteSkin( const RString &sNoteSkin_ )
 void NoteField::CacheAllUsedNoteSkins()
 {
 	// If we're in Routine mode, apply our per-player noteskins.
-	if( GAMESTATE->GetCurrentStyle()->m_StyleType == StyleType_TwoPlayersSharedSides )
+	if( GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_StyleType == StyleType_TwoPlayersSharedSides )
 	{
 		FOREACH_EnabledPlayer( pn )
 			GAMESTATE->ApplyStageModifiers( pn, ROUTINE_NOTESKIN.GetValue(pn) );
@@ -171,16 +171,26 @@ void NoteField::CacheAllUsedNoteSkins()
 	}
 }
 
-void NoteField::Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels )
+void NoteField::Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels, bool use_states_zoom )
 {
 	m_pPlayerState = pPlayerState;
 	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
 	CacheAllUsedNoteSkins();
+	// Design change:  Instead of having a flag in the style that toggles a
+	// fixed zoom that is only applied to the columns, ScreenGameplay now
+	// calculates a zoom factor to apply to the notefield and puts it in the
+	// PlayerState. -Kyz
+	// use_states_zoom flag exists because edit mode has to set its own special
+	// zoom factor. -Kyz
+	if(use_states_zoom)
+	{
+		SetZoom(pPlayerState->m_NotefieldZoom);
+	}
 }
 
 void NoteField::Load( 
 	const NoteData *pNoteData,
-	int iDrawDistanceAfterTargetsPixels, 
+	int iDrawDistanceAfterTargetsPixels,
 	int iDrawDistanceBeforeTargetsPixels )
 {
 	ASSERT( pNoteData != NULL );
@@ -192,10 +202,10 @@ void NoteField::Load(
 	m_fPercentFadeToFail = -1;
 
 	//int i1 = m_pNoteData->GetNumTracks();
-	//int i2 = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;
-	ASSERT_M(m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer, 
-		 ssprintf("NumTracks %d = ColsPerPlayer %d",m_pNoteData->GetNumTracks(), 
-			  GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer));
+	//int i2 = GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer;
+	ASSERT_M(m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer,
+		 ssprintf("NumTracks %d = ColsPerPlayer %d",m_pNoteData->GetNumTracks(),
+			  GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer));
 	
 	// The NoteSkin may have changed at the beginning of a new course song.
 	RString sNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin;
@@ -294,7 +304,7 @@ void NoteField::Update( float fDeltaTime )
 
 float NoteField::GetWidth() const
 {
-	const Style* pStyle = GAMESTATE->GetCurrentStyle();
+	const Style* pStyle = GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber);
 	float fMinX, fMaxX;
 	// TODO: Remove use of PlayerNumber.
 	pStyle->GetMinAndMaxColX( m_pPlayerState->m_PlayerNumber, fMinX, fMaxX );
@@ -1203,10 +1213,10 @@ void NoteField::DrawPrimitives()
 
 	float fSelectedRangeGlow = SCALE( RageFastCos(RageTimer::GetTimeSinceStartFast()*2), -1, 1, 0.1f, 0.3f );
 
-	const Style* pStyle = GAMESTATE->GetCurrentStyle();
-	ASSERT_M(m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer, 
+	const Style* pStyle = GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber);
+	ASSERT_M(m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer, 
 		 ssprintf("NumTracks %d != ColsPerPlayer %d",m_pNoteData->GetNumTracks(), 
-			  GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer));
+			  GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer));
 
 	for( int j=0; j<m_pNoteData->GetNumTracks(); j++ )	// for each arrow column
 	{

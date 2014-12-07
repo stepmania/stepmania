@@ -723,7 +723,9 @@ void PlayerOptions::ToggleOneTurn( Turn t )
 float PlayerOptions::GetReversePercentForColumn( int iCol ) const
 {
 	float f = 0;
-	int iNumCols = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;
+	ASSERT(m_pn == PLAYER_1 || m_pn == PLAYER_2);
+	ASSERT(GAMESTATE->GetCurrentStyle(m_pn) != NULL);
+	int iNumCols = GAMESTATE->GetCurrentStyle(m_pn)->m_iColsPerPlayer;
 
 	f += m_fScrolls[SCROLL_REVERSE];
 
@@ -784,6 +786,48 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	return true;
 }
 
+
+PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
+{
+	// Do not copy m_pn from the other, it must be preserved as what PlayerState set it to.
+#define CPY(x) x= other.x;
+	CPY(m_LifeType);
+	CPY(m_DrainType);
+	CPY(m_BatteryLives);
+	CPY(m_fTimeSpacing);
+	CPY(m_fScrollSpeed);
+	CPY(m_fScrollBPM);
+	CPY(m_fMaxScrollBPM);
+	CPY(m_fRandomSpeed);
+	CPY(m_FailType);
+	CPY(m_MinTNSToHideNotes);
+	CPY(m_bMuteOnError);
+	CPY(m_fDark);
+	CPY(m_fBlind);
+	CPY(m_fCover);
+	CPY(m_fRandAttack);
+	CPY(m_fNoAttack);
+	CPY(m_fPlayerAutoPlay);
+	CPY(m_fPerspectiveTilt);
+	CPY(m_fSkew);
+	CPY(m_sNoteSkin);
+	for( int i = 0; i < PlayerOptions::NUM_ACCELS; ++i )
+		CPY(m_fAccels[i]);
+	for( int i = 0; i < PlayerOptions::NUM_EFFECTS; ++i )
+		CPY(m_fEffects[i]);
+	for( int i = 0; i < PlayerOptions::NUM_APPEARANCES; ++i )
+		CPY(m_fAppearances[i]);
+	for( int i = 0; i < PlayerOptions::NUM_SCROLLS; ++i )
+		CPY(m_fScrolls[i]);
+	for( int i = 0; i < PlayerOptions::NUM_TURNS; ++i )
+		CPY(m_bTurns[i]);
+	for( int i = 0; i < PlayerOptions::NUM_TRANSFORMS; ++i )
+		CPY(m_bTransforms[i]);
+#undef CPY
+	return *this;
+}
+
+
 bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerNumber pn ) const
 {
 	if( m_fTimeSpacing && pSteps->HasSignificantTimingChanges() )
@@ -835,7 +879,7 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 		DisplayBpms bpms;
 		if( GAMESTATE->IsCourseMode() )
 		{
-			Trail *pTrail = GAMESTATE->m_pCurCourse->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType );
+			Trail *pTrail = GAMESTATE->m_pCurCourse->GetTrail( GAMESTATE->GetCurrentStyle(m_pn)->m_StepsType );
 			pTrail->GetDisplayBpms( bpms );
 		}
 		else
@@ -1357,7 +1401,7 @@ public:
 	static int GetReversePercentForColumn( T *p, lua_State *L )
 	{
 		const int colNum = IArg(1);
-		const int numColumns = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;
+		const int numColumns = GAMESTATE->GetCurrentStyle(p->m_pn)->m_iColsPerPlayer;
 
 		// We don't want to go outside the bounds.
 		if(colNum < 0 || colNum > numColumns)

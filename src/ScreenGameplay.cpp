@@ -65,7 +65,6 @@
 #define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB(m_sName,"ShowLifeMeterForDisabledPlayers")
 #define SHOW_SCORE_IN_RAVE			THEME->GetMetricB(m_sName,"ShowScoreInRave")
 #define SONG_POSITION_METER_WIDTH		THEME->GetMetricF(m_sName,"SongPositionMeterWidth")
-#define PLAYER_X( sName, styleType )		THEME->GetMetricF(m_sName,ssprintf("Player%s%sX",sName.c_str(),StyleTypeToString(styleType).c_str()))
 #define STOP_COURSE_EARLY			THEME->GetMetricB(m_sName,"StopCourseEarly")	// evaluate this every time it's used
 
 static ThemeMetric<float> INITIAL_BACKGROUND_BRIGHTNESS	("ScreenGameplay","InitialBackgroundBrightness");
@@ -444,7 +443,14 @@ void ScreenGameplay::Init()
 		// fill in difficulty of CPU players with that of the first human player
 		// this should not need to worry about step content.
 		FOREACH_PotentialCpuPlayer(p)
-			GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSteps[ GAMESTATE->GetFirstHumanPlayer() ] );
+		{
+			PlayerNumber human_pn= GAMESTATE->GetFirstHumanPlayer();
+			GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSteps[human_pn] );
+			if(GAMESTATE->GetCurrentGame()->m_PlayersHaveSeparateStyles)
+			{
+				GAMESTATE->SetCurrentStyle(GAMESTATE->GetCurrentStyle(human_pn), p);
+			}
+		}
 
 		FOREACH_EnabledPlayer(p)
 			ASSERT( GAMESTATE->m_pCurSteps[p].Get() != NULL );
@@ -458,7 +464,14 @@ void ScreenGameplay::Init()
 	STATSMAN->m_CurStageStats.m_Stage = GAMESTATE->GetCurrentStage();
 	STATSMAN->m_CurStageStats.m_iStageIndex = GAMESTATE->m_iCurrentStageIndex;
 	STATSMAN->m_CurStageStats.m_playMode = GAMESTATE->m_PlayMode;
-	STATSMAN->m_CurStageStats.m_pStyle = GAMESTATE->GetCurrentStyle();
+	FOREACH_PlayerNumber(pn)
+	{
+		STATSMAN->m_CurStageStats.m_player[pn].m_pStyle= GAMESTATE->GetCurrentStyle(pn);
+	}
+	FOREACH_MultiPlayer(pn)
+	{
+		STATSMAN->m_CurStageStats.m_multiPlayer[pn].m_pStyle= GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
+	}
 
 	/* Record combo rollover. */
 	FOREACH_EnabledPlayerInfoNotDummy( m_vPlayerInfo, pi )
@@ -501,26 +514,98 @@ void ScreenGameplay::Init()
 		this->AddChild( &m_Toasty );
 	}
 
+	// Use the margin function to calculate where the notefields should be and
+	// what size to zoom them to.  This way, themes get margins to put cut-ins
+	// in, and the engine can have players on different styles without the
+	// notefields overlapping. -Kyz
+	LuaReference margarine;
+	float margins[NUM_PLAYERS][2];
+	FOREACH_PlayerNumber(pn)
+	{
+		margins[pn][0]= 40;
+		margins[pn][1]= 40;
+	}
+	THEME->GetMetric(m_sName, "MarginFunction", margarine);
+	if(margarine.GetLuaType() != LUA_TFUNCTION)
+	{
+		LuaHelpers::ReportScriptErrorFmt("MarginFunction metric for %s must be a function.", m_sName.c_str());
+	}
+	else
+	{
+		Lua* L= LUA->Get();
+		margarine.PushSelf(L);
+		lua_createtable(L, 0, 0);
+		int next_player_slot= 1;
+		FOREACH_EnabledPlayer(pn)
+		{
+			Enum::Push(L, pn);
+			lua_rawseti(L, -2, next_player_slot);
+			++next_player_slot;
+		}
+		Enum::Push(L, GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StyleType);
+		RString err= "Error running MarginFunction:  ";
+		if(LuaHelpers::RunScriptOnStack(L, err, 2, 3, true))
+		{
+			RString marge= "Margin value must be a number.";
+			margins[PLAYER_1][0]= SafeFArg(L, -3, marge, 40);
+			float center= SafeFArg(L, -2, marge, 80);
+			margins[PLAYER_1][1]= center / 2.0f;
+			margins[PLAYER_2][0]= center / 2.0f;
+			margins[PLAYER_2][1]= SafeFArg(L, -1, marge, 40);
+		}
+		lua_settop(L, 0);
+		LUA->Release(L);
+	}
+
+	float left_edge[NUM_PLAYERS]= {0.0f, SCREEN_WIDTH / 2.0f};
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
 		RString sName = ssprintf("Player%s", pi->GetName().c_str());
 		pi->m_pPlayer->SetName( sName );
+
+		Style const* style= GAMESTATE->GetCurrentStyle(pi->m_pn);
+		float style_width= style->GetWidth(pi->m_pn);
+		float edge= left_edge[pi->m_pn];
+		float screen_space;
+		float field_space;
+		float left_marge;
+		float right_marge;
+#define CENTER_PLAYER_BLOCK \
+		{ \
+			edge= 0.0f; \
+			screen_space= SCREEN_WIDTH; \
+			left_marge= margins[PLAYER_1][0]; \
+			right_marge= margins[PLAYER_2][1]; \
+			field_space= screen_space - left_marge - right_marge; \
+		}
 		// If pi->m_pn is set, then the player will be visible.  If not, then it's not 
 		// visible and don't bother setting its position.
-
-		float fPlayerX;
-		if( GAMESTATE->m_bMultiplayer && !pi->m_bIsDummy )
-		{
-			fPlayerX = SCREEN_CENTER_X;
-		}
+		if(GAMESTATE->m_bMultiplayer && !pi->m_bIsDummy)
+		CENTER_PLAYER_BLOCK
 		else
 		{
-			fPlayerX = PLAYER_X( pi->GetName(), GAMESTATE->GetCurrentStyle()->m_StyleType );
-			if( Center1Player() )
-				fPlayerX = SCREEN_CENTER_X;
+			screen_space= SCREEN_WIDTH / 2.0f;
+			left_marge= margins[pi->m_pn][0];
+			right_marge= margins[pi->m_pn][1];
+			field_space= screen_space - left_marge - right_marge;
+			if(Center1Player() ||
+				(style_width > field_space && GAMESTATE->GetNumPlayersEnabled() == 1
+					&& (bool)ALLOW_CENTER_1_PLAYER))
+			CENTER_PLAYER_BLOCK
 		}
+#undef CENTER_PLAYER_BLOCK
+		float player_x= edge + left_marge + (field_space / 2.0f);
+		float field_zoom= field_space / style_width;
+		/*
+		LuaHelpers::ReportScriptErrorFmt("Positioning player %d at %.0f:  "
+			"screen_space %.0f, left_edge %.0f, field_space %.0f, left_marge %.0f,"
+			" right_marge %.0f, style_width %.0f, field_zoom %.2f.",
+			pi->m_pn+1, player_x, screen_space, left_edge[pi->m_pn], field_space,
+			left_marge, right_marge, style_width, field_zoom);
+		*/
+		pi->GetPlayerState()->m_NotefieldZoom= min(1.0f, field_zoom);
 
-		pi->m_pPlayer->SetX( fPlayerX );
+		pi->m_pPlayer->SetX(player_x);
 		pi->m_pPlayer->RunCommands( PLAYER_INIT_COMMAND );
 		//ActorUtil::LoadAllCommands(pi->m_pPlayer, m_sName);
 		this->AddChild( pi->m_pPlayer );
@@ -602,7 +687,7 @@ void ScreenGameplay::Init()
 
 #if !defined(WITHOUT_NETWORKING)
 	// Only used in SMLAN/SMOnline:
-	if( !m_bForceNoNetwork && NSMAN->useSMserver && GAMESTATE->GetCurrentStyle()->m_StyleType != StyleType_OnePlayerTwoSides )
+	if( !m_bForceNoNetwork && NSMAN->useSMserver && GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StyleType != StyleType_OnePlayerTwoSides )
 	{
 		m_bShowScoreboard = PREFSMAN->m_bEnableScoreboard.Get();
 		PlayerNumber pn = GAMESTATE->GetFirstDisabledPlayer();
@@ -825,7 +910,7 @@ bool ScreenGameplay::Center1Player() const
 		(bool)ALLOW_CENTER_1_PLAYER &&
 		GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
 		GAMESTATE->m_PlayMode != PLAY_MODE_RAVE &&
-		GAMESTATE->GetCurrentStyle()->m_StyleType == StyleType_OnePlayerOneSide;
+		GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StyleType == StyleType_OnePlayerOneSide;
 }
 
 // fill in m_apSongsQueue, m_vpStepsQueue, m_asModifiersQueue
@@ -989,7 +1074,7 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 		NoteData originalNoteData;
 		pSteps->GetNoteData( originalNoteData );
 
-		const Style* pStyle = GAMESTATE->GetCurrentStyle();
+		const Style* pStyle = GAMESTATE->GetCurrentStyle(pi->m_pn);
 		NoteData ndTransformed;
 		pStyle->GetTransformedNoteDataForStyle( pi->GetStepsAndTrailIndex(), originalNoteData, ndTransformed );
 
@@ -2049,7 +2134,6 @@ void ScreenGameplay::UpdateLights()
 	if( m_CabinetLightsNoteData.GetNumTracks() == 0 )	// light data wasn't loaded
 		return;
 
-	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	bool bBlinkCabinetLight[NUM_CabinetLight];
 	bool bBlinkGameButton[NUM_GameController][NUM_GameButton];
 	ZERO( bBlinkCabinetLight );
@@ -2075,6 +2159,7 @@ void ScreenGameplay::UpdateLights()
 
 		FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
 		{
+			const Style* pStyle = GAMESTATE->GetCurrentStyle(pi->m_pn);
 			const NoteData &nd = pi->m_pPlayer->GetNoteData();
 			for( int t=0; t<nd.GetNumTracks(); t++ )
 			{
@@ -2187,12 +2272,28 @@ void ScreenGameplay::SendCrossedMessages()
 					iNumTracksWithTapOrHoldHead++;
 
 					// send crossed message
-					const Style *pStyle = GAMESTATE->GetCurrentStyle();
-					RString sButton = pStyle->ColToButtonName( t );
-					Message msg( i == 0 ? "NoteCrossed" : "NoteWillCross" );
-					msg.SetParam( "ButtonName", sButton );
-					msg.SetParam( "NumMessagesFromCrossed", i );
-					MESSAGEMAN->Broadcast( msg );
+					if(GAMESTATE->GetCurrentGame()->m_PlayersHaveSeparateStyles)
+					{
+						FOREACH_EnabledPlayerNumberInfo(m_vPlayerInfo, pi)
+						{
+							const Style *pStyle = GAMESTATE->GetCurrentStyle(pi->m_pn);
+							RString sButton = pStyle->ColToButtonName( t );
+							Message msg( i == 0 ? "NoteCrossed" : "NoteWillCross" );
+							msg.SetParam( "ButtonName", sButton );
+							msg.SetParam( "NumMessagesFromCrossed", i );
+							msg.SetParam("PlayerNumber", pi->m_pn);
+							MESSAGEMAN->Broadcast( msg );
+						}
+					}
+					else
+					{
+						const Style *pStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
+						RString sButton = pStyle->ColToButtonName( t );
+						Message msg( i == 0 ? "NoteCrossed" : "NoteWillCross" );
+						msg.SetParam( "ButtonName", sButton );
+						msg.SetParam( "NumMessagesFromCrossed", i );
+						MESSAGEMAN->Broadcast( msg );
+					}
 				}
 
 				if( iNumTracksWithTapOrHoldHead > 0 )
@@ -2280,7 +2381,7 @@ bool ScreenGameplay::Input( const InputEventPlus &input )
 		 * If this is also a style button, don't do this; pump center is start.
 		 */
 		bool bHoldingGiveUp = false;
-		if( GAMESTATE->GetCurrentStyle()->GameInputToColumn(input.GameI) == Column_Invalid )
+		if( GAMESTATE->GetCurrentStyle(input.pn)->GameInputToColumn(input.GameI) == Column_Invalid )
 		{
 			bHoldingGiveUp |= ( START_GIVES_UP && input.MenuI == GAME_BUTTON_START );
 			bHoldingGiveUp |= ( BACK_GIVES_UP && input.MenuI == GAME_BUTTON_BACK );
@@ -2306,7 +2407,7 @@ bool ScreenGameplay::Input( const InputEventPlus &input )
 		/* Only handle GAME_BUTTON_BACK as a regular BACK button if BACK_GIVES_UP is
 		 * disabled. */
 		bool bHoldingBack = false;
-		if( GAMESTATE->GetCurrentStyle()->GameInputToColumn(input.GameI) == Column_Invalid )
+		if( GAMESTATE->GetCurrentStyle(input.pn)->GameInputToColumn(input.GameI) == Column_Invalid )
 		{
 			bHoldingBack |= input.MenuI == GAME_BUTTON_BACK && !BACK_GIVES_UP;
 		}
@@ -2338,7 +2439,7 @@ bool ScreenGameplay::Input( const InputEventPlus &input )
 	if( !input.GameI.IsValid() )
 		return false;
 
-	int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
+	int iCol = GAMESTATE->GetCurrentStyle(input.pn)->GameInputToColumn( input.GameI );
 
 	// Don't pass on any inputs to Player that aren't a press or a release.
 	switch( input.type )

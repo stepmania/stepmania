@@ -70,7 +70,7 @@ GameInput Style::StyleInputToGameInput( int iCol, PlayerNumber pn ) const
 		}
 	}
 
-	FAIL_M( ssprintf("Invalid column number %i for player %i in the style %s", iCol, pn, GAMESTATE->GetCurrentStyle()->m_szName) );
+	FAIL_M( ssprintf("Invalid column number %i for player %i in the style %s", iCol, pn, m_szName) );
 };
 
 int Style::GameInputToColumn( const GameInput &GameI ) const
@@ -106,6 +106,16 @@ void Style::GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut 
 	}
 }
 
+float Style::GetWidth(PlayerNumber pn) const
+{
+	float left, right;
+	GetMinAndMaxColX(pn, left, right);
+	// left and right are the center positions of the columns.  The full width
+	// needs to be from the edges.
+	float width= right - left;
+	return width + (width / static_cast<float>(m_iColsPerPlayer-1));
+}
+
 RString Style::ColToButtonName( int iCol ) const
 {
 	const char *pzColumnName = m_ColumnInfo[PLAYER_1][iCol].pzName;
@@ -127,7 +137,20 @@ public:
 	DEFINE_METHOD( GetStyleType,		m_StyleType )
 	DEFINE_METHOD( GetStepsType,		m_StepsType )
 	DEFINE_METHOD( ColumnsPerPlayer,	m_iColsPerPlayer )
-	DEFINE_METHOD( NeedsZoomOutWith2Players,	m_bNeedsZoomOutWith2Players )
+	static int NeedsZoomOutWith2Players(T* p, lua_State *L)
+	{
+		// m_bNeedsZoomOutWith2Players was removed in favor of having
+		// ScreenGameplay use the style's width and margin values to calculate
+		// the zoom.  So this always returns false. -Kyz
+		lua_pushboolean(L, false);
+		return 1;
+	}
+	static int GetWidth(T* p, lua_State* L)
+	{
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
+		lua_pushnumber(L, p->GetWidth(pn));
+		return 1;
+	}
 	DEFINE_METHOD( LockedDifficulty,	m_bLockDifficulties )
 
 	static int GetColumnInfo( T* p, lua_State *L )
@@ -173,6 +196,7 @@ public:
 		ADD_METHOD( GetColumnDrawOrder );
 		ADD_METHOD( ColumnsPerPlayer );
 		ADD_METHOD( NeedsZoomOutWith2Players );
+		ADD_METHOD( GetWidth );
 		ADD_METHOD( LockedDifficulty );
 	}
 };

@@ -15,6 +15,34 @@ ________________________________________________________________________________
 * [Player] "ComboBreakOnImmediateHoldLetGo" theme metric added. [sillybear]
 * [PlayerState] ApplyPreferredOptionsToOtherLevels function added. [kyzentun]
   
+2014/12/07
+----------
+* [Game] GetSeparateStyles function added.  Use this to detect whether a game
+  allows the players to play different styles. [kyzentun] (used by kickbox)
+* [GameManager] Lua Scripts/ folders are now reloaded when the Game mode is
+  changed. [kyzentun]
+* [GameState] CanSafelyEnterGameplay function added. [kyzentun]
+	In kickbox game mode, players can have different styles set, pass a
+	PlayerNumber when using SetCurrentStyle or GetCurrentStyle.
+* [kickbox] New game mode with 4 styles. [kyzentun]
+* [ScreenGameplay] Notefield positioning is handled a bit differently now.
+  See comments in _fallback/metrics.ini above the [ScreenGameplay]
+  MarginFunction metric.  Basically, you can define a lua function that
+  returns the space you want at the edges and in the center instead of
+  setting position metrics.  Do NOT use Style:GetWidth to calculate the
+	margins your function returns.
+	ScreenGameplay now handles zooming the notefield to fit in the space
+	instead of using the NeedsZoomOutWith2Players flag in the style.
+	If the notefield doesn't fit in the space between the margins, and there is
+	only one player, the player will be centered even if the Center1Player pref
+	is false. [kyzentun]
+* [Style] NeedsZoomOutWith2Players decapitated.  Always returns false now.
+  GetWidth added. [kyzentun]
+* [techno] Techno game mode no longer has special column width for versus.
+  Techno was the only game mode that used the NeedsZoomOutWith2Players flag,
+  and the zoom factor it applied was 0.6, and the special versus column width
+  was 0.6*normal, so this should make no difference. [kyzentun]
+
 2014/12/03
 ----------
 * [command line arg] --game command line arg added for setting the game type
@@ -67,6 +95,10 @@ ________________________________________________________________________________
 2014/11/01
 ----------
 * [RollingNumbers] Cropping and color during tweens fixed. [kyzentun]
+
+2014/10/27
+----------
+* [Changelog] Vospi read the release notes.
 
 2014/10/23
 ----------
