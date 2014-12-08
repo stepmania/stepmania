@@ -50,13 +50,13 @@ public:
 	static int Load( T* p, lua_State *L )
 	{
 		p->Load( SArg(1) );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetGrade( T* p, lua_State *L )
 	{
 		Grade g = Enum::Check<Grade>(L, 1);
 		p->SetGrade( g );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	LunaGradeDisplay()

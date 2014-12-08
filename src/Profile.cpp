@@ -2394,7 +2394,7 @@ public:
 		screenshot.sMD5= BinaryToHex(CRYPTMAN->GetMD5ForFile(filename));
 		screenshot.highScore= *hs;
 		p->AddScreenshot(screenshot);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	DEFINE_METHOD(GetType, m_Type);
 	DEFINE_METHOD(GetPriority, m_ListPriority);
@@ -2403,13 +2403,13 @@ public:
 	static int SetDisplayName( T* p, lua_State *L )
 	{
 		p->m_sDisplayName= SArg(1);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int GetLastUsedHighScoreName( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sLastUsedHighScoreName ); return 1; }
 	static int SetLastUsedHighScoreName( T* p, lua_State *L )
 	{
 		p->m_sLastUsedHighScoreName= SArg(1);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int GetHighScoreList( T* p, lua_State *L )
 	{
@@ -2431,7 +2431,7 @@ public:
 		}
 
 		luaL_typerror( L, 1, "Song or Course" );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int GetCategoryHighScoreList( T* p, lua_State *L )
 	{
@@ -2498,9 +2498,9 @@ public:
 	}
 
 	static int GetCharacter( T* p, lua_State *L )			{ p->GetCharacter()->PushSelf(L); return 1; }
-	static int SetCharacter( T* p, lua_State *L )			{ p->SetCharacter(SArg(1)); return 0; }
+	static int SetCharacter( T* p, lua_State *L )			{ p->SetCharacter(SArg(1)); COMMON_RETURN_SELF; }
 	static int GetWeightPounds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iWeightPounds ); return 1; }
-	static int SetWeightPounds( T* p, lua_State *L )		{ p->m_iWeightPounds = IArg(1); return 0; }
+	static int SetWeightPounds( T* p, lua_State *L )		{ p->m_iWeightPounds = IArg(1); COMMON_RETURN_SELF; }
 	DEFINE_METHOD(GetVoomax, m_Voomax);
 	DEFINE_METHOD(GetAge, GetAge());
 	DEFINE_METHOD(GetBirthYear, m_BirthYear);
@@ -2509,35 +2509,35 @@ public:
 	static int SetVoomax( T* p, lua_State *L )
 	{
 		p->m_Voomax= FArg(1);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetBirthYear( T* p, lua_State *L )
 	{
 		p->m_BirthYear= IArg(1);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetIgnoreStepCountCalories( T* p, lua_State *L )
 	{
 		p->m_IgnoreStepCountCalories= BArg(1);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetIsMale( T* p, lua_State *L )
 	{
 		p->m_IsMale= BArg(1);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int AddCaloriesToDailyTotal( T* p, lua_State *L )
 	{
 		p->AddCaloriesToDailyTotal(FArg(1));
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	DEFINE_METHOD(CalculateCaloriesFromHeartRate, CalculateCaloriesFromHeartRate(FArg(1), FArg(2)));
 	static int GetGoalType( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_GoalType ); return 1; }
-	static int SetGoalType( T* p, lua_State *L )			{ p->m_GoalType = Enum::Check<GoalType>(L, 1); return 0; }
+	static int SetGoalType( T* p, lua_State *L )			{ p->m_GoalType = Enum::Check<GoalType>(L, 1); COMMON_RETURN_SELF; }
 	static int GetGoalCalories( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iGoalCalories ); return 1; }
-	static int SetGoalCalories( T* p, lua_State *L )		{ p->m_iGoalCalories = IArg(1); return 0; }
+	static int SetGoalCalories( T* p, lua_State *L )		{ p->m_iGoalCalories = IArg(1); COMMON_RETURN_SELF; }
 	static int GetGoalSeconds( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_iGoalSeconds ); return 1; }
-	static int SetGoalSeconds( T* p, lua_State *L )			{ p->m_iGoalSeconds = IArg(1); return 0; }
+	static int SetGoalSeconds( T* p, lua_State *L )			{ p->m_iGoalSeconds = IArg(1); COMMON_RETURN_SELF; }
 	static int GetCaloriesBurnedToday( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCaloriesBurnedToday() ); return 1; }
 	static int GetTotalNumSongsPlayed( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iNumTotalSongsPlayed ); return 1; }
 	static int IsCodeUnlocked( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsCodeUnlocked(SArg(1)) ); return 1; }

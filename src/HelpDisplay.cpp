@@ -91,14 +91,14 @@ public:
 		else
 			p->SetTips( arrayTips );
 
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetTipsColonSeparated( T* p, lua_State *L )
 	{
 		vector<RString> vs;
 		split( SArg(1), "::", vs );
 		p->SetTips( vs );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int gettips( T* p, lua_State *L )
@@ -111,7 +111,7 @@ public:
 
 		return 2;
 	}
-	static int SetSecsBetweenSwitches( T* p, lua_State *L ) { p->SetSecsBetweenSwitches( FArg(1) ); return 0; }
+	static int SetSecsBetweenSwitches( T* p, lua_State *L ) { p->SetSecsBetweenSwitches( FArg(1) ); COMMON_RETURN_SELF; }
 
 	LunaHelpDisplay()
 	{

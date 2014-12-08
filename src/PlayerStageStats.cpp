@@ -834,7 +834,7 @@ public:
 			p->m_iScore = IArg(1); 
 			return 1; 
 		} 
-		return 0; 
+		COMMON_RETURN_SELF;
 	}
 	static int SetCurMaxScore( T* p, lua_State *L )
 	{
@@ -843,13 +843,13 @@ public:
 			p->m_iCurMaxScore = IArg(1);
 			return 1;
 		}
-		return 0;
+		COMMON_RETURN_SELF;
 	}
   
-	static int FailPlayer( T* p, lua_State * )
+	static int FailPlayer( T* p, lua_State *L )
 	{
 		p->m_bFailed = true;
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	LunaPlayerStageStats()

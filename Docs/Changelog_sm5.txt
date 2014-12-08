@@ -26,6 +26,11 @@ ________________________________________________________________________________
   GetType and GetPriority lua functions added to Profile.
   Bug that caused a crash when a profile dir was renamed to a non-number and
   a new profile was created fixed. [kyzentun]
+* [Everything] Actor and singleton functions that formerly returned nothing now
+  return the actor or singleton. Example (set zoom, x, y, and diffuse in one):
+	self:zoom(.5):xy(_screen.cx, _screen.h-60):diffuse(color("#dc322f"))
+  This also works for PlayerOptions and SongOptions API functions.  Pass true
+  as an extra arg, and they can be chained.
 
 2014/11/22
 ----------

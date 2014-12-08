@@ -219,7 +219,7 @@ public:
 		const PlayerState *pStageStats = Luna<PlayerState>::check( L, 1 );
 		const PlayerStageStats *pPlayerStageStats = Luna<PlayerStageStats>::check( L, 2 );
 		p->Load( pStageStats, pPlayerStageStats );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	LunaPercentageDisplay()

@@ -90,12 +90,12 @@ void TextBanner::SetFromSong( const Song *pSong )
 class LunaTextBanner: public Luna<TextBanner>
 {
 public:
-	static int Load( T* p, lua_State *L ) { p->Load( SArg(1) ); return 0; }
+	static int Load( T* p, lua_State *L ) { p->Load( SArg(1) ); COMMON_RETURN_SELF; }
 	static int SetFromSong( T* p, lua_State *L )
 	{
 		Song *pSong = Luna<Song>::check(L,1);
   		p->SetFromSong( pSong );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetFromString( T* p, lua_State *L )
 	{
@@ -106,7 +106,7 @@ public:
 		RString sDisplayArtist = SArg(5);
 		RString sTranslitArtist = SArg(6);
   		p->SetFromString( sDisplayTitle, sTranslitTitle, sDisplaySubTitle, sTranslitSubTitle, sDisplayArtist, sTranslitArtist );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	LunaTextBanner()

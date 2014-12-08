@@ -9,6 +9,7 @@ function Sprite:LoadFromSongBanner(song)
 	else
 		self:LoadBanner( THEME:GetPathG("Common","fallback banner") )
 	end
+	return self
 end
 
 function Sprite:LoadFromSongBackground(song)
@@ -18,6 +19,7 @@ function Sprite:LoadFromSongBackground(song)
 	end
 
 	self:LoadBackground( Path )
+	return self
 end
 
 function LoadSongBackground()
@@ -37,21 +39,25 @@ function Sprite:LoadFromCurrentSongBackground()
 		end
 	end
 
-	if not song then return end
+	if not song then return self end
 
 	self:LoadFromSongBackground(song)
+	return self
 end
 
 function Sprite:position( f )
 	self:GetTexture():position( f )
+	return self
 end
 
 function Sprite:loop( f )
 	self:GetTexture():loop( f )
+	return self
 end
 
 function Sprite:rate( f )
 	self:GetTexture():rate( f )
+	return self
 end
 
 function Sprite.LinearFrames(NumFrames, Seconds)
@@ -66,7 +72,7 @@ function Sprite.LinearFrames(NumFrames, Seconds)
 end
 
 -- command aliases:
-function Sprite:cropto(w,h) self:CropTo(w,h) end
+function Sprite:cropto(w,h) self:CropTo(w,h) return self end
 
 -- (c) 2005 Glenn Maynard
 -- All rights reserved.

@@ -108,7 +108,7 @@ void HoldJudgment::HandleMessage( const Message &msg )
 class LunaHoldJudgment: public Luna<HoldJudgment>
 {
 public:
-	static int LoadFromMultiPlayer( T* p, lua_State *L ) { p->LoadFromMultiPlayer( Enum::Check<MultiPlayer>(L, 1) ); return 0; }
+	static int LoadFromMultiPlayer( T* p, lua_State *L ) { p->LoadFromMultiPlayer( Enum::Check<MultiPlayer>(L, 1) ); COMMON_RETURN_SELF; }
 
 	LunaHoldJudgment()
 	{

@@ -1086,7 +1086,7 @@ public:
 	// NoteSkins
 	static int NoteSkin(T* p, lua_State* L)
 	{
-		DefaultNilArgs(L, 2);
+		int original_top= lua_gettop(L);
 		if( p->m_sNoteSkin.empty()  )
 		{
 			lua_pushstring( L, CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue() );
@@ -1095,11 +1095,12 @@ public:
 		{
 			lua_pushstring( L, p->m_sNoteSkin );
 		}
-		if(lua_isstring(L, 1))
+		if(original_top >= 1 && lua_isstring(L, 1))
 		{
-			if(NOTESKIN->DoesNoteSkinExist(SArg(1)))
+			RString skin= SArg(1);
+			if(NOTESKIN->DoesNoteSkinExist(skin))
 			{
-				p->m_sNoteSkin = SArg(1);
+				p->m_sNoteSkin = skin;
 				lua_pushboolean(L, true);
 			}
 			else
@@ -1111,6 +1112,7 @@ public:
 		{
 			lua_pushnil(L);
 		}
+		OPTIONAL_RETURN_SELF(original_top);
 		return 2;
 	}
 
@@ -1127,7 +1129,7 @@ public:
 	// engine's enforcement of sane separation between speed mod types.
 	static int CMod(T* p, lua_State* L)
 	{
-		DefaultNilArgs(L, 2);
+		int original_top= lua_gettop(L);
 		if(p->m_fTimeSpacing)
 		{
 			lua_pushnumber(L, p->m_fScrollBPM);
@@ -1138,7 +1140,7 @@ public:
 			lua_pushnil(L);
 			lua_pushnil(L);
 		}
-		if(lua_isnumber(L, 1))
+		if(original_top >= 1 && lua_isnumber(L, 1))
 		{
 			float speed= FArg(1);
 			if(!isfinite(speed) || speed <= 0.0f)
@@ -1150,16 +1152,17 @@ public:
 			p->m_fScrollSpeed = 1;
 			p->m_fMaxScrollBPM = 0;
 		}
-		if(lua_isnumber(L, 2))
+		if(original_top >= 2 && lua_isnumber(L, 2))
 		{
 			SetSpeedModApproaches(p, FArgGTEZero(L, 2));
 		}
+		OPTIONAL_RETURN_SELF(original_top);
 		return 2;
 	}
 
 	static int XMod(T* p, lua_State* L)
 	{
-		DefaultNilArgs(L, 2);
+		int original_top= lua_gettop(L);
 		if(!p->m_fTimeSpacing)
 		{
 			lua_pushnumber(L, p->m_fScrollSpeed);
@@ -1170,23 +1173,24 @@ public:
 			lua_pushnil(L);
 			lua_pushnil(L);
 		}
-		if(lua_isnumber(L, 1))
+		if(lua_isnumber(L, 1) && original_top >= 1)
 		{
 			p->m_fScrollSpeed = FArg(1);
 			p->m_fTimeSpacing = 0;
 			p->m_fScrollBPM= CMOD_DEFAULT;
 			p->m_fMaxScrollBPM = 0;
 		}
-		if(lua_isnumber(L, 2))
+		if(lua_isnumber(L, 2) && original_top >= 2)
 		{
 			SetSpeedModApproaches(p, FArgGTEZero(L, 2));
 		}
+		OPTIONAL_RETURN_SELF(original_top);
 		return 2;
 	}
 
 	static int MMod(T* p, lua_State* L)
 	{
-		DefaultNilArgs(L, 2);
+		int original_top= lua_gettop(L);
 		if(!p->m_fTimeSpacing && p->m_fMaxScrollBPM)
 		{
 			lua_pushnumber(L, p->m_fMaxScrollBPM);
@@ -1197,7 +1201,7 @@ public:
 			lua_pushnil(L);
 			lua_pushnil(L);
 		}
-		if(lua_isnumber(L, 1))
+		if(lua_isnumber(L, 1) && original_top >= 1)
 		{
 			float speed= FArg(1);
 			if(!isfinite(speed) || speed <= 0.0f)
@@ -1209,10 +1213,11 @@ public:
 			p->m_fScrollSpeed= 1;
 			p->m_fMaxScrollBPM = speed;
 		}
-		if(lua_isnumber(L, 2))
+		if(lua_isnumber(L, 2) && original_top >= 2)
 		{
 			SetSpeedModApproaches(p, FArgGTEZero(L, 2));
 		}
+		OPTIONAL_RETURN_SELF(original_top);
 		return 2;
 	}
 
@@ -1224,23 +1229,24 @@ public:
 
 	static int Overhead(T* p, lua_State* L)
 	{
-		DefaultNilArgs(L, 2);
+		int original_top= lua_gettop(L);
 		lua_pushboolean(L, (p->m_fPerspectiveTilt == 0.0f && p->m_fSkew == 0.0f));
 		if(lua_toboolean(L, 1))
 		{
 			p->m_fPerspectiveTilt= 0;
 			p->m_fSkew= 0;
 		}
-		if(lua_isnumber(L, 2))
+		if(lua_isnumber(L, 2) && original_top >= 2)
 		{
 			SetPerspectiveApproach(p, L, FArgGTEZero(L, 2));
 		}
+		OPTIONAL_RETURN_SELF(original_top);
 		return 1;
 	}
 
 	static int Incoming(T* p, lua_State* L)
 	{
-		DefaultNilArgs(L, 2);
+		int original_top= lua_gettop(L);
 		if((p->m_fSkew > 0.0f && p->m_fPerspectiveTilt < 0.0f) ||
 			(p->m_fSkew < 0.0f && p->m_fPerspectiveTilt > 0.0f))
 		{
@@ -1252,22 +1258,23 @@ public:
 			lua_pushnil(L);
 			lua_pushnil(L);
 		}
-		if(lua_isnumber(L, 1))
+		if(lua_isnumber(L, 1) && original_top >= 1)
 		{
 			float value= FArg(1);
 			p->m_fPerspectiveTilt= -value;
 			p->m_fSkew= value;
 		}
-		if(lua_isnumber(L, 2))
+		if(lua_isnumber(L, 2) && original_top >= 2)
 		{
 			SetPerspectiveApproach(p, L, FArgGTEZero(L, 2));
 		}
+		OPTIONAL_RETURN_SELF(original_top);
 		return 2;
 	}
 
 	static int Space(T* p, lua_State* L)
 	{
-		DefaultNilArgs(L, 2);
+		int original_top= lua_gettop(L);
 		if((p->m_fSkew > 0.0f && p->m_fPerspectiveTilt > 0.0f) ||
 			(p->m_fSkew < 0.0f && p->m_fPerspectiveTilt < 0.0f))
 		{
@@ -1279,22 +1286,23 @@ public:
 			lua_pushnil(L);
 			lua_pushnil(L);
 		}
-		if(lua_isnumber(L, 1))
+		if(lua_isnumber(L, 1) && original_top >= 1)
 		{
 			float value= FArg(1);
 			p->m_fPerspectiveTilt= value;
 			p->m_fSkew= value;
 		}
-		if(lua_isnumber(L, 2))
+		if(lua_isnumber(L, 2) && original_top >= 2)
 		{
 			SetPerspectiveApproach(p, L, FArgGTEZero(L, 2));
 		}
+		OPTIONAL_RETURN_SELF(original_top);
 		return 2;
 	}
 
 	static int Hallway(T* p, lua_State* L)
 	{
-		DefaultNilArgs(L, 2);
+		int original_top= lua_gettop(L);
 		if(p->m_fSkew == 0.0f && p->m_fPerspectiveTilt < 0.0f)
 		{
 			lua_pushnumber(L, -p->m_fPerspectiveTilt);
@@ -1305,21 +1313,22 @@ public:
 			lua_pushnil(L);
 			lua_pushnil(L);
 		}
-		if(lua_isnumber(L, 1))
+		if(lua_isnumber(L, 1) && original_top >= 1)
 		{
 			p->m_fPerspectiveTilt= -FArg(1);
 			p->m_fSkew= 0;
 		}
-		if(lua_isnumber(L, 2))
+		if(lua_isnumber(L, 2) && original_top >= 2)
 		{
 			SetPerspectiveApproach(p, L, FArgGTEZero(L, 2));
 		}
+		OPTIONAL_RETURN_SELF(original_top);
 		return 2;
 	}
 	
 	static int Distant(T* p, lua_State* L)
 	{
-		DefaultNilArgs(L, 2);
+		int original_top= lua_gettop(L);
 		if(p->m_fSkew == 0.0f && p->m_fPerspectiveTilt > 0.0f)
 		{
 			lua_pushnumber(L, p->m_fPerspectiveTilt);
@@ -1330,15 +1339,16 @@ public:
 			lua_pushnil(L);
 			lua_pushnil(L);
 		}
-		if(lua_isnumber(L, 1))
+		if(lua_isnumber(L, 1) && original_top >= 1)
 		{
 			p->m_fPerspectiveTilt= FArg(1);
 			p->m_fSkew= 0;
 		}
-		if(lua_isnumber(L, 2))
+		if(lua_isnumber(L, 2) && original_top >= 2)
 		{
 			SetPerspectiveApproach(p, L, FArgGTEZero(L, 2));
 		}
+		OPTIONAL_RETURN_SELF(original_top);
 		return 2;
 	}
 
