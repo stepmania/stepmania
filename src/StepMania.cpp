@@ -826,19 +826,26 @@ void StepMania::InitializeCurrentGame( const Game* g )
 
 	if( sAnnouncer.empty() )
 		sAnnouncer = GAMESTATE->GetCurrentGame()->m_szName;
+	RString argCurGame;
+	if( GetCommandlineArgument( "game", &argCurGame) && argCurGame != sGametype )
+	{
+		Game const* new_game= GAMEMAN->StringToGame(argCurGame);
+		if(new_game == NULL)
+		{
+			LOG->Warn("%s is not a known game type, ignoring.", argCurGame.c_str());
+		}
+		else
+		{
+			PREFSMAN->SetCurrentGame(sGametype);
+			GAMESTATE->SetCurGame(new_game);
+		}
+	}
+	
 	// It doesn't matter if sTheme is blank or invalid, THEME->STAL will set
 	// a selectable theme for us. -Kyz
 
 	// process gametype, theme and language command line arguments;
 	// these change the preferences in order for transparent loading -aj
-	RString argCurGame;
-	if( GetCommandlineArgument( "game", &argCurGame) && argCurGame != sGametype )
-	{
-		sGametype = argCurGame;
-		// set game type in preferences too for correct behavior
-		PREFSMAN->SetCurrentGame( sGametype );
-	}
-	
 	RString argTheme;
 	if( GetCommandlineArgument(	"theme",&argTheme) && argTheme != sTheme )
 	{
