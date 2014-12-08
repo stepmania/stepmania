@@ -821,6 +821,7 @@ void StepMania::InitializeCurrentGame( const Game* g )
 
 	RString sAnnouncer = PREFSMAN->m_sAnnouncer;
 	RString sTheme = PREFSMAN->m_sTheme;
+	RString sGametype = GAMESTATE->GetCurrentGame()->m_szName;
 	RString sLanguage = PREFSMAN->m_sLanguage;
 
 	if( sAnnouncer.empty() )
@@ -828,8 +829,16 @@ void StepMania::InitializeCurrentGame( const Game* g )
 	// It doesn't matter if sTheme is blank or invalid, THEME->STAL will set
 	// a selectable theme for us. -Kyz
 
-	// process theme and language command line arguments;
+	// process gametype, theme and language command line arguments;
 	// these change the preferences in order for transparent loading -aj
+	RString argCurGame;
+	if( GetCommandlineArgument( "game", &argCurGame) && argCurGame != sGametype )
+	{
+		sGametype = argCurGame;
+		// set game type in preferences too for correct behavior
+		PREFSMAN->SetCurrentGame( sGametype );
+	}
+	
 	RString argTheme;
 	if( GetCommandlineArgument(	"theme",&argTheme) && argTheme != sTheme )
 	{
