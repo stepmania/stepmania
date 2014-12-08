@@ -8,6 +8,8 @@
 #include "Foreach.h"
 #include "RadarValues.h"
 
+#include <algorithm>
+
 ThemeMetric<RString> EMPTY_NAME("HighScore","EmptyName");
 
 
@@ -231,27 +233,47 @@ void HighScore::SetDisqualified( bool b ) { m_Impl->bDisqualified = b; }
  * is used. */
 RString *HighScore::GetNameMutable() { return &m_Impl->sName; }
 
-bool HighScore::operator>=( const HighScore& other ) const
+bool HighScore::operator<(HighScore const& other) const
 {
 	/* Make sure we treat AAAA as higher than AAA, even though the score
  	 * is the same. */
 	if( PREFSMAN->m_bPercentageScoring )
 	{
 		if( GetPercentDP() != other.GetPercentDP() )
-			return GetPercentDP() >= other.GetPercentDP();
+			return GetPercentDP() < other.GetPercentDP();
 	}
 	else
 	{
 		if( GetScore() != other.GetScore() )
-			return GetScore() >= other.GetScore();
+			return GetScore() < other.GetScore();
 	}
 
-	return GetGrade() >= other.GetGrade();
+	return GetGrade() < other.GetGrade();
+}
+
+bool HighScore::operator>(HighScore const& other) const
+{
+	return other.operator<(*this);
+}
+
+bool HighScore::operator<=( const HighScore& other ) const
+{
+	return !operator>(other);
+}
+
+bool HighScore::operator>=( const HighScore& other ) const
+{
+	return !operator<(other);
 }
 
 bool HighScore::operator==( const HighScore& other ) const 
 {
 	return *m_Impl == *other.m_Impl;
+}
+
+bool HighScore::operator!=( const HighScore& other ) const
+{
+	return !operator==(other);
 }
 
 XNode* HighScore::CreateNode() const
@@ -404,6 +426,24 @@ void HighScoreList::ClampSize( bool bIsMachine )
 		PREFSMAN->m_iMaxHighScoresPerListForPlayer;
 	if( vHighScores.size() > unsigned(iMaxScores) )
 		vHighScores.erase( vHighScores.begin()+iMaxScores, vHighScores.end() );
+}
+
+void HighScoreList::MergeFromOtherHSL(HighScoreList& other, bool is_machine)
+{
+	iNumTimesPlayed+= other.iNumTimesPlayed;
+	if(other.dtLastPlayed > dtLastPlayed) { dtLastPlayed= other.dtLastPlayed; }
+	if(other.HighGrade > HighGrade) { HighGrade= other.HighGrade; }
+	vHighScores.insert(vHighScores.end(), other.vHighScores.begin(),
+		other.vHighScores.end());
+	std::sort(vHighScores.begin(), vHighScores.end());
+	// Remove non-unique scores because they probably come from an accidental
+	// repeated merge. -Kyz
+	vector<HighScore>::iterator unique_end=
+		std::unique(vHighScores.begin(), vHighScores.end());
+	vHighScores.erase(unique_end, vHighScores.end());
+	// Reverse it because sort moved the lesser scores to the top.
+	std::reverse(vHighScores.begin(), vHighScores.end());
+	ClampSize(is_machine);
 }
 
 XNode* Screenshot::CreateNode() const

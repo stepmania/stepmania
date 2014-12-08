@@ -6,8 +6,8 @@
 #include "Difficulty.h"
 #include "Preference.h"
 #include "Grade.h"
+#include "Profile.h"
 
-class Profile;
 class Song;
 class Steps;
 class Style;
@@ -51,6 +51,11 @@ public:
 	bool SaveProfile( PlayerNumber pn ) const;
 	bool SaveLocalProfile( RString sProfileID );
 	void UnloadProfile( PlayerNumber pn );
+
+	void MergeLocalProfiles(RString const& from_id, RString const& to_id);
+	void MergeLocalProfileIntoMachine(RString const& from_id, bool skip_totals);
+	void ChangeProfileType(int index, ProfileType new_type);
+	void MoveProfilePriority(int index, bool up);
 
 	// General data
 	void IncrementToastiesCount( PlayerNumber pn );

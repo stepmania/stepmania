@@ -3463,6 +3463,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetNumTotalSongsPlayed' return='int' arguments=''>
 		Returns the total number of songs played with the profile.
 	</Function>
+	<Function name='GetPriority' return='int' arguments=''>
+		Returns the position the profile should have in its category in the list.
+	</Function>
 	<Function name='GetSongNumTimesPlayed' return='int' arguments='Song s'>
 		Returns the number of times song <code>s</code> has been played with the profile.
 	</Function>
@@ -3510,6 +3513,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetTotalTrailsWithTopGrade' return='int' arguments='StepsType st, Difficulty d, Grade g'>
 		Returns the number of trails with the specified StepsType and Difficulty that you've scored a certain Grade <code>g</code> on.
+	</Function>
+	<Function name='GetType' return='ProfileType' arguments=''>
+		Returns the type of the profile.  The type of the profile is only used to determine where the profile shows up in the list of profiles, and that problem is already handled by ProfileManager, so if you're reading this, this function only exists so you can make your theme color this profile's list entry based on the type or something like that.
 	</Function>
 	<Function name='GetUserTable' return='table' arguments=''>
 		Returns the user table for this Profile.
