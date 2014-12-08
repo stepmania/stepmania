@@ -402,7 +402,7 @@ void RageFileManager::GetDirListingWithMultipleExtensions( const RString &sPath,
 	for(vector<RString>::const_iterator curr_ext= ExtensionList.begin();
 		curr_ext != ExtensionList.end(); ++curr_ext)
 	{
-		GetDirListing(sPath + (*curr_ext), AddTo, bOnlyDirs, bReturnPathToo);
+		GetDirListing(sPath + "*." + (*curr_ext), AddTo, bOnlyDirs, bReturnPathToo);
 	}
 }
 
