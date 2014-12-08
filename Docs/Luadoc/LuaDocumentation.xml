@@ -2941,6 +2941,45 @@ save yourself some time, copy this for undocumented things:
 		Returns a table of noteskin names for the current gametype.
 	</Function>
 </Class>
+<Class name='NoteField'>
+	<Function name='DidHoldNote' return='' arguments='int column, TapNoteScore tns, bool bright'>
+		Makes the NoteField act as if a hold note was hit in the column, with the given score and bright setting. <br />
+		The callback for DidHoldNote will not be called.
+	</Function>
+	<Function name='DidTapNote' return='' arguments='int column, TapNoteScore tns, bool bright'>
+		Makes the NoteField act as if a tap note was hit in the column, with the given score and bright setting. <br />
+		The callback for DidTapNote will not be called.
+	</Function>
+	<Function name='SetDidHoldNoteCallback' return= '' arguments='function callback'>
+		Same as SetDidTapNoteCallback, but for hold notes.  Uses HoldNoteScore instead of TapNoteScore.
+	</Function>
+	<Function name='SetDidTapNoteCallback' return= '' arguments='function callback'>
+		Sets the function that the NoteField will call whenever a tap note is hit.<br />
+		The callback function is passed the column, the TapNoteScore, and whether the explosion will be bright.<br />
+		The callback function can return changed values for the NoteField to use instead of the ones that were passed.<br />
+		Pass nil instead of a function to clear the callback.
+	</Function>
+	<Function name='SetPressed' return='' arguments='int column'>
+		Makes the NoteField act as if a press occurred in the column. <br />
+		The callback for SetPressed will not be called.
+	</Function>
+	<Function name='SetSetPressedCallback' return= '' arguments='function callback'>
+		Sets the function that the NoteField will call whenever a press occurs.<br />
+		The callback function is passed the column for the press.<br />
+		The callback function can return changed values for the NoteField to use instead of the ones that were passed.<br />
+		Pass nil instead of a function to clear the callback.
+	</Function>
+	<Function name='SetStepCallback' return= '' arguments='function callback'>
+		Sets the function that the NoteField will call whenever a step occurs.<br />
+		The callback function is passed the column and the TapNoteScore for the step.<br />
+		The callback function can return changed values for the NoteField to use instead of the ones that were passed.<br />
+		Pass nil instead of a function to clear the callback.
+	</Function>
+	<Function name='Step' return='' arguments='int column, TapNoteScore tns'>
+		Makes the NoteField act as if a step occurred in the column with the given score.
+		The callback for Step will not be called.
+	</Function>
+</Class>
 <Class name='OptionRow'>
 	<Function name='FirstItemGoesDown' return='bool' arguments=''>
 		Returns <code>true</code> if the first item in the row goes down.

@@ -67,6 +67,11 @@ NoteField::NoteField()
 	m_iBeginMarker = m_iEndMarker = -1;
 
 	m_fPercentFadeToFail = -1;
+
+	m_StepCallback.SetFromNil();
+	m_SetPressedCallback.SetFromNil();
+	m_DidTapNoteCallback.SetFromNil();
+	m_DidHoldNoteCallback.SetFromNil();
 }
 
 NoteField::~NoteField()
@@ -1375,10 +1380,111 @@ void NoteField::FadeToFail()
 	m_fPercentFadeToFail = max( 0.0f, m_fPercentFadeToFail );	// this will slowly increase every Update()
 		// don't fade all over again if this is called twice
 }
-void NoteField::Step( int iCol, TapNoteScore score ) { m_pCurDisplay->m_ReceptorArrowRow.Step( iCol, score ); }
-void NoteField::SetPressed( int iCol ) { m_pCurDisplay->m_ReceptorArrowRow.SetPressed( iCol ); }
-void NoteField::DidTapNote( int iCol, TapNoteScore score, bool bBright ) { m_pCurDisplay->m_GhostArrowRow.DidTapNote( iCol, score, bBright ); }
-void NoteField::DidHoldNote( int iCol, HoldNoteScore score, bool bBright ) { m_pCurDisplay->m_GhostArrowRow.DidHoldNote( iCol, score, bBright ); }
+
+// A few functions and macros to take care of processing the callback
+// return values, since the code would be identical in all of them. -Kyz
+
+#define OPEN_CALLBACK_BLOCK(member_name) \
+	if(!from_lua && !member_name.IsNil()) \
+	{ \
+		Lua* L= LUA->Get(); \
+		member_name.PushSelf(L);
+
+#define OPEN_RUN_BLOCK(arg_count) \
+	RString error= "Error running callback: "; \
+	if(LuaHelpers::RunScriptOnStack(L, error, arg_count, arg_count, true)) \
+	{
+
+#define CLOSE_RUN_AND_CALLBACK_BLOCKS  } lua_settop(L, 0);  LUA->Release(L); }
+
+static void get_returned_column(Lua* L, int index, int& col)
+{
+	if(lua_isnumber(L, index))
+	{
+		// 1-indexed columns in lua
+		int tmpcol= lua_tonumber(L, index) - 1;
+		if(tmpcol < 0 || tmpcol >= GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer)
+		{
+			LuaHelpers::ReportScriptErrorFmt(
+				"Column returned by callback must be between 1 and %d "
+				"(GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()).",
+				GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer);
+		}
+		else
+		{
+			col= tmpcol;
+		}
+	}
+}
+
+// Templated so it can be used for TNS and HNS. -Kyz
+template<class T> static void get_returned_score(Lua* L, int index, T& score)
+{
+	T maybe_score= Enum::Check<T>(L, index, true, true);
+	if(maybe_score != EnumTraits<T>::Invalid)
+	{
+		score= maybe_score;
+	}
+}
+
+static void get_returned_bright(Lua* L, int index, bool& bright)
+{
+	if(lua_isboolean(L, index))
+	{
+		bright= lua_toboolean(L, index);
+	}
+}
+
+void NoteField::Step(int col, TapNoteScore score, bool from_lua)
+{
+	OPEN_CALLBACK_BLOCK(m_StepCallback);
+	lua_pushnumber(L, col);
+	Enum::Push(L, score);
+	OPEN_RUN_BLOCK(2);
+	get_returned_column(L, 1, col);
+	get_returned_score(L, 2, score);
+	CLOSE_RUN_AND_CALLBACK_BLOCKS;
+	m_pCurDisplay->m_ReceptorArrowRow.Step(col, score);
+}
+void NoteField::SetPressed(int col, bool from_lua)
+{
+	OPEN_CALLBACK_BLOCK(m_SetPressedCallback);
+	lua_pushnumber(L, col);
+	OPEN_RUN_BLOCK(1);
+	get_returned_column(L, 1, col);
+	CLOSE_RUN_AND_CALLBACK_BLOCKS;
+	m_pCurDisplay->m_ReceptorArrowRow.SetPressed(col);
+}
+void NoteField::DidTapNote(int col, TapNoteScore score, bool bright, bool from_lua)
+{
+	OPEN_CALLBACK_BLOCK(m_DidTapNoteCallback);
+	lua_pushnumber(L, col);
+	Enum::Push(L, score);
+	lua_pushboolean(L, bright);
+	OPEN_RUN_BLOCK(3);
+	get_returned_column(L, 1, col);
+	get_returned_score(L, 2, score);
+	get_returned_bright(L, 3, bright);
+	CLOSE_RUN_AND_CALLBACK_BLOCKS;
+	m_pCurDisplay->m_GhostArrowRow.DidTapNote(col, score, bright);
+}
+void NoteField::DidHoldNote(int col, HoldNoteScore score, bool bright, bool from_lua)
+{
+	OPEN_CALLBACK_BLOCK(m_DidHoldNoteCallback);
+	lua_pushnumber(L, col);
+	Enum::Push(L, score);
+	lua_pushboolean(L, bright);
+	OPEN_RUN_BLOCK(3);
+	get_returned_column(L, 1, col);
+	get_returned_score(L, 2, score);
+	get_returned_bright(L, 3, bright);
+	CLOSE_RUN_AND_CALLBACK_BLOCKS;
+	m_pCurDisplay->m_GhostArrowRow.DidHoldNote(col, score, bright);
+}
+
+#undef OPEN_CALLBACK_BLOCK
+#undef OPEN_RUN_BLOCK
+#undef CLOSE_RUN_AND_CALLBACK_BLOCKS
 
 void NoteField::HandleMessage( const Message &msg )
 {
@@ -1390,6 +1496,98 @@ void NoteField::HandleMessage( const Message &msg )
 
 	ActorFrame::HandleMessage( msg );
 }
+
+// lua start
+#include "LuaBinding.h"
+
+/** @brief Allow Lua to have access to the Notefield. */
+class LunaNoteField: public Luna<NoteField>
+{
+public:
+#define SET_CALLBACK_GENERIC(callback_name, member_name) \
+	static int callback_name(T* p, lua_State* L) \
+	{ \
+		if(lua_isnoneornil(L, 1)) \
+		{ \
+			p->member_name.SetFromNil(); \
+		} \
+		else if(lua_isfunction(L, 1)) \
+		{ \
+			p->member_name.SetFromStack(L); \
+		} \
+		else \
+		{ \
+			luaL_error(L, #callback_name "Callback argument must be nil (to clear the callback) or a function (to set the callback)."); \
+		} \
+		return 0; \
+	}
+	SET_CALLBACK_GENERIC(SetStepCallback, m_StepCallback);
+	SET_CALLBACK_GENERIC(SetSetPressedCallback, m_SetPressedCallback);
+	SET_CALLBACK_GENERIC(SetDidTapNoteCallback, m_DidTapNoteCallback);
+	SET_CALLBACK_GENERIC(SetDidHoldNoteCallback, m_DidHoldNoteCallback);
+#undef SET_CALLBACK_GENERIC
+
+	static int check_column(lua_State* L, int index)
+	{
+		// 1-indexed columns in lua
+		int col= IArg(1)-1;
+		if(col < 0 || col >= GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer)
+		{
+			luaL_error(L, "Column must be between 1 and %d "
+				"(GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()).",
+				GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer);
+		}
+		return col;
+	}
+
+	static int Step(T* p, lua_State* L)
+	{
+		int col= check_column(L, 1);
+		TapNoteScore tns= Enum::Check<TapNoteScore>(L, 2);
+		p->Step(col, tns, true);
+		return 0;
+	}
+
+	static int SetPressed(T* p, lua_State* L)
+	{
+		int col= check_column(L, 1);
+		p->SetPressed(col, true);
+		return 0;
+	}
+
+	static int DidTapNote(T* p, lua_State* L)
+	{
+		int col= check_column(L, 1);
+		TapNoteScore tns= Enum::Check<TapNoteScore>(L, 2);
+		bool bright= BArg(3);
+		p->DidTapNote(col, tns, bright, true);
+		return 0;
+	}
+
+	static int DidHoldNote(T* p, lua_State* L)
+	{
+		int col= check_column(L, 1);
+		HoldNoteScore hns= Enum::Check<HoldNoteScore>(L, 2);
+		bool bright= BArg(3);
+		p->DidHoldNote(col, hns, bright, true);
+		return 0;
+	}
+
+	LunaNoteField()
+	{
+		ADD_METHOD(SetStepCallback);
+		ADD_METHOD(SetSetPressedCallback);
+		ADD_METHOD(SetDidTapNoteCallback);
+		ADD_METHOD(SetDidHoldNoteCallback);
+		ADD_METHOD(Step);
+		ADD_METHOD(SetPressed);
+		ADD_METHOD(DidTapNote);
+		ADD_METHOD(DidHoldNote);
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS(NoteField, ActorFrame)
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford

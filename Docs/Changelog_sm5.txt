@@ -11,6 +11,10 @@ ________________________________________________________________________________
   Reset key mappings option added to debug menu for recovering from an
   unusuble keymap without needing to find and delete KeyMaps.ini. [kyzentun]
 
+2014/11/30
+----------
+* [NoteField] New functions added for controlling the receptor and ghost arrow
+  (explosion) flashes. [kyzentun]
 
 2014/11/28
 ----------
