@@ -397,6 +397,7 @@ public:
 		NUM_MAIN_MENU_CHOICES,
 		MAIN_MENU_CHOICE_INVALID
 	};
+	int GetSongOrNotesEnd();
 	void HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAnswers );
 	void HandleMainMenuChoice( MainMenuChoice c ) { const vector<int> v; HandleMainMenuChoice( c, v ); }
 	MainMenuChoice m_CurrentAction;

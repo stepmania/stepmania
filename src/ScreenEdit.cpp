@@ -4423,6 +4423,13 @@ static LocalizedString DESTROY_ALL_UNSAVED_CHANGES	( "ScreenEdit", "This will de
 static LocalizedString REVERT_FROM_DISK			( "ScreenEdit", "Do you want to revert from disk?" );
 static LocalizedString SAVE_CHANGES_BEFORE_EXITING	( "ScreenEdit", "Do you want to save changes before exiting?" );
 
+int ScreenEdit::GetSongOrNotesEnd()
+{
+	return max(m_iStartPlayingAt, max(m_NoteDataEdit.GetLastRow(),
+			BeatToNoteRow(m_pSteps->GetTimingData()->GetBeatFromElapsedTime(
+					GAMESTATE->m_pCurSong->m_fMusicLengthSeconds))));
+}
+
 void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAnswers )
 {
 	GAMESTATE->SetProcessedTimingData(m_pSteps->GetTimingData());
@@ -4440,7 +4447,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 		case play_whole_song:
 			{
 				m_iStartPlayingAt = 0;
-				m_iStopPlayingAt = m_NoteDataEdit.GetLastRow();
+				m_iStopPlayingAt= GetSongOrNotesEnd();
 				TransitionEditState( STATE_PLAYING );
 			}
 			break;
@@ -4454,7 +4461,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 		case play_current_beat_to_end:
 			{
 				m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat);
-				m_iStopPlayingAt = max( m_iStartPlayingAt, m_NoteDataEdit.GetLastRow() );
+				m_iStopPlayingAt= GetSongOrNotesEnd();
 				TransitionEditState( STATE_PLAYING );
 			}
 			break;
