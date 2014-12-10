@@ -8,7 +8,12 @@ ________________________________________________________________________________
 ----------
 * [EditMode] Play whole song and play from current beat will now play until
   either the music or the notes end, whichever is greater. [kyzentun]
+  The screens used for setting the options used to play the screen and for
+  adding attacks can be set through the "OptionsScreen" and "SetModScreen"
+  metrics in the ScreenEdit section.
+* [GameState] ApplyPreferredSongOptionsToOtherLevels function added. [kyzentun]
 * [Player] "ComboBreakOnImmediateHoldLetGo" theme metric added. [sillybear]
+* [PlayerState] ApplyPreferredOptionsToOtherLevels function added. [kyzentun]
   
 2014/12/03
 ----------

@@ -748,6 +748,7 @@
 			<Function name='AnyPlayerHasRankingFeats'/>
 			<Function name='ApplyGameCommand'/>
 			<Function name='ApplyPreferredModifiers'/>
+			<Function name='ApplyPreferredSongOptionsToOtherLevels'/>
 			<Function name='ApplyStageModifiers'/>
 			<Function name='ClearStageModifiersIllegalForCourse'/>
 			<Function name='CurrentOptionsDisqualifyPlayer'/>
@@ -1162,6 +1163,7 @@
 			<Function name='SetScore'/>
 		</Class>
 		<Class name='PlayerState'>
+			<Function name='ApplyPreferredOptionsToOtherLevels'/>
 			<Function name='GetCurrentPlayerOptions'/>
 			<Function name='GetHealthState'/>
 			<Function name='GetMultiPlayerNumber'/>

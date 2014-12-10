@@ -2257,6 +2257,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='ApplyPreferredModifiers' return='void' arguments='PlayerNumber pn, string mods'>
 		Applies the specified modifiers for the specified player's preferred modifier set.
 	</Function>
+	<Function name='ApplyPreferredSongOptionsToOtherLevels' return='void' arguments=''>
+		Applies the song options of ModsLevel_Preferred to the other ModsLevels.
+	</Function>
 	<Function name='ApplyStageModifiers' return='void' arguments='PlayerNumber pn, string mods'>
 		Applies the specified modifiers for the specified player for the current stage.
 	</Function>
@@ -3369,6 +3372,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='PlayerState'>
+	<Function name='ApplyPreferredOptionsToOtherLevels' return='void' arguments=''>
+		Applies the player options of ModsLevel_Preferred to the other ModsLevels.
+	</Function>
 	<Function name='GetCurrentPlayerOptions' return='PlayerOptions' arguments='' >
 		Returns the current PlayerOptions for this PlayerState.
 	</Function>

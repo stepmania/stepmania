@@ -2470,6 +2470,12 @@ public:
 		lua_pushstring(L, so.GetString());
 		return 1;
 	}
+	static int ApplyPreferredSongOptionsToOtherLevels(T* p, lua_State* L)
+	{
+		p->m_SongOptions.Assign(ModsLevel_Preferred,
+			p->m_SongOptions.Get(ModsLevel_Preferred));
+		return 0;
+	}
 	static int ApplyStageModifiers( T* p, lua_State *L )
 	{
 		p->ApplyStageModifiers( Enum::Check<PlayerNumber>(L, 1), SArg(2) );
@@ -2862,6 +2868,7 @@ public:
 		ADD_METHOD( GetSongOptions );
 		ADD_METHOD( GetSongOptionsObject );
 		ADD_METHOD( GetDefaultSongOptions );
+		ADD_METHOD( ApplyPreferredSongOptionsToOtherLevels );
 		ADD_METHOD( ApplyPreferredModifiers );
 		ADD_METHOD( ApplyStageModifiers );
 		ADD_METHOD( ClearStageModifiersIllegalForCourse );

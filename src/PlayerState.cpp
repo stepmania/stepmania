@@ -213,6 +213,12 @@ const TimingData &PlayerState::GetDisplayedTiming() const
 class LunaPlayerState: public Luna<PlayerState>
 {
 public:
+	static int ApplyPreferredOptionsToOtherLevels(T* p, lua_State* L)
+	{
+		p->m_PlayerOptions.Assign(ModsLevel_Preferred,
+			p->m_PlayerOptions.Get(ModsLevel_Preferred));
+		return 0;
+	}
 	DEFINE_METHOD( GetPlayerNumber, m_PlayerNumber );
 	static int GetSongPosition( T* p, lua_State *L )
 	{
@@ -260,6 +266,7 @@ public:
 
 	LunaPlayerState()
 	{
+		ADD_METHOD( ApplyPreferredOptionsToOtherLevels );
 		ADD_METHOD( GetPlayerNumber );
 		ADD_METHOD( GetMultiPlayerNumber );
 		ADD_METHOD( GetPlayerController );

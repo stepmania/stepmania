@@ -59,6 +59,9 @@ const float RECORD_HOLD_SECONDS = 0.3f;
 #define PLAY_RECORD_HELP_TEXT	THEME->GetString(m_sName,"PlayRecordHelpText")
 #define EDIT_HELP_TEXT		THEME->GetString(m_sName,"EditHelpText")
 
+#define SET_MOD_SCREEN THEME->GetMetric("ScreenEdit", "SetModScreen")
+#define OPTIONS_SCREEN THEME->GetMetric("ScreenEdit", "OptionsScreen")
+
 AutoScreenMessage( SM_UpdateTextInfo );
 AutoScreenMessage( SM_BackFromMainMenu );
 AutoScreenMessage( SM_BackFromAreaMenu );
@@ -2722,7 +2725,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		g_fLastInsertAttackPositionSeconds = start;
 		g_fLastInsertAttackDurationSeconds = end - start;
 		toEdit.Assign( ModsLevel_Stage, po );
-		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertStepAttackPlayerOptions );
+		SCREENMAN->AddNewScreenToTop( SET_MOD_SCREEN, SM_BackFromInsertStepAttackPlayerOptions );
 		return true;
 	}
 	case EDIT_BUTTON_ADD_COURSE_MODS:
@@ -2758,7 +2761,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			g_fLastInsertAttackPositionSeconds = fStart;
 			g_fLastInsertAttackDurationSeconds = fEnd - fStart;
 			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.Assign( ModsLevel_Stage, po );
-			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertCourseAttackPlayerOptions );
+			SCREENMAN->AddNewScreenToTop( SET_MOD_SCREEN, SM_BackFromInsertCourseAttackPlayerOptions );
 
 		}
 		return true;
@@ -3739,7 +3742,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		int iDurationChoice = ScreenMiniMenu::s_viLastAnswers[0];
 		g_fLastInsertAttackDurationSeconds = StringToFloat( g_InsertTapAttack.rows[0].choices[iDurationChoice] );
 
-		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertTapAttackPlayerOptions );
+		SCREENMAN->AddNewScreenToTop( SET_MOD_SCREEN, SM_BackFromInsertTapAttackPlayerOptions );
 	}
 	else if( SM == SM_BackFromInsertTapAttackPlayerOptions )
 	{
@@ -3973,7 +3976,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 				po.FromString(attacks[iAttack].sModifiers);
 			
 			toEdit.Assign( ModsLevel_Preferred, po );
-			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertStepAttackPlayerOptions );
+			SCREENMAN->AddNewScreenToTop( SET_MOD_SCREEN, SM_BackFromInsertStepAttackPlayerOptions );
 		}
 		SetDirty(true);
 	}
@@ -4003,7 +4006,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 				po.FromString( ce.attacks[iAttack].sModifiers );
 
 			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
-			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertCourseAttackPlayerOptions );
+			SCREENMAN->AddNewScreenToTop( SET_MOD_SCREEN, SM_BackFromInsertCourseAttackPlayerOptions );
 		}
 	}
 	else if (SM == SM_BackFromInsertStepAttackPlayerOptions)
@@ -4646,7 +4649,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			ScreenPrompt::Prompt( SM_DoRevertFromDisk, REVERT_FROM_DISK.GetValue() + "\n\n" + DESTROY_ALL_UNSAVED_CHANGES.GetValue(), PROMPT_YES_NO, ANSWER_NO );
 			break;
 		case options:
-			SCREENMAN->AddNewScreenToTop( "ScreenEditOptions", SM_BackFromOptions );
+			SCREENMAN->AddNewScreenToTop( OPTIONS_SCREEN, SM_BackFromOptions );
 			break;
 		case edit_song_info:
 			{
@@ -5049,7 +5052,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 				po.FromString(attacks[iAttack].sModifiers);
 				
 			toEdit.Assign( ModsLevel_Preferred, po );
-			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertStepAttackPlayerOptions );
+			SCREENMAN->AddNewScreenToTop( SET_MOD_SCREEN, SM_BackFromInsertStepAttackPlayerOptions );
 			SetDirty(true);
 			break;
 		}
