@@ -304,7 +304,8 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 
 bool Screen::PassInputToLua(const InputEventPlus& input)
 {
-	if(m_InputCallbacks.empty())
+	if(m_InputCallbacks.empty() || m_fLockInputSecs > 0.0f
+		|| !AllowCallbackInput())
 	{
 		return false;
 	}
