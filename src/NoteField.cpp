@@ -1407,18 +1407,18 @@ void NoteField::FadeToFail()
 
 #define CLOSE_RUN_AND_CALLBACK_BLOCKS  } lua_settop(L, 0);  LUA->Release(L); }
 
-static void get_returned_column(Lua* L, int index, int& col)
+static void get_returned_column(Lua* L, PlayerNumber pn, int index, int& col)
 {
 	if(lua_isnumber(L, index))
 	{
 		// 1-indexed columns in lua
 		int tmpcol= lua_tonumber(L, index) - 1;
-		if(tmpcol < 0 || tmpcol >= GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer)
+		if(tmpcol < 0 || tmpcol >= GAMESTATE->GetCurrentStyle(pn)->m_iColsPerPlayer)
 		{
 			LuaHelpers::ReportScriptErrorFmt(
 				"Column returned by callback must be between 1 and %d "
 				"(GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()).",
-				GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer);
+				GAMESTATE->GetCurrentStyle(pn)->m_iColsPerPlayer);
 		}
 		else
 		{
@@ -1451,7 +1451,7 @@ void NoteField::Step(int col, TapNoteScore score, bool from_lua)
 	lua_pushnumber(L, col);
 	Enum::Push(L, score);
 	OPEN_RUN_BLOCK(2);
-	get_returned_column(L, 1, col);
+	get_returned_column(L, m_pPlayerState->m_PlayerNumber, 1, col);
 	get_returned_score(L, 2, score);
 	CLOSE_RUN_AND_CALLBACK_BLOCKS;
 	m_pCurDisplay->m_ReceptorArrowRow.Step(col, score);
@@ -1461,7 +1461,7 @@ void NoteField::SetPressed(int col, bool from_lua)
 	OPEN_CALLBACK_BLOCK(m_SetPressedCallback);
 	lua_pushnumber(L, col);
 	OPEN_RUN_BLOCK(1);
-	get_returned_column(L, 1, col);
+	get_returned_column(L, m_pPlayerState->m_PlayerNumber, 1, col);
 	CLOSE_RUN_AND_CALLBACK_BLOCKS;
 	m_pCurDisplay->m_ReceptorArrowRow.SetPressed(col);
 }
@@ -1472,7 +1472,7 @@ void NoteField::DidTapNote(int col, TapNoteScore score, bool bright, bool from_l
 	Enum::Push(L, score);
 	lua_pushboolean(L, bright);
 	OPEN_RUN_BLOCK(3);
-	get_returned_column(L, 1, col);
+	get_returned_column(L, m_pPlayerState->m_PlayerNumber, 1, col);
 	get_returned_score(L, 2, score);
 	get_returned_bright(L, 3, bright);
 	CLOSE_RUN_AND_CALLBACK_BLOCKS;
@@ -1485,7 +1485,7 @@ void NoteField::DidHoldNote(int col, HoldNoteScore score, bool bright, bool from
 	Enum::Push(L, score);
 	lua_pushboolean(L, bright);
 	OPEN_RUN_BLOCK(3);
-	get_returned_column(L, 1, col);
+	get_returned_column(L, m_pPlayerState->m_PlayerNumber, 1, col);
 	get_returned_score(L, 2, score);
 	get_returned_bright(L, 3, bright);
 	CLOSE_RUN_AND_CALLBACK_BLOCKS;
@@ -1537,22 +1537,22 @@ public:
 	SET_CALLBACK_GENERIC(SetDidHoldNoteCallback, m_DidHoldNoteCallback);
 #undef SET_CALLBACK_GENERIC
 
-	static int check_column(lua_State* L, int index)
+	static int check_column(lua_State* L, int index, PlayerNumber pn)
 	{
 		// 1-indexed columns in lua
 		int col= IArg(1)-1;
-		if(col < 0 || col >= GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer)
+		if(col < 0 || col >= GAMESTATE->GetCurrentStyle(pn)->m_iColsPerPlayer)
 		{
 			luaL_error(L, "Column must be between 1 and %d "
-				"(GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()).",
-				GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer);
+				"(GAMESTATE:GetCurrentStyle(pn):ColumnsPerPlayer()).",
+				GAMESTATE->GetCurrentStyle(pn)->m_iColsPerPlayer);
 		}
 		return col;
 	}
 
 	static int Step(T* p, lua_State* L)
 	{
-		int col= check_column(L, 1);
+		int col= check_column(L, 1, p->GetPlayerState()->m_PlayerNumber);
 		TapNoteScore tns= Enum::Check<TapNoteScore>(L, 2);
 		p->Step(col, tns, true);
 		return 0;
@@ -1560,14 +1560,14 @@ public:
 
 	static int SetPressed(T* p, lua_State* L)
 	{
-		int col= check_column(L, 1);
+		int col= check_column(L, 1, p->GetPlayerState()->m_PlayerNumber);
 		p->SetPressed(col, true);
 		return 0;
 	}
 
 	static int DidTapNote(T* p, lua_State* L)
 	{
-		int col= check_column(L, 1);
+		int col= check_column(L, 1, p->GetPlayerState()->m_PlayerNumber);
 		TapNoteScore tns= Enum::Check<TapNoteScore>(L, 2);
 		bool bright= BArg(3);
 		p->DidTapNote(col, tns, bright, true);
@@ -1576,7 +1576,7 @@ public:
 
 	static int DidHoldNote(T* p, lua_State* L)
 	{
-		int col= check_column(L, 1);
+		int col= check_column(L, 1, p->GetPlayerState()->m_PlayerNumber);
 		HoldNoteScore hns= Enum::Check<HoldNoteScore>(L, 2);
 		bool bright= BArg(3);
 		p->DidHoldNote(col, hns, bright, true);
