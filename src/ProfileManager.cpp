@@ -784,7 +784,7 @@ void ProfileManager::MoveProfilePriority(int index, bool up)
 			if(curr->profile.m_ListPriority != priority)
 			{
 				curr->profile.m_ListPriority= priority;
-				if(i != index && i != swindex)
+				if(i != static_cast<size_t>(index) && i != static_cast<size_t>(swindex))
 				{
 					curr->profile.SaveTypeToDir(curr->sDir);
 				}
