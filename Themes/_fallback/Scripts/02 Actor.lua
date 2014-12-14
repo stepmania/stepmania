@@ -280,7 +280,7 @@ function Actor:heartbeat(fEffectPeriod)
 	else
 		self:effecttiming(0,0.125,0.125,0.75);
 	end
-	self:effecmagnitude(1,1.125,1)
+	self:effectmagnitude(1,1.125,1)
 	return self
 end
 
