@@ -940,6 +940,9 @@ void Profile::swap(Profile& other)
 	// own swap function, which includes the standard containers.
 #define SWAP_STR_MEMBER(member_name) member_name.swap(other.member_name)
 #define SWAP_GENERAL(member_name) std::swap(member_name, other.member_name)
+#define SWAP_ARRAY(member_name, size) \
+	for(int i= 0; i < size; ++i) { \
+		std::swap(member_name[i], other.member_name[i]); } \
 	SWAP_GENERAL(m_ListPriority);
 	SWAP_STR_MEMBER(m_sDisplayName);
 	SWAP_STR_MEMBER(m_sCharacterID);
@@ -973,21 +976,25 @@ void Profile::swap(Profile& other)
 	SWAP_STR_MEMBER(m_UnlockedEntryIDs);
 	SWAP_STR_MEMBER(m_sLastPlayedMachineGuid);
 	SWAP_GENERAL(m_LastPlayedDate);
-	SWAP_GENERAL(m_iNumSongsPlayedByPlayMode);
+	SWAP_ARRAY(m_iNumSongsPlayedByPlayMode, NUM_PlayMode);
 	SWAP_STR_MEMBER(m_iNumSongsPlayedByStyle);
-	SWAP_GENERAL(m_iNumSongsPlayedByDifficulty);
-	SWAP_GENERAL(m_iNumSongsPlayedByMeter);
+	SWAP_ARRAY(m_iNumSongsPlayedByDifficulty, NUM_Difficulty);
+	SWAP_ARRAY(m_iNumSongsPlayedByMeter, MAX_METER+1);
 	SWAP_GENERAL(m_iNumTotalSongsPlayed);
-	SWAP_GENERAL(m_iNumStagesPassedByPlayMode);
-	SWAP_GENERAL(m_iNumStagesPassedByGrade);
+	SWAP_ARRAY(m_iNumStagesPassedByPlayMode, NUM_PlayMode);
+	SWAP_ARRAY(m_iNumStagesPassedByGrade, NUM_Grade);
 	SWAP_GENERAL(m_UserTable);
 	SWAP_STR_MEMBER(m_SongHighScores);
 	SWAP_STR_MEMBER(m_CourseHighScores);
-	SWAP_GENERAL(m_CategoryHighScores);
+	for(int st= 0; st < NUM_StepsType; ++st)
+	{
+		SWAP_ARRAY(m_CategoryHighScores[st], NUM_RankingCategory);
+	}
 	SWAP_STR_MEMBER(m_vScreenshots);
 	SWAP_STR_MEMBER(m_mapDayToCaloriesBurned);
 #undef SWAP_STR_MEMBER
 #undef SWAP_GENERAL
+#undef SWAP_ARRAY
 }
 
 // Category high scores
