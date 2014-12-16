@@ -508,11 +508,7 @@ RString NoteSkinManager::GetPathFromDirAndFile( const RString &sDir, const RStri
 	if( matches.size() > 1 )
 	{
 		RString sError = "Multiple files match '"+sDir+sFileName+"'.  Please remove all but one of these files: ";
-		sError+= matches[1];
-		for(size_t n= 1; n < matches.size(); ++n)
-		{
-			sError+= ", " + matches[n];
-		}
+		sError+= join(", ", matches);
 		LuaHelpers::ReportScriptError(sError, "NOTESKIN_ERROR");
 	}
 	
