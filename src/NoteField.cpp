@@ -1396,6 +1396,7 @@ void NoteField::FadeToFail()
 	{
 
 #define CLOSE_RUN_AND_CALLBACK_BLOCKS  } lua_settop(L, 0);  LUA->Release(L); }
+#define PUSH_COLUMN lua_pushnumber(L, col+1)
 
 static void get_returned_column(Lua* L, int index, int& col)
 {
@@ -1438,7 +1439,7 @@ static void get_returned_bright(Lua* L, int index, bool& bright)
 void NoteField::Step(int col, TapNoteScore score, bool from_lua)
 {
 	OPEN_CALLBACK_BLOCK(m_StepCallback);
-	lua_pushnumber(L, col);
+	PUSH_COLUMN;
 	Enum::Push(L, score);
 	OPEN_RUN_BLOCK(2);
 	get_returned_column(L, 1, col);
@@ -1449,7 +1450,7 @@ void NoteField::Step(int col, TapNoteScore score, bool from_lua)
 void NoteField::SetPressed(int col, bool from_lua)
 {
 	OPEN_CALLBACK_BLOCK(m_SetPressedCallback);
-	lua_pushnumber(L, col);
+	PUSH_COLUMN;
 	OPEN_RUN_BLOCK(1);
 	get_returned_column(L, 1, col);
 	CLOSE_RUN_AND_CALLBACK_BLOCKS;
@@ -1458,7 +1459,7 @@ void NoteField::SetPressed(int col, bool from_lua)
 void NoteField::DidTapNote(int col, TapNoteScore score, bool bright, bool from_lua)
 {
 	OPEN_CALLBACK_BLOCK(m_DidTapNoteCallback);
-	lua_pushnumber(L, col);
+	PUSH_COLUMN;
 	Enum::Push(L, score);
 	lua_pushboolean(L, bright);
 	OPEN_RUN_BLOCK(3);
@@ -1471,7 +1472,7 @@ void NoteField::DidTapNote(int col, TapNoteScore score, bool bright, bool from_l
 void NoteField::DidHoldNote(int col, HoldNoteScore score, bool bright, bool from_lua)
 {
 	OPEN_CALLBACK_BLOCK(m_DidHoldNoteCallback);
-	lua_pushnumber(L, col);
+	PUSH_COLUMN;
 	Enum::Push(L, score);
 	lua_pushboolean(L, bright);
 	OPEN_RUN_BLOCK(3);
@@ -1485,6 +1486,7 @@ void NoteField::DidHoldNote(int col, HoldNoteScore score, bool bright, bool from
 #undef OPEN_CALLBACK_BLOCK
 #undef OPEN_RUN_BLOCK
 #undef CLOSE_RUN_AND_CALLBACK_BLOCKS
+#undef PUSH_COLUMN
 
 void NoteField::HandleMessage( const Message &msg )
 {
