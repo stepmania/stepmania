@@ -2603,6 +2603,7 @@ public:
 	static int GetTotalMines( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalMines ); return 1; }
 	static int GetTotalHands( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalHands ); return 1; }
 	static int GetTotalLifts( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalLifts ); return 1; }
+	DEFINE_METHOD(GetTotalDancePoints, m_iTotalDancePoints);
 	static int GetUserTable( T* p, lua_State *L )		{ p->m_UserTable.PushSelf(L); return 1; }
 	static int GetLastPlayedSong( T* p, lua_State *L )
 	{
@@ -2688,6 +2689,7 @@ public:
 		ADD_METHOD( GetTotalMines );
 		ADD_METHOD( GetTotalHands );
 		ADD_METHOD( GetTotalLifts );
+		ADD_METHOD( GetTotalDancePoints );
 		ADD_METHOD( GetUserTable );
 		ADD_METHOD( GetLastPlayedSong );
 		ADD_METHOD( GetLastPlayedCourse );

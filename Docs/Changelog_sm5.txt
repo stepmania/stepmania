@@ -4,6 +4,10 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2014/12/18
+----------
+* [Profile] GetTotalDancePoints added. [kyzentun]
+
 2014/12/10
 ----------
 * [EditMode] Play whole song and play from current beat will now play until

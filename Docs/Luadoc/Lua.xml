@@ -1220,6 +1220,7 @@
 			<Function name='GetSongsPercentComplete'/>
 			<Function name='GetSongsPossible'/>
 			<Function name='GetTotalCaloriesBurned'/>
+			<Function name='GetTotalDancePoints'/>
 			<Function name='GetTotalGameplaySeconds'/>
 			<Function name='GetTotalHands'/>
 			<Function name='GetTotalHolds'/>
