@@ -4,6 +4,16 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2014/12/20
+----------
+* [Preferences] AllowMultipleHighScoreWithSameName, ComboContinuesBetweenSongs
+  Disqualification, FailOffForFirstStageEasy, FailOffInBeginner,
+  LockCourseDifficulties, InputDebounceTime, MaxHighScoresPerListForMachine,
+  and MaxHighScoresPerListForPlayer added to service options.
+  InputDebounceTime is in Input Options, the rest are in Arcade Options.
+  (might not show up in themes that customize the order and placement of the
+  preferences) [kyzentun]
+
 2014/12/18
 ----------
 * [Profile] GetTotalDancePoints added. [kyzentun]
@@ -50,7 +60,7 @@ ________________________________________________________________________________
   a new profile was created fixed. [kyzentun]
 * [Everything] Actor and singleton functions that formerly returned nothing now
   return the actor or singleton. Example (set zoom, x, y, and diffuse in one):
-	self:zoom(.5):xy(_screen.cx, _screen.h-60):diffuse(color("#dc322f"))
+  self:zoom(.5):xy(_screen.cx, _screen.h-60):diffuse(color("#dc322f"))
   This also works for PlayerOptions and SongOptions API functions.  Pass true
   as an extra arg, and they can be chained.
 

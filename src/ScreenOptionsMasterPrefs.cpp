@@ -405,6 +405,13 @@ static void MusicWheelSwitchSpeed( int &sel, bool ToSel, const ConfOption *pConf
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
+static void InputDebounceTime(int& sel, bool to_sel, ConfOption const* conf_option)
+{
+	float const mapping[]= {0.0f, 0.01f, 0.02f, 0.03f, 0.04f, 0.05f, 0.06f, 0.07f, 0.08f, 0.09f, 0.1f};
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
+}
+
+// Machine options
 static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	// 0 = Pay, 1 = Free
@@ -486,6 +493,18 @@ static void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption 
 	// StepMania 3.9 and 4.0 values:
 	const float mapping[] = { 1.60f,1.40f,1.20f,1.00f,0.80f,0.60f,0.40f };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
+}
+
+static void MaxHighScoresPerListForMachine(int& sel, bool to_sel, ConfOption const* conf_option)
+{
+	int const mapping[]= {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
+}
+
+static void MaxHighScoresPerListForPlayer(int& sel, bool to_sel, ConfOption const* conf_option)
+{
+	int const mapping[]= {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
 }
 
 
@@ -730,6 +749,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ArcadeOptionsNavigation",	MovePref<bool>,		"StepMania Style","Arcade Style" ) );
 	ADD( ConfOption( "ThreeKeyNavigation", MovePref<bool>, "Five Key Menu", "Three Key Menu" ) );
 	ADD( ConfOption( "MusicWheelSwitchSpeed",	MusicWheelSwitchSpeed,	"Slow","Normal","Fast","Really Fast" ) );
+	ADD( ConfOption( "InputDebounceTime", InputDebounceTime, "0ms", "10ms", "20ms", "30ms", "40ms", "50ms", "60ms", "70ms", "80ms", "90ms", "100ms") );
 
 	// Gameplay options
 	ADD( ConfOption( "Center1Player",		MovePref<bool>,		"Off","On" ) );
@@ -738,6 +758,12 @@ static void InitializeConfOptions()
 	// W1 is Fantastic Timing
 	ADD( ConfOption( "AllowW1",			MovePref<AllowW1>,	"Never","Courses Only","Always" ) );
 	ADD( ConfOption( "AllowExtraStage",		MovePref<bool>,		"Off","On" ) );
+	ADD( ConfOption( "AllowMultipleHighScoreWithSameName", MovePref<bool>, "Off", "On" ) );
+	ADD( ConfOption( "ComboContinuesBetweenSongs", MovePref<bool>, "Off", "On") );
+	ADD( ConfOption( "Disqualification", MovePref<bool>,		"Off","On" ) );
+	ADD( ConfOption( "FailOffForFirstStageEasy", MovePref<bool>, "Off","On" ) );
+	ADD( ConfOption( "FailOffInBeginner", MovePref<bool>, "Off","On" ) );
+	ADD( ConfOption( "LockCourseDifficulties", MovePref<bool>, "Off", "On" ) );
 	ADD( ConfOption( "PickExtraStage",		MovePref<bool>,		"Off","On" ) );
 	ADD( ConfOption( "UseUnlockSystem",		MovePref<bool>,		"Off","On" ) );
 
@@ -767,6 +793,8 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ShowSongOptions",		MovePref<Maybe>,	"Ask", "Hide","Show" ) );
 	ADD( ConfOption( "PercentageScoring",	MovePref<bool>,	"Off","On" ) );
 	ADD( ConfOption( "GetRankingName",		MovePref<GetRankingName>, "Off", "On", "Ranking Songs" ) );
+	ADD( ConfOption( "MaxHighScoresPerListForMachine", MaxHighScoresPerListForMachine, "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20") );
+	ADD( ConfOption( "MaxHighScoresPerListForPlayer", MaxHighScoresPerListForPlayer, "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20") );
 	ADD( ConfOption( "MinTNSToHideNotes", MovePref<TapNoteScore>, "TNS_None", "TNS_HitMine", "TNS_AvoidMine", "TNS_CheckpointMiss", "TNS_Miss", "TNS_W5", "TNS_W4", "TNS_W3", "TNS_W2", "TNS_W1", "TNS_CheckpointHit"));
 
 
