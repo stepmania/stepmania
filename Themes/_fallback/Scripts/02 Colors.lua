@@ -145,17 +145,22 @@ function PlayerDarkColor( pn )
 	return color("1,1,1,1")
 end
 
+local function GameColorDifficultyWrapper(diff)
+	assert(GameColor.Difficulty[diff], "GameColor:  There is no entry in GameColor.Difficulty for CustomDifficulty '" .. tostring(diff) .. "'.")
+	return GameColor.Difficulty[diff]
+end
+
 function CustomDifficultyToColor( sCustomDifficulty )
-	return GameColor.Difficulty[sCustomDifficulty]
+	return GameColorDifficultyWrapper(sCustomDifficulty)
 end
 
 function CustomDifficultyToDarkColor( sCustomDifficulty ) 
-	local c = GameColor.Difficulty[sCustomDifficulty]
+	local c = GameColorDifficultyWrapper(sCustomDifficulty)
 	return { c[1]/2, c[2]/2, c[3]/2, c[4] }
 end
 
 function CustomDifficultyToLightColor( sCustomDifficulty ) 
-	local c = GameColor.Difficulty[sCustomDifficulty]
+	local c = GameColorDifficultyWrapper(sCustomDifficulty)
 	return { scale(c[1],0,1,0.5,1), scale(c[2],0,1,0.5,1), scale(c[3],0,1,0.5,1), c[4] }
 end
 
