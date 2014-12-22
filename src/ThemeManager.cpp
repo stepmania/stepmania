@@ -629,7 +629,8 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 					case FT_Xml:
 					case FT_Model:
 					case FT_Lua:
-						matches= category == EC_BGANIMATIONS || category == EC_GRAPHICS;
+						matches= category == EC_BGANIMATIONS || category == EC_GRAPHICS
+							|| category == EC_SOUNDS;
 						break;
 					case FT_Ini:
 						matches= category == EC_FONTS;
@@ -858,8 +859,13 @@ RString ThemeManager::GetPath( ElementCategory category, const RString &sMetrics
 {
 	PathInfo pi;
 	GetPathInfo( pi, category, sMetricsGroup, sElement, bOptional );
-	if(!bOptional)
-		ASSERT( !pi.sResolvedPath.empty() );
+	if(!bOptional && pi.sResolvedPath.empty())
+	{
+		LuaHelpers::ReportScriptErrorFmt("Theme element not found and not "
+			"optional: Category: %s  Metrics group: %s  Element name: %s.",
+			ElementCategoryToString(category).c_str(), sMetricsGroup.c_str(),
+			sElement.c_str());
+	}
 	return pi.sResolvedPath;
 }
 
