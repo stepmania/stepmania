@@ -149,38 +149,34 @@ void ScreenHowToPlay::Init()
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
 
 		Steps *pSteps = SongUtil::GetClosestNotes( &m_Song, pStyle->m_StepsType, Difficulty_Beginner );
-		ASSERT_M( pSteps != NULL, ssprintf("No playable steps of StepsType '%s' for ScreenHowToPlay", StringConversion::ToString(pStyle->m_StepsType).c_str()) );
+		if(pSteps == NULL)
+		{
+			LuaHelpers::ReportScriptErrorFmt("No playable steps of StepsType '%s' for ScreenHowToPlay in file %s", StringConversion::ToString(pStyle->m_StepsType).c_str(), sStepsPath.c_str());
+		}
+		else
+		{
+			m_Song.m_SongTiming.TidyUpData( false );
+			pSteps->m_Timing.TidyUpData( true );
+			NoteData tempNoteData;
+			pSteps->GetNoteData( tempNoteData );
+			pStyle->GetTransformedNoteDataForStyle( PLAYER_1, tempNoteData, m_NoteData );
 
-		m_Song.m_SongTiming.TidyUpData( false );
-		pSteps->m_Timing.TidyUpData( true );
-		NoteData tempNoteData;
-		pSteps->GetNoteData( tempNoteData );
-		pStyle->GetTransformedNoteDataForStyle( PLAYER_1, tempNoteData, m_NoteData );
+			GAMESTATE->m_pCurSong.Set( &m_Song );
+			GAMESTATE->m_pCurSteps[PLAYER_1].Set(pSteps);
+			GAMESTATE->m_bGameplayLeadIn.Set( false );
+			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_AUTOPLAY;
 
-		GAMESTATE->m_pCurSong.Set( &m_Song );
-		GAMESTATE->m_pCurSteps[PLAYER_1].Set(pSteps);
-		GAMESTATE->m_bGameplayLeadIn.Set( false );
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_AUTOPLAY;
+			m_Player->Init("Player", GAMESTATE->m_pPlayerState[PLAYER_1],
+				NULL, m_pLifeMeterBar, NULL, NULL, NULL, NULL, NULL, NULL);
+			m_Player.Load( m_NoteData );
+			m_Player->SetName( "Player" );
+			this->AddChild( m_Player );
+			ActorUtil::LoadAllCommandsAndSetXY( m_Player, m_sName );
 
-		m_Player->Init( 
-			"Player",
-			GAMESTATE->m_pPlayerState[PLAYER_1], 
-			NULL,
-			m_pLifeMeterBar, 
-			NULL, 
-			NULL, 
-			NULL, 
-			NULL, 
-			NULL, 
-			NULL );
-		m_Player.Load( m_NoteData );
-		m_Player->SetName( "Player" );
-		this->AddChild( m_Player );
-		ActorUtil::LoadAllCommandsAndSetXY( m_Player, m_sName );
-
-		// Don't show judgment
-		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_fBlind, 1.0f );
-		GAMESTATE->m_bDemonstrationOrJukebox = true;
+			// Don't show judgment
+			PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_fBlind, 1.0f );
+			GAMESTATE->m_bDemonstrationOrJukebox = true;
+		}
 	}
 
 	// deferred until after the player, so the notes go under it
