@@ -1831,6 +1831,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 			// update give up
 			bool bGiveUpTimerFired = !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > GIVE_UP_SECONDS;
+			m_gave_up= bGiveUpTimerFired;
 
 
 			bool bAllHumanHaveBigMissCombo = true;
@@ -2526,16 +2527,23 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
 			// Mark failure.
-			if( GAMESTATE->GetPlayerFailType(pi->GetPlayerState()) != FailType_Off &&
-				(pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing()) )
+			if(GAMESTATE->GetPlayerFailType(pi->GetPlayerState()) != FailType_Off
+					&& (pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing()))
+			{
 				pi->GetPlayerStageStats()->m_bFailed = true;
+			}
 
 			if( !pi->GetPlayerStageStats()->m_bFailed )
+			{
 				pi->GetPlayerStageStats()->m_iSongsPassed++;
+			}
 
 			// set a life record at the point of failure
 			if( pi->GetPlayerStageStats()->m_bFailed )
-				pi->GetPlayerStageStats()->SetLifeRecordAt( 0, STATSMAN->m_CurStageStats.m_fGameplaySeconds );
+			{
+				pi->GetPlayerStageStats()->SetLifeRecordAt(
+					0, STATSMAN->m_CurStageStats.m_fGameplaySeconds );
+			}
 		}
 
 		/* If all players have *really* failed (bFailed, not the life meter or
@@ -2544,9 +2552,11 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		const bool bStopCourseEarly = STOP_COURSE_EARLY;
 		const bool bIsLastSong = IsLastSong();
 
-		LOG->Trace( "bAllReallyFailed = %d, bStopCourseEarly = %d, bIsLastSong = %d", bAllReallyFailed, bStopCourseEarly, bIsLastSong );
+		LOG->Trace( "bAllReallyFailed = %d, bStopCourseEarly = %d, "
+			"bIsLastSong = %d, m_gave_up = %d", bAllReallyFailed, bStopCourseEarly,
+			bIsLastSong, m_gave_up );
 
-		if( bStopCourseEarly || bAllReallyFailed || bIsLastSong )
+		if( bStopCourseEarly || bAllReallyFailed || bIsLastSong || m_gave_up )
 		{
 			// Time to leave from ScreenGameplay
 			HandleScreenMessage( SM_LeaveGameplay );
