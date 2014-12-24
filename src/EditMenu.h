@@ -102,74 +102,86 @@ public:
 
 	void RefreshAll();
 
+	bool SafeToUse();
+
+#define RETURN_IF_INVALID(check, retval) if(check) { return retval; }
+
 	/** @brief Retrieve the currently selected group.
 	 * @return the current group. */
 	RString	GetSelectedGroup() const
 	{ 
 		if( !SHOW_GROUPS.GetValue() ) return GROUP_ALL; 
 		int groups = static_cast<int>(m_sGroups.size());
-		ASSERT_M(m_iSelection[ROW_GROUP] < groups,
-			 ssprintf("Group selection %d < Number of groups %d",
-				  m_iSelection[ROW_GROUP],
-				  groups)); 
+		RETURN_IF_INVALID(m_iSelection[ROW_GROUP] >= groups, "");
 		return m_sGroups[m_iSelection[ROW_GROUP]]; 
 	}
 	/** @brief Retrieve the currently selected song.
 	 * @return the current song. */
 	Song*	GetSelectedSong() const	
 	{
-		ASSERT(m_iSelection[ROW_SONG] < (int)m_pSongs.size());	
+		RETURN_IF_INVALID(m_pSongs.empty() ||
+			m_iSelection[ROW_SONG] >= (int)m_pSongs.size(), NULL);
 		return m_pSongs[m_iSelection[ROW_SONG]]; 
 	}
 	/** @brief Retrieve the currently selected steps type.
 	 * @return the current steps type. */
 	StepsType GetSelectedStepsType() const
 	{
-		ASSERT(m_iSelection[ROW_STEPS_TYPE] < (int)m_StepsTypes.size());
+		RETURN_IF_INVALID(m_StepsTypes.empty() ||
+			m_iSelection[ROW_STEPS_TYPE] >= (int)m_StepsTypes.size(), StepsType_Invalid);
 		return m_StepsTypes[m_iSelection[ROW_STEPS_TYPE]];
 	}
 	/** @brief Retrieve the currently selected steps.
 	 * @return the current steps. */
 	Steps*	GetSelectedSteps() const
 	{
-		ASSERT(m_iSelection[ROW_STEPS] < (int)m_vpSteps.size());
+		RETURN_IF_INVALID(m_vpSteps.empty() ||
+			m_iSelection[ROW_STEPS] >= (int)m_vpSteps.size(), NULL);
 		return m_vpSteps[m_iSelection[ROW_STEPS]].pSteps; 
 	}
 	/** @brief Retrieve the currently selected difficulty.
 	 * @return the current difficulty. */
 	Difficulty GetSelectedDifficulty() const
 	{
-		ASSERT(m_iSelection[ROW_STEPS] < (int)m_vpSteps.size());
+		RETURN_IF_INVALID(m_vpSteps.empty() ||
+			m_iSelection[ROW_STEPS] >= (int)m_vpSteps.size(), Difficulty_Invalid);
 		return m_vpSteps[m_iSelection[ROW_STEPS]].dc;
 	}
 	/** @brief Retrieve the currently selected source steps type.
 	 * @return the current source steps type. */
 	StepsType GetSelectedSourceStepsType() const
 	{
-		ASSERT(m_iSelection[ROW_SOURCE_STEPS_TYPE] < (int)m_StepsTypes.size());	
+		RETURN_IF_INVALID(m_StepsTypes.empty() ||
+			m_iSelection[ROW_SOURCE_STEPS_TYPE] >= (int)m_StepsTypes.size(), StepsType_Invalid);
 		return m_StepsTypes[m_iSelection[ROW_SOURCE_STEPS_TYPE]];
 	}
 	/** @brief Retrieve the currently selected source steps.
 	 * @return the current source steps. */
 	Steps* GetSelectedSourceSteps() const 
 	{
-		ASSERT(m_iSelection[ROW_SOURCE_STEPS] < (int)m_vpSourceSteps.size());	
+		RETURN_IF_INVALID(m_vpSourceSteps.empty() ||
+			m_iSelection[ROW_SOURCE_STEPS] >= (int)m_vpSourceSteps.size(), NULL);
 		return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].pSteps; 
 	}
 	/** @brief Retrieve the currently selected difficulty.
 	 * @return the current difficulty. */
 	Difficulty GetSelectedSourceDifficulty() const
 	{
-		ASSERT(m_iSelection[ROW_SOURCE_STEPS] < (int)m_vpSourceSteps.size());
+		RETURN_IF_INVALID(m_vpSourceSteps.empty() ||
+			m_iSelection[ROW_SOURCE_STEPS] >= (int)m_vpSourceSteps.size(), Difficulty_Invalid);
 		return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].dc;
 	}
 	/** @brief Retrieve the currently selected action.
 	 * @return the current action. */
 	EditMenuAction GetSelectedAction() const
 	{
-		ASSERT(m_iSelection[ROW_ACTION]	< (int)m_Actions.size());
+		RETURN_IF_INVALID(m_Actions.empty() ||
+			m_iSelection[ROW_ACTION]	>= (int)m_Actions.size(), EditMenuAction_Invalid);
 		return m_Actions[m_iSelection[ROW_ACTION]]; 
 	}
+
+#undef RETURN_IF_INVALID
+
 	/** @brief Retrieve the currently selected row.
 	 * @return the current row. */
 	EditMenuRow GetSelectedRow() const { return m_SelectedRow; }

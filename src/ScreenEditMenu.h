@@ -29,6 +29,7 @@ private:
 private:
 	BitmapText		m_textExplanation;
 	BitmapText		m_textNumStepsLoadedFromProfile;
+	BitmapText m_NoSongsMessage;
 };
 
 #endif

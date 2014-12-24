@@ -56,6 +56,16 @@ void ScreenEditMenu::Init()
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textNumStepsLoadedFromProfile );
 	RefreshNumStepsLoadedFromProfile();
 	this->AddChild( &m_textNumStepsLoadedFromProfile );
+	if(!m_Selector.SafeToUse())
+	{
+		m_NoSongsMessage.SetName("NoSongsMessage");
+		m_NoSongsMessage.LoadFromFont(THEME->GetPathF(m_sName, "NoSongsMessage"));
+		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND(m_NoSongsMessage);
+		AddChild(&m_NoSongsMessage);
+		m_Selector.SetVisible(false);
+		m_textExplanation.SetVisible(false);
+		m_textNumStepsLoadedFromProfile.SetVisible(false);
+	}
 }
 
 void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
@@ -161,11 +171,16 @@ static LocalizedString DELETED_AUTOGEN_STEPS	( "ScreenEditMenu", "These steps ar
 static LocalizedString STEPS_WILL_BE_LOST	( "ScreenEditMenu", "These steps will be lost permanently." );
 static LocalizedString CONTINUE_WITH_DELETE	( "ScreenEditMenu", "Continue with delete?" );
 static LocalizedString ENTER_EDIT_DESCRIPTION	( "ScreenEditMenu", "Enter a description for this edit.");
+static LocalizedString INVALID_SELECTION("ScreenEditMenu", "One of the selected things is invalid.  Pick something valid instead.");
 
 bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 {
 	if( IsTransitioning() )
 		return false;
+	if(!m_Selector.SafeToUse())
+	{
+		return false;
+	}
 
 	if( m_Selector.CanGoDown() )
 	{
@@ -182,6 +197,11 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 //	Difficulty sourceDiff	= m_Selector.GetSelectedSourceDifficulty();
 	Steps* pSourceSteps	= m_Selector.GetSelectedSourceSteps();
 	EditMenuAction action	= m_Selector.GetSelectedAction();
+	if(st == StepsType_Invalid)
+	{
+		ScreenPrompt::Prompt(SM_None, INVALID_SELECTION);
+		return true;
+	}
 
 	GAMESTATE->m_pCurSong.Set( pSong );
 	GAMESTATE->m_pCurCourse.Set( NULL );
