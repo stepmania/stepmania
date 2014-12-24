@@ -458,7 +458,7 @@ void BMSSong::PrecacheBackgrounds(const RString &dir)
 	
 	for( unsigned i = 0; i < arrayPossibleFiles.size(); i++ )
 	{
-		for( unsigned j = 0; exts[j] != NULL; ++j )
+		for (unsigned j = 0; exts[j] != NULL && j < exts.size(); ++j)
 		{
 			RString fn = SetExtension( arrayPossibleFiles[i], exts[j] );
 			mapBackground[fn] = arrayPossibleFiles[i];
@@ -926,11 +926,14 @@ bool BMSChartReader::ReadNoteData()
 			{
 				search = ssprintf( "#bmp%s", obj.value.c_str() );
 				it = in->headers.find( search );
-				
-				RString bg;
-				if (song->GetBackground(it->second, in->path, bg))
+
+				if (it != in->headers.end())
 				{
-					info.backgroundChanges[row] = bg;
+					RString bg;
+					if (song->GetBackground(it->second, in->path, bg))
+					{
+						info.backgroundChanges[row] = bg;
+					}
 				}
 			}
 		}
