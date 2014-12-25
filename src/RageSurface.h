@@ -10,9 +10,21 @@ struct RageSurfaceColor
 	RageSurfaceColor(): r(0), g(0), b(0), a(0) { }
 	RageSurfaceColor( uint8_t r_, uint8_t g_, uint8_t b_, uint8_t a_ ):
 		r(r_), g(g_), b(b_), a(a_) { }
-
-	bool operator== ( const RageSurfaceColor &rhs ) const;
 };
+
+inline bool operator==(RageSurfaceColor const &lhs, RageSurfaceColor const &rhs)
+{
+  return
+    lhs.r == rhs.r &&
+    lhs.g == rhs.g &&
+    lhs.b == rhs.b &&
+    lhs.a == rhs.a;
+}
+
+inline bool operator!=(RageSurfaceColor const &lhs, RageSurfaceColor const &rhs)
+{
+  return !operator==(lhs, rhs);
+}
 
 struct RageSurfacePalette 
 {

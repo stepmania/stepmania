@@ -15,6 +15,8 @@
 #include "NotesLoader.h"
 #include "PrefsManager.h"
 #include "BackgroundUtil.h"
+#include "ActorUtil.h"
+#include "RageFileManager.h"
 
 /* BMS encoding:	tap-hold
  * 4&8panel:	Player1		Player2
@@ -136,17 +138,40 @@ struct BMSObject
 	float position;
 	bool flag;
 	RString value;
-	bool operator<(const BMSObject &other) const
-	{
-		if( measure < other.measure ) return true;
-		if( measure > other.measure ) return false;
-		if( position < other.position ) return true;
-		if( position > other.position ) return false;
-		if( channel == 1 ) return false;
-		if( other.channel == 1 ) return true;
-		return channel < other.channel;
-	}
 };
+
+inline bool operator<(BMSObject const &lhs, BMSObject const &rhs)
+{
+	if (lhs.measure != rhs.measure)
+	{
+		return lhs.measure < rhs.measure;
+	}
+	if (lhs.position != rhs.position)
+	{
+		return lhs.position < rhs.position;
+	}
+	if (lhs.channel == 1)
+	{
+		return false;
+	}
+	if (rhs.channel == 1)
+	{
+		return true;
+	}
+	return lhs.channel < rhs.channel;
+}
+inline bool operator>(BMSObject const &lhs, BMSObject const &rhs)
+{
+	return operator<(rhs, lhs);
+}
+inline bool operator<=(BMSObject const &lhs, BMSObject const &rhs)
+{
+	return !operator<(rhs, lhs);
+}
+inline bool operator>=(BMSObject const &lhs, BMSObject const &rhs)
+{
+	return !operator<(lhs, rhs);
+}
 
 struct BMSMeasure
 {
@@ -328,8 +353,8 @@ int BMSSong::AllocateKeysound( RString filename, RString path )
 
 	if( !IsAFile(dir + normalizedFilename) )
 	{
-		const char *exts[] = { "oga", "ogg", "wav", "mp3", NULL }; // XXX: stop duplicating these everywhere
-		for( unsigned i = 0; exts[i] != NULL; ++i )
+		vector<RString> const& exts= ActorUtil::GetTypeExtensionList(FT_Sound);
+		for(size_t i = 0; i < exts.size(); ++i)
 		{
 			RString fn = SetExtension( normalizedFilename, exts[i] );
 			if( IsAFile(dir + fn) )
@@ -393,8 +418,10 @@ bool BMSSong::GetBackground( RString filename, RString path, RString &bgfile )
 	
 	if( !IsAFile(dir + normalizedFilename) )
 	{
-		const char *exts[] = { "ogv", "avi", "mpg", "mpeg", "bmp", "png", "jpeg", NULL }; // XXX: stop duplicating these everywhere
-		for( unsigned i = 0; exts[i] != NULL; ++i )
+		vector<RString> exts;
+		ActorUtil::AddTypeExtensionsToList(FT_Movie, exts);
+		ActorUtil::AddTypeExtensionsToList(FT_Bitmap, exts);
+		for(size_t i = 0; i < exts.size(); ++i)
 		{
 			RString fn = SetExtension( normalizedFilename, exts[i] );
 			if( IsAFile(dir + fn) )
@@ -424,12 +451,10 @@ void BMSSong::PrecacheBackgrounds(const RString &dir)
 	backgroundsPrecached = true;
 	vector<RString> arrayPossibleFiles;
 	
-	const char *exts[] = { "ogv", "avi", "mpg", "mpeg", "bmp", "png", "jpeg", NULL }; // XXX: stop duplicating these everywhere
-	
-	for( unsigned i = 0; exts[i] != NULL; ++i )
-	{
-		GetDirListing( dir + RString("*.") + RString(exts[i]), arrayPossibleFiles );
-	}
+	vector<RString> exts;
+	ActorUtil::AddTypeExtensionsToList(FT_Movie, exts);
+	ActorUtil::AddTypeExtensionsToList(FT_Bitmap, exts);
+	FILEMAN->GetDirListingWithMultipleExtensions(dir + RString("*."), exts, arrayPossibleFiles);
 	
 	for( unsigned i = 0; i < arrayPossibleFiles.size(); i++ )
 	{

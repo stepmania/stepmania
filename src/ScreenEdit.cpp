@@ -30,6 +30,7 @@
 #include "ScreenTextEntry.h"
 #include "SongManager.h"
 #include "SongUtil.h"
+#include "SpecialFiles.h"
 #include "StepsUtil.h"
 #include "Style.h"
 #include "ThemeManager.h"
@@ -57,6 +58,9 @@ const float RECORD_HOLD_SECONDS = 0.3f;
 
 #define PLAY_RECORD_HELP_TEXT	THEME->GetString(m_sName,"PlayRecordHelpText")
 #define EDIT_HELP_TEXT		THEME->GetString(m_sName,"EditHelpText")
+
+#define SET_MOD_SCREEN THEME->GetMetric("ScreenEdit", "SetModScreen")
+#define OPTIONS_SCREEN THEME->GetMetric("ScreenEdit", "OptionsScreen")
 
 AutoScreenMessage( SM_UpdateTextInfo );
 AutoScreenMessage( SM_BackFromMainMenu );
@@ -115,8 +119,120 @@ static const char *EditStateNames[] = {
 XToString( EditState );
 LuaXType( EditState );
 
+map<RString, EditButton> name_to_edit_button;
+
 void ScreenEdit::InitEditMappings()
 {
+	// Created courtesy of query replace regex.
+	name_to_edit_button["COLUMN_0"]= EDIT_BUTTON_COLUMN_0;
+	name_to_edit_button["COLUMN_1"]= EDIT_BUTTON_COLUMN_1;
+	name_to_edit_button["COLUMN_2"]= EDIT_BUTTON_COLUMN_2;
+	name_to_edit_button["COLUMN_3"]= EDIT_BUTTON_COLUMN_3;
+	name_to_edit_button["COLUMN_4"]= EDIT_BUTTON_COLUMN_4;
+	name_to_edit_button["COLUMN_5"]= EDIT_BUTTON_COLUMN_5;
+	name_to_edit_button["COLUMN_6"]= EDIT_BUTTON_COLUMN_6;
+	name_to_edit_button["COLUMN_7"]= EDIT_BUTTON_COLUMN_7;
+	name_to_edit_button["COLUMN_8"]= EDIT_BUTTON_COLUMN_8;
+	name_to_edit_button["COLUMN_9"]= EDIT_BUTTON_COLUMN_9;
+
+	name_to_edit_button["RIGHT_SIDE"]= EDIT_BUTTON_RIGHT_SIDE;
+	name_to_edit_button["LAY_ROLL"]= EDIT_BUTTON_LAY_ROLL;
+	name_to_edit_button["LAY_TAP_ATTACK"]= EDIT_BUTTON_LAY_TAP_ATTACK;
+	name_to_edit_button["REMOVE_NOTE"]= EDIT_BUTTON_REMOVE_NOTE;
+
+	name_to_edit_button["CYCLE_TAP_LEFT"]= EDIT_BUTTON_CYCLE_TAP_LEFT;
+	name_to_edit_button["CYCLE_TAP_RIGHT"]= EDIT_BUTTON_CYCLE_TAP_RIGHT;
+
+	name_to_edit_button["CYCLE_SEGMENT_LEFT"]= EDIT_BUTTON_CYCLE_SEGMENT_LEFT;
+	name_to_edit_button["CYCLE_SEGMENT_RIGHT"]= EDIT_BUTTON_CYCLE_SEGMENT_RIGHT;
+
+	name_to_edit_button["SCROLL_UP_LINE"]= EDIT_BUTTON_SCROLL_UP_LINE;
+	name_to_edit_button["SCROLL_UP_PAGE"]= EDIT_BUTTON_SCROLL_UP_PAGE;
+	name_to_edit_button["SCROLL_UP_TS"]= EDIT_BUTTON_SCROLL_UP_TS;
+	name_to_edit_button["SCROLL_DOWN_LINE"]= EDIT_BUTTON_SCROLL_DOWN_LINE;
+	name_to_edit_button["SCROLL_DOWN_PAGE"]= EDIT_BUTTON_SCROLL_DOWN_PAGE;
+	name_to_edit_button["SCROLL_DOWN_TS"]= EDIT_BUTTON_SCROLL_DOWN_TS;
+	name_to_edit_button["SCROLL_NEXT_MEASURE"]= EDIT_BUTTON_SCROLL_NEXT_MEASURE;
+	name_to_edit_button["SCROLL_PREV_MEASURE"]= EDIT_BUTTON_SCROLL_PREV_MEASURE;
+	name_to_edit_button["SCROLL_HOME"]= EDIT_BUTTON_SCROLL_HOME;
+	name_to_edit_button["SCROLL_END"]= EDIT_BUTTON_SCROLL_END;
+	name_to_edit_button["SCROLL_NEXT"]= EDIT_BUTTON_SCROLL_NEXT;
+	name_to_edit_button["SCROLL_PREV"]= EDIT_BUTTON_SCROLL_PREV;
+
+	name_to_edit_button["SEGMENT_NEXT"]= EDIT_BUTTON_SEGMENT_NEXT;
+	name_to_edit_button["SEGMENT_PREV"]= EDIT_BUTTON_SEGMENT_PREV;
+
+	name_to_edit_button["SCROLL_SELECT"]= EDIT_BUTTON_SCROLL_SELECT;
+
+	name_to_edit_button["LAY_SELECT"]= EDIT_BUTTON_LAY_SELECT;
+
+	name_to_edit_button["SCROLL_SPEED_UP"]= EDIT_BUTTON_SCROLL_SPEED_UP;
+	name_to_edit_button["SCROLL_SPEED_DOWN"]= EDIT_BUTTON_SCROLL_SPEED_DOWN;
+
+	name_to_edit_button["SNAP_NEXT"]= EDIT_BUTTON_SNAP_NEXT;
+	name_to_edit_button["SNAP_PREV"]= EDIT_BUTTON_SNAP_PREV;
+
+	name_to_edit_button["OPEN_EDIT_MENU"]= EDIT_BUTTON_OPEN_EDIT_MENU;
+	name_to_edit_button["OPEN_TIMING_MENU"]= EDIT_BUTTON_OPEN_TIMING_MENU;
+	name_to_edit_button["OPEN_ALTER_MENU"]= EDIT_BUTTON_OPEN_ALTER_MENU;
+	name_to_edit_button["OPEN_AREA_MENU"]= EDIT_BUTTON_OPEN_AREA_MENU;
+	name_to_edit_button["OPEN_BGCHANGE_LAYER1_MENU"]= EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU;
+	name_to_edit_button["OPEN_BGCHANGE_LAYER2_MENU"]= EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU;
+	name_to_edit_button["OPEN_COURSE_MENU"]= EDIT_BUTTON_OPEN_COURSE_MENU;
+	name_to_edit_button["OPEN_COURSE_ATTACK_MENU"]= EDIT_BUTTON_OPEN_COURSE_ATTACK_MENU;
+
+	name_to_edit_button["OPEN_STEP_ATTACK_MENU"]= EDIT_BUTTON_OPEN_STEP_ATTACK_MENU;
+	name_to_edit_button["ADD_STEP_MODS"]= EDIT_BUTTON_ADD_STEP_MODS;
+
+	name_to_edit_button["OPEN_INPUT_HELP"]= EDIT_BUTTON_OPEN_INPUT_HELP;
+
+	name_to_edit_button["BAKE_RANDOM_FROM_SONG_GROUP"]= EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP;
+	name_to_edit_button["BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE"]= EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE;
+
+	name_to_edit_button["PLAY_FROM_START"]= EDIT_BUTTON_PLAY_FROM_START;
+	name_to_edit_button["PLAY_FROM_CURSOR"]= EDIT_BUTTON_PLAY_FROM_CURSOR;
+	name_to_edit_button["PLAY_SELECTION"]= EDIT_BUTTON_PLAY_SELECTION;
+	name_to_edit_button["RECORD_FROM_CURSOR"]= EDIT_BUTTON_RECORD_FROM_CURSOR;
+	name_to_edit_button["RECORD_SELECTION"]= EDIT_BUTTON_RECORD_SELECTION;
+
+	name_to_edit_button["RETURN_TO_EDIT"]= EDIT_BUTTON_RETURN_TO_EDIT;
+
+	name_to_edit_button["INSERT"]= EDIT_BUTTON_INSERT;
+	name_to_edit_button["DELETE"]= EDIT_BUTTON_DELETE;
+	name_to_edit_button["INSERT_SHIFT_PAUSES"]= EDIT_BUTTON_INSERT_SHIFT_PAUSES;
+	name_to_edit_button["DELETE_SHIFT_PAUSES"]= EDIT_BUTTON_DELETE_SHIFT_PAUSES;
+
+	name_to_edit_button["OPEN_NEXT_STEPS"]= EDIT_BUTTON_OPEN_NEXT_STEPS;
+	name_to_edit_button["OPEN_PREV_STEPS"]= EDIT_BUTTON_OPEN_PREV_STEPS;
+	name_to_edit_button["PLAY_SAMPLE_MUSIC"]= EDIT_BUTTON_PLAY_SAMPLE_MUSIC;
+
+	name_to_edit_button["BPM_UP"]= EDIT_BUTTON_BPM_UP;
+	name_to_edit_button["BPM_DOWN"]= EDIT_BUTTON_BPM_DOWN;
+	name_to_edit_button["STOP_UP"]= EDIT_BUTTON_STOP_UP;
+	name_to_edit_button["STOP_DOWN"]= EDIT_BUTTON_STOP_DOWN;
+
+	name_to_edit_button["DELAY_UP"]= EDIT_BUTTON_DELAY_UP;
+	name_to_edit_button["DELAY_DOWN"]= EDIT_BUTTON_DELAY_DOWN;
+
+	name_to_edit_button["OFFSET_UP"]= EDIT_BUTTON_OFFSET_UP;
+	name_to_edit_button["OFFSET_DOWN"]= EDIT_BUTTON_OFFSET_DOWN;
+	name_to_edit_button["SAMPLE_START_UP"]= EDIT_BUTTON_SAMPLE_START_UP;
+	name_to_edit_button["SAMPLE_START_DOWN"]= EDIT_BUTTON_SAMPLE_START_DOWN;
+	name_to_edit_button["SAMPLE_LENGTH_UP"]= EDIT_BUTTON_SAMPLE_LENGTH_UP;
+	name_to_edit_button["SAMPLE_LENGTH_DOWN"]= EDIT_BUTTON_SAMPLE_LENGTH_DOWN;
+
+	name_to_edit_button["ADJUST_FINE"]= EDIT_BUTTON_ADJUST_FINE;
+
+	name_to_edit_button["SAVE"]= EDIT_BUTTON_SAVE;
+
+	name_to_edit_button["UNDO"]= EDIT_BUTTON_UNDO;
+
+	name_to_edit_button["ADD_COURSE_MODS"]= EDIT_BUTTON_ADD_COURSE_MODS;
+
+	name_to_edit_button["SWITCH_PLAYERS"]= EDIT_BUTTON_SWITCH_PLAYERS;
+
+	name_to_edit_button["SWITCH_TIMINGS"]= EDIT_BUTTON_SWITCH_TIMINGS;
+
 	m_EditMappingsDeviceInput.Clear();
 
 	// Common mappings:
@@ -381,7 +497,49 @@ void ScreenEdit::InitEditMappings()
 	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 	m_RecordPausedMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = GAME_BUTTON_BACK;
 	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_UNDO][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
+
+	IniFile mapping_ini;
+	// Only use the mappings file if it exists.  It's meant to be optional, and
+	// only used in rare cases like someone having critical keys broken. -Kyz
+	if(mapping_ini.ReadFile(SpecialFiles::EDIT_MODE_KEYMAPS_PATH))
+	{
+		LoadKeymapSectionIntoMappingsMember(mapping_ini.GetChild("Edit"),
+			m_EditMappingsDeviceInput);
+		LoadKeymapSectionIntoMappingsMember(mapping_ini.GetChild("Play"),
+			m_PlayMappingsDeviceInput);
+		LoadKeymapSectionIntoMappingsMember(mapping_ini.GetChild("Record"),
+			m_RecordMappingsDeviceInput);
+		LoadKeymapSectionIntoMappingsMember(mapping_ini.GetChild("RecordPaused"),
+			m_RecordPausedMappingsDeviceInput);
+	}
 }
+
+void ScreenEdit::LoadKeymapSectionIntoMappingsMember(XNode const* section, MapEditToDI& mappings)
+{
+	if(section == NULL) {return;} // Not an error, sections are optional. -Kyz
+	FOREACH_CONST_Attr(section, attr)
+	{
+		map<RString, EditButton>::iterator name_entry=
+			name_to_edit_button.find(attr->first);
+		if(name_entry != name_to_edit_button.end())
+		{
+			RString joined_names;
+			attr->second->GetValue(joined_names);
+			vector<RString> key_names;
+			split(joined_names, DEVICE_INPUT_SEPARATOR, key_names, false);
+			for(size_t k= 0; k < key_names.size() && k < NUM_EDIT_TO_DEVICE_SLOTS; ++k)
+			{
+				DeviceInput devi;
+				devi.FromString(key_names[k]);
+				if(devi.IsValid())
+				{
+					mappings.button[name_entry->second][k]= devi;
+				}
+			}
+		}
+	}
+}
+
 
 /* Given a DeviceInput that was just depressed, return an active edit function. */
 EditButton ScreenEdit::DeviceToEdit( const DeviceInput &DeviceI ) const
@@ -2567,7 +2725,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		g_fLastInsertAttackPositionSeconds = start;
 		g_fLastInsertAttackDurationSeconds = end - start;
 		toEdit.Assign( ModsLevel_Stage, po );
-		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertStepAttackPlayerOptions );
+		SCREENMAN->AddNewScreenToTop( SET_MOD_SCREEN, SM_BackFromInsertStepAttackPlayerOptions );
 		return true;
 	}
 	case EDIT_BUTTON_ADD_COURSE_MODS:
@@ -2603,7 +2761,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			g_fLastInsertAttackPositionSeconds = fStart;
 			g_fLastInsertAttackDurationSeconds = fEnd - fStart;
 			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.Assign( ModsLevel_Stage, po );
-			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertCourseAttackPlayerOptions );
+			SCREENMAN->AddNewScreenToTop( SET_MOD_SCREEN, SM_BackFromInsertCourseAttackPlayerOptions );
 
 		}
 		return true;
@@ -3584,7 +3742,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		int iDurationChoice = ScreenMiniMenu::s_viLastAnswers[0];
 		g_fLastInsertAttackDurationSeconds = StringToFloat( g_InsertTapAttack.rows[0].choices[iDurationChoice] );
 
-		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertTapAttackPlayerOptions );
+		SCREENMAN->AddNewScreenToTop( SET_MOD_SCREEN, SM_BackFromInsertTapAttackPlayerOptions );
 	}
 	else if( SM == SM_BackFromInsertTapAttackPlayerOptions )
 	{
@@ -3818,7 +3976,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 				po.FromString(attacks[iAttack].sModifiers);
 			
 			toEdit.Assign( ModsLevel_Preferred, po );
-			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertStepAttackPlayerOptions );
+			SCREENMAN->AddNewScreenToTop( SET_MOD_SCREEN, SM_BackFromInsertStepAttackPlayerOptions );
 		}
 		SetDirty(true);
 	}
@@ -3848,7 +4006,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 				po.FromString( ce.attacks[iAttack].sModifiers );
 
 			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
-			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertCourseAttackPlayerOptions );
+			SCREENMAN->AddNewScreenToTop( SET_MOD_SCREEN, SM_BackFromInsertCourseAttackPlayerOptions );
 		}
 	}
 	else if (SM == SM_BackFromInsertStepAttackPlayerOptions)
@@ -4268,6 +4426,13 @@ static LocalizedString DESTROY_ALL_UNSAVED_CHANGES	( "ScreenEdit", "This will de
 static LocalizedString REVERT_FROM_DISK			( "ScreenEdit", "Do you want to revert from disk?" );
 static LocalizedString SAVE_CHANGES_BEFORE_EXITING	( "ScreenEdit", "Do you want to save changes before exiting?" );
 
+int ScreenEdit::GetSongOrNotesEnd()
+{
+	return max(m_iStartPlayingAt, max(m_NoteDataEdit.GetLastRow(),
+			BeatToNoteRow(m_pSteps->GetTimingData()->GetBeatFromElapsedTime(
+					GAMESTATE->m_pCurSong->m_fMusicLengthSeconds))));
+}
+
 void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAnswers )
 {
 	GAMESTATE->SetProcessedTimingData(m_pSteps->GetTimingData());
@@ -4285,7 +4450,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 		case play_whole_song:
 			{
 				m_iStartPlayingAt = 0;
-				m_iStopPlayingAt = m_NoteDataEdit.GetLastRow();
+				m_iStopPlayingAt= GetSongOrNotesEnd();
 				TransitionEditState( STATE_PLAYING );
 			}
 			break;
@@ -4299,7 +4464,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 		case play_current_beat_to_end:
 			{
 				m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat);
-				m_iStopPlayingAt = max( m_iStartPlayingAt, m_NoteDataEdit.GetLastRow() );
+				m_iStopPlayingAt= GetSongOrNotesEnd();
 				TransitionEditState( STATE_PLAYING );
 			}
 			break;
@@ -4484,7 +4649,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			ScreenPrompt::Prompt( SM_DoRevertFromDisk, REVERT_FROM_DISK.GetValue() + "\n\n" + DESTROY_ALL_UNSAVED_CHANGES.GetValue(), PROMPT_YES_NO, ANSWER_NO );
 			break;
 		case options:
-			SCREENMAN->AddNewScreenToTop( "ScreenEditOptions", SM_BackFromOptions );
+			SCREENMAN->AddNewScreenToTop( OPTIONS_SCREEN, SM_BackFromOptions );
 			break;
 		case edit_song_info:
 			{
@@ -4887,7 +5052,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 				po.FromString(attacks[iAttack].sModifiers);
 				
 			toEdit.Assign( ModsLevel_Preferred, po );
-			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertStepAttackPlayerOptions );
+			SCREENMAN->AddNewScreenToTop( SET_MOD_SCREEN, SM_BackFromInsertStepAttackPlayerOptions );
 			SetDirty(true);
 			break;
 		}

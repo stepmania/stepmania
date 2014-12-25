@@ -926,21 +926,21 @@ public:
 		return 1;
 	}
 	static int FindEntryID( T* p, lua_State *L )			{ RString sName = SArg(1); RString s = p->FindEntryID(sName); if( s.empty() ) lua_pushnil(L); else lua_pushstring(L, s); return 1; }
-	static int UnlockEntryID( T* p, lua_State *L )			{ RString sUnlockEntryID = SArg(1); p->UnlockEntryID(sUnlockEntryID); return 0; }
-	static int UnlockEntryIndex( T* p, lua_State *L )		{ int iUnlockEntryID = IArg(1); p->UnlockEntryIndex(iUnlockEntryID); return 0; }
+	static int UnlockEntryID( T* p, lua_State *L )			{ RString sUnlockEntryID = SArg(1); p->UnlockEntryID(sUnlockEntryID); COMMON_RETURN_SELF; }
+	static int UnlockEntryIndex( T* p, lua_State *L )		{ int iUnlockEntryID = IArg(1); p->UnlockEntryIndex(iUnlockEntryID); COMMON_RETURN_SELF; }
 	static int LockEntryID( T * p, lua_State * L)
 	{
 		RString entryID = SArg(1);
 		p->LockEntryID( entryID );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int LockEntryIndex( T * p, lua_State * L)
 	{
 		int entryIndex = IArg(1);
 		p->LockEntryIndex( entryIndex );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
-	static int PreferUnlockEntryID( T* p, lua_State *L )		{ RString sUnlockEntryID = SArg(1); p->PreferUnlockEntryID(sUnlockEntryID); return 0; }
+	static int PreferUnlockEntryID( T* p, lua_State *L )		{ RString sUnlockEntryID = SArg(1); p->PreferUnlockEntryID(sUnlockEntryID); COMMON_RETURN_SELF; }
 	static int GetNumUnlocks( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetNumUnlocks() ); return 1; }
 	static int GetNumUnlocked( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetNumUnlocked() ); return 1; }
 	static int GetUnlockEntryIndexToCelebrate( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetUnlockEntryIndexToCelebrate() ); return 1; }

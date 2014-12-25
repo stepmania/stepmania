@@ -33,10 +33,22 @@ void PercentageDisplay::LoadFromNode( const XNode* pNode )
 	pNode->GetAttrValue( "AutoRefresh", m_bAutoRefresh );
 	{
 		Lua *L = LUA->Get();
-		if( pNode->PushAttrValue(L, "FormatPercentScore") )
+		if(pNode->PushAttrValue(L, "FormatPercentScore"))
+		{
 			m_FormatPercentScore.SetFromStack( L );
+			if(m_FormatPercentScore.GetLuaType() != LUA_TFUNCTION)
+			{
+				// Not reported as an error because _fallback and default provided bad
+				// examples in their [LifeMeterBattery Percent]:Format metric and nobody
+				// realized it was supposed to be set to a function. -Kyz
+				LOG->Trace("Format attribute for PercentageDisplay named '%s' is not a function. Defaulting to 'FormatPercentScore'.", GetName().c_str());
+				m_FormatPercentScore.SetFromExpression("FormatPercentScore");
+			}
+		}
 		else
+		{
 			lua_pop(L, 1);
+		}
 		LUA->Release(L);
 	}
 
@@ -86,9 +98,12 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 	m_sPercentFormat = THEME->GetMetric( sMetricsGroup, "PercentFormat" );
 	m_sRemainderFormat = THEME->GetMetric( sMetricsGroup, "RemainderFormat" );
 
-	if( m_FormatPercentScore.IsNil() )
+	if(m_FormatPercentScore.GetLuaType() != LUA_TFUNCTION)
 	{
-		LOG->Trace( "Format is nil in [%s]. Defaulting to 'FormatPercentScore'.", sMetricsGroup.c_str() );
+		// Not reported as an error because _fallback and default provided bad
+		// examples in their [LifeMeterBattery Percent]:Format metric and nobody
+		// realized it was supposed to be set to a function. -Kyz
+		LOG->Trace("Format metric is not a function in [%s]. Defaulting to 'FormatPercentScore'.", sMetricsGroup.c_str());
 		m_FormatPercentScore.SetFromExpression( "FormatPercentScore" );
 	}
 
@@ -157,14 +172,16 @@ void PercentageDisplay::Refresh()
 		}
 		else
 		{
-			Lua *L = LUA->Get();
-			m_FormatPercentScore.PushSelf( L );
-			ASSERT( !lua_isnil(L, -1) );
-			LuaHelpers::Push( L, fPercentDancePoints );
-			RString Error= "Error running FormatPercentScore: ";
-			LuaHelpers::RunScriptOnStack(L, Error, 1, 1, true); // 1 arg, 1 result
-			LuaHelpers::Pop( L, sNumToDisplay );
-			LUA->Release(L);
+			if(m_FormatPercentScore.GetLuaType() == LUA_TFUNCTION)
+			{
+				Lua *L = LUA->Get();
+				m_FormatPercentScore.PushSelf( L );
+				LuaHelpers::Push( L, fPercentDancePoints );
+				RString Error= "Error running FormatPercentScore: ";
+				LuaHelpers::RunScriptOnStack(L, Error, 1, 1, true); // 1 arg, 1 result
+				LuaHelpers::Pop( L, sNumToDisplay );
+				LUA->Release(L);
+			}
 
 			// HACK: Use the last frame in the numbers texture as '-'
 			sNumToDisplay.Replace('-','x');
@@ -202,7 +219,7 @@ public:
 		const PlayerState *pStageStats = Luna<PlayerState>::check( L, 1 );
 		const PlayerStageStats *pPlayerStageStats = Luna<PlayerStageStats>::check( L, 2 );
 		p->Load( pStageStats, pPlayerStageStats );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	LunaPercentageDisplay()

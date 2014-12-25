@@ -40,7 +40,6 @@ struct File
 		dir=false; size=-1; hash=-1; priv=NULL; dirp=NULL;
 	}
 	
-	bool operator== (const File &rhs) const { return lname==rhs.lname; }
 	bool operator< (const File &rhs) const { return lname<rhs.lname; }
 
 	bool equal(const File &rhs) const { return lname == rhs.lname; }
@@ -51,6 +50,15 @@ struct File
 		return lname == l;
 	}
 };
+
+inline bool operator==(File const &lhs, File const &rhs)
+{
+	return lhs.lname == rhs.lname;
+}
+inline bool operator!=(File const &lhs, File const &rhs)
+{
+	return !operator==(lhs, rhs);
+}
 
 /** @brief This represents a directory. */
 struct FileSet

@@ -145,17 +145,22 @@ function PlayerDarkColor( pn )
 	return color("1,1,1,1")
 end
 
+local function GameColorDifficultyWrapper(diff)
+	assert(GameColor.Difficulty[diff], "GameColor:  There is no entry in GameColor.Difficulty for CustomDifficulty '" .. tostring(diff) .. "'.")
+	return GameColor.Difficulty[diff]
+end
+
 function CustomDifficultyToColor( sCustomDifficulty )
-	return GameColor.Difficulty[sCustomDifficulty]
+	return GameColorDifficultyWrapper(sCustomDifficulty)
 end
 
 function CustomDifficultyToDarkColor( sCustomDifficulty ) 
-	local c = GameColor.Difficulty[sCustomDifficulty]
+	local c = GameColorDifficultyWrapper(sCustomDifficulty)
 	return { c[1]/2, c[2]/2, c[3]/2, c[4] }
 end
 
 function CustomDifficultyToLightColor( sCustomDifficulty ) 
-	local c = GameColor.Difficulty[sCustomDifficulty]
+	local c = GameColorDifficultyWrapper(sCustomDifficulty)
 	return { scale(c[1],0,1,0.5,1), scale(c[2],0,1,0.5,1), scale(c[3],0,1,0.5,1), c[4] }
 end
 
@@ -191,8 +196,6 @@ end
 
 -- ColorToHex(c)
 -- Takes in a normal color("") and returns the hex representation.
--- Adapted from code in LuaBit (http://luaforge.net/projects/bit/),
--- which is MIT licensed and copyright (C) 2006~2007 hanzhao.
 function ColorToHex(c)
 	local r = c[1]
 	local g = c[2]
@@ -200,27 +203,7 @@ function ColorToHex(c)
 	local a = HasAlpha(c)
 
 	local function hex(value)
-		value = math.ceil(value)
-
-		local hexVals = { 'A', 'B', 'C', 'D', 'E', 'F' }
-		local out = ""
-		local last = 0
-
-		while(value ~= 0) do
-			last = math.mod(value, 16)
-			if(last < 10) then
-				out = tostring(last) .. out
-			else
-				out = hexVals[(last-10)+1] .. out
-			end
-			value = math.floor(value/16)
-		end
-
-		if(out == "") then
-			return "00"
-		end
-		
-		return string.format( "%02X", tonumber(out,16) )
+		return ("%02X"):format(value)
 	end
 
 	local rX = hex( scale(r, 0, 1, 0, 255) )

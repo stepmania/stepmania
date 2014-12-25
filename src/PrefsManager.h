@@ -213,6 +213,7 @@ public:
 	Preference<int>	m_iSongsPerPlay;
 	Preference<bool>	m_bDelayedCreditsReconcile; // zuh?
 	Preference<bool>	m_bComboContinuesBetweenSongs;
+	Preference<TapNoteScore> m_MinTNSToHideNotes;
 	Preference<Maybe>	m_ShowSongOptions;
 	Preference<bool>	m_bDancePointsForOni;
 	Preference<bool>	m_bPercentageScoring;
@@ -294,7 +295,6 @@ public:
 
 	/** @brief Enable some quirky behavior used by some older versions of StepMania. */
 	Preference<bool>	m_bQuirksMode;
-	Preference<FailType> m_DefaultFailType;
 
 	// Debug:
 	Preference<bool>	m_bLogToDisk;

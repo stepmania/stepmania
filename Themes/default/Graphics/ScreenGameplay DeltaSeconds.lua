@@ -8,9 +8,12 @@ local t = LoadFont("ScreenGameplay","RemainingTime") .. {
 		if params.Player == PlayerNumber then
 			if params.TapNoteScore then
 				local tns = ToEnumShortString(params.TapNoteScore)
-				self:playcommand( "GainSeconds" );
-				self:playcommand( tns );
-				self:settextf( "%+1.1fs", PREFSMAN:GetPreference( string.format("TimeMeterSecondsChange%s", tns) ) );
+				local prefname= ("TimeMeterSecondsChange%s"):format(tns)
+				if PREFSMAN:PreferenceExists(prefname) then
+					self:playcommand( "GainSeconds" );
+					self:playcommand( tns );
+					self:settextf( "%+1.1fs", PREFSMAN:GetPreference(prefname) );
+				end
 			else
 				return
 			end

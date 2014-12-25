@@ -4,6 +4,7 @@
 const RString SpecialFiles::USER_PACKAGES_DIR = "UserPackages/";
 const RString SpecialFiles::PACKAGES_DIR = "Packages/";
 const RString SpecialFiles::KEYMAPS_PATH = "Save/Keymaps.ini";
+const RString SpecialFiles::EDIT_MODE_KEYMAPS_PATH = "Save/EditMode_Keymaps.ini";
 const RString SpecialFiles::PREFERENCES_INI_PATH	= "Save/Preferences.ini";
 const RString SpecialFiles::THEMES_DIR  = "Themes/";
 const RString SpecialFiles::LANGUAGES_SUBDIR = "Languages/";

@@ -41,7 +41,7 @@ public:
 	{
 		Actor *pTarget = Luna<Actor>::check( L, 1 );
 		p->SetTarget( pTarget );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int GetTarget( T* p, lua_State *L )

@@ -370,21 +370,21 @@ void Actor::PreDraw() // calculate actor properties
 			/* XXX: Should diffuse_blink and diffuse_shift multiply the tempState color? 
 			 * (That would have the same effect with 1,1,1,1, and allow tweening the diffuse
 			 * while blinking and shifting.) */
-			for(int i=0; i<4; i++)
+			for(int i=0; i<NUM_DIFFUSE_COLORS; i++)
 			{
 				tempState.diffuse[i] = bBlinkOn ? m_effectColor1 : m_effectColor2;
 				tempState.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
 			}
 			break;
 		case diffuse_shift:
-			for(int i=0; i<4; i++)
+			for(int i=0; i<NUM_DIFFUSE_COLORS; i++)
 			{
 				tempState.diffuse[i] = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
 				tempState.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
 			}
 			break;
 		case diffuse_ramp:
-			for(int i=0; i<4; i++)
+			for(int i=0; i<NUM_DIFFUSE_COLORS; i++)
 			{
 				tempState.diffuse[i] = m_effectColor1*fPercentThroughEffect + m_effectColor2*(1.0f-fPercentThroughEffect);
 				tempState.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
@@ -408,7 +408,7 @@ void Actor::PreDraw() // calculate actor properties
 				RageFastCos( fPercentBetweenColors*2*PI + PI * 2.0f / 3.0f ) * 0.5f + 0.5f,
 				RageFastCos( fPercentBetweenColors*2*PI + PI * 4.0f / 3.0f) * 0.5f + 0.5f,
 				fOriginalAlpha );
-			for( int i=1; i<4; i++ )
+			for( int i=1; i<NUM_DIFFUSE_COLORS; i++ )
 				tempState.diffuse[i] = tempState.diffuse[0];
 			break;
 		case wag:
@@ -471,7 +471,7 @@ void Actor::PreDraw() // calculate actor properties
 			tempState = m_current;
 		}
 
-		for( int i=0; i<4; i++ )
+		for( int i=0; i<NUM_DIFFUSE_COLORS; i++ )
 		{
 			tempState.diffuse[i] *= m_internalDiffuse;
 		}
@@ -785,7 +785,7 @@ RString Actor::GetLineage() const
 	
 	if( m_pParent )
 		sPath = m_pParent->GetLineage() + '/';
-	sPath += ssprintf( "<%s> %s", typeid(*this).name(), m_sName.c_str() );
+	sPath += ssprintf( "<type %s> %s", typeid(*this).name(), m_sName.c_str() );
 	return sPath;
 }
 
@@ -889,7 +889,7 @@ void Actor::ScaleTo( const RectF &rect, StretchType st )
 void Actor::SetEffectClockString( const RString &s )
 {
 	if     (s.EqualsNoCase("timer"))	this->SetEffectClock( CLOCK_TIMER );
-	if     (s.EqualsNoCase("timerglobal"))	this->SetEffectClock( CLOCK_TIMER_GLOBAL );
+	else if(s.EqualsNoCase("timerglobal"))	this->SetEffectClock( CLOCK_TIMER_GLOBAL );
 	else if(s.EqualsNoCase("beat"))		this->SetEffectClock( CLOCK_BGM_BEAT );
 	else if(s.EqualsNoCase("music"))	this->SetEffectClock( CLOCK_BGM_TIME );
 	else if(s.EqualsNoCase("bgm"))		this->SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
@@ -899,9 +899,13 @@ void Actor::SetEffectClockString( const RString &s )
 	{
 		CabinetLight cl = StringToCabinetLight( s );
 		if( cl == CabinetLight_Invalid )
-			FAIL_M(ssprintf("Invalid cabinet light: %s", s.c_str()));
-
-		this->SetEffectClock( (EffectClock) (cl + CLOCK_LIGHT_1) );
+		{
+			LuaHelpers::ReportScriptErrorFmt("String '%s' is not an effect clock string or the name of a cabinet light.", s.c_str());
+		}
+		else
+		{
+			this->SetEffectClock(static_cast<EffectClock>(cl + CLOCK_LIGHT_1));
+		}
 	}
 }
 
@@ -1130,7 +1134,7 @@ void Actor::RunCommands( const LuaReference& cmds, const LuaReference *pParamTab
 {
 	if( !cmds.IsSet() || cmds.IsNil() )
 	{
-		LuaHelpers::ReportScriptError("RunCommands: command is unset or nil");
+		LuaHelpers::ReportScriptErrorFmt("RunCommands: commands for %s are unset or nil", GetLineage().c_str());
 		return;
 	}
 
@@ -1140,7 +1144,7 @@ void Actor::RunCommands( const LuaReference& cmds, const LuaReference *pParamTab
 	cmds.PushSelf( L );
 	if( lua_isnil(L, -1) )
 	{
-		LuaHelpers::ReportScriptError("Error compiling commands");
+		LuaHelpers::ReportScriptErrorFmt("RunCommands: Error compiling commands for %s", GetLineage().c_str());
 		LUA->Release(L);
 		return;
 	}
@@ -1155,7 +1159,7 @@ void Actor::RunCommands( const LuaReference& cmds, const LuaReference *pParamTab
 		pParamTable->PushSelf( L );
 
 	// call function with 2 arguments and 0 results
-	RString Error= "Error playing command: ";
+	RString Error= "Error playing command:";
 	LuaHelpers::RunScriptOnStack(L, Error, 2, 0, true);
 
 	LUA->Release(L);
@@ -1182,7 +1186,7 @@ float Actor::GetTweenTimeLeft() const
  * being manipulated, which would add overhead ... */
 void Actor::SetGlobalDiffuseColor( RageColor c )
 {
-	for( int i=0; i<4; i++ ) // color, not alpha
+	for( int i=0; i<NUM_DIFFUSE_COLORS; i++ ) // color, not alpha
 	{
 		for( unsigned ts = 0; ts < m_Tweens.size(); ++ts )
 		{
@@ -1201,7 +1205,7 @@ void Actor::SetGlobalDiffuseColor( RageColor c )
 
 void Actor::SetDiffuseColor( RageColor c )
 {
-	for( int i=0; i<4; i++ )
+	for( int i=0; i<NUM_DIFFUSE_COLORS; i++ )
 	{
 		DestTweenState().diffuse[i].r = c.r;
 		DestTweenState().diffuse[i].g = c.g;
@@ -1220,7 +1224,7 @@ void Actor::TweenState::Init()
 	fSkewY = 0;
 	crop = RectF( 0,0,0,0 );
 	fade = RectF( 0,0,0,0 );
-	for( int i=0; i<4; i++ )
+	for( int i=0; i<NUM_DIFFUSE_COLORS; i++ )
 		diffuse[i] = RageColor( 1, 1, 1, 1 );
 	glow = RageColor( 1, 1, 1, 0 );
 	aux = 0;
@@ -1264,7 +1268,7 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 	average_out.fade.right	= lerp( fPercentBetween, ts1.fade.right,  ts2.fade.right );
 	average_out.fade.bottom	= lerp( fPercentBetween, ts1.fade.bottom, ts2.fade.bottom );
 
-	for( int i=0; i<4; ++i )
+	for( int i=0; i<NUM_DIFFUSE_COLORS; ++i )
 		average_out.diffuse[i] = lerp( fPercentBetween, ts1.diffuse[i], ts2.diffuse[i] );
 
 	average_out.glow	= lerp( fPercentBetween, ts1.glow,        ts2.glow );
@@ -1398,17 +1402,17 @@ Actor::TweenInfo &Actor::TweenInfo::operator=( const TweenInfo &rhs )
 class LunaActor : public Luna<Actor>
 {
 public:
-	static int name( T* p, lua_State *L )			{ p->SetName(SArg(1)); return 0; }
+	static int name( T* p, lua_State *L )			{ p->SetName(SArg(1)); COMMON_RETURN_SELF; }
 	static int sleep( T* p, lua_State *L )
 	{
 		float fTime = FArg(1);
 		if (fTime < 0)
 		{
 			LuaHelpers::ReportScriptErrorFmt("Lua: sleep(%f): time must not be negative", fTime);
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 		p->Sleep(fTime);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int linear( T* p, lua_State *L )
 	{
@@ -1416,10 +1420,10 @@ public:
 		if (fTime < 0)
 		{
 			LuaHelpers::ReportScriptErrorFmt("Lua: linear(%f): tween time must not be negative", fTime);
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 		p->BeginTweening(fTime, TWEEN_LINEAR);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int accelerate( T* p, lua_State *L )
 	{
@@ -1427,10 +1431,10 @@ public:
 		if (fTime < 0)
 		{
 			LuaHelpers::ReportScriptErrorFmt("Lua: accelerate(%f): tween time must not be negative", fTime);
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 		p->BeginTweening(fTime, TWEEN_ACCELERATE);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int decelerate( T* p, lua_State *L )
 	{
@@ -1438,10 +1442,10 @@ public:
 		if (fTime < 0)
 		{
 			LuaHelpers::ReportScriptErrorFmt("Lua: decelerate(%f): tween time must not be negative", fTime);
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 		p->BeginTweening(fTime, TWEEN_DECELERATE);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int spring( T* p, lua_State *L )
 	{
@@ -1449,10 +1453,10 @@ public:
 		if (fTime < 0)
 		{
 			LuaHelpers::ReportScriptErrorFmt("Lua: spring(%f): tween time must not be negative", fTime);
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 		p->BeginTweening(fTime, TWEEN_SPRING);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int tween( T* p, lua_State *L )
 	{
@@ -1460,113 +1464,113 @@ public:
 		if (fTime < 0)
 		{
 			LuaHelpers::ReportScriptErrorFmt("Lua: tween(%f): tween time must not be negative", fTime);
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 		ITween *pTween = ITween::CreateFromStack( L, 2 );
 		if(pTween != NULL)
 		{
 			p->BeginTweening(fTime, pTween);
 		}
-		return 0;
+		COMMON_RETURN_SELF;
 	}
-	static int stoptweening( T* p, lua_State * )		{ p->StopTweening(); return 0; }
-	static int finishtweening( T* p, lua_State * )		{ p->FinishTweening(); return 0; }
-	static int hurrytweening( T* p, lua_State *L )		{ p->HurryTweening(FArg(1)); return 0; }
+	static int stoptweening( T* p, lua_State *L )		{ p->StopTweening(); COMMON_RETURN_SELF; }
+	static int finishtweening( T* p, lua_State *L )		{ p->FinishTweening(); COMMON_RETURN_SELF; }
+	static int hurrytweening( T* p, lua_State *L )		{ p->HurryTweening(FArg(1)); COMMON_RETURN_SELF; }
 	static int GetTweenTimeLeft( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetTweenTimeLeft() ); return 1; }
-	static int x( T* p, lua_State *L )			{ p->SetX(FArg(1)); return 0; }
-	static int y( T* p, lua_State *L )			{ p->SetY(FArg(1)); return 0; }
-	static int z( T* p, lua_State *L )			{ p->SetZ(FArg(1)); return 0; }
-	static int xy( T* p, lua_State *L )			{ p->SetXY(FArg(1),FArg(2)); return 0; }
-	static int addx( T* p, lua_State *L )			{ p->AddX(FArg(1)); return 0; }
-	static int addy( T* p, lua_State *L )			{ p->AddY(FArg(1)); return 0; }
-	static int addz( T* p, lua_State *L )			{ p->AddZ(FArg(1)); return 0; }
-	static int zoom( T* p, lua_State *L )			{ p->SetZoom(FArg(1)); return 0; }
-	static int zoomx( T* p, lua_State *L )			{ p->SetZoomX(FArg(1)); return 0; }
-	static int zoomy( T* p, lua_State *L )			{ p->SetZoomY(FArg(1)); return 0; }
-	static int zoomz( T* p, lua_State *L )			{ p->SetZoomZ(FArg(1)); return 0; }
-	static int zoomto( T* p, lua_State *L )			{ p->ZoomTo(FArg(1), FArg(2)); return 0; }
-	static int zoomtowidth( T* p, lua_State *L )		{ p->ZoomToWidth(FArg(1)); return 0; }
-	static int zoomtoheight( T* p, lua_State *L )		{ p->ZoomToHeight(FArg(1)); return 0; }
-	static int setsize( T* p, lua_State *L )		{ p->SetWidth(FArg(1)); p->SetHeight(FArg(2)); return 0; }
-	static int SetWidth( T* p, lua_State *L )		{ p->SetWidth(FArg(1)); return 0; }
-	static int SetHeight( T* p, lua_State *L )		{ p->SetHeight(FArg(1)); return 0; }
-	static int basealpha( T* p, lua_State *L )		{ p->SetBaseAlpha(FArg(1)); return 0; }
-	static int basezoom( T* p, lua_State *L )		{ p->SetBaseZoom(FArg(1)); return 0; }
-	static int basezoomx( T* p, lua_State *L )		{ p->SetBaseZoomX(FArg(1)); return 0; }
-	static int basezoomy( T* p, lua_State *L )		{ p->SetBaseZoomY(FArg(1)); return 0; }
-	static int basezoomz( T* p, lua_State *L )		{ p->SetBaseZoomZ(FArg(1)); return 0; }
-	static int stretchto( T* p, lua_State *L )		{ p->StretchTo( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
-	static int cropleft( T* p, lua_State *L )		{ p->SetCropLeft(FArg(1)); return 0; }
-	static int croptop( T* p, lua_State *L )		{ p->SetCropTop(FArg(1)); return 0; }
-	static int cropright( T* p, lua_State *L )		{ p->SetCropRight(FArg(1)); return 0; }
-	static int cropbottom( T* p, lua_State *L )		{ p->SetCropBottom(FArg(1)); return 0; }
-	static int fadeleft( T* p, lua_State *L )		{ p->SetFadeLeft(FArg(1)); return 0; }
-	static int fadetop( T* p, lua_State *L )		{ p->SetFadeTop(FArg(1)); return 0; }
-	static int faderight( T* p, lua_State *L )		{ p->SetFadeRight(FArg(1)); return 0; }
-	static int fadebottom( T* p, lua_State *L )		{ p->SetFadeBottom(FArg(1)); return 0; }
-	static int diffuse( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuse( c ); return 0; }
-	static int diffuseupperleft( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseUpperLeft( c ); return 0; }
-	static int diffuseupperright( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseUpperRight( c ); return 0; }
-	static int diffuselowerleft( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLowerLeft( c ); return 0; }
-	static int diffuselowerright( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLowerRight( c ); return 0; }
-	static int diffuseleftedge( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLeftEdge( c ); return 0; }
-	static int diffuserightedge( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseRightEdge( c ); return 0; }
-	static int diffusetopedge( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseTopEdge( c ); return 0; }
-	static int diffusebottomedge( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseBottomEdge( c ); return 0; }
-	static int diffusealpha( T* p, lua_State *L )		{ p->SetDiffuseAlpha(FArg(1)); return 0; }
-	static int diffusecolor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseColor( c ); return 0; }
-	static int glow( T* p, lua_State *L )			{ RageColor c; c.FromStackCompat( L, 1 ); p->SetGlow( c ); return 0; }
-	static int aux( T* p, lua_State *L )			{ p->SetAux( FArg(1) ); return 0; }
+	static int x( T* p, lua_State *L )			{ p->SetX(FArg(1)); COMMON_RETURN_SELF; }
+	static int y( T* p, lua_State *L )			{ p->SetY(FArg(1)); COMMON_RETURN_SELF; }
+	static int z( T* p, lua_State *L )			{ p->SetZ(FArg(1)); COMMON_RETURN_SELF; }
+	static int xy( T* p, lua_State *L )			{ p->SetXY(FArg(1),FArg(2)); COMMON_RETURN_SELF; }
+	static int addx( T* p, lua_State *L )			{ p->AddX(FArg(1)); COMMON_RETURN_SELF; }
+	static int addy( T* p, lua_State *L )			{ p->AddY(FArg(1)); COMMON_RETURN_SELF; }
+	static int addz( T* p, lua_State *L )			{ p->AddZ(FArg(1)); COMMON_RETURN_SELF; }
+	static int zoom( T* p, lua_State *L )			{ p->SetZoom(FArg(1)); COMMON_RETURN_SELF; }
+	static int zoomx( T* p, lua_State *L )			{ p->SetZoomX(FArg(1)); COMMON_RETURN_SELF; }
+	static int zoomy( T* p, lua_State *L )			{ p->SetZoomY(FArg(1)); COMMON_RETURN_SELF; }
+	static int zoomz( T* p, lua_State *L )			{ p->SetZoomZ(FArg(1)); COMMON_RETURN_SELF; }
+	static int zoomto( T* p, lua_State *L )			{ p->ZoomTo(FArg(1), FArg(2)); COMMON_RETURN_SELF; }
+	static int zoomtowidth( T* p, lua_State *L )		{ p->ZoomToWidth(FArg(1)); COMMON_RETURN_SELF; }
+	static int zoomtoheight( T* p, lua_State *L )		{ p->ZoomToHeight(FArg(1)); COMMON_RETURN_SELF; }
+	static int setsize( T* p, lua_State *L )		{ p->SetWidth(FArg(1)); p->SetHeight(FArg(2)); COMMON_RETURN_SELF; }
+	static int SetWidth( T* p, lua_State *L )		{ p->SetWidth(FArg(1)); COMMON_RETURN_SELF; }
+	static int SetHeight( T* p, lua_State *L )		{ p->SetHeight(FArg(1)); COMMON_RETURN_SELF; }
+	static int basealpha( T* p, lua_State *L )		{ p->SetBaseAlpha(FArg(1)); COMMON_RETURN_SELF; }
+	static int basezoom( T* p, lua_State *L )		{ p->SetBaseZoom(FArg(1)); COMMON_RETURN_SELF; }
+	static int basezoomx( T* p, lua_State *L )		{ p->SetBaseZoomX(FArg(1)); COMMON_RETURN_SELF; }
+	static int basezoomy( T* p, lua_State *L )		{ p->SetBaseZoomY(FArg(1)); COMMON_RETURN_SELF; }
+	static int basezoomz( T* p, lua_State *L )		{ p->SetBaseZoomZ(FArg(1)); COMMON_RETURN_SELF; }
+	static int stretchto( T* p, lua_State *L )		{ p->StretchTo( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); COMMON_RETURN_SELF; }
+	static int cropleft( T* p, lua_State *L )		{ p->SetCropLeft(FArg(1)); COMMON_RETURN_SELF; }
+	static int croptop( T* p, lua_State *L )		{ p->SetCropTop(FArg(1)); COMMON_RETURN_SELF; }
+	static int cropright( T* p, lua_State *L )		{ p->SetCropRight(FArg(1)); COMMON_RETURN_SELF; }
+	static int cropbottom( T* p, lua_State *L )		{ p->SetCropBottom(FArg(1)); COMMON_RETURN_SELF; }
+	static int fadeleft( T* p, lua_State *L )		{ p->SetFadeLeft(FArg(1)); COMMON_RETURN_SELF; }
+	static int fadetop( T* p, lua_State *L )		{ p->SetFadeTop(FArg(1)); COMMON_RETURN_SELF; }
+	static int faderight( T* p, lua_State *L )		{ p->SetFadeRight(FArg(1)); COMMON_RETURN_SELF; }
+	static int fadebottom( T* p, lua_State *L )		{ p->SetFadeBottom(FArg(1)); COMMON_RETURN_SELF; }
+	static int diffuse( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuse( c ); COMMON_RETURN_SELF; }
+	static int diffuseupperleft( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseUpperLeft( c ); COMMON_RETURN_SELF; }
+	static int diffuseupperright( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseUpperRight( c ); COMMON_RETURN_SELF; }
+	static int diffuselowerleft( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLowerLeft( c ); COMMON_RETURN_SELF; }
+	static int diffuselowerright( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLowerRight( c ); COMMON_RETURN_SELF; }
+	static int diffuseleftedge( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLeftEdge( c ); COMMON_RETURN_SELF; }
+	static int diffuserightedge( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseRightEdge( c ); COMMON_RETURN_SELF; }
+	static int diffusetopedge( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseTopEdge( c ); COMMON_RETURN_SELF; }
+	static int diffusebottomedge( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseBottomEdge( c ); COMMON_RETURN_SELF; }
+	static int diffusealpha( T* p, lua_State *L )		{ p->SetDiffuseAlpha(FArg(1)); COMMON_RETURN_SELF; }
+	static int diffusecolor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseColor( c ); COMMON_RETURN_SELF; }
+	static int glow( T* p, lua_State *L )			{ RageColor c; c.FromStackCompat( L, 1 ); p->SetGlow( c ); COMMON_RETURN_SELF; }
+	static int aux( T* p, lua_State *L )			{ p->SetAux( FArg(1) ); COMMON_RETURN_SELF; }
 	static int getaux( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetAux() ); return 1; }
-	static int rotationx( T* p, lua_State *L )		{ p->SetRotationX(FArg(1)); return 0; }
-	static int rotationy( T* p, lua_State *L )		{ p->SetRotationY(FArg(1)); return 0; }
-	static int rotationz( T* p, lua_State *L )		{ p->SetRotationZ(FArg(1)); return 0; }
-	static int addrotationx( T* p, lua_State *L )		{ p->AddRotationX(FArg(1)); return 0; }
-	static int addrotationy( T* p, lua_State *L )		{ p->AddRotationY(FArg(1)); return 0; }
-	static int addrotationz( T* p, lua_State *L )		{ p->AddRotationZ(FArg(1)); return 0; }
+	static int rotationx( T* p, lua_State *L )		{ p->SetRotationX(FArg(1)); COMMON_RETURN_SELF; }
+	static int rotationy( T* p, lua_State *L )		{ p->SetRotationY(FArg(1)); COMMON_RETURN_SELF; }
+	static int rotationz( T* p, lua_State *L )		{ p->SetRotationZ(FArg(1)); COMMON_RETURN_SELF; }
+	static int addrotationx( T* p, lua_State *L )		{ p->AddRotationX(FArg(1)); COMMON_RETURN_SELF; }
+	static int addrotationy( T* p, lua_State *L )		{ p->AddRotationY(FArg(1)); COMMON_RETURN_SELF; }
+	static int addrotationz( T* p, lua_State *L )		{ p->AddRotationZ(FArg(1)); COMMON_RETURN_SELF; }
 	static int getrotation( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetRotationX()); lua_pushnumber(L, p->GetRotationY()); lua_pushnumber(L, p->GetRotationZ()); return 3; }
-	static int baserotationx( T* p, lua_State *L )		{ p->SetBaseRotationX(FArg(1)); return 0; }
-	static int baserotationy( T* p, lua_State *L )		{ p->SetBaseRotationY(FArg(1)); return 0; }
-	static int baserotationz( T* p, lua_State *L )		{ p->SetBaseRotationZ(FArg(1)); return 0; }
-	static int skewx( T* p, lua_State *L )			{ p->SetSkewX(FArg(1)); return 0; }
-	static int skewy( T* p, lua_State *L )			{ p->SetSkewY(FArg(1)); return 0; }
-	static int heading( T* p, lua_State *L )		{ p->AddRotationH(FArg(1)); return 0; }
-	static int pitch( T* p, lua_State *L )			{ p->AddRotationP(FArg(1)); return 0; }
-	static int roll( T* p, lua_State *L )			{ p->AddRotationR(FArg(1)); return 0; }
-	static int shadowlength( T* p, lua_State *L )		{ p->SetShadowLength(FArg(1)); return 0; }
-	static int shadowlengthx( T* p, lua_State *L )		{ p->SetShadowLengthX(FArg(1)); return 0; }
-	static int shadowlengthy( T* p, lua_State *L )		{ p->SetShadowLengthY(FArg(1)); return 0; }
-	static int shadowcolor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetShadowColor( c ); return 0; }
-	static int horizalign( T* p, lua_State *L )		{ p->SetHorizAlign(Enum::Check<HorizAlign>(L, 1)); return 0; }
-	static int vertalign( T* p, lua_State *L )		{ p->SetVertAlign(Enum::Check<VertAlign>(L, 1)); return 0; }
-	static int halign( T* p, lua_State *L )			{ p->SetHorizAlign(FArg(1)); return 0; }
-	static int valign( T* p, lua_State *L )			{ p->SetVertAlign(FArg(1)); return 0; }
-	static int diffuseblink( T* p, lua_State * )		{ p->SetEffectDiffuseBlink(1.0f, RageColor(0.5f,0.5f,0.5f,0.5f), RageColor(1,1,1,1)); return 0; }
-	static int diffuseshift( T* p, lua_State * )		{ p->SetEffectDiffuseShift(1.0f, RageColor(0,0,0,1), RageColor(1,1,1,1)); return 0; }
-	static int diffuseramp( T* p, lua_State * )		{ p->SetEffectDiffuseRamp(1.0f, RageColor(0,0,0,1), RageColor(1,1,1,1)); return 0; }
-	static int glowblink( T* p, lua_State * )		{ p->SetEffectGlowBlink(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); return 0; }
-	static int glowshift( T* p, lua_State * )		{ p->SetEffectGlowShift(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); return 0; }
-	static int glowramp( T* p, lua_State * )		{ p->SetEffectGlowRamp(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); return 0; }
-	static int rainbow( T* p, lua_State * )			{ p->SetEffectRainbow(2.0f); return 0; }
-	static int wag( T* p, lua_State * )			{ p->SetEffectWag(2.0f, RageVector3(0,0,20)); return 0; }
-	static int bounce( T* p, lua_State * )			{ p->SetEffectBounce(2.0f, RageVector3(0,20,0)); return 0; }
-	static int bob( T* p, lua_State * )			{ p->SetEffectBob(2.0f, RageVector3(0,20,0)); return 0; }
-	static int pulse( T* p, lua_State * )			{ p->SetEffectPulse(2.0f, 0.5f, 1.0f); return 0; }
-	static int spin( T* p, lua_State * )			{ p->SetEffectSpin(RageVector3(0,0,180)); return 0; }
-	static int vibrate( T* p, lua_State * )			{ p->SetEffectVibrate(RageVector3(10,10,10)); return 0; }
-	static int stopeffect( T* p, lua_State * )		{ p->StopEffect(); return 0; }
-	static int effectcolor1( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetEffectColor1( c ); return 0; }
-	static int effectcolor2( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetEffectColor2( c ); return 0; }
+	static int baserotationx( T* p, lua_State *L )		{ p->SetBaseRotationX(FArg(1)); COMMON_RETURN_SELF; }
+	static int baserotationy( T* p, lua_State *L )		{ p->SetBaseRotationY(FArg(1)); COMMON_RETURN_SELF; }
+	static int baserotationz( T* p, lua_State *L )		{ p->SetBaseRotationZ(FArg(1)); COMMON_RETURN_SELF; }
+	static int skewx( T* p, lua_State *L )			{ p->SetSkewX(FArg(1)); COMMON_RETURN_SELF; }
+	static int skewy( T* p, lua_State *L )			{ p->SetSkewY(FArg(1)); COMMON_RETURN_SELF; }
+	static int heading( T* p, lua_State *L )		{ p->AddRotationH(FArg(1)); COMMON_RETURN_SELF; }
+	static int pitch( T* p, lua_State *L )			{ p->AddRotationP(FArg(1)); COMMON_RETURN_SELF; }
+	static int roll( T* p, lua_State *L )			{ p->AddRotationR(FArg(1)); COMMON_RETURN_SELF; }
+	static int shadowlength( T* p, lua_State *L )		{ p->SetShadowLength(FArg(1)); COMMON_RETURN_SELF; }
+	static int shadowlengthx( T* p, lua_State *L )		{ p->SetShadowLengthX(FArg(1)); COMMON_RETURN_SELF; }
+	static int shadowlengthy( T* p, lua_State *L )		{ p->SetShadowLengthY(FArg(1)); COMMON_RETURN_SELF; }
+	static int shadowcolor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetShadowColor( c ); COMMON_RETURN_SELF; }
+	static int horizalign( T* p, lua_State *L )		{ p->SetHorizAlign(Enum::Check<HorizAlign>(L, 1)); COMMON_RETURN_SELF; }
+	static int vertalign( T* p, lua_State *L )		{ p->SetVertAlign(Enum::Check<VertAlign>(L, 1)); COMMON_RETURN_SELF; }
+	static int halign( T* p, lua_State *L )			{ p->SetHorizAlign(FArg(1)); COMMON_RETURN_SELF; }
+	static int valign( T* p, lua_State *L )			{ p->SetVertAlign(FArg(1)); COMMON_RETURN_SELF; }
+	static int diffuseblink( T* p, lua_State *L )		{ p->SetEffectDiffuseBlink(1.0f, RageColor(0.5f,0.5f,0.5f,0.5f), RageColor(1,1,1,1)); COMMON_RETURN_SELF; }
+	static int diffuseshift( T* p, lua_State *L )		{ p->SetEffectDiffuseShift(1.0f, RageColor(0,0,0,1), RageColor(1,1,1,1)); COMMON_RETURN_SELF; }
+	static int diffuseramp( T* p, lua_State *L )		{ p->SetEffectDiffuseRamp(1.0f, RageColor(0,0,0,1), RageColor(1,1,1,1)); COMMON_RETURN_SELF; }
+	static int glowblink( T* p, lua_State *L )		{ p->SetEffectGlowBlink(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); COMMON_RETURN_SELF; }
+	static int glowshift( T* p, lua_State *L )		{ p->SetEffectGlowShift(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); COMMON_RETURN_SELF; }
+	static int glowramp( T* p, lua_State *L )		{ p->SetEffectGlowRamp(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); COMMON_RETURN_SELF; }
+	static int rainbow( T* p, lua_State *L )			{ p->SetEffectRainbow(2.0f); COMMON_RETURN_SELF; }
+	static int wag( T* p, lua_State *L )			{ p->SetEffectWag(2.0f, RageVector3(0,0,20)); COMMON_RETURN_SELF; }
+	static int bounce( T* p, lua_State *L )			{ p->SetEffectBounce(2.0f, RageVector3(0,20,0)); COMMON_RETURN_SELF; }
+	static int bob( T* p, lua_State *L )			{ p->SetEffectBob(2.0f, RageVector3(0,20,0)); COMMON_RETURN_SELF; }
+	static int pulse( T* p, lua_State *L )			{ p->SetEffectPulse(2.0f, 0.5f, 1.0f); COMMON_RETURN_SELF; }
+	static int spin( T* p, lua_State *L )			{ p->SetEffectSpin(RageVector3(0,0,180)); COMMON_RETURN_SELF; }
+	static int vibrate( T* p, lua_State *L )			{ p->SetEffectVibrate(RageVector3(10,10,10)); COMMON_RETURN_SELF; }
+	static int stopeffect( T* p, lua_State *L )		{ p->StopEffect(); COMMON_RETURN_SELF; }
+	static int effectcolor1( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetEffectColor1( c ); COMMON_RETURN_SELF; }
+	static int effectcolor2( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetEffectColor2( c ); COMMON_RETURN_SELF; }
 	static int effectperiod( T* p, lua_State *L )
 	{
 		float fPeriod = FArg(1);
 		if (fPeriod <= 0)
 		{
 			LuaHelpers::ReportScriptErrorFmt("Effect period (%f) must be positive; ignoring", fPeriod);
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 		p->SetEffectPeriod(FArg(1));
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int effecttiming( T* p, lua_State *L )
 	{
@@ -1575,42 +1579,42 @@ public:
 		{
 			LuaHelpers::ReportScriptErrorFmt("Effect timings (%f,%f,%f,%f) must not be negative; ignoring",
 					f1, f2, f3, f4);
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 		if (f1 == 0 && f2 == 0 && f3 == 0 && f4 == 0)
 		{
 			LuaHelpers::ReportScriptErrorFmt("Effect timings (0,0,0,0) must not all be zero; ignoring");
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 		p->SetEffectTiming(FArg(1), FArg(2), FArg(3), FArg(4));
-		return 0;
+		COMMON_RETURN_SELF;
 	}
-	static int effectoffset( T* p, lua_State *L )		{ p->SetEffectOffset(FArg(1)); return 0; }
-	static int effectclock( T* p, lua_State *L )		{ p->SetEffectClockString(SArg(1)); return 0; }
-	static int effectmagnitude( T* p, lua_State *L )	{ p->SetEffectMagnitude( RageVector3(FArg(1),FArg(2),FArg(3)) ); return 0; }
+	static int effectoffset( T* p, lua_State *L )		{ p->SetEffectOffset(FArg(1)); COMMON_RETURN_SELF; }
+	static int effectclock( T* p, lua_State *L )		{ p->SetEffectClockString(SArg(1)); COMMON_RETURN_SELF; }
+	static int effectmagnitude( T* p, lua_State *L )	{ p->SetEffectMagnitude( RageVector3(FArg(1),FArg(2),FArg(3)) ); COMMON_RETURN_SELF; }
 	static int geteffectmagnitude( T* p, lua_State *L )	{ RageVector3 v = p->GetEffectMagnitude(); lua_pushnumber(L, v[0]); lua_pushnumber(L, v[1]); lua_pushnumber(L, v[2]); return 3; }
-	static int scaletocover( T* p, lua_State *L )		{ p->ScaleToCover( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); return 0; }
-	static int scaletofit( T* p, lua_State *L )		{ p->ScaleToFitInside( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); return 0; }
-	static int animate( T* p, lua_State *L )		{ p->EnableAnimation(BIArg(1)); return 0; }
-	static int play( T* p, lua_State * )			{ p->EnableAnimation(true); return 0; }
-	static int pause( T* p, lua_State * )			{ p->EnableAnimation(false); return 0; }
-	static int setstate( T* p, lua_State *L )		{ p->SetState(IArg(1)); return 0; }
+	static int scaletocover( T* p, lua_State *L )		{ p->ScaleToCover( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); COMMON_RETURN_SELF; }
+	static int scaletofit( T* p, lua_State *L )		{ p->ScaleToFitInside( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); COMMON_RETURN_SELF; }
+	static int animate( T* p, lua_State *L )		{ p->EnableAnimation(BIArg(1)); COMMON_RETURN_SELF; }
+	static int play( T* p, lua_State *L )			{ p->EnableAnimation(true); COMMON_RETURN_SELF; }
+	static int pause( T* p, lua_State *L )			{ p->EnableAnimation(false); COMMON_RETURN_SELF; }
+	static int setstate( T* p, lua_State *L )		{ p->SetState(IArg(1)); COMMON_RETURN_SELF; }
 	static int GetNumStates( T* p, lua_State *L )		{ LuaHelpers::Push( L, p->GetNumStates() ); return 1; }
-	static int texturetranslate( T* p, lua_State *L )	{ p->SetTextureTranslate(FArg(1),FArg(2)); return 0; }
-	static int texturewrapping( T* p, lua_State *L )	{ p->SetTextureWrapping(BIArg(1)); return 0; }
-	static int SetTextureFiltering( T* p, lua_State *L )	{ p->SetTextureFiltering(BArg(1)); return 0; }
-	static int blend( T* p, lua_State *L )			{ p->SetBlendMode( Enum::Check<BlendMode>(L, 1) ); return 0; }
-	static int zbuffer( T* p, lua_State *L )		{ p->SetUseZBuffer(BIArg(1)); return 0; }
-	static int ztest( T* p, lua_State *L )			{ p->SetZTestMode((BIArg(1))?ZTEST_WRITE_ON_PASS:ZTEST_OFF); return 0; }
-	static int ztestmode( T* p, lua_State *L )		{ p->SetZTestMode( Enum::Check<ZTestMode>(L, 1) ); return 0; }
-	static int zwrite( T* p, lua_State *L )			{ p->SetZWrite(BIArg(1)); return 0; }
-	static int zbias( T* p, lua_State *L )			{ p->SetZBias(FArg(1)); return 0; }
-	static int clearzbuffer( T* p, lua_State *L )		{ p->SetClearZBuffer(BIArg(1)); return 0; }
-	static int backfacecull( T* p, lua_State *L )		{ p->SetCullMode((BIArg(1)) ? CULL_BACK : CULL_NONE); return 0; }
-	static int cullmode( T* p, lua_State *L )		{ p->SetCullMode( Enum::Check<CullMode>(L, 1)); return 0; }
-	static int visible( T* p, lua_State *L )		{ p->SetVisible(BIArg(1)); return 0; }
-	static int hibernate( T* p, lua_State *L )		{ p->SetHibernate(FArg(1)); return 0; }
-	static int draworder( T* p, lua_State *L )		{ p->SetDrawOrder(IArg(1)); return 0; }
+	static int texturetranslate( T* p, lua_State *L )	{ p->SetTextureTranslate(FArg(1),FArg(2)); COMMON_RETURN_SELF; }
+	static int texturewrapping( T* p, lua_State *L )	{ p->SetTextureWrapping(BIArg(1)); COMMON_RETURN_SELF; }
+	static int SetTextureFiltering( T* p, lua_State *L )	{ p->SetTextureFiltering(BArg(1)); COMMON_RETURN_SELF; }
+	static int blend( T* p, lua_State *L )			{ p->SetBlendMode( Enum::Check<BlendMode>(L, 1) ); COMMON_RETURN_SELF; }
+	static int zbuffer( T* p, lua_State *L )		{ p->SetUseZBuffer(BIArg(1)); COMMON_RETURN_SELF; }
+	static int ztest( T* p, lua_State *L )			{ p->SetZTestMode((BIArg(1))?ZTEST_WRITE_ON_PASS:ZTEST_OFF); COMMON_RETURN_SELF; }
+	static int ztestmode( T* p, lua_State *L )		{ p->SetZTestMode( Enum::Check<ZTestMode>(L, 1) ); COMMON_RETURN_SELF; }
+	static int zwrite( T* p, lua_State *L )			{ p->SetZWrite(BIArg(1)); COMMON_RETURN_SELF; }
+	static int zbias( T* p, lua_State *L )			{ p->SetZBias(FArg(1)); COMMON_RETURN_SELF; }
+	static int clearzbuffer( T* p, lua_State *L )		{ p->SetClearZBuffer(BIArg(1)); COMMON_RETURN_SELF; }
+	static int backfacecull( T* p, lua_State *L )		{ p->SetCullMode((BIArg(1)) ? CULL_BACK : CULL_NONE); COMMON_RETURN_SELF; }
+	static int cullmode( T* p, lua_State *L )		{ p->SetCullMode( Enum::Check<CullMode>(L, 1)); COMMON_RETURN_SELF; }
+	static int visible( T* p, lua_State *L )		{ p->SetVisible(BIArg(1)); COMMON_RETURN_SELF; }
+	static int hibernate( T* p, lua_State *L )		{ p->SetHibernate(FArg(1)); COMMON_RETURN_SELF; }
+	static int draworder( T* p, lua_State *L )		{ p->SetDrawOrder(IArg(1)); COMMON_RETURN_SELF; }
 	static int playcommand( T* p, lua_State *L )
 	{
 		if( !lua_istable(L, 2) && !lua_isnoneornil(L, 2) )
@@ -1623,16 +1627,16 @@ public:
 		Message msg( SArg(1), ParamTable );
 		p->HandleMessage( msg );
 
-		return 0;
+		COMMON_RETURN_SELF;
 	}
-	static int queuecommand( T* p, lua_State *L )		{ p->QueueCommand(SArg(1)); return 0; }
-	static int queuemessage( T* p, lua_State *L )		{ p->QueueMessage(SArg(1)); return 0; }
+	static int queuecommand( T* p, lua_State *L )		{ p->QueueCommand(SArg(1)); COMMON_RETURN_SELF; }
+	static int queuemessage( T* p, lua_State *L )		{ p->QueueMessage(SArg(1)); COMMON_RETURN_SELF; }
 	static int addcommand( T* p, lua_State *L )
 	{
 		LuaReference *pRef = new LuaReference;
 		pRef->SetFromStack( L );
 		p->AddCommand( SArg(1), apActorCommands(pRef) );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int GetCommand( T* p, lua_State *L )
 	{
@@ -1659,7 +1663,7 @@ public:
 		ParamTable.SetFromStack( L );
 
 		p->RunCommandsRecursively( ref, &ParamTable );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int GetX( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetX() ); return 1; }
@@ -1706,7 +1710,7 @@ public:
 		LUA->YieldLua();
 		p->Draw();
 		LUA->UnyieldLua();
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	LunaActor()

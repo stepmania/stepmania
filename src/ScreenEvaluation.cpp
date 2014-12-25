@@ -624,7 +624,9 @@ void ScreenEvaluation::Init()
 	bool bOneHasNewTopRecord = false;
 	bool bOneHasFullW1Combo = false;
 	bool bOneHasFullW2Combo = false;
-
+	bool bOneHasFullW3Combo = false;
+	bool bOneHasFullW4Combo = false;
+	
 	FOREACH_PlayerNumber( p )
 	{
 		if(GAMESTATE->IsPlayerEnabled(p))
@@ -634,6 +636,12 @@ void ScreenEvaluation::Init()
 			{
 				bOneHasNewTopRecord = true;
 			}
+
+			if( m_pStageStats->m_player[p].FullComboOfScore(TNS_W4) )
+				bOneHasFullW4Combo = true;
+
+			if( m_pStageStats->m_player[p].FullComboOfScore(TNS_W3) )
+				bOneHasFullW3Combo = true;
 
 			if( m_pStageStats->m_player[p].FullComboOfScore(TNS_W2) )
 				bOneHasFullW2Combo = true;
@@ -655,9 +663,13 @@ void ScreenEvaluation::Init()
 	{
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation new record") );
 	}
-	else if( (bOneHasFullW1Combo || bOneHasFullW2Combo) )
+	else if( bOneHasFullW4Combo && ANNOUNCER->HasSoundsFor("evaluation full combo W4") )
 	{
-		RString sComboType = bOneHasFullW1Combo ? "W1" : "W2";
+		SOUND->PlayOnceFromDir(ANNOUNCER->GetPathTo("evaluation full combo W4"));
+	}
+	else if( (bOneHasFullW1Combo || bOneHasFullW2Combo || bOneHasFullW3Combo) )
+	{
+		RString sComboType = bOneHasFullW1Combo ? "W1" : ( bOneHasFullW2Combo ? "W2" : "W3" );
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation full combo "+sComboType) );
 	}
 	else

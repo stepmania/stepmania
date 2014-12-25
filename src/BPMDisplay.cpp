@@ -307,7 +307,7 @@ REGISTER_ACTOR_CLASS( SongBPMDisplay );
 class LunaBPMDisplay: public Luna<BPMDisplay>
 {
 public:
-	static int SetFromGameState( T* p, lua_State *L ) { p->SetFromGameState(); return 0; }
+	static int SetFromGameState( T* p, lua_State *L ) { p->SetFromGameState(); COMMON_RETURN_SELF; }
 	static int SetFromSong( T* p, lua_State *L )
 	{
 		if( lua_isnil(L,1) ) { p->NoBPM(); }
@@ -316,7 +316,7 @@ public:
 			const Song* pSong = Luna<Song>::check( L, 1, true );
 			p->SetBpmFromSong(pSong);
 		}
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetFromSteps( T* p, lua_State *L )
 	{
@@ -326,7 +326,7 @@ public:
 			const Steps* pSteps = Luna<Steps>::check( L, 1, true );
 			p->SetBpmFromSteps(pSteps);
 		}
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetFromCourse( T* p, lua_State *L )
 	{
@@ -336,7 +336,7 @@ public:
 			const Course* pCourse = Luna<Course>::check( L, 1, true );
 			p->SetBpmFromCourse(pCourse);
 		}
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int GetText( T* p, lua_State *L )		{ lua_pushstring( L, p->GetText() ); return 1; }
 

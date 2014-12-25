@@ -11,19 +11,19 @@ function Actor:ease(t, fEase)
 	-- fEase = -100 is equivalent to TweenType_Accelerate.
 	if fEase == -100 then
 		self:accelerate(t)
-		return
+		return self
 	end
 
 	-- fEase = 0 is equivalent to TweenType_Linear.
 	if fEase == 0 then
 		self:linear(t)
-		return
+		return self
 	end
 
 	-- fEase = +100 is equivalent to TweenType_Decelerate.
 	if fEase == 100 then
 		self:decelerate(t)
-		return
+		return self
 	end
 
 	self:tween( t, "TweenType_Bezier",
@@ -34,6 +34,7 @@ function Actor:ease(t, fEase)
 			1
 		}
 	)
+	return self
 end
 -- Notes On Beziers --
 -- They can be 1D ( Quadratic ) or 2D ( Bezier )
@@ -52,6 +53,7 @@ local BounceBeginBezier =
 }
 function Actor:bouncebegin(t)
 	self:tween( t, "TweenType_Bezier", BounceBeginBezier )
+	return self
 end
 
 local BounceEndBezier =
@@ -63,6 +65,7 @@ local BounceEndBezier =
 }
 function Actor:bounceend(t)
 	self:tween( t, "TweenType_Bezier", BounceEndBezier )
+	return self
 end
 
 local SmoothBezier =
@@ -71,6 +74,7 @@ local SmoothBezier =
 }
 function Actor:smooth(t)
 	self:tween( t, "TweenType_Bezier", SmoothBezier )
+	return self
 end
 -- SSC Additions
 local DropBezier =
@@ -82,6 +86,7 @@ local DropBezier =
 }
 function Actor:drop(t)
 	self:tween( t, "TweenType_Bezier", DropBezier )
+	return self
 end
 
 -- compound tweens "combine multiple interpolators to allow generating more
@@ -119,6 +124,7 @@ function Actor:compound(length,...)
 			-- todo: handle using tween and 'TweenType_Bezier'
 		end
 	end
+	return self
 end
 
 -- Hide if b is true, but don't unhide if b is false.
@@ -126,16 +132,19 @@ function Actor:hide_if(b)
 	if b then
 		self:visible(false)
 	end
+	return self
 end
 
 function Actor:player(p)
 	self:visible( GAMESTATE:IsHumanPlayer(p) )
+	return self
 end
 
 function ActorFrame:propagatecommand(...)
 	self:propagate(1)
 	self:playcommand(...)
 	self:propagate(0)
+	return self
 end
 
 -- Shortcut for alignment.
@@ -145,10 +154,12 @@ end
 function Actor:align(h, v)
 	self:halign( h )
 	self:valign( v )
+	return self
 end
 
 function Actor:FullScreen()
 	self:stretchto( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT )
+	return self
 end
 
 bg_fit_functions= {
@@ -185,16 +196,18 @@ function Actor:scale_or_crop_background_no_move()
 	else
 		self:scaletocover(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 	end
+	return self
 end
 
 function Actor:scale_or_crop_background()
 	self:scale_or_crop_background_no_move()
 	self:xy(SCREEN_CENTER_X, SCREEN_CENTER_Y)
+	return self
 end
 
-function Actor:CenterX() self:x(SCREEN_CENTER_X) end
-function Actor:CenterY() self:y(SCREEN_CENTER_Y) end
-function Actor:Center() self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y) end
+function Actor:CenterX() self:x(SCREEN_CENTER_X) return self end
+function Actor:CenterY() self:y(SCREEN_CENTER_Y) return self end
+function Actor:Center() self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y) return self end
 
 function Actor:bezier(...)
 	local a = {...}
@@ -205,6 +218,7 @@ function Actor:bezier(...)
 		b[#b+1] = a[i]
 	end
 	self:tween(a[2], "TweenMode_Bezier", b)
+	return self
 end
 
 function Actor:Real()
@@ -212,6 +226,7 @@ function Actor:Real()
 	self:basezoom(GetReal())
 	-- don't make this ugly
 	self:SetTextureFiltering(false)
+	return self
 end
 
 -- Scale things back up after they have already been scaled down.
@@ -219,6 +234,7 @@ function Actor:RealInverse()
 	-- scale back up to theme resolution
 	self:basezoom(GetRealInverse())
 	self:SetTextureFiltering(true)
+	return self
 end
 
 -- MaskSource([clearzbuffer])
@@ -229,12 +245,14 @@ function Actor:MaskSource(noclear)
 	end
 	self:zwrite(true)
 	self:blend('BlendMode_NoEffect')
+	return self
 end
 
 -- MaskDest()
 -- Sets an actor up to be masked by anything with MaskSource().
 function Actor:MaskDest()
 	self:ztest(true)
+	return self
 end
 
 -- Thump()
@@ -249,6 +267,7 @@ function Actor:thump(fEffectPeriod)
 	end
 	-- The default effectmagnitude will make this effect look very bad.
 	self:effectmagnitude(1,1.125,1)
+	return self
 end
 
 -- Heartbeat()
@@ -261,7 +280,8 @@ function Actor:heartbeat(fEffectPeriod)
 	else
 		self:effecttiming(0,0.125,0.125,0.75);
 	end
-	self:effecmagnitude(1,1.125,1)
+	self:effectmagnitude(1,1.125,1)
+	return self
 end
 
 --[[ BitmapText commands ]]
@@ -271,24 +291,28 @@ end
 -- Named because it works best with pixel fonts.
 function BitmapText:PixelFont()
 	self:SetTextureFiltering(false)
+	return self
 end
 
 -- Stroke(color)
 -- Sets the text's stroke color.
 function BitmapText:Stroke(c)
 	self:strokecolor( c )
+	return self
 end
 
 -- NoStroke()
 -- Removes any stroke.
 function BitmapText:NoStroke()
 	self:strokecolor( color("0,0,0,0") )
+	return self
 end
 
 -- Set Text With Format (contributed by Daisuke Master)
 -- this function is my hero - shake
 function BitmapText:settextf(...)
 	self:settext(string.format(...))
+	return self
 end
 
 -- DiffuseAndStroke(diffuse,stroke)
@@ -296,6 +320,7 @@ end
 function BitmapText:DiffuseAndStroke(diffuseC,strokeC)
 	self:diffuse(diffuseC)
 	self:strokecolor(strokeC)
+	return self
 end;
 --[[ end BitmapText commands ]]
 
@@ -345,6 +370,7 @@ function Actor:LyricCommand(side)
 	self:sleep( Var "LyricDuration" * 0.25 )
 	self:linear(0.2)
 	self:diffusealpha(0)
+	return self
 end
 
 -- formerly in 02 HelpDisplay.lua, although nothing uses it:
@@ -362,6 +388,7 @@ function HelpDisplay:setfromsongorcourse()
 	end
 
 	self:settips( Artists, AltArtists )
+	return self
 end
 
 -- Play the sound on the given player's side. Must set SupportPan = true
@@ -370,6 +397,7 @@ function ActorSound:playforplayer(pn)
 	local fBalance = SOUND:GetPlayerBalance(pn)
 	self:get():SetProperty("Pan", fBalance)
 	self:play()
+	return self
 end
 
 function PositionPerPlayer(player, p1X, p2X)
@@ -392,7 +420,7 @@ function GetRealInverse()
 end
 
 -- command aliases:
-function Actor:SetSize(w,h) self:setsize(w,h) end
+function Actor:SetSize(w,h) self:setsize(w,h) return self end
 
 -- Simple draworder mappings
 DrawOrder = {

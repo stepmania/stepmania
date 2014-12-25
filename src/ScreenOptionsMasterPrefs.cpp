@@ -30,10 +30,12 @@ static void GetPrefsDefaultModifiers( PlayerOptions &po, SongOptions &so )
 static void SetPrefsDefaultModifiers( const PlayerOptions &po, const SongOptions &so )
 {
 	vector<RString> as;
-	if( po.GetString() != "" )
-		as.push_back( po.GetString() );
-	if( so.GetString() != "" )
-		as.push_back( so.GetString() );
+#define remove_empty_back() if(as.back() == "") { as.pop_back(); }
+	as.push_back(po.GetString());
+	remove_empty_back();
+	as.push_back(so.GetString());
+	remove_empty_back();
+#undef remove_empty_back
 
 	PREFSMAN->m_sDefaultModifiers.Set( join(", ",as) );
 }
@@ -336,6 +338,32 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 	}
 }
 
+static void DefaultFailChoices(vector<RString>& out)
+{
+	out.push_back("Immediate");
+	out.push_back("ImmediateContinue");
+	out.push_back("EndOfSong");
+	out.push_back("Off");
+}
+
+static void DefaultFailType(int& sel, bool to_sel, const ConfOption* conf_option)
+{
+	if(to_sel)
+	{
+		PlayerOptions po;
+		po.FromString(PREFSMAN->m_sDefaultModifiers);
+		sel= po.m_FailType;
+	}
+	else
+	{
+		PlayerOptions po;
+		SongOptions so;
+		GetPrefsDefaultModifiers(po, so);
+		po.m_FailType= static_cast<FailType>(sel);
+		SetPrefsDefaultModifiers(po, so);
+	}
+}
+
 // Background options
 static void BGBrightness( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
@@ -377,6 +405,13 @@ static void MusicWheelSwitchSpeed( int &sel, bool ToSel, const ConfOption *pConf
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
+static void InputDebounceTime(int& sel, bool to_sel, ConfOption const* conf_option)
+{
+	float const mapping[]= {0.0f, 0.01f, 0.02f, 0.03f, 0.04f, 0.05f, 0.06f, 0.07f, 0.08f, 0.09f, 0.1f};
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
+}
+
+// Machine options
 static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	// 0 = Pay, 1 = Free
@@ -460,6 +495,18 @@ static void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption 
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
+static void MaxHighScoresPerListForMachine(int& sel, bool to_sel, ConfOption const* conf_option)
+{
+	int const mapping[]= {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
+}
+
+static void MaxHighScoresPerListForPlayer(int& sel, bool to_sel, ConfOption const* conf_option)
+{
+	int const mapping[]= {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
+}
+
 
 #include "LuaManager.h"
 static int GetTimingDifficulty()
@@ -486,21 +533,44 @@ struct res_t
 	int w, h;
 	res_t(): w(0), h(0) { }
 	res_t( int w_, int h_ ): w(w_), h(h_) { }
-	res_t operator-( const res_t &rhs ) const
-	{
-		return res_t( w-rhs.w, h-rhs.h );
-	}
-
-	bool operator<( const res_t &rhs ) const
-	{
-		if( w != rhs.w )
-			return w < rhs.w;
-		return h < rhs.h;
+	
+	res_t& operator-=( res_t const &rhs) {
+		w -= rhs.w;
+		h -= rhs.h;
+		return *this;
 	}
 
 	// Ugly: allow convert to a float for FindClosestEntry.
 	operator float() const { return w * 5000.0f + h; }
 };
+
+inline bool operator<(res_t const &lhs, res_t const &rhs)
+{
+	if( lhs.w != rhs.w )
+	{
+		return lhs.w < rhs.w;
+	
+	}
+	return lhs.h < rhs.h;
+}
+inline bool operator>(res_t const &lhs, res_t const &rhs)
+{
+	return operator<(rhs, lhs);
+}
+inline bool operator<=(res_t const &lhs, res_t const &rhs)
+{
+	return !operator<(rhs, lhs);
+}
+inline bool operator>=(res_t const &lhs, res_t const &rhs)
+{
+	return !operator<(lhs, rhs);
+}
+
+inline res_t operator-(res_t lhs, res_t const &rhs)
+{
+	lhs -= rhs;
+	return lhs;
+}
 
 static void DisplayResolutionM( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
@@ -679,6 +749,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ArcadeOptionsNavigation",	MovePref<bool>,		"StepMania Style","Arcade Style" ) );
 	ADD( ConfOption( "ThreeKeyNavigation", MovePref<bool>, "Five Key Menu", "Three Key Menu" ) );
 	ADD( ConfOption( "MusicWheelSwitchSpeed",	MusicWheelSwitchSpeed,	"Slow","Normal","Fast","Really Fast" ) );
+	ADD( ConfOption( "InputDebounceTime", InputDebounceTime, "0ms", "10ms", "20ms", "30ms", "40ms", "50ms", "60ms", "70ms", "80ms", "90ms", "100ms") );
 
 	// Gameplay options
 	ADD( ConfOption( "Center1Player",		MovePref<bool>,		"Off","On" ) );
@@ -687,6 +758,12 @@ static void InitializeConfOptions()
 	// W1 is Fantastic Timing
 	ADD( ConfOption( "AllowW1",			MovePref<AllowW1>,	"Never","Courses Only","Always" ) );
 	ADD( ConfOption( "AllowExtraStage",		MovePref<bool>,		"Off","On" ) );
+	ADD( ConfOption( "AllowMultipleHighScoreWithSameName", MovePref<bool>, "Off", "On" ) );
+	ADD( ConfOption( "ComboContinuesBetweenSongs", MovePref<bool>, "Off", "On") );
+	ADD( ConfOption( "Disqualification", MovePref<bool>,		"Off","On" ) );
+	ADD( ConfOption( "FailOffForFirstStageEasy", MovePref<bool>, "Off","On" ) );
+	ADD( ConfOption( "FailOffInBeginner", MovePref<bool>, "Off","On" ) );
+	ADD( ConfOption( "LockCourseDifficulties", MovePref<bool>, "Off", "On" ) );
 	ADD( ConfOption( "PickExtraStage",		MovePref<bool>,		"Off","On" ) );
 	ADD( ConfOption( "UseUnlockSystem",		MovePref<bool>,		"Off","On" ) );
 
@@ -708,7 +785,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ProgressiveLifebar",		MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8") );
 	ADD( ConfOption( "ProgressiveStageLifebar",	MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
 	ADD( ConfOption( "ProgressiveNonstopLifebar",	MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
-	ADD( ConfOption( "DefaultFailType", MovePref<FailType>, "Immediate","ImmediateContinue","EndOfSong","Off" ) );
+	ADD( ConfOption( "DefaultFailType", DefaultFailType, DefaultFailChoices ) );
 	ADD( ConfOption( "CoinsPerCredit",		CoinsPerCredit,		"|1","|2","|3","|4","|5","|6","|7","|8","|9","|10","|11","|12","|13","|14","|15","|16" ) );
 	ADD( ConfOption( "Premium",			MovePref<Premium>,	"Off","Double for 1 Credit","2 Players for 1 Credit" ) );
 	ADD( ConfOption( "JointPremium",		JointPremium,		"Off","2 Players for 1 Credit" ) );
@@ -716,6 +793,10 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ShowSongOptions",		MovePref<Maybe>,	"Ask", "Hide","Show" ) );
 	ADD( ConfOption( "PercentageScoring",	MovePref<bool>,	"Off","On" ) );
 	ADD( ConfOption( "GetRankingName",		MovePref<GetRankingName>, "Off", "On", "Ranking Songs" ) );
+	ADD( ConfOption( "MaxHighScoresPerListForMachine", MaxHighScoresPerListForMachine, "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20") );
+	ADD( ConfOption( "MaxHighScoresPerListForPlayer", MaxHighScoresPerListForPlayer, "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20") );
+	ADD( ConfOption( "MinTNSToHideNotes", MovePref<TapNoteScore>, "TNS_None", "TNS_HitMine", "TNS_AvoidMine", "TNS_CheckpointMiss", "TNS_Miss", "TNS_W5", "TNS_W4", "TNS_W3", "TNS_W2", "TNS_W1", "TNS_CheckpointHit"));
+
 
 	// Graphic options
 	ADD( ConfOption( "Windowed",			MovePref<bool>,		"Full Screen", "Windowed" ) );

@@ -31,6 +31,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='Alpha' theme='_fallback' return='color' arguments='color c, float percent'>
 		[02 Colors.lua] Returns a <code>color</code> with the specified alpha.
 	</Function>
+	<Function name='approach' return='float' arguments='float current, float goal, float speed'>
+		Use this to make a current value approach a goal value at the given speed.  Speed must not be negative.  The value will not overshoot the goal.<br />
+		Note:  When you see the error "approach: speed 1 is negative." it means that the speed value passed was negative.  The 1 is there because approach and multiapproach use the same internal function and can be ignored when using approach.
+	</Function>
 	<Function name='ArbitrarySpeedMods' theme='_fallback' return='LuaOptionRow' arguments=''>
 		[03 CustomSpeedMods.lua]
 	</Function>
@@ -136,7 +140,7 @@ save yourself some time, copy this for undocumented things:
 		[03 Gameplay.lua]
 	</Function>
 	<Function name='fapproach' theme='_fallback' return='float' arguments='float val, float other_val, float to_move'>
-		[02 Utilities.lua]
+		[02 Utilities.lua] Old name for approach.
 	</Function>
 	<Function name='FindSelection' theme='_fallback' return='int' arguments='table list'>
 		[02 Utilities.lua] Return the index of a true value in <code>list</code>.
@@ -327,6 +331,12 @@ save yourself some time, copy this for undocumented things:
 	<Function name='JudgmentLineToStrokeColor' theme='_fallback' return='color' arguments='JudgmentLine jl'>
 		[02 Colors.lua]
 	</Function>
+	<Function name='lerp' return='float' arguments='float percent, float start, float end'>
+		Returns a number linearly interpolated between start and end by percent.
+	</Function>
+	<Function name='lerp_color' return='color' arguments='float percent, color start, color end'>
+		Same as lerp, but for colors.  All channels will reach the end of the interpolation at the same time.
+	</Function>
 	<Function name='LoadActor' return='ActorDef' arguments='string sPath, ...'>
 		Returns an Actor definition for the actor at <code>sPath</code>. If <code>sPath</code> points to a Lua file, any additional arguments will be passed to that script.
 	</Function>
@@ -368,6 +378,11 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='MonthToString' return='string' arguments='Month m'>
 		Returns Month <code>m</code> as a string.
+	</Function>
+	<Function name='multiapproach' return='table' arguments='table currents, table goals, table speeds'>
+		Similar to approach, but operates on tables of values instead of single values.  This will modify the contents of <code>currents</code> in place, as well as returning <code>currents</code>.<br />
+		<code>currents</code>, <code>goals</code>, and <code>speeds</code> must all be the same size and contain only numbers.<br />
+		Note:  When you see the error "approach: speed 1 is negative." it means that a speed value passed was negative.  The 1 tells you which entry in the table was invalid.
 	</Function>
 	<Function name='next' return='void' arguments='table t, int index'>
 		"Allows a program to traverse all fields of a table. Its first argument is a
@@ -969,7 +984,7 @@ save yourself some time, copy this for undocumented things:
 		Sets the Actor's alpha level to <code>fAlpha</code>, where <code>fAlpha</code> is in the range 0..1.
 	</Function>
 	<Function name='diffuseblink' return='void' arguments=''>
-		Makes the Actor switch between two colors immediately.
+		Makes the Actor switch between two colors immediately.  See Themerdocs/effect_colors.txt for an example.
 	</Function>
 	<Function name='diffusebottomedge' return='void' arguments=''>
 		Sets the Actor's bottom edge color to <code>c</code>.
@@ -987,13 +1002,13 @@ save yourself some time, copy this for undocumented things:
 		Sets the Actor's lower right corner color to <code>c</code>.
 	</Function>
 	<Function name='diffuseramp' return='void' arguments=''>
-		Makes the Actor switch between two colors, jumping back to the first after reaching the second.
+		Makes the Actor switch between two colors, jumping back to the first after reaching the second.  See Themerdocs/effect_colors.txt for an example.
 	</Function>
 	<Function name='diffuserightedge' return='void' arguments='color c'>
 		Sets the Actor's right edge color to <code>c</code>.
 	</Function>
 	<Function name='diffuseshift' return='void' arguments=''>
-		Makes the Actor shift between two colors smoothly.
+		Makes the Actor shift between two colors smoothly.  See Themerdocs/effect_colors.txt for an example.
 	</Function>
 	<Function name='diffusetopedge' return='void' arguments='color c'>
 		Sets the Actor's top edge color to <code>c</code>.
@@ -1129,13 +1144,13 @@ save yourself some time, copy this for undocumented things:
 		Sets the Actor's glow color.
 	</Function>
 	<Function name='glowblink' return='void' arguments=''>
-		Makes the Actor glow between two colors immediately.
+		Makes the Actor glow between two colors immediately.  See Themerdocs/effect_colors.txt for an example.
 	</Function>
 	<Function name='glowramp' return='void' arguments=''>
-		Makes the Actor glow between two colors smoothly, jumping back to the first at the end.
+		Makes the Actor glow between two colors smoothly, jumping back to the first at the end.  See Themerdocs/effect_colors.txt for an example.
 	</Function>
 	<Function name='glowshift' return='void' arguments=''>
-		Makes the Actor glow between two colors smoothly.
+		Makes the Actor glow between two colors smoothly.  See Themerdocs/effect_colors.txt for an example.
 	</Function>
 	<Function name='halign' return='void' arguments='float fAlign'>
 		Set the fractional horizontal alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is left aligned while an alignment of 1 is right aligned. See <Link function='horizalign' /> for the common case.
@@ -1192,7 +1207,7 @@ save yourself some time, copy this for undocumented things:
 		Basically creates a command named <code>!sMessageName</code> (Note the ! at the beginning. The source code says this: "Hack: use "!" as a marker to broadcast a command, instead of playing a command, so we don't have to add yet another element to every tween state for this rarely-used command.")
 	</Function>
 	<Function name='rainbow' return='void' arguments=''>
-		Makes the Actor change colors continually using colors of the rainbow.
+		Makes the Actor change colors continually using colors of the rainbow.  Each channel follows a cosine wave, red starts at 0, green starts at 2pi/3, and blue starts at 4pi/3.
 	</Function>
 	<Function name='roll' return='void' arguments='float fRoll'>
 		Sets the roll of this Actor to <code>fRoll</code>.
@@ -2242,6 +2257,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='ApplyPreferredModifiers' return='void' arguments='PlayerNumber pn, string mods'>
 		Applies the specified modifiers for the specified player's preferred modifier set.
 	</Function>
+	<Function name='ApplyPreferredSongOptionsToOtherLevels' return='void' arguments=''>
+		Applies the song options of ModsLevel_Preferred to the other ModsLevels.
+	</Function>
 	<Function name='ApplyStageModifiers' return='void' arguments='PlayerNumber pn, string mods'>
 		Applies the specified modifiers for the specified player for the current stage.
 	</Function>
@@ -2463,6 +2481,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetStageIndex' return='int' arguments=''>
 		Returns the current stage index.
+	</Function>
+	<Function name='GetStepsSeconds' return='float' arguments=''>
+		Returns the current StepsSeconds, which is the time value used to set the samples in a player's life record.
 	</Function>
 	<Function name='GetStageSeed' return='int' arguments=''>
 		Return the random seed for the current stage.
@@ -2923,6 +2944,45 @@ save yourself some time, copy this for undocumented things:
 		Returns a table of noteskin names for the current gametype.
 	</Function>
 </Class>
+<Class name='NoteField'>
+	<Function name='DidHoldNote' return='' arguments='int column, TapNoteScore tns, bool bright'>
+		Makes the NoteField act as if a hold note was hit in the column, with the given score and bright setting. <br />
+		The callback for DidHoldNote will not be called.
+	</Function>
+	<Function name='DidTapNote' return='' arguments='int column, TapNoteScore tns, bool bright'>
+		Makes the NoteField act as if a tap note was hit in the column, with the given score and bright setting. <br />
+		The callback for DidTapNote will not be called.
+	</Function>
+	<Function name='SetDidHoldNoteCallback' return= '' arguments='function callback'>
+		Same as SetDidTapNoteCallback, but for hold notes.  Uses HoldNoteScore instead of TapNoteScore.
+	</Function>
+	<Function name='SetDidTapNoteCallback' return= '' arguments='function callback'>
+		Sets the function that the NoteField will call whenever a tap note is hit.<br />
+		The callback function is passed the column, the TapNoteScore, and whether the explosion will be bright.<br />
+		The callback function can return changed values for the NoteField to use instead of the ones that were passed.<br />
+		Pass nil instead of a function to clear the callback.
+	</Function>
+	<Function name='SetPressed' return='' arguments='int column'>
+		Makes the NoteField act as if a press occurred in the column. <br />
+		The callback for SetPressed will not be called.
+	</Function>
+	<Function name='SetSetPressedCallback' return= '' arguments='function callback'>
+		Sets the function that the NoteField will call whenever a press occurs.<br />
+		The callback function is passed the column for the press.<br />
+		The callback function can return changed values for the NoteField to use instead of the ones that were passed.<br />
+		Pass nil instead of a function to clear the callback.
+	</Function>
+	<Function name='SetStepCallback' return= '' arguments='function callback'>
+		Sets the function that the NoteField will call whenever a step occurs.<br />
+		The callback function is passed the column and the TapNoteScore for the step.<br />
+		The callback function can return changed values for the NoteField to use instead of the ones that were passed.<br />
+		Pass nil instead of a function to clear the callback.
+	</Function>
+	<Function name='Step' return='' arguments='int column, TapNoteScore tns'>
+		Makes the NoteField act as if a step occurred in the column with the given score.
+		The callback for Step will not be called.
+	</Function>
+</Class>
 <Class name='OptionRow'>
 	<Function name='FirstItemGoesDown' return='bool' arguments=''>
 		Returns <code>true</code> if the first item in the row goes down.
@@ -2984,6 +3044,13 @@ save yourself some time, copy this for undocumented things:
 </Class>
 <Class name='PlayerOptions'>
 	<Description>
+		All these functions have an optional last argument:  If the last argument is the boolean value true, then instead of returning the previous settings as normal, they will instead return the PlayerOptions object.<br />
+		This allows you to chain them like this:<br />
+		player_options:Twirl(5, 1, true):Roll(5, true):Dizzy(true):Twirl()<br />
+		<br />
+		Special note:  Functions that take a bool as their arg must have true as the second arg to be used with chaining.<br />
+		"player_options:Backwards(true, true):Beat(5)" will chain, "player_options:Backwards(true):Beat(5)" will not chain.<br />
+		<br />
 		Most options fall into one of four types:  float, int, bool, or enum.<br />
 		Float type options have this interface:<br />
 		Option(value, approach_speed)<br />
@@ -3079,6 +3146,7 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='Mines' return='bool' arguments='bool value'> </Function>
 	<Function name='Mini' return='float, float' arguments='float value, float approach_speed'> </Function>
+	<Function name='MinTNSToHideNotes' return='TapNoteScore' arguments='TapNoteScore tns'> Sets the min TapNoteScore required for the notes to disappear after being hit. </Function>
 	<Function name='Mirror' return='bool' arguments='bool value'> </Function>
 	<Function name='MMod' return='float, float' arguments='float value, float approach_speed'>
 		If the player has a MMod set, returns the value of that MMod and its associated approach speed.  Returns nil otherwise.<br />
@@ -3102,7 +3170,7 @@ save yourself some time, copy this for undocumented things:
 		Changing the noteskin during a song is not supported.<br />
 		Example:<br />
 		note_name= options:NoteSkin() -- Sets note_name to the player's current noteskin.<br />
-		prev_note_name, succeeded= options:NoteSkin("cel") -- Sets prev_note_name to the noteskin the player had set, changes the current noteskin to "cel", sets succeeded to true if the the "cel" noteskin exists.<br />
+		prev_note_name, succeeded= options:NoteSkin("cel") -- Sets prev_note_name to the noteskin the player had set, changes the current noteskin to "cel", sets succeeded to true if the "cel" noteskin exists.<br />
 	</Function>
 	<Function name='Overhead' return='bool' arguments='bool'>
 		If the player is using Overhead (0 tilt, 0 skew), returns true.<br />
@@ -3304,6 +3372,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='PlayerState'>
+	<Function name='ApplyPreferredOptionsToOtherLevels' return='void' arguments=''>
+		Applies the player options of ModsLevel_Preferred to the other ModsLevels.
+	</Function>
 	<Function name='GetCurrentPlayerOptions' return='PlayerOptions' arguments='' >
 		Returns the current PlayerOptions for this PlayerState.
 	</Function>
@@ -3444,6 +3515,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetNumTotalSongsPlayed' return='int' arguments=''>
 		Returns the total number of songs played with the profile.
 	</Function>
+	<Function name='GetPriority' return='int' arguments=''>
+		Returns the position the profile should have in its category in the list.
+	</Function>
 	<Function name='GetSongNumTimesPlayed' return='int' arguments='Song s'>
 		Returns the number of times song <code>s</code> has been played with the profile.
 	</Function>
@@ -3461,6 +3535,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetTotalCaloriesBurned' return='float' arguments=''>
 		Return the total number of calories burned.
+	</Function>
+	<Function name='GetTotalDancePoints' return='int' arguments=''>
+		Returns the number of dance points earned.
 	</Function>
 	<Function name='GetTotalHands' return='int' arguments=''>
 		Returns the number of Hands stepped on.
@@ -3491,6 +3568,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetTotalTrailsWithTopGrade' return='int' arguments='StepsType st, Difficulty d, Grade g'>
 		Returns the number of trails with the specified StepsType and Difficulty that you've scored a certain Grade <code>g</code> on.
+	</Function>
+	<Function name='GetType' return='ProfileType' arguments=''>
+		Returns the type of the profile.  The type of the profile is only used to determine where the profile shows up in the list of profiles, and that problem is already handled by ProfileManager, so if you're reading this, this function only exists so you can make your theme color this profile's list entry based on the type or something like that.
 	</Function>
 	<Function name='GetUserTable' return='table' arguments=''>
 		Returns the user table for this Profile.
@@ -4811,8 +4891,8 @@ save yourself some time, copy this for undocumented things:
 <Class name='TimingData'>
 	<Description>
 		GetBPMsAndTimes, GetStops, GetDelays, GetLabels, GetWarps, GetCombos, GetTimeSignatures, GetTickcounts, GetFakes, GetScrolls, and GetSpeeds all have two different modes.<br />
-		If the metric TimingData:GetReturnsNumbers is false (the default), they return tables of strings.  The strings are numbers separated by '='.<br />
-		If the metric TimingData:GetReturnsNumbers is true, they return tables of tables, and the inner tables contain numbers as described for each function.<br />
+		If false (or nothing) is the argument to these functions, they return tables of strings.  The strings are numbers separated by '='.<br />
+		If the argument is true, they return tables of tables, and the inner tables contain numbers as described for each function.<br />
 		The first form is kept around and is the default for compatibility with older themes.  The advantage of the second form is that you no longer need to have a bit of code in your theme to transform the string into a table of numbers before you can use it.<br />
 		Example:<br />
 		local bpmsand= timing_data:GetBPMsAndTimes()<br />
@@ -4822,7 +4902,7 @@ save yourself some time, copy this for undocumented things:
 		end<br />
 		-- do something that looks at all the bpms and times. <br />
 		Becomes:<br />
-		local bpmsand= timing_data:GetBPMsAndTimes()<br />
+		local bpmsand= timing_data:GetBPMsAndTimes(true)<br />
 		-- do something that looks at all the bpms and times. <br />
 	</Description>
 	<Function name='GetActualBPM' return='{float}' arguments=''>

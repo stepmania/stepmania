@@ -65,6 +65,13 @@ LuaDeclareType( VertAlign );
 /** @brief The bottom vertical alignment constant. */
 #define align_bottom 1.0f
 
+// This is the number of colors in Actor::diffuse.  Actor has multiple
+// diffuse colors so that each edge can be a different color, and the actor
+// is drawn with a gradient between them.
+// I doubt I actually found all the places that touch diffuse and rely on the
+// number of diffuse colors, so change this at your own risk. -Kyz
+#define NUM_DIFFUSE_COLORS 4
+
 // ssc futures:
 /*
 enum EffectAction
@@ -218,7 +225,7 @@ public:
 		 * @brief Four values making up the diffuse in this TweenState.
 		 *
 		 * 0 = UpperLeft, 1 = UpperRight, 2 = LowerLeft, 3 = LowerRight */
-		RageColor	diffuse[4];
+		RageColor	diffuse[NUM_DIFFUSE_COLORS];
 		/** @brief The glow color for this TweenState. */
 		RageColor	glow;
 		/** @brief A magical value that nobody really knows the use for. ;) */
@@ -272,7 +279,7 @@ public:
 	virtual void Update( float fDeltaTime );		// this can short circuit UpdateInternal
 	virtual void UpdateInternal( float fDeltaTime );	// override this
 	void UpdateTweening( float fDeltaTime );
-	// These next functions should all be overridden by a derived class that has its own tweening states to handl.
+	// These next functions should all be overridden by a derived class that has its own tweening states to handle.
 	virtual void SetCurrentTweenStart() {}
 	virtual void EraseHeadTween() {}
 	virtual void UpdatePercentThroughTween( float PercentThroughTween ) {}
@@ -433,8 +440,8 @@ public:
 
 	void SetGlobalDiffuseColor( RageColor c );
 
-	virtual void SetDiffuse( RageColor c )		{ for(int i=0; i<4; i++) DestTweenState().diffuse[i] = c; };
-	virtual void SetDiffuseAlpha( float f )		{ for(int i = 0; i < 4; ++i) { RageColor c = GetDiffuses( i ); c.a = f; SetDiffuses( i, c ); } }
+	virtual void SetDiffuse( RageColor c )		{ for(int i=0; i<NUM_DIFFUSE_COLORS; i++) DestTweenState().diffuse[i] = c; };
+	virtual void SetDiffuseAlpha( float f )		{ for(int i = 0; i < NUM_DIFFUSE_COLORS; ++i) { RageColor c = GetDiffuses( i ); c.a = f; SetDiffuses( i, c ); } }
 	float GetCurrentDiffuseAlpha() const		{ return m_current.diffuse[0].a; }
 	void SetDiffuseColor( RageColor c );
 	void SetDiffuses( int i, RageColor c )		{ DestTweenState().diffuse[i] = c; };

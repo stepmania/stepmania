@@ -7,6 +7,8 @@
 #include "RageLog.h"
 #include <set>
 #include "Background.h"
+#include "RageFileManager.h"
+#include "ActorUtil.h"
 
 
 bool BackgroundDef::operator<( const BackgroundDef &other ) const
@@ -194,15 +196,8 @@ void BackgroundUtil::GetSongMovies( const Song *pSong, const RString &sMatch, ve
 	vsPathsOut.clear();
 	if( sMatch.empty() )
 	{
-		GetDirListing( pSong->GetSongDir()+sMatch+"*.ogv",	vsPathsOut, false, true );
-		GetDirListing( pSong->GetSongDir()+sMatch+"*.avi",	vsPathsOut, false, true );
-		GetDirListing( pSong->GetSongDir()+sMatch+"*.mpg",	vsPathsOut, false, true );
-		GetDirListing( pSong->GetSongDir()+sMatch+"*.mpeg", vsPathsOut, false, true );
-		GetDirListing( pSong->GetSongDir()+sMatch+"*.mp4", vsPathsOut, false, true );
-		GetDirListing( pSong->GetSongDir()+sMatch+"*.flv", vsPathsOut, false, true );
-		GetDirListing( pSong->GetSongDir()+sMatch+"*.f4v", vsPathsOut, false, true );
-		GetDirListing( pSong->GetSongDir()+sMatch+"*.mov", vsPathsOut, false, true );
-		GetDirListing( pSong->GetSongDir()+sMatch+"*.mkv", vsPathsOut, false, true );		
+		FILEMAN->GetDirListingWithMultipleExtensions(pSong->GetSongDir()+sMatch,
+			ActorUtil::GetTypeExtensionList(FT_Movie), vsPathsOut, false, true);
 	}
 	else
 	{
@@ -221,11 +216,8 @@ void BackgroundUtil::GetSongBitmaps( const Song *pSong, const RString &sMatch, v
 	vsPathsOut.clear();
 	if( sMatch.empty() )
 	{
-		GetDirListing( pSong->GetSongDir()+sMatch+"*.png",	vsPathsOut, false, true );
-		GetDirListing( pSong->GetSongDir()+sMatch+"*.jpg",	vsPathsOut, false, true );
-		GetDirListing( pSong->GetSongDir()+sMatch+"*.jpeg",	vsPathsOut, false, true );
-		GetDirListing( pSong->GetSongDir()+sMatch+"*.gif",	vsPathsOut, false, true );
-		GetDirListing( pSong->GetSongDir()+sMatch+"*.bmp",	vsPathsOut, false, true );
+		FILEMAN->GetDirListingWithMultipleExtensions(pSong->GetSongDir()+sMatch,
+			ActorUtil::GetTypeExtensionList(FT_Bitmap), vsPathsOut, false, true);
 	}
 	else
 	{

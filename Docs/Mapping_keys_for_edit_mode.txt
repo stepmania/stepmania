@@ -1,0 +1,287 @@
+Don't try to change the way keys are mapped in edit mode unless you have a good reason.  It's complicated and easy to mess up.
+If you do make a mistake, you can go back to the default edit mode keymapping just by removing the "User Data Folder/Save/EditMode_Keymaps.ini" file.
+
+Edit Mode loads key mapping settings from "User Data Folder/Save/EditMode_Keymaps.ini".  "User Data Folder" is a special name that means the folder where all your user data for stepmania is stored, the name depends on what OS you're on.  See Docs/Userdocs/sm5_beginner.txt and search for "User Data Folder" to learn where it is on your OS.
+
+Entries in EditMode_Keymaps.ini set which what keys trigger an action.  Any function that doesn't have an entry in EditMode_Keymaps.ini will use the default mapping.  Be careful when choosing a key for a function to make sure that same key isn't already mapped to something else either in the default mapping or in the mapping you are creating.
+If you hold F3, you can use the Debug Menu to reload the screen while in Edit Mode, which will reload the key mapping, so you can adjust the mapping while stepmania is running.
+
+EditMode_Keymaps.ini is broken up into four sections, one for each major mode that Edit Mode can be in.  The "Edit" section is for when in normal editing mode.  The "Play" section is for when Edit Mode is playing back a song.  The "Record" section is for record mode, and the "RecordPaused" section is for when Record mode is paused.
+
+Each line in a section is the name of the function being set, followed by "=", then the name of the key for that function.  You can list two keys by seperating them with a ":".  Examples:
+SNAP_NEXT=Key_s
+SNAP_PREV=Key_d:Key_v
+
+Note that you cannot change which keys need to be held down for certain things, like holding shift for rolls.
+
+Next will be a list of function names (headed by "Function Names"), then a list of key names (headed by "Key Names"), then the default key mapping (headed by "Default Mapping") as an example.
+
+Function Names:
+COLUMN_0
+COLUMN_1
+COLUMN_2
+COLUMN_3
+COLUMN_4
+COLUMN_5
+COLUMN_6
+COLUMN_7
+COLUMN_8
+COLUMN_9
+RIGHT_SIDE
+LAY_ROLL
+LAY_TAP_ATTACK
+REMOVE_NOTE
+CYCLE_TAP_LEFT
+CYCLE_TAP_RIGHT
+CYCLE_SEGMENT_LEFT
+CYCLE_SEGMENT_RIGHT
+SCROLL_UP_LINE
+SCROLL_UP_PAGE
+SCROLL_UP_TS
+SCROLL_DOWN_LINE
+SCROLL_DOWN_PAGE
+SCROLL_DOWN_TS
+SCROLL_NEXT_MEASURE
+SCROLL_PREV_MEASURE
+SCROLL_HOME
+SCROLL_END
+SCROLL_NEXT
+SCROLL_PREV
+SEGMENT_NEXT
+SEGMENT_PREV
+SCROLL_SELECT
+LAY_SELECT
+SCROLL_SPEED_UP
+SCROLL_SPEED_DOWN
+SNAP_NEXT
+SNAP_PREV
+OPEN_EDIT_MENU
+OPEN_TIMING_MENU
+OPEN_ALTER_MENU
+OPEN_AREA_MENU
+OPEN_BGCHANGE_LAYER1_MENU
+OPEN_BGCHANGE_LAYER2_MENU
+OPEN_COURSE_MENU
+OPEN_COURSE_ATTACK_MENU
+OPEN_STEP_ATTACK_MENU
+ADD_STEP_MODS
+OPEN_INPUT_HELP
+BAKE_RANDOM_FROM_SONG_GROUP
+BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE
+PLAY_FROM_START
+PLAY_FROM_CURSOR
+PLAY_SELECTION
+RECORD_FROM_CURSOR
+RECORD_SELECTION
+RETURN_TO_EDIT
+INSERT
+DELETE
+INSERT_SHIFT_PAUSES
+DELETE_SHIFT_PAUSES
+OPEN_NEXT_STEPS
+OPEN_PREV_STEPS
+PLAY_SAMPLE_MUSIC
+BPM_UP
+BPM_DOWN
+STOP_UP
+STOP_DOWN
+DELAY_UP
+DELAY_DOWN
+OFFSET_UP
+OFFSET_DOWN
+SAMPLE_START_UP
+SAMPLE_START_DOWN
+SAMPLE_LENGTH_UP
+SAMPLE_LENGTH_DOWN
+ADJUST_FINE
+SAVE
+UNDO
+ADD_COURSE_MODS
+SWITCH_PLAYERS
+SWITCH_TIMINGS
+
+
+Key Names:
+(If you're really having trouble finding the name for a key, map it to something in the normal controller mapping screen and check Keymaps.ini to see what its name is.)
+Most keys can be set with something like this: "Key_a", where "a" is the character typed by the key.  This includes keys like ".", ",", and so on.  For other keys, there are special names that can be used, which are listed below.  "Key_." and "Key_period" both mean the same thing.
+Some key names have spaces in them.
+
+Key_period
+Key_comma
+Key_space
+Key_delete
+Key_backspace
+Key_tab
+Key_enter
+Key_pause
+Key_escape
+Key_F1
+Key_F2
+(Don't map F3, it's used for the debug menu, so probably won't work.)
+Key_F4
+Key_F5
+Key_F6
+Key_F7
+Key_F8
+Key_F9
+Key_F10
+Key_F11
+Key_F12
+Key_F13
+Key_F14
+Key_F15
+Key_F16
+Key_left ctrl
+Key_right ctrl
+Key_left shift
+Key_right shift
+Key_left alt
+Key_right alt
+Key_left meta
+Key_right meta
+Key_left super
+Key_right super
+Key_menu
+Key_function
+Key_num lock
+Key_scroll lock
+Key_caps lock
+Key_prtsc
+Key_up
+Key_down
+Key_left
+Key_right
+Key_insert
+Key_home
+Key_end
+Key_pgup
+Key_pgdn
+Key_KP 0
+Key_KP 1
+Key_KP 2
+Key_KP 3
+Key_KP 4
+Key_KP 5
+Key_KP 6
+Key_KP 7
+Key_KP 8
+Key_KP 9
+Key_KP /
+Key_KP *
+Key_KP -
+Key_KP +
+Key_KP .
+Key_KP =
+Key_KP enter
+
+
+Default Mapping:
+Comments are in this section to tell which things require a modifier key to be held.
+Note that not all sections map all functions.  This is because those functions aren't useful in all modes.
+(if you spot a key name that is in all caps in this section, I missed it when editing at 4 AM and it's supposed to be lower case)
+
+[Edit]
+SCROLL_UP_LINE=Key_up
+SCROLL_DOWN_LINE=Key_down
+SCROLL_UP_PAGE=Key_pgup:Key_;
+SCROLL_DOWN_PAGE=Key_pgdn:Key_'
+# Scrolling by timing segments actually requires holding Ctrl.
+SCROLL_UP_TS=Key_pgup:Key_;
+SCROLL_DOWN_TS=Key_pgdn:Key_'
+SCROLL_HOME=Key_home
+SCROLL_END=Key_end
+SCROLL_NEXT=Key_period
+SCROLL_PREV=Key_comma
+# Hold Ctrl for SEGMENT_NEXT and SEGMENT_PREV.
+SEGMENT_NEXT=Key_period
+SEGMENT_PREV=Key_comma
+SCROLL_SELECT=Key_left shift:Key_right shift
+LAY_SELECT=Key_space
+# Hold Ctrl for PLAY_FROM_START.
+PLAY_FROM_START=Key_p
+# Hold Shift for PLAY_FROM_CURSOR.
+PLAY_FROM_CURSOR=Key_p
+PLAY_SELECTION=Key_p
+OPEN_TIMING_MENU=Key_F4
+# OPEN_PREV_STEPS/OPEN_NEXT_STEPS aren't allowed in home mode. It breaks the "delay creation until first save" logic.
+OPEN_PREV_STEPS=Key_F5
+OPEN_NEXT_STEPS=Key_F6
+BPM_DOWN=Key_F7
+BPM_UP=Key_F8
+STOP_DOWN=Key_F9
+STOP_UP=Key_F10
+# Hold Shift for DELAY_DOWN and DELAY_UP.
+DELAY_DOWN=Key_F9
+DELAY_UP=Key_F10
+OFFSET_DOWN=Key_F11
+OFFSET_UP=Key_F12
+SAMPLE_START_UP=Key_]
+SAMPLE_START_DOWN=Key_[
+# Hold Shift for SAMPLE_LENGTH_UP and SAMPLE_LENGTH_DOWN.
+SAMPLE_LENGTH_UP=Key_]
+SAMPLE_LENGTH_DOWN=Key_[
+PLAY_SAMPLE_MUSIC=Key_l
+OPEN_BGCHANGE_LAYER1_MENU=Key_b
+# Hold Shift for OPEN_BGCHANGE_LAYER2_MENU.
+OPEN_BGCHANGE_LAYER2_MENU=Key_b
+# Hold Ctrl for INSERT_SHIFT_PAUSES and DELETE_SHIFT_PAUSES.
+INSERT_SHIFT_PAUSES=Key_insert
+DELETE_SHIFT_PAUSES=Key_DEL
+COLUMN_0=Key_1
+COLUMN_1=Key_2
+COLUMN_2=Key_3
+COLUMN_3=Key_4
+COLUMN_4=Key_5
+COLUMN_5=Key_6
+COLUMN_6=Key_7
+COLUMN_7=Key_8
+COLUMN_8=Key_9
+COLUMN_9=Key_0
+# Yeah, you're screwed when editing techno-double8, bm-double5, or bm-double7, or any other style with more than 10 columns.
+RIGHT_SIDE=Key_left alt:Key_right alt
+LAY_ROLL=Key_left shift:Key_right shift
+CYCLE_TAP_LEFT=Key_n
+CYCLE_TAP_RIGHT=Key_m
+# Hold Ctrl for CYCLE_SEGMENT_LEFT and CYCLE_SEGMENT_RIGHT.
+CYCLE_SEGMENT_LEFT=Key_n
+CYCLE_SEGMENT_RIGHT=Key_m
+# Hold Ctrl for SCROLL_SPEED_UP and SCROLL_SPEED_DOWN
+SCROLL_SPEED_UP=Key_up
+SCROLL_SPEED_DOWN=Key_down
+SCROLL_SELECT=Key_left shift:Key_right shift
+SNAP_NEXT=Key_left
+SNAP_PREV=Key_right
+OPEN_EDIT_MENU=Key_escape
+OPEN_AREA_MENU=Key_enter
+OPEN_ALTER_MENU=Key_a
+OPEN_INPUT_HELP=Key_F1
+# Hold Alt for BAKE_RANDOM_FROM_SONG_GROUP.
+BAKE_RANDOM_FROM_SONG_GROUP=Key_b
+# Hold Ctrl for BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE.
+BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE=Key_b
+# Hold Ctrl for RECORD_SELECTION.
+RECORD_SELECTION=Key_r
+INSERT=Key_insert:Key_\
+DELETE=Key_delete
+ADJUST_FINE=Key_right alt:Key_left alt
+# Hold Ctrl or Cmd (OS X) for SAVE.
+SAVE=Key_s
+UNDO=Key_u
+SWITCH_PLAYERS=Key_/
+SWITCH_TIMINGS=Key_t
+
+[Play]
+RETURN_TO_EDIT=Key_enter:Key_escape
+
+[Record]
+LAY_ROLL=Key_left shift:Key_right shift
+REMOVE_NOTE=Key_left alt:Key_right alt
+RETURN_TO_EDIT=Key_escape:Key_enter
+
+[RecordPaused]
+PLAY_SELECTION=Key_p
+# Hold Ctrl for RECORD_SELECTION.
+RECORD_SELECTION=Key_r
+RECORD_FROM_CURSOR=Key_r
+RETURN_TO_EDIT=Key_escape
+UNDO=Key_u

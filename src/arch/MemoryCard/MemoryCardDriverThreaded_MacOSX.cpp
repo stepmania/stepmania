@@ -59,7 +59,12 @@ MemoryCardDriverThreaded_MacOSX::~MemoryCardDriverThreaded_MacOSX()
 }
 
 void MemoryCardDriverThreaded_MacOSX::Unmount( UsbStorageDevice *pDevice )
-{	
+{
+#if defined(SYNC_VOLUME_FULLSYNC) && defined(SYNC_VOLUME_WAIT)
+	
+	if( sync_volume_np( pDevice->sOsMountDir.c_str(), SYNC_VOLUME_FULLSYNC | SYNC_VOLUME_WAIT ) != 0 )
+		LOG->Warn( "Failed to flush the memory card." );
+#else
 	ParamBlockRec pb;
 	Str255 name; // A pascal string.
 	const RString& base = Basename( pDevice->sOsMountDir );
@@ -72,6 +77,8 @@ void MemoryCardDriverThreaded_MacOSX::Unmount( UsbStorageDevice *pDevice )
 	
 	if( PBFlushVolSync(&pb) != noErr )
 		LOG->Warn( "Failed to flush the memory card." );
+	
+#endif
 }
 
 bool MemoryCardDriverThreaded_MacOSX::USBStorageDevicesChanged()

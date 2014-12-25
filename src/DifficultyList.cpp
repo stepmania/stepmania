@@ -389,7 +389,7 @@ void StepsDisplayList::HandleMessage( const Message &msg )
 class LunaStepsDisplayList: public Luna<StepsDisplayList>
 {
 public:
-	static int setfromgamestate( T* p, lua_State *L )		{ p->SetFromGameState(); return 0; }
+	static int setfromgamestate( T* p, lua_State *L )		{ p->SetFromGameState(); COMMON_RETURN_SELF; }
 
 	LunaStepsDisplayList()
 	{

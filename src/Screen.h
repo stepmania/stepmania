@@ -128,6 +128,7 @@ public:
 	bool PassInputToLua(const InputEventPlus& input);
 	void AddInputCallbackFromStack(lua_State* L);
 	void RemoveInputCallback(lua_State* L);
+	virtual bool AllowCallbackInput() { return true; }
 
 	// let subclass override if they want
 	virtual bool MenuUp(const InputEventPlus &) { return false; }

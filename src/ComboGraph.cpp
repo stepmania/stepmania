@@ -140,14 +140,14 @@ public:
 	static int Load( T* p, lua_State *L )
 	{
 		p->Load( SArg(1) );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int Set( T* p, lua_State *L )
 	{
 		StageStats *pStageStats = Luna<StageStats>::check( L, 1 );
 		PlayerStageStats *pPlayerStageStats = Luna<PlayerStageStats>::check( L, 2 );
 		p->Set( *pStageStats, *pPlayerStageStats );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	LunaComboGraph()

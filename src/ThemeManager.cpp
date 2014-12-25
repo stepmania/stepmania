@@ -616,45 +616,53 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 		for( unsigned p = 0; p < asPaths.size(); ++p )
 		{
 			// BGAnimations, Fonts, Graphics, Sounds, Other
-			static const char *masks[NUM_ElementCategory][15] = {
-				{ "redir", "lua", "xml", "png", "jpg", "jpeg", "bmp", "gif", "ogv", "avi", "mpg", "mpeg", "txt", "", NULL},
-				{ "redir", "ini", NULL },
-				{ "redir", "lua", "xml", "png", "jpg", "jpeg", "bmp", "gif", "ogv", "avi", "mpg", "mpeg", "txt", "", NULL},
-				{ "redir", "lua", "mp3", "oga", "ogg", "wav", NULL },
-				{ "*", NULL },
-			};
-			const char **asset_masks = masks[category];
-
-			const RString ext = GetExtension( asPaths[p] );
-
-			for( int i = 0; asset_masks[i]; ++i )
+			const RString ext = GetExtension(asPaths[p]);
+			bool matches= category == EC_OTHER || ext == "redir";
+			if(!matches)
 			{
-				// No extension means directories.
-				if( asset_masks[i][0] == 0 )
+				FileType ft= ActorUtil::GetFileType(asPaths[p]);
+				switch(ft)
 				{
-					if( !IsADirectory(asPaths[p]) )
-						continue;
-
-					RString sXMLPath = asPaths[p] + "/default.xml";
-					if( DoesFileExist(sXMLPath) )
-					{
-						asElementPaths.push_back( sXMLPath );
+					case FT_Bitmap:
+					case FT_Sprite:
+					case FT_Movie:
+					case FT_Xml:
+					case FT_Model:
+					case FT_Lua:
+						matches= category == EC_BGANIMATIONS || category == EC_GRAPHICS
+							|| category == EC_SOUNDS;
 						break;
-					}
-
-					RString sLuaPath = asPaths[p] + "/default.lua";
-					if( DoesFileExist(sLuaPath) )
-					{
-						asElementPaths.push_back( sLuaPath );
+					case FT_Ini:
+						matches= category == EC_FONTS;
 						break;
-					}
+					case FT_Directory:
+						{
+							RString sXMLPath = asPaths[p] + "/default.xml";
+							if(DoesFileExist(sXMLPath))
+							{
+								asElementPaths.push_back(sXMLPath);
+								break;
+							}
+							RString sLuaPath = asPaths[p] + "/default.lua";
+							if(DoesFileExist(sLuaPath))
+							{
+								asElementPaths.push_back(sLuaPath);
+								break;
+							}
+						}
+						matches= category == EC_BGANIMATIONS || category == EC_GRAPHICS;
+						break;
+					case FT_Sound:
+						matches= category == EC_SOUNDS;
+						break;
+					default:
+						matches= false;
+						break;
 				}
-
-				if( ext == asset_masks[i] || !strcmp(asset_masks[i], "*") )
-				{
-					asElementPaths.push_back( asPaths[p] );
-					break;
-				}
+			}
+			if(matches)
+			{
+				asElementPaths.push_back(asPaths[p]);
 			}
 		}
 	}
@@ -851,8 +859,13 @@ RString ThemeManager::GetPath( ElementCategory category, const RString &sMetrics
 {
 	PathInfo pi;
 	GetPathInfo( pi, category, sMetricsGroup, sElement, bOptional );
-	if(!bOptional)
-		ASSERT( !pi.sResolvedPath.empty() );
+	if(!bOptional && pi.sResolvedPath.empty())
+	{
+		LuaHelpers::ReportScriptErrorFmt("Theme element not found and not "
+			"optional: Category: %s  Metrics group: %s  Element name: %s.",
+			ElementCategoryToString(category).c_str(), sMetricsGroup.c_str(),
+			sElement.c_str());
+	}
 	return pi.sResolvedPath;
 }
 

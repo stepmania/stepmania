@@ -12,6 +12,7 @@
 #include "ScreenGameplay.h"
 #include "RageSoundManager.h"
 #include "GameSoundManager.h"
+#include "InputMapper.h"
 #include "RageTextureManager.h"
 #include "MemoryCardManager.h"
 #include "NoteSkinManager.h"
@@ -544,6 +545,7 @@ static LocalizedString PROFILE			( "ScreenDebugOverlay", "Profile" );
 static LocalizedString CLEAR_PROFILE_STATS	( "ScreenDebugOverlay", "Clear Profile Stats" );
 static LocalizedString FILL_PROFILE_STATS	( "ScreenDebugOverlay", "Fill Profile Stats" );
 static LocalizedString SEND_NOTES_ENDED	( "ScreenDebugOverlay", "Send Notes Ended" );
+static LocalizedString RESET_KEY_MAP ("ScreenDebugOverlay", "Reset key mapping to default");
 static LocalizedString RELOAD			( "ScreenDebugOverlay", "Reload" );
 static LocalizedString RESTART			( "ScreenDebugOverlay", "Restart" );
 static LocalizedString SCREEN_ON		( "ScreenDebugOverlay", "Send On To Screen" );
@@ -952,6 +954,19 @@ class DebugLineSendNotesEnded : public IDebugLine
 	}
 };
 
+class DebugLineResetKeyMapping : public IDebugLine
+{
+	virtual RString GetDisplayTitle() { return RESET_KEY_MAP.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
+	virtual bool IsEnabled() { return true; }
+	virtual void DoAndLog( RString &sMessageOut )
+	{
+		INPUTMAPPER->ResetMappingsToDefault();
+		INPUTMAPPER->SaveMappingsToDisk();
+		IDebugLine::DoAndLog( sMessageOut );
+	}
+};
+
 class DebugLineReloadCurrentScreen : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return RELOAD.GetValue(); }
@@ -1272,6 +1287,7 @@ DECLARE_ONE( DebugLineVisualDelayDown );
 DECLARE_ONE( DebugLineVisualDelayUp );
 DECLARE_ONE( DebugLineForceCrash );
 DECLARE_ONE( DebugLineUptime );
+DECLARE_ONE( DebugLineResetKeyMapping );
 
 
 /*

@@ -373,12 +373,12 @@ bool ScreenWithMenuElementsSimple::MenuBack( const InputEventPlus &input )
 class LunaScreenWithMenuElements: public Luna<ScreenWithMenuElements>
 {
 public:
-	static int Cancel( T* p, lua_State *L )		{ p->Cancel( SM_GoToPrevScreen ); return 0; }
+	static int Cancel( T* p, lua_State *L )		{ p->Cancel( SM_GoToPrevScreen ); COMMON_RETURN_SELF; }
 	static int IsTransitioning( T* p, lua_State *L ) { lua_pushboolean( L, p->IsTransitioning() ); return 1; }
 	static int SetAllowLateJoin( T* p, lua_State *L )
 	{
 		p->m_bShouldAllowLateJoin= BArg(1);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	static int StartTransitioningScreen( T* p, lua_State *L )
@@ -386,7 +386,7 @@ public:
 		RString sMessage = SArg(1);
 		ScreenMessage SM = ScreenMessageHelpers::ToScreenMessage( sMessage );
 		p->StartTransitioningScreen( SM );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	LunaScreenWithMenuElements()

@@ -142,6 +142,7 @@ ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE	( "Player", "PenalizeTapScoreNone" );
 ThemeMetric<bool> JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER	( "Player", "JudgeHoldNotesOnSameRowTogether" );
 ThemeMetric<bool> CHECKPOINTS_FLASH_ON_HOLD ( "Player", "CheckpointsFlashOnHold" ); // sm-ssc addition
 ThemeMetric<bool> IMMEDIATE_HOLD_LET_GO	( "Player", "ImmediateHoldLetGo" );
+ThemeMetric<bool> COMBO_BREAK_ON_IMMEDIATE_HOLD_LET_GO ( "Player", "ComboBreakOnImmediateHoldLetGo" );
 /**
  * @brief Must a Player step on a hold head for a hold to activate?
  *
@@ -1460,6 +1461,21 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		}
 	}
 
+	if ( (hns == HNS_LetGo) && COMBO_BREAK_ON_IMMEDIATE_HOLD_LET_GO )
+	{
+		const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+		const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
+
+		if( m_pPlayerStageStats )
+		{
+			m_pPlayerStageStats->m_iCurCombo = 0;
+			m_pPlayerStageStats->m_iCurMissCombo++;
+			SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
+		}
+
+		SendComboMessages( iOldCombo, iOldMissCombo );
+	}
+	
 	if( hns != HNS_None )
 	{
 		//LOG->Trace("tap note scoring time.");
@@ -2563,7 +2579,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				const bool bBright = ( m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > int(BRIGHT_GHOST_COMBO_THRESHOLD) ) || bBlind;
 				if( m_pNoteField )
 					m_pNoteField->DidTapNote( col, bBlind? TNS_W1:score, bBright );
-				if( score >= TNS_W3 || bBlind )
+				if( score >= m_pPlayerState->m_PlayerOptions.GetCurrent().m_MinTNSToHideNotes || bBlind )
 					HideNote( col, iRowOfOverlappingNoteOrRow );
 			}
 		}
@@ -2909,7 +2925,7 @@ void Player::FlashGhostRow( int iRow )
 			continue;
 		if( m_pNoteField )
 			m_pNoteField->DidTapNote( iTrack, lastTNS, bBright );
-		if( lastTNS >= TNS_W3 || bBlind )
+		if( lastTNS >= m_pPlayerState->m_PlayerOptions.GetCurrent().m_MinTNSToHideNotes || bBlind )
 			HideNote( iTrack, iRow );
 	}
 }
@@ -3492,13 +3508,13 @@ public:
 	{ 
 		Actor *pActor = Luna<Actor>::check(L, 1); 
 		p->SetActorWithJudgmentPosition(pActor); 
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetActorWithComboPosition( T* p, lua_State *L )
 	{ 
 		Actor *pActor = Luna<Actor>::check(L, 1); 
 		p->SetActorWithComboPosition(pActor); 
-		return 0; 
+		COMMON_RETURN_SELF;
 	}
 	static int GetPlayerTimingData( T* p, lua_State *L )
 	{

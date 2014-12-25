@@ -909,7 +909,7 @@ public:
 		RString screen= SArg(1);
 		ValidateScreenName(L, screen);
 		p->SetNewScreen(screen);
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int GetTopScreen( T* p, lua_State *L )
 	{
@@ -920,7 +920,7 @@ public:
 			lua_pushnil( L );
 		return 1;
 	}
-	static int SystemMessage( T* p, lua_State *L )		{ p->SystemMessage( SArg(1) ); return 0; }
+	static int SystemMessage( T* p, lua_State *L )		{ p->SystemMessage( SArg(1) ); COMMON_RETURN_SELF; }
 	static int ScreenIsPrepped( T* p, lua_State *L )	{ lua_pushboolean( L, ScreenManagerUtil::ScreenIsPrepped( SArg(1) ) ); return 1; }
 	static int ScreenClassExists( T* p, lua_State *L )	{ lua_pushboolean( L, g_pmapRegistrees->find( SArg(1) ) != g_pmapRegistrees->end() ); return 1; }
 	static int AddNewScreenToTop( T* p, lua_State *L )
@@ -935,10 +935,10 @@ public:
 		}
 
 		p->AddNewScreenToTop( screen, SM );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	//static int GetScreenStackSize( T* p, lua_State *L )	{ lua_pushnumber( L, ScreenManagerUtil::g_ScreenStack.size() ); return 1; }
-	static int ReloadOverlayScreens( T* p, lua_State *L )	{ p->ReloadOverlayScreens(); return 0; }
+	static int ReloadOverlayScreens( T* p, lua_State *L )	{ p->ReloadOverlayScreens(); COMMON_RETURN_SELF; }
 
 	LunaScreenManager()
 	{

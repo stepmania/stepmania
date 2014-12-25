@@ -276,6 +276,7 @@ protected:
 	BitmapText		m_textDebug;
 
 	RageTimer		m_GiveUpTimer;
+	bool m_gave_up;
 	void AbortGiveUp( bool bShowText );
 
 	Transition		m_Ready;

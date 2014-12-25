@@ -22,6 +22,7 @@ public:
 	void StartTransitioningScreen( ScreenMessage smSendWhenDone );
 	virtual void Cancel( ScreenMessage smSendWhenDone );
 	bool IsTransitioning();
+	virtual bool AllowCallbackInput() { return !IsTransitioning(); }
 
 	void StopTimer();
 	void ResetTimer();

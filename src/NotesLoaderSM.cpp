@@ -73,7 +73,7 @@ void SMLoader::LoadFromTokens(
 	Trim( sDifficulty );
 	Trim( sNoteData );
 
-	//	LOG->Trace( "Steps::LoadFromTokens()" );
+	// LOG->Trace( "Steps::LoadFromTokens(), %s", sStepsType.c_str() );
 
 	// backwards compatibility hacks:
 	// HACK: We eliminated "ez2-single-hard", but we should still handle it.
@@ -85,6 +85,7 @@ void SMLoader::LoadFromTokens(
 		sStepsType = "para-single";
 
 	out.m_StepsType = GAMEMAN->StringToStepsType( sStepsType );
+	out.m_StepsTypeStr = sStepsType;
 	out.SetDescription( sDescription );
 	out.SetCredit( sDescription ); // this is often used for both.
 	out.SetChartName(sDescription); // yeah, one more for good measure.

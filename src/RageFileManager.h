@@ -24,6 +24,9 @@ public:
 	void MountUserFilesystems();
 
 	void GetDirListing( const RString &sPath, vector<RString> &AddTo, bool bOnlyDirs, bool bReturnPathToo );
+	void GetDirListingWithMultipleExtensions(const RString &sPath,
+		vector<RString> const& ExtensionList, vector<RString> &AddTo,
+		bool bOnlyDirs= false, bool bReturnPathToo= false);
 	bool Move( const RString &sOldPath, const RString &sNewPath );
 	bool Remove( const RString &sPath );
 	void CreateDir( const RString &sDir );

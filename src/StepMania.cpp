@@ -67,6 +67,7 @@
 #include "GameLoop.h"
 #include "SpecialFiles.h"
 #include "Profile.h"
+#include "ActorUtil.h"
 
 #if defined(WIN32)
 #include <windows.h>
@@ -820,14 +821,30 @@ void StepMania::InitializeCurrentGame( const Game* g )
 
 	RString sAnnouncer = PREFSMAN->m_sAnnouncer;
 	RString sTheme = PREFSMAN->m_sTheme;
+	RString sGametype = GAMESTATE->GetCurrentGame()->m_szName;
 	RString sLanguage = PREFSMAN->m_sLanguage;
 
 	if( sAnnouncer.empty() )
 		sAnnouncer = GAMESTATE->GetCurrentGame()->m_szName;
+	RString argCurGame;
+	if( GetCommandlineArgument( "game", &argCurGame) && argCurGame != sGametype )
+	{
+		Game const* new_game= GAMEMAN->StringToGame(argCurGame);
+		if(new_game == NULL)
+		{
+			LOG->Warn("%s is not a known game type, ignoring.", argCurGame.c_str());
+		}
+		else
+		{
+			PREFSMAN->SetCurrentGame(sGametype);
+			GAMESTATE->SetCurGame(new_game);
+		}
+	}
+	
 	// It doesn't matter if sTheme is blank or invalid, THEME->STAL will set
 	// a selectable theme for us. -Kyz
 
-	// process theme and language command line arguments;
+	// process gametype, theme and language command line arguments;
 	// these change the preferences in order for transparent loading -aj
 	RString argTheme;
 	if( GetCommandlineArgument(	"theme",&argTheme) && argTheme != sTheme )
@@ -950,6 +967,10 @@ int main(int argc, char* argv[])
 	HOOKS->Init();
 
 	LUA		= new LuaManager;
+
+	// Initialize the file extension type lists so everything can ask ActorUtil
+	// what the type of a file is.
+	ActorUtil::InitFileTypeLists();
 
 	// Almost everything uses this to read and write files.  Load this early.
 	FILEMAN = new RageFileManager( argv[0] );

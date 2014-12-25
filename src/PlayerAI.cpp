@@ -11,6 +11,29 @@ struct TapScoreDistribution
 {
 	float fPercent[NUM_TapNoteScore];
 
+	void ChangeWeightsToPercents()
+	{
+		float sum= 0;
+		for(int i= 0; i < NUM_TapNoteScore; ++i)
+		{
+			sum+= fPercent[i];
+		}
+		for(int i= 0; i < NUM_TapNoteScore; ++i)
+		{
+			fPercent[i]/= sum;
+		}
+	}
+	void SetDefaultWeights()
+	{
+		fPercent[TNS_None] = 0;
+		fPercent[TNS_Miss] = 1;
+		fPercent[TNS_W5] = 0;
+		fPercent[TNS_W4] = 0;
+		fPercent[TNS_W3] = 0;
+		fPercent[TNS_W2] = 0;
+		fPercent[TNS_W1] = 0;
+	}
+
 	TapNoteScore GetTapNoteScore()
 	{
 		float fRand = randomf(0,1);
@@ -31,57 +54,54 @@ static TapScoreDistribution g_Distributions[NUM_SKILL_LEVELS];
 
 void PlayerAI::InitFromDisk()
 {
-	bool bSuccess;
-
 	IniFile ini;
-	bSuccess = ini.ReadFile( AI_PATH );
-	ASSERT( bSuccess );
-
-	for( int i=0; i<NUM_SKILL_LEVELS; i++ )
+	bool bSuccess = ini.ReadFile( AI_PATH );
+	if(!bSuccess)
 	{
-		RString sKey = ssprintf("Skill%d", i);
-		XNode* pNode = ini.GetChild(sKey);
-		TapScoreDistribution& dist = g_Distributions[i];
-		if( pNode == NULL )
+		LuaHelpers::ReportScriptErrorFmt("Error trying to read \"%s\" to load AI player skill settings.", AI_PATH);
+		for(int i= 0; i < NUM_SKILL_LEVELS; ++i)
 		{
-			LuaHelpers::ReportScriptErrorFmt("AI.ini: \"%s\" doesn't exist.", sKey.c_str());
-			dist.fPercent[TNS_None] = 0;
-			dist.fPercent[TNS_Miss] = 1;
-			dist.fPercent[TNS_W5] = 0;
-			dist.fPercent[TNS_W4] = 0;
-			dist.fPercent[TNS_W3] = 0;
-			dist.fPercent[TNS_W2] = 0;
-			dist.fPercent[TNS_W1] = 0;
+			g_Distributions[i].SetDefaultWeights();
+			g_Distributions[i].ChangeWeightsToPercents();
 		}
-		else
+	}
+	else
+	{
+		for( int i=0; i<NUM_SKILL_LEVELS; i++ )
 		{
-#define SET_MALF_IF(condition, tns) \
-			if(condition) \
-			{ \
-				LuaHelpers::ReportScriptError("AI weight for " #tns " not set."); \
-				dist.fPercent[tns]= 0; \
+			RString sKey = ssprintf("Skill%d", i);
+			XNode* pNode = ini.GetChild(sKey);
+			TapScoreDistribution& dist = g_Distributions[i];
+			if( pNode == NULL )
+			{
+				LuaHelpers::ReportScriptErrorFmt("AI.ini: \"%s\" section doesn't exist.", sKey.c_str());
+				dist.SetDefaultWeights();
 			}
-			dist.fPercent[TNS_None] = 0;
-			bSuccess = pNode->GetAttrValue( "WeightMiss", dist.fPercent[TNS_Miss] );
-			SET_MALF_IF(!bSuccess, TNS_Miss);
-			bSuccess = pNode->GetAttrValue( "WeightW5", dist.fPercent[TNS_W5] );
-			SET_MALF_IF(!bSuccess, TNS_W5);
-			bSuccess = pNode->GetAttrValue( "WeightW4", dist.fPercent[TNS_W4] );
-			SET_MALF_IF(!bSuccess, TNS_W4);
-			bSuccess = pNode->GetAttrValue( "WeightW3", dist.fPercent[TNS_W3] );
-			SET_MALF_IF(!bSuccess, TNS_W3);
-			bSuccess = pNode->GetAttrValue( "WeightW2", dist.fPercent[TNS_W2] );
-			SET_MALF_IF(!bSuccess, TNS_W2);
-			bSuccess = pNode->GetAttrValue( "WeightW1", dist.fPercent[TNS_W1] );
-			SET_MALF_IF(!bSuccess, TNS_W1);
-#undef SET_MALF_IF
+			else
+			{
+			#define SET_MALF_IF(condition, tns) \
+				if(condition) \
+				{ \
+					LuaHelpers::ReportScriptErrorFmt("AI weight for " #tns " in \"%s\" section not set.", sKey.c_str()); \
+					dist.fPercent[tns]= 0; \
+				}
+				dist.fPercent[TNS_None] = 0;
+				bSuccess = pNode->GetAttrValue( "WeightMiss", dist.fPercent[TNS_Miss] );
+				SET_MALF_IF(!bSuccess, TNS_Miss);
+				bSuccess = pNode->GetAttrValue( "WeightW5", dist.fPercent[TNS_W5] );
+				SET_MALF_IF(!bSuccess, TNS_W5);
+				bSuccess = pNode->GetAttrValue( "WeightW4", dist.fPercent[TNS_W4] );
+				SET_MALF_IF(!bSuccess, TNS_W4);
+				bSuccess = pNode->GetAttrValue( "WeightW3", dist.fPercent[TNS_W3] );
+				SET_MALF_IF(!bSuccess, TNS_W3);
+				bSuccess = pNode->GetAttrValue( "WeightW2", dist.fPercent[TNS_W2] );
+				SET_MALF_IF(!bSuccess, TNS_W2);
+				bSuccess = pNode->GetAttrValue( "WeightW1", dist.fPercent[TNS_W1] );
+				SET_MALF_IF(!bSuccess, TNS_W1);
+			#undef SET_MALF_IF
+			}
+			dist.ChangeWeightsToPercents();
 		}
-
-		float fSum = 0;
-		for( int j=0; j<NUM_TapNoteScore; j++ )
-			fSum += dist.fPercent[j];
-		for( int j=0; j<NUM_TapNoteScore; j++ )
-			dist.fPercent[j] /= fSum;
 	}
 }
 

@@ -307,12 +307,12 @@ public:
 
 		Message msg( SArg(1), ParamTable );
 		p->Broadcast( msg );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetLogging(T* p, lua_State *L)
 	{
 		p->SetLogging(lua_toboolean(L, -1));
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	LunaMessageManager()

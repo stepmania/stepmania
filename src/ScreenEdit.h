@@ -39,6 +39,7 @@ LuaDeclareType( EditState );
 
 enum EditButton
 {
+	// Add to the name_to_edit_button list when adding to this enum. -Kyz
 	EDIT_BUTTON_COLUMN_0,
 	EDIT_BUTTON_COLUMN_1,
 	EDIT_BUTTON_COLUMN_2,
@@ -151,6 +152,7 @@ enum EditButton
 	
 	EDIT_BUTTON_SWITCH_TIMINGS, /**< Allow switching between Song and Step TimingData. */
 
+	// Add to the name_to_edit_button list when adding to this enum. -Kyz
 	NUM_EditButton, // leave this at the end
 	EditButton_Invalid
 };
@@ -395,6 +397,7 @@ public:
 		NUM_MAIN_MENU_CHOICES,
 		MAIN_MENU_CHOICE_INVALID
 	};
+	int GetSongOrNotesEnd();
 	void HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAnswers );
 	void HandleMainMenuChoice( MainMenuChoice c ) { const vector<int> v; HandleMainMenuChoice( c, v ); }
 	MainMenuChoice m_CurrentAction;
@@ -665,6 +668,7 @@ public:
 	bool EditIsBeingPressed( EditButton button ) const;
 	const MapEditToDI *GetCurrentDeviceInputMap() const;
 	const MapEditButtonToMenuButton *GetCurrentMenuButtonMap() const;
+	void LoadKeymapSectionIntoMappingsMember(XNode const* section, MapEditToDI& mappings);
 	MapEditToDI		m_EditMappingsDeviceInput;
 	MapEditToDI		m_PlayMappingsDeviceInput;
 	MapEditToDI		m_RecordMappingsDeviceInput;

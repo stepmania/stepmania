@@ -27,6 +27,10 @@
 
 ProfileManager*	PROFILEMAN = NULL;	// global and accessible from anywhere in our program
 
+#define ID_DIGITS 8
+#define ID_DIGITS_STR "8"
+#define MAX_ID 99999999
+
 static void DefaultLocalProfileIDInit( size_t /*PlayerNumber*/ i, RString &sNameOut, RString &defaultValueOut )
 {
 	sNameOut = ssprintf( "DefaultLocalProfileIDP%d", int(i+1) );
@@ -54,6 +58,11 @@ struct DirAndProfile
 {
 	RString sDir;
 	Profile profile;
+	void swap(DirAndProfile& other)
+	{
+		sDir.swap(other.sDir);
+		profile.swap(other.profile);
+	}
 };
 static vector<DirAndProfile> g_vLocalProfile;
 
@@ -399,20 +408,67 @@ void ProfileManager::UnloadAllLocalProfiles()
 	g_vLocalProfile.clear();
 }
 
+static void add_category_to_global_list(vector<DirAndProfile>& cat)
+{
+	g_vLocalProfile.insert(g_vLocalProfile.end(), cat.begin(), cat.end());
+}
+
 void ProfileManager::RefreshLocalProfilesFromDisk()
 {
 	UnloadAllLocalProfiles();
 
-	vector<RString> vsProfileID;
-	GetDirListing( USER_PROFILES_DIR + "*", vsProfileID, true, true );
-	FOREACH_CONST( RString, vsProfileID, p )
+	vector<RString> profile_ids;
+	GetDirListing(USER_PROFILES_DIR + "*", profile_ids, true, true);
+	// Profiles have 3 types:
+	// 1.  Guest profiles:
+	//   Meant for use by guests, always at the top of the list.
+	// 2.  Normal profiles:
+	//   Meant for normal use, listed after guests.
+	// e.  Test profiles:
+	//   Meant for use when testing things, listed last.
+	// If the user renames a profile directory manually, that should not be a
+	// problem. -Kyz
+	map<ProfileType, vector<DirAndProfile> > categorized_profiles;
+	// The type data for a profile is in its own file so that loading isn't
+	// slowed down by copying temporary profiles around to make sure the list
+	// is sorted.  The profiles are loaded at the end. -Kyz
+	FOREACH_CONST(RString, profile_ids, id)
 	{
-		g_vLocalProfile.push_back( DirAndProfile() );
-		DirAndProfile &dap = g_vLocalProfile.back();
-		dap.sDir = *p + "/";
-		dap.profile.LoadAllFromDir( dap.sDir, PREFSMAN->m_bSignProfileData );
+		DirAndProfile derp;
+		derp.sDir= *id + "/";
+		derp.profile.LoadTypeFromDir(derp.sDir);
+		map<ProfileType, vector<DirAndProfile> >::iterator category=
+			categorized_profiles.find(derp.profile.m_Type);
+		if(category == categorized_profiles.end())
+		{
+			categorized_profiles[derp.profile.m_Type].push_back(derp);
+		}
+		else
+		{
+			bool inserted= false;
+			FOREACH(DirAndProfile, category->second, curr)
+			{
+				if(curr->profile.m_ListPriority > derp.profile.m_ListPriority)
+				{
+					category->second.insert(curr, derp);
+					inserted= true;
+					break;
+				}
+			}
+			if(!inserted)
+			{
+				category->second.push_back(derp);
+			}
+		}
 	}
-}
+	add_category_to_global_list(categorized_profiles[ProfileType_Guest]);
+	add_category_to_global_list(categorized_profiles[ProfileType_Normal]);
+	add_category_to_global_list(categorized_profiles[ProfileType_Test]);
+	FOREACH(DirAndProfile, g_vLocalProfile, curr)
+	{
+		curr->profile.LoadAllFromDir(curr->sDir, PREFSMAN->m_bSignProfileData);
+	}
+ }
 
 const Profile *ProfileManager::GetLocalProfile( const RString &sProfileID ) const
 {
@@ -433,14 +489,44 @@ bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 
 	// Find a directory directory name that's a number greater than all 
 	// existing numbers.  This preserves the "order by create date".
-	int iMaxProfileNumber = -1;
-	vector<RString> vs;
-	GetLocalProfileIDs( vs );
-	FOREACH_CONST( RString, vs, s )
-		iMaxProfileNumber = StringToInt( *s );
+	// Profile IDs are actually the directory names, so they can be any string,
+	// and we have to handle the case where the user renames one.
+	// Since the user can rename them, they might have any number, wrapping our
+	// counter or setting it to a ridiculous value.  That case must also be
+	// handled. -Kyz
+	int max_profile_number= -1;
+	int first_free_number= 0;
+	vector<RString> profile_ids;
+	GetLocalProfileIDs(profile_ids);
+	FOREACH_CONST(RString, profile_ids, id)
+	{
+		int tmp= 0;
+		if((*id) >> tmp)
+		{
+			// The profile ids are already in order, so we don't have to handle the
+			// case where 5 is encountered before 3.
+			if(tmp == first_free_number)
+			{
+				++first_free_number;
+			}
+			max_profile_number= max(tmp, max_profile_number);
+		}
+	}
 
-	int iProfileNumber = iMaxProfileNumber + 1;
-	RString sProfileID = ssprintf( "%08d", iProfileNumber );
+	int profile_number = max_profile_number + 1;
+	// Prevent profiles from going over the 8 digit limit.
+	if(profile_number > MAX_ID || profile_number < 0)
+	{
+		profile_number= first_free_number;
+	}
+	ASSERT_M(profile_number >= 0 && profile_number <= MAX_ID,
+		"Too many profiles, cannot assign ID to new profile.");
+	RString profile_id = ssprintf( "%0" ID_DIGITS_STR "d", profile_number );
+
+	// make sure this id doesn't already exist
+	ASSERT_M(GetLocalProfile(profile_id) == NULL,
+		ssprintf("creating profile with ID \"%s\" that already exists",
+		profile_id.c_str()));
 
 	// Create the new profile.
 	Profile *pProfile = new Profile;
@@ -448,7 +534,7 @@ bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 	pProfile->m_sCharacterID = CHARMAN->GetRandomCharacter()->m_sCharacterID;
 
 	// Save it to disk.
-	RString sProfileDir = LocalProfileIDToDir( sProfileID );
+	RString sProfileDir = LocalProfileIDToDir(profile_id);
 	if( !pProfile->SaveAllToDir(sProfileDir, PREFSMAN->m_bSignProfileData) )
 	{
 		delete pProfile;
@@ -456,10 +542,35 @@ bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 		return false;
 	}
 
-	AddLocalProfileByID( pProfile, sProfileID );
+	AddLocalProfileByID(pProfile, profile_id);
 
-	sProfileIDOut = sProfileID;
+	sProfileIDOut = profile_id;
 	return true;
+}
+
+static void InsertProfileIntoList(DirAndProfile& derp)
+{
+	bool inserted= false;
+	derp.profile.m_ListPriority= 0;
+	FOREACH(DirAndProfile, g_vLocalProfile, curr)
+	{
+		if(curr->profile.m_Type > derp.profile.m_Type)
+		{
+			derp.profile.SaveTypeToDir(derp.sDir);
+			g_vLocalProfile.insert(curr, derp);
+			inserted= true;
+			break;
+		}
+		else if(curr->profile.m_Type == derp.profile.m_Type)
+		{
+			++derp.profile.m_ListPriority;
+		}
+	}
+	if(!inserted)
+	{
+		derp.profile.SaveTypeToDir(derp.sDir);
+		g_vLocalProfile.push_back(derp);
+	}
 }
 
 void ProfileManager::AddLocalProfileByID( Profile *pProfile, RString sProfileID )
@@ -469,11 +580,10 @@ void ProfileManager::AddLocalProfileByID( Profile *pProfile, RString sProfileID 
 		ssprintf("creating \"%s\" \"%s\" that already exists",
 		pProfile->m_sDisplayName.c_str(), sProfileID.c_str()) );
 
-	// insert
-	g_vLocalProfile.push_back( DirAndProfile() );
-	DirAndProfile &dap = g_vLocalProfile.back();
-	dap.sDir = LocalProfileIDToDir( sProfileID );
-	dap.profile = *pProfile;
+	DirAndProfile derp;
+	derp.sDir= LocalProfileIDToDir(sProfileID);
+	derp.profile= *pProfile;
+	InsertProfileIntoList(derp);
 }
 
 bool ProfileManager::RenameLocalProfile( RString sProfileID, RString sNewName )
@@ -617,6 +727,81 @@ const Profile* ProfileManager::GetProfile( ProfileSlot slot ) const
 		return m_pMachineProfile;
 	default:
 		FAIL_M("Invalid profile slot chosen: unable to get the profile!");
+	}
+}
+
+void ProfileManager::MergeLocalProfiles(RString const& from_id, RString const& to_id)
+{
+	Profile* from= GetLocalProfile(from_id);
+	Profile* to= GetLocalProfile(to_id);
+	if(from == NULL || to == NULL)
+	{
+		return;
+	}
+	to->MergeScoresFromOtherProfile(from, false,
+		LocalProfileIDToDir(from_id), LocalProfileIDToDir(to_id));
+}
+
+void ProfileManager::MergeLocalProfileIntoMachine(RString const& from_id, bool skip_totals)
+{
+	Profile* from= GetLocalProfile(from_id);
+	if(from == NULL)
+	{
+		return;
+	}
+	GetMachineProfile()->MergeScoresFromOtherProfile(from, skip_totals,
+		LocalProfileIDToDir(from_id), MACHINE_PROFILE_DIR);
+}
+
+void ProfileManager::ChangeProfileType(int index, ProfileType new_type)
+{
+	if(index < 0 || static_cast<size_t>(index) >= g_vLocalProfile.size())
+	{ return; }
+	if(new_type == g_vLocalProfile[index].profile.m_Type)
+	{ return; }
+	DirAndProfile derp= g_vLocalProfile[index];
+	g_vLocalProfile.erase(g_vLocalProfile.begin() + index);
+	derp.profile.m_Type= new_type;
+	InsertProfileIntoList(derp);
+}
+
+void ProfileManager::MoveProfilePriority(int index, bool up)
+{
+	if(index < 0 || static_cast<size_t>(index) >= g_vLocalProfile.size())
+	{ return; }
+	// Changing the priority is complicated a bit because the profiles might
+	// all have the same priority.  So this function has to assign priorities
+	// to all the profiles of the same type.
+	// bools are numbers, true evaluatues to 1.
+	int swindex= index + ((up * -2) + 1);
+	ProfileType type= g_vLocalProfile[index].profile.m_Type;
+	int priority= 0;
+	for(size_t i= 0; i < g_vLocalProfile.size(); ++i)
+	{
+		DirAndProfile* curr= &g_vLocalProfile[i];
+		if(curr->profile.m_Type == type)
+		{
+			if(curr->profile.m_ListPriority != priority)
+			{
+				curr->profile.m_ListPriority= priority;
+				if(i != static_cast<size_t>(index) && i != static_cast<size_t>(swindex))
+				{
+					curr->profile.SaveTypeToDir(curr->sDir);
+				}
+			}
+			++priority;
+		}
+		else if(curr->profile.m_Type > type)
+		{
+			break;
+		}
+	}
+	// Only swap if both indices are valid and the types match.
+	if(swindex >= 0 && static_cast<size_t>(swindex) < g_vLocalProfile.size() &&
+		g_vLocalProfile[swindex].profile.m_Type ==
+		g_vLocalProfile[index].profile.m_Type)
+	{
+		g_vLocalProfile[index].swap(g_vLocalProfile[swindex]);
 	}
 }
 
@@ -839,8 +1024,31 @@ public:
 			lua_pushnil(L);
 		return 1;
 	}
-	static int GetLocalProfileFromIndex( T* p, lua_State *L ) { Profile *pProfile = p->GetLocalProfileFromIndex(IArg(1)); ASSERT(pProfile != NULL); pProfile->PushSelf(L); return 1; }
-	static int GetLocalProfileIDFromIndex( T* p, lua_State *L )	{ lua_pushstring(L, p->GetLocalProfileIDFromIndex(IArg(1)) ); return 1; }
+	static int GetLocalProfileFromIndex( T* p, lua_State *L )
+	{
+		int index= IArg(1);
+		if(index >= p->GetNumLocalProfiles())
+		{
+			luaL_error(L, "Profile index %d out of range.", index);
+		}
+		Profile *pProfile = p->GetLocalProfileFromIndex(index);
+		if(pProfile == NULL)
+		{
+			luaL_error(L, "No profile at index %d.", index);
+		}
+		pProfile->PushSelf(L);
+		return 1;
+	}
+	static int GetLocalProfileIDFromIndex( T* p, lua_State *L )
+	{
+		int index= IArg(1);
+		if(index >= p->GetNumLocalProfiles())
+		{
+			luaL_error(L, "Profile index %d out of range.", index);
+		}
+		lua_pushstring(L, p->GetLocalProfileIDFromIndex(index) );
+		return 1;
+	}
 	static int GetLocalProfileIndexFromID( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetLocalProfileIndexFromID(SArg(1)) ); return 1; }
 	static int GetNumLocalProfiles( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetNumLocalProfiles() ); return 1; }
 	static int GetProfileDir( T* p, lua_State *L ) { lua_pushstring(L, p->GetProfileDir(Enum::Check<ProfileSlot>(L, 1)) ); return 1; }

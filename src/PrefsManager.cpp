@@ -221,7 +221,8 @@ PrefsManager::PrefsManager() :
 	m_iSongsPerPlay			( "SongsPerPlay",		3, ValidateSongsPerPlay ),
 	m_bDelayedCreditsReconcile	( "DelayedCreditsReconcile",	false ),
 	m_bComboContinuesBetweenSongs	( "ComboContinuesBetweenSongs",	false ),
-	m_ShowSongOptions		( "ShowSongOptions",		Maybe_YES ),
+	m_MinTNSToHideNotes("MinTNSToHideNotes", TNS_W3),
+	m_ShowSongOptions		( "ShowSongOptions",		Maybe_NO ),
 	m_bDancePointsForOni		( "DancePointsForOni",		true ),
 	m_bPercentageScoring		( "PercentageScoring",		false ),
 	m_fMinPercentageForMachineSongHighScore		( "MinPercentageForMachineSongHighScore",	0.0001f ), // This is for home, who cares how bad you do?
@@ -286,7 +287,6 @@ PrefsManager::PrefsManager() :
 	m_sCoursesToShowRanking		( "CoursesToShowRanking",		"" ),
 
 	m_bQuirksMode		( "QuirksMode",		false ),
-	m_DefaultFailType("DefaultFailtype", FailType_ImmediateContinue),
 
 	/* Debug: */
 	m_bLogToDisk			( "LogToDisk",		true ),
@@ -567,12 +567,12 @@ public:
 		if( pPref == NULL )
 		{
 			LuaHelpers::ReportScriptErrorFmt( "SetPreference: unknown preference \"%s\"", sName.c_str() );
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 
 		lua_pushvalue( L, 2 );
 		pPref->SetFromStack( L );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetPreferenceToDefault( T* p, lua_State *L )
 	{
@@ -582,12 +582,12 @@ public:
 		if( pPref == NULL )
 		{
 			LuaHelpers::ReportScriptErrorFmt( "SetPreferenceToDefault: unknown preference \"%s\"", sName.c_str() );
-			return 0;
+			COMMON_RETURN_SELF;
 		}
 
 		pPref->LoadDefault();
 		LOG->Trace( "Restored preference \"%s\" to default \"%s\"", sName.c_str(), pPref->ToString().c_str() );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int PreferenceExists( T* p, lua_State *L )
 	{
@@ -603,7 +603,7 @@ public:
 		return 1;
 	}
 	
-	static int SavePreferences( T* p, lua_State *L ) { p->SavePrefsToDisk(); return 0; }
+	static int SavePreferences( T* p, lua_State *L ) { p->SavePrefsToDisk(); COMMON_RETURN_SELF; }
 	
 	LunaPrefsManager()
 	{

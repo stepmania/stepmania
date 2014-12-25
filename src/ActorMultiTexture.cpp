@@ -149,7 +149,7 @@ public:
 	static int ClearTextures( T* p, lua_State *L )
 	{
 		p->ClearTextures();
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int AddTexture( T* p, lua_State *L )
 	{
@@ -163,24 +163,24 @@ public:
 		int iIndex = IArg(1);
 		TextureMode tm = Enum::Check<TextureMode>(L, 2);
 		p->SetTextureMode( iIndex, tm );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetTextureCoords( T* p, lua_State *L )
 	{
 		p->SetTextureCoords( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetSizeFromTexture( T* p, lua_State *L )
 	{
 		RageTexture *pTexture = Luna<RageTexture>::check(L, 1);
 		p->SetSizeFromTexture( pTexture );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetEffectMode( T* p, lua_State *L )
 	{
 		EffectMode em = Enum::Check<EffectMode>(L, 1);
 		p->SetEffectMode( em );
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 
 	LunaActorMultiTexture()

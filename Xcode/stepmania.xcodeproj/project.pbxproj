@@ -1757,6 +1757,7 @@
 		EEC7863F0E58208B00F559BC /* StepsDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EEC7863D0E58208B00F559BC /* StepsDisplay.cpp */; };
 		F4BC045409E6B578003F770B /* ScreenGameplaySyncMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */; };
 		F4BC045509E6B582003F770B /* ScreenGameplaySyncMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB55EB609A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h */; };
+		F8FFD97A19E909ED00AEAA69 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8FFD97919E909ED00AEAA69 /* Accelerate.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -3249,6 +3250,8 @@
 		EE9D33F414B81BE80098EB9C /* jutils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jutils.c; path = ../extern/libjpeg/jutils.c; sourceTree = SOURCE_ROOT; };
 		EEC7863D0E58208B00F559BC /* StepsDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StepsDisplay.cpp; path = ../src/StepsDisplay.cpp; sourceTree = "<group>"; };
 		EEC7863E0E58208B00F559BC /* StepsDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StepsDisplay.h; path = ../src/StepsDisplay.h; sourceTree = "<group>"; };
+		F8FFD97719E907BA00AEAA69 /* vecLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = vecLib.framework; path = ../../../../../System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework; sourceTree = "<group>"; };
+		F8FFD97919E909ED00AEAA69 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3284,6 +3287,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8FFD97A19E909ED00AEAA69 /* Accelerate.framework in Frameworks */,
 				AA29CE3C0558741A00961A51 /* Cocoa.framework in Frameworks */,
 				AA29CE3D0558741A00961A51 /* Carbon.framework in Frameworks */,
 				AA29CE3E0558741A00961A51 /* IOKit.framework in Frameworks */,
@@ -3506,6 +3510,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F8FFD97919E909ED00AEAA69 /* Accelerate.framework */,
+				F8FFD97719E907BA00AEAA69 /* vecLib.framework */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
@@ -6264,7 +6270,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0610;
 			};
 			buildConfigurationList = AAC845130856A19700A9FEAB /* Build configuration list for PBXProject "stepmania" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -8317,6 +8323,10 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Accelerate.framework/Versions/A/Frameworks",
+				);
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
@@ -8388,8 +8398,9 @@
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Libraries";
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = "non-global";
@@ -8661,7 +8672,7 @@
 					"HAVE_MEMORY_H=1",
 					"HAVE_WAITPID=1",
 					"SIZEOF_LONG=4",
-					"FPM_INTEL=1",
+					"FPM_64BIT=1",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
@@ -8691,7 +8702,7 @@
 					"HAVE_MEMORY_H=1",
 					"HAVE_WAITPID=1",
 					"SIZEOF_LONG=4",
-					"FPM_INTEL=1",
+					"FPM_64BIT=1",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
@@ -8722,7 +8733,7 @@
 					"HAVE_MEMORY_H=1",
 					"HAVE_WAITPID=1",
 					"SIZEOF_LONG=4",
-					"FPM_INTEL=1",
+					"FPM_64BIT=1",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
@@ -8770,7 +8781,7 @@
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_STYLE = "non-global";
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include $(PROJECT_DIR)/../extern/vorbis";
@@ -8785,6 +8796,10 @@
 				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = stabs;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Accelerate.framework/Versions/A/Frameworks",
+				);
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -9007,6 +9022,10 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Accelerate.framework/Versions/A/Frameworks",
+				);
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
 				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = _XOPEN_SOURCE;
@@ -9075,7 +9094,7 @@
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_STYLE = "non-global";
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include $(PROJECT_DIR)/../extern/vorbis";

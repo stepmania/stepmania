@@ -111,7 +111,7 @@ public:
 			Steps *pS = Luna<Steps>::check(L,1);
 			p->SetFromSteps( PLAYER_1, pS );
 		}
-		return 0;
+		COMMON_RETURN_SELF;
 	}
 	static int SetFromTrail( T* p, lua_State *L )
 	{ 
@@ -124,11 +124,11 @@ public:
 			Trail *pT = Luna<Trail>::check(L,1);
 			p->SetFromTrail( PLAYER_1, pT );
 		}
-		return 0;
+		COMMON_RETURN_SELF;
 	}
-	static int Unset( T* p, lua_State *L )				{ p->Unset(); return 0; }
-	static int SetPlayer( T* p, lua_State *L )			{ p->SetPlayer( Enum::Check<PlayerNumber>(L, 1) ); return 0; }
-	static int SetFromDifficulty( T* p, lua_State *L )		{ p->SetFromDifficulty( Enum::Check<Difficulty>(L, 1) ); return 0; }
+	static int Unset( T* p, lua_State *L )				{ p->Unset(); COMMON_RETURN_SELF; }
+	static int SetPlayer( T* p, lua_State *L )			{ p->SetPlayer( Enum::Check<PlayerNumber>(L, 1) ); COMMON_RETURN_SELF; }
+	static int SetFromDifficulty( T* p, lua_State *L )		{ p->SetFromDifficulty( Enum::Check<Difficulty>(L, 1) ); COMMON_RETURN_SELF; }
 
 	LunaDifficultyIcon()
 	{

@@ -4,6 +4,113 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2014/12/20
+----------
+* [Preferences] AllowMultipleHighScoreWithSameName, ComboContinuesBetweenSongs
+  Disqualification, FailOffForFirstStageEasy, FailOffInBeginner,
+  LockCourseDifficulties, InputDebounceTime, MaxHighScoresPerListForMachine,
+  and MaxHighScoresPerListForPlayer added to service options.
+  InputDebounceTime is in Input Options, the rest are in Arcade Options.
+  (might not show up in themes that customize the order and placement of the
+  preferences) [kyzentun]
+
+2014/12/18
+----------
+* [Profile] GetTotalDancePoints added. [kyzentun]
+
+2014/12/10
+----------
+* [EditMode] Play whole song and play from current beat will now play until
+  either the music or the notes end, whichever is greater. [kyzentun]
+  The screens used for setting the options used to play the screen and for
+  adding attacks can be set through the "OptionsScreen" and "SetModScreen"
+  metrics in the ScreenEdit section.
+* [GameState] ApplyPreferredSongOptionsToOtherLevels function added. [kyzentun]
+* [Player] "ComboBreakOnImmediateHoldLetGo" theme metric added. [sillybear]
+* [PlayerState] ApplyPreferredOptionsToOtherLevels function added. [kyzentun]
+  
+2014/12/03
+----------
+* [command line arg] --game command line arg added for setting the game type
+  when starting stepmania. [sillybear]
+* [Announcer] "evaluation full combo W3" and "evaluation full combo W4"
+  responses added. [sillybear]
+
+2014/12/01
+----------
+* [ScreenMapControllers] Forced sanity checking of key mappings added.
+  Start, MenuLeft, MenuRight, and Operator keys must be mapped.
+  Reset key mappings option added to debug menu for recovering from an
+  unusuble keymap without needing to find and delete KeyMaps.ini. [kyzentun]
+
+2014/11/30
+----------
+* [NoteField] New functions added for controlling the receptor and ghost arrow
+  (explosion) flashes. [kyzentun]
+
+2014/11/28
+----------
+* [Profile] Guest and Test profile types added.  All existing and new
+  profiles are Normal.  If a profile is changed to Guest through the profile
+  management screen, it will always show at the top of the list.  A profile
+  set to Test will always be at the bottom of the list.  Profiles can be
+  moved around in the list.
+  GetType and GetPriority lua functions added to Profile.
+  Bug that caused a crash when a profile dir was renamed to a non-number and
+  a new profile was created fixed. [kyzentun]
+* [Everything] Actor and singleton functions that formerly returned nothing now
+  return the actor or singleton. Example (set zoom, x, y, and diffuse in one):
+  self:zoom(.5):xy(_screen.cx, _screen.h-60):diffuse(color("#dc322f"))
+  This also works for PlayerOptions and SongOptions API functions.  Pass true
+  as an extra arg, and they can be chained.
+
+2014/11/22
+----------
+* [Preferences] MinTNSToHideNotes preference added. [kyzentun]
+* [PlayerOptions] MinTNSToHideNotes mod added. [kyzentun]
+
+2014/11/15
+----------
+* [Preferences] Default Fail Type preference mechanism changed internally again.
+  Set your Default Fail Type preference again. [kyzentun]
+
+2014/11/05
+----------
+* [ScreenPrompt] Answer OnCommand metrics fixed to actually work. [kyzentun]
+
+2014/11/01
+----------
+* [RollingNumbers] Cropping and color during tweens fixed. [kyzentun]
+
+2014/10/23
+----------
+* [Global] approach, multiapproach, lerp, and lerp_color lua functions added. [kyzentun]
+
+2014/10/20
+----------
+* [StageStats] GetStepsSeconds function added. [kyzentun]
+* [Steps] If an unrecognized step type is saved, preserve that step instead of
+  deleting it. A warning will be placed in the log file during song load.  [kyzentun]
+
+================================================================================
+StepMania 5.0 beta 4a | 20141015
+--------------------------------------------------------------------------------
+
+2014/10/19
+----------
+* [BackgroundEffects] Fixed errors in StretchNoLoop and StretchRewind.
+
+2014/10/13
+----------
+* [NoteDisplay] Var Player and Var Controller work for non-receptor arrows. [hanubeki]
+* [Mac OS X] Allow StepMania to be built and run in Yosemite.
+
+2014/10/11
+----------
+* [NoteDisplay] Add two noteskin metrics, {PartName}NoteColorType and
+  {PartName}NoteColorCount. View https://github.com/stepmania/stepmania/pull/328
+  for more information. [hanubeki]
+
 ================================================================================
 StepMania 5.0 beta 4 | 20140930
 --------------------------------------------------------------------------------

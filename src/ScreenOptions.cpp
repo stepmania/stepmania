@@ -673,7 +673,7 @@ void ScreenOptions::PositionRows( bool bTween )
 			i < first_start ||
 			(i >= first_end && i < second_start) ||
 			i >= second_end;
-		for( int j=0; j<4; j++ )
+		for( int j=0; j<NUM_DIFFUSE_COLORS; j++ )
 			tsDestination.diffuse[j].a = bHidden? 0.0f:1.0f;
 		if( !bHidden )
 			pos++;
@@ -686,7 +686,7 @@ void ScreenOptions::PositionRows( bool bTween )
 		tsDestination.Init();
 		tsDestination.pos.y = SEPARATE_EXIT_ROW_Y;
 
-		for( int j=0; j<4; j++ )
+		for( int j=0; j<NUM_DIFFUSE_COLORS; j++ )
 			tsDestination.diffuse[j].a = 1.0f;
 		pSeparateExitRow->SetDestination( tsDestination, bTween );
 	}

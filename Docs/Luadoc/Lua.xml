@@ -203,6 +203,7 @@
 		<Function name='WriteGamePrefToFile'/>
 		<Function name='WritePrefToFile'/>
 		<Function name='Year'/>
+		<Function name='approach'/>
 		<Function name='assert'/>
 		<Function name='clamp'/>
 		<Function name='class'/>
@@ -219,11 +220,14 @@
 		<Function name='ipairs'/>
 		<Function name='ivalues'/>
 		<Function name='join'/>
+		<Function name='lerp'/>
+		<Function name='lerp_color'/>
 		<Function name='load'/>
 		<Function name='loadfile'/>
 		<Function name='loadstring'/>
 		<Function name='mbstrlen'/>
 		<Function name='module'/>
+		<Function name='multiapproach'/>
 		<Function name='newproxy'/>
 		<Function name='next'/>
 		<Function name='pairs'/>
@@ -744,6 +748,7 @@
 			<Function name='AnyPlayerHasRankingFeats'/>
 			<Function name='ApplyGameCommand'/>
 			<Function name='ApplyPreferredModifiers'/>
+			<Function name='ApplyPreferredSongOptionsToOtherLevels'/>
 			<Function name='ApplyStageModifiers'/>
 			<Function name='ClearStageModifiersIllegalForCourse'/>
 			<Function name='CurrentOptionsDisqualifyPlayer'/>
@@ -960,6 +965,16 @@
 			<Function name='SelectCourse'/>
 			<Function name='SelectSong'/>
 		</Class>
+		<Class base='ActorFrame' name='NoteField'>
+			<Function name='DidHoldNote'/>
+			<Function name='DidTapNote'/>
+			<Function name='SetPressed'/>
+			<Function name='SetDidHoldNoteCallback'/>
+			<Function name='SetDidTapNoteCallback'/>
+			<Function name='SetSetPressedCallback'/>
+			<Function name='SetStepCallback'/>
+			<Function name='Step'/>
+		</Class>
 		<Class name='NoteSkinManager'>
 			<Function name='DoesNoteSkinExist'/>
 			<Function name='GetMetric'/>
@@ -1049,6 +1064,7 @@
 			<Function name='MaxScrollBPM'/>
 			<Function name='Mines'/>
 			<Function name='Mini'/>
+			<Function name='MinTNSToHideNotes' />
 			<Function name='Mirror'/>
 			<Function name='MMod'/>
 			<Function name='MuteOnError'/>
@@ -1147,6 +1163,7 @@
 			<Function name='SetScore'/>
 		</Class>
 		<Class name='PlayerState'>
+			<Function name='ApplyPreferredOptionsToOtherLevels'/>
 			<Function name='GetCurrentPlayerOptions'/>
 			<Function name='GetHealthState'/>
 			<Function name='GetMultiPlayerNumber'/>
@@ -1196,12 +1213,14 @@
 			<Function name='GetMostPopularSong'/>
 			<Function name='GetNumToasties'/>
 			<Function name='GetNumTotalSongsPlayed'/>
+			<Function name='GetPriority'/>
 			<Function name='GetSongNumTimesPlayed'/>
 			<Function name='GetSongsActual'/>
 			<Function name='GetSongsAndCoursesPercentCompleteAllDifficulties'/>
 			<Function name='GetSongsPercentComplete'/>
 			<Function name='GetSongsPossible'/>
 			<Function name='GetTotalCaloriesBurned'/>
+			<Function name='GetTotalDancePoints'/>
 			<Function name='GetTotalGameplaySeconds'/>
 			<Function name='GetTotalHands'/>
 			<Function name='GetTotalHolds'/>
@@ -1215,6 +1234,7 @@
 			<Function name='GetTotalStepsWithTopGrade'/>
 			<Function name='GetTotalTapsAndHolds'/>
 			<Function name='GetTotalTrailsWithTopGrade'/>
+			<Function name='GetType'/>
 			<Function name='GetUserTable'/>
 			<Function name='GetVoomax'/>
 			<Function name='GetWeightPounds'/>
@@ -1584,6 +1604,7 @@
 			<Function name='GetPossibleSongs'/>
 			<Function name='GetStage'/>
 			<Function name='GetStageIndex'/>
+			<Function name='GetStepsSeconds'/>
 			<Function name='OnePassed'/>
 			<Function name='PlayerHasHighScore'/>
 		</Class>
@@ -2264,6 +2285,11 @@
 			<EnumValue name='&apos;ProfileSlot_Player1&apos;' value='0'/>
 			<EnumValue name='&apos;ProfileSlot_Player2&apos;' value='1'/>
 			<EnumValue name='&apos;ProfileSlot_Machine&apos;' value='2'/>
+		</Enum>
+		<Enum name='ProfileType'>
+			<EnumValue name='&apos;ProfileType_Guest&apos;' value='0'/>
+			<EnumValue name='&apos;ProfileType_Normal&apos;' value='1'/>
+			<EnumValue name='&apos;ProfileType_Test&apos;' value='2'/>
 		</Enum>
 		<Enum name='RadarCategory'>
 			<EnumValue name='&apos;RadarCategory_Stream&apos;' value='0'/>

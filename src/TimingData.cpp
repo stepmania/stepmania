@@ -1045,7 +1045,7 @@ public:
 #define GET_FUNCTION(get_name, segment_name) \
 	static int get_name(T* p, lua_State* L) \
 	{ \
-		if(TIMING_DATA_RETURNS_NUMBERS) \
+		if(lua_toboolean(L, 1)) \
 		{ \
 			TimingSegmentSetToLuaTable(p, segment_name, L); \
 		} \

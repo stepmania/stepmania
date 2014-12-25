@@ -66,13 +66,17 @@ struct InputDeviceInfo
 	
 	InputDevice id;
 	RString sDesc;
-
-	bool operator==( const InputDeviceInfo &other ) const
-	{
-		return id == other.id && 
-			sDesc == other.sDesc;
-	}
 };
+
+inline bool operator==(InputDeviceInfo const &lhs, InputDeviceInfo const &rhs)
+{
+	return lhs.id == rhs.id && lhs.sDesc == rhs.sDesc;
+}
+
+inline bool operator!=(InputDeviceInfo const &lhs, InputDeviceInfo const &rhs)
+{
+	return !operator==(lhs, rhs);
+}
 
 enum InputDeviceState
 {
@@ -336,25 +340,6 @@ public:
 	DeviceInput( InputDevice d, DeviceButton b, const RageTimer &t, int zVal=0 ):
 		device(d), button(b), level(0), z(zVal), bDown(false), ts(t) { }
 
-	bool operator==( const DeviceInput &other ) const
-	{ 
-		/* Return true if we represent the same button on the same device.
-		 * Don't compare level or ts. */
-		return device == other.device  &&  button == other.button;
-	}
-	bool operator!=( const DeviceInput &other ) const
-	{
-		return ! operator==( other );
-	}
-	bool operator<( const DeviceInput &other ) const
-	{ 
-		/* Return true if we represent the same button on the same device.
-		 * Don't compare level or ts. */
-		if( device != other.device )
-			return device < other.device;
-		return button < other.button;
-	}
-
 	RString ToString() const;
 	bool FromString( const RString &s );
 
@@ -364,6 +349,40 @@ public:
 	bool IsJoystick() const { return ::IsJoystick(device); }
 	bool IsMouse() const { return ::IsMouse(device); }
 };
+
+inline bool operator==(DeviceInput const &lhs, DeviceInput const &rhs)
+{
+	/* Return true if we represent the same button on the same device.
+	 * Don't compare level or ts. */
+	return lhs.device == rhs.device &&
+		lhs.button == rhs.button;
+}
+inline bool operator!=(DeviceInput const &lhs, DeviceInput const &rhs)
+{
+	return !operator==(lhs, rhs);
+}
+
+inline bool operator<(DeviceInput const &lhs, DeviceInput const &rhs)
+{
+	/* Only the devices and buttons matter here. */
+	if ( lhs.device != rhs.device)
+	{
+		return lhs.device < rhs.device;
+	}
+	return lhs.button < rhs.button;
+}
+inline bool operator>(DeviceInput const &lhs, DeviceInput const &rhs)
+{
+	return operator<(rhs, lhs);
+}
+inline bool operator<=(DeviceInput const &lhs, DeviceInput const &rhs)
+{
+	return !operator<(rhs, lhs);
+}
+inline bool operator>=(DeviceInput const &lhs, DeviceInput const &rhs)
+{
+	return !operator<(lhs, rhs);
+}
 
 typedef vector<DeviceInput> DeviceInputList;
 

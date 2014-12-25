@@ -74,6 +74,14 @@ RString RageColor::NormalizeColorString( RString sColor )
 	return c.ToString();
 }
 
+void lerp_rage_color(RageColor& out, RageColor const& a, RageColor const& b, float t)
+{
+	out.b= lerp(t, a.b, b.b);
+	out.g= lerp(t, a.g, b.g);
+	out.r= lerp(t, a.r, b.r);
+	out.a= lerp(t, a.a, b.a);
+}
+
 void WeightedAvergeOfRSVs(RageSpriteVertex& average_out, RageSpriteVertex const& rsv1, RageSpriteVertex const& rsv2, float percent_between)
 {
 	average_out.p= lerp(percent_between, rsv1.p, rsv2.p);
@@ -207,8 +215,21 @@ int LuaFunc_color( lua_State *L )
 	c.PushTable( L );
 	return 1;
 }
-void LuaFunc_Register_color( lua_State *L ) { lua_register( L, "color", LuaFunc_color ); }
-REGISTER_WITH_LUA_FUNCTION( LuaFunc_Register_color );
+LUAFUNC_REGISTER_COMMON(color);
+
+int LuaFunc_lerp_color(lua_State *L)
+{
+	// Args:  percent, color, color
+	// Returns:  color
+	float percent= FArg(1);
+	RageColor a, b, c;
+	a.FromStack(L, 2);
+	b.FromStack(L, 3);
+	lerp_rage_color(c, a, b, percent);
+	c.PushTable(L);
+	return 1;
+}
+LUAFUNC_REGISTER_COMMON(lerp_color);
 
 /*
  * Copyright (c) 2006 Glenn Maynard

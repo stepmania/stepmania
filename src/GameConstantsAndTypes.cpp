@@ -227,6 +227,16 @@ TapNoteScore StringToTapNoteScore( const RString &s )
 
 	return TapNoteScore_Invalid;
 }
+// This is necessary because the StringToX macro wasn't used, and Preference
+// relies on there being a StringConversion entry for enums used in prefs. -Kyz
+namespace StringConversion
+{
+	template<> bool FromString<TapNoteScore>(const RString& value, TapNoteScore& out)
+	{
+		out= StringToTapNoteScore(value);
+		return out != TapNoteScore_Invalid;
+	}
+}
 XToLocalizedString( TapNoteScore );
 LuaFunction( TapNoteScoreToLocalizedString, TapNoteScoreToLocalizedString(Enum::Check<TapNoteScore>(L, 1)) );
 

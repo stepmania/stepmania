@@ -52,6 +52,7 @@ function ScreenSelectMusic:setupmusicstagemods()
 		GAMESTATE:SetSongOptions( "ModsLevel_Stage", so )
 		MESSAGEMAN:Broadcast( "SongOptionsChanged" )
 	end
+	return self
 end
 
 function ScreenSelectMusic:setupcoursestagemods()
@@ -72,6 +73,7 @@ function ScreenSelectMusic:setupcoursestagemods()
 		GAMESTATE:SetSongOptions( "ModsLevel_Stage", so )
 		MESSAGEMAN:Broadcast( "SongOptionsChanged" )
 	end
+	return self
 end
 
 -- (c) 2006-2007 Steve Checkoway
