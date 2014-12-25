@@ -1,6 +1,8 @@
 #include "global.h"
 #include "NoteDisplay.h"
 #include "GameState.h"
+#include "GhostArrowRow.h"
+#include "NoteData.h"
 #include "NoteSkinManager.h"
 #include "ArrowEffects.h"
 #include "RageLog.h"
@@ -315,6 +317,189 @@ void NoteDisplay::Load( int iColNum, const PlayerState* pPlayerState, float fYRe
 			m_HoldTail[ht][at].Load(	sButton, HoldTypeToString(ht)+" Tail "+ActiveTypeToString(at), pn, GameI.controller );
 		}
 	}
+}
+
+inline float NoteRowToVisibleBeat( const PlayerState *pPlayerState, int iRow )
+{
+	return NoteRowToBeat(iRow);
+}
+
+bool NoteDisplay::IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels ) const
+{
+	// IMPORTANT:  Do not modify this function without also modifying the
+	// version that is in NoteField.cpp or coming up with a good way to
+	// merge them. -Kyz
+	// TRICKY: If boomerang is on, then ones in the range
+	// [iFirstRowToDraw,iLastRowToDraw] aren't necessarily visible.
+	// Test to see if this beat is visible before drawing.
+	float fYOffset = ArrowEffects::GetYOffset( m_pPlayerState, iCol, fBeat );
+	if( fYOffset > iDrawDistanceBeforeTargetsPixels )	// off screen
+		return false;
+	if( fYOffset < iDrawDistanceAfterTargetsPixels )	// off screen
+		return false;
+
+	return true;
+}
+
+bool NoteDisplay::DrawHoldsInRange(NoteDisplayRenderArgs const& args,
+	vector<NoteData::TrackMap::const_iterator> const& tap_set)
+{
+	bool any_upcoming = false;
+	for(vector<NoteData::TrackMap::const_iterator>::const_iterator tapit=
+		tap_set.begin(); tapit != tap_set.end(); ++tapit)
+	{
+		TapNote const& tn= (*tapit)->second;
+		HoldNoteResult const& result= tn.HoldResult;
+		int start_row= (*tapit)->first;
+		int end_row = start_row + tn.iDuration;
+
+		// TRICKY: If boomerang is on, then all notes in the range
+		// [first_row,last_row] aren't necessarily visible.
+		// Test every note to make sure it's on screen before drawing
+		float throw_away;
+		bool start_past_peak = false;
+		bool end_past_peak = false;
+		float start_y	= ArrowEffects::GetYOffset(m_pPlayerState, args.column,
+			NoteRowToVisibleBeat(m_pPlayerState, start_row), throw_away,
+			start_past_peak);
+		float end_y	= ArrowEffects::GetYOffset(m_pPlayerState, args.column,
+			NoteRowToVisibleBeat(m_pPlayerState, end_row), throw_away,
+			end_past_peak);
+		bool tail_visible = args.draw_pixels_after_targets <= end_y &&
+			end_y <= args.draw_pixels_before_targets;
+		bool head_visible = args.draw_pixels_after_targets <= start_y  &&
+			start_y <= args.draw_pixels_before_targets;
+		bool straddling_visible = start_y <= args.draw_pixels_after_targets &&
+			args.draw_pixels_before_targets <= end_y;
+		bool straddling_peak = start_past_peak && !end_past_peak;
+		if(!(tail_visible || head_visible || straddling_visible || straddling_peak))
+		{
+			//LOG->Trace( "skip drawing this hold." );
+			continue;	// skip
+		}
+
+		bool is_addition = (tn.source == TapNoteSource_Addition);
+		bool hopo_possible = (tn.bHopoPossible);
+		bool use_addition_coloring = is_addition || hopo_possible;
+		const bool hold_ghost_showing = tn.HoldResult.bActive  &&  tn.HoldResult.fLife > 0;
+		const bool is_holding = tn.HoldResult.bHeld;
+		if(hold_ghost_showing)
+		{
+			args.ghost_row.SetHoldShowing(args.column, tn);
+		}
+
+		ASSERT_M(NoteRowToBeat(start_row) > -2000, ssprintf("%i %i %i", start_row, end_row, args.column));
+
+		bool in_selection_range = false;
+		if(args.selection_begin_marker != -1 && args.selection_end_marker != -1)
+		{
+			in_selection_range = (args.selection_begin_marker <= start_row &&
+				end_row < args.selection_end_marker);
+		}
+
+		DrawHold(tn, args.column, start_row, is_holding, result,
+			use_addition_coloring,
+			in_selection_range ? args.selection_glow : args.fail_fade,
+			m_fYReverseOffsetPixels, (float)args.draw_pixels_after_targets,
+			(float)args.draw_pixels_before_targets,
+			args.draw_pixels_before_targets, args.fade_before_targets);
+
+		bool note_upcoming = NoteRowToBeat(start_row) >
+			m_pPlayerState->GetDisplayedPosition().m_fSongBeat;
+		any_upcoming |= note_upcoming;
+	}
+	return any_upcoming;
+}
+
+bool NoteDisplay::DrawTapsInRange(NoteDisplayRenderArgs const& args,
+	vector<NoteData::TrackMap::const_iterator> const& tap_set)
+{
+	bool any_upcoming= false;
+	// draw notes from furthest to closest
+	for(vector<NoteData::TrackMap::const_iterator>::const_iterator tapit=
+		tap_set.begin(); tapit != tap_set.end(); ++tapit)
+	{
+		int tap_row= (*tapit)->first;
+		TapNote const& tn= (*tapit)->second;
+
+		// TRICKY: If boomerang is on, then all notes in the range
+		// [first_row,last_row] aren't necessarily visible.
+		// Test every note to make sure it's on screen before drawing.
+		if(!IsOnScreen(NoteRowToBeat(tap_row), args.column,
+				args.draw_pixels_after_targets, args.draw_pixels_before_targets))
+		{
+			continue; // skip
+		}
+
+		// Hm, this assert used to pass the first and last rows to draw, when it
+		// was in NoteField, but those aren't available here.
+		// Well, anyone who has to investigate hitting it can use a debugger to
+		// discover the values, hopefully. -Kyz
+		ASSERT_M(NoteRowToBeat(tap_row) > -2000,
+			ssprintf("Invalid tap_row: %i, %f %f",
+				tap_row,
+				m_pPlayerState->GetDisplayedPosition().m_fSongBeat,
+				m_pPlayerState->GetDisplayedPosition().m_fMusicSeconds));
+
+		// See if there is a hold step that begins on this index.
+		// Only do this if the noteskin cares.
+		bool hold_begins_on_this_beat = false;
+		if(DrawHoldHeadForTapsOnSameRow())
+		{
+			for(int c2= 0; c2 < args.note_data.GetNumTracks(); ++c2)
+			{
+				const TapNote &tmp = args.note_data.GetTapNote(c2, tap_row);
+				if(tmp.type == TapNoteType_HoldHead &&
+					tmp.subType == TapNoteSubType_Hold)
+				{
+					hold_begins_on_this_beat = true;
+					break;
+				}
+			}
+		}
+
+		// do the same for a roll.
+		bool roll_begins_on_this_beat = false;
+		if(DrawRollHeadForTapsOnSameRow())
+		{
+			for(int c2= 0; c2 < args.note_data.GetNumTracks(); ++c2)
+			{
+				const TapNote &tmp = args.note_data.GetTapNote(c2, tap_row);
+				if(tmp.type == TapNoteType_HoldHead &&
+					tmp.subType == TapNoteSubType_Roll)
+				{
+					roll_begins_on_this_beat = true;
+					break;
+				}
+			}
+		}
+
+		bool in_selection_range = false;
+		if(args.selection_begin_marker != -1 && args.selection_end_marker != -1)
+		{
+			in_selection_range = args.selection_begin_marker <= tap_row &&
+				tap_row < args.selection_end_marker;
+		}
+
+		bool is_addition = (tn.source == TapNoteSource_Addition);
+		bool hopo_possible = (tn.bHopoPossible);
+		bool use_addition_coloring = is_addition || hopo_possible;
+		DrawTap(tn, args.column, NoteRowToVisibleBeat(m_pPlayerState, tap_row),
+			hold_begins_on_this_beat, roll_begins_on_this_beat,
+			use_addition_coloring,
+			in_selection_range ? args.selection_glow : args.fail_fade,
+			m_fYReverseOffsetPixels, args.draw_pixels_after_targets,
+			args.draw_pixels_before_targets, args.fade_before_targets);
+
+		any_upcoming |= NoteRowToBeat(tap_row) >
+			m_pPlayerState->GetDisplayedPosition().m_fSongBeat;
+
+		if(!PREFSMAN->m_FastNoteRendering)
+		{
+			DISPLAY->ClearZBuffer();
+		}
+	}
+	return any_upcoming;
 }
 
 bool NoteDisplay::DrawHoldHeadForTapsOnSameRow() const

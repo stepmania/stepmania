@@ -36,11 +36,8 @@ static ThemeMetric<float> FADE_FAIL_TIME( "NoteField", "FadeFailTime" );
 static RString RoutineNoteSkinName( size_t i ) { return ssprintf("RoutineNoteSkinP%i",int(i+1)); }
 static ThemeMetric1D<RString> ROUTINE_NOTESKIN( "NoteField", RoutineNoteSkinName, NUM_PLAYERS );
 
-static bool FAST_NOTE_RENDERING_PREF_CACHED= false;
-
 NoteField::NoteField()
 {
-	FAST_NOTE_RENDERING_PREF_CACHED= PREFSMAN->m_FastNoteRendering;
 	m_pNoteData = NULL;
 	m_pCurDisplay = NULL;
 
@@ -801,13 +798,11 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceB
 	return fLastBeatToDraw;
 }
 
-inline float NoteRowToVisibleBeat( const PlayerState *pPlayerState, int iRow )
-{
-	return NoteRowToBeat(iRow);
-}
-
 bool NoteField::IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels ) const
 {
+	// IMPORTANT:  Do not modify this function without also modifying the
+	// version that is in NoteDisplay.cpp or coming up with a good way to
+	// merge them. -Kyz
 	// TRICKY: If boomerang is on, then ones in the range 
 	// [iFirstRowToDraw,iLastRowToDraw] aren't necessarily visible.
 	// Test to see if this beat is visible before drawing.
@@ -1208,168 +1203,69 @@ void NoteField::DrawPrimitives()
 		 ssprintf("NumTracks %d != ColsPerPlayer %d",m_pNoteData->GetNumTracks(), 
 			  GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer));
 
+	NoteDisplayRenderArgs display_args(*m_pNoteData,
+		iDrawDistanceBeforeTargetsPixels,
+		iDrawDistanceAfterTargetsPixels, m_iBeginMarker, m_iEndMarker,
+		fSelectedRangeGlow, m_fPercentFadeToFail, FADE_BEFORE_TARGETS_PERCENT,
+		m_pCurDisplay->m_GhostArrowRow);
 	for( int j=0; j<m_pNoteData->GetNumTracks(); j++ )	// for each arrow column
 	{
 		const int c = pStyle->m_iColumnDrawOrder[j];
-
-		bool bAnyUpcomingInThisCol = false;
-
-		// Draw all HoldNotes in this column (so that they appear under the tap notes)
-		{
-			NoteData::TrackMap::const_iterator begin, end;
-			m_pNoteData->GetTapNoteRangeInclusive( c, iFirstRowToDraw, iLastRowToDraw+1, begin, end );
-
-			for( ; begin != end; ++begin )
-			{
-				const TapNote &tn = begin->second; //m_pNoteData->GetTapNote(c, j);
-				if( tn.type != TapNoteType_HoldHead )
-					continue; // skip
-
-				const HoldNoteResult &Result = tn.HoldResult;
-				if( Result.hns == HNS_Held ) // if this HoldNote was completed
-					continue; // don't draw anything
-
-				int iStartRow = begin->first;
-				int iEndRow = iStartRow + tn.iDuration;
-
-				// TRICKY: If boomerang is on, then all notes in the range 
-				// [iFirstRowToDraw,iLastRowToDraw] aren't necessarily visible.
-				// Test every note to make sure it's on screen before drawing
-				float fThrowAway;
-				bool bStartIsPastPeak = false;
-				bool bEndIsPastPeak = false;
-				float fStartYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, c, NoteRowToVisibleBeat(m_pPlayerState, iStartRow), fThrowAway, bStartIsPastPeak );
-				float fEndYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, c, NoteRowToVisibleBeat(m_pPlayerState, iEndRow), fThrowAway, bEndIsPastPeak );
-
-				bool bTailIsOnVisible = iDrawDistanceAfterTargetsPixels <= fEndYOffset && fEndYOffset <= iDrawDistanceBeforeTargetsPixels;
-				bool bHeadIsVisible = iDrawDistanceAfterTargetsPixels <= fStartYOffset  && fStartYOffset <= iDrawDistanceBeforeTargetsPixels;
-				bool bStraddlingVisible = fStartYOffset <= iDrawDistanceAfterTargetsPixels && iDrawDistanceBeforeTargetsPixels <= fEndYOffset;
-				bool bStaddlingPeak = bStartIsPastPeak && !bEndIsPastPeak;
-				if( !(bTailIsOnVisible || bHeadIsVisible || bStraddlingVisible || bStaddlingPeak) )
-				{
-					//LOG->Trace( "skip drawing this hold." );
-					continue;	// skip
-				}
-
-				bool bIsAddition = (tn.source == TapNoteSource_Addition);
-				bool bIsHopoPossible = (tn.bHopoPossible);
-				bool bUseAdditionColoring = bIsAddition || bIsHopoPossible;
-				const bool bHoldGhostShowing = tn.HoldResult.bActive  &&  tn.HoldResult.fLife > 0;
-				const bool bIsHoldingNote = tn.HoldResult.bHeld;
-				if( bHoldGhostShowing )
-					m_pCurDisplay->m_GhostArrowRow.SetHoldShowing( c, tn );
-
-				ASSERT_M( NoteRowToBeat(iStartRow) > -2000, ssprintf("%i %i %i", iStartRow, iEndRow, c) );
-
-				bool bIsInSelectionRange = false;
-				if( m_iBeginMarker!=-1 && m_iEndMarker!=-1 )
-					bIsInSelectionRange = (m_iBeginMarker <= iStartRow && iEndRow < m_iEndMarker);
-
-				NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
-				displayCols->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, Result, bUseAdditionColoring, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 
-					m_fYReverseOffsetPixels, (float) iDrawDistanceAfterTargetsPixels, (float) iDrawDistanceBeforeTargetsPixels, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
-
-				bool bNoteIsUpcoming = NoteRowToBeat(iStartRow) > m_pPlayerState->GetDisplayedPosition().m_fSongBeat;
-				bAnyUpcomingInThisCol |= bNoteIsUpcoming;
-			}
-		}
-
-		// Draw all TapNotes in this column
-
-		// draw notes from furthest to closest
+		display_args.column= c;
+		bool any_upcoming= false;
+		// Build lists of holds and taps for each player number, then pass those
+		// lists to the displays to draw.
+		// The vector in the NUM_PlayerNumber slot should stay empty, not worth
+		// optimizing it out. -Kyz
+		vector<vector<NoteData::TrackMap::const_iterator> > holds(PLAYER_INVALID+1);
+		vector<vector<NoteData::TrackMap::const_iterator> > taps(PLAYER_INVALID+1);
 		NoteData::TrackMap::const_iterator begin, end;
-		m_pNoteData->GetTapNoteRange( c, iFirstRowToDraw, iLastRowToDraw+1, begin, end );
-		for( ; begin != end; ++begin )
+		m_pNoteData->GetTapNoteRangeInclusive(c, iFirstRowToDraw,
+			iLastRowToDraw+1, begin, end);
+		for(; begin != end; ++begin)
 		{
-			int q = begin->first;
-			const TapNote &tn = begin->second; //m_pNoteData->GetTapNote(c, q);
-
-			// Switch modified by Wolfman2000, tested by Saturn2888
-			// Fixes hold head overlapping issue, but not the rolls.
-			switch( tn.type )
+			TapNote const& tn= begin->second;
+			switch(tn.type)
 			{
-				case TapNoteType_Empty: // no note here
-				{
+				case TapNoteType_Empty:
 					continue;
-				}
+				case TapNoteType_Tap:
+				case TapNoteType_HoldTail:
+				case TapNoteType_Mine:
+				case TapNoteType_Lift:
+				case TapNoteType_Attack:
+				case TapNoteType_AutoKeysound:
+				case TapNoteType_Fake:
+					if(!tn.result.bHidden)
+					{
+						taps[tn.pn].push_back(begin);
+					}
+					break;
 				case TapNoteType_HoldHead:
-				{
-					//if (tn.subType == TapNoteSubType_Roll)
-						continue; // skip
-				}
-				default: break;
-			}
-
-			// Don't draw hidden (fully judged) steps.
-			if( tn.result.bHidden )
-				continue;
-
-			// TRICKY: If boomerang is on, then all notes in the range 
-			// [iFirstRowToDraw,iLastRowToDraw] aren't necessarily visible.
-			// Test every note to make sure it's on screen before drawing.
-			if( !IsOnScreen( NoteRowToBeat(q), c, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels ) )
-				continue; // skip
-
-			ASSERT_M( NoteRowToBeat(q) > -2000, ssprintf("%i %i %i, %f %f", q, iLastRowToDraw, 
-							iFirstRowToDraw, m_pPlayerState->GetDisplayedPosition().m_fSongBeat, m_pPlayerState->GetDisplayedPosition().m_fMusicSeconds) );
-
-			// See if there is a hold step that begins on this index.
-			// Only do this if the noteskin cares.
-			bool bHoldNoteBeginsOnThisBeat = false;
-			if( m_pCurDisplay->display[c].DrawHoldHeadForTapsOnSameRow() )
-			{
-				for( int c2=0; c2<m_pNoteData->GetNumTracks(); c2++ )
-				{
-					const TapNote &tmp = m_pNoteData->GetTapNote(c2, q);
-					if(tmp.type == TapNoteType_HoldHead &&
-					   tmp.subType == TapNoteSubType_Hold)
+					if(tn.HoldResult.hns != HNS_Held)
 					{
-						bHoldNoteBeginsOnThisBeat = true;
-						break;
+						holds[tn.pn].push_back(begin);
 					}
-				}
-			}
-
-			// do the same for a roll.
-			bool bRollNoteBeginsOnThisBeat = false;
-			if (m_pCurDisplay->display[c].DrawRollHeadForTapsOnSameRow() )
-			{
-				for( int c2=0; c2<m_pNoteData->GetNumTracks(); c2++ )
-				{
-					const TapNote &tmp = m_pNoteData->GetTapNote(c2, q);
-					if(tmp.type == TapNoteType_HoldHead &&
-					   tmp.subType == TapNoteSubType_Roll)
-					{
-						bRollNoteBeginsOnThisBeat = true;
-						break;
-					}
-				}
-			}
-
-			bool bIsInSelectionRange = false;
-			if( m_iBeginMarker!=-1 && m_iEndMarker!=-1 )
-				bIsInSelectionRange = m_iBeginMarker<=q && q<m_iEndMarker;
-
-			bool bIsAddition = (tn.source == TapNoteSource_Addition);
-			bool bIsHopoPossible = (tn.bHopoPossible);
-			bool bUseAdditionColoring = bIsAddition || bIsHopoPossible;
-			NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
-			displayCols->display[c].DrawTap(tn, c, NoteRowToVisibleBeat(m_pPlayerState, q),
-							bHoldNoteBeginsOnThisBeat, bRollNoteBeginsOnThisBeat,
-					bUseAdditionColoring, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 
-					m_fYReverseOffsetPixels, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels, 
-					FADE_BEFORE_TARGETS_PERCENT );
-
-			bool bNoteIsUpcoming = NoteRowToBeat(q) > m_pPlayerState->GetDisplayedPosition().m_fSongBeat;
-			bAnyUpcomingInThisCol |= bNoteIsUpcoming;
-
-			if(!FAST_NOTE_RENDERING_PREF_CACHED)
-			{
-				DISPLAY->ClearZBuffer();
+					break;
 			}
 		}
-
-		cur->m_ReceptorArrowRow.SetNoteUpcoming( c, bAnyUpcomingInThisCol );
+#define DTS_INNER(pn, tap_set, draw_func, disp) \
+		if(!tap_set[pn].empty()) \
+		{ \
+			any_upcoming|= disp->display[c].draw_func(display_args, tap_set[pn]); \
+		}
+#define DRAW_TAP_SET(tap_set, draw_func) \
+		FOREACH_PlayerNumber(pn) \
+		{ \
+			DTS_INNER(pn, tap_set, draw_func, m_pDisplays[pn]); \
+		}
+		DRAW_TAP_SET(holds, DrawHoldsInRange);
+		DTS_INNER(PLAYER_INVALID, holds, DrawHoldsInRange, m_pCurDisplay);
+		DRAW_TAP_SET(taps, DrawTapsInRange);
+		DTS_INNER(PLAYER_INVALID, taps, DrawTapsInRange, m_pCurDisplay);
+#undef DTS_INNER
+#undef DRAW_TAP_SET
+		cur->m_ReceptorArrowRow.SetNoteUpcoming(c, any_upcoming);
 	}
 
 	cur->m_GhostArrowRow.Draw();

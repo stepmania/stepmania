@@ -1,6 +1,7 @@
 #ifndef NOTE_DISPLAY_H
 #define NOTE_DISPLAY_H
 
+#include "NoteData.h"
 #include "PlayerNumber.h"
 #include "GameInput.h"
 
@@ -8,6 +9,7 @@ class Actor;
 class Sprite;
 class Model;
 class PlayerState;
+class GhostArrowRow;
 struct TapNote;
 struct HoldNoteResult;
 struct NoteMetricCache_t;
@@ -83,6 +85,30 @@ enum ActiveType
 #define FOREACH_ActiveType( i ) FOREACH_ENUM( ActiveType, i )
 const RString &ActiveTypeToString( ActiveType at );
 
+// A little pod struct to carry the data the NoteField needs to pass to the
+// NoteDisplay during rendering.
+struct NoteDisplayRenderArgs
+{
+	NoteData const& note_data;
+	int column;
+	int draw_pixels_before_targets;
+	int draw_pixels_after_targets;
+	int selection_begin_marker;
+	int selection_end_marker;
+	float selection_glow;
+	float fail_fade;
+	float fade_before_targets;
+	GhostArrowRow& ghost_row;
+NoteDisplayRenderArgs(NoteData const& nd, int dpbt, int dpat, int sbm,
+	int sem, float sg, float ff, float fbt, GhostArrowRow& gr)
+	:note_data(nd), column(0),
+		draw_pixels_before_targets(dpbt), draw_pixels_after_targets(dpat),
+		selection_begin_marker(sbm), selection_end_marker(sem),
+		selection_glow(sg), fail_fade(ff), fade_before_targets(fbt), ghost_row(gr)
+	{}
+};
+
+
 /** @brief Draws TapNotes and HoldNotes. */
 class NoteDisplay
 {
@@ -94,6 +120,12 @@ public:
 
 	static void Update( float fDeltaTime );
 
+	bool IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels ) const;
+
+	bool DrawHoldsInRange(NoteDisplayRenderArgs const& args,
+		vector<NoteData::TrackMap::const_iterator> const& tap_set);
+	bool DrawTapsInRange(NoteDisplayRenderArgs const& args,
+		vector<NoteData::TrackMap::const_iterator> const& tap_set);
 	/**
 	 * @brief Draw the TapNote onto the NoteField.
 	 * @param tn the TapNote in question.
