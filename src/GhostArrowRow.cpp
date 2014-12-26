@@ -35,6 +35,15 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 	}
 }
 
+void GhostArrowRow::SetColumnRenderers(vector<NoteColumnRenderer>& renderers)
+{
+	ASSERT_M(renderers.size() == m_Ghost.size(), "Notefield has different number of columns than ghost row.");
+	for(size_t c= 0; c < m_Ghost.size(); ++c)
+	{
+		m_Ghost[c]->SetFakeParent(&(renderers[c]));
+	}
+}
+
 GhostArrowRow::~GhostArrowRow()
 {
 	for( unsigned i = 0; i < m_Ghost.size(); ++i )

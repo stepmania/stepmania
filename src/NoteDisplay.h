@@ -1,15 +1,16 @@
 #ifndef NOTE_DISPLAY_H
 #define NOTE_DISPLAY_H
 
+#include "ActorFrame.h"
 #include "NoteData.h"
 #include "PlayerNumber.h"
 #include "GameInput.h"
 
-class Actor;
 class Sprite;
 class Model;
 class PlayerState;
 class GhostArrowRow;
+class ReceptorArrowRow;
 struct TapNote;
 struct HoldNoteResult;
 struct NoteMetricCache_t;
@@ -87,27 +88,21 @@ const RString &ActiveTypeToString( ActiveType at );
 
 // A little pod struct to carry the data the NoteField needs to pass to the
 // NoteDisplay during rendering.
-struct NoteDisplayRenderArgs
+struct CommonColumnRenderArgs
 {
-	NoteData const& note_data;
-	int column;
+	ReceptorArrowRow* receptor_row;
+	GhostArrowRow* ghost_row;
+	NoteData const* note_data;
+	int first_row;
+	int last_row;
 	int draw_pixels_before_targets;
 	int draw_pixels_after_targets;
-	int selection_begin_marker;
-	int selection_end_marker;
+	int* selection_begin_marker;
+	int* selection_end_marker;
 	float selection_glow;
 	float fail_fade;
 	float fade_before_targets;
-	GhostArrowRow& ghost_row;
-NoteDisplayRenderArgs(NoteData const& nd, int dpbt, int dpat, int sbm,
-	int sem, float sg, float ff, float fbt, GhostArrowRow& gr)
-	:note_data(nd), column(0),
-		draw_pixels_before_targets(dpbt), draw_pixels_after_targets(dpat),
-		selection_begin_marker(sbm), selection_end_marker(sem),
-		selection_glow(sg), fail_fade(ff), fade_before_targets(fbt), ghost_row(gr)
-	{}
 };
-
 
 /** @brief Draws TapNotes and HoldNotes. */
 class NoteDisplay
@@ -122,9 +117,9 @@ public:
 
 	bool IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels ) const;
 
-	bool DrawHoldsInRange(NoteDisplayRenderArgs const& args,
+	bool DrawHoldsInRange(CommonColumnRenderArgs const& args, int column,
 		vector<NoteData::TrackMap::const_iterator> const& tap_set);
-	bool DrawTapsInRange(NoteDisplayRenderArgs const& args,
+	bool DrawTapsInRange(CommonColumnRenderArgs const& args, int column,
 		vector<NoteData::TrackMap::const_iterator> const& tap_set);
 	/**
 	 * @brief Draw the TapNote onto the NoteField.
@@ -182,6 +177,25 @@ private:
 	NoteColorSprite		m_HoldBottomCap[NUM_HoldType][NUM_ActiveType];
 	NoteColorActor		m_HoldTail[NUM_HoldType][NUM_ActiveType];
 	float			m_fYReverseOffsetPixels;
+};
+
+// So, this is a bit screwy, and it's all because routine forces rendering
+// notes from different noteskins in the same column.
+// NoteColumnRenderer exists to hold all the data needed for rendering a
+// column and apply any transforms from that column's actor to the
+// NoteDisplays that render the notes.
+// NoteColumnRenderer is also used as a fake parent for the receptor and ghost
+// actors so they can move with the rest of the column.  I didn't use
+// ActorProxy because the receptor/ghost actors need to pull in the parent
+// state of their rows and the parent state of the column. -Kyz
+class NoteColumnRenderer : public ActorFrame
+{
+	public:
+	NoteDisplay* m_displays[PLAYER_INVALID+1];
+	CommonColumnRenderArgs* m_render_args;
+	int m_column;
+
+	virtual void DrawPrimitives();
 };
 
 #endif

@@ -4,6 +4,7 @@
 #include "ActorFrame.h"
 #include "GameConstantsAndTypes.h"
 #include "NoteTypes.h"
+#include "NoteDisplay.h"
 
 class PlayerState;
 /** @brief Row of GhostArrow Actors. */
@@ -15,6 +16,7 @@ public:
 	virtual void DrawPrimitives();
 
 	void Load( const PlayerState* pPlayerState, float fYReverseOffset );
+	void SetColumnRenderers(vector<NoteColumnRenderer>& renderers);
 
 	void DidTapNote( int iCol, TapNoteScore tns, bool bBright );
 	void DidHoldNote( int iCol, HoldNoteScore hns, bool bBright );

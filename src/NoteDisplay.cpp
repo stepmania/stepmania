@@ -7,6 +7,7 @@
 #include "ArrowEffects.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
+#include "ReceptorArrowRow.h"
 #include "ActorUtil.h"
 #include "Style.h"
 #include "PlayerState.h"
@@ -341,8 +342,8 @@ bool NoteDisplay::IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTarge
 	return true;
 }
 
-bool NoteDisplay::DrawHoldsInRange(NoteDisplayRenderArgs const& args,
-	vector<NoteData::TrackMap::const_iterator> const& tap_set)
+bool NoteDisplay::DrawHoldsInRange(CommonColumnRenderArgs const& args,
+	int column, vector<NoteData::TrackMap::const_iterator> const& tap_set)
 {
 	bool any_upcoming = false;
 	for(vector<NoteData::TrackMap::const_iterator>::const_iterator tapit=
@@ -359,10 +360,10 @@ bool NoteDisplay::DrawHoldsInRange(NoteDisplayRenderArgs const& args,
 		float throw_away;
 		bool start_past_peak = false;
 		bool end_past_peak = false;
-		float start_y	= ArrowEffects::GetYOffset(m_pPlayerState, args.column,
+		float start_y	= ArrowEffects::GetYOffset(m_pPlayerState, column,
 			NoteRowToVisibleBeat(m_pPlayerState, start_row), throw_away,
 			start_past_peak);
-		float end_y	= ArrowEffects::GetYOffset(m_pPlayerState, args.column,
+		float end_y	= ArrowEffects::GetYOffset(m_pPlayerState, column,
 			NoteRowToVisibleBeat(m_pPlayerState, end_row), throw_away,
 			end_past_peak);
 		bool tail_visible = args.draw_pixels_after_targets <= end_y &&
@@ -385,19 +386,19 @@ bool NoteDisplay::DrawHoldsInRange(NoteDisplayRenderArgs const& args,
 		const bool is_holding = tn.HoldResult.bHeld;
 		if(hold_ghost_showing)
 		{
-			args.ghost_row.SetHoldShowing(args.column, tn);
+			args.ghost_row->SetHoldShowing(column, tn);
 		}
 
-		ASSERT_M(NoteRowToBeat(start_row) > -2000, ssprintf("%i %i %i", start_row, end_row, args.column));
+		ASSERT_M(NoteRowToBeat(start_row) > -2000, ssprintf("%i %i %i", start_row, end_row, column));
 
 		bool in_selection_range = false;
-		if(args.selection_begin_marker != -1 && args.selection_end_marker != -1)
+		if(*args.selection_begin_marker != -1 && *args.selection_end_marker != -1)
 		{
-			in_selection_range = (args.selection_begin_marker <= start_row &&
-				end_row < args.selection_end_marker);
+			in_selection_range = (*args.selection_begin_marker <= start_row &&
+				end_row < *args.selection_end_marker);
 		}
 
-		DrawHold(tn, args.column, start_row, is_holding, result,
+		DrawHold(tn, column, start_row, is_holding, result,
 			use_addition_coloring,
 			in_selection_range ? args.selection_glow : args.fail_fade,
 			m_fYReverseOffsetPixels, (float)args.draw_pixels_after_targets,
@@ -411,8 +412,8 @@ bool NoteDisplay::DrawHoldsInRange(NoteDisplayRenderArgs const& args,
 	return any_upcoming;
 }
 
-bool NoteDisplay::DrawTapsInRange(NoteDisplayRenderArgs const& args,
-	vector<NoteData::TrackMap::const_iterator> const& tap_set)
+bool NoteDisplay::DrawTapsInRange(CommonColumnRenderArgs const& args,
+	int column, vector<NoteData::TrackMap::const_iterator> const& tap_set)
 {
 	bool any_upcoming= false;
 	// draw notes from furthest to closest
@@ -425,7 +426,7 @@ bool NoteDisplay::DrawTapsInRange(NoteDisplayRenderArgs const& args,
 		// TRICKY: If boomerang is on, then all notes in the range
 		// [first_row,last_row] aren't necessarily visible.
 		// Test every note to make sure it's on screen before drawing.
-		if(!IsOnScreen(NoteRowToBeat(tap_row), args.column,
+		if(!IsOnScreen(NoteRowToBeat(tap_row), column,
 				args.draw_pixels_after_targets, args.draw_pixels_before_targets))
 		{
 			continue; // skip
@@ -446,9 +447,9 @@ bool NoteDisplay::DrawTapsInRange(NoteDisplayRenderArgs const& args,
 		bool hold_begins_on_this_beat = false;
 		if(DrawHoldHeadForTapsOnSameRow())
 		{
-			for(int c2= 0; c2 < args.note_data.GetNumTracks(); ++c2)
+			for(int c2= 0; c2 < args.note_data->GetNumTracks(); ++c2)
 			{
-				const TapNote &tmp = args.note_data.GetTapNote(c2, tap_row);
+				const TapNote &tmp = args.note_data->GetTapNote(c2, tap_row);
 				if(tmp.type == TapNoteType_HoldHead &&
 					tmp.subType == TapNoteSubType_Hold)
 				{
@@ -462,9 +463,9 @@ bool NoteDisplay::DrawTapsInRange(NoteDisplayRenderArgs const& args,
 		bool roll_begins_on_this_beat = false;
 		if(DrawRollHeadForTapsOnSameRow())
 		{
-			for(int c2= 0; c2 < args.note_data.GetNumTracks(); ++c2)
+			for(int c2= 0; c2 < args.note_data->GetNumTracks(); ++c2)
 			{
-				const TapNote &tmp = args.note_data.GetTapNote(c2, tap_row);
+				const TapNote &tmp = args.note_data->GetTapNote(c2, tap_row);
 				if(tmp.type == TapNoteType_HoldHead &&
 					tmp.subType == TapNoteSubType_Roll)
 				{
@@ -475,16 +476,16 @@ bool NoteDisplay::DrawTapsInRange(NoteDisplayRenderArgs const& args,
 		}
 
 		bool in_selection_range = false;
-		if(args.selection_begin_marker != -1 && args.selection_end_marker != -1)
+		if(*args.selection_begin_marker != -1 && *args.selection_end_marker != -1)
 		{
-			in_selection_range = args.selection_begin_marker <= tap_row &&
-				tap_row < args.selection_end_marker;
+			in_selection_range = *args.selection_begin_marker <= tap_row &&
+				tap_row < *args.selection_end_marker;
 		}
 
 		bool is_addition = (tn.source == TapNoteSource_Addition);
 		bool hopo_possible = (tn.bHopoPossible);
 		bool use_addition_coloring = is_addition || hopo_possible;
-		DrawTap(tn, args.column, NoteRowToVisibleBeat(m_pPlayerState, tap_row),
+		DrawTap(tn, column, NoteRowToVisibleBeat(m_pPlayerState, tap_row),
 			hold_begins_on_this_beat, roll_begins_on_this_beat,
 			use_addition_coloring,
 			in_selection_range ? args.selection_glow : args.fail_fade,
@@ -1062,6 +1063,64 @@ void NoteDisplay::DrawTap(const TapNote& tn, int iCol, float fBeat,
 
 	if( tn.type == TapNoteType_Attack )
 		pActor->PlayCommand( "UnsetAttack" );
+}
+
+void NoteColumnRenderer::DrawPrimitives()
+{
+	bool any_upcoming= false;
+	// Build lists of holds and taps for each player number, then pass those
+	// lists to the displays to draw.
+	// The vector in the NUM_PlayerNumber slot should stay empty, not worth
+	// optimizing it out. -Kyz
+	vector<vector<NoteData::TrackMap::const_iterator> > holds(PLAYER_INVALID+1);
+	vector<vector<NoteData::TrackMap::const_iterator> > taps(PLAYER_INVALID+1);
+	NoteData::TrackMap::const_iterator begin, end;
+	m_render_args->note_data->GetTapNoteRangeInclusive(m_column,
+		m_render_args->first_row, m_render_args->last_row+1, begin, end);
+	for(; begin != end; ++begin)
+	{
+		TapNote const& tn= begin->second;
+		switch(tn.type)
+		{
+			case TapNoteType_Empty:
+				continue;
+			case TapNoteType_Tap:
+			case TapNoteType_HoldTail:
+			case TapNoteType_Mine:
+			case TapNoteType_Lift:
+			case TapNoteType_Attack:
+			case TapNoteType_AutoKeysound:
+			case TapNoteType_Fake:
+				if(!tn.result.bHidden)
+				{
+					taps[tn.pn].push_back(begin);
+				}
+				break;
+			case TapNoteType_HoldHead:
+				if(tn.HoldResult.hns != HNS_Held)
+				{
+					holds[tn.pn].push_back(begin);
+				}
+				break;
+		}
+	}
+#define DTS_INNER(pn, tap_set, draw_func, disp) \
+	if(!tap_set[pn].empty()) \
+	{ \
+		any_upcoming|= disp->draw_func(*m_render_args, m_column, tap_set[pn]); \
+	}
+#define DRAW_TAP_SET(tap_set, draw_func) \
+	FOREACH_PlayerNumber(pn) \
+	{ \
+		DTS_INNER(pn, tap_set, draw_func, m_displays[pn]); \
+	}
+	DRAW_TAP_SET(holds, DrawHoldsInRange);
+	DTS_INNER(PLAYER_INVALID, holds, DrawHoldsInRange, m_displays[PLAYER_INVALID]);
+	DRAW_TAP_SET(taps, DrawTapsInRange);
+	DTS_INNER(PLAYER_INVALID, taps, DrawTapsInRange, m_displays[PLAYER_INVALID]);
+#undef DTS_INNER
+#undef DRAW_TAP_SET
+	m_render_args->receptor_row->SetNoteUpcoming(m_column, any_upcoming);
 }
 
 /*

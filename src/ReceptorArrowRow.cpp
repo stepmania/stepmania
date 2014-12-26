@@ -30,6 +30,15 @@ void ReceptorArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOff
 	}
 }
 
+void ReceptorArrowRow::SetColumnRenderers(vector<NoteColumnRenderer>& renderers)
+{
+	ASSERT_M(renderers.size() == m_ReceptorArrow.size(), "Notefield has different number of columns than receptor row.");
+	for(size_t c= 0; c < m_ReceptorArrow.size(); ++c)
+	{
+		m_ReceptorArrow[c]->SetFakeParent(&(renderers[c]));
+	}
+}
+
 ReceptorArrowRow::~ReceptorArrowRow()
 {
 	for( unsigned i = 0; i < m_ReceptorArrow.size(); ++i )

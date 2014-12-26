@@ -61,9 +61,13 @@ NoteField::NoteField()
 	m_sprBeatBars.Load( THEME->GetPathG("NoteField","bars") );
 	m_sprBeatBars.StopAnimating();
 
+	// I decided to do it this way because I don't want to dig through
+	// ScreenEdit to change all the places it touches the markers. -Kyz
+	m_ColumnRenderArgs.selection_begin_marker= &m_iBeginMarker;
+	m_ColumnRenderArgs.selection_end_marker= &m_iEndMarker;
 	m_iBeginMarker = m_iEndMarker = -1;
 
-	m_fPercentFadeToFail = -1;
+	m_ColumnRenderArgs.fail_fade = -1;
 
 	m_StepCallback.SetFromNil();
 	m_SetPressedCallback.SetFromNil();
@@ -166,6 +170,8 @@ void NoteField::CacheAllUsedNoteSkins()
 		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLower );
 		m_pDisplays[pn] = it->second;
 	}
+
+	InitColumnRenderers();
 }
 
 void NoteField::Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels )
@@ -186,7 +192,7 @@ void NoteField::Load(
 	m_iDrawDistanceBeforeTargetsPixels = iDrawDistanceBeforeTargetsPixels;
 	ASSERT( m_iDrawDistanceBeforeTargetsPixels >= m_iDrawDistanceAfterTargetsPixels );
 
-	m_fPercentFadeToFail = -1;
+	m_ColumnRenderArgs.fail_fade = -1;
 
 	//int i1 = m_pNoteData->GetNumTracks();
 	//int i2 = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;
@@ -237,6 +243,27 @@ void NoteField::Load(
 		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLower );
 		m_pDisplays[pn] = it->second;
 	}
+	InitColumnRenderers();
+}
+
+void NoteField::InitColumnRenderers()
+{
+	m_ColumnRenderArgs.receptor_row= &(m_pCurDisplay->m_ReceptorArrowRow);
+	m_ColumnRenderArgs.ghost_row= &(m_pCurDisplay->m_GhostArrowRow);
+	m_ColumnRenderArgs.note_data= m_pNoteData;
+	m_ColumnRenderers.resize(GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer);
+	for(size_t ncr= 0; ncr < m_ColumnRenderers.size(); ++ncr)
+	{
+		FOREACH_EnabledPlayer(pn)
+		{
+			m_ColumnRenderers[ncr].m_displays[pn]= &(m_pDisplays[pn]->display[ncr]);
+		}
+		m_ColumnRenderers[ncr].m_displays[PLAYER_INVALID]= &(m_pCurDisplay->display[ncr]);
+		m_ColumnRenderers[ncr].m_column= ncr;
+		m_ColumnRenderers[ncr].m_render_args= &m_ColumnRenderArgs;
+	}
+	m_pCurDisplay->m_ReceptorArrowRow.SetColumnRenderers(m_ColumnRenderers);
+	m_pCurDisplay->m_GhostArrowRow.SetColumnRenderers(m_ColumnRenderers);
 }
 
 void NoteField::Update( float fDeltaTime )
@@ -247,6 +274,11 @@ void NoteField::Update( float fDeltaTime )
 	}
 
 	ActorFrame::Update( fDeltaTime );
+
+	for(size_t c= 0; c < m_ColumnRenderers.size(); ++c)
+	{
+		m_ColumnRenderers[c].Update(fDeltaTime);
+	}
 
 	// update m_fBoardOffsetPixels, m_fCurrentBeatLastUpdate, m_fYPosCurrentBeatLastUpdate
 	const float fCurrentBeat = m_pPlayerState->GetDisplayedPosition().m_fSongBeat;
@@ -273,11 +305,11 @@ void NoteField::Update( float fDeltaTime )
 	cur->m_ReceptorArrowRow.Update( fDeltaTime );
 	cur->m_GhostArrowRow.Update( fDeltaTime );
 
-	if( m_fPercentFadeToFail >= 0 )
-		m_fPercentFadeToFail = min( m_fPercentFadeToFail + fDeltaTime/FADE_FAIL_TIME, 1 );
+	if( m_ColumnRenderArgs.fail_fade >= 0 )
+		m_ColumnRenderArgs.fail_fade = min( m_ColumnRenderArgs.fail_fade + fDeltaTime/FADE_FAIL_TIME, 1 );
 
 	// Update fade to failed
-	m_pCurDisplay->m_ReceptorArrowRow.SetFadeToFailPercent( m_fPercentFadeToFail );
+	m_pCurDisplay->m_ReceptorArrowRow.SetFadeToFailPercent( m_ColumnRenderArgs.fail_fade );
 
 	NoteDisplay::Update( fDeltaTime );
 	/* Update all NoteDisplays. Hack: We need to call this once per frame, not
@@ -829,41 +861,41 @@ void NoteField::DrawPrimitives()
 	const PlayerOptions &current_po = m_pPlayerState->m_PlayerOptions.GetCurrent();
 
 	// Adjust draw range depending on some effects
-	int iDrawDistanceAfterTargetsPixels = m_iDrawDistanceAfterTargetsPixels;
+	m_ColumnRenderArgs.draw_pixels_after_targets= m_iDrawDistanceAfterTargetsPixels;
 	// HACK: If boomerang and centered are on, then we want to draw much 
 	// earlier so that the notes don't pop on screen.
 	float fCenteredTimesBoomerang = 
 		current_po.m_fScrolls[PlayerOptions::SCROLL_CENTERED] * 
 		current_po.m_fAccels[PlayerOptions::ACCEL_BOOMERANG];
-	iDrawDistanceAfterTargetsPixels += int(SCALE( fCenteredTimesBoomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2 ));
-	int iDrawDistanceBeforeTargetsPixels = m_iDrawDistanceBeforeTargetsPixels;
+	m_ColumnRenderArgs.draw_pixels_after_targets += int(SCALE( fCenteredTimesBoomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2 ));
+	m_ColumnRenderArgs.draw_pixels_before_targets = m_iDrawDistanceBeforeTargetsPixels;
 
 	float fDrawScale = 1;
 	fDrawScale *= 1 + 0.5f * fabsf( current_po.m_fPerspectiveTilt );
 	fDrawScale *= 1 + fabsf( current_po.m_fEffects[PlayerOptions::EFFECT_MINI] );
 
-	iDrawDistanceAfterTargetsPixels = (int)(iDrawDistanceAfterTargetsPixels * fDrawScale);
-	iDrawDistanceBeforeTargetsPixels = (int)(iDrawDistanceBeforeTargetsPixels * fDrawScale);
+	m_ColumnRenderArgs.draw_pixels_after_targets = (int)(m_ColumnRenderArgs.draw_pixels_after_targets * fDrawScale);
+	m_ColumnRenderArgs.draw_pixels_before_targets = (int)(m_ColumnRenderArgs.draw_pixels_before_targets * fDrawScale);
 
 
 	// Probe for first and last notes on the screen
-	float fFirstBeatToDraw = FindFirstDisplayedBeat( m_pPlayerState, iDrawDistanceAfterTargetsPixels );
-	float fLastBeatToDraw = FindLastDisplayedBeat( m_pPlayerState, iDrawDistanceBeforeTargetsPixels );
+	float fFirstBeatToDraw = FindFirstDisplayedBeat( m_pPlayerState, m_ColumnRenderArgs.draw_pixels_after_targets );
+	float fLastBeatToDraw = FindLastDisplayedBeat( m_pPlayerState, m_ColumnRenderArgs.draw_pixels_before_targets );
 
 	m_pPlayerState->m_fLastDrawnBeat = fLastBeatToDraw;
 
-	const int iFirstRowToDraw  = BeatToNoteRow(fFirstBeatToDraw);
-	const int iLastRowToDraw   = BeatToNoteRow(fLastBeatToDraw);
+	m_ColumnRenderArgs.first_row  = BeatToNoteRow(fFirstBeatToDraw);
+	m_ColumnRenderArgs.last_row   = BeatToNoteRow(fLastBeatToDraw);
 
 	//LOG->Trace( "start = %f.1, end = %f.1", fFirstBeatToDraw-fSongBeat, fLastBeatToDraw-fSongBeat );
-	//LOG->Trace( "Drawing elements %d through %d", iFirstRowToDraw, iLastRowToDraw );
+	//LOG->Trace( "Drawing elements %d through %d", m_ColumnRenderArgs.first_row, m_ColumnRenderArgs.last_row );
 
-#define IS_ON_SCREEN( fBeat )  ( fFirstBeatToDraw <= (fBeat) && (fBeat) <= fLastBeatToDraw && IsOnScreen( fBeat, 0, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels ) )
+#define IS_ON_SCREEN( fBeat )  ( fFirstBeatToDraw <= (fBeat) && (fBeat) <= fLastBeatToDraw && IsOnScreen( fBeat, 0, m_ColumnRenderArgs.draw_pixels_after_targets, m_ColumnRenderArgs.draw_pixels_before_targets ) )
 
 	// Draw board
 	if( SHOW_BOARD )
 	{
-		DrawBoard( iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels );
+		DrawBoard( m_ColumnRenderArgs.draw_pixels_after_targets, m_ColumnRenderArgs.draw_pixels_before_targets );
 	}
 
 	// Draw Receptors
@@ -886,7 +918,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < tSigs.size(); i++)
 		{
 			const TimeSignatureSegment *ts = ToTimeSignature(tSigs[i]);
-			int iSegmentEndRow = (i + 1 == tSigs.size()) ? iLastRowToDraw : tSigs[i+1]->GetRow();
+			int iSegmentEndRow = (i + 1 == tSigs.size()) ? m_ColumnRenderArgs.last_row : tSigs[i+1]->GetRow();
 
 			// beat bars every 16th note
 			int iDrawBeatBarsEveryRows = BeatToNoteRow( ((float)ts->GetDen()) / 4 ) / 4;
@@ -929,7 +961,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_SCROLL]->size(); i++)
 		{
 			ScrollSegment *seg = ToScroll( segs[SEGMENT_SCROLL]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_ColumnRenderArgs.first_row && seg->GetRow() <= m_ColumnRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -941,7 +973,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_BPM]->size(); i++)
 		{
 			const BPMSegment *seg = ToBPM( segs[SEGMENT_BPM]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_ColumnRenderArgs.first_row && seg->GetRow() <= m_ColumnRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -953,7 +985,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_STOP]->size(); i++)
 		{
 			const StopSegment *seg = ToStop( segs[SEGMENT_STOP]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_ColumnRenderArgs.first_row && seg->GetRow() <= m_ColumnRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -965,7 +997,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_DELAY]->size(); i++)
 		{
 			const DelaySegment *seg = ToDelay( segs[SEGMENT_DELAY]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_ColumnRenderArgs.first_row && seg->GetRow() <= m_ColumnRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -977,7 +1009,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_WARP]->size(); i++)
 		{
 			const WarpSegment *seg = ToWarp( segs[SEGMENT_WARP]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_ColumnRenderArgs.first_row && seg->GetRow() <= m_ColumnRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -989,7 +1021,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_TIME_SIG]->size(); i++)
 		{
 			const TimeSignatureSegment *seg = ToTimeSignature( segs[SEGMENT_TIME_SIG]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_ColumnRenderArgs.first_row && seg->GetRow() <= m_ColumnRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -1001,7 +1033,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_TICKCOUNT]->size(); i++)
 		{
 			const TickcountSegment *seg = ToTickcount( segs[SEGMENT_TICKCOUNT]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_ColumnRenderArgs.first_row && seg->GetRow() <= m_ColumnRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -1013,7 +1045,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_COMBO]->size(); i++)
 		{
 			const ComboSegment *seg = ToCombo( segs[SEGMENT_COMBO]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_ColumnRenderArgs.first_row && seg->GetRow() <= m_ColumnRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -1025,7 +1057,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_LABEL]->size(); i++)
 		{
 			const LabelSegment *seg = ToLabel( segs[SEGMENT_LABEL]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_ColumnRenderArgs.first_row && seg->GetRow() <= m_ColumnRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -1037,7 +1069,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_SPEED]->size(); i++)
 		{
 			const SpeedSegment *seg = ToSpeed( segs[SEGMENT_SPEED]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_ColumnRenderArgs.first_row && seg->GetRow() <= m_ColumnRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -1050,7 +1082,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_FAKE]->size(); i++)
 		{
 			const FakeSegment *seg = ToFake( segs[SEGMENT_FAKE]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_ColumnRenderArgs.first_row && seg->GetRow() <= m_ColumnRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -1070,8 +1102,8 @@ void NoteField::DrawPrimitives()
 				float fSecond = a->fStartSecond;
 				float fBeat = timing.GetBeatFromElapsedTime( fSecond );
 
-				if( BeatToNoteRow(fBeat) >= iFirstRowToDraw &&
-					BeatToNoteRow(fBeat) <= iLastRowToDraw)
+				if( BeatToNoteRow(fBeat) >= m_ColumnRenderArgs.first_row &&
+					BeatToNoteRow(fBeat) <= m_ColumnRenderArgs.last_row)
 				{
 					if( IS_ON_SCREEN(fBeat) )
 						DrawAttackText( fBeat, *a );
@@ -1089,8 +1121,8 @@ void NoteField::DrawPrimitives()
 				FOREACH_CONST(Attack, attacks, a)
 				{
 					float fBeat = timing.GetBeatFromElapsedTime(a->fStartSecond);
-					if (BeatToNoteRow(fBeat) >= iFirstRowToDraw &&
-						BeatToNoteRow(fBeat) <= iLastRowToDraw &&
+					if (BeatToNoteRow(fBeat) >= m_ColumnRenderArgs.first_row &&
+						BeatToNoteRow(fBeat) <= m_ColumnRenderArgs.last_row &&
 						IS_ON_SCREEN(fBeat))
 					{
 						this->DrawAttackText(fBeat, *a);
@@ -1174,20 +1206,20 @@ void NoteField::DrawPrimitives()
 		{
 			int iBegin = m_iBeginMarker;
 			int iEnd = m_iEndMarker;
-			CLAMP( iBegin, iFirstRowToDraw, iLastRowToDraw );
-			CLAMP( iEnd, iFirstRowToDraw, iLastRowToDraw );
+			CLAMP( iBegin, m_ColumnRenderArgs.first_row, m_ColumnRenderArgs.last_row );
+			CLAMP( iEnd, m_ColumnRenderArgs.first_row, m_ColumnRenderArgs.last_row );
 			DrawAreaHighlight( iBegin, iEnd );
 		}
 		else if( m_iBeginMarker != -1 )
 		{
-			if( m_iBeginMarker >= iFirstRowToDraw &&
-				m_iBeginMarker <= iLastRowToDraw )
+			if( m_iBeginMarker >= m_ColumnRenderArgs.first_row &&
+				m_iBeginMarker <= m_ColumnRenderArgs.last_row )
 				DrawMarkerBar( m_iBeginMarker );
 		}
 		else if( m_iEndMarker != -1 )
 		{
-			if( m_iEndMarker >= iFirstRowToDraw &&
-				m_iEndMarker <= iLastRowToDraw )
+			if( m_iEndMarker >= m_ColumnRenderArgs.first_row &&
+				m_iEndMarker <= m_ColumnRenderArgs.last_row )
 			DrawMarkerBar( m_iEndMarker );
 		}
 	}
@@ -1196,76 +1228,19 @@ void NoteField::DrawPrimitives()
 	// Draw the arrows in order of column. This minimizes texture switches and
 	// lets us draw in big batches.
 
-	float fSelectedRangeGlow = SCALE( RageFastCos(RageTimer::GetTimeSinceStartFast()*2), -1, 1, 0.1f, 0.3f );
-
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	ASSERT_M(m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer, 
 		 ssprintf("NumTracks %d != ColsPerPlayer %d",m_pNoteData->GetNumTracks(), 
 			  GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer));
 
-	NoteDisplayRenderArgs display_args(*m_pNoteData,
-		iDrawDistanceBeforeTargetsPixels,
-		iDrawDistanceAfterTargetsPixels, m_iBeginMarker, m_iEndMarker,
-		fSelectedRangeGlow, m_fPercentFadeToFail, FADE_BEFORE_TARGETS_PERCENT,
-		m_pCurDisplay->m_GhostArrowRow);
+	m_ColumnRenderArgs.selection_glow= SCALE(
+		RageFastCos(RageTimer::GetTimeSinceStartFast()*2), -1, 1, 0.1f, 0.3f);
+	m_ColumnRenderArgs.fade_before_targets= FADE_BEFORE_TARGETS_PERCENT;
+
 	for( int j=0; j<m_pNoteData->GetNumTracks(); j++ )	// for each arrow column
 	{
 		const int c = pStyle->m_iColumnDrawOrder[j];
-		display_args.column= c;
-		bool any_upcoming= false;
-		// Build lists of holds and taps for each player number, then pass those
-		// lists to the displays to draw.
-		// The vector in the NUM_PlayerNumber slot should stay empty, not worth
-		// optimizing it out. -Kyz
-		vector<vector<NoteData::TrackMap::const_iterator> > holds(PLAYER_INVALID+1);
-		vector<vector<NoteData::TrackMap::const_iterator> > taps(PLAYER_INVALID+1);
-		NoteData::TrackMap::const_iterator begin, end;
-		m_pNoteData->GetTapNoteRangeInclusive(c, iFirstRowToDraw,
-			iLastRowToDraw+1, begin, end);
-		for(; begin != end; ++begin)
-		{
-			TapNote const& tn= begin->second;
-			switch(tn.type)
-			{
-				case TapNoteType_Empty:
-					continue;
-				case TapNoteType_Tap:
-				case TapNoteType_HoldTail:
-				case TapNoteType_Mine:
-				case TapNoteType_Lift:
-				case TapNoteType_Attack:
-				case TapNoteType_AutoKeysound:
-				case TapNoteType_Fake:
-					if(!tn.result.bHidden)
-					{
-						taps[tn.pn].push_back(begin);
-					}
-					break;
-				case TapNoteType_HoldHead:
-					if(tn.HoldResult.hns != HNS_Held)
-					{
-						holds[tn.pn].push_back(begin);
-					}
-					break;
-			}
-		}
-#define DTS_INNER(pn, tap_set, draw_func, disp) \
-		if(!tap_set[pn].empty()) \
-		{ \
-			any_upcoming|= disp->display[c].draw_func(display_args, tap_set[pn]); \
-		}
-#define DRAW_TAP_SET(tap_set, draw_func) \
-		FOREACH_PlayerNumber(pn) \
-		{ \
-			DTS_INNER(pn, tap_set, draw_func, m_pDisplays[pn]); \
-		}
-		DRAW_TAP_SET(holds, DrawHoldsInRange);
-		DTS_INNER(PLAYER_INVALID, holds, DrawHoldsInRange, m_pCurDisplay);
-		DRAW_TAP_SET(taps, DrawTapsInRange);
-		DTS_INNER(PLAYER_INVALID, taps, DrawTapsInRange, m_pCurDisplay);
-#undef DTS_INNER
-#undef DRAW_TAP_SET
-		cur->m_ReceptorArrowRow.SetNoteUpcoming(c, any_upcoming);
+		m_ColumnRenderers[c].Draw();
 	}
 
 	cur->m_GhostArrowRow.Draw();
@@ -1273,7 +1248,7 @@ void NoteField::DrawPrimitives()
 
 void NoteField::FadeToFail()
 {
-	m_fPercentFadeToFail = max( 0.0f, m_fPercentFadeToFail );	// this will slowly increase every Update()
+	m_ColumnRenderArgs.fail_fade = max( 0.0f, m_ColumnRenderArgs.fail_fade );	// this will slowly increase every Update()
 		// don't fade all over again if this is called twice
 }
 
@@ -1471,6 +1446,17 @@ public:
 		return 0;
 	}
 
+	static int GetColumnActors(T* p, lua_State* L)
+	{
+		lua_createtable(L, p->m_ColumnRenderers.size(), 0);
+		for(size_t i= 0; i < p->m_ColumnRenderers.size(); ++i)
+		{
+			p->m_ColumnRenderers[i].PushSelf(L);
+			lua_rawseti(L, -2, i+1);
+		}
+		return 1;
+	}
+
 	LunaNoteField()
 	{
 		ADD_METHOD(SetStepCallback);
@@ -1481,6 +1467,7 @@ public:
 		ADD_METHOD(SetPressed);
 		ADD_METHOD(DidTapNote);
 		ADD_METHOD(DidHoldNote);
+		ADD_METHOD(GetColumnActors);
 	}
 };
 
