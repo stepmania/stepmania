@@ -1,6 +1,7 @@
 /** @brief ActorMultiVertex - A texture created from multiple textures. */
 
 #include "Actor.h"
+#include "CubicSpline.h"
 #include "RageDisplay.h"
 #include "RageMath.h"
 #include "RageTextureID.h"

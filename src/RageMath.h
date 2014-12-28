@@ -85,43 +85,6 @@ private:
 	RageQuadratic m_Y;
 };
 
-struct CubicSpline
-{
-	void solve_looped();
-	void solve_straight();
-	float evaluate(float t, bool loop);
-	void set_point(size_t i, float v);
-	void resize(size_t s);
-	size_t size();
-	bool empty();
-private:
-	bool check_minimum_size();
-	void prep_inner(size_t last, vector<float>& diagonals, vector<float>& results);
-	void set_results(size_t last, vector<float>& diagonals, vector<float>& results);
-
-	struct SplinePoint
-	{
-		float a, b, c, d;
-	};
-	vector<SplinePoint> m_points;
-};
-
-struct CubicSplineN
-{
-	void solve();
-	void evaluate(float t, vector<float>& v);
-	void set_point(size_t i, vector<float> const& v);
-	void resize(size_t s);
-	size_t size();
-	void redimension(size_t d);
-	size_t dimension();
-	bool empty();
-	typedef vector<CubicSpline> spline_cont_t;
-	bool loop;
-private:
-	spline_cont_t m_splines;
-};
-
 #endif
 
 /*

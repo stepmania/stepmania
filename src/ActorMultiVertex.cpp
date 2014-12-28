@@ -66,6 +66,7 @@ ActorMultiVertex::ActorMultiVertex()
 	_using_spline= false;
 	_spline.redimension(3);
 	_spline.loop= false;
+	_spline.m_owned_by_actor= true;
 }
 
 ActorMultiVertex::~ActorMultiVertex()

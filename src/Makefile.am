@@ -516,6 +516,7 @@ RageFileDriverSlice.cpp RageFileDriverSlice.h \
 RageFileDriverTimeout.cpp RageFileDriverTimeout.h
 
 Rage = $(PCRE) $(Lua) $(jsoncpp) $(RageFile) $(RageSoundFileReaders) \
+CubicSpline.cpp CubicSpline.h \
 RageBitmapTexture.cpp RageBitmapTexture.h \
 RageDisplay.cpp RageDisplay.h \
 RageDisplay_OGL.cpp RageDisplay_OGL.h \
