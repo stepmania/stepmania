@@ -272,6 +272,7 @@
 			<Function name='GetDiffuse'/>
 			<Function name='GetDiffuseAlpha'/>
 			<Function name='GetEffectDelta'/>
+			<Function name='GetFakeParent'/>
 			<Function name='GetGlow'/>
 			<Function name='GetHAlign'/>
 			<Function name='GetHeight'/>
@@ -301,6 +302,7 @@
 			<Function name='Real'/>
 			<Function name='RealInverse'/>
 			<Function name='RunCommandsRecursively'/>
+			<Function name='SetFakeParent'/>
 			<Function name='SetHeight'/>
 			<Function name='SetSize'/>
 			<Function name='SetTextureFiltering'/>
@@ -968,6 +970,7 @@
 		<Class base='ActorFrame' name='NoteField'>
 			<Function name='DidHoldNote'/>
 			<Function name='DidTapNote'/>
+			<Function name='GetColumnActors'/>
 			<Function name='SetPressed'/>
 			<Function name='SetDidHoldNoteCallback'/>
 			<Function name='SetDidTapNoteCallback'/>

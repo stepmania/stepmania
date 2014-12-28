@@ -179,7 +179,7 @@ private:
 	float			m_fYReverseOffsetPixels;
 };
 
-// So, this is a bit screwy, and it's all because routine forces rendering
+// So, this is a bit screwy, and it's partly because routine forces rendering
 // notes from different noteskins in the same column.
 // NoteColumnRenderer exists to hold all the data needed for rendering a
 // column and apply any transforms from that column's actor to the
@@ -188,7 +188,7 @@ private:
 // actors so they can move with the rest of the column.  I didn't use
 // ActorProxy because the receptor/ghost actors need to pull in the parent
 // state of their rows and the parent state of the column. -Kyz
-class NoteColumnRenderer : public ActorFrame
+class NoteColumnRenderer : public Actor
 {
 	public:
 	NoteDisplay* m_displays[PLAYER_INVALID+1];

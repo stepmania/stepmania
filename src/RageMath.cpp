@@ -5,6 +5,7 @@
  */
 
 #include "global.h"
+#include "RageLog.h"
 #include "RageMath.h"
 #include "RageTypes.h"
 #include <float.h>
@@ -694,6 +695,265 @@ void RageBezier2D::SetFromBezier(
 	m_X.SetFromBezier( fC1X, fC2X, fC3X, fC4X );
 	m_Y.SetFromBezier( fC1Y, fC2Y, fC3Y, fC4Y );
 }
+
+// CubicSpline implementation written by Kyzentun 2014/12/27
+
+void CubicSpline::solve_looped()
+{
+	if(check_minimum_size()) { return; }
+	size_t last= m_points.size();
+	vector<float> results(m_points.size());
+	vector<float> diagonals(m_points.size());
+	results[0]= 3 * (m_points[1].a - m_points[last-1].a);
+	diagonals[0]= 4.0f;
+	prep_inner(last, diagonals, results);
+	results[last-1]= 3 * (m_points[0].a - m_points[last-2].a);
+	diagonals[last-1]= 4.0f;
+
+	// The steps to solve the system of equations look like this:
+	// | 4 1 0 0 1 | -> | 4 0 0 0 1 | -> | 4 0 0 0 0 | -> | 4 0 0 0 0 |
+	// | 1 4 1 0 0 | -> | 0 d 1 0 x | -> | 0 d 1 0 x | -> | 0 d 0 0 x |
+	// | 0 1 4 1 0 | -> | 0 1 4 1 0 | -> | 0 1 4 1 0 | -> | 0 0 d 1 x |
+	// | 0 0 1 4 1 | -> | 0 0 1 4 1 | -> | 0 0 1 4 1 | -> | 0 0 1 4 1 |
+	// | 1 0 0 1 4 | -> | 1 x 0 1 4 | -> | 0 x 0 1 q | -> | 0 x x 1 q |
+	// V
+	// | 4 0 0 0 0 | -> | 4 0 0 0 0 | -> | 4 0 0 0 0 | -> | 4 0 0 0 0 |
+	// | 0 d 0 0 0 | -> | 0 d 0 0 0 | -> | 0 d 0 0 0 | -> | 0 d 0 0 0 |
+	// | 0 0 d 1 x | -> | 0 0 d 0 x | -> | 0 0 d 0 0 | -> | 0 0 d 0 0 |
+	// | 0 0 1 d 1 | -> | 0 0 0 d n | -> | 0 0 0 d n | -> | 0 0 0 d 0 |
+	// | 0 0 x 1 r | -> | 0 0 x n r | -> | 0 0 0 n s | -> | 0 0 0 0 t |
+	// Each time through the loop performs two of these steps, 4 operations.
+
+	size_t end= last-1;
+	size_t stop= end-1;
+	float cedge= 1.0f; // [ri][cl]
+	float redge= 1.0f; // [rl][ci]
+	// The loop stops before end because the case where [ri][cl] == [ri][ci+1]
+	// needs special handling.
+	for(size_t i= 0; i < stop; ++i)
+	{
+		float next_cedge= 0.0f; // [ri+1][ce]
+		float next_redge= 0.0f; // [re][ci+1]
+		// Operation:  Add col[i] / -[ri][ci] to col[i+1] to zero [ri][ci+1].
+		float diag_recip= 1.0f / diagonals[i];
+		diagonals[i+1]-= diag_recip;
+		next_redge-= redge * diag_recip;
+		// Operation:  Add row[i] / -[ri][ci] to row[i+1] to zero [ri+1][ci].
+		results[i+1]-= results[i] * diag_recip;
+		next_cedge-= cedge * diag_recip;
+		// Operation:  Add col[i] * -(cedge/[ri][ci]) to col[e] to zero cedge.
+		diagonals[end]-= redge * (cedge / diagonals[i]);
+		cedge= next_cedge; // Do not use cedge after this point in the loop.
+		// Operation:  Add row[i] * -(redge/[ri][ci]) to row[e] to zero redge.
+		results[end]-= results[i] * (redge / diagonals[i]);
+		redge= next_redge; // Do not use redge after this point in the loop.
+	}
+	// [rs][ce] is 1 - cedge, [re][cs] is 1 - redge
+	// Operation:  Add col[s] * -([rs][ce] / [rs][cs]) to col[e] to zero redge.
+	diagonals[end]-= redge * ((1.0f - cedge) / diagonals[stop]);
+	// Operation:  Add row[s] * -([re][cs] / [rs][cs]) to row[e] to zero redge.
+	results[end]-= results[stop] * ((1.0f - redge) / diagonals[stop]);
+
+	set_results(last, diagonals, results);
+}
+
+void CubicSpline::solve_straight()
+{
+	if(check_minimum_size()) { return; }
+	size_t last= m_points.size();
+	vector<float> results(m_points.size());
+	vector<float> diagonals(m_points.size());
+	results[0]= 3 * (m_points[1].a - m_points[0].a);
+	diagonals[0]= 2.0f;
+	prep_inner(last, diagonals, results);
+	results[last-1]= 3 * (m_points[last-1].a - m_points[last-2].a);
+	diagonals[last-1]= 2.0f;
+
+	// The system of equations to be solved looks like this:
+	// | 2 1 0 0 | = | results[0] |
+	// | 1 4 1 0 | = | results[1] |
+	// | 0 1 4 1 | = | results[2] |
+	// | 0 0 1 2 | = | results[3] |
+	// Operations are carefully chosen to only modify the values in the
+	// diagonals and the results, leaving the 1s unchanged.
+	// Operation:  Add col[0] * -.5 to col[1] to zero [r0][c1].
+	diagonals[1]-= .5f;
+	// Operation:  Add row[0] * -.5 to row[1] to zero [r1][c0].
+	results[1]-= results[0] * .5f;
+	for(size_t i= 1; i < last - 1; ++i)
+	{
+		float diag_recip= 1.0f / diagonals[i];
+		// Operation:  Add col[i] / -[ri][ci] to col[i+1] to zero [ri][ci+1].
+		diagonals[i+1]-= diag_recip;
+		// Operation:  Add row[i] / -[ri][ci] to row[i+1] to zero [ri+1][ci];
+		results[i]-= results[i-1] * diag_recip;
+	}
+	set_results(last, diagonals, results);
+}
+
+bool CubicSpline::check_minimum_size()
+{
+	size_t last= m_points.size();
+	if(last < 2) { return true; }
+	if(last == 2)
+	{
+		m_points[0].b= m_points[1].a - m_points[0].a;
+		m_points[0].c= m_points[0].d= 0.0f;
+		// These will be used in the looping case.
+		m_points[1].b= m_points[0].a - m_points[1].a;
+		m_points[1].c= m_points[1].d= 0.0f;
+		return true;
+	}
+	float a= m_points[0].a;
+	for(size_t i= 1; i < m_points.size(); ++i)
+	{
+		m_points[i].b= m_points[i].c= m_points[i].d= 0.0f;
+		if(m_points[i].a != a) { return false; }
+	}
+	return true;
+}
+
+void CubicSpline::prep_inner(size_t last, vector<float>& diagonals, vector<float>& results)
+{
+	for(size_t i= 1; i < last - 1; ++i)
+	{
+		results[i]= 3 * (m_points[i+1].a - m_points[i-1].a);
+		diagonals[i]= 4.0f;
+	}
+}
+
+void CubicSpline::set_results(size_t last, vector<float>& diagonals, vector<float>& results)
+{
+	// No more operations left, everything not a diagonal should be zero now.
+	for(size_t i= 0; i < last; ++i)
+	{
+		results[i]/= diagonals[i];
+	}
+	// Now we can go through and set the b, c, d values of each point.
+	// b, c, d values of the last point are not set because they are unused.
+	for(size_t i= 0; i < last; ++i)
+	{
+		size_t next= (i+1) % last;
+		float diff= m_points[next].a - m_points[i].a;
+		m_points[i].b= results[i];
+		m_points[i].c= (3 * diff) - (2 * results[i]) - results[next];
+		m_points[i].d= (2 * -diff) + results[i] + results[next];
+	}
+	// Solving is now complete.
+}
+
+float CubicSpline::evaluate(float t, bool loop)
+{
+	if(loop)
+	{
+		t= fmodf(t, m_points.size());
+	}
+	int flort= static_cast<int>(t);
+	if(flort < 0)
+	{
+		return m_points[0].a;
+	}
+	size_t p= min(static_cast<size_t>(flort), m_points.size()-1);
+	float tfrac= t - static_cast<float>(flort);
+	float tsq= tfrac * tfrac;
+	float tcub= tsq * tfrac;
+	return m_points[p].a + (m_points[p].b * tfrac) +
+		(m_points[p].c * tsq) + (m_points[p].d * tcub);
+}
+
+void CubicSpline::set_point(size_t i, float v)
+{
+	ASSERT_M(i < m_points.size(), "CubicSpline::set_point requires the index to be less than the number of points.");
+	m_points[i].a= v;
+}
+
+void CubicSpline::resize(size_t s)
+{
+	m_points.resize(s);
+}
+
+size_t CubicSpline::size()
+{
+	return m_points.size();
+}
+
+bool CubicSpline::empty()
+{
+	return m_points.empty();
+}
+
+void CubicSplineN::solve()
+{
+	if(loop)
+	{
+		for(spline_cont_t::iterator spline= m_splines.begin();
+				spline != m_splines.end(); ++spline)
+		{
+			spline->solve_looped();
+		}
+	}
+	else
+	{
+		for(spline_cont_t::iterator spline= m_splines.begin();
+				spline != m_splines.end(); ++spline)
+		{
+			spline->solve_straight();
+		}
+	}
+}
+
+void CubicSplineN::evaluate(float t, vector<float>& v)
+{
+	for(spline_cont_t::iterator spline= m_splines.begin();
+			spline != m_splines.end(); ++spline)
+	{
+		v.push_back(spline->evaluate(t, loop));
+	}
+}
+
+void CubicSplineN::set_point(size_t i, vector<float> const& v)
+{
+	ASSERT_M(v.size() == m_splines.size(), "CubicSplineN::set_point requires the passed point to be the same dimension as the spline.");
+	for(size_t n= 0; n < m_splines.size(); ++n)
+	{
+		m_splines[n].set_point(i, v[n]);
+	}
+}
+
+void CubicSplineN::resize(size_t s)
+{
+	for(spline_cont_t::iterator spline= m_splines.begin();
+			spline != m_splines.end(); ++spline)
+	{
+		spline->resize(s);
+	}
+}
+
+size_t CubicSplineN::size()
+{
+	if(!m_splines.empty())
+	{
+		return m_splines[0].size();
+	}
+	return 0;
+}
+
+bool CubicSplineN::empty()
+{
+	return m_splines.empty() || m_splines[0].empty();
+}
+
+void CubicSplineN::redimension(size_t d)
+{
+	m_splines.resize(d);
+}
+
+size_t CubicSplineN::dimension()
+{
+	return m_splines.size();
+}
+
+
 
 /*
  * Copyright (c) 2001-2006 Chris Danford, Glenn Maynard

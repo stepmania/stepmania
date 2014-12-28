@@ -831,6 +831,12 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetParent' return='Actor' arguments=''>
 		Returns the Actor's parent, or <code>nil</code> if it doesn't have one.
 	</Function>
+	<Function name='GetFakeParent' return='Actor' arguments=''>
+		Returns the Actor's fake parent, or <code>nil</code> if it doesn't have one.
+	</Function>
+	<Function name='SetFakeParent' return='' arguments='Actor p'>
+		Sets the Actor's fake parent to p, or clears it if p is nil.
+	</Function>
 	<Function name='GetVisible' return='bool' arguments=''>
 		Returns the Actor's visibility.
 	</Function>
@@ -2952,6 +2958,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='DidTapNote' return='' arguments='int column, TapNoteScore tns, bool bright'>
 		Makes the NoteField act as if a tap note was hit in the column, with the given score and bright setting. <br />
 		The callback for DidTapNote will not be called.
+	</Function>
+	<Function name='GetColumnActors' return='{actor}' arguments=''>
+		Returns a table of the actors for the columns.
 	</Function>
 	<Function name='SetDidHoldNoteCallback' return= '' arguments='function callback'>
 		Same as SetDidTapNoteCallback, but for hold notes.  Uses HoldNoteScore instead of TapNoteScore.

@@ -7,6 +7,7 @@
 #include "RageLog.h"
 #include "RageDisplay.h"
 #include "RageTexture.h"
+#include "RageTimer.h"
 #include "RageUtil.h"
 #include "ActorUtil.h"
 #include "Foreach.h"
@@ -62,6 +63,9 @@ ActorMultiVertex::ActorMultiVertex()
 
 	_EffectMode = EffectMode_Normal;
 	_TextureMode = TextureMode_Modulate;
+	_using_spline= false;
+	_spline.redimension(3);
+	_spline.loop= false;
 }
 
 ActorMultiVertex::~ActorMultiVertex()
@@ -73,6 +77,8 @@ ActorMultiVertex::ActorMultiVertex( const ActorMultiVertex &cpy ):
 	Actor( cpy )
 {
 #define CPY(a) a = cpy.a
+	CPY( _spline );
+	CPY( _using_spline );
 	CPY( AMV_Tweens );
 	CPY( AMV_current );
 	CPY( AMV_start );
@@ -192,6 +198,75 @@ void ActorMultiVertex::SetVertexColor( int index, RageColor c )
 void ActorMultiVertex::SetVertexCoords( int index, float TexCoordX, float TexCoordY )
 {
 	AMV_DestTweenState().vertices[index].t = RageVector2( TexCoordX, TexCoordY );
+}
+
+bool ActorMultiVertex::GetUseSpline()
+{
+	return _using_spline;
+}
+
+void ActorMultiVertex::SetUseSpline(bool use)
+{
+	_using_spline= use;
+}
+
+void ActorMultiVertex::SplineSetPoint(size_t i, float x , float y , float z)
+{
+	vector<float> v(3);
+	v[0]= x; v[1]= y; v[2]= z;
+	_spline.set_point(i, v);
+}
+
+void ActorMultiVertex::SplineResize(size_t s)
+{
+	_spline.resize(s);
+}
+
+size_t ActorMultiVertex::SplineSize()
+{
+	return _spline.size();
+}
+
+void ActorMultiVertex::SplineSolve()
+{
+	if(_spline.empty())
+	{
+		return;
+	}
+	_spline.solve();
+	float num_parts= 0.0f;
+	size_t num_verts= GetNumVertices();
+	switch(GetDestDrawMode())
+	{
+		case DrawMode_Quads:
+			break;
+		case DrawMode_QuadStrip:
+			break;
+		case DrawMode_Fan:
+			break;
+		case DrawMode_Strip:
+			break;
+		case DrawMode_Triangles:
+			break;
+		case DrawMode_LineStrip:
+			{
+				float conversion= static_cast<float>(_spline.size()-1) / static_cast<float>(num_verts-1);
+				if(_spline.loop)
+				{
+					conversion= static_cast<float>(_spline.size()) / static_cast<float>(num_verts-1);
+				}
+				for(size_t i= 0; i < num_verts; ++i)
+				{
+					float t= i * conversion;
+					vector<float> p;
+					_spline.evaluate(t, p);
+					SetVertexPos(i, p[0], p[1], p[2]);
+				}
+			}
+			break;
+		case DrawMode_SymmetricQuadStrip:
+			break;
+	}
 }
 
 void ActorMultiVertex::DrawPrimitives()
@@ -658,6 +733,48 @@ public:
 		}
 		return 1;
 	}
+	DEFINE_METHOD(GetUseSpline, GetUseSpline());
+	DEFINE_METHOD(SplineGetLoop, SplineGetLoop());
+	static int SplineSetLoop(T* p, lua_State* L)
+	{
+		p->SplineSetLoop(lua_toboolean(L, 1));
+		COMMON_RETURN_SELF;
+	}
+	static int SplineSize(T* p, lua_State* L)
+	{
+		lua_pushnumber(L, p->SplineSize());
+		return 1;
+	}
+	static int SetUseSpline(T* p, lua_State* L)
+	{
+		p->SetUseSpline(lua_toboolean(L, 1));
+		COMMON_RETURN_SELF;
+	}
+	static int SplineSetPoint(T* p, lua_State* L)
+	{
+		size_t i= IArg(1)-1;
+		if(i >= p->SplineSize())
+		{
+			luaL_error(L, "Spline point index greater than the number of points.");
+		}
+		p->SplineSetPoint(i, FArg(2), FArg(3), FArg(4));
+		COMMON_RETURN_SELF;
+	}
+	static int SplineResize(T* p, lua_State* L)
+	{
+		int s= IArg(1);
+		if(s < 0)
+		{
+			luaL_error(L, "Negative spline size not allowed.");
+		}
+		p->SplineResize(static_cast<size_t>(s));
+		COMMON_RETURN_SELF;
+	}
+	static int SplineSolve(T* p, lua_State* L)
+	{
+		p->SplineSolve();
+		COMMON_RETURN_SELF;
+	}
 
 	LunaActorMultiVertex()
 	{
@@ -678,6 +795,15 @@ public:
 		ADD_METHOD( GetCurrDrawMode );
 		ADD_METHOD( GetCurrFirstToDraw );
 		ADD_METHOD( GetCurrNumToDraw );
+
+		ADD_METHOD(GetUseSpline);
+		ADD_METHOD(SetUseSpline);
+		ADD_METHOD(SplineGetLoop);
+		ADD_METHOD(SplineSetLoop);
+		ADD_METHOD(SplineSize);
+		ADD_METHOD(SplineResize);
+		ADD_METHOD(SplineSetPoint);
+		ADD_METHOD(SplineSolve);
 
 		// Copy from RageTexture
 		ADD_METHOD( SetTexture );

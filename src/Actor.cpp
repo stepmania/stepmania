@@ -1739,6 +1739,32 @@ public:
 			pParent->PushSelf(L);
 		return 1;
 	}
+	static int GetFakeParent(T* p, lua_State *L)
+	{
+		Actor* fake= p->GetFakeParent();
+		if(fake == NULL)
+		{
+			lua_pushnil(L);
+		}
+		else
+		{
+			fake->PushSelf(L);
+		}
+		return 1;
+	}
+	static int SetFakeParent(T* p, lua_State* L)
+	{
+		if(lua_isnoneornil(L, 1))
+		{
+			p->SetFakeParent(NULL);
+		}
+		else
+		{
+			Actor* fake= Luna<Actor>::check(L, 1);
+			p->SetFakeParent(fake);
+		}
+		COMMON_RETURN_SELF;
+	}
 	static int Draw( T* p, lua_State *L )
 	{
 		LUA->YieldLua();
@@ -1910,6 +1936,8 @@ public:
 
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetParent );
+		ADD_METHOD( GetFakeParent );
+		ADD_METHOD( SetFakeParent );
 
 		ADD_METHOD( Draw );
 	}

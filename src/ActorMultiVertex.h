@@ -2,6 +2,7 @@
 
 #include "Actor.h"
 #include "RageDisplay.h"
+#include "RageMath.h"
 #include "RageTextureID.h"
 
 enum DrawMode
@@ -102,10 +103,22 @@ public:
 	void SetVertexColor( int index , RageColor c );
 	void SetVertexCoords( int index , float TexCoordX , float TexCoordY );
 
+	bool GetUseSpline();
+	void SetUseSpline(bool use);
+	bool SplineGetLoop() { return _spline.loop; }
+	void SplineSetLoop(bool loop) { _spline.loop= loop; }
+	void SplineSetPoint(size_t i, float x , float y , float z);
+	void SplineResize(size_t s);
+	size_t SplineSize();
+	void SplineSolve();
+
 	virtual void PushSelf( lua_State *L );
 
 private:
 	RageTexture* _Texture;
+
+	CubicSplineN _spline;
+	bool _using_spline;
 
 	vector<RageSpriteVertex> _Vertices;
 	vector<AMV_TweenState> AMV_Tweens;
