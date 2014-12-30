@@ -30,6 +30,7 @@ protected:
 	float m_fYReverseOffsetPixels;
 	float m_fFadeToFailPercent;
 
+	vector<NoteColumnRenderer> const* m_renderers;
 	vector<ReceptorArrow *> 	m_ReceptorArrow;
 };
 

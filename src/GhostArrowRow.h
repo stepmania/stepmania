@@ -26,6 +26,7 @@ protected:
 	float m_fYReverseOffsetPixels;
 	const PlayerState* m_pPlayerState;
 
+	vector<NoteColumnRenderer> const* m_renderers;
 	vector<Actor *> 	m_Ghost;
 	vector<TapNoteSubType> m_bHoldShowing;
 	vector<TapNoteSubType> m_bLastHoldShowing;

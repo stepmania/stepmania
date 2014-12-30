@@ -9,11 +9,11 @@ struct CubicSpline
 {
 	void solve_looped();
 	void solve_straight();
-	float evaluate(float t, bool loop);
+	float evaluate(float t, bool loop) const;
 	void set_point(size_t i, float v);
 	void resize(size_t s);
-	size_t size();
-	bool empty();
+	size_t size() const;
+	bool empty() const;
 private:
 	bool check_minimum_size();
 	void prep_inner(size_t last, vector<float>& results);
@@ -29,16 +29,16 @@ private:
 struct CubicSplineN
 {
 	CubicSplineN()
-		:m_dirty(true), m_owned_by_actor(false)
+		:m_owned_by_actor(false), m_dirty(true)
 	{}
 	void solve();
-	void evaluate(float t, vector<float>& v);
+	void evaluate(float t, vector<float>& v) const;
 	void set_point(size_t i, vector<float> const& v);
 	void resize(size_t s);
-	size_t size();
+	size_t size() const;
 	void redimension(size_t d);
-	size_t dimension();
-	bool empty();
+	size_t dimension() const;
+	bool empty() const;
 	typedef vector<CubicSpline> spline_cont_t;
 	bool loop;
 	bool m_owned_by_actor;

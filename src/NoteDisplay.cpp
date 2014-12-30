@@ -342,6 +342,13 @@ bool NoteDisplay::IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTarge
 	return true;
 }
 
+float NoteDisplay::BeatToTValue(CommonColumnRenderArgs const& args, float beat) const
+{
+	float song_beat= m_pPlayerState->GetDisplayedPosition().m_fSongBeatVisible;
+	float relative_beat= beat - song_beat;
+	return (relative_beat / args.beats_per_t) - args.receptor_t;
+}
+
 bool NoteDisplay::DrawHoldsInRange(CommonColumnRenderArgs const& args,
 	int column, vector<NoteData::TrackMap::const_iterator> const& tap_set)
 {
@@ -398,12 +405,9 @@ bool NoteDisplay::DrawHoldsInRange(CommonColumnRenderArgs const& args,
 				end_row < *args.selection_end_marker);
 		}
 
-		DrawHold(tn, column, start_row, is_holding, result,
+		DrawHold(tn, args, column, start_row, is_holding, result,
 			use_addition_coloring,
-			in_selection_range ? args.selection_glow : args.fail_fade,
-			m_fYReverseOffsetPixels, (float)args.draw_pixels_after_targets,
-			(float)args.draw_pixels_before_targets,
-			args.draw_pixels_before_targets, args.fade_before_targets);
+			in_selection_range ? args.selection_glow : args.fail_fade);
 
 		bool note_upcoming = NoteRowToBeat(start_row) >
 			m_pPlayerState->GetDisplayedPosition().m_fSongBeat;
@@ -485,12 +489,10 @@ bool NoteDisplay::DrawTapsInRange(CommonColumnRenderArgs const& args,
 		bool is_addition = (tn.source == TapNoteSource_Addition);
 		bool hopo_possible = (tn.bHopoPossible);
 		bool use_addition_coloring = is_addition || hopo_possible;
-		DrawTap(tn, column, NoteRowToVisibleBeat(m_pPlayerState, tap_row),
+		DrawTap(tn, args, column, NoteRowToVisibleBeat(m_pPlayerState, tap_row),
 			hold_begins_on_this_beat, roll_begins_on_this_beat,
 			use_addition_coloring,
-			in_selection_range ? args.selection_glow : args.fail_fade,
-			m_fYReverseOffsetPixels, args.draw_pixels_after_targets,
-			args.draw_pixels_before_targets, args.fade_before_targets);
+			in_selection_range ? args.selection_glow : args.fail_fade);
 
 		any_upcoming |= NoteRowToBeat(tap_row) >
 			m_pPlayerState->GetDisplayedPosition().m_fSongBeat;
@@ -611,12 +613,12 @@ struct StripBuffer
 	int Free() const { return size - Used(); }
 };
 
-void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow,
-				float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar,
-				float fOverlappedTime,
-				float fYTop, float fYBottom,
-				float fYStartPos, float fYEndPos,
-				bool bWrapping, bool bAnchorToTop, bool bFlipTextureVertically )
+void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
+	CommonColumnRenderArgs const& args, int iCol, int fYStep,
+	float fPercentFadeToFail, float fColorScale, bool bGlow,
+	float fOverlappedTime, float fYTop, float fYBottom, float fYStartPos,
+	float fYEndPos, bool bWrapping, bool bAnchorToTop,
+	bool bFlipTextureVertically, float top_t, float bottom_t)
 {
 	ASSERT( !vpSpr.empty() );
 
@@ -681,12 +683,20 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 			bLast = true;
 		}
 
+		float curtsy= top_t;
+		if(top_t != bottom_t)
+		{
+			curtsy= SCALE(fY, fYTop, fYBottom, top_t, bottom_t);
+		}
+		vector<float> spline_pos;
+		args.spline->evaluate(curtsy, spline_pos);
+
 		const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
-		const float fZ			= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
+		const float fZ			= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset ) + spline_pos[2];
 		const float fFrameWidthScale	= ArrowEffects::GetFrameWidthScale( m_pPlayerState, fYOffset, fOverlappedTime );
 		const float fScaledFrameWidth	= fFrameWidth * fFrameWidthScale;
 
-		float fX			= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
+		float fX			= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset ) + spline_pos[0];
 
 		// XXX: Actor rotations use degrees, RageFastCos/Sin use radians. Convert here.
 		const float fRotationY		= ArrowEffects::GetRotationY( m_pPlayerState, fYOffset ) * PI/180;
@@ -708,15 +718,15 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 		float fTexCoordTop		= SCALE( fDistFromTop, 0, fFrameHeight, rect.top, rect.bottom );
 		fTexCoordTop += fAddToTexCoord;
 
-		const float fAlpha		= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+		const float fAlpha		= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, args.draw_pixels_before_targets, args.fade_before_targets );
 		const RageColor color		= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 
 		if( fAlpha > 0 )
 			bAllAreTransparent = false;
 
-		queue.v[0].p = RageVector3(fXLeft,  fY, fZLeft);  queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
-		queue.v[1].p = RageVector3(fXCenter, fY, fZCenter); queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordCenter, fTexCoordTop);
-		queue.v[2].p = RageVector3(fXRight, fY, fZRight);  queue.v[2].c = color; queue.v[2].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		queue.v[0].p = RageVector3(fXLeft,  fY + spline_pos[1], fZLeft);  queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
+		queue.v[1].p = RageVector3(fXCenter, fY + spline_pos[1], fZCenter); queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordCenter, fTexCoordTop);
+		queue.v[2].p = RageVector3(fXRight, fY + spline_pos[1], fZRight);  queue.v[2].c = color; queue.v[2].t = RageVector2(fTexCoordRight, fTexCoordTop);
 		queue.v+=3;
 
 		if( queue.Free() < 3 || bLast )
@@ -742,8 +752,11 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 	}
 }
 
-void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool bIsBeingHeld, float fYHead, float fYTail, bool /* bIsAddition */, float fPercentFadeToFail, float fColorScale, bool bGlow,
-			   float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
+void NoteDisplay::DrawHoldBody(const TapNote& tn,
+	CommonColumnRenderArgs const& args, int iCol, float fBeat,
+	bool bIsBeingHeld, float fYHead, float fYTail, bool bIsAddition,
+	float fPercentFadeToFail, float fColorScale, bool bGlow,
+	float top_t, float bottom_t)
 {
 	vector<Sprite*> vpSprTop;
 	Sprite *pSpriteTop = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, fBeat, tn.subType == TapNoteSubType_Roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
@@ -801,48 +814,51 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 	const float fFrameHeightTop	= pSpriteTop->GetUnzoomedHeight();
 	const float fFrameHeightBottom	= pSpriteBottom->GetUnzoomedHeight();
 
-	float fYStartPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fDrawDistanceAfterTargetsPixels, m_fYReverseOffsetPixels );
-	float fYEndPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fDrawDistanceBeforeTargetsPixels, m_fYReverseOffsetPixels );
+	float fYStartPos = ArrowEffects::GetYPos( m_pPlayerState, iCol,
+		args.draw_pixels_after_targets, m_fYReverseOffsetPixels );
+	float fYEndPos = ArrowEffects::GetYPos( m_pPlayerState, iCol,
+		args.draw_pixels_before_targets, m_fYReverseOffsetPixels );
 	if( bReverse )
 		swap( fYStartPos, fYEndPos );
 
 	bool bTopAnchor = bReverse && cache->m_bTopHoldAnchorWhenReverse;
 
 	// Draw the top cap
-	DrawHoldPart(
-		vpSprTop,
-		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
-		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
+	DrawHoldPart(vpSprTop, args, iCol, fYStep, fPercentFadeToFail,
+		fColorScale, bGlow,
 		tn.HoldResult.fOverlappedTime,
 		fYHead-fFrameHeightTop, fYHead,
 		fYStartPos, fYEndPos,
-		false, bTopAnchor, bFlipHoldBody );
+		false, bTopAnchor, bFlipHoldBody, top_t, top_t);
 
 	// Draw the body
-	DrawHoldPart(
-		vpSprBody,
-		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
-		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
+	DrawHoldPart(vpSprBody, args, iCol, fYStep, fPercentFadeToFail,
+		fColorScale, bGlow,
 		tn.HoldResult.fOverlappedTime,
 		fYHead, fYTail,
 		fYStartPos, fYEndPos,
-		true, bTopAnchor, bFlipHoldBody );
+		true, bTopAnchor, bFlipHoldBody, top_t, bottom_t);
 
 	// Draw the bottom cap
-	DrawHoldPart(
-		vpSprBottom,
-		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
-		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
+	DrawHoldPart(vpSprBottom, args, iCol, fYStep, fPercentFadeToFail,
+		fColorScale, bGlow,
 		tn.HoldResult.fOverlappedTime,
 		fYTail, fYTail+fFrameHeightBottom,
 		max(fYStartPos, fYHead), fYEndPos,
-		false, bTopAnchor, bFlipHoldBody );
+		false, bTopAnchor, bFlipHoldBody, bottom_t, bottom_t);
 }
 
-void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeingHeld, const HoldNoteResult &Result, bool bIsAddition, float fPercentFadeToFail, 
-			   float fReverseOffsetPixels, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fDrawDistanceBeforeTargetsPixels2, float fFadeInPercentOfDrawFar )
+void NoteDisplay::DrawHold(const TapNote& tn,
+	CommonColumnRenderArgs const& args, int iCol, int iRow, bool bIsBeingHeld,
+	const HoldNoteResult &Result, bool bIsAddition, float fPercentFadeToFail)
 {
 	int iEndRow = iRow + tn.iDuration;
+	float top_t= BeatToTValue(args, NoteRowToVisibleBeat(m_pPlayerState, iRow));
+	float bottom_t= BeatToTValue(args, NoteRowToVisibleBeat(m_pPlayerState, iEndRow));
+	if(bIsBeingHeld)
+	{
+		top_t= args.receptor_t;
+	}
 
 	// bDrawGlowOnly is a little hacky.  We need to draw the diffuse part and the glow part one pass at a time to minimize state changes
 
@@ -873,8 +889,8 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	if( bReverse )
 		swap( fStartYOffset, fEndYOffset );
 
-	const float fYHead		= ArrowEffects::GetYPos( m_pPlayerState, iCol, fStartYOffset, fReverseOffsetPixels );
-	const float fYTail		= ArrowEffects::GetYPos( m_pPlayerState, iCol, fEndYOffset, fReverseOffsetPixels );
+	const float fYHead		= ArrowEffects::GetYPos( m_pPlayerState, iCol, fStartYOffset, m_fYReverseOffsetPixels );
+	const float fYTail		= ArrowEffects::GetYPos( m_pPlayerState, iCol, fEndYOffset, m_fYReverseOffsetPixels );
 
 	const float fColorScale		= SCALE( tn.HoldResult.fLife, 0.0f, 1.0f, cache->m_fHoldLetGoGrayPercent, 1.0f );
 
@@ -896,8 +912,8 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	}
 	*/
 
-	DrawHoldBody( tn, iCol, fBeat, bIsBeingHeld, fYHead, fYTail, bIsAddition, fPercentFadeToFail, fColorScale, false, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	DrawHoldBody( tn, iCol, fBeat, bIsBeingHeld, fYHead, fYTail, bIsAddition, fPercentFadeToFail, fColorScale, true, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	DrawHoldBody(tn, args, iCol, fBeat, bIsBeingHeld, fYHead, fYTail, bIsAddition, fPercentFadeToFail, fColorScale, false, top_t, bottom_t);
+	DrawHoldBody(tn, args, iCol, fBeat, bIsBeingHeld, fYHead, fYTail, bIsAddition, fPercentFadeToFail, fColorScale, true, top_t, bottom_t);
 
 	/* These set the texture mode themselves. */
 	// this part was modified in pumpmania, where it flips the draw order
@@ -905,25 +921,33 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	if( cache->m_bHoldTailIsAboveWavyParts )
 	{
 		Actor *pActor = GetHoldActor( m_HoldTail, NotePart_HoldTail, NoteRowToBeat(iRow), tn.subType == TapNoteSubType_Roll, bIsBeingHeld );
-		DrawActor( tn, pActor, NotePart_HoldTail, iCol, bFlipHeadAndTail ? fStartYOffset : fEndYOffset, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, fColorScale, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+		DrawActor(tn, pActor, NotePart_HoldTail, args, iCol, bFlipHeadAndTail ? fStartYOffset : fEndYOffset, fBeat, bIsAddition, fPercentFadeToFail, fColorScale, false);
 	}
 	if( cache->m_bHoldHeadIsAboveWavyParts )
 	{
 		Actor *pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, NoteRowToBeat(iRow), tn.subType == TapNoteSubType_Roll, bIsBeingHeld );
-		DrawActor( tn, pActor, NotePart_HoldHead, iCol, bFlipHeadAndTail ? fEndYOffset : fStartYOffset, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, fColorScale, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+		DrawActor(tn, pActor, NotePart_HoldHead, args, iCol, bFlipHeadAndTail ? fEndYOffset : fStartYOffset, fBeat, bIsAddition, fPercentFadeToFail, fColorScale, bIsBeingHeld);
 	}
 }
 
-void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, int iCol, float fYOffset, float fBeat, bool bIsAddition, float fPercentFadeToFail, float fReverseOffsetPixels, float fColorScale, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
+void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
+	CommonColumnRenderArgs const& args, int iCol, float fYOffset, float fBeat,
+	bool bIsAddition, float fPercentFadeToFail, float fColorScale,
+	bool is_being_held)
 {
 	if (tn.type == TapNoteType_AutoKeysound && !GAMESTATE->m_bInStepEditor) return;
-	if( fYOffset < fDrawDistanceAfterTargetsPixels || fYOffset > fDrawDistanceBeforeTargetsPixels )
+	if(fYOffset < args.draw_pixels_after_targets ||
+		fYOffset > args.draw_pixels_before_targets)
 		return;
-	const float fY		= ArrowEffects::GetYPos(	m_pPlayerState, iCol, fYOffset, fReverseOffsetPixels );
-	const float fX		= ArrowEffects::GetXPos(	m_pPlayerState, iCol, fYOffset );
-	const float fZ		= ArrowEffects::GetZPos(	m_pPlayerState, iCol, fYOffset );
-	const float fAlpha	= ArrowEffects::GetAlpha(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	const float fGlow	= ArrowEffects::GetGlow(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	float spline_t= BeatToTValue(args, fBeat);
+	if(is_being_held) { spline_t= args.receptor_t; }
+	vector<float> spline_pos;
+	args.spline->evaluate(spline_t, spline_pos);
+	const float fY		= ArrowEffects::GetYPos(	m_pPlayerState, iCol, fYOffset, m_fYReverseOffsetPixels ) + spline_pos[1];
+	const float fX		= ArrowEffects::GetXPos(	m_pPlayerState, iCol, fYOffset ) + spline_pos[0];
+	const float fZ		= ArrowEffects::GetZPos(	m_pPlayerState, iCol, fYOffset ) + spline_pos[2];
+	const float fAlpha	= ArrowEffects::GetAlpha(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, args.draw_pixels_before_targets, args.fade_before_targets );
+	const float fGlow	= ArrowEffects::GetGlow(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, args.draw_pixels_before_targets, args.fade_before_targets );
 	const RageColor diffuse	= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	const RageColor glow	= RageColor(1,1,1,fGlow);
 	float fRotationX	= 0, fRotationZ	= 0;
@@ -979,13 +1003,10 @@ void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, in
 	}
 }
 
-void NoteDisplay::DrawTap(const TapNote& tn, int iCol, float fBeat,
-			  bool bOnSameRowAsHoldStart, bool bOnSameRowAsRollStart,
-			  bool bIsAddition, float fPercentFadeToFail, 
-			  float fReverseOffsetPixels, 
-			  float fDrawDistanceAfterTargetsPixels, 
-			  float fDrawDistanceBeforeTargetsPixels, 
-			  float fFadeInPercentOfDrawFar)
+void NoteDisplay::DrawTap(const TapNote& tn,
+	CommonColumnRenderArgs const& args, int iCol, float fBeat,
+	bool bOnSameRowAsHoldStart, bool bOnSameRowAsRollStart,
+	bool bIsAddition, float fPercentFadeToFail)
 {
 	Actor* pActor = NULL;
 	NotePart part = NotePart_Tap;
@@ -1059,7 +1080,7 @@ void NoteDisplay::DrawTap(const TapNote& tn, int iCol, float fBeat,
 
 	const float fYOffset = ArrowEffects::GetYOffset( m_pPlayerState, iCol, fBeat );
 	// this is the line that forces the (1,1,1,x) part of the noteskin diffuse -aj
-	DrawActor( tn, pActor, part, iCol, fYOffset, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, 1.0f, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	DrawActor(tn, pActor, part, args, iCol, fYOffset, fBeat, bIsAddition, fPercentFadeToFail, 1.0f, false);
 
 	if( tn.type == TapNoteType_Attack )
 		pActor->PlayCommand( "UnsetAttack" );
@@ -1067,6 +1088,11 @@ void NoteDisplay::DrawTap(const TapNote& tn, int iCol, float fBeat,
 
 void NoteColumnRenderer::DrawPrimitives()
 {
+	m_render_args->spline= &m_spline;
+	m_render_args->receptor_t= m_receptor_t;
+	m_render_args->beats_per_t= m_beats_per_t;
+	m_render_args->first_beat= NoteRowToBeat(m_render_args->first_row);
+	m_render_args->last_beat= NoteRowToBeat(m_render_args->last_row);
 	bool any_upcoming= false;
 	// Build lists of holds and taps for each player number, then pass those
 	// lists to the displays to draw.
@@ -1122,6 +1148,38 @@ void NoteColumnRenderer::DrawPrimitives()
 #undef DRAW_TAP_SET
 	m_render_args->receptor_row->SetNoteUpcoming(m_column, any_upcoming);
 }
+
+#include "LuaBinding.h"
+
+struct LunaNoteColumnRenderer : Luna<NoteColumnRenderer>
+{
+	static int get_spline(T* p, lua_State* L)
+	{
+		p->m_spline.PushSelf(L);
+		return 1;
+	}
+	DEFINE_METHOD(get_receptor_t, m_receptor_t);
+	DEFINE_METHOD(get_beats_per_t, m_beats_per_t);
+#define SET_T(member, name) \
+	static int name(T* p, lua_State* L) \
+	{ \
+		p->member= FArg(1); \
+		COMMON_RETURN_SELF; \
+	}
+	SET_T(m_receptor_t, set_receptor_t);
+	SET_T(m_beats_per_t, set_beats_per_t);
+
+	LunaNoteColumnRenderer()
+	{
+		ADD_METHOD(get_spline);
+		ADD_METHOD(get_receptor_t);
+		ADD_METHOD(get_beats_per_t);
+		ADD_METHOD(set_receptor_t);
+		ADD_METHOD(set_beats_per_t);
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS(NoteColumnRenderer, Actor)
 
 /*
  * (c) 2001-2006 Brian Bugh, Ben Nordstrom, Chris Danford, Steve Checkoway

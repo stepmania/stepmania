@@ -2,6 +2,7 @@
 #define NOTE_DISPLAY_H
 
 #include "ActorFrame.h"
+#include "CubicSpline.h"
 #include "NoteData.h"
 #include "PlayerNumber.h"
 #include "GameInput.h"
@@ -93,10 +94,15 @@ struct CommonColumnRenderArgs
 	ReceptorArrowRow* receptor_row;
 	GhostArrowRow* ghost_row;
 	NoteData const* note_data;
+	CubicSplineN const* spline;
+	float receptor_t;
+	float beats_per_t;
+	float first_beat;
+	float last_beat;
 	int first_row;
 	int last_row;
-	int draw_pixels_before_targets;
-	int draw_pixels_after_targets;
+	float draw_pixels_before_targets;
+	float draw_pixels_after_targets;
 	int* selection_begin_marker;
 	int* selection_end_marker;
 	float selection_glow;
@@ -116,6 +122,7 @@ public:
 	static void Update( float fDeltaTime );
 
 	bool IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels ) const;
+	float BeatToTValue(CommonColumnRenderArgs const& args, float beat) const;
 
 	bool DrawHoldsInRange(CommonColumnRenderArgs const& args, int column,
 		vector<NoteData::TrackMap::const_iterator> const& tap_set);
@@ -134,19 +141,14 @@ public:
 	 * @param fDrawDistanceAfterTargetsPixels how much to draw after the receptors.
 	 * @param fDrawDistanceBeforeTargetsPixels how much ot draw before the receptors.
 	 * @param fFadeInPercentOfDrawFar when to start fading in. */
-	void DrawTap(const TapNote& tn, int iCol, float fBeat, 
-		     bool bOnSameRowAsHoldStart, bool bOnSameRowAsRollBeat,
-		     bool bIsAddition, float fPercentFadeToFail,
-		     float fReverseOffsetPixels,
-		     float fDrawDistanceAfterTargetsPixels,
-		     float fDrawDistanceBeforeTargetsPixels,
-		     float fFadeInPercentOfDrawFar );
-	void DrawHold( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, const HoldNoteResult &Result, 
-		bool bIsAddition, float fPercentFadeToFail, float fReverseOffsetPixels, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, 
-		float fDrawDistanceBeforeTargetsPixels2, float fFadeInPercentOfDrawFar );
-	
+	void DrawTap(const TapNote& tn, CommonColumnRenderArgs const& args,
+		int iCol, float fBeat, bool bOnSameRowAsHoldStart,
+		bool bOnSameRowAsRollBeat, bool bIsAddition, float fPercentFadeToFail);
+	void DrawHold(const TapNote& tn, CommonColumnRenderArgs const& args,
+		int iCol, int iRow, bool bIsBeingHeld, const HoldNoteResult &Result,
+		bool bIsAddition, float fPercentFadeToFail);
+
 	bool DrawHoldHeadForTapsOnSameRow() const;
-	
 	bool DrawRollHeadForTapsOnSameRow() const;
 
 private:
@@ -155,14 +157,20 @@ private:
 	Actor *GetHoldActor( NoteColorActor nca[NUM_HoldType][NUM_ActiveType], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
 	Sprite *GetHoldSprite( NoteColorSprite ncs[NUM_HoldType][NUM_ActiveType], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
 
-	void DrawActor( const TapNote& tn, Actor* pActor, NotePart part, int iCol, float fYOffset, float fBeat, bool bIsAddition, float fPercentFadeToFail,
-			float fReverseOffsetPixels, float fColorScale, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
-	void DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool bIsBeingHeld, float fYHead, float fYTail, bool bIsAddition, float fPercentFadeToFail, 
-			   float fColorScale, 
-			   bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
-	void DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow,
-			   float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar, float fOverlappedTime,
-			   float fYTop, float fYBottom, float fYStartPos, float fYEndPos, bool bWrapping, bool bAnchorToTop, bool bFlipTextureVertically );
+	void DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
+		CommonColumnRenderArgs const& args, int iCol, float fYOffset, float fBeat,
+		bool bIsAddition, float fPercentFadeToFail, float fColorScale,
+		bool is_being_held);
+	void DrawHoldBody(const TapNote& tn, CommonColumnRenderArgs const& args,
+		int iCol, float fBeat, bool bIsBeingHeld, float fYHead, float fYTail,
+		bool bIsAddition, float fPercentFadeToFail, float fColorScale,
+		bool bGlow, float top_t, float bottom_t);
+	void DrawHoldPart(vector<Sprite*> &vpSpr,
+		CommonColumnRenderArgs const& args, int iCol, int fYStep,
+		float fPercentFadeToFail, float fColorScale, bool bGlow,
+		float fOverlappedTime, float fYTop, float fYBottom, float fYStartPos,
+		float fYEndPos, bool bWrapping, bool bAnchorToTop,
+		bool bFlipTextureVertically, float top_t, float bottom_t);
 
 	const PlayerState	*m_pPlayerState;	// to look up PlayerOptions
 	NoteMetricCache_t	*cache;
@@ -191,11 +199,20 @@ private:
 class NoteColumnRenderer : public Actor
 {
 	public:
+	NoteColumnRenderer()
+	{
+		m_spline.redimension(3);
+		m_spline.m_owned_by_actor= true;
+	}
 	NoteDisplay* m_displays[PLAYER_INVALID+1];
 	CommonColumnRenderArgs* m_render_args;
 	int m_column;
+	float m_receptor_t;
+	float m_beats_per_t;
+	CubicSplineN m_spline;
 
 	virtual void DrawPrimitives();
+	virtual void PushSelf(lua_State* L);
 };
 
 #endif

@@ -269,7 +269,7 @@ void CubicSpline::set_results(size_t last, vector<float>& diagonals, vector<floa
 	// Solving is now complete.
 }
 
-float CubicSpline::evaluate(float t, bool loop)
+float CubicSpline::evaluate(float t, bool loop) const
 {
 	if(m_points.empty())
 	{
@@ -277,7 +277,9 @@ float CubicSpline::evaluate(float t, bool loop)
 	}
 	if(loop)
 	{
-		t= fmodf(t, m_points.size());
+		float max_t= m_points.size() + 1.0f;
+		while(t > max_t) { t-= max_t; }
+		while(t < 0.0f) { t+= max_t; }
 	}
 	int flort= static_cast<int>(t);
 	if(flort < 0)
@@ -303,12 +305,12 @@ void CubicSpline::resize(size_t s)
 	m_points.resize(s);
 }
 
-size_t CubicSpline::size()
+size_t CubicSpline::size() const
 {
 	return m_points.size();
 }
 
-bool CubicSpline::empty()
+bool CubicSpline::empty() const
 {
 	return m_points.empty();
 }
@@ -335,9 +337,9 @@ void CubicSplineN::solve()
 	m_dirty= false;
 }
 
-void CubicSplineN::evaluate(float t, vector<float>& v)
+void CubicSplineN::evaluate(float t, vector<float>& v) const
 {
-	for(spline_cont_t::iterator spline= m_splines.begin();
+	for(spline_cont_t::const_iterator spline= m_splines.begin();
 			spline != m_splines.end(); ++spline)
 	{
 		v.push_back(spline->evaluate(t, loop));
@@ -364,7 +366,7 @@ void CubicSplineN::resize(size_t s)
 	m_dirty= true;
 }
 
-size_t CubicSplineN::size()
+size_t CubicSplineN::size() const
 {
 	if(!m_splines.empty())
 	{
@@ -373,7 +375,7 @@ size_t CubicSplineN::size()
 	return 0;
 }
 
-bool CubicSplineN::empty()
+bool CubicSplineN::empty() const
 {
 	return m_splines.empty() || m_splines[0].empty();
 }
@@ -384,7 +386,7 @@ void CubicSplineN::redimension(size_t d)
 	m_dirty= true;
 }
 
-size_t CubicSplineN::dimension()
+size_t CubicSplineN::dimension() const
 {
 	return m_splines.size();
 }
@@ -440,7 +442,7 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 		{
 			luaL_error(L, "Cannot set spline point at index less than 1.");
 		}
-		if(i >= p->size())
+		if(static_cast<size_t>(i) >= p->size())
 		{
 			luaL_error(L, "Cannot set spline point at index greater than size.");
 		}
