@@ -7,6 +7,7 @@ struct lua_State;
 
 struct CubicSpline
 {
+CubicSpline() :m_spatial_extent(0.0f) {}
 	void solve_looped();
 	void solve_straight();
 	float evaluate(float t, bool loop) const;
@@ -17,6 +18,7 @@ struct CubicSpline
 	void resize(size_t s);
 	size_t size() const;
 	bool empty() const;
+	float m_spatial_extent;
 private:
 	bool check_minimum_size();
 	void prep_inner(size_t last, vector<float>& results);
@@ -42,6 +44,8 @@ struct CubicSplineN
 		vector<float> const& c, vector<float> const& d);
 	void get_coefficients(size_t i, vector<float>& b,
 		vector<float>& c, vector<float>& d);
+	void set_spatial_extent(size_t i, float extent);
+	float get_spatial_extent(size_t i);
 	void resize(size_t s);
 	size_t size() const;
 	void redimension(size_t d);

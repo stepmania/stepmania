@@ -128,6 +128,23 @@ void SplineSolutionCache::solve_diagonals_looped(vector<float>& diagonals)
 
 SplineSolutionCache solution_cache;
 
+// loop_space_difference exists to handle numbers that exist in a finite
+// looped space, instead of the flat infinite space.
+// To put it more concretely, loop_space_difference exists to allow a spline
+// to control rotation with wrapping behavior at 0.0 and 2pi, instead of
+// suddenly jerking from 2pi to 0.0. -Kyz
+float loop_space_difference(float a, float b, float spatial_extent);
+float loop_space_difference(float a, float b, float spatial_extent)
+{
+	float const plus_diff= a - (b + spatial_extent);
+	float const minus_diff= a - (b - spatial_extent);
+	if(abs(plus_diff) < abs(minus_diff))
+	{
+		return plus_diff;
+	}
+	return minus_diff;
+}
+
 void CubicSpline::solve_looped()
 {
 	if(check_minimum_size()) { return; }
@@ -135,9 +152,11 @@ void CubicSpline::solve_looped()
 	vector<float> results(m_points.size());
 	vector<float> diagonals(m_points.size());
 	solution_cache.solve_diagonals_looped(diagonals);
-	results[0]= 3 * (m_points[1].a - m_points[last-1].a);
+	results[0]= 3 * loop_space_difference(
+		m_points[1].a, m_points[last-1].a, m_spatial_extent);
 	prep_inner(last, results);
-	results[last-1]= 3 * (m_points[0].a - m_points[last-2].a);
+	results[last-1]= 3 * loop_space_difference(
+		m_points[0].a, m_points[last-2].a, m_spatial_extent);
 
 	// The steps to solve the system of equations look like this:
 	// | 4 1 0 0 1 | -> | 4 0 0 0 1 | -> | 4 0 0 0 0 | -> | 4 0 0 0 0 |
@@ -193,7 +212,8 @@ void CubicSpline::solve_straight()
 	solution_cache.solve_diagonals_straight(diagonals);
 	results[0]= 3 * (m_points[1].a - m_points[0].a);
 	prep_inner(last, results);
-	results[last-1]= 3 * (m_points[last-1].a - m_points[last-2].a);
+	results[last-1]= 3 * loop_space_difference(
+		m_points[last-1].a, m_points[last-2].a, m_spatial_extent);
 
 	// The system of equations to be solved looks like this:
 	// | 2 1 0 0 | = | results[0] |
@@ -224,10 +244,12 @@ bool CubicSpline::check_minimum_size()
 	}
 	if(last == 2)
 	{
-		m_points[0].b= m_points[1].a - m_points[0].a;
+		m_points[0].b= loop_space_difference(
+			m_points[1].a, m_points[0].a, m_spatial_extent);
 		m_points[0].c= m_points[0].d= 0.0f;
 		// These will be used in the looping case.
-		m_points[1].b= m_points[0].a - m_points[1].a;
+		m_points[1].b= loop_space_difference(
+			m_points[0].a, m_points[1].a, m_spatial_extent);
 		m_points[1].c= m_points[1].d= 0.0f;
 		return true;
 	}
@@ -245,7 +267,8 @@ void CubicSpline::prep_inner(size_t last, vector<float>& results)
 {
 	for(size_t i= 1; i < last - 1; ++i)
 	{
-		results[i]= 3 * (m_points[i+1].a - m_points[i-1].a);
+		results[i]= 3 * loop_space_difference(
+			m_points[i+1].a, m_points[i-1].a, m_spatial_extent);
 	}
 }
 
@@ -261,7 +284,8 @@ void CubicSpline::set_results(size_t last, vector<float>& diagonals, vector<floa
 	for(size_t i= 0; i < last; ++i)
 	{
 		size_t next= (i+1) % last;
-		float diff= m_points[next].a - m_points[i].a;
+		float diff= loop_space_difference(
+			m_points[next].a, m_points[i].a, m_spatial_extent);
 		m_points[i].b= results[i];
 		m_points[i].c= (3 * diff) - (2 * results[i]) - results[next];
 		m_points[i].d= (2 * -diff) + results[i] + results[next];
@@ -432,6 +456,7 @@ void CubicSplineN::set_coefficients(size_t i, vector<float> const& b,
 	{
 		m_splines[n].set_coefficients(i, b[n], c[n], d[n]);
 	}
+	m_dirty= true;
 }
 
 void CubicSplineN::get_coefficients(size_t i, vector<float>& b,
@@ -444,6 +469,21 @@ void CubicSplineN::get_coefficients(size_t i, vector<float>& b,
 	{
 		m_splines[n].get_coefficients(i, b[n], c[n], d[n]);
 	}
+}
+
+void CubicSplineN::set_spatial_extent(size_t i, float extent)
+{
+	ASSERT_M(i < m_splines.size(), "CubicSplineN: index of spline to set extent"
+		" of is out of range.");
+	m_splines[i].m_spatial_extent= extent;
+	m_dirty= true;
+}
+
+float CubicSplineN::get_spatial_extent(size_t i)
+{
+	ASSERT_M(i < m_splines.size(), "CubicSplineN: index of spline to get extent"
+		" of is out of range.");
+	return m_splines[i].m_spatial_extent;
 }
 
 void CubicSplineN::resize(size_t s)
@@ -485,6 +525,24 @@ size_t CubicSplineN::dimension() const
 
 struct LunaCubicSplineN : Luna<CubicSplineN>
 {
+	static size_t dimension_index(T* p, lua_State* L, int s)
+	{
+		size_t i= static_cast<size_t>(IArg(s)-1);
+		if(i >= p->dimension())
+		{
+			luaL_error(L, "Spline dimension index out of range.");
+		}
+		return i;
+	}
+	static size_t point_index(T* p, lua_State* L, int s)
+	{
+		size_t i= static_cast<size_t>(IArg(s)-1);
+		if(i >= p->size())
+		{
+			luaL_error(L, "Spline point index out of range.");
+		}
+		return i;
+	}
 	static int solve(T* p, lua_State* L)
 	{
 		p->solve();
@@ -543,16 +601,8 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 	}
 	static int set_point(T* p, lua_State* L)
 	{
-		int i= IArg(1)-1;
-		if(i < 0)
-		{
-			luaL_error(L, "Cannot set spline point at index less than 1.");
-		}
-		if(static_cast<size_t>(i) >= p->size())
-		{
-			luaL_error(L, "Cannot set spline point at index greater than size.");
-		}
-		set_point_from_stack(p, L, static_cast<size_t>(i), 2);
+		size_t i= point_index(p, L, 1);
+		set_point_from_stack(p, L, i, 2);
 		COMMON_RETURN_SELF;
 	}
 	static void set_coefficients_from_stack(T* p, lua_State* L, size_t i, int s)
@@ -569,29 +619,13 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 	}
 	static int set_coefficients(T* p, lua_State* L)
 	{
-		int i= IArg(1)-1;
-		if(i < 0)
-		{
-			luaL_error(L, "Cannot set spline coefficients at index less than 1.");
-		}
-		if(static_cast<size_t>(i) >= p->size())
-		{
-			luaL_error(L, "Cannot set spline coefficients at index greater than size.");
-		}
+		size_t i= point_index(p, L, 1);
 		set_coefficients_from_stack(p, L, i, 2);
 		COMMON_RETURN_SELF;
 	}
 	static int get_coefficients(T* p, lua_State* L)
 	{
-		int i= IArg(1)-1;
-		if(i < 0)
-		{
-			luaL_error(L, "Cannot get spline coefficients at index less than 1.");
-		}
-		if(static_cast<size_t>(i) >= p->size())
-		{
-			luaL_error(L, "Cannot get spline coefficients at index greater than size.");
-		}
+		size_t i= point_index(p, L, 1);
 		size_t limit= p->dimension();
 		vector<vector<float> > coeff(3);
 		coeff[0].resize(limit);
@@ -609,6 +643,18 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 			}
 			lua_rawseti(L, -2, co+1);
 		}
+		return 1;
+	}
+	static int set_spatial_extent(T* p, lua_State* L)
+	{
+		size_t i= dimension_index(p, L, 1);
+		p->set_spatial_extent(i, FArg(2));
+		COMMON_RETURN_SELF;
+	}
+	static int get_spatial_extent(T* p, lua_State* L)
+	{
+		size_t i= dimension_index(p, L, 1);
+		lua_pushnumber(L, p->get_spatial_extent(i));
 		return 1;
 	}
 	static int resize(T* p, lua_State* L)
@@ -669,6 +715,8 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 		ADD_METHOD(set_point);
 		ADD_METHOD(set_coefficients);
 		ADD_METHOD(get_coefficients);
+		ADD_METHOD(set_spatial_extent);
+		ADD_METHOD(get_spatial_extent);
 		ADD_METHOD(resize);
 		ADD_METHOD(size);
 		ADD_METHOD(redimension);
