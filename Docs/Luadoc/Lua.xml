@@ -970,7 +970,7 @@
 		<Class base='ActorFrame' name='NoteField'>
 			<Function name='DidHoldNote'/>
 			<Function name='DidTapNote'/>
-			<Function name='GetColumnActors'/>
+			<Function name='get_column_actors'/>
 			<Function name='SetPressed'/>
 			<Function name='SetDidHoldNoteCallback'/>
 			<Function name='SetDidTapNoteCallback'/>

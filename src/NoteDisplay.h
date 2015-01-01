@@ -87,16 +87,24 @@ enum ActiveType
 #define FOREACH_ActiveType( i ) FOREACH_ENUM( ActiveType, i )
 const RString &ActiveTypeToString( ActiveType at );
 
+enum NoteColumnSplineMode
+{
+	NCSM_Disabled,
+	NCSM_Offset,
+	NCSM_Position,
+	NUM_NoteColumnSplineMode,
+	NoteColumnSplineMode_Invalid
+};
+
 // A little pod struct to carry the data the NoteField needs to pass to the
 // NoteDisplay during rendering.
-struct CommonColumnRenderArgs
+struct NoteFieldRenderArgs
 {
+	PlayerState const* player_state; // to look up PlayerOptions
+	float reverse_offset_pixels;
 	ReceptorArrowRow* receptor_row;
 	GhostArrowRow* ghost_row;
 	NoteData const* note_data;
-	CubicSplineN const* spline;
-	float receptor_t;
-	float beats_per_t;
 	float first_beat;
 	float last_beat;
 	int first_row;
@@ -108,6 +116,52 @@ struct CommonColumnRenderArgs
 	float selection_glow;
 	float fail_fade;
 	float fade_before_targets;
+};
+
+// NCSplineHandler exists to allow NoteColumnRenderer to have separate
+// splines for position, rotation, and zoom, while concisely presenting the
+// same interface for all three.
+struct NCSplineHandler
+{
+	NCSplineHandler()
+	{
+		m_spline.redimension(3);
+		m_spline.m_owned_by_actor= true;
+		m_spline_mode= NCSM_Disabled;
+		m_receptor_t= 0.0f;
+		m_beats_per_t= 1.0f;
+		m_subtract_song_beat_from_curr= true;
+	}
+	float BeatToTValue(float song_beat, float note_beat) const;
+	void EvalForBeat(float song_beat, float note_beat, vector<float>& ret) const;
+	void EvalDerivForBeat(float song_beat, float note_beat, vector<float>& ret) const;
+	void EvalForReceptor(float song_beat, vector<float>& ret) const;
+
+	CubicSplineN m_spline;
+	NoteColumnSplineMode m_spline_mode;
+	float m_receptor_t;
+	float m_beats_per_t;
+	bool m_subtract_song_beat_from_curr;
+
+	void PushSelf(lua_State* L);
+};
+
+struct NoteColumnRenderArgs
+{
+	void spae_pos_for_beat(PlayerState const* state,
+		float beat, float y_offset, float y_reverse_offset,
+		vector<float>& sp_pos, vector<float>& ae_pos) const;
+	void spae_zoom_for_beat(PlayerState const* state, float beat,
+		vector<float>& sp_zoom, vector<float>& ae_zoom) const;
+	void SetPRZForActor(Actor* actor,
+		vector<float> const& sp_pos, vector<float> const& ae_pos,
+		vector<float> const& sp_rot, vector<float> const& ae_rot,
+		vector<float> const& sp_zoom, vector<float> const& ae_zoom) const;
+	NCSplineHandler const* pos_handler;
+	NCSplineHandler const* rot_handler;
+	NCSplineHandler const* zoom_handler;
+	float song_beat;
+	int column;
 };
 
 /** @brief Draws TapNotes and HoldNotes. */
@@ -122,11 +176,12 @@ public:
 	static void Update( float fDeltaTime );
 
 	bool IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels ) const;
-	float BeatToTValue(CommonColumnRenderArgs const& args, float beat) const;
 
-	bool DrawHoldsInRange(CommonColumnRenderArgs const& args, int column,
+	bool DrawHoldsInRange(NoteFieldRenderArgs const& field_args,
+		NoteColumnRenderArgs const& column_args,
 		vector<NoteData::TrackMap::const_iterator> const& tap_set);
-	bool DrawTapsInRange(CommonColumnRenderArgs const& args, int column,
+	bool DrawTapsInRange(NoteFieldRenderArgs const& field_args,
+		NoteColumnRenderArgs const& column_args,
 		vector<NoteData::TrackMap::const_iterator> const& tap_set);
 	/**
 	 * @brief Draw the TapNote onto the NoteField.
@@ -141,11 +196,13 @@ public:
 	 * @param fDrawDistanceAfterTargetsPixels how much to draw after the receptors.
 	 * @param fDrawDistanceBeforeTargetsPixels how much ot draw before the receptors.
 	 * @param fFadeInPercentOfDrawFar when to start fading in. */
-	void DrawTap(const TapNote& tn, CommonColumnRenderArgs const& args,
-		int iCol, float fBeat, bool bOnSameRowAsHoldStart,
+	void DrawTap(const TapNote& tn, NoteFieldRenderArgs const& field_args,
+		NoteColumnRenderArgs const& column_args, float fBeat,
+		bool bOnSameRowAsHoldStart,
 		bool bOnSameRowAsRollBeat, bool bIsAddition, float fPercentFadeToFail);
-	void DrawHold(const TapNote& tn, CommonColumnRenderArgs const& args,
-		int iCol, int iRow, bool bIsBeingHeld, const HoldNoteResult &Result,
+	void DrawHold(const TapNote& tn, NoteFieldRenderArgs const& field_args,
+		NoteColumnRenderArgs const& column_args, int iRow, bool bIsBeingHeld,
+		const HoldNoteResult &Result,
 		bool bIsAddition, float fPercentFadeToFail);
 
 	bool DrawHoldHeadForTapsOnSameRow() const;
@@ -158,19 +215,22 @@ private:
 	Sprite *GetHoldSprite( NoteColorSprite ncs[NUM_HoldType][NUM_ActiveType], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
 
 	void DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
-		CommonColumnRenderArgs const& args, int iCol, float fYOffset, float fBeat,
+		NoteFieldRenderArgs const& field_args,
+		NoteColumnRenderArgs const& column_args, float fYOffset, float fBeat,
 		bool bIsAddition, float fPercentFadeToFail, float fColorScale,
 		bool is_being_held);
-	void DrawHoldBody(const TapNote& tn, CommonColumnRenderArgs const& args,
-		int iCol, float fBeat, bool bIsBeingHeld, float fYHead, float fYTail,
+	void DrawHoldBody(const TapNote& tn, NoteFieldRenderArgs const& field_args,
+		NoteColumnRenderArgs const& column_args, float fBeat, bool bIsBeingHeld,
+		float fYHead, float fYTail,
 		bool bIsAddition, float fPercentFadeToFail, float fColorScale,
-		bool bGlow, float top_t, float bottom_t);
+		bool bGlow, float top_beat, float bottom_beat);
 	void DrawHoldPart(vector<Sprite*> &vpSpr,
-		CommonColumnRenderArgs const& args, int iCol, int fYStep,
+		NoteFieldRenderArgs const& field_args,
+		NoteColumnRenderArgs const& column_args, int fYStep,
 		float fPercentFadeToFail, float fColorScale, bool bGlow,
 		float fOverlappedTime, float fYTop, float fYBottom, float fYStartPos,
 		float fYEndPos, bool bWrapping, bool bAnchorToTop,
-		bool bFlipTextureVertically, float top_t, float bottom_t);
+		bool bFlipTextureVertically, float top_beat, float bottom_beat);
 
 	const PlayerState	*m_pPlayerState;	// to look up PlayerOptions
 	NoteMetricCache_t	*cache;
@@ -196,21 +256,24 @@ private:
 // actors so they can move with the rest of the column.  I didn't use
 // ActorProxy because the receptor/ghost actors need to pull in the parent
 // state of their rows and the parent state of the column. -Kyz
-class NoteColumnRenderer : public Actor
-{
-	public:
-	NoteColumnRenderer()
-	{
-		m_spline.redimension(3);
-		m_spline.m_owned_by_actor= true;
-	}
-	NoteDisplay* m_displays[PLAYER_INVALID+1];
-	CommonColumnRenderArgs* m_render_args;
-	int m_column;
-	float m_receptor_t;
-	float m_beats_per_t;
-	CubicSplineN m_spline;
 
+struct NoteColumnRenderer : public Actor
+{
+	NoteDisplay* m_displays[PLAYER_INVALID+1];
+	NoteFieldRenderArgs* m_field_render_args;
+	NoteColumnRenderArgs m_column_render_args;
+	int m_column;
+	// m_column_render_args has pointers to these fields that are updated
+	// every frame instead of using m_column_render_args directly so that they
+	// can be moved into a tween state later. -Kyz
+	NCSplineHandler m_pos_handler;
+	NCSplineHandler m_rot_handler;
+	NCSplineHandler m_zoom_handler;
+
+	// UpdateReceptorGhostStuff takes care of the logic for making the ghost
+	// and receptor positions follow the splines.  It's called by their row
+	// update functions. -Kyz
+	void UpdateReceptorGhostStuff(Actor* receptor) const;
 	virtual void DrawPrimitives();
 	virtual void PushSelf(lua_State* L);
 };
@@ -218,6 +281,7 @@ class NoteColumnRenderer : public Actor
 #endif
 
 /**
+ * NoteColumnRenderer and associated spline stuff (c) Eric Reese 2014-2015
  * @file
  * @author Brian Bugh, Ben Nordstrom, Chris Danford, Steve Checkoway (c) 2001-2006
  * @section LICENSE

@@ -53,8 +53,6 @@ void ReceptorArrowRow::Update( float fDeltaTime )
 
 	for( unsigned c=0; c<m_ReceptorArrow.size(); c++ )
 	{
-		vector<float> spline_pos;
-		(*m_renderers)[c].m_spline.evaluate((*m_renderers)[c].m_receptor_t, spline_pos);
 		// m_fDark==1 or m_fFadeToFailPercent==1 should make fBaseAlpha==0
 		float fBaseAlpha = (1 - m_pPlayerState->m_PlayerOptions.GetCurrent().m_fDark);
 		if( m_fFadeToFailPercent != -1 )
@@ -65,18 +63,7 @@ void ReceptorArrowRow::Update( float fDeltaTime )
 		m_ReceptorArrow[c]->SetBaseAlpha( fBaseAlpha );
 
 		// set arrow XYZ
-		float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
-		const float fY = ArrowEffects::GetYPos( m_pPlayerState, c, 0, m_fYReverseOffsetPixels );
-		const float fZ = ArrowEffects::GetZPos( m_pPlayerState, c, 0 );
-		m_ReceptorArrow[c]->SetX( fX + spline_pos[0] );
-		m_ReceptorArrow[c]->SetY( fY + spline_pos[1] );
-		m_ReceptorArrow[c]->SetZ( fZ + spline_pos[2] );
-
-		const float fRotation = ArrowEffects::ReceptorGetRotationZ( m_pPlayerState );
-		m_ReceptorArrow[c]->SetRotationZ( fRotation );
-
-		const float fZoom = ArrowEffects::GetZoom( m_pPlayerState );
-		m_ReceptorArrow[c]->SetZoom( fZoom );
+		(*m_renderers)[c].UpdateReceptorGhostStuff(m_ReceptorArrow[c]);
 	}
 }
 

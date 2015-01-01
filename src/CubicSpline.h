@@ -10,7 +10,10 @@ struct CubicSpline
 	void solve_looped();
 	void solve_straight();
 	float evaluate(float t, bool loop) const;
+	float evaluate_derivative(float t, bool loop) const;
 	void set_point(size_t i, float v);
+	void set_coefficients(size_t i, float b, float c, float d);
+	void get_coefficients(size_t i, float& b, float& c, float& d);
 	void resize(size_t s);
 	size_t size() const;
 	bool empty() const;
@@ -33,7 +36,12 @@ struct CubicSplineN
 	{}
 	void solve();
 	void evaluate(float t, vector<float>& v) const;
+	void evaluate_derivative(float t, vector<float>& v) const;
 	void set_point(size_t i, vector<float> const& v);
+	void set_coefficients(size_t i, vector<float> const& b,
+		vector<float> const& c, vector<float> const& d);
+	void get_coefficients(size_t i, vector<float>& b,
+		vector<float>& c, vector<float>& d);
 	void resize(size_t s);
 	size_t size() const;
 	void redimension(size_t d);

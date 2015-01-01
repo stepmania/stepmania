@@ -56,23 +56,8 @@ void GhostArrowRow::Update( float fDeltaTime )
 {
 	for( unsigned c=0; c<m_Ghost.size(); c++ )
 	{
-		vector<float> spline_pos;
-		(*m_renderers)[c].m_spline.evaluate((*m_renderers)[c].m_receptor_t, spline_pos);
 		m_Ghost[c]->Update( fDeltaTime );
-
-		float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
-		float fY = ArrowEffects::GetYPos( m_pPlayerState, c, 0, m_fYReverseOffsetPixels );
-		float fZ = ArrowEffects::GetZPos( m_pPlayerState, c, 0 );
-
-		m_Ghost[c]->SetX( fX + spline_pos[0] );
-		m_Ghost[c]->SetY( fY + spline_pos[1] );
-		m_Ghost[c]->SetZ( fZ + spline_pos[2] );
-
-		const float fRotation = ArrowEffects::ReceptorGetRotationZ( m_pPlayerState );
-		m_Ghost[c]->SetRotationZ( fRotation );
-
-		const float fZoom = ArrowEffects::GetZoom( m_pPlayerState );
-		m_Ghost[c]->SetZoom( fZoom );
+		(*m_renderers)[c].UpdateReceptorGhostStuff(m_Ghost[c]);
 	}
 
 	for( unsigned i = 0; i < m_bHoldShowing.size(); ++i )

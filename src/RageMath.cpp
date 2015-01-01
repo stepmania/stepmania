@@ -41,6 +41,22 @@ void RageVec3Normalize( RageVector3* pOut, const RageVector3* pV )
 	pOut->z = pV->z * scale;
 }
 
+void VectorFloatNormalize(vector<float>& v)
+{
+	ASSERT_M(v.size() == 3, "Can't normalize a non-3D vector.");
+	float scale = 1.0f / sqrtf(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+	v[0]*= scale;
+	v[1]*= scale;
+	v[2]*= scale;
+}
+
+void RageVec3Cross(RageVector3* ret, RageVector3 const* a, RageVector3 const* b)
+{
+	ret->x= (a->y * b->z) - (a->z * b->y);
+	ret->y= ((a->x * b->z) - (a->z * b->x));
+	ret->z= (a->x * b->y) - (a->y * b->x);
+}
+
 void RageVec3TransformCoord( RageVector3* pOut, const RageVector3* pV, const RageMatrix* pM )
 {
 	RageVector4 temp( pV->x, pV->y, pV->z, 1.0f );	// translate
@@ -312,6 +328,21 @@ void RageMatrixRotationXYZ( RageMatrix* pOut, float rX, float rY, float rZ )
 	pOut->m31 = 0;
 	pOut->m32 = 0;
 	pOut->m33 = 1;
+}
+
+void RageAARotate(RageVector3* inret, RageVector3 const* axis, float angle)
+{
+	float ha= angle/2.0f;
+	float ca2= RageFastCos(ha);
+	float sa2= RageFastSin(ha);
+	RageVector4 quat(axis->x * sa2, axis->y * sa2, axis->z * sa2, ca2);
+	RageVector4 quatc(-quat.x, -quat.y, -quat.z, ca2);
+	RageVector4 point(inret->x, inret->y, inret->z, 0.0f);
+	RageQuatMultiply(&point, quat, point);
+	RageQuatMultiply(&point, point, quatc);
+	inret->x= point.x;
+	inret->y= point.y;
+	inret->z= point.z;
 }
 
 void RageQuatMultiply( RageVector4* pOut, const RageVector4 &pA, const RageVector4 &pB )

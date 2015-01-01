@@ -265,6 +265,11 @@ void CubicSpline::set_results(size_t last, vector<float>& diagonals, vector<floa
 		m_points[i].b= results[i];
 		m_points[i].c= (3 * diff) - (2 * results[i]) - results[next];
 		m_points[i].d= (2 * -diff) + results[i] + results[next];
+#define UNNAN(n) if(n != n) { n = 0.0f; }
+		UNNAN(m_points[i].b);
+		UNNAN(m_points[i].c);
+		UNNAN(m_points[i].d);
+#undef UNNAN
 	}
 	// Solving is now complete.
 }
@@ -275,16 +280,24 @@ float CubicSpline::evaluate(float t, bool loop) const
 	{
 		return 0.0f;
 	}
+	int flort= static_cast<int>(t);
 	if(loop)
 	{
-		float max_t= m_points.size() + 1.0f;
-		while(t > max_t) { t-= max_t; }
+		float max_t= m_points.size();
+		while(t >= max_t) { t-= max_t; }
 		while(t < 0.0f) { t+= max_t; }
+		flort= static_cast<int>(t);
 	}
-	int flort= static_cast<int>(t);
-	if(flort < 0)
+	else
 	{
-		return m_points[0].a;
+		if(flort <= 0)
+		{
+			return m_points[0].a;
+		}
+		else if(static_cast<size_t>(flort) >= m_points.size() - 1)
+		{
+			return m_points[m_points.size() - 1].a;
+		}
 	}
 	size_t p= min(static_cast<size_t>(flort), m_points.size()-1);
 	float tfrac= t - static_cast<float>(flort);
@@ -294,10 +307,54 @@ float CubicSpline::evaluate(float t, bool loop) const
 		(m_points[p].c * tsq) + (m_points[p].d * tcub);
 }
 
+float CubicSpline::evaluate_derivative(float t, bool loop) const
+{
+	if(m_points.empty())
+	{
+		return 0.0f;
+	}
+	int flort= static_cast<int>(t);
+	if(loop)
+	{
+		float max_t= m_points.size();
+		while(t >= max_t) { t-= max_t; }
+		while(t < 0.0f) { t+= max_t; }
+		flort= static_cast<int>(t);
+	}
+	else
+	{
+		if(static_cast<size_t>(flort) >= m_points.size() - 1)
+		{
+			return 0.0f;
+		}
+	}
+	size_t p= min(static_cast<size_t>(flort), m_points.size()-1);
+	float tfrac= t - static_cast<float>(flort);
+	float tsq= tfrac * tfrac;
+	return m_points[p].b + (2.0f * m_points[p].c * tfrac) +
+		(3.0f * m_points[p].d * tsq);
+}
+
 void CubicSpline::set_point(size_t i, float v)
 {
 	ASSERT_M(i < m_points.size(), "CubicSpline::set_point requires the index to be less than the number of points.");
 	m_points[i].a= v;
+}
+
+void CubicSpline::set_coefficients(size_t i, float b, float c, float d)
+{
+	ASSERT_M(i < m_points.size(), "CubicSpline: point index must be less than the number of points.");
+	m_points[i].b= b;
+	m_points[i].c= c;
+	m_points[i].d= d;
+}
+
+void CubicSpline::get_coefficients(size_t i, float& b, float& c, float& d)
+{
+	ASSERT_M(i < m_points.size(), "CubicSpline: point index must be less than the number of points.");
+	b= m_points[i].b;
+	c= m_points[i].c;
+	d= m_points[i].d;
 }
 
 void CubicSpline::resize(size_t s)
@@ -346,6 +403,15 @@ void CubicSplineN::evaluate(float t, vector<float>& v) const
 	}
 }
 
+void CubicSplineN::evaluate_derivative(float t, vector<float>& v) const
+{
+	for(spline_cont_t::const_iterator spline= m_splines.begin();
+			spline != m_splines.end(); ++spline)
+	{
+		v.push_back(spline->evaluate_derivative(t, loop));
+	}
+}
+
 void CubicSplineN::set_point(size_t i, vector<float> const& v)
 {
 	ASSERT_M(v.size() == m_splines.size(), "CubicSplineN::set_point requires the passed point to be the same dimension as the spline.");
@@ -354,6 +420,30 @@ void CubicSplineN::set_point(size_t i, vector<float> const& v)
 		m_splines[n].set_point(i, v[n]);
 	}
 	m_dirty= true;
+}
+
+void CubicSplineN::set_coefficients(size_t i, vector<float> const& b,
+	vector<float> const& c, vector<float> const& d)
+{
+	ASSERT_M(b.size() == c.size() && c.size() == d.size() &&
+		d.size() == m_splines.size(), "CubicSplineN: coefficient vectors must be "
+		"the same dimension as the spline.");
+	for(size_t n= 0; n < m_splines.size(); ++n)
+	{
+		m_splines[n].set_coefficients(i, b[n], c[n], d[n]);
+	}
+}
+
+void CubicSplineN::get_coefficients(size_t i, vector<float>& b,
+	vector<float>& c, vector<float>& d)
+{
+	ASSERT_M(b.size() == c.size() && c.size() == d.size() &&
+		d.size() == m_splines.size(), "CubicSplineN: coefficient vectors must be "
+		"the same dimension as the spline.");
+	for(size_t n= 0; n < m_splines.size(); ++n)
+	{
+		m_splines[n].get_coefficients(i, b[n], c[n], d[n]);
+	}
 }
 
 void CubicSplineN::resize(size_t s)
@@ -412,31 +502,47 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 		}
 		return 1;
 	}
+	static int evaluate_derivative(T* p, lua_State* L)
+	{
+		vector<float> pos;
+		p->evaluate_derivative(FArg(1), pos);
+		lua_createtable(L, pos.size(), 0);
+		for(size_t i= 0; i < pos.size(); ++i)
+		{
+			lua_pushnumber(L, pos[i]);
+			lua_rawseti(L, -2, i+1);
+		}
+		return 1;
+	}
+	static void get_element_table_from_stack(T* p, lua_State* L, int s,
+		size_t limit, vector<float>& ret)
+	{
+		size_t elements= lua_objlen(L, s);
+		// Too many elements is not an error because allowing it allows the user
+		// to reuse the same position data set after changing the dimension size.
+		// The same is true for too few elements.
+		for(size_t e= 0; e < elements; ++e)
+		{
+			lua_rawgeti(L, s, e+1);
+			ret.push_back(FArg(-1));
+		}
+		while(ret.size() < limit)
+		{
+			ret.push_back(0.0f);
+		}
+	}
 	static void set_point_from_stack(T* p, lua_State* L, size_t i, int s)
 	{
 		if(!lua_istable(L, s))
 		{
 			luaL_error(L, "Spline point must be a table.");
 		}
-		size_t elements= lua_objlen(L, s);
-		// Too many elements is not an error because allowing it allows the user
-		// to reuse the same position data set after changing the dimension size.
-		// The same is true for too few elements.
 		vector<float> pos;
-		for(size_t e= 0; e < elements; ++e)
-		{
-			lua_rawgeti(L, s, e+1);
-			pos.push_back(FArg(-1));
-		}
-		while(pos.size() < p->dimension())
-		{
-			pos.push_back(0.0f);
-		}
+		get_element_table_from_stack(p, L, s, p->dimension(), pos);
 		p->set_point(i, pos);
 	}
 	static int set_point(T* p, lua_State* L)
 	{
-		vector<float> pos;
 		int i= IArg(1)-1;
 		if(i < 0)
 		{
@@ -448,6 +554,62 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 		}
 		set_point_from_stack(p, L, static_cast<size_t>(i), 2);
 		COMMON_RETURN_SELF;
+	}
+	static void set_coefficients_from_stack(T* p, lua_State* L, size_t i, int s)
+	{
+		if(!lua_istable(L, s) || !lua_istable(L, s+1) || !lua_istable(L, s+2))
+		{
+			luaL_error(L, "Spline coefficient args must be three tables.");
+		}
+		size_t limit= p->dimension();
+		vector<float> b; get_element_table_from_stack(p, L, s, limit, b);
+		vector<float> c; get_element_table_from_stack(p, L, s+1, limit, c);
+		vector<float> d; get_element_table_from_stack(p, L, s+2, limit, d);
+		p->set_coefficients(i, b, c, d);
+	}
+	static int set_coefficients(T* p, lua_State* L)
+	{
+		int i= IArg(1)-1;
+		if(i < 0)
+		{
+			luaL_error(L, "Cannot set spline coefficients at index less than 1.");
+		}
+		if(static_cast<size_t>(i) >= p->size())
+		{
+			luaL_error(L, "Cannot set spline coefficients at index greater than size.");
+		}
+		set_coefficients_from_stack(p, L, i, 2);
+		COMMON_RETURN_SELF;
+	}
+	static int get_coefficients(T* p, lua_State* L)
+	{
+		int i= IArg(1)-1;
+		if(i < 0)
+		{
+			luaL_error(L, "Cannot get spline coefficients at index less than 1.");
+		}
+		if(static_cast<size_t>(i) >= p->size())
+		{
+			luaL_error(L, "Cannot get spline coefficients at index greater than size.");
+		}
+		size_t limit= p->dimension();
+		vector<vector<float> > coeff(3);
+		coeff[0].resize(limit);
+		coeff[1].resize(limit);
+		coeff[2].resize(limit);
+		p->get_coefficients(i, coeff[0], coeff[1], coeff[2]);
+		lua_createtable(L, 3, 0);
+		for(size_t co= 0; co < coeff.size(); ++co)
+		{
+			lua_createtable(L, limit, 0);
+			for(size_t v= 0; v < limit; ++v)
+			{
+				lua_pushnumber(L, coeff[co][v]);
+				lua_rawseti(L, -2, v+1);
+			}
+			lua_rawseti(L, -2, co+1);
+		}
+		return 1;
 	}
 	static int resize(T* p, lua_State* L)
 	{
@@ -503,7 +665,10 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 	{
 		ADD_METHOD(solve);
 		ADD_METHOD(evaluate);
+		ADD_METHOD(evaluate_derivative);
 		ADD_METHOD(set_point);
+		ADD_METHOD(set_coefficients);
+		ADD_METHOD(get_coefficients);
 		ADD_METHOD(resize);
 		ADD_METHOD(size);
 		ADD_METHOD(redimension);

@@ -2959,7 +2959,7 @@ save yourself some time, copy this for undocumented things:
 		Makes the NoteField act as if a tap note was hit in the column, with the given score and bright setting. <br />
 		The callback for DidTapNote will not be called.
 	</Function>
-	<Function name='GetColumnActors' return='{actor}' arguments=''>
+	<Function name='get_column_actors' return='{actor}' arguments=''>
 		Returns a table of the actors for the columns.
 	</Function>
 	<Function name='SetDidHoldNoteCallback' return= '' arguments='function callback'>

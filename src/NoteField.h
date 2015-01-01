@@ -105,7 +105,7 @@ protected:
 		~NoteDisplayCols() { delete [] display; }
 	};
 
-	CommonColumnRenderArgs m_ColumnRenderArgs;
+	NoteFieldRenderArgs m_FieldRenderArgs;
 
 	/* All loaded note displays, mapped by their name. */
 	map<RString, NoteDisplayCols *> m_NoteDisplays;
