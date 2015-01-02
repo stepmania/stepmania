@@ -10,8 +10,12 @@ struct CubicSpline
 CubicSpline() :m_spatial_extent(0.0f) {}
 	void solve_looped();
 	void solve_straight();
+	void solve_polygonal();
+	void p_and_tfrac_from_t(float t, bool loop, size_t& p, float& tfrac) const;
 	float evaluate(float t, bool loop) const;
 	float evaluate_derivative(float t, bool loop) const;
+	float evaluate_second_derivative(float t, bool loop) const;
+	float evaluate_third_derivative(float t, bool loop) const;
 	void set_point(size_t i, float v);
 	void set_coefficients(size_t i, float b, float c, float d);
 	void get_coefficients(size_t i, float& b, float& c, float& d);
@@ -34,11 +38,13 @@ private:
 struct CubicSplineN
 {
 	CubicSplineN()
-		:m_owned_by_actor(false), m_dirty(true)
+		:loop(false), polygonal(false), m_owned_by_actor(false), m_dirty(true)
 	{}
 	void solve();
 	void evaluate(float t, vector<float>& v) const;
 	void evaluate_derivative(float t, vector<float>& v) const;
+	void evaluate_second_derivative(float t, vector<float>& v) const;
+	void evaluate_third_derivative(float t, vector<float>& v) const;
 	void set_point(size_t i, vector<float> const& v);
 	void set_coefficients(size_t i, vector<float> const& b,
 		vector<float> const& c, vector<float> const& d);
@@ -53,6 +59,7 @@ struct CubicSplineN
 	bool empty() const;
 	typedef vector<CubicSpline> spline_cont_t;
 	bool loop;
+	bool polygonal;
 	bool m_owned_by_actor;
 
 	void PushSelf(lua_State* L);
