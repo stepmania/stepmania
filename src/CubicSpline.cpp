@@ -20,29 +20,39 @@ using std::list;
 
 struct SplineSolutionCache
 {
-	void solve_diagonals_straight(vector<float>& diagonals);
-	void solve_diagonals_looped(vector<float>& diagonals);
+	struct Entry
+	{
+		vector<float> diagonals;
+		vector<float> multiples;
+	};
+	void solve_diagonals_straight(vector<float>& diagonals, vector<float>& multiples);
+	void solve_diagonals_looped(vector<float>& diagonals, vector<float>& multiples);
 private:
 	void prep_inner(size_t last, vector<float>& out);
-	bool find_in_cache(list<vector<float> >& cache, vector<float>& out);
-	void add_to_cache(list<vector<float> >& cache, vector<float>& out);
-	list<vector<float> > straight_diagonals;
-	list<vector<float> > looped_diagonals;
+	bool find_in_cache(list<Entry>& cache, vector<float>& outd, vector<float>& outm);
+	void add_to_cache(list<Entry>& cache, vector<float>& outd, vector<float>& outm);
+	list<Entry> straight_diagonals;
+	list<Entry> looped_diagonals;
 };
 
 size_t const solution_cache_limit= 16;
 
-bool SplineSolutionCache::find_in_cache(list<vector<float> >& cache, vector<float>& out)
+bool SplineSolutionCache::find_in_cache(list<Entry>& cache, vector<float>& outd, vector<float>& outm)
 {
-	size_t out_size= out.size();
-	for(list<vector<float> >::iterator entry= cache.begin();
+	size_t out_size= outd.size();
+	for(list<Entry>::iterator entry= cache.begin();
 			entry != cache.end(); ++entry)
 	{
-		if(out_size == entry->size())
+		if(out_size == entry->diagonals.size())
 		{
 			for(size_t i= 0; i < out_size; ++i)
 			{
-				out[i]= (*entry)[i];
+				outd[i]= entry->diagonals[i];
+			}
+			outm.resize(entry->multiples.size());
+			for(size_t i= 0; i < entry->multiples.size(); ++i)
+			{
+				outm[i]= entry->multiples[i];
 			}
 			return true;
 		}
@@ -50,13 +60,15 @@ bool SplineSolutionCache::find_in_cache(list<vector<float> >& cache, vector<floa
 	return false;
 }
 
-void SplineSolutionCache::add_to_cache(list<vector<float> >& cache, vector<float>& out)
+void SplineSolutionCache::add_to_cache(list<Entry>& cache, vector<float>& outd, vector<float>& outm)
 {
 	if(cache.size() >= solution_cache_limit)
 	{
 		cache.pop_back();
 	}
-	cache.push_front(out);
+	cache.push_front(Entry());
+	cache.front().diagonals= outd;
+	cache.front().multiples= outm;
 }
 
 void SplineSolutionCache::prep_inner(size_t last, vector<float>& out)
@@ -67,64 +79,138 @@ void SplineSolutionCache::prep_inner(size_t last, vector<float>& out)
 	}
 }
 
-void SplineSolutionCache::solve_diagonals_straight(vector<float>& diagonals)
+void SplineSolutionCache::solve_diagonals_straight(vector<float>& diagonals, vector<float>& multiples)
 {
-	if(find_in_cache(straight_diagonals, diagonals))
+	if(find_in_cache(straight_diagonals, diagonals, multiples))
 	{
 		return;
 	}
+
+	// Solution steps:
+	// Two stages:  First, work downwards, zeroing the 1s below each diagonal.
+	// | 2 1 0 0 | -> | 2 1 0 0 | -> | 2 1 0 0 | -> | 2 1 0 0 |
+	// | 1 4 1 0 | -> | 0 a 1 0 | -> | 0 d 1 0 | -> | 0 a 1 0 |
+	// | 0 1 4 1 | -> | 0 1 4 1 | -> | 0 0 b 1 | -> | 0 0 b 1 |
+	// | 0 0 1 2 | -> | 0 0 1 2 | -> | 0 0 1 2 | -> | 0 0 0 c |
+	// Second stage:  Work upwards, zeroing the 1s above each diagonal.
+	// V
+	// | 2 1 0 0 | -> | 2 1 0 0 | -> | 2 0 0 0 |
+	// | 0 a 1 0 | -> | 0 a 0 0 | -> | 0 a 0 0 |
+	// | 0 0 b 0 | -> | 0 0 b 0 | -> | 0 0 b 0 |
+	// | 0 0 0 c | -> | 0 0 0 c | -> | 0 0 0 c |
+
 	size_t last= diagonals.size();
 	diagonals[0]= 2.0f;
 	prep_inner(last-1, diagonals);
 	diagonals[last-1]= 2.0f;
-	// Operation:  Add col[0] * -.5 to col[1] to zero [r0][c1].
+
+	// Stage one.
+	// Operation:  Add row[0] * -.5 to row[1] to zero [r1][c0].
 	diagonals[1]-= .5f;
+	multiples.push_back(.5f);
 	for(size_t i= 1; i < last-1; ++i)
 	{
-		// Operation:  Add col[i] / -[ri][ci] to col[i+1] to zero [ri][ci+1].
-		diagonals[i+1]-= 1.0f / diagonals[i];
+		// Operation:  Add row[i] / -[ri][ci] to row[i+1] to zero [ri+1][ci].
+		float const diag_recip= 1.0f / diagonals[i];
+		diagonals[i+1]-= diag_recip;
+		multiples.push_back(diag_recip);
+	}
+	// Stage two.
+	for(size_t i= last-1; i > 0; --i)
+	{
+		// Operation:  Add row [i] / -[ri][ci] to row[i-1] to zero [ri-1][ci].
+		multiples.push_back(1.0f / diagonals[i]);
 	}
   // Solving finished.
-	add_to_cache(straight_diagonals, diagonals);
+	add_to_cache(straight_diagonals, diagonals, multiples);
 }
 
-void SplineSolutionCache::solve_diagonals_looped(vector<float>& diagonals)
+void SplineSolutionCache::solve_diagonals_looped(vector<float>& diagonals, vector<float>& multiples)
 {
-	if(find_in_cache(looped_diagonals, diagonals))
+	if(find_in_cache(looped_diagonals, diagonals, multiples))
 	{
 		return;
 	}
+
+	// The steps to solve the system of equations look like this:
+	// Stage one:  Zero the 1s below the diagonals.
+	// | 4 1 0 0 1 | -> | 4 1 0 0 1 | -> | 4 1 0 0 1 | -> | 4 1 0 0 1 |
+	// | 1 4 1 0 0 | -> | 0 a 1 0 u | -> | 0 a 1 0 u | -> | 0 a 1 0 u |
+	// | 0 1 4 1 0 | -> | 0 1 4 1 0 | -> | 0 0 b 1 v | -> | 0 0 b 1 v |
+	// | 0 0 1 4 1 | -> | 0 0 1 4 1 | -> | 0 0 1 4 1 | -> | 0 0 0 c w |
+	// | 1 0 0 1 4 | -> | 1 0 0 1 4 | -> | 1 0 0 1 4 | -> | 1 0 0 1 4 |
+	// V
+	// | 4 1 0 0 1 |
+	// | 0 a 1 0 u |
+	// | 0 0 b 1 v |
+	// | 0 0 0 c w |
+	// | 1 0 0 0 d |
+	// The top of the right column is left unzeroed because it will be changed
+	// by stage two, nullifying the effect of zeroing it.
+	// V Stage two:  Zero the 1s above the diagonals, starting with the second
+	//   to last row to avoid carrying effects across the left column.
+	// | 4 1 0 0 1 | -> | 4 1 0 0 1 | -> | 4 0 0 0 z | -> | 4 0 0 0 z |
+	// | 0 a 1 0 u | -> | 0 a 0 0 y | -> | 0 a 0 0 y | -> | 0 a 0 0 y |
+	// | 0 0 b 0 x | -> | 0 0 b 0 x | -> | 0 0 b 0 x | -> | 0 0 b 0 x |
+	// | 0 0 0 c w | -> | 0 0 0 c w | -> | 0 0 0 c w | -> | 0 0 0 c w |
+	// | 1 0 0 0 d | -> | 1 0 0 0 d | -> | 1 0 0 0 d | -> | 0 0 0 0 f |
+	// V Stage three:  Zero the right column.
+	// | 4 0 0 0 0 | -> | 4 0 0 0 0 | -> | 4 0 0 0 0 | -> | 4 0 0 0 0 |
+	// | 0 a 0 0 y | -> | 0 a 0 0 0 | -> | 0 a 0 0 0 | -> | 0 a 0 0 0 |
+	// | 0 0 b 0 x | -> | 0 0 b 0 x | -> | 0 0 b 0 0 | -> | 0 0 b 0 0 |
+	// | 0 0 0 c w | -> | 0 0 0 c w | -> | 0 0 0 c w | -> | 0 0 0 c 0 |
+	// | 0 0 0 0 f | -> | 0 0 0 0 f | -> | 0 0 0 0 f | -> | 0 0 0 0 f |
+
 	size_t last= diagonals.size();
 	diagonals[0]= 4.0f;
 	prep_inner(last, diagonals);
+	// right_column is sized to not store the diagonal .
+	vector<float> right_column(diagonals.size()-1, 0.0f);
+	right_column[0]= 1.0f;
+	right_column[last-2]= 1.0f;
 
-	size_t end= last-1;
-	size_t stop= end-1;
-	float cedge= 1.0f; // [ri][cl]
-	float redge= 1.0f; // [rl][ci]
-	// The loop stops before end because the case where [ri][cl] == [ri][ci+1]
-	// needs special handling.
-	for(size_t i= 0; i < stop; ++i)
+	// Stage one.
+	for(size_t i= 0; i < last-2; ++i)
 	{
-		float next_cedge= 0.0f; // [ri+1][ce]
-		float next_redge= 0.0f; // [re][ci+1]
-		// Operation:  Add col[i] / -[ri][ci] to col[i+1] to zero [ri][ci+1].
-		float diag_recip= 1.0f / diagonals[i];
-		diagonals[i+1]-= diag_recip;
-		next_redge-= redge * diag_recip;
 		// Operation:  Add row[i] / -[ri][ci] to row[i+1] to zero [ri+1][ci].
-		next_cedge-= cedge * diag_recip;
-		// Operation:  Add col[i] * -(cedge/[ri][ci]) to col[e] to zero cedge.
-		diagonals[end]-= redge * (cedge / diagonals[i]);
-		cedge= next_cedge; // Do not use cedge after this point in the loop.
-		// Operation:  Add row[i] * -(redge/[ri][ci]) to row[e] to zero redge.
-		redge= next_redge; // Do not use redge after this point in the loop.
+		float const diag_recip= 1.0f / diagonals[i];
+		diagonals[i+1]-= diag_recip;
+		right_column[i+1]-= right_column[i] * diag_recip;
+		multiples.push_back(diag_recip);
 	}
-	// [rs][ce] is 1 - cedge, [re][cs] is 1 - redge
-	// Operation:  Add col[s] * -([rs][ce] / [rs][cs]) to col[e] to zero redge.
-	diagonals[end]-= redge * ((1.0f - cedge) / diagonals[stop]);
+	// Last step of stage one needs special handling for right_column.
+	// Operation: Add row[l-2] / [rl-2][cl-2] to row[l-1] to zero [rl-1][cl-2].
+	{
+		float const diag_recip= 1.0f / diagonals[last-2];
+		diagonals[last-1]-= right_column[last-2] * diag_recip;
+		multiples.push_back(diag_recip);
+	}
+	// Stage two.
+	for(size_t i= last-2; i > 0; --i)
+	{
+		// Operation: Add row[i] / -[ri][ci] to row[i-1] to zero [ri-1][ci].
+		float const diag_recip= 1.0f / diagonals[i];
+		right_column[i-1]-= right_column[i] * diag_recip;
+		multiples.push_back(diag_recip);
+	}
+	// Last step of stage two.
+	{
+		// Operation: Add row[0] / [r0][c0] to row[l-1] to zero [rl-1][c0].
+		float const diag_recip= 1.0f / diagonals[0];
+		right_column[0]-= right_column[1] * diag_recip;
+		multiples.push_back(diag_recip);
+	}
+	// Stage three.
+	size_t const end= last-1;
+	for(size_t i= 0; i < end; ++i)
+	{
+		// Operation: Add row[e] * (right_column[i] / [re][ce]) to row[i] to
+		// zero right_column[i].
+		multiples.push_back(right_column[i] / diagonals[end]);
+	}
+
   // Solving finished.
-	add_to_cache(looped_diagonals, diagonals);
+	add_to_cache(looped_diagonals, diagonals, multiples);
 }
 
 SplineSolutionCache solution_cache;
@@ -169,55 +255,46 @@ void CubicSpline::solve_looped()
 	size_t last= m_points.size();
 	vector<float> results(m_points.size());
 	vector<float> diagonals(m_points.size());
-	solution_cache.solve_diagonals_looped(diagonals);
+	vector<float> multiples;
+	solution_cache.solve_diagonals_looped(diagonals, multiples);
 	results[0]= 3 * loop_space_difference(
 		m_points[1].a, m_points[last-1].a, m_spatial_extent);
 	prep_inner(last, results);
 	results[last-1]= 3 * loop_space_difference(
 		m_points[0].a, m_points[last-2].a, m_spatial_extent);
 
-	// The steps to solve the system of equations look like this:
-	// | 4 1 0 0 1 | -> | 4 0 0 0 1 | -> | 4 0 0 0 0 | -> | 4 0 0 0 0 |
-	// | 1 4 1 0 0 | -> | 0 d 1 0 x | -> | 0 d 1 0 x | -> | 0 d 0 0 x |
-	// | 0 1 4 1 0 | -> | 0 1 4 1 0 | -> | 0 1 4 1 0 | -> | 0 0 d 1 x |
-	// | 0 0 1 4 1 | -> | 0 0 1 4 1 | -> | 0 0 1 4 1 | -> | 0 0 1 4 1 |
-	// | 1 0 0 1 4 | -> | 1 x 0 1 4 | -> | 0 x 0 1 q | -> | 0 x x 1 q |
-	// V
-	// | 4 0 0 0 0 | -> | 4 0 0 0 0 | -> | 4 0 0 0 0 | -> | 4 0 0 0 0 |
-	// | 0 d 0 0 0 | -> | 0 d 0 0 0 | -> | 0 d 0 0 0 | -> | 0 d 0 0 0 |
-	// | 0 0 d 1 x | -> | 0 0 d 0 x | -> | 0 0 d 0 0 | -> | 0 0 d 0 0 |
-	// | 0 0 1 d 1 | -> | 0 0 0 d n | -> | 0 0 0 d n | -> | 0 0 0 d 0 |
-	// | 0 0 x 1 r | -> | 0 0 x n r | -> | 0 0 0 n s | -> | 0 0 0 0 t |
-	// Each time through the loop performs two of these steps, 4 operations.
-	// All operations on diagonals are done by the solution cache, because the
-	// diagonals come out the same for all splines of a given size.
-
-	size_t end= last-1;
-	size_t stop= end-1;
-	float cedge= 1.0f; // [ri][cl]
-	float redge= 1.0f; // [rl][ci]
-	// The loop stops before end because the case where [ri][cl] == [ri][ci+1]
-	// needs special handling.
-	for(size_t i= 0; i < stop; ++i)
+	// Steps explained in detail in SplineSolutionCache.
+	// Only the operations on the results column are performed here.
+	// Stage one.
+	// SplineSolutionCache's Stage one loop ends at last-2 because it has to
+	// handle right_column.  This does not handle right_column, so the loop
+	// goes to last-1.
+	for(size_t i= 0; i < last-1; ++i)
 	{
-		float next_cedge= 0.0f; // [ri+1][ce]
-		float next_redge= 0.0f; // [re][ci+1]
-		// Operation:  Add col[i] / -[ri][ci] to col[i+1] to zero [ri][ci+1].
-		float diag_recip= 1.0f / diagonals[i];
-		next_redge-= redge * diag_recip;
-		// Operation:  Add row[i] / -[ri][ci] to row[i+1] to zero [ri+1][ci].
-		results[i+1]-= results[i] * diag_recip;
-		next_cedge-= cedge * diag_recip;
-		// Operation:  Add col[i] * -(cedge/[ri][ci]) to col[e] to zero cedge.
-		cedge= next_cedge; // Do not use cedge after this point in the loop.
-		// Operation:  Add row[i] * -(redge/[ri][ci]) to row[e] to zero redge.
-		results[end]-= results[i] * (redge / diagonals[i]);
-		redge= next_redge; // Do not use redge after this point in the loop.
+		// Operation: Add row[i] * -multiples[i] to row[i+1].
+		results[i+1]-= results[i] * multiples[i];
 	}
-	// [rs][ce] is 1 - cedge, [re][cs] is 1 - redge
-	// Operation:  Add row[s] * -([re][cs] / [rs][cs]) to row[e] to zero redge.
-	results[end]-= results[stop] * ((1.0f - redge) / diagonals[stop]);
-
+	size_t next_mult= last-1;
+	// Stage two.
+	for(size_t i= last-2; i > 0; --i)
+	{
+		// Operation: Add row[i] * -multiples[nm] to row[i-1].
+		results[i-1]-= results[i] * multiples[next_mult];
+		++next_mult;
+	}
+	// Last step of stage two.
+	// Operation: Add row[0] * -multiples[nm] to row[l-1].
+	results[last-1]-= results[0] * multiples[next_mult];
+	++next_mult;
+	// Stage three.
+	size_t const end= last-1;
+	for(size_t i= 0; i < end; ++i)
+	{
+		// Operation: Add row[e] * -multiples[nm] to row[i].
+		results[i]-= results[end] * multiples[next_mult];
+		++next_mult;
+	}
+	// Solving finished.
 	set_results(last, diagonals, results);
 }
 
@@ -227,28 +304,30 @@ void CubicSpline::solve_straight()
 	size_t last= m_points.size();
 	vector<float> results(m_points.size());
 	vector<float> diagonals(m_points.size());
-	solution_cache.solve_diagonals_straight(diagonals);
+	vector<float> multiples;
+	solution_cache.solve_diagonals_straight(diagonals, multiples);
 	results[0]= 3 * (m_points[1].a - m_points[0].a);
 	prep_inner(last, results);
 	results[last-1]= 3 * loop_space_difference(
 		m_points[last-1].a, m_points[last-2].a, m_spatial_extent);
 
-	// The system of equations to be solved looks like this:
-	// | 2 1 0 0 | = | results[0] |
-	// | 1 4 1 0 | = | results[1] |
-	// | 0 1 4 1 | = | results[2] |
-	// | 0 0 1 2 | = | results[3] |
-	// Operations are carefully chosen to only modify the values in the
-	// diagonals and the results, leaving the 1s unchanged.
-	// All operations on diagonals are done by the solution cache, because the
-	// diagonals come out the same for all splines of a given size.
-	// Operation:  Add row[0] * -.5 to row[1] to zero [r1][c0].
-	results[1]-= results[0] * .5f;
-	for(size_t i= 1; i < last - 1; ++i)
+	// Steps explained in detail in SplineSolutionCache.
+	// Only the operations on the results column are performed here.
+	// Stage one.
+	for(size_t i= 0; i < last-1; ++i)
 	{
-		// Operation:  Add row[i] / -[ri][ci] to row[i+1] to zero [ri+1][ci];
-		results[i]-= results[i-1] * (1.0f / diagonals[i]);
+		// Operation: Add row[i] * -multiples[i] to row[i+1].
+		results[i+1]-= results[i] * multiples[i];
 	}
+	size_t next_mult= last-1;
+	// Stage two.
+	for(size_t i= last-1; i > 0; --i)
+	{
+		// Operation: Add row[i] * -multiples[nm] to row [i-1].
+		results[i-1]-= results[i] * multiples[next_mult];
+		++next_mult;
+	}
+	// Solving finished.
 	set_results(last, diagonals, results);
 }
 
