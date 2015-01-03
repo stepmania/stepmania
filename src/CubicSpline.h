@@ -38,7 +38,7 @@ private:
 struct CubicSplineN
 {
 	CubicSplineN()
-		:loop(false), polygonal(false), m_owned_by_actor(false), m_dirty(true)
+		:m_owned_by_actor(false), m_loop(false), m_polygonal(false), m_dirty(true)
 	{}
 	void solve();
 	void evaluate(float t, vector<float>& v) const;
@@ -58,12 +58,18 @@ struct CubicSplineN
 	size_t dimension() const;
 	bool empty() const;
 	typedef vector<CubicSpline> spline_cont_t;
-	bool loop;
-	bool polygonal;
+	void set_loop(bool l);
+	bool get_loop();
+	void set_polygonal(bool p);
+	bool get_polygonal();
+	void set_dirty(bool d);
+	bool get_dirty();
 	bool m_owned_by_actor;
 
 	void PushSelf(lua_State* L);
 private:
+	bool m_loop;
+	bool m_polygonal;
 	bool m_dirty;
 	spline_cont_t m_splines;
 };

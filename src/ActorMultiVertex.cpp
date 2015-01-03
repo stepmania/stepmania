@@ -65,7 +65,6 @@ ActorMultiVertex::ActorMultiVertex()
 	_TextureMode = TextureMode_Modulate;
 	_using_spline= false;
 	_spline.redimension(3);
-	_spline.loop= false;
 	_spline.m_owned_by_actor= true;
 }
 
@@ -252,10 +251,6 @@ void ActorMultiVertex::SplineSolve()
 		case DrawMode_LineStrip:
 			{
 				float conversion= static_cast<float>(_spline.size()-1) / static_cast<float>(num_verts-1);
-				if(_spline.loop)
-				{
-					conversion= static_cast<float>(_spline.size()) / static_cast<float>(num_verts-1);
-				}
 				for(size_t i= 0; i < num_verts; ++i)
 				{
 					float t= i * conversion;
@@ -735,12 +730,6 @@ public:
 		return 1;
 	}
 	DEFINE_METHOD(GetUseSpline, GetUseSpline());
-	DEFINE_METHOD(SplineGetLoop, SplineGetLoop());
-	static int SplineSetLoop(T* p, lua_State* L)
-	{
-		p->SplineSetLoop(lua_toboolean(L, 1));
-		COMMON_RETURN_SELF;
-	}
 	static int SplineSize(T* p, lua_State* L)
 	{
 		lua_pushnumber(L, p->SplineSize());
@@ -799,8 +788,6 @@ public:
 
 		ADD_METHOD(GetUseSpline);
 		ADD_METHOD(SetUseSpline);
-		ADD_METHOD(SplineGetLoop);
-		ADD_METHOD(SplineSetLoop);
 		ADD_METHOD(SplineSize);
 		ADD_METHOD(SplineResize);
 		ADD_METHOD(SplineSetPoint);

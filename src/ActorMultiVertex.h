@@ -106,8 +106,6 @@ public:
 
 	bool GetUseSpline();
 	void SetUseSpline(bool use);
-	bool SplineGetLoop() { return _spline.loop; }
-	void SplineSetLoop(bool loop) { _spline.loop= loop; }
 	void SplineSetPoint(size_t i, float x , float y , float z);
 	void SplineResize(size_t s);
 	size_t SplineSize();

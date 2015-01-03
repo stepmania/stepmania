@@ -526,13 +526,13 @@ void CubicSplineN::solve()
 	{ \
 		spline->solvent(); \
 	}
-	if(polygonal)
+	if(m_polygonal)
 	{
 		SOLVE_LOOP(solve_polygonal);
 	}
 	else
 	{
-		if(loop)
+		if(m_loop)
 		{
 			SOLVE_LOOP(solve_looped);
 		}
@@ -551,7 +551,7 @@ void CubicSplineN::something(float t, vector<float>& v) const \
 	for(spline_cont_t::const_iterator spline= m_splines.begin(); \
 			spline != m_splines.end(); ++spline) \
 	{ \
-		v.push_back(spline->something(t, loop)); \
+		v.push_back(spline->something(t, m_loop)); \
 	} \
 }
 
@@ -646,6 +646,25 @@ size_t CubicSplineN::dimension() const
 {
 	return m_splines.size();
 }
+
+// m_dirty is set before the member so that the set_dirty that is created
+// can actually be used to set the dirty flag. -Kyz
+#define SET_GET_MEM(member, name) \
+void CubicSplineN::set_##name(bool b) \
+{ \
+	m_dirty= true; \
+	member= b; \
+} \
+bool CubicSplineN::get_##name() \
+{ \
+	return member; \
+}
+
+SET_GET_MEM(m_loop, loop);
+SET_GET_MEM(m_polygonal, polygonal);
+SET_GET_MEM(m_dirty, dirty);
+
+#undef SET_GET_MEM
 
 #include "LuaBinding.h"
 
@@ -780,7 +799,7 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 	}
 	static int get_max_t(T* p, lua_State* L)
 	{
-		lua_pushnumber(L, p->size() - 1 + p->loop);
+		lua_pushnumber(L, p->size() - 1 + p->get_loop());
 		return 1;
 	}
 	static int resize(T* p, lua_State* L)
@@ -823,26 +842,21 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 		lua_pushboolean(L, p->empty());
 		return 1;
 	}
-	static int set_loop(T* p, lua_State* L)
-	{
-		p->loop= lua_toboolean(L, 1);
-		COMMON_RETURN_SELF;
+#define SET_GET_LUA(name) \
+	static int set_##name(T* p, lua_State* L) \
+	{ \
+		p->set_##name(lua_toboolean(L, 1)); \
+		COMMON_RETURN_SELF; \
+	} \
+	static int get_##name(T* p, lua_State* L) \
+	{ \
+		lua_pushboolean(L, p->get_##name()); \
+		return 1; \
 	}
-	static int get_loop(T* p, lua_State* L)
-	{
-		lua_pushboolean(L, p->loop);
-		return 1;
-	}
-	static int set_polygonal(T* p, lua_State* L)
-	{
-		p->polygonal= lua_toboolean(L, 1);
-		COMMON_RETURN_SELF;
-	}
-	static int get_polygonal(T* p, lua_State* L)
-	{
-		lua_pushboolean(L, p->polygonal);
-		return 1;
-	}
+	SET_GET_LUA(loop);
+	SET_GET_LUA(polygonal);
+	SET_GET_LUA(dirty);
+#undef SET_GET_LUA
 	static int destroy(T* p, lua_State* L)
 	{
 		if(p->m_owned_by_actor)
@@ -875,6 +889,8 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 		ADD_METHOD(get_loop);
 		ADD_METHOD(set_polygonal);
 		ADD_METHOD(get_polygonal);
+		ADD_METHOD(set_dirty);
+		ADD_METHOD(get_dirty);
 		ADD_METHOD(destroy);
 	}
 };
