@@ -18,7 +18,9 @@ CubicSpline() :m_spatial_extent(0.0f) {}
 	float evaluate_third_derivative(float t, bool loop) const;
 	void set_point(size_t i, float v);
 	void set_coefficients(size_t i, float b, float c, float d);
-	void get_coefficients(size_t i, float& b, float& c, float& d);
+	void get_coefficients(size_t i, float& b, float& c, float& d) const;
+	void set_point_and_coefficients(size_t i, float a, float b, float c, float d);
+	void get_point_and_coefficients(size_t i, float& a, float& b, float& c, float& d) const;
 	void resize(size_t s);
 	size_t size() const;
 	bool empty() const;
@@ -40,6 +42,8 @@ struct CubicSplineN
 	CubicSplineN()
 		:m_owned_by_actor(false), m_loop(false), m_polygonal(false), m_dirty(true)
 	{}
+	static void weighted_average(CubicSplineN& out, CubicSplineN const& from,
+		CubicSplineN const& to, float between);
 	void solve();
 	void evaluate(float t, vector<float>& v) const;
 	void evaluate_derivative(float t, vector<float>& v) const;
@@ -59,11 +63,11 @@ struct CubicSplineN
 	bool empty() const;
 	typedef vector<CubicSpline> spline_cont_t;
 	void set_loop(bool l);
-	bool get_loop();
+	bool get_loop() const;
 	void set_polygonal(bool p);
-	bool get_polygonal();
+	bool get_polygonal() const;
 	void set_dirty(bool d);
-	bool get_dirty();
+	bool get_dirty() const;
 	bool m_owned_by_actor;
 
 	void PushSelf(lua_State* L);

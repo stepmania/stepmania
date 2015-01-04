@@ -136,6 +136,8 @@ struct NCSplineHandler
 	void EvalForBeat(float song_beat, float note_beat, vector<float>& ret) const;
 	void EvalDerivForBeat(float song_beat, float note_beat, vector<float>& ret) const;
 	void EvalForReceptor(float song_beat, vector<float>& ret) const;
+	static void MakeWeightedAverage(NCSplineHandler& out,
+		NCSplineHandler const& from, NCSplineHandler const& to, float between);
 
 	CubicSplineN m_spline;
 	NoteColumnSplineMode m_spline_mode;
@@ -263,12 +265,6 @@ struct NoteColumnRenderer : public Actor
 	NoteFieldRenderArgs* m_field_render_args;
 	NoteColumnRenderArgs m_column_render_args;
 	int m_column;
-	// m_column_render_args has pointers to these fields that are updated
-	// every frame instead of using m_column_render_args directly so that they
-	// can be moved into a tween state later. -Kyz
-	NCSplineHandler m_pos_handler;
-	NCSplineHandler m_rot_handler;
-	NCSplineHandler m_zoom_handler;
 
 	// UpdateReceptorGhostStuff takes care of the logic for making the ghost
 	// and receptor positions follow the splines.  It's called by their row
@@ -276,6 +272,42 @@ struct NoteColumnRenderer : public Actor
 	void UpdateReceptorGhostStuff(Actor* receptor) const;
 	virtual void DrawPrimitives();
 	virtual void PushSelf(lua_State* L);
+
+	struct NCR_TweenState
+	{
+		NCSplineHandler m_pos_handler;
+		NCSplineHandler m_rot_handler;
+		NCSplineHandler m_zoom_handler;
+		static void MakeWeightedAverage(NCR_TweenState& out,
+			NCR_TweenState const& from, NCR_TweenState const& to, float between);
+		bool operator==(NCR_TweenState const& other) const;
+		bool operator!=(NCR_TweenState const& other) const { return !operator==(other); }
+	};
+
+	NCR_TweenState& NCR_DestTweenState()
+	{
+		if(NCR_Tweens.empty())
+		{ return NCR_current; }
+		else
+		{ return NCR_Tweens.back(); }
+	}
+	NCR_TweenState const& NCR_DestTweenState() const { return const_cast<NoteColumnRenderer*>(this)->NCR_DestTweenState(); }
+
+	virtual void SetCurrentTweenStart();
+	virtual void EraseHeadTween();
+	virtual void UpdatePercentThroughTween(float between);
+	virtual void BeginTweening(float time, ITween* interp);
+	virtual void StopTweening();
+	virtual void FinishTweening();
+
+	NCSplineHandler* GetPosHandler() { return &NCR_DestTweenState().m_pos_handler; }
+	NCSplineHandler* GetRotHandler() { return &NCR_DestTweenState().m_rot_handler; }
+	NCSplineHandler* GetZoomHandler() { return &NCR_DestTweenState().m_zoom_handler; }
+
+	private:
+	vector<NCR_TweenState> NCR_Tweens;
+	NCR_TweenState NCR_current;
+	NCR_TweenState NCR_start;
 };
 
 #endif

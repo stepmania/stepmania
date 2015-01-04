@@ -325,6 +325,25 @@ void NCSplineHandler::EvalForReceptor(float song_beat, vector<float>& ret) const
 	m_spline.evaluate(t_value, ret);
 }
 
+void NCSplineHandler::MakeWeightedAverage(NCSplineHandler& out,
+		NCSplineHandler const& from, NCSplineHandler const& to, float between)
+{
+#define BOOLS_FROM_CLOSEST(closest) \
+	out.m_spline_mode= closest.m_spline_mode; \
+	out.m_subtract_song_beat_from_curr= closest.m_subtract_song_beat_from_curr;
+	if(between >= 0.5f)
+	{
+		BOOLS_FROM_CLOSEST(to);
+	}
+	else
+	{
+		BOOLS_FROM_CLOSEST(from);
+	}
+#undef BOOLS_FROM_CLOSEST
+	CubicSplineN::weighted_average(out.m_spline, from.m_spline, to.m_spline,
+		between);
+}
+
 void NoteColumnRenderArgs::spae_pos_for_beat(PlayerState const* state,
 	float beat, float y_offset, float y_reverse_offset,
 	vector<float>& sp_pos, vector<float>& ae_pos) const
@@ -1346,7 +1365,7 @@ void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
 	vector<float> ae_pos(3, 0.0f);
 	vector<float> ae_rot(3, 0.0f);
 	vector<float> ae_zoom(3, 0.0f);
-	switch(m_pos_handler.m_spline_mode)
+	switch(NCR_current.m_pos_handler.m_spline_mode)
 	{
 		case NCSM_Disabled:
 			ArrowEffects::GetXYZPos(player_state, m_column, 0, m_field_render_args->reverse_offset_pixels, ae_pos);
@@ -1358,13 +1377,13 @@ void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
 			break;
 		case NCSM_Offset:
 			ArrowEffects::GetXYZPos(player_state, m_column, 0, m_field_render_args->reverse_offset_pixels, ae_pos);
-			m_pos_handler.EvalForReceptor(song_beat, sp_pos);
+			NCR_current.m_pos_handler.EvalForReceptor(song_beat, sp_pos);
 			break;
 		case NCSM_Position:
-			m_pos_handler.EvalForReceptor(song_beat, sp_pos);
+			NCR_current.m_pos_handler.EvalForReceptor(song_beat, sp_pos);
 			break;
 	}
-	switch(m_rot_handler.m_spline_mode)
+	switch(NCR_current.m_rot_handler.m_spline_mode)
 	{
 		case NCSM_Disabled:
 			ae_rot[2]= ArrowEffects::ReceptorGetRotationZ(player_state);
@@ -1373,13 +1392,13 @@ void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
 			break;
 		case NCSM_Offset:
 			ae_rot[2]= ArrowEffects::ReceptorGetRotationZ(player_state);
-			m_rot_handler.EvalForReceptor(song_beat, sp_rot);
+			NCR_current.m_rot_handler.EvalForReceptor(song_beat, sp_rot);
 			break;
 		case NCSM_Position:
-			m_rot_handler.EvalForReceptor(song_beat, sp_rot);
+			NCR_current.m_rot_handler.EvalForReceptor(song_beat, sp_rot);
 			break;
 	}
-	switch(m_zoom_handler.m_spline_mode)
+	switch(NCR_current.m_zoom_handler.m_spline_mode)
 	{
 		case NCSM_Disabled:
 			ae_zoom[0]= ae_zoom[1]= ae_zoom[2]= ArrowEffects::GetZoom(player_state);
@@ -1388,10 +1407,10 @@ void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
 			break;
 		case NCSM_Offset:
 			ae_zoom[0]= ae_zoom[1]= ae_zoom[2]= ArrowEffects::GetZoom(player_state);
-			m_zoom_handler.EvalForReceptor(song_beat, sp_zoom);
+			NCR_current.m_zoom_handler.EvalForReceptor(song_beat, sp_zoom);
 			break;
 		case NCSM_Position:
-			m_zoom_handler.EvalForReceptor(song_beat, sp_zoom);
+			NCR_current.m_zoom_handler.EvalForReceptor(song_beat, sp_zoom);
 			break;
 	}
 	m_column_render_args.SetPRZForActor(receptor, sp_pos, ae_pos, sp_rot, ae_rot, sp_zoom, ae_zoom);
@@ -1400,9 +1419,9 @@ void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
 void NoteColumnRenderer::DrawPrimitives()
 {
 	m_column_render_args.song_beat= m_field_render_args->player_state->GetDisplayedPosition().m_fSongBeatVisible;
-	m_column_render_args.pos_handler= &m_pos_handler;
-	m_column_render_args.rot_handler= &m_rot_handler;
-	m_column_render_args.zoom_handler= &m_zoom_handler;
+	m_column_render_args.pos_handler= &NCR_current.m_pos_handler;
+	m_column_render_args.rot_handler= &NCR_current.m_rot_handler;
+	m_column_render_args.zoom_handler= &NCR_current.m_zoom_handler;
 	m_field_render_args->first_beat= NoteRowToBeat(m_field_render_args->first_row);
 	m_field_render_args->last_beat= NoteRowToBeat(m_field_render_args->last_row);
 	bool any_upcoming= false;
@@ -1461,6 +1480,64 @@ void NoteColumnRenderer::DrawPrimitives()
 	m_field_render_args->receptor_row->SetNoteUpcoming(m_column, any_upcoming);
 }
 
+void NoteColumnRenderer::SetCurrentTweenStart()
+{
+	NCR_start= NCR_current;
+}
+
+void NoteColumnRenderer::EraseHeadTween()
+{
+	NCR_current= NCR_Tweens[0];
+	NCR_Tweens.erase(NCR_Tweens.begin());
+}
+
+void NoteColumnRenderer::UpdatePercentThroughTween(float between)
+{
+	NCR_TweenState::MakeWeightedAverage(NCR_current, NCR_start, NCR_Tweens[0],
+		between);
+}
+
+void NoteColumnRenderer::BeginTweening(float time, ITween* interp)
+{
+	Actor::BeginTweening(time, interp);
+	if(!NCR_Tweens.empty())
+	{
+		NCR_Tweens.push_back(NCR_Tweens.back());
+	}
+	else
+	{
+		NCR_Tweens.push_back(NCR_current);
+	}
+}
+
+void NoteColumnRenderer::StopTweening()
+{
+	NCR_Tweens.clear();
+	Actor::StopTweening();
+}
+
+void NoteColumnRenderer::FinishTweening()
+{
+	if(!NCR_Tweens.empty())
+	{
+		NCR_current= NCR_DestTweenState();
+	}
+	Actor::FinishTweening();
+}
+
+void NoteColumnRenderer::NCR_TweenState::MakeWeightedAverage(
+	NCR_TweenState& out, NCR_TweenState const& from, NCR_TweenState const& to,
+	float between)
+{
+#define WEIGHT_FOR_ME(me) \
+	NCSplineHandler::MakeWeightedAverage(out.me, from.me, to.me, between);
+	WEIGHT_FOR_ME(m_pos_handler);
+	WEIGHT_FOR_ME(m_rot_handler);
+	WEIGHT_FOR_ME(m_zoom_handler);
+#undef WEIGHT_FOR_ME
+}
+
+
 #include "LuaBinding.h"
 
 struct LunaNCSplineHandler : Luna<NCSplineHandler>
@@ -1518,12 +1595,12 @@ struct LunaNoteColumnRenderer : Luna<NoteColumnRenderer>
 #define GET_HANDLER(member, name) \
 	static int name(T* p, lua_State* L) \
 	{ \
-		p->member.PushSelf(L); \
+		p->member->PushSelf(L); \
 		return 1; \
 	}
-	GET_HANDLER(m_pos_handler, get_pos_handler);
-	GET_HANDLER(m_rot_handler, get_rot_handler);
-	GET_HANDLER(m_zoom_handler, get_zoom_handler);
+	GET_HANDLER(GetPosHandler(), get_pos_handler);
+	GET_HANDLER(GetRotHandler(), get_rot_handler);
+	GET_HANDLER(GetZoomHandler(), get_zoom_handler);
 #undef GET_HANDLER
 
 	LunaNoteColumnRenderer()
