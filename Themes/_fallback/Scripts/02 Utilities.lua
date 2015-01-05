@@ -304,8 +304,9 @@ function getenv(name) return envTable[name] end
 -- tobool(v)
 -- Converts v to a boolean.
 function tobool(v)
-	if getmetatable(v) and (getmetatable(v))["__tobool"] and type((getmetatable(v))["__tobool"])=="function" then
-		return (getmetatable(v))["__tobool"](v)
+	local meta= getmetatable(v)
+	if meta and type(meta.__tobool) == "function" then
+		return meta.__tobool(v)
 	elseif type(v) == "string" then
 		local cmp = string.lower(v)
 		if cmp == "true" or cmp == "t" then
@@ -319,7 +320,10 @@ function tobool(v)
 		else
 			return true
 		end
+	elseif type(v) == "boolean" then
+		return v
 	end
+	return nil
 end
 
 -- GetPlayerOrMachineProfile(pn)
