@@ -35,7 +35,7 @@ private:
 	list<Entry> looped_diagonals;
 };
 
-size_t const solution_cache_limit= 16;
+const size_t solution_cache_limit= 16;
 
 bool SplineSolutionCache::find_in_cache(list<Entry>& cache, vector<float>& outd, vector<float>& outm)
 {
@@ -111,7 +111,7 @@ void SplineSolutionCache::solve_diagonals_straight(vector<float>& diagonals, vec
 	for(size_t i= 1; i < last-1; ++i)
 	{
 		// Operation:  Add row[i] / -[ri][ci] to row[i+1] to zero [ri+1][ci].
-		float const diag_recip= 1.0f / diagonals[i];
+		const float diag_recip= 1.0f / diagonals[i];
 		diagonals[i+1]-= diag_recip;
 		multiples.push_back(diag_recip);
 	}
@@ -173,7 +173,7 @@ void SplineSolutionCache::solve_diagonals_looped(vector<float>& diagonals, vecto
 	for(size_t i= 0; i < last-2; ++i)
 	{
 		// Operation:  Add row[i] / -[ri][ci] to row[i+1] to zero [ri+1][ci].
-		float const diag_recip= 1.0f / diagonals[i];
+		const float diag_recip= 1.0f / diagonals[i];
 		diagonals[i+1]-= diag_recip;
 		right_column[i+1]-= right_column[i] * diag_recip;
 		multiples.push_back(diag_recip);
@@ -181,7 +181,7 @@ void SplineSolutionCache::solve_diagonals_looped(vector<float>& diagonals, vecto
 	// Last step of stage one needs special handling for right_column.
 	// Operation: Add row[l-2] / [rl-2][cl-2] to row[l-1] to zero [rl-1][cl-2].
 	{
-		float const diag_recip= 1.0f / diagonals[last-2];
+		const float diag_recip= 1.0f / diagonals[last-2];
 		diagonals[last-1]-= right_column[last-2] * diag_recip;
 		multiples.push_back(diag_recip);
 	}
@@ -189,19 +189,19 @@ void SplineSolutionCache::solve_diagonals_looped(vector<float>& diagonals, vecto
 	for(size_t i= last-2; i > 0; --i)
 	{
 		// Operation: Add row[i] / -[ri][ci] to row[i-1] to zero [ri-1][ci].
-		float const diag_recip= 1.0f / diagonals[i];
+		const float diag_recip= 1.0f / diagonals[i];
 		right_column[i-1]-= right_column[i] * diag_recip;
 		multiples.push_back(diag_recip);
 	}
 	// Last step of stage two.
 	{
 		// Operation: Add row[0] / [r0][c0] to row[l-1] to zero [rl-1][c0].
-		float const diag_recip= 1.0f / diagonals[0];
+		const float diag_recip= 1.0f / diagonals[0];
 		right_column[0]-= right_column[1] * diag_recip;
 		multiples.push_back(diag_recip);
 	}
 	// Stage three.
-	size_t const end= last-1;
+	const size_t end= last-1;
 	for(size_t i= 0; i < end; ++i)
 	{
 		// Operation: Add row[e] * (right_column[i] / [re][ce]) to row[i] to
@@ -223,13 +223,13 @@ SplineSolutionCache solution_cache;
 float loop_space_difference(float a, float b, float spatial_extent);
 float loop_space_difference(float a, float b, float spatial_extent)
 {
-	float const norm_diff= a - b;
+	const float norm_diff= a - b;
 	if(spatial_extent == 0.0f) { return norm_diff; }
-	float const plus_diff= a - (b + spatial_extent);
-	float const minus_diff= a - (b - spatial_extent);
-	float const abs_norm_diff= abs(norm_diff);
-	float const abs_plus_diff= abs(plus_diff);
-	float const abs_minus_diff= abs(minus_diff);
+	const float plus_diff= a - (b + spatial_extent);
+	const float minus_diff= a - (b - spatial_extent);
+	const float abs_norm_diff= abs(norm_diff);
+	const float abs_plus_diff= abs(plus_diff);
+	const float abs_minus_diff= abs(minus_diff);
 	if(abs_norm_diff < abs_plus_diff)
 	{
 		if(abs_norm_diff < abs_minus_diff)
@@ -287,7 +287,7 @@ void CubicSpline::solve_looped()
 	results[last-1]-= results[0] * multiples[next_mult];
 	++next_mult;
 	// Stage three.
-	size_t const end= last-1;
+	const size_t end= last-1;
 	for(size_t i= 0; i < end; ++i)
 	{
 		// Operation: Add row[e] * -multiples[nm] to row[i].
@@ -532,7 +532,7 @@ bool CubicSpline::empty() const
 }
 
 void CubicSplineN::weighted_average(CubicSplineN& out,
-	CubicSplineN const& from, CubicSplineN const& to, float between)
+	const CubicSplineN& from, CubicSplineN const& to, float between)
 {
 	ASSERT_M(out.dimension() == from.dimension() &&
 		to.dimension() == from.dimension(),
@@ -552,8 +552,8 @@ void CubicSplineN::weighted_average(CubicSplineN& out,
 	// Behavior for splines of different sizes:  Use a size between the two.
 	// Points that exist in both will be averaged.
 	// Points that only exist in one will come only from that one.
-	size_t const from_size= from.size();
-	size_t const to_size= to.size();
+	const size_t from_size= from.size();
+	const size_t to_size= to.size();
 	size_t out_size= to_size;
 	size_t limit= to_size;
 	if(from_size < to_size)
@@ -666,7 +666,7 @@ CSN_EVAL_SOMETHING(evaluate_third_derivative);
 
 #undef CSN_EVAL_SOMETHING
 
-void CubicSplineN::set_point(size_t i, vector<float> const& v)
+void CubicSplineN::set_point(size_t i, const vector<float>& v)
 {
 	ASSERT_M(v.size() == m_splines.size(), "CubicSplineN::set_point requires the passed point to be the same dimension as the spline.");
 	for(size_t n= 0; n < m_splines.size(); ++n)
@@ -676,8 +676,8 @@ void CubicSplineN::set_point(size_t i, vector<float> const& v)
 	m_dirty= true;
 }
 
-void CubicSplineN::set_coefficients(size_t i, vector<float> const& b,
-	vector<float> const& c, vector<float> const& d)
+void CubicSplineN::set_coefficients(size_t i, const vector<float>& b,
+	const vector<float>& c, const vector<float>& d)
 {
 	ASSERT_M(b.size() == c.size() && c.size() == d.size() &&
 		d.size() == m_splines.size(), "CubicSplineN: coefficient vectors must be "
@@ -904,7 +904,7 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 	}
 	static int get_max_t(T* p, lua_State* L)
 	{
-		lua_pushnumber(L, p->size() - 1 + p->get_loop());
+		lua_pushnumber(L, p->get_max_t());
 		return 1;
 	}
 	static int set_size(T* p, lua_State* L)

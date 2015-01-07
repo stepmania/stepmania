@@ -33,6 +33,7 @@ function alias_one(class, main_name, alt_name)
 		lua.ReportScriptError("Alias name of function must be a string.")
 		return
 	end
+	if class[alt_name] then return end
 	class[alt_name]= class[main_name]
 end
 

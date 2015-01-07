@@ -42,16 +42,16 @@ struct CubicSplineN
 	CubicSplineN()
 		:m_owned_by_actor(false), m_loop(false), m_polygonal(false), m_dirty(true)
 	{}
-	static void weighted_average(CubicSplineN& out, CubicSplineN const& from,
-		CubicSplineN const& to, float between);
+	static void weighted_average(CubicSplineN& out, const CubicSplineN& from,
+		const CubicSplineN& to, float between);
 	void solve();
 	void evaluate(float t, vector<float>& v) const;
 	void evaluate_derivative(float t, vector<float>& v) const;
 	void evaluate_second_derivative(float t, vector<float>& v) const;
 	void evaluate_third_derivative(float t, vector<float>& v) const;
-	void set_point(size_t i, vector<float> const& v);
-	void set_coefficients(size_t i, vector<float> const& b,
-		vector<float> const& c, vector<float> const& d);
+	void set_point(size_t i, const vector<float>& v);
+	void set_coefficients(size_t i, const vector<float>& b,
+		const vector<float>& c, const vector<float>& d);
 	void get_coefficients(size_t i, vector<float>& b,
 		vector<float>& c, vector<float>& d);
 	void set_spatial_extent(size_t i, float extent);
@@ -61,6 +61,10 @@ struct CubicSplineN
 	void redimension(size_t d);
 	size_t dimension() const;
 	bool empty() const;
+	float get_max_t() const {
+		if(m_loop) { return static_cast<float>(size()); }
+		else { return static_cast<float>(size()-1); }
+	}
 	typedef vector<CubicSpline> spline_cont_t;
 	void set_loop(bool l);
 	bool get_loop() const;

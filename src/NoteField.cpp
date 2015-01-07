@@ -1397,10 +1397,10 @@ public:
 		} \
 		return 0; \
 	}
-	SET_CALLBACK_GENERIC(SetStepCallback, m_StepCallback);
-	SET_CALLBACK_GENERIC(SetSetPressedCallback, m_SetPressedCallback);
-	SET_CALLBACK_GENERIC(SetDidTapNoteCallback, m_DidTapNoteCallback);
-	SET_CALLBACK_GENERIC(SetDidHoldNoteCallback, m_DidHoldNoteCallback);
+	SET_CALLBACK_GENERIC(set_step_callback, m_StepCallback);
+	SET_CALLBACK_GENERIC(set_set_pressed_callback, m_SetPressedCallback);
+	SET_CALLBACK_GENERIC(set_did_tap_note_callback, m_DidTapNoteCallback);
+	SET_CALLBACK_GENERIC(set_did_hold_note_callback, m_DidHoldNoteCallback);
 #undef SET_CALLBACK_GENERIC
 
 	static int check_column(lua_State* L, int index)
@@ -1416,7 +1416,7 @@ public:
 		return col;
 	}
 
-	static int Step(T* p, lua_State* L)
+	static int step(T* p, lua_State* L)
 	{
 		int col= check_column(L, 1);
 		TapNoteScore tns= Enum::Check<TapNoteScore>(L, 2);
@@ -1424,14 +1424,14 @@ public:
 		return 0;
 	}
 
-	static int SetPressed(T* p, lua_State* L)
+	static int set_pressed(T* p, lua_State* L)
 	{
 		int col= check_column(L, 1);
 		p->SetPressed(col, true);
 		return 0;
 	}
 
-	static int DidTapNote(T* p, lua_State* L)
+	static int did_tap_note(T* p, lua_State* L)
 	{
 		int col= check_column(L, 1);
 		TapNoteScore tns= Enum::Check<TapNoteScore>(L, 2);
@@ -1440,7 +1440,7 @@ public:
 		return 0;
 	}
 
-	static int DidHoldNote(T* p, lua_State* L)
+	static int did_hold_note(T* p, lua_State* L)
 	{
 		int col= check_column(L, 1);
 		HoldNoteScore hns= Enum::Check<HoldNoteScore>(L, 2);
@@ -1462,14 +1462,14 @@ public:
 
 	LunaNoteField()
 	{
-		ADD_METHOD(SetStepCallback);
-		ADD_METHOD(SetSetPressedCallback);
-		ADD_METHOD(SetDidTapNoteCallback);
-		ADD_METHOD(SetDidHoldNoteCallback);
-		ADD_METHOD(Step);
-		ADD_METHOD(SetPressed);
-		ADD_METHOD(DidTapNote);
-		ADD_METHOD(DidHoldNote);
+		ADD_METHOD(set_step_callback);
+		ADD_METHOD(set_set_pressed_callback);
+		ADD_METHOD(set_did_tap_note_callback);
+		ADD_METHOD(set_did_hold_note_callback);
+		ADD_METHOD(step);
+		ADD_METHOD(set_pressed);
+		ADD_METHOD(did_tap_note);
+		ADD_METHOD(did_hold_note);
 		ADD_METHOD(get_column_actors);
 	}
 };

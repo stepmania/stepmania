@@ -100,11 +100,11 @@ enum NoteColumnSplineMode
 // NoteDisplay during rendering.
 struct NoteFieldRenderArgs
 {
-	PlayerState const* player_state; // to look up PlayerOptions
+	const PlayerState* player_state; // to look up PlayerOptions
 	float reverse_offset_pixels;
 	ReceptorArrowRow* receptor_row;
 	GhostArrowRow* ghost_row;
-	NoteData const* note_data;
+	const NoteData* note_data;
 	float first_beat;
 	float last_beat;
 	int first_row;
@@ -137,7 +137,7 @@ struct NCSplineHandler
 	void EvalDerivForBeat(float song_beat, float note_beat, vector<float>& ret) const;
 	void EvalForReceptor(float song_beat, vector<float>& ret) const;
 	static void MakeWeightedAverage(NCSplineHandler& out,
-		NCSplineHandler const& from, NCSplineHandler const& to, float between);
+		const NCSplineHandler& from, const NCSplineHandler& to, float between);
 
 	CubicSplineN m_spline;
 	NoteColumnSplineMode m_spline_mode;
@@ -150,18 +150,18 @@ struct NCSplineHandler
 
 struct NoteColumnRenderArgs
 {
-	void spae_pos_for_beat(PlayerState const* state,
+	void spae_pos_for_beat(const PlayerState* state,
 		float beat, float y_offset, float y_reverse_offset,
 		vector<float>& sp_pos, vector<float>& ae_pos) const;
-	void spae_zoom_for_beat(PlayerState const* state, float beat,
+	void spae_zoom_for_beat(const PlayerState* state, float beat,
 		vector<float>& sp_zoom, vector<float>& ae_zoom) const;
 	void SetPRZForActor(Actor* actor,
-		vector<float> const& sp_pos, vector<float> const& ae_pos,
-		vector<float> const& sp_rot, vector<float> const& ae_rot,
-		vector<float> const& sp_zoom, vector<float> const& ae_zoom) const;
-	NCSplineHandler const* pos_handler;
-	NCSplineHandler const* rot_handler;
-	NCSplineHandler const* zoom_handler;
+		const vector<float>& sp_pos, const vector<float>& ae_pos,
+		const vector<float>& sp_rot, const vector<float>& ae_rot,
+		const vector<float>& sp_zoom, const vector<float>& ae_zoom) const;
+	const NCSplineHandler* pos_handler;
+	const NCSplineHandler* rot_handler;
+	const NCSplineHandler* zoom_handler;
 	float song_beat;
 	int column;
 };
@@ -179,12 +179,12 @@ public:
 
 	bool IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels ) const;
 
-	bool DrawHoldsInRange(NoteFieldRenderArgs const& field_args,
-		NoteColumnRenderArgs const& column_args,
-		vector<NoteData::TrackMap::const_iterator> const& tap_set);
-	bool DrawTapsInRange(NoteFieldRenderArgs const& field_args,
-		NoteColumnRenderArgs const& column_args,
-		vector<NoteData::TrackMap::const_iterator> const& tap_set);
+	bool DrawHoldsInRange(const NoteFieldRenderArgs& field_args,
+		const NoteColumnRenderArgs& column_args,
+		const vector<NoteData::TrackMap::const_iterator>& tap_set);
+	bool DrawTapsInRange(const NoteFieldRenderArgs& field_args,
+		const NoteColumnRenderArgs& column_args,
+		const vector<NoteData::TrackMap::const_iterator>& tap_set);
 	/**
 	 * @brief Draw the TapNote onto the NoteField.
 	 * @param tn the TapNote in question.
@@ -198,12 +198,12 @@ public:
 	 * @param fDrawDistanceAfterTargetsPixels how much to draw after the receptors.
 	 * @param fDrawDistanceBeforeTargetsPixels how much ot draw before the receptors.
 	 * @param fFadeInPercentOfDrawFar when to start fading in. */
-	void DrawTap(const TapNote& tn, NoteFieldRenderArgs const& field_args,
-		NoteColumnRenderArgs const& column_args, float fBeat,
+	void DrawTap(const TapNote& tn, const NoteFieldRenderArgs& field_args,
+		const NoteColumnRenderArgs& column_args, float fBeat,
 		bool bOnSameRowAsHoldStart,
 		bool bOnSameRowAsRollBeat, bool bIsAddition, float fPercentFadeToFail);
-	void DrawHold(const TapNote& tn, NoteFieldRenderArgs const& field_args,
-		NoteColumnRenderArgs const& column_args, int iRow, bool bIsBeingHeld,
+	void DrawHold(const TapNote& tn, const NoteFieldRenderArgs& field_args,
+		const NoteColumnRenderArgs& column_args, int iRow, bool bIsBeingHeld,
 		const HoldNoteResult &Result,
 		bool bIsAddition, float fPercentFadeToFail);
 
@@ -217,18 +217,18 @@ private:
 	Sprite *GetHoldSprite( NoteColorSprite ncs[NUM_HoldType][NUM_ActiveType], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
 
 	void DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
-		NoteFieldRenderArgs const& field_args,
-		NoteColumnRenderArgs const& column_args, float fYOffset, float fBeat,
+		const NoteFieldRenderArgs& field_args,
+		const NoteColumnRenderArgs& column_args, float fYOffset, float fBeat,
 		bool bIsAddition, float fPercentFadeToFail, float fColorScale,
 		bool is_being_held);
-	void DrawHoldBody(const TapNote& tn, NoteFieldRenderArgs const& field_args,
-		NoteColumnRenderArgs const& column_args, float fBeat, bool bIsBeingHeld,
+	void DrawHoldBody(const TapNote& tn, const NoteFieldRenderArgs& field_args,
+		const NoteColumnRenderArgs& column_args, float fBeat, bool bIsBeingHeld,
 		float fYHead, float fYTail,
 		bool bIsAddition, float fPercentFadeToFail, float fColorScale,
 		bool bGlow, float top_beat, float bottom_beat);
 	void DrawHoldPart(vector<Sprite*> &vpSpr,
-		NoteFieldRenderArgs const& field_args,
-		NoteColumnRenderArgs const& column_args, int fYStep,
+		const NoteFieldRenderArgs& field_args,
+		const NoteColumnRenderArgs& column_args, int fYStep,
 		float fPercentFadeToFail, float fColorScale, bool bGlow,
 		float fOverlappedTime, float fYTop, float fYBottom, float fYStartPos,
 		float fYEndPos, bool bWrapping, bool bAnchorToTop,
@@ -275,13 +275,14 @@ struct NoteColumnRenderer : public Actor
 
 	struct NCR_TweenState
 	{
+		NCR_TweenState();
 		NCSplineHandler m_pos_handler;
 		NCSplineHandler m_rot_handler;
 		NCSplineHandler m_zoom_handler;
 		static void MakeWeightedAverage(NCR_TweenState& out,
-			NCR_TweenState const& from, NCR_TweenState const& to, float between);
-		bool operator==(NCR_TweenState const& other) const;
-		bool operator!=(NCR_TweenState const& other) const { return !operator==(other); }
+			const NCR_TweenState& from, const NCR_TweenState& to, float between);
+		bool operator==(const NCR_TweenState& other) const;
+		bool operator!=(const NCR_TweenState& other) const { return !operator==(other); }
 	};
 
 	NCR_TweenState& NCR_DestTweenState()
@@ -291,7 +292,7 @@ struct NoteColumnRenderer : public Actor
 		else
 		{ return NCR_Tweens.back(); }
 	}
-	NCR_TweenState const& NCR_DestTweenState() const { return const_cast<NoteColumnRenderer*>(this)->NCR_DestTweenState(); }
+	const NCR_TweenState& NCR_DestTweenState() const { return const_cast<NoteColumnRenderer*>(this)->NCR_DestTweenState(); }
 
 	virtual void SetCurrentTweenStart();
 	virtual void EraseHeadTween();

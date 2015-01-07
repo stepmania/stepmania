@@ -326,7 +326,7 @@ void NCSplineHandler::EvalForReceptor(float song_beat, vector<float>& ret) const
 }
 
 void NCSplineHandler::MakeWeightedAverage(NCSplineHandler& out,
-		NCSplineHandler const& from, NCSplineHandler const& to, float between)
+		const NCSplineHandler& from, const NCSplineHandler& to, float between)
 {
 #define BOOLS_FROM_CLOSEST(closest) \
 	out.m_spline_mode= closest.m_spline_mode; \
@@ -344,7 +344,7 @@ void NCSplineHandler::MakeWeightedAverage(NCSplineHandler& out,
 		between);
 }
 
-void NoteColumnRenderArgs::spae_pos_for_beat(PlayerState const* state,
+void NoteColumnRenderArgs::spae_pos_for_beat(const PlayerState* state,
 	float beat, float y_offset, float y_reverse_offset,
 	vector<float>& sp_pos, vector<float>& ae_pos) const
 {
@@ -367,7 +367,7 @@ void NoteColumnRenderArgs::spae_pos_for_beat(PlayerState const* state,
 			break;
 	}
 }
-void NoteColumnRenderArgs::spae_zoom_for_beat(PlayerState const* state, float beat,
+void NoteColumnRenderArgs::spae_zoom_for_beat(const PlayerState* state, float beat,
 	vector<float>& sp_zoom, vector<float>& ae_zoom) const
 {
 	switch(zoom_handler->m_spline_mode)
@@ -387,9 +387,9 @@ void NoteColumnRenderArgs::spae_zoom_for_beat(PlayerState const* state, float be
 	}
 }
 void NoteColumnRenderArgs::SetPRZForActor(Actor* actor,
-	vector<float> const& sp_pos, vector<float> const& ae_pos,
-	vector<float> const& sp_rot, vector<float> const& ae_rot,
-	vector<float> const& sp_zoom, vector<float> const& ae_zoom) const
+	const vector<float>& sp_pos, const vector<float>& ae_pos,
+	const vector<float>& sp_rot, const vector<float>& ae_rot,
+	const vector<float>& sp_zoom, const vector<float>& ae_zoom) const
 {
 	actor->SetX(sp_pos[0] + ae_pos[0]);
 	actor->SetY(sp_pos[1] + ae_pos[1]);
@@ -468,16 +468,16 @@ bool NoteDisplay::IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTarge
 	return true;
 }
 
-bool NoteDisplay::DrawHoldsInRange(NoteFieldRenderArgs const& field_args,
-	NoteColumnRenderArgs const& column_args,
-	vector<NoteData::TrackMap::const_iterator> const& tap_set)
+bool NoteDisplay::DrawHoldsInRange(const NoteFieldRenderArgs& field_args,
+	const NoteColumnRenderArgs& column_args,
+	const vector<NoteData::TrackMap::const_iterator>& tap_set)
 {
 	bool any_upcoming = false;
 	for(vector<NoteData::TrackMap::const_iterator>::const_iterator tapit=
 		tap_set.begin(); tapit != tap_set.end(); ++tapit)
 	{
-		TapNote const& tn= (*tapit)->second;
-		HoldNoteResult const& result= tn.HoldResult;
+		const TapNote& tn= (*tapit)->second;
+		const HoldNoteResult& result= tn.HoldResult;
 		int start_row= (*tapit)->first;
 		int end_row = start_row + tn.iDuration;
 
@@ -536,9 +536,9 @@ bool NoteDisplay::DrawHoldsInRange(NoteFieldRenderArgs const& field_args,
 	return any_upcoming;
 }
 
-bool NoteDisplay::DrawTapsInRange(NoteFieldRenderArgs const& field_args,
-	NoteColumnRenderArgs const& column_args,
-	vector<NoteData::TrackMap::const_iterator> const& tap_set)
+bool NoteDisplay::DrawTapsInRange(const NoteFieldRenderArgs& field_args,
+	const NoteColumnRenderArgs& column_args,
+	const vector<NoteData::TrackMap::const_iterator>& tap_set)
 {
 	bool any_upcoming= false;
 	// draw notes from furthest to closest
@@ -546,7 +546,7 @@ bool NoteDisplay::DrawTapsInRange(NoteFieldRenderArgs const& field_args,
 		tap_set.begin(); tapit != tap_set.end(); ++tapit)
 	{
 		int tap_row= (*tapit)->first;
-		TapNote const& tn= (*tapit)->second;
+		const TapNote& tn= (*tapit)->second;
 
 		// TRICKY: If boomerang is on, then all notes in the range
 		// [first_row,last_row] aren't necessarily visible.
@@ -736,8 +736,8 @@ struct StripBuffer
 };
 
 void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
-	NoteFieldRenderArgs const& field_args,
-	NoteColumnRenderArgs const& column_args, int fYStep,
+	const NoteFieldRenderArgs& field_args,
+	const NoteColumnRenderArgs& column_args, int fYStep,
 	float fPercentFadeToFail, float fColorScale, bool bGlow,
 	float fOverlappedTime, float fYTop, float fYBottom, float fYStartPos,
 	float fYEndPos, bool bWrapping, bool bAnchorToTop,
@@ -793,8 +793,8 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	const float fTexCoordCenter	= (fTexCoordLeft+fTexCoordRight)/2;
 
 	// pos_z_vec will be used later to orient the hold.  Read below. -Kyz
-	static RageVector3 const pos_z_vec(0.0f, 0.0f, 1.0f);
-	static RageVector3 const pos_y_vec(0.0f, 1.0f, 0.0f);
+	static const RageVector3 pos_z_vec(0.0f, 0.0f, 1.0f);
+	static const RageVector3 pos_y_vec(0.0f, 1.0f, 0.0f);
 
 	StripBuffer queue;
 	for( float fY = fYStartPos; !bLast; fY += fYStep )
@@ -946,9 +946,9 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		render_left.y*= half_width;
 		render_left.z*= half_width;
 
-		RageVector3 const left_vert(center_vert.x + render_left.x,
+		const RageVector3 left_vert(center_vert.x + render_left.x,
 			center_vert.y + render_left.y, center_vert.z + render_left.z);
-		RageVector3 const right_vert(center_vert.x - render_left.x,
+		const RageVector3 right_vert(center_vert.x - render_left.x,
 			center_vert.y - render_left.y, center_vert.z - render_left.z);
 
 		const float fDistFromTop	= fY - fYTop;
@@ -990,8 +990,8 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 }
 
 void NoteDisplay::DrawHoldBody(const TapNote& tn,
-	NoteFieldRenderArgs const& field_args,
-	NoteColumnRenderArgs const& column_args, float fBeat,
+	const NoteFieldRenderArgs& field_args,
+	const NoteColumnRenderArgs& column_args, float fBeat,
 	bool bIsBeingHeld, float fYHead, float fYTail, bool bIsAddition,
 	float fPercentFadeToFail, float fColorScale, bool bGlow,
 	float top_beat, float bottom_beat)
@@ -1087,8 +1087,8 @@ void NoteDisplay::DrawHoldBody(const TapNote& tn,
 }
 
 void NoteDisplay::DrawHold(const TapNote& tn,
-	NoteFieldRenderArgs const& field_args,
-	NoteColumnRenderArgs const& column_args, int iRow, bool bIsBeingHeld,
+	const NoteFieldRenderArgs& field_args,
+	const NoteColumnRenderArgs& column_args, int iRow, bool bIsBeingHeld,
 	const HoldNoteResult &Result, bool bIsAddition, float fPercentFadeToFail)
 {
 	int iEndRow = iRow + tn.iDuration;
@@ -1173,7 +1173,7 @@ void NoteDisplay::DrawHold(const TapNote& tn,
 }
 
 void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
-	NoteFieldRenderArgs const& field_args, NoteColumnRenderArgs const& column_args, float fYOffset, float fBeat,
+	const NoteFieldRenderArgs& field_args, const NoteColumnRenderArgs& column_args, float fYOffset, float fBeat,
 	bool bIsAddition, float fPercentFadeToFail, float fColorScale,
 	bool is_being_held)
 {
@@ -1266,8 +1266,8 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 }
 
 void NoteDisplay::DrawTap(const TapNote& tn,
-	NoteFieldRenderArgs const& field_args,
-	NoteColumnRenderArgs const& column_args, float fBeat,
+	const NoteFieldRenderArgs& field_args,
+	const NoteColumnRenderArgs& column_args, float fBeat,
 	bool bOnSameRowAsHoldStart, bool bOnSameRowAsRollStart,
 	bool bIsAddition, float fPercentFadeToFail)
 {
@@ -1351,7 +1351,7 @@ void NoteDisplay::DrawTap(const TapNote& tn,
 
 void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
 {
-	PlayerState const* player_state= m_field_render_args->player_state;
+	const PlayerState* player_state= m_field_render_args->player_state;
 	float song_beat= player_state->GetDisplayedPosition().m_fSongBeatVisible;
 	// sp_* will be filled with the settings from the splines.
 	// ae_* will be filled with the settings from ArrowEffects.
@@ -1436,7 +1436,7 @@ void NoteColumnRenderer::DrawPrimitives()
 		m_field_render_args->first_row, m_field_render_args->last_row+1, begin, end);
 	for(; begin != end; ++begin)
 	{
-		TapNote const& tn= begin->second;
+		const TapNote& tn= begin->second;
 		switch(tn.type)
 		{
 			case TapNoteType_Empty:
@@ -1525,8 +1525,15 @@ void NoteColumnRenderer::FinishTweening()
 	Actor::FinishTweening();
 }
 
+NoteColumnRenderer::NCR_TweenState::NCR_TweenState()
+{
+	m_rot_handler.m_spline.set_spatial_extent(0, PI*2.0f);
+	m_rot_handler.m_spline.set_spatial_extent(1, PI*2.0f);
+	m_rot_handler.m_spline.set_spatial_extent(2, PI*2.0f);
+}
+
 void NoteColumnRenderer::NCR_TweenState::MakeWeightedAverage(
-	NCR_TweenState& out, NCR_TweenState const& from, NCR_TweenState const& to,
+	NCR_TweenState& out, const NCR_TweenState& from, const NCR_TweenState& to,
 	float between)
 {
 #define WEIGHT_FOR_ME(me) \
