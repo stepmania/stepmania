@@ -76,10 +76,12 @@ function make_camel_aliases(class)
 	end
 end
 
-make_camel_aliases(CubicSplineN)
-make_camel_aliases(NCSplineHandler)
-make_camel_aliases(NoteColumnRenderer)
-make_camel_aliases(NoteField)
+local to_camel_list= {
+	CubicSplineN, NCSplineHandler, NoteColumnRenderer, NoteField}
+
+for i, class in ipairs(to_camel_list) do
+	make_camel_aliases(class)
+end
 
 --[[ ActorScroller: all of these got renamed, so alias the lowercase ones if
 themes are going to look for them. ]]

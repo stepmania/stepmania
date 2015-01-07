@@ -96,6 +96,9 @@ enum NoteColumnSplineMode
 	NoteColumnSplineMode_Invalid
 };
 
+const RString& NoteColumnSplineModeToString(NoteColumnSplineMode ncsm);
+LuaDeclareType(NoteColumnSplineMode);
+
 // A little pod struct to carry the data the NoteField needs to pass to the
 // NoteDisplay during rendering.
 struct NoteFieldRenderArgs

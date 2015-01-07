@@ -322,7 +322,7 @@ void ActorMultiVertex::SetVertsFromSplinesInternal(size_t num_splines, size_t of
 	vector<RageSpriteVertex>& verts= AMV_DestTweenState().vertices;
 	size_t first= AMV_DestTweenState().FirstToDraw + offset;
 	size_t num_verts= AMV_DestTweenState().GetSafeNumToDraw(AMV_DestTweenState()._DrawMode, AMV_DestTweenState().NumToDraw);
-	float tper[num_splines]= {0.0f};
+	vector<float> tper(num_splines, 0.0f);
 	float num_parts= static_cast<float>(num_verts - offset) /
 		static_cast<float>(num_splines);
 	for(size_t i= 0; i < num_splines; ++i)
