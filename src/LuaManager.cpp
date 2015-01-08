@@ -1042,8 +1042,8 @@ LuaFunction( ProductFamily, (RString) PRODUCT_FAMILY );
 LuaFunction( ProductVersion, (RString) PRODUCT_VER );
 LuaFunction( ProductID, (RString) PRODUCT_ID );
 
-extern const char *const version_date;
-extern const char *const version_time;
+extern char const * const version_date;
+extern char const * const version_time;
 LuaFunction( VersionDate, (RString) version_date );
 LuaFunction( VersionTime, (RString) version_time );
 

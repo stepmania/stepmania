@@ -906,8 +906,8 @@ static void MountTreeOfZips( const RString &dir )
 
 #if defined(HAVE_VERSION_INFO)
 extern unsigned long version_num;
-extern const char *const version_date;
-extern const char *const version_time;
+extern char const * const version_time;
+extern char const * const version_date;
 #endif
 
 static void WriteLogHeader()
@@ -955,7 +955,7 @@ static void ApplyLogPreferences()
 
 static LocalizedString COULDNT_OPEN_LOADING_WINDOW( "LoadingWindow", "Couldn't open any loading windows." );
 
-int main(int argc, char* argv[])
+int sm_main(int argc, char* argv[])
 {
 	RageThreadRegister thread( "Main thread" );
 	RageException::SetCleanupHandler( HandleException );
