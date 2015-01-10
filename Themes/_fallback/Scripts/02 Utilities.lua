@@ -29,30 +29,6 @@ function TableStringLookup(t, group)
 	return ret
 end
 
-function split(delimiter, text)
-	local list = {}
-	local pos = 1
-	while 1 do
-		local first,last = string.find(text, delimiter, pos)
-		if first then
-			table.insert(list, string.sub(text, pos, first-1))
-			pos = last+1
-		else
-			table.insert(list, string.sub(text, pos))
-			break
-		end
-	end
-	return list
-end
-
-function join(delimiter, list)
-	local ret = list[1]
-	for i = 2,table.getn(list) do
-		ret = ret .. delimiter .. list[i]
-	end
-	return ret or ""
-end
-
 function wrap(val,n)
 	local x = val
 	Trace( "wrap "..x.." "..n )

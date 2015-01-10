@@ -30,6 +30,16 @@ void ReceptorArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOff
 	}
 }
 
+void ReceptorArrowRow::SetColumnRenderers(vector<NoteColumnRenderer>& renderers)
+{
+	ASSERT_M(renderers.size() == m_ReceptorArrow.size(), "Notefield has different number of columns than receptor row.");
+	for(size_t c= 0; c < m_ReceptorArrow.size(); ++c)
+	{
+		m_ReceptorArrow[c]->SetFakeParent(&(renderers[c]));
+	}
+	m_renderers= &renderers;
+}
+
 ReceptorArrowRow::~ReceptorArrowRow()
 {
 	for( unsigned i = 0; i < m_ReceptorArrow.size(); ++i )
@@ -53,18 +63,7 @@ void ReceptorArrowRow::Update( float fDeltaTime )
 		m_ReceptorArrow[c]->SetBaseAlpha( fBaseAlpha );
 
 		// set arrow XYZ
-		float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
-		const float fY = ArrowEffects::GetYPos( m_pPlayerState, c, 0, m_fYReverseOffsetPixels );
-		const float fZ = ArrowEffects::GetZPos( m_pPlayerState, c, 0 );
-		m_ReceptorArrow[c]->SetX( fX );
-		m_ReceptorArrow[c]->SetY( fY );
-		m_ReceptorArrow[c]->SetZ( fZ );
-
-		const float fRotation = ArrowEffects::ReceptorGetRotationZ( m_pPlayerState );
-		m_ReceptorArrow[c]->SetRotationZ( fRotation );
-
-		const float fZoom = ArrowEffects::GetZoom( m_pPlayerState );
-		m_ReceptorArrow[c]->SetZoom( fZoom );
+		(*m_renderers)[c].UpdateReceptorGhostStuff(m_ReceptorArrow[c]);
 	}
 }
 

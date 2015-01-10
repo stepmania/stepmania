@@ -8,6 +8,23 @@ ________________________________________________________________________________
 ----------
 * [Sprite] SetStateProperties function added. [kyzentun]
 
+2015/01/06
+----------
+* [ActorMultiVertex] GetSpline and SetVertsFromSplines functions added.
+  [kyzentun]
+* [NoteColumnRenderer] Functions for fetching the spline handlers for the
+  column added. [kyzentun]
+* [NCSplineHandler] New class for setting various parameters of a spline used
+  by a NoteColumnRenderer and containing the spline. [kyzentun]
+* [CubicSplineN] New class that provides spline functionality. [kyzentun]
+
+2014/12/26
+----------
+* [NoteField] Columns turned into actors that can be fetched with
+  get_column_actors. [kyzentun]
+  Tiny boost in fps when there is a large number of notes on screen.
+* [NoteColumnRenderer] New class for controlling one column. [kyzentun]
+
 2014/12/20
 ----------
 * [Preferences] AllowMultipleHighScoreWithSameName, ComboContinuesBetweenSongs

@@ -35,6 +35,16 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 	}
 }
 
+void GhostArrowRow::SetColumnRenderers(vector<NoteColumnRenderer>& renderers)
+{
+	ASSERT_M(renderers.size() == m_Ghost.size(), "Notefield has different number of columns than ghost row.");
+	for(size_t c= 0; c < m_Ghost.size(); ++c)
+	{
+		m_Ghost[c]->SetFakeParent(&(renderers[c]));
+	}
+	m_renderers= &renderers;
+}
+
 GhostArrowRow::~GhostArrowRow()
 {
 	for( unsigned i = 0; i < m_Ghost.size(); ++i )
@@ -47,20 +57,7 @@ void GhostArrowRow::Update( float fDeltaTime )
 	for( unsigned c=0; c<m_Ghost.size(); c++ )
 	{
 		m_Ghost[c]->Update( fDeltaTime );
-
-		float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
-		float fY = ArrowEffects::GetYPos( m_pPlayerState, c, 0, m_fYReverseOffsetPixels );
-		float fZ = ArrowEffects::GetZPos( m_pPlayerState, c, 0 );
-
-		m_Ghost[c]->SetX( fX );
-		m_Ghost[c]->SetY( fY );
-		m_Ghost[c]->SetZ( fZ );
-
-		const float fRotation = ArrowEffects::ReceptorGetRotationZ( m_pPlayerState );
-		m_Ghost[c]->SetRotationZ( fRotation );
-
-		const float fZoom = ArrowEffects::GetZoom( m_pPlayerState );
-		m_Ghost[c]->SetZoom( fZoom );
+		(*m_renderers)[c].UpdateReceptorGhostStuff(m_Ghost[c]);
 	}
 
 	for( unsigned i = 0; i < m_bHoldShowing.size(); ++i )

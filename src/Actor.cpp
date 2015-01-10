@@ -164,6 +164,7 @@ Actor::Actor()
 	m_size = RageVector2( 1, 1 );
 	InitState();
 	m_pParent = NULL;
+	m_FakeParent= NULL;
 	m_bFirstUpdate = true;
 }
 
@@ -183,6 +184,7 @@ Actor::Actor( const Actor &cpy ):
 #define CPY(x) x = cpy.x
 	CPY( m_sName );
 	CPY( m_pParent );
+	CPY( m_FakeParent );
 	CPY( m_pLuaInstance );
 
 	CPY( m_baseRotation );
@@ -279,24 +281,56 @@ void Actor::LoadFromNode( const XNode* pNode )
 	PlayCommandNoRecurse( Message("Init") );
 }
 
+bool Actor::PartiallyOpaque()
+{
+	return m_pTempState->diffuse[0].a > 0 || m_pTempState->diffuse[1].a > 0 ||
+		m_pTempState->diffuse[2].a > 0 || m_pTempState->diffuse[3].a > 0 ||
+		m_pTempState->glow.a > 0;
+}
+
 void Actor::Draw()
 {
 	if( !m_bVisible ||
 		m_fHibernateSecondsLeft > 0 || 
 		this->EarlyAbortDraw() )
+	{
 		return; // early abort
+	}
+	bool fake_parent_partially_opaque= true;
+	if(m_FakeParent)
+	{
+		if(!m_FakeParent->m_bVisible || m_FakeParent->m_fHibernateSecondsLeft > 0
+			|| m_FakeParent->EarlyAbortDraw())
+		{
+			return;
+		}
+		m_FakeParent->PreDraw();
+		fake_parent_partially_opaque= m_FakeParent->PartiallyOpaque();
+	}
 	
 	this->PreDraw();
 	ASSERT( m_pTempState != NULL );
-	if( m_pTempState->diffuse[0].a > 0 || m_pTempState->diffuse[1].a > 0 || m_pTempState->diffuse[2].a > 0 || m_pTempState->diffuse[3].a > 0 || m_pTempState->glow.a > 0 ) // This Actor is not fully transparent
-	{	
+	if(PartiallyOpaque() && fake_parent_partially_opaque)
+	{
+		if(m_FakeParent)
+		{
+			m_FakeParent->BeginDraw();
+		}
 		// call the most-derived versions
 		this->BeginDraw();	
 		this->DrawPrimitives();	// call the most-derived version of DrawPrimitives();
 		this->EndDraw();
+		if(m_FakeParent)
+		{
+			m_FakeParent->EndDraw();
+		}
 	}
 	
 	this->PostDraw();
+	if(m_FakeParent)
+	{
+		m_FakeParent->PostDraw();
+	}
 	m_pTempState = NULL;
 }
 
@@ -1705,6 +1739,32 @@ public:
 			pParent->PushSelf(L);
 		return 1;
 	}
+	static int GetFakeParent(T* p, lua_State *L)
+	{
+		Actor* fake= p->GetFakeParent();
+		if(fake == NULL)
+		{
+			lua_pushnil(L);
+		}
+		else
+		{
+			fake->PushSelf(L);
+		}
+		return 1;
+	}
+	static int SetFakeParent(T* p, lua_State* L)
+	{
+		if(lua_isnoneornil(L, 1))
+		{
+			p->SetFakeParent(NULL);
+		}
+		else
+		{
+			Actor* fake= Luna<Actor>::check(L, 1);
+			p->SetFakeParent(fake);
+		}
+		COMMON_RETURN_SELF;
+	}
 	static int Draw( T* p, lua_State *L )
 	{
 		LUA->YieldLua();
@@ -1876,6 +1936,8 @@ public:
 
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetParent );
+		ADD_METHOD( GetFakeParent );
+		ADD_METHOD( SetFakeParent );
 
 		ADD_METHOD( Draw );
 	}
