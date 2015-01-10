@@ -16,6 +16,7 @@
 
 REGISTER_ACTOR_CLASS( Sprite );
 
+const float min_state_delay= 0.0001f;
 
 Sprite::Sprite()
 {
@@ -182,12 +183,21 @@ void Sprite::LoadFromNode( const XNode* pNode )
 
 				State newState;
 				if( !pFrame->GetAttrValue("Delay", newState.fDelay) )
+				{
 					newState.fDelay = 0.1f;
+				}
+				if(newState.fDelay <= min_state_delay)
+				{
+					LuaHelpers::ReportScriptErrorFmt("%s: State #%i has near-zero delay.", ActorUtil::GetWhere(pNode).c_str(), i);
+					newState.fDelay= 0.1f;
+				}
 
 				pFrame->GetAttrValue( "Frame", iFrameIndex );
 				if( iFrameIndex >= m_pTexture->GetNumFrames() )
+				{
 					LuaHelpers::ReportScriptErrorFmt( "%s: State #%i is frame %d, but the texture \"%s\" only has %d frames",
 						ActorUtil::GetWhere(pNode).c_str(), i, iFrameIndex, sPath.c_str(), m_pTexture->GetNumFrames() );
+				}
 				newState.rect = *m_pTexture->GetTextureCoordRect( iFrameIndex );
 
 				const XNode *pPoints[2] = { pFrame->GetChild( "1" ), pFrame->GetChild( "2" ) };
@@ -352,7 +362,7 @@ void Sprite::UpdateAnimationState()
 	// We already know what's going to show.
 	if( m_States.size() > 1 )
 	{
-		while( m_fSecsIntoState+0.0001f > m_States[m_iCurState].fDelay )	// it's time to switch frames
+		while( m_fSecsIntoState+min_state_delay > m_States[m_iCurState].fDelay )	// it's time to switch frames
 		{
 			// increment frame and reset the counter
 			m_fSecsIntoState -= m_States[m_iCurState].fDelay;		// leave the left over time for the next frame
@@ -1037,6 +1047,15 @@ void Sprite::AddImageCoords( float fX, float fY )
 class LunaSprite: public Luna<Sprite>
 {
 public:
+	static float valid_state_delay(lua_State* L, int i)
+	{
+		float delay= FArg(i);
+		if(delay <= min_state_delay)
+		{
+			luaL_error(L, "State delay cannot be less than or equal to zero.");
+		}
+		return delay;
+	}
 	static int Load( T* p, lua_State *L )
 	{
 		if( lua_isnil(L, 1) )
@@ -1128,8 +1147,7 @@ public:
 			lua_getfield(L, -1, "Delay");
 			if(lua_isnumber(L, -1))
 			{
-				new_state.fDelay= FArg(-1);
-				// I wonder what a negative state delay does... -Kyz
+				new_state.fDelay= valid_state_delay(L, -1);
 			}
 			lua_pop(L, 1);
 			RectF r= new_state.rect;
@@ -1192,7 +1210,12 @@ public:
 		COMMON_RETURN_SELF;
 	}
 	static int GetNumStates( T* p, lua_State *L ) { lua_pushnumber( L, p->GetNumStates() ); return 1; }
-	static int SetAllStateDelays( T* p, lua_State *L ) { p->SetAllStateDelays(FArg(1)); COMMON_RETURN_SELF; }
+	static int SetAllStateDelays( T* p, lua_State *L )
+	{
+		float delay= valid_state_delay(L, -1);
+		p->SetAllStateDelays(delay);
+		COMMON_RETURN_SELF;
+	}
 
 	LunaSprite()
 	{
