@@ -1093,6 +1093,80 @@ public:
 	static int addimagecoords( T* p, lua_State *L )		{ p->AddImageCoords( FArg(1),FArg(2) ); COMMON_RETURN_SELF; }
 	static int setstate( T* p, lua_State *L )		{ p->SetState( IArg(1) ); COMMON_RETURN_SELF; }
 	static int GetState( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetState() ); return 1; }
+	static int SetStateProperties(T* p, lua_State* L)
+	{
+		// States table example:
+		// {{Frame= 0, Delay= .016, {0, 0}, {.25, .25}}}
+		// Each element in the States table must have a Frame and a Delay.
+		// Frame is optional, defaulting to 0.
+		// Delay is optional, defaulting to 0.
+		// The two tables in the state are the upper left and lower right and are
+		// optional.
+		if(!lua_istable(L, 1))
+		{
+			luaL_error(L, "State properties must be in a table.");
+		}
+		vector<Sprite::State> new_states;
+		size_t num_states= lua_objlen(L, 1);
+		for(size_t s= 0; s < num_states; ++s)
+		{
+			Sprite::State new_state;
+			lua_rawgeti(L, 1, s+1);
+			lua_getfield(L, -1, "Frame");
+			int frame_index= 0;
+			if(lua_isnumber(L, -1))
+			{
+				frame_index= IArg(-1);
+				if(frame_index < 0 || frame_index >= p->GetTexture()->GetNumFrames())
+				{
+					luaL_error(L, "Frame index out of range 0-%d.",
+						p->GetTexture()->GetNumFrames()-1);
+				}
+			}
+			new_state.rect= *p->GetTexture()->GetTextureCoordRect(frame_index);
+			lua_pop(L, 1);
+			lua_getfield(L, -1, "Delay");
+			if(lua_isnumber(L, -1))
+			{
+				new_state.fDelay= FArg(-1);
+				// I wonder what a negative state delay does... -Kyz
+			}
+			lua_pop(L, 1);
+			RectF r= new_state.rect;
+			lua_rawgeti(L, -1, 1);
+			if(lua_istable(L, -1))
+			{
+				lua_rawgeti(L, -1, 1);
+				// I have no idea why the points are from 0 to 1 and make it use only
+				// a portion of the state.  This is just copied from LoadFromNode.
+				// -Kyz
+				new_state.rect.left= SCALE(FArg(-1), 0.0f, 1.0f, r.left, r.right);
+				lua_pop(L, 1);
+				lua_rawgeti(L, -1, 2);
+				new_state.rect.top= SCALE(FArg(-1), 0.0f, 1.0f, r.top, r.bottom);
+				lua_pop(L, 1);
+			}
+			lua_pop(L, 1);
+			lua_rawgeti(L, -1, 2);
+			if(lua_istable(L, -1))
+			{
+				lua_rawgeti(L, -1, 1);
+				// I have no idea why the points are from 0 to 1 and make it use only
+				// a portion of the state.  This is just copied from LoadFromNode.
+				// -Kyz
+				new_state.rect.right= SCALE(FArg(-1), 0.0f, 1.0f, r.left, r.right);
+				lua_pop(L, 1);
+				lua_rawgeti(L, -1, 2);
+				new_state.rect.bottom= SCALE(FArg(-1), 0.0f, 1.0f, r.top, r.bottom);
+				lua_pop(L, 1);
+			}
+			lua_pop(L, 1);
+			new_states.push_back(new_state);
+			lua_pop(L, 1);
+		}
+		p->SetStateProperties(new_states);
+		COMMON_RETURN_SELF;
+	}
 	static int GetAnimationLengthSeconds( T* p, lua_State *L ) { lua_pushnumber( L, p->GetAnimationLengthSeconds() ); return 1; }
 	static int SetSecondsIntoAnimation( T* p, lua_State *L )	{ p->SetSecondsIntoAnimation(FArg(0)); COMMON_RETURN_SELF; }
 	static int SetTexture( T* p, lua_State *L )
@@ -1136,6 +1210,7 @@ public:
 		ADD_METHOD( addimagecoords );
 		ADD_METHOD( setstate );
 		ADD_METHOD( GetState );
+		ADD_METHOD( SetStateProperties );
 		ADD_METHOD( GetAnimationLengthSeconds );
 		ADD_METHOD( SetSecondsIntoAnimation );
 		ADD_METHOD( SetTexture );

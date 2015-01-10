@@ -4511,6 +4511,21 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetSecondsIntoAnimation' return='void' arguments='float fSeconds'>
 		Sets the number of seconds into the animation to <code>fSeconds</code>.
 	</Function>
+	<Function name='SetStateProperties' return= '' arguments='table properties'>
+		Sets the properties of the states of the sprite.  The properties table is identical to the "Frames" table that can be put in the sprite when calling Def.Sprite.<br />
+		Example:<br />
+		{{Frame= 0, Delay= .016, {0, 0}, {.25, .25}},<br />
+		{Frame= 1, Delay= .016, {0, 0}, {.25, .25}},<br />
+		{Frame= 2, Delay= .016, {0, 0}, {.25, .25}},<br />
+		{Frame= 3, Delay= .016, {0, 0}, {.25, .25}},<br />
+		}<br />
+		Frame is optional, defaulting to 0.<br />
+		Delay is optional, defaulting to 0.<br />
+		The two tables are optional upper left and lower right corners of the fraction of the frame to use.  The example makes the sprite only use the upper left corner of each frame.<br />
+		Simpler example:<br />
+		{{Frame= 0, Delay= .016}, {Frame= 1, Delay= .016}, {Frame= 2, Delay= .016}, {Frame= 3, Delay= .016}}<br />
+		This example makes the sprite use the whole of each frame.
+	</Function>
 	<Function name='SetTexture' return='void' arguments='RageTexture texture'>
 		Set the texture to <code>texture</code>.
 	</Function>

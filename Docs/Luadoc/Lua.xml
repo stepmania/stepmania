@@ -1581,6 +1581,7 @@
 			<Function name='SetCustomPosCoords'/>
 			<Function name='SetEffectMode'/>
 			<Function name='SetSecondsIntoAnimation'/>
+			<Function name='SetStateProperties'/>
 			<Function name='SetTexture'/>
 			<Function name='StopUsingCustomPosCoords'/>
 			<Function name='addimagecoords'/>
