@@ -61,12 +61,16 @@ inline bool CLAMP( unsigned &x, unsigned l, unsigned h )
 	else if (x < l) { x = l; return true; }
 	return false;
 }
+
+#if !defined(_MSC_VER)
 inline bool CLAMP( size_t &x, size_t l, size_t h )
 {
 	if (x > h)	{ x = h; return true; }
 	else if (x < l) { x = l; return true; }
 	return false;
 }
+#endif
+
 inline bool CLAMP( float &x, float l, float h )
 {
 	if (x > h)	{ x = h; return true; }
