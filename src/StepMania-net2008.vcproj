@@ -1173,6 +1173,14 @@
 				>
 			</File>
 			<File
+				RelativePath="CubicSpline.cpp"
+				>
+			</File>
+			<File
+				RelativePath="CubicSpline.h"
+				>
+			</File>
+			<File
 				RelativePath="DateTime.cpp"
 				>
 			</File>
