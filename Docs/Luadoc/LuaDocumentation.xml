@@ -4185,6 +4185,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetCurrentRowIndex' renamed='true' return='int' arguments='PlayerNumber pn'>
 		Returns the current row that player <code>pn</code> is on. (Was previously <code>GetCurrentRow</code>.)
 	</Function>
+	<Function name='GetNumRows' return='int' arguments=''>
+		Returns the number of rows on the screen.
+	</Function>
 	<Function name='GetOptionRow' return='OptionRow' arguments='int iRow'>
 		Returns the specified OptionRow.
 	</Function>

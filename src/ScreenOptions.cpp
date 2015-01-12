@@ -1352,13 +1352,21 @@ public:
 	static int FocusedItemEndsScreen( T* p, lua_State *L ) { lua_pushboolean( L, p->FocusedItemEndsScreen(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
 	static int GetCurrentRowIndex( T* p, lua_State *L ) { lua_pushnumber( L, p->GetCurrentRow(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
 	static int GetOptionRow( T* p, lua_State *L ) {
-		OptionRow* pOptRow = p->GetRow( IArg(1) );
+		int row_index= IArg(1);
+		// TODO:  Change row indices to be 1-indexed when breaking compatibility
+		// is allowed. -Kyz
+		if(row_index < 0 || row_index >= p->GetNumRows())
+		{
+			luaL_error(L, "Row index %d is invalid.", row_index);
+		}
+		OptionRow* pOptRow = p->GetRow(row_index);
 		if( pOptRow )
 			pOptRow->PushSelf(L);
 		else
 			lua_pushnil( L );
 		return 1;
 	}
+	DEFINE_METHOD(GetNumRows, GetNumRows());
    //static int SetOptionRowFromName( T* p, lua_State *L ) { p->SetOptionRowFromName( SArg(1) ); return 0; }
 
 	LunaScreenOptions()
@@ -1367,6 +1375,7 @@ public:
 		ADD_METHOD( FocusedItemEndsScreen );
 		ADD_METHOD( GetCurrentRowIndex );
 		ADD_METHOD( GetOptionRow );
+		ADD_METHOD( GetNumRows );
         //ADD_METHOD( SetOptionRowFromName );
 	}
 };

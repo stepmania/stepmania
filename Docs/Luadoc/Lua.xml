@@ -1442,6 +1442,7 @@
 			<Function name='AllAreOnLastRow'/>
 			<Function name='FocusedItemEndsScreen'/>
 			<Function name='GetCurrentRowIndex'/>
+			<Function name='GetNumRows'/>
 			<Function name='GetOptionRow'/>
 		</Class>
 		<Class base='ScreenOptions' name='ScreenPlayerOptions'>
