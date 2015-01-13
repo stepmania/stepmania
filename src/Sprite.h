@@ -57,7 +57,7 @@ public:
 	virtual float GetAnimationLengthSeconds() const;
 	virtual void SetSecondsIntoAnimation( float fSeconds );
 	void SetStateProperties(const vector<State>& new_states)
-	{ m_States= new_states; }
+	{ m_States= new_states; SetState(0); }
 
 	RString	GetTexturePath() const;
 

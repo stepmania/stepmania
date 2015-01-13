@@ -1127,6 +1127,10 @@ public:
 		}
 		vector<Sprite::State> new_states;
 		size_t num_states= lua_objlen(L, 1);
+		if(num_states == 0)
+		{
+			luaL_error(L, "A Sprite cannot have zero states.");
+		}
 		for(size_t s= 0; s < num_states; ++s)
 		{
 			Sprite::State new_state;
