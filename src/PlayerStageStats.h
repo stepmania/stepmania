@@ -63,18 +63,18 @@ public:
 	int		m_iTapNoteScores[NUM_TapNoteScore];
 	int		m_iHoldNoteScores[NUM_HoldNoteScore];
 	/** @brief The Player's current combo. */
-	int		m_iCurCombo;
+	unsigned int	m_iCurCombo;
 	/** @brief The Player's max combo. */
-	int		m_iMaxCombo;
+	unsigned int	m_iMaxCombo;
 	/** @brief The Player's current miss combo. */
-	int		m_iCurMissCombo;
-	int		m_iCurScoreMultiplier;
+	unsigned int	m_iCurMissCombo;
+	unsigned int	m_iCurScoreMultiplier;
 	/** @brief The player's current score. */
-	int		m_iScore;
+	unsigned int	m_iScore;
 	/** @brief The theoretically highest score the Player could have at this point. */
-	int		m_iCurMaxScore;
+	unsigned int	m_iCurMaxScore;
 	/** @brief The maximum score the Player can get this goaround. */
-	int		m_iMaxScore;
+	unsigned int	m_iMaxScore;
 	
 	/**
 	 * @brief The possible RadarValues for a song.

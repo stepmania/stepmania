@@ -198,7 +198,7 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	GAMESTATE->SetProcessedTimingData(NULL);
 }
 
-static int GetScore(int p, int Z, int S, int n)
+static unsigned int GetScore(uint64_t p, int Z, uint64_t S, int n)
 {
 	/* There's a problem with the scoring system described below. Z/S is truncated
 	 * to an int. However, in some cases we can end up with very small base scores.
@@ -216,7 +216,7 @@ static int GetScore(int p, int Z, int S, int n)
 	return p * (Z / S) * n;
 #elif 1
 	// This doesn't round down Z/S.
-	return int(int64_t(p) * n * Z / S);
+	return unsigned int(p * n * Z / S);
 #else
 	// This also doesn't round down Z/S. Use this if you don't have 64-bit ints.
 	return int(p * n * (float(Z) / S));
@@ -260,8 +260,8 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 	if( m_UseInternalScoring )
 	{
 		
-		int &iScore = m_pPlayerStageStats->m_iScore;
-		int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
+		unsigned int &iScore = m_pPlayerStageStats->m_iScore;
+		unsigned int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
 
 		// See Aaron In Japan for more details about the scoring formulas.
 		// Note: this assumes no custom scoring systems are in use.
@@ -277,8 +277,8 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 
 		m_iTapNotesHit++;
 
-		const int N = m_iNumTapsAndHolds;
-		const int sum = (N * (N + 1)) / 2;
+		const uint64_t N = uint64_t(m_iNumTapsAndHolds);
+		const uint64_t sum = (N * (N + 1)) / 2;
 		const int Z = m_iMaxPossiblePoints/10;
 
 		// Don't use a multiplier if the player has failed
@@ -320,14 +320,14 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 			iCurMaxScore += m_iPointBonus;
 		}
 
-		ASSERT_M( iScore >= 0, "iScore < 0 before re-rounding" );
+		//ASSERT_M( iScore >= 0, "iScore < 0 before re-rounding" );
 
 		// Undo rounding from the last tap, and re-round.
 		iScore += m_iScoreRemainder;
 		m_iScoreRemainder = (iScore % m_iRoundTo);
 		iScore = iScore - m_iScoreRemainder;
 
-		ASSERT_M( iScore >= 0, "iScore < 0 after re-rounding" );
+		//ASSERT_M( iScore >= 0, "iScore < 0 after re-rounding" );
 
 		// LOG->Trace( "score: %i", iScore );
 	}

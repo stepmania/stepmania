@@ -42,7 +42,7 @@ void ScoreDisplayNormal::Init( const PlayerState* pPlayerState, const PlayerStag
 	this->HandleMessage( msg );
 }
 
-void ScoreDisplayNormal::SetScore( int iNewScore ) 
+void ScoreDisplayNormal::SetScore( unsigned int iNewScore ) 
 {
 	float fScore = (float)iNewScore;
 

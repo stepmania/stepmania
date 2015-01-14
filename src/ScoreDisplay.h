@@ -13,7 +13,7 @@ class ScoreDisplay : public ActorFrame
 public:
 	virtual void Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats );
 
-	virtual void SetScore( int ) {}
+	virtual void SetScore( unsigned int ) {}
 	virtual void OnLoadSong() {};
 	/* Notification of a tap note judgment. This *is* called for the head of
 	 * hold notes. */

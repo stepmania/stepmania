@@ -24,9 +24,9 @@ class ScoreKeeperNormal: public ScoreKeeper
 	int	m_iTapNotesHit;	// number of notes judged so far, needed by scoring
 
 	int	m_iNumTapsAndHolds;
-	int	m_iMaxScoreSoFar; // for nonstop scoring
-	int	m_iPointBonus; // the difference to award at the end
-	int	m_iCurToastyCombo;
+	unsigned int	m_iMaxScoreSoFar; // for nonstop scoring
+	unsigned int	m_iPointBonus; // the difference to award at the end
+	unsigned int	m_iCurToastyCombo;
 	//int	m_iCurToastyTrigger;
 	//int	m_iNextToastyAt;
 	bool	m_bIsLastSongInCourse;

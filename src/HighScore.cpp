@@ -17,10 +17,10 @@ struct HighScoreImpl
 {
 	RString	sName;	// name that shows in the machine's ranking screen
 	Grade grade;
-	int iScore;
+	unsigned int iScore;
 	float fPercentDP;
 	float fSurviveSeconds;
-	int iMaxCombo;			// maximum combo obtained [SM5 alpha 1a+]
+	unsigned int iMaxCombo;			// maximum combo obtained [SM5 alpha 1a+]
 	StageAward stageAward;	// stage award [SM5 alpha 1a+]
 	PeakComboAward peakComboAward;	// peak combo award [SM5 alpha 1a+]
 	RString	sModifiers;
@@ -211,8 +211,8 @@ bool HighScore::GetDisqualified() const { return m_Impl->bDisqualified; }
 
 void HighScore::SetName( const RString &sName ) { m_Impl->sName = sName; }
 void HighScore::SetGrade( Grade g ) { m_Impl->grade = g; }
-void HighScore::SetScore( int iScore ) { m_Impl->iScore = iScore; }
-void HighScore::SetMaxCombo( int i ) { m_Impl->iMaxCombo = i; }
+void HighScore::SetScore( unsigned int iScore ) { m_Impl->iScore = iScore; }
+void HighScore::SetMaxCombo( unsigned int i ) { m_Impl->iMaxCombo = i; }
 void HighScore::SetStageAward( StageAward a ) { m_Impl->stageAward = a; }
 void HighScore::SetPeakComboAward( PeakComboAward a ) { m_Impl->peakComboAward = a; }
 void HighScore::SetPercentDP( float f ) { m_Impl->fPercentDP = f; }
