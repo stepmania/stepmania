@@ -201,7 +201,7 @@ public:
 	StepsType m_LastStepsType;
 	SongID m_lastSong;
 	CourseID m_lastCourse;
-	int m_iCurrentCombo;
+	unsigned int m_iCurrentCombo;
 	int m_iTotalSessions;
 	int m_iTotalSessionSeconds;
 	int m_iTotalGameplaySeconds;

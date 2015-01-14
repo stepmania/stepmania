@@ -318,7 +318,7 @@ bool StageStats::PlayerHasHighScore( PlayerNumber pn ) const
 		PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse, pTrail) :
 		PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong, pSteps);
 
-	int iScore = m_player[pn].m_iScore;
+	unsigned int iScore = m_player[pn].m_iScore;
 	float fPercentDP = m_player[pn].GetPercentDancePoints();
 	for( int h=0; h<(int)hsl.vHighScores.size() && h<PREFSMAN->m_iMaxHighScoresPerListForMachine; ++h )
 	{

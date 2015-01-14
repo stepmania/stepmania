@@ -13,7 +13,7 @@ public:
 
 	virtual void Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats );
 
-	virtual void SetScore( int iNewScore );
+	virtual void SetScore( unsigned int iNewScore );
 	virtual void SetText( RString s ) { m_text.SetText(s); }
 
 protected:
