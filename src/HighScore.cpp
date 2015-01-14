@@ -191,8 +191,8 @@ bool HighScore::IsEmpty() const
 
 RString	HighScore::GetName() const { return m_Impl->sName; }
 Grade HighScore::GetGrade() const { return m_Impl->grade; }
-int HighScore::GetScore() const { return m_Impl->iScore; }
-int HighScore::GetMaxCombo() const { return m_Impl->iMaxCombo; }
+unsigned int HighScore::GetScore() const { return m_Impl->iScore; }
+unsigned int HighScore::GetMaxCombo() const { return m_Impl->iMaxCombo; }
 StageAward HighScore::GetStageAward() const { return m_Impl->stageAward; }
 PeakComboAward HighScore::GetPeakComboAward() const { return m_Impl->peakComboAward; }
 float HighScore::GetPercentDP() const { return m_Impl->fPercentDP; }
