@@ -43,6 +43,8 @@ const int NUM_SCORE_DIGITS = 9;
 
 #define SHOW_OPTIONS_MESSAGE_SECONDS		THEME->GetMetricF( m_sName, "ShowOptionsMessageSeconds" )
 
+static const ThemeMetric<int> HARD_COMMENT_METER("ScreenSelectMusic", "HardCommentMeter");
+
 AutoScreenMessage( SM_AllowOptionsMenuRepeat );
 AutoScreenMessage( SM_SongChanged );
 AutoScreenMessage( SM_SortOrderChanging );
@@ -1211,7 +1213,7 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			bool bIsHard = false;
 			FOREACH_HumanPlayer( p )
 			{
-				if( GAMESTATE->m_pCurSteps[p]  &&  GAMESTATE->m_pCurSteps[p]->GetMeter() >= 10 )
+				if( GAMESTATE->m_pCurSteps[p]  &&  GAMESTATE->m_pCurSteps[p]->GetMeter() >= HARD_COMMENT_METER )
 					bIsHard = true;
 			}
 

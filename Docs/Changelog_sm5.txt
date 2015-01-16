@@ -4,6 +4,11 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/01/16
+----------
+* [ScreenSelectMusic] HardCommentMeter metric added.  Sets the meter that
+  will trigger the "select music comment hard" announcer sound. [kyzentun]
+
 2015/01/12
 ----------
 * [ScreenOptions] GetNumRows function added. [kyzentun]
