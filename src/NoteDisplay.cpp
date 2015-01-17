@@ -934,11 +934,11 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		RageVector3 render_left;
 		if(abs(render_forward.z) > 0.9f) // 0.9 arbitrariliy picked.
 		{
-			RageVec3Cross(&render_left, &render_forward, &pos_y_vec);
+			RageVec3Cross(&render_left, &pos_y_vec, &render_forward);
 		}
 		else
 		{
-			RageVec3Cross(&render_left, &render_forward, &pos_z_vec);
+			RageVec3Cross(&render_left, &pos_z_vec, &render_forward);
 		}
 		RageAARotate(&render_left, &render_forward, render_roty);
 		const float half_width= fScaledFrameWidth * .5f;
