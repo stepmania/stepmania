@@ -290,29 +290,30 @@ void NoteDisplay::Load( int iColNum, const PlayerState* pPlayerState, float fYRe
 	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
 
 	const PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-	const GameInput GameI = GAMESTATE->GetCurrentStyle(pPlayerState->m_PlayerNumber)->StyleInputToGameInput( iColNum, pn );
+	vector<GameInput> GameI;
+	GAMESTATE->GetCurrentStyle(pPlayerState->m_PlayerNumber)->StyleInputToGameInput( iColNum, pn, GameI );
 
 	const RString &sButton = GAMESTATE->GetCurrentStyle(pPlayerState->m_PlayerNumber)->ColToButtonName( iColNum );
 
 	cache->Load( sButton );
 
 	// "normal" note types
-	m_TapNote.Load(		sButton, "Tap Note", pn, GameI.controller );
+	m_TapNote.Load(		sButton, "Tap Note", pn, GameI[0].controller );
 	//m_TapAdd.Load(		sButton, "Tap Addition", pn, GameI.controller );
-	m_TapMine.Load(		sButton, "Tap Mine", pn, GameI.controller );
-	m_TapLift.Load(		sButton, "Tap Lift", pn, GameI.controller );
-	m_TapFake.Load(		sButton, "Tap Fake", pn, GameI.controller );
+	m_TapMine.Load(		sButton, "Tap Mine", pn, GameI[0].controller );
+	m_TapLift.Load(		sButton, "Tap Lift", pn, GameI[0].controller );
+	m_TapFake.Load(		sButton, "Tap Fake", pn, GameI[0].controller );
 
 	// hold types
 	FOREACH_HoldType( ht )
 	{
 		FOREACH_ActiveType( at )
 		{
-			m_HoldHead[ht][at].Load(	sButton, HoldTypeToString(ht)+" Head "+ActiveTypeToString(at), pn, GameI.controller );
-			m_HoldTopCap[ht][at].Load(	sButton, HoldTypeToString(ht)+" Topcap "+ActiveTypeToString(at), pn, GameI.controller );
-			m_HoldBody[ht][at].Load(	sButton, HoldTypeToString(ht)+" Body "+ActiveTypeToString(at), pn, GameI.controller );
-			m_HoldBottomCap[ht][at].Load(	sButton, HoldTypeToString(ht)+" Bottomcap "+ActiveTypeToString(at), pn, GameI.controller );
-			m_HoldTail[ht][at].Load(	sButton, HoldTypeToString(ht)+" Tail "+ActiveTypeToString(at), pn, GameI.controller );
+			m_HoldHead[ht][at].Load(	sButton, HoldTypeToString(ht)+" Head "+ActiveTypeToString(at), pn, GameI[0].controller );
+			m_HoldTopCap[ht][at].Load(	sButton, HoldTypeToString(ht)+" Topcap "+ActiveTypeToString(at), pn, GameI[0].controller );
+			m_HoldBody[ht][at].Load(	sButton, HoldTypeToString(ht)+" Body "+ActiveTypeToString(at), pn, GameI[0].controller );
+			m_HoldBottomCap[ht][at].Load(	sButton, HoldTypeToString(ht)+" Bottomcap "+ActiveTypeToString(at), pn, GameI[0].controller );
+			m_HoldTail[ht][at].Load(	sButton, HoldTypeToString(ht)+" Tail "+ActiveTypeToString(at), pn, GameI[0].controller );
 		}
 	}
 }

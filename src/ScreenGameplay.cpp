@@ -2179,8 +2179,12 @@ void ScreenGameplay::UpdateLights()
 
 				if( bBlink )
 				{
-					GameInput gi = pStyle->StyleInputToGameInput( t, pi->m_pn );
-					bBlinkGameButton[gi.controller][gi.button] = true;
+					vector<GameInput> gi;
+					pStyle->StyleInputToGameInput( t, pi->m_pn, gi );
+					for(size_t i= 0; i < gi.size(); ++i)
+					{
+						bBlinkGameButton[gi[i].controller][gi[i].button] = true;
+					}
 				}
 			}
 		}

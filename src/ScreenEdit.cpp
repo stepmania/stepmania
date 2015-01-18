@@ -1514,8 +1514,13 @@ void ScreenEdit::Update( float fDeltaTime )
 		
 		for( int t=0; t<GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_iColsPerPlayer; t++ )	// for each track
 		{
-			GameInput GameI = GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->StyleInputToGameInput( t, PLAYER_1 );
-			float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
+			vector<GameInput> GameI;
+			GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->StyleInputToGameInput( t, PLAYER_1, GameI );
+			float fSecsHeld= 0.0f;
+			for(size_t i= 0; i < GameI.size(); ++i)
+			{
+				fSecsHeld= max(fSecsHeld, INPUTMAPPER->GetSecsHeld(GameI[i]));
+			}
 			fSecsHeld = min( fSecsHeld, m_RemoveNoteButtonLastChanged.Ago() );
 			if( fSecsHeld == 0 )
 				continue;
@@ -1568,7 +1573,8 @@ void ScreenEdit::Update( float fDeltaTime )
 		bool bButtonIsBeingPressed = false;
 		for( int t=0; t<GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_iColsPerPlayer; t++ )	// for each track
 		{
-			GameInput GameI = GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->StyleInputToGameInput( t, PLAYER_1 );
+			vector<GameInput> GameI;
+			GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->StyleInputToGameInput( t, PLAYER_1, GameI );
 			if( INPUTMAPPER->IsBeingPressed(GameI) )
 				bButtonIsBeingPressed = true;
 		}

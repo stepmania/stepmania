@@ -80,7 +80,7 @@ public:
 	 * This is primarily for Couple and Routine styles. */
 	bool		m_bLockDifficulties;
 
-	GameInput StyleInputToGameInput( int iCol, PlayerNumber pn ) const;
+	void StyleInputToGameInput( int iCol, PlayerNumber pn, vector<GameInput>& ret ) const;
 	/**
 	 * @brief Retrieve the column based on the game input.
 	 * @param GameI the game input.

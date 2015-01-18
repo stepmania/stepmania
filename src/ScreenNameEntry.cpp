@@ -270,9 +270,15 @@ void ScreenNameEntry::Init()
 				break; // We have enough columns.
 
 			// Find out if this column is associated with the START menu button.
-			GameInput gi = GAMESTATE->GetCurrentStyle(p)->StyleInputToGameInput( iCol, p );
-			GameButton mb = INPUTMAPPER->GameButtonToMenuButton( gi.button );
-			if( mb == GAME_BUTTON_START )
+			vector<GameInput> gi;
+			GAMESTATE->GetCurrentStyle(p)->StyleInputToGameInput( iCol, p, gi );
+			bool gi_is_start= false;
+			for(size_t i= 0; i < gi.size(); ++i)
+			{
+				gi_is_start|= (INPUTMAPPER->GameButtonToMenuButton(gi[i].button)
+					== GAME_BUTTON_START);
+			}
+			if(gi_is_start)
 				continue;
 			m_ColToStringIndex[p][iCol] = CurrentStringIndex++;
 

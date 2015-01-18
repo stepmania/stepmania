@@ -74,6 +74,8 @@ public:
 	Song* GetDefaultSong() const;
 
 	bool CanSafelyEnterGameplay(RString& reason);
+	void SetCompatibleStylesForPlayers();
+	void ForceSharedSidesMatch();
 
 	void Update( float fDelta );
 

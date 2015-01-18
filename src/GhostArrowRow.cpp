@@ -24,8 +24,9 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 	{
 		const RString &sButton = GAMESTATE->GetCurrentStyle(pn)->ColToButtonName( c );
 
-		const GameInput GameI = GAMESTATE->GetCurrentStyle(pn)->StyleInputToGameInput( c, pn );
-		NOTESKIN->SetGameController( GameI.controller );
+		vector<GameInput> GameI;
+		GAMESTATE->GetCurrentStyle(pn)->StyleInputToGameInput( c, pn, GameI );
+		NOTESKIN->SetGameController( GameI[0].controller );
 
 		m_bHoldShowing.push_back( TapNoteSubType_Invalid );
 		m_bLastHoldShowing.push_back( TapNoteSubType_Invalid );

@@ -927,9 +927,10 @@ void Player::Update( float fDeltaTime )
 		ASSERT( m_pPlayerState != NULL );
 
 		// TODO: Remove use of PlayerNumber.
-		GameInput GameI = GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( col, m_pPlayerState->m_PlayerNumber );
+		vector<GameInput> GameI;
+		GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( col, m_pPlayerState->m_PlayerNumber, GameI );
 
-		bool bIsHoldingButton = INPUTMAPPER->IsBeingPressed( GameI );
+		bool bIsHoldingButton= INPUTMAPPER->IsBeingPressed(GameI);
 
 		// TODO: Make this work for non-human-controlled players
 		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && m_pPlayerState->m_PlayerController==PC_HUMAN )
@@ -1221,10 +1222,13 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			}
 			else
 			{
-				GameInput GameI = GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( iTrack, pn );
-			// this previously read as bIsHoldingButton &=
-			// was there a specific reason for this? - Friez
-				bIsHoldingButton &= INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
+				vector<GameInput> GameI;
+				GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( iTrack, pn, GameI );
+
+				bool is_holding= false;
+				// this previously read as bIsHoldingButton &=
+				// was there a specific reason for this? - Friez
+				is_holding &= INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp);
 			}
 		}
 	}
@@ -2141,9 +2145,14 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		int iNumTracksHeld = 0;
 		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 		{
-			GameInput GameI = GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( t, pn );
-			const float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
-			if( fSecsHeld > 0  && fSecsHeld < m_fTimingWindowJump )
+			vector<GameInput> GameI;
+			GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( t, pn, GameI );
+			float secs_held= 0.0f;
+			for(size_t i= 0; i < GameI.size(); ++i)
+			{
+				secs_held= max(secs_held, INPUTMAPPER->GetSecsHeld( GameI[i] ));
+			}
+			if( secs_held > 0  && secs_held < m_fTimingWindowJump )
 				iNumTracksHeld++;
 		}
 
@@ -2950,16 +2959,25 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				if( !REQUIRE_STEP_ON_HOLD_HEADS )
 				{
 					PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-					GameInput GameI = GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( iTrack, pn );
+					vector<GameInput> GameI;
+					GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( iTrack, pn, GameI );
 					if( PREFSMAN->m_fPadStickSeconds > 0.f )
 					{
-						float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI, m_pPlayerState->m_mp );
-						if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
-							Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );
+						for(size_t i= 0; i < GameI.size(); ++i)
+						{
+							float fSecsHeld = INPUTMAPPER->GetSecsHeld(GameI[i], m_pPlayerState->m_mp);
+							if(fSecsHeld >= PREFSMAN->m_fPadStickSeconds)
+							{
+								Step(iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false);
+							}
+						}
 					}
-					else if( INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp) )
+					else
 					{
-						Step( iTrack, -1, now, true, false );
+						if(INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp))
+						{
+							Step(iTrack, -1, now, true, false);
+						}
 					}
 				}
 				break;
@@ -2969,17 +2987,22 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				// Hold the panel while crossing a mine will cause the mine to explode
 				// TODO: Remove use of PlayerNumber.
 				PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-				GameInput GameI = GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( iTrack, pn );
-				if( PREFSMAN->m_fPadStickSeconds > 0 )
+				vector<GameInput> GameI;
+				GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( iTrack, pn, GameI );
+				if( PREFSMAN->m_fPadStickSeconds > 0.0f )
 				{
-					float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI, m_pPlayerState->m_mp );
-					if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
-						Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );
+					for(size_t i= 0; i < GameI.size(); ++i)
+					{
+						float fSecsHeld = INPUTMAPPER->GetSecsHeld(GameI[i], m_pPlayerState->m_mp);
+						if(fSecsHeld >= PREFSMAN->m_fPadStickSeconds)
+						{
+							Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );
+						}
+					}
 				}
-				else
+				else if(INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp))
 				{
-					if( INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp) )
-						Step( iTrack, iRow, now, true, false );
+					Step( iTrack, iRow, now, true, false );
 				}
 				break;
 			}
