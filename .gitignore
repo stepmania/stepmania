@@ -126,6 +126,7 @@ Utils/temp*
 Program/StepMania*.lib
 
 # Unknown File Types
+*.dia
 .deps
 *.rej
 tests/*.err
