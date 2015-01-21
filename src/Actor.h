@@ -577,7 +577,7 @@ public:
 	virtual void PushContext( lua_State *L );
 
 	// Named commands
-	void AddCommand( const RString &sCmdName, apActorCommands apac );
+	void AddCommand( const RString &sCmdName, apActorCommands apac, bool warn= true );
 	bool HasCommand( const RString &sCmdName ) const;
 	const apActorCommands *GetCommand( const RString &sCommandName ) const;
 	void PlayCommand( const RString &sCommandName ) { HandleMessage( Message(sCommandName) ); } // convenience

@@ -3163,12 +3163,12 @@ static const Style g_Style_Kickbox_Arachnid_Versus=
 static const Style* g_apGame_Kickbox_Styles[] =
 {
 	&g_Style_Kickbox_Human,
-	&g_Style_Kickbox_Human_Versus,
 	&g_Style_Kickbox_Quadarm,
-	&g_Style_Kickbox_Quadarm_Versus,
 	&g_Style_Kickbox_Insect,
-	&g_Style_Kickbox_Insect_Versus,
 	&g_Style_Kickbox_Arachnid,
+	&g_Style_Kickbox_Human_Versus,
+	&g_Style_Kickbox_Quadarm_Versus,
+	&g_Style_Kickbox_Insect_Versus,
 	&g_Style_Kickbox_Arachnid_Versus,
 	NULL
 };

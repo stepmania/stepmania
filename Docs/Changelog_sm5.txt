@@ -4,6 +4,32 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/01/20
+----------
+* [ScreenSelect] ChoiceNames can be a lua command that is evaluated to get a
+  list of the gamecommands.  The main use of this is to get rid of the huge
+  list of metrics that ScreenSelectStyle requires.  A single lua function
+  instead of a metric for every style for every game type. [kyzentun]
+* [ScreenSelectMaster] IconChoicePosFunction metric added.  This metric is
+  optional, if it's set, it must be set to a function that returns a table
+  of positions.  Each position is a table of the form "{x, y, z}", where x,
+  y, and z are numbers and any that is not a number defaults to 0.
+  The function is passed the number of choices for the screen.
+  IconChoiceOnCommand and IconChoiceOffCommand metrics added so each choice
+  doesn't require its own On/OffCommand pair.  These are also optional, but
+  if they are set, they will override the individual commands if they exist.
+  (If "IconChoiceCactusOnCommand" and "IconChoiceOnCommand" both exist,
+  "IconChoiceOnCommand" will be used.) [kyzentun]
+  Example:
+  # in metrics.ini
+  IconChoicePosFunction=choice_positions
+  -- In a file in Scripts/
+  function choice_positions(count)
+    local ret= {}
+    for i= 1, ret do ret[i]= {i*24, i*48} end
+    return ret
+  end
+
 2014/12/10
 ----------
 * [EditMode] Play whole song and play from current beat will now play until
@@ -22,20 +48,20 @@ ________________________________________________________________________________
 * [GameManager] Lua Scripts/ folders are now reloaded when the Game mode is
   changed. [kyzentun]
 * [GameState] CanSafelyEnterGameplay function added. [kyzentun]
-	In kickbox game mode, players can have different styles set, pass a
-	PlayerNumber when using SetCurrentStyle or GetCurrentStyle.
+  In kickbox game mode, players can have different styles set, pass a
+  PlayerNumber when using SetCurrentStyle or GetCurrentStyle.
 * [kickbox] New game mode with 4 styles. [kyzentun]
 * [ScreenGameplay] Notefield positioning is handled a bit differently now.
   See comments in _fallback/metrics.ini above the [ScreenGameplay]
   MarginFunction metric.  Basically, you can define a lua function that
   returns the space you want at the edges and in the center instead of
   setting position metrics.  Do NOT use Style:GetWidth to calculate the
-	margins your function returns.
-	ScreenGameplay now handles zooming the notefield to fit in the space
-	instead of using the NeedsZoomOutWith2Players flag in the style.
-	If the notefield doesn't fit in the space between the margins, and there is
-	only one player, the player will be centered even if the Center1Player pref
-	is false. [kyzentun]
+  margins your function returns.
+  ScreenGameplay now handles zooming the notefield to fit in the space
+  instead of using the NeedsZoomOutWith2Players flag in the style.
+  If the notefield doesn't fit in the space between the margins, and there is
+  only one player, the player will be centered even if the Center1Player pref
+  is false. [kyzentun]
 * [Style] NeedsZoomOutWith2Players decapitated.  Always returns false now.
   GetWidth added. [kyzentun]
 * [techno] Techno game mode no longer has special column width for versus.
@@ -74,7 +100,7 @@ ________________________________________________________________________________
   a new profile was created fixed. [kyzentun]
 * [Everything] Actor and singleton functions that formerly returned nothing now
   return the actor or singleton. Example (set zoom, x, y, and diffuse in one):
-	self:zoom(.5):xy(_screen.cx, _screen.h-60):diffuse(color("#dc322f"))
+  self:zoom(.5):xy(_screen.cx, _screen.h-60):diffuse(color("#dc322f"))
   This also works for PlayerOptions and SongOptions API functions.  Pass true
   as an extra arg, and they can be chained.
 

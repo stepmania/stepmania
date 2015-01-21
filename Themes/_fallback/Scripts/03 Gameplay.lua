@@ -107,6 +107,46 @@ function GameCompatibleModes()
 	return Modes[CurGameName()]
 end
 
+local function upper_first_letter(s)
+	local first_letter= s:match("([a-zA-Z])")
+	return s:gsub(first_letter, first_letter:upper(), 1)
+end
+
+-- No more having a metric for every style for every game mode. -Kyz
+function ScreenSelectStyleChoices()
+	local styles= GAMEMAN:GetStylesForGame(GAMESTATE:GetCurrentGame():GetName())
+	local choices= {}
+	for i, style in ipairs(styles) do
+		local name= style:GetName()
+		local cap_name= upper_first_letter(name)
+		choices[#choices+1]= "name," .. cap_name .. ";style," .. name .. ";text,"
+			.. cap_name .. ";screen," .. Branch.AfterSelectStyle()
+	end
+	return choices
+end
+
+-- No more having an xy for every style for every game mode. -Kyz
+function ScreenSelectStylePositions(count)
+	local poses= {}
+	local columns= 1
+	if count > 4 then columns= 2 end
+	local start_y= _screen.cy - (_screen.h / (math.ceil(count/columns) / 2))
+	for i= 1, count do
+		poses[i]= {}
+		if i <= count/columns then
+			poses[i][1]= _screen.cx - 160
+			poses[i][2]= start_y + (96 * i)
+		else
+			poses[i][1]= _screen.cx + 160
+			poses[i][2]= start_y + (96 * (i-(count/2)))
+		end
+		if columns == 1 then
+			poses[i][1]= _screen.cx
+		end
+	end
+	return poses
+end
+
 function SelectProfileKeys()
 	local sGame = CurGameName()
 	if sGame == "pump" then

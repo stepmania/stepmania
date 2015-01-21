@@ -998,7 +998,7 @@ void GameState::SetCompatibleStylesForPlayers()
 				SetCurrentStyle(style, PLAYER_INVALID);
 			}
 		}
-		else
+		else if(GetCurrentStyle(PLAYER_INVALID) == NULL)
 		{
 			vector<StepsType> vst;
 			GAMEMAN->GetStepsTypesForGame(m_pCurGame, vst);
@@ -1009,37 +1009,26 @@ void GameState::SetCompatibleStylesForPlayers()
 	}
 	if(!style_set)
 	{
-		if(GetCurrentGame()->m_PlayersHaveSeparateStyles)
+		FOREACH_EnabledPlayer(pn)
 		{
-			FOREACH_EnabledPlayer(pn)
+			StepsType st= StepsType_Invalid;
+			if(m_pCurSteps[pn] != NULL)
 			{
-				StepsType st= StepsType_Invalid;
-				if(m_pCurSteps[pn] != NULL)
-				{
-					st= m_pCurSteps[pn]->m_StepsType;
-				}
-				else if(m_pCurTrail[pn] != NULL)
-				{
-					st= m_pCurTrail[pn]->m_StepsType;
-				}
-				else
-				{
-					vector<StepsType> vst;
-					GAMEMAN->GetStepsTypesForGame(m_pCurGame, vst);
-					st= vst[0];
-				}
-				const Style *style = GAMEMAN->GetFirstCompatibleStyle(
-					m_pCurGame, GetNumSidesJoined(), st);
-				SetCurrentStyle(style, pn);
+				st= m_pCurSteps[pn]->m_StepsType;
 			}
-		}
-		else
-		{
-			vector<StepsType> vst;
-			GAMEMAN->GetStepsTypesForGame(m_pCurGame, vst);
+			else if(m_pCurTrail[pn] != NULL)
+			{
+				st= m_pCurTrail[pn]->m_StepsType;
+			}
+			else
+			{
+				vector<StepsType> vst;
+				GAMEMAN->GetStepsTypesForGame(m_pCurGame, vst);
+				st= vst[0];
+			}
 			const Style *style = GAMEMAN->GetFirstCompatibleStyle(
-				m_pCurGame, GetNumSidesJoined(), vst[0]);
-			SetCurrentStyle(style, PLAYER_INVALID);
+				m_pCurGame, GetNumSidesJoined(), st);
+			SetCurrentStyle(style, pn);
 		}
 	}
 }
