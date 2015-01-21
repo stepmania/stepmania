@@ -589,6 +589,7 @@ void ScreenGameplay::Init()
 			right_marge= margins[pi->m_pn][1];
 			field_space= screen_space - left_marge - right_marge;
 			if(Center1Player() ||
+				style->m_StyleType == StyleType_TwoPlayersSharedSides ||
 				(style_width > field_space && GAMESTATE->GetNumPlayersEnabled() == 1
 					&& (bool)ALLOW_CENTER_1_PLAYER))
 			CENTER_PLAYER_BLOCK

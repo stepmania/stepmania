@@ -102,7 +102,6 @@ function GameCompatibleModes()
 		-- todo: add versus modes for technomotion
 		techno = "Single4,Single5,Single8,Double4,Double5,Double8",
 		lights = "Single", -- lights shouldn't be playable
-		kickbox= "Human,Quadarm,Insect,Arachnid",
 	}
 	return Modes[CurGameName()]
 end
@@ -119,8 +118,12 @@ function ScreenSelectStyleChoices()
 	for i, style in ipairs(styles) do
 		local name= style:GetName()
 		local cap_name= upper_first_letter(name)
-		choices[#choices+1]= "name," .. cap_name .. ";style," .. name .. ";text,"
-			.. cap_name .. ";screen," .. Branch.AfterSelectStyle()
+		-- couple-edit and threepanel don't seem like they should actually be
+		-- selectable. -Kyz
+		if name ~= "couple-edit" and name ~= "threepanel" then
+			choices[#choices+1]= "name," .. cap_name .. ";style," .. name ..
+				";text," .. cap_name .. ";screen," .. Branch.AfterSelectStyle()
+		end
 	end
 	return choices
 end
@@ -129,19 +132,32 @@ end
 function ScreenSelectStylePositions(count)
 	local poses= {}
 	local columns= 1
-	if count > 4 then columns= 2 end
-	local start_y= _screen.cy - (_screen.h / (math.ceil(count/columns) / 2))
-	for i= 1, count do
-		poses[i]= {}
-		if i <= count/columns then
-			poses[i][1]= _screen.cx - 160
-			poses[i][2]= start_y + (96 * i)
+	local choice_height= 96
+	local column_x= {_screen.cx, _screen.cx + 160}
+	if count > 4 then
+		column_x[1]= _screen.cx - 160
+		columns= 2
+	end
+	if count > 8 then
+		column_x[1]= _screen.cx - 240
+		column_x[2]= _screen.cx
+		column_x[3]= _screen.cx + 240
+		columns= 3
+	end
+	local num_per_column= {math.ceil(count/columns), math.floor(count/columns)}
+	if count > 8 then
+		if count % 3 == 0 then
+			num_per_column[3]= count/columns
+		elseif count % 3 == 1 then
+			num_per_column[3]= num_per_column[2]
 		else
-			poses[i][1]= _screen.cx + 160
-			poses[i][2]= start_y + (96 * (i-(count/2)))
+			num_per_column[3]= num_per_column[1]
 		end
-		if columns == 1 then
-			poses[i][1]= _screen.cx
+	end
+	for c= 1, columns do
+		local start_y= _screen.cy - (choice_height * ((num_per_column[c] / 2)+.5))
+		for i= 1, num_per_column[c] do
+			poses[#poses+1]= {column_x[c], start_y + (choice_height * i)}
 		end
 	end
 	return poses
