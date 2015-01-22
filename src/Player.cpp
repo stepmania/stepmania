@@ -1225,10 +1225,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 				vector<GameInput> GameI;
 				GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( iTrack, pn, GameI );
 
-				bool is_holding= false;
-				// this previously read as bIsHoldingButton &=
-				// was there a specific reason for this? - Friez
-				is_holding &= INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp);
+				bIsHoldingButton &= INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp);
 			}
 		}
 	}

@@ -396,20 +396,29 @@ void GameState::JoinPlayer( PlayerNumber pn )
 	}
 
 	// Set the current style to something appropriate for the new number of joined players.
-	if( ALLOW_LATE_JOIN  &&  GetCurrentStyle(PLAYER_INVALID) != NULL )
+	// beat gametype's versus styles use a different stepstype from its single
+	// styles, so when GameCommand tries to join both players for a versus
+	// style, it hits the assert when joining the first player.  So if the first
+	// player is being joined and the current styletype is for two players,
+	// assume that the second player will be joined immediately afterwards and
+	// don't try to change the style. -Kyz
+	const Style* cur_style= GetCurrentStyle(PLAYER_INVALID);
+	if( ALLOW_LATE_JOIN  &&  cur_style != NULL && !(pn == PLAYER_1 &&
+			(cur_style->m_StyleType == StyleType_TwoPlayersTwoSides ||
+				cur_style->m_StyleType == StyleType_TwoPlayersSharedSides)))
 	{
 		const Style *pStyle;
 		// Only use one player for StyleType_OnePlayerTwoSides and StepsTypes
 		// that can only be played by one player (e.g. dance-solo,
 		// dance-threepanel, popn-nine). -aj
 		// XXX?: still shows joined player as "Insert Card". May not be an issue? -aj
-		if( GetCurrentStyle(PLAYER_INVALID)->m_StyleType == StyleType_OnePlayerTwoSides ||
-			GetCurrentStyle(PLAYER_INVALID)->m_StepsType == StepsType_dance_solo ||
-			GetCurrentStyle(PLAYER_INVALID)->m_StepsType == StepsType_dance_threepanel ||
-			GetCurrentStyle(PLAYER_INVALID)->m_StepsType == StepsType_popn_nine )
-			pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, 1, GetCurrentStyle(PLAYER_INVALID)->m_StepsType );
+		if( cur_style->m_StyleType == StyleType_OnePlayerTwoSides ||
+			cur_style->m_StepsType == StepsType_dance_solo ||
+			cur_style->m_StepsType == StepsType_dance_threepanel ||
+			cur_style->m_StepsType == StepsType_popn_nine )
+			pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, 1, cur_style->m_StepsType );
 		else
-			pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, GetNumSidesJoined(), GetCurrentStyle(PLAYER_INVALID)->m_StepsType );
+			pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, GetNumSidesJoined(), cur_style->m_StepsType );
 
 		// use SetCurrentStyle in case of StyleType_OnePlayerTwoSides
 		SetCurrentStyle( pStyle, pn );
