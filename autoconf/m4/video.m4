@@ -73,7 +73,7 @@ dnl System FFMpeg
 dnl We might as well throw in GPL stuff as we're bound to GPL by libmad anyway.
 		FFMPEG_CONFFLAGS="--enable-gpl --disable-programs --disable-doc --disable-avdevice --disable-swresample --disable-postproc --disable-avfilter"
 		if test "$host_os" = "mingw32"; then
-			FFMPEG_CONFFLAGS="$FFMPEG_CONFFLAGS --yasmexe=../yasm-1.2.0-win32.exe --arch=x86"
+			FFMPEG_CONFFLAGS="$FFMPEG_CONFFLAGS --arch=x86"
 		fi
 		if test "$enable_lto" = "yes"; then
 			FFMPEG_CONFFLAGS="$FFMPEG_CONFFLAGS --enable-lto"
