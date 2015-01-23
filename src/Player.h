@@ -199,6 +199,7 @@ protected:
 	NoteData::all_tracks_iterator *m_pIterUnjudgedMineRows;
 	unsigned int	m_iLastSeenCombo;
 	bool	m_bSeenComboYet;
+	int m_iMilestoneCounters[5];
 	JudgedRows		*m_pJudgedRows;
 
 	RageSound		m_soundMine;

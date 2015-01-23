@@ -370,8 +370,10 @@ void Player::Init(
 	m_pPrimaryScoreKeeper = pPrimaryScoreKeeper;
 	m_pSecondaryScoreKeeper = pSecondaryScoreKeeper;
 
-	m_iLastSeenCombo      = -1;
+	m_iLastSeenCombo      = 0;
 	m_bSeenComboYet       = false;
+	for( int i=0; i<5; i++ )
+		m_iMilestoneCounters[i] = 0;
 
 	// set initial life
 	if( m_pLifeMeter && m_pPlayerStageStats )
@@ -3392,21 +3394,29 @@ void Player::SetCombo( unsigned int iCombo, unsigned int iMisses )
 	bool b100Milestone = false;
 	bool b250Milestone = false;
 	bool b1000Milestone = false;
-	for( unsigned int i=m_iLastSeenCombo+1; i<=iCombo; i++ )
+	int iNewMilestoneCounters[5] = {
+		int(iCombo/25),
+		int(iCombo/50),
+		int(iCombo/100),
+		int(iCombo/250),
+		int(iCombo/200)
+	};
+	//Don't do milestones right after combo overflow or if combo hasn't changed.
+	if( m_iLastSeenCombo <= iCombo )
 	{
-		if( i < 600 )
-		{
-			b25Milestone |= ((i % 25) == 0);
-			b50Milestone |= ((i % 50) == 0);
-			b100Milestone |= ((i % 100) == 0);
-			b250Milestone |= ((i % 250) == 0);
-		}
+		if( iCombo > 600 )
+			b1000Milestone = iNewMilestoneCounters[4] > m_iMilestoneCounters[4];
 		else
 		{
-			b1000Milestone |= ((i % 200) == 0);
+			b25Milestone = iNewMilestoneCounters[0] > m_iMilestoneCounters[0];
+			b50Milestone = iNewMilestoneCounters[1] > m_iMilestoneCounters[1];
+			b100Milestone = iNewMilestoneCounters[2] > m_iMilestoneCounters[2];
+			b250Milestone = iNewMilestoneCounters[3] > m_iMilestoneCounters[3];
 		}
 	}
-	m_iLastSeenCombo = iCombo;
+	
+	for( int i=0; i<5; i++ )
+		m_iMilestoneCounters[i] = iNewMilestoneCounters[i];
 
 	if( b25Milestone )
 		this->PlayCommand( "TwentyFiveMilestone");
