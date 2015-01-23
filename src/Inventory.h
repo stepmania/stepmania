@@ -28,7 +28,7 @@ protected:
 	void AwardItem( int iItemIndex );
 
 	PlayerState* m_pPlayerState;
-	int m_iLastSeenCombo;
+	unsigned int m_iLastSeenCombo;
 
 	/** @brief a sound played when an item has been acquired. */
 	RageSound m_soundAcquireItem;
