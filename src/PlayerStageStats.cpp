@@ -372,7 +372,25 @@ void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 	m_fLastSecond = max( fStepsSecond, m_fLastSecond );
 	//LOG->Trace( "fLastSecond = %f", m_fLastSecond );
 
-	// fSecond will always be greater than any value already in the map.
+	// fStepsSecond will usually be greater than any value already in the map,
+	// but if a tap and a hold both set the life on the same frame, it won't.
+	// Check whether an entry already exists for the current time, and move it
+	// back a tiny bit if it does and the new value is not the same as the old.
+	// Otherwise, you get the rare bug where the life graph shows a gradual
+	// decline when the lifebar was actually full up to a miss.  This occurs
+	// because the first call has full life, and removes the previous full life
+	// entry.  Then the second call of the frame occurs and sets the life for
+	// the current time to a lower value.
+	// -Kyz
+	map<float,float>::iterator curr= m_fLifeRecord.find(fStepsSecond);
+	if(curr != m_fLifeRecord.end())
+	{
+		if(curr->second != fLife)
+		{
+			// 2^-8
+			m_fLifeRecord[fStepsSecond - 0.00390625]= curr->second;
+		}
+	}
 	m_fLifeRecord[fStepsSecond] = fLife;
 
 	Message msg(static_cast<MessageID>(Message_LifeMeterChangedP1+m_player_number));
