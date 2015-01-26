@@ -353,15 +353,50 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 {
 	vector<PlayerNumber> vpns;
 	GetActiveElementPlayerNumbers( vpns );
+	int first_playable= -1;
+	bool on_unplayable[NUM_PLAYERS];
+	FOREACH_PlayerNumber(pn)
+	{
+		on_unplayable[pn]= false;
+	}
 
 	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 	{
+		RString command= "Enabled";
+		bool disabled= false;
+		if(!m_aGameCommands[c].IsPlayable())
+		{
+			command= "Disabled";
+			disabled= true;
+		}
+		else if(first_playable == -1)
+		{
+			first_playable= c;
+		}
 		if( SHOW_ICON )
-			m_vsprIcon[c]->PlayCommand( m_aGameCommands[c].IsPlayable()? "Enabled":"Disabled" );
+		{
+			m_vsprIcon[c]->PlayCommand(command);
+		}
 
 		FOREACH( PlayerNumber, vpns, p )
+		{
+			if(disabled && m_iChoice[*p] == c)
+			{
+				on_unplayable[*p]= true;
+			}
 			if( m_vsprScroll[*p][c].IsLoaded() )
-				m_vsprScroll[*p][c]->PlayCommand( m_aGameCommands[c].IsPlayable()? "Enabled":"Disabled" );
+			{
+				m_vsprScroll[*p][c]->PlayCommand(command);
+			}
+		}
+	}
+	FOREACH(PlayerNumber, vpns, pn)
+	{
+		if(on_unplayable[*pn])
+		{
+			ChangeSelection(*pn, first_playable < m_iChoice[*pn] ? MenuDir_Left :
+				MenuDir_Right, first_playable);
+		}
 	}
 
 	/* If no options are playable at all, just wait.  Some external
