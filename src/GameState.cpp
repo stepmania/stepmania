@@ -3094,6 +3094,32 @@ public:
 		return 0;
 	}
 
+	static int GetAutoGenFarg(T* p, lua_State *L)
+	{
+		int i= IArg(1) - 1;
+		if(i < 0) { lua_pushnil(L); return 1; }
+		size_t si= static_cast<size_t>(i);
+		if(si >= p->m_autogen_fargs.size()) { lua_pushnil(L); return 1; }
+		lua_pushnumber(L, p->GetAutoGenFarg(si));
+		return 1;
+	}
+	static int SetAutoGenFarg(T* p, lua_State* L)
+	{
+		int i= IArg(1) - 1;
+		if(i < 0)
+		{
+			luaL_error(L, "%i is not a valid autogen arg index.", i);
+		}
+		float v= FArg(2);
+		size_t si= static_cast<size_t>(i);
+		while(si >= p->m_autogen_fargs.size())
+		{
+			p->m_autogen_fargs.push_back(0.0f);
+		}
+		p->m_autogen_fargs[si]= v;
+		COMMON_RETURN_SELF;
+	}
+
 	LunaGameState()
 	{
 		ADD_METHOD( IsPlayerEnabled );
@@ -3218,6 +3244,8 @@ public:
 		ADD_METHOD( SetCurrentStyle );
 		ADD_METHOD( SetCurrentPlayMode );
 		ADD_METHOD( SetStepsForEditMode );
+		ADD_METHOD( GetAutoGenFarg );
+		ADD_METHOD( SetAutoGenFarg );
 	}
 };
 

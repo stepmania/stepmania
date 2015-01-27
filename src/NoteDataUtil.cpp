@@ -781,6 +781,174 @@ void NoteDataUtil::LoadTransformedLightsFromTwo( const NoteData &marquee, const 
 	NoteDataUtil::RemoveMines( out );
 }
 
+// This kickbox_limb enum should not be used anywhere outside the
+// Autogenkickbox function. -Kyz
+enum kickbox_limb
+{
+	left_foot, left_fist, right_fist, right_foot, num_kickbox_limbs, invalid_limb= -1
+};
+void NoteDataUtil::AutogenKickbox(const NoteData& in, NoteData& out, const TimingData& timing, StepsType out_type, int nonrandom_seed)
+{
+	// Each limb has its own list of tracks it is used for.  This allows
+	// abstract handling of the different styles.
+	// By convention, the lower panels are pushed first.  This gives the upper
+	// panels a higher index, which is mnemonically useful.
+	vector<vector<int> > limb_tracks(num_kickbox_limbs);
+	bool have_feet= true;
+	switch(out_type)
+	{
+		case StepsType_kickbox_human:
+			out.SetNumTracks(4);
+			limb_tracks[left_foot].push_back(0);
+			limb_tracks[left_fist].push_back(1);
+			limb_tracks[right_fist].push_back(2);
+			limb_tracks[right_foot].push_back(3);
+			break;
+		case StepsType_kickbox_quadarm:
+			out.SetNumTracks(4);
+			have_feet= false;
+			limb_tracks[left_fist].push_back(1);
+			limb_tracks[left_fist].push_back(0);
+			limb_tracks[right_fist].push_back(2);
+			limb_tracks[right_fist].push_back(3);
+			break;
+		case StepsType_kickbox_insect:
+			out.SetNumTracks(6);
+			limb_tracks[left_foot].push_back(0);
+			limb_tracks[left_fist].push_back(2);
+			limb_tracks[left_fist].push_back(1);
+			limb_tracks[right_fist].push_back(3);
+			limb_tracks[right_fist].push_back(4);
+			limb_tracks[right_foot].push_back(5);
+			break;
+		case StepsType_kickbox_arachnid:
+			out.SetNumTracks(8);
+			limb_tracks[left_foot].push_back(0);
+			limb_tracks[left_foot].push_back(1);
+			limb_tracks[left_fist].push_back(3);
+			limb_tracks[left_fist].push_back(2);
+			limb_tracks[right_fist].push_back(4);
+			limb_tracks[right_fist].push_back(5);
+			limb_tracks[right_foot].push_back(7);
+			limb_tracks[right_foot].push_back(6);
+			break;
+		DEFAULT_FAIL(out_type);
+	}
+	// prev_limb_panels keeps track of which panel in the track list the limb
+	// hit last.
+	vector<size_t> prev_limb_panels(num_kickbox_limbs, 0);
+	vector<int> panel_repeat_counts(num_kickbox_limbs, 0);
+	vector<int> panel_repeat_goals(num_kickbox_limbs, 0);
+	RandomGen rnd(nonrandom_seed);
+	kickbox_limb prev_limb_used= invalid_limb;
+	// Kicks are only allowed if there is enough setup/recovery time.
+	float kick_recover_time= GAMESTATE->GetAutoGenFarg(0);
+	if(kick_recover_time <= 0.0f)
+	{
+		kick_recover_time= .25f;
+	}
+	float prev_note_time= -1.0f;
+	int rows_done= 0;
+#define RAND_FIST ((rnd() % 2) ? left_fist : right_fist)
+#define RAND_FOOT ((rnd() % 2) ? left_foot : right_foot)
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS(in, r)
+	{
+		// Arbitrary:  Drop everything except taps and hold heads out entirely,
+		// convert holds to tap just the head.
+		bool has_valid_tapnote= false;
+		for(int t= 0; t < in.GetNumTracks(); ++t)
+		{
+			const TapNote& tn= in.GetTapNote(t, r);
+			if(tn.type == TapNoteType_Tap || tn.type == TapNoteType_HoldHead)
+			{
+				has_valid_tapnote= true;
+				break;
+			}
+		}
+		if(!has_valid_tapnote) { continue; }
+		int next_row= r;
+		bool next_has_valid= false;
+		while(!next_has_valid)
+		{
+			if(!in.GetNextTapNoteRowForAllTracks(next_row))
+			{
+				next_row= -1;
+				next_has_valid= true;
+			}
+			else
+			{
+				for(int t= 0; t < in.GetNumTracks(); ++t)
+				{
+					const TapNote& tn= in.GetTapNote(t, next_row);
+					if(tn.type == TapNoteType_Tap || tn.type == TapNoteType_HoldHead)
+					{
+						next_has_valid= true;
+						break;
+					}
+				}
+			}
+		}
+		float this_note_time= timing.GetElapsedTimeFromBeat(NoteRowToBeat(r));
+		float next_note_time= timing.GetElapsedTimeFromBeat(NoteRowToBeat(next_row));
+		kickbox_limb this_limb= invalid_limb;
+		switch(prev_limb_used)
+		{
+			case invalid_limb:
+				// First limb is arbitrarily always a fist.
+				this_limb= RAND_FIST;
+				break;
+			case left_foot:
+			case right_foot:
+				// Multiple kicks in a row are allowed if they're on the same foot.
+				// Allow the last note to be a kick.
+				// Switch feet if there's enough time.
+				if(next_note_time - this_note_time > kick_recover_time * 2.0f)
+				{
+					this_limb= prev_limb_used == left_foot ? right_foot : left_foot;
+				}
+				else if((next_note_time - this_note_time > kick_recover_time * .5f ||
+						next_note_time < 0.0f) && (rnd() % 2))
+				{
+					this_limb= prev_limb_used;
+				}
+				else
+				{
+					this_limb= RAND_FIST;
+				}
+				break;
+			case left_fist:
+			case right_fist:
+				if(this_note_time - prev_note_time > kick_recover_time &&
+					(next_note_time - this_note_time > kick_recover_time ||
+						next_note_time < 0.0f) && have_feet)
+				{
+					this_limb= RAND_FOOT;
+				}
+				else
+				{
+					// Alternate fists.
+					this_limb= prev_limb_used == left_fist ? right_fist : left_fist;
+				}
+				break;
+		}
+		size_t this_panel= prev_limb_panels[this_limb];
+		if(panel_repeat_counts[this_limb] + 1 > panel_repeat_goals[this_limb])
+		{
+			// Use a different panel.
+			this_panel= (this_panel + 1) % limb_tracks[this_limb].size();
+			panel_repeat_counts[this_limb]= 0;
+			panel_repeat_goals[this_limb]= (rnd() % 8) + 1;
+		}
+		out.SetTapNote(limb_tracks[this_limb][this_panel], r, TAP_ORIGINAL_TAP);
+		++panel_repeat_counts[this_limb];
+		prev_limb_panels[this_limb]= this_panel;
+		prev_note_time= this_note_time;
+		prev_limb_used= this_limb;
+		++rows_done;
+	}
+	out.RevalidateATIs(vector<int>(), false);
+}
+
 RadarStats CalculateRadarStatsFast( const NoteData &in, RadarStats &out )
 {
 	out.taps = 0;
