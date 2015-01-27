@@ -202,6 +202,11 @@ if test "$with_prof" = "yes"; then
 	test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS="$LDFLAGS -pg"
 fi
 
+dnl Usually in libc, but not always(?)
+if test "$unix" = "yes"; then
+	AC_SEARCH_LIBS(clock_gettime, rt,, AC_ERROR([clock_gettime() not available?]))
+fi
+
 SM_OPENGL
 SM_X11
 GL_CFLAGS="$GL_CFLAGS $XCFLAGS"
