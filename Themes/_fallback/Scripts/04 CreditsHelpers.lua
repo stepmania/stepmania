@@ -50,6 +50,7 @@ local stepmania_credits= {
 	{
 		name= "Translators",
 		"John Reactor (Polish)",
+		"Jarosław Pietras (Polish)",
 		"DHalens (Spanish)",
 		"@Niler_jp (Japanese)",
 		"Deamon007 (Dutch)"
