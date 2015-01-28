@@ -1579,6 +1579,72 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 						iTakeFromTrack[8] = 0;
 						iTakeFromTrack[9] = 1;
 						break;
+					case StepsType_kickbox_human:
+						if(iRandChoice == 1)
+						{
+							iTakeFromTrack[0]= 3;
+							iTakeFromTrack[3]= 0;
+						}
+						if(iRandChoice == 2)
+						{
+							iTakeFromTrack[1]= 2;
+							iTakeFromTrack[2]= 1;
+						}
+						break;
+					case StepsType_kickbox_quadarm:
+						if(iRandChoice == 1)
+						{
+							iTakeFromTrack[0]= 1;
+							iTakeFromTrack[1]= 0;
+							iTakeFromTrack[2]= 3;
+							iTakeFromTrack[3]= 2;
+						}
+						if(iRandChoice == 2)
+						{
+							iTakeFromTrack[1]= 2;
+							iTakeFromTrack[2]= 1;
+						}
+						break;
+					case StepsType_kickbox_insect:
+						if(iRandChoice == 1)
+						{
+							iTakeFromTrack[1]= 2;
+							iTakeFromTrack[2]= 1;
+							iTakeFromTrack[3]= 4;
+							iTakeFromTrack[4]= 3;
+						}
+						if(iRandChoice == 2)
+						{
+							iTakeFromTrack[1]= 4;
+							iTakeFromTrack[2]= 3;
+							iTakeFromTrack[3]= 2;
+							iTakeFromTrack[4]= 1;
+						}
+						break;
+					case StepsType_kickbox_arachnid:
+						if(iRandChoice == 1)
+						{
+							iTakeFromTrack[0]= 1;
+							iTakeFromTrack[1]= 0;
+							iTakeFromTrack[2]= 3;
+							iTakeFromTrack[3]= 2;
+							iTakeFromTrack[4]= 5;
+							iTakeFromTrack[5]= 4;
+							iTakeFromTrack[6]= 7;
+							iTakeFromTrack[7]= 6;
+						}
+						if(iRandChoice == 2)
+						{
+							iTakeFromTrack[0]= 6;
+							iTakeFromTrack[1]= 7;
+							iTakeFromTrack[2]= 4;
+							iTakeFromTrack[3]= 5;
+							iTakeFromTrack[4]= 2;
+							iTakeFromTrack[5]= 3;
+							iTakeFromTrack[6]= 0;
+							iTakeFromTrack[7]= 1;
+						}
+						break;
 					default: break;
 					}
 					break;
@@ -1616,6 +1682,36 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 			iTakeFromTrack[5] = 4;
 			iTakeFromTrack[6] = 7;
 			iTakeFromTrack[7] = 6;
+			break;
+		case StepsType_kickbox_human:
+			iTakeFromTrack[0]= 1;
+			iTakeFromTrack[1]= 0;
+			iTakeFromTrack[2]= 3;
+			iTakeFromTrack[3]= 2;
+			break;
+		case StepsType_kickbox_quadarm:
+			iTakeFromTrack[0]= 1;
+			iTakeFromTrack[1]= 0;
+			iTakeFromTrack[2]= 3;
+			iTakeFromTrack[3]= 2;
+			break;
+		case StepsType_kickbox_insect:
+			iTakeFromTrack[0]= 1;
+			iTakeFromTrack[1]= 4;
+			iTakeFromTrack[2]= 3;
+			iTakeFromTrack[3]= 2;
+			iTakeFromTrack[4]= 1;
+			iTakeFromTrack[5]= 4;
+			break;
+		case StepsType_kickbox_arachnid:
+			iTakeFromTrack[0]= 5;
+			iTakeFromTrack[1]= 4;
+			iTakeFromTrack[2]= 5;
+			iTakeFromTrack[3]= 4;
+			iTakeFromTrack[4]= 3;
+			iTakeFromTrack[5]= 2;
+			iTakeFromTrack[6]= 1;
+			iTakeFromTrack[7]= 0;
 			break;
 		default: 
 			break;
