@@ -198,7 +198,7 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	GAMESTATE->SetProcessedTimingData(NULL);
 }
 
-static int GetScore(int p, int Z, int S, int n)
+static int GetScore(int p, int Z, int64_t S, int n)
 {
 	/* There's a problem with the scoring system described below. Z/S is truncated
 	 * to an int. However, in some cases we can end up with very small base scores.
@@ -277,8 +277,8 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 
 		m_iTapNotesHit++;
 
-		const uint64_t N = uint64_t(m_iNumTapsAndHolds);
-		const int sum = int((N * (N + 1)) / 2);
+		const int64_t N = uint64_t(m_iNumTapsAndHolds);
+		const int64_t sum = (N * (N + 1)) / 2;
 		const int Z = m_iMaxPossiblePoints/10;
 
 		// Don't use a multiplier if the player has failed
