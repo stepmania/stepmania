@@ -30,10 +30,8 @@ AM_CXXFLAGS += $(GL_CFLAGS)
 
 .PHONY: increment_version
 
-all: increment_version
-
 increment_version:
-	if test -e ver.cpp; then \
+	if test -e ver.h; then \
 		build=`sed -rs 's/.*version_num = ([[:digit:]]+);/\1/;q' ver.cpp`; \
 		build=`expr $$build + 1`; \
 	else \
@@ -43,8 +41,7 @@ increment_version:
 	echo "extern const char *const version_time = \"`date +"%X %Z (UTC%:z)"`\";" >> ver.cpp;
 	echo "extern const char *const version_date = \"`date +"%Y%m%d"`\";" >> ver.cpp;
 
-ver.cpp:
-	$(MAKE) increment_version
+ver.cpp: increment_version
 
 PNG = \
 ../extern/libpng/include/png.c ../extern/libpng/include/.png.h \
