@@ -34,6 +34,7 @@ struct Game
 	/** @brief Do we count multiple notes in a row as separate notes, or as one note? */
 	bool			m_bCountNotesSeparately;
 	bool			m_bTickHolds;
+	bool m_PlayersHaveSeparateStyles;
 
 	InputScheme		m_InputScheme;
 

@@ -1,5 +1,5 @@
 AC_PREREQ(2.59)
-AC_INIT(StepMania 5, beta 0, [https://github.com/stepmania/stepmania], StepMania, [http://stepmania.com])
+AC_INIT(StepMania, 5.0, [https://github.com/stepmania/stepmania], StepMania, [http://stepmania.com])
 AC_CONFIG_SRCDIR([src/StepMania.cpp])
 AC_CONFIG_AUX_DIR(autoconf)
 AC_CANONICAL_TARGET
@@ -202,6 +202,11 @@ if test "$with_prof" = "yes"; then
 	test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS="$LDFLAGS -pg"
 fi
 
+dnl Usually in libc, but not always(?)
+if test "$unix" = "yes"; then
+	AC_SEARCH_LIBS(clock_gettime, rt,, AC_ERROR([clock_gettime() not available?]))
+fi
+
 SM_OPENGL
 SM_X11
 GL_CFLAGS="$GL_CFLAGS $XCFLAGS"
@@ -344,6 +349,7 @@ AM_CONDITIONAL(HAVE_PTHREAD, test "$have_pthread" = "yes")
 # Always:
 AC_DEFINE(_GNU_SOURCE, 1, [Use GNU extensions])
 AC_DEFINE(__STDC_FORMAT_MACROS, 1, [Use PRId64 and similar])
+AC_DEFINE(USE_GITVERSION, 1, [We are generating gitversion.h])
 
 AM_CONDITIONAL(HAVE_ALSA, test x$alsa != xfalse )
 AM_CONDITIONAL(HAVE_GTK, test "$enable_gtk2" != "no" )

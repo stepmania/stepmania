@@ -3,6 +3,12 @@
 #ifndef PRODUCT_INFO_H
 #define PRODUCT_INFO_H
 
+// XXX: VC doesn't generate this yet. Hack around it for now
+#include "config.h"
+#ifdef USE_GITVERSION
+#include "gitversion.h"
+#endif
+
 /**
  * @brief A friendly string to refer to the product in crash dialogs, etc.
  *
@@ -16,7 +22,7 @@
  * As an example, use "StepMania4" here, not "StepMania".
  * It would cause a conflict with older versions such as StepMania 3.X.
  */
-#define PRODUCT_ID_BARE StepMania 5
+#define PRODUCT_ID_BARE StepMania 5.0
 
 /**
  * @brief Version info displayed to the user.
@@ -30,7 +36,7 @@
  * </li></ul>
  */
 #ifndef PRODUCT_VER_BARE
-#define PRODUCT_VER_BARE v5.0 beta 4a
+#define PRODUCT_VER_BARE 5.0-UNKNOWN
 #endif
 
 /**

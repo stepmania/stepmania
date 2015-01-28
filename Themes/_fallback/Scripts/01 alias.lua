@@ -24,6 +24,65 @@ _safe = {
   
 --[[ compatibility aliases ]]
 
+function alias_one(class, main_name, alt_name)
+	if type(main_name) ~= "string" then
+		lua.ReportScriptError("Name of function to make an alias for must be a string.")
+		return
+	end
+	if type(alt_name) ~= "string" then
+		lua.ReportScriptError("Alias name of function must be a string.")
+		return
+	end
+	if class[alt_name] then return end
+	class[alt_name]= class[main_name]
+end
+
+function alias_set(class, set)
+	assert(type(class) == "table" and type(set) == "table",
+		"alias_set must be passed a class and a set of names to make alieases.")
+	for i, fun in ipairs(set) do
+		if type(fun) == "table" then
+			local main_name= fun[1]
+			if type(set[2]) == "table" then
+				for n, alt_name in ipairs(set[2]) do
+					alias_one(class, main_name, alt_name)
+				end
+			elseif type(set[2]) == "string" then
+				alias_one(class, main_name, set[2])
+			end
+		else
+			lua.ReportScriptError("alias entry " .. i .. " in set passed to " ..
+				"alias_set is not a table.")
+		end
+	end
+end
+
+function make_camel_aliases(class)
+	local name_list= {}
+	for name, fun in pairs(class) do
+		if type(fun) == "function" and type(name) == "string" then
+			name_list[#name_list+1]= name
+		end
+	end
+	for i, name in ipairs(name_list) do
+		local words= split("_", name)
+		for o, w in ipairs(words) do
+			words[o]= w:sub(1,1):upper() .. w:sub(2)
+		end
+		local camel_name= join("", words)
+		if name ~= camel_name then
+			alias_one(class, name, camel_name)
+		end
+	end
+end
+
+local to_camel_list= {
+	CubicSplineN, NCSplineHandler, NoteColumnRenderer, NoteField}
+
+for i, class in ipairs(to_camel_list) do
+	make_camel_aliases(class)
+end
+
 --[[ ActorScroller: all of these got renamed, so alias the lowercase ones if
 themes are going to look for them. ]]
 ActorScroller.getsecondtodestination = ActorScroller.GetSecondsToDestination

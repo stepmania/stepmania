@@ -144,6 +144,10 @@ local log_display_mt= {
 					end
 				end,
 				[name_mess]= function(subself, mess)
+					if PREFSMAN:GetPreference("IgnoredDialogs") ~= "" then
+						self:visible(false)
+						return
+					end
 					if not mess.message then return end
 					if self.messes_since_update > self.max_log then return end
 					-- Long ago, someone decided that "::" should be an alias for "\n"

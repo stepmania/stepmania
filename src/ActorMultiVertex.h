@@ -1,7 +1,9 @@
 /** @brief ActorMultiVertex - A texture created from multiple textures. */
 
 #include "Actor.h"
+#include "CubicSpline.h"
 #include "RageDisplay.h"
+#include "RageMath.h"
 #include "RageTextureID.h"
 
 enum DrawMode
@@ -26,6 +28,7 @@ class RageTexture;
 class ActorMultiVertex: public Actor
 {
 public:
+	static const size_t num_vert_splines= 4;
 	ActorMultiVertex();
 	ActorMultiVertex( const ActorMultiVertex &cpy );
 	virtual ~ActorMultiVertex();
@@ -35,7 +38,9 @@ public:
 
 	struct AMV_TweenState
 	{
-		AMV_TweenState(): _DrawMode(DrawMode_Invalid), FirstToDraw(0), NumToDraw(-1), line_width(1.0f) {}
+		AMV_TweenState(): _DrawMode(DrawMode_Invalid), FirstToDraw(0),
+			NumToDraw(-1), line_width(1.0f)
+		{}
 		static void MakeWeightedAverage(AMV_TweenState& average_out, const AMV_TweenState& ts1, const AMV_TweenState& ts2, float percent_between);
 		bool operator==(const AMV_TweenState& other) const;
 		bool operator!=(const AMV_TweenState& other) const { return !operator==(other); }
@@ -102,6 +107,10 @@ public:
 	void SetVertexColor( int index , RageColor c );
 	void SetVertexCoords( int index , float TexCoordX , float TexCoordY );
 
+	inline void SetVertsFromSplinesInternal(size_t num_splines, size_t start_vert);
+	void SetVertsFromSplines();
+	CubicSplineN* GetSpline(size_t i);
+
 	virtual void PushSelf( lua_State *L );
 
 private:
@@ -117,6 +126,10 @@ private:
 	
 	EffectMode _EffectMode;
 	TextureMode _TextureMode;
+
+	// Four splines for controlling vert positions, because quads drawmode
+	// requires four. -Kyz
+	vector<CubicSplineN> _splines;
 };
 
 /**

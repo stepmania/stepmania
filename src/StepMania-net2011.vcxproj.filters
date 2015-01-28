@@ -369,6 +369,9 @@
     <ClCompile Include="CryptHelpers.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
+    <ClCompile Include="CubicSpline.cpp">
+      <Filter>Data Structures</Filter>
+    </ClCompile>
     <ClCompile Include="DateTime.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
@@ -1722,6 +1725,9 @@
       <Filter>Data Structures</Filter>
     </ClInclude>
     <ClInclude Include="CryptHelpers.h">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="CubicSpline.h">
       <Filter>Data Structures</Filter>
     </ClInclude>
     <ClInclude Include="DateTime.h">

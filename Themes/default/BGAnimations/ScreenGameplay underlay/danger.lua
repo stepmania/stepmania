@@ -9,7 +9,7 @@ for pn=1,#players do
 			self:x(
 				THEME:GetMetric(
 					Var "LoadingScreen",
-					"Player" .. ToEnumShortString(players[pn]) .. ToEnumShortString(GAMESTATE:GetCurrentStyle():GetStyleType()) .. "X"
+					"Player" .. ToEnumShortString(players[pn]) .. ToEnumShortString(GAMESTATE:GetCurrentStyle(pn):GetStyleType()) .. "X"
 				)
 			)
 		end,

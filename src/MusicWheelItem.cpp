@@ -338,7 +338,7 @@ void MusicWheelItem::RefreshGrades()
 		else if( GAMESTATE->m_pCurTrail[p] )
 			st = GAMESTATE->m_pCurTrail[p]->m_StepsType;
 		else
-			st = GAMESTATE->m_pCurStyle->m_StepsType;
+			st = GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType;
 
 		m_pGradeDisplay[p]->SetVisible( true );
 

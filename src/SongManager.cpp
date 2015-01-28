@@ -1167,7 +1167,7 @@ void SongManager::GetCoursesInGroup( vector<Course*> &AddTo, const RString &sCou
 				AddTo.push_back( m_pCourses[i] );
 }
 
-bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut )
+bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut, StepsType stype )
 {
 	const RString sCourseSuffix = sPreferredGroup + (bExtra2 ? "/extra2.crs" : "/extra1.crs");
 	RString sCoursePath = SpecialFiles::SONGS_DIR + sCourseSuffix;
@@ -1184,7 +1184,7 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredG
 	CourseLoaderCRS::LoadFromCRSFile( sCoursePath, course );
 	if( course.GetEstimatedNumStages() <= 0 ) return false;
 
-	Trail *pTrail = course.GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType );
+	Trail *pTrail = course.GetTrail(stype);
 	if( pTrail->m_vEntries.empty() )
 		return false;
 
@@ -1231,11 +1231,11 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->m_sGroupName.c_str():"") );
 
 	// Check preferred group
-	if( GetExtraStageInfoFromCourse(bExtra2, sGroup, pSongOut, pStepsOut) )
+	if( GetExtraStageInfoFromCourse(bExtra2, sGroup, pSongOut, pStepsOut, sd->m_StepsType) )
 		return;
 
 	// Optionally, check the Songs folder for extra1/2.crs files.
-	if( GetExtraStageInfoFromCourse(bExtra2, "", pSongOut, pStepsOut) )
+	if( GetExtraStageInfoFromCourse(bExtra2, "", pSongOut, pStepsOut, sd->m_StepsType) )
 		return;
 
 	// Choose a hard song for the extra stage
@@ -1894,7 +1894,7 @@ int FindCourseIndexOfSameMode( T begin, T end, const Course *p )
 
 		/* If it's not playable in this mode, don't increment. It might result in 
 		 * different output in different modes, but that's better than having holes. */
-		if( !(*it)->IsPlayableIn( GAMESTATE->GetCurrentStyle()->m_StepsType ) )
+		if( !(*it)->IsPlayableIn( GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType ) )
 			continue;
 		if( (*it)->GetPlayMode() != pm )
 			continue;

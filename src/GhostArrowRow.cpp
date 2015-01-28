@@ -15,17 +15,18 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 	m_pPlayerState = pPlayerState;
 	m_fYReverseOffsetPixels = fYReverseOffset;
 
-	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	const PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	const Style* pStyle = GAMESTATE->GetCurrentStyle(pn);
 	NOTESKIN->SetPlayerNumber( pn );
 
 	// init arrows
 	for( int c=0; c<pStyle->m_iColsPerPlayer; c++ ) 
 	{
-		const RString &sButton = GAMESTATE->GetCurrentStyle()->ColToButtonName( c );
+		const RString &sButton = GAMESTATE->GetCurrentStyle(pn)->ColToButtonName( c );
 
-		const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( c, pn );
-		NOTESKIN->SetGameController( GameI.controller );
+		vector<GameInput> GameI;
+		GAMESTATE->GetCurrentStyle(pn)->StyleInputToGameInput( c, pn, GameI );
+		NOTESKIN->SetGameController( GameI[0].controller );
 
 		m_bHoldShowing.push_back( TapNoteSubType_Invalid );
 		m_bLastHoldShowing.push_back( TapNoteSubType_Invalid );
@@ -33,6 +34,16 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 		m_Ghost.push_back( NOTESKIN->LoadActor(sButton, "Explosion", this) );
 		m_Ghost[c]->SetName( "GhostArrow" );
 	}
+}
+
+void GhostArrowRow::SetColumnRenderers(vector<NoteColumnRenderer>& renderers)
+{
+	ASSERT_M(renderers.size() == m_Ghost.size(), "Notefield has different number of columns than ghost row.");
+	for(size_t c= 0; c < m_Ghost.size(); ++c)
+	{
+		m_Ghost[c]->SetFakeParent(&(renderers[c]));
+	}
+	m_renderers= &renderers;
 }
 
 GhostArrowRow::~GhostArrowRow()
@@ -47,20 +58,7 @@ void GhostArrowRow::Update( float fDeltaTime )
 	for( unsigned c=0; c<m_Ghost.size(); c++ )
 	{
 		m_Ghost[c]->Update( fDeltaTime );
-
-		float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
-		float fY = ArrowEffects::GetYPos( m_pPlayerState, c, 0, m_fYReverseOffsetPixels );
-		float fZ = ArrowEffects::GetZPos( m_pPlayerState, c, 0 );
-
-		m_Ghost[c]->SetX( fX );
-		m_Ghost[c]->SetY( fY );
-		m_Ghost[c]->SetZ( fZ );
-
-		const float fRotation = ArrowEffects::ReceptorGetRotationZ( m_pPlayerState );
-		m_Ghost[c]->SetRotationZ( fRotation );
-
-		const float fZoom = ArrowEffects::GetZoom( m_pPlayerState );
-		m_Ghost[c]->SetZoom( fZoom );
+		(*m_renderers)[c].UpdateReceptorGhostStuff(m_Ghost[c]);
 	}
 
 	for( unsigned i = 0; i < m_bHoldShowing.size(); ++i )
@@ -92,7 +90,7 @@ void GhostArrowRow::Update( float fDeltaTime )
 
 void GhostArrowRow::DrawPrimitives()
 {
-	const Style* pStyle = GAMESTATE->GetCurrentStyle();
+	const Style* pStyle = GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber);
 	for( unsigned i=0; i<m_Ghost.size(); i++ )
 	{
 		const int c = pStyle->m_iColumnDrawOrder[i];

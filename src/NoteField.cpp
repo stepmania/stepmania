@@ -36,11 +36,8 @@ static ThemeMetric<float> FADE_FAIL_TIME( "NoteField", "FadeFailTime" );
 static RString RoutineNoteSkinName( size_t i ) { return ssprintf("RoutineNoteSkinP%i",int(i+1)); }
 static ThemeMetric1D<RString> ROUTINE_NOTESKIN( "NoteField", RoutineNoteSkinName, NUM_PLAYERS );
 
-static bool FAST_NOTE_RENDERING_PREF_CACHED= false;
-
 NoteField::NoteField()
 {
-	FAST_NOTE_RENDERING_PREF_CACHED= PREFSMAN->m_FastNoteRendering;
 	m_pNoteData = NULL;
 	m_pCurDisplay = NULL;
 
@@ -64,9 +61,13 @@ NoteField::NoteField()
 	m_sprBeatBars.Load( THEME->GetPathG("NoteField","bars") );
 	m_sprBeatBars.StopAnimating();
 
+	// I decided to do it this way because I don't want to dig through
+	// ScreenEdit to change all the places it touches the markers. -Kyz
+	m_FieldRenderArgs.selection_begin_marker= &m_iBeginMarker;
+	m_FieldRenderArgs.selection_end_marker= &m_iEndMarker;
 	m_iBeginMarker = m_iEndMarker = -1;
 
-	m_fPercentFadeToFail = -1;
+	m_FieldRenderArgs.fail_fade = -1;
 
 	m_StepCallback.SetFromNil();
 	m_SetPressedCallback.SetFromNil();
@@ -100,9 +101,9 @@ void NoteField::CacheNoteSkin( const RString &sNoteSkin_ )
 	LockNoteSkin l( sNoteSkinLower );
 
 	LOG->Trace("NoteField::CacheNoteSkin: cache %s", sNoteSkinLower.c_str() );
-	NoteDisplayCols *nd = new NoteDisplayCols( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
+	NoteDisplayCols *nd = new NoteDisplayCols( GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer );
 
-	for( int c=0; c<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; c++ ) 
+	for( int c=0; c<GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer; c++ )
 		nd->display[c].Load( c, m_pPlayerState, m_fYReverseOffsetPixels );
 	nd->m_ReceptorArrowRow.Load( m_pPlayerState, m_fYReverseOffsetPixels );
 	nd->m_GhostArrowRow.Load( m_pPlayerState, m_fYReverseOffsetPixels );
@@ -124,7 +125,7 @@ void NoteField::UncacheNoteSkin( const RString &sNoteSkin_ )
 void NoteField::CacheAllUsedNoteSkins()
 {
 	// If we're in Routine mode, apply our per-player noteskins.
-	if( GAMESTATE->GetCurrentStyle()->m_StyleType == StyleType_TwoPlayersSharedSides )
+	if( GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_StyleType == StyleType_TwoPlayersSharedSides )
 	{
 		FOREACH_EnabledPlayer( pn )
 			GAMESTATE->ApplyStageModifiers( pn, ROUTINE_NOTESKIN.GetValue(pn) );
@@ -169,18 +170,30 @@ void NoteField::CacheAllUsedNoteSkins()
 		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLower );
 		m_pDisplays[pn] = it->second;
 	}
+
+	InitColumnRenderers();
 }
 
-void NoteField::Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels )
+void NoteField::Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels, bool use_states_zoom )
 {
 	m_pPlayerState = pPlayerState;
 	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
 	CacheAllUsedNoteSkins();
+	// Design change:  Instead of having a flag in the style that toggles a
+	// fixed zoom that is only applied to the columns, ScreenGameplay now
+	// calculates a zoom factor to apply to the notefield and puts it in the
+	// PlayerState. -Kyz
+	// use_states_zoom flag exists because edit mode has to set its own special
+	// zoom factor. -Kyz
+	if(use_states_zoom)
+	{
+		SetZoom(pPlayerState->m_NotefieldZoom);
+	}
 }
 
 void NoteField::Load( 
 	const NoteData *pNoteData,
-	int iDrawDistanceAfterTargetsPixels, 
+	int iDrawDistanceAfterTargetsPixels,
 	int iDrawDistanceBeforeTargetsPixels )
 {
 	ASSERT( pNoteData != NULL );
@@ -189,13 +202,13 @@ void NoteField::Load(
 	m_iDrawDistanceBeforeTargetsPixels = iDrawDistanceBeforeTargetsPixels;
 	ASSERT( m_iDrawDistanceBeforeTargetsPixels >= m_iDrawDistanceAfterTargetsPixels );
 
-	m_fPercentFadeToFail = -1;
+	m_FieldRenderArgs.fail_fade = -1;
 
 	//int i1 = m_pNoteData->GetNumTracks();
-	//int i2 = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;
-	ASSERT_M(m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer, 
-		 ssprintf("NumTracks %d = ColsPerPlayer %d",m_pNoteData->GetNumTracks(), 
-			  GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer));
+	//int i2 = GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer;
+	ASSERT_M(m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer,
+		 ssprintf("NumTracks %d = ColsPerPlayer %d",m_pNoteData->GetNumTracks(),
+			  GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer));
 	
 	// The NoteSkin may have changed at the beginning of a new course song.
 	RString sNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin;
@@ -240,6 +253,30 @@ void NoteField::Load(
 		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLower );
 		m_pDisplays[pn] = it->second;
 	}
+	InitColumnRenderers();
+}
+
+void NoteField::InitColumnRenderers()
+{
+	m_FieldRenderArgs.player_state= m_pPlayerState;
+	m_FieldRenderArgs.reverse_offset_pixels= m_fYReverseOffsetPixels;
+	m_FieldRenderArgs.receptor_row= &(m_pCurDisplay->m_ReceptorArrowRow);
+	m_FieldRenderArgs.ghost_row= &(m_pCurDisplay->m_GhostArrowRow);
+	m_FieldRenderArgs.note_data= m_pNoteData;
+	m_ColumnRenderers.resize(GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer);
+	for(size_t ncr= 0; ncr < m_ColumnRenderers.size(); ++ncr)
+	{
+		FOREACH_EnabledPlayer(pn)
+		{
+			m_ColumnRenderers[ncr].m_displays[pn]= &(m_pDisplays[pn]->display[ncr]);
+		}
+		m_ColumnRenderers[ncr].m_displays[PLAYER_INVALID]= &(m_pCurDisplay->display[ncr]);
+		m_ColumnRenderers[ncr].m_column= ncr;
+		m_ColumnRenderers[ncr].m_column_render_args.column= ncr;
+		m_ColumnRenderers[ncr].m_field_render_args= &m_FieldRenderArgs;
+	}
+	m_pCurDisplay->m_ReceptorArrowRow.SetColumnRenderers(m_ColumnRenderers);
+	m_pCurDisplay->m_GhostArrowRow.SetColumnRenderers(m_ColumnRenderers);
 }
 
 void NoteField::Update( float fDeltaTime )
@@ -250,6 +287,11 @@ void NoteField::Update( float fDeltaTime )
 	}
 
 	ActorFrame::Update( fDeltaTime );
+
+	for(size_t c= 0; c < m_ColumnRenderers.size(); ++c)
+	{
+		m_ColumnRenderers[c].Update(fDeltaTime);
+	}
 
 	// update m_fBoardOffsetPixels, m_fCurrentBeatLastUpdate, m_fYPosCurrentBeatLastUpdate
 	const float fCurrentBeat = m_pPlayerState->GetDisplayedPosition().m_fSongBeat;
@@ -276,11 +318,11 @@ void NoteField::Update( float fDeltaTime )
 	cur->m_ReceptorArrowRow.Update( fDeltaTime );
 	cur->m_GhostArrowRow.Update( fDeltaTime );
 
-	if( m_fPercentFadeToFail >= 0 )
-		m_fPercentFadeToFail = min( m_fPercentFadeToFail + fDeltaTime/FADE_FAIL_TIME, 1 );
+	if( m_FieldRenderArgs.fail_fade >= 0 )
+		m_FieldRenderArgs.fail_fade = min( m_FieldRenderArgs.fail_fade + fDeltaTime/FADE_FAIL_TIME, 1 );
 
 	// Update fade to failed
-	m_pCurDisplay->m_ReceptorArrowRow.SetFadeToFailPercent( m_fPercentFadeToFail );
+	m_pCurDisplay->m_ReceptorArrowRow.SetFadeToFailPercent( m_FieldRenderArgs.fail_fade );
 
 	NoteDisplay::Update( fDeltaTime );
 	/* Update all NoteDisplays. Hack: We need to call this once per frame, not
@@ -294,7 +336,7 @@ void NoteField::Update( float fDeltaTime )
 
 float NoteField::GetWidth() const
 {
-	const Style* pStyle = GAMESTATE->GetCurrentStyle();
+	const Style* pStyle = GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber);
 	float fMinX, fMaxX;
 	// TODO: Remove use of PlayerNumber.
 	pStyle->GetMinAndMaxColX( m_pPlayerState->m_PlayerNumber, fMinX, fMaxX );
@@ -801,13 +843,11 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceB
 	return fLastBeatToDraw;
 }
 
-inline float NoteRowToVisibleBeat( const PlayerState *pPlayerState, int iRow )
-{
-	return NoteRowToBeat(iRow);
-}
-
 bool NoteField::IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels ) const
 {
+	// IMPORTANT:  Do not modify this function without also modifying the
+	// version that is in NoteDisplay.cpp or coming up with a good way to
+	// merge them. -Kyz
 	// TRICKY: If boomerang is on, then ones in the range 
 	// [iFirstRowToDraw,iLastRowToDraw] aren't necessarily visible.
 	// Test to see if this beat is visible before drawing.
@@ -834,41 +874,41 @@ void NoteField::DrawPrimitives()
 	const PlayerOptions &current_po = m_pPlayerState->m_PlayerOptions.GetCurrent();
 
 	// Adjust draw range depending on some effects
-	int iDrawDistanceAfterTargetsPixels = m_iDrawDistanceAfterTargetsPixels;
+	m_FieldRenderArgs.draw_pixels_after_targets= m_iDrawDistanceAfterTargetsPixels;
 	// HACK: If boomerang and centered are on, then we want to draw much 
 	// earlier so that the notes don't pop on screen.
 	float fCenteredTimesBoomerang = 
 		current_po.m_fScrolls[PlayerOptions::SCROLL_CENTERED] * 
 		current_po.m_fAccels[PlayerOptions::ACCEL_BOOMERANG];
-	iDrawDistanceAfterTargetsPixels += int(SCALE( fCenteredTimesBoomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2 ));
-	int iDrawDistanceBeforeTargetsPixels = m_iDrawDistanceBeforeTargetsPixels;
+	m_FieldRenderArgs.draw_pixels_after_targets += int(SCALE( fCenteredTimesBoomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2 ));
+	m_FieldRenderArgs.draw_pixels_before_targets = m_iDrawDistanceBeforeTargetsPixels;
 
 	float fDrawScale = 1;
 	fDrawScale *= 1 + 0.5f * fabsf( current_po.m_fPerspectiveTilt );
 	fDrawScale *= 1 + fabsf( current_po.m_fEffects[PlayerOptions::EFFECT_MINI] );
 
-	iDrawDistanceAfterTargetsPixels = (int)(iDrawDistanceAfterTargetsPixels * fDrawScale);
-	iDrawDistanceBeforeTargetsPixels = (int)(iDrawDistanceBeforeTargetsPixels * fDrawScale);
+	m_FieldRenderArgs.draw_pixels_after_targets = (int)(m_FieldRenderArgs.draw_pixels_after_targets * fDrawScale);
+	m_FieldRenderArgs.draw_pixels_before_targets = (int)(m_FieldRenderArgs.draw_pixels_before_targets * fDrawScale);
 
 
 	// Probe for first and last notes on the screen
-	float fFirstBeatToDraw = FindFirstDisplayedBeat( m_pPlayerState, iDrawDistanceAfterTargetsPixels );
-	float fLastBeatToDraw = FindLastDisplayedBeat( m_pPlayerState, iDrawDistanceBeforeTargetsPixels );
+	float fFirstBeatToDraw = FindFirstDisplayedBeat( m_pPlayerState, m_FieldRenderArgs.draw_pixels_after_targets );
+	float fLastBeatToDraw = FindLastDisplayedBeat( m_pPlayerState, m_FieldRenderArgs.draw_pixels_before_targets );
 
 	m_pPlayerState->m_fLastDrawnBeat = fLastBeatToDraw;
 
-	const int iFirstRowToDraw  = BeatToNoteRow(fFirstBeatToDraw);
-	const int iLastRowToDraw   = BeatToNoteRow(fLastBeatToDraw);
+	m_FieldRenderArgs.first_row  = BeatToNoteRow(fFirstBeatToDraw);
+	m_FieldRenderArgs.last_row   = BeatToNoteRow(fLastBeatToDraw);
 
 	//LOG->Trace( "start = %f.1, end = %f.1", fFirstBeatToDraw-fSongBeat, fLastBeatToDraw-fSongBeat );
-	//LOG->Trace( "Drawing elements %d through %d", iFirstRowToDraw, iLastRowToDraw );
+	//LOG->Trace( "Drawing elements %d through %d", m_FieldRenderArgs.first_row, m_FieldRenderArgs.last_row );
 
-#define IS_ON_SCREEN( fBeat )  ( fFirstBeatToDraw <= (fBeat) && (fBeat) <= fLastBeatToDraw && IsOnScreen( fBeat, 0, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels ) )
+#define IS_ON_SCREEN( fBeat )  ( fFirstBeatToDraw <= (fBeat) && (fBeat) <= fLastBeatToDraw && IsOnScreen( fBeat, 0, m_FieldRenderArgs.draw_pixels_after_targets, m_FieldRenderArgs.draw_pixels_before_targets ) )
 
 	// Draw board
 	if( SHOW_BOARD )
 	{
-		DrawBoard( iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels );
+		DrawBoard( m_FieldRenderArgs.draw_pixels_after_targets, m_FieldRenderArgs.draw_pixels_before_targets );
 	}
 
 	// Draw Receptors
@@ -891,7 +931,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < tSigs.size(); i++)
 		{
 			const TimeSignatureSegment *ts = ToTimeSignature(tSigs[i]);
-			int iSegmentEndRow = (i + 1 == tSigs.size()) ? iLastRowToDraw : tSigs[i+1]->GetRow();
+			int iSegmentEndRow = (i + 1 == tSigs.size()) ? m_FieldRenderArgs.last_row : tSigs[i+1]->GetRow();
 
 			// beat bars every 16th note
 			int iDrawBeatBarsEveryRows = BeatToNoteRow( ((float)ts->GetDen()) / 4 ) / 4;
@@ -934,7 +974,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_SCROLL]->size(); i++)
 		{
 			ScrollSegment *seg = ToScroll( segs[SEGMENT_SCROLL]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_FieldRenderArgs.first_row && seg->GetRow() <= m_FieldRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -946,7 +986,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_BPM]->size(); i++)
 		{
 			const BPMSegment *seg = ToBPM( segs[SEGMENT_BPM]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_FieldRenderArgs.first_row && seg->GetRow() <= m_FieldRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -958,7 +998,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_STOP]->size(); i++)
 		{
 			const StopSegment *seg = ToStop( segs[SEGMENT_STOP]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_FieldRenderArgs.first_row && seg->GetRow() <= m_FieldRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -970,7 +1010,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_DELAY]->size(); i++)
 		{
 			const DelaySegment *seg = ToDelay( segs[SEGMENT_DELAY]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_FieldRenderArgs.first_row && seg->GetRow() <= m_FieldRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -982,7 +1022,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_WARP]->size(); i++)
 		{
 			const WarpSegment *seg = ToWarp( segs[SEGMENT_WARP]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_FieldRenderArgs.first_row && seg->GetRow() <= m_FieldRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -994,7 +1034,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_TIME_SIG]->size(); i++)
 		{
 			const TimeSignatureSegment *seg = ToTimeSignature( segs[SEGMENT_TIME_SIG]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_FieldRenderArgs.first_row && seg->GetRow() <= m_FieldRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -1006,7 +1046,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_TICKCOUNT]->size(); i++)
 		{
 			const TickcountSegment *seg = ToTickcount( segs[SEGMENT_TICKCOUNT]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_FieldRenderArgs.first_row && seg->GetRow() <= m_FieldRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -1018,7 +1058,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_COMBO]->size(); i++)
 		{
 			const ComboSegment *seg = ToCombo( segs[SEGMENT_COMBO]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_FieldRenderArgs.first_row && seg->GetRow() <= m_FieldRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -1030,7 +1070,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_LABEL]->size(); i++)
 		{
 			const LabelSegment *seg = ToLabel( segs[SEGMENT_LABEL]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_FieldRenderArgs.first_row && seg->GetRow() <= m_FieldRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -1042,7 +1082,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_SPEED]->size(); i++)
 		{
 			const SpeedSegment *seg = ToSpeed( segs[SEGMENT_SPEED]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_FieldRenderArgs.first_row && seg->GetRow() <= m_FieldRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -1055,7 +1095,7 @@ void NoteField::DrawPrimitives()
 		for (i = 0; i < segs[SEGMENT_FAKE]->size(); i++)
 		{
 			const FakeSegment *seg = ToFake( segs[SEGMENT_FAKE]->at(i) );
-			if( seg->GetRow() >= iFirstRowToDraw && seg->GetRow() <= iLastRowToDraw )
+			if( seg->GetRow() >= m_FieldRenderArgs.first_row && seg->GetRow() <= m_FieldRenderArgs.last_row )
 			{
 				float fBeat = seg->GetBeat();
 				if( IS_ON_SCREEN(fBeat) )
@@ -1075,8 +1115,8 @@ void NoteField::DrawPrimitives()
 				float fSecond = a->fStartSecond;
 				float fBeat = timing.GetBeatFromElapsedTime( fSecond );
 
-				if( BeatToNoteRow(fBeat) >= iFirstRowToDraw &&
-					BeatToNoteRow(fBeat) <= iLastRowToDraw)
+				if( BeatToNoteRow(fBeat) >= m_FieldRenderArgs.first_row &&
+					BeatToNoteRow(fBeat) <= m_FieldRenderArgs.last_row)
 				{
 					if( IS_ON_SCREEN(fBeat) )
 						DrawAttackText( fBeat, *a );
@@ -1094,8 +1134,8 @@ void NoteField::DrawPrimitives()
 				FOREACH_CONST(Attack, attacks, a)
 				{
 					float fBeat = timing.GetBeatFromElapsedTime(a->fStartSecond);
-					if (BeatToNoteRow(fBeat) >= iFirstRowToDraw &&
-						BeatToNoteRow(fBeat) <= iLastRowToDraw &&
+					if (BeatToNoteRow(fBeat) >= m_FieldRenderArgs.first_row &&
+						BeatToNoteRow(fBeat) <= m_FieldRenderArgs.last_row &&
 						IS_ON_SCREEN(fBeat))
 					{
 						this->DrawAttackText(fBeat, *a);
@@ -1179,20 +1219,20 @@ void NoteField::DrawPrimitives()
 		{
 			int iBegin = m_iBeginMarker;
 			int iEnd = m_iEndMarker;
-			CLAMP( iBegin, iFirstRowToDraw, iLastRowToDraw );
-			CLAMP( iEnd, iFirstRowToDraw, iLastRowToDraw );
+			CLAMP( iBegin, m_FieldRenderArgs.first_row, m_FieldRenderArgs.last_row );
+			CLAMP( iEnd, m_FieldRenderArgs.first_row, m_FieldRenderArgs.last_row );
 			DrawAreaHighlight( iBegin, iEnd );
 		}
 		else if( m_iBeginMarker != -1 )
 		{
-			if( m_iBeginMarker >= iFirstRowToDraw &&
-				m_iBeginMarker <= iLastRowToDraw )
+			if( m_iBeginMarker >= m_FieldRenderArgs.first_row &&
+				m_iBeginMarker <= m_FieldRenderArgs.last_row )
 				DrawMarkerBar( m_iBeginMarker );
 		}
 		else if( m_iEndMarker != -1 )
 		{
-			if( m_iEndMarker >= iFirstRowToDraw &&
-				m_iEndMarker <= iLastRowToDraw )
+			if( m_iEndMarker >= m_FieldRenderArgs.first_row &&
+				m_iEndMarker <= m_FieldRenderArgs.last_row )
 			DrawMarkerBar( m_iEndMarker );
 		}
 	}
@@ -1201,175 +1241,19 @@ void NoteField::DrawPrimitives()
 	// Draw the arrows in order of column. This minimizes texture switches and
 	// lets us draw in big batches.
 
-	float fSelectedRangeGlow = SCALE( RageFastCos(RageTimer::GetTimeSinceStartFast()*2), -1, 1, 0.1f, 0.3f );
+	const Style* pStyle = GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber);
+	ASSERT_M(m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer, 
+		ssprintf("NumTracks %d != ColsPerPlayer %d",m_pNoteData->GetNumTracks(), 
+			GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer));
 
-	const Style* pStyle = GAMESTATE->GetCurrentStyle();
-	ASSERT_M(m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer, 
-		 ssprintf("NumTracks %d != ColsPerPlayer %d",m_pNoteData->GetNumTracks(), 
-			  GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer));
+	m_FieldRenderArgs.selection_glow= SCALE(
+		RageFastCos(RageTimer::GetTimeSinceStartFast()*2), -1, 1, 0.1f, 0.3f);
+	m_FieldRenderArgs.fade_before_targets= FADE_BEFORE_TARGETS_PERCENT;
 
 	for( int j=0; j<m_pNoteData->GetNumTracks(); j++ )	// for each arrow column
 	{
 		const int c = pStyle->m_iColumnDrawOrder[j];
-
-		bool bAnyUpcomingInThisCol = false;
-
-		// Draw all HoldNotes in this column (so that they appear under the tap notes)
-		{
-			NoteData::TrackMap::const_iterator begin, end;
-			m_pNoteData->GetTapNoteRangeInclusive( c, iFirstRowToDraw, iLastRowToDraw+1, begin, end );
-
-			for( ; begin != end; ++begin )
-			{
-				const TapNote &tn = begin->second; //m_pNoteData->GetTapNote(c, j);
-				if( tn.type != TapNoteType_HoldHead )
-					continue; // skip
-
-				const HoldNoteResult &Result = tn.HoldResult;
-				if( Result.hns == HNS_Held ) // if this HoldNote was completed
-					continue; // don't draw anything
-
-				int iStartRow = begin->first;
-				int iEndRow = iStartRow + tn.iDuration;
-
-				// TRICKY: If boomerang is on, then all notes in the range 
-				// [iFirstRowToDraw,iLastRowToDraw] aren't necessarily visible.
-				// Test every note to make sure it's on screen before drawing
-				float fThrowAway;
-				bool bStartIsPastPeak = false;
-				bool bEndIsPastPeak = false;
-				float fStartYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, c, NoteRowToVisibleBeat(m_pPlayerState, iStartRow), fThrowAway, bStartIsPastPeak );
-				float fEndYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, c, NoteRowToVisibleBeat(m_pPlayerState, iEndRow), fThrowAway, bEndIsPastPeak );
-
-				bool bTailIsOnVisible = iDrawDistanceAfterTargetsPixels <= fEndYOffset && fEndYOffset <= iDrawDistanceBeforeTargetsPixels;
-				bool bHeadIsVisible = iDrawDistanceAfterTargetsPixels <= fStartYOffset  && fStartYOffset <= iDrawDistanceBeforeTargetsPixels;
-				bool bStraddlingVisible = fStartYOffset <= iDrawDistanceAfterTargetsPixels && iDrawDistanceBeforeTargetsPixels <= fEndYOffset;
-				bool bStaddlingPeak = bStartIsPastPeak && !bEndIsPastPeak;
-				if( !(bTailIsOnVisible || bHeadIsVisible || bStraddlingVisible || bStaddlingPeak) )
-				{
-					//LOG->Trace( "skip drawing this hold." );
-					continue;	// skip
-				}
-
-				bool bIsAddition = (tn.source == TapNoteSource_Addition);
-				bool bIsHopoPossible = (tn.bHopoPossible);
-				bool bUseAdditionColoring = bIsAddition || bIsHopoPossible;
-				const bool bHoldGhostShowing = tn.HoldResult.bActive  &&  tn.HoldResult.fLife > 0;
-				const bool bIsHoldingNote = tn.HoldResult.bHeld;
-				if( bHoldGhostShowing )
-					m_pCurDisplay->m_GhostArrowRow.SetHoldShowing( c, tn );
-
-				ASSERT_M( NoteRowToBeat(iStartRow) > -2000, ssprintf("%i %i %i", iStartRow, iEndRow, c) );
-
-				bool bIsInSelectionRange = false;
-				if( m_iBeginMarker!=-1 && m_iEndMarker!=-1 )
-					bIsInSelectionRange = (m_iBeginMarker <= iStartRow && iEndRow < m_iEndMarker);
-
-				NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
-				displayCols->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, Result, bUseAdditionColoring, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 
-					m_fYReverseOffsetPixels, (float) iDrawDistanceAfterTargetsPixels, (float) iDrawDistanceBeforeTargetsPixels, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
-
-				bool bNoteIsUpcoming = NoteRowToBeat(iStartRow) > m_pPlayerState->GetDisplayedPosition().m_fSongBeat;
-				bAnyUpcomingInThisCol |= bNoteIsUpcoming;
-			}
-		}
-
-		// Draw all TapNotes in this column
-
-		// draw notes from furthest to closest
-		NoteData::TrackMap::const_iterator begin, end;
-		m_pNoteData->GetTapNoteRange( c, iFirstRowToDraw, iLastRowToDraw+1, begin, end );
-		for( ; begin != end; ++begin )
-		{
-			int q = begin->first;
-			const TapNote &tn = begin->second; //m_pNoteData->GetTapNote(c, q);
-
-			// Switch modified by Wolfman2000, tested by Saturn2888
-			// Fixes hold head overlapping issue, but not the rolls.
-			switch( tn.type )
-			{
-				case TapNoteType_Empty: // no note here
-				{
-					continue;
-				}
-				case TapNoteType_HoldHead:
-				{
-					//if (tn.subType == TapNoteSubType_Roll)
-						continue; // skip
-				}
-				default: break;
-			}
-
-			// Don't draw hidden (fully judged) steps.
-			if( tn.result.bHidden )
-				continue;
-
-			// TRICKY: If boomerang is on, then all notes in the range 
-			// [iFirstRowToDraw,iLastRowToDraw] aren't necessarily visible.
-			// Test every note to make sure it's on screen before drawing.
-			if( !IsOnScreen( NoteRowToBeat(q), c, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels ) )
-				continue; // skip
-
-			ASSERT_M( NoteRowToBeat(q) > -2000, ssprintf("%i %i %i, %f %f", q, iLastRowToDraw, 
-							iFirstRowToDraw, m_pPlayerState->GetDisplayedPosition().m_fSongBeat, m_pPlayerState->GetDisplayedPosition().m_fMusicSeconds) );
-
-			// See if there is a hold step that begins on this index.
-			// Only do this if the noteskin cares.
-			bool bHoldNoteBeginsOnThisBeat = false;
-			if( m_pCurDisplay->display[c].DrawHoldHeadForTapsOnSameRow() )
-			{
-				for( int c2=0; c2<m_pNoteData->GetNumTracks(); c2++ )
-				{
-					const TapNote &tmp = m_pNoteData->GetTapNote(c2, q);
-					if(tmp.type == TapNoteType_HoldHead &&
-					   tmp.subType == TapNoteSubType_Hold)
-					{
-						bHoldNoteBeginsOnThisBeat = true;
-						break;
-					}
-				}
-			}
-
-			// do the same for a roll.
-			bool bRollNoteBeginsOnThisBeat = false;
-			if (m_pCurDisplay->display[c].DrawRollHeadForTapsOnSameRow() )
-			{
-				for( int c2=0; c2<m_pNoteData->GetNumTracks(); c2++ )
-				{
-					const TapNote &tmp = m_pNoteData->GetTapNote(c2, q);
-					if(tmp.type == TapNoteType_HoldHead &&
-					   tmp.subType == TapNoteSubType_Roll)
-					{
-						bRollNoteBeginsOnThisBeat = true;
-						break;
-					}
-				}
-			}
-
-			bool bIsInSelectionRange = false;
-			if( m_iBeginMarker!=-1 && m_iEndMarker!=-1 )
-				bIsInSelectionRange = m_iBeginMarker<=q && q<m_iEndMarker;
-
-			bool bIsAddition = (tn.source == TapNoteSource_Addition);
-			bool bIsHopoPossible = (tn.bHopoPossible);
-			bool bUseAdditionColoring = bIsAddition || bIsHopoPossible;
-			NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
-			displayCols->display[c].DrawTap(tn, c, NoteRowToVisibleBeat(m_pPlayerState, q),
-							bHoldNoteBeginsOnThisBeat, bRollNoteBeginsOnThisBeat,
-					bUseAdditionColoring, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 
-					m_fYReverseOffsetPixels, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels, 
-					FADE_BEFORE_TARGETS_PERCENT );
-
-			bool bNoteIsUpcoming = NoteRowToBeat(q) > m_pPlayerState->GetDisplayedPosition().m_fSongBeat;
-			bAnyUpcomingInThisCol |= bNoteIsUpcoming;
-
-			if(!FAST_NOTE_RENDERING_PREF_CACHED)
-			{
-				DISPLAY->ClearZBuffer();
-			}
-		}
-
-		cur->m_ReceptorArrowRow.SetNoteUpcoming( c, bAnyUpcomingInThisCol );
+		m_ColumnRenderers[c].Draw();
 	}
 
 	cur->m_GhostArrowRow.Draw();
@@ -1377,7 +1261,7 @@ void NoteField::DrawPrimitives()
 
 void NoteField::FadeToFail()
 {
-	m_fPercentFadeToFail = max( 0.0f, m_fPercentFadeToFail );	// this will slowly increase every Update()
+	m_FieldRenderArgs.fail_fade = max( 0.0f, m_FieldRenderArgs.fail_fade );	// this will slowly increase every Update()
 		// don't fade all over again if this is called twice
 }
 
@@ -1398,18 +1282,18 @@ void NoteField::FadeToFail()
 #define CLOSE_RUN_AND_CALLBACK_BLOCKS  } lua_settop(L, 0);  LUA->Release(L); }
 #define PUSH_COLUMN lua_pushnumber(L, col+1)
 
-static void get_returned_column(Lua* L, int index, int& col)
+static void get_returned_column(Lua* L, PlayerNumber pn, int index, int& col)
 {
 	if(lua_isnumber(L, index))
 	{
 		// 1-indexed columns in lua
 		int tmpcol= lua_tonumber(L, index) - 1;
-		if(tmpcol < 0 || tmpcol >= GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer)
+		if(tmpcol < 0 || tmpcol >= GAMESTATE->GetCurrentStyle(pn)->m_iColsPerPlayer)
 		{
 			LuaHelpers::ReportScriptErrorFmt(
 				"Column returned by callback must be between 1 and %d "
 				"(GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()).",
-				GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer);
+				GAMESTATE->GetCurrentStyle(pn)->m_iColsPerPlayer);
 		}
 		else
 		{
@@ -1442,7 +1326,7 @@ void NoteField::Step(int col, TapNoteScore score, bool from_lua)
 	PUSH_COLUMN;
 	Enum::Push(L, score);
 	OPEN_RUN_BLOCK(2);
-	get_returned_column(L, 1, col);
+	get_returned_column(L, m_pPlayerState->m_PlayerNumber, 1, col);
 	get_returned_score(L, 2, score);
 	CLOSE_RUN_AND_CALLBACK_BLOCKS;
 	m_pCurDisplay->m_ReceptorArrowRow.Step(col, score);
@@ -1452,7 +1336,7 @@ void NoteField::SetPressed(int col, bool from_lua)
 	OPEN_CALLBACK_BLOCK(m_SetPressedCallback);
 	PUSH_COLUMN;
 	OPEN_RUN_BLOCK(1);
-	get_returned_column(L, 1, col);
+	get_returned_column(L, m_pPlayerState->m_PlayerNumber, 1, col);
 	CLOSE_RUN_AND_CALLBACK_BLOCKS;
 	m_pCurDisplay->m_ReceptorArrowRow.SetPressed(col);
 }
@@ -1463,7 +1347,7 @@ void NoteField::DidTapNote(int col, TapNoteScore score, bool bright, bool from_l
 	Enum::Push(L, score);
 	lua_pushboolean(L, bright);
 	OPEN_RUN_BLOCK(3);
-	get_returned_column(L, 1, col);
+	get_returned_column(L, m_pPlayerState->m_PlayerNumber, 1, col);
 	get_returned_score(L, 2, score);
 	get_returned_bright(L, 3, bright);
 	CLOSE_RUN_AND_CALLBACK_BLOCKS;
@@ -1476,7 +1360,7 @@ void NoteField::DidHoldNote(int col, HoldNoteScore score, bool bright, bool from
 	Enum::Push(L, score);
 	lua_pushboolean(L, bright);
 	OPEN_RUN_BLOCK(3);
-	get_returned_column(L, 1, col);
+	get_returned_column(L, m_pPlayerState->m_PlayerNumber, 1, col);
 	get_returned_score(L, 2, score);
 	get_returned_bright(L, 3, bright);
 	CLOSE_RUN_AND_CALLBACK_BLOCKS;
@@ -1523,68 +1407,80 @@ public:
 		} \
 		return 0; \
 	}
-	SET_CALLBACK_GENERIC(SetStepCallback, m_StepCallback);
-	SET_CALLBACK_GENERIC(SetSetPressedCallback, m_SetPressedCallback);
-	SET_CALLBACK_GENERIC(SetDidTapNoteCallback, m_DidTapNoteCallback);
-	SET_CALLBACK_GENERIC(SetDidHoldNoteCallback, m_DidHoldNoteCallback);
+	SET_CALLBACK_GENERIC(set_step_callback, m_StepCallback);
+	SET_CALLBACK_GENERIC(set_set_pressed_callback, m_SetPressedCallback);
+	SET_CALLBACK_GENERIC(set_did_tap_note_callback, m_DidTapNoteCallback);
+	SET_CALLBACK_GENERIC(set_did_hold_note_callback, m_DidHoldNoteCallback);
 #undef SET_CALLBACK_GENERIC
 
-	static int check_column(lua_State* L, int index)
+	static int check_column(lua_State* L, int index, PlayerNumber pn)
 	{
 		// 1-indexed columns in lua
 		int col= IArg(1)-1;
-		if(col < 0 || col >= GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer)
+		if(col < 0 || col >= GAMESTATE->GetCurrentStyle(pn)->m_iColsPerPlayer)
 		{
 			luaL_error(L, "Column must be between 1 and %d "
-				"(GAMESTATE:GetCurrentStyle():ColumnsPerPlayer()).",
-				GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer);
+				"(GAMESTATE:GetCurrentStyle(pn):ColumnsPerPlayer()).",
+				GAMESTATE->GetCurrentStyle(pn)->m_iColsPerPlayer);
 		}
 		return col;
 	}
 
-	static int Step(T* p, lua_State* L)
+	static int step(T* p, lua_State* L)
 	{
-		int col= check_column(L, 1);
+		int col= check_column(L, 1, p->GetPlayerState()->m_PlayerNumber);
 		TapNoteScore tns= Enum::Check<TapNoteScore>(L, 2);
 		p->Step(col, tns, true);
 		return 0;
 	}
 
-	static int SetPressed(T* p, lua_State* L)
+	static int set_pressed(T* p, lua_State* L)
 	{
-		int col= check_column(L, 1);
+		int col= check_column(L, 1, p->GetPlayerState()->m_PlayerNumber);
 		p->SetPressed(col, true);
 		return 0;
 	}
 
-	static int DidTapNote(T* p, lua_State* L)
+	static int did_tap_note(T* p, lua_State* L)
 	{
-		int col= check_column(L, 1);
+		int col= check_column(L, 1, p->GetPlayerState()->m_PlayerNumber);
 		TapNoteScore tns= Enum::Check<TapNoteScore>(L, 2);
 		bool bright= BArg(3);
 		p->DidTapNote(col, tns, bright, true);
 		return 0;
 	}
 
-	static int DidHoldNote(T* p, lua_State* L)
+	static int did_hold_note(T* p, lua_State* L)
 	{
-		int col= check_column(L, 1);
+		int col= check_column(L, 1, p->GetPlayerState()->m_PlayerNumber);
 		HoldNoteScore hns= Enum::Check<HoldNoteScore>(L, 2);
 		bool bright= BArg(3);
 		p->DidHoldNote(col, hns, bright, true);
 		return 0;
 	}
 
+	static int get_column_actors(T* p, lua_State* L)
+	{
+		lua_createtable(L, p->m_ColumnRenderers.size(), 0);
+		for(size_t i= 0; i < p->m_ColumnRenderers.size(); ++i)
+		{
+			p->m_ColumnRenderers[i].PushSelf(L);
+			lua_rawseti(L, -2, i+1);
+		}
+		return 1;
+	}
+
 	LunaNoteField()
 	{
-		ADD_METHOD(SetStepCallback);
-		ADD_METHOD(SetSetPressedCallback);
-		ADD_METHOD(SetDidTapNoteCallback);
-		ADD_METHOD(SetDidHoldNoteCallback);
-		ADD_METHOD(Step);
-		ADD_METHOD(SetPressed);
-		ADD_METHOD(DidTapNote);
-		ADD_METHOD(DidHoldNote);
+		ADD_METHOD(set_step_callback);
+		ADD_METHOD(set_set_pressed_callback);
+		ADD_METHOD(set_did_tap_note_callback);
+		ADD_METHOD(set_did_hold_note_callback);
+		ADD_METHOD(step);
+		ADD_METHOD(set_pressed);
+		ADD_METHOD(did_tap_note);
+		ADD_METHOD(did_hold_note);
+		ADD_METHOD(get_column_actors);
 	}
 };
 

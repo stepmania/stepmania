@@ -29,30 +29,6 @@ function TableStringLookup(t, group)
 	return ret
 end
 
-function split(delimiter, text)
-	local list = {}
-	local pos = 1
-	while 1 do
-		local first,last = string.find(text, delimiter, pos)
-		if first then
-			table.insert(list, string.sub(text, pos, first-1))
-			pos = last+1
-		else
-			table.insert(list, string.sub(text, pos))
-			break
-		end
-	end
-	return list
-end
-
-function join(delimiter, list)
-	local ret = list[1]
-	for i = 2,table.getn(list) do
-		ret = ret .. delimiter .. list[i]
-	end
-	return ret or ""
-end
-
 function wrap(val,n)
 	local x = val
 	Trace( "wrap "..x.." "..n )
@@ -238,12 +214,10 @@ function Center1Player()
 end
 
 function IsRoutine()
-	local styleType = GAMESTATE:GetCurrentStyle():GetStyleType()
-
-	if styleType == "StyleType_TwoPlayersSharedSides" then
+	local style= GAMESTATE:GetCurrentStyle()
+	if style and style:GetStyleType() == "StyleType_TwoPlayersSharedSides" then
 		return true
 	end
-
 	return false
 end
 
@@ -304,8 +278,9 @@ function getenv(name) return envTable[name] end
 -- tobool(v)
 -- Converts v to a boolean.
 function tobool(v)
-	if getmetatable(v) and (getmetatable(v))["__tobool"] and type((getmetatable(v))["__tobool"])=="function" then
-		return (getmetatable(v))["__tobool"](v)
+	local meta= getmetatable(v)
+	if meta and type(meta.__tobool) == "function" then
+		return meta.__tobool(v)
 	elseif type(v) == "string" then
 		local cmp = string.lower(v)
 		if cmp == "true" or cmp == "t" then
@@ -319,7 +294,10 @@ function tobool(v)
 		else
 			return true
 		end
+	elseif type(v) == "boolean" then
+		return v
 	end
+	return nil
 end
 
 -- GetPlayerOrMachineProfile(pn)

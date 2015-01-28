@@ -79,7 +79,7 @@ void ScreenOptionsManageCourses::BeginScreen()
 	vector<const Style*> vpStyles;
 	GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vpStyles );
 	const Style *pStyle = vpStyles[0];
-	GAMESTATE->SetCurrentStyle( pStyle );
+	GAMESTATE->SetCurrentStyle( pStyle, PLAYER_INVALID );
 
 	if( GAMESTATE->m_stEdit == StepsType_Invalid  ||
 	    GAMESTATE->m_cdEdit == Difficulty_Invalid )

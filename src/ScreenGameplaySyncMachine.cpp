@@ -18,7 +18,7 @@ void ScreenGameplaySyncMachine::Init()
 	m_bForceNoNetwork = true;
 
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-	GAMESTATE->SetCurrentStyle( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
+	GAMESTATE->SetCurrentStyle( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame), PLAYER_INVALID );
 	AdjustSync::ResetOriginalSyncData();
 
 	RString sFile = THEME->GetPathO("ScreenGameplaySyncMachine","music");
@@ -99,7 +99,7 @@ void ScreenGameplaySyncMachine::HandleScreenMessage( const ScreenMessage SM )
 			GAMESTATE->m_pCurSteps[pn].Set( NULL );
 		}
 		GAMESTATE->m_PlayMode.Set( PlayMode_Invalid );
-		GAMESTATE->SetCurrentStyle( NULL );
+		GAMESTATE->SetCurrentStyle( NULL, PLAYER_INVALID );
 		GAMESTATE->m_pCurSong.Set( NULL );
 	}
 }

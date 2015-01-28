@@ -239,6 +239,7 @@ namespace
 		 * case going from theme to theme, but if it was, it should be fixed
 		 * now. There's probably be a better way to do it, but I'm not sure
 		 * what it'd be. -aj */
+		THEME->UpdateLuaGlobals();
 		THEME->ReloadMetrics();
 		g_NewGame= RString();
 		g_NewTheme= RString();

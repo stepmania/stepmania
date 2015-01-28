@@ -341,6 +341,23 @@ function SpeedModIncLarge()
 	return ret
 end
 
+function GetSpeedModeAndValueFromPoptions(pn)
+	local poptions= GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred")
+	local speed= nil
+	local mode= nil
+	if poptions:MaxScrollBPM() > 0 then
+		mode= "m"
+		speed= math.round(poptions:MaxScrollBPM())
+	elseif poptions:TimeSpacing() > 0 then
+		mode= "C"
+		speed= math.round(poptions:ScrollBPM())
+	else
+		mode= "x"
+		speed= math.round(poptions:ScrollSpeed() * 100)
+	end
+	return speed, mode
+end
+
 function ArbitrarySpeedMods()
 	-- If players are allowed to join while this option row is active, problems will probably occur.
 	local increment= get_speed_increment()
@@ -400,6 +417,7 @@ function ArbitrarySpeedMods()
 				val.mode= ({"x", "C", "m"})[real_choice - 4]
 			end
 			self:GenChoices()
+			MESSAGEMAN:Broadcast("SpeedChoiceChanged", {pn= pn, mode= val.mode, speed= val.speed})
 			return true
 		end,
 		GenChoices= function(self)
@@ -440,19 +458,7 @@ function ArbitrarySpeedMods()
 	}
 	for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
 		if GAMESTATE:IsHumanPlayer(pn) then
-			local poptions= GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred")
-			local speed= nil
-			local mode= nil
-			if poptions:MaxScrollBPM() > 0 then
-				mode= "m"
-				speed= math.round(poptions:MaxScrollBPM())
-			elseif poptions:TimeSpacing() > 0 then
-				mode= "C"
-				speed= math.round(poptions:ScrollBPM())
-			else
-				mode= "x"
-				speed= math.round(poptions:ScrollSpeed() * 100)
-			end
+			local speed, mode= GetSpeedModeAndValueFromPoptions(pn)
 			ret.CurValues[pn]= {mode= mode, speed= speed}
 			ret.NumPlayers= ret.NumPlayers + 1
 		end

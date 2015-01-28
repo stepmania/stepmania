@@ -112,6 +112,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='ConnectToServer' return='bool' arguments='string sAddress'>
 		Tries to connect to the server at <code>sAddress</code>.
 	</Function>
+	<Function name='create_spline' return='CubicSplineN' arguments=''>
+		Creates a CubicSplineN for you to use.  Make sure you destroy the CubicSplineN when you're done with it, or you will have a memory leak.
+	</Function>
 	<Function name='CustomDifficultyToColor' theme='_fallback' return='color' arguments='string cd'>
 		[02 Colors.lua]
 	</Function>
@@ -831,6 +834,12 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetParent' return='Actor' arguments=''>
 		Returns the Actor's parent, or <code>nil</code> if it doesn't have one.
 	</Function>
+	<Function name='GetFakeParent' return='Actor' arguments=''>
+		Returns the Actor's fake parent, or <code>nil</code> if it doesn't have one.
+	</Function>
+	<Function name='SetFakeParent' return='' arguments='Actor p'>
+		Sets the Actor's fake parent to p, or clears it if p is nil.
+	</Function>
 	<Function name='GetVisible' return='bool' arguments=''>
 		Returns the Actor's visibility.
 	</Function>
@@ -1515,6 +1524,22 @@ save yourself some time, copy this for undocumented things:
 		Sets multiple vertices at once. The elements of <code>vertices</code> should themselves be tables, of the form provided to <Link class='ActorMultiVertex' function='SetVertex'>SetVertex</Link>. If <code>vertices</code> is the first argument it will start from vertex 1. If an integer is provided before <code>vertices</code> it will start from that vertex. It will add vertices as necessary.
         Example: self:SetVertices( { { { x1, y1, z1 } , { r1,g1,b1,a1 } , { tcx1,tcy1 } }; { { x2, y2, z2 } , { r2,g2,b2,a2 } , { tcx2,tcy2 } } } )
 	</Function>
+	<Function name='SetVertsFromSplines' return='' arguments=''>
+		Sets all the drawn verts of the ActorMultiVertex by evaluating the splines.<br />
+		("all the drawn verts" means all the verts between FirstToDraw and NumToDraw, the verts that are set to draw in the current tween state.)<br />
+		The parts of the ActorMultiVertex are evenly spaced along the spline in terms of t value.<br />
+		The exact behavior depends on the draw mode.<br />
+		DrawMode_Quads uses all 4 splines, one for each corner.<br />
+		DrawMode_QuadStrip and DrawMode_Strip use 2 splines, one for each edge of the strip.<br />
+		DrawMode_Fan uses one spline, for the edge verts of the fan.  The first vert is not touched because it is the center.<br />
+		DrawMode_Triangles uses 3 splines, one for each corner.<br />
+		DrawMode_SymmetricQuadStrip uses 3 splines, one on each edge and one in the center.<br />
+		DrawMode_LineStrip uses 1 spline.<br />
+	</Function>
+	<Function name='GetSpline' return='CubicSplineN' arguments='int i'>
+		Returns the requested spline.  Spline indices range from 1 to 4.<br />
+		ActorMultiVertex splines are not inside the tween state, and will not change the verts until you call SetVertsFromSplines.
+	</Function>
 	<Function name='SetNumVertices' return='void' arguments='int num'>
 		Sets the number of vertices.
 	</Function>
@@ -2056,6 +2081,92 @@ save yourself some time, copy this for undocumented things:
 		Returns the SHA-1 hash for <code>s</code>.
 	</Function>
 </Class>
+<Class name='CubicSplineN'>
+	<Description>
+		All functions in this class have camel case equivalents, use whichever naming style you prefer.<br />
+		This spline implementation is a cubic spline.<br />
+		A spline is a line calculated from a small set of points with mathematical smooting applied.<br />
+		Splines can have any number of dimensions, but splines owned by actors (the ones inside NCSplineHandler and ActorMultiVertex) always have 3 dimensions.<br />
+	</Description>
+	<Function name='solve' return='' arguments=''>
+		Solves the spline, setting the coefficients.
+	</Function>
+	<Function name='evaluate' return='{float}' arguments='float t'>
+		Evaluates the spline at the given t value, returning a table of the results for each dimension of the spline.<br />
+		t can range from 0 to the value returned by get_max_t().<br />
+		A normal spline will return its starting point for any t value less than 0 and its end point for any t value greater than the max.<br />
+		A looped spline adjust the t value to be within the its range by adding or subtracting the max t as needed. (so if the max t is 4 and you evaluate at 5, it will return the same as if you evaluated at 1.)
+	</Function>
+	<Function name='evaluate_derivative' return='{float}' arguments='float t'>
+		Evaluates the derivative at t.
+	</Function>
+	<Function name='evaluate_second_derivative' return='{float}' arguments='float t'>
+		Evaluates the second derivative at t.
+	</Function>
+	<Function name='evaluate_third_derivative' return='{float}' arguments='float t'>
+		Evaluates the third derivative at t.<br />
+		Second and third derivative functions exist because they're possible, not because they're expected to be useful.  The fourth derivative would be 0 because the equation for evaluating the spline is "a + (b*t) + (c*t^2) + (d*t^3)".
+	</Function>
+	<Function name='set_point' return='' arguments='int i, {float} p'>
+		Sets point i of the spline to the position specified by the table p.
+	</Function>
+	<Function name='set_coefficients' return= '' arguments='int i, {float} b, {float} c, {float} d'>
+		Sets the coefficients of the spline at point i.<br />
+		Each table must contain a value for each dimension of the spline.<br />
+		Solving the spline normally should cover all normal usage, this is for people that want a spline with an abnormal behavior, so if you set the coefficients  directly, expect to end up with an unsmooth shape.
+	</Function>
+	<Function name='get_coefficients' return='{{float}, {float}, {float}}' arguments='int i'>
+		Returns a table containing the tables of coefficients for the point i.
+	</Function>
+	<Function name='set_spatial_extent' return='' arguments='int d, float e'>
+		Sets the spatial extent of dimension d of the spline to e.<br />
+		The spatial extent exists to handle numbers that exist in a finite looped space, instead of the flat infinite space.<br />
+		To put it more concretely, spatial extent exists to allow a spline to control rotation with wrapping behavior at 0.0 and 2pi, instead of suddenly jerking from 2pi to 0.0.
+	</Function>
+	<Function name='get_spatial_extent' return='float' arguments='int d'>
+		Returns the spatial extent of dimension d of the spline.
+	</Function>
+	<Function name='get_max_t' return='float' arguments=''>
+		Returns the max t value the spline extends to.  For a normal spline, this will be size()-1.  For a looped spline, this will be size().
+	</Function>
+	<Function name='set_size' return='' arguments='int s'>
+		Sets the number of points in the spline.  You must set the number of points before trying to set the position of any point.
+	</Function>
+	<Function name='get_size' return='int s' arguments=''>
+		Returns the number of points in the spline.
+	</Function>
+	<Function name='set_dimension' return='' arguments='int d'>
+		Sets the number of dimensions the spline has.<br />
+		Splines that are owned by actors (the ones inside ActorMultiVertex and NCSplineHandler) cannot have their number of dimensions changed because the actors require them to have 3 dimensions.
+	</Function>
+	<Function name='get_dimension' return='int' arguments=''>
+		Returns the number of dimensions the spline has.
+	</Function>
+	<Function name='empty' return='bool' arguments=''>
+		Returns true of the spline has zero points, or false if it has more than zero points.
+	</Function>
+	<Function name='set_loop' return='' arguments='bool'>
+		Sets whether the spline is looped.  A looped spline is one where the end point is connected to the start point.
+	</Function>
+	<Function name='get_loop' return='bool' arguments=''>
+		Returns whether the spline is looped.
+	</Function>
+	<Function name='set_polygonal' return='' arguments='bool'>
+		Sets whether the spline is polygonal.  If the spline is polygonal, then it will have straight lines between the points instead of curves.
+	</Function>
+	<Function name='get_polygonal' return='bool' arguments=''>
+		Returns whether the spline is polygonal.
+	</Function>
+	<Function name='set_dirty' return='' arguments='bool'>
+		Sets whether the spline is dirty.  A dirty spline is one that has been changed in some way that affects its shape.  When solve() is called, the spline will only be solved if it is dirty.  The dirty flag is automatically set by everything, so you should never have to call this function.
+	</Function>
+	<Function name='get_dirty' return='bool' arguments=''>
+		Returns whether the spline is currently dirty.
+	</Function>
+	<Function name='destroy' return='' arguments=''>
+		Destroys the spline, freeing the memory allocated for it.  This can only be called on splines created with create_spline().
+	</Function>
+</Class>
 <Class name='DifficultyIcon'>
 	<Function name='SetFromDifficulty' return='void' arguments='Difficulty dc'>
 		Sets the DifficultyIcon's state from the difficulty passed in.
@@ -2130,6 +2241,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetName' return='string' arguments=''>
 		Returns the name of the game such as &quot;dance&quot; or &quot;pump&quot;.
+	</Function>
+	<Function name='GetSeparateStyles' return='bool' arguments=''>
+		Returns whether this game allows the players to have separate styles.
 	</Function>
 </Class>
 <Class name='GameCommand'>
@@ -2269,6 +2383,16 @@ save yourself some time, copy this for undocumented things:
 	<Function name='ApplyGameCommand' return='void' arguments='string sCommand, PlayerNumber pn'>
 		The second argument is optional. Apply the GameCommand represented by <code>sCommand</code>
 		for <code>pn</code>, if given. See <Link class='GameCommand' />.
+	</Function>
+	<Function name='CanSafelyEnterGameplay' return='bool,string' arguments=''>
+		Checks various things to determine whether the game will crash when gameplay starts.  Returns false and a string if gameplay cannot be entered safely.<br />
+		Might not work in all cases, but will catch things like a player not having
+		steps set or no current song or style.  Mainly exists for people with a custom ScreenSelectMusic replacement.<br />
+		Example:<br />
+		local can, reason= GAMESTATE:CanSafelyEnterGameplay()<br />
+		if not can then<br />
+		lua.ReportScriptError("Cannot safely enter gameplay: " .. tostring(reason))<br />
+		end<br />
 	</Function>
 	<Function name='ClearStageModifiersIllegalForCourse' return='void' arguments=''>
 		Removes any stage modifiers that are illegal for course play.
@@ -2944,41 +3068,102 @@ save yourself some time, copy this for undocumented things:
 		Returns a table of noteskin names for the current gametype.
 	</Function>
 </Class>
+<Class name='NCSplineHandler'>
+	<Description>
+		All functions in this class have camel case equivalents, use whichever naming style you prefer.<br />
+		The spline handler holds info on how the spline is used by the engine.<br />
+		Each get/set pair of functions in this class is for a different aspect of the spline's behavior.
+	</Description>
+	<Function name='get_spline' return='CubicSplineN' arguments=''>
+		Returns the spline for this handler.
+	</Function>
+	<Function name='get_beats_per_t' return='float' arguments=''>
+		Returns the beats per t value of the spline.  If the beats_per_t is 4, then a note must be on screen for 4 beats to traverse from one point on the spline to the next.
+	</Function>
+	<Function name='set_beats_per_t' return='' arguments='float per'>
+		Sets the beats per t value for the spline.
+	</Function>
+	<Function name='get_receptor_t' return='float' arguments=''>
+		Returns the t value that receptors are evaluated at.
+	</Function>
+	<Function name='set_receptor_t' return='' arguments='float t'>
+		 the t value that receptors are evaluated at.
+	</Function>
+	<Function name='get_spline_mode' return='NoteColumnSplineMode' arguments=''>
+		Returns the mode the spline is set to.<br />
+		"NoteColumnSplineMode_Disabled" means the spline will not affect the notes or receptors at all.<br />
+		"NoteColumnSplineMode_Offset" means the spline will added to the effects from the mods.<br />
+		"NoteColumnSplineMode_Position" means only the spline affect the notes and mods will be ignored. (but only mods that affect the same aspect of the note as the spline will be disabled.  So a rotation spline won't disable Mini or Tiny, but a zoom spline will, and a zoom spline won't disable Dizzy, Twirl, or Roll, but a rotation spline will.)
+	</Function>
+	<Function name='set_spline_mode' return='' arguments='NoteColumnSplineMode mode'>
+		Sets the current spline mode for this handler.
+	</Function>
+	<Function name='get_subtract_song_beat' return='bool' arguments=''>
+		Returns whether the current song beat is subtracted from a note's beat when calculating the t value to use on the spline.
+	</Function>
+	<Function name='set_subtract_song_beat' return='' arguments='bool s'>
+		Sets whether the current song beat is subtracted from a note's beat when calculating the t value to use on the spline.
+	</Function>
+</Class>
+<Class base='Actor' name='NoteColumnRenderer'>
+	<Description>
+		All functions in this class have camel case equivalents, use whichever naming style you prefer.<br />
+		Position, rotation, and zoom each have separate spline handlers to allow them to have separate independent behavior.<br />
+		It is important to note that the spline handlers are inside the tween state, so whenever you start a new tween on the actor, you need to refetch the spline handlers.<br />
+	</Description>
+	<Function name='get_pos_handler' return='NCSplineHandler' arguments=''>
+		Returns the handler for the position spline.
+	</Function>
+	<Function name='get_rot_handler' return='NCSplineHandler' arguments=''>
+		Returns the handler for the rotation spline.<br />
+		The rotation applied by the rotation spline is in radians.<br />
+		For convenience, the spatial extent of the rotation spline defaults to 2pi.
+	</Function>
+	<Function name='get_zoom_handler' return='NCSplineHandler' arguments=''>
+		Returns the handler for the zoom spline.
+	</Function>
+</Class>
 <Class name='NoteField'>
-	<Function name='DidHoldNote' return='' arguments='int column, TapNoteScore tns, bool bright'>
+	<Description>
+		All functions in this class have camel case equivalents, use whichever naming style you prefer.<br />
+	</Description>
+	<Function name='did_hold_note' return='' arguments='int column, TapNoteScore tns, bool bright'>
 		Makes the NoteField act as if a hold note was hit in the column, with the given score and bright setting. <br />
-		The callback for DidHoldNote will not be called.
+		The callback for did_hold_note will not be called.
 	</Function>
-	<Function name='DidTapNote' return='' arguments='int column, TapNoteScore tns, bool bright'>
+	<Function name='did_tap_note' return='' arguments='int column, TapNoteScore tns, bool bright'>
 		Makes the NoteField act as if a tap note was hit in the column, with the given score and bright setting. <br />
-		The callback for DidTapNote will not be called.
+		The callback for did_tap_note will not be called.
 	</Function>
-	<Function name='SetDidHoldNoteCallback' return= '' arguments='function callback'>
+	<Function name='get_column_actors' return='{NoteColumnRenderer}' arguments=''>
+		Returns a table of the actors for the columns.  This means that each column is an actor, so you can move it around or animate it like an actor.  See the NoteColumnRenderer class for a list of special functions for the column's actor.
+	</Function>
+	<Function name='set_did_hold_note_callback' return= '' arguments='function callback'>
 		Same as SetDidTapNoteCallback, but for hold notes.  Uses HoldNoteScore instead of TapNoteScore.
 	</Function>
-	<Function name='SetDidTapNoteCallback' return= '' arguments='function callback'>
+	<Function name='set_did_tap_note_callback' return= '' arguments='function callback'>
 		Sets the function that the NoteField will call whenever a tap note is hit.<br />
 		The callback function is passed the column, the TapNoteScore, and whether the explosion will be bright.<br />
 		The callback function can return changed values for the NoteField to use instead of the ones that were passed.<br />
 		Pass nil instead of a function to clear the callback.
 	</Function>
-	<Function name='SetPressed' return='' arguments='int column'>
+	<Function name='set_pressed' return='' arguments='int column'>
 		Makes the NoteField act as if a press occurred in the column. <br />
-		The callback for SetPressed will not be called.
+		The callback for set_pressed will not be called.
 	</Function>
-	<Function name='SetSetPressedCallback' return= '' arguments='function callback'>
+	<Function name='set_set_pressed_callback' return= '' arguments='function callback'>
 		Sets the function that the NoteField will call whenever a press occurs.<br />
 		The callback function is passed the column for the press.<br />
 		The callback function can return changed values for the NoteField to use instead of the ones that were passed.<br />
 		Pass nil instead of a function to clear the callback.
 	</Function>
-	<Function name='SetStepCallback' return= '' arguments='function callback'>
+	<Function name='set_step_callback' return= '' arguments='function callback'>
 		Sets the function that the NoteField will call whenever a step occurs.<br />
 		The callback function is passed the column and the TapNoteScore for the step.<br />
 		The callback function can return changed values for the NoteField to use instead of the ones that were passed.<br />
 		Pass nil instead of a function to clear the callback.
 	</Function>
-	<Function name='Step' return='' arguments='int column, TapNoteScore tns'>
+	<Function name='step' return='' arguments='int column, TapNoteScore tns'>
 		Makes the NoteField act as if a step occurred in the column with the given score.
 		The callback for Step will not be called.
 	</Function>
@@ -4013,6 +4198,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetCurrentRowIndex' renamed='true' return='int' arguments='PlayerNumber pn'>
 		Returns the current row that player <code>pn</code> is on. (Was previously <code>GetCurrentRow</code>.)
 	</Function>
+	<Function name='GetNumRows' return='int' arguments=''>
+		Returns the number of rows on the screen.
+	</Function>
 	<Function name='GetOptionRow' return='OptionRow' arguments='int iRow'>
 		Returns the specified OptionRow.
 	</Function>
@@ -4511,6 +4699,21 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetSecondsIntoAnimation' return='void' arguments='float fSeconds'>
 		Sets the number of seconds into the animation to <code>fSeconds</code>.
 	</Function>
+	<Function name='SetStateProperties' return= '' arguments='table properties'>
+		Sets the properties of the states of the sprite.  The properties table is identical to the "Frames" table that can be put in the sprite when calling Def.Sprite.<br />
+		Example:<br />
+		{{Frame= 0, Delay= .016, {0, 0}, {.25, .25}},<br />
+		{Frame= 1, Delay= .016, {0, 0}, {.25, .25}},<br />
+		{Frame= 2, Delay= .016, {0, 0}, {.25, .25}},<br />
+		{Frame= 3, Delay= .016, {0, 0}, {.25, .25}},<br />
+		}<br />
+		Frame is optional, defaulting to 0.<br />
+		Delay is optional, defaulting to 0.<br />
+		The two tables are optional upper left and lower right corners of the fraction of the frame to use.  The example makes the sprite only use the upper left corner of each frame.<br />
+		Simpler example:<br />
+		{{Frame= 0, Delay= .016}, {Frame= 1, Delay= .016}, {Frame= 2, Delay= .016}, {Frame= 3, Delay= .016}}<br />
+		This example makes the sprite use the whole of each frame.
+	</Function>
 	<Function name='SetTexture' return='void' arguments='RageTexture texture'>
 		Set the texture to <code>texture</code>.
 	</Function>
@@ -4719,11 +4922,14 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetColumnDrawOrder' return='int' arguments='int column'>
 		Returns the draw order of the column.
 	</Function>
+	<Function name='GetWidth' return='float' arguments='PlayerNumber pn'>
+		Returns the width of the notefield for the given player with this style.
+	</Function>
 	<Function name='LockedDifficulty' return='bool' arguments=''>
 		Returns <code>true</code> if this style locks the difficulty for both players.
 	</Function>
 	<Function name='NeedsZoomOutWith2Players' return='bool' arguments=''>
-		Returns <code>true</code> if the Style needs to be zoomed out with two players.
+		Deprecated.  Always returns false.
 	</Function>
 </Class>
 <Class name='TapNote'>

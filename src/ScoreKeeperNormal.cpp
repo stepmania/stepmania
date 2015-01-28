@@ -74,7 +74,7 @@ void ScoreKeeperNormal::Load(
 		// We might have been given lots of songs; don't keep them in memory uncompressed.
 		pSteps->Compress();
 
-		const Style* pStyle = GAMESTATE->GetCurrentStyle();
+		const Style* pStyle = GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber);
 		NoteData ndPre;
 		pStyle->GetTransformedNoteDataForStyle( m_pPlayerState->m_PlayerNumber, ndTemp, ndPre );
 

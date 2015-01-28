@@ -442,6 +442,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClCompile Include="ControllerStateDisplay.cpp" />
     <ClCompile Include="CreateZip.cpp" />
     <ClCompile Include="CryptHelpers.cpp" />
+    <ClCompile Include="CubicSpline.cpp" />
     <ClCompile Include="DateTime.cpp" />
     <ClCompile Include="Difficulty.cpp" />
     <ClCompile Include="EnumHelper.cpp" />
@@ -1757,6 +1758,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClInclude Include="ControllerStateDisplay.h" />
     <ClInclude Include="CreateZip.h" />
     <ClInclude Include="CryptHelpers.h" />
+    <ClInclude Include="CubicSpline.h" />
     <ClInclude Include="DateTime.h" />
     <ClInclude Include="Difficulty.h" />
     <ClInclude Include="EnumHelper.h" />

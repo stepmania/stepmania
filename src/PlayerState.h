@@ -37,6 +37,8 @@ public:
 	 * @param fDelta the current time. */
 	void Update( float fDelta );
 
+	void SetPlayerNumber(PlayerNumber pn);
+
 	/**
 	 * @brief The PlayerNumber assigned to this Player: usually 1 or 2.
 	 *
@@ -50,6 +52,10 @@ public:
 	 * This is only used if GAMESTATE->m_bMultiplayer is true.
 	 */
 	MultiPlayer		m_mp;
+
+	// This is used by ArrowEffects and the NoteField to zoom both appropriately
+	// to fit in the space available. -Kyz
+	float m_NotefieldZoom;
 
 	// Music statistics:
 	SongPosition m_Position;

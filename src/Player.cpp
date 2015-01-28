@@ -300,7 +300,7 @@ void Player::Init(
 
 	{
 		// Init judgment positions
-		bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->GetUsesCenteredArrows();
+		bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle(pPlayerState->m_PlayerNumber)->GetUsesCenteredArrows();
 		Actor TempJudgment;
 		TempJudgment.SetName( "Judgment" );
 		ActorUtil::LoadCommand( TempJudgment, sType, "Transform" );
@@ -499,13 +499,13 @@ void Player::Init(
 	}
 
 	// Load HoldJudgments
-	m_vpHoldJudgment.resize( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
-	for( int i = 0; i < GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; ++i )
+	m_vpHoldJudgment.resize( GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer );
+	for( int i = 0; i < GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer; ++i )
 		m_vpHoldJudgment[i] = NULL;
 
 	if( HasVisibleParts() )
 	{
-		for( int i = 0; i < GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; ++i )
+		for( int i = 0; i < GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer; ++i )
 		{
 			HoldJudgment *pJudgment = new HoldJudgment;
 			// xxx: assumes sprite; todo: don't force 1x2 -aj
@@ -523,7 +523,7 @@ void Player::Init(
 		this->AddChild( m_pNoteField );
 	}
 
-	m_vbFretIsDown.resize( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
+	m_vbFretIsDown.resize( GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer );
 	FOREACH( bool, m_vbFretIsDown, b )
 		*b = false;
 
@@ -649,7 +649,7 @@ void Player::Load()
 //		m_pScore->Init( pn );
 
 	/* Apply transforms. */
-	NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions.GetStage(), GAMESTATE->GetCurrentStyle()->m_StepsType );
+	NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions.GetStage(), GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType );
 
 	const Song* pSong = GAMESTATE->m_pCurSong;
 
@@ -668,7 +668,7 @@ void Player::Load()
 			// it has to do with there only being four cases. This is a lame
 			// workaround, but since only DDR has ever really implemented those
 			// modes, it's stayed like this. -aj
-			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+			StepsType st = GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType;
 			NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions.GetStage(), st );
 
 			if (BATTLE_RAVE_MIRROR)
@@ -707,7 +707,7 @@ void Player::Load()
 		m_pNoteField->Load( &m_NoteData, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels );
 	}
 
-	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->GetUsesCenteredArrows();
+	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->GetUsesCenteredArrows();
 	if( m_pAttackDisplay )
 		m_pAttackDisplay->SetX( ATTACK_DISPLAY_X.GetValue(pn, bPlayerUsingBothSides) - 40 );
 	// set this in Update //m_pAttackDisplay->SetY( bReverse ? ATTACK_DISPLAY_Y_REVERSE : ATTACK_DISPLAY_Y );
@@ -860,7 +860,7 @@ void Player::Update( float fDeltaTime )
 
 		// Update Y positions
 		{
-			for( int c=0; c<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; c++ )
+			for( int c=0; c<GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer; c++ )
 			{
 				float fPercentReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(c);
 				float fHoldJudgeYPos = SCALE( fPercentReverse, 0.f, 1.f, HOLD_JUDGMENT_Y_STANDARD, HOLD_JUDGMENT_Y_REVERSE );
@@ -920,16 +920,17 @@ void Player::Update( float fDeltaTime )
 	}
 
 	// update pressed flag
-	const int iNumCols = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;
+	const int iNumCols = GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer;
 	ASSERT_M( iNumCols <= MAX_COLS_PER_PLAYER, ssprintf("%i > %i", iNumCols, MAX_COLS_PER_PLAYER) );
 	for( int col=0; col < iNumCols; ++col )
 	{
 		ASSERT( m_pPlayerState != NULL );
 
 		// TODO: Remove use of PlayerNumber.
-		GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( col, m_pPlayerState->m_PlayerNumber );
+		vector<GameInput> GameI;
+		GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( col, m_pPlayerState->m_PlayerNumber, GameI );
 
-		bool bIsHoldingButton = INPUTMAPPER->IsBeingPressed( GameI );
+		bool bIsHoldingButton= INPUTMAPPER->IsBeingPressed(GameI);
 
 		// TODO: Make this work for non-human-controlled players
 		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && m_pPlayerState->m_PlayerController==PC_HUMAN )
@@ -1221,10 +1222,10 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			}
 			else
 			{
-				GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
-			// this previously read as bIsHoldingButton &=
-			// was there a specific reason for this? - Friez
-				bIsHoldingButton &= INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
+				vector<GameInput> GameI;
+				GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( iTrack, pn, GameI );
+
+				bIsHoldingButton &= INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp);
 			}
 		}
 	}
@@ -1505,7 +1506,7 @@ void Player::ApplyWaitingTransforms()
 
 		// if re-adding noteskin changes, this is one place to edit -aj
 
-		NoteDataUtil::TransformNoteData( m_NoteData, po, GAMESTATE->GetCurrentStyle()->m_StepsType, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat) );
+		NoteDataUtil::TransformNoteData( m_NoteData, po, GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat) );
 	}
 	m_pPlayerState->m_ModsToApply.clear();
 }
@@ -1516,7 +1517,7 @@ void Player::DrawPrimitives()
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 	// May have both players in doubles (for battle play); only draw primary player.
-	if( GAMESTATE->GetCurrentStyle()->m_StyleType == StyleType_OnePlayerTwoSides  &&
+	if( GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StyleType == StyleType_OnePlayerTwoSides  &&
 		pn != GAMESTATE->GetMasterPlayerNumber() )
 		return;
 
@@ -2141,9 +2142,14 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		int iNumTracksHeld = 0;
 		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 		{
-			GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( t, pn );
-			const float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
-			if( fSecsHeld > 0  && fSecsHeld < m_fTimingWindowJump )
+			vector<GameInput> GameI;
+			GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( t, pn, GameI );
+			float secs_held= 0.0f;
+			for(size_t i= 0; i < GameI.size(); ++i)
+			{
+				secs_held= max(secs_held, INPUTMAPPER->GetSecsHeld( GameI[i] ));
+			}
+			if( secs_held > 0  && secs_held < m_fTimingWindowJump )
 				iNumTracksHeld++;
 		}
 
@@ -2417,7 +2423,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			{
 				bool bNoteRowMatchesFrets = true;
 				int iFirstNoteCol = -1;
-				for( int i=0; i<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; i++ )
+				for( int i=0; i<GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer; i++ )
 				{
 					const TapNote &tn = m_NoteData.GetTapNote( i, iRowOfOverlappingNoteOrRow );
 					bool bIsNote = (tn.type != TapNoteType_Empty);
@@ -2444,7 +2450,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				else
 				{
 					int iLastNoteCol = -1;
-					for( int i=GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer-1; i>=0; i-- )
+					for( int i=GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer-1; i>=0; i-- )
 					{
 						const TapNote &tn = m_NoteData.GetTapNote( i, iRowOfOverlappingNoteOrRow );
 						bool bIsNote = (tn.type != TapNoteType_Empty);
@@ -2950,16 +2956,25 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				if( !REQUIRE_STEP_ON_HOLD_HEADS )
 				{
 					PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-					GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
+					vector<GameInput> GameI;
+					GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( iTrack, pn, GameI );
 					if( PREFSMAN->m_fPadStickSeconds > 0.f )
 					{
-						float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI, m_pPlayerState->m_mp );
-						if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
-							Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );
+						for(size_t i= 0; i < GameI.size(); ++i)
+						{
+							float fSecsHeld = INPUTMAPPER->GetSecsHeld(GameI[i], m_pPlayerState->m_mp);
+							if(fSecsHeld >= PREFSMAN->m_fPadStickSeconds)
+							{
+								Step(iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false);
+							}
+						}
 					}
-					else if( INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp) )
+					else
 					{
-						Step( iTrack, -1, now, true, false );
+						if(INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp))
+						{
+							Step(iTrack, -1, now, true, false);
+						}
 					}
 				}
 				break;
@@ -2969,17 +2984,22 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				// Hold the panel while crossing a mine will cause the mine to explode
 				// TODO: Remove use of PlayerNumber.
 				PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-				GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
-				if( PREFSMAN->m_fPadStickSeconds > 0 )
+				vector<GameInput> GameI;
+				GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( iTrack, pn, GameI );
+				if( PREFSMAN->m_fPadStickSeconds > 0.0f )
 				{
-					float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI, m_pPlayerState->m_mp );
-					if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
-						Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );
+					for(size_t i= 0; i < GameI.size(); ++i)
+					{
+						float fSecsHeld = INPUTMAPPER->GetSecsHeld(GameI[i], m_pPlayerState->m_mp);
+						if(fSecsHeld >= PREFSMAN->m_fPadStickSeconds)
+						{
+							Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );
+						}
+					}
 				}
-				else
+				else if(INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp))
 				{
-					if( INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp) )
-						Step( iTrack, iRow, now, true, false );
+					Step( iTrack, iRow, now, true, false );
 				}
 				break;
 			}

@@ -182,6 +182,8 @@
 		36CA53210F9156860063D59D /* ScreenOptionsEditCourse.h in Headers */ = {isa = PBXBuildFile; fileRef = 36CA531F0F9156860063D59D /* ScreenOptionsEditCourse.h */; };
 		37171EBE1946C9D500E09FC5 /* ActorMultiVertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37171EBC1946C9D500E09FC5 /* ActorMultiVertex.cpp */; };
 		37171EBF1946C9D500E09FC5 /* ActorMultiVertex.h in Headers */ = {isa = PBXBuildFile; fileRef = 37171EBD1946C9D500E09FC5 /* ActorMultiVertex.h */; };
+		37EC1B1F1A61C00E008C749C /* CubicSpline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37EC1B1D1A61C00E008C749C /* CubicSpline.cpp */; };
+		37EC1B201A61C00E008C749C /* CubicSpline.h in Headers */ = {isa = PBXBuildFile; fileRef = 37EC1B1E1A61C00E008C749C /* CubicSpline.h */; };
 		AA059ABC0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */; };
 		AA059ABD0B8CCFB5006F8139 /* ActorMultiTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059ABB0B8CCFB5006F8139 /* ActorMultiTexture.h */; };
 		AA059ABE0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */; };
@@ -2066,6 +2068,8 @@
 		36CA531F0F9156860063D59D /* ScreenOptionsEditCourse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenOptionsEditCourse.h; path = ../src/ScreenOptionsEditCourse.h; sourceTree = SOURCE_ROOT; };
 		37171EBC1946C9D500E09FC5 /* ActorMultiVertex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActorMultiVertex.cpp; path = ../src/ActorMultiVertex.cpp; sourceTree = "<group>"; };
 		37171EBD1946C9D500E09FC5 /* ActorMultiVertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActorMultiVertex.h; path = ../src/ActorMultiVertex.h; sourceTree = "<group>"; };
+		37EC1B1D1A61C00E008C749C /* CubicSpline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CubicSpline.cpp; path = ../src/CubicSpline.cpp; sourceTree = "<group>"; };
+		37EC1B1E1A61C00E008C749C /* CubicSpline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CubicSpline.h; path = ../src/CubicSpline.h; sourceTree = "<group>"; };
 		AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = sourcecode.cpp.cpp; name = ActorMultiTexture.cpp; path = ../src/ActorMultiTexture.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		AA059ABB0B8CCFB5006F8139 /* ActorMultiTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = sourcecode.c.h; name = ActorMultiTexture.h; path = ../src/ActorMultiTexture.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		AA059E2A0B8F0C66006F8139 /* libz_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libz_link.a; sourceTree = "<group>"; };
@@ -3990,6 +3994,8 @@
 		AA6EFDBB04770A83005F316C /* Rage */ = {
 			isa = PBXGroup;
 			children = (
+				37EC1B1D1A61C00E008C749C /* CubicSpline.cpp */,
+				37EC1B1E1A61C00E008C749C /* CubicSpline.h */,
 				AA6EFD6D04770A7C005F316C /* RageBitmapTexture.cpp */,
 				AA6EFD6E04770A7C005F316C /* RageBitmapTexture.h */,
 				AA6EFD6F04770A7C005F316C /* RageDisplay.cpp */,
@@ -5496,6 +5502,7 @@
 				B75CE3B5137963350076A82D /* SongPosition.h in Headers */,
 				2B9C2E8E137A138B004C92F3 /* NotesLoaderJson.h in Headers */,
 				2B9C2E90137A138B004C92F3 /* NotesWriterJson.h in Headers */,
+				37EC1B201A61C00E008C749C /* CubicSpline.h in Headers */,
 				2B43509513949F37006FA051 /* TimingSegments.h in Headers */,
 				B773AE6E140AAB1800C68DDD /* SpecialDirs.h in Headers */,
 				2B01A79816C881E500D5CFD2 /* RageDisplay_OGL_Helpers.h in Headers */,
@@ -6818,6 +6825,7 @@
 				AAFBEEED094D807E000029DE /* ScreenOptionsMemoryCard.cpp in Sources */,
 				AAFBEEEF094D807E000029DE /* ScreenServiceAction.cpp in Sources */,
 				AA0732900954381800F396C5 /* XmlFileUtil.cpp in Sources */,
+				37EC1B1F1A61C00E008C749C /* CubicSpline.cpp in Sources */,
 				AAD5219C095513DA00073D86 /* XmlFile.cpp in Sources */,
 				AADD1CC5095C233F0088C9DF /* LocalizedString.cpp in Sources */,
 				AABBFCD309838C3A00F077E2 /* SMMain.mm in Sources */,
@@ -8400,7 +8408,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.6;
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = "non-global";
@@ -8781,7 +8789,7 @@
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.6;
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_STYLE = "non-global";
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include $(PROJECT_DIR)/../extern/vorbis";
@@ -9094,7 +9102,7 @@
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.6;
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_STYLE = "non-global";
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../extern/glew-1.5.8/include $(PROJECT_DIR)/../extern/jsoncpp/include $(PROJECT_DIR)/../extern/vorbis";

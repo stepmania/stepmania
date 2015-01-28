@@ -22,12 +22,14 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	virtual void Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels );
+	virtual void Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels, bool use_states_zoom= true );
 	virtual void Load( 
 		const NoteData* pNoteData, 
 		int iDrawDistanceAfterTargetsPixels, 
 		int iDrawDistanceBeforeTargetsPixels );
 	virtual void Unload();
+
+	void InitColumnRenderers();
 
 	virtual void HandleMessage( const Message &msg );
 
@@ -54,6 +56,10 @@ public:
 	const PlayerState *GetPlayerState() const { return m_pPlayerState; }
 
 	int	m_iBeginMarker, m_iEndMarker;	// only used with MODE_EDIT
+
+	// m_ColumnRenderers belongs in the protected section, but it's here in
+	// public so that the Lua API can access it. -Kyz
+	vector<NoteColumnRenderer> m_ColumnRenderers;
 
 protected:
 	void CacheNoteSkin( const RString &sNoteSkin );
@@ -84,8 +90,6 @@ protected:
 	
 	const NoteData *m_pNoteData;
 
-	float			m_fPercentFadeToFail;	// -1 if not fading to fail
-
 	const PlayerState*	m_pPlayerState;
 	int			m_iDrawDistanceAfterTargetsPixels;	// this should be a negative number
 	int			m_iDrawDistanceBeforeTargetsPixels;	// this should be a positive number
@@ -100,6 +104,8 @@ protected:
 		NoteDisplayCols( int iNumCols ) { display = new NoteDisplay[iNumCols]; }
 		~NoteDisplayCols() { delete [] display; }
 	};
+
+	NoteFieldRenderArgs m_FieldRenderArgs;
 
 	/* All loaded note displays, mapped by their name. */
 	map<RString, NoteDisplayCols *> m_NoteDisplays;

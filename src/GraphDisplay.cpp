@@ -288,6 +288,14 @@ public:
 	{
 		StageStats *pStageStats = Luna<StageStats>::check( L, 1 );
 		PlayerStageStats *pPlayerStageStats = Luna<PlayerStageStats>::check( L, 2 );
+		if(pStageStats == NULL)
+		{
+			luaL_error(L, "The StageStats passed to GraphDisplay:Set are nil.");
+		}
+		if(pPlayerStageStats == NULL)
+		{
+			luaL_error(L, "The PlayerStageStats passed to GraphDisplay:Set are nil.");
+		}
 		p->Set( *pStageStats, *pPlayerStageStats );
 		COMMON_RETURN_SELF;
 	}

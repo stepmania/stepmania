@@ -4,6 +4,62 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/01/20
+----------
+* [ScreenSelect] ChoiceNames can be a lua command that is evaluated to get a
+  list of the gamecommands.  The main use of this is to get rid of the huge
+  list of metrics that ScreenSelectStyle requires.  A single lua function
+  instead of a metric for every style for every game type. [kyzentun]
+* [ScreenSelectMaster] IconChoicePosFunction metric added.  This metric is
+  optional, if it's set, it must be set to a function that returns a table
+  of positions.  Each position is a table of the form "{x, y, z}", where x,
+  y, and z are numbers and any that is not a number defaults to 0.
+  The function is passed the number of choices for the screen.
+  IconChoiceOnCommand and IconChoiceOffCommand metrics added so each choice
+  doesn't require its own On/OffCommand pair.  These are also optional, but
+  if they are set, they will override the individual commands if they exist.
+  (If "IconChoiceCactusOnCommand" and "IconChoiceOnCommand" both exist,
+  "IconChoiceOnCommand" will be used.) [kyzentun]
+  Example:
+  # in metrics.ini
+  IconChoicePosFunction=choice_positions
+  -- In a file in Scripts/
+  function choice_positions(count)
+    local ret= {}
+    for i= 1, ret do ret[i]= {i*24, i*48} end
+    return ret
+  end
+
+2015/01/16
+----------
+* [ScreenSelectMusic] HardCommentMeter metric added.  Sets the meter that
+  will trigger the "select music comment hard" announcer sound. [kyzentun]
+
+2015/01/12
+----------
+* [ScreenOptions] GetNumRows function added. [kyzentun]
+
+2015/01/09
+----------
+* [Sprite] SetStateProperties function added. [kyzentun]
+
+2015/01/06
+----------
+* [ActorMultiVertex] GetSpline and SetVertsFromSplines functions added.
+  [kyzentun]
+* [NoteColumnRenderer] Functions for fetching the spline handlers for the
+  column added. [kyzentun]
+* [NCSplineHandler] New class for setting various parameters of a spline used
+  by a NoteColumnRenderer and containing the spline. [kyzentun]
+* [CubicSplineN] New class that provides spline functionality. [kyzentun]
+
+2014/12/26
+----------
+* [NoteField] Columns turned into actors that can be fetched with
+  get_column_actors. [kyzentun]
+  Tiny boost in fps when there is a large number of notes on screen.
+* [NoteColumnRenderer] New class for controlling one column. [kyzentun]
+
 2014/12/20
 ----------
 * [Preferences] AllowMultipleHighScoreWithSameName, ComboContinuesBetweenSongs
@@ -29,6 +85,34 @@ ________________________________________________________________________________
 * [Player] "ComboBreakOnImmediateHoldLetGo" theme metric added. [sillybear]
 * [PlayerState] ApplyPreferredOptionsToOtherLevels function added. [kyzentun]
   
+2014/12/07
+----------
+* [Game] GetSeparateStyles function added.  Use this to detect whether a game
+  allows the players to play different styles. [kyzentun] (used by kickbox)
+* [GameManager] Lua Scripts/ folders are now reloaded when the Game mode is
+  changed. [kyzentun]
+* [GameState] CanSafelyEnterGameplay function added. [kyzentun]
+  In kickbox game mode, players can have different styles set, pass a
+  PlayerNumber when using SetCurrentStyle or GetCurrentStyle.
+* [kickbox] New game mode with 4 styles. [kyzentun]
+* [ScreenGameplay] Notefield positioning is handled a bit differently now.
+  See comments in _fallback/metrics.ini above the [ScreenGameplay]
+  MarginFunction metric.  Basically, you can define a lua function that
+  returns the space you want at the edges and in the center instead of
+  setting position metrics.  Do NOT use Style:GetWidth to calculate the
+  margins your function returns.
+  ScreenGameplay now handles zooming the notefield to fit in the space
+  instead of using the NeedsZoomOutWith2Players flag in the style.
+  If the notefield doesn't fit in the space between the margins, and there is
+  only one player, the player will be centered even if the Center1Player pref
+  is false. [kyzentun]
+* [Style] NeedsZoomOutWith2Players decapitated.  Always returns false now.
+  GetWidth added. [kyzentun]
+* [techno] Techno game mode no longer has special column width for versus.
+  Techno was the only game mode that used the NeedsZoomOutWith2Players flag,
+  and the zoom factor it applied was 0.6, and the special versus column width
+  was 0.6*normal, so this should make no difference. [kyzentun]
+
 2014/12/03
 ----------
 * [command line arg] --game command line arg added for setting the game type
@@ -81,6 +165,10 @@ ________________________________________________________________________________
 2014/11/01
 ----------
 * [RollingNumbers] Cropping and color during tweens fixed. [kyzentun]
+
+2014/10/27
+----------
+* [Changelog] Vospi read the release notes.
 
 2014/10/23
 ----------

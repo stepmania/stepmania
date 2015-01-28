@@ -7,6 +7,7 @@
 #include "RageLog.h"
 #include "RageDisplay.h"
 #include "RageTexture.h"
+#include "RageTimer.h"
 #include "RageUtil.h"
 #include "ActorUtil.h"
 #include "Foreach.h"
@@ -62,6 +63,12 @@ ActorMultiVertex::ActorMultiVertex()
 
 	_EffectMode = EffectMode_Normal;
 	_TextureMode = TextureMode_Modulate;
+	_splines.resize(num_vert_splines);
+	for(size_t i= 0; i < num_vert_splines; ++i)
+	{
+		_splines[i].redimension(3);
+		_splines[i].m_owned_by_actor= true;
+	}
 }
 
 ActorMultiVertex::~ActorMultiVertex()
@@ -78,6 +85,7 @@ ActorMultiVertex::ActorMultiVertex( const ActorMultiVertex &cpy ):
 	CPY( AMV_start );
 	CPY( _EffectMode );
 	CPY( _TextureMode );
+	CPY( _splines );
 #undef CPY
 
 	if( cpy._Texture != NULL )
@@ -307,6 +315,62 @@ bool ActorMultiVertex::EarlyAbortDraw() const
 		return true;
 	}
 	return false;
+}
+
+void ActorMultiVertex::SetVertsFromSplinesInternal(size_t num_splines, size_t offset)
+{
+	vector<RageSpriteVertex>& verts= AMV_DestTweenState().vertices;
+	size_t first= AMV_DestTweenState().FirstToDraw + offset;
+	size_t num_verts= AMV_DestTweenState().GetSafeNumToDraw(AMV_DestTweenState()._DrawMode, AMV_DestTweenState().NumToDraw) - offset;
+	vector<float> tper(num_splines, 0.0f);
+	float num_parts= static_cast<float>(num_verts) /
+		static_cast<float>(num_splines);
+	for(size_t i= 0; i < num_splines; ++i)
+	{
+		tper[i]= _splines[i].get_max_t() / num_parts;
+	}
+	for(size_t v= 0; v < num_verts; ++v)
+	{
+		vector<float> pos;
+		const int spi= v%num_splines;
+		float part= static_cast<float>(v/num_splines);
+		_splines[spi].evaluate(part * tper[spi], pos);
+		verts[v+first].p.x= pos[0];
+		verts[v+first].p.y= pos[1];
+		verts[v+first].p.z= pos[2];
+	}
+}
+
+void ActorMultiVertex::SetVertsFromSplines()
+{
+	if(AMV_DestTweenState().vertices.empty()) { return; }
+	switch(AMV_DestTweenState()._DrawMode)
+	{
+		case DrawMode_Quads:
+			SetVertsFromSplinesInternal(4, 0);
+			break;
+		case DrawMode_QuadStrip:
+		case DrawMode_Strip:
+			SetVertsFromSplinesInternal(2, 0);
+			break;
+		case DrawMode_Fan:
+			// Skip the first vert because it is the center of the fan. -Kyz
+			SetVertsFromSplinesInternal(1, 1);
+			break;
+		case DrawMode_Triangles:
+		case DrawMode_SymmetricQuadStrip:
+			SetVertsFromSplinesInternal(3, 0);
+			break;
+		case DrawMode_LineStrip:
+			SetVertsFromSplinesInternal(1, 0);
+			break;
+	}
+}
+
+CubicSplineN* ActorMultiVertex::GetSpline(size_t i)
+{
+	ASSERT(i < num_vert_splines);
+	return &(_splines[i]);
 }
 
 void ActorMultiVertex::SetCurrentTweenStart()
@@ -638,6 +702,23 @@ public:
 		COMMON_RETURN_SELF;
 	}
 
+	static int GetSpline(T* p, lua_State* L)
+	{
+		size_t i= static_cast<size_t>(IArg(1)-1);
+		if(i >= ActorMultiVertex::num_vert_splines)
+		{
+			luaL_error(L, "Spline index must be greater than 0 and less than or equal to %zu.", ActorMultiVertex::num_vert_splines);
+		}
+		p->GetSpline(i)->PushSelf(L);
+		return 1;
+	}
+
+	static int SetVertsFromSplines(T* p, lua_State* L)
+	{
+		p->SetVertsFromSplines();
+		COMMON_RETURN_SELF;
+	}
+
 	static int SetTexture( T* p, lua_State *L )
 	{
 		RageTexture *Texture = Luna<RageTexture>::check(L, 1);
@@ -678,6 +759,9 @@ public:
 		ADD_METHOD( GetCurrDrawMode );
 		ADD_METHOD( GetCurrFirstToDraw );
 		ADD_METHOD( GetCurrNumToDraw );
+
+		ADD_METHOD( GetSpline );
+		ADD_METHOD( SetVertsFromSplines );
 
 		// Copy from RageTexture
 		ADD_METHOD( SetTexture );

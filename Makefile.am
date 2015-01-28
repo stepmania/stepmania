@@ -3,12 +3,6 @@ AUTOMAKE_OPTIONS = 1.7 foreign
 SUBDIRS = bundle src
 ACLOCAL_AMFLAGS = -I autoconf/m4
 
-## Black magic (read: sed) for getting the product ID as defined in code, not by the autotools.
-## Quotes are making vim's highlighting of this even worse, so just escape everything,
-## including the escapes. Make it lowercase to match ArchHooks::MountInitialFileSystems().
-## Replace space with - so package build tools won't choke on the installation directory.
-productID := $(shell sed -nr /define\\s+PRODUCT_ID_BARE/\{s/.*define\\s+PRODUCT_ID_BARE\\s+\(.+\)/\\1/\;y/ABCDEFGHIJKLMNOPQRSTUVWXYZ\ /abcdefghijklmnopqrstuvwxyz-/\;p\;q\} $(srcdir)/src/ProductInfo.h)
-
 installFiles = src/stepmania
 if HAVE_GTK
 installFiles += src/GtkModule.so
@@ -27,14 +21,14 @@ dist-hook: SMData
 	cp -r -t "$(distdir)" $(installFiles)
 
 install-exec-hook:
-	mkdir -p "$(DESTDIR)$(prefix)/$(productID)"
-	$(INSTALL) $(installFiles) "$(DESTDIR)$(prefix)/$(productID)"
+	mkdir -p "$(DESTDIR)$(prefix)/stepmania-$(VERSION)"
+	$(INSTALL) $(installFiles) "$(DESTDIR)$(prefix)/stepmania-$(VERSION)"
 
 install-data-local:
-	mkdir -p "$(DESTDIR)$(prefix)/$(productID)/Songs"
-	cp -r -t "$(DESTDIR)$(prefix)/$(productID)" $(installData)
+	mkdir -p "$(DESTDIR)$(prefix)/stepmania-$(VERSION)/Songs"
+	cp -r -t "$(DESTDIR)$(prefix)/stepmania-$(VERSION)" $(installData)
 
 uninstall-hook:
-	rm -f "$(DESTDIR)$(prefix)/$(productID)/stepmania"
-	rm -f "$(DESTDIR)$(prefix)/$(productID)/GtkModule.so"
+	rm -f "$(DESTDIR)$(prefix)/stepmania-$(VERSION)/stepmania"
+	rm -f "$(DESTDIR)$(prefix)/stepmania-$(VERSION)/GtkModule.so"
 # todo: properly remove data
