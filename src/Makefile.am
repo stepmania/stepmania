@@ -31,7 +31,7 @@ AM_CXXFLAGS += $(GL_CFLAGS)
 .PHONY: increment_version gitversion
 
 increment_version:
-	if test -e ver.h; then \
+	if test -e ver.cpp; then \
 		build=`sed -rs 's/.*version_num = ([[:digit:]]+);/\1/;q' ver.cpp`; \
 		build=`expr $$build + 1`; \
 	else \
