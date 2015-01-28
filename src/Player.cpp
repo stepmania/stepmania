@@ -370,8 +370,9 @@ void Player::Init(
 	m_pPrimaryScoreKeeper = pPrimaryScoreKeeper;
 	m_pSecondaryScoreKeeper = pSecondaryScoreKeeper;
 
-	m_iLastSeenCombo      = -1;
-
+	m_iLastSeenCombo      = 0;
+	m_bSeenComboYet       = false;
+	
 	// set initial life
 	if( m_pLifeMeter && m_pPlayerStageStats )
 	{
@@ -763,10 +764,10 @@ void Player::Load()
 	m_pIterUnjudgedMineRows = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
 }
 
-void Player::SendComboMessages( int iOldCombo, int iOldMissCombo )
+void Player::SendComboMessages( unsigned int iOldCombo, unsigned int iOldMissCombo )
 {
-	const int iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-	if( iOldCombo > COMBO_STOPPED_AT && iCurCombo < COMBO_STOPPED_AT )
+	const unsigned int iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+	if( iOldCombo > (unsigned int)COMBO_STOPPED_AT && iCurCombo < (unsigned int)COMBO_STOPPED_AT )
 	{
 		SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
 	}
@@ -1411,7 +1412,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 				//LOG->Trace("initiated note and didn't let go");
 				fLife = 1; // xxx: should be MAX_HOLD_LIFE instead? -aj
 				hns = HNS_Held;
-				bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+				bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD;
 				if( m_pNoteField )
 				{
 					FOREACH( TrackRowTapNote, vTN, trtn )
@@ -1463,19 +1464,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	}
 
 	if ( (hns == HNS_LetGo) && COMBO_BREAK_ON_IMMEDIATE_HOLD_LET_GO )
-	{
-		const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-		const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
-
-		if( m_pPlayerStageStats )
-		{
-			m_pPlayerStageStats->m_iCurCombo = 0;
-			m_pPlayerStageStats->m_iCurMissCombo++;
-			SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
-		}
-
-		SendComboMessages( iOldCombo, iOldMissCombo );
-	}
+		IncrementMissCombo();
 	
 	if( hns != HNS_None )
 	{
@@ -1919,8 +1908,8 @@ void Player::DoTapScoreNone()
 	Message msg( "ScoreNone" );
 	MESSAGEMAN->Broadcast( msg );
 
-	const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-	const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
+	const unsigned int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+	const unsigned int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
 
 	/* The only real way to tell if a mine has been scored is if it has disappeared
 	* but this only works for hit mines so update the scores for avoided mines here. */
@@ -2106,21 +2095,9 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 
 					if( ROLL_BODY_INCREMENTS_COMBO && m_pPlayerState->m_PlayerController != PC_AUTOPLAY )
 					{
-						// increment combo
-						const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-						const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
-
-						if( m_pPlayerStageStats )
-						{
-							m_pPlayerStageStats->m_iCurCombo++;
-							m_pPlayerStageStats->m_iCurMissCombo = 0;
-						}
-
-						SendComboMessages( iOldCombo, iOldMissCombo );
-						if( m_pPlayerStageStats )
-							SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
-
-						bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+						IncrementCombo();
+						
+						bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD;
 						if( m_pNoteField )
 							m_pNoteField->DidHoldNote( col, HNS_Held, bBright );
 					}
@@ -2582,7 +2559,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				const bool bBlind = (m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind != 0);
 				// XXX: This is the wrong combo for shared players.
 				// STATSMAN->m_CurStageStats.m_Player[pn] might work, but could be wrong.
-				const bool bBright = ( m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > int(BRIGHT_GHOST_COMBO_THRESHOLD) ) || bBlind;
+				const bool bBright = ( m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > (unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD ) || bBlind;
 				if( m_pNoteField )
 					m_pNoteField->DidTapNote( col, bBlind? TNS_W1:score, bBright );
 				if( score >= m_pPlayerState->m_PlayerOptions.GetCurrent().m_MinTNSToHideNotes || bBlind )
@@ -2921,7 +2898,7 @@ void Player::FlashGhostRow( int iRow )
 {
 	TapNoteScore lastTNS = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow ).result.tns;
 	const bool bBlind = (m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind != 0);
-	const bool bBright = ( m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > int(BRIGHT_GHOST_COMBO_THRESHOLD) ) || bBlind;
+	const bool bBright = ( m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > (unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD ) || bBlind;
 
 	for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
 	{
@@ -3124,8 +3101,8 @@ void Player::HandleTapRowScore( unsigned row )
 		return;
 
 	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteWithResult(m_NoteData, row).result.tns;
-	const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-	const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
+	const unsigned int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+	const unsigned int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
 
 	if( scoreOfLastTap == TNS_Miss )
 		m_LastTapNoteScore = TNS_Miss;
@@ -3150,8 +3127,8 @@ void Player::HandleTapRowScore( unsigned row )
 	if( m_pSecondaryScoreKeeper != NULL )
 		m_pSecondaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
 
-	const int iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-	const int iCurMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
+	const unsigned int iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+	const unsigned int iCurMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
 
 	SendComboMessages( iOldCombo, iOldMissCombo );
 
@@ -3231,8 +3208,8 @@ void Player::HandleHoldCheckpoint(int iRow,
 	if( bNoCheating && m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 		return;
 
-	const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-	const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
+	const unsigned int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+	const unsigned int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
 
 	if( m_pPrimaryScoreKeeper )
 		m_pPrimaryScoreKeeper->HandleHoldCheckpointScore(m_NoteData, 
@@ -3253,7 +3230,7 @@ void Player::HandleHoldCheckpoint(int iRow,
 			FOREACH_CONST( int, viColsWithHold, i )
 			{
 				bool bBright = m_pPlayerStageStats 
-					&& m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+					&& m_pPlayerStageStats->m_iCurCombo>(unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD;
 				if( m_pNoteField )
 					m_pNoteField->DidHoldNote( *i, HNS_Held, bBright );
 			}
@@ -3422,30 +3399,35 @@ void Player::SetHoldJudgment( TapNote &tn, int iTrack )
 	}
 }
 
-void Player::SetCombo( int iCombo, int iMisses )
+void Player::SetCombo( unsigned int iCombo, unsigned int iMisses )
 {
-	if( m_iLastSeenCombo == -1 )	// first update, don't set bIsMilestone=true
+	if( !m_bSeenComboYet )	// first update, don't set bIsMilestone=true
+	{
+		m_bSeenComboYet = true;
 		m_iLastSeenCombo = iCombo;
-
+	}
+	
 	bool b25Milestone = false;
 	bool b50Milestone = false;
 	bool b100Milestone = false;
 	bool b250Milestone = false;
 	bool b1000Milestone = false;
-	for( int i=m_iLastSeenCombo+1; i<=iCombo; i++ )
+
+#define MILESTONE_CHECK(amount) ((iCombo / amount) > (m_iLastSeenCombo / amount))
+	if(m_iLastSeenCombo < 600)
 	{
-		if( i < 600 )
-		{
-			b25Milestone |= ((i % 25) == 0);
-			b50Milestone |= ((i % 50) == 0);
-			b100Milestone |= ((i % 100) == 0);
-			b250Milestone |= ((i % 250) == 0);
-		}
-		else
-		{
-			b1000Milestone |= ((i % 200) == 0);
-		}
+		b25Milestone= MILESTONE_CHECK(25);
+		b50Milestone= MILESTONE_CHECK(50);
+		b100Milestone= MILESTONE_CHECK(100);
+		b250Milestone= MILESTONE_CHECK(250);
+		b1000Milestone= MILESTONE_CHECK(1000);
 	}
+	else
+	{
+		b1000Milestone= MILESTONE_CHECK(1000);
+	}
+#undef MILESTONE_CHECK
+
 	m_iLastSeenCombo = iCombo;
 
 	if( b25Milestone )
@@ -3502,6 +3484,29 @@ void Player::SetCombo( int iCombo, int iMisses )
 			msg.SetParam( "FullComboW4", true );
 		this->HandleMessage( msg );
 	}
+}
+
+void Player::IncrementComboOrMissCombo(bool bComboOrMissCombo)
+{
+		const unsigned int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+		const unsigned int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
+
+		if( m_pPlayerStageStats )
+		{
+			if( bComboOrMissCombo )
+			{
+				m_pPlayerStageStats->m_iCurCombo++;
+				m_pPlayerStageStats->m_iCurMissCombo = 0;
+			}
+			else
+			{
+				m_pPlayerStageStats->m_iCurCombo = 0;
+				m_pPlayerStageStats->m_iCurMissCombo++;
+			}
+			SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
+		}
+
+		SendComboMessages( iOldCombo, iOldMissCombo );
 }
 
 RString Player::ApplyRandomAttack()

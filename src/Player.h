@@ -128,14 +128,17 @@ protected:
 	void HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow, const vector<int> &viColsWithHold );
 	void DrawTapJudgments();
 	void DrawHoldJudgments();
-	void SendComboMessages( int iOldCombo, int iOldMissCombo );
+	void SendComboMessages( unsigned int iOldCombo, unsigned int iOldMissCombo );
 	void PlayKeysound( const TapNote &tn, TapNoteScore score );
 
 	void SetMineJudgment( TapNoteScore tns , int iTrack );
 	void SetJudgment( int iRow, int iFirstTrack, const TapNote &tn ) { SetJudgment( iRow, iFirstTrack, tn, tn.result.tns, tn.result.fTapNoteOffset ); }	
 	void SetJudgment( int iRow, int iFirstTrack, const TapNote &tn, TapNoteScore tns, float fTapNoteOffset );	// -1 if no track as in TNS_Miss
 	void SetHoldJudgment( TapNote &tn, int iTrack );
-	void SetCombo( int iCombo, int iMisses );
+	void SetCombo( unsigned int iCombo, unsigned int iMisses );
+	void IncrementComboOrMissCombo( bool bComboOrMissCombo );
+	void IncrementCombo() { IncrementComboOrMissCombo(true); };
+	void IncrementMissCombo() { IncrementComboOrMissCombo(false); };
 
 	void ChangeLife( TapNoteScore tns );
 	void ChangeLife( HoldNoteScore hns, TapNoteScore tns );
@@ -194,7 +197,8 @@ protected:
 	NoteData::all_tracks_iterator *m_pIterUncrossedRows;
 	NoteData::all_tracks_iterator *m_pIterUnjudgedRows;
 	NoteData::all_tracks_iterator *m_pIterUnjudgedMineRows;
-	int			m_iLastSeenCombo;
+	unsigned int	m_iLastSeenCombo;
+	bool	m_bSeenComboYet;
 	JudgedRows		*m_pJudgedRows;
 
 	RageSound		m_soundMine;
