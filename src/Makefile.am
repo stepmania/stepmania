@@ -51,7 +51,8 @@ gitversion:
 	fi
 
 gitversion.h: gitversion
-ProductInfo.h: gitversion.h
+
+BUILT_SOURCES = gitversion.h ver.cpp
 
 PNG = \
 ../extern/libpng/include/png.c ../extern/libpng/include/.png.h \
