@@ -791,39 +791,53 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 {
 	// Do not copy m_pn from the other, it must be preserved as what PlayerState set it to.
 #define CPY(x) x= other.x;
+#define CPY_SPEED(x) m_ ## x = other.m_ ## x; m_Speed ## x = other.m_Speed ## x;
 	CPY(m_LifeType);
 	CPY(m_DrainType);
 	CPY(m_BatteryLives);
-	CPY(m_fTimeSpacing);
-	CPY(m_fScrollSpeed);
-	CPY(m_fScrollBPM);
-	CPY(m_fMaxScrollBPM);
-	CPY(m_fRandomSpeed);
+	CPY_SPEED(fTimeSpacing);
+	CPY_SPEED(fScrollSpeed);
+	CPY_SPEED(fScrollBPM);
+	CPY_SPEED(fMaxScrollBPM);
+	CPY_SPEED(fRandomSpeed);
 	CPY(m_FailType);
 	CPY(m_MinTNSToHideNotes);
 	CPY(m_bMuteOnError);
-	CPY(m_fDark);
-	CPY(m_fBlind);
-	CPY(m_fCover);
-	CPY(m_fRandAttack);
-	CPY(m_fNoAttack);
-	CPY(m_fPlayerAutoPlay);
-	CPY(m_fPerspectiveTilt);
-	CPY(m_fSkew);
+	CPY_SPEED(fDark);
+	CPY_SPEED(fBlind);
+	CPY_SPEED(fCover);
+	CPY_SPEED(fRandAttack);
+	CPY_SPEED(fNoAttack);
+	CPY_SPEED(fPlayerAutoPlay);
+	CPY_SPEED(fPerspectiveTilt);
+	CPY_SPEED(fSkew);
 	CPY(m_sNoteSkin);
 	for( int i = 0; i < PlayerOptions::NUM_ACCELS; ++i )
-		CPY(m_fAccels[i]);
+	{
+		CPY_SPEED(fAccels[i]);
+	}
 	for( int i = 0; i < PlayerOptions::NUM_EFFECTS; ++i )
-		CPY(m_fEffects[i]);
+	{
+		CPY_SPEED(fEffects[i]);
+	}
 	for( int i = 0; i < PlayerOptions::NUM_APPEARANCES; ++i )
-		CPY(m_fAppearances[i]);
+	{
+		CPY_SPEED(fAppearances[i]);
+	}
 	for( int i = 0; i < PlayerOptions::NUM_SCROLLS; ++i )
-		CPY(m_fScrolls[i]);
+	{
+		CPY_SPEED(fScrolls[i]);
+	}
 	for( int i = 0; i < PlayerOptions::NUM_TURNS; ++i )
+	{
 		CPY(m_bTurns[i]);
+	}
 	for( int i = 0; i < PlayerOptions::NUM_TRANSFORMS; ++i )
+	{
 		CPY(m_bTransforms[i]);
+	}
 #undef CPY
+#undef CPY_SPEED
 	return *this;
 }
 
