@@ -29,6 +29,9 @@ dist-hook: SMData
 install-exec-hook:
 	mkdir -p "$(DESTDIR)$(prefix)/$(productID)"
 	$(INSTALL) $(installFiles) "$(DESTDIR)$(prefix)/$(productID)"
+	$(INSTALL) "bundle/ffmpeg/libavutil/libavutil.so.52" "$(DESTDIR)$(prefix)/$(productID)"
+	$(INSTALL) "bundle/ffmpeg/libavcodec/libavcodec.so.55" "$(DESTDIR)$(prefix)/$(productID)"
+	$(INSTALL) "bundle/ffmpeg/libavformat/libavformat.so.55" $(DESTDIR)$(prefix)/$(productID)"
 
 install-data-local:
 	mkdir -p "$(DESTDIR)$(prefix)/$(productID)/Songs"
