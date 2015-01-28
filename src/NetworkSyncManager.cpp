@@ -6,9 +6,10 @@
 
 NetworkSyncManager *NSMAN;
 
-// Aldo: used by GetCurrentSMVersion()
+// Aldo: version_num used by GetCurrentSMVersion()
+// XXX: That's probably not what you want... --root
 #if defined(HAVE_VERSION_INFO)
-extern unsigned long version_num;
+#include "ver.h"
 #endif
 
 #if defined(WITHOUT_NETWORKING)

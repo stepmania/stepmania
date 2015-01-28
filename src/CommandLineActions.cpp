@@ -18,6 +18,10 @@
 #include "JsonUtil.h"
 #include "ScreenInstallOverlay.h"
 
+#if defined(HAVE_VERSION_INFO)
+#include "ver.h"
+#endif
+
 // only used for Version()
 #if defined(_WINDOWS)
 #include <windows.h>
@@ -76,12 +80,6 @@ static void LuaInformation()
 
 	delete pNode;
 }
-
-#if defined(HAVE_VERSION_INFO)
-extern unsigned long version_num;
-extern const char *const version_date;
-extern const char *const version_time;
-#endif
 
 /**
  * @brief Print out version information.

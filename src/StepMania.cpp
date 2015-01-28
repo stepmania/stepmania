@@ -69,6 +69,10 @@
 #include "Profile.h"
 #include "ActorUtil.h"
 
+#ifdef HAVE_VERSION_INFO
+#include "ver.h"
+#endif
+
 #if defined(WIN32)
 #include <windows.h>
 #endif
@@ -907,11 +911,6 @@ static void MountTreeOfZips( const RString &dir )
 	}
 }
 
-#if defined(HAVE_VERSION_INFO)
-extern unsigned long version_num;
-extern const char *const version_date;
-extern const char *const version_time;
-#endif
 
 static void WriteLogHeader()
 {

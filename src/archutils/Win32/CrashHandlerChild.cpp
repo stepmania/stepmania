@@ -30,9 +30,8 @@
 #pragma comment(lib, "archutils/Win32/ddk/dbghelp.lib")
 #endif
 
-extern unsigned long version_num;
-extern const char *const version_date;
-extern const char *const version_time;
+// XXX: What happens when we *don't* have version info? Does that ever actually happen?
+#include "ver.h"
 
 // VDI symbol lookup:
 namespace VDDebugInfo
