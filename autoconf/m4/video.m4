@@ -70,8 +70,14 @@ if test "$with_ffmpeg" = "yes"; then
 		fi
 	else
 dnl System FFMpeg
+dnl HACK: $prefix is set to NONE if not user specified
+		if test "$prefix" = "NONE"; then
+			our_installdir="/opt"
+		else
+			our_installdir="$prefix"
+		fi
 dnl We might as well throw in GPL stuff as we're bound to GPL by libmad anyway.
-		FFMPEG_CONFFLAGS="--enable-gpl --disable-programs --disable-doc --disable-avdevice --disable-swresample --disable-postproc --disable-avfilter"
+		FFMPEG_CONFFLAGS="--shlibdir=$our_installdir/stepmania-$VERSION --enable-gpl --disable-programs --disable-doc --disable-avdevice --disable-swresample --disable-postproc --disable-avfilter"
 		if test "$host_os" = "mingw32"; then
 			FFMPEG_CONFFLAGS="$FFMPEG_CONFFLAGS --arch=x86"
 		fi
