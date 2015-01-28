@@ -188,7 +188,7 @@ void Sprite::LoadFromNode( const XNode* pNode )
 				}
 				if(newState.fDelay <= min_state_delay)
 				{
-					LuaHelpers::ReportScriptErrorFmt("%s: State #%i has near-zero delay.", ActorUtil::GetWhere(pNode).c_str(), i);
+					LuaHelpers::ReportScriptErrorFmt("%s: State #%i has near-zero delay.", ActorUtil::GetWhere(pNode).c_str(), i+1);
 					newState.fDelay= 0.1f;
 				}
 
@@ -196,7 +196,7 @@ void Sprite::LoadFromNode( const XNode* pNode )
 				if( iFrameIndex >= m_pTexture->GetNumFrames() )
 				{
 					LuaHelpers::ReportScriptErrorFmt( "%s: State #%i is frame %d, but the texture \"%s\" only has %d frames",
-						ActorUtil::GetWhere(pNode).c_str(), i, iFrameIndex, sPath.c_str(), m_pTexture->GetNumFrames() );
+						ActorUtil::GetWhere(pNode).c_str(), i+1, iFrameIndex, sPath.c_str(), m_pTexture->GetNumFrames() );
 				}
 				newState.rect = *m_pTexture->GetTextureCoordRect( iFrameIndex );
 

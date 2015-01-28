@@ -37,14 +37,14 @@ return Def.ActorFrame {
 	NOTESKIN:LoadActor(Var "Button", "Ready Receptor")..{
 		Name="Base";
 		Frames={
-			{ Frame = 0, Delay = 0 }
+			{ Frame = 0 }
 		};
 		PressCommand=cmd(finishtweening;linear,0.05;zoom,0.9;linear,0.1;zoom,1);
 	};
 	NOTESKIN:LoadActor(Var "Button", "Ready Receptor")..{
 		Name="Glow";
 		Frames= {
-			{ Frame = 1, Delay = 0 }
+			{ Frame = 1 }
 		};
 		InitCommand=cmd(blend,'BlendMode_Add');
 		PressCommand=cmd(finishtweening;linear,0.05;zoom,0.9;linear,0.1;zoom,1);
