@@ -379,7 +379,7 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
 			GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 			GAMESTATE->m_bSideIsJoined[0] = true;
 			GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
-			GAMESTATE->m_pCurStyle.Set( vpStyle[0] );
+			GAMESTATE->SetCurrentStyle( vpStyle[0], PLAYER_1 );
 			GAMESTATE->m_pCurSong.Set( pSong );
 			GAMESTATE->m_pPreferredSong = pSong;
 			sInitialScreen = StepMania::GetSelectMusicScreen();

@@ -193,7 +193,7 @@ void PercentageDisplay::Refresh()
 
 bool PercentageDisplay::ShowDancePointsNotPercentage() const
 {
-	// Use staight dance points in workout because the percentage denominator isn't accurate - we don't know when the players are going to stop.
+	// Use straight dance points in workout because the percentage denominator isn't accurate - we don't know when the players are going to stop.
 
 	if( GAMESTATE->m_pCurCourse )
 	{

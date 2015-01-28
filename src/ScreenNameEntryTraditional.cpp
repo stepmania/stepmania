@@ -24,20 +24,20 @@ void ScreenNameEntryTraditional::Init()
 		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
 		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle( GAMEMAN->GetDefaultGame(),"versus") );
+		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle( GAMEMAN->GetDefaultGame(),"versus"), GAMESTATE->GetMasterPlayerNumber() );
 		for( int z = 0; z < 3; ++z )
 		{
 			StageStats ss;
 			const vector<Song*> &apSongs = SONGMAN->GetAllSongs();
 			ss.m_vpPlayedSongs.push_back( apSongs[rand()%apSongs.size()] );
 			ss.m_vpPossibleSongs = ss.m_vpPlayedSongs;
-			ss.m_pStyle = GAMESTATE->GetCurrentStyle();
 			ss.m_playMode = GAMESTATE->m_PlayMode;
 			ASSERT( ss.m_vpPlayedSongs[0]->GetAllSteps().size() );
-			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 
 			FOREACH_PlayerNumber( p )
 			{
+				ss.m_player[p].m_pStyle = GAMESTATE->GetCurrentStyle(p);
+				StepsType st = GAMESTATE->GetCurrentStyle(p)->m_StepsType;
 				Steps *pSteps = ss.m_vpPlayedSongs[0]->GetAllSteps()[0];
 				ss.m_player[p].m_iStepsPlayed = 1;
 				GAMESTATE->m_pCurSteps[p].Set( pSteps );

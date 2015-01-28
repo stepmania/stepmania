@@ -1334,9 +1334,9 @@ void Actor::QueueMessage( const RString& sMessageName )
 	TI.m_sCommandName = "!" + sMessageName;
 }
 
-void Actor::AddCommand( const RString &sCmdName, apActorCommands apac )
+void Actor::AddCommand( const RString &sCmdName, apActorCommands apac, bool warn )
 {
-	if( HasCommand(sCmdName) )
+	if( HasCommand(sCmdName) && warn)
 	{
 		RString sWarning = GetLineage()+"'s command '"+sCmdName+"' defined twice";
 		LuaHelpers::ReportScriptError(sWarning, "COMMAND_DEFINED_TWICE");

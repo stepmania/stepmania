@@ -478,7 +478,7 @@ void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool b
 		int iCounts[NUM_Grade];
 		const Profile *pProfile = PROFILEMAN->GetMachineProfile();
 		ASSERT( pProfile != NULL );
-		pProfile->GetGrades( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, iCounts );
+		pProfile->GetGrades( pSong, GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType, iCounts );
 
 		RString foo;
 		foo.reserve(256);
@@ -632,7 +632,7 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 	case SORT_TOP_GRADES:
 		{
 			int iCounts[NUM_Grade];
-			PROFILEMAN->GetMachineProfile()->GetGrades( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, iCounts );
+			PROFILEMAN->GetMachineProfile()->GetGrades( pSong, GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType, iCounts );
 
 			for( int i=Grade_Tier01; i<NUM_Grade; ++i )
 			{
@@ -932,10 +932,10 @@ void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 {
 	vector<const Style*> vpPossibleStyles;
 	// If AutoSetStyle, or a Style hasn't been chosen, check StepsTypes for all Styles.
-	if( CommonMetrics::AUTO_SET_STYLE || GAMESTATE->m_pCurStyle == NULL )
+	if( CommonMetrics::AUTO_SET_STYLE || GAMESTATE->GetCurrentStyle(PLAYER_INVALID) == NULL )
 		GAMEMAN->GetCompatibleStyles( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), vpPossibleStyles );
 	else
-		vpPossibleStyles.push_back( GAMESTATE->m_pCurStyle );
+		vpPossibleStyles.push_back( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) );
 
 	// Only allow OneSide Styles in Workout
 	if( GAMESTATE->m_bMultiplayer )
@@ -1048,13 +1048,13 @@ bool SongUtil::GetStepsTypeAndDifficultyFromSortOrder( SortOrder so, StepsType &
 	case SORT_MEDIUM_METER:
 	case SORT_HARD_METER:
 	case SORT_CHALLENGE_METER:
-		stOut = GAMESTATE->GetCurrentStyle()->m_StepsType;
+		stOut = GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType;
 		break;
 	case SORT_DOUBLE_EASY_METER:
 	case SORT_DOUBLE_MEDIUM_METER:
 	case SORT_DOUBLE_HARD_METER:
 	case SORT_DOUBLE_CHALLENGE_METER:
-		stOut = GAMESTATE->GetCurrentStyle()->m_StepsType;	// in case we don't find any matches below
+		stOut = GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType;	// in case we don't find any matches below
 		vector<const Style*> vpStyles;
 		GAMEMAN->GetStylesForGame(GAMESTATE->m_pCurGame,vpStyles);
 		FOREACH_CONST( const Style*, vpStyles, i )

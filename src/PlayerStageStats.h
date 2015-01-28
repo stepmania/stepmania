@@ -7,6 +7,7 @@
 #include "PlayerNumber.h"
 #include <map>
 class Steps;
+class Style;
 struct lua_State;
 /** @brief Contains statistics for one stage of play - either one song, or a whole course. */
 class PlayerStageStats
@@ -36,6 +37,7 @@ public:
 	bool m_for_multiplayer;
 	PlayerNumber m_player_number;
 	MultiPlayer m_multiplayer_number;
+	const Style*	m_pStyle;
 
 	bool		m_bJoined;
   bool    m_bPlayerCanAchieveFullCombo;

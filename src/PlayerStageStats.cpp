@@ -27,6 +27,7 @@ Grade GetGradeFromPercent( float fPercent );
 
 void PlayerStageStats::InternalInit()
 {
+	m_pStyle= NULL;
 	m_for_multiplayer= false;
 	m_player_number= PLAYER_1;
 	m_multiplayer_number= MultiPlayer_P1;
@@ -85,6 +86,7 @@ void PlayerStageStats::Init(MultiPlayer pn)
 
 void PlayerStageStats::AddStats( const PlayerStageStats& other )
 {
+	m_pStyle= other.m_pStyle;
 	m_bJoined = other.m_bJoined;
 	FOREACH_CONST( Steps*, other.m_vpPossibleSteps, s )
 		m_vpPossibleSteps.push_back( *s );
