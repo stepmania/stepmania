@@ -205,7 +205,7 @@ void BackgroundImpl::Init()
 	{
 		bOneOrMoreChars = true;
 		// Disable dancing characters if Beginner Helper will be showing.
-		if( PREFSMAN->m_bShowBeginnerHelper && BeginnerHelper::CanUse() && 
+		if( PREFSMAN->m_bShowBeginnerHelper && BeginnerHelper::CanUse(p) &&
 			GAMESTATE->m_pCurSteps[p] && GAMESTATE->m_pCurSteps[p]->GetDifficulty() == Difficulty_Beginner )
 			bShowingBeginnerHelper = true;
 	}

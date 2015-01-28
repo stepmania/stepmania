@@ -2242,6 +2242,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetName' return='string' arguments=''>
 		Returns the name of the game such as &quot;dance&quot; or &quot;pump&quot;.
 	</Function>
+	<Function name='GetSeparateStyles' return='bool' arguments=''>
+		Returns whether this game allows the players to have separate styles.
+	</Function>
 </Class>
 <Class name='GameCommand'>
 	<Function name='GetAnnouncer' return='string' arguments=''>
@@ -2380,6 +2383,16 @@ save yourself some time, copy this for undocumented things:
 	<Function name='ApplyGameCommand' return='void' arguments='string sCommand, PlayerNumber pn'>
 		The second argument is optional. Apply the GameCommand represented by <code>sCommand</code>
 		for <code>pn</code>, if given. See <Link class='GameCommand' />.
+	</Function>
+	<Function name='CanSafelyEnterGameplay' return='bool,string' arguments=''>
+		Checks various things to determine whether the game will crash when gameplay starts.  Returns false and a string if gameplay cannot be entered safely.<br />
+		Might not work in all cases, but will catch things like a player not having
+		steps set or no current song or style.  Mainly exists for people with a custom ScreenSelectMusic replacement.<br />
+		Example:<br />
+		local can, reason= GAMESTATE:CanSafelyEnterGameplay()<br />
+		if not can then<br />
+		lua.ReportScriptError("Cannot safely enter gameplay: " .. tostring(reason))<br />
+		end<br />
 	</Function>
 	<Function name='ClearStageModifiersIllegalForCourse' return='void' arguments=''>
 		Removes any stage modifiers that are illegal for course play.
@@ -4909,11 +4922,14 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetColumnDrawOrder' return='int' arguments='int column'>
 		Returns the draw order of the column.
 	</Function>
+	<Function name='GetWidth' return='float' arguments='PlayerNumber pn'>
+		Returns the width of the notefield for the given player with this style.
+	</Function>
 	<Function name='LockedDifficulty' return='bool' arguments=''>
 		Returns <code>true</code> if this style locks the difficulty for both players.
 	</Function>
 	<Function name='NeedsZoomOutWith2Players' return='bool' arguments=''>
-		Returns <code>true</code> if the Style needs to be zoomed out with two players.
+		Deprecated.  Always returns false.
 	</Function>
 </Class>
 <Class name='TapNote'>

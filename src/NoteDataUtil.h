@@ -63,6 +63,11 @@ namespace NoteDataUtil
 	void LoadTransformedLightsFromTwo( const NoteData &marquee, const NoteData &bass, NoteData &out );
 	void InsertHoldTails( NoteData &inout );
 
+	// Special case so that kickbox can have autogen steps that are playable.
+	// Hopefully I'll replace this with a good generalized autogen system
+	// later.  -Kyz
+	void AutogenKickbox(const NoteData& in, NoteData& out, const TimingData& timing, StepsType out_type, int nonrandom_seed);
+
 	// radar values - return between 0.0 and 1.2
 	float GetStreamRadarValue( const NoteData &in, float fSongSeconds );
 	float GetVoltageRadarValue( const NoteData &in, float fSongSeconds );

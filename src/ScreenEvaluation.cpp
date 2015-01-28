@@ -103,9 +103,8 @@ void ScreenEvaluation::Init()
 		StageStats &ss = STATSMAN->m_vPlayedStageStats.back();
 
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus") );
+		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus"), PLAYER_INVALID );
 		ss.m_playMode = GAMESTATE->m_PlayMode;
-		ss.m_pStyle = GAMESTATE->GetCurrentStyle();
 		ss.m_Stage = Stage_1st;
 		enum_add( ss.m_Stage, rand()%3 );
 		ss.m_EarnedExtraStage = (EarnedExtraStage)(rand() % NUM_EarnedExtraStage);
@@ -120,6 +119,7 @@ void ScreenEvaluation::Init()
 
 		FOREACH_PlayerNumber( p )
 		{
+			ss.m_player[p].m_pStyle = GAMESTATE->GetCurrentStyle(p);
 			if( RandomInt(2) )
 				PO_GROUP_ASSIGN_N( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_bTransforms, PlayerOptions::TRANSFORM_ECHO, true );	// show "disqualified"
 			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_fMusicRate, 1.1f );

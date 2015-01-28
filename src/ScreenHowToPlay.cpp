@@ -124,7 +124,7 @@ void ScreenHowToPlay::Init()
 		}
 	}
 
-	GAMESTATE->SetCurrentStyle( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
+	GAMESTATE->SetCurrentStyle( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame), PLAYER_INVALID );
 
 	if( USE_PLAYER )
 	{
@@ -146,7 +146,7 @@ void ScreenHowToPlay::Init()
 			loaderSM.LoadFromSimfile( sStepsPath, m_Song, false );
 		m_Song.AddAutoGenNotes();
 
-		const Style* pStyle = GAMESTATE->GetCurrentStyle();
+		const Style* pStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
 
 		Steps *pSteps = SongUtil::GetClosestNotes( &m_Song, pStyle->m_StepsType, Difficulty_Beginner );
 		if(pSteps == NULL)

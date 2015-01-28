@@ -15,7 +15,7 @@ ScreenGameplayLesson::ScreenGameplayLesson()
 
 void ScreenGameplayLesson::Init()
 {
-	ASSERT( GAMESTATE->GetCurrentStyle() != NULL );
+	ASSERT( GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber()) != NULL );
 	ASSERT( GAMESTATE->m_pCurSong != NULL );
 
 	/* Now that we've set up, init the base class. */
