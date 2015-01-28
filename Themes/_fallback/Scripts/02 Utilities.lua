@@ -214,12 +214,10 @@ function Center1Player()
 end
 
 function IsRoutine()
-	local styleType = GAMESTATE:GetCurrentStyle():GetStyleType()
-
-	if styleType == "StyleType_TwoPlayersSharedSides" then
+	local style= GAMESTATE:GetCurrentStyle()
+	if style and style:GetStyleType() == "StyleType_TwoPlayersSharedSides" then
 		return true
 	end
-
 	return false
 end
 
