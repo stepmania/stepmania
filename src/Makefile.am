@@ -28,7 +28,7 @@ AM_CXXFLAGS += -finline-limit=300
 
 AM_CXXFLAGS += $(GL_CFLAGS)
 
-.PHONY: increment_version
+.PHONY: increment_version gitversion
 
 increment_version:
 	if test -e ver.h; then \
@@ -42,6 +42,16 @@ increment_version:
 	echo "extern const char *const version_date = \"`date +"%Y%m%d"`\";" >> ver.cpp;
 
 ver.cpp: increment_version
+
+gitversion:
+	rm -f gitversion.h
+	touch gitversion.h
+	if git rev-parse --short HEAD; then \
+		echo "#define PRODUCT_VER_BARE 5.0-git-`git rev-parse --short HEAD`" > gitversion.h; \
+	fi
+
+gitversion.h: gitversion
+ProductInfo.h: gitversion.h
 
 PNG = \
 ../extern/libpng/include/png.c ../extern/libpng/include/.png.h \
@@ -734,7 +744,7 @@ main_LDADD = \
 		$(GL_LIBS) \
 		libtomcrypt.a libtommath.a
 
-nodist_stepmania_SOURCES = ver.cpp
+nodist_stepmania_SOURCES = ver.cpp gitversion.h
 
 stepmania_CPPFLAGS = $(main_CPPFLAGS)
 stepmania_SOURCES = $(main_SOURCES)

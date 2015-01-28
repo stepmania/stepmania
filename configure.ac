@@ -349,6 +349,7 @@ AM_CONDITIONAL(HAVE_PTHREAD, test "$have_pthread" = "yes")
 # Always:
 AC_DEFINE(_GNU_SOURCE, 1, [Use GNU extensions])
 AC_DEFINE(__STDC_FORMAT_MACROS, 1, [Use PRId64 and similar])
+AC_DEFINE(USE_GITVERSION, 1, [We are generating gitversion.h])
 
 AM_CONDITIONAL(HAVE_ALSA, test x$alsa != xfalse )
 AM_CONDITIONAL(HAVE_GTK, test "$enable_gtk2" != "no" )
