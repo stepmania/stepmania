@@ -20,11 +20,16 @@ void ReceptorArrow::Load( const PlayerState* pPlayerState, int iColNo )
 	m_iColNo = iColNo;
 
 	const PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-	const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iColNo, pn );
+	vector<GameInput> GameI;
+	GAMESTATE->GetCurrentStyle(pn)->StyleInputToGameInput(iColNo, pn, GameI);
 	NOTESKIN->SetPlayerNumber( pn );
-	NOTESKIN->SetGameController( GameI.controller );
+	// FIXME?  Does this cause a problem when game inputs on different
+	// controllers are mapped to the same column?  Such a thing could be set
+	// up in a style that uses two controllers and has a mapping that fits the
+	// requirements. -Kyz
+	NOTESKIN->SetGameController( GameI[0].controller );
 
-	RString sButton = GAMESTATE->GetCurrentStyle()->ColToButtonName( iColNo );
+	RString sButton = GAMESTATE->GetCurrentStyle(pn)->ColToButtonName( iColNo );
 	m_pReceptor.Load( NOTESKIN->LoadActor(sButton, "Receptor") );
 	this->AddChild( m_pReceptor );
 

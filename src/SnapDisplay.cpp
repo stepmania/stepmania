@@ -22,7 +22,7 @@ SnapDisplay::SnapDisplay()
 
 void SnapDisplay::Load()
 {
-	m_iNumCols = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;
+	m_iNumCols = GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_iColsPerPlayer;
 
 	m_sprIndicators[0].SetX( -ARROW_SIZE * (m_iNumCols/2 + 0.5f) );
 	m_sprIndicators[1].SetX(  ARROW_SIZE * (m_iNumCols/2 + 0.5f) );

@@ -209,7 +209,7 @@ void ScreenNetEvaluation::UpdateStats()
 
 	m_textPlayerOptions[m_pActivePlayer].SetText( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].playerOptions );
 
-	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+	StepsType st = GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType;
 	Difficulty dc = NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty;
 	Steps *pSteps = SongUtil::GetOneSteps( GAMESTATE->m_pCurSong, st, dc );
 

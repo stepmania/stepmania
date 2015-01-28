@@ -52,7 +52,6 @@ static StageStats AccumPlayedStageStats( const vector<StageStats>& vss )
 
 	if( !vss.empty() )
 	{
-		ssreturn.m_pStyle = vss[0].m_pStyle;
 		ssreturn.m_playMode = vss[0].m_playMode;
 	}
 
@@ -111,7 +110,7 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 	CHECKPOINT;
 
 	StyleID sID;
-	sID.FromStyle( ss.m_pStyle );
+	sID.FromStyle( ss.m_player[pn].m_pStyle );
 
 	ASSERT( (int) ss.m_vpPlayedSongs.size() == ss.m_player[pn].m_iStepsPlayed );
 	for( int i=0; i<ss.m_player[pn].m_iStepsPlayed; i++ )

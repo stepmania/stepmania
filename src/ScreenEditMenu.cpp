@@ -32,7 +32,7 @@ REGISTER_SCREEN_CLASS( ScreenEditMenu );
 void ScreenEditMenu::Init()
 {
 	// HACK: Disable any style set by the editor.
-	GAMESTATE->m_pCurStyle.Set( NULL );
+	GAMESTATE->SetCurrentStyle( NULL, PLAYER_INVALID );
 
 	// Enable all players.
 	FOREACH_PlayerNumber( pn )
@@ -205,7 +205,7 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 
 	GAMESTATE->m_pCurSong.Set( pSong );
 	GAMESTATE->m_pCurCourse.Set( NULL );
-	GAMESTATE->SetCurrentStyle( GAMEMAN->GetEditorStyleForStepsType(st) );
+	GAMESTATE->SetCurrentStyle( GAMEMAN->GetEditorStyleForStepsType(st), PLAYER_INVALID );
 	GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 
 	// handle error cases

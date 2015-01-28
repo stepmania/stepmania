@@ -20,7 +20,6 @@ StageStats::StageStats()
 	m_playMode = PlayMode_Invalid;
 	m_Stage = Stage_Invalid;
 	m_iStageIndex = -1;
-	m_pStyle = NULL;
 	m_vpPlayedSongs.clear();
 	m_vpPossibleSongs.clear();
 	m_EarnedExtraStage = EarnedExtraStage_No;
@@ -54,7 +53,6 @@ void StageStats::AssertValid( PlayerNumber pn ) const
 	ASSERT( m_player[pn].m_vpPossibleSteps.size() != 0 );
 	ASSERT( m_player[pn].m_vpPossibleSteps[0] != NULL );
 	ASSERT_M( m_playMode < NUM_PlayMode, ssprintf("playmode %i", m_playMode) );
-	ASSERT( m_pStyle != NULL );
 	ASSERT_M( m_player[pn].m_vpPossibleSteps[0]->GetDifficulty() < NUM_Difficulty, ssprintf("Invalid Difficulty %i", m_player[pn].m_vpPossibleSteps[0]->GetDifficulty()) );
 	ASSERT_M( (int) m_vpPlayedSongs.size() == m_player[pn].m_iStepsPlayed, ssprintf("%i Songs Played != %i Steps Played for player %i", (int)m_vpPlayedSongs.size(), (int)m_player[pn].m_iStepsPlayed, pn) );
 	ASSERT_M( m_vpPossibleSongs.size() == m_player[pn].m_vpPossibleSteps.size(), ssprintf("%i Possible Songs != %i Possible Steps for player %i", (int)m_vpPossibleSongs.size(), (int)m_player[pn].m_vpPossibleSteps.size(), pn) );
@@ -69,7 +67,6 @@ void StageStats::AssertValid( MultiPlayer pn ) const
 	ASSERT( m_multiPlayer[pn].m_vpPossibleSteps.size() != 0 );
 	ASSERT( m_multiPlayer[pn].m_vpPossibleSteps[0] != NULL );
 	ASSERT_M( m_playMode < NUM_PlayMode, ssprintf("playmode %i", m_playMode) );
-	ASSERT( m_pStyle != NULL );
 	ASSERT_M( m_player[pn].m_vpPossibleSteps[0]->GetDifficulty() < NUM_Difficulty, ssprintf("difficulty %i", m_player[pn].m_vpPossibleSteps[0]->GetDifficulty()) );
 	ASSERT( (int) m_vpPlayedSongs.size() == m_player[pn].m_iStepsPlayed );
 	ASSERT( m_vpPossibleSongs.size() == m_player[pn].m_vpPossibleSteps.size() );
@@ -216,7 +213,7 @@ void StageStats::FinalizeScores( bool bSummary )
 	FOREACH_HumanPlayer( p )
 	{
 		const HighScore &hs = m_player[p].m_HighScore;
-		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+		StepsType st = GAMESTATE->GetCurrentStyle(p)->m_StepsType;
 
 		const Song* pSong = GAMESTATE->m_pCurSong;
 		const Steps* pSteps = GAMESTATE->m_pCurSteps[p];
@@ -270,7 +267,7 @@ void StageStats::FinalizeScores( bool bSummary )
 
 		HighScore &hs = m_player[p].m_HighScore;
 		Profile* pProfile = PROFILEMAN->GetMachineProfile();
-		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+		StepsType st = GAMESTATE->GetCurrentStyle(p)->m_StepsType;
 
 		const HighScoreList *pHSL = NULL;
 		if( bSummary )

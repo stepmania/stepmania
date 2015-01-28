@@ -15,17 +15,18 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 	m_pPlayerState = pPlayerState;
 	m_fYReverseOffsetPixels = fYReverseOffset;
 
-	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	const PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	const Style* pStyle = GAMESTATE->GetCurrentStyle(pn);
 	NOTESKIN->SetPlayerNumber( pn );
 
 	// init arrows
 	for( int c=0; c<pStyle->m_iColsPerPlayer; c++ ) 
 	{
-		const RString &sButton = GAMESTATE->GetCurrentStyle()->ColToButtonName( c );
+		const RString &sButton = GAMESTATE->GetCurrentStyle(pn)->ColToButtonName( c );
 
-		const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( c, pn );
-		NOTESKIN->SetGameController( GameI.controller );
+		vector<GameInput> GameI;
+		GAMESTATE->GetCurrentStyle(pn)->StyleInputToGameInput( c, pn, GameI );
+		NOTESKIN->SetGameController( GameI[0].controller );
 
 		m_bHoldShowing.push_back( TapNoteSubType_Invalid );
 		m_bLastHoldShowing.push_back( TapNoteSubType_Invalid );
@@ -89,7 +90,7 @@ void GhostArrowRow::Update( float fDeltaTime )
 
 void GhostArrowRow::DrawPrimitives()
 {
-	const Style* pStyle = GAMESTATE->GetCurrentStyle();
+	const Style* pStyle = GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber);
 	for( unsigned i=0; i<m_Ghost.size(); i++ )
 	{
 		const int c = pStyle->m_iColumnDrawOrder[i];

@@ -68,7 +68,7 @@ void ScreenSelectMusic::Init()
 	if( PREFSMAN->m_sTestInitialScreen.Get() == m_sName )
 	{
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus") );
+		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus"), PLAYER_INVALID );
 		GAMESTATE->JoinPlayer( PLAYER_1 );
 		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 	}
@@ -234,20 +234,17 @@ void ScreenSelectMusic::BeginScreen()
 
 	if( CommonMetrics::AUTO_SET_STYLE )
 	{
-		vector<StepsType> vst;
-		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vst );
-		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), vst[0] );
-		GAMESTATE->SetCurrentStyle( pStyle );
+		GAMESTATE->SetCompatibleStylesForPlayers();
 	}
 
-	if( GAMESTATE->GetCurrentStyle() == NULL )
+	if( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) == NULL )
 	{
 		LuaHelpers::ReportScriptError("The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic.");
 		// Instead of crashing, set the first compatible style.
 		vector<StepsType> vst;
 		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vst );
 		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), vst[0] );
-		GAMESTATE->SetCurrentStyle( pStyle );
+		GAMESTATE->SetCurrentStyle( pStyle, PLAYER_INVALID );
 	}
 
 	if( GAMESTATE->m_PlayMode == PlayMode_Invalid )
@@ -1436,31 +1433,9 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			}
 		}
 
-		if( CommonMetrics::AUTO_SET_STYLE )
-		{
-			// Now that Steps have been chosen, set a Style that can play them.
-			const Style *pStyle = NULL;
-			if( GAMESTATE->IsCourseMode() )
-				pStyle = GAMESTATE->m_pCurCourse->GetCourseStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined() );
-			if( pStyle == NULL )
-			{
-				StepsType stCurrent;
-				PlayerNumber pn = GAMESTATE->GetMasterPlayerNumber();
-				if( GAMESTATE->IsCourseMode() )
-				{
-					ASSERT( GAMESTATE->m_pCurTrail[pn] != NULL );
-					stCurrent = GAMESTATE->m_pCurTrail[pn]->m_StepsType;
-				}
-				else
-				{
-					ASSERT( GAMESTATE->m_pCurSteps[pn] != NULL );
-					stCurrent = GAMESTATE->m_pCurSteps[pn]->m_StepsType;
-				}
-				vector<StepsType> vst;
-				pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), stCurrent );
-			}
-			GAMESTATE->SetCurrentStyle( pStyle );
-		}
+		// Now that Steps have been chosen, set a Style that can play them.
+		GAMESTATE->SetCompatibleStylesForPlayers();
+		GAMESTATE->ForceSharedSidesMatch();
 
 		/* If we're currently waiting on song assets, abort all except the music
 		 * and start the music, so if we make a choice quickly before background
@@ -1831,6 +1806,10 @@ void ScreenSelectMusic::AfterMusicChange()
 		}
 
 		SongUtil::GetPlayableSteps( pSong, m_vpSteps );
+		if(m_vpSteps.empty())
+		{
+			//LuaHelpers::ReportScriptError("GetPlayableSteps returned nothing.");
+		}
 
 		if ( PREFSMAN->m_bShowBanners )
 			g_sBannerPath = pSong->GetBannerPath();
@@ -1848,7 +1827,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		if( CommonMetrics::AUTO_SET_STYLE )
 			pStyle = pCourse->GetCourseStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined() );
 		if( pStyle == NULL )
-			pStyle = GAMESTATE->GetCurrentStyle();
+			pStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
 		lCourse->GetTrails( m_vpTrails, pStyle->m_StepsType );
 
 		m_sSampleMusicToPlay = m_sCourseMusicPath;

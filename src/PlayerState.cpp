@@ -16,6 +16,7 @@ PlayerState::PlayerState()
 
 void PlayerState::Reset()
 {
+	m_NotefieldZoom= 1.0f;
 	m_PlayerOptions.Init();
 
 	m_fLastDrawnBeat = -100;
@@ -94,6 +95,15 @@ void PlayerState::Update( float fDelta )
 
 	if( m_fSecondsUntilAttacksPhasedOut > 0 )
 		m_fSecondsUntilAttacksPhasedOut = max( 0, m_fSecondsUntilAttacksPhasedOut - fDelta );
+}
+
+void PlayerState::SetPlayerNumber(PlayerNumber pn)
+{
+	m_PlayerNumber = pn;
+	FOREACH_ENUM(ModsLevel, ml)
+	{
+		m_PlayerOptions.Get(ml).m_pn= pn;
+	}
 }
 
 void PlayerState::ResetToDefaultPlayerOptions( ModsLevel l )

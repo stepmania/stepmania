@@ -96,6 +96,7 @@ public:
 
 	bool operator==( const PlayerOptions &other ) const;
 	bool operator!=( const PlayerOptions &other ) const { return !operator==(other); }
+	PlayerOptions& operator=(PlayerOptions const& other);
 
 	/** @brief The various acceleration mods. */
 	enum Accel {
@@ -182,6 +183,8 @@ public:
 	};
 
 	float GetReversePercentForColumn( int iCol ) const; // accounts for all Directions
+
+	PlayerNumber m_pn; // Needed for fetching the style.
 
 	LifeType m_LifeType;
 	DrainType m_DrainType;	// only used with LifeBar

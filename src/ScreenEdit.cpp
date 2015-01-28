@@ -1273,7 +1273,7 @@ void ScreenEdit::Init()
 	m_CurrentAction = MAIN_MENU_CHOICE_INVALID;
 	m_InputPlayerNumber = PLAYER_INVALID;
 
-	if( GAMESTATE->GetCurrentStyle()->m_StyleType == StyleType_TwoPlayersSharedSides )
+	if( GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StyleType == StyleType_TwoPlayersSharedSides )
 		m_InputPlayerNumber = PLAYER_1;
 
 	FOREACH_PlayerNumber( p )
@@ -1328,7 +1328,8 @@ void ScreenEdit::Init()
 				                 ModsLevel_Preferred, m_sNoteSkin, sNoteSkin );
 		}
 	}
-	m_PlayerStateEdit.m_PlayerNumber = PLAYER_1;
+	m_PlayerStateEdit.SetPlayerNumber(PLAYER_1);
+	m_PlayerStateEdit.m_NotefieldZoom= 1.0f;
 	// If we always go with the GAMESTATE NoteSkin, we will have fun effects
 	// like Vivid or Flat in the editor notefield. This is not conducive to
 	// productive editing.
@@ -1349,7 +1350,7 @@ void ScreenEdit::Init()
 	m_pSteps->GetNoteData( m_NoteDataEdit );
 	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_Y );
 	m_NoteFieldEdit.SetZoom( 0.5f );
-	m_NoteFieldEdit.Init( &m_PlayerStateEdit, PLAYER_HEIGHT*2 );
+	m_NoteFieldEdit.Init( &m_PlayerStateEdit, PLAYER_HEIGHT*2, false );
 	m_NoteFieldEdit.Load( &m_NoteDataEdit, -240, 850 );
 	this->AddChild( &m_NoteFieldEdit );
 
@@ -1511,10 +1512,15 @@ void ScreenEdit::Update( float fDeltaTime )
 	{
 		// TODO: Find a way to prevent STATE_RECORDING when in Song Timing.
 		
-		for( int t=0; t<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; t++ )	// for each track
+		for( int t=0; t<GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_iColsPerPlayer; t++ )	// for each track
 		{
-			GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( t, PLAYER_1 );
-			float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
+			vector<GameInput> GameI;
+			GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->StyleInputToGameInput( t, PLAYER_1, GameI );
+			float fSecsHeld= 0.0f;
+			for(size_t i= 0; i < GameI.size(); ++i)
+			{
+				fSecsHeld= max(fSecsHeld, INPUTMAPPER->GetSecsHeld(GameI[i]));
+			}
 			fSecsHeld = min( fSecsHeld, m_RemoveNoteButtonLastChanged.Ago() );
 			if( fSecsHeld == 0 )
 				continue;
@@ -1565,9 +1571,10 @@ void ScreenEdit::Update( float fDeltaTime )
 		 * range.
 		 */
 		bool bButtonIsBeingPressed = false;
-		for( int t=0; t<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; t++ )	// for each track
+		for( int t=0; t<GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_iColsPerPlayer; t++ )	// for each track
 		{
-			GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( t, PLAYER_1 );
+			vector<GameInput> GameI;
+			GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->StyleInputToGameInput( t, PLAYER_1, GameI );
 			if( INPUTMAPPER->IsBeingPressed(GameI) )
 				bButtonIsBeingPressed = true;
 		}
@@ -1912,9 +1919,9 @@ bool ScreenEdit::Input( const InputEventPlus &input )
 
 static void ShiftToRightSide( int &iCol, int iNumTracks )
 {
-	switch( GAMESTATE->GetCurrentStyle()->m_StyleType )
+	switch( GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StyleType )
 	{
-	DEFAULT_FAIL( GAMESTATE->GetCurrentStyle()->m_StyleType );
+	DEFAULT_FAIL( GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StyleType );
 	case StyleType_OnePlayerOneSide:
 		break;
 	case StyleType_TwoPlayersTwoSides:
@@ -2900,7 +2907,7 @@ bool ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 	if( input.pn != PLAYER_1 )
 		return false;		// ignore
 
-	const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
+	const int iCol = GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->GameInputToColumn( input.GameI );
 
 	//Is this actually a column? If not, ignore the input.
 	if( iCol == -1 )
@@ -3017,13 +3024,13 @@ bool ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 
 	if( GamePreferences::m_AutoPlay == PC_HUMAN && GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetCurrent().m_fPlayerAutoPlay == 0 )
 	{
-		const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
+		const int iCol = GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->GameInputToColumn( input.GameI );
 		bool bRelease = input.type == IET_RELEASE;
 		switch( input.pn )
 		{
 		case PLAYER_2:
 			// ignore player 2 input unless this mode requires it
-			if( GAMESTATE->GetCurrentStyle()->m_StyleType != StyleType_TwoPlayersSharedSides )
+			if( GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StyleType != StyleType_TwoPlayersSharedSides )
 				break;
 
 		// fall through to input handling logic:
@@ -4833,7 +4840,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 			const NoteData OldClipboard( m_Clipboard );
 			HandleAlterMenuChoice( cut, false );
 			
-			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+			StepsType st = GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType;
 			TurnType tt = (TurnType)iAnswers[c];
 			switch( tt )
 			{
@@ -4855,7 +4862,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 			int iBeginRow = m_NoteFieldEdit.m_iBeginMarker;
 			int iEndRow = m_NoteFieldEdit.m_iEndMarker;
 			TransformType tt = (TransformType)iAnswers[c];
-			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+			StepsType st = GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType;
 			
 			switch( tt )
 			{

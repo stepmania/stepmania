@@ -22,8 +22,58 @@ function GetExtraColorThreshold()
 		para = 10,
 		techno = 10,
 		lights = 10, -- lights shouldn't be playable
+		kickbox= 100, -- extra color is lame
 	}
 	return Modes[CurGameName()] or 10
+end
+
+-- GameplayMargins exists to provide a layer of backwards compatibility for
+-- people using the X position metrics to set where the notefields are.
+-- This makes it somewhat complex.
+-- Rather than trying to understand how it works, you can simply do this:
+-- (example values in parentheses)
+-- 1.  Decide how much space you want in the center between notefields. (80)
+-- 2.  Decide how much space you want on each side. (40)
+-- 3.  Write a simple function that just returns those numbers:
+--     function GameplayMargins() return 40, 80, 40 end
+-- Then the engine does the work of figuring out where each notefield should
+-- be centered.
+function GameplayMargins(enabled_players, styletype)
+	local other= {[PLAYER_1]= PLAYER_2, [PLAYER_2]= PLAYER_1}
+	local margins= {[PLAYER_1]= {40, 40}, [PLAYER_2]= {40, 40}}
+	-- Use a fake style width because calculating the real style width throws off
+	-- the code in the engine.
+	local fake_style_width= 272
+	-- Handle the case of a single player that is centered first because it's
+	-- simpler.
+	if Center1Player() then
+		local pn= enabled_players[1]
+		fake_style_width= 544
+		local center= _screen.cx
+		local left= center - (fake_style_width / 2)
+		local right= _screen.w - center - (fake_style_width / 2)
+		-- center margin width will be ignored.
+		return left, 80, right
+	end
+	local half_screen= _screen.w / 2
+	local left= {[PLAYER_1]= 0, [PLAYER_2]= half_screen}
+	for i, pn in ipairs(enabled_players) do
+		local edge= left[pn]
+		local center= THEME:GetMetric("ScreenGameplay",
+			"Player"..ToEnumShortString(pn)..ToEnumShortString(styletype).."X")
+		-- Adjust for the p2 center being on the right side.
+		center= center - edge
+		margins[pn][1]= center - (fake_style_width / 2)
+		margins[pn][2]= half_screen - center - (fake_style_width / 2)
+		if #enabled_players == 1 then
+			margins[other[pn]][1]= margins[pn][2]
+			margins[other[pn]][2]= margins[pn][1]
+		end
+	end
+	local left= margins[PLAYER_1][1]
+	local center= margins[PLAYER_1][2] + margins[PLAYER_2][1]
+	local right= margins[PLAYER_2][2]
+	return left, center, right
 end
 
 -- AllowOptionsMenu()
@@ -51,9 +101,66 @@ function GameCompatibleModes()
 		maniax = "Single,Double,Versus",
 		-- todo: add versus modes for technomotion
 		techno = "Single4,Single5,Single8,Double4,Double5,Double8",
-		lights = "Single" -- lights shouldn't be playable
+		lights = "Single", -- lights shouldn't be playable
 	}
 	return Modes[CurGameName()]
+end
+
+local function upper_first_letter(s)
+	local first_letter= s:match("([a-zA-Z])")
+	return s:gsub(first_letter, first_letter:upper(), 1)
+end
+
+-- No more having a metric for every style for every game mode. -Kyz
+function ScreenSelectStyleChoices()
+	local styles= GAMEMAN:GetStylesForGame(GAMESTATE:GetCurrentGame():GetName())
+	local choices= {}
+	for i, style in ipairs(styles) do
+		local name= style:GetName()
+		local cap_name= upper_first_letter(name)
+		-- couple-edit and threepanel don't seem like they should actually be
+		-- selectable. -Kyz
+		if name ~= "couple-edit" and name ~= "threepanel" then
+			choices[#choices+1]= "name," .. cap_name .. ";style," .. name ..
+				";text," .. cap_name .. ";screen," .. Branch.AfterSelectStyle()
+		end
+	end
+	return choices
+end
+
+-- No more having an xy for every style for every game mode. -Kyz
+function ScreenSelectStylePositions(count)
+	local poses= {}
+	local columns= 1
+	local choice_height= 96
+	local column_x= {_screen.cx, _screen.cx + 160}
+	if count > 4 then
+		column_x[1]= _screen.cx - 160
+		columns= 2
+	end
+	if count > 8 then
+		column_x[1]= _screen.cx - 240
+		column_x[2]= _screen.cx
+		column_x[3]= _screen.cx + 240
+		columns= 3
+	end
+	local num_per_column= {math.ceil(count/columns), math.floor(count/columns)}
+	if count > 8 then
+		if count % 3 == 0 then
+			num_per_column[3]= count/columns
+		elseif count % 3 == 1 then
+			num_per_column[3]= num_per_column[2]
+		else
+			num_per_column[3]= num_per_column[1]
+		end
+	end
+	for c= 1, columns do
+		local start_y= _screen.cy - (choice_height * ((num_per_column[c] / 2)+.5))
+		for i= 1, num_per_column[c] do
+			poses[#poses+1]= {column_x[c], start_y + (choice_height * i)}
+		end
+	end
+	return poses
 end
 
 function SelectProfileKeys()
