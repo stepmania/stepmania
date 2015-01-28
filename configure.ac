@@ -1,5 +1,5 @@
 AC_PREREQ(2.59)
-AC_INIT(StepMania 5, beta 0, [https://github.com/stepmania/stepmania], StepMania, [http://stepmania.com])
+AC_INIT(StepMania, 5.0, [https://github.com/stepmania/stepmania], StepMania, [http://stepmania.com])
 AC_CONFIG_SRCDIR([src/StepMania.cpp])
 AC_CONFIG_AUX_DIR(autoconf)
 AC_CANONICAL_TARGET
