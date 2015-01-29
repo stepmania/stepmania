@@ -333,7 +333,8 @@ void ActorMultiVertex::SetVertsFromSplinesInternal(size_t num_splines, size_t of
 	{
 		vector<float> pos;
 		const int spi= v%num_splines;
-		_splines[spi].evaluate(static_cast<float>(v) * tper[spi], pos);
+		float part= static_cast<float>(v/num_splines);
+		_splines[spi].evaluate(part * tper[spi], pos);
 		verts[v+first].p.x= pos[0];
 		verts[v+first].p.y= pos[1];
 		verts[v+first].p.z= pos[2];

@@ -18,7 +18,7 @@ public:
 
 	bool Init( int iDancePadType );
 	bool IsInitialized() { return m_bInitialized; }
-	static bool CanUse();
+	static bool CanUse(PlayerNumber pn);
 	void AddPlayer( PlayerNumber pn, const NoteData &nd );
 	void ShowStepCircle( PlayerNumber pn, int CSTEP );
 	bool m_bShowBackground;

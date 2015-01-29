@@ -49,34 +49,14 @@ inline U lerp( T x, U l, U h )
 	return U(x * (h - l) + l);
 }
 
-inline bool CLAMP( int &x, int l, int h )
+template<typename T, typename U, typename V>
+inline bool CLAMP(T& x, U l, V h)
 {
-	if (x > h)	{ x = h; return true; }
-	else if (x < l) { x = l; return true; }
-	return false;
-}
-inline bool CLAMP( unsigned &x, unsigned l, unsigned h )
-{
-	if (x > h)	{ x = h; return true; }
-	else if (x < l) { x = l; return true; }
+	if(x > static_cast<T>(h)) { x= static_cast<T>(h); return true; }
+	else if(x < static_cast<T>(l)) { x= static_cast<T>(l); return true; }
 	return false;
 }
 
-#if !defined(_MSC_VER)
-inline bool CLAMP( size_t &x, size_t l, size_t h )
-{
-	if (x > h)	{ x = h; return true; }
-	else if (x < l) { x = l; return true; }
-	return false;
-}
-#endif
-
-inline bool CLAMP( float &x, float l, float h )
-{
-	if (x > h)	{ x = h; return true; }
-	else if (x < l) { x = l; return true; }
-	return false;
-}
 template<class T>
 inline bool ENUM_CLAMP( T &x, T l, T h )
 {

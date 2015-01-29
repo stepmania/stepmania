@@ -16,29 +16,7 @@
  * As an example, use "StepMania4" here, not "StepMania".
  * It would cause a conflict with older versions such as StepMania 3.X.
  */
-#define PRODUCT_ID_BARE StepMania 5
-
-/**
- * @brief Version info displayed to the user.
- *
- * These are the 'official' version designations:
- * <ul>
- * <li>"v5.0 alpha #": Alpha versions (bug squashing, polishing until we reach beta)</li>
- * <li>"v5.0 beta #": Beta versions (bug squashing, _focus_ is on high priority bugs)</li>
- * <li>"v5.0 rc#": Release Candidates (if there are no problems, move on to final)</li>
- * <li>"v5.0.0": Final Releases</li>
- * </li></ul>
- */
-#ifndef PRODUCT_VER_BARE
-#define PRODUCT_VER_BARE v5.0 beta 4a
-#endif
-
-/**
- * @brief A unique ID for a build of an application.
- *
- * This is used in crash reports and in the network code's version handling.
- */
-#define PRODUCT_ID_VER_BARE PRODUCT_FAMILY_BARE PRODUCT_VER_BARE
+#define PRODUCT_ID_BARE StepMania 5.0
 
 // These cannot be #undef'd so make them unlikely to conflict with anything
 #define PRODUCT_STRINGIFY(x) #x
@@ -46,8 +24,6 @@
 
 #define PRODUCT_FAMILY		PRODUCT_XSTRINGIFY(PRODUCT_FAMILY_BARE)
 #define PRODUCT_ID			PRODUCT_XSTRINGIFY(PRODUCT_ID_BARE)
-#define PRODUCT_VER			PRODUCT_XSTRINGIFY(PRODUCT_VER_BARE)
-#define PRODUCT_ID_VER		PRODUCT_XSTRINGIFY(PRODUCT_ID_VER_BARE)
 
 #define VIDEO_TROUBLESHOOTING_URL "http://old.stepmania.com/stepmaniawiki.php?title=Video_Driver_Troubleshooting"
 /** @brief The URL to report bugs on the program. */

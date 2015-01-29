@@ -34,11 +34,6 @@ function GameOverOrContinue()
 	end
 end
 
--- functions used for Routine mode
-function IsRoutine()
-	return GAMESTATE:GetCurrentStyle() and GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_TwoPlayersSharedSides"
-end
-
 Branch = {
 	Init = function() return "ScreenInit" end,
 	AfterInit = function()

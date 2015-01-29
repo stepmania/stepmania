@@ -1,4 +1,5 @@
 #include "global.h"
+#include "ScreenDimensions.h"
 #include "ScreenOptionsManageProfiles.h"
 #include "ScreenManager.h"
 #include "RageLog.h"
@@ -454,7 +455,7 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus & )
 		int iWidth, iX, iY;
 		this->GetWidthXY( PLAYER_1, iCurRow, 0, iWidth, iX, iY );
 
-		ScreenMiniMenu::MiniMenu( &g_TempMenu, SM_BackFromContextMenu, SM_BackFromContextMenu, (float)iX, (float)iY );
+		ScreenMiniMenu::MiniMenu( &g_TempMenu, SM_BackFromContextMenu, SM_BackFromContextMenu, (float)iX, SCREEN_CENTER_Y );
 	}
 }
 

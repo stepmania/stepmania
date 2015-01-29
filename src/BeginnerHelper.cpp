@@ -78,7 +78,7 @@ BeginnerHelper::~BeginnerHelper()
 bool BeginnerHelper::Init( int iDancePadType )
 {
 	ASSERT( !m_bInitialized );
-	if( !CanUse() )
+	if( !CanUse(PLAYER_INVALID) )
 		return false;
 
 	// If no players were successfully added, bail.
@@ -200,7 +200,7 @@ void BeginnerHelper::AddPlayer( PlayerNumber pn, const NoteData &ns )
 	ASSERT( pn >= 0 && pn < NUM_PLAYERS );
 	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
 
-	if( !CanUse() )
+	if( !CanUse(pn) )
 		return;
 	
 	const Character *Character = GAMESTATE->m_pCurCharacters[pn];
@@ -212,13 +212,20 @@ void BeginnerHelper::AddPlayer( PlayerNumber pn, const NoteData &ns )
 	m_bPlayerEnabled[pn] = true;
 }
 
-bool BeginnerHelper::CanUse()
+bool BeginnerHelper::CanUse(PlayerNumber pn)
 {
 	for (int i=0; i<NUM_ANIMATIONS; ++i )
 		if( !DoesFileExist(GetAnimPath((Animation)i)) )
 			return false;
 
-	return GAMESTATE->GetCurrentStyle()->m_bCanUseBeginnerHelper;
+	// This does not pass PLAYER_INVALID to GetCurrentStyle because that would
+	// only check the first non-NULL style.  Both styles need to be checked. -Kyz
+	if(pn == PLAYER_INVALID)
+	{
+		return GAMESTATE->GetCurrentStyle(PLAYER_1)->m_bCanUseBeginnerHelper ||
+			GAMESTATE->GetCurrentStyle(PLAYER_2)->m_bCanUseBeginnerHelper;
+	}
+	return GAMESTATE->GetCurrentStyle(pn)->m_bCanUseBeginnerHelper;
 }
 
 void BeginnerHelper::DrawPrimitives()

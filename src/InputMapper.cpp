@@ -910,6 +910,16 @@ bool InputMapper::IsBeingPressed( GameButton MenuI, PlayerNumber pn ) const
 	return false;
 }
 
+bool InputMapper::IsBeingPressed(const vector<GameInput>& GameI, MultiPlayer mp, const DeviceInputList *pButtonState ) const
+{
+	bool pressed= false;
+	for(size_t i= 0; i < GameI.size(); ++i)
+	{
+		pressed |= IsBeingPressed(GameI[i], mp, pButtonState);
+	}
+	return pressed;
+}
+
 void InputMapper::RepeatStopKey( const GameInput &GameI )
 {
 	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )

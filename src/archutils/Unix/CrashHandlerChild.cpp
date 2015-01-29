@@ -23,9 +23,7 @@
 #endif
 
 #if defined(HAVE_VERSION_INFO)
-extern const unsigned long version_num;
-extern const char *const version_date;
-extern const char *const version_time;
+#include "ver.h"
 #endif
 
 bool child_read( int fd, void *p, int size );

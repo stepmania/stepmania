@@ -47,7 +47,7 @@ void Style::GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& ori
 	noteDataOut.LoadTransformed( original, m_iColsPerPlayer, iNewToOriginalTrack );
 }
 
-GameInput Style::StyleInputToGameInput( int iCol, PlayerNumber pn ) const
+void Style::StyleInputToGameInput( int iCol, PlayerNumber pn, vector<GameInput>& ret ) const
 {
 	ASSERT_M( pn < NUM_PLAYERS  &&  iCol < MAX_COLS_PER_PLAYER,
 		ssprintf("P%i C%i", pn, iCol) );
@@ -65,12 +65,20 @@ GameInput Style::StyleInputToGameInput( int iCol, PlayerNumber pn ) const
 			if( iThisInputCol == END_MAPPING )
 				break;
 
+			// A style can have multiple game inputs mapped to a single column, so
+			// we have to return all the game inputs that are valid.  If only the
+			// first is returned, then holds will drop on other inputs that should
+			// be valid. -Kyz
 			if( iThisInputCol == iCol )
-				return GameInput( gc, gb );
+			{
+				ret.push_back(GameInput( gc, gb ));
+			}
 		}
 	}
-
-	FAIL_M( ssprintf("Invalid column number %i for player %i in the style %s", iCol, pn, GAMESTATE->GetCurrentStyle()->m_szName) );
+	if(unlikely(ret.empty()))
+	{
+		FAIL_M( ssprintf("Invalid column number %i for player %i in the style %s", iCol, pn, m_szName) );
+	}
 };
 
 int Style::GameInputToColumn( const GameInput &GameI ) const
@@ -82,8 +90,12 @@ int Style::GameInputToColumn( const GameInput &GameI ) const
 		return Column_Invalid;
 
 	for( int i = 0; i <= iColumnIndex; ++i )
+	{
 		if( m_iInputColumn[GameI.controller][i] == END_MAPPING )
+		{
 			return Column_Invalid;
+		}
+	}
 
 	return m_iInputColumn[GameI.controller][iColumnIndex];
 }
@@ -102,14 +114,25 @@ void Style::GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut 
 	}
 }
 
+float Style::GetWidth(PlayerNumber pn) const
+{
+	float left, right;
+	GetMinAndMaxColX(pn, left, right);
+	// left and right are the center positions of the columns.  The full width
+	// needs to be from the edges.
+	float width= right - left;
+	return width + (width / static_cast<float>(m_iColsPerPlayer-1));
+}
+
 RString Style::ColToButtonName( int iCol ) const
 {
 	const char *pzColumnName = m_ColumnInfo[PLAYER_1][iCol].pzName;
 	if( pzColumnName != NULL )
 		return pzColumnName;
 
-	GameInput GI = StyleInputToGameInput( iCol, PLAYER_1 );
-	return INPUTMAPPER->GetInputScheme()->GetGameButtonName(GI.button);
+	vector<GameInput> GI;
+	StyleInputToGameInput( iCol, PLAYER_1, GI );
+	return INPUTMAPPER->GetInputScheme()->GetGameButtonName(GI[0].button);
 }
 
 // Lua bindings
@@ -123,7 +146,20 @@ public:
 	DEFINE_METHOD( GetStyleType,		m_StyleType )
 	DEFINE_METHOD( GetStepsType,		m_StepsType )
 	DEFINE_METHOD( ColumnsPerPlayer,	m_iColsPerPlayer )
-	DEFINE_METHOD( NeedsZoomOutWith2Players,	m_bNeedsZoomOutWith2Players )
+	static int NeedsZoomOutWith2Players(T* p, lua_State *L)
+	{
+		// m_bNeedsZoomOutWith2Players was removed in favor of having
+		// ScreenGameplay use the style's width and margin values to calculate
+		// the zoom.  So this always returns false. -Kyz
+		lua_pushboolean(L, false);
+		return 1;
+	}
+	static int GetWidth(T* p, lua_State* L)
+	{
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
+		lua_pushnumber(L, p->GetWidth(pn));
+		return 1;
+	}
 	DEFINE_METHOD( LockedDifficulty,	m_bLockDifficulties )
 
 	static int GetColumnInfo( T* p, lua_State *L )
@@ -169,6 +205,7 @@ public:
 		ADD_METHOD( GetColumnDrawOrder );
 		ADD_METHOD( ColumnsPerPlayer );
 		ADD_METHOD( NeedsZoomOutWith2Players );
+		ADD_METHOD( GetWidth );
 		ADD_METHOD( LockedDifficulty );
 	}
 };

@@ -14,11 +14,10 @@ if BUILD_TESTS
 endif
 
 AM_LDFLAGS =
-AM_CXXFLAGS = 
+AM_CXXFLAGS =
 AM_CFLAGS = 
 noinst_LIBRARIES =
 EXTRA_DIST =
-
 
 AM_CXXFLAGS += -fno-exceptions
 
@@ -28,23 +27,31 @@ AM_CXXFLAGS += -finline-limit=300
 
 AM_CXXFLAGS += $(GL_CFLAGS)
 
-.PHONY: increment_version
+.PHONY: update_version
 
-all: increment_version
-
-increment_version:
+update_version:
 	if test -e ver.cpp; then \
-		build=`sed -rs 's/.*version_num = ([[:digit:]]+);/\1/;q' ver.cpp`; \
+		build=`sed -rs 's/.*version_num = ([[:digit:]]+);/\1/;2q;d' ver.cpp`; \
 		build=`expr $$build + 1`; \
 	else \
 		build=0; \
 	fi; \
-	echo "extern const unsigned long version_num = $$build;" > ver.cpp; \
-	echo "extern const char *const version_time = \"`date +"%X %Z (UTC%:z)"`\";" >> ver.cpp;
-	echo "extern const char *const version_date = \"`date +"%Y%m%d"`\";" >> ver.cpp;
+	echo "#include \"ver.h\"" > ver.cpp; \
+	echo "const unsigned long version_num = $$build;" >> ver.cpp
+# Header inclusion necessary to get linker symbols right
+	echo "const char *const version_time = \"`date +"%X %Z (UTC%:z)"`\";" >> ver.cpp
+	echo "const char *const version_date = \"`date +"%Y%m%d"`\";" >> ver.cpp
+	if git rev-parse --short HEAD; then \
+		echo "const char *const product_version = \"5.0-git-`git rev-parse --short HEAD`\";" >> ver.cpp; \
+	else \
+		echo "const char *const product_version = \"5.0-UNKNOWN\";" >> ver.cpp; \
+	fi
 
-ver.cpp:
-	$(MAKE) increment_version
+ver.cpp: update_version
+# make doesn't recognize a file it updated during the current invocation
+# (in this case ver.cpp) as being updated. So remake and delete stepmania-ver.o
+# every time.
+.INTERMEDIATE: stepmania-ver.o
 
 PNG = \
 ../extern/libpng/include/png.c ../extern/libpng/include/.png.h \

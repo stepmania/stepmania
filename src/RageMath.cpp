@@ -705,7 +705,8 @@ float RageBezier2D::EvaluateYFromX( float fX ) const
 	 * http://www.tinaja.com/text/bezmath.html).  This usually finds T within an
 	 * acceptable error margin in a few steps. */
 	float fT = SCALE( fX, m_X.GetBezierStart(), m_X.GetBezierEnd(), 0, 1 );
-	while(1)
+	// Don't try more than 100 times, the curve might be a bit nonsensical. -Kyz
+	for(int i= 0; i < 100; ++i)
 	{
 		float fGuessedX = m_X.Evaluate( fT );
 		float fError = fX-fGuessedX;
@@ -717,6 +718,7 @@ float RageBezier2D::EvaluateYFromX( float fX ) const
 		float fSlope = m_X.GetSlope( fT );
 		fT += fError/fSlope;
 	}
+	return m_Y.Evaluate( fT );
 }
 
 void RageBezier2D::SetFromBezier(
