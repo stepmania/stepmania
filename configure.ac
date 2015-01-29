@@ -388,6 +388,21 @@ AC_SUBST(RESFLAGS)
 dnl Add these after all tests are done as they don't exist just yet.
 LIBS="$LIBS $FFMPEG_LIBS"
 
+# Selection between bundled pcre and system pcre
+AC_ARG_WITH(system-pcre, AS_HELP_STRING([--with-system-pcre],[Disable building of bundled libpcre]), with_system_pcre=$withval, with_system_pcre=no)
+AM_CONDITIONAL(USE_SYSTEM_PCRE, test "$with_system_pcre" == "yes")
+
+if test "$with_system_pcre" == "yes"; then
+	have_libpcre=yes
+	AC_CHECK_HEADER(pcre.h, , have_libpcre=no)
+	if test "$have_libpcre" = "no"; then
+		AC_MSG_ERROR([If you want to use system libpcre, please make sure that it is installed. Otherwise please configure with --without-system-pcre.])
+	else
+		AC_DEFINE([USE_SYSTEM_PCRE], 1, [Build with system libpcre])
+		LIBS="$LIBS -lpcre"
+	fi
+fi
+
 AC_CONFIG_FILES(Makefile)
 AC_CONFIG_FILES(bundle/Makefile)
 AC_CONFIG_FILES(src/Makefile)
