@@ -19,7 +19,6 @@ AM_CFLAGS =
 noinst_LIBRARIES =
 EXTRA_DIST =
 
-
 AM_CXXFLAGS += -fno-exceptions
 
 # Relax inlining; the default of 600 takes way too long to compile and
@@ -28,31 +27,31 @@ AM_CXXFLAGS += -finline-limit=300
 
 AM_CXXFLAGS += $(GL_CFLAGS)
 
-.PHONY: increment_version gitversion
+.PHONY: update_version
 
-increment_version:
+update_version:
 	if test -e ver.cpp; then \
-		build=`sed -rs 's/.*version_num = ([[:digit:]]+);/\1/;q' ver.cpp`; \
+		build=`sed -rs 's/.*version_num = ([[:digit:]]+);/\1/;2q;d' ver.cpp`; \
 		build=`expr $$build + 1`; \
 	else \
 		build=0; \
 	fi; \
-	echo "const unsigned long version_num = $$build;" > ver.cpp; \
-	echo "const char *const version_time = \"`date +"%X %Z (UTC%:z)"`\";" >> ver.cpp;
-	echo "const char *const version_date = \"`date +"%Y%m%d"`\";" >> ver.cpp;
-
-ver.cpp: increment_version
-
-gitversion:
-	rm -f gitversion.h
-	touch gitversion.h
+	echo "#include \"ver.h\"" > ver.cpp; \
+	echo "const unsigned long version_num = $$build;" >> ver.cpp
+# Header inclusion necessary to get linker symbols right
+	echo "const char *const version_time = \"`date +"%X %Z (UTC%:z)"`\";" >> ver.cpp
+	echo "const char *const version_date = \"`date +"%Y%m%d"`\";" >> ver.cpp
 	if git rev-parse --short HEAD; then \
-		echo "#define PRODUCT_VER_BARE 5.0-git-`git rev-parse --short HEAD`" > gitversion.h; \
+		echo "const char *const product_version = \"5.0-git-`git rev-parse --short HEAD`\";" >> ver.cpp; \
+	else \
+		echo "const char *const product_version = \"5.0-UNKNOWN\";" >> ver.cpp; \
 	fi
 
-gitversion.h: gitversion
-
-BUILT_SOURCES = gitversion.h ver.cpp
+ver.cpp: update_version
+# make doesn't recognize a file it updated during the current invocation
+# (in this case ver.cpp) as being updated. So remake and delete stepmania-ver.o
+# every time.
+.INTERMEDIATE: stepmania-ver.o
 
 PNG = \
 ../extern/libpng/include/png.c ../extern/libpng/include/.png.h \
@@ -745,7 +744,7 @@ main_LDADD = \
 		$(GL_LIBS) \
 		libtomcrypt.a libtommath.a
 
-nodist_stepmania_SOURCES = ver.cpp gitversion.h
+nodist_stepmania_SOURCES = ver.cpp
 
 stepmania_CPPFLAGS = $(main_CPPFLAGS)
 stepmania_SOURCES = $(main_SOURCES)

@@ -12,6 +12,7 @@
 #include "RageLog.h"
 #include "RageTypes.h"
 #include "MessageManager.h"
+#include "ver.h"
 
 #include <sstream> // conversion for lua functions.
 #include <csetjmp>
@@ -1040,7 +1041,7 @@ void LuaHelpers::PushValueFunc( lua_State *L, int iArgs )
 
 #include "ProductInfo.h"
 LuaFunction( ProductFamily, (RString) PRODUCT_FAMILY );
-LuaFunction( ProductVersion, (RString) PRODUCT_VER );
+LuaFunction( ProductVersion, (RString) product_version );
 LuaFunction( ProductID, (RString) PRODUCT_ID );
 
 extern const char *const version_date;

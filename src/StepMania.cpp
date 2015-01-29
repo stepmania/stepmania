@@ -914,7 +914,7 @@ static void MountTreeOfZips( const RString &dir )
 
 static void WriteLogHeader()
 {
-	LOG->Info( PRODUCT_ID_VER );
+	LOG->Info( RString(PRODUCT_FAMILY) + product_version );
 
 #if defined(HAVE_VERSION_INFO)
 	LOG->Info( "Compiled %s @ %s (build %lu)", version_date, version_time, version_num );
