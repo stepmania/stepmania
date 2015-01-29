@@ -1,8 +1,10 @@
 #ifndef STEPMANIA_VER_H
 #define STEPMANIA_VER_H
 
+
+
 // HACK: The MSVC project doesn't generate this yet
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MACOSX__)
 #define product_version "5.0-UNKNOWN"
 #else
 extern const char *const product_version;
