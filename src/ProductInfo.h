@@ -3,9 +3,6 @@
 #ifndef PRODUCT_INFO_H
 #define PRODUCT_INFO_H
 
-// XXX: VC doesn't generate this yet. Hack around it for now
-#include "config.h"
-
 /**
  * @brief A friendly string to refer to the product in crash dialogs, etc.
  *
