@@ -1891,7 +1891,11 @@ public:
 		p->RemoveWrapperState(si);
 		COMMON_RETURN_SELF;
 	}
-	DEFINE_METHOD(GetNumWrapperStates, GetNumWrapperStates());
+	static int GetNumWrapperStates(T* p, lua_State* L)
+	{
+		lua_pushnumber(L, p->GetNumWrapperStates());
+		return 1;
+	}
 	static int GetWrapperState(T* p, lua_State* L)
 	{
 		size_t si= get_state_index(p, L, 1);
