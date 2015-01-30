@@ -18,7 +18,7 @@ using namespace X11Helper;
 #include <GL/glx.h>	// All sorts of stuff...
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-#include <X11/extensions/Xrandr.h>
+#include <X11/extensions/xf86vidmode.h>
 
 #if defined(HAVE_LIBXTST)
 #include <X11/extensions/XTest.h>
@@ -27,9 +27,7 @@ using namespace X11Helper;
 static GLXContext g_pContext = NULL;
 static GLXContext g_pBackgroundContext = NULL;
 static Window g_AltWindow = None;
-static Rotation g_OldRotation;
-static int g_iOldSize;
-XRRScreenConfiguration *g_pScreenConfig = NULL;
+XF86VidModeModeInfo g_originalMode;
 
 static LocalizedString FAILED_CONNECTION_XSERVER( "LowLevelWindow_X11", "Failed to establish a connection with the X server" );
 LowLevelWindow_X11::LowLevelWindow_X11()
@@ -49,8 +47,6 @@ LowLevelWindow_X11::LowLevelWindow_X11()
 	LOG->Info( "Server GLX vendor: %s [%s]", glXQueryServerString( Dpy, iScreen, GLX_VENDOR ), glXQueryServerString( Dpy, iScreen, GLX_VERSION ) );
 	LOG->Info( "Client GLX vendor: %s [%s]", glXGetClientString( Dpy, GLX_VENDOR ), glXGetClientString( Dpy, GLX_VERSION ) );
 	m_bWasWindowed = true;
-	g_pScreenConfig = XRRGetScreenInfo( Dpy, RootWindow(Dpy, DefaultScreen(Dpy)) );
-	g_iOldSize = XRRConfigCurrentConfiguration( g_pScreenConfig, &g_OldRotation );
 }
 
 LowLevelWindow_X11::~LowLevelWindow_X11()
@@ -58,7 +54,7 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 	// Reset the display
 	if( !m_bWasWindowed )
 	{
-		XRRSetScreenConfig( Dpy, g_pScreenConfig, RootWindow(Dpy, DefaultScreen(Dpy)), g_iOldSize, g_OldRotation, CurrentTime );
+		XF86VidModeSwitchToMode( Dpy, DefaultScreen( Dpy ), g_originalModeline );
 
 		XUngrabKeyboard( Dpy, CurrentTime );
 	}
@@ -72,7 +68,6 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 		glXDestroyContext( Dpy, g_pBackgroundContext );
 		g_pBackgroundContext = NULL;
 	}
-	XRRFreeScreenConfigInfo( g_pScreenConfig );
 	g_pScreenConfig = NULL;
 
 	XDestroyWindow( Dpy, Win );
@@ -164,6 +159,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 		// Wait until we actually have a mapped window before trying to
 		// use it!
+		// DANGER! This drops ALL events before the MapNotify. Use XMaskEvent()
 		XEvent event;
 		do
 		{
@@ -184,29 +180,67 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		if( m_bWasWindowed )
 		{
 			// If the user changed the resolution while StepMania was windowed we overwrite the resolution to restore with it at exit.
-			g_iOldSize = XRRConfigCurrentConfiguration( g_pScreenConfig, &g_OldRotation );
+			// XXX: I don't know what this returns, or whether it *can* fail.
+			
+			// XFree86-VideoMode can't make up its mind what struct it wants to
+			// use. This function returns an XF86VidModeModeLine when almost
+			// everything else wants XF86VidModeModeInfo. And there's no
+			// conversion function. Our only option is to do the conversion
+			// ourselves and assume that the private bytes don't differ 
+			// between the two.
+			
+			XF86VidModeModeLine tempMode;
+			int iPixelClock;
+			
+			XF86VidModeGetModeLine( Dpy, DefaultScreen(Dpy), &iPixelClock, &tempMode );
+			
+			g_originalMode.dotclock = iPixelClock;
+			g_originalMode.hdisplay = tempMode.hdisplay;
+			g_originalMode.hsyncstart = tempMode.hsyncstart;
+			g_originalMode.hsyncend = tempMode.hsyncend;
+			g_originalMode.htotal = tempMode.htotal;
+			g_originalMode.vdisplay = tempMode.vdisplay;
+			g_originalMode.vsyncstart = tempMode.vsyncstart;
+			g_originalMode.vsyncend = tempMode.vsyncend;
+			g_originalMode.vtotal = tempMode.vtotal;
+			g_originalMode.flags = tempMode.flags;
+			g_originalMode.privsize = tempMode.privsize;
+			g_originalMode.private = tempMode.private;
+			
 			m_bWasWindowed = false;
 		}
 
 		// Find a matching mode.
-		int iSizesXct;
-		XRRScreenSize *pSizesX = XRRSizes( Dpy, DefaultScreen(Dpy), &iSizesXct );
-		ASSERT_M( iSizesXct != 0, "Couldn't get resolution list from X server" );
+		int iNumModes;
+		XF86VidModeModeInfo[] aModes;
+		XF86VidModeGetAllModeLines( Dpy, DefaultScreen(Dpy), &iNumModes, &aModes );
+		ASSERT_M( iNumModes > 0, "Couldn't get resolution list from X server" );
 
 		int iSizeMatch = -1;
+		float fRefreshCloseness;
 
-		for( int i = 0; i < iSizesXct; ++i )
+		for( int i = 0; i < iNumModes; ++i )
 		{
-			if( pSizesX[i].width == p.width && pSizesX[i].height == p.height )
+			if( aModes[i].hdisplay == p.width && aModes[i].vdisplay == p.height )
 			{
-				iSizeMatch = i;
-				break;
+				// We're not told the refresh rate; we're expected to calculate
+				// it ourselves.
+				float fRefreshRate = aModes[i].dotclock / ( aModes[i].htotal * aModes[i].vtotal );
+				// And of course it's rarely if ever an exact integer. Just get the nearest match.
+				float fTempClose = fabs( p.rate - fRefreshRate );
+				if( iSizeMatch == -1 || fTempClose < fRefreshCloseness )
+				{
+					fRefreshCloseness = fTempClose;
+					iSizeMatch = i;
+				}
 			}
 		}
+		
+		ASSERT( iSizeMatch != -1 );
 
 		// Set this mode.
 		// XXX: This doesn't handle if the config has changed since we queried it (see man Xrandr)
-		XRRSetScreenConfig( Dpy, g_pScreenConfig, RootWindow(Dpy, DefaultScreen(Dpy)), iSizeMatch, 1, CurrentTime );
+		XF86VidModeSwitchToMode( Dpy, DefaultScreen(Dpy), &( aModes[iSizeMatch] ) );
 
 		XRaiseWindow( Dpy, Win );
 
@@ -218,17 +252,14 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	{
 		if( !m_bWasWindowed )
 		{
-			XRRSetScreenConfig( Dpy, g_pScreenConfig, RootWindow(Dpy, DefaultScreen(Dpy)), g_iOldSize, g_OldRotation, CurrentTime );
+			// Return the display to the mode it was in before we fullscreened.
+			XF86VidModeSwitchToMode( Dpy, DefaultScreen(Dpy), g_originalModeline );
 			// In windowed mode, we actually want the WM to function normally.
 			// Release any previous grab.
 			XUngrabKeyboard( Dpy, CurrentTime );
 			m_bWasWindowed = true;
 		}
 	}
-	// NOTE: nVidia's implementation of this is broken by default.
-	// The only ways around this are mucking with xorg.conf or querying
-	// nvidia-settings with "$ nvidia-settings -t -q RefreshRate".
-	int rate = XRRConfigCurrentRate( g_pScreenConfig );
 
 	// Make a window fixed size, don't let resize it or maximize it.
 	// Do this before resizing the window so that pane-style WMs (Ion,
@@ -334,13 +365,15 @@ void LowLevelWindow_X11::SwapBuffers()
 
 void LowLevelWindow_X11::GetDisplayResolutions( DisplayResolutions &out ) const
 {
-	int iSizesXct;
-	XRRScreenSize *pSizesX = XRRSizes( Dpy, DefaultScreen( Dpy ), &iSizesXct );
-	ASSERT_M( iSizesXct != 0, "Couldn't get resolution list from X server" );
+	int iNumModes = 0;
+	XF86VidModeInfo[] aModes;
+	XF86VidModeGetAllModeLines( Dpy, DefaultScreen( Dpy ), &iNumModes, &aModes );
+	ASSERT_M( iNumModes != 0, "Couldn't get resolution list from X server" );
 
-	for( int i = 0; i < iSizesXct; ++i )
+	for( int i = 0; i < iNumModes; ++i )
 	{
-		DisplayResolution res = { pSizesX[i].width, pSizesX[i].height, true };
+		// XXX: bStretched doesn't appear to actually be used anywhere?
+		DisplayResolution res = { aModes[i].hdisplay, aModes[i].vdisplay, true };
 		out.insert( res );
 	}
 }

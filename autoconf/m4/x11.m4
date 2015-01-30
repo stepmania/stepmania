@@ -32,14 +32,12 @@ AC_DEFUN([SM_X11],
 	AC_DEFINE(HAVE_X11, 1, [X11 libraries present])
 	fi
 
-	# Check for Xrandr
-	# Can someone fix this for me? This is producing bizarre warnings from
-	# configure... I have no clue what I'm doing -Ben
-	AC_CHECK_LIB(Xrandr, XRRSizes,
+	# Check for Xxf86vm
+	AC_CHECK_LIB(Xxf86vm, XF86VidModeSwitchToMode,
 		have_xrandr=yes,
 		have_xrandr=no,
 		[$XLIBS])
-	AC_CHECK_HEADER(X11/extensions/Xrandr.h, have_xrandr_header=yes, have_xrandr_header=no, [#include <X11/Xlib.h>])
+	AC_CHECK_HEADER(X11/extensions/xf86vmode.h, have_xrandr_header=yes, have_xrandr_header=no, [#include <X11/Xlib.h>])
 
 	if test "$have_xrandr_header" = "no"; then
 		have_xrandr=no
