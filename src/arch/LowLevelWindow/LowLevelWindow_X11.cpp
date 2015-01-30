@@ -14,7 +14,7 @@ using namespace X11Helper;
 
 #include <stack>
 #include <math.h>	// ceil()
-#include <GL/glew.h>
+#include <GL/glxew.h>
 #define GLX_GLXEXT_PROTOTYPES
 #include <GL/glx.h>	// All sorts of stuff...
 #include <X11/Xlib.h>
