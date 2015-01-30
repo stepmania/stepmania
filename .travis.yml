@@ -59,6 +59,7 @@ matrix:
                         - libvorbis-dev
                         - libxtst-dev
                         - libxrandr-dev
+                        - libxxf86vm-dev
                         - libglew-dev
 
         -
