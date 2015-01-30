@@ -18,11 +18,6 @@ using namespace X11Helper;
 #include <GL/glx.h>	// All sorts of stuff...
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-// !!DANGER!! We are using preprocessor macros to modify structure definitions
-// of interfaces that are not ours! Because fuck C++, right?
-#define private private_
-#include <X11/extensions/xf86vmode.h>
-#endif
 
 #if defined(HAVE_LIBXTST)
 #include <X11/extensions/XTest.h>
@@ -72,8 +67,9 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 		glXDestroyContext( Dpy, g_pBackgroundContext );
 		g_pBackgroundContext = NULL;
 	}
-
-		if( g_originalMode.privsize > 0 ) XFree( g_originalMode.private_ );
+		// We're supposed to XFree() the private bits of XF86VidModeModeInfo
+		// structs. This isn't actually possible from C++. At all. Period.
+		// Let it leak.
 	}
 
 	XDestroyWindow( Dpy, Win );
@@ -187,7 +183,9 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	{
 		if( m_bWasWindowed )
 		{
-			if( g_originalMode.privsize > 0 ) XFree( g_originalMode.private_ );
+			// We're supposed to XFree() the private bits of XF86VidModeModeInfo
+			// structs. This isn't actually possible from C++. At all. Period.
+			// Let it leak.
 
 			// If the user changed the resolution while StepMania was windowed we overwrite the resolution to restore with it at exit.
 			// XXX: I don't know what this returns, or whether it *can* fail.
@@ -214,8 +212,10 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 			g_originalMode.vsyncend = tempMode.vsyncend;
 			g_originalMode.vtotal = tempMode.vtotal;
 			g_originalMode.flags = tempMode.flags;
-			g_originalMode.privsize = tempMode.privsize;
-			g_originalMode.private_ = tempMode.private_;
+			// Once again, we can't actually address XF86VidModeModeInfo::private.
+			// I hope the server doesn't need its private bits, because it's
+			// not getting 'em.
+			g_originalMode.privsize = 0;
 			
 			m_bWasWindowed = false;
 		}
@@ -254,8 +254,9 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 		rate = (int) aModes[i].dotclock / ( (float) aModes[i].htotal * aModes[i].vtotal );
 
-		for( int i = 0; i < iNumModes; ++i )
-			if( aModes[i].privsize > 0 ) XFree( aModes[i].private_ );
+		// We're supposed to XFree() the private bits of XF86VidModeModeInfo
+		// structs. This isn't actually possible from C++. At all. Period.
+		// Let it leak.
 
 		XFree( aModes );
 
@@ -399,7 +400,9 @@ void LowLevelWindow_X11::GetDisplayResolutions( DisplayResolutions &out ) const
 		DisplayResolution res = { aModes[i].hdisplay, aModes[i].vdisplay, true };
 		out.insert( res );
 
-		if( aModes[i].privsize > 0 ) XFree( aModes.private_ );
+		// We're supposed to XFree() the private bits of XF86VidModeModeInfo
+		// structs. This isn't actually possible from C++. At all. Period.
+		// Let it leak.
 	}
 
 	XFree( aModes );
