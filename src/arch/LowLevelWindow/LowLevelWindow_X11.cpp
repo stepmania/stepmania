@@ -102,6 +102,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 {
 	if( g_pContext == NULL || p.bpp != CurrentParams.bpp || m_bWasWindowed != p.windowed )
 	{
+		bool bFirstRun = g_pContext == NULL;
 		// Different depth, or we didn't make a window before. New context.
 		bNewDeviceOut = true;
 
@@ -170,6 +171,9 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 		// Set the event mask back to what it was
 		XSelectInput( Dpy, Win, winAttrib.your_event_mask );
+
+		GLenum err = glewInit();
+		ASSERT( err == GLEW_OK );
 	}
 	else
 	{
@@ -352,6 +356,12 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	// Set our V-sync hint.
 	if(GLXEW_EXT_swap_control)
 		glXSwapIntervalEXT( Dpy, Win, CurrentParams.vsync ? 1 : 0 );
+	// XXX: These two might be server-global. I should look into whether
+	// to try to preserve the original value on exit.
+	else if(GLXEW_MESA_swap_control)
+		glXSwapIntervalMESA( CurrentParams.vsync ? 1 : 0 );
+	else if(GLXEW_SGI_swap_control) // DRI Intel needs this
+		glXSwapIntervalSGI( CurrentParams.vsync ? 1 : 0 );
 	else
 		CurrentParams.vsync = false; // Assuming it's not on
 
