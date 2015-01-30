@@ -18,7 +18,7 @@ using namespace X11Helper;
 #include <GL/glx.h>	// All sorts of stuff...
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-#include <X11/extensions/xf86vidmode.h>
+#include <X11/extensions/xf86vmode.h>
 
 #if defined(HAVE_LIBXTST)
 #include <X11/extensions/XTest.h>
@@ -54,7 +54,7 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 	// Reset the display
 	if( !m_bWasWindowed )
 	{
-		XF86VidModeSwitchToMode( Dpy, DefaultScreen( Dpy ), g_originalModeline );
+		XF86VidModeSwitchToMode( Dpy, DefaultScreen( Dpy ), g_originalMode );
 
 		XUngrabKeyboard( Dpy, CurrentTime );
 	}
@@ -68,7 +68,10 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 		glXDestroyContext( Dpy, g_pBackgroundContext );
 		g_pBackgroundContext = NULL;
 	}
-	g_pScreenConfig = NULL;
+
+	extern "C" { // Why the fuck is it called "private" when C++ exists?
+		if( g_originalMode.privsize > 0 ) XFree( g_originalMode.private );
+	}
 
 	XDestroyWindow( Dpy, Win );
 	Win = None;
@@ -175,10 +178,16 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		bNewDeviceOut = false;
 	}
 
+	int rate = 0;
+
 	if( !p.windowed )
 	{
 		if( m_bWasWindowed )
 		{
+			extern "C" { // Why the fuck is it called "private" when C++ exists?
+				if( g_originalMode.privsize > 0 ) XFree( g_originalMode.private );
+			}
+
 			// If the user changed the resolution while StepMania was windowed we overwrite the resolution to restore with it at exit.
 			// XXX: I don't know what this returns, or whether it *can* fail.
 			
@@ -205,14 +214,16 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 			g_originalMode.vtotal = tempMode.vtotal;
 			g_originalMode.flags = tempMode.flags;
 			g_originalMode.privsize = tempMode.privsize;
-			g_originalMode.private = tempMode.private;
+			extern "C" { // Why the fuck is it called "private" when C++ exists?
+				g_originalMode.private = tempMode.private;
+			}
 			
 			m_bWasWindowed = false;
 		}
 
 		// Find a matching mode.
 		int iNumModes;
-		XF86VidModeModeInfo[] aModes;
+		XF86VidModeModeInfo aModes[];
 		XF86VidModeGetAllModeLines( Dpy, DefaultScreen(Dpy), &iNumModes, &aModes );
 		ASSERT_M( iNumModes > 0, "Couldn't get resolution list from X server" );
 
@@ -225,7 +236,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 			{
 				// We're not told the refresh rate; we're expected to calculate
 				// it ourselves.
-				float fRefreshRate = aModes[i].dotclock / ( aModes[i].htotal * aModes[i].vtotal );
+				float fRefreshRate = aModes[i].dotclock / ( (float) aModes[i].htotal * aModes[i].vtotal );
 				// And of course it's rarely if ever an exact integer. Just get the nearest match.
 				float fTempClose = fabs( p.rate - fRefreshRate );
 				if( iSizeMatch == -1 || fTempClose < fRefreshCloseness )
@@ -239,8 +250,17 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		ASSERT( iSizeMatch != -1 );
 
 		// Set this mode.
-		// XXX: This doesn't handle if the config has changed since we queried it (see man Xrandr)
+		// XXX How do we detect failure?
 		XF86VidModeSwitchToMode( Dpy, DefaultScreen(Dpy), &( aModes[iSizeMatch] ) );
+
+		rate = (int) aModes[i].dotclock / ( (float) aModes[i].htotal * aModes[i].vtotal );
+
+		for( int i = 0; i < iNumModes; ++i )
+			extern "C" { // Why the fuck is it called "private" when C++ exists?
+				if( aModes[i].privsize > 0 ) XFree( aModes[i].private );
+			}
+
+		XFree( aModes );
 
 		XRaiseWindow( Dpy, Win );
 
@@ -253,12 +273,18 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		if( !m_bWasWindowed )
 		{
 			// Return the display to the mode it was in before we fullscreened.
-			XF86VidModeSwitchToMode( Dpy, DefaultScreen(Dpy), g_originalModeline );
+			XF86VidModeSwitchToMode( Dpy, DefaultScreen(Dpy), &g_originalMode );
 			// In windowed mode, we actually want the WM to function normally.
 			// Release any previous grab.
 			XUngrabKeyboard( Dpy, CurrentTime );
 			m_bWasWindowed = true;
+
+			// Read the desktop refresh rate, because why not
+			rate = (int) g_originalMode[i].dotclock / ( (float) g_originalMode[i].htotal * g_originalMode[i].vtotal );
+
 		}
+		// XXX: How important is windowed refresh rate to us? We could query it
+		// here if we want it.
 	}
 
 	// Make a window fixed size, don't let resize it or maximize it.
@@ -308,7 +334,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	XResizeWindow( Dpy, Win, p.width, p.height );
 
 	CurrentParams = p;
-	CurrentParams.rate = rate;
+	if( rate > 0 ) CurrentParams.rate = rate;
 	return ""; // Success
 }
 
@@ -366,7 +392,7 @@ void LowLevelWindow_X11::SwapBuffers()
 void LowLevelWindow_X11::GetDisplayResolutions( DisplayResolutions &out ) const
 {
 	int iNumModes = 0;
-	XF86VidModeInfo[] aModes;
+	XF86VidModeInfo aModes[];
 	XF86VidModeGetAllModeLines( Dpy, DefaultScreen( Dpy ), &iNumModes, &aModes );
 	ASSERT_M( iNumModes != 0, "Couldn't get resolution list from X server" );
 
@@ -375,7 +401,13 @@ void LowLevelWindow_X11::GetDisplayResolutions( DisplayResolutions &out ) const
 		// XXX: bStretched doesn't appear to actually be used anywhere?
 		DisplayResolution res = { aModes[i].hdisplay, aModes[i].vdisplay, true };
 		out.insert( res );
+
+		extern "C" { // Why the fuck is it called "private" when C++ exists?
+			if( aModes[i].privsize > 0 ) XFree( aModes.private );
+		}
 	}
+
+	XFree( aModes );
 }
 
 bool LowLevelWindow_X11::SupportsThreadedRendering()
