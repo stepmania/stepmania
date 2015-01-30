@@ -68,10 +68,10 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 		glXDestroyContext( Dpy, g_pBackgroundContext );
 		g_pBackgroundContext = NULL;
 	}
-		// We're supposed to XFree() the private bits of XF86VidModeModeInfo
-		// structs. This isn't actually possible from C++. At all. Period.
-		// Let it leak.
-	}
+	// We're supposed to XFree() the private bits of XF86VidModeModeInfo
+	// structs. This isn't actually possible from C++. At all. Period.
+	// Let it leak.
+
 
 	XDestroyWindow( Dpy, Win );
 	Win = None;
@@ -223,9 +223,10 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 		// Find a matching mode.
 		int iNumModes;
-		XF86VidModeModeInfo aModes[];
-		XF86VidModeGetAllModeLines( Dpy, DefaultScreen(Dpy), &iNumModes, &aModes );
+		XF86VidModeModeInfo **aModes_;
+		XF86VidModeGetAllModeLines( Dpy, DefaultScreen(Dpy), &iNumModes, &aModes_ );
 		ASSERT_M( iNumModes > 0, "Couldn't get resolution list from X server" );
+		XF86VidModeModeInfo *aModes = *aModes_;
 
 		int iSizeMatch = -1;
 		float fRefreshCloseness;
@@ -253,7 +254,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		// XXX How do we detect failure?
 		XF86VidModeSwitchToMode( Dpy, DefaultScreen(Dpy), &( aModes[iSizeMatch] ) );
 
-		rate = (int) aModes[i].dotclock / ( (float) aModes[i].htotal * aModes[i].vtotal );
+		rate = (int) aModes[iSizeMatch].dotclock / ( (float) aModes[iSizeMatch].htotal * aModes[iSizeMatch].vtotal );
 
 		// We're supposed to XFree() the private bits of XF86VidModeModeInfo
 		// structs. This isn't actually possible from C++. At all. Period.
@@ -279,7 +280,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 			m_bWasWindowed = true;
 
 			// Read the desktop refresh rate, because why not
-			rate = (int) g_originalMode[i].dotclock / ( (float) g_originalMode[i].htotal * g_originalMode[i].vtotal );
+			rate = (int) g_originalMode.dotclock / ( (float) g_originalMode.htotal * g_originalMode.vtotal );
 
 		}
 		// XXX: How important is windowed refresh rate to us? We could query it
@@ -391,9 +392,10 @@ void LowLevelWindow_X11::SwapBuffers()
 void LowLevelWindow_X11::GetDisplayResolutions( DisplayResolutions &out ) const
 {
 	int iNumModes = 0;
-	XF86VidModeInfo aModes[];
-	XF86VidModeGetAllModeLines( Dpy, DefaultScreen( Dpy ), &iNumModes, &aModes );
+	XF86VidModeModeInfo **aModes_;
+	XF86VidModeGetAllModeLines( Dpy, DefaultScreen( Dpy ), &iNumModes, &aModes_ );
 	ASSERT_M( iNumModes != 0, "Couldn't get resolution list from X server" );
+	XF86VidModeModeInfo *aModes = *aModes_;
 
 	for( int i = 0; i < iNumModes; ++i )
 	{
