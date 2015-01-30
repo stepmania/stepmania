@@ -18,7 +18,11 @@ using namespace X11Helper;
 #include <GL/glx.h>	// All sorts of stuff...
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+// !!DANGER!! We are using preprocessor macros to modify structure definitions
+// of interfaces that are not ours! Because fuck C++, right?
+#define private private_
 #include <X11/extensions/xf86vmode.h>
+#endif
 
 #if defined(HAVE_LIBXTST)
 #include <X11/extensions/XTest.h>
@@ -54,7 +58,7 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 	// Reset the display
 	if( !m_bWasWindowed )
 	{
-		XF86VidModeSwitchToMode( Dpy, DefaultScreen( Dpy ), g_originalMode );
+		XF86VidModeSwitchToMode( Dpy, DefaultScreen( Dpy ), &g_originalMode );
 
 		XUngrabKeyboard( Dpy, CurrentTime );
 	}
@@ -69,8 +73,7 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 		g_pBackgroundContext = NULL;
 	}
 
-	extern "C" { // Why the fuck is it called "private" when C++ exists?
-		if( g_originalMode.privsize > 0 ) XFree( g_originalMode.private );
+		if( g_originalMode.privsize > 0 ) XFree( g_originalMode.private_ );
 	}
 
 	XDestroyWindow( Dpy, Win );
@@ -184,9 +187,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	{
 		if( m_bWasWindowed )
 		{
-			extern "C" { // Why the fuck is it called "private" when C++ exists?
-				if( g_originalMode.privsize > 0 ) XFree( g_originalMode.private );
-			}
+			if( g_originalMode.privsize > 0 ) XFree( g_originalMode.private_ );
 
 			// If the user changed the resolution while StepMania was windowed we overwrite the resolution to restore with it at exit.
 			// XXX: I don't know what this returns, or whether it *can* fail.
@@ -214,9 +215,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 			g_originalMode.vtotal = tempMode.vtotal;
 			g_originalMode.flags = tempMode.flags;
 			g_originalMode.privsize = tempMode.privsize;
-			extern "C" { // Why the fuck is it called "private" when C++ exists?
-				g_originalMode.private = tempMode.private;
-			}
+			g_originalMode.private_ = tempMode.private_;
 			
 			m_bWasWindowed = false;
 		}
@@ -256,9 +255,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		rate = (int) aModes[i].dotclock / ( (float) aModes[i].htotal * aModes[i].vtotal );
 
 		for( int i = 0; i < iNumModes; ++i )
-			extern "C" { // Why the fuck is it called "private" when C++ exists?
-				if( aModes[i].privsize > 0 ) XFree( aModes[i].private );
-			}
+			if( aModes[i].privsize > 0 ) XFree( aModes[i].private_ );
 
 		XFree( aModes );
 
@@ -402,9 +399,7 @@ void LowLevelWindow_X11::GetDisplayResolutions( DisplayResolutions &out ) const
 		DisplayResolution res = { aModes[i].hdisplay, aModes[i].vdisplay, true };
 		out.insert( res );
 
-		extern "C" { // Why the fuck is it called "private" when C++ exists?
-			if( aModes[i].privsize > 0 ) XFree( aModes.private );
-		}
+		if( aModes[i].privsize > 0 ) XFree( aModes.private_ );
 	}
 
 	XFree( aModes );
