@@ -29,6 +29,15 @@ static GLXContext g_pBackgroundContext = NULL;
 static Window g_AltWindow = None;
 XF86VidModeModeInfo g_originalMode;
 
+inline float calcRefresh( int iPixelClock, int hRes, int vRes )
+{
+	// Pixel Clock divided by total pixels in mode,
+	// not just those onscreen!
+	// the pixel clock as returned by XF86VM is in kHz.
+	// We want Hz.
+	return ( iPixelClock * 1000.0 ) / ( hRes * vRes );
+}
+
 static LocalizedString FAILED_CONNECTION_XSERVER( "LowLevelWindow_X11", "Failed to establish a connection with the X server" );
 LowLevelWindow_X11::LowLevelWindow_X11()
 {
@@ -178,7 +187,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		bNewDeviceOut = false;
 	}
 
-	int rate = 0;
+	float rate = 0;
 
 	if( !p.windowed )
 	{
@@ -237,11 +246,13 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 			{
 				// We're not told the refresh rate; we're expected to calculate
 				// it ourselves.
-				float fRefreshRate = aModes[i].dotclock / ( (float) aModes[i].htotal * aModes[i].vtotal );
+				float fCheckRefresh = calcRefresh( aModes[i].dotclock, aModes[i].htotal, aModes[i].vtotal );
+
 				// And of course it's rarely if ever an exact integer. Just get the nearest match.
-				float fTempClose = fabs( p.rate - fRefreshRate );
+				float fTempClose = fabs( p.rate - rate );
 				if( iSizeMatch == -1 || fTempClose < fRefreshCloseness )
 				{
+					rate = fCheckRefresh;
 					fRefreshCloseness = fTempClose;
 					iSizeMatch = i;
 				}
@@ -254,13 +265,11 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		// XXX How do we detect failure?
 		XF86VidModeSwitchToMode( Dpy, DefaultScreen(Dpy), &( aModes[iSizeMatch] ) );
 
-		rate = (int) aModes[iSizeMatch].dotclock / ( (float) aModes[iSizeMatch].htotal * aModes[iSizeMatch].vtotal );
-
 		// We're supposed to XFree() the private bits of XF86VidModeModeInfo
 		// structs. This isn't actually possible from C++. At all. Period.
 		// Let it leak.
 
-		XFree( aModes );
+		XFree( aModes_ );
 
 		XRaiseWindow( Dpy, Win );
 
@@ -279,12 +288,22 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 			XUngrabKeyboard( Dpy, CurrentTime );
 			m_bWasWindowed = true;
 
-			// Read the desktop refresh rate, because why not
-			rate = (int) g_originalMode.dotclock / ( (float) g_originalMode.htotal * g_originalMode.vtotal );
+			rate = calcRefresh( g_originalMode.dotclock, g_originalMode.htotal, g_originalMode.vtotal );
+		}
+
+		if( rate <= 0 )
+		{
+			XF86VidModeModeLine mode;
+			int iClock;
+			
+			XF86VidModeGetModeLine( Dpy, DefaultScreen(Dpy), &iClock, &mode );
+			rate = calcRefresh( iClock, mode.htotal, mode.vtotal );
+			
+			// We're supposed to XFree() the private bits of XF86VidModeModeInfo
+			// structs. This isn't actually possible from C++. At all. Period.
+			// Let it leak.
 
 		}
-		// XXX: How important is windowed refresh rate to us? We could query it
-		// here if we want it.
 	}
 
 	// Make a window fixed size, don't let resize it or maximize it.
@@ -334,7 +353,8 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	XResizeWindow( Dpy, Win, p.width, p.height );
 
 	CurrentParams = p;
-	if( rate > 0 ) CurrentParams.rate = rate;
+	ASSERT( rate > 0 );
+	CurrentParams.rate = roundf(rate);
 	return ""; // Success
 }
 
@@ -408,7 +428,7 @@ void LowLevelWindow_X11::GetDisplayResolutions( DisplayResolutions &out ) const
 		// Let it leak.
 	}
 
-	XFree( aModes );
+	XFree( aModes_ );
 }
 
 bool LowLevelWindow_X11::SupportsThreadedRendering()
