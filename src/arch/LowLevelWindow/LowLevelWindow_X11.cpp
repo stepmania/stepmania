@@ -18,6 +18,7 @@ using namespace X11Helper;
 #include <GL/glx.h>	// All sorts of stuff...
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#include <X11/extensions/xf86vmode.h>
 
 #if defined(HAVE_LIBXTST)
 #include <X11/extensions/XTest.h>
