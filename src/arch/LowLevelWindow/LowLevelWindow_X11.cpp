@@ -255,6 +255,9 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		// XXX How do we detect failure?
 		XF86VidModeSwitchToMode( Dpy, DefaultScreen(Dpy), &( aModes[iSizeMatch] ) );
 
+		// Move the viwport to the corner where we are.
+		XF86VidModeSetViewPort( Dpy, DefaultScreen(Dpy), 0, 0);
+
 		// We're supposed to XFree() the private bits of XF86VidModeModeInfo
 		// structs. This isn't actually possible from C++. At all. Period.
 		// Let it leak.
