@@ -63,7 +63,7 @@ static const GLenum RageSpriteVertexFormat = GL_T2F_C4F_N3F_V3F;
 /* If we support texture matrix scaling, a handle to the vertex program: */
 static GLhandleARB g_bTextureMatrixShader = 0;
 
-static map<unsigned, RenderTarget *> g_mapRenderTargets;
+static std::map<unsigned, RenderTarget *> g_mapRenderTargets;
 static RenderTarget *g_pCurrentRenderTarget = NULL;
 
 static LowLevelWindow *g_pWind;
@@ -685,7 +685,9 @@ void SetupExtensions()
 	const float fGLUVersion = StringToFloat( (const char *) gluGetString(GLU_VERSION) );
 	g_gluVersion = lrintf( fGLUVersion * 10 );
 
+#ifndef HAVE_X11 // LLW_X11 needs to init GLEW early for GLX exts
 	glewInit();
+#endif
 	
 	g_iMaxTextureUnits = 1;
 	if (GLEW_ARB_multitexture)
