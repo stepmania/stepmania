@@ -14,6 +14,7 @@ using namespace X11Helper;
 
 #include <stack>
 #include <math.h>	// ceil()
+#include <GL/glew.h>
 #define GLX_GLXEXT_PROTOTYPES
 #include <GL/glx.h>	// All sorts of stuff...
 #include <X11/Xlib.h>
@@ -99,17 +100,6 @@ void *LowLevelWindow_X11::GetProcAddress( RString s )
 
 RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
-#if defined(UNIX)
-	/* nVidia cards:
-	 * This only works the first time we set up a window; after that, the
-	 * drivers appear to cache the value, so you have to actually restart
-	 * the program to change it again. */
-	static char buf[128];
-	strcpy( buf, "__GL_SYNC_TO_VBLANK=" );
-	strcat( buf, p.vsync?"1":"0" );
-	putenv( buf );
-#endif
-
 	if( g_pContext == NULL || p.bpp != CurrentParams.bpp || m_bWasWindowed != p.windowed )
 	{
 		// Different depth, or we didn't make a window before. New context.
@@ -355,6 +345,13 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	CurrentParams = p;
 	ASSERT( rate > 0 );
 	CurrentParams.rate = roundf(rate);
+
+	// Set our V-sync hint.
+	if(GLXEW_EXT_swap_control)
+		glXSwapIntervalEXT( Dpy, Win, CurrentParams.vsync ? 1 : 0 );
+	else
+		CurrentParams.vsync = false; // Assuming it's not on
+
 	return ""; // Success
 }
 
