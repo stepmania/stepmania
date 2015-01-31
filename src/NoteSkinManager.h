@@ -25,9 +25,11 @@ public:
 	bool DoNoteSkinsExistForGame( const Game *pGame );
 	RString GetDefaultNoteSkinName();	// looks up current const Game* in GAMESTATE
 
+	void ValidateNoteSkinName(RString& name);
+
 	void SetCurrentNoteSkin( const RString &sNoteSkin ) { m_sCurrentNoteSkin = sNoteSkin; }
 	const RString &GetCurrentNoteSkin() { return m_sCurrentNoteSkin; }
-	void SetPlayerNumber( PlayerNumber pn ) { m_PlayerNumber = pn; }
+	void SetPlayerNumber( PlayerNumber pn ) { m_PlayerNumber = pn; }
 	void SetGameController( GameController gc ) { m_GameController = gc; }
 	RString GetPath( const RString &sButtonName, const RString &sElement );
 	bool PushActorTemplate( Lua *L, const RString &sButton, const RString &sElement, bool bSpriteOnly );

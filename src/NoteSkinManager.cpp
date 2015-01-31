@@ -246,6 +246,15 @@ RString NoteSkinManager::GetDefaultNoteSkinName()
 	return name;
 }
 
+void NoteSkinManager::ValidateNoteSkinName(RString& name)
+{
+	if(name.empty() || !DoesNoteSkinExist(name))
+	{
+		LuaHelpers::ReportScriptError("Someone set a noteskin that doesn't exist.  Good job.");
+		name= GetDefaultNoteSkinName();
+	}
+}
+
 void NoteSkinManager::GetAllNoteSkinNamesForGame( const Game *pGame, vector<RString> &AddTo )
 {
 	if( pGame == m_pCurGame )
