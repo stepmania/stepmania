@@ -677,10 +677,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 						// todo: preferred sort section color handling? -aj
 						RageColor colorSection = (so==SORT_GROUP) ? SONGMAN->GetSongGroupColor(pSong->m_sGroupName) : SECTION_COLORS.GetValue(iSectionColorIndex);
 						iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
-						// In certain situations (e.g. simulating Pump it Up), themes may
-						// want to only show one group at a time.
-						if( !HIDE_INACTIVE_SECTIONS )
-							arrayWheelItemDatas.push_back( new MusicWheelItemData(WheelItemDataType_Section, NULL, sThisSection, NULL, colorSection, iSectionCount) );
+						arrayWheelItemDatas.push_back( new MusicWheelItemData(WheelItemDataType_Section, NULL, sThisSection, NULL, colorSection, iSectionCount) );
 						sLastSection = sThisSection;
 					}
 				}
@@ -1361,9 +1358,14 @@ void MusicWheel::SetOpenSection( RString group )
 	for( unsigned i = 0; i < from.size(); ++i )
 	{
 		MusicWheelItemData &d = *from[i];
+		// Don't show songs outside the current group
 		if( (d.m_Type == WheelItemDataType_Song || d.m_Type == WheelItemDataType_Course) && !d.m_sText.empty() &&
 			 d.m_sText != group )
 			 continue;
+		// In certain situations (e.g. simulating Pump it Up), themes may
+		// want to hide inactive group headings as well.
+		if( HIDE_INACTIVE_SECTIONS && d.m_Type == WheelItemDataType_Section && group != "" )
+			continue;
 
 		// If AUTO_SET_STYLE, hide courses that prefer a style that isn't available.
 		if( d.m_Type == WheelItemDataType_Course && CommonMetrics::AUTO_SET_STYLE )
