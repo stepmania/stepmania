@@ -1002,6 +1002,33 @@ struct BMSAutoKeysound {
 	int index;
 };
 
+struct bmFrac {
+	long long num;
+	long long den;
+};
+
+bmFrac toFraction(double f)
+{
+	double df;
+	long long upper = 1LL, lower = 1LL;
+	df = 1;
+
+	while (abs(df - f) > 0.000001)
+	{
+		if (df < f)
+		{
+			upper++;
+		}
+		else
+		{
+			lower++;
+		}
+		df = (double)upper / lower;
+	}
+
+	return bmFrac{ upper, lower };
+}
+
 bool BMSChartReader::ReadNoteData()
 {
 	if( out->m_StepsType == StepsType_Invalid )
@@ -1145,7 +1172,7 @@ bool BMSChartReader::ReadNoteData()
 
 	int trackMeasure = -1;
 	float measureStartBeat = 0.0f;
-	float measureSize = 0.0f;
+	double measureSize = 0.0f;
 	float adjustedMeasureSize = 0.0f;
 	float measureAdjust = 1.0f;
 	int firstNoteMeasure = 0;
@@ -1172,25 +1199,24 @@ bool BMSChartReader::ReadNoteData()
 			measureStartBeat += adjustedMeasureSize;
 			measureSize = 4.0f;
 			BMSMeasures::iterator it = in->measures.find(trackMeasure);
-			if( it != in->measures.end() ) measureSize = it->second.size * 4.0f;
+			if( it != in->measures.end() ) measureSize = it->second.size * 4.0;
 			adjustedMeasureSize = measureSize;
 			if( trackMeasure < firstNoteMeasure ) adjustedMeasureSize = measureSize = 4.0f;
 
 			// measure size adjustment
-			// XXX: need more testing / fine-tuning!
-			int sixteenths = lrintf(measureSize * 4.0f);
-			if( sixteenths > 1 ) adjustedMeasureSize = (float)sixteenths / 4.0f;
-			measureAdjust = adjustedMeasureSize / measureSize;
-			td.SetBPMAtRow( BeatToNoteRow(measureStartBeat), measureAdjust * currentBPM );
-			
 			{
-				int num = sixteenths;
-				int den = 16;
-				while (den > 4 && num % 2 == 0 && den % 2 == 0) {
+				bmFrac numFrac = toFraction(measureSize);
+				long long num = numFrac.num;
+				long long den = 4 * numFrac.den;
+
+				while ( num % 2 == 0 && den % 2 == 0 && den > 4  ) { // Both are multiples of 2
 					num /= 2;
 					den /= 2;
 				}
 				td.SetTimeSignatureAtRow( BeatToNoteRow(measureStartBeat), num, den );
+
+				// Since BMS measure events only last through the measure, we need to restore the default measure length.
+				td.SetTimeSignatureAtRow(BeatToNoteRow(measureStartBeat + measureSize), 4, 4);
 			}
 			// end measure size adjustment
 		}
