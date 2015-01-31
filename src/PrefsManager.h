@@ -253,6 +253,9 @@ public:
 	// after pressed.
 	Preference<float>	m_fPadStickSeconds;
 
+	// Lead in time before recording starts in edit mode.
+	Preference<float> m_EditRecordModeLeadIn;
+
 	// Useful for non 4:3 displays and resolutions < 640x480 where texels don't
 	// map directly to pixels.
 	Preference<bool>	m_bForceMipMaps;

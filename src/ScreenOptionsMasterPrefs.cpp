@@ -680,6 +680,16 @@ static void GlobalOffsetSeconds( int &sel, bool ToSel, const ConfOption *pConfOp
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
+static void EditRecordModeLeadIn(int &sel, bool to_sel, const ConfOption* conf_option)
+{
+	float mapping[32];
+	for(int i= 0; i < 32; ++i)
+	{
+		mapping[i]= static_cast<float>(i);
+	}
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
+}
+
 static vector<ConfOption> g_ConfOptions;
 static void InitializeConfOptions()
 {
@@ -725,6 +735,14 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "AutogenGroupCourses",		MovePref<bool>,		"Off","On" ) );
 	ADD( ConfOption( "FastLoad",			MovePref<bool>,		"Off","On" ) );
 	ADD( ConfOption( "FastLoadAdditionalSongs",			MovePref<bool>,		"Off","On" ) );
+	{
+		ConfOption c("EditRecordModeLeadIn", EditRecordModeLeadIn);
+		for(int i= 0; i < 32; ++i)
+		{
+			c.AddOption(ssprintf("%+i s", i));
+		}
+		ADD(c);
+	}
 
 	// Background options
 	ADD( ConfOption( "RandomBackgroundMode",	MovePref<RandomBackgroundMode>, "Off","Animations","Random Movies" ) );

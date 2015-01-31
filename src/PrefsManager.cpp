@@ -258,6 +258,7 @@ PrefsManager::PrefsManager() :
 	m_fDebounceCoinInputTime	( "DebounceCoinInputTime",		0 ),
 
 	m_fPadStickSeconds		( "PadStickSeconds",			0 ),
+	m_EditRecordModeLeadIn("EditRecordModeLeadIn", 1.0f),
 	m_bForceMipMaps			( "ForceMipMaps",			false ),
 	m_bTrilinearFiltering		( "TrilinearFiltering",			false ),
 	m_bAnisotropicFiltering		( "AnisotropicFiltering",		false ),
