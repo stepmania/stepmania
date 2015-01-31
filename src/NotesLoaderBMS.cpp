@@ -404,8 +404,16 @@ struct bmsCommandTree
 	{
 		line++;
 
-		if (statement.length() == 0 || statement[0] != '#') // Skip.
+		if (statement.length() == 0) // Skip.
 			return;
+
+		// LTrim the statement to allow indentation
+		size_t hash = statement.find('#');
+
+		if (hash == RString::npos)
+			return;
+		
+		statement = statement.substr(hash);
 
 		size_t space = statement.find(' ');
 		RString name = statement.substr(0, space);
