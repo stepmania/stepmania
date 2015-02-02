@@ -15,6 +15,8 @@
 #include "LuaManager.h"
 #include "LocalizedString.h"
 
+const float min_state_delay= 0.0001f;
+
 static const char *DrawModeNames[] = {
 	"Quads",
 	"QuadStrip",
@@ -69,6 +71,10 @@ ActorMultiVertex::ActorMultiVertex()
 		_splines[i].redimension(3);
 		_splines[i].m_owned_by_actor= true;
 	}
+	_skip_next_update= true;
+	_use_animation_state= false;
+	_secs_into_state= 0.0f;
+	_cur_state= 0;
 }
 
 ActorMultiVertex::~ActorMultiVertex()
@@ -86,6 +92,11 @@ ActorMultiVertex::ActorMultiVertex( const ActorMultiVertex &cpy ):
 	CPY( _EffectMode );
 	CPY( _TextureMode );
 	CPY( _splines );
+	CPY(_skip_next_update);
+	CPY(_use_animation_state);
+	CPY(_secs_into_state);
+	CPY(_cur_state);
+	CPY(_states);
 #undef CPY
 
 	if( cpy._Texture != NULL )
@@ -371,6 +382,199 @@ CubicSplineN* ActorMultiVertex::GetSpline(size_t i)
 {
 	ASSERT(i < num_vert_splines);
 	return &(_splines[i]);
+}
+
+void ActorMultiVertex::SetState(size_t i)
+{
+	ASSERT(i < _states.size());
+	_cur_state= i;
+	_secs_into_state= 0.0f;
+}
+
+void ActorMultiVertex::SetAllStateDelays(float delay)
+{
+	FOREACH(State, _states, s)
+	{
+		s->delay= delay;
+	}
+}
+
+float ActorMultiVertex::GetAnimationLengthSeconds() const
+{
+	float tot= 0.0f;
+	FOREACH_CONST(State, _states, s)
+	{
+		tot+= s->delay;
+	}
+	return tot;
+}
+
+void ActorMultiVertex::SetSecondsIntoAnimation(float seconds)
+{
+	SetState(0);
+	if(_Texture)
+	{
+		_Texture->SetPosition(seconds);
+	}
+	_secs_into_state= seconds;
+	UpdateAnimationState(true);
+}
+
+void ActorMultiVertex::UpdateAnimationState(bool force_update)
+{
+	AMV_TweenState& dest= AMV_DestTweenState();
+	vector<RageSpriteVertex>& verts= dest.vertices;
+	vector<size_t>& qs= dest.quad_states;
+	if(!_use_animation_state || _states.empty() ||
+		dest._DrawMode == DrawMode_LineStrip || qs.empty())
+	{ return; }
+	bool state_changed= force_update;
+	if(_states.size() > 1)
+	{
+		while(_states[_cur_state].delay > min_state_delay &&
+			_secs_into_state + min_state_delay > _states[_cur_state].delay)
+		{
+			_secs_into_state-= _states[_cur_state].delay;
+			_cur_state= (_cur_state + 1) % _states.size();
+			state_changed= true;
+		}
+	}
+	if(state_changed)
+	{
+		size_t first= dest.FirstToDraw;
+		size_t last= first+dest.GetSafeNumToDraw(dest._DrawMode, dest.NumToDraw);
+#define STATE_ID const size_t state_id= (_cur_state + qs[quad_id % qs.size()]) % _states.size();
+		switch(AMV_DestTweenState()._DrawMode)
+		{
+			case DrawMode_Quads:
+				for(size_t i= first; i < last; ++i)
+				{
+					const size_t quad_id= (i-first)/4;
+					STATE_ID;
+					switch((i-first)%4)
+					{
+						case 0:
+							verts[i].t.x= _states[state_id].rect.left;
+							verts[i].t.y= _states[state_id].rect.top;
+							break;
+						case 1:
+							verts[i].t.x= _states[state_id].rect.right;
+							verts[i].t.y= _states[state_id].rect.top;
+							break;
+						case 2:
+							verts[i].t.x= _states[state_id].rect.right;
+							verts[i].t.y= _states[state_id].rect.bottom;
+							break;
+						case 3:
+							verts[i].t.x= _states[state_id].rect.left;
+							verts[i].t.y= _states[state_id].rect.bottom;
+							break;
+					}
+				}
+				break;
+			case DrawMode_QuadStrip:
+				for(size_t i= first; i < last; ++i)
+				{
+					const size_t quad_id= (i-first)/2;
+					STATE_ID;
+					switch((i-first)%2)
+					{
+						case 0:
+							verts[i].t.x= _states[state_id].rect.left;
+							verts[i].t.y= _states[state_id].rect.top;
+							break;
+						case 1:
+							verts[i].t.x= _states[state_id].rect.left;
+							verts[i].t.y= _states[state_id].rect.bottom;
+							break;
+					}
+				}
+				break;
+			case DrawMode_Strip:
+			case DrawMode_Fan:
+				for(size_t i= first; i < last; ++i)
+				{
+					const size_t quad_id= (i-first);
+					STATE_ID;
+					verts[i].t.x= _states[state_id].rect.left;
+					verts[i].t.y= _states[state_id].rect.top;
+				}
+				break;
+			case DrawMode_Triangles:
+				for(size_t i= first; i < last; ++i)
+				{
+					const size_t quad_id= (i-first)/3;
+					STATE_ID;
+					switch((i-first)%3)
+					{
+						case 0:
+							verts[i].t.x= _states[state_id].rect.left;
+							verts[i].t.y= _states[state_id].rect.top;
+							break;
+						case 1:
+							verts[i].t.x= _states[state_id].rect.right;
+							verts[i].t.y= _states[state_id].rect.top;
+							break;
+						case 2:
+							verts[i].t.x= _states[state_id].rect.right;
+							verts[i].t.y= _states[state_id].rect.bottom;
+							break;
+					}
+				}
+				break;
+			case DrawMode_SymmetricQuadStrip:
+				for(size_t i= first; i < last; ++i)
+				{
+					const size_t quad_id= (i-first)/3;
+					STATE_ID;
+					switch((i-first)%3)
+					{
+						case 0:
+						case 2:
+							verts[i].t.x= _states[state_id].rect.left;
+							verts[i].t.y= _states[state_id].rect.top;
+							break;
+						case 1:
+							verts[i].t.x= _states[state_id].rect.right;
+							verts[i].t.y= _states[state_id].rect.top;
+							break;
+					}
+				}
+				break;
+		}
+	}
+#undef STATE_ID
+}
+
+void ActorMultiVertex::EnableAnimation(bool bEnable)
+{
+	bool bWasEnabled = m_bIsAnimating;
+	Actor::EnableAnimation(bEnable);
+
+	if(bEnable && !bWasEnabled)
+	{
+		_skip_next_update = true;
+	}
+}
+
+void ActorMultiVertex::Update(float fDelta)
+{
+	Actor::Update(fDelta); // do tweening
+	const bool skip_this_movie_update= _skip_next_update;
+	_skip_next_update= false;
+	if(!m_bIsAnimating) { return; }
+	if(!_Texture) { return; }
+	float time_passed = GetEffectDeltaTime();
+	_secs_into_state += time_passed;
+	if(_secs_into_state < 0)
+	{
+		wrap(_secs_into_state, GetAnimationLengthSeconds());
+	}
+	UpdateAnimationState();
+	if(!skip_this_movie_update)
+	{
+		_Texture->DecodeSeconds(max(0, time_passed));
+	}
 }
 
 void ActorMultiVertex::SetCurrentTweenStart()
@@ -719,6 +923,189 @@ public:
 		COMMON_RETURN_SELF;
 	}
 
+	DEFINE_METHOD(GetUseAnimationState, _use_animation_state);
+	static int SetUseAnimationState(T* p, lua_State *L)
+	{
+		p->_use_animation_state= BArg(1);
+		COMMON_RETURN_SELF;
+	}
+	static int GetNumStates(T* p, lua_State *L)
+	{
+		lua_pushnumber(L, p->GetNumStates());
+		return 1;
+	}
+	static void FillStateFromLua(lua_State *L, ActorMultiVertex::State& state,
+		RageTexture* tex, int index)
+	{
+		if(tex == NULL)
+		{
+			luaL_error(L, "The texture must be set before adding states.");
+		}
+		// State looks like this:
+		// {{left, top, right, bottom}, delay}
+#define DATA_ERROR(i) \
+		if(!lua_istable(L, i)) \
+		{ \
+			luaL_error(L, "The state data must be in a table like this: {{left, top, right, bottom}, delay}"); \
+		}
+#define SET_SIDE(i, side) \
+		lua_rawgeti(L, -1, i); \
+		state.side= FArg(-1); \
+		lua_pop(L, 1);
+
+		DATA_ERROR(index);
+		lua_rawgeti(L, index, 1);
+		DATA_ERROR(-1);
+		SET_SIDE(1, rect.left);
+		SET_SIDE(2, rect.top);
+		SET_SIDE(3, rect.right);
+		SET_SIDE(4, rect.bottom);
+		lua_pop(L, 1);
+		SET_SIDE(2, delay);
+		const float width_ratio= tex->GetImageToTexCoordsRatioX();
+		const float height_ratio= tex->GetImageToTexCoordsRatioY();
+		state.rect.left= state.rect.left * width_ratio;
+		state.rect.top= state.rect.top * height_ratio;
+		// Pixel centers are at .5, so add an extra pixel to the size to adjust.
+		state.rect.right= (state.rect.right * width_ratio) + width_ratio;
+		state.rect.bottom= (state.rect.bottom * height_ratio) + height_ratio;
+#undef SET_SIDE
+#undef DATA_ERROR
+	}
+	static int AddState(T* p, lua_State *L)
+	{
+		ActorMultiVertex::State s;
+		FillStateFromLua(L, s, p->GetTexture(), 1);
+		p->AddState(s);
+		COMMON_RETURN_SELF;
+	}
+	static size_t ValidStateIndex(T* p, lua_State *L, int pos)
+	{
+		int index= IArg(pos)-1;
+		if(index < 0 || static_cast<size_t>(index) >= p->GetNumStates())
+		{
+			luaL_error(L, "Invalid state index %d.", index+1);
+		}
+		return static_cast<size_t>(index);
+	}
+	static int RemoveState(T* p, lua_State *L)
+	{
+		p->RemoveState(ValidStateIndex(p, L, 1));
+		COMMON_RETURN_SELF;
+	}
+	static int GetState(T* p, lua_State *L)
+	{
+		lua_pushnumber(L, p->GetState()+1);
+		return 1;
+	}
+	static int SetState(T* p, lua_State *L)
+	{
+		p->SetState(ValidStateIndex(p, L, 1));
+		COMMON_RETURN_SELF;
+	}
+	static int GetStateData(T* p, lua_State *L)
+	{
+		RageTexture* tex= p->GetTexture();
+		if(tex == NULL)
+		{
+			luaL_error(L, "The texture must be set before adding states.");
+		}
+		const float width_pix= tex->GetImageToTexCoordsRatioX();
+		const float height_pix= tex->GetImageToTexCoordsRatioY();
+		const float width_ratio= 1.0f / tex->GetImageToTexCoordsRatioX();
+		const float height_ratio= 1.0f / tex->GetImageToTexCoordsRatioY();
+		const ActorMultiVertex::State& state=
+			p->GetStateData(ValidStateIndex(p, L, 1));
+		lua_createtable(L, 2, 0);
+		lua_createtable(L, 4, 0);
+		lua_pushnumber(L, state.rect.left * width_ratio);
+		lua_rawseti(L, -2, 1);
+		lua_pushnumber(L, state.rect.top * height_ratio);
+		lua_rawseti(L, -2, 2);
+		lua_pushnumber(L, (state.rect.right - width_pix) * width_ratio);
+		lua_rawseti(L, -2, 3);
+		lua_pushnumber(L, (state.rect.bottom + height_pix) * height_ratio);
+		lua_rawseti(L, -2, 4);
+		lua_rawseti(L, -2, 1);
+		lua_pushnumber(L, state.delay);
+		lua_rawseti(L, -2, 2);
+		return 1;
+	}
+	static int SetStateData(T* p, lua_State *L)
+	{
+		ActorMultiVertex::State& state= p->GetStateData(ValidStateIndex(p, L, 1));
+		FillStateFromLua(L, state, p->GetTexture(), 2);
+		COMMON_RETURN_SELF;
+	}
+	static int SetStateProperties(T* p, lua_State *L)
+	{
+		if(!lua_istable(L, 1))
+		{
+			luaL_error(L, "The states must be inside a table.");
+		}
+		RageTexture* tex= p->GetTexture();
+		if(tex == NULL)
+		{
+			luaL_error(L, "The texture must be set before adding states.");
+		}
+		vector<ActorMultiVertex::State> new_states;
+		size_t num_states= lua_objlen(L, 1);
+		new_states.resize(num_states);
+		for(size_t i= 0; i < num_states; ++i)
+		{
+			lua_rawgeti(L, 1, i);
+			FillStateFromLua(L, new_states[i], tex, -1);
+			lua_pop(L, 1);
+		}
+		p->SetStateProperties(new_states);
+		COMMON_RETURN_SELF;
+	}
+	static int SetAllStateDelays(T* p, lua_State *L)
+	{
+		p->SetAllStateDelays(FArg(1));
+		COMMON_RETURN_SELF;
+	}
+	DEFINE_METHOD(GetAnimationLengthSeconds, GetAnimationLengthSeconds());
+	static int SetSecondsIntoAnimation(T* p, lua_State *L)
+	{
+		p->SetSecondsIntoAnimation(FArg(1));
+		COMMON_RETURN_SELF;
+	}
+	static int GetNumQuadStates(T* p, lua_State *L)
+	{
+		lua_pushnumber(L, p->GetNumQuadStates());
+		return 1;
+	}
+	static size_t QuadStateIndex(T* p, lua_State *L, int pos)
+	{
+		int index= IArg(pos)-1;
+		if(index < 0 || static_cast<size_t>(index) >= p->GetNumQuadStates())
+		{
+			luaL_error(L, "Invalid state index %d.", index+1);
+		}
+		return static_cast<size_t>(index);
+	}
+	static int AddQuadState(T* p, lua_State *L)
+	{
+		p->AddQuadState(IArg(1)-1);
+		COMMON_RETURN_SELF;
+	}
+	static int RemoveQuadState(T* p, lua_State *L)
+	{
+		p->RemoveQuadState(QuadStateIndex(p, L, 1));
+		COMMON_RETURN_SELF;
+	}
+	static int GetQuadState(T* p, lua_State *L)
+	{
+		lua_pushnumber(L, p->GetQuadState(QuadStateIndex(p, L, 1))+1);
+		return 1;
+	}
+	static int SetQuadState(T* p, lua_State *L)
+	{
+		p->SetQuadState(QuadStateIndex(p, L, 1), IArg(1)-1);
+		COMMON_RETURN_SELF;
+	}
+
 	static int SetTexture( T* p, lua_State *L )
 	{
 		RageTexture *Texture = Luna<RageTexture>::check(L, 1);
@@ -762,6 +1149,24 @@ public:
 
 		ADD_METHOD( GetSpline );
 		ADD_METHOD( SetVertsFromSplines );
+
+		ADD_METHOD(GetUseAnimationState);
+		ADD_METHOD(SetUseAnimationState);
+		ADD_METHOD(GetNumStates);
+		ADD_METHOD(GetNumQuadStates);
+		ADD_METHOD(AddState);
+		ADD_METHOD(RemoveState);
+		ADD_METHOD(GetState);
+		ADD_METHOD(SetState);
+		ADD_METHOD(GetStateData);
+		ADD_METHOD(SetStateData);
+		ADD_METHOD(SetStateProperties);
+		ADD_METHOD(SetAllStateDelays);
+		ADD_METHOD(SetSecondsIntoAnimation);
+		ADD_METHOD(AddQuadState);
+		ADD_METHOD(RemoveQuadState);
+		ADD_METHOD(GetQuadState);
+		ADD_METHOD(SetQuadState);
 
 		// Copy from RageTexture
 		ADD_METHOD( SetTexture );
