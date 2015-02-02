@@ -4,6 +4,18 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/02/02
+----------
+* [Scripts] find_missing_strings_in_theme_translations function added to
+  _fallback scripts to assist translators in finding what needs to be
+  translated.  If you need/want to run it on your them, write a piece of lua
+  like this:
+  find_missing_strings_in_theme_translations("_fallback", "en.ini")
+  The first arg is the folder name of the theme to look at.
+  The second arg is the name of the language that is fully translated.  All
+  other languages will be compared to it to decide what is missing or unused.
+  [kyzentun]
+
 2015/01/31
 ----------
 * [EditMode] Want more lead in time before recording starts?
