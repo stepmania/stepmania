@@ -72,6 +72,7 @@ ActorMultiVertex::ActorMultiVertex()
 		_splines[i].m_owned_by_actor= true;
 	}
 	_skip_next_update= true;
+	_decode_movie= true;
 	_use_animation_state= false;
 	_secs_into_state= 0.0f;
 	_cur_state= 0;
@@ -571,7 +572,7 @@ void ActorMultiVertex::Update(float fDelta)
 		wrap(_secs_into_state, GetAnimationLengthSeconds());
 	}
 	UpdateAnimationState();
-	if(!skip_this_movie_update)
+	if(!skip_this_movie_update && _decode_movie)
 	{
 		_Texture->DecodeSeconds(max(0, time_passed));
 	}
@@ -897,11 +898,14 @@ public:
 		if( lua_isnil(L, 1) )
 		{
 			p->UnloadTexture();
+			p->LoadFromTexture(TEXTUREMAN->GetDefaultTextureID());
 		}
 		else
 		{
 			RageTextureID ID( SArg(1) );
+			TEXTUREMAN->DisableOddDimensionWarning();
 			p->LoadFromTexture( ID );
+			TEXTUREMAN->EnableOddDimensionWarning();
 		}
 		COMMON_RETURN_SELF;
 	}
@@ -1053,7 +1057,7 @@ public:
 		new_states.resize(num_states);
 		for(size_t i= 0; i < num_states; ++i)
 		{
-			lua_rawgeti(L, 1, i);
+			lua_rawgeti(L, 1, i+1);
 			FillStateFromLua(L, new_states[i], tex, -1);
 			lua_pop(L, 1);
 		}
@@ -1102,7 +1106,17 @@ public:
 	}
 	static int SetQuadState(T* p, lua_State *L)
 	{
-		p->SetQuadState(QuadStateIndex(p, L, 1), IArg(1)-1);
+		p->SetQuadState(QuadStateIndex(p, L, 1), IArg(2)-1);
+		COMMON_RETURN_SELF;
+	}
+	static int ForceStateUpdate(T* p, lua_State *L)
+	{
+		p->UpdateAnimationState(true);
+		COMMON_RETURN_SELF;
+	}
+	static int SetDecodeMovie(T* p, lua_State *L)
+	{
+		p->_decode_movie= BArg(1);
 		COMMON_RETURN_SELF;
 	}
 
@@ -1167,6 +1181,8 @@ public:
 		ADD_METHOD(RemoveQuadState);
 		ADD_METHOD(GetQuadState);
 		ADD_METHOD(SetQuadState);
+		ADD_METHOD(ForceStateUpdate);
+		ADD_METHOD(SetDecodeMovie);
 
 		// Copy from RageTexture
 		ADD_METHOD( SetTexture );

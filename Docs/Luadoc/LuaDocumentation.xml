@@ -1525,6 +1525,9 @@ save yourself some time, copy this for undocumented things:
 		{{left, top, right, bottom}, delay}<br />
 		left, top, right, and bottom are pixel coordinates, starting at 0.  If delay is 0 or negative, the state will last forever.
 	</Function>
+	<Function name='ForceStateUpdate' return='' arguments=''>
+		Forces the AMV to update the texture coordinates on all its quads, even if the current state has not changed.
+	</Function>
 	<Function name='GetUseAnimationState' return= 'bool' arguments=''>
 		Returns whether the AMV uses the animation state.
 	</Function>
@@ -1543,6 +1546,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetState' return= 'int' arguments=''>
 		Returns the id of the current state.
+	</Function>
+	<Function name='SetDecodeMovie' return='' arguments='bool decode'>
+		Sets whether the AMV should call the decode function for its texture during updates.
 	</Function>
 	<Function name='SetState' return= '' arguments='int id'>
 		Sets the current state.
@@ -4044,6 +4050,24 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='RageTexture'>
+	<Function name='GetSourceWidth' return='float' arguments=''>
+		Returns the source width.
+	</Function>
+	<Function name='GetSourceHeight' return='float' arguments=''>
+		Returns the source height.
+	</Function>
+	<Function name='GetTextureWidth' return='float' arguments=''>
+		Returns the texture width.
+	</Function>
+	<Function name='GetTextureHeight' return='float' arguments=''>
+		Returns the texture height.
+	</Function>
+	<Function name='GetImageWidth' return='float' arguments=''>
+		Returns the image width.
+	</Function>
+	<Function name='GetImageHeight' return='float' arguments=''>
+		Returns the image height.
+	</Function>
 	<Function name='GetNumFrames' return='int' arguments=''>
 		Returns the number of frames in this texture.
 	</Function>
@@ -4351,6 +4375,11 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetBannerPath' return='string' arguments=''>
 		Returns the path to the song's banner.
+	</Function>
+	<Function name='GetBGChanges' return='table' arguments=''>
+		Returns a table with all the data for the song's BGCHANGES line.<br />
+		Each element of the table is one change like this:<br />
+		{start_beat= 1.0, rate= 1.0, transition= "example", effect= "example", file1= "example", file2= "example", color1= "#FFFFFFFF", color2= "#FFFFFFFF"}
 	</Function>
 	<Function name='GetCDImagePath' return='string' arguments=''>
 		Returns the path to the song's CD image.

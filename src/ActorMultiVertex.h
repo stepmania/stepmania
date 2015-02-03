@@ -146,6 +146,7 @@ public:
 	void SetQuadState(size_t i, size_t s)
 	{ AMV_DestTweenState().quad_states[i]= s; }
 	bool _use_animation_state;
+	bool _decode_movie;
 
 	virtual void PushSelf( lua_State *L );
 

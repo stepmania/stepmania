@@ -491,6 +491,7 @@
 		<Class base='Actor' name='ActorMultiVertex'>
 			<Function name='AddState'/>
 			<Function name='AddQuadState'/>
+			<Function name='ForceStateUpdate'/>
 			<Function name='GetCurrDrawMode'/>
 			<Function name='GetCurrFirstToDraw'/>
 			<Function name='GetCurrNumToDraw'/>
@@ -510,6 +511,7 @@
 			<Function name='RemoveState'/>
 			<Function name='RemoveQuadState'/>
 			<Function name='SetAllStateDelays'/>
+			<Function name='SetDecodeMovie'/>
 			<Function name='SetDrawState'/>
 			<Function name='SetEffectMode'/>
 			<Function name='SetLineWidth'/>
@@ -1382,6 +1384,12 @@
 			<Function name='volume'/>
 		</Class>
 		<Class name='RageTexture'>
+			<Function name='GetSourceWidth'/>
+			<Function name='GetSourceHeight'/>
+			<Function name='GetTextureWidth'/>
+			<Function name='GetTextureHeight'/>
+			<Function name='GetImageWidth'/>
+			<Function name='GetImageHeight'/>
 			<Function name='GetTextureCoordRect'/>
 			<Function name='loop'/>
 			<Function name='position'/>
@@ -1505,6 +1513,7 @@
 			<Function name='GetAllSteps'/>
 			<Function name='GetBackgroundPath'/>
 			<Function name='GetBannerPath'/>
+			<Function name='GetBGChanges'/>
 			<Function name='GetCDImagePath'/>
 			<Function name='GetCDTitlePath'/>
 			<Function name='GetDiscPath'/>
