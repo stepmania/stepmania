@@ -257,6 +257,7 @@
 	</GlobalFunctions>
 	<Classes>
 		<Class name='Actor'>
+			<Function name='AddWrapperState'/>
 			<Function name='Center'/>
 			<Function name='CenterX'/>
 			<Function name='CenterY'/>
@@ -278,6 +279,7 @@
 			<Function name='GetHeight'/>
 			<Function name='GetName'/>
 			<Function name='GetNumStates'/>
+			<Function name='GetNumWrapperStates'/>
 			<Function name='GetParent'/>
 			<Function name='GetRotationX'/>
 			<Function name='GetRotationY'/>
@@ -287,6 +289,7 @@
 			<Function name='GetVAlign'/>
 			<Function name='GetVisible'/>
 			<Function name='GetWidth'/>
+			<Function name='GetWrapperState'/>
 			<Function name='GetX'/>
 			<Function name='GetY'/>
 			<Function name='GetZ'/>
@@ -301,6 +304,7 @@
 			<Function name='MaskSource'/>
 			<Function name='Real'/>
 			<Function name='RealInverse'/>
+			<Function name='RemoveWrapperState'/>
 			<Function name='RunCommandsRecursively'/>
 			<Function name='SetFakeParent'/>
 			<Function name='SetHeight'/>

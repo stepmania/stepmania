@@ -251,6 +251,12 @@ void ActorFrame::DrawPrimitives()
 	RageColor diffuse = m_pTempState->diffuse[0];
 	RageColor glow = m_pTempState->glow;
 
+	// Word of warning:  Actor::Draw duplicates the structure of how an Actor
+	// is drawn inside of an ActorFrame for its wrapping feature.  So if
+	// you're adding something new to ActorFrames that affects how Actors are
+	// drawn, make sure to also apply it in Actor::Draw's handling of the
+	// wrappers. -Kyz
+
 	// draw all sub-ActorFrames while we're in the ActorFrame's local coordinate space
 	if( m_bDrawByZPosition )
 	{

@@ -831,6 +831,20 @@ save yourself some time, copy this for undocumented things:
 <!-- Classes -->
 <Classes>
 <Class name='Actor'>
+	<Function name='AddWrapperState' return='ActorFrame' arguments=''>
+		This adds a wrapper state around the Actor, which is like wrapping the Actor in an ActorFrame, except that you can use it on any actor, and add or remove wrapper states in response to things that happen while the screen is being used. (wrapping an Actor in an ActorFrame normally requires setting it up before the screen starts)<br />
+		The ActorFrame that is returned is the wrapper state, for convenience.<br />
+		An Actor can have any number of wrapper states.  Use GetWrapperState to access wrapper states for the actor.
+	</Function>
+	<Function name='GetNumWrapperStates' return='ActorFrame' arguments=''>
+		Returns the number of wrapper states the actor has.
+	</Function>
+	<Function name='GetWrapperState' return='ActorFrame' arguments='int i'>
+		Returns the wrapper state at index i.  Think of wrapper states with a higher index as being "further out".  Actor is inside Wrapper 1, Wrapper 1 is inside Wrapper 2, Wrapper 2 is inside Wrapper 3, and so on.
+	</Function>
+	<Function name='RemoveWrapperState' return='' arguments='int i'>
+		Removes the wrapper state at index i.
+	</Function>
 	<Function name='GetParent' return='Actor' arguments=''>
 		Returns the Actor's parent, or <code>nil</code> if it doesn't have one.
 	</Function>

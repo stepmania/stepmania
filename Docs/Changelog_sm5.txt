@@ -21,6 +21,13 @@ ________________________________________________________________________________
 * [EditMode] Want more lead in time before recording starts?
   It's a preference.  [kyzentun]
 
+2015/01/30
+----------
+* [Actor] Wrapper states added.  This makes wrapping an Actor inside an
+  ActorFrame for any reason unnecessary, and makes it possible to do things
+  that were only possible by wrapping an Actor in an ActorFrame to Actors
+  that you couldn't put inside a frame before. [kyzentun]
+
 2015/01/20
 ----------
 * [ScreenSelect] ChoiceNames can be a lua command that is evaluated to get a
