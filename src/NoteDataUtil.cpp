@@ -556,7 +556,8 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 		{
 			int iOldTrack = t;
 			int iNewTrack = (iOldTrack + iCurTrackOffset) % iNewNumTracks;
-			const TapNote &tn = in.GetTapNote( iOldTrack, r );
+			TapNote tn = in.GetTapNote( iOldTrack, r );
+			tn.pn= PLAYER_INVALID;
 			out.SetTapNote( iNewTrack, r, tn );
 		}
 	}
@@ -622,9 +623,10 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 	{
 		for( int iTrackFrom = 0; iTrackFrom < in.GetNumTracks(); ++iTrackFrom )
 		{
-			const TapNote &tnFrom = in.GetTapNote( iTrackFrom, row );
+			TapNote tnFrom = in.GetTapNote( iTrackFrom, row );
 			if( tnFrom.type == TapNoteType_Empty || tnFrom.type == TapNoteType_AutoKeysound )
 				continue;
+			tnFrom.pn= PLAYER_INVALID;
 
 			// If this is a hold note, find the end.
 			int iEndIndex = row;

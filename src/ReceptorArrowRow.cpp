@@ -12,6 +12,7 @@ ReceptorArrowRow::ReceptorArrowRow()
 	m_pPlayerState = NULL;
 	m_fYReverseOffsetPixels = 0;
 	m_fFadeToFailPercent = 0;
+	m_renderers= NULL;
 }
 
 void ReceptorArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset )
@@ -62,8 +63,18 @@ void ReceptorArrowRow::Update( float fDeltaTime )
 		CLAMP( fBaseAlpha, 0.0f, 1.0f );
 		m_ReceptorArrow[c]->SetBaseAlpha( fBaseAlpha );
 
-		// set arrow XYZ
-		(*m_renderers)[c].UpdateReceptorGhostStuff(m_ReceptorArrow[c]);
+		if(m_renderers != NULL)
+		{
+			// set arrow XYZ
+			(*m_renderers)[c].UpdateReceptorGhostStuff(m_ReceptorArrow[c]);
+		}
+		else
+		{
+			// ScreenNameEntry uses ReceptorArrowRow but doesn't have or need
+			// column renderers.  Just do the lazy thing and offset x. -Kyz
+			const Style* style= GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber);
+			m_ReceptorArrow[c]->SetX(style->m_ColumnInfo[m_pPlayerState->m_PlayerNumber][c].fXOffset);
+		}
 	}
 }
 

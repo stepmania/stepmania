@@ -145,6 +145,12 @@ save yourself some time, copy this for undocumented things:
 	<Function name='fapproach' theme='_fallback' return='float' arguments='float val, float other_val, float to_move'>
 		[02 Utilities.lua] Old name for approach.
 	</Function>
+	<Function name='find_missing_strings_in_theme_translations' return='' arguments='string theme_name, string master_lang_name'>
+		This function creates files in the theme's Languages folder listing all the strings that have no translation and all the strings that are unused.<br />
+		Strings that do not have an entry in the master language are considered unused.<br />
+		master_lang_name is the name of the ini file that contains the language with all strings used by the theme.<br />
+		Example:  find_missing_strings_in_theme_translations("my_best_theme", "en.ini")
+	</Function>
 	<Function name='FindSelection' theme='_fallback' return='int' arguments='table list'>
 		[02 Utilities.lua] Return the index of a true value in <code>list</code>.
 	</Function>
@@ -831,6 +837,20 @@ save yourself some time, copy this for undocumented things:
 <!-- Classes -->
 <Classes>
 <Class name='Actor'>
+	<Function name='AddWrapperState' return='ActorFrame' arguments=''>
+		This adds a wrapper state around the Actor, which is like wrapping the Actor in an ActorFrame, except that you can use it on any actor, and add or remove wrapper states in response to things that happen while the screen is being used. (wrapping an Actor in an ActorFrame normally requires setting it up before the screen starts)<br />
+		The ActorFrame that is returned is the wrapper state, for convenience.<br />
+		An Actor can have any number of wrapper states.  Use GetWrapperState to access wrapper states for the actor.
+	</Function>
+	<Function name='GetNumWrapperStates' return='ActorFrame' arguments=''>
+		Returns the number of wrapper states the actor has.
+	</Function>
+	<Function name='GetWrapperState' return='ActorFrame' arguments='int i'>
+		Returns the wrapper state at index i.  Think of wrapper states with a higher index as being "further out".  Actor is inside Wrapper 1, Wrapper 1 is inside Wrapper 2, Wrapper 2 is inside Wrapper 3, and so on.
+	</Function>
+	<Function name='RemoveWrapperState' return='' arguments='int i'>
+		Removes the wrapper state at index i.
+	</Function>
 	<Function name='GetParent' return='Actor' arguments=''>
 		Returns the Actor's parent, or <code>nil</code> if it doesn't have one.
 	</Function>
@@ -1415,6 +1435,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetNumChildren' return='int' arguments=''>
 		Returns the number of children in the ActorFrame.
 	</Function>
+	<Function name='GetUpdateRate' return='float' arguments=''>
+		Gets the update function's rate.
+	</Function>
 	<Function name='playcommandonchildren' return='void' arguments='string sCommandName'>
 		Plays the <code>sCommandName</code> command on the ActorFrame's children.
 	</Function>
@@ -1517,6 +1540,72 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='ActorMultiVertex'>
+	<Function name='AddQuadState' return='' arguments='int offset'>
+		The list of quad states is used to determine which animation state is used for each quad.  The offset is added to the AMV's current state, and the resulting state is used.
+	</Function>
+	<Function name='AddState' return='' arguments='table state_data'>
+		Adds an animation state to the ActorMultiVertex.  The state_data table must be like this:<br />
+		{{left, top, right, bottom}, delay}<br />
+		left, top, right, and bottom are pixel coordinates, starting at 0.  If delay is 0 or negative, the state will last forever.
+	</Function>
+	<Function name='ForceStateUpdate' return='' arguments=''>
+		Forces the AMV to update the texture coordinates on all its quads, even if the current state has not changed.
+	</Function>
+	<Function name='GetUseAnimationState' return= 'bool' arguments=''>
+		Returns whether the AMV uses the animation state.
+	</Function>
+	<Function name='SetUseAnimationState' return= '' arguments='bool use'>
+		Sets whether the AMV uses the animation state.<br />
+		This works best when using DrawMode_Quads.<br />
+		AMV's can have animated textures like sprites.  Each state tells the AMV what part of the texture to use, and how long the state lasts.<br />
+		Use AddState to add a state onto the end, or SetStateProperties to set all the states at once, or SetState to set a single state.<br />
+		Each quad has its own offset that is added to the current state.  Use AddQuadState to add to the list of quad states, or SetQuadState to set an existing quad state.
+	</Function>
+	<Function name='GetNumStates' return= 'int' arguments=''>
+		Returns the number of states the AMV has.
+	</Function>
+	<Function name='GetNumQuadStates' return= 'int' arguments=''>
+		Returns the number of quad states in the destination tween state for the AMV.
+	</Function>
+	<Function name='GetState' return= 'int' arguments=''>
+		Returns the id of the current state.
+	</Function>
+	<Function name='GetDecodeMovie' return='bool' arguments=''>
+		Gets whether the AMV should call the decode function for its texture during updates.
+	</Function>
+	<Function name='SetDecodeMovie' return='' arguments='bool decode'>
+		Sets whether the AMV should call the decode function for its texture during updates.
+	</Function>
+	<Function name='SetState' return= '' arguments='int id'>
+		Sets the current state.
+	</Function>
+	<Function name='GetQuadState' return= 'int' arguments='int id'>
+		Returns the offset of the requested quad state.
+	</Function>
+	<Function name='SetQuadState' return= '' arguments='int id, int offset'>
+		Sets the offset of the requested quad state.
+	</Function>
+	<Function name='GetStateData' return= 'table' arguments='int id'>
+		Returns a table containing the data for the requested state.
+	</Function>
+	<Function name='SetStateData' return= '' arguments='int id, table state_data'>
+		Sets the requested state to the data in state_data.  Similar to AddState, but SetStateData only works on states that have already been added.
+	</Function>
+	<Function name='SetStateProperties' return= '' arguments='table {state_data, ...}'>
+		Each element of the table must be a state_data table, and is used to construct one state.  The table as a whole is the entire list of all states for the AMV.
+	</Function>
+	<Function name='RemoveState' return= '' arguments='int id'>
+		Removes the requested state from the state list.
+	</Function>
+	<Function name='RemoveQuadState' return= '' arguments='int id'>
+		Removes the requested quad state from the quad state list.
+	</Function>
+	<Function name='SetAllStateDelays' return= '' arguments='float delay'>
+		Sets the delay for every state to delay.
+	</Function>
+	<Function name='SetSecondsIntoAnimation' return= '' arguments='float seconds'>
+		Sets how far into its animation the AMV is.
+	</Function>
 	<Function name='SetVertex' return='void' arguments='int index, table { table pos, table color, table textcoords }'>
 		Sets vertex number <code>index</code> with the properties provided. The tables of properties are each optional and can be provided in any order.
 	</Function>
@@ -3987,6 +4076,24 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='RageTexture'>
+	<Function name='GetSourceWidth' return='float' arguments=''>
+		Returns the source width.
+	</Function>
+	<Function name='GetSourceHeight' return='float' arguments=''>
+		Returns the source height.
+	</Function>
+	<Function name='GetTextureWidth' return='float' arguments=''>
+		Returns the texture width.
+	</Function>
+	<Function name='GetTextureHeight' return='float' arguments=''>
+		Returns the texture height.
+	</Function>
+	<Function name='GetImageWidth' return='float' arguments=''>
+		Returns the image width.
+	</Function>
+	<Function name='GetImageHeight' return='float' arguments=''>
+		Returns the image height.
+	</Function>
 	<Function name='GetNumFrames' return='int' arguments=''>
 		Returns the number of frames in this texture.
 	</Function>
@@ -4294,6 +4401,11 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetBannerPath' return='string' arguments=''>
 		Returns the path to the song's banner.
+	</Function>
+	<Function name='GetBGChanges' return='table' arguments=''>
+		Returns a table with all the data for the song's BGCHANGES line.<br />
+		Each element of the table is one change like this:<br />
+		{start_beat= 1.0, rate= 1.0, transition= "example", effect= "example", file1= "example", file2= "example", color1= "#FFFFFFFF", color2= "#FFFFFFFF"}
 	</Function>
 	<Function name='GetCDImagePath' return='string' arguments=''>
 		Returns the path to the song's CD image.
@@ -4653,6 +4765,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetAnimationLengthSeconds' return='float' arguments=''>
 		Returns the length of the animation in seconds.
 	</Function>
+	<Function name='GetDecodeMovie' return='bool' arguments=''>
+		Gets whether the Sprite should call the decode function for its texture during updates.
+	</Function>
 	<Function name='GetNumStates' return='int' arguments=''>
 		Return the number of states this Sprite has.
 	</Function>
@@ -4692,6 +4807,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='StopUsingCustomPosCoords' return='void' arguments=''>
 		Turns off the custom pos coords for the sprite.
+	</Function>
+	<Function name='SetDecodeMovie' return='' arguments='bool decode'>
+		Sets whether the Sprite should call the decode function for its texture during updates.
 	</Function>
 	<Function name='SetEffectMode' return='void' arguments='EffectMode mode'>
 		Set the <Link class='ENUM' function='EffectMode' /> to <code>mode</code>.

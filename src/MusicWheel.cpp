@@ -87,6 +87,7 @@ void MusicWheel::Load( RString sType )
 	SHOW_EASY_FLAG			.Load(sType,"UseEasyMarkerFlag");
 	USE_SECTIONS_WITH_PREFERRED_GROUP		.Load(sType,"UseSectionsWithPreferredGroup");
 	HIDE_INACTIVE_SECTIONS		.Load(sType,"OnlyShowActiveSection");
+	HIDE_ACTIVE_SECTION_TITLE		.Load(sType,"HideActiveSectionTitle");
 	REMIND_WHEEL_POSITIONS		.Load(sType,"RemindWheelPositions");
 	vector<RString> vsModeChoiceNames;
 	split( MODE_MENU_CHOICE_NAMES, ",", vsModeChoiceNames );
@@ -677,10 +678,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 						// todo: preferred sort section color handling? -aj
 						RageColor colorSection = (so==SORT_GROUP) ? SONGMAN->GetSongGroupColor(pSong->m_sGroupName) : SECTION_COLORS.GetValue(iSectionColorIndex);
 						iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
-						// In certain situations (e.g. simulating Pump it Up), themes may
-						// want to only show one group at a time.
-						if( !HIDE_INACTIVE_SECTIONS )
-							arrayWheelItemDatas.push_back( new MusicWheelItemData(WheelItemDataType_Section, NULL, sThisSection, NULL, colorSection, iSectionCount) );
+						arrayWheelItemDatas.push_back( new MusicWheelItemData(WheelItemDataType_Section, NULL, sThisSection, NULL, colorSection, iSectionCount) );
 						sLastSection = sThisSection;
 					}
 				}
@@ -1361,9 +1359,21 @@ void MusicWheel::SetOpenSection( RString group )
 	for( unsigned i = 0; i < from.size(); ++i )
 	{
 		MusicWheelItemData &d = *from[i];
+
+		// Hide songs/courses which are not in the active section
 		if( (d.m_Type == WheelItemDataType_Song || d.m_Type == WheelItemDataType_Course) && !d.m_sText.empty() &&
 			 d.m_sText != group )
 			 continue;
+
+		// In certain situations (e.g. simulating Pump it Up or IIDX),
+		// themes may want to hide inactive section headings as well.
+		if( HIDE_INACTIVE_SECTIONS && d.m_Type == WheelItemDataType_Section && group != "" ) {
+			// Based on the HideActiveSectionTitle metric, we either
+			// hide all section titles, or only those which are not
+			// currently open.
+			if ( HIDE_ACTIVE_SECTION_TITLE || d.m_sText != group )
+				continue;
+		}
 
 		// If AUTO_SET_STYLE, hide courses that prefer a style that isn't available.
 		if( d.m_Type == WheelItemDataType_Course && CommonMetrics::AUTO_SET_STYLE )

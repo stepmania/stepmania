@@ -290,7 +290,7 @@ bool WheelBase::Select()	// return true if this selection can end the screen
 	{
 	case WheelItemDataType_Generic:
 		m_LastSelection = m_CurWheelItemData[m_iSelection];
-		break;
+		return true;
 	case WheelItemDataType_Section:
 		{
 			RString sThisItemSectionName = m_CurWheelItemData[m_iSelection]->m_sText;
@@ -305,12 +305,11 @@ bool WheelBase::Select()	// return true if this selection can end the screen
 				m_soundExpand.Play();
 			}
 		}
-		break;
+		// Opening/closing sections cannot end the screen
+		return false;
 	default:
-		break;
+		return true;
 	}
-
-	return true;
 }
 
 WheelItemBaseData* WheelBase::GetItem( unsigned int iIndex )

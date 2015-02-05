@@ -310,6 +310,11 @@ public:
 	void SetFakeParent(Actor* mailman) { m_FakeParent= mailman; }
 	Actor* GetFakeParent() { return m_FakeParent; }
 
+	void AddWrapperState();
+	void RemoveWrapperState(size_t i);
+	Actor* GetWrapperState(size_t i);
+	size_t GetNumWrapperStates() const { return m_WrapperStates.size(); }
+
 	/**
 	 * @brief Retrieve the Actor's x position.
 	 * @return the Actor's x position. */
@@ -604,6 +609,7 @@ public:
 	virtual float GetAnimationLengthSeconds() const { return 0; }
 	virtual void SetSecondsIntoAnimation( float ) {}
 	virtual void SetUpdateRate( float ) {}
+	virtual float GetUpdateRate() { return 1.0f; }
 
 	HiddenPtr<LuaClass> m_pLuaInstance;
 
@@ -616,6 +622,9 @@ protected:
 	// state without making that actor the parent.  It's like having multiple
 	// parents. -Kyz
 	Actor* m_FakeParent;
+	// WrapperStates provides a way to wrap the actor inside ActorFrames,
+	// applicable to any actor, not just ones the theme creates.
+	vector<Actor*> m_WrapperStates;
 
 	/** @brief Some general information about the Tween. */
 	struct TweenInfo

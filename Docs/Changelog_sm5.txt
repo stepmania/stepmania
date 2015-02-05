@@ -4,6 +4,52 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/02/04
+----------
+* [ActorFrame] GetUpdateRate added. [kyzentun]
+* [Background] Using the wrong transition name no longer crashes.
+  Playback rate is applied to videos.
+  Checkerboard and other BackgroundEffects that use the same file twice no
+  longer play videos back at multiplied speed. [kyzentun]
+* [Sprite] Get/SetDecodeMovie added. [kyzentun]
+
+2015/02/03
+----------
+* [MusicWheel] HideActiveSectionTitle metric added. [djpohly]
+
+2015/02/02
+----------
+* [ActorMultiVertex] ForceStateUpdate and Get/SetDecodeMovie added. [kyzentun]
+* [RageTexture] Get<thing>Width and Height functions added.
+  (<thing> means Source, Texture, or Image) [kyzentun]
+* [Scripts] find_missing_strings_in_theme_translations function added to
+  _fallback scripts to assist translators in finding what needs to be
+  translated.  If you need/want to run it on your them, write a piece of lua
+  like this:
+  find_missing_strings_in_theme_translations("_fallback", "en.ini")
+  The first arg is the folder name of the theme to look at.
+  The second arg is the name of the language that is fully translated.  All
+  other languages will be compared to it to decide what is missing or unused.
+  [kyzentun]
+* [Song] GetBGChanges added. [kyzentun]
+
+2015/02/01
+----------
+* [ActorMultiVertex] Animation state system added.  AMVs can now have
+  animated textures controlled by states written in lua. [kyzentun]
+
+2015/01/31
+----------
+* [EditMode] Want more lead in time before recording starts?
+  It's a preference.  [kyzentun]
+
+2015/01/30
+----------
+* [Actor] Wrapper states added.  This makes wrapping an Actor inside an
+  ActorFrame for any reason unnecessary, and makes it possible to do things
+  that were only possible by wrapping an Actor in an ActorFrame to Actors
+  that you couldn't put inside a frame before. [kyzentun]
+
 2015/01/20
 ----------
 * [ScreenSelect] ChoiceNames can be a lua command that is evaluated to get a

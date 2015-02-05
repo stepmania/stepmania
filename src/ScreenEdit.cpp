@@ -3200,9 +3200,9 @@ void ScreenEdit::TransitionEditState( EditState em )
 		if( bStateChanging )
 			AdjustSync::ResetOriginalSyncData();
 
-		/* Give a 1 second lead-in.  If we're loading Player, this must be done first.
+		/* Give a lead-in.  If we're loading Player, this must be done first.
 		 * Also be sure to get the right timing. */
-		float fSeconds = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_iStartPlayingAt) ) - 1;
+		float fSeconds = GetAppropriateTiming().GetElapsedTimeFromBeat( NoteRowToBeat(m_iStartPlayingAt) ) - PREFSMAN->m_EditRecordModeLeadIn;
 		GAMESTATE->UpdateSongPosition( fSeconds, GetAppropriateTiming(), RageZeroTimer );
 
 		GAMESTATE->m_bGameplayLeadIn.Set( false );

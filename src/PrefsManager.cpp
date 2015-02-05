@@ -11,6 +11,10 @@
 #include "RageLog.h"
 #include "SpecialFiles.h"
 
+#if !defined(WITHOUT_NETWORKING) && defined(HAVE_VERSION_INFO)
+#include "ver.h"
+#endif
+
 //DEFAULTS_INI_PATH	= "Data/Defaults.ini";		// these can be overridden
 //PREFERENCES_INI_PATH	// overlay on Defaults.ini, contains the user's choices
 //STATIC_INI_PATH	= "Data/Static.ini";		// overlay on the 2 above, can't be overridden
@@ -143,10 +147,6 @@ bool g_bAutoRestart = false;
 # define TRUE_IF_DEBUG false
 #endif
 
-#if !defined(WITHOUT_NETWORKING) && defined(HAVE_VERSION_INFO)
-extern unsigned long version_num;
-#endif
-
 void ValidateDisplayAspectRatio( float &val )
 {
 	if( val < 0 )
@@ -258,6 +258,7 @@ PrefsManager::PrefsManager() :
 	m_fDebounceCoinInputTime	( "DebounceCoinInputTime",		0 ),
 
 	m_fPadStickSeconds		( "PadStickSeconds",			0 ),
+	m_EditRecordModeLeadIn("EditRecordModeLeadIn", 1.0f),
 	m_bForceMipMaps			( "ForceMipMaps",			false ),
 	m_bTrilinearFiltering		( "TrilinearFiltering",			false ),
 	m_bAnisotropicFiltering		( "AnisotropicFiltering",		false ),

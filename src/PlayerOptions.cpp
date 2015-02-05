@@ -811,7 +811,11 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY_SPEED(fPlayerAutoPlay);
 	CPY_SPEED(fPerspectiveTilt);
 	CPY_SPEED(fSkew);
-	CPY(m_sNoteSkin);
+	if(!other.m_sNoteSkin.empty() &&
+		NOTESKIN->DoesNoteSkinExist(other.m_sNoteSkin))
+	{
+		CPY(m_sNoteSkin);
+	}
 	for( int i = 0; i < PlayerOptions::NUM_ACCELS; ++i )
 	{
 		CPY_SPEED(fAccels[i]);

@@ -22,11 +22,7 @@
 #include "archutils/Darwin/Crash.h"
 #endif
 
-#if defined(HAVE_VERSION_INFO)
-extern const unsigned long version_num;
-extern const char *const version_date;
-extern const char *const version_time;
-#endif
+#include "ver.h"
 
 bool child_read( int fd, void *p, int size );
 
@@ -204,7 +200,7 @@ static void child_process()
 		exit(1);
 	}
 	
-	fprintf( CrashDump, "%s crash report", PRODUCT_ID_VER );
+	fprintf( CrashDump, "%s%s crash report", PRODUCT_FAMILY, product_version );
 #if defined(HAVE_VERSION_INFO)
 	fprintf( CrashDump, " (build %lu, %s @ %s)", version_num, version_date, version_time );
 #endif

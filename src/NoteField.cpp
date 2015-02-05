@@ -137,7 +137,10 @@ void NoteField::CacheAllUsedNoteSkins()
 	GAMESTATE->GetAllUsedNoteSkins( asSkinsLower );
 	asSkinsLower.push_back( m_pPlayerState->m_PlayerOptions.GetStage().m_sNoteSkin );
 	FOREACH( RString, asSkinsLower, s )
+	{
+		NOTESKIN->ValidateNoteSkinName(*s);
 		s->MakeLower();
+	}
 
 	for( unsigned i=0; i < asSkinsLower.size(); ++i )
 		CacheNoteSkin( asSkinsLower[i] );
@@ -155,6 +158,7 @@ void NoteField::CacheAllUsedNoteSkins()
 		UncacheNoteSkin( *s );
 
 	RString sCurrentNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin;
+	NOTESKIN->ValidateNoteSkinName(sCurrentNoteSkinLower);
 	sCurrentNoteSkinLower.MakeLower();
 
 	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( sCurrentNoteSkinLower );
@@ -165,6 +169,7 @@ void NoteField::CacheAllUsedNoteSkins()
 	FOREACH_EnabledPlayer( pn )
 	{
 		RString sNoteSkinLower = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin;
+		NOTESKIN->ValidateNoteSkinName(sNoteSkinLower);
 		sNoteSkinLower.MakeLower();
 		it = m_NoteDisplays.find( sNoteSkinLower );
 		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLower );

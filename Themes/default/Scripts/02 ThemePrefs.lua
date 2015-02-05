@@ -116,7 +116,7 @@ end
 
 -- screen filter
 function OptionRowScreenFilter()
-	local t = {
+	return {
 		Name="ScreenFilter",
 		LayoutType = "ShowAllInRow",
 		SelectType = "SelectOne",
@@ -147,14 +147,12 @@ function OptionRowScreenFilter()
 				end
 			end
 		end,
-	};
-	setmetatable(t, t)
-	return t
+	}
 end
 
 -- protiming
 function OptionRowProTiming()
-	local t = {
+	return {
 		Name = "ProTiming",
 		LayoutType = "ShowAllInRow",
 		SelectType = "SelectOne",
@@ -181,8 +179,6 @@ function OptionRowProTiming()
 			SetUserPref("UserPrefProtiming" .. ToEnumShortString(pn), bSave)
 		end
 	}
-	setmetatable(t, t)
-	return t
 end
 
 --[[ end option rows ]]

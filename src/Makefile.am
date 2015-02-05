@@ -19,7 +19,6 @@ AM_CFLAGS =
 noinst_LIBRARIES =
 EXTRA_DIST =
 
-
 AM_CXXFLAGS += -fno-exceptions
 
 # Relax inlining; the default of 600 takes way too long to compile and
@@ -28,31 +27,31 @@ AM_CXXFLAGS += -finline-limit=300
 
 AM_CXXFLAGS += $(GL_CFLAGS)
 
-.PHONY: increment_version gitversion
+.PHONY: update_version
 
-increment_version:
-	if test -e ver.h; then \
-		build=`sed -rs 's/.*version_num = ([[:digit:]]+);/\1/;q' ver.cpp`; \
+update_version:
+	if test -e ver.cpp; then \
+		build=`sed -rs 's/.*version_num = ([[:digit:]]+);/\1/;2q;d' ver.cpp`; \
 		build=`expr $$build + 1`; \
 	else \
 		build=0; \
 	fi; \
-	echo "extern const unsigned long version_num = $$build;" > ver.cpp; \
-	echo "extern const char *const version_time = \"`date +"%X %Z (UTC%:z)"`\";" >> ver.cpp;
-	echo "extern const char *const version_date = \"`date +"%Y%m%d"`\";" >> ver.cpp;
-
-ver.cpp: increment_version
-
-gitversion:
-	rm -f gitversion.h
-	touch gitversion.h
+	echo "#include \"ver.h\"" > ver.cpp; \
+	echo "const unsigned long version_num = $$build;" >> ver.cpp
+# Header inclusion necessary to get linker symbols right
+	echo "const char *const version_time = \"`date +"%X %Z (UTC%:z)"`\";" >> ver.cpp
+	echo "const char *const version_date = \"`date +"%Y%m%d"`\";" >> ver.cpp
 	if git rev-parse --short HEAD; then \
-		echo "#define PRODUCT_VER_BARE 5.0-git-`git rev-parse --short HEAD`" > gitversion.h; \
+		echo "const char *const product_version = \"5.0-git-`git rev-parse --short HEAD`\";" >> ver.cpp; \
+	else \
+		echo "const char *const product_version = \"5.0-UNKNOWN\";" >> ver.cpp; \
 	fi
 
-gitversion.h: gitversion
-
-BUILT_SOURCES = gitversion.h ver.cpp
+ver.cpp: update_version
+# make doesn't recognize a file it updated during the current invocation
+# (in this case ver.cpp) as being updated. So remake and delete stepmania-ver.o
+# every time.
+.INTERMEDIATE: stepmania-ver.o
 
 PNG = \
 ../extern/libpng/include/png.c ../extern/libpng/include/.png.h \
@@ -486,8 +485,13 @@ ScoreDisplayNormal.cpp ScoreDisplayNormal.h ScoreDisplayOni.cpp ScoreDisplayOni.
 ScoreDisplayPercentage.cpp ScoreDisplayPercentage.h ScoreDisplayRave.cpp ScoreDisplayRave.h \
 SongPosition.cpp SongPosition.h
 
-PCRE = ../extern/pcre/get.c ../extern/pcre/internal.h ../extern/pcre/maketables.c ../extern/pcre/pcre.c ../extern/pcre/pcre.h ../extern/pcre/study.c
+Rage =
+all_test_SOURCES =
+if !USE_SYSTEM_PCRE
+Rage += ../extern/pcre/get.c ../extern/pcre/internal.h ../extern/pcre/maketables.c ../extern/pcre/pcre.c ../extern/pcre/pcre.h ../extern/pcre/study.c
+all_test_SOURCES += ../extern/pcre/get.c ../extern/pcre/internal.h ../extern/pcre/maketables.c ../extern/pcre/pcre.c ../extern/pcre/pcre.h ../extern/pcre/study.c
 EXTRA_DIST += ../extern/pcre/chartables.c
+endif
 
 Lua = ../extern/lua-5.1/src/lapi.c ../extern/lua-5.1/src/lauxlib.c ../extern/lua-5.1/src/lbaselib.c ../extern/lua-5.1/src/lcode.c ../extern/lua-5.1/src/ldblib.c \
 ../extern/lua-5.1/src/ldebug.c ../extern/lua-5.1/src/ldo.c ../extern/lua-5.1/src/ldump.c ../extern/lua-5.1/src/lfunc.c ../extern/lua-5.1/src/lgc.c ../extern/lua-5.1/src/linit.c \
@@ -523,7 +527,7 @@ RageFileDriverReadAhead.cpp RageFileDriverReadAhead.h \
 RageFileDriverSlice.cpp RageFileDriverSlice.h \
 RageFileDriverTimeout.cpp RageFileDriverTimeout.h
 
-Rage = $(PCRE) $(Lua) $(jsoncpp) $(RageFile) $(RageSoundFileReaders) \
+Rage += $(Lua) $(jsoncpp) $(RageFile) $(RageSoundFileReaders) \
 CubicSpline.cpp CubicSpline.h \
 RageBitmapTexture.cpp RageBitmapTexture.h \
 RageDisplay.cpp RageDisplay.h \
@@ -745,7 +749,7 @@ main_LDADD = \
 		$(GL_LIBS) \
 		libtomcrypt.a libtommath.a
 
-nodist_stepmania_SOURCES = ver.cpp gitversion.h
+nodist_stepmania_SOURCES = ver.cpp
 
 stepmania_CPPFLAGS = $(main_CPPFLAGS)
 stepmania_SOURCES = $(main_SOURCES)
@@ -769,9 +773,8 @@ if HAVE_GTK
  GtkModule_so_SOURCES = arch/LoadingWindow/LoadingWindow_GtkModule.cpp
 endif
 
-all_test_SOURCES = \
+all_test_SOURCES += \
 		$(ArchUtils) \
-		$(PCRE) \
 		$(RageFile) \
 		$(Lua) \
 		$(ArchHooks) \

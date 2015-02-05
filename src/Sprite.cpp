@@ -26,6 +26,7 @@ Sprite::Sprite()
 	m_bUsingCustomTexCoords = false;
 	m_bUsingCustomPosCoords = false;
 	m_bSkipNextUpdate = true;
+	m_DecodeMovie= true;
 	m_EffectMode = EffectMode_Normal;
 	
 	m_fRememberedClipWidth = -1;
@@ -62,6 +63,7 @@ Sprite::Sprite( const Sprite &cpy ):
 	CPY( m_bUsingCustomTexCoords );
 	CPY( m_bUsingCustomPosCoords );
 	CPY( m_bSkipNextUpdate );
+	CPY( m_DecodeMovie );
 	CPY( m_EffectMode );
 	memcpy( m_CustomTexCoords, cpy.m_CustomTexCoords, sizeof(m_CustomTexCoords) );
 	memcpy( m_CustomPosCoords, cpy.m_CustomPosCoords, sizeof(m_CustomPosCoords) );
@@ -185,11 +187,6 @@ void Sprite::LoadFromNode( const XNode* pNode )
 				if( !pFrame->GetAttrValue("Delay", newState.fDelay) )
 				{
 					newState.fDelay = 0.1f;
-				}
-				if(newState.fDelay <= min_state_delay)
-				{
-					LuaHelpers::ReportScriptErrorFmt("%s: State #%i has near-zero delay.", ActorUtil::GetWhere(pNode).c_str(), i+1);
-					newState.fDelay= 0.1f;
 				}
 
 				pFrame->GetAttrValue( "Frame", iFrameIndex );
@@ -362,7 +359,12 @@ void Sprite::UpdateAnimationState()
 	// We already know what's going to show.
 	if( m_States.size() > 1 )
 	{
-		while( m_fSecsIntoState+min_state_delay > m_States[m_iCurState].fDelay )	// it's time to switch frames
+		// UpdateAnimationState changed to not loop forever on negative state
+		// delay.  This allows a state to last forever when it is reached, so
+		// the animation has a built-in ending point. -Kyz
+		while(m_States[m_iCurState].fDelay > min_state_delay &&
+			m_fSecsIntoState+min_state_delay > m_States[m_iCurState].fDelay)
+		// it's time to switch frames
 		{
 			// increment frame and reset the counter
 			m_fSecsIntoState -= m_States[m_iCurState].fDelay;		// leave the left over time for the next frame
@@ -408,7 +410,7 @@ void Sprite::Update( float fDelta )
 	UpdateAnimationState();
 
 	// If the texture is a movie, decode frames.
-	if( !bSkipThisMovieUpdate )
+	if(!bSkipThisMovieUpdate && m_DecodeMovie)
 		m_pTexture->DecodeSeconds( max(0, fTimePassed) );
 
 	// update scrolling
@@ -1047,15 +1049,6 @@ void Sprite::AddImageCoords( float fX, float fY )
 class LunaSprite: public Luna<Sprite>
 {
 public:
-	static float valid_state_delay(lua_State* L, int i)
-	{
-		float delay= FArg(i);
-		if(delay <= min_state_delay)
-		{
-			luaL_error(L, "State delay cannot be less than or equal to zero.");
-		}
-		return delay;
-	}
 	static int Load( T* p, lua_State *L )
 	{
 		if( lua_isnil(L, 1) )
@@ -1151,7 +1144,7 @@ public:
 			lua_getfield(L, -1, "Delay");
 			if(lua_isnumber(L, -1))
 			{
-				new_state.fDelay= valid_state_delay(L, -1);
+				new_state.fDelay= FArg(-1);
 			}
 			lua_pop(L, 1);
 			RectF r= new_state.rect;
@@ -1216,8 +1209,13 @@ public:
 	static int GetNumStates( T* p, lua_State *L ) { lua_pushnumber( L, p->GetNumStates() ); return 1; }
 	static int SetAllStateDelays( T* p, lua_State *L )
 	{
-		float delay= valid_state_delay(L, -1);
-		p->SetAllStateDelays(delay);
+		p->SetAllStateDelays(FArg(-1));
+		COMMON_RETURN_SELF;
+	}
+	DEFINE_METHOD(GetDecodeMovie, m_DecodeMovie);
+	static int SetDecodeMovie(T* p, lua_State *L)
+	{
+		p->m_DecodeMovie= BArg(1);
 		COMMON_RETURN_SELF;
 	}
 
@@ -1245,6 +1243,8 @@ public:
 		ADD_METHOD( SetEffectMode );
 		ADD_METHOD( GetNumStates );
 		ADD_METHOD( SetAllStateDelays );
+		ADD_METHOD(GetDecodeMovie);
+		ADD_METHOD(SetDecodeMovie);
 	}
 };
 

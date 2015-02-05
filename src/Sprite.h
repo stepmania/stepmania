@@ -90,6 +90,8 @@ public:
 
 	void SetAllStateDelays(float fDelay);
 
+	bool m_DecodeMovie;
+
 protected:
 	void LoadFromTexture( RageTextureID ID );
 

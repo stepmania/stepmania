@@ -1932,7 +1932,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			}
 			if (bAllHumanHaveBigMissCombo) // possible to get in here.
 			{
-				bAllHumanHaveBigMissCombo = FAIL_ON_MISS_COMBO.GetValue() != -1 && STATSMAN->m_CurStageStats.GetMinimumMissCombo() >= FAIL_ON_MISS_COMBO;
+				bAllHumanHaveBigMissCombo = FAIL_ON_MISS_COMBO.GetValue() != -1 && STATSMAN->m_CurStageStats.GetMinimumMissCombo() >= (unsigned int)FAIL_ON_MISS_COMBO;
 			}
 			if( bGiveUpTimerFired || bAllHumanHaveBigMissCombo )
 			{

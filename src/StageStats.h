@@ -74,7 +74,7 @@ public:
 	 * @param pn the PlayerNumber in question.
 	 * @return true if the PlayerNumber has a high score, false otherwise. */
 	bool PlayerHasHighScore( PlayerNumber pn ) const;
-	int GetMinimumMissCombo() const;
+	unsigned int GetMinimumMissCombo() const;
 
 	// Lua
 	void PushSelf( lua_State *L );

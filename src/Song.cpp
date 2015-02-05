@@ -1916,6 +1916,33 @@ public:
 		return 1;
 	}
 	static int GetTimingData( T* p, lua_State *L ) { p->m_SongTiming.PushSelf(L); return 1; }
+	static int GetBGChanges(T* p, lua_State* L)
+	{
+		const vector<BackgroundChange>& changes= p->GetBackgroundChanges(BACKGROUND_LAYER_1);
+		lua_createtable(L, changes.size(), 0);
+		for(size_t c= 0; c < changes.size(); ++c)
+		{
+			lua_createtable(L, 0, 8);
+			lua_pushnumber(L, changes[c].m_fStartBeat);
+			lua_setfield(L, -2, "start_beat");
+			lua_pushnumber(L, changes[c].m_fRate);
+			lua_setfield(L, -2, "rate");
+			LuaHelpers::Push(L, changes[c].m_sTransition);
+			lua_setfield(L, -2, "transition");
+			LuaHelpers::Push(L, changes[c].m_def.m_sEffect);
+			lua_setfield(L, -2, "effect");
+			LuaHelpers::Push(L, changes[c].m_def.m_sFile1);
+			lua_setfield(L, -2, "file1");
+			LuaHelpers::Push(L, changes[c].m_def.m_sFile2);
+			lua_setfield(L, -2, "file2");
+			LuaHelpers::Push(L, changes[c].m_def.m_sColor1);
+			lua_setfield(L, -2, "color1");
+			LuaHelpers::Push(L, changes[c].m_def.m_sColor2);
+			lua_setfield(L, -2, "color2");
+			lua_rawseti(L, -2, c+1);
+		}
+		return 1;
+	}
 	// has functions
 	static int HasMusic( T* p, lua_State *L )			{ lua_pushboolean(L, p->HasMusic()); return 1; }
 	static int HasBanner( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBanner()); return 1; }
@@ -2053,6 +2080,7 @@ public:
 		ADD_METHOD( HasStepsTypeAndDifficulty );
 		ADD_METHOD( GetOneSteps );
 		ADD_METHOD( GetTimingData );
+		ADD_METHOD(GetBGChanges);
 		ADD_METHOD( HasMusic );
 		ADD_METHOD( HasBanner );
 		ADD_METHOD( HasBackground );

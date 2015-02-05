@@ -25,7 +25,7 @@ ThemeMetric<float> ITEM_USE_RATE_SECONDS("Inventory","ItemUseRateSeconds");
 struct Item
 {
 	AttackLevel level;
-	int iCombo;
+	unsigned int iCombo;
 	RString sModifier;
 };
 static vector<Item>	g_Items;
@@ -100,9 +100,9 @@ void Inventory::Update( float fDelta )
 	// check to see if they deserve a new item
 	if( STATSMAN->m_CurStageStats.m_player[pn].m_iCurCombo != m_iLastSeenCombo )
 	{
-		int iOldCombo = m_iLastSeenCombo;
+		unsigned int iOldCombo = m_iLastSeenCombo;
 		m_iLastSeenCombo = STATSMAN->m_CurStageStats.m_player[pn].m_iCurCombo;
-		int iNewCombo = m_iLastSeenCombo;
+		unsigned int iNewCombo = m_iLastSeenCombo;
 
 #define CROSSED(i) (iOldCombo<i)&&(iNewCombo>=i)
 #define BROKE_ABOVE(i) (iNewCombo<iOldCombo)&&(iOldCombo>=i)

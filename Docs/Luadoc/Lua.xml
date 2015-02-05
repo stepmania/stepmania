@@ -212,6 +212,7 @@
 		<Function name='dofile'/>
 		<Function name='error'/>
 		<Function name='fapproach'/>
+		<Function name='find_missing_strings_in_theme_translations'/>
 		<Function name='foreach_ordered'/>
 		<Function name='gcinfo'/>
 		<Function name='getenv'/>
@@ -257,6 +258,7 @@
 	</GlobalFunctions>
 	<Classes>
 		<Class name='Actor'>
+			<Function name='AddWrapperState'/>
 			<Function name='Center'/>
 			<Function name='CenterX'/>
 			<Function name='CenterY'/>
@@ -278,6 +280,7 @@
 			<Function name='GetHeight'/>
 			<Function name='GetName'/>
 			<Function name='GetNumStates'/>
+			<Function name='GetNumWrapperStates'/>
 			<Function name='GetParent'/>
 			<Function name='GetRotationX'/>
 			<Function name='GetRotationY'/>
@@ -287,6 +290,7 @@
 			<Function name='GetVAlign'/>
 			<Function name='GetVisible'/>
 			<Function name='GetWidth'/>
+			<Function name='GetWrapperState'/>
 			<Function name='GetX'/>
 			<Function name='GetY'/>
 			<Function name='GetZ'/>
@@ -301,6 +305,7 @@
 			<Function name='MaskSource'/>
 			<Function name='Real'/>
 			<Function name='RealInverse'/>
+			<Function name='RemoveWrapperState'/>
 			<Function name='RunCommandsRecursively'/>
 			<Function name='SetFakeParent'/>
 			<Function name='SetHeight'/>
@@ -450,6 +455,7 @@
 			<Function name='GetChildren'/>
 			<Function name='GetDrawFunction'/>
 			<Function name='GetNumChildren'/>
+			<Function name='GetUpdateRate'/>
 			<Function name='RemoveAllChildren'/>
 			<Function name='RemoveChild'/>
 			<Function name='RunCommandsOnChildren'/>
@@ -489,22 +495,42 @@
 			<Function name='SetTextureMode'/>
 		</Class>
 		<Class base='Actor' name='ActorMultiVertex'>
+			<Function name='AddState'/>
+			<Function name='AddQuadState'/>
+			<Function name='ForceStateUpdate'/>
 			<Function name='GetCurrDrawMode'/>
 			<Function name='GetCurrFirstToDraw'/>
 			<Function name='GetCurrNumToDraw'/>
+			<Function name='GetDecodeMovie'/>
 			<Function name='GetDestDrawMode'/>
 			<Function name='GetDestFirstToDraw'/>
 			<Function name='GetDestNumToDraw'/>
+			<Function name='GetNumStates'/>
+			<Function name='GetNumQuadStates'/>
 			<Function name='GetNumVertices'/>
+			<Function name='GetQuadState'/>
 			<Function name='GetSpline'/>
+			<Function name='GetState'/>
+			<Function name='GetStateData'/>
 			<Function name='GetTexture'/>
+			<Function name='GetUseAnimationState'/>
 			<Function name='LoadTexture'/>
+			<Function name='RemoveState'/>
+			<Function name='RemoveQuadState'/>
+			<Function name='SetAllStateDelays'/>
+			<Function name='SetDecodeMovie'/>
 			<Function name='SetDrawState'/>
 			<Function name='SetEffectMode'/>
 			<Function name='SetLineWidth'/>
 			<Function name='SetNumVertices'/>
+			<Function name='SetQuadState'/>
+			<Function name='SetSecondsIntoAnimation'/>
+			<Function name='SetState'/>
+			<Function name='SetStateData'/>
+			<Function name='SetStateProperties'/>
 			<Function name='SetTexture'/>
 			<Function name='SetTextureMode'/>
+			<Function name='SetUseAnimationState'/>
 			<Function name='SetVertex'/>
 			<Function name='SetVertices'/>
 			<Function name='SetVertsFromSplines'/>
@@ -569,6 +595,7 @@
 			<Function name='SetFromSteps'/>
 		</Class>
 		<Class base='Sprite' name='Banner'>
+			<Function name='GetDecodeMovie'/>
 			<Function name='GetPercentScrolling'/>
 			<Function name='GetScrolling'/>
 			<Function name='LoadBackgroundFromUnlockEntry'/>
@@ -581,6 +608,7 @@
 			<Function name='LoadFromSortOrder'/>
 			<Function name='LoadIconFromCharacter'/>
 			<Function name='ScaleToClipped'/>
+			<Function name='SetDecodeMovie'/>
 			<Function name='SetScrolling'/>
 			<Function name='scaletoclipped'/>
 		</Class>
@@ -1365,6 +1393,12 @@
 			<Function name='volume'/>
 		</Class>
 		<Class name='RageTexture'>
+			<Function name='GetSourceWidth'/>
+			<Function name='GetSourceHeight'/>
+			<Function name='GetTextureWidth'/>
+			<Function name='GetTextureHeight'/>
+			<Function name='GetImageWidth'/>
+			<Function name='GetImageHeight'/>
 			<Function name='GetTextureCoordRect'/>
 			<Function name='loop'/>
 			<Function name='position'/>
@@ -1488,6 +1522,7 @@
 			<Function name='GetAllSteps'/>
 			<Function name='GetBackgroundPath'/>
 			<Function name='GetBannerPath'/>
+			<Function name='GetBGChanges'/>
 			<Function name='GetCDImagePath'/>
 			<Function name='GetCDTitlePath'/>
 			<Function name='GetDiscPath'/>

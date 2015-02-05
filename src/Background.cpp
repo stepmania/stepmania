@@ -765,10 +765,16 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 				if( !change.m_sTransition.empty() )
 				{
 					map<RString,BackgroundTransition>::const_iterator lIter = mapNameToTransition.find( change.m_sTransition );
-					ASSERT( lIter != mapNameToTransition.end() );
-					const BackgroundTransition &bt = lIter->second;
-					m_pFadingBGA->RunCommandsOnLeaves( *bt.cmdLeaves );
-					m_pFadingBGA->RunCommands( *bt.cmdRoot );
+					if(lIter == mapNameToTransition.end())
+					{
+						LuaHelpers::ReportScriptErrorFmt("'%s' is not the name of a BackgroundTransition file.", change.m_sTransition.c_str());
+					}
+					else
+					{
+						const BackgroundTransition &bt = lIter->second;
+						m_pFadingBGA->RunCommandsOnLeaves( *bt.cmdLeaves );
+						m_pFadingBGA->RunCommands( *bt.cmdRoot );
+					}
 				}
 			}
 		}

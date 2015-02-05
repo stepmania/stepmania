@@ -251,6 +251,12 @@ void ActorFrame::DrawPrimitives()
 	RageColor diffuse = m_pTempState->diffuse[0];
 	RageColor glow = m_pTempState->glow;
 
+	// Word of warning:  Actor::Draw duplicates the structure of how an Actor
+	// is drawn inside of an ActorFrame for its wrapping feature.  So if
+	// you're adding something new to ActorFrames that affects how Actors are
+	// drawn, make sure to also apply it in Actor::Draw's handling of the
+	// wrappers. -Kyz
+
 	// draw all sub-ActorFrames while we're in the ActorFrame's local coordinate space
 	if( m_bDrawByZPosition )
 	{
@@ -619,6 +625,7 @@ public:
 	static int propagate( T* p, lua_State *L )			{ p->SetPropagateCommands( BIArg(1) ); COMMON_RETURN_SELF; }
 	static int fov( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); COMMON_RETURN_SELF; }
 	static int SetUpdateRate( T* p, lua_State *L )			{ p->SetUpdateRate( FArg(1) ); COMMON_RETURN_SELF; }
+	DEFINE_METHOD(GetUpdateRate, GetUpdateRate());
 	static int SetFOV( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); COMMON_RETURN_SELF; }
 	static int vanishpoint( T* p, lua_State *L )			{ p->SetVanishPoint( FArg(1), FArg(2) ); COMMON_RETURN_SELF; }
 	static int GetChild( T* p, lua_State *L )
@@ -732,6 +739,7 @@ public:
 		ADD_METHOD( propagate ); // deprecated
 		ADD_METHOD( fov );
 		ADD_METHOD( SetUpdateRate );
+		ADD_METHOD( GetUpdateRate );
 		ADD_METHOD( SetFOV );
 		ADD_METHOD( vanishpoint );
 		ADD_METHOD( GetChild );
