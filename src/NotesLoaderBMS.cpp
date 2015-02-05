@@ -281,7 +281,7 @@ struct bmsCommandTree
 
 		newNode->conditionValue = randomStack[currentNode->branchHeight];
 		newNode->parent = currentNode;
-		newNode->branchHeight = currentNode->branchHeight + 1;
+		newNode->branchHeight = currentNode->branchHeight;
 		newNode->conditionType = bmsNodeS::CT_CONDITIONALCHAIN;
 
 		currentNode->branches.push_back(newNode);
@@ -294,7 +294,7 @@ struct bmsCommandTree
 
 		newNode->conditionValue = randomStack[currentNode->branchHeight];
 		newNode->parent = Chain;
-		newNode->branchHeight = currentNode->branchHeight + 1;
+		newNode->branchHeight = Chain->branchHeight + 1;
 		newNode->conditionTriggerValue = value;
 		newNode->conditionType = bmsNodeS::CT_IF;
 		Chain->branches.push_back(newNode);
@@ -306,9 +306,9 @@ struct bmsCommandTree
 	{
 		bmsNodeS *newNode = new bmsNodeS;
 
-		newNode->conditionValue = randomStack[currentNode->branchHeight];
+		newNode->conditionValue = randomStack[Chain->branchHeight];
 		newNode->parent = Chain;
-		newNode->branchHeight = currentNode->branchHeight + 1;
+		newNode->branchHeight = Chain->branchHeight + 1;
 		newNode->conditionTriggerValue = value;
 		newNode->conditionType = bmsNodeS::CT_ELSEIF;
 		Chain->branches.push_back(newNode);
@@ -320,9 +320,9 @@ struct bmsCommandTree
 	{
 		bmsNodeS *newNode = new bmsNodeS;
 
-		newNode->conditionValue = randomStack[currentNode->branchHeight];
+		newNode->conditionValue = randomStack[Chain->branchHeight];
 		newNode->parent = Chain;
-		newNode->branchHeight = currentNode->branchHeight + 1;
+		newNode->branchHeight = Chain->branchHeight + 1;
 		newNode->conditionType = bmsNodeS::CT_ELSE;
 		Chain->branches.push_back(newNode);
 
@@ -353,24 +353,31 @@ struct bmsCommandTree
 		}
 	}
 
+	bool triggerBranches(bmsNodeS* node, BMSHeaders &headersOut, vector<RString> &linesOut)
+	{
+		FOREACH(bmsNodeS*, node->branches, b)
+			if (evaluateNode(*b, headersOut, linesOut))
+			{
+				node->Triggered = true;
+				return true;
+			}
+
+		return false;
+	}
+
 	bool evaluateNode(bmsNodeS* node, BMSHeaders &headersOut, vector<RString> &linesOut)
 	{
 		switch (node->conditionType)
 		{
 		case bmsNodeS::CT_CONDITIONALCHAIN:
-			FOREACH(bmsNodeS*, node->branches, b)
-				if (evaluateNode(*b, headersOut, linesOut))
-				{
-					node->Triggered = true;
-					return true;
-				}
+			triggerBranches(node, headersOut, linesOut);
 			break;
-
 		case bmsNodeS::CT_IF:
 		case bmsNodeS::CT_ELSEIF: // Their differences are solved at node creation time.
 			if (node->parent->conditionValue == node->conditionTriggerValue)
 			{
 				appendNodeElements(node, headersOut, linesOut);
+				triggerBranches(node, headersOut, linesOut);
 				return true;
 			}
 			break;
@@ -378,16 +385,13 @@ struct bmsCommandTree
 			if (!node->parent->Triggered) // we're the only branch left, so okay, evaluate.
 			{
 				appendNodeElements(node, headersOut, linesOut);
+				triggerBranches(node, headersOut, linesOut);
 				return true;
 			}
 			break;
 		case bmsNodeS::CT_NULL:
 			appendNodeElements(node, headersOut, linesOut);
-			FOREACH(bmsNodeS*, node->branches, b)
-			{
-				evaluateNode(*b, headersOut, linesOut);
-			}
-
+			triggerBranches(node, headersOut, linesOut);
 		default:
 			break;
 		}
@@ -427,8 +431,10 @@ struct bmsCommandTree
 		{
 			if (randomStack.size() < currentNode->branchHeight + 1)
 			{
-				LOG->UserLog("Song file", path, "Line %d: Missing #RANDOM. Warning: processing as part of parent branch!", line);
-				return;
+				LOG->UserLog("Song file", path, "Line %d: Missing #RANDOM. Warning: Branch will be considered false!", line);
+
+				while (randomStack.size() < currentNode->branchHeight + 1)
+					randomStack.push_back(0);
 			}
 
 			bmsNodeS *chain = addConditionalChain();
