@@ -10,6 +10,10 @@ local t = Def.ActorFrame {
 				self:position(0)
 			end
 			self:effectclock("music")
+			-- Explanation in StretchNoLoop.lua.
+			if self.GetTexture then
+				self:GetTexture():rate(self:GetParent():GetUpdateRate())
+			end
 		end;
 		GainFocusCommand=cmd(play);
 		LoseFocusCommand=cmd(pause);

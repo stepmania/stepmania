@@ -1429,6 +1429,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetNumChildren' return='int' arguments=''>
 		Returns the number of children in the ActorFrame.
 	</Function>
+	<Function name='GetUpdateRate' return='float' arguments=''>
+		Gets the update function's rate.
+	</Function>
 	<Function name='playcommandonchildren' return='void' arguments='string sCommandName'>
 		Plays the <code>sCommandName</code> command on the ActorFrame's children.
 	</Function>
@@ -1560,6 +1563,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetState' return= 'int' arguments=''>
 		Returns the id of the current state.
+	</Function>
+	<Function name='GetDecodeMovie' return='bool' arguments=''>
+		Gets whether the AMV should call the decode function for its texture during updates.
 	</Function>
 	<Function name='SetDecodeMovie' return='' arguments='bool decode'>
 		Sets whether the AMV should call the decode function for its texture during updates.
@@ -4753,6 +4759,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetAnimationLengthSeconds' return='float' arguments=''>
 		Returns the length of the animation in seconds.
 	</Function>
+	<Function name='GetDecodeMovie' return='bool' arguments=''>
+		Gets whether the Sprite should call the decode function for its texture during updates.
+	</Function>
 	<Function name='GetNumStates' return='int' arguments=''>
 		Return the number of states this Sprite has.
 	</Function>
@@ -4792,6 +4801,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='StopUsingCustomPosCoords' return='void' arguments=''>
 		Turns off the custom pos coords for the sprite.
+	</Function>
+	<Function name='SetDecodeMovie' return='' arguments='bool decode'>
+		Sets whether the Sprite should call the decode function for its texture during updates.
 	</Function>
 	<Function name='SetEffectMode' return='void' arguments='EffectMode mode'>
 		Set the <Link class='ENUM' function='EffectMode' /> to <code>mode</code>.

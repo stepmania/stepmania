@@ -625,6 +625,7 @@ public:
 	static int propagate( T* p, lua_State *L )			{ p->SetPropagateCommands( BIArg(1) ); COMMON_RETURN_SELF; }
 	static int fov( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); COMMON_RETURN_SELF; }
 	static int SetUpdateRate( T* p, lua_State *L )			{ p->SetUpdateRate( FArg(1) ); COMMON_RETURN_SELF; }
+	DEFINE_METHOD(GetUpdateRate, GetUpdateRate());
 	static int SetFOV( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); COMMON_RETURN_SELF; }
 	static int vanishpoint( T* p, lua_State *L )			{ p->SetVanishPoint( FArg(1), FArg(2) ); COMMON_RETURN_SELF; }
 	static int GetChild( T* p, lua_State *L )
@@ -738,6 +739,7 @@ public:
 		ADD_METHOD( propagate ); // deprecated
 		ADD_METHOD( fov );
 		ADD_METHOD( SetUpdateRate );
+		ADD_METHOD( GetUpdateRate );
 		ADD_METHOD( SetFOV );
 		ADD_METHOD( vanishpoint );
 		ADD_METHOD( GetChild );

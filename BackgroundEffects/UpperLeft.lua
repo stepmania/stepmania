@@ -3,7 +3,13 @@ local Color1 = color(Var "Color1");
 
 local t = Def.ActorFrame {
 	LoadActor(Var "File1") .. {
-		OnCommand=cmd(diffuse,Color1;effectclock,"music");
+		OnCommand=function(self)
+			self:diffuse(Color1):effectclock("music")
+			-- Explanation in StretchNoLoop.lua.
+			if self.GetTexture then
+				self:GetTexture():rate(self:GetParent():GetUpdateRate())
+			end
+		end,
 		GainFocusCommand=cmd(play);
 		LoseFocusCommand=cmd(pause);
 	};

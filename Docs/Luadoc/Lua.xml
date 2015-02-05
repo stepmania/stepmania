@@ -454,6 +454,7 @@
 			<Function name='GetChildren'/>
 			<Function name='GetDrawFunction'/>
 			<Function name='GetNumChildren'/>
+			<Function name='GetUpdateRate'/>
 			<Function name='RemoveAllChildren'/>
 			<Function name='RemoveChild'/>
 			<Function name='RunCommandsOnChildren'/>
@@ -499,6 +500,7 @@
 			<Function name='GetCurrDrawMode'/>
 			<Function name='GetCurrFirstToDraw'/>
 			<Function name='GetCurrNumToDraw'/>
+			<Function name='GetDecodeMovie'/>
 			<Function name='GetDestDrawMode'/>
 			<Function name='GetDestFirstToDraw'/>
 			<Function name='GetDestNumToDraw'/>
@@ -592,6 +594,7 @@
 			<Function name='SetFromSteps'/>
 		</Class>
 		<Class base='Sprite' name='Banner'>
+			<Function name='GetDecodeMovie'/>
 			<Function name='GetPercentScrolling'/>
 			<Function name='GetScrolling'/>
 			<Function name='LoadBackgroundFromUnlockEntry'/>
@@ -604,6 +607,7 @@
 			<Function name='LoadFromSortOrder'/>
 			<Function name='LoadIconFromCharacter'/>
 			<Function name='ScaleToClipped'/>
+			<Function name='SetDecodeMovie'/>
 			<Function name='SetScrolling'/>
 			<Function name='scaletoclipped'/>
 		</Class>

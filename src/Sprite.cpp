@@ -26,6 +26,7 @@ Sprite::Sprite()
 	m_bUsingCustomTexCoords = false;
 	m_bUsingCustomPosCoords = false;
 	m_bSkipNextUpdate = true;
+	m_DecodeMovie= true;
 	m_EffectMode = EffectMode_Normal;
 	
 	m_fRememberedClipWidth = -1;
@@ -62,6 +63,7 @@ Sprite::Sprite( const Sprite &cpy ):
 	CPY( m_bUsingCustomTexCoords );
 	CPY( m_bUsingCustomPosCoords );
 	CPY( m_bSkipNextUpdate );
+	CPY( m_DecodeMovie );
 	CPY( m_EffectMode );
 	memcpy( m_CustomTexCoords, cpy.m_CustomTexCoords, sizeof(m_CustomTexCoords) );
 	memcpy( m_CustomPosCoords, cpy.m_CustomPosCoords, sizeof(m_CustomPosCoords) );
@@ -408,7 +410,7 @@ void Sprite::Update( float fDelta )
 	UpdateAnimationState();
 
 	// If the texture is a movie, decode frames.
-	if( !bSkipThisMovieUpdate )
+	if(!bSkipThisMovieUpdate && m_DecodeMovie)
 		m_pTexture->DecodeSeconds( max(0, fTimePassed) );
 
 	// update scrolling
@@ -1210,6 +1212,12 @@ public:
 		p->SetAllStateDelays(FArg(-1));
 		COMMON_RETURN_SELF;
 	}
+	DEFINE_METHOD(GetDecodeMovie, m_DecodeMovie);
+	static int SetDecodeMovie(T* p, lua_State *L)
+	{
+		p->m_DecodeMovie= BArg(1);
+		COMMON_RETURN_SELF;
+	}
 
 	LunaSprite()
 	{
@@ -1235,6 +1243,8 @@ public:
 		ADD_METHOD( SetEffectMode );
 		ADD_METHOD( GetNumStates );
 		ADD_METHOD( SetAllStateDelays );
+		ADD_METHOD(GetDecodeMovie);
+		ADD_METHOD(SetDecodeMovie);
 	}
 };
 

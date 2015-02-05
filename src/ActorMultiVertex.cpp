@@ -1114,6 +1114,7 @@ public:
 		p->UpdateAnimationState(true);
 		COMMON_RETURN_SELF;
 	}
+	DEFINE_METHOD(GetDecodeMovie, _decode_movie);
 	static int SetDecodeMovie(T* p, lua_State *L)
 	{
 		p->_decode_movie= BArg(1);
@@ -1182,6 +1183,7 @@ public:
 		ADD_METHOD(GetQuadState);
 		ADD_METHOD(SetQuadState);
 		ADD_METHOD(ForceStateUpdate);
+		ADD_METHOD(GetDecodeMovie);
 		ADD_METHOD(SetDecodeMovie);
 
 		// Copy from RageTexture

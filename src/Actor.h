@@ -609,6 +609,7 @@ public:
 	virtual float GetAnimationLengthSeconds() const { return 0; }
 	virtual void SetSecondsIntoAnimation( float ) {}
 	virtual void SetUpdateRate( float ) {}
+	virtual float GetUpdateRate() { return 1.0f; }
 
 	HiddenPtr<LuaClass> m_pLuaInstance;
 

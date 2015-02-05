@@ -4,9 +4,18 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/02/04
+----------
+* [ActorFrame] GetUpdateRate added. [kyzentun]
+* [Background] Using the wrong transition name no longer crashes.
+  Playback rate is applied to videos.
+  Checkerboard and other BackgroundEffects that use the same file twice no
+  longer play videos back at multiplied speed. [kyzentun]
+* [Sprite] Get/SetDecodeMovie added. [kyzentun]
+
 2015/02/02
 ----------
-* [ActorMultiVertex] ForceStateUpdate and SetDecodeMovie added. [kyzentun]
+* [ActorMultiVertex] ForceStateUpdate and Get/SetDecodeMovie added. [kyzentun]
 * [RageTexture] Get<thing>Width and Height functions added.
   (<thing> means Source, Texture, or Image) [kyzentun]
 * [Scripts] find_missing_strings_in_theme_translations function added to

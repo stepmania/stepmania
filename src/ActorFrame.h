@@ -76,6 +76,7 @@ public:
 	virtual void HurryTweening( float factor );
 
 	void SetUpdateRate( float fUpdateRate ) { m_fUpdateRate = fUpdateRate; }
+	float GetUpdateRate() { return m_fUpdateRate; }
 	void SetFOV( float fFOV ) { m_fFOV = fFOV; }
 	void SetVanishPoint( float fX, float fY) { m_fVanishX = fX; m_fVanishY = fY; }
 
