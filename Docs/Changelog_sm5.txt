@@ -13,6 +13,10 @@ ________________________________________________________________________________
   longer play videos back at multiplied speed. [kyzentun]
 * [Sprite] Get/SetDecodeMovie added. [kyzentun]
 
+2015/02/03
+----------
+* [MusicWheel] HideActiveSectionTitle metric added. [djpohly]
+
 2015/02/02
 ----------
 * [ActorMultiVertex] ForceStateUpdate and Get/SetDecodeMovie added. [kyzentun]

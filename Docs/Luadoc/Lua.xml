@@ -212,6 +212,7 @@
 		<Function name='dofile'/>
 		<Function name='error'/>
 		<Function name='fapproach'/>
+		<Function name='find_missing_strings_in_theme_translations'/>
 		<Function name='foreach_ordered'/>
 		<Function name='gcinfo'/>
 		<Function name='getenv'/>
