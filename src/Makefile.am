@@ -485,8 +485,13 @@ ScoreDisplayNormal.cpp ScoreDisplayNormal.h ScoreDisplayOni.cpp ScoreDisplayOni.
 ScoreDisplayPercentage.cpp ScoreDisplayPercentage.h ScoreDisplayRave.cpp ScoreDisplayRave.h \
 SongPosition.cpp SongPosition.h
 
-PCRE = ../extern/pcre/get.c ../extern/pcre/internal.h ../extern/pcre/maketables.c ../extern/pcre/pcre.c ../extern/pcre/pcre.h ../extern/pcre/study.c
+Rage =
+all_test_SOURCES =
+if !USE_SYSTEM_PCRE
+Rage += ../extern/pcre/get.c ../extern/pcre/internal.h ../extern/pcre/maketables.c ../extern/pcre/pcre.c ../extern/pcre/pcre.h ../extern/pcre/study.c
+all_test_SOURCES += ../extern/pcre/get.c ../extern/pcre/internal.h ../extern/pcre/maketables.c ../extern/pcre/pcre.c ../extern/pcre/pcre.h ../extern/pcre/study.c
 EXTRA_DIST += ../extern/pcre/chartables.c
+endif
 
 Lua = ../extern/lua-5.1/src/lapi.c ../extern/lua-5.1/src/lauxlib.c ../extern/lua-5.1/src/lbaselib.c ../extern/lua-5.1/src/lcode.c ../extern/lua-5.1/src/ldblib.c \
 ../extern/lua-5.1/src/ldebug.c ../extern/lua-5.1/src/ldo.c ../extern/lua-5.1/src/ldump.c ../extern/lua-5.1/src/lfunc.c ../extern/lua-5.1/src/lgc.c ../extern/lua-5.1/src/linit.c \
@@ -522,7 +527,7 @@ RageFileDriverReadAhead.cpp RageFileDriverReadAhead.h \
 RageFileDriverSlice.cpp RageFileDriverSlice.h \
 RageFileDriverTimeout.cpp RageFileDriverTimeout.h
 
-Rage = $(PCRE) $(Lua) $(jsoncpp) $(RageFile) $(RageSoundFileReaders) \
+Rage += $(Lua) $(jsoncpp) $(RageFile) $(RageSoundFileReaders) \
 CubicSpline.cpp CubicSpline.h \
 RageBitmapTexture.cpp RageBitmapTexture.h \
 RageDisplay.cpp RageDisplay.h \
@@ -768,9 +773,8 @@ if HAVE_GTK
  GtkModule_so_SOURCES = arch/LoadingWindow/LoadingWindow_GtkModule.cpp
 endif
 
-all_test_SOURCES = \
+all_test_SOURCES += \
 		$(ArchUtils) \
-		$(PCRE) \
 		$(RageFile) \
 		$(Lua) \
 		$(ArchHooks) \
