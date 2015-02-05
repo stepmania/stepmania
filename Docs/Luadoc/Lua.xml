@@ -493,22 +493,41 @@
 			<Function name='SetTextureMode'/>
 		</Class>
 		<Class base='Actor' name='ActorMultiVertex'>
+			<Function name='AddState'/>
+			<Function name='AddQuadState'/>
+			<Function name='ForceStateUpdate'/>
 			<Function name='GetCurrDrawMode'/>
 			<Function name='GetCurrFirstToDraw'/>
 			<Function name='GetCurrNumToDraw'/>
 			<Function name='GetDestDrawMode'/>
 			<Function name='GetDestFirstToDraw'/>
 			<Function name='GetDestNumToDraw'/>
+			<Function name='GetNumStates'/>
+			<Function name='GetNumQuadStates'/>
 			<Function name='GetNumVertices'/>
+			<Function name='GetQuadState'/>
 			<Function name='GetSpline'/>
+			<Function name='GetState'/>
+			<Function name='GetStateData'/>
 			<Function name='GetTexture'/>
+			<Function name='GetUseAnimationState'/>
 			<Function name='LoadTexture'/>
+			<Function name='RemoveState'/>
+			<Function name='RemoveQuadState'/>
+			<Function name='SetAllStateDelays'/>
+			<Function name='SetDecodeMovie'/>
 			<Function name='SetDrawState'/>
 			<Function name='SetEffectMode'/>
 			<Function name='SetLineWidth'/>
 			<Function name='SetNumVertices'/>
+			<Function name='SetQuadState'/>
+			<Function name='SetSecondsIntoAnimation'/>
+			<Function name='SetState'/>
+			<Function name='SetStateData'/>
+			<Function name='SetStateProperties'/>
 			<Function name='SetTexture'/>
 			<Function name='SetTextureMode'/>
+			<Function name='SetUseAnimationState'/>
 			<Function name='SetVertex'/>
 			<Function name='SetVertices'/>
 			<Function name='SetVertsFromSplines'/>
@@ -1369,6 +1388,12 @@
 			<Function name='volume'/>
 		</Class>
 		<Class name='RageTexture'>
+			<Function name='GetSourceWidth'/>
+			<Function name='GetSourceHeight'/>
+			<Function name='GetTextureWidth'/>
+			<Function name='GetTextureHeight'/>
+			<Function name='GetImageWidth'/>
+			<Function name='GetImageHeight'/>
 			<Function name='GetTextureCoordRect'/>
 			<Function name='loop'/>
 			<Function name='position'/>
@@ -1492,6 +1517,7 @@
 			<Function name='GetAllSteps'/>
 			<Function name='GetBackgroundPath'/>
 			<Function name='GetBannerPath'/>
+			<Function name='GetBGChanges'/>
 			<Function name='GetCDImagePath'/>
 			<Function name='GetCDTitlePath'/>
 			<Function name='GetDiscPath'/>

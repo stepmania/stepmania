@@ -1531,6 +1531,69 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='ActorMultiVertex'>
+	<Function name='AddQuadState' return='' arguments='int offset'>
+		The list of quad states is used to determine which animation state is used for each quad.  The offset is added to the AMV's current state, and the resulting state is used.
+	</Function>
+	<Function name='AddState' return='' arguments='table state_data'>
+		Adds an animation state to the ActorMultiVertex.  The state_data table must be like this:<br />
+		{{left, top, right, bottom}, delay}<br />
+		left, top, right, and bottom are pixel coordinates, starting at 0.  If delay is 0 or negative, the state will last forever.
+	</Function>
+	<Function name='ForceStateUpdate' return='' arguments=''>
+		Forces the AMV to update the texture coordinates on all its quads, even if the current state has not changed.
+	</Function>
+	<Function name='GetUseAnimationState' return= 'bool' arguments=''>
+		Returns whether the AMV uses the animation state.
+	</Function>
+	<Function name='SetUseAnimationState' return= '' arguments='bool use'>
+		Sets whether the AMV uses the animation state.<br />
+		This works best when using DrawMode_Quads.<br />
+		AMV's can have animated textures like sprites.  Each state tells the AMV what part of the texture to use, and how long the state lasts.<br />
+		Use AddState to add a state onto the end, or SetStateProperties to set all the states at once, or SetState to set a single state.<br />
+		Each quad has its own offset that is added to the current state.  Use AddQuadState to add to the list of quad states, or SetQuadState to set an existing quad state.
+	</Function>
+	<Function name='GetNumStates' return= 'int' arguments=''>
+		Returns the number of states the AMV has.
+	</Function>
+	<Function name='GetNumQuadStates' return= 'int' arguments=''>
+		Returns the number of quad states in the destination tween state for the AMV.
+	</Function>
+	<Function name='GetState' return= 'int' arguments=''>
+		Returns the id of the current state.
+	</Function>
+	<Function name='SetDecodeMovie' return='' arguments='bool decode'>
+		Sets whether the AMV should call the decode function for its texture during updates.
+	</Function>
+	<Function name='SetState' return= '' arguments='int id'>
+		Sets the current state.
+	</Function>
+	<Function name='GetQuadState' return= 'int' arguments='int id'>
+		Returns the offset of the requested quad state.
+	</Function>
+	<Function name='SetQuadState' return= '' arguments='int id, int offset'>
+		Sets the offset of the requested quad state.
+	</Function>
+	<Function name='GetStateData' return= 'table' arguments='int id'>
+		Returns a table containing the data for the requested state.
+	</Function>
+	<Function name='SetStateData' return= '' arguments='int id, table state_data'>
+		Sets the requested state to the data in state_data.  Similar to AddState, but SetStateData only works on states that have already been added.
+	</Function>
+	<Function name='SetStateProperties' return= '' arguments='table {state_data, ...}'>
+		Each element of the table must be a state_data table, and is used to construct one state.  The table as a whole is the entire list of all states for the AMV.
+	</Function>
+	<Function name='RemoveState' return= '' arguments='int id'>
+		Removes the requested state from the state list.
+	</Function>
+	<Function name='RemoveQuadState' return= '' arguments='int id'>
+		Removes the requested quad state from the quad state list.
+	</Function>
+	<Function name='SetAllStateDelays' return= '' arguments='float delay'>
+		Sets the delay for every state to delay.
+	</Function>
+	<Function name='SetSecondsIntoAnimation' return= '' arguments='float seconds'>
+		Sets how far into its animation the AMV is.
+	</Function>
 	<Function name='SetVertex' return='void' arguments='int index, table { table pos, table color, table textcoords }'>
 		Sets vertex number <code>index</code> with the properties provided. The tables of properties are each optional and can be provided in any order.
 	</Function>
@@ -4001,6 +4064,24 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='RageTexture'>
+	<Function name='GetSourceWidth' return='float' arguments=''>
+		Returns the source width.
+	</Function>
+	<Function name='GetSourceHeight' return='float' arguments=''>
+		Returns the source height.
+	</Function>
+	<Function name='GetTextureWidth' return='float' arguments=''>
+		Returns the texture width.
+	</Function>
+	<Function name='GetTextureHeight' return='float' arguments=''>
+		Returns the texture height.
+	</Function>
+	<Function name='GetImageWidth' return='float' arguments=''>
+		Returns the image width.
+	</Function>
+	<Function name='GetImageHeight' return='float' arguments=''>
+		Returns the image height.
+	</Function>
 	<Function name='GetNumFrames' return='int' arguments=''>
 		Returns the number of frames in this texture.
 	</Function>
@@ -4308,6 +4389,11 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetBannerPath' return='string' arguments=''>
 		Returns the path to the song's banner.
+	</Function>
+	<Function name='GetBGChanges' return='table' arguments=''>
+		Returns a table with all the data for the song's BGCHANGES line.<br />
+		Each element of the table is one change like this:<br />
+		{start_beat= 1.0, rate= 1.0, transition= "example", effect= "example", file1= "example", file2= "example", color1= "#FFFFFFFF", color2= "#FFFFFFFF"}
 	</Function>
 	<Function name='GetCDImagePath' return='string' arguments=''>
 		Returns the path to the song's CD image.
