@@ -13,10 +13,12 @@ RollingNumbers::RollingNumbers()
 	m_fCurrentNumber = 0;
 	m_fTargetNumber = 0;
 	m_fScoreVelocity = 0;
+	m_metrics_loaded= false;
 }
 
 void RollingNumbers::Load( const RString &sMetricsGroup )
 {
+	m_metrics_loaded= true;
 	TEXT_FORMAT.Load(sMetricsGroup, "TextFormat");
 	APPROACH_SECONDS.Load(sMetricsGroup, "ApproachSeconds");
 	COMMIFY.Load(sMetricsGroup, "Commify");
@@ -40,6 +42,10 @@ void RollingNumbers::DrawPart(RageColor const* diffuse, RageColor const& stroke,
 
 void RollingNumbers::DrawPrimitives()
 {
+	if(!m_metrics_loaded)
+	{
+		return;
+	}
 	RageColor diffuse_orig[NUM_DIFFUSE_COLORS];
 	RageColor diffuse_temp[NUM_DIFFUSE_COLORS];
 	RageColor stroke_orig= GetCurrStrokeColor();
@@ -93,6 +99,11 @@ void RollingNumbers::Update( float fDeltaTime )
 
 void RollingNumbers::SetTargetNumber( float fTargetNumber )
 {
+	if(!m_metrics_loaded)
+	{
+		LuaHelpers::ReportScriptError("You must use Load to load the metrics for a RollingNumbers actor before doing anything else.");
+		return;
+	}
 	if( fTargetNumber == m_fTargetNumber ) // no change
 		return;
 	m_fTargetNumber = fTargetNumber;
@@ -109,9 +120,15 @@ void RollingNumbers::SetTargetNumber( float fTargetNumber )
 
 void RollingNumbers::UpdateText()
 {
+	if(!m_metrics_loaded)
+	{
+		return;
+	}
 	RString s = ssprintf( TEXT_FORMAT.GetValue(), m_fCurrentNumber );
-	if( COMMIFY )
+	if(COMMIFY)
+	{
 		s = Commify( s );
+	}
 	SetText( s );
 }
 
