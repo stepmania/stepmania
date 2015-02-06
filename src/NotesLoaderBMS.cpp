@@ -230,7 +230,6 @@ struct bmsCommandTree
 			int conditionTriggerValue; // value which triggers this branch. does not apply to #ELSE
 		};
 
-		bool Triggered;
 		BMSHeaders Commands;
 		vector<RString> ChannelCommands;
 		vector<bmsNodeS*> branches;
@@ -238,7 +237,6 @@ struct bmsCommandTree
 
 		bmsNodeS()
 		{
-			Triggered = true;
 			parent = NULL;
 			conditionValue = 0;
 			conditionType = CT_NULL;
@@ -359,7 +357,6 @@ struct bmsCommandTree
 		FOREACH(bmsNodeS*, node->branches, b)
 			if (evaluateNode(*b, headersOut, linesOut))
 			{
-				node->Triggered = true;
 				return true;
 			}
 
@@ -379,16 +376,13 @@ struct bmsCommandTree
 			{
 				appendNodeElements(node, headersOut, linesOut);
 				triggerBranches(node, headersOut, linesOut);
-				return true;
+				return true; // returning true means to stop trying to triggering branches
 			}
 			break;
 		case bmsNodeS::CT_ELSE:
-			if (!node->parent->Triggered) // we're the only branch left, so okay, evaluate.
-			{
 				appendNodeElements(node, headersOut, linesOut);
 				triggerBranches(node, headersOut, linesOut);
 				return true;
-			}
 			break;
 		case bmsNodeS::CT_NULL:
 			appendNodeElements(node, headersOut, linesOut);
@@ -397,6 +391,7 @@ struct bmsCommandTree
 			break;
 		}
 
+		// returning false means to execute any other branches.
 		return false;
 	}
 
