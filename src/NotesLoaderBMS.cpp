@@ -195,6 +195,7 @@ public:
 	BMSObjects objects;
 	BMSHeaders headers;
 	BMSMeasures measures;
+	map<int, bool> referencedTracks;
 
 	void TidyUpData();
 };
@@ -404,7 +405,7 @@ struct bmsCommandTree
 		evaluateNode(&root, headersOut, linesOut);
 	}
 
-	void doStatement(RString statement)
+	void doStatement(RString statement, map<int, bool> &referencedTracks)
 	{
 		line++;
 
@@ -499,7 +500,14 @@ struct bmsCommandTree
 				('0' <= statement[5] && statement[5] <= '9') &&
 				statement[6] == ':')
 			{
+				int channel = atoi(statement.substr(4, 2).c_str());
 				currentNode->ChannelCommands.push_back(statement);
+
+				if ((11 <= channel && channel <= 19) || (21 <= channel && channel <= 29))
+				{
+					referencedTracks[channel] = true;
+				}
+
 			}
 			else
 			{
@@ -535,7 +543,7 @@ bool BMSChart::Load( const RString &chartPath )
 
 		StripCrnl(line);
 
-		Tree.doStatement(line);
+		Tree.doStatement(line, referencedTracks);
 	}
 
 	vector<RString> lines;
@@ -797,7 +805,7 @@ class BMSChartReader {
 	map<RString, int> mapValueToKeysoundIndex;
 
 public:
-	BMSChartReader( BMSChart *chart, Steps *steps, BMSSong *song );
+	BMSChartReader(BMSChart *chart, Steps *steps, BMSSong *song);
 	bool Read();
 
 	Steps *GetSteps();
@@ -808,11 +816,12 @@ public:
 
 };
 
-BMSChartReader::BMSChartReader( BMSChart *chart, Steps *steps, BMSSong *bmsSong )
+BMSChartReader::BMSChartReader(BMSChart *chart, Steps *steps, BMSSong *bmsSong)
 {
 	this->in   = chart;
 	this->out  = steps;
 	this->song = bmsSong;
+	this->nonEmptyTracks = chart->referencedTracks;
 }
 
 bool BMSChartReader::Read()
@@ -903,18 +912,9 @@ void BMSChartReader::ReadHeaders()
 
 void BMSChartReader::CalculateStepsType()
 {
-	for( unsigned i = 0; i < in->objects.size(); i ++ )
-	{
-		BMSObject &obj = in->objects[i];
-		int channel = obj.channel;
-		if( (11 <= channel && channel <= 19) || (21 <= channel && channel <= 29) )
-		{
-			nonEmptyTracks[channel] = true;
-		}
-	}
-
 	nonEmptyTracksCount = nonEmptyTracks.size();
 	out->m_StepsType = DetermineStepsType();
+	out->m_StepsTypeStr = GAMEMAN->GetStepsTypeInfo(out->m_StepsType).szName;
 }
 
 enum BmsRawChannel
