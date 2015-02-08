@@ -1446,7 +1446,16 @@ void GameState::SetCurrentStyle(const Style *style, PlayerNumber pn)
 	if(INPUTMAPPER)
 	{
 		if(GetCurrentStyle(pn) && GetCurrentStyle(pn)->m_StyleType == StyleType_OnePlayerTwoSides)
+		{
+			// If the other player is joined, unjoin them because this style only
+			// allows one player.
+			PlayerNumber other_pn= OPPOSITE_PLAYER[this->GetMasterPlayerNumber()];
+			if(GetNumSidesJoined() > 1)
+			{
+				UnjoinPlayer(other_pn);
+			}
 			INPUTMAPPER->SetJoinControllers(this->GetMasterPlayerNumber());
+		}
 		else
 			INPUTMAPPER->SetJoinControllers(PLAYER_INVALID);
 	}

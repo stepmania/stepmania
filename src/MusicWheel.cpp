@@ -896,6 +896,7 @@ void MusicWheel::readyWheelItemsData(SortOrder so) {
 
 void MusicWheel::FilterWheelItemDatas(vector<MusicWheelItemData *> &aUnFilteredDatas, vector<MusicWheelItemData *> &aFilteredData, SortOrder so )
 {
+	aFilteredData.clear();
 
 	unsigned unfilteredSize=aUnFilteredDatas.size();
 
@@ -1179,11 +1180,15 @@ bool MusicWheel::ChangeSort( SortOrder new_so, bool allowSameSort )	// return tr
 {
 	ASSERT( new_so < NUM_SortOrder );
 	if( GAMESTATE->m_SortOrder == new_so && !allowSameSort )
+	{
 		return false;
+	}
 
 	// Don't change to SORT_MODE_MENU if it doesn't have at least two choices.
 	if( new_so == SORT_MODE_MENU && getWheelItemsData(new_so).size() < 2 )
+	{
 		return false;
+	}
 
 	switch( m_WheelState )
 	{
@@ -1522,19 +1527,22 @@ RString MusicWheel::JumpToPrevGroup()
 // Called on late join. Selectable courses may have changed; reopen the section.
 void MusicWheel::PlayerJoined()
 {
-	// TRICKY: If Autogen is off and someone joins, the first player may be on
-	// a song that has an illegal stepstype for the current amount of players.
-	// (e.g. a song that only has doubles difficulties and a second player joins.)
-	// We need to rebuild the wheel item data in this situation. -aj
-	if( !GAMESTATE->IsCourseMode() && !PREFSMAN->m_bAutogenSteps )
+	// If someone joins, there may be songs on the wheel that should not be
+	// selectable, or there may be songs that have become selectable.
+	// Set the status of all the wheel item data vectors to invalid so that
+	// readyWheelItemsData will rebuild all the data next time
+	// getWheelItemsData is called for that SortOrder.  SetOpenSection calls
+	// readyWheelItemsData to get the items, and RebuildWheelItems when its
+	// done, so invalidating and calling SetOpenSection is all we need to do.
+	// -Kyz
+	// Also removed the weird checks for course mode and autogen because
+	// it seems weird that courses wouldn't also be affected by a player
+	// joining, and not doing it in autogen causes other weird problems. -Kyz
+	FOREACH_ENUM(SortOrder, so)
 	{
-		FOREACH_ENUM(SortOrder, so)
-		{
-			m_WheelItemDatasStatus[so] = INVALID;
-		}
-		RebuildWheelItems();
+		m_WheelItemDatasStatus[so] = INVALID;
 	}
-	SetOpenSection( m_sExpandedSectionName );
+	SetOpenSection(m_sExpandedSectionName);
 }
 
 bool MusicWheel::IsRouletting() const
