@@ -43,7 +43,8 @@ static Preference<float> g_iDefaultRecordLength( "DefaultRecordLength", 4 );
 static Preference<bool> g_bEditorShowBGChangesPlay( "EditorShowBGChangesPlay", true );
 
 /** @brief How long must the button be held to generate a hold in record mode? */
-const float RECORD_HOLD_SECONDS = 0.3f;
+const float record_hold_default= 0.3f;
+float record_hold_seconds = record_hold_default;
 
 #define PLAYER_X		(SCREEN_CENTER_X)
 #define PLAYER_Y		(SCREEN_CENTER_Y)
@@ -194,6 +195,11 @@ void ScreenEdit::InitEditMappings()
 	name_to_edit_button["PLAY_SELECTION"]= EDIT_BUTTON_PLAY_SELECTION;
 	name_to_edit_button["RECORD_FROM_CURSOR"]= EDIT_BUTTON_RECORD_FROM_CURSOR;
 	name_to_edit_button["RECORD_SELECTION"]= EDIT_BUTTON_RECORD_SELECTION;
+
+	name_to_edit_button["RECORD_HOLD_RESET"]= EDIT_BUTTON_RECORD_HOLD_RESET;
+	name_to_edit_button["RECORD_HOLD_OFF"]= EDIT_BUTTON_RECORD_HOLD_OFF;
+	name_to_edit_button["RECORD_HOLD_MORE"]= EDIT_BUTTON_RECORD_HOLD_MORE;
+	name_to_edit_button["RECORD_HOLD_LESS"]= EDIT_BUTTON_RECORD_HOLD_LESS;
 
 	name_to_edit_button["RETURN_TO_EDIT"]= EDIT_BUTTON_RETURN_TO_EDIT;
 
@@ -386,6 +392,11 @@ void ScreenEdit::InitEditMappings()
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_DELETE_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_DEL);
 		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELETE_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
 		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_DELETE_SHIFT_PAUSES][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_RECORD_HOLD_LESS][0]= DeviceInput(DEVICE_KEYBOARD, KEY_Cq);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_RECORD_HOLD_MORE][0]= DeviceInput(DEVICE_KEYBOARD, KEY_Cw);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_RECORD_HOLD_RESET][0]= DeviceInput(DEVICE_KEYBOARD, KEY_Ce);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_RECORD_HOLD_OFF][0]= DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
 		break;
 	default: break;
 	}
@@ -1548,7 +1559,7 @@ void ScreenEdit::Update( float fDeltaTime )
 			{
 				m_NoteDataRecord.ClearRangeForTrack( BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat), t );
 			}
-			else if( fSecsHeld > RECORD_HOLD_SECONDS )
+			else if( fSecsHeld > record_hold_seconds )
 			{
 				// create or extend a hold or roll note
 				TapNote tn = EditIsBeingPressed(EDIT_BUTTON_LAY_ROLL) ? TAP_ORIGINAL_ROLL_HEAD: TAP_ORIGINAL_HOLD_HEAD;
@@ -1663,6 +1674,7 @@ static LocalizedString SONG_TIMING("ScreenEdit", "Song Timing");
 static LocalizedString BEAT_0_OFFSET("ScreenEdit", "Beat 0 offset");
 static LocalizedString PREVIEW_START("ScreenEdit", "Preview Start");
 static LocalizedString PREVIEW_LENGTH("ScreenEdit", "Preview Length");
+static LocalizedString RECORD_HOLD_TIME("ScreenEdit", "Record Hold Time");
 
 static ThemeMetric<RString> CURRENT_BEAT_FORMAT("ScreenEdit", "CurrentBeatFormat");
 static ThemeMetric<RString> CURRENT_SECOND_FORMAT("ScreenEdit", "CurrentSecondFormat");
@@ -1700,6 +1712,7 @@ static ThemeMetric<RString> TIMING_MODE_FORMAT("ScreenEdit", "TimingModeFormat")
 static ThemeMetric<RString> BEAT_0_OFFSET_FORMAT("ScreenEdit", "Beat0OffsetFormat");
 static ThemeMetric<RString> PREVIEW_START_FORMAT("ScreenEdit", "PreviewStartFormat");
 static ThemeMetric<RString> PREVIEW_LENGTH_FORMAT("ScreenEdit", "PreviewLengthFormat");
+static ThemeMetric<RString> RECORD_HOLD_TIME_FORMAT("ScreenEdit", "RecordHoldTimeFormat");
 void ScreenEdit::UpdateTextInfo()
 {
 	if( m_pSteps == NULL )
@@ -1829,6 +1842,11 @@ void ScreenEdit::UpdateTextInfo()
 				  GetAppropriateTiming().m_fBeat0OffsetInSeconds );
 		sText += ssprintf( PREVIEW_START_FORMAT.GetValue(), PREVIEW_START.GetValue().c_str(), m_pSong->m_fMusicSampleStartSeconds );
 		sText += ssprintf( PREVIEW_LENGTH_FORMAT.GetValue(), PREVIEW_LENGTH.GetValue().c_str(), m_pSong->m_fMusicSampleLengthSeconds );
+		if(record_hold_seconds < record_hold_default - .001f ||
+			record_hold_seconds > record_hold_default + .001f)
+		{
+			sText += ssprintf(RECORD_HOLD_TIME_FORMAT.GetValue(), RECORD_HOLD_TIME.GetValue().c_str(), record_hold_seconds);
+		}
 		break;
 	}
 
@@ -2868,6 +2886,26 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_DELETE_SHIFT_PAUSES:
 		HandleAreaMenuChoice( shift_pauses_backward );
 		SCREENMAN->PlayInvalidSound();
+		return true;
+
+	case EDIT_BUTTON_RECORD_HOLD_LESS:
+		record_hold_seconds-= .01f;
+		if(record_hold_seconds <= 0.0f)
+		{
+			record_hold_seconds= 0.0f;
+		}
+		return true;
+
+	case EDIT_BUTTON_RECORD_HOLD_MORE:
+		record_hold_seconds+= .01f;
+		return true;
+
+	case EDIT_BUTTON_RECORD_HOLD_RESET:
+		record_hold_seconds= record_hold_default;
+		return true;
+
+	case EDIT_BUTTON_RECORD_HOLD_OFF:
+		record_hold_seconds= 120.0f;
 		return true;
 
 	case EDIT_BUTTON_SAVE:
