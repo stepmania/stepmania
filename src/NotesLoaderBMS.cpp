@@ -178,6 +178,7 @@ struct BMSMeasure
 	float size;
 };
 
+const int MaxBMSElements = 1296; // ZZ in b36
 typedef map<RString, RString> BMSHeaders;
 typedef map<int, BMSMeasure> BMSMeasures;
 typedef vector<BMSObject> BMSObjects;
@@ -194,6 +195,7 @@ public:
 	BMSObjects objects;
 	BMSHeaders headers;
 	BMSMeasures measures;
+	map<int, bool> referencedTracks;
 
 	void TidyUpData();
 };
@@ -209,8 +211,313 @@ bool BMSChart::GetHeader( const RString &header, RString &out )
 	return true;
 }
 
+// az: Implement #RANDOM, #IF, #ELSE, #ELSEIF and #ENDIF.
+struct bmsCommandTree
+{
+
+	struct bmsNodeS { // Each of these imply one branching level.
+		int branchHeight;
+		enum {
+			CT_NULL,
+			CT_CONDITIONALCHAIN,
+			CT_IF,
+			CT_ELSEIF,
+			CT_ELSE
+		} conditionType; // #IF or #ELSE?
+
+		union {
+			int conditionValue; // value which we got for this #random
+			int conditionTriggerValue; // value which triggers this branch. does not apply to #ELSE
+		};
+
+		BMSHeaders Commands;
+		vector<RString> ChannelCommands;
+		vector<bmsNodeS*> branches;
+		bmsNodeS* parent;
+
+		bmsNodeS()
+		{
+			parent = NULL;
+			conditionValue = 0;
+			conditionType = CT_NULL;
+		}
+
+		~bmsNodeS()
+		{
+			FOREACH(bmsNodeS*, branches, b)
+			{
+				delete *b;
+			}
+		}
+	};
+
+	bmsNodeS *currentNode;
+	bmsNodeS root;
+	vector<unsigned int> randomStack;
+
+	int line;
+	RString path;
+
+	bmsCommandTree()
+	{
+		line = 0;
+		root.branchHeight = 0;
+		root.conditionValue = 0;
+		root.conditionTriggerValue = -1;
+		root.parent = NULL;
+		root.conditionType = bmsNodeS::CT_NULL;
+
+		currentNode = &root;
+	}
+
+	~bmsCommandTree()
+	{
+	}
+
+	bmsNodeS *addConditionalChain()
+	{
+		bmsNodeS *newNode = new bmsNodeS;
+
+		newNode->conditionValue = randomStack[currentNode->branchHeight];
+		newNode->parent = currentNode;
+		newNode->branchHeight = currentNode->branchHeight;
+		newNode->conditionType = bmsNodeS::CT_CONDITIONALCHAIN;
+
+		currentNode->branches.push_back(newNode);
+		return newNode;
+	}
+
+	bmsNodeS* createIfNode(bmsNodeS *Chain, int value)
+	{
+		bmsNodeS *newNode = new bmsNodeS;
+
+		newNode->conditionValue = randomStack[currentNode->branchHeight];
+		newNode->parent = Chain;
+		newNode->branchHeight = Chain->branchHeight + 1;
+		newNode->conditionTriggerValue = value;
+		newNode->conditionType = bmsNodeS::CT_IF;
+		Chain->branches.push_back(newNode);
+
+		return newNode;
+	}
+
+	bmsNodeS* createElseIfNode(bmsNodeS *Chain, int value)
+	{
+		bmsNodeS *newNode = new bmsNodeS;
+
+		newNode->conditionValue = randomStack[Chain->branchHeight];
+		newNode->parent = Chain;
+		newNode->branchHeight = Chain->branchHeight + 1;
+		newNode->conditionTriggerValue = value;
+		newNode->conditionType = bmsNodeS::CT_ELSEIF;
+		Chain->branches.push_back(newNode);
+
+		return newNode;
+	}
+
+	bmsNodeS* createElseNode(bmsNodeS *Chain)
+	{
+		bmsNodeS *newNode = new bmsNodeS;
+
+		newNode->conditionValue = randomStack[Chain->branchHeight];
+		newNode->parent = Chain;
+		newNode->branchHeight = Chain->branchHeight + 1;
+		newNode->conditionType = bmsNodeS::CT_ELSE;
+		Chain->branches.push_back(newNode);
+
+		return newNode;
+	}
+
+	/*
+		A condition chain can't ever be the current node. 
+		A conditional chain will never have more than one #IF.
+		The current node is always an #IF/#ELSE/#ELSEIF node or the root node.
+		All #IFs must be parented by a condition chain for interpreting #ELSE and #ELSEIF founds on that chain.
+		Likewise, all #ELSE and #ELSEIF commands must be parented by a condition chain node.
+		Therefore, the root node will only have conditional chains as branches
+		and all commands that must be evaluated without question.
+		-az
+	*/
+
+	void appendNodeElements(bmsNodeS* node, BMSHeaders &headersOut, vector<RString> &linesOut)
+	{
+		for (BMSHeaders::iterator i = node->Commands.begin(); i != node->Commands.end(); ++i)
+		{
+			headersOut[i->first] = i->second;
+		}
+
+		for (vector<RString>::iterator i = node->ChannelCommands.begin(); i != node->ChannelCommands.end(); ++i)
+		{
+			linesOut.push_back(*i);
+		}
+	}
+
+	bool triggerBranches(bmsNodeS* node, BMSHeaders &headersOut, vector<RString> &linesOut)
+	{
+		FOREACH(bmsNodeS*, node->branches, b)
+			if (evaluateNode(*b, headersOut, linesOut))
+			{
+				return true;
+			}
+
+		return false;
+	}
+
+	bool evaluateNode(bmsNodeS* node, BMSHeaders &headersOut, vector<RString> &linesOut)
+	{
+		switch (node->conditionType)
+		{
+		case bmsNodeS::CT_CONDITIONALCHAIN:
+			triggerBranches(node, headersOut, linesOut);
+			break;
+		case bmsNodeS::CT_IF:
+		case bmsNodeS::CT_ELSEIF: // Their differences are solved at node creation time.
+			if (node->parent->conditionValue == node->conditionTriggerValue)
+			{
+				appendNodeElements(node, headersOut, linesOut);
+				triggerBranches(node, headersOut, linesOut);
+				return true; // returning true means to stop trying to triggering branches
+			}
+			break;
+		case bmsNodeS::CT_ELSE:
+				appendNodeElements(node, headersOut, linesOut);
+				triggerBranches(node, headersOut, linesOut);
+				return true;
+			break;
+		case bmsNodeS::CT_NULL:
+			appendNodeElements(node, headersOut, linesOut);
+			triggerBranches(node, headersOut, linesOut);
+		default:
+			break;
+		}
+
+		// returning false means to execute any other branches.
+		return false;
+	}
+
+	void evaluateBMSTree(BMSHeaders &headersOut, vector<RString> &linesOut)
+	{
+		evaluateNode(&root, headersOut, linesOut);
+	}
+
+	void doStatement(RString statement, map<int, bool> &referencedTracks)
+	{
+		line++;
+
+		if (statement.length() == 0) // Skip.
+			return;
+
+		// LTrim the statement to allow indentation
+		size_t hash = statement.find('#');
+
+		if (hash == RString::npos)
+			return;
+		
+		statement = statement.substr(hash);
+
+		size_t space = statement.find(' ');
+		RString name = statement.substr(0, space);
+		RString value = "";
+
+		if (space != statement.npos)
+			value = statement.substr(space + 1);
+		name.MakeLower();
+
+		if (name == "#if")
+		{
+			if (randomStack.size() < currentNode->branchHeight + 1)
+			{
+				LOG->UserLog("Song file", path, "Line %d: Missing #RANDOM. Warning: Branch will be considered false!", line);
+
+				while (randomStack.size() < currentNode->branchHeight + 1)
+					randomStack.push_back(0);
+			}
+
+			bmsNodeS *chain = addConditionalChain();
+			currentNode = createIfNode(chain, atoi(value.c_str()));
+		}
+		else if (name == "#else")
+		{
+			if (currentNode->parent != NULL) // Not the root node.
+			{
+				if (currentNode->parent->conditionType == bmsNodeS::CT_CONDITIONALCHAIN)
+				{
+					currentNode = createElseNode(currentNode->parent);
+					return;
+				}
+				else
+					LOG->UserLog("Song file", path, "Line %d: #else without matching #if chain.\n", line);
+			} else
+				LOG->UserLog("Song file", path, "Line %d: #else used at root level.\n", line);
+		}
+		else if (name == "#elseif")
+		{
+			if (currentNode->parent != NULL) // Not the root node.
+			{
+				if (currentNode->parent->conditionType == bmsNodeS::CT_CONDITIONALCHAIN)
+				{
+					currentNode = createElseIfNode(currentNode->parent, atoi(value.c_str()));
+				}else
+					LOG->UserLog("Song file", path, "Line %d: #elseif without matching #if chain.\n", line);
+			}else
+				LOG->UserLog("Song file", path, "Line %d: #elseif used at root level.\n", line);
+		}
+		else if (name == "#endif" || name == "#end")
+		{
+			if (currentNode->parent != NULL) // not the root node
+			{
+				currentNode = currentNode->parent;
+			}
+			
+			if (currentNode->conditionType != bmsNodeS::CT_CONDITIONALCHAIN)
+			{
+				LOG->UserLog("Song file", path, "Line %d: #endif without a matching #if!", line);
+				return;
+			}
+
+			// We're in a conditional chain, so that means we can go one level up to our *real* parent.
+			currentNode = currentNode->parent;
+		}
+		else if (name == "#random")
+		{
+			while (randomStack.size() < currentNode->branchHeight + 1) // if we're on branch level N we need N+1 values.
+				randomStack.push_back(0);
+
+			randomStack[currentNode->branchHeight] = rand() % StringToInt(value) + 1;
+		}
+		else
+		{
+			if (statement.size() >= 7 &&
+				('0' <= statement[1] && statement[1] <= '9') &&
+				('0' <= statement[2] && statement[2] <= '9') &&
+				('0' <= statement[3] && statement[3] <= '9') &&
+				('0' <= statement[4] && statement[4] <= '9') &&
+				('0' <= statement[5] && statement[5] <= '9') &&
+				statement[6] == ':')
+			{
+				int channel = atoi(statement.substr(4, 2).c_str());
+				currentNode->ChannelCommands.push_back(statement);
+
+				if ((11 <= channel && channel <= 19) || (21 <= channel && channel <= 29))
+				{
+					referencedTracks[channel] = true;
+				}
+
+			}
+			else
+			{
+				currentNode->Commands[name] = value;
+			}
+		}
+		
+		// we're done.
+	}
+};
+
 bool BMSChart::Load( const RString &chartPath )
 {
+	bmsCommandTree Tree;
+	Tree.path = chartPath;
 	path = chartPath;
 
 	RageFile file;
@@ -220,69 +527,58 @@ bool BMSChart::Load( const RString &chartPath )
 		return false;
 	}
 
-	while( !file.AtEOF() )
+	while (!file.AtEOF())
 	{
 		RString line;
-		if( file.GetLine(line) == -1 )
+		if (file.GetLine(line) == -1)
 		{
-			LOG->UserLog( "Song file", path, "had a read error: %s", file.GetError().c_str() );
+			LOG->UserLog("Song file", path, "had a read error: %s", file.GetError().c_str());
 			return false;
 		}
 
-		StripCrnl( line );
+		StripCrnl(line);
 
-		if( line.size() > 1 && line[0] == '#' )
+		Tree.doStatement(line, referencedTracks);
+	}
+
+	vector<RString> lines;
+	Tree.evaluateBMSTree(headers, lines);
+
+	for (vector<RString>::iterator i = lines.begin(); i != lines.end(); ++i)
+	{
+		RString line = *i;
+		RString data = line.substr(7);
+		int measure = atoi(line.substr(1, 3).c_str());
+		int channel = atoi(line.substr(4, 2).c_str());
+		bool flag = false;
+		if (channel == 2)
 		{
-			if( line.size() >= 7 &&
-				( '0' <= line[1] && line[1] <= '9' ) &&
-				( '0' <= line[2] && line[2] <= '9' ) &&
-				( '0' <= line[3] && line[3] <= '9' ) &&
-				( '0' <= line[4] && line[4] <= '9' ) &&
-				( '0' <= line[5] && line[5] <= '9' ) &&
-				line[6] == ':' )
+			// special channel: time signature
+			BMSMeasure m = { StringToFloat(data) };
+			this->measures[measure] = m;
+		}
+		else
+		{
+			if (channel >= 51)
 			{
-				RString data = line.substr(7);
-				int measure = atoi( line.substr(1, 3).c_str() );
-				int channel = atoi( line.substr(4, 2).c_str() );
-				bool flag = false;
-				if( channel == 2 )
-				{
-					// special channel: time signature
-					BMSMeasure m = { StringToFloat(data) };
-					this->measures[measure] = m;
-				}
-				else
-				{
-					if( channel >= 51 )
-					{
-						channel -= 40;
-						flag = true;
-					}
-					int count = data.size() / 2;
-					for( int i = 0; i < count; i ++ )
-					{
-						RString value = data.substr( 2 * i, 2 );
-						if( value != "00" )
-						{
-							value.MakeLower();
-							BMSObject o = { channel, measure, (float)i / count, flag, value };
-							objects.push_back( o );
-						}
-					}
-				}
+				channel -= 40;
+				flag = true;
 			}
-			else
+			int count = data.size() / 2;
+			for (int i = 0; i < count; i++)
 			{
-				size_t space = line.find(' ');
-				RString name = line.substr( 0, space );
-				RString value = "";
-				if( space != line.npos )
-					value = line.substr( space+1 );
-				name.MakeLower();
-				headers[name] = value;
+				RString value = data.substr(2 * i, 2);
+				if (value != "00")
+				{
+					value.MakeLower();
+					BMSObject o = { channel, measure, (float)i / count, flag, value };
+					objects.push_back(o);
+				}
 			}
 		}
 	}
+
+
 
 	TidyUpData();
 
@@ -458,7 +754,7 @@ void BMSSong::PrecacheBackgrounds(const RString &dir)
 	
 	for( unsigned i = 0; i < arrayPossibleFiles.size(); i++ )
 	{
-		for (unsigned j = 0; exts[j] != NULL && j < exts.size(); ++j)
+		for (unsigned j = 0; j < exts.size(); j++)
 		{
 			RString fn = SetExtension( arrayPossibleFiles[i], exts[j] );
 			mapBackground[fn] = arrayPossibleFiles[i];
@@ -476,7 +772,8 @@ struct BMSChartInfo {
 	RString backgroundFile;
 	RString stageFile;
 	RString musicFile;
-	
+	RString overrideMusicFile;
+
 	map<int, RString> backgroundChanges;
 };
 
@@ -503,7 +800,7 @@ class BMSChartReader {
 	map<RString, int> mapValueToKeysoundIndex;
 
 public:
-	BMSChartReader( BMSChart *chart, Steps *steps, BMSSong *song );
+	BMSChartReader(BMSChart *chart, Steps *steps, BMSSong *song);
 	bool Read();
 
 	Steps *GetSteps();
@@ -514,11 +811,12 @@ public:
 
 };
 
-BMSChartReader::BMSChartReader( BMSChart *chart, Steps *steps, BMSSong *bmsSong )
+BMSChartReader::BMSChartReader(BMSChart *chart, Steps *steps, BMSSong *bmsSong)
 {
 	this->in   = chart;
 	this->out  = steps;
 	this->song = bmsSong;
+	this->nonEmptyTracks = chart->referencedTracks;
 }
 
 bool BMSChartReader::Read()
@@ -592,23 +890,26 @@ void BMSChartReader::ReadHeaders()
 		{
 			out->SetMeter( StringToInt(it->second) );
 		}
+		else if (it->first == "#music")
+		{
+			info.overrideMusicFile = it->second;
+		}
+		else if (it->first == "#offset")
+		{
+			out->m_Timing.m_fBeat0OffsetInSeconds = -StringToFloat(it->second);
+		}
+		else if (it->first == "#maker")
+		{
+			out->SetCredit(it->second);
+		}
 	}
 }
 
 void BMSChartReader::CalculateStepsType()
 {
-	for( unsigned i = 0; i < in->objects.size(); i ++ )
-	{
-		BMSObject &obj = in->objects[i];
-		int channel = obj.channel;
-		if( (11 <= channel && channel <= 19) || (21 <= channel && channel <= 29) )
-		{
-			nonEmptyTracks[channel] = true;
-		}
-	}
-
 	nonEmptyTracksCount = nonEmptyTracks.size();
 	out->m_StepsType = DetermineStepsType();
+	out->m_StepsTypeStr = GAMEMAN->GetStepsTypeInfo(out->m_StepsType).szName;
 }
 
 enum BmsRawChannel
@@ -701,6 +1002,33 @@ struct BMSAutoKeysound {
 	int row;
 	int index;
 };
+
+struct bmFrac {
+	long long num;
+	long long den;
+};
+
+bmFrac toFraction(double f)
+{
+	double df;
+	long long upper = 1LL, lower = 1LL;
+	df = 1;
+
+	while (abs(df - f) > 0.000001)
+	{
+		if (df < f)
+		{
+			upper++;
+		}
+		else
+		{
+			lower++;
+		}
+		df = (double)upper / lower;
+	}
+
+	return bmFrac{ upper, lower };
+}
 
 bool BMSChartReader::ReadNoteData()
 {
@@ -845,7 +1173,7 @@ bool BMSChartReader::ReadNoteData()
 
 	int trackMeasure = -1;
 	float measureStartBeat = 0.0f;
-	float measureSize = 0.0f;
+	double measureSize = 0.0f;
 	float adjustedMeasureSize = 0.0f;
 	float measureAdjust = 1.0f;
 	int firstNoteMeasure = 0;
@@ -872,25 +1200,24 @@ bool BMSChartReader::ReadNoteData()
 			measureStartBeat += adjustedMeasureSize;
 			measureSize = 4.0f;
 			BMSMeasures::iterator it = in->measures.find(trackMeasure);
-			if( it != in->measures.end() ) measureSize = it->second.size * 4.0f;
+			if( it != in->measures.end() ) measureSize = it->second.size * 4.0;
 			adjustedMeasureSize = measureSize;
 			if( trackMeasure < firstNoteMeasure ) adjustedMeasureSize = measureSize = 4.0f;
 
 			// measure size adjustment
-			// XXX: need more testing / fine-tuning!
-			int sixteenths = lrintf(measureSize * 4.0f);
-			if( sixteenths > 1 ) adjustedMeasureSize = (float)sixteenths / 4.0f;
-			measureAdjust = adjustedMeasureSize / measureSize;
-			td.SetBPMAtRow( BeatToNoteRow(measureStartBeat), measureAdjust * currentBPM );
-			
 			{
-				int num = sixteenths;
-				int den = 16;
-				while (den > 4 && num % 2 == 0 && den % 2 == 0) {
+				bmFrac numFrac = toFraction(measureSize);
+				long long num = numFrac.num;
+				long long den = 4 * numFrac.den;
+
+				while ( num % 2 == 0 && den % 2 == 0 && den > 4  ) { // Both are multiples of 2
 					num /= 2;
 					den /= 2;
 				}
 				td.SetTimeSignatureAtRow( BeatToNoteRow(measureStartBeat), num, den );
+
+				// Since BMS measure events only last through the measure, we need to restore the default measure length.
+				td.SetTimeSignatureAtRow(BeatToNoteRow(measureStartBeat + measureSize), 4, 4);
 			}
 			// end measure size adjustment
 		}
@@ -927,13 +1254,17 @@ bool BMSChartReader::ReadNoteData()
 				search = ssprintf( "#bmp%s", obj.value.c_str() );
 				it = in->headers.find( search );
 
-				if (it != in->headers.end())
+				if (it != in->headers.end()) // To elaborate, this means this is an unknown key.
 				{
 					RString bg;
 					if (song->GetBackground(it->second, in->path, bg))
 					{
 						info.backgroundChanges[row] = bg;
 					}
+				}
+				else
+				{
+					LOG->UserLog("Song file", in->path.c_str(), "uses key \"%s\" for a bmp change which is undefined.", obj.value.c_str());
 				}
 			}
 		}
