@@ -1004,6 +1004,9 @@ struct BMSAutoKeysound {
 };
 
 struct bmFrac {
+	bmFrac(long long n, long long d)
+		:num(n), den(d)
+	{}
 	long long num;
 	long long den;
 };
@@ -1027,7 +1030,7 @@ bmFrac toFraction(double f)
 		df = (double)upper / lower;
 	}
 
-	return bmFrac{ upper, lower };
+	return bmFrac( upper, lower );
 }
 
 bool BMSChartReader::ReadNoteData()
