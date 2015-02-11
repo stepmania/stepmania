@@ -172,8 +172,13 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		// Set the event mask back to what it was
 		XSelectInput( Dpy, Win, winAttrib.your_event_mask );
 
-		GLenum err = glewInit();
-		ASSERT( err == GLEW_OK );
+		// I can't find official docs saying what happens if you re-init GLEW.
+		// I'll just assume the behavior is undefined.
+		if(bFirstRun)
+		{
+			GLenum err = glewInit();
+			ASSERT( err == GLEW_OK );
+		}
 	}
 	else
 	{
