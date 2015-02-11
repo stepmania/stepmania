@@ -363,8 +363,10 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		glXSwapIntervalEXT( Dpy, Win, CurrentParams.vsync ? 1 : 0 );
 	// XXX: These two might be server-global. I should look into whether
 	// to try to preserve the original value on exit.
+#ifdef GLXEW_MESA_swap_control // Added in 1.7. 1.6 is still common out there apparently.
 	else if(GLXEW_MESA_swap_control)
 		glXSwapIntervalMESA( CurrentParams.vsync ? 1 : 0 );
+#endif
 	else if(GLXEW_SGI_swap_control) // DRI Intel needs this
 		glXSwapIntervalSGI( CurrentParams.vsync ? 1 : 0 );
 	else
