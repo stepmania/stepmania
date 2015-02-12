@@ -19,7 +19,12 @@ using namespace X11Helper;
 #include <GL/glx.h>	// All sorts of stuff...
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#ifdef HAVE_XRANDR
+#include <X11/extensions/Xrandr.h>
+#endif
+#ifdef HAVE_XF86VIDMODE
 #include <X11/extensions/xf86vmode.h>
+#endif
 
 #if defined(HAVE_LIBXTST)
 #include <X11/extensions/XTest.h>
@@ -28,15 +33,29 @@ using namespace X11Helper;
 static GLXContext g_pContext = NULL;
 static GLXContext g_pBackgroundContext = NULL;
 static Window g_AltWindow = None;
-XF86VidModeModeInfo g_originalMode;
+#ifdef HAVE_XRANDR
+RRMode g_originalRandRMode;
+RROutput g_usedCrtc;
+bool g_bUseXRandR = false;
+int g_iRandRVerMinor;
+int g_iRandRVerMajor;
+#endif
+#ifdef HAVE_XF86VIDMODE
+XF86VidModeModeInfo g_originalVidModeMode;
+#endif
 
-inline float calcRefresh( int iPixelClock, int hRes, int vRes )
+inline float calcRandRRefresh( int iPixelClock, int iHTotal, int iVTotal )
 {
 	// Pixel Clock divided by total pixels in mode,
 	// not just those onscreen!
+	return ( iPixelClock ) / ( iHTotal * iVTotal );
+}
+
+inline float calcVidModeRefresh( int iPixelClock, int hTotal, int vTotal )
+{
 	// the pixel clock as returned by XF86VM is in kHz.
 	// We want Hz.
-	return ( iPixelClock * 1000.0 ) / ( hRes * vRes );
+	return calcRandRRefresh( iPixelClock * 1000.0, hTotal, vTotal );
 }
 
 static LocalizedString FAILED_CONNECTION_XSERVER( "LowLevelWindow_X11", "Failed to establish a connection with the X server" );
@@ -44,6 +63,13 @@ LowLevelWindow_X11::LowLevelWindow_X11()
 {
 	if( !OpenXConnection() )
 		RageException::Throw( "%s", FAILED_CONNECTION_XSERVER.GetValue().c_str() );
+
+#ifdef HAVE_XRANDR
+	if( XRRQueryVersion( Dpy, &g_iRandRVerMajor, &g_iRandRVerMinor ) && g_iRandRVerMajor >= 1 && g_iRandRVerMinor >= 2) g_bUseXRandR = true;
+#endif
+#ifndef HAVE_XF86VIDMODE
+	ASSERT(g_bUseXRandR == true, "XRandR not present or too old.");
+#endif
 
 	const int iScreen = DefaultScreen( Dpy );
 	int iXServerVersion = XVendorRelease( Dpy ); /* eg. 40201001 */
@@ -64,7 +90,21 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 	// Reset the display
 	if( !m_bWasWindowed )
 	{
-		XF86VidModeSwitchToMode( Dpy, DefaultScreen( Dpy ), &g_originalMode );
+#ifdef HAVE_XRANDR
+		if(g_bUseXRandR)
+		{
+			XRRScreenResources *res = XRRGetScreenResources(Dpy, Win);
+			XRRCrtcInfo *conf = XRRGetCrtcInfo(Dpy, res, g_usedCrtc);
+			XRRSetCrtcConfig(Dpy, res, g_usedCrtc, conf->timestamp, conf->x, conf->y, g_originalRandRMode, conf->rotation, conf->outputs, conf->noutput);
+		}
+		else
+#ifndef HAVE_XF86VIDMODE
+			FAIL_M("XRandR not present or too old.");
+#endif
+#endif
+#ifdef HAVE_XF86VIDMODE
+			XF86VidModeSwitchToMode( Dpy, DefaultScreen( Dpy ), &g_originalVidModeMode );
+#endif
 
 		XUngrabKeyboard( Dpy, CurrentTime );
 	}
@@ -81,7 +121,6 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 	// We're supposed to XFree() the private bits of XF86VidModeModeInfo
 	// structs. This isn't actually possible from C++. At all. Period.
 	// Let it leak.
-
 
 	XDestroyWindow( Dpy, Win );
 	Win = None;
@@ -186,92 +225,184 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		bNewDeviceOut = false;
 	}
 
-	float rate = 0;
+	float rate = 60; // Will be unchanged if windowed. Not sure I care.
 
 	if( !p.windowed )
 	{
-		if( m_bWasWindowed )
+		/* === Changing Resolution === */
+#ifdef HAVE_XRANDR
+		// Arcane and undocumented but PROPER XRandR 1.2 method.
+		// What we do is directly reconfigure the CRTC of the primary display,
+		// Which prevents the (RandR) screen itself from resizing, and therefore
+		// leaving user's desktop unmolested.
+		if(g_bUseXRandR)
 		{
+			// XRandR is present and at least 1.2. Continue.
+			LOG->Info("LowLevelWindow_X11: Using XRandR");
+
+			XRRScreenResources *scrRes = XRRGetScreenResources(Dpy, Win);
+			ASSERT(scrRes != NULL);
+			ASSERT(scrRes->ncrtc > 0);
+			ASSERT(scrRes->noutput > 0);
+			ASSERT(scrRes->nmode > 0);
+
+			RROutput primaryOut;
+			if(g_iRandRVerMajor >= 1 && g_iRandRVerMinor >= 3)
+				// RandR 1.3 can tell us what the primary display is.
+				primaryOut = XRRGetOutputPrimary(Dpy, Win);
+			else // Only RandR 1.2. We have to guess.
+				primaryOut = scrRes->outputs[0];
+			
+			XRROutputInfo *outInfo = XRRGetOutputInfo(Dpy, scrRes, primaryOut);
+			ASSERT(outInfo->ncrtc > 0);
+			XRRCrtcInfo *oldConf = XRRGetCrtcInfo( Dpy, scrRes, outInfo->crtcs[0] );
+			
+			float fRefreshDiff = 99999;
+			float fRefreshRate = 0;
+			RRMode mode;
+			// A quirk of XRandR is that the width and height are as the display
+			// controller ("CRTC") sees it, which means height and width are
+			// flipped if there's rotation going on.
+			bool bPortrait = oldConf->rotation & ( RR_Rotate_90 | RR_Rotate_270 );
+#define REAL_WIDTH(x)( bPortrait ? x.height : x.width )
+#define REAL_HEIGHT(x) ( bPortrait ? x.width : x.height )
+			
+			// Find a mode that matches our exact wanted resolution,
+			// with as close to our desired refresh rate as possible.
+			for(int i = 0; i < scrRes->nmode; i++)
+				if(REAL_WIDTH(scrRes->modes[i]) == p.width && REAL_HEIGHT(scrRes->modes[i]) == p.height)
+				{
+					XRRModeInfo *thisMI = &scrRes->modes[i];
+					float fTempRefresh = calcRandRRefresh( thisMI->dotClock, thisMI->hTotal, thisMI->vTotal );
+					float fTempDiff = abs( fRefreshRate - fTempRefresh );
+					if(fTempDiff < fRefreshDiff)
+					{
+						int j;
+						// Ensure that the output supports the mode
+						for(j = 0; j < outInfo->nmode; j++)
+							if(outInfo->modes[j] == scrRes->modes[i].id)
+							{
+								mode = outInfo->modes[j];
+								break;
+							}
+
+						if(j < outInfo->nmode)
+						{
+							fRefreshRate = fTempRefresh;
+							fRefreshDiff = fTempDiff;
+						}
+					}
+				}
+
+#undef REAL_WIDTH
+#undef REAL_HEIGHT
+			rate = roundf(fRefreshRate);
+			
+			ASSERT(fRefreshRate > 0);
+
+			g_usedCrtc = outInfo->crtcs[0];
+			if(m_bWasWindowed)
+				// Save the old mode to restore later.
+				g_originalRandRMode = oldConf->mode;
+
+			// and FIRE!
+			XRRSetCrtcConfig(Dpy, scrRes, g_usedCrtc, oldConf->timestamp, oldConf->x, oldConf->y, mode, oldConf->rotation, oldConf->outputs, oldConf->noutput);
+			
+			// We don't move to absolute 0,0 because that may be in the area of a different output.
+			// Instead we preserved the corner of our CRTC; go to that.
+			XMoveWindow(Dpy, Win, oldConf->x, oldConf->y);
+		}
+		else
+#ifndef HAVE_XF86VIDMODE
+			FAIL_M("XRandR extension not present or too old.");
+#endif
+#endif // HAVE_XRANDR
+#ifdef HAVE_XF86VIDMODE
+		{
+			// Legacy probably-deprecated XFree86-VidModeExtension method.
+			// Some X servers will resize the root window in response to this.
+			// Some won't. We hope for the latter. Hope is all we got.
+			if( m_bWasWindowed )
+			{
+				// We're supposed to XFree() the private bits of XF86VidModeModeInfo
+				// structs. This isn't actually possible from C++. At all. Period.
+				// Let it leak.
+
+				// XFree86-VideoMode can't make up its mind what struct it wants to
+				// use. This function returns an XF86VidModeModeLine when almost
+				// everything else wants XF86VidModeModeInfo. And there's no
+				// conversion function. Our only option is to do the conversion
+				// ourselves and assume that the private bytes don't differ
+				// between the two.
+
+				XF86VidModeModeLine tempMode;
+				int iPixelClock;
+
+				XF86VidModeGetModeLine( Dpy, DefaultScreen(Dpy), &iPixelClock, &tempMode );
+
+				g_originalVidModeMode.dotclock = iPixelClock;
+				g_originalVidModeMode.hdisplay = tempMode.hdisplay;
+				g_originalVidModeMode.hsyncstart = tempMode.hsyncstart;
+				g_originalVidModeMode.hsyncend = tempMode.hsyncend;
+				g_originalVidModeMode.htotal = tempMode.htotal;
+				g_originalVidModeMode.vdisplay = tempMode.vdisplay;
+				g_originalVidModeMode.vsyncstart = tempMode.vsyncstart;
+				g_originalVidModeMode.vsyncend = tempMode.vsyncend;
+				g_originalVidModeMode.vtotal = tempMode.vtotal;
+				g_originalVidModeMode.flags = tempMode.flags;
+				// Once again, we can't actually address XF86VidModeModeInfo::private.
+				// I hope the server doesn't need its private bits, because it's
+				// not getting 'em.
+				g_originalVidModeMode.privsize = 0;
+			}
+
+			// Find a matching mode.
+			int iNumModes;
+			XF86VidModeModeInfo **aModes_;
+			XF86VidModeGetAllModeLines( Dpy, DefaultScreen(Dpy), &iNumModes, &aModes_ );
+			ASSERT_M( iNumModes > 0, "Couldn't get resolution list from X server" );
+			XF86VidModeModeInfo *aModes = *aModes_;
+
+			int iSizeMatch = -1;
+			float fRefreshCloseness;
+
+			for( int i = 0; i < iNumModes; ++i )
+			{
+				if( aModes[i].hdisplay == p.width && aModes[i].vdisplay == p.height )
+				{
+					// We're not told the refresh rate; we're expected to calculate
+					// it ourselves.
+					float fCheckRefresh = calcVidModeRefresh( aModes[i].dotclock, aModes[i].htotal, aModes[i].vtotal );
+
+					// And of course it's rarely if ever an exact integer. Just get the nearest match.
+					float fTempClose = fabs( p.rate - rate );
+					if( iSizeMatch == -1 || fTempClose < fRefreshCloseness )
+					{
+						rate = fCheckRefresh;
+						fRefreshCloseness = fTempClose;
+						iSizeMatch = i;
+					}
+				}
+			}
+		
+			ASSERT( iSizeMatch != -1 );
+
+			// Set this mode.
+			// XXX How do we detect failure?
+			XF86VidModeSwitchToMode( Dpy, DefaultScreen(Dpy), &( aModes[iSizeMatch] ) );
+
+			// Move the viewport to the corner where we are.
+			XF86VidModeSetViewPort( Dpy, DefaultScreen(Dpy), 0, 0);
+
 			// We're supposed to XFree() the private bits of XF86VidModeModeInfo
 			// structs. This isn't actually possible from C++. At all. Period.
 			// Let it leak.
 
-			// If the user changed the resolution while StepMania was windowed we overwrite the resolution to restore with it at exit.
-			// XXX: I don't know what this returns, or whether it *can* fail.
-			
-			// XFree86-VideoMode can't make up its mind what struct it wants to
-			// use. This function returns an XF86VidModeModeLine when almost
-			// everything else wants XF86VidModeModeInfo. And there's no
-			// conversion function. Our only option is to do the conversion
-			// ourselves and assume that the private bytes don't differ 
-			// between the two.
-			
-			XF86VidModeModeLine tempMode;
-			int iPixelClock;
-			
-			XF86VidModeGetModeLine( Dpy, DefaultScreen(Dpy), &iPixelClock, &tempMode );
-			
-			g_originalMode.dotclock = iPixelClock;
-			g_originalMode.hdisplay = tempMode.hdisplay;
-			g_originalMode.hsyncstart = tempMode.hsyncstart;
-			g_originalMode.hsyncend = tempMode.hsyncend;
-			g_originalMode.htotal = tempMode.htotal;
-			g_originalMode.vdisplay = tempMode.vdisplay;
-			g_originalMode.vsyncstart = tempMode.vsyncstart;
-			g_originalMode.vsyncend = tempMode.vsyncend;
-			g_originalMode.vtotal = tempMode.vtotal;
-			g_originalMode.flags = tempMode.flags;
-			// Once again, we can't actually address XF86VidModeModeInfo::private.
-			// I hope the server doesn't need its private bits, because it's
-			// not getting 'em.
-			g_originalMode.privsize = 0;
-			
-			m_bWasWindowed = false;
+			XFree( aModes_ );
 		}
+#endif // HAVE_XF86VIDMODE
 
-		// Find a matching mode.
-		int iNumModes;
-		XF86VidModeModeInfo **aModes_;
-		XF86VidModeGetAllModeLines( Dpy, DefaultScreen(Dpy), &iNumModes, &aModes_ );
-		ASSERT_M( iNumModes > 0, "Couldn't get resolution list from X server" );
-		XF86VidModeModeInfo *aModes = *aModes_;
-
-		int iSizeMatch = -1;
-		float fRefreshCloseness;
-
-		for( int i = 0; i < iNumModes; ++i )
-		{
-			if( aModes[i].hdisplay == p.width && aModes[i].vdisplay == p.height )
-			{
-				// We're not told the refresh rate; we're expected to calculate
-				// it ourselves.
-				float fCheckRefresh = calcRefresh( aModes[i].dotclock, aModes[i].htotal, aModes[i].vtotal );
-
-				// And of course it's rarely if ever an exact integer. Just get the nearest match.
-				float fTempClose = fabs( p.rate - rate );
-				if( iSizeMatch == -1 || fTempClose < fRefreshCloseness )
-				{
-					rate = fCheckRefresh;
-					fRefreshCloseness = fTempClose;
-					iSizeMatch = i;
-				}
-			}
-		}
-		
-		ASSERT( iSizeMatch != -1 );
-
-		// Set this mode.
-		// XXX How do we detect failure?
-		XF86VidModeSwitchToMode( Dpy, DefaultScreen(Dpy), &( aModes[iSizeMatch] ) );
-
-		// Move the viwport to the corner where we are.
-		XF86VidModeSetViewPort( Dpy, DefaultScreen(Dpy), 0, 0);
-
-		// We're supposed to XFree() the private bits of XF86VidModeModeInfo
-		// structs. This isn't actually possible from C++. At all. Period.
-		// Let it leak.
-
-		XFree( aModes_ );
+		m_bWasWindowed = false;
 
 		XRaiseWindow( Dpy, Win );
 
@@ -284,27 +415,25 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		if( !m_bWasWindowed )
 		{
 			// Return the display to the mode it was in before we fullscreened.
-			XF86VidModeSwitchToMode( Dpy, DefaultScreen(Dpy), &g_originalMode );
+#ifdef HAVE_XRANDR
+			if(g_bUseXRandR)
+			{
+				XRRScreenResources *res = XRRGetScreenResources(Dpy, Win);
+				XRRCrtcInfo *conf = XRRGetCrtcInfo(Dpy, res, g_usedCrtc);
+				XRRSetCrtcConfig(Dpy, res, g_usedCrtc, conf->timestamp, conf->x, conf->y, g_originalRandRMode, conf->rotation, conf->outputs, conf->noutput);
+			}
+			else
+#ifndef HAVE_XF86VIDMODE
+				FAIL_M("XRandR not present or too old.");
+#endif
+#endif
+#ifdef HAVE_XF86VIDMODE
+				XF86VidModeSwitchToMode( Dpy, DefaultScreen(Dpy), &g_originalVidModeMode );
+#endif
 			// In windowed mode, we actually want the WM to function normally.
 			// Release any previous grab.
 			XUngrabKeyboard( Dpy, CurrentTime );
 			m_bWasWindowed = true;
-
-			rate = calcRefresh( g_originalMode.dotclock, g_originalMode.htotal, g_originalMode.vtotal );
-		}
-
-		if( rate <= 0 )
-		{
-			XF86VidModeModeLine mode;
-			int iClock;
-			
-			XF86VidModeGetModeLine( Dpy, DefaultScreen(Dpy), &iClock, &mode );
-			rate = calcRefresh( iClock, mode.htotal, mode.vtotal );
-			
-			// We're supposed to XFree() the private bits of XF86VidModeModeInfo
-			// structs. This isn't actually possible from C++. At all. Period.
-			// Let it leak.
-
 		}
 	}
 
@@ -428,24 +557,67 @@ void LowLevelWindow_X11::SwapBuffers()
 
 void LowLevelWindow_X11::GetDisplayResolutions( DisplayResolutions &out ) const
 {
-	int iNumModes = 0;
-	XF86VidModeModeInfo **aModes_;
-	XF86VidModeGetAllModeLines( Dpy, DefaultScreen( Dpy ), &iNumModes, &aModes_ );
-	ASSERT_M( iNumModes != 0, "Couldn't get resolution list from X server" );
-	XF86VidModeModeInfo *aModes = *aModes_;
-
-	for( int i = 0; i < iNumModes; ++i )
+#ifdef HAVE_XRANDR
+	if(g_bUseXRandR)
 	{
-		// XXX: bStretched doesn't appear to actually be used anywhere?
-		DisplayResolution res = { aModes[i].hdisplay, aModes[i].vdisplay, true };
-		out.insert( res );
+		XRRScreenResources *scrRes = XRRGetScreenResources(Dpy, Win);
+		RROutput primaryOut;
+		if(g_iRandRVerMajor >= 1 && g_iRandRVerMinor >= 3)
+			// RandR 1.3 can tell us what the primary display is.
+			primaryOut = XRRGetOutputPrimary(Dpy, Win);
+		else // Only RandR 1.2. We have to guess.
+			primaryOut = scrRes->outputs[0];
 
-		// We're supposed to XFree() the private bits of XF86VidModeModeInfo
-		// structs. This isn't actually possible from C++. At all. Period.
-		// Let it leak.
+		XRROutputInfo *outInfo = XRRGetOutputInfo(Dpy, scrRes, primaryOut);
+		ASSERT(outInfo->ncrtc > 0);
+		XRRCrtcInfo *conf = XRRGetCrtcInfo( Dpy, scrRes, outInfo->crtcs[0] );
+
+		// A quirk of XRandR is that the width and height are as the display
+		// controller ("CRTC") sees it, which means height and width are
+		// flipped if there's rotation going on.
+		bool bPortrait = conf->rotation & ( RR_Rotate_90 | RR_Rotate_270 );
+#define REAL_WIDTH(x) bPortrait ? x.height : x.width
+#define REAL_HEIGHT(x) bPortrait ? x.width : x.height
+
+		for(int i = 0; i < scrRes->nmode; i++)
+			// Ensure that the output supports the mode
+			for(int j = 0; j < outInfo->nmode; j++)
+				if(outInfo->modes[j] == scrRes->modes[i].id)
+				{
+					DisplayResolution res = { REAL_WIDTH(scrRes->modes[i]), REAL_HEIGHT(scrRes->modes[i]), true };
+					out.insert( res );
+					break;
+				}
+#undef REAL_WIDTH
+#undef REAL_HEIGHT
 	}
+	else
+#ifndef HAVE_XF86VIDMODE
+		FAIL_M("XRandR not present or too old.");
+#endif
+#endif
+#ifdef HAVE_XF86VIDMODE
+	{
+		int iNumModes = 0;
+		XF86VidModeModeInfo **aModes_;
+		XF86VidModeGetAllModeLines( Dpy, DefaultScreen( Dpy ), &iNumModes, &aModes_ );
+		ASSERT_M( iNumModes != 0, "Couldn't get resolution list from X server" );
+		XF86VidModeModeInfo *aModes = *aModes_;
 
-	XFree( aModes_ );
+		for( int i = 0; i < iNumModes; ++i )
+		{
+			// XXX: bStretched doesn't appear to actually be used anywhere?
+			DisplayResolution res = { aModes[i].hdisplay, aModes[i].vdisplay, true };
+			out.insert( res );
+
+			// We're supposed to XFree() the private bits of XF86VidModeModeInfo
+			// structs. This isn't actually possible from C++. At all. Period.
+			// Let it leak.
+		}
+
+		XFree( aModes_ );
+	}
+#endif
 }
 
 bool LowLevelWindow_X11::SupportsThreadedRendering()

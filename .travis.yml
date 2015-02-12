@@ -24,7 +24,7 @@ before_script:
     - sudo apt-get install -y zlib1g-dev
     - sudo apt-get install -y libjpeg8-dev
     - sudo apt-get install -y libpng12-dev
-    - sudo apt-get install -y libxtst-dev libxxf86vm-dev
+    - sudo apt-get install -y libxtst-dev libxrandr-dev libxxf86vm-dev
     - sudo apt-get install -y libglu1-mesa-dev
     - sudo apt-get install -y mesa-common-dev
     - sudo apt-get install -y libglew-dev

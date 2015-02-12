@@ -32,6 +32,17 @@ AC_DEFUN([SM_X11],
 	AC_DEFINE(HAVE_X11, 1, [X11 libraries present])
 	fi
 
+	# Check for Xrandr
+	AC_CHECK_LIB(Xrandr, XRRQueryVersion,
+		have_xrandr=yes,
+		have_xrandr=no,
+		[$XLIBS])
+	AC_CHECK_HEADER(X11/extensions/Xrandr.h, have_xrandr_header=yes, have_xrandr_header=no, [#include <X11/Xlib.h>])
+
+	if test "$have_xrandr_header" = "no"; then
+		have_xrandr=no
+	fi
+
 	# Check for Xxf86vm
 	AC_CHECK_LIB(Xxf86vm, XF86VidModeSwitchToMode,
 		have_xf86vm=yes,
@@ -43,14 +54,25 @@ AC_DEFUN([SM_X11],
 		have_xf86vm=no
 	fi
 
-	if test "$have_xf86vm" = "no"; then
+	no_modeset=yes
+	if test "$have_xrandr" = "yes"; then
+		XLIBS="$XLIBS -lXrandr"
+		AC_DEFINE(HAVE_XRANDR, 1, [Xrandr is available])
+		no_modeset=no
+	fi
+
+	if test "$have_xf86vm" = "yes"; then
+		XLIBS="$XLIBS -lXxf86vm"
+		AC_DEFINE(HAVE_XF86VIDMODE, 1, [XF86VidMode is available])
+		no_modeset=no
+	fi
+
+	if test "$no_modeset" = "yes"; then
 		if test "$unix" = "yes"; then
 			AC_MSG_ERROR("Couldn't find X11 libraries.")
 		else
 			no_x=yes
 		fi
-	else
-		XLIBS="$XLIBS -lXxf86vm"
 	fi
 
 	AM_CONDITIONAL(HAVE_X11, test "$no_x" != "yes")
