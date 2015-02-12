@@ -223,6 +223,33 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	{
 		// We're remodeling the existing window, and not touching the context.
 		bNewDeviceOut = false;
+
+		if( !p.windowed )
+		{
+			// X11 is an asynchronous beast. If we're resizing an existing
+			// window directly (i.e. override-redirect as opposed to asking the
+			// WM to do it) and don't wait for the window to actually be
+			// resized, we'll get unexpected results from glViewport() etc. I
+			// don't know why, or why it *doesn't* break in the slower process
+			// of waiting for the WM to resize the window.
+
+			// So, set the event mask so we're notified when the window is resized...
+			XWindowAttributes attrib;
+			XGetWindowAttributes( Dpy, Win, &attrib );
+			XSelectInput( Dpy, Win, attrib.your_event_mask | StructureNotifyMask );
+
+			// Send the resize command...
+			XResizeWindow( Dpy, Win, p.width, p.height );
+
+			// wait for the notification...
+			XEvent ev;
+			do {
+				XMaskEvent(Dpy, StructureNotifyMask, &ev);
+			} while(ev.type != ConfigureNotify);
+
+			// And finally, set the mask back to what it was.
+			XSelectInput( Dpy, Win, attrib.your_event_mask );
+		}
 	}
 
 	float rate = 60; // Will be unchanged if windowed. Not sure I care.
@@ -479,9 +506,6 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		// Commented out per the patch at http://ssc.ajworld.net/sm-ssc/bugtracker/view.php?id=398
 		//XMoveWindow( Dpy, Win, 0, 0 );
 	}
-
-	// Resize the window.
-	XResizeWindow( Dpy, Win, p.width, p.height );
 
 	CurrentParams = p;
 	ASSERT( rate > 0 );
