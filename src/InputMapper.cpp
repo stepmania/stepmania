@@ -413,6 +413,21 @@ static const AutoMappings g_AutoMappings[] =
 	   ),
 	   AutoMappings(
 		"dance",
+		"USB DancePad",
+		"D-Force Dance Pad",
+		AutoMappingEntry( 0, JOY_BUTTON_1,     DANCE_BUTTON_UP,	       false ),
+		AutoMappingEntry( 0, JOY_BUTTON_2,     DANCE_BUTTON_DOWN,      false ),
+		AutoMappingEntry( 0, JOY_BUTTON_3,     DANCE_BUTTON_LEFT,      false ),
+		AutoMappingEntry( 0, JOY_BUTTON_4,     DANCE_BUTTON_RIGHT,     false ),
+		AutoMappingEntry( 0, JOY_BUTTON_7,      DANCE_BUTTON_UPLEFT,    false ),
+		AutoMappingEntry( 0, JOY_BUTTON_8,      DANCE_BUTTON_UPRIGHT,   false ),
+		//AutoMappingEntry{ 0, JOY_BUTTON_1,    DANCE_BUTTON_DOWNLEFT,  false ),
+		//AutoMappingEntry{ 0, JOY_BUTTON_4,    DANCE_BUTTON_DOWNRIGHT, false ),
+		AutoMappingEntry( 0, JOY_BUTTON_9,      GAME_BUTTON_BACK,       false ),
+		AutoMappingEntry( 0, JOY_BUTTON_10,     GAME_BUTTON_START,      false )
+	   ),
+	   AutoMappings(
+		"dance",
 		"Dual USB Vibration Joystick",
 		"PC Multi Hub Double Power Box 4",
 		AutoMappingEntry( 0, JOY_BUTTON_13,     DANCE_BUTTON_UP,	       false ),
