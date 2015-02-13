@@ -20,8 +20,9 @@
 
 -- StepManiaCredits is defined in _fallback/Scripts/04 CreditsHelpers.lua.
 
-local lineOn = cmd(zoom,0.875;strokecolor,color("#444444");shadowcolor,color("#444444");shadowlength,3)
-local sectionOn = cmd(diffuse,color("#88DDFF");strokecolor,color("#446688");shadowcolor,color("#446688");shadowlength,3)
+local line_on = cmd(zoom,0.875;strokecolor,color("#444444");shadowcolor,color("#444444");shadowlength,1)
+local section_on = cmd(diffuse,color("#88DDFF");strokecolor,color("#446688");shadowcolor,color("#446688");shadowlength,1)
+local subsection_on = cmd(diffuse,color("#88DDFF");strokecolor,color("#446688");shadowcolor,color("#446688");shadowlength,1)
 local item_padding_start = 4;
 local line_height= 30
 -- Tell the credits table the line height so it can use it for logo sizing.
@@ -38,9 +39,13 @@ local creditScroller = Def.ActorScroller {
 
 -- Add sections with padding.
 for section in ivalues(StepManiaCredits.Get()) do
-	StepManiaCredits.AddLineToScroller(creditScroller, section.name, sectionOn)
+	StepManiaCredits.AddLineToScroller(creditScroller, section.name, section_on)
 	for name in ivalues(section) do
-		StepManiaCredits.AddLineToScroller(creditScroller, name)
+		if name.type == "subsection" then
+			StepManiaCredits.AddLineToScroller(creditScroller, name, subsection_on)
+		else
+			StepManiaCredits.AddLineToScroller(creditScroller, name, line_on)
+		end
 	end
 	StepManiaCredits.AddLineToScroller(creditScroller)
 	StepManiaCredits.AddLineToScroller(creditScroller)
