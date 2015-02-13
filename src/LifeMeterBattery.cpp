@@ -240,8 +240,8 @@ int LifeMeterBattery::GetRemainingLives() const
 }
 void LifeMeterBattery::Refresh()
 {
-	m_textNumLives.SetText( ssprintf(LIVES_FORMAT.GetValue(), m_iLivesLeft-1) );
-	if( m_iLivesLeft-1 < 0 )
+	m_textNumLives.SetText( ssprintf(LIVES_FORMAT.GetValue(), m_iLivesLeft) );
+	if( m_iLivesLeft < 0 )
 	{
 		// hide text to avoid showing -1
 		m_textNumLives.SetVisible(false);
