@@ -384,16 +384,58 @@ void TimingData::AddSegment( const TimingSegment *seg )
 			// get the segment before last; if we're on the same
 			// row, get the segment in effect before 'cur'
 			if( bOnSameRow && index > 0 )
-				prev = vSegs[index - 1];
-
-			// if true, this is redundant segment change
-			if( (*prev) == (*seg) )
 			{
-				if( prev != cur )
-					EraseSegment( vSegs, index, cur );
-				return;
+				prev = vSegs[index - 1];
 			}
 
+			// If there is another segment after this one, it might become
+			// redundant when this one is inserted.
+			// If the next segment is redundant, we want to move its starting row
+			// to the row the new segment is being added at instead of erasing it
+			// and adding the new segment.
+			// If the new segment is also redundant, erase the next segment because
+			// that effectively moves it back to the prev segment. -Kyz
+			if(static_cast<size_t>(index) < vSegs.size() - 1)
+			{
+				TimingSegment* next= vSegs[index + 1];
+				if((*seg) == (*next))
+				{
+					// The segment after this new one is redundant.
+					if((*seg) == (*prev))
+					{
+						// This new segment is redundant.  Erase the next segment and
+						// ignore this new one.
+						EraseSegment(vSegs, index + 1, next);
+						if( prev != cur )
+						{
+							EraseSegment( vSegs, index, cur );
+						}
+						return;
+					}
+					else
+					{
+						// Move the next segment's start back to this row.
+						next->SetRow(seg->GetRow());
+						if( prev != cur )
+						{
+							EraseSegment( vSegs, index, cur );
+						}
+						return;
+					}
+				}
+			}
+			else
+			{
+				// if true, this is redundant segment change
+				if( (*prev) == (*seg) )
+				{
+					if( prev != cur )
+					{
+						EraseSegment( vSegs, index, cur );
+					}
+					return;
+				}
+			}
 			break;
 		}
 	}
