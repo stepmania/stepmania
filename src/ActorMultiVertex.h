@@ -1,4 +1,4 @@
-/** @brief ActorMultiVertex - A texture created from multiple textures. */
+/** @brief ActorMultiVertex - An actor with mutiple vertices. Can be used to create shapes that quads can't. */
 
 #include "Actor.h"
 #include "CubicSpline.h"
