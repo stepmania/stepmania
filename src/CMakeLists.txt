@@ -16,6 +16,13 @@ elseif(MSVC)
 elseif(WIN32)
 
 else() # Unix/Linux
+  find_library(DL_LIBRARY dl)
+  if(${LIBDL_FOUND})
+    set(HAS_LIBDL TRUE)
+  else()
+    set(HAS_LIBDL FALSE)
+  endif()
+
   find_package(Threads)
   if (${Threads_FOUND})
     set(HAS_PTHREAD TRUE)
@@ -41,6 +48,8 @@ else() # Unix/Linux
   endif()
 
   find_package(GTK2 2.0 REQUIRED gtk)
+
+
 endif()
 
 source_group("Generated Files" FILES ${SM_SRC_DIR}/verstub.cpp)
@@ -420,6 +429,7 @@ elseif(APPLE)
   )
 else() # Unix / Linux
   list(APPEND SMDATA_LINK_LIB
+    ${DL_LIBRARY}
     ${OPENGL_LIBRARY}
     ${GTK2_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
