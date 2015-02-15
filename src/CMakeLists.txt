@@ -23,6 +23,13 @@ else() # Unix/Linux
     set(HAS_LIBDL FALSE)
   endif()
 
+  include("${SM_CMAKE_DIR}/CMakeScout_XRandR.cmake")
+  if (${XRANDR_FOUND})
+    set(HAS_XRANDR TRUE)
+  else()
+    set(HAX_XRANDR FALSE)
+  endif()
+
   find_package(Threads)
   if (${Threads_FOUND})
     set(HAS_PTHREAD TRUE)
@@ -433,6 +440,7 @@ else() # Unix / Linux
     ${OPENGL_LIBRARY}
     ${GTK2_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
+    ${XRANDR_LIBRARIES}
   )
   message(STATUS "${CMAKE_THREAD_LIBS_INIT}")
 endif()
