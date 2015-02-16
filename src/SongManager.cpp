@@ -162,7 +162,7 @@ void SongManager::SanityCheckGroupDir( RString sDir ) const
 	GetDirListing( sDir + "/*.ogg", arrayFiles );
 	GetDirListing( sDir + "/*.wav", arrayFiles );
 	if( !arrayFiles.empty() )
-		RageException::Throw( FOLDER_CONTAINS_MUSIC_FILES.GetValue(), sDir.c_str() );	
+		LOG->Warn( FOLDER_CONTAINS_MUSIC_FILES.GetValue(), sDir.c_str() );	
 }
 
 void SongManager::AddGroup( RString sDir, RString sGroupDirName )
