@@ -30,6 +30,18 @@ else() # Unix/Linux
     set(HAX_XRANDR FALSE)
   endif()
 
+  include("${SM_CMAKE_DIR}/CMakeScout_Vorbis.cmake")
+  if (VORBIS_FOUND)
+    set(HAS_VORBIS TRUE)
+  else()
+    set(HAS_VORBIS FALSE)
+  endif()
+  if (OGG_FOUND)
+    set(HAS_OGG TRUE)
+  else()
+    set(HAS_OGG FALSE)
+  endif()
+
   find_package(Threads)
   if (${Threads_FOUND})
     set(HAS_PTHREAD TRUE)
@@ -42,6 +54,10 @@ else() # Unix/Linux
     set(HAS_FFMPEG TRUE)
   else()
     set(HAS_FFMPEG FALSE)
+  endif()
+
+  if (NOT HAS_OGG)
+    message(FATAL_ERROR "OGG required to compile StepMania.")
   endif()
 
   find_package(OpenGL REQUIRED)
@@ -438,6 +454,7 @@ else() # Unix / Linux
   list(APPEND SMDATA_LINK_LIB
     ${DL_LIBRARY}
     ${OPENGL_LIBRARY}
+    ${VORBIS_LIBRARIES}
     ${GTK2_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
     ${XRANDR_LIBRARIES}
