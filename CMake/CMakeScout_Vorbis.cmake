@@ -1,40 +1,158 @@
-# This comes from the Allegro source.
+# Borrowed from orxonox.
 
-# - Find vorbis
-# Find the native vorbis includes and libraries
+# Several changes and additions by Fabian 'x3n' Landau
+#                 > www.orxonox.net <
+
+IF (OGG_INCLUDE_DIR AND OGG_LIBRARY)
+  SET(OGG_FIND_QUIETLY TRUE)
+ENDIF (OGG_INCLUDE_DIR AND OGG_LIBRARY)
+
+IF (VORBIS_INCLUDE_DIR AND VORBIS_LIBRARY AND VORBISENC_LIBRARY AND VORBISFILE_LIBRARY)
+  SET(VORBIS_FIND_QUIETLY TRUE)
+ENDIF (VORBIS_INCLUDE_DIR AND VORBIS_LIBRARY AND VORBISENC_LIBRARY AND VORBISFILE_LIBRARY) 
+
+
+#SET(OGGVORBIS_LIBRARY_DIR "/usr/pack/oggvorbis-1.0-ds/i686-debian-linux3.0/lib")
+#SET(OGGVORBIS_LIBRARY "-L ${OGGVORBIS_LIBRARY_DIR} -lvorbisenc -lvorbisfile -logg -lvorbis ")
+#SET(OGGVORBIS_INCLUDE_DIR "/usr/pack/oggvorbis-1.0-ds/i686-debian-linux3.0/include")
+
 #
-#  VORBIS_INCLUDE_DIR - where to find vorbis.h, etc.
-#  VORBIS_LIBRARIES   - List of libraries when using vorbis(file).
-#  VORBIS_FOUND       - True if vorbis found.
+# Includes
+#
 
-if(VORBIS_INCLUDE_DIR)
-  # Already in cache, be silent
-  set(VORBIS_FIND_QUIETLY TRUE)
-endif(VORBIS_INCLUDE_DIR)
+FIND_PATH(OGG_INCLUDE_DIR ogg/ogg.h
+  /usr/pack/oggvorbis-1.0-ds/i686-debian-linux3.0/include 		# Tardis specific hack
+  /usr/local/include
+  /usr/include
+  /sw/include
+  /opt/local/include
+  /opt/csw/include
+  /opt/csw/include
+  /opt/include
+  ../libs/libogg-1.1.3/include
+  ${DEPENDENCY_DIR}/libogg-1.1.3/include
+  )
 
-find_package(Ogg)
-if(OGG_FOUND)
-  find_path(VORBIS_INCLUDE_DIR vorbis/vorbisfile.h)
-  # MSVC built vorbis may be named vorbis_static
-  # The provided project files name the library with the lib prefix.
-  find_library(VORBIS_LIBRARY
-    NAMES vorbis vorbis_static libvorbis libvorbis_static)
-  find_library(VORBISFILE_LIBRARY
-    NAMES vorbisfile vorbisfile_static libvorbisfile libvorbisfile_static)
-  # Handle the QUIETLY and REQUIRED arguments and set VORBIS_FOUND
-  # to TRUE if all listed variables are TRUE.
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(VORBIS DEFAULT_MSG
-    VORBIS_INCLUDE_DIR
-    VORBIS_LIBRARY VORBISFILE_LIBRARY)
-endif(OGG_FOUND)
+FIND_PATH(VORBIS_INCLUDE_DIR vorbis/codec.h
+  /usr/pack/oggvorbis-1.0-ds/i686-debian-linux3.0/include 		# Tardis specific hack
+  /usr/local/include
+  /usr/include
+  /sw/include
+  /opt/local/include
+  /opt/csw/include
+  /opt/csw/include
+  /opt/include
+  ../libs/libvorbis-1.2.0/include
+  ${DEPENDENCY_DIR}/libvorbis-1.2.0/include
+  )
 
-if(VORBIS_FOUND)
-  set(VORBIS_LIBRARIES ${VORBISFILE_LIBRARY} ${VORBIS_LIBRARY}
-    ${OGG_LIBRARY})
-else(VORBIS_FOUND)
-  set(VORBIS_LIBRARIES)
-endif(VORBIS_FOUND)
+#
+# Libs
+#
 
-mark_as_advanced(VORBIS_INCLUDE_DIR)
-mark_as_advanced(VORBIS_LIBRARY VORBISFILE_LIBRARY)
+FIND_LIBRARY(OGG_LIBRARY
+  NAMES ogg
+  PATHS
+  /usr/pack/oggvorbis-1.0-ds/i686-debian-linux3.1/lib
+  /usr/local/lib
+  /usr/lib
+  /sw/lib
+  /opt/local/lib
+  /opt/csw/lib
+  /opt/lib
+  ../libs/libogg-1.1.3/src/.libs
+  ${DEPENDENCY_DIR}/libogg-1.1.3/lib
+  )
+
+FIND_LIBRARY(VORBIS_LIBRARY
+  NAMES vorbis
+  PATHS
+  /usr/pack/oggvorbis-1.0-ds/i686-debian-linux3.1/lib
+  /usr/local/lib
+  /usr/lib
+  /sw/lib
+  /opt/local/lib
+  /opt/csw/lib
+  /opt/lib
+  ../libs/libvorbis-1.2.0/lib/.libs
+  ${DEPENDENCY_DIR}/libvorbis-1.2.0/lib
+  )
+
+#FIND_LIBRARY(VORBISENC_LIBRARY
+#  NAMES vorbisenc
+#  PATHS
+#  /usr/pack/oggvorbis-1.0-ds/i686-debian-linux3.1/lib
+#  /usr/local/lib
+#  /usr/lib
+#  /sw/lib
+#  /opt/local/lib
+#  /opt/csw/lib
+#  /opt/lib
+#  ../libs/libvorbis-1.2.0/lib/.libs
+#  )
+
+FIND_LIBRARY(VORBISFILE_LIBRARY
+  NAMES vorbisfile
+  PATHS
+  /usr/pack/oggvorbis-1.0-ds/i686-debian-linux3.1/lib
+  /usr/local/lib
+  /usr/lib
+  /sw/lib
+  /opt/local/lib
+  /opt/csw/lib
+  /opt/lib
+  ../libs/libvorbis-1.2.0/lib/.libs
+  ${DEPENDENCY_DIR}/libvorbis-1.2.0/lib
+  )
+
+SET (OGG_FOUND "NO")
+
+IF (OGG_INCLUDE_DIR AND OGG_LIBRARY)
+  SET (OGG_FOUND "YES")
+  IF (NOT OGG_FIND_QUIETLY)
+    MESSAGE (STATUS "Ogg was found.")
+    IF (VERBOSE_FIND)
+      MESSAGE (STATUS "  include path: ${OGG_INCLUDE_DIR}")
+      MESSAGE (STATUS "  library path: ${OGG_LIBRARY}")
+      MESSAGE (STATUS "  libraries:    ogg")
+    ENDIF (VERBOSE_FIND)
+  ENDIF (NOT OGG_FIND_QUIETLY)
+ELSE (OGG_INCLUDE_DIR AND OGG_LIBRARY)
+  IF (NOT OGG_INCLUDE_DIR)
+    MESSAGE (SEND_ERROR "Ogg include path was not found.")
+  ENDIF (NOT OGG_INCLUDE_DIR)
+  IF (NOT OGG_LIBRARY)
+    MESSAGE (SEND_ERROR "Ogg library was not found.")
+  ENDIF (NOT OGG_LIBRARY)
+ENDIF (OGG_INCLUDE_DIR AND OGG_LIBRARY)
+
+
+SET (VORBIS_FOUND "NO")
+
+IF (VORBIS_INCLUDE_DIR AND VORBIS_LIBRARY AND VORBISFILE_LIBRARY)# AND VORBISENC_LIBRARY)
+  SET (VORBIS_FOUND "YES")
+  IF (NOT VORBIS_FIND_QUIETLY)
+    MESSAGE (STATUS "Vorbis was found.")
+    IF (VERBOSE_FIND)
+      MESSAGE (STATUS "  include path: ${VORBIS_INCLUDE_DIR}")
+      MESSAGE (STATUS "  library path: ${VORBIS_LIBRARY}")
+      #MESSAGE (STATUS "  library path: ${VORBISENC_LIBRARY}")
+      MESSAGE (STATUS "  library path: ${VORBISFILE_LIBRARY}")
+      MESSAGE (STATUS "  libraries:    vorbis vorbisenc vorbisfile")
+    ENDIF (VERBOSE_FIND)
+  ENDIF (NOT VORBIS_FIND_QUIETLY)
+ELSE (VORBIS_INCLUDE_DIR AND VORBIS_LIBRARY AND VORBISFILE_LIBRARY)# AND VORBISENC_LIBRARY)
+  IF (NOT VORBIS_INCLUDE_DIR)
+    MESSAGE (SEND_ERROR "Vorbis include path was not found.")
+  ENDIF (NOT VORBIS_INCLUDE_DIR)
+  IF (NOT VORBIS_LIBRARY)
+    MESSAGE (SEND_ERROR "Vorbis library \"vorbis\" was not found.")
+  ENDIF (NOT VORBIS_LIBRARY)
+  #IF (NOT VORBISENC_LIBRARY)
+  #  MESSAGE (SEND_ERROR "Vorbis library \"vorbisenc\" was not found.")
+  #ENDIF (NOT VORBISENC_LIBRARY)
+  IF (NOT VORBISFILE_LIBRARY)
+    MESSAGE (SEND_ERROR "Vorbis library \"vorbisfile\" was not found.")
+  ENDIF (NOT VORBISFILE_LIBRARY)
+ENDIF (VORBIS_INCLUDE_DIR AND VORBIS_LIBRARY AND VORBISFILE_LIBRARY)# AND VORBISENC_LIBRARY)
+
