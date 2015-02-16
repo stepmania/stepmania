@@ -423,6 +423,18 @@ void TimingData::AddSegment( const TimingSegment *seg )
 						return;
 					}
 				}
+				else
+				{
+					// if true, this is redundant segment change
+					if( (*prev) == (*seg) )
+					{
+						if( prev != cur )
+						{
+							EraseSegment( vSegs, index, cur );
+						}
+						return;
+					}
+				}
 			}
 			else
 			{

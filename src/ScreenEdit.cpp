@@ -2367,7 +2367,10 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 
 			float fNewBPM = fBPM + fDelta;
-			GetAppropriateTimingForUpdate().SetBPMAtBeat( GetBeat(), fNewBPM );
+			if(fNewBPM > 0.0f)
+			{
+				GetAppropriateTimingForUpdate().AddSegment(BPMSegment(GetRow(), fNewBPM));
+			}
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 			SetDirty( true );
 		}
