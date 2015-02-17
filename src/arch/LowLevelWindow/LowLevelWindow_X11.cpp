@@ -96,6 +96,9 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 			XRRScreenResources *res = XRRGetScreenResources(Dpy, Win);
 			XRRCrtcInfo *conf = XRRGetCrtcInfo(Dpy, res, g_usedCrtc);
 			XRRSetCrtcConfig(Dpy, res, g_usedCrtc, conf->timestamp, conf->x, conf->y, g_originalRandRMode, conf->rotation, conf->outputs, conf->noutput);
+
+			XRRFreeScreenResources(res);
+			XRRFreeCrtcInfo(conf);
 		}
 		else
 #ifndef HAVE_XF86VIDMODE
@@ -338,6 +341,11 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 			// We don't move to absolute 0,0 because that may be in the area of a different output.
 			// Instead we preserved the corner of our CRTC; go to that.
 			XMoveWindow(Dpy, Win, oldConf->x, oldConf->y);
+
+			// Final cleanup
+			XRRFreeScreenResources(scrRes);
+			XRRFreeOutputInfo(outInfo);
+			XRRFreeCrtcInfo(oldConf);
 		}
 		else
 #ifndef HAVE_XF86VIDMODE
@@ -448,6 +456,9 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 				XRRScreenResources *res = XRRGetScreenResources(Dpy, Win);
 				XRRCrtcInfo *conf = XRRGetCrtcInfo(Dpy, res, g_usedCrtc);
 				XRRSetCrtcConfig(Dpy, res, g_usedCrtc, conf->timestamp, conf->x, conf->y, g_originalRandRMode, conf->rotation, conf->outputs, conf->noutput);
+
+				XRRFreeScreenResources(res);
+				XRRFreeCrtcInfo(conf);
 			}
 			else
 #ifndef HAVE_XF86VIDMODE
@@ -614,6 +625,10 @@ void LowLevelWindow_X11::GetDisplayResolutions( DisplayResolutions &out ) const
 				}
 #undef REAL_WIDTH
 #undef REAL_HEIGHT
+
+		XRRFreeScreenResources(scrRes);
+		XRRFreeOutputInfo(outInfo);
+		XRRFreeCrtcInfo(conf);
 	}
 	else
 #ifndef HAVE_XF86VIDMODE
