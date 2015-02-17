@@ -203,16 +203,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		XSelectInput( Dpy, Win, winAttrib.your_event_mask | StructureNotifyMask );
 		XMapWindow( Dpy, Win );
 
-		// Wait until we actually have a mapped window before trying to
-		// use it!
-		XEvent event;
-		do
-		{
-			XMaskEvent( Dpy, StructureNotifyMask, &event );
-		} while (event.type != MapNotify);
-
-		// Set the event mask back to what it was
-		XSelectInput( Dpy, Win, winAttrib.your_event_mask );
+		// We can wait for the MapNotify later. We've got work to do!
 
 		// I can't find official docs saying what happens if you re-init GLEW.
 		// I'll just assume the behavior is undefined.
@@ -515,31 +506,42 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	ASSERT( rate > 0 );
 	CurrentParams.rate = roundf(rate);
 
-	// Set our V-sync hint.
-	if(GLXEW_EXT_swap_control)
-		glXSwapIntervalEXT( Dpy, Win, CurrentParams.vsync ? 1 : 0 );
-	// XXX: These two might be server-global. I should look into whether
-	// to try to preserve the original value on exit.
-#ifdef GLXEW_MESA_swap_control // Added in 1.7. 1.6 is still common out there apparently.
-	else if(GLXEW_MESA_swap_control)
-		glXSwapIntervalMESA( CurrentParams.vsync ? 1 : 0 );
-#endif
-	else if(GLXEW_SGI_swap_control) // DRI Intel needs this
-		glXSwapIntervalSGI( CurrentParams.vsync ? 1 : 0 );
-	else
-		CurrentParams.vsync = false; // Assuming it's not on
-
-	if( bNewDeviceOut == false && !p.windowed )
+	// Wait for window to be ready for drawing, before setting v-sync hint.
+	// Just in case the GLX impl is sensitive to it.
+	if( bNewDeviceOut == true )
 	{
-		// Wait on the window to be resized as we commanded earlier.
+		XEvent ev;
+		do {
+			XMaskEvent(Dpy, StructureNotifyMask, &ev);
+		} while(ev.type != MapNotify);
+
+		// And set the mask back to what it was.
+		XSelectInput( Dpy, Win, winAttrib.your_event_mask );
+	}
+	else if( !p.windowed )
+	{
 		XEvent ev;
 		do {
 			XMaskEvent(Dpy, StructureNotifyMask, &ev);
 		} while(ev.type != ConfigureNotify);
 
-		// And finally, set the mask back to what it was.
+		// And set the mask back to what it was.
 		XSelectInput( Dpy, Win, winAttrib.your_event_mask );
 	}
+
+	// Set our V-sync hint.
+	if(GLXEW_EXT_swap_control) // I haven't seen this actually implemented yet, but why not.
+		glXSwapIntervalEXT( Dpy, Win, CurrentParams.vsync ? 1 : 0 );
+	// XXX: These two might be server-global. I should look into whether
+	// to try to preserve the original value on exit.
+#ifdef GLXEW_MESA_swap_control // Added in 1.7. 1.6 is still common out there apparently.
+	else if(GLXEW_MESA_swap_control) // Haven't seen this NOT implemented yet
+		glXSwapIntervalMESA( CurrentParams.vsync ? 1 : 0 );
+#endif
+	else if(GLXEW_SGI_swap_control) // But old GLEW.
+		glXSwapIntervalSGI( CurrentParams.vsync ? 1 : 0 );
+	else
+		CurrentParams.vsync = false; // Assuming it's not on
 
 	return ""; // Success
 }
