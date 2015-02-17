@@ -27,16 +27,6 @@ bool SMLoader::LoadFromDir( const RString &sPath, Song &out )
 {
 	vector<RString> aFileNames;
 	GetApplicableFiles( sPath, aFileNames );
-	
-	if( aFileNames.size() > 1 )
-	{
-		// Need to break this up first.
-		RString tmp = "Song " + sPath + " has more than one";
-		LOG->UserLog(tmp, this->GetFileExtension(), "file. There can only be one!");
-		return false;
-	}
-	
-	ASSERT( aFileNames.size() == 1 );
 	return LoadFromSimfile( sPath + aFileNames[0], out );
 }
 
@@ -1229,6 +1219,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 
 void SMLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 {
+	GetDirListing( sPath + RString("*.ats" ), out );
 	GetDirListing( sPath + RString("*" + this->GetFileExtension() ), out );
 }
 

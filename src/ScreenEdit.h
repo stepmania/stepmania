@@ -217,8 +217,10 @@ public:
 	virtual void HandleMessage( const Message &msg );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	void SetDirty( bool bDirty ) { m_bDirty = bDirty; }
-	bool IsDirty() const { return m_bDirty; }
+	void SetDirty(bool dirty);
+	bool IsDirty() const { return m_dirty; }
+
+	void PerformSave(bool autosave);
 
 	EditState GetEditState(){ return m_EditState; }
 
@@ -326,7 +328,8 @@ protected:
 	NoteData		m_Undo;
 
 	/** @brief Has the NoteData been changed such that a user should be prompted to save? */
-	bool			m_bDirty;
+	bool			m_dirty;
+	float m_next_autosave_time;
 
 	/** @brief The sound that is played when a note is added. */
 	RageSound		m_soundAddNote;

@@ -113,9 +113,9 @@ public:
 	 * @param sPath the path where we're saving the file.
 	 * @param bSavingCache a flag to determine if we're saving cache data.
 	 */
-	bool SaveToSSCFile( RString sPath, bool bSavingCache );
+	bool SaveToSSCFile(RString sPath, bool bSavingCache, bool autosave= false);
 	/** @brief Save to the SSC and SM files no matter what. */
-	void Save();
+	void Save(bool autosave= false);
 	/** 
 	  * @brief Save the current Song to a JSON file.
 	  * @return its success or failure. */
@@ -132,6 +132,9 @@ public:
 	 * @brief Save the current Song to a DWI file if possible.
 	 * @return its success or failure. */
 	bool SaveToDWIFile();
+
+	bool WasLoadedFromAutosave() const
+	{ return GetExtension(m_sSongFileName) == "ats"; }
 
 	const RString &GetSongFilePath() const;
 	RString GetCacheFilePath() const;
