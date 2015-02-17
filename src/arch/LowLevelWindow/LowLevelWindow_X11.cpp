@@ -204,11 +204,10 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 		// Wait until we actually have a mapped window before trying to
 		// use it!
-		// DANGER! This drops ALL events before the MapNotify. Use XMaskEvent()
 		XEvent event;
 		do
 		{
-			XNextEvent( Dpy, &event );
+			XMaskEvent( Dpy, StructureNotifyMask, &event );
 		} while (event.type != MapNotify);
 
 		// Set the event mask back to what it was
