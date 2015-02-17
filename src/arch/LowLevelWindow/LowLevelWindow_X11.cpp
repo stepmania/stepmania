@@ -142,6 +142,8 @@ void *LowLevelWindow_X11::GetProcAddress( RString s )
 
 RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
+	XWindowAttributes winAttrib;
+
 	if( g_pContext == NULL || p.bpp != CurrentParams.bpp || m_bWasWindowed != p.windowed )
 	{
 		bool bFirstRun = g_pContext == NULL;
@@ -197,7 +199,6 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		glXMakeCurrent( Dpy, Win, g_pContext );
 
 		// Map the window, ensuring we get the MapNotify event
-		XWindowAttributes winAttrib;
 		XGetWindowAttributes( Dpy, Win, &winAttrib );
 		XSelectInput( Dpy, Win, winAttrib.your_event_mask | StructureNotifyMask );
 		XMapWindow( Dpy, Win );
@@ -236,21 +237,14 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 			// of waiting for the WM to resize the window.
 
 			// So, set the event mask so we're notified when the window is resized...
-			XWindowAttributes attrib;
-			XGetWindowAttributes( Dpy, Win, &attrib );
-			XSelectInput( Dpy, Win, attrib.your_event_mask | StructureNotifyMask );
+			XGetWindowAttributes( Dpy, Win, &winAttrib );
+			XSelectInput( Dpy, Win, winAttrib.your_event_mask | StructureNotifyMask );
 
 			// Send the resize command...
 			XResizeWindow( Dpy, Win, p.width, p.height );
 
-			// wait for the notification...
-			XEvent ev;
-			do {
-				XMaskEvent(Dpy, StructureNotifyMask, &ev);
-			} while(ev.type != ConfigureNotify);
-
-			// And finally, set the mask back to what it was.
-			XSelectInput( Dpy, Win, attrib.your_event_mask );
+			// We'll wait for the notification once we've done everything else,
+			// to save time.
 		}
 	}
 
@@ -444,7 +438,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		// We should do this every time on fullscreen and not only we entering from windowed mode because we could lose focus at resolution change and that will leave the user input locked.
 		XGrabKeyboard( Dpy, Win, True, GrabModeAsync, GrabModeAsync, CurrentTime );
 	}
-	else
+	else // if(p.windowed)
 	{
 		if( !m_bWasWindowed )
 		{
@@ -534,6 +528,18 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		glXSwapIntervalSGI( CurrentParams.vsync ? 1 : 0 );
 	else
 		CurrentParams.vsync = false; // Assuming it's not on
+
+	if( bNewDeviceOut == false && !p.windowed )
+	{
+		// Wait on the window to be resized as we commanded earlier.
+		XEvent ev;
+		do {
+			XMaskEvent(Dpy, StructureNotifyMask, &ev);
+		} while(ev.type != ConfigureNotify);
+
+		// And finally, set the mask back to what it was.
+		XSelectInput( Dpy, Win, winAttrib.your_event_mask );
+	}
 
 	return ""; // Success
 }
