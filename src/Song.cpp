@@ -991,7 +991,7 @@ bool Song::HasStepsTypeAndDifficulty( StepsType st, Difficulty dc ) const
 	return SongUtil::GetOneSteps( this, st, dc ) != NULL;
 }
 
-void Song::Save()
+void Song::Save(bool autosave)
 {
 	LOG->Trace( "Song::SaveToSongFile()" );
 
@@ -999,11 +999,16 @@ void Song::Save()
 	TranslateTitles();
 
 	// Save the new files. These calls make backups on their own.
-	if( !SaveToSSCFile(GetSongFilePath(), false) )
+	if( !SaveToSSCFile(GetSongFilePath(), false, autosave) )
 		return;
+	SaveToCacheFile();
+	// Skip saving the sm and .old files if we are autosaving. -Kyz
+	if(autosave)
+	{
+		return;
+	}
 	SaveToSMFile();
 	//SaveToDWIFile();
-	SaveToCacheFile();
 
 	/* We've safely written our files and created backups. Rename non-SM and
 	 * non-DWI files to avoid confusion. */
@@ -1058,16 +1063,20 @@ bool Song::SaveToSMFile()
 
 }
 
-bool Song::SaveToSSCFile( RString sPath, bool bSavingCache )
+bool Song::SaveToSSCFile( RString sPath, bool bSavingCache, bool autosave )
 {
 	RString path = sPath;
 	if (!bSavingCache)
 		path = SetExtension(sPath, "ssc");
-	
+	if(autosave)
+	{
+		path = SetExtension(sPath, "ats");
+	}
+
 	LOG->Trace( "Song::SaveToSSCFile('%s')", path.c_str() );
 
 	// If the file exists, make a backup.
-	if( !bSavingCache && IsAFile(path) )
+	if(!bSavingCache && !autosave && IsAFile(path))
 		FileCopy( path, path + ".old" );
 
 	vector<Steps*> vpStepsToSave;
@@ -1090,13 +1099,22 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache )
 		vpStepsToSave.push_back(*s);
 	}
 	
-	if (bSavingCache)
+	if(bSavingCache || autosave)
 	{
 		return NotesWriterSSC::Write(path, *this, vpStepsToSave, bSavingCache);
 	}
 
 	if( !NotesWriterSSC::Write(path, *this, vpStepsToSave, bSavingCache) )
 		return false;
+
+	// Remove the autosave file so that edit mode won't auto load it. -Kyz
+	RString autosave_path= sPath;
+	SetExtension(autosave_path, "ats");
+	if(FILEMAN->DoesFileExist(autosave_path))
+	{
+		FILEMAN->Remove(autosave_path);
+	}
+
 
 	if( g_BackUpAllSongSaves.Get() )
 	{
