@@ -44,7 +44,7 @@ update_version:
 	if git rev-parse --short HEAD; then \
 		echo "const char *const product_version = \"5.0-git-`git rev-parse --short HEAD`\";" >> ver.cpp; \
 	else \
-		echo "const char *const product_version = \"5.0-UNKNOWN\";" >> ver.cpp; \
+		echo "const char *const product_version = \"5.0.6\";" >> ver.cpp; \
 	fi
 
 ver.cpp: update_version
