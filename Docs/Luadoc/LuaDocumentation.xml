@@ -4372,7 +4372,7 @@ save yourself some time, copy this for undocumented things:
 </Class>
 <Class name='ScreenTextEntry'>
 	<Description>
-		TextEntrySettings is implemented similar to the Attributes in BitmapText. Formatting issues prevent the sample from being properly shown here; please see Changelog_sm-ssc.txt for the TextEntrySettings format.
+		TextEntrySettings is implemented similar to the Attributes in BitmapText. Formatting issues prevent the sample from being properly shown here.<br />Please see docs/Themerdocs/ScreenTextEntry.txt for the TextEntrySettings format.
 	</Description>
 	<Function name='Load' return='void' arguments='TextEntrySettings args'>
 		Sets up a ScreenTextEntry's values.
