@@ -294,6 +294,7 @@ void BitmapText::BuildChars()
 			RageSpriteVertex v[4];
 			const glyph &g = m_pFont->GetGlyph( sLine[j] );
 
+			// Advance the cursor early for RTL(?)
 			if( m_pFont->IsRightToLeft() )
 				iX -= g.m_iHadvance;
 
@@ -304,7 +305,8 @@ void BitmapText::BuildChars()
 			v[3].p = RageVector3( iX+g.m_fHshift+g.m_fWidth,	iY+g.m_pPage->m_fVshift,		0 );	// top right
 
 			// Advance the cursor.
-			iX += g.m_iHadvance;
+			if( !m_pFont->IsRightToLeft() )
+				iX += g.m_iHadvance;
 
 			// set texture coordinates
 			v[0].t = RageVector2( g.m_TexRect.left,	g.m_TexRect.top );
