@@ -81,7 +81,10 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 
 		Song* pSong = GAMESTATE->m_pCurSong;
 		Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
-		GAMESTATE->m_pCurSteps[PLAYER_1].Set(NULL);
+		FOREACH_PlayerNumber(pn)
+		{
+			GAMESTATE->m_pCurSteps[pn].Set(NULL);
+		}
 		bool bSaveSong = !pStepsToDelete->WasLoadedFromProfile();
 		pSong->DeleteSteps( pStepsToDelete );
 		SONGMAN->Invalidate( pSong );

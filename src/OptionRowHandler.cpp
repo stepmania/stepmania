@@ -203,7 +203,7 @@ public:
 				}
 				else
 				{
-					LuaHelpers::ReportScriptErrorFmt("Unkown row flag \"%s\".", sName.c_str());
+					LuaHelpers::ReportScriptErrorFmt("Unknown row flag \"%s\".", sName.c_str());
 				}
 			}
 			for( int col = 0; col < NumCols; ++col )
