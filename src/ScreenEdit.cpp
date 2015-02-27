@@ -4163,6 +4163,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			return;
 		case ANSWER_NO:
 			// Don't save; just exit.
+			m_pSong->RemoveAutosave();
 			SCREENMAN->SendMessageToTopScreen( SM_DoExit );
 			return;
 		case ANSWER_CANCEL:
@@ -4183,7 +4184,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_AutoSaveSuccessful )
 	{
-		LOG->Trace( "AutoSave successful." );
+		LOG->Trace("AutoSave successful.");
 		m_next_autosave_time= RageTimer::GetTimeSinceStartFast() + time_between_autosave;
 	}
 	else if( SM == SM_SaveFailed ) // save failed; stay in the editor

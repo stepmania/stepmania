@@ -87,9 +87,12 @@ public:
 	 *
 	 * This assumes that there is no song present right now.
 	 * @param sDir the song directory from which to load. */
-	bool LoadFromSongDir( RString sDir );
+	bool LoadFromSongDir( RString sDir, bool load_autosave= false );
 	// This one takes the effort to reuse Steps pointers as best as it can
 	bool ReloadFromSongDir( RString sDir );
+
+	bool HasAutosaveFile();
+	bool LoadAutosaveFile();
 
 	/**
 	 * @brief Call this after loading a song to clean up invalid data.
@@ -133,8 +136,9 @@ public:
 	 * @return its success or failure. */
 	bool SaveToDWIFile();
 
+	void RemoveAutosave();
 	bool WasLoadedFromAutosave() const
-	{ return GetExtension(m_sSongFileName) == "ats"; }
+	{ return m_loaded_from_autosave; }
 
 	const RString &GetSongFilePath() const;
 	RString GetCacheFilePath() const;
@@ -446,6 +450,7 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
+	bool m_loaded_from_autosave;
 	/** @brief the Steps that belong to this Song. */
 	vector<Steps*> m_vpSteps;
 	/** @brief the Steps of a particular StepsType that belong to this Song. */
