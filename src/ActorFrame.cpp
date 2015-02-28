@@ -721,14 +721,16 @@ public:
 
 	static int RemoveChild( T* p, lua_State *L )
 	{
-		Actor *pChild = p->GetChild( SArg(1) );
-		if( pChild )
-			p->RemoveChild( pChild );
-		else
-			lua_pushnil( L );
-		return 1;
+		Actor *child = p->GetChild(SArg(1));
+		if(child)
+		{
+			p->RemoveChild(child);
+			SAFE_DELETE(child);
+		}
+		COMMON_RETURN_SELF;
 	}
-	static int RemoveAllChildren( T* p, lua_State *L )				{ p->RemoveAllChildren( ); COMMON_RETURN_SELF; }
+	static int RemoveAllChildren( T* p, lua_State *L )
+	{ p->DeleteAllChildren(); COMMON_RETURN_SELF; }
 
 	LunaActorFrame()
 	{
