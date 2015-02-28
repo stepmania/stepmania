@@ -107,7 +107,7 @@ void LifeMeterBattery::OnSongEnded()
 		m_iLivesLeft = min( m_iLivesLeft, m_pPlayerState->m_PlayerOptions.GetSong().m_BatteryLives );
 
 		if( m_iTrailingLivesLeft < m_iLivesLeft )
-			m_soundGainLife.Play();
+			m_soundGainLife.Play(false);
 	}
 
 	Refresh();
@@ -120,7 +120,7 @@ void LifeMeterBattery::SubtractLives( int iLives )
 
 	m_iTrailingLivesLeft = m_iLivesLeft;
 	m_iLivesLeft -= iLives;
-	m_soundLoseLife.Play();
+	m_soundLoseLife.Play(false);
 	m_textNumLives.PlayCommand("LoseLife");
 
 	Refresh();
@@ -135,7 +135,7 @@ void LifeMeterBattery::AddLives( int iLives )
 
 	m_iTrailingLivesLeft = m_iLivesLeft;
 	m_iLivesLeft += iLives;
-	m_soundGainLife.Play();
+	m_soundGainLife.Play(false);
 	m_textNumLives.PlayCommand("GainLife");
 
 	Refresh();

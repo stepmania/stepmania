@@ -278,7 +278,7 @@ void ScreenTextEntry::TryAppendToAnswer( RString s )
 
 	wstring sNewAnswer = m_sAnswer+RStringToWstring(s);
 	m_sAnswer = sNewAnswer;
-	m_sndType.Play();
+	m_sndType.Play(true);
 	UpdateAnswerText();
 }
 
@@ -290,7 +290,7 @@ void ScreenTextEntry::BackspaceInAnswer()
 		return;
 	}
 	m_sAnswer.erase( m_sAnswer.end()-1 );
-	m_sndBackspace.Play();
+	m_sndBackspace.Play(true);
 	UpdateAnswerText();
 }
 
@@ -703,7 +703,7 @@ void ScreenTextEntryVisual::MoveX( int iDir )
 	}
 	while( sKey == "" );
 
-	m_sndChange.Play();
+	m_sndChange.Play(true);
 	PositionCursor();
 }
 
@@ -735,7 +735,7 @@ void ScreenTextEntryVisual::MoveY( int iDir )
 	}
 	while( sKey == "" );
 
-	m_sndChange.Play();
+	m_sndChange.Play(true);
 	PositionCursor();
 }
 

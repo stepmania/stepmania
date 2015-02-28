@@ -481,18 +481,18 @@ void MemoryCardManager::CheckStateChanges()
 				case MemoryCardState_Removed:
 					if( LastState == MemoryCardState_Ready )
 					{
-						m_soundDisconnect.Play( &params );
+						m_soundDisconnect.Play(true, &params);
 						MESSAGEMAN->Broadcast( (MessageID)(Message_CardRemovedP1+p) );
 					}
 					break;
 				case MemoryCardState_Ready:
-					m_soundReady.Play( &params );
+					m_soundReady.Play(true, &params);
 					break;
 				case MemoryCardState_TooLate:
-					m_soundTooLate.Play( &params );
+					m_soundTooLate.Play(true, &params);
 					break;
 				case MemoryCardState_Error:
-					m_soundError.Play( &params );
+					m_soundError.Play(true, &params);
 					break;
 				default: break;
 			}

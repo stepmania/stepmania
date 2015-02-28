@@ -276,7 +276,7 @@ static void DoPlayOnce( RString sPath )
 	RageSound *pSound = new RageSound;
 	pSound->Load( sPath, false );
 
-	pSound->Play();
+	pSound->Play(false);
 	pSound->DeleteSelfWhenFinishedPlaying();
 }
 

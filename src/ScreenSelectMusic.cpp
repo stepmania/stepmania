@@ -492,7 +492,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 
 		m_bGoToOptions = true;
 		if( PLAY_SOUND_ON_ENTERING_OPTIONS_MENU )
-			m_soundStart.Play();
+			m_soundStart.Play(true);
 		this->PlayCommand( "ShowEnteringOptions" );
 
 		// Re-queue SM_BeginFadingOut, since ShowEnteringOptions may have
@@ -573,7 +573,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 					if( MODE_MENU_AVAILABLE )
 						m_MusicWheel.NextSort();
 					else
-						m_soundLocked.Play();
+						m_soundLocked.Play(true);
 					break;
 				default: break;
 			}
@@ -679,14 +679,14 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 			if (input.MenuI == m_GameButtonPreviousDifficulty )
 			{
 				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-					m_soundLocked.Play();
+					m_soundLocked.Play(true);
 				else
 					ChangeSteps( input.pn, -1 );
 			}
 			else if( input.MenuI == m_GameButtonNextDifficulty )
 			{
 				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-					m_soundLocked.Play();
+					m_soundLocked.Play(true);
 				else
 					ChangeSteps( input.pn, +1 );
 			}
@@ -705,7 +705,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 			if(input.MenuI == m_GameButtonPreviousGroup )
 			{
 				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-					m_soundLocked.Play();
+					m_soundLocked.Play(true);
 				else
 				{
 					RString sNewGroup = m_MusicWheel.JumpToPrevGroup();
@@ -718,7 +718,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 			else if(input.MenuI == m_GameButtonNextGroup )
 			{
 				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-					m_soundLocked.Play();
+					m_soundLocked.Play(true);
 				else
 				{
 					RString sNewGroup = m_MusicWheel.JumpToNextGroup();
@@ -740,7 +740,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 			if( input.MenuI == m_GameButtonPreviousSong )
 			{
 				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-					m_soundLocked.Play();
+					m_soundLocked.Play(true);
 				else
 				{
 					m_SelectionState = SelectionState_SelectingSong;
@@ -752,7 +752,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 			else if( input.MenuI == m_GameButtonNextSong )
 			{
 				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-					m_soundLocked.Play();
+					m_soundLocked.Play(true);
 				else
 				{
 					m_SelectionState = SelectionState_SelectingSong;
@@ -765,7 +765,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 			else if( input.MenuI == m_GameButtonPreviousDifficulty )
 			{
 				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-					m_soundLocked.Play();
+					m_soundLocked.Play(true);
 				else
 				{
 					m_SelectionState = SelectionState_SelectingSong;
@@ -776,7 +776,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 			else if( input.MenuI == m_GameButtonNextDifficulty )
 			{
 				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-					m_soundLocked.Play();
+					m_soundLocked.Play(true);
 				else
 				{
 					m_SelectionState = SelectionState_SelectingSong;
@@ -788,7 +788,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 			else if(input.MenuI == m_GameButtonPreviousGroup )
 			{
 				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-					m_soundLocked.Play();
+					m_soundLocked.Play(true);
 				else
 				{
 					RString sNewGroup = m_MusicWheel.JumpToPrevGroup();
@@ -802,7 +802,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 			else if(input.MenuI == m_GameButtonNextGroup )
 			{
 				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-					m_soundLocked.Play();
+					m_soundLocked.Play(true);
 				else
 				{
 					RString sNewGroup = m_MusicWheel.JumpToNextGroup();
@@ -824,14 +824,14 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 				if( input.MenuI == m_GameButtonPreviousSong )
 				{
 					if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-						m_soundLocked.Play();
+						m_soundLocked.Play(true);
 					else
 						ChangeSteps( input.pn, -1 );
 				}
 				else if( input.MenuI == m_GameButtonNextSong )
 				{
 					if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-						m_soundLocked.Play();
+						m_soundLocked.Play(true);
 					else
 						ChangeSteps( input.pn, +1 );
 				}
@@ -839,7 +839,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 			else if( input.MenuI == GAME_BUTTON_MENUUP || input.MenuI == GAME_BUTTON_MENUDOWN ) // && TWO_PART_DESELECTS_WITH_MENUUPDOWN
 			{
 				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-					m_soundLocked.Play();
+					m_soundLocked.Play(true);
 				else
 				{
 					// XXX: should this be called "TwoPartCancelled"?
@@ -869,14 +869,14 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 	if( CodeDetector::EnteredPrevSteps(input.GameI.controller) && !CHANGE_STEPS_WITH_GAME_BUTTONS )
 	{
 		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-			m_soundLocked.Play();
+			m_soundLocked.Play(true);
 		else
 			ChangeSteps( input.pn, -1 );
 	}
 	else if( CodeDetector::EnteredNextSteps(input.GameI.controller) && !CHANGE_STEPS_WITH_GAME_BUTTONS )
 	{
 		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-			m_soundLocked.Play();
+			m_soundLocked.Play(true);
 		else
 			ChangeSteps( input.pn, +1 );
 	}
@@ -885,19 +885,19 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 		if( MODE_MENU_AVAILABLE )
 			m_MusicWheel.ChangeSort( SORT_MODE_MENU );
 		else
-			m_soundLocked.Play();
+			m_soundLocked.Play(true);
 	}
 	else if( CodeDetector::EnteredNextSort(input.GameI.controller) )
 	{
 		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-			m_soundLocked.Play();
+			m_soundLocked.Play(true);
 		else if( !GAMESTATE->IsCourseMode() )
 			// Only change sorts in non-course mode
 			m_MusicWheel.NextSort();
 	}
 	else if( !GAMESTATE->IsAnExtraStageAndSelectionLocked() && CodeDetector::DetectAndAdjustMusicOptions(input.GameI.controller) )
 	{
-		m_soundOptionsChange.Play();
+		m_soundOptionsChange.Play(true);
 
 		Message msg( "PlayerOptionsChanged" );
 		msg.SetParam( "PlayerNumber", input.pn );
@@ -908,7 +908,7 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 	else if( CodeDetector::EnteredNextGroup(input.GameI.controller) && !CHANGE_GROUPS_WITH_GAME_BUTTONS )
 	{
 		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-			m_soundLocked.Play();
+			m_soundLocked.Play(true);
 		else
 		{
 			RString sNewGroup = m_MusicWheel.JumpToNextGroup();
@@ -921,7 +921,7 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 	else if( CodeDetector::EnteredPrevGroup(input.GameI.controller) && !CHANGE_GROUPS_WITH_GAME_BUTTONS )
 	{
 		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-			m_soundLocked.Play();
+			m_soundLocked.Play(true);
 		else
 		{
 			RString sNewGroup = m_MusicWheel.JumpToPrevGroup();
@@ -934,7 +934,7 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 	else if( CodeDetector::EnteredCloseFolder(input.GameI.controller) )
 	{
 		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-			m_soundLocked.Play();
+			m_soundLocked.Play(true);
 		else
 		{
 			RString sCurSection = m_MusicWheel.GetSelectedSection();
@@ -1377,7 +1377,7 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			if( !bAllPlayersDoneSelectingSteps )
 			{
 				m_bStepsChosen[pn] = true;
-				m_soundStart.Play();
+				m_soundStart.Play(true);
 
 				// impldiff: Pump it Up Pro uses "StepsSelected". -aj
 				Message msg("StepsChosen");
@@ -1403,7 +1403,7 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 	Message msg( "Start" + SelectionStateToString(m_SelectionState) );
 	MESSAGEMAN->Broadcast( msg );
 
-	m_soundStart.Play();
+	m_soundStart.Play(true);
 
 	// If the MenuTimer has forced us to move on && TWO_PART_CONFIRMS_ONLY,
 	// set Selection State to finalized and move on.
@@ -1425,7 +1425,7 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			{
 				m_bStepsChosen[p] = true;
 				// Don't play start sound. We play it again below on finalized
-				//m_soundStart.Play();
+				//m_soundStart.Play(true);
 
 				Message lMsg("StepsChosen");
 				lMsg.SetParam( "Player", p );

@@ -850,9 +850,9 @@ void Player::Update( float fDeltaTime )
 		if( g_bEnableAttackSoundPlayback )
 		{
 			if( m_pPlayerState->m_bAttackBeganThisUpdate )
-				m_soundAttackLaunch.Play();
+				m_soundAttackLaunch.Play(false);
 			if( m_pPlayerState->m_bAttackEndedThisUpdate )
-				m_soundAttackEnding.Play();
+				m_soundAttackEnding.Play(false);
 		}
 
 		float fMiniPercent = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_MINI];
@@ -1997,7 +1997,7 @@ void Player::PlayKeysound( const TapNote &tn, TapNoteScore score )
 				}
 			}
 		}
-		m_vKeysounds[tn.iKeysoundIndex].Play();
+		m_vKeysounds[tn.iKeysoundIndex].Play(false);
 		Preference<float> *pVolume = Preference<float>::GetPreferenceByName("SoundVolume");
 		float fVol = pVolume->Get();
 		m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", fVol);
@@ -2491,7 +2491,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		{
 			score = TNS_None;	// don't score this as anything
 
-			m_soundAttackLaunch.Play();
+			m_soundAttackLaunch.Play(false);
 
 			// put attack in effect
 			Attack attack(
@@ -2889,7 +2889,7 @@ void Player::UpdateJudgedRows()
 		{
 			// Only play one copy of each mine sound at a time per player.
 			(*s)->Stop();
-			(*s)->Play();
+			(*s)->Play(false);
 		}
 	}
 }

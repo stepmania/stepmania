@@ -106,7 +106,7 @@ void RandomSample::PlayRandom()
 	int iIndexToPlay = GetNextToPlay();
 	if( iIndexToPlay == -1 )
 		return;
-	m_pSamples[iIndexToPlay]->Play();
+	m_pSamples[iIndexToPlay]->Play(true);
 }
 
 void RandomSample::PlayCopyOfRandom()

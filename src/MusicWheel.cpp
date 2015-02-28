@@ -1172,7 +1172,7 @@ void MusicWheel::ChangeMusic( int iDist )
 
 	// If we're moving automatically, don't play this; it'll be called in Update.
 	if(!IsMoving())
-		m_soundChangeMusic.Play();
+		m_soundChangeMusic.Play(true);
 }
 
 
@@ -1201,7 +1201,7 @@ bool MusicWheel::ChangeSort( SortOrder new_so, bool allowSameSort )	// return tr
 
 	SCREENMAN->PostMessageToTopScreen( SM_SortOrderChanging, 0 );
 
-	m_soundChangeSort.Play();
+	m_soundChangeSort.Play(true);
 
 	TweenOffScreenForSort();
 

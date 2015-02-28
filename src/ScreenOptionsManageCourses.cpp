@@ -217,7 +217,7 @@ bool ScreenOptionsManageCourses::MenuSelect( const InputEventPlus &input )
 	if( input.type != IET_FIRST_PRESS )
 		return false;
 	SetNextCombination();
-	m_soundDifficultyChanged.Play();
+	m_soundDifficultyChanged.Play(true);
 	return true;
 }
 

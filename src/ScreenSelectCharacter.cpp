@@ -309,7 +309,7 @@ void ScreenSelectCharacter::Move( PlayerNumber pn, int deltaValue )
 			m_iSelectedCharacter[pnAffected] += deltaValue;
 			wrap( m_iSelectedCharacter[pnAffected], apCharacters.size() );
 			AfterValueChange(pn);
-			m_soundChange.Play();
+			m_soundChange.Play(true);
 			break;
 		}
 		default: break;

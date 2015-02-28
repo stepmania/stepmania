@@ -128,7 +128,7 @@ void LifeMeterTime::OnLoadSong()
 	if( MIN_LIFE_TIME > fGainSeconds )
 		fGainSeconds = MIN_LIFE_TIME;
 	m_fLifeTotalGainedSeconds += fGainSeconds;
-	m_soundGainLife.Play();
+	m_soundGainLife.Play(false);
 	SendLifeChangedMessage( fOldLife, TapNoteScore_Invalid, HoldNoteScore_Invalid );
 }
 

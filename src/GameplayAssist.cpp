@@ -59,7 +59,7 @@ void GameplayAssist::PlayTicks( const NoteData &nd, const PlayerState *ps )
 
 			RageSoundParams p;
 			p.m_StartTime = position.m_LastBeatUpdate  + (fSecondsUntil - (float)CommonMetrics::TICK_EARLY_SECONDS);
-			m_soundAssistClap.Play( &p );
+			m_soundAssistClap.Play(false, &p);
 		}
 	}
 
@@ -96,9 +96,9 @@ void GameplayAssist::PlayTicks( const NoteData &nd, const PlayerState *ps )
 			RageSoundParams p;
 			p.m_StartTime = position.m_LastBeatUpdate  + (fSecondsUntil - (float)CommonMetrics::TICK_EARLY_SECONDS);
 			if( bIsMeasure )
-				m_soundAssistMetronomeMeasure.Play( &p );
+				m_soundAssistMetronomeMeasure.Play(false, &p);
 			else
-				m_soundAssistMetronomeBeat.Play( &p );
+				m_soundAssistMetronomeBeat.Play(false, &p);
 		}
 	}
 

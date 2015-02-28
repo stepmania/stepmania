@@ -2003,7 +2003,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			int iHeadRow;
 			if( m_NoteDataEdit.IsHoldNoteAtRow( iCol, iSongIndex, &iHeadRow ) )
 			{
-				m_soundRemoveNote.Play();
+				m_soundRemoveNote.Play(true);
 				SetDirty( true );
 				SaveUndo();
 				m_NoteDataEdit.SetTapNote( iCol, iHeadRow, TAP_EMPTY );
@@ -2011,7 +2011,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			else if( m_NoteDataEdit.GetTapNote(iCol, iSongIndex).type != TapNoteType_Empty )
 			{
-				m_soundRemoveNote.Play();
+				m_soundRemoveNote.Play(true);
 				SetDirty( true );
 				SaveUndo();
 				m_NoteDataEdit.SetTapNote( iCol, iSongIndex, TAP_EMPTY );
@@ -2024,7 +2024,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			else
 			{
-				m_soundAddNote.Play();
+				m_soundAddNote.Play(true);
 				SetDirty( true );
 				SaveUndo();
 				TapNote tn = m_selectedTap;
@@ -2104,7 +2104,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 			if( fSpeeds[iSpeed] != fScrollSpeed )
 			{
-				m_soundMarker.Play();
+				m_soundMarker.Play(true);
 				fScrollSpeed = fSpeeds[iSpeed];
 			}
 
@@ -2235,7 +2235,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				m_NoteFieldEdit.m_iBeginMarker = iCurrentRow;
 				m_NoteFieldEdit.m_iEndMarker = -1;
 			}
-			m_soundMarker.Play();
+			m_soundMarker.Play(true);
 		}
 		return true;
 	case EDIT_BUTTON_OPEN_AREA_MENU:
@@ -2338,7 +2338,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				it - vSteps.begin() + 1,
 				int(vSteps.size()) );
 			SCREENMAN->SystemMessage( s );
-			m_soundSwitchSteps.Play();
+			m_soundSwitchSteps.Play(true);
 			
 			ScrollTo( GetAppropriateTiming().GetBeatFromElapsedTime(curSecond) );
 		}
@@ -2371,7 +2371,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			{
 				GetAppropriateTimingForUpdate().AddSegment(BPMSegment(GetRow(), fNewBPM));
 			}
-			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
+			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play(true);
 			SetDirty( true );
 		}
 		return true;
@@ -2416,7 +2416,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 					stops.erase( stops.begin()+i, stops.begin()+i+1);
 			}
 
-			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
+			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play(true);
 			SetDirty( true );
 		}
 		return true;
@@ -2462,7 +2462,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 					stops.erase( stops.begin()+i, stops.begin()+i+1);
 			}
 			
-			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
+			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play(true);
 			SetDirty( true );
 		}
 		return true;
@@ -2488,7 +2488,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 					fDelta *= 40;
 			}
 			GetAppropriateTimingForUpdate().m_fBeat0OffsetInSeconds += fDelta;
-			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
+			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play(true);
 			if (GAMESTATE->m_bIsUsingStepTiming)
 			{
 				GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks.UpdateStartTimes(fDelta);
@@ -2534,7 +2534,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				m_pSong->m_fMusicSampleStartSeconds += fDelta;
 				m_pSong->m_fMusicSampleStartSeconds = max(m_pSong->m_fMusicSampleStartSeconds,0);
 			}
-			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
+			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play(true);
 			SetDirty( true );
 		}
 		return true;
@@ -2819,7 +2819,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				}
 				bgChange.m_def.m_sFile1 = sName;
 				m_pSong->AddBackgroundChange( iLayer, bgChange );
-				m_soundMarker.Play();
+				m_soundMarker.Play(true);
 			}
 		}
 		return true;
@@ -2925,12 +2925,12 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		enum_add( m_InputPlayerNumber, 1 );
 		if( m_InputPlayerNumber == NUM_PLAYERS )
 			m_InputPlayerNumber = PLAYER_1;
-		m_soundSwitchPlayer.Play();
+		m_soundSwitchPlayer.Play(true);
 		return true;
 	
 	case EDIT_BUTTON_SWITCH_TIMINGS:
 		GAMESTATE->m_bIsUsingStepTiming = !GAMESTATE->m_bIsUsingStepTiming;
-		m_soundSwitchTiming.Play();
+		m_soundSwitchTiming.Play(true);
 		return true;
 	default:
 		return false;
@@ -3344,7 +3344,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		p.m_StartSecond = fStartSeconds;
 		p.StopMode = RageSoundParams::M_CONTINUE;
 		m_pSoundMusic->SetProperty( "AccurateSync", true );
-		m_pSoundMusic->Play( &p );
+		m_pSoundMusic->Play(false, &p);
 		break;
 		}
 	default: break;
@@ -3416,7 +3416,7 @@ void ScreenEdit::ScrollTo( float fDestinationBeat )
 		}
 	}
 
-	m_soundChangeLine.Play();
+	m_soundChangeLine.Play(true);
 }
 
 static LocalizedString NEW_KEYSOUND_FILE("ScreenEdit", "Enter New Keysound File");
@@ -4237,7 +4237,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenEdit::OnSnapModeChange()
 {
-	m_soundChangeSnap.Play();
+	m_soundChangeSnap.Play(true);
 
 	NoteType nt = m_SnapDisplay.GetNoteType();
 	int iStepIndex = BeatToNoteRow( GetBeat() );
@@ -4526,7 +4526,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				else
 				{
 					m_NoteFieldEdit.m_iBeginMarker = iCurrentRow;
-					m_soundMarker.Play();
+					m_soundMarker.Play(true);
 				}
 			}
 			break;
@@ -4540,7 +4540,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				else
 				{
 					m_NoteFieldEdit.m_iEndMarker = iCurrentRow;
-					m_soundMarker.Play();
+					m_soundMarker.Play(true);
 				}
 			}
 			break;
@@ -4687,7 +4687,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 					break;
 				}
 
-				m_soundSave.Play();
+				m_soundSave.Play(true);
 			}
 			break;
 		case revert_to_last_save:
