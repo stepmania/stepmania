@@ -622,19 +622,27 @@ bool BitmapText::StringWillUseAlternate( const RString& sText, const RString& sA
 	return true;
 }
 
-void BitmapText::CropToWidth( int iMaxWidthInSourcePixels )
+void BitmapText::CropLineToWidth(size_t l, int width)
 {
-	iMaxWidthInSourcePixels = max( 0, iMaxWidthInSourcePixels );
-
-	for( unsigned l=0; l<m_wTextLines.size(); l++ ) // for each line
+	if(l < m_wTextLines.size())
 	{
-		while( m_iLineWidths[l] > iMaxWidthInSourcePixels )
+		int used_width= width;
+		wstring& line= m_wTextLines[l];
+		int fit= m_pFont->GetGlyphsThatFit(line, &used_width);
+		if(fit < line.size())
 		{
-			m_wTextLines[l].erase( m_wTextLines[l].end()-1, m_wTextLines[l].end() );
-			m_iLineWidths[l] = m_pFont->GetLineWidthInSourcePixels( m_wTextLines[l] );
+			line.erase(line.begin()+fit, line.end());
 		}
+		m_iLineWidths[l]= used_width;
 	}
+}
 
+void BitmapText::CropToWidth(int width)
+{
+	for(size_t l= 0; l < m_wTextLines.size(); ++l)
+	{
+		CropLineToWidth(l, width);
+	}
 	BuildChars();
 }
 
