@@ -257,6 +257,8 @@ public:
 	RString GetBackgroundPath() const;
 	RString GetCDTitlePath() const;
 	RString GetPreviewVidPath() const;
+	RString GetPreviewMusicPath() const;
+	float GetPreviewStartSeconds() const;
 
 	// For loading only:
 	bool m_bHasMusic, m_bHasBanner, m_bHasBackground;

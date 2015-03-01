@@ -4,22 +4,29 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/03/01
+----------
+* [SelectMusic] Select Music now plays preview.ogg for a simfile if it exists
+  instead of using the song file for the sample music.  The sample length
+  from the simfile is used and the sample start is treated as 0. [kyzentun]
+* [foreach] foreach_ordered lua function now works on tables that have both
+  number and string keys.  Number keys are iterated over first. [kyzentun]
 
 2015/02/27
 ----------
 * [ActorFrame] Fixed RemoveChild and RemoveAllChildren lua functions to
-	delete the children instead of leaking memory. [kyzentun]
+  delete the children instead of leaking memory. [kyzentun]
 
 2015/02/26
 ----------
 * [PaneDisplay] Changed to print an error when metrics or player number are
-	omitted instead of crashing. [kyzentun]
+  omitted instead of crashing. [kyzentun]
 * [Screen] Fixed crash when AddInputCallback is passed nil. [kyzentun]
 
 2015/02/22
 ----------
 * [BitmapText] Place characters of right-to-left alphabets correctly.
-	(untested) [roothorick]
+  (untested) [roothorick]
 
 ================================================================================
 StepMania 5.0.6 | 20150217
@@ -28,7 +35,7 @@ StepMania 5.0.6 | 20150217
 2015/02/16
 ----------
 * [EditMode] Fixed mistake in TimingData that broke editing bpms. [kyzentun]
-	Fixed crash when deleting steps. [kyzentun]
+  Fixed crash when deleting steps. [kyzentun]
 * [InputMapper] Backslash can be mapped now. [kyzentun]
 
 ================================================================================

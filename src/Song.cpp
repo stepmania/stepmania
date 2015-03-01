@@ -1477,6 +1477,26 @@ RString Song::GetPreviewVidPath() const
 	return GetSongAssetPath( m_sPreviewVidFile, m_sSongDir );
 }
 
+RString Song::GetPreviewMusicPath() const
+{
+	RString preview= GetSongDir() + "preview.ogg";
+	if(FILEMAN->DoesFileExist(preview))
+	{
+		return preview;
+	}
+	return GetMusicPath();
+}
+
+float Song::GetPreviewStartSeconds() const
+{
+	RString preview= GetSongDir() + "preview.ogg";
+	if(FILEMAN->DoesFileExist(preview))
+	{
+		return 0.0f;
+	}
+	return m_fMusicSampleStartSeconds;
+}
+
 RString Song::GetDisplayMainTitle() const
 {
 	if(!PREFSMAN->m_bShowNativeLanguage) return GetTranslitMainTitle();
