@@ -899,6 +899,24 @@ bool SongUtil::ValidateCurrentStepsCredit( const RString &sAnswer, RString &sErr
 	return true;
 }
 
+static LocalizedString MUSIC_DOES_NOT_EXIST("SongUtil", "The music file '%s' does not exist.");
+bool SongUtil::ValidateCurrentStepsMusic(const RString &answer, RString &error)
+{
+	if(answer.empty())
+		return true;
+	Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+	RString real_file= pSteps->GetMusicFile();
+	pSteps->SetMusicFile(answer);
+	RString path= pSteps->GetMusicPath();
+	bool valid= DoesFileExist(path);
+	pSteps->SetMusicFile(real_file);
+	if(!valid)
+	{
+		error= ssprintf(MUSIC_DOES_NOT_EXIST.GetValue(), answer.c_str());
+	}
+	return valid;
+}
+
 void SongUtil::GetAllSongGenres( vector<RString> &vsOut )
 {
 	set<RString> genres;

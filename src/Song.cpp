@@ -1394,7 +1394,7 @@ vector<RString> Song::GetInstrumentTracksToVectorString() const
 	return ret;
 }
 
-RString GetSongAssetPath( RString sPath, const RString &sSongPath )
+RString Song::GetSongAssetPath( RString sPath, const RString &sSongPath )
 {
 	if( sPath == "" )
 		return RString();

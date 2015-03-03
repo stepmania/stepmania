@@ -537,6 +537,7 @@ public:
 		step_display_bpm,
 		step_min_bpm,
 		step_max_bpm,
+		step_music,
 		NUM_STEPS_INFORMATION_CHOICES
 	};
 	void HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers );

@@ -1039,6 +1039,7 @@ void ScreenSelectMusic::ChangeSteps( PlayerNumber pn, int dir )
 		m_soundDifficultyHarder.SetProperty( "Pan", fBalance );
 		m_soundDifficultyHarder.PlayCopy();
 	}
+	GAMESTATE->ForceOtherPlayersToCompatibleSteps(pn);
 
 	Message msg( "ChangeSteps" );
 	msg.SetParam( "Player", pn );
