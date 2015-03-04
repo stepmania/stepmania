@@ -773,6 +773,7 @@ struct BMSChartInfo {
 	RString stageFile;
 	RString musicFile;
 	RString overrideMusicFile;
+	RString previewFile;
 
 	map<int, RString> backgroundChanges;
 };
@@ -893,6 +894,10 @@ void BMSChartReader::ReadHeaders()
 		else if (it->first == "#music")
 		{
 			info.overrideMusicFile = it->second;
+		}
+		else if (it->first == "#preview")
+		{
+			info.previewFile = it->second;
 		}
 		else if (it->first == "#offset")
 		{
@@ -1572,6 +1577,7 @@ void BMSSongLoader::AddToSong()
 		}
 
 		out->m_sMusicFile = main.info.musicFile;
+		out->m_PreviewFile= main.info.previewFile;
 		out->m_SongTiming = main.steps->m_Timing;
 	}
 

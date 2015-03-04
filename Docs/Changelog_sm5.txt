@@ -8,7 +8,7 @@ ________________________________________________________________________________
 ----------
 * [SelectMusic] Select Music now plays music file named by #PREVIEW tag if
   it's not blank, instead of using the song file for the sample music.  The
-  sample length from the simfile is used and the sample start is treated as
+  sample length is read from the preview file.  The sample start is treated as
   0. [kyzentun]
 * [Song] GetPreviewMusicPath added. [kyzentun]
 * [foreach] foreach_ordered lua function now works on tables that have both
