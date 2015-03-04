@@ -899,6 +899,24 @@ bool SongUtil::ValidateCurrentStepsCredit( const RString &sAnswer, RString &sErr
 	return true;
 }
 
+static LocalizedString PREVIEW_DOES_NOT_EXIST("SongUtil", "The preview file '%s' does not exist.");
+bool SongUtil::ValidateCurrentSongPreview(const RString& answer, RString& error)
+{
+	if(answer.empty())
+	{ return true; }
+	Song* song= GAMESTATE->m_pCurSong;
+	RString real_file= song->m_PreviewFile;
+	song->m_PreviewFile= answer;
+	RString path= song->GetPreviewMusicPath();
+	bool valid= DoesFileExist(path);
+	song->m_PreviewFile= real_file;
+	if(!valid)
+	{
+		error= ssprintf(PREVIEW_DOES_NOT_EXIST.GetValue(), answer.c_str());
+	}
+	return valid;
+}
+
 void SongUtil::GetAllSongGenres( vector<RString> &vsOut )
 {
 	set<RString> genres;

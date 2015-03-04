@@ -4464,6 +4464,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetOrigin' return='string' arguments=''>
 		Gets the Song's origin.
 	</Function>
+	<Function name='GetPreviewMusicPath' return='string' arguments=''>
+		Returns the path to the Song's preview music.  This handles the #PREVIEW tag internally, so it works with songs that use it and songs that don't.
+	</Function>
 	<Function name='GetPreviewVidPath' return='string' arguments=''>
 		Returns the path to the Song's preview video, if it exists. (Returns <code>nil</code> otherwise.)
 	</Function>

@@ -568,6 +568,7 @@ public:
 		artist,
 		genre,
 		credit,
+		preview,
 		main_title_transliteration,
 		sub_title_transliteration,
 		artist_transliteration,

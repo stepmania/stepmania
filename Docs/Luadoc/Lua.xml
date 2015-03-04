@@ -1542,6 +1542,7 @@
 			<Function name='GetMusicPath'/>
 			<Function name='GetOneSteps'/>
 			<Function name='GetOrigin'/>
+			<Function name='GetPreviewMusicPath'/>
 			<Function name='GetPreviewVidPath'/>
 			<Function name='GetSampleLength'/>
 			<Function name='GetSampleStart'/>

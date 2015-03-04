@@ -43,7 +43,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 222;
+const int FILE_CACHE_VERSION = 223;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -1479,22 +1479,20 @@ RString Song::GetPreviewVidPath() const
 
 RString Song::GetPreviewMusicPath() const
 {
-	RString preview= GetSongDir() + "preview.ogg";
-	if(FILEMAN->DoesFileExist(preview))
+	if(m_PreviewFile.empty())
 	{
-		return preview;
+		return GetMusicPath();
 	}
-	return GetMusicPath();
+	return GetSongAssetPath(m_PreviewFile, m_sSongDir);
 }
 
 float Song::GetPreviewStartSeconds() const
 {
-	RString preview= GetSongDir() + "preview.ogg";
-	if(FILEMAN->DoesFileExist(preview))
+	if(m_PreviewFile.empty())
 	{
-		return 0.0f;
+		return m_fMusicSampleStartSeconds;
 	}
-	return m_fMusicSampleStartSeconds;
+	return 0.0f;
 }
 
 RString Song::GetDisplayMainTitle() const
@@ -1814,6 +1812,12 @@ public:
 			lua_pushnil(L);
 		return 1; 
 	}
+	static int GetPreviewMusicPath(T* p, lua_State* L)
+	{
+		RString s= p->GetPreviewMusicPath();
+		lua_pushstring(L, s);
+		return 1;
+	}
 	static int GetJacketPath( T* p, lua_State *L )
 	{
 		RString s = p->GetJacketPath();
@@ -1886,7 +1890,7 @@ public:
 	}
 	static int GetSampleStart( T* p, lua_State *L )
 	{
-		lua_pushnumber(L, p->m_fMusicSampleStartSeconds);
+		lua_pushnumber(L, p->GetPreviewStartSeconds());
 		return 1;
 	}
 	static int GetSampleLength( T* p, lua_State *L )
@@ -2128,6 +2132,7 @@ public:
 		ADD_METHOD( ShowInDemonstrationAndRanking );
 		ADD_METHOD( HasPreviewVid );
 		ADD_METHOD( GetPreviewVidPath );
+		ADD_METHOD(GetPreviewMusicPath);
 	}   
 };
 

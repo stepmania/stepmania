@@ -548,10 +548,10 @@ void ScreenNetSelectMusic::MusicChanged()
 		{
 			SOUND->StopMusic();
 			SOUND->PlayMusic(
-				GAMESTATE->m_pCurSong->GetMusicPath(), 
+				GAMESTATE->m_pCurSong->GetPreviewMusicPath(),
 				NULL,
 				true,
-				GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds,
+				GAMESTATE->m_pCurSong->GetPreviewStartSeconds(),
 				GAMESTATE->m_pCurSong->m_fMusicSampleLengthSeconds );
 		}
 	}

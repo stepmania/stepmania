@@ -79,17 +79,14 @@ void ScreenWithMenuElements::Init()
 
 	// decorations
 	{
-		AutoActor decorations;
-		decorations.LoadB( m_sName, "decorations" );
-		decorations->SetName("Decorations");
-		decorations->SetDrawOrder( DRAW_ORDER_DECORATIONS );
-		ActorFrame *pFrame = dynamic_cast<ActorFrame*>(static_cast<Actor*>(decorations));
+		m_Decorations.LoadB( m_sName, "decorations" );
+		m_Decorations->SetName("Decorations");
+		m_Decorations->SetDrawOrder( DRAW_ORDER_DECORATIONS );
+		ActorFrame *pFrame = dynamic_cast<ActorFrame*>(static_cast<Actor*>(m_Decorations));
 		if( pFrame )
 		{
-			m_vDecorations = pFrame->GetChildren();
-			FOREACH( Actor*, m_vDecorations, child )
-				this->AddChild( *child );
-			pFrame->RemoveAllChildren();
+			this->AddChild(m_Decorations);
+			LOAD_ALL_COMMANDS(m_Decorations);
 		}
 	}
 
@@ -167,8 +164,6 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 		if( m_MemoryCardDisplay[p] != NULL )
 			SAFE_DELETE( m_MemoryCardDisplay[p] );
 	}
-	FOREACH( Actor*, m_vDecorations, actor )
-		delete *actor;
 }
 
 void ScreenWithMenuElements::SetHelpText( RString s )

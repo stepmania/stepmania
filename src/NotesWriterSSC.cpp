@@ -230,6 +230,10 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	f.PutLine( ssprintf( "#LYRICSPATH:%s;", SmEscape(out.m_sLyricsFile).c_str() ) );
 	f.PutLine( ssprintf( "#CDTITLE:%s;", SmEscape(out.m_sCDTitleFile).c_str() ) );
 	f.PutLine( ssprintf( "#MUSIC:%s;", SmEscape(out.m_sMusicFile).c_str() ) );
+	if(!out.m_PreviewFile.empty())
+	{
+		f.PutLine(ssprintf("#PREVIEW:%s;", SmEscape(out.m_PreviewFile).c_str()));
+	}
 
 	{
 		vector<RString> vs = out.GetInstrumentTracksToVectorString();

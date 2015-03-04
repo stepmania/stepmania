@@ -224,6 +224,7 @@ public:
 	RString m_sOrigin; // song origin (for .ssc format)
 
 	RString	m_sMusicFile;
+	RString m_PreviewFile;
 	RString	m_sInstrumentTrackFile[NUM_InstrumentTrack];
 
 	/** @brief The length of the music file. */

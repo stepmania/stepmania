@@ -6,9 +6,11 @@ ________________________________________________________________________________
 
 2015/03/01
 ----------
-* [SelectMusic] Select Music now plays preview.ogg for a simfile if it exists
-  instead of using the song file for the sample music.  The sample length
-  from the simfile is used and the sample start is treated as 0. [kyzentun]
+* [SelectMusic] Select Music now plays music file named by #PREVIEW tag if
+  it's not blank, instead of using the song file for the sample music.  The
+  sample length from the simfile is used and the sample start is treated as
+  0. [kyzentun]
+* [Song] GetPreviewMusicPath added. [kyzentun]
 * [foreach] foreach_ordered lua function now works on tables that have both
   number and string keys.  Number keys are iterated over first. [kyzentun]
 

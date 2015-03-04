@@ -952,6 +952,9 @@ static MenuDef g_SongInformation(
 	MenuRowDef(ScreenEdit::credit,
 		"Credit",
 		true, EditMode_Practice, true, true, 0, NULL ),
+	MenuRowDef(ScreenEdit::preview,
+		"Preview",
+		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef(ScreenEdit::main_title_transliteration,	
 		"Main title transliteration",
 		true, EditMode_Practice, true, true, 0, NULL ),
@@ -1477,10 +1480,10 @@ void ScreenEdit::PlayPreviewMusic()
 {
 	SOUND->StopMusic();
 	SOUND->PlayMusic( 
-		m_pSong->GetMusicPath(), 
+		m_pSong->GetPreviewMusicPath(),
 		NULL,
 		false,
-		m_pSong->m_fMusicSampleStartSeconds,
+		m_pSong->GetPreviewStartSeconds(),
 		m_pSong->m_fMusicSampleLengthSeconds,
 		FADE_IN_PREVIEW,
 		FADE_OUT_PREVIEW );
@@ -4318,6 +4321,12 @@ static void ChangeCredit( const RString &sNew )
 	pSong->m_sCredit = sNew;
 }
 
+static void ChangePreview(const RString& sNew)
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+	pSong->m_PreviewFile= sNew;
+}
+
 static void ChangeMainTitleTranslit( const RString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
@@ -4707,6 +4716,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_SongInformation.rows[artist].SetOneUnthemedChoice( pSong->m_sArtist );
 				g_SongInformation.rows[genre].SetOneUnthemedChoice( pSong->m_sGenre );
 				g_SongInformation.rows[credit].SetOneUnthemedChoice( pSong->m_sCredit );
+				g_SongInformation.rows[preview].SetOneUnthemedChoice(pSong->m_PreviewFile);
 				g_SongInformation.rows[main_title_transliteration].SetOneUnthemedChoice( pSong->m_sMainTitleTranslit );
 				g_SongInformation.rows[sub_title_transliteration].SetOneUnthemedChoice( pSong->m_sSubTitleTranslit );
 				g_SongInformation.rows[artist_transliteration].SetOneUnthemedChoice( pSong->m_sArtistTranslit );
@@ -5419,6 +5429,7 @@ static LocalizedString ENTER_SUB_TITLE			("ScreenEdit","Enter a new sub title.")
 static LocalizedString ENTER_ARTIST			("ScreenEdit","Enter a new artist.");
 static LocalizedString ENTER_GENRE			("ScreenEdit","Enter a new genre.");
 static LocalizedString ENTER_CREDIT			("ScreenEdit","Enter a new credit.");
+static LocalizedString ENTER_PREVIEW ("ScreenEdit", "Enter a preview file.");
 static LocalizedString ENTER_MAIN_TITLE_TRANSLIT	("ScreenEdit","Enter a new main title transliteration.");
 static LocalizedString ENTER_SUB_TITLE_TRANSLIT		("ScreenEdit","Enter a new sub title transliteration.");
 static LocalizedString ENTER_ARTIST_TRANSLIT		("ScreenEdit","Enter a new artist transliteration.");
@@ -5446,6 +5457,9 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 		break;
 	case credit:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_CREDIT, pSong->m_sCredit, 100, NULL, ChangeCredit, NULL );
+		break;
+	case preview:
+		ScreenTextEntry::TextEntry(SM_None, ENTER_PREVIEW, pSong->m_PreviewFile, 100, SongUtil::ValidateCurrentSongPreview, ChangePreview, NULL);
 		break;
 	case main_title_transliteration:
 		ScreenTextEntry::TextEntry( SM_None, ENTER_MAIN_TITLE_TRANSLIT, pSong->m_sMainTitleTranslit, 100, NULL, ChangeMainTitleTranslit, NULL );
