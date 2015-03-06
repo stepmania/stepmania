@@ -536,7 +536,14 @@ void Song::TidyUpData( bool fromCache, bool /* duringCache */ )
 	}
 
 	// This must be done before radar calculation.
-	if( HasMusic() )
+	if(m_fMusicLengthSeconds > 0.0f || lastSecond > -1.0f)
+	{
+		if(m_fMusicLengthSeconds == 0.0f)
+		{
+			m_fMusicLengthSeconds= lastSecond;
+		}
+	}
+	else if(HasMusic())
 	{
 		RString error;
 		RageSoundReader *Sample = RageSoundReader_FileReader::OpenFile( GetMusicPath(), error );
@@ -575,7 +582,7 @@ void Song::TidyUpData( bool fromCache, bool /* duringCache */ )
 					 m_fMusicLengthSeconds);
 	}
 
-	if(!m_PreviewFile.empty())
+	if(!m_PreviewFile.empty() && m_fMusicSampleStartSeconds == -1)
 	{
 		RString error;
 		RageSoundReader* sample= RageSoundReader_FileReader::OpenFile(GetPreviewMusicPath(), error);
