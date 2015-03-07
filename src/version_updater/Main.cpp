@@ -58,6 +58,8 @@ int main(int argc, char *argv[]) {
   std::ostringstream versionStream;
   versionStream << smVersionMajor << "." << smVersionMinor << "." << smVersionPatch;
   std::string smVersionFull = versionStream.str();
+  
+  std::string smVersionGit = smVersionFull + "-" + smVersionGitHash;
 
   std::ofstream versionDataFile(argv[1], std::ios::out);
   if (versionDataFile.is_open()) {
@@ -68,7 +70,8 @@ int main(int argc, char *argv[]) {
     versionDataFile << "extern char const * const sm_version_full = \"" << smVersionFull << "\";" << std::endl;
     versionDataFile << "extern char const * const version_date = \"" << strdate << "\";" << std::endl;
     versionDataFile << "extern char const * const version_time = \"" << strtime << "\";" << std::endl;
-	versionDataFile.close();
+    versionDataFile << "extern char const * const product_version = \"" << smVersionGit << "\";" << std::endl;
+    versionDataFile.close();
   }
 
   return 0;

@@ -8,15 +8,6 @@ set(SM_VERSION_MAJOR 5)
 set(SM_VERSION_MINOR 0)
 set(SM_VERSION_PATCH 6)
 
-# Set up common C/C++ flags.
-if(NOT MSVC)
-  set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG=1")
-  set(CMAKE_C_FLAGS_DEBUG "-g -DDEBUG=1")
-else()
-  set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG=1")
-  set(CMAKE_C_FLAGS_DEBUG "-DDEBUG=1")
-endif()
-
 # Set up helper variables for future configuring.
 set(SM_CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 set(SM_EXTERN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern")
@@ -26,6 +17,26 @@ set(SM_PROGRAM_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Program")
 set(SM_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Build")
 set(SM_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(SM_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+
+# Using the deprecated version for now to keep cmake 2.8 users happy.
+exec_program(git "${SM_ROOT_DIR}"
+  ARGS "rev-parse" "--short" "HEAD"
+  OUTPUT_VARIABLE SM_VERSION_GIT_HASH
+  RETURN_VALUE ret
+)
+
+if(NOT (ret STREQUAL "0"))
+  SET(SM_VERSION_GIT_HASH "UNKNOWN")
+endif()
+
+# Set up common C/C++ flags.
+if(NOT MSVC)
+  set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG=1")
+  set(CMAKE_C_FLAGS_DEBUG "-g -DDEBUG=1")
+else()
+  set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG=1")
+  set(CMAKE_C_FLAGS_DEBUG "-DDEBUG=1")
+endif()
 
 # Allow for finding DirectX.
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
