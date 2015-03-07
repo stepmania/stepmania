@@ -265,6 +265,11 @@ elseif(APPLE)
     COMMAND ${CMAKE_COMMAND} -E copy "${SM_XCODE_DIR}/Hardware.plist" "$<TARGET_FILE_DIR:StepMania>/../Resources/"
   )
 else() # Linux
+  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${SM_ROOT_DIR}")
+  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_ROOT_DIR}")
+  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${SM_ROOT_DIR}")
+  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_ROOT_DIR}")
+  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}")
   if (${HAS_PTHREAD})
     sm_add_compile_definition("StepMania" HAVE_LIBPTHREAD)
   endif()
