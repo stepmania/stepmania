@@ -32,6 +32,7 @@ else() # Unix/Linux
 
   include("${SM_CMAKE_DIR}/CMakeScout_Ogg.cmake")
   include("${SM_CMAKE_DIR}/CMakeScout_Vorbis.cmake")
+  include("${SM_CMAKE_DIR}/CMakeScout_VorbisFile.cmake")
 
   find_package(Threads)
   if (${Threads_FOUND})
@@ -440,6 +441,7 @@ elseif(APPLE)
 else() # Unix / Linux
   list(APPEND SMDATA_LINK_LIB
     ${DL_LIBRARY}
+    ${VORBISFILE_LIBRARY}
     ${VORBIS_LIBRARY}
     ${OGG_LIBRARY}
     ${OPENGL_LIBRARY}
