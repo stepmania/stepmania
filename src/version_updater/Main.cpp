@@ -10,6 +10,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include "version.hpp"
 
 int main(int argc, char *argv[]) {
   if (argc < 2) {
@@ -54,9 +55,17 @@ int main(int argc, char *argv[]) {
   // zero out the newline.
   strtime[sizeof(strtime) - 1] = 0;
 
+  std::ostringstream versionStream;
+  versionStream << smVersionMajor << "." << smVersionMinor << "." << smVersionPatch;
+  std::string smVersionFull = versionStream.str();
+
   std::ofstream versionDataFile(argv[1], std::ios::out);
   if (versionDataFile.is_open()) {
     versionDataFile << "unsigned long version_num = " << build << ";" << std::endl;
+    versionDataFile << "int sm_version_major = " << smVersionMajor << ";" << std::endl;
+    versionDataFile << "int sm_version_minor = " << smVersionMinor << ";" << std::endl;
+    versionDataFile << "int sm_version_patch = " << smVersionPatch << ";" << std::endl;
+    versionDataFile << "extern char const * const sm_version_full = \"" << smVersionFull << "\";" << std::endl;
     versionDataFile << "extern char const * const version_date = \"" << strdate << "\";" << std::endl;
     versionDataFile << "extern char const * const version_time = \"" << strtime << "\";" << std::endl;
 	versionDataFile.close();

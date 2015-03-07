@@ -1,0 +1,8 @@
+#ifndef VERSION_UPDATER_HPP_
+#define VERSION_UPDATER_HPP_
+
+int smVersionMajor = @SM_VERSION_MAJOR@;
+int smVersionMinor = @SM_VERSION_MINOR@;
+int smVersionPatch = @SM_VERSION_PATCH@;
+
+#endif

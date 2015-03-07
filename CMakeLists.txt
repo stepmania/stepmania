@@ -6,7 +6,7 @@ include(CMake/CMakeMacros.txt)
 # Set up version numbers according to the new scheme.
 set(SM_VERSION_MAJOR 5)
 set(SM_VERSION_MINOR 0)
-set(SM_VERSION_PATCH 0)
+set(SM_VERSION_PATCH 6)
 
 # Set up common C/C++ flags.
 if(NOT MSVC)
