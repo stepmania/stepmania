@@ -23,6 +23,11 @@ else() # Unix/Linux
     message(FATAL_ERROR "Bzip2 support required.")
   endif()
 
+  find_package("ZLIB")
+  if (NOT(${ZLIB_FOUND}))
+    message(FATAL_ERROR "zlib support required.")
+  endif()
+
   find_library(DL_LIBRARY dl)
   if(${LIBDL_FOUND})
     set(HAS_LIBDL TRUE)
@@ -474,9 +479,11 @@ else() # Unix / Linux
     ${OPENGL_LIBRARY}
     ${GTK2_LIBRARIES}
     "${BZIP2_LIBRARIES}"
+    "${ZLIB_LIBRARIES}"
     ${CMAKE_THREAD_LIBS_INIT}
     ${XRANDR_LIBRARIES}
   )
+  list(REMOVE_ITEM SMDATA_LINK_LIB "zlib")
 endif()
 
 target_link_libraries("StepMania" ${SMDATA_LINK_LIB})
