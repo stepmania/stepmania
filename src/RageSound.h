@@ -120,7 +120,7 @@ public:
 
 	RString GetError() const { return m_sError; }
 
-	void Play( const RageSoundParams *params=NULL );
+	void Play(bool is_action, const RageSoundParams *params=NULL);
 	void PlayCopy( const RageSoundParams *pParams = NULL ) const;
 	void Stop();
 

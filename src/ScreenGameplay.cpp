@@ -1477,7 +1477,7 @@ void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMu
 			p.m_LengthSeconds = fSecondsToStartFadingOutMusic + MUSIC_FADE_OUT_SECONDS - p.m_StartSecond;
 		}
 	}
-	m_pSoundMusic->Play( &p );
+	m_pSoundMusic->Play(false, &p);
 	if( m_bPaused )
 		m_pSoundMusic->Pause( true );
 
@@ -1592,7 +1592,7 @@ void ScreenGameplay::BeginScreen()
 		p.StopMode = RageSoundParams::M_CONTINUE;
 		p.m_StartSecond = startOffset;
 		m_pSoundMusic->SetProperty( "AccurateSync", true );
-		m_pSoundMusic->Play( &p );
+		m_pSoundMusic->Play(false, &p);
 
 		UpdateSongPosition(0);
 	}
@@ -2854,9 +2854,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	{
 		int iTrickLevel = SM-SM_BattleTrickLevel1+1;
 		PlayAnnouncer( ssprintf("gameplay battle trick level%d",iTrickLevel), 3 );
-		if( SM == SM_BattleTrickLevel1 ) m_soundBattleTrickLevel1.Play();
-		else if( SM == SM_BattleTrickLevel2 ) m_soundBattleTrickLevel2.Play();
-		else if( SM == SM_BattleTrickLevel3 ) m_soundBattleTrickLevel3.Play();
+		if( SM == SM_BattleTrickLevel1 ) m_soundBattleTrickLevel1.Play(false);
+		else if( SM == SM_BattleTrickLevel2 ) m_soundBattleTrickLevel2.Play(false);
+		else if( SM == SM_BattleTrickLevel3 ) m_soundBattleTrickLevel3.Play(false);
 	}
 	else if( SM >= SM_BattleDamageLevel1 && SM <= SM_BattleDamageLevel3 )
 	{

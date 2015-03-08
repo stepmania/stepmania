@@ -540,7 +540,7 @@ bool ScreenSelectMaster::MenuLeft( const InputEventPlus &input )
 	if( Move(pn, MenuDir_Left) )
 	{
 		m_TrackingRepeatingInput = input.MenuI;
-		m_soundChange.Play();
+		m_soundChange.Play(true);
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuLeftP1+pn) );
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuSelectionChanged) );
 
@@ -571,7 +571,7 @@ bool ScreenSelectMaster::MenuRight( const InputEventPlus &input )
 	if( Move(pn, MenuDir_Right) )
 	{
 		m_TrackingRepeatingInput = input.MenuI;
-		m_soundChange.Play();
+		m_soundChange.Play(true);
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuRightP1+pn) );
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuSelectionChanged) );
 
@@ -602,7 +602,7 @@ bool ScreenSelectMaster::MenuUp( const InputEventPlus &input )
 	if( Move(pn, MenuDir_Up) )
 	{
 		m_TrackingRepeatingInput = input.MenuI;
-		m_soundChange.Play();
+		m_soundChange.Play(true);
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuUpP1+pn) );
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuSelectionChanged) );
 
@@ -633,7 +633,7 @@ bool ScreenSelectMaster::MenuDown( const InputEventPlus &input )
 	if( Move(pn, MenuDir_Down) )
 	{
 		m_TrackingRepeatingInput = input.MenuI;
-		m_soundChange.Play();
+		m_soundChange.Play(true);
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuDownP1+pn) );
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuSelectionChanged) );
 

@@ -137,7 +137,7 @@ void ScreenSetTime::ChangeValue( int iDirection )
 
 	m_TimeOffset = iAdjusted - iNow;
 
-	m_soundChangeValue.Play();
+	m_soundChangeValue.Play(true);
 }
 
 void ScreenSetTime::ChangeSelection( int iDirection )
@@ -156,7 +156,7 @@ void ScreenSetTime::ChangeSelection( int iDirection )
 		RageColor(1,1,1,1) );
 
 	if( iDirection != 0 )
-		m_soundChangeSelection.Play();
+		m_soundChangeSelection.Play(true);
 }
 
 bool ScreenSetTime::MenuUp( const InputEventPlus &input )

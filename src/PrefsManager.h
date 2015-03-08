@@ -295,6 +295,7 @@ public:
 	Preference<bool>	m_bMonkeyInput;
 	Preference<RString>	m_sMachineName;
 	Preference<RString>	m_sCoursesToShowRanking;
+	Preference<bool> m_MuteActions;
 
 	/** @brief Enable some quirky behavior used by some older versions of StepMania. */
 	Preference<bool>	m_bQuirksMode;

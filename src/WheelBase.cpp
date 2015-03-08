@@ -233,14 +233,14 @@ void WheelBase::Update( float fDeltaTime )
 			ChangeMusic( m_Moving );
 
 			if( PREFSMAN->m_iMusicWheelSwitchSpeed < MAX_WHEEL_SOUND_SPEED )
-				m_soundChangeMusic.Play();
+				m_soundChangeMusic.Play(true);
 		}
 
 		if( PREFSMAN->m_iMusicWheelSwitchSpeed >= MAX_WHEEL_SOUND_SPEED &&
 			m_MovingSoundTimer.PeekDeltaTime() >= 1.0f / MAX_WHEEL_SOUND_SPEED )
 		{
 			m_MovingSoundTimer.GetDeltaTime();
-			m_soundChangeMusic.Play();
+			m_soundChangeMusic.Play(true);
 		}
 	}
 	else
@@ -297,12 +297,12 @@ bool WheelBase::Select()	// return true if this selection can end the screen
 			if( m_sExpandedSectionName == sThisItemSectionName ) // already expanded
 			{
 				SetOpenSection( "" ); // collapse it
-				m_soundCollapse.Play();
+				m_soundCollapse.Play(true);
 			}
 			else // already collapsed
 			{
 				SetOpenSection( sThisItemSectionName ); // expand it
-				m_soundExpand.Play();
+				m_soundExpand.Play(true);
 			}
 		}
 		// Opening/closing sections cannot end the screen
@@ -357,7 +357,7 @@ void WheelBase::ChangeMusicUnlessLocked( int n )
 		{
 			int iSign = n/abs(n);
 			m_fLockedWheelVelocity = iSign*LOCKED_INITIAL_VELOCITY;
-			m_soundLocked.Play();
+			m_soundLocked.Play(true);
 		}
 		return;
 	}
@@ -376,7 +376,7 @@ void WheelBase::Move(int n)
 		{
 			int iSign = n/abs(n);
 			m_fLockedWheelVelocity = iSign*LOCKED_INITIAL_VELOCITY;
-			m_soundLocked.Play();
+			m_soundLocked.Play(true);
 		}
 		return;
 	}
@@ -441,7 +441,7 @@ void WheelBase::ChangeMusic( int iDist )
 
 	/* If we're moving automatically, don't play this; it'll be called in Update. */
 	if(!IsMoving())
-		m_soundChangeMusic.Play();
+		m_soundChangeMusic.Play(true);
 }
 
 void WheelBase::RebuildWheelItems( int iDist )

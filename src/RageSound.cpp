@@ -392,11 +392,15 @@ void RageSound::SoundIsFinishedPlaying()
 	m_Mutex.Unlock();
 }
 
-void RageSound::Play( const RageSoundParams *pParams )
+void RageSound::Play(bool is_action, const RageSoundParams *pParams)
 {
 	if( m_pSource == NULL )
 	{
 		LOG->Warn( "RageSound::Play: sound not loaded" );
+		return;
+	}
+	if(is_action && PREFSMAN->m_MuteActions)
+	{
 		return;
 	}
 

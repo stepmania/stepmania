@@ -811,7 +811,7 @@ bool ScreenOptions::MenuStart( const InputEventPlus &input )
 			if( bHoldingLeftAndRight )
 			{
 				if( MoveRowRelative(pn, -1, input.type != IET_FIRST_PRESS) )
-					m_SoundPrevRow.Play();
+					m_SoundPrevRow.Play(true);
 				return true;
 			}
 		}
@@ -902,9 +902,9 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 		}
 
 		if( bSelected )
-			m_SoundToggleOn.Play();
+			m_SoundToggleOn.Play(true);
 		else
-			m_SoundToggleOff.Play();
+			m_SoundToggleOff.Play(true);
 
 		m_pRows[iCurRow]->PositionUnderlines( pn );
 		RefreshIcons( iCurRow, pn );
@@ -957,7 +957,7 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 			/* Jump to the exit row.  (If everyone's already on the exit row, then
 			 * we'll have already gone to the next screen above.) */
 			if( MoveRowAbsolute(pn, m_pRows.size()-1) )
-				m_SoundNextRow.Play();
+				m_SoundNextRow.Play(true);
 
 			break;
 		}
@@ -1054,9 +1054,9 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 		if( MoveRowRelative(pn, iDelta, bRepeat) )
 		{
 			if( iDelta < 0 )
-				m_SoundPrevRow.Play();
+				m_SoundPrevRow.Play(true);
 			else
-				m_SoundNextRow.Play();
+				m_SoundNextRow.Play(true);
 		}
 		return;
 	}
@@ -1129,7 +1129,7 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 	}
 
 	if( bOneChanged )
-		m_SoundChangeCol.Play();
+		m_SoundChangeCol.Play(true);
 
 	if( row.GetRowDef().m_bExportOnChange )
 	{
@@ -1322,9 +1322,9 @@ void ScreenOptions::MenuUpDown( const InputEventPlus &input, int iDir )
 	if( MoveRowRelative(pn, iDir, input.type != IET_FIRST_PRESS) )
 	{
 		if( iDir < 0 )
-			m_SoundPrevRow.Play();
+			m_SoundPrevRow.Play(true);
 		else
-			m_SoundNextRow.Play();
+			m_SoundNextRow.Play(true);
 	}
 }
 

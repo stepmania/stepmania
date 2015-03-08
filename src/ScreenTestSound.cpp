@@ -57,7 +57,7 @@ void ScreenTestSound::Init()
 		s[i].s.SetParams( p );
 
 //s[0].s.SetStopMode(RageSound::M_LOOP);
-//s[0].s.Play();
+//s[0].s.Play(false);
 
 	selected = 0;
 	for( int i = 0; i < nsounds; ++i )
@@ -149,7 +149,7 @@ bool ScreenTestSound::Input( const InputEventPlus &input )
 				 * and we won't be allowed to touch it.  Copy it ourself. */
 				RageSound *pCopy = new RageSound( s[selected].s );
 				m_sSoundCopies[selected].push_back( pCopy );
-				pCopy->Play();
+				pCopy->Play(false);
 				break;
 			}
 			case 's':

@@ -48,7 +48,7 @@ void ScreenUnlockBrowse::BeginScreen()
 
 bool ScreenUnlockBrowse::MenuStart( const InputEventPlus &input )
 {
-	m_soundStart.Play();
+	m_soundStart.Play(true);
 	this->PostScreenMessage( SM_BeginFadingOut, 0 );
 	return true;
 }

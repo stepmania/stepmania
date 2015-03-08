@@ -14,7 +14,7 @@ void ActorSound::Load( const RString &sPath )
 
 void ActorSound::Play()
 {
-	m_Sound.Play();
+	m_Sound.Play(false);
 }
 
 void ActorSound::Pause( bool bPause )

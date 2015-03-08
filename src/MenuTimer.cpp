@@ -110,7 +110,7 @@ void MenuTimer::Update( float fDeltaTime )
 		}
 
 		if( iCrossed <= WARNING_BEEP_START && m_soundBeep.IsLoaded() && !m_bSilent )
-			m_soundBeep.Play();
+			m_soundBeep.Play(false);
 	}
 
 	if( fNewSecondsLeft == 0 )

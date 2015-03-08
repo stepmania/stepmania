@@ -449,7 +449,7 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 
 				INPUTMAPPER->AddDefaultMappingsForCurrentGameIfUnmapped();
 
-				m_soundDelete.Play();
+				m_soundDelete.Play(true);
 				bHandled = true;
 			}
 			break;
@@ -469,7 +469,7 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 				--m_CurSlot;
 			}
 			AfterChangeFocus();
-			m_soundChange.Play();
+			m_soundChange.Play(true);
 			bHandled = true;
 			break;
 		case KEY_RIGHT:	// Move the selection right, wrapping down.
@@ -485,7 +485,7 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 				m_CurController++;
 			}
 			AfterChangeFocus();
-			m_soundChange.Play();
+			m_soundChange.Play(true);
 			bHandled = true;
 			break;
 		case KEY_UP: // Move the selection up.
@@ -496,7 +496,7 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 			BeforeChangeFocus();
 			m_CurButton--;
 			AfterChangeFocus();
-			m_soundChange.Play();
+			m_soundChange.Play(true);
 			bHandled = true;
 			break;
 		case KEY_DOWN: // Move the selection down.
@@ -507,7 +507,7 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 			BeforeChangeFocus();
 			m_CurButton++;
 			AfterChangeFocus();
-			m_soundChange.Play();
+			m_soundChange.Play(true);
 			bHandled = true;
 			break;
 		case KEY_ESC: // Quit the screen.

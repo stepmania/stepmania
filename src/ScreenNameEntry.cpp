@@ -352,7 +352,7 @@ bool ScreenNameEntry::Input( const InputEventPlus &input )
 		if( iStringIndex != -1 )
 		{
 			m_ReceptorArrowRow[input.pn].Step( iCol, TNS_W1 );
-			m_soundStep.Play();
+			m_soundStep.Play(true);
 			char c = m_Text[input.pn].GetClosestChar( m_fFakeBeat );
 			m_textSelectedChars[input.pn][iCol].SetText( RString(1, c) );
 			m_sSelectedName[input.pn][iStringIndex] = c;
@@ -391,7 +391,7 @@ bool ScreenNameEntry::MenuStart( const InputEventPlus &input )
 	m_bStillEnteringName[pn] = false;
 	m_Text[pn].SetDone();
 
-	m_soundStep.Play();
+	m_soundStep.Play(true);
 
 	// save last used ranking name
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);

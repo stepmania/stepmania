@@ -773,7 +773,7 @@ bool ScreenEvaluation::MenuStart( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return false;
 
-	m_soundStart.Play();
+	m_soundStart.Play(true);
 
 	HandleMenuStart();
 	return true;

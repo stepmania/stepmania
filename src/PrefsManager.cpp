@@ -286,6 +286,7 @@ PrefsManager::PrefsManager() :
 	m_bMonkeyInput			( "MonkeyInput",			false ),
 	m_sMachineName			( "MachineName",			"" ),
 	m_sCoursesToShowRanking		( "CoursesToShowRanking",		"" ),
+	m_MuteActions("MuteActions", false),
 
 	m_bQuirksMode		( "QuirksMode",		false ),
 
