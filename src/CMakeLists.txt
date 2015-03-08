@@ -47,8 +47,11 @@ else() # Unix/Linux
   # --shlibdir=$our_installdir/stepmania-$VERSION
   set(FFMPEG_CONFFLAGS "--enable-gpl --disable-programs --disable-doc --disable-avdevice --disable-swresample --disable-postproc --disable-avfilter --disable-shared --enable-static")
   externalproject_add("ffmpeg"
-    SOURCE_DIR "${SM_BUNDLE_DIR}/ffmpeg"
-    CONFIGURE_COMMAND "${SM_BUNDLE_DIR}/ffmpeg/configure" ${FFMPEG_CONFFLAGS}
+    DOWNLOAD_DIR "${SM_EXTERN_DIR}/ffmpeg-linux"
+    GIT_REPOSITORY "git://source.ffmpeg.org/ffmpeg.git"
+    GIT_TAG "n2.1.3"
+    CONFIGURE_COMMAND "${SM_EXTERN_DIR}/ffmpeg-linux/configure" ${FFMPEG_CONFFLAGS}
+    UPDATE_COMMAND ""
     INSTALL_COMMAND ""
     TEST_COMMAND ""
   )
@@ -277,9 +280,7 @@ else() # Linux
   set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${SM_ROOT_DIR}")
   set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_ROOT_DIR}")
   set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}")
-  # add_custom_target("ffmpeg"
-  #   COMMAND make
-  #  WORKING_DIRECTORY ${SM_BUNDLE_DIR})
+
   if (${HAS_PTHREAD})
     sm_add_compile_definition("StepMania" HAVE_LIBPTHREAD)
   endif()
@@ -464,7 +465,6 @@ else() # Unix / Linux
     ${CMAKE_THREAD_LIBS_INIT}
     ${XRANDR_LIBRARIES}
   )
-  message(STATUS "${CMAKE_THREAD_LIBS_INIT}")
 endif()
 
 target_link_libraries("StepMania" ${SMDATA_LINK_LIB})
@@ -487,7 +487,7 @@ if(NOT APPLE)
   else()
     add_dependencies("StepMania" "ffmpeg")
     list(APPEND SM_INCLUDE_DIRS
-      "${SM_BUNDLE_DIR}/ffmpeg"
+      "${SM_EXTERN_DIR}/ffmpeg-linux"
     )
   endif()
 else()
