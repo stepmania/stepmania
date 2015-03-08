@@ -1612,7 +1612,16 @@ public:
 	}
 	static int stoptweening( T* p, lua_State *L )		{ p->StopTweening(); COMMON_RETURN_SELF; }
 	static int finishtweening( T* p, lua_State *L )		{ p->FinishTweening(); COMMON_RETURN_SELF; }
-	static int hurrytweening( T* p, lua_State *L )		{ p->HurryTweening(FArg(1)); COMMON_RETURN_SELF; }
+	static int hurrytweening( T* p, lua_State *L )
+	{
+		float time= FArg(1);
+		if(time < 0.0f)
+		{
+			luaL_error(L, "Tweening hurry factor cannot be negative. %f", time);
+		}
+		p->HurryTweening(time);
+		COMMON_RETURN_SELF;
+	}
 	static int GetTweenTimeLeft( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetTweenTimeLeft() ); return 1; }
 	static int x( T* p, lua_State *L )			{ p->SetX(FArg(1)); COMMON_RETURN_SELF; }
 	static int y( T* p, lua_State *L )			{ p->SetY(FArg(1)); COMMON_RETURN_SELF; }
