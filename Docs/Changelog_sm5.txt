@@ -4,6 +4,23 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/03/08
+----------
+* [EditMode] Clearing an area now prompts for confirmation if it contains
+	EditClearPromptThreshold notes or more.  EditClearPromptThreshold is a
+	preference that can be set in the Advanced Options section, or in the
+	options in Edit Mode. [kyzentun]
+
+2015/03/05
+----------
+* [Graphics] DX9 support improved, giving a large speed boost and fixing the
+  problem that made people get stuck with 16bit color. [xwidghet]
+
+2015/03/04
+----------
+* [Loading] The song length from the cache is used now.  This cut loading time
+  by 30% for kyz. [kyzentun]
+
 2015/03/01
 ----------
 * [SelectMusic] Select Music now plays music file named by #PREVIEW tag if
@@ -14,10 +31,18 @@ ________________________________________________________________________________
 * [foreach] foreach_ordered lua function now works on tables that have both
   number and string keys.  Number keys are iterated over first. [kyzentun]
 
+2015/02/28
+----------
+* [General] Pause/Break key now toggles "action" sounds off or on.  There is
+  also a button in the F3 debug menu (press A, there are so many that it is
+	off the bottom) for people that don't have a Pause/Break key. [kyzentun]
+
 2015/02/27
 ----------
 * [ActorFrame] Fixed RemoveChild and RemoveAllChildren lua functions to
   delete the children instead of leaking memory. [kyzentun]
+* [Font] Asserts and other things that caused Stepmania to crash on font
+  mistakes now emit non-fatal errors. [kyzentun]
 
 2015/02/26
 ----------

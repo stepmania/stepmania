@@ -90,6 +90,7 @@ AutoScreenMessage( SM_BackFromKeysoundTrack );
 AutoScreenMessage( SM_BackFromNewKeysound );
 AutoScreenMessage( SM_DoRevertToLastSave );
 AutoScreenMessage( SM_DoRevertFromDisk );
+AutoScreenMessage( SM_ConfirmClearArea );
 AutoScreenMessage( SM_BackFromTimingDataInformation );
 AutoScreenMessage( SM_BackFromDifficultyMeterChange );
 AutoScreenMessage( SM_BackFromBeat0Change );
@@ -4131,6 +4132,14 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			SetDirty( false );
 		}
 	}
+	else if(SM == SM_ConfirmClearArea)
+	{
+		if(ScreenPrompt::s_LastAnswer == ANSWER_YES)
+		{
+			m_NoteDataEdit.ClearRange(
+				m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker);
+		}
+	}
 	else if( SM == SM_DoEraseStepTiming )
 	{
 		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
@@ -4764,6 +4773,7 @@ static LocalizedString ENTER_ARBITRARY_MAPPING( "ScreenEdit", "Enter the new tra
 static LocalizedString TOO_MANY_TRACKS("ScreenEdit", "Too many tracks specified.");
 static LocalizedString NOT_A_TRACK("ScreenEdit", "'%s' is not a track id.");
 static LocalizedString OUT_OF_RANGE_ID("ScreenEdit", "Entry %d, '%d', is out of range 1 to %d.");
+static LocalizedString CONFIRM_CLEAR("ScreenEdit", "Are you sure you want to clear %d notes?");
 
 static bool ConvertMappingInputToMapping(RString const& mapstr, int* mapping, RString& error)
 {
@@ -4875,7 +4885,17 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 			break;
 		case clear:
 		{
-			m_NoteDataEdit.ClearRange( m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
+			int note_count= m_NoteDataEdit.GetNumTapNotesNoTiming(
+				m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker);
+			if(note_count >= PREFSMAN->m_EditClearPromptThreshold)
+			{
+				ScreenPrompt::Prompt(SM_ConfirmClearArea, ssprintf(CONFIRM_CLEAR.GetValue(), note_count), PROMPT_YES_NO);
+			}
+			else
+			{
+				m_NoteDataEdit.ClearRange(
+					m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker);
+			}
 		}
 			break;
 		case quantize:

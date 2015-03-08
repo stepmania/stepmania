@@ -255,6 +255,8 @@ public:
 
 	// Lead in time before recording starts in edit mode.
 	Preference<float> m_EditRecordModeLeadIn;
+	// User is prompted on clearing an area with more than this note count.
+	Preference<int> m_EditClearPromptThreshold;
 
 	// Useful for non 4:3 displays and resolutions < 640x480 where texels don't
 	// map directly to pixels.

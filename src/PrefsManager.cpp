@@ -259,6 +259,7 @@ PrefsManager::PrefsManager() :
 
 	m_fPadStickSeconds		( "PadStickSeconds",			0 ),
 	m_EditRecordModeLeadIn("EditRecordModeLeadIn", 1.0f),
+	m_EditClearPromptThreshold("EditClearPromptThreshold", 50),
 	m_bForceMipMaps			( "ForceMipMaps",			false ),
 	m_bTrilinearFiltering		( "TrilinearFiltering",			false ),
 	m_bAnisotropicFiltering		( "AnisotropicFiltering",		false ),

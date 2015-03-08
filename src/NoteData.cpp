@@ -500,6 +500,21 @@ int NoteData::GetNumTapNotes( int iStartIndex, int iEndIndex ) const
 	return iNumNotes;
 }
 
+int NoteData::GetNumTapNotesNoTiming( int iStartIndex, int iEndIndex ) const
+{
+	int iNumNotes = 0;
+	for( int t=0; t<GetNumTracks(); t++ )
+	{
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, iStartIndex, iEndIndex )
+		{
+			if(GetTapNote(t, r).type != TapNoteType_Empty)
+			{ iNumNotes++; }
+		}
+	}
+
+	return iNumNotes;
+}
+
 int NoteData::GetNumTapNotesInRow( int iRow ) const
 {
 	int iNumNotes = 0;

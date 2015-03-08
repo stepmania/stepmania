@@ -690,6 +690,12 @@ static void EditRecordModeLeadIn(int &sel, bool to_sel, const ConfOption* conf_o
 	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
 }
 
+static void EditClearPromptThreshold(int& sel, bool to_sel, const ConfOption* conf_option)
+{
+	int mapping[]= {-1, 10, 50, 100, 1000, 1000000};
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
+}
+
 static vector<ConfOption> g_ConfOptions;
 static void InitializeConfOptions()
 {
@@ -743,6 +749,7 @@ static void InitializeConfOptions()
 		}
 		ADD(c);
 	}
+	ADD(ConfOption("EditClearPromptThreshold", EditClearPromptThreshold, "-1", "10", "50", "100", "1000", "1000000"));
 
 	// Background options
 	ADD( ConfOption( "RandomBackgroundMode",	MovePref<RandomBackgroundMode>, "Off","Animations","Random Movies" ) );
