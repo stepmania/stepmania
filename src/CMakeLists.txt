@@ -18,6 +18,11 @@ elseif(WIN32)
 else() # Unix/Linux
   include(ExternalProject)
 
+  find_package("BZip2")
+  if (NOT(${BZIP2_FOUND}))
+    message(FATAL_ERROR "Bzip2 support required.")
+  endif()
+
   find_library(DL_LIBRARY dl)
   if(${LIBDL_FOUND})
     set(HAS_LIBDL TRUE)
@@ -45,12 +50,13 @@ else() # Unix/Linux
 
   # NEVER use the system ffmpeg. Not worth the hassle.
   # --shlibdir=$our_installdir/stepmania-$VERSION
-  set(FFMPEG_CONFFLAGS "--enable-gpl --disable-programs --disable-doc --disable-avdevice --disable-swresample --disable-postproc --disable-avfilter --disable-shared --enable-static")
   externalproject_add("ffmpeg"
     DOWNLOAD_DIR "${SM_EXTERN_DIR}/ffmpeg-linux"
+    PREFIX "${SM_EXTERN_DIR}/ffmpeg-linux"
     GIT_REPOSITORY "git://source.ffmpeg.org/ffmpeg.git"
     GIT_TAG "n2.1.3"
-    CONFIGURE_COMMAND "${SM_EXTERN_DIR}/ffmpeg-linux/configure" ${FFMPEG_CONFFLAGS}
+    CONFIGURE_COMMAND "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg/configure" "--enable-gpl" "--disable-programs" "--disable-doc" "--disable-avdevice" "--disable-swresample" "--disable-postproc" "--disable-avfilter" "--disable-shared" "--enable-static"
+    BUILD_COMMAND "make"
     UPDATE_COMMAND ""
     INSTALL_COMMAND ""
     TEST_COMMAND ""
@@ -455,13 +461,19 @@ elseif(APPLE)
     "swscale"
   )
 else() # Unix / Linux
+  # TODO: Remember to find and locate the zip archive files.
   list(APPEND SMDATA_LINK_LIB
+    "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build/libavformat/libavformat.a"
+    "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build/libavcodec/libavcodec.a"
+    "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build/libswscale/libswscale.a"
+    "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build/libavutil/libavutil.a"
     ${DL_LIBRARY}
     ${VORBISFILE_LIBRARY}
     ${VORBIS_LIBRARY}
     ${OGG_LIBRARY}
     ${OPENGL_LIBRARY}
     ${GTK2_LIBRARIES}
+    "${BZIP2_LIBRARIES}"
     ${CMAKE_THREAD_LIBS_INIT}
     ${XRANDR_LIBRARIES}
   )
@@ -487,7 +499,8 @@ if(NOT APPLE)
   else()
     add_dependencies("StepMania" "ffmpeg")
     list(APPEND SM_INCLUDE_DIRS
-      "${SM_EXTERN_DIR}/ffmpeg-linux"
+      "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg"
+      "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build"
     )
   endif()
 else()
