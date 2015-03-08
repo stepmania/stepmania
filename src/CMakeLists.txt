@@ -16,6 +16,8 @@ elseif(MSVC)
 elseif(WIN32)
 
 else() # Unix/Linux
+  include(ExternalProject)
+
   find_library(DL_LIBRARY dl)
   if(${LIBDL_FOUND})
     set(HAS_LIBDL TRUE)
@@ -41,12 +43,17 @@ else() # Unix/Linux
     set(HAS_PTHREAD FALSE)
   endif()
 
-  include("${SM_CMAKE_DIR}/CMakeScout_FFMPEG.txt")
-  if (${FFMPEG_FOUND})
-    set(HAS_FFMPEG TRUE)
-  else()
-    set(HAS_FFMPEG FALSE)
-  endif()
+  # NEVER use the system ffmpeg. Not worth the hassle.
+  # --shlibdir=$our_installdir/stepmania-$VERSION
+  set(FFMPEG_CONFFLAGS "--enable-gpl --disable-programs --disable-doc --disable-avdevice --disable-swresample --disable-postproc --disable-avfilter --disable-shared --enable-static")
+  externalproject_add("ffmpeg"
+    SOURCE_DIR "${SM_BUNDLE_DIR}/ffmpeg"
+    CONFIGURE_COMMAND "${SM_BUNDLE_DIR}/ffmpeg/configure" ${FFMPEG_CONFFLAGS}
+    INSTALL_COMMAND ""
+    TEST_COMMAND ""
+  )
+
+  set(HAS_FFMPEG TRUE)
 
   find_package(OpenGL REQUIRED)
   if (NOT ${OPENGL_FOUND})
@@ -270,6 +277,9 @@ else() # Linux
   set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${SM_ROOT_DIR}")
   set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_ROOT_DIR}")
   set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}")
+  # add_custom_target("ffmpeg"
+  #   COMMAND make
+  #  WORKING_DIRECTORY ${SM_BUNDLE_DIR})
   if (${HAS_PTHREAD})
     sm_add_compile_definition("StepMania" HAVE_LIBPTHREAD)
   endif()
@@ -475,6 +485,7 @@ if(NOT APPLE)
       "${SM_EXTERN_DIR}/ffmpeg/include"
     )
   else()
+    add_dependencies("StepMania" "ffmpeg")
     list(APPEND SM_INCLUDE_DIRS
       "${SM_BUNDLE_DIR}/ffmpeg"
     )
