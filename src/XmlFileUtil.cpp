@@ -321,8 +321,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 
 		if( !node->GetName().empty() )
 		{
-			DEBUG_ASSERT( node->GetName().size() );
-			pNode->m_childs.push_back( node );
+			pNode->AppendChild(node);
 		}
 		else
 		{
@@ -421,7 +420,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 		WRITE( "'" );
 	}
 
-	if( pNode->m_childs.empty() && pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == NULL )
+	if( pNode->ChildrenEmpty() && pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == NULL )
 	{
 		// <TAG Attr1="Val1"/> alone tag 
 		WRITE( "/>" );
@@ -431,7 +430,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 		// <TAG Attr1="Val1"> and get child
 		WRITE( ">" );
 
-		if( !pNode->m_childs.empty() )
+		if( !pNode->ChildrenEmpty() )
 			iTabBase++;
 
 		FOREACH_CONST_Child( pNode, p )
@@ -442,7 +441,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 		const XNodeValue *pText = pNode->GetAttr( XNode::TEXT_ATTRIBUTE );
 		if( pText != NULL )
 		{
-			if( !pNode->m_childs.empty() )
+			if( !pNode->ChildrenEmpty() )
 			{
 				WRITE( "\r\n" );
 				if( bWriteTabs )
@@ -456,7 +455,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 		}
 
 		// </TAG> CloseTag
-		if( !pNode->m_childs.empty() )
+		if( !pNode->ChildrenEmpty() )
 		{
 			WRITE( "\r\n" );
 			if( bWriteTabs )
@@ -467,7 +466,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 		WRITE( pNode->GetName() );
 		WRITE( ">" );
 
-		if( !pNode->m_childs.empty() )
+		if( !pNode->ChildrenEmpty() )
 			iTabBase--;
 	}
 	return true;
@@ -781,8 +780,8 @@ void XmlFileUtil::MergeIniUnder( XNode *pFrom, XNode *pTo )
 	vector<XNodes::iterator> aToMove;
 
 	// Iterate over each section in pFrom.
-	XNodes::iterator it = pFrom->m_childs.begin();
-	while( it != pFrom->m_childs.end() )
+	XNodes::iterator it = pFrom->GetChildrenBegin();
+	while( it != pFrom->GetChildrenEnd() )
 	{
 		XNodes::iterator next = it;
 		++next;
@@ -811,7 +810,7 @@ void XmlFileUtil::MergeIniUnder( XNode *pFrom, XNode *pTo )
 	for( int i = aToMove.size()-1; i >= 0; --i )
 	{
 		XNode *pNode = *aToMove[i];
-		pFrom->m_childs.erase( aToMove[i] );
+		pFrom->RemoveChild(pNode, false);
 		pTo->AppendChild( pNode );
 	}
 }
