@@ -198,10 +198,7 @@ protected:
 	 * @brief Retrieve the file extension associated with this loader.
 	 * @return the file extension. */
 	RString GetFileExtension() const { return fileExt; }
-
-public:
-	// SetSongTitle and GetSongTitle changed to public to allow the functions
-	// used by the parser helper to access them. -Kyz
+	
 	/**
 	 * @brief Set the song title.
 	 * @param t the song title. */

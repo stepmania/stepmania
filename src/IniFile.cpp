@@ -34,8 +34,6 @@ bool IniFile::ReadFile( const RString &sPath )
 bool IniFile::ReadFile( RageFileBasic &f )
 {
 	RString keyname;
-	// keychild is used to cache the node that values are being added to. -Kyz
-	XNode* keychild= NULL;
 	while( 1 )
 	{
 		RString line;
@@ -63,47 +61,34 @@ bool IniFile::ReadFile( RageFileBasic &f )
 		}
 
 
-		if( line.empty() )
+		if( line.size() == 0 )
 			continue;
-		switch(line[0])
+		if( line[0] == ';' )
+			continue; // comment
+		if( line[0] == '#' )
+			continue; // comment
+		if( line.size() > 1 && line[0] == '/' && line[1] == '/' )
+			continue; // comment
+		if( line.size() > 1 && line[0] == '-' && line[1] == '-' )
+			continue; // comment (Lua style)
+
+		if( line[0] == '[' && line[line.size()-1] == ']'  )
 		{
-			case ';':
-			case '#':
-				continue; // comment
-			case '/':
-			case '-':
-				if(line.size() > 1 && line[0] == line[1])
-				{ continue; } // comment (Lua or C++ style)
-				goto keyvalue;
-			case '[':
-				if(line[line.size()-1] == ']')
-				{
-					// New section.
-					keyname = line.substr(1, line.size()-2);
-					keychild= GetChild(keyname);
-					if(keychild == NULL)
-					{
-						keychild= AppendChild(keyname);
-					}
-					break;
-				}
-			default:
-			keyvalue:
-				if(keychild == NULL)
-				{ break; }
-				// New value.
-				size_t iEqualIndex = line.find("=");
-				if( iEqualIndex != string::npos )
-				{
-					RString valuename = line.Left((int) iEqualIndex);
-					RString value = line.Right(line.size()-valuename.size()-1);
-					Trim(valuename);
-					if(!valuename.empty())
-					{
-						SetKeyValue(keychild, valuename, value);
-					}
-				}
-				break;
+			// New section.
+			keyname = line.substr(1, line.size()-2);
+		}
+		else
+		{
+			// New value.
+			size_t iEqualIndex = line.find("=");
+			if( iEqualIndex != string::npos )
+			{
+				RString valuename = line.Left( (int) iEqualIndex );
+				RString value = line.Right( line.size()-valuename.size()-1 );
+				Trim( valuename );
+				if( keyname.size() && valuename.size() )
+					SetValue( keyname, valuename, value );
+			}
 		}
 	}
 }
