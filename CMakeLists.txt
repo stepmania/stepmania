@@ -56,6 +56,20 @@ project(StepMania)
 # Put the predefined targets in separate groups.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+# Prep the endian test.
+set(ENDIANNESS "ENDIAN_LITTLE")
+if(APPLE)
+
+elseif(WIN32)
+
+else()
+  include(TestBigEndian)
+  test_big_endian(BIGENDIAN)
+  if (${BIGENDIAN})
+    set(ENDIANNESS "ENDIAN_BIG")
+  endif()
+endif()
+
 # The external libraries need to be included.
 add_subdirectory(extern)
 

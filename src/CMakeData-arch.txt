@@ -72,6 +72,14 @@ elseif(APPLE)
     "arch/Sound/RageSoundDriver_AU.h"
   )
 else() # Unix
+  if (HAS_PULSE)
+    list(APPEND SMDATA_ARCH_SOUND_SRC
+      "arch/Sound/RageSoundDriver_PulseAudio.cpp"
+    )
+    list(APPEND SMDATA_ARCH_SOUND_HPP
+      "arch/Sound/RageSoundDriver_PulseAudio.h"
+    )
+  endif()
   # TODO: Figure out Jack/Alsa.
 endif()
 

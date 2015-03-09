@@ -46,6 +46,13 @@ else() # Unix/Linux
   include("${SM_CMAKE_DIR}/CMakeScout_Vorbis.cmake")
   include("${SM_CMAKE_DIR}/CMakeScout_VorbisFile.cmake")
 
+  include("${SM_CMAKE_DIR}/CMakeScout_PulseAudio.cmake")
+  if (PULSEAUDIO_FOUND)
+    set(HAS_PULSE TRUE)
+  else()
+    message(WARNING "You will not get good enjoyment out of StepMania without audio. Please fix.")
+  endif()
+
   find_package(Threads)
   if (${Threads_FOUND})
     set(HAS_PTHREAD TRUE)
@@ -229,6 +236,7 @@ else()
 endif()
 
 sm_add_compile_definition("StepMania" CMAKE_POWERED)
+sm_add_compile_definition("StepMania" "${ENDIANNESS}")
 
 set_target_properties("StepMania" PROPERTIES OUTPUT_NAME_DEBUG "StepMania-debug")
 set_target_properties("StepMania" PROPERTIES OUTPUT_NAME_MINSIZEREL "StepMania-min-size")
@@ -298,13 +306,7 @@ else() # Linux
   if (${HAS_FFMPEG})
     sm_add_compile_definition("StepMania" HAVE_FFMPEG)
   endif()
-  include(TestBigEndian)
-  test_big_endian(BIGENDIAN)
-  if (${BIGENDIAN})
-    sm_add_compile_definition("StepMania" ENDIAN_BIG)
-  else()
-    sm_add_compile_definition("StepMania" ENDIAN_LITTLE)
-  endif()
+
   sm_add_compile_definition("StepMania" UNIX)
   if("${CMAKE_SYSTEM}" MATCHES "Linux")
     sm_add_compile_definition("StepMania" LINUX)
@@ -481,6 +483,18 @@ else() # Unix / Linux
     "${BZIP2_LIBRARIES}"
     "${ZLIB_LIBRARIES}"
     ${CMAKE_THREAD_LIBS_INIT}
+  )
+
+  if (HAS_PULSE)
+    list(APPEND SMDATA_LINK_LIB ${PULSEAUDIO_LIBRARY})
+    # PACKAGE_NAME and PACKAGE_VERSION are only used in this scenario. Why is not clear.
+    # TODO: Remove this silliness.
+    sm_add_compile_definition("StepMania" PACKAGE_NAME="StepMania")
+    set(PACKAGE_VERSION "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}")
+    sm_add_compile_definition("StepMania" PACKAGE_VERSION="${PACKAGE_VERSION}")
+  endif()
+
+  list(APPEND SMDATA_LINK_LIB
     ${XRANDR_LIBRARIES}
   )
   list(REMOVE_ITEM SMDATA_LINK_LIB "zlib")
