@@ -83,6 +83,11 @@ if(LINUX)
   endif()
 endif()
 
+# Prep options that are needed for each platform.
+if(LINUX)
+  option(WITH_FFMPEG "Build with FFMPEG" ON)
+endif()
+
 # The external libraries need to be included.
 add_subdirectory(extern)
 

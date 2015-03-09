@@ -55,21 +55,30 @@ if(LINUX) # Unix/Linux
     set(HAS_PTHREAD FALSE)
   endif()
 
-  # NEVER use the system ffmpeg. Not worth the hassle.
-  # --shlibdir=$our_installdir/stepmania-$VERSION
-  externalproject_add("ffmpeg"
-    DOWNLOAD_DIR "${SM_EXTERN_DIR}/ffmpeg-linux"
-    PREFIX "${SM_EXTERN_DIR}/ffmpeg-linux"
-    GIT_REPOSITORY "git://source.ffmpeg.org/ffmpeg.git"
-    GIT_TAG "n2.1.3"
-    CONFIGURE_COMMAND "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg/configure" "--enable-gpl" "--disable-programs" "--disable-doc" "--disable-avdevice" "--disable-swresample" "--disable-postproc" "--disable-avfilter" "--disable-shared" "--enable-static"
-    BUILD_COMMAND "make"
-    UPDATE_COMMAND ""
-    INSTALL_COMMAND ""
-    TEST_COMMAND ""
-  )
+  include("${SM_CMAKE_DIR}/CMakeScout_Yasm.cmake")
+  if (NOT YASM_EXECUTABLE)
+    message("YASM was not found. Please install if you wish for ffmpeg support.")
+    set(WITH_FFMPEG OFF)
+  endif()
 
-  set(HAS_FFMPEG TRUE)
+  if(WITH_FFMPEG)
+    # NEVER use the system ffmpeg. Not worth the hassle.
+    # --shlibdir=$our_installdir/stepmania-$VERSION
+    externalproject_add("ffmpeg"
+      DOWNLOAD_DIR "${SM_EXTERN_DIR}/ffmpeg-linux"
+      PREFIX "${SM_EXTERN_DIR}/ffmpeg-linux"
+      GIT_REPOSITORY "git://source.ffmpeg.org/ffmpeg.git"
+      GIT_TAG "n2.1.3"
+      CONFIGURE_COMMAND "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg/configure" "--enable-gpl" "--disable-programs" "--disable-doc" "--disable-avdevice" "--disable-swresample" "--disable-postproc" "--disable-avfilter" "--disable-shared" "--enable-static"
+      BUILD_COMMAND "make"
+      UPDATE_COMMAND ""
+      INSTALL_COMMAND ""
+      TEST_COMMAND ""
+    )
+    set(HAS_FFMPEG TRUE)
+  else()
+    set(HAS_FFMPEG FALSE)
+  endif()
 
   find_package(OpenGL REQUIRED)
   if (NOT ${OPENGL_FOUND})
