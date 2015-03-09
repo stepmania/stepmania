@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
+project(StepMania)
+
 # Include the macros and functions.
 include(CMake/CMakeMacros.txt)
 
@@ -7,6 +9,7 @@ include(CMake/CMakeMacros.txt)
 set(SM_VERSION_MAJOR 5)
 set(SM_VERSION_MINOR 0)
 set(SM_VERSION_PATCH 6)
+set(SM_VERSION_FULL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")
 
 # Set up helper variables for future configuring.
 set(SM_CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
@@ -17,6 +20,23 @@ set(SM_PROGRAM_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Program")
 set(SM_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Build")
 set(SM_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(SM_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+
+# Some OS specific helpers.
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+  set(LINUX TRUE)
+else()
+  set(LINUX FALSE)
+endif()
+
+if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+  set(MACOSX TRUE)
+else()
+  set(MACOSX FALSE)
+endif()
+
+# Some eventual distribution stuff.
+set(CPACK_PACKAGE_NAME "StepMania")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Rhythm Game Simulator")
 
 # Using the deprecated version for now to keep cmake 2.8 users happy.
 exec_program(git "${SM_ROOT_DIR}"
@@ -50,19 +70,12 @@ elseif(WIN32)
   include(CMake/CMakeScout_DirectX.txt)
 endif()
 
-# Finally set up the project.
-project(StepMania)
-
 # Put the predefined targets in separate groups.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Prep the endian test.
 set(ENDIANNESS "ENDIAN_LITTLE")
-if(APPLE)
-
-elseif(WIN32)
-
-else()
+if(LINUX)
   include(TestBigEndian)
   test_big_endian(BIGENDIAN)
   if (${BIGENDIAN})

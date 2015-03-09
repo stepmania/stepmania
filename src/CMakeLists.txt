@@ -9,13 +9,7 @@ add_custom_command(
 )
 
 # Add dependencies needed here.
-if(APPLE)
-
-elseif(MSVC)
-
-elseif(WIN32)
-
-else() # Unix/Linux
+if(LINUX) # Unix/Linux
   include(ExternalProject)
 
   find_package("BZip2")
@@ -50,7 +44,8 @@ else() # Unix/Linux
   if (PULSEAUDIO_FOUND)
     set(HAS_PULSE TRUE)
   else()
-    message(WARNING "You will not get good enjoyment out of StepMania without audio. Please fix.")
+    # TODO: Add other audio sources, determine the proper order.
+    message("You will not get good enjoyment out of StepMania without audio. Please fix.")
   endif()
 
   find_package(Threads)
@@ -236,7 +231,6 @@ else()
 endif()
 
 sm_add_compile_definition("StepMania" CMAKE_POWERED)
-sm_add_compile_definition("StepMania" "${ENDIANNESS}")
 
 set_target_properties("StepMania" PROPERTIES OUTPUT_NAME_DEBUG "StepMania-debug")
 set_target_properties("StepMania" PROPERTIES OUTPUT_NAME_MINSIZEREL "StepMania-min-size")
@@ -294,6 +288,8 @@ elseif(APPLE)
     COMMAND ${CMAKE_COMMAND} -E copy "${SM_XCODE_DIR}/Hardware.plist" "$<TARGET_FILE_DIR:StepMania>/../Resources/"
   )
 else() # Linux
+  # TODO: Have this compile definition be used all over. Currently fixed for Windows and Mac, but in headers.
+  sm_add_compile_definition("StepMania" "${ENDIANNESS}")
   set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${SM_ROOT_DIR}")
   set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_ROOT_DIR}")
   set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${SM_ROOT_DIR}")
@@ -518,11 +514,13 @@ if(NOT APPLE)
       "${SM_EXTERN_DIR}/ffmpeg/include"
     )
   else()
-    add_dependencies("StepMania" "ffmpeg")
-    list(APPEND SM_INCLUDE_DIRS
-      "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg"
-      "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build"
-    )
+    if (HAS_FFMPEG)
+      add_dependencies("StepMania" "ffmpeg")
+      list(APPEND SM_INCLUDE_DIRS
+        "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg"
+        "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build"
+      )
+    endif()
   endif()
 else()
   list(APPEND SM_INCLUDE_DIRS
