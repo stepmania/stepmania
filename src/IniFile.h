@@ -44,6 +44,11 @@ public:
 			pNode = AppendChild( sKey );
 		pNode->AppendAttr<T>( sValueName, value );
 	}
+	template <typename T>
+	void SetKeyValue(XNode* keynode, const RString &sValueName, const T &value)
+	{
+		keynode->AppendAttr<T>(sValueName, value);
+	}
 
 	bool DeleteKey( const RString &keyname );
 	bool DeleteValue( const RString &keyname, const RString &valuename );
