@@ -466,16 +466,17 @@ void PrefsManager::ReadGamePrefsFromIni( const RString &sIni )
 
 	FOREACH_CONST_Child( &ini, section )
 	{
-		if( !BeginsWith(section->GetName(), GAME_SECTION_PREFIX) )
+		RString section_name= section->GetName();
+		if( !BeginsWith(section_name, GAME_SECTION_PREFIX) )
 			continue;
 
-		RString sGame = section->GetName().Right( section->GetName().length() - GAME_SECTION_PREFIX.length() );
+		RString sGame = section_name.Right( section_name.length() - GAME_SECTION_PREFIX.length() );
 		GamePrefs &gp = m_mapGameNameToGamePrefs[ sGame ];
 
 		// todo: read more prefs here? -aj
-		ini.GetValue( section->GetName(), "Announcer",		gp.m_sAnnouncer );
-		ini.GetValue( section->GetName(), "Theme",			gp.m_sTheme );
-		ini.GetValue( section->GetName(), "DefaultModifiers",	gp.m_sDefaultModifiers );
+		ini.GetValue(section_name, "Announcer",		gp.m_sAnnouncer);
+		ini.GetValue(section_name, "Theme",			gp.m_sTheme);
+		ini.GetValue(section_name, "DefaultModifiers",	gp.m_sDefaultModifiers);
 	}
 }
 
