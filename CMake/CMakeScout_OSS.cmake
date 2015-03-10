@@ -1,10 +1,37 @@
-# Hopefully find the Open Sound System, or OSS.
-# Anyone looking for Open Source Software is in the wrong file, but the right repository. ;)
+# Copied from marsyas, which is also copied from fqterm.
+# Further modifications are done.
 
-find_path(OSS_INCLUDE_DIR "sys/soundcard.h")
-set(OSS_LIBRARIES TRUE)
-mark_as_advanced(OSS_INCLUDE_DIR)
+IF(UNIX)
+  IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
+	SET(OSS_HDR_NAME "linux/soundcard.h")
+  ELSE(CMAKE_SYSTEM_NAME MATCHES "Linux")
+	IF(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+	  SET(OSS_HDR_NAME "sys/soundcard.h")
+	ENDIF(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+  ENDIF(CMAKE_SYSTEM_NAME MATCHES "Linux")
+ENDIF(UNIX)
 
-# Pass QUIETLY and REQUIRED as normal. Will set OSS_FOUND to TRUE if everything works.
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(OSS DEFAULT_MSG OSS_LIBRARIES OSS_INCLUDE_DIR)
+FIND_PATH(OSS_INCLUDE_DIR "${OSS_HDR_NAME}"
+  "/usr/include" "/usr/local/include"
+)
+
+IF(OSS_INCLUDE_DIR)
+  SET(OSS_FOUND TRUE)
+ELSE(OSS_INCLUDE_DIR)
+  SET(OSS_FOUND)
+ENDIF(OSS_INCLUDE_DIR)
+
+IF(OSS_FOUND)
+  MESSAGE(STATUS "Found OSS Audio")
+ELSE(OSS_FOUND)
+  IF(OSS_FIND_REQUIRED)
+    MESSAGE(FATAL_ERROR "FAILED to found Audio - REQUIRED")
+  ELSE(OSS_FIND_REQUIRED)
+    MESSAGE(STATUS "Audio Disabled")
+  ENDIF(OSS_FIND_REQUIRED)
+ENDIF(OSS_FOUND)
+
+MARK_AS_ADVANCED (
+  OSS_FOUND
+  OSS_INCLUDE_DIR
+)
