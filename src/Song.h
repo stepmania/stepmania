@@ -87,9 +87,12 @@ public:
 	 *
 	 * This assumes that there is no song present right now.
 	 * @param sDir the song directory from which to load. */
-	bool LoadFromSongDir( RString sDir );
+	bool LoadFromSongDir( RString sDir, bool load_autosave= false );
 	// This one takes the effort to reuse Steps pointers as best as it can
 	bool ReloadFromSongDir( RString sDir );
+
+	bool HasAutosaveFile();
+	bool LoadAutosaveFile();
 
 	/**
 	 * @brief Call this after loading a song to clean up invalid data.
@@ -113,9 +116,9 @@ public:
 	 * @param sPath the path where we're saving the file.
 	 * @param bSavingCache a flag to determine if we're saving cache data.
 	 */
-	bool SaveToSSCFile( RString sPath, bool bSavingCache );
+	bool SaveToSSCFile(RString sPath, bool bSavingCache, bool autosave= false);
 	/** @brief Save to the SSC and SM files no matter what. */
-	void Save();
+	void Save(bool autosave= false);
 	/** 
 	  * @brief Save the current Song to a JSON file.
 	  * @return its success or failure. */
@@ -132,6 +135,10 @@ public:
 	 * @brief Save the current Song to a DWI file if possible.
 	 * @return its success or failure. */
 	bool SaveToDWIFile();
+
+	void RemoveAutosave();
+	bool WasLoadedFromAutosave() const
+	{ return m_loaded_from_autosave; }
 
 	const RString &GetSongFilePath() const;
 	RString GetCacheFilePath() const;
@@ -447,6 +454,7 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
+	bool m_loaded_from_autosave;
 	/** @brief the Steps that belong to this Song. */
 	vector<Steps*> m_vpSteps;
 	/** @brief the Steps of a particular StepsType that belong to this Song. */
