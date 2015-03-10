@@ -260,10 +260,10 @@ list(APPEND SM_DATA_REST_HPP
 )
 
 if(WITH_NETWORKING)
-  list(APPEND SMDATA_REST_SRC
+  list(APPEND SM_DATA_REST_SRC
     "RoomWheel.cpp"
   )
-  list(APPEND SMDATA_REST_HPP
+  list(APPEND SM_DATA_REST_HPP
     "RoomWheel.h"
   )
 endif()
