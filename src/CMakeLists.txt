@@ -269,6 +269,10 @@ endif()
 
 sm_add_compile_definition("StepMania" CMAKE_POWERED)
 
+if (NOT WITH_NETWORKING)
+  sm_add_compile_definition("StepMania" WITHOUT_NETWORKING)
+endif()
+
 set_target_properties("StepMania" PROPERTIES OUTPUT_NAME_DEBUG "StepMania-debug")
 set_target_properties("StepMania" PROPERTIES OUTPUT_NAME_MINSIZEREL "StepMania-min-size")
 set_target_properties("StepMania" PROPERTIES OUTPUT_NAME_RELWITHDEBINFO "StepMania-release-symbols")
