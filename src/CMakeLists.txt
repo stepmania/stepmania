@@ -48,6 +48,27 @@ if(LINUX) # Unix/Linux
     message("You will not get good enjoyment out of StepMania without audio. Please fix.")
   endif()
 
+  find_package(ALSA)
+  if (ALSA_FOUND)
+    set(HAS_ALSA TRUE)
+  else()
+    set(HAS_ALSA FALSE)
+  endif()
+
+  include("${SM_CMAKE_DIR}/CMakeScout_Jack.cmake")
+  if (JACK_FOUND)
+    set(HAS_JACK TRUE)
+  else()
+    set(HAS_JACK FALSE)
+  endif()
+
+  include("${SM_CMAKE_DIR}/CMakeScout_OSS.cmake")
+  if (OSS_FOUND)
+    set(HAS_OSS TRUE)
+  else()
+    set(HAS_OSS FALSE)
+  endif()
+
   find_package(Threads)
   if (${Threads_FOUND})
     set(HAS_PTHREAD TRUE)
@@ -489,6 +510,19 @@ else() # Unix / Linux
     "${ZLIB_LIBRARIES}"
     ${CMAKE_THREAD_LIBS_INIT}
   )
+
+  if (HAS_ALSA)
+    list(APPEND SMDATA_LINK_LIB ${ALSA_LIBRARIES})
+  endif()
+
+  if (HAS_JACK)
+    list(APPEND SMDATA_LINK_LIB ${JACK_LIBRARIES})
+  endif()
+
+  if (HAS_OSS)
+    # No mention of OSS libraries.
+    sm_add_compile_definition("StepMania" "HAVE_OSS_VERSION=1")
+  endif()
 
   if (HAS_PULSE)
     list(APPEND SMDATA_LINK_LIB ${PULSEAUDIO_LIBRARY})
