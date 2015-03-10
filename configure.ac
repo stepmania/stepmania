@@ -270,7 +270,7 @@ if test "$with_network" = "no"; then
 fi
 AM_CONDITIONAL(WITHOUT_NETWORKING, test "$with_network" = "no")
 
-AC_ARG_WITH(gles2, AS_HELP_STRING([--without-gles2],[Disable OpenGL ES 2.0]), with_network=$withval, with_network=yes)
+AC_ARG_WITH(gles2, AS_HELP_STRING([--without-gles2],[Disable OpenGL ES 2.0]), with_gles2=$withval, with_gles2=yes)
 if test "$with_gles2" = "no"; then
 	AC_DEFINE(WITHOUT_GLES2, 1, [OpenGL ES 2.0 support not available])
 fi
