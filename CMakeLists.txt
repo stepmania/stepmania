@@ -84,6 +84,8 @@ if(LINUX)
 endif()
 
 # Prep options that are needed for each platform.
+option(WITH_NETWORKING "Build with networking support" ON)
+
 if(LINUX)
   option(WITH_FFMPEG "Build with FFMPEG" ON)
 endif()

@@ -154,7 +154,6 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
   "CharacterManager.cpp"
   "CommandLineActions.cpp"
   "CryptManager.cpp"
-  "ezsockets.cpp"
   "FontManager.cpp"
   "GameManager.cpp"
   "GameSoundManager.cpp"
@@ -182,7 +181,6 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
   "CharacterManager.h"
   "CommandLineActions.h"
   "CryptManager.h"
-  "ezsockets.h"
   "FontManager.h"
   "GameManager.h"
   "GameSoundManager.h"
@@ -204,6 +202,15 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
   "ThemeManager.h"
   "UnlockManager.h"
 )
+
+if(WITH_NETWORKING)
+  list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
+    "ezsockets.cpp"
+  )
+  list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
+    "ezsockets.h"
+  )
+endif()
 
 source_group("Global Singletons" FILES ${SMDATA_GLOBAL_SINGLETON_SRC} ${SMDATA_GLOBAL_SINGLETON_HPP})
 

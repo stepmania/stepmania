@@ -193,7 +193,6 @@ list(APPEND SM_DATA_REST_SRC
   "Profile.cpp"
   "RadarValues.cpp"
   "RandomSample.cpp"
-  "RoomInfoDisplay.cpp"
   "SampleHistory.cpp"
   "ScreenDimensions.cpp"
   "SoundEffectControl.cpp"
@@ -249,7 +248,6 @@ list(APPEND SM_DATA_REST_HPP
   "Profile.h"
   "RadarValues.h"
   "RandomSample.h"
-  "RoomInfoDisplay.h"
   "SampleHistory.h"
   "ScreenDimensions.h"
   "SoundEffectControl.h"
@@ -260,6 +258,15 @@ list(APPEND SM_DATA_REST_HPP
   "TimingSegments.h"
   "TitleSubstitution.h"
 )
+
+if(WITH_NETWORKING)
+  list(APPEND SMDATA_REST_SRC
+    "RoomWheel.cpp"
+  )
+  list(APPEND SMDATA_REST_HPP
+    "RoomWheel.h"
+  )
+endif()
 
 source_group("Data Structures\\\\Misc Objects" FILES ${SM_DATA_REST_SRC} ${SM_DATA_REST_HPP})
 

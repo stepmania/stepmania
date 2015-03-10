@@ -163,7 +163,6 @@ list(APPEND SMDATA_SCREEN_NET_SRC
   "ScreenNetSelectBase.cpp"
   "ScreenNetSelectMusic.cpp"
   "ScreenNetworkOptions.cpp"
-  "ScreenSMOnlineLogin.cpp"
 )
 
 list(APPEND SMDATA_SCREEN_NET_HPP
@@ -172,8 +171,17 @@ list(APPEND SMDATA_SCREEN_NET_HPP
   "ScreenNetSelectBase.h"
   "ScreenNetSelectMusic.h"
   "ScreenNetworkOptions.h"
-  "ScreenSMOnlineLogin.h"
 )
+
+if (WITH_NETWORKING)
+  list(APPEND SMDATA_SCREEN_NET_SRC
+    "ScreenSMOnlineLogin.cpp"
+  )
+  list(APPEND SMDATA_SCREEN_NET_HPP
+    "ScreenSMOnlineLogin.h"
+  )
+endif()
+
 source_group("Screens\\\\Network" FILES ${SMDATA_SCREEN_NET_SRC} ${SMDATA_SCREEN_NET_HPP})
 
 list(APPEND SMDATA_ALL_SCREENS_SRC
