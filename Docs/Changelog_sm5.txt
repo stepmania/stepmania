@@ -4,8 +4,15 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+================================================================================
+StepMania 5.0.7rc | 20150309
+--------------------------------------------------------------------------------
+
 2015/03/09
 ----------
+* [EditMode] Autosave every 5 minutes added. [kyzentun]
+* [General] NotesLoaderSM, NotesLoaderSSC, IniFile::ReadFile rewritten,
+  load times substantially faster. [kyzentun]
 * [Preference] HarshHotLifePenalty preference added, for toggling whether
   LifeMeterBar takes away .1 life when it's full. [kyzentun]
 

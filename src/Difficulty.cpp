@@ -47,29 +47,43 @@ CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty cd )
 	return Difficulty_Invalid;
 }
 
+struct OldStyleStringToDifficultyMapHolder
+{
+	std::map<RString, Difficulty> conversion_map;
+	OldStyleStringToDifficultyMapHolder()
+	{
+		conversion_map["beginner"]= Difficulty_Beginner;
+		conversion_map["easy"]= Difficulty_Easy;
+		conversion_map["basic"]= Difficulty_Easy;
+		conversion_map["light"]= Difficulty_Easy;
+		conversion_map["medium"]= Difficulty_Medium;
+		conversion_map["another"]= Difficulty_Medium;
+		conversion_map["trick"]= Difficulty_Medium;
+		conversion_map["standard"]= Difficulty_Medium;
+		conversion_map["difficult"]= Difficulty_Medium;
+		conversion_map["hard"]= Difficulty_Hard;
+		conversion_map["ssr"]= Difficulty_Hard;
+		conversion_map["maniac"]= Difficulty_Hard;
+		conversion_map["heavy"]= Difficulty_Hard;
+		conversion_map["smaniac"]= Difficulty_Challenge;
+		conversion_map["challenge"]= Difficulty_Challenge;
+		conversion_map["expert"]= Difficulty_Challenge;
+		conversion_map["oni"]= Difficulty_Challenge;
+		conversion_map["edit"]= Difficulty_Edit;
+	}
+};
+OldStyleStringToDifficultyMapHolder OldStyleStringToDifficulty_converter;
 Difficulty OldStyleStringToDifficulty( const RString& sDC )
 {
 	RString s2 = sDC;
 	s2.MakeLower();
-	if( s2 == "beginner" )			return Difficulty_Beginner;
-	else if( s2 == "easy" )		return Difficulty_Easy;
-	else if( s2 == "basic" )		return Difficulty_Easy;
-	else if( s2 == "light" )		return Difficulty_Easy;
-	else if( s2 == "medium" )		return Difficulty_Medium;
-	else if( s2 == "another" )		return Difficulty_Medium;
-	else if( s2 == "trick" )		return Difficulty_Medium;
-	else if( s2 == "standard" )	return Difficulty_Medium;
-	else if( s2 == "difficult")	return Difficulty_Medium;
-	else if( s2 == "hard" )		return Difficulty_Hard;
-	else if( s2 == "ssr" )			return Difficulty_Hard;
-	else if( s2 == "maniac" )		return Difficulty_Hard;
-	else if( s2 == "heavy" )		return Difficulty_Hard;
-	else if( s2 == "smaniac" )		return Difficulty_Challenge;
-	else if( s2 == "challenge" )	return Difficulty_Challenge;
-	else if( s2 == "expert" )		return Difficulty_Challenge;
-	else if( s2 == "oni" )			return Difficulty_Challenge;
-	else if( s2 == "edit" )		return Difficulty_Edit;
-	else							return Difficulty_Invalid;
+	std::map<RString, Difficulty>::iterator diff=
+		OldStyleStringToDifficulty_converter.conversion_map.find(s2);
+	if(diff != OldStyleStringToDifficulty_converter.conversion_map.end())
+	{
+		return diff->second;
+	}
+	return Difficulty_Invalid;
 }
 
 LuaFunction( OldStyleStringToDifficulty, OldStyleStringToDifficulty(SArg(1)) );
