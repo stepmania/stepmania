@@ -385,7 +385,7 @@ void SetCredit(StepsTagInfo& info)
 }
 void SetStepsMusic(StepsTagInfo& info)
 {
-	pNewNotes->SetMusicFile(sParams[1]);
+	info.steps->SetMusicFile((*info.params)[1]);
 }
 void SetStepsBPMs(StepsTagInfo& info)
 {
