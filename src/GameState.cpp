@@ -1077,6 +1077,75 @@ void GameState::ForceSharedSidesMatch()
 	}
 }
 
+void GameState::ForceOtherPlayersToCompatibleSteps(PlayerNumber main)
+{
+	if(IsCourseMode())
+	{
+		Trail* steps_to_match= m_pCurTrail[main].Get();
+		if(steps_to_match == NULL) { return; }
+		int num_players= GAMESTATE->GetNumPlayersEnabled();
+		StyleType styletype_to_match= GAMEMAN->GetFirstCompatibleStyle(
+			GAMESTATE->GetCurrentGame(), num_players, steps_to_match->m_StepsType)
+			->m_StyleType;
+		FOREACH_EnabledPlayer(pn)
+		{
+			Trail* pn_steps= m_pCurTrail[pn].Get();
+			bool match_failed= false;
+			if(steps_to_match != pn_steps && pn_steps != NULL)
+			{
+				StyleType pn_styletype= GAMEMAN->GetFirstCompatibleStyle(
+					GAMESTATE->GetCurrentGame(), num_players, pn_steps->m_StepsType)
+					->m_StyleType;
+				if(styletype_to_match == StyleType_TwoPlayersSharedSides ||
+					pn_styletype == StyleType_TwoPlayersSharedSides)
+				{
+					match_failed= true;
+				}
+
+				if(match_failed)
+				{
+					m_pCurTrail[pn].Set(steps_to_match);
+				}
+			}
+		}
+	}
+	else
+	{
+		Steps* steps_to_match= m_pCurSteps[main].Get();
+		if(steps_to_match == NULL) { return; }
+		int num_players= GAMESTATE->GetNumPlayersEnabled();
+		StyleType styletype_to_match= GAMEMAN->GetFirstCompatibleStyle(
+			GAMESTATE->GetCurrentGame(), num_players, steps_to_match->m_StepsType)
+			->m_StyleType;
+		RString music_to_match= steps_to_match->GetMusicFile();
+		FOREACH_EnabledPlayer(pn)
+		{
+			Steps* pn_steps= m_pCurSteps[pn].Get();
+			bool match_failed= false;
+			if(steps_to_match != pn_steps && pn_steps != NULL)
+			{
+				StyleType pn_styletype= GAMEMAN->GetFirstCompatibleStyle(
+					GAMESTATE->GetCurrentGame(), num_players, pn_steps->m_StepsType)
+					->m_StyleType;
+				if(styletype_to_match == StyleType_TwoPlayersSharedSides ||
+					pn_styletype == StyleType_TwoPlayersSharedSides)
+				{
+					match_failed= true;
+				}
+				if(music_to_match != pn_steps->GetMusicFile())
+				{
+					match_failed= true;
+				}
+
+				if(match_failed)
+				{
+					m_pCurSteps[pn].Set(steps_to_match);
+				}
+			}
+		}
+	}
+}
+
 void GameState::Update( float fDelta )
 {
 	m_SongOptions.Update( fDelta );
@@ -2602,6 +2671,7 @@ public:
 			Steps *pS = Luna<Steps>::check(L,2);
 			SetCompatibleStyleOrError(p, L, pS->m_StepsType, pn);
 			p->m_pCurSteps[pn].Set(pS);
+			p->ForceOtherPlayersToCompatibleSteps(pn);
 		}
 		COMMON_RETURN_SELF;
 	}
@@ -2632,6 +2702,7 @@ public:
 			Trail *pS = Luna<Trail>::check(L,2);
 			SetCompatibleStyleOrError(p, L, pS->m_StepsType, pn);
 			p->m_pCurTrail[pn].Set(pS);
+			p->ForceOtherPlayersToCompatibleSteps(pn);
 		}
 		COMMON_RETURN_SELF;
 	}

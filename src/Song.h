@@ -248,6 +248,7 @@ public:
 	AttackArray m_Attacks;
 	vector<RString>	m_sAttackString;
 
+	static RString GetSongAssetPath( RString sPath, const RString &sSongPath );
 	RString GetMusicPath() const;
 	RString GetInstrumentTrackPath( InstrumentTrack it ) const;
 	RString GetBannerPath() const;

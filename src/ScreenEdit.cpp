@@ -106,6 +106,7 @@ AutoScreenMessage( SM_BackFromSpeedWaitChange );
 AutoScreenMessage( SM_BackFromSpeedModeChange );
 AutoScreenMessage( SM_BackFromScrollChange );
 AutoScreenMessage( SM_BackFromFakeChange );
+AutoScreenMessage( SM_BackFromStepMusicChange );
 AutoScreenMessage( SM_DoEraseStepTiming );
 AutoScreenMessage( SM_DoSaveAndExit );
 AutoScreenMessage( SM_DoExit );
@@ -915,7 +916,9 @@ static MenuDef g_StepsInformation(
 		true, EditMode_Full, true, true, 0, NULL ),
     MenuRowDef(ScreenEdit::step_max_bpm,
 		"Max BPM",
-		true, EditMode_Full, true, true, 0, NULL )
+		true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef(ScreenEdit::step_music,
+		"Music File", true, EditMode_Full,true, true, 0, NULL)
 );
 
 static MenuDef g_StepsData(
@@ -2343,6 +2346,9 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				int(vSteps.size()) );
 			SCREENMAN->SystemMessage( s );
 			m_soundSwitchSteps.Play(true);
+			// Reload the music because it can be different for every steps. -Kyz
+			m_AutoKeysounds.FinishLoading();
+			m_pSoundMusic = m_AutoKeysounds.GetSound();
 			
 			ScrollTo( GetAppropriateTiming().GetBeatFromElapsedTime(curSecond) );
 		}
@@ -3663,7 +3669,12 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			SetDirty( true );
 		}
 	}
-	
+	else if ( SM == SM_BackFromStepMusicChange && !ScreenTextEntry::s_bCancelledLast )
+	{
+		// Reload the music because it just changed. -Kyz
+		m_AutoKeysounds.FinishLoading();
+		m_pSoundMusic = m_AutoKeysounds.GetSound();
+	}
 	else if( SM == SM_BackFromBGChange )
 	{
 		HandleBGChangeChoice( (BGChangeChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
@@ -4300,6 +4311,12 @@ static void ChangeStepMeter( const RString &sNew )
 	GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(max(diff, 1));
 }
 
+static void ChangeStepMusic(const RString& sNew)
+{
+	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+	pSteps->SetMusicFile(sNew);
+}
+
 static void ChangeMainTitle( const RString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
@@ -4589,6 +4606,8 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_StepsInformation.rows[step_display_bpm].iDefaultChoice = pSteps->GetDisplayBPM();
 				g_StepsInformation.rows[step_min_bpm].SetOneUnthemedChoice( FloatToString(pSteps->GetMinBPM()));
 				g_StepsInformation.rows[step_max_bpm].SetOneUnthemedChoice( FloatToString(pSteps->GetMaxBPM()));
+				g_StepsInformation.rows[step_music].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);
+				g_StepsInformation.rows[step_music].SetOneUnthemedChoice( pSteps->GetMusicFile() );
 				EditMiniMenu( &g_StepsInformation, SM_BackFromStepsInformation, SM_None );
 			}
 			break;
@@ -5358,6 +5377,7 @@ static LocalizedString ENTER_NEW_STEP_AUTHOR( "ScreenEdit", "Enter the author wh
 static LocalizedString ENTER_NEW_METER( "ScreenEdit", "Enter a new meter." );
 static LocalizedString ENTER_MIN_BPM			("ScreenEdit","Enter a new min BPM.");
 static LocalizedString ENTER_MAX_BPM			("ScreenEdit","Enter a new max BPM.");
+static LocalizedString ENTER_NEW_STEP_MUSIC("ScreenEdit", "Enter the music file for this chart.");
 void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers )
 {
 	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
@@ -5436,6 +5456,17 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 									   FloatToString(pSteps->GetMaxBPM()), 20,
 									   ScreenTextEntry::FloatValidate,
 									   ChangeStepsMaxBPM, NULL);
+			break;
+		}
+		case step_music:
+		{
+			ScreenTextEntry::TextEntry(SM_BackFromStepMusicChange,
+									   ENTER_NEW_STEP_MUSIC,
+									   m_pSteps->GetMusicFile(),
+									   255,
+									   SongUtil::ValidateCurrentStepsMusic,
+									   ChangeStepMusic,
+									   NULL);
 			break;
 		}
 	default:

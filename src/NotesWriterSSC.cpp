@@ -362,6 +362,12 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	lines.push_back( ssprintf( "#DIFFICULTY:%s;", DifficultyToString(in.GetDifficulty()).c_str() ) );
 	lines.push_back( ssprintf( "#METER:%d;", in.GetMeter() ) );
 
+	const RString& music= in.GetMusicFile();
+	if(!music.empty())
+	{
+		lines.push_back(ssprintf("#MUSIC:%s;", music.c_str()));
+	}
+
 	vector<RString> asRadarValues;
 	FOREACH_PlayerNumber( pn )
 	{

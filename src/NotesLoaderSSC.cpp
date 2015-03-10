@@ -727,6 +727,11 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 					pNewNotes->SetFilename(sPath);
 					out.AddSteps( pNewNotes );
 				}
+
+				else if(sValueName == "MUSIC")
+				{
+					pNewNotes->SetMusicFile(sParams[1]);
+				}
 				
 				else if( sValueName=="BPMS" )
 				{

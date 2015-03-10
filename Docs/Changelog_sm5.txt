@@ -26,6 +26,11 @@ ________________________________________________________________________________
 * [Loading] The song length from the cache is used now.  This cut loading time
   by 30% for kyz. [kyzentun]
 
+2015/03/02
+----------
+* [Song] Per-chart music feature added.  Each chart can have a MUSIC tag.
+  [kyzentun]
+
 2015/03/01
 ----------
 * [SelectMusic] Select Music now plays music file named by #PREVIEW tag if

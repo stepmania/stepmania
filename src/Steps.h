@@ -173,6 +173,10 @@ public:
 	 * @return true if it does, or false otherwise. */
 	bool HasAttacks() const;
 
+	const RString GetMusicPath() const; // Returns the path for loading.
+	const RString& GetMusicFile() const; // Returns the filename for the simfile.
+	void SetMusicFile(const RString& file);
+
 	// Lua
 	void PushSelf( lua_State *L );
 
@@ -218,7 +222,9 @@ private:
 	/** @brief The name of the file where these steps are stored. */
 	RString				m_sFilename;
 	/** @brief true if these Steps were loaded from or saved to disk. */
-	bool				m_bSavedToDisk;	
+	bool				m_bSavedToDisk;
+	/** @brief allows the steps to specify their own music file. */
+	RString m_MusicFile;
 	/** @brief What profile was used? This is ProfileSlot_Invalid if not from a profile. */
 	ProfileSlot			m_LoadedFromProfile;
 

@@ -76,6 +76,7 @@ public:
 	bool CanSafelyEnterGameplay(RString& reason);
 	void SetCompatibleStylesForPlayers();
 	void ForceSharedSidesMatch();
+	void ForceOtherPlayersToCompatibleSteps(PlayerNumber main);
 
 	void Update( float fDelta );
 
