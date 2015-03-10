@@ -273,6 +273,14 @@ if(NOT APPLE)
     list(APPEND SMDATA_ARCH_LIGHTS_HPP
       "arch/Lights/LightsDriver_Win32Parallel.h"
     )
+    if (WITH_MINIMAID)
+      list(APPEND SMDATA_ARCH_LIGHTS_SRC
+        "arch/Lights/LightsDriver_Win32Minimaid.cpp"
+      )
+      list(APPEND SMDATA_ARCH_LIGHTS_HPP
+        "arch/Lights/LightsDriver_Win32Minimaid.h"
+      )
+    endif()
   else() # TODO: Linux HAVE_PARALLEL_PORT
     list(APPEND SMDATA_ARCH_LIGHTS_SRC
       "arch/Lights/LightsDriver_LinuxParallel.cpp"
@@ -331,6 +339,15 @@ else(UNIX)
     "arch/InputHandler/InputHandler_Linux_PIUIO.h"
     "arch/InputHandler/InputHandler_X11.h"
   )
+  if(WITH_TTY)
+    list(APPEND SMDATA_ARCH_INPUT_SRC
+      "arch/InputHandler/InputHandler_Linux_tty.cpp"
+    )
+    list(APPEND SMDATA_ARCH_INPUT_HPP
+      "arch/InputHandler/InputHandler_Linux_tty.h"
+      "arch/InputHandler/InputHandler_Linux_tty_keys.h"
+    )
+  endif()
 endif(WIN32)
 
 source_group("Arch Specific\\\\Input Handler" FILES ${SMDATA_ARCH_INPUT_SRC} ${SMDATA_ARCH_INPUT_HPP})

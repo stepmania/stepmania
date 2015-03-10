@@ -34,6 +34,32 @@ else()
   set(MACOSX FALSE)
 endif()
 
+if (CMAKE_SYSTEM_NAME MATCHES "BSD")
+  set(BSD TRUE)
+  if (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+    set(FREEBSD TRUE)
+    set(OPENBSD FALSE)
+    set(NETBSD FALSE)
+  elseif (CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
+    set(FREEBSD FALSE)
+    set(OPENBSD TRUE)
+    set(NETBSD FALSE)
+  elseif (CMAKE_SYSTEM_NAME MATCHES "NetBSD")
+    set(FREEBSD FALSE)
+    set(OPENBSD FALSE)
+    set(NETBSD TRUE)
+  else()
+    set(FREEBSD FALSE)
+    set(OPENBSD FALSE)
+    set(NETBSD FALSE)
+  endif()
+else()
+  set(BSD FALSE)
+  set(FREEBSD FALSE)
+  set(OPENBSD FALSE)
+  set(NETBSD FALSE)
+endif()
+
 # Some eventual distribution stuff.
 set(CPACK_PACKAGE_NAME "StepMania")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Rhythm Game Simulator")
@@ -86,8 +112,21 @@ endif()
 # Prep options that are needed for each platform.
 option(WITH_NETWORKING "Build with networking support" ON)
 
-if(LINUX)
+# This option is not yet working, but will likely default to ON in the future.
+option(WITH_LTO "Build with Link Time Optimization (LTO)/Whole Program Optimization" OFF)
+
+option(WITH_SSE2 "Build with SSE2 Optimizations" ON)
+
+# This option may go away in the future: if it does, JPEG will always be required.
+option(WITH_JPEG "Build with JPEG Image Support" ON)
+
+if(WIN32)
+  option(WITH_MINIMAID "Build with Mimimaid Lights Support" OFF)
+elseif(LINUX)
   option(WITH_FFMPEG "Build with FFMPEG" ON)
+  option(WITH_TTY "Build with Linux TTY Input Support" OFF)
+  option(WITH_PROFILING "Build with Profiling Support" OFF)
+  option(WITH_GLES2 "Build with OpenGL ES 2.0 Support" ON)
 endif()
 
 # The external libraries need to be included.
