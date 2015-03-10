@@ -127,6 +127,7 @@ elseif(LINUX)
   option(WITH_TTY "Build with Linux TTY Input Support" OFF)
   option(WITH_PROFILING "Build with Profiling Support" OFF)
   option(WITH_GLES2 "Build with OpenGL ES 2.0 Support" ON)
+  option(WITH_GTK2 "Build with GTK2 Support" ON)
 endif()
 
 # The external libraries need to be included.

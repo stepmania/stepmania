@@ -242,10 +242,18 @@ else()
     list(APPEND SMDATA_ARCH_LOADING_HPP
       "arch/LoadingWindow/LoadingWindow_MacOSX.h"
     )
-  else() # TODO: GTK stuff for linux.
-  
-  endif(APPLE)
-endif(WIN32)
+  elseif(LINUX) # TODO: GTK stuff for linux.
+    if (HAS_GTK2)
+      list(APPEND SMDATA_ARCH_LOADING_SRC
+        "arch/LoadingWindow/LoadingWindow_Gtk.cpp"
+      )
+      list(APPEND SMDATA_ARCH_LOADING_HPP
+        "arch/LoadingWindow/LoadingWindow_Gtk.h"
+        "arch/LoadingWindow/LoadingWindow_GtkModule.h"
+      )
+    endif()
+  endif()
+endif()
 
 source_group("Arch Specific\\\\Loading Window" FILES ${SMDATA_ARCH_LOADING_SRC} ${SMDATA_ARCH_LOADING_HPP})
 

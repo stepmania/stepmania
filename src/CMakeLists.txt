@@ -12,6 +12,18 @@ add_custom_command(
 if(LINUX) # Unix/Linux
   include(ExternalProject)
 
+  if(WITH_GTK2)
+    find_package("GTK2")
+    if (${GTK2_FOUND})
+      set(HAS_GTK2 TRUE)
+    else()
+      set(HAS_GTK2 FALSE)
+      message("GTK2 was not found on your system. There will be no loading window.")
+    endif()
+  else()
+    set(HAS_GTK2 FALSE)
+  endif()
+
   find_package("BZip2")
   if (NOT(${BZIP2_FOUND}))
     message(FATAL_ERROR "Bzip2 support required.")
@@ -574,6 +586,9 @@ if(NOT APPLE)
         "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg"
         "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build"
       )
+    endif()
+    if (HAS_GTK2)
+      list(APPEND SM_INCLUDE_DIRS "${GTK2_INCLUDE_DIRS}")
     endif()
   endif()
 else()
