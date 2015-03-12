@@ -360,6 +360,10 @@ else() # Linux
   if("${CMAKE_SYSTEM}" MATCHES "Linux")
     sm_add_compile_definition("StepMania" LINUX)
   endif()
+
+  add_custom_command(TARGET "StepMania" POST_BUILD
+    COMMAND ln -sf "${SM_SRC_DIR}/GtkModule.so" "${SM_ROOT_DIR}/GtkModule.so"
+  )
 endif()
 
 set_property(TARGET "StepMania" PROPERTY FOLDER "Internal Libraries")
