@@ -627,22 +627,6 @@ void Song::TidyUpData( bool fromCache, bool /* duringCache */ )
 					 m_fMusicLengthSeconds);
 	}
 
-	if(!m_PreviewFile.empty() && m_fMusicSampleStartSeconds == -1)
-	{
-		RString error;
-		RageSoundReader* sample= RageSoundReader_FileReader::OpenFile(GetPreviewMusicPath(), error);
-		if(sample == NULL)
-		{
-			LOG->UserLog( "Preview file", GetPreviewMusicPath(), "couldn't be opened: %s", error.c_str() );
-			m_PreviewFile= "";
-		}
-		else
-		{
-			m_fMusicSampleLengthSeconds= sample->GetLength() / 1000.0f;
-			delete sample;
-		}
-	}
-
 	if( m_fMusicLengthSeconds < 0 )
 	{
 		LOG->UserLog("Sound file",

@@ -20,6 +20,7 @@
 #include "NotesWriterSM.h"
 #include "PrefsManager.h"
 #include "RageSoundManager.h"
+#include "RageSoundReader_FileReader.h"
 #include "RageInput.h"
 #include "RageLog.h"
 #include "ScreenDimensions.h"
@@ -4457,7 +4458,25 @@ static void ChangeCredit( const RString &sNew )
 static void ChangePreview(const RString& sNew)
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
-	pSong->m_PreviewFile= sNew;
+	if(!sNew.empty())
+	{
+		RString error;
+		RageSoundReader* sample= RageSoundReader_FileReader::OpenFile(pSong->GetPreviewMusicPath(), error);
+		if(sample == NULL)
+		{
+			LOG->UserLog( "Preview file", pSong->GetPreviewMusicPath(), "couldn't be opened: %s", error.c_str() );
+		}
+		else
+		{
+			pSong->m_fMusicSampleLengthSeconds= sample->GetLength() / 1000.0f;
+			pSong->m_PreviewFile= sNew;
+			delete sample;
+		}
+	}
+	else
+	{
+		pSong->m_PreviewFile= sNew;
+	}
 }
 
 static void ChangeMainTitleTranslit( const RString &sNew )

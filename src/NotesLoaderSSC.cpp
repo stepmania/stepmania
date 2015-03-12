@@ -1075,6 +1075,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 
 	StepsTagInfo reused_steps_info(&*this, pSong, sEditFilePath, false);
 	reused_steps_info.for_load_edit= true;
+	reused_steps_info.timing= &stepsTiming;
 
 	for(unsigned int i = 0; i < msd.GetNumValues(); ++i)
 	{
@@ -1088,7 +1089,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 			reused_steps_info.params= &sParams;
 			steps_handler_map_t::iterator handler=
 				parser_helper.steps_tag_handlers.find(sValueName);
-			if(handler != parser_helper.steps_tag_handlers.end())
+			if(pNewNotes != NULL && handler != parser_helper.steps_tag_handlers.end())
 			{
 				handler->second(reused_steps_info);
 			}
@@ -1180,6 +1181,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 				this->SetSongTitle(sParams[1]);
 				sSongFullTitle.Replace('\\', '/');
 				pSong = SONGMAN->FindSong(sSongFullTitle);
+				reused_steps_info.song= pSong;
 				if(pSong == NULL)
 				{
 					LOG->UserLog("Edit file", sEditFilePath,
