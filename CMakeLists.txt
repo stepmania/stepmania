@@ -75,15 +75,6 @@ if(NOT (ret STREQUAL "0"))
   SET(SM_VERSION_GIT_HASH "UNKNOWN")
 endif()
 
-# Set up common C/C++ flags.
-if(NOT MSVC)
-  set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG=1")
-  set(CMAKE_C_FLAGS_DEBUG "-g -DDEBUG=1")
-else()
-  set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG=1")
-  set(CMAKE_C_FLAGS_DEBUG "-DDEBUG=1")
-endif()
-
 # Allow for finding DirectX.
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 

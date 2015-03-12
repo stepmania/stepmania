@@ -285,6 +285,36 @@ if (NOT WITH_NETWORKING)
   sm_add_compile_definition("StepMania" WITHOUT_NETWORKING)
 endif()
 
+set(SM_COMPILE_FLAGS "")
+
+# Compilation flags per project here.
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  sm_add_compile_definition("StepMania" "DEBUG=1")
+endif()
+
+if(WITH_SSE2)
+  if(MSVC)
+    set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} /arch:SSE2")
+  else()
+    set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} -msse2")
+  endif()
+endif()
+
+if(WITH_LTO)
+  if(MSVC)
+    set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} /GL")
+  else()
+    set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} -flto")
+  endif()
+endif()
+
+if(MSVC)
+  # TODO: Find a way to do this cleanly for non MSVC users.
+  set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} /MP2")
+endif()
+
+set_target_properties("StepMania" PROPERTIES COMPILE_FLAGS ${SM_COMPILE_FLAGS})
+
 set_target_properties("StepMania" PROPERTIES OUTPUT_NAME_DEBUG "StepMania-debug")
 set_target_properties("StepMania" PROPERTIES OUTPUT_NAME_MINSIZEREL "StepMania-min-size")
 set_target_properties("StepMania" PROPERTIES OUTPUT_NAME_RELWITHDEBINFO "StepMania-release-symbols")
@@ -295,7 +325,6 @@ if(WIN32)
   sm_add_compile_definition("StepMania" _CRT_SECURE_NO_WARNINGS)
   sm_add_compile_definition("StepMania" _WINSOCK_DEPRECATED_NO_WARNINGS)
   sm_add_compile_definition("StepMania" GLEW_STATIC)
-  sm_add_compile_flag("StepMania" "/MP")
   
   set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${SM_PROGRAM_DIR}")
   set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_PROGRAM_DIR}")
