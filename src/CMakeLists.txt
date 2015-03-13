@@ -34,12 +34,12 @@ source_group("Global Files" FILES ${SMDATA_GLOBAL_FILES_SRC} ${SMDATA_GLOBAL_FIL
 # Keep the module path local for easier grabbing.
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
-include(CMakeData-arch.txt)
-include(CMakeData-rage.txt)
-include(CMakeData-os.txt)
-include(CMakeData-actor.txt)
-include(CMakeData-screen.txt)
-include(CMakeData-data.txt)
+include(CMakeData-arch.cmake)
+include(CMakeData-rage.cmake)
+include(CMakeData-os.cmake)
+include(CMakeData-actor.cmake)
+include(CMakeData-screen.cmake)
+include(CMakeData-data.cmake)
 
 list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
   "AnnouncerManager.cpp"
