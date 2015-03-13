@@ -78,27 +78,8 @@ endif()
 # Allow for finding DirectX.
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
-if(APPLE)
-  # Apple Archs needs to be 32-bit for now.
-  # When SDL2 is introduced, this may change.
-  set(CMAKE_OSX_ARCHITECTURES "i386")
-  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.6")
-elseif(WIN32)
-  include(CMake/CMakeScout_DirectX.txt)
-endif()
-
 # Put the predefined targets in separate groups.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-# Prep the endian test.
-set(ENDIANNESS "ENDIAN_LITTLE")
-if(LINUX)
-  include(TestBigEndian)
-  test_big_endian(BIGENDIAN)
-  if (${BIGENDIAN})
-    set(ENDIANNESS "ENDIAN_BIG")
-  endif()
-endif()
 
 # Prep options that are needed for each platform.
 option(WITH_NETWORKING "Build with networking support" ON)
@@ -120,6 +101,139 @@ elseif(LINUX)
   option(WITH_GLES2 "Build with OpenGL ES 2.0 Support" ON)
   option(WITH_GTK2 "Build with GTK2 Support" ON)
 endif()
+
+# Dependencies go here.
+set(ENDIANNESS "ENDIAN_LITTLE")
+if(WIN32)
+  include(CMake/CMakeScout_DirectX.txt)
+elseif(MACOSX)
+  # Apple Archs needs to be 32-bit for now.
+  # When SDL2 is introduced, this may change.
+  set(CMAKE_OSX_ARCHITECTURES "i386")
+  set(CMAKE_OSX_DEPLOYMENT_TARGET "10.6")
+elseif(LINUX)
+  include(TestBigEndian)
+  include(ExternalProject)
+
+  if(WITH_GTK2)
+    find_package("GTK2")
+    if (${GTK2_FOUND})
+      set(HAS_GTK2 TRUE)
+    else()
+      set(HAS_GTK2 FALSE)
+      message("GTK2 was not found on your system. There will be no loading window.")
+    endif()
+  else()
+    set(HAS_GTK2 FALSE)
+  endif()
+
+  find_package("BZip2")
+  if (NOT(${BZIP2_FOUND}))
+    message(FATAL_ERROR "Bzip2 support required.")
+  endif()
+
+  find_package("ZLIB")
+  if (NOT(${ZLIB_FOUND}))
+    message(FATAL_ERROR "zlib support required.")
+  endif()
+
+  find_library(DL_LIBRARY dl)
+  if(${LIBDL_FOUND})
+    set(HAS_LIBDL TRUE)
+  else()
+    set(HAS_LIBDL FALSE)
+  endif()
+
+  include("${SM_CMAKE_DIR}/CMakeScout_XRandR.cmake")
+  if (${XRANDR_FOUND})
+    set(HAS_XRANDR TRUE)
+  else()
+    set(HAX_XRANDR FALSE)
+  endif()
+
+  include("${SM_CMAKE_DIR}/CMakeScout_Ogg.cmake")
+  include("${SM_CMAKE_DIR}/CMakeScout_Vorbis.cmake")
+  include("${SM_CMAKE_DIR}/CMakeScout_VorbisFile.cmake")
+
+  include("${SM_CMAKE_DIR}/CMakeScout_PulseAudio.cmake")
+  if (PULSEAUDIO_FOUND)
+    set(HAS_PULSE TRUE)
+  else()
+    set(HAS_PULSE FALSE)
+  endif()
+
+  find_package(ALSA)
+  if (ALSA_FOUND)
+    set(HAS_ALSA TRUE)
+  else()
+    set(HAS_ALSA FALSE)
+  endif()
+
+  include("${SM_CMAKE_DIR}/CMakeScout_Jack.cmake")
+  if (JACK_FOUND)
+    set(HAS_JACK TRUE)
+  else()
+    set(HAS_JACK FALSE)
+  endif()
+
+  include("${SM_CMAKE_DIR}/CMakeScout_OSS.cmake")
+  if (OSS_FOUND)
+    set(HAS_OSS TRUE)
+  else()
+    set(HAS_OSS FALSE)
+  endif()
+
+  find_package(Threads)
+  if (${Threads_FOUND})
+    set(HAS_PTHREAD TRUE)
+  else()
+    set(HAS_PTHREAD FALSE)
+  endif()
+
+  include("${SM_CMAKE_DIR}/CMakeScout_Yasm.cmake")
+  if (NOT YASM_EXECUTABLE)
+    message("YASM was not found. Please install if you wish for ffmpeg support.")
+    set(WITH_FFMPEG OFF)
+  endif()
+
+  if(WITH_FFMPEG)
+    # NEVER use the system ffmpeg. Not worth the hassle.
+    # --shlibdir=$our_installdir/stepmania-$VERSION
+    externalproject_add("ffmpeg"
+      DOWNLOAD_DIR "${SM_EXTERN_DIR}/ffmpeg-linux"
+      PREFIX "${SM_EXTERN_DIR}/ffmpeg-linux"
+      GIT_REPOSITORY "git://source.ffmpeg.org/ffmpeg.git"
+      GIT_TAG "n2.1.3"
+      CONFIGURE_COMMAND "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg/configure" "--enable-gpl" "--disable-programs" "--disable-doc" "--disable-avdevice" "--disable-swresample" "--disable-postproc" "--disable-avfilter" "--disable-shared" "--enable-static"
+      BUILD_COMMAND "make"
+      UPDATE_COMMAND ""
+      INSTALL_COMMAND ""
+      TEST_COMMAND ""
+    )
+    set(HAS_FFMPEG TRUE)
+  else()
+    set(HAS_FFMPEG FALSE)
+  endif()
+
+  find_package(OpenGL REQUIRED)
+  if (NOT ${OPENGL_FOUND})
+    message(FATAL_ERROR "OpenGL required to compile StepMania.")
+  endif()
+
+  find_package(GLEW REQUIRED)
+  if (NOT ${GLEW_FOUND})
+    message(FATAL_ERROR "GLEW required to compile StepMania.")
+  endif()
+
+  find_package(GTK2 2.0 REQUIRED gtk)
+
+  test_big_endian(BIGENDIAN)
+  if (${BIGENDIAN})
+    set(ENDIANNESS "ENDIAN_BIG")
+  endif()
+
+endif()
+
 
 # The external libraries need to be included.
 add_subdirectory(extern)
