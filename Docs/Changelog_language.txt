@@ -1,0 +1,43 @@
+StepMania 5 Language Changelog
+________________________________________________________________________________
+The StepMania 5 Language Changelog covers all language strings added after
+StepMania 5.0.6.  This is to inform translators of strings that need to be
+translated from English to other languages.
+________________________________________________________________________________
+
+Strings are listed by the section of the language file they are in.  Example:
+
+* [ScreenDebugOverlay] Mute actions, Mute actions on, Mute actions off
+
+This means that three strings were added to the "ScreenDebugOverlay" section,
+"Mute actions", "Mute actions on", and "Mute actions off".
+
+2015/04/08
+----------
+* [OptionExplanations] EditClearPromptThreshold, HarshHotLifePenalty
+* [OptionTitles] EditClearPromptThreshold, HarshHotLifePenalty
+* [ScreenEdit] Are you sure you want to clear %d notes?
+
+2015/04/02
+----------
+* [OptionTitles] Preview
+* [ScreenEdit] Enter a preview file.
+* [SongManager] The preview file '%s' does not exist.
+
+2015/03/02
+----------
+* [OptionTitles] Music File
+* [ScreenEdit] Enter the music file for this chart.
+* [SongManager] The music file '%s' does not exist.
+
+2015/02/27
+----------
+* [ScreenDebugOverlay] Mute actions, Mute actions on, Mute actions off
+
+2015/02/22
+----------
+* [EditMenuAction] LoadAutosave
+
+2015/02/17
+----------
+* [ScreenEdit] Autosave successful.
