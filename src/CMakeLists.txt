@@ -292,28 +292,6 @@ list(APPEND SMDATA_LINK_LIB
 )
 
 if (WIN32)
-
-  # FFMPEG...it can be evil.
-  find_library(LIB_SWSCALE NAMES "swscale"
-    PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
-  )
-  get_filename_component(LIB_SWSCALE ${LIB_SWSCALE} NAME)
-  
-  find_library(LIB_AVCODEC NAMES "avcodec"
-    PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
-  )
-  get_filename_component(LIB_AVCODEC ${LIB_AVCODEC} NAME)
-  
-  find_library(LIB_AVFORMAT NAMES "avformat"
-    PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
-  )
-  get_filename_component(LIB_AVFORMAT ${LIB_AVFORMAT} NAME)
-  
-  find_library(LIB_AVUTIL NAMES "avutil"
-    PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
-  )
-  get_filename_component(LIB_AVUTIL ${LIB_AVUTIL} NAME)
-
   set(SMDATA_LINK_LIB
     "lua-5.1"
     "tomcrypt"
@@ -350,49 +328,10 @@ if (WIN32)
   sm_add_link_flag("StepMania" "/MAP")
   
 elseif(APPLE)
-  find_library(MAC_FRAME_ACCELERATE Accelerate ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_APPKIT AppKit ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_AUDIOTOOLBOX AudioToolbox ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_AUDIOUNIT AudioUnit ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_CARBON Carbon ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_COCOA Cocoa ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_COREAUDIO CoreAudio ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_COREFOUNDATION CoreFoundation ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_CORESERVICES CoreServices ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_FOUNDATION Foundation ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_IOKIT IOKit ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_OPENGL OpenGL ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  find_library(MAC_FRAME_QUICKTIME QuickTime ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  
-  set(MAC_VECLIB_DIR "${MAC_FRAME_ACCELERATE}/Versions/A/Frameworks")
-  set_target_properties("StepMania" PROPERTIES XCODE_ATTRIBUTE_FRAMEWORK_SEARCH_PATHS
-    "${MAC_VECLIB_DIR}"
-  )
-  
-  find_library(MAC_FRAME_VECLIB vecLib "${MAC_VECLIB_DIR}")
-  
-  mark_as_advanced(
-    MAC_FRAME_ACCELERATE
-    MAC_FRAME_APPKIT
-    MAC_FRAME_AUDIOTOOLBOX
-    MAC_FRAME_AUDIOUNIT
-    MAC_FRAME_CARBON
-    MAC_FRAME_COCOA
-    MAC_FRAME_COREAUDIO
-    MAC_FRAME_COREFOUNDATION
-    MAC_FRAME_CORESERVICES
-    MAC_FRAME_FOUNDATION
-    MAC_FRAME_IOKIT
-    MAC_FRAME_OPENGL
-    MAC_FRAME_QUICKTIME
-    MAC_FRAME_VECLIB
-  )
-  
-# The following were removed from SMDATA_LINK_LIB to "match" StepMania's pbxproj.
+  # The following were removed from SMDATA_LINK_LIB to "match" StepMania's pbxproj.
 #    ${MAC_FRAME_APPKIT}
 #    ${MAC_FRAME_FOUNDATION}
 #    "ffmpeg"
-  
   
   # TODO: Adjust the target when StepMania-Data returns.
   # TODO: Find a cleaner way besides just setting to wipe the slate clean.

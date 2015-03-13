@@ -106,11 +106,70 @@ endif()
 set(ENDIANNESS "ENDIAN_LITTLE")
 if(WIN32)
   include(CMake/CMakeScout_DirectX.txt)
+  # FFMPEG...it can be evil.
+  find_library(LIB_SWSCALE NAMES "swscale"
+    PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
+  )
+  get_filename_component(LIB_SWSCALE ${LIB_SWSCALE} NAME)
+  
+  find_library(LIB_AVCODEC NAMES "avcodec"
+    PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
+  )
+  get_filename_component(LIB_AVCODEC ${LIB_AVCODEC} NAME)
+  
+  find_library(LIB_AVFORMAT NAMES "avformat"
+    PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
+  )
+  get_filename_component(LIB_AVFORMAT ${LIB_AVFORMAT} NAME)
+  
+  find_library(LIB_AVUTIL NAMES "avutil"
+    PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
+  )
+  get_filename_component(LIB_AVUTIL ${LIB_AVUTIL} NAME)
 elseif(MACOSX)
   # Apple Archs needs to be 32-bit for now.
   # When SDL2 is introduced, this may change.
   set(CMAKE_OSX_ARCHITECTURES "i386")
   set(CMAKE_OSX_DEPLOYMENT_TARGET "10.6")
+  
+  find_library(MAC_FRAME_ACCELERATE Accelerate ${CMAKE_SYSTEM_FRAMEWORK_PATH})
+  find_library(MAC_FRAME_APPKIT AppKit ${CMAKE_SYSTEM_FRAMEWORK_PATH})
+  find_library(MAC_FRAME_AUDIOTOOLBOX AudioToolbox ${CMAKE_SYSTEM_FRAMEWORK_PATH})
+  find_library(MAC_FRAME_AUDIOUNIT AudioUnit ${CMAKE_SYSTEM_FRAMEWORK_PATH})
+  find_library(MAC_FRAME_CARBON Carbon ${CMAKE_SYSTEM_FRAMEWORK_PATH})
+  find_library(MAC_FRAME_COCOA Cocoa ${CMAKE_SYSTEM_FRAMEWORK_PATH})
+  find_library(MAC_FRAME_COREAUDIO CoreAudio ${CMAKE_SYSTEM_FRAMEWORK_PATH})
+  find_library(MAC_FRAME_COREFOUNDATION CoreFoundation ${CMAKE_SYSTEM_FRAMEWORK_PATH})
+  find_library(MAC_FRAME_CORESERVICES CoreServices ${CMAKE_SYSTEM_FRAMEWORK_PATH})
+  find_library(MAC_FRAME_FOUNDATION Foundation ${CMAKE_SYSTEM_FRAMEWORK_PATH})
+  find_library(MAC_FRAME_IOKIT IOKit ${CMAKE_SYSTEM_FRAMEWORK_PATH})
+  find_library(MAC_FRAME_OPENGL OpenGL ${CMAKE_SYSTEM_FRAMEWORK_PATH})
+  find_library(MAC_FRAME_QUICKTIME QuickTime ${CMAKE_SYSTEM_FRAMEWORK_PATH})
+  
+  # TODO: Do not always assume Accelerate always has Veclib.
+  set(MAC_VECLIB_DIR "${MAC_FRAME_ACCELERATE}/Versions/A/Frameworks")
+  set_target_properties("StepMania" PROPERTIES XCODE_ATTRIBUTE_FRAMEWORK_SEARCH_PATHS
+    "${MAC_VECLIB_DIR}"
+  )
+  
+  find_library(MAC_FRAME_VECLIB vecLib "${MAC_VECLIB_DIR}")
+  
+  mark_as_advanced(
+    MAC_FRAME_ACCELERATE
+    MAC_FRAME_APPKIT
+    MAC_FRAME_AUDIOTOOLBOX
+    MAC_FRAME_AUDIOUNIT
+    MAC_FRAME_CARBON
+    MAC_FRAME_COCOA
+    MAC_FRAME_COREAUDIO
+    MAC_FRAME_COREFOUNDATION
+    MAC_FRAME_CORESERVICES
+    MAC_FRAME_FOUNDATION
+    MAC_FRAME_IOKIT
+    MAC_FRAME_OPENGL
+    MAC_FRAME_QUICKTIME
+    MAC_FRAME_VECLIB
+  )
 elseif(LINUX)
   include(TestBigEndian)
   include(ExternalProject)
