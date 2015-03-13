@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8.12)
 project(StepMania)
 
 # Include the macros and functions.
-include(CMake/CMakeMacros.txt)
+include(CMake/CMakeMacros.cmake)
 
 # Set up version numbers according to the new scheme.
 set(SM_VERSION_MAJOR 5)
@@ -105,7 +105,7 @@ endif()
 # Dependencies go here.
 set(ENDIANNESS "ENDIAN_LITTLE")
 if(WIN32)
-  include(CMake/CMakeScout_DirectX.txt)
+  include(CMake/CMakeScout_DirectX.cmake)
   # FFMPEG...it can be evil.
   find_library(LIB_SWSCALE NAMES "swscale"
     PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
