@@ -305,6 +305,7 @@ if (WIN32)
     "setupapi.lib"
     "hid.lib"
   )
+  list(REMOVE_ITEM SMDATA_LINK_LIB "mad")
   
   sm_add_link_flag("StepMania" "/LIBPATH:\"${DIRECTX_LIBRARY_DIR}\"")
   sm_add_link_flag("StepMania" "/LIBPATH:\"${SM_EXTERN_DIR}/ffmpeg/lib\"")
