@@ -342,7 +342,6 @@ elseif(APPLE)
     ${MAC_FRAME_AUDIOUNIT}
     ${MAC_FRAME_COREAUDIO}
     ${MAC_FRAME_CORESERVICES}
-    ${MAC_FRAME_VECLIB}
     "ogg"
     "theora"
     "vorbis"

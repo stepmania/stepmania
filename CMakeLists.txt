@@ -64,8 +64,8 @@ if(NOT (ret STREQUAL "0"))
   SET(SM_VERSION_GIT_HASH "UNKNOWN")
 endif()
 
-# Allow for finding DirectX.
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+# Allow for finding our libraries in a standard location.
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 
 # Put the predefined targets in separate groups.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -137,14 +137,6 @@ elseif(MACOSX)
   find_library(MAC_FRAME_OPENGL OpenGL ${CMAKE_SYSTEM_FRAMEWORK_PATH})
   find_library(MAC_FRAME_QUICKTIME QuickTime ${CMAKE_SYSTEM_FRAMEWORK_PATH})
   
-  # TODO: Do not always assume Accelerate always has Veclib.
-  set(MAC_VECLIB_DIR "${MAC_FRAME_ACCELERATE}/Versions/A/Frameworks")
-  set_target_properties("StepMania" PROPERTIES XCODE_ATTRIBUTE_FRAMEWORK_SEARCH_PATHS
-    "${MAC_VECLIB_DIR}"
-  )
-  
-  find_library(MAC_FRAME_VECLIB vecLib "${MAC_VECLIB_DIR}")
-  
   mark_as_advanced(
     MAC_FRAME_ACCELERATE
     MAC_FRAME_APPKIT
@@ -159,7 +151,6 @@ elseif(MACOSX)
     MAC_FRAME_IOKIT
     MAC_FRAME_OPENGL
     MAC_FRAME_QUICKTIME
-    MAC_FRAME_VECLIB
   )
 elseif(LINUX)
   include(TestBigEndian)
