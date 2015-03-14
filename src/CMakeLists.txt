@@ -8,7 +8,6 @@ add_custom_command(
   DEPENDS VersionUpdater
 )
 
-
 source_group("Generated Files" FILES ${SM_SRC_DIR}/verstub.cpp)
 
 # Main project is below.
@@ -292,27 +291,19 @@ list(APPEND SMDATA_LINK_LIB
 )
 
 if (WIN32)
-  set(SMDATA_LINK_LIB
-    "lua-5.1"
-    "tomcrypt"
-    "tommath"
-    "zlib"
-    "jsoncpp"
-    "png"
-    "glew"
-    "pcre"
-	# The misc libraries are here.
-	"${LIB_SWSCALE}"
-	"${LIB_AVCODEC}"
-	"${LIB_AVFORMAT}"
-	"${LIB_AVUTIL}"
-	"libmad.lib"
-	"ogg_static.lib"
-	"vorbis_static.lib"
-	"vorbisfile_static.lib"
-	"dbghelp.lib"
-	"setupapi.lib"
-	"hid.lib"
+  list(APPEND SMDATA_LINK_LIB
+    # The misc libraries are here.
+    "${LIB_SWSCALE}"
+    "${LIB_AVCODEC}"
+    "${LIB_AVFORMAT}"
+    "${LIB_AVUTIL}"
+    "libmad.lib"
+    "ogg_static.lib"
+    "vorbis_static.lib"
+    "vorbisfile_static.lib"
+    "dbghelp.lib"
+    "setupapi.lib"
+    "hid.lib"
   )
   
   sm_add_link_flag("StepMania" "/LIBPATH:\"${DIRECTX_LIBRARY_DIR}\"")
