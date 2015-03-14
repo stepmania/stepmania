@@ -166,7 +166,6 @@ if (NOT WITH_NETWORKING)
 endif()
 
 set(SM_COMPILE_FLAGS "")
-
 # Compilation flags per project here.
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   sm_add_compile_definition("StepMania" "DEBUG=1")
@@ -305,6 +304,7 @@ if (WIN32)
     "setupapi.lib"
     "hid.lib"
   )
+  # Mad is not built in Windows.
   list(REMOVE_ITEM SMDATA_LINK_LIB "mad")
   
   sm_add_link_flag("StepMania" "/LIBPATH:\"${DIRECTX_LIBRARY_DIR}\"")
@@ -318,7 +318,10 @@ if (WIN32)
   sm_add_link_flag("StepMania" "/SAFESEH:NO")
   sm_add_link_flag("StepMania" "/NOLOGO")
   sm_add_link_flag("StepMania" "/MAP")
-  
+  sm_add_link_flag("StepMania" "/NODEFAULTLIB:wininet.lib")
+  sm_add_link_flag("StepMania" "/NODEFAULTLIB:msimg32.lib")
+  sm_add_link_flag("StepMania" "/NODEFAULTLIB:libci.lib")
+  set_target_properties("StepMania" PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt.lib")
 elseif(APPLE)
   # The following were removed from SMDATA_LINK_LIB to "match" StepMania's pbxproj.
 #    ${MAC_FRAME_APPKIT}

@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
 
   std::ofstream versionDataFile(argv[1], std::ios::out);
   if (versionDataFile.is_open()) {
-    versionDataFile << "unsigned long version_num = " << build << ";" << std::endl;
+    versionDataFile << "extern unsigned long const version_num = " << build << ";" << std::endl;
     versionDataFile << "int sm_version_major = " << smVersionMajor << ";" << std::endl;
     versionDataFile << "int sm_version_minor = " << smVersionMinor << ";" << std::endl;
     versionDataFile << "int sm_version_patch = " << smVersionPatch << ";" << std::endl;
