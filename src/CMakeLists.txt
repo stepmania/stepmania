@@ -322,6 +322,8 @@ if (WIN32)
   sm_add_link_flag("StepMania" "/NODEFAULTLIB:msimg32.lib")
   sm_add_link_flag("StepMania" "/NODEFAULTLIB:libci.lib")
   set_target_properties("StepMania" PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt.lib")
+  set_target_properties("StepMania" PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
+  set_target_properties("StepMania" PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS")
 elseif(APPLE)
   # The following were removed from SMDATA_LINK_LIB to "match" StepMania's pbxproj.
 #    ${MAC_FRAME_APPKIT}
