@@ -65,7 +65,7 @@ if(NOT (ret STREQUAL "0"))
 endif()
 
 # Allow for finding our libraries in a standard location.
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules/")
 
 # Put the predefined targets in separate groups.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -96,7 +96,8 @@ endif()
 # Dependencies go here.
 set(ENDIANNESS "ENDIAN_LITTLE")
 if(WIN32)
-  include(CMake/CMakeScout_DirectX.cmake)
+  find_package(DirectX REQUIRED)
+  
   # FFMPEG...it can be evil.
   find_library(LIB_SWSCALE NAMES "swscale"
     PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH

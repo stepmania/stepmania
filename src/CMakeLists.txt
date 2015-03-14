@@ -307,6 +307,8 @@ if (WIN32)
   # Mad is not built in Windows.
   list(REMOVE_ITEM SMDATA_LINK_LIB "mad")
   
+  get_filename_component(DIRECTX_LIBRARY_DIR "${DIRECTX_LIBRARIES}" DIRECTORY)
+  
   sm_add_link_flag("StepMania" "/LIBPATH:\"${DIRECTX_LIBRARY_DIR}\"")
   sm_add_link_flag("StepMania" "/LIBPATH:\"${SM_EXTERN_DIR}/ffmpeg/lib\"")
   sm_add_link_flag("StepMania" "/LIBPATH:\"${SM_EXTERN_DIR}/libjpeg\"")
