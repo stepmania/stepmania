@@ -263,6 +263,9 @@ else() # Linux
   if (${HAS_FFMPEG})
     sm_add_compile_definition("StepMania" HAVE_FFMPEG)
   endif()
+  if (BSD)
+    sm_add_compile_definition("StepMania" BSD)
+  endif()
 
   if (GTK2_FOUND)
     sm_add_compile_definition("StepMania" HAVE_GTK)
