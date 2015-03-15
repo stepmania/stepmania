@@ -198,6 +198,19 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 		return true;
 	}
 
+	// Release the lookup tables being used for the timing data because
+	// changing the timing data invalidates them. -Kyz
+	if(a != Action_Invalid)
+	{
+		FOREACH_EnabledPlayer(pn)
+		{
+			if(GAMESTATE->m_pCurSteps[pn])
+			{
+				GAMESTATE->m_pCurSteps[pn]->GetTimingData()->ReleaseLookup();
+			}
+		}
+	}
+
 	switch( a )
 	{
 	case RevertSyncChanges:
