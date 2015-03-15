@@ -27,21 +27,23 @@ if(APPLE)
   
   source_group("OS Specific\\\\Darwin" FILES ${SMDATA_OS_DARWIN_SRC} ${SMDATA_OS_DARWIN_HPP})
   
-  list(APPEND SMDATA_OS_UNIX_SRC
-    "archutils/Unix/Backtrace.cpp"
-    "archutils/Unix/BacktraceNames.cpp"
-    "archutils/Unix/CrashHandler.cpp"
-    "archutils/Unix/CrashHandlerChild.cpp"
-    "archutils/Unix/CrashHandlerInternal.cpp"
-    "archutils/Unix/SignalHandler.cpp"
-  )
-  list(APPEND SMDATA_OS_UNIX_HPP
-    "archutils/Unix/Backtrace.h"
-    "archutils/Unix/BacktraceNames.h"
-    "archutils/Unix/CrashHandler.h"
-    "archutils/Unix/CrashHandlerInternal.h"
-    "archutils/Unix/SignalHandler.h"
-  )
+  if (WITH_CRASH_HANDLER)
+    list(APPEND SMDATA_OS_UNIX_SRC
+      "archutils/Unix/Backtrace.cpp"
+      "archutils/Unix/BacktraceNames.cpp"
+      "archutils/Unix/CrashHandler.cpp"
+      "archutils/Unix/CrashHandlerChild.cpp"
+      "archutils/Unix/CrashHandlerInternal.cpp"
+      "archutils/Unix/SignalHandler.cpp"
+    )
+    list(APPEND SMDATA_OS_UNIX_HPP
+      "archutils/Unix/Backtrace.h"
+      "archutils/Unix/BacktraceNames.h"
+      "archutils/Unix/CrashHandler.h"
+      "archutils/Unix/CrashHandlerInternal.h"
+      "archutils/Unix/SignalHandler.h"
+    )
+  endif()
   
   source_group("OS Specific\\\\Unix" FILES ${SMDATA_OS_UNIX_SRC} ${SMDATA_OS_UNIX_HPP})
   

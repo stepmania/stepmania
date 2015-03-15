@@ -173,7 +173,7 @@ elseif(APPLE)
   list(APPEND SMDATA_ARCH_MEMORY_HPP
     "arch/MemoryCard/MemoryCardDriverThreaded_MacOSX.h"
   )
-else() # Unix
+elseif(LINUX)
   list(APPEND SMDATA_ARCH_MEMORY_SRC
     "arch/MemoryCard/MemoryCardDriverThreaded_Linux.cpp"
   )
@@ -290,13 +290,29 @@ if(NOT APPLE)
         "arch/Lights/LightsDriver_Win32Minimaid.h"
       )
     endif()
-  else() # TODO: Linux HAVE_PARALLEL_PORT
-    list(APPEND SMDATA_ARCH_LIGHTS_SRC
-      "arch/Lights/LightsDriver_LinuxParallel.cpp"
-    )
-    list(APPEND SMDATA_ARCH_LIGHTS_HPP
-      "arch/Lights/LightsDriver_LinuxParallel.h"
-    )
+  else() # Unix/Linux TODO: Linux HAVE_PARALLEL_PORT
+    if(LINUX)
+      list(APPEND SMDATA_ARCH_LIGHTS_SRC
+        "arch/Lights/LightsDriver_Linux_PIUIO.cpp"
+        "arch/Lights/LightsDriver_Linux_PIUIO_Leds.cpp"
+        "arch/Lights/LightsDriver_LinuxWeedTech.cpp"
+        "arch/Lights/LightsDriver_LinuxParallel.cpp"
+      )
+      list(APPEND SMDATA_ARCH_LIGHTS_HPP
+        "arch/Lights/LightsDriver_Linux_PIUIO.h"
+        "arch/Lights/LightsDriver_Linux_PIUIO_Leds.h"
+        "arch/Lights/LightsDriver_LinuxWeedTech.h"
+        "arch/Lights/LightsDriver_LinuxParallel.h"
+      )
+      if (WITH_PARALLEL_PORT)
+        list(APPEND SMDATA_ARCH_LIGHTS_SRC
+          "arch/Lights/LightsDriver_LinuxParallel.cpp"
+        )
+        list(APPEND SMDATA_ARCH_LIGHTS_HPP
+          "arch/Lights/LightsDriver_LinuxParallel.h"
+        )
+      endif()
+    endif()
   endif(WIN32)
 endif(NOT APPLE)
 
@@ -333,19 +349,30 @@ elseif(APPLE)
   list(APPEND SMDATA_ARCH_INPUT_HPP
     "arch/InputHandler/InputHandler_MacOSX_HID.h"
   )
-else(UNIX)
-  list(APPEND SMDATA_ARCH_INPUT_SRC
-    "arch/InputHandler/LinuxInputManager.cpp"
-    "arch/InputHandler/InputHandler_Linux_Joystick.cpp"
-    "arch/InputHandler/InputHandler_Linux_Event.cpp"
-    "arch/InputHandler/InputHandler_Linux_PIUIO.cpp"
-  )
-  list(APPEND SMDATA_ARCH_INPUT_SRC
-    "arch/InputHandler/LinuxInputManager.h"
-    "arch/InputHandler/InputHandler_Linux_Joystick.h"
-    "arch/InputHandler/InputHandler_Linux_Event.h"
-    "arch/InputHandler/InputHandler_Linux_PIUIO.h"
-  )
+else() # Unix/Linux
+  if (LINUX)
+    list(APPEND SMDATA_ARCH_INPUT_SRC
+      "arch/InputHandler/LinuxInputManager.cpp"
+      "arch/InputHandler/InputHandler_Linux_Joystick.cpp"
+      "arch/InputHandler/InputHandler_Linux_Event.cpp"
+      "arch/InputHandler/InputHandler_Linux_PIUIO.cpp"
+    )
+    list(APPEND SMDATA_ARCH_INPUT_SRC
+      "arch/InputHandler/LinuxInputManager.h"
+      "arch/InputHandler/InputHandler_Linux_Joystick.h"
+      "arch/InputHandler/InputHandler_Linux_Event.h"
+      "arch/InputHandler/InputHandler_Linux_PIUIO.h"
+    )
+    if(WITH_TTY)
+      list(APPEND SMDATA_ARCH_INPUT_SRC
+        "arch/InputHandler/InputHandler_Linux_tty.cpp"
+      )
+      list(APPEND SMDATA_ARCH_INPUT_HPP
+        "arch/InputHandler/InputHandler_Linux_tty.h"
+        "arch/InputHandler/InputHandler_Linux_tty_keys.h"
+      )
+    endif()
+  endif()
   if(X11_FOUND)
     list(APPEND SMDATA_ARCH_INPUT_SRC
       "arch/InputHandler/InputHandler_X11.cpp"
@@ -354,16 +381,7 @@ else(UNIX)
       "arch/InputHandler/InputHandler_X11.h"
     )
   endif()
-  if(WITH_TTY)
-    list(APPEND SMDATA_ARCH_INPUT_SRC
-      "arch/InputHandler/InputHandler_Linux_tty.cpp"
-    )
-    list(APPEND SMDATA_ARCH_INPUT_HPP
-      "arch/InputHandler/InputHandler_Linux_tty.h"
-      "arch/InputHandler/InputHandler_Linux_tty_keys.h"
-    )
-  endif()
-endif(WIN32)
+endif()
 
 source_group("Arch Specific\\\\Input Handler" FILES ${SMDATA_ARCH_INPUT_SRC} ${SMDATA_ARCH_INPUT_HPP})
 
@@ -454,7 +472,7 @@ list(APPEND SMDATA_ALL_ARCH_HPP
   ${SMDATA_ARCH_LIGHTS_HPP}
   ${SMDATA_ARCH_LOADING_HPP}
   ${SMDATA_ARCH_LOWLEVEL_HPP}
-  ${SMDATA_ARCH_MEMORY_SRC}
+  ${SMDATA_ARCH_MEMORY_HPP}
   ${SMDATA_ARCH_MOVIE_TEXTURE_HPP}
   ${SMDATA_ARCH_SOUND_HPP}
   ${SMDATA_ARCH_THREADS_HPP}
