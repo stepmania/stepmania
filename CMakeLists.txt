@@ -186,7 +186,7 @@ elseif(LINUX)
     set(HAS_LIBDL FALSE)
   endif()
 
-  include("${SM_CMAKE_DIR}/CMakeScout_XRandR.cmake")
+  find_package(Xrandr)
   if (${XRANDR_FOUND})
     set(HAS_XRANDR TRUE)
   else()
