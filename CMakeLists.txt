@@ -241,6 +241,8 @@ elseif(LINUX)
 
   if(NOT OSS_FOUND AND NOT JACK_FOUND AND NOT ALSA_FOUND AND NOT PULSE_FOUND)
     message(FATAL_ERROR "No sound libraries found. You will require at least one.")
+  else()
+    message(STATUS "-- At least one sound library was found. Do not worry if any were not found at this stage.")
   endif()
 
   find_package(Threads)
