@@ -225,6 +225,10 @@ elseif(LINUX)
     set(HAS_OSS FALSE)
   endif()
 
+  if(NOT OSS_FOUND AND NOT JACK_FOUND AND NOT ALSA_FOUND AND NOT PULSE_FOUND)
+    message(FATAL_ERROR "No sound libraries found. You will require at least one.")
+  endif()
+
   find_package(Threads)
   if (${Threads_FOUND})
     set(HAS_PTHREAD TRUE)
