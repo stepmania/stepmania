@@ -895,7 +895,12 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 						{ tryingSteps = false; }
 						break;
 					case LNDID_difficulty:
-						if(out.GetDifficulty() != StringToDifficulty(matcher))
+						// Accept any difficulty if it's an edit because LoadEditFromMsd
+						// forces edits onto Edit difficulty even if they have a difficulty
+						// tag. -Kyz
+						if(out.GetDifficulty() != StringToDifficulty(matcher) &&
+							!(out.GetDifficulty() == Difficulty_Edit &&
+								GetExtension(cachePath).MakeLower() == "edit"))
 						{ tryingSteps = false; }
 						break;
 					case LNDID_meter:
@@ -1125,13 +1130,27 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 				if(!bAddStepsToSong)
 				{ return true; }
 
+				// Force the difficulty to edit in case the edit set its own
+				// difficulty because IsEditAlreadyLoaded has an assert and edits
+				// shouldn't be able to add charts of other difficulties. -Kyz
+				if(pNewNotes != NULL)
+				{
+					pNewNotes->SetDifficulty(Difficulty_Edit);
+					if(pSong->IsEditAlreadyLoaded(pNewNotes))
+					{
+						LOG->UserLog("Edit file", sEditFilePath,
+							"is a duplicate of another edit that was already loaded.");
+						SAFE_DELETE(pNewNotes);
+						return false;
+					}
+				}
+
 				if(reused_steps_info.ssc_format)
 				{
 					if(reused_steps_info.has_own_timing)
-					pNewNotes->m_Timing = stepsTiming;
+					{ pNewNotes->m_Timing = stepsTiming; }
 					pNewNotes->SetSMNoteData(sParams[1]);
 					pNewNotes->TidyUpData();
-					pSong->AddSteps(pNewNotes);
 				}
 				else
 				{
@@ -1148,14 +1167,6 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 				pNewNotes->SetLoadedFromProfile(slot);
 				pNewNotes->SetDifficulty(Difficulty_Edit);
 				pNewNotes->SetFilename(sEditFilePath);
-
-				if(pSong->IsEditAlreadyLoaded(pNewNotes))
-				{
-					LOG->UserLog("Edit file", sEditFilePath,
-						"is a duplicate of another edit that was already loaded.");
-					SAFE_DELETE(pNewNotes);
-					return false;
-				}
 
 				pSong->AddSteps(pNewNotes);
 				return true; // Only allow one Steps per edit file!
