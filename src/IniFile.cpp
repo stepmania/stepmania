@@ -188,6 +188,7 @@ bool IniFile::RenameKey(const RString &from, const RString &to)
 		return false;
 
 	pNode->SetName( to );
+	RenameChildInByName(pNode);
 
 	return true;
 }

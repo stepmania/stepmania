@@ -124,6 +124,7 @@ public:
 	XNode *AppendChild( XNode *node );
 	bool RemoveChild( XNode *node, bool bDelete = true );
 	void RemoveChildFromByName(XNode *node);
+	void RenameChildInByName(XNode* node);
 
 	XNodeValue *AppendAttrFrom( const RString &sName, XNodeValue *pValue, bool bOverwrite = true );
 	XNodeValue *AppendAttr( const RString &sName );

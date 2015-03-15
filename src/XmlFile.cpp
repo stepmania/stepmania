@@ -169,6 +169,12 @@ void XNode::RemoveChildFromByName(XNode* node)
 	}
 }
 
+void XNode::RenameChildInByName(XNode* node)
+{
+	RemoveChildFromByName(node);
+	m_children_by_name.insert(make_pair(node->m_sName, node));
+}
+
 
 // detach attribute
 bool XNode::RemoveAttr( const RString &sName )
