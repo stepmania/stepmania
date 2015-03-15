@@ -194,7 +194,7 @@ elseif(LINUX)
   endif()
 
   include("${SM_CMAKE_DIR}/CMakeScout_Ogg.cmake")
-  include("${SM_CMAKE_DIR}/CMakeScout_Vorbis.cmake")
+  find_package(Vorbis)
   find_package(VorbisFile)
 
   find_package(PulseAudio)
