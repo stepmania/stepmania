@@ -9,3 +9,5 @@ find_program(YASM_EXECUTABLE yasm
 
 find_package_handle_standard_args(yasm DEFAULT_MSG YASM_EXECUTABLE)
 
+mark_as_advanced(YASM_EXECUTABLE)
+
