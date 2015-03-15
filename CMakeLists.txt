@@ -211,7 +211,7 @@ elseif(LINUX)
     set(HAS_ALSA FALSE)
   endif()
 
-  include("${SM_CMAKE_DIR}/CMakeScout_Jack.cmake")
+  find_package(JACK)
   if (JACK_FOUND)
     set(HAS_JACK TRUE)
   else()
