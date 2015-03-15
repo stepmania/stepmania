@@ -374,15 +374,29 @@ else() # Unix / Linux
     "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build/libavcodec/libavcodec.a"
     "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build/libswscale/libswscale.a"
     "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build/libavutil/libavutil.a"
-    ${DL_LIBRARY}
-    ${VORBISFILE_LIBRARY}
-    ${VORBIS_LIBRARY}
-    ${OGG_LIBRARY}
-    ${OPENGL_LIBRARY}
-    ${GTK2_LIBRARIES}
+    "${DL_LIBRARY}"
+  )
+
+  if(HAS_OGG)
+    list(APPEND SMDATA_LINK_LIB
+      "${VORBISFILE_LIBRARY}"
+      "${VORBIS_LIBRARY}"
+      "${OGG_LIBRARY}"
+    )
+  endif()
+
+  if(HAS_MP3)
+    list(APPEND SMDATA_LINK_LIB
+      "${LIBMAD_LIBRARY}"
+    )
+  endif()
+
+  list(APPEND SMDATA_LINK_LIB
+    "${OPENGL_LIBRARY}"
+    "${GTK2_LIBRARIES}"
     "${BZIP2_LIBRARIES}"
     "${ZLIB_LIBRARIES}"
-    ${CMAKE_THREAD_LIBS_INIT}
+    "${CMAKE_THREAD_LIBS_INIT}"
   )
 
   if (HAS_ALSA)

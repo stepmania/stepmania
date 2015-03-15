@@ -158,7 +158,6 @@ list(APPEND SMDATA_RAGE_SOUND_SRC
   "RageSoundReader_Extend.cpp"
   "RageSoundReader_FileReader.cpp"
   "RageSoundReader_Merge.cpp"
-  "RageSoundReader_MP3.cpp"
   "RageSoundReader_Pan.cpp"
   "RageSoundReader_PitchChange.cpp"
   "RageSoundReader_PostBuffering.cpp"
@@ -181,7 +180,6 @@ list(APPEND SMDATA_RAGE_SOUND_HPP
   "RageSoundReader_FileReader.h"
   "RageSoundReader_Filter.h"
   "RageSoundReader_Merge.h"
-  "RageSoundReader_MP3.h"
   "RageSoundReader_Pan.h"
   "RageSoundReader_PitchChange.h"
   "RageSoundReader_PostBuffering.h"
@@ -196,6 +194,11 @@ list(APPEND SMDATA_RAGE_SOUND_HPP
 if (HAS_OGG)
   list(APPEND SMDATA_RAGE_SOUND_SRC "RageSoundReader_Vorbisfile.cpp")
   list(APPEND SMDATA_RAGE_SOUND_HPP "RageSoundReader_Vorbisfile.h")
+endif()
+
+if (HAS_MP3)
+  list(APPEND SMDATA_RAGE_SOUND_SRC "RageSoundReader_MP3.cpp")
+  list(APPEND SMDATA_RAGE_SOUND_HPP "RageSoundReader_MP3.h")
 endif()
 
 source_group("Rage\\\\Sound" FILES ${SMDATA_RAGE_SOUND_SRC} ${SMDATA_RAGE_SOUND_HPP})
