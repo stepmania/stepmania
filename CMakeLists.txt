@@ -90,12 +90,14 @@ else()
     option(WITH_PROFILING "Build with Profiling Support" OFF)
     option(WITH_GLES2 "Build with OpenGL ES 2.0 Support" ON)
     option(WITH_GTK2 "Build with GTK2 Support" ON)
+    option(WITH_OGG "Build with OGG/Vorbis Support" ON)
   endif()
 endif()
 
 # Dependencies go here.
 set(ENDIANNESS "ENDIAN_LITTLE")
 if(WIN32)
+  set(HAS_OGG TRUE)
   find_package(DirectX REQUIRED)
   
   # FFMPEG...it can be evil.
@@ -119,6 +121,7 @@ if(WIN32)
   )
   get_filename_component(LIB_AVUTIL ${LIB_AVUTIL} NAME)
 elseif(MACOSX)
+  set(HAS_OGG TRUE)
   # Apple Archs needs to be 32-bit for now.
   # When SDL2 is introduced, this may change.
   set(CMAKE_OSX_ARCHITECTURES "i386")
@@ -193,9 +196,17 @@ elseif(LINUX)
     set(HAX_XRANDR FALSE)
   endif()
 
-  find_package(Ogg)
-  find_package(Vorbis)
-  find_package(VorbisFile)
+  if (WITH_OGG)
+    find_package(Ogg)
+    find_package(Vorbis)
+    find_package(VorbisFile)
+
+    if(NOT (OGG_FOUND AND VORBIS_FOUND AND VORBISFILE_FOUND) )
+      message(FATAL_ERROR "Not all vorbis libraries were found. If you wish to skip vorbis support, set WITH_OGG to OFF when configuring.")
+    else()
+      set(HAS_OGG TRUE)
+    endif()
+  endif()
 
   find_package(PulseAudio)
   if (PULSEAUDIO_FOUND)

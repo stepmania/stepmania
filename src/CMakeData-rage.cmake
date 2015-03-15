@@ -166,7 +166,6 @@ list(APPEND SMDATA_RAGE_SOUND_SRC
   "RageSoundReader_Resample_Good.cpp"
   "RageSoundReader_SpeedChange.cpp"
   "RageSoundReader_ThreadedBuffer.cpp"
-  "RageSoundReader_Vorbisfile.cpp"
   "RageSoundReader_WAV.cpp"
   "RageSoundUtil.cpp"
 )
@@ -190,10 +189,14 @@ list(APPEND SMDATA_RAGE_SOUND_HPP
   "RageSoundReader_Resample_Good.h"
   "RageSoundReader_SpeedChange.h"
   "RageSoundReader_ThreadedBuffer.h"
-  "RageSoundReader_Vorbisfile.h"
   "RageSoundReader_WAV.h"
   "RageSoundUtil.h"
 )
+
+if (HAS_OGG)
+  list(APPEND SMDATA_RAGE_SOUND_SRC "RageSoundReader_Vorbisfile.cpp")
+  list(APPEND SMDATA_RAGE_SOUND_HPP "RageSoundReader_Vorbisfile.h")
+endif()
 
 source_group("Rage\\\\Sound" FILES ${SMDATA_RAGE_SOUND_SRC} ${SMDATA_RAGE_SOUND_HPP})
 
