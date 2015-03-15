@@ -218,7 +218,7 @@ elseif(LINUX)
     set(HAS_JACK FALSE)
   endif()
 
-  include("${SM_CMAKE_DIR}/CMakeScout_OSS.cmake")
+  find_package(OSS)
   if (OSS_FOUND)
     set(HAS_OSS TRUE)
   else()
