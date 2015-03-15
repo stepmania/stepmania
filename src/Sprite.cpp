@@ -1078,6 +1078,7 @@ public:
 		TEXTUREMAN->EnableOddDimensionWarning();
 		return 1;
 	}
+	DEFINE_METHOD(GetTexturePath, GetTexturePath());
 
 	/* Commands that go in the tweening queue: 
 	 * Commands that take effect immediately (ignoring the tweening queue): */
@@ -1224,6 +1225,7 @@ public:
 		ADD_METHOD( Load );
 		ADD_METHOD( LoadBanner );
 		ADD_METHOD( LoadBackground );
+		ADD_METHOD(GetTexturePath);
 		ADD_METHOD( customtexturerect );
 		ADD_METHOD( SetCustomImageRect );
 		ADD_METHOD( SetCustomPosCoords );

@@ -1654,6 +1654,7 @@
 			<Function name='GetNumStates'/>
 			<Function name='GetState'/>
 			<Function name='GetTexture'/>
+			<Function name='GetTexturePath'/>
 			<Function name='LinearFrames'/>
 			<Function name='Load'/>
 			<Function name='LoadBackground'/>
