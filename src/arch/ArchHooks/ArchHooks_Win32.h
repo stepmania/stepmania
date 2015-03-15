@@ -12,7 +12,6 @@ public:
 	RString GetArchName() const { return "Windows"; }
 	void DumpDebugInfo();
 	void RestartProgram();
-	RString GetMachineId() const;
 	bool CheckForMultipleInstances(int argc, char* argv[]);
 
 	void SetTime( tm newtime );
