@@ -264,7 +264,7 @@ inline int SafeFArg(lua_State* L, int index, RString const& err, int def)
 {
 	if(lua_isnumber(L, index))
 	{
-		return lua_tonumber(L, index);
+		return static_cast<int>(lua_tonumber(L, index));
 	}
 	LuaHelpers::ReportScriptError(err);
 	return def;
