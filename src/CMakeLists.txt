@@ -264,14 +264,17 @@ else() # Linux
     sm_add_compile_definition("StepMania" HAVE_FFMPEG)
   endif()
 
+  if (GTK2_FOUND)
+    sm_add_compile_definition("StepMania" HAVE_GTK)
+    add_custom_command(TARGET "StepMania" POST_BUILD
+      COMMAND ln -sf "${SM_SRC_DIR}/GtkModule.so" "${SM_ROOT_DIR}/GtkModule.so"
+    )
+  endif()
+
   sm_add_compile_definition("StepMania" UNIX)
   if("${CMAKE_SYSTEM}" MATCHES "Linux")
     sm_add_compile_definition("StepMania" LINUX)
   endif()
-
-  add_custom_command(TARGET "StepMania" POST_BUILD
-    COMMAND ln -sf "${SM_SRC_DIR}/GtkModule.so" "${SM_ROOT_DIR}/GtkModule.so"
-  )
 endif()
 
 set_property(TARGET "StepMania" PROPERTY FOLDER "Internal Libraries")
@@ -393,7 +396,15 @@ else() # Unix / Linux
 
   list(APPEND SMDATA_LINK_LIB
     "${OPENGL_LIBRARY}"
-    "${GTK2_LIBRARIES}"
+  )
+
+  if(GTK2_FOUND)
+    list(APPEND SMDATA_LINK_LIB
+      "${GTK2_LIBRARIES}"
+    )
+  endif()
+
+  list(APPEND SMDATA_LINK_LIB
     "${BZIP2_LIBRARIES}"
     "${ZLIB_LIBRARIES}"
     "${CMAKE_THREAD_LIBS_INIT}"

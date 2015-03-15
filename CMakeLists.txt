@@ -164,7 +164,7 @@ elseif(LINUX)
   include(ExternalProject)
 
   if(WITH_GTK2)
-    find_package("GTK2")
+    find_package("GTK2" 2.0)
     if (${GTK2_FOUND})
       set(HAS_GTK2 TRUE)
     else()
@@ -293,8 +293,6 @@ elseif(LINUX)
   if (NOT ${GLEW_FOUND})
     message(FATAL_ERROR "GLEW required to compile StepMania.")
   endif()
-
-  find_package(GTK2 2.0 REQUIRED gtk)
 
   test_big_endian(BIGENDIAN)
   if (${BIGENDIAN})

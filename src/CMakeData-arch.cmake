@@ -242,8 +242,8 @@ else()
     list(APPEND SMDATA_ARCH_LOADING_HPP
       "arch/LoadingWindow/LoadingWindow_MacOSX.h"
     )
-  elseif(LINUX) # TODO: GTK stuff for linux.
-    if (HAS_GTK2)
+  elseif(LINUX)
+    if (GTK2_FOUND)
       list(APPEND SMDATA_ARCH_LOADING_SRC
         "arch/LoadingWindow/LoadingWindow_Gtk.cpp"
       )
