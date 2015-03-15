@@ -197,7 +197,7 @@ elseif(LINUX)
   include("${SM_CMAKE_DIR}/CMakeScout_Vorbis.cmake")
   include("${SM_CMAKE_DIR}/CMakeScout_VorbisFile.cmake")
 
-  include("${SM_CMAKE_DIR}/CMakeScout_PulseAudio.cmake")
+  find_package(PulseAudio)
   if (PULSEAUDIO_FOUND)
     set(HAS_PULSE TRUE)
   else()
