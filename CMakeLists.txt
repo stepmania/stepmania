@@ -193,7 +193,7 @@ elseif(LINUX)
     set(HAX_XRANDR FALSE)
   endif()
 
-  include("${SM_CMAKE_DIR}/CMakeScout_Ogg.cmake")
+  find_package(Ogg)
   find_package(Vorbis)
   find_package(VorbisFile)
 
