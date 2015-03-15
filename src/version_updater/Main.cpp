@@ -55,22 +55,17 @@ int main(int argc, char *argv[]) {
   // zero out the newline.
   strtime[sizeof(strtime) - 1] = 0;
 
-  std::ostringstream versionStream;
-  versionStream << smVersionMajor << "." << smVersionMinor << "." << smVersionPatch;
-  std::string smVersionFull = versionStream.str();
-  
-  std::string smVersionGit = smVersionFull + "-" + smVersionGitHash;
-
   std::ofstream versionDataFile(argv[1], std::ios::out);
   if (versionDataFile.is_open()) {
     versionDataFile << "extern unsigned long const version_num = " << build << ";" << std::endl;
-    versionDataFile << "int sm_version_major = " << smVersionMajor << ";" << std::endl;
-    versionDataFile << "int sm_version_minor = " << smVersionMinor << ";" << std::endl;
-    versionDataFile << "int sm_version_patch = " << smVersionPatch << ";" << std::endl;
-    versionDataFile << "extern char const * const sm_version_full = \"" << smVersionFull << "\";" << std::endl;
+    versionDataFile << "extern int const sm_version_major = " << smVersionMajor << ";" << std::endl;
+    versionDataFile << "extern int const sm_version_minor = " << smVersionMinor << ";" << std::endl;
+    versionDataFile << "extern int const sm_version_patch = " << smVersionPatch << ";" << std::endl;
+    versionDataFile << "extern char const * const sm_version_git_hash = \"" << smVersionGitHash << "\";" << std::endl;
+    versionDataFile << "extern char const * const sm_version_traditional = \"" << smVersionTraditional << "\";" << std::endl;
     versionDataFile << "extern char const * const version_date = \"" << strdate << "\";" << std::endl;
     versionDataFile << "extern char const * const version_time = \"" << strtime << "\";" << std::endl;
-    versionDataFile << "extern char const * const product_version = \"" << smVersionGit << "\";" << std::endl;
+    versionDataFile << "extern char const * const product_version = \"" << smVersionFull << "\";" << std::endl;
     versionDataFile.close();
   }
 

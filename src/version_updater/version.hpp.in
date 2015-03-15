@@ -5,5 +5,7 @@ int smVersionMajor = @SM_VERSION_MAJOR@;
 int smVersionMinor = @SM_VERSION_MINOR@;
 int smVersionPatch = @SM_VERSION_PATCH@;
 char const * const smVersionGitHash = "@SM_VERSION_GIT_HASH@";
+char const * const smVersionFull = "@SM_VERSION_FULL@";
+char const * const smVersionTraditional = "@SM_VERSION_TRADITIONAL@";
 
 #endif

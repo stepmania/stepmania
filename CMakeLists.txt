@@ -5,12 +5,6 @@ project(StepMania)
 # Include the macros and functions.
 include(CMake/CMakeMacros.cmake)
 
-# Set up version numbers according to the new scheme.
-set(SM_VERSION_MAJOR 5)
-set(SM_VERSION_MINOR 0)
-set(SM_VERSION_PATCH 6)
-set(SM_VERSION_FULL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")
-
 # Set up helper variables for future configuring.
 set(SM_CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 set(SM_EXTERN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extern")
@@ -44,23 +38,6 @@ endif()
 set(CPACK_PACKAGE_NAME "StepMania")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Rhythm Game Simulator")
 
-# Using the deprecated version for now to keep cmake 2.8 users happy.
-exec_program(git "${SM_ROOT_DIR}"
-  ARGS "rev-parse" "--short" "HEAD"
-  OUTPUT_VARIABLE SM_VERSION_GIT_HASH
-  RETURN_VALUE ret
-)
-
-if(NOT (ret STREQUAL "0"))
-  SET(SM_VERSION_GIT_HASH "UNKNOWN")
-endif()
-
-# Allow for finding our libraries in a standard location.
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules/")
-
-# Put the predefined targets in separate groups.
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
 # Prep options that are needed for each platform.
 option(WITH_NETWORKING "Build with networking support" ON)
 
@@ -71,6 +48,9 @@ option(WITH_SSE2 "Build with SSE2 Optimizations" ON)
 
 # This option may go away in the future: if it does, JPEG will always be required.
 option(WITH_JPEG "Build with JPEG Image Support" ON)
+
+# Turn this on to set this to a specific release mode.
+option(WITH_FULL_RELEASE "Build as a proper, full release." OFF)
 
 if(WIN32)
   option(WITH_MINIMAID "Build with Mimimaid Lights Support" OFF)
@@ -87,6 +67,36 @@ else()
     option(WITH_CRASH_HANDLER "Build with Crash Handler Support" ON)
   endif()
 endif()
+
+# Set up version numbers according to the new scheme.
+set(SM_VERSION_MAJOR 5)
+set(SM_VERSION_MINOR 0)
+set(SM_VERSION_PATCH 6)
+set(SM_VERSION_TRADITIONAL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")
+
+if(WITH_FULL_RELEASE EQUAL ON)
+  set(SM_VERSION_FULL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")
+else()
+  # Using the deprecated version for now to keep cmake 2.8 users happy.
+  exec_program(git "${SM_ROOT_DIR}"
+    ARGS "rev-parse" "--short" "HEAD"
+    OUTPUT_VARIABLE SM_VERSION_GIT_HASH
+    RETURN_VALUE ret
+  )
+
+  if(NOT (ret STREQUAL "0"))
+    set(SM_VERSION_GIT_HASH "UNKNOWN")
+    set(SM_VERSION_FULL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-${SM_VERSION_GIT_HASH}")
+  else()
+    set(SM_VERSION_FULL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-git-${SM_VERSION_GIT_HASH}")
+  endif()
+endif()
+
+# Allow for finding our libraries in a standard location.
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules/")
+
+# Put the predefined targets in separate groups.
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Dependencies go here.
 set(ENDIANNESS "ENDIAN_LITTLE")
@@ -118,6 +128,7 @@ if(WIN32)
 elseif(MACOSX)
   set(HAS_OGG TRUE)
   set(HAS_MP3 TRUE)
+  set(WITH_CRASH_HANDLER TRUE)
   # Apple Archs needs to be 32-bit for now.
   # When SDL2 is introduced, this may change.
   set(CMAKE_OSX_ARCHITECTURES "i386")
