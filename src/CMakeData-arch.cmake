@@ -139,7 +139,6 @@ elseif(MSVC)
     "arch/MovieTexture/MovieTexture_FFMpeg.h"
   )
 else() # Unix
-  # Verify if we even need ffmpeg.
   if (${HAS_FFMPEG})
     list(APPEND SMDATA_ARCH_MOVIE_TEXTURE_SRC
       "arch/MovieTexture/MovieTexture_FFMpeg.cpp"
@@ -207,12 +206,14 @@ elseif(APPLE)
     "arch/LowLevelWindow/LowLevelWindow_MacOSX.h"
   )
 else(UNIX)
-  list(APPEND SMDATA_ARCH_LOWLEVEL_SRC
-    "arch/LowLevelWindow/LowLevelWindow_X11.cpp"
-  )
-  list(APPEND SMDATA_ARCH_LOWLEVEL_HPP
-    "arch/LowLevelWindow/LowLevelWindow_X11.h"
-  )
+  if (X11_FOUND)
+    list(APPEND SMDATA_ARCH_LOWLEVEL_SRC
+      "arch/LowLevelWindow/LowLevelWindow_X11.cpp"
+    )
+    list(APPEND SMDATA_ARCH_LOWLEVEL_HPP
+      "arch/LowLevelWindow/LowLevelWindow_X11.h"
+    )
+  endif()
 endif(WIN32)
 
 source_group("Arch Specific\\\\Low Level Window" FILES ${SMDATA_ARCH_LOWLEVEL_SRC} ${SMDATA_ARCH_LOWLEVEL_HPP})
@@ -338,15 +339,21 @@ else(UNIX)
     "arch/InputHandler/InputHandler_Linux_Joystick.cpp"
     "arch/InputHandler/InputHandler_Linux_Event.cpp"
     "arch/InputHandler/InputHandler_Linux_PIUIO.cpp"
-    "arch/InputHandler/InputHandler_X11.cpp"
   )
   list(APPEND SMDATA_ARCH_INPUT_SRC
     "arch/InputHandler/LinuxInputManager.h"
     "arch/InputHandler/InputHandler_Linux_Joystick.h"
     "arch/InputHandler/InputHandler_Linux_Event.h"
     "arch/InputHandler/InputHandler_Linux_PIUIO.h"
-    "arch/InputHandler/InputHandler_X11.h"
   )
+  if(X11_FOUND)
+    list(APPEND SMDATA_ARCH_INPUT_SRC
+      "arch/InputHandler/InputHandler_X11.cpp"
+    )
+    list(APPEND SMDATA_ARCH_INPUT_HPP
+      "arch/InputHandler/InputHandler_X11.h"
+    )
+  endif()
   if(WITH_TTY)
     list(APPEND SMDATA_ARCH_INPUT_SRC
       "arch/InputHandler/InputHandler_Linux_tty.cpp"

@@ -166,6 +166,8 @@ elseif(LINUX)
     set(HAS_GTK2 FALSE)
   endif()
 
+  find_package(X11)
+
   find_package("BZip2")
   if (NOT(${BZIP2_FOUND}))
     message(FATAL_ERROR "Bzip2 support required.")

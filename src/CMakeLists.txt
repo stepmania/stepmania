@@ -435,6 +435,10 @@ else() # Unix / Linux
     sm_add_compile_definition("StepMania" PACKAGE_VERSION="${PACKAGE_VERSION}")
   endif()
 
+  if(X11_FOUND)
+    list(APPEND SMDATA_LINK_LIB ${X11_LIBRARIES})
+  endif()
+
   list(APPEND SMDATA_LINK_LIB
     ${XRANDR_LIBRARIES}
   )
@@ -468,6 +472,9 @@ if(NOT APPLE)
     endif()
     if (HAS_GTK2)
       list(APPEND SM_INCLUDE_DIRS "${GTK2_INCLUDE_DIRS}")
+    endif()
+    if (X11_FOUND)
+      list(APPEND SM_INCLUDE_DIRS "${X11_INCLUDE_DIR}")
     endif()
   endif()
 else()

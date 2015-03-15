@@ -114,7 +114,6 @@ else()
       "archutils/Unix/SignalHandler.cpp"
       "archutils/Unix/SpecialDirs.cpp"
       "archutils/Unix/StackCheck.cpp"
-      "archutils/Unix/X11Helper.cpp"
       )
     list(APPEND SMDATA_OS_HPP
       "archutils/Unix/arch_setup.h"
@@ -124,9 +123,16 @@ else()
       "archutils/Unix/RunningUnderValgrind.h"
       "archutils/Unix/SignalHandler.h"
       "archutils/Unix/SpecialDirs.h"
-      "archutils/Unix/X11Helper.h"
       "archutils/Common/gcc_byte_swaps.h"
     )
+    if(X11_FOUND)
+      list(APPEND SMDATA_OS_SRC
+        "archutils/Unix/X11Helper.cpp"
+      )
+      list(APPEND SMDATA_OS_HPP
+        "archutils/Unix/X11Helper.h"
+      )
+    endif()
     if(HAS_PTHREAD)
       list(APPEND SMDATA_OS_SRC
         "archutils/Common/PthreadHelpers.cpp"
