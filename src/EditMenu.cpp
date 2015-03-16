@@ -31,6 +31,7 @@ static const char *EditMenuActionNames[] = {
 	"Delete",
 	"Create",
 	"Practice",
+	"LoadAutosave",
 };
 XToString( EditMenuAction );
 XToLocalizedString( EditMenuAction );
@@ -659,6 +660,12 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			m_StepsDisplaySource.SetVisible( !(bHideMeter || GetSelectedSteps()) );
 
 			m_Actions.clear();
+			// Stick autosave in the list first so that people will see it. -Kyz
+			Song* cur_song= GetSelectedSong();
+			if(cur_song != NULL && cur_song->HasAutosaveFile() && !cur_song->WasLoadedFromAutosave())
+			{
+				m_Actions.push_back(EditMenuAction_LoadAutosave);
+			}
 			if( GetSelectedSteps() )
 			{
 				switch( mode )

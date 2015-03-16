@@ -83,6 +83,7 @@ Song::Song()
 	m_bHasMusic = false;
 	m_bHasBanner = false;
 	m_bHasBackground = false;
+	m_loaded_from_autosave= false;
 }
 
 Song::~Song()
@@ -266,7 +267,7 @@ static set<RString> BlacklistedImages;
  * HasMusic(), HasBanner() or GetHashForDirectory().
  * If true, check the directory hash and reload the song from scratch if it's changed.
  */
-bool Song::LoadFromSongDir( RString sDir )
+bool Song::LoadFromSongDir( RString sDir, bool load_autosave )
 {
 //	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir.c_str() );
 	ASSERT_M( sDir != "", "Songs can't be loaded from an empty directory!" );
@@ -293,7 +294,9 @@ bool Song::LoadFromSongDir( RString sDir )
 	if( !DoesFileExist(sCacheFilePath) )
 		bUseCache = false;
 	if( !PREFSMAN->m_bFastLoad && GetHashForDirectory(m_sSongDir) != uCacheHash )
-		bUseCache = false; // this cache is out of date 
+		bUseCache = false; // this cache is out of date
+	if(load_autosave)
+	{ bUseCache= false; }
 
 	if( bUseCache )
 	{
@@ -317,7 +320,7 @@ bool Song::LoadFromSongDir( RString sDir )
 		// There was no entry in the cache for this song, or it was out of date.
 		// Let's load it from a file, then write a cache entry.
 
-		if( !NotesLoader::LoadFromDir(sDir, *this, BlacklistedImages) )
+		if(!NotesLoader::LoadFromDir(sDir, *this, BlacklistedImages, load_autosave))
 		{
 			LOG->UserLog( "Song", sDir, "has no SSC, SM, SMA, DWI, BMS, or KSF files." );
 
@@ -341,9 +344,14 @@ bool Song::LoadFromSongDir( RString sDir )
 		}
 		TidyUpData(false, true);
 
-		// save a cache file so we don't have to parse it all over again next time
-		if( !SaveToCacheFile() )
-			sCacheFilePath = RString();
+		// Don't save a cache file if the autosave is being loaded, because the
+		// cache file would contain the autosave filename. -Kyz
+		if(!load_autosave)
+		{
+			// save a cache file so we don't have to parse it all over again next time
+			if(!SaveToCacheFile())
+			{ sCacheFilePath = RString(); }
+		}
 	}
 
 	FOREACH( Steps*, m_vpSteps, s )
@@ -459,6 +467,43 @@ bool Song::ReloadFromSongDir( RString sDir )
 
 	AddAutoGenNotes();
 	return true;
+}
+
+bool Song::HasAutosaveFile()
+{
+	if(m_sSongFileName.empty())
+	{
+		return false;
+	}
+	RString autosave_path= SetExtension(m_sSongFileName, "ats");
+	return FILEMAN->DoesFileExist(autosave_path);
+}
+
+bool Song::LoadAutosaveFile()
+{
+	if(m_sSongFileName.empty())
+	{
+		return false;
+	}
+	// Save these strings because they need to be restored after the reset.
+	// The filenames need to point to the original instead of the autosave for
+	// things like load from disk to work. -Kyz
+	RString dir= GetSongDir();
+	RString song_timing_file= m_SongTiming.m_sFile;
+	RString song_file= m_sSongFileName;
+	// Reset needs to be used to remove all the steps and other things that
+	// will be loaded from the autosave. -Kyz
+	Reset();
+	if(LoadFromSongDir(dir, true))
+	{
+		m_loaded_from_autosave= true;
+		m_sSongFileName= song_file;
+		m_SongTiming.m_sFile= song_timing_file;
+		return true;
+	}
+	// Loading the autosave failed, reload the original. -Kyz
+	LoadFromSongDir(dir, false);
+	return false;
 }
 
 static void GetImageDirListing( RString sPath, vector<RString> &AddTo )
@@ -991,7 +1036,7 @@ bool Song::HasStepsTypeAndDifficulty( StepsType st, Difficulty dc ) const
 	return SongUtil::GetOneSteps( this, st, dc ) != NULL;
 }
 
-void Song::Save()
+void Song::Save(bool autosave)
 {
 	LOG->Trace( "Song::SaveToSongFile()" );
 
@@ -999,11 +1044,17 @@ void Song::Save()
 	TranslateTitles();
 
 	// Save the new files. These calls make backups on their own.
-	if( !SaveToSSCFile(GetSongFilePath(), false) )
+	if( !SaveToSSCFile(GetSongFilePath(), false, autosave) )
 		return;
+	// Skip saving the cache, sm, and .old files if we are autosaving.  The
+	// cache file should not contain the autosave filename. -Kyz
+	if(autosave)
+	{
+		return;
+	}
+	SaveToCacheFile();
 	SaveToSMFile();
 	//SaveToDWIFile();
-	SaveToCacheFile();
 
 	/* We've safely written our files and created backups. Rename non-SM and
 	 * non-DWI files to avoid confusion. */
@@ -1058,16 +1109,20 @@ bool Song::SaveToSMFile()
 
 }
 
-bool Song::SaveToSSCFile( RString sPath, bool bSavingCache )
+bool Song::SaveToSSCFile( RString sPath, bool bSavingCache, bool autosave )
 {
 	RString path = sPath;
 	if (!bSavingCache)
 		path = SetExtension(sPath, "ssc");
-	
+	if(autosave)
+	{
+		path = SetExtension(sPath, "ats");
+	}
+
 	LOG->Trace( "Song::SaveToSSCFile('%s')", path.c_str() );
 
 	// If the file exists, make a backup.
-	if( !bSavingCache && IsAFile(path) )
+	if(!bSavingCache && !autosave && IsAFile(path))
 		FileCopy( path, path + ".old" );
 
 	vector<Steps*> vpStepsToSave;
@@ -1090,13 +1145,15 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache )
 		vpStepsToSave.push_back(*s);
 	}
 	
-	if (bSavingCache)
+	if(bSavingCache || autosave)
 	{
 		return NotesWriterSSC::Write(path, *this, vpStepsToSave, bSavingCache);
 	}
 
 	if( !NotesWriterSSC::Write(path, *this, vpStepsToSave, bSavingCache) )
 		return false;
+
+	RemoveAutosave();
 
 	if( g_BackUpAllSongSaves.Get() )
 	{
@@ -1151,6 +1208,26 @@ bool Song::SaveToDWIFile()
 	return NotesWriterDWI::Write( sPath, *this );
 }
 
+void Song::RemoveAutosave()
+{
+	RString autosave_path= SetExtension(m_sSongFileName, "ats");
+	if(FILEMAN->DoesFileExist(autosave_path))
+	{
+		// Change all the steps to point to the actual file, not the autosave
+		// file.  -Kyz
+		RString extension= GetExtension(m_sSongFileName);
+		for(size_t i= 0; i < m_vpSteps.size(); ++i)
+		{
+			if(!m_vpSteps[i]->IsAutogen())
+			{
+				m_vpSteps[i]->SetFilename(
+					SetExtension(m_vpSteps[i]->GetFilename(), extension));
+			}
+		}
+		FILEMAN->Remove(autosave_path);
+		m_loaded_from_autosave= false;
+	}
+}
 
 void Song::AddAutoGenNotes()
 {

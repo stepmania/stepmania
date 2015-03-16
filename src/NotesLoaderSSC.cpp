@@ -724,6 +724,10 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 					bHasOwnTiming = false;
 					pNewNotes->SetSMNoteData( sParams[1] );
 					pNewNotes->TidyUpData();
+					// Unlike the song and timing filenames, the steps filenames do
+					// need to point to the autosave file if that's where they were
+					// loaded from, because that's where the actual steps data is.
+					// -Kyz
 					pNewNotes->SetFilename(sPath);
 					out.AddSteps( pNewNotes );
 				}

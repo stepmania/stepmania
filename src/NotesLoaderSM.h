@@ -34,7 +34,7 @@ struct SMLoader
 	 * @param out a reference to the Song that will retrieve the song information.
 	 * @return its success or failure.
 	 */
-	virtual bool LoadFromDir( const RString &sPath, Song &out );
+	virtual bool LoadFromDir( const RString &sPath, Song &out, bool load_autosave= false );
 	/**
 	 * @brief Perform some cleanup on the loaded song.
 	 * @param song a reference to the song that may need cleaning up.
@@ -61,7 +61,7 @@ struct SMLoader
 	 * @param sPath a const reference to the path on the hard drive to check.
 	 * @param out a vector of files found in the path.
 	 */
-	virtual void GetApplicableFiles( const RString &sPath, vector<RString> &out );
+	virtual void GetApplicableFiles( const RString &sPath, vector<RString> &out, bool load_autosave= false );
 	virtual bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong=NULL );
 	virtual bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot, Song *givenSong=NULL );
 	virtual bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong=NULL );

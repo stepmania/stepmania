@@ -42,6 +42,7 @@ enum EditMenuAction
 	EditMenuAction_Delete, /**< Remove the current step from the Song. */
 	EditMenuAction_Create, /**< Create a new step for the Song. */
 	EditMenuAction_Practice, /**< Practice the current step for the Song. */
+	EditMenuAction_LoadAutosave,
 	NUM_EditMenuAction, /**< The number of MenuActions available to choose from. */
 	EditMenuAction_Invalid
 };
