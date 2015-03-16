@@ -6,7 +6,6 @@
 #include "archutils/Unix/SignalHandler.h"
 #include "SpecialFiles.h"
 #include "ProductInfo.h"
-#include <CoreServices/CoreServices.h>
 #include <ApplicationServices/ApplicationServices.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -21,16 +20,18 @@ extern "C" {
 #include <IOKit/network/IONetworkInterface.h>
 #include <IOKit/network/IOEthernetController.h>
 
+#import <Foundation/Foundation.h>
+
 static bool IsFatalSignal( int signal )
 {
 	switch( signal )
 	{
-	case SIGINT:
-	case SIGTERM:
-	case SIGHUP:
-		return false;
-	default:
-		return true;
+		case SIGINT:
+		case SIGTERM:
+		case SIGHUP:
+			return false;
+		default:
+			return true;
 	}
 }
 
@@ -99,7 +100,7 @@ void ArchHooks_MacOSX::Init()
 	if( !old )
 	{
 		newDict = CFDictionaryCreateMutable( kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,
-						     &kCFTypeDictionaryValueCallBacks );
+						    &kCFTypeDictionaryValueCallBacks );
 		CFDictionaryAddValue( newDict, version, value );
 	}
 	else
@@ -174,7 +175,7 @@ RString ArchHooks_MacOSX::GetMachineId() const
 		return ret;
 
 	property = CFDictionaryCreateMutable( kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,
-					      &kCFTypeDictionaryValueCallBacks );
+					     &kCFTypeDictionaryValueCallBacks );
 
 	if( !property )
 	{
@@ -202,13 +203,13 @@ RString ArchHooks_MacOSX::GetMachineId() const
 		}
 
 		data = IORegistryEntryCreateCFProperty( controller, CFSTR(kIOMACAddress),
-							kCFAllocatorDefault, 0 );
+						       kCFAllocatorDefault, 0 );
 		if( data )
 		{
 			const uint8_t *p = CFDataGetBytePtr( (CFDataRef)data );
-			
+
 			ret += ssprintf( "-%02x:%02x:%02x:%02x:%02x:%02x",
-					 p[0], p[1], p[2], p[3], p[4], p[5] );
+					p[0], p[1], p[2], p[3], p[4], p[5] );
 			CFRelease( data );
 		}
 		IOObjectRelease( controller );
@@ -220,16 +221,13 @@ RString ArchHooks_MacOSX::GetMachineId() const
 
 void ArchHooks_MacOSX::DumpDebugInfo()
 {
-	// Get system version
-	RString sSystemVersion;
+	// Get system version like 10.x.x
+	RString SystemVersion;
 	{
-		char osrelease[256];
-		size_t size = sizeof(osrelease);
-		
-		if( sysctlbyname( "kern.osrelease", osrelease, &size, NULL, 0 ) )
-			sSystemVersion = ssprintf( "Mac OS X %s", osrelease );
-		else
-			sSystemVersion = ssprintf( "Mac OS X Unknown" );
+		// http://stackoverflow.com/a/891336
+		NSDictionary *version = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
+		NSString *productVersion = [version objectForKey:@"ProductVersion"];
+		SystemVersion = ssprintf("Mac OS X %s", [productVersion cStringUsingEncoding:[NSString defaultCStringEncoding]]);
 	}
 
 	size_t size;
@@ -312,10 +310,10 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 	} while( false );
 #undef GET_PARAM
 
-	// Send all of the information to the log 
+	// Send all of the information to the log
 	LOG->Info( "Model: %s (%d/%d)", sModel.c_str(), iCPUs, iMaxCPUs );
 	LOG->Info( "Clock speed %.2f %cHz", fFreq, freqPower );
-	LOG->Info( "%s", sSystemVersion.c_str());
+	LOG->Info( "%s", SystemVersion.c_str());
 	LOG->Info( "Memory: %.2f %cB", fRam, ramPower );
 }
 
@@ -337,7 +335,7 @@ RString ArchHooks::GetPreferredLanguage()
 	CFStringRef lang;
 
 	if( CFArrayGetCount(languages) > 0 &&
-		(lang = (CFStringRef)CFArrayGetValueAtIndex(languages, 0)) != NULL )
+	   (lang = (CFStringRef)CFArrayGetValueAtIndex(languages, 0)) != NULL )
 	{
 		// MacRoman agrees with ASCII in the low-order 7 bits.
 		const char *str = CFStringGetCStringPtr( lang, kCFStringEncodingMacRoman );
@@ -354,7 +352,7 @@ RString ArchHooks::GetPreferredLanguage()
 bool ArchHooks_MacOSX::GoToURL( RString sUrl )
 {
 	CFURLRef url = CFURLCreateWithBytes( kCFAllocatorDefault, (const UInt8*)sUrl.data(),
-						 sUrl.length(), kCFStringEncodingUTF8, NULL );
+					    sUrl.length(), kCFStringEncodingUTF8, NULL );
 	OSStatus result = LSOpenCFURLRef( url, NULL );
 
 	CFRelease( url );
@@ -469,12 +467,12 @@ float ArchHooks_MacOSX::GetDisplayAspectRatio()
 	if( width && height )
 		return float(width)/height;
 	return 4/3.f;
-}	
+}
 
 /*
  * (c) 2003-2006 Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -484,7 +482,7 @@ float ArchHooks_MacOSX::GetDisplayAspectRatio()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
