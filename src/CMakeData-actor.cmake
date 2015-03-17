@@ -123,6 +123,7 @@ list(APPEND SMDATA_ACTOR_MENU_SRC
   "EditMenu.cpp"
   "FadingBanner.cpp"
   "GradeDisplay.cpp"
+  "GraphDisplay.cpp"
   "GrooveRadar.cpp"
   "HelpDisplay.cpp"
   "MemoryCardDisplay.cpp"
