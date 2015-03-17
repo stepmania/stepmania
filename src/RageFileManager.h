@@ -29,6 +29,7 @@ public:
 		bool bOnlyDirs= false, bool bReturnPathToo= false);
 	bool Move( const RString &sOldPath, const RString &sNewPath );
 	bool Remove( const RString &sPath );
+	bool DeleteRecursive( const RString &sPath );
 	void CreateDir( const RString &sDir );
 	
 	enum FileType { TYPE_FILE, TYPE_DIR, TYPE_NONE };

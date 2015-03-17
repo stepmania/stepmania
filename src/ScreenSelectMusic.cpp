@@ -26,10 +26,12 @@
 #include "CommonMetrics.h"
 #include "BannerCache.h"
 //#include "BackgroundCache.h"
+#include "ScreenPrompt.h"
 #include "Song.h"
 #include "InputEventPlus.h"
 #include "RageInput.h"
 #include "OptionsList.h"
+#include "RageFileManager.h"
 
 static const char *SelectionStateNames[] = {
 	"SelectingSong",
@@ -50,6 +52,7 @@ AutoScreenMessage( SM_SongChanged );
 AutoScreenMessage( SM_SortOrderChanging );
 AutoScreenMessage( SM_SortOrderChanged );
 AutoScreenMessage( SM_BackFromPlayerOptions );
+AutoScreenMessage( SM_ConfirmDeleteSong );
 
 static RString g_sCDTitlePath;
 static bool g_bWantFallbackCdTitle;
@@ -398,6 +401,8 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 
 	CheckBackgroundRequests( false );
 }
+
+
 bool ScreenSelectMusic::Input( const InputEventPlus &input )
 {
 	// HACK: This screen eats mouse inputs if we don't check for them first.
@@ -459,6 +464,18 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 				m_MusicWheel.ChangeSort( so );
 				m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
 				AfterMusicChange();
+				return true;
+			}
+		}
+		else if( input.DeviceI.device == DEVICE_KEYBOARD && bHoldingCtrl && input.DeviceI.button == KEY_BACK && input.type == IET_FIRST_PRESS
+			&& m_MusicWheel.IsSettled() )
+		{
+			// Keyboard shortcut to delete a song from disk (ctrl + backspace)
+			Song* songToDelete = m_MusicWheel.GetSelectedSong();
+			if ( songToDelete && PREFSMAN->m_bAllowSongDeletion.Get() ) 
+			{
+				m_pSongAwaitingDeletionConfirmation = songToDelete;
+				ScreenPrompt::Prompt(SM_ConfirmDeleteSong, ssprintf("Permanently delete '%s' ( %s ) from disk?", songToDelete->m_sMainTitle.c_str(), songToDelete->GetSongDir().c_str()), PROMPT_YES_NO);
 				return true;
 			}
 		}
@@ -1168,6 +1185,18 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_LoseFocus )
 	{
 		CodeDetector::RefreshCacheItems(); // reset for other screens
+	}
+	else if( SM == SM_ConfirmDeleteSong )
+	{
+		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
+		{
+			OnConfirmSongDeletion();
+		}
+		else
+		{
+			// need to resume the song preview that was automatically paused
+			m_MusicWheel.ChangeMusic(0);
+		}
 	}
 
 	ScreenWithMenuElements::HandleScreenMessage( SM );
@@ -1906,6 +1935,34 @@ void ScreenSelectMusic::OpenOptionsList(PlayerNumber pn)
 		m_OptionsList[pn].Open();
 	}
 }
+
+void ScreenSelectMusic::OnConfirmSongDeletion()
+{
+	Song* deletedSong = m_pSongAwaitingDeletionConfirmation;
+	if ( !deletedSong )
+	{
+		LOG->Warn("Attempted to delete a null song (ScreenSelectMusic::OnConfirmSongDeletion)");
+		return;
+	}
+	// ensure Stepmania is configured to allow song deletion
+	if ( !PREFSMAN->m_bAllowSongDeletion.Get() )
+	{
+		LOG->Warn("Attemped to delete a song but AllowSongDeletion was set to false (ScreenSelectMusic::OnConfirmSongDeletion)");
+		return;
+	}
+
+	RString deleteDir = deletedSong->GetSongDir();
+	// flush the deleted song from any caches
+	SONGMAN->UnlistSong(deletedSong);
+	// refresh the song list
+	m_MusicWheel.ReloadSongList();
+	LOG->Trace("Deleting song: '%s'\n", deleteDir.c_str());
+	// delete the song directory from disk
+	FILEMAN->DeleteRecursive(deleteDir);
+
+	m_pSongAwaitingDeletionConfirmation = NULL;
+}
+
 
 // lua start
 #include "LuaBinding.h"

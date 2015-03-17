@@ -464,6 +464,13 @@ bool RageFileManager::Remove( const RString &sPath_ )
 	return bDeleted;
 }
 
+bool RageFileManager::DeleteRecursive( const RString &sPath )
+{
+	// On some OS's, non-empty directories cannot be deleted.
+	// This is a work-around that can delete both files and non-empty directories
+	return ::DeleteRecursive(sPath);
+}
+
 void RageFileManager::CreateDir( const RString &sDir )
 {
 	RString sTempFile = sDir + "newdir.temp.newdir";

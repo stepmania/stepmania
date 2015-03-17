@@ -255,6 +255,24 @@ MusicWheel::~MusicWheel()
 	}
 }
 
+void MusicWheel::ReloadSongList()
+{
+	int songIdxToPreserve = m_iSelection;
+	// Remove the song from any sorting caches:
+	FOREACH_ENUM( SortOrder, so ) {
+		m_WheelItemDatasStatus[so]=INVALID;
+	}
+	// rebuild the info associated with this sort order
+	readyWheelItemsData(GAMESTATE->m_SortOrder);
+	// re-open the section to refresh song counts, etc.
+	SetOpenSection(m_sExpandedSectionName);
+	// navigate to the song nearest to what was previously selected
+	m_iSelection = songIdxToPreserve;
+	RebuildWheelItems();
+	// refresh the song preview
+	SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
+}
+
 /* If a song or course is set in GAMESTATE and available, select it.  Otherwise, choose the
  * first available song or course.  Return true if an item was set, false if no items are
  * available. */
