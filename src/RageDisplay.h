@@ -244,6 +244,8 @@ public:
 	 */
 	virtual unsigned CreateRenderTarget( const RenderTargetParam &, int & /* iTextureWidthOut */, int & /* iTextureHeightOut */ ) { return 0; }
 
+	virtual unsigned GetRenderTarget()	{ return 0; }
+
 	/* Set the render target, or 0 to resume rendering to the framebuffer. An active render
 	 * target may not be used as a texture. If bPreserveTexture is true, the contents
 	 * of the texture will be preserved from the previous call; otherwise, cleared.  If

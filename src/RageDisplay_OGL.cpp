@@ -2475,6 +2475,14 @@ unsigned RageDisplay_Legacy::CreateRenderTarget( const RenderTargetParam &param,
 	return iTexture;
 }
 
+unsigned RageDisplay_Legacy::GetRenderTarget( )
+{
+	for( map<unsigned, RenderTarget*>::const_iterator it = g_mapRenderTargets.begin( ); it != g_mapRenderTargets.end( ); ++it )
+	if( it->second == g_pCurrentRenderTarget )
+		return it->first;
+	return 0;
+}
+
 void RageDisplay_Legacy::SetRenderTarget( unsigned iTexture, bool bPreserveTexture )
 {
 	if (iTexture == 0)
