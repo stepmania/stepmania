@@ -46,6 +46,7 @@ void XNode::Free()
 	FOREACH_Attr( this, pAttr )
 		delete pAttr->second;
 	m_childs.clear();
+	m_children_by_name.clear();
 	m_attrs.clear();
 }
 	
@@ -98,10 +99,11 @@ XNodeValue *XNode::GetAttr( const RString &attrname )
 
 XNode *XNode::GetChild( const RString &sName )
 {
-	FOREACH_Child( this, it )
+	multimap<RString, XNode*>::iterator by_name= m_children_by_name.lower_bound(sName);
+	if(by_name != m_children_by_name.end() &&
+		sName == by_name->second->GetName())
 	{
-		if( it->GetName() == sName )
-			return it;
+		return by_name->second;
 	}
 	return NULL;
 }
@@ -120,10 +122,11 @@ bool XNode::PushChildValue( lua_State *L, const RString &sName ) const
 
 const XNode *XNode::GetChild( const RString &sName ) const
 {
-	FOREACH_CONST_Child( this, it )
+	multimap<RString, XNode*>::const_iterator by_name= m_children_by_name.lower_bound(sName);
+	if(by_name != m_children_by_name.end() &&
+		sName == by_name->second->GetName())
 	{
-		if( it->GetName() == sName )
-			return it;
+		return by_name->second;
 	}
 	return NULL;
 }
@@ -131,21 +134,45 @@ const XNode *XNode::GetChild( const RString &sName ) const
 XNode *XNode::AppendChild( XNode *node )
 {
 	DEBUG_ASSERT( node->m_sName.size() );
-
+	m_children_by_name.insert(make_pair(node->m_sName, node));
 	m_childs.push_back( node );
 	return node;
 }
 
 // detach node and delete object
-bool XNode::RemoveChild( XNode *node, bool /* bDelete */ )
+bool XNode::RemoveChild(XNode *node, bool bDelete)
 {
 	XNodes::iterator it = find( m_childs.begin(), m_childs.end(), node );
 	if( it == m_childs.end() )
 		return false;
-
-	delete node;
+	RemoveChildFromByName(node);
+	if(bDelete)
+	{ delete node; }
 	m_childs.erase( it );
 	return true;
+}
+
+void XNode::RemoveChildFromByName(XNode* node)
+{
+	multimap<RString, XNode*>::iterator by_name= m_children_by_name.lower_bound(node->m_sName);
+	if(by_name != m_children_by_name.end() &&
+		node->GetName() == by_name->second->GetName())
+	{
+		for(; by_name != m_children_by_name.end(); ++by_name)
+		{
+			if(by_name->second == node)
+			{
+				m_children_by_name.erase(by_name);
+				break;
+			}
+		}
+	}
+}
+
+void XNode::RenameChildInByName(XNode* node)
+{
+	RemoveChildFromByName(node);
+	m_children_by_name.insert(make_pair(node->m_sName, node));
 }
 
 

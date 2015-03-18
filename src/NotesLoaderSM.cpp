@@ -13,6 +13,242 @@
 #include "Attack.h"
 #include "PrefsManager.h"
 
+// Everything from this line to the creation of sm_parser_helper exists to
+// speed up parsing by allowing the use of std::map.  All these functions
+// are put into a map of function pointers which is used when loading.
+// -Kyz
+/****************************************************************/
+struct SMSongTagInfo
+{
+	SMLoader* loader;
+	Song* song;
+	const MsdFile::value_t* params;
+	const RString& path;
+	vector< pair<float, float> > BPMChanges, Stops;
+	SMSongTagInfo(SMLoader* l, Song* s, const RString& p)
+		:loader(l), song(s), path(p)
+	{}
+};
+
+typedef void (*song_tag_func_t)(SMSongTagInfo& info);
+
+// Functions for song tags go below this line. -Kyz
+/****************************************************************/
+void SMSetTitle(SMSongTagInfo& info)
+{
+	info.song->m_sMainTitle = (*info.params)[1];
+	info.loader->SetSongTitle((*info.params)[1]);
+}
+void SMSetSubtitle(SMSongTagInfo& info)
+{
+	info.song->m_sSubTitle = (*info.params)[1];
+}
+void SMSetArtist(SMSongTagInfo& info)
+{
+	info.song->m_sArtist = (*info.params)[1];
+}
+void SMSetTitleTranslit(SMSongTagInfo& info)
+{
+	info.song->m_sMainTitleTranslit = (*info.params)[1];
+}
+void SMSetSubtitleTranslit(SMSongTagInfo& info)
+{
+	info.song->m_sSubTitleTranslit = (*info.params)[1];
+}
+void SMSetArtistTranslit(SMSongTagInfo& info)
+{
+	info.song->m_sArtistTranslit = (*info.params)[1];
+}
+void SMSetGenre(SMSongTagInfo& info)
+{
+	info.song->m_sGenre = (*info.params)[1];
+}
+void SMSetCredit(SMSongTagInfo& info)
+{
+	info.song->m_sCredit = (*info.params)[1];
+}
+void SMSetBanner(SMSongTagInfo& info)
+{
+	info.song->m_sBannerFile = (*info.params)[1];
+}
+void SMSetBackground(SMSongTagInfo& info)
+{
+	info.song->m_sBackgroundFile = (*info.params)[1];
+}
+void SMSetLyricsPath(SMSongTagInfo& info)
+{
+	info.song->m_sLyricsFile = (*info.params)[1];
+}
+void SMSetCDTitle(SMSongTagInfo& info)
+{
+	info.song->m_sCDTitleFile = (*info.params)[1];
+}
+void SMSetMusic(SMSongTagInfo& info)
+{
+	info.song->m_sMusicFile = (*info.params)[1];
+}
+void SMSetOffset(SMSongTagInfo& info)
+{
+	info.song->m_SongTiming.m_fBeat0OffsetInSeconds = StringToFloat((*info.params)[1]);
+}
+void SMSetBPMs(SMSongTagInfo& info)
+{
+	info.BPMChanges.clear();
+	info.loader->ParseBPMs(info.BPMChanges, (*info.params)[1]);
+}
+void SMSetStops(SMSongTagInfo& info)
+{
+	info.Stops.clear();
+	info.loader->ParseStops(info.Stops, (*info.params)[1]);
+}
+void SMSetDelays(SMSongTagInfo& info)
+{
+	info.loader->ProcessDelays(info.song->m_SongTiming, (*info.params)[1]);
+}
+void SMSetTimeSignatures(SMSongTagInfo& info)
+{
+	info.loader->ProcessTimeSignatures(info.song->m_SongTiming, (*info.params)[1]);
+}
+void SMSetTickCounts(SMSongTagInfo& info)
+{
+	info.loader->ProcessTickcounts(info.song->m_SongTiming, (*info.params)[1]);
+}
+void SMSetInstrumentTrack(SMSongTagInfo& info)
+{
+	info.loader->ProcessInstrumentTracks(*info.song, (*info.params)[1]);
+}
+void SMSetSampleStart(SMSongTagInfo& info)
+{
+	info.song->m_fMusicSampleStartSeconds = HHMMSSToSeconds((*info.params)[1]);
+}
+void SMSetSampleLength(SMSongTagInfo& info)
+{
+	info.song->m_fMusicSampleLengthSeconds = HHMMSSToSeconds((*info.params)[1]);
+}
+void SMSetDisplayBPM(SMSongTagInfo& info)
+{
+	// #DISPLAYBPM:[xxx][xxx:xxx]|[*];
+	if((*info.params)[1] == "*")
+	{ info.song->m_DisplayBPMType = DISPLAY_BPM_RANDOM; }
+	else
+	{
+		info.song->m_DisplayBPMType = DISPLAY_BPM_SPECIFIED;
+		info.song->m_fSpecifiedBPMMin = StringToFloat((*info.params)[1]);
+		if((*info.params)[2].empty())
+		{ info.song->m_fSpecifiedBPMMax = info.song->m_fSpecifiedBPMMin; }
+		else
+		{ info.song->m_fSpecifiedBPMMax = StringToFloat((*info.params)[2]); }
+	}
+}
+void SMSetSelectable(SMSongTagInfo& info)
+{
+	if((*info.params)[1].EqualsNoCase("YES"))
+	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
+	else if((*info.params)[1].EqualsNoCase("NO"))
+	{ info.song->m_SelectionDisplay = info.song->SHOW_NEVER; }
+	// ROULETTE from 3.9. It was removed since UnlockManager can serve
+	// the same purpose somehow. This, of course, assumes you're using
+	// unlocks. -aj
+	else if((*info.params)[1].EqualsNoCase("ROULETTE"))
+	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
+	/* The following two cases are just fixes to make sure simfiles that
+	 * used 3.9+ features are not excluded here */
+	else if((*info.params)[1].EqualsNoCase("ES") || (*info.params)[1].EqualsNoCase("OMES"))
+	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
+	else if(StringToInt((*info.params)[1]) > 0)
+	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
+	else
+	{ LOG->UserLog("Song file", info.path, "has an unknown #SELECTABLE value, \"%s\"; ignored.", (*info.params)[1].c_str()); }
+}
+void SMSetBGChanges(SMSongTagInfo& info)
+{
+	info.loader->ProcessBGChanges(*info.song, (*info.params)[0], info.path, (*info.params)[1]);
+}
+void SMSetFGChanges(SMSongTagInfo& info)
+{
+	vector<RString> aFGChangeExpressions;
+	split((*info.params)[1], ",", aFGChangeExpressions);
+
+	for(unsigned int b = 0; b < aFGChangeExpressions.size(); ++b)
+	{
+		BackgroundChange change;
+		if(info.loader->LoadFromBGChangesString(change, aFGChangeExpressions[b]))
+		info.song->AddForegroundChange(change);
+	}
+}
+void SMSetKeysounds(SMSongTagInfo& info)
+{
+	split((*info.params)[1], ",", info.song->m_vsKeysoundFile);
+}
+void SMSetAttacks(SMSongTagInfo& info)
+{
+	info.loader->ProcessAttackString(info.song->m_sAttackString, (*info.params));
+	info.loader->ProcessAttacks(info.song->m_Attacks, (*info.params));
+}
+
+typedef std::map<RString, song_tag_func_t> song_handler_map_t;
+
+struct sm_parser_helper_t
+{
+	song_handler_map_t song_tag_handlers;
+	// Unless signed, the comments in this tag list are not by me.  They were
+	// moved here when converting from the else if chain. -Kyz
+	sm_parser_helper_t()
+	{
+		song_tag_handlers["TITLE"]= &SMSetTitle;
+		song_tag_handlers["SUBTITLE"]= &SMSetSubtitle;
+		song_tag_handlers["ARTIST"]= &SMSetArtist;
+		song_tag_handlers["TITLETRANSLIT"]= &SMSetTitleTranslit;
+		song_tag_handlers["SUBTITLETRANSLIT"]= &SMSetSubtitleTranslit;
+		song_tag_handlers["ARTISTTRANSLIT"]= &SMSetArtistTranslit;
+		song_tag_handlers["GENRE"]= &SMSetGenre;
+		song_tag_handlers["CREDIT"]= &SMSetCredit;
+		song_tag_handlers["BANNER"]= &SMSetBanner;
+		song_tag_handlers["BACKGROUND"]= &SMSetBackground;
+		// Save "#LYRICS" for later, so we can add an internal lyrics tag.
+		song_tag_handlers["LYRICSPATH"]= &SMSetLyricsPath;
+		song_tag_handlers["CDTITLE"]= &SMSetCDTitle;
+		song_tag_handlers["MUSIC"]= &SMSetMusic;
+		song_tag_handlers["OFFSET"]= &SMSetOffset;
+		song_tag_handlers["BPMS"]= &SMSetBPMs;
+		song_tag_handlers["STOPS"]= &SMSetStops;
+		song_tag_handlers["FREEZES"]= &SMSetStops;
+		song_tag_handlers["DELAYS"]= &SMSetDelays;
+		song_tag_handlers["TIMESIGNATURES"]= &SMSetTimeSignatures;
+		song_tag_handlers["TICKCOUNTS"]= &SMSetTickCounts;
+		song_tag_handlers["INSTRUMENTTRACK"]= &SMSetInstrumentTrack;
+		song_tag_handlers["SAMPLESTART"]= &SMSetSampleStart;
+		song_tag_handlers["SAMPLELENGTH"]= &SMSetSampleLength;
+		song_tag_handlers["DISPLAYBPM"]= &SMSetDisplayBPM;
+		song_tag_handlers["SELECTABLE"]= &SMSetSelectable;
+		// It's a bit odd to have the tag that exists for backwards compatibility
+		// in this list and not the replacement, but the BGCHANGES tag has a
+		// number on the end, allowing up to NUM_BackgroundLayer tags, so it
+		// can't fit in the map. -Kyz
+		song_tag_handlers["ANIMATIONS"]= &SMSetBGChanges;
+		song_tag_handlers["FGCHANGES"]= &SMSetFGChanges;
+		song_tag_handlers["KEYSOUNDS"]= &SMSetKeysounds;
+		// Attacks loaded from file
+		song_tag_handlers["ATTACKS"]= &SMSetAttacks;
+		/* Tags that no longer exist, listed for posterity.  May their names
+		 * never be forgotten for their service to Stepmania. -Kyz
+		 * LASTBEATHINT: // unable to identify at this point: ignore
+		 * MUSICBYTES: // ignore
+		 * FIRSTBEAT: // cache tags from older SM files: ignore.
+		 * LASTBEAT: // cache tags from older SM files: ignore.
+		 * SONGFILENAME: // cache tags from older SM files: ignore.
+		 * HASMUSIC: // cache tags from older SM files: ignore.
+		 * HASBANNER: // cache tags from older SM files: ignore.
+		 * SAMPLEPATH: // SamplePath was used when the song has a separate preview clip. -aj
+		 * LEADTRACK: // XXX: Does anyone know what LEADTRACK is for? -Wolfman2000
+		 * MUSICLENGTH: // Loaded from the cache now. -Kyz
+		 */
+	}
+};
+sm_parser_helper_t sm_parser_helper;
+// End sm_parser_helper related functions. -Kyz
+/****************************************************************/
+
 void SMLoader::SetSongTitle(const RString & title)
 {
 	this->songTitle = title;
@@ -23,20 +259,10 @@ RString SMLoader::GetSongTitle() const
 	return this->songTitle;
 }
 
-bool SMLoader::LoadFromDir( const RString &sPath, Song &out )
+bool SMLoader::LoadFromDir( const RString &sPath, Song &out, bool load_autosave )
 {
 	vector<RString> aFileNames;
-	GetApplicableFiles( sPath, aFileNames );
-	
-	if( aFileNames.size() > 1 )
-	{
-		// Need to break this up first.
-		RString tmp = "Song " + sPath + " has more than one";
-		LOG->UserLog(tmp, this->GetFileExtension(), "file. There can only be one!");
-		return false;
-	}
-	
-	ASSERT( aFileNames.size() == 1 );
+	GetApplicableFiles( sPath, aFileNames, load_autosave );
 	return LoadFromSimfile( sPath + aFileNames[0], out );
 }
 
@@ -885,9 +1111,10 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 		return false;
 	}
 
-	vector< pair<float, float> > vBPMChanges, vStops;
 	out.m_SongTiming.m_sFile = sPath;
 	out.m_sSongFileName = sPath;
+
+	SMSongTagInfo reused_song_info(&*this, &out, sPath);
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -896,191 +1123,22 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 		RString sValueName = sParams[0];
 		sValueName.MakeUpper();
 
-		// handle the data
+		reused_song_info.params= &sParams;
+		song_handler_map_t::iterator handler=
+			sm_parser_helper.song_tag_handlers.find(sValueName);
+		if(handler != sm_parser_helper.song_tag_handlers.end())
+		{
 		/* Don't use GetMainAndSubTitlesFromFullTitle; that's only for heuristically
 		 * splitting other formats that *don't* natively support #SUBTITLE. */
-		if( sValueName=="TITLE" )
-		{
-			out.m_sMainTitle = sParams[1];
-			this->SetSongTitle(sParams[1]);
+			handler->second(reused_song_info);
 		}
-
-		else if( sValueName=="SUBTITLE" )
-			out.m_sSubTitle = sParams[1];
-
-		else if( sValueName=="ARTIST" )
-			out.m_sArtist = sParams[1];
-
-		else if( sValueName=="TITLETRANSLIT" )
-			out.m_sMainTitleTranslit = sParams[1];
-
-		else if( sValueName=="SUBTITLETRANSLIT" )
-			out.m_sSubTitleTranslit = sParams[1];
-
-		else if( sValueName=="ARTISTTRANSLIT" )
-			out.m_sArtistTranslit = sParams[1];
-
-		else if( sValueName=="GENRE" )
-			out.m_sGenre = sParams[1];
-
-		else if( sValueName=="CREDIT" )
-			out.m_sCredit = sParams[1];
-
-		else if( sValueName=="BANNER" )
-			out.m_sBannerFile = sParams[1];
-
-		else if( sValueName=="BACKGROUND" )
-			out.m_sBackgroundFile = sParams[1];
-
-		// Save "#LYRICS" for later, so we can add an internal lyrics tag.
-		else if( sValueName=="LYRICSPATH" )
-			out.m_sLyricsFile = sParams[1];
-
-		else if( sValueName=="CDTITLE" )
-			out.m_sCDTitleFile = sParams[1];
-
-		else if( sValueName=="MUSIC" )
-			out.m_sMusicFile = sParams[1];
-
-		else if( sValueName=="OFFSET" )
+		else if(sValueName.Left(strlen("BGCHANGES")) == "BGCHANGES")
 		{
-			out.m_SongTiming.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
+			SMSetBGChanges(reused_song_info);
 		}
-		else if( sValueName=="BPMS" )
+		else if(sValueName == "NOTES" || sValueName == "NOTES2")
 		{
-			vBPMChanges.clear();
-			ParseBPMs(vBPMChanges, sParams[1]);
-		}
-
-		else if( sValueName=="STOPS" || sValueName=="FREEZES" )
-		{
-			vStops.clear();
-			ParseStops(vStops, sParams[1]);
-		}
-
-		else if( sValueName=="DELAYS" )
-		{
-			ProcessDelays(out.m_SongTiming, sParams[1]);
-		}
-
-		else if( sValueName=="TIMESIGNATURES" )
-		{
-			ProcessTimeSignatures(out.m_SongTiming, sParams[1]);
-		}
-
-		else if( sValueName=="TICKCOUNTS" )
-		{
-			ProcessTickcounts(out.m_SongTiming, sParams[1]);
-		}
-
-		else if( sValueName=="INSTRUMENTTRACK" )
-		{
-			ProcessInstrumentTracks( out, sParams[1] );
-		}
-
-		else if( sValueName=="MUSICLENGTH" )
-		{
-			if( !bFromCache )
-				continue;
-			out.m_fMusicLengthSeconds = StringToFloat( sParams[1] );
-		}
-
-		else if( sValueName=="LASTBEATHINT" )
-		{
-			// unable to identify at this point: ignore
-		}
-
-		else if( sValueName=="MUSICBYTES" )
-			; /* ignore */
-
-		// cache tags from older SM files: ignore.
-		else if(sValueName=="FIRSTBEAT" || sValueName=="LASTBEAT" ||
-			sValueName=="SONGFILENAME" || sValueName=="HASMUSIC" ||
-			sValueName=="HASBANNER")
-		{
-			;
-		}
-
-		else if( sValueName=="SAMPLESTART" )
-			out.m_fMusicSampleStartSeconds = HHMMSSToSeconds( sParams[1] );
-
-		else if( sValueName=="SAMPLELENGTH" )
-			out.m_fMusicSampleLengthSeconds = HHMMSSToSeconds( sParams[1] );
-
-		// SamplePath is used when the song has a separate preview clip. -aj
-		//else if( sValueName=="SAMPLEPATH" )
-			//out.m_sMusicSamplePath = sParams[1];
-
-		else if( sValueName=="DISPLAYBPM" )
-		{
-			// #DISPLAYBPM:[xxx][xxx:xxx]|[*]; 
-			if( sParams[1] == "*" )
-				out.m_DisplayBPMType = DISPLAY_BPM_RANDOM;
-			else 
-			{
-				out.m_DisplayBPMType = DISPLAY_BPM_SPECIFIED;
-				out.m_fSpecifiedBPMMin = StringToFloat( sParams[1] );
-				if( sParams[2].empty() )
-					out.m_fSpecifiedBPMMax = out.m_fSpecifiedBPMMin;
-				else
-					out.m_fSpecifiedBPMMax = StringToFloat( sParams[2] );
-			}
-		}
-
-		else if( sValueName=="SELECTABLE" )
-		{
-			if(sParams[1].EqualsNoCase("YES"))
-				out.m_SelectionDisplay = out.SHOW_ALWAYS;
-			else if(sParams[1].EqualsNoCase("NO"))
-				out.m_SelectionDisplay = out.SHOW_NEVER;
-			// ROULETTE from 3.9. It was removed since UnlockManager can serve
-			// the same purpose somehow. This, of course, assumes you're using
-			// unlocks. -aj
-			else if(sParams[1].EqualsNoCase("ROULETTE"))
-				out.m_SelectionDisplay = out.SHOW_ALWAYS;
-			/* The following two cases are just fixes to make sure simfiles that
-			 * used 3.9+ features are not excluded here */
-			else if(sParams[1].EqualsNoCase("ES") || sParams[1].EqualsNoCase("OMES"))
-				out.m_SelectionDisplay = out.SHOW_ALWAYS;
-			else if( StringToInt(sParams[1]) > 0 )
-				out.m_SelectionDisplay = out.SHOW_ALWAYS;
-			else
-				LOG->UserLog( "Song file", sPath, "has an unknown #SELECTABLE value, \"%s\"; ignored.", sParams[1].c_str() );
-		}
-
-		else if( sValueName.Left(strlen("BGCHANGES"))=="BGCHANGES" || sValueName=="ANIMATIONS" )
-		{
-			ProcessBGChanges( out, sValueName, sPath, sParams[1]);
-		}
-
-		else if( sValueName=="FGCHANGES" )
-		{
-			vector<RString> aFGChangeExpressions;
-			split( sParams[1], ",", aFGChangeExpressions );
-
-			for( unsigned b=0; b<aFGChangeExpressions.size(); b++ )
-			{
-				BackgroundChange change;
-				if( LoadFromBGChangesString( change, aFGChangeExpressions[b] ) )
-					out.AddForegroundChange( change );
-			}
-		}
-
-		else if( sValueName=="KEYSOUNDS" )
-		{
-			split( sParams[1], ",", out.m_vsKeysoundFile );
-		}
-
-		// Attacks loaded from file
-		else if( sValueName=="ATTACKS" )
-		{
-			ProcessAttackString(out.m_sAttackString, sParams);
-			ProcessAttacks(out.m_Attacks, sParams);
-		}
-
-		else if( sValueName=="NOTES" || sValueName=="NOTES2" )
-		{
-			if( iNumParams < 7 )
+			if(iNumParams < 7)
 			{
 				LOG->UserLog( "Song file", sPath, "has %d fields in a #NOTES tag, but should have at least 7.", iNumParams );
 				continue;
@@ -1094,20 +1152,19 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 				sParams[4], 
 				sParams[5], 
 				sParams[6],
-				*pNewNotes );
+				*pNewNotes);
 
 			pNewNotes->SetFilename(sPath);
 			out.AddSteps( pNewNotes );
 		}
-		// XXX: Does anyone know what LEADTRACK is for? -Wolfman2000
-		else if( sValueName=="LEADTRACK" )
-			;
 		else
-			LOG->UserLog( "Song file", sPath, "has an unexpected value named \"%s\".", sValueName.c_str() );
+		{
+			LOG->UserLog("Song file", sPath, "has an unexpected value named \"%s\".", sValueName.c_str());
+		}
 	}
 
 	// Turn negative time changes into warps
-	ProcessBPMsAndStops(out.m_SongTiming, vBPMChanges, vStops);
+	ProcessBPMsAndStops(out.m_SongTiming, reused_song_info.BPMChanges, reused_song_info.Stops);
 
 	TidyUpData( out, bFromCache );
 	return true;
@@ -1227,9 +1284,16 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 	return false;
 }
 
-void SMLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
+void SMLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out, bool load_autosave )
 {
-	GetDirListing( sPath + RString("*" + this->GetFileExtension() ), out );
+	if(load_autosave)
+	{
+		GetDirListing( sPath + RString("*.ats" ), out );
+	}
+	else
+	{
+		GetDirListing( sPath + RString("*" + this->GetFileExtension() ), out );
+	}
 }
 
 void SMLoader::TidyUpData( Song &song, bool bFromCache )

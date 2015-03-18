@@ -20,6 +20,7 @@
 #include "NotesWriterSM.h"
 #include "PrefsManager.h"
 #include "RageSoundManager.h"
+#include "RageSoundReader_FileReader.h"
 #include "RageInput.h"
 #include "RageLog.h"
 #include "ScreenDimensions.h"
@@ -45,6 +46,7 @@ static Preference<bool> g_bEditorShowBGChangesPlay( "EditorShowBGChangesPlay", t
 /** @brief How long must the button be held to generate a hold in record mode? */
 const float record_hold_default= 0.3f;
 float record_hold_seconds = record_hold_default;
+const float time_between_autosave= 300.0f; // 5 minutes. -Kyz
 
 #define PLAYER_X		(SCREEN_CENTER_X)
 #define PLAYER_Y		(SCREEN_CENTER_Y)
@@ -110,6 +112,7 @@ AutoScreenMessage( SM_BackFromStepMusicChange );
 AutoScreenMessage( SM_DoEraseStepTiming );
 AutoScreenMessage( SM_DoSaveAndExit );
 AutoScreenMessage( SM_DoExit );
+AutoScreenMessage( SM_AutoSaveSuccessful );
 AutoScreenMessage( SM_SaveSuccessful );
 AutoScreenMessage( SM_SaveFailed );
 
@@ -1390,7 +1393,11 @@ void ScreenEdit::Init()
 	m_bHasUndo = false;
 	m_Undo.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 
-	m_bDirty = m_NoteDataEdit.IsEmpty(); // require the usage of saving if empty.
+	SetDirty(m_NoteDataEdit.IsEmpty()); // require saving if empty.
+	if(GAMESTATE->m_pCurSong->WasLoadedFromAutosave())
+	{
+		SetDirty(true);
+	}
 
 	m_Player->Init( "Player", GAMESTATE->m_pPlayerState[PLAYER_1], NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
 	m_Player->CacheAllUsedNoteSkins();
@@ -1526,6 +1533,16 @@ void ScreenEdit::Update( float fDeltaTime )
 		GAMESTATE->UpdateSongPosition( fSeconds, GAMESTATE->m_pCurSong->m_SongTiming, tm );
 	}
 
+	if(m_EditState == STATE_EDITING)
+	{
+		if(IsDirty() && m_next_autosave_time > -1.0f &&
+			RageTimer::GetTimeSinceStartFast() > m_next_autosave_time)
+		{
+			PerformSave(true);
+		}
+	}
+
+
 	if( m_EditState == STATE_RECORDING  )	
 	{
 		// TODO: Find a way to prevent STATE_RECORDING when in Song Timing.
@@ -1610,7 +1627,6 @@ void ScreenEdit::Update( float fDeltaTime )
 			TransitionEditState( ( LOOP_ON_CHART_END ? STATE_PLAYING : STATE_EDITING ) );
 		}
 	}
-
 
 	//LOG->Trace( "ScreenEdit::Update(%f)", fDeltaTime );
 	ScreenWithMenuElements::Update( fDeltaTime );
@@ -3467,6 +3483,7 @@ void ScreenEdit::HandleMessage( const Message &msg )
 }
 
 static LocalizedString SAVE_SUCCESSFUL				( "ScreenEdit", "Save successful." );
+static LocalizedString AUTOSAVE_SUCCESSFUL				( "ScreenEdit", "Autosave successful." );
 
 static LocalizedString ADD_NEW_MOD ("ScreenEdit", "Adding New Mod");
 static LocalizedString ADD_NEW_ATTACK ("ScreenEdit", "Adding New Attack");
@@ -4171,6 +4188,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			return;
 		case ANSWER_NO:
 			// Don't save; just exit.
+			m_pSong->RemoveAutosave();
 			SCREENMAN->SendMessageToTopScreen( SM_DoExit );
 			return;
 		case ANSWER_CANCEL:
@@ -4188,6 +4206,12 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			ScreenPrompt::Prompt( SM_DoExit, SAVE_SUCCESSFUL );
 		else
 			SCREENMAN->SystemMessage( SAVE_SUCCESSFUL );
+	}
+	else if( SM == SM_AutoSaveSuccessful )
+	{
+		LOG->Trace("AutoSave successful.");
+		m_next_autosave_time= RageTimer::GetTimeSinceStartFast() + time_between_autosave;
+		SCREENMAN->SystemMessage(AUTOSAVE_SUCCESSFUL);
 	}
 	else if( SM == SM_SaveFailed ) // save failed; stay in the editor
 	{
@@ -4256,6 +4280,90 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 
 	ScreenWithMenuElements::HandleScreenMessage( SM );
+}
+
+void ScreenEdit::SetDirty(bool dirty)
+{
+	if(dirty)
+	{
+		if(!m_dirty)
+		{
+			m_next_autosave_time= RageTimer::GetTimeSinceStartFast() + time_between_autosave;
+		}
+	}
+	else
+	{
+		m_next_autosave_time= -1.0f;
+	}
+	m_dirty= dirty;
+}
+
+void ScreenEdit::PerformSave(bool autosave)
+{
+	// copy edit into current Steps
+	m_pSteps->SetNoteData( m_NoteDataEdit );
+
+	// don't forget the attacks.
+	m_pSong->m_Attacks = GAMESTATE->m_pCurSong->m_Attacks;
+	m_pSong->m_sAttackString = GAMESTATE->m_pCurSong->m_Attacks.ToVectorString();
+	m_pSteps->m_Attacks = GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks;
+	m_pSteps->m_sAttackString = GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks.ToVectorString();
+
+	const ScreenMessage save_message= autosave ? SM_AutoSaveSuccessful
+		: SM_SaveSuccessful;
+
+	switch( EDIT_MODE.GetValue() )
+	{
+		DEFAULT_FAIL( EDIT_MODE.GetValue() );
+		case EditMode_Home:
+			{
+				ASSERT( m_pSteps->IsAnEdit() );
+
+				RString sError;
+				m_pSteps->CalculateRadarValues( m_pSong->m_fMusicLengthSeconds );
+				if( !NotesWriterSM::WriteEditFileToMachine(m_pSong, m_pSteps, sError) )
+				{
+					ScreenPrompt::Prompt( SM_None, sError );
+					break;
+				}
+
+				m_pSteps->SetSavedToDisk( true );
+
+				// HACK: clear undo, so "exit" below knows we don't need to save.
+				// This only works because important non-steps data can't be changed in
+				// home mode (BPMs, stops).
+				ClearUndo();
+
+				SCREENMAN->ZeroNextUpdate();
+
+				HandleScreenMessage(save_message);
+
+				/* FIXME
+					 RString s;
+					 switch( c )
+					 {
+					 case save:			s = "ScreenMemcardSaveEditsAfterSave";	break;
+					 case save_on_exit:	s = "ScreenMemcardSaveEditsAfterExit";	break;
+					 default:		FAIL_M(ssprintf("Invalid menu choice: %i", c));
+					 }
+					 SCREENMAN->AddNewScreenToTop( s );
+				*/
+			}
+			break;
+		case EditMode_Full:
+			{
+				// This will recalculate radar values.
+				m_pSong->Save(autosave);
+				SCREENMAN->ZeroNextUpdate();
+
+				HandleScreenMessage(save_message);
+			}
+			break;
+		case EditMode_CourseMods:
+		case EditMode_Practice:
+			break;
+	}
+	m_soundSave.Play(true);
 }
 
 void ScreenEdit::OnSnapModeChange()
@@ -4350,7 +4458,25 @@ static void ChangeCredit( const RString &sNew )
 static void ChangePreview(const RString& sNew)
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
-	pSong->m_PreviewFile= sNew;
+	if(!sNew.empty())
+	{
+		RString error;
+		RageSoundReader* sample= RageSoundReader_FileReader::OpenFile(pSong->GetPreviewMusicPath(), error);
+		if(sample == NULL)
+		{
+			LOG->UserLog( "Preview file", pSong->GetPreviewMusicPath(), "couldn't be opened: %s", error.c_str() );
+		}
+		else
+		{
+			pSong->m_fMusicSampleLengthSeconds= sample->GetLength() / 1000.0f;
+			pSong->m_PreviewFile= sNew;
+			delete sample;
+		}
+	}
+	else
+	{
+		pSong->m_PreviewFile= sNew;
+	}
 }
 
 static void ChangeMainTitleTranslit( const RString &sNew )
@@ -4659,73 +4785,8 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 		}
 		case save:
 		case save_on_exit:
-			{
-				m_CurrentAction = c;
-
-				// copy edit into current Steps
-				m_pSteps->SetNoteData( m_NoteDataEdit );
-				
-				// don't forget the attacks.
-				m_pSong->m_Attacks = GAMESTATE->m_pCurSong->m_Attacks;
-				m_pSong->m_sAttackString = GAMESTATE->m_pCurSong->m_Attacks.ToVectorString();
-				m_pSteps->m_Attacks = GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks;
-				m_pSteps->m_sAttackString = GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks.ToVectorString();
-
-				switch( EDIT_MODE.GetValue() )
-				{
-				DEFAULT_FAIL( EDIT_MODE.GetValue() );
-				case EditMode_Home:
-					{
-						ASSERT( m_pSteps->IsAnEdit() );
-
-						RString sError;
-						
-						m_pSteps->CalculateRadarValues( m_pSong->m_fMusicLengthSeconds );
-						if( !NotesWriterSM::WriteEditFileToMachine(m_pSong, m_pSteps, sError) )
-						{
-							ScreenPrompt::Prompt( SM_None, sError );
-							break;
-						}
-
-						m_pSteps->SetSavedToDisk( true );
-
-						// HACK: clear undo, so "exit" below knows we don't need to save.
-						// This only works because important non-steps data can't be changed in
-						// home mode (BPMs, stops).
-						ClearUndo();
-
-						SCREENMAN->ZeroNextUpdate();
-
-						HandleScreenMessage( SM_SaveSuccessful );
-
-						/* FIXME
-						RString s;
-						switch( c )
-						{
-						case save:			s = "ScreenMemcardSaveEditsAfterSave";	break;
-						case save_on_exit:	s = "ScreenMemcardSaveEditsAfterExit";	break;
-						default:		FAIL_M(ssprintf("Invalid menu choice: %i", c));
-						}
-						SCREENMAN->AddNewScreenToTop( s );
-						*/
-					}
-					break;
-				case EditMode_Full: 
-					{
-						// This will recalculate radar values.
-						m_pSong->Save();
-						SCREENMAN->ZeroNextUpdate();
-
-						HandleScreenMessage( SM_SaveSuccessful );
-					}
-					break;
-				case EditMode_CourseMods:
-				case EditMode_Practice:
-					break;
-				}
-
-				m_soundSave.Play(true);
-			}
+			m_CurrentAction = c;
+			PerformSave(false);
 			break;
 		case revert_to_last_save:
 			ScreenPrompt::Prompt( SM_DoRevertToLastSave, REVERT_LAST_SAVE.GetValue() + "\n\n" + DESTROY_ALL_UNSAVED_CHANGES.GetValue(), PROMPT_YES_NO, ANSWER_NO );
