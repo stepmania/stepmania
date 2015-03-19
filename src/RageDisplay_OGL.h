@@ -71,6 +71,7 @@ public:
 	bool IsEffectModeSupported( EffectMode effect );
 	bool SupportsRenderToTexture() const;
 	unsigned CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
+	unsigned GetRenderTarget();
 	void SetRenderTarget( unsigned iHandle, bool bPreserveTexture );
 	bool IsZWriteEnabled() const;
 	bool IsZTestEnabled() const;

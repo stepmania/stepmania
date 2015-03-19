@@ -2411,6 +2411,7 @@ void RenderTarget_FramebufferObject::Create( const RenderTargetParam &param, int
 		glGenRenderbuffersEXT( 1, reinterpret_cast<GLuint*>(&m_iDepthBufferHandle) );
 		ASSERT( m_iDepthBufferHandle != 0 );
 
+		glBindRenderbufferEXT( GL_RENDERBUFFER, m_iDepthBufferHandle );
 		glRenderbufferStorageEXT( GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT16, iTextureWidth, iTextureHeight );
 		glFramebufferRenderbufferEXT( GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_iDepthBufferHandle );
 	}
@@ -2472,6 +2473,14 @@ unsigned RageDisplay_Legacy::CreateRenderTarget( const RenderTargetParam &param,
 	ASSERT( g_mapRenderTargets.find(iTexture) == g_mapRenderTargets.end() );
 	g_mapRenderTargets[iTexture] = pTarget;
 	return iTexture;
+}
+
+unsigned RageDisplay_Legacy::GetRenderTarget( )
+{
+	for( map<unsigned, RenderTarget*>::const_iterator it = g_mapRenderTargets.begin( ); it != g_mapRenderTargets.end( ); ++it )
+	if( it->second == g_pCurrentRenderTarget )
+		return it->first;
+	return 0;
 }
 
 void RageDisplay_Legacy::SetRenderTarget( unsigned iTexture, bool bPreserveTexture )
