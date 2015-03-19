@@ -151,25 +151,32 @@ if(NOT APPLE)
   source_group("" FILES "Main.cpp")
 endif()
 
-# TODO: Make this actually be data and not an executable.
-if(APPLE)
-  set(MACOSX_BUNDLE_BUNDLE_NAME "StepMania")
-  add_executable("StepMania" MACOSX_BUNDLE ${SMDATA_ALL_FILES_SRC} ${SMDATA_ALL_FILES_HPP})
-  set_target_properties("StepMania" PROPERTIES MACOSX_BUNDLE TRUE)
+# TODO: Reconsile the OS dependent naming scheme.
+if (WIN32 OR APPLE)
+  set(SM_EXE_NAME "StepMania")
 else()
-  add_executable("StepMania" ${SMDATA_ALL_FILES_SRC} ${SMDATA_ALL_FILES_HPP})
+  set(SM_EXE_NAME "stepmania")
 endif()
 
-sm_add_compile_definition("StepMania" CMAKE_POWERED)
+# TODO: Make this actually be data and not an executable.
+if(APPLE)
+  set(MACOSX_BUNDLE_BUNDLE_NAME ${SM_EXE_NAME})
+  add_executable("${SM_EXE_NAME}" MACOSX_BUNDLE ${SMDATA_ALL_FILES_SRC} ${SMDATA_ALL_FILES_HPP})
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES MACOSX_BUNDLE TRUE)
+else()
+  add_executable("${SM_EXE_NAME}" ${SMDATA_ALL_FILES_SRC} ${SMDATA_ALL_FILES_HPP})
+endif()
+
+sm_add_compile_definition("${SM_EXE_NAME}" CMAKE_POWERED)
 
 if (NOT WITH_NETWORKING)
-  sm_add_compile_definition("StepMania" WITHOUT_NETWORKING)
+  sm_add_compile_definition("${SM_EXE_NAME}" WITHOUT_NETWORKING)
 endif()
 
 set(SM_COMPILE_FLAGS "")
 # Compilation flags per project here.
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  sm_add_compile_definition("StepMania" "DEBUG=1")
+  sm_add_compile_definition("${SM_EXE_NAME}" "DEBUG=1")
 endif()
 
 if(WITH_SSE2)
@@ -193,92 +200,92 @@ if(MSVC)
   set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} /MP2")
 endif()
 
-set_target_properties("StepMania" PROPERTIES COMPILE_FLAGS ${SM_COMPILE_FLAGS})
+set_target_properties("${SM_EXE_NAME}" PROPERTIES COMPILE_FLAGS ${SM_COMPILE_FLAGS})
 
-set_target_properties("StepMania" PROPERTIES OUTPUT_NAME_DEBUG "StepMania-debug")
-set_target_properties("StepMania" PROPERTIES OUTPUT_NAME_MINSIZEREL "StepMania-min-size")
-set_target_properties("StepMania" PROPERTIES OUTPUT_NAME_RELWITHDEBINFO "StepMania-release-symbols")
+set_target_properties("${SM_EXE_NAME}" PROPERTIES OUTPUT_NAME_DEBUG "StepMania-debug")
+set_target_properties("${SM_EXE_NAME}" PROPERTIES OUTPUT_NAME_MINSIZEREL "StepMania-min-size")
+set_target_properties("${SM_EXE_NAME}" PROPERTIES OUTPUT_NAME_RELWITHDEBINFO "StepMania-release-symbols")
 
 if(WIN32)
-  sm_add_compile_definition("StepMania" WINDOWS)
-  sm_add_compile_definition("StepMania" _WINDOWS) # TODO: Remove this potential duplicate.
-  sm_add_compile_definition("StepMania" _CRT_SECURE_NO_WARNINGS)
-  sm_add_compile_definition("StepMania" _WINSOCK_DEPRECATED_NO_WARNINGS)
-  sm_add_compile_definition("StepMania" GLEW_STATIC)
+  sm_add_compile_definition("${SM_EXE_NAME}" WINDOWS)
+  sm_add_compile_definition("${SM_EXE_NAME}" _WINDOWS) # TODO: Remove this potential duplicate.
+  sm_add_compile_definition("${SM_EXE_NAME}" _CRT_SECURE_NO_WARNINGS)
+  sm_add_compile_definition("${SM_EXE_NAME}" _WINSOCK_DEPRECATED_NO_WARNINGS)
+  sm_add_compile_definition("${SM_EXE_NAME}" GLEW_STATIC)
   
-  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${SM_PROGRAM_DIR}")
-  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_PROGRAM_DIR}")
-  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${SM_PROGRAM_DIR}")
-  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_PROGRAM_DIR}")
-  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_PROGRAM_DIR}")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${SM_PROGRAM_DIR}")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_PROGRAM_DIR}")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${SM_PROGRAM_DIR}")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_PROGRAM_DIR}")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_PROGRAM_DIR}")
 elseif(APPLE)
-  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${SM_ROOT_DIR}")
-  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_ROOT_DIR}")
-  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${SM_ROOT_DIR}")
-  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_ROOT_DIR}")
-  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${SM_ROOT_DIR}")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_ROOT_DIR}")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${SM_ROOT_DIR}")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_ROOT_DIR}")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}")
   
-  set_target_properties("StepMania" PROPERTIES XCODE_ATTRIBUTE_INFOPLIST_FILE
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES XCODE_ATTRIBUTE_INFOPLIST_FILE
     "${SM_XCODE_DIR}/Info-StepMania.plist"
   )
-  set_target_properties("StepMania" PROPERTIES XCODE_ATTRIBUTE_INFOPLIST_PREFIX_HEADER "${SM_SRC_DIR}/ProductInfo.h")
-  set_target_properties("StepMania" PROPERTIES XCODE_ATTRIBUTE_INFOPLIST_PREPROCESS "YES")
-  set_target_properties("StepMania" PROPERTIES XCODE_ATTRIBUTE_INFOPLIST_PREPROCESSOR_DEFINITIONS
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES XCODE_ATTRIBUTE_INFOPLIST_PREFIX_HEADER "${SM_SRC_DIR}/ProductInfo.h")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES XCODE_ATTRIBUTE_INFOPLIST_PREPROCESS "YES")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES XCODE_ATTRIBUTE_INFOPLIST_PREPROCESSOR_DEFINITIONS
     "EXECUTABLE_NAME=\$(PRODUCT_NAME)"
   )
 
-  set_target_properties("StepMania" PROPERTIES XCODE_ATTRIBUTE_GCC_PREFIX_HEADER
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES XCODE_ATTRIBUTE_GCC_PREFIX_HEADER
     "${CMAKE_CURRENT_SOURCE_DIR}/archutils/Darwin/StepMania.pch")
-  set_target_properties("StepMania" PROPERTIES XCODE_ATTRIBUTE_GCC_ENABLE_CPP_EXCEPTIONS "NO")
-  set_target_properties("StepMania" PROPERTIES XCODE_ATTRIBUTE_LIBRARY_SEARCH_PATHS
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES XCODE_ATTRIBUTE_GCC_ENABLE_CPP_EXCEPTIONS "NO")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES XCODE_ATTRIBUTE_LIBRARY_SEARCH_PATHS
     "${SM_XCODE_DIR}/ffmpeg/lib ${SM_XCODE_DIR}/Libraries"
   )
-  set_target_properties("StepMania" PROPERTIES XCODE_ATTRIBUTE_OTHER_LDFLAGS "-lbz2")
-  sm_add_compile_definition("StepMania" _XOPEN_SOURCE)
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES XCODE_ATTRIBUTE_OTHER_LDFLAGS "-lbz2")
+  sm_add_compile_definition("${SM_EXE_NAME}" _XOPEN_SOURCE)
   
   # Add the ability to copy the resource file.
-  add_custom_command(TARGET "StepMania"
+  add_custom_command(TARGET "${SM_EXE_NAME}"
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:StepMania>/../Resources"
   )
-  add_custom_command(TARGET "StepMania"
+  add_custom_command(TARGET "${SM_EXE_NAME}"
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy "${SM_XCODE_DIR}/smicon.icns" "$<TARGET_FILE_DIR:StepMania>/../Resources/"
   )
-  add_custom_command(TARGET "StepMania"
+  add_custom_command(TARGET "${SM_EXE_NAME}"
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy "${SM_XCODE_DIR}/Hardware.plist" "$<TARGET_FILE_DIR:StepMania>/../Resources/"
   )
 else() # Linux
   # TODO: Have this compile definition be used all over. Currently fixed for Windows and Mac, but in headers.
-  sm_add_compile_definition("StepMania" "${ENDIANNESS}")
-  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${SM_ROOT_DIR}")
-  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_ROOT_DIR}")
-  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${SM_ROOT_DIR}")
-  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_ROOT_DIR}")
-  set_target_properties("StepMania" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}")
+  sm_add_compile_definition("${SM_EXE_NAME}" "${ENDIANNESS}")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${SM_ROOT_DIR}")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_ROOT_DIR}")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${SM_ROOT_DIR}")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_ROOT_DIR}")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}")
 
   if (${HAS_PTHREAD})
-    sm_add_compile_definition("StepMania" HAVE_LIBPTHREAD)
+    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_LIBPTHREAD)
   endif()
   if (${HAS_FFMPEG})
-    sm_add_compile_definition("StepMania" HAVE_FFMPEG)
+    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_FFMPEG)
   endif()
   if (BSD)
-    sm_add_compile_definition("StepMania" BSD)
+    sm_add_compile_definition("${SM_EXE_NAME}" BSD)
   endif()
 
   if (GTK2_FOUND)
-    sm_add_compile_definition("StepMania" HAVE_GTK)
+    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_GTK)
   endif()
 
-  sm_add_compile_definition("StepMania" UNIX)
+  sm_add_compile_definition("${SM_EXE_NAME}" UNIX)
   if("${CMAKE_SYSTEM}" MATCHES "Linux")
-    sm_add_compile_definition("StepMania" LINUX)
+    sm_add_compile_definition("${SM_EXE_NAME}" LINUX)
   endif()
 endif()
 
-set_property(TARGET "StepMania" PROPERTY FOLDER "Internal Libraries")
+set_property(TARGET "${SM_EXE_NAME}" PROPERTY FOLDER "Internal Libraries")
 
 list(APPEND SMDATA_LINK_LIB
   "lua-5.1"
@@ -313,23 +320,23 @@ if (WIN32)
   
   get_filename_component(DIRECTX_LIBRARY_DIR "${DIRECTX_LIBRARIES}" DIRECTORY)
   
-  sm_add_link_flag("StepMania" "/LIBPATH:\"${DIRECTX_LIBRARY_DIR}\"")
-  sm_add_link_flag("StepMania" "/LIBPATH:\"${SM_EXTERN_DIR}/ffmpeg/lib\"")
-  sm_add_link_flag("StepMania" "/LIBPATH:\"${SM_EXTERN_DIR}/libjpeg\"")
-  sm_add_link_flag("StepMania" "/LIBPATH:\"${SM_EXTERN_DIR}/mad-0.15.1b/msvc++/Release\"")
-  sm_add_link_flag("StepMania" "/LIBPATH:\"${SM_EXTERN_DIR}/vorbis/win32\"")
-  sm_add_link_flag("StepMania" "/LIBPATH:\"${SM_SRC_DIR}/archutils/Win32/ddk\"")
-  sm_add_link_flag("StepMania" "/ERRORREPORT:SEND")
-  sm_add_link_flag("StepMania" "/MAPINFO:EXPORTS")
-  sm_add_link_flag("StepMania" "/SAFESEH:NO")
-  sm_add_link_flag("StepMania" "/NOLOGO")
-  sm_add_link_flag("StepMania" "/MAP")
-  sm_add_link_flag("StepMania" "/NODEFAULTLIB:wininet.lib")
-  sm_add_link_flag("StepMania" "/NODEFAULTLIB:msimg32.lib")
-  sm_add_link_flag("StepMania" "/NODEFAULTLIB:libci.lib")
-  set_target_properties("StepMania" PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt.lib")
-  set_target_properties("StepMania" PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
-  set_target_properties("StepMania" PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS")
+  sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${DIRECTX_LIBRARY_DIR}\"")
+  sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/ffmpeg/lib\"")
+  sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/libjpeg\"")
+  sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/mad-0.15.1b/msvc++/Release\"")
+  sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/vorbis/win32\"")
+  sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_SRC_DIR}/archutils/Win32/ddk\"")
+  sm_add_link_flag("${SM_EXE_NAME}" "/ERRORREPORT:SEND")
+  sm_add_link_flag("${SM_EXE_NAME}" "/MAPINFO:EXPORTS")
+  sm_add_link_flag("${SM_EXE_NAME}" "/SAFESEH:NO")
+  sm_add_link_flag("${SM_EXE_NAME}" "/NOLOGO")
+  sm_add_link_flag("${SM_EXE_NAME}" "/MAP")
+  sm_add_link_flag("${SM_EXE_NAME}" "/NODEFAULTLIB:wininet.lib")
+  sm_add_link_flag("${SM_EXE_NAME}" "/NODEFAULTLIB:msimg32.lib")
+  sm_add_link_flag("${SM_EXE_NAME}" "/NODEFAULTLIB:libci.lib")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt.lib")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS")
 elseif(APPLE)
   # The following were removed from SMDATA_LINK_LIB to "match" StepMania's pbxproj.
 #    ${MAC_FRAME_APPKIT}
@@ -421,16 +428,16 @@ else() # Unix / Linux
 
   if (HAS_OSS)
     # No mention of OSS libraries.
-    sm_add_compile_definition("StepMania" "HAVE_OSS_VERSION=1")
+    sm_add_compile_definition("${SM_EXE_NAME}" "HAVE_OSS_VERSION=1")
   endif()
 
   if (HAS_PULSE)
     list(APPEND SMDATA_LINK_LIB ${PULSEAUDIO_LIBRARY})
     # PACKAGE_NAME and PACKAGE_VERSION are only used in this scenario. Why is not clear.
     # TODO: Remove this silliness.
-    sm_add_compile_definition("StepMania" PACKAGE_NAME="StepMania")
+    sm_add_compile_definition("${SM_EXE_NAME}" PACKAGE_NAME="StepMania")
     set(PACKAGE_VERSION "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}")
-    sm_add_compile_definition("StepMania" PACKAGE_VERSION="${PACKAGE_VERSION}")
+    sm_add_compile_definition("${SM_EXE_NAME}" PACKAGE_VERSION="${PACKAGE_VERSION}")
   endif()
 
   if(X11_FOUND)
@@ -443,7 +450,7 @@ else() # Unix / Linux
   list(REMOVE_ITEM SMDATA_LINK_LIB "zlib")
 endif()
 
-target_link_libraries("StepMania" ${SMDATA_LINK_LIB})
+target_link_libraries("${SM_EXE_NAME}" ${SMDATA_LINK_LIB})
 
 list(APPEND SM_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -462,7 +469,7 @@ if(NOT APPLE)
     )
   else()
     if (HAS_FFMPEG)
-      add_dependencies("StepMania" "ffmpeg")
+      add_dependencies("${SM_EXE_NAME}" "ffmpeg")
       list(APPEND SM_INCLUDE_DIRS
         "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg"
         "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build"
@@ -492,5 +499,5 @@ else()
   )
 endif()
 
-target_include_directories("StepMania" PUBLIC ${SM_INCLUDE_DIRS})
+target_include_directories("${SM_EXE_NAME}" PUBLIC ${SM_INCLUDE_DIRS})
 
