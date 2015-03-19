@@ -82,16 +82,6 @@ static BOOL CALLBACK GetEnabledPopup( HWND hWnd, LPARAM lParam )
 	return FALSE;
 }
 
-static const RString CURRENT_VERSION_KEY = "HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion";
-
-RString ArchHooks_Win32::GetMachineId() const
-{
-	RString s;
-	if( RegistryAccess::GetRegValue( CURRENT_VERSION_KEY, "ProductID", s ) )
-		return s;
-	return RString();
-}
-
 bool ArchHooks_Win32::CheckForMultipleInstances(int argc, char* argv[])
 {
 	if( !g_bIsMultipleInstance )

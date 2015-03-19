@@ -8,7 +8,6 @@ class ArchHooks_MacOSX : public ArchHooks
 public:
 	void Init();
 	RString GetArchName() const;
-	RString GetMachineId() const;
 	void DumpDebugInfo();
 	RString GetPreferredLanguage();
 	bool GoToURL( RString sUrl );
