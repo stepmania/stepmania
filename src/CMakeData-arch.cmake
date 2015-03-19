@@ -250,7 +250,6 @@ else()
       )
       list(APPEND SMDATA_ARCH_LOADING_HPP
         "arch/LoadingWindow/LoadingWindow_Gtk.h"
-        "arch/LoadingWindow/LoadingWindow_GtkModule.h"
       )
     endif()
   endif()
@@ -450,7 +449,6 @@ endif(NOT APPLE)
 
 source_group("Arch Specific\\\\Arch Hooks" FILES ${SMDATA_ARCH_HOOKS_SRC} ${SMDATA_ARCH_HOOKS_HPP})
 
-
 list(APPEND SMDATA_ALL_ARCH_SRC
   ${SMDATA_ARCH_SRC}
   ${SMDATA_ARCH_DIALOG_SRC}
@@ -477,3 +475,4 @@ list(APPEND SMDATA_ALL_ARCH_HPP
   ${SMDATA_ARCH_SOUND_HPP}
   ${SMDATA_ARCH_THREADS_HPP}
 )
+

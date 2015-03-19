@@ -39,6 +39,7 @@ include(CMakeData-os.cmake)
 include(CMakeData-actor.cmake)
 include(CMakeData-screen.cmake)
 include(CMakeData-data.cmake)
+include(CMakeData-gtk.cmake)
 
 list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
   "AnnouncerManager.cpp"
@@ -269,12 +270,6 @@ else() # Linux
 
   if (GTK2_FOUND)
     sm_add_compile_definition("StepMania" HAVE_GTK)
-    # TODO: Identify why the post build custom command does not always work.
-    file(COPY "${SM_SRC_DIR}/GtkModule.so" DESTINATION "${SM_ROOT_DIR}")
-
-    # add_custom_command(TARGET "StepMania" POST_BUILD
-    #   COMMAND ln -sf "${SM_SRC_DIR}/GtkModule.so" "${SM_ROOT_DIR}/GtkModule.so"
-    # )
   endif()
 
   sm_add_compile_definition("StepMania" UNIX)
@@ -498,3 +493,4 @@ else()
 endif()
 
 target_include_directories("StepMania" PUBLIC ${SM_INCLUDE_DIRS})
+
