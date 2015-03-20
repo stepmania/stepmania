@@ -502,7 +502,8 @@ endif()
 target_include_directories("${SM_EXE_NAME}" PUBLIC ${SM_INCLUDE_DIRS})
 
 if(WIN32)
-  set(SM_INSTALL_DESTINATION "")
+  # TODO: Look forward to 64-bit builds. Also, Find a way to not need to hardcode this.
+  set(SM_INSTALL_DESTINATION "C:/Program Files (x86)")
 elseif(APPLE)
   # TODO: Confirm if anything special is needed. Most Mac apps are just portable .app folders.
   set(SM_INSTALL_DESTINATION "")
