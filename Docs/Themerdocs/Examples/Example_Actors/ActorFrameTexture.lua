@@ -13,8 +13,9 @@ local Example1_AlphaBuffer = true; -- Change this to see the effect of the Alpha
 -- Example 2: An ActorFrameTexture draws a spinning ActorFrame containing 3 color-channging quads. The texture is drawn by a sprite.
 local Example2_PreserveTexture = false; -- Change this to see the effect of PreserveTexture.
 
--- Example 3: An ActorFrameTexture draws a white quad, and then draws 3 quads on top of it all using "BlendMode_Add", each with either
--- R, G, or B. Change the diffuse to see different colors show up as a result of the texture having RGB values greater than 1.
+-- Example 3: This example shows how the Float property of ActorFrameTexture works. An ActorFrameTexture draws a white quad, 
+-- and then draws 3 quads on top of it all using "BlendMode_Add", each with either R, G, or B. Change the diffuse to see different 
+-- colors show up as a result of the texture having RGB values greater than 1.
 local Example3_Diffuse = { 1,0.5,1,1 } -- Note that with Green of 50%, there is still a white rectangle where the Green square intersect the background white square.
 
 -- Example 4: Use a pair of AFTs to draw an object with a fading trail behind it. This example is a bit odd, in that the length of the 
@@ -30,6 +31,8 @@ local Example3_Diffuse = { 1,0.5,1,1 } -- Note that with Green of 50%, there is 
 	
 	Because it is not drawing to the screen, an ActorFrameTexture's postion, rotation, and zoom have no affect. Diffuse and 
 	glow are applied to the children of an ActorFrameTexture the same way they are applied to the children of an ActorFrame.
+	Additionally, an ActorFrameTexture can draw to it's texture at any time, by calling the Actor method Draw. For all other
+	Actor classes, the Draw method will have no effect if called outside of the Screen's draw cycle.
 	
 	ActorFrameTextures draw only actors or parts of actors that are located within the range x = 0 to x = <width> and y = 0
 	to y = <height>. If an actor is sitting at x = 0 inside the ActorFrameTexture, only the right half of the Actor will draw.
@@ -101,11 +104,8 @@ Examples[1] = Def.ActorFrame{
 			self:Create();
 
 			-- The ActorFrameTexture only needs to draw once, so hide it after the first draw.
-			self:SetDrawFunction( function()
-				-- Calling self:Draw() would cause an infinite loop. Wrap all children in a single ActorFrame and draw that instead.
-				self:GetChild("Draw"):Draw();
-				self:hibernate(math.huge);
-			end )
+			self:Draw()
+			self:hibernate(math.huge)
 		end;
 		Def.ActorFrame{
 			Name = "Draw";
@@ -158,10 +158,8 @@ Examples[3] = Def.ActorFrame{
 			self:EnableFloat( true );
 			self:Create();
 			
-			self:SetDrawFunction( function()
-				self:GetChild("Draw"):Draw();
-				self:hibernate(math.huge);
-			end )
+			self:Draw()
+			self:hibernate(math.huge)
 		end;
 		Def.ActorFrame{
 			Name = "Draw";
