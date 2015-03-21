@@ -28,7 +28,7 @@ Environment variables can be modified at this stage. If you want to pass `-ggdb`
 CMake GUI
 ===
 
-For those that use the GUI to work with cmake, make sure your source directory is the parent directory and the build files go in this one. 
+For those that use the GUI to work with cmake, you need to specify where the source code is and where the binaries will be built. The first one, counter-intuitively, is actually the parent directory of this one: the main StepMania directory. The second one for building can be this directory.
 
 Upon setting the source and build directories, you should `Configure` the build. If no errors show up, you can hit `Generate` until none of the rows on the GUI are red.
 
