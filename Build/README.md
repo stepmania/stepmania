@@ -13,6 +13,8 @@ CMake Command Line
 
 If you are unfamiliar with cmake, first run `cmake --help`. This will present a list of options and generators. The generators are used for setting up your project.
 
+The following steps will assume you operate from the StepMania project's Build directory.
+
 For the first setup, you will want to run this command:
 
 `cmake -G {YourGeneratorHere} .. && cmake ..`
