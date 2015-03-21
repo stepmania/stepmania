@@ -23,6 +23,8 @@ If any cmake project file changes, you can just run `cmake .. && cmake ..` to ge
 
 The reason for running cmake at least twice is to make sure that all of the variables get set up appropriately.
 
+Environment variables can be modified at this stage. If you want to pass `-ggdb` or any other flag that is not set up by default, utilize `CXXFLAGS` or any appropriate variable.
+
 CMake GUI
 ===
 
