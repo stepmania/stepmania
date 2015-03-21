@@ -28,9 +28,11 @@ Environment variables can be modified at this stage. If you want to pass `-ggdb`
 CMake GUI
 ===
 
-For those that use the GUI to work with cmake, make sure your source directory is the parent directory and the build files go in this one. Keep generating until none of the lines are red.
+For those that use the GUI to work with cmake, make sure your source directory is the parent directory and the build files go in this one. 
 
-If the cache has to be deleted, go to File -> Delete Cache, and then start again.
+Upon setting the source and build directories, you should `Configure` the build. If no errors show up, you can hit `Generate` until none of the rows on the GUI are red.
+
+If the cmake project file changes, you can just generate the build to get up to date. If this by itself doesn't work, you may have to clean the cmake cache. Go to File -> Delete Cache, and then run the `Configure` and `Generate` steps again.
 
 With that, you should be good to go.
 
