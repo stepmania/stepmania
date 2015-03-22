@@ -39,32 +39,35 @@ set(CPACK_PACKAGE_NAME "StepMania")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Rhythm Game Simulator")
 
 # Prep options that are needed for each platform.
-option(WITH_NETWORKING "Build with networking support" ON)
+option(WITH_NETWORKING "Build with networking support." ON)
 
 # This option is not yet working, but will likely default to ON in the future.
-option(WITH_LTO "Build with Link Time Optimization (LTO)/Whole Program Optimization" OFF)
+option(WITH_LTO "Build with Link Time Optimization (LTO)/Whole Program Optimization." OFF)
 
-option(WITH_SSE2 "Build with SSE2 Optimizations" ON)
+option(WITH_SSE2 "Build with SSE2 Optimizations." ON)
 
 # This option may go away in the future: if it does, JPEG will always be required.
-option(WITH_JPEG "Build with JPEG Image Support" ON)
+option(WITH_JPEG "Build with JPEG Image Support." ON)
 
 # Turn this on to set this to a specific release mode.
 option(WITH_FULL_RELEASE "Build as a proper, full release." OFF)
 
+# Turn this option off to not use the GPL exclusive components.
+option(WITH_GPL_LIBS "Build with GPL libraries." ON)
+
 if(WIN32)
-  option(WITH_MINIMAID "Build with Mimimaid Lights Support" OFF)
+  option(WITH_MINIMAID "Build with Mimimaid Lights Support." OFF)
 else()
   if(LINUX)
-    option(WITH_FFMPEG "Build with FFMPEG" ON)
-    option(WITH_TTY "Build with Linux TTY Input Support" OFF)
-    option(WITH_PROFILING "Build with Profiling Support" OFF)
-    option(WITH_GLES2 "Build with OpenGL ES 2.0 Support" ON)
-    option(WITH_GTK2 "Build with GTK2 Support" ON)
-    option(WITH_OGG "Build with OGG/Vorbis Support" ON)
-    option(WITH_MP3 "Build with MP3 Support" ON)
-    option(WITH_PARALLEL_PORT "Build with Parallel Lights I/O Support" OFF)
-    option(WITH_CRASH_HANDLER "Build with Crash Handler Support" ON)
+    option(WITH_FFMPEG "Build with FFMPEG." ON)
+    option(WITH_TTY "Build with Linux TTY Input Support." OFF)
+    option(WITH_PROFILING "Build with Profiling Support." OFF)
+    option(WITH_GLES2 "Build with OpenGL ES 2.0 Support." ON)
+    option(WITH_GTK2 "Build with GTK2 Support." ON)
+    option(WITH_OGG "Build with OGG/Vorbis Support." ON)
+    option(WITH_MP3 "Build with MP3 Support." ON)
+    option(WITH_PARALLEL_PORT "Build with Parallel Lights I/O Support." OFF)
+    option(WITH_CRASH_HANDLER "Build with Crash Handler Support." ON)
   endif()
 endif()
 
@@ -166,6 +169,11 @@ elseif(MACOSX)
 elseif(LINUX)
   include(TestBigEndian)
   include(ExternalProject)
+
+  if(NOT WITH_GPL_LIBS)
+    message("Disabling GPL exclusive libraries: no MP3 support.")
+    set(WITH_MP3 OFF)
+  endif()
 
   if(WITH_GTK2)
     find_package("GTK2" 2.0)
@@ -274,6 +282,22 @@ elseif(LINUX)
   endif()
 
   if(WITH_FFMPEG)
+    list(APPEND FFMPEG_CONFIGURE
+      "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg/configure"
+      "--disable-programs"
+      "--disable-doc"
+      "--disable-avdevice"
+      "--disable-swresample"
+      "--disable-postproc"
+      "--disable-avfilter"
+      "--disable-shared"
+      "--enable-static"
+    )
+    if(WITH_GPL_LIBS)
+      list(APPEND FFMPEG_CONFIGURE
+        "--enable-gpl"
+      )
+    endif()
     # NEVER use the system ffmpeg. Not worth the hassle.
     # --shlibdir=$our_installdir/stepmania-$VERSION
     externalproject_add("ffmpeg"
@@ -281,7 +305,7 @@ elseif(LINUX)
       PREFIX "${SM_EXTERN_DIR}/ffmpeg-linux"
       GIT_REPOSITORY "git://source.ffmpeg.org/ffmpeg.git"
       GIT_TAG "n2.1.3"
-      CONFIGURE_COMMAND "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg/configure" "--enable-gpl" "--disable-programs" "--disable-doc" "--disable-avdevice" "--disable-swresample" "--disable-postproc" "--disable-avfilter" "--disable-shared" "--enable-static"
+      CONFIGURE_COMMAND ${FFMPEG_CONFIGURE}
       BUILD_COMMAND "make"
       UPDATE_COMMAND ""
       INSTALL_COMMAND ""
