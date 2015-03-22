@@ -296,9 +296,12 @@ list(APPEND SMDATA_LINK_LIB
   "mad"
   "png"
   "glew"
-  "pcre"
   "jpeg"
 )
+
+if (NOT SYSTEM_PCRE_FOUND)
+  list(INSERT SMDATA_LINK_LIB 8 "pcre")
+endif()
 
 if (WIN32)
   list(APPEND SMDATA_LINK_LIB
@@ -380,11 +383,25 @@ elseif(APPLE)
   )
 else() # Unix / Linux
   # TODO: Remember to find and locate the zip archive files.
+  if (HAS_FFMPEG)
+    if(WITH_SYSTEM_FFMPEG)
+      list(APPEND SMDATA_LINK_LIB
+        "${FFMPEG_avformat_LIBRARY}"
+        "${FFMPEG_avcodec_LIBRARY}"
+        "${FFMPEG_swscale_LIBRARY}"
+        "${FFMPEG_avutil_LIBRARY}"
+      )
+    else()
+      list(APPEND SMDATA_LINK_LIB
+        "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build/libavformat/libavformat.a"
+        "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build/libavcodec/libavcodec.a"
+        "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build/libswscale/libswscale.a"
+        "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build/libavutil/libavutil.a"
+      )
+    endif()
+  endif()
+
   list(APPEND SMDATA_LINK_LIB
-    "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build/libavformat/libavformat.a"
-    "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build/libavcodec/libavcodec.a"
-    "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build/libswscale/libswscale.a"
-    "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build/libavutil/libavutil.a"
     "${DL_LIBRARY}"
   )
 
@@ -444,6 +461,10 @@ else() # Unix / Linux
     list(APPEND SMDATA_LINK_LIB ${X11_LIBRARIES})
   endif()
 
+  if(PCRE_FOUND)
+    list(APPEND SMDATA_LINK_LIB ${PCRE_LIBRARY})
+  endif()
+
   list(APPEND SMDATA_LINK_LIB
     ${XRANDR_LIBRARIES}
   )
@@ -469,17 +490,24 @@ if(NOT APPLE)
     )
   else()
     if (HAS_FFMPEG)
-      add_dependencies("${SM_EXE_NAME}" "ffmpeg")
-      list(APPEND SM_INCLUDE_DIRS
-        "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg"
-        "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build"
-      )
+      if (WITH_SYSTEM_FFMPEG)
+        list(APPEND SM_INCLUDE_DIRS "${FFMPEG_INCLUDE_DIR}")
+      else()
+        add_dependencies("${SM_EXE_NAME}" "ffmpeg")
+        list(APPEND SM_INCLUDE_DIRS
+          "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg"
+          "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build"
+        )
+      endif()
     endif()
     if (HAS_GTK2)
       list(APPEND SM_INCLUDE_DIRS "${GTK2_INCLUDE_DIRS}")
     endif()
     if (X11_FOUND)
       list(APPEND SM_INCLUDE_DIRS "${X11_INCLUDE_DIR}")
+    endif()
+    if (PCRE_FOUND)
+      list(APPEND SM_INCLUDE_DIRS "${PCRE_INCLUDE_DIR}")
     endif()
   endif()
 else()
