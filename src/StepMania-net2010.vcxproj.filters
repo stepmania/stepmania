@@ -630,6 +630,9 @@
     <ClCompile Include="global.cpp">
       <Filter>StepMania</Filter>
     </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>StepMania</Filter>
+    </ClCompile>
     <ClCompile Include="SpecialFiles.cpp">
       <Filter>StepMania</Filter>
     </ClCompile>

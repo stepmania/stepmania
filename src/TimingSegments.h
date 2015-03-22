@@ -266,7 +266,7 @@ struct TickcountSegment : public TimingSegment
 	void SetTicks( int iTicks ) { m_iTicksPerBeat = iTicks; }
 
 	RString ToString( int dec ) const;
-	vector<float> GetValues() const { return vector<float>(1, GetTicks()); }
+	vector<float> GetValues() const { return vector<float>(1, GetTicks() * 1.f); }
 
 	bool operator==( const TickcountSegment &other ) const
 	{

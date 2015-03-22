@@ -68,7 +68,7 @@
 - (void) startGame:(id)sender
 {
 	// Hand off to main application code.
-	exit( SM_main(m_iArgc, m_pArgv) );
+	exit( sm_main(m_iArgc, m_pArgv) );
 }
 
 /* From here:

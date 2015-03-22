@@ -2,6 +2,20 @@
 *.o
 *.obj
 
+# CMake Files/Directories
+CMakeFiles/
+CMakeCache.txt
+CMakeScripts/
+cmake_install.cmake
+# The following are generated from CMake, and thus should be stopped.
+Build/*
+Build/*/*
+Debug/
+Release/
+Contents/
+verdata.*
+StepMania-debug
+
 # Text Editor Based Items
 ___*
 *~
@@ -49,6 +63,7 @@ lib*_link.a
 *.suo
 *.exp
 *.ilk
+*.map
 
 # Windows General Files
 Thumbs.db
@@ -73,6 +88,13 @@ src/config.h
 src/config.h.in
 src/stamp-h1
 GtkModule.so
+StepMania
+
+# Version control specific.
+*.BACKUP.*
+*.BASE.*
+*.LOCAL.*
+*.REMOTE.*
 
 # StepMania Specific
 *.smzip
@@ -147,3 +169,4 @@ BuildLog.htm
 *.swp
 *.pc
 *.d
+
