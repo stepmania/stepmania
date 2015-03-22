@@ -60,6 +60,8 @@ if(WIN32)
 else()
   if(LINUX)
     option(WITH_FFMPEG "Build with FFMPEG." ON)
+    # Builder beware: later versions of ffmpeg may break!
+    option(WITH_SYSTEM_FFMPEG "Build with the system's FFMPEG." OFF)
     option(WITH_TTY "Build with Linux TTY Input Support." OFF)
     option(WITH_PROFILING "Build with Profiling Support." OFF)
     option(WITH_GLES2 "Build with OpenGL ES 2.0 Support." ON)
@@ -287,36 +289,47 @@ elseif(LINUX)
   endif()
 
   if(WITH_FFMPEG)
-    list(APPEND FFMPEG_CONFIGURE
-      "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg/configure"
-      "--disable-programs"
-      "--disable-doc"
-      "--disable-avdevice"
-      "--disable-swresample"
-      "--disable-postproc"
-      "--disable-avfilter"
-      "--disable-shared"
-      "--enable-static"
-    )
-    if(WITH_GPL_LIBS)
+    if (WITH_SYSTEM_FFMPEG)
+      find_package("FFMPEG")
+      if(NOT FFMPEG_FOUND)
+        message(FATAL_ERROR "System ffmpeg not found! Either install the libraries or remove the argument, then try again.")
+      else()
+
+        message(STATUS "-- Warning! Your version of ffmpeg may be too high! If you want to use the system ffmpeg, clear your cmake cache and do not include the system ffmpeg argument.")
+        set(HAS_FFMPEG TRUE)
+      endif()
+    else()
       list(APPEND FFMPEG_CONFIGURE
-        "--enable-gpl"
+        "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg/configure"
+        "--disable-programs"
+        "--disable-doc"
+        "--disable-avdevice"
+        "--disable-swresample"
+        "--disable-postproc"
+        "--disable-avfilter"
+        "--disable-shared"
+        "--enable-static"
       )
+      if(WITH_GPL_LIBS)
+        list(APPEND FFMPEG_CONFIGURE
+          "--enable-gpl"
+        )
+      endif()
+      # NEVER use the system ffmpeg. Not worth the hassle.
+      # --shlibdir=$our_installdir/stepmania-$VERSION
+      externalproject_add("ffmpeg"
+        DOWNLOAD_DIR "${SM_EXTERN_DIR}/ffmpeg-linux"
+        PREFIX "${SM_EXTERN_DIR}/ffmpeg-linux"
+        GIT_REPOSITORY "git://source.ffmpeg.org/ffmpeg.git"
+        GIT_TAG "n2.1.3"
+        CONFIGURE_COMMAND ${FFMPEG_CONFIGURE}
+        BUILD_COMMAND "make"
+        UPDATE_COMMAND ""
+        INSTALL_COMMAND ""
+        TEST_COMMAND ""
+      )
+      set(HAS_FFMPEG TRUE)
     endif()
-    # NEVER use the system ffmpeg. Not worth the hassle.
-    # --shlibdir=$our_installdir/stepmania-$VERSION
-    externalproject_add("ffmpeg"
-      DOWNLOAD_DIR "${SM_EXTERN_DIR}/ffmpeg-linux"
-      PREFIX "${SM_EXTERN_DIR}/ffmpeg-linux"
-      GIT_REPOSITORY "git://source.ffmpeg.org/ffmpeg.git"
-      GIT_TAG "n2.1.3"
-      CONFIGURE_COMMAND ${FFMPEG_CONFIGURE}
-      BUILD_COMMAND "make"
-      UPDATE_COMMAND ""
-      INSTALL_COMMAND ""
-      TEST_COMMAND ""
-    )
-    set(HAS_FFMPEG TRUE)
   else()
     set(HAS_FFMPEG FALSE)
   endif()
