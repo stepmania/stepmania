@@ -296,9 +296,12 @@ list(APPEND SMDATA_LINK_LIB
   "mad"
   "png"
   "glew"
-  "pcre"
   "jpeg"
 )
+
+if (NOT SYSTEM_PCRE_FOUND)
+  list(INSERT SMDATA_LINK_LIB 8 "pcre")
+endif()
 
 if (WIN32)
   list(APPEND SMDATA_LINK_LIB
@@ -444,6 +447,10 @@ else() # Unix / Linux
     list(APPEND SMDATA_LINK_LIB ${X11_LIBRARIES})
   endif()
 
+  if(PCRE_FOUND)
+    list(APPEND SMDATA_LINK_LIB ${PCRE_LIBRARY})
+  endif()
+
   list(APPEND SMDATA_LINK_LIB
     ${XRANDR_LIBRARIES}
   )
@@ -480,6 +487,9 @@ if(NOT APPLE)
     endif()
     if (X11_FOUND)
       list(APPEND SM_INCLUDE_DIRS "${X11_INCLUDE_DIR}")
+    endif()
+    if (PCRE_FOUND)
+      list(APPEND SM_INCLUDE_DIRS "${PCRE_INCLUDE_DIR}")
     endif()
   endif()
 else()

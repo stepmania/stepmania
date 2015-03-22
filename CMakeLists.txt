@@ -106,6 +106,7 @@ set(ENDIANNESS "ENDIAN_LITTLE")
 if(WIN32)
   set(HAS_OGG TRUE)
   set(HAS_MP3 TRUE)
+  set(SYSTEM_PCRE_FOUND FALSE)
   find_package(DirectX REQUIRED)
   
   # FFMPEG...it can be evil.
@@ -131,6 +132,7 @@ if(WIN32)
 elseif(MACOSX)
   set(HAS_OGG TRUE)
   set(HAS_MP3 TRUE)
+  set(SYSTEM_PCRE_FOUND FALSE)
   set(WITH_CRASH_HANDLER TRUE)
   # Apple Archs needs to be 32-bit for now.
   # When SDL2 is introduced, this may change.
@@ -188,6 +190,9 @@ elseif(LINUX)
   endif()
 
   find_package(X11)
+
+  find_package(Pcre)
+  set(SYSTEM_PCRE_FOUND ${PCRE_FOUND})
 
   find_package("BZip2")
   if (NOT(${BZIP2_FOUND}))
