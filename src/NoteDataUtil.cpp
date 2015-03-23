@@ -951,194 +951,192 @@ void NoteDataUtil::AutogenKickbox(const NoteData& in, NoteData& out, const Timin
 	out.RevalidateATIs(vector<int>(), false);
 }
 
-RadarStats CalculateRadarStatsFast( const NoteData &in, RadarStats &out )
+struct recent_note_t
 {
-	out.taps = 0;
-	out.jumps = 0;
-	out.hands = 0;
-	out.quads = 0;
-	map<int, int> simultaneousMap;
-	map<int, int> simultaneousMapNoHold;
-	map<int, int> simultaneousMapTapHoldHead;
-	map<int, int>::iterator itr;
-	for( int t=0; t<in.GetNumTracks(); t++ )
-	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( in, t, r, 0, MAX_NOTE_ROW )
-		{
-			/* This function deals strictly with taps, jumps, hands, and quads.
-			 * As such, all rows in here have to be judgable. */
-			if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r))
-				continue;
-			
-			const TapNote &tn = in.GetTapNote(t, r);
-			switch( tn.type )
-			{
-				case TapNoteType_Mine:
-				case TapNoteType_Empty:
-				case TapNoteType_Fake:
-				case TapNoteType_AutoKeysound:
-					continue;	// skip these types - they don't count
-				default: break;
-			}
-
-			if( (itr = simultaneousMap.find(r)) == simultaneousMap.end() )
-				simultaneousMap[r] = 1;
-			else
-				itr->second++;
-
-			if( (itr = simultaneousMapNoHold.find(r)) == simultaneousMapNoHold.end() )
-				simultaneousMapNoHold[r] = 1;
-			else
-				itr->second++;
-			
-			if( tn.type == TapNoteType_Tap || tn.type == TapNoteType_Lift || tn.type == TapNoteType_HoldHead )
-			{
-				simultaneousMapTapHoldHead[r] = 1;
-			}
-
-			if( tn.type == TapNoteType_HoldHead )
-			{
-				int searchStartRow = r + 1;
-				int searchEndRow   = r + tn.iDuration;
-				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, rr, searchStartRow, searchEndRow )
-				{
-					switch( in.GetTapNote(t, rr).type )
-					{
-						case TapNoteType_Mine:
-						case TapNoteType_Empty:
-						case TapNoteType_Fake:
-							continue;	// skip these types - they don't count
-						default: break;
-					}
-					if( (itr = simultaneousMap.find(rr)) == simultaneousMap.end() )
-						simultaneousMap[rr] = 1;
-					else
-						itr->second++;
-				}
-			}
-		}
-	}
-	for( itr = simultaneousMap.begin(); itr != simultaneousMap.end(); itr ++ )
-	{
-		if( itr->second >= 3 )
-		{
-			out.hands ++;
-			if( itr->second >= 4 )
-			{
-				out.quads ++;
-			}
-		}
-	}
-	for( itr = simultaneousMapNoHold.begin(); itr != simultaneousMapNoHold.end(); itr ++ )
-	{
-		if( itr->second >= 2 )
-		{
-			out.jumps ++;
-		}
-	}
-	out.taps = simultaneousMapTapHoldHead.size();
-	return out;
-}
+	int row;
+	int track;
+	recent_note_t()
+		:row(0), track(0) {}
+	recent_note_t(int r, int t)
+		:row(r), track(t) {}
+};
 
 void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out )
 {
-	RadarStats stats;
-	CalculateRadarStatsFast( in, stats );
-	
-	// The for loop and the assert are used to ensure that all fields of 
-	// RadarValue get set in here.
-	FOREACH_ENUM( RadarCategory, rc )
+	int curr_row= -1;
+	bool judgable= false;
+	// recent_notes is used to calculate the voltage.  Each element is the row
+	// and track number of a tap note.  When the pair at the beginning is too
+	// old, it's deleted.  This provides a way to have a rolling window
+	// that scans for the peak step density. -Kyz
+	vector<recent_note_t> recent_notes;
+	NoteData::all_tracks_const_iterator curr_note=
+		in.GetTapNoteRangeAllTracks(0, MAX_NOTE_ROW);
+	int num_notes_on_curr_row= 0;
+	TimingData* timing= GAMESTATE->GetProcessedTimingData();
+	// total_taps exists because the stream calculation needs GetNumTapNotes,
+	// but TapsAndHolds + Jumps + Hands would be inaccurate. -Kyz
+	float total_taps= 0;
+	// hold_ends tracks where currently active holds will end, which is used
+	// to count the number of hands. -Kyz
+	vector<int> hold_ends;
+	// num_holds_on_curr_row saves us the work of tracking where holds started
+	// just to keep a jump of two holds from counting as a hand.
+	int num_holds_on_curr_row= 0;
+	const float voltage_window_beats= 8.0f;
+	const int voltage_window= BeatToNoteRow(voltage_window_beats);
+	size_t max_notes_in_voltage_window= 0;
+	int num_chaos_rows= 0;
+
+	// Steps zeros the RadarValues before calling CalculateRadarValues. -Kyz
+
+	while(!curr_note.IsAtEnd())
 	{
-		switch( rc )
+		if(curr_note.Row() != curr_row)
 		{
-		case RadarCategory_Stream:			out[rc] = GetStreamRadarValue( in, fSongSeconds );	break;	
-		case RadarCategory_Voltage:			out[rc] = GetVoltageRadarValue( in, fSongSeconds );	break;
-		case RadarCategory_Air:				out[rc] = GetAirRadarValue( in, fSongSeconds );		break;
-		case RadarCategory_Freeze:			out[rc] = GetFreezeRadarValue( in, fSongSeconds );	break;
-		case RadarCategory_Chaos:			out[rc] = GetChaosRadarValue( in, fSongSeconds );	break;
-		case RadarCategory_TapsAndHolds:	out[rc] = (float) stats.taps;				break;
-		case RadarCategory_Jumps:			out[rc] = (float) stats.jumps;				break;
-		case RadarCategory_Holds:			out[rc] = (float) in.GetNumHoldNotes();		break;
-		case RadarCategory_Mines:			out[rc] = (float) in.GetNumMines();			break;
-		case RadarCategory_Hands:			out[rc] = (float) in.GetNumHands();			break;
-		case RadarCategory_Rolls:			out[rc] = (float) in.GetNumRolls();			break;
-		case RadarCategory_Lifts:			out[rc] = (float) in.GetNumLifts();			break;
-		case RadarCategory_Fakes:			out[rc] = (float) in.GetNumFakes();			break;
-		default:	FAIL_M("Non-existant radar category attempted to be set!");
+			curr_row= curr_note.Row();
+			num_notes_on_curr_row= 0;
+			num_holds_on_curr_row= 0;
+			judgable= timing->IsJudgableAtRow(curr_row);
+			for(size_t n= 0; n < hold_ends.size(); ++n)
+			{
+				if(hold_ends[n] < curr_row)
+				{
+					hold_ends.erase(hold_ends.begin() + n);
+					--n;
+				}
+			}
+			for(size_t n= 0; n < recent_notes.size(); ++n)
+			{
+				if(recent_notes[n].row < curr_row - voltage_window)
+				{
+					recent_notes.erase(recent_notes.begin() + n);
+					--n;
+				}
+				else
+				{
+					// recent_notes is kept sorted, so reaching the first note that
+					// isn't old enough to remove means we're finished. -Kyz
+					break;
+				}
+			}
+			// GetChaosRadarValue did not care about whether a row is judgable.
+			// So chaos is checked here. -Kyz
+			if(GetNoteType(curr_row) >= NOTE_TYPE_12TH)
+			{
+				++num_chaos_rows;
+			}
 		}
+		if(judgable)
+		{
+			switch(curr_note->type)
+			{
+				case TapNoteType_Tap:
+				case TapNoteType_HoldHead:
+					// HoldTails and Attacks are counted by IsTap. -Kyz
+				case TapNoteType_HoldTail:
+				case TapNoteType_Attack:
+					++num_notes_on_curr_row;
+					// Rolls are not counted by GetNumHoldNotes, which is what
+					// GetStreamRadarValue and GetVoltageRadarValue used to use. -Kyz
+					switch(curr_note->type)
+					{
+						case TapNoteType_HoldHead:
+						case TapNoteType_HoldTail:
+							if(curr_note->subType != TapNoteSubType_Hold)
+							{
+								break;
+							}
+							// This is really dumb:  GetNumTapNotes counts hold heads, and
+							// GetNumHoldNotes also counts hold heads.  So stream and
+							// voltage count hold heads twice. -Kyz
+							++total_taps;
+							recent_notes.push_back(
+								recent_note_t(curr_row, curr_note.Track()));
+						case TapNoteType_Tap:
+						case TapNoteType_Attack:
+							++total_taps;
+							recent_notes.push_back(
+								recent_note_t(curr_row, curr_note.Track()));
+							max_notes_in_voltage_window= max(recent_notes.size(),
+								max_notes_in_voltage_window);
+							break;
+					}
+					// If there is one hold active, and one tap on this row, it does
+					// not count as a jump.  Hands do need to count the number of
+					// holds active though. -Kyz
+					switch(num_notes_on_curr_row)
+					{
+						case 1:
+							++out[RadarCategory_TapsAndHolds];
+							break;
+						case 2:
+							++out[RadarCategory_Jumps];
+							break;
+						default:
+							break;
+					}
+					if(num_notes_on_curr_row + (hold_ends.size() -
+							num_holds_on_curr_row) >= 3)
+					{
+						++out[RadarCategory_Hands];
+					}
+					if(curr_note->type == TapNoteType_HoldHead)
+					{
+						hold_ends.push_back(curr_row + curr_note->iDuration);
+						++num_holds_on_curr_row;
+						switch(curr_note->subType)
+						{
+							case TapNoteSubType_Hold:
+								++out[RadarCategory_Holds];
+								break;
+							case TapNoteSubType_Roll:
+								++out[RadarCategory_Rolls];
+								break;
+							default:
+								break;
+						}
+					}
+					break;
+				case TapNoteType_Mine:
+					++out[RadarCategory_Mines];
+					break;
+				case TapNoteType_Lift:
+					++out[RadarCategory_Lifts];
+					break;
+				case TapNoteType_Fake:
+					++out[RadarCategory_Fakes];
+					break;
+			}
+		}
+		else
+		{
+			++out[RadarCategory_Fakes];
+		}
+		++curr_note;
 	}
-}
-
-float NoteDataUtil::GetStreamRadarValue( const NoteData &in, float fSongSeconds )
-{
-	if( !fSongSeconds )
-		return 0.0f;
-	// density of steps
-	int iNumNotes = in.GetNumTapNotes() + in.GetNumHoldNotes();
-	float fNotesPerSecond = iNumNotes/fSongSeconds;
-	float fReturn = fNotesPerSecond / 7;
-	return min( fReturn, 1.0f );
-}
-
-float NoteDataUtil::GetVoltageRadarValue( const NoteData &in, float fSongSeconds )
-{
-	if( !fSongSeconds )
-		return 0.0f;
-
-	const float fLastBeat = in.GetLastBeat();
-	const float fAvgBPS = fLastBeat / fSongSeconds;
-
-	// peak density of steps
-	float fMaxDensitySoFar = 0;
-
-	const float BEAT_WINDOW = 8;
-	const int BEAT_WINDOW_ROWS = BeatToNoteRow( BEAT_WINDOW );
-
-	for( int i=0; i<=BeatToNoteRow(fLastBeat); i+=BEAT_WINDOW_ROWS )
+	// Walking the notes complete, now assign any values that remain. -Kyz
+#define CAP_RADAR(n) min(1.0f, (n))
+	if(fSongSeconds > 0.0f)
 	{
-		int iNumNotesThisWindow = in.GetNumTapNotes( i, i+BEAT_WINDOW_ROWS ) + in.GetNumHoldNotes( i, i+BEAT_WINDOW_ROWS );
-		float fDensityThisWindow = iNumNotesThisWindow / BEAT_WINDOW;
-		fMaxDensitySoFar = max( fMaxDensitySoFar, fDensityThisWindow );
+		out[RadarCategory_Stream]= CAP_RADAR((total_taps / fSongSeconds) / 7.0f);
+		// As seen in GetVoltageRadarValue:  Don't use the timing data, just
+		// pretend the beats are evenly spaced. -Kyz
+		int avg_bps= in.GetLastBeat() / fSongSeconds;
+		out[RadarCategory_Voltage]= CAP_RADAR(
+			((max_notes_in_voltage_window / voltage_window_beats) * avg_bps) /
+			10.0f);
+		out[RadarCategory_Air]= CAP_RADAR(
+			out[RadarCategory_Jumps] / fSongSeconds);
+		out[RadarCategory_Freeze]= CAP_RADAR(
+			out[RadarCategory_Holds] / fSongSeconds);
+		out[RadarCategory_Chaos]= CAP_RADAR(
+			num_chaos_rows / fSongSeconds * .5f);
 	}
-
-	float fReturn = fMaxDensitySoFar*fAvgBPS/10;
-	return min( fReturn, 1.0f );
-}
-
-float NoteDataUtil::GetAirRadarValue( const NoteData &in, float fSongSeconds )
-{
-	if( !fSongSeconds )
-		return 0.0f;
-	// number of doubles
-	int iNumDoubles = in.GetNumJumps();
-	float fReturn = iNumDoubles / fSongSeconds;
-	return min( fReturn, 1.0f );
-}
-
-float NoteDataUtil::GetFreezeRadarValue( const NoteData &in, float fSongSeconds )
-{
-	if( !fSongSeconds )
-		return 0.0f;
-	// number of hold steps
-	float fReturn = in.GetNumHoldNotes() / fSongSeconds;
-	return min( fReturn, 1.0f );
-}
-
-float NoteDataUtil::GetChaosRadarValue( const NoteData &in, float fSongSeconds )
-{
-	if( !fSongSeconds )
-		return 0.0f;
-	// count number of notes smaller than 8ths
-	int iNumChaosNotes = 0;
-
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS( in, r )
-	{
-		if( GetNoteType(r) >= NOTE_TYPE_12TH )
-			iNumChaosNotes++;
-	}
-
-	float fReturn = iNumChaosNotes / fSongSeconds * 0.5f;
-	return min( fReturn, 1.0f );
+#undef CAP_RADAR
+	// Sorry, there's not an assert here anymore for making sure all fields
+	// are set.  There's a comment in the RadarCategory enum to direct
+	// attention here when adding new categories. -Kyz
 }
 
 void NoteDataUtil::RemoveHoldNotes( NoteData &in, int iStartIndex, int iEndIndex )

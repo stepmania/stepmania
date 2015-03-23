@@ -90,6 +90,7 @@ public:
 	bool LoadFromSongDir( RString sDir, bool load_autosave= false );
 	// This one takes the effort to reuse Steps pointers as best as it can
 	bool ReloadFromSongDir( RString sDir );
+	void LoadEditsFromSongDir(RString dir);
 
 	bool HasAutosaveFile();
 	bool LoadAutosaveFile();

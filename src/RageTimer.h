@@ -23,6 +23,7 @@ public:
 	/* deprecated: */
 	static float GetTimeSinceStart( bool bAccurate = true );	// seconds since the program was started
 	static float GetTimeSinceStartFast() { return GetTimeSinceStart(false); }
+	static uint64_t GetUsecsSinceStart();
 
 	/* Get a timer representing half of the time ago as this one. */
 	RageTimer Half() const;
@@ -52,8 +53,9 @@ private:
 extern const RageTimer RageZeroTimer;
 
 // For profiling how long some chunk of code takes. -Kyz
-#define START_TIME(name) float name##_start_time= RageTimer::GetTimeSinceStartFast();
-#define END_TIME(name) float name##_end_time= RageTimer::GetTimeSinceStartFast();  LOG->Warn(#name " time: %f to %f = %f", name##_start_time, name##_end_time, name##_end_time - name##_start_time);
+#define START_TIME(name) uint64_t name##_start_time= RageTimer::GetUsecsSinceStart();
+#define END_TIME(name) uint64_t name##_end_time= RageTimer::GetUsecsSinceStart();  LOG->Warn(#name " time: %zu to %zu = %zu", name##_start_time, name##_end_time, name##_end_time - name##_start_time);
+#define END_TIME_ADD_TO(name) uint64_t name##_end_time= RageTimer::GetUsecsSinceStart();  name##_total += name##_end_time - name##_start_time;
 
 #endif
 
