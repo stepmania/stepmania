@@ -7,7 +7,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 ## Do not install stepmania in the traditional way.
 noinst_PROGRAMS = stepmania
-TESTS = 
+TESTS =
 tests: $(TESTS)
 if BUILD_TESTS
  noinst_PROGRAMS += $(TESTS)
@@ -15,7 +15,7 @@ endif
 
 AM_LDFLAGS =
 AM_CXXFLAGS =
-AM_CFLAGS = 
+AM_CFLAGS =
 noinst_LIBRARIES =
 EXTRA_DIST =
 
@@ -27,9 +27,9 @@ AM_CXXFLAGS += -finline-limit=300
 
 AM_CXXFLAGS += $(GL_CFLAGS)
 
-.PHONY: update_version
+.PHONY: ver.cpp
 
-update_version:
+ver.cpp:
 	if test -e ver.cpp; then \
 		build=`sed -rs 's/.*version_num = ([[:digit:]]+);/\1/;2q;d' ver.cpp`; \
 		build=`expr $$build + 1`; \
@@ -46,12 +46,6 @@ update_version:
 	else \
 		echo "const char *const product_version = \"5.0-UNKNOWN\";" >> ver.cpp; \
 	fi
-
-ver.cpp: update_version
-# make doesn't recognize a file it updated during the current invocation
-# (in this case ver.cpp) as being updated. So remake and delete stepmania-ver.o
-# every time.
-.INTERMEDIATE: stepmania-ver.o
 
 PNG = \
 ../extern/libpng/include/png.c ../extern/libpng/include/.png.h \
@@ -228,7 +222,7 @@ InputHandler = arch/InputHandler/InputHandler.cpp arch/InputHandler/InputHandler
 
 Lights = arch/Lights/LightsDriver.cpp arch/Lights/LightsDriver.h
 
-MemoryCard = arch/MemoryCard/MemoryCardDriver.cpp arch/MemoryCard/MemoryCardDriver.h 
+MemoryCard = arch/MemoryCard/MemoryCardDriver.cpp arch/MemoryCard/MemoryCardDriver.h
 
 MovieTexture = arch/MovieTexture/MovieTexture.cpp arch/MovieTexture/MovieTexture.h
 
@@ -259,7 +253,7 @@ MovieTexture += arch/MovieTexture/MovieTexture_Generic.cpp arch/MovieTexture/Mov
 	arch/MovieTexture/MovieTexture_Null.cpp arch/MovieTexture/MovieTexture_Null.h
 
 Sound += arch/Sound/RageSoundDriver_Null.cpp arch/Sound/RageSoundDriver_Null.h
-	
+
 if HAVE_FFMPEG
  MovieTexture += arch/MovieTexture/MovieTexture_FFMpeg.cpp arch/MovieTexture/MovieTexture_FFMpeg.h
 endif
@@ -300,19 +294,19 @@ endif
 # =========================
 if UNIX
  ArchHooks += arch/ArchHooks/ArchHooks_Unix.cpp arch/ArchHooks/ArchHooks_Unix.h
- 
+
 if LINUX
   InputHandler += arch/InputHandler/LinuxInputManager.cpp arch/InputHandler/LinuxInputManager.h \
 		arch/InputHandler/InputHandler_Linux_Joystick.cpp arch/InputHandler/InputHandler_Linux_Joystick.h \
 		arch/InputHandler/InputHandler_Linux_Event.cpp arch/InputHandler/InputHandler_Linux_Event.h \
 		arch/InputHandler/InputHandler_Linux_PIUIO.cpp arch/InputHandler/InputHandler_Linux_PIUIO.h
-  
+
   Lights += arch/Lights/LightsDriver_LinuxWeedTech.cpp arch/Lights/LightsDriver_LinuxWeedTech.h \
 		arch/Lights/LightsDriver_Linux_PIUIO.cpp arch/Lights/LightsDriver_Linux_PIUIO.h \
 		arch/Lights/LightsDriver_Linux_PIUIO_Leds.cpp arch/Lights/LightsDriver_Linux_PIUIO_Leds.h
-  
+
   MemoryCard += arch/MemoryCard/MemoryCardDriverThreaded_Linux.cpp arch/MemoryCard/MemoryCardDriverThreaded_Linux.h
-  
+
 if HAVE_ALSA
    Sound += arch/Sound/ALSA9Dynamic.cpp arch/Sound/ALSA9Dynamic.h \
 	arch/Sound/ALSA9Functions.h \
@@ -323,11 +317,11 @@ if HAVE_ALSA
    # several sources to be built. We link to this at runtime, so don't add ALSA_LDFLAGS.
    AM_CXXFLAGS += $(ALSA_CFLAGS)
 endif
-  
+
 if HAVE_PARALLEL_PORT
    Lights += arch/Lights/LightsDriver_LinuxParallel.cpp arch/Lights/LightsDriver_LinuxParallel.h
 endif
-  
+
 if WITH_TTY
    InputHandler += arch/InputHandler/InputHandler_Linux_tty.cpp arch/InputHandler/InputHandler_Linux_tty.h \
 		arch/InputHandler/InputHandler_Linux_tty_keys.h
@@ -356,10 +350,8 @@ if WINDOWS
  ArchHooks += arch/ArchHooks/ArchHooks_Win32.cpp arch/ArchHooks/ArchHooks_Win32.h \
 	arch/ArchHooks/ArchHooks_Win32Static.cpp
 
- ArchUtils += archutils/Win32/arch_setup.cpp archutils/Win32/arch_setup.h \
-	archutils/Win32/arch_time.cpp \
+ ArchUtils += archutils/Win32/arch_time.cpp \
 	archutils/Win32/AppInstance.cpp archutils/Win32/AppInstance.h \
-	archutils/Win32/CommandLine.cpp archutils/Win32/CommandLine.h \
 	archutils/Win32/Crash.cpp archutils/Win32/Crash.h \
 	archutils/Win32/CrashHandlerChild.cpp \
 	archutils/Win32/CrashHandlerInternal.h \
@@ -380,33 +372,33 @@ if WINDOWS
 	archutils/Win32/WindowIcon.cpp archutils/Win32/WindowIcon.h \
 	archutils/Win32/WindowsDialogBox.cpp archutils/Win32/WindowsDialogBox.h \
 	archutils/Win32/WindowsResources.rc archutils/Win32/WindowsResources.h
-		
+
  Dialog += arch/Dialog/DialogDriver_Win32.cpp arch/Dialog/DialogDriver_Win32.h
- 
+
  LoadingWindow += arch/LoadingWindow/LoadingWindow_Win32.cpp arch/LoadingWindow/LoadingWindow_Win32.h
- 
+
  LowLevelWindow += arch/LowLevelWindow/LowLevelWindow_Win32.cpp arch/LowLevelWindow/LowLevelWindow_Win32.h
 
  MemoryCard += arch/MemoryCard/MemoryCardDriverThreaded_Windows.cpp arch/MemoryCard/MemoryCardDriverThreaded_Windows.h
- 
+
  # XXX We may want to ditch DirectShow in favor of using ffmpeg on all platforms.
  # FIXME BROKEN
  # MovieTexture += arch/MovieTexture/MovieTexture_DShow.cpp arch/MovieTexture/MovieTexture_DShow.h \
  #	arch/MovieTexture/MovieTexture_DShowHelper.cpp arch/MovieTexture/MovieTexture_DShowHelper.h
- 
+
  # XXX: Do we want to detect DirectX SDK and selectively enable DirectX drivers?
  InputHandler += arch/InputHandler/InputHandler_DirectInput.cpp arc/InputHandler/InputHandler_DirectInput.h \
 		arch/InputHandler/InputHandler_DirectInputHelper.cpp arch/InputHandler/InputHandler_DirectInputHelper.h \
 		arch/InputHandler/InputHandler_Win32_MIDI.cpp arch/InputHandler/InputHandler_Win32_MIDI.h \
 		arch/InputHandler/InputHandler_Win32_Para.cpp arch/InputHandler/InputHandler_Win32_Para.h \
 		arch/InputHandler/InputHandler_Win32_Pump.cpp arch/InputHandler/InputHandler_Win32_Pump.h
-		
+
  Sound += arch/Sound/RageSoundDriver_DSound_Software.cpp arch/Sound/RageSoundDriver_DSound_Software.h \
 	arch/Sound/DSoundHelpers.cpp arch/Sound/DSoundHelpers.h \
 	arch/Sound/RageSoundDriver_WaveOut.cpp arch/Sound/RageSoundDriver_WaveOut.h
 # FIXME: BROKEN
 # 	arch/Sound/RageSoundDriver_WDMKS.cpp arch/Sound/RageSoundDriver_WDMKS.h
-	
+
 if HAVE_PARALLEL_PORT
   Lights += arch/Lights/LightsDriver_Win32Parallel.cpp arch/Lights/LightsDriver_Win32Parallel.h
 endif
@@ -414,7 +406,7 @@ endif
 if HAVE_MINIMAID
   Lights += arch/Lights/LightsDriver_Win32Minimaid.cpp arch/Lights/LightsDriver_Win32Minimaid.h
 endif
- 
+
 if !HAVE_PTHREAD
   Threads += arch/Threads/Threads_Win32.cpp arch/Threads/Threads_Win32.h
 endif
@@ -424,7 +416,7 @@ Arch = $(LoadingWindow) $(Sound) $(ArchHooks) $(InputHandler) $(MovieTexture) \
 	   $(Lights) $(MemoryCard) $(LowLevelWindow) $(ArchUtils) $(Dialog) $(Threads) \
 	   arch/arch_default.h arch/RageDriver.cpp arch/RageDriver.h
 
-RageSoundFileReaders = RageSoundReader_WAV.cpp RageSoundReader_WAV.h 
+RageSoundFileReaders = RageSoundReader_WAV.cpp RageSoundReader_WAV.h
 
 if HAVE_VORBIS
  RageSoundFileReaders += RageSoundReader_Vorbisfile.cpp RageSoundReader_Vorbisfile.h
@@ -459,7 +451,7 @@ PaneDisplay.cpp PaneDisplay.h ScrollBar.cpp ScrollBar.h \
 SnapDisplay.cpp SnapDisplay.h \
 TextBanner.cpp TextBanner.h WheelBase.cpp WheelBase.h WheelItemBase.cpp WheelItemBase.h \
 WheelNotifyIcon.cpp WheelNotifyIcon.h \
-WorkoutGraph.cpp WorkoutGraph.h 
+WorkoutGraph.cpp WorkoutGraph.h
 
 if !WITHOUT_NETWORKING
  ActorsInMenus += RoomInfoDisplay.cpp RoomInfoDisplay.h
@@ -514,7 +506,7 @@ jsoncpp = ../extern/jsoncpp/src/lib_json/json_reader.cpp \
 ../extern/jsoncpp/include/json/json.h \
 ../extern/jsoncpp/include/json/reader.h \
 ../extern/jsoncpp/include/json/value.h \
-../extern/jsoncpp/include/json/writer.h 
+../extern/jsoncpp/include/json/writer.h
 
 RageFile = \
 RageFileBasic.cpp RageFileBasic.h \
