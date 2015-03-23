@@ -36,5 +36,19 @@ Upon setting the source and build directories, you should `Configure` the build.
 
 If the cmake project file changes, you can just generate the build to get up to date. If this by itself doesn't work, you may have to clean the cmake cache. Go to File -> Delete Cache, and then run the `Configure` and `Generate` steps again.
 
-With that, you should be good to go.
+Release vs Debug
+==
+
+If you are generating makefiles with cmake, you will also need to specify your build type. Most users will want to use `RELEASE` while some developers may want to use `DEBUG`.
+
+When generating your cmake files for the first time (or after any cache delete), pass in `-DCMAKE_BUILD_TYPE=Debug` for a debug build. We have `RelWithDbgInfo` and `MinSizeRel` available as well.
+
+It is advised to clean your cmake cache if you switch builds.
+
+Note that if you use an IDE like Visual Studio or Xcode, you do not need to worry about setting the build type. You can edit the build type directly in the IDE.
+
+Last Words
+==
+
+With that, you should be good to go. If there are still questions, view the resources on the parent directory's README.md file.
 
