@@ -513,15 +513,6 @@ bool Song::LoadAutosaveFile()
 	return false;
 }
 
-static void GetImageDirListing( RString sPath, vector<RString> &AddTo )
-{
-	GetDirListing( sPath + ".png", AddTo, false, false );
-	GetDirListing( sPath + ".jpg", AddTo, false, false );
-	GetDirListing( sPath + ".jpeg", AddTo, false, false );
-	GetDirListing( sPath + ".bmp", AddTo, false, false );
-	GetDirListing( sPath + ".gif", AddTo, false, false );
-}
-
 /* Fix up song paths. If there's a leading "./", be sure to keep it: it's
  * a signal that the path is from the root directory, not the song directory.
  * Other than a leading "./", song paths must never contain "." or "..". */
@@ -540,48 +531,19 @@ void FixupPath( RString &path, const RString &sSongPath )
 void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 {
 	// We need to do this before calling any of HasMusic, HasHasCDTitle, etc.
-	ASSERT_M( m_sSongDir.Left(3) != "../", m_sSongDir ); // meaningless
-	FixupPath( m_sSongDir, "" );
-	FixupPath( m_sMusicFile, m_sSongDir );
-	FOREACH_ENUM( InstrumentTrack, i )
-		if( !m_sInstrumentTrackFile[i].empty() )
-			FixupPath( m_sInstrumentTrackFile[i], m_sSongDir );
-	FixupPath( m_sBannerFile, m_sSongDir );
-	FixupPath( m_sJacketFile, m_sSongDir );
-	FixupPath( m_sCDFile, m_sSongDir );
-	FixupPath( m_sDiscFile, m_sSongDir );
-	FixupPath( m_sLyricsFile, m_sSongDir );
-	FixupPath( m_sBackgroundFile, m_sSongDir );
-	FixupPath( m_sCDTitleFile, m_sSongDir );
-
-	if (this->m_sArtist == "The Dancing Monkeys Project" && this->m_sMainTitle.find_first_of('-') != string::npos)
-	{
-		// Dancing Monkeys had a bug/feature where the artist was replaced. Restore it.
-		vector<RString> titleParts;
-		split(this->m_sMainTitle, "-", titleParts);
-		this->m_sArtist = titleParts.front();
-		Trim(this->m_sArtist);
-		titleParts.erase(titleParts.begin());
-		this->m_sMainTitle = join("-", titleParts);
-		Trim(this->m_sMainTitle);
-	}
-
-	Trim( m_sMainTitle );
-	Trim( m_sSubTitle );
-	Trim( m_sArtist );
-
-	// Fall back on the song directory name.
-	if(m_sMainTitle == "")
-		NotesLoader::GetMainAndSubTitlesFromFullTitle(
-			Basename(this->GetSongDir()), m_sMainTitle, m_sSubTitle);
-
-	if(m_sArtist == "")
-		m_sArtist = "Unknown artist";
-	TranslateTitles();
-
-	// Here's the problem:  We have a directory full of images. We want to
-	// determine which image is the banner, which is the background, and which
-	// is the CDTitle.
+	ASSERT_M(m_sSongDir.Left(3) != "../", m_sSongDir); // meaningless
+	FixupPath(m_sSongDir, "");
+	FixupPath(m_sMusicFile, m_sSongDir);
+	FOREACH_ENUM(InstrumentTrack, i)
+	{ if(!m_sInstrumentTrackFile[i].empty())
+		{ FixupPath(m_sInstrumentTrackFile[i], m_sSongDir); }	}
+	FixupPath(m_sBannerFile, m_sSongDir);
+	FixupPath(m_sJacketFile, m_sSongDir);
+	FixupPath(m_sCDFile, m_sSongDir);
+	FixupPath(m_sDiscFile, m_sSongDir);
+	FixupPath(m_sLyricsFile, m_sSongDir);
+	FixupPath(m_sBackgroundFile, m_sSongDir);
+	FixupPath(m_sCDTitleFile, m_sSongDir);
 
 	CHECKPOINT_M("Looking for images...");
 
@@ -594,6 +556,33 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 
 	if(!from_cache)
 	{
+		if (this->m_sArtist == "The Dancing Monkeys Project" && this->m_sMainTitle.find_first_of('-') != string::npos)
+		{
+			// Dancing Monkeys had a bug/feature where the artist was replaced. Restore it.
+			vector<RString> titleParts;
+			split(this->m_sMainTitle, "-", titleParts);
+			this->m_sArtist = titleParts.front();
+			Trim(this->m_sArtist);
+			titleParts.erase(titleParts.begin());
+			this->m_sMainTitle = join("-", titleParts);
+			Trim(this->m_sMainTitle);
+		}
+
+		Trim(m_sMainTitle);
+		Trim(m_sSubTitle);
+		Trim(m_sArtist);
+
+		// Fall back on the song directory name.
+		if(m_sMainTitle == "")
+		{
+			NotesLoader::GetMainAndSubTitlesFromFullTitle(
+				Basename(this->GetSongDir()), m_sMainTitle, m_sSubTitle);
+		}
+
+		if(m_sArtist == "")
+		{ m_sArtist = "Unknown artist"; }
+		TranslateTitles();
+
 		// Set the has flags before tidying so that tidying can check them instead
 		// of using the has functions that hit the disk. -Kyz
 		// These will be written to cache, for Song::LoadFromSongDir to use later.
@@ -608,25 +597,73 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			{ BANNERCACHE->CacheBackground(GetBackgroundPath()); }
 		*/
 
+		// There are several things that need to find a file from the dir with a
+		// particular extension or type of extension.  So fetch a list of all
+		// files in the dir once, then split that list into the different things
+		// we need. -Kyz
+		vector<RString> song_dir_listing;
+		FILEMAN->GetDirListing(m_sSongDir + "*", song_dir_listing, false, false);
+		vector<RString> music_list;
+		vector<RString> image_list;
+		vector<RString> movie_list;
+		vector<RString> lyric_list;
+		vector<RString> lyric_extensions(1, "lrc");
+		// Using a pair didn't work, so these two vectors have to be kept in
+		// sync instead. -Kyz
+		vector<vector<RString>*> lists_to_fill;
+		vector<const vector<RString>*> fill_exts;
+		lists_to_fill.reserve(4);
+		fill_exts.reserve(4);
+		lists_to_fill.push_back(&music_list);
+		fill_exts.push_back(&ActorUtil::GetTypeExtensionList(FT_Sound));
+		lists_to_fill.push_back(&image_list);
+		fill_exts.push_back(&ActorUtil::GetTypeExtensionList(FT_Bitmap));
+		lists_to_fill.push_back(&movie_list);
+		fill_exts.push_back(&ActorUtil::GetTypeExtensionList(FT_Movie));
+		lists_to_fill.push_back(&lyric_list);
+		fill_exts.push_back(&lyric_extensions);
+		for(vector<RString>::iterator filename= song_dir_listing.begin();
+				filename != song_dir_listing.end(); ++filename)
+		{
+			bool matched_something= false;
+			RString file_ext= GetExtension(*filename).MakeLower();
+			if(!file_ext.empty())
+			{
+				for(size_t tf= 0; tf < lists_to_fill.size(); ++ tf)
+				{
+					for(vector<RString>::const_iterator ext= fill_exts[tf]->begin();
+							ext != fill_exts[tf]->end(); ++ext)
+					{
+						if(file_ext == *ext)
+						{
+							lists_to_fill[tf]->push_back(*filename);
+							matched_something= true;
+							break;
+						}
+					}
+					if(matched_something)
+					{
+						break;
+					}
+				}
+			}
+		}
+
 		if(!m_bHasMusic)
 		{
-			vector<RString> arrayPossibleMusic;
-			FILEMAN->GetDirListingWithMultipleExtensions(m_sSongDir,
-				ActorUtil::GetTypeExtensionList(FT_Sound), arrayPossibleMusic);
-
-			if( !arrayPossibleMusic.empty() )
+			// If the first song is "intro", and we have more than one available,
+			// don't use it--it's probably a KSF intro music file, which we don't
+			// (yet) support.
+			if(!music_list.empty())
 			{
-				int idx = 0;
-				/* If the first song is "intro", and we have more than one available,
-				 * don't use it--it's probably a KSF intro music file, which we don't
-				 * (yet) support. */
-				if( arrayPossibleMusic.size() > 1 &&
-					!arrayPossibleMusic[0].Left(5).CompareNoCase("intro") )
-				++idx;
-
-				// we found a match
-				m_sMusicFile = arrayPossibleMusic[idx];
+				LOG->Trace("Song '%s' points to a music file that doesn't exist, found music file '%s'", m_sSongDir.c_str(), music_list[0].c_str());
 				m_bHasMusic= true;
+				m_sMusicFile= music_list[0];
+				if(music_list.size() > 1 &&
+					!m_sMusicFile.Left(5).CompareNoCase("intro"))
+				{
+					m_sMusicFile= music_list[1];
+				}
 			}
 		}
 		// This must be done before radar calculation.
@@ -697,9 +734,10 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 		if(m_fMusicSampleLengthSeconds <= 0.00f)
 		{ m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH; }
 
-		// Fetch the list of images in the song dir ONCE, not TWELVE TIMES! -Kyz
-		vector<RString> image_dir_list;
-		GetImageDirListing(m_sSongDir + "*", image_dir_list);
+		// Here's the problem:  We have a directory full of images. We want to
+		// determine which image is the banner, which is the background, and
+		// which is the CDTitle.
+
 		// For blank args to FindFirstFilenameContaining. -Kyz
 		vector<RString> empty_list;
 
@@ -720,7 +758,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			/* Some people do things differently for the sake of being different.
 			 * Don't match eg. abnormal, numbness. */
 			vector<RString> ends_with(1, " bn");
-			m_bHasBanner= FindFirstFilenameContaining(image_dir_list,
+			m_bHasBanner= FindFirstFilenameContaining(image_list,
 				m_sBannerFile, empty_list, contains, ends_with);
 		}
 
@@ -731,7 +769,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			// find an image with "bg" or "background" in the file name
 			vector<RString> contains(1, "background");
 			vector<RString> ends_with(1, "bg");
-			m_bHasBackground= FindFirstFilenameContaining(image_dir_list,
+			m_bHasBackground= FindFirstFilenameContaining(image_list,
 				m_sBackgroundFile, empty_list, contains, ends_with);
 		}
 
@@ -743,7 +781,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			contains.reserve(2);
 			contains.push_back("jacket");
 			contains.push_back("albumart");
-			has_jacket= FindFirstFilenameContaining(image_dir_list,
+			has_jacket= FindFirstFilenameContaining(image_list,
 				m_sJacketFile, starts_with, contains, empty_list);
 		}
 
@@ -752,7 +790,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			// CD image, a la ddr 1st-3rd (not to be confused with CDTitles)
 			// find an image with "-cd" at the end of the filename.
 			vector<RString> ends_with(1, "-cd");
-			has_cdimage= FindFirstFilenameContaining(image_dir_list,
+			has_cdimage= FindFirstFilenameContaining(image_list,
 				m_sCDFile, empty_list, empty_list, ends_with);
 		}
 
@@ -763,7 +801,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			ends_with.reserve(2);
 			ends_with.push_back(" disc");
 			ends_with.push_back(" title");
-			has_disc= FindFirstFilenameContaining(image_dir_list,
+			has_disc= FindFirstFilenameContaining(image_list,
 				m_sDiscFile, empty_list, empty_list, ends_with);
 		}
 
@@ -771,53 +809,53 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 		{
 			// find an image with "cdtitle" in the file name
 			vector<RString> contains(1, "cdtitle");
-			has_cdtitle= FindFirstFilenameContaining(image_dir_list,
+			has_cdtitle= FindFirstFilenameContaining(image_list,
 				m_sCDTitleFile, empty_list, contains, empty_list);
 		}
 
 		if(!HasLyrics())
 		{
 			// Check if there is a lyric file in here
-			vector<RString> lyric_files;
-			GetDirListing(m_sSongDir + RString("*.lrc"), lyric_files);
-			if(!lyric_files.empty())
-			{ m_sLyricsFile = lyric_files[0]; }
+			if(!lyric_list.empty())
+			{
+				m_sLyricsFile= lyric_list[0];
+			}
 		}
 
 		/* Now, For the images we still haven't found,
 		 * look at the image dimensions of the remaining unclassified images. */
-		for(unsigned int i= 0; i < image_dir_list.size(); ++i) // foreach image
+		for(unsigned int i= 0; i < image_list.size(); ++i) // foreach image
 		{
 			if(m_bHasBanner && m_bHasBackground && has_cdtitle)
 				break; // done
 
 			// ignore DWI "-char" graphics
-			RString lower = image_dir_list[i];
+			RString lower = image_list[i];
 			lower.MakeLower();
 			if(BlacklistedImages.find(lower) != BlacklistedImages.end())
 				continue;	// skip
 
 			// Skip any image that we've already classified
 
-			if(m_bHasBanner && m_sBannerFile.EqualsNoCase(image_dir_list[i]))
+			if(m_bHasBanner && m_sBannerFile.EqualsNoCase(image_list[i]))
 				continue;	// skip
 
-			if(m_bHasBackground && m_sBackgroundFile.EqualsNoCase(image_dir_list[i]))
+			if(m_bHasBackground && m_sBackgroundFile.EqualsNoCase(image_list[i]))
 				continue;	// skip
 
-			if(has_cdtitle && m_sCDTitleFile.EqualsNoCase(image_dir_list[i]))
+			if(has_cdtitle && m_sCDTitleFile.EqualsNoCase(image_list[i]))
 				continue;	// skip
 
-			if(has_jacket && m_sJacketFile.EqualsNoCase(image_dir_list[i]))
+			if(has_jacket && m_sJacketFile.EqualsNoCase(image_list[i]))
 				continue;	// skip
 
-			if(has_disc && m_sDiscFile.EqualsNoCase(image_dir_list[i]))
+			if(has_disc && m_sDiscFile.EqualsNoCase(image_list[i]))
 				continue;	// skip
 
-			if(has_cdimage && m_sCDFile.EqualsNoCase(image_dir_list[i]))
+			if(has_cdimage && m_sCDFile.EqualsNoCase(image_list[i]))
 				continue;	// skip
 
-			RString sPath = m_sSongDir + image_dir_list[i];
+			RString sPath = m_sSongDir + image_list[i];
 
 			// We only care about the dimensions.
 			RString error;
@@ -834,7 +872,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 
 			if(!m_bHasBackground && width >= 320 && height >= 240)
 			{
-				m_sBackgroundFile = image_dir_list[i];
+				m_sBackgroundFile = image_list[i];
 				m_bHasBackground= true;
 				continue;
 			}
@@ -842,7 +880,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			if(!m_bHasBanner && 100 <= width && width <= 320 &&
 				50 <= height && height <= 240)
 			{
-				m_sBannerFile = image_dir_list[i];
+				m_sBannerFile = image_list[i];
 				m_bHasBanner= true;
 				continue;
 			}
@@ -851,7 +889,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			 * (over 2:1; usually over 3:1), and large (not a cdtitle). */
 			if(!m_bHasBanner && width > 200 && float(width) / height > 2.0f)
 			{
-				m_sBannerFile = image_dir_list[i];
+				m_sBannerFile = image_list[i];
 				m_bHasBanner= true;
 				continue;
 			}
@@ -873,7 +911,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			 */
 			if(!has_cdtitle && width <= 100 && height <= 48)
 			{
-				m_sCDTitleFile = image_dir_list[i];
+				m_sCDTitleFile = image_list[i];
 				has_cdtitle= true;
 				continue;
 			}
@@ -881,7 +919,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			// Jacket files typically have the same width and height.
 			if(!has_jacket && width == height)
 			{
-				m_sJacketFile = image_dir_list[i];
+				m_sJacketFile = image_list[i];
 				has_jacket= true;
 				continue;
 			}
@@ -889,9 +927,9 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			// Disc images are typically rectangular; make sure we have a banner already.
 			if(!has_disc && (width > height) && m_bHasBanner)
 			{
-				if(image_dir_list[i] != m_sBannerFile)
+				if(image_list[i] != m_sBannerFile)
 				{
-					m_sDiscFile = image_dir_list[i];
+					m_sDiscFile = image_list[i];
 					has_disc= true;
 				}
 				continue;
@@ -900,7 +938,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			// CD images are the same as Jackets, typically the same width and height
 			if(!has_cdimage && width == height)
 			{
-				m_sCDFile = image_dir_list[i];
+				m_sCDFile = image_list[i];
 				has_cdimage= true;
 				continue;
 			}
@@ -910,16 +948,14 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 		// beat 0.
 		if(!HasBGChanges())
 		{
-			vector<RString> arrayPossibleMovies;
-			FILEMAN->GetDirListingWithMultipleExtensions(m_sSongDir,
-				ActorUtil::GetTypeExtensionList(FT_Movie), arrayPossibleMovies);
-
 			/* Use this->GetBeatFromElapsedTime(0) instead of 0 to start when the
 			 * music starts. */
-			if(arrayPossibleMovies.size() == 1)
-			this->AddBackgroundChange(BACKGROUND_LAYER_1,
-				BackgroundChange(0, arrayPossibleMovies[0], "", 1.f,
-					SBE_StretchNoLoop));
+			if(movie_list.size() == 1)
+			{
+				this->AddBackgroundChange(BACKGROUND_LAYER_1,
+					BackgroundChange(0, movie_list[0], "", 1.f,
+						SBE_StretchNoLoop));
+			}
 		}
 		// Don't allow multiple Steps of the same StepsType and Difficulty
 		// (except for edits). We should be able to use difficulty names as
