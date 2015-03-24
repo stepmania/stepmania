@@ -392,11 +392,12 @@ else() # Unix / Linux
         "${FFMPEG_avutil_LIBRARY}"
       )
     else()
+      set(SM_FFMPEG_ROOT "${CMAKE_BINARY_DIR}/ffmpeg-prefix/src/ffmpeg-build")
       list(APPEND SMDATA_LINK_LIB
-        "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build/libavformat/libavformat.a"
-        "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build/libavcodec/libavcodec.a"
-        "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build/libswscale/libswscale.a"
-        "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build/libavutil/libavutil.a"
+        "${SM_FFMPEG_ROOT}/libavformat/libavformat.a"
+        "${SM_FFMPEG_ROOT}/libavcodec/libavcodec.a"
+        "${SM_FFMPEG_ROOT}/libswscale/libswscale.a"
+        "${SM_FFMPEG_ROOT}/libavutil/libavutil.a"
       )
     endif()
   endif()
@@ -531,7 +532,7 @@ target_include_directories("${SM_EXE_NAME}" PUBLIC ${SM_INCLUDE_DIRS})
 
 if(WIN32)
   # TODO: Look forward to 64-bit builds. Also, Find a way to not need to hardcode this.
-  set(SM_INSTALL_DESTINATION "C:/Program Files (x86)")
+  set(SM_INSTALL_DESTINATION "C:/Program Files (x86)/StepMania 5")
 elseif(APPLE)
   # TODO: Confirm if anything special is needed. Most Mac apps are just portable .app folders.
   set(SM_INSTALL_DESTINATION "")

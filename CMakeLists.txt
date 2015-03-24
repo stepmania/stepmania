@@ -300,7 +300,7 @@ elseif(LINUX)
       endif()
     else()
       list(APPEND FFMPEG_CONFIGURE
-        "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg/configure"
+        "${SM_EXTERN_DIR}/ffmpeg-linux-2.1.3/configure"
         "--disable-programs"
         "--disable-doc"
         "--disable-avdevice"
@@ -315,13 +315,13 @@ elseif(LINUX)
           "--enable-gpl"
         )
       endif()
-      # NEVER use the system ffmpeg. Not worth the hassle.
       # --shlibdir=$our_installdir/stepmania-$VERSION
       externalproject_add("ffmpeg"
-        DOWNLOAD_DIR "${SM_EXTERN_DIR}/ffmpeg-linux"
-        PREFIX "${SM_EXTERN_DIR}/ffmpeg-linux"
-        GIT_REPOSITORY "git://source.ffmpeg.org/ffmpeg.git"
-        GIT_TAG "n2.1.3"
+        # DOWNLOAD_DIR "${SM_EXTERN_DIR}/ffmpeg-linux"
+        # PREFIX "${SM_EXTERN_DIR}/ffmpeg-linux"
+        # GIT_REPOSITORY "git://source.ffmpeg.org/ffmpeg.git"
+        # GIT_TAG "n2.1.3"
+        DOWNLOAD_COMMAND git clone "--branch" "n2.1.3" "--depth" "1" "git://source.ffmpeg.org/ffmpeg.git" "${SM_EXTERN_DIR}/ffmpeg-linux-2.1.3"
         CONFIGURE_COMMAND ${FFMPEG_CONFIGURE}
         BUILD_COMMAND "make"
         UPDATE_COMMAND ""
