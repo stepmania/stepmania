@@ -1122,7 +1122,7 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 		out[RadarCategory_Stream]= CAP_RADAR((total_taps / fSongSeconds) / 7.0f);
 		// As seen in GetVoltageRadarValue:  Don't use the timing data, just
 		// pretend the beats are evenly spaced. -Kyz
-		int avg_bps= in.GetLastBeat() / fSongSeconds;
+		float avg_bps= in.GetLastBeat() / fSongSeconds;
 		out[RadarCategory_Voltage]= CAP_RADAR(
 			((max_notes_in_voltage_window / voltage_window_beats) * avg_bps) /
 			10.0f);
