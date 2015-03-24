@@ -4097,6 +4097,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetNumFrames' return='int' arguments=''>
 		Returns the number of frames in this texture.
 	</Function>
+	<Function name='GetPath' return='string' arguments=''>
+		Returns the path to the texture's file.
+	</Function>
 	<Function name='GetTextureCoordRect' return='{float}' arguments=''>
 		Return the texture coordinate rectangle as <code>{left, top, right, bottom}</code>.
 	</Function>
@@ -4779,9 +4782,6 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetTexture' return='RageTexture' arguments=''>
 		Returns the Sprite's texture.
-	</Function>
-	<Function name='GetTexturePath' return='string' arguments=''>
-		Returns the path to the Sprite's texture.
 	</Function>
 	<Function name='LinearFrames' theme='_fallback' return='table' arguments='int iNumFrames, float fSeconds'>
 		[02 Sprite.lua] Returns a <code>Frames</code> table consisting of <code>iNumFrames</code> frames lasting for a total of <code>fSeconds</code> seconds. This function is not a member function and should be used as <code>Frames = Sprite.LinearFrames( 5, 2.6 )</code>.

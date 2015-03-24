@@ -4,6 +4,26 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/03/24
+----------
+* [Sprite/RageTexture] GetTexturePath moved to RageTexture and renamed to
+  GetPath. [kyzentun]
+
+2015/03/22
+----------
+* [Dev] Primary build method of all platforms changed to CMake.  People
+  building from source must install CMake (min 2.8.12) and read
+  Build/README.md for building instructions. [wolfman2000]
+
+2015/03/18
+----------
+* [OSX] Empty Stepmania directory created on desktop removed. [dguzek]
+
+2015/03/17
+----------
+* [ActorFrameTexture] Example added to Themerdocs/Examples/Example_Actors/.
+  Crash fixes for AFTs. [sigatrev]
+
 2015/03/15
 ----------
 * [Sprite] GetTexturePath added. [kyzentun]

@@ -1399,6 +1399,7 @@
 			<Function name='GetTextureHeight'/>
 			<Function name='GetImageWidth'/>
 			<Function name='GetImageHeight'/>
+			<Function name='GetPath'/>
 			<Function name='GetTextureCoordRect'/>
 			<Function name='loop'/>
 			<Function name='position'/>
@@ -1654,7 +1655,6 @@
 			<Function name='GetNumStates'/>
 			<Function name='GetState'/>
 			<Function name='GetTexture'/>
-			<Function name='GetTexturePath'/>
 			<Function name='LinearFrames'/>
 			<Function name='Load'/>
 			<Function name='LoadBackground'/>
