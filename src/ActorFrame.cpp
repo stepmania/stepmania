@@ -624,7 +624,16 @@ public:
 	}
 	static int propagate( T* p, lua_State *L )			{ p->SetPropagateCommands( BIArg(1) ); COMMON_RETURN_SELF; }
 	static int fov( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); COMMON_RETURN_SELF; }
-	static int SetUpdateRate( T* p, lua_State *L )			{ p->SetUpdateRate( FArg(1) ); COMMON_RETURN_SELF; }
+	static int SetUpdateRate( T* p, lua_State *L )
+	{
+		float rate= FArg(1);
+		if(rate <= 0)
+		{
+			luaL_error(L, "ActorFrame:SetUpdateRate(%f) Update rate must be greater than 0.", rate);
+		}
+		p->SetUpdateRate(rate);
+		COMMON_RETURN_SELF;
+	}
 	DEFINE_METHOD(GetUpdateRate, GetUpdateRate());
 	static int SetFOV( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); COMMON_RETURN_SELF; }
 	static int vanishpoint( T* p, lua_State *L )			{ p->SetVanishPoint( FArg(1), FArg(2) ); COMMON_RETURN_SELF; }
