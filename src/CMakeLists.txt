@@ -392,7 +392,6 @@ else() # Unix / Linux
         "${FFMPEG_avutil_LIBRARY}"
       )
     else()
-      set(SM_FFMPEG_ROOT "${CMAKE_BINARY_DIR}/ffmpeg-prefix/src/ffmpeg-build")
       list(APPEND SMDATA_LINK_LIB
         "${SM_FFMPEG_ROOT}/libavformat/libavformat.a"
         "${SM_FFMPEG_ROOT}/libavcodec/libavcodec.a"
@@ -496,8 +495,8 @@ if(NOT APPLE)
       else()
         add_dependencies("${SM_EXE_NAME}" "ffmpeg")
         list(APPEND SM_INCLUDE_DIRS
-          "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg"
-          "${SM_EXTERN_DIR}/ffmpeg-linux/src/ffmpeg-build"
+          "${SM_FFMPEG_SRC_DIR}"
+          "${SM_FFMPEG_ROOT}"
         )
       endif()
     endif()
