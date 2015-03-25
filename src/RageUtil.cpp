@@ -970,6 +970,47 @@ void MakeValidFilename( RString &sName )
 	sName = WStringToRString( wsName );
 }
 
+bool FindFirstFilenameContaining(const vector<RString>& filenames,
+	RString& out, const vector<RString>& starts_with,
+	const vector<RString>& contains, const vector<RString>& ends_with)
+{
+	for(size_t i= 0; i < filenames.size(); ++i)
+	{
+		RString lower= GetFileNameWithoutExtension(filenames[i]);
+		lower.MakeLower();
+		for(size_t s= 0; s < starts_with.size(); ++s)
+		{
+			if(!lower.compare(0, starts_with[s].size(), starts_with[s]))
+			{
+				out= filenames[i];
+				return true;
+			}
+		}
+		size_t lower_size= lower.size();
+		for(size_t s= 0; s < ends_with.size(); ++s)
+		{
+			if(lower_size >= ends_with[s].size())
+			{
+				size_t end_pos= lower_size - ends_with[s].size();
+				if(!lower.compare(end_pos, string::npos, ends_with[s]))
+				{
+					out= filenames[i];
+					return true;
+				}
+			}
+		}
+		for(size_t s= 0; s < contains.size(); ++s)
+		{
+			if(lower.find(contains[s]) != string::npos)
+			{
+				out= filenames[i];
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 int g_argc = 0;
 char **g_argv = NULL;
 

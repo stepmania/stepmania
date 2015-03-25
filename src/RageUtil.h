@@ -382,6 +382,11 @@ RString GetExtension( const RString &sPath );
 RString GetFileNameWithoutExtension( const RString &sPath );
 void MakeValidFilename( RString &sName );
 
+bool FindFirstFilenameContaining(
+	const vector<RString>& filenames, RString& out,
+	const vector<RString>& starts_with,
+	const vector<RString>& contains, const vector<RString>& ends_with);
+
 extern const wchar_t INVALID_CHAR;
 
 int utf8_get_char_len( char p );

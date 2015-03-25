@@ -41,6 +41,8 @@ enum RadarCategory
 	RadarCategory_Rolls, /**< How many rolls are in the song? */
 	RadarCategory_Lifts, /**< How many lifts are in the song? */
 	RadarCategory_Fakes, /**< How many fakes are in the song? */
+	// If you add another radar category, make sure you update
+	// NoteDataUtil::CalculateRadarValues to calculate it. -Kyz
 	NUM_RadarCategory,	/**< The number of radar categories. */
 	RadarCategory_Invalid
 };
