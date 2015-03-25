@@ -2701,20 +2701,17 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 	int iMissIfOlderThanThisRow;
 	const float fEarliestTime = m_pPlayerState->m_Position.m_fMusicSeconds - fMissIfOlderThanSeconds;
 	{
-		bool bFreeze, bDelay;
-		float fMissIfOlderThanThisBeat;
-		float fThrowAway;
-		int iWarpBeginRow;
-		float fWarpLength;
-		m_Timing->GetBeatAndBPSFromElapsedTime( fEarliestTime, fMissIfOlderThanThisBeat, fThrowAway, bFreeze, bDelay, iWarpBeginRow, fWarpLength );
+		TimingData::GetBeatArgs beat_info;
+		beat_info.elapsed_time= fEarliestTime;
+		m_Timing->GetBeatAndBPSFromElapsedTime(beat_info);
 
-		iMissIfOlderThanThisRow = BeatToNoteRow( fMissIfOlderThanThisBeat );
-		if( bFreeze || bDelay )
+		iMissIfOlderThanThisRow = BeatToNoteRow(beat_info.beat);
+		if(beat_info.freeze_out || beat_info.delay_out )
 		{
 			/* If there is a freeze on iMissIfOlderThanThisIndex, include this index too.
 			 * Otherwise we won't show misses for tap notes on freezes until the
 			 * freeze finishes. */
-			if( !bDelay )
+			if(!beat_info.delay_out)
 				iMissIfOlderThanThisRow++;
 		}
 	}
