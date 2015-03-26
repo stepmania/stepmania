@@ -440,7 +440,7 @@ if(NOT APPLE)
   endif(WIN32)
 else(NOT APPLE)
   list(APPEND SMDATA_ARCH_HOOKS_SRC
-    "arch/ArchHooks/ArchHooks_MacOSX.cpp"
+    "arch/ArchHooks/ArchHooks_MacOSX.mm"
   )
   list(APPEND SMDATA_ARCH_HOOKS_HPP
     "arch/ArchHooks/ArchHooks_MacOSX.h"
