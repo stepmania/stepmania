@@ -21,6 +21,8 @@ extern "C" {
 #include <IOKit/network/IONetworkInterface.h>
 #include <IOKit/network/IOEthernetController.h>
 
+#import <Foundation/Foundation.h>
+
 static bool IsFatalSignal( int signal )
 {
 	switch( signal )
@@ -140,16 +142,13 @@ RString ArchHooks_MacOSX::GetArchName() const
 
 void ArchHooks_MacOSX::DumpDebugInfo()
 {
-	// Get system version
-	RString sSystemVersion;
+	// Get system version (like 10.x.x)
+	RString SystemVersion;
 	{
-		char osrelease[256];
-		size_t size = sizeof(osrelease);
-		
-		if( sysctlbyname( "kern.osrelease", osrelease, &size, NULL, 0 ) )
-			sSystemVersion = ssprintf( "Mac OS X %s", osrelease );
-		else
-			sSystemVersion = ssprintf( "Mac OS X Unknown" );
+		// http://stackoverflow.com/a/891336
+		NSDictionary *version = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
+		NSString *productVersion = [version objectForKey:@"ProductVersion"];
+		SystemVersion = ssprintf("Mac OS X %s", [productVersion cStringUsingEncoding:[NSString defaultCStringEncoding]]);
 	}
 
 	size_t size;
@@ -232,10 +231,10 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 	} while( false );
 #undef GET_PARAM
 
-	// Send all of the information to the log 
+	// Send all of the information to the log
 	LOG->Info( "Model: %s (%d/%d)", sModel.c_str(), iCPUs, iMaxCPUs );
 	LOG->Info( "Clock speed %.2f %cHz", fFreq, freqPower );
-	LOG->Info( "%s", sSystemVersion.c_str());
+	LOG->Info( "%s", SystemVersion.c_str());
 	LOG->Info( "Memory: %.2f %cB", fRam, ramPower );
 }
 
@@ -389,12 +388,12 @@ float ArchHooks_MacOSX::GetDisplayAspectRatio()
 	if( width && height )
 		return float(width)/height;
 	return 4/3.f;
-}	
+}
 
 /*
  * (c) 2003-2006 Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -404,7 +403,7 @@ float ArchHooks_MacOSX::GetDisplayAspectRatio()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
