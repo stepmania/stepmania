@@ -2751,7 +2751,7 @@ IdleTimeoutSeconds=0
 
 [ScreenOptionsAdvanced]
 Fallback="ScreenOptionsServiceChild"
-LineNames="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31"
+LineNames="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32"
 Line1="conf,MenuTimer"
 Line2="conf,ScoringType"
 Line3="conf,TimingWindowScale"
@@ -2783,6 +2783,7 @@ Line28="conf,AutogenSteps"
 Line29="conf,AutogenGroupCourses"
 Line30="conf,FastLoad"
 Line31="conf,OnlyPreferredDifficulties"
+Line32="conf,HiddenSongs"
 
 [ScreenOptionsGraphicsSound]
 Fallback="ScreenOptionsServiceChild"

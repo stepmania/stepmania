@@ -299,6 +299,7 @@ public:
 	Preference<RString>	m_sMachineName;
 	Preference<RString>	m_sCoursesToShowRanking;
 	Preference<bool> m_MuteActions;
+	Preference<bool> m_bAllowSongDeletion; // Allow the user to remove songs from their collection through UI / keyboard shortcut
 
 	/** @brief Enable some quirky behavior used by some older versions of StepMania. */
 	Preference<bool>	m_bQuirksMode;

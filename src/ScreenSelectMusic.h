@@ -48,6 +48,7 @@ public:
 	MusicWheel *GetMusicWheel() { return &m_MusicWheel; }
 
 	void OpenOptionsList( PlayerNumber pn );
+	void OnConfirmSongDeletion();
 
 	// Lua
 	virtual void PushSelf( lua_State *L );
@@ -153,6 +154,8 @@ protected:
 
 	BackgroundLoader	m_BackgroundLoader;
 	RageTexturePreloader	m_TexturePreload;
+
+	Song* m_pSongAwaitingDeletionConfirmation;
 };
 
 #endif
