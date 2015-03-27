@@ -12,6 +12,12 @@ Strings are listed by the section of the language file they are in.  Example:
 This means that three strings were added to the "ScreenDebugOverlay" section,
 "Mute actions", "Mute actions on", and "Mute actions off".
 
+2015/03/27
+----------
+* [OptionExplanations] AllowSongDeletion
+* [OptionTitles] AllowSongDeletion
+* [ScreenSelectMusic] PermanentlyDelete
+
 2015/04/08
 ----------
 * [OptionExplanations] EditClearPromptThreshold, HarshHotLifePenalty

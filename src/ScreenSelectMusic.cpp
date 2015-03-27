@@ -64,6 +64,8 @@ static RageTimer g_StartedLoadingAt(RageZeroTimer);
 static RageTimer g_ScreenStartedLoadingAt(RageZeroTimer);
 RageTimer g_CanOpenOptionsList(RageZeroTimer);
 
+static LocalizedString PERMANENTLY_DELETE("ScreenSelectMusic", "PermanentlyDelete");
+
 REGISTER_SCREEN_CLASS( ScreenSelectMusic );
 void ScreenSelectMusic::Init()
 {
@@ -475,7 +477,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 			if ( songToDelete && PREFSMAN->m_bAllowSongDeletion.Get() ) 
 			{
 				m_pSongAwaitingDeletionConfirmation = songToDelete;
-				ScreenPrompt::Prompt(SM_ConfirmDeleteSong, ssprintf("Permanently delete '%s' ( %s ) from disk?", songToDelete->m_sMainTitle.c_str(), songToDelete->GetSongDir().c_str()), PROMPT_YES_NO);
+				ScreenPrompt::Prompt(SM_ConfirmDeleteSong, ssprintf(PERMANENTLY_DELETE.GetValue(), songToDelete->m_sMainTitle.c_str(), songToDelete->GetSongDir().c_str()), PROMPT_YES_NO);
 				return true;
 			}
 		}

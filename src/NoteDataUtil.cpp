@@ -963,6 +963,7 @@ struct recent_note_t
 
 void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out )
 {
+	out.Zero();
 	int curr_row= -1;
 	bool judgable= false;
 	// recent_notes is used to calculate the voltage.  Each element is the row
