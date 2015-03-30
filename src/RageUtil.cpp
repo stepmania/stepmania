@@ -667,6 +667,14 @@ RString join( const RString &sDeliminator, const vector<RString> &sSource)
 		return RString();
 
 	RString sTmp;
+	size_t final_size= 0;
+	size_t delim_size= sDeliminator.size();
+	for(size_t n= 0; n < sSource.size()-1; ++n)
+	{
+		final_size+= sSource[n].size() + delim_size;
+	}
+	final_size+= sSource.back().size();
+	sTmp.reserve(final_size);
 
 	for( unsigned iNum = 0; iNum < sSource.size()-1; iNum++ )
 	{
@@ -683,6 +691,18 @@ RString join( const RString &sDelimitor, vector<RString>::const_iterator begin, 
 		return RString();
 
 	RString sRet;
+	size_t final_size= 0;
+	size_t delim_size= sDelimitor.size();
+	for(vector<RString>::const_iterator curr= begin; curr != end; ++curr)
+	{
+		final_size+= curr->size();
+		if(curr != end)
+		{
+			final_size+= delim_size;
+		}
+	}
+	sRet.reserve(final_size);
+
 	while( begin != end )
 	{
 		sRet += *begin;

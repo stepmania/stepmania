@@ -178,8 +178,10 @@ protected:
 	void AddGroup( RString sDir, RString sGroupDirName );
 	int GetNumEditsLoadedFromProfile( ProfileSlot slot ) const;
 
+	void AddSongToList(Song* new_song);
 	/** @brief All of the songs that can be played. */
 	vector<Song*>		m_pSongs;
+	map<RString, Song*> m_SongsByDir;
 	/** @brief Hold pointers to all the songs that have been deleted from disk but must at least be kept temporarily alive for smooth audio transitions. */
 	vector<Song*>       m_pDeletedSongs;
 	/** @brief The most popular songs ranked by number of plays. */

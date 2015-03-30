@@ -293,9 +293,9 @@ bool Song::LoadFromSongDir( RString sDir, bool load_autosave )
 
 	if( !DoesFileExist(sCacheFilePath) )
 	{ bUseCache = false; }
-	if(!PREFSMAN->m_bFastLoad && GetHashForDirectory(m_sSongDir) != uCacheHash)
+	else if(!PREFSMAN->m_bFastLoad && GetHashForDirectory(m_sSongDir) != uCacheHash)
 	{ bUseCache = false; } // this cache is out of date
-	if(load_autosave)
+	else if(load_autosave)
 	{ bUseCache= false; }
 
 	if( bUseCache )
@@ -390,6 +390,10 @@ bool Song::LoadFromSongDir( RString sDir, bool load_autosave )
  * Song/Steps objects to reload themselves. -- djpohly */
 bool Song::ReloadFromSongDir( RString sDir )
 {
+	// Remove the cache file to force the song to reload from its dir instead
+	// of loading from the cache. -Kyz
+	FILEMAN->Remove(GetCacheFilePath());
+
 	RemoveAutoGenNotes();
 	vector<Steps*> vOldSteps = m_vpSteps;
 
@@ -2196,6 +2200,11 @@ public:
 		lua_pushboolean( L, p->m_DisplayBPMType == DISPLAY_BPM_RANDOM );
 		return 1;
 	}
+	static int ReloadFromSongDir(T* p, lua_State* L)
+	{
+		p->ReloadFromSongDir();
+		COMMON_RETURN_SELF;
+	}
 
 	LunaSong()
 	{
@@ -2262,6 +2271,7 @@ public:
 		ADD_METHOD( HasPreviewVid );
 		ADD_METHOD( GetPreviewVidPath );
 		ADD_METHOD(GetPreviewMusicPath);
+		ADD_METHOD(ReloadFromSongDir);
 	}   
 };
 

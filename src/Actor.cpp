@@ -269,14 +269,7 @@ void Actor::LoadFromNode( const XNode* pNode )
 		// Load Name, if any.
 		const RString &sKeyName = pAttr->first;
 		const XNodeValue *pValue = pAttr->second;
-		if( sKeyName == "Name" )			SetName( pValue->GetValue<RString>() );
-		else if( sKeyName == "BaseRotationX" )		SetBaseRotationX( pValue->GetValue<float>() );
-		else if( sKeyName == "BaseRotationY" )		SetBaseRotationY( pValue->GetValue<float>() );
-		else if( sKeyName == "BaseRotationZ" )		SetBaseRotationZ( pValue->GetValue<float>() );
-		else if( sKeyName == "BaseZoomX" )		SetBaseZoomX( pValue->GetValue<float>() );
-		else if( sKeyName == "BaseZoomY" )		SetBaseZoomY( pValue->GetValue<float>() );
-		else if( sKeyName == "BaseZoomZ" )		SetBaseZoomZ( pValue->GetValue<float>() );
-		else if( EndsWith(sKeyName,"Command") )
+		if( EndsWith(sKeyName,"Command") )
 		{
 			LuaReference *pRef = new LuaReference;
 			pValue->PushValue( L );
@@ -284,6 +277,13 @@ void Actor::LoadFromNode( const XNode* pNode )
 			RString sCmdName = sKeyName.Left( sKeyName.size()-7 );
 			AddCommand( sCmdName, apActorCommands( pRef ) );
 		}
+		else if( sKeyName == "Name" )			SetName( pValue->GetValue<RString>() );
+		else if( sKeyName == "BaseRotationX" )		SetBaseRotationX( pValue->GetValue<float>() );
+		else if( sKeyName == "BaseRotationY" )		SetBaseRotationY( pValue->GetValue<float>() );
+		else if( sKeyName == "BaseRotationZ" )		SetBaseRotationZ( pValue->GetValue<float>() );
+		else if( sKeyName == "BaseZoomX" )		SetBaseZoomX( pValue->GetValue<float>() );
+		else if( sKeyName == "BaseZoomY" )		SetBaseZoomY( pValue->GetValue<float>() );
+		else if( sKeyName == "BaseZoomZ" )		SetBaseZoomZ( pValue->GetValue<float>() );
 	}
 
 	LUA->Release( L );
