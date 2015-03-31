@@ -81,8 +81,9 @@ void TimingData::PrepareLookup()
 		GetBeatStarts time_start;
 		time_start.last_time= -m_fBeat0OffsetInSeconds;
 		float time= GetElapsedTimeInternal(time_start, FLT_MAX, curr_segment);
-		m_time_start_lookup.push_back(lookup_item_t(time, time_start));
+		m_time_start_lookup.push_back(lookup_item_t(NoteRowToBeat(time_start.last_row), time_start));
 	}
+	// DumpLookupTables();
 }
 
 void TimingData::ReleaseLookup()
@@ -99,6 +100,26 @@ void TimingData::ReleaseLookup()
 	CLEAR_LOOKUP(m_beat_start_lookup);
 	CLEAR_LOOKUP(m_time_start_lookup);
 #undef CLEAR_LOOKUP
+}
+
+void TimingData::DumpOneTable(const beat_start_lookup_t& lookup, const RString& name)
+{
+	LOG->Trace("%s lookup table:", name.c_str());
+	for(size_t lit= 0; lit < lookup.size(); ++lit)
+	{
+		const lookup_item_t& item= lookup[lit];
+		const GetBeatStarts& starts= item.second;
+		LOG->Trace("%zu: %f", lit, item.first);
+		LOG->Trace("  bpm: %d, warp: %d, stop: %d, delay: %d, last_row: %d, last_time: %f, warp_destination: %f, is_warping: %d", starts.bpm, starts.warp, starts.stop, starts.delay, starts.last_row, starts.last_time, starts.warp_destination, starts.is_warping);
+	}
+}
+
+void TimingData::DumpLookupTables()
+{
+	LOG->Trace("Dumping timing data lookup tables for %s:", m_sFile.c_str());
+	DumpOneTable(m_beat_start_lookup, "m_beat_start_lookup");
+	DumpOneTable(m_time_start_lookup, "m_time_start_lookup");
+	LOG->Trace("Finished dumping lookup tables for %s:", m_sFile.c_str());
 }
 
 TimingData::beat_start_lookup_t::const_iterator FindEntryInLookup(
@@ -760,12 +781,13 @@ float TimingData::GetElapsedTimeInternal(GetBeatStarts& start, float beat,
 
 	float bps= GetBPMAtRow(start.last_row) / 60.0f;
 #define INC_INDEX(index) ++curr_segment; ++index;
+	bool find_marker= beat < FLT_MAX;
 
 	while(curr_segment < max_segment)
 	{
 		int event_row= INT_MAX;
 		int event_type= NOT_FOUND;
-		FindEvent(event_row, event_type, start, beat, true, bpms, warps, stops,
+		FindEvent(event_row, event_type, start, beat, find_marker, bpms, warps, stops,
 			delays);
 		float time_to_next_event= start.is_warping ? 0 :
 			NoteRowToBeat(event_row - start.last_row) / bps;

@@ -126,6 +126,8 @@ public:
 
 	void PrepareLookup();
 	void ReleaseLookup();
+	void DumpOneTable(const beat_start_lookup_t& lookup, const RString& name);
+	void DumpLookupTables();
 
 	int GetSegmentIndexAtRow(TimingSegmentType tst, int row) const;
 	int GetSegmentIndexAtBeat(TimingSegmentType tst, float beat) const
