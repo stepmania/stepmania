@@ -76,7 +76,7 @@ endif()
 # Set up version numbers according to the new scheme.
 set(SM_VERSION_MAJOR 5)
 set(SM_VERSION_MINOR 0)
-set(SM_VERSION_PATCH 6)
+set(SM_VERSION_PATCH 7)
 set(SM_VERSION_TRADITIONAL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")
 
 if(WITH_FULL_RELEASE EQUAL ON)
