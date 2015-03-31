@@ -17,8 +17,10 @@
 #include "Sprite.h"
 #include "RageFileManager.h"
 #include "RageSurface.h"
+#include "RageTextureManager.h"
 #include "NoteDataUtil.h"
 #include "SongUtil.h"
+#include "SongManager.h"
 #include "StepsUtil.h"
 #include "Foreach.h"
 #include "BackgroundUtil.h"
@@ -455,6 +457,28 @@ bool Song::ReloadFromSongDir( RString sDir )
 	}
 
 	AddAutoGenNotes();
+	// Reload any images associated with the song. -Kyz
+	vector<RString> to_reload;
+	to_reload.reserve(7);
+	to_reload.push_back(m_sBannerFile);
+	to_reload.push_back(m_sJacketFile);
+	to_reload.push_back(m_sCDFile);
+	to_reload.push_back(m_sDiscFile);
+	to_reload.push_back(m_sBackgroundFile);
+	to_reload.push_back(m_sCDTitleFile);
+	to_reload.push_back(m_sPreviewVidFile);
+	for(vector<RString>::iterator file= to_reload.begin(); file != to_reload.end(); ++file)
+	{
+		RageTextureID id(*file);
+		if(TEXTUREMAN->IsTextureRegistered(id))
+		{
+			RageTexture* tex= TEXTUREMAN->LoadTexture(id);
+			if(tex)
+			{
+				tex->Reload();
+			}
+		}
+	}
 	return true;
 }
 
@@ -1224,6 +1248,10 @@ bool Song::SaveToJsonFile( RString sPath )
 
 bool Song::SaveToCacheFile()
 {
+	if(SONGMAN->IsGroupNeverCached(m_sGroupName))
+	{
+		return true;
+	}
 	SONGINDEX->AddCacheIndex(m_sSongDir, GetHashForDirectory(m_sSongDir));
 	const RString sPath = GetCacheFilePath();
 	return SaveToSSCFile(sPath, true);

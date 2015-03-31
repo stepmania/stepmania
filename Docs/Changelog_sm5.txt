@@ -4,6 +4,14 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/03/30
+----------
+* [Select Music] Ctrl+Shift+R mapped to reload the current song. [kyzentun]
+* [Song] ReloadFromSongDir lua function exposed. [kyzentun]
+* [Preferences] NeverCacheList preference added.  It's a comma separated
+  list of group names, if a song is in one of the named groups, it is never
+  cached. [kyzentun]
+
 2015/03/27
 ----------
 * [Select Music] Ability to delete the current song by pressing Ctrl+Backspace added. [Wallacoloo]

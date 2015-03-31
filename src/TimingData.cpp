@@ -164,31 +164,29 @@ bool TimingData::empty() const
 	return true;
 }
 
-TimingData TimingData::CopyRange(int startRow, int endRow) const
+void TimingData::CopyRange(int start_row, int end_row,
+	TimingSegmentType copy_type, int dest_row, TimingData& dest) const
 {
-	TimingData ret;
-
-	FOREACH_TimingSegmentType( tst )
+	int row_offset= dest_row - start_row;
+	FOREACH_TimingSegmentType(seg_type)
 	{
-		const vector<TimingSegment*> &vSegs = GetTimingSegments(tst);
-
-		for (unsigned i = 0; i < vSegs.size(); i++)
+		if(seg_type == copy_type || copy_type == TimingSegmentType_Invalid)
 		{
-			const TimingSegment *seg = vSegs[i];
-			int row = seg->GetRow();
-
-			if (row >= startRow && row < endRow)
+			const vector<TimingSegment*>& segs= GetTimingSegments(seg_type);
+			for(size_t i= 0; i < segs.size(); ++i)
 			{
-				TimingSegment *cpy = seg->Copy();
-
-				// offset rows as though startRow were beat 0.
-				cpy->SetRow(seg->GetRow() - startRow);
-				ret.AddSegment(cpy);
+				if(segs[i]->GetRow() >= start_row && segs[i]->GetRow() <= end_row)
+				{
+					TimingSegment* copy= segs[i]->Copy();
+					copy->SetRow(segs[i]->GetRow() + row_offset);
+					dest.AddSegment(copy);
+					// TimingSegment::Copy creates a new segment with new, and
+					// AddSegment copies it again, so delete the temp. -Kyz
+					delete copy;
+				}
 			}
 		}
 	}
-
-	return ret;
 }
 
 void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut, float highest ) const

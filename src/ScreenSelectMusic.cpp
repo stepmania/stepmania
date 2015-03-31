@@ -441,10 +441,25 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL));
 
+		bool holding_shift=
+		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) ||
+		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT));
+
 		wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI,false);
 		MakeUpper( &c, 1 );
 
-		if( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
+		if(holding_shift && bHoldingCtrl && c == 'R' && m_MusicWheel.IsSettled())
+		{
+			// Reload the currently selected song. -Kyz
+			Song* to_reload= m_MusicWheel.GetSelectedSong();
+			if(to_reload)
+			{
+				to_reload->ReloadFromSongDir();
+				AfterMusicChange();
+				return true;
+			}
+		}
+		else if( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
 		{
 			// Only allow changing the sort order if the wheel is not locked
 			// and we're not in course mode. -aj

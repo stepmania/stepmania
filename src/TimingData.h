@@ -149,7 +149,7 @@ public:
 
 	bool empty() const;
 
-	TimingData CopyRange(int startRow, int endRow) const;
+	void CopyRange(int start_row, int end_row, TimingSegmentType copy_type, int dest_row, TimingData& dest) const;
 	/**
 	 * @brief Gets the actual BPM of the song,
 	 * while respecting a limit.

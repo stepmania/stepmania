@@ -91,6 +91,13 @@ SongManager::~SongManager()
 
 void SongManager::InitAll( LoadingWindow *ld )
 {
+	vector<RString> never_cache;
+	split(PREFSMAN->m_NeverCacheList, ",", never_cache);
+	for(vector<RString>::iterator group= never_cache.begin();
+			group != never_cache.end(); ++group)
+	{
+		m_GroupsToNeverCache.insert(*group);
+	}
 	InitSongsFromDisk( ld );
 	InitCoursesFromDisk( ld );
 	InitAutogenCourses();
@@ -467,6 +474,11 @@ void SongManager::UnlistSong(Song *song)
 			}
 		}
 	}
+}
+
+bool SongManager::IsGroupNeverCached(const RString& group) const
+{
+	return m_GroupsToNeverCache.find(group) != m_GroupsToNeverCache.end();
 }
 
 RString SongManager::GetSongGroupBannerPath( RString sSongGroup ) const
