@@ -440,6 +440,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	trail.m_StepsType = st;
 	trail.m_CourseType = GetCourseType();
 	trail.m_CourseDifficulty = cd;
+	trail.m_vEntries.reserve(entries.size());
 
 	// Set to true if CourseDifficulty is able to change something.
 	bool bCourseDifficultyIsSignificant = (cd == Difficulty_Medium);
