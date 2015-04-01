@@ -29,14 +29,26 @@ File.open("#{Dir.pwd}/ProductInfo.h", "r") do |f|
 		end
 	end
 end
-# open ver.h in read-only mode
-File.open("#{Dir.pwd}/ver.h", "r") do |f|
-	# read each line, matching for product version
-	f.each do |line|
-		if line.match( /^#define\s+product_version\s+"(.*?)"/ )
-			version = $1
-		end
-	end
+
+# Determine if the Cmake generated verstub.cpp is available.
+File.open("#{Dir.pwd}/verstub.cpp", "r") do |verFile|
+  verFile.each do |verLine|
+    if verLine.match( /^extern char const \* const product_version \= "(.*?)"/ )
+      version = $1
+    end
+  end
+end
+
+if (version.length == 0)
+  # open ver.h in read-only mode
+  File.open("#{Dir.pwd}/ver.h", "r") do |f|
+    # read each line, matching for product version
+    f.each do |line|
+      if line.match( /^#define\s+product_version\s+"(.*?)"/ )
+        version = $1
+      end
+    end
+  end
 end
 
 # replace whitespace with hyphens in the version string

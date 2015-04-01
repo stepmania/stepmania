@@ -9,6 +9,11 @@ include_directories(${PROJECT_BINARY_DIR})
 
 add_executable("VersionUpdater" Main.cpp "${PROJECT_BINARY_DIR}/version.hpp")
 
+if (WITH_FULL_RELEASE)
+  sm_add_compile_definition("VersionUpdater" IS_FULL_RELEASE)
+  message(STATUS "Full release mode engaged.")
+endif()
+
 set_property(TARGET "VersionUpdater" PROPERTY FOLDER "Internal Libraries")
 
 if(MSVC)

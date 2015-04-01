@@ -79,22 +79,18 @@ set(SM_VERSION_MINOR 0)
 set(SM_VERSION_PATCH 7)
 set(SM_VERSION_TRADITIONAL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")
 
-if(WITH_FULL_RELEASE EQUAL ON)
-  set(SM_VERSION_FULL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")
-else()
-  # Using the deprecated version for now to keep cmake 2.8 users happy.
-  exec_program(git "${SM_ROOT_DIR}"
-    ARGS "rev-parse" "--short" "HEAD"
-    OUTPUT_VARIABLE SM_VERSION_GIT_HASH
-    RETURN_VALUE ret
-  )
+# Using the deprecated version for now to keep cmake 2.8 users happy.
+exec_program(git "${SM_ROOT_DIR}"
+  ARGS "rev-parse" "--short" "HEAD"
+  OUTPUT_VARIABLE SM_VERSION_GIT_HASH
+  RETURN_VALUE ret
+)
 
-  if(NOT (ret STREQUAL "0"))
-    set(SM_VERSION_GIT_HASH "UNKNOWN")
-    set(SM_VERSION_FULL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-${SM_VERSION_GIT_HASH}")
-  else()
-    set(SM_VERSION_FULL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-git-${SM_VERSION_GIT_HASH}")
-  endif()
+if(NOT (ret STREQUAL "0"))
+  set(SM_VERSION_GIT_HASH "UNKNOWN")
+  set(SM_VERSION_FULL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-${SM_VERSION_GIT_HASH}")
+else()
+  set(SM_VERSION_FULL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-git-${SM_VERSION_GIT_HASH}")
 endif()
 
 # Allow for finding our libraries in a standard location.
