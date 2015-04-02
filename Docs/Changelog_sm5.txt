@@ -4,6 +4,14 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/04/02
+----------
+* [global] commify function exposed to lua. [kyzentun]
+
+================================================================================
+StepMania 5.0.7 | 20150401
+--------------------------------------------------------------------------------
+
 2015/03/30
 ----------
 * [Select Music] Ctrl+Shift+R mapped to reload the current song. [kyzentun]

@@ -332,17 +332,39 @@ RString Commify( int iNum )
 	return Commify( sNum );
 }
 
-RString Commify( RString sNum, RString sSeperator ) 
+RString Commify(const RString& num, const RString& sep, const RString& dot)
 {
-	RString sReturn;
-	for( unsigned i=0; i<sNum.length(); i++ )
+	size_t num_end= num.size();
+	size_t dot_pos= num.find(dot);
+	if(dot_pos != string::npos)
 	{
-		char cDigit = sNum[sNum.length()-1-i];
-		if( i!=0 && i%3 == 0 )
-			sReturn = sSeperator + sReturn;
-		sReturn = cDigit + sReturn;
+		num_end= dot_pos;
 	}
-	return sReturn;
+	size_t commies= (num_end / 3) - (!(num_end % 3));
+	if(commies < 1)
+	{
+		return num;
+	}
+	size_t commified_len= num.size() + (commies * sep.size());
+	RString ret;
+	ret.resize(commified_len);
+	size_t dest= 0;
+	size_t next_comma= (num_end % 3) + (3 * (!(num_end % 3)));
+	for(size_t c= 0; c < num.size(); ++c)
+	{
+		if(c == next_comma && c < num_end)
+		{
+			for(size_t s= 0; s < sep.size(); ++s)
+			{
+				ret[dest]= sep[s];
+				++dest;
+			}
+			next_comma+= 3;
+		}
+		ret[dest]= num[c];
+		++dest;
+	}
+	return ret;
 }
 
 static LocalizedString NUM_PREFIX	( "RageUtil", "NumPrefix" );
@@ -2395,6 +2417,26 @@ LuaFunction( PrettyPercent, PrettyPercent( FArg(1), FArg(2) ) );
 static bool UndocumentedFeature( RString s ){ sm_crash(s); return true; }
 LuaFunction( UndocumentedFeature, UndocumentedFeature(SArg(1)) );
 LuaFunction( lerp, lerp(FArg(1), FArg(2), FArg(3)) );
+
+int LuaFunc_commify(lua_State* L);
+int LuaFunc_commify(lua_State* L)
+{
+	RString num= SArg(1);
+	RString sep= ",";
+	RString dot= ".";
+	if(!lua_isnoneornil(L, 2))
+	{
+		sep= lua_tostring(L, 2);
+	}
+	if(!lua_isnoneornil(L, 3))
+	{
+		dot= lua_tostring(L, 3);
+	}
+	RString ret= Commify(num, sep, dot);
+	LuaHelpers::Push(L, ret);
+	return 1;
+}
+LUAFUNC_REGISTER_COMMON(commify);
 
 void luafunc_approach_internal(lua_State* L, int valind, int goalind, int speedind);
 void luafunc_approach_internal(lua_State* L, int valind, int goalind, int speedind, int process_index)

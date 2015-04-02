@@ -109,6 +109,15 @@ save yourself some time, copy this for undocumented things:
 	<Function name='ComboUnderField' theme='_fallback' return='bool' arguments=''>
 		[03 Gameplay.lua] Returns the <code>UserPrefComboUnderField</code> user preference value.
 	</Function>
+	<Function name='commify' return='string' arguments='string number, string comma, string dot'>
+		This will take the number and insert a comma every three digits, as normal in English for writing large numbers.<br />
+		<code>number</code> can be a string, an integer, or a float.<br />
+		<code>comma</code> is an optional argument that is used instead of a comma.<br />
+		"commify(1234, 'cat')" will result in "1cat234".<br />
+		<code>dot</code> is an optional argument that is used instead of a dot to find the end of the part that should be commified.<br />
+		"commify('1234cat5678', ',', 'cat')" will result in "1,234cat5678", but "commify('1234cat5678')" will result in "12,34c,at5,678".<br />
+		The <code>comma</code> and <code>dot</code> arguments are provided to ease compliance with locales or languages that do not use comma and dot in numbers the way English does.
+	</Function>
 	<Function name='ConnectToServer' return='bool' arguments='string sAddress'>
 		Tries to connect to the server at <code>sAddress</code>.
 	</Function>

@@ -60,11 +60,7 @@ function split(delimiter, text)
 end
 
 function join(delimiter, list)
-	local ret = list[1]
-	for i = 2,table.getn(list) do
-		ret = ret .. delimiter .. list[i]
-	end
-	return ret or ""
+	return table.concat(list, delimiter)
 end
 
 -- (c) 2006 Glenn Maynard

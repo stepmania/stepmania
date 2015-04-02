@@ -209,6 +209,7 @@
 		<Function name='class'/>
 		<Function name='collectgarbage'/>
 		<Function name='color'/>
+		<Function name='commify'/>
 		<Function name='dofile'/>
 		<Function name='error'/>
 		<Function name='fapproach'/>
