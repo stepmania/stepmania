@@ -46,6 +46,29 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
+	// PushPlayerMatrix and PopPlayerMatrix are separate functions because
+	// they need to be used twice so that the notefield board can rendered
+	// underneath the combo and judgment.  They're not embedded in
+	// PlayerMatrixPusher so that some nutjob can later decide to expose them
+	// to lua. -Kyz
+	void PushPlayerMatrix(float x, float skew, float center_y);
+	void PopPlayerMatrix();
+
+	// This exists so that the board can be drawn underneath combo/judge. -Kyz
+	void DrawNoteFieldBoard();
+
+	// Here's a fun construct for people that haven't seen it before:
+	// This object does some task when it's created, then cleans up when it's
+	// destroyed.  That way, you stick it inside a block, and can't forget the
+	// cleanup. -Kyz
+	struct PlayerNoteFieldPositioner
+	{
+		PlayerNoteFieldPositioner(Player* p, float x, float tilt, float skew, float mini, float center_y, bool reverse);
+		~PlayerNoteFieldPositioner();
+		Player* player;
+		float original_y;
+		float y_offset;
+	};
 
 	struct TrackRowTapNote
 	{
@@ -232,6 +255,8 @@ protected:
 
 	bool m_bSendJudgmentAndComboMessages;
 	bool m_bTickHolds;
+	// This exists so that the board can be drawn underneath combo/judge. -Kyz
+	bool m_drawing_notefield_board;
 };
 
 class PlayerPlus

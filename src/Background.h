@@ -23,6 +23,13 @@ public:
 	void FadeToActualBrightness();
 	void SetBrightness( float fBrightness ); // overrides pref and Cover
 
+	// One more piece of the puzzle that puts the notefield board above the bg
+	// and under everything else.  m_disable_draw exists so that
+	// ScreenGameplay can draw the background manually, and still have it as a
+	// child. -Kyz
+	bool m_disable_draw;
+	virtual bool EarlyAbortDraw() const { return m_disable_draw; }
+
 	/**
 	 * @brief Retrieve whatever dancing characters are in use.
 	 * @return the dancing characters. */

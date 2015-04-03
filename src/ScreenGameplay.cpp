@@ -23,6 +23,7 @@
 #include "ScoreKeeperRave.h"
 #include "LyricsLoader.h"
 #include "ActorUtil.h"
+#include "ArrowEffects.h"
 #include "RageSoundManager.h"
 #include "RageSoundReader.h"
 #include "RageTextureManager.h"
@@ -2009,6 +2010,35 @@ void ScreenGameplay::Update( float fDeltaTime )
 				if( m_bShowScoreboard && NSMAN->ChangedScoreboard(cn) && GAMESTATE->GetFirstDisabledPlayer() != PLAYER_INVALID )
 					m_Scoreboard[cn].SetText( NSMAN->m_Scoreboard[cn] );
 	}
+
+	// ArrowEffects::Update call moved because having it happen once per
+	// NoteField (which means twice in two player) seemed wasteful. -Kyz
+	ArrowEffects::Update();
+}
+
+void ScreenGameplay::DrawPrimitives()
+{
+	// ScreenGameplay::DrawPrimitives exists so that the notefield board can be
+	// above the song background and underneath everything else.  This way, a
+	// theme can put a screen filter in the notefield board and not have it
+	// obscure custom elements on the screen.  Putting the screen filter in the
+	// notefield board simplifies placement because it ensures that the filter
+	// is in the same place as the notefield, instead of forcing the filter to
+	// check conditions and metrics that affect the position of the notefield.
+	// This also solves the problem of the ComboUnderField metric putting the
+	// combo underneath the opaque notefield board.
+	// -Kyz
+	if(m_pSongBackground)
+	{
+		m_pSongBackground->m_disable_draw= false;
+		m_pSongBackground->Draw();
+		m_pSongBackground->m_disable_draw= true;
+	}
+	FOREACH_EnabledPlayerNumberInfo(m_vPlayerInfo, pi)
+	{
+		pi->m_pPlayer->DrawNoteFieldBoard();
+	}
+	ScreenWithMenuElements::DrawPrimitives();
 }
 
 void ScreenGameplay::FailFadeRemovePlayer(PlayerInfo* pi)

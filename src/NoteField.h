@@ -21,6 +21,8 @@ public:
 	~NoteField();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
+	void CalcPixelsBeforeAndAfterTargets();
+	void DrawBoardPrimitive();
 
 	virtual void Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels, bool use_states_zoom= true );
 	virtual void Load( 
@@ -94,6 +96,9 @@ protected:
 	int			m_iDrawDistanceAfterTargetsPixels;	// this should be a negative number
 	int			m_iDrawDistanceBeforeTargetsPixels;	// this should be a positive number
 	float		m_fYReverseOffsetPixels;
+
+	// This exists so that the board can be drawn underneath combo/judge. -Kyz
+	bool m_drawing_board_primitive;
 
 	// color arrows
 	struct NoteDisplayCols
