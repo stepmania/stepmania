@@ -67,6 +67,8 @@
 		2B17ABFD139817D6001AE57D /* libpcre-sm5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B17ABE013981756001AE57D /* libpcre-sm5.a */; };
 		2B30D6821315EA7E00044B68 /* MouseDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B30D6801315EA7E00044B68 /* MouseDevice.cpp */; };
 		2B30D6831315EA7E00044B68 /* MouseDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B30D6811315EA7E00044B68 /* MouseDevice.h */; };
+		2B399E861ACF25820087F19B /* ArchHooks_MacOSX.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B399E851ACF25820087F19B /* ArchHooks_MacOSX.mm */; };
+		2B399E871ACF25820087F19B /* ArchHooks_MacOSX.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B399E851ACF25820087F19B /* ArchHooks_MacOSX.mm */; };
 		2B43509513949F37006FA051 /* TimingSegments.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B43509313949F37006FA051 /* TimingSegments.h */; };
 		2B43509613949F37006FA051 /* TimingSegments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B43509413949F37006FA051 /* TimingSegments.cpp */; };
 		2B76698B132FF71500586512 /* NotesLoaderSMA.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B766989132FF71500586512 /* NotesLoaderSMA.h */; };
@@ -1136,8 +1138,6 @@
 		AA6999610ACE1CBB000237F9 /* ControllerStateDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA69995F0ACE1CBB000237F9 /* ControllerStateDisplay.cpp */; };
 		AA6999620ACE1CBB000237F9 /* ControllerStateDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6999600ACE1CBB000237F9 /* ControllerStateDisplay.h */; };
 		AA6999630ACE1CBB000237F9 /* ControllerStateDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA69995F0ACE1CBB000237F9 /* ControllerStateDisplay.cpp */; };
-		AA6C6AD80DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6AD60DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp */; };
-		AA6C6ADA0DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6AD60DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp */; };
 		AA6C6ADB0DC6B17B00E7A13E /* ArchHooks_MacOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6C6AD70DC6B17B00E7A13E /* ArchHooks_MacOSX.h */; };
 		AA6C6ADE0DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6ADC0DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp */; };
 		AA6C6AE00DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6ADC0DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp */; };
@@ -1927,6 +1927,7 @@
 		2B17ABE013981756001AE57D /* libpcre-sm5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpcre-sm5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B30D6801315EA7E00044B68 /* MouseDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseDevice.cpp; sourceTree = "<group>"; };
 		2B30D6811315EA7E00044B68 /* MouseDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MouseDevice.h; sourceTree = "<group>"; };
+		2B399E851ACF25820087F19B /* ArchHooks_MacOSX.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ArchHooks_MacOSX.mm; path = ArchHooks/ArchHooks_MacOSX.mm; sourceTree = "<group>"; };
 		2B43509313949F37006FA051 /* TimingSegments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimingSegments.h; path = ../src/TimingSegments.h; sourceTree = SOURCE_ROOT; };
 		2B43509413949F37006FA051 /* TimingSegments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TimingSegments.cpp; path = ../src/TimingSegments.cpp; sourceTree = SOURCE_ROOT; };
 		2B766989132FF71500586512 /* NotesLoaderSMA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderSMA.h; path = ../src/NotesLoaderSMA.h; sourceTree = SOURCE_ROOT; };
@@ -2229,7 +2230,6 @@
 		AA65877A098C322800CE55CC /* ScreenUnlockStatus.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenUnlockStatus.h; path = ../src/ScreenUnlockStatus.h; sourceTree = "<group>"; };
 		AA69995F0ACE1CBB000237F9 /* ControllerStateDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ControllerStateDisplay.cpp; path = ../src/ControllerStateDisplay.cpp; sourceTree = "<group>"; };
 		AA6999600ACE1CBB000237F9 /* ControllerStateDisplay.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ControllerStateDisplay.h; path = ../src/ControllerStateDisplay.h; sourceTree = "<group>"; };
-		AA6C6AD60DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArchHooks_MacOSX.cpp; path = ArchHooks/ArchHooks_MacOSX.cpp; sourceTree = "<group>"; };
 		AA6C6AD70DC6B17B00E7A13E /* ArchHooks_MacOSX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArchHooks_MacOSX.h; path = ArchHooks/ArchHooks_MacOSX.h; sourceTree = "<group>"; };
 		AA6C6ADC0DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DialogDriver_MacOSX.cpp; sourceTree = "<group>"; };
 		AA6C6ADD0DC6B1DC00E7A13E /* DialogDriver_MacOSX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DialogDriver_MacOSX.h; sourceTree = "<group>"; };
@@ -5196,7 +5196,7 @@
 			children = (
 				AA3F283B04BE6DDC00D02EE9 /* ArchHooks.cpp */,
 				AABE36FC0497CE44005F316C /* ArchHooks.h */,
-				AA6C6AD60DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp */,
+				2B399E851ACF25820087F19B /* ArchHooks_MacOSX.mm */,
 				AA6C6AD70DC6B17B00E7A13E /* ArchHooks_MacOSX.h */,
 			);
 			name = ArchHooks;
@@ -6721,6 +6721,7 @@
 				AAF74590061181F700B19AD1 /* RageDisplay_Null.cpp in Sources */,
 				AAD36084062BB8AE00D0CED8 /* RageSoundPosMap.cpp in Sources */,
 				AA2828B3062FC0B8006F61EC /* SignalHandler.cpp in Sources */,
+				2B399E861ACF25820087F19B /* ArchHooks_MacOSX.mm in Sources */,
 				AA5C73FD0637A5F100AFB891 /* CourseUtil.cpp in Sources */,
 				AA5C73FF0637A5F100AFB891 /* SongUtil.cpp in Sources */,
 				AA5C74010637A5F100AFB891 /* StepsUtil.cpp in Sources */,
@@ -6887,7 +6888,6 @@
 				AAA7D4C90C7E872600FB8F78 /* ScreenOptionsToggleSongs.cpp in Sources */,
 				AA11A20F0DC5A1B0006BD8AC /* ModIcon.cpp in Sources */,
 				AA11A2110DC5A1B0006BD8AC /* ModIconRow.cpp in Sources */,
-				AA6C6AD80DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp in Sources */,
 				AA6C6ADE0DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp in Sources */,
 				AA6C6AE50DC6B22800E7A13E /* LoadingWindow_MacOSX.mm in Sources */,
 				AA6C6B030DC6B2B400E7A13E /* LowLevelWindow_MacOSX.mm in Sources */,
@@ -6931,6 +6931,7 @@
 				AA40D38609A08D650068C0D5 /* RageInputDevice.cpp in Sources */,
 				AA40D38709A08D650068C0D5 /* RageLog.cpp in Sources */,
 				AA40D38809A08D650068C0D5 /* RageMath.cpp in Sources */,
+				2B399E871ACF25820087F19B /* ArchHooks_MacOSX.mm in Sources */,
 				AA40D38909A08D650068C0D5 /* RageSound.cpp in Sources */,
 				AA40D38A09A08D650068C0D5 /* RageSoundManager.cpp in Sources */,
 				AA40D38B09A08D650068C0D5 /* RageSoundReader_Preload.cpp in Sources */,
@@ -7297,7 +7298,6 @@
 				AAA071770CE7B3BB005A3060 /* version.c in Sources */,
 				AA11A2130DC5A1B0006BD8AC /* ModIcon.cpp in Sources */,
 				AA11A2150DC5A1B0006BD8AC /* ModIconRow.cpp in Sources */,
-				AA6C6ADA0DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp in Sources */,
 				AA6C6AE00DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp in Sources */,
 				AA6C6AE70DC6B22800E7A13E /* LoadingWindow_MacOSX.mm in Sources */,
 				AA6C6B050DC6B2B400E7A13E /* LowLevelWindow_MacOSX.mm in Sources */,
