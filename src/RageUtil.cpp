@@ -334,13 +334,20 @@ RString Commify( int iNum )
 
 RString Commify(const RString& num, const RString& sep, const RString& dot)
 {
+	size_t num_start= 0;
 	size_t num_end= num.size();
 	size_t dot_pos= num.find(dot);
+	size_t dash_pos= num.find('-');
 	if(dot_pos != string::npos)
 	{
 		num_end= dot_pos;
 	}
-	size_t commies= (num_end / 3) - (!(num_end % 3));
+	if(dash_pos != string::npos)
+	{
+		num_start= dash_pos + 1;
+	}
+	size_t num_size= num_end - num_start;
+	size_t commies= (num_size / 3) - (!(num_size % 3));
 	if(commies < 1)
 	{
 		return num;
@@ -349,7 +356,7 @@ RString Commify(const RString& num, const RString& sep, const RString& dot)
 	RString ret;
 	ret.resize(commified_len);
 	size_t dest= 0;
-	size_t next_comma= (num_end % 3) + (3 * (!(num_end % 3)));
+	size_t next_comma= (num_size % 3) + (3 * (!(num_size % 3))) + num_start;
 	for(size_t c= 0; c < num.size(); ++c)
 	{
 		if(c == next_comma && c < num_end)
