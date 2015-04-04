@@ -94,6 +94,7 @@ AutoScreenMessage( SM_DoRevertToLastSave );
 AutoScreenMessage( SM_DoRevertFromDisk );
 AutoScreenMessage( SM_ConfirmClearArea );
 AutoScreenMessage( SM_BackFromTimingDataInformation );
+AutoScreenMessage(SM_BackFromTimingDataChangeInformation);
 AutoScreenMessage( SM_BackFromDifficultyMeterChange );
 AutoScreenMessage( SM_BackFromBeat0Change );
 AutoScreenMessage( SM_BackFromBPMChange );
@@ -1033,6 +1034,18 @@ static MenuDef g_TimingDataInformation(
 	MenuRowDef(ScreenEdit::fake,
 		"Edit fake",
 		true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef(ScreenEdit::shift_timing_in_region_down,
+		"Shift timing in region down",
+		true, EditMode_Full, true, true, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd"),
+	MenuRowDef(ScreenEdit::shift_timing_in_region_up,
+		"Shift timing in region up",
+		true, EditMode_Full, true, true, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd"),
+	MenuRowDef(ScreenEdit::copy_timing_in_region,
+		"Copy timing in region",
+		true, EditMode_Full, true, true, 0, NULL),
+	MenuRowDef(ScreenEdit::paste_timing_from_clip,
+		"Paste timing from clipboard",
+		true, EditMode_Full, true, true, 0, NULL),
 	MenuRowDef(ScreenEdit::copy_full_timing,
 		"Copy timing data",
 		true, EditMode_Full, true, true, 0, NULL ),
@@ -1042,6 +1055,47 @@ static MenuDef g_TimingDataInformation(
 	MenuRowDef(ScreenEdit::erase_step_timing,
 		"Erase step timing",
 		true, EditMode_Full, true, true, 0, NULL )
+);
+
+static MenuDef g_TimingDataChangeInformation(
+	"ScreenMiniMenuTimingDataChangeInformation",
+	MenuRowDef(ScreenEdit::timing_all,
+		"All timing",
+		true, EditMode_Full, true, true, 0, NULL),
+	MenuRowDef(ScreenEdit::timing_bpm,
+		"BPM changes",
+		true, EditMode_Full, true, true, 0, NULL),
+	MenuRowDef(ScreenEdit::timing_stop,
+		"Stops",
+		true, EditMode_Full, true, true, 0, NULL),
+	MenuRowDef(ScreenEdit::timing_delay,
+		"Delays",
+		true, EditMode_Full, true, true, 0, NULL),
+	// Time signatures disabled because they don't fully work. -Kyz
+	// MenuRowDef(ScreenEdit::timing_time_sig,
+	// 	"Time Signatures",
+	// 	true, EditMode_Full, true, true, 0, NULL),
+	MenuRowDef(ScreenEdit::timing_warp,
+		"Warps",
+		true, EditMode_Full, true, true, 0, NULL),
+	MenuRowDef(ScreenEdit::timing_label,
+		"Labels",
+		true, EditMode_Full, true, true, 0, NULL),
+	MenuRowDef(ScreenEdit::timing_tickcount,
+		"Tickcount",
+		true, EditMode_Full, true, true, 0, NULL),
+	MenuRowDef(ScreenEdit::timing_combo,
+		"Combo segments",
+		true, EditMode_Full, true, true, 0, NULL),
+	MenuRowDef(ScreenEdit::timing_speed,
+		"Speed segments",
+		true, EditMode_Full, true, true, 0, NULL),
+	MenuRowDef(ScreenEdit::timing_scroll,
+		"Scroll segments",
+		true, EditMode_Full, true, true, 0, NULL),
+	MenuRowDef(ScreenEdit::timing_fake,
+		"Fakes",
+		true, EditMode_Full, true, true, 0, NULL)
 );
 
 // XXX: What are these enums used for?
@@ -3541,6 +3595,10 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		HandleTimingDataInformationChoice( (TimingDataInformationChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
 	}
+	else if(SM == SM_BackFromTimingDataChangeInformation)
+	{
+		HandleTimingDataChangeChoice((TimingDataChangeChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers);
+	}
 	else if( SM == SM_BackFromDifficultyMeterChange )
 	{
 		int i = StringToInt( ScreenTextEntry::s_sLastAnswer );
@@ -4628,6 +4686,12 @@ void ScreenEdit::DisplayTimingMenu()
 	EditMiniMenu( &g_TimingDataInformation, SM_BackFromTimingDataInformation );
 }
 
+void ScreenEdit::DisplayTimingChangeMenu()
+{
+	int row= GetRow();
+	EditMiniMenu(&g_TimingDataChangeInformation, SM_BackFromTimingDataChangeInformation);
+}
+
 // End helper functions
 
 static LocalizedString REVERT_LAST_SAVE			( "ScreenEdit", "Do you want to revert to your last save?" );
@@ -5303,6 +5367,13 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 	
 }
 
+int GetRowsFromAnswers(int choice, const vector<int>& answers);
+int GetRowsFromAnswers(int choice, const vector<int>& answers)
+{
+	// Logic courtesy of someone else, not me.  Just deduplicating it.  -Kyz
+	return answers.size() > 0 ? NoteTypeToRow((NoteType)answers[choice]) : 48;
+}
+
 void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo )
 {
 	bool bSaveUndo = true;
@@ -5355,23 +5426,19 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			
 		case insert_and_shift:
 			NoteDataUtil::InsertRows( m_NoteDataEdit, GetRow(),
-				iAnswers.size() > 0 ? 
-				NoteTypeToRow((NoteType)iAnswers[c]) : 48);
+				GetRowsFromAnswers(c, iAnswers));
 			break;
 		case delete_and_shift:
 			NoteDataUtil::DeleteRows( m_NoteDataEdit, GetRow(),
-				iAnswers.size() > 0 ? 
-				NoteTypeToRow((NoteType)iAnswers[c]) : 48);
+				GetRowsFromAnswers(c, iAnswers));
 			break;
 		case shift_pauses_forward:
 			GetAppropriateTimingForUpdate().InsertRows( GetRow(),
-				iAnswers.size() > 0 ? 
-				NoteTypeToRow((NoteType)iAnswers[c]) : 48);
+				GetRowsFromAnswers(c, iAnswers));
 			break;
 		case shift_pauses_backward:
 			GetAppropriateTimingForUpdate().DeleteRows( GetRow(),
-			  iAnswers.size() > 0 ? 
-			  NoteTypeToRow((NoteType)iAnswers[c]) : 48);
+				GetRowsFromAnswers(c, iAnswers));
 			break;
 
 		case convert_pause_to_beat:
@@ -5501,7 +5568,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 									   ENTER_NEW_METER,
 									   ssprintf("%d", m_pSteps->GetMeter()),
 									   4,
-									   NULL,
+									   ScreenTextEntry::IntValidate,
 									   ChangeStepMeter,
 									   NULL);
 			break;
@@ -5747,6 +5814,23 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			);
 			break;
 		}
+		case shift_timing_in_region_down:
+			m_timing_is_being_copied= false;
+			m_timing_rows_being_shitted= GetRowsFromAnswers(c, iAnswers);
+			DisplayTimingChangeMenu();
+			break;
+		case shift_timing_in_region_up:
+			m_timing_is_being_copied= false;
+			m_timing_rows_being_shitted= -GetRowsFromAnswers(c, iAnswers);
+			DisplayTimingChangeMenu();
+			break;
+		case copy_timing_in_region:
+			m_timing_is_being_copied= true;
+			DisplayTimingChangeMenu();
+			break;
+		case paste_timing_from_clip:
+			clipboardFullTiming.CopyRange(0, MAX_NOTE_ROW, TimingSegmentType_Invalid, GetRow(), GetAppropriateTimingForUpdate());
+			break;
 	case copy_full_timing:
 	{
 		clipboardFullTiming = GetAppropriateTiming();
@@ -5769,6 +5853,71 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenPrompt::Prompt( SM_DoEraseStepTiming, CONFIRM_TIMING_ERASE , PROMPT_YES_NO, ANSWER_NO );
 	break;
 		
+	}
+}
+
+void ScreenEdit::HandleTimingDataChangeChoice(TimingDataChangeChoice choice,
+	const vector<int>& answers)
+{
+	TimingSegmentType change_type= TimingSegmentType_Invalid;
+	switch(choice)
+	{
+		case timing_all:
+			change_type= TimingSegmentType_Invalid;
+			break;
+		case timing_bpm:
+			change_type= SEGMENT_BPM;
+			break;
+		case timing_stop:
+			change_type= SEGMENT_STOP;
+			break;
+		case timing_delay:
+			change_type= SEGMENT_DELAY;
+			break;
+		case timing_time_sig:
+			change_type= SEGMENT_TIME_SIG;
+			break;
+		case timing_warp:
+			change_type= SEGMENT_WARP;
+			break;
+		case timing_label:
+			change_type= SEGMENT_LABEL;
+			break;
+		case timing_tickcount:
+			change_type= SEGMENT_TICKCOUNT;
+			break;
+		case timing_combo:
+			change_type= SEGMENT_COMBO;
+			break;
+		case timing_speed:
+			change_type= SEGMENT_SPEED;
+			break;
+		case timing_scroll:
+			change_type= SEGMENT_SCROLL;
+			break;
+		case timing_fake:
+			change_type= SEGMENT_FAKE;
+			break;
+		default: break;
+	}
+	int begin= m_NoteFieldEdit.m_iBeginMarker;
+	int end= m_NoteFieldEdit.m_iEndMarker;
+	if(begin < 0)
+	{
+		begin= GetRow();
+	}
+	if(end < 0)
+	{
+		end= MAX_NOTE_ROW;
+	}
+	if(m_timing_is_being_copied)
+	{
+		clipboardFullTiming.Clear();
+		GetAppropriateTiming().CopyRange(begin, end, change_type, 0, clipboardFullTiming);
+	}
+	else
+	{
+		GetAppropriateTimingForUpdate().ShiftRange(begin, end, change_type, m_timing_rows_being_shitted);
 	}
 }
 

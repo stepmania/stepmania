@@ -8,6 +8,9 @@
 #include "Foreach.h"
 #include <float.h>
 
+static void EraseSegment(vector<TimingSegment*> &vSegs, int index, TimingSegment *cur);
+static const int INVALID_INDEX = -1;
+
 TimingSegment* GetSegmentAtRow( int iNoteRow, TimingSegmentType tst );
 
 TimingData::TimingData(float fOffset) : m_fBeat0OffsetInSeconds(fOffset)
@@ -189,6 +192,72 @@ void TimingData::CopyRange(int start_row, int end_row,
 	}
 }
 
+void TimingData::ShiftRange(int start_row, int end_row,
+	TimingSegmentType shift_type, int shift_amount)
+{
+	FOREACH_TimingSegmentType(seg_type)
+	{
+		if(seg_type == shift_type || shift_type == TimingSegmentType_Invalid)
+		{
+			vector<TimingSegment*>& segs= GetTimingSegments(seg_type);
+			int first_row= min(start_row, start_row + shift_amount);
+			int last_row= max(end_row, end_row + shift_amount);
+			int first_affected= GetSegmentIndexAtRow(seg_type, first_row);
+			int last_affected= GetSegmentIndexAtRow(seg_type, last_row);
+			if(first_affected == INVALID_INDEX)
+			{
+				continue;
+			}
+			// Prance through the affected area twice.  The first time, changing
+			// the rows of the segments, the second time removing segments that
+			// have been run over by a segment being moved.  Attempts to combine
+			// both operations into a single loop were error prone. -Kyz
+			for(size_t i= first_affected; i <= last_affected && i < segs.size(); ++i)
+			{
+				int seg_row= segs[i]->GetRow();
+				if(seg_row > 0 && seg_row >= start_row && seg_row <= end_row)
+				{
+					int dest_row= max(seg_row + shift_amount, 0);
+					segs[i]->SetRow(dest_row);
+				}
+			}
+#define ERASE_SEG(s) if(segs.size() > 1) { EraseSegment(segs, s, segs[s]); --i; --last_affected; erased= true; }
+			for(size_t i= first_affected; i <= last_affected && i < segs.size(); ++i)
+			{
+				bool erased= false;
+				int seg_row= segs[i]->GetRow();
+				if(i < segs.size() - 1)
+				{
+					int next_row= segs[i+1]->GetRow();
+					// This is a loop so that it will go back through and remove all
+					// segments that were run over. -Kyz
+					while(seg_row >= next_row && seg_row < start_row)
+					{
+						ERASE_SEG(i);
+						if(i < segs.size())
+						{
+							seg_row= segs[i]->GetRow();
+						}
+						else
+						{
+							seg_row= -1;
+						}
+					}
+				}
+				if(!erased && i > 0)
+				{
+					int prev_row= segs[i-1]->GetRow();
+					if(prev_row >= seg_row)
+					{
+						ERASE_SEG(i);
+					}
+				}
+			}
+#undef ERASE_SEG
+		}
+	}
+}
+
 void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut, float highest ) const
 {
 	fMinBPMOut = FLT_MAX;
@@ -231,8 +300,6 @@ float TimingData::GetPreviousSegmentBeatAtRow(TimingSegmentType tst, int row) co
 	}
 	return (backup > -1) ? backup : NoteRowToBeat(row);
 }
-
-static const int INVALID_INDEX = -1;
 
 int TimingData::GetSegmentIndexAtRow(TimingSegmentType tst, int iRow ) const
 {

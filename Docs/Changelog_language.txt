@@ -5,12 +5,38 @@ StepMania 5.0.6.  This is to inform translators of strings that need to be
 translated from English to other languages.
 ________________________________________________________________________________
 
-Strings are listed by the section of the language file they are in.  Example:
+Strings are listed by the section of the language file they are in.
+One string is listed per line, to minimize confusion.
+Example:
 
-* [ScreenDebugOverlay] Mute actions, Mute actions on, Mute actions off
+* [ScreenDebugOverlay] Mute actions
+  Mute actions on
+  Mute actions off
 
 This means that three strings were added to the "ScreenDebugOverlay" section,
 "Mute actions", "Mute actions on", and "Mute actions off".
+
+Day not found
+----------
+* [OptionTitles] All timing
+  BPM changes
+  Combo segments
+  Delays
+  Labels
+  Paste timing from clipboard
+  Scroll segments
+  Shift timing in region down
+  Shift timing in region up
+  Speed segments
+  Stops
+  Tickcount
+  Time Signatures
+  Warps
+* [ScreenTextEntry] "%s" is an invalid integer value.
+
+================================================================================
+StepMania 5.0.7 | 20150401
+--------------------------------------------------------------------------------
 
 2015/03/27
 ----------
@@ -20,8 +46,10 @@ This means that three strings were added to the "ScreenDebugOverlay" section,
 
 2015/04/08
 ----------
-* [OptionExplanations] EditClearPromptThreshold, HarshHotLifePenalty
-* [OptionTitles] EditClearPromptThreshold, HarshHotLifePenalty
+* [OptionExplanations] EditClearPromptThreshold
+  HarshHotLifePenalty
+* [OptionTitles] EditClearPromptThreshold
+  HarshHotLifePenalty
 * [ScreenEdit] Are you sure you want to clear %d notes?
 
 2015/04/02
@@ -38,7 +66,9 @@ This means that three strings were added to the "ScreenDebugOverlay" section,
 
 2015/02/27
 ----------
-* [ScreenDebugOverlay] Mute actions, Mute actions on, Mute actions off
+* [ScreenDebugOverlay] Mute actions
+  Mute actions on
+  Mute actions off
 
 2015/02/22
 ----------
