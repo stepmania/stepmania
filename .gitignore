@@ -15,6 +15,7 @@ Release/
 Contents/
 verdata.*
 StepMania-debug
+Xcode/Info.StepMania.plist
 
 # Text Editor Based Items
 ___*

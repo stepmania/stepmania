@@ -158,6 +158,9 @@ else()
   set(SM_EXE_NAME "stepmania")
 endif()
 
+# Configure generated files here.
+configure_file("${SM_XCODE_DIR}/Info.plist.in.xml" "${SM_XCODE_DIR}/Info.StepMania.plist")
+
 # TODO: Make this actually be data and not an executable.
 if(APPLE)
   set(MACOSX_BUNDLE_BUNDLE_NAME ${SM_EXE_NAME})
@@ -225,22 +228,15 @@ elseif(APPLE)
   set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_ROOT_DIR}")
   set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}")
   
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES XCODE_ATTRIBUTE_INFOPLIST_FILE
-    "${SM_XCODE_DIR}/Info-StepMania.plist"
-  )
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES XCODE_ATTRIBUTE_INFOPLIST_PREFIX_HEADER "${SM_SRC_DIR}/ProductInfo.h")
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES XCODE_ATTRIBUTE_INFOPLIST_PREPROCESS "YES")
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES XCODE_ATTRIBUTE_INFOPLIST_PREPROCESSOR_DEFINITIONS
-    "EXECUTABLE_NAME=\$(PRODUCT_NAME)"
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES
+    MACOSX_BUNDLE_INFO_PLIST "${SM_XCODE_DIR}/Info.StepMania.plist"
+    XCODE_ATTRIBUTE_INFOPLIST_FILE "${SM_XCODE_DIR}/Info.StepMania.plist"
+    XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/archutils/Darwin/StepMania.pch"
+    XCODE_ATTRIBUTE_GCC_ENABLE_CPP_EXCEPTIONS "NO"
+    XCODE_ATTRIBUTE_LIBRARY_SEARCH_PATHS "${SM_XCODE_DIR}/ffmpeg/lib ${SM_XCODE_DIR}/Libraries"
+    XCODE_ATTRIBUTE_OTHER_LDFLAGS "-lbz2"
   )
 
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES XCODE_ATTRIBUTE_GCC_PREFIX_HEADER
-    "${CMAKE_CURRENT_SOURCE_DIR}/archutils/Darwin/StepMania.pch")
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES XCODE_ATTRIBUTE_GCC_ENABLE_CPP_EXCEPTIONS "NO")
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES XCODE_ATTRIBUTE_LIBRARY_SEARCH_PATHS
-    "${SM_XCODE_DIR}/ffmpeg/lib ${SM_XCODE_DIR}/Libraries"
-  )
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES XCODE_ATTRIBUTE_OTHER_LDFLAGS "-lbz2")
   sm_add_compile_definition("${SM_EXE_NAME}" _XOPEN_SOURCE)
   
   # Add the ability to copy the resource file.
