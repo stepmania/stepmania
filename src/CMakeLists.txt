@@ -203,11 +203,17 @@ if(MSVC)
   set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} /MP2")
 endif()
 
-set_target_properties("${SM_EXE_NAME}" PROPERTIES COMPILE_FLAGS ${SM_COMPILE_FLAGS})
+set(SM_NAME_RELEASE "StepMania")
+set(SM_NAME_DEBUG "StepMania-debug")
+set(SM_NAME_MINSIZEREL "StepMania-min-size")
+set(SM_NAME_RELWITHDEBINFO "StepMania-release-symbols")
 
-set_target_properties("${SM_EXE_NAME}" PROPERTIES OUTPUT_NAME_DEBUG "StepMania-debug")
-set_target_properties("${SM_EXE_NAME}" PROPERTIES OUTPUT_NAME_MINSIZEREL "StepMania-min-size")
-set_target_properties("${SM_EXE_NAME}" PROPERTIES OUTPUT_NAME_RELWITHDEBINFO "StepMania-release-symbols")
+set_target_properties("${SM_EXE_NAME}" PROPERTIES
+  COMPILE_FLAGS ${SM_COMPILE_FLAGS}
+  OUTPUT_NAME_DEBUG "${SM_NAME_DEBUG}"
+  OUTPUT_NAME_MINSIZEREL "${SM_NAME_MINSIZEREL}"
+  OUTPUT_NAME_RELWITHDEBINFO "${SM_RELWITHDEBINFO}"
+)
 
 if(WIN32)
   sm_add_compile_definition("${SM_EXE_NAME}" WINDOWS)
@@ -216,19 +222,20 @@ if(WIN32)
   sm_add_compile_definition("${SM_EXE_NAME}" _WINSOCK_DEPRECATED_NO_WARNINGS)
   sm_add_compile_definition("${SM_EXE_NAME}" GLEW_STATIC)
   
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${SM_PROGRAM_DIR}")
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_PROGRAM_DIR}")
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${SM_PROGRAM_DIR}")
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_PROGRAM_DIR}")
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_PROGRAM_DIR}")
-elseif(APPLE)
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${SM_ROOT_DIR}")
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_ROOT_DIR}")
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${SM_ROOT_DIR}")
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_ROOT_DIR}")
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}")
-  
   set_target_properties("${SM_EXE_NAME}" PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${SM_PROGRAM_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_PROGRAM_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${SM_PROGRAM_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_PROGRAM_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_PROGRAM_DIR}"
+  )
+elseif(APPLE)
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${SM_ROOT_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_ROOT_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${SM_ROOT_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_ROOT_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}"
     MACOSX_BUNDLE_INFO_PLIST "${SM_XCODE_DIR}/Info.StepMania.plist"
     XCODE_ATTRIBUTE_INFOPLIST_FILE "${SM_XCODE_DIR}/Info.StepMania.plist"
     XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/archutils/Darwin/StepMania.pch"
@@ -239,27 +246,73 @@ elseif(APPLE)
 
   sm_add_compile_definition("${SM_EXE_NAME}" _XOPEN_SOURCE)
   
+  if (CMAKE_BUILD_TYPE EQUAL "Debug")
+    set(SM_APP_RELEASE_NAME "${SM_NAME_DEBUG}")
+  elseif(CMAKE_BUILD_TYPE EQUAL "MinSizeRel")
+    set(SM_APP_RELEASE_NAME "${SM_NAME_MINSIZEREL}")
+  elseif(CMAKE_BUILD_TYPE EQUAL "RelWithDebInfo")
+    set(SM_APP_RELEASE_NAME "${SM_NAME_RELWITHDEBINFO}")
+  else()
+    set(SM_APP_RELEASE_NAME "${SM_NAME_RELEASE}")
+  endif()
+  if (WITH_FULL_RELEASE)
+    string(CONCAT SM_NAME_VERSION "${SM_EXE_NAME}" "-" "${SM_VERSION_TRADITIONAL}")
+    set(SM_DMG_VERSION "${SM_VERSION_TRADITIONAL}")
+  else()
+    string(CONCAT SM_NAME_VERSION "${SM_EXE_NAME}" "-" "${SM_VERSION_FULL}")
+    set(SM_DMG_VERSION "${SM_VERSION_FULL}")
+  endif()
+  set(SM_DMG_RELEASE_NAME "${SM_NAME_VERSION}-mac.dmg")
+
+  add_custom_target(dmg
+    COMMAND
+      pushd ${SM_ROOT_DIR}\;
+      mkdir dmgtmpdir\;
+      cd dmgtmpdir\;
+      mkdir ${SM_NAME_VERSION}\;
+      cd ${SM_NAME_VERSION}\;
+      mkdir ${SM_NAME_VERSION}\;
+      cd ${SM_NAME_VERSION}\;
+      cp -r "${SM_ROOT_DIR}/Announcers" .\;
+      cp -r "${SM_ROOT_DIR}/BackgroundEffects" .\;
+      cp -r "${SM_ROOT_DIR}/BackgroundTransitions" .\;
+      cp -r "${SM_ROOT_DIR}/BGAnimations" .\;
+      cp -r "${SM_ROOT_DIR}/Characters" .\;
+      cp -r "${SM_ROOT_DIR}/Courses" .\;
+      cp -r "${SM_ROOT_DIR}/Data" .\;
+      cp -r "${SM_ROOT_DIR}/Docs" .\;
+      cp -r "${SM_ROOT_DIR}/Manual" .\;
+      cp -r "${SM_ROOT_DIR}/NoteSkins" .\;
+      cp -r "${SM_ROOT_DIR}/Scripts" .\;
+      cp -r "${SM_ROOT_DIR}/Songs" .\;
+      cp -r "${SM_ROOT_DIR}/Themes" .\;
+      cp -r "${SM_ROOT_DIR}/${SM_APP_RELEASE_NAME}.app" .\;
+      cd ${SM_ROOT_DIR}\;
+      hdiutil create "${SM_DMG_RELEASE_NAME}"
+        -volname "StepMania ${SM_DMG_VERSION}"
+        -srcfolder "dmgtmpdir/${SM_NAME_VERSION}/"
+        -ov\;
+      rm -rf dmgtmpdir\;
+      popd\;
+  )
+
   # Add the ability to copy the resource file.
   add_custom_command(TARGET "${SM_EXE_NAME}"
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:StepMania>/../Resources"
-  )
-  add_custom_command(TARGET "${SM_EXE_NAME}"
-    POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy "${SM_XCODE_DIR}/smicon.icns" "$<TARGET_FILE_DIR:StepMania>/../Resources/"
-  )
-  add_custom_command(TARGET "${SM_EXE_NAME}"
-    POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy "${SM_XCODE_DIR}/Hardware.plist" "$<TARGET_FILE_DIR:StepMania>/../Resources/"
   )
 else() # Linux
   # TODO: Have this compile definition be used all over. Currently fixed for Windows and Mac, but in headers.
   sm_add_compile_definition("${SM_EXE_NAME}" "${ENDIANNESS}")
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${SM_ROOT_DIR}")
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_ROOT_DIR}")
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${SM_ROOT_DIR}")
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_ROOT_DIR}")
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}")
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${SM_ROOT_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_ROOT_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${SM_ROOT_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_ROOT_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}"
+  )
 
   if (${HAS_PTHREAD})
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_LIBPTHREAD)
