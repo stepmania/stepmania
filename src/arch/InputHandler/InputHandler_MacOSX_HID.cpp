@@ -380,7 +380,7 @@ static wchar_t KeyCodeToChar(CGKeyCode keyCode, unsigned int modifierFlags)
 {
 	TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardInputSource();
 	CFDataRef uchr = (CFDataRef)TISGetInputSourceProperty(currentKeyboard, kTISPropertyUnicodeKeyLayoutData);
-	const UCKeyboardLayout *keyboardLayout = (const UCKeyboardLayout*)CFDataGetBytePtr(uchr);
+	const UCKeyboardLayout *keyboardLayout = uchr ? (const UCKeyboardLayout*)CFDataGetBytePtr(uchr) : NULL;
 	
 	if( keyboardLayout )
 	{
