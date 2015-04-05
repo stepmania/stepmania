@@ -41,9 +41,13 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Rhythm Game Simulator")
 # Prep options that are needed for each platform.
 option(WITH_NETWORKING "Build with networking support." ON)
 
+# This option quiets warnings that are a part of external projects.
+option(WITH_EXTERNAL_WARNINGS "Build with warnings for all components, not just StepMania." OFF)
+
 # This option is not yet working, but will likely default to ON in the future.
 option(WITH_LTO "Build with Link Time Optimization (LTO)/Whole Program Optimization." OFF)
 
+# This option handles if we use SSE2 processing.
 option(WITH_SSE2 "Build with SSE2 Optimizations." ON)
 
 # This option may go away in the future: if it does, JPEG will always be required.
@@ -296,7 +300,8 @@ elseif(LINUX)
         set(HAS_FFMPEG TRUE)
       endif()
     else()
-      set(SM_FFMPEG_SRC_DIR "${SM_EXTERN_DIR}/ffmpeg-linux-2.1.3")
+      set(SM_FFMPEG_VERSION "2.1.3")
+      string(CONCAT SM_FFMPEG_SRC_DIR "${SM_EXTERN_DIR}" "/ffmpeg-linux-" "${SM_FFMPEG_VERSION}")
       set(SM_FFMPEG_ROOT "${CMAKE_BINARY_DIR}/ffmpeg-prefix/src/ffmpeg-build")
       list(APPEND FFMPEG_CONFIGURE
         "${SM_FFMPEG_SRC_DIR}/configure"
@@ -314,6 +319,13 @@ elseif(LINUX)
           "--enable-gpl"
         )
       endif()
+
+      if (NOT WITH_EXTERNAL_WARNINGS)
+        list(APPEND FFMPEG_CONFIGURE
+          "--extra-cflags=-w"
+        )
+      endif()
+
       if (IS_DIRECTORY "${SM_FFMPEG_SRC_DIR}")
         externalproject_add("ffmpeg"
           SOURCE_DIR "${SM_FFMPEG_SRC_DIR}"
@@ -326,12 +338,8 @@ elseif(LINUX)
       else()
         # --shlibdir=$our_installdir/stepmania-$VERSION
         externalproject_add("ffmpeg"
-          # DOWNLOAD_DIR "${SM_EXTERN_DIR}/ffmpeg-linux"
-          # PREFIX "${SM_EXTERN_DIR}/ffmpeg-linux"
-          # GIT_REPOSITORY "git://source.ffmpeg.org/ffmpeg.git"
-          # GIT_TAG "n2.1.3"
-          DOWNLOAD_COMMAND git clone "--branch" "n2.1.3" "--depth" "1" "git://source.ffmpeg.org/ffmpeg.git" "${SM_FFMPEG_SRC_DIR}"
-          CONFIGURE_COMMAND ${FFMPEG_CONFIGURE}
+          DOWNLOAD_COMMAND git clone "--branch" "n${SM_FFMPEG_VERSION}" "--depth" "1" "git://source.ffmpeg.org/ffmpeg.git" "${SM_FFMPEG_SRC_DIR}"
+          CONFIGURE_COMMAND "${FFMPEG_CONFIGURE}"
           BUILD_COMMAND "make"
           UPDATE_COMMAND ""
           INSTALL_COMMAND ""
