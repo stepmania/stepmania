@@ -700,6 +700,63 @@ const MapEditButtonToMenuButton *ScreenEdit::GetCurrentMenuButtonMap() const
 	}
 }
 
+enum RowCountChoice
+{
+	RCC_4M,
+	RCC_2M,
+	RCC_1M,
+	RCC_2ND,
+	RCC_4TH,
+	RCC_8TH,
+	RCC_12TH,
+	RCC_16TH,
+	RCC_24TH,
+	RCC_32ND,
+	RCC_48TH,
+	RCC_64TH,
+	RCC_192ND,
+};
+
+#define RCC_CHOICES RCC_4TH, "4m", "2m", "1m", "2nd", "4th","8th","12th","16th","24th","32nd","48th","64th","192nd"
+
+int GetRowsFromAnswers(int choice, const vector<int>& answers);
+int GetRowsFromAnswers(int choice, const vector<int>& answers)
+{
+	if(answers.empty())
+	{
+		return 192 / 8;
+	}
+	switch(answers[choice])
+	{
+		case RCC_4M:
+			return 192 * 4;
+		case RCC_2M:
+			return 192 * 2;
+		case RCC_1M:
+			return 192;
+		case RCC_2ND:
+			return 192 / 2;
+		case RCC_4TH:
+		default:
+			return 192 / 4;
+		case RCC_8TH:
+			return 192 / 8;
+		case RCC_12TH:
+			return 192 / 12;
+		case RCC_16TH:
+			return 192 / 16;
+		case RCC_24TH:
+			return 192 / 24;
+		case RCC_32ND:
+			return 192 / 32;
+		case RCC_48TH:
+			return 192 / 48;
+		case RCC_64TH:
+			return 3;
+		case RCC_192ND:
+			return 1;
+	}
+}
 
 static MenuDef g_EditHelp(
 	"ScreenMiniMenuEditHelp"
@@ -852,16 +909,16 @@ static MenuDef g_AreaMenu(
 		true, EditMode_Practice, true, true, 0, NULL ),
     MenuRowDef(ScreenEdit::insert_and_shift,
 		"Insert beat and shift down",
-		true, EditMode_Practice, true, true, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd" ),
+		true, EditMode_Practice, true, true, RCC_CHOICES ),
 	MenuRowDef(ScreenEdit::delete_and_shift,
 		"Delete beat and shift up",	
-		true, EditMode_Practice, true, true, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd" ),
+		true, EditMode_Practice, true, true, RCC_CHOICES ),
 	MenuRowDef(ScreenEdit::shift_pauses_forward,
 		"Shift all timing changes down",
-		true, EditMode_Full, true, true, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd" ),
+		true, EditMode_Full, true, true, RCC_CHOICES ),
 	MenuRowDef(ScreenEdit::shift_pauses_backward,
 		"Shift all timing changes up",
-		true, EditMode_Full, true, true, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd" ),
+		true, EditMode_Full, true, true, RCC_CHOICES ),
 	MenuRowDef(ScreenEdit::convert_pause_to_beat,
 		"Convert pause to beats",
 		true, 
@@ -1036,10 +1093,10 @@ static MenuDef g_TimingDataInformation(
 		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef(ScreenEdit::shift_timing_in_region_down,
 		"Shift timing in region down",
-		true, EditMode_Full, true, true, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd"),
+		true, EditMode_Full, true, true, RCC_CHOICES),
 	MenuRowDef(ScreenEdit::shift_timing_in_region_up,
 		"Shift timing in region up",
-		true, EditMode_Full, true, true, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd"),
+		true, EditMode_Full, true, true, RCC_CHOICES),
 	MenuRowDef(ScreenEdit::copy_timing_in_region,
 		"Copy timing in region",
 		true, EditMode_Full, true, true, 0, NULL),
@@ -5365,13 +5422,6 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 		default: break;
 	}
 	
-}
-
-int GetRowsFromAnswers(int choice, const vector<int>& answers);
-int GetRowsFromAnswers(int choice, const vector<int>& answers)
-{
-	// Logic courtesy of someone else, not me.  Just deduplicating it.  -Kyz
-	return answers.size() > 0 ? NoteTypeToRow((NoteType)answers[choice]) : 48;
 }
 
 void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo )

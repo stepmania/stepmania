@@ -16,8 +16,14 @@ Example:
 This means that three strings were added to the "ScreenDebugOverlay" section,
 "Mute actions", "Mute actions on", and "Mute actions off".
 
-Day not found
+
+
+2015/04/04  (Day not found)
 ----------
+* [OptionNames] 1m
+  2m
+	2nd
+	4m
 * [OptionTitles] All timing
   BPM changes
   Combo segments
