@@ -79,6 +79,7 @@ ThemePrefs =
 	-- Only read from disk once, when _fallback calls this; we just
 	-- need the base set once to add prefs onto.
 	Init = function( prefs, bLoadFromDisk )
+
 		-- If we don't have IniFile, we can't read/write from/to disk
 		if not IniFile then Warn( GetString("IniFileMissing") ) end
 
@@ -99,7 +100,7 @@ ThemePrefs =
 
 		-- if the key doesn't exist, add it with our default value
 		for k, tbl in pairs(prefs) do
-			if not PrefsTable[section][k] then
+			if PrefsTable[section][k] == nil then
 				Trace( k .. " doesn't exist, creating" )
 				PrefsTable[section][k] = tbl.Default
 			end
@@ -116,16 +117,17 @@ ThemePrefs =
 
 	Save = function()
 --		Trace( "ThemePrefs.Save" )
-		if not IniFile then return false end
-		if not NeedsSaved then return end
-		NeedsSaved = false
-		IniFile.WriteFile( ThemePrefsPath, PrefsTable )
+		if IniFile and ThemePrefs.NeedsSaved then
+			IniFile.WriteFile( ThemePrefsPath, PrefsTable )
+			ThemePrefs.NeedsSaved = false
+			return
+		end
 	end,
 
 	-- for when you absolutely have to save, no matter what NeedsSaved says.
 	ForceSave = function()
 		if not IniFile then return false end
-		NeedsSaved = false
+		ThemePrefs.NeedsSaved = false
 		IniFile.WriteFile( ThemePrefsPath, PrefsTable )
 	end,
 
@@ -140,7 +142,11 @@ ThemePrefs =
 	Set = function( name, value )
 		--Trace( ("ThemePrefs.Set(%s, %s)"):format(name, tostring(value)) )
 		local tbl = ResolveTable(name)
-		if tbl then tbl[name] = value; NeedsSaved = true; return end
+		if tbl then
+			ThemePrefs.NeedsSaved = true
+			tbl[name] = value
+			return
+		end
 		Warn( "Set: "..GetString("UnknownPreference"):format(name) )
 	end,
 };
