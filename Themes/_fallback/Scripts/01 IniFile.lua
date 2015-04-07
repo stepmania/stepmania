@@ -42,7 +42,7 @@ local RageFile =
 IniFile = 
 {
 	StrToKeyVal = function( str )
-		local _, _, key, value = str:find( "(.+)=(.*)" )
+		local key, value = str:match( "(.+)=(.*)" )
 
 		-- key is always a string, but value may be num, bool, or nil.
 		-- do a few quick checks to see which one it is.
@@ -80,7 +80,7 @@ IniFile =
 			--ignore comments.
 			if not str:find("^%s*#") then
 				-- is this a section?
-				local _, _, sec = str:find( "%[(.+)%]" )
+				local sec = str:match( "%[(.+)%]" )
 
 				-- if so, set focus there; otherwise, try to
 				-- read a key/value pair (ignore blank lines)
@@ -91,7 +91,7 @@ IniFile =
 					--Warn( "Switching section to " .. sec )
 				else
 					local k, v = IniFile.StrToKeyVal( str )
-					if k and v then current[k] = v end
+					if k and v ~= nil then current[k] = v end
 				end
 			end
 		end
