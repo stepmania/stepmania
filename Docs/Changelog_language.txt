@@ -17,6 +17,13 @@ This means that three strings were added to the "ScreenDebugOverlay" section,
 "Mute actions", "Mute actions on", and "Mute actions off".
 
 
+2015/04/08
+----------
+* [OptionExplanations] EditClearPromptThreshold
+  HarshHotLifePenalty
+* [OptionTitles] EditClearPromptThreshold
+  HarshHotLifePenalty
+* [ScreenEdit] Are you sure you want to clear %d notes?
 
 2015/04/04  (Day not found)
 ----------
@@ -40,6 +47,12 @@ This means that three strings were added to the "ScreenDebugOverlay" section,
   Warps
 * [ScreenTextEntry] "%s" is an invalid integer value.
 
+2015/04/02
+----------
+* [OptionTitles] Preview
+* [ScreenEdit] Enter a preview file.
+* [SongUtil] The preview file '%s' does not exist.
+
 ================================================================================
 StepMania 5.0.7 | 20150401
 --------------------------------------------------------------------------------
@@ -49,20 +62,6 @@ StepMania 5.0.7 | 20150401
 * [OptionExplanations] AllowSongDeletion
 * [OptionTitles] AllowSongDeletion
 * [ScreenSelectMusic] PermanentlyDelete
-
-2015/04/08
-----------
-* [OptionExplanations] EditClearPromptThreshold
-  HarshHotLifePenalty
-* [OptionTitles] EditClearPromptThreshold
-  HarshHotLifePenalty
-* [ScreenEdit] Are you sure you want to clear %d notes?
-
-2015/04/02
-----------
-* [OptionTitles] Preview
-* [ScreenEdit] Enter a preview file.
-* [SongManager] The preview file '%s' does not exist.
 
 2015/03/02
 ----------
