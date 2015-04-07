@@ -468,6 +468,14 @@ save yourself some time, copy this for undocumented things:
 	<Function name='ReadPrefFromFile' theme='_fallback' return='string' arguments='string prefName'>
 		[03 UserPreferences2.lua] (internal) Reads the specified user preference from its config file.
 	</Function>
+	<Function name='rec_print_children' theme='_fallback' return='' arguments='ActorFrame a, string indent'>
+		Recursively prints all the children of the actor frame to the log file.  This can be useful for finding out what actors are on a screen or just seeing what the structure of the actor tree looks like.<br />
+		<code>indent</code> is an optional argument that will be prepended to every line.
+	</Function>
+	<Function name='rec_print_table' theme='_fallback' return='' arguments='table t, string indent'>
+		Recursively prints all values in the table to the log file in the form "(key_type) key: (value_type) value" so that you know the type of the key and the value.  Useful if you're not sure exactly what is in a table passed as a parameter.<br />
+		<code>indent</code> is an optional argument that will be prepended to every line.
+	</Function>
 	<Function name='ReportStyle' return='void' arguments=''>
 		Sends the current style to the server.
 	</Function>

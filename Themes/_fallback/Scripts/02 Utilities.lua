@@ -356,6 +356,65 @@ function IsUsingWideScreen()
 	end;
 end;
 
+-- Usage:  Pass in an ActorFrame and a string to put in front of every line.
+-- indent will be appended to at each level of the recursion, to indent each
+-- generation further.
+
+function rec_print_children(parent, indent)
+	if not indent then indent= "" end
+	if #parent > 0 and type(parent) == "table" then
+		for i, c in ipairs(parent) do
+			rec_print_children(c, indent .. i .. "->")
+		end
+	elseif parent.GetChildren then
+		local pname= (parent.GetName and parent:GetName()) or ""
+		local children= parent:GetChildren()
+		Trace(indent .. pname .. " children:")
+		for k, v in pairs(children) do
+			if #v > 0 then
+				Trace(indent .. pname .. "->" .. k .. " shared name:")
+				rec_print_children(v, indent .. pname .. "->")
+				Trace(indent .. pname .. "->" .. k .. " shared name over.")
+			else
+				rec_print_children(v, indent .. pname .. "->")
+			end
+		end
+		Trace(indent .. pname .. " children over.")
+	else
+		local pname= (parent.GetName and parent:GetName()) or ""
+		Trace(indent .. pname .. "(" .. tostring(parent) .. ")")
+	end
+end
+
+-- Usage:  Pass in a table and a string to indent each line with.
+-- indent will be appended to at each level of the recursion, to indent each
+-- generation further.
+-- DO NOT pass in a table that contains a reference loop.
+-- A reference loop is a case where a table contains a member that is a
+-- reference to itself, or contains a table that contains a reference to
+-- itself.
+-- Short reference loop example:  a= {}   a[1]= a
+-- Longer reference loop example:  a= {b= {c= {}}}   a.b.c[1]= a
+function rec_print_table(t, indent, depth_remaining)
+	if not indent then indent= "" end
+	if type(t) ~= "table" then
+		Trace(indent .. "rec_print_table passed a " .. type(t))
+		return
+	end
+	depth_remaining= depth_remaining or -1
+	if depth_remaining == 0 then return end
+	for k, v in pairs(t) do
+		if type(v) == "table" then
+			Trace(indent .. k .. ": table")
+			rec_print_table(v, indent .. "  ", depth_remaining - 1)
+		else
+			Trace(indent .. "(" .. type(k) .. ")" .. k .. ": " ..
+							"(" .. type(v) .. ")" .. tostring(v))
+		end
+	end
+	Trace(indent .. "end")
+end
+
 -- Minor text formatting functions from Kyzentun.
 -- TODO:  Figure out why BitmapText:maxwidth doesn't do what I want.
 -- Intentionally undocumented because they should be moved to BitmapText ASAP

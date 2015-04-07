@@ -4,6 +4,37 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/04/06
+----------
+* [global] rec_print_children and rec_print_table lua functions added to
+  _fallback. [kyzentun]
+* [Language] Dutch translation updated. [Thumbsy]
+* [RadarValues] Stream, Voltage, Air, Freeze, and Chaos are no longer capped
+  at 1.  Stream and Voltage no longer count hold heads twice.
+  RadarCategory_Notes added, which counts all notes.
+  Scoring bug fixes related to radar calculation. [kyzentun]
+* [ScreenSelectGame] Exit option returns to ScreenOptionsService unless the
+  game type actually changed. [Wallacoloo]
+
+2015/04/04
+----------
+* [EditMode] Added submenus to the timing edit menu to allow shifting,
+  copying, and pasting any or all timing segments in the selected region or
+  after the current cursor position. [kyzentun]
+  Shifting menus in edit mode now have choices for 1, 2, or 4 measures or 2
+  beats. [kyzentun]
+* [global] Fixed crash on OS X for certain dance pads when in Japanese
+  locale. [Wallacoloo]
+
+2015/04/03
+----------
+* [ScreenGameplay] The NoteField board is now underneath everything except
+  the backgound.  This means underneath any custom actors on the underlay or
+  overlay or decoration layers, and also underneath the combo/judgment even
+  when the ComboUnderField metric is true. [kyzentun]
+  Fixed bug in screen filter in default theme that made it not appear under
+  the field when a solo file was played without Center1Player. [kyzentun]
+
 2015/04/02
 ----------
 * [global] commify function exposed to lua. [kyzentun]

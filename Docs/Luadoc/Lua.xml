@@ -239,6 +239,8 @@
 		<Function name='rawequal'/>
 		<Function name='rawget'/>
 		<Function name='rawset'/>
+		<Function name='rec_print_children'/>
+		<Function name='rec_print_table'/>
 		<Function name='require'/>
 		<Function name='round'/>
 		<Function name='scale'/>
