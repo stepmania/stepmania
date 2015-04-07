@@ -951,13 +951,13 @@ void NoteDataUtil::AutogenKickbox(const NoteData& in, NoteData& out, const Timin
 	out.RevalidateATIs(vector<int>(), false);
 }
 
-struct recent_note_t
+struct recent_note
 {
 	int row;
 	int track;
-	recent_note_t()
+	recent_note()
 		:row(0), track(0) {}
-	recent_note_t(int r, int t)
+	recent_note(int r, int t)
 		:row(r), track(t) {}
 };
 
@@ -967,7 +967,7 @@ struct recent_note_t
 // its loop.  So this state structure exists to be passed to a function that
 // can be called from both places to do the work.  If this were Lua,
 // DoRowEndRadarCalc would be a nested function. -Kyz
-struct crv_state_t
+struct crv_state
 {
 	bool judgable;
 	// hold_ends tracks where currently active holds will end, which is used
@@ -978,12 +978,12 @@ struct crv_state_t
 	int num_holds_on_curr_row;
 	int num_notes_on_curr_row;
 
-	crv_state_t()
+	crv_state()
 		:judgable(false), num_holds_on_curr_row(0), num_notes_on_curr_row(0)
 	{}
 };
 
-static void DoRowEndRadarCalc(crv_state_t& state, RadarValues& out)
+static void DoRowEndRadarCalc(crv_state& state, RadarValues& out)
 {
 	if(state.judgable)
 	{
@@ -1006,7 +1006,7 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 	// and track number of a tap note.  When the pair at the beginning is too
 	// old, it's deleted.  This provides a way to have a rolling window
 	// that scans for the peak step density. -Kyz
-	vector<recent_note_t> recent_notes;
+	vector<recent_note> recent_notes;
 	NoteData::all_tracks_const_iterator curr_note=
 		in.GetTapNoteRangeAllTracks(0, MAX_NOTE_ROW);
 	TimingData* timing= GAMESTATE->GetProcessedTimingData();
@@ -1017,7 +1017,7 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 	const int voltage_window= BeatToNoteRow(voltage_window_beats);
 	size_t max_notes_in_voltage_window= 0;
 	int num_chaos_rows= 0;
-	crv_state_t state;
+	crv_state state;
 
 	while(!curr_note.IsAtEnd())
 	{
@@ -1073,7 +1073,7 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 					++state.num_notes_on_curr_row;
 					++total_taps;
 					recent_notes.push_back(
-						recent_note_t(curr_row, curr_note.Track()));
+						recent_note(curr_row, curr_note.Track()));
 					max_notes_in_voltage_window= max(recent_notes.size(),
 						max_notes_in_voltage_window);
 					// If there is one hold active, and one tap on this row, it does

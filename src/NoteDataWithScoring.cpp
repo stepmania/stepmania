@@ -178,16 +178,16 @@ float GetActualChaosRadarValue( const NoteData &in, float fSongSeconds, const Pl
 }
 }
 
-struct hold_status_t
+struct hold_status
 {
 	int end_row;
 	int last_held_row;
-	hold_status_t(int e, int l)
+	hold_status(int e, int l)
 		:end_row(e), last_held_row(l)
 	{}
 };
 
-struct garv_state_t
+struct garv_state
 {
 	int curr_row;
 	int notes_hit_for_stream;
@@ -202,7 +202,7 @@ struct garv_state_t
 	int lifts_hit;
 	// hold_ends tracks where currently active holds will end, which is used
 	// to count the number of hands. -Kyz
-	vector<hold_status_t> hold_ends;
+	vector<hold_status> hold_ends;
 	int num_notes_on_curr_row;
 	// num_holds_on_curr_row saves us the work of tracking where holds started
 	// just to keep a jump of two holds from counting as a hand.
@@ -222,7 +222,7 @@ struct garv_state_t
 	TapNoteScore hands_tns;
 	TapNoteScore lifts_tns;
 	bool judgable;
-	garv_state_t()
+	garv_state()
 		:curr_row(0), notes_hit_for_stream(0), jumps_hit_for_air(0),
 		 holds_held(0), rolls_held(0), notes_hit(0), taps_hit(0), jumps_hit(0),
 		 hands_hit(0), mines_avoided(0), lifts_hit(0), num_notes_on_curr_row(0),
@@ -235,7 +235,7 @@ struct garv_state_t
 	{}
 };
 
-static void DoRowEndRadarActualCalc(garv_state_t& state, RadarValues& out)
+static void DoRowEndRadarActualCalc(garv_state& state, RadarValues& out)
 {
 	if(state.judgable && state.last_tns_on_row != TapNoteScore_Invalid)
 	{
@@ -274,7 +274,7 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 	// NoteDataUtil::CalculateRadarValues because I couldn't figure out a good
 	// way to combine them into one. -Kyz
 	PlayerNumber pn= pss.m_player_number;
-	garv_state_t state;
+	garv_state state;
 
 	NoteData::all_tracks_const_iterator curr_note=
 		in.GetTapNoteRangeAllTracks(0, MAX_NOTE_ROW);
@@ -336,7 +336,7 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 							state.rolls_held+= (curr_note->HoldResult.hns >= HNS_Held);
 						}
 						state.hold_ends.push_back(
-							hold_status_t(state.curr_row + curr_note->iDuration,
+							hold_status(state.curr_row + curr_note->iDuration,
 								curr_note->HoldResult.iLastHeldRow));
 						++state.num_holds_on_curr_row;
 					}
