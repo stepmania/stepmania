@@ -83,11 +83,11 @@ set(SM_VERSION_MINOR 0)
 set(SM_VERSION_PATCH 7)
 set(SM_VERSION_TRADITIONAL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")
 
-# Using the deprecated version for now to keep cmake 2.8 users happy.
-exec_program(git "${SM_ROOT_DIR}"
-  ARGS "rev-parse" "--short" "HEAD"
+execute_process(COMMAND git rev-parse --short HEAD
+  WORKING_DIRECTORY "${SM_ROOT_DIR}"
   OUTPUT_VARIABLE SM_VERSION_GIT_HASH
-  RETURN_VALUE ret
+  RESULT_VARIABLE ret
+  OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
 if(NOT (ret STREQUAL "0"))
@@ -301,7 +301,8 @@ elseif(LINUX)
       endif()
     else()
       set(SM_FFMPEG_VERSION "2.1.3")
-      string(CONCAT SM_FFMPEG_SRC_DIR "${SM_EXTERN_DIR}" "/ffmpeg-linux-" "${SM_FFMPEG_VERSION}")
+      set(SM_FFMPEG_SRC_LIST "${SM_EXTERN_DIR}" "/ffmpeg-linux-" "${SM_FFMPEG_VERSION}")
+      sm_join("${SM_FFMPEG_SRC_LIST}" "" SM_FFMPEG_SRC_DIR)
       set(SM_FFMPEG_ROOT "${CMAKE_BINARY_DIR}/ffmpeg-prefix/src/ffmpeg-build")
       list(APPEND FFMPEG_CONFIGURE
         "${SM_FFMPEG_SRC_DIR}/configure"

@@ -8,6 +8,13 @@ function(sm_append_simple_target_property target property str)
   endif()
 endfunction()
 
+# Borrowed from http://stackoverflow.com/a/7172941/445373
+# TODO: Upgrade to cmake 3.x so that this function is not needed.
+function(sm_join values glue output)
+  string(REPLACE ";" "${glue}" _TMP_STR "${values}")
+  set(${output} "${_TMP_STR}" PARENT_SCOPE)
+endfunction()
+
 function(sm_add_compile_definition target def)
   sm_append_simple_target_property(${target} COMPILE_DEFINITIONS ${def})
 endfunction()
