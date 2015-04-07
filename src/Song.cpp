@@ -45,7 +45,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 225;
+const int FILE_CACHE_VERSION = 226;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -344,11 +344,11 @@ bool Song::LoadFromSongDir( RString sDir, bool load_autosave )
 			this->m_sSongFileName = sDir + songName;
 			// Continue on with a blank Song so that people can make adjustments using the editor.
 		}
-		TidyUpData(false, true);
-
 		// If edits are not cached, looking for them causes a substantial hit to
 		// loading time. -Kyz
 		LoadEditsFromSongDir(sDir);
+
+		TidyUpData(false, true);
 
 		// Don't save a cache file if the autosave is being loaded, because the
 		// cache file would contain the autosave filename. -Kyz
