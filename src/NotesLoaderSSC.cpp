@@ -352,25 +352,21 @@ void SetRadarValues(StepsTagInfo& info)
 {
 	if(info.from_cache || info.for_load_edit)
 	{
-		vector<RString> saValues;
-		split((*info.params)[1], ",", saValues, true);
-		int categories = NUM_RadarCategory;
-		if(info.song->m_fVersion < VERSION_RADAR_FAKE && !info.for_load_edit)
-		{ categories -= 1; }
-		if(saValues.size() == (unsigned int)categories * NUM_PLAYERS)
+		vector<RString> values;
+		split((*info.params)[1], ",", values, true);
+		// Instead of trying to use the version to figure out how many
+		// categories to expect, look at the number of values and split them
+		// evenly. -Kyz
+		size_t cats_per_player= values.size() / NUM_PlayerNumber;
+		RadarValues v[NUM_PLAYERS];
+		FOREACH_PlayerNumber(pn)
 		{
-			RadarValues v[NUM_PLAYERS];
-			FOREACH_PlayerNumber(pn)
+			for(size_t i= 0; i < cats_per_player; ++i)
 			{
-				// Can't use the foreach anymore due to flexible radar lines.
-				for(RadarCategory rc = (RadarCategory)0; rc < categories;
-						 enum_add<RadarCategory>(rc, +1))
-				{
-					v[pn][rc] = StringToFloat(saValues[pn*categories + rc]);
-				}
+				v[pn][i]= StringToFloat(values[pn * cats_per_player + i]);
 			}
-			info.steps->SetCachedRadarValues(v);
 		}
+		info.steps->SetCachedRadarValues(v);
 	}
 	else
 	{

@@ -32,6 +32,8 @@ const float VERSION_OFFSET_BEFORE_ATTACK = 0.72f;
 const float VERSION_CHART_NAME_TAG = 0.74f;
 /** @brief The version that introduced the cache switch tag. */
 const float VERSION_CACHE_SWITCH_TAG = 0.77f;
+/** @brief The version where note count was added as a radar category. */
+const float VERSION_RADAR_NOTECOUNT = 0.83f;
 
 /**
  * @brief The SSCLoader handles all of the parsing needed for .ssc files.

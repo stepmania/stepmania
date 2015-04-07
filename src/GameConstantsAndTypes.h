@@ -33,6 +33,7 @@ enum RadarCategory
 	RadarCategory_Air, /**< How much air is in the song? */
 	RadarCategory_Freeze, /**< How much freeze (holds) is in the song? */
 	RadarCategory_Chaos, /**< How much chaos is in the song? */
+	RadarCategory_Notes, /**< How many notes are in the song? */
 	RadarCategory_TapsAndHolds, /**< How many taps and holds are in the song? */
 	RadarCategory_Jumps, /**< How many jumps are in the song? */
 	RadarCategory_Holds, /**< How many holds are in the song? */
@@ -42,7 +43,8 @@ enum RadarCategory
 	RadarCategory_Lifts, /**< How many lifts are in the song? */
 	RadarCategory_Fakes, /**< How many fakes are in the song? */
 	// If you add another radar category, make sure you update
-	// NoteDataUtil::CalculateRadarValues to calculate it. -Kyz
+	// NoteDataUtil::CalculateRadarValues to calculate it.
+	// Also update NoteDataWithScoring::GetActualRadarValues. -Kyz
 	NUM_RadarCategory,	/**< The number of radar categories. */
 	RadarCategory_Invalid
 };

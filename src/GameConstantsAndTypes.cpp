@@ -30,6 +30,7 @@ static const char *RadarCategoryNames[] = {
 	"Air",
 	"Freeze",
 	"Chaos",
+	"Notes",
 	"TapsAndHolds",
 	"Jumps",
 	"Holds",

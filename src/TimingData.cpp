@@ -780,9 +780,21 @@ float TimingData::GetElapsedTimeInternal(GetBeatStarts& start, float beat,
 	float bps= GetBPMAtRow(start.last_row) / 60.0f;
 #define INC_INDEX(index) ++curr_segment; ++index;
 	bool find_marker= beat < FLT_MAX;
+	// Stops require this special kluge to handle the case where a stop and a
+	// warp are on the same row and the lookup table entry would be between
+	// the stop and the warp.  If that happens, then the last_time in the entry
+	// is pushed past the marker by the stop, so the marker can't be found and
+	// the step that is on that row comes up as a miss.
+	// So this kluge backs up the lookup table entry by one step if the last
+	// thing found was a stop. -Kyz
+	bool last_found_was_a_stop= false;
+	GetBeatStarts pre_stop_state= start;
+	unsigned int start_segment= curr_segment;
 
-	while(curr_segment < max_segment)
+	while(curr_segment < max_segment || curr_segment - start_segment <= 1)
 	{
+		last_found_was_a_stop= false;
+		pre_stop_state= start;
 		int event_row= INT_MAX;
 		int event_type= NOT_FOUND;
 		FindEvent(event_row, event_type, start, beat, find_marker, bpms, warps, stops,
@@ -802,6 +814,7 @@ float TimingData::GetElapsedTimeInternal(GetBeatStarts& start, float beat,
 				break;
 			case FOUND_STOP:
 			case FOUND_STOP_DELAY:
+				last_found_was_a_stop= true;
 				time_to_next_event= ToStop(stops[start.stop])->GetPause();
 				next_event_time= start.last_time + time_to_next_event;
 				start.last_time= next_event_time;
@@ -831,6 +844,10 @@ float TimingData::GetElapsedTimeInternal(GetBeatStarts& start, float beat,
 		start.last_row= event_row;
 	}
 #undef INC_INDEX
+	if(last_found_was_a_stop)
+	{
+		start= pre_stop_state;
+	}
 	return start.last_time;
 }
 
