@@ -962,7 +962,7 @@ void BrightnessOverlay::FadeToActualBrightness()
 	SetActualBrightness();
 }
 
-Background::Background()				{ m_pImpl = new BackgroundImpl; this->AddChild(m_pImpl); }
+Background::Background()				{ m_disable_draw= false; m_pImpl = new BackgroundImpl; this->AddChild(m_pImpl); }
 Background::~Background()				{ SAFE_DELETE( m_pImpl ); }
 void Background::Init()					{ m_pImpl->Init(); }
 void Background::LoadFromSong( const Song *pSong )	{ m_pImpl->LoadFromSong(pSong); }

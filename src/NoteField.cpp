@@ -40,6 +40,7 @@ NoteField::NoteField()
 {
 	m_pNoteData = NULL;
 	m_pCurDisplay = NULL;
+	m_drawing_board_primitive= false;
 
 	m_textMeasureNumber.LoadFromFont( THEME->GetPathF("NoteField","MeasureNumber") );
 	m_textMeasureNumber.SetZoom( 1.0f );
@@ -194,6 +195,12 @@ void NoteField::Init( const PlayerState* pPlayerState, float fYReverseOffsetPixe
 	{
 		SetZoom(pPlayerState->m_NotefieldZoom);
 	}
+	// Pass the player state info down to children so that they can set
+	// per-player things.  For example, if a screen filter is in the notefield
+	// board, this tells it what player it's for. -Kyz
+	Message msg("PlayerStateSet");
+	msg.SetParam("PlayerNumber", pPlayerState->m_PlayerNumber);
+	HandleMessage(msg);
 }
 
 void NoteField::Load( 
@@ -865,6 +872,31 @@ bool NoteField::IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTargets
 	return true;
 }
 
+void NoteField::CalcPixelsBeforeAndAfterTargets()
+{
+	const PlayerOptions& curr_options= m_pPlayerState->m_PlayerOptions.GetCurrent();
+	// Adjust draw range depending on some effects
+	m_FieldRenderArgs.draw_pixels_after_targets= m_iDrawDistanceAfterTargetsPixels;
+	// HACK: If boomerang and centered are on, then we want to draw much 
+	// earlier so that the notes don't pop on screen.
+	float centered_times_boomerang=
+		curr_options.m_fScrolls[PlayerOptions::SCROLL_CENTERED] *
+		curr_options.m_fAccels[PlayerOptions::ACCEL_BOOMERANG];
+	m_FieldRenderArgs.draw_pixels_after_targets +=
+		int(SCALE(centered_times_boomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2));
+	m_FieldRenderArgs.draw_pixels_before_targets =
+		m_iDrawDistanceBeforeTargetsPixels;
+
+	float draw_scale= 1;
+	draw_scale*= 1 + 0.5f * fabsf(curr_options.m_fPerspectiveTilt);
+	draw_scale*= 1 + fabsf(curr_options.m_fEffects[PlayerOptions::EFFECT_MINI]);
+
+	m_FieldRenderArgs.draw_pixels_after_targets=
+		(int)(m_FieldRenderArgs.draw_pixels_after_targets * draw_scale);
+	m_FieldRenderArgs.draw_pixels_before_targets=
+		(int)(m_FieldRenderArgs.draw_pixels_before_targets * draw_scale);
+}
+
 void NoteField::DrawPrimitives()
 {
 	//LOG->Trace( "NoteField::DrawPrimitives()" );
@@ -872,49 +904,36 @@ void NoteField::DrawPrimitives()
 	// This should be filled in on the first update.
 	ASSERT( m_pCurDisplay != NULL );
 
-	ArrowEffects::Update();
+	// ArrowEffects::Update call moved because having it happen once per
+	// NoteField (which means twice in two player) seemed wasteful. -Kyz
 
+	if(m_drawing_board_primitive)
+	{
+		CalcPixelsBeforeAndAfterTargets();
+		DrawBoard(m_FieldRenderArgs.draw_pixels_after_targets,
+			m_FieldRenderArgs.draw_pixels_before_targets);
+		return;
+	}
+	// Some might prefer an else block, instead of returning from the if, but I
+	// don't want to bump the indent on the entire remaining section. -Kyz
+
+	CalcPixelsBeforeAndAfterTargets();
 	NoteDisplayCols *cur = m_pCurDisplay;
-
-	const PlayerOptions &current_po = m_pPlayerState->m_PlayerOptions.GetCurrent();
-
-	// Adjust draw range depending on some effects
-	m_FieldRenderArgs.draw_pixels_after_targets= m_iDrawDistanceAfterTargetsPixels;
-	// HACK: If boomerang and centered are on, then we want to draw much 
-	// earlier so that the notes don't pop on screen.
-	float fCenteredTimesBoomerang = 
-		current_po.m_fScrolls[PlayerOptions::SCROLL_CENTERED] * 
-		current_po.m_fAccels[PlayerOptions::ACCEL_BOOMERANG];
-	m_FieldRenderArgs.draw_pixels_after_targets += int(SCALE( fCenteredTimesBoomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2 ));
-	m_FieldRenderArgs.draw_pixels_before_targets = m_iDrawDistanceBeforeTargetsPixels;
-
-	float fDrawScale = 1;
-	fDrawScale *= 1 + 0.5f * fabsf( current_po.m_fPerspectiveTilt );
-	fDrawScale *= 1 + fabsf( current_po.m_fEffects[PlayerOptions::EFFECT_MINI] );
-
-	m_FieldRenderArgs.draw_pixels_after_targets = (int)(m_FieldRenderArgs.draw_pixels_after_targets * fDrawScale);
-	m_FieldRenderArgs.draw_pixels_before_targets = (int)(m_FieldRenderArgs.draw_pixels_before_targets * fDrawScale);
-
-
 	// Probe for first and last notes on the screen
-	float fFirstBeatToDraw = FindFirstDisplayedBeat( m_pPlayerState, m_FieldRenderArgs.draw_pixels_after_targets );
-	float fLastBeatToDraw = FindLastDisplayedBeat( m_pPlayerState, m_FieldRenderArgs.draw_pixels_before_targets );
+	float first_beat_to_draw= FindFirstDisplayedBeat(
+		m_pPlayerState, m_FieldRenderArgs.draw_pixels_after_targets);
+	float last_beat_to_draw= FindLastDisplayedBeat(
+		m_pPlayerState, m_FieldRenderArgs.draw_pixels_before_targets);
 
-	m_pPlayerState->m_fLastDrawnBeat = fLastBeatToDraw;
+	m_pPlayerState->m_fLastDrawnBeat = last_beat_to_draw;
 
-	m_FieldRenderArgs.first_row  = BeatToNoteRow(fFirstBeatToDraw);
-	m_FieldRenderArgs.last_row   = BeatToNoteRow(fLastBeatToDraw);
+	m_FieldRenderArgs.first_row  = BeatToNoteRow(first_beat_to_draw);
+	m_FieldRenderArgs.last_row   = BeatToNoteRow(last_beat_to_draw);
 
-	//LOG->Trace( "start = %f.1, end = %f.1", fFirstBeatToDraw-fSongBeat, fLastBeatToDraw-fSongBeat );
+	//LOG->Trace( "start = %f.1, end = %f.1", first_beat_to_draw-fSongBeat, last_beat_to_draw-fSongBeat );
 	//LOG->Trace( "Drawing elements %d through %d", m_FieldRenderArgs.first_row, m_FieldRenderArgs.last_row );
 
-#define IS_ON_SCREEN( fBeat )  ( fFirstBeatToDraw <= (fBeat) && (fBeat) <= fLastBeatToDraw && IsOnScreen( fBeat, 0, m_FieldRenderArgs.draw_pixels_after_targets, m_FieldRenderArgs.draw_pixels_before_targets ) )
-
-	// Draw board
-	if( SHOW_BOARD )
-	{
-		DrawBoard( m_FieldRenderArgs.draw_pixels_after_targets, m_FieldRenderArgs.draw_pixels_before_targets );
-	}
+#define IS_ON_SCREEN(fBeat)  (first_beat_to_draw <= (fBeat) && (fBeat) <= last_beat_to_draw && IsOnScreen(fBeat, 0, m_FieldRenderArgs.draw_pixels_after_targets, m_FieldRenderArgs.draw_pixels_before_targets))
 
 	// Draw Receptors
 	{
@@ -1262,6 +1281,17 @@ void NoteField::DrawPrimitives()
 	}
 
 	cur->m_GhostArrowRow.Draw();
+}
+
+void NoteField::DrawBoardPrimitive()
+{
+	if(!SHOW_BOARD)
+	{
+		return;
+	}
+	m_drawing_board_primitive= true;
+	Draw();
+	m_drawing_board_primitive= false;
 }
 
 void NoteField::FadeToFail()

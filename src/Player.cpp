@@ -214,6 +214,7 @@ float Player::GetWindowSeconds( TimingWindow tw )
 
 Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 {
+	m_drawing_notefield_board= false;
 	m_bLoaded = false;
 
 	m_pPlayerState = NULL;
@@ -1510,10 +1511,30 @@ void Player::DrawPrimitives()
 		pn != GAMESTATE->GetMasterPlayerNumber() )
 		return;
 
+	bool draw_notefield= m_pNoteField && !IsOniDead();
+
+	const PlayerOptions& curr_options= m_pPlayerState->m_PlayerOptions.GetCurrent();
+	float tilt= curr_options.m_fPerspectiveTilt;
+	float skew= curr_options.m_fSkew;
+	float mini= curr_options.m_fEffects[PlayerOptions::EFFECT_MINI];
+	float center_y= GetY() + (GRAY_ARROWS_Y_STANDARD + GRAY_ARROWS_Y_REVERSE) / 2;
+	bool reverse= curr_options.GetReversePercentForColumn(0) > .5;
+
+	if(m_drawing_notefield_board)
+	{
+		// Ask the Notefield to draw its board primitive before everything else
+		// so that things drawn under the field aren't behind the opaque board.
+		// -Kyz
+		if(draw_notefield)
+		{
+			PlayerNoteFieldPositioner poser(this, GetX(), tilt, skew, mini, center_y, reverse);
+			m_pNoteField->DrawBoardPrimitive();
+		}
+		return;
+	}
+
 	// Draw these below everything else.
-	// xxx: if NoteField Board is enabled and COMBO_UNDER_FIELD, we really want
-	// the combo under the field but over the notefield board. -aj
-	if( COMBO_UNDER_FIELD && m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind == 0 )
+	if( COMBO_UNDER_FIELD && curr_options.m_fBlind == 0 )
 	{
 		if( m_sprCombo )
 			m_sprCombo->Draw();
@@ -1528,48 +1549,14 @@ void Player::DrawPrimitives()
 	if( HOLD_JUDGMENTS_UNDER_FIELD )
 		DrawHoldJudgments();
 
-	float fTilt = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fPerspectiveTilt;
-	float fSkew = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fSkew;
-	bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(0)>0.5;
-
-	DISPLAY->CameraPushMatrix();
-	DISPLAY->PushMatrix();
-
-	float fCenterY = this->GetY()+(GRAY_ARROWS_Y_STANDARD+GRAY_ARROWS_Y_REVERSE)/2;
-
-	DISPLAY->LoadMenuPerspective( 45, SCREEN_WIDTH, SCREEN_HEIGHT, SCALE(fSkew,0.f,1.f,this->GetX(),SCREEN_CENTER_X), fCenterY );
-
-	if( m_pNoteField && !IsOniDead() )
+	if(draw_notefield)
 	{
-		float fOriginalY = 	m_pNoteField->GetY();
-
-		float fTiltDegrees = SCALE(fTilt,-1.f,+1.f,+30,-30) * (bReverse?-1:1);
-
-		float fZoom = SCALE( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_MINI], 0.f, 1.f, 1.f, 0.5f );
-		if( fTilt > 0 )
-			fZoom *= SCALE( fTilt, 0.f, 1.f, 1.f, 0.9f );
-		else
-			fZoom *= SCALE( fTilt, 0.f, -1.f, 1.f, 0.9f );
-
-		float fYOffset;
-		if( fTilt > 0 )
-			fYOffset = SCALE( fTilt, 0.f, 1.f, 0.f, -45.f ) * (bReverse?-1:1);
-		else
-			fYOffset = SCALE( fTilt, 0.f, -1.f, 0.f, -20.f ) * (bReverse?-1:1);
-
-		m_pNoteField->SetY( fOriginalY + fYOffset );
-		m_pNoteField->SetZoom( fZoom );
-		m_pNoteField->SetRotationX( fTiltDegrees );
+		PlayerNoteFieldPositioner poser(this, GetX(), tilt, skew, mini, center_y, reverse);
 		m_pNoteField->Draw();
-
-		m_pNoteField->SetY( fOriginalY );
 	}
 
-	DISPLAY->CameraPopMatrix();
-	DISPLAY->PopMatrix();
-
 	// m_pNoteField->m_sprBoard->GetVisible()
-	if( !COMBO_UNDER_FIELD && m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind == 0 )
+	if( !COMBO_UNDER_FIELD && curr_options.m_fBlind == 0 )
 		if( m_sprCombo )
 			m_sprCombo->Draw();
 
@@ -1578,6 +1565,61 @@ void Player::DrawPrimitives()
 
 	if( !(bool)HOLD_JUDGMENTS_UNDER_FIELD )
 		DrawHoldJudgments();
+}
+
+void Player::PushPlayerMatrix(float x, float skew, float center_y)
+{
+	DISPLAY->CameraPushMatrix();
+	DISPLAY->PushMatrix();
+	DISPLAY->LoadMenuPerspective(45, SCREEN_WIDTH, SCREEN_HEIGHT,
+		SCALE(skew, 0.1f, 1.0f, x, SCREEN_CENTER_X), center_y);
+}
+
+void Player::PopPlayerMatrix()
+{
+	DISPLAY->CameraPopMatrix();
+	DISPLAY->PopMatrix();
+}
+
+void Player::DrawNoteFieldBoard()
+{
+	m_drawing_notefield_board= true;
+	Draw();
+	m_drawing_notefield_board= false;
+}
+
+Player::PlayerNoteFieldPositioner::PlayerNoteFieldPositioner(
+	Player* p, float x, float tilt, float skew, float mini, float center_y, bool reverse)
+	:player(p)
+{
+	player->PushPlayerMatrix(x, skew, center_y);
+	float reverse_mult= (reverse ? -1 : 1);
+	original_y= player->m_pNoteField->GetY();
+	float tilt_degrees= SCALE(tilt, -1.f, +1.f, +30, -30) * reverse_mult;
+	float zoom= SCALE(mini, 0.f, 1.f, 1.f, .5f);
+	// Something strange going on here.  Notice that the range for tilt's
+	// effect on y_offset goes to -45 when positive, but -20 when negative.
+	// I don't know why it's done this why, simply preserving old behavior.
+	// -Kyz
+	if(tilt > 0)
+	{
+		zoom*= SCALE(tilt, 0.f, 1.f, 1.f, 0.9f);
+		y_offset= SCALE(tilt, 0.f, 1.f, 0.f, -45.f) * reverse_mult;
+	}
+	else
+	{
+		zoom*= SCALE(tilt, 0.f, -1.f, 1.f, 0.9f);
+		y_offset= SCALE(tilt, 0.f, -1.f, 0.f, -20.f) * reverse_mult;
+	}
+	player->m_pNoteField->SetY(original_y + y_offset);
+	player->m_pNoteField->SetZoom(zoom);
+	player->m_pNoteField->SetRotationX(tilt_degrees);
+}
+
+Player::PlayerNoteFieldPositioner::~PlayerNoteFieldPositioner()
+{
+	player->m_pNoteField->SetY(original_y);
+	player->PopPlayerMatrix();
 }
 
 void Player::DrawTapJudgments()
