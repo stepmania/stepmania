@@ -108,6 +108,16 @@ bool ScreenTextEntry::FloatValidate( const RString &sAnswer, RString &sErrorOut 
 	return false;
 }
 
+static LocalizedString INVALID_INT( "ScreenTextEntry", "\"%s\" is an invalid integer value." );
+bool ScreenTextEntry::IntValidate( const RString &sAnswer, RString &sErrorOut )
+{
+	int f;
+	if(sAnswer >> f)
+		return true;
+	sErrorOut = ssprintf( INVALID_INT.GetValue(), sAnswer.c_str() );
+	return false;
+}
+
 bool ScreenTextEntry::s_bCancelledLast = false;
 
 /* Handle UTF-8. Right now, we need to at least be able to backspace a whole

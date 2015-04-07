@@ -268,6 +268,10 @@ protected:
 	/** @brief Display the TimingData menu for editing song and step timing. */
 	void DisplayTimingMenu();
 
+	bool m_timing_is_being_copied; // Instead of being shifted.
+	int m_timing_rows_being_shitted; // How far the timing is being shitted.
+	void DisplayTimingChangeMenu();
+
 	EditState		m_EditState;
 
 	Song*			m_pSong;
@@ -603,14 +607,36 @@ public:
 		speed_mode,
 		scroll,
 		fake,
+		shift_timing_in_region_down,
+		shift_timing_in_region_up,
+		copy_timing_in_region,
+		paste_timing_from_clip,
 		copy_full_timing,
 		paste_full_timing,
 		erase_step_timing,
 		NUM_TIMING_DATA_INFORMATION_CHOICES
 	};
-	
-	void HandleTimingDataInformationChoice (TimingDataInformationChoice c, 
+	void HandleTimingDataInformationChoice (TimingDataInformationChoice c,
 						const vector<int> &iAnswers );
+
+	enum TimingDataChangeChoice
+	{
+		timing_all,
+		timing_bpm,
+		timing_stop,
+		timing_delay,
+		timing_time_sig,
+		timing_warp,
+		timing_label,
+		timing_tickcount,
+		timing_combo,
+		timing_speed,
+		timing_scroll,
+		timing_fake,
+		NUM_TimingDataChangeChoices
+	};
+	void HandleTimingDataChangeChoice(TimingDataChangeChoice choice,
+		const vector<int>& answers);
 
 	enum BGChangeChoice
 	{

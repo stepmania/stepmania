@@ -97,6 +97,7 @@ public:
 	void LoadFromTextEntrySettings( const TextEntrySettings &settings );
 
 	static bool FloatValidate( const RString &sAnswer, RString &sErrorOut );
+	static bool IntValidate( const RString &sAnswer, RString &sErrorOut );
 
 	virtual void Init();
 	virtual void BeginScreen();
