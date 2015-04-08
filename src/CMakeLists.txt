@@ -151,13 +151,6 @@ if(NOT APPLE)
   source_group("" FILES "Main.cpp")
 endif()
 
-# TODO: Reconsile the OS dependent naming scheme.
-if (WIN32 OR APPLE)
-  set(SM_EXE_NAME "StepMania")
-else()
-  set(SM_EXE_NAME "stepmania")
-endif()
-
 # Configure generated files here.
 configure_file("${SM_XCODE_DIR}/Info.plist.in.xml" "${SM_XCODE_DIR}/Info.StepMania.plist")
 

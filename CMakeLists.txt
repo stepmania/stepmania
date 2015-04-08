@@ -15,6 +15,13 @@ set(SM_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Build")
 set(SM_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(SM_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
+# TODO: Reconsile the OS dependent naming scheme.
+if (WIN32 OR APPLE)
+  set(SM_EXE_NAME "StepMania")
+else()
+  set(SM_EXE_NAME "stepmania")
+endif()
+
 # Some OS specific helpers.
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
   set(LINUX TRUE)
@@ -33,10 +40,6 @@ if (CMAKE_SYSTEM_NAME MATCHES "BSD")
 else()
   set(BSD FALSE)
 endif()
-
-# Some eventual distribution stuff.
-set(CPACK_PACKAGE_NAME "StepMania")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Rhythm Game Simulator")
 
 # Allow for finding our libraries in a standard location.
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules/")
@@ -340,3 +343,12 @@ add_subdirectory(extern)
 # The internal libraries and eventual executable to be used.
 add_subdirectory(src)
 
+# Define installer based items for cpack.
+set(CPACK_PACKAGE_NAME "${SM_EXE_NAME}")
+set(CPACK_PACKAGE_VENDOR "StepMania")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Rhythm Game Simulator")
+set(CPACK_PACKAGE_VERSION_MAJOR "${SM_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${SM_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${SM_VERSION_PATCH}")
+set(CPACK_PACKAGE_VERSION "${SM_VERSION_TRADITIONAL}")
+include(CPack)
