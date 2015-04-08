@@ -800,6 +800,10 @@ public:
 	static int PlayOnce( T* p, lua_State *L )
 	{
 		RString sPath = SArg(1);
+		if(lua_toboolean(L, 2) && PREFSMAN->m_MuteActions)
+		{
+			COMMON_RETURN_SELF;
+		}
 		p->PlayOnce( sPath );
 		COMMON_RETURN_SELF;
 	}

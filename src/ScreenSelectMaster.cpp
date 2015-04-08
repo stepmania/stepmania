@@ -925,7 +925,7 @@ bool ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 	// double press is enabled and the player hasn't made their first press
 	if(DOUBLE_PRESS_TO_SELECT && !m_bDoubleChoice[pn])
 	{
-		m_soundStart.PlayCopy();
+		m_soundStart.PlayCopy(true);
 		m_bDoubleChoice[pn] = true;
 
 		if(SHOW_SCROLLER)
@@ -954,7 +954,7 @@ bool ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 
 	// Play a copy of the sound, so it'll finish playing even if we leave the screen immediately.
 	if( mc->m_sSoundPath.empty() && !m_bDoubleChoiceNoSound )
-		m_soundStart.PlayCopy();
+		m_soundStart.PlayCopy(true);
 
 	if( mc->m_sScreen.empty() )
 	{

@@ -831,7 +831,7 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 	if( iCurRow < 0 )
 	{
 		// this shouldn't be happening, but it is, so we need to bail out. -aj
-		m_SoundStart.PlayCopy();
+		m_SoundStart.PlayCopy(true);
 		this->BeginFadingOut();
 		return;
 	}
@@ -875,7 +875,7 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 
 		if( bEndThisScreen )
 		{
-			m_SoundStart.PlayCopy();
+			m_SoundStart.PlayCopy(true);
 			this->BeginFadingOut();
 			return;
 		}

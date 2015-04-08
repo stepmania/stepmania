@@ -1237,8 +1237,8 @@ save yourself some time, copy this for undocumented things:
 	<Function name='play' return='void' arguments=''>
 		Starts the Actor's movement. (Usually used for Sprites or Models.)
 	</Function>
-	<Function name='playcommand' return='void' arguments='string sCommandName'>
-		Plays a command named <code>sCommandName</code>.
+	<Function name='playcommand' return='void' arguments='string sCommandName, table params'>
+		Plays a command named <code>sCommandName</code>.  <code>params</code> is passed to the command as an argument if it is a table.
 	</Function>
 	<Function name='player' theme='_fallback' return='void' arguments='PlayerNumber p'>
 		[02 Actor.lua] Sets the visibility of the Actor based on <code>p</code> being a human player.
@@ -1802,10 +1802,14 @@ save yourself some time, copy this for undocumented things:
 	<Description>
 		This Actor represents a playable sound. There are two attributes that can be set on load.<br />
 		* <code>SupportPan</code> - Let the sound pan from side to side.<br />
-		* <code>SupportRateChanging</code> - Let the sound change rate and pitch.
+		* <code>SupportRateChanging</code> - Let the sound change rate and pitch.<br />
+		* <code>IsAction</code> - If true, the sound is an action sound, and will be muted if the MuteActions preference is turned on.
 	</Description>
 	<Function name='get' return='RageSound' arguments=''>
 		Returns the <Link class='RageSound' /> that can be played by this Actor.
+	</Function>
+	<Function name='get_is_action' return='bool' arguments=''>
+		Returns whether the sound is an action.
 	</Function>
 	<Function name='load' return='void' arguments='string sPath'>
 		Loads the sound at <code>sPath</code>.
@@ -1818,6 +1822,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='playforplayer' theme='_fallback' return='void' arguments='PlayerNumber pn'>
 		[02 Sound.lua] Plays the sound on the given player's side. You must set <code>SupportPan = true</code> on load.
+	</Function>
+	<Function name='set_is_action' return='' arguments='bool is_action'>
+		Sets whether the sound is an action.
 	</Function>
 	<Function name='stop' return='void' arguments=''>
 		Stops the sound.
@@ -2460,8 +2467,8 @@ save yourself some time, copy this for undocumented things:
 		tells the sound manager to apply the current music rate. If <code>alignBeat</code> 
 		is true or nil, the length is automatically adjusted to cover an integer number of beats.
 	</Function>
-	<Function name='PlayOnce' return='void' arguments='string sPath'>
-		Play the sound at <code>sPath</code> one time.
+	<Function name='PlayOnce' return='void' arguments='string sPath, bool is_action'>
+		Play the sound at <code>sPath</code> one time.  <code>is_action</code> is optional, if it is true, the sound is an action sound, and will be muted if the MuteActions preference is turned on.
 	</Function>
 	<Function name='StopMusic' return='void' arguments='void'>
 		Stops the music.

@@ -406,7 +406,7 @@ void RageSound::Play(bool is_action, const RageSoundParams *pParams)
 
 	if( IsPlaying() )
 	{
-		PlayCopy( pParams );
+		PlayCopy(is_action, pParams);
 		return;
 	}
 
@@ -416,8 +416,12 @@ void RageSound::Play(bool is_action, const RageSoundParams *pParams)
 	StartPlaying();
 }
 
-void RageSound::PlayCopy( const RageSoundParams *pParams ) const
+void RageSound::PlayCopy(bool is_action, const RageSoundParams *pParams) const
 {
+	if(is_action && PREFSMAN->m_MuteActions)
+	{
+		return;
+	}
 	RageSound *pSound = new RageSound( *this );
 
 	if( pParams )

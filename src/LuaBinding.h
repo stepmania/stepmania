@@ -165,6 +165,8 @@ public:
 
 #define ADD_METHOD( method_name ) \
 	AddMethod( #method_name, method_name )
+#define ADD_GET_SET_METHODS(method_name) \
+	ADD_METHOD(get_##method_name); ADD_METHOD(set_##method_name);
 
 #define LUA_REGISTER_NAMESPACE( T ) \
 	static void Register##T( lua_State *L ) { luaL_register( L, #T, T##Table ); lua_pop( L, 1 ); } \

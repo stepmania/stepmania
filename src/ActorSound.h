@@ -7,6 +7,9 @@
 class ActorSound: public Actor
 {
 public:
+	ActorSound()
+		:m_is_action(false)
+	{}
 	virtual ~ActorSound() { }
 	virtual ActorSound *Copy() const;
 
@@ -16,6 +19,8 @@ public:
 	void Stop();
 	void LoadFromNode( const XNode* pNode );
 	void PushSound( lua_State *L ) { m_Sound.PushSelf( L ); }
+
+	bool m_is_action;
 
 	//
 	// Lua
