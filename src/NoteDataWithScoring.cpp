@@ -2,6 +2,7 @@
 #include "NoteDataWithScoring.h"
 #include "NoteData.h"
 #include "PlayerStageStats.h"
+#include "Game.h"
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
 #include "ThemeMetric.h"
@@ -156,13 +157,8 @@ float GetActualVoltageRadarValue( const NoteData &in, float fSongSeconds, const 
 	 * varies depending on the mode and score keeper. Instead, let's use the
 	 * length of the longest recorded combo. This is only subtly different:
 	 * it's the percent of the song the longest combo took to get. */
-	// FIXME:
-	// If MaxCombo.m_fSizeSeconds is used, it is wrong (too short) for any song
-	// where the last second is after the last step.  However, calculating the
-	// max combo possible would require consulting the timing data on every step
-	// for combo segments and generally be a painful waste of effort. -Kyz
 	const PlayerStageStats::Combo_t MaxCombo = pss.GetMaxCombo();
-	float fComboPercent = SCALE( MaxCombo.m_fSizeSeconds, 0, pss.m_fLastSecond-pss.m_fFirstSecond, 0.0f, 1.0f );
+	float fComboPercent = SCALE(MaxCombo.m_fSizeSeconds, 0, fSongSeconds, 0.0f, 1.0f);
 	return clamp( fComboPercent, 0.0f, 1.0f );
 }
 
@@ -264,6 +260,15 @@ static void DoRowEndRadarActualCalc(garv_state& state, RadarValues& out)
 	}
 }
 
+static void UpdateHittable(int curr_row, int& first, int& last)
+{
+	if(first == -1)
+	{
+		first= curr_row;
+	}
+	last= curr_row;
+}
+
 void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 	const PlayerStageStats &pss, float song_seconds, RadarValues& out)
 {
@@ -279,6 +284,15 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 	NoteData::all_tracks_const_iterator curr_note=
 		in.GetTapNoteRangeAllTracks(0, MAX_NOTE_ROW);
 	TimingData* timing= GAMESTATE->GetProcessedTimingData();
+	// first_hittable_row and last_hittable_row exist so that
+	// GetActualVoltageRadarValue can be passed the correct song length.
+	// GetActualVoltageRadarValue scores based on the max combo, a full combo
+	// is a full voltage score.  The song length is used instead of trying to
+	// figure out the max combo for the song because rolls mean there isn't a
+	// limit to the max combo. -Kyz
+	int first_hittable_row= -1;
+	int last_hittable_row= -1;
+	bool tick_holds= GAMESTATE->GetCurrentGame()->m_bTickHolds;
 
 	while(!curr_note.IsAtEnd())
 	{
@@ -307,12 +321,22 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 		{
 			switch(curr_note->type)
 			{
+				case TapNoteType_HoldTail:
+					// If there are tick holds, then the hold tail needs to be counted
+					// in last_hittable_row because that's where the combo will end.
+					// -Kyz
+					if(tick_holds)
+					{
+						UpdateHittable(state.curr_row, first_hittable_row, last_hittable_row);
+					}
+					break;
 				case TapNoteType_Tap:
 				case TapNoteType_HoldHead:
-					// HoldTails and Attacks are counted by IsTap. -Kyz
-				case TapNoteType_HoldTail:
+					// HoldTails and Attacks are counted by IsTap.  But it doesn't
+					// make sense to count HoldTails as hittable notes. -Kyz
 				case TapNoteType_Attack:
 				case TapNoteType_Lift:
+					UpdateHittable(state.curr_row, first_hittable_row, last_hittable_row);
 					++state.num_notes_on_curr_row;
 					state.notes_hit_for_stream+= (curr_note->result.tns >= state.stream_tns);
 					state.notes_hit+= (curr_note->result.tns >= state.taps_tns);
@@ -362,6 +386,9 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 	int jump_count= out[RadarCategory_Jumps];
 	int hold_count= out[RadarCategory_Holds];
 	int tap_count= out[RadarCategory_TapsAndHolds];
+	float hittable_steps_length= max(0, 
+		timing->GetElapsedTimeFromBeat(NoteRowToBeat(last_hittable_row)) -
+		timing->GetElapsedTimeFromBeat(NoteRowToBeat(first_hittable_row)));
 	// The for loop and the assert are used to ensure that all fields of 
 	// RadarValue get set in here.
 	FOREACH_ENUM(RadarCategory, rc)
@@ -372,7 +399,7 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 				out[rc]= clamp(float(state.notes_hit_for_stream) / note_count, 0.0f, 1.0f);
 				break;
 			case RadarCategory_Voltage:
-				out[rc]= GetActualVoltageRadarValue(in, song_seconds, pss);
+				out[rc]= GetActualVoltageRadarValue(in, hittable_steps_length, pss);
 				break;
 			case RadarCategory_Air:
 				out[rc]= clamp(float(state.jumps_hit_for_air) / jump_count, 0.0f, 1.0f);

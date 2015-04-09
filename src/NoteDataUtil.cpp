@@ -1066,8 +1066,8 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 					// Lifts have to be counted with taps for them to be added to max dp
 					// correctly. -Kyz
 				case TapNoteType_Lift:
-					// HoldTails and Attacks are counted by IsTap. -Kyz
-				case TapNoteType_HoldTail:
+					// HoldTails and Attacks are counted by IsTap.  But it doesn't
+					// make sense to count HoldTails as hittable notes. -Kyz
 				case TapNoteType_Attack:
 					++out[RadarCategory_Notes];
 					++state.num_notes_on_curr_row;
