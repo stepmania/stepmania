@@ -572,14 +572,9 @@ endif()
 target_include_directories("${SM_EXE_NAME}" PUBLIC ${SM_INCLUDE_DIRS})
 
 if(WIN32)
-  # TODO: Look forward to 64-bit builds. Also, Find a way to not need to hardcode this.
-  set(SM_INSTALL_DESTINATION "C:/Program Files (x86)/StepMania 5")
-elseif(APPLE)
-  # TODO: Confirm if anything special is needed. Most Mac apps are just portable .app folders.
-  set(SM_INSTALL_DESTINATION "")
+  set(SM_INSTALL_DESTINATION "StepMania 5")
 else()
-  # TODO: Allow for a more flexible system. Good luck convincing old users of that.
-  set(SM_INSTALL_DESTINATION "/opt/stepmania-5.0")
+  set(SM_INSTALL_DESTINATION "stepmania-5.0")
 endif()
 
 if(NOT APPLE)
