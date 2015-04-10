@@ -336,9 +336,28 @@ bool StepsID::operator<( const StepsID &rhs ) const
 	COMP(st);
 	COMP(dc);
 	COMP(sDescription);
-	COMP(uHash);
+	// See explanation in class declaration. -Kyz
+	if(uHash != 0 && rhs.uHash != 0)
+	{
+		COMP(uHash);
+	}
 #undef COMP
 	return false;
+}
+
+bool StepsID::operator==(const StepsID &rhs) const
+{
+#define COMP(a) if(a != rhs.a) return false;
+	COMP(st);
+	COMP(dc);
+	COMP(sDescription);
+	// See explanation in class declaration. -Kyz
+	if(uHash != 0 && rhs.uHash != 0)
+	{
+		COMP(uHash);
+	}
+#undef COMP
+	return true;
 }
 
 /*
