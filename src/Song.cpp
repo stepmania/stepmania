@@ -316,6 +316,13 @@ bool Song::LoadFromSongDir( RString sDir, bool load_autosave )
 			loaderSM.LoadFromSimfile( sCacheFilePath, *this, true );
 			loaderSM.TidyUpData( *this, true );
 		}
+		if(m_sMainTitle == "" || m_sMusicFile == "")
+		{
+			LOG->Warn("Main title or music file for '%s' came up blank, forced to fall back on TidyUpData to fix title and paths.  Do not use # or ; in a song title.", m_sSongDir.c_str());
+			// Tell TidyUpData that it's not loaded from the cache because it needs
+			// to hit the song folder to find the files that weren't found. -Kyz
+			TidyUpData(false, false);
+		}
 	}
 	else
 	{
