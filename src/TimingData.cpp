@@ -60,7 +60,7 @@ void TimingData::PrepareLookup()
 	// lookups would probably cause FindEntryInLookup to return the wrong
 	// thing.  So release the lookups. -Kyz
 	ReleaseLookup();
-	const unsigned int segments_per_lookup= 32;
+	const unsigned int segments_per_lookup= 16;
 	const vector<TimingSegment*>* segs= m_avpTimingSegments;
 	const vector<TimingSegment*>& bpms= segs[SEGMENT_BPM];
 	const vector<TimingSegment*>& warps= segs[SEGMENT_WARP];
@@ -86,6 +86,13 @@ void TimingData::PrepareLookup()
 		float time= GetElapsedTimeInternal(time_start, FLT_MAX, curr_segment);
 		m_time_start_lookup.push_back(lookup_item_t(NoteRowToBeat(time_start.last_row), time_start));
 	}
+	// If there are less than two entries, then FindEntryInLookup in lookup
+	// will always decide there's no appropriate entry.  So clear the table.
+	// -Kyz
+	if(m_beat_start_lookup.size() < 2)
+	{
+		ReleaseLookup();
+	}
 	// DumpLookupTables();
 }
 
@@ -105,15 +112,37 @@ void TimingData::ReleaseLookup()
 #undef CLEAR_LOOKUP
 }
 
+RString SegInfoStr(const vector<TimingSegment*>& segs, unsigned int index, const RString& name)
+{
+	if(index < segs.size())
+	{
+		return ssprintf("%s: %d at %d", name.c_str(), index, segs[index]->GetRow());
+	}
+	return ssprintf("%s: %d at end", name.c_str(), index);
+}
+
 void TimingData::DumpOneTable(const beat_start_lookup_t& lookup, const RString& name)
 {
+	const vector<TimingSegment*>* segs= m_avpTimingSegments;
+	const vector<TimingSegment*>& bpms= segs[SEGMENT_BPM];
+	const vector<TimingSegment*>& warps= segs[SEGMENT_WARP];
+	const vector<TimingSegment*>& stops= segs[SEGMENT_STOP];
+	const vector<TimingSegment*>& delays= segs[SEGMENT_DELAY];
 	LOG->Trace("%s lookup table:", name.c_str());
 	for(size_t lit= 0; lit < lookup.size(); ++lit)
 	{
 		const lookup_item_t& item= lookup[lit];
 		const GetBeatStarts& starts= item.second;
 		LOG->Trace("%zu: %f", lit, item.first);
-		LOG->Trace("  bpm: %d, warp: %d, stop: %d, delay: %d, last_row: %d, last_time: %f, warp_destination: %f, is_warping: %d", starts.bpm, starts.warp, starts.stop, starts.delay, starts.last_row, starts.last_time, starts.warp_destination, starts.is_warping);
+		RString str= ssprintf("  %s, %s, %s, %s,\n"
+			"  last_row: %d, last_time: %.3f,\n"
+			"  warp_destination: %.3f, is_warping: %d",
+			SegInfoStr(bpms, starts.bpm, "bpm").c_str(),
+			SegInfoStr(warps, starts.warp, "warp").c_str(),
+			SegInfoStr(stops, starts.stop, "stop").c_str(),
+			SegInfoStr(delays, starts.delay, "delay").c_str(),
+			starts.last_row, starts.last_time, starts.warp_destination, starts.is_warping);
+		LOG->Trace(str.c_str());
 	}
 }
 
@@ -138,6 +167,11 @@ TimingData::beat_start_lookup_t::const_iterator FindEntryInLookup(
 	{
 		return lookup.end();
 	}
+	if(lookup[upper].first < entry)
+	{
+		// See explanation at the end of this function. -Kyz
+		return lookup.begin() + upper - 1;
+	}
 	while(upper - lower > 1)
 	{
 		size_t next= (upper + lower) / 2;
@@ -155,7 +189,15 @@ TimingData::beat_start_lookup_t::const_iterator FindEntryInLookup(
 			break;
 		}
 	}
-	return lookup.begin() + lower;
+	// If the time or beat being looked up is close enough to the starting
+	// point that is returned, such as putting the time inside a stop or delay,
+	// then it can make arrows unhittable.  So always return the entry before
+	// the closest one to prevent that. -Kyz
+	if(lower == 0)
+	{
+		return lookup.end();
+	}
+	return lookup.begin() + lower - 1;
 }
 
 bool TimingData::empty() const
@@ -847,21 +889,9 @@ float TimingData::GetElapsedTimeInternal(GetBeatStarts& start, float beat,
 	float bps= GetBPMAtRow(start.last_row) / 60.0f;
 #define INC_INDEX(index) ++curr_segment; ++index;
 	bool find_marker= beat < FLT_MAX;
-	// Stops require this special kluge to handle the case where a stop and a
-	// warp are on the same row and the lookup table entry would be between
-	// the stop and the warp.  If that happens, then the last_time in the entry
-	// is pushed past the marker by the stop, so the marker can't be found and
-	// the step that is on that row comes up as a miss.
-	// So this kluge backs up the lookup table entry by one step if the last
-	// thing found was a stop. -Kyz
-	bool last_found_was_a_stop= false;
-	GetBeatStarts pre_stop_state= start;
-	unsigned int start_segment= curr_segment;
 
-	while(curr_segment < max_segment || curr_segment - start_segment <= 1)
+	while(curr_segment < max_segment)
 	{
-		last_found_was_a_stop= false;
-		pre_stop_state= start;
 		int event_row= INT_MAX;
 		int event_type= NOT_FOUND;
 		FindEvent(event_row, event_type, start, beat, find_marker, bpms, warps, stops,
@@ -881,7 +911,6 @@ float TimingData::GetElapsedTimeInternal(GetBeatStarts& start, float beat,
 				break;
 			case FOUND_STOP:
 			case FOUND_STOP_DELAY:
-				last_found_was_a_stop= true;
 				time_to_next_event= ToStop(stops[start.stop])->GetPause();
 				next_event_time= start.last_time + time_to_next_event;
 				start.last_time= next_event_time;
@@ -911,10 +940,6 @@ float TimingData::GetElapsedTimeInternal(GetBeatStarts& start, float beat,
 		start.last_row= event_row;
 	}
 #undef INC_INDEX
-	if(last_found_was_a_stop)
-	{
-		start= pre_stop_state;
-	}
 	return start.last_time;
 }
 
