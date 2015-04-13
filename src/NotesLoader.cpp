@@ -35,8 +35,7 @@ bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &Bl
 	if( !list.empty() )
 	{
 		if( !loaderSSC.LoadFromDir( sPath, out, load_autosave ) )
-			return false;
-		loaderSSC.TidyUpData( out, false );
+		{ return false; }
 		return true;
 	}
 	SMALoader loaderSMA;

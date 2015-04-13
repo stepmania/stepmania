@@ -6133,7 +6133,11 @@ void ScreenEdit::RevertFromDisk()
 	id.FromSteps( GAMESTATE->m_pCurSteps[PLAYER_1] );
 	ASSERT( id.IsValid() );
 
-	GAMESTATE->m_pCurSong->ReloadFromSongDir( GAMESTATE->m_pCurSong->GetSongDir() );
+	// If m_bInStepEditor is true while the song is reloaded, it screws up
+	// loading and results in the steps being cleared.  -Kyz
+	GAMESTATE->m_bInStepEditor= false;
+	GAMESTATE->m_pCurSong->ReloadFromSongDir();
+	GAMESTATE->m_bInStepEditor= true;
 
 	Steps *pNewSteps = id.ToSteps( GAMESTATE->m_pCurSong, true );
 	if( !pNewSteps )
