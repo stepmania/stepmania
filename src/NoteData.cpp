@@ -89,7 +89,7 @@ void NoteData::ClearRangeForTrack( int rowBegin, int rowEnd, int iTrack )
 	{
 		NoteData::TrackMap::iterator prev = lEnd;
 		--prev;
-		TapNote tn = lBegin->second;
+		TapNote tn = prev->second;
 		int iRow = prev->first;
 		if( tn.type == TapNoteType_HoldHead && iRow + tn.iDuration > rowEnd )
 		{
