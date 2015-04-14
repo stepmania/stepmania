@@ -502,8 +502,14 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 		return false; // don't care
 
 	// Handle late joining
-	if( m_SelectionState != SelectionState_Finalized  &&  input.MenuI == GAME_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
+	// If the other player is allowed to join on the extra stage, then the
+	// summary screen will crash on invalid stage stats. -Kyz
+	if(m_SelectionState != SelectionState_Finalized &&
+		input.MenuI == GAME_BUTTON_START && input.type == IET_FIRST_PRESS &&
+		!GAMESTATE->IsAnExtraStage() && GAMESTATE->JoinInput(input.pn))
+	{
 		return true; // don't handle this press again below
+	}
 
 	if( !GAMESTATE->IsHumanPlayer(input.pn) )
 		return false;
