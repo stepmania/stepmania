@@ -256,6 +256,10 @@ elseif(LINUX)
   endif()
 
   if(WITH_FFMPEG)
+    if(WITH_LIBVA)
+      find_package(VA)
+    endif()
+
     if (WITH_SYSTEM_FFMPEG)
       find_package("FFMPEG")
       if(NOT FFMPEG_FOUND)
@@ -290,6 +294,12 @@ elseif(LINUX)
       if (NOT WITH_EXTERNAL_WARNINGS)
         list(APPEND FFMPEG_CONFIGURE
           "--extra-cflags=-w"
+        )
+      endif()
+
+      if(WITH_LIBVA AND VA_FOUND)
+        list(APPEND FFMPEG_CONFIGURE
+          "--extra-ldflags=-lva"
         )
       endif()
 

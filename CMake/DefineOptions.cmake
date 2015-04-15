@@ -26,6 +26,7 @@ else()
     option(WITH_FFMPEG "Build with FFMPEG." ON)
     # Builder beware: later versions of ffmpeg may break!
     option(WITH_SYSTEM_FFMPEG "Build with the system's FFMPEG." OFF)
+    option(WITH_LIBVA "Build with libVa support for Video Acceleration." OFF)
     option(WITH_TTY "Build with Linux TTY Input Support." OFF)
     option(WITH_PROFILING "Build with Profiling Support." OFF)
     option(WITH_GLES2 "Build with OpenGL ES 2.0 Support." ON)
