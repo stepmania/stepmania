@@ -456,6 +456,10 @@ else() # Unix / Linux
         "${SM_FFMPEG_ROOT}/libavutil/libavutil.a"
       )
     endif()
+
+    if(WITH_LIBVA AND VA_FOUND)
+      list(APPEND SMDATA_LINK_LIB ${VA_LIBRARY})
+    endif()
   endif()
 
   list(APPEND SMDATA_LINK_LIB
@@ -525,6 +529,7 @@ else() # Unix / Linux
   list(APPEND SMDATA_LINK_LIB
     ${XRANDR_LIBRARIES}
   )
+
   list(REMOVE_ITEM SMDATA_LINK_LIB "zlib")
 endif()
 

@@ -297,12 +297,6 @@ elseif(LINUX)
         )
       endif()
 
-      if(WITH_LIBVA AND VA_FOUND)
-        list(APPEND FFMPEG_CONFIGURE
-          "--extra-ldflags=-lva"
-        )
-      endif()
-
       if (IS_DIRECTORY "${SM_FFMPEG_SRC_DIR}")
         externalproject_add("ffmpeg"
           SOURCE_DIR "${SM_FFMPEG_SRC_DIR}"
