@@ -1,0 +1,8 @@
+LICENSE
+=======
+
+StepMania's source code and resulting binary is licensed under the MIT license. Go to http://opensource.org/licenses/MIT for more information.
+
+A few sample songs were provided that can be distributed. They are under the CC-NC (Creative Commons Non-Commercial) license. Go to https://creativecommons.org/ for more information.
+
+The FFMPEG codes (see https://www.ffmpeg.org/ for more) and the MAD library (see http://www.underbit.com/products/mad/ for more) use the GPL license. Go to http://www.gnu.org for more information.

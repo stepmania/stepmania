@@ -15,6 +15,13 @@ set(SM_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Build")
 set(SM_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(SM_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
+# TODO: Reconsile the OS dependent naming scheme.
+if (WIN32 OR APPLE)
+  set(SM_EXE_NAME "StepMania")
+else()
+  set(SM_EXE_NAME "stepmania")
+endif()
+
 # Some OS specific helpers.
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
   set(LINUX TRUE)
@@ -34,48 +41,10 @@ else()
   set(BSD FALSE)
 endif()
 
-# Some eventual distribution stuff.
-set(CPACK_PACKAGE_NAME "StepMania")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Rhythm Game Simulator")
+# Allow for finding our libraries in a standard location.
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules/")
 
-# Prep options that are needed for each platform.
-option(WITH_NETWORKING "Build with networking support." ON)
-
-# This option quiets warnings that are a part of external projects.
-option(WITH_EXTERNAL_WARNINGS "Build with warnings for all components, not just StepMania." OFF)
-
-# This option is not yet working, but will likely default to ON in the future.
-option(WITH_LTO "Build with Link Time Optimization (LTO)/Whole Program Optimization." OFF)
-
-# This option handles if we use SSE2 processing.
-option(WITH_SSE2 "Build with SSE2 Optimizations." ON)
-
-# This option may go away in the future: if it does, JPEG will always be required.
-option(WITH_JPEG "Build with JPEG Image Support." ON)
-
-# Turn this on to set this to a specific release mode.
-option(WITH_FULL_RELEASE "Build as a proper, full release." OFF)
-
-# Turn this option off to not use the GPL exclusive components.
-option(WITH_GPL_LIBS "Build with GPL libraries." ON)
-
-if(WIN32)
-  option(WITH_MINIMAID "Build with Mimimaid Lights Support." OFF)
-else()
-  if(LINUX)
-    option(WITH_FFMPEG "Build with FFMPEG." ON)
-    # Builder beware: later versions of ffmpeg may break!
-    option(WITH_SYSTEM_FFMPEG "Build with the system's FFMPEG." OFF)
-    option(WITH_TTY "Build with Linux TTY Input Support." OFF)
-    option(WITH_PROFILING "Build with Profiling Support." OFF)
-    option(WITH_GLES2 "Build with OpenGL ES 2.0 Support." ON)
-    option(WITH_GTK2 "Build with GTK2 Support." ON)
-    option(WITH_OGG "Build with OGG/Vorbis Support." ON)
-    option(WITH_MP3 "Build with MP3 Support." ON)
-    option(WITH_PARALLEL_PORT "Build with Parallel Lights I/O Support." OFF)
-    option(WITH_CRASH_HANDLER "Build with Crash Handler Support." ON)
-  endif()
-endif()
+include("CMake/DefineOptions.cmake")
 
 # Set up version numbers according to the new scheme.
 set(SM_VERSION_MAJOR 5)
@@ -96,9 +65,6 @@ if(NOT (ret STREQUAL "0"))
 else()
   set(SM_VERSION_FULL "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-git-${SM_VERSION_GIT_HASH}")
 endif()
-
-# Allow for finding our libraries in a standard location.
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules/")
 
 # Put the predefined targets in separate groups.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -290,6 +256,10 @@ elseif(LINUX)
   endif()
 
   if(WITH_FFMPEG)
+    if(WITH_LIBVA)
+      find_package("Va")
+    endif()
+
     if (WITH_SYSTEM_FFMPEG)
       find_package("FFMPEG")
       if(NOT FFMPEG_FOUND)
@@ -377,3 +347,5 @@ add_subdirectory(extern)
 # The internal libraries and eventual executable to be used.
 add_subdirectory(src)
 
+# Define installer based items for cpack.
+include("CMake/CPackSetup.cmake")

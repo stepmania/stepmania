@@ -151,13 +151,6 @@ if(NOT APPLE)
   source_group("" FILES "Main.cpp")
 endif()
 
-# TODO: Reconsile the OS dependent naming scheme.
-if (WIN32 OR APPLE)
-  set(SM_EXE_NAME "StepMania")
-else()
-  set(SM_EXE_NAME "stepmania")
-endif()
-
 # Configure generated files here.
 configure_file("${SM_XCODE_DIR}/Info.plist.in.xml" "${SM_XCODE_DIR}/Info.StepMania.plist")
 
@@ -213,6 +206,21 @@ set_target_properties("${SM_EXE_NAME}" PROPERTIES
   OUTPUT_NAME_DEBUG "${SM_NAME_DEBUG}"
   OUTPUT_NAME_MINSIZEREL "${SM_NAME_MINSIZEREL}"
   OUTPUT_NAME_RELWITHDEBINFO "${SM_RELWITHDEBINFO}"
+)
+
+list(APPEND SM_WINDOWS_PROGRAM_DLLS
+  "${SM_PROGRAM_DIR}/avcodec-53.dll"
+  "${SM_PROGRAM_DIR}/avformat-53.dll"
+  "${SM_PROGRAM_DIR}/avutil-51.dll"
+  "${SM_PROGRAM_DIR}/jpeg.dll"
+  "${SM_PROGRAM_DIR}/msvcp100.dll"
+  "${SM_PROGRAM_DIR}/msvcp110.dll"
+  "${SM_PROGRAM_DIR}/msvcr100.dll"
+  "${SM_PROGRAM_DIR}/msvcr110.dll"
+  "${SM_PROGRAM_DIR}/parallel_lights_io.dll"
+  "${SM_PROGRAM_DIR}/swscale-2.dll"
+  "${SM_PROGRAM_DIR}/vccorlib110.dll"
+  "${SM_PROGRAM_DIR}/zlib1.dll"
 )
 
 if(WIN32)
@@ -448,6 +456,10 @@ else() # Unix / Linux
         "${SM_FFMPEG_ROOT}/libavutil/libavutil.a"
       )
     endif()
+
+    if(WITH_LIBVA AND VA_FOUND)
+      list(APPEND SMDATA_LINK_LIB ${VA_LIBRARY})
+    endif()
   endif()
 
   list(APPEND SMDATA_LINK_LIB
@@ -517,6 +529,7 @@ else() # Unix / Linux
   list(APPEND SMDATA_LINK_LIB
     ${XRANDR_LIBRARIES}
   )
+
   list(REMOVE_ITEM SMDATA_LINK_LIB "zlib")
 endif()
 
@@ -579,18 +592,34 @@ endif()
 target_include_directories("${SM_EXE_NAME}" PUBLIC ${SM_INCLUDE_DIRS})
 
 if(WIN32)
-  # TODO: Look forward to 64-bit builds. Also, Find a way to not need to hardcode this.
-  set(SM_INSTALL_DESTINATION "C:/Program Files (x86)/StepMania 5")
-elseif(APPLE)
-  # TODO: Confirm if anything special is needed. Most Mac apps are just portable .app folders.
-  set(SM_INSTALL_DESTINATION "")
+  set(SM_INSTALL_DESTINATION ".")
 else()
-  # TODO: Allow for a more flexible system. Good luck convincing old users of that.
-  set(SM_INSTALL_DESTINATION "/opt/stepmania-5.0")
+  set(SM_INSTALL_DESTINATION "stepmania-5.0")
 endif()
 
 if(NOT APPLE)
-  install(TARGETS "${SM_EXE_NAME}" DESTINATION "${SM_INSTALL_DESTINATION}")
+  if(WIN32)
+    # Hardcoding the values for now since the foreach loop is not working as intended.
+    install(TARGETS "${SM_EXE_NAME}" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
+    install(FILES "${SM_PROGRAM_DIR}/avcodec-53.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
+    install(FILES "${SM_PROGRAM_DIR}/avformat-53.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
+    install(FILES "${SM_PROGRAM_DIR}/avutil-51.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
+    install(FILES "${SM_PROGRAM_DIR}/jpeg.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
+    install(FILES "${SM_PROGRAM_DIR}/msvcp100.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
+    install(FILES "${SM_PROGRAM_DIR}/msvcp110.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
+    install(FILES "${SM_PROGRAM_DIR}/msvcr100.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
+    install(FILES "${SM_PROGRAM_DIR}/msvcr110.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
+    install(FILES "${SM_PROGRAM_DIR}/parallel_lights_io.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
+    install(FILES "${SM_PROGRAM_DIR}/swscale-2.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
+    install(FILES "${SM_PROGRAM_DIR}/vccorlib110.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
+    install(FILES "${SM_PROGRAM_DIR}/zlib1.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
+
+    # foreach(SM_WINDOW_DLL "${SM_WINDOWS_PROGRAM_DLLS}")
+    #   install(FILES "${SM_WINDOW_DLL}" DESTINATION "${SM_INSTALL_DESTINATION}")
+    # endforeach()
+  else()
+    install(TARGETS "${SM_EXE_NAME}" DESTINATION "${SM_INSTALL_DESTINATION}")
+  endif()
   if (UNIX OR LINUX)
     install(FILES "${SM_ROOT_DIR}/GtkModule.so" LIBRARY DESTINATION "${SM_INSTALL_DESTINATION}" OPTIONAL)
   endif()
