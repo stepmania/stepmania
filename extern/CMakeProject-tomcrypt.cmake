@@ -269,6 +269,12 @@ add_library("tomcrypt" ${TOMCRYPT_SRC} ${TOMCRYPT_HPP})
 
 set_property(TARGET "tomcrypt" PROPERTY FOLDER "External Libraries")
 
+if (WITH_PORTABLE_TOMCRYPT)
+  sm_add_compile_definition("tomcrypt" LTC_NO_ASM)
+elseif(WITH_NO_ROLC_TOMCRYPT AND NOT APPLE)
+  sm_add_compile_definition("tomcrypt" LTC_NO_ROLC)
+endif()
+
 if (APPLE)
   sm_add_compile_definition("tomcrypt" LTC_NO_ROLC)
   sm_append_simple_target_property("tomcrypt" XCODE_ATTRIBUTE_GCC_NO_COMMON_BLOCKS "YES")
