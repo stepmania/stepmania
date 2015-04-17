@@ -57,8 +57,11 @@ local function DefaultSave( pref, choices, values )
 
 	return function(self, list, pn)
 		for i=1, #choices do
-			if list[i] then ThemePrefs.Set( pref, values[i] ) break end
-			MESSAGEMAN:Broadcast( msg, params )
+			if list[i] then
+				ThemePrefs.Set( pref, values[i] )
+				MESSAGEMAN:Broadcast( msg, params )
+				break
+			end
 		end
 	end
 end
