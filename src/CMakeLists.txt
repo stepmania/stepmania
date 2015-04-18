@@ -163,6 +163,12 @@ else()
   add_executable("${SM_EXE_NAME}" ${SMDATA_ALL_FILES_SRC} ${SMDATA_ALL_FILES_HPP})
 endif()
 
+if (WITH_PORTABLE_TOMCRYPT)
+  sm_add_compile_definition("${SM_EXE_NAME}" LTC_NO_ASM)
+elseif (WITH_NO_ROLC_TOMCRYPT OR APPLE)
+  sm_add_compile_definition("${SM_EXE_NAME}" LTC_NO_ROLC)
+endif()
+
 sm_add_compile_definition("${SM_EXE_NAME}" CMAKE_POWERED)
 
 if (NOT WITH_NETWORKING)
