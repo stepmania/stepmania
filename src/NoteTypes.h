@@ -193,6 +193,14 @@ struct TapNote
 			type = TapNoteType_Empty;
 		}
 	}
+  
+  /**
+   * @brief Retrieve the "effective" player that interacts with the note.
+   *
+   * All notes belong to a player, even if it is only for statistical purposes.
+   * @return The effective player.
+   */
+  PlayerNumber GetEffectivePlayer() const;
 
 	/**
 	 * @brief Determine if the two TapNotes are equal to each other.

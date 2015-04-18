@@ -450,6 +450,24 @@ void split( const wstring &sSource, const wstring &sDelimitor, int &iBegin, int 
 RString join( const RString &sDelimitor, const vector<RString>& sSource );
 RString join( const RString &sDelimitor, vector<RString>::const_iterator begin, vector<RString>::const_iterator end );
 
+// Joins a vector of any type to create an RString according to the deliminator.
+template<class T>
+RString join(RString const &delimiter, vector<T> const &source)
+{
+  std::stringstream ss;
+  for (size_t i = 0; i < source.size(); ++i)
+  {
+    if (i != 0)
+    {
+      ss << delimiter;
+    }
+    ss << source[i];
+  }
+  
+  RString result(ss.str());
+  return result;
+}
+
 // These methods escapes a string for saving in a .sm or .crs file
 RString SmEscape( const RString &sUnescaped );
 RString SmEscape( const char *cUnescaped, int len );

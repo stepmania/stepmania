@@ -205,8 +205,6 @@ public:
    * @return true if it's a fake, false otherwise. */
   bool IsFake(TapNote const &tn, int const row) const;
   
-  // The following methods may return vector<int>'s later.
-  
   /**
    * @brief Get the number of rows that contain a basic tap note.
    * @param start The starting row to focus on.
@@ -224,13 +222,21 @@ public:
   int GetNumRowsWithTapOrHoldHead(int start = 0, int finish = MAX_NOTE_ROW) const;
   
   /**
+   * Determine which rows require a certain number of presses for each player.
+   * @param min The minimum number to hit/have held down.
+   * @param row The row to focus on.
+   * @return A player-organized truth on which player needs the minimum presses on that row.
+   */
+  vector<bool> RowNeedsAtLeastSimulteanousPresses(int min, int row) const;
+  
+  /**
    * @brief Get the number of rows that require a certain number of presses to count.
    * @param min The minimum number to hit/have held down.
    * @param start The starting row to focus on.
    * @param finish The ending row to focus on.
-   * @return The number of rows containing the minimum number of presses.
+   * @return The number of rows containing the minimum number of presses for each player.
    */
-  int GetNumRowsWithSimultaneousPresses(int min, int start = 0, int finish = MAX_NOTE_ROW) const;
+  vector<int> GetNumRowsWithSimultaneousPresses(int min, int start = 0, int finish = MAX_NOTE_ROW) const;
   
   /**
    * @brief Get the number of rows that require a certain number of taps to count.
@@ -239,7 +245,7 @@ public:
    * @param finish The ending row to focus on.
    * @return The number of rows containing the minimum number of taps.
    */
-  int GetNumRowsWithSimultaneousTaps(int min, int start = 0, int finish = MAX_NOTE_ROW) const;
+  vector<int> GetNumRowsWithSimultaneousTaps(int min, int start = 0, int finish = MAX_NOTE_ROW) const;
   
   /**
    * @brief Get the number of tap notes within the chart.
@@ -247,7 +253,7 @@ public:
    * @param finish The ending row to focus on.
    * @return The number of taps in the chart.
    */
-  int GetNumTapNotes(int start = 0, int finish = MAX_NOTE_ROW) const;
+  vector<int> GetNumTapNotes(int start = 0, int finish = MAX_NOTE_ROW) const;
   
   /**
    * @brief Get the number of tap notes within the row.
@@ -262,7 +268,7 @@ public:
    * @param finish The ending row to focus on.
    * @return The number of jumps.
    */
-  int GetNumJumps(int start = 0, int finish = MAX_NOTE_ROW) const;
+  vector<int> GetNumJumps(int start = 0, int finish = MAX_NOTE_ROW) const;
   
   /**
    * @brief Get the number of hands within the chart.
@@ -270,7 +276,7 @@ public:
    * @param finish The ending row to focus on.
    * @return The number of hands.
    */
-  int GetNumHands(int start = 0, int finish = MAX_NOTE_ROW) const;
+  vector<int> GetNumHands(int start = 0, int finish = MAX_NOTE_ROW) const;
   
   /**
    * @brief Get the number of quads within the chart.
@@ -278,7 +284,7 @@ public:
    * @param finish The ending row to focus on.
    * @return The number of quads.
    */
-  int GetNumQuads(int start = 0, int finish = MAX_NOTE_ROW) const;
+  vector<int> GetNumQuads(int start = 0, int finish = MAX_NOTE_ROW) const;
   
   /**
    * @brief Get the number of hold notes within the chart.
@@ -286,7 +292,7 @@ public:
    * @param finish The ending row to focus on.
    * @return The number of hold notes.
    */
-  int GetNumHoldNotes(int start = 0, int finish = MAX_NOTE_ROW) const;
+  vector<int> GetNumHoldNotes(int start = 0, int finish = MAX_NOTE_ROW) const;
   
   /**
    * @brief Get the number of roll notes within the chart.
@@ -294,7 +300,7 @@ public:
    * @param finish The ending row to focus on.
    * @return The number of roll notes.
    */
-  int GetNumRolls(int start = 0, int finish = MAX_NOTE_ROW) const;
+  vector<int> GetNumRolls(int start = 0, int finish = MAX_NOTE_ROW) const;
   
   /**
    * @brief Get the number of mines within the chart.
@@ -302,7 +308,7 @@ public:
    * @param finish The ending row to focus on.
    * @return The number of mines.
    */
-  int GetNumMines(int start = 0, int finish = MAX_NOTE_ROW) const;
+  vector<int> GetNumMines(int start = 0, int finish = MAX_NOTE_ROW) const;
   
   /**
    * @brief Get the number of lifts within the chart.
@@ -310,7 +316,7 @@ public:
    * @param finish The ending row to focus on.
    * @return The number of lifts.
    */
-  int GetNumLifts(int start = 0, int finish = MAX_NOTE_ROW) const;
+  vector<int> GetNumLifts(int start = 0, int finish = MAX_NOTE_ROW) const;
   
   /**
    * @brief Get the number of fakes within the chart.
@@ -318,7 +324,30 @@ public:
    * @param finish The ending row to focus on.
    * @return The number of fakes.
    */
-  int GetNumFakes(int start = 0, int finish = MAX_NOTE_ROW) const;
+  vector<int> GetNumFakes(int start = 0, int finish = MAX_NOTE_ROW) const;
+  
+  /**
+   * @brief Determine if the step style is meant for multiple players.
+   * @return true if the chart is for multiple players, or false if just one player is needed.
+   */
+  bool IsMultiPlayerStyle() const;
+  
+  /**
+   * @brief Expose the steps type category for easier logic handling.
+   * @return The current steps' type category.
+   */
+  StepsTypeCategory GetStepsTypeCategory() const;
+  
+  /**
+   * Get the effective player of a note based on its position and track.
+   *
+   * Couples charts use the track, whereas routine charts look at the note itself.
+   * @param track The column of notes to view.
+   * @param tn The tapnote contained within the track.
+   * @return The effective player number.
+   */
+  PlayerNumber GetEffectivePlayer(int const track, TapNote const &tn) const;
+  
   
 	// Lua
 	void PushSelf( lua_State *L );
@@ -350,14 +379,12 @@ private:
 
 	/**
    * @brief Get the number of holds of the specific type within the chart.
-   *
-   * This method may change to return a vector of ints later.
    * @param holdType The specific type of hold we want.
    * @param start The starting row to look at.
    * @param finish The ending row to look at.
    * @return The number of holds of the type we want within the chart.
    */
-  int GetNumHoldsOfType(TapNoteSubType const holdType, int start = 0, int finish = MAX_NOTE_ROW) const;
+  vector<int> GetNumHoldsOfType(TapNoteSubType const holdType, int start = 0, int finish = MAX_NOTE_ROW) const;
   
   /**
 	 * @brief Identify this Steps' parent.
