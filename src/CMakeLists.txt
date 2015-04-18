@@ -151,8 +151,14 @@ if(NOT APPLE)
   source_group("" FILES "Main.cpp")
 endif()
 
+set(SM_NAME_RELEASE "StepMania")
+set(SM_NAME_DEBUG "StepMania-debug")
+set(SM_NAME_MINSIZEREL "StepMania-min-size")
+set(SM_NAME_RELWITHDEBINFO "StepMania-release-symbols")
+
 # Configure generated files here.
 configure_file("${SM_XCODE_DIR}/Info.plist.in.xml" "${SM_XCODE_DIR}/Info.StepMania.plist")
+configure_file("${SM_XCODE_DIR}/plistHelper.in.hpp" "${SM_XCODE_DIR}/plistHelper.hpp")
 
 # TODO: Make this actually be data and not an executable.
 if(APPLE)
@@ -175,11 +181,13 @@ if (NOT WITH_NETWORKING)
   sm_add_compile_definition("${SM_EXE_NAME}" WITHOUT_NETWORKING)
 endif()
 
-set(SM_COMPILE_FLAGS "")
 # Compilation flags per project here.
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  sm_add_compile_definition("${SM_EXE_NAME}" "DEBUG=1")
-endif()
+sm_add_compile_definition("${SM_EXE_NAME}" $<$<CONFIG:Debug>:DEBUG>)
+sm_add_compile_definition("${SM_EXE_NAME}" $<$<CONFIG:Release>:RELEASE>)
+sm_add_compile_definition("${SM_EXE_NAME}" $<$<CONFIG:MinSizeRel>:MINSIZEREL>)
+sm_add_compile_definition("${SM_EXE_NAME}" $<$<CONFIG:RelWithDebInfo>:RELWITHDEBINFO>)
+
+set(SM_COMPILE_FLAGS "")
 
 if(WITH_SSE2)
   if(MSVC)
@@ -202,13 +210,11 @@ if(MSVC)
   set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} /MP2")
 endif()
 
-set(SM_NAME_RELEASE "StepMania")
-set(SM_NAME_DEBUG "StepMania-debug")
-set(SM_NAME_MINSIZEREL "StepMania-min-size")
-set(SM_NAME_RELWITHDEBINFO "StepMania-release-symbols")
-
 set_target_properties("${SM_EXE_NAME}" PROPERTIES
   COMPILE_FLAGS ${SM_COMPILE_FLAGS}
+)
+
+set_target_properties("${SM_EXE_NAME}" PROPERTIES
   OUTPUT_NAME_DEBUG "${SM_NAME_DEBUG}"
   OUTPUT_NAME_MINSIZEREL "${SM_NAME_MINSIZEREL}"
   OUTPUT_NAME_RELWITHDEBINFO "${SM_RELWITHDEBINFO}"
@@ -252,6 +258,12 @@ elseif(APPLE)
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}"
     MACOSX_BUNDLE_INFO_PLIST "${SM_XCODE_DIR}/Info.StepMania.plist"
     XCODE_ATTRIBUTE_INFOPLIST_FILE "${SM_XCODE_DIR}/Info.StepMania.plist"
+    XCODE_ATTRIBUTE_INFOPLIST_PREPROCESS "YES"
+    XCODE_ATTRIBUTE_INFOPLIST_PREPROCESSOR_DEFINITIONS[variant=Release] "RELEASE"
+    XCODE_ATTRIBUTE_INFOPLIST_PREPROCESSOR_DEFINITIONS[variant=Debug] "DEBUG"
+    XCODE_ATTRIBUTE_INFOPLIST_PREPROCESSOR_DEFINITIONS[variant=MinSizeRel] "MINSIZEREL"
+    XCODE_ATTRIBUTE_INFOPLIST_PREPROCESSOR_DEFINITIONS[variant=RelWithDebInfo] "RELWITHDEBINFO"
+    XCODE_ATTRIBUTE_INFOPLIST_PREFIX_HEADER "${SM_XCODE_DIR}/plistHelper.hpp"
     XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/archutils/Darwin/StepMania.pch"
     XCODE_ATTRIBUTE_GCC_ENABLE_CPP_EXCEPTIONS "NO"
     XCODE_ATTRIBUTE_LIBRARY_SEARCH_PATHS "${SM_XCODE_DIR}/ffmpeg/lib ${SM_XCODE_DIR}/Libraries"
