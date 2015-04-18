@@ -177,6 +177,149 @@ public:
 	const RString& GetMusicFile() const; // Returns the filename for the simfile.
 	void SetMusicFile(const RString& file);
 
+  /**
+   * @brief Determine if the note in question should be counted as a tap.
+   * @param tn the note in question.
+   * @param row the row it lives in.
+   * @return true if it's a tap, false otherwise. */
+  bool IsTap(TapNote const &tn, int const row) const;
+  
+  /**
+   * @brief Determine if the note in question should be counted as a mine.
+   * @param tn the note in question.
+   * @param row the row it lives in.
+   * @return true if it's a mine, false otherwise. */
+  bool IsMine(TapNote const &tn, int const row) const;
+  
+  /**
+   * @brief Determine if the note in question should be counted as a lift.
+   * @param tn the note in question.
+   * @param row the row it lives in.
+   * @return true if it's a lift, false otherwise. */
+  bool IsLift(TapNote const &tn, int const row) const;
+  
+  /**
+   * @brief Determine if the note in question should be counted as a fake.
+   * @param tn the note in question.
+   * @param row the row it lives in.
+   * @return true if it's a fake, false otherwise. */
+  bool IsFake(TapNote const &tn, int const row) const;
+  
+  // The following methods may return vector<int>'s later.
+  
+  /**
+   * @brief Get the number of rows that contain a basic tap note.
+   * @param start The starting row to focus on.
+   * @param finish The ending row to focus on.
+   * @return The number of rows with a tap note.
+   */
+  int GetNumRowsWithTap(int start = 0, int finish = MAX_NOTE_ROW) const;
+  
+  /**
+   * @brief Get the number of rows that contain a basic tap note or hold head.
+   * @param start The starting row to focus on.
+   * @param finish The ending row to focus on.
+   * @return The number of rows with a tap note or hold head.
+   */
+  int GetNumRowsWithTapOrHoldHead(int start = 0, int finish = MAX_NOTE_ROW) const;
+  
+  /**
+   * @brief Get the number of rows that require a certain number of presses to count.
+   * @param min The minimum number to hit/have held down.
+   * @param start The starting row to focus on.
+   * @param finish The ending row to focus on.
+   * @return The number of rows containing the minimum number of presses.
+   */
+  int GetNumRowsWithSimultaneousPresses(int min, int start = 0, int finish = MAX_NOTE_ROW) const;
+  
+  /**
+   * @brief Get the number of rows that require a certain number of taps to count.
+   * @param min The minimum number to hit.
+   * @param start The starting row to focus on.
+   * @param finish The ending row to focus on.
+   * @return The number of rows containing the minimum number of taps.
+   */
+  int GetNumRowsWithSimultaneousTaps(int min, int start = 0, int finish = MAX_NOTE_ROW) const;
+  
+  /**
+   * @brief Get the number of tap notes within the chart.
+   * @param start The starting row to focus on.
+   * @param finish The ending row to focus on.
+   * @return The number of taps in the chart.
+   */
+  int GetNumTapNotes(int start = 0, int finish = MAX_NOTE_ROW) const;
+  
+  /**
+   * @brief Get the number of tap notes within the row.
+   * @param row The row to focus on.
+   * @return The number of taps in the row.
+   */
+  int GetNumTapNotesInRow(int const row) const;
+  
+  /**
+   * @brief Get the number of jumps within the chart.
+   * @param start The starting row to focus on.
+   * @param finish The ending row to focus on.
+   * @return The number of jumps.
+   */
+  int GetNumJumps(int start = 0, int finish = MAX_NOTE_ROW) const;
+  
+  /**
+   * @brief Get the number of hands within the chart.
+   * @param start The starting row to focus on.
+   * @param finish The ending row to focus on.
+   * @return The number of hands.
+   */
+  int GetNumHands(int start = 0, int finish = MAX_NOTE_ROW) const;
+  
+  /**
+   * @brief Get the number of quads within the chart.
+   * @param start The starting row to focus on.
+   * @param finish The ending row to focus on.
+   * @return The number of quads.
+   */
+  int GetNumQuads(int start = 0, int finish = MAX_NOTE_ROW) const;
+  
+  /**
+   * @brief Get the number of hold notes within the chart.
+   * @param start The starting row to focus on.
+   * @param finish The ending row to focus on.
+   * @return The number of hold notes.
+   */
+  int GetNumHoldNotes(int start = 0, int finish = MAX_NOTE_ROW) const;
+  
+  /**
+   * @brief Get the number of roll notes within the chart.
+   * @param start The starting row to focus on.
+   * @param finish The ending row to focus on.
+   * @return The number of roll notes.
+   */
+  int GetNumRolls(int start = 0, int finish = MAX_NOTE_ROW) const;
+  
+  /**
+   * @brief Get the number of mines within the chart.
+   * @param start The starting row to focus on.
+   * @param finish The ending row to focus on.
+   * @return The number of mines.
+   */
+  int GetNumMines(int start = 0, int finish = MAX_NOTE_ROW) const;
+  
+  /**
+   * @brief Get the number of lifts within the chart.
+   * @param start The starting row to focus on.
+   * @param finish The ending row to focus on.
+   * @return The number of lifts.
+   */
+  int GetNumLifts(int start = 0, int finish = MAX_NOTE_ROW) const;
+  
+  /**
+   * @brief Get the number of fakes within the chart.
+   * @param start The starting row to focus on.
+   * @param finish The ending row to focus on.
+   * @return The number of fakes.
+   */
+  int GetNumFakes(int start = 0, int finish = MAX_NOTE_ROW) const;
+  
 	// Lua
 	void PushSelf( lua_State *L );
 
@@ -206,6 +349,17 @@ private:
 	void DeAutogen( bool bCopyNoteData = true ); /* If this Steps is autogenerated, make it a real Steps. */
 
 	/**
+   * @brief Get the number of holds of the specific type within the chart.
+   *
+   * This method may change to return a vector of ints later.
+   * @param holdType The specific type of hold we want.
+   * @param start The starting row to look at.
+   * @param finish The ending row to look at.
+   * @return The number of holds of the type we want within the chart.
+   */
+  int GetNumHoldsOfType(TapNoteSubType const holdType, int start = 0, int finish = MAX_NOTE_ROW) const;
+  
+  /**
 	 * @brief Identify this Steps' parent.
 	 *
 	 * If this Steps is autogenerated, this will point to the autogen

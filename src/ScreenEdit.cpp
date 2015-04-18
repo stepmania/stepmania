@@ -1911,6 +1911,7 @@ void ScreenEdit::UpdateTextInfo()
 	}
 	
 	GAMESTATE->SetProcessedTimingData(m_pSteps->GetTimingData());
+  m_pSteps->SetNoteData(m_NoteDataEdit);
 	const StepsTypeCategory &cat = GAMEMAN->GetStepsTypeInfo(m_pSteps->m_StepsType).m_StepsTypeCategory;
 	if (cat == StepsTypeCategory_Couple || cat == StepsTypeCategory_Routine)
 	{
@@ -1949,14 +1950,14 @@ void ScreenEdit::UpdateTextInfo()
 	}
 	else
 	{
-		sText += ssprintf( NUM_STEPS_FORMAT.GetValue(), TAP_STEPS.GetValue().c_str(), m_NoteDataEdit.GetNumTapNotes() );
-		sText += ssprintf( NUM_JUMPS_FORMAT.GetValue(), JUMPS.GetValue().c_str(), m_NoteDataEdit.GetNumJumps() );
-		sText += ssprintf( NUM_HANDS_FORMAT.GetValue(), HANDS.GetValue().c_str(), m_NoteDataEdit.GetNumHands() );
-		sText += ssprintf( NUM_HOLDS_FORMAT.GetValue(), HOLDS.GetValue().c_str(), m_NoteDataEdit.GetNumHoldNotes() );
-		sText += ssprintf( NUM_MINES_FORMAT.GetValue(), MINES.GetValue().c_str(), m_NoteDataEdit.GetNumMines() );
-		sText += ssprintf( NUM_ROLLS_FORMAT.GetValue(), ROLLS.GetValue().c_str(), m_NoteDataEdit.GetNumRolls() );
-		sText += ssprintf( NUM_LIFTS_FORMAT.GetValue(), LIFTS.GetValue().c_str(), m_NoteDataEdit.GetNumLifts() );
-		sText += ssprintf( NUM_FAKES_FORMAT.GetValue(), FAKES.GetValue().c_str(), m_NoteDataEdit.GetNumFakes() );
+		sText += ssprintf( NUM_STEPS_FORMAT.GetValue(), TAP_STEPS.GetValue().c_str(), m_pSteps->GetNumTapNotes() );
+		sText += ssprintf( NUM_JUMPS_FORMAT.GetValue(), JUMPS.GetValue().c_str(), m_pSteps->GetNumJumps() );
+		sText += ssprintf( NUM_HANDS_FORMAT.GetValue(), HANDS.GetValue().c_str(), m_pSteps->GetNumHands() );
+		sText += ssprintf( NUM_HOLDS_FORMAT.GetValue(), HOLDS.GetValue().c_str(), m_pSteps->GetNumHoldNotes() );
+		sText += ssprintf( NUM_MINES_FORMAT.GetValue(), MINES.GetValue().c_str(), m_pSteps->GetNumMines() );
+		sText += ssprintf( NUM_ROLLS_FORMAT.GetValue(), ROLLS.GetValue().c_str(), m_pSteps->GetNumRolls() );
+		sText += ssprintf( NUM_LIFTS_FORMAT.GetValue(), LIFTS.GetValue().c_str(), m_pSteps->GetNumLifts() );
+		sText += ssprintf( NUM_FAKES_FORMAT.GetValue(), FAKES.GetValue().c_str(), m_pSteps->GetNumFakes() );
 	}
 	switch( EDIT_MODE.GetValue() )
 	{
@@ -4886,15 +4887,15 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			}
 			else
 			{
-				g_StepsData.rows[tap_notes].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumTapNotes()) );
-				g_StepsData.rows[jumps].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumJumps()) );
-				g_StepsData.rows[hands].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumHands()) );
-				g_StepsData.rows[quads].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumQuads()) );
-				g_StepsData.rows[holds].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumHoldNotes()) );
-				g_StepsData.rows[mines].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumMines()) );
-				g_StepsData.rows[rolls].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumRolls()) );
-				g_StepsData.rows[lifts].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumLifts()) );
-				g_StepsData.rows[fakes].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumFakes()) );
+				g_StepsData.rows[tap_notes].SetOneUnthemedChoice( ssprintf("%d", pSteps->GetNumTapNotes()) );
+				g_StepsData.rows[jumps].SetOneUnthemedChoice( ssprintf("%d", pSteps->GetNumJumps()) );
+				g_StepsData.rows[hands].SetOneUnthemedChoice( ssprintf("%d", pSteps->GetNumHands()) );
+				g_StepsData.rows[quads].SetOneUnthemedChoice( ssprintf("%d", pSteps->GetNumQuads()) );
+				g_StepsData.rows[holds].SetOneUnthemedChoice( ssprintf("%d", pSteps->GetNumHoldNotes()) );
+				g_StepsData.rows[mines].SetOneUnthemedChoice( ssprintf("%d", pSteps->GetNumMines()) );
+				g_StepsData.rows[rolls].SetOneUnthemedChoice( ssprintf("%d", pSteps->GetNumRolls()) );
+				g_StepsData.rows[lifts].SetOneUnthemedChoice( ssprintf("%d", pSteps->GetNumLifts()) );
+				g_StepsData.rows[fakes].SetOneUnthemedChoice( ssprintf("%d", pSteps->GetNumFakes()) );
 			}
 			RadarValues radar;
 			radar.Zero();

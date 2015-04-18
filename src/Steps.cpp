@@ -614,6 +614,248 @@ void Steps::SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] )
 	m_bAreCachedRadarValuesJustLoaded = true;
 }
 
+bool Steps::IsTap(TapNote const &tn, int const row) const
+{
+  if (this->m_Timing.IsJudgableAtRow(row))
+    return this->GetNoteData().IsTap(tn, row);
+  return false;
+}
+
+bool Steps::IsMine(TapNote const &tn, int const row) const
+{
+  if (this->m_Timing.IsJudgableAtRow(row))
+    return this->GetNoteData().IsMine(tn, row);
+  return false;
+}
+
+bool Steps::IsLift(TapNote const &tn, int const row) const
+{
+  if (this->m_Timing.IsJudgableAtRow(row))
+    return this->GetNoteData().IsLift(tn, row);
+  return false;
+}
+
+bool Steps::IsFake(TapNote const &tn, int const row) const
+{
+  if (this->m_Timing.IsJudgableAtRow(row))
+    return this->GetNoteData().IsFake(tn, row);
+  return true;
+}
+
+int Steps::GetNumRowsWithTap(int start, int end) const
+{
+  int numNotes = 0;
+  const NoteData &nd = this->GetNoteData();
+  FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, end)
+  {
+    if (this->m_Timing.IsJudgableAtRow(r) && nd.IsThereATapAtRow(r))
+      ++numNotes;
+  }
+  return numNotes;
+}
+
+int Steps::GetNumRowsWithTapOrHoldHead(int start, int end) const
+{
+  int numNotes = 0;
+  const NoteData &nd = this->GetNoteData();
+  FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, end)
+  {
+    if (this->m_Timing.IsJudgableAtRow(r) && nd.IsThereATapOrHoldHeadAtRow(r))
+      ++numNotes;
+  }
+  return numNotes;
+}
+
+int Steps::GetNumRowsWithSimultaneousPresses(int min, int start, int end) const
+{
+  const NoteData &nd = this->GetNoteData();
+  if (!this->m_Timing.HasWarps() && !this->m_Timing.HasFakes())
+  {
+    return nd.GetNumRowsWithSimultaneousPresses(min, start, end);
+  }
+  int num = 0;
+  FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, end)
+  {
+    if (this->m_Timing.IsJudgableAtRow(r) &&
+        nd.RowNeedsAtLeastSimultaneousPresses(min, r))
+      ++num;
+  }
+  return num;
+}
+
+int Steps::GetNumRowsWithSimultaneousTaps(int min, int start, int end) const
+{
+  const NoteData &nd = this->GetNoteData();
+  if (!this->m_Timing.HasWarps() && !this->m_Timing.HasFakes())
+  {
+    return nd.GetNumRowsWithSimultaneousTaps(min, start, end);
+  }
+  int num = 0;
+  FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, end)
+  {
+    if (!this->m_Timing.IsJudgableAtRow(r))
+    {
+      continue;
+    }
+    if (nd.GetNumAllTapsOnRow(r) >= min)
+    {
+      ++num;
+    }
+  }
+  return num;
+}
+
+int Steps::GetNumHoldsOfType(TapNoteSubType const holdType, int start, int finish) const
+{
+  NoteData const &nd = this->GetNoteData();
+  if (!this->m_Timing.HasWarps() && !this->m_Timing.HasFakes())
+  {
+    return nd.GetNumHoldsOfType(holdType, start, finish);
+  }
+  int holds = 0;
+  FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, finish)
+  {
+    if (this->m_Timing.IsJudgableAtRow(r))
+    {
+      holds += nd.GetNumHoldsOnRowOfType(r, holdType);
+    }
+  }
+  return holds;
+}
+
+int Steps::GetNumTapNotes(int start, int finish) const
+{
+  NoteData const &nd = this->GetNoteData();
+  if (!this->m_Timing.HasWarps() && !this->m_Timing.HasFakes())
+  {
+    return nd.GetNumTapNotes(start, finish);
+  }
+  
+  int num = 0;
+  FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, finish)
+  {
+    if (!this->m_Timing.IsJudgableAtRow(r))
+    {
+      continue;
+    }
+    for (int t = 0; t < nd.GetNumTracks(); t++)
+    {
+      if (nd.IsTap(nd.GetTapNote(t, r), r))
+      {
+        ++num;
+      }
+    }
+  }
+  
+  return num;
+}
+
+int Steps::GetNumTapNotesInRow(int const row) const
+{
+  if (!this->m_Timing.IsJudgableAtRow(row))
+  {
+    return 0;
+  }
+  return this->GetNoteData().GetNumTapNotesInRow(row);
+}
+
+int Steps::GetNumJumps(int start, int finish) const
+{
+  return this->GetNumRowsWithSimultaneousTaps(2, start, finish);
+}
+
+int Steps::GetNumHands(int start, int finish) const
+{
+  return this->GetNumRowsWithSimultaneousPresses(3, start, finish);
+}
+
+int Steps::GetNumQuads(int start, int finish) const
+{
+  return this->GetNumRowsWithSimultaneousPresses(4, start, finish);
+}
+
+int Steps::GetNumHoldNotes(int start, int finish) const
+{
+  return this->GetNumHoldsOfType(TapNoteSubType_Hold, start, finish);
+}
+
+int Steps::GetNumRolls(int start, int finish) const
+{
+  return this->GetNumHoldsOfType(TapNoteSubType_Roll, start, finish);
+}
+
+int Steps::GetNumMines(int start, int finish) const
+{
+  const NoteData &nd = this->GetNoteData();
+  if (!this->m_Timing.HasWarps() && !this->m_Timing.HasFakes())
+  {
+    return nd.GetNumMines(start, finish);
+  }
+  int num = 0;
+  FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, finish)
+  {
+    if (!this->m_Timing.IsJudgableAtRow(r))
+    {
+      continue;
+    }
+    for (int t = 0; t < nd.GetNumTracks(); ++t)
+    {
+      if (nd.IsMine(nd.GetTapNote(t, r), r))
+      {
+        ++num;
+      }
+    }
+  }
+  return num;
+}
+
+int Steps::GetNumLifts(int start, int finish) const
+{
+  const NoteData &nd = this->GetNoteData();
+  if (!this->m_Timing.HasWarps() && !this->m_Timing.HasFakes())
+  {
+    return nd.GetNumLifts(start, finish);
+  }
+  int num = 0;
+  FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, finish)
+  {
+    if (!this->m_Timing.IsJudgableAtRow(r))
+    {
+      continue;
+    }
+    for (int t = 0; t < nd.GetNumTracks(); ++t)
+    {
+      if (nd.IsLift(nd.GetTapNote(t, r), r))
+      {
+        ++num;
+      }
+    }
+  }
+  return num;
+}
+
+int Steps::GetNumFakes(int start, int finish) const
+{
+  const NoteData &nd = this->GetNoteData();
+  if (!this->m_Timing.HasWarps() && !this->m_Timing.HasFakes())
+  {
+    return nd.GetNumFakes(start, finish);
+  }
+  int num = 0;
+  FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, finish)
+  {
+    for (int t = 0; t < nd.GetNumTracks(); ++t)
+    {
+      if (nd.IsFake(nd.GetTapNote(t, r), r) || !this->m_Timing.IsJudgableAtRow(r))
+      {
+        ++num;
+      }
+    }
+  }
+  return num;
+}
+
+
 // lua start
 #include "LuaBinding.h"
 /** @brief Allow Lua to have access to the Steps. */
