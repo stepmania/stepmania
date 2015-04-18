@@ -785,6 +785,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "AllowExtraStage",		MovePref<bool>,		"Off","On" ) );
 	ADD( ConfOption( "AllowMultipleHighScoreWithSameName", MovePref<bool>, "Off", "On" ) );
 	ADD( ConfOption( "ComboContinuesBetweenSongs", MovePref<bool>, "Off", "On") );
+	ADD(ConfOption("AllowMultipleToasties", MovePref<bool>, "Off", "On"));
 	ADD( ConfOption( "Disqualification", MovePref<bool>,		"Off","On" ) );
 	ADD( ConfOption( "HarshHotLifePenalty", MovePref<bool>,      "Off", "On") );
 	ADD( ConfOption( "FailOffForFirstStageEasy", MovePref<bool>, "Off","On" ) );

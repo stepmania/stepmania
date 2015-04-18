@@ -22,6 +22,7 @@ public:
 	virtual float GetTweenTimeLeft() const;
 	void Reset(); // explicitly allow transitioning again
 
+	bool IsWaiting() const { return m_State == waiting; };
 	bool IsTransitioning() const	{ return m_State == transitioning; };
 	bool IsFinished() const	{ return m_State == finished; };
 

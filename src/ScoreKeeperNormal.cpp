@@ -582,8 +582,9 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 			msg.SetParam("ToastyCombo", m_cur_toasty_combo);
 			msg.SetParam("Level", m_cur_toasty_level);
 			MESSAGEMAN->Broadcast(msg);
-			// TODO: keep a pointer to the Profile.  Don't index with m_PlayerNumber
 			SCREENMAN->PostMessageToTopScreen(SM_PlayToasty, 0);
+			// TODO: keep a pointer to the Profile.  Don't index with m_PlayerNumber
+			// TODO: Make the profile count the level and combo of the toasty. -Kyz
 			PROFILEMAN->IncrementToastiesCount(m_pPlayerState->m_PlayerNumber);
 			m_next_toasty_at= CalcNextToastyAt(m_cur_toasty_level);
 		}

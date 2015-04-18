@@ -2874,10 +2874,14 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_PlayToasty )
 	{
-		if( g_bEasterEggs )
+		if(g_bEasterEggs)
 		{
-			m_Toasty.Reset();
-			m_Toasty.StartTransitioning();
+			if(PREFSMAN->m_AllowMultipleToasties ||
+				m_Toasty.IsWaiting())
+			{
+				m_Toasty.Reset();
+				m_Toasty.StartTransitioning();
+			}
 		}
 	}
 	else if( ScreenMessageHelpers::ScreenMessageToString(SM).find("0Combo") != string::npos )
