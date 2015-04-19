@@ -285,29 +285,29 @@ public:
 		return GetNumRowsWithSimultaneousTaps( 2, iStartIndex, iEndIndex );
 	}
 	
-  /**
-   * @brief Get the number of judgable notes on a row.
-   * @param row The row that contains the notes.
-   * @return The number of judgable notes.
-   */
-  int GetNumAllTapsOnRow(int const row) const;
-  
-  /**
-   * @brief Get the number of holds that are the same type on a row.
-   * @param row The row that contains the notes.
-   * @param holdType The specific type of hold to watch for.
-   * @return The number of holds of the same type within the row.
-   */
-  int GetNumHoldsOnRowOfType(int const row, TapNoteSubType const holdType) const;
+	/**
+	 * @brief Get the number of judgable notes on a row.
+	 * @param row The row that contains the notes.
+	 * @return The number of judgable notes.
+	 */
+	int GetNumAllTapsOnRow(int const row) const;
 
-  /**
-   * @brief Get the number of holds that are the same type.
-   * @param row The row that contains the notes.
-   * @param holdType The specific type of hold to watch for.
-   * @return The number of holds of the same type.
-   */
-  int GetNumHoldsOfType(TapNoteSubType const holdType, int startIndex, int finishIndex) const;
-  
+	/**
+	 * @brief Get the number of holds that are the same type on a row.
+	 * @param row The row that contains the notes.
+	 * @param holdType The specific type of hold to watch for.
+	 * @return The number of holds of the same type within the row.
+	 */
+	int GetNumHoldsOnRowOfType(int const row, TapNoteSubType const holdType) const;
+
+	/**
+	 * @brief Get the number of holds that are the same type.
+	 * @param row The row that contains the notes.
+	 * @param holdType The specific type of hold to watch for.
+	 * @return The number of holds of the same type.
+	 */
+	int GetNumHoldsOfType(TapNoteSubType const holdType, int startIndex, int finishIndex) const;
+	
 	// This row needs at least iMinSimultaneousPresses either tapped or held.
 	bool RowNeedsAtLeastSimultaneousPresses( int iMinSimultaneousPresses, int row ) const;
 	bool RowNeedsHands( int row ) const { return RowNeedsAtLeastSimultaneousPresses(3,row); }
