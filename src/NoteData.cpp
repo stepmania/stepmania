@@ -460,11 +460,12 @@ int NoteData::GetLastRow() const
 
 bool NoteData::IsTap(const TapNote &tn, const int row) const
 {
-  return tn.type != TapNoteType_Empty &&
-    tn.type != TapNoteType_Mine &&
-    tn.type != TapNoteType_Lift &&
-    tn.type != TapNoteType_Fake &&
-    tn.type != TapNoteType_AutoKeysound;
+	return
+		tn.type != TapNoteType_Empty &&
+		tn.type != TapNoteType_Mine &&
+		tn.type != TapNoteType_Lift &&
+		tn.type != TapNoteType_Fake &&
+		tn.type != TapNoteType_AutoKeysound;
 }
 
 bool NoteData::IsMine(const TapNote &tn, const int row) const
@@ -559,18 +560,18 @@ int NoteData::GetNumRowsWithTapOrHoldHead( int iStartIndex, int iEndIndex ) cons
 
 int NoteData::GetNumAllTapsOnRow(int const row) const
 {
-  int num = 0;
-  for (int t = 0; t < GetNumTracks(); t++)
-  {
-    TapNote const &tn = GetTapNote(t, row);
-    if (tn.type != TapNoteType_Mine &&
-        tn.type != TapNoteType_Empty &&
-        tn.type != TapNoteType_Fake)
-    {
-      ++num;
-    }
-  }
-  return num;
+	int num = 0;
+	for (int t = 0; t < GetNumTracks(); t++)
+	{
+		TapNote const &tn = GetTapNote(t, row);
+		if (tn.type != TapNoteType_Mine &&
+		    tn.type != TapNoteType_Empty &&
+		    tn.type != TapNoteType_Fake)
+		{
+			++num;
+		}
+	}
+	return num;
 }
 
 bool NoteData::RowNeedsAtLeastSimultaneousPresses( int iMinSimultaneousPresses, const int row ) const
@@ -611,82 +612,80 @@ bool NoteData::RowNeedsAtLeastSimultaneousPresses( int iMinSimultaneousPresses, 
 
 int NoteData::GetNumRowsWithSimultaneousPresses( int iMinSimultaneousPresses, int iStartIndex, int iEndIndex ) const
 {
-  /* Count the number of times you have to use your hands.  This includes
-   * three taps at the same time, a tap while two hold notes are being held,
-   * etc.  Only count rows that have at least one tap note (hold heads count).
-   * Otherwise, every row of hold notes counts, so three simultaneous hold
-   * notes will count as hundreds of "hands".
-   */
-  int iNum = 0;
-  FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
-  {
-    if( RowNeedsAtLeastSimultaneousPresses(iMinSimultaneousPresses,r) )
-    {
-      ++iNum;
-    }
-  }
-
-  return iNum;
+	/* Count the number of times you have to use your hands.  This includes
+	 * three taps at the same time, a tap while two hold notes are being held,
+	 * etc.  Only count rows that have at least one tap note (hold heads count).
+	 * Otherwise, every row of hold notes counts, so three simultaneous hold
+	 * notes will count as hundreds of "hands".
+	 */
+	int iNum = 0;
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
+	{
+		if( RowNeedsAtLeastSimultaneousPresses(iMinSimultaneousPresses,r) )
+		{
+			++iNum;
+		}
+	}
+	return iNum;
 }
 
 int NoteData::GetNumHoldsOnRowOfType(int const row, TapNoteSubType const holdType) const
 {
-  int holds = 0;
-  for (int t = 0; t < GetNumTracks(); ++t)
-  {
-    TapNote const &tn = GetTapNote(t, row);
-    if (tn.type == TapNoteType_HoldHead &&
-        tn.subType == holdType)
-    {
-      ++holds;
-    }
-  }
-  return holds;
+	int holds = 0;
+	for (int t = 0; t < GetNumTracks(); ++t)
+	{
+		TapNote const &tn = GetTapNote(t, row);
+		if (tn.type == TapNoteType_HoldHead &&
+		    tn.subType == holdType)
+		{
+			++holds;
+		}
+	}
+	return holds;
 }
 
 int NoteData::GetNumRowsWithSimultaneousTaps( int iMinTaps, int iStartIndex, int iEndIndex ) const
 {
-  int iNum = 0;
-  FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
-  {
-    int iNumNotesThisIndex = GetNumAllTapsOnRow(r);
-    if( iNumNotesThisIndex >= iMinTaps )
-    {
-      iNum++;
-    }
-  }
-
-  return iNum;
+	int iNum = 0;
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
+	{
+		int iNumNotesThisIndex = GetNumAllTapsOnRow(r);
+		if( iNumNotesThisIndex >= iMinTaps )
+		{
+			iNum++;
+		}
+	}
+	return iNum;
 }
 
 int NoteData::GetNumHoldsOfType(TapNoteSubType const holdType, int startIndex, int finishIndex) const
 {
-  int holds = 0;
-  for (int t = 0; t < GetNumTracks(); ++t)
-  {
-    NoteData::TrackMap::const_iterator trackStart, trackEnd;
-    GetTapNoteRangeExclusive(t, startIndex, finishIndex, trackStart, trackEnd);
-    for (; trackStart != trackEnd; ++trackStart)
-    {
-      TapNote const &tn = trackStart->second;
-      if (tn.type == TapNoteType_HoldHead &&
-          tn.subType == holdType)
-      {
-        ++holds;
-      }
-    }
-  }
-  return holds;
+	int holds = 0;
+	for (int t = 0; t < GetNumTracks(); ++t)
+	{
+		NoteData::TrackMap::const_iterator trackStart, trackEnd;
+		GetTapNoteRangeExclusive(t, startIndex, finishIndex, trackStart, trackEnd);
+		for (; trackStart != trackEnd; ++trackStart)
+		{
+			TapNote const &tn = trackStart->second;
+			if (tn.type == TapNoteType_HoldHead &&
+			  tn.subType == holdType)
+			{
+				++holds;
+			}
+		}
+	}
+	return holds;
 }
 
 int NoteData::GetNumHoldNotes( int iStartIndex, int iEndIndex ) const
 {
-  return GetNumHoldsOfType(TapNoteSubType_Hold, iStartIndex, iEndIndex);
+	return GetNumHoldsOfType(TapNoteSubType_Hold, iStartIndex, iEndIndex);
 }
 
 int NoteData::GetNumRolls( int iStartIndex, int iEndIndex ) const
 {
-  return GetNumHoldsOfType(TapNoteSubType_Roll, iStartIndex, iEndIndex);
+	return GetNumHoldsOfType(TapNoteSubType_Roll, iStartIndex, iEndIndex);
 }
 
 int NoteData::GetNumLifts( int iStartIndex, int iEndIndex ) const

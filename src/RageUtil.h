@@ -454,18 +454,18 @@ RString join( const RString &sDelimitor, vector<RString>::const_iterator begin, 
 template<class T>
 RString join(RString const &delimiter, vector<T> const &source)
 {
-  std::stringstream ss;
-  for (size_t i = 0; i < source.size(); ++i)
-  {
-    if (i != 0)
-    {
-      ss << delimiter;
-    }
-    ss << source[i];
-  }
-  
-  RString result(ss.str());
-  return result;
+	std::stringstream ss;
+	for (size_t i = 0; i < source.size(); ++i)
+	{
+		if (i != 0)
+		{
+			ss << delimiter;
+		}
+		ss << source[i];
+	}
+
+	RString result(ss.str());
+	return result;
 }
 
 // These methods escapes a string for saving in a .sm or .crs file

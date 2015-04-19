@@ -1903,40 +1903,40 @@ void ScreenEdit::UpdateTextInfo()
 	}
 	
 	GAMESTATE->SetProcessedTimingData(m_pSteps->GetTimingData());
-  m_pSteps->SetNoteData(m_NoteDataEdit);
+	m_pSteps->SetNoteData(m_NoteDataEdit);
 
-  sText += ssprintf(NUM_STEPS_FORMAT.GetValue(),
-                    TAP_STEPS.GetValue().c_str(),
-                    join(" / ", m_pSteps->GetNumTapNotes()).c_str()
-  );
-  sText += ssprintf(NUM_JUMPS_FORMAT.GetValue(),
-                    JUMPS.GetValue().c_str(),
-                    join(" / ", m_pSteps->GetNumJumps() ).c_str()
-  );
-  sText += ssprintf(NUM_HANDS_FORMAT.GetValue(),
-                    HANDS.GetValue().c_str(),
-                    join(" / ", m_pSteps->GetNumHands() ).c_str()
-  );
-  sText += ssprintf(NUM_HOLDS_FORMAT.GetValue(),
-                    HOLDS.GetValue().c_str(),
-                    join(" / ", m_pSteps->GetNumHoldNotes() ).c_str()
-  );
-  sText += ssprintf(NUM_MINES_FORMAT.GetValue(),
-                    MINES.GetValue().c_str(),
-                    join(" / ", m_pSteps->GetNumMines() ).c_str()
-  );
-  sText += ssprintf(NUM_ROLLS_FORMAT.GetValue(),
-                    ROLLS.GetValue().c_str(),
-                    join(" / ", m_pSteps->GetNumRolls() ).c_str()
-  );
-  sText += ssprintf(NUM_LIFTS_FORMAT.GetValue(),
-                    LIFTS.GetValue().c_str(),
-                    join(" / ", m_pSteps->GetNumLifts() ).c_str()
-  );
-  sText += ssprintf(NUM_FAKES_FORMAT.GetValue(),
-                    FAKES.GetValue().c_str(),
-                    join(" / ", m_pSteps->GetNumFakes() ).c_str()
-  );
+	sText += ssprintf(NUM_STEPS_FORMAT.GetValue(),
+		    TAP_STEPS.GetValue().c_str(),
+		    join(" / ", m_pSteps->GetNumTapNotes()).c_str()
+	);
+	sText += ssprintf(NUM_JUMPS_FORMAT.GetValue(),
+		    JUMPS.GetValue().c_str(),
+		    join(" / ", m_pSteps->GetNumJumps() ).c_str()
+	);
+	sText += ssprintf(NUM_HANDS_FORMAT.GetValue(),
+		    HANDS.GetValue().c_str(),
+		    join(" / ", m_pSteps->GetNumHands() ).c_str()
+	);
+	sText += ssprintf(NUM_HOLDS_FORMAT.GetValue(),
+		    HOLDS.GetValue().c_str(),
+		    join(" / ", m_pSteps->GetNumHoldNotes() ).c_str()
+	);
+	sText += ssprintf(NUM_MINES_FORMAT.GetValue(),
+		    MINES.GetValue().c_str(),
+		    join(" / ", m_pSteps->GetNumMines() ).c_str()
+	);
+	sText += ssprintf(NUM_ROLLS_FORMAT.GetValue(),
+		    ROLLS.GetValue().c_str(),
+		    join(" / ", m_pSteps->GetNumRolls() ).c_str()
+	);
+	sText += ssprintf(NUM_LIFTS_FORMAT.GetValue(),
+		    LIFTS.GetValue().c_str(),
+		    join(" / ", m_pSteps->GetNumLifts() ).c_str()
+	);
+	sText += ssprintf(NUM_FAKES_FORMAT.GetValue(),
+		    FAKES.GetValue().c_str(),
+		    join(" / ", m_pSteps->GetNumFakes() ).c_str()
+	);
 	
 	switch( EDIT_MODE.GetValue() )
 	{
@@ -4853,7 +4853,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			g_StepsData.rows[lifts].SetOneUnthemedChoice( ssprintf("%s", join(" / ", pSteps->GetNumLifts()).c_str() ) );
 			g_StepsData.rows[fakes].SetOneUnthemedChoice( ssprintf("%s", join(" / ", pSteps->GetNumFakes()).c_str() ) );
 
-      RadarValues radar;
+			RadarValues radar;
 			radar.Zero();
 			NoteDataUtil::CalculateRadarValues(m_NoteDataEdit, fMusicSeconds, radar);
 			g_StepsData.rows[stream].SetOneUnthemedChoice(ssprintf("%.2f", radar[RadarCategory_Stream]));

@@ -327,34 +327,34 @@ public:
 	int GetNumLifts( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 	int GetNumFakes( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 
-  /**
-   * @brief Determine if the note in question should be counted as a tap.
-   * @param tn the note in question.
-   * @param row the row it lives in.
-   * @return true if it's a tap, false otherwise. */
-  bool IsTap(const TapNote &tn, const int row) const;
-  
-  /**
-   * @brief Determine if the note in question should be counted as a mine.
-   * @param tn the note in question.
-   * @param row the row it lives in.
-   * @return true if it's a mine, false otherwise. */
-  bool IsMine(const TapNote &tn, const int row) const;
-  
-  /**
-   * @brief Determine if the note in question should be counted as a lift.
-   * @param tn the note in question.
-   * @param row the row it lives in.
-   * @return true if it's a lift, false otherwise. */
-  bool IsLift(const TapNote &tn, const int row) const;
-  
-  /**
-   * @brief Determine if the note in question should be counted as a fake.
-   * @param tn the note in question.
-   * @param row the row it lives in.
-   * @return true if it's a fake, false otherwise. */
-  bool IsFake(const TapNote &tn, const int row) const;
-  
+	/**
+	 * @brief Determine if the note in question should be counted as a tap.
+	 * @param tn the note in question.
+	 * @param row the row it lives in.
+	 * @return true if it's a tap, false otherwise. */
+	bool IsTap(const TapNote &tn, const int row) const;
+	
+	/**
+	 * @brief Determine if the note in question should be counted as a mine.
+	 * @param tn the note in question.
+	 * @param row the row it lives in.
+	 * @return true if it's a mine, false otherwise. */
+	bool IsMine(const TapNote &tn, const int row) const;
+
+	/**
+	 * @brief Determine if the note in question should be counted as a lift.
+	 * @param tn the note in question.
+	 * @param row the row it lives in.
+	 * @return true if it's a lift, false otherwise. */
+	bool IsLift(const TapNote &tn, const int row) const;
+
+	/**
+	 * @brief Determine if the note in question should be counted as a fake.
+	 * @param tn the note in question.
+	 * @param row the row it lives in.
+	 * @return true if it's a fake, false otherwise. */
+	bool IsFake(const TapNote &tn, const int row) const;
+	
 	// Transformations
 	void LoadTransformed(const NoteData& original,
 						 int iNewNumTracks,
