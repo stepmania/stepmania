@@ -458,13 +458,13 @@ public:
 		NUM_AREA_MENU_CHOICES
 	};
 	void HandleArbitraryRemapping(RString const& mapstr);
-	void HandleAlterMenuChoice(AlterMenuChoice c,
-				   const vector<int> &iAnswers,
-				   bool bAllowUndo = true);
-	void HandleAlterMenuChoice(AlterMenuChoice c,
-				   bool bAllowUndo = true)
+	void HandleAlterMenuChoice(AlterMenuChoice choice,
+		const vector<int> &answers, bool allow_undo= true,
+		bool prompt_clear= true);
+	void HandleAlterMenuChoice(AlterMenuChoice c, bool allow_undo= true,
+		bool prompt_clear= true)
 	{
-		const vector<int> v; HandleAlterMenuChoice(c, v, bAllowUndo);
+		const vector<int> v; HandleAlterMenuChoice(c, v, allow_undo, prompt_clear);
 	}
 	
 	void HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo = true );
