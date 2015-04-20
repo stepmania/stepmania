@@ -165,6 +165,8 @@ struct NoteColumnRenderArgs
 	const NCSplineHandler* pos_handler;
 	const NCSplineHandler* rot_handler;
 	const NCSplineHandler* zoom_handler;
+	RageColor diffuse;
+	RageColor glow;
 	float song_beat;
 	int column;
 };

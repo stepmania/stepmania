@@ -957,7 +957,14 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		fTexCoordTop += fAddToTexCoord;
 
 		const float fAlpha		= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, column_args.column, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets );
-		const RageColor color		= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
+		const RageColor color= RageColor(
+			column_args.diffuse.r * fColorScale,
+			column_args.diffuse.g * fColorScale,
+			column_args.diffuse.b * fColorScale,
+			column_args.diffuse.a * fAlpha);
+
+		// Holds don't get a glow pass because rendering them is already
+		// painfully slow. -Kyz
 
 		if( fAlpha > 0 )
 			bAllAreTransparent = false;
@@ -1187,8 +1194,16 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 
 	const float fAlpha	= ArrowEffects::GetAlpha(	m_pPlayerState, column_args.column, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets );
 	const float fGlow	= ArrowEffects::GetGlow(	m_pPlayerState, column_args.column, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets );
-	const RageColor diffuse	= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
-	const RageColor glow	= RageColor(1,1,1,fGlow);
+	const RageColor diffuse	= RageColor(
+		column_args.diffuse.r * fColorScale,
+		column_args.diffuse.g * fColorScale,
+		column_args.diffuse.b * fColorScale,
+		column_args.diffuse.a * fAlpha);
+	const RageColor glow	= RageColor(
+		column_args.glow.r * fColorScale,
+		column_args.glow.g * fColorScale,
+		column_args.glow.b * fColorScale,
+		column_args.glow.a * fGlow);
 
 	bool bIsHoldHead = tn.type == TapNoteType_HoldHead;
 	bool bIsHoldCap = bIsHoldHead || tn.type == TapNoteType_HoldTail;
@@ -1415,6 +1430,8 @@ void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
 			break;
 	}
 	m_column_render_args.SetPRZForActor(receptor, sp_pos, ae_pos, sp_rot, ae_rot, sp_zoom, ae_zoom);
+	receptor->SetInternalDiffuse(m_column_render_args.diffuse);
+	receptor->SetInternalGlow(m_column_render_args.glow);
 }
 
 void NoteColumnRenderer::DrawPrimitives()
@@ -1423,6 +1440,8 @@ void NoteColumnRenderer::DrawPrimitives()
 	m_column_render_args.pos_handler= &NCR_current.m_pos_handler;
 	m_column_render_args.rot_handler= &NCR_current.m_rot_handler;
 	m_column_render_args.zoom_handler= &NCR_current.m_zoom_handler;
+	m_column_render_args.diffuse= m_pTempState->diffuse[0];
+	m_column_render_args.glow= m_pTempState->glow;
 	m_field_render_args->first_beat= NoteRowToBeat(m_field_render_args->first_row);
 	m_field_render_args->last_beat= NoteRowToBeat(m_field_render_args->last_row);
 	bool any_upcoming= false;
