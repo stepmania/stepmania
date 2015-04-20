@@ -157,7 +157,10 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 				// case 'A': tn = TAP_ORIGINAL_ATTACK;			break;
 				case 'K': tn = TAP_ORIGINAL_AUTO_KEYSOUND;		break;
 				case 'L': tn = TAP_ORIGINAL_LIFT;			break;
-				case 'F': tn = TAP_ORIGINAL_FAKE;			break;
+				case 'F':
+						tn = TAP_ORIGINAL_TAP;
+						tn.judgmentType = JudgmentType_Fake;
+						break;
 				// case 'I': tn = TAP_ORIGINAL_ITEM;			break;
 				default: 
 					/* Invalid data. We don't want to assert, since there might
@@ -195,6 +198,47 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 				}
 #endif
 
+				// Look for multiple attributes.
+				if ( *p == '=' )
+				{
+					// TODO: Find a way to move this code to another method.
+					// The tricky part is the p pointer: const chars don't help.
+					++p;
+					
+					bool done = false;
+					while ( !done && p < endLine )
+					{
+						switch (*(p++))
+						{
+							case '=':
+								done = true;
+								break;
+							case 'J':
+								switch (*(p++))
+							{
+								case 'B':
+									// TODO: Have this use a Bonus attribute when it's working.
+									break;
+								case 'E':
+									// TODO: Have this use an Evil attribute when it's working.
+									// Until then, explicit fall-through.
+								case 'F':
+									tn.judgmentType = JudgmentType_Fake;
+									break;
+								default:
+									LOG->Warn( "Unknown judgment character %c found", *p);
+									break;
+							}
+								break;
+							default:
+								// Invalid character. Try to fail gracefully.
+								LOG->Warn( "Unkonwn attribtue key characer %c found", *p);
+								break;
+						}
+					}
+
+				}
+				
 				// look for optional keysound index (e.g. "[123]")
 				if( *p == '[' )
 				{
@@ -387,29 +431,59 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 					char c;
 					switch( tn.type )
 					{
-					case TapNoteType_Empty:			c = '0'; break;
-					case TapNoteType_Tap:			c = '1'; break;
-					case TapNoteType_HoldHead:
-						switch( tn.subType )
-						{
-						case TapNoteSubType_Hold:	c = '2'; break;
-						case TapNoteSubType_Roll:	c = '4'; break;
-						//case TapNoteSubType_Mine:	c = 'N'; break;
+						case TapNoteType_Empty:
+							c = '0';
+							break;
+						case TapNoteType_Tap:
+							c = '1';
+							break;
+						case TapNoteType_HoldHead:
+							switch( tn.subType )
+							{
+								case TapNoteSubType_Hold:
+									c = '2';
+									break;
+								case TapNoteSubType_Roll:
+									c = '4';
+									break;
+									//case TapNoteSubType_Mine:	c = 'N'; break;
+								default:
+									FAIL_M(ssprintf("Invalid tap note subtype: %i", tn.subType));
+							}
+							break;
+						case TapNoteType_HoldTail:
+							c = '3';
+							break;
+						case TapNoteType_Mine:
+							c = 'M';
+							break;
+						case TapNoteType_Attack:
+							c = 'A';
+							break;
+						case TapNoteType_AutoKeysound:
+							c = 'K';
+							break;
+						case TapNoteType_Lift:
+							c = 'L';
+							break;
 						default:
-							FAIL_M(ssprintf("Invalid tap note subtype: %i", tn.subType));
-						}
-						break;
-					case TapNoteType_HoldTail:		c = '3'; break;
-					case TapNoteType_Mine:			c = 'M'; break;
-					case TapNoteType_Attack:			c = 'A'; break;
-					case TapNoteType_AutoKeysound:	c = 'K'; break;
-					case TapNoteType_Lift:			c = 'L'; break;
-					case TapNoteType_Fake:			c = 'F'; break;
-					default: 
-						c = '\0';
-						FAIL_M(ssprintf("Invalid tap note type: %i", tn.type));
+							c = '\0';
+							FAIL_M(ssprintf("Invalid tap note type: %i", tn.type));
 					}
 					sRet.append( 1, c );
+					
+					// TODO: When new attributes are needed, have them go within the equals signs.
+					if ( c != '3' )
+					{
+						switch ( tn.judgmentType )
+						{
+							case JudgmentType_Fake:
+								sRet.append("=JF=");
+								break;
+							default:
+								break;
+						}
+					}
 
 					if( tn.type == TapNoteType_Attack )
 					{
@@ -1057,7 +1131,7 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 				++num_chaos_rows;
 			}
 		}
-		if(state.judgable)
+		if(state.judgable && !curr_note->IsJudgmentFake())
 		{
 			switch(curr_note->type)
 			{
@@ -1114,8 +1188,7 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 				case TapNoteType_Mine:
 					++out[RadarCategory_Mines];
 					break;
-				case TapNoteType_Fake:
-					++out[RadarCategory_Fakes];
+				default:
 					break;
 			}
 		}
@@ -1273,7 +1346,8 @@ void NoteDataUtil::RemoveLifts( NoteData &inout, int iStartIndex, int iEndIndex 
 
 void NoteDataUtil::RemoveFakes( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	RemoveSpecificTapNotes( inout, TapNoteType_Fake, iStartIndex, iEndIndex );
+	// TODO: Remove the notes that have said attribute.
+	// RemoveSpecificTapNotes( inout, TapNoteType_Fake, iStartIndex, iEndIndex );
 }
 
 void NoteDataUtil::RemoveAllButOneTap( NoteData &inout, int row )
@@ -1797,7 +1871,6 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 			case TapNoteType_Mine:
 			case TapNoteType_Attack:
 			case TapNoteType_Lift:
-			case TapNoteType_Fake:
 				break;	// shuffle this
 			DEFAULT_FAIL( tn1.type );
 			}
@@ -1829,7 +1902,6 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 				case TapNoteType_Mine:
 				case TapNoteType_Attack:
 				case TapNoteType_Lift:
-				case TapNoteType_Fake:
 					break;	// ok to swap with this
 				DEFAULT_FAIL( tn2.type );
 				}
@@ -1965,7 +2037,8 @@ void NoteDataUtil::Wide( NoteData &inout, int iStartIndex, int iEndIndex )
 			iTrackToAdd--;
 		CLAMP( iTrackToAdd, 0, inout.GetNumTracks()-1 );
 
-		if( inout.GetTapNote(iTrackToAdd, i).type != TapNoteType_Empty  &&  inout.GetTapNote(iTrackToAdd, i).type != TapNoteType_Fake )
+		TapNote const &tn = inout.GetTapNote(iTrackToAdd, i);
+		if( tn.type != TapNoteType_Empty )
 		{
 			iTrackToAdd = (iTrackToAdd+1) % inout.GetNumTracks();
 		}
@@ -2723,6 +2796,7 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 		TapNote tn(
 			TapNoteType_Attack,
 			TapNoteSubType_Invalid,
+			JudgmentType_Normal,
 			TapNoteSource_Original, 
 			szAttacks[RandomInt(ARRAYLEN(szAttacks))],
 			15.0f, 

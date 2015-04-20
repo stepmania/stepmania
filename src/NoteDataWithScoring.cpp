@@ -25,10 +25,13 @@ int LastTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
 	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
 		/* Skip empty tracks and mines */
-		const TapNote &tn = in.GetTapNote( t, iRow );
+		TapNote const &tn = in.GetTapNote( t, iRow );
+		if ( tn.IsJudgmentFake() )
+		{
+			continue;
+		}
 		if (tn.type == TapNoteType_Empty ||
 			tn.type == TapNoteType_Mine ||
-			tn.type == TapNoteType_Fake ||
 			tn.type == TapNoteType_AutoKeysound) 
 			continue;
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn && pn != PLAYER_INVALID )
@@ -62,10 +65,13 @@ int MinTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
 	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
 		// Skip empty tracks and mines
-		const TapNote &tn = in.GetTapNote( t, iRow );
+		TapNote const &tn = in.GetTapNote( t, iRow );
+		if ( tn.IsJudgmentFake() )
+		{
+			continue;
+		}
 		if (tn.type == TapNoteType_Empty ||
 			tn.type == TapNoteType_Mine ||
-			tn.type == TapNoteType_Fake ||
 			tn.type == TapNoteType_AutoKeysound) 
 			continue;
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn && pn != PLAYER_INVALID )
@@ -129,9 +135,9 @@ TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned 
 	{
 		// Ignore mines (and fake arrows), or the score will always be TNS_None.
 		const TapNote &tn = in.GetTapNote( t, row );
-		if (tn.type == TapNoteType_Empty ||
+		if (tn.IsJudgmentFake() ||
+			tn.type == TapNoteType_Empty ||
 			tn.type == TapNoteType_Mine ||
-			tn.type == TapNoteType_Fake ||
 			tn.type == TapNoteType_AutoKeysound ||
 			( plnum != PlayerNumber_Invalid && tn.pn != plnum ) )
 			continue;
@@ -317,7 +323,7 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 		}
 		bool for_this_player= curr_note->pn == pn || pn == PLAYER_INVALID ||
 			curr_note->pn == PLAYER_INVALID;
-		if(state.judgable && for_this_player)
+		if(state.judgable && !curr_note->IsJudgmentFake() && for_this_player)
 		{
 			switch(curr_note->type)
 			{
@@ -372,7 +378,7 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 				case TapNoteType_Mine:
 					state.mines_avoided+= (curr_note->result.tns == TNS_AvoidMine);
 					break;
-				case TapNoteType_Fake:
+				default:
 					break;
 			}
 		}
