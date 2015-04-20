@@ -21,7 +21,6 @@ enum NotePart
 	NotePart_Tap, /**< The part representing a traditional TapNote. */
 	NotePart_Mine, /**< The part representing a mine. */
 	NotePart_Lift, /**< The part representing a lift note. */
-	NotePart_Fake, /**< The part representing a fake note. */
 	NotePart_HoldHead, /**< The part representing a hold head. */
 	NotePart_HoldTail, /**< The part representing a hold tail. */
 	NotePart_HoldTopCap, /**< The part representing a hold's top cap. */

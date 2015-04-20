@@ -5,18 +5,17 @@
 #include "XmlFile.h"
 #include "LocalizedString.h"
 
-TapNote TAP_EMPTY	( TapNoteType_Empty,	TapNoteSubType_Invalid,	TapNoteSource_Original, "", 0, -1 );
-TapNote TAP_ORIGINAL_TAP	( TapNoteType_Tap,	TapNoteSubType_Invalid,	TapNoteSource_Original, "", 0, -1 );
-TapNote TAP_ORIGINAL_LIFT	( TapNoteType_Lift,	TapNoteSubType_Invalid,	TapNoteSource_Original, "", 0, -1 );
-TapNote TAP_ORIGINAL_HOLD_HEAD	( TapNoteType_HoldHead,	TapNoteSubType_Hold,	TapNoteSource_Original, "", 0, -1 );
-TapNote TAP_ORIGINAL_ROLL_HEAD	( TapNoteType_HoldHead,	TapNoteSubType_Roll,	TapNoteSource_Original, "", 0, -1 );
-TapNote TAP_ORIGINAL_MINE	( TapNoteType_Mine,	TapNoteSubType_Invalid,	TapNoteSource_Original, "", 0, -1 );
-TapNote TAP_ORIGINAL_ATTACK	( TapNoteType_Attack,	TapNoteSubType_Invalid,	TapNoteSource_Original, "", 0, -1 );
-TapNote TAP_ORIGINAL_AUTO_KEYSOUND	( TapNoteType_AutoKeysound,TapNoteSubType_Invalid,	TapNoteSource_Original, "", 0, -1 );
-TapNote TAP_ORIGINAL_FAKE	( TapNoteType_Fake,	TapNoteSubType_Invalid,	TapNoteSource_Original, "", 0, -1 );
-//TapNote TAP_ORIGINAL_MINE_HEAD ( TapNoteType_HoldHead, TapNoteSubType_Mine, TapNoteSource_Original, "", 0, -1 );
-TapNote TAP_ADDITION_TAP	( TapNoteType_Tap,	TapNoteSubType_Invalid,	TapNoteSource_Addition, "", 0, -1 );
-TapNote TAP_ADDITION_MINE	( TapNoteType_Mine,	TapNoteSubType_Invalid,	TapNoteSource_Addition, "", 0, -1 );
+TapNote TAP_EMPTY	( TapNoteType_Empty,	TapNoteSubType_Invalid,	JudgmentType_Normal, TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_TAP	( TapNoteType_Tap,	TapNoteSubType_Invalid, JudgmentType_Normal,	TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_LIFT	( TapNoteType_Lift,	TapNoteSubType_Invalid,	JudgmentType_Normal, TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_HOLD_HEAD	( TapNoteType_HoldHead,	TapNoteSubType_Hold, JudgmentType_Normal,	TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_ROLL_HEAD	( TapNoteType_HoldHead,	TapNoteSubType_Roll, JudgmentType_Normal,	TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_MINE	( TapNoteType_Mine,	TapNoteSubType_Invalid, JudgmentType_Normal,	TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_ATTACK	( TapNoteType_Attack,	TapNoteSubType_Invalid, JudgmentType_Normal,	TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ORIGINAL_AUTO_KEYSOUND	( TapNoteType_AutoKeysound,TapNoteSubType_Invalid, JudgmentType_Normal,	TapNoteSource_Original, "", 0, -1 );
+//TapNote TAP_ORIGINAL_MINE_HEAD ( TapNoteType_HoldHead, TapNoteSubType_Mine, JudgmentType_Normal, TapNoteSource_Original, "", 0, -1 );
+TapNote TAP_ADDITION_TAP	( TapNoteType_Tap,	TapNoteSubType_Invalid, JudgmentType_Normal,	TapNoteSource_Addition, "", 0, -1 );
+TapNote TAP_ADDITION_MINE	( TapNoteType_Mine,	TapNoteSubType_Invalid, JudgmentType_Normal,	TapNoteSource_Addition, "", 0, -1 );
 
 
 static const char *TapNoteTypeNames[] = {
@@ -28,7 +27,6 @@ static const char *TapNoteTypeNames[] = {
 	"Lift",
 	"Attack",
 	"AutoKeySound",
-	"Fake",
 };
 XToString( TapNoteType );
 XToLocalizedString( TapNoteType );
@@ -42,6 +40,16 @@ static const char *TapNoteSubTypeNames[] = {
 XToString( TapNoteSubType );
 XToLocalizedString( TapNoteSubType );
 LuaXType( TapNoteSubType );
+
+static char const *JudgmentTypeNames[] = {
+	"Normal",
+	"Bonus",
+	"Evil",
+	"Fake"
+};
+XToString(JudgmentType);
+XToLocalizedString(JudgmentType);
+LuaXType(JudgmentType);
 
 static const char *TapNoteSourceNames[] = {
 	"Original",
@@ -120,6 +128,102 @@ static const int BEATS_PER_MEASURE = 4;
  *
  * FIXME: Similar to the above, use time signatures and don't force hard-coded values. */
 static const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;
+
+TapNote::TapNote():
+	type(TapNoteType_Empty),
+	subType(TapNoteSubType_Invalid),
+	judgmentType(JudgmentType_Normal),
+	source(TapNoteSource_Original),
+	result(),
+	pn(PLAYER_INVALID),
+	bHopoPossible(false),
+	sAttackModifiers(""),
+	fAttackDurationSeconds(0),
+	iKeysoundIndex(-1),
+	iDuration(0),
+	HoldResult()
+{
+}
+
+void TapNote::Init()
+{
+	type = TapNoteType_Empty;
+	subType = TapNoteSubType_Invalid;
+	judgmentType = JudgmentType_Normal;
+	source = TapNoteSource_Original;
+	pn = PLAYER_INVALID,
+	bHopoPossible = false;
+	fAttackDurationSeconds = 0.f;
+	iKeysoundIndex = -1;
+	iDuration = 0;
+}
+
+TapNote::TapNote(TapNoteType type_,
+                 TapNoteSubType subType_,
+                 JudgmentType judgmentType_,
+                 TapNoteSource source_,
+                 RString sAttackModifiers_,
+                 float fAttackDurationSeconds_,
+                 int iKeysoundIndex_ ):
+	type(type_),
+	subType(subType_),
+	judgmentType(judgmentType_),
+	source(source_),
+	pn(PLAYER_INVALID),
+	bHopoPossible(false),
+	sAttackModifiers(sAttackModifiers_),
+	fAttackDurationSeconds(fAttackDurationSeconds_),
+	iKeysoundIndex(iKeysoundIndex_),
+	iDuration(0),
+	HoldResult()
+{
+	if (type_ >= NUM_TapNoteType)
+	{
+		LOG->Trace("Invalid tap note type %s (most likely) due to random vanish issues. Assume it doesn't need judging.", TapNoteTypeToString(type_).c_str() );
+		type = TapNoteType_Empty;
+	}
+}
+
+bool TapNote::IsJudgmentFake() const
+{
+	return judgmentType == JudgmentType_Fake;
+}
+
+bool TapNote::CanBeHit() const
+{
+	return judgmentType == JudgmentType_Normal || judgmentType == JudgmentType_Bonus;
+}
+
+bool TapNote::CanBeMissed() const
+{
+	return judgmentType == JudgmentType_Normal || judgmentType == JudgmentType_Evil;
+}
+
+bool TapNote::CannotBeMissed() const
+{
+	return IsJudgmentFake() || judgmentType == JudgmentType_Bonus;
+}
+
+bool TapNote::CannotBeHit() const
+{
+	return IsJudgmentFake() || judgmentType == JudgmentType_Evil;
+}
+
+bool TapNote::operator==( TapNote const &other ) const
+{
+#define COMPARE(x)	if(x!=other.x) return false
+	COMPARE(type);
+	COMPARE(subType);
+	COMPARE(judgmentType);
+	COMPARE(source);
+	COMPARE(sAttackModifiers);
+	COMPARE(fAttackDurationSeconds);
+	COMPARE(iKeysoundIndex);
+	COMPARE(iDuration);
+	COMPARE(pn);
+#undef COMPARE
+	return true;
+}
 
 /**
  * @brief Retrieve the proper quantized NoteType for the note.
@@ -258,9 +362,26 @@ public:
 	DEFINE_METHOD( GetAttackModifiers, sAttackModifiers );
 	DEFINE_METHOD( GetAttackDuration, fAttackDurationSeconds );
 	DEFINE_METHOD( GetKeysoundIndex, iKeysoundIndex );
-	static int GetHoldDuration( T* p, lua_State* L )		{ lua_pushnumber(L, NoteRowToBeat(p->iDuration)); return 1; }
-	static int GetTapNoteResult( T* p, lua_State* L )		{ p->result.PushSelf(L); return 1; }
-	static int GetHoldNoteResult( T* p, lua_State* L )		{ p->HoldResult.PushSelf(L); return 1; }
+	static int GetHoldDuration( T* p, lua_State* L )
+	{
+		lua_pushnumber(L, NoteRowToBeat(p->iDuration));
+		return 1;
+	}
+	static int GetTapNoteResult( T* p, lua_State* L )
+	{
+		p->result.PushSelf(L);
+		return 1;
+	}
+	static int GetHoldNoteResult( T* p, lua_State* L )
+	{
+		p->HoldResult.PushSelf(L);
+		return 1;
+	}
+	static int GetJudgmentType( T *p, lua_State *L)
+	{
+		LuaHelpers::Push(L, p->judgmentType);
+		return 1;
+	}
 
 	LunaTapNote()
 	{
@@ -274,6 +395,7 @@ public:
 		ADD_METHOD( GetKeysoundIndex );
 		ADD_METHOD( GetHoldDuration );
 		ADD_METHOD( GetHoldNoteResult );
+		ADD_METHOD( GetJudgmentType );
 	}
 };
 LUA_REGISTER_CLASS( TapNote )
