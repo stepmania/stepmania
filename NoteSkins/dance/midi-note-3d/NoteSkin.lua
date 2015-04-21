@@ -16,24 +16,6 @@ local OldRedir = ret.Redir;
 ret.Redir = function(sButton, sElement)
 	-- sButton, sElement = OldRedir(sButton, sElement);
 
-	-- Instead of separate hold heads, use the tap note graphics.
-	if sElement == "Hold Head Active" or
-	   sElement == "Roll Head Active"
-	then
-		sElement = 
-			(GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_TwoPlayersSharedSides")
-			and "Tap Note" or "Hold Head Active";
-	end
-	
-	-- Test
-	if sElement == "Hold Head Inactive" or
-	   sElement == "Roll Head Inactive"
-	then
-		sElement =
-			(GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_TwoPlayersSharedSides")
-			and "Tap Note" or "Hold Head Inactive";
-	end
-	
 	if sElement == "Tap Fake"
 	then
 		sElement = "Tap Note";

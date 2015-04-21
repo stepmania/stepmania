@@ -127,7 +127,7 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 	pShared = NULL;
 
 	vector<RString> vsMusicFile;
-	const RString sMusicPath = pSong->GetMusicPath();
+	const RString sMusicPath = GAMESTATE->m_pCurSteps[GAMESTATE->GetMasterPlayerNumber()]->GetMusicPath();
 
 	if( !sMusicPath.empty() )
 		vsMusicFile.push_back( sMusicPath );

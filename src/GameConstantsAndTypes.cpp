@@ -30,6 +30,7 @@ static const char *RadarCategoryNames[] = {
 	"Air",
 	"Freeze",
 	"Chaos",
+	"Notes",
 	"TapsAndHolds",
 	"Jumps",
 	"Holds",
@@ -201,30 +202,34 @@ static const char *TapNoteScoreNames[] = {
 	"W1",
 	"CheckpointHit",
 };
+struct tns_conversion_helper
+{
+	std::map<RString, TapNoteScore> conversion_map;
+	tns_conversion_helper()
+	{
+		FOREACH_ENUM(TapNoteScore, tns)
+		{
+			conversion_map[TapNoteScoreNames[tns]]= tns;
+		}
+		// for backward compatibility
+		conversion_map["Boo"]= TNS_W5;
+		conversion_map["Good"]= TNS_W4;
+		conversion_map["Great"]= TNS_W3;
+		conversion_map["Perfect"]= TNS_W2;
+		conversion_map["Marvelous"]= TNS_W1;
+	}
+};
+tns_conversion_helper tns_converter;
 XToString( TapNoteScore );
 LuaXType( TapNoteScore );
 TapNoteScore StringToTapNoteScore( const RString &s )
 {
-	// new style
-	if	   ( s == "None" )		return TNS_None;
-	else if( s == "HitMine" )	return TNS_HitMine;
-	else if( s == "AvoidMine" )	return TNS_AvoidMine;
-	else if( s == "CheckpointHit" )	return TNS_CheckpointHit;
-	else if( s == "CheckpointMiss" )return TNS_CheckpointMiss;
-	else if( s == "Miss" )		return TNS_Miss;
-	else if( s == "W5" )		return TNS_W5;
-	else if( s == "W4" )		return TNS_W4;
-	else if( s == "W3" )		return TNS_W3;
-	else if( s == "W2" )		return TNS_W2;
-	else if( s == "W1" )		return TNS_W1;
-
-	// for backward compatibility
-	else if( s == "Boo" )		return TNS_W5;
-	else if( s == "Good" )		return TNS_W4;
-	else if( s == "Great" )		return TNS_W3;
-	else if( s == "Perfect" )	return TNS_W2;
-	else if( s == "Marvelous" )	return TNS_W1;
-
+	std::map<RString, TapNoteScore>::iterator tns=
+		tns_converter.conversion_map.find(s);
+	if(tns != tns_converter.conversion_map.end())
+	{
+		return tns->second;
+	}
 	return TapNoteScore_Invalid;
 }
 // This is necessary because the StringToX macro wasn't used, and Preference

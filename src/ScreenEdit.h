@@ -114,6 +114,11 @@ enum EditButton
 	EDIT_BUTTON_RECORD_FROM_CURSOR,
 	EDIT_BUTTON_RECORD_SELECTION,
 
+	EDIT_BUTTON_RECORD_HOLD_RESET,
+	EDIT_BUTTON_RECORD_HOLD_OFF,
+	EDIT_BUTTON_RECORD_HOLD_MORE,
+	EDIT_BUTTON_RECORD_HOLD_LESS,
+
 	EDIT_BUTTON_RETURN_TO_EDIT,
 
 	EDIT_BUTTON_INSERT,
@@ -212,8 +217,10 @@ public:
 	virtual void HandleMessage( const Message &msg );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	void SetDirty( bool bDirty ) { m_bDirty = bDirty; }
-	bool IsDirty() const { return m_bDirty; }
+	void SetDirty(bool dirty);
+	bool IsDirty() const { return m_dirty; }
+
+	void PerformSave(bool autosave);
 
 	EditState GetEditState(){ return m_EditState; }
 
@@ -260,6 +267,10 @@ protected:
 	
 	/** @brief Display the TimingData menu for editing song and step timing. */
 	void DisplayTimingMenu();
+
+	bool m_timing_is_being_copied; // Instead of being shifted.
+	int m_timing_rows_being_shitted; // How far the timing is being shitted.
+	void DisplayTimingChangeMenu();
 
 	EditState		m_EditState;
 
@@ -321,7 +332,8 @@ protected:
 	NoteData		m_Undo;
 
 	/** @brief Has the NoteData been changed such that a user should be prompted to save? */
-	bool			m_bDirty;
+	bool			m_dirty;
+	float m_next_autosave_time;
 
 	/** @brief The sound that is played when a note is added. */
 	RageSound		m_soundAddNote;
@@ -446,13 +458,13 @@ public:
 		NUM_AREA_MENU_CHOICES
 	};
 	void HandleArbitraryRemapping(RString const& mapstr);
-	void HandleAlterMenuChoice(AlterMenuChoice c,
-				   const vector<int> &iAnswers,
-				   bool bAllowUndo = true);
-	void HandleAlterMenuChoice(AlterMenuChoice c,
-				   bool bAllowUndo = true)
+	void HandleAlterMenuChoice(AlterMenuChoice choice,
+		const vector<int> &answers, bool allow_undo= true,
+		bool prompt_clear= true);
+	void HandleAlterMenuChoice(AlterMenuChoice c, bool allow_undo= true,
+		bool prompt_clear= true)
 	{
-		const vector<int> v; HandleAlterMenuChoice(c, v, bAllowUndo);
+		const vector<int> v; HandleAlterMenuChoice(c, v, allow_undo, prompt_clear);
 	}
 	
 	void HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo = true );
@@ -532,6 +544,7 @@ public:
 		step_display_bpm,
 		step_min_bpm,
 		step_max_bpm,
+		step_music,
 		NUM_STEPS_INFORMATION_CHOICES
 	};
 	void HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers );
@@ -563,6 +576,7 @@ public:
 		artist,
 		genre,
 		credit,
+		preview,
 		main_title_transliteration,
 		sub_title_transliteration,
 		artist_transliteration,
@@ -593,14 +607,36 @@ public:
 		speed_mode,
 		scroll,
 		fake,
+		shift_timing_in_region_down,
+		shift_timing_in_region_up,
+		copy_timing_in_region,
+		paste_timing_from_clip,
 		copy_full_timing,
 		paste_full_timing,
 		erase_step_timing,
 		NUM_TIMING_DATA_INFORMATION_CHOICES
 	};
-	
-	void HandleTimingDataInformationChoice (TimingDataInformationChoice c, 
+	void HandleTimingDataInformationChoice (TimingDataInformationChoice c,
 						const vector<int> &iAnswers );
+
+	enum TimingDataChangeChoice
+	{
+		timing_all,
+		timing_bpm,
+		timing_stop,
+		timing_delay,
+		timing_time_sig,
+		timing_warp,
+		timing_label,
+		timing_tickcount,
+		timing_combo,
+		timing_speed,
+		timing_scroll,
+		timing_fake,
+		NUM_TimingDataChangeChoices
+	};
+	void HandleTimingDataChangeChoice(TimingDataChangeChoice choice,
+		const vector<int>& answers);
 
 	enum BGChangeChoice
 	{

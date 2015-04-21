@@ -344,7 +344,7 @@ bool ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 
 	if( GAMESTATE->m_pCurSong == NULL )
 		return false;
-	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+	StepsType st = GAMESTATE->GetCurrentStyle(pn)->m_StepsType;
 	vector <Steps *> MultiSteps;
 	MultiSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( st );
 	if(MultiSteps.size() == 0)
@@ -449,9 +449,9 @@ void ScreenNetSelectMusic::StartSelectedSong()
 {
 	Song * pSong = m_MusicWheel.GetSelectedSong();
 	GAMESTATE->m_pCurSong.Set( pSong );
-	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType; //StepsType_dance_single;
 	FOREACH_EnabledPlayer (pn)
 	{
+		StepsType st = GAMESTATE->GetCurrentStyle(pn)->m_StepsType; //StepsType_dance_single;
 		GAMESTATE->m_PreferredDifficulty[pn].Set( m_DC[pn] );
 		Steps *pSteps = SongUtil::GetStepsByDifficulty(pSong, st, m_DC[pn]);
 		GAMESTATE->m_pCurSteps[pn].Set( pSteps );
@@ -476,7 +476,7 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 		return;
 	}
 
-	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+	StepsType st = GAMESTATE->GetCurrentStyle(pn)->m_StepsType;
 
 	Steps * pSteps = SongUtil::GetStepsByDifficulty( GAMESTATE->m_pCurSong, st, m_DC[pn] );
 	GAMESTATE->m_pCurSteps[pn].Set( pSteps );
@@ -503,7 +503,7 @@ void ScreenNetSelectMusic::MusicChanged()
 	FOREACH_EnabledPlayer (pn)
 	{
 		m_DC[pn] = GAMESTATE->m_PreferredDifficulty[pn];
-		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+		StepsType st = GAMESTATE->GetCurrentStyle(pn)->m_StepsType;
 		vector <Steps *> MultiSteps;
 		MultiSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( st );
 		if(MultiSteps.size() == 0)
@@ -548,10 +548,10 @@ void ScreenNetSelectMusic::MusicChanged()
 		{
 			SOUND->StopMusic();
 			SOUND->PlayMusic(
-				GAMESTATE->m_pCurSong->GetMusicPath(), 
+				GAMESTATE->m_pCurSong->GetPreviewMusicPath(),
 				NULL,
 				true,
-				GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds,
+				GAMESTATE->m_pCurSong->GetPreviewStartSeconds(),
 				GAMESTATE->m_pCurSong->m_fMusicSampleLengthSeconds );
 		}
 	}

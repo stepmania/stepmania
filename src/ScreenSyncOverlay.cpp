@@ -29,13 +29,14 @@ void ScreenSyncOverlay::Init()
 	Screen::Init();
 	
 	m_quad.SetDiffuse( RageColor(0,0,0,0) );
-	m_quad.SetHorizAlign( align_left );
-	m_quad.SetXY( SCREEN_CENTER_X+10, SCREEN_TOP+100 );
+	m_quad.SetHorizAlign(align_right);
+	m_quad.SetVertAlign(align_top);
+	m_quad.SetXY(SCREEN_WIDTH, SCREEN_TOP);
 	this->AddChild( &m_quad );
 
 	m_textHelp.LoadFromFont( THEME->GetPathF("Common", "normal") );
 	m_textHelp.SetHorizAlign( align_left );
-	m_textHelp.SetXY( SCREEN_CENTER_X+20, SCREEN_TOP+100 );
+	m_textHelp.SetVertAlign(align_top);
 	m_textHelp.SetDiffuseAlpha( 0 );
 	m_textHelp.SetShadowLength( 2 );
 	m_textHelp.SetText( 
@@ -48,6 +49,8 @@ void ScreenSyncOverlay::Init()
 		MACHINE_OFFSET.GetValue()+":\n"
 		"    Shift + F11/F12\n" +
 		HOLD_ALT.GetValue() );
+	m_textHelp.SetXY(SCREEN_WIDTH - m_textHelp.GetZoomedWidth() - 10,
+		SCREEN_TOP + 10);
 	this->AddChild( &m_textHelp );
 	
 	m_quad.ZoomToWidth( m_textHelp.GetZoomedWidth()+20 ); 
@@ -193,6 +196,19 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 	{
 		SCREENMAN->SystemMessage( CANT_SYNC_WHILE_PLAYING_A_COURSE );
 		return true;
+	}
+
+	// Release the lookup tables being used for the timing data because
+	// changing the timing data invalidates them. -Kyz
+	if(a != Action_Invalid)
+	{
+		FOREACH_EnabledPlayer(pn)
+		{
+			if(GAMESTATE->m_pCurSteps[pn])
+			{
+				GAMESTATE->m_pCurSteps[pn]->GetTimingData()->ReleaseLookup();
+			}
+		}
 	}
 
 	switch( a )

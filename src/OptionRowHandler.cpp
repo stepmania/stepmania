@@ -203,7 +203,7 @@ public:
 				}
 				else
 				{
-					LuaHelpers::ReportScriptErrorFmt("Unkown row flag \"%s\".", sName.c_str());
+					LuaHelpers::ReportScriptErrorFmt("Unknown row flag \"%s\".", sName.c_str());
 				}
 			}
 			for( int col = 0; col < NumCols; ++col )
@@ -434,13 +434,16 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 			m_Def.m_vsChoices.push_back( "" );
 			m_aListEntries.push_back( GameCommand() );
 		}
-		else if(GAMESTATE->GetCurrentStyle() && GAMESTATE->IsCourseMode() && GAMESTATE->m_pCurCourse)   // playing a course
+		// TODO:  Fix this OptionRow to fetch steps for all styles available.
+		// This is broken in kickbox game mode because kickbox uses separated
+		// styles. -Kyz
+		else if(GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber()) && GAMESTATE->IsCourseMode() && GAMESTATE->m_pCurCourse)   // playing a course
 		{
 			m_Def.m_bOneChoiceForAllPlayers = (bool)PREFSMAN->m_bLockCourseDifficulties;
 			m_Def.m_layoutType = StringToLayoutType( STEPS_ROW_LAYOUT_TYPE );
 
 			vector<Trail*> vTrails;
-			GAMESTATE->m_pCurCourse->GetTrails( vTrails, GAMESTATE->GetCurrentStyle()->m_StepsType );
+			GAMESTATE->m_pCurCourse->GetTrails( vTrails, GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType );
 			for( unsigned i=0; i<vTrails.size(); i++ )
 			{
 				Trail* pTrail = vTrails[i];
@@ -453,13 +456,13 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 				m_aListEntries.push_back( mc );
 			}
 		}
-		else if(GAMESTATE->GetCurrentStyle() && GAMESTATE->m_pCurSong) // playing a song
+		else if(GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber()) && GAMESTATE->m_pCurSong) // playing a song
 		{
 			m_Def.m_layoutType = StringToLayoutType( STEPS_ROW_LAYOUT_TYPE );
 
 			vector<Steps*> vpSteps;
 			Song *pSong = GAMESTATE->m_pCurSong;
-			SongUtil::GetSteps( pSong, vpSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
+			SongUtil::GetSteps( pSong, vpSteps, GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType );
 			StepsUtil::RemoveLockedSteps( pSong, vpSteps );
 			StepsUtil::SortNotesArrayByDifficulty( vpSteps );
 			for( unsigned i=0; i<vpSteps.size(); i++ )

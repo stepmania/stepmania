@@ -329,6 +329,12 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 {
 	if( GAMESTATE->m_pCurSong.Get() )
 	{
+#define SEGMENTS_MISMATCH_MESSAGE(orig, test, segments_name) \
+	if(orig.size() != test.size()) \
+	{ \
+		LuaHelpers::ReportScriptError("The sync overlay's " #segments_name " segment list is a different size from the song's.  Please report this bug with steps to reproduce it."); \
+	}
+
 		unsigned int iOriginalSize = vsAddTo.size();
 		TimingData &original = s_vpTimingDataOriginal[0];
 		TimingData &testing = GAMESTATE->m_pCurSong->m_SongTiming;
@@ -350,7 +356,8 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 
 		const vector<TimingSegment *> &bpmTest = testing.GetTimingSegments(SEGMENT_BPM);
 		const vector<TimingSegment *> &bpmOrig = original.GetTimingSegments(SEGMENT_BPM);
-		for( unsigned i=0; i< bpmTest.size(); i++ )
+		SEGMENTS_MISMATCH_MESSAGE(bpmOrig, bpmTest, bpm);
+		for(size_t i= 0; i < bpmTest.size() && i < bpmOrig.size(); i++)
 		{
 			float fNew = Quantize( ToBPM(bpmTest[i])->GetBPM(), 0.001f );
 			float fOld = Quantize( ToBPM(bpmOrig[i])->GetBPM(), 0.001f );
@@ -373,7 +380,8 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 		const vector<TimingSegment *> &stopTest = testing.GetTimingSegments(SEGMENT_STOP);
 		const vector<TimingSegment *> &stopOrig = original.GetTimingSegments(SEGMENT_STOP);
 
-		for( unsigned i=0; i< stopTest.size(); i++ )
+		SEGMENTS_MISMATCH_MESSAGE(stopOrig, stopTest, stop);
+		for(size_t i= 0; i < stopTest.size() && i < stopOrig.size(); i++)
 		{
 			float fOld = Quantize( ToStop(stopOrig[i])->GetPause(), 0.001f );
 			float fNew = Quantize( ToStop(stopTest[i])->GetPause(), 0.001f );
@@ -395,7 +403,8 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 		const vector<TimingSegment *> &delyTest = testing.GetTimingSegments(SEGMENT_DELAY);
 		const vector<TimingSegment *> &delyOrig = original.GetTimingSegments(SEGMENT_DELAY);
 
-		for( unsigned i=0; i< delyTest.size(); i++ )
+		SEGMENTS_MISMATCH_MESSAGE(delyOrig, delyTest, delay);
+		for(size_t i= 0; i < delyTest.size() && i < delyOrig.size(); i++)
 		{
 			if( delyTest[i] == delyOrig[i] )
 				continue;
@@ -426,6 +435,7 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 		{
 			vsAddTo.push_back( ssprintf(TAPS_IGNORED.GetValue(), s_iStepsFiltered) );
 		}
+#undef SEGMENTS_MISMATCH_MESSAGE
 	}
 }
 

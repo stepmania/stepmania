@@ -21,7 +21,7 @@ namespace NotesLoader
 	 * @param out the Song in question.
 	 * @param BlacklistedImages images to exclude (DWI files only for some reason).
 	 * @return its success or failure. */
-	bool LoadFromDir( const RString &sPath, Song &out, set<RString> &BlacklistedImages );
+	bool LoadFromDir( const RString &sPath, Song &out, set<RString> &BlacklistedImages, bool load_autosave= false );
 }
 
 #endif

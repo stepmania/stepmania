@@ -27,6 +27,7 @@ private:
 	void Create();
 	void Destroy();
 	unsigned m_iTexHandle;
+	unsigned m_iPreviousRenderTarget;
 };
 
 #endif

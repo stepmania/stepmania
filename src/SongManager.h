@@ -37,6 +37,7 @@ public:
 
 	void InitSongsFromDisk( LoadingWindow *ld );
 	void FreeSongs();
+	void UnlistSong(Song *song);
 	void Cleanup();
 
 	void Invalidate( const Song *pStaleSong );
@@ -66,6 +67,8 @@ public:
 	void InitAll( LoadingWindow *ld );	// songs, courses, groups - everything.
 	void Reload( bool bAllowFastLoad, LoadingWindow *ld=NULL );	// songs, courses, groups - everything.
 	void PreloadSongImages();
+
+	bool IsGroupNeverCached(const RString& group) const;
 
 	RString GetSongGroupBannerPath( RString sSongGroup ) const;
 	//RString GetSongGroupBackgroundPath( RString sSongGroup ) const;
@@ -172,13 +175,18 @@ public:
 protected:
 	void LoadStepManiaSongDir( RString sDir, LoadingWindow *ld );
 	void LoadDWISongDir( RString sDir );
-	bool GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut );
+	bool GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut, StepsType stype );
 	void SanityCheckGroupDir( RString sDir ) const;
 	void AddGroup( RString sDir, RString sGroupDirName );
 	int GetNumEditsLoadedFromProfile( ProfileSlot slot ) const;
 
+	void AddSongToList(Song* new_song);
 	/** @brief All of the songs that can be played. */
 	vector<Song*>		m_pSongs;
+	map<RString, Song*> m_SongsByDir;
+	set<RString> m_GroupsToNeverCache;
+	/** @brief Hold pointers to all the songs that have been deleted from disk but must at least be kept temporarily alive for smooth audio transitions. */
+	vector<Song*>       m_pDeletedSongs;
 	/** @brief The most popular songs ranked by number of plays. */
 	vector<Song*>		m_pPopularSongs;
 	//vector<Song*>		m_pRecentSongs;	// songs recently played on the machine

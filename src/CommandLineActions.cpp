@@ -17,6 +17,7 @@
 #include "Preference.h"
 #include "JsonUtil.h"
 #include "ScreenInstallOverlay.h"
+#include "ver.h"
 
 // only used for Version()
 #if defined(_WINDOWS)
@@ -69,19 +70,13 @@ static void LuaInformation()
 	pNode->AppendAttr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
 	pNode->AppendAttr("xsi:schemaLocation", "http://www.stepmania.com Lua.xsd");
 
-	pNode->AppendChild("Version", PRODUCT_ID_VER);
+	pNode->AppendChild("Version", string(PRODUCT_FAMILY) + product_version);
 	pNode->AppendChild("Date", DateTime::GetNowDate().GetString());
 
 	XmlFileUtil::SaveToFile(pNode, "Lua.xml", "Lua.xsl");
 
 	delete pNode;
 }
-
-#if defined(HAVE_VERSION_INFO)
-extern unsigned long version_num;
-extern const char *const version_date;
-extern const char *const version_time;
-#endif
 
 /**
  * @brief Print out version information.
@@ -92,7 +87,7 @@ extern const char *const version_time;
 static void Version()
 {
 	#if defined(WIN32)
-		RString sProductID = ssprintf("%s", PRODUCT_ID_VER);
+		RString sProductID = ssprintf("%s", (string(PRODUCT_FAMILY) + product_version).c_str() );
 		RString sVersion = "(StepMania was built without HAVE_VERSION_INFO)";
 		#if defined(HAVE_VERSION_INFO)
 			sVersion = ssprintf("build %lu\nCompile Date: %s @ %s", version_num, version_date, version_time);

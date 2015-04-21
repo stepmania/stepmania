@@ -37,10 +37,21 @@ void ActorFrameTexture::Create()
 {
 	if( m_pRenderTarget != NULL )
 	{
-		LOG->Warn( "Can't Create an already created ActorFrameTexture" );
+		LuaHelpers::ReportScriptError( "Can't Create an already created ActorFrameTexture" );
 		return;
 	}
 
+	if( TEXTUREMAN->IsTextureRegistered( m_sTextureName ) )
+	{
+		LuaHelpers::ReportScriptError( "ActorFrameTexture: Texture Name already in use." );
+		return;
+	}
+
+	if( (int)m_size.x < 1 || (int)m_size.y < 1 )
+	{
+		LuaHelpers::ReportScriptError( "ActorFrameTexture: Cannot have width or height less than 1" );
+		return;
+	}
 	RageTextureID id( m_sTextureName );
 	id.Policy = RageTextureID::TEX_VOLATILE;
 

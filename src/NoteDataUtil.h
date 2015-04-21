@@ -11,23 +11,9 @@ class Song;
 struct AttackArray;
 class TimingData;
 
-/** @brief A limited selection of the RadarValues. */
-struct RadarStats
-{
-	/** @brief The number of tap notes in the song. */
-	int taps;
-	/** @brief The number of jumps in the song. */
-	int jumps;
-	/** @brief The number of 3 panel hits in the song. */
-	int hands;
-	/** @brief The number of 4 panel hits in the song. */
-	int quads;
-};
-
 void PlaceAutoKeysound( NoteData &out, int row, TapNote akTap );
 int FindLongestOverlappingHoldNoteForAnyTrack( const NoteData &in, int iRow );
 void LightTransformHelper( const NoteData &in, NoteData &out, const vector<int> &aiTracks );
-RadarStats CalculateRadarStatsFast( const NoteData &in, RadarStats &out );
 
 /**
  * @brief Utility functions that deal with NoteData.
@@ -63,12 +49,10 @@ namespace NoteDataUtil
 	void LoadTransformedLightsFromTwo( const NoteData &marquee, const NoteData &bass, NoteData &out );
 	void InsertHoldTails( NoteData &inout );
 
-	// radar values - return between 0.0 and 1.2
-	float GetStreamRadarValue( const NoteData &in, float fSongSeconds );
-	float GetVoltageRadarValue( const NoteData &in, float fSongSeconds );
-	float GetAirRadarValue( const NoteData &in, float fSongSeconds );
-	float GetFreezeRadarValue( const NoteData &in, float fSongSeconds );
-	float GetChaosRadarValue( const NoteData &in, float fSongSeconds );
+	// Special case so that kickbox can have autogen steps that are playable.
+	// Hopefully I'll replace this with a good generalized autogen system
+	// later.  -Kyz
+	void AutogenKickbox(const NoteData& in, NoteData& out, const TimingData& timing, StepsType out_type, int nonrandom_seed);
 
 	void CalculateRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out );
 

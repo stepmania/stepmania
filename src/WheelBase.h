@@ -56,6 +56,8 @@ public:
 	WheelState GetWheelState() { return m_WheelState; }
 	bool WheelIsLocked() { return (m_WheelState == STATE_LOCKED ? true : false); }
 	void RebuildWheelItems( int dist = INT_MAX );	// INT_MAX = refresh all
+	// Update the list of songs to match whatever songs are indexed by the song manager (SONGMAN)
+	virtual void ReloadSongList() {}
 
 	virtual unsigned int GetNumItems() const { return m_CurWheelItemData.size(); }
 	bool IsEmpty() { return m_bEmpty; }

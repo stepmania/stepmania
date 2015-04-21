@@ -1,6 +1,7 @@
 #include "global.h"
 #include "SongManager.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
+#include "ActorUtil.h"
 #include "AnnouncerManager.h"
 #include "BackgroundUtil.h"
 #include "BannerCache.h"
@@ -24,6 +25,7 @@
 #include "RageFileManager.h"
 #include "RageLog.h"
 #include "Song.h"
+#include "SongCacheIndex.h"
 #include "SongUtil.h"
 #include "Sprite.h"
 #include "StatsManager.h"
@@ -89,6 +91,13 @@ SongManager::~SongManager()
 
 void SongManager::InitAll( LoadingWindow *ld )
 {
+	vector<RString> never_cache;
+	split(PREFSMAN->m_NeverCacheList, ",", never_cache);
+	for(vector<RString>::iterator group= never_cache.begin();
+			group != never_cache.end(); ++group)
+	{
+		m_GroupsToNeverCache.insert(*group);
+	}
 	InitSongsFromDisk( ld );
 	InitCoursesFromDisk( ld );
 	InitAutogenCourses();
@@ -142,12 +151,18 @@ void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 {
 	RageTimer tm;
+	// Tell SONGINDEX to not write the cache index file every time a song adds
+	// an entry. -Kyz
+	SONGINDEX->delay_save_cache= true;
 	LoadStepManiaSongDir( SpecialFiles::SONGS_DIR, ld );
 
 	const bool bOldVal = PREFSMAN->m_bFastLoad;
 	PREFSMAN->m_bFastLoad.Set( PREFSMAN->m_bFastLoadAdditionalSongs );
 	LoadStepManiaSongDir( ADDITIONAL_SONGS_DIR, ld );
 	PREFSMAN->m_bFastLoad.Set( bOldVal );
+	LoadEnabledSongsFromPref();
+	SONGINDEX->SaveCacheIndex();
+	SONGINDEX->delay_save_cache= false;
 
 	LOG->Trace( "Found %d songs in %f seconds.", (int)m_pSongs.size(), tm.GetDeltaTime() );
 }
@@ -157,12 +172,20 @@ void SongManager::SanityCheckGroupDir( RString sDir ) const
 {
 	// Check to see if they put a song directly inside the group folder.
 	vector<RString> arrayFiles;
-	GetDirListing( sDir + "/*.mp3", arrayFiles );
-	GetDirListing( sDir + "/*.oga", arrayFiles );
-	GetDirListing( sDir + "/*.ogg", arrayFiles );
-	GetDirListing( sDir + "/*.wav", arrayFiles );
-	if( !arrayFiles.empty() )
-		RageException::Throw( FOLDER_CONTAINS_MUSIC_FILES.GetValue(), sDir.c_str() );	
+	GetDirListing( sDir + "/*", arrayFiles );
+	const vector<RString>& audio_exts= ActorUtil::GetTypeExtensionList(FT_Sound);
+	FOREACH(RString, arrayFiles, fname)
+	{
+		const RString ext= GetExtension(*fname);
+		FOREACH_CONST(RString, audio_exts, aud)
+		{
+			if(ext == *aud)
+			{
+				RageException::Throw(
+					FOLDER_CONTAINS_MUSIC_FILES.GetValue(), sDir.c_str());
+			}
+		}
+	}
 }
 
 void SongManager::AddGroup( RString sDir, RString sGroupDirName )
@@ -309,14 +332,13 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 				);
 			}
 			Song* pNewSong = new Song;
-			m_pSongs.push_back( pNewSong );
 			if( !pNewSong->LoadFromSongDir( sSongDirName ) )
 			{
 				// The song failed to load.
-				m_pSongs.pop_back();
 				delete pNewSong;
 				continue;
 			}
+			AddSongToList(pNewSong);
 
 			index_entry.push_back( pNewSong );
 			loaded++;
@@ -341,8 +363,6 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 	if( ld ) {
 		ld->SetIndeterminate( true );
 	}
-
-	LoadEnabledSongsFromPref();
 }
 
 // Instead of "symlinks", songs should have membership in multiple groups. -Chris
@@ -375,7 +395,7 @@ void SongManager::LoadGroupSymLinks(RString sDir, RString sGroupFolder)
 
 			pNewSong->m_bIsSymLink = true;	// Very important so we don't double-parse later
 			pNewSong->m_sGroupName = sGroupFolder;
-			m_pSongs.push_back( pNewSong );
+			AddSongToList(pNewSong);
 			index_entry.push_back( pNewSong );
 		}
 	}
@@ -423,14 +443,42 @@ void SongManager::FreeSongs()
 	for( unsigned i=0; i<m_pSongs.size(); i++ )
 		SAFE_DELETE( m_pSongs[i] );
 	m_pSongs.clear();
-	m_mapSongGroupIndex.clear();
+	m_SongsByDir.clear();
 
-	// wait why is it cleared twice? -aj
+	// also free the songs that have been deleted from disk
+	for ( unsigned i=0; i<m_pDeletedSongs.size(); ++i ) 
+		SAFE_DELETE( m_pDeletedSongs[i] );
+	m_pDeletedSongs.clear();
+
+	m_mapSongGroupIndex.clear();
 	m_sSongGroupBannerPaths.clear();
-	//m_sSongGroupBackgroundPaths.clear(); // when in Rome... -aj
 
 	m_pPopularSongs.clear();
 	m_pShuffledSongs.clear();
+}
+
+void SongManager::UnlistSong(Song *song)
+{
+	// cannot immediately free song data, as it is needed temporarily for smooth audio transitions, etc.
+	// Instead, remove it from the m_pSongs list and store it in a special place where it can safely be deleted later.
+	m_pDeletedSongs.push_back(song);
+
+	// remove all occurences of the song in each of our song vectors
+	vector<Song*>* songVectors[3] = { &m_pSongs, &m_pPopularSongs, &m_pShuffledSongs };
+	for (int songVecIdx=0; songVecIdx<3; ++songVecIdx) {
+		vector<Song*>& v = *songVectors[songVecIdx];
+		for (int i=0; i<v.size(); ++i) {
+			if (v[i] == song) {
+				v.erase(v.begin()+i);
+				--i;
+			}
+		}
+	}
+}
+
+bool SongManager::IsGroupNeverCached(const RString& group) const
+{
+	return m_GroupsToNeverCache.find(group) != m_GroupsToNeverCache.end();
 }
 
 RString SongManager::GetSongGroupBannerPath( RString sSongGroup ) const
@@ -1102,9 +1150,6 @@ void SongManager::SaveEnabledSongsToPref()
 
 void SongManager::LoadEnabledSongsFromPref()
 {
-	FOREACH( Song *, m_pSongs, s )
-		(*s)->SetEnabled( true );
-
 	vector<RString> asDisabledSongs;
 	split( g_sDisabledSongs, ";", asDisabledSongs, true );
 
@@ -1167,7 +1212,7 @@ void SongManager::GetCoursesInGroup( vector<Course*> &AddTo, const RString &sCou
 				AddTo.push_back( m_pCourses[i] );
 }
 
-bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut )
+bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut, StepsType stype )
 {
 	const RString sCourseSuffix = sPreferredGroup + (bExtra2 ? "/extra2.crs" : "/extra1.crs");
 	RString sCoursePath = SpecialFiles::SONGS_DIR + sCourseSuffix;
@@ -1184,7 +1229,7 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredG
 	CourseLoaderCRS::LoadFromCRSFile( sCoursePath, course );
 	if( course.GetEstimatedNumStages() <= 0 ) return false;
 
-	Trail *pTrail = course.GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType );
+	Trail *pTrail = course.GetTrail(stype);
 	if( pTrail->m_vEntries.empty() )
 		return false;
 
@@ -1231,11 +1276,11 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->m_sGroupName.c_str():"") );
 
 	// Check preferred group
-	if( GetExtraStageInfoFromCourse(bExtra2, sGroup, pSongOut, pStepsOut) )
+	if( GetExtraStageInfoFromCourse(bExtra2, sGroup, pSongOut, pStepsOut, sd->m_StepsType) )
 		return;
 
 	// Optionally, check the Songs folder for extra1/2.crs files.
-	if( GetExtraStageInfoFromCourse(bExtra2, "", pSongOut, pStepsOut) )
+	if( GetExtraStageInfoFromCourse(bExtra2, "", pSongOut, pStepsOut, sd->m_StepsType) )
 		return;
 
 	// Choose a hard song for the extra stage
@@ -1333,17 +1378,18 @@ Course* SongManager::GetRandomCourse()
 	return NULL;
 }
 
-Song* SongManager::GetSongFromDir( RString sDir ) const
+Song* SongManager::GetSongFromDir(RString dir) const
 {
-	if( sDir.Right(1) != "/" )
-		sDir += "/";
+	if(dir.Right(1) != "/")
+	{ dir += "/"; }
 
-	sDir.Replace( '\\', '/' );
-
-	FOREACH_CONST( Song*, m_pSongs, s )
-		if( sDir.EqualsNoCase((*s)->GetSongDir()) )
-			return *s;
-
+	dir.Replace('\\', '/');
+	dir.MakeLower();
+	map<RString, Song*>::const_iterator entry= m_SongsByDir.find(dir);
+	if(entry != m_SongsByDir.end())
+	{
+		return entry->second;
+	}
 	return NULL;
 }
 
@@ -1827,6 +1873,15 @@ int SongManager::GetNumEditsLoadedFromProfile( ProfileSlot slot ) const
 	return iCount;
 }
 
+void SongManager::AddSongToList(Song* new_song)
+{
+	new_song->SetEnabled(true);
+	m_pSongs.push_back(new_song);
+	RString dir= new_song->GetSongDir();
+	dir.MakeLower();
+	m_SongsByDir.insert(make_pair(dir, new_song));
+}
+
 void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
 {
 	// Profile courses may refer to profile steps, so free profile courses first.
@@ -1894,7 +1949,7 @@ int FindCourseIndexOfSameMode( T begin, T end, const Course *p )
 
 		/* If it's not playable in this mode, don't increment. It might result in 
 		 * different output in different modes, but that's better than having holes. */
-		if( !(*it)->IsPlayableIn( GAMESTATE->GetCurrentStyle()->m_StepsType ) )
+		if( !(*it)->IsPlayableIn( GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType ) )
 			continue;
 		if( (*it)->GetPlayMode() != pm )
 			continue;

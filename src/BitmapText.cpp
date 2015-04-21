@@ -294,6 +294,7 @@ void BitmapText::BuildChars()
 			RageSpriteVertex v[4];
 			const glyph &g = m_pFont->GetGlyph( sLine[j] );
 
+			// Advance the cursor early for RTL(?)
 			if( m_pFont->IsRightToLeft() )
 				iX -= g.m_iHadvance;
 
@@ -304,7 +305,8 @@ void BitmapText::BuildChars()
 			v[3].p = RageVector3( iX+g.m_fHshift+g.m_fWidth,	iY+g.m_pPage->m_fVshift,		0 );	// top right
 
 			// Advance the cursor.
-			iX += g.m_iHadvance;
+			if( !m_pFont->IsRightToLeft() )
+				iX += g.m_iHadvance;
 
 			// set texture coordinates
 			v[0].t = RageVector2( g.m_TexRect.left,	g.m_TexRect.top );
@@ -620,19 +622,27 @@ bool BitmapText::StringWillUseAlternate( const RString& sText, const RString& sA
 	return true;
 }
 
-void BitmapText::CropToWidth( int iMaxWidthInSourcePixels )
+void BitmapText::CropLineToWidth(size_t l, int width)
 {
-	iMaxWidthInSourcePixels = max( 0, iMaxWidthInSourcePixels );
-
-	for( unsigned l=0; l<m_wTextLines.size(); l++ ) // for each line
+	if(l < m_wTextLines.size())
 	{
-		while( m_iLineWidths[l] > iMaxWidthInSourcePixels )
+		int used_width= width;
+		wstring& line= m_wTextLines[l];
+		int fit= m_pFont->GetGlyphsThatFit(line, &used_width);
+		if(fit < line.size())
 		{
-			m_wTextLines[l].erase( m_wTextLines[l].end()-1, m_wTextLines[l].end() );
-			m_iLineWidths[l] = m_pFont->GetLineWidthInSourcePixels( m_wTextLines[l] );
+			line.erase(line.begin()+fit, line.end());
 		}
+		m_iLineWidths[l]= used_width;
 	}
+}
 
+void BitmapText::CropToWidth(int width)
+{
+	for(size_t l= 0; l < m_wTextLines.size(); ++l)
+	{
+		CropLineToWidth(l, width);
+	}
 	BuildChars();
 }
 

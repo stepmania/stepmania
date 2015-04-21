@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libglew", "..\extern\glew-1
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "liblua", "..\extern\lua-5.1\liblua-net2011.vcxproj", "{0555A743-D202-409C-A331-349FEE971025}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libjson", "..\extern\jsoncpp\libjson-net2011.vcxproj", "{0DCAA088-FC09-4422-892B-8E89F1F798CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -79,6 +81,14 @@ Global
 		{0555A743-D202-409C-A331-349FEE971025}.Release|Win32.Build.0 = Release|Win32
 		{0555A743-D202-409C-A331-349FEE971025}.Release-SSE2|Win32.ActiveCfg = Release|Win32
 		{0555A743-D202-409C-A331-349FEE971025}.Release-SSE2|Win32.Build.0 = Release|Win32
+		{0DCAA088-FC09-4422-892B-8E89F1F798CB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0DCAA088-FC09-4422-892B-8E89F1F798CB}.Debug|Win32.Build.0 = Debug|Win32
+		{0DCAA088-FC09-4422-892B-8E89F1F798CB}.FastDebug|Win32.ActiveCfg = Debug|Win32
+		{0DCAA088-FC09-4422-892B-8E89F1F798CB}.FastDebug|Win32.Build.0 = Debug|Win32
+		{0DCAA088-FC09-4422-892B-8E89F1F798CB}.Release|Win32.ActiveCfg = Release|Win32
+		{0DCAA088-FC09-4422-892B-8E89F1F798CB}.Release|Win32.Build.0 = Release|Win32
+		{0DCAA088-FC09-4422-892B-8E89F1F798CB}.Release-SSE2|Win32.ActiveCfg = Release|Win32
+		{0DCAA088-FC09-4422-892B-8E89F1F798CB}.Release-SSE2|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

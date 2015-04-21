@@ -68,23 +68,26 @@ typedef vector<XNode*> XNodes;
 /** @brief Loop through each child. */
 #define FOREACH_Child( pNode, Var ) \
 	XNode *Var = NULL; \
-	for( XNodes::iterator Var##Iter = (pNode)->m_childs.begin(); \
-		Var = (Var##Iter != (pNode)->m_childs.end())? *Var##Iter:NULL, \
-		Var##Iter != (pNode)->m_childs.end(); \
+	for( XNodes::iterator Var##Iter = (pNode)->GetChildrenBegin(); \
+		Var = (Var##Iter != (pNode)->GetChildrenEnd())? *Var##Iter:NULL, \
+		Var##Iter != (pNode)->GetChildrenEnd(); \
 		++Var##Iter )
 /** @brief Loop through each child, using a constant iterator. */
 #define FOREACH_CONST_Child( pNode, Var ) \
 	const XNode *Var = NULL; \
-	for( XNodes::const_iterator Var##Iter = (pNode)->m_childs.begin(); \
-		Var = (Var##Iter != (pNode)->m_childs.end())? *Var##Iter:NULL, \
-		Var##Iter != (pNode)->m_childs.end(); \
+	for( XNodes::const_iterator Var##Iter = (pNode)->GetChildrenBegin(); \
+		Var = (Var##Iter != (pNode)->GetChildrenEnd())? *Var##Iter:NULL, \
+		Var##Iter != (pNode)->GetChildrenEnd(); \
 		++Var##Iter )
 
 class XNode
 {
+private:
+	XNodes	m_childs;	// child nodes
+	multimap<RString, XNode*> m_children_by_name;
+
 public:
 	RString m_sName;
-	XNodes	m_childs;	// child nodes
 	XAttrs	m_attrs;	// attributes
 
 	void SetName( const RString &sName ) { m_sName = sName; }
@@ -101,6 +104,12 @@ public:
 	bool GetAttrValue( const RString &sName, T &out ) const	{ const XNodeValue *pAttr=GetAttr(sName); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
 	bool PushAttrValue( lua_State *L, const RString &sName ) const;
 
+	XNodes::iterator GetChildrenBegin() { return m_childs.begin(); }
+	XNodes::const_iterator GetChildrenBegin() const { return m_childs.begin(); }
+	XNodes::iterator GetChildrenEnd() { return m_childs.end(); }
+	XNodes::const_iterator GetChildrenEnd() const { return m_childs.end(); }
+	bool ChildrenEmpty() const { return m_childs.empty(); }
+
 	// in one level child nodes
 	const XNode *GetChild( const RString &sName ) const;
 	XNode *GetChild( const RString &sName );
@@ -114,6 +123,8 @@ public:
 	XNode *AppendChild( const RString &sName )		{ XNode *p=new XNode(sName); return AppendChild(p); }
 	XNode *AppendChild( XNode *node );
 	bool RemoveChild( XNode *node, bool bDelete = true );
+	void RemoveChildFromByName(XNode *node);
+	void RenameChildInByName(XNode* node);
 
 	XNodeValue *AppendAttrFrom( const RString &sName, XNodeValue *pValue, bool bOverwrite = true );
 	XNodeValue *AppendAttr( const RString &sName );

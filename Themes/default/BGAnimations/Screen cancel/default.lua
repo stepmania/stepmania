@@ -4,6 +4,7 @@ return Def.ActorFrame {
 		OnCommand=cmd(diffuse,color("0,0,0,0.5");sleep,5/60;diffusealpha,1;sleep,5/60);
 	};
 	LoadActor(THEME:GetPathS("_Screen","cancel")) .. {
+		IsAction= true,
 		StartTransitioningCommand=cmd(play);
 	};
 };

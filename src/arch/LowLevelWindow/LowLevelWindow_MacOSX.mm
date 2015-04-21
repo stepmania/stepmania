@@ -96,7 +96,7 @@ public:
 	[m_Window setExcludedFromWindowsMenu:YES];
 	[m_Window useOptimizedDrawing:YES];
 	[m_Window setReleasedWhenClosed:NO];
-	[m_Window setDelegate:self];
+	[m_Window setDelegate:static_cast<id<NSWindowDelegate> >(self)];
 }
 
 - (void) closeWindow

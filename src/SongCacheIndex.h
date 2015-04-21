@@ -15,8 +15,10 @@ public:
 	static RString GetCacheFilePath( const RString &sGroup, const RString &sPath );
 
 	void ReadCacheIndex();
+	void SaveCacheIndex();
 	void AddCacheIndex( const RString &path, unsigned hash );
 	unsigned GetCacheHash( const RString &path ) const;
+	bool delay_save_cache;
 };
 
 extern SongCacheIndex *SONGINDEX;	// global and accessible from anywhere in our program

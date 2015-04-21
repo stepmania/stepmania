@@ -11,6 +11,10 @@
 #include "RageLog.h"
 #include "SpecialFiles.h"
 
+#if !defined(WITHOUT_NETWORKING) && defined(HAVE_VERSION_INFO)
+#include "ver.h"
+#endif
+
 //DEFAULTS_INI_PATH	= "Data/Defaults.ini";		// these can be overridden
 //PREFERENCES_INI_PATH	// overlay on Defaults.ini, contains the user's choices
 //STATIC_INI_PATH	= "Data/Static.ini";		// overlay on the 2 above, can't be overridden
@@ -143,10 +147,6 @@ bool g_bAutoRestart = false;
 # define TRUE_IF_DEBUG false
 #endif
 
-#if !defined(WITHOUT_NETWORKING) && defined(HAVE_VERSION_INFO)
-extern unsigned long version_num;
-#endif
-
 void ValidateDisplayAspectRatio( float &val )
 {
 	if( val < 0 )
@@ -193,6 +193,7 @@ PrefsManager::PrefsManager() :
 	//m_BackgroundCache		( "BackgroundCache",		BGCACHE_LOW_RES_PRELOAD ),
 	m_bFastLoad		( "FastLoad",			true ),
 	m_bFastLoadAdditionalSongs      ( "FastLoadAdditionalSongs",    true ),
+	m_NeverCacheList("NeverCacheList", ""),
 
 	m_bOnlyDedicatedMenuButtons	( "OnlyDedicatedMenuButtons",	false ),
 	m_bMenuTimer		( "MenuTimer",			false ),
@@ -202,6 +203,7 @@ PrefsManager::PrefsManager() :
 
 	m_iRegenComboAfterMiss		( "RegenComboAfterMiss",	5 ),
 	m_bMercifulDrain		( "MercifulDrain",		false ),	// negative life deltas are scaled by the players life percentage
+	m_HarshHotLifePenalty("HarshHotLifePenalty", true),
 	m_bMinimum1FullSongInCourses	( "Minimum1FullSongInCourses",	false ),	// FEoS for 1st song, FailImmediate thereafter
 	m_bFailOffInBeginner		( "FailOffInBeginner",		false ),
 	m_bFailOffForFirstStageEasy	( "FailOffForFirstStageEasy",	false ),
@@ -258,6 +260,8 @@ PrefsManager::PrefsManager() :
 	m_fDebounceCoinInputTime	( "DebounceCoinInputTime",		0 ),
 
 	m_fPadStickSeconds		( "PadStickSeconds",			0 ),
+	m_EditRecordModeLeadIn("EditRecordModeLeadIn", 1.0f),
+	m_EditClearPromptThreshold("EditClearPromptThreshold", 50),
 	m_bForceMipMaps			( "ForceMipMaps",			false ),
 	m_bTrilinearFiltering		( "TrilinearFiltering",			false ),
 	m_bAnisotropicFiltering		( "AnisotropicFiltering",		false ),
@@ -285,6 +289,8 @@ PrefsManager::PrefsManager() :
 	m_bMonkeyInput			( "MonkeyInput",			false ),
 	m_sMachineName			( "MachineName",			"" ),
 	m_sCoursesToShowRanking		( "CoursesToShowRanking",		"" ),
+	m_MuteActions("MuteActions", false),
+	m_bAllowSongDeletion("AllowSongDeletion", false),
 
 	m_bQuirksMode		( "QuirksMode",		false ),
 
@@ -462,16 +468,17 @@ void PrefsManager::ReadGamePrefsFromIni( const RString &sIni )
 
 	FOREACH_CONST_Child( &ini, section )
 	{
-		if( !BeginsWith(section->GetName(), GAME_SECTION_PREFIX) )
+		RString section_name= section->GetName();
+		if( !BeginsWith(section_name, GAME_SECTION_PREFIX) )
 			continue;
 
-		RString sGame = section->GetName().Right( section->GetName().length() - GAME_SECTION_PREFIX.length() );
+		RString sGame = section_name.Right( section_name.length() - GAME_SECTION_PREFIX.length() );
 		GamePrefs &gp = m_mapGameNameToGamePrefs[ sGame ];
 
 		// todo: read more prefs here? -aj
-		ini.GetValue( section->GetName(), "Announcer",		gp.m_sAnnouncer );
-		ini.GetValue( section->GetName(), "Theme",			gp.m_sTheme );
-		ini.GetValue( section->GetName(), "DefaultModifiers",	gp.m_sDefaultModifiers );
+		ini.GetValue(section_name, "Announcer",		gp.m_sAnnouncer);
+		ini.GetValue(section_name, "Theme",			gp.m_sTheme);
+		ini.GetValue(section_name, "DefaultModifiers",	gp.m_sDefaultModifiers);
 	}
 }
 

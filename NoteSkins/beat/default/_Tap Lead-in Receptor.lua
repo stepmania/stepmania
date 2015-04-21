@@ -11,7 +11,7 @@ return Def.ActorFrame {
 
 		LoadActor( "_Tap Receptor", NOTESKIN:LoadActor(Var "Button", "Go Receptor") ) .. {
 			Frame0000=0;
-			Delay0000=0;
+			Delay0000=1;
 		
 			InitCommand=cmd(playcommand, "Set");
 			GameplayLeadInChangedMessageCommand=cmd(playcommand,"Set");

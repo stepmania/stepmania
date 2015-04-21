@@ -454,7 +454,7 @@ void NoteDataUtil::SplitCompositeNoteData( const NoteData &in, vector<NoteData> 
 			 occuring to begin with, but at this time, I am unsure how to deal with it.
 			 Hopefully this hack can be removed soon. -- Jason "Wolfman2000" Felds
 			 */
-			const Style *curStyle = GAMESTATE->GetCurrentStyle();
+			const Style *curStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
 			if( (curStyle == NULL || curStyle->m_StyleType == StyleType_TwoPlayersSharedSides )
 				&& int( tn.pn ) > NUM_PlayerNumber )
 			{
@@ -556,7 +556,8 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 		{
 			int iOldTrack = t;
 			int iNewTrack = (iOldTrack + iCurTrackOffset) % iNewNumTracks;
-			const TapNote &tn = in.GetTapNote( iOldTrack, r );
+			TapNote tn = in.GetTapNote( iOldTrack, r );
+			tn.pn= PLAYER_INVALID;
 			out.SetTapNote( iNewTrack, r, tn );
 		}
 	}
@@ -622,9 +623,10 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 	{
 		for( int iTrackFrom = 0; iTrackFrom < in.GetNumTracks(); ++iTrackFrom )
 		{
-			const TapNote &tnFrom = in.GetTapNote( iTrackFrom, row );
+			TapNote tnFrom = in.GetTapNote( iTrackFrom, row );
 			if( tnFrom.type == TapNoteType_Empty || tnFrom.type == TapNoteType_AutoKeysound )
 				continue;
+			tnFrom.pn= PLAYER_INVALID;
 
 			// If this is a hold note, find the end.
 			int iEndIndex = row;
@@ -781,194 +783,367 @@ void NoteDataUtil::LoadTransformedLightsFromTwo( const NoteData &marquee, const 
 	NoteDataUtil::RemoveMines( out );
 }
 
-RadarStats CalculateRadarStatsFast( const NoteData &in, RadarStats &out )
+// This kickbox_limb enum should not be used anywhere outside the
+// Autogenkickbox function. -Kyz
+enum kickbox_limb
 {
-	out.taps = 0;
-	out.jumps = 0;
-	out.hands = 0;
-	out.quads = 0;
-	map<int, int> simultaneousMap;
-	map<int, int> simultaneousMapNoHold;
-	map<int, int> simultaneousMapTapHoldHead;
-	map<int, int>::iterator itr;
-	for( int t=0; t<in.GetNumTracks(); t++ )
+	left_foot, left_fist, right_fist, right_foot, num_kickbox_limbs, invalid_limb= -1
+};
+void NoteDataUtil::AutogenKickbox(const NoteData& in, NoteData& out, const TimingData& timing, StepsType out_type, int nonrandom_seed)
+{
+	// Each limb has its own list of tracks it is used for.  This allows
+	// abstract handling of the different styles.
+	// By convention, the lower panels are pushed first.  This gives the upper
+	// panels a higher index, which is mnemonically useful.
+	vector<vector<int> > limb_tracks(num_kickbox_limbs);
+	bool have_feet= true;
+	switch(out_type)
 	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( in, t, r, 0, MAX_NOTE_ROW )
+		case StepsType_kickbox_human:
+			out.SetNumTracks(4);
+			limb_tracks[left_foot].push_back(0);
+			limb_tracks[left_fist].push_back(1);
+			limb_tracks[right_fist].push_back(2);
+			limb_tracks[right_foot].push_back(3);
+			break;
+		case StepsType_kickbox_quadarm:
+			out.SetNumTracks(4);
+			have_feet= false;
+			limb_tracks[left_fist].push_back(1);
+			limb_tracks[left_fist].push_back(0);
+			limb_tracks[right_fist].push_back(2);
+			limb_tracks[right_fist].push_back(3);
+			break;
+		case StepsType_kickbox_insect:
+			out.SetNumTracks(6);
+			limb_tracks[left_foot].push_back(0);
+			limb_tracks[left_fist].push_back(2);
+			limb_tracks[left_fist].push_back(1);
+			limb_tracks[right_fist].push_back(3);
+			limb_tracks[right_fist].push_back(4);
+			limb_tracks[right_foot].push_back(5);
+			break;
+		case StepsType_kickbox_arachnid:
+			out.SetNumTracks(8);
+			limb_tracks[left_foot].push_back(0);
+			limb_tracks[left_foot].push_back(1);
+			limb_tracks[left_fist].push_back(3);
+			limb_tracks[left_fist].push_back(2);
+			limb_tracks[right_fist].push_back(4);
+			limb_tracks[right_fist].push_back(5);
+			limb_tracks[right_foot].push_back(7);
+			limb_tracks[right_foot].push_back(6);
+			break;
+		DEFAULT_FAIL(out_type);
+	}
+	// prev_limb_panels keeps track of which panel in the track list the limb
+	// hit last.
+	vector<size_t> prev_limb_panels(num_kickbox_limbs, 0);
+	vector<int> panel_repeat_counts(num_kickbox_limbs, 0);
+	vector<int> panel_repeat_goals(num_kickbox_limbs, 0);
+	RandomGen rnd(nonrandom_seed);
+	kickbox_limb prev_limb_used= invalid_limb;
+	// Kicks are only allowed if there is enough setup/recovery time.
+	float kick_recover_time= GAMESTATE->GetAutoGenFarg(0);
+	if(kick_recover_time <= 0.0f)
+	{
+		kick_recover_time= .25f;
+	}
+	float prev_note_time= -1.0f;
+	int rows_done= 0;
+#define RAND_FIST ((rnd() % 2) ? left_fist : right_fist)
+#define RAND_FOOT ((rnd() % 2) ? left_foot : right_foot)
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS(in, r)
+	{
+		// Arbitrary:  Drop everything except taps and hold heads out entirely,
+		// convert holds to tap just the head.
+		bool has_valid_tapnote= false;
+		for(int t= 0; t < in.GetNumTracks(); ++t)
 		{
-			/* This function deals strictly with taps, jumps, hands, and quads.
-			 * As such, all rows in here have to be judgable. */
-			if (!GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(r))
-				continue;
-			
-			const TapNote &tn = in.GetTapNote(t, r);
-			switch( tn.type )
+			const TapNote& tn= in.GetTapNote(t, r);
+			if(tn.type == TapNoteType_Tap || tn.type == TapNoteType_HoldHead)
 			{
-				case TapNoteType_Mine:
-				case TapNoteType_Empty:
-				case TapNoteType_Fake:
-				case TapNoteType_AutoKeysound:
-					continue;	// skip these types - they don't count
-				default: break;
+				has_valid_tapnote= true;
+				break;
 			}
-
-			if( (itr = simultaneousMap.find(r)) == simultaneousMap.end() )
-				simultaneousMap[r] = 1;
-			else
-				itr->second++;
-
-			if( (itr = simultaneousMapNoHold.find(r)) == simultaneousMapNoHold.end() )
-				simultaneousMapNoHold[r] = 1;
-			else
-				itr->second++;
-			
-			if( tn.type == TapNoteType_Tap || tn.type == TapNoteType_Lift || tn.type == TapNoteType_HoldHead )
+		}
+		if(!has_valid_tapnote) { continue; }
+		int next_row= r;
+		bool next_has_valid= false;
+		while(!next_has_valid)
+		{
+			if(!in.GetNextTapNoteRowForAllTracks(next_row))
 			{
-				simultaneousMapTapHoldHead[r] = 1;
+				next_row= -1;
+				next_has_valid= true;
 			}
-
-			if( tn.type == TapNoteType_HoldHead )
+			else
 			{
-				int searchStartRow = r + 1;
-				int searchEndRow   = r + tn.iDuration;
-				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, rr, searchStartRow, searchEndRow )
+				for(int t= 0; t < in.GetNumTracks(); ++t)
 				{
-					switch( in.GetTapNote(t, rr).type )
+					const TapNote& tn= in.GetTapNote(t, next_row);
+					if(tn.type == TapNoteType_Tap || tn.type == TapNoteType_HoldHead)
 					{
-						case TapNoteType_Mine:
-						case TapNoteType_Empty:
-						case TapNoteType_Fake:
-							continue;	// skip these types - they don't count
-						default: break;
+						next_has_valid= true;
+						break;
 					}
-					if( (itr = simultaneousMap.find(rr)) == simultaneousMap.end() )
-						simultaneousMap[rr] = 1;
-					else
-						itr->second++;
 				}
 			}
 		}
-	}
-	for( itr = simultaneousMap.begin(); itr != simultaneousMap.end(); itr ++ )
-	{
-		if( itr->second >= 3 )
+		float this_note_time= timing.GetElapsedTimeFromBeat(NoteRowToBeat(r));
+		float next_note_time= timing.GetElapsedTimeFromBeat(NoteRowToBeat(next_row));
+		kickbox_limb this_limb= invalid_limb;
+		switch(prev_limb_used)
 		{
-			out.hands ++;
-			if( itr->second >= 4 )
-			{
-				out.quads ++;
-			}
+			case invalid_limb:
+				// First limb is arbitrarily always a fist.
+				this_limb= RAND_FIST;
+				break;
+			case left_foot:
+			case right_foot:
+				// Multiple kicks in a row are allowed if they're on the same foot.
+				// Allow the last note to be a kick.
+				// Switch feet if there's enough time.
+				if(next_note_time - this_note_time > kick_recover_time * 2.0f)
+				{
+					this_limb= prev_limb_used == left_foot ? right_foot : left_foot;
+				}
+				else if((next_note_time - this_note_time > kick_recover_time * .5f ||
+						next_note_time < 0.0f) && (rnd() % 2))
+				{
+					this_limb= prev_limb_used;
+				}
+				else
+				{
+					this_limb= RAND_FIST;
+				}
+				break;
+			case left_fist:
+			case right_fist:
+				if(this_note_time - prev_note_time > kick_recover_time &&
+					(next_note_time - this_note_time > kick_recover_time ||
+						next_note_time < 0.0f) && have_feet)
+				{
+					this_limb= RAND_FOOT;
+				}
+				else
+				{
+					// Alternate fists.
+					this_limb= prev_limb_used == left_fist ? right_fist : left_fist;
+				}
+				break;
+		}
+		size_t this_panel= prev_limb_panels[this_limb];
+		if(panel_repeat_counts[this_limb] + 1 > panel_repeat_goals[this_limb])
+		{
+			// Use a different panel.
+			this_panel= (this_panel + 1) % limb_tracks[this_limb].size();
+			panel_repeat_counts[this_limb]= 0;
+			panel_repeat_goals[this_limb]= (rnd() % 8) + 1;
+		}
+		out.SetTapNote(limb_tracks[this_limb][this_panel], r, TAP_ORIGINAL_TAP);
+		++panel_repeat_counts[this_limb];
+		prev_limb_panels[this_limb]= this_panel;
+		prev_note_time= this_note_time;
+		prev_limb_used= this_limb;
+		++rows_done;
+	}
+	out.RevalidateATIs(vector<int>(), false);
+}
+
+struct recent_note
+{
+	int row;
+	int track;
+	recent_note()
+		:row(0), track(0) {}
+	recent_note(int r, int t)
+		:row(r), track(t) {}
+};
+
+// CalculateRadarValues has to delay some stuff until a row ends, but can
+// only detect a row ending when it hits the next note.  There isn't a note
+// after the last row, so it also has to do the delayed stuff after exiting
+// its loop.  So this state structure exists to be passed to a function that
+// can be called from both places to do the work.  If this were Lua,
+// DoRowEndRadarCalc would be a nested function. -Kyz
+struct crv_state
+{
+	bool judgable;
+	// hold_ends tracks where currently active holds will end, which is used
+	// to count the number of hands. -Kyz
+	vector<int> hold_ends;
+	// num_holds_on_curr_row saves us the work of tracking where holds started
+	// just to keep a jump of two holds from counting as a hand.
+	int num_holds_on_curr_row;
+	int num_notes_on_curr_row;
+
+	crv_state()
+		:judgable(false), num_holds_on_curr_row(0), num_notes_on_curr_row(0)
+	{}
+};
+
+static void DoRowEndRadarCalc(crv_state& state, RadarValues& out)
+{
+	if(state.judgable)
+	{
+		if(state.num_notes_on_curr_row + (state.hold_ends.size() -
+				state.num_holds_on_curr_row) >= 3)
+		{
+			++out[RadarCategory_Hands];
 		}
 	}
-	for( itr = simultaneousMapNoHold.begin(); itr != simultaneousMapNoHold.end(); itr ++ )
-	{
-		if( itr->second >= 2 )
-		{
-			out.jumps ++;
-		}
-	}
-	out.taps = simultaneousMapTapHoldHead.size();
-	return out;
 }
 
 void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out )
 {
-	RadarStats stats;
-	CalculateRadarStatsFast( in, stats );
-	
-	// The for loop and the assert are used to ensure that all fields of 
-	// RadarValue get set in here.
-	FOREACH_ENUM( RadarCategory, rc )
+	// Anybody editing this function should also examine
+	// NoteDataWithScoring::GetActualRadarValues to make sure it handles things
+	// the same way.
+	out.Zero();
+	int curr_row= -1;
+	// recent_notes is used to calculate the voltage.  Each element is the row
+	// and track number of a tap note.  When the pair at the beginning is too
+	// old, it's deleted.  This provides a way to have a rolling window
+	// that scans for the peak step density. -Kyz
+	vector<recent_note> recent_notes;
+	NoteData::all_tracks_const_iterator curr_note=
+		in.GetTapNoteRangeAllTracks(0, MAX_NOTE_ROW);
+	TimingData* timing= GAMESTATE->GetProcessedTimingData();
+	// total_taps exists because the stream calculation needs GetNumTapNotes,
+	// but TapsAndHolds + Jumps + Hands would be inaccurate. -Kyz
+	float total_taps= 0;
+	const float voltage_window_beats= 8.0f;
+	const int voltage_window= BeatToNoteRow(voltage_window_beats);
+	size_t max_notes_in_voltage_window= 0;
+	int num_chaos_rows= 0;
+	crv_state state;
+
+	while(!curr_note.IsAtEnd())
 	{
-		switch( rc )
+		if(curr_note.Row() != curr_row)
 		{
-		case RadarCategory_Stream:			out[rc] = GetStreamRadarValue( in, fSongSeconds );	break;	
-		case RadarCategory_Voltage:			out[rc] = GetVoltageRadarValue( in, fSongSeconds );	break;
-		case RadarCategory_Air:				out[rc] = GetAirRadarValue( in, fSongSeconds );		break;
-		case RadarCategory_Freeze:			out[rc] = GetFreezeRadarValue( in, fSongSeconds );	break;
-		case RadarCategory_Chaos:			out[rc] = GetChaosRadarValue( in, fSongSeconds );	break;
-		case RadarCategory_TapsAndHolds:	out[rc] = (float) stats.taps;				break;
-		case RadarCategory_Jumps:			out[rc] = (float) stats.jumps;				break;
-		case RadarCategory_Holds:			out[rc] = (float) in.GetNumHoldNotes();		break;
-		case RadarCategory_Mines:			out[rc] = (float) in.GetNumMines();			break;
-		case RadarCategory_Hands:			out[rc] = (float) in.GetNumHands();			break;
-		case RadarCategory_Rolls:			out[rc] = (float) in.GetNumRolls();			break;
-		case RadarCategory_Lifts:			out[rc] = (float) in.GetNumLifts();			break;
-		case RadarCategory_Fakes:			out[rc] = (float) in.GetNumFakes();			break;
-		default:	FAIL_M("Non-existant radar category attempted to be set!");
+			DoRowEndRadarCalc(state, out);
+			curr_row= curr_note.Row();
+			state.num_notes_on_curr_row= 0;
+			state.num_holds_on_curr_row= 0;
+			state.judgable= timing->IsJudgableAtRow(curr_row);
+			for(size_t n= 0; n < state.hold_ends.size(); ++n)
+			{
+				if(state.hold_ends[n] < curr_row)
+				{
+					state.hold_ends.erase(state.hold_ends.begin() + n);
+					--n;
+				}
+			}
+			for(size_t n= 0; n < recent_notes.size(); ++n)
+			{
+				if(recent_notes[n].row < curr_row - voltage_window)
+				{
+					recent_notes.erase(recent_notes.begin() + n);
+					--n;
+				}
+				else
+				{
+					// recent_notes is kept sorted, so reaching the first note that
+					// isn't old enough to remove means we're finished. -Kyz
+					break;
+				}
+			}
+			// GetChaosRadarValue did not care about whether a row is judgable.
+			// So chaos is checked here. -Kyz
+			if(GetNoteType(curr_row) >= NOTE_TYPE_12TH)
+			{
+				++num_chaos_rows;
+			}
 		}
+		if(state.judgable)
+		{
+			switch(curr_note->type)
+			{
+				case TapNoteType_Tap:
+				case TapNoteType_HoldHead:
+					// Lifts have to be counted with taps for them to be added to max dp
+					// correctly. -Kyz
+				case TapNoteType_Lift:
+					// HoldTails and Attacks are counted by IsTap.  But it doesn't
+					// make sense to count HoldTails as hittable notes. -Kyz
+				case TapNoteType_Attack:
+					++out[RadarCategory_Notes];
+					++state.num_notes_on_curr_row;
+					++total_taps;
+					recent_notes.push_back(
+						recent_note(curr_row, curr_note.Track()));
+					max_notes_in_voltage_window= max(recent_notes.size(),
+						max_notes_in_voltage_window);
+					// If there is one hold active, and one tap on this row, it does
+					// not count as a jump.  Hands do need to count the number of
+					// holds active though. -Kyz
+					switch(state.num_notes_on_curr_row)
+					{
+						case 1:
+							++out[RadarCategory_TapsAndHolds];
+							break;
+						case 2:
+							++out[RadarCategory_Jumps];
+							break;
+						default:
+							break;
+					}
+					if(curr_note->type == TapNoteType_HoldHead)
+					{
+						state.hold_ends.push_back(curr_row + curr_note->iDuration);
+						++state.num_holds_on_curr_row;
+						switch(curr_note->subType)
+						{
+							case TapNoteSubType_Hold:
+								++out[RadarCategory_Holds];
+								break;
+							case TapNoteSubType_Roll:
+								++out[RadarCategory_Rolls];
+								break;
+							default:
+								break;
+						}
+					}
+					else if(curr_note->type == TapNoteType_Lift)
+					{
+						++out[RadarCategory_Lifts];
+					}
+					break;
+				case TapNoteType_Mine:
+					++out[RadarCategory_Mines];
+					break;
+				case TapNoteType_Fake:
+					++out[RadarCategory_Fakes];
+					break;
+			}
+		}
+		else
+		{
+			++out[RadarCategory_Fakes];
+		}
+		++curr_note;
 	}
-}
+	DoRowEndRadarCalc(state, out);
 
-float NoteDataUtil::GetStreamRadarValue( const NoteData &in, float fSongSeconds )
-{
-	if( !fSongSeconds )
-		return 0.0f;
-	// density of steps
-	int iNumNotes = in.GetNumTapNotes() + in.GetNumHoldNotes();
-	float fNotesPerSecond = iNumNotes/fSongSeconds;
-	float fReturn = fNotesPerSecond / 7;
-	return min( fReturn, 1.0f );
-}
-
-float NoteDataUtil::GetVoltageRadarValue( const NoteData &in, float fSongSeconds )
-{
-	if( !fSongSeconds )
-		return 0.0f;
-
-	const float fLastBeat = in.GetLastBeat();
-	const float fAvgBPS = fLastBeat / fSongSeconds;
-
-	// peak density of steps
-	float fMaxDensitySoFar = 0;
-
-	const float BEAT_WINDOW = 8;
-	const int BEAT_WINDOW_ROWS = BeatToNoteRow( BEAT_WINDOW );
-
-	for( int i=0; i<=BeatToNoteRow(fLastBeat); i+=BEAT_WINDOW_ROWS )
+	// Walking the notes complete, now assign any values that remain. -Kyz
+	if(fSongSeconds > 0.0f)
 	{
-		int iNumNotesThisWindow = in.GetNumTapNotes( i, i+BEAT_WINDOW_ROWS ) + in.GetNumHoldNotes( i, i+BEAT_WINDOW_ROWS );
-		float fDensityThisWindow = iNumNotesThisWindow / BEAT_WINDOW;
-		fMaxDensitySoFar = max( fMaxDensitySoFar, fDensityThisWindow );
+		out[RadarCategory_Stream]= (total_taps / fSongSeconds) / 7.0f;
+		// As seen in GetVoltageRadarValue:  Don't use the timing data, just
+		// pretend the beats are evenly spaced. -Kyz
+		float avg_bps= in.GetLastBeat() / fSongSeconds;
+		out[RadarCategory_Voltage]=
+			((max_notes_in_voltage_window / voltage_window_beats) * avg_bps) /
+			10.0f;
+		out[RadarCategory_Air]= out[RadarCategory_Jumps] / fSongSeconds;
+		out[RadarCategory_Freeze]= out[RadarCategory_Holds] / fSongSeconds;
+		out[RadarCategory_Chaos]= num_chaos_rows / fSongSeconds * .5f;
 	}
-
-	float fReturn = fMaxDensitySoFar*fAvgBPS/10;
-	return min( fReturn, 1.0f );
-}
-
-float NoteDataUtil::GetAirRadarValue( const NoteData &in, float fSongSeconds )
-{
-	if( !fSongSeconds )
-		return 0.0f;
-	// number of doubles
-	int iNumDoubles = in.GetNumJumps();
-	float fReturn = iNumDoubles / fSongSeconds;
-	return min( fReturn, 1.0f );
-}
-
-float NoteDataUtil::GetFreezeRadarValue( const NoteData &in, float fSongSeconds )
-{
-	if( !fSongSeconds )
-		return 0.0f;
-	// number of hold steps
-	float fReturn = in.GetNumHoldNotes() / fSongSeconds;
-	return min( fReturn, 1.0f );
-}
-
-float NoteDataUtil::GetChaosRadarValue( const NoteData &in, float fSongSeconds )
-{
-	if( !fSongSeconds )
-		return 0.0f;
-	// count number of notes smaller than 8ths
-	int iNumChaosNotes = 0;
-
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS( in, r )
-	{
-		if( GetNoteType(r) >= NOTE_TYPE_12TH )
-			iNumChaosNotes++;
-	}
-
-	float fReturn = iNumChaosNotes / fSongSeconds * 0.5f;
-	return min( fReturn, 1.0f );
+	// Sorry, there's not an assert here anymore for making sure all fields
+	// are set.  There's a comment in the RadarCategory enum to direct
+	// attention here when adding new categories. -Kyz
 }
 
 void NoteDataUtil::RemoveHoldNotes( NoteData &in, int iStartIndex, int iEndIndex )
@@ -1411,6 +1586,72 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 						iTakeFromTrack[8] = 0;
 						iTakeFromTrack[9] = 1;
 						break;
+					case StepsType_kickbox_human:
+						if(iRandChoice == 1)
+						{
+							iTakeFromTrack[0]= 3;
+							iTakeFromTrack[3]= 0;
+						}
+						if(iRandChoice == 2)
+						{
+							iTakeFromTrack[1]= 2;
+							iTakeFromTrack[2]= 1;
+						}
+						break;
+					case StepsType_kickbox_quadarm:
+						if(iRandChoice == 1)
+						{
+							iTakeFromTrack[0]= 1;
+							iTakeFromTrack[1]= 0;
+							iTakeFromTrack[2]= 3;
+							iTakeFromTrack[3]= 2;
+						}
+						if(iRandChoice == 2)
+						{
+							iTakeFromTrack[1]= 2;
+							iTakeFromTrack[2]= 1;
+						}
+						break;
+					case StepsType_kickbox_insect:
+						if(iRandChoice == 1)
+						{
+							iTakeFromTrack[1]= 2;
+							iTakeFromTrack[2]= 1;
+							iTakeFromTrack[3]= 4;
+							iTakeFromTrack[4]= 3;
+						}
+						if(iRandChoice == 2)
+						{
+							iTakeFromTrack[1]= 4;
+							iTakeFromTrack[2]= 3;
+							iTakeFromTrack[3]= 2;
+							iTakeFromTrack[4]= 1;
+						}
+						break;
+					case StepsType_kickbox_arachnid:
+						if(iRandChoice == 1)
+						{
+							iTakeFromTrack[0]= 1;
+							iTakeFromTrack[1]= 0;
+							iTakeFromTrack[2]= 3;
+							iTakeFromTrack[3]= 2;
+							iTakeFromTrack[4]= 5;
+							iTakeFromTrack[5]= 4;
+							iTakeFromTrack[6]= 7;
+							iTakeFromTrack[7]= 6;
+						}
+						if(iRandChoice == 2)
+						{
+							iTakeFromTrack[0]= 6;
+							iTakeFromTrack[1]= 7;
+							iTakeFromTrack[2]= 4;
+							iTakeFromTrack[3]= 5;
+							iTakeFromTrack[4]= 2;
+							iTakeFromTrack[5]= 3;
+							iTakeFromTrack[6]= 0;
+							iTakeFromTrack[7]= 1;
+						}
+						break;
 					default: break;
 					}
 					break;
@@ -1448,6 +1689,36 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 			iTakeFromTrack[5] = 4;
 			iTakeFromTrack[6] = 7;
 			iTakeFromTrack[7] = 6;
+			break;
+		case StepsType_kickbox_human:
+			iTakeFromTrack[0]= 1;
+			iTakeFromTrack[1]= 0;
+			iTakeFromTrack[2]= 3;
+			iTakeFromTrack[3]= 2;
+			break;
+		case StepsType_kickbox_quadarm:
+			iTakeFromTrack[0]= 1;
+			iTakeFromTrack[1]= 0;
+			iTakeFromTrack[2]= 3;
+			iTakeFromTrack[3]= 2;
+			break;
+		case StepsType_kickbox_insect:
+			iTakeFromTrack[0]= 1;
+			iTakeFromTrack[1]= 4;
+			iTakeFromTrack[2]= 3;
+			iTakeFromTrack[3]= 2;
+			iTakeFromTrack[4]= 1;
+			iTakeFromTrack[5]= 4;
+			break;
+		case StepsType_kickbox_arachnid:
+			iTakeFromTrack[0]= 5;
+			iTakeFromTrack[1]= 4;
+			iTakeFromTrack[2]= 5;
+			iTakeFromTrack[3]= 4;
+			iTakeFromTrack[4]= 3;
+			iTakeFromTrack[5]= 2;
+			iTakeFromTrack[6]= 1;
+			iTakeFromTrack[7]= 0;
 			break;
 		default: 
 			break;

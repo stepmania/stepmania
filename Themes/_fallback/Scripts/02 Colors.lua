@@ -129,10 +129,14 @@ function ColorDarkTone(c)
 	return { c[1]/2, c[2]/2, c[3]/2, c[4] }
 end
 
+local pn_to_color_name= {[PLAYER_1]= "PLAYER_1", [PLAYER_2]= "PLAYER_2"}
+local default_color= color("1,1,1,1")
+
 function PlayerColor( pn )
-	if pn == PLAYER_1 then return GameColor.PlayerColors["PLAYER_1"] end
-	if pn == PLAYER_2 then return GameColor.PlayerColors["PLAYER_2"] end
-	return color("1,1,1,1")
+	if not GameColor or not GameColor.PlayerColors then
+		return default_color
+	end
+	return GameColor.PlayerColors[pn_to_color_name[pn]] or default_color
 end
 
 function PlayerScoreColor( pn )
@@ -140,9 +144,9 @@ function PlayerScoreColor( pn )
 end
 
 function PlayerDarkColor( pn )
-	if pn == PLAYER_1 then return GameColor.PlayerDarkColors["PLAYER_1"] end 
-	if pn == PLAYER_2 then return GameColor.PlayerDarkColors["PLAYER_2"] end
-	return color("1,1,1,1")
+	if not GameColor then return default_color end
+	if not GameColor.PlayerDarkColors then return PlayerColor(pn) end
+	return GameColor.PlayerDarkColors[pn_to_color_name[pn]] or default_color
 end
 
 local function GameColorDifficultyWrapper(diff)
@@ -168,21 +172,24 @@ function StepsOrTrailToColor(StepsOrTrail)
 	return CustomDifficultyToColor( StepsOrTrailToCustomDifficulty(stepsOrTrail) )
 end
 
+local stage_default= color("#000000")
 function StageToColor( stage )
-	return GameColor.Stage[stage] or color("#000000")
+	if not GameColor or not GameColor.Stage then return stage_default end
+	return GameColor.Stage[stage] or stage_default
 end
 
 function StageToStrokeColor( stage )
-	local c = GameColor.Stage[stage]
+	local c = StageToColor(stage)
 	return { c[1]/2, c[2]/2, c[3]/2, c[4] }
 end
 
 function JudgmentLineToColor( i )
-	return GameColor.Judgment[i] or color("#000000")
+	if not GameColor or not GameColor.Judgment then return stage_default end
+	return GameColor.Judgment[i] or stage_default
 end
 
 function JudgmentLineToStrokeColor( i )
-	local c = GameColor.Judgment[i]
+	local c = JudgmentLineToColor(i)
 	return { c[1]/2, c[2]/2, c[3]/2, c[4] }
 end
 

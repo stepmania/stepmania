@@ -114,7 +114,7 @@ void ScreenOptionsCourseOverview::HandleScreenMessage( const ScreenMessage SM )
 			
 			if( EditCourseUtil::RenameAndSave( GAMESTATE->m_pCurCourse, ScreenTextEntry::s_sLastAnswer ) )
 			{
-				m_soundSave.Play();
+				m_soundSave.Play(true);
 				SCREENMAN->SystemMessage( WORKOUT_SAVED );
 			}
 		}
@@ -169,7 +169,7 @@ void ScreenOptionsCourseOverview::ProcessMenuStart( const InputEventPlus &input 
 			{
 				if( EditCourseUtil::Save( GAMESTATE->m_pCurCourse ) )
 				{
-					m_soundSave.Play();
+					m_soundSave.Play(true);
 					SCREENMAN->SystemMessage( WORKOUT_SAVED );
 				}
 				else

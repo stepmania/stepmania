@@ -40,6 +40,7 @@ private:
 	float	m_fTargetNumber;
 	/** @brief The speed we are trying to reach the target number. */
 	float	m_fScoreVelocity;
+	bool m_metrics_loaded;
 };
 
 #endif

@@ -31,6 +31,7 @@ static const char *EditMenuActionNames[] = {
 	"Delete",
 	"Create",
 	"Practice",
+	"LoadAutosave",
 };
 XToString( EditMenuAction );
 XToLocalizedString( EditMenuAction );
@@ -316,7 +317,7 @@ void EditMenu::Up()
 	} while (!RowIsSelectable(dest));
 	ASSERT( dest >= 0 );
 	ChangeToRow( dest );
-	m_soundChangeRow.Play();
+	m_soundChangeRow.Play(true);
 }
 
 void EditMenu::Down()
@@ -328,7 +329,7 @@ void EditMenu::Down()
 	} while (!RowIsSelectable(dest));
 	ASSERT( dest < NUM_EditMenuRow );
 	ChangeToRow( dest );
-	m_soundChangeRow.Play();
+	m_soundChangeRow.Play(true);
 }
 
 void EditMenu::Left()
@@ -338,7 +339,7 @@ void EditMenu::Left()
 		m_iSelection[m_SelectedRow]--;
 		wrap( m_iSelection[m_SelectedRow], GetRowSize(m_SelectedRow) );
 		OnRowValueChanged( m_SelectedRow );
-		m_soundChangeValue.Play();
+		m_soundChangeValue.Play(true);
 	}
 }
 
@@ -349,7 +350,7 @@ void EditMenu::Right()
 		m_iSelection[m_SelectedRow]++;
 		wrap( m_iSelection[m_SelectedRow], GetRowSize(m_SelectedRow) );
 		OnRowValueChanged( m_SelectedRow );
-		m_soundChangeValue.Play();
+		m_soundChangeValue.Play(true);
 	}
 }
 
@@ -659,6 +660,12 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			m_StepsDisplaySource.SetVisible( !(bHideMeter || GetSelectedSteps()) );
 
 			m_Actions.clear();
+			// Stick autosave in the list first so that people will see it. -Kyz
+			Song* cur_song= GetSelectedSong();
+			if(cur_song != NULL && cur_song->HasAutosaveFile() && !cur_song->WasLoadedFromAutosave())
+			{
+				m_Actions.push_back(EditMenuAction_LoadAutosave);
+			}
 			if( GetSelectedSteps() )
 			{
 				switch( mode )

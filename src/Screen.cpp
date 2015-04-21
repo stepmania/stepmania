@@ -374,13 +374,13 @@ bool Screen::PassInputToLua(const InputEventPlus& input)
 
 void Screen::AddInputCallbackFromStack(lua_State* L)
 {
-	callback_key_t key= lua_topointer(L, -1);
+	callback_key_t key= lua_topointer(L, 1);
 	m_InputCallbacks[key]= LuaReference(L);
 }
 
 void Screen::RemoveInputCallback(lua_State* L)
 {
-	callback_key_t key= lua_topointer(L, -1);
+	callback_key_t key= lua_topointer(L, 1);
 	if(m_CallingInputCallbacks)
 	{
 		m_DelayedCallbackRemovals.push_back(key);
@@ -424,7 +424,7 @@ public:
 
 	static int AddInputCallback(T* p, lua_State* L)
 	{
-		if(!lua_isfunction(L, -1))
+		if(!lua_isfunction(L, 1))
 		{
 			luaL_error(L, "Input callback must be a function.");
 		}
@@ -434,7 +434,7 @@ public:
 
 	static int RemoveInputCallback(T* p, lua_State* L)
 	{
-		if(!lua_isfunction(L, -1))
+		if(!lua_isfunction(L, 1))
 		{
 			luaL_error(L, "Input callback must be a function.");
 		}

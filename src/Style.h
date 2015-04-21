@@ -67,7 +67,11 @@ public:
 	int			m_iInputColumn[NUM_GameController][NUM_GameButton];
 	int			m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 	/** @brief Does this style need to be zoomed out with two players due to too many columns? */
-	bool		m_bNeedsZoomOutWith2Players;
+	// Design change:  Instead of having a flag in the style that toggles a
+	// fixed zoom that is only applied to the columns, ScreenGameplay now
+	// calculates a zoom factor to apply to the notefield and puts it in the
+	// PlayerState. -Kyz
+	//bool		m_bNeedsZoomOutWith2Players;
 	/** @brief Can this style use the BeginnerHelper for assisting new people to the game? */
 	bool		m_bCanUseBeginnerHelper;
 	/** 
@@ -76,7 +80,7 @@ public:
 	 * This is primarily for Couple and Routine styles. */
 	bool		m_bLockDifficulties;
 
-	GameInput StyleInputToGameInput( int iCol, PlayerNumber pn ) const;
+	void StyleInputToGameInput( int iCol, PlayerNumber pn, vector<GameInput>& ret ) const;
 	/**
 	 * @brief Retrieve the column based on the game input.
 	 * @param GameI the game input.
@@ -88,6 +92,7 @@ public:
 	bool GetUsesCenteredArrows() const;
 	void GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& original, NoteData& noteDataOut ) const;
 	void GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut ) const;
+	float GetWidth(PlayerNumber pn) const;
 
 	// Lua
 	void PushSelf( lua_State *L );

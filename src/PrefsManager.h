@@ -185,6 +185,7 @@ public:
 	//Preference<BackgroundCacheMode>		m_BackgroundCache;
 	Preference<bool>	m_bFastLoad;
 	Preference<bool>	m_bFastLoadAdditionalSongs;
+	Preference<RString> m_NeverCacheList;
 
 	Preference<bool>	m_bOnlyDedicatedMenuButtons;
 	Preference<bool>	m_bMenuTimer;
@@ -194,6 +195,7 @@ public:
 	// Whoever added these: Please add a comment saying what they do. -Chris
 	Preference<int>	m_iRegenComboAfterMiss;
 	Preference<bool>	m_bMercifulDrain; // negative life deltas are scaled by the players life percentage
+	Preference<bool> m_HarshHotLifePenalty; // See LifeMeterBar.cpp -Kyz
 	Preference<bool>	m_bMinimum1FullSongInCourses; // FEoS for 1st song, FailImmediate thereafter
 	Preference<bool>	m_bFailOffInBeginner;
 	Preference<bool>	m_bFailOffForFirstStageEasy;
@@ -253,6 +255,11 @@ public:
 	// after pressed.
 	Preference<float>	m_fPadStickSeconds;
 
+	// Lead in time before recording starts in edit mode.
+	Preference<float> m_EditRecordModeLeadIn;
+	// User is prompted on clearing an area with more than this note count.
+	Preference<int> m_EditClearPromptThreshold;
+
 	// Useful for non 4:3 displays and resolutions < 640x480 where texels don't
 	// map directly to pixels.
 	Preference<bool>	m_bForceMipMaps;
@@ -292,6 +299,8 @@ public:
 	Preference<bool>	m_bMonkeyInput;
 	Preference<RString>	m_sMachineName;
 	Preference<RString>	m_sCoursesToShowRanking;
+	Preference<bool> m_MuteActions;
+	Preference<bool> m_bAllowSongDeletion; // Allow the user to remove songs from their collection through UI / keyboard shortcut
 
 	/** @brief Enable some quirky behavior used by some older versions of StepMania. */
 	Preference<bool>	m_bQuirksMode;

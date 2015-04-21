@@ -6,9 +6,10 @@
 
 NetworkSyncManager *NSMAN;
 
-// Aldo: used by GetCurrentSMVersion()
+// Aldo: version_num used by GetCurrentSMVersion()
+// XXX: That's probably not what you want... --root
 #if defined(HAVE_VERSION_INFO)
-extern unsigned long version_num;
+#include "ver.h"
 #endif
 
 #if defined(WITHOUT_NETWORKING)
@@ -165,7 +166,7 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 
 	m_packet.Write1( NETPROTOCOLVERSION );
 
-	m_packet.WriteNT( RString(PRODUCT_ID_VER) );
+	m_packet.WriteNT( RString( string(PRODUCT_FAMILY) + product_version ) );
 
 	/* Block until response is received.
 	 * Move mode to blocking in order to give CPU back to the system,
@@ -642,7 +643,7 @@ void NetworkSyncManager::ProcessInput()
 				StyleName = m_packet.ReadNT();
 
 				GAMESTATE->SetCurGame( GAMEMAN->StringToGame(GameName) );
-				GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMESTATE->m_pCurGame,StyleName) );
+				GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMESTATE->m_pCurGame,StyleName), PLAYER_INVALID );
 
 				SCREENMAN->SetNewScreen( "ScreenNetSelectMusic" ); //Should this be metric'd out?
 			}

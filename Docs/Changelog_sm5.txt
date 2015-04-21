@@ -4,6 +4,280 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/04/08
+----------
+* [ActorSound] IsAction attribute added.  get/set_is_action functions added.
+  [kyzentun]
+* [GameSoundManager] is_action arg added to PlayOnce. [kyzentun]
+
+2015/04/06
+----------
+* [global] rec_print_children and rec_print_table lua functions added to
+  _fallback. [kyzentun]
+* [Language] Dutch translation updated. [Thumbsy]
+* [RadarValues] Stream, Voltage, Air, Freeze, and Chaos are no longer capped
+  at 1.  Stream and Voltage no longer count hold heads twice.
+  RadarCategory_Notes added, which counts all notes.
+  Scoring bug fixes related to radar calculation. [kyzentun]
+* [ScreenSelectGame] Exit option returns to ScreenOptionsService unless the
+  game type actually changed. [Wallacoloo]
+
+2015/04/04
+----------
+* [EditMode] Added submenus to the timing edit menu to allow shifting,
+  copying, and pasting any or all timing segments in the selected region or
+  after the current cursor position. [kyzentun]
+  Shifting menus in edit mode now have choices for 1, 2, or 4 measures or 2
+  beats. [kyzentun]
+* [global] Fixed crash on OS X for certain dance pads when in Japanese
+  locale. [Wallacoloo]
+
+2015/04/03
+----------
+* [ScreenGameplay] The NoteField board is now underneath everything except
+  the backgound.  This means underneath any custom actors on the underlay or
+  overlay or decoration layers, and also underneath the combo/judgment even
+  when the ComboUnderField metric is true. [kyzentun]
+  Fixed bug in screen filter in default theme that made it not appear under
+  the field when a solo file was played without Center1Player. [kyzentun]
+
+2015/04/02
+----------
+* [global] commify function exposed to lua. [kyzentun]
+
+================================================================================
+StepMania 5.0.7 | 20150401
+--------------------------------------------------------------------------------
+
+2015/03/30
+----------
+* [Select Music] Ctrl+Shift+R mapped to reload the current song. [kyzentun]
+* [Song] ReloadFromSongDir lua function exposed. [kyzentun]
+* [Preferences] NeverCacheList preference added.  It's a comma separated
+  list of group names, if a song is in one of the named groups, it is never
+  cached. [kyzentun]
+
+2015/03/27
+----------
+* [Select Music] Ability to delete the current song by pressing Ctrl+Backspace added. [Wallacoloo]
+
+2015/03/24
+----------
+* [Sprite/RageTexture] GetTexturePath moved to RageTexture and renamed to
+  GetPath. [kyzentun]
+
+2015/03/22
+----------
+* [Dev] Primary build method of all platforms changed to CMake.  People
+  building from source must install CMake (min 2.8.12) and read
+  Build/README.md for building instructions. [wolfman2000]
+
+2015/03/18
+----------
+* [OSX] Empty Stepmania directory created on desktop removed. [dguzek]
+
+2015/03/17
+----------
+* [ActorFrameTexture] Example added to Themerdocs/Examples/Example_Actors/.
+  Crash fixes for AFTs. [sigatrev]
+
+2015/03/15
+----------
+* [Sprite] GetTexturePath added. [kyzentun]
+
+2015/03/12
+----------
+* [Language] Docs/Changelog_language.txt added for tracking language changes.
+
+=======
+================================================================================
+StepMania 5.0.7rc | 20150309
+--------------------------------------------------------------------------------
+
+2015/03/09
+----------
+* [EditMode] Autosave every 5 minutes added. [kyzentun]
+* [General] NotesLoaderSM, NotesLoaderSSC, IniFile::ReadFile rewritten,
+  load times substantially faster. [kyzentun]
+* [Preference] HarshHotLifePenalty preference added, for toggling whether
+  LifeMeterBar takes away .1 life when it's full. [kyzentun]
+
+2015/03/08
+----------
+* [EditMode] Clearing an area now prompts for confirmation if it contains
+	EditClearPromptThreshold notes or more.  EditClearPromptThreshold is a
+	preference that can be set in the Advanced Options section, or in the
+	options in Edit Mode. [kyzentun]
+
+2015/03/05
+----------
+* [Graphics] DX9 support improved, giving a large speed boost and fixing the
+  problem that made people get stuck with 16bit color. [xwidghet]
+
+2015/03/04
+----------
+* [Loading] The song length from the cache is used now.  This cut loading time
+  by 30% for kyz. [kyzentun]
+
+2015/03/02
+----------
+* [Song] Per-chart music feature added.  Each chart can have a MUSIC tag.
+  [kyzentun]
+
+2015/03/01
+----------
+* [SelectMusic] Select Music now plays music file named by #PREVIEW tag if
+  it's not blank, instead of using the song file for the sample music.  The
+  sample length is read from the preview file.  The sample start is treated as
+  0. [kyzentun]
+* [Song] GetPreviewMusicPath added. [kyzentun]
+* [foreach] foreach_ordered lua function now works on tables that have both
+  number and string keys.  Number keys are iterated over first. [kyzentun]
+
+2015/02/28
+----------
+* [General] Pause/Break key now toggles "action" sounds off or on.  There is
+  also a button in the F3 debug menu (press A, there are so many that it is
+	off the bottom) for people that don't have a Pause/Break key. [kyzentun]
+
+2015/02/27
+----------
+* [ActorFrame] Fixed RemoveChild and RemoveAllChildren lua functions to
+  delete the children instead of leaking memory. [kyzentun]
+* [Font] Asserts and other things that caused Stepmania to crash on font
+  mistakes now emit non-fatal errors. [kyzentun]
+
+2015/02/26
+----------
+* [PaneDisplay] Changed to print an error when metrics or player number are
+  omitted instead of crashing. [kyzentun]
+* [Screen] Fixed crash when AddInputCallback is passed nil. [kyzentun]
+
+2015/02/22
+----------
+* [BitmapText] Place characters of right-to-left alphabets correctly.
+  (untested) [roothorick]
+
+================================================================================
+StepMania 5.0.6 | 20150217
+--------------------------------------------------------------------------------
+
+2015/02/16
+----------
+* [EditMode] Fixed mistake in TimingData that broke editing bpms. [kyzentun]
+  Fixed crash when deleting steps. [kyzentun]
+* [InputMapper] Backslash can be mapped now. [kyzentun]
+
+================================================================================
+StepMania 5.0.5 | 20150214
+--------------------------------------------------------------------------------
+
+2015/02/12
+----------
+* [InputMapper] Added D-Force Automappings [shakesoda]
+
+2015/02/04
+----------
+* [ActorFrame] GetUpdateRate added. [kyzentun]
+* [Background] Using the wrong transition name no longer crashes.
+  Playback rate is applied to videos.
+  Checkerboard and other BackgroundEffects that use the same file twice no
+  longer play videos back at multiplied speed. [kyzentun]
+* [Sprite] Get/SetDecodeMovie added. [kyzentun]
+
+2015/02/03
+----------
+* [MusicWheel] HideActiveSectionTitle metric added. [djpohly]
+
+2015/02/02
+----------
+* [ActorMultiVertex] ForceStateUpdate and Get/SetDecodeMovie added. [kyzentun]
+* [RageTexture] Get<thing>Width and Height functions added.
+  (<thing> means Source, Texture, or Image) [kyzentun]
+* [Scripts] find_missing_strings_in_theme_translations function added to
+  _fallback scripts to assist translators in finding what needs to be
+  translated.  If you need/want to run it on your them, write a piece of lua
+  like this:
+  find_missing_strings_in_theme_translations("_fallback", "en.ini")
+  The first arg is the folder name of the theme to look at.
+  The second arg is the name of the language that is fully translated.  All
+  other languages will be compared to it to decide what is missing or unused.
+  [kyzentun]
+* [Song] GetBGChanges added. [kyzentun]
+
+2015/02/01
+----------
+* [ActorMultiVertex] Animation state system added.  AMVs can now have
+  animated textures controlled by states written in lua. [kyzentun]
+
+2015/01/31
+----------
+* [EditMode] Want more lead in time before recording starts?
+  It's a preference.  [kyzentun]
+
+2015/01/30
+----------
+* [Actor] Wrapper states added.  This makes wrapping an Actor inside an
+  ActorFrame for any reason unnecessary, and makes it possible to do things
+  that were only possible by wrapping an Actor in an ActorFrame to Actors
+  that you couldn't put inside a frame before. [kyzentun]
+
+2015/01/20
+----------
+* [ScreenSelect] ChoiceNames can be a lua command that is evaluated to get a
+  list of the gamecommands.  The main use of this is to get rid of the huge
+  list of metrics that ScreenSelectStyle requires.  A single lua function
+  instead of a metric for every style for every game type. [kyzentun]
+* [ScreenSelectMaster] IconChoicePosFunction metric added.  This metric is
+  optional, if it's set, it must be set to a function that returns a table
+  of positions.  Each position is a table of the form "{x, y, z}", where x,
+  y, and z are numbers and any that is not a number defaults to 0.
+  The function is passed the number of choices for the screen.
+  IconChoiceOnCommand and IconChoiceOffCommand metrics added so each choice
+  doesn't require its own On/OffCommand pair.  These are also optional, but
+  if they are set, they will override the individual commands if they exist.
+  (If "IconChoiceCactusOnCommand" and "IconChoiceOnCommand" both exist,
+  "IconChoiceOnCommand" will be used.) [kyzentun]
+  Example:
+  # in metrics.ini
+  IconChoicePosFunction=choice_positions
+  -- In a file in Scripts/
+  function choice_positions(count)
+    local ret= {}
+    for i= 1, ret do ret[i]= {i*24, i*48} end
+    return ret
+  end
+
+2015/01/16
+----------
+* [ScreenSelectMusic] HardCommentMeter metric added.  Sets the meter that
+  will trigger the "select music comment hard" announcer sound. [kyzentun]
+
+2015/01/12
+----------
+* [ScreenOptions] GetNumRows function added. [kyzentun]
+
+2015/01/09
+----------
+* [Sprite] SetStateProperties function added. [kyzentun]
+
+2015/01/06
+----------
+* [ActorMultiVertex] GetSpline and SetVertsFromSplines functions added.
+  [kyzentun]
+* [NoteColumnRenderer] Functions for fetching the spline handlers for the
+  column added. [kyzentun]
+* [NCSplineHandler] New class for setting various parameters of a spline used
+  by a NoteColumnRenderer and containing the spline. [kyzentun]
+* [CubicSplineN] New class that provides spline functionality. [kyzentun]
+
+2014/12/26
+----------
+* [NoteField] Columns turned into actors that can be fetched with
+  get_column_actors. [kyzentun]
+  Tiny boost in fps when there is a large number of notes on screen.
+* [NoteColumnRenderer] New class for controlling one column. [kyzentun]
+
 2014/12/20
 ----------
 * [Preferences] AllowMultipleHighScoreWithSameName, ComboContinuesBetweenSongs
@@ -29,6 +303,34 @@ ________________________________________________________________________________
 * [Player] "ComboBreakOnImmediateHoldLetGo" theme metric added. [sillybear]
 * [PlayerState] ApplyPreferredOptionsToOtherLevels function added. [kyzentun]
   
+2014/12/07
+----------
+* [Game] GetSeparateStyles function added.  Use this to detect whether a game
+  allows the players to play different styles. [kyzentun] (used by kickbox)
+* [GameManager] Lua Scripts/ folders are now reloaded when the Game mode is
+  changed. [kyzentun]
+* [GameState] CanSafelyEnterGameplay function added. [kyzentun]
+  In kickbox game mode, players can have different styles set, pass a
+  PlayerNumber when using SetCurrentStyle or GetCurrentStyle.
+* [kickbox] New game mode with 4 styles. [kyzentun]
+* [ScreenGameplay] Notefield positioning is handled a bit differently now.
+  See comments in _fallback/metrics.ini above the [ScreenGameplay]
+  MarginFunction metric.  Basically, you can define a lua function that
+  returns the space you want at the edges and in the center instead of
+  setting position metrics.  Do NOT use Style:GetWidth to calculate the
+  margins your function returns.
+  ScreenGameplay now handles zooming the notefield to fit in the space
+  instead of using the NeedsZoomOutWith2Players flag in the style.
+  If the notefield doesn't fit in the space between the margins, and there is
+  only one player, the player will be centered even if the Center1Player pref
+  is false. [kyzentun]
+* [Style] NeedsZoomOutWith2Players decapitated.  Always returns false now.
+  GetWidth added. [kyzentun]
+* [techno] Techno game mode no longer has special column width for versus.
+  Techno was the only game mode that used the NeedsZoomOutWith2Players flag,
+  and the zoom factor it applied was 0.6, and the special versus column width
+  was 0.6*normal, so this should make no difference. [kyzentun]
+
 2014/12/03
 ----------
 * [command line arg] --game command line arg added for setting the game type
@@ -81,6 +383,10 @@ ________________________________________________________________________________
 2014/11/01
 ----------
 * [RollingNumbers] Cropping and color during tweens fixed. [kyzentun]
+
+2014/10/27
+----------
+* [Changelog] Vospi read the release notes.
 
 2014/10/23
 ----------

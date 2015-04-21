@@ -120,16 +120,16 @@ ScreenNameEntry::ScreenNameEntry()
 		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
 		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle( GAMEMAN->GetDefaultGame(),"versus") );
+		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle( GAMEMAN->GetDefaultGame(),"versus"), PLAYER_INVALID );
 		StageStats ss;
 		for( int z = 0; z < 3; ++z )
 		{
 			ss.m_vpPlayedSongs.push_back( SONGMAN->GetRandomSong() );
 			ss.m_vpPossibleSongs = ss.m_vpPlayedSongs;
-			ss.m_pStyle = GAMESTATE->GetCurrentStyle();
+			ss.m_player[PLAYER_1].m_pStyle = GAMESTATE->GetCurrentStyle(PLAYER_1);
 			ss.m_playMode = GAMESTATE->m_PlayMode;
 			ASSERT( ss.m_vpPlayedSongs[0]->GetAllSteps().size() != 0 );
-			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+			StepsType st = GAMESTATE->GetCurrentStyle(PLAYER_1)->m_StepsType;
 
 			FOREACH_PlayerNumber( p )
 			{
@@ -247,7 +247,7 @@ void ScreenNameEntry::Init()
 
 		ASSERT( GAMESTATE->IsHumanPlayer(p) );	// they better be enabled if they made a high score!
 
-		const float fPlayerX = PLAYER_X( p, GAMESTATE->GetCurrentStyle()->m_StyleType );
+		const float fPlayerX = PLAYER_X( p, GAMESTATE->GetCurrentStyle(p)->m_StyleType );
 
 		{
 			LockNoteSkin l( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetCurrent().m_sNoteSkin );
@@ -258,7 +258,7 @@ void ScreenNameEntry::Init()
 			this->AddChild( &m_ReceptorArrowRow[p] );
 		}
 
-		const Style* pStyle = GAMESTATE->GetCurrentStyle();
+		const Style* pStyle = GAMESTATE->GetCurrentStyle(p);
 		const int iMaxCols = min( int(ABS_MAX_RANKING_NAME_LENGTH), pStyle->m_iColsPerPlayer );
 		m_ColToStringIndex[p].insert(m_ColToStringIndex[p].begin(), pStyle->m_iColsPerPlayer, -1);
 		int CurrentStringIndex = 0;
@@ -270,9 +270,15 @@ void ScreenNameEntry::Init()
 				break; // We have enough columns.
 
 			// Find out if this column is associated with the START menu button.
-			GameInput gi = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iCol, p );
-			GameButton mb = INPUTMAPPER->GameButtonToMenuButton( gi.button );
-			if( mb == GAME_BUTTON_START )
+			vector<GameInput> gi;
+			GAMESTATE->GetCurrentStyle(p)->StyleInputToGameInput( iCol, p, gi );
+			bool gi_is_start= false;
+			for(size_t i= 0; i < gi.size(); ++i)
+			{
+				gi_is_start|= (INPUTMAPPER->GameButtonToMenuButton(gi[i].button)
+					== GAME_BUTTON_START);
+			}
+			if(gi_is_start)
 				continue;
 			m_ColToStringIndex[p][iCol] = CurrentStringIndex++;
 
@@ -338,7 +344,7 @@ bool ScreenNameEntry::Input( const InputEventPlus &input )
 	if( input.type != IET_FIRST_PRESS || !input.GameI.IsValid() )
 		return false; // ignore
 
-	const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
+	const int iCol = GAMESTATE->GetCurrentStyle(input.pn)->GameInputToColumn( input.GameI );
 	bool bHandled = false;
 	if( iCol != Column_Invalid && m_bStillEnteringName[input.pn] )
 	{
@@ -346,7 +352,7 @@ bool ScreenNameEntry::Input( const InputEventPlus &input )
 		if( iStringIndex != -1 )
 		{
 			m_ReceptorArrowRow[input.pn].Step( iCol, TNS_W1 );
-			m_soundStep.Play();
+			m_soundStep.Play(true);
 			char c = m_Text[input.pn].GetClosestChar( m_fFakeBeat );
 			m_textSelectedChars[input.pn][iCol].SetText( RString(1, c) );
 			m_sSelectedName[input.pn][iStringIndex] = c;
@@ -385,7 +391,7 @@ bool ScreenNameEntry::MenuStart( const InputEventPlus &input )
 	m_bStillEnteringName[pn] = false;
 	m_Text[pn].SetDone();
 
-	m_soundStep.Play();
+	m_soundStep.Play(true);
 
 	// save last used ranking name
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);

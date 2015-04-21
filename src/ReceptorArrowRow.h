@@ -4,6 +4,7 @@
 #include "ReceptorArrow.h"
 #include "ActorFrame.h"
 #include "GameConstantsAndTypes.h"
+#include "NoteDisplay.h"
 
 class PlayerState;
 /** @brief A row of ReceptorArrow objects. */
@@ -16,6 +17,7 @@ public:
 	virtual void DrawPrimitives();
 
 	void Load( const PlayerState* pPlayerState, float fYReverseOffset );
+	void SetColumnRenderers(vector<NoteColumnRenderer>& renderers);
 
 	void Step( int iCol, TapNoteScore score );
 	void SetPressed( int iCol );
@@ -28,6 +30,7 @@ protected:
 	float m_fYReverseOffsetPixels;
 	float m_fFadeToFailPercent;
 
+	vector<NoteColumnRenderer> const* m_renderers;
 	vector<ReceptorArrow *> 	m_ReceptorArrow;
 };
 

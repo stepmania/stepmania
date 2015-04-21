@@ -11,6 +11,14 @@ class RageTexture;
 class Sprite: public Actor
 {
 public:
+	/** @brief The Sprite's present state. */
+	struct State
+	{
+		RectF rect;
+		/** @brief The number of "seconds to show". */
+		float fDelay;
+	};
+
 	Sprite();
 	Sprite( const Sprite &cpy );
 	virtual ~Sprite();
@@ -48,6 +56,8 @@ public:
 	int GetState() { return m_iCurState; }
 	virtual float GetAnimationLengthSeconds() const;
 	virtual void SetSecondsIntoAnimation( float fSeconds );
+	void SetStateProperties(const vector<State>& new_states)
+	{ m_States= new_states; SetState(0); }
 
 	RString	GetTexturePath() const;
 
@@ -80,6 +90,8 @@ public:
 
 	void SetAllStateDelays(float fDelay);
 
+	bool m_DecodeMovie;
+
 protected:
 	void LoadFromTexture( RageTextureID ID );
 
@@ -90,13 +102,6 @@ private:
 
 	RageTexture* m_pTexture;
 
-	/** @brief The Sprite's present state. */
-	struct State
-	{
-		RectF rect;
-		/** @brief The number of "seconds to show". */
-		float fDelay;
-	};
 	vector<State> m_States;
 	int		m_iCurState;
 	/** @brief The number of seconds that have elapsed since we switched to this frame. */

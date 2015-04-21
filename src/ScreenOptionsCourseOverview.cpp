@@ -139,7 +139,7 @@ void ScreenOptionsCourseOverview::HandleScreenMessage( const ScreenMessage SM )
 			
 			if( EditCourseUtil::RenameAndSave( GAMESTATE->m_pCurCourse, ScreenTextEntry::s_sLastAnswer ) )
 			{
-				m_soundSave.Play();
+				m_soundSave.Play(true);
 				SCREENMAN->SystemMessage( COURSE_SAVED );
 			}
 		}
@@ -203,7 +203,7 @@ void ScreenOptionsCourseOverview::ProcessMenuStart( const InputEventPlus &input 
 		{
 			Course *pCourse = GAMESTATE->m_pCurCourse;
 			random_shuffle( pCourse->m_vEntries.begin(), pCourse->m_vEntries.end() );
-			Trail *pTrail = pCourse->GetTrailForceRegenCache( GAMESTATE->m_pCurStyle->m_StepsType );
+			Trail *pTrail = pCourse->GetTrailForceRegenCache( GAMESTATE->GetCurrentStyle(input.pn)->m_StepsType );
 			GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
 			SCREENMAN->PlayStartSound();
 			MESSAGEMAN->Broadcast("CurrentCourseChanged");
@@ -236,7 +236,7 @@ void ScreenOptionsCourseOverview::ProcessMenuStart( const InputEventPlus &input 
 			{
 				if( EditCourseUtil::Save( GAMESTATE->m_pCurCourse ) )
 				{
-					m_soundSave.Play();
+					m_soundSave.Play(true);
 					SCREENMAN->SystemMessage( COURSE_SAVED );
 				}
 				else

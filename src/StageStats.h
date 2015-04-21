@@ -37,7 +37,6 @@ public:
 	Stage		m_Stage;
 	int		m_iStageIndex;
 	PlayMode	m_playMode;
-	const Style*	m_pStyle;
 	vector<Song*>	m_vpPlayedSongs;
 	vector<Song*>	m_vpPossibleSongs;
 
@@ -75,7 +74,7 @@ public:
 	 * @param pn the PlayerNumber in question.
 	 * @return true if the PlayerNumber has a high score, false otherwise. */
 	bool PlayerHasHighScore( PlayerNumber pn ) const;
-	int GetMinimumMissCombo() const;
+	unsigned int GetMinimumMissCombo() const;
 
 	// Lua
 	void PushSelf( lua_State *L );

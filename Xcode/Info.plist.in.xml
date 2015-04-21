@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>English</string>
+    <key>CFBundleDocumentTypes</key>
+    <array>
+      <dict>
+        <key>CFBundleTypeExtensions</key>
+        <array>
+          <string>smzip</string>
+        </array>
+        <key>CFBundleTypeIconFile</key>
+        <string>smicon.icns</string>
+        <key>CFBundleTypeMIMETypes</key>
+        <array>
+          <string>application/zip</string>
+        </array>
+        <key>CFBundleTypeName</key>
+        <string>SMZip</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>LSTypeIsPackage</key>
+        <false />
+        <key>NSPersistentStoreTypeKey</key>
+        <string>Binary</string>
+      </dict>
+    </array>
+    <key>CFBundleExecutable</key>
+    <string>PRODUCT_NAME</string>
+    <key>CFBundleGetInfoString</key>
+    <string>@SM_EXE_NAME@ @SM_VERSION_TRADITIONAL@</string>
+    <key>CFBundleIconFile</key>
+    <string>smicon.icns</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.@SM_EXE_NAME@ @SM_VERSION_MAJOR@</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>@SM_EXE_NAME@</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>@SM_VERSION_TRADITIONAL@</string>
+    <key>CFBundleSignature</key>
+    <string>Step</string>
+    <key>CFBundleVersion</key>
+    <string>@SM_VERSION_TRADITIONAL@</string>
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.music-games</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>@CMAKE_OSX_DEPLOYMENT_TARGET_FULL@</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>Copyright 2001-2015</string>
+    <key>NSPrincipalClass</key>
+    <string>SMApplication</string>
+  </dict>
+</plist>
+

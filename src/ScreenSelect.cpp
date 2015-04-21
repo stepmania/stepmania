@@ -31,6 +31,46 @@ void ScreenSelect::Init()
 		this->SubscribeToMessage( Message_PlayerJoined );
 
 	// Load choices
+	// Allow lua as an alternative to metrics.
+	RString choice_names= CHOICE_NAMES;
+	if(choice_names.Left(4) == "lua,")
+	{
+		RString command= choice_names.Right(choice_names.size()-4);
+		Lua* L= LUA->Get();
+		if(LuaHelpers::RunExpression(L, command, m_sName + "::ChoiceNames"))
+		{
+			if(!lua_istable(L, 1))
+			{
+				LuaHelpers::ReportScriptError(m_sName + "::ChoiceNames expression did not return a table of gamecommands.");
+			}
+			else
+			{
+				size_t len= lua_objlen(L, 1);
+				for(size_t i= 1; i <= len; ++i)
+				{
+					lua_rawgeti(L, 1, i);
+					if(!lua_isstring(L, -1))
+					{
+						LuaHelpers::ReportScriptErrorFmt(m_sName + "::ChoiceNames element %zu is not a string.", i);
+					}
+					else
+					{
+						RString com= SArg(-1);
+						GameCommand mc;
+						mc.ApplyCommitsScreens(false);
+						mc.m_sName = ssprintf("%zu", i);
+						Commands cmd= ParseCommands(com);
+						mc.Load(i, cmd);
+						m_aGameCommands.push_back(mc);
+					}
+					lua_pop(L, 1);
+				}
+			}
+		}
+		lua_settop(L, 0);
+		LUA->Release(L);
+	}
+	else
 	{
 		// Instead of using NUM_CHOICES, use a comma-separated list of choices.
 		// Each element in the list is a choice name. This level of indirection 

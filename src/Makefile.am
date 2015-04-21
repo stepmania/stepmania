@@ -7,18 +7,17 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 ## Do not install stepmania in the traditional way.
 noinst_PROGRAMS = stepmania
-TESTS = 
+TESTS =
 tests: $(TESTS)
 if BUILD_TESTS
  noinst_PROGRAMS += $(TESTS)
 endif
 
 AM_LDFLAGS =
-AM_CXXFLAGS = 
-AM_CFLAGS = 
+AM_CXXFLAGS =
+AM_CFLAGS =
 noinst_LIBRARIES =
 EXTRA_DIST =
-
 
 AM_CXXFLAGS += -fno-exceptions
 
@@ -28,23 +27,25 @@ AM_CXXFLAGS += -finline-limit=300
 
 AM_CXXFLAGS += $(GL_CFLAGS)
 
-.PHONY: increment_version
+.PHONY: ver.cpp
 
-all: increment_version
-
-increment_version:
+ver.cpp:
 	if test -e ver.cpp; then \
-		build=`sed -rs 's/.*version_num = ([[:digit:]]+);/\1/;q' ver.cpp`; \
+		build=`sed -rs 's/.*version_num = ([[:digit:]]+);/\1/;2q;d' ver.cpp`; \
 		build=`expr $$build + 1`; \
 	else \
 		build=0; \
 	fi; \
-	echo "extern const unsigned long version_num = $$build;" > ver.cpp; \
-	echo "extern const char *const version_time = \"`date +"%X %Z (UTC%:z)"`\";" >> ver.cpp;
-	echo "extern const char *const version_date = \"`date +"%Y%m%d"`\";" >> ver.cpp;
-
-ver.cpp:
-	$(MAKE) increment_version
+	echo "#include \"ver.h\"" > ver.cpp; \
+	echo "const unsigned long version_num = $$build;" >> ver.cpp
+# Header inclusion necessary to get linker symbols right
+	echo "const char *const version_time = \"`date +"%X %Z (UTC%:z)"`\";" >> ver.cpp
+	echo "const char *const version_date = \"`date +"%Y%m%d"`\";" >> ver.cpp
+	if git rev-parse --short HEAD; then \
+		echo "const char *const product_version = \"5.0-git-`git rev-parse --short HEAD`\";" >> ver.cpp; \
+	else \
+		echo "const char *const product_version = \"5.0-UNKNOWN\";" >> ver.cpp; \
+	fi
 
 PNG = \
 ../extern/libpng/include/png.c ../extern/libpng/include/.png.h \
@@ -221,7 +222,7 @@ InputHandler = arch/InputHandler/InputHandler.cpp arch/InputHandler/InputHandler
 
 Lights = arch/Lights/LightsDriver.cpp arch/Lights/LightsDriver.h
 
-MemoryCard = arch/MemoryCard/MemoryCardDriver.cpp arch/MemoryCard/MemoryCardDriver.h 
+MemoryCard = arch/MemoryCard/MemoryCardDriver.cpp arch/MemoryCard/MemoryCardDriver.h
 
 MovieTexture = arch/MovieTexture/MovieTexture.cpp arch/MovieTexture/MovieTexture.h
 
@@ -252,7 +253,7 @@ MovieTexture += arch/MovieTexture/MovieTexture_Generic.cpp arch/MovieTexture/Mov
 	arch/MovieTexture/MovieTexture_Null.cpp arch/MovieTexture/MovieTexture_Null.h
 
 Sound += arch/Sound/RageSoundDriver_Null.cpp arch/Sound/RageSoundDriver_Null.h
-	
+
 if HAVE_FFMPEG
  MovieTexture += arch/MovieTexture/MovieTexture_FFMpeg.cpp arch/MovieTexture/MovieTexture_FFMpeg.h
 endif
@@ -293,19 +294,19 @@ endif
 # =========================
 if UNIX
  ArchHooks += arch/ArchHooks/ArchHooks_Unix.cpp arch/ArchHooks/ArchHooks_Unix.h
- 
+
 if LINUX
   InputHandler += arch/InputHandler/LinuxInputManager.cpp arch/InputHandler/LinuxInputManager.h \
 		arch/InputHandler/InputHandler_Linux_Joystick.cpp arch/InputHandler/InputHandler_Linux_Joystick.h \
 		arch/InputHandler/InputHandler_Linux_Event.cpp arch/InputHandler/InputHandler_Linux_Event.h \
 		arch/InputHandler/InputHandler_Linux_PIUIO.cpp arch/InputHandler/InputHandler_Linux_PIUIO.h
-  
+
   Lights += arch/Lights/LightsDriver_LinuxWeedTech.cpp arch/Lights/LightsDriver_LinuxWeedTech.h \
 		arch/Lights/LightsDriver_Linux_PIUIO.cpp arch/Lights/LightsDriver_Linux_PIUIO.h \
 		arch/Lights/LightsDriver_Linux_PIUIO_Leds.cpp arch/Lights/LightsDriver_Linux_PIUIO_Leds.h
-  
+
   MemoryCard += arch/MemoryCard/MemoryCardDriverThreaded_Linux.cpp arch/MemoryCard/MemoryCardDriverThreaded_Linux.h
-  
+
 if HAVE_ALSA
    Sound += arch/Sound/ALSA9Dynamic.cpp arch/Sound/ALSA9Dynamic.h \
 	arch/Sound/ALSA9Functions.h \
@@ -316,11 +317,11 @@ if HAVE_ALSA
    # several sources to be built. We link to this at runtime, so don't add ALSA_LDFLAGS.
    AM_CXXFLAGS += $(ALSA_CFLAGS)
 endif
-  
+
 if HAVE_PARALLEL_PORT
    Lights += arch/Lights/LightsDriver_LinuxParallel.cpp arch/Lights/LightsDriver_LinuxParallel.h
 endif
-  
+
 if WITH_TTY
    InputHandler += arch/InputHandler/InputHandler_Linux_tty.cpp arch/InputHandler/InputHandler_Linux_tty.h \
 		arch/InputHandler/InputHandler_Linux_tty_keys.h
@@ -349,10 +350,8 @@ if WINDOWS
  ArchHooks += arch/ArchHooks/ArchHooks_Win32.cpp arch/ArchHooks/ArchHooks_Win32.h \
 	arch/ArchHooks/ArchHooks_Win32Static.cpp
 
- ArchUtils += archutils/Win32/arch_setup.cpp archutils/Win32/arch_setup.h \
-	archutils/Win32/arch_time.cpp \
+ ArchUtils += archutils/Win32/arch_time.cpp \
 	archutils/Win32/AppInstance.cpp archutils/Win32/AppInstance.h \
-	archutils/Win32/CommandLine.cpp archutils/Win32/CommandLine.h \
 	archutils/Win32/Crash.cpp archutils/Win32/Crash.h \
 	archutils/Win32/CrashHandlerChild.cpp \
 	archutils/Win32/CrashHandlerInternal.h \
@@ -373,33 +372,33 @@ if WINDOWS
 	archutils/Win32/WindowIcon.cpp archutils/Win32/WindowIcon.h \
 	archutils/Win32/WindowsDialogBox.cpp archutils/Win32/WindowsDialogBox.h \
 	archutils/Win32/WindowsResources.rc archutils/Win32/WindowsResources.h
-		
+
  Dialog += arch/Dialog/DialogDriver_Win32.cpp arch/Dialog/DialogDriver_Win32.h
- 
+
  LoadingWindow += arch/LoadingWindow/LoadingWindow_Win32.cpp arch/LoadingWindow/LoadingWindow_Win32.h
- 
+
  LowLevelWindow += arch/LowLevelWindow/LowLevelWindow_Win32.cpp arch/LowLevelWindow/LowLevelWindow_Win32.h
 
  MemoryCard += arch/MemoryCard/MemoryCardDriverThreaded_Windows.cpp arch/MemoryCard/MemoryCardDriverThreaded_Windows.h
- 
+
  # XXX We may want to ditch DirectShow in favor of using ffmpeg on all platforms.
  # FIXME BROKEN
  # MovieTexture += arch/MovieTexture/MovieTexture_DShow.cpp arch/MovieTexture/MovieTexture_DShow.h \
  #	arch/MovieTexture/MovieTexture_DShowHelper.cpp arch/MovieTexture/MovieTexture_DShowHelper.h
- 
+
  # XXX: Do we want to detect DirectX SDK and selectively enable DirectX drivers?
  InputHandler += arch/InputHandler/InputHandler_DirectInput.cpp arc/InputHandler/InputHandler_DirectInput.h \
 		arch/InputHandler/InputHandler_DirectInputHelper.cpp arch/InputHandler/InputHandler_DirectInputHelper.h \
 		arch/InputHandler/InputHandler_Win32_MIDI.cpp arch/InputHandler/InputHandler_Win32_MIDI.h \
 		arch/InputHandler/InputHandler_Win32_Para.cpp arch/InputHandler/InputHandler_Win32_Para.h \
 		arch/InputHandler/InputHandler_Win32_Pump.cpp arch/InputHandler/InputHandler_Win32_Pump.h
-		
+
  Sound += arch/Sound/RageSoundDriver_DSound_Software.cpp arch/Sound/RageSoundDriver_DSound_Software.h \
 	arch/Sound/DSoundHelpers.cpp arch/Sound/DSoundHelpers.h \
 	arch/Sound/RageSoundDriver_WaveOut.cpp arch/Sound/RageSoundDriver_WaveOut.h
 # FIXME: BROKEN
 # 	arch/Sound/RageSoundDriver_WDMKS.cpp arch/Sound/RageSoundDriver_WDMKS.h
-	
+
 if HAVE_PARALLEL_PORT
   Lights += arch/Lights/LightsDriver_Win32Parallel.cpp arch/Lights/LightsDriver_Win32Parallel.h
 endif
@@ -407,7 +406,7 @@ endif
 if HAVE_MINIMAID
   Lights += arch/Lights/LightsDriver_Win32Minimaid.cpp arch/Lights/LightsDriver_Win32Minimaid.h
 endif
- 
+
 if !HAVE_PTHREAD
   Threads += arch/Threads/Threads_Win32.cpp arch/Threads/Threads_Win32.h
 endif
@@ -417,7 +416,7 @@ Arch = $(LoadingWindow) $(Sound) $(ArchHooks) $(InputHandler) $(MovieTexture) \
 	   $(Lights) $(MemoryCard) $(LowLevelWindow) $(ArchUtils) $(Dialog) $(Threads) \
 	   arch/arch_default.h arch/RageDriver.cpp arch/RageDriver.h
 
-RageSoundFileReaders = RageSoundReader_WAV.cpp RageSoundReader_WAV.h 
+RageSoundFileReaders = RageSoundReader_WAV.cpp RageSoundReader_WAV.h
 
 if HAVE_VORBIS
  RageSoundFileReaders += RageSoundReader_Vorbisfile.cpp RageSoundReader_Vorbisfile.h
@@ -452,7 +451,7 @@ PaneDisplay.cpp PaneDisplay.h ScrollBar.cpp ScrollBar.h \
 SnapDisplay.cpp SnapDisplay.h \
 TextBanner.cpp TextBanner.h WheelBase.cpp WheelBase.h WheelItemBase.cpp WheelItemBase.h \
 WheelNotifyIcon.cpp WheelNotifyIcon.h \
-WorkoutGraph.cpp WorkoutGraph.h 
+WorkoutGraph.cpp WorkoutGraph.h
 
 if !WITHOUT_NETWORKING
  ActorsInMenus += RoomInfoDisplay.cpp RoomInfoDisplay.h
@@ -478,8 +477,13 @@ ScoreDisplayNormal.cpp ScoreDisplayNormal.h ScoreDisplayOni.cpp ScoreDisplayOni.
 ScoreDisplayPercentage.cpp ScoreDisplayPercentage.h ScoreDisplayRave.cpp ScoreDisplayRave.h \
 SongPosition.cpp SongPosition.h
 
-PCRE = ../extern/pcre/get.c ../extern/pcre/internal.h ../extern/pcre/maketables.c ../extern/pcre/pcre.c ../extern/pcre/pcre.h ../extern/pcre/study.c
+Rage =
+all_test_SOURCES =
+if !USE_SYSTEM_PCRE
+Rage += ../extern/pcre/get.c ../extern/pcre/internal.h ../extern/pcre/maketables.c ../extern/pcre/pcre.c ../extern/pcre/pcre.h ../extern/pcre/study.c
+all_test_SOURCES += ../extern/pcre/get.c ../extern/pcre/internal.h ../extern/pcre/maketables.c ../extern/pcre/pcre.c ../extern/pcre/pcre.h ../extern/pcre/study.c
 EXTRA_DIST += ../extern/pcre/chartables.c
+endif
 
 Lua = ../extern/lua-5.1/src/lapi.c ../extern/lua-5.1/src/lauxlib.c ../extern/lua-5.1/src/lbaselib.c ../extern/lua-5.1/src/lcode.c ../extern/lua-5.1/src/ldblib.c \
 ../extern/lua-5.1/src/ldebug.c ../extern/lua-5.1/src/ldo.c ../extern/lua-5.1/src/ldump.c ../extern/lua-5.1/src/lfunc.c ../extern/lua-5.1/src/lgc.c ../extern/lua-5.1/src/linit.c \
@@ -502,7 +506,7 @@ jsoncpp = ../extern/jsoncpp/src/lib_json/json_reader.cpp \
 ../extern/jsoncpp/include/json/json.h \
 ../extern/jsoncpp/include/json/reader.h \
 ../extern/jsoncpp/include/json/value.h \
-../extern/jsoncpp/include/json/writer.h 
+../extern/jsoncpp/include/json/writer.h
 
 RageFile = \
 RageFileBasic.cpp RageFileBasic.h \
@@ -515,7 +519,8 @@ RageFileDriverReadAhead.cpp RageFileDriverReadAhead.h \
 RageFileDriverSlice.cpp RageFileDriverSlice.h \
 RageFileDriverTimeout.cpp RageFileDriverTimeout.h
 
-Rage = $(PCRE) $(Lua) $(jsoncpp) $(RageFile) $(RageSoundFileReaders) \
+Rage += $(Lua) $(jsoncpp) $(RageFile) $(RageSoundFileReaders) \
+CubicSpline.cpp CubicSpline.h \
 RageBitmapTexture.cpp RageBitmapTexture.h \
 RageDisplay.cpp RageDisplay.h \
 RageDisplay_OGL.cpp RageDisplay_OGL.h \
@@ -730,6 +735,8 @@ if !WITHOUT_GLES2
  main_SOURCES += RageDisplay_GLES2.cpp RageDisplay_GLES2.h
 endif
 
+main_SOURCES += Main.cpp
+
 main_LDADD = \
 		$(VIDEO_LIBS) \
 		$(AUDIO_LIBS) \
@@ -760,9 +767,8 @@ if HAVE_GTK
  GtkModule_so_SOURCES = arch/LoadingWindow/LoadingWindow_GtkModule.cpp
 endif
 
-all_test_SOURCES = \
+all_test_SOURCES += \
 		$(ArchUtils) \
-		$(PCRE) \
 		$(RageFile) \
 		$(Lua) \
 		$(ArchHooks) \

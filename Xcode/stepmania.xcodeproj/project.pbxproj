@@ -67,6 +67,8 @@
 		2B17ABFD139817D6001AE57D /* libpcre-sm5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B17ABE013981756001AE57D /* libpcre-sm5.a */; };
 		2B30D6821315EA7E00044B68 /* MouseDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B30D6801315EA7E00044B68 /* MouseDevice.cpp */; };
 		2B30D6831315EA7E00044B68 /* MouseDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B30D6811315EA7E00044B68 /* MouseDevice.h */; };
+		2B399E861ACF25820087F19B /* ArchHooks_MacOSX.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B399E851ACF25820087F19B /* ArchHooks_MacOSX.mm */; };
+		2B399E871ACF25820087F19B /* ArchHooks_MacOSX.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B399E851ACF25820087F19B /* ArchHooks_MacOSX.mm */; };
 		2B43509513949F37006FA051 /* TimingSegments.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B43509313949F37006FA051 /* TimingSegments.h */; };
 		2B43509613949F37006FA051 /* TimingSegments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B43509413949F37006FA051 /* TimingSegments.cpp */; };
 		2B76698B132FF71500586512 /* NotesLoaderSMA.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B766989132FF71500586512 /* NotesLoaderSMA.h */; };
@@ -182,6 +184,8 @@
 		36CA53210F9156860063D59D /* ScreenOptionsEditCourse.h in Headers */ = {isa = PBXBuildFile; fileRef = 36CA531F0F9156860063D59D /* ScreenOptionsEditCourse.h */; };
 		37171EBE1946C9D500E09FC5 /* ActorMultiVertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37171EBC1946C9D500E09FC5 /* ActorMultiVertex.cpp */; };
 		37171EBF1946C9D500E09FC5 /* ActorMultiVertex.h in Headers */ = {isa = PBXBuildFile; fileRef = 37171EBD1946C9D500E09FC5 /* ActorMultiVertex.h */; };
+		37EC1B1F1A61C00E008C749C /* CubicSpline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37EC1B1D1A61C00E008C749C /* CubicSpline.cpp */; };
+		37EC1B201A61C00E008C749C /* CubicSpline.h in Headers */ = {isa = PBXBuildFile; fileRef = 37EC1B1E1A61C00E008C749C /* CubicSpline.h */; };
 		AA059ABC0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */; };
 		AA059ABD0B8CCFB5006F8139 /* ActorMultiTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059ABB0B8CCFB5006F8139 /* ActorMultiTexture.h */; };
 		AA059ABE0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */; };
@@ -1134,8 +1138,6 @@
 		AA6999610ACE1CBB000237F9 /* ControllerStateDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA69995F0ACE1CBB000237F9 /* ControllerStateDisplay.cpp */; };
 		AA6999620ACE1CBB000237F9 /* ControllerStateDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6999600ACE1CBB000237F9 /* ControllerStateDisplay.h */; };
 		AA6999630ACE1CBB000237F9 /* ControllerStateDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA69995F0ACE1CBB000237F9 /* ControllerStateDisplay.cpp */; };
-		AA6C6AD80DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6AD60DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp */; };
-		AA6C6ADA0DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6AD60DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp */; };
 		AA6C6ADB0DC6B17B00E7A13E /* ArchHooks_MacOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6C6AD70DC6B17B00E7A13E /* ArchHooks_MacOSX.h */; };
 		AA6C6ADE0DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6ADC0DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp */; };
 		AA6C6AE00DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6ADC0DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp */; };
@@ -1925,6 +1927,7 @@
 		2B17ABE013981756001AE57D /* libpcre-sm5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpcre-sm5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B30D6801315EA7E00044B68 /* MouseDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseDevice.cpp; sourceTree = "<group>"; };
 		2B30D6811315EA7E00044B68 /* MouseDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MouseDevice.h; sourceTree = "<group>"; };
+		2B399E851ACF25820087F19B /* ArchHooks_MacOSX.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ArchHooks_MacOSX.mm; path = ArchHooks/ArchHooks_MacOSX.mm; sourceTree = "<group>"; };
 		2B43509313949F37006FA051 /* TimingSegments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimingSegments.h; path = ../src/TimingSegments.h; sourceTree = SOURCE_ROOT; };
 		2B43509413949F37006FA051 /* TimingSegments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TimingSegments.cpp; path = ../src/TimingSegments.cpp; sourceTree = SOURCE_ROOT; };
 		2B766989132FF71500586512 /* NotesLoaderSMA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderSMA.h; path = ../src/NotesLoaderSMA.h; sourceTree = SOURCE_ROOT; };
@@ -2066,6 +2069,8 @@
 		36CA531F0F9156860063D59D /* ScreenOptionsEditCourse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenOptionsEditCourse.h; path = ../src/ScreenOptionsEditCourse.h; sourceTree = SOURCE_ROOT; };
 		37171EBC1946C9D500E09FC5 /* ActorMultiVertex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActorMultiVertex.cpp; path = ../src/ActorMultiVertex.cpp; sourceTree = "<group>"; };
 		37171EBD1946C9D500E09FC5 /* ActorMultiVertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActorMultiVertex.h; path = ../src/ActorMultiVertex.h; sourceTree = "<group>"; };
+		37EC1B1D1A61C00E008C749C /* CubicSpline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CubicSpline.cpp; path = ../src/CubicSpline.cpp; sourceTree = "<group>"; };
+		37EC1B1E1A61C00E008C749C /* CubicSpline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CubicSpline.h; path = ../src/CubicSpline.h; sourceTree = "<group>"; };
 		AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = sourcecode.cpp.cpp; name = ActorMultiTexture.cpp; path = ../src/ActorMultiTexture.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		AA059ABB0B8CCFB5006F8139 /* ActorMultiTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 8; lastKnownFileType = sourcecode.c.h; name = ActorMultiTexture.h; path = ../src/ActorMultiTexture.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		AA059E2A0B8F0C66006F8139 /* libz_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libz_link.a; sourceTree = "<group>"; };
@@ -2225,7 +2230,6 @@
 		AA65877A098C322800CE55CC /* ScreenUnlockStatus.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenUnlockStatus.h; path = ../src/ScreenUnlockStatus.h; sourceTree = "<group>"; };
 		AA69995F0ACE1CBB000237F9 /* ControllerStateDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ControllerStateDisplay.cpp; path = ../src/ControllerStateDisplay.cpp; sourceTree = "<group>"; };
 		AA6999600ACE1CBB000237F9 /* ControllerStateDisplay.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ControllerStateDisplay.h; path = ../src/ControllerStateDisplay.h; sourceTree = "<group>"; };
-		AA6C6AD60DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArchHooks_MacOSX.cpp; path = ArchHooks/ArchHooks_MacOSX.cpp; sourceTree = "<group>"; };
 		AA6C6AD70DC6B17B00E7A13E /* ArchHooks_MacOSX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArchHooks_MacOSX.h; path = ArchHooks/ArchHooks_MacOSX.h; sourceTree = "<group>"; };
 		AA6C6ADC0DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DialogDriver_MacOSX.cpp; sourceTree = "<group>"; };
 		AA6C6ADD0DC6B1DC00E7A13E /* DialogDriver_MacOSX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DialogDriver_MacOSX.h; sourceTree = "<group>"; };
@@ -3990,6 +3994,8 @@
 		AA6EFDBB04770A83005F316C /* Rage */ = {
 			isa = PBXGroup;
 			children = (
+				37EC1B1D1A61C00E008C749C /* CubicSpline.cpp */,
+				37EC1B1E1A61C00E008C749C /* CubicSpline.h */,
 				AA6EFD6D04770A7C005F316C /* RageBitmapTexture.cpp */,
 				AA6EFD6E04770A7C005F316C /* RageBitmapTexture.h */,
 				AA6EFD6F04770A7C005F316C /* RageDisplay.cpp */,
@@ -5190,7 +5196,7 @@
 			children = (
 				AA3F283B04BE6DDC00D02EE9 /* ArchHooks.cpp */,
 				AABE36FC0497CE44005F316C /* ArchHooks.h */,
-				AA6C6AD60DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp */,
+				2B399E851ACF25820087F19B /* ArchHooks_MacOSX.mm */,
 				AA6C6AD70DC6B17B00E7A13E /* ArchHooks_MacOSX.h */,
 			);
 			name = ArchHooks;
@@ -5496,6 +5502,7 @@
 				B75CE3B5137963350076A82D /* SongPosition.h in Headers */,
 				2B9C2E8E137A138B004C92F3 /* NotesLoaderJson.h in Headers */,
 				2B9C2E90137A138B004C92F3 /* NotesWriterJson.h in Headers */,
+				37EC1B201A61C00E008C749C /* CubicSpline.h in Headers */,
 				2B43509513949F37006FA051 /* TimingSegments.h in Headers */,
 				B773AE6E140AAB1800C68DDD /* SpecialDirs.h in Headers */,
 				2B01A79816C881E500D5CFD2 /* RageDisplay_OGL_Helpers.h in Headers */,
@@ -6714,6 +6721,7 @@
 				AAF74590061181F700B19AD1 /* RageDisplay_Null.cpp in Sources */,
 				AAD36084062BB8AE00D0CED8 /* RageSoundPosMap.cpp in Sources */,
 				AA2828B3062FC0B8006F61EC /* SignalHandler.cpp in Sources */,
+				2B399E861ACF25820087F19B /* ArchHooks_MacOSX.mm in Sources */,
 				AA5C73FD0637A5F100AFB891 /* CourseUtil.cpp in Sources */,
 				AA5C73FF0637A5F100AFB891 /* SongUtil.cpp in Sources */,
 				AA5C74010637A5F100AFB891 /* StepsUtil.cpp in Sources */,
@@ -6818,6 +6826,7 @@
 				AAFBEEED094D807E000029DE /* ScreenOptionsMemoryCard.cpp in Sources */,
 				AAFBEEEF094D807E000029DE /* ScreenServiceAction.cpp in Sources */,
 				AA0732900954381800F396C5 /* XmlFileUtil.cpp in Sources */,
+				37EC1B1F1A61C00E008C749C /* CubicSpline.cpp in Sources */,
 				AAD5219C095513DA00073D86 /* XmlFile.cpp in Sources */,
 				AADD1CC5095C233F0088C9DF /* LocalizedString.cpp in Sources */,
 				AABBFCD309838C3A00F077E2 /* SMMain.mm in Sources */,
@@ -6879,7 +6888,6 @@
 				AAA7D4C90C7E872600FB8F78 /* ScreenOptionsToggleSongs.cpp in Sources */,
 				AA11A20F0DC5A1B0006BD8AC /* ModIcon.cpp in Sources */,
 				AA11A2110DC5A1B0006BD8AC /* ModIconRow.cpp in Sources */,
-				AA6C6AD80DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp in Sources */,
 				AA6C6ADE0DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp in Sources */,
 				AA6C6AE50DC6B22800E7A13E /* LoadingWindow_MacOSX.mm in Sources */,
 				AA6C6B030DC6B2B400E7A13E /* LowLevelWindow_MacOSX.mm in Sources */,
@@ -6923,6 +6931,7 @@
 				AA40D38609A08D650068C0D5 /* RageInputDevice.cpp in Sources */,
 				AA40D38709A08D650068C0D5 /* RageLog.cpp in Sources */,
 				AA40D38809A08D650068C0D5 /* RageMath.cpp in Sources */,
+				2B399E871ACF25820087F19B /* ArchHooks_MacOSX.mm in Sources */,
 				AA40D38909A08D650068C0D5 /* RageSound.cpp in Sources */,
 				AA40D38A09A08D650068C0D5 /* RageSoundManager.cpp in Sources */,
 				AA40D38B09A08D650068C0D5 /* RageSoundReader_Preload.cpp in Sources */,
@@ -7289,7 +7298,6 @@
 				AAA071770CE7B3BB005A3060 /* version.c in Sources */,
 				AA11A2130DC5A1B0006BD8AC /* ModIcon.cpp in Sources */,
 				AA11A2150DC5A1B0006BD8AC /* ModIconRow.cpp in Sources */,
-				AA6C6ADA0DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp in Sources */,
 				AA6C6AE00DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp in Sources */,
 				AA6C6AE70DC6B22800E7A13E /* LoadingWindow_MacOSX.mm in Sources */,
 				AA6C6B050DC6B2B400E7A13E /* LowLevelWindow_MacOSX.mm in Sources */,
@@ -7957,6 +7965,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
 				GCC_WARN_MISSING_PARENTHESES = NO;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
@@ -7995,6 +8004,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
 				GCC_WARN_MISSING_PARENTHESES = NO;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
@@ -8033,6 +8043,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
 				GCC_WARN_MISSING_PARENTHESES = NO;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
@@ -8071,6 +8082,7 @@
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
 				GCC_WARN_MISSING_PARENTHESES = NO;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
@@ -8108,6 +8120,7 @@
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
 				GCC_WARN_MISSING_PARENTHESES = NO;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
@@ -8145,6 +8158,7 @@
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
 				GCC_WARN_MISSING_PARENTHESES = NO;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
@@ -8180,6 +8194,7 @@
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
 				GCC_WARN_MISSING_PARENTHESES = NO;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
@@ -8226,6 +8241,7 @@
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
 				GCC_WARN_MISSING_PARENTHESES = NO;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
@@ -8272,6 +8288,7 @@
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
 				GCC_WARN_MISSING_PARENTHESES = NO;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
@@ -8596,6 +8613,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = "tommath-sm5";
 				SYMROOT = "$(SRCROOT)/build";
@@ -8612,6 +8630,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = "tommath-sm5";
 				SYMROOT = "$(SRCROOT)/build";
@@ -8628,6 +8647,7 @@
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INSTALL_PATH = /usr/local/lib;
 				KEEP_PRIVATE_EXTERNS = YES;
 				PRODUCT_NAME = "tomcrypt-sm5";
@@ -8649,6 +8669,7 @@
 					"DEBUG=1",
 				);
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INSTALL_PATH = /usr/local/lib;
 				KEEP_PRIVATE_EXTERNS = YES;
 				PRODUCT_NAME = "tomcrypt-sm5";
@@ -8678,6 +8699,7 @@
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_SHADOW = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../src/mad-0.15.1b";
@@ -8708,6 +8730,7 @@
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_SHADOW = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../src/mad-0.15.1b";
@@ -8739,6 +8762,7 @@
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = NO;
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_SHADOW = NO;
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../src/mad-0.15.1b";
@@ -8920,6 +8944,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_SHADOW = NO;
 				INSTALL_PATH = /usr/local/lib;
 				OBJROOT = "$(SRCROOT)/build";
@@ -8977,6 +9002,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = "tommath-sm5";
 				SYMROOT = "$(SRCROOT)/build";
@@ -8993,6 +9019,7 @@
 				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INSTALL_PATH = /usr/local/lib;
 				KEEP_PRIVATE_EXTERNS = YES;
 				PRODUCT_NAME = "tomcrypt-sm5";
@@ -9116,6 +9143,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_SHADOW = NO;
 				INSTALL_PATH = /usr/local/lib;
 				OBJROOT = "$(SRCROOT)/build";
@@ -9140,6 +9168,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_SHADOW = NO;
 				INSTALL_PATH = /usr/local/lib;
 				OBJROOT = "$(SRCROOT)/build";
@@ -9168,6 +9197,7 @@
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
 				GCC_WARN_MISSING_PARENTHESES = NO;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
@@ -9205,6 +9235,7 @@
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
 				GCC_WARN_MISSING_PARENTHESES = NO;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
@@ -9242,6 +9273,7 @@
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
 				GCC_WARN_MISSING_PARENTHESES = NO;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;

@@ -239,6 +239,13 @@ local function update_list_cursor()
 	end
 end
 
+local function exit_screen()
+	local profile_id= GAMESTATE:GetEditLocalProfileID()
+	PROFILEMAN:SaveLocalProfile(profile_id)
+	SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+	SOUND:PlayOnce(THEME:GetPathS("Common", "Start"), true)
+end
+
 local function input(event)
 	local pn= event.PlayerNumber
 	if not pn then return false end
@@ -270,11 +277,10 @@ local function input(event)
 					profile[menu_items[menu_pos].get](profile), active_list)
 				update_list_cursor()
 			elseif item.item_type == "exit" then
-				local profile_id= GAMESTATE:GetEditLocalProfileID()
-				PROFILEMAN:SaveLocalProfile(profile_id)
-				SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
-				SOUND:PlayOnce(THEME:GetPathS("Common", "Start"))
+				exit_screen()
 			end
+		elseif button == "Back" then
+			exit_screen()
 		else
 			if button == "MenuLeft" or button == "MenuUp" then
 				if menu_pos > 1 then menu_pos= menu_pos - 1 end
@@ -286,11 +292,13 @@ local function input(event)
 		end
 	elseif cursor_on_menu == "numpad" then
 		local done= number_entry:handle_input(button)
-		if done then
+		if done or button == "Back" then
 			local item= menu_items[menu_pos]
-			profile[item.set](profile, number_entry.value)
+			if button ~= "Back" then
+				profile[item.set](profile, number_entry.value)
 				menu_values[menu_pos]:playcommand(
 					"Set", {item_value_to_text(item, number_entry.value)})
+			end
 			--fade_actor_to(fader, 0)
 			fade_actor_to(number_entry.container, 0)
 			cursor_on_menu= "main"
@@ -304,8 +312,11 @@ local function input(event)
 			if list_pos < #active_list then list_pos= list_pos + 1 end
 			update_list_cursor()
 			menu_values[menu_pos]:playcommand("PressRight")
-		elseif button == "Start" then
-			profile[menu_items[menu_pos].set](profile, active_list[list_pos].setting)
+		elseif button == "Start" or button == "Back" then
+			if button ~= "Back" then
+				profile[menu_items[menu_pos].set](
+					profile, active_list[list_pos].setting)
+			end
 			local valactor= menu_values[menu_pos]
 			left_showing= false
 			right_showing= false

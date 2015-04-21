@@ -73,6 +73,11 @@ public:
 	void SaveCurrentSettingsToProfile( PlayerNumber pn );
 	Song* GetDefaultSong() const;
 
+	bool CanSafelyEnterGameplay(RString& reason);
+	void SetCompatibleStylesForPlayers();
+	void ForceSharedSidesMatch();
+	void ForceOtherPlayersToCompatibleSteps(PlayerNumber main);
+
 	void Update( float fDelta );
 
 	// Main state info
@@ -85,7 +90,11 @@ public:
 	 * @param pGame the game to start using. */
 	void SetCurGame( const Game *pGame );
 	BroadcastOnChangePtr<const Game>	m_pCurGame;
+	private: // DO NOT access directly.  Use Get/SetCurrentStyle.
 	BroadcastOnChangePtr<const Style>	m_pCurStyle;
+	// Only used if the Game specifies that styles are separate.
+	Style const* m_SeparatedStyles[NUM_PlayerNumber];
+	public:
 	/** @brief Determine which side is joined.
 	 *
 	 * The left side is player 1, and the right side is player 2. */
@@ -127,10 +136,10 @@ public:
 	bool	EnoughCreditsToJoin() const { return m_iCoins >= GetCoinsNeededToJoin(); }
 	int		GetNumSidesJoined() const;
 
-	const Game*	GetCurrentGame();
-	const Style*	GetCurrentStyle() const;
-	void	SetCurrentStyle( const Style *pStyle );
-	bool SetCompatibleStyle(StepsType stype);
+	const Game*	GetCurrentGame() const;
+	const Style*	GetCurrentStyle(PlayerNumber pn) const;
+	void	SetCurrentStyle(const Style *style, PlayerNumber pn);
+	bool SetCompatibleStyle(StepsType stype, PlayerNumber pn);
 
 	void GetPlayerInfo( PlayerNumber pn, bool& bIsEnabledOut, bool& bIsHumanOut );
 	bool IsPlayerEnabled( PlayerNumber pn ) const;
@@ -395,6 +404,15 @@ public:
 	bool IsGoalComplete( PlayerNumber pn )	{ return GetGoalPercentComplete( pn ) >= 1; }
 
 	bool m_bDopefish;
+
+	// Autogen stuff.  This should probably be moved to its own singleton or
+	// something when autogen is generalized and more customizable. -Kyz
+	float GetAutoGenFarg(size_t i)
+	{
+		if(i >= m_autogen_fargs.size()) { return 0.0f; }
+		return m_autogen_fargs[i];
+	}
+	vector<float> m_autogen_fargs;
 
 	// Lua
 	void PushSelf( lua_State *L );

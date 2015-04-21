@@ -125,7 +125,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	}
 
 	// this was previously if( IsHot()  &&  score < TNS_GOOD ) in 3.9... -freem
-	if( IsHot()  &&  fDeltaLife < 0 )
+	if(PREFSMAN->m_HarshHotLifePenalty && IsHot()  &&  fDeltaLife < 0)
 		fDeltaLife = min( fDeltaLife, -0.10f );		// make it take a while to get back to "hot"
 
 	switch(m_pPlayerState->m_PlayerOptions.GetSong().m_DrainType)
@@ -162,7 +162,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		default:
 			FAIL_M(ssprintf("Invalid HoldNoteScore: %i", score));
 		}
-		if( IsHot()  &&  score == HNS_LetGo )
+		if(PREFSMAN->m_HarshHotLifePenalty && IsHot()  &&  score == HNS_LetGo)
 			fDeltaLife = -0.10f;		// make it take a while to get back to "hot"
 		break;
 	case DrainType_NoRecover:

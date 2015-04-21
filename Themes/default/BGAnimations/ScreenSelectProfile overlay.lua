@@ -300,12 +300,15 @@ local t = Def.ActorFrame {
 		};
 		-- sounds
 		LoadActor( THEME:GetPathS("Common","start") )..{
+			IsAction= true,
 			StartButtonMessageCommand=cmd(play);
 		};
 		LoadActor( THEME:GetPathS("Common","cancel") )..{
+			IsAction= true,
 			BackButtonMessageCommand=cmd(play);
 		};
 		LoadActor( THEME:GetPathS("Common","value") )..{
+			IsAction= true,
 			DirectionButtonMessageCommand=cmd(play);
 		};
 	};

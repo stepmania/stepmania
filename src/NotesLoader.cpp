@@ -25,18 +25,17 @@ void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, R
 	sSubTitleOut = ""; 
 };
 
-bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &BlacklistedImages )
+bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &BlacklistedImages, bool load_autosave )
 {
 	vector<RString> list;
 
 	BlacklistedImages.clear();
 	SSCLoader loaderSSC;
-	loaderSSC.GetApplicableFiles( sPath, list );
+	loaderSSC.GetApplicableFiles( sPath, list, load_autosave );
 	if( !list.empty() )
 	{
-		if( !loaderSSC.LoadFromDir( sPath, out ) )
-			return false;
-		loaderSSC.TidyUpData( out, false );
+		if( !loaderSSC.LoadFromDir( sPath, out, load_autosave ) )
+		{ return false; }
 		return true;
 	}
 	SMALoader loaderSMA;

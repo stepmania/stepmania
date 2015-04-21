@@ -6,8 +6,8 @@ static RString GetSpecialFolderPath( int csidl )
 {
 	RString sDir;
 	TCHAR szDir[MAX_PATH] = "";
-	BOOL bResult = SHGetSpecialFolderPath( NULL, szDir, csidl, FALSE );
-	ASSERT( bResult );
+	HRESULT hResult = SHGetFolderPath( NULL, csidl, NULL, SHGFP_TYPE_CURRENT, szDir );
+	ASSERT( hResult == S_OK );
 	sDir = szDir;
 	sDir += "/";
 	return sDir;

@@ -50,6 +50,8 @@ public:
 	RString JumpToPrevGroup();
 	const MusicWheelItemData *GetCurWheelItemData( int i ) { return (const MusicWheelItemData *) m_CurWheelItemData[i]; }
 
+	virtual void ReloadSongList();
+
 	// Lua
 	void PushSelf( lua_State *L );
 
@@ -90,6 +92,7 @@ protected:
 	// sm-ssc additions:
 	ThemeMetric<bool>		USE_SECTIONS_WITH_PREFERRED_GROUP;
 	ThemeMetric<bool>		HIDE_INACTIVE_SECTIONS;
+	ThemeMetric<bool>		HIDE_ACTIVE_SECTION_TITLE;
 	ThemeMetric<bool>		REMIND_WHEEL_POSITIONS;
 	ThemeMetric<RageColor>	ROULETTE_COLOR;
 	ThemeMetric<RageColor>	RANDOM_COLOR;

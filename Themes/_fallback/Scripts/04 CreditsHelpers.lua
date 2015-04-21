@@ -52,7 +52,12 @@ local stepmania_credits= {
 		"John Reactor (Polish)",
 		"DHalens (Spanish)",
 		"@Niler_jp (Japanese)",
-		"Deamon007 (Dutch)"
+		"Deamon007 (Dutch)",
+		{type= "subsection", name= "5.0.5 update"},
+		"Kevin O. (Thumbsy) (Dutch)",
+		"Grégory Doche (French)",
+		"Jarosław Pietras (Polish)",
+		"Alejandro G. de la Muñoza (Spanish)",
 	},
 	{
 		name= "Other Contributors",
@@ -168,7 +173,7 @@ local special_logos= {
 		OnCommand= function(self)
 			self:GetParent():GetChild("name"):distort(.25) -- minecraft is broken, -kyz
 		end
-	}
+	},
 }
 
 -- Go through the credits and swap in the special logos.

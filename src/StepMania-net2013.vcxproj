@@ -125,7 +125,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;..\extern\ffmpeg\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng\lib;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;WINDOWS;DEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_BINARY_PNG;GLEW_STATIC;_WINDOWS;WINDOWS;DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -156,7 +156,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
       <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;Comctl32.lib;swscale.lib;avcodec.lib;avformat.lib;avutil.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../Program/StepMania-debug.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\extern\libpng\lib;..\extern\ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\extern\libpng\lib\1.2.7;..\extern\ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;archutils\Win32\ddk;..\extern\mad-0.15.1b\msvc++\Release;..\extern\vorbis\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>wininet.lib;msimg32.lib;libci.lib;msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)StepMania.pdb</ProgramDatabaseFile>
@@ -193,7 +193,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;..\extern\ffmpeg\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng\lib;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;WINDOWS;RELEASE;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_BINARY_PNG;GLEW_STATIC;_WINDOWS;WINDOWS;RELEASE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -224,7 +224,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
       <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;Comctl32.lib;swscale.lib;avcodec.lib;avformat.lib;avutil.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../Program/StepMania.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\extern\libpng\lib;..\extern\ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\extern\libpng\lib\1.2.7;..\extern\ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;archutils\Win32\ddk;..\extern\mad-0.15.1b\msvc++\Release;..\extern\vorbis\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>wininet.lib;msimg32.lib;libci.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ProgramDatabaseFile>$(IntDir)StepMania.pdb</ProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
@@ -258,7 +258,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;..\extern\ffmpeg\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng\lib;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;WINDOWS;DEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_BINARY_PNG;GLEW_STATIC;_WINDOWS;WINDOWS;DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -289,7 +289,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
       <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;Comctl32.lib;swscale.lib;avcodec.lib;avformat.lib;avutil.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../Program/StepMania-fastdebug.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\extern\libpng\lib;..\extern\ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\extern\libpng\lib\1.2.7;..\extern\ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;archutils\Win32\ddk;..\extern\mad-0.15.1b\msvc++\Release;..\extern\vorbis\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>wininet.lib;msimg32.lib;libci.lib;msvcrt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(IntDir)StepMania.pdb</ProgramDatabaseFile>
@@ -327,7 +327,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>.;..\extern\lua-5.1\src;..\extern\ffmpeg\include;BaseClasses;..\extern\jsoncpp\include;..\extern\glew-1.5.8\include;..\extern\pcre;..\extern\mad-0.15.1b;..\extern\libpng\lib;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;WINDOWS;RELEASE;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_BINARY_PNG;GLEW_STATIC;_WINDOWS;WINDOWS;RELEASE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -359,7 +359,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
       <AdditionalDependencies>shell32.lib;gdi32.lib;user32.lib;ole32.lib;advapi32.lib;Comctl32.lib;swscale.lib;avcodec.lib;avformat.lib;avutil.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>..\Program/StepMania-SSE2.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\extern\libpng\lib;..\extern\ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;..\extern\mad-0.15.1b\msvc++\Release\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\extern\libpng\lib\1.2.7;..\extern\ffmpeg\lib;..\extern\libjpeg\;..\extern\zlib\;archutils\Win32\ddk;..\extern\mad-0.15.1b\msvc++\Release;..\extern\vorbis\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>wininet.lib;msimg32.lib;libci.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ProgramDatabaseFile>$(IntDir)StepMania-SSE2.pdb</ProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
@@ -467,6 +467,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
     <ClCompile Include="ControllerStateDisplay.cpp" />
     <ClCompile Include="CreateZip.cpp" />
     <ClCompile Include="CryptHelpers.cpp" />
+    <ClCompile Include="CubicSpline.cpp" />
     <ClCompile Include="DateTime.cpp" />
     <ClCompile Include="Difficulty.cpp" />
     <ClCompile Include="EnumHelper.cpp" />
@@ -555,6 +556,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release-SSE2|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="SpecialFiles.cpp" />
     <ClCompile Include="StepMania.cpp" />
     <ClCompile Include="arch\RageDriver.cpp" />
@@ -1782,6 +1784,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
     <ClInclude Include="ControllerStateDisplay.h" />
     <ClInclude Include="CreateZip.h" />
     <ClInclude Include="CryptHelpers.h" />
+    <ClInclude Include="CubicSpline.h" />
     <ClInclude Include="DateTime.h" />
     <ClInclude Include="Difficulty.h" />
     <ClInclude Include="EnumHelper.h" />

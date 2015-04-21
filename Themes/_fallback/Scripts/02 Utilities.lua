@@ -29,30 +29,6 @@ function TableStringLookup(t, group)
 	return ret
 end
 
-function split(delimiter, text)
-	local list = {}
-	local pos = 1
-	while 1 do
-		local first,last = string.find(text, delimiter, pos)
-		if first then
-			table.insert(list, string.sub(text, pos, first-1))
-			pos = last+1
-		else
-			table.insert(list, string.sub(text, pos))
-			break
-		end
-	end
-	return list
-end
-
-function join(delimiter, list)
-	local ret = list[1]
-	for i = 2,table.getn(list) do
-		ret = ret .. delimiter .. list[i]
-	end
-	return ret or ""
-end
-
 function wrap(val,n)
 	local x = val
 	Trace( "wrap "..x.." "..n )
@@ -238,12 +214,10 @@ function Center1Player()
 end
 
 function IsRoutine()
-	local styleType = GAMESTATE:GetCurrentStyle():GetStyleType()
-
-	if styleType == "StyleType_TwoPlayersSharedSides" then
+	local style= GAMESTATE:GetCurrentStyle()
+	if style and style:GetStyleType() == "StyleType_TwoPlayersSharedSides" then
 		return true
 	end
-
 	return false
 end
 
@@ -381,6 +355,65 @@ function IsUsingWideScreen()
 		end;
 	end;
 end;
+
+-- Usage:  Pass in an ActorFrame and a string to put in front of every line.
+-- indent will be appended to at each level of the recursion, to indent each
+-- generation further.
+
+function rec_print_children(parent, indent)
+	if not indent then indent= "" end
+	if #parent > 0 and type(parent) == "table" then
+		for i, c in ipairs(parent) do
+			rec_print_children(c, indent .. i .. "->")
+		end
+	elseif parent.GetChildren then
+		local pname= (parent.GetName and parent:GetName()) or ""
+		local children= parent:GetChildren()
+		Trace(indent .. pname .. " children:")
+		for k, v in pairs(children) do
+			if #v > 0 then
+				Trace(indent .. pname .. "->" .. k .. " shared name:")
+				rec_print_children(v, indent .. pname .. "->")
+				Trace(indent .. pname .. "->" .. k .. " shared name over.")
+			else
+				rec_print_children(v, indent .. pname .. "->")
+			end
+		end
+		Trace(indent .. pname .. " children over.")
+	else
+		local pname= (parent.GetName and parent:GetName()) or ""
+		Trace(indent .. pname .. "(" .. tostring(parent) .. ")")
+	end
+end
+
+-- Usage:  Pass in a table and a string to indent each line with.
+-- indent will be appended to at each level of the recursion, to indent each
+-- generation further.
+-- DO NOT pass in a table that contains a reference loop.
+-- A reference loop is a case where a table contains a member that is a
+-- reference to itself, or contains a table that contains a reference to
+-- itself.
+-- Short reference loop example:  a= {}   a[1]= a
+-- Longer reference loop example:  a= {b= {c= {}}}   a.b.c[1]= a
+function rec_print_table(t, indent, depth_remaining)
+	if not indent then indent= "" end
+	if type(t) ~= "table" then
+		Trace(indent .. "rec_print_table passed a " .. type(t))
+		return
+	end
+	depth_remaining= depth_remaining or -1
+	if depth_remaining == 0 then return end
+	for k, v in pairs(t) do
+		if type(v) == "table" then
+			Trace(indent .. k .. ": table")
+			rec_print_table(v, indent .. "  ", depth_remaining - 1)
+		else
+			Trace(indent .. "(" .. type(k) .. ")" .. k .. ": " ..
+							"(" .. type(v) .. ")" .. tostring(v))
+		end
+	end
+	Trace(indent .. "end")
+end
 
 -- Minor text formatting functions from Kyzentun.
 -- TODO:  Figure out why BitmapText:maxwidth doesn't do what I want.

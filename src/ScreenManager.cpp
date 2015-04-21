@@ -742,7 +742,12 @@ void ScreenManager::LoadDelayedScreen()
 		// Screens may not call SetNewScreen from the ctor or Init(). (We don't do this
 		// check inside PrepareScreen; that may be called from a thread for concurrent
 		// loading, and the main thread may call SetNewScreen during that time.)
-		ASSERT_M( m_sDelayedScreen.empty(), m_sDelayedScreen );
+		// Emit an error instead of asserting. -Kyz
+		if(!m_sDelayedScreen.empty())
+		{
+			LuaHelpers::ReportScriptError("Setting a new screen during an InitCommand is not allowed.");
+			m_sDelayedScreen= "";
+		}
 
 		bLoaded = ActivatePreparedScreenAndBackground( sScreenName );
 		ASSERT( bLoaded );
@@ -861,7 +866,7 @@ void ScreenManager::ZeroNextUpdate()
 { \
 	RageSoundParams p; \
 	p.m_bIsCriticalSound = true; \
-	snd.Play(&p); \
+	snd.Play(false, &p); \
 }
 
 /* Always play these sounds, even if we're in a silent attract loop. */

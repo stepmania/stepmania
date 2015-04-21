@@ -1,154 +1,54 @@
-local function Fooled()
-	local phrases = {
-		"hornswaggled",
-		"bamboozled",
-		"hoodwinked",
-		"swindled",
-		"duped",
-		"hoaxed",
-		"fleeced",
-		"shafted",
-		"caboodled",
-		"beguiled",
-		"finagled",
-		"two-timed",
-		"suckered",
-		"flimflammed"
-	}
-	return phrases[math.random(#phrases)]
-end
+-- To add a section to the credits, use the following:
+-- local theme_credits= {
+-- 	name= "Theme Credits", -- the name of your section
+-- 	"Me", -- The people you want to list in your section.
+-- 	"Myself",
+-- 	"My other self",
+--  {logo= "pro_dude", name= "Pro self"}, -- Someone who has a logo image.
+--     -- This logo image would be "Graphics/CreditsLogo pro_dude.png".
+-- }
+-- StepManiaCredits.AddSection(theme_credits)
+--
+-- If you want to add your section after an existing section, use the following:
+-- StepManiaCredits.AddSection(theme_credits, 7)
+--
+-- Or position can be the name of a section to insert after:
+-- StepManiaCredits.AddSection(theme_credits, "Special Thanks")
+--
+-- Or if you want to add your section before a section:
+-- StepManiaCredits.AddSection(theme_credits, "Special Thanks", true)
 
-local ssc = {
-	"AJ Kelly as freem",
-	"Jonathan Payne (Midiman)",
-	"Colby Klein (shakesoda)",
-}
+-- StepManiaCredits is defined in _fallback/Scripts/04 CreditsHelpers.lua.
 
-local sm_ssc = {
-	"Jason Felds (wolfman2000)", -- Timing Segments, Split Timing, optimization
-	"Thai Pangsakulyanont (theDtTvB)", -- BMS, Split Timing, optimization
-	"Alberto Ramos (Daisuke Master)",
-	"Jack Walstrom (FSX)",
-}
-
-local stepmania = {
-	"Chris Danford",
-	"Glenn Maynard",
-	"Steve Checkoway",
-	-- and various other contributors
-}
-
-local oitg = {
-	"infamouspat",
-	"Mark Cannon (vyhd)",
-}
-
-local contrib = {
-	"Aldo Fregoso (Aldo_MX)", -- delays and much more. StepMania AMX creator
-	"A.C (@waiei)", -- custom scoring fixes + Hybrid scoring
-	"cerbo", -- lua bindings and other fun stuff
-	"cesarmades", -- pump/cmd* noteskins
-	"Chris Eldridge (kurisu)", -- dance-threepanel stepstype support
-	"Christophe Goulet-LeBlanc (Kommisar)", -- songs
-	"corec", -- various fixes
-	"galopin", -- piu PlayStation2 usb mat support
-	"gholms", -- automake 1.11 support
-	"juanelote", -- SongManager:GetSongGroupByIndex, JumpToNext/PrevGroup logic mods
-	"Kaox", -- pump/default noteskin
-	"NitroX72", -- pump/frame noteskin
-	"Petriform", -- default theme music
-	"桜為小鳩/Sakurana-Kobato (@sakuraponila)", -- custom scoring fixes
-	"Samuel Kim (1a2a3a2a1a)", -- various beat mode fixes
-	"hanubeki (@803832)", -- beginner helper fix, among various other things
-	"v1toko", -- x-mode from StepNXA
-	"Alfred Sorenson", -- new lua bindings
-	"Mark Seymour (Azure)", -- various graphics work
-}
-
-local translators = {
-	"John Reactor (Polish)",
-	"DHalens (Spanish)",
-	"@Niler_jp (Japanese)",
-	"Deamon007 (Dutch)"
-}
-
-local thanks = {
-	"A Pseudonymous Coder", -- support
-	"Bill Shillito (DM Ashura)", -- Music (not yet though)
-	"cpubasic13", -- testing (a lot)
-	"Dreamwoods",
-	"Jason Bolt (LightningXCE)",
-	"Jousway", -- Noteskins
-	"Luizsan", -- creator of Delta theme
-	"Matt1360", -- Automake magic + oitg bro
-	"Renard",
-	"Ryan McKanna (Plaguefox)",
-	"Sta Kousin", --help with Japanese bug reports
-}
-
-local shoutout = {
-	"The Lua team", -- lua project lead or some shit. super nerdy but oh hell.
-	"Mojang AB", -- minecraft forever -freem
-	"Wolfire Games", -- piles of inspiration
-	"NAKET Coder",
-	"Ciera Boyd", -- you bet your ass I'm putting my girlfriend in the credits
-	--Image(), -- we should have some logos probably to look super pro
-	"#KBO",
-	"Celestia Radio", -- LOVE AND TOLERANCE
-	"You showed us... your ultimate dance!",
-}
-
-local copyright = {
-	"StepMania is released under the terms of the MIT license.",
-	"If you paid for the program you've been " .. Fooled() .. ".",
-	"All content is the sole property of their respectful owners."
-}
-
-local sections = {
-	{ "the spinal shark collective (project lead)", ssc },
-	{ "sm-ssc Team", sm_ssc },
-	{ "StepMania Team", stepmania },
-	{ "OpenITG Team", oitg },
-	{ "Translators", translators },
-	{ "Other Contributors", contrib },
-	{ "Special Thanks", thanks },
-	{ "Shoutouts", shoutout },
-	{ "Copyright", copyright },
-}
-
--- To add people or sections modify the above.
-
-local lineOn = cmd(zoom,0.875;strokecolor,color("#444444");shadowcolor,color("#444444");shadowlength,3)
-local sectionOn = cmd(diffuse,color("#88DDFF");strokecolor,color("#446688");shadowcolor,color("#446688");shadowlength,3)
+local line_on = cmd(zoom,0.875;strokecolor,color("#444444");shadowcolor,color("#444444");shadowlength,1)
+local section_on = cmd(diffuse,color("#88DDFF");strokecolor,color("#446688");shadowcolor,color("#446688");shadowlength,1)
+local subsection_on = cmd(diffuse,color("#88DDFF");strokecolor,color("#446688");shadowcolor,color("#446688");shadowlength,1)
 local item_padding_start = 4;
+local line_height= 30
+-- Tell the credits table the line height so it can use it for logo sizing.
+StepManiaCredits.SetLineHeight(line_height)
 
 local creditScroller = Def.ActorScroller {
 	SecondsPerItem = 0.5;
 	NumItemsToDraw = 40;
 	TransformFunction = function( self, offset, itemIndex, numItems)
-		self:y(30*offset)
+		self:y(line_height*offset)
 	end;
 	OnCommand = cmd(scrollwithpadding,item_padding_start,15);
 }
 
-local function AddLine( text, command )
-	local text = Def.ActorFrame{
-		LoadFont("Common normal")..{
-			Text = text or "";
-			OnCommand = command or lineOn;
-		}
-	}
-	table.insert( creditScroller, text )
-end
-
 -- Add sections with padding.
-for section in ivalues(sections) do
-	AddLine( section[1], sectionOn )
-	for name in ivalues(section[2]) do
-		AddLine( name )
+for section in ivalues(StepManiaCredits.Get()) do
+	StepManiaCredits.AddLineToScroller(creditScroller, section.name, section_on)
+	for name in ivalues(section) do
+		if name.type == "subsection" then
+			StepManiaCredits.AddLineToScroller(creditScroller, name, subsection_on)
+		else
+			StepManiaCredits.AddLineToScroller(creditScroller, name, line_on)
+		end
 	end
-	AddLine()
-	AddLine()
+	StepManiaCredits.AddLineToScroller(creditScroller)
+	StepManiaCredits.AddLineToScroller(creditScroller)
 end
 
 creditScroller.BeginCommand=function(self)

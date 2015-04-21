@@ -47,6 +47,7 @@ void RageTextureRenderTarget::Destroy()
 
 void RageTextureRenderTarget::BeginRenderingTo( bool bPreserveTexture )
 {
+	m_iPreviousRenderTarget = DISPLAY->GetRenderTarget( );
 	DISPLAY->SetRenderTarget( m_iTexHandle, bPreserveTexture );
 
 	/* We're rendering to a texture, not the framebuffer.
@@ -69,7 +70,7 @@ void RageTextureRenderTarget::FinishRenderingTo()
 	DISPLAY->CameraPopMatrix();
 	DISPLAY->PopMatrix();
 
-	DISPLAY->SetRenderTarget( 0 );
+	DISPLAY->SetRenderTarget( m_iPreviousRenderTarget );
 }
 
 // lua start

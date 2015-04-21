@@ -7,6 +7,7 @@
 #include "PlayerNumber.h"
 #include <map>
 class Steps;
+class Style;
 struct lua_State;
 /** @brief Contains statistics for one stage of play - either one song, or a whole course. */
 class PlayerStageStats
@@ -36,6 +37,7 @@ public:
 	bool m_for_multiplayer;
 	PlayerNumber m_player_number;
 	MultiPlayer m_multiplayer_number;
+	const Style*	m_pStyle;
 
 	bool		m_bJoined;
   bool    m_bPlayerCanAchieveFullCombo;
@@ -63,18 +65,18 @@ public:
 	int		m_iTapNoteScores[NUM_TapNoteScore];
 	int		m_iHoldNoteScores[NUM_HoldNoteScore];
 	/** @brief The Player's current combo. */
-	int		m_iCurCombo;
+	unsigned int		m_iCurCombo;
 	/** @brief The Player's max combo. */
-	int		m_iMaxCombo;
+	unsigned int		m_iMaxCombo;
 	/** @brief The Player's current miss combo. */
-	int		m_iCurMissCombo;
+	unsigned int		m_iCurMissCombo;
 	int		m_iCurScoreMultiplier;
 	/** @brief The player's current score. */
-	int		m_iScore;
+	unsigned int		m_iScore;
 	/** @brief The theoretically highest score the Player could have at this point. */
-	int		m_iCurMaxScore;
+	unsigned int		m_iCurMaxScore;
 	/** @brief The maximum score the Player can get this goaround. */
-	int		m_iMaxScore;
+	unsigned int		m_iMaxScore;
 	
 	/**
 	 * @brief The possible RadarValues for a song.

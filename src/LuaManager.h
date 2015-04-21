@@ -257,6 +257,19 @@ inline bool TableContainsOnlyStrings(lua_State* L, int index)
 #define BArg(n) (MyLua_checkboolean(L,(n)))
 #define FArg(n) ((float) luaL_checknumber(L,(n)))
 
+// SafeFArg is for places that need to get a number off the lua stack, but
+// can't risk an error being raised.  IArg and luaL_optnumber would both raise
+// an error on a type mismatch. -Kyz
+inline int SafeFArg(lua_State* L, int index, RString const& err, int def)
+{
+	if(lua_isnumber(L, index))
+	{
+		return static_cast<int>(lua_tonumber(L, index));
+	}
+	LuaHelpers::ReportScriptError(err);
+	return def;
+}
+
 #define LuaFunction( func, expr ) \
 int LuaFunc_##func( lua_State *L ); \
 int LuaFunc_##func( lua_State *L ) { \

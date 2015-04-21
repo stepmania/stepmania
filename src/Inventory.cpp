@@ -25,7 +25,7 @@ ThemeMetric<float> ITEM_USE_RATE_SECONDS("Inventory","ItemUseRateSeconds");
 struct Item
 {
 	AttackLevel level;
-	int iCombo;
+	unsigned int iCombo;
 	RString sModifier;
 };
 static vector<Item>	g_Items;
@@ -92,7 +92,7 @@ void Inventory::Load( PlayerState* pPlayerState )
 void Inventory::Update( float fDelta )
 {
 	if( m_pPlayerState->m_bAttackEndedThisUpdate )
-		m_soundItemEnding.Play();
+		m_soundItemEnding.Play(false);
 
 	// TODO: remove use of PlayerNumber
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
@@ -100,9 +100,9 @@ void Inventory::Update( float fDelta )
 	// check to see if they deserve a new item
 	if( STATSMAN->m_CurStageStats.m_player[pn].m_iCurCombo != m_iLastSeenCombo )
 	{
-		int iOldCombo = m_iLastSeenCombo;
+		unsigned int iOldCombo = m_iLastSeenCombo;
 		m_iLastSeenCombo = STATSMAN->m_CurStageStats.m_player[pn].m_iCurCombo;
-		int iNewCombo = m_iLastSeenCombo;
+		unsigned int iNewCombo = m_iLastSeenCombo;
 
 #define CROSSED(i) (iOldCombo<i)&&(iNewCombo>=i)
 #define BROKE_ABOVE(i) (iNewCombo<iOldCombo)&&(iOldCombo>=i)
@@ -183,7 +183,7 @@ void Inventory::AwardItem( int iItemIndex )
 		a.fSecsRemaining = ITEM_DURATION_SECONDS;
 		a.level = g_Items[iItemIndex].level;
 		pInventory[iOpenSlot] = a;
-		m_soundAcquireItem.Play();
+		m_soundAcquireItem.Play(false);
 	}
 	// else not enough room to insert item
 }
@@ -200,7 +200,7 @@ void Inventory::UseItem( int iSlot )
 
 	// remove the item
 	pInventory[iSlot].MakeBlank();
-	m_vpSoundUseItem[a.level]->Play();
+	m_vpSoundUseItem[a.level]->Play(false);
 
 	PlayerNumber pnToAttack = OPPOSITE_PLAYER[pn];
 	PlayerState *pPlayerStateToAttack = GAMESTATE->m_pPlayerState[pnToAttack];

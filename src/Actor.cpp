@@ -1,5 +1,6 @@
 #include "global.h"
 #include "Actor.h"
+#include "ActorFrame.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
 #include "RageMath.h"
@@ -164,6 +165,7 @@ Actor::Actor()
 	m_size = RageVector2( 1, 1 );
 	InitState();
 	m_pParent = NULL;
+	m_FakeParent= NULL;
 	m_bFirstUpdate = true;
 }
 
@@ -171,6 +173,11 @@ Actor::~Actor()
 {
 	StopTweening();
 	UnsubscribeAll();
+	for(size_t i= 0; i < m_WrapperStates.size(); ++i)
+	{
+		SAFE_DELETE(m_WrapperStates[i]);
+	}
+	m_WrapperStates.clear();
 }
 
 Actor::Actor( const Actor &cpy ):
@@ -183,7 +190,14 @@ Actor::Actor( const Actor &cpy ):
 #define CPY(x) x = cpy.x
 	CPY( m_sName );
 	CPY( m_pParent );
+	CPY( m_FakeParent );
 	CPY( m_pLuaInstance );
+
+	m_WrapperStates.resize(cpy.m_WrapperStates.size());
+	for(size_t i= 0; i < m_WrapperStates.size(); ++i)
+	{
+		m_WrapperStates[i]= new ActorFrame(*dynamic_cast<ActorFrame*>(cpy.m_WrapperStates[i]));
+	}
 
 	CPY( m_baseRotation );
 	CPY( m_baseScale );
@@ -255,14 +269,7 @@ void Actor::LoadFromNode( const XNode* pNode )
 		// Load Name, if any.
 		const RString &sKeyName = pAttr->first;
 		const XNodeValue *pValue = pAttr->second;
-		if( sKeyName == "Name" )			SetName( pValue->GetValue<RString>() );
-		else if( sKeyName == "BaseRotationX" )		SetBaseRotationX( pValue->GetValue<float>() );
-		else if( sKeyName == "BaseRotationY" )		SetBaseRotationY( pValue->GetValue<float>() );
-		else if( sKeyName == "BaseRotationZ" )		SetBaseRotationZ( pValue->GetValue<float>() );
-		else if( sKeyName == "BaseZoomX" )		SetBaseZoomX( pValue->GetValue<float>() );
-		else if( sKeyName == "BaseZoomY" )		SetBaseZoomY( pValue->GetValue<float>() );
-		else if( sKeyName == "BaseZoomZ" )		SetBaseZoomZ( pValue->GetValue<float>() );
-		else if( EndsWith(sKeyName,"Command") )
+		if( EndsWith(sKeyName,"Command") )
 		{
 			LuaReference *pRef = new LuaReference;
 			pValue->PushValue( L );
@@ -270,6 +277,13 @@ void Actor::LoadFromNode( const XNode* pNode )
 			RString sCmdName = sKeyName.Left( sKeyName.size()-7 );
 			AddCommand( sCmdName, apActorCommands( pRef ) );
 		}
+		else if( sKeyName == "Name" )			SetName( pValue->GetValue<RString>() );
+		else if( sKeyName == "BaseRotationX" )		SetBaseRotationX( pValue->GetValue<float>() );
+		else if( sKeyName == "BaseRotationY" )		SetBaseRotationY( pValue->GetValue<float>() );
+		else if( sKeyName == "BaseRotationZ" )		SetBaseRotationZ( pValue->GetValue<float>() );
+		else if( sKeyName == "BaseZoomX" )		SetBaseZoomX( pValue->GetValue<float>() );
+		else if( sKeyName == "BaseZoomY" )		SetBaseZoomY( pValue->GetValue<float>() );
+		else if( sKeyName == "BaseZoomZ" )		SetBaseZoomZ( pValue->GetValue<float>() );
 	}
 
 	LUA->Release( L );
@@ -279,24 +293,123 @@ void Actor::LoadFromNode( const XNode* pNode )
 	PlayCommandNoRecurse( Message("Init") );
 }
 
+bool Actor::PartiallyOpaque()
+{
+	return m_pTempState->diffuse[0].a > 0 || m_pTempState->diffuse[1].a > 0 ||
+		m_pTempState->diffuse[2].a > 0 || m_pTempState->diffuse[3].a > 0 ||
+		m_pTempState->glow.a > 0;
+}
+
 void Actor::Draw()
 {
 	if( !m_bVisible ||
 		m_fHibernateSecondsLeft > 0 || 
 		this->EarlyAbortDraw() )
+	{
 		return; // early abort
-	
-	this->PreDraw();
-	ASSERT( m_pTempState != NULL );
-	if( m_pTempState->diffuse[0].a > 0 || m_pTempState->diffuse[1].a > 0 || m_pTempState->diffuse[2].a > 0 || m_pTempState->diffuse[3].a > 0 || m_pTempState->glow.a > 0 ) // This Actor is not fully transparent
-	{	
-		// call the most-derived versions
-		this->BeginDraw();	
-		this->DrawPrimitives();	// call the most-derived version of DrawPrimitives();
-		this->EndDraw();
 	}
-	
-	this->PostDraw();
+	if(m_FakeParent)
+	{
+		if(!m_FakeParent->m_bVisible || m_FakeParent->m_fHibernateSecondsLeft > 0
+			|| m_FakeParent->EarlyAbortDraw())
+		{
+			return;
+		}
+		m_FakeParent->PreDraw();
+		if(!m_FakeParent->PartiallyOpaque())
+		{
+			m_FakeParent->PostDraw();
+			return;
+		}
+	}
+
+	if(m_FakeParent)
+	{
+		m_FakeParent->BeginDraw();
+	}
+	size_t wrapper_states_used= 0;
+	RageColor last_diffuse;
+	RageColor last_glow;
+	bool use_last_diffuse= false;
+	// dont_abort_draw exists because if one of the layers is invisible,
+	// there's no point in continuing. -Kyz
+	bool dont_abort_draw= true;
+	// abort_with_end_draw exists because PreDraw happens before the
+	// opaqueness test, so if we abort at the opaqueness test, there isn't
+	// a BeginDraw to match the EndDraw. -Kyz
+	bool abort_with_end_draw= true;
+	// It's more intuitive to apply the highest index wrappers first.
+	// On the lua side, it looks like this:
+	// wrapper[3] is the outermost frame.  wrapper[2] is inside wrapper[3].
+	// wrapper[1] is inside wrapper[2].  The actor is inside wrapper[1].
+	// -Kyz
+	for(size_t i= m_WrapperStates.size(); i > 0 && dont_abort_draw; --i)
+	{
+		Actor* state= m_WrapperStates[i-1];
+		if(!state->m_bVisible || state->m_fHibernateSecondsLeft > 0 ||
+			state->EarlyAbortDraw())
+		{
+			dont_abort_draw= false;
+		}
+		else
+		{
+			state->PreDraw();
+			if(state->PartiallyOpaque())
+			{
+				state->BeginDraw();
+				last_diffuse= state->m_pTempState->diffuse[0];
+				last_glow= state->m_pTempState->glow;
+				use_last_diffuse= true;
+				if(i > 1)
+				{
+					m_WrapperStates[i-2]->SetInternalDiffuse(last_diffuse);
+					m_WrapperStates[i-2]->SetInternalGlow(last_glow);
+				}
+			}
+			else
+			{
+				dont_abort_draw= false;
+				abort_with_end_draw= false;
+			}
+			++wrapper_states_used;
+		}
+	}
+	// call the most-derived versions
+	if(dont_abort_draw)
+	{
+		if(use_last_diffuse)
+		{
+			this->SetInternalDiffuse(last_diffuse);
+			this->SetInternalGlow(last_glow);
+		}
+		this->PreDraw();
+		ASSERT( m_pTempState != NULL );
+		if(PartiallyOpaque())
+		{
+			this->BeginDraw();
+			this->DrawPrimitives();
+			this->EndDraw();
+		}
+		this->PostDraw();
+	}
+	for(size_t i= 0; i < wrapper_states_used; ++i)
+	{
+		Actor* state= m_WrapperStates[i];
+		if(abort_with_end_draw)
+		{
+			state->EndDraw();
+		}
+		abort_with_end_draw= true;
+		state->PostDraw();
+		state->m_pTempState= NULL;
+	}
+
+	if(m_FakeParent)
+	{
+		m_FakeParent->EndDraw();
+		m_FakeParent->PostDraw();
+		m_FakeParent->m_pTempState= NULL;
+	}
 	m_pTempState = NULL;
 }
 
@@ -694,6 +807,10 @@ void Actor::Update( float fDeltaTime )
 		fDeltaTime = -m_fHibernateSecondsLeft;
 		m_fHibernateSecondsLeft = 0;
 	}
+	for(size_t i= 0; i < m_WrapperStates.size(); ++i)
+	{
+		m_WrapperStates[i]->Update(fDeltaTime);
+	}
 
 	this->UpdateInternal( fDeltaTime );
 }
@@ -787,6 +904,26 @@ RString Actor::GetLineage() const
 		sPath = m_pParent->GetLineage() + '/';
 	sPath += ssprintf( "<type %s> %s", typeid(*this).name(), m_sName.c_str() );
 	return sPath;
+}
+
+void Actor::AddWrapperState()
+{
+	ActorFrame* wrapper= new ActorFrame;
+	wrapper->InitState();
+	m_WrapperStates.push_back(wrapper);
+}
+
+void Actor::RemoveWrapperState(size_t i)
+{
+	ASSERT(i < m_WrapperStates.size());
+	SAFE_DELETE(m_WrapperStates[i]);
+	m_WrapperStates.erase(m_WrapperStates.begin()+i);
+}
+
+Actor* Actor::GetWrapperState(size_t i)
+{
+	ASSERT(i < m_WrapperStates.size());
+	return m_WrapperStates[i];
 }
 
 void Actor::BeginTweening( float time, ITween *pTween )
@@ -1300,9 +1437,9 @@ void Actor::QueueMessage( const RString& sMessageName )
 	TI.m_sCommandName = "!" + sMessageName;
 }
 
-void Actor::AddCommand( const RString &sCmdName, apActorCommands apac )
+void Actor::AddCommand( const RString &sCmdName, apActorCommands apac, bool warn )
 {
-	if( HasCommand(sCmdName) )
+	if( HasCommand(sCmdName) && warn)
 	{
 		RString sWarning = GetLineage()+"'s command '"+sCmdName+"' defined twice";
 		LuaHelpers::ReportScriptError(sWarning, "COMMAND_DEFINED_TWICE");
@@ -1475,7 +1612,16 @@ public:
 	}
 	static int stoptweening( T* p, lua_State *L )		{ p->StopTweening(); COMMON_RETURN_SELF; }
 	static int finishtweening( T* p, lua_State *L )		{ p->FinishTweening(); COMMON_RETURN_SELF; }
-	static int hurrytweening( T* p, lua_State *L )		{ p->HurryTweening(FArg(1)); COMMON_RETURN_SELF; }
+	static int hurrytweening( T* p, lua_State *L )
+	{
+		float time= FArg(1);
+		if(time < 0.0f)
+		{
+			luaL_error(L, "Tweening hurry factor cannot be negative. %f", time);
+		}
+		p->HurryTweening(time);
+		COMMON_RETURN_SELF;
+	}
 	static int GetTweenTimeLeft( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetTweenTimeLeft() ); return 1; }
 	static int x( T* p, lua_State *L )			{ p->SetX(FArg(1)); COMMON_RETURN_SELF; }
 	static int y( T* p, lua_State *L )			{ p->SetY(FArg(1)); COMMON_RETURN_SELF; }
@@ -1705,6 +1851,66 @@ public:
 			pParent->PushSelf(L);
 		return 1;
 	}
+	static int GetFakeParent(T* p, lua_State *L)
+	{
+		Actor* fake= p->GetFakeParent();
+		if(fake == NULL)
+		{
+			lua_pushnil(L);
+		}
+		else
+		{
+			fake->PushSelf(L);
+		}
+		return 1;
+	}
+	static int SetFakeParent(T* p, lua_State* L)
+	{
+		if(lua_isnoneornil(L, 1))
+		{
+			p->SetFakeParent(NULL);
+		}
+		else
+		{
+			Actor* fake= Luna<Actor>::check(L, 1);
+			p->SetFakeParent(fake);
+		}
+		COMMON_RETURN_SELF;
+	}
+	static int AddWrapperState(T* p, lua_State* L)
+	{
+		p->AddWrapperState();
+		p->GetWrapperState(p->GetNumWrapperStates()-1)->PushSelf(L);
+		return 1;
+	}
+	static size_t get_state_index(T* p, lua_State* L, int stack_index)
+	{
+		// Lua is one indexed.
+		int i= IArg(stack_index)-1;
+		const size_t si= static_cast<size_t>(i);
+		if(i < 0 || si >= p->GetNumWrapperStates())
+		{
+			luaL_error(L, "%d is not a valid wrapper state index.", i+1);
+		}
+		return si;
+	}
+	static int RemoveWrapperState(T* p, lua_State* L)
+	{
+		size_t si= get_state_index(p, L, 1);
+		p->RemoveWrapperState(si);
+		COMMON_RETURN_SELF;
+	}
+	static int GetNumWrapperStates(T* p, lua_State* L)
+	{
+		lua_pushnumber(L, p->GetNumWrapperStates());
+		return 1;
+	}
+	static int GetWrapperState(T* p, lua_State* L)
+	{
+		size_t si= get_state_index(p, L, 1);
+		p->GetWrapperState(si)->PushSelf(L);
+		return 1;
+	}
 	static int Draw( T* p, lua_State *L )
 	{
 		LUA->YieldLua();
@@ -1876,6 +2082,12 @@ public:
 
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetParent );
+		ADD_METHOD( GetFakeParent );
+		ADD_METHOD( SetFakeParent );
+		ADD_METHOD( AddWrapperState );
+		ADD_METHOD( RemoveWrapperState );
+		ADD_METHOD( GetNumWrapperStates );
+		ADD_METHOD( GetWrapperState );
 
 		ADD_METHOD( Draw );
 	}

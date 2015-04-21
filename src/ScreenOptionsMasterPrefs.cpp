@@ -680,6 +680,22 @@ static void GlobalOffsetSeconds( int &sel, bool ToSel, const ConfOption *pConfOp
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
+static void EditRecordModeLeadIn(int &sel, bool to_sel, const ConfOption* conf_option)
+{
+	float mapping[32];
+	for(int i= 0; i < 32; ++i)
+	{
+		mapping[i]= static_cast<float>(i);
+	}
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
+}
+
+static void EditClearPromptThreshold(int& sel, bool to_sel, const ConfOption* conf_option)
+{
+	int mapping[]= {-1, 10, 50, 100, 1000, 1000000};
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
+}
+
 static vector<ConfOption> g_ConfOptions;
 static void InitializeConfOptions()
 {
@@ -725,6 +741,15 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "AutogenGroupCourses",		MovePref<bool>,		"Off","On" ) );
 	ADD( ConfOption( "FastLoad",			MovePref<bool>,		"Off","On" ) );
 	ADD( ConfOption( "FastLoadAdditionalSongs",			MovePref<bool>,		"Off","On" ) );
+	{
+		ConfOption c("EditRecordModeLeadIn", EditRecordModeLeadIn);
+		for(int i= 0; i < 32; ++i)
+		{
+			c.AddOption(ssprintf("%+i s", i));
+		}
+		ADD(c);
+	}
+	ADD(ConfOption("EditClearPromptThreshold", EditClearPromptThreshold, "-1", "10", "50", "100", "1000", "1000000"));
 
 	// Background options
 	ADD( ConfOption( "RandomBackgroundMode",	MovePref<RandomBackgroundMode>, "Off","Animations","Random Movies" ) );
@@ -761,11 +786,13 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "AllowMultipleHighScoreWithSameName", MovePref<bool>, "Off", "On" ) );
 	ADD( ConfOption( "ComboContinuesBetweenSongs", MovePref<bool>, "Off", "On") );
 	ADD( ConfOption( "Disqualification", MovePref<bool>,		"Off","On" ) );
+	ADD( ConfOption( "HarshHotLifePenalty", MovePref<bool>,      "Off", "On") );
 	ADD( ConfOption( "FailOffForFirstStageEasy", MovePref<bool>, "Off","On" ) );
-	ADD( ConfOption( "FailOffInBeginner", MovePref<bool>, "Off","On" ) );
+	ADD( ConfOption( "FailOffInBeginner",       MovePref<bool>, "Off","On" ) );
 	ADD( ConfOption( "LockCourseDifficulties", MovePref<bool>, "Off", "On" ) );
 	ADD( ConfOption( "PickExtraStage",		MovePref<bool>,		"Off","On" ) );
 	ADD( ConfOption( "UseUnlockSystem",		MovePref<bool>,		"Off","On" ) );
+	ADD( ConfOption( "AllowSongDeletion",   MovePref<bool>,     "Off","On" ) );
 
 	// Machine options
 	ADD( ConfOption( "MenuTimer",			MovePref<bool>,		"Off","On" ) );

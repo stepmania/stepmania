@@ -32,7 +32,7 @@ REGISTER_SCREEN_CLASS( ScreenEditMenu );
 void ScreenEditMenu::Init()
 {
 	// HACK: Disable any style set by the editor.
-	GAMESTATE->m_pCurStyle.Set( NULL );
+	GAMESTATE->SetCurrentStyle( NULL, PLAYER_INVALID );
 
 	// Enable all players.
 	FOREACH_PlayerNumber( pn )
@@ -81,6 +81,10 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 
 		Song* pSong = GAMESTATE->m_pCurSong;
 		Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
+		FOREACH_PlayerNumber(pn)
+		{
+			GAMESTATE->m_pCurSteps[pn].Set(NULL);
+		}
 		bool bSaveSong = !pStepsToDelete->WasLoadedFromProfile();
 		pSong->DeleteSteps( pStepsToDelete );
 		SONGMAN->Invalidate( pSong );
@@ -205,7 +209,7 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 
 	GAMESTATE->m_pCurSong.Set( pSong );
 	GAMESTATE->m_pCurCourse.Set( NULL );
-	GAMESTATE->SetCurrentStyle( GAMEMAN->GetEditorStyleForStepsType(st) );
+	GAMESTATE->SetCurrentStyle( GAMEMAN->GetEditorStyleForStepsType(st), PLAYER_INVALID );
 	GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 
 	// handle error cases
@@ -261,6 +265,18 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 		ASSERT( pSteps != NULL );
 		ScreenPrompt::Prompt( SM_None, STEPS_WILL_BE_LOST.GetValue() + "\n\n" + CONTINUE_WITH_DELETE.GetValue(),
 		                      PROMPT_YES_NO, ANSWER_NO );
+		break;
+	case EditMenuAction_LoadAutosave:
+		if(pSong)
+		{
+			FOREACH_PlayerNumber(pn)
+			{
+				GAMESTATE->m_pCurSteps[pn].Set(NULL);
+			}
+			pSong->LoadAutosaveFile();
+			SONGMAN->Invalidate(pSong);
+			SCREENMAN->SendMessageToTopScreen( SM_RefreshSelector );
+		}
 		break;
 	case EditMenuAction_Create:
 		ASSERT( !pSteps );
@@ -340,6 +356,7 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 		}
 		return true;
 	case EditMenuAction_Delete:
+	case EditMenuAction_LoadAutosave:
 		return true;
 	default:
 		FAIL_M(ssprintf("Invalid edit menu action: %i", action));

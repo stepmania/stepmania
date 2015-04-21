@@ -62,7 +62,8 @@ public:
 	void SetMaxHeight( float fMaxHeight );
 	void SetMaxDimUseZoom(bool use);
 	void SetWrapWidthPixels( int iWrapWidthPixels );
-	void CropToWidth( int iWidthInSourcePixels );
+	void CropLineToWidth(size_t l, int width);
+	void CropToWidth(int width);
 
 	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();

@@ -30,13 +30,13 @@ local function CreateSegments(Player)
 				local firstBeatSecs = song:GetFirstSecond();
 				local lastBeatSecs = song:GetLastSecond();
 
-				local bpms = timingData:GetBPMsAndTimes();
-				local stops = timingData:GetStops();
-				local delays = timingData:GetDelays();
-				local warps = timingData:GetWarps();
-				local fakes = timingData:GetFakes();
-				local scrolls = timingData:GetScrolls();
-				local speeds = timingData:GetSpeeds();
+				local bpms = timingData:GetBPMsAndTimes(true);
+				local stops = timingData:GetStops(true);
+				local delays = timingData:GetDelays(true);
+				local warps = timingData:GetWarps(true);
+				local fakes = timingData:GetFakes(true);
+				local scrolls = timingData:GetScrolls(true);
+				local speeds = timingData:GetSpeeds(true);
 
 				-- we don't want too many segments to be shown.
 				local sumSegments = #bpms + #stops + #delays + #warps + #fakes + #scrolls + #speeds

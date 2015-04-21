@@ -28,6 +28,7 @@ static void InitNames()
 	g_mapNamesToString[KEY_COMMA] = "comma";
 	g_mapNamesToString[KEY_SPACE] = "space";
 	g_mapNamesToString[KEY_DEL] = "delete";
+	g_mapNamesToString[KEY_BACKSLASH] = "backslash";
 
 	g_mapNamesToString[KEY_BACK] = "backspace";
 	g_mapNamesToString[KEY_TAB] = "tab";
@@ -145,6 +146,12 @@ RString DeviceButtonToString( DeviceButton key )
 {
 	InitNames();
 
+	// Check the name map first to allow making names for keys that are inside
+	// the ascii range. -Kyz
+	map<DeviceButton,RString>::const_iterator it = g_mapNamesToString.find( key );
+	if( it != g_mapNamesToString.end() )
+		return it->second;
+
 	// All printable ASCII except for uppercase alpha characters line up.
 	if( key >= 33 && key < 127 && !(key >= 'A' && key <= 'Z' ) )
 		return ssprintf( "%c", key );
@@ -157,10 +164,6 @@ RString DeviceButtonToString( DeviceButton key )
 
 	if( key >= MIDI_FIRST && key <= MIDI_LAST )
 		return ssprintf( "Midi %d", key-MIDI_FIRST );
-
-	map<DeviceButton,RString>::const_iterator it = g_mapNamesToString.find( key );
-	if( it != g_mapNamesToString.end() )
-		return it->second;
 
 	return "unknown";
 }

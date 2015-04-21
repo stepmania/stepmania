@@ -209,9 +209,11 @@
 		<Function name='class'/>
 		<Function name='collectgarbage'/>
 		<Function name='color'/>
+		<Function name='commify'/>
 		<Function name='dofile'/>
 		<Function name='error'/>
 		<Function name='fapproach'/>
+		<Function name='find_missing_strings_in_theme_translations'/>
 		<Function name='foreach_ordered'/>
 		<Function name='gcinfo'/>
 		<Function name='getenv'/>
@@ -237,6 +239,8 @@
 		<Function name='rawequal'/>
 		<Function name='rawget'/>
 		<Function name='rawset'/>
+		<Function name='rec_print_children'/>
+		<Function name='rec_print_table'/>
 		<Function name='require'/>
 		<Function name='round'/>
 		<Function name='scale'/>
@@ -257,6 +261,7 @@
 	</GlobalFunctions>
 	<Classes>
 		<Class name='Actor'>
+			<Function name='AddWrapperState'/>
 			<Function name='Center'/>
 			<Function name='CenterX'/>
 			<Function name='CenterY'/>
@@ -272,11 +277,13 @@
 			<Function name='GetDiffuse'/>
 			<Function name='GetDiffuseAlpha'/>
 			<Function name='GetEffectDelta'/>
+			<Function name='GetFakeParent'/>
 			<Function name='GetGlow'/>
 			<Function name='GetHAlign'/>
 			<Function name='GetHeight'/>
 			<Function name='GetName'/>
 			<Function name='GetNumStates'/>
+			<Function name='GetNumWrapperStates'/>
 			<Function name='GetParent'/>
 			<Function name='GetRotationX'/>
 			<Function name='GetRotationY'/>
@@ -286,6 +293,7 @@
 			<Function name='GetVAlign'/>
 			<Function name='GetVisible'/>
 			<Function name='GetWidth'/>
+			<Function name='GetWrapperState'/>
 			<Function name='GetX'/>
 			<Function name='GetY'/>
 			<Function name='GetZ'/>
@@ -300,7 +308,9 @@
 			<Function name='MaskSource'/>
 			<Function name='Real'/>
 			<Function name='RealInverse'/>
+			<Function name='RemoveWrapperState'/>
 			<Function name='RunCommandsRecursively'/>
+			<Function name='SetFakeParent'/>
 			<Function name='SetHeight'/>
 			<Function name='SetSize'/>
 			<Function name='SetTextureFiltering'/>
@@ -448,6 +458,7 @@
 			<Function name='GetChildren'/>
 			<Function name='GetDrawFunction'/>
 			<Function name='GetNumChildren'/>
+			<Function name='GetUpdateRate'/>
 			<Function name='RemoveAllChildren'/>
 			<Function name='RemoveChild'/>
 			<Function name='RunCommandsOnChildren'/>
@@ -487,23 +498,45 @@
 			<Function name='SetTextureMode'/>
 		</Class>
 		<Class base='Actor' name='ActorMultiVertex'>
+			<Function name='AddState'/>
+			<Function name='AddQuadState'/>
+			<Function name='ForceStateUpdate'/>
 			<Function name='GetCurrDrawMode'/>
 			<Function name='GetCurrFirstToDraw'/>
 			<Function name='GetCurrNumToDraw'/>
+			<Function name='GetDecodeMovie'/>
 			<Function name='GetDestDrawMode'/>
 			<Function name='GetDestFirstToDraw'/>
 			<Function name='GetDestNumToDraw'/>
+			<Function name='GetNumStates'/>
+			<Function name='GetNumQuadStates'/>
 			<Function name='GetNumVertices'/>
+			<Function name='GetQuadState'/>
+			<Function name='GetSpline'/>
+			<Function name='GetState'/>
+			<Function name='GetStateData'/>
 			<Function name='GetTexture'/>
+			<Function name='GetUseAnimationState'/>
 			<Function name='LoadTexture'/>
+			<Function name='RemoveState'/>
+			<Function name='RemoveQuadState'/>
+			<Function name='SetAllStateDelays'/>
+			<Function name='SetDecodeMovie'/>
 			<Function name='SetDrawState'/>
 			<Function name='SetEffectMode'/>
 			<Function name='SetLineWidth'/>
 			<Function name='SetNumVertices'/>
+			<Function name='SetQuadState'/>
+			<Function name='SetSecondsIntoAnimation'/>
+			<Function name='SetState'/>
+			<Function name='SetStateData'/>
+			<Function name='SetStateProperties'/>
 			<Function name='SetTexture'/>
 			<Function name='SetTextureMode'/>
+			<Function name='SetUseAnimationState'/>
 			<Function name='SetVertex'/>
 			<Function name='SetVertices'/>
+			<Function name='SetVertsFromSplines'/>
 		</Class>
 		<Class base='Actor' name='ActorProxy'>
 			<Function name='GetTarget'/>
@@ -565,6 +598,7 @@
 			<Function name='SetFromSteps'/>
 		</Class>
 		<Class base='Sprite' name='Banner'>
+			<Function name='GetDecodeMovie'/>
 			<Function name='GetPercentScrolling'/>
 			<Function name='GetScrolling'/>
 			<Function name='LoadBackgroundFromUnlockEntry'/>
@@ -577,6 +611,7 @@
 			<Function name='LoadFromSortOrder'/>
 			<Function name='LoadIconFromCharacter'/>
 			<Function name='ScaleToClipped'/>
+			<Function name='SetDecodeMovie'/>
 			<Function name='SetScrolling'/>
 			<Function name='scaletoclipped'/>
 		</Class>
@@ -676,6 +711,31 @@
 			<Function name='SHA1File'/>
 			<Function name='SHA1String'/>
 		</Class>
+		<Class name='CubicSplineN'>
+			<Function name='solve'/>
+			<Function name='evaluate'/>
+			<Function name='evaluate_derivative'/>
+			<Function name='evaluate_second_derivative'/>
+			<Function name='evaluate_third_derivative'/>
+			<Function name='set_point'/>
+			<Function name='set_coefficients'/>
+			<Function name='get_coefficients'/>
+			<Function name='set_spatial_extent'/>
+			<Function name='get_spatial_extent'/>
+			<Function name='get_max_t'/>
+			<Function name='set_size'/>
+			<Function name='get_size'/>
+			<Function name='set_dimension'/>
+			<Function name='get_dimension'/>
+			<Function name='empty'/>
+			<Function name='set_loop'/>
+			<Function name='get_loop'/>
+			<Function name='set_polygonal'/>
+			<Function name='get_polygonal'/>
+			<Function name='set_dirty'/>
+			<Function name='get_dirty'/>
+			<Function name='destroy'/>
+		</Class>
 		<Class base='Sprite' name='DifficultyIcon'>
 			<Function name='SetFromDifficulty'/>
 			<Function name='SetFromSteps'/>
@@ -702,6 +762,7 @@
 			<Function name='CountNotesSeparately'/>
 			<Function name='GetMapJudgmentTo'/>
 			<Function name='GetName'/>
+			<Function name='GetSeparateStyles'/>
 		</Class>
 		<Class name='GameCommand'>
 			<Function name='GetAnnouncer'/>
@@ -750,6 +811,7 @@
 			<Function name='ApplyPreferredModifiers'/>
 			<Function name='ApplyPreferredSongOptionsToOtherLevels'/>
 			<Function name='ApplyStageModifiers'/>
+			<Function name='CanSafelyEnterGameplay'/>
 			<Function name='ClearStageModifiersIllegalForCourse'/>
 			<Function name='CurrentOptionsDisqualifyPlayer'/>
 			<Function name='Dopefish'/>
@@ -965,15 +1027,32 @@
 			<Function name='SelectCourse'/>
 			<Function name='SelectSong'/>
 		</Class>
+		<Class name='NCSplineHandler'>
+			<Function name='get_spline'/>
+			<Function name='get_beats_per_t'/>
+			<Function name='set_beats_per_t'/>
+			<Function name='get_receptor_t'/>
+			<Function name='set_receptor_t'/>
+			<Function name='get_spline_mode'/>
+			<Function name='set_spline_mode'/>
+			<Function name='get_subtract_song_beat'/>
+			<Function name='set_subtract_song_beat'/>
+		</Class>
+		<Class base='Actor' name='NoteColumnRenderer'>
+			<Function name='get_pos_handler'/>
+			<Function name='get_rot_handler'/>
+			<Function name='get_zoom_handler'/>
+		</Class>
 		<Class base='ActorFrame' name='NoteField'>
-			<Function name='DidHoldNote'/>
-			<Function name='DidTapNote'/>
-			<Function name='SetPressed'/>
-			<Function name='SetDidHoldNoteCallback'/>
-			<Function name='SetDidTapNoteCallback'/>
-			<Function name='SetSetPressedCallback'/>
-			<Function name='SetStepCallback'/>
-			<Function name='Step'/>
+			<Function name='did_hold_note'/>
+			<Function name='did_tap_note'/>
+			<Function name='get_column_actors'/>
+			<Function name='set_pressed'/>
+			<Function name='set_did_hold_note_callback'/>
+			<Function name='set_did_tap_note_callback'/>
+			<Function name='set_set_pressed_callback'/>
+			<Function name='set_step_callback'/>
+			<Function name='step'/>
 		</Class>
 		<Class name='NoteSkinManager'>
 			<Function name='DoesNoteSkinExist'/>
@@ -1317,6 +1396,13 @@
 			<Function name='volume'/>
 		</Class>
 		<Class name='RageTexture'>
+			<Function name='GetSourceWidth'/>
+			<Function name='GetSourceHeight'/>
+			<Function name='GetTextureWidth'/>
+			<Function name='GetTextureHeight'/>
+			<Function name='GetImageWidth'/>
+			<Function name='GetImageHeight'/>
+			<Function name='GetPath'/>
 			<Function name='GetTextureCoordRect'/>
 			<Function name='loop'/>
 			<Function name='position'/>
@@ -1396,6 +1482,7 @@
 			<Function name='AllAreOnLastRow'/>
 			<Function name='FocusedItemEndsScreen'/>
 			<Function name='GetCurrentRowIndex'/>
+			<Function name='GetNumRows'/>
 			<Function name='GetOptionRow'/>
 		</Class>
 		<Class base='ScreenOptions' name='ScreenPlayerOptions'>
@@ -1439,6 +1526,7 @@
 			<Function name='GetAllSteps'/>
 			<Function name='GetBackgroundPath'/>
 			<Function name='GetBannerPath'/>
+			<Function name='GetBGChanges'/>
 			<Function name='GetCDImagePath'/>
 			<Function name='GetCDTitlePath'/>
 			<Function name='GetDiscPath'/>
@@ -1458,6 +1546,7 @@
 			<Function name='GetMusicPath'/>
 			<Function name='GetOneSteps'/>
 			<Function name='GetOrigin'/>
+			<Function name='GetPreviewMusicPath'/>
 			<Function name='GetPreviewVidPath'/>
 			<Function name='GetSampleLength'/>
 			<Function name='GetSampleStart'/>
@@ -1581,6 +1670,7 @@
 			<Function name='SetCustomPosCoords'/>
 			<Function name='SetEffectMode'/>
 			<Function name='SetSecondsIntoAnimation'/>
+			<Function name='SetStateProperties'/>
 			<Function name='SetTexture'/>
 			<Function name='StopUsingCustomPosCoords'/>
 			<Function name='addimagecoords'/>
@@ -1660,6 +1750,7 @@
 			<Function name='GetName'/>
 			<Function name='GetStepsType'/>
 			<Function name='GetStyleType'/>
+			<Function name='GetWidth'/>
 			<Function name='LockedDifficulty'/>
 			<Function name='NeedsZoomOutWith2Players'/>
 		</Class>
@@ -2211,6 +2302,11 @@
 			<EnumValue name='&apos;MusicWheelUsesSections_Never&apos;' value='0'/>
 			<EnumValue name='&apos;MusicWheelUsesSections_Always&apos;' value='1'/>
 			<EnumValue name='&apos;MusicWheelUsesSections_ABCOnly&apos;' value='2'/>
+		</Enum>
+		<Enum name='NoteColumnSplineMode'>
+			<EnumValue name='&apos;NoteColumnSplineMode_Disabled&apos;' value='0'/>
+			<EnumValue name='&apos;NoteColumnSplineMode_Offset&apos;' value='1'/>
+			<EnumValue name='&apos;NoteColumnSplineMode_Position&apos;' value='2'/>
 		</Enum>
 		<Enum name='NotePart'>
 			<EnumValue name='&apos;NotePart_TapNote&apos;' value='0'/>

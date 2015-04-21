@@ -145,6 +145,7 @@ public:
 
 	int GetLineWidthInSourcePixels( const wstring &szLine ) const;
 	int GetLineHeightInSourcePixels( const wstring &szLine ) const;
+	int GetGlyphsThatFit(const wstring& line, int* width) const;
 
 	bool FontCompleteForString( const wstring &str ) const;
 

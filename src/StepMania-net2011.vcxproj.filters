@@ -97,12 +97,6 @@
     <Filter Include="BaseClasses">
       <UniqueIdentifier>{2d157d5c-7c0e-4967-925a-3976a6ad0dd0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Helpers">
-      <UniqueIdentifier>{46a5ab77-6eaf-44eb-93ec-43b2db4741ff}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Helpers\jsoncpp">
-      <UniqueIdentifier>{52c8e19c-32ec-4115-bee6-f5957389d7ea}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Screen.cpp">
@@ -369,6 +363,9 @@
     <ClCompile Include="CryptHelpers.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
+    <ClCompile Include="CubicSpline.cpp">
+      <Filter>Data Structures</Filter>
+    </ClCompile>
     <ClCompile Include="DateTime.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
@@ -613,6 +610,9 @@
       <Filter>StepMania</Filter>
     </ClCompile>
     <ClCompile Include="global.cpp">
+      <Filter>StepMania</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
       <Filter>StepMania</Filter>
     </ClCompile>
     <ClCompile Include="SpecialFiles.cpp">
@@ -1449,15 +1449,6 @@
     <ClCompile Include="BaseClasses\wxutil.cpp">
       <Filter>BaseClasses</Filter>
     </ClCompile>
-    <ClCompile Include="..\extern\jsoncpp\src\lib_json\json_reader.cpp">
-      <Filter>Helpers\jsoncpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\jsoncpp\src\lib_json\json_value.cpp">
-      <Filter>Helpers\jsoncpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extern\jsoncpp\src\lib_json\json_writer.cpp">
-      <Filter>Helpers\jsoncpp</Filter>
-    </ClCompile>
     <ClCompile Include="SongPosition.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
@@ -1722,6 +1713,9 @@
       <Filter>Data Structures</Filter>
     </ClInclude>
     <ClInclude Include="CryptHelpers.h">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="CubicSpline.h">
       <Filter>Data Structures</Filter>
     </ClInclude>
     <ClInclude Include="DateTime.h">

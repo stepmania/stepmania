@@ -1,5 +1,5 @@
 AC_PREREQ(2.59)
-AC_INIT(StepMania 5, beta 0, [https://github.com/stepmania/stepmania], StepMania, [http://stepmania.com])
+AC_INIT(StepMania, 5.0, [https://github.com/stepmania/stepmania], StepMania, [http://stepmania.com])
 AC_CONFIG_SRCDIR([src/StepMania.cpp])
 AC_CONFIG_AUX_DIR(autoconf)
 AC_CANONICAL_TARGET
@@ -202,6 +202,11 @@ if test "$with_prof" = "yes"; then
 	test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS="$LDFLAGS -pg"
 fi
 
+dnl Usually in libc, but not always(?)
+if test "$unix" = "yes"; then
+	AC_SEARCH_LIBS(clock_gettime, rt,, AC_ERROR([clock_gettime() not available?]))
+fi
+
 SM_OPENGL
 SM_X11
 GL_CFLAGS="$GL_CFLAGS $XCFLAGS"
@@ -265,7 +270,7 @@ if test "$with_network" = "no"; then
 fi
 AM_CONDITIONAL(WITHOUT_NETWORKING, test "$with_network" = "no")
 
-AC_ARG_WITH(gles2, AS_HELP_STRING([--without-gles2],[Disable OpenGL ES 2.0]), with_network=$withval, with_network=yes)
+AC_ARG_WITH(gles2, AS_HELP_STRING([--without-gles2],[Disable OpenGL ES 2.0]), with_gles2=$withval, with_gles2=yes)
 if test "$with_gles2" = "no"; then
 	AC_DEFINE(WITHOUT_GLES2, 1, [OpenGL ES 2.0 support not available])
 fi
@@ -344,6 +349,7 @@ AM_CONDITIONAL(HAVE_PTHREAD, test "$have_pthread" = "yes")
 # Always:
 AC_DEFINE(_GNU_SOURCE, 1, [Use GNU extensions])
 AC_DEFINE(__STDC_FORMAT_MACROS, 1, [Use PRId64 and similar])
+AC_DEFINE(USE_GITVERSION, 1, [We are generating gitversion.h])
 
 AM_CONDITIONAL(HAVE_ALSA, test x$alsa != xfalse )
 AM_CONDITIONAL(HAVE_GTK, test "$enable_gtk2" != "no" )
@@ -381,6 +387,21 @@ AC_SUBST(RESFLAGS)
 
 dnl Add these after all tests are done as they don't exist just yet.
 LIBS="$LIBS $FFMPEG_LIBS"
+
+# Selection between bundled pcre and system pcre
+AC_ARG_WITH(system-pcre, AS_HELP_STRING([--with-system-pcre],[Disable building of bundled libpcre]), with_system_pcre=$withval, with_system_pcre=no)
+AM_CONDITIONAL(USE_SYSTEM_PCRE, test "$with_system_pcre" == "yes")
+
+if test "$with_system_pcre" == "yes"; then
+	have_libpcre=yes
+	AC_CHECK_HEADER(pcre.h, , have_libpcre=no)
+	if test "$have_libpcre" = "no"; then
+		AC_MSG_ERROR([If you want to use system libpcre, please make sure that it is installed. Otherwise please configure with --without-system-pcre.])
+	else
+		AC_DEFINE([USE_SYSTEM_PCRE], 1, [Build with system libpcre])
+		LIBS="$LIBS -lpcre"
+	fi
+fi
 
 AC_CONFIG_FILES(Makefile)
 AC_CONFIG_FILES(bundle/Makefile)

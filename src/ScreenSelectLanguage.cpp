@@ -50,7 +50,7 @@ bool ScreenSelectLanguage::MenuStart( const InputEventPlus &input )
 	PREFSMAN->SavePrefsToDisk();
 	THEME->SwitchThemeAndLanguage( THEME->GetCurThemeName(), PREFSMAN->m_sLanguage, PREFSMAN->m_bPseudoLocalize );
 
-	m_soundStart.Play();
+	m_soundStart.Play(true);
 	this->PostScreenMessage( SM_BeginFadingOut, 0 );
 	return true;
 }

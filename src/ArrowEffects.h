@@ -19,6 +19,14 @@ public:
 		return GetYOffset( pPlayerState, iCol, fNoteBeat, fThrowAway, bThrowAway, bAbsolute );
 	}
 
+	static void GetXYZPos(const PlayerState* player_state, int col, float y_offset, float y_reverse_offset, vector<float>& ret, bool with_reverse= true)
+	{
+		ASSERT(ret.size() == 3);
+		ret[0]= GetXPos(player_state, col, y_offset);
+		ret[1]= GetYPos(player_state, col, y_offset, y_reverse_offset, with_reverse);
+		ret[2]= GetZPos(player_state, col, y_offset);
+	}
+
 	/**
 	 * @brief Retrieve the actual display position.
 	 *

@@ -104,6 +104,68 @@ void ScreenSelectMaster::Init()
 	FOREACH( PlayerNumber, vpns, p )
 		m_vsprScroll[*p].resize( m_aGameCommands.size() );
 
+	vector<RageVector3> positions;
+	bool positions_set_by_lua= false;
+	if(THEME->HasMetric(m_sName, "IconChoicePosFunction"))
+	{
+		positions_set_by_lua= true;
+		LuaReference command= THEME->GetMetricR(m_sName, "IconChoicePosFunction");
+		if(command.GetLuaType() != LUA_TFUNCTION)
+		{
+			LuaHelpers::ReportScriptError(m_sName+"::IconChoicePosFunction must be a function.");
+			positions_set_by_lua= false;
+		}
+		else
+		{
+			Lua* L= LUA->Get();
+			command.PushSelf(L);
+			lua_pushnumber(L, m_aGameCommands.size());
+			RString err= m_sName + "::IconChoicePosFunction: ";
+			if(!LuaHelpers::RunScriptOnStack(L, err, 1, 1, true))
+			{
+				positions_set_by_lua= false;
+			}
+			else
+			{
+				if(!lua_istable(L, -1))
+				{
+					LuaHelpers::ReportScriptError(m_sName+"::IconChoicePosFunction did not return a table of positions.");
+					positions_set_by_lua= false;
+				}
+				else
+				{
+					size_t poses= lua_objlen(L, -1);
+					for(size_t p= 1; p <= poses; ++p)
+					{
+						lua_rawgeti(L, -1, p);
+						RageVector3 pos(0.0f, 0.0f, 0.0f);
+						if(!lua_istable(L, -1))
+						{
+							LuaHelpers::ReportScriptErrorFmt("Position %zu is not a table.", p);
+						}
+						else
+						{
+#define SET_POS_PART(i, part) \
+							lua_rawgeti(L, -1, i); \
+							pos.part= lua_tonumber(L, -1); \
+							lua_pop(L, 1);
+							// If part of the position is not provided, we want it to
+							// default to zero, which lua_tonumber does. -Kyz
+							SET_POS_PART(1, x);
+							SET_POS_PART(2, y);
+							SET_POS_PART(3, z);
+#undef SET_POS_PART
+						}
+						lua_pop(L, 1);
+						positions.push_back(pos);
+					}
+				}
+			}
+			lua_settop(L, 0);
+			LUA->Release(L);
+		}
+	}
+
 	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 	{
 		GameCommand& mc = m_aGameCommands[c];
@@ -122,7 +184,26 @@ void ScreenSelectMaster::Init()
 			RString sName = "Icon" "Choice" + mc.m_sName;
 			m_vsprIcon[c]->SetName( sName );
 			if( USE_ICON_METRICS )
-				LOAD_ALL_COMMANDS_AND_SET_XY( m_vsprIcon[c] );
+			{
+				if(positions_set_by_lua)
+				{
+					LOAD_ALL_COMMANDS(m_vsprIcon[c]);
+					m_vsprIcon[c]->SetXY(positions[c].x, positions[c].y);
+					m_vsprIcon[c]->SetZ(positions[c].z);
+				}
+				else
+				{
+					LOAD_ALL_COMMANDS_AND_SET_XY( m_vsprIcon[c] );
+				}
+#define OPTIONAL_COMMAND(onoff) \
+				if(THEME->HasMetric(m_sName, "IconChoice" onoff "Command")) \
+				{ \
+					m_vsprIcon[c]->AddCommand(onoff, THEME->GetMetricA(m_sName, "IconChoice" onoff "Command"), false); \
+				}
+				OPTIONAL_COMMAND("On");
+				OPTIONAL_COMMAND("Off");
+#undef OPTIONAL_COMMAND
+			}
 			this->AddChild( m_vsprIcon[c] );
 		}
 
@@ -353,15 +434,50 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 {
 	vector<PlayerNumber> vpns;
 	GetActiveElementPlayerNumbers( vpns );
+	int first_playable= -1;
+	bool on_unplayable[NUM_PLAYERS];
+	FOREACH_PlayerNumber(pn)
+	{
+		on_unplayable[pn]= false;
+	}
 
 	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 	{
+		RString command= "Enabled";
+		bool disabled= false;
+		if(!m_aGameCommands[c].IsPlayable())
+		{
+			command= "Disabled";
+			disabled= true;
+		}
+		else if(first_playable == -1)
+		{
+			first_playable= c;
+		}
 		if( SHOW_ICON )
-			m_vsprIcon[c]->PlayCommand( m_aGameCommands[c].IsPlayable()? "Enabled":"Disabled" );
+		{
+			m_vsprIcon[c]->PlayCommand(command);
+		}
 
 		FOREACH( PlayerNumber, vpns, p )
+		{
+			if(disabled && m_iChoice[*p] == c)
+			{
+				on_unplayable[*p]= true;
+			}
 			if( m_vsprScroll[*p][c].IsLoaded() )
-				m_vsprScroll[*p][c]->PlayCommand( m_aGameCommands[c].IsPlayable()? "Enabled":"Disabled" );
+			{
+				m_vsprScroll[*p][c]->PlayCommand(command);
+			}
+		}
+	}
+	FOREACH(PlayerNumber, vpns, pn)
+	{
+		if(on_unplayable[*pn])
+		{
+			ChangeSelection(*pn, first_playable < m_iChoice[*pn] ? MenuDir_Left :
+				MenuDir_Right, first_playable);
+		}
 	}
 
 	/* If no options are playable at all, just wait.  Some external
@@ -424,7 +540,7 @@ bool ScreenSelectMaster::MenuLeft( const InputEventPlus &input )
 	if( Move(pn, MenuDir_Left) )
 	{
 		m_TrackingRepeatingInput = input.MenuI;
-		m_soundChange.Play();
+		m_soundChange.Play(true);
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuLeftP1+pn) );
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuSelectionChanged) );
 
@@ -455,7 +571,7 @@ bool ScreenSelectMaster::MenuRight( const InputEventPlus &input )
 	if( Move(pn, MenuDir_Right) )
 	{
 		m_TrackingRepeatingInput = input.MenuI;
-		m_soundChange.Play();
+		m_soundChange.Play(true);
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuRightP1+pn) );
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuSelectionChanged) );
 
@@ -486,7 +602,7 @@ bool ScreenSelectMaster::MenuUp( const InputEventPlus &input )
 	if( Move(pn, MenuDir_Up) )
 	{
 		m_TrackingRepeatingInput = input.MenuI;
-		m_soundChange.Play();
+		m_soundChange.Play(true);
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuUpP1+pn) );
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuSelectionChanged) );
 
@@ -517,7 +633,7 @@ bool ScreenSelectMaster::MenuDown( const InputEventPlus &input )
 	if( Move(pn, MenuDir_Down) )
 	{
 		m_TrackingRepeatingInput = input.MenuI;
-		m_soundChange.Play();
+		m_soundChange.Play(true);
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuDownP1+pn) );
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuSelectionChanged) );
 
@@ -809,7 +925,7 @@ bool ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 	// double press is enabled and the player hasn't made their first press
 	if(DOUBLE_PRESS_TO_SELECT && !m_bDoubleChoice[pn])
 	{
-		m_soundStart.PlayCopy();
+		m_soundStart.PlayCopy(true);
 		m_bDoubleChoice[pn] = true;
 
 		if(SHOW_SCROLLER)
@@ -838,7 +954,7 @@ bool ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 
 	// Play a copy of the sound, so it'll finish playing even if we leave the screen immediately.
 	if( mc->m_sSoundPath.empty() && !m_bDoubleChoiceNoSound )
-		m_soundStart.PlayCopy();
+		m_soundStart.PlayCopy(true);
 
 	if( mc->m_sScreen.empty() )
 	{

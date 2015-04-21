@@ -6,14 +6,26 @@ Note that this is a namespace, not a class per se.
 
 -- TODO: move this into a more general section
 -- func takes a key and a value
+function foreach_by_sorted_keys(tbl, keys, func)
+	table.sort(keys)
+	for _, key in ipairs(keys) do func(key, tbl[key]) end
+end
+
 function foreach_ordered( tbl, func )
-	local keys = { }
-	for k,_ in pairs(tbl) do keys[#keys+1] = k end
-
-	table.sort( keys )
-
+	local string_keys= {}
+	local number_keys= {}
+	-- First person to to use this on a table that uses something else as keys
+	-- gets to extend this function to cover more types.  And a beating. -Kyz
+	for k,_ in pairs(tbl) do
+		if type(k) == "string" then
+			table.insert(string_keys, k)
+		elseif type(k) == "number" then
+			table.insert(number_keys, k)
+		end
+	end
 	-- iterate in sorted order
-	for _,key in ipairs(keys) do func( key, tbl[key]) end
+	foreach_by_sorted_keys(tbl, number_keys, func)
+	foreach_by_sorted_keys(tbl, string_keys, func)
 end
 
 -- redeclared here for my sanity's sake
@@ -30,7 +42,7 @@ local RageFile =
 IniFile = 
 {
 	StrToKeyVal = function( str )
-		local _, _, key, value = str:find( "(.+)=(.*)" )
+		local key, value = str:match( "(.+)=(.*)" )
 
 		-- key is always a string, but value may be num, bool, or nil.
 		-- do a few quick checks to see which one it is.
@@ -68,7 +80,7 @@ IniFile =
 			--ignore comments.
 			if not str:find("^%s*#") then
 				-- is this a section?
-				local _, _, sec = str:find( "%[(.+)%]" )
+				local sec = str:match( "%[(.+)%]" )
 
 				-- if so, set focus there; otherwise, try to
 				-- read a key/value pair (ignore blank lines)
@@ -79,7 +91,7 @@ IniFile =
 					--Warn( "Switching section to " .. sec )
 				else
 					local k, v = IniFile.StrToKeyVal( str )
-					if k and v then current[k] = v end
+					if k and v ~= nil then current[k] = v end
 				end
 			end
 		end

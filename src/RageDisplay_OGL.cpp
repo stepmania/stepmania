@@ -798,11 +798,20 @@ bool RageDisplay_Legacy::BeginFrame()
 
 void RageDisplay_Legacy::EndFrame()
 {
-	glFlush();
-
 	FrameLimitBeforeVsync( g_pWind->GetActualVideoModeParams().rate );
 	g_pWind->SwapBuffers();
 	FrameLimitAfterVsync();
+
+	// Some would advise against glFinish(), ever. Those people don't realize
+	// the degree of freedom GL hosts are permitted in queueing commands.
+	// If left to its own devices, the host could lag behind several frames' worth
+	// of commands.
+	// glFlush() only forces the host to not wait to execute all commands
+	// sent so far; it does NOT block on those commands until they finish.
+	// glFinish() blocks. We WANT to block. Why? This puts the engine state
+	// reflected by the next frame as close as possible to the on-screen
+	// appearance of that frame.
+	glFinish();
 
 	g_pWind->Update();
 
@@ -2402,6 +2411,7 @@ void RenderTarget_FramebufferObject::Create( const RenderTargetParam &param, int
 		glGenRenderbuffersEXT( 1, reinterpret_cast<GLuint*>(&m_iDepthBufferHandle) );
 		ASSERT( m_iDepthBufferHandle != 0 );
 
+		glBindRenderbufferEXT( GL_RENDERBUFFER, m_iDepthBufferHandle );
 		glRenderbufferStorageEXT( GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT16, iTextureWidth, iTextureHeight );
 		glFramebufferRenderbufferEXT( GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_iDepthBufferHandle );
 	}
@@ -2463,6 +2473,14 @@ unsigned RageDisplay_Legacy::CreateRenderTarget( const RenderTargetParam &param,
 	ASSERT( g_mapRenderTargets.find(iTexture) == g_mapRenderTargets.end() );
 	g_mapRenderTargets[iTexture] = pTarget;
 	return iTexture;
+}
+
+unsigned RageDisplay_Legacy::GetRenderTarget( )
+{
+	for( map<unsigned, RenderTarget*>::const_iterator it = g_mapRenderTargets.begin( ); it != g_mapRenderTargets.end( ); ++it )
+	if( it->second == g_pCurrentRenderTarget )
+		return it->first;
+	return 0;
 }
 
 void RageDisplay_Legacy::SetRenderTarget( unsigned iTexture, bool bPreserveTexture )

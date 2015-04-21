@@ -12,6 +12,12 @@ if WINDOWS
 	rm -f ../*.dll
 endif
 
+install:
+	cd ffmpeg && $(MAKE) install-libs
+
+uninstall:
+	cd ffmpeg && $(MAKE) uninstall-libs
+
 clean-local: del-dlls
 	cd ffmpeg && $(MAKE) clean
 

@@ -260,7 +260,7 @@ void LuaBinding::ApplyDerivedType( Lua *L, const RString &sClassName, void *pSel
 
 	int iType = lua_type( L, iTable );
 	ASSERT_M( iType == LUA_TTABLE || iType == LUA_TUSERDATA,
-		ssprintf("%i", iType) );
+		ssprintf("Object on lua stack that derived type is being applied to is %i instead of %i or %i", iType, LUA_TTABLE, LUA_TUSERDATA) );
 
 	if( iType == LUA_TTABLE )
 	{

@@ -98,6 +98,7 @@ protected:
 	bool AllAreOnLastRow() const;
 	OptionRow* GetRow( int iRow ) const { return m_pRows[iRow]; }
         //void SetOptionRowFromName( const RString& nombre );
+	int GetNumRows() const { return static_cast<int>(m_pRows.size()); }
 
 protected:	// derived classes need access to these
 	enum Navigation { NAV_THREE_KEY, NAV_THREE_KEY_MENU, NAV_THREE_KEY_ALT, NAV_FIVE_KEY, NAV_TOGGLE_THREE_KEY, NAV_TOGGLE_FIVE_KEY };

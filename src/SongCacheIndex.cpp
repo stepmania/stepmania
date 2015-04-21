@@ -106,13 +106,21 @@ void SongCacheIndex::ReadCacheIndex()
 	FILEMAN->FlushDirCache();
 }
 
+void SongCacheIndex::SaveCacheIndex()
+{
+	CacheIndex.WriteFile(CACHE_INDEX);
+}
+
 void SongCacheIndex::AddCacheIndex(const RString &path, unsigned hash)
 {
 	if( hash == 0 )
 		++hash; /* no 0 hash values */
 	CacheIndex.SetValue( "Cache", "CacheVersion", FILE_CACHE_VERSION );
 	CacheIndex.SetValue( "Cache", MangleName(path), hash );
-	CacheIndex.WriteFile( CACHE_INDEX );
+	if(!delay_save_cache)
+	{
+		CacheIndex.WriteFile(CACHE_INDEX);
+	}
 }
 
 unsigned SongCacheIndex::GetCacheHash( const RString &path ) const

@@ -20,7 +20,7 @@ void FixupPath( RString &path, const RString &sSongPath );
 RString GetSongAssetPath( RString sPath, const RString &sSongPath );
 
 /** @brief The version of the .ssc file format. */
-const static float STEPFILE_VERSION_NUMBER = 0.82f;
+const static float STEPFILE_VERSION_NUMBER = 0.83f;
 
 /** @brief How many edits for this song can each profile have? */
 const int MAX_EDITS_PER_SONG_PER_PROFILE = 15;
@@ -87,9 +87,14 @@ public:
 	 *
 	 * This assumes that there is no song present right now.
 	 * @param sDir the song directory from which to load. */
-	bool LoadFromSongDir( RString sDir );
+	bool LoadFromSongDir( RString sDir, bool load_autosave= false );
 	// This one takes the effort to reuse Steps pointers as best as it can
 	bool ReloadFromSongDir( RString sDir );
+	bool ReloadFromSongDir() { return ReloadFromSongDir(GetSongDir()); }
+	void LoadEditsFromSongDir(RString dir);
+
+	bool HasAutosaveFile();
+	bool LoadAutosaveFile();
 
 	/**
 	 * @brief Call this after loading a song to clean up invalid data.
@@ -113,9 +118,9 @@ public:
 	 * @param sPath the path where we're saving the file.
 	 * @param bSavingCache a flag to determine if we're saving cache data.
 	 */
-	bool SaveToSSCFile( RString sPath, bool bSavingCache );
+	bool SaveToSSCFile(RString sPath, bool bSavingCache, bool autosave= false);
 	/** @brief Save to the SSC and SM files no matter what. */
-	void Save();
+	void Save(bool autosave= false);
 	/** 
 	  * @brief Save the current Song to a JSON file.
 	  * @return its success or failure. */
@@ -132,6 +137,10 @@ public:
 	 * @brief Save the current Song to a DWI file if possible.
 	 * @return its success or failure. */
 	bool SaveToDWIFile();
+
+	void RemoveAutosave();
+	bool WasLoadedFromAutosave() const
+	{ return m_loaded_from_autosave; }
 
 	const RString &GetSongFilePath() const;
 	RString GetCacheFilePath() const;
@@ -224,6 +233,7 @@ public:
 	RString m_sOrigin; // song origin (for .ssc format)
 
 	RString	m_sMusicFile;
+	RString m_PreviewFile;
 	RString	m_sInstrumentTrackFile[NUM_InstrumentTrack];
 
 	/** @brief The length of the music file. */
@@ -247,6 +257,7 @@ public:
 	AttackArray m_Attacks;
 	vector<RString>	m_sAttackString;
 
+	static RString GetSongAssetPath( RString sPath, const RString &sSongPath );
 	RString GetMusicPath() const;
 	RString GetInstrumentTrackPath( InstrumentTrack it ) const;
 	RString GetBannerPath() const;
@@ -257,6 +268,8 @@ public:
 	RString GetBackgroundPath() const;
 	RString GetCDTitlePath() const;
 	RString GetPreviewVidPath() const;
+	RString GetPreviewMusicPath() const;
+	float GetPreviewStartSeconds() const;
 
 	// For loading only:
 	bool m_bHasMusic, m_bHasBanner, m_bHasBackground;
@@ -443,6 +456,7 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
+	bool m_loaded_from_autosave;
 	/** @brief the Steps that belong to this Song. */
 	vector<Steps*> m_vpSteps;
 	/** @brief the Steps of a particular StepsType that belong to this Song. */

@@ -46,6 +46,29 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
+	// PushPlayerMatrix and PopPlayerMatrix are separate functions because
+	// they need to be used twice so that the notefield board can rendered
+	// underneath the combo and judgment.  They're not embedded in
+	// PlayerMatrixPusher so that some nutjob can later decide to expose them
+	// to lua. -Kyz
+	void PushPlayerMatrix(float x, float skew, float center_y);
+	void PopPlayerMatrix();
+
+	// This exists so that the board can be drawn underneath combo/judge. -Kyz
+	void DrawNoteFieldBoard();
+
+	// Here's a fun construct for people that haven't seen it before:
+	// This object does some task when it's created, then cleans up when it's
+	// destroyed.  That way, you stick it inside a block, and can't forget the
+	// cleanup. -Kyz
+	struct PlayerNoteFieldPositioner
+	{
+		PlayerNoteFieldPositioner(Player* p, float x, float tilt, float skew, float mini, float center_y, bool reverse);
+		~PlayerNoteFieldPositioner();
+		Player* player;
+		float original_y;
+		float y_offset;
+	};
 
 	struct TrackRowTapNote
 	{
@@ -128,14 +151,17 @@ protected:
 	void HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow, const vector<int> &viColsWithHold );
 	void DrawTapJudgments();
 	void DrawHoldJudgments();
-	void SendComboMessages( int iOldCombo, int iOldMissCombo );
+	void SendComboMessages( unsigned int iOldCombo, unsigned int iOldMissCombo );
 	void PlayKeysound( const TapNote &tn, TapNoteScore score );
 
 	void SetMineJudgment( TapNoteScore tns , int iTrack );
 	void SetJudgment( int iRow, int iFirstTrack, const TapNote &tn ) { SetJudgment( iRow, iFirstTrack, tn, tn.result.tns, tn.result.fTapNoteOffset ); }	
 	void SetJudgment( int iRow, int iFirstTrack, const TapNote &tn, TapNoteScore tns, float fTapNoteOffset );	// -1 if no track as in TNS_Miss
 	void SetHoldJudgment( TapNote &tn, int iTrack );
-	void SetCombo( int iCombo, int iMisses );
+	void SetCombo( unsigned int iCombo, unsigned int iMisses );
+	void IncrementComboOrMissCombo( bool bComboOrMissCombo );
+	void IncrementCombo() { IncrementComboOrMissCombo(true); };
+	void IncrementMissCombo() { IncrementComboOrMissCombo(false); };
 
 	void ChangeLife( TapNoteScore tns );
 	void ChangeLife( HoldNoteScore hns, TapNoteScore tns );
@@ -194,7 +220,8 @@ protected:
 	NoteData::all_tracks_iterator *m_pIterUncrossedRows;
 	NoteData::all_tracks_iterator *m_pIterUnjudgedRows;
 	NoteData::all_tracks_iterator *m_pIterUnjudgedMineRows;
-	int			m_iLastSeenCombo;
+	unsigned int	m_iLastSeenCombo;
+	bool	m_bSeenComboYet;
 	JudgedRows		*m_pJudgedRows;
 
 	RageSound		m_soundMine;
@@ -228,6 +255,8 @@ protected:
 
 	bool m_bSendJudgmentAndComboMessages;
 	bool m_bTickHolds;
+	// This exists so that the board can be drawn underneath combo/judge. -Kyz
+	bool m_drawing_notefield_board;
 };
 
 class PlayerPlus

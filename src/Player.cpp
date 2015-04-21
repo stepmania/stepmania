@@ -214,6 +214,7 @@ float Player::GetWindowSeconds( TimingWindow tw )
 
 Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 {
+	m_drawing_notefield_board= false;
 	m_bLoaded = false;
 
 	m_pPlayerState = NULL;
@@ -300,7 +301,7 @@ void Player::Init(
 
 	{
 		// Init judgment positions
-		bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->GetUsesCenteredArrows();
+		bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle(pPlayerState->m_PlayerNumber)->GetUsesCenteredArrows();
 		Actor TempJudgment;
 		TempJudgment.SetName( "Judgment" );
 		ActorUtil::LoadCommand( TempJudgment, sType, "Transform" );
@@ -370,8 +371,9 @@ void Player::Init(
 	m_pPrimaryScoreKeeper = pPrimaryScoreKeeper;
 	m_pSecondaryScoreKeeper = pSecondaryScoreKeeper;
 
-	m_iLastSeenCombo      = -1;
-
+	m_iLastSeenCombo      = 0;
+	m_bSeenComboYet       = false;
+	
 	// set initial life
 	if( m_pLifeMeter && m_pPlayerStageStats )
 	{
@@ -499,13 +501,13 @@ void Player::Init(
 	}
 
 	// Load HoldJudgments
-	m_vpHoldJudgment.resize( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
-	for( int i = 0; i < GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; ++i )
+	m_vpHoldJudgment.resize( GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer );
+	for( int i = 0; i < GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer; ++i )
 		m_vpHoldJudgment[i] = NULL;
 
 	if( HasVisibleParts() )
 	{
-		for( int i = 0; i < GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; ++i )
+		for( int i = 0; i < GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer; ++i )
 		{
 			HoldJudgment *pJudgment = new HoldJudgment;
 			// xxx: assumes sprite; todo: don't force 1x2 -aj
@@ -523,7 +525,7 @@ void Player::Init(
 		this->AddChild( m_pNoteField );
 	}
 
-	m_vbFretIsDown.resize( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
+	m_vbFretIsDown.resize( GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer );
 	FOREACH( bool, m_vbFretIsDown, b )
 		*b = false;
 
@@ -649,7 +651,7 @@ void Player::Load()
 //		m_pScore->Init( pn );
 
 	/* Apply transforms. */
-	NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions.GetStage(), GAMESTATE->GetCurrentStyle()->m_StepsType );
+	NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions.GetStage(), GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType );
 
 	const Song* pSong = GAMESTATE->m_pCurSong;
 
@@ -668,7 +670,7 @@ void Player::Load()
 			// it has to do with there only being four cases. This is a lame
 			// workaround, but since only DDR has ever really implemented those
 			// modes, it's stayed like this. -aj
-			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+			StepsType st = GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType;
 			NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions.GetStage(), st );
 
 			if (BATTLE_RAVE_MIRROR)
@@ -707,7 +709,7 @@ void Player::Load()
 		m_pNoteField->Load( &m_NoteData, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels );
 	}
 
-	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->GetUsesCenteredArrows();
+	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->GetUsesCenteredArrows();
 	if( m_pAttackDisplay )
 		m_pAttackDisplay->SetX( ATTACK_DISPLAY_X.GetValue(pn, bPlayerUsingBothSides) - 40 );
 	// set this in Update //m_pAttackDisplay->SetY( bReverse ? ATTACK_DISPLAY_Y_REVERSE : ATTACK_DISPLAY_Y );
@@ -763,10 +765,10 @@ void Player::Load()
 	m_pIterUnjudgedMineRows = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
 }
 
-void Player::SendComboMessages( int iOldCombo, int iOldMissCombo )
+void Player::SendComboMessages( unsigned int iOldCombo, unsigned int iOldMissCombo )
 {
-	const int iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-	if( iOldCombo > COMBO_STOPPED_AT && iCurCombo < COMBO_STOPPED_AT )
+	const unsigned int iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+	if( iOldCombo > (unsigned int)COMBO_STOPPED_AT && iCurCombo < (unsigned int)COMBO_STOPPED_AT )
 	{
 		SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
 	}
@@ -849,9 +851,9 @@ void Player::Update( float fDeltaTime )
 		if( g_bEnableAttackSoundPlayback )
 		{
 			if( m_pPlayerState->m_bAttackBeganThisUpdate )
-				m_soundAttackLaunch.Play();
+				m_soundAttackLaunch.Play(false);
 			if( m_pPlayerState->m_bAttackEndedThisUpdate )
-				m_soundAttackEnding.Play();
+				m_soundAttackEnding.Play(false);
 		}
 
 		float fMiniPercent = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_MINI];
@@ -860,7 +862,7 @@ void Player::Update( float fDeltaTime )
 
 		// Update Y positions
 		{
-			for( int c=0; c<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; c++ )
+			for( int c=0; c<GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer; c++ )
 			{
 				float fPercentReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(c);
 				float fHoldJudgeYPos = SCALE( fPercentReverse, 0.f, 1.f, HOLD_JUDGMENT_Y_STANDARD, HOLD_JUDGMENT_Y_REVERSE );
@@ -920,16 +922,17 @@ void Player::Update( float fDeltaTime )
 	}
 
 	// update pressed flag
-	const int iNumCols = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;
+	const int iNumCols = GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer;
 	ASSERT_M( iNumCols <= MAX_COLS_PER_PLAYER, ssprintf("%i > %i", iNumCols, MAX_COLS_PER_PLAYER) );
 	for( int col=0; col < iNumCols; ++col )
 	{
 		ASSERT( m_pPlayerState != NULL );
 
 		// TODO: Remove use of PlayerNumber.
-		GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( col, m_pPlayerState->m_PlayerNumber );
+		vector<GameInput> GameI;
+		GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( col, m_pPlayerState->m_PlayerNumber, GameI );
 
-		bool bIsHoldingButton = INPUTMAPPER->IsBeingPressed( GameI );
+		bool bIsHoldingButton= INPUTMAPPER->IsBeingPressed(GameI);
 
 		// TODO: Make this work for non-human-controlled players
 		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && m_pPlayerState->m_PlayerController==PC_HUMAN )
@@ -1221,10 +1224,10 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			}
 			else
 			{
-				GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
-			// this previously read as bIsHoldingButton &=
-			// was there a specific reason for this? - Friez
-				bIsHoldingButton &= INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
+				vector<GameInput> GameI;
+				GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( iTrack, pn, GameI );
+
+				bIsHoldingButton &= INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp);
 			}
 		}
 	}
@@ -1410,7 +1413,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 				//LOG->Trace("initiated note and didn't let go");
 				fLife = 1; // xxx: should be MAX_HOLD_LIFE instead? -aj
 				hns = HNS_Held;
-				bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+				bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD;
 				if( m_pNoteField )
 				{
 					FOREACH( TrackRowTapNote, vTN, trtn )
@@ -1462,19 +1465,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	}
 
 	if ( (hns == HNS_LetGo) && COMBO_BREAK_ON_IMMEDIATE_HOLD_LET_GO )
-	{
-		const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-		const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
-
-		if( m_pPlayerStageStats )
-		{
-			m_pPlayerStageStats->m_iCurCombo = 0;
-			m_pPlayerStageStats->m_iCurMissCombo++;
-			SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
-		}
-
-		SendComboMessages( iOldCombo, iOldMissCombo );
-	}
+		IncrementMissCombo();
 	
 	if( hns != HNS_None )
 	{
@@ -1505,7 +1496,7 @@ void Player::ApplyWaitingTransforms()
 
 		// if re-adding noteskin changes, this is one place to edit -aj
 
-		NoteDataUtil::TransformNoteData( m_NoteData, po, GAMESTATE->GetCurrentStyle()->m_StepsType, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat) );
+		NoteDataUtil::TransformNoteData( m_NoteData, po, GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat) );
 	}
 	m_pPlayerState->m_ModsToApply.clear();
 }
@@ -1516,14 +1507,34 @@ void Player::DrawPrimitives()
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 	// May have both players in doubles (for battle play); only draw primary player.
-	if( GAMESTATE->GetCurrentStyle()->m_StyleType == StyleType_OnePlayerTwoSides  &&
+	if( GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StyleType == StyleType_OnePlayerTwoSides  &&
 		pn != GAMESTATE->GetMasterPlayerNumber() )
 		return;
 
+	bool draw_notefield= m_pNoteField && !IsOniDead();
+
+	const PlayerOptions& curr_options= m_pPlayerState->m_PlayerOptions.GetCurrent();
+	float tilt= curr_options.m_fPerspectiveTilt;
+	float skew= curr_options.m_fSkew;
+	float mini= curr_options.m_fEffects[PlayerOptions::EFFECT_MINI];
+	float center_y= GetY() + (GRAY_ARROWS_Y_STANDARD + GRAY_ARROWS_Y_REVERSE) / 2;
+	bool reverse= curr_options.GetReversePercentForColumn(0) > .5;
+
+	if(m_drawing_notefield_board)
+	{
+		// Ask the Notefield to draw its board primitive before everything else
+		// so that things drawn under the field aren't behind the opaque board.
+		// -Kyz
+		if(draw_notefield)
+		{
+			PlayerNoteFieldPositioner poser(this, GetX(), tilt, skew, mini, center_y, reverse);
+			m_pNoteField->DrawBoardPrimitive();
+		}
+		return;
+	}
+
 	// Draw these below everything else.
-	// xxx: if NoteField Board is enabled and COMBO_UNDER_FIELD, we really want
-	// the combo under the field but over the notefield board. -aj
-	if( COMBO_UNDER_FIELD && m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind == 0 )
+	if( COMBO_UNDER_FIELD && curr_options.m_fBlind == 0 )
 	{
 		if( m_sprCombo )
 			m_sprCombo->Draw();
@@ -1538,48 +1549,14 @@ void Player::DrawPrimitives()
 	if( HOLD_JUDGMENTS_UNDER_FIELD )
 		DrawHoldJudgments();
 
-	float fTilt = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fPerspectiveTilt;
-	float fSkew = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fSkew;
-	bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(0)>0.5;
-
-	DISPLAY->CameraPushMatrix();
-	DISPLAY->PushMatrix();
-
-	float fCenterY = this->GetY()+(GRAY_ARROWS_Y_STANDARD+GRAY_ARROWS_Y_REVERSE)/2;
-
-	DISPLAY->LoadMenuPerspective( 45, SCREEN_WIDTH, SCREEN_HEIGHT, SCALE(fSkew,0.f,1.f,this->GetX(),SCREEN_CENTER_X), fCenterY );
-
-	if( m_pNoteField && !IsOniDead() )
+	if(draw_notefield)
 	{
-		float fOriginalY = 	m_pNoteField->GetY();
-
-		float fTiltDegrees = SCALE(fTilt,-1.f,+1.f,+30,-30) * (bReverse?-1:1);
-
-		float fZoom = SCALE( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_MINI], 0.f, 1.f, 1.f, 0.5f );
-		if( fTilt > 0 )
-			fZoom *= SCALE( fTilt, 0.f, 1.f, 1.f, 0.9f );
-		else
-			fZoom *= SCALE( fTilt, 0.f, -1.f, 1.f, 0.9f );
-
-		float fYOffset;
-		if( fTilt > 0 )
-			fYOffset = SCALE( fTilt, 0.f, 1.f, 0.f, -45.f ) * (bReverse?-1:1);
-		else
-			fYOffset = SCALE( fTilt, 0.f, -1.f, 0.f, -20.f ) * (bReverse?-1:1);
-
-		m_pNoteField->SetY( fOriginalY + fYOffset );
-		m_pNoteField->SetZoom( fZoom );
-		m_pNoteField->SetRotationX( fTiltDegrees );
+		PlayerNoteFieldPositioner poser(this, GetX(), tilt, skew, mini, center_y, reverse);
 		m_pNoteField->Draw();
-
-		m_pNoteField->SetY( fOriginalY );
 	}
 
-	DISPLAY->CameraPopMatrix();
-	DISPLAY->PopMatrix();
-
 	// m_pNoteField->m_sprBoard->GetVisible()
-	if( !COMBO_UNDER_FIELD && m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind == 0 )
+	if( !COMBO_UNDER_FIELD && curr_options.m_fBlind == 0 )
 		if( m_sprCombo )
 			m_sprCombo->Draw();
 
@@ -1588,6 +1565,61 @@ void Player::DrawPrimitives()
 
 	if( !(bool)HOLD_JUDGMENTS_UNDER_FIELD )
 		DrawHoldJudgments();
+}
+
+void Player::PushPlayerMatrix(float x, float skew, float center_y)
+{
+	DISPLAY->CameraPushMatrix();
+	DISPLAY->PushMatrix();
+	DISPLAY->LoadMenuPerspective(45, SCREEN_WIDTH, SCREEN_HEIGHT,
+		SCALE(skew, 0.1f, 1.0f, x, SCREEN_CENTER_X), center_y);
+}
+
+void Player::PopPlayerMatrix()
+{
+	DISPLAY->CameraPopMatrix();
+	DISPLAY->PopMatrix();
+}
+
+void Player::DrawNoteFieldBoard()
+{
+	m_drawing_notefield_board= true;
+	Draw();
+	m_drawing_notefield_board= false;
+}
+
+Player::PlayerNoteFieldPositioner::PlayerNoteFieldPositioner(
+	Player* p, float x, float tilt, float skew, float mini, float center_y, bool reverse)
+	:player(p)
+{
+	player->PushPlayerMatrix(x, skew, center_y);
+	float reverse_mult= (reverse ? -1 : 1);
+	original_y= player->m_pNoteField->GetY();
+	float tilt_degrees= SCALE(tilt, -1.f, +1.f, +30, -30) * reverse_mult;
+	float zoom= SCALE(mini, 0.f, 1.f, 1.f, .5f);
+	// Something strange going on here.  Notice that the range for tilt's
+	// effect on y_offset goes to -45 when positive, but -20 when negative.
+	// I don't know why it's done this why, simply preserving old behavior.
+	// -Kyz
+	if(tilt > 0)
+	{
+		zoom*= SCALE(tilt, 0.f, 1.f, 1.f, 0.9f);
+		y_offset= SCALE(tilt, 0.f, 1.f, 0.f, -45.f) * reverse_mult;
+	}
+	else
+	{
+		zoom*= SCALE(tilt, 0.f, -1.f, 1.f, 0.9f);
+		y_offset= SCALE(tilt, 0.f, -1.f, 0.f, -20.f) * reverse_mult;
+	}
+	player->m_pNoteField->SetY(original_y + y_offset);
+	player->m_pNoteField->SetZoom(zoom);
+	player->m_pNoteField->SetRotationX(tilt_degrees);
+}
+
+Player::PlayerNoteFieldPositioner::~PlayerNoteFieldPositioner()
+{
+	player->m_pNoteField->SetY(original_y);
+	player->PopPlayerMatrix();
 }
 
 void Player::DrawTapJudgments()
@@ -1918,8 +1950,8 @@ void Player::DoTapScoreNone()
 	Message msg( "ScoreNone" );
 	MESSAGEMAN->Broadcast( msg );
 
-	const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-	const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
+	const unsigned int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+	const unsigned int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
 
 	/* The only real way to tell if a mine has been scored is if it has disappeared
 	* but this only works for hit mines so update the scores for avoided mines here. */
@@ -2007,7 +2039,7 @@ void Player::PlayKeysound( const TapNote &tn, TapNoteScore score )
 				}
 			}
 		}
-		m_vKeysounds[tn.iKeysoundIndex].Play();
+		m_vKeysounds[tn.iKeysoundIndex].Play(false);
 		Preference<float> *pVolume = Preference<float>::GetPreferenceByName("SoundVolume");
 		float fVol = pVolume->Get();
 		m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", fVol);
@@ -2105,21 +2137,9 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 
 					if( ROLL_BODY_INCREMENTS_COMBO && m_pPlayerState->m_PlayerController != PC_AUTOPLAY )
 					{
-						// increment combo
-						const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-						const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
-
-						if( m_pPlayerStageStats )
-						{
-							m_pPlayerStageStats->m_iCurCombo++;
-							m_pPlayerStageStats->m_iCurMissCombo = 0;
-						}
-
-						SendComboMessages( iOldCombo, iOldMissCombo );
-						if( m_pPlayerStageStats )
-							SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
-
-						bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+						IncrementCombo();
+						
+						bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD;
 						if( m_pNoteField )
 							m_pNoteField->DidHoldNote( col, HNS_Held, bBright );
 					}
@@ -2141,9 +2161,14 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		int iNumTracksHeld = 0;
 		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 		{
-			GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( t, pn );
-			const float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
-			if( fSecsHeld > 0  && fSecsHeld < m_fTimingWindowJump )
+			vector<GameInput> GameI;
+			GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( t, pn, GameI );
+			float secs_held= 0.0f;
+			for(size_t i= 0; i < GameI.size(); ++i)
+			{
+				secs_held= max(secs_held, INPUTMAPPER->GetSecsHeld( GameI[i] ));
+			}
+			if( secs_held > 0  && secs_held < m_fTimingWindowJump )
 				iNumTracksHeld++;
 		}
 
@@ -2417,7 +2442,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			{
 				bool bNoteRowMatchesFrets = true;
 				int iFirstNoteCol = -1;
-				for( int i=0; i<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; i++ )
+				for( int i=0; i<GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer; i++ )
 				{
 					const TapNote &tn = m_NoteData.GetTapNote( i, iRowOfOverlappingNoteOrRow );
 					bool bIsNote = (tn.type != TapNoteType_Empty);
@@ -2444,7 +2469,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				else
 				{
 					int iLastNoteCol = -1;
-					for( int i=GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer-1; i>=0; i-- )
+					for( int i=GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer-1; i>=0; i-- )
 					{
 						const TapNote &tn = m_NoteData.GetTapNote( i, iRowOfOverlappingNoteOrRow );
 						bool bIsNote = (tn.type != TapNoteType_Empty);
@@ -2508,7 +2533,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		{
 			score = TNS_None;	// don't score this as anything
 
-			m_soundAttackLaunch.Play();
+			m_soundAttackLaunch.Play(false);
 
 			// put attack in effect
 			Attack attack(
@@ -2576,7 +2601,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				const bool bBlind = (m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind != 0);
 				// XXX: This is the wrong combo for shared players.
 				// STATSMAN->m_CurStageStats.m_Player[pn] might work, but could be wrong.
-				const bool bBright = ( m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > int(BRIGHT_GHOST_COMBO_THRESHOLD) ) || bBlind;
+				const bool bBright = ( m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > (unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD ) || bBlind;
 				if( m_pNoteField )
 					m_pNoteField->DidTapNote( col, bBlind? TNS_W1:score, bBright );
 				if( score >= m_pPlayerState->m_PlayerOptions.GetCurrent().m_MinTNSToHideNotes || bBlind )
@@ -2718,20 +2743,17 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 	int iMissIfOlderThanThisRow;
 	const float fEarliestTime = m_pPlayerState->m_Position.m_fMusicSeconds - fMissIfOlderThanSeconds;
 	{
-		bool bFreeze, bDelay;
-		float fMissIfOlderThanThisBeat;
-		float fThrowAway;
-		int iWarpBeginRow;
-		float fWarpLength;
-		m_Timing->GetBeatAndBPSFromElapsedTime( fEarliestTime, fMissIfOlderThanThisBeat, fThrowAway, bFreeze, bDelay, iWarpBeginRow, fWarpLength );
+		TimingData::GetBeatArgs beat_info;
+		beat_info.elapsed_time= fEarliestTime;
+		m_Timing->GetBeatAndBPSFromElapsedTime(beat_info);
 
-		iMissIfOlderThanThisRow = BeatToNoteRow( fMissIfOlderThanThisBeat );
-		if( bFreeze || bDelay )
+		iMissIfOlderThanThisRow = BeatToNoteRow(beat_info.beat);
+		if(beat_info.freeze_out || beat_info.delay_out )
 		{
 			/* If there is a freeze on iMissIfOlderThanThisIndex, include this index too.
 			 * Otherwise we won't show misses for tap notes on freezes until the
 			 * freeze finishes. */
-			if( !bDelay )
+			if(!beat_info.delay_out)
 				iMissIfOlderThanThisRow++;
 		}
 	}
@@ -2906,7 +2928,7 @@ void Player::UpdateJudgedRows()
 		{
 			// Only play one copy of each mine sound at a time per player.
 			(*s)->Stop();
-			(*s)->Play();
+			(*s)->Play(false);
 		}
 	}
 }
@@ -2915,7 +2937,7 @@ void Player::FlashGhostRow( int iRow )
 {
 	TapNoteScore lastTNS = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow ).result.tns;
 	const bool bBlind = (m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind != 0);
-	const bool bBright = ( m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > int(BRIGHT_GHOST_COMBO_THRESHOLD) ) || bBlind;
+	const bool bBright = ( m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > (unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD ) || bBlind;
 
 	for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
 	{
@@ -2950,16 +2972,25 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				if( !REQUIRE_STEP_ON_HOLD_HEADS )
 				{
 					PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-					GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
+					vector<GameInput> GameI;
+					GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( iTrack, pn, GameI );
 					if( PREFSMAN->m_fPadStickSeconds > 0.f )
 					{
-						float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI, m_pPlayerState->m_mp );
-						if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
-							Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );
+						for(size_t i= 0; i < GameI.size(); ++i)
+						{
+							float fSecsHeld = INPUTMAPPER->GetSecsHeld(GameI[i], m_pPlayerState->m_mp);
+							if(fSecsHeld >= PREFSMAN->m_fPadStickSeconds)
+							{
+								Step(iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false);
+							}
+						}
 					}
-					else if( INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp) )
+					else
 					{
-						Step( iTrack, -1, now, true, false );
+						if(INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp))
+						{
+							Step(iTrack, -1, now, true, false);
+						}
 					}
 				}
 				break;
@@ -2969,17 +3000,22 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				// Hold the panel while crossing a mine will cause the mine to explode
 				// TODO: Remove use of PlayerNumber.
 				PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-				GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
-				if( PREFSMAN->m_fPadStickSeconds > 0 )
+				vector<GameInput> GameI;
+				GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( iTrack, pn, GameI );
+				if( PREFSMAN->m_fPadStickSeconds > 0.0f )
 				{
-					float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI, m_pPlayerState->m_mp );
-					if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
-						Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );
+					for(size_t i= 0; i < GameI.size(); ++i)
+					{
+						float fSecsHeld = INPUTMAPPER->GetSecsHeld(GameI[i], m_pPlayerState->m_mp);
+						if(fSecsHeld >= PREFSMAN->m_fPadStickSeconds)
+						{
+							Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );
+						}
+					}
 				}
-				else
+				else if(INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp))
 				{
-					if( INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp) )
-						Step( iTrack, iRow, now, true, false );
+					Step( iTrack, iRow, now, true, false );
 				}
 				break;
 			}
@@ -3104,8 +3140,8 @@ void Player::HandleTapRowScore( unsigned row )
 		return;
 
 	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteWithResult(m_NoteData, row).result.tns;
-	const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-	const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
+	const unsigned int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+	const unsigned int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
 
 	if( scoreOfLastTap == TNS_Miss )
 		m_LastTapNoteScore = TNS_Miss;
@@ -3130,8 +3166,8 @@ void Player::HandleTapRowScore( unsigned row )
 	if( m_pSecondaryScoreKeeper != NULL )
 		m_pSecondaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
 
-	const int iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-	const int iCurMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
+	const unsigned int iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+	const unsigned int iCurMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
 
 	SendComboMessages( iOldCombo, iOldMissCombo );
 
@@ -3211,8 +3247,8 @@ void Player::HandleHoldCheckpoint(int iRow,
 	if( bNoCheating && m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 		return;
 
-	const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-	const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
+	const unsigned int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+	const unsigned int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
 
 	if( m_pPrimaryScoreKeeper )
 		m_pPrimaryScoreKeeper->HandleHoldCheckpointScore(m_NoteData, 
@@ -3233,7 +3269,7 @@ void Player::HandleHoldCheckpoint(int iRow,
 			FOREACH_CONST( int, viColsWithHold, i )
 			{
 				bool bBright = m_pPlayerStageStats 
-					&& m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+					&& m_pPlayerStageStats->m_iCurCombo>(unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD;
 				if( m_pNoteField )
 					m_pNoteField->DidHoldNote( *i, HNS_Held, bBright );
 			}
@@ -3402,30 +3438,35 @@ void Player::SetHoldJudgment( TapNote &tn, int iTrack )
 	}
 }
 
-void Player::SetCombo( int iCombo, int iMisses )
+void Player::SetCombo( unsigned int iCombo, unsigned int iMisses )
 {
-	if( m_iLastSeenCombo == -1 )	// first update, don't set bIsMilestone=true
+	if( !m_bSeenComboYet )	// first update, don't set bIsMilestone=true
+	{
+		m_bSeenComboYet = true;
 		m_iLastSeenCombo = iCombo;
-
+	}
+	
 	bool b25Milestone = false;
 	bool b50Milestone = false;
 	bool b100Milestone = false;
 	bool b250Milestone = false;
 	bool b1000Milestone = false;
-	for( int i=m_iLastSeenCombo+1; i<=iCombo; i++ )
+
+#define MILESTONE_CHECK(amount) ((iCombo / amount) > (m_iLastSeenCombo / amount))
+	if(m_iLastSeenCombo < 600)
 	{
-		if( i < 600 )
-		{
-			b25Milestone |= ((i % 25) == 0);
-			b50Milestone |= ((i % 50) == 0);
-			b100Milestone |= ((i % 100) == 0);
-			b250Milestone |= ((i % 250) == 0);
-		}
-		else
-		{
-			b1000Milestone |= ((i % 200) == 0);
-		}
+		b25Milestone= MILESTONE_CHECK(25);
+		b50Milestone= MILESTONE_CHECK(50);
+		b100Milestone= MILESTONE_CHECK(100);
+		b250Milestone= MILESTONE_CHECK(250);
+		b1000Milestone= MILESTONE_CHECK(1000);
 	}
+	else
+	{
+		b1000Milestone= MILESTONE_CHECK(1000);
+	}
+#undef MILESTONE_CHECK
+
 	m_iLastSeenCombo = iCombo;
 
 	if( b25Milestone )
@@ -3482,6 +3523,29 @@ void Player::SetCombo( int iCombo, int iMisses )
 			msg.SetParam( "FullComboW4", true );
 		this->HandleMessage( msg );
 	}
+}
+
+void Player::IncrementComboOrMissCombo(bool bComboOrMissCombo)
+{
+		const unsigned int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+		const unsigned int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
+
+		if( m_pPlayerStageStats )
+		{
+			if( bComboOrMissCombo )
+			{
+				m_pPlayerStageStats->m_iCurCombo++;
+				m_pPlayerStageStats->m_iCurMissCombo = 0;
+			}
+			else
+			{
+				m_pPlayerStageStats->m_iCurCombo = 0;
+				m_pPlayerStageStats->m_iCurMissCombo++;
+			}
+			SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
+		}
+
+		SendComboMessages( iOldCombo, iOldMissCombo );
 }
 
 RString Player::ApplyRandomAttack()

@@ -33,6 +33,7 @@ enum RadarCategory
 	RadarCategory_Air, /**< How much air is in the song? */
 	RadarCategory_Freeze, /**< How much freeze (holds) is in the song? */
 	RadarCategory_Chaos, /**< How much chaos is in the song? */
+	RadarCategory_Notes, /**< How many notes are in the song? */
 	RadarCategory_TapsAndHolds, /**< How many taps and holds are in the song? */
 	RadarCategory_Jumps, /**< How many jumps are in the song? */
 	RadarCategory_Holds, /**< How many holds are in the song? */
@@ -41,6 +42,9 @@ enum RadarCategory
 	RadarCategory_Rolls, /**< How many rolls are in the song? */
 	RadarCategory_Lifts, /**< How many lifts are in the song? */
 	RadarCategory_Fakes, /**< How many fakes are in the song? */
+	// If you add another radar category, make sure you update
+	// NoteDataUtil::CalculateRadarValues to calculate it.
+	// Also update NoteDataWithScoring::GetActualRadarValues. -Kyz
 	NUM_RadarCategory,	/**< The number of radar categories. */
 	RadarCategory_Invalid
 };
@@ -104,6 +108,10 @@ enum StepsType
 	StepsType_popn_five,
 	StepsType_popn_nine,
 	StepsType_lights_cabinet,
+	StepsType_kickbox_human,
+	StepsType_kickbox_quadarm,
+	StepsType_kickbox_insect,
+	StepsType_kickbox_arachnid,
 	NUM_StepsType,		// leave this at the end
 	StepsType_Invalid,
 };

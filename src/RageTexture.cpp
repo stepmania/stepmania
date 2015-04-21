@@ -108,6 +108,13 @@ public:
 		p->Reload();
 		COMMON_RETURN_SELF;
 	}
+	DEFINE_METHOD(GetSourceWidth, GetSourceWidth());
+	DEFINE_METHOD(GetSourceHeight, GetSourceHeight());
+	DEFINE_METHOD(GetTextureWidth, GetTextureWidth());
+	DEFINE_METHOD(GetTextureHeight, GetTextureHeight());
+	DEFINE_METHOD(GetImageWidth, GetImageWidth());
+	DEFINE_METHOD(GetImageHeight, GetImageHeight());
+	DEFINE_METHOD(GetPath, GetID().filename);
 
 	LunaRageTexture()
 	{
@@ -117,6 +124,13 @@ public:
 		ADD_METHOD( GetTextureCoordRect );
 		ADD_METHOD( GetNumFrames );
 		ADD_METHOD( Reload );
+		ADD_METHOD(GetSourceWidth);
+		ADD_METHOD(GetSourceHeight);
+		ADD_METHOD(GetTextureWidth);
+		ADD_METHOD(GetTextureHeight);
+		ADD_METHOD(GetImageWidth);
+		ADD_METHOD(GetImageHeight);
+		ADD_METHOD(GetPath);
 	}
 };
 

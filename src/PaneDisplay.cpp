@@ -99,13 +99,25 @@ void PaneDisplay::LoadFromNode( const XNode *pNode )
 
 	RString sMetricsGroup;
 	b = pNode->GetAttrValue( "MetricsGroup", sMetricsGroup );
-	ASSERT( b );
+	if(!b)
+	{
+		sMetricsGroup= "PaneDisplay";
+		LuaHelpers::ReportScriptError("PaneDisplay must have a MetricsGroup specified.");
+	}
 
 	Lua *L = LUA->Get();
 	b = pNode->PushAttrValue( L, "PlayerNumber" );
-	ASSERT( b );
 	PlayerNumber pn;
-	LuaHelpers::Pop( L, pn );
+	if(!b)
+	{
+		lua_pop(L, 1);
+		pn= GAMESTATE->GetMasterPlayerNumber();
+		LuaHelpers::ReportScriptError("PaneDisplay must have a PlayerNumber specified.");
+	}
+	else
+	{
+		LuaHelpers::Pop( L, pn );
+	}
 	LUA->Release( L );
 
 	Load( sMetricsGroup, pn );

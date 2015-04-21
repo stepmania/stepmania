@@ -165,6 +165,8 @@ namespace SongUtil
 	bool ValidateCurrentStepsDescription( const RString &sAnswer, RString &sErrorOut );
 	bool ValidateCurrentStepsCredit( const RString &sAnswer, RString &sErrorOut );
 	bool ValidateCurrentStepsChartName(const RString &answer, RString &error);
+	bool ValidateCurrentSongPreview(const RString& answer, RString& error);
+	bool ValidateCurrentStepsMusic(const RString &answer, RString &error);
 
 	void GetAllSongGenres( vector<RString> &vsOut );
 	/**

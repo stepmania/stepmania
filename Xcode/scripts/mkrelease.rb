@@ -22,15 +22,33 @@ end
 
 # open ProductInfo.h in read-only mode
 File.open("#{Dir.pwd}/ProductInfo.h", "r") do |f|
-	# read each line, matching for product family and version
+	# read each line, matching for product family
 	f.each do |line|
 		if line.match( /^#define\s+PRODUCT_FAMILY_BARE\s+(.*?)\s*$/ )
-			family = $1;
-		
-		elsif line.match( /^#define\s+PRODUCT_VER_BARE\s+(.*?)\s*$/ )
-			version = $1;
+			family = $1
 		end
-	end	
+	end
+end
+
+# Determine if the Cmake generated verstub.cpp is available.
+File.open("#{Dir.pwd}/verstub.cpp", "r") do |verFile|
+  verFile.each do |verLine|
+    if verLine.match( /^extern char const \* const product_version \= "(.*?)"/ )
+      version = $1
+    end
+  end
+end
+
+if (version.length == 0)
+  # open ver.h in read-only mode
+  File.open("#{Dir.pwd}/ver.h", "r") do |f|
+    # read each line, matching for product version
+    f.each do |line|
+      if line.match( /^#define\s+product_version\s+"(.*?)"/ )
+        version = $1
+      end
+    end
+  end
 end
 
 # replace whitespace with hyphens in the version string
@@ -54,12 +72,12 @@ Dir.chdir ".."
 
 # create a temp directory; this will be automatically deleted when the block completes
 Dir.mktmpdir {|temp|
-		
+
 	# nest two directories named by family and version within the temp directory
 	# the outer will become the root of the dmg
 	# the inner will neatly tidy all the contents together so users can easily drag/drop everything at once
 	FileUtils.mkdir_p("#{temp}/#{name}/#{name}/")
-	
+
 	# loop through the directories array
 	directories.each do |directory|
 		# recursively copy each directory into our temp directory

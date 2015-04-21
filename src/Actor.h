@@ -232,6 +232,8 @@ public:
 		float		aux;
 	};
 
+	// PartiallyOpaque broken out of Draw for reuse and clarity.
+	bool PartiallyOpaque();
 	/**
 	 * @brief Calls multiple functions for drawing the Actors.
 	 *
@@ -304,6 +306,14 @@ public:
 	 * @brief Retrieve the Actor's lineage.
 	 * @return the Actor's lineage. */
 	RString GetLineage() const;
+
+	void SetFakeParent(Actor* mailman) { m_FakeParent= mailman; }
+	Actor* GetFakeParent() { return m_FakeParent; }
+
+	void AddWrapperState();
+	void RemoveWrapperState(size_t i);
+	Actor* GetWrapperState(size_t i);
+	size_t GetNumWrapperStates() const { return m_WrapperStates.size(); }
 
 	/**
 	 * @brief Retrieve the Actor's x position.
@@ -577,7 +587,7 @@ public:
 	virtual void PushContext( lua_State *L );
 
 	// Named commands
-	void AddCommand( const RString &sCmdName, apActorCommands apac );
+	void AddCommand( const RString &sCmdName, apActorCommands apac, bool warn= true );
 	bool HasCommand( const RString &sCmdName ) const;
 	const apActorCommands *GetCommand( const RString &sCommandName ) const;
 	void PlayCommand( const RString &sCommandName ) { HandleMessage( Message(sCommandName) ); } // convenience
@@ -599,6 +609,7 @@ public:
 	virtual float GetAnimationLengthSeconds() const { return 0; }
 	virtual void SetSecondsIntoAnimation( float ) {}
 	virtual void SetUpdateRate( float ) {}
+	virtual float GetUpdateRate() { return 1.0f; }
 
 	HiddenPtr<LuaClass> m_pLuaInstance;
 
@@ -607,6 +618,13 @@ protected:
 	RString m_sName;
 	/** @brief the current parent of this Actor if it exists. */
 	Actor *m_pParent;
+	// m_FakeParent exists to provide a way to render the actor inside another's
+	// state without making that actor the parent.  It's like having multiple
+	// parents. -Kyz
+	Actor* m_FakeParent;
+	// WrapperStates provides a way to wrap the actor inside ActorFrames,
+	// applicable to any actor, not just ones the theme creates.
+	vector<Actor*> m_WrapperStates;
 
 	/** @brief Some general information about the Tween. */
 	struct TweenInfo

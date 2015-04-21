@@ -152,6 +152,8 @@ public:
 	virtual void HandleMessage( const Message &msg );
 	virtual void Cancel( ScreenMessage smSendWhenDone );
 
+	virtual void DrawPrimitives();
+
 	/**
 	 * @brief Retrieve the current ScreenType.
 	 * @return the gameplay ScreenType. */

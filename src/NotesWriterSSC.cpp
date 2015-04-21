@@ -230,6 +230,10 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	f.PutLine( ssprintf( "#LYRICSPATH:%s;", SmEscape(out.m_sLyricsFile).c_str() ) );
 	f.PutLine( ssprintf( "#CDTITLE:%s;", SmEscape(out.m_sCDTitleFile).c_str() ) );
 	f.PutLine( ssprintf( "#MUSIC:%s;", SmEscape(out.m_sMusicFile).c_str() ) );
+	if(!out.m_PreviewFile.empty())
+	{
+		f.PutLine(ssprintf("#PREVIEW:%s;", SmEscape(out.m_PreviewFile).c_str()));
+	}
 
 	{
 		vector<RString> vs = out.GetInstrumentTracksToVectorString();
@@ -357,6 +361,12 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	lines.push_back( ssprintf( "#CHARTSTYLE:%s;", SmEscape(in.GetChartStyle()).c_str() ) );
 	lines.push_back( ssprintf( "#DIFFICULTY:%s;", DifficultyToString(in.GetDifficulty()).c_str() ) );
 	lines.push_back( ssprintf( "#METER:%d;", in.GetMeter() ) );
+
+	const RString& music= in.GetMusicFile();
+	if(!music.empty())
+	{
+		lines.push_back(ssprintf("#MUSIC:%s;", music.c_str()));
+	}
 
 	vector<RString> asRadarValues;
 	FOREACH_PlayerNumber( pn )

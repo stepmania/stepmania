@@ -160,7 +160,7 @@ void ScreenPrompt::Change( int dir )
 
 	PositionCursor();
 
-	m_sndChange.Play();
+	m_sndChange.Play(true);
 }
 
 bool ScreenPrompt::MenuLeft( const InputEventPlus &input )

@@ -51,7 +51,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;..\extern\ffmpeg\include;BaseClasses;..\extern\jsoncpp\include;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;Actors;&quot;$(DXSDK_DIR)\include&quot;"
-				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG,GLEW_STATIC"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;WINDOWS;DEBUG;GLEW_STATIC;_BINARY_PNG"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -81,7 +81,7 @@
 				OutputFile="../Program/StepMania-debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\extern\ffmpeg\lib\;..\extern\libpng\lib\;..\extern\libjpeg\;..\extern\zlib\;&quot;..\extern\mad-0.15.1b\msvc++\Release\&quot;;&quot;$(DXSDK_DIR)\Lib\x86&quot;"
+				AdditionalLibraryDirectories="..\extern\ffmpeg\lib\;..\extern\libpng\lib\1.2.7;..\extern\libjpeg\;..\extern\vorbis\win32\;..\extern\zlib\;&quot;..\extern\mad-0.15.1b\msvc++\Release\&quot;;archutils\Win32\ddk\;&quot;$(DXSDK_DIR)\Lib\x86&quot;"
 				GenerateManifest="true"
 				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib;msvcrt.lib"
 				GenerateDebugInformation="true"
@@ -155,7 +155,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="2"
 				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;..\extern\ffmpeg\include;BaseClasses;..\extern\jsoncpp\include;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;Actors;&quot;$(DXSDK_DIR)\include&quot;"
-				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE,GLEW_STATIC"
+				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE,GLEW_STATIC,_BINARY_PNG"
 				StringPooling="true"
 				MinimalRebuild="false"
 				ExceptionHandling="0"
@@ -188,7 +188,7 @@
 				OutputFile="../Program/StepMania.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\extern\ffmpeg\lib\;..\extern\libpng\lib\;..\extern\libjpeg\;..\extern\zlib\;&quot;..\extern\mad-0.15.1b\msvc++\Release\&quot;;&quot;$(DXSDK_DIR)\Lib\x86&quot;"
+				AdditionalLibraryDirectories="..\extern\ffmpeg\lib\;..\extern\libpng\lib\1.2.7;..\extern\libjpeg\;..\extern\vorbis\win32\;..\extern\zlib\;&quot;..\extern\mad-0.15.1b\msvc++\Release\&quot;;archutils\Win32\ddk\;&quot;$(DXSDK_DIR)\Lib\x86&quot;"
 				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib"
 				ProgramDatabaseFile="$(IntDir)/StepMania.pdb"
 				GenerateMapFile="true"
@@ -256,7 +256,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;..\extern\ffmpeg\include;BaseClasses;..\extern\jsoncpp\include;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;Actors;&quot;$(DXSDK_DIR)\include&quot;"
-				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG,GLEW_STATIC"
+				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG,GLEW_STATIC,_BINARY_PNG"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="3"
@@ -286,7 +286,7 @@
 				OutputFile="../Program/StepMania-fastdebug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\extern\ffmpeg\lib\;..\extern\libpng\lib\;..\extern\libjpeg\;..\extern\zlib\;&quot;..\extern\mad-0.15.1b\msvc++\Release\&quot;;&quot;$(DXSDK_DIR)\Lib\x86&quot;"
+				AdditionalLibraryDirectories="..\extern\ffmpeg\lib\;..\extern\libpng\lib\1.2.7;..\extern\libjpeg\;..\extern\vorbis\win32\;..\extern\zlib\;&quot;..\extern\mad-0.15.1b\msvc++\Release\&quot;;archutils\Win32\ddk\;&quot;$(DXSDK_DIR)\Lib\x86&quot;"
 				GenerateManifest="true"
 				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib;msvcrt.lib"
 				GenerateDebugInformation="true"
@@ -360,7 +360,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories=".;&quot;..\extern\lua-5.1\src&quot;;..\extern\ffmpeg\include;BaseClasses;..\extern\jsoncpp\include;&quot;..\extern\glew-1.5.8\include&quot;;..\extern\pcre;&quot;..\extern\mad-0.15.1b&quot;;..\extern\libpng\include;..\extern\libjpeg;..\extern\zlib;..\extern\vorbis;Actors;&quot;$(DXSDK_DIR)\include&quot;"
-				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE,GLEW_STATIC"
+				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE,GLEW_STATIC,_BINARY_PNG"
 				StringPooling="true"
 				MinimalRebuild="false"
 				ExceptionHandling="0"
@@ -394,7 +394,7 @@
 				OutputFile="..\Program/StepMania-SSE2.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\extern\ffmpeg\lib\;..\extern\libpng\lib\;..\extern\libjpeg\;..\extern\zlib\;&quot;..\extern\mad-0.15.1b\msvc++\Release\&quot;;&quot;$(DXSDK_DIR)\Lib\x86&quot;"
+				AdditionalLibraryDirectories="..\extern\ffmpeg\lib\;..\extern\libpng\lib\1.2.7;..\extern\libjpeg\;..\extern\vorbis\win32\;..\extern\zlib\;&quot;..\extern\mad-0.15.1b\msvc++\Release\&quot;;archutils\Win32\ddk\;&quot;$(DXSDK_DIR)\Lib\x86&quot;"
 				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib"
 				ProgramDatabaseFile="$(IntDir)/StepMania-SSE2.pdb"
 				GenerateMapFile="true"
@@ -1173,6 +1173,14 @@
 				>
 			</File>
 			<File
+				RelativePath="CubicSpline.cpp"
+				>
+			</File>
+			<File
+				RelativePath="CubicSpline.h"
+				>
+			</File>
+			<File
 				RelativePath="DateTime.cpp"
 				>
 			</File>
@@ -1918,6 +1926,10 @@
 			</File>
 			<File
 				RelativePath="global.h"
+				>
+			</File>
+			<File
+				RelativePath="Main.cpp"
 				>
 			</File>
 			<File

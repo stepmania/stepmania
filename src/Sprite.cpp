@@ -16,6 +16,7 @@
 
 REGISTER_ACTOR_CLASS( Sprite );
 
+const float min_state_delay= 0.0001f;
 
 Sprite::Sprite()
 {
@@ -25,6 +26,7 @@ Sprite::Sprite()
 	m_bUsingCustomTexCoords = false;
 	m_bUsingCustomPosCoords = false;
 	m_bSkipNextUpdate = true;
+	m_DecodeMovie= true;
 	m_EffectMode = EffectMode_Normal;
 	
 	m_fRememberedClipWidth = -1;
@@ -61,6 +63,7 @@ Sprite::Sprite( const Sprite &cpy ):
 	CPY( m_bUsingCustomTexCoords );
 	CPY( m_bUsingCustomPosCoords );
 	CPY( m_bSkipNextUpdate );
+	CPY( m_DecodeMovie );
 	CPY( m_EffectMode );
 	memcpy( m_CustomTexCoords, cpy.m_CustomTexCoords, sizeof(m_CustomTexCoords) );
 	memcpy( m_CustomPosCoords, cpy.m_CustomPosCoords, sizeof(m_CustomPosCoords) );
@@ -182,12 +185,16 @@ void Sprite::LoadFromNode( const XNode* pNode )
 
 				State newState;
 				if( !pFrame->GetAttrValue("Delay", newState.fDelay) )
+				{
 					newState.fDelay = 0.1f;
+				}
 
 				pFrame->GetAttrValue( "Frame", iFrameIndex );
 				if( iFrameIndex >= m_pTexture->GetNumFrames() )
+				{
 					LuaHelpers::ReportScriptErrorFmt( "%s: State #%i is frame %d, but the texture \"%s\" only has %d frames",
-						ActorUtil::GetWhere(pNode).c_str(), i, iFrameIndex, sPath.c_str(), m_pTexture->GetNumFrames() );
+						ActorUtil::GetWhere(pNode).c_str(), i+1, iFrameIndex, sPath.c_str(), m_pTexture->GetNumFrames() );
+				}
 				newState.rect = *m_pTexture->GetTextureCoordRect( iFrameIndex );
 
 				const XNode *pPoints[2] = { pFrame->GetChild( "1" ), pFrame->GetChild( "2" ) };
@@ -352,7 +359,12 @@ void Sprite::UpdateAnimationState()
 	// We already know what's going to show.
 	if( m_States.size() > 1 )
 	{
-		while( m_fSecsIntoState+0.0001f > m_States[m_iCurState].fDelay )	// it's time to switch frames
+		// UpdateAnimationState changed to not loop forever on negative state
+		// delay.  This allows a state to last forever when it is reached, so
+		// the animation has a built-in ending point. -Kyz
+		while(m_States[m_iCurState].fDelay > min_state_delay &&
+			m_fSecsIntoState+min_state_delay > m_States[m_iCurState].fDelay)
+		// it's time to switch frames
 		{
 			// increment frame and reset the counter
 			m_fSecsIntoState -= m_States[m_iCurState].fDelay;		// leave the left over time for the next frame
@@ -398,7 +410,7 @@ void Sprite::Update( float fDelta )
 	UpdateAnimationState();
 
 	// If the texture is a movie, decode frames.
-	if( !bSkipThisMovieUpdate )
+	if(!bSkipThisMovieUpdate && m_DecodeMovie)
 		m_pTexture->DecodeSeconds( max(0, fTimePassed) );
 
 	// update scrolling
@@ -1093,6 +1105,83 @@ public:
 	static int addimagecoords( T* p, lua_State *L )		{ p->AddImageCoords( FArg(1),FArg(2) ); COMMON_RETURN_SELF; }
 	static int setstate( T* p, lua_State *L )		{ p->SetState( IArg(1) ); COMMON_RETURN_SELF; }
 	static int GetState( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetState() ); return 1; }
+	static int SetStateProperties(T* p, lua_State* L)
+	{
+		// States table example:
+		// {{Frame= 0, Delay= .016, {0, 0}, {.25, .25}}}
+		// Each element in the States table must have a Frame and a Delay.
+		// Frame is optional, defaulting to 0.
+		// Delay is optional, defaulting to 0.
+		// The two tables in the state are the upper left and lower right and are
+		// optional.
+		if(!lua_istable(L, 1))
+		{
+			luaL_error(L, "State properties must be in a table.");
+		}
+		vector<Sprite::State> new_states;
+		size_t num_states= lua_objlen(L, 1);
+		if(num_states == 0)
+		{
+			luaL_error(L, "A Sprite cannot have zero states.");
+		}
+		for(size_t s= 0; s < num_states; ++s)
+		{
+			Sprite::State new_state;
+			lua_rawgeti(L, 1, s+1);
+			lua_getfield(L, -1, "Frame");
+			int frame_index= 0;
+			if(lua_isnumber(L, -1))
+			{
+				frame_index= IArg(-1);
+				if(frame_index < 0 || frame_index >= p->GetTexture()->GetNumFrames())
+				{
+					luaL_error(L, "Frame index out of range 0-%d.",
+						p->GetTexture()->GetNumFrames()-1);
+				}
+			}
+			new_state.rect= *p->GetTexture()->GetTextureCoordRect(frame_index);
+			lua_pop(L, 1);
+			lua_getfield(L, -1, "Delay");
+			if(lua_isnumber(L, -1))
+			{
+				new_state.fDelay= FArg(-1);
+			}
+			lua_pop(L, 1);
+			RectF r= new_state.rect;
+			lua_rawgeti(L, -1, 1);
+			if(lua_istable(L, -1))
+			{
+				lua_rawgeti(L, -1, 1);
+				// I have no idea why the points are from 0 to 1 and make it use only
+				// a portion of the state.  This is just copied from LoadFromNode.
+				// -Kyz
+				new_state.rect.left= SCALE(FArg(-1), 0.0f, 1.0f, r.left, r.right);
+				lua_pop(L, 1);
+				lua_rawgeti(L, -1, 2);
+				new_state.rect.top= SCALE(FArg(-1), 0.0f, 1.0f, r.top, r.bottom);
+				lua_pop(L, 1);
+			}
+			lua_pop(L, 1);
+			lua_rawgeti(L, -1, 2);
+			if(lua_istable(L, -1))
+			{
+				lua_rawgeti(L, -1, 1);
+				// I have no idea why the points are from 0 to 1 and make it use only
+				// a portion of the state.  This is just copied from LoadFromNode.
+				// -Kyz
+				new_state.rect.right= SCALE(FArg(-1), 0.0f, 1.0f, r.left, r.right);
+				lua_pop(L, 1);
+				lua_rawgeti(L, -1, 2);
+				new_state.rect.bottom= SCALE(FArg(-1), 0.0f, 1.0f, r.top, r.bottom);
+				lua_pop(L, 1);
+			}
+			lua_pop(L, 1);
+			new_states.push_back(new_state);
+			lua_pop(L, 1);
+		}
+		p->SetStateProperties(new_states);
+		COMMON_RETURN_SELF;
+	}
 	static int GetAnimationLengthSeconds( T* p, lua_State *L ) { lua_pushnumber( L, p->GetAnimationLengthSeconds() ); return 1; }
 	static int SetSecondsIntoAnimation( T* p, lua_State *L )	{ p->SetSecondsIntoAnimation(FArg(0)); COMMON_RETURN_SELF; }
 	static int SetTexture( T* p, lua_State *L )
@@ -1118,7 +1207,17 @@ public:
 		COMMON_RETURN_SELF;
 	}
 	static int GetNumStates( T* p, lua_State *L ) { lua_pushnumber( L, p->GetNumStates() ); return 1; }
-	static int SetAllStateDelays( T* p, lua_State *L ) { p->SetAllStateDelays(FArg(1)); COMMON_RETURN_SELF; }
+	static int SetAllStateDelays( T* p, lua_State *L )
+	{
+		p->SetAllStateDelays(FArg(-1));
+		COMMON_RETURN_SELF;
+	}
+	DEFINE_METHOD(GetDecodeMovie, m_DecodeMovie);
+	static int SetDecodeMovie(T* p, lua_State *L)
+	{
+		p->m_DecodeMovie= BArg(1);
+		COMMON_RETURN_SELF;
+	}
 
 	LunaSprite()
 	{
@@ -1136,6 +1235,7 @@ public:
 		ADD_METHOD( addimagecoords );
 		ADD_METHOD( setstate );
 		ADD_METHOD( GetState );
+		ADD_METHOD( SetStateProperties );
 		ADD_METHOD( GetAnimationLengthSeconds );
 		ADD_METHOD( SetSecondsIntoAnimation );
 		ADD_METHOD( SetTexture );
@@ -1143,6 +1243,8 @@ public:
 		ADD_METHOD( SetEffectMode );
 		ADD_METHOD( GetNumStates );
 		ADD_METHOD( SetAllStateDelays );
+		ADD_METHOD(GetDecodeMovie);
+		ADD_METHOD(SetDecodeMovie);
 	}
 };
 

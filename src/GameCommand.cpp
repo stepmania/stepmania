@@ -84,7 +84,7 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 {
 	if( m_pm != PlayMode_Invalid && GAMESTATE->m_PlayMode != m_pm )
 		return false;
-	if( m_pStyle && GAMESTATE->GetCurrentStyle() != m_pStyle )
+	if( m_pStyle && GAMESTATE->GetCurrentStyle(pn) != m_pStyle )
 		return false;
 	// HACK: don't compare m_dc if m_pSteps is set.  This causes problems 
 	// in ScreenSelectOptionsMaster::ImportOptions if m_PreferredDifficulty 
@@ -289,7 +289,7 @@ void GameCommand::LoadOne( const Command& cmd )
 		if( !m_bInvalid )
 		{
 			Song *pSong = (m_pSong != NULL)? m_pSong:GAMESTATE->m_pCurSong;
-			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->GetCurrentStyle();
+			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber());
 			if( pSong == NULL || pStyle == NULL )
 			{
 				MAKE_INVALID("Must set Song and Style to set Steps.");
@@ -327,7 +327,7 @@ void GameCommand::LoadOne( const Command& cmd )
 		if( !m_bInvalid )
 		{
 			Course *pCourse = (m_pCourse != NULL)? m_pCourse:GAMESTATE->m_pCurCourse;
-			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->GetCurrentStyle();
+			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber());
 			if( pCourse == NULL || pStyle == NULL )
 			{
 				MAKE_INVALID("Must set Course and Style to set Trail.");
@@ -598,7 +598,7 @@ bool GameCommand::IsPlayable( RString *why ) const
 	if( m_pm != PlayMode_Invalid || m_pStyle != NULL )
 	{
 		const PlayMode pm = (m_pm != PlayMode_Invalid) ? m_pm : GAMESTATE->m_PlayMode;
-		const Style *style = (m_pStyle != NULL)? m_pStyle: GAMESTATE->GetCurrentStyle();
+		const Style *style = (m_pStyle != NULL)? m_pStyle: GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber());
 		if( !AreStyleAndPlayModeCompatible( style, pm ) )
 		{
 			if( why )
@@ -705,7 +705,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 
 	if( m_pStyle != NULL )
 	{
-		GAMESTATE->SetCurrentStyle( m_pStyle );
+		GAMESTATE->SetCurrentStyle( m_pStyle, GAMESTATE->GetMasterPlayerNumber() );
 
 		// It's possible to choose a style that didn't have enough players joined.
 		// If enough players aren't joined, then  we need to subtract credits

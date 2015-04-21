@@ -69,6 +69,10 @@
 #include "Profile.h"
 #include "ActorUtil.h"
 
+#ifdef HAVE_VERSION_INFO
+#include "ver.h"
+#endif
+
 #if defined(WIN32)
 #include <windows.h>
 #endif
@@ -88,6 +92,9 @@ void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 		//float fRatio = PREFSMAN->m_iDisplayHeight;
 		//iWidth = PREFSMAN->m_iDisplayHeight * fRatio;
 		iWidth = static_cast<int>(ceilf(PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio));
+		// ceilf causes the width to come out odd when it shouldn't.
+		// 576 * 1.7778 = 1024.0128, which is rounded to 1025. -Kyz
+		iWidth-= iWidth % 2;
 	}
 
 	paramsOut = VideoModeParams(
@@ -904,15 +911,10 @@ static void MountTreeOfZips( const RString &dir )
 	}
 }
 
-#if defined(HAVE_VERSION_INFO)
-extern unsigned long version_num;
-extern const char *const version_date;
-extern const char *const version_time;
-#endif
 
 static void WriteLogHeader()
 {
-	LOG->Info( PRODUCT_ID_VER );
+	LOG->Info("%s%s", PRODUCT_FAMILY, product_version);
 
 #if defined(HAVE_VERSION_INFO)
 	LOG->Info( "Compiled %s @ %s (build %lu)", version_date, version_time, version_num );
@@ -955,7 +957,7 @@ static void ApplyLogPreferences()
 
 static LocalizedString COULDNT_OPEN_LOADING_WINDOW( "LoadingWindow", "Couldn't open any loading windows." );
 
-int main(int argc, char* argv[])
+int sm_main(int argc, char* argv[])
 {
 	RageThreadRegister thread( "Main thread" );
 	RageException::SetCleanupHandler( HandleException );

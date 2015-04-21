@@ -381,6 +381,9 @@
     <ClCompile Include="CryptHelpers.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
+    <ClCompile Include="CubicSpline.cpp">
+      <Filter>Data Structures</Filter>
+    </ClCompile>
     <ClCompile Include="DateTime.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
@@ -1623,6 +1626,7 @@
     <ClCompile Include="SongPosition.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
+    <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Screen.h">
@@ -1884,6 +1888,9 @@
       <Filter>Data Structures</Filter>
     </ClInclude>
     <ClInclude Include="CryptHelpers.h">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="CubicSpline.h">
       <Filter>Data Structures</Filter>
     </ClInclude>
     <ClInclude Include="DateTime.h">

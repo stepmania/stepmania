@@ -126,6 +126,7 @@ struct FileCopyResult
 	RString sFile, sComment;
 };
 
+#if !defined(WITHOUT_NETWORKING)
 Preference<RString> g_sCookie( "Cookie", "" );
 
 class DownloadTask
@@ -273,6 +274,7 @@ public:
 	}
 };
 static vector<DownloadTask*> g_pDownloadTasks;
+#endif
 
 static bool IsStepManiaProtocol(const RString &arg)
 {
@@ -294,7 +296,13 @@ PlayAfterLaunchInfo DoInstalls( CommandLineActions::CommandLineArgs args )
 	{
 		RString s = args.argv[i];
 		if( IsStepManiaProtocol(s) )
+    {
+#if !defined(WITHOUT_NETWORKING)
 			g_pDownloadTasks.push_back( new DownloadTask(s) );
+#else
+      // TODO: Figure out a meaningful log message.
+#endif
+    }
 		else if( IsPackageFile(s) )
 			InstallSmzipOsArg(s, ret);
 	}
@@ -340,7 +348,7 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
  		PlayAfterLaunchInfo pali2 = DoInstalls( args );
 		playAfterLaunchInfo.OverlayWith( pali2 );
 	}
-
+#if !defined(WITHOUT_NETWORKING)
 	for(int i=g_pDownloadTasks.size()-1; i>=0; --i)
 	{
 		DownloadTask *p = g_pDownloadTasks[i];
@@ -361,7 +369,7 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
 		}
 		m_textStatus.SetText( join("\n", vsMessages) );
 	}
-
+#endif
 	if( playAfterLaunchInfo.bAnySongChanged )
 		SONGMAN->Reload( false, NULL );
 
@@ -379,7 +387,7 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
 			GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 			GAMESTATE->m_bSideIsJoined[0] = true;
 			GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
-			GAMESTATE->m_pCurStyle.Set( vpStyle[0] );
+			GAMESTATE->SetCurrentStyle( vpStyle[0], PLAYER_1 );
 			GAMESTATE->m_pCurSong.Set( pSong );
 			GAMESTATE->m_pPreferredSong = pSong;
 			sInitialScreen = StepMania::GetSelectMusicScreen();

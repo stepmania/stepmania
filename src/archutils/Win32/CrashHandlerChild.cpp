@@ -25,14 +25,14 @@
 #include "XmlFileUtil.h"
 #include "LocalizedString.h"
 #include "RageFileDriverDeflate.h"
+#include "ver.h"
 
 #if defined(_MSC_VER)
-#pragma comment(lib, "archutils/Win32/ddk/dbghelp.lib")
+#pragma comment(lib, "dbghelp.lib")
 #endif
 
-extern unsigned long version_num;
-extern const char *const version_date;
-extern const char *const version_time;
+// XXX: What happens when we *don't* have version info? Does that ever actually happen?
+#include "ver.h"
 
 // VDI symbol lookup:
 namespace VDDebugInfo
@@ -435,7 +435,7 @@ static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
 	sOut += ssprintf(
 			"%s crash report (build %d, %s @ %s)\n"
 			"--------------------------------------\n\n",
-			PRODUCT_ID_VER, version_num, version_date, version_time );
+			(string(PRODUCT_FAMILY) + product_version).c_str(), version_num, version_date, version_time );
 
 	sOut += ssprintf( "Crash reason: %s\n", Data.m_CrashInfo.m_CrashReason );
 	sOut += ssprintf( "\n" );
@@ -738,7 +738,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 			// Create the form data to send.
 			m_pPost = new NetworkPostData;
 			m_pPost->SetData( "Product", PRODUCT_ID );
-			m_pPost->SetData( "Version", PRODUCT_VER );
+			m_pPost->SetData( "Version", product_version );
 			m_pPost->SetData( "Arch", HOOKS->GetArchName().c_str() );
 			m_pPost->SetData( "Report", m_sCrashReport );
 			m_pPost->SetData( "Reason", m_CrashData.m_CrashInfo.m_CrashReason );

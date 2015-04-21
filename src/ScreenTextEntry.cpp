@@ -108,6 +108,16 @@ bool ScreenTextEntry::FloatValidate( const RString &sAnswer, RString &sErrorOut 
 	return false;
 }
 
+static LocalizedString INVALID_INT( "ScreenTextEntry", "\"%s\" is an invalid integer value." );
+bool ScreenTextEntry::IntValidate( const RString &sAnswer, RString &sErrorOut )
+{
+	int f;
+	if(sAnswer >> f)
+		return true;
+	sErrorOut = ssprintf( INVALID_INT.GetValue(), sAnswer.c_str() );
+	return false;
+}
+
 bool ScreenTextEntry::s_bCancelledLast = false;
 
 /* Handle UTF-8. Right now, we need to at least be able to backspace a whole
@@ -278,7 +288,7 @@ void ScreenTextEntry::TryAppendToAnswer( RString s )
 
 	wstring sNewAnswer = m_sAnswer+RStringToWstring(s);
 	m_sAnswer = sNewAnswer;
-	m_sndType.Play();
+	m_sndType.Play(true);
 	UpdateAnswerText();
 }
 
@@ -290,7 +300,7 @@ void ScreenTextEntry::BackspaceInAnswer()
 		return;
 	}
 	m_sAnswer.erase( m_sAnswer.end()-1 );
-	m_sndBackspace.Play();
+	m_sndBackspace.Play(true);
 	UpdateAnswerText();
 }
 
@@ -703,7 +713,7 @@ void ScreenTextEntryVisual::MoveX( int iDir )
 	}
 	while( sKey == "" );
 
-	m_sndChange.Play();
+	m_sndChange.Play(true);
 	PositionCursor();
 }
 
@@ -735,7 +745,7 @@ void ScreenTextEntryVisual::MoveY( int iDir )
 	}
 	while( sKey == "" );
 
-	m_sndChange.Play();
+	m_sndChange.Play(true);
 	PositionCursor();
 }
 

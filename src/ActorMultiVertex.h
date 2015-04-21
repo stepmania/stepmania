@@ -1,7 +1,9 @@
-/** @brief ActorMultiVertex - A texture created from multiple textures. */
+/** @brief ActorMultiVertex - An actor with mutiple vertices. Can be used to create shapes that quads can't. */
 
 #include "Actor.h"
+#include "CubicSpline.h"
 #include "RageDisplay.h"
+#include "RageMath.h"
 #include "RageTextureID.h"
 
 enum DrawMode
@@ -26,6 +28,7 @@ class RageTexture;
 class ActorMultiVertex: public Actor
 {
 public:
+	static const size_t num_vert_splines= 4;
 	ActorMultiVertex();
 	ActorMultiVertex( const ActorMultiVertex &cpy );
 	virtual ~ActorMultiVertex();
@@ -35,7 +38,9 @@ public:
 
 	struct AMV_TweenState
 	{
-		AMV_TweenState(): _DrawMode(DrawMode_Invalid), FirstToDraw(0), NumToDraw(-1), line_width(1.0f) {}
+	AMV_TweenState(): _DrawMode(DrawMode_Invalid), FirstToDraw(0),
+			NumToDraw(-1), line_width(1.0f)
+		{}
 		static void MakeWeightedAverage(AMV_TweenState& average_out, const AMV_TweenState& ts1, const AMV_TweenState& ts2, float percent_between);
 		bool operator==(const AMV_TweenState& other) const;
 		bool operator!=(const AMV_TweenState& other) const { return !operator==(other); }
@@ -44,6 +49,7 @@ public:
 		int GetSafeNumToDraw( DrawMode dm, int num ) const;
 
 		vector<RageSpriteVertex> vertices;
+		vector<size_t> quad_states;
 
 		DrawMode _DrawMode;
 		int FirstToDraw;
@@ -62,6 +68,8 @@ public:
 	}
 	const AMV_TweenState& AMV_DestTweenState() const { return const_cast<ActorMultiVertex*>(this)->AMV_DestTweenState(); }
 
+	virtual void EnableAnimation(bool bEnable);
+	virtual void Update(float fDelta);
 	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();
 	virtual void DrawInternal( const AMV_TweenState *TS );
@@ -102,6 +110,44 @@ public:
 	void SetVertexColor( int index , RageColor c );
 	void SetVertexCoords( int index , float TexCoordX , float TexCoordY );
 
+	inline void SetVertsFromSplinesInternal(size_t num_splines, size_t start_vert);
+	void SetVertsFromSplines();
+	CubicSplineN* GetSpline(size_t i);
+
+	struct State
+	{
+		RectF rect;
+		float delay;
+	};
+	int GetNumStates() const { return _states.size(); }
+	void AddState(const State& new_state) { _states.push_back(new_state); }
+	void RemoveState(size_t i)
+	{ ASSERT(i < _states.size()); _states.erase(_states.begin()+i); }
+	size_t GetState() { return _cur_state; }
+	State& GetStateData(size_t i)
+	{ ASSERT(i < _states.size()); return _states[i]; }
+	void SetStateData(size_t i, const State& s)
+	{ ASSERT(i < _states.size()); _states[i]= s; }
+	void SetStateProperties(const vector<State>& new_states)
+	{ _states= new_states; SetState(0); }
+	void SetState(size_t i);
+	void SetAllStateDelays(float delay);
+	float GetAnimationLengthSeconds() const;
+	void SetSecondsIntoAnimation(float seconds);
+	void UpdateAnimationState(bool force_update= false);
+	size_t GetNumQuadStates() const
+	{ return AMV_DestTweenState().quad_states.size(); }
+	void AddQuadState(size_t s)
+	{ AMV_DestTweenState().quad_states.push_back(s); }
+	void RemoveQuadState(size_t i)
+	{ AMV_DestTweenState().quad_states.erase(AMV_DestTweenState().quad_states.begin()+i); }
+	size_t GetQuadState(size_t i)
+	{ return AMV_DestTweenState().quad_states[i]; }
+	void SetQuadState(size_t i, size_t s)
+	{ AMV_DestTweenState().quad_states[i]= s; }
+	bool _use_animation_state;
+	bool _decode_movie;
+
 	virtual void PushSelf( lua_State *L );
 
 private:
@@ -117,6 +163,15 @@ private:
 	
 	EffectMode _EffectMode;
 	TextureMode _TextureMode;
+
+	// Four splines for controlling vert positions, because quads drawmode
+	// requires four. -Kyz
+	vector<CubicSplineN> _splines;
+
+	bool _skip_next_update;
+	float _secs_into_state;
+	size_t _cur_state;
+	vector<State> _states;
 };
 
 /**

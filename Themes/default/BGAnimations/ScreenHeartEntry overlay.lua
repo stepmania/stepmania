@@ -83,7 +83,7 @@ local function input(event)
 	if not heart_entries[pn] then return end
 	local done= heart_entries[pn]:handle_input(event.GameButton)
 	if done then
-		SOUND:PlayOnce(THEME:GetPathS("Common", "Start"))
+		SOUND:PlayOnce(THEME:GetPathS("Common", "Start"), true)
 		local all_done= true
 		for pn, entry in pairs(heart_entries) do
 			if not entry.done then all_done= false break end

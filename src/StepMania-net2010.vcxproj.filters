@@ -381,6 +381,9 @@
     <ClCompile Include="CryptHelpers.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
+    <ClCompile Include="CubicSpline.cpp">
+      <Filter>Data Structures</Filter>
+    </ClCompile>
     <ClCompile Include="DateTime.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
@@ -625,6 +628,9 @@
       <Filter>StepMania</Filter>
     </ClCompile>
     <ClCompile Include="global.cpp">
+      <Filter>StepMania</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
       <Filter>StepMania</Filter>
     </ClCompile>
     <ClCompile Include="SpecialFiles.cpp">
@@ -1884,6 +1890,9 @@
       <Filter>Data Structures</Filter>
     </ClInclude>
     <ClInclude Include="CryptHelpers.h">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="CubicSpline.h">
       <Filter>Data Structures</Filter>
     </ClInclude>
     <ClInclude Include="DateTime.h">
