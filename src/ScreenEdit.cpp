@@ -5041,7 +5041,7 @@ void ScreenEdit::HandleArbitraryRemapping(RString const& mapstr)
 	m_Clipboard = OldClipboard;
 }
 
-void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo)
+void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &answers, bool allow_undo, bool prompt_clear)
 {
 	ASSERT_M(m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1,
 			 "You can only alter a selection of notes with a selection to begin with!");
@@ -5066,7 +5066,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 	/* We call HandleAreaMenuChoice recursively. Only the outermost
 	 * HandleAreaMenuChoice should allow Undo so that the inner calls don't
 	 * also save Undo and mess up the outermost */
-	if( !bAllowUndo )
+	if(!allow_undo)
 		bSaveUndo = false;
 	
 	if( bSaveUndo )
@@ -5076,8 +5076,8 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 	{
 		case cut:
 		{
-			HandleAlterMenuChoice( copy, false );
-			HandleAlterMenuChoice( clear, false );
+			HandleAlterMenuChoice(copy, false, false);
+			HandleAlterMenuChoice(clear, false, false);
 		}
 			break;
 		case copy:
@@ -5091,7 +5091,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 		{
 			int note_count= m_NoteDataEdit.GetNumTapNotesNoTiming(
 				m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker);
-			if(note_count >= PREFSMAN->m_EditClearPromptThreshold)
+			if(note_count >= PREFSMAN->m_EditClearPromptThreshold && prompt_clear)
 			{
 				ScreenPrompt::Prompt(SM_ConfirmClearArea, ssprintf(CONFIRM_CLEAR.GetValue(), note_count), PROMPT_YES_NO);
 			}
@@ -5104,7 +5104,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 			break;
 		case quantize:
 		{
-			NoteType nt = (NoteType)iAnswers[c];
+			NoteType nt = (NoteType)answers[c];
 			NoteDataUtil::SnapToNearestNoteType(m_NoteDataEdit, nt, nt,
 							    m_NoteFieldEdit.m_iBeginMarker,
 							    m_NoteFieldEdit.m_iEndMarker );
@@ -5116,7 +5116,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 			HandleAlterMenuChoice( cut, false );
 			
 			StepsType st = GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType;
-			TurnType tt = (TurnType)iAnswers[c];
+			TurnType tt = (TurnType)answers[c];
 			switch( tt )
 			{
 				DEFAULT_FAIL( tt );
@@ -5136,7 +5136,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 		{
 			int iBeginRow = m_NoteFieldEdit.m_iBeginMarker;
 			int iEndRow = m_NoteFieldEdit.m_iEndMarker;
-			TransformType tt = (TransformType)iAnswers[c];
+			TransformType tt = (TransformType)answers[c];
 			StepsType st = GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType;
 			
 			switch( tt )
@@ -5170,7 +5170,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 			const NoteData OldClipboard( m_Clipboard );
 			HandleAlterMenuChoice( cut, false );
 			
-			AlterType at = (AlterType)iAnswers[c];
+			AlterType at = (AlterType)answers[c];
 			switch( at )
 			{
 				DEFAULT_FAIL( at );
@@ -5213,7 +5213,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &iAn
 		case tempo:
 		{
 			// This affects all steps.
-			AlterType at = (AlterType)iAnswers[c];
+			AlterType at = (AlterType)answers[c];
 			float fScale = -1;
 			
 			switch( at )

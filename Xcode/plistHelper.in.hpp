@@ -1,0 +1,10 @@
+#if defined(DEBUG)
+#define PRODUCT_NAME @SM_NAME_DEBUG@
+#elif defined(MINSIZEREL)
+#define PRODUCT_NAME @SM_NAME_MINSIZEREL@
+#elif defined(RELWITHDEBINFO)
+#define PRODUCT_NAME @SM_NAME_RELWITHDEBINFO@
+#else
+#define PRODUCT_NAME @SM_NAME_RELEASE@
+#endif
+
