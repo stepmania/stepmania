@@ -37,14 +37,14 @@ void ScoreDisplayCalories::LoadFromNode( const XNode* pNode )
 	MESSAGEMAN->Subscribe( this, "Step" );
 }
 
-void ScoreDisplayCalories::Update( float fDelta )
+void ScoreDisplayCalories::UpdateInternal(int32_t tween_delta)
 {
 	// We have to set the initial text after StatsManager::CalcAccumPlayedStageStats
 	// is called.
 	if( IsFirstUpdate() )
 		UpdateNumber();
 
-	RollingNumbers::Update( fDelta );
+	RollingNumbers::UpdateInternal(tween_delta);
 }
 
 void ScoreDisplayCalories::HandleMessage( const Message &msg )

@@ -16,7 +16,7 @@ public:
 	PercentageDisplay();
 	void Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats );
 	void Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats, const RString &sMetricsGroup, bool bAutoRefresh );
-	void Update( float fDeltaTime );
+	void UpdateInternal(int32_t tween_delta);
 	virtual void LoadFromNode( const XNode* pNode );
 	virtual PercentageDisplay *Copy() const;
 

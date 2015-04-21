@@ -340,7 +340,7 @@ void BeginnerHelper::Step( PlayerNumber pn, int CSTEP )
 	m_sFlash.SetDiffuseAlpha( 0 );
 }
 
-void BeginnerHelper::Update( float fDeltaTime )
+void BeginnerHelper::UpdateInternal(int32_t tween_delta)
 {
 	if( !m_bInitialized )
 		return;
@@ -371,19 +371,19 @@ void BeginnerHelper::Update( float fDeltaTime )
 	m_iLastRowChecked = iCurRow;
 
 	// Update animations
-	ActorFrame::Update( fDeltaTime );
-	m_pDancePad->Update( fDeltaTime );
-	m_sFlash.Update( fDeltaTime );
+	ActorFrame::UpdateInternal(tween_delta);
+	m_pDancePad->Update(tween_delta);
+	m_sFlash.Update(tween_delta);
 
-	float beat = fDeltaTime*GAMESTATE->m_Position.m_fCurBPS;
+	int32_t beat_delta= tween_delta * GAMESTATE->m_Position.m_fCurBPS;
 	// If this is not a human player, the dancer is not shown
 	FOREACH_HumanPlayer( pu )
 	{
 		// Update dancer's animation and StepCircles
-		m_pDancer[pu]->Update( beat );
+		m_pDancer[pu]->Update(beat_delta);
 		for( int scu=0; scu<NUM_PLAYERS; scu++ )
 			for( int scue=0; scue<4; scue++ )
-				m_sStepCircle[scu][scue].Update( beat );
+				m_sStepCircle[scu][scue].Update(beat_delta);
 	}
 }
 

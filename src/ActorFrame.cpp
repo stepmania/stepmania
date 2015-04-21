@@ -466,19 +466,19 @@ void ActorFrame::RunCommandsOnLeaves( const LuaReference& cmds, const LuaReferen
 		m_SubActors[i]->RunCommandsOnLeaves( cmds, pParamTable );
 }
 
-void ActorFrame::UpdateInternal( float fDeltaTime )
+void ActorFrame::UpdateInternal(int32_t tween_delta)
 {
 //	LOG->Trace( "ActorFrame::Update( %f )", fDeltaTime );
 
-	fDeltaTime *= m_fUpdateRate;
+	tween_delta *= m_fUpdateRate;
 
-	Actor::UpdateInternal( fDeltaTime );
+	Actor::UpdateInternal(tween_delta);
 
 	// update all sub-Actors
 	for( vector<Actor*>::iterator it=m_SubActors.begin(); it!=m_SubActors.end(); it++ )
 	{
 		Actor *pActor = *it;
-		pActor->Update(fDeltaTime);
+		pActor->Update(tween_delta);
 	}
 
 	if( unlikely(!m_UpdateFunction.IsNil()) )
@@ -491,7 +491,7 @@ void ActorFrame::UpdateInternal( float fDeltaTime )
 			return;
 		}
 		this->PushSelf( L );
-		lua_pushnumber( L, fDeltaTime );
+		lua_pushnumber(L, tween_time_to_secs(tween_delta));
 		RString Error= "Error running UpdateFunction: ";
 		LuaHelpers::RunScriptOnStack(L, Error, 2, 0, true); // 1 args, 0 results
 		LUA->Release(L);
@@ -524,18 +524,16 @@ PropagateActorFrameCommand1Param( SetZWrite,		bool )
 PropagateActorFrameCommand1Param( HurryTweening,	float )
 
 
-float ActorFrame::GetTweenTimeLeft() const
+int64_t ActorFrame::GetTweenTimeLeft() const
 {
-	float m = Actor::GetTweenTimeLeft();
-
+	int64_t time = Actor::GetTweenTimeLeft();
+	int64_t actor_max= 0;
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 	{
 		const Actor* pActor = m_SubActors[i];
-		m = max(m, m_fHibernateSecondsLeft + pActor->GetTweenTimeLeft());
+		actor_max= max(actor_max, pActor->GetTweenTimeLeft());
 	}
-
-	return m;
-
+	return max(time, actor_max + m_hibernate_time_left);
 }
 
 static bool CompareActorsByDrawOrder(const Actor *p1, const Actor *p2)

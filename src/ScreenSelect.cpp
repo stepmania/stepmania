@@ -114,7 +114,7 @@ ScreenSelect::~ScreenSelect()
 		MESSAGEMAN->Unsubscribe( this, m_asSubscribedMessages[i] );
 }
 
-void ScreenSelect::Update( float fDelta )
+void ScreenSelect::UpdateInternal(int32_t tween_delta)
 {
 	if( !IsTransitioning() )
 	{
@@ -132,7 +132,7 @@ void ScreenSelect::Update( float fDelta )
 		}
 	}
 
-	ScreenWithMenuElements::Update( fDelta );
+	ScreenWithMenuElements::UpdateInternal(tween_delta);
 }
 
 bool ScreenSelect::Input( const InputEventPlus &input )

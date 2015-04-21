@@ -13,7 +13,7 @@ class ReceptorArrowRow : public ActorFrame
 public:
 	ReceptorArrowRow();
 	virtual ~ReceptorArrowRow();
-	virtual void Update( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 	virtual void DrawPrimitives();
 
 	void Load( const PlayerState* pPlayerState, float fYReverseOffset );

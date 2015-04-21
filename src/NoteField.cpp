@@ -291,18 +291,18 @@ void NoteField::InitColumnRenderers()
 	m_pCurDisplay->m_GhostArrowRow.SetColumnRenderers(m_ColumnRenderers);
 }
 
-void NoteField::Update( float fDeltaTime )
+void NoteField::UpdateInternal(int32_t tween_delta)
 {
 	if( m_bFirstUpdate )
 	{
 		m_pCurDisplay->m_ReceptorArrowRow.PlayCommand( "On" );
 	}
 
-	ActorFrame::Update( fDeltaTime );
+	ActorFrame::UpdateInternal(tween_delta);
 
 	for(size_t c= 0; c < m_ColumnRenderers.size(); ++c)
 	{
-		m_ColumnRenderers[c].Update(fDeltaTime);
+		m_ColumnRenderers[c].Update(tween_delta);
 	}
 
 	// update m_fBoardOffsetPixels, m_fCurrentBeatLastUpdate, m_fYPosCurrentBeatLastUpdate
@@ -323,27 +323,30 @@ void NoteField::Update( float fDeltaTime )
 	const float fYOffsetCurrent	= ArrowEffects::GetYOffset( m_pPlayerState, 0, m_fCurrentBeatLastUpdate );
 	m_fYPosCurrentBeatLastUpdate	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffsetCurrent, m_fYReverseOffsetPixels );
 
-	m_rectMarkerBar.Update( fDeltaTime );
+	m_rectMarkerBar.Update(tween_delta);
 
 	NoteDisplayCols *cur = m_pCurDisplay;
 
-	cur->m_ReceptorArrowRow.Update( fDeltaTime );
-	cur->m_GhostArrowRow.Update( fDeltaTime );
+	cur->m_ReceptorArrowRow.Update(tween_delta);
+	cur->m_GhostArrowRow.Update(tween_delta);
 
 	if( m_FieldRenderArgs.fail_fade >= 0 )
-		m_FieldRenderArgs.fail_fade = min( m_FieldRenderArgs.fail_fade + fDeltaTime/FADE_FAIL_TIME, 1 );
+	{
+		m_FieldRenderArgs.fail_fade = min(m_FieldRenderArgs.fail_fade +
+			tween_time_to_secs(tween_delta)/FADE_FAIL_TIME, 1);
+	}
 
 	// Update fade to failed
 	m_pCurDisplay->m_ReceptorArrowRow.SetFadeToFailPercent( m_FieldRenderArgs.fail_fade );
 
-	NoteDisplay::Update( fDeltaTime );
+	NoteDisplay::Update(tween_delta);
 	/* Update all NoteDisplays. Hack: We need to call this once per frame, not
 	 * once per player. */
 	// TODO: Remove use of PlayerNumber.
 
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	if( pn == GAMESTATE->GetMasterPlayerNumber() )
-		NoteDisplay::Update( fDeltaTime );
+		NoteDisplay::Update(tween_delta);
 }
 
 float NoteField::GetWidth() const

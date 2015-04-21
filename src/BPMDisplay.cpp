@@ -56,16 +56,16 @@ float BPMDisplay::GetActiveBPM() const
 	return m_fBPMTo + (m_fBPMFrom-m_fBPMTo)*m_fPercentInState;
 }
 
-void BPMDisplay::Update( float fDeltaTime ) 
+void BPMDisplay::UpdateInternal(int32_t tween_delta)
 { 
-	BitmapText::Update( fDeltaTime ); 
+	BitmapText::UpdateInternal(tween_delta);
 
 	if( !(bool)CYCLE )
 		return;
 	if( m_BPMS.size() == 0 )
 		return; // no bpm
 
-	m_fPercentInState -= fDeltaTime / m_fCycleTime;
+	m_fPercentInState -= tween_time_to_secs(tween_delta) / m_fCycleTime;
 	if( m_fPercentInState < 0 )
 	{
 		// go to next state
@@ -276,7 +276,7 @@ class SongBPMDisplay: public BPMDisplay
 public:
 	SongBPMDisplay();
 	virtual SongBPMDisplay *Copy() const;
-	virtual void Update( float fDeltaTime ); 
+	virtual void UpdateInternal(int32_t tween_delta);
 
 private:
 	float m_fLastGameStateBPM;
@@ -288,7 +288,7 @@ SongBPMDisplay::SongBPMDisplay()
 	m_fLastGameStateBPM = 0;
 }
 
-void SongBPMDisplay::Update( float fDeltaTime ) 
+void SongBPMDisplay::UpdateInternal(int32_t tween_delta)
 {
 	float fGameStateBPM = GAMESTATE->m_Position.m_fCurBPS * 60.0f;
 	if( m_fLastGameStateBPM != fGameStateBPM )
@@ -297,7 +297,7 @@ void SongBPMDisplay::Update( float fDeltaTime )
 		SetConstantBpm( fGameStateBPM );
 	}
 
-	BPMDisplay::Update( fDeltaTime );
+	BPMDisplay::UpdateInternal(tween_delta);
 }
 
 REGISTER_ACTOR_CLASS( SongBPMDisplay );

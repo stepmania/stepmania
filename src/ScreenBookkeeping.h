@@ -24,7 +24,7 @@ class ScreenBookkeeping : public ScreenWithMenuElements
 public:
 	virtual void Init();
 
-	virtual void Update( float fDelta );
+	virtual void UpdateInternal(int32_t tween_delta);
 	virtual bool Input( const InputEventPlus &input );
 
 	virtual bool MenuLeft( const InputEventPlus &input );

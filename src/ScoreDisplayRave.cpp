@@ -51,9 +51,9 @@ void ScoreDisplayRave::Init( const PlayerState* pPlayerState, const PlayerStageS
 	this->AddChild( m_sprFrameOverlay );
 }
 
-void ScoreDisplayRave::Update( float fDelta )
+void ScoreDisplayRave::UpdateInternal(int32_t tween_delta)
 {
-	ScoreDisplay::Update( fDelta );
+	ScoreDisplay::UpdateInternal(tween_delta);
 
 	float fLevel = m_pPlayerState->m_fSuperMeter;
 	AttackLevel level = (AttackLevel)(int)fLevel;

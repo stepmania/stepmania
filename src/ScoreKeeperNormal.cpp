@@ -515,8 +515,9 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	{
 	case TNS_W1:
 	case TNS_W2:
-		m_iCurToastyCombo += iNumTapsInRow;
-
+		// TODO:  Come up with a design for the theme to list a set of milestone
+		// values?  Current behavior is to just happen at multiples of
+		// m_ToastyTrigger.  -Kyz
 		/*
 		// compile the list of toasty triggers
 		{
@@ -536,21 +537,25 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 			m_iNextToastyAt = -1;
 		}
 		*/
-
-		if( m_iCurToastyCombo >= m_ToastyTrigger &&
-			m_iCurToastyCombo - iNumTapsInRow < m_ToastyTrigger &&
-			!GAMESTATE->m_bDemonstrationOrJukebox )
 		{
-			SCREENMAN->PostMessageToTopScreen( SM_PlayToasty, 0 );
-			Message msg("ToastyAchieved");
-			msg.SetParam( "PlayerNumber", m_pPlayerState->m_PlayerNumber );
-			msg.SetParam( "ToastyCombo", m_iCurToastyCombo );
-			MESSAGEMAN->Broadcast(msg);
+			int old_toastiness= m_iCurToastyCombo / m_ToastyTrigger;
+			m_iCurToastyCombo += iNumTapsInRow;
+			int new_toastiness= m_iCurToastyCombo / m_ToastyTrigger;
+			if(new_toastiness > old_toastiness &&
+				!GAMESTATE->m_bDemonstrationOrJukebox)
+			{
+				SCREENMAN->PostMessageToTopScreen( SM_PlayToasty, 0 );
+				Message msg("ToastyAchieved");
+				msg.SetParam( "PlayerNumber", m_pPlayerState->m_PlayerNumber );
+				msg.SetParam( "ToastyCombo", m_iCurToastyCombo );
+				msg.SetParam( "Level", new_toastiness );
+				MESSAGEMAN->Broadcast(msg);
 
-			// TODO: keep a pointer to the Profile.  Don't index with m_PlayerNumber
-			PROFILEMAN->IncrementToastiesCount( m_pPlayerState->m_PlayerNumber );
+				// TODO: keep a pointer to the Profile.  Don't index with m_PlayerNumber
+				PROFILEMAN->IncrementToastiesCount( m_pPlayerState->m_PlayerNumber );
 
-			//m_iCurToastyTrigger++;
+				//m_iCurToastyTrigger++;
+			}
 		}
 		break;
 	default:

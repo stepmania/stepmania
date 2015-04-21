@@ -242,13 +242,13 @@ void ScreenHowToPlay::Step()
 	}
 }
 
-void ScreenHowToPlay::Update( float fDelta )
+void ScreenHowToPlay::UpdateInternal(int32_t tween_delta)
 {
 	if( GAMESTATE->m_pCurSong != NULL )
 	{
 		RageTimer tm;
 		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong, GAMESTATE->m_pCurSong->m_SongTiming, tm );
-		m_fFakeSecondsIntoSong += fDelta;
+		m_fFakeSecondsIntoSong += tween_time_to_secs(tween_delta);
 
 		static int iLastNoteRowCounted = 0;
 		int iCurNoteRow = BeatToNoteRowNotRounded( GAMESTATE->m_Position.m_fSongBeat );
@@ -282,7 +282,7 @@ void ScreenHowToPlay::Update( float fDelta )
 		}
 	}
 
-	ScreenAttract::Update( fDelta );
+	ScreenAttract::UpdateInternal(tween_delta);
 }
 
 void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )

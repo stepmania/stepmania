@@ -63,6 +63,11 @@ uint64_t RageTimer::GetUsecsSinceStart()
 	return GetTime(true) - g_iStartTime;
 }
 
+uint64_t RageTimer::GetRawTime()
+{
+	return GetTime(true);
+}
+
 void RageTimer::Touch()
 {
 	uint64_t usecs = GetTime( true );
@@ -151,6 +156,21 @@ float RageTimer::Difference(const RageTimer &lhs, const RageTimer &rhs)
 
 	return float(secs) + float(us) / TIMESTAMP_RESOLUTION;
 }
+
+DEF_TOT_CALL_END(actor_update);
+DEF_TOT_CALL_PAIR(game_loop_body);
+DEF_TOTAL_TIME(check_focus);
+DEF_TOTAL_TIME(soundman_update);
+DEF_TOTAL_TIME(sound_update);
+DEF_TOTAL_TIME(textureman_update);
+DEF_TOTAL_TIME(gamestate_update);
+DEF_TOTAL_TIME(screenman_update);
+DEF_TOTAL_TIME(memcardman_update);
+DEF_TOTAL_TIME(nsman_update);
+DEF_TOTAL_TIME(handle_input);
+DEF_TOTAL_TIME(devices_changed);
+DEF_TOTAL_TIME(lightsman_update);
+DEF_TOTAL_TIME(screenman_draw);
 
 #include "LuaManager.h"
 LuaFunction(GetTimeSinceStart, RageTimer::GetTimeSinceStartFast())

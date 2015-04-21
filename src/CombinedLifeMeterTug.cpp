@@ -54,7 +54,7 @@ CombinedLifeMeterTug::CombinedLifeMeterTug()
 	this->AddChild( m_sprFrame );
 }
 
-void CombinedLifeMeterTug::Update( float fDelta )
+void CombinedLifeMeterTug::UpdateInternal(int32_t tween_delta)
 {
 	float fPercentToShow = GAMESTATE->m_fTugLifePercentP1;
 	CLAMP( fPercentToShow, 0.f, 1.f );
@@ -66,7 +66,7 @@ void CombinedLifeMeterTug::Update( float fDelta )
 
 	m_sprSeparator->SetX( fSeparatorX );
 
-	ActorFrame::Update( fDelta );
+	ActorFrame::UpdateInternal(tween_delta);
 }
 
 void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, TapNoteScore score )

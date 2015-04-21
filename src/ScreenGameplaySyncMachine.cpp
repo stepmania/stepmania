@@ -63,9 +63,9 @@ void ScreenGameplaySyncMachine::Init()
 	RefreshText();
 }
 
-void ScreenGameplaySyncMachine::Update( float fDelta )
+void ScreenGameplaySyncMachine::UpdateInternal(int32_t tween_delta)
 {
-	ScreenGameplayNormal::Update( fDelta );
+	ScreenGameplayNormal::UpdateInternal(tween_delta);
 	RefreshText();
 }
 

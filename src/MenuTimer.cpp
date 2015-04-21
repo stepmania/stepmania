@@ -73,12 +73,13 @@ void MenuTimer::EnableStealth( bool bStealth )
 	}
 }
 
-void MenuTimer::Update( float fDeltaTime ) 
+void MenuTimer::UpdateInternal(int32_t tween_delta)
 { 
-	ActorFrame::Update( fDeltaTime );
+	ActorFrame::UpdateInternal(tween_delta);
 
 	if( m_bPaused )
 		return;
+	float fDeltaTime= tween_time_to_secs(tween_delta);
 
 	// run down the stall time if any
 	if( m_fStallSeconds > 0 )

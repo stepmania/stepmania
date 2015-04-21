@@ -250,9 +250,9 @@ void ScreenWithMenuElements::StartPlayingMusic()
 	}
 }
 
-void ScreenWithMenuElements::Update( float fDeltaTime )
+void ScreenWithMenuElements::UpdateInternal(int32_t tween_delta)
 {
-	Screen::Update( fDeltaTime );
+	Screen::UpdateInternal(tween_delta);
 }
 
 void ScreenWithMenuElements::ResetTimer()
@@ -280,9 +280,9 @@ void ScreenWithMenuElements::StartTransitioningScreen( ScreenMessage smSendWhenD
 	{
 		// Time the transition so that it finishes exactly when all actors have 
 		// finished tweening.
-		float fSecondsUntilFinished = GetTweenTimeLeft();
-		float fSecondsUntilBeginOff = max( fSecondsUntilFinished - m_Out.GetTweenTimeLeft(), 0 );
-		m_Out.SetHibernate( fSecondsUntilBeginOff );
+		int32_t time_until_finished= GetTweenTimeLeft();
+		int32_t time_until_begin_off= max(time_until_finished - m_Out.GetTweenTimeLeft(), 0);
+		m_Out.SetHibernateInternal(time_until_begin_off);
 	}
 }
 

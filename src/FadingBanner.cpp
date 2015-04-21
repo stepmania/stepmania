@@ -38,16 +38,16 @@ void FadingBanner::ScaleToClipped( float fWidth, float fHeight )
 		m_Banner[i].ScaleToClipped( fWidth, fHeight );
 }
 
-void FadingBanner::UpdateInternal( float fDeltaTime )
+void FadingBanner::UpdateInternal(int32_t tween_delta)
 {
 	// update children manually
 	// ActorFrame::UpdateInternal( fDeltaTime );
-	Actor::UpdateInternal( fDeltaTime );
+	Actor::UpdateInternal(tween_delta);
 
 	if( !m_bSkipNextBannerUpdate )
 	{
 		for( int i = 0; i < NUM_BANNERS; ++i )
-			m_Banner[i].Update( fDeltaTime );
+			m_Banner[i].Update(tween_delta);
 	}
 
 	m_bSkipNextBannerUpdate = false;

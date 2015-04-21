@@ -787,7 +787,7 @@ void Player::SendComboMessages( unsigned int iOldCombo, unsigned int iOldMissCom
 	}
 }
 
-void Player::Update( float fDeltaTime )
+void Player::UpdateInternal(int32_t tween_delta)
 {
 	const RageTimer now;
 	// Don't update if we haven't been loaded yet.
@@ -799,7 +799,7 @@ void Player::Update( float fDeltaTime )
 	if( GAMESTATE->m_pCurSong==NULL || IsOniDead() )
 		return;
 
-	ActorFrame::Update( fDeltaTime );
+	ActorFrame::UpdateInternal(tween_delta);
 
 	if(m_pPlayerState->m_mp != MultiPlayer_Invalid)
 	{
@@ -815,6 +815,8 @@ void Player::Update( float fDeltaTime )
 		if((m_pPlayerState->m_mp % 8) != iCycle)
 			return;
 	}
+
+	float fDeltaTime= tween_time_to_secs(tween_delta);
 
 	const float fSongBeat = m_pPlayerState->m_Position.m_fSongBeat;
 	const int iSongRow = BeatToNoteRow( fSongBeat );

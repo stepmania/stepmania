@@ -18,7 +18,7 @@ void Transition::Load( RString sBGAniDir )
 }
 
 
-void Transition::UpdateInternal( float fDeltaTime )
+void Transition::UpdateInternal(int32_t tween_delta)
 {
 	if( m_State != transitioning )
 		return;
@@ -31,7 +31,7 @@ void Transition::UpdateInternal( float fDeltaTime )
 		SCREENMAN->SendMessageToTopScreen( m_MessageToSendWhenDone );
 	}
 
-	ActorFrame::UpdateInternal( fDeltaTime );
+	ActorFrame::UpdateInternal(tween_delta);
 }
 
 void Transition::Reset()
@@ -64,7 +64,7 @@ void Transition::StartTransitioning( ScreenMessage send_when_done )
 	m_State = transitioning;
 }
 
-float Transition::GetTweenTimeLeft() const
+int64_t Transition::GetTweenTimeLeft() const
 {
 	if( m_State != transitioning )
 		return 0;

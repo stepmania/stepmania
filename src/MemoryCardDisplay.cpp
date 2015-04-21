@@ -41,7 +41,7 @@ void MemoryCardDisplay::LoadFromNode( const XNode* pNode )
 	ActorFrame::LoadFromNode( pNode );
 }
 
-void MemoryCardDisplay::Update( float fDelta )
+void MemoryCardDisplay::UpdateInternal(int32_t tween_delta)
 {
 	MemoryCardState newMcs = MEMCARDMAN->GetCardState(m_PlayerNumber);
 	if( m_LastSeenState != newMcs )
@@ -52,7 +52,7 @@ void MemoryCardDisplay::Update( float fDelta )
 		m_spr[m_LastSeenState].SetVisible( true );
 	}
 
-	ActorFrame::Update( fDelta );
+	ActorFrame::UpdateInternal(tween_delta);
 }
 
 /*

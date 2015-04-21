@@ -17,7 +17,7 @@ public:
 	~ScreenManager();
 
 	// pass these messages along to the current state
-	void Update( float fDeltaTime );
+	void Update(int32_t delta_time);
 	void Draw();
 	void Input( const InputEventPlus &input );
 

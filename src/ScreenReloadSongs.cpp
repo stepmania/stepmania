@@ -66,9 +66,9 @@ ScreenReloadSongs::~ScreenReloadSongs()
 	delete m_pLoadingWindow;
 }
 
-void ScreenReloadSongs::Update( float fDeltaTime )
+void ScreenReloadSongs::UpdateInternal(int32_t tween_delta)
 {
-	Screen::Update( fDeltaTime );
+	Screen::UpdateInternal(tween_delta);
 
 	/* Start the reload on the second update. On the first (0), SCREENMAN->Draw won't draw. */
 	++m_iUpdates;

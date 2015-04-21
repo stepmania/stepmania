@@ -21,7 +21,7 @@ class StreamDisplay : public ActorFrame
 public:
 	StreamDisplay();
 
-	virtual void Update( float fDeltaSecs );
+	virtual void UpdateInternal(int32_t tween_delta);
 
 	void Load( const RString &sMetricsGroup );
 

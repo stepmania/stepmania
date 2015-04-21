@@ -72,6 +72,9 @@ LuaDeclareType( VertAlign );
 // number of diffuse colors, so change this at your own risk. -Kyz
 #define NUM_DIFFUSE_COLORS 4
 
+#define secs_to_tween_time(secs) ((secs) * 1000000)
+#define tween_time_to_secs(time) ((time) * .000001)
+
 // ssc futures:
 /*
 enum EffectAction
@@ -134,6 +137,7 @@ public:
 	/** @brief Various values an Actor's effect can be tied to. */
 	enum EffectClock
 	{
+		CLOCK_NONE,
 		CLOCK_TIMER,
 		CLOCK_TIMER_GLOBAL,
 		CLOCK_BGM_TIME,
@@ -274,13 +278,14 @@ public:
 	virtual void DrawPrimitives() {};
 	/** @brief Pop the transform from the world matrix stack. */
 	virtual void EndDraw();
-	
-	// TODO: make Update non virtual and change all classes to override UpdateInternal 
-	// instead.
+
+	void SetHibernateInternal(int64_t time);
+	void SetHibernate(float secs);
+
 	bool IsFirstUpdate() const;
-	virtual void Update( float fDeltaTime );		// this can short circuit UpdateInternal
-	virtual void UpdateInternal( float fDeltaTime );	// override this
-	void UpdateTweening( float fDeltaTime );
+	void Update(int32_t tween_delta);		// this can short circuit UpdateInternal
+	virtual void UpdateInternal(int32_t tween_delta);	// override this
+	void UpdateTweening(int32_t tween_delta);
 	// These next functions should all be overridden by a derived class that has its own tweening states to handle.
 	virtual void SetCurrentTweenStart() {}
 	virtual void EraseHeadTween() {}
@@ -481,7 +486,8 @@ public:
 	virtual void FinishTweening();
 	virtual void HurryTweening( float factor );
 	// Let ActorFrame and BGAnimation override
-	virtual float GetTweenTimeLeft() const;	// Amount of time until all tweens have stopped
+	virtual int64_t GetTweenTimeLeft() const;	// Amount of time until all tweens have stopped
+	float GetTweenSecsLeft() const { return tween_time_to_secs(GetTweenTimeLeft()); }
 	TweenState& DestTweenState() // where Actor will end when its tween finish
 	{
 		if( m_Tweens.empty() )	// not tweening
@@ -520,22 +526,25 @@ public:
 	void StopEffect()				{ m_Effect = no_effect; }
 	Effect GetEffect() const			{ return m_Effect; }
 #endif
-	float GetSecsIntoEffect() const			{ return m_fSecsIntoEffect; }
-	float GetEffectDelta() const			{ return m_fEffectDelta; }
+	float GetSecsIntoEffect() const;
+	/* This can be used in lieu of the fDeltaTime parameter to Update() to
+	 * follow the effect clock.  Actor::Update must be called first. */
+	float GetEffectDelta() const;
 
 	// todo: account for SSC_FUTURES by adding an effect as an arg to each one -aj
 	void SetEffectColor1( RageColor c )		{ m_effectColor1 = c; }
 	void SetEffectColor2( RageColor c )		{ m_effectColor2 = c; }
-	void SetEffectPeriod( float fTime );
+	void SetEffectPeriod(float secs);
 	float GetEffectPeriod() const;
-	void SetEffectTiming( float fRampUp, float fAtHalf, float fRampDown, float fAtZero );
-	void SetEffectOffset( float fTime )		{ m_fEffectOffset = fTime; }
+	void SetEffectTiming(float ramp_up, float at_half, float ramp_down, float at_zero);
+	void SetEffectOffset(float time);
 	void SetEffectClock( EffectClock c )		{ m_EffectClock = c; }
 	void SetEffectClockString( const RString &s );	// convenience
 
 	void SetEffectMagnitude( RageVector3 vec )	{ m_vEffectMagnitude = vec; }
 	RageVector3 GetEffectMagnitude() const		{ return m_vEffectMagnitude; }
 
+	void ResetEffectTimeIfDifferent(Effect new_effect);
 	void SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
 	void SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
 	void SetEffectDiffuseRamp( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
@@ -561,8 +570,6 @@ public:
 	void SetShadowLengthX( float fLengthX )		{ m_fShadowLengthX = fLengthX; }
 	void SetShadowLengthY( float fLengthY )		{ m_fShadowLengthY = fLengthY; }
 	void SetShadowColor( RageColor c )		{ m_ShadowColor = c; }
-	// TODO: Implement hibernate as a tween type?
-	void SetHibernate( float fSecs )		{ m_fHibernateSecondsLeft = fSecs; }
 	void SetDrawOrder( int iOrder )			{ m_iDrawOrder = iOrder; }
 	int GetDrawOrder() const			{ return m_iDrawOrder; }
 
@@ -635,13 +642,11 @@ protected:
 		TweenInfo( const TweenInfo &cpy );
 		TweenInfo &operator=( const TweenInfo &rhs );
 
-		ITween		*m_pTween;
-		/** @brief How far into the tween are we? */
-		float		m_fTimeLeftInTween;
-		/** @brief The number of seconds between Start and End positions/zooms. */
-		float		m_fTweenTime;
+		ITween* m_tween;
+		int64_t m_time_into_tween;
+		int64_t m_tween_time;
 		/** @brief The command to execute when this TweenState goes into effect. */
-		RString		m_sCommandName;
+		RString		m_command_name;
 	};
 
 	RageVector3	m_baseRotation;
@@ -681,20 +686,21 @@ protected:
 #else // compatibility
 	Effect m_Effect;
 #endif
-	float m_fSecsIntoEffect;
-	float m_fEffectDelta;
+	int64_t m_time_into_effect;
+	int32_t m_effect_delta_time;
 
 	// units depend on m_EffectClock
-	float m_fEffectRampUp;
-	float m_fEffectHoldAtHalf;
-	float m_fEffectRampDown;
-	float m_fEffectHoldAtZero;
-	float m_fEffectOffset;
+	int64_t m_effect_ramp_up;
+	int64_t m_effect_hold_at_half;
+	int64_t m_effect_ramp_down;
+	int64_t m_effect_hold_at_zero;
+	int64_t m_effect_offset;
+	// Anything changing ramp_up, hold_at_half, ramp_down, or hold_at_zero must
+	// also update the period so the period is only calculated when changed. -Kyz
+	int64_t m_effect_period;
 	EffectClock m_EffectClock;
 
-	/* This can be used in lieu of the fDeltaTime parameter to Update() to
-	 * follow the effect clock.  Actor::Update must be called first. */
-	float GetEffectDeltaTime() const		{ return m_fEffectDelta; }
+	int64_t m_hibernate_time_left;
 
 	// todo: account for SSC_FUTURES by having these be vectors too -aj
 	RageColor	m_effectColor1;
@@ -704,7 +710,6 @@ protected:
 	// other properties
 	bool		m_bVisible;
 	bool		m_bIsAnimating;
-	float		m_fHibernateSecondsLeft;
 	float		m_fShadowLengthX;
 	float		m_fShadowLengthY;
 	RageColor	m_ShadowColor;

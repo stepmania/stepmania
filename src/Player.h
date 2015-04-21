@@ -44,7 +44,7 @@ public:
 	Player( NoteData &nd, bool bVisibleParts = true );
 	~Player();
 
-	virtual void Update( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 	virtual void DrawPrimitives();
 	// PushPlayerMatrix and PopPlayerMatrix are separate functions because
 	// they need to be used twice so that the notefield board can rendered

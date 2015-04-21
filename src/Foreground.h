@@ -12,7 +12,7 @@ public:
 	void Unload();
 	void LoadFromSong( const Song *pSong );
 
-	virtual void Update( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 	virtual void HandleMessage( const Message &msg );
 
 protected:

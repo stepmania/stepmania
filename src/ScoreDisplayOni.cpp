@@ -30,9 +30,9 @@ void ScoreDisplayOni::Init( const PlayerState* pPlayerState, const PlayerStageSt
 }
 
 
-void ScoreDisplayOni::Update( float fDelta )
+void ScoreDisplayOni::UpdateInternal(int32_t tween_delta)
 {
-	ScoreDisplay::Update( fDelta );
+	ScoreDisplay::UpdateInternal(tween_delta);
 
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;

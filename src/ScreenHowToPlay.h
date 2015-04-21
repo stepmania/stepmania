@@ -15,7 +15,7 @@ public:
 	virtual void Init();
 	~ScreenHowToPlay();
 
-	virtual void Update( float fDelta );
+	virtual void UpdateInternal(int32_t tween_delta);
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	// Lua

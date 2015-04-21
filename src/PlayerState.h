@@ -35,7 +35,7 @@ public:
 	/** 
 	 * @brief Update the PlayerState based on the present time.
 	 * @param fDelta the current time. */
-	void Update( float fDelta );
+	void Update(int32_t tween_delta);
 
 	void SetPlayerNumber(PlayerNumber pn);
 
@@ -131,7 +131,7 @@ public:
 	// Attacks take a while to transition out of use.  Account for this in PlayerAI
 	// by still penalizing it for 1 second after the player options are rebuilt.
 	int		m_iLastPositiveSumOfAttackLevels;
-	float	m_fSecondsUntilAttacksPhasedOut; // positive means PlayerAI is still affected
+	int32_t m_time_until_attacks_phased_out; // positive means PlayerAI is still affected
 	bool	m_bAttackBeganThisUpdate;	// flag for other objects to watch (play sounds)
 	bool	m_bAttackEndedThisUpdate;	// flag for other objects to watch (play sounds)
 

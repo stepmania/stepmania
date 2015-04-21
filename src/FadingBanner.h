@@ -35,7 +35,7 @@ public:
 	bool LoadFromCachedBackground( const RString &path );
 
 	void SetMovingFast( bool fast ) { m_bMovingFast=fast; }
-	virtual void UpdateInternal( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 	virtual void DrawPrimitives();
 
 	int GetLatestIndex(){ return m_iIndexLatest; }

@@ -39,7 +39,7 @@ public:
 	virtual void BeginScreen();
 	void InitMenu( const vector<OptionRowHandler*> &vHands );
 	virtual ~ScreenOptions();
-	virtual void Update( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 	virtual bool Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 

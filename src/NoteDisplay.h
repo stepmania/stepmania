@@ -180,7 +180,7 @@ public:
 
 	void Load( int iColNum, const PlayerState* pPlayerState, float fYReverseOffsetPixels );
 
-	static void Update( float fDeltaTime );
+	static void Update(int32_t tween_delta);
 
 	bool IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels ) const;
 

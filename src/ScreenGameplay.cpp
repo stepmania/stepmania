@@ -1649,27 +1649,28 @@ void ScreenGameplay::GetMusicEndTiming( float &fSecondsToStartFadingOutMusic, fl
 	fSecondsToStartTransitioningOut = max( fSecondsToStartTransitioningOut, fSecondsToStartFadingOutMusic + MUSIC_FADE_OUT_SECONDS - fTransitionLength );
 }
 
-void ScreenGameplay::Update( float fDeltaTime )
+void ScreenGameplay::UpdateInternal(int32_t tween_delta)
 {
 	if( GAMESTATE->m_pCurSong == NULL  )
 	{
 		/* ScreenDemonstration will move us to the next screen.  We just need to
 		 * survive for one update without crashing.  We need to call Screen::Update
 		 * to make sure we receive the next-screen message. */
-		Screen::Update( fDeltaTime );
+		Screen::UpdateInternal(tween_delta);
 		return;
 	}
 
+	float fDeltaTime= tween_time_to_secs(tween_delta);
 	UpdateSongPosition( fDeltaTime );
 
 	if( m_bZeroDeltaOnNextUpdate )
 	{
-		Screen::Update( 0 );
+		Screen::UpdateInternal( 0 );
 		m_bZeroDeltaOnNextUpdate = false;
 	}
 	else
 	{
-		Screen::Update( fDeltaTime );
+		Screen::UpdateInternal(tween_delta);
 	}
 
 	/* This happens if ScreenDemonstration::HandleScreenMessage sets a new screen when
@@ -2874,10 +2875,11 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_PlayToasty )
 	{
-		// todo: make multiple toasties work -aj
 		if( g_bEasterEggs )
-			if( !m_Toasty.IsTransitioning()  &&  !m_Toasty.IsFinished() )	// don't play if we've already played it once
-				m_Toasty.StartTransitioning();
+		{
+			m_Toasty.Reset();
+			m_Toasty.StartTransitioning();
+		}
 	}
 	else if( ScreenMessageHelpers::ScreenMessageToString(SM).find("0Combo") != string::npos )
 	{

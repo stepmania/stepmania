@@ -26,7 +26,7 @@ public:
 	virtual bool MenuBack( const InputEventPlus &input );
 
 	virtual void TweenOffScreen( );
-	virtual void Update(float f);
+	virtual void UpdateInternal(int32_t tween_delta);
 
 protected:
 	ThemeMetric<float> EXISTINGBG_WIDTH; // "PackagesBGWidth"

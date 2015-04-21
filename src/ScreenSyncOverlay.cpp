@@ -69,7 +69,7 @@ void ScreenSyncOverlay::Init()
 	Update( 0 );
 }
 
-void ScreenSyncOverlay::Update( float fDeltaTime )
+void ScreenSyncOverlay::UpdateInternal(int32_t tween_delta)
 {
 	this->SetVisible( IsGameplay() );
 	if( !IsGameplay() )
@@ -78,7 +78,7 @@ void ScreenSyncOverlay::Update( float fDeltaTime )
 		return;
 	}
 
-	Screen::Update(fDeltaTime);
+	Screen::UpdateInternal(tween_delta);
 
 	UpdateText();
 }

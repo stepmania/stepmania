@@ -12,7 +12,7 @@ class ScreenNameEntry : public ScreenWithMenuElements
 public:
 	ScreenNameEntry();
 	virtual void Init();
-	virtual void Update( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 	virtual bool Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 

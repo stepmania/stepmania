@@ -557,14 +557,14 @@ void ScreenNetSelectMusic::MusicChanged()
 	}
 }
 
-void ScreenNetSelectMusic::Update( float fDeltaTime )
+void ScreenNetSelectMusic::UpdateInternal(int32_t tween_delta)
 {
 	if(!m_bInitialSelect)
 	{
 		m_bInitialSelect = true;
 		SCREENMAN->PostMessageToTopScreen( SM_RefreshWheelLocation, 1.0f );
 	}
-	ScreenNetSelectBase::Update( fDeltaTime );
+	ScreenNetSelectBase::UpdateInternal(tween_delta);
 }
 
 #endif

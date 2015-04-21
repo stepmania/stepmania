@@ -76,7 +76,7 @@ bool WheelNotifyIcon::EarlyAbortDraw() const
 	return Sprite::EarlyAbortDraw();
 }
 
-void WheelNotifyIcon::Update( float fDeltaTime )
+void WheelNotifyIcon::UpdateInternal(int32_t tween_delta)
 {
 	if( m_vIconsToShow.size() > 0 )
 	{
@@ -88,7 +88,7 @@ void WheelNotifyIcon::Update( float fDeltaTime )
 		Sprite::SetState( m_vIconsToShow[index] );
 	}
 
-	Sprite::Update( fDeltaTime );
+	Sprite::UpdateInternal(tween_delta);
 }
 
 /*

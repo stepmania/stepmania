@@ -176,6 +176,10 @@ float fmodfp(float x, float y)
 	x = fmodf(x, y);	/* x is [0,y] */
 	return x;
 }
+int32_t mod_positive(int32_t x, int32_t y)
+{
+	return ((x % y) + y) % y;
+}
 
 int power_of_two( int iInput )
 {

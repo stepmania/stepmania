@@ -39,16 +39,14 @@ void HelpDisplay::SetTips( const vector<RString> &arrayTips, const vector<RStrin
 }
 
 
-void HelpDisplay::Update( float fDeltaTime )
+void HelpDisplay::UpdateInternal(int32_t tween_delta)
 {
-	float fHibernate = m_fHibernateSecondsLeft;
-
-	BitmapText::Update( fDeltaTime );
+	BitmapText::UpdateInternal(tween_delta);
 
 	if( m_arrayTips.empty() )
 		return;
 
-	m_fSecsUntilSwitch -= max( fDeltaTime - fHibernate, 0 );
+	m_fSecsUntilSwitch -= tween_time_to_secs(tween_delta);
 	if( m_fSecsUntilSwitch > 0 )
 		return;
 

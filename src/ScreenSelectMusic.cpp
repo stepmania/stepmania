@@ -388,7 +388,7 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 	}
 }
 
-void ScreenSelectMusic::Update( float fDeltaTime )
+void ScreenSelectMusic::UpdateInternal(int32_t tween_delta)
 {
 	if( !IsTransitioning() )
 	{
@@ -399,7 +399,7 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 		}
 	}
 
-	ScreenWithMenuElements::Update( fDeltaTime );
+	ScreenWithMenuElements::UpdateInternal(tween_delta);
 
 	CheckBackgroundRequests( false );
 }
@@ -538,7 +538,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 		// Re-queue SM_BeginFadingOut, since ShowEnteringOptions may have
 		// short-circuited animations.
 		this->ClearMessageQueue( SM_BeginFadingOut );
-		this->PostScreenMessage( SM_BeginFadingOut, this->GetTweenTimeLeft() );
+		this->PostScreenMessage( SM_BeginFadingOut, this->GetTweenSecsLeft() );
 
 		return true;
 	}
@@ -1186,7 +1186,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		if( OPTIONS_MENU_AVAILABLE && !m_bGoToOptions )
 			this->PlayCommand( "HidePressStartForOptions" );
 
-		this->PostScreenMessage( SM_GoToNextScreen, this->GetTweenTimeLeft() );
+		this->PostScreenMessage( SM_GoToNextScreen, this->GetTweenSecsLeft() );
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
@@ -1511,7 +1511,7 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			this->PostScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
 
 			StartTransitioningScreen( SM_None );
-			float fTime = max( SHOW_OPTIONS_MESSAGE_SECONDS, this->GetTweenTimeLeft() );
+			float fTime = max( SHOW_OPTIONS_MESSAGE_SECONDS, this->GetTweenSecsLeft() );
 			this->PostScreenMessage( SM_BeginFadingOut, fTime );
 		}
 		else

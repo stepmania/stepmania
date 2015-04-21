@@ -53,11 +53,11 @@ GhostArrowRow::~GhostArrowRow()
 }
 
 
-void GhostArrowRow::Update( float fDeltaTime )
+void GhostArrowRow::UpdateInternal(int32_t tween_delta)
 {
 	for( unsigned c=0; c<m_Ghost.size(); c++ )
 	{
-		m_Ghost[c]->Update( fDeltaTime );
+		m_Ghost[c]->Update(tween_delta);
 		(*m_renderers)[c].UpdateReceptorGhostStuff(m_Ghost[c]);
 	}
 

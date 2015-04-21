@@ -64,7 +64,7 @@ public:
 	void RunCommandsOnChildren( const apActorCommands& cmds, const LuaReference *pParamTable = NULL ) { this->RunCommandsOnChildren( *cmds, pParamTable ); }	// convenience
 	virtual void RunCommandsOnLeaves( const LuaReference& cmds, const LuaReference *pParamTable = NULL ); /* but not on self */
 
-	virtual void UpdateInternal( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 	virtual void BeginDraw();
 	virtual void DrawPrimitives();
 	virtual void EndDraw();
@@ -89,7 +89,7 @@ public:
 	virtual void SetPropagateCommands( bool b );
 
 	/** @brief Amount of time until all tweens (and all children's tweens) have stopped: */
-	virtual float GetTweenTimeLeft() const;
+	virtual int64_t GetTweenTimeLeft() const;
 
 	virtual void HandleMessage( const Message &msg );
 	virtual void RunCommands( const LuaReference& cmds, const LuaReference *pParamTable = NULL );

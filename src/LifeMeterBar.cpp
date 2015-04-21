@@ -276,14 +276,15 @@ bool LifeMeterBar::IsFailing() const
 }
 
 
-void LifeMeterBar::Update( float fDeltaTime )
+void LifeMeterBar::UpdateInternal(int32_t tween_delta)
 {
-	LifeMeter::Update( fDeltaTime );
+	LifeMeter::UpdateInternal(tween_delta);
+	float double_delta= tween_time_to_secs(tween_delta * 2);
 
-	m_fPassingAlpha += !IsFailing() ? +fDeltaTime*2 : -fDeltaTime*2;
+	m_fPassingAlpha += !IsFailing() ? +double_delta : -double_delta;
 	CLAMP( m_fPassingAlpha, 0, 1 );
 
-	m_fHotAlpha  += IsHot() ? + fDeltaTime*2 : -fDeltaTime*2;
+	m_fHotAlpha  += IsHot() ? + double_delta : -double_delta;
 	CLAMP( m_fHotAlpha, 0, 1 );
 
 	m_pStream->SetPassingAlpha( m_fPassingAlpha );

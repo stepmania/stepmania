@@ -14,7 +14,7 @@ class ScreenStatsOverlay : public Screen
 public:
 	virtual void Init();
 	
-	void Update( float fDeltaTime );
+	void UpdateInternal(int32_t tween_delta);
 
 private:
 	void AddTimestampLine( const RString &txt, const RageColor &color );

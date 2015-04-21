@@ -23,7 +23,7 @@ public:
 	virtual void Load( RageTextureID ID ) { Load( ID, true ); }
 	void LoadFromCachedBanner( const RString &sPath );
 
-	virtual void Update( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 
 	/**
 	 * @brief Attempt to load the banner from a song.

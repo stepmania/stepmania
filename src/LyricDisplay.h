@@ -8,7 +8,7 @@ class LyricDisplay: public ActorFrame
 {
 public:
 	LyricDisplay();
-	void Update( float fDeltaTime );
+	void UpdateInternal(int32_t tween_delta);
 
 	// Call when song changes:
 	void Init();

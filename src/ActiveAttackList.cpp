@@ -16,14 +16,14 @@ void ActiveAttackList::Init( const PlayerState* pPlayerState )
 	m_pPlayerState = pPlayerState;
 }
 
-void ActiveAttackList::Update( float fDelta ) 
+void ActiveAttackList::UpdateInternal(int32_t tween_delta)
 {
 	bool bTimeToRefresh = 
 		IsFirstUpdate() || // check this before running Actor::Update()
 		m_pPlayerState->m_bAttackBeganThisUpdate ||
 		m_pPlayerState->m_bAttackEndedThisUpdate;
 
-	BitmapText::Update( fDelta ); 
+	BitmapText::UpdateInternal(tween_delta);
 
 	if( bTimeToRefresh )
 		Refresh();

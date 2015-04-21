@@ -38,12 +38,12 @@ void LyricDisplay::Stop() {
 	m_bStopped = true;
 }
 
-void LyricDisplay::Update( float fDeltaTime )
+void LyricDisplay::UpdateInternal(int32_t tween_delta)
 {
 	if( m_bStopped )
 		return;
 
-	ActorFrame::Update( fDeltaTime );
+	ActorFrame::UpdateInternal(tween_delta);
 
 	if( GAMESTATE->m_pCurSong == NULL )
 		return;

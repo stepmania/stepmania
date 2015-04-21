@@ -15,8 +15,7 @@ public:
 	struct State
 	{
 		RectF rect;
-		/** @brief The number of "seconds to show". */
-		float fDelay;
+		int32_t delay;
 	};
 
 	Sprite();
@@ -33,7 +32,7 @@ public:
 
 	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();
-	virtual void Update( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 
 	void UpdateAnimationState();	// take m_fSecondsIntoState, and move to a new state
 
@@ -54,8 +53,8 @@ public:
 	virtual int GetNumStates() const;
 	virtual void SetState( int iNewState );
 	int GetState() { return m_iCurState; }
-	virtual float GetAnimationLengthSeconds() const;
-	virtual void SetSecondsIntoAnimation( float fSeconds );
+	virtual int32_t GetAnimationLength() const;
+	virtual void SetSecondsIntoAnimation(float seconds);
 	void SetStateProperties(const vector<State>& new_states)
 	{ m_States= new_states; SetState(0); }
 
@@ -88,7 +87,7 @@ public:
 	// Commands
 	virtual void PushSelf( lua_State *L );
 
-	void SetAllStateDelays(float fDelay);
+	void SetAllStateDelays(float delay);
 
 	bool m_DecodeMovie;
 
@@ -104,8 +103,7 @@ private:
 
 	vector<State> m_States;
 	int		m_iCurState;
-	/** @brief The number of seconds that have elapsed since we switched to this frame. */
-	float	m_fSecsIntoState;
+	int32_t m_time_into_state;
 
 	EffectMode m_EffectMode;
 	bool m_bUsingCustomTexCoords;

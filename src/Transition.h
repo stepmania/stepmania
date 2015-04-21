@@ -15,11 +15,11 @@ public:
 
 	void Load( RString sBGAniDir );
 
-	virtual void UpdateInternal( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 
 	virtual void StartTransitioning( ScreenMessage send_when_done = SM_None );
 	virtual bool EarlyAbortDraw() const;
-	virtual float GetTweenTimeLeft() const;
+	virtual int64_t GetTweenTimeLeft() const;
 	void Reset(); // explicitly allow transitioning again
 
 	bool IsTransitioning() const	{ return m_State == transitioning; };

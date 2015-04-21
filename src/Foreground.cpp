@@ -71,7 +71,7 @@ void Foreground::LoadFromSong( const Song *pSong )
 	this->SortByDrawOrder();
 }
 
-void Foreground::Update( float fDeltaTime )
+void Foreground::UpdateInternal(int32_t tween_delta)
 {
 	// Calls to Update() should *not* be scaled by music rate. Undo it.
 	const float fRate = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
@@ -98,7 +98,7 @@ void Foreground::Update( float fDeltaTime )
 			bga.m_bga->PlayCommand( "On" );
 
 			const float fStartSecond = m_pSong->m_SongTiming.GetElapsedTimeFromBeat( bga.m_fStartBeat );
-			const float fStopSecond = fStartSecond + bga.m_bga->GetTweenTimeLeft();
+			const float fStopSecond = fStartSecond + bga.m_bga->GetTweenSecsLeft();
 			bga.m_fStopBeat = m_pSong->m_SongTiming.GetBeatFromElapsedTime( fStopSecond );
 
 			lDeltaTime = GAMESTATE->m_Position.m_fMusicSeconds - fStartSecond;
@@ -111,7 +111,7 @@ void Foreground::Update( float fDeltaTime )
 		// This shouldn't go down, but be safe:
 		lDeltaTime = max( lDeltaTime, 0 );
 
-		bga.m_bga->Update( lDeltaTime / fRate );
+		bga.m_bga->Update(tween_delta / fRate);
 
 		if( GAMESTATE->m_Position.m_fSongBeat > bga.m_fStopBeat )
 		{

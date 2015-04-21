@@ -13,7 +13,7 @@ public:
 	~ScreenReloadSongs();
 
 	virtual void Init();
-	void Update( float fDeltaTime );
+	void UpdateInternal(int32_t tween_delta);
 private:
 	int m_iUpdates;
 	LoadingWindow *m_pLoadingWindow;

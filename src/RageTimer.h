@@ -24,6 +24,7 @@ public:
 	static float GetTimeSinceStart( bool bAccurate = true );	// seconds since the program was started
 	static float GetTimeSinceStartFast() { return GetTimeSinceStart(false); }
 	static uint64_t GetUsecsSinceStart();
+	static uint64_t GetRawTime();
 
 	/* Get a timer representing half of the time ago as this one. */
 	RageTimer Half() const;
@@ -57,6 +58,7 @@ extern const RageTimer RageZeroTimer;
 #define START_TIME_CALL_COUNT(name) START_TIME(name); ++name##_call_count;
 #define END_TIME(name) uint64_t name##_end_time= RageTimer::GetUsecsSinceStart();  LOG->Time(#name " time: %zu to %zu = %zu", name##_start_time, name##_end_time, name##_end_time - name##_start_time);
 #define END_TIME_ADD_TO(name) uint64_t name##_end_time= RageTimer::GetUsecsSinceStart();  name##_total += name##_end_time - name##_start_time;
+#define END_TIME_CALL_COUNT(name) END_TIME_ADD_TO(name); ++name##_end_count;
 
 #define DECL_TOTAL_TIME(name) extern uint64_t name##_total;
 #define DEF_TOTAL_TIME(name) uint64_t name##_total= 0;
@@ -64,6 +66,24 @@ extern const RageTimer RageZeroTimer;
 #define DECL_TOT_CALL_PAIR(name) extern uint64_t name##_total; extern uint64_t name##_call_count;
 #define DEF_TOT_CALL_PAIR(name) uint64_t name##_total= 0; uint64_t name##_call_count= 0;
 #define PRINT_TOT_CALL_PAIR(name) LOG->Time(#name " calls: %zu, time: %zu", name##_call_count, name##_total);
+#define DECL_TOT_CALL_END(name) DECL_TOT_CALL_PAIR(name); extern uint64_t name##_end_count;
+#define DEF_TOT_CALL_END(name) DEF_TOT_CALL_PAIR(name); uint64_t name##_end_count= 0;
+#define PRINT_TOT_CALL_END(name) LOG->Time(#name " calls: %zu, time: %zu, early end: %zu", name##_call_count, name##_total, name##_end_count);
+
+DECL_TOT_CALL_END(actor_update);
+DECL_TOT_CALL_PAIR(game_loop_body);
+DECL_TOTAL_TIME(check_focus);
+DECL_TOTAL_TIME(soundman_update);
+DECL_TOTAL_TIME(sound_update);
+DECL_TOTAL_TIME(textureman_update);
+DECL_TOTAL_TIME(gamestate_update);
+DECL_TOTAL_TIME(screenman_update);
+DECL_TOTAL_TIME(memcardman_update);
+DECL_TOTAL_TIME(nsman_update);
+DECL_TOTAL_TIME(handle_input);
+DECL_TOTAL_TIME(devices_changed);
+DECL_TOTAL_TIME(lightsman_update);
+DECL_TOTAL_TIME(screenman_draw);
 
 #endif
 

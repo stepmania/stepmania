@@ -77,9 +77,9 @@ void ScreenSetTime::Init()
 	ChangeSelection( 0 );
 }
 
-void ScreenSetTime::Update( float fDelta )
+void ScreenSetTime::UpdateInternal(int32_t tween_delta)
 {
-	Screen::Update( fDelta );
+	Screen::UpdateInternal(tween_delta);
 
 	time_t iNow = time(NULL);
 	iNow += m_TimeOffset;

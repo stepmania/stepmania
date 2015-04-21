@@ -132,11 +132,11 @@ void GrooveRadar::GrooveRadarValueMap::SetFromValues( vector<float> vals )
 		m_PercentTowardNew = 0;
 }
 
-void GrooveRadar::GrooveRadarValueMap::Update( float fDeltaTime )
+void GrooveRadar::GrooveRadarValueMap::UpdateInternal(int32_t tween_delta)
 {
-	ActorFrame::Update( fDeltaTime );
+	ActorFrame::UpdateInternal(tween_delta);
 
-	m_PercentTowardNew = min( m_PercentTowardNew+4.0f*fDeltaTime, 1 );
+	m_PercentTowardNew = min( m_PercentTowardNew+4.0f*tween_time_to_secs(tween_delta), 1 );
 }
 
 void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()

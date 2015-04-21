@@ -12,7 +12,7 @@ public:
 	
 	bool Input( const InputEventPlus &input );
 
-	void Update( float fDeltaTime );
+	void UpdateInternal(int32_t tween_delta);
 
 	static void SetShowAutoplay( bool b );
 private:

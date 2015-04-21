@@ -61,11 +61,11 @@ void ScreenBookkeeping::Init()
 	UpdateView();
 }
 
-void ScreenBookkeeping::Update( float fDelta )
+void ScreenBookkeeping::UpdateInternal(int32_t tween_delta)
 {
 	UpdateView();	// refresh so that counts change in real-time
 
-	ScreenWithMenuElements::Update( fDelta );
+	ScreenWithMenuElements::UpdateInternal(tween_delta);
 }
 
 bool ScreenBookkeeping::Input( const InputEventPlus &input )

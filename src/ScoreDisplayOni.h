@@ -13,7 +13,7 @@ public:
 
 	virtual void Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats );
 
-	virtual void Update( float fDelta );
+	virtual void UpdateInternal(int32_t tween_delta);
 
 protected:
 	Sprite		m_sprFrame;

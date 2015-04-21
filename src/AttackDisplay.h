@@ -18,7 +18,7 @@ public:
 	void Init( const PlayerState* pPlayerState );
 	void SetAttack( const RString &mod );
 
-	virtual void Update( float fDelta );
+	virtual void UpdateInternal(int32_t tween_delta);
 
 protected:
 	const PlayerState* m_pPlayerState;
