@@ -33,6 +33,16 @@
 #define INVALID_SOCKET -1
 #endif
 
+// Returns a timeval set to the given number of milliseconds.
+inline timeval timevalFromMs(unsigned int ms)
+{
+	timeval tv;
+	tv.tv_sec = ms / 1000;
+	tv.tv_usec = (ms % 1000) * 1000;
+	return tv;
+}
+
+
 EzSockets::EzSockets()
 {
 	MAXCON = 5;
@@ -185,12 +195,24 @@ bool EzSockets::connect(const std::string& host, unsigned short port)
 	return true;
 }
 
+inline bool checkCanRead(int sock, timeval& timeout)
+{
+	fd_set fds;
+	FD_ZERO(&fds);
+	FD_SET((unsigned)sock, &fds);
+
+	return select(sock+1, &fds, NULL, NULL, &timeout) > 0;
+}
+
 bool EzSockets::CanRead()
 {
-	FD_ZERO(scks);
-	FD_SET((unsigned)sock, scks);
+	return checkCanRead(sock, *times);
+}
 
-	return select(sock+1,scks,NULL,NULL,times) > 0;
+bool EzSockets::CanRead(unsigned int msTimeout)
+{
+	timeval tv = timevalFromMs(msTimeout);
+	return checkCanRead(sock, tv);
 }
 
 bool EzSockets::IsError()
@@ -208,12 +230,24 @@ bool EzSockets::IsError()
 	return true;
 }
 
+inline bool checkCanWrite(int sock, timeval& timeout)
+{
+	fd_set fds;
+	FD_ZERO(&fds);
+	FD_SET((unsigned)sock, &fds);
+
+	return select(sock+1, NULL, &fds, NULL, &timeout) > 0;
+}
+
 bool EzSockets::CanWrite()
 {
-	FD_ZERO(scks);
-	FD_SET((unsigned)sock, scks);
+	return checkCanWrite(sock, *times);
+}
 
-	return select(sock+1, NULL, scks, NULL, times) > 0;
+bool EzSockets::CanWrite(unsigned int msTimeout)
+{
+	timeval tv = timevalFromMs(msTimeout);
+	return checkCanWrite(sock, tv);
 }
 
 void EzSockets::update()
