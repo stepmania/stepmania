@@ -666,6 +666,20 @@ CSN_EVAL_SOMETHING(evaluate_third_derivative);
 
 #undef CSN_EVAL_SOMETHING
 
+#define CSN_EVAL_RV_SOMETHING(something) \
+void CubicSplineN::something(float t, RageVector3& v) const \
+{ \
+	ASSERT(m_splines.size() == 3); \
+	v.x= m_splines[0].something(t, m_loop); \
+	v.y= m_splines[1].something(t, m_loop); \
+	v.z= m_splines[2].something(t, m_loop); \
+}
+
+CSN_EVAL_RV_SOMETHING(evaluate);
+CSN_EVAL_RV_SOMETHING(evaluate_derivative);
+
+#undef CSN_EVAL_RV_SOMETHING
+
 void CubicSplineN::set_point(size_t i, const vector<float>& v)
 {
 	ASSERT_M(v.size() == m_splines.size(), "CubicSplineN::set_point requires the passed point to be the same dimension as the spline.");

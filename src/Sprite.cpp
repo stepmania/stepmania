@@ -8,6 +8,7 @@
 #include "RageLog.h"
 #include "RageDisplay.h"
 #include "RageTexture.h"
+#include "RageTimer.h"
 #include "RageUtil.h"
 #include "ActorUtil.h"
 #include "Foreach.h"
@@ -23,6 +24,7 @@ Sprite::Sprite()
 	m_pTexture = NULL;
 	m_iCurState = 0;
 	m_fSecsIntoState = 0.0f;
+	m_animation_length_seconds= 0.0f;
 	m_bUsingCustomTexCoords = false;
 	m_bUsingCustomPosCoords = false;
 	m_bSkipNextUpdate = true;
@@ -58,6 +60,7 @@ Sprite::Sprite( const Sprite &cpy ):
 {
 #define CPY(a) a = cpy.a
 	CPY( m_States );
+	CPY(m_animation_length_seconds);
 	CPY( m_iCurState );
 	CPY( m_fSecsIntoState );
 	CPY( m_bUsingCustomTexCoords );
@@ -93,6 +96,7 @@ void Sprite::SetAllStateDelays(float fDelay)
 	{
 		m_States[i].fDelay = fDelay;
 	}
+	RecalcAnimationLengthSeconds();
 }
 
 RageTextureID Sprite::SongBGTexture( RageTextureID ID )
@@ -248,6 +252,7 @@ void Sprite::LoadFromNode( const XNode* pNode )
 	}
 
 	Actor::LoadFromNode( pNode );
+	RecalcAnimationLengthSeconds();
 }
 
 void Sprite::UnloadTexture()
@@ -351,6 +356,7 @@ void Sprite::LoadStatesFromTexture()
 		newState.rect = *m_pTexture->GetTextureCoordRect( i );
 		m_States.push_back( newState );
 	}
+	RecalcAnimationLengthSeconds();
 }
 
 void Sprite::UpdateAnimationState()
@@ -774,12 +780,13 @@ void Sprite::SetState( int iNewState )
 	m_fSecsIntoState = 0.0f;
 }
 
-float Sprite::GetAnimationLengthSeconds() const
+void Sprite::RecalcAnimationLengthSeconds()
 {
-	float fTotal = 0;
-	FOREACH_CONST( State, m_States, s )
-		fTotal += s->fDelay;
-	return fTotal;
+	float m_animation_length_seconds = 0;
+	FOREACH_CONST(State, m_States, s)
+	{
+		m_animation_length_seconds += s->fDelay;
+	}
 }
 
 void Sprite::SetSecondsIntoAnimation( float fSeconds )

@@ -60,6 +60,8 @@ public:
 	void UnloadTexture( RageTexture *t );
 	void ReloadAll();
 
+	void RegisterTextureForUpdating(RageTextureID id, RageTexture* tex);
+
 	bool SetPrefs( RageTextureManagerPrefs prefs );
 	RageTextureManagerPrefs GetPrefs() { return m_Prefs; };
 

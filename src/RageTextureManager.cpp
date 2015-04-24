@@ -35,6 +35,8 @@ RageTextureManager*		TEXTUREMAN		= NULL; // global and accessible from anywhere 
 namespace
 {
 	map<RageTextureID, RageTexture*> m_mapPathToTexture;
+	map<RageTextureID, RageTexture*> m_textures_to_update;
+	map<RageTexture*, RageTextureID> m_texture_ids_by_pointer;
 };
 
 RageTextureManager::RageTextureManager():
@@ -50,11 +52,13 @@ RageTextureManager::~RageTextureManager()
 			LOG->Trace( "TEXTUREMAN LEAK: '%s', RefCount = %d.", i->first.filename.c_str(), pTexture->m_iRefCount );
 		SAFE_DELETE( pTexture );
 	}
+	m_textures_to_update.clear();
+	m_texture_ids_by_pointer.clear();
 }
 
 void RageTextureManager::Update( float fDeltaTime )
 {
-	FOREACHM( RageTextureID, RageTexture*, m_mapPathToTexture, i )
+	FOREACHM(RageTextureID, RageTexture*, m_textures_to_update, i)
 	{
 		RageTexture* pTexture = i->second;
 		pTexture->Update( fDeltaTime );
@@ -93,6 +97,12 @@ void RageTextureManager::RegisterTexture( RageTextureID ID, RageTexture *pTextur
 	}
 
 	m_mapPathToTexture[ID] = pTexture;
+	m_texture_ids_by_pointer[pTexture]= ID;
+}
+
+void RageTextureManager::RegisterTextureForUpdating(RageTextureID id, RageTexture* tex)
+{
+	m_textures_to_update[id]= tex;
 }
 
 static const RString g_sDefaultTextureName = "__blank__";
@@ -164,6 +174,7 @@ RageTexture* RageTextureManager::LoadTextureInternal( RageTextureID ID )
 	}
 
 	m_mapPathToTexture[ID] = pTexture;
+	m_texture_ids_by_pointer[pTexture]= ID;
 
 	return pTexture;
 }
@@ -224,13 +235,43 @@ void RageTextureManager::DeleteTexture( RageTexture *t )
 	ASSERT( t->m_iRefCount == 0 );
 	LOG->Trace( "RageTextureManager: deleting '%s'.", t->GetID().filename.c_str() );
 
-	FOREACHM( RageTextureID, RageTexture*, m_mapPathToTexture, i )
+	map<RageTexture*, RageTextureID>::iterator id_entry=
+		m_texture_ids_by_pointer.find(t);
+	if(id_entry != m_texture_ids_by_pointer.end())
 	{
-		if( i->second == t )
+		map<RageTextureID, RageTexture*>::iterator tex_entry=
+			m_mapPathToTexture.find(id_entry->second);
+		if(tex_entry != m_mapPathToTexture.end())
 		{
-			m_mapPathToTexture.erase( i );	// remove map entry
-			SAFE_DELETE( t );	// free the texture
-			return;
+			m_mapPathToTexture.erase(tex_entry);
+			SAFE_DELETE(t);
+		}
+		map<RageTextureID, RageTexture*>::iterator tex_update_entry=
+			m_textures_to_update.find(id_entry->second);
+		if(tex_update_entry != m_textures_to_update.end())
+		{
+			m_textures_to_update.erase(tex_update_entry);
+		}
+		m_texture_ids_by_pointer.erase(id_entry);
+		return;
+	}
+	else
+	{
+		FAIL_M("Tried to delete a texture that wasn't in the ids by pointer list.");
+		FOREACHM( RageTextureID, RageTexture*, m_mapPathToTexture, i )
+		{
+			if( i->second == t )
+			{
+				m_mapPathToTexture.erase( i );	// remove map entry
+				SAFE_DELETE( t );	// free the texture
+				map<RageTextureID, RageTexture*>::iterator tex_update_entry=
+					m_textures_to_update.find(i->first);
+				if(tex_update_entry != m_textures_to_update.end())
+				{
+					m_textures_to_update.erase(tex_update_entry);
+				}
+				return;
+			}
 		}
 	}
 

@@ -50,7 +50,14 @@ ReceptorArrowRow::~ReceptorArrowRow()
 void ReceptorArrowRow::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
-	ArrowEffects::Update();
+	// If we're on gameplay, then the notefield will take care of updating
+	// ArrowEffects.  But if we're on ScreenNameEntry, there is no notefield,
+	// Checking whether m_renderers is null is a proxy for checking whether
+	// there is a notefield. -Kyz
+	if(m_renderers == NULL)
+	{
+		ArrowEffects::Update();
+	}
 
 	for( unsigned c=0; c<m_ReceptorArrow.size(); c++ )
 	{

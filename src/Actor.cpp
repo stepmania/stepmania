@@ -17,6 +17,7 @@
 #include <typeinfo>
 
 static Preference<bool> g_bShowMasks("ShowMasks", false);
+static const float default_effect_period= 1.0f;
 
 /**
  * @brief Set up a hidden Actor that won't be drawn.
@@ -107,10 +108,7 @@ void Actor::InitState()
 #endif
 	m_fSecsIntoEffect = 0;
 	m_fEffectDelta = 0;
-	m_fEffectRampUp = 0.5f;
-	m_fEffectHoldAtHalf = 0;
-	m_fEffectRampDown = 0.5f;
-	m_fEffectHoldAtZero = 0;
+	SetEffectPeriod(default_effect_period);
 	m_fEffectOffset = 0;
 	m_EffectClock = CLOCK_TIMER;
 	m_vEffectMagnitude = RageVector3(0,0,10);
@@ -229,6 +227,7 @@ Actor::Actor( const Actor &cpy ):
 	CPY( m_fEffectHoldAtHalf );
 	CPY( m_fEffectRampDown );
 	CPY( m_fEffectHoldAtZero );
+	CPY(m_effect_period);
 	CPY( m_fEffectOffset );
 	CPY( m_EffectClock );
 
@@ -801,7 +800,9 @@ void Actor::Update( float fDeltaTime )
 	{
 		m_fHibernateSecondsLeft -= fDeltaTime;
 		if( m_fHibernateSecondsLeft > 0 )
+		{
 			return;
+		}
 
 		// Grab the leftover time.
 		fDeltaTime = -m_fHibernateSecondsLeft;
@@ -815,69 +816,65 @@ void Actor::Update( float fDeltaTime )
 	this->UpdateInternal( fDeltaTime );
 }
 
-void Actor::UpdateInternal( float fDeltaTime )
+static void generic_global_timer_update(float new_time, float& effect_delta_time, float& time_into_effect)
+{
+	effect_delta_time= new_time - time_into_effect;
+	time_into_effect= new_time;
+}
+
+void Actor::UpdateInternal(float delta_time)
 {
 	if( m_bFirstUpdate )
 		m_bFirstUpdate = false;
 
-	switch( m_EffectClock )
+	switch(m_EffectClock)
 	{
-	case CLOCK_TIMER:
-		m_fSecsIntoEffect += fDeltaTime;
-		m_fEffectDelta = fDeltaTime;
-
-		/* Wrap the counter, so it doesn't increase indefinitely (causing loss
-		 * of precision if a screen is left to sit for a day). */
-		if( m_fSecsIntoEffect >= GetEffectPeriod() )
-			m_fSecsIntoEffect -= GetEffectPeriod();
-		break;
-
-	case CLOCK_TIMER_GLOBAL:
-	{
-		float fTime = RageTimer::GetTimeSinceStartFast();
-		m_fEffectDelta = fTime - m_fSecsIntoEffect;
-		m_fSecsIntoEffect = fTime;
-		break;
-	}
-
-	case CLOCK_BGM_BEAT:
-		m_fEffectDelta = g_fCurrentBGMBeat - m_fSecsIntoEffect;
-		m_fSecsIntoEffect = g_fCurrentBGMBeat;
-		break;
-
-	case CLOCK_BGM_BEAT_PLAYER1:
-		m_fEffectDelta = g_vfCurrentBGMBeatPlayer[PLAYER_1] - m_fSecsIntoEffect;
-		m_fSecsIntoEffect = g_vfCurrentBGMBeatPlayerNoOffset[PLAYER_1];
-		break;
-		
-	case CLOCK_BGM_BEAT_PLAYER2:
-		m_fEffectDelta = g_vfCurrentBGMBeatPlayer[PLAYER_2] - m_fSecsIntoEffect;
-		m_fSecsIntoEffect = g_vfCurrentBGMBeatPlayerNoOffset[PLAYER_2];
-		break;
-	
-	case CLOCK_BGM_TIME:
-		m_fEffectDelta = g_fCurrentBGMTime - m_fSecsIntoEffect;
-		m_fSecsIntoEffect = g_fCurrentBGMTime;
-		break;
-
-	case CLOCK_BGM_BEAT_NO_OFFSET:
-		m_fEffectDelta = g_fCurrentBGMBeatNoOffset - m_fSecsIntoEffect;
-		m_fSecsIntoEffect = g_fCurrentBGMBeatNoOffset;
-		break;
-
-	case CLOCK_BGM_TIME_NO_OFFSET:
-		m_fEffectDelta = g_fCurrentBGMTimeNoOffset - m_fSecsIntoEffect;
-		m_fSecsIntoEffect = g_fCurrentBGMTimeNoOffset;
-		break;
-
-	default:
-		if( m_EffectClock >= CLOCK_LIGHT_1 && m_EffectClock <= CLOCK_LIGHT_LAST )
-		{
-			int i = m_EffectClock - CLOCK_LIGHT_1;
-			m_fEffectDelta = g_fCabinetLights[i] - m_fSecsIntoEffect;
-			m_fSecsIntoEffect = g_fCabinetLights[i];
-		}
-		break;
+		case CLOCK_TIMER:
+			m_fSecsIntoEffect+= delta_time;
+			m_fEffectDelta= delta_time;
+			// Wrap the counter, so it doesn't increase indefinitely (causing loss
+			// of precision if a screen is left to sit for a day).
+			if(m_fSecsIntoEffect > GetEffectPeriod())
+			{
+				m_fSecsIntoEffect-= GetEffectPeriod();
+			}
+			break;
+		case CLOCK_TIMER_GLOBAL:
+			generic_global_timer_update(RageTimer::GetUsecsSinceStart(),
+				m_fEffectDelta, m_fSecsIntoEffect);
+			break;
+		case CLOCK_BGM_BEAT:
+			generic_global_timer_update(g_fCurrentBGMBeat,
+				m_fEffectDelta, m_fSecsIntoEffect);
+			break;
+		case CLOCK_BGM_BEAT_PLAYER1:
+			generic_global_timer_update(g_vfCurrentBGMBeatPlayer[PLAYER_1],
+				m_fEffectDelta, m_fSecsIntoEffect);
+			break;
+		case CLOCK_BGM_BEAT_PLAYER2:
+			generic_global_timer_update(g_vfCurrentBGMBeatPlayer[PLAYER_2],
+				m_fEffectDelta, m_fSecsIntoEffect);
+			break;
+		case CLOCK_BGM_TIME:
+			generic_global_timer_update(g_fCurrentBGMTime,
+				m_fEffectDelta, m_fSecsIntoEffect);
+			break;
+		case CLOCK_BGM_BEAT_NO_OFFSET:
+			generic_global_timer_update(g_fCurrentBGMBeatNoOffset,
+				m_fEffectDelta, m_fSecsIntoEffect);
+			break;
+		case CLOCK_BGM_TIME_NO_OFFSET:
+			generic_global_timer_update(g_fCurrentBGMTimeNoOffset,
+				m_fEffectDelta, m_fSecsIntoEffect);
+			break;
+		default:
+			if(m_EffectClock >= CLOCK_LIGHT_1 && m_EffectClock <= CLOCK_LIGHT_LAST)
+			{
+				generic_global_timer_update(
+					g_fCabinetLights[m_EffectClock - CLOCK_LIGHT_1],
+					m_fEffectDelta, m_fSecsIntoEffect);
+			}
+			break;
 	}
 
 	// update effect
@@ -893,7 +890,7 @@ void Actor::UpdateInternal( float fDeltaTime )
 		default: break;
 	}
 
-	this->UpdateTweening( fDeltaTime );
+	this->UpdateTweening(delta_time);
 }
 
 RString Actor::GetLineage() const
@@ -1073,11 +1070,8 @@ void Actor::SetEffectPeriod( float fTime )
 	m_fEffectHoldAtHalf = 0;
 	m_fEffectRampDown = fTime/2;
 	m_fEffectHoldAtZero = 0;
-}
-
-float Actor::GetEffectPeriod() const
-{
-	return m_fEffectRampUp + m_fEffectHoldAtHalf + m_fEffectRampDown + m_fEffectHoldAtZero;
+	m_effect_period= m_fEffectRampUp + m_fEffectHoldAtHalf + m_fEffectRampDown +
+		m_fEffectHoldAtZero;
 }
 
 void Actor::SetEffectTiming( float fRampUp, float fAtHalf, float fRampDown, float fAtZero )
@@ -1091,19 +1085,26 @@ void Actor::SetEffectTiming( float fRampUp, float fAtHalf, float fRampDown, floa
 	m_fEffectHoldAtHalf = fAtHalf; 
 	m_fEffectRampDown = fRampDown;
 	m_fEffectHoldAtZero = fAtZero;
+	m_effect_period= m_fEffectRampUp + m_fEffectHoldAtHalf + m_fEffectRampDown +
+		m_fEffectHoldAtZero;
 }
 
 // effect "macros"
+
+void Actor::ResetEffectTimeIfDifferent(Effect new_effect)
+{
+	if(m_Effect != new_effect)
+	{
+		m_Effect= new_effect;
+		m_fSecsIntoEffect = 0;
+	}
+}
 
 void Actor::SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
 	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
-	if( m_Effect != diffuse_blink )
-	{
-		m_Effect = diffuse_blink;
-		m_fSecsIntoEffect = 0;
-	}
+	ResetEffectTimeIfDifferent(diffuse_blink);
 	SetEffectPeriod( fEffectPeriodSeconds );
 	m_effectColor1 = c1;
 	m_effectColor2 = c2;
@@ -1113,11 +1114,7 @@ void Actor::SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, Rag
 {
 	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
-	if( m_Effect != diffuse_shift )
-	{
-		m_Effect = diffuse_shift;
-		m_fSecsIntoEffect = 0;
-	}
+	ResetEffectTimeIfDifferent(diffuse_shift);
 	SetEffectPeriod( fEffectPeriodSeconds );
 	m_effectColor1 = c1;
 	m_effectColor2 = c2;
@@ -1127,11 +1124,7 @@ void Actor::SetEffectDiffuseRamp( float fEffectPeriodSeconds, RageColor c1, Rage
 {
 	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
-	if( m_Effect != diffuse_ramp )
-	{
-		m_Effect = diffuse_ramp;
-		m_fSecsIntoEffect = 0;
-	}
+	ResetEffectTimeIfDifferent(diffuse_ramp);
 	SetEffectPeriod( fEffectPeriodSeconds );
 	m_effectColor1 = c1;
 	m_effectColor2 = c2;
@@ -1141,11 +1134,7 @@ void Actor::SetEffectGlowBlink( float fEffectPeriodSeconds, RageColor c1, RageCo
 {
 	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
-	if( m_Effect != glow_blink )
-	{
-		m_Effect = glow_blink;
-		m_fSecsIntoEffect = 0;
-	}
+	ResetEffectTimeIfDifferent(glow_blink);
 	SetEffectPeriod( fEffectPeriodSeconds );
 	m_effectColor1 = c1;
 	m_effectColor2 = c2;
@@ -1155,11 +1144,7 @@ void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageCo
 {
 	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
-	if( m_Effect != glow_shift )
-	{
-		m_Effect = glow_shift;
-		m_fSecsIntoEffect = 0;
-	}
+	ResetEffectTimeIfDifferent(glow_shift);
 	SetEffectPeriod( fEffectPeriodSeconds );
 	m_effectColor1 = c1;
 	m_effectColor2 = c2;
@@ -1169,11 +1154,7 @@ void Actor::SetEffectGlowRamp( float fEffectPeriodSeconds, RageColor c1, RageCol
 {
 	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
-	if( m_Effect != glow_ramp )
-	{
-		m_Effect = glow_ramp;
-		m_fSecsIntoEffect = 0;
-	}
+	ResetEffectTimeIfDifferent(glow_ramp);
 	SetEffectPeriod( fEffectPeriodSeconds );
 	m_effectColor1 = c1;
 	m_effectColor2 = c2;
@@ -1183,11 +1164,7 @@ void Actor::SetEffectRainbow( float fEffectPeriodSeconds )
 {
 	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
-	if( m_Effect != rainbow )
-	{
-		m_Effect = rainbow;
-		m_fSecsIntoEffect = 0;
-	}
+	ResetEffectTimeIfDifferent(rainbow);
 	SetEffectPeriod( fEffectPeriodSeconds );
 }
 
@@ -1195,11 +1172,7 @@ void Actor::SetEffectWag( float fPeriod, RageVector3 vect )
 {
 	ASSERT( fPeriod > 0 );
 	// todo: account for SSC_FUTURES -aj
-	if( m_Effect != wag )
-	{
-		m_Effect = wag;
-		m_fSecsIntoEffect = 0;
-	}
+	ResetEffectTimeIfDifferent(wag);
 	SetEffectPeriod( fPeriod );
 	m_vEffectMagnitude = vect;
 }

@@ -136,9 +136,9 @@ struct NCSplineHandler
 		m_subtract_song_beat_from_curr= true;
 	}
 	float BeatToTValue(float song_beat, float note_beat) const;
-	void EvalForBeat(float song_beat, float note_beat, vector<float>& ret) const;
-	void EvalDerivForBeat(float song_beat, float note_beat, vector<float>& ret) const;
-	void EvalForReceptor(float song_beat, vector<float>& ret) const;
+	void EvalForBeat(float song_beat, float note_beat, RageVector3& ret) const;
+	void EvalDerivForBeat(float song_beat, float note_beat, RageVector3& ret) const;
+	void EvalForReceptor(float song_beat, RageVector3& ret) const;
 	static void MakeWeightedAverage(NCSplineHandler& out,
 		const NCSplineHandler& from, const NCSplineHandler& to, float between);
 
@@ -153,15 +153,15 @@ struct NCSplineHandler
 
 struct NoteColumnRenderArgs
 {
-	void spae_pos_for_beat(const PlayerState* state,
+	void spae_pos_for_beat(const PlayerState* player_state,
 		float beat, float y_offset, float y_reverse_offset,
-		vector<float>& sp_pos, vector<float>& ae_pos) const;
+		RageVector3& sp_pos, RageVector3& ae_pos) const;
 	void spae_zoom_for_beat(const PlayerState* state, float beat,
-		vector<float>& sp_zoom, vector<float>& ae_zoom) const;
+		RageVector3& sp_zoom, RageVector3& ae_zoom) const;
 	void SetPRZForActor(Actor* actor,
-		const vector<float>& sp_pos, const vector<float>& ae_pos,
-		const vector<float>& sp_rot, const vector<float>& ae_rot,
-		const vector<float>& sp_zoom, const vector<float>& ae_zoom) const;
+		const RageVector3& sp_pos, const RageVector3& ae_pos,
+		const RageVector3& sp_rot, const RageVector3& ae_rot,
+		const RageVector3& sp_zoom, const RageVector3& ae_zoom) const;
 	const NCSplineHandler* pos_handler;
 	const NCSplineHandler* rot_handler;
 	const NCSplineHandler* zoom_handler;
@@ -221,23 +221,44 @@ private:
 	Actor *GetHoldActor( NoteColorActor nca[NUM_HoldType][NUM_ActiveType], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
 	Sprite *GetHoldSprite( NoteColorSprite ncs[NUM_HoldType][NUM_ActiveType], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
 
+	struct draw_hold_part_args
+	{
+		int y_step;
+		float percent_fade_to_fail;
+		float color_scale;
+		float overlapped_time;
+		float y_top;
+		float y_bottom;
+		float y_start_pos;
+		float y_end_pos;
+		float top_beat;
+		float bottom_beat;
+		bool wrapping;
+		bool anchor_to_top;
+		bool flip_texture_vertically;
+	};
+
 	void DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 		const NoteFieldRenderArgs& field_args,
 		const NoteColumnRenderArgs& column_args, float fYOffset, float fBeat,
 		bool bIsAddition, float fPercentFadeToFail, float fColorScale,
 		bool is_being_held);
-	void DrawHoldBody(const TapNote& tn, const NoteFieldRenderArgs& field_args,
-		const NoteColumnRenderArgs& column_args, float fBeat, bool bIsBeingHeld,
-		float fYHead, float fYTail,
-		bool bIsAddition, float fPercentFadeToFail, float fColorScale,
-		bool bGlow, float top_beat, float bottom_beat);
 	void DrawHoldPart(vector<Sprite*> &vpSpr,
 		const NoteFieldRenderArgs& field_args,
-		const NoteColumnRenderArgs& column_args, int fYStep,
-		float fPercentFadeToFail, float fColorScale, bool bGlow,
-		float fOverlappedTime, float fYTop, float fYBottom, float fYStartPos,
-		float fYEndPos, bool bWrapping, bool bAnchorToTop,
-		bool bFlipTextureVertically, float top_beat, float bottom_beat);
+		const NoteColumnRenderArgs& column_args,
+		const draw_hold_part_args& part_args, bool glow);
+	void DrawHoldBodyInternal(vector<Sprite*>& sprite_top,
+		vector<Sprite*>& sprite_body, vector<Sprite*>& sprite_bottom,
+		const NoteFieldRenderArgs& field_args,
+		const NoteColumnRenderArgs& column_args,
+		draw_hold_part_args& part_args,
+		const float head_minus_top, const float tail_plus_bottom,
+		const float y_head, const float y_tail, const float top_beat,
+		const float bottom_beat, bool glow);
+	void DrawHoldBody(const TapNote& tn, const NoteFieldRenderArgs& field_args,
+		const NoteColumnRenderArgs& column_args, float beat, bool being_held,
+		float y_head, float y_tail, float percent_fade_to_fail,
+		float color_scale, float top_beat, float bottom_beat);
 
 	const PlayerState	*m_pPlayerState;	// to look up PlayerOptions
 	NoteMetricCache_t	*cache;

@@ -303,19 +303,19 @@ float NCSplineHandler::BeatToTValue(float song_beat, float note_beat) const
 	return relative_beat / m_beats_per_t;
 }
 
-void NCSplineHandler::EvalForBeat(float song_beat, float note_beat, vector<float>& ret) const
+void NCSplineHandler::EvalForBeat(float song_beat, float note_beat, RageVector3& ret) const
 {
 	float t_value= BeatToTValue(song_beat, note_beat);
 	m_spline.evaluate(t_value, ret);
 }
 
-void NCSplineHandler::EvalDerivForBeat(float song_beat, float note_beat, vector<float>& ret) const
+void NCSplineHandler::EvalDerivForBeat(float song_beat, float note_beat, RageVector3& ret) const
 {
 	float t_value= BeatToTValue(song_beat, note_beat);
 	m_spline.evaluate_derivative(t_value, ret);
 }
 
-void NCSplineHandler::EvalForReceptor(float song_beat, vector<float>& ret) const
+void NCSplineHandler::EvalForReceptor(float song_beat, RageVector3& ret) const
 {
 	float t_value= m_receptor_t;
 	if(!m_subtract_song_beat_from_curr)
@@ -344,22 +344,17 @@ void NCSplineHandler::MakeWeightedAverage(NCSplineHandler& out,
 		between);
 }
 
-void NoteColumnRenderArgs::spae_pos_for_beat(const PlayerState* state,
+void NoteColumnRenderArgs::spae_pos_for_beat(const PlayerState* player_state,
 	float beat, float y_offset, float y_reverse_offset,
-	vector<float>& sp_pos, vector<float>& ae_pos) const
+	RageVector3& sp_pos, RageVector3& ae_pos) const
 {
 	switch(pos_handler->m_spline_mode)
 	{
 		case NCSM_Disabled:
-			ArrowEffects::GetXYZPos(state, column, y_offset, y_reverse_offset, ae_pos);
-			sp_pos.resize(3);
-			// Sure, resize is supposed to call the default constructor, and for
-			// numbers the default constructor is supposed to set it to zero, but
-			// I got bit for relying on that once. -Kyz
-			sp_pos[0]= sp_pos[1]= sp_pos[2]= 0.0f;
+			ArrowEffects::GetXYZPos(player_state, column, y_offset, y_reverse_offset, ae_pos);
 			break;
 		case NCSM_Offset:
-			ArrowEffects::GetXYZPos(state, column, y_offset, y_reverse_offset, ae_pos);
+			ArrowEffects::GetXYZPos(player_state, column, y_offset, y_reverse_offset, ae_pos);
 			pos_handler->EvalForBeat(song_beat, beat, sp_pos);
 			break;
 		case NCSM_Position:
@@ -368,17 +363,15 @@ void NoteColumnRenderArgs::spae_pos_for_beat(const PlayerState* state,
 	}
 }
 void NoteColumnRenderArgs::spae_zoom_for_beat(const PlayerState* state, float beat,
-	vector<float>& sp_zoom, vector<float>& ae_zoom) const
+	RageVector3& sp_zoom, RageVector3& ae_zoom) const
 {
 	switch(zoom_handler->m_spline_mode)
 	{
 		case NCSM_Disabled:
-			ae_zoom[0]= ae_zoom[1]= ae_zoom[2]= ArrowEffects::GetZoom(state);
-			sp_zoom.resize(3);
-			sp_zoom[0]= sp_zoom[1]= sp_zoom[2]= 0.0f;
+			ae_zoom.x= ae_zoom.y= ae_zoom.z= ArrowEffects::GetZoom(state);
 			break;
 		case NCSM_Offset:
-			ae_zoom[0]= ae_zoom[1]= ae_zoom[2]= ArrowEffects::GetZoom(state);
+			ae_zoom.x= ae_zoom.y= ae_zoom.z= ArrowEffects::GetZoom(state);
 			zoom_handler->EvalForBeat(song_beat, beat, sp_zoom);
 			break;
 		case NCSM_Position:
@@ -387,19 +380,19 @@ void NoteColumnRenderArgs::spae_zoom_for_beat(const PlayerState* state, float be
 	}
 }
 void NoteColumnRenderArgs::SetPRZForActor(Actor* actor,
-	const vector<float>& sp_pos, const vector<float>& ae_pos,
-	const vector<float>& sp_rot, const vector<float>& ae_rot,
-	const vector<float>& sp_zoom, const vector<float>& ae_zoom) const
+	const RageVector3& sp_pos, const RageVector3& ae_pos,
+	const RageVector3& sp_rot, const RageVector3& ae_rot,
+	const RageVector3& sp_zoom, const RageVector3& ae_zoom) const
 {
-	actor->SetX(sp_pos[0] + ae_pos[0]);
-	actor->SetY(sp_pos[1] + ae_pos[1]);
-	actor->SetZ(sp_pos[2] + ae_pos[2]);
-	actor->SetRotationX(sp_rot[0] * PI_180R + ae_rot[0]);
-	actor->SetRotationY(sp_rot[1] * PI_180R + ae_rot[1]);
-	actor->SetRotationZ(sp_rot[2] * PI_180R + ae_rot[2]);
-	actor->SetZoomX(sp_zoom[0] + ae_zoom[0]);
-	actor->SetZoomY(sp_zoom[1] + ae_zoom[1]);
-	actor->SetZoomZ(sp_zoom[2] + ae_zoom[2]);
+	actor->SetX(sp_pos.x + ae_pos.x);
+	actor->SetY(sp_pos.y + ae_pos.y);
+	actor->SetZ(sp_pos.z + ae_pos.z);
+	actor->SetRotationX(sp_rot.x * PI_180R + ae_rot.x);
+	actor->SetRotationY(sp_rot.y * PI_180R + ae_rot.y);
+	actor->SetRotationZ(sp_rot.z * PI_180R + ae_rot.z);
+	actor->SetZoomX(sp_zoom.x + ae_zoom.x);
+	actor->SetZoomY(sp_zoom.y + ae_zoom.y);
+	actor->SetZoomZ(sp_zoom.z + ae_zoom.z);
 }
 
 
@@ -704,9 +697,9 @@ Sprite *NoteDisplay::GetHoldSprite( NoteColorSprite ncs[NUM_HoldType][NUM_Active
 static float ArrowGetAlphaOrGlow( bool bGlow, const PlayerState* pPlayerState, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
 	if( bGlow )
-		return ArrowEffects::GetGlow( pPlayerState, iCol, fYOffset, fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+		return ArrowEffects::GetGlow(iCol, fYOffset, fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar);
 	else
-		return ArrowEffects::GetAlpha( pPlayerState, iCol, fYOffset, fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar  );
+		return ArrowEffects::GetAlpha(iCol, fYOffset, fPercentFadeToFail, fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar);
 }
 
 struct StripBuffer
@@ -738,53 +731,49 @@ struct StripBuffer
 
 void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	const NoteFieldRenderArgs& field_args,
-	const NoteColumnRenderArgs& column_args, int fYStep,
-	float fPercentFadeToFail, float fColorScale, bool bGlow,
-	float fOverlappedTime, float fYTop, float fYBottom, float fYStartPos,
-	float fYEndPos, bool bWrapping, bool bAnchorToTop,
-	bool bFlipTextureVertically, float top_beat, float bottom_beat)
+	const NoteColumnRenderArgs& column_args,
+	const draw_hold_part_args& part_args, bool glow)
 {
-	ASSERT( !vpSpr.empty() );
+	ASSERT(!vpSpr.empty());
 
 	float ae_zoom= ArrowEffects::GetZoom(m_pPlayerState);
 	Sprite *pSprite = vpSpr.front();
 
 	// draw manually in small segments
 	RectF rect = *pSprite->GetCurrentTextureCoordRect();
-	if( bFlipTextureVertically )
-		swap( rect.top, rect.bottom );
+	if(part_args.flip_texture_vertically)
+		swap(rect.top, rect.bottom);
 	const float fFrameWidth		= pSprite->GetUnzoomedWidth();
 	const float fFrameHeight	= pSprite->GetUnzoomedHeight() * ae_zoom;
 
 	/* Only draw the section that's within the range specified.  If a hold note is
 	 * very long, don't process or draw the part outside of the range.  Don't change
-	 * fYTop or fYBottom; they need to be left alone to calculate texture coordinates. */
-	fYStartPos = max( fYTop, fYStartPos );
-	fYEndPos = min( fYBottom, fYEndPos );
-
-	if( bGlow )
-		fColorScale = 1;
+	 * part_args.y_top or part_args.y_bottom; they need to be left alone to calculate texture coordinates. */
+	const float y_start_pos = max(part_args.y_top, part_args.y_start_pos);
+	const float y_end_pos = min(part_args.y_bottom, part_args.y_end_pos);
+	const float color_scale= glow ? 1 : part_args.color_scale;
 
 	// top to bottom
 	bool bAllAreTransparent = true;
 	bool bLast = false;
 	float fAddToTexCoord = 0;
 
-	if( !bAnchorToTop )
+	if(!part_args.anchor_to_top)
 	{
-		float fTexCoordBottom		= SCALE( fYBottom - fYTop, 0, fFrameHeight, rect.top, rect.bottom );
-		float fWantTexCoordBottom	= ceilf( fTexCoordBottom - 0.0001f );
-		fAddToTexCoord = fWantTexCoordBottom - fTexCoordBottom;
+		float tex_coord_bottom= SCALE(part_args.y_bottom - part_args.y_top,
+			0, fFrameHeight, rect.top, rect.bottom);
+		float want_tex_coord_bottom	= ceilf(tex_coord_bottom - 0.0001f);
+		fAddToTexCoord = want_tex_coord_bottom - tex_coord_bottom;
 	}
 
-	if( bWrapping )
+	if(part_args.wrapping)
 	{
 		/* For very large hold notes, shift the texture coordinates to be near 0, so we
 		 * don't send very large values to the renderer. */
-		const float fDistFromTop	= fYStartPos - fYTop;
-		float fTexCoordTop		= SCALE( fDistFromTop, 0, fFrameHeight, rect.top, rect.bottom );
+		const float fDistFromTop	= y_start_pos - part_args.y_top;
+		float fTexCoordTop		= SCALE(fDistFromTop, 0, fFrameHeight, rect.top, rect.bottom);
 		fTexCoordTop += fAddToTexCoord;
-		fAddToTexCoord -= floorf( fTexCoordTop );
+		fAddToTexCoord -= floorf(fTexCoordTop);
 	}
 
 	DISPLAY->ClearAllTextures();
@@ -798,20 +787,20 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	static const RageVector3 pos_y_vec(0.0f, 1.0f, 0.0f);
 
 	StripBuffer queue;
-	for( float fY = fYStartPos; !bLast; fY += fYStep )
+	for(float fY = y_start_pos; !bLast; fY += part_args.y_step)
 	{
-		if( fY >= fYEndPos )
+		if(fY >= y_end_pos)
 		{
-			fY = fYEndPos;
+			fY = y_end_pos;
 			bLast = true;
 		}
 
-		const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, column_args.column, fY, m_fYReverseOffsetPixels );
+		const float fYOffset= ArrowEffects::GetYOffsetFromYPos(column_args.column, fY, m_fYReverseOffsetPixels);
 
-		float cur_beat= top_beat;
-		if(top_beat != bottom_beat)
+		float cur_beat= part_args.top_beat;
+		if(part_args.top_beat != part_args.bottom_beat)
 		{
-			cur_beat= SCALE(fY, fYTop, fYBottom, top_beat, bottom_beat);
+			cur_beat= SCALE(fY, part_args.y_top, part_args.y_bottom, part_args.top_beat, part_args.bottom_beat);
 		}
 
 		// Fun times ahead with vector math.  If the notes are being moved by the
@@ -834,12 +823,12 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		// TODO:  Figure out whether it's worth the time investment to figure out
 		// a way to skip the complex vector handling if the spline is disabled.
 
-		vector<float> sp_pos;
-		vector<float> sp_pos_forward;
-		vector<float> sp_rot;
-		vector<float> sp_zoom;
-		vector<float> ae_pos(3, 0.0f);
-		vector<float> ae_rot(3, 0.0f);
+		RageVector3 sp_pos;
+		RageVector3 sp_pos_forward;
+		RageVector3 sp_rot;
+		RageVector3 sp_zoom;
+		RageVector3 ae_pos;
+		RageVector3 ae_rot;
 
 		// (step 1 of vector handling, part 1)
 		// ArrowEffects only contributes to the Y component of the vector to
@@ -848,32 +837,30 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		RageVector3 render_forward(0.0f, 1.0f, 0.0f);
 		column_args.spae_pos_for_beat(m_pPlayerState, cur_beat,
 			fYOffset, m_fYReverseOffsetPixels, sp_pos, ae_pos);
-		// fX and fZ are sp_pos[0] + ae_pos[0] and sp_pos[2] + ae_pos[2]. -Kyz
+		// fX and fZ are sp_pos.x + ae_pos.x and sp_pos.z + ae_pos.z. -Kyz
 		// fY is the actual y position that should be used, not whatever spae
 		// fetched from ArrowEffects. -Kyz
 		switch(column_args.pos_handler->m_spline_mode)
 		{
 			case NCSM_Disabled:
-				ae_pos[1]= fY;
-				sp_pos_forward.resize(3);
-				sp_pos_forward[0]= sp_pos_forward[1]= sp_pos_forward[2]= 0.0f;
+				ae_pos.y= fY;
 				break;
 			case NCSM_Offset:
-				ae_pos[1]= fY;
+				ae_pos.y= fY;
 				column_args.pos_handler->EvalDerivForBeat(column_args.song_beat, cur_beat, sp_pos_forward);
-				VectorFloatNormalize(sp_pos_forward);
+				RageVec3Normalize(&sp_pos_forward, &sp_pos_forward);
 				break;
 			case NCSM_Position:
-				ae_pos[1]= 0.0f;
+				ae_pos.y= 0.0f;
 				render_forward.y= 0.0f;
 				column_args.pos_handler->EvalDerivForBeat(column_args.song_beat, cur_beat, sp_pos_forward);
-				VectorFloatNormalize(sp_pos_forward);
+				RageVec3Normalize(&sp_pos_forward, &sp_pos_forward);
 				break;
 		}
 
-		render_forward.x+= sp_pos_forward[0];
-		render_forward.y+= sp_pos_forward[1];
-		render_forward.z+= sp_pos_forward[2];
+		render_forward.x+= sp_pos_forward.x;
+		render_forward.y+= sp_pos_forward.y;
+		render_forward.z+= sp_pos_forward.z;
 		// Normalize the vector so it'll be easy to test when determining whether
 		// to use pos_z_vec or pos_y_vec for the cross product in step 2.
 		RageVec3Normalize(&render_forward, &render_forward);
@@ -888,15 +875,15 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 				break;
 			case NCSM_Offset:
 				column_args.zoom_handler->EvalForBeat(column_args.song_beat, cur_beat, sp_zoom);
-				render_width= fFrameWidth * (ae_zoom + sp_zoom[0]);
+				render_width= fFrameWidth * (ae_zoom + sp_zoom.x);
 				break;
 			case NCSM_Position:
 				column_args.zoom_handler->EvalForBeat(column_args.song_beat, cur_beat, sp_zoom);
-				render_width= fFrameWidth * sp_zoom[0];
+				render_width= fFrameWidth * sp_zoom.x;
 				break;
 		}
 
-		const float fFrameWidthScale	= ArrowEffects::GetFrameWidthScale( m_pPlayerState, fYOffset, fOverlappedTime );
+		const float fFrameWidthScale	= ArrowEffects::GetFrameWidthScale(m_pPlayerState, fYOffset, part_args.overlapped_time);
 		const float fScaledFrameWidth	= render_width * fFrameWidthScale;
 
 		// Can't use the same code as for taps because hold bodies can only rotate
@@ -905,12 +892,10 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		{
 			case NCSM_Disabled:
 				// XXX: Actor rotations use degrees, Math uses radians. Convert here.
-				ae_rot[1]= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset) * PI_180;
-				sp_rot.resize(3);
-				sp_rot[0]= sp_rot[1]= sp_rot[2]= 0.0f;
+				ae_rot.y= ArrowEffects::GetRotationY(fYOffset) * PI_180;
 				break;
 			case NCSM_Offset:
-				ae_rot[1]= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset) * PI_180;
+				ae_rot.y= ArrowEffects::GetRotationY(fYOffset) * PI_180;
 				column_args.rot_handler->EvalForBeat(column_args.song_beat, cur_beat, sp_rot);
 				break;
 			case NCSM_Position:
@@ -918,18 +903,18 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 				break;
 		}
 
-		RageVector3 center_vert(sp_pos[0] + ae_pos[0],
-			sp_pos[1] + ae_pos[1], sp_pos[2] + ae_pos[2]);
+		RageVector3 center_vert(sp_pos.x + ae_pos.x,
+			sp_pos.y + ae_pos.y, sp_pos.z + ae_pos.z);
 
 		// Special case for hold caps, which have the same top and bottom beat.
-		if(top_beat == bottom_beat && fY != fYStartPos)
+		if(part_args.top_beat == part_args.bottom_beat && fY != y_start_pos)
 		{
 			center_vert.x+= render_forward.x;
 			center_vert.y+= render_forward.y;
 			center_vert.z+= render_forward.z;
 		}
 
-		const float render_roty= (sp_rot[1] + ae_rot[1]);
+		const float render_roty= (sp_rot.y + ae_rot.y);
 
 		// (step 2 of vector handling)
 		RageVector3 render_left;
@@ -952,21 +937,18 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		const RageVector3 right_vert(center_vert.x - render_left.x,
 			center_vert.y - render_left.y, center_vert.z - render_left.z);
 
-		const float fDistFromTop	= fY - fYTop;
-		float fTexCoordTop		= SCALE( fDistFromTop, 0, fFrameHeight, rect.top, rect.bottom );
+		const float fDistFromTop	= fY - part_args.y_top;
+		float fTexCoordTop		= SCALE(fDistFromTop, 0, fFrameHeight, rect.top, rect.bottom);
 		fTexCoordTop += fAddToTexCoord;
 
-		const float fAlpha		= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, column_args.column, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets );
+		const float fAlpha		= ArrowGetAlphaOrGlow(glow, m_pPlayerState, column_args.column, fYOffset, part_args.percent_fade_to_fail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets);
 		const RageColor color= RageColor(
-			column_args.diffuse.r * fColorScale,
-			column_args.diffuse.g * fColorScale,
-			column_args.diffuse.b * fColorScale,
+			column_args.diffuse.r * color_scale,
+			column_args.diffuse.g * color_scale,
+			column_args.diffuse.b * color_scale,
 			column_args.diffuse.a * fAlpha);
 
-		// Holds don't get a glow pass because rendering them is already
-		// painfully slow. -Kyz
-
-		if( fAlpha > 0 )
+		if(fAlpha > 0)
 			bAllAreTransparent = false;
 
 		queue.v[0].p = left_vert;  queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
@@ -974,124 +956,146 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		queue.v[2].p = right_vert;  queue.v[2].c = color; queue.v[2].t = RageVector2(fTexCoordRight, fTexCoordTop);
 		queue.v+=3;
 
-		if( queue.Free() < 3 || bLast )
+		if(queue.Free() < 3 || bLast)
 		{
 			/* The queue is full.  Render it, clear the buffer, and move back a step to
 			 * start off the strip again. */
-			if( !bAllAreTransparent )
+			if(!bAllAreTransparent)
 			{
-				FOREACH( Sprite*, vpSpr, spr )
+				FOREACH(Sprite*, vpSpr, spr)
 				{
 					RageTexture* pTexture = (*spr)->GetTexture();
-					DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
-					DISPLAY->SetBlendMode( spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD );
-					DISPLAY->SetCullMode( CULL_NONE );
-					DISPLAY->SetTextureWrapping( TextureUnit_1, bWrapping );
+					DISPLAY->SetTexture(TextureUnit_1, pTexture->GetTexHandle());
+					DISPLAY->SetBlendMode(spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD);
+					DISPLAY->SetCullMode(CULL_NONE);
+					DISPLAY->SetTextureWrapping(TextureUnit_1, part_args.wrapping);
 					queue.Draw();
 				}
 			}
 			queue.Init();
 			bAllAreTransparent = true;
-			fY -= fYStep;
+			fY -= part_args.y_step;
 		}
 	}
 }
 
+void NoteDisplay::DrawHoldBodyInternal(vector<Sprite*>& sprite_top,
+	vector<Sprite*>& sprite_body, vector<Sprite*>& sprite_bottom,
+	const NoteFieldRenderArgs& field_args,
+	const NoteColumnRenderArgs& column_args,
+	draw_hold_part_args& part_args,
+	const float head_minus_top, const float tail_plus_bottom,
+	const float y_head, const float y_tail, const float top_beat,
+	const float bottom_beat, bool glow)
+{
+	// Draw the top cap
+	part_args.y_top= head_minus_top;
+	part_args.y_bottom= y_head;
+	part_args.top_beat= top_beat;
+	part_args.bottom_beat= top_beat;
+	part_args.wrapping= false;
+	DrawHoldPart(sprite_top, field_args, column_args, part_args, glow);
+	// Draw the body
+	part_args.y_top= y_head;
+	part_args.y_bottom= y_tail;
+	part_args.bottom_beat= bottom_beat;
+	part_args.wrapping= true;
+	DrawHoldPart(sprite_body, field_args, column_args, part_args, glow);
+	// Draw the bottom cap
+	part_args.y_top= y_tail;
+	part_args.y_bottom= tail_plus_bottom;
+	part_args.top_beat= bottom_beat;
+	part_args.y_start_pos= max(part_args.y_start_pos, y_head);
+	DrawHoldPart(sprite_bottom, field_args, column_args, part_args, glow);
+}
+
 void NoteDisplay::DrawHoldBody(const TapNote& tn,
 	const NoteFieldRenderArgs& field_args,
-	const NoteColumnRenderArgs& column_args, float fBeat,
-	bool bIsBeingHeld, float fYHead, float fYTail, bool bIsAddition,
-	float fPercentFadeToFail, float fColorScale, bool bGlow,
-	float top_beat, float bottom_beat)
+	const NoteColumnRenderArgs& column_args, float beat,
+	bool being_held, float y_head, float y_tail, float percent_fade_to_fail,
+	float color_scale, float top_beat, float bottom_beat)
 {
+	draw_hold_part_args part_args;
+	part_args.percent_fade_to_fail= percent_fade_to_fail;
+	part_args.color_scale= color_scale;
+	part_args.overlapped_time= tn.HoldResult.fOverlappedTime;
 	vector<Sprite*> vpSprTop;
-	Sprite *pSpriteTop = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, fBeat, tn.subType == TapNoteSubType_Roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
+	Sprite *pSpriteTop = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, beat, tn.subType == TapNoteSubType_Roll, being_held && !cache->m_bHoldActiveIsAddLayer );
 	vpSprTop.push_back( pSpriteTop );
 
 	vector<Sprite*> vpSprBody;
-	Sprite *pSpriteBody = GetHoldSprite( m_HoldBody, NotePart_HoldBody, fBeat, tn.subType == TapNoteSubType_Roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
+	Sprite *pSpriteBody = GetHoldSprite( m_HoldBody, NotePart_HoldBody, beat, tn.subType == TapNoteSubType_Roll, being_held && !cache->m_bHoldActiveIsAddLayer );
 	vpSprBody.push_back( pSpriteBody );
 
 	vector<Sprite*> vpSprBottom;
-	Sprite *pSpriteBottom = GetHoldSprite( m_HoldBottomCap, NotePart_HoldBottomCap, fBeat, tn.subType == TapNoteSubType_Roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
+	Sprite *pSpriteBottom = GetHoldSprite( m_HoldBottomCap, NotePart_HoldBottomCap, beat, tn.subType == TapNoteSubType_Roll, being_held && !cache->m_bHoldActiveIsAddLayer );
 	vpSprBottom.push_back( pSpriteBottom );
 
-	if( bIsBeingHeld && cache->m_bHoldActiveIsAddLayer )
+	if(being_held && cache->m_bHoldActiveIsAddLayer)
 	{
-		Sprite *pSprTop = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, fBeat, tn.subType == TapNoteSubType_Roll, true );
+		Sprite *pSprTop = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, beat, tn.subType == TapNoteSubType_Roll, true );
 		vpSprTop.push_back( pSprTop );
-		Sprite *pSprBody = GetHoldSprite( m_HoldBody, NotePart_HoldBody, fBeat, tn.subType == TapNoteSubType_Roll, true );
+		Sprite *pSprBody = GetHoldSprite( m_HoldBody, NotePart_HoldBody, beat, tn.subType == TapNoteSubType_Roll, true );
 		vpSprBody.push_back( pSprBody );
-		Sprite *pSprBottom = GetHoldSprite( m_HoldBottomCap, NotePart_HoldBottomCap, fBeat, tn.subType == TapNoteSubType_Roll, true );
+		Sprite *pSprBottom = GetHoldSprite( m_HoldBottomCap, NotePart_HoldBottomCap, beat, tn.subType == TapNoteSubType_Roll, true );
 		vpSprBottom.push_back( pSprBottom );
 	}
 
-	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(column_args.column) > 0.5f;
-	bool bFlipHoldBody = bReverse && cache->m_bFlipHoldBodyWhenReverse;
-	if( bFlipHoldBody )
+	const bool reverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(column_args.column) > 0.5f;
+	part_args.flip_texture_vertically = reverse && cache->m_bFlipHoldBodyWhenReverse;
+	if(part_args.flip_texture_vertically)
 	{
 		swap( vpSprTop, vpSprBottom );
 		swap( pSpriteTop, pSpriteBottom );
 	}
 
-	if( bGlow )
-		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
-	else
-		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Modulate );
-
-	const bool bWavyPartsNeedZBuffer = ArrowEffects::NeedZBuffer( m_pPlayerState );
+	const bool bWavyPartsNeedZBuffer = ArrowEffects::NeedZBuffer();
 	DISPLAY->SetZTestMode( bWavyPartsNeedZBuffer?ZTEST_WRITE_ON_PASS:ZTEST_OFF );
 	DISPLAY->SetZWrite( bWavyPartsNeedZBuffer );
 
 	// Hack: Z effects need a finer grain step.
-	const int fYStep = bWavyPartsNeedZBuffer? 4: 16; // use small steps only if wavy
+	part_args.y_step = bWavyPartsNeedZBuffer? 4: 16; // use small steps only if wavy
 
-	if( bFlipHoldBody )
+	if(part_args.flip_texture_vertically)
 	{
-		fYHead -= cache->m_iStopDrawingHoldBodyOffsetFromTail;
-		fYTail -= cache->m_iStartDrawingHoldBodyOffsetFromHead;
+		y_head -= cache->m_iStopDrawingHoldBodyOffsetFromTail;
+		y_tail -= cache->m_iStartDrawingHoldBodyOffsetFromHead;
 	}
 	else
 	{
-		fYHead += cache->m_iStartDrawingHoldBodyOffsetFromHead;
-		fYTail += cache->m_iStopDrawingHoldBodyOffsetFromTail;
+		y_head += cache->m_iStartDrawingHoldBodyOffsetFromHead;
+		y_tail += cache->m_iStopDrawingHoldBodyOffsetFromTail;
 	}
 
-	const float fFrameHeightTop	= pSpriteTop->GetUnzoomedHeight();
-	const float fFrameHeightBottom	= pSpriteBottom->GetUnzoomedHeight();
+	const float frame_height_top= pSpriteTop->GetUnzoomedHeight();
+	const float frame_height_bottom= pSpriteBottom->GetUnzoomedHeight();
 
-	float fYStartPos = ArrowEffects::GetYPos( m_pPlayerState, column_args.column,
-		field_args.draw_pixels_after_targets, m_fYReverseOffsetPixels );
-	float fYEndPos = ArrowEffects::GetYPos( m_pPlayerState, column_args.column,
-		field_args.draw_pixels_before_targets, m_fYReverseOffsetPixels );
-	if( bReverse )
-		swap( fYStartPos, fYEndPos );
+	part_args.y_start_pos= ArrowEffects::GetYPos(column_args.column,
+		field_args.draw_pixels_after_targets, m_fYReverseOffsetPixels);
+	part_args.y_end_pos= ArrowEffects::GetYPos(column_args.column,
+		field_args.draw_pixels_before_targets, m_fYReverseOffsetPixels);
+	if(reverse)
+	{
+		swap(part_args.y_start_pos, part_args.y_end_pos);
+	}
+	// So that part_args.y_start_pos can be changed when drawing the bottom.
+	const float original_y_start_pos= part_args.y_start_pos;
+	const float head_minus_top= y_head - frame_height_top;
+	const float tail_plus_bottom= y_tail + frame_height_bottom;
 
-	bool bTopAnchor = bReverse && cache->m_bTopHoldAnchorWhenReverse;
+	part_args.anchor_to_top= reverse && cache->m_bTopHoldAnchorWhenReverse;
 
-	// Draw the top cap
-	DrawHoldPart(vpSprTop, field_args, column_args, fYStep, fPercentFadeToFail,
-		fColorScale, bGlow,
-		tn.HoldResult.fOverlappedTime,
-		fYHead-fFrameHeightTop, fYHead,
-		fYStartPos, fYEndPos,
-		false, bTopAnchor, bFlipHoldBody, top_beat, top_beat);
-
-	// Draw the body
-	DrawHoldPart(vpSprBody, field_args, column_args, fYStep, fPercentFadeToFail,
-		fColorScale, bGlow,
-		tn.HoldResult.fOverlappedTime,
-		fYHead, fYTail,
-		fYStartPos, fYEndPos,
-		true, bTopAnchor, bFlipHoldBody, top_beat, bottom_beat);
-
-	// Draw the bottom cap
-	DrawHoldPart(vpSprBottom, field_args, column_args, fYStep, fPercentFadeToFail,
-		fColorScale, bGlow,
-		tn.HoldResult.fOverlappedTime,
-		fYTail, fYTail+fFrameHeightBottom,
-		max(fYStartPos, fYHead), fYEndPos,
-		false, bTopAnchor, bFlipHoldBody, bottom_beat, bottom_beat);
+	DISPLAY->SetTextureMode(TextureUnit_1, TextureMode_Modulate);
+	DrawHoldBodyInternal(vpSprTop, vpSprBody, vpSprBottom, field_args,
+		column_args, part_args, head_minus_top,
+		tail_plus_bottom, y_head, y_tail, top_beat, bottom_beat,
+		false);
+	part_args.y_start_pos= original_y_start_pos;
+	DISPLAY->SetTextureMode(TextureUnit_1, TextureMode_Glow);
+	DrawHoldBodyInternal(vpSprTop, vpSprBody, vpSprBottom, field_args,
+		column_args, part_args, head_minus_top,
+		tail_plus_bottom, y_head, y_tail, top_beat, bottom_beat,
+		true);
 }
 
 void NoteDisplay::DrawHold(const TapNote& tn,
@@ -1136,8 +1140,8 @@ void NoteDisplay::DrawHold(const TapNote& tn,
 	if( bReverse )
 		swap( fStartYOffset, fEndYOffset );
 
-	const float fYHead		= ArrowEffects::GetYPos( m_pPlayerState, column_args.column, fStartYOffset, m_fYReverseOffsetPixels );
-	const float fYTail		= ArrowEffects::GetYPos( m_pPlayerState, column_args.column, fEndYOffset, m_fYReverseOffsetPixels );
+	const float fYHead= ArrowEffects::GetYPos(column_args.column, fStartYOffset, m_fYReverseOffsetPixels);
+	const float fYTail= ArrowEffects::GetYPos(column_args.column, fEndYOffset, m_fYReverseOffsetPixels);
 
 	const float fColorScale		= SCALE( tn.HoldResult.fLife, 0.0f, 1.0f, cache->m_fHoldLetGoGrayPercent, 1.0f );
 
@@ -1162,8 +1166,7 @@ void NoteDisplay::DrawHold(const TapNote& tn,
 	}
 	*/
 
-	DrawHoldBody(tn, field_args, column_args, fBeat, bIsBeingHeld, fYHead, fYTail, bIsAddition, fPercentFadeToFail, fColorScale, false, top_beat, bottom_beat);
-	DrawHoldBody(tn, field_args, column_args, fBeat, bIsBeingHeld, fYHead, fYTail, bIsAddition, fPercentFadeToFail, fColorScale, true, top_beat, bottom_beat);
+	DrawHoldBody(tn, field_args, column_args, fBeat, bIsBeingHeld, fYHead, fYTail, fPercentFadeToFail, fColorScale, top_beat, bottom_beat);
 
 	/* These set the texture mode themselves. */
 	// this part was modified in pumpmania, where it flips the draw order
@@ -1188,12 +1191,14 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 	if (tn.type == TapNoteType_AutoKeysound && !GAMESTATE->m_bInStepEditor) return;
 	if(fYOffset < field_args.draw_pixels_after_targets ||
 		fYOffset > field_args.draw_pixels_before_targets)
+	{
 		return;
+	}
 	float spline_beat= fBeat;
 	if(is_being_held) { spline_beat= column_args.song_beat; }
 
-	const float fAlpha	= ArrowEffects::GetAlpha(	m_pPlayerState, column_args.column, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets );
-	const float fGlow	= ArrowEffects::GetGlow(	m_pPlayerState, column_args.column, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets );
+	const float fAlpha= ArrowEffects::GetAlpha(column_args.column, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets);
+	const float fGlow= ArrowEffects::GetGlow(column_args.column, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets);
 	const RageColor diffuse	= RageColor(
 		column_args.diffuse.r * fColorScale,
 		column_args.diffuse.g * fColorScale,
@@ -1213,12 +1218,12 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 
 	// same logical structure as in UpdateReceptorGhostStuff, I just haven't
 	// figured out a good way to combine them. -Kyz
-	vector<float> sp_pos;
-	vector<float> sp_rot;
-	vector<float> sp_zoom;
-	vector<float> ae_pos(3, 0.0f);
-	vector<float> ae_rot(3, 0.0f);
-	vector<float> ae_zoom(3, 0.0f);
+	RageVector3 sp_pos;
+	RageVector3 sp_rot;
+	RageVector3 sp_zoom;
+	RageVector3 ae_pos;
+	RageVector3 ae_rot;
+	RageVector3 ae_zoom;
 	column_args.spae_pos_for_beat(m_pPlayerState, spline_beat,
 		fYOffset, m_fYReverseOffsetPixels, sp_pos, ae_pos);
 
@@ -1227,20 +1232,18 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 		case NCSM_Disabled:
 			if(!bIsHoldCap)
 			{
-				ae_rot[0]= ArrowEffects::GetRotationX(m_pPlayerState, fYOffset);
+				ae_rot.x= ArrowEffects::GetRotationX(fYOffset);
 			}
-			ae_rot[1]= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset);
-			ae_rot[2]= ArrowEffects::GetRotationZ(m_pPlayerState, fBeat, bIsHoldHead);
-			sp_rot.resize(3);
-			sp_rot[0]= sp_rot[1]= sp_rot[2]= 0.0f;
+			ae_rot.y= ArrowEffects::GetRotationY(fYOffset);
+			ae_rot.z= ArrowEffects::GetRotationZ(m_pPlayerState, fBeat, bIsHoldHead);
 			break;
 		case NCSM_Offset:
 			if(!bIsHoldCap)
 			{
-				ae_rot[0]= ArrowEffects::GetRotationX(m_pPlayerState, fYOffset);
+				ae_rot.x= ArrowEffects::GetRotationX(fYOffset);
 			}
-			ae_rot[1]= ArrowEffects::GetRotationY(m_pPlayerState, fYOffset);
-			ae_rot[2]= ArrowEffects::GetRotationZ(m_pPlayerState, fBeat, bIsHoldHead);
+			ae_rot.y= ArrowEffects::GetRotationY(fYOffset);
+			ae_rot.z= ArrowEffects::GetRotationZ(m_pPlayerState, fBeat, bIsHoldHead);
 			column_args.rot_handler->EvalForBeat(column_args.song_beat, spline_beat, sp_rot);
 			break;
 		case NCSM_Position:
@@ -1375,21 +1378,16 @@ void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
 	// sp_* will be zeroes in NCSM_Disabled, and ae_* will be zeroes in
 	// NCSM_Position, so the setting step won't have to check the mode. -Kyz
 	// sp_* are sized by the spline evaluate function.
-	vector<float> sp_pos;
-	vector<float> sp_rot;
-	vector<float> sp_zoom;
-	vector<float> ae_pos(3, 0.0f);
-	vector<float> ae_rot(3, 0.0f);
-	vector<float> ae_zoom(3, 0.0f);
+	RageVector3 sp_pos;
+	RageVector3 sp_rot;
+	RageVector3 sp_zoom;
+	RageVector3 ae_pos;
+	RageVector3 ae_rot;
+	RageVector3 ae_zoom;
 	switch(NCR_current.m_pos_handler.m_spline_mode)
 	{
 		case NCSM_Disabled:
 			ArrowEffects::GetXYZPos(player_state, m_column, 0, m_field_render_args->reverse_offset_pixels, ae_pos);
-			sp_pos.resize(3);
-			// Sure, resize is supposed to call the default constructor, and for
-			// numbers the default constructor is supposed to set it to zero, but
-			// I got bit for relying on that once. -Kyz
-			sp_pos[0]= sp_pos[1]= sp_pos[2]= 0.0f;
 			break;
 		case NCSM_Offset:
 			ArrowEffects::GetXYZPos(player_state, m_column, 0, m_field_render_args->reverse_offset_pixels, ae_pos);
@@ -1402,12 +1400,10 @@ void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
 	switch(NCR_current.m_rot_handler.m_spline_mode)
 	{
 		case NCSM_Disabled:
-			ae_rot[2]= ArrowEffects::ReceptorGetRotationZ(player_state);
-			sp_rot.resize(3);
-			sp_rot[0]= sp_rot[1]= sp_rot[2]= 0.0f;
+			ae_rot.z= ArrowEffects::ReceptorGetRotationZ(player_state);
 			break;
 		case NCSM_Offset:
-			ae_rot[2]= ArrowEffects::ReceptorGetRotationZ(player_state);
+			ae_rot.z= ArrowEffects::ReceptorGetRotationZ(player_state);
 			NCR_current.m_rot_handler.EvalForReceptor(song_beat, sp_rot);
 			break;
 		case NCSM_Position:
@@ -1417,12 +1413,10 @@ void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
 	switch(NCR_current.m_zoom_handler.m_spline_mode)
 	{
 		case NCSM_Disabled:
-			ae_zoom[0]= ae_zoom[1]= ae_zoom[2]= ArrowEffects::GetZoom(player_state);
-			sp_zoom.resize(3);
-			sp_zoom[0]= sp_zoom[1]= sp_zoom[2]= 0.0f;
+			ae_zoom.x= ae_zoom.y= ae_zoom.z= ArrowEffects::GetZoom(player_state);
 			break;
 		case NCSM_Offset:
-			ae_zoom[0]= ae_zoom[1]= ae_zoom[2]= ArrowEffects::GetZoom(player_state);
+			ae_zoom.x= ae_zoom.y= ae_zoom.z= ArrowEffects::GetZoom(player_state);
 			NCR_current.m_zoom_handler.EvalForReceptor(song_beat, sp_zoom);
 			break;
 		case NCSM_Position:
@@ -1436,6 +1430,7 @@ void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
 
 void NoteColumnRenderer::DrawPrimitives()
 {
+	ArrowEffects::SetCurrentOptions(&m_field_render_args->player_state->m_PlayerOptions.GetCurrent());
 	m_column_render_args.song_beat= m_field_render_args->player_state->GetDisplayedPosition().m_fSongBeatVisible;
 	m_column_render_args.pos_handler= &NCR_current.m_pos_handler;
 	m_column_render_args.rot_handler= &NCR_current.m_rot_handler;

@@ -527,7 +527,7 @@ public:
 	void SetEffectColor1( RageColor c )		{ m_effectColor1 = c; }
 	void SetEffectColor2( RageColor c )		{ m_effectColor2 = c; }
 	void SetEffectPeriod( float fTime );
-	float GetEffectPeriod() const;
+	float GetEffectPeriod() const { return m_effect_period; }
 	void SetEffectTiming( float fRampUp, float fAtHalf, float fRampDown, float fAtZero );
 	void SetEffectOffset( float fTime )		{ m_fEffectOffset = fTime; }
 	void SetEffectClock( EffectClock c )		{ m_EffectClock = c; }
@@ -536,6 +536,7 @@ public:
 	void SetEffectMagnitude( RageVector3 vec )	{ m_vEffectMagnitude = vec; }
 	RageVector3 GetEffectMagnitude() const		{ return m_vEffectMagnitude; }
 
+	void ResetEffectTimeIfDifferent(Effect new_effect);
 	void SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
 	void SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
 	void SetEffectDiffuseRamp( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
@@ -690,6 +691,10 @@ protected:
 	float m_fEffectRampDown;
 	float m_fEffectHoldAtZero;
 	float m_fEffectOffset;
+	// Anything changing ramp_up, hold_at_half, ramp_down, or hold_at_zero must
+	// also update the period so the period is only calculated when changed.
+	// -Kyz
+	float m_effect_period;
 	EffectClock m_EffectClock;
 
 	/* This can be used in lieu of the fDeltaTime parameter to Update() to
