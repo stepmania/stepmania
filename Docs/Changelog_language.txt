@@ -16,6 +16,15 @@ Example:
 This means that three strings were added to the "ScreenDebugOverlay" section,
 "Mute actions", "Mute actions on", and "Mute actions off".
 
+2015/04/23
+----------
+* [OptionExplanations] Display Options
+  InputOptions
+* [OptionTitles] Display Options
+  InputOptions
+	Input Options
+* [ScreenOptionsDisplaySub] HeaderText
+* [ScreenOptionsInputSub] HeaderText
 
 2015/04/08
 ----------

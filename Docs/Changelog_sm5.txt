@@ -4,6 +4,46 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/04/23
+----------
+* [ServiceMenu] Entries in service menu rearranged to hopefully organize them
+  better.  ScreenOptionsInputSub and ScreenOptionsDisplaySub added.  Updating
+  a theme to show the options for the new screens should be a simple matter of
+  changing the LineNames entry for ScreenOptionsService to include
+  "InputOptions" and "SoundGraphics". [tuxdude]
+
+2015/04/18
+----------
+* [EditMode] Fixed bug that made alter menu choices prompt for clearing. [kyzentun]
+* [NoteColumnRenderer] Added handling for diffuse and glow to make rainbow
+  and related effects work. [kyzentun]
+
+2015/04/15
+----------
+* [compiling] -DWITH_LIBVA option added to cmake building to fix compiling
+  problems for some linux users. [wolfman2000]
+
+2015/04/14
+----------
+* [SelectMusic] Disabled late join on Extra Stage to prevent crash on
+  Evaluation Summary. [kyzentun]
+
+2015/04/13
+----------
+* [EditMode] Fixed Revert From Disk to actually work. [kyzentun]
+* [japanese] Language update from hanubeki. [hanubeki]
+
+2015/04/11
+----------
+* [dev] cpack support for installing. [wolfman2000]
+* [TimingData] Fixed bug that made steps on the same row as a stop and a bpm
+  change unhittable. [kyzentun]
+
+2015/04/10
+----------
+* [Profile] Kluged together a fix for scores on edit charts not being loaded
+  until after the chart is played. [kyzentun]
+
 2015/04/08
 ----------
 * [ActorSound] IsAction attribute added.  get/set_is_action functions added.
@@ -105,9 +145,9 @@ StepMania 5.0.7rc | 20150309
 2015/03/08
 ----------
 * [EditMode] Clearing an area now prompts for confirmation if it contains
-	EditClearPromptThreshold notes or more.  EditClearPromptThreshold is a
-	preference that can be set in the Advanced Options section, or in the
-	options in Edit Mode. [kyzentun]
+  EditClearPromptThreshold notes or more.  EditClearPromptThreshold is a
+  preference that can be set in the Advanced Options section, or in the
+  options in Edit Mode. [kyzentun]
 
 2015/03/05
 ----------
@@ -138,7 +178,7 @@ StepMania 5.0.7rc | 20150309
 ----------
 * [General] Pause/Break key now toggles "action" sounds off or on.  There is
   also a button in the F3 debug menu (press A, there are so many that it is
-	off the bottom) for people that don't have a Pause/Break key. [kyzentun]
+  off the bottom) for people that don't have a Pause/Break key. [kyzentun]
 
 2015/02/27
 ----------
