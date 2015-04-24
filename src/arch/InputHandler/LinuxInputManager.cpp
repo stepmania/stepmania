@@ -13,17 +13,21 @@
 
 RString getDevice(RString inputDir, RString type)
 {
+	RString result = "";
 	DIR* dir = opendir( inputDir.c_str() );
 	if(dir == NULL)
 		{ LOG->Warn("LinuxInputManager: Couldn't open %s: %s.", inputDir.c_str(), strerror(errno) ); return ""; }
 	
 	struct dirent* d;
 	while( ( d = readdir(dir) ) != NULL)
-		if( strncmp( type.c_str(), d->d_name, type.size() ) == 0) break;
+		if( strncmp( type.c_str(), d->d_name, type.size() ) == 0)
+		{
+			result = RString("/dev/input/") + d->d_name;
+			break;
+		}
 	
 	closedir(dir);
-	if( d == NULL ) return "";
-	return RString("/dev/input/") + d->d_name;
+	return result;
 }
 
 LinuxInputManager::LinuxInputManager()
