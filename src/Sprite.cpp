@@ -16,13 +16,11 @@
 
 REGISTER_ACTOR_CLASS( Sprite );
 
-const float min_state_delay= 0.0001f;
-
 Sprite::Sprite()
 {
 	m_pTexture = NULL;
 	m_iCurState = 0;
-	m_fSecsIntoState = 0.0f;
+	m_time_into_state = 0;
 	m_bUsingCustomTexCoords = false;
 	m_bUsingCustomPosCoords = false;
 	m_bSkipNextUpdate = true;
@@ -59,7 +57,7 @@ Sprite::Sprite( const Sprite &cpy ):
 #define CPY(a) a = cpy.a
 	CPY( m_States );
 	CPY( m_iCurState );
-	CPY( m_fSecsIntoState );
+	CPY(m_time_into_state);
 	CPY( m_bUsingCustomTexCoords );
 	CPY( m_bUsingCustomPosCoords );
 	CPY( m_bSkipNextUpdate );
@@ -83,15 +81,16 @@ void Sprite::InitState()
 {
 	Actor::InitState();
 	m_iCurState = 0;
-	m_fSecsIntoState = 0.0f;
+	m_time_into_state = 0;
 	m_bSkipNextUpdate = true;
 }
 
-void Sprite::SetAllStateDelays(float fDelay)
+void Sprite::SetAllStateDelays(float delay)
 {
+	int32_t lay= secs_to_tween_time(delay);
 	for(unsigned int i=0;i<m_States.size();i++)
 	{
-		m_States[i].fDelay = fDelay;
+		m_States[i].delay = lay;
 	}
 }
 
@@ -184,10 +183,12 @@ void Sprite::LoadFromNode( const XNode* pNode )
 					break;
 
 				State newState;
-				if( !pFrame->GetAttrValue("Delay", newState.fDelay) )
+				float new_delay= 0.1f;
+				if(!pFrame->GetAttrValue("Delay", new_delay))
 				{
-					newState.fDelay = 0.1f;
+					new_delay = 0.1f;
 				}
+				newState.delay= secs_to_tween_time(new_delay);
 
 				pFrame->GetAttrValue( "Frame", iFrameIndex );
 				if( iFrameIndex >= m_pTexture->GetNumFrames() )
@@ -233,9 +234,11 @@ void Sprite::LoadFromNode( const XNode* pNode )
 
 			newState.rect = *m_pTexture->GetTextureCoordRect( iFrameIndex );
 
-			if( !pNode->GetAttrValue(sDelayKey, newState.fDelay) )
+			float new_delay= 0.1f;
+			if(!pNode->GetAttrValue(sDelayKey, new_delay))
 				break;
 
+			newState.delay= secs_to_tween_time(new_delay);
 			aStates.push_back( newState );
 		}
 
@@ -285,7 +288,7 @@ void Sprite::EnableAnimation( bool bEnable )
 		 * pass; 3: EnableAnimation(true); 4: Update(30). We must be sure not to send
 		 * that long 30-second update to the movie.
 		 *
-		 * (detail: the timestamps here are actually coming from GetEffectDeltaTime())
+		 * (detail: the timestamps here are actually coming from GetEffectDelta())
 		 */
 		m_bSkipNextUpdate = true;
 	}
@@ -338,7 +341,7 @@ void Sprite::LoadStatesFromTexture()
 	if( m_pTexture == NULL )
 	{
 		State newState;
-		newState.fDelay = 0.1f;
+		newState.delay = secs_to_tween_time(0.1f);
 		newState.rect = RectF( 0, 0, 1, 1 );
 		m_States.push_back( newState );
 		return;
@@ -347,7 +350,7 @@ void Sprite::LoadStatesFromTexture()
 	for( int i=0; i<m_pTexture->GetNumFrames(); ++i )
 	{
 		State newState;
-		newState.fDelay = 0.1f;
+		newState.delay = secs_to_tween_time(0.1f);
 		newState.rect = *m_pTexture->GetTextureCoordRect( i );
 		m_States.push_back( newState );
 	}
@@ -362,12 +365,12 @@ void Sprite::UpdateAnimationState()
 		// UpdateAnimationState changed to not loop forever on negative state
 		// delay.  This allows a state to last forever when it is reached, so
 		// the animation has a built-in ending point. -Kyz
-		while(m_States[m_iCurState].fDelay > min_state_delay &&
-			m_fSecsIntoState+min_state_delay > m_States[m_iCurState].fDelay)
+		while(m_States[m_iCurState].delay > 0 &&
+			m_time_into_state > m_States[m_iCurState].delay)
 		// it's time to switch frames
 		{
 			// increment frame and reset the counter
-			m_fSecsIntoState -= m_States[m_iCurState].fDelay;		// leave the left over time for the next frame
+			m_time_into_state -= m_States[m_iCurState].delay;		// leave the left over time for the next frame
 			m_iCurState = (m_iCurState+1) % m_States.size();
 		}
 	}
@@ -388,9 +391,9 @@ void Sprite::UpdateAnimationState()
  * (I'd like to handle sprite and movie animation as consistently as possible;
  * the above is just documentation of current practice.) -glenn */
 // todo: see if "current" practice is just that. -aj
-void Sprite::Update( float fDelta )
+void Sprite::UpdateInternal(int32_t tween_delta)
 {
-	Actor::Update( fDelta ); // do tweening
+	Actor::UpdateInternal(tween_delta); // do tweening
 
 	const bool bSkipThisMovieUpdate = m_bSkipNextUpdate;
 	m_bSkipNextUpdate = false;
@@ -401,33 +404,37 @@ void Sprite::Update( float fDelta )
 	if( !m_pTexture ) // no texture, nothing to animate
 		return;
 
-	float fTimePassed = GetEffectDeltaTime();
-	m_fSecsIntoState += fTimePassed;
-
-	if( m_fSecsIntoState < 0 )
-		wrap( m_fSecsIntoState, GetAnimationLengthSeconds() );
-
+	m_time_into_state+= m_effect_delta_time;
+	if(m_time_into_state < 0)
+	{
+		wrap(m_time_into_state, GetAnimationLength());
+	}
 	UpdateAnimationState();
 
 	// If the texture is a movie, decode frames.
 	if(!bSkipThisMovieUpdate && m_DecodeMovie)
-		m_pTexture->DecodeSeconds( max(0, fTimePassed) );
+	{
+		m_pTexture->DecodeSeconds(max(0, GetEffectDelta()));
+	}
 
 	// update scrolling
 	if( m_fTexCoordVelocityX != 0 || m_fTexCoordVelocityY != 0 )
 	{
 		float fTexCoords[8];
 		Sprite::GetActiveTextureCoords( fTexCoords );
+		float delta= tween_time_to_secs(tween_delta);
  
 		// top left, bottom left, bottom right, top right
-		fTexCoords[0] += fDelta*m_fTexCoordVelocityX;
-		fTexCoords[1] += fDelta*m_fTexCoordVelocityY; 
-		fTexCoords[2] += fDelta*m_fTexCoordVelocityX;
-		fTexCoords[3] += fDelta*m_fTexCoordVelocityY;
-		fTexCoords[4] += fDelta*m_fTexCoordVelocityX;
-		fTexCoords[5] += fDelta*m_fTexCoordVelocityY;
-		fTexCoords[6] += fDelta*m_fTexCoordVelocityX;
-		fTexCoords[7] += fDelta*m_fTexCoordVelocityY;
+		const float xdelta= delta*m_fTexCoordVelocityX;
+		const float ydelta= delta*m_fTexCoordVelocityY;
+		fTexCoords[0] += xdelta;
+		fTexCoords[1] += ydelta;
+		fTexCoords[2] += xdelta;
+		fTexCoords[3] += ydelta;
+		fTexCoords[4] += xdelta;
+		fTexCoords[5] += ydelta;
+		fTexCoords[6] += xdelta;
+		fTexCoords[7] += ydelta;
 
 		/* When wrapping, avoid gradual loss of precision and sending
 		 * unreasonably large texture coordinates to the renderer by pushing
@@ -771,23 +778,25 @@ void Sprite::SetState( int iNewState )
 
 	CLAMP(iNewState, 0, (int)m_States.size()-1);
 	m_iCurState = iNewState;
-	m_fSecsIntoState = 0.0f;
+	m_time_into_state = 0;
 }
 
-float Sprite::GetAnimationLengthSeconds() const
+int32_t Sprite::GetAnimationLength() const
 {
-	float fTotal = 0;
+	int32_t total= 0;
 	FOREACH_CONST( State, m_States, s )
-		fTotal += s->fDelay;
-	return fTotal;
+	{
+		total+= s->delay;
+	}
+	return total;
 }
 
-void Sprite::SetSecondsIntoAnimation( float fSeconds )
+void Sprite::SetSecondsIntoAnimation(float seconds)
 {
-	SetState( 0 );	// rewind to the first state
-	if( m_pTexture )
-		m_pTexture->SetPosition( fSeconds );
-	m_fSecsIntoState = fSeconds;
+	SetState(0); // rewind to the first state
+	if(m_pTexture)
+		m_pTexture->SetPosition(seconds);
+	m_time_into_state= secs_to_tween_time(seconds);
 	UpdateAnimationState();
 }
 
@@ -1144,7 +1153,7 @@ public:
 			lua_getfield(L, -1, "Delay");
 			if(lua_isnumber(L, -1))
 			{
-				new_state.fDelay= FArg(-1);
+				new_state.delay= secs_to_tween_time(FArg(-1));
 			}
 			lua_pop(L, 1);
 			RectF r= new_state.rect;
@@ -1182,7 +1191,11 @@ public:
 		p->SetStateProperties(new_states);
 		COMMON_RETURN_SELF;
 	}
-	static int GetAnimationLengthSeconds( T* p, lua_State *L ) { lua_pushnumber( L, p->GetAnimationLengthSeconds() ); return 1; }
+	static int GetAnimationLengthSeconds(T* p, lua_State *L)
+	{
+		lua_pushnumber(L, tween_time_to_secs(p->GetAnimationLength()));
+		return 1;
+	}
 	static int SetSecondsIntoAnimation( T* p, lua_State *L )	{ p->SetSecondsIntoAnimation(FArg(0)); COMMON_RETURN_SELF; }
 	static int SetTexture( T* p, lua_State *L )
 	{

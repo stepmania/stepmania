@@ -14,7 +14,7 @@ public:
 	ScoreDisplayRave();
 	virtual void Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats );
 
-	virtual void Update( float fDelta );
+	virtual void UpdateInternal(int32_t tween_delta);
 
 protected:
 	AutoActor m_sprFrameBase;

@@ -712,9 +712,10 @@ void Model::UpdateTempGeometry()
 	m_pTempGeometry->Change( m_vTempMeshes );
 }
 
-void Model::Update( float fDelta )
+void Model::UpdateInternal(int32_t tween_delta)
 {
-	Actor::Update( fDelta );
+	Actor::UpdateInternal(tween_delta);
+	float fDelta= tween_time_to_secs(tween_delta);
 	AdvanceFrame( fDelta );
 
 	for( unsigned i = 0; i < m_Materials.size(); ++i )

@@ -207,7 +207,7 @@ public:
 	virtual void EndScreen();
 
 	virtual ~ScreenEdit();
-	virtual void Update( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 	virtual void DrawPrimitives();
 	virtual bool Input( const InputEventPlus &input );
 	bool InputEdit( const InputEventPlus &input, EditButton EditB );

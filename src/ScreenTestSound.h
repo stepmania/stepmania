@@ -16,7 +16,7 @@ public:
 
 	virtual bool Input( const InputEventPlus &input );
 
-	void Update(float f);
+	void UpdateInternal(int32_t tween_delta);
 	void UpdateText(int n);
 
 	struct Sound {

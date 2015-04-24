@@ -15,7 +15,7 @@ public:
 	ScoreDisplayAliveTime();
 	~ScoreDisplayAliveTime();
 
-	virtual void Update( float fDelta );
+	virtual void UpdateInternal(int32_t tween_delta);
 
 	void LoadFromNode( const XNode* pNode );
 	virtual ScoreDisplayAliveTime *Copy() const;

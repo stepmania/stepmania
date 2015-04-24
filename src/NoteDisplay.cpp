@@ -638,7 +638,7 @@ bool NoteDisplay::DrawRollHeadForTapsOnSameRow() const
 	return cache->m_bDrawRollHeadForTapsOnSameRow;
 }
 
-void NoteDisplay::Update( float fDeltaTime )
+void NoteDisplay::Update(int32_t tween_delta)
 {
 	/* This function is static: it's called once per game loop, not once per
 	 * NoteDisplay.  Update each cached item exactly once. */
@@ -646,7 +646,7 @@ void NoteDisplay::Update( float fDeltaTime )
 	for( it = g_NoteResource.begin(); it != g_NoteResource.end(); ++it )
 	{
 		NoteResource *pRes = it->second;
-		pRes->m_pActor->Update( fDeltaTime );
+		pRes->m_pActor->Update(tween_delta);
 	}
 }
 

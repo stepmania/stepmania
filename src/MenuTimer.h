@@ -18,7 +18,7 @@ public:
 	virtual ~MenuTimer();
 	void Load( RString sMetricsGroup );
 	
-	virtual void Update( float fDeltaTime ); 
+	virtual void UpdateInternal(int32_t tween_delta);
 
 	void SetSeconds( float fSeconds );
 	float GetSeconds() const { return m_fSecondsLeft; }

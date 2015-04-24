@@ -89,7 +89,7 @@ void Inventory::Load( PlayerState* pPlayerState )
 	}
 }
 
-void Inventory::Update( float fDelta )
+void Inventory::UpdateInternal(int32_t tween_delta)
 {
 	if( m_pPlayerState->m_bAttackEndedThisUpdate )
 		m_soundItemEnding.Play(false);
@@ -129,7 +129,7 @@ void Inventory::Update( float fDelta )
 		GAMESTATE->m_Position.m_fSongBeat < song.GetLastBeat() )
 	{
 		// every 1 seconds, try to use an item
-		int iLastSecond = (int)(RageTimer::GetTimeSinceStartFast() - fDelta);
+		int iLastSecond = (int)(RageTimer::GetTimeSinceStartFast() - tween_time_to_secs(tween_delta));
 		int iThisSecond = (int)RageTimer::GetTimeSinceStartFast();
 		if( iLastSecond != iThisSecond )
 		{

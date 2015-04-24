@@ -131,9 +131,9 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 	Refresh();
 }
 
-void PercentageDisplay::Update( float fDeltaTime )
+void PercentageDisplay::UpdateInternal(int32_t tween_delta)
 {
-	ActorFrame::Update( fDeltaTime );
+	ActorFrame::UpdateInternal(tween_delta);
 
 	if( m_bAutoRefresh )
 		Refresh();

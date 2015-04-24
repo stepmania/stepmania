@@ -22,7 +22,11 @@
 #include "RageTimer.h"
 #include "RageInput.h"
 
+#define secs_to_tween_time(secs) ((secs) * 1000000)
+#define tween_time_to_secs(time) ((time) * .000001)
+
 static RageTimer g_GameplayTimer;
+static int64_t g_last_raw_time= 0;
 
 static Preference<bool> g_bNeverBoostAppPriority( "NeverBoostAppPriority", false );
 
@@ -253,6 +257,7 @@ void GameLoop::RunGameLoop()
 	if( ChangeAppPri() )
 		HOOKS->BoostPriority();
 
+	g_last_raw_time= RageTimer::GetRawTime();
 	while( !ArchHooks::UserQuit() )
 	{
 		if(!g_NewGame.empty())
@@ -265,34 +270,61 @@ void GameLoop::RunGameLoop()
 		}
 
 		// Update
-		float fDeltaTime = g_GameplayTimer.GetDeltaTime();
+		int64_t new_raw_time= RageTimer::GetRawTime();
+		int32_t tween_delta= new_raw_time - g_last_raw_time;
+		g_last_raw_time= new_raw_time;
+		float fDeltaTime= tween_time_to_secs(tween_delta);
 
 		if( g_fConstantUpdateDeltaSeconds > 0 )
+		{
+			tween_delta= secs_to_tween_time(g_fConstantUpdateDeltaSeconds);
 			fDeltaTime = g_fConstantUpdateDeltaSeconds;
+		}
 		
 		CheckGameLoopTimerSkips( fDeltaTime );
 
 		fDeltaTime *= g_fUpdateRate;
+		tween_delta*= g_fUpdateRate;
+		START_TIME_CALL_COUNT(game_loop_body);
 
+		START_TIME(check_focus);
 		CheckFocus();
+		END_TIME_ADD_TO(check_focus);
 
 		// Update SOUNDMAN early (before any RageSound::GetPosition calls), to flush position data.
+		START_TIME(soundman_update);
 		SOUNDMAN->Update();
+		END_TIME_ADD_TO(soundman_update);
 
 		/* Update song beat information -before- calling update on all the classes that
 		 * depend on it. If you don't do this first, the classes are all acting on old 
 		 * information and will lag. (but no longer fatally, due to timestamping -glenn) */
+		START_TIME(sound_update);
 		SOUND->Update( fDeltaTime );
+		END_TIME_ADD_TO(sound_update);
+		START_TIME(textureman_update);
 		TEXTUREMAN->Update( fDeltaTime );
-		GAMESTATE->Update( fDeltaTime );
-		SCREENMAN->Update( fDeltaTime );
+		END_TIME_ADD_TO(textureman_update);
+		START_TIME(gamestate_update);
+		GAMESTATE->Update(tween_delta);
+		END_TIME_ADD_TO(gamestate_update);
+		START_TIME(screenman_update);
+		SCREENMAN->Update(tween_delta);
+		END_TIME_ADD_TO(screenman_update);
+		START_TIME(memcardman_update);
 		MEMCARDMAN->Update();
+		END_TIME_ADD_TO(memcardman_update);
+		START_TIME(nsman_update);
 		NSMAN->Update( fDeltaTime );
+		END_TIME_ADD_TO(nsman_update);
 
 		/* Important: Process input AFTER updating game logic, or input will be
 		 * acting on song beat from last frame */
+		START_TIME(handle_input);
 		HandleInputEvents( fDeltaTime );
+		END_TIME_ADD_TO(handle_input);
 
+		START_TIME(devices_changed);
 		if( INPUTMAN->DevicesChanged() )
 		{
 			INPUTFILTER->Reset();	// fix "buttons stuck" if button held while unplugged
@@ -301,11 +333,17 @@ void GameLoop::RunGameLoop()
 			if( INPUTMAPPER->CheckForChangedInputDevicesAndRemap(sMessage) )
 				SCREENMAN->SystemMessage( sMessage );
 		}
+		END_TIME_ADD_TO(devices_changed);
 
+		START_TIME(lightsman_update);
 		LIGHTSMAN->Update( fDeltaTime );
+		END_TIME_ADD_TO(lightsman_update);
 
 		// Render
+		START_TIME(screenman_draw);
 		SCREENMAN->Draw();
+		END_TIME_ADD_TO(screenman_draw);
+		END_TIME_ADD_TO(game_loop_body);
 	}
 
 	// If we ended mid-game, finish up.

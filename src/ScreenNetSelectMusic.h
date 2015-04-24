@@ -32,7 +32,7 @@ protected:
 	virtual bool MenuDown( const InputEventPlus &input );
 	bool LeftAndRightPressed( const PlayerNumber pn );
 
-	virtual void Update( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 
 	void MusicChanged();
 

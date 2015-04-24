@@ -76,13 +76,13 @@ void Banner::LoadFromCachedBanner( const RString &sPath )
 		LoadFallback();
 }
 
-void Banner::Update( float fDeltaTime )
+void Banner::UpdateInternal(int32_t tween_delta)
 {
-	Sprite::Update( fDeltaTime );
+	Sprite::UpdateInternal(tween_delta);
 
 	if( m_bScrolling )
 	{
-		m_fPercentScrolling += fDeltaTime/(float)SCROLL_SPEED_DIVISOR;
+		m_fPercentScrolling += tween_time_to_secs(tween_delta)/(float)SCROLL_SPEED_DIVISOR;
 		m_fPercentScrolling -= (int)m_fPercentScrolling;
 
 		const RectF *pTextureRect = GetCurrentTextureCoordRect();

@@ -19,7 +19,7 @@ class NoteField : public ActorFrame
 public:
 	NoteField();
 	~NoteField();
-	virtual void Update( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 	virtual void DrawPrimitives();
 	void CalcPixelsBeforeAndAfterTargets();
 	void DrawBoardPrimitive();

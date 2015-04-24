@@ -47,9 +47,9 @@ ReceptorArrowRow::~ReceptorArrowRow()
 		delete m_ReceptorArrow[i];
 }
 
-void ReceptorArrowRow::Update( float fDeltaTime )
+void ReceptorArrowRow::UpdateInternal(int32_t tween_delta)
 {
-	ActorFrame::Update( fDeltaTime );
+	ActorFrame::UpdateInternal(tween_delta);
 	ArrowEffects::Update();
 
 	for( unsigned c=0; c<m_ReceptorArrow.size(); c++ )

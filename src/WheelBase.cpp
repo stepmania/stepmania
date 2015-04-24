@@ -156,9 +156,10 @@ void WheelBase::SetPositions()
 	}
 }
 
-void WheelBase::Update( float fDeltaTime )
+void WheelBase::UpdateInternal(int32_t tween_delta)
 {
-	ActorFrame::Update( fDeltaTime );
+	ActorFrame::UpdateInternal(tween_delta);
+	float fDeltaTime= tween_time_to_secs(tween_delta);
 
 	// If tweens aren't controlling the position of the wheel, set positions.
 	if( !GetTweenTimeLeft() )
@@ -337,7 +338,7 @@ void WheelBase::TweenOnScreenForSort()
 
 	this->PlayCommand( "SortOn" );
 
-	m_fTimeLeftInState = GetTweenTimeLeft();
+	m_fTimeLeftInState = GetTweenSecsLeft();
 }
 
 void WheelBase::TweenOffScreenForSort()
@@ -346,7 +347,7 @@ void WheelBase::TweenOffScreenForSort()
 
 	this->PlayCommand( "SortOff" );
 
-	m_fTimeLeftInState = GetTweenTimeLeft();
+	m_fTimeLeftInState = GetTweenSecsLeft();
 }
 
 void WheelBase::ChangeMusicUnlessLocked( int n )

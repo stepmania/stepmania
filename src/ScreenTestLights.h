@@ -12,7 +12,7 @@ public:
 	virtual void BeginScreen();
 	virtual void EndScreen();
 
-	virtual void Update( float fDelta );
+	virtual void UpdateInternal(int32_t tween_delta);
 	virtual bool Input( const InputEventPlus &input );
 
 	virtual bool MenuLeft( const InputEventPlus &input );

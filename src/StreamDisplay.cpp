@@ -61,12 +61,16 @@ void StreamDisplay::Load( const RString & /* unreferenced: _sMetricsGroup  */)
 	}
 }
 
-void StreamDisplay::Update( float fDeltaSecs )
+void StreamDisplay::UpdateInternal(int32_t tween_delta)
 {
-	ActorFrame::Update( fDeltaSecs );
+	ActorFrame::UpdateInternal(tween_delta);
+	float delta_secs= tween_time_to_secs(tween_delta);
 
 	// HACK:  Tweaking these values is very difficult.  Update the
 	// "physics" many times so that the spring motion appears faster
+
+	// Can I just say that seems like a mistake that impedes tweaking?  And now
+	// we're stuck with that mistake because of brokewards compatibility. -Kyz
 	for( int i=0; i<10; i++ )
 	{
 		const float fDelta = m_fPercent - m_fTrailingPercent;
@@ -83,16 +87,16 @@ void StreamDisplay::Update( float fDeltaSecs )
 		else
 		{
 			const float fSpringForce = fDelta * SPRING_MULTIPLIER;
-			m_fVelocity += fSpringForce * fDeltaSecs;
+			m_fVelocity += fSpringForce * delta_secs;
 
 			const float fViscousForce = -m_fVelocity * VISCOSITY_MULTIPLIER;
 			if( !m_bAlwaysBounce )
-				m_fVelocity += fViscousForce * fDeltaSecs;
+				m_fVelocity += fViscousForce * delta_secs;
 		}
 
 		CLAMP( m_fVelocity, VELOCITY_MIN, VELOCITY_MAX );
 
-		m_fTrailingPercent += m_fVelocity * fDeltaSecs;
+		m_fTrailingPercent += m_fVelocity * delta_secs;
 	}
 
 	// Don't clamp life percentage a little outside the visible range so

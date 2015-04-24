@@ -66,9 +66,9 @@ void AttackDisplay::Init( const PlayerState* pPlayerState )
 }
 
 
-void AttackDisplay::Update( float fDelta )
+void AttackDisplay::UpdateInternal(int32_t tween_delta)
 {
-	ActorFrame::Update( fDelta );
+	ActorFrame::UpdateInternal(tween_delta);
 
 	if( GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
 		GAMESTATE->m_PlayMode != PLAY_MODE_RAVE )

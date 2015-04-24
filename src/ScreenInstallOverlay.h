@@ -12,7 +12,7 @@ public:
 	virtual ~ScreenInstallOverlay();
 	virtual void Init();
 
-	void Update( float fDeltaTime );
+	void UpdateInternal(int32_t tween_delta);
 	bool Input( const InputEventPlus &input );
 
 private:

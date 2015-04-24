@@ -23,7 +23,7 @@ public:
 	void ShowStepCircle( PlayerNumber pn, int CSTEP );
 	bool m_bShowBackground;
 
-	void Update( float fDeltaTime );
+	void UpdateInternal(int32_t tween_delta);
 	virtual void DrawPrimitives();
 
 protected:

@@ -13,7 +13,7 @@ public:
 	void Load( PlayerNumber pn );
 	void LoadFromNode( const XNode* pNode );
 	virtual MemoryCardDisplay *Copy() const;
-	void Update( float fDelta );
+	void UpdateInternal(int32_t tween_delta);
 
 protected:
 	PlayerNumber m_PlayerNumber;

@@ -210,14 +210,14 @@ bool LifeMeterTime::IsFailing() const
 	return GetLifeSeconds() <= 0;
 }
 
-void LifeMeterTime::Update( float fDeltaTime )
+void LifeMeterTime::UpdateInternal(int32_t tween_delta)
 {
 	// update current stage stats so ScoreDisplayLifeTime can show the right thing
 	float fSecs = GetLifeSeconds();
 	fSecs = max( 0, fSecs );
 	m_pPlayerStageStats->m_fLifeRemainingSeconds = fSecs;
 	
-	LifeMeter::Update( fDeltaTime );
+	LifeMeter::UpdateInternal(tween_delta);
 
 	m_pStream->SetPercent( GetLife() );
 	m_pStream->SetPassingAlpha( 0 );

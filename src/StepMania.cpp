@@ -1209,6 +1209,21 @@ int sm_main(int argc, char* argv[])
 	// Run the main loop.
 	GameLoop::RunGameLoop();
 
+	PRINT_TOT_CALL_END(actor_update);
+	PRINT_TOT_CALL_PAIR(game_loop_body);
+	PRINT_TOTAL_TIME(check_focus);
+	PRINT_TOTAL_TIME(soundman_update);
+	PRINT_TOTAL_TIME(sound_update);
+	PRINT_TOTAL_TIME(textureman_update);
+	PRINT_TOTAL_TIME(gamestate_update);
+	PRINT_TOTAL_TIME(screenman_update);
+	PRINT_TOTAL_TIME(memcardman_update);
+	PRINT_TOTAL_TIME(nsman_update);
+	PRINT_TOTAL_TIME(handle_input);
+	PRINT_TOTAL_TIME(devices_changed);
+	PRINT_TOTAL_TIME(lightsman_update);
+	PRINT_TOTAL_TIME(screenman_draw);
+
 	PREFSMAN->SavePrefsToDisk();
 
 	ShutdownGame();

@@ -305,7 +305,7 @@ void ScreenDebugOverlay::Init()
 	this->SetVisible( false );
 }
 
-void ScreenDebugOverlay::Update( float fDeltaTime )
+void ScreenDebugOverlay::UpdateInternal(int32_t tween_delta)
 {
 	{
 		float fRate = 1;
@@ -330,7 +330,7 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 	}
 
 	bool bCenteringNeedsUpdate = g_fImageScaleCurrent != g_fImageScaleDestination;
-	fapproach( g_fImageScaleCurrent, g_fImageScaleDestination, fDeltaTime );
+	fapproach(g_fImageScaleCurrent, g_fImageScaleDestination, tween_time_to_secs(tween_delta));
 	if( bCenteringNeedsUpdate )
 	{
 		DISPLAY->ChangeCentering(
@@ -340,7 +340,7 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 			PREFSMAN->m_fCenterImageAddHeight - (int)SCREEN_HEIGHT + (int)(g_fImageScaleCurrent*SCREEN_HEIGHT) );
 	}
 
-	Screen::Update(fDeltaTime);
+	Screen::UpdateInternal(tween_delta);
 
 	this->SetVisible( g_bIsDisplayed && !m_bForcedHidden );
 	if( !g_bIsDisplayed )

@@ -140,11 +140,11 @@ void ScreenPackages::HandleScreenMessage( const ScreenMessage SM )
 }
 
 static LocalizedString DOWNLOAD_PROGRESS( "ScreenPackages", "DL @ %d KB/s" );
-void ScreenPackages::Update( float fDeltaTime )
+void ScreenPackages::UpdateInternal(int32_t tween_delta)
 {
 	HTTPUpdate();
 
-	m_fLastUpdate += fDeltaTime;
+	m_fLastUpdate += tween_time_to_secs(tween_delta);
 	if ( m_fLastUpdate >= 1.0 )
 	{
 		if ( m_bIsDownloading && m_bGotHeader )
@@ -155,7 +155,7 @@ void ScreenPackages::Update( float fDeltaTime )
 		m_fLastUpdate = 0;
 	}
 
-	ScreenWithMenuElements::Update(fDeltaTime);
+	ScreenWithMenuElements::UpdateInternal(tween_delta);
 }
 
 static LocalizedString ENTER_URL ("ScreenPackages","Enter URL");

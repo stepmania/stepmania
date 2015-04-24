@@ -1146,13 +1146,13 @@ void GameState::ForceOtherPlayersToCompatibleSteps(PlayerNumber main)
 	}
 }
 
-void GameState::Update( float fDelta )
+void GameState::Update(int32_t tween_delta)
 {
-	m_SongOptions.Update( fDelta );
+	m_SongOptions.Update();
 
 	FOREACH_PlayerNumber( p )
 	{
-		m_pPlayerState[p]->Update( fDelta );
+		m_pPlayerState[p]->Update(tween_delta);
 
 		if( !m_bGoalComplete[p] && IsGoalComplete(p) )
 		{
@@ -1235,7 +1235,7 @@ void GameState::ResetStageStatistics()
 		m_pPlayerState[p]->m_HealthState = HealthState_Alive;
 
 		m_pPlayerState[p]->m_iLastPositiveSumOfAttackLevels = 0;
-		m_pPlayerState[p]->m_fSecondsUntilAttacksPhasedOut = 0;	// PlayerAI not affected
+		m_pPlayerState[p]->m_time_until_attacks_phased_out = 0;	// PlayerAI not affected
 
 		m_bGoalComplete[p] = false;
 	}

@@ -17,7 +17,7 @@ public:
 
 	virtual void Load( const PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats );
 
-	virtual void Update( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 
 	virtual void OnSongEnded();
 	virtual void ChangeLife( TapNoteScore score );

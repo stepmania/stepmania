@@ -62,7 +62,7 @@ public:
 	ControllerStateDisplay();
 	void LoadMultiPlayer( RString sType, MultiPlayer mp );
 	void LoadGameController( RString sType, GameController gc );
-	virtual void Update( float fDelta );
+	virtual void UpdateInternal(int32_t tween_delta);
 	bool IsLoaded() const { return m_bIsLoaded; }
 
 	virtual ControllerStateDisplay *Copy() const;

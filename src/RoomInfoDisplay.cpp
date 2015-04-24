@@ -134,14 +134,14 @@ void RoomInfoDisplay::SetRoom( const RoomWheelItemData* roomData )
 	m_Desc.SetText( ROOM_DESC.GetValue() + roomData->m_sDesc );
 }
 
-void RoomInfoDisplay::Update( float fDeltaTime )
+void RoomInfoDisplay::UpdateInternal(int32_t tween_delta)
 {
 	if ((m_deployDelay.PeekDeltaTime() >= DEPLOY_DELAY) && (m_deployDelay.PeekDeltaTime() < (DEPLOY_DELAY + RETRACT_DELAY)))
 		DeployInfoBox();
 	else if (m_deployDelay.PeekDeltaTime() >= DEPLOY_DELAY + RETRACT_DELAY)
 		RetractInfoBox();
 
-	ActorFrame::Update(fDeltaTime);
+	ActorFrame::UpdateInternal(tween_delta);
 }
 
 void RoomInfoDisplay::RequestRoomInfo(const RString& name)

@@ -176,13 +176,14 @@ void DancingCharacters::LoadNextSong()
 
 int Neg1OrPos1() { return RandomInt( 2 ) ? -1 : +1; }
 
-void DancingCharacters::Update( float fDelta )
+void DancingCharacters::UpdateInternal(int32_t tween_delta)
 {
+	float delta= tween_time_to_secs(tween_delta);
 	if( GAMESTATE->m_Position.m_bFreeze || GAMESTATE->m_Position.m_bDelay )
 	{
 		// spin the camera Matrix-style
-		m_CameraPanYStart += fDelta*40;
-		m_CameraPanYEnd += fDelta*40;
+		m_CameraPanYStart += delta*40;
+		m_CameraPanYEnd += delta*40;
 	}
 	else
 	{
@@ -198,7 +199,7 @@ void DancingCharacters::Update( float fDelta )
 		FOREACH_PlayerNumber( p )
 		{
 			if( GAMESTATE->IsPlayerEnabled(p) )
-				m_pCharacter[p]->Update( fDelta*fUpdateScale );
+				m_pCharacter[p]->Update(tween_delta*fUpdateScale);
 		}
 	}
 

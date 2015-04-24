@@ -1633,9 +1633,9 @@ void ScreenEdit::EditMiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, S
 	ScreenMiniMenu::MiniMenu( &menu, SM_SendOnOK, SM_SendOnCancel );
 }
 
-void ScreenEdit::Update( float fDeltaTime )
+void ScreenEdit::UpdateInternal(int32_t tween_delta)
 {
-	m_PlayerStateEdit.Update( fDeltaTime );
+	m_PlayerStateEdit.Update(tween_delta);
 
 	if( m_pSoundMusic->IsPlaying() )
 	{
@@ -1740,17 +1740,17 @@ void ScreenEdit::Update( float fDeltaTime )
 	}
 
 	//LOG->Trace( "ScreenEdit::Update(%f)", fDeltaTime );
-	ScreenWithMenuElements::Update( fDeltaTime );
+	ScreenWithMenuElements::UpdateInternal(tween_delta);
 
 
 	// Update trailing beat
 	float fDelta = GetBeat() - m_fTrailingBeat;
 	if( fabsf(fDelta) < 10 )
 		fapproach( m_fTrailingBeat, GetBeat(),
-			fDeltaTime*40 / m_NoteFieldEdit.GetPlayerState()->m_PlayerOptions.GetCurrent().m_fScrollSpeed );
+			tween_time_to_secs(tween_delta)*40 / m_NoteFieldEdit.GetPlayerState()->m_PlayerOptions.GetCurrent().m_fScrollSpeed );
 	else
 		fapproach( m_fTrailingBeat, GetBeat(),
-			fabsf(fDelta) * fDeltaTime*5 );
+			fabsf(fDelta) * tween_time_to_secs(tween_delta)*5 );
 
 	PlayTicks();
 }

@@ -128,8 +128,8 @@ TapNoteScore PlayerAI::GetTapNoteScore( const PlayerState* pPlayerState )
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )
 	{
 		int iSumOfAttackLevels = 
-			pPlayerState->m_fSecondsUntilAttacksPhasedOut > 0 ? 
-			pPlayerState->m_iLastPositiveSumOfAttackLevels : 
+			pPlayerState->m_time_until_attacks_phased_out > 0 ?
+			pPlayerState->m_iLastPositiveSumOfAttackLevels :
 			0;
 
 		ASSERT_M( iCpuSkill>=0 && iCpuSkill<NUM_SKILL_LEVELS, ssprintf("%i", iCpuSkill) );

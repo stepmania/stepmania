@@ -325,15 +325,15 @@ bool ScreenNameEntry::AnyStillEntering() const
 	return false;
 }
 
-void ScreenNameEntry::Update( float fDelta )
+void ScreenNameEntry::UpdateInternal(int32_t tween_delta)
 {
 	if( m_bFirstUpdate )
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("name entry") );
 
-	m_fFakeBeat += fDelta * FAKE_BEATS_PER_SEC;
+	m_fFakeBeat += tween_time_to_secs(tween_delta) * FAKE_BEATS_PER_SEC;
 	GAMESTATE->m_Position.m_fSongBeat = m_fFakeBeat;
 
-	ScreenWithMenuElements::Update(fDelta);
+	ScreenWithMenuElements::UpdateInternal(tween_delta);
 }
 
 bool ScreenNameEntry::Input( const InputEventPlus &input )

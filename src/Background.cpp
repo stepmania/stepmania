@@ -46,7 +46,7 @@ class BrightnessOverlay: public ActorFrame
 {
 public:
 	BrightnessOverlay();
-	void Update( float fDeltaTime );
+	void UpdateInternal(int32_t tween_delta);
 
 	void FadeToActualBrightness();
 	void SetActualBrightness();
@@ -74,7 +74,7 @@ public:
 	virtual void LoadFromSong( const Song *pSong );
 	virtual void Unload();
 
-	virtual void Update( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 	virtual void DrawPrimitives();
 
 	void FadeToActualBrightness() { m_Brightness.FadeToActualBrightness(); }
@@ -798,7 +798,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 	}
 
 	/* This is unaffected by the music rate. */
-	float fDeltaTimeNoMusicRate = max( fDeltaTime / fRate, 0 );
+	int32_t fDeltaTimeNoMusicRate = secs_to_tween_time(max(fDeltaTime / fRate, 0 ));
 
 	if( m_pCurrentBGA )
 		m_pCurrentBGA->Update( fDeltaTimeNoMusicRate );
@@ -806,9 +806,9 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 		m_pFadingBGA->Update( fDeltaTimeNoMusicRate );
 }
 
-void BackgroundImpl::Update( float fDeltaTime )
+void BackgroundImpl::UpdateInternal(int32_t tween_delta)
 {
-	ActorFrame::Update( fDeltaTime );
+	ActorFrame::UpdateInternal(tween_delta);
 
 	{
 		bool bVisible = IsDangerAllVisible();
@@ -818,7 +818,7 @@ void BackgroundImpl::Update( float fDeltaTime )
 	}
 
 	if( m_pDancingCharacters )
-		m_pDancingCharacters->Update( fDeltaTime );
+		m_pDancingCharacters->Update(tween_delta);
 
 	FOREACH_BackgroundLayer( i )
 	{
@@ -910,9 +910,9 @@ BrightnessOverlay::BrightnessOverlay()
 	SetActualBrightness();
 }
 
-void BrightnessOverlay::Update( float fDeltaTime )
+void BrightnessOverlay::UpdateInternal(int32_t tween_delta)
 {
-	ActorFrame::Update( fDeltaTime );
+	ActorFrame::UpdateInternal(tween_delta);
 	/* If we're actually playing, then we're past fades, etc; update the
 	 * background brightness to follow Cover. */
 	if( !GAMESTATE->m_bGameplayLeadIn )

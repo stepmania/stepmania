@@ -9,7 +9,7 @@ class CombinedLifeMeterTug : public CombinedLifeMeter
 {
 public:
 	CombinedLifeMeterTug();
-	virtual void Update( float fDelta );
+	virtual void UpdateInternal(int32_t tween_delta);
 
 	virtual void ChangeLife( PlayerNumber pn, TapNoteScore score );
 	virtual void ChangeLife( PlayerNumber pn, HoldNoteScore score, TapNoteScore tscore );

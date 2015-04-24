@@ -102,7 +102,7 @@ public:
 	virtual void Init();
 	virtual void BeginScreen();
 
-	virtual void Update( float fDelta );
+	virtual void UpdateInternal(int32_t tween_delta);
 	virtual bool Input( const InputEventPlus &input );
 
 	static RString s_sLastAnswer;

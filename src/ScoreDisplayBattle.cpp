@@ -36,9 +36,9 @@ void ScoreDisplayBattle::Init( const PlayerState* pPlayerState, const PlayerStag
 	ScoreDisplay::Init( pPlayerState, pPlayerStageStats );
 }
 
-void ScoreDisplayBattle::Update( float fDelta )
+void ScoreDisplayBattle::UpdateInternal(int32_t tween_delta)
 {
-	ScoreDisplay::Update( fDelta );
+	ScoreDisplay::UpdateInternal(tween_delta);
 
 	for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
 	{

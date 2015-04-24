@@ -37,7 +37,7 @@ public:
 	virtual void Load( RString sType );
 	void BeginScreen();
 
-	virtual void Update( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 
 	virtual void Move(int n);
 	void ChangeMusicUnlessLocked( int n ); /* +1 or -1 */

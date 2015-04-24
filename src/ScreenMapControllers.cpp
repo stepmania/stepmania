@@ -231,9 +231,10 @@ void ScreenMapControllers::BeginScreen()
 }
 
 
-void ScreenMapControllers::Update( float fDeltaTime )
+void ScreenMapControllers::UpdateInternal(int32_t tween_delta)
 {
-	ScreenWithMenuElements::Update( fDeltaTime );
+	ScreenWithMenuElements::UpdateInternal(tween_delta);
+	float fDeltaTime= tween_time_to_secs(tween_delta);
 
 	if(m_fLockInputSecs <= 0.0f)
 	{

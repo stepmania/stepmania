@@ -343,6 +343,7 @@ void fapproach( float& val, float other_val, float to_move );
 
 /* Return a positive x mod y. */
 float fmodfp( float x, float y );
+int32_t mod_positive(int32_t x, int32_t y);
 
 int power_of_two( int input );
 bool IsAnInt( const RString &s );

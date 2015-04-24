@@ -37,10 +37,10 @@ void ScoreDisplayAliveTime::LoadFromNode( const XNode* pNode )
 	}
 }
 
-void ScoreDisplayAliveTime::Update( float fDelta )
+void ScoreDisplayAliveTime::UpdateInternal(int32_t tween_delta)
 {
 	UpdateNumber();
-	BitmapText::Update( fDelta );
+	BitmapText::UpdateInternal(tween_delta);
 }
 
 void ScoreDisplayAliveTime::HandleMessage( const Message &msg )

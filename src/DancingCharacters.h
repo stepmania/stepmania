@@ -32,7 +32,7 @@ public:
 
 	void LoadNextSong();
  
-	virtual void Update( float fDelta );
+	virtual void UpdateInternal(int32_t tween_delta);
 	virtual void DrawPrimitives();
 	bool	m_bDrawDangerLight;
 	void Change2DAnimState( PlayerNumber pn, int iState );

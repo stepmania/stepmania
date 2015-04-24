@@ -337,9 +337,10 @@ bool ScreenInstallOverlay::Input( const InputEventPlus &input )
 	return Screen::Input(input);
 }
 
-void ScreenInstallOverlay::Update( float fDeltaTime )
+void ScreenInstallOverlay::UpdateInternal(int32_t tween_delta)
 {
-	Screen::Update(fDeltaTime);
+	Screen::UpdateInternal(tween_delta);
+	float fDeltaTime= tween_time_to_secs(tween_delta);
 	PlayAfterLaunchInfo playAfterLaunchInfo;
 	while( CommandLineActions::ToProcess.size() > 0 )
 	{

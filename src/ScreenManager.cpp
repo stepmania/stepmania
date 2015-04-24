@@ -404,7 +404,7 @@ ScreenMessage ScreenManager::PopTopScreenInternal( bool bSendLoseFocus )
 	return ls.m_SendOnPop;
 }
 
-void ScreenManager::Update( float fDeltaTime )
+void ScreenManager::Update(int32_t delta_time)
 {
 	// Pop the top screen, if PopTopScreen was called.
 	if( m_PopTopScreen != SM_Invalid )
@@ -442,20 +442,20 @@ void ScreenManager::Update( float fDeltaTime )
 	 * animations don't jump. */
 	if( pScreen && m_bZeroNextUpdate )
 	{
-		LOG->Trace( "Zeroing this update.  Was %f", fDeltaTime );
-		fDeltaTime = 0;
+		LOG->Trace( "Zeroing this update.  Was %zu", delta_time );
+		delta_time = 0;
 		m_bZeroNextUpdate = false;
 	}
 
 	// Update screens.
 	{
 		for( unsigned i=0; i<g_ScreenStack.size(); i++ )
-			g_ScreenStack[i].m_pScreen->Update( fDeltaTime );
+			g_ScreenStack[i].m_pScreen->Update(delta_time);
 
-		g_pSharedBGA->Update( fDeltaTime );
+		g_pSharedBGA->Update(delta_time);
 
 		for( unsigned i=0; i<g_OverlayScreens.size(); i++ )
-			g_OverlayScreens[i]->Update( fDeltaTime );	
+			g_OverlayScreens[i]->Update(delta_time);
 	}
 
 	/* The music may be started on the first update. If we're reading from a CD,

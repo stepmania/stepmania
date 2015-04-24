@@ -163,14 +163,15 @@ void ActorScroller::LoadFromNode( const XNode *pNode )
 	pNode->GetAttrValue( "WrapScroller", m_bWrap );
 }
 
-void ActorScroller::UpdateInternal( float fDeltaTime )
+void ActorScroller::UpdateInternal(int32_t tween_delta)
 {
-	ActorFrame::UpdateInternal( fDeltaTime );
+	ActorFrame::UpdateInternal(tween_delta);
 
 	// If we have no children, the code below will busy loop.
 	if( !m_SubActors.size() )
 		return;
 
+	float fDeltaTime= tween_time_to_secs(tween_delta);
 	// handle pause
 	if( fDeltaTime > m_fPauseCountdownSeconds )
 	{

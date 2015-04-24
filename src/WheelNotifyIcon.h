@@ -19,7 +19,7 @@ public:
 
 	void SetFlags( Flags flags );
 
-	virtual void Update( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 	virtual bool EarlyAbortDraw() const;
 
 protected:

@@ -558,14 +558,14 @@ void ActorMultiVertex::EnableAnimation(bool bEnable)
 	}
 }
 
-void ActorMultiVertex::Update(float fDelta)
+void ActorMultiVertex::UpdateInternal(int32_t tween_delta)
 {
-	Actor::Update(fDelta); // do tweening
+	Actor::UpdateInternal(tween_delta); // do tweening
 	const bool skip_this_movie_update= _skip_next_update;
 	_skip_next_update= false;
 	if(!m_bIsAnimating) { return; }
 	if(!_Texture) { return; }
-	float time_passed = GetEffectDeltaTime();
+	float time_passed = GetEffectDelta();
 	_secs_into_state += time_passed;
 	if(_secs_into_state < 0)
 	{

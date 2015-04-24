@@ -106,9 +106,9 @@ void ScreenTestSound::UpdateText(int n)
 		));
 }
 
-void ScreenTestSound::Update(float f)
+void ScreenTestSound::UpdateInternal(int32_t tween_delta)
 {
-	Screen::Update(f);
+	Screen::UpdateInternal(tween_delta);
 
 	for(int i = 0; i < nsounds; ++i)
 	{

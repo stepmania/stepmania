@@ -11,7 +11,7 @@ public:
 	ScoreDisplayCalories();
 	~ScoreDisplayCalories();
 
-	virtual void Update( float fDelta );
+	virtual void UpdateInternal(int32_t tween_delta);
 
 	void LoadFromNode( const XNode* pNode );
 	virtual ScoreDisplayCalories *Copy() const;

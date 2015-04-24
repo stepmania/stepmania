@@ -15,7 +15,7 @@ public:
 	void Load( const PlayerState* pPlayerState, int iColNo );
 
 	virtual void DrawPrimitives();
-	virtual void Update( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 	void Step( TapNoteScore score );
 	void SetPressed() { m_bIsPressed = true; };
 	void SetNoteUpcoming( bool b );

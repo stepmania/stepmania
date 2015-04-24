@@ -68,9 +68,9 @@ void ControllerStateDisplay::LoadInternal( RString sType, MultiPlayer mp, GameCo
 	}
 }
 
-void ControllerStateDisplay::Update( float fDelta )
+void ControllerStateDisplay::UpdateInternal(int32_t tween_delta)
 {
-	ActorFrame::Update( fDelta );
+	ActorFrame::UpdateInternal(tween_delta);
 
 	if( m_mp != MultiPlayer_Invalid )
 	{

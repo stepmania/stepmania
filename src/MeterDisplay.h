@@ -31,7 +31,7 @@ private:
 class SongMeterDisplay: public MeterDisplay 
 {
 public:
-	virtual void Update( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 	virtual SongMeterDisplay *Copy() const;
 };
 

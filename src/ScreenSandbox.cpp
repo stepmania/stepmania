@@ -27,9 +27,9 @@ bool ScreenSandbox::Input( const InputEventPlus &input )
 	return Screen::Input( input );
 }
 
-void ScreenSandbox::Update( float fDeltaTime )
+void ScreenSandbox::UpdateInternal(int32_t tween_delta)
 {
-	Screen::Update(fDeltaTime);
+	Screen::UpdateInternal(tween_delta);
 }
 
 void ScreenSandbox::DrawPrimitives()

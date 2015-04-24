@@ -254,9 +254,9 @@ int LifeMeterBattery::GetTotalLives()
 	return m_pPlayerState->m_PlayerOptions.GetSong().m_BatteryLives;
 }
 
-void LifeMeterBattery::Update( float fDeltaTime )
+void LifeMeterBattery::UpdateInternal(int32_t tween_delta)
 {
-	LifeMeter::Update( fDeltaTime );
+	LifeMeter::UpdateInternal(tween_delta);
 }
 
 // lua start

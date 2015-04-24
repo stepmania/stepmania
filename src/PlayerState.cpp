@@ -1,4 +1,6 @@
 #include "global.h"
+// Just for secs_to_tween_time.
+#include "Actor.h"
 #include "PlayerState.h"
 #include "Foreach.h"
 #include "GameState.h"
@@ -31,7 +33,7 @@ void PlayerState::Reset()
 	m_iCpuSkill = 5;
 
 	m_iLastPositiveSumOfAttackLevels = 0;
-	m_fSecondsUntilAttacksPhasedOut = 0;
+	m_time_until_attacks_phased_out = 0;
 	m_bAttackBeganThisUpdate = false;
 	m_bAttackEndedThisUpdate = false;
 	m_ActiveAttacks.clear();
@@ -50,7 +52,7 @@ void PlayerState::Reset()
 	ClearHopoState();
 }
 
-void PlayerState::Update( float fDelta )
+void PlayerState::Update(int32_t tween_delta)
 {
 	// TRICKY: GAMESTATE->Update is run before any of the Screen update's,
 	// so we'll clear these flags here and let them get turned on later
@@ -91,10 +93,10 @@ void PlayerState::Update( float fDelta )
 		RebuildPlayerOptionsFromActiveAttacks();
 
 	// Update after enabling attacks, so we approach the new state.
-	m_PlayerOptions.Update( fDelta );
+	m_PlayerOptions.Update();
 
-	if( m_fSecondsUntilAttacksPhasedOut > 0 )
-		m_fSecondsUntilAttacksPhasedOut = max( 0, m_fSecondsUntilAttacksPhasedOut - fDelta );
+	if(m_time_until_attacks_phased_out > 0)
+		m_time_until_attacks_phased_out = max(0, m_time_until_attacks_phased_out - tween_delta);
 }
 
 void PlayerState::SetPlayerNumber(PlayerNumber pn)
@@ -180,12 +182,12 @@ void PlayerState::RebuildPlayerOptionsFromActiveAttacks()
 	if( iSumOfAttackLevels > 0 )
 	{
 		m_iLastPositiveSumOfAttackLevels = iSumOfAttackLevels;
-		m_fSecondsUntilAttacksPhasedOut = 10000;	// any positive number that won't run out before the attacks
+		m_time_until_attacks_phased_out = secs_to_tween_time(2);	// any positive number that won't run out before the attacks
 	}
 	else
 	{
 		// don't change!  m_iLastPositiveSumOfAttackLevels[p] = iSumOfAttackLevels;
-		m_fSecondsUntilAttacksPhasedOut = 2;	// 2 seconds to phase out
+		m_time_until_attacks_phased_out = secs_to_tween_time(2);	// 2 seconds to phase out
 	}
 }
 

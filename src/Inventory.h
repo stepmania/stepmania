@@ -19,7 +19,7 @@ public:
 	~Inventory();
 	void Load( PlayerState* pPlayerState );
 
-	virtual void Update( float fDelta );
+	virtual void UpdateInternal(int32_t tween_delta);
 	virtual void DrawPrimitives() {};
 
 	void UseItem( int iSlot );

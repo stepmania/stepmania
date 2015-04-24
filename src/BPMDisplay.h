@@ -24,7 +24,7 @@ public:
 	 * @brief Update the display as required.
 	 * @param fDeltaTime the changed time.
 	 */
-	virtual void Update( float fDeltaTime ); 
+	virtual void UpdateInternal(int32_t tween_delta);
 	void LoadFromNode( const XNode *pNode );
 	/**
 	 * @brief Use the BPM[s] from a song.

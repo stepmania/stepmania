@@ -105,10 +105,10 @@ void Screen::EndScreen()
 	m_bRunning = false;
 }
 
-void Screen::Update( float fDeltaTime )
+void Screen::UpdateInternal(int32_t tween_delta)
 {
-	ActorFrame::Update( fDeltaTime );
-	
+	ActorFrame::UpdateInternal(tween_delta);
+	float fDeltaTime= tween_time_to_secs(tween_delta);
 	m_fLockInputSecs = max( 0, m_fLockInputSecs-fDeltaTime );
 
 	/* We need to ensure two things:

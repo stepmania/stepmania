@@ -541,11 +541,12 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 	}
 }
 
-void BGAnimationLayer::UpdateInternal( float fDeltaTime )
+void BGAnimationLayer::UpdateInternal(int32_t tween_delta)
 {
-	ActorFrame::UpdateInternal( fDeltaTime );
+	ActorFrame::UpdateInternal(tween_delta);
 
-	fDeltaTime *= m_fUpdateRate;
+	tween_delta *= m_fUpdateRate;
+	float fDeltaTime= tween_time_to_secs(tween_delta);
 
 	switch( m_Type )
 	{

@@ -41,7 +41,7 @@ protected:
 	public:
 		GrooveRadarValueMap();
 
-		virtual void Update( float fDeltaTime );
+		virtual void UpdateInternal(int32_t tween_delta);
 		virtual void DrawPrimitives();
 
 		void SetEmpty();

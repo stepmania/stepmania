@@ -38,12 +38,11 @@ public:
 		Call( ModsLevel_Preferred, &T::Init );
 	}
 
-	void Update( float fDelta )
+	void Update()
 	{
 		// Don't let the mod approach speed be affected by Tab.
 		// TODO: Find a more elegant way of handling this.
-		fDelta = m_Timer.GetDeltaTime();
-		m_[ModsLevel_Current].Approach( m_[ModsLevel_Song], fDelta );
+		m_[ModsLevel_Current].Approach(m_[ModsLevel_Song], m_Timer.GetDeltaTime());
 	}
 
 	template<typename U>

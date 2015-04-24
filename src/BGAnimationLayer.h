@@ -17,7 +17,7 @@ public:
 	void LoadFromAniLayerFile( const RString& sPath );
 	void LoadFromNode( const XNode* pNode );
 
-	void UpdateInternal( float fDeltaTime );
+	void UpdateInternal(int32_t tween_delta);
 
 	float GetMaxTweenTimeLeft() const;
 

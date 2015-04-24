@@ -13,12 +13,12 @@
 class DeviceList: public BitmapText
 {
 public:
-	void Update( float fDeltaTime )
+	void UpdateInternal(int32_t tween_delta)
 	{
 		// Update devices text
 		this->SetText( INPUTMAN->GetDisplayDevicesString() );
 
-		BitmapText::Update( fDeltaTime );
+		BitmapText::UpdateInternal(tween_delta);
 	}
 
 	virtual DeviceList *Copy() const;
@@ -33,7 +33,7 @@ class InputList: public BitmapText
 {
 	virtual InputList *Copy() const;
 
-	void Update( float fDeltaTime )
+	void Update(int32_t tween_delta)
 	{
 		// Update input texts
 		vector<RString> asInputs;
@@ -82,7 +82,7 @@ class InputList: public BitmapText
 
 		this->SetText( join( "\n", asInputs ) );
 
-		BitmapText::Update( fDeltaTime );
+		BitmapText::UpdateInternal(tween_delta);
 	}
 };
 

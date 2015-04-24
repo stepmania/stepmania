@@ -486,11 +486,11 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	}
 }
 
-void ScreenOptions::Update( float fDeltaTime )
+void ScreenOptions::UpdateInternal(int32_t tween_delta)
 {
 	//LOG->Trace( "ScreenOptions::Update(%f)", fDeltaTime );
 
-	ScreenWithMenuElements::Update( fDeltaTime );
+	ScreenWithMenuElements::UpdateInternal(tween_delta);
 }
 
 bool ScreenOptions::Input( const InputEventPlus &input )

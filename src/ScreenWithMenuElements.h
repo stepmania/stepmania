@@ -18,7 +18,7 @@ public:
 	virtual ~ScreenWithMenuElements();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
-	void Update( float fDeltaTime );
+	void UpdateInternal(int32_t tween_delta);
 	void StartTransitioningScreen( ScreenMessage smSendWhenDone );
 	virtual void Cancel( ScreenMessage smSendWhenDone );
 	bool IsTransitioning();

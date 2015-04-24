@@ -86,15 +86,16 @@ void RollingNumbers::DrawPrimitives()
 	m_pTempState->crop.right= original_crop_right;
 }
 
-void RollingNumbers::Update( float fDeltaTime )
+void RollingNumbers::UpdateInternal(int32_t tween_delta)
 {
 	if(m_fCurrentNumber != m_fTargetNumber)
 	{
-		fapproach( m_fCurrentNumber, m_fTargetNumber, fabsf(m_fScoreVelocity) * fDeltaTime );
+		fapproach(m_fCurrentNumber, m_fTargetNumber, fabsf(m_fScoreVelocity) *
+			tween_time_to_secs(tween_delta));
 		UpdateText();
 	}
 
-	BitmapText::Update( fDeltaTime );
+	BitmapText::UpdateInternal(tween_delta);
 }
 
 void RollingNumbers::SetTargetNumber( float fTargetNumber )

@@ -40,9 +40,9 @@ static LocalizedString AUTO_CYCLE	( "ScreenTestLights", "Auto Cycle" );
 static LocalizedString MANUAL_CYCLE	( "ScreenTestLights", "Manual Cycle" );
 static LocalizedString CABINET_LIGHT( "ScreenTestLights", "cabinet light" );
 static LocalizedString CONTROLLER_LIGHT( "ScreenTestLights", "controller light" );
-void ScreenTestLights::Update( float fDeltaTime )
+void ScreenTestLights::UpdateInternal(int32_t tween_delta)
 {
-	Screen::Update( fDeltaTime );
+	Screen::UpdateInternal(tween_delta);
 
 
 	if( m_timerBackToAutoCycle.Ago() > 20 )

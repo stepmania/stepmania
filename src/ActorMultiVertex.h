@@ -69,7 +69,7 @@ public:
 	const AMV_TweenState& AMV_DestTweenState() const { return const_cast<ActorMultiVertex*>(this)->AMV_DestTweenState(); }
 
 	virtual void EnableAnimation(bool bEnable);
-	virtual void Update(float fDelta);
+	virtual void UpdateInternal(int32_t tween_delta);
 	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();
 	virtual void DrawInternal( const AMV_TweenState *TS );

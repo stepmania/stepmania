@@ -363,7 +363,7 @@ void ScreenSelectMaster::BeginScreen()
 	ScreenSelect::BeginScreen();
 
 	// Call GetTweenTimeLeft after the base BeginScreen has started the in Transition.
-	m_fLockInputSecs = this->GetTweenTimeLeft();
+	m_fLockInputSecs = this->GetTweenSecsLeft();
 }
 
 void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
@@ -708,7 +708,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 	}
 
 	m_fLockInputSecs = PRE_SWITCH_PAGE_SECONDS;
-	this->PostScreenMessage( SM_PlayPostSwitchPage, GetTweenTimeLeft() );
+	this->PostScreenMessage( SM_PlayPostSwitchPage, GetTweenSecsLeft() );
 	return true;
 }
 
@@ -883,7 +883,7 @@ float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 		FOREACH_ENUM( Page, page )
 		{
 			m_sprMore[page]->PlayCommand( "Off" );
-			fSecs = max( fSecs, m_sprMore[page]->GetTweenTimeLeft() );
+			fSecs = max( fSecs, m_sprMore[page]->GetTweenSecsLeft() );
 		}
 	}
 	if( SHOW_CURSOR )
@@ -891,7 +891,7 @@ float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 		if(m_sprCursor[pn] != NULL)
 		{
 			m_sprCursor[pn]->PlayCommand( "Choose" );
-			fSecs = max( fSecs, m_sprCursor[pn]->GetTweenTimeLeft() );
+			fSecs = max( fSecs, m_sprCursor[pn]->GetTweenSecsLeft() );
 		}
 	}
 

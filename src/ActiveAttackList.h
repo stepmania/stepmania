@@ -17,7 +17,7 @@ public:
 	/**
 	 * @brief Look into updating the list.
 	 * @param fDelta the present time. */
-	virtual void Update( float fDelta );
+	virtual void UpdateInternal(int32_t tween_delta);
 	/** @brief Refresh the list of attacks. */ 
 	void Refresh();
 

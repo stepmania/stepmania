@@ -16,7 +16,7 @@ public:
 	void DrawPart(RageColor const* diffuse, RageColor const& stroke,
 		float crop_left, float crop_right);
 	virtual void DrawPrimitives();
-	virtual void Update( float fDeltaTime );
+	virtual void UpdateInternal(int32_t tween_delta);
 
 	/** 
 	 * @brief Set the new target number to be reached.

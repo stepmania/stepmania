@@ -60,9 +60,9 @@ void ScreenStatsOverlay::Init()
 	this->SubscribeToMessage( "ShowStatsChanged" );
 }
 
-void ScreenStatsOverlay::Update( float fDeltaTime )
+void ScreenStatsOverlay::UpdateInternal(int32_t tween_delta)
 {
-	Screen::Update(fDeltaTime);
+	Screen::UpdateInternal(tween_delta);
 
 	static bool bShowStatsWasOn = false;
 

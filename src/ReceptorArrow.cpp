@@ -38,9 +38,9 @@ void ReceptorArrow::Load( const PlayerState* pPlayerState, int iColNo )
 	m_bWasReverse = bReverse;
 }
 
-void ReceptorArrow::Update( float fDeltaTime )
+void ReceptorArrow::UpdateInternal(int32_t tween_delta)
 {
-	ActorFrame::Update( fDeltaTime );
+	ActorFrame::UpdateInternal(tween_delta);
 
 	bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(m_iColNo) > 0.5f;
 	if( bReverse != m_bWasReverse )

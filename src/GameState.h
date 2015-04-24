@@ -78,7 +78,7 @@ public:
 	void ForceSharedSidesMatch();
 	void ForceOtherPlayersToCompatibleSteps(PlayerNumber main);
 
-	void Update( float fDelta );
+	void Update(int32_t tween_delta);
 
 	// Main state info
 

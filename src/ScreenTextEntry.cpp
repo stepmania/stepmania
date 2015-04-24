@@ -190,9 +190,9 @@ void ScreenTextEntry::UpdateAnswerText()
 	m_textAnswer.SetText( s );
 }
 
-void ScreenTextEntry::Update( float fDelta )
+void ScreenTextEntry::UpdateInternal(int32_t tween_delta)
 {
-	ScreenWithMenuElements::Update( fDelta );
+	ScreenWithMenuElements::UpdateInternal(tween_delta);
 
 	if( m_timerToggleCursor.PeekDeltaTime() > 0.25f )
 	{

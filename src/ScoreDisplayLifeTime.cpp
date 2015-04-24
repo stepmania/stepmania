@@ -49,9 +49,9 @@ void ScoreDisplayLifeTime::Init( const PlayerState* pPlayerState, const PlayerSt
 	}
 }
 
-void ScoreDisplayLifeTime::Update( float fDelta )
+void ScoreDisplayLifeTime::UpdateInternal(int32_t tween_delta)
 {
-	ScoreDisplay::Update( fDelta );
+	ScoreDisplay::UpdateInternal(tween_delta);
 
 	float fSecs = m_pPlayerStageStats->m_fLifeRemainingSeconds;
 

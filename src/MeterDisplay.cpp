@@ -76,7 +76,7 @@ void MeterDisplay::SetStreamWidth( float fStreamWidth )
 	m_sprStream->SetZoomX( m_fStreamWidth / m_sprStream->GetUnzoomedWidth() );
 }
 
-void SongMeterDisplay::Update( float fDeltaTime )
+void SongMeterDisplay::UpdateInternal(int32_t tween_delta)
 {
 	if( GAMESTATE->m_pCurSong )
 	{
@@ -88,7 +88,7 @@ void SongMeterDisplay::Update( float fDeltaTime )
 		SetPercent( fPercentPositionSong );
 	}
 
-	MeterDisplay::Update( fDeltaTime );
+	MeterDisplay::UpdateInternal(tween_delta);
 }
 
 // lua start
