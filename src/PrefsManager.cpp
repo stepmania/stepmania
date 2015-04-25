@@ -223,6 +223,7 @@ PrefsManager::PrefsManager() :
 	m_iSongsPerPlay			( "SongsPerPlay",		3, ValidateSongsPerPlay ),
 	m_bDelayedCreditsReconcile	( "DelayedCreditsReconcile",	false ),
 	m_bComboContinuesBetweenSongs	( "ComboContinuesBetweenSongs",	false ),
+	m_AllowMultipleToasties("AllowMultipleToasties", true),
 	m_MinTNSToHideNotes("MinTNSToHideNotes", TNS_W3),
 	m_ShowSongOptions		( "ShowSongOptions",		Maybe_NO ),
 	m_bDancePointsForOni		( "DancePointsForOni",		true ),

@@ -215,6 +215,7 @@ public:
 	Preference<int>	m_iSongsPerPlay;
 	Preference<bool>	m_bDelayedCreditsReconcile; // zuh?
 	Preference<bool>	m_bComboContinuesBetweenSongs;
+	Preference<bool>	m_AllowMultipleToasties;
 	Preference<TapNoteScore> m_MinTNSToHideNotes;
 	Preference<Maybe>	m_ShowSongOptions;
 	Preference<bool>	m_bDancePointsForOni;

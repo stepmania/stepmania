@@ -18,6 +18,7 @@ AutoScreenMessage( SM_PlayToasty );
 class ScoreKeeperNormal: public ScoreKeeper
 {
 	void AddScoreInternal( TapNoteScore score );
+	int CalcNextToastyAt(int level);
 
 	int	m_iScoreRemainder;
 	int	m_iMaxPossiblePoints;
@@ -26,9 +27,9 @@ class ScoreKeeperNormal: public ScoreKeeper
 	int	m_iNumTapsAndHolds;
 	int	m_iMaxScoreSoFar; // for nonstop scoring
 	int	m_iPointBonus; // the difference to award at the end
-	int	m_iCurToastyCombo;
-	//int	m_iCurToastyTrigger;
-	//int	m_iNextToastyAt;
+	int m_cur_toasty_combo;
+	int m_cur_toasty_level;
+	int m_next_toasty_at;
 	bool	m_bIsLastSongInCourse;
 	bool	m_bIsBeginner;
 
@@ -43,8 +44,8 @@ class ScoreKeeperNormal: public ScoreKeeper
 	ThemeMetric<bool>		m_AvoidMineIncrementsCombo;
 	ThemeMetric<bool>		m_UseInternalScoring;
 
-	//ThemeMetric<LuaReference>	m_vToastyTriggers;
-	ThemeMetric<int>	m_ToastyTrigger;
+	ThemeMetric<TapNoteScore> m_toasty_min_tns;
+	ThemeMetric<LuaReference> m_toasty_trigger;
 
 	vector<Steps*>	m_apSteps;
 

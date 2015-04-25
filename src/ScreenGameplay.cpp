@@ -2874,10 +2874,15 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_PlayToasty )
 	{
-		// todo: make multiple toasties work -aj
-		if( g_bEasterEggs )
-			if( !m_Toasty.IsTransitioning()  &&  !m_Toasty.IsFinished() )	// don't play if we've already played it once
+		if(g_bEasterEggs)
+		{
+			if(PREFSMAN->m_AllowMultipleToasties ||
+				m_Toasty.IsWaiting())
+			{
+				m_Toasty.Reset();
 				m_Toasty.StartTransitioning();
+			}
+		}
 	}
 	else if( ScreenMessageHelpers::ScreenMessageToString(SM).find("0Combo") != string::npos )
 	{
