@@ -194,16 +194,44 @@ namespace OptionRowHandlerUtil
 	int GetOneSelection( const vector<bool> &vbSelected );
 }
 
-inline void VerifySelected( SelectType st, const vector<bool> &vbSelected, const RString &sName )
+inline void VerifySelected(SelectType st, vector<bool> &selected, const RString &sName)
 {
-	int iNumSelected = 0;
+	int num_selected = 0;
 	if( st == SELECT_ONE )
 	{
-		ASSERT_M( vbSelected.size() > 0, ssprintf("%s: %i/%i", sName.c_str(), iNumSelected, int(vbSelected.size())) );
-		for( unsigned e = 0; e < vbSelected.size(); ++e )
-			if( vbSelected[e] )
-				iNumSelected++;
-		ASSERT_M( iNumSelected == 1, ssprintf("%s: %i/%i", sName.c_str(), iNumSelected, int(vbSelected.size())) );
+		int first_selected= -1;
+		if(selected.empty())
+		{
+			LuaHelpers::ReportScriptErrorFmt("Option row %s requires only one "
+				"thing to be selected, but the list of selected things has zero "
+				"elements.", sName.c_str());
+			return;
+		}
+		for(unsigned int e= 0; e < selected.size(); ++e)
+		{
+			if(selected[e])
+			{
+				num_selected++;
+				if(first_selected == -1)
+				{
+					first_selected= static_cast<int>(e);
+				}
+			}
+		}
+		if(num_selected != 1)
+		{
+			LuaHelpers::ReportScriptErrorFmt("Option row %s requires only one "
+				"thing to be selected, but %i out of %i things are selected.",
+				sName.c_str(), num_selected, static_cast<int>(selected.size()));
+			for(unsigned int e= 0; e < selected.size(); ++e)
+			{
+				if(selected[e] && e != first_selected)
+				{
+					selected[e]= false;
+				}
+			}
+			return;
+		}
 	}
 }
 
