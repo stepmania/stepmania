@@ -460,3 +460,22 @@ function GetCodeForGame(codeName)
 	local inputCode = CodeDetectorCodes[codeName]
 	return inputCode[gameName] or inputCode["default"]
 end
+
+local ModeMenuBaseChoices = "Preferred,Group,Title,Bpm,Popularity,TopGrades,Artist,Genre,Length,Recent"
+local ModeMenuAdditionalChoices = {
+	Single	= "EasyMeter,MediumMeter,HardMeter,ChallengeMeter",
+	Double	= "DoubleEasyMeter,DoubleMediumMeter,DoubleHardMeter,DoubleChallengeMeter"
+}
+
+function GetModeMenuChoices()
+	local s = ModeMenuBaseChoices
+	local style	= GAMESTATE:GetCurrentStyle()
+	local stype	= style:GetStyleType()
+	if stype == "StyleType_OnePlayerTwoSides" then
+		s = s .. "," .. ModeMenuAdditionalChoices.Double
+	else
+		s = s .. "," .. ModeMenuAdditionalChoices.Single
+	end
+	
+	return s
+end
