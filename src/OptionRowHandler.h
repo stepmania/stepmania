@@ -230,6 +230,10 @@ inline void VerifySelected(SelectType st, vector<bool> &selected, const RString 
 					selected[e]= false;
 				}
 			}
+			if(num_selected == 0)
+			{
+				selected[0]= true;
+			}
 			return;
 		}
 	}
