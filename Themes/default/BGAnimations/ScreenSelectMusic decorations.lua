@@ -123,7 +123,8 @@ t[#t+1] = StandardDecorationFromFileOptional("SegmentDisplay","SegmentDisplay");
 --[[ t[#t+1] = StandardDecorationFromFileOptional("NegativeDisplay","NegativeDisplay") .. {
 }; --]]
 
-t[#t+1] = StandardDecorationFromFileOptional("SongTime","SongTime") .. {
+t[#t+1] = StandardDecorationFromFileOptional("SongTimeLabel","SongTimeLabel") 
+t[#t+1] = StandardDecorationFromFileOptional("SongTime","SongTimeText") .. {
 	SetCommand=function(self)
 		local curSelection = nil;
 		local length = 0.0;
@@ -261,6 +262,7 @@ end
 
 t[#t+1] = StandardDecorationFromFileOptional("DifficultyDisplay","DifficultyDisplay");
 
+t[#t+1] = StandardDecorationFromFileOptional("SortOrderFrame","SortOrderFrame")
 t[#t+1] = StandardDecorationFromFileOptional("SortOrder","SortOrderText") .. {
 	BeginCommand=cmd(playcommand,"Set");
 	SortOrderChangedMessageCommand=cmd(playcommand,"Set");
