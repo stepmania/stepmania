@@ -1627,7 +1627,7 @@ static const Style g_Style_Beat_Versus5 =
 	true,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"versus5",			// m_szName
-	StepsType_beat_single5,	// m_StepsType
+	StepsType_beat_versus5,	// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	6,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1656,7 +1656,7 @@ static const Style g_Style_Beat_Versus5 =
 		0,1,2,3,4,5
 	},
 	false, // m_bCanUseBeginnerHelper
-	true, // m_bLockDifficulties
+	false, // m_bLockDifficulties
 };
 
 static const Style g_Style_Beat_Double5 =
@@ -1715,7 +1715,7 @@ static const Style g_Style_Beat_Single7 =
 	true,				// m_bUsedForGameplay
 	true,				// m_bUsedForEdit
 	true,				// m_bUsedForDemonstration
-	true,				// m_bUsedForHowToPlay
+	false,				// m_bUsedForHowToPlay
 	"single7",			// m_szName
 	StepsType_beat_single7,	// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
@@ -1760,7 +1760,7 @@ static const Style g_Style_Beat_Versus7 =
 	true,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"versus7",			// m_szName
-	StepsType_beat_single7,	// m_StepsType
+	StepsType_beat_versus7,	// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	8,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1793,7 +1793,7 @@ static const Style g_Style_Beat_Versus7 =
 		0,1,2,3,4,5,6,7
 	},
 	false, // m_bCanUseBeginnerHelper
-	true, // m_bLockDifficulties
+	false, // m_bLockDifficulties
 };
 
 
@@ -1878,7 +1878,7 @@ static const AutoMappings g_AutoKeyMappings_Beat = AutoMappings (
 	AutoMappingEntry( 0, KEY_PERIOD,	BEAT_BUTTON_KEY5,		false ),
 	AutoMappingEntry( 0, KEY_SEMICOLON,	BEAT_BUTTON_KEY6,		false ),
 	AutoMappingEntry( 0, KEY_SLASH,	BEAT_BUTTON_KEY7,		false ),
-	AutoMappingEntry( 0, KEY_SPACE,	BEAT_BUTTON_SCRATCHUP,		false )
+	AutoMappingEntry( 0, KEY_LSHIFT,	BEAT_BUTTON_SCRATCHUP,		false )
 );
 
 static const Game g_Game_Beat = 
@@ -1894,11 +1894,11 @@ static const Game g_Game_Beat =
 		{	// m_szButtonNames
 			{ "Key1",		GAME_BUTTON_LEFT },
 			{ "Key2",		GameButton_Invalid },
-			{ "Key3",		GameButton_Invalid },
+			{ "Key3",		GAME_BUTTON_RIGHT },
 			{ "Key4",		GameButton_Invalid },
 			{ "Key5",		GameButton_Invalid },
 			{ "Key6",		GameButton_Invalid },
-			{ "Key7",		GAME_BUTTON_RIGHT },
+			{ "Key7",		GameButton_Invalid },
 			{ "Scratch up",		GAME_BUTTON_UP },
 			{ "Scratch down",	GAME_BUTTON_DOWN },
 		},

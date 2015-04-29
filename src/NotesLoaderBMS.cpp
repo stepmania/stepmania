@@ -1515,9 +1515,6 @@ void BMSSongLoader::AddToSong()
 						steps->SetDifficulty( Difficulty_Easy );
 					}
 				}
-				// [x] [Expert]
-				else if( tag.find('x') != tag.npos )
-					steps->SetDifficulty( Difficulty_Challenge );
 				// [A] <A> (A) [ANOTHER] <ANOTHER> (ANOTHER) (ANOTHER7) Another (DP ANOTHER) (Another) -ANOTHER- [A7] [A14] etc etc etc
 				else if( tag.find('a') != tag.npos )
 					steps->SetDifficulty( Difficulty_Hard );
