@@ -75,19 +75,14 @@ protected:
 	void DrawBeatBar( const float fBeat, BeatBarType type, int iMeasureIndex );
 	void DrawMarkerBar( int fBeat );
 	void DrawAreaHighlight( int iStartBeat, int iEndBeat );
-	void DrawBPMText( const float fBeat, const float fBPM );
-	void DrawFreezeText( const float fBeat, const float fLength );
-	void DrawDelayText( const float fBeat, const float fLength );
-	void DrawWarpText( const float fBeat, const float fNewBeat );
-	void DrawTimeSignatureText( const float fBeat, int iNumerator, int iDenominator );
-	void DrawTickcountText( const float fBeat, int iTicks );
-	void DrawComboText( const float fBeat, int iCombo, int iMiss );
-	void DrawLabelText( const float fBeat, RString sLabel );
-	void DrawSpeedText( const float fBeat, float fPercent, float fWait, int iMode );
-	void DrawScrollText( const float fBeat, float fPercent );
-	void DrawFakeText( const float fBeat, const float fNewBeat );
-	void DrawAttackText( const float fBeat, const Attack &attack );
-	void DrawBGChangeText( const float fBeat, const RString sNewBGName );
+	void set_text_measure_number_for_draw(
+		const float beat, const float side_sign, float x_offset,
+		const float horiz_align, const RageColor& color, const RageColor& glow);
+	void draw_timing_segment_text(const RString& text,
+		const float beat, const float side_sign, float x_offset,
+		const float horiz_align, const RageColor& color, const RageColor& glow);
+	void DrawAttackText(const float beat, const Attack &attack, const RageColor& glow);
+	void DrawBGChangeText(const float beat, const RString new_bg_name, const RageColor& glow);
 	float GetWidth() const;
 	
 	const NoteData *m_pNoteData;

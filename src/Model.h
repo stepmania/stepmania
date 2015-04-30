@@ -43,7 +43,9 @@ public:
 
 	virtual int GetNumStates() const;
 	virtual void SetState( int iNewState );
-	virtual float GetAnimationLengthSeconds() const;
+	virtual float GetAnimationLengthSeconds() const
+	{ return m_animation_length_seconds; }
+	virtual void RecalcAnimationLengthSeconds();
 	virtual void SetSecondsIntoAnimation( float fSeconds );
 
 	RString		GetDefaultAnimation() const { return m_sDefaultAnimation; };
@@ -57,6 +59,7 @@ public:
 private:
 	RageModelGeometry		*m_pGeometry;
 
+	float m_animation_length_seconds;
 	vector<msMaterial>		m_Materials;
 	map<RString,msAnimation>	m_mapNameToAnimation;
 	const msAnimation*		m_pCurAnimation;

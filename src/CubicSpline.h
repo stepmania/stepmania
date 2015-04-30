@@ -3,6 +3,7 @@
 
 #include <vector>
 using std::vector;
+#include "RageTypes.h"
 struct lua_State;
 
 struct CubicSpline
@@ -49,6 +50,8 @@ struct CubicSplineN
 	void evaluate_derivative(float t, vector<float>& v) const;
 	void evaluate_second_derivative(float t, vector<float>& v) const;
 	void evaluate_third_derivative(float t, vector<float>& v) const;
+	void evaluate(float t, RageVector3& v) const;
+	void evaluate_derivative(float t, RageVector3& v) const;
 	void set_point(size_t i, const vector<float>& v);
 	void set_coefficients(size_t i, const vector<float>& b,
 		const vector<float>& c, const vector<float>& d);

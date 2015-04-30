@@ -819,6 +819,8 @@ void Player::Update( float fDeltaTime )
 	const float fSongBeat = m_pPlayerState->m_Position.m_fSongBeat;
 	const int iSongRow = BeatToNoteRow( fSongBeat );
 
+	ArrowEffects::SetCurrentOptions(&m_pPlayerState->m_PlayerOptions.GetCurrent());
+
 	// Optimization: Don't spend time processing the things below that won't show 
 	// if the Player doesn't show anything on the screen.
 	if( HasVisibleParts() )
@@ -869,7 +871,7 @@ void Player::Update( float fDeltaTime )
 				//float fGrayYPos = SCALE( fPercentReverse, 0.f, 1.f, GRAY_ARROWS_Y_STANDARD, GRAY_ARROWS_Y_REVERSE );
 
 				float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
-				const float fZ = ArrowEffects::GetZPos( m_pPlayerState, c, 0 );
+				const float fZ = ArrowEffects::GetZPos(c, 0);
 				fX *= ( 1 - fMiniPercent * 0.5f );
 
 				m_vpHoldJudgment[c]->SetX( fX );

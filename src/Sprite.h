@@ -54,10 +54,12 @@ public:
 	virtual int GetNumStates() const;
 	virtual void SetState( int iNewState );
 	int GetState() { return m_iCurState; }
-	virtual float GetAnimationLengthSeconds() const;
+	virtual float GetAnimationLengthSeconds() const
+	{ return m_animation_length_seconds; }
+	virtual void RecalcAnimationLengthSeconds();
 	virtual void SetSecondsIntoAnimation( float fSeconds );
 	void SetStateProperties(const vector<State>& new_states)
-	{ m_States= new_states; SetState(0); }
+	{ m_States= new_states; RecalcAnimationLengthSeconds(); SetState(0); }
 
 	RString	GetTexturePath() const;
 
@@ -106,6 +108,7 @@ private:
 	int		m_iCurState;
 	/** @brief The number of seconds that have elapsed since we switched to this frame. */
 	float	m_fSecsIntoState;
+	float m_animation_length_seconds;
 
 	EffectMode m_EffectMode;
 	bool m_bUsingCustomTexCoords;
