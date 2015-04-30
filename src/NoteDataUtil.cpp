@@ -1445,6 +1445,44 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 				iTakeFromTrack[5] = 0;
 				break;
 			}
+			case StepsType_beat_single5:
+			{
+				// scratch is on right (cols 5 and 11) for 5-key
+				iTakeFromTrack[0] = 4;
+				iTakeFromTrack[1] = 3;
+				iTakeFromTrack[2] = 2;
+				iTakeFromTrack[3] = 1;
+				iTakeFromTrack[4] = 0;
+				iTakeFromTrack[5] = 5;
+				iTakeFromTrack[6] = 10;
+				iTakeFromTrack[7] = 9;
+				iTakeFromTrack[8] = 8;
+				iTakeFromTrack[9] = 7;
+				iTakeFromTrack[10] = 6;
+				iTakeFromTrack[11] = 11;
+				break;
+			}
+			case StepsType_beat_single7:
+			{
+				// scratch is on left (cols 0 and 8) for 7-key
+				iTakeFromTrack[0] = 0;
+				iTakeFromTrack[1] = 7;
+				iTakeFromTrack[2] = 6;
+				iTakeFromTrack[3] = 5;
+				iTakeFromTrack[4] = 4;
+				iTakeFromTrack[5] = 3;
+				iTakeFromTrack[6] = 2;
+				iTakeFromTrack[7] = 1;
+				iTakeFromTrack[8] = 8;
+				iTakeFromTrack[9] = 15;
+				iTakeFromTrack[10] = 14;
+				iTakeFromTrack[11] = 13;
+				iTakeFromTrack[12] = 12;
+				iTakeFromTrack[13] = 11;
+				iTakeFromTrack[14] = 10;
+				iTakeFromTrack[15] = 9;
+				break;
+			}
 			default:
 				needsBackwards = false;
 		}
