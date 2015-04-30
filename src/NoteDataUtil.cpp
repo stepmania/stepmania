@@ -1445,6 +1445,44 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 				iTakeFromTrack[5] = 0;
 				break;
 			}
+			case StepsType_beat_single5:
+			{
+				// scratch is on right (cols 5 and 11) for 5-key
+				iTakeFromTrack[0] = 4;
+				iTakeFromTrack[1] = 3;
+				iTakeFromTrack[2] = 2;
+				iTakeFromTrack[3] = 1;
+				iTakeFromTrack[4] = 0;
+				iTakeFromTrack[5] = 5;
+				iTakeFromTrack[6] = 10;
+				iTakeFromTrack[7] = 9;
+				iTakeFromTrack[8] = 8;
+				iTakeFromTrack[9] = 7;
+				iTakeFromTrack[10] = 6;
+				iTakeFromTrack[11] = 11;
+				break;
+			}
+			case StepsType_beat_single7:
+			{
+				// scratch is on left (cols 0 and 8) for 7-key
+				iTakeFromTrack[0] = 0;
+				iTakeFromTrack[1] = 7;
+				iTakeFromTrack[2] = 6;
+				iTakeFromTrack[3] = 5;
+				iTakeFromTrack[4] = 4;
+				iTakeFromTrack[5] = 3;
+				iTakeFromTrack[6] = 2;
+				iTakeFromTrack[7] = 1;
+				iTakeFromTrack[8] = 8;
+				iTakeFromTrack[9] = 15;
+				iTakeFromTrack[10] = 14;
+				iTakeFromTrack[11] = 13;
+				iTakeFromTrack[12] = 12;
+				iTakeFromTrack[13] = 11;
+				iTakeFromTrack[14] = 10;
+				iTakeFromTrack[15] = 9;
+				break;
+			}
 			default:
 				needsBackwards = false;
 		}
@@ -1460,17 +1498,36 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 	case NoteDataUtil::super_shuffle:		// use shuffle code to mix up HoldNotes without creating impossible patterns
 		{
 			// TRICKY: Shuffle so that both player get the same shuffle mapping
-			// in the same round.
+			// in the same round. This is already achieved in beat mode.
 			int iOrig[MAX_NOTE_TRACKS];
 			memcpy( iOrig, iTakeFromTrack, sizeof(iOrig) );
 
 			int iShuffleSeed = GAMESTATE->m_iStageSeed;
 			do {
 				RandomGen rnd( iShuffleSeed );
-				random_shuffle( &iTakeFromTrack[0], &iTakeFromTrack[NumTracks], rnd );
+				// ignore turntable in beat mode
+				switch(st) {
+					case StepsType_beat_single5:
+					{
+						random_shuffle( &iTakeFromTrack[0], &iTakeFromTrack[5], rnd );
+						random_shuffle( &iTakeFromTrack[6], &iTakeFromTrack[11], rnd );
+						break;
+					}
+					case StepsType_beat_single7:
+					{
+						random_shuffle( &iTakeFromTrack[1], &iTakeFromTrack[8], rnd );
+						random_shuffle( &iTakeFromTrack[9], &iTakeFromTrack[16], rnd );
+						break;
+					}
+					default:
+					{
+						random_shuffle( &iTakeFromTrack[0], &iTakeFromTrack[NumTracks], rnd );
+						break;
+					}
+				}
 				iShuffleSeed++;
 			}
-			while ( !memcmp( iOrig, iTakeFromTrack, sizeof(iOrig) ) );
+			while ( !memcmp( iOrig, iTakeFromTrack, sizeof(iOrig) ) ); // shuffle again if shuffle managed to shuffle them in the same order
 		}
 		break;
 	case NoteDataUtil::soft_shuffle:
