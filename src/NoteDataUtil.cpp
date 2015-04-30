@@ -1498,17 +1498,36 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 	case NoteDataUtil::super_shuffle:		// use shuffle code to mix up HoldNotes without creating impossible patterns
 		{
 			// TRICKY: Shuffle so that both player get the same shuffle mapping
-			// in the same round.
+			// in the same round. This is already achieved in beat mode.
 			int iOrig[MAX_NOTE_TRACKS];
 			memcpy( iOrig, iTakeFromTrack, sizeof(iOrig) );
 
 			int iShuffleSeed = GAMESTATE->m_iStageSeed;
 			do {
 				RandomGen rnd( iShuffleSeed );
-				random_shuffle( &iTakeFromTrack[0], &iTakeFromTrack[NumTracks], rnd );
+				// ignore turntable in beat mode
+				switch(st) {
+					case StepsType_beat_single5:
+					{
+						random_shuffle( &iTakeFromTrack[0], &iTakeFromTrack[5], rnd );
+						random_shuffle( &iTakeFromTrack[6], &iTakeFromTrack[11], rnd );
+						break;
+					}
+					case StepsType_beat_single7:
+					{
+						random_shuffle( &iTakeFromTrack[1], &iTakeFromTrack[8], rnd );
+						random_shuffle( &iTakeFromTrack[9], &iTakeFromTrack[16], rnd );
+						break;
+					}
+					default:
+					{
+						random_shuffle( &iTakeFromTrack[0], &iTakeFromTrack[NumTracks], rnd );
+						break;
+					}
+				}
 				iShuffleSeed++;
 			}
-			while ( !memcmp( iOrig, iTakeFromTrack, sizeof(iOrig) ) );
+			while ( !memcmp( iOrig, iTakeFromTrack, sizeof(iOrig) ) ); // shuffle again if shuffle managed to shuffle them in the same order
 		}
 		break;
 	case NoteDataUtil::soft_shuffle:
