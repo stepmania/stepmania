@@ -39,6 +39,7 @@
 #include "ThemeManager.h"
 #include "NoteSkinManager.h"
 #include "PrefsManager.h"
+#include "Song.h"
 #include "SongManager.h"
 #include "CharacterManager.h"
 #include "GameState.h"
@@ -1465,7 +1466,14 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 								|| INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT) ) );
 		bool bSaveCompressed = !bHoldingShift;
 		RageTimer timer;
-		StepMania::SaveScreenshot( "Screenshots/", bSaveCompressed, false, "", "" );
+		RString prefix;
+		RString suffix;
+		if(GAMESTATE->m_pCurSong)
+		{
+			prefix= GAMESTATE->m_pCurSong->GetDisplayFullTitle() + "_";
+			suffix= "_" + SCREENMAN->GetTopScreen()->GetName();
+		}
+		StepMania::SaveScreenshot("Screenshots/", bSaveCompressed, false, prefix, suffix);
 		LOG->Trace( "Screenshot took %f seconds.", timer.GetDeltaTime() );
 		return true; // handled
 	}

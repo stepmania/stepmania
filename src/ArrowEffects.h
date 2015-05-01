@@ -1,12 +1,20 @@
 #ifndef ARROWEFFECTS_H
 #define ARROWEFFECTS_H
 
+#include "RageTypes.h"
+
 class PlayerState;
+class PlayerOptions;
 /** @brief Functions that return properties of arrows based on Style and PlayerOptions. */
 class ArrowEffects
 {
 public:
 	static void Update();
+	// SetCurrentOptions and the hidden static variable it set exists so that
+	// ArrowEffects doesn't have to reach through the PlayerState to check
+	// every option.  Also, it will make it easier to implement per-column
+	// mods later. -Kyz
+	static void SetCurrentOptions(const PlayerOptions* options);
 
 	// fYOffset is a vertical position in pixels relative to the center
 	// (positive if has not yet been stepped on, negative if has already passed).
@@ -19,12 +27,11 @@ public:
 		return GetYOffset( pPlayerState, iCol, fNoteBeat, fThrowAway, bThrowAway, bAbsolute );
 	}
 
-	static void GetXYZPos(const PlayerState* player_state, int col, float y_offset, float y_reverse_offset, vector<float>& ret, bool with_reverse= true)
+	static void GetXYZPos(const PlayerState* player_state, int col, float y_offset, float y_reverse_offset, RageVector3& ret, bool with_reverse= true)
 	{
-		ASSERT(ret.size() == 3);
-		ret[0]= GetXPos(player_state, col, y_offset);
-		ret[1]= GetYPos(player_state, col, y_offset, y_reverse_offset, with_reverse);
-		ret[2]= GetZPos(player_state, col, y_offset);
+		ret.x= GetXPos(player_state, col, y_offset);
+		ret.y= GetYPos(col, y_offset, y_reverse_offset, with_reverse);
+		ret.z= GetZPos(col, y_offset);
 	}
 
 	/**
@@ -37,10 +44,10 @@ public:
 	 * @param fYReverseOffsetPixels the amount offset due to reverse.
 	 * @param WithReverse a flag to see if the Reverse mod is on.
 	 * @return the actual display position. */
-	static float GetYPos(	const PlayerState* pPlayerState, int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse = true );
+	static float GetYPos(int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse = true );
 
 	// Inverse of ArrowGetYPos (YPos -> fYOffset).
-	static float GetYOffsetFromYPos( const PlayerState* pPlayerState, int iCol, float YPos, float fYReverseOffsetPixels );
+	static float GetYOffsetFromYPos(int iCol, float YPos, float fYReverseOffsetPixels);
 
 	// fRotation is Z rotation of an arrow.  This will depend on the column of 
 	// the arrow and possibly the Arrow effect and the fYOffset (in the case of 
@@ -50,8 +57,8 @@ public:
 
 	// Due to the handling logic for holds on Twirl, we need to use an offset instead.
 	// It's more intuitive for Roll to be based off offset, so use an offset there too.
-	static float GetRotationX(  const PlayerState* pPlayerState, float fYOffset );
-	static float GetRotationY(  const PlayerState* pPlayerState, float fYOffset );
+	static float GetRotationX(float fYOffset);
+	static float GetRotationY(float fYOffset);
 
 	// fXPos is a horizontal position in pixels relative to the center of the field.
 	// This depends on the column of the arrow and possibly the Arrow effect and
@@ -66,18 +73,18 @@ public:
 	 * @param iCol the specific arrow column.
 	 * @param fYPos the Y position of the arrow.
 	 * @return the Z position. */
-	static float GetZPos( const PlayerState* pPlayerState, int iCol, float fYPos );
+	static float GetZPos(int iCol, float fYPos);
 
 	// Enable this if any ZPos effects are enabled.
-	static bool NeedZBuffer( const PlayerState* pPlayerState );
+	static bool NeedZBuffer();
 
 	// fAlpha is the transparency of the arrow.  It depends on fYPos and the 
 	// AppearanceType.
-	static float GetAlpha( const PlayerState* pPlayerState, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
+	static float GetAlpha(int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar);
 
 	// fAlpha is the transparency of the arrow.  It depends on fYPos and the 
 	// AppearanceType.
-	static float GetGlow( const PlayerState* pPlayerState, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
+	static float GetGlow(int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
 
 	/**
 	 * @brief Retrieve the current brightness.

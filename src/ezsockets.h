@@ -60,9 +60,12 @@ public:
 	long uAddr();
 
 	bool CanRead();
+	bool CanRead(unsigned int msTimeout);
 	bool DataAvailable() { return ( ( inBuffer.length()>0 ) || CanRead() ); }
+	bool DataAvailable(unsigned int msTimeout) { return ( ( inBuffer.length()>0 ) || CanRead(msTimeout) ); }
 	bool IsError();
 	bool CanWrite();
+	bool CanWrite(unsigned int msTimeout);
 
 	void update();
 

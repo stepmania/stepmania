@@ -4,6 +4,15 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/04/25
+----------
+* [General] Screenshot key now checks whether there is a current song, and
+  puts the song title and current screen name in the screenshot filename. [kyzentun]
+
+2015/04/24
+----------
+* [Gameplay] Toasty animation can now occur multiple times during gameplay. [kyzentun]
+
 2015/04/23
 ----------
 * [ServiceMenu] Entries in service menu rearranged to hopefully organize them

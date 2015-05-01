@@ -57,13 +57,17 @@ extern const RageTimer RageZeroTimer;
 #define START_TIME_CALL_COUNT(name) START_TIME(name); ++name##_call_count;
 #define END_TIME(name) uint64_t name##_end_time= RageTimer::GetUsecsSinceStart();  LOG->Time(#name " time: %zu to %zu = %zu", name##_start_time, name##_end_time, name##_end_time - name##_start_time);
 #define END_TIME_ADD_TO(name) uint64_t name##_end_time= RageTimer::GetUsecsSinceStart();  name##_total += name##_end_time - name##_start_time;
+#define END_TIME_CALL_COUNT(name) END_TIME_ADD_TO(name); ++name##_end_count;
 
 #define DECL_TOTAL_TIME(name) extern uint64_t name##_total;
 #define DEF_TOTAL_TIME(name) uint64_t name##_total= 0;
 #define PRINT_TOTAL_TIME(name) LOG->Time(#name " total time: %zu", name##_total);
 #define DECL_TOT_CALL_PAIR(name) extern uint64_t name##_total; extern uint64_t name##_call_count;
 #define DEF_TOT_CALL_PAIR(name) uint64_t name##_total= 0; uint64_t name##_call_count= 0;
-#define PRINT_TOT_CALL_PAIR(name) LOG->Time(#name " calls: %zu, time: %zu", name##_call_count, name##_total);
+#define PRINT_TOT_CALL_PAIR(name) LOG->Time(#name " calls: %zu, time: %zu, per: %f", name##_call_count, name##_total, static_cast<float>(name##_total) / name##_call_count);
+#define DECL_TOT_CALL_END(name) DECL_TOT_CALL_PAIR(name); extern uint64_t name##_end_count;
+#define DEF_TOT_CALL_END(name) DEF_TOT_CALL_PAIR(name); uint64_t name##_end_count= 0;
+#define PRINT_TOT_CALL_END(name) LOG->Time(#name " calls: %zu, time: %zu, early end: %zu, per: %f", name##_call_count, name##_total, name##_end_count, static_cast<float>(name##_total) / (name##_call_count - name##_end_count));
 
 #endif
 

@@ -996,6 +996,16 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 		// (except for edits). We should be able to use difficulty names as
 		// unique identifiers for steps. */
 		SongUtil::AdjustDuplicateSteps(this);
+
+		// Clear fields for files that turned out to not exist.
+#define CLEAR_NOT_HAS(has_name, field_name) if(!has_name) { field_name= ""; }
+		CLEAR_NOT_HAS(m_bHasBanner, m_sBannerFile);
+		CLEAR_NOT_HAS(m_bHasBackground, m_sBackgroundFile);
+		CLEAR_NOT_HAS(has_jacket, m_sJacketFile);
+		CLEAR_NOT_HAS(has_cdimage, m_sCDFile);
+		CLEAR_NOT_HAS(has_disc, m_sDiscFile);
+		CLEAR_NOT_HAS(has_cdtitle, m_sCDTitleFile);
+#undef CLEAR_NOT_HAS
 	}
 
 	/* Generate these before we autogen notes, so the new notes can inherit
