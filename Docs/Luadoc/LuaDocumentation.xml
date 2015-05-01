@@ -1090,13 +1090,30 @@ save yourself some time, copy this for undocumented things:
 		Set the Actor's effect magnitude in each direction to the given values.
 	</Function>
 	<Function name='effectoffset' return='void' arguments='float fTime'>
-		Set the Actor's effect offset to <code>fTime</code>.
+		Set the Actor's effect offset to <code>fTime</code>.  The offset is added to the time into the effect before calculating percent_through_effect.
 	</Function>
 	<Function name='effectperiod' return='void' arguments='float fTime'>
 		Set the Actor's effect period to <code>fTime</code>.
 	</Function>
-	<Function name='effecttiming' return='void' arguments='float fRampUp, float fAtHalf, float fRampDown, float fAtZero'>
-		Set the Actor's effect timing.
+	<Function name='effecttiming' return='void' arguments='float ramp_to_half, float hold_at_half, float ramp_to_full, float hold_at_zero, float hold_at_full'>
+		Set the Actor's effect timing.<br />
+		hold_at_zero is before hold_at_full in the argument list for compatibility.  A future version will probably swap them because it makes more sense to have hold_at_full come before hold_at_zero.<br />
+		All effect timings must be greater than or equal to zero, at least one of them must be greater than zero.<br />
+		The effect timing controls how long it takes an effect to cycle and how long it spends in each phase.<br />
+		Depending on the effect clock, the actor's time into effect is updated every frame.  That time is then translated into a percent_through_effect using the parameters to this function.<br />
+		<br />
+		ramp_to_half is the amount of time for percent_through_effect to reach 0.5.<br />
+		hold_at_half is the amount of time percent_through_effect will stay at 0.5.<br />
+		ramp_to_full is the amount of time percent_through_effect will take to go from 0.5 to 1.0.<br />
+		hold_at_full is the amount of time percent_through_effect will stay at 1.0.<br />
+		After reaching the end of hold_at_full, percent_through_effect stays at 0 until hold_at_zero is over.<br />
+		<br />
+		The different effects use percent_through_effect in different ways.  Some use it to calculate percent_between_colors with this sine wave:  sin((percent_through_effect + 0.25f) * 2 * PI ) / 2 + 0.5f<br />
+		Some effects check the internal bool blink_on.  blink_on is true if percent_through_effect is greater than 0.5 and false if percent_through_effect is less than or equal to 0.5.<br />
+		Check the effect functions for individual explanations:  diffuseblink, diffuseshift, glowblink, glowshift, glowramp, rainbow, wag, bounce, bob, pulse, spin, vibrate.
+	</Function>
+	<Function name='effect_hold_at_full' return='void' arguments='float hold_at_full'>
+		Set the hold_at_full part of the effect timing while leaving the others unchanged.
 	</Function>
 	<Function name='fadebottom' return='void' arguments='float percent'>
 		Fades <code>percent</code> of the Actor from the bottom where <code>percent</code> is in the range 0..1.

@@ -373,6 +373,7 @@
 			<Function name='effectoffset'/>
 			<Function name='effectperiod'/>
 			<Function name='effecttiming'/>
+			<Function name='effect_hold_at_full'/>
 			<Function name='fadebottom'/>
 			<Function name='fadeleft'/>
 			<Function name='faderight'/>

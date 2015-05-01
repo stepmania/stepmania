@@ -223,10 +223,11 @@ Actor::Actor( const Actor &cpy ):
 #endif
 	CPY( m_fSecsIntoEffect );
 	CPY( m_fEffectDelta );
-	CPY( m_fEffectRampUp );
-	CPY( m_fEffectHoldAtHalf );
-	CPY( m_fEffectRampDown );
-	CPY( m_fEffectHoldAtZero );
+	CPY(m_effect_ramp_to_half);
+	CPY(m_effect_hold_at_half);
+	CPY(m_effect_ramp_to_full);
+	CPY(m_effect_hold_at_full);
+	CPY(m_effect_hold_at_zero);
 	CPY(m_effect_period);
 	CPY( m_fEffectOffset );
 	CPY( m_EffectClock );
@@ -440,27 +441,26 @@ void Actor::PreDraw() // calculate actor properties
 		const float fTimeIntoEffect = fmodfp( m_fSecsIntoEffect+m_fEffectOffset, fTotalPeriod );
 
 		float fPercentThroughEffect;
-		if( fTimeIntoEffect < m_fEffectRampUp )
+		const float rup_plus_ath= m_effect_ramp_to_half + m_effect_hold_at_half;
+		const float rupath_plus_rdown= rup_plus_ath + m_effect_ramp_to_full;
+		const float rupathrdown_plus_atf= rupath_plus_rdown + m_effect_hold_at_full;
+		if(fTimeIntoEffect < m_effect_ramp_to_half)
 		{
-			fPercentThroughEffect = SCALE( 
-				fTimeIntoEffect, 
-				0, 
-				m_fEffectRampUp, 
-				0.0f, 
-				0.5f );
+			fPercentThroughEffect = SCALE(fTimeIntoEffect,
+				0, m_effect_ramp_to_half, 0.0f, 0.5f);
 		}
-		else if( fTimeIntoEffect < m_fEffectRampUp + m_fEffectHoldAtHalf )
+		else if(fTimeIntoEffect < rup_plus_ath)
 		{
 			fPercentThroughEffect = 0.5f;
 		}
-		else if( fTimeIntoEffect < m_fEffectRampUp + m_fEffectHoldAtHalf + m_fEffectRampDown )
+		else if(fTimeIntoEffect < rupath_plus_rdown)
 		{
-			fPercentThroughEffect = SCALE( 
-				fTimeIntoEffect, 
-				m_fEffectRampUp + m_fEffectHoldAtHalf, 
-				m_fEffectRampUp + m_fEffectHoldAtHalf + m_fEffectRampDown, 
-				0.5f, 
-				1.0f );
+			fPercentThroughEffect = SCALE(fTimeIntoEffect,
+				rup_plus_ath, rupath_plus_rdown, 0.5f, 1.0f);
+		}
+		else if(fTimeIntoEffect < rupathrdown_plus_atf)
+		{
+			fPercentThroughEffect= 1.0f;
 		}
 		else
 		{
@@ -1062,31 +1062,51 @@ void Actor::StretchTo( const RectF &r )
 	SetZoomY( fNewZoomY );
 }
 
-
-void Actor::SetEffectPeriod( float fTime )
+void Actor::RecalcEffectPeriod()
 {
-	ASSERT( fTime > 0 );
-	m_fEffectRampUp = fTime/2;
-	m_fEffectHoldAtHalf = 0;
-	m_fEffectRampDown = fTime/2;
-	m_fEffectHoldAtZero = 0;
-	m_effect_period= m_fEffectRampUp + m_fEffectHoldAtHalf + m_fEffectRampDown +
-		m_fEffectHoldAtZero;
+	m_effect_period= m_effect_ramp_to_half + m_effect_hold_at_half +
+		m_effect_ramp_to_full + m_effect_hold_at_full + m_effect_hold_at_zero;
 }
 
-void Actor::SetEffectTiming( float fRampUp, float fAtHalf, float fRampDown, float fAtZero )
+void Actor::SetEffectPeriod(float time)
+{
+	ASSERT(time > 0);
+	m_effect_ramp_to_half= time/2;
+	m_effect_hold_at_half= 0;
+	m_effect_ramp_to_full= time/2;
+	m_effect_hold_at_full= 0;
+	m_effect_hold_at_zero= 0;
+	RecalcEffectPeriod();
+}
+
+bool Actor::SetEffectTiming(float ramp_toh, float at_half, float ramp_tof, float at_full, float at_zero, RString& err)
 {
 	// No negative timings
-	ASSERT( fRampUp >= 0 && fAtHalf >= 0 && fRampDown >= 0 && fAtZero >= 0 );
+	if(ramp_toh < 0 || at_half < 0 || ramp_tof < 0 || at_full < 0 || at_zero < 0)
+	{
+		err= ssprintf("Effect timings (%f,%f,%f,%f,%f) must not be negative;",
+			ramp_toh, at_half, ramp_tof, at_zero, at_full);
+		return false;
+	}
 	// and at least one positive timing.
-	ASSERT( fRampUp > 0 || fAtHalf > 0 || fRampDown > 0 || fAtZero > 0 );
+	if(ramp_toh <= 0 && at_half <= 0 && ramp_tof <= 0 && at_full <= 0 && at_zero <= 0)
+	{
+		err= ssprintf("Effect timings (0,0,0,0,0) must not all be zero;");
+		return false;
+	}
+	m_effect_ramp_to_half= ramp_toh;
+	m_effect_hold_at_half= at_half;
+	m_effect_ramp_to_full= ramp_tof;
+	m_effect_hold_at_full= at_full;
+	m_effect_hold_at_zero= at_zero;
+	RecalcEffectPeriod();
+	return true;
+}
 
-	m_fEffectRampUp = fRampUp; 
-	m_fEffectHoldAtHalf = fAtHalf; 
-	m_fEffectRampDown = fRampDown;
-	m_fEffectHoldAtZero = fAtZero;
-	m_effect_period= m_fEffectRampUp + m_fEffectHoldAtHalf + m_fEffectRampDown +
-		m_fEffectHoldAtZero;
+bool Actor::SetEffectHoldAtFull(float haf, RString& err)
+{
+	return SetEffectTiming(m_effect_ramp_to_half, m_effect_hold_at_half,
+		m_effect_ramp_to_full, haf, m_effect_hold_at_zero, err);
 }
 
 // effect "macros"
@@ -1693,19 +1713,30 @@ public:
 	}
 	static int effecttiming( T* p, lua_State *L )
 	{
-		float f1 = FArg(1), f2 = FArg(2), f3 = FArg(3), f4 = FArg(4);
-		if (f1 < 0 || f2 < 0 || f3 < 0 || f4 < 0)
+		float rth= FArg(1);
+		float hah= FArg(2);
+		float rtf= FArg(3);
+		float haz= FArg(4);
+		// Compatibility:  hold_at_full is optional.
+		float haf= 0;
+		if(lua_isnumber(L, 5))
 		{
-			LuaHelpers::ReportScriptErrorFmt("Effect timings (%f,%f,%f,%f) must not be negative; ignoring",
-					f1, f2, f3, f4);
-			COMMON_RETURN_SELF;
+			haf= FArg(5);
 		}
-		if (f1 == 0 && f2 == 0 && f3 == 0 && f4 == 0)
+		RString err;
+		if(!p->SetEffectTiming(rth, hah, rtf, haf, haz, err))
 		{
-			LuaHelpers::ReportScriptErrorFmt("Effect timings (0,0,0,0) must not all be zero; ignoring");
-			COMMON_RETURN_SELF;
+			luaL_error(L, err.c_str());
 		}
-		p->SetEffectTiming(FArg(1), FArg(2), FArg(3), FArg(4));
+		COMMON_RETURN_SELF;
+	}
+	static int effect_hold_at_full(T* p, lua_State*L)
+	{
+		RString err;
+		if(!p->SetEffectHoldAtFull(FArg(1), err))
+		{
+			luaL_error(L, err.c_str());
+		}
 		COMMON_RETURN_SELF;
 	}
 	static int effectoffset( T* p, lua_State *L )		{ p->SetEffectOffset(FArg(1)); COMMON_RETURN_SELF; }
