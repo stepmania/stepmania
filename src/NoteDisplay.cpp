@@ -1204,17 +1204,28 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 		column_args.diffuse.g * fColorScale,
 		column_args.diffuse.b * fColorScale,
 		column_args.diffuse.a * fAlpha);
+	const RageColor glow = RageColor(1, 1, 1, fGlow);
+	// We can't actually use the glow color from the effect on the colum actor
+	// because it's used by the stealth modifier. -Kyz
+	/*
 	const RageColor glow	= RageColor(
 		column_args.glow.r * fColorScale,
 		column_args.glow.g * fColorScale,
 		column_args.glow.b * fColorScale,
 		column_args.glow.a * fGlow);
+	*/
 
 	bool bIsHoldHead = tn.type == TapNoteType_HoldHead;
 	bool bIsHoldCap = bIsHoldHead || tn.type == TapNoteType_HoldTail;
-	
+
+	// So, thie call to GetBrightness does nothing because fColorScale is not
+	// used after this point.  If you read GetBrightness, it looks like it's
+	// meant to fade the note to black, so a note that is one beat past the
+	// receptors is black.  However, I looked through the github history and
+	// it's been down here, disabled, since at least SM5 beta 1a.  I don't
+	// know if we should bring that behavior back now. -Kyz
 	if( tn.type != TapNoteType_HoldHead )
-		fColorScale		*= ArrowEffects::GetBrightness(	m_pPlayerState, fBeat );
+	{ fColorScale *= ArrowEffects::GetBrightness(m_pPlayerState, fBeat); }
 
 	// same logical structure as in UpdateReceptorGhostStuff, I just haven't
 	// figured out a good way to combine them. -Kyz
@@ -1430,7 +1441,6 @@ void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
 
 void NoteColumnRenderer::DrawPrimitives()
 {
-	ArrowEffects::SetCurrentOptions(&m_field_render_args->player_state->m_PlayerOptions.GetCurrent());
 	m_column_render_args.song_beat= m_field_render_args->player_state->GetDisplayedPosition().m_fSongBeatVisible;
 	m_column_render_args.pos_handler= &NCR_current.m_pos_handler;
 	m_column_render_args.rot_handler= &NCR_current.m_rot_handler;
