@@ -337,6 +337,7 @@ void ScreenGameplay::Init()
 	GIVE_UP_START_TEXT.Load(		m_sName, "GiveUpStartText" );
 	GIVE_UP_BACK_TEXT.Load(			m_sName, "GiveUpBackText" );
 	GIVE_UP_ABORTED_TEXT.Load(		m_sName, "GiveUpAbortedText" );
+	SKIP_SONG_TEXT.Load(m_sName, "SkipSongText");
 	GIVE_UP_SECONDS.Load(			m_sName, "GiveUpSeconds" );
 	MUSIC_FADE_OUT_SECONDS.Load(		m_sName, "MusicFadeOutSeconds" );
 	OUT_TRANSITION_LENGTH.Load(		m_sName, "OutTransitionLength" );
@@ -347,6 +348,7 @@ void ScreenGameplay::Init()
 	MIN_SECONDS_TO_STEP_NEXT_SONG.Load(	m_sName, "MinSecondsToStepNextSong" );
 	START_GIVES_UP.Load(			m_sName, "StartGivesUp" );
 	BACK_GIVES_UP.Load(			m_sName, "BackGivesUp" );
+	SELECT_SKIPS_SONG.Load(m_sName, "SelectSkipsSong");
 	GIVING_UP_GOES_TO_PREV_SCREEN.Load(	m_sName, "GivingUpGoesToPrevScreen" );
 	FAIL_ON_MISS_COMBO.Load(		m_sName, "FailOnMissCombo" );
 	ALLOW_CENTER_1_PLAYER.Load(		m_sName, "AllowCenter1Player" );
@@ -900,6 +902,7 @@ void ScreenGameplay::Init()
 	LoadNextSong();
 
 	m_GiveUpTimer.SetZero();
+	m_SkipSongTimer.SetZero();
 }
 
 bool ScreenGameplay::Center1Player() const
@@ -1509,7 +1512,7 @@ void ScreenGameplay::PauseGame( bool bPause, GameController gc )
 	if( bPause && m_DancingState == STATE_OUTRO )
 		return;
 
-	AbortGiveUp( false );
+	ResetGiveUpTimers(false);
 
 	m_bPaused = bPause;
 	m_PauseController = gc;
@@ -1926,6 +1929,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			// update give up
 			bool bGiveUpTimerFired = !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > GIVE_UP_SECONDS;
 			m_gave_up= bGiveUpTimerFired;
+			m_skipped_song= !m_SkipSongTimer.IsZero() && m_SkipSongTimer.Ago() > GIVE_UP_SECONDS;
 
 
 			bool bAllHumanHaveBigMissCombo = true;
@@ -1942,7 +1946,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			{
 				bAllHumanHaveBigMissCombo = FAIL_ON_MISS_COMBO.GetValue() != -1 && STATSMAN->m_CurStageStats.GetMinimumMissCombo() >= (unsigned int)FAIL_ON_MISS_COMBO;
 			}
-			if( bGiveUpTimerFired || bAllHumanHaveBigMissCombo )
+			if(bGiveUpTimerFired || bAllHumanHaveBigMissCombo || m_skipped_song)
 			{
 				STATSMAN->m_CurStageStats.m_bGaveUp = true;
 				FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
@@ -1951,9 +1955,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 					pi->GetPlayerStageStats()->m_bDisqualified |= bGiveUpTimerFired;    // Don't disqualify if failing for miss combo.  The player should still be eligable for a high score on courses.
 				}
 
-				AbortGiveUp( false );
+				ResetGiveUpTimers(false);
 
-				if( GIVING_UP_GOES_TO_PREV_SCREEN )
+				if(GIVING_UP_GOES_TO_PREV_SCREEN && !m_skipped_song)
 				{
 					BeginBackingOutFromGameplay();
 				}
@@ -2353,7 +2357,7 @@ void ScreenGameplay::SendCrossedMessages()
 void ScreenGameplay::BeginBackingOutFromGameplay()
 {
 	m_DancingState = STATE_OUTRO;
-	AbortGiveUp( false );
+	ResetGiveUpTimers(false);
 
 	m_pSoundMusic->StopPlaying();
 	m_GameplayAssist.StopPlaying(); // Stop any queued assist ticks.
@@ -2370,19 +2374,43 @@ void ScreenGameplay::BeginBackingOutFromGameplay()
 		m_Cancel.StartTransitioning( SM_DoPrevScreen );
 }
 
+void ScreenGameplay::AbortGiveUpText(bool show_abort_text)
+{
+	m_textDebug.StopTweening();
+	if(show_abort_text)
+	{
+		m_textDebug.SetText(GIVE_UP_ABORTED_TEXT);
+	}
+	// otherwise tween out the text that's there
+
+	m_textDebug.BeginTweening(1/2.f);
+	m_textDebug.SetDiffuse(RageColor(1,1,1,0));
+}
+
+void ScreenGameplay::AbortSkipSong(bool show_text)
+{
+	if(m_SkipSongTimer.IsZero())
+	{
+		return;
+	}
+	AbortGiveUpText(show_text);
+	m_SkipSongTimer.SetZero();
+}
+
 void ScreenGameplay::AbortGiveUp( bool bShowText )
 {
 	if( m_GiveUpTimer.IsZero() )
+	{
 		return;
-
-	m_textDebug.StopTweening();
-	if( bShowText )
-		m_textDebug.SetText( GIVE_UP_ABORTED_TEXT );
-	// otherwise tween out the text that's there
-
-	m_textDebug.BeginTweening( 1/2.f );
-	m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
+	}
+	AbortGiveUpText(bShowText);
 	m_GiveUpTimer.SetZero();
+}
+
+void ScreenGameplay::ResetGiveUpTimers(bool show_text)
+{
+	AbortSkipSong(show_text);
+	AbortGiveUp(show_text);
 }
 
 
@@ -2425,6 +2453,22 @@ bool ScreenGameplay::Input( const InputEventPlus &input )
 		{
 			bHoldingGiveUp |= ( START_GIVES_UP && input.MenuI == GAME_BUTTON_START );
 			bHoldingGiveUp |= ( BACK_GIVES_UP && input.MenuI == GAME_BUTTON_BACK );
+		}
+		// Allow holding SELECT to skip the current song in course mode. -Kyz
+		if(GAMESTATE->IsCourseMode() && SELECT_SKIPS_SONG &&
+			input.MenuI == GAME_BUTTON_SELECT)
+		{
+			if(input.type == IET_RELEASE)
+			{
+				AbortSkipSong(true);
+			}
+			else if(input.type == IET_FIRST_PRESS && m_SkipSongTimer.IsZero())
+			{
+				m_textDebug.SetText(SKIP_SONG_TEXT);
+				m_textDebug.PlayCommand("StartOn");
+				m_SkipSongTimer.Touch();
+			}
+			return true;
 		}
 
 		if( bHoldingGiveUp )
@@ -2508,7 +2552,7 @@ bool ScreenGameplay::Input( const InputEventPlus &input )
 		// handle a step or battle item activate
 		if( GAMESTATE->IsHumanPlayer( input.pn ) )
 		{
-			AbortGiveUp( true );
+			ResetGiveUpTimers(true);
 
 			if( GamePreferences::m_AutoPlay == PC_HUMAN && GAMESTATE->m_pPlayerState[input.pn]->m_PlayerOptions.GetCurrent().m_fPlayerAutoPlay == 0 )
 			{
@@ -2665,7 +2709,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_NotesEnded )	// received while STATE_DANCING
 	{
-		AbortGiveUp( false ); // don't allow giveup while the next song is loading
+		ResetGiveUpTimers(false); // don't allow giveup while the next song is loading
 
 		/* Do this in LoadNextSong, so we don't tween off old attacks until
 		 * m_NextSong finishes. */
@@ -2700,9 +2744,16 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		const bool bIsLastSong = IsLastSong();
 
 		LOG->Trace( "bAllReallyFailed = %d, bStopCourseEarly = %d, "
-			"bIsLastSong = %d, m_gave_up = %d", bAllReallyFailed, bStopCourseEarly,
-			bIsLastSong, m_gave_up );
+			"bIsLastSong = %d, m_gave_up = %d, m_skipped_song = %d",
+			bAllReallyFailed, bStopCourseEarly, bIsLastSong, m_gave_up,
+			m_skipped_song);
 
+		if(!bIsLastSong && m_skipped_song)
+		{
+			// Load the next song in the course.
+			HandleScreenMessage( SM_StartLoadingNextSong );
+			return;
+		}
 		if( bStopCourseEarly || bAllReallyFailed || bIsLastSong || m_gave_up )
 		{
 			// Time to leave from ScreenGameplay
@@ -2740,7 +2791,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		if( m_DancingState == STATE_OUTRO )	// ScreenGameplay already ended
 			return;		// ignore
 		m_DancingState = STATE_OUTRO;
-		AbortGiveUp( false );
+		ResetGiveUpTimers(false);
 
 		GAMESTATE->RemoveAllActiveAttacks();
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
@@ -2947,7 +2998,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_BeginFailed )
 	{
 		m_DancingState = STATE_OUTRO;
-		AbortGiveUp( false );
+		ResetGiveUpTimers(false);
 		m_GameplayAssist.StopPlaying(); // Stop any queued assist ticks.
 		TweenOffScreen();
 		m_Failed.StartTransitioning( SM_DoNextScreen );

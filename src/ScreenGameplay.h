@@ -193,6 +193,7 @@ protected:
 	LocalizedString GIVE_UP_START_TEXT;
 	LocalizedString GIVE_UP_BACK_TEXT;
 	LocalizedString GIVE_UP_ABORTED_TEXT;
+	LocalizedString SKIP_SONG_TEXT;
 	ThemeMetric<float> GIVE_UP_SECONDS;
 	ThemeMetric<float> MUSIC_FADE_OUT_SECONDS;
 	ThemeMetric<float> OUT_TRANSITION_LENGTH;
@@ -203,6 +204,7 @@ protected:
 	ThemeMetric<float> MIN_SECONDS_TO_STEP_NEXT_SONG;
 	ThemeMetric<bool> START_GIVES_UP;
 	ThemeMetric<bool> BACK_GIVES_UP;
+	ThemeMetric<bool> SELECT_SKIPS_SONG;
 	ThemeMetric<bool> GIVING_UP_GOES_TO_PREV_SCREEN;
 	/** @brief The miss combo a player needs to fail out of a song. */
 	ThemeMetric<int> FAIL_ON_MISS_COMBO;
@@ -279,7 +281,12 @@ protected:
 
 	RageTimer		m_GiveUpTimer;
 	bool m_gave_up;
+	RageTimer m_SkipSongTimer;
+	bool m_skipped_song;
+	void AbortGiveUpText(bool show_abort_text);
+	void AbortSkipSong(bool show_text);
 	void AbortGiveUp( bool bShowText );
+	void ResetGiveUpTimers(bool show_text);
 
 	Transition		m_Ready;
 	Transition		m_Go;
