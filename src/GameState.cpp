@@ -1443,9 +1443,9 @@ bool GameState::PlayersCanJoin() const
 	{
 		return true;
 	}
-	if(GetCurrentStyle(PLAYER_INVALID) != NULL)
+	if(GetCurrentStyle(PLAYER_INVALID) == NULL)
 	{
-		return false; // selecting a style finalizes the players
+		return true; // selecting a style finalizes the players
 	}
 	if( ALLOW_LATE_JOIN.IsLoaded()  &&  ALLOW_LATE_JOIN )
 	{
