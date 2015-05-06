@@ -492,6 +492,7 @@ void actor_template_t::load_node(XNode const& node, RString const& dirname, cond
 {
 	type= node.GetName();
 	bool type_set_by_automagic= false;
+#define set_type(auto_type) type_set_by_automagic= true; type= auto_type;
 	FOREACH_CONST_Attr(&node, attr)
 	{
 		if(attr->first == "Name")
@@ -525,6 +526,11 @@ void actor_template_t::load_node(XNode const& node, RString const& dirname, cond
 			// Ignore.  This attribute seems to be put in by the xml parser, and
 			// not part of the actual xml code.
 		}
+		else if(attr->first == "Text")
+		{
+			set_type("BitmapText");
+			store_field(attr->first, attr->second, true);
+		}
 		else if(attr->first == "File")
 		{
 			RString relative_path;
@@ -532,7 +538,7 @@ void actor_template_t::load_node(XNode const& node, RString const& dirname, cond
 			RString sfname= dirname + relative_path;
 			if(FILEMAN->IsADirectory(sfname))
 			{
-				type= "LoadActor";
+				set_type("LoadActor");
 				store_field("File", attr->second, false);
 			}
 			else
@@ -553,7 +559,7 @@ void actor_template_t::load_node(XNode const& node, RString const& dirname, cond
 						case FT_Xml:
 							this_relative= SetExtension(this_relative, "lua");
 						case FT_Lua:
-							type= "LoadActor";
+							set_type("LoadActor");
 							store_field("File", this_relative, false);
 							handled_level= 2;
 							break;
@@ -563,23 +569,23 @@ void actor_template_t::load_node(XNode const& node, RString const& dirname, cond
 						case FT_Movie:
 							if(handled_level < 2)
 							{
-								type= "Sprite";
+								set_type("Sprite");
 								store_field("File", this_relative, false);
 								handled_level= 1;
 							}
 							break;
 						case FT_Sound:
-							type= "ActorSound";
+							set_type("ActorSound");
 							store_field("File", this_relative, false);
 							handled_level= 1;
 							break;
 						case FT_Sprite:
-							type= "Sprite";
+							set_type("Sprite");
 							load_frames_from_file(dirname + this_relative, Dirname(relative_path));
 							handled_level= 2;
 							break;
 						case FT_Model:
-							type= "Model";
+							set_type("Model");
 							store_field("Meshes", this_relative, false);
 							store_field("Materials", this_relative, false);
 							store_field("Bones", this_relative, false);
@@ -590,7 +596,7 @@ void actor_template_t::load_node(XNode const& node, RString const& dirname, cond
 					{
 						if(extension == "model")
 						{
-							type= "Model";
+							set_type("Model");
 							load_model_from_file(dirname + this_relative, Dirname(relative_path));
 							handled_level= 2;
 						}
@@ -611,16 +617,6 @@ void actor_template_t::load_node(XNode const& node, RString const& dirname, cond
 				}
 			}
 		}
-		// else if(attr->first.Right(1) == "X")
-		// {
-		// 	attr->second->GetValue(x);
-		// 	x= maybe_conv_pos(x, convert_xpos);
-		// }
-		// else if(attr->first.Right(1) == "Y")
-		// {
-		// 	attr->second->GetValue(y);
-		// 	y= maybe_conv_pos(y, convert_ypos);
-		// }
 		else
 		{
 			store_field(attr->first, attr->second, true);

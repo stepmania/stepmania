@@ -564,6 +564,7 @@ static LocalizedString SCREEN_OFF		( "ScreenDebugOverlay", "Send Off To Screen" 
 static LocalizedString RELOAD_OVERLAY_SCREENS( "ScreenDebugOverlay", "Reload Overlay Screens" );
 static LocalizedString TOGGLE_ERRORS( "ScreenDebugOverlay", "Toggle Errors" );
 static LocalizedString CLEAR_ERRORS( "ScreenDebugOverlay", "Clear Errors" );
+static LocalizedString CONVERT_XML( "ScreenDebugOverlay", "Convert XML" );
 static LocalizedString RELOAD_THEME_AND_TEXTURES( "ScreenDebugOverlay", "Reload Theme and Textures" );
 static LocalizedString WRITE_PROFILES	( "ScreenDebugOverlay", "Write Profiles" );
 static LocalizedString WRITE_PREFERENCES	( "ScreenDebugOverlay", "Write Preferences" );
@@ -1115,6 +1116,24 @@ class DebugLineClearErrors : public IDebugLine
 	}
 };
 
+void convert_xmls_in_dir(RString const& dirname);
+class DebugLineConvrtXML : public IDebugLine
+{
+	virtual RString GetDisplayTitle() { return CONVERT_XML.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
+	virtual bool IsEnabled() { return true; }
+	virtual RString GetPageName() const { return "Theme"; }
+	virtual void DoAndLog( RString &sMessageOut )
+	{
+		Song* cur_song= GAMESTATE->m_pCurSong;
+		if(cur_song)
+		{
+			convert_xmls_in_dir(cur_song->GetSongDir() + "/");
+			IDebugLine::DoAndLog(sMessageOut);
+		}
+	}
+};
+
 class DebugLineWriteProfiles : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return WRITE_PROFILES.GetValue(); }
@@ -1300,6 +1319,7 @@ DECLARE_ONE( DebugLineReloadTheme );
 DECLARE_ONE( DebugLineReloadOverlayScreens );
 DECLARE_ONE( DebugLineToggleErrors );
 DECLARE_ONE( DebugLineClearErrors );
+DECLARE_ONE( DebugLineConvrtXML );
 DECLARE_ONE( DebugLineWriteProfiles );
 DECLARE_ONE( DebugLineWritePreferences );
 DECLARE_ONE( DebugLineMenuTimer );

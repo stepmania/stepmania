@@ -2022,6 +2022,7 @@ public:
 		ADD_METHOD( effectcolor2 );
 		ADD_METHOD( effectperiod );
 		ADD_METHOD( effecttiming );
+		ADD_METHOD(effect_hold_at_full);
 		ADD_METHOD( effectoffset );
 		ADD_METHOD( effectclock );
 		ADD_METHOD( effectmagnitude );
