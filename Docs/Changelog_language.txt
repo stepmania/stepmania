@@ -19,7 +19,7 @@ This means that three strings were added to the "ScreenDebugOverlay" section,
 2015/05/05
 ----------
 * [ScreenGameplay] SkipSongText
-
+* [SongManager] Sanity checking groups...
 
 2015/04/23
 ----------
