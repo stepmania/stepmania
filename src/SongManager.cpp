@@ -107,6 +107,7 @@ void SongManager::InitAll( LoadingWindow *ld )
 static LocalizedString RELOADING ( "SongManager", "Reloading..." );
 static LocalizedString UNLOADING_SONGS ( "SongManager", "Unloading songs..." );
 static LocalizedString UNLOADING_COURSES ( "SongManager", "Unloading courses..." );
+static LocalizedString SANITY_CHECKING_GROUPS("SongManager", "Sanity checking groups...");
 
 void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 {
@@ -278,9 +279,21 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 
 	groupIndex = 0;
 	songCount = 0;
+	if(ld)
+	{
+		ld->SetIndeterminate(false);
+		ld->SetTotalWork(arrayGroupDirs.size());
+	}
+	int sanity_index= 0;
 	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
 	{
 		RString sGroupDirName = *s;
+		if(ld)
+		{
+			ld->SetProgress(sanity_index);
+			ld->SetText(SANITY_CHECKING_GROUPS.GetValue() + ssprintf("\n%s",
+					Basename(sGroupDirName).c_str()));
+		}
 		// TODO: If this check fails, log a warning instead of crashing.
 		SanityCheckGroupDir(sDir+sGroupDirName);
 

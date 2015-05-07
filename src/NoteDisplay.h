@@ -246,7 +246,7 @@ private:
 	void DrawHoldPart(vector<Sprite*> &vpSpr,
 		const NoteFieldRenderArgs& field_args,
 		const NoteColumnRenderArgs& column_args,
-		const draw_hold_part_args& part_args, bool glow);
+		const draw_hold_part_args& part_args, bool glow, int part_type);
 	void DrawHoldBodyInternal(vector<Sprite*>& sprite_top,
 		vector<Sprite*>& sprite_body, vector<Sprite*>& sprite_bottom,
 		const NoteFieldRenderArgs& field_args,

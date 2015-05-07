@@ -4,6 +4,24 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/05/05
+----------
+* [Gameplay] Holding Select on gameplay now skips the current song in course
+  or endless mode. [kyzentun]
+
+2015/04/30
+----------
+* [beat] Default key configuration slightly tweaked, space is now the
+  default scratch key, key7 is now mapped to right instead of key3.
+  Backwards and shuffle chart mods now ignore the scratch column. [jobn]
+
+2015/04/27
+----------
+* [general] "Do not show again" button on missing texture dialog works now.
+  If the background or banner file for a song doesn't exist when the song is
+  cached, the cache file will have a blank path so Stepmania won't try to
+  load the nonexistent banner or background.
+
 2015/04/25
 ----------
 * [General] Screenshot key now checks whether there is a current song, and

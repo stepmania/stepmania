@@ -745,6 +745,7 @@ void NoteField::DrawPrimitives()
 	}
 	// Some might prefer an else block, instead of returning from the if, but I
 	// don't want to bump the indent on the entire remaining section. -Kyz
+	ArrowEffects::SetCurrentOptions(&m_pPlayerState->m_PlayerOptions.GetCurrent());
 
 	CalcPixelsBeforeAndAfterTargets();
 	NoteDisplayCols *cur = m_pCurDisplay;

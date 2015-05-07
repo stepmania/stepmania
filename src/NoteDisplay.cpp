@@ -729,10 +729,17 @@ struct StripBuffer
 	int Free() const { return size - Used(); }
 };
 
+enum hold_part_type
+{
+	hpt_top,
+	hpt_body,
+	hpt_bottom,
+};
+
 void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	const NoteFieldRenderArgs& field_args,
 	const NoteColumnRenderArgs& column_args,
-	const draw_hold_part_args& part_args, bool glow)
+	const draw_hold_part_args& part_args, bool glow, int part_type)
 {
 	ASSERT(!vpSpr.empty());
 
@@ -744,36 +751,46 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	if(part_args.flip_texture_vertically)
 		swap(rect.top, rect.bottom);
 	const float fFrameWidth		= pSprite->GetUnzoomedWidth();
-	const float fFrameHeight	= pSprite->GetUnzoomedHeight() * ae_zoom;
+	const float unzoomed_frame_height= pSprite->GetUnzoomedHeight();
 
 	/* Only draw the section that's within the range specified.  If a hold note is
 	 * very long, don't process or draw the part outside of the range.  Don't change
 	 * part_args.y_top or part_args.y_bottom; they need to be left alone to calculate texture coordinates. */
 	const float y_start_pos = max(part_args.y_top, part_args.y_start_pos);
-	const float y_end_pos = min(part_args.y_bottom, part_args.y_end_pos);
+	float y_end_pos = min(part_args.y_bottom, part_args.y_end_pos);
 	const float color_scale= glow ? 1 : part_args.color_scale;
+	if(part_type == hpt_body)
+	{
+		// Overshoot to cover up the seam between body and bottom.
+		// It's not fully gone, but the bg doesn't peak through.
+		y_end_pos+= 1;
+	}
 
 	// top to bottom
 	bool bAllAreTransparent = true;
 	bool bLast = false;
 	float fAddToTexCoord = 0;
 
-	if(!part_args.anchor_to_top)
+	// The caps should always use the full texture.
+	if(part_type == hpt_body)
 	{
-		float tex_coord_bottom= SCALE(part_args.y_bottom - part_args.y_top,
-			0, fFrameHeight, rect.top, rect.bottom);
-		float want_tex_coord_bottom	= ceilf(tex_coord_bottom - 0.0001f);
-		fAddToTexCoord = want_tex_coord_bottom - tex_coord_bottom;
-	}
+		if(!part_args.anchor_to_top)
+		{
+			float tex_coord_bottom= SCALE(part_args.y_bottom - part_args.y_top,
+				0, unzoomed_frame_height, rect.top, rect.bottom);
+			float want_tex_coord_bottom	= ceilf(tex_coord_bottom - 0.0001f);
+			fAddToTexCoord = want_tex_coord_bottom - tex_coord_bottom;
+		}
 
-	if(part_args.wrapping)
-	{
-		/* For very large hold notes, shift the texture coordinates to be near 0, so we
-		 * don't send very large values to the renderer. */
-		const float fDistFromTop	= y_start_pos - part_args.y_top;
-		float fTexCoordTop		= SCALE(fDistFromTop, 0, fFrameHeight, rect.top, rect.bottom);
-		fTexCoordTop += fAddToTexCoord;
-		fAddToTexCoord -= floorf(fTexCoordTop);
+		if(part_args.wrapping)
+		{
+			/* For very large hold notes, shift the texture coordinates to be near 0, so we
+			 * don't send very large values to the renderer. */
+			const float fDistFromTop	= y_start_pos - part_args.y_top;
+			float fTexCoordTop		= SCALE(fDistFromTop, 0, unzoomed_frame_height, rect.top, rect.bottom);
+			fTexCoordTop += fAddToTexCoord;
+			fAddToTexCoord -= floorf(fTexCoordTop);
+		}
 	}
 
 	DISPLAY->ClearAllTextures();
@@ -937,8 +954,8 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		const RageVector3 right_vert(center_vert.x - render_left.x,
 			center_vert.y - render_left.y, center_vert.z - render_left.z);
 
-		const float fDistFromTop	= fY - part_args.y_top;
-		float fTexCoordTop		= SCALE(fDistFromTop, 0, fFrameHeight, rect.top, rect.bottom);
+		const float fDistFromTop	= (fY - y_start_pos) / ae_zoom;
+		float fTexCoordTop		= SCALE(fDistFromTop, 0, unzoomed_frame_height, rect.top, rect.bottom);
 		fTexCoordTop += fAddToTexCoord;
 
 		const float fAlpha		= ArrowGetAlphaOrGlow(glow, m_pPlayerState, column_args.column, fYOffset, part_args.percent_fade_to_fail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets);
@@ -994,19 +1011,19 @@ void NoteDisplay::DrawHoldBodyInternal(vector<Sprite*>& sprite_top,
 	part_args.top_beat= top_beat;
 	part_args.bottom_beat= top_beat;
 	part_args.wrapping= false;
-	DrawHoldPart(sprite_top, field_args, column_args, part_args, glow);
+	DrawHoldPart(sprite_top, field_args, column_args, part_args, glow, hpt_top);
 	// Draw the body
 	part_args.y_top= y_head;
 	part_args.y_bottom= y_tail;
 	part_args.bottom_beat= bottom_beat;
 	part_args.wrapping= true;
-	DrawHoldPart(sprite_body, field_args, column_args, part_args, glow);
+	DrawHoldPart(sprite_body, field_args, column_args, part_args, glow, hpt_body);
 	// Draw the bottom cap
 	part_args.y_top= y_tail;
 	part_args.y_bottom= tail_plus_bottom;
 	part_args.top_beat= bottom_beat;
 	part_args.y_start_pos= max(part_args.y_start_pos, y_head);
-	DrawHoldPart(sprite_bottom, field_args, column_args, part_args, glow);
+	DrawHoldPart(sprite_bottom, field_args, column_args, part_args, glow, hpt_bottom);
 }
 
 void NoteDisplay::DrawHoldBody(const TapNote& tn,
@@ -1067,8 +1084,9 @@ void NoteDisplay::DrawHoldBody(const TapNote& tn,
 		y_tail += cache->m_iStopDrawingHoldBodyOffsetFromTail;
 	}
 
-	const float frame_height_top= pSpriteTop->GetUnzoomedHeight();
-	const float frame_height_bottom= pSpriteBottom->GetUnzoomedHeight();
+	float ae_zoom= ArrowEffects::GetZoom(m_pPlayerState);
+	const float frame_height_top= pSpriteTop->GetUnzoomedHeight() * ae_zoom;
+	const float frame_height_bottom= pSpriteBottom->GetUnzoomedHeight() * ae_zoom;
 
 	part_args.y_start_pos= ArrowEffects::GetYPos(column_args.column,
 		field_args.draw_pixels_after_targets, m_fYReverseOffsetPixels);
@@ -1204,17 +1222,28 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 		column_args.diffuse.g * fColorScale,
 		column_args.diffuse.b * fColorScale,
 		column_args.diffuse.a * fAlpha);
+	const RageColor glow = RageColor(1, 1, 1, fGlow);
+	// We can't actually use the glow color from the effect on the colum actor
+	// because it's used by the stealth modifier. -Kyz
+	/*
 	const RageColor glow	= RageColor(
 		column_args.glow.r * fColorScale,
 		column_args.glow.g * fColorScale,
 		column_args.glow.b * fColorScale,
 		column_args.glow.a * fGlow);
+	*/
 
 	bool bIsHoldHead = tn.type == TapNoteType_HoldHead;
 	bool bIsHoldCap = bIsHoldHead || tn.type == TapNoteType_HoldTail;
-	
+
+	// So, thie call to GetBrightness does nothing because fColorScale is not
+	// used after this point.  If you read GetBrightness, it looks like it's
+	// meant to fade the note to black, so a note that is one beat past the
+	// receptors is black.  However, I looked through the github history and
+	// it's been down here, disabled, since at least SM5 beta 1a.  I don't
+	// know if we should bring that behavior back now. -Kyz
 	if( tn.type != TapNoteType_HoldHead )
-		fColorScale		*= ArrowEffects::GetBrightness(	m_pPlayerState, fBeat );
+	{ fColorScale *= ArrowEffects::GetBrightness(m_pPlayerState, fBeat); }
 
 	// same logical structure as in UpdateReceptorGhostStuff, I just haven't
 	// figured out a good way to combine them. -Kyz
@@ -1430,7 +1459,6 @@ void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
 
 void NoteColumnRenderer::DrawPrimitives()
 {
-	ArrowEffects::SetCurrentOptions(&m_field_render_args->player_state->m_PlayerOptions.GetCurrent());
 	m_column_render_args.song_beat= m_field_render_args->player_state->GetDisplayedPosition().m_fSongBeatVisible;
 	m_column_render_args.pos_handler= &NCR_current.m_pos_handler;
 	m_column_render_args.rot_handler= &NCR_current.m_rot_handler;

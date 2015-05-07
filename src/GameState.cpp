@@ -372,6 +372,23 @@ void GameState::Reset()
 
 void GameState::JoinPlayer( PlayerNumber pn )
 {
+	// Make sure the join will be successful before doing it. -Kyz
+	{
+		int players_joined= GetNumPlayersEnabled();
+		if(players_joined > 0)
+		{
+			const Style* cur_style= GetCurrentStyle(PLAYER_INVALID);
+			if(cur_style)
+			{
+				const Style* new_style= GAMEMAN->GetFirstCompatibleStyle(m_pCurGame,
+					players_joined + 1, cur_style->m_StepsType);
+				if(new_style == NULL)
+				{
+					return;
+				}
+			}
+		}
+	}
 	/* If joint premium and we're not taking away a credit for the 2nd join,
 	 * give the new player the same number of stage tokens that the old player
 	 * has. */
@@ -403,7 +420,7 @@ void GameState::JoinPlayer( PlayerNumber pn )
 	// assume that the second player will be joined immediately afterwards and
 	// don't try to change the style. -Kyz
 	const Style* cur_style= GetCurrentStyle(PLAYER_INVALID);
-	if( ALLOW_LATE_JOIN  &&  cur_style != NULL && !(pn == PLAYER_1 &&
+	if(cur_style != NULL && !(pn == PLAYER_1 &&
 			(cur_style->m_StyleType == StyleType_TwoPlayersTwoSides ||
 				cur_style->m_StyleType == StyleType_TwoPlayersSharedSides)))
 	{
@@ -671,33 +688,6 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 	int iNumStagesOfThisSong = 1;
 	if( m_pCurSong )
 	{
-		const Style *pStyle = GetCurrentStyle(PLAYER_INVALID);
-		int numSidesJoined = GetNumSidesJoined();
-		if( pStyle == NULL )
-		{
-			const Steps *pSteps = NULL;
-			if( this->GetMasterPlayerNumber() != PlayerNumber_Invalid )
-				pSteps = m_pCurSteps[this->GetMasterPlayerNumber()];
-			// Don't call GetFirstCompatibleStyle if numSidesJoined == 0.
-			// This happens because on SContinue when players are unjoined,
-			// pCurSteps will still be set while no players are joined. -Chris
-			if( pSteps && numSidesJoined > 0 )
-			{
-				// If a style isn't set, use the style of the selected steps.
-				StepsType st = pSteps->m_StepsType;
-				pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, numSidesJoined, st );
-			}
-			else
-			{
-				/* If steps aren't set either, pick any style for the number of
-				 * joined players, or one player if no players are joined. */
-				vector<const Style*> vpStyles;
-				int iJoined = max( numSidesJoined, 1 );
-				GAMEMAN->GetCompatibleStyles( m_pCurGame, iJoined, vpStyles );
-				ASSERT( !vpStyles.empty() );
-				pStyle = vpStyles[0];
-			}
-		}
 		/* Extra stages need to only count as one stage in case a multi-stage
 		 * song is chosen. */
 		if( IsAnExtraStage() )
@@ -1449,14 +1439,41 @@ RString GameState::GetPlayerDisplayName( PlayerNumber pn ) const
 
 bool GameState::PlayersCanJoin() const
 {
-	bool b = GetNumSidesJoined() == 0 || GetCurrentStyle(PLAYER_INVALID) == NULL;	// selecting a style finalizes the players
+	if(GetNumSidesJoined() == 0)
+	{
+		return true;
+	}
+	if(GetCurrentStyle(PLAYER_INVALID) == NULL)
+	{
+		return true; // selecting a style finalizes the players
+	}
 	if( ALLOW_LATE_JOIN.IsLoaded()  &&  ALLOW_LATE_JOIN )
 	{
 		Screen *pScreen = SCREENMAN->GetTopScreen();
-		if( pScreen )
-			b |= pScreen->AllowLateJoin();
+		if(pScreen)
+		{
+			if(!pScreen->AllowLateJoin())
+			{
+				return false;
+			}
+		}
+		// We can't use FOREACH_EnabledPlayer because that uses PlayersCanJoin
+		// in part of its logic chain. -Kyz
+		FOREACH_PlayerNumber(pn)
+		{
+			const Style* style= GetCurrentStyle(pn);
+			if(style)
+			{
+				const Style* compat_style= GAMEMAN->GetFirstCompatibleStyle(
+					m_pCurGame, 2, style->m_StepsType);
+				if(compat_style == NULL)
+				{
+					return false;
+				}
+			}
+		}
 	}
-	return b;
+	return true;
 }
 
 int GameState::GetNumSidesJoined() const
