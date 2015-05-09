@@ -31,5 +31,5 @@ before_script:
     - ./.install-cmake.sh
 
 script:
-    - cmake -G -DWITH_PORTABLE_TOMCRYPT=ON 'Unix Makefiles'
+    - cmake -DWITH_PORTABLE_TOMCRYPT=ON -G 'Unix Makefiles'
     - make
