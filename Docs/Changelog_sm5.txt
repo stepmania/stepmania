@@ -4,6 +4,14 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/05/09
+----------
+* [general] Workaround for the axis problem added.  Set the Axis Fix
+  preference under Input Options to true if you have the axis problem.
+	[Fighter19]
+* [general] Added XML to Lua converter.  See Docs/Themerdocs/XmlToLua.txt for
+  details. [kyzentun]
+
 2015/05/05
 ----------
 * [Gameplay] Holding Select on gameplay now skips the current song in course

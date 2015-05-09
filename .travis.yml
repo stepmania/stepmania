@@ -28,7 +28,8 @@ before_script:
     - sudo apt-get install -y libglu1-mesa-dev
     - sudo apt-get install -y mesa-common-dev
     - sudo apt-get install -y libglew-dev
+    - sudo apt-get install -y cmake
 
 script:
-    - ./autogen.sh
-    - ./configure && make
+    - cmake -G 'Unix Makefiles' . && cmake .
+    - make

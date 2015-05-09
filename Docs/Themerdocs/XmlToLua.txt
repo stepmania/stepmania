@@ -46,9 +46,9 @@ something that has to be a certain type.
 * File field conditions:
   * Images and .sprite files are converted to Sprites.
   * .txt and .model files are converted to Models.
-	* Folders are converted to use LoadActor, which has its own rules for
-	  guessing the actor type.
-	* Sound files are converted to ActorSound.
+  * Folders are converted to use LoadActor, which has its own rules for
+    guessing the actor type.
+  * Sound files are converted to ActorSound.
 
 * If there is a Text field, the actor is assumed to be a BitmapText.
 
@@ -118,8 +118,8 @@ So after conversion you might see something like this:
 ```
 xtl_cond_a_result= GAMESTATE:IsPlayerEnabled(PLAYER_1)
 local function optional_actor(cond, actor)
-	if cond then return actor end
-	return Def.Actor{}
+  if cond then return actor end
+  return Def.Actor{}
 end
 ```
 The optional_actor function is a convenient way to insert a blank, unrendered
@@ -129,8 +129,8 @@ You'll see it used like this:
     optional_actor(xtl_cond_a_result,
     Def.Sprite{
       Name= "xtl_actor_g",
-	    InitCommand= cmd(x,0;y,0),
-	    Texture= "foo 3x1.png",
+      InitCommand= cmd(x,0;y,0),
+      Texture= "foo 3x1.png",
     }),
 ```
 
