@@ -291,6 +291,10 @@ elseif(LINUX)
         )
       endif()
 
+      if (WITH_CRYSTALHD_DISABLED)
+        list(APPEND FFMPEG_CONFIGURE "--disable-crystalhd")
+      endif()
+
       if (NOT WITH_EXTERNAL_WARNINGS)
         list(APPEND FFMPEG_CONFIGURE
           "--extra-cflags=-w"
