@@ -10,11 +10,13 @@
 #include "archutils/Win32/RegistryAccess.h"
 #include "InputFilter.h"
 #include "PrefsManager.h"
+#include "GamePreferences.h" //needed for Axis Fix
 #include "Foreach.h"
 
 #include "InputHandler_DirectInputHelper.h"
 
 REGISTER_INPUT_HANDLER_CLASS2( DirectInput, DInput );
+static Preference<bool> g_bAxisFix( "AxisFix", false );
 
 static vector<DIDevice> Devices;
 
@@ -587,8 +589,17 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 										 device.m_sName.c_str(), in.ofs );
 						
 						float l = SCALE( int(evtbuf[i].dwData), 0.0f, 100.0f, 0.0f, 1.0f );
-						ButtonPressed( DeviceInput(dev, up, max(-l,0), tm) );
-						ButtonPressed( DeviceInput(dev, down, max(+l,0), tm) );
+						if(g_bAxisFix)
+						{
+						  ButtonPressed( DeviceInput(dev, up, (l == 0) || (l == -1), tm) );
+						  ButtonPressed( DeviceInput(dev, down,(l == 0) || (l == 1), tm) );
+
+						}
+						else
+						{
+						  ButtonPressed( DeviceInput(dev, up, max(-l,0), tm) );
+						  ButtonPressed( DeviceInput(dev, down, max(+l,0), tm) ); 
+						}
 					}
 					break;
 				}

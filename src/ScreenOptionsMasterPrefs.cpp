@@ -775,6 +775,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ThreeKeyNavigation", MovePref<bool>, "Five Key Menu", "Three Key Menu" ) );
 	ADD( ConfOption( "MusicWheelSwitchSpeed",	MusicWheelSwitchSpeed,	"Slow","Normal","Fast","Really Fast" ) );
 	ADD( ConfOption( "InputDebounceTime", InputDebounceTime, "0ms", "10ms", "20ms", "30ms", "40ms", "50ms", "60ms", "70ms", "80ms", "90ms", "100ms") );
+	ADD( ConfOption( "AxisFix",			MovePref<bool>,		"Off","On" ) );
 
 	// Gameplay options
 	ADD( ConfOption( "Center1Player",		MovePref<bool>,		"Off","On" ) );
