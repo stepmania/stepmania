@@ -118,6 +118,7 @@ list(APPEND SMDATA_FILE_TYPES_HPP
   "IniFile.h"
   "MsdFile.h"
   "XmlFile.h"
+  "XmlToLua.h"
   "XmlFileUtil.h"
 )
 

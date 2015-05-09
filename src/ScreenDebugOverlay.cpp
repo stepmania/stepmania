@@ -29,6 +29,7 @@
 #include "Song.h"
 #include "ScreenSyncOverlay.h"
 #include "ThemeMetric.h"
+#include "XmlToLua.h"
 
 static bool g_bIsDisplayed = false;
 static bool g_bIsSlow = false;
@@ -1116,8 +1117,7 @@ class DebugLineClearErrors : public IDebugLine
 	}
 };
 
-void convert_xmls_in_dir(RString const& dirname);
-class DebugLineConvrtXML : public IDebugLine
+class DebugLineConvertXML : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return CONVERT_XML.GetValue(); }
 	virtual RString GetDisplayValue() { return RString(); }
@@ -1319,7 +1319,7 @@ DECLARE_ONE( DebugLineReloadTheme );
 DECLARE_ONE( DebugLineReloadOverlayScreens );
 DECLARE_ONE( DebugLineToggleErrors );
 DECLARE_ONE( DebugLineClearErrors );
-DECLARE_ONE( DebugLineConvrtXML );
+DECLARE_ONE( DebugLineConvertXML );
 DECLARE_ONE( DebugLineWriteProfiles );
 DECLARE_ONE( DebugLineWritePreferences );
 DECLARE_ONE( DebugLineMenuTimer );

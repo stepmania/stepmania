@@ -121,6 +121,11 @@ save yourself some time, copy this for undocumented things:
 	<Function name='ConnectToServer' return='bool' arguments='string sAddress'>
 		Tries to connect to the server at <code>sAddress</code>.
 	</Function>
+	<Function name='convert_xml_bgs' return='' arguments='string dir'>
+		Recursively searches <code>dir</code> for xml files of actors and
+		converts them to equivalent lua files.  See Docs/Themerdocs/XmlToLua.txt
+		for details.
+	</Function>
 	<Function name='create_spline' return='CubicSplineN' arguments=''>
 		Creates a CubicSplineN for you to use.  Make sure you destroy the CubicSplineN when you're done with it, or you will have a memory leak.
 	</Function>

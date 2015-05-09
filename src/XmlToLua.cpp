@@ -245,6 +245,15 @@ void init_parser_helpers()
 	chunks_to_replace["IsPlayerEnabled(1)"]= "IsPlayerEnabled(PLAYER_2)";
 }
 
+void convert_lua_chunk(RString& chunk_text)
+{
+	for(map<RString, RString>::iterator chunk= chunks_to_replace.begin();
+			chunk != chunks_to_replace.end(); ++chunk)
+	{
+		chunk_text.Replace(chunk->first, chunk->second);
+	}
+}
+
 // Conditions are mapped by condition string.
 // So condition_set_t::iterator->first is the lua to execute for the
 // condition, and condition_set_t::iterator->second is the name of the
@@ -293,11 +302,7 @@ void actor_template_t::store_cmd(RString const& cmd_name, RString const& full_cm
 	if(full_cmd.Left(1) == "%")
 	{
 		RString cmd_text= full_cmd.Right(full_cmd.size()-1);
-		for(map<RString, RString>::iterator chunk= chunks_to_replace.begin();
-				chunk != chunks_to_replace.end(); ++chunk)
-		{
-			cmd_text.Replace(chunk->first, chunk->second);
-		}
+		convert_lua_chunk(cmd_text);
 		fields[cmd_name]= cmd_text;
 		return;
 	}
@@ -739,7 +744,9 @@ void convert_xml_file(RString const& fname, RString const& dirname)
 	for(condition_set_t::iterator cond= conditions.begin();
 		cond != conditions.end(); ++cond)
 	{
-		file->Write("local " + cond->second + "_result= " + cond->first + "\n\n");
+		RString cond_text= cond->first;
+		convert_lua_chunk(cond_text);
+		file->Write("local " + cond->second + "_result= " + cond_text + "\n\n");
 	}
 	if(!conditions.empty())
 	{
