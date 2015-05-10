@@ -22,6 +22,8 @@ if(WIN32)
   # to be installed relatively cleanly.
   set(CPACK_PACKAGE_INSTALL_DIRECTORY "StepMania ${SM_VERSION_MAJOR}")
   set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "StepMania ${SM_VERSION_MAJOR}")
+  set(CPACK_NSIS_EXECUTABLES_DIRECTORY "Program")
+  set(CPACK_NSIS_INSTALL_ROOT "C:\\\\Games")
 endif()
 
 include(CPack)
