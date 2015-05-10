@@ -748,26 +748,56 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 				m_fMusicLengthSeconds);
 			m_fMusicLengthSeconds = 0;
 		}
-		if(m_fMusicSampleStartSeconds == -1 ||
-			m_fMusicSampleLengthSeconds == 0 ||
-			m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds)
-		{
-			const TimingData &timing = this->m_SongTiming;
-			m_fMusicSampleStartSeconds = timing.GetElapsedTimeFromBeat(100);
-
-			if(m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds)
+		if(!m_PreviewFile.empty()) { // if there's a preview file, make sure all of it is heard!
+			RString error;
+			RageSoundReader *Sample = RageSoundReader_FileReader::OpenFile(GetPreviewMusicPath(), error);
+			if(Sample == NULL && m_sMusicFile != "")
 			{
-				// Attempt to get a reasonable default.
-				int iBeat = lrintf(this->m_SongTiming.GetBeatFromElapsedTime(this->GetLastSecond())/2);
-				iBeat -= iBeat%4;
-				m_fMusicSampleStartSeconds = timing.GetElapsedTimeFromBeat((float)iBeat);
-			}
-		}
+				LOG->UserLog("Sound file", GetPreviewMusicPath(), "couldn't be opened: %s", error.c_str());
 
-		// The old logic meant that you couldn't have sample lengths that go forever,
-		// e.g. those in Donkey Konga. I never liked that. -freem
-		if(m_fMusicSampleLengthSeconds <= 0.00f)
-		{ m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH; }
+				// Don't use this file.
+				m_PreviewFile = "";
+				m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
+			}
+			else if(Sample != NULL)
+			{
+				m_fMusicSampleLengthSeconds = Sample->GetLength() / 1000.0f;
+				delete Sample;
+
+				if(m_fMusicSampleLengthSeconds < 0)
+				{
+					// It failed; bad file or something. It's already logged a warning.
+					m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
+				}
+				else if(m_fMusicSampleLengthSeconds == 0)
+				{
+					LOG->UserLog("Sound file", GetPreviewMusicPath(), "is empty.");
+				}
+			}
+		} else { // no preview file, calculate sample from music as normal
+		
+			if(m_fMusicSampleStartSeconds == -1 ||
+				m_fMusicSampleLengthSeconds == 0 ||
+				m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds)
+			{
+				const TimingData &timing = this->m_SongTiming;
+				m_fMusicSampleStartSeconds = timing.GetElapsedTimeFromBeat(100);
+
+				if(m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds)
+				{
+					// Attempt to get a reasonable default.
+					int iBeat = lrintf(this->m_SongTiming.GetBeatFromElapsedTime(this->GetLastSecond())/2);
+					iBeat -= iBeat%4;
+					m_fMusicSampleStartSeconds = timing.GetElapsedTimeFromBeat((float)iBeat);
+				}
+			}
+
+			// The old logic meant that you couldn't have sample lengths that go forever,
+			// e.g. those in Donkey Konga. I never liked that. -freem
+			if(m_fMusicSampleLengthSeconds <= 0.00f)
+			{ m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH; }
+		
+		}
 
 		// Here's the problem:  We have a directory full of images. We want to
 		// determine which image is the banner, which is the background, and
