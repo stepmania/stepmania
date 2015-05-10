@@ -201,6 +201,7 @@ endif
 FileTypes = IniFile.cpp IniFile.h \
 MsdFile.cpp MsdFile.h \
 XmlFile.cpp XmlFile.h \
+XmlToLua.cpp XmlToLua.h \
 XmlFileUtil.cpp XmlFileUtil.h
 
 StepMania = CommandLineActions.h CommandLineActions.cpp \
