@@ -51,11 +51,25 @@ else (JACK_LIBRARIES AND JACK_INCLUDE_DIRS)
       /opt/local/lib
       /sw/lib
   )
+  
+  if (JACK_LIBRARY AND JACK_INCLUDE_DIR)	
+    set(JACK_FOUND TRUE)
+    	
+    set(JACK_INCLUDE_DIRS	
+      ${JACK_INCLUDE_DIR}	
+    )
+    
+    set(JACK_LIBRARIES
+      ${JACK_LIBRARIES}
+      ${JACK_LIBRARY}
+    )
+
+  endif (JACK_LIBRARY AND JACK_INCLUDE_DIR)
 
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(JACK DEFAULT_MSG
     JACK_INCLUDE_DIRS JACK_LIBRARIES)
 
   # show the JACK_INCLUDE_DIRS and JACK_LIBRARIES variables only in the advanced view
-  mark_as_advanced(JACK_INCLUDE_DIRS JACK_LIBRARIES)
+  #mark_as_advanced(JACK_INCLUDE_DIRS JACK_LIBRARIES)
 endif (JACK_LIBRARIES AND JACK_INCLUDE_DIRS)
