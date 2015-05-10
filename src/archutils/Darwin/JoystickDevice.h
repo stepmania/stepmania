@@ -7,15 +7,13 @@ struct Joystick
 {
 	InputDevice id;
 	// map cookie to button
-	__gnu_cxx::hash_map<IOHIDElementCookie, DeviceButton> mapping;
+	std::unordered_map<IOHIDElementCookie, DeviceButton> mapping;
 	IOHIDElementCookie x_axis, y_axis, z_axis, x_rot, y_rot, z_rot, hat;
-	int x_min, x_max;
-	int y_min, y_max;
-	int z_min, z_max;
-	int rx_min, rx_max;
-	int ry_min, ry_max;
-	int rz_min, rz_max;
 	int hat_min, hat_max;
+	int x_min, y_min, z_min;
+	int x_max, y_max, z_max;
+	int rx_min, ry_min, rz_min;
+	int rx_max, ry_max, rz_max;
 
 	Joystick();
 };
