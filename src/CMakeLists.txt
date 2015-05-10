@@ -558,6 +558,8 @@ target_link_libraries("${SM_EXE_NAME}" ${SMDATA_LINK_LIB})
 list(APPEND SM_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
   "${SM_EXTERN_DIR}/vorbis"
+  "${SM_EXTERN_DIR}/libtommath"
+  "${SM_EXTERN_DIR}/libtomcrypt/src/headers"
 )
 if(NOT APPLE)
   list(APPEND SM_INCLUDE_DIRS
