@@ -51,6 +51,20 @@ else (JACK_LIBRARIES AND JACK_INCLUDE_DIRS)
       /opt/local/lib
       /sw/lib
   )
+  
+  if (JACK_LIBRARY AND JACK_INCLUDE_DIR)	
+    set(JACK_FOUND TRUE)
+    	
+    set(JACK_INCLUDE_DIRS	
+      ${JACK_INCLUDE_DIR}	
+    )
+    
+    set(JACK_LIBRARIES
+      ${JACK_LIBRARIES}
+      ${JACK_LIBRARY}
+    )
+
+  endif (JACK_LIBRARY AND JACK_INCLUDE_DIR)
 
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(JACK DEFAULT_MSG
