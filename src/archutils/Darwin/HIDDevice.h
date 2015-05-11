@@ -11,7 +11,7 @@
 #include <mach/mach_error.h>
 #include <vector>
 #include <utility>
-#include <ext/hash_map>
+#include <unordered_map>
 
 #include "RageLog.h"
 #include "RageInputDevice.h"
@@ -41,20 +41,6 @@ inline Boolean LongValue( CFTypeRef o, long &n )
 	if( !o || CFGetTypeID(o) != CFNumberGetTypeID() )
 		return false;
 	return CFNumberGetValue( CFNumberRef(o), kCFNumberLongType, &n );
-}
-
-namespace __gnu_cxx
-{
-#ifndef __LP64__
-	template<>
-	struct hash<IOHIDElementCookie> : private hash<uintptr_t>
-	{
-		size_t operator()( const IOHIDElementCookie& cookie ) const
-		{
-			return hash<unsigned long>::operator()( uintptr_t(cookie) );
-		}
-	};
-#endif
 }
 
 /* This is just awful, these aren't objects, treating them as such
