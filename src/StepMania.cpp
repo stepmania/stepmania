@@ -1466,14 +1466,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 								|| INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT) ) );
 		bool bSaveCompressed = !bHoldingShift;
 		RageTimer timer;
-		RString prefix;
-		RString suffix;
-		if(GAMESTATE->m_pCurSong)
-		{
-			prefix= GAMESTATE->m_pCurSong->GetDisplayFullTitle() + "_";
-			suffix= "_" + SCREENMAN->GetTopScreen()->GetName();
-		}
-		StepMania::SaveScreenshot("Screenshots/", bSaveCompressed, false, prefix, suffix);
+		StepMania::SaveScreenshot("Screenshots/", bSaveCompressed, false, "", "");
 		LOG->Trace( "Screenshot took %f seconds.", timer.GetDeltaTime() );
 		return true; // handled
 	}
@@ -1594,7 +1587,6 @@ void HandleInputEvents(float fDeltaTime)
 		if( GAMESTATE->IsEventMode() &&
 			CodeDetector::EnteredCode(input.GameI.controller,CODE_BACK_IN_EVENT_MODE) )
 		{
-			input.pn = PLAYER_1;
 			input.MenuI = GAME_BUTTON_BACK;
 		}
 
