@@ -748,7 +748,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 				m_fMusicLengthSeconds);
 			m_fMusicLengthSeconds = 0;
 		}
-		if(!m_PreviewFile.empty()) { // if there's a preview file, make sure all of it is heard!
+		if(!m_PreviewFile.empty() && m_fMusicSampleLengthSeconds <= 0.00f) { // if there's a preview file and sample length isn't specified, set sample length to length of preview file
 			RString error;
 			RageSoundReader *Sample = RageSoundReader_FileReader::OpenFile(GetPreviewMusicPath(), error);
 			if(Sample == NULL && m_sMusicFile != "")
