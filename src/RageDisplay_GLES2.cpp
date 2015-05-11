@@ -388,8 +388,8 @@ RString RageDisplay_GLES2::TryVideoMode( const VideoModeParams &p, bool &bNewDev
 
 		/* Delete all render targets.  They may have associated resources other than
 		 * the texture itself. */
-		//FOREACHM( unsigned, RenderTarget *, g_mapRenderTargets, rt )
-		//	delete rt->second;
+		//for (auto &rt: g_mapRenderTargets)
+		//	delete rt.second;
 		//g_mapRenderTargets.clear();
 
 		/* Recreate all vertex buffers. */

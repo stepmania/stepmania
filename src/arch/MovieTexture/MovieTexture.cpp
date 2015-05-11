@@ -6,7 +6,6 @@
 #include "PrefsManager.h"
 #include "RageFile.h"
 #include "LocalizedString.h"
-#include "Foreach.h"
 #include "arch/arch_default.h"
 
 void ForceToAscii( RString &str )
@@ -94,14 +93,14 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 	
 	RageMovieTexture *ret = NULL;
 	
-	FOREACH_CONST( RString, DriversToTry, Driver )
+	for (auto const &Driver: DriversToTry)
 	{
-		LOG->Trace( "Initializing driver: %s", Driver->c_str() );
-		RageDriver *pDriverBase = RageMovieTextureDriver::m_pDriverList.Create( *Driver );
+		LOG->Trace( "Initializing driver: %s", Driver.c_str() );
+		RageDriver *pDriverBase = RageMovieTextureDriver::m_pDriverList.Create( Driver );
 		
 		if( pDriverBase == NULL )
 		{
-			LOG->Trace( "Unknown movie driver name: %s", Driver->c_str() );
+			LOG->Trace( "Unknown movie driver name: %s", Driver.c_str() );
 			continue;
 		}
 		
@@ -114,12 +113,12 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 
 		if( ret == NULL )
 		{
-			LOG->Trace( "Couldn't load driver %s: %s", Driver->c_str(), sError.c_str() );
+			LOG->Trace( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
 			SAFE_DELETE( ret );
 			continue;
 		}
 		LOG->Trace( "Created movie texture \"%s\" with driver \"%s\"",
-			    ID.filename.c_str(), Driver->c_str() );
+			    ID.filename.c_str(), Driver.c_str() );
 		break;
 	}
 	if ( !ret )

@@ -1,5 +1,8 @@
 #include "global.h"
 #include "TrailUtil.h"
+
+#include <numeric>
+
 #include "Trail.h"
 #include "Course.h"
 #include "XmlFile.h"
@@ -14,10 +17,9 @@ int TrailUtil::GetNumSongs( const Trail *pTrail )
 
 float TrailUtil::GetTotalSeconds( const Trail *pTrail )
 {
-	float fSecs = 0;
-	FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
-		fSecs += e->pSong->m_fMusicLengthSeconds;
-	return fSecs;
+	return std::accumulate(pTrail->m_vEntries.begin(), pTrail->m_vEntries.end(), 0.f, [](float const sec, TrailEntry const &e) {
+		return sec + e.pSong->m_fMusicLengthSeconds;
+	});
 }
 
 ///////////////////////////////////////////////////////////////////////

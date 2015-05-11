@@ -2,7 +2,6 @@
 #include "SampleHistory.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "Foreach.h"
 
 SampleHistory::SampleHistory()
 {

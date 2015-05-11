@@ -8,7 +8,6 @@
 #include "RageLog.h"
 #include "RageMath.h"
 #include "StageStats.h"
-#include "Foreach.h"
 #include "Song.h"
 #include "XmlFile.h"
 
@@ -156,8 +155,10 @@ GraphDisplay::GraphDisplay()
 
 GraphDisplay::~GraphDisplay()
 {
-	FOREACH( Actor*, m_vpSongBoundaries, p )
-		SAFE_DELETE( *p );
+	for (auto *p: m_vpSongBoundaries)
+	{
+		SAFE_DELETE( p );
+	}
 	m_vpSongBoundaries.clear();
 	SAFE_DELETE( m_pGraphLine );
 	SAFE_DELETE( m_pGraphBody );
@@ -176,7 +177,7 @@ void GraphDisplay::Set( const StageStats &ss, const PlayerStageStats &pss )
 
 	// Show song boundaries
 	float fSec = 0;
-	FOREACH_CONST( Song*, ss.m_vpPossibleSongs, song )
+	for (auto song = ss.m_vpPossibleSongs.begin(); song != ss.m_vpPossibleSongs.end(); ++song)
 	{
 		if( song == ss.m_vpPossibleSongs.end()-1 )
 			continue;

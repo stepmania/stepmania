@@ -10,7 +10,6 @@
 #include "XmlFileUtil.h"
 #include "IniFile.h"
 #include "LuaManager.h"
-#include "Foreach.h"
 #include "Song.h"
 #include "Course.h"
 #include "GameState.h"
@@ -475,9 +474,8 @@ void ActorUtil::LoadAllCommandsFromName( Actor& actor, const RString &sMetricsGr
 	set<RString> vsValueNames;
 	THEME->GetMetricsThatBeginWith( sMetricsGroup, sName, vsValueNames );
 
-	FOREACHS_CONST( RString, vsValueNames, v )
+	for (auto const &sv: vsValueNames)
 	{
-		const RString &sv = *v;
 		static const RString sEnding = "Command"; 
 		if( EndsWith(sv,sEnding) )
 		{

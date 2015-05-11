@@ -5,7 +5,6 @@
 
 #include "RageInput.h" // g_sInputDrivers
 #include "RageLog.h"
-#include "Foreach.h"
 
 #include <string> // std::string::npos
 #include <dirent.h>
@@ -74,13 +73,13 @@ void LinuxInputManager::InitDriver(InputHandler_Linux_Event* driver)
 {
 	m_EventDriver = driver;
 
-	FOREACH(RString, m_vsPendingEventDevices, dev)
+        for (auto &dev: m_vsPendingEventDevices)
 	{
-		RString devFile = getDevice(*dev, "event");
+		RString devFile = getDevice(dev, "event");
 		ASSERT( devFile != "" );
 		
-		if( ! driver->TryDevice(devFile) && m_bJoystickEnabled && getDevice(*dev, "js") != "" )
-			m_vsPendingJoystickDevices.push_back(*dev);
+		if( ! driver->TryDevice(devFile) && m_bJoystickEnabled && getDevice(dev, "js") != "" )
+			m_vsPendingJoystickDevices.push_back(dev);
 	}
 	if( m_JoystickDriver != NULL ) InitDriver(m_JoystickDriver);
 
@@ -91,9 +90,9 @@ void LinuxInputManager::InitDriver(InputHandler_Linux_Joystick* driver)
 {
 	m_JoystickDriver = driver;
 
-	FOREACH(RString, m_vsPendingJoystickDevices, dev)
+        for (auto &dev: m_vsPendingJoystickDevices)
 	{
-		RString devFile = getDevice(*dev, "js");
+		RString devFile = getDevice(dev, "js");
 		ASSERT( devFile != "" );
 		
 		driver->TryDevice(devFile);

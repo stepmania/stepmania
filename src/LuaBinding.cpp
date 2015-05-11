@@ -2,7 +2,6 @@
 #include "LuaBinding.h"
 #include "LuaReference.h"
 #include "RageUtil.h"
-#include "Foreach.h"
 
 #include "SubscriptionManager.h"
 static SubscriptionManager<LuaBinding> m_Subscribers;
@@ -16,8 +15,10 @@ namespace
 
 		/* Register base classes first. */
 		map<RString, LuaBinding *> mapToRegister;
-		FOREACHS( LuaBinding*, *m_Subscribers.m_pSubscribers, p )
-			mapToRegister[(*p)->GetClassName()] = (*p);
+		for (auto *p: *m_Subscribers.m_pSubscribers)
+		{
+			mapToRegister[p->GetClassName()] = p;
+		}
 
 		set<RString> setRegisteredAlready;
 

@@ -2,7 +2,6 @@
 #include "RageSoundDriver.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "Foreach.h"
 #include "arch/arch_default.h"
 
 DriverList RageSoundDriver::m_pDriverList;
@@ -12,12 +11,12 @@ RageSoundDriver *RageSoundDriver::Create( const RString& sDrivers )
 	vector<RString> DriversToTry;
 	split( sDrivers.empty()? DEFAULT_SOUND_DRIVER_LIST:sDrivers, ",", DriversToTry, true );
 	
-	FOREACH_CONST( RString, DriversToTry, Driver )
+    for (auto const &Driver: DriversToTry)
 	{
-		RageDriver *pDriver = m_pDriverList.Create( *Driver );
+		RageDriver *pDriver = m_pDriverList.Create( Driver );
 		if( pDriver == NULL )
 		{
-			LOG->Trace( "Unknown sound driver: %s", Driver->c_str() );
+			LOG->Trace( "Unknown sound driver: %s", Driver.c_str() );
 			continue;
 		}
 
@@ -27,10 +26,10 @@ RageSoundDriver *RageSoundDriver::Create( const RString& sDrivers )
 		const RString sError = pRet->Init();
 		if( sError.empty() )
 		{
-			LOG->Info( "Sound driver: %s", Driver->c_str() );
+			LOG->Info( "Sound driver: %s", Driver.c_str() );
 			return pRet;
 		}
-		LOG->Info( "Couldn't load driver %s: %s", Driver->c_str(), sError.c_str() );
+		LOG->Info( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
 		SAFE_DELETE( pRet );
 	}
 	return NULL;

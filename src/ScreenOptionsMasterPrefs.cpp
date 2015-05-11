@@ -12,7 +12,6 @@
 #include "GameState.h"
 #include "StepMania.h"
 #include "Game.h"
-#include "Foreach.h"
 #include "GameConstantsAndTypes.h"
 #include "DisplayResolutions.h"
 #include "LocalizedString.h"
@@ -165,9 +164,9 @@ static void GameChoices( vector<RString> &out )
 {
 	vector<const Game*> aGames;
 	GAMEMAN->GetEnabledGames( aGames );
-	FOREACH( const Game*, aGames, g )
+	for (auto const *g: aGames)
 	{
-		RString sGameName = (*g)->m_szName;
+		RString sGameName = g->m_szName;
 		out.push_back( sGameName );
 	}
 }
@@ -198,13 +197,13 @@ static void LanguageChoices( vector<RString> &out )
 	THEME->GetLanguages( vs );
 	SortRStringArray( vs, true );
 
-	FOREACH_CONST( RString, vs, s )
+	for (auto const &s: vs)
 	{
-		const LanguageInfo *pLI = GetLanguageInfo( *s );
+		const LanguageInfo *pLI = GetLanguageInfo( s );
 		if( pLI )
 			out.push_back( THEME->GetString("NativeLanguageNames", pLI->szEnglishName) );
 		else
-			out.push_back( *s );
+			out.push_back( s );
 	}
 }
 
@@ -244,8 +243,10 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 static void ThemeChoices( vector<RString> &out )
 {
 	THEME->GetSelectableThemeNames( out );
-	FOREACH( RString, out, s )
-		*s = THEME->GetThemeDisplayName( *s );
+	for (auto &s: out)
+	{
+		s = THEME->GetThemeDisplayName( s );
+	}
 }
 
 static void DisplayResolutionChoices( vector<RString> &out )
@@ -253,9 +254,9 @@ static void DisplayResolutionChoices( vector<RString> &out )
 	DisplayResolutions d;
 	DISPLAY->GetDisplayResolutions( d );
 
-	FOREACHS_CONST( DisplayResolution, d, iter )
+	for (auto const &iter: d)
 	{
-		RString s = ssprintf("%dx%d", iter->iWidth, iter->iHeight);
+		RString s = ssprintf("%dx%d", iter.iWidth, iter.iHeight);
 		out.push_back( s );
 	}
 }
@@ -579,9 +580,9 @@ static void DisplayResolutionM( int &sel, bool ToSel, const ConfOption *pConfOpt
 	DisplayResolutions d;
 	DISPLAY->GetDisplayResolutions( d );
 
-	FOREACHS_CONST( DisplayResolution, d, iter )
+	for (auto const &iter: d)
 	{
-		v.push_back( res_t(iter->iWidth, iter->iHeight) );
+		v.push_back( res_t(iter.iWidth, iter.iHeight) );
 	}
 
 	res_t sel_res( PREFSMAN->m_iDisplayWidth, PREFSMAN->m_iDisplayHeight );

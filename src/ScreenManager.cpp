@@ -70,7 +70,6 @@
 #include "FontManager.h"
 #include "Screen.h"
 #include "ScreenDimensions.h"
-#include "Foreach.h"
 #include "ActorUtil.h"
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessible from anywhere in our program
@@ -141,19 +140,16 @@ namespace ScreenManagerUtil
 
 	bool ScreenIsPrepped( const RString &sScreenName )
 	{
-		FOREACH( LoadedScreen, g_vPreparedScreens, s )
-		{
-			if( s->m_pScreen->GetName() == sScreenName )
-			return true;
-		}
-		return false;
+		return std::any_of(g_vPreparedScreens.begin(), g_vPreparedScreens.end(), [&sScreenName](LoadedScreen const &s) {
+			return s.m_pScreen->GetName() == sScreenName;
+		});
 	}
 
 	/* If the named screen is loaded, remove it from the prepared list and
 	 * return it in ls. */
 	bool GetPreppedScreen( const RString &sScreenName, LoadedScreen &ls )
 	{
-		FOREACH( LoadedScreen, g_vPreparedScreens, s )
+		for (auto s = g_vPreparedScreens.begin(); s != g_vPreparedScreens.end(); ++s)
 		{
 			if( s->m_pScreen->GetName() == sScreenName )
 			{
@@ -190,12 +186,16 @@ namespace ScreenManagerUtil
 	 * freed by the caller. */
 	void GrabPreparedActors( vector<Actor*> &apOut )
 	{
-		FOREACH( LoadedScreen, g_vPreparedScreens, s )
-			if( s->m_bDeleteWhenDone )
-				apOut.push_back( s->m_pScreen );
+		for (auto &s: g_vPreparedScreens)
+		{
+			if( s.m_bDeleteWhenDone )
+				apOut.push_back( s.m_pScreen );
+		}
 		g_vPreparedScreens.clear();
-		FOREACH( Actor*, g_vPreparedBackgrounds, a )
-			apOut.push_back( *a );
+		for (auto *a: g_vPreparedBackgrounds)
+		{
+			apOut.push_back( a );
+		}
 		g_vPreparedBackgrounds.clear();
 
 		g_setGroupedScreens.clear();
@@ -210,8 +210,10 @@ namespace ScreenManagerUtil
 		GrabPreparedActors( apActorsToDelete );
 
 		BeforeDeleteScreen();
-		FOREACH( Actor*, apActorsToDelete, a )
-			SAFE_DELETE( *a );
+		for (auto *a: apActorsToDelete)
+		{
+			SAFE_DELETE( a );
+		}
 		AfterDeleteScreen();
 	}
 };
@@ -338,13 +340,9 @@ Screen *ScreenManager::GetScreen( int iPosition )
 
 bool ScreenManager::AllowOperatorMenuButton() const
 {
-	FOREACH( LoadedScreen, g_ScreenStack, s )
-	{
-		if( !s->m_pScreen->AllowOperatorMenuButton() )
-			return false;
-	}
-
-	return true;
+	return std::all_of(g_ScreenStack.begin(), g_ScreenStack.end(), [](LoadedScreen const &s) {
+		return s.m_pScreen->AllowOperatorMenuButton();
+	});
 }
 
 bool ScreenManager::IsScreenNameValid(RString const& name) const
@@ -590,11 +588,11 @@ void ScreenManager::PrepareScreen( const RString &sScreenName )
 	if( !sNewBGA.empty() && sNewBGA != g_pSharedBGA->GetName() )
 	{
 		Actor *pNewBGA = NULL;
-		FOREACH( Actor*, g_vPreparedBackgrounds, a )
+		for (auto *a: g_vPreparedBackgrounds)
 		{
-			if( (*a)->GetName() == sNewBGA )
+			if( a->GetName() == sNewBGA )
 			{
-				pNewBGA = *a;
+				pNewBGA = a;
 				break;
 			}
 		}
@@ -670,7 +668,7 @@ bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenN
 		}
 		else
 		{
-			FOREACH( Actor*, g_vPreparedBackgrounds, a )
+			for (auto a = g_vPreparedBackgrounds.begin(); a != g_vPreparedBackgrounds.end(); ++a)
 			{
 				if( (*a)->GetName() == sNewBGA )
 				{
@@ -756,8 +754,10 @@ void ScreenManager::LoadDelayedScreen()
 	if( !apActorsToDelete.empty() )
 	{
 		BeforeDeleteScreen();
-		FOREACH( Actor*, apActorsToDelete, a )
-			SAFE_DELETE( *a );
+		for (auto *a: apActorsToDelete)
+		{
+			SAFE_DELETE(a);
+		}
 		AfterDeleteScreen();
 	}
 

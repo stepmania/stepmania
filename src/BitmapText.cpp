@@ -9,7 +9,6 @@
 #include "Font.h"
 #include "ActorUtil.h"
 #include "LuaBinding.h"
-#include "Foreach.h"
 
 REGISTER_ACTOR_CLASS( BitmapText );
 
@@ -860,9 +859,9 @@ void BitmapText::AddAttribute( size_t iPos, const Attribute &attr )
 	int iLines = 0;
 	size_t iAdjustedPos = iPos;
 	
-	FOREACH_CONST( wstring, m_wTextLines, line )
+	for (auto const &line: m_wTextLines)
 	{
-		size_t length = line->length();
+		size_t length = line.length();
 		if( length >= iAdjustedPos )
 			break;
 		iAdjustedPos -= length;

@@ -15,7 +15,6 @@
 #include "RageLog.h"
 #include "RageTimer.h"
 #include "RageSoundReader_Preload.h"
-#include "Foreach.h"
 #include "LocalizedString.h"
 #include "Preference.h"
 
@@ -50,8 +49,10 @@ RageSoundManager::~RageSoundManager()
 {
 	/* Don't lock while deleting the driver (the decoder thread might deadlock). */
 	delete m_pDriver;
-	FOREACHM( RString, RageSoundReader_Preload *, m_mapPreloadedSounds, s )
-		delete s->second;
+	for (auto &s: m_mapPreloadedSounds)
+	{
+		delete s.second;
+	}
 	m_mapPreloadedSounds.clear();
 }
 

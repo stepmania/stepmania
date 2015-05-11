@@ -3,7 +3,6 @@
 #include <cstring>
 #include "NotesWriterSSC.h"
 #include "BackgroundUtil.h"
-#include "Foreach.h"
 #include "GameManager.h"
 #include "LocalizedString.h"
 #include "NoteTypes.h"
@@ -22,9 +21,10 @@
  * @return the joined lines. */
 static RString JoinLineList( vector<RString> &lines )
 {
-	for( unsigned i = 0; i < lines.size(); ++i )
-		TrimRight( lines[i] );
-
+	for (auto &line: lines)
+	{
+		TrimRight( line );
+	}
 	// Skip leading blanks.
 	unsigned j = 0;
 	while( j < lines.size() && lines.size() == 0 )
@@ -287,9 +287,10 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 		else
 			f.Write( ssprintf("#BGCHANGES%d:", b+1) );
 
-		FOREACH_CONST( BackgroundChange, out.GetBackgroundChanges(b), bgc )
-			f.PutLine( (*bgc).ToString() +"," );
-
+		for (auto const &bgc: out.GetBackgroundChanges(b))
+		{
+			f.PutLine( bgc.ToString() +"," );
+		}
 		/* If there's an animation plan at all, add a dummy "-nosongbg-" tag to
 		 * indicate that this file doesn't want a song BG entry added at the end.
 		 * See SSCLoader::TidyUpData. This tag will be removed on load. Add it
@@ -302,9 +303,9 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	if( out.GetForegroundChanges().size() )
 	{
 		f.Write( "#FGCHANGES:" );
-		FOREACH_CONST( BackgroundChange, out.GetForegroundChanges(), bgc )
+		for (auto const &bgc: out.GetForegroundChanges())
 		{
-			f.PutLine( (*bgc).ToString() +"," );
+			f.PutLine( bgc.ToString() +"," );
 		}
 		f.PutLine( ";" );
 	}
@@ -460,9 +461,8 @@ bool NotesWriterSSC::Write( RString sPath, const Song &out, const vector<Steps*>
 	}
 
 	// Save specified Steps to this file
-	FOREACH_CONST( Steps*, vpStepsToSave, s ) 
+	for (auto const *pSteps: vpStepsToSave)
 	{
-		const Steps* pSteps = *s;
 		RString sTag = GetSSCNoteData( out, *pSteps, bSavingCache );
 		f.PutLine( sTag );
 	}

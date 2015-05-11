@@ -10,13 +10,14 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "arch/Dialog/Dialog.h"
 #include "RageFile.h"
+
 #if !defined(SMPACKAGE)
 #include "ScreenManager.h"
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "ActorUtil.h"
 #endif
-#include "Foreach.h"
+
 #include "GameLoop.h" // For ChangeTheme
 #include "ThemeMetric.h"
 #include "SubscriptionManager.h"
@@ -310,8 +311,10 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 		{
 			vector<RString> vs;
 			GetOptionalLanguageIniPaths(vs,sThemeName,sLanguage);
-			FOREACH_CONST(RString,vs,s)
-				iniStrings.ReadFile( *s );
+			for (auto const &s: vs)
+			{
+				iniStrings.ReadFile( s );
+			}
 		}
 		iniStrings.ReadFile( GetLanguageIniPath(sThemeName,SpecialFiles::BASE_LANGUAGE) );
 		if( sLanguage.CompareNoCase(SpecialFiles::BASE_LANGUAGE) )
@@ -445,8 +448,10 @@ void ThemeManager::ReloadSubscribers()
 	// reload subscribers
 	if( g_Subscribers.m_pSubscribers )
 	{
-		FOREACHS_CONST( IThemeMetric*, *g_Subscribers.m_pSubscribers, p )
-			(*p)->Read();
+		for (auto *p: *g_Subscribers.m_pSubscribers)
+		{
+			p->Read();
+		}
 	}
 }
 
@@ -454,8 +459,10 @@ void ThemeManager::ClearSubscribers()
 {
 	if( g_Subscribers.m_pSubscribers )
 	{
-		FOREACHS_CONST( IThemeMetric*, *g_Subscribers.m_pSubscribers, p )
-			(*p)->Clear();
+		for (auto *p: *g_Subscribers.m_pSubscribers)
+		{
+			p->Clear();
+		}
 	}
 }
 
@@ -487,10 +494,9 @@ void ThemeManager::RunLuaScripts( const RString &sMask, bool bUseThemeDir )
 		SortRStringArray( arrayScriptDirs );
 		StripCvsAndSvn( arrayScriptDirs );
 		StripMacResourceForks( arrayScriptDirs );
-		FOREACH_CONST( RString, arrayScriptDirs, s )	// foreach dir in /Scripts/
+		for (auto const &sScriptDirName: arrayScriptDirs)
 		{
 			// Find all Lua files in this directory, add them to asElementPaths
-			RString sScriptDirName = *s;
 			GetDirListing( sScriptDir + "Scripts/" + sScriptDirName + "/" + sMask, asElementChildPaths, false, true );
 			for( unsigned i = 0; i < asElementChildPaths.size(); ++i )
 			{
@@ -751,10 +757,10 @@ bool ThemeManager::GetPathInfoToAndFallback( PathInfo &out, ElementCategory cate
 	int n = 100;
 	while( n-- )
 	{
-		FOREACHD_CONST( Theme, g_vThemes, iter )
+		for (auto const &iter: g_vThemes)
 		{
 			// search with requested name
-			if( GetPathInfoToRaw( out, iter->sThemeName, category, sMetricsGroup, sElement ) )
+			if( GetPathInfoToRaw( out, iter.sThemeName, category, sMetricsGroup, sElement ) )
 				return true;
 		}
 
@@ -1141,18 +1147,18 @@ void ThemeManager::GetLanguagesForTheme( const RString &sThemeName, vector<RStri
 	vector<RString> as;
 	GetDirListing( sLanguageDir + "*.ini", as );
 	
-	FOREACH_CONST( RString, as, s )
+	for (auto const &s: as)
 	{
 		// ignore metrics.ini
-		if( s->CompareNoCase(SpecialFiles::METRICS_FILE)==0 )
+		if( s.CompareNoCase(SpecialFiles::METRICS_FILE)==0 )
 			continue;
 
 		// Ignore filenames with a space.  These are optional language inis that probably came from a mounted package.
-		if( s->find(" ") != RString::npos )
+		if( s.find(" ") != RString::npos )
 			continue;
 
 		// strip ".ini"
-		RString s2 = s->Left( s->size()-4 );
+		RString s2 = s.Left( s.size()-4 );
 
 		asLanguagesOut.push_back( s2 );
 	}

@@ -1,7 +1,6 @@
 #include "global.h"
 
 #include "BannerCache.h"
-#include "Foreach.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
 #include "RageLog.h"
@@ -150,9 +149,10 @@ void BannerCache::LoadBanner( RString sBannerPath )
 void BannerCache::OutputStats() const
 {
 	int iTotalSize = 0;
-	FOREACHM_CONST( RString, RageSurface *, g_BannerPathToImage, it )
+	
+	for (auto const &it: g_BannerPathToImage)
 	{
-		const RageSurface *pImage = it->second;
+		const RageSurface *pImage = it.second;
 		const int iSize = pImage->pitch * pImage->h;
 		iTotalSize += iSize;
 	}
@@ -161,9 +161,10 @@ void BannerCache::OutputStats() const
 
 void BannerCache::UnloadAllBanners()
 {
-	FOREACHM( RString, RageSurface *, g_BannerPathToImage, it )
-		delete it->second;
-
+	for (auto &it: g_BannerPathToImage)
+	{
+		delete it.second;
+	}
 	g_BannerPathToImage.clear();
 }
 

@@ -41,7 +41,6 @@
 #include "LocalizedString.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"
-#include "Foreach.h"
 
 vector<TimingData> AdjustSync::s_vpTimingDataOriginal;
 float AdjustSync::s_fGlobalOffsetSecondsOriginal = 0.0f;
@@ -60,10 +59,10 @@ void AdjustSync::ResetOriginalSyncData()
 	if( GAMESTATE->m_pCurSong )
 	{
 		s_vpTimingDataOriginal.push_back(GAMESTATE->m_pCurSong->m_SongTiming);
-		const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
-		FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
+		auto &vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+		for (auto const *s: vpSteps)
 		{
-			s_vpTimingDataOriginal.push_back((*s)->m_Timing);
+			s_vpTimingDataOriginal.push_back(s->m_Timing);
 		}
 	}
 	else
@@ -127,10 +126,10 @@ void AdjustSync::RevertSyncChanges()
 	GAMESTATE->m_pCurSong->m_SongTiming = s_vpTimingDataOriginal[0];
 
 	unsigned location = 1;
-	const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
-	FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
+	auto &vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+	for (auto *s: vpSteps)
 	{
-		(*s)->m_Timing = s_vpTimingDataOriginal[location];
+		s->m_Timing = s_vpTimingDataOriginal[location];
 		location++;
 	}
 
@@ -198,14 +197,14 @@ void AdjustSync::AutosyncOffset()
 			case AutosyncType_Song:
 			{
 				GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += mean;
-				const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
-				FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
+				auto &vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+				for (auto *s: vpSteps)
 				{
 					// Empty TimingData means it's inherited
 					// from the song and is already changed.
-					if( (*s)->m_Timing.empty() )
+					if( s->m_Timing.empty() )
 						continue;
-					(*s)->m_Timing.m_fBeat0OffsetInSeconds += mean;
+					s->m_Timing.m_fBeat0OffsetInSeconds += mean;
 				}
 				break;
 			}

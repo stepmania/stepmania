@@ -5,7 +5,6 @@
 
 #include "ThemeManager.h"
 #include <map>
-#include "Foreach.h"
 #include "LuaManager.h"
 #include "RageUtil.h"
 
@@ -276,8 +275,10 @@ public:
 	void Load( const RString& sGroup, MetricNameMap pfn, const vector<RString> vsValueNames )
 	{
 		m_metric.clear();
-		FOREACH_CONST( RString, vsValueNames, s )
-			m_metric[*s].Load( sGroup, pfn(*s) );
+		for (auto const &s: vsValueNames)
+		{
+			m_metric[s].Load( sGroup, pfn(s) );
+		}
 	}
 	void Read()
 	{

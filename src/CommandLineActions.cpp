@@ -8,7 +8,6 @@
 #include "LuaManager.h"
 #include "ProductInfo.h"
 #include "DateTime.h"
-#include "Foreach.h"
 #include "arch/Dialog/Dialog.h"
 #include "RageFileManager.h"
 #include "SpecialFiles.h"
@@ -38,10 +37,10 @@ static void Nsis()
 
 	vector<RString> vs;
 	GetDirListing(INSTALLER_LANGUAGES_DIR + "*.ini", vs, false, false);
-	FOREACH_CONST(RString, vs, s)
+	for (auto const &s: vs)
 	{
 		RString sThrowAway, sLangCode;
-		splitpath(*s, sThrowAway, sLangCode, sThrowAway);
+		splitpath(s, sThrowAway, sLangCode, sThrowAway);
 		const LanguageInfo *pLI = GetLanguageInfo(sLangCode);
 
 		RString sLangNameUpper = pLI->szEnglishName;

@@ -3,7 +3,6 @@
 #include <cstring>
 #include "NotesWriterSM.h"
 #include "BackgroundUtil.h"
-#include "Foreach.h"
 #include "GameManager.h"
 #include "LocalizedString.h"
 #include "NoteTypes.h"
@@ -117,18 +116,18 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 			timing.AddSegment( StopSegment(fs->GetRow(), 0) );
 	}
 	// Delays can't be negative: thus, no effect.
-	FOREACH_CONST(TimingSegment *, delays, ss)
+	for (auto const *ss: delays)
 	{
-		float fBeat = NoteRowToBeat( (*ss)->GetRow()-1 );
-		float fPause = ToDelay(*ss)->GetPause();
+		float fBeat = NoteRowToBeat( ss->GetRow()-1 );
+		float fPause = ToDelay(ss)->GetPause();
 		allPauses.insert( pair<float,float>(fBeat, fPause) );
 	}
 
 	f.Write( "#STOPS:" );
 	vector<RString> stopLines;
-	FOREACHM(float, float, allPauses, ap)
+	for (auto const &ap: allPauses)
 	{
-		stopLines.push_back(ssprintf("%.6f=%.6f", ap->first, ap->second));
+		stopLines.push_back(ssprintf("%.6f=%.6f", ap.first, ap.second));
 	}
 	f.PutLine(join(",\n", stopLines));
 
@@ -143,9 +142,10 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 		else
 			f.Write( ssprintf("#BGCHANGES%d:", b+1) );
 
-		FOREACH_CONST( BackgroundChange, out.GetBackgroundChanges(b), bgc )
-			f.PutLine( (*bgc).ToString() +"," );
-
+		for (auto const &bgc: out.GetBackgroundChanges(b))
+		{
+			f.PutLine( bgc.ToString() +"," );
+		}
 		/* If there's an animation plan at all, add a dummy "-nosongbg-" tag to indicate that
 		 * this file doesn't want a song BG entry added at the end.  See SMLoader::TidyUpData.
 		 * This tag will be removed on load.  Add it at a very high beat, so it won't cause
@@ -158,9 +158,9 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	if( out.GetForegroundChanges().size() )
 	{
 		f.Write( "#FGCHANGES:" );
-		FOREACH_CONST( BackgroundChange, out.GetForegroundChanges(), bgc )
+		for (auto const &bgc: out.GetForegroundChanges())
 		{
-			f.PutLine( (*bgc).ToString() +"," );
+			f.PutLine( bgc.ToString() +"," );
 		}
 		f.PutLine( ";" );
 	}
@@ -253,9 +253,8 @@ bool NotesWriterSM::Write( RString sPath, Song &out, const vector<Steps*>& vpSte
 
 	WriteGlobalTags( f, out );
 
-	FOREACH_CONST( Steps*, vpStepsToSave, s ) 
+	for (auto const *pSteps: vpStepsToSave)
 	{
-		const Steps* pSteps = *s;
 		RString sTag = GetSMNotesTag( out, *pSteps );
 		f.PutLine( sTag );
 	}

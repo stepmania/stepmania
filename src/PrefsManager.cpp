@@ -1,6 +1,5 @@
 #include "global.h"
 #include "PrefsManager.h"
-#include "Foreach.h"
 #include "IniFile.h"
 #include "LuaManager.h"
 #include "Preference.h"
@@ -520,14 +519,14 @@ void PrefsManager::SavePrefsToIni( IniFile &ini )
 		pNode = ini.AppendChild( "Options" );
 	IPreference::SavePrefsToNode( pNode );
 
-	FOREACHM_CONST( RString, GamePrefs, m_mapGameNameToGamePrefs, iter )
+	for (auto const &iter : m_mapGameNameToGamePrefs)
 	{
-		RString sSection = "Game-" + RString( iter->first );
+		RString sSection = "Game-" + RString( iter.first );
 
 		// todo: write more values here? -aj
-		ini.SetValue( sSection, "Announcer",		iter->second.m_sAnnouncer );
-		ini.SetValue( sSection, "Theme",		iter->second.m_sTheme );
-		ini.SetValue( sSection, "DefaultModifiers",	iter->second.m_sDefaultModifiers );
+		ini.SetValue( sSection, "Announcer",		iter.second.m_sAnnouncer );
+		ini.SetValue( sSection, "Theme",		iter.second.m_sTheme );
+		ini.SetValue( sSection, "DefaultModifiers",	iter.second.m_sDefaultModifiers );
 	}
 }
 

@@ -42,10 +42,12 @@ static void SetNextCombination()
 {
 	vector<StepsTypeAndDifficulty> v;
 	{
-		FOREACH_CONST( StepsType, CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue(), st )
+		for (auto const &st: CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue())
 		{
-			FOREACH_CONST( CourseDifficulty, CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
-				v.push_back( StepsTypeAndDifficulty(*st, *cd) );
+			for (auto const &cd: CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue())
+			{
+				v.push_back( StepsTypeAndDifficulty(st, cd) );
+			}
 		}
 	}
 
@@ -125,12 +127,12 @@ void ScreenOptionsManageCourses::BeginScreen()
 		break;
 	}
 
-	FOREACH_CONST( Course*, m_vpCourses, p )
+	for (auto const *p: m_vpCourses)
 	{
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 		OptionRowDefinition &def = vHands.back()->m_Def;
 
-		def.m_sName = (*p)->GetDisplayFullTitle();
+		def.m_sName = p->GetDisplayFullTitle();
 		def.m_bAllowThemeTitle = false;	// not themable
 		def.m_sExplanationName = "Select Course";
 		def.m_vsChoices.clear();

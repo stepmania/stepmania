@@ -10,7 +10,6 @@
 #include "RageLog.h"
 #include "ActorUtil.h"
 #include "ModelManager.h"
-#include "Foreach.h"
 #include "LuaBinding.h"
 #include "PrefsManager.h"
 
@@ -731,47 +730,46 @@ void Model::Update( float fDelta )
 int Model::GetNumStates() const
 {
 	int iMaxStates = 0;
-	FOREACH_CONST( msMaterial, m_Materials, m )
-		iMaxStates = max( iMaxStates, m->diffuse.GetNumStates() );
+	for (auto const &m: m_Materials)
+	{
+		iMaxStates = max( iMaxStates, m.diffuse.GetNumStates() );
+	}
 	return iMaxStates;
 }
 
 void Model::SetState( int iNewState )
 {
-	FOREACH( msMaterial, m_Materials, m )
+	for (auto &m: m_Materials)
 	{
-		m->diffuse.SetState( iNewState );
-		m->alpha.SetState( iNewState );
+		m.diffuse.SetState( iNewState );
+		m.alpha.SetState( iNewState );
 	}
 }
 
 void Model::RecalcAnimationLengthSeconds()
 {
 	m_animation_length_seconds= 0;
-	FOREACH_CONST(msMaterial, m_Materials, m)
+	for (auto const &m: m_Materials)
 	{
 		m_animation_length_seconds= max(m_animation_length_seconds,
-			m->diffuse.GetAnimationLengthSeconds());
+			m.diffuse.GetAnimationLengthSeconds());
 	}
 }
 
 void Model::SetSecondsIntoAnimation( float fSeconds )
 {
-	FOREACH( msMaterial, m_Materials, m )
+	for (auto &m: m_Materials)
 	{
-		m->diffuse.SetSecondsIntoAnimation( fSeconds );
-		m->alpha.SetSecondsIntoAnimation( fSeconds );
+		m.diffuse.SetSecondsIntoAnimation( fSeconds );
+		m.alpha.SetSecondsIntoAnimation( fSeconds );
 	}
 }
 
 bool Model::MaterialsNeedNormals() const
 {
-	FOREACH_CONST( msMaterial, m_Materials, m )
-	{
-		if( m->NeedsNormals() )
-			return true;
-	}
-	return false;
+	return std::any_of(m_Materials.begin(), m_Materials.end(), [](msMaterial const &m) {
+		return m.NeedsNormals();
+	});
 }
 
 // lua start

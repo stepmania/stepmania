@@ -38,7 +38,6 @@
 #include "StatsManager.h"
 #include "PlayerAI.h" // for NUM_SKILL_LEVELS
 #include "NetworkSyncManager.h"
-#include "Foreach.h"
 #include "DancingCharacters.h"
 #include "ScreenDimensions.h"
 #include "ThemeMetric.h"
@@ -878,10 +877,10 @@ void ScreenGameplay::Init()
 
 	// Fill StageStats
 	STATSMAN->m_CurStageStats.m_vpPossibleSongs = m_apSongsQueue;
-	FOREACH( PlayerInfo, m_vPlayerInfo, pi )
+	for (auto &pi: m_vPlayerInfo)
 	{
-		if( pi->GetPlayerStageStats() )
-			pi->GetPlayerStageStats()->m_vpPossibleSteps = pi->m_vpStepsQueue;
+		if( pi.GetPlayerStageStats() )
+			pi.GetPlayerStageStats()->m_vpPossibleSteps = pi.m_vpStepsQueue;
 	}
 
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
@@ -930,10 +929,10 @@ void ScreenGameplay::InitSongQueues()
 		PlayerNumber pnMaster = GAMESTATE->GetMasterPlayerNumber();
 		Trail *pTrail = GAMESTATE->m_pCurTrail[pnMaster];
 		ASSERT( pTrail != NULL );
-		FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
+		for (auto const &e: pTrail->m_vEntries)
 		{
-			ASSERT( e->pSong != NULL );
-			m_apSongsQueue.push_back( e->pSong );
+			ASSERT( e.pSong != NULL );
+			m_apSongsQueue.push_back( e.pSong );
 		}
 
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
@@ -943,12 +942,12 @@ void ScreenGameplay::InitSongQueues()
 
 			pi->m_vpStepsQueue.clear();
 			pi->m_asModifiersQueue.clear();
-			FOREACH_CONST( TrailEntry, lTrail->m_vEntries, e )
+			for (auto const &e: lTrail->m_vEntries)
 			{
-				ASSERT( e->pSteps != NULL );
-				pi->m_vpStepsQueue.push_back( e->pSteps );
+				ASSERT( e.pSteps != NULL );
+				pi->m_vpStepsQueue.push_back( e.pSteps );
 				AttackArray a;
-				e->GetAttackArray( a );
+				e.GetAttackArray( a );
 				pi->m_asModifiersQueue.push_back( a );
 			}
 
@@ -2539,10 +2538,10 @@ bool ScreenGameplay::Input( const InputEventPlus &input )
 	{
 		if( input.mp != MultiPlayer_Invalid  &&  GAMESTATE->IsMultiPlayerEnabled(input.mp)  &&  iCol != -1 )
 		{
-			FOREACH( PlayerInfo, m_vPlayerInfo, pi )
+			for (auto const &pi: m_vPlayerInfo)
 			{
-				if( input.mp == pi->m_mp )
-					pi->m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
+				if( input.mp == pi.m_mp )
+					pi.m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
 			}
 			return true;
 		}
@@ -2866,24 +2865,24 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			PlayerNumber master_pn = GAMESTATE->GetMasterPlayerNumber();
 			Trail *master_trail= GAMESTATE->m_pCurTrail[master_pn];
 			ASSERT(master_trail != NULL);
-			FOREACH_CONST(TrailEntry, master_trail->m_vEntries, entry)
+			for (auto const &entry: master_trail->m_vEntries)
 			{
-				ASSERT(entry->pSong != NULL);
-				m_apSongsQueue.push_back(entry->pSong);
-				STATSMAN->m_CurStageStats.m_vpPossibleSongs.push_back(entry->pSong);
+				ASSERT(entry.pSong != NULL);
+				m_apSongsQueue.push_back(entry.pSong);
+				STATSMAN->m_CurStageStats.m_vpPossibleSongs.push_back(entry.pSong);
 			}
 			FOREACH_EnabledPlayerInfo(m_vPlayerInfo, pi)
 			{
 				Trail* trail= GAMESTATE->m_pCurTrail[pi->GetStepsAndTrailIndex()];
 				ASSERT(trail != NULL);
-				FOREACH_CONST(TrailEntry, trail->m_vEntries, entry)
+				for (auto const &entry: trail->m_vEntries)
 				{
-					ASSERT(entry->pSteps != NULL);
-					pi->m_vpStepsQueue.push_back(entry->pSteps);
+					ASSERT(entry.pSteps != NULL);
+					pi->m_vpStepsQueue.push_back(entry.pSteps);
 					AttackArray a;
-					entry->GetAttackArray(a);
+					entry.GetAttackArray(a);
 					pi->m_asModifiersQueue.push_back(a);
-					pi->GetPlayerStageStats()->m_vpPossibleSteps.push_back(entry->pSteps);
+					pi->GetPlayerStageStats()->m_vpPossibleSteps.push_back(entry.pSteps);
 				}
 				// In a survival course, override stored mods
 				if(course->GetCourseType() == COURSE_TYPE_SURVIVAL &&

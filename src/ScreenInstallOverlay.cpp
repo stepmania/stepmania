@@ -68,23 +68,23 @@ static void InstallSmzip( const RString &sZipFile, PlayAfterLaunchInfo &out )
 		GetDirListingRecursive( TEMP_ZIP_MOUNT_POINT, "*", vsRawFiles);
 
 		vector<RString> vsPrettyFiles;
-		FOREACH_CONST( RString, vsRawFiles, s )
+		for (auto &s: vsRawFiles)
 		{
-			if( GetExtension(*s).EqualsNoCase("ctl") )
+			if( GetExtension(s).EqualsNoCase("ctl") )
 				continue;
 
-			vsFiles.push_back( *s);
+			vsFiles.push_back(s);
 
-			RString s2 = s->Right( s->length() - TEMP_ZIP_MOUNT_POINT.length() );
+			RString s2 = s.Right( s.length() - TEMP_ZIP_MOUNT_POINT.length() );
 			vsPrettyFiles.push_back( s2 );
 		}
 		sort( vsPrettyFiles.begin(), vsPrettyFiles.end() );
 	}
 
 	RString sResult = "Success installing " + sZipFile;
-	FOREACH_CONST( RString, vsFiles, sSrcFile )
+	for (auto sSrcFile: vsFiles)
 	{
-		RString sDestFile = *sSrcFile;
+		RString sDestFile = sSrcFile;
 		sDestFile = sDestFile.Right( sDestFile.length() - TEMP_ZIP_MOUNT_POINT.length() );
 
 		RString sDir, sThrowAway;
@@ -95,7 +95,7 @@ static void InstallSmzip( const RString &sZipFile, PlayAfterLaunchInfo &out )
 
 		FILEMAN->CreateDir( sDir );
 
-		if( !FileCopy( *sSrcFile, sDestFile ) )
+		if( !FileCopy( sSrcFile, sDestFile ) )
 		{
 			sResult = "Error extracting " + sDestFile;
 			break;
@@ -363,9 +363,9 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
 
 	{
 		vector<RString> vsMessages;
-		FOREACH_CONST( DownloadTask*, g_pDownloadTasks, pDT )
+		for (auto *pDT: g_pDownloadTasks)
 		{
-			vsMessages.push_back( (*pDT)->GetStatus() );
+			vsMessages.push_back( pDT->GetStatus() );
 		}
 		m_textStatus.SetText( join("\n", vsMessages) );
 	}

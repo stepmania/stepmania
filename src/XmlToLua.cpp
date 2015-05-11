@@ -1,6 +1,5 @@
 #include "global.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
 #include "IniFile.h"
 #include "RageFile.h"
 #include "RageFileManager.h"

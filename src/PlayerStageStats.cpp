@@ -1,8 +1,10 @@
 #include "global.h"
 #include "PlayerStageStats.h"
+
+#include <numeric>
+
 #include "RageLog.h"
 #include "ThemeManager.h"
-#include "Foreach.h"
 #include "LuaManager.h"
 #include <float.h>
 #include "GameState.h"
@@ -31,8 +33,8 @@ void PlayerStageStats::InternalInit()
 	m_for_multiplayer= false;
 	m_player_number= PLAYER_1;
 	m_multiplayer_number= MultiPlayer_P1;
-
-  m_bPlayerCanAchieveFullCombo = true;
+	
+	m_bPlayerCanAchieveFullCombo = true;
 	m_bJoined = false;
 	m_vpPossibleSteps.clear();
 	m_iStepsPlayed = 0;
@@ -88,8 +90,10 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 {
 	m_pStyle= other.m_pStyle;
 	m_bJoined = other.m_bJoined;
-	FOREACH_CONST( Steps*, other.m_vpPossibleSteps, s )
-		m_vpPossibleSteps.push_back( *s );
+	for (auto *s: other.m_vpPossibleSteps)
+	{
+		m_vpPossibleSteps.push_back( s );
+	}
 	m_iStepsPlayed += other.m_iStepsPlayed;
 	m_fAliveSeconds += other.m_fAliveSeconds;
 	m_bFailed |= other.m_bFailed;
@@ -335,14 +339,13 @@ int PlayerStageStats::GetLessonScoreActual() const
 
 int PlayerStageStats::GetLessonScoreNeeded() const
 {
-	float fScore = 0;
-
-	FOREACH_CONST( Steps*, m_vpPossibleSteps, steps )
-	{
-		fScore += (*steps)->GetRadarValues(PLAYER_1)[RadarCategory_TapsAndHolds];
-	}
-
-	return lrintf( fScore * LESSON_PASS_THRESHOLD );
+	auto getScore = [](float f, Steps const *s) {
+		return f + s->GetRadarValues(PLAYER_1)[RadarCategory_TapsAndHolds];
+	};
+	
+	float score = std::accumulate(m_vpPossibleSteps.begin(), m_vpPossibleSteps.end(), 0.f, getScore);
+	
+	return lrintf( score * LESSON_PASS_THRESHOLD );
 }
 
 void PlayerStageStats::ResetScoreForLesson()

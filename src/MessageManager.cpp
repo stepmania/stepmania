@@ -1,6 +1,5 @@
 #include "global.h"
 #include "MessageManager.h"
-#include "Foreach.h"
 #include "RageUtil.h"
 #include "RageThreads.h"
 #include "EnumHelper.h"
@@ -220,9 +219,8 @@ void MessageManager::Broadcast( Message &msg ) const
 	if( iter == g_MessageToSubscribers.end() )
 		return;
 
-	FOREACHS_CONST( IMessageSubscriber*, iter->second, p )
+	for (auto *pSub: iter->second)
 	{
-		IMessageSubscriber *pSub = *p;
 		pSub->HandleMessage( msg );
 	}
 }
@@ -252,8 +250,10 @@ void IMessageSubscriber::ClearMessages( const RString sMessage )
 MessageSubscriber::MessageSubscriber( const MessageSubscriber &cpy ):
 	IMessageSubscriber(cpy)
 {
-	FOREACH_CONST( RString, cpy.m_vsSubscribedTo, msg )
-		this->SubscribeToMessage( *msg );
+	for (auto &msg: cpy.m_vsSubscribedTo)
+	{
+		this->SubscribeToMessage( msg );
+	}
 }
 
 MessageSubscriber &MessageSubscriber::operator=(const MessageSubscriber &cpy)
@@ -263,8 +263,10 @@ MessageSubscriber &MessageSubscriber::operator=(const MessageSubscriber &cpy)
 
 	UnsubscribeAll();
 
-	FOREACH_CONST( RString, cpy.m_vsSubscribedTo, msg )
-		this->SubscribeToMessage( *msg );
+	for (auto &msg: cpy.m_vsSubscribedTo)
+	{
+		this->SubscribeToMessage( msg );
+	}
 
 	return *this;
 }
@@ -283,8 +285,10 @@ void MessageSubscriber::SubscribeToMessage( MessageID message )
 
 void MessageSubscriber::UnsubscribeAll()
 {
-	FOREACH_CONST( RString, m_vsSubscribedTo, s )
-		MESSAGEMAN->Unsubscribe( this, *s );
+	for (auto const &s: m_vsSubscribedTo)
+	{
+		MESSAGEMAN->Unsubscribe( this, s );
+	}
 	m_vsSubscribedTo.clear();
 }
 

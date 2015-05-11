@@ -2,7 +2,6 @@
 #include "MemoryCardDriver.h"
 #include "RageFileManager.h"
 #include "RageLog.h"
-#include "Foreach.h"
 #include "ProfileManager.h"
 
 static const RString TEMP_MOUNT_POINT = "/@mctemptimeout/";
@@ -51,11 +50,11 @@ bool MemoryCardDriver::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStor
 	GetUSBStorageDevices( vStorageDevicesOut );
 
 	// log connects
-	FOREACH( UsbStorageDevice, vStorageDevicesOut, newd )
+    for (auto const &newd: vStorageDevicesOut)
 	{
-		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), *newd );
+		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), newd );
 		if( iter == vOld.end() )    // didn't find
-			LOG->Trace( "New device connected: %s", newd->sDevice.c_str() );
+			LOG->Trace( "New device connected: %s", newd.sDevice.c_str() );
 	}
 
 	/* When we first see a device, regardless of bMount, just return it as CHECKING,

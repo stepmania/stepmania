@@ -14,7 +14,6 @@ using namespace RageDisplay_Legacy_Helpers;
 #include "RageTypes.h"
 #include "RageUtil.h"
 #include "EnumHelper.h"
-#include "Foreach.h"
 #include "DisplayResolutions.h"
 #include "LocalizedString.h"
 
@@ -310,11 +309,11 @@ GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asD
 	GLhandleARB hShader = glCreateShaderObjectARB( ShaderType );
 	vector<const GLcharARB *> apData;
 	vector<GLint> aiLength;
-	FOREACH( RString, asDefines, s )
+	for (auto &s: asDefines)
 	{
-		*s = ssprintf( "#define %s\n", s->c_str() );
-		apData.push_back( s->data() );
-		aiLength.push_back( s->size() );
+		s = ssprintf( "#define %s\n", s.c_str() );
+		apData.push_back( s.data() );
+		aiLength.push_back( s.size() );
 	}
 	apData.push_back( "#line 1\n" );
 	aiLength.push_back( 8 );
@@ -748,8 +747,10 @@ RString RageDisplay_Legacy::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 		/* Delete all render targets.  They may have associated resources other than
 		 * the texture itself. */
-		FOREACHM( unsigned, RenderTarget *, g_mapRenderTargets, rt )
-			delete rt->second;
+		for (auto &rt: g_mapRenderTargets)
+		{
+			delete rt.second;
+		}
 		g_mapRenderTargets.clear();
 
 		/* Recreate all vertex buffers. */
@@ -1055,8 +1056,10 @@ public:
 
 static void InvalidateObjects()
 {
-	FOREACHS( InvalidateObject*, g_InvalidateList, it )
-		(*it)->Invalidate();
+	for (auto *it: g_InvalidateList)
+	{
+		it->Invalidate();
+	}
 }
 
 class RageCompiledGeometryHWOGL : public RageCompiledGeometrySWOGL, public InvalidateObject

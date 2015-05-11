@@ -10,7 +10,6 @@
 #include "Course.h"
 #include "Style.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
 #include "LuaManager.h"
 #include "XmlFile.h"
 #include "PlayerStageStats.h"

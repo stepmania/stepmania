@@ -8,7 +8,7 @@ REGISTER_SCREEN_CLASS( ScreenUnlockBrowse );
 void ScreenUnlockBrowse::Init()
 {
 	// fill m_aGameCommands before calling Init()
-	FOREACH_CONST( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
+	for (auto ue = UNLOCKMAN->m_UnlockEntries.begin(); ue != UNLOCKMAN->m_UnlockEntries.end(); ++ue)
 	{
 		GameCommand gc;
 		UnlockEntryStatus st = ue->GetUnlockEntryStatus();

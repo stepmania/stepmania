@@ -76,9 +76,9 @@ static bool ChangeAppPri()
 		if( INPUTMAN )
 		{
 			INPUTMAN->GetDevicesAndDescriptions(vDevices);
-			FOREACH_CONST( InputDeviceInfo, vDevices, d )
+			for (auto const &d: vDevices)
 			{
-				if( d->sDesc.find("NTPAD") != string::npos )
+				if( d.sDesc.find("NTPAD") != string::npos )
 				{
 					LOG->Trace( "Using NTPAD.  Don't boost priority." );
 					return false;

@@ -2,7 +2,6 @@
 #include "StatsManager.h"
 #include "RageFileManager.h"
 #include "GameState.h"
-#include "Foreach.h"
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "PrefsManager.h"
@@ -55,9 +54,10 @@ static StageStats AccumPlayedStageStats( const vector<StageStats>& vss )
 		ssreturn.m_playMode = vss[0].m_playMode;
 	}
 
-	FOREACH_CONST( StageStats, vss, ss )
-		ssreturn.AddStats( *ss );
-
+	for (auto &ss: vss)
+	{
+		ssreturn.AddStats( ss );
+	}
 	unsigned uNumSongs = ssreturn.m_vpPlayedSongs.size();
 
 	if( uNumSongs == 0 )
@@ -290,8 +290,10 @@ void StatsManager::UnjoinPlayer( PlayerNumber pn )
 	/* A player has been unjoined.  Clear his data from m_vPlayedStageStats, and
 	 * purge any m_vPlayedStageStats that no longer have any player data because
 	 * all of the players that were playing at the time have been unjoined. */
-	FOREACH( StageStats, m_vPlayedStageStats, ss )
-		ss->m_player[pn] = PlayerStageStats();
+	for (auto &ss: m_vPlayedStageStats)
+	{
+		ss.m_player[pn] = PlayerStageStats();
+	}
 
 	for( int i = 0; i < (int) m_vPlayedStageStats.size(); ++i )
 	{
@@ -398,15 +400,10 @@ public:
 		FOREACH_HumanPlayer( p )
 		{
 			// If this player failed any stage, then their final grade is an F.
-			bool bPlayerFailedOneStage = false;
-			FOREACH_CONST( StageStats, STATSMAN->m_vPlayedStageStats, ss )
-			{
-				if( ss->m_player[p].m_bFailed )
-				{
-					bPlayerFailedOneStage = true;
-					break;
-				}
-			}
+			auto const &playerStats = STATSMAN->m_vPlayedStageStats;
+			bool bPlayerFailedOneStage = std::any_of(playerStats.begin(), playerStats.end(), [&p](StageStats const &ss) {
+				return ss.m_player[p].m_bFailed;
+			});
 
 			if( bPlayerFailedOneStage )
 				continue;
