@@ -24,7 +24,7 @@
  * Down			13-53		23-63
  * Up			15-55		25-65
  * Right		16-56		26-66
- * 
+ *
  * 6panel:		Player1
  * Left			11-51
  * Left+Up		12-52
@@ -32,21 +32,21 @@
  * Up			14-54
  * Up+Right		15-55
  * Right		16-56
- * 
+ *
  * Notice that 15 and 25 have double meanings!  What were they thinking???
- * While reading in, use the 6 panel mapping.  After reading in, detect if 
+ * While reading in, use the 6 panel mapping.  After reading in, detect if
  * only 4 notes are used.  If so, shift the Up+Right column back to the Up
  * column
- * 
+ *
  * BMSes are used for games besides dance and so we're borking up BMSes that are for popn/beat/etc.
- * 
+ *
  * popn-nine:		11-15,22-25
  * popn-five:   	13-15,21-22
  * beat-single5:	11-16
  * beat-double5:	11-16,21-26
  * beat-single7:	11-16,18-19
  * beat-double7:	11-16,18-19,21-26,28-29
- * 
+ *
  * So the magics for these are:
  * popn-nine: nothing >5, with 12, 14, 22 and/or 24
  * popn-five: nothing >5, with 14 and/or 22
@@ -329,7 +329,7 @@ struct bmsCommandTree
 	}
 
 	/*
-		A condition chain can't ever be the current node. 
+		A condition chain can't ever be the current node.
 		A conditional chain will never have more than one #IF.
 		The current node is always an #IF/#ELSE/#ELSEIF node or the root node.
 		All #IFs must be parented by a condition chain for interpreting #ELSE and #ELSEIF founds on that chain.
@@ -412,7 +412,7 @@ struct bmsCommandTree
 
 		if (hash == RString::npos)
 			return;
-		
+
 		statement = statement.substr(hash);
 
 		size_t space = statement.find(' ');
@@ -468,7 +468,7 @@ struct bmsCommandTree
 			{
 				currentNode = currentNode->parent;
 			}
-			
+
 			if (currentNode->conditionType != bmsNodeS::CT_CONDITIONALCHAIN)
 			{
 				LOG->UserLog("Song file", path, "Line %d: #endif without a matching #if!", line);
@@ -509,7 +509,7 @@ struct bmsCommandTree
 				currentNode->Commands[name] = value;
 			}
 		}
-		
+
 		// we're done.
 	}
 };
@@ -598,7 +598,7 @@ class BMSSong {
 	bool backgroundsPrecached;
 	void PrecacheBackgrounds(const RString &dir);
 	map<RString, RString> mapBackground;
-	
+
 public:
 	BMSSong( Song *song );
 	int AllocateKeysound( RString filename, RString path );
@@ -679,7 +679,7 @@ int BMSSong::AllocateKeysound( RString filename, RString path )
 	mapKeysoundToIndex[filename] = index;
 	mapKeysoundToIndex[normalizedFilename] = index;
 	return index;
-	
+
 }
 
 bool BMSSong::GetBackground( RString filename, RString path, RString &bgfile )
@@ -695,23 +695,23 @@ bool BMSSong::GetBackground( RString filename, RString path, RString &bgfile )
 		bgfile = bg;
 		return true;
 	}
-	
+
 	// FIXME: garbled file names seem to crash the app.
 	// this might not be the best place to put this code.
 	if( !utf8_is_valid(filename) )
 		return false;
-	
+
 	RString normalizedFilename = filename;
 	RString dir = out->GetSongDir();
-	
+
 	if (dir.empty())
 		dir = Dirname(path);
-	
+
 	if( !backgroundsPrecached )
 	{
 		PrecacheBackgrounds(dir);
 	}
-	
+
 	if( !IsAFile(dir + normalizedFilename) )
 	{
 		vector<RString> exts;
@@ -727,18 +727,18 @@ bool BMSSong::GetBackground( RString filename, RString path, RString &bgfile )
 			}
 		}
 	}
-	
+
 	if( !IsAFile(dir + normalizedFilename) )
 	{
 		mapBackground[filename] = "";
 		LOG->UserLog( "Song file", dir, "references bmp \"%s\" that can't be found", normalizedFilename.c_str() );
 		return false;
 	}
-	
+
 	mapBackground[filename] = normalizedFilename;
 	bgfile = normalizedFilename;
 	return true;
-	
+
 }
 
 void BMSSong::PrecacheBackgrounds(const RString &dir)
@@ -746,12 +746,12 @@ void BMSSong::PrecacheBackgrounds(const RString &dir)
 	if( backgroundsPrecached ) return;
 	backgroundsPrecached = true;
 	vector<RString> arrayPossibleFiles;
-	
+
 	vector<RString> exts;
 	ActorUtil::AddTypeExtensionsToList(FT_Movie, exts);
 	ActorUtil::AddTypeExtensionsToList(FT_Bitmap, exts);
 	FILEMAN->GetDirListingWithMultipleExtensions(dir + RString("*."), exts, arrayPossibleFiles);
-	
+
 	for( unsigned i = 0; i < arrayPossibleFiles.size(); i++ )
 	{
 		for (unsigned j = 0; j < exts.size(); j++)
@@ -779,7 +779,7 @@ struct BMSChartInfo {
 };
 
 class BMSChartReader {
-	
+
 	BMSChart *in;
 	Steps *out;
 	BMSSong *song;
@@ -942,7 +942,7 @@ StepsType BMSChartReader::DetermineStepsType()
 	switch( player )
 	{
 		case 1:	// "1 player"
-			switch( nonEmptyTracksCount ) 
+			switch( nonEmptyTracksCount )
 			{
 				case 4:		return StepsType_dance_single;
 				case 5:
@@ -968,7 +968,7 @@ StepsType BMSChartReader::DetermineStepsType()
 		case 2:	// couple/battle
 			return StepsType_dance_couple;
 		case 3:	// double
-			switch( nonEmptyTracksCount ) 
+			switch( nonEmptyTracksCount )
 			{
 				case 8:		return StepsType_dance_double;
 				case 12:		return StepsType_beat_double5;
@@ -1196,7 +1196,7 @@ bool BMSChartReader::ReadNoteData()
 			break;
 		}
 	}
-	
+
 	vector<BMSAutoKeysound> autos;
 
 	for( unsigned i = 0; i < in->objects.size(); i ++ )
@@ -1341,7 +1341,7 @@ bool BMSChartReader::ReadNoteData()
 			autos.push_back( ak );
 		}
 	}
-	
+
 	int rowsToLook[3] = { 0, -1, 1 };
 	for( unsigned i = 0; i < autos.size(); i ++ )
 	{
@@ -1437,9 +1437,9 @@ void BMSSongLoader::AddToSong()
     {
         return;
     }
-    
+
 	RString commonSubstring = "";
-    
+
 	{
 		bool found = false;
 		for( unsigned i = 0; i < loadedSteps.size(); i ++ )
@@ -1483,7 +1483,7 @@ void BMSSongLoader::AddToSong()
 	else
 	{
 		// Now, with our fancy little substring, trim the titles and
-		// figure out where each goes.	
+		// figure out where each goes.
 		for( unsigned i = 0; i < loadedSteps.size(); i ++ )
 		{
 			Steps *steps = loadedSteps[i].steps;
@@ -1566,9 +1566,9 @@ void BMSSongLoader::AddToSong()
  					out->m_sBackgroundFile = main.info.stageFile;
 				break;
 		}
-		
+
 		map<int, RString>::const_iterator it = main.info.backgroundChanges.begin();
-		
+
 		for (; it != main.info.backgroundChanges.end(); it++)
 		{
 			out->AddBackgroundChange(BACKGROUND_LAYER_1,
@@ -1576,7 +1576,7 @@ void BMSSongLoader::AddToSong()
 													  it->second,
 													  "",
 													  1.f,
-													  SBE_StretchNoLoop));
+													  it->second.substr(it->second.length()-4)==".lua"?SBE_Centered:SBE_StretchNoLoop));
 		}
 
 		out->m_sMusicFile = main.info.musicFile;
@@ -1655,7 +1655,7 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1665,7 +1665,7 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
