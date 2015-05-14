@@ -1,6 +1,7 @@
 # Traditional Compilation File Stuff.
 *.o
 *.obj
+*.a
 
 # CMake Files/Directories
 CMakeFiles/
@@ -23,6 +24,7 @@ verdata.*
 StepMania-debug
 Xcode/Info.StepMania.plist
 Xcode/plistHelper.hpp
+src/version_updater/VersionUpdater
 
 # Text Editor Based Items
 ___*
@@ -57,7 +59,6 @@ UserInterfaceState.xcuserstate
 contents.xcworkspacedata
 xcschememanagement.plist
 PBProject/Hardware.plist
-lib*_link.a
 
 # Mac General Files
 *.app
@@ -138,7 +139,6 @@ bundle/ffmpeg/*/*.so.*
 bundle/ffmpeg/*/*.ver
 bundle/ffmpeg/*/*.def
 bundle/ffmpeg/*/*.orig.def
-bundle/ffmpeg/*/*.dll.a
 bundle/ffmpeg/*/*.lib
 src/build-*
 src/Release-*
@@ -148,7 +148,6 @@ src/libtomcrypt/Debug
 src/libtommath/build-*
 src/libtommath/Release-*
 src/libtommath/Debug
-src/*.a
 src/*.so
 ffmpeg-*
 Data/SpeedMods.txt
