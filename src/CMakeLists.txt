@@ -367,8 +367,8 @@ else() # Linux
     sm_add_compile_definition("${SM_EXE_NAME}" LINUX)
   endif()
 
-  sm_add_compile_flag("${SM_EXE_NAME}" "--std=gnu++11")
-  sm_add_compile_flag("jsoncpp" "--std=gnu++11")
+  sm_add_compile_flag("${SM_EXE_NAME}" "-std=gnu++11")
+  sm_add_compile_flag("jsoncpp" "-std=gnu++11")
 endif()
 
 set_property(TARGET "${SM_EXE_NAME}" PROPERTY FOLDER "Internal Libraries")
