@@ -11,6 +11,8 @@ ________________________________________________________________________________
 * [general] BackInEventMode code now works when called from either player.
   [nixtrix]
 * [cmake] JACK is now properly found by CMake.
+* [theme] Preview music fadeout time is now adjustable by the metric
+  SampleMusicFadeoutSeconds. [nixtrix]
 
 2015/05/09
 ----------
