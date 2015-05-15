@@ -893,10 +893,11 @@ void BMSChartReader::ReadHeaders()
 		}
 		else if( it->first == "#difficulty")
 		{
-		    // only set the difficulty if the #difficulty tag is between 1 and 6 (beginner~edit)
-		    int diff = StringToInt(it->second)-1; // BMS uses 1 to 6, SM uses 0 to 5
-		    if(diff>=0 && diff<NUM_Difficulty)
-                out->SetDifficulty( (Difficulty)diff );
+			// only set the difficulty if the #difficulty tag is between 1 and 6 (beginner~edit)
+			int diff = StringToInt(it->second)-1; // BMS uses 1 to 6, SM uses 0 to 5
+			if(diff>=0 && diff<NUM_Difficulty) {
+				out->SetDifficulty( (Difficulty)diff );
+			}
 		}
 		else if (it->first == "#music")
 		{
@@ -1479,7 +1480,6 @@ void BMSSongLoader::AddToSong()
 		for( unsigned i = 0; i < loadedSteps.size(); i ++ )
 		{
 			Steps *steps = loadedSteps[i].steps;
-			//steps->SetDifficulty( Difficulty_Medium );
 
 			RString title = loadedSteps[i].info.title;
 
@@ -1494,7 +1494,6 @@ void BMSSongLoader::AddToSong()
 		for( unsigned i = 0; i < loadedSteps.size(); i ++ )
 		{
 			Steps *steps = loadedSteps[i].steps;
-			//steps->SetDifficulty( Difficulty_Medium );
 
 			RString title = loadedSteps[i].info.title;
 
