@@ -16,7 +16,6 @@
 #include "ActorUtil.h"
 #include "SongUtil.h"
 #include "CourseUtil.h"
-#include "Foreach.h"
 #include "Style.h"
 #include "PlayerState.h"
 #include "CommonMetrics.h"
@@ -479,9 +478,9 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so )
 				set<StepsType> vStepsType;
 				SongUtil::GetPlayableStepsTypes( pSong, vStepsType );
 
-				FOREACHS( StepsType, vStepsType, st )
+				for (auto const &st: vStepsType)
 				{
-					if(pSong->HasStepsType(*st))
+					if(pSong->HasStepsType(st))
 					{
 						arraySongs.push_back( pSong );
 						break;
@@ -787,12 +786,12 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 			}
 
 			vector<Course*> apCourses;
-			FOREACH_CONST( CourseType, vct, ct )
+			for (auto const &ct: vct)
 			{
 				if( bOnlyPreferred )
-					SONGMAN->GetPreferredSortCourses( *ct, apCourses, PREFSMAN->m_bAutogenGroupCourses );
+					SONGMAN->GetPreferredSortCourses( ct, apCourses, PREFSMAN->m_bAutogenGroupCourses );
 				else
-					SONGMAN->GetCourses( *ct, apCourses, PREFSMAN->m_bAutogenGroupCourses );
+					SONGMAN->GetCourses( ct, apCourses, PREFSMAN->m_bAutogenGroupCourses );
 			}
 
 			switch( PREFSMAN->m_CourseSortOrder )
@@ -825,10 +824,8 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 
 			RString sLastSection = "";
 			int iSectionColorIndex = 0;
-			for( unsigned i=0; i<apCourses.size(); i++ )	// foreach course
+			for (auto *pCourse : apCourses)
 			{
-				Course* pCourse = apCourses[i];
-
 				// if unlocks are on, make sure it is unlocked
 				if ( UNLOCKMAN->CourseIsLocked(pCourse) )
 					continue;
@@ -876,8 +873,10 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 			WID.m_Flags.bEdits = false;
 			set<StepsType> vStepsType;
 			SongUtil::GetPlayableStepsTypes( WID.m_pSong, vStepsType );
-			FOREACHS( StepsType, vStepsType, st )
-				WID.m_Flags.bEdits |= WID.m_pSong->HasEdits( *st );
+			for (auto const &st: vStepsType)
+			{
+				WID.m_Flags.bEdits |= WID.m_pSong->HasEdits( st );
+			}
 			WID.m_Flags.iStagesForSong = GameState::GetNumStagesMultiplierForSong( WID.m_pSong );
 		}
 		else if( WID.m_pCourse != NULL )
@@ -1635,9 +1634,9 @@ Song *MusicWheel::GetPreferredSelectionForRandomOrPortal()
 		if( i < 900 && pSong->IsTutorial() )
 			continue;
 
-		FOREACH( Difficulty, vDifficultiesToRequire, d )
+		for (auto const &d: vDifficultiesToRequire)
 		{
-			if( !pSong->HasStepsTypeAndDifficulty(st,*d) )
+			if( !pSong->HasStepsTypeAndDifficulty(st,d) )
 			{
 				isValid = false;
 				break;

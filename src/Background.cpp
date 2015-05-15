@@ -249,8 +249,10 @@ void BackgroundImpl::Unload()
 
 void BackgroundImpl::Layer::Unload()
 {
-	FOREACHM( BackgroundDef, Actor*, m_BGAnimations, iter )
-		delete iter->second;
+	for (auto &iter: m_BGAnimations)
+	{
+		delete iter.second;
+	}
 	m_BGAnimations.clear();
 	m_aBGChanges.clear();
 
@@ -527,10 +529,10 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 		int iSize = min( (int)g_iNumBackgrounds, (int)vsNames.size() );
 		vsNames.resize( iSize );
 
-		FOREACH_CONST( RString, vsNames, s )
+		for (auto const &s: vsNames)
 		{
 			BackgroundDef bd;
-			bd.m_sFile1 = *s;
+			bd.m_sFile1 = s;
 			m_RandomBGAnimations.push_back( bd );
 		}
 	}
@@ -559,7 +561,8 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 			Layer &layer = m_Layer[i];
 
 			// Load all song-specified backgrounds
-			FOREACH_CONST( BackgroundChange, pSong->GetBackgroundChanges(i), bgc )
+			auto bgchanges = pSong->GetBackgroundChanges(i);
+			for (auto bgc = bgchanges.begin(); bgc != bgchanges.end(); ++bgc)
 			{
 				BackgroundChange change = *bgc;
 				BackgroundDef &bd = change.m_def;
@@ -630,9 +633,9 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	FOREACH_BackgroundLayer( i )
 	{
 		Layer &layer = m_Layer[i];
-		FOREACH_CONST( BackgroundChange, layer.m_aBGChanges, bgc )
+		for (auto const &bgc: layer.m_aBGChanges)
 		{
-			const BackgroundDef &bd = bgc->m_def;
+			const BackgroundDef &bd = bgc.m_def;
 			if( bd == m_StaticBackgroundDef )
 			{
 				bStaticBackgroundUsed = true;

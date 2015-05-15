@@ -9,7 +9,6 @@
 #include "RageTexture.h"
 #include "RageUtil.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
 #include "LuaBinding.h"
 #include "LuaManager.h"
 
@@ -35,8 +34,10 @@ ActorMultiTexture::ActorMultiTexture( const ActorMultiTexture &cpy ):
 	CPY( m_aTextureUnits );
 #undef CPY
 
-	FOREACH( TextureUnitState, m_aTextureUnits, tex )
-		tex->m_pTexture = TEXTUREMAN->CopyTexture( tex->m_pTexture );
+	for (auto &tex: m_aTextureUnits)
+	{
+		tex.m_pTexture = TEXTUREMAN->CopyTexture( tex.m_pTexture );
+	}
 }
 
 void ActorMultiTexture::SetTextureCoords( const RectF &r )
@@ -58,8 +59,10 @@ void ActorMultiTexture::SetSizeFromTexture( RageTexture *pTexture )
 
 void ActorMultiTexture::ClearTextures()
 {
-	FOREACH( TextureUnitState, m_aTextureUnits, tex )
-		TEXTUREMAN->UnloadTexture( tex->m_pTexture );
+	for (auto const &tex: m_aTextureUnits)
+	{
+		TEXTUREMAN->UnloadTexture( tex.m_pTexture );
+	}
 	m_aTextureUnits.clear();
 }
 

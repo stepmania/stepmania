@@ -22,7 +22,6 @@
 #include "SongUtil.h"
 #include "SongManager.h"
 #include "StepsUtil.h"
-#include "Foreach.h"
 #include "BackgroundUtil.h"
 #include "SpecialFiles.h"
 #include "NotesLoader.h"
@@ -90,12 +89,14 @@ Song::Song()
 
 Song::~Song()
 {
-	FOREACH( Steps*, m_vpSteps, s )
-		SAFE_DELETE( *s );
-	m_vpSteps.clear();
-	FOREACH(Steps*, m_UnknownStyleSteps, s)
+	for (auto *s: m_vpSteps)
 	{
-		SAFE_DELETE(*s);
+		SAFE_DELETE( s );
+	}
+	m_vpSteps.clear();
+	for (auto *s: m_UnknownStyleSteps)
+	{
+		SAFE_DELETE(s);
 	}
 	m_UnknownStyleSteps.clear();
 	
@@ -159,14 +160,14 @@ void Song::SetSpecifiedLastSecond(const float f)
 // Reset to an empty song.
 void Song::Reset()
 {
-	FOREACH( Steps*, m_vpSteps, s )
-		SAFE_DELETE( *s );
+	for (auto *s: m_vpSteps)
+		SAFE_DELETE( s );
 	m_vpSteps.clear();
 	FOREACH_ENUM( StepsType, st )
 		m_vpStepsByType[st].clear();
-	FOREACH(Steps*, m_UnknownStyleSteps, s)
+	for (auto *s: m_UnknownStyleSteps)
 	{
-		SAFE_DELETE(*s);
+		SAFE_DELETE(s);
 	}
 	m_UnknownStyleSteps.clear();
 
@@ -181,7 +182,8 @@ void Song::Reset()
 void Song::AddBackgroundChange( BackgroundLayer iLayer, BackgroundChange seg )
 {
 	// Delete old background change at this start beat, if any.
-	FOREACH( BackgroundChange, GetBackgroundChanges(iLayer), bgc )
+	auto &changes = GetBackgroundChanges(iLayer);
+	for (auto bgc = changes.begin(); bgc != changes.end(); ++bgc)
 	{
 		if( bgc->m_fStartBeat == seg.m_fStartBeat )
 		{
@@ -367,11 +369,11 @@ bool Song::LoadFromSongDir( RString sDir, bool load_autosave )
 		}
 	}
 
-	FOREACH( Steps*, m_vpSteps, s )
+	for (auto *s: m_vpSteps)
 	{
 		/* Compress all Steps. During initial caching, this will remove cached
 		 * NoteData; during cached loads, this will just remove cached SMData. */
-		(*s)->Compress();
+		s->Compress();
 	}
 
 	// Load the cached banners, if it's not loaded already.
@@ -584,9 +586,9 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 
 	m_SongTiming.TidyUpData(false);
 
-	FOREACH(Steps *, m_vpSteps, s)
+	for (auto *s: m_vpSteps)
 	{
-		(*s)->m_Timing.TidyUpData(true);
+		s->m_Timing.TidyUpData(true);
 	}
 
 	if(!from_cache)
@@ -1162,9 +1164,8 @@ bool Song::SaveToSMFile()
 		FileCopy( sPath, sPath + ".old" );
 	
 	vector<Steps*> vpStepsToSave;
-	FOREACH_CONST( Steps*, m_vpSteps, s ) 
+	for (auto *pSteps: m_vpSteps)
 	{
-		Steps *pSteps = *s;
 		if( pSteps->IsAutogen() )
 			continue; // don't write autogen notes
 		
@@ -1174,9 +1175,9 @@ bool Song::SaveToSMFile()
 		
 		vpStepsToSave.push_back( pSteps );
 	}
-	FOREACH_CONST(Steps*, m_UnknownStyleSteps, s)
+	for (auto *s: m_UnknownStyleSteps)
 	{
-		vpStepsToSave.push_back(*s);
+		vpStepsToSave.push_back(s);
 	}
 	
 	return NotesWriterSM::Write( sPath, *this, vpStepsToSave );
@@ -1200,9 +1201,8 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache, bool autosave )
 		FileCopy( path, path + ".old" );
 
 	vector<Steps*> vpStepsToSave;
-	FOREACH_CONST( Steps*, m_vpSteps, s ) 
+	for (auto *pSteps: m_vpSteps)
 	{
-		Steps *pSteps = *s;
 		if( pSteps->IsAutogen() )
 			continue; // don't write autogen notes
 
@@ -1214,9 +1214,9 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache, bool autosave )
 			pSteps->SetFilename(path);
 		vpStepsToSave.push_back( pSteps );
 	}
-	FOREACH_CONST(Steps*, m_UnknownStyleSteps, s)
+	for (auto *s: m_UnknownStyleSteps)
 	{
-		vpStepsToSave.push_back(*s);
+		vpStepsToSave.push_back(s);
 	}
 	
 	if(bSavingCache || autosave)
@@ -1251,9 +1251,10 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache, bool autosave )
 	}
 
 	// Mark these steps saved to disk.
-	FOREACH( Steps*, vpStepsToSave, s )
-		(*s)->SetSavedToDisk( true );
-
+	for (auto *s: vpStepsToSave)
+	{
+		s->SetSavedToDisk( true );
+	}
 	return true;
 }
 
@@ -1311,12 +1312,12 @@ void Song::AddAutoGenNotes()
 {
 	bool HasNotes[NUM_StepsType];
 	memset( HasNotes, 0, sizeof(HasNotes) );
-	for( unsigned i=0; i < m_vpSteps.size(); i++ ) // foreach Steps
+	for (auto const *step: m_vpSteps)
 	{
-		if( m_vpSteps[i]->IsAutogen() )
+		if( step->IsAutogen() )
 			continue;
 
-		StepsType st = m_vpSteps[i]->m_StepsType;
+		StepsType st = step->m_StepsType;
 		HasNotes[st] = true;
 	}
 
@@ -1424,30 +1425,16 @@ bool Song::IsEasy( StepsType st ) const
 bool Song::IsTutorial() const
 {
 	// A Song is considered a Tutorial if it has only Beginner steps.
-	FOREACH_CONST( Steps*, m_vpSteps, s )
-	{
-		if( (*s)->m_StepsType == StepsType_lights_cabinet )
-			continue; // ignore
-		if( (*s)->GetDifficulty() != Difficulty_Beginner )
-			return false;
-	}
-
-	return true;
+	return std::all_of(m_vpSteps.begin(), m_vpSteps.end(), [](Steps const *s) {
+		return s->m_StepsType == StepsType_lights_cabinet || s->GetDifficulty() == Difficulty_Beginner;
+	});
 }
 
 bool Song::HasEdits( StepsType st ) const
 {
-	for( unsigned i=0; i<m_vpSteps.size(); i++ )
-	{
-		Steps* pSteps = m_vpSteps[i];
-		if( pSteps->m_StepsType == st &&
-			pSteps->GetDifficulty() == Difficulty_Edit )
-		{
-			return true;
-		}
-	}
-
-	return false;
+	return std::any_of(m_vpSteps.begin(), m_vpSteps.end(), [st](Steps const *s) {
+		return s->m_StepsType == st && s->GetDifficulty() == Difficulty_Edit;
+	});
 }
 
 bool Song::NormallyDisplayed() const
@@ -1535,9 +1522,9 @@ vector<BackgroundChange> &Song::GetForegroundChanges()
 vector<RString> Song::GetChangesToVectorString(const vector<BackgroundChange> & changes) const
 {
 	vector<RString> ret;
-	FOREACH_CONST( BackgroundChange, changes, bgc )
+	for (auto const &bgc: changes)
 	{
-		ret.push_back((*bgc).ToString());
+		ret.push_back(bgc.ToString());
 	}
 	return ret;
 }

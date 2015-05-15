@@ -1,7 +1,6 @@
 #include "global.h"
 #include "RageLog.h"
 #include "InputHandler_MacOSX_HID.h"
-#include "Foreach.h"
 #include "PrefsManager.h"
 #include "InputFilter.h"
 #include "archutils/Darwin/DarwinThreadHelpers.h"
@@ -38,8 +37,10 @@ void InputHandler_MacOSX_HID::QueueCallback( void *target, int result, void *ref
 		//LOG->Trace( "Got event with cookie %p, value %d", event.elementCookie, int(event.value) );
 		dev->GetButtonPresses( vPresses, event.elementCookie, event.value, now );
 	}
-	FOREACH_CONST( DeviceInput, vPresses, i )
-		INPUTFILTER->ButtonPressed( *i );
+	for (auto const &i: vPresses)
+	{
+		INPUTFILTER->ButtonPressed( i );
+	}
 }
 
 static void RunLoopStarted( CFRunLoopObserverRef o, CFRunLoopActivity a, void *sem )
@@ -120,9 +121,10 @@ void InputHandler_MacOSX_HID::StartDevices()
 	int n = 0;
 
 	ASSERT( m_LoopRef );
-	FOREACH( HIDDevice *, m_vDevices, i )
-		(*i)->StartQueue( m_LoopRef, InputHandler_MacOSX_HID::QueueCallback, this, n++ );
-
+	for (auto *i: m_vDevices)
+	{
+		i->StartQueue( m_LoopRef, InputHandler_MacOSX_HID::QueueCallback, this, n++ );
+	}
 	CFRunLoopSourceRef runLoopSource = IONotificationPortGetRunLoopSource( m_NotifyPort );
 
 	CFRunLoopAddSource( m_LoopRef, runLoopSource, kCFRunLoopDefaultMode );
@@ -130,8 +132,10 @@ void InputHandler_MacOSX_HID::StartDevices()
 
 InputHandler_MacOSX_HID::~InputHandler_MacOSX_HID()
 {
-	FOREACH( HIDDevice *, m_vDevices, i )
-		delete *i;
+	for (auto *i: m_vDevices)
+	{
+		delete i;
+	}
 	if( PREFSMAN->m_bThreadedInput )
 	{
 		CFRunLoopSourceSignal( m_SourceRef );
@@ -142,8 +146,10 @@ InputHandler_MacOSX_HID::~InputHandler_MacOSX_HID()
 		LOG->Trace( "Input handler thread shut down." );
 	}
 
-	FOREACH( io_iterator_t, m_vIters, i )
-		IOObjectRelease( *i );
+	for (auto &i: m_vIters)
+	{
+		IOObjectRelease( i );
+	}
 	IONotificationPortDestroy( m_NotifyPort );
 }
 
@@ -277,8 +283,10 @@ InputHandler_MacOSX_HID::InputHandler_MacOSX_HID() : m_Sem( "Input thread starte
 
 void InputHandler_MacOSX_HID::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices )
 {
-	FOREACH_CONST( HIDDevice *, m_vDevices, i )
-		(*i)->GetDevicesAndDescriptions( vDevices );
+	for (auto const *i: m_vDevices)
+	{
+		i->GetDevicesAndDescriptions( vDevices );
+	}
 }
 
 RString InputHandler_MacOSX_HID::GetDeviceSpecificInputString( const DeviceInput &di )

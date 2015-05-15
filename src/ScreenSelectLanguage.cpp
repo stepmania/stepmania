@@ -13,7 +13,7 @@ void ScreenSelectLanguage::Init()
 	THEME->GetLanguages( vs );
 	SortRStringArray( vs, true );
 
-	FOREACH_CONST( RString, vs, s )
+    for (auto s = vs.begin(); s != vs.end(); ++s)
 	{
 		const LanguageInfo *pLI = GetLanguageInfo( *s );
 

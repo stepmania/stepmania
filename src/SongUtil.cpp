@@ -9,7 +9,6 @@
 #include "PrefsManager.h"
 #include "SongManager.h"
 #include "XmlFile.h"
-#include "Foreach.h"
 #include "UnlockManager.h"
 #include "ThemeMetric.h"
 #include "LocalizedString.h"
@@ -720,11 +719,11 @@ void SongUtil::SortByMostRecentlyPlayedForMachine( vector<Song*> &vpSongsInOut )
 {
 	Profile *pProfile = PROFILEMAN->GetMachineProfile();
 
-	FOREACH_CONST( Song*, vpSongsInOut, s )
+	for (auto const *s: vpSongsInOut)
 	{
-		int iNumTimesPlayed = pProfile->GetSongNumTimesPlayed( *s );
-		RString val = iNumTimesPlayed ? pProfile->GetSongLastPlayedDateTime(*s).GetString() : "0";
-		g_mapSongSortVal[*s] = val;
+		int iNumTimesPlayed = pProfile->GetSongNumTimesPlayed( s );
+		RString val = iNumTimesPlayed ? pProfile->GetSongLastPlayedDateTime(s).GetString() : "0";
+		g_mapSongSortVal[s] = val;
 	}
 
 	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersBySortValueDescending );
@@ -733,10 +732,8 @@ void SongUtil::SortByMostRecentlyPlayedForMachine( vector<Song*> &vpSongsInOut )
 
 bool SongUtil::IsEditDescriptionUnique( const Song* pSong, StepsType st, const RString &sPreferredDescription, const Steps *pExclude )
 {
-	FOREACH_CONST( Steps*, pSong->GetAllSteps(), s )
+	for (auto const *pSteps: pSong->GetAllSteps())
 	{
-		Steps *pSteps = *s;
-
 		if( pSteps->GetDifficulty() != Difficulty_Edit )
 			continue;
 		if( pSteps->m_StepsType != st )
@@ -751,10 +748,8 @@ bool SongUtil::IsEditDescriptionUnique( const Song* pSong, StepsType st, const R
 
 bool SongUtil::IsChartNameUnique( const Song* pSong, StepsType st, const RString &name, const Steps *pExclude )
 {
-	FOREACH_CONST( Steps*, pSong->GetAllSteps(), s )
+	for (auto const &pSteps: pSong->GetAllSteps())
 	{
-		Steps *pSteps = *s;
-		
 		if( pSteps->m_StepsType != st )
 			continue;
 		if( pSteps == pExclude )
@@ -814,13 +809,13 @@ bool SongUtil::ValidateCurrentEditStepsDescription( const RString &sAnswer, RStr
 
 	// Steps name must be unique for this song.
 	vector<Steps*> v;
-	GetSteps( pSong, v, StepsType_Invalid, Difficulty_Edit ); 
-	FOREACH_CONST( Steps*, v, s )
+	GetSteps( pSong, v, StepsType_Invalid, Difficulty_Edit );
+	for (auto const *s: v)
 	{
-		if( pSteps == *s )
+		if( pSteps == s )
 			continue; // don't compare name against ourself
 
-		if( (*s)->GetDescription() == sAnswer )
+		if( s->GetDescription() == sAnswer )
 		{
 			sErrorOut = EDIT_NAME_CONFLICTS;
 			return false;
@@ -938,15 +933,15 @@ bool SongUtil::ValidateCurrentStepsMusic(const RString &answer, RString &error)
 void SongUtil::GetAllSongGenres( vector<RString> &vsOut )
 {
 	set<RString> genres;
-	FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), song )
+	for (auto const *song: SONGMAN->GetAllSongs())
 	{
-		if( !(*song)->m_sGenre.empty() )
-			genres.insert( (*song)->m_sGenre );
+		if( !song->m_sGenre.empty() )
+			genres.insert( song->m_sGenre );
 	}
 
-	FOREACHS_CONST( RString, genres, s )
+	for (auto const &s: genres)
 	{
-		vsOut.push_back( *s );
+		vsOut.push_back( s );
 	}
 }
 
@@ -954,12 +949,11 @@ void SongUtil::FilterSongs( const SongCriteria &sc, const vector<Song*> &in,
 			   vector<Song*> &out, bool doCareAboutGame )
 {
 	out.reserve( in.size() );
-	FOREACH_CONST( Song*, in, s )
+	for (auto const s: in)
 	{
-		if( sc.Matches( *s ) && (!doCareAboutGame || IsSongPlayable(*s) ) )
+		if( sc.Matches( s ) && (!doCareAboutGame || IsSongPlayable(s) ) )
 		{
-			
-			out.push_back( *s );
+			out.push_back( s );
 		}
 	}
 }
@@ -994,16 +988,16 @@ void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 	}
 
 	set<StepsType> vStepsTypes;
-	FOREACH( const Style*, vpPossibleStyles, s )
-		vStepsTypes.insert( (*s)->m_StepsType );
+	for (auto const *s: vpPossibleStyles)
+		vStepsTypes.insert( s->m_StepsType );
 
 	/* filter out hidden StepsTypes, and remove steps that we don't have enough
 	 * stages left to play. */
 	// this being const may have caused some problems... -aj
 	const vector<StepsType> &vstToShow = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
-	FOREACHS( StepsType, vStepsTypes, st )
+	for (auto const &st: vStepsTypes)
 	{
-		bool bShowThisStepsType = find( vstToShow.begin(), vstToShow.end(), *st ) != vstToShow.end();
+		bool bShowThisStepsType = find( vstToShow.begin(), vstToShow.end(), st ) != vstToShow.end();
 
 		int iNumPlayers = GAMESTATE->GetNumPlayersEnabled();
 		iNumPlayers = max( iNumPlayers, 1 );
@@ -1013,7 +1007,7 @@ void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 			GAMESTATE->GetNumStagesMultiplierForSong(pSong);
 
 		if( bShowThisStepsType && bEnoughStages )
-			vOut.insert( *st );
+			vOut.insert( st );
 	}
 }
 
@@ -1022,9 +1016,10 @@ void SongUtil::GetPlayableSteps( const Song *pSong, vector<Steps*> &vOut )
 	set<StepsType> vStepsType;
 	GetPlayableStepsTypes( pSong, vStepsType );
 
-	FOREACHS( StepsType, vStepsType, st )
-		SongUtil::GetSteps( pSong, vOut, *st );
-
+	for (auto const &st: vStepsType)
+	{
+		SongUtil::GetSteps( pSong, vOut, st );
+	}
 	StepsUtil::RemoveLockedSteps( pSong, vOut );
 	StepsUtil::SortNotesArrayByDifficulty( vOut );
 	StepsUtil::SortStepsByTypeAndDifficulty( vOut );
@@ -1047,16 +1042,9 @@ bool SongUtil::IsStepsPlayable( Song *pSong, Steps *pSteps )
 bool SongUtil::IsSongPlayable( Song *s )
 {
 	const vector<Steps*> & steps = s->GetAllSteps();
-	// I'm sure there is a foreach loop, but I don't
-	FOREACH( Steps*, const_cast<vector<Steps*>&>(steps), step )
-	{
-		if (IsStepsPlayable(s, *step))
-		{
-			return true;
-		}
-	}
-	
-	return false;
+	return std::any_of(steps.begin(), steps.end(), [song = s](Steps *step) {
+		return SongUtil::IsStepsPlayable(song, step);
+	});
 }
 
 bool SongUtil::GetStepsTypeAndDifficultyFromSortOrder( SortOrder so, StepsType &stOut, Difficulty &dcOut )
@@ -1093,15 +1081,15 @@ bool SongUtil::GetStepsTypeAndDifficultyFromSortOrder( SortOrder so, StepsType &
 		stOut = GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType;	// in case we don't find any matches below
 		vector<const Style*> vpStyles;
 		GAMEMAN->GetStylesForGame(GAMESTATE->m_pCurGame,vpStyles);
-		FOREACH_CONST( const Style*, vpStyles, i )
+		for (auto const *i: vpStyles)
 		{
-			if( (*i)->m_StyleType == StyleType_OnePlayerTwoSides )
+			if( i->m_StyleType == StyleType_OnePlayerTwoSides )
 			{
 				// Ugly hack to ignore pump's half-double.
-				bool bContainsHalf = ((RString)(*i)->m_szName).find("half") != RString::npos;
+				bool bContainsHalf = ((RString)i->m_szName).find("half") != RString::npos;
 				if( bContainsHalf )
 					continue;
-				stOut = (*i)->m_StepsType;
+				stOut = i->m_StepsType;
 				break;
 			}
 		}

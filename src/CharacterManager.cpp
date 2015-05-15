@@ -2,7 +2,6 @@
 #include "CharacterManager.h"
 #include "Character.h"
 #include "GameState.h"
-#include "Foreach.h"
 #include "LuaManager.h"
 
 #define CHARACTERS_DIR "/Characters/"
@@ -95,14 +94,18 @@ Character* CharacterManager::GetDefaultCharacter()
 
 void CharacterManager::DemandGraphics()
 {
-	FOREACH( Character*, m_pCharacters, c )
-		(*c)->DemandGraphics();
+	for (auto *c: m_pCharacters)
+	{
+		c->DemandGraphics();
+	}
 }
 
 void CharacterManager::UndemandGraphics()
 {
-	FOREACH( Character*, m_pCharacters, c )
-		(*c)->UndemandGraphics();
+	for (auto *c: m_pCharacters)
+	{
+		c->UndemandGraphics();
+	}
 }
 
 Character* CharacterManager::GetCharacterFromID( RString sCharacterID )

@@ -8,7 +8,6 @@
 #include "Steps.h"
 #include "Song.h"
 #include "StepsUtil.h"
-#include "Foreach.h"
 #include "CommonMetrics.h"
 #include "BannerCache.h"
 #include "UnlockManager.h"
@@ -411,11 +410,11 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				vector<Song*> vtSongs;
 				GetSongsToShowForGroup(GetSelectedGroup(), vtSongs);
 				// Filter out songs that aren't playable.
-				FOREACH(Song*, vtSongs, s)
+				for (auto *s: vtSongs)
 				{
-					if(SongUtil::IsSongPlayable(*s))
+					if(SongUtil::IsSongPlayable(s))
 					{
-						m_pSongs.push_back(*s);
+						m_pSongs.push_back(s);
 					}
 				}
 			}
@@ -462,14 +461,16 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 
 				// Only show StepsTypes for which we have valid Steps.
 				vector<StepsType> vSts = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
-				FOREACH( StepsType, vSts, st )
+				for (auto const &st: vSts)
 				{
-					if(SongUtil::GetStepsByDifficulty( GetSelectedSong(), *st, Difficulty_Invalid, false) != NULL)
-					m_StepsTypes.push_back(*st);
+					if(SongUtil::GetStepsByDifficulty( GetSelectedSong(), st, Difficulty_Invalid, false) != NULL)
+					m_StepsTypes.push_back(st);
 					
 					// Try to preserve the user's StepsType selection.
-					if(*st == orgSel)
-					m_iSelection[ROW_STEPS_TYPE] = m_StepsTypes.size() - 1;
+					if(st == orgSel)
+					{
+						m_iSelection[ROW_STEPS_TYPE] = m_StepsTypes.size() - 1;
+					}
 				}
 			}
 		}
@@ -506,8 +507,10 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 								vector<Steps*> v;
 								SongUtil::GetSteps( GetSelectedSong(), v, GetSelectedStepsType(), Difficulty_Edit );
 								StepsUtil::SortStepsByDescription( v );
-								FOREACH_CONST( Steps*, v, p )
-									m_vpSteps.push_back( StepsAndDifficulty(*p,dc) );
+								for (auto *p: v)
+								{
+									m_vpSteps.push_back( StepsAndDifficulty(p,dc) );
+								}
 							}
 							break;
 						case EditMode_Home:
@@ -558,7 +561,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			}
 			StripLockedStepsAndDifficulty( m_vpSteps );
 
-			FOREACH( StepsAndDifficulty, m_vpSteps, s )
+			for (auto s = m_vpSteps.begin(); s != m_vpSteps.end(); ++s)
 			{
 				if( s->dc == dcOld )
 				{
@@ -618,8 +621,10 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 					vector<Steps*> v;
 					SongUtil::GetSteps( GetSelectedSong(), v, GetSelectedSourceStepsType(), dc );
 					StepsUtil::SortStepsByDescription( v );
-					FOREACH_CONST( Steps*, v, pSteps )
-						m_vpSourceSteps.push_back( StepsAndDifficulty(*pSteps,dc) );
+					for (auto const pSteps: v)
+					{
+						m_vpSourceSteps.push_back( StepsAndDifficulty(pSteps,dc) );
+					}
 				}
 			}
 			StripLockedStepsAndDifficulty( m_vpSteps );

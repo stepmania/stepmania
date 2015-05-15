@@ -30,7 +30,6 @@
 #include "RageSoundManager.h"
 #include "RageLog.h"
 #include "RageSoundReader_FileReader.h"
-#include "Foreach.h"
 
 void AutoKeysounds::Load( PlayerNumber pn, const NoteData& ndAutoKeysoundsOnly )
 {
@@ -142,10 +141,10 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 
 
 	vector<RageSoundReader *> vpSounds;
-	FOREACH( RString, vsMusicFile, s )
+	for (auto const &s: vsMusicFile)
 	{
 		RString sError;
-		RageSoundReader *pSongReader = RageSoundReader_FileReader::OpenFile( *s, sError );
+		RageSoundReader *pSongReader = RageSoundReader_FileReader::OpenFile( s, sError );
 		vpSounds.push_back( pSongReader );
 	}
 
@@ -162,8 +161,10 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 	{
 		RageSoundReader_Merge *pMerge = new RageSoundReader_Merge;
 
-		FOREACH( RageSoundReader *, vpSounds, so )
-			pMerge->AddSound( *so );
+		for (auto *so: vpSounds)
+		{
+			pMerge->AddSound( so );
+		}
 		pMerge->Finish( SOUNDMAN->GetDriverSampleRate() );
 
 		RageSoundReader *pSongReader = pMerge;
@@ -308,9 +309,10 @@ void AutoKeysounds::FinishLoading()
 	{
 		RageSoundReader_Merge *pMerge = new RageSoundReader_Merge;
 
-		FOREACH( RageSoundReader *, apSounds, ps )
-			pMerge->AddSound( *ps );
-
+		for (auto *ps: apSounds)
+		{
+			pMerge->AddSound( ps );
+		}
 		pMerge->Finish( SOUNDMAN->GetDriverSampleRate() );
 
 		m_pChain = pMerge;

@@ -649,10 +649,9 @@ template<class T>
 void GetAsNotInBs( const vector<T> &as, const vector<T> &bs, vector<T> &difference )
 {
 	vector<T> bsUnmatched = bs;
-	// Cannot use FOREACH_CONST here because vector<T>::const_iterator is an implicit type.
-	for( typename vector<T>::const_iterator a = as.begin(); a != as.end(); ++a )
+	for( auto a = as.begin(); a != as.end(); ++a )
 	{
-		typename vector<T>::iterator iter = find( bsUnmatched.begin(), bsUnmatched.end(), *a );
+		auto iter = find( bsUnmatched.begin(), bsUnmatched.end(), *a );
 		if( iter != bsUnmatched.end() )
 			bsUnmatched.erase( iter );
 		else

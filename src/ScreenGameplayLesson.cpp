@@ -33,7 +33,7 @@ void ScreenGameplayLesson::Init()
 	vector<RString> vs;
 	GetDirListing( sDir+"Page*", vs, true, true );
 	m_vPages.resize( vs.size() );
-	FOREACH( RString, vs, s )
+	for (auto s = vs.begin(); s != vs.end(); ++s)
 	{
 		int i = s - vs.begin();
 		AutoActor &aa = m_vPages[i];
@@ -46,7 +46,7 @@ void ScreenGameplayLesson::Init()
 		this->AddChild( aa );
 	}
 
-	FOREACH( AutoActor, m_vPages, aa )
+	for (auto aa = m_vPages.begin(); aa != m_vPages.end(); ++aa)
 	{
 		bool bIsFirst = aa == m_vPages.begin();
 		(*aa)->PlayCommand( bIsFirst ? "Show" : "Hide" );

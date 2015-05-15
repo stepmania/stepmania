@@ -1,7 +1,9 @@
 #include "global.h"
 #include "StageStats.h"
+
+#include <numeric>
+
 #include "GameState.h"
-#include "Foreach.h"
 #include "Steps.h"
 #include "Song.h"
 #include "RageLog.h"
@@ -91,10 +93,14 @@ int StageStats::GetAverageMeter( PlayerNumber pn ) const
 void StageStats::AddStats( const StageStats& other )
 {
 	ASSERT( !other.m_vpPlayedSongs.empty() );
-	FOREACH_CONST( Song*, other.m_vpPlayedSongs, s )
-		m_vpPlayedSongs.push_back( *s );
-	FOREACH_CONST( Song*, other.m_vpPossibleSongs, s )
-		m_vpPossibleSongs.push_back( *s );
+	for (auto &s: other.m_vpPlayedSongs)
+	{
+		m_vpPlayedSongs.push_back( s );
+	}
+	for (auto &s: other.m_vpPossibleSongs)
+	{
+		m_vpPossibleSongs.push_back( s );
+	}
 	m_Stage = Stage_Invalid; // meaningless
 	m_iStageIndex = -1; // meaningless
 
@@ -126,10 +132,10 @@ bool StageStats::AllFailed() const
 
 float StageStats::GetTotalPossibleStepsSeconds() const
 {
-	float fSecs = 0;
-	FOREACH_CONST( Song*, m_vpPossibleSongs, s )
-		fSecs += (*s)->GetStepsSeconds();
-	return fSecs / m_fMusicRate;
+	float secs = std::accumulate(m_vpPossibleSongs.begin(), m_vpPossibleSongs.end(), 0.f, [](float const f, Song const *s) {
+		return f + s->GetStepsSeconds();
+	});
+	return secs / m_fMusicRate;
 }
 
 static HighScore FillInHighScore( const PlayerStageStats &pss, const PlayerState &ps, RString sRankingToFillInMarker, RString sPlayerGuid )

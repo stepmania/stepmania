@@ -127,12 +127,12 @@ void ScreenOptionsManageProfiles::BeginScreen()
 
 	PROFILEMAN->GetLocalProfileIDs( m_vsLocalProfileID );
 
-	FOREACH_CONST( RString, m_vsLocalProfileID, s )
+	for (auto const &s: m_vsLocalProfileID)
 	{
-		Profile *pProfile = PROFILEMAN->GetLocalProfile( *s );
+		Profile *pProfile = PROFILEMAN->GetLocalProfile( s );
 		ASSERT( pProfile != NULL );
 
-		RString sCommand = ssprintf( "gamecommand;screen,ScreenOptionsCustomizeProfile;profileid,%s;name,dummy", s->c_str() );
+		RString sCommand = ssprintf( "gamecommand;screen,ScreenOptionsCustomizeProfile;profileid,%s;name,dummy", s.c_str() );
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands(sCommand) );
 		OptionRowDefinition &def = pHand->m_Def;
 		def.m_layoutType = LAYOUT_SHOW_ALL_IN_ROW;
@@ -143,7 +143,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 
 		PlayerNumber pn = PLAYER_INVALID;
 		FOREACH_PlayerNumber( p )
-			if( *s == ProfileManager::m_sDefaultLocalProfileID[p].Get() )
+			if( s == ProfileManager::m_sDefaultLocalProfileID[p].Get() )
 				pn = p;
 		if( pn != PLAYER_INVALID )
 			def.m_vsChoices.push_back( PlayerNumberToLocalizedString(pn) );
@@ -217,7 +217,8 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 			if( iNumProfiles < NUM_PLAYERS )
 			{
 				int iFirstUnused = -1;
-				FOREACH_CONST( Preference<RString>*, PROFILEMAN->m_sDefaultLocalProfileID.m_v, i )
+				auto &prefs = PROFILEMAN->m_sDefaultLocalProfileID.m_v;
+				for (auto i = prefs.begin(); i != prefs.end(); ++i)
 				{
 					RString sLocalProfileID = (*i)->Get();
 					if( sLocalProfileID.empty() )

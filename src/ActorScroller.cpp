@@ -1,6 +1,5 @@
 #include "global.h"
 #include "ActorScroller.h"
-#include "Foreach.h"
 #include "RageUtil.h"
 #include "XmlFile.h"
 #include "arch/Dialog/Dialog.h"
@@ -312,8 +311,10 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 	if( m_bDrawByZPosition )
 	{
 		ActorUtil::SortByZPosition( subs );
-		FOREACH( Actor*, subs, a )
-			(*a)->Draw();
+		for (auto *a: subs)
+		{
+			a->Draw();
+		}
 	}
 }
 

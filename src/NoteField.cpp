@@ -137,10 +137,10 @@ void NoteField::CacheAllUsedNoteSkins()
 	vector<RString> asSkinsLower;
 	GAMESTATE->GetAllUsedNoteSkins( asSkinsLower );
 	asSkinsLower.push_back( m_pPlayerState->m_PlayerOptions.GetStage().m_sNoteSkin );
-	FOREACH( RString, asSkinsLower, s )
+	for (auto &s: asSkinsLower)
 	{
-		NOTESKIN->ValidateNoteSkinName(*s);
-		s->MakeLower();
+		NOTESKIN->ValidateNoteSkinName(s);
+		s.MakeLower();
 	}
 
 	for( unsigned i=0; i < asSkinsLower.size(); ++i )
@@ -149,14 +149,18 @@ void NoteField::CacheAllUsedNoteSkins()
 	/* If we're changing note skins in the editor, we can have old note skins lying
 	 * around.  Remove them so they don't accumulate. */
 	set<RString> setNoteSkinsToUnload;
-	FOREACHM( RString, NoteDisplayCols *, m_NoteDisplays, d )
+	for (auto &d: m_NoteDisplays)
 	{
-		bool unused = find(asSkinsLower.begin(), asSkinsLower.end(), d->first) == asSkinsLower.end();
+		bool unused = find(asSkinsLower.begin(), asSkinsLower.end(), d.first) == asSkinsLower.end();
 		if( unused )
-			setNoteSkinsToUnload.insert( d->first );
+		{
+			setNoteSkinsToUnload.insert( d.first );
+		}
 	}
-	FOREACHS( RString, setNoteSkinsToUnload, s )
-		UncacheNoteSkin( *s );
+	for (auto const &s: setNoteSkinsToUnload)
+	{
+		UncacheNoteSkin( s );
+	}
 
 	RString sCurrentNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin;
 	NOTESKIN->ValidateNoteSkinName(sCurrentNoteSkinLower);
@@ -867,16 +871,16 @@ void NoteField::DrawPrimitives()
 			ASSERT_M( GAMESTATE->m_iEditCourseEntryIndex >= 0  &&  GAMESTATE->m_iEditCourseEntryIndex < (int)pCourse->m_vEntries.size(), 
 				ssprintf("%i",GAMESTATE->m_iEditCourseEntryIndex.Get()) );
 			const CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
-			FOREACH_CONST( Attack, ce.attacks, a )
+			for (auto const &a: ce.attacks)
 			{
-				float fSecond = a->fStartSecond;
+				float fSecond = a.fStartSecond;
 				float fBeat = timing.GetBeatFromElapsedTime( fSecond );
 
 				if( BeatToNoteRow(fBeat) >= m_FieldRenderArgs.first_row &&
 					BeatToNoteRow(fBeat) <= m_FieldRenderArgs.last_row &&
 					IS_ON_SCREEN(fBeat))
 				{
-					DrawAttackText(fBeat, *a, text_glow);
+					DrawAttackText(fBeat, a, text_glow);
 				}
 			}
 		}
@@ -888,14 +892,14 @@ void NoteField::DrawPrimitives()
 			// XXX: We're somehow getting here when attacks is null. Find the actual cause later.
 			if (&attacks)
 			{
-				FOREACH_CONST(Attack, attacks, a)
+				for (auto const &a: attacks)
 				{
-					float fBeat = timing.GetBeatFromElapsedTime(a->fStartSecond);
+					float fBeat = timing.GetBeatFromElapsedTime(a.fStartSecond);
 					if (BeatToNoteRow(fBeat) >= m_FieldRenderArgs.first_row &&
 						BeatToNoteRow(fBeat) <= m_FieldRenderArgs.last_row &&
 						IS_ON_SCREEN(fBeat))
 					{
-						this->DrawAttackText(fBeat, *a, text_glow);
+						this->DrawAttackText(fBeat, a, text_glow);
 					}
 				}
 			}
@@ -950,7 +954,7 @@ void NoteField::DrawPrimitives()
 							if( IS_ON_SCREEN(fLowestBeat) )
 							{
 								vector<RString> vsBGChanges;
-								FOREACH_CONST( BackgroundLayer, viLowestIndex, bl )
+								for (auto bl = viLowestIndex.begin(); bl != viLowestIndex.end(); ++bl)
 								{
 									ASSERT( iter[*bl] != GAMESTATE->m_pCurSong->GetBackgroundChanges(*bl).end() );
 									const BackgroundChange& change = *iter[*bl];
@@ -961,8 +965,11 @@ void NoteField::DrawPrimitives()
 								}
 								DrawBGChangeText(fLowestBeat, join("\n",vsBGChanges), text_glow);
 							}
-							FOREACH_CONST( BackgroundLayer, viLowestIndex, bl )
-								iter[*bl]++;
+							
+							for (auto &bl: viLowestIndex)
+							{
+								iter[bl]++;
+							}
 						}
 					}
 					break;

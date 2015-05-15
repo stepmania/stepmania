@@ -233,7 +233,7 @@ void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
 
 	m_frameContainer.SortByDrawOrder();
 
-	FOREACH( OptionRow*, m_pRows, p )
+	for (auto p = m_pRows.begin(); p != m_pRows.end(); ++p)
 	{
 		int iIndex = p - m_pRows.begin();
 
@@ -335,9 +335,10 @@ void ScreenOptions::TweenOnScreen()
 {
 	ScreenWithMenuElements::TweenOnScreen();
 
-	FOREACH( OptionRow*, m_pRows, p )
-		(*p)->RunCommands( ROW_ON_COMMAND );
-
+	for (auto *p: m_pRows)
+	{
+		p->RunCommands( ROW_ON_COMMAND );
+	}
 	m_frameContainer.SortByDrawOrder();
 }
 
@@ -345,8 +346,10 @@ void ScreenOptions::TweenOffScreen()
 {
 	ScreenWithMenuElements::TweenOffScreen();
 
-	FOREACH( OptionRow*, m_pRows, p )
-		(*p)->RunCommands( ROW_OFF_COMMAND );
+	for (auto *p: m_pRows)
+	{
+		p->RunCommands( ROW_OFF_COMMAND );
+	}
 }
 
 ScreenOptions::~ScreenOptions()

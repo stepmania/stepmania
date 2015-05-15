@@ -2,6 +2,9 @@
 #include <cassert>
 
 #include "ActorMultiVertex.h"
+
+#include <numeric>
+
 #include "RageTextureManager.h"
 #include "XmlFile.h"
 #include "RageLog.h"
@@ -10,7 +13,6 @@
 #include "RageTimer.h"
 #include "RageUtil.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
 #include "LuaBinding.h"
 #include "LuaManager.h"
 #include "LocalizedString.h"
@@ -394,20 +396,20 @@ void ActorMultiVertex::SetState(size_t i)
 
 void ActorMultiVertex::SetAllStateDelays(float delay)
 {
-	FOREACH(State, _states, s)
+	for (auto &s: _states)
 	{
-		s->delay= delay;
+		s.delay= delay;
 	}
 }
 
 float ActorMultiVertex::GetAnimationLengthSeconds() const
 {
-	float tot= 0.0f;
-	FOREACH_CONST(State, _states, s)
+	float total = 0.f;
+	for (auto const &s: _states)
 	{
-		tot+= s->delay;
+		total += s.delay;
 	}
-	return tot;
+	return total;
 }
 
 void ActorMultiVertex::SetSecondsIntoAnimation(float seconds)

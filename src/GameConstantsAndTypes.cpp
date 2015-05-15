@@ -4,7 +4,6 @@
 #include "RageUtil.h"
 #include "ThemeMetric.h"
 #include "EnumHelper.h"
-#include "Foreach.h"
 #include "LuaManager.h"
 #include "GameManager.h"
 #include "LocalizedString.h"
@@ -374,10 +373,10 @@ void DisplayBpms::Add( float f )
 float DisplayBpms::GetMin() const
 {
 	float fMin = FLT_MAX;
-	FOREACH_CONST( float, vfBpms, f )
+	for (auto const &f: vfBpms)
 	{
-		if( *f != -1 )
-			fMin = min( fMin, *f );
+		if( f != -1 )
+			fMin = min( fMin, f );
 	}
 	if( fMin == FLT_MAX )
 		return 0;
@@ -393,10 +392,10 @@ float DisplayBpms::GetMax() const
 float DisplayBpms::GetMaxWithin(float highest) const
 {
 	float fMax = 0;
-	FOREACH_CONST( float, vfBpms, f )
+	for (auto const &f: vfBpms)
 	{
-		if( *f != -1 )
-			fMax = clamp(max( fMax, *f ), 0, highest);
+		if( f != -1 )
+			fMax = clamp(max( fMax, f ), 0, highest);
 	}
 	return fMax;
 }
@@ -408,12 +407,9 @@ bool DisplayBpms::BpmIsConstant() const
 
 bool DisplayBpms::IsSecret() const
 {
-	FOREACH_CONST( float, vfBpms, f )
-	{
-		if( *f == -1 )
-			return true;
-	}
-	return false;
+	return std::any_of(vfBpms.begin(), vfBpms.end(), [](float const f) {
+		return f == -1;
+	});
 }
 
 static const char *StyleTypeNames[] = {

@@ -11,7 +11,6 @@
 #include "InputFilter.h"
 #include "PrefsManager.h"
 #include "GamePreferences.h" //needed for Axis Fix
-#include "Foreach.h"
 
 #include "InputHandler_DirectInputHelper.h"
 
@@ -837,14 +836,14 @@ wchar_t InputHandler_DInput::DeviceButtonToChar( DeviceButton button, bool bUseC
 		return '\0';
 	}
 
-	FOREACH_CONST( DIDevice, Devices, d )
+        for (auto &d: Devices)
 	{
-		if( d->type != DIDevice::KEYBOARD )
+		if( d.type != DIDevice::KEYBOARD )
 			continue;
 
-		FOREACH_CONST( input_t, d->Inputs, i )
+                for (auto &i: d.Inputs)
 		{
-			if( button != i->num )
+			if( button != i.num )
 				continue;
 
 			unsigned char keys[256];
@@ -852,7 +851,7 @@ wchar_t InputHandler_DInput::DeviceButtonToChar( DeviceButton button, bool bUseC
 			if( bUseCurrentKeyModifiers )
 				GetKeyboardState(keys);
 			// todo: handle Caps Lock -freem
-			wchar_t c = ScancodeAndKeysToChar( i->ofs, keys );
+			wchar_t c = ScancodeAndKeysToChar( i.ofs, keys );
 			if( c )
 				return c;
 		}

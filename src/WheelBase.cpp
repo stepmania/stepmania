@@ -11,7 +11,6 @@
 #include "ThemeManager.h"
 #include "RageTextureManager.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
 #include "Style.h"
 #include "ThemeMetric.h"
 #include "ScreenDimensions.h"
@@ -34,8 +33,10 @@ LuaXType( WheelState );
 
 WheelBase::~WheelBase()
 {
-	FOREACH( WheelItemBase*, m_WheelBaseItems, i )
-		SAFE_DELETE( *i );
+	for (auto *i: m_WheelBaseItems)
+	{
+		SAFE_DELETE( i );
+	}
 	m_WheelBaseItems.clear();
 	m_LastSelection = NULL;
 }

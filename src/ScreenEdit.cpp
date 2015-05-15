@@ -6,7 +6,6 @@
 #include "AdjustSync.h"
 #include "BackgroundUtil.h"
 #include "CommonMetrics.h"
-#include "Foreach.h"
 #include "GameManager.h"
 #include "GamePreferences.h"
 #include "GameSoundManager.h"
@@ -1617,11 +1616,13 @@ void ScreenEdit::MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu )
 	menu.rows.clear();
 
 	vector<MenuRowDef> aRows;
-	FOREACH_CONST( MenuRowDef, pDef->rows, r )
+	for (auto const &r: pDef->rows)
 	{
 		// Don't add rows that aren't applicable to this edit mode.
-		if( EDIT_MODE >= r->emShowIn )
-			menu.rows.push_back( *r );
+		if( EDIT_MODE >= r.emShowIn )
+		{
+			menu.rows.push_back( r );
+		}
 	}
 }
 
@@ -2722,12 +2723,12 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				// Fill in lines enabled/disabled
 				bool bAlreadyBGChangeHere = false;
 				BackgroundChange bgChange; 
-				FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer), bgc )
+				for (auto &bgc: m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer))
 				{
-					if( bgc->m_fStartBeat == GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat )
+					if( bgc.m_fStartBeat == GAMESTATE->m_pPlayerState[PLAYER_1]->m_Position.m_fSongBeat )
 					{
 						bAlreadyBGChangeHere = true;
-						bgChange = *bgc;
+						bgChange = bgc;
 					}
 				}
 
@@ -2945,7 +2946,8 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				BackgroundLayer iLayer = BACKGROUND_LAYER_1;
 				BackgroundChange bgChange;
 				bgChange.m_fStartBeat = GAMESTATE->m_Position.m_fSongBeat;
-				FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(iLayer), bgc )
+				auto &changes = m_pSong->GetBackgroundChanges(iLayer);
+				for (auto bgc = changes.begin(); bgc != changes.end(); ++bgc)
 				{
 					if( bgc->m_fStartBeat == GAMESTATE->m_Position.m_fSongBeat )
 					{
@@ -3822,7 +3824,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			Course *pCourse = SONGMAN->FindCourse( name );
 
 			int iCourseEntryIndex = -1;
-			FOREACH_CONST( CourseEntry, pCourse->m_vEntries, i )
+			for (auto i = pCourse->m_vEntries.begin(); i != pCourse->m_vEntries.end(); ++i)
 			{
 				if( i->songID.ToSong() == GAMESTATE->m_pCurSong.Get() )
 					iCourseEntryIndex = i - pCourse->m_vEntries.begin();
@@ -4351,27 +4353,26 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		Song *pSong = GAMESTATE->m_pCurSong;
 		const vector<Steps*> &apSteps = pSong->GetAllSteps();
 		vector<Steps*> apToDelete;
-		FOREACH_CONST( Steps *, apSteps, s )
+		for (auto *s: apSteps)
 		{
 			// If we're not on the same style, let it go.
-			if( GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType != (*s)->m_StepsType )
+			if( GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType != s->m_StepsType )
 				continue;
 			// If autogenned, it isn't being saved.
-			if( (*s)->IsAutogen() )
+			if( s->IsAutogen() )
 				continue;
 			// If the notedata has content, let it go.
-			if( !(*s)->GetNoteData().IsEmpty() )
+			if( !s->GetNoteData().IsEmpty() )
 				continue;
 			// It's hard to say if these steps were saved to disk or not.
 			/*
 			if( !(*s)->GetSavedToDisk() )
 				continue;
 			 */
-			apToDelete.push_back( *s );
+			apToDelete.push_back( s );
 		}
-		FOREACH_CONST( Steps *, apToDelete, s )
+		for (auto *pSteps: apToDelete)
 		{
-			Steps *pSteps = *s;
 			pSong->DeleteSteps( pSteps );
 			if( m_pSteps == pSteps )
 				m_pSteps = NULL;
@@ -5975,7 +5976,8 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 {
 	BackgroundChange newChange;
 
-	FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer), iter )
+	auto &changes = m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer);
+	for (auto iter = changes.begin(); iter != changes.end(); ++iter)
 	{
 		if( iter->m_fStartBeat == GAMESTATE->m_Position.m_fSongBeat )
 		{
@@ -6076,8 +6078,10 @@ void ScreenEdit::SetupCourseAttacks()
 			}
 		}
 
-		FOREACH( Attack, Attacks, attack )
-			GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( *attack );
+		for (auto const &attack: Attacks)
+		{
+			GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( attack );
+		}
 	}
 	else 
 	{
@@ -6090,11 +6094,13 @@ void ScreenEdit::SetupCourseAttacks()
 			
 			if (attacks.size() > 0)
 			{
-				FOREACH(Attack, attacks, attack)
+				for (auto const &attack: attacks)
 				{
-					float fBeat = GetAppropriateTiming().GetBeatFromElapsedTime(attack->fStartSecond);
+					float fBeat = GetAppropriateTiming().GetBeatFromElapsedTime(attack.fStartSecond);
 					if (fBeat >= GetBeat())
-						GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( *attack );
+					{
+						GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( attack );
+					}
 				}
 			}
 		}
@@ -6110,8 +6116,10 @@ void ScreenEdit::CopyToLastSave()
 	m_SongLastSave = *GAMESTATE->m_pCurSong;
 	m_vStepsLastSave.clear();
 	const vector<Steps*> &vSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType );
-	FOREACH_CONST( Steps*, vSteps, it )
-		m_vStepsLastSave.push_back( **it );
+	for (auto *it: vSteps)
+	{
+		m_vStepsLastSave.push_back( *it );
+	}
 }
 
 void ScreenEdit::CopyFromLastSave()
@@ -6351,8 +6359,10 @@ static void ProcessKeyName( RString &s )
 
 static void ProcessKeyNames( vector<RString> &vs, bool doSort )
 {
-	FOREACH( RString, vs, s )
-		ProcessKeyName( *s );
+	for (auto &s: vs)
+	{
+		ProcessKeyName(s);
+	}
 
 	if (doSort)
 		sort( vs.begin(), vs.end() );
@@ -6364,15 +6374,15 @@ static RString GetDeviceButtonsLocalized( const vector<EditButton> &veb, const M
 {
 	vector<RString> vsPress;
 	vector<RString> vsHold;
-	FOREACH_CONST( EditButton, veb, eb )
+	for (auto const &eb: veb)
 	{
-		if( !IsMapped( *eb, editmap ) )
+		if( !IsMapped( eb, editmap ) )
 			continue;
 
 		for( int s=0; s<NUM_EDIT_TO_DEVICE_SLOTS; s++ )
 		{
-			DeviceInput diPress = editmap.button[*eb][s];
-			DeviceInput diHold = editmap.hold[*eb][s];
+			DeviceInput diPress = editmap.button[eb][s];
+			DeviceInput diHold = editmap.hold[eb][s];
 			if( diPress.IsValid() )
 				vsPress.push_back( Capitalize(INPUTMAN->GetLocalizedInputString(diPress)) );
 			if( diHold.IsValid() )
@@ -6399,10 +6409,10 @@ void ScreenEdit::DoStepAttackMenu()
 		
 	g_AttackAtTimeMenu.rows.clear();
 	unsigned index = 0;
-		
-	FOREACH(int, points, i)
+	
+	for (auto &i: points)
 	{
-		const Attack &attack = attacks[*i];
+		const Attack &attack = attacks[i];
 		RString desc = ssprintf("%g -> %g (%d mod[s])",
 			startTime, startTime + attack.fSecsRemaining,
 			attack.GetNumAttacks());
@@ -6439,9 +6449,9 @@ void ScreenEdit::DoKeyboardTrackMenu()
 	vector<RString> &kses = m_pSong->m_vsKeysoundFile;
 	
 	vector<RString> choices;
-	FOREACH(RString, kses, ks)
+	for (auto &ks: kses)
 	{
-		choices.push_back(*ks);
+		choices.push_back(ks);
 	}
 	choices.push_back(NEWKEYSND);
 	choices.push_back(NO_KEYSND);

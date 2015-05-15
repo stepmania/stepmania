@@ -1,5 +1,8 @@
 #include "global.h"
 #include "ModelTypes.h"
+
+#include <numeric>
+
 #include "IniFile.h"
 #include "RageUtil.h"
 #include "RageFile.h"
@@ -8,7 +11,6 @@
 #include "RageTextureManager.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
-#include "Foreach.h"
 
 #define MS_MAX_NAME	32
 
@@ -148,10 +150,9 @@ void AnimatedTexture::SetState( int iState )
 
 float AnimatedTexture::GetAnimationLengthSeconds() const
 {
-	float fTotalSeconds = 0;
-	FOREACH_CONST( AnimatedTextureState, vFrames, ats )
-		fTotalSeconds += ats->fDelaySecs;
-	return fTotalSeconds;
+	return std::accumulate(vFrames.begin(), vFrames.end(), 0.f, [](float const total, AnimatedTextureState const &ats) {
+		return total + ats.fDelaySecs;
+	});
 }
 
 void AnimatedTexture::SetSecondsIntoAnimation( float fSeconds )

@@ -87,8 +87,10 @@ void ScreenWithMenuElements::Init()
 		if( pFrame )
 		{
 			m_vDecorations = pFrame->GetChildren();
-			FOREACH( Actor*, m_vDecorations, child )
-				this->AddChild( *child );
+			for (auto *child: m_vDecorations)
+			{
+				this->AddChild( child );
+			}
 			pFrame->RemoveAllChildren();
 		}
 	}
@@ -167,8 +169,10 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 		if( m_MemoryCardDisplay[p] != NULL )
 			SAFE_DELETE( m_MemoryCardDisplay[p] );
 	}
-	FOREACH( Actor*, m_vDecorations, actor )
-		delete *actor;
+	for (auto *actor: m_vDecorations)
+	{
+		delete actor;
+	}
 }
 
 void ScreenWithMenuElements::SetHelpText( RString s )

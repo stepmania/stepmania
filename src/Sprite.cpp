@@ -11,7 +11,6 @@
 #include "RageTimer.h"
 #include "RageUtil.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
 #include "LuaBinding.h"
 #include "LuaManager.h"
 
@@ -783,9 +782,9 @@ void Sprite::SetState( int iNewState )
 void Sprite::RecalcAnimationLengthSeconds()
 {
 	float m_animation_length_seconds = 0;
-	FOREACH_CONST(State, m_States, s)
+	for (auto &s: m_States)
 	{
-		m_animation_length_seconds += s->fDelay;
+		m_animation_length_seconds += s.fDelay;
 	}
 }
 
