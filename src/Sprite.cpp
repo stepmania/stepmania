@@ -782,7 +782,7 @@ void Sprite::SetState( int iNewState )
 
 void Sprite::RecalcAnimationLengthSeconds()
 {
-	float m_animation_length_seconds = 0;
+	m_animation_length_seconds = 0;
 	FOREACH_CONST(State, m_States, s)
 	{
 		m_animation_length_seconds += s->fDelay;
