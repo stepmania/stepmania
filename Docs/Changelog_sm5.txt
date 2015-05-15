@@ -4,6 +4,14 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/05/15
+----------
+* [BMS] .lua files defined in the #BMP tags now work as BG animations, and the
+  #difficulty tag is now supported. [nixtrix]
+* [general] BackInEventMode code now works when called from either player.
+  [nixtrix]
+* [cmake] JACK is now properly found by CMake.
+
 2015/05/09
 ----------
 * [general] Workaround for the axis problem added.  Set the Axis Fix
