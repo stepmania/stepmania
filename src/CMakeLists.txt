@@ -269,7 +269,7 @@ elseif(APPLE)
     XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/archutils/Darwin/StepMania.pch"
     XCODE_ATTRIBUTE_GCC_ENABLE_CPP_EXCEPTIONS "NO"
     XCODE_ATTRIBUTE_LIBRARY_SEARCH_PATHS "${SM_XCODE_DIR}/ffmpeg/lib ${SM_XCODE_DIR}/Libraries"
-    XCODE_ATTRIBUTE_OTHER_LDFLAGS "-lbz2"
+    XCODE_ATTRIBUTE_OTHER_LDFLAGS "-lbz2 -liconv"
   )
 
   sm_add_compile_definition("${SM_EXE_NAME}" _XOPEN_SOURCE)
@@ -451,11 +451,8 @@ elseif(APPLE)
     "pcre"
     "jpeg"
     "avcodec"
-    "avdevice"
-    "avfilter"
     "avformat"
     "avutil"
-    "swresample"
     "swscale"
   )
 else() # Unix / Linux
