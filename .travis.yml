@@ -45,7 +45,7 @@ install:
 
     # I just noticed: clang is already installed. Are these changes needed?
     # - if [ "$CXX" == "clang++" ]; then sudo apt-get install -y --allow-unauthenticated clang-3.4; fi
-    # - if [ "$CXX" == "clang++" ]; then sudo apt-get install -y --allow-unauthenticated libc++-dev; fi
+    - if [ "$CXX" == "clang++" ]; then sudo apt-get install -y --allow-unauthenticated libc++-dev; fi
     # - if [ "$CXX" == "clang++" ]; then export CXX="clang++-3.4"; fi
     # - if [ "$CXX" == "clang++" ]; then export CC="clang-3.4"; fi
 
