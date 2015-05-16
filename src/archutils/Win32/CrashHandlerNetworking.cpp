@@ -5,7 +5,6 @@
 #include "RageThreads.h"
 #include "RageTimer.h"
 #include "RageUtil.h"
-#include "Foreach.h"
 
 #if defined(WINDOWS)
 #include <windows.h>
@@ -439,7 +438,7 @@ void NetworkStream_Win32::Close()
 {
 	if( m_State == STATE_IDLE )
 		return;
-	
+
 	/* If we have an active, stable connection, make sure we flush any data
 	 * completely before closing. If you don't want to do this, call Cancel()
 	 * first. */
@@ -588,18 +587,22 @@ void NetworkPostData::CreateMimeData( const map<RString,RString> &mapNameToData,
 	while(1)
 	{
 		sMimeBoundaryOut = ssprintf( "--%08i", rand() );
-		FOREACHM_CONST( RString, RString, mapNameToData, d )
-			if( d->second.find(sMimeBoundaryOut) != RString::npos )
+		for (auto const &d: mapNameToData)
+		{
+			if( d.second.find(sMimeBoundaryOut) != RString::npos )
+			{
 				continue;
+			}
+		}
 		break;
 	}
 
-	FOREACHM_CONST( RString, RString, mapNameToData, d )
+	for (auto const &d: mapNameToData)
 	{
 		sOut += "--" + sMimeBoundaryOut + "\r\n";
-		sOut += ssprintf( "Content-Disposition: form-data; name=\"%s\"\r\n", d->first.c_str() );
+		sOut += ssprintf( "Content-Disposition: form-data; name=\"%s\"\r\n", d.first.c_str() );
 		sOut += "\r\n";
-		sOut += d->second;
+		sOut += d.second;
 		sOut += "\r\n";
 	}
 	if( sOut.size() )
@@ -743,7 +746,7 @@ void NetworkPostData::SetData( const RString &sKey, const RString &sData )
 /*
  * (c) 2006 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -753,7 +756,7 @@ void NetworkPostData::SetData( const RString &sKey, const RString &sData )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

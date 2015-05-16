@@ -79,8 +79,6 @@ static void Serialize( const NoteData &o, Json::Value &root )
 	{
 		NoteData::TrackMap::const_iterator begin, end;
 		o.GetTapNoteRange( t, 0, MAX_NOTE_ROW, begin, end );
-		//NoteData::TrackMap tm = o.GetTrack(t);
-		//FOREACHM_CONST( int, TapNote, tm, iter )
 		for( ; begin != end; ++begin )
 		{
 			int iRow = begin->first;
@@ -185,11 +183,11 @@ bool NotesWriterJson::WriteSong( const RString &sFile, const Song &out, bool bWr
 	if( bWriteSteps )
 	{
 		vector<const Steps*> vpSteps;
-		FOREACH_CONST( Steps*, out.GetAllSteps(), iter )
+		for (auto const *iter: out.GetAllSteps())
 		{
-			if( (*iter)->IsAutogen() )
+			if( iter->IsAutogen() )
 				continue;
-			vpSteps.push_back( *iter );
+			vpSteps.push_back( iter );
 		}
 		JsonUtil::SerializeVectorPointers<Steps>( vpSteps, Serialize, root["Charts"] );
 	}
@@ -207,7 +205,7 @@ bool NotesWriterJson::WriteSteps( const RString &sFile, const Steps &out )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -217,7 +215,7 @@ bool NotesWriterJson::WriteSteps( const RString &sFile, const Steps &out )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
