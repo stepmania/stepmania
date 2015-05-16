@@ -369,6 +369,11 @@ else() # Linux
 
   sm_add_compile_flag("${SM_EXE_NAME}" "-std=gnu++11")
   sm_add_compile_flag("jsoncpp" "-std=gnu++11")
+  if ( CMAKE_CXX_COMPILER MATCHES "clang" )
+    sm_add_compile_flag("${SM_EXE_NAME}" "-stdlib=libc++")
+    set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS "-stdlib=libc++")
+    sm_add_compile_flag("jsoncpp" "-stdlib=libc++")
+  endif()
 endif()
 
 set_property(TARGET "${SM_EXE_NAME}" PROPERTY FOLDER "Internal Libraries")
