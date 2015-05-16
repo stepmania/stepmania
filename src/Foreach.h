@@ -18,9 +18,6 @@ for( set<elemType>::const_iterator var = (vect).begin(); var != (vect).end(); ++
 /** @brief General foreach loop iterating over a map. */
 #define FOREACHM( keyType, valType, vect, var ) 			\
 for( map<keyType, valType>::iterator var = (vect).begin(); var != (vect).end(); ++var )
-/** @brief General foreach loop iterating over a map, using a constant iterator. */
-#define FOREACHM_CONST( keyType, valType, vect, var ) 			\
-for( map<keyType, valType>::const_iterator var = (vect).begin(); var != (vect).end(); ++var )
 
 #endif
 
@@ -29,7 +26,7 @@ for( map<keyType, valType>::const_iterator var = (vect).begin(); var != (vect).e
  * @author Chris Danford (c) 2004-2005
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -39,7 +36,7 @@ for( map<keyType, valType>::const_iterator var = (vect).begin(); var != (vect).e
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

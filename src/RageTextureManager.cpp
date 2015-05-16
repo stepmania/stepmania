@@ -17,7 +17,7 @@
  * If a texture is loaded as DEFAULT that was already loaded as VOLATILE, DEFAULT
  * overrides.
  */
-	
+
 #include "global.h"
 #include "RageTextureManager.h"
 #include "RageBitmapTexture.h"
@@ -25,7 +25,6 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
-#include "Foreach.h"
 #include "ActorUtil.h"
 
 #include <map>
@@ -45,11 +44,11 @@ RageTextureManager::RageTextureManager():
 
 RageTextureManager::~RageTextureManager()
 {
-	FOREACHM( RageTextureID, RageTexture*, m_mapPathToTexture, i )
+	for (auto const &i: m_mapPathToTexture)
 	{
-		RageTexture* pTexture = i->second;
+		RageTexture* pTexture = i.second;
 		if( pTexture->m_iRefCount )
-			LOG->Trace( "TEXTUREMAN LEAK: '%s', RefCount = %d.", i->first.filename.c_str(), pTexture->m_iRefCount );
+			LOG->Trace( "TEXTUREMAN LEAK: '%s', RefCount = %d.", i.first.filename.c_str(), pTexture->m_iRefCount );
 		SAFE_DELETE( pTexture );
 	}
 	m_textures_to_update.clear();
@@ -58,9 +57,9 @@ RageTextureManager::~RageTextureManager()
 
 void RageTextureManager::Update( float fDeltaTime )
 {
-	FOREACHM(RageTextureID, RageTexture*, m_textures_to_update, i)
+	for (auto const &i: m_textures_to_update)
 	{
-		RageTexture* pTexture = i->second;
+		RageTexture* pTexture = i.second;
 		pTexture->Update( fDeltaTime );
 	}
 }
@@ -225,7 +224,7 @@ void RageTextureManager::UnloadTexture( RageTexture *t )
 	/* Delete volatile textures after they've been used at least once. */
 	if( t->GetPolicy() == RageTextureID::TEX_VOLATILE && t->m_bWasUsed )
 		bDeleteThis = true;
-	
+
 	if( bDeleteThis )
 		DeleteTexture( t );
 }
@@ -258,7 +257,7 @@ void RageTextureManager::DeleteTexture( RageTexture *t )
 	else
 	{
 		FAIL_M("Tried to delete a texture that wasn't in the ids by pointer list.");
-		FOREACHM( RageTextureID, RageTexture*, m_mapPathToTexture, i )
+		for (auto i = m_mapPathToTexture.begin(); i != m_mapPathToTexture.end(); ++i)
 		{
 			if( i->second == t )
 			{
@@ -301,7 +300,7 @@ void RageTextureManager::GarbageCollect( GCType type )
 			RageTextureID::TexPolicy policy = t->GetPolicy();
 			switch( policy )
 			{
-			case RageTextureID::TEX_DEFAULT: 
+			case RageTextureID::TEX_DEFAULT:
 				/* If m_bDelayedDelete, wait until delayed_delete.  If !m_bDelayedDelete,
 				 * it should have been deleted when it reached no references, but we
 				 * might have just changed the preference. */
@@ -319,7 +318,7 @@ void RageTextureManager::GarbageCollect( GCType type )
 		/* This happens when we change themes; free all textures. */
 		if( type==delayed_delete )
 			bDeleteThis = true;
-			
+
 		if( bDeleteThis )
 			DeleteTexture( t );
 	}
@@ -334,9 +333,9 @@ void RageTextureManager::ReloadAll()
 	 * ton of cached data that we're not necessarily going to use. */
 	DoDelayedDelete();
 
-	FOREACHM( RageTextureID, RageTexture*, m_mapPathToTexture, i )
+	for (auto &i: m_mapPathToTexture)
 	{
-		i->second->Reload();
+		i.second->Reload();
 	}
 
 	EnableOddDimensionWarning();
@@ -350,9 +349,9 @@ void RageTextureManager::ReloadAll()
  * associated with a different texture).  Ack. */
 void RageTextureManager::InvalidateTextures()
 {
-	FOREACHM( RageTextureID, RageTexture*, m_mapPathToTexture, i )
+	for (auto &i: m_mapPathToTexture)
 	{
-		RageTexture* pTexture = i->second;
+		RageTexture* pTexture = i.second;
 		pTexture->Invalidate();
 	}
 }
@@ -364,7 +363,7 @@ bool RageTextureManager::SetPrefs( RageTextureManagerPrefs prefs )
 		bNeedReload = true;
 
 	m_Prefs = prefs;
-	
+
 	ASSERT( m_Prefs.m_iTextureColorDepth==16 || m_Prefs.m_iTextureColorDepth==32 );
 	ASSERT( m_Prefs.m_iMovieColorDepth==16 || m_Prefs.m_iMovieColorDepth==32 );
 	return bNeedReload;
@@ -376,10 +375,10 @@ void RageTextureManager::DiagnosticOutput() const
 	LOG->Trace( "%u textures loaded:", iCount );
 
 	int iTotal = 0;
-	FOREACHM_CONST( RageTextureID, RageTexture*, m_mapPathToTexture, i )
+	for (auto const &i: m_mapPathToTexture)
 	{
-		const RageTextureID &ID = i->first;
-		const RageTexture *pTex = i->second;
+		const RageTextureID &ID = i.first;
+		const RageTexture *pTex = i.second;
 
 		RString sDiags = DISPLAY->GetTextureDiagnostics( pTex->GetTexHandle() );
 		RString sStr = ssprintf( "%3ix%3i (%2i)", pTex->GetTextureHeight(), pTex->GetTextureWidth(),

@@ -10,7 +10,6 @@
 #include "RageLog.h"
 #include "XmlFile.h"
 #include "GameState.h" // blame radar calculations.
-#include "Foreach.h"
 #include "RageUtil_AutoPtr.h"
 
 REGISTER_CLASS_TRAITS( NoteData, new NoteData(*pCopy) )
@@ -31,9 +30,13 @@ bool NoteData::IsComposite() const
 {
 	for( int track = 0; track < GetNumTracks(); ++track )
 	{
-		FOREACHM_CONST( int, TapNote, m_TapNotes[track], tn )
-			if( tn->second.pn != PLAYER_INVALID )
+		for (auto const &tn: m_TapNotes[track])
+		{
+			if (tn.second.pn != PLAYER_INVALID)
+			{
 				return true;
+			}
+		}
 	}
 	return false;
 }
@@ -402,7 +405,7 @@ bool NoteData::IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow ) const
 }
 
 bool NoteData::IsEmpty() const
-{ 
+{
 	for( int t=0; t < GetNumTracks(); t++ )
 	{
 		int iRow = -1;
@@ -416,7 +419,7 @@ bool NoteData::IsEmpty() const
 }
 
 int NoteData::GetFirstRow() const
-{ 
+{
 	int iEarliestRowFoundSoFar = -1;
 
 	for( int t=0; t < GetNumTracks(); t++ )
@@ -438,7 +441,7 @@ int NoteData::GetFirstRow() const
 }
 
 int NoteData::GetLastRow() const
-{ 
+{
 	int iOldestRowFoundSoFar = 0;
 
 	for( int t=0; t < GetNumTracks(); t++ )
@@ -697,14 +700,14 @@ int NoteData::GetNumLifts( int iStartIndex, int iEndIndex ) const
 int NoteData::GetNumFakes( int iStartIndex, int iEndIndex ) const
 {
 	int iNumFakes = 0;
-	
+
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, iStartIndex, iEndIndex )
 			if( this->IsFake(GetTapNote(t, r), r))
 				iNumFakes++;
 	}
-	
+
 	return iNumFakes;
 }
 
@@ -917,7 +920,7 @@ void NoteData::LoadTransformed( const NoteData& in, int iNewNumTracks, const int
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		const int iOriginalTrack = iOriginalTrackToTakeFrom[t];
-		ASSERT_M( iOriginalTrack < in.GetNumTracks(), ssprintf("from OriginalTrack %i >= %i (#tracks) (taking from %i)", 
+		ASSERT_M( iOriginalTrack < in.GetNumTracks(), ssprintf("from OriginalTrack %i >= %i (#tracks) (taking from %i)",
 			iOriginalTrack, in.GetNumTracks(), iOriginalTrackToTakeFrom[t]));
 
 		if( iOriginalTrack == -1 )
@@ -976,7 +979,7 @@ bool NoteData::GetNextTapNoteRowForTrack( int track, int &rowInOut ) const
 {
 	const TrackMap &mapTrack = m_TapNotes[track];
 
-	// lower_bound and upper_bound have the same effect here because duplicate 
+	// lower_bound and upper_bound have the same effect here because duplicate
 	// keys aren't allowed.
 
 	// lower_bound "finds the first element whose key is not less than k" (>=);
@@ -1003,7 +1006,7 @@ bool NoteData::GetPrevTapNoteRowForTrack( int track, int &rowInOut ) const
 		return false;
 
 	// Move back by one.
-	--iter;	
+	--iter;
 	ASSERT( iter->first < rowInOut );
 	rowInOut = iter->first;
 	return true;
@@ -1462,7 +1465,7 @@ template class NoteData::_all_tracks_iterator<const NoteData, NoteData::const_it
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1472,7 +1475,7 @@ template class NoteData::_all_tracks_iterator<const NoteData, NoteData::const_it
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
