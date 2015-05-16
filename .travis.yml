@@ -35,6 +35,7 @@ install:
     - sudo apt-get install -y libglu1-mesa-dev -qq
     - sudo apt-get install -y mesa-common-dev -qq
     - sudo apt-get install -y libglew-dev -qq
+    - sudo apt-get install -y libstdc++-4.8-dev -qq
 
     - if [ "$CXX" == "g++" ]; then sudo apt-get install -y gcc-4.8 g++-4.8 -qq; fi
     - if [ "$CXX" == "g++" ]; then export CXX="g++-4.8"; fi
