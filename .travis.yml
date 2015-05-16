@@ -55,4 +55,4 @@ install:
 script:
     - echo "Building StepMania now."
     - cmake -DWITH_PORTABLE_TOMCRYPT=ON -G 'Unix Makefiles'
-    - make
+    - make VERBOSE=1
