@@ -42,8 +42,7 @@ install:
     # - if [ "$CXX" = "g++" ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90; fi
     # - if [ "$CXX" = "g++" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 90; fi
 
-    - if [ "$CXX" == "clang++" ]; then sudo apt-get install -y --allow-unauthenticated clang-3.4; fi
-    - if [ "$CXX" == "clang++" ]; then export CXX="clang++-3.4"; fi
+    - if [ "$CXX" == "clang++" ]; then sudo apt-get install -y --allow-unauthenticated libc++-dev; fi
 
     - echo "apt-get packages installed."
 
@@ -52,4 +51,4 @@ install:
 script:
     - echo "Building StepMania now."
     - cmake -DWITH_PORTABLE_TOMCRYPT=ON -G 'Unix Makefiles'
-    - make
+    - make VERBOSE=1
