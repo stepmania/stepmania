@@ -51,6 +51,7 @@ install:
     - 
       if [ "$CXX" == "clang++" ]; then
       sudo apt-get install --allow-unauthenticated libclang-3.7-dev clang-3.7;
+      sudo apt-get install libc++-dev libc++abi-dev;
       export CXX="clang++-3.7";
       export CC="clang-3.7";
       fi
