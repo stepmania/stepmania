@@ -47,15 +47,6 @@ install:
       if [ "$CXX" == "clang++" ]; then
         sudo apt-get install --allow-unauthenticated clang-3.4 -qq;
         sudo apt-get install libc++abi-dev -qq;
-        export ORIG_BUILD_DIR=$(pwd);
-        # export CXX_FLAGS="-std=c++11 -stdlib=libc++";
-        # svn co --quiet http://llvm.org/svn/llvm-project/libcxx/trunk libcxx;
-        # cd libcxx/lib && bash buildit;
-        # sudo cp ./libc++.so.1.0 /usr/lib;
-        # sudo mkdir /usr/include/c++/v1;
-        # cd .. && sudo cp -r include/* /usr/include/c++/v1/;
-        # cd /usr/lib && sudo ln -sf libc++.so.1.0 libc++.so;
-        # sudo ln -sf libc++.so.1.0 libc++.so.1 && cd $ORIG_BUILD_DIR;
         export CXX="clang++-3.4";
         export CC="clang-3.4";
       fi
