@@ -55,11 +55,11 @@ install:
       mkdir clang-done;
       export PREFIX="~/clang-done";
       git clone https://github.com/rsmmr/install-clang.git;
-      install-clang/install-clang -r 'git://github.com/llvm-mirror' -j 2 $PREFIX | awk 'NR % 1000 == 0';
+      install-clang/install-clang -j 2 $PREFIX | awk 'NR % 1000 == 0';
       export CC=$PREFIX/bin/clang;
       export CXX=$PREFIX/bin/clang++;
       rm -rf $PREFIX/src/llvm;
-      install-clang/install-clang -r 'git://github.com/llvm-mirror' -j 2 -a libcxxabi $PREFIX | awk 'NR % 1000 == 0';
+      install-clang/install-clang -j 2 -a libcxxabi $PREFIX | awk 'NR % 1000 == 0';
       sudo cp $PREFIX/lib/libc++.so.1.0 /usr/lib;
       sudo ln -sf /usr/lib/libc++.so.1.0 /usr/lib/libc++.so;
       sudo ln -sf /usr/lib/libc++.so.1.0 /usr/lib/libc++.so.1;
