@@ -9,7 +9,7 @@ notifications:
     irc: "chat.freenode.net#stepmania-devs"
 
 before_install:
-    - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+    - if [ "$CXX" == "g++" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
     - if [ "$CXX" == "clang++" ]; then sudo add-apt-repository -y ppa:h-rayflood/llvm; fi
     - sudo apt-get update -qq
     - sudo apt-get autoremove -qq
@@ -36,13 +36,25 @@ install:
     - sudo apt-get install -y mesa-common-dev -qq
     - sudo apt-get install -y libglew-dev -qq
 
-    - sudo apt-get install -y gcc-4.8 g++-4.8 -qq
-    - if [ "$CXX" == "g++" ]; then export CXX="g++-4.8"; fi
-    - if [ "$CXX" == "g++" ]; then export CC="gcc-4.8"; fi
-    # - if [ "$CXX" = "g++" ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90; fi
-    # - if [ "$CXX" = "g++" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 90; fi
-
-    - if [ "$CXX" == "clang++" ]; then sudo apt-get install -y --allow-unauthenticated libc++-dev -qq; fi
+    - 
+      if [ "$CXX" == "g++" ]; then
+        sudo apt-get install gcc-4.8 g++-4.8 -qq;
+        export CXX="g++-4.8";
+        export CC="gcc-4.8";
+      fi
+    - 
+      if [ "$CXX" == "clang++" ]; then
+        sudo apt-get install -y --allow-unauthenticated clang-3.4 -qq;
+        svn co --quiet http://llvm.org/svn/llvm-project/libcxx/trunk libcxx;
+        cd libcxx/lib && bash buildit;
+        sudo cp ./libc++.so.1.0 /usr/lib;
+        sudo mkdir /usr/include/c++/v1;
+        cd .. && sudo cp -r include/* /usr/include/c++/v1/;
+        cd /usr/lib && sudo ln -sf libc++.so.1.0 libc++.so;
+        sudo ln -sf libc++.so.1.0 libc++.so.1 && cd $cwd;
+        export CXX="clang++-3.4";
+        export CC="clang-3.4";
+      fi
 
     - echo "apt-get packages installed."
 
@@ -51,4 +63,4 @@ install:
 script:
     - echo "Building StepMania now."
     - cmake -DWITH_PORTABLE_TOMCRYPT=ON -G 'Unix Makefiles'
-    - make VERBOSE=1
+    - make
