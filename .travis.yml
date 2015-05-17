@@ -50,11 +50,9 @@ install:
       fi
     - 
       if [ "$CXX" == "clang++" ]; then
-        sudo apt-get install libclang-3.5-dev clang-3.5 -qq;
+        sudo apt-get install --allow-unauthenticated clang-3.5;
         export LD_LIBRARY_PATH=/usr/lib/llvm-3.5/lib/;
         export PATH=/usr/lib/llvm-3.5/bin:$PATH;
-        export CXX="clang++-3.5";
-        export CC="clang-3.5";
       fi
 
     - echo "apt-get packages installed."
