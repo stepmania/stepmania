@@ -386,6 +386,7 @@ else() # Linux
     sm_add_compile_flag("${SM_EXE_NAME}" "-stdlib=libc++")
     set_target_properties("${SM_EXE_NAME}"
                           PROPERTIES LINK_FLAGS "-stdlib=libc++")
+    sm_add_compile_flag("jsoncpp" "-stdlib=libc++")
   endif()
 endif()
 

@@ -32,6 +32,8 @@ matrix:
                         - libxtst-dev
                         - libxrandr-dev
                         - libglew-dev
+                        - libc++-dev
+                        - libstdc++-4.8-dev
 
         -
             env: CXX_COMPILER=clang++-3.6 CC_COMPILER=clang-3.6 BUILD_TYPE=Release WITH_FFMPEG=ON WITH_FFMPEG_JOBS=1
