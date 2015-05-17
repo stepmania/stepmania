@@ -9,8 +9,7 @@ notifications:
     irc: "chat.freenode.net#stepmania-devs"
 
 before_install:
-    - if [ "$CXX" == "g++" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
-    - if [ "$CXX" == "clang++" ]; then sudo add-apt-repository -y ppa:h-rayflood/llvm; fi
+    - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
     - sudo apt-get update -qq
     - sudo apt-get autoremove -qq
     - echo "apt-get ready for installing."
@@ -35,15 +34,39 @@ install:
     - sudo apt-get install -y libglu1-mesa-dev -qq
     - sudo apt-get install -y mesa-common-dev -qq
     - sudo apt-get install -y libglew-dev -qq
+    - sudo apt-get install -y libstdc++-4.8-dev -qq
 
-    - if [ "$CXX" == "g++" ]; then sudo apt-get install -y gcc-4.8 g++-4.8 -qq; fi
-    - if [ "$CXX" == "g++" ]; then export CXX="g++-4.8"; fi
-    - if [ "$CXX" == "g++" ]; then export CC="gcc-4.8"; fi
-    # - if [ "$CXX" = "g++" ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90; fi
-    # - if [ "$CXX" = "g++" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 90; fi
-
-    - if [ "$CXX" == "clang++" ]; then sudo apt-get install -y --allow-unauthenticated clang-3.4; fi
-    - if [ "$CXX" == "clang++" ]; then export CXX="clang++-3.4"; fi
+    - 
+      if [ "$CXX" == "g++" ]; then
+        sudo apt-get install gcc-4.8 g++-4.8 -qq;
+        export CXX="g++-4.8";
+        export CC="gcc-4.8";
+      fi
+    - 
+      if [ "$CXX" == "clang++" ]; then
+        export ORIG_BUILD_DIR=$(pwd);
+        export CXX_FLAGS="-std=c++11 -stdlib=libc++";
+        cd ~;
+        mkdir llvm-holder;
+        cd llvm-holder;
+        svn co --quiet http://llvm.org/svn/llvm-project/libcxx/trunk libcxx;
+        cd libcxx/lib && bash buildit;
+        sudo cp ./libc++.so.1.0 /usr/lib;
+        sudo mkdir /usr/include/c++/v1;
+        cd .. && sudo cp -r include/* /usr/include/c++/v1;
+        cd /usr/lib && sudo ln -sf libc++.so.1.0 libc++.so;
+        sudo ln -sf libc++.so.1.0 libc++.so.1;
+        cd ~/llvm-holder;
+        svn co --quiet http://llvm.org/svn/llvm-project/libcxxabi/trunk libcxxabi;
+        cd libcxxabi/lib && bash buildit;
+        cd ..;
+        sudo cp -r include/* /usr/include/c++/v1;
+        sudo cp libc++abi.so.1.0 /usr/lib;
+        cd /usr/lib;
+        sudo ln -s libc++abi.so.1.0 libc++abi.so.1;
+        sudo ln -s libc++abi.so.1.0 libc++abi.so;
+        cd $ORIG_BUILD_DIR;
+      fi
 
     - echo "apt-get packages installed."
 
@@ -52,4 +75,4 @@ install:
 script:
     - echo "Building StepMania now."
     - cmake -DWITH_PORTABLE_TOMCRYPT=ON -G 'Unix Makefiles'
-    - make
+    - make -j2
