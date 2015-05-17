@@ -10,7 +10,12 @@ notifications:
 
 before_install:
     - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-    - if [ "$CXX" == "clang++" ]; then sudo add-apt-repository -y ppa:h-rayflood/llvm; fi
+    -
+      if [ "$CXX" == "clang++" ]; then
+        sudo add-apt-repository -y ppa:h-rayflood/llvm;
+        sudo add-apt-repository -y 'deb http://llvm.org/apt/precise/ llvm-toolchain-precise main';
+        wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -;
+      fi
     - sudo apt-get update -qq
     - sudo apt-get autoremove -qq
     - echo "apt-get ready for installing."
@@ -45,19 +50,11 @@ install:
       fi
     - 
       if [ "$CXX" == "clang++" ]; then
-        sudo apt-get install clang-3.4 -qq;
-        export ORIG_BUILD_DIR=$(pwd);
-        export CXX_FLAGS="-std=c++11 -stdlib=libc++";
-        svn co --quiet http://llvm.org/svn/llvm-project/libcxx/trunk libcxx;
-        cd libcxx/lib && bash buildit;
-        sudo cp ./libc++.so.1.0 /usr/lib;
-        sudo mkdir /usr/include/c++/v1;
-        cd .. && sudo cp -r include/* /usr/include/c++/v1;
-        cd /usr/lib && sudo ln -sf libc++.so.1.0 libc++.so;
-        sudo ln -sf libc++.so.1.0 libc++.so.1 && cd $ORIG_BUILD_DIR;
-        sudo apt-get install libc++abi-dev -qq;
-        export CXX="clang++-3.4";
-        export CC="clang-3.4";
+        sudo apt-get install libclang-3.5-dev clang-3.5 -qq;
+        export LD_LIBRARY_PATH=/usr/lib/llvm-3.5/lib/;
+        export PATH=/usr/lib/llvm-3.5/bin:$PATH;
+        export CXX="clang++-3.5";
+        export CC="clang-3.5";
       fi
 
     - echo "apt-get packages installed."
