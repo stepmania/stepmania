@@ -55,7 +55,7 @@ install:
       mkdir clang-done;
       export PREFIX="~/clang-done";
       git clone https://github.com/rsmmr/install-clang.git;
-      install-clang/install-clang -r 'git://github.com/llvm-mirror' -j 2 $PREFIX | awk 'NR % 1000 == 0'
+      install-clang/install-clang -r 'git://github.com/llvm-mirror' -j 2 $PREFIX | awk 'NR % 1000 == 0';
       export CC=$PREFIX/bin/clang;
       export CXX=$PREFIX/bin/clang++;
       rm -rf $PREFIX/src/llvm;
