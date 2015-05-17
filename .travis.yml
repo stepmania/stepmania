@@ -12,8 +12,7 @@ before_install:
     - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
     -
       if [ "$CXX" == "clang++" ]; then
-        sudo add-apt-repository -y ppa:h-rayflood/llvm;
-        sudo add-apt-repository -y 'deb http://llvm.org/apt/precise/ llvm-toolchain-precise main';
+        sudo add-apt-repository -y 'deb http://llvm.org/apt/precise/ llvm-toolchain-precise-3.5 main';
         wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -;
       fi
     - sudo apt-get update -qq
@@ -50,21 +49,27 @@ install:
       fi
     - 
       if [ "$CXX" == "clang++" ]; then
-      export ORIG_SM_DIR=$(pwd);
-      cd ~;
-      mkdir clang-done;
-      export PREFIX="~/clang-done";
-      git clone https://github.com/rsmmr/install-clang.git;
-      install-clang/install-clang -j 2 $PREFIX | awk 'NR % 1000 == 0';
-      export CC=$PREFIX/bin/clang;
-      export CXX=$PREFIX/bin/clang++;
-      rm -rf $PREFIX/src/llvm;
-      install-clang/install-clang -j 2 -a libcxxabi $PREFIX | awk 'NR % 1000 == 0';
-      sudo cp $PREFIX/lib/libc++.so.1.0 /usr/lib;
-      sudo ln -sf /usr/lib/libc++.so.1.0 /usr/lib/libc++.so;
-      sudo ln -sf /usr/lib/libc++.so.1.0 /usr/lib/libc++.so.1;
-      sudo ldconfig;
-      cd $ORIG_SM_DIR;
+        sudo apt-get install clang-3.5 libclang-3.5-dev llvm-3.5-runtime;
+        export ORIG_BUILD_DIR=$(pwd);
+        export CXX_FLAGS="-std=c++11 -stdlib=libc++";
+        cd ~;
+        mkdir llvm-holder;
+        cd llvm-holder;
+        svn co --quiet http://llvm.org/svn/llvm-project/libcxx/trunk libcxx;
+        cd libcxx/lib && bash buildit;
+        sudo cp ./libc++.so.1.0 /usr/lib;
+        sudo mkdir /usr/include/c++/v1;
+        cd .. && sudo cp -r include/* /usr/include/c++/v1;
+        cd /usr/lib && sudo ln -sf libc++.so.1.0 libc++.so;
+        sudo ln -sf libc++.so.1.0 libc++.so.1;
+        cd ~/llvm-holder;
+        svn co --quiet http://llvm.org/svn/llvm-project/libcxxabi/trunk libcxxabi;
+        cd libcxxabi/lib && bash buildit;
+        sudo cp libc++abi.so.1.0 /usr/lib;
+        cd /usr/lib;
+        sudo ln -s libc++abi.so.1.0 libc++abi.so.1;
+        sudo ln -s libc++abi.so.1.0 libc++abi.so;
+        cd $ORIG_BUILD_DIR;
       fi
 
     - echo "apt-get packages installed."
