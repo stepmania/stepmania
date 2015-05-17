@@ -50,10 +50,21 @@ install:
       fi
     - 
       if [ "$CXX" == "clang++" ]; then
-      sudo apt-get install --allow-unauthenticated libclang-3.7-dev clang-3.7;
-      sudo apt-get install libc++-dev libc++abi-dev;
-      export CXX="clang++-3.7";
-      export CC="clang-3.7";
+      export ORIG_SM_DIR=$(pwd);
+      cd ~;
+      mkdir clang-done;
+      export PREFIX="~/clang-done";
+      git clone git@github.com:rsmmr/install-clang.git;
+      install-clang/install-clang -r 'git://github.com/llvm-mirror' -j 2 $PREFIX | awk 'NR % 1000 == 0'
+      export CC=$PREFIX/bin/clang;
+      export CXX=$PREFIX/bin/clang++;
+      rm -rf $PREFIX/src/llvm;
+      install-clang/install-clang -r 'git://github.com/llvm-mirror' -j 2 -a libcxxabi $PREFIX | awk 'NR % 1000 == 0';
+      sudo cp $PREFIX/lib/libc++.so.1.0 /usr/lib;
+      sudo ln -sf /usr/lib/libc++.so.1.0 /usr/lib/libc++.so;
+      sudo ln -sf /usr/lib/libc++.so.1.0 /usr/lib/libc++.so.1;
+      sudo ldconfig;
+      cd $ORIG_SM_DIR;
       fi
 
     - echo "apt-get packages installed."
