@@ -150,9 +150,13 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 		case LifeType_Bar:
 			switch(m_DrainType)
 			{
-				case DrainType_Normal:						break;
-				case DrainType_NoRecover:		AddTo.push_back("NoRecover");	break;
-				case DrainType_SuddenDeath:	AddTo.push_back("SuddenDeath");	break;
+				case DrainType_NoRecover:
+					AddTo.push_back("NoRecover");
+					break;
+				case DrainType_SuddenDeath:
+					AddTo.push_back("SuddenDeath");
+					break;
+				default: break;
 			}
 			break;
 		case LifeType_Battery:

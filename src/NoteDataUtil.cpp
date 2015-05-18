@@ -932,6 +932,8 @@ void NoteDataUtil::AutogenKickbox(const NoteData& in, NoteData& out, const Timin
 					this_limb= prev_limb_used == left_fist ? right_fist : left_fist;
 				}
 				break;
+			default:
+				break;
 		}
 		size_t this_panel= prev_limb_panels[this_limb];
 		if(panel_repeat_counts[this_limb] + 1 > panel_repeat_goals[this_limb])
@@ -1116,6 +1118,8 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 					break;
 				case TapNoteType_Fake:
 					++out[RadarCategory_Fakes];
+					break;
+				default:
 					break;
 			}
 		}

@@ -223,7 +223,7 @@ void ActorMultiVertex::DrawPrimitives()
 
 	Actor::SetTextureRenderStates();
 	DISPLAY->SetEffectMode( _EffectMode );
-	
+
 	// set temporary diffuse and glow
 	static AMV_TweenState TS;
 
@@ -242,9 +242,9 @@ void ActorMultiVertex::DrawPrimitives()
 			TS.vertices[i].c.g *= m_pTempState->diffuse[0].g;
 			TS.vertices[i].c.a *= m_pTempState->diffuse[0].a;
 		}
-	
+
 	}
-	
+
 	// Draw diffuse pass.
 	if( m_pTempState->diffuse[0].a > 0 )
 	{
@@ -259,7 +259,7 @@ void ActorMultiVertex::DrawPrimitives()
 		for( size_t i=0; i < TS.vertices.size(); i++ )
 		{
 			TS.vertices[i].c = m_pTempState->glow;
-		}		
+		}
 		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
 		DrawInternal( AMV_TempState );
 
@@ -315,6 +315,8 @@ void ActorMultiVertex::DrawInternal( const AMV_TweenState *TS )
 			DISPLAY->DrawSymmetricQuadStrip( &TS->vertices[FirstToDraw], NumToDraw );
 			break;
 		}
+		default:
+			break;
 	}
 
 	DISPLAY->SetEffectMode( EffectMode_Normal );
@@ -375,6 +377,8 @@ void ActorMultiVertex::SetVertsFromSplines()
 			break;
 		case DrawMode_LineStrip:
 			SetVertsFromSplinesInternal(1, 0);
+			break;
+		default:
 			break;
 	}
 }
@@ -542,6 +546,8 @@ void ActorMultiVertex::UpdateAnimationState(bool force_update)
 					}
 				}
 				break;
+			default:
+				break;
 		}
 	}
 #undef STATE_ID
@@ -669,7 +675,7 @@ int ActorMultiVertex::AMV_TweenState::GetSafeNumToDraw( DrawMode dm, int num ) c
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ActorMultiVertex. */ 
+/** @brief Allow Lua to have access to the ActorMultiVertex. */
 class LunaActorMultiVertex: public Luna<ActorMultiVertex>
 {
 public:
@@ -873,7 +879,7 @@ public:
 		lua_pushnumber(L, p->GetDestNumToDraw());
 		return 1;
 	}
-	
+
 	static int GetCurrDrawMode( T* p, lua_State* L )
 	{
 		Enum::Push(L, p->GetCurrDrawMode());
@@ -892,7 +898,7 @@ public:
 		lua_pushnumber(L, p->GetCurrNumToDraw());
 		return 1;
 	}
-	
+
 	static int LoadTexture( T* p, lua_State *L )
 	{
 		if( lua_isnil(L, 1) )
@@ -1199,7 +1205,7 @@ LUA_REGISTER_DERIVED_CLASS( ActorMultiVertex, Actor )
 /*
  * (c) 2014 Matthew Gardner and Eric Reese
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1209,7 +1215,7 @@ LUA_REGISTER_DERIVED_CLASS( ActorMultiVertex, Actor )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
