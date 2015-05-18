@@ -913,6 +913,8 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 						out.TidyUpData();
 						return true;
 						break;
+					default:
+						break;
 				}
 			}
 			else
@@ -926,6 +928,8 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 						break;
 					case LNDID_notedata:
 						tryingSteps = true;
+						break;
+					default:
 						break;
 				}
 			}

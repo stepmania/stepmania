@@ -367,18 +367,20 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 		f.PutLine( ssprintf("#CDTITLE:%s;", DwiEscape(out.m_sCDTitleFile).c_str()) );
 	switch( out.m_DisplayBPMType )
 	{
-	case DISPLAY_BPM_ACTUAL:
-		// write nothing
-		break;
-	case DISPLAY_BPM_SPECIFIED:
-		if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
-			f.PutLine( ssprintf("#DISPLAYBPM:%i;\n", (int) out.m_fSpecifiedBPMMin) );
-		else
-			f.PutLine( ssprintf("#DISPLAYBPM:%i..%i;\n", (int) out.m_fSpecifiedBPMMin, (int) out.m_fSpecifiedBPMMax) );
-		break;
-	case DISPLAY_BPM_RANDOM:
-		f.PutLine( "#DISPLAYBPM:*" );
-		break;
+		case DISPLAY_BPM_ACTUAL:
+			// write nothing
+			break;
+		case DISPLAY_BPM_SPECIFIED:
+			if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
+				f.PutLine( ssprintf("#DISPLAYBPM:%i;\n", (int) out.m_fSpecifiedBPMMin) );
+			else
+				f.PutLine( ssprintf("#DISPLAYBPM:%i..%i;\n", (int) out.m_fSpecifiedBPMMin, (int) out.m_fSpecifiedBPMMax) );
+			break;
+		case DISPLAY_BPM_RANDOM:
+			f.PutLine( "#DISPLAYBPM:*" );
+			break;
+		default:
+			break;
 	}
 
 	// TODO: Also check for delays, add them as stops minus one row?
