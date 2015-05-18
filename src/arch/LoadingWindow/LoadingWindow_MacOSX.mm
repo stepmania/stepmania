@@ -3,6 +3,7 @@
 #import "LoadingWindow_MacOSX.h"
 #import "RageUtil.h"
 #import "RageFile.h"
+#include "ThemeManager.h"
 
 @interface LoadingWindowHelper : NSObject
 {
@@ -25,7 +26,7 @@
 	NSRect viewRect, windowRect;
 	float height = 0.0f;
 	float padding = 5.0f;
-	
+
 	NSRect progressIndicatorRect;
 	progressIndicatorRect = NSMakeRect(padding, padding, size.width-padding*2.0f, 0);
 	m_ProgressIndicator = [[NSProgressIndicator alloc] initWithFrame:progressIndicatorRect];
@@ -36,7 +37,7 @@
 	[m_ProgressIndicator setDoubleValue:0];
 	progressIndicatorRect = [m_ProgressIndicator frame];
 	float progressHeight = progressIndicatorRect.size.height;
-	
+
 	NSFont *font = [NSFont systemFontOfSize:0.0f];
 	NSRect textRect;
 	// Just give it a size until it is created.
@@ -45,7 +46,7 @@
 	[m_Text setFont:font];
 	height = [[m_Text layoutManager] defaultLineHeightForFont:font]*3 + 4;
 	textRect = NSMakeRect( 0, progressHeight + padding, size.width, height );
-	
+
 	[m_Text setFrame:textRect];
 	[m_Text setEditable:NO];
 	[m_Text setSelectable:NO];
@@ -55,20 +56,20 @@
 	[m_Text setHorizontallyResizable:NO];
 	[m_Text setVerticallyResizable:NO];
 	[m_Text setString:@"Initializing Hardware..."];
-	
+
 	viewRect = NSMakeRect( 0, height + progressHeight + padding, size.width, size.height );
 	NSImageView *iView = [[NSImageView alloc] initWithFrame:viewRect];
 	[iView setImage:image];
 	[iView setImageFrameStyle:NSImageFrameNone];
-	
+
 	windowRect = NSMakeRect( 0, 0, size.width, size.height + height + progressHeight + padding);
 	m_Window = [[NSWindow alloc] initWithContentRect:windowRect
 							styleMask:NSTitledWindowMask
 							backing:NSBackingStoreBuffered
 							defer:YES];
-	
+
 	NSView *view = [m_Window contentView];
-	
+
 	// Set some properties.
 	[m_Window setOneShot:YES];
 	[m_Window setReleasedWhenClosed:YES];
@@ -79,14 +80,16 @@
 
 	// Set subviews.
 	[view addSubview:m_Text];
-	[view addSubview:iView];
 	[m_Text release];
+
+	[view addSubview:iView];
 	[iView release];
+
 	[view addSubview:m_ProgressIndicator];
 
 	// Display the window.
 	[m_Window makeKeyAndOrderFront:nil];
-}	
+}
 
 - (void) setProgress:(NSNumber *)progress
 {
@@ -107,35 +110,7 @@
 
 static LoadingWindowHelper *g_Helper = nil;
 
-LoadingWindow_MacOSX::LoadingWindow_MacOSX()
-{
-	RageFile f;
-	RString data;
-	
-	vector<RString> vs;
-	GetDirListing( "Data/splash*.png", vs, false, true );
-	if( vs.empty() || !f.Open(vs[0]) )
-		return;
-	f.Read( data );
-	if( data.empty() )
-		return;
-
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	NSImage *image = nil;
-	NSData *d = [[NSData alloc] initWithBytes:data.data() length:data.length()];
-	image = [[NSImage alloc] initWithData:d];
-	[d release];
-	if( !image )
-	{
-		[pool release];
-		return;
-	}
-	
-	g_Helper = [[LoadingWindowHelper alloc] init];
-	g_Helper->m_Pool = pool;
-	[g_Helper performSelectorOnMainThread:@selector(setupWindow:) withObject:image waitUntilDone:YES];
-	[image release];
-}
+LoadingWindow_MacOSX::LoadingWindow_MacOSX() {}
 
 LoadingWindow_MacOSX::~LoadingWindow_MacOSX()
 {
@@ -157,6 +132,45 @@ void LoadingWindow_MacOSX::SetText( RString str )
 	[s release];
 }
 
+void LoadingWindow_MacOSX::SetSplash( const RageSurface *pSplash )
+{
+	RageFile f;
+	RString data;
+	vector<RString> vs;
+
+	// Try to load a custom splash from the current theme, first.
+	GetDirListing( THEME->GetPathG( "Common", "splash"), vs, false, true );
+
+	//	if no Common splash file was found in the theme...
+	if( vs.empty() || !f.Open(vs[0]) )
+	{
+		// then try the stock splash.png from ./Data/
+		GetDirListing( "Data/splash*.png", vs, false, true );
+	}
+
+	if( vs.empty() || !f.Open(vs[0]) )
+		return;
+	f.Read( data );
+	if( data.empty() )
+		return;
+
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	NSImage *image = nil;
+	NSData *d = [[NSData alloc] initWithBytes:data.data() length:data.length()];
+	image = [[NSImage alloc] initWithData:d];
+	[d release];
+	if( !image )
+	{
+		[pool release];
+		return;
+	}
+
+	g_Helper = [[LoadingWindowHelper alloc] init];
+	g_Helper->m_Pool = pool;
+	[g_Helper performSelectorOnMainThread:@selector(setupWindow:) withObject:image waitUntilDone:NO];
+	[image release];
+}
+
 void LoadingWindow_MacOSX::SetProgress( const int progress )
 {
 	[g_Helper performSelectorOnMainThread:@selector(setProgress:) withObject:[NSNumber numberWithDouble:(double)progress] waitUntilDone:NO];
@@ -176,7 +190,7 @@ void LoadingWindow_MacOSX::SetIndeterminate( bool indeterminate )
 /*
  * (c) 2003-2006, 2008 Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -186,7 +200,7 @@ void LoadingWindow_MacOSX::SetIndeterminate( bool indeterminate )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
