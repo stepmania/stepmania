@@ -15,7 +15,6 @@
 #include "RageLog.h"
 #include "RageTimer.h"
 #include "RageSoundReader_Preload.h"
-#include "Foreach.h"
 #include "LocalizedString.h"
 #include "Preference.h"
 
@@ -50,8 +49,10 @@ RageSoundManager::~RageSoundManager()
 {
 	/* Don't lock while deleting the driver (the decoder thread might deadlock). */
 	delete m_pDriver;
-	FOREACHM( RString, RageSoundReader_Preload *, m_mapPreloadedSounds, s )
-		delete s->second;
+	for (auto &s: m_mapPreloadedSounds)
+	{
+		delete s.second;
+	}
 	m_mapPreloadedSounds.clear();
 }
 
@@ -101,7 +102,7 @@ void RageSoundManager::Update()
 	{
 		map<RString, RageSoundReader_Preload *>::iterator it, next;
 		it = m_mapPreloadedSounds.begin();
-		
+
 		while( it != m_mapPreloadedSounds.end() )
 		{
 			next = it; ++next;
@@ -168,7 +169,7 @@ void RageSoundManager::AddLoadedSound( const RString &sPath_, RageSoundReader_Pr
 	map<RString, RageSoundReader_Preload *>::const_iterator it;
 	it = m_mapPreloadedSounds.find( sPath );
 	ASSERT_M( it == m_mapPreloadedSounds.end(), sPath );
-	
+
 	m_mapPreloadedSounds[sPath] = pSound->Copy();
 }
 
