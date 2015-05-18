@@ -1,6 +1,5 @@
 #include "global.h"
 #include "PrefsManager.h"
-#include "Foreach.h"
 #include "IniFile.h"
 #include "LuaManager.h"
 #include "Preference.h"
@@ -163,7 +162,7 @@ PrefsManager::PrefsManager() :
 
 	m_sAnnouncer		( "Announcer",			"" ),
 	m_sTheme		( "Theme",			SpecialFiles::BASE_THEME_NAME ),
-	m_sDefaultModifiers	( "DefaultModifiers",		"" ), 
+	m_sDefaultModifiers	( "DefaultModifiers",		"" ),
 
 	m_bWindowed		( "Windowed",			true ),
 	m_iDisplayWidth		( "DisplayWidth",		854 ),
@@ -282,7 +281,7 @@ PrefsManager::PrefsManager() :
 	m_iSoundDevice			( "SoundDevice",			"" ),
 	m_iSoundPreferredSampleRate	( "SoundPreferredSampleRate",		0 ),
 	m_sLightsStepsDifficulty	( "LightsStepsDifficulty",		"medium" ),
-	m_bAllowUnacceleratedRenderer	( "AllowUnacceleratedRenderer",		false ), 
+	m_bAllowUnacceleratedRenderer	( "AllowUnacceleratedRenderer",		false ),
 	m_bThreadedInput		( "ThreadedInput",			true ),
 	m_bThreadedMovieDecode		( "ThreadedMovieDecode",		true ),
 	m_sTestInitialScreen		( "TestInitialScreen",			"" ),
@@ -373,7 +372,7 @@ void PrefsManager::StoreGamePrefs()
 	ASSERT( !m_sCurrentGame.Get().empty() );
 
 	// save off old values
-	GamePrefs &gp = m_mapGameNameToGamePrefs[m_sCurrentGame];
+	GamePrefs &gp = m_mapGameNameToGamePrefs[m_sCurrentGame.ToString()];
 	gp.m_sAnnouncer = m_sAnnouncer;
 	gp.m_sTheme = m_sTheme;
 	gp.m_sDefaultModifiers = m_sDefaultModifiers;
@@ -520,14 +519,14 @@ void PrefsManager::SavePrefsToIni( IniFile &ini )
 		pNode = ini.AppendChild( "Options" );
 	IPreference::SavePrefsToNode( pNode );
 
-	FOREACHM_CONST( RString, GamePrefs, m_mapGameNameToGamePrefs, iter )
+	for (auto const &iter: m_mapGameNameToGamePrefs)
 	{
-		RString sSection = "Game-" + RString( iter->first );
+		RString sSection = "Game-" + RString( iter.first );
 
 		// todo: write more values here? -aj
-		ini.SetValue( sSection, "Announcer",		iter->second.m_sAnnouncer );
-		ini.SetValue( sSection, "Theme",		iter->second.m_sTheme );
-		ini.SetValue( sSection, "DefaultModifiers",	iter->second.m_sDefaultModifiers );
+		ini.SetValue( sSection, "Announcer",		iter.second.m_sAnnouncer );
+		ini.SetValue( sSection, "Theme",		iter.second.m_sTheme );
+		ini.SetValue( sSection, "DefaultModifiers",	iter.second.m_sDefaultModifiers );
 	}
 }
 
@@ -549,7 +548,7 @@ RString PrefsManager::GetPreferencesSection() const
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the PrefsManager. */ 
+/** @brief Allow Lua to have access to the PrefsManager. */
 class LunaPrefsManager: public Luna<PrefsManager>
 {
 public:
@@ -610,9 +609,9 @@ public:
 		lua_pushboolean( L, true );
 		return 1;
 	}
-	
+
 	static int SavePreferences( T* p, lua_State *L ) { p->SavePrefsToDisk(); COMMON_RETURN_SELF; }
-	
+
 	LunaPrefsManager()
 	{
 		ADD_METHOD( GetPreference );
@@ -629,7 +628,7 @@ LUA_REGISTER_CLASS( PrefsManager )
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -639,7 +638,7 @@ LUA_REGISTER_CLASS( PrefsManager )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

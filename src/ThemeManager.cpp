@@ -688,14 +688,16 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 
 		switch( LuaHelpers::ReportScriptError(message, "", true) )
 		{
-		case Dialog::abort:
-			RageException::Throw( "%s", message.c_str() ); 
-			break;
-		case Dialog::retry:
-			ReloadMetrics();
-			return GetPathInfoToRaw( out, sThemeName_, category, sMetricsGroup_, sElement_ );
-		case Dialog::ignore:
-			break;
+			case Dialog::abort:
+				RageException::Throw( "%s", message.c_str() );
+				break;
+			case Dialog::retry:
+				ReloadMetrics();
+				return GetPathInfoToRaw( out, sThemeName_, category, sMetricsGroup_, sElement_ );
+			case Dialog::ignore:
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -733,12 +735,14 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 
 	switch(LuaHelpers::ReportScriptError(sMessage, "", true))
 	{
-	case Dialog::retry:
-		ReloadMetrics();
-		return GetPathInfoToRaw( out, sThemeName_, category, sMetricsGroup_, sElement_ );
-	case Dialog::ignore:
-		GetPathInfo( out, category, "", "_missing" );
-		return true;
+		case Dialog::retry:
+			ReloadMetrics();
+			return GetPathInfoToRaw( out, sThemeName_, category, sMetricsGroup_, sElement_ );
+		case Dialog::ignore:
+			GetPathInfo( out, category, "", "_missing" );
+			return true;
+		default:
+			break;
 	}
 
 	RageException::Throw( "%s", sMessage.c_str() ); 
@@ -751,10 +755,10 @@ bool ThemeManager::GetPathInfoToAndFallback( PathInfo &out, ElementCategory cate
 	int n = 100;
 	while( n-- )
 	{
-		FOREACHD_CONST( Theme, g_vThemes, iter )
+		for (auto const &iter: g_vThemes)
 		{
 			// search with requested name
-			if( GetPathInfoToRaw( out, iter->sThemeName, category, sMetricsGroup, sElement ) )
+			if( GetPathInfoToRaw( out, iter.sThemeName, category, sMetricsGroup, sElement ) )
 				return true;
 		}
 

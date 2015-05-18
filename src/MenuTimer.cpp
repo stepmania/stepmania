@@ -183,8 +183,8 @@ void MenuTimer::SetText( float fSeconds )
 		LuaHelpers::Push( L, fSeconds );
 
 		// call function with 1 argument and 1 result
-		RString Error= "Error running Text" + (i+1);
-		Error+= "FormatFunction: ";
+		RString Error = ssprintf("Error running Text%d", (i+1));
+		Error += "FormatFunction: ";
 		LuaHelpers::RunScriptOnStack(L, Error, 1, 1, true);
 
 		RString sText;

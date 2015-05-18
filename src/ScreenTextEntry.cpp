@@ -214,10 +214,12 @@ bool ScreenTextEntry::Input( const InputEventPlus &input )
 	{
 		switch( input.type )
 		{
-		case IET_FIRST_PRESS:
-			bLCtrl = true; break;
-		case IET_RELEASE:
-			bLCtrl = false; break;
+			case IET_FIRST_PRESS:
+				bLCtrl = true; break;
+			case IET_RELEASE:
+				bLCtrl = false; break;
+			default:
+				break;
 		}
 	}
 	
@@ -225,10 +227,12 @@ bool ScreenTextEntry::Input( const InputEventPlus &input )
 	{
 		switch( input.type )
 		{
-		case IET_FIRST_PRESS:
-			bRCtrl = true; break;
-		case IET_RELEASE:
-			bRCtrl = false; break;
+			case IET_FIRST_PRESS:
+				bRCtrl = true; break;
+			case IET_RELEASE:
+				bRCtrl = false; break;
+			default:
+				break;
 		}
 	}
 	

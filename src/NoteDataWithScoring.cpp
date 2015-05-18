@@ -374,6 +374,8 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 					break;
 				case TapNoteType_Fake:
 					break;
+				default:
+					break;
 			}
 		}
 		++curr_note;

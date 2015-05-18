@@ -142,7 +142,7 @@ void TimingData::DumpOneTable(const beat_start_lookup_t& lookup, const RString& 
 			SegInfoStr(stops, starts.stop, "stop").c_str(),
 			SegInfoStr(delays, starts.delay, "delay").c_str(),
 			starts.last_row, starts.last_time, starts.warp_destination, starts.is_warping);
-		LOG->Trace(str.c_str());
+		LOG->Trace("%s", str.c_str());
 	}
 }
 
@@ -661,6 +661,8 @@ void TimingData::AddSegment( const TimingSegment *seg )
 			}
 			break;
 		}
+		default:
+			break;
 	}
 
 	// the segment at or before this row is equal to the new one; ignore it

@@ -3,16 +3,14 @@
 #include "RageLog.h"
 #include "Foreach.h"
 
-using __gnu_cxx::hash_map;
-
 Joystick::Joystick() :	id( InputDevice_Invalid ),
-			x_axis( 0 ), x_min( 0 ), x_max( 0 ),
-			y_axis( 0 ), y_min( 0 ), y_max( 0 ),
-			z_axis( 0 ), z_min( 0 ), z_max( 0 ),
-			x_rot( 0 ), rx_min( 0 ), rx_max( 0 ),
-			y_rot( 0 ), ry_min( 0 ), ry_max( 0 ),
-			z_rot( 0 ), rz_min( 0 ), rz_max( 0 ),
-			hat( 0 ), hat_min( 0 ), hat_max( 0 )
+			x_axis( 0 ), y_axis( 0 ), z_axis( 0 ),
+			x_rot( 0 ), y_rot( 0 ), z_rot( 0 ),
+			hat( 0 ), hat_min( 0 ), hat_max( 0 ),
+			x_min( 0 ), y_min( 0 ), z_min( 0 ),
+			x_max( 0 ), y_max( 0 ), z_max( 0 ),
+			rx_min( 0 ), ry_min( 0 ), rz_min( 0 ),
+			rx_max( 0 ), ry_max( 0 ), rz_max( 0 )
 {
 }
 
@@ -136,8 +134,10 @@ void JoystickDevice::Open()
 		ADD( x_rot );	ADD( y_rot );	ADD( z_rot );
 		ADD( hat );
 #undef ADD
-		for( hash_map<IOHIDElementCookie,DeviceButton>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j )
+		for( std::unordered_map<IOHIDElementCookie,DeviceButton>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j )
+		{
 			AddElementToQueue( j->first );
+		}
 	}
 }
 
@@ -234,8 +234,8 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 		}
 		else
 		{
-			// hash_map<T,U>::operator[] is not const
-			hash_map<IOHIDElementCookie, DeviceButton>::const_iterator iter;
+			// This cannot be const.
+			std::unordered_map<IOHIDElementCookie, DeviceButton>::const_iterator iter;
 
 			iter = js.mapping.find( cookie );
 			if( iter != js.mapping.end() )

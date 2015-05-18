@@ -596,6 +596,8 @@ void actor_template_t::load_node(XNode const& node, RString const& dirname, cond
 							store_field("Bones", this_relative, false);
 							handled_level= 2;
 							break;
+						default:
+							break;
 					}
 					if(!handled_level)
 					{
