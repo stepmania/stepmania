@@ -87,7 +87,7 @@ void RageBitmapTexture::Create()
 	{
 		RString warning = ssprintf("RageBitmapTexture: Couldn't load %s: %s",
 			actualID.filename.c_str(), error.c_str());
-		LOG->Warn(warning);
+		LOG->Warn("%s", warning.c_str());
 		Dialog::OK(warning, "missing_texture");
 		pImg = RageSurfaceUtils::MakeDummySurface( 64, 64 );
 		ASSERT( pImg != NULL );
