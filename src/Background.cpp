@@ -249,8 +249,10 @@ void BackgroundImpl::Unload()
 
 void BackgroundImpl::Layer::Unload()
 {
-	FOREACHM( BackgroundDef, Actor*, m_BGAnimations, iter )
-		delete iter->second;
+	for (auto &iter: m_BGAnimations)
+	{
+		delete iter.second;
+	}
 	m_BGAnimations.clear();
 	m_aBGChanges.clear();
 
@@ -527,10 +529,10 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 		int iSize = min( (int)g_iNumBackgrounds, (int)vsNames.size() );
 		vsNames.resize( iSize );
 
-		FOREACH_CONST( RString, vsNames, s )
+		for (auto &s: vsNames)
 		{
 			BackgroundDef bd;
-			bd.m_sFile1 = *s;
+			bd.m_sFile1 = s;
 			m_RandomBGAnimations.push_back( bd );
 		}
 	}
@@ -559,11 +561,12 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 			Layer &layer = m_Layer[i];
 
 			// Load all song-specified backgrounds
-			FOREACH_CONST( BackgroundChange, pSong->GetBackgroundChanges(i), bgc )
+			auto &changes = pSong->GetBackgroundChanges(i);
+			for (auto bgc = changes.begin(); bgc != changes.end(); ++bgc)
 			{
 				BackgroundChange change = *bgc;
 				BackgroundDef &bd = change.m_def;
-				
+
 				bool bIsAlreadyLoaded = layer.m_BGAnimations.find(bd) != layer.m_BGAnimations.end();
 
 				if( bd.m_sFile1 != RANDOM_BACKGROUND_FILE  &&  !bIsAlreadyLoaded )
@@ -585,7 +588,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 						}
 					}
 				}
-			
+
 				if( !bd.IsEmpty() )
 					layer.m_aBGChanges.push_back( change );
 			}
@@ -630,7 +633,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	FOREACH_BackgroundLayer( i )
 	{
 		Layer &layer = m_Layer[i];
-		FOREACH_CONST( BackgroundChange, layer.m_aBGChanges, bgc )
+		for (auto bgc = layer.m_aBGChanges.begin(); bgc != layer.m_aBGChanges.end(); ++bgc)
 		{
 			const BackgroundDef &bd = bgc->m_def;
 			if( bd == m_StaticBackgroundDef )
@@ -760,7 +763,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 			if( m_pFadingBGA )
 			{
 				m_pFadingBGA->PlayCommand( "LoseFocus" );
-				
+
 				if( !change.m_sTransition.empty() )
 				{
 					map<RString,BackgroundTransition>::const_iterator lIter = mapNameToTransition.find( change.m_sTransition );
@@ -975,7 +978,7 @@ void Background::GetLoadedBackgroundChanges( vector<BackgroundChange> *pBackgrou
 /*
  * (c) 2001-2004 Chris Danford, Ben Nordstrom
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -985,7 +988,7 @@ void Background::GetLoadedBackgroundChanges( vector<BackgroundChange> *pBackgrou
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

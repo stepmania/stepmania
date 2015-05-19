@@ -177,8 +177,10 @@ OptionsList::OptionsList()
 
 OptionsList::~OptionsList()
 {
-	FOREACHM( RString, OptionRowHandler *, m_Rows, hand )
-		delete hand->second;
+	for (auto &hand: m_Rows)
+	{
+		delete hand.second;
+	}
 }
 
 void OptionsList::Load( RString sType, PlayerNumber pn )
@@ -197,9 +199,10 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 
 	vector<RString> asDirectLines;
 	split( DIRECT_LINES, ",", asDirectLines, true );
-	FOREACH( RString, asDirectLines, s )
-		m_setDirectRows.insert( *s );
-
+	for (auto const &s: asDirectLines)
+	{
+		m_setDirectRows.insert( s );
+	}
 	vector<RString> setToLoad;
 	split( TOP_MENUS, ",", setToLoad );
 	m_setTopMenus.insert( setToLoad.begin(), setToLoad.end() );
@@ -249,9 +252,9 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 void OptionsList::Reset()
 {
 	/* Import options. */
-	FOREACHM( RString, OptionRowHandler *, m_Rows, hand )
+	for (auto &hand: m_Rows)
 	{
-		RString sLineName = hand->first;
+		RString sLineName = hand.first;
 		ImportRow( sLineName );
 	}
 }
@@ -623,7 +626,7 @@ void OptionsList::SelectItem( const RString &sRowName, int iMenuItem )
 	}
 	else	// data.selectType != SELECT_MULTIPLE
 	{
-		fill( bSelections.begin(), bSelections.end(), false ); 
+		fill( bSelections.begin(), bSelections.end(), false );
 		bSelections[iMenuItem] = true;
 	}
 
@@ -683,10 +686,10 @@ bool OptionsList::Start()
 			GAMESTATE->ResetToDefaultSongOptions( ModsLevel_Preferred );
 
 			/* Import options. */
-			FOREACHM( RString, OptionRowHandler *, m_Rows, hand )
+			for (auto &hand: m_Rows)
 			{
-				ImportRow( hand->first );
-				SelectionsChanged( hand->first );
+				ImportRow( hand.first );
+				SelectionsChanged( hand.first );
 			}
 
 			UpdateMenuFromSelections();

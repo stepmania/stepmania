@@ -3,7 +3,6 @@
 #include <cstring>
 #include "NotesWriterSM.h"
 #include "BackgroundUtil.h"
-#include "Foreach.h"
 #include "GameManager.h"
 #include "LocalizedString.h"
 #include "NoteTypes.h"
@@ -119,18 +118,18 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 			timing.AddSegment( StopSegment(fs->GetRow(), 0) );
 	}
 	// Delays can't be negative: thus, no effect.
-	FOREACH_CONST(TimingSegment *, delays, ss)
+	for (auto const *ss: delays)
 	{
-		float fBeat = NoteRowToBeat( (*ss)->GetRow()-1 );
-		float fPause = ToDelay(*ss)->GetPause();
+		float fBeat = NoteRowToBeat( ss->GetRow()-1 );
+		float fPause = ToDelay(ss)->GetPause();
 		allPauses.insert( pair<float,float>(fBeat, fPause) );
 	}
 
 	f.Write( "#STOPS:" );
 	vector<RString> stopLines;
-	FOREACHM(float, float, allPauses, ap)
+	for (auto const &ap: allPauses)
 	{
-		stopLines.push_back(ssprintf("%.6f=%.6f", ap->first, ap->second));
+		stopLines.push_back(ssprintf("%.6f=%.6f", ap.first, ap.second));
 	}
 	f.PutLine(join(",\n", stopLines));
 
@@ -145,8 +144,10 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 		else
 			f.Write( ssprintf("#BGCHANGES%d:", b+1) );
 
-		FOREACH_CONST( BackgroundChange, out.GetBackgroundChanges(b), bgc )
-			f.PutLine( (*bgc).ToString() +"," );
+		for (auto &bgc: out.GetBackgroundChanges(b))
+		{
+			f.PutLine(bgc.ToString() + "," );
+		}
 
 		/* If there's an animation plan at all, add a dummy "-nosongbg-" tag to indicate that
 		 * this file doesn't want a song BG entry added at the end.  See SMLoader::TidyUpData.
@@ -160,9 +161,9 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	if( out.GetForegroundChanges().size() )
 	{
 		f.Write( "#FGCHANGES:" );
-		FOREACH_CONST( BackgroundChange, out.GetForegroundChanges(), bgc )
+		for (auto const &bgc: out.GetForegroundChanges())
 		{
-			f.PutLine( (*bgc).ToString() +"," );
+			f.PutLine( bgc.ToString() +"," );
 		}
 		f.PutLine( ";" );
 	}
@@ -215,7 +216,7 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 	lines.push_back( ssprintf( "     %s:", SmEscape(desc).c_str() ) );
 	lines.push_back( ssprintf( "     %s:", DifficultyToString(in.GetDifficulty()).c_str() ) );
 	lines.push_back( ssprintf( "     %d:", in.GetMeter() ) );
-	
+
 	vector<RString> asRadarValues;
 	// OpenITG simfiles use 11 radar categories.
 	int categories = 11;
@@ -223,7 +224,7 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 	{
 		const RadarValues &rv = in.GetRadarValues( pn );
 		// Can't use the foreach anymore due to flexible radar lines.
-		for( RadarCategory rc = (RadarCategory)0; rc < categories; 
+		for( RadarCategory rc = (RadarCategory)0; rc < categories;
 		    enum_add<RadarCategory>( rc, 1 ) )
 		{
 			asRadarValues.push_back( ssprintf("%.6f", rv[rc]) );
@@ -255,9 +256,8 @@ bool NotesWriterSM::Write( RString sPath, Song &out, const vector<Steps*>& vpSte
 
 	WriteGlobalTags( f, out );
 
-	FOREACH_CONST( Steps*, vpStepsToSave, s ) 
+	for (auto const *pSteps: vpStepsToSave)
 	{
-		const Steps* pSteps = *s;
 		RString sTag = GetSMNotesTag( out, *pSteps );
 		f.PutLine( sTag );
 	}
@@ -307,8 +307,8 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RS
 	RString sPath = sDir + GetEditFileName(pSong,pSteps);
 
 	// Check to make sure that we're not clobering an existing file before opening.
-	bool bFileNameChanging = 
-		pSteps->GetSavedToDisk()  && 
+	bool bFileNameChanging =
+		pSteps->GetSavedToDisk()  &&
 		pSteps->GetFilename() != sPath;
 	if( bFileNameChanging  &&  DoesFileExist(sPath) )
 	{
@@ -344,7 +344,7 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RS
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -354,7 +354,7 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RS
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
