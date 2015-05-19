@@ -1587,6 +1587,7 @@ void BMSSongLoader::AddToSong()
 
 		out->m_sMusicFile = main.info.musicFile;
 		out->m_PreviewFile= main.info.previewFile;
+		out->m_fMusicSampleLengthSeconds = 0.00f; // to ensure whole preview file is heard
 		out->m_SongTiming = main.steps->m_Timing;
 	}
 
