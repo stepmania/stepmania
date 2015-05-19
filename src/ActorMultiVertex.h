@@ -73,7 +73,7 @@ public:
 	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();
 	virtual void DrawInternal( const AMV_TweenState *TS );
-	
+
 	void SetCurrentTweenStart();
 	void EraseHeadTween();
 	void UpdatePercentThroughTween( float PercentThroughTween );
@@ -81,7 +81,7 @@ public:
 
 	void StopTweening();
 	void FinishTweening();
-	
+
 	void SetTexture( RageTexture *Texture );
 	RageTexture* GetTexture() { return _Texture; };
 	void LoadFromTexture( RageTextureID ID );
@@ -105,7 +105,7 @@ public:
 	int GetCurrFirstToDraw() const					{ return AMV_current.FirstToDraw; }
 	int GetCurrNumToDraw() const					{ return AMV_current.NumToDraw; }
 	size_t GetNumVertices() 					{ return AMV_DestTweenState().vertices.size(); }
-	
+
 	void SetVertexPos( int index , float x , float y , float z );
 	void SetVertexColor( int index , RageColor c );
 	void SetVertexCoords( int index , float TexCoordX , float TexCoordY );
@@ -160,7 +160,7 @@ private:
 
 	// required to handle diffuse and glow
 	AMV_TweenState *AMV_TempState;
-	
+
 	EffectMode _EffectMode;
 	TextureMode _TextureMode;
 
@@ -179,7 +179,7 @@ private:
  * @author Matthew Gardner and Eric Reese (c) 2014
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -189,7 +189,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
