@@ -382,7 +382,13 @@ public:
 /** @brief Allow a quick way to swap notedata. */
 namespace std
 {
-	template<> inline void swap<NoteData>( NoteData &nd1, NoteData &nd2 ){ nd1.swap( nd2 ); }
+	template<> inline void swap<NoteData>( NoteData &nd1, NoteData &nd2 )
+#if !defined(_MSC_VER)
+	noexcept(is_nothrow_move_constructible<NoteData>::value && is_nothrow_move_assignable<NoteData>::value)
+#endif
+	{
+		nd1.swap( nd2 );
+	}
 }
 
 #endif
