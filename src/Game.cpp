@@ -33,7 +33,8 @@ static std::array<Game::PerButtonInfo, 11> const g_CommonButtonInfo =
 
 const Game::PerButtonInfo *Game::GetPerButtonInfo( GameButton gb ) const
 {
-	COMPILE_ASSERT( GAME_BUTTON_NEXT == g_CommonButtonInfo.size() );
+	// TODO: Replace the need for this compile assert.
+	COMPILE_ASSERT( GAME_BUTTON_NEXT == 11 );
 	if( gb < GAME_BUTTON_NEXT )
 		return &g_CommonButtonInfo[gb];
 	else
