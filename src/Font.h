@@ -7,6 +7,7 @@
 #include "RageUtil.h"
 #include "RageTypes.h"
 #include <map>
+#include <array>
 
 class FontPage;
 class RageTexture;
@@ -48,7 +49,7 @@ struct glyph
 
 	/** @brief Texture coordinate rect. */
 	RectF m_TexRect;
-	
+
 	/** @brief Set up the glyph with default values. */
 	glyph() : m_pPage(NULL), m_FontPageTextures(), m_iHadvance(0),
 		m_fWidth(0), m_fHeight(0), m_fHshift(0), m_TexRect() {}
@@ -77,7 +78,7 @@ struct FontPageSettings
 	/** @brief The initial settings for the FontPage. */
 	FontPageSettings(): m_sTexturePath(""),
 		m_iDrawExtraPixelsLeft(0), m_iDrawExtraPixelsRight(0),
-		m_iAddToAllWidths(0), 
+		m_iAddToAllWidths(0),
 		m_iLineSpacing(-1),
 		m_iTop(-1),
 		m_iBaseline(-1),
@@ -182,20 +183,20 @@ private:
 
 	/**
 	 * @brief This is the primary fontpage of this font.
-	 * 
-	 * The font-wide height, center, etc. is pulled from it. 
+	 *
+	 * The font-wide height, center, etc. is pulled from it.
 	 * (This is one of pages[].) */
 	FontPage *m_pDefault;
 
 	/** @brief Map from characters to glyphs. */
 	map<wchar_t,glyph*> m_iCharToGlyph;
 	/** @brief Each glyph is part of one of the pages[]. */
-	glyph *m_iCharToGlyphCache[128];
+	std::array<glyph *, 128> m_iCharToGlyphCache;
 
 	/**
 	 * @brief True for Hebrew, Arabic, Urdu fonts.
 	 *
-	 * This will also change the way glyphs from the default FontPage are rendered. 
+	 * This will also change the way glyphs from the default FontPage are rendered.
 	 * There may be a better way to handle this. */
 	bool m_bRightToLeft;
 
@@ -207,14 +208,14 @@ private:
 	void LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RString &sTexturePath, const RString &PageName, RString sChars );
 	static void GetFontPaths( const RString &sFontOrTextureFilePath, vector<RString> &sTexturePaths );
 	RString GetPageNameFromFileName( const RString &sFilename );
-	
+
 	Font(const Font& rhs);
 	Font& operator=(const Font& rhs);
 };
 
 /**
  * @brief Last private-use Unicode character:
- * 
+ *
  * This is in the header to reduce file dependencies. */
 const wchar_t FONT_DEFAULT_GLYPH = 0xF8FF;
 
@@ -224,7 +225,7 @@ const wchar_t FONT_DEFAULT_GLYPH = 0xF8FF;
  * @file
  * @author Glenn Maynard, Chris Danford (c) 2001-2004
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -234,7 +235,7 @@ const wchar_t FONT_DEFAULT_GLYPH = 0xF8FF;
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

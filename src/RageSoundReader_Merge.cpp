@@ -175,7 +175,7 @@ int RageSoundReader_Merge::Read( float *pBuffer, int iFrames )
 	/*
 	 * All sounds which are active should stay aligned; each GetNextSourceFrame should not
 	 * come out of sync.  Accomodate small rounding errors.  A larger inconsistency
-	 * happens may be a bug, such as sounds at different speeds. 
+	 * happens may be a bug, such as sounds at different speeds.
 	 */
 
 	vector<int> aNextSourceFrames;

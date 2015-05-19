@@ -1,5 +1,8 @@
 #include "global.h"
 #include "XmlFileUtil.h"
+
+#include <array>
+
 #include "XmlFile.h"
 #include "RageFile.h"
 #include "RageFileDriverMemory.h"
@@ -58,23 +61,23 @@ static void InitEntities()
 	if( !g_mapEntitiesToChars.empty() )
 		return;
 
-	static struct Entity
+	struct Entity
 	{
 		char c;
-		const char *pEntity;
-	}
-	const EntityTable[] =
+		std::string pEntity;
+		Entity(char ch, std::string ent): c(ch), pEntity(ent) {}
+	};
+	static std::array<Entity, 5> const EntityTable =
 	{
-		{ '&',  "amp", },
-		{ '\"', "quot", },
-		{ '\'', "apos", },
-		{ '<',  "lt", },
-		{ '>',  "gt", } 
+		Entity{ '&',  "amp", },
+		Entity{ '\"', "quot", },
+		Entity{ '\'', "apos", },
+		Entity{ '<',  "lt", },
+		Entity{ '>',  "gt", }
 	};
 
-	for( unsigned i = 0; i < ARRAYLEN(EntityTable); ++i )
+	for (auto const &ent: EntityTable)
 	{
-		const Entity &ent = EntityTable[i];
 		g_mapEntitiesToChars[ent.pEntity] = RString(1, ent.c);
 		g_mapCharsToEntities[ent.c] = ent.pEntity;
 	}
@@ -127,10 +130,10 @@ RString::size_type LoadAttributes( XNode *pNode, const RString &xml, RString &sE
 
 		// XML Attr Name
 		RString::size_type iEnd = xml.find_first_of( " =", iOffset );
-		if( iEnd == xml.npos ) 
+		if( iEnd == xml.npos )
 		{
 			// error
-			if( sErrorOut.empty() ) 
+			if( sErrorOut.empty() )
 				sErrorOut = ssprintf( "<%s> attribute has error ", pNode->GetName().c_str() );
 			return string::npos;
 		}
@@ -171,10 +174,10 @@ RString::size_type LoadAttributes( XNode *pNode, const RString &xml, RString &sE
 				iEnd = xml.find_first_of( " >", iOffset );
 			}
 
-			if( iEnd == xml.npos ) 
+			if( iEnd == xml.npos )
 			{
 				// error
-				if( sErrorOut.empty() ) 
+				if( sErrorOut.empty() )
 					sErrorOut = ssprintf( "<%s> attribute text: couldn't find matching quote", sName.c_str() );
 				return string::npos;
 			}
@@ -225,7 +228,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 		RString::size_type iEnd = xml.find( "-->", iOffset );
 		if( iEnd == string::npos )
 		{
-			if( sErrorOut.empty() ) 
+			if( sErrorOut.empty() )
 				sErrorOut = "Unterminated comment";
 
 			return string::npos;
@@ -250,7 +253,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 	if( iOffset == string::npos )
 		return string::npos;
 
-	// alone tag <TAG ... /> or <?TAG ... ?> or <!-- ... --> 
+	// alone tag <TAG ... /> or <?TAG ... ?> or <!-- ... -->
 	// current pointer:   ^               ^              ^
 
 	if( iOffset < xml.size() && (xml[iOffset] == chXMLTagPre || xml[iOffset] == chXMLQuestion || xml[iOffset] == chXMLDash) )
@@ -264,7 +267,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 		if( iOffset == xml.size() || xml[iOffset] != chXMLTagClose )
 		{
 			// error: <TAG ... / >
-			if( sErrorOut.empty() ) 
+			if( sErrorOut.empty() )
 				sErrorOut = "Element must be closed.";
 
 			// ill-formed tag
@@ -274,8 +277,8 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 		// well-formed tag
 		++iOffset;
 
-		// UGLY: We want to ignore all XML meta tags.  So, since the Node we 
-		// just loaded is a meta tag, then Load ourself again using the rest 
+		// UGLY: We want to ignore all XML meta tags.  So, since the Node we
+		// just loaded is a meta tag, then Load ourself again using the rest
 		// of the file until we reach a non-meta tag.
 		if( !pNode->GetName().empty() && (pNode->GetName()[0] == chXMLQuestion || pNode->GetName()[0] == chXMLExclamation) )
 			iOffset = LoadInternal( pNode, xml, sErrorOut, iOffset );
@@ -287,12 +290,12 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 	//                        ^- current pointer
 	if( pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == NULL )
 	{
-		// Text Value 
+		// Text Value
 		++iOffset;
 		RString::size_type iEnd = xml.find( chXMLTagOpen, iOffset );
 		if( iEnd == string::npos )
 		{
-			if( sErrorOut.empty() ) 
+			if( sErrorOut.empty() )
 				sErrorOut = ssprintf( "%s must be closed with </%s>", pNode->GetName().c_str(), pNode->GetName().c_str() );
 			// error cos not exist CloseTag </TAG>
 			return string::npos;
@@ -343,7 +346,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 			RString::size_type iEnd = xml.find_first_of( " >", iOffset );
 			if( iEnd == string::npos )
 			{
-				if( sErrorOut.empty() ) 
+				if( sErrorOut.empty() )
 					sErrorOut = ssprintf( "it must be closed with </%s>", pNode->GetName().c_str() );
 				// error
 				return string::npos;
@@ -361,7 +364,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 			else
 			{
 				// not welformed open/close
-				if( sErrorOut.empty() ) 
+				if( sErrorOut.empty() )
 					sErrorOut = ssprintf( "'<%s> ... </%s>' is not well-formed.", pNode->GetName().c_str(), closename.c_str() );
 				return string::npos;
 			}
@@ -370,12 +373,12 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 		{
 			if( pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == NULL && iOffset < xml.size() && xml[iOffset] != chXMLTagOpen )
 			{
-				// Text Value 
+				// Text Value
 				RString::size_type iEnd = xml.find( chXMLTagOpen, iOffset );
-				if( iEnd == string::npos ) 
+				if( iEnd == string::npos )
 				{
 					// error cos not exist CloseTag </TAG>
-					if( sErrorOut.empty() )  
+					if( sErrorOut.empty() )
 						sErrorOut = ssprintf( "it must be closed with </%s>", pNode->GetName().c_str() );
 					return string::npos;
 				}
@@ -406,7 +409,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 	WRITE( "<" );
 	WRITE( pNode->GetName() );
 
-	// <TAG Attr1="Val1" 
+	// <TAG Attr1="Val1"
 	FOREACH_CONST_Attr( pNode, p )
 	{
 		if( p->first == XNode::TEXT_ATTRIBUTE )
@@ -422,7 +425,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 
 	if( pNode->ChildrenEmpty() && pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == NULL )
 	{
-		// <TAG Attr1="Val1"/> alone tag 
+		// <TAG Attr1="Val1"/> alone tag
 		WRITE( "/>" );
 	}
 	else
@@ -818,7 +821,7 @@ void XmlFileUtil::MergeIniUnder( XNode *pFrom, XNode *pTo )
 /*
  * (c) 2001-2006 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -828,7 +831,7 @@ void XmlFileUtil::MergeIniUnder( XNode *pFrom, XNode *pTo )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
