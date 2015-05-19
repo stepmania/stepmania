@@ -1,5 +1,8 @@
 #include "global.h"
 #include "NoteSkinManager.h"
+
+#include <memory>
+
 #include "RageFileManager.h"
 #include "RageLog.h"
 #include "GameInput.h"
@@ -273,7 +276,7 @@ void NoteSkinManager::GetAllNoteSkinNamesForGame( const Game *pGame, vector<RStr
 		StripCvsAndSvn( AddTo );
 		StripMacResourceForks( AddTo );
 	}
-}	
+}
 
 RString NoteSkinManager::GetMetric( const RString &sButtonName, const RString &sValue )
 {
@@ -374,8 +377,8 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 		}
 
 		RString message = ssprintf(
-			"The NoteSkin element \"%s %s\" could not be found in any of the following directories:\n%s", 
-			sButtonName.c_str(), sElement.c_str(), 
+			"The NoteSkin element \"%s %s\" could not be found in any of the following directories:\n%s",
+			sButtonName.c_str(), sElement.c_str(),
 			sPaths.c_str() );
 
 		switch(LuaHelpers::ReportScriptError(message, "NOTESKIN_ERROR", true))
@@ -437,7 +440,7 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 					break;
 			}
 		}
-		
+
 		sPath = sRealPath;
 	}
 
@@ -483,7 +486,7 @@ Actor *NoteSkinManager::LoadActor( const RString &sButton, const RString &sEleme
 		return Sprite::NewBlankSprite();
 	}
 
-	auto_ptr<XNode> pNode( XmlFileUtil::XNodeFromTable(L) );
+	std::unique_ptr<XNode> pNode( XmlFileUtil::XNodeFromTable(L) );
 	if( pNode.get() == NULL )
 	{
 		// XNode will warn about the error
@@ -524,14 +527,14 @@ RString NoteSkinManager::GetPathFromDirAndFile( const RString &sDir, const RStri
 		sError+= join(", ", matches);
 		LuaHelpers::ReportScriptError(sError, "NOTESKIN_ERROR");
 	}
-	
+
 	return matches[0];
 }
 
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the NoteSkinManager. */ 
+/** @brief Allow Lua to have access to the NoteSkinManager. */
 class LunaNoteSkinManager: public Luna<NoteSkinManager>
 {
 public:
@@ -618,7 +621,7 @@ LUA_REGISTER_CLASS( NoteSkinManager )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -628,7 +631,7 @@ LUA_REGISTER_CLASS( NoteSkinManager )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

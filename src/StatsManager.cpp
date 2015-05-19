@@ -1,5 +1,8 @@
 #include "global.h"
 #include "StatsManager.h"
+
+#include <memory>
+
 #include "RageFileManager.h"
 #include "GameState.h"
 #include "Foreach.h"
@@ -42,7 +45,7 @@ void StatsManager::Reset()
 	m_CurStageStats.Init();
 	m_vPlayedStageStats.clear();
 	m_AccumPlayedStageStats.Init();
-	
+
 	CalcAccumPlayedStageStats();
 }
 
@@ -65,7 +68,7 @@ static StageStats AccumPlayedStageStats( const vector<StageStats>& vss )
 
 	/* Scale radar percentages back down to roughly 0..1.  Don't scale RadarCategory_TapsAndHolds
 	 * and the rest, which are counters. */
-	// FIXME: Weight each song by the number of stages it took to account for 
+	// FIXME: Weight each song by the number of stages it took to account for
 	// long, marathon.
 	FOREACH_EnabledPlayer( p )
 	{
@@ -124,7 +127,7 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 		int iMeter = clamp( pSteps->GetMeter(), 0, MAX_METER );
 		pProfile->m_iNumSongsPlayedByMeter[iMeter] ++;
 	}
-	
+
 	pProfile->m_iTotalDancePoints += ss.m_player[pn].m_iActualDancePoints;
 
 	if( ss.m_Stage == Stage_Extra1 || ss.m_Stage == Stage_Extra2 )
@@ -238,7 +241,7 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 
 	// Save recent scores
 	{
-		auto_ptr<XNode> xml( new XNode("Stats") );
+		std::unique_ptr<XNode> xml( new XNode("Stats") );
 		xml->AppendChild( "MachineGuid",  PROFILEMAN->GetMachineProfile()->m_sGuid );
 
 		XNode *recent = NULL;
@@ -272,9 +275,9 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 		const RString UPLOAD_DIR = "/Save/Upload/";
 		RString sFileNameNoExtension = Profile::MakeUniqueFileNameNoExtension(UPLOAD_DIR, sDate + " " );
 		RString fn = UPLOAD_DIR + sFileNameNoExtension + ".xml";
-		
+
 		bool bSaved = XmlFileUtil::SaveToFile( xml.get(), fn, "", false );
-		
+
 		if( bSaved )
 		{
 			RString sStatsXmlSigFile = fn + SIGNATURE_APPEND;
@@ -332,7 +335,7 @@ void StatsManager::GetStepsInUse( set<Steps*> &apInUseOut ) const
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the StatsManager. */ 
+/** @brief Allow Lua to have access to the StatsManager. */
 class LunaStatsManager: public Luna<StatsManager>
 {
 public:
@@ -440,7 +443,7 @@ LUA_REGISTER_CLASS( StatsManager )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -450,7 +453,7 @@ LUA_REGISTER_CLASS( StatsManager )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

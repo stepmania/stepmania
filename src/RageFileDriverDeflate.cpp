@@ -62,7 +62,7 @@ RageFileObjInflate *RageFileObjInflate::Copy() const
 {
 	return new RageFileObjInflate( *this );
 }
-	
+
 
 RageFileObjInflate::~RageFileObjInflate()
 {
@@ -239,7 +239,7 @@ int RageFileObjDeflate::WriteInternal( const void *pBuffer, size_t iBytes )
 
 		if( err != Z_OK )
 			FAIL_M( ssprintf("deflate: err %i", err) );
-			
+
 		if( m_pDeflate->avail_out < sizeof(buf) )
 		{
 			int lBytes = sizeof(buf)-m_pDeflate->avail_out;
@@ -307,7 +307,7 @@ int RageFileObjDeflate::FlushInternal()
  */
 RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t *iCRC32 )
 {
-	auto_ptr<RageFileBasic> pFile(pFile_);
+	std::unique_ptr<RageFileBasic> pFile(pFile_);
 
 	sError = "";
 
@@ -367,7 +367,7 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 	if( iFlags & FCOMMENT )
 		while( sError == "" && FileReading::read_8( *pFile, sError ) != 0 )
 			;
-	
+
 	if( iFlags & FHCRC )
 	{
 		/* Get the CRC of the data read so far.  Be sure to do this before
@@ -375,7 +375,7 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 		uint32_t iActualCRC32;
 		bool bOK = pFile->GetCRC32( &iActualCRC32 );
 		ASSERT( bOK );
-	
+
 		uint16_t iExpectedCRC16 = FileReading::read_u16_le( *pFile, sError );
 		uint16_t iActualCRC16 = int16_t( iActualCRC32 & 0xFFFF );
 		if( sError != "" )
@@ -401,17 +401,17 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 	int iFooterPos = pFile->GetFileSize() - 8;
 
 	FileReading::Seek( *pFile, iFooterPos, sError );
-	
+
 	uint32_t iExpectedCRC32 = FileReading::read_u32_le( *pFile, sError );
 	uint32_t iUncompressedSize = FileReading::read_u32_le( *pFile, sError );
 	if( iCRC32 != NULL )
 		*iCRC32 = iExpectedCRC32;
-	
+
 	FileReading::Seek( *pFile, iDataPos, sError );
-	
+
 	if( sError != "" )
 		return NULL;
-	
+
 	RageFileDriverSlice *pSliceFile = new RageFileDriverSlice( pFile.release(), iDataPos, iFooterPos-iDataPos );
 	pSliceFile->DeleteFileWhenFinished();
 	RageFileObjInflate *pInflateFile = new RageFileObjInflate( pSliceFile, iUncompressedSize );
@@ -434,7 +434,7 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
  * gzip.Start();
  * gzip.Write( "data" );
  * gzip.Finish();
- */ 
+ */
 RageFileObjGzip::RageFileObjGzip( RageFileBasic *pFile ):
 	RageFileObjDeflate( pFile )
 {
@@ -459,7 +459,7 @@ int RageFileObjGzip::Start()
 
 	if( m_pFile->Write( header, sizeof(header) ) == -1 )
 		return -1;
-	
+
 	m_iDataStartOffset = Tell();
 
 	/* Enable and reset the CRC32 for the uncompressed data about to be
@@ -500,7 +500,7 @@ int RageFileObjGzip::Finish()
 		SetError( m_pFile->GetError() );
 		return -1;
 	}
-	
+
 	/* Flush the CRC and wize that we just wrote directly to the file. */
 	return m_pFile->Flush();
 }
