@@ -1,5 +1,8 @@
 #include "global.h"
 #include "Difficulty.h"
+
+#include <memory>
+
 #include "GameState.h"
 #include "ThemeMetric.h"
 #include "LuaManager.h"
@@ -23,13 +26,13 @@ LuaXType( Difficulty );
 
 const RString &CourseDifficultyToLocalizedString( CourseDifficulty x )
 {
-	static auto_ptr<LocalizedString> g_CourseDifficultyName[NUM_Difficulty];
+	static std::unique_ptr<LocalizedString> g_CourseDifficultyName[NUM_Difficulty];
 	if( g_CourseDifficultyName[0].get() == NULL )
 	{
 		FOREACH_ENUM( Difficulty,i)
 		{
-			auto_ptr<LocalizedString> ap( new LocalizedString("CourseDifficulty", DifficultyToString(i)) );
-			g_CourseDifficultyName[i] = ap;
+			std::unique_ptr<LocalizedString> ap( new LocalizedString("CourseDifficulty", DifficultyToString(i)) );
+			g_CourseDifficultyName[i] = std::move(ap);
 		}
 	}
 	return g_CourseDifficultyName[x]->GetValue();
@@ -165,7 +168,7 @@ LuaFunction( TrailToCustomDifficulty, TrailToCustomDifficulty(Luna<Trail>::check
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -175,7 +178,7 @@ LuaFunction( TrailToCustomDifficulty, TrailToCustomDifficulty(Luna<Trail>::check
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
