@@ -507,7 +507,7 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 
 				wchar_t c;
 				if( sCodepoint.substr(0, 2) == "U+" && IsHexVal(sCodepoint.substr(2)) )
-					sscanf( sCodepoint.substr(2).c_str(), "%lc", &c );
+					sscanf( sCodepoint.substr(2).c_str(), "%x", (unsigned int *)&c );
 				else if( sCodepoint.size() > 0 &&
 						utf8_get_char_len(sCodepoint[0]) == int(sCodepoint.size()) )
 				{
