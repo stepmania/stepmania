@@ -1,8 +1,8 @@
 #include "global.h"
 #include "InputHandler_MonkeyKeyboard.h"
+#include <array>
 #include "RageUtil.h"
 #include "PrefsManager.h"
-
 
 InputHandler_MonkeyKeyboard::InputHandler_MonkeyKeyboard()
 {
@@ -18,7 +18,7 @@ void InputHandler_MonkeyKeyboard::GetDevicesAndDescriptions( vector<InputDeviceI
 	vDevicesOut.push_back( InputDeviceInfo(DEVICE_KEYBOARD, "MonkeyKeyboard") );
 }
 
-static const DeviceButton g_keys[] =
+std::array<DeviceButton, 26> g_keys =
 {
 	// Some of the default keys for the dance game type
 	KEY_LEFT,		// DANCE_BUTTON_LEFT,
@@ -51,7 +51,7 @@ static const DeviceButton g_keys[] =
 
 static DeviceButton GetRandomKeyboardKey()
 {
-	int index = RandomInt( ARRAYLEN(g_keys) );
+	int index = RandomInt( g_keys.size() );
 	return g_keys[index];
 }
 
@@ -70,7 +70,7 @@ void InputHandler_MonkeyKeyboard::Update()
 		InputHandler::UpdateTimer();
 		return;
 	}
-	
+
 	float fSecsAgo = m_timerPressButton.Ago();
 
 	if( fSecsAgo > 0.5 )
@@ -95,7 +95,7 @@ void InputHandler_MonkeyKeyboard::Update()
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -105,7 +105,7 @@ void InputHandler_MonkeyKeyboard::Update()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

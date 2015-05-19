@@ -167,7 +167,7 @@ void FontPage::SetTextureCoords( const vector<int> &widths, int iAdvanceExtraPix
 			if( (iSourcePixelsToChopOff % 2) == 1 )
 			{
 				/* We don't want to chop off an odd number of pixels, since that'll
-				 * put our texture coordinates between texels and make things blurrier. 
+				 * put our texture coordinates between texels and make things blurrier.
 				 * Note that, since we set m_iHadvance above, this merely expands what
 				 * we render; it doesn't advance the cursor further.  So, glyphs
 				 * that have an odd width should err to being a pixel offcenter left,
@@ -351,17 +351,19 @@ const glyph &Font::GetGlyph( wchar_t c ) const
 		c = 1;
 
 	// Fast path:
-	if( c < (int) ARRAYLEN(m_iCharToGlyphCache) && m_iCharToGlyphCache[c] )
+	if (c < m_iCharToGlyphCache.size() && m_iCharToGlyphCache[c])
+	{
 		return *m_iCharToGlyphCache[c];
+	}
 
 	// Try the regular character.
 	map<wchar_t,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
 
 	// If that's missing, use the default glyph.
-	if(it == m_iCharToGlyph.end()) 
+	if(it == m_iCharToGlyph.end())
 		it = m_iCharToGlyph.find(FONT_DEFAULT_GLYPH);
 
-	if(it == m_iCharToGlyph.end()) 
+	if(it == m_iCharToGlyph.end())
 		RageException::Throw( "The default glyph is missing from the font \"%s\".", path.c_str() );
 
 	return *it->second;
@@ -673,7 +675,7 @@ RString FontPageSettings::MapRange( RString sMapping, int iMapOffset, int iGlyph
 
 		/* What's a practical limit?  A 2048x2048 texture could contain 16x16
 		 * characters, which is 16384 glyphs. (Use a grayscale map and that's
-		 * only 4 megs.) Let's use that as a cap. (We don't want to go crazy 
+		 * only 4 megs.) Let's use that as a cap. (We don't want to go crazy
 		 * if someone says "range Unicode #0-FFFFFFFF".) */
 		if( iCount > 16384 )
 			return ssprintf( "Can't map %i glyphs to one font page", iCount );
@@ -890,18 +892,19 @@ void Font::Load( const RString &sIniPath, RString sChars )
 	if( LoadStack.empty() )
 	{
 		// Cache ASCII glyphs.
-		ZERO( m_iCharToGlyphCache );
-		map<wchar_t,glyph*>::iterator it;
-		for( it = m_iCharToGlyph.begin(); it != m_iCharToGlyph.end(); ++it )
-			if( it->first < (int) ARRAYLEN(m_iCharToGlyphCache) )
+		m_iCharToGlyphCache.fill( NULL );
+		for( auto it = m_iCharToGlyph.begin(); it != m_iCharToGlyph.end(); ++it )
+			if( it->first < m_iCharToGlyphCache.size() )
+			{
 				m_iCharToGlyphCache[it->first] = it->second;
+			}
 	}
 }
 
 /*
  * (c) 2001-2004 Glenn Maynard, Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -911,7 +914,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

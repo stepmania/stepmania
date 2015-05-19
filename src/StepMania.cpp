@@ -2,6 +2,8 @@
 
 #include "StepMania.h"
 
+#include <array>
+
 // Rage global classes
 #include "RageLog.h"
 #include "RageTextureManager.h"
@@ -461,7 +463,9 @@ struct VideoCardDefaults
 		iTextureSize = iTextureSize_;
 		bSmoothLines = bSmoothLines_;
 	}
-} const g_VideoCardDefaults[] =
+};
+
+std::array<VideoCardDefaults, 17> const g_VideoCardDefaults =
 {
 	VideoCardDefaults(
 		"Voodoo *5",
@@ -637,7 +641,7 @@ bool CheckVideoDefaultSettings()
 	VideoCardDefaults defaults;
 
 	unsigned i;
-	for( i=0; i<ARRAYLEN(g_VideoCardDefaults); i++ )
+	for( i = 0; i < g_VideoCardDefaults.size(); ++i )
 	{
 		defaults = g_VideoCardDefaults[i];
 
@@ -649,7 +653,7 @@ bool CheckVideoDefaultSettings()
 			break;
 		}
 	}
-	if (i >= ARRAYLEN(g_VideoCardDefaults))
+	if (i >= g_VideoCardDefaults.size())
 	{
 		FAIL_M("Failed to match video driver");
 	}
@@ -848,7 +852,7 @@ void StepMania::InitializeCurrentGame( const Game* g )
 			GAMESTATE->SetCurGame(new_game);
 		}
 	}
-	
+
 	// It doesn't matter if sTheme is blank or invalid, THEME->STAL will set
 	// a selectable theme for us. -Kyz
 
@@ -1270,14 +1274,14 @@ void StepMania::InsertCoin( int iNum, bool bCountInBookkeeping )
 	{
 		GAMESTATE->m_iCoins.Set( GAMESTATE->m_iCoins + iNum );
 	}
-	
+
 	int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
 	bool bMaxCredits = iCredits >= MAX_NUM_CREDITS;
 	if( bMaxCredits )
 	{
 		GAMESTATE->m_iCoins.Set( MAX_NUM_CREDITS * PREFSMAN->m_iCoinsPerCredit );
 	}
-	
+
 	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins.Get(), PREFSMAN->m_iCoinsPerCredit.Get() );
 
 	// If inserting coins, play an appropriate sound; if deducting coins, don't play anything.
