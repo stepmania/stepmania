@@ -98,6 +98,7 @@ src/config.h.in
 src/stamp-h1
 GtkModule.so
 StepMania
+core
 
 # Version control specific.
 *.BACKUP.*
