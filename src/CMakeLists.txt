@@ -477,7 +477,7 @@ else() # Unix / Linux
       )
     endif()
 
-    if(WITH_LIBVA AND VA_FOUND)
+    if(VA_FOUND)
       list(APPEND SMDATA_LINK_LIB ${VA_LIBRARY})
     endif()
   endif()
