@@ -74,7 +74,13 @@ static void SetSampleRate( AudioUnit au, Float64 desiredRate )
 	if( rate == desiredRate )
 		return;
 	
-	if( (error = AudioObjectGetPropertyData(OutputDevice, &RateAddr, 0, NULL, &size, NULL)) )
+	AudioObjectPropertyAddress AvailableRatesAddr = {
+		kAudioDevicePropertyAvailableNominalSampleRates,
+		kAudioDevicePropertyScopeOutput,
+		kAudioObjectPropertyElementWildcard
+	};
+	
+	if( (error = AudioObjectGetPropertyData(OutputDevice, &AvailableRatesAddr, 0, NULL, &size, NULL)) )
 	{
 		LOG->Warn( WERROR("Couldn't get available nominal sample rates info", error) );
 		return;
@@ -83,7 +89,7 @@ static void SetSampleRate( AudioUnit au, Float64 desiredRate )
 	const int num = size/sizeof(AudioValueRange);
 	AudioValueRange *ranges = new AudioValueRange[num];
 	
-	if( (error = AudioObjectGetPropertyData(OutputDevice, &RateAddr, 0, NULL, &size, ranges)) )
+	if( (error = AudioObjectGetPropertyData(OutputDevice, &AvailableRatesAddr, 0, NULL, &size, ranges)) )
 	{
 		LOG->Warn( WERROR("Couldn't get available nominal sample rates", error) );
 		delete[] ranges;
