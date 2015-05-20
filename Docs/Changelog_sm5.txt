@@ -13,6 +13,17 @@ ________________________________________________________________________________
 * [cmake] JACK is now properly found by CMake.
 * [theme] Preview music fadeout time is now adjustable by the metric
   SampleMusicFadeoutSeconds. [nixtrix]
+* [Song] Setting a sample length of 0 uses the length of the entire preview
+  file. [nixtrix]
+
+================================================================================
+StepMania 5.0.8 | 20150510
+--------------------------------------------------------------------------------
+
+2015/05/10
+----------
+* [General] Screenshots are not tagged with song title or screen name because
+  this causes problems when titles have UTF8 or slashes. [kyzentun]
 
 2015/05/09
 ----------

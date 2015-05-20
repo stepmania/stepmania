@@ -255,11 +255,9 @@ elseif(LINUX)
     set(WITH_FFMPEG OFF)
   endif()
 
-  if(WITH_FFMPEG)
-    if(WITH_LIBVA)
-      find_package("Va")
-    endif()
+  find_package("Va")
 
+  if(WITH_FFMPEG)
     if (WITH_SYSTEM_FFMPEG)
       find_package("FFMPEG")
       if(NOT FFMPEG_FOUND)

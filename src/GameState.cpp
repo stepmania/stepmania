@@ -1442,10 +1442,12 @@ bool GameState::PlayersCanJoin() const
 	{
 		return true;
 	}
-	if(GetCurrentStyle(PLAYER_INVALID) == NULL)
-	{
-		return true; // selecting a style finalizes the players
-	}
+	// If we check the style and it comes up NULL, either the style has not been
+	// chosen, or we're on ScreenSelectMusic with AutoSetStyle.
+	// If the style does not come up NULL, we might be on a screen in a custom
+	// theme that wants to allow joining after the style is set anyway.
+	// Either way, we can't use the existence of a style to decide.
+	// -Kyz
 	if( ALLOW_LATE_JOIN.IsLoaded()  &&  ALLOW_LATE_JOIN )
 	{
 		Screen *pScreen = SCREENMAN->GetTopScreen();
@@ -1471,8 +1473,9 @@ bool GameState::PlayersCanJoin() const
 				}
 			}
 		}
+		return true;
 	}
-	return true;
+	return false;
 }
 
 int GameState::GetNumSidesJoined() const
@@ -1634,10 +1637,7 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 	}
 	if( GetCurrentStyle(pn) == NULL )	// no style chosen
 	{
-		if( PlayersCanJoin() )
-			return m_bSideIsJoined[pn];	// only allow input from sides that have already joined
-		else
-			return true;	// if we can't join, then we're on a screen like MusicScroll or GameOver
+		return m_bSideIsJoined[pn];	// only allow input from sides that have already joined
 	}
 
 	StyleType type = GetCurrentStyle(pn)->m_StyleType;
