@@ -374,7 +374,11 @@ void GameState::JoinPlayer( PlayerNumber pn )
 {
 	// Make sure the join will be successful before doing it. -Kyz
 	{
-		int players_joined= GetNumPlayersEnabled();
+		int players_joined= 0;
+		for(int i= 0; i < NUM_PLAYERS; ++i)
+		{
+			players_joined+= m_bSideIsJoined[i];
+		}
 		if(players_joined > 0)
 		{
 			const Style* cur_style= GetCurrentStyle(PLAYER_INVALID);
