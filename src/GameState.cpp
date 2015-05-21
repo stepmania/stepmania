@@ -1084,7 +1084,7 @@ void GameState::ForceOtherPlayersToCompatibleSteps(PlayerNumber main)
 		FOREACH_EnabledPlayer(pn)
 		{
 			Trail* pn_steps= m_pCurTrail[pn].Get();
-			bool match_failed= false;
+			bool match_failed= pn_steps == NULL;
 			if(steps_to_match != pn_steps && pn_steps != NULL)
 			{
 				StyleType pn_styletype= GAMEMAN->GetFirstCompatibleStyle(
@@ -1095,11 +1095,10 @@ void GameState::ForceOtherPlayersToCompatibleSteps(PlayerNumber main)
 				{
 					match_failed= true;
 				}
-
-				if(match_failed)
-				{
-					m_pCurTrail[pn].Set(steps_to_match);
-				}
+			}
+			if(match_failed)
+			{
+				m_pCurTrail[pn].Set(steps_to_match);
 			}
 		}
 	}
@@ -1115,7 +1114,7 @@ void GameState::ForceOtherPlayersToCompatibleSteps(PlayerNumber main)
 		FOREACH_EnabledPlayer(pn)
 		{
 			Steps* pn_steps= m_pCurSteps[pn].Get();
-			bool match_failed= false;
+			bool match_failed= pn_steps == NULL;
 			if(steps_to_match != pn_steps && pn_steps != NULL)
 			{
 				StyleType pn_styletype= GAMEMAN->GetFirstCompatibleStyle(
@@ -1130,11 +1129,10 @@ void GameState::ForceOtherPlayersToCompatibleSteps(PlayerNumber main)
 				{
 					match_failed= true;
 				}
-
-				if(match_failed)
-				{
-					m_pCurSteps[pn].Set(steps_to_match);
-				}
+			}
+			if(match_failed)
+			{
+				m_pCurSteps[pn].Set(steps_to_match);
 			}
 		}
 	}
