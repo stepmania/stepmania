@@ -17,6 +17,7 @@
 #include <csetjmp>
 #include <cassert>
 #include <map>
+#include <array>
 
 LuaManager *LUA = NULL;
 struct Impl
@@ -652,13 +653,13 @@ XNode *LuaHelpers::GetLuaInformation()
 	ASSERT( lua_istable(L, -1) );
 
 	//const RString BuiltInPackages[] = { "_G", "coroutine", "debug", "math", "package", "string", "table" };
-	const RString BuiltInPackages[] = { "_G", "coroutine", "debug", "math", "package", "string", "table" };
-	const RString *const end = BuiltInPackages+ARRAYLEN(BuiltInPackages);
+	std::array<RString, 7> const BuiltInPackages = { "_G", "coroutine", "debug", "math", "package", "string", "table" };
+	const RString *const end = BuiltInPackages.end();
 	FOREACH_LUATABLE( L, -1 )
 	{
 		RString sNamespace;
 		LuaHelpers::Pop( L, sNamespace );
-		if( find(BuiltInPackages, end, sNamespace) != end )
+		if( find(BuiltInPackages.begin(), end, sNamespace) != end )
 			continue;
 		vector<RString> &vNamespaceFunctions = mNamespaces[sNamespace];
 		FOREACH_LUATABLE( L, -1 )
