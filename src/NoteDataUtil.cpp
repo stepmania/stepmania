@@ -11,6 +11,7 @@
 #include "Foreach.h"
 #include "TimingData.h"
 #include <utility>
+#include <array>
 
 // TODO: Remove these constants that aren't time signature-aware
 static const int BEATS_PER_MEASURE = 4;
@@ -2769,12 +2770,7 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 {
 	// throw an attack in every 30 seconds
 
-	const char* szAttacks[3] =
-	{
-		"2x",
-		"drunk",
-		"dizzy",
-	};
+	std::array<char *, 3> const szAttacks =	{ "2x", "drunk", "dizzy" };
 
 	for( float sec=15; sec<pSong->m_fMusicLengthSeconds; sec+=30 )
 	{
@@ -2785,7 +2781,7 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 			TapNoteType_Attack,
 			TapNoteSubType_Invalid,
 			TapNoteSource_Original, 
-			szAttacks[RandomInt(ARRAYLEN(szAttacks))],
+			szAttacks[RandomInt(szAttacks.size())],
 			15.0f, 
 			-1 );
 		nd.SetTapNote( iTrack, BeatToNoteRow(fBeat), tn );

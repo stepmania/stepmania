@@ -7,7 +7,10 @@ class Steps;
 class Trail;
 struct lua_State;
 
-#define ONE( arr ) { for( unsigned Z = 0; Z < ARRAYLEN(arr); ++Z ) arr[Z]=1.0f; }
+#define ONE( arr ) { \
+for( unsigned Z = 0; Z < ARRAYLEN(arr); ++Z ) \
+arr[Z]=1.0f; \
+}
 
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"

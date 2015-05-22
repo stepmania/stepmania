@@ -8,6 +8,8 @@
 #include "RageSoundUtil.h"
 #include "Foreach.h"
 
+#include <array>
+
 RageSoundReader_Merge::RageSoundReader_Merge()
 {
 	m_iSampleRate = -1;
@@ -232,8 +234,9 @@ int RageSoundReader_Merge::Read( float *pBuffer, int iFrames )
 	}
 
 	RageSoundMixBuffer mix;
-	float Buffer[2048];
-	iFrames = min( iFrames, (int) (ARRAYLEN(Buffer) / m_iChannels) );
+	int const bufferSize = 2048;
+	float Buffer[bufferSize];
+	iFrames = min( iFrames, static_cast<int>(( bufferSize + 0.f) / m_iChannels) );
 
 	/* Read iFrames from each sound. */
 	for( unsigned i = 0; i < m_aSounds.size(); ++i )
