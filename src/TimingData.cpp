@@ -304,19 +304,19 @@ void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut, float highe
 {
 	fMinBPMOut = FLT_MAX;
 	fMaxBPMOut = 0;
-	const vector<TimingSegment*> &bpms = GetTimingSegments(SEGMENT_BPM);
+	const std::vector<TimingSegment*> &bpms = GetTimingSegments(SEGMENT_BPM);
 
 	for (unsigned i = 0; i < bpms.size(); i++)
 	{
 		const float fBPM = ToBPM(bpms[i])->GetBPM();
-		fMaxBPMOut = clamp(max( fBPM, fMaxBPMOut ), 0, highest);
-		fMinBPMOut = min( fBPM, fMinBPMOut );
+		fMaxBPMOut = clamp(std::max( fBPM, fMaxBPMOut ), 0.f, highest);
+		fMinBPMOut = std::min( fBPM, fMinBPMOut );
 	}
 }
 
 float TimingData::GetNextSegmentBeatAtRow(TimingSegmentType tst, int row) const
 {
-	const vector<TimingSegment *> segs = GetTimingSegments(tst);
+	const std::vector<TimingSegment *> segs = GetTimingSegments(tst);
 	for (unsigned i = 0; i < segs.size(); i++ )
 	{
 		if( segs[i]->GetRow() <= row )

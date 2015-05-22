@@ -32,7 +32,11 @@ inline unsigned long max( unsigned int a, unsigned long b ) { return a > b? a:b;
 inline unsigned long max( unsigned long a, unsigned int b ) { return a > b? a:b; }
 
 /** @brief If outside the range from low to high, bring it within range. */
-#define clamp(val,low,high)		( max( (low), min((val),(high)) ) )
+template<typename T>
+T clamp( T val, T low, T high)
+{
+    return std::max(low, std::min(val, high));
+}
 
 /**
  * @brief Scales x so that l1 corresponds to l2 and h1 corresponds to h2.
