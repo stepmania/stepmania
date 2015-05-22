@@ -726,7 +726,7 @@ float ArrowGetPercentVisible(float fYPosWithoutReverse)
 			* fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH];
 	}
 
-	return clamp( 1+fVisibleAdjust, 0, 1 );
+	return clamp( 1+fVisibleAdjust, 0.f, 1.f );
 }
 
 float ArrowEffects::GetAlpha(int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar)

@@ -393,10 +393,12 @@ float DisplayBpms::GetMax() const
 float DisplayBpms::GetMaxWithin(float highest) const
 {
 	float fMax = 0;
-	FOREACH_CONST( float, vfBpms, f )
+	for (auto &f: vfBpms)
 	{
-		if( *f != -1 )
-			fMax = clamp(max( fMax, *f ), 0, highest);
+		if( f != -1 )
+		{
+			fMax = clamp(max( fMax, f ), 0.f, highest);
+		}
 	}
 	return fMax;
 }
