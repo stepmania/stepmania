@@ -238,7 +238,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 
 		const float fSecondToStartOn = g_Playing->m_Timing.GetElapsedTimeFromBeatNoOffset( fCurBeatToStartOn );
 		const float fMaximumDistance = 2;
-		const float fDistance = min( fSecondToStartOn - GAMESTATE->m_Position.m_fMusicSeconds, fMaximumDistance );
+		const float fDistance = std::min( fSecondToStartOn - GAMESTATE->m_Position.m_fMusicSeconds, fMaximumDistance );
 
 		when = GAMESTATE->m_Position.m_LastBeatUpdate + fDistance;
 	}
@@ -451,6 +451,7 @@ GameSoundManager::~GameSoundManager()
 
 float GameSoundManager::GetFrameTimingAdjustment( float fDeltaTime )
 {
+	using std::min;
 	/*
 	 * We get one update per frame, and we're updated early, almost immediately after vsync,
 	 * near the beginning of the game loop.  However, it's very likely that we'll lose the
@@ -481,7 +482,7 @@ float GameSoundManager::GetFrameTimingAdjustment( float fDeltaTime )
 		return 0;
 
 	/* Subtract the extra delay. */
-	return min( -fExtraDelay, 0 );
+	return min( -fExtraDelay, 0.f );
 }
 
 void GameSoundManager::Update( float fDeltaTime )

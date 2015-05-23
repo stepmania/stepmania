@@ -282,6 +282,7 @@ RString SecondsToHHMMSS( float fSecs )
 
 RString SecondsToMMSSMsMs( float fSecs )
 {
+	using std::min;
 	const int iMinsDisplay = (int)fSecs/60;
 	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
 	const int iLeftoverDisplay = (int) ( (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100 );
@@ -291,6 +292,7 @@ RString SecondsToMMSSMsMs( float fSecs )
 
 RString SecondsToMSSMsMs( float fSecs )
 {
+	using std::min;
 	const int iMinsDisplay = (int)fSecs/60;
 	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
 	const int iLeftoverDisplay = (int) ( (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100 );
@@ -300,6 +302,7 @@ RString SecondsToMSSMsMs( float fSecs )
 
 RString SecondsToMMSSMsMsMs( float fSecs )
 {
+	using std::min;
 	const int iMinsDisplay = (int)fSecs/60;
 	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
 	const int iLeftoverDisplay = (int) ( (fSecs - iMinsDisplay*60 - iSecsDisplay) * 1000 );
@@ -882,6 +885,7 @@ while( 1 )
 template <class S>
 void do_split( const S &Source, const S &Delimitor, int &begin, int &size, int len, const bool bIgnoreEmpty )
 {
+	using std::min;
 	if( size != -1 )
 	{
 		// Start points to the beginning of the last delimiter. Move it up.

@@ -99,6 +99,7 @@ boolean RageFile_JPEG_fill_input_buffer( j_decompress_ptr cinfo )
 
 void RageFile_JPEG_skip_input_data( j_decompress_ptr cinfo, long num_bytes )
 {
+	using std::min;
 	RageFile_source_mgr *src = (RageFile_source_mgr *) cinfo->src;
 
 	int in_buffer = min( (long) src->pub.bytes_in_buffer, num_bytes );
@@ -122,14 +123,14 @@ static RageSurface *RageSurface_Load_JPEG( RageFile *f, const char *fn, char err
 	cinfo.err = jpeg_std_error(&jerr.pub);
 	jerr.pub.error_exit = my_error_exit;
 	jerr.pub.output_message = my_output_message;
-	
+
 	RageSurface *volatile img = NULL; /* volatile to prevent possible problems with setjmp */
 
 	if( setjmp(jerr.setjmp_buffer) )
 	{
 		my_jpeg_error_mgr *myerr = (my_jpeg_error_mgr *) cinfo.err;
 		memcpy( errorbuf, myerr->errorbuf, JMSG_LENGTH_MAX );
-		
+
 		jpeg_destroy_decompress( &cinfo );
 		delete img;
 		return NULL;
@@ -226,7 +227,7 @@ RageSurfaceUtils::OpenResult RageSurface_Load_JPEG( const RString &sPath, RageSu
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -236,7 +237,7 @@ RageSurfaceUtils::OpenResult RageSurface_Load_JPEG( const RString &sPath, RageSu
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -119,6 +119,7 @@ int StepsDisplayList::GetCurrentRowIndex( PlayerNumber pn ) const
 // Update m_fY and m_bHidden[].
 void StepsDisplayList::UpdatePositions()
 {
+	using std::min;
 	using std::max;
 	int iCurrentRow[NUM_PLAYERS];
 	FOREACH_HumanPlayer( p )

@@ -295,6 +295,7 @@ void NoteField::InitColumnRenderers()
 
 void NoteField::Update( float fDeltaTime )
 {
+	using std::min;
 	if( m_bFirstUpdate )
 	{
 		m_pCurDisplay->m_ReceptorArrowRow.PlayCommand( "On" );
@@ -334,7 +335,7 @@ void NoteField::Update( float fDeltaTime )
 	cur->m_GhostArrowRow.Update( fDeltaTime );
 
 	if( m_FieldRenderArgs.fail_fade >= 0 )
-		m_FieldRenderArgs.fail_fade = min( m_FieldRenderArgs.fail_fade + fDeltaTime/FADE_FAIL_TIME, 1 );
+		m_FieldRenderArgs.fail_fade = min( m_FieldRenderArgs.fail_fade + fDeltaTime/FADE_FAIL_TIME, 1.f );
 
 	// Update fade to failed
 	m_pCurDisplay->m_ReceptorArrowRow.SetFadeToFailPercent( m_FieldRenderArgs.fail_fade );
@@ -648,6 +649,7 @@ float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistance
 
 float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceBeforeTargetsPixels )
 {
+	using std::min;
 	// Probe for last note to draw. Worst case is 0.25x + boost.
 	// Adjust search distance so that notes don't pop onto the screen.
 	float fSearchDistance = 10;

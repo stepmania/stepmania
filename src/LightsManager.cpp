@@ -145,6 +145,7 @@ float LightsManager::GetActorLightLatencySeconds() const
 
 void LightsManager::Update( float fDeltaTime )
 {
+	using std::min;
 	// Update actor effect lights.
 	FOREACH_CabinetLight( cl )
 	{

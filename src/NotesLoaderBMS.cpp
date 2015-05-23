@@ -93,6 +93,7 @@ static void SearchForDifficulty( RString sTag, Steps *pOut )
 
 static void SlideDuplicateDifficulties( Song &p )
 {
+	using std::min;
 	/* BMS files have to guess the Difficulty from the meter; this is inaccurate,
 	* and often leads to duplicates. Slide duplicate difficulties upwards.
 	* We only do this with BMS files, since a very common bug was having *all*

@@ -57,6 +57,7 @@ static const float g_fSimultaneousThreshold = 0.05f;
 
 bool InputQueueCode::EnteredCode( GameController controller ) const
 {
+	using std::min;
 	if( controller == GameController_Invalid )
 		return false;
 	if( m_aPresses.size() == 0 )

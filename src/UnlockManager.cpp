@@ -680,7 +680,7 @@ float UnlockManager::PointsUntilNextUnlock( UnlockRequirement t ) const
 	float fSmallestPoints = FLT_MAX;   // or an arbitrarily large value
 	for( unsigned a=0; a<m_UnlockEntries.size(); a++ )
 		if( m_UnlockEntries[a].m_fRequirement[t] > fScores[t] )
-			fSmallestPoints = min( fSmallestPoints, m_UnlockEntries[a].m_fRequirement[t] );
+			fSmallestPoints = std::min( fSmallestPoints, m_UnlockEntries[a].m_fRequirement[t] );
 
 	if( fSmallestPoints == FLT_MAX )
 		return 0;  // no match found

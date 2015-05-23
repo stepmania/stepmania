@@ -66,6 +66,7 @@ void RageBitmapTexture::Reload()
  */
 void RageBitmapTexture::Create()
 {
+	using std::min;
 	using std::max;
 	RageTextureID actualID = GetID();
 

@@ -101,6 +101,7 @@ struct pixerror_t
 
 void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither )
 {
+	using std::min;
 	ASSERT( iColors != 0 );
 
 	acolorhist_item *acolormap=NULL;
@@ -326,6 +327,7 @@ static bool CompareBySumDescending( const box &b1, const box &b2 )
 
 static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, int maxval, int newcolors )
 {
+	using std::min;
 	using std::max;
 	acolorhist_item *acolormap;
 	box_vector bv;

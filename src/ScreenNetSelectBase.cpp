@@ -197,6 +197,7 @@ void ScreenNetSelectBase::UpdateUsers()
 /** ColorBitmapText ***********************************************************/
 void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternateText, int iWrapWidthPixels )
 {
+	using std::min;
 	ASSERT( m_pFont != NULL );
 
 	RString sNewText = StringWillUseAlternate(_sText,_sAlternateText) ? _sAlternateText : _sText;
@@ -387,6 +388,7 @@ void ColorBitmapText::DrawPrimitives( )
 void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
 {
 	using std::max;
+	using std::min;
 	iNumLines = max( 0, iNumLines );
 	iNumLines = min( (int)m_wTextLines.size(), iNumLines );
 	if( iDirection == 0 )

@@ -17,6 +17,7 @@ SampleHistory::SampleHistory()
 
 float SampleHistory::GetSampleNum( float fSamplesAgo ) const
 {
+	using std::min;
 	fSamplesAgo = min( fSamplesAgo, (float) m_afHistory.size() - 1 );
 	if( fSamplesAgo < 0 )
 		fSamplesAgo = 0;
@@ -45,6 +46,7 @@ float SampleHistory::GetSample( float fSecondsAgo ) const
 
 void SampleHistory::AddSample( float fSample, float fDeltaTime )
 {
+	using std::min;
 	while( fDeltaTime > 0.0001f )
 	{
 		float fTime = min( m_fToSample, fDeltaTime );

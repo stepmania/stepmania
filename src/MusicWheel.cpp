@@ -920,6 +920,7 @@ void MusicWheel::readyWheelItemsData(SortOrder so) {
 
 void MusicWheel::FilterWheelItemDatas(vector<MusicWheelItemData *> &aUnFilteredDatas, vector<MusicWheelItemData *> &aFilteredData, SortOrder so )
 {
+	using std::min;
 	aFilteredData.clear();
 
 	unsigned unfilteredSize=aUnFilteredDatas.size();
@@ -1070,7 +1071,8 @@ void MusicWheel::FilterWheelItemDatas(vector<MusicWheelItemData *> &aUnFilteredD
 	/* Update the popularity.  This is affected by filtering. */
 	if( so == SORT_POPULARITY )
 	{
-		for( unsigned i=0; i< min(3u,aFilteredData.size()); i++ )
+		unsigned highest = min(3u, static_cast<unsigned>(aFilteredData.size()));
+		for( unsigned i = 0; i < highest; i++ )
 		{
 			MusicWheelItemData& WID = *aFilteredData[i];
 			WID.m_Flags.iPlayersBestNumber = i+1;

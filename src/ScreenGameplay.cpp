@@ -615,7 +615,7 @@ void ScreenGameplay::Init()
 			pi->m_pn+1, player_x, screen_space, left_edge[pi->m_pn], field_space,
 			left_marge, right_marge, style_width, field_zoom);
 		*/
-		pi->GetPlayerState()->m_NotefieldZoom= min(1.0f, field_zoom);
+		pi->GetPlayerState()->m_NotefieldZoom= std::min(1.0f, field_zoom);
 
 		pi->m_pPlayer->SetX(player_x);
 		pi->m_pPlayer->RunCommands( PLAYER_INIT_COMMAND );

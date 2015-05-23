@@ -325,6 +325,7 @@ static char staticlog[1024*32]="";
 static unsigned staticlog_size = 0;
 void RageLog::AddToInfo( const RString &str )
 {
+	using std::min;
 	static bool limit_reached = false;
 	if( limit_reached )
 		return;
@@ -333,9 +334,9 @@ void RageLog::AddToInfo( const RString &str )
 	if( staticlog_size + len > sizeof(staticlog) )
 	{
 		const RString txt( NEWLINE "Staticlog limit reached" NEWLINE );
-
-		const unsigned pos = min( staticlog_size, sizeof(staticlog) - txt.size() );
-		memcpy( staticlog+pos, txt.data(), txt.size() );
+		unsigned txtSize = static_cast<unsigned>(sizeof(staticlog) - txt.size());
+		unsigned const pos = min( staticlog_size, txtSize );
+		memcpy( staticlog + pos, txt.data(), txt.size() );
 		limit_reached = true;
 		return;
 	}
@@ -392,6 +393,7 @@ static int g_AdditionalLogSize = 0;
 
 void RageLog::UpdateMappedLog()
 {
+	using std::min;
 	RString str;
 	for (auto const &i: LogMaps)
 	{
@@ -404,6 +406,7 @@ void RageLog::UpdateMappedLog()
 
 const char *RageLog::GetAdditionalLog()
 {
+	using std::min;
 	int size = min( g_AdditionalLogSize, (int) sizeof(g_AdditionalLogStr)-1 );
 	g_AdditionalLogStr[size] = 0;
 	return g_AdditionalLogStr;

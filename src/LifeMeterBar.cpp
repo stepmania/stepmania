@@ -108,6 +108,7 @@ void LifeMeterBar::Load( const PlayerState *pPlayerState, PlayerStageStats *pPla
 
 void LifeMeterBar::ChangeLife( TapNoteScore score )
 {
+	using std::min;
 	float fDeltaLife=0.f;
 	switch( score )
 	{
@@ -134,7 +135,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	case DrainType_Normal:
 		break;
 	case DrainType_NoRecover:
-		fDeltaLife = min( fDeltaLife, 0 );
+		fDeltaLife = min( fDeltaLife, 0.f );
 		break;
 	case DrainType_SuddenDeath:
 		if( score < MIN_STAY_ALIVE )

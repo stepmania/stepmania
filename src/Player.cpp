@@ -796,6 +796,7 @@ void Player::SendComboMessages( unsigned int iOldCombo, unsigned int iOldMissCom
 
 void Player::Update( float fDeltaTime )
 {
+	using std::min;
 	const RageTimer now;
 	// Don't update if we haven't been loaded yet.
 	if( !m_bLoaded )
@@ -1090,6 +1091,7 @@ void Player::Update( float fDeltaTime )
 void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTapNote> &vTN )
 {
 	ASSERT( !vTN.empty() );
+	using std::min;
 
 	//LOG->Trace("--------------------------------");
 	/*
@@ -2134,7 +2136,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				 * Do this even if we're a little beyond the end of the hold note, to make sure
 				 * iLastHeldRow is clamped to iEndRow if the hold note is held all the way. */
 				//LOG->Trace("setting iLastHeldRow to min of iSongRow (%i) and iEndRow (%i)",iSongRow,iEndRow);
-				tn.HoldResult.iLastHeldRow = min( iSongRow, iEndRow );
+				tn.HoldResult.iLastHeldRow = std::min( iSongRow, iEndRow );
 			}
 
 			// If the song beat is in the range of this hold:

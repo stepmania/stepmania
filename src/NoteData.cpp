@@ -307,6 +307,7 @@ int NoteData::GetLastTrackWithTapOrHoldHead( int row ) const
 
 void NoteData::AddHoldNote( int iTrack, int iStartRow, int iEndRow, TapNote tn )
 {
+	using std::min;
 	using std::max;
 	ASSERT( iStartRow>=0 && iEndRow>=0 );
 	ASSERT_M( iEndRow >= iStartRow, ssprintf("EndRow %d < StartRow %d",iEndRow,iStartRow) );
@@ -421,6 +422,7 @@ bool NoteData::IsEmpty() const
 
 int NoteData::GetFirstRow() const
 {
+	using std::min;
 	int iEarliestRowFoundSoFar = -1;
 
 	for( int t=0; t < GetNumTracks(); t++ )
@@ -1124,6 +1126,7 @@ void NoteData::GetTapNoteRangeExclusive( int iTrack, int iStartRow, int iEndRow,
 
 bool NoteData::GetNextTapNoteRowForAllTracks( int &rowInOut ) const
 {
+	using std::min;
 	int iClosestNextRow = MAX_NOTE_ROW;
 	bool bAnyHaveNextNote = false;
 	for( int t=0; t<GetNumTracks(); t++ )

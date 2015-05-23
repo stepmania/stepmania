@@ -66,6 +66,7 @@ void RageTextureManager::Update( float fDeltaTime )
 
 void RageTextureManager::AdjustTextureID( RageTextureID &ID ) const
 {
+	using std::min;
 	if( ID.iColorDepth == -1 )
 		ID.iColorDepth = m_Prefs.m_iTextureColorDepth;
 	ID.iMaxSize = min( ID.iMaxSize, m_Prefs.m_iMaxTextureResolution );
@@ -195,6 +196,7 @@ RageTexture* RageTextureManager::CopyTexture( RageTexture *pCopy )
 
 void RageTextureManager::VolatileTexture( RageTextureID ID )
 {
+	using std::min;
 	RageTexture* pTexture = LoadTextureInternal( ID );
 	pTexture->GetPolicy() = min( pTexture->GetPolicy(), RageTextureID::TEX_VOLATILE );
 	UnloadTexture( pTexture );

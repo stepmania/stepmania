@@ -137,6 +137,7 @@ int RageSoundReader_Preload::GetNextSourceFrame() const
 
 int RageSoundReader_Preload::Read( float *pBuffer, int iFrames )
 {
+	using std::min;
 	const int iSizeFrames = m_Buffer->size() / framesize;
 	const int iFramesAvail = iSizeFrames - m_iPosition;
 

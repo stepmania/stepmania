@@ -133,7 +133,7 @@ void ArrowEffects::Update()
 
 			for( int i=iStartCol; i<=iEndCol; i++ )
 			{
-				data.m_fMinTornadoX[iColNum] = min( data.m_fMinTornadoX[iColNum], pCols[i].fXOffset * field_zoom );
+				data.m_fMinTornadoX[iColNum] = std::min( data.m_fMinTornadoX[iColNum], pCols[i].fXOffset * field_zoom );
 				data.m_fMaxTornadoX[iColNum] = max( data.m_fMaxTornadoX[iColNum], pCols[i].fXOffset * field_zoom);
 			}
 		}
@@ -563,7 +563,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	{
 		// Allow Tiny to pull tracks together, but not to push them apart.
 		float fTinyPercent = fEffects[PlayerOptions::EFFECT_TINY];
-		fTinyPercent = min( powf(TINY_PERCENT_BASE, fTinyPercent), (float)TINY_PERCENT_GATE );
+		fTinyPercent = std::min( powf(TINY_PERCENT_BASE, fTinyPercent), (float)TINY_PERCENT_GATE );
 		fPixelOffsetFromCenter *= fTinyPercent;
 	}
 

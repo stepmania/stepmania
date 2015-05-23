@@ -20,13 +20,6 @@ class RageFileDriver;
 /** @brief Get the length of the array. */
 #define ARRAYLEN(a) (sizeof(a) / sizeof((a)[0]))
 
-/* Common harmless mismatches.  All min(T,T) and max(T,T) cases are handled
- * by the generic template we get from <algorithm>. */
-inline float min( float a, int b ) { return a < b? a:b; }
-inline float min( int a, float b ) { return a < b? a:b; }
-inline unsigned long min( unsigned int a, unsigned long b ) { return a < b? a:b; }
-inline unsigned long min( unsigned long a, unsigned int b ) { return a < b? a:b; }
-
 /** @brief If outside the range from low to high, bring it within range. */
 template<typename T>
 T clamp( T val, T low, T high)

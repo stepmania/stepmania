@@ -495,7 +495,7 @@ public:
 			// must be a valid length), we must adjust the length here to a safe
 			// value.  Thanks to Ullrich Pollähne for catching this bug
 
-			nChars		= min(nChars, str.length() - nStart);
+			nChars		= std::min(nChars, str.length() - nStart);
 
 			// Watch out for assignment to self
 
@@ -526,7 +526,7 @@ public:
 			// must be a valid length), we must adjust the length here to a safe
 			// value. Thanks to Ullrich Pollähne for catching this bug
 
-			nChars		= min(nChars, str.length() - nStart);
+			nChars		= std::min(nChars, str.length() - nStart);
 
 			// Watch out for assignment to self
 
@@ -693,7 +693,7 @@ public:
 	{
 		// Range check the count.
 
-		nCount = std::max(0, min(nCount, static_cast<int>(this->size())));
+		nCount = std::max(0, std::min(nCount, static_cast<int>(this->size())));
 		return this->substr(0, static_cast<MYSIZE>(nCount));
 	}
 
@@ -736,7 +736,7 @@ public:
 	{
 		// Range check the count.
 
-		nCount = std::max(0, min(nCount, static_cast<int>(this->size())));
+		nCount = std::max(0, std::min(nCount, static_cast<int>(this->size())));
 		return this->substr(this->size()-static_cast<MYSIZE>(nCount));
 	}
 

@@ -730,6 +730,7 @@ void Actor::EndDraw()
 
 void Actor::UpdateTweening( float fDeltaTime )
 {
+	using std::min;
 	while( !m_Tweens.empty() // something to do
 		&& fDeltaTime > 0 )	// something will change
 	{

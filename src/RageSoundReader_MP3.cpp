@@ -703,6 +703,7 @@ RageSoundReader_MP3 *RageSoundReader_MP3::Copy() const
 
 int RageSoundReader_MP3::Read( float *buf, int iFrames )
 {
+	using std::min;
 	int iFramesWritten = 0;
 
 	while( iFrames > 0 )

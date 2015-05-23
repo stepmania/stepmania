@@ -1016,6 +1016,7 @@ void NoteDisplay::DrawHoldBodyInternal(vector<Sprite*>& sprite_top,
 	const float bottom_beat, bool glow)
 {
 	using std::max;
+	using std::min;
 	// Draw the top cap
 	part_args.y_top= head_minus_top;
 	part_args.y_bottom= y_head;

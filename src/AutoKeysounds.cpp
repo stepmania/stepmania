@@ -67,7 +67,7 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 				 * This leads to failure later on.
 				 * We need a better way to prevent this. */
 				if( m_ndAutoKeysoundsOnly[pn].GetNextTapNoteRowForTrack( t, iNextRowForPlayer ) )
-					iNextRow = min( iNextRow, iNextRowForPlayer );
+					iNextRow = std::min( iNextRow, iNextRowForPlayer );
 			}
 
 			if( iNextRow == INT_MAX )

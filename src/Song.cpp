@@ -1110,7 +1110,7 @@ void Song::ReCalculateRadarValuesAndLastSecond(bool fromCache, bool duringCache)
 			 * don't force the first beat of the whole song to 0. */
 			if( tempNoteData.GetLastRow() != 0 )
 			{
-				localFirst = min(localFirst,
+				localFirst = std::min(localFirst,
 					pSteps->GetTimingData()->GetElapsedTimeFromBeat(tempNoteData.GetFirstBeat()));
 				localLast = std::max(localLast,
 					pSteps->GetTimingData()->GetElapsedTimeFromBeat(tempNoteData.GetLastBeat()));

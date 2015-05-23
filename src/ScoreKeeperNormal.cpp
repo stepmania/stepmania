@@ -456,6 +456,7 @@ void ScoreKeeperNormal::HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteSco
 
 void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumHitMaintainCombo, int iNumBreakCombo, int iRow )
 {
+	using std::min;
 	// Regular combo
 	if( m_ComboIsPerRow )
 	{
@@ -484,6 +485,7 @@ void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumH
 
 void ScoreKeeperNormal::HandleRowComboInternal( TapNoteScore tns, int iNumTapsInRow, int iRow )
 {
+	using std::min;
 	if( m_ComboIsPerRow )
 	{
 		iNumTapsInRow = min( iNumTapsInRow, 1);
