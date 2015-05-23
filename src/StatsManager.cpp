@@ -317,7 +317,7 @@ void StatsManager::UnjoinPlayer( PlayerNumber pn )
 	}
 }
 
-void StatsManager::GetStepsInUse( set<Steps*> &apInUseOut ) const
+void StatsManager::GetStepsInUse( std::set<Steps*> &apInUseOut ) const
 {
 	for( int i = 0; i < (int) m_vPlayedStageStats.size(); ++i )
 	{

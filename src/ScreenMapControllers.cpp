@@ -518,7 +518,7 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 			if(CursorOnKey())
 			{
 				SetListEntry to_add(SetListEntry(CurKeyIndex(), m_CurController, m_CurSlot));
-				set<SetListEntry>::iterator found= m_SetList.find(to_add);
+				std::set<SetListEntry>::iterator found= m_SetList.find(to_add);
 				if(found == m_SetList.end())
 				{
 					m_SetList.insert(to_add);

@@ -20,7 +20,7 @@ namespace
 			mapToRegister[p->GetClassName()] = p;
 		}
 
-		set<RString> setRegisteredAlready;
+		std::set<RString> setRegisteredAlready;
 
 		while( !mapToRegister.empty() )
 		{

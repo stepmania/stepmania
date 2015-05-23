@@ -91,7 +91,7 @@ XToString( MessageID );
 
 static RageMutex g_Mutex( "MessageManager" );
 
-typedef set<IMessageSubscriber*> SubscribersSet;
+typedef std::set<IMessageSubscriber*> SubscribersSet;
 static map<RString,SubscribersSet> g_MessageToSubscribers;
 
 Message::Message( const RString &s )

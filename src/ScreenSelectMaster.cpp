@@ -507,7 +507,7 @@ bool ScreenSelectMaster::Move( PlayerNumber pn, MenuDir dir )
 		return false;
 
 	int iSwitchToIndex = m_iChoice[pn];
-	set<int> seen;
+	std::set<int> seen;
 
 	do
 	{

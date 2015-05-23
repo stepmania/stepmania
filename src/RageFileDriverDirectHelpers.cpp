@@ -300,9 +300,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 	static const RString IGNORE_MARKER_BEGINNING = "ignore-";
 
 	vector<RString> vsFilesToRemove;
-	for( set<File>::iterator iter = fs.files.lower_bound(IGNORE_MARKER_BEGINNING);
-		 iter != fs.files.end();
-		 ++iter )
+	for( auto iter = fs.files.lower_bound(IGNORE_MARKER_BEGINNING); iter != fs.files.end(); ++iter )
 	{
 		if( !BeginsWith( iter->lname, IGNORE_MARKER_BEGINNING ) )
 			break;
@@ -316,7 +314,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 		// Erase the file corresponding to the ignore marker
 		File fileToDelete;
 		fileToDelete.SetName( iter );
-		set<File>::iterator iter2 = fs.files.find( fileToDelete );
+		std::set<File>::iterator iter2 = fs.files.find( fileToDelete );
 		if( iter2 != fs.files.end() )
 			fs.files.erase( iter2 );
 	}

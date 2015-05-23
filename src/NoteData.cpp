@@ -202,7 +202,7 @@ int NoteData::GetNumTapNonEmptyTracks( int row ) const
 	return iNum;
 }
 
-void NoteData::GetTapNonEmptyTracks( int row, set<int>& addTo ) const
+void NoteData::GetTapNonEmptyTracks( int row, std::set<int>& addTo ) const
 {
 	for( int t=0; t<GetNumTracks(); t++ )
 		if( GetTapNote(t, row).type != TapNoteType_Empty )
@@ -964,7 +964,7 @@ void NoteData::SetTapNote( int track, int row, const TapNote& t )
 	}
 }
 
-void NoteData::GetTracksHeldAtRow( int row, set<int>& addTo )
+void NoteData::GetTracksHeldAtRow( int row, std::set<int>& addTo )
 {
 	for( int t=0; t<GetNumTracks(); ++t )
 		if( IsHoldNoteAtRow( t, row ) )
@@ -973,7 +973,7 @@ void NoteData::GetTracksHeldAtRow( int row, set<int>& addTo )
 
 int NoteData::GetNumTracksHeldAtRow( int row )
 {
-	static set<int> viTracks;
+	static std::set<int> viTracks;
 	viTracks.clear();
 	GetTracksHeldAtRow( row, viTracks );
 	return viTracks.size();
@@ -1212,7 +1212,7 @@ void NoteData::AddATIToList(all_tracks_const_iterator* iter) const
 
 void NoteData::RemoveATIFromList(all_tracks_iterator* iter) const
 {
-	set<all_tracks_iterator*>::iterator pos= m_atis.find(iter);
+	auto pos= m_atis.find(iter);
 	if(pos != m_atis.end())
 	{
 		m_atis.erase(pos);
@@ -1221,7 +1221,7 @@ void NoteData::RemoveATIFromList(all_tracks_iterator* iter) const
 
 void NoteData::RemoveATIFromList(all_tracks_const_iterator* iter) const
 {
-	set<all_tracks_const_iterator*>::iterator pos= m_const_atis.find(iter);
+	auto pos= m_const_atis.find(iter);
 	if(pos != m_const_atis.end())
 	{
 		m_const_atis.erase(pos);
@@ -1230,13 +1230,11 @@ void NoteData::RemoveATIFromList(all_tracks_const_iterator* iter) const
 
 void NoteData::RevalidateATIs(vector<int> const& added_or_removed_tracks, bool added)
 {
-	for(set<all_tracks_iterator*>::iterator cur= m_atis.begin();
-			cur != m_atis.end(); ++cur)
+	for(auto cur= m_atis.begin(); cur != m_atis.end(); ++cur)
 	{
 		(*cur)->Revalidate(this, added_or_removed_tracks, added);
 	}
-	for(set<all_tracks_const_iterator*>::iterator cur= m_const_atis.begin();
-			cur != m_const_atis.end(); ++cur)
+	for(auto cur= m_const_atis.begin(); cur != m_const_atis.end(); ++cur)
 	{
 		(*cur)->Revalidate(this, added_or_removed_tracks, added);
 	}

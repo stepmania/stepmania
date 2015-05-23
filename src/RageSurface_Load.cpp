@@ -47,7 +47,7 @@ static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error
 	 * wrong file format.  The error message always looks like "unknown file format" or
 	 * "Not Vorbis data"; ignore it so we always give a consistent error message, and
 	 * continue trying other file formats.
-	 * 
+	 *
 	 * OPEN_FATAL_ERROR: Either the file was opened successfully and appears to be the
 	 * correct format, but a fatal format-specific error was encountered that will probably
 	 * not be fixed by using a different reader (for example, an Ogg file that doesn't
@@ -85,7 +85,7 @@ RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, b
 		}
 	}
 
-	set<RString> FileTypes;
+	std::set<RString> FileTypes;
 	vector<RString> const& exts= ActorUtil::GetTypeExtensionList(FT_Bitmap);
 	for(vector<RString>::const_iterator curr= exts.begin();
 			curr != exts.end(); ++curr)
@@ -107,7 +107,7 @@ RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, b
 		FileTypes.erase( format );
 	}
 
-	for( set<RString>::iterator it = FileTypes.begin(); bKeepTrying && it != FileTypes.end(); ++it )
+	for( auto it = FileTypes.begin(); bKeepTrying && it != FileTypes.end(); ++it )
 	{
 		RageSurface *ret = TryOpenFile( sPath, bHeaderOnly, error, *it, bKeepTrying );
 		if( ret )
@@ -123,7 +123,7 @@ RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, b
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -133,7 +133,7 @@ RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, b
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

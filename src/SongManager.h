@@ -163,7 +163,7 @@ public:
 
 	void UpdatePopular();
 	void UpdateShuffled();	// re-shuffle songs and courses
-	void UpdatePreferredSort(RString sPreferredSongs = "PreferredSongs.txt", RString sPreferredCourses = "PreferredCourses.txt"); 
+	void UpdatePreferredSort(RString sPreferredSongs = "PreferredSongs.txt", RString sPreferredCourses = "PreferredCourses.txt");
 	void SortSongs();		// sort m_pSongs by CompareSongPointersByTitle
 
 	void UpdateRankingCourses();	// courses shown on the ranking screen
@@ -184,7 +184,7 @@ protected:
 	/** @brief All of the songs that can be played. */
 	vector<Song*>		m_pSongs;
 	map<RString, Song*> m_SongsByDir;
-	set<RString> m_GroupsToNeverCache;
+	std::set<RString> m_GroupsToNeverCache;
 	/** @brief Hold pointers to all the songs that have been deleted from disk but must at least be kept temporarily alive for smooth audio transitions. */
 	vector<Song*>       m_pDeletedSongs;
 	/** @brief The most popular songs ranked by number of plays. */
@@ -234,7 +234,7 @@ extern SongManager*	SONGMAN;	// global and accessible from anywhere in our progr
  * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -244,7 +244,7 @@ extern SongManager*	SONGMAN;	// global and accessible from anywhere in our progr
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

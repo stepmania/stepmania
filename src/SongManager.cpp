@@ -1927,7 +1927,7 @@ void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
 	RefreshCourseGroupInfo();
 
 	// Free profile steps.
-	set<Steps*> setInUse;
+	std::set<Steps*> setInUse;
 	if( STATSMAN )
 		STATSMAN->GetStepsInUse( setInUse );
 	for (auto *s: m_pSongs)
