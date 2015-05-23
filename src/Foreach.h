@@ -8,10 +8,6 @@ for( vector<elemType>::iterator var = (vect).begin(); var != (vect).end(); ++var
 #define FOREACH_CONST( elemType, vect, var ) 	\
 for( vector<elemType>::const_iterator var = (vect).begin(); var != (vect).end(); ++var )
 
-/** @brief General foreach loop iterating over a set. */
-#define FOREACHS( elemType, vect, var ) 			\
-for( set<elemType>::iterator var = (vect).begin(); var != (vect).end(); ++var )
-
 #endif
 
 /**
