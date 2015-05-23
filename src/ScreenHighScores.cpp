@@ -24,13 +24,13 @@ REGISTER_SCREEN_CLASS( ScreenHighScores );
 static void GetAllSongsToShow( vector<Song*> &vpOut, int iNumMostRecentScoresToShow )
 {
 	vpOut.clear();
-	FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), s )
+	for (auto *s: SONGMAN->GetAllSongs())
 	{
-		if( !(*s)->NormallyDisplayed() )
+		if( !s->NormallyDisplayed() )
 			continue;	// skip
-		if( !(*s)->ShowInDemonstrationAndRanking() )
+		if( !s->ShowInDemonstrationAndRanking() )
 			continue;	// skip
-		vpOut.push_back( *s );
+		vpOut.push_back( s );
 	}
 
 	if( (int)vpOut.size() > iNumMostRecentScoresToShow )
@@ -51,13 +51,13 @@ static void GetAllCoursesToShow( vector<Course*> &vpOut, CourseType ct, int iNum
 	else
 		SONGMAN->GetCourses( ct, vpCourses, false );
 
-	FOREACH_CONST( Course*, vpCourses, c)
+	for (auto *c: vpCourses)
 	{
-		if( UNLOCKMAN->CourseIsLocked(*c) )
+		if( UNLOCKMAN->CourseIsLocked(c) )
 			continue;	// skip
-		if( !(*c)->ShowInDemonstrationAndRanking() )
+		if( !c->ShowInDemonstrationAndRanking() )
 			continue;	// skip
-		vpOut.push_back( *c );
+		vpOut.push_back( c );
 	}
 	if( (int)vpOut.size() > iNumMostRecentScoresToShow )
 	{
@@ -127,7 +127,7 @@ void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
 	lua_pushvalue( L, -1 );
 	msg.SetParamFromStack( L, "Entries" );
 
-	FOREACH( DifficultyAndStepsType, m_DifficultiesToShow, iter )
+	for (auto iter = m_DifficultiesToShow.begin(); iter != m_DifficultiesToShow.end(); ++iter)
 	{
 		int i = iter-m_DifficultiesToShow.begin();
 		Difficulty dc = iter->first;
@@ -181,7 +181,7 @@ void ScoreScroller::Load( RString sMetricsGroup )
 {
 	SCROLLER_ITEMS_TO_DRAW.Load(sMetricsGroup, "ScrollerItemsToDraw");
 	SCROLLER_SECONDS_PER_ITEM.Load(sMetricsGroup, "ScrollerSecondsPerItem");
-	
+
 
 	int iNumCopies = SCROLLER_ITEMS_TO_DRAW+1;
 	for( int i=0; i<iNumCopies; ++i )
@@ -329,7 +329,7 @@ void ScreenHighScores::DoScroll( int iDir )
 /*
  * (c) 2001-2007 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -339,7 +339,7 @@ void ScreenHighScores::DoScroll( int iDir )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

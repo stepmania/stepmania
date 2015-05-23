@@ -17,12 +17,14 @@ AutoScreenMessage( SM_RoomInfoDeploy );
 
 RoomWheel::~RoomWheel()
 {
-	FOREACH( WheelItemBaseData*, m_CurWheelItemData, i )
-		SAFE_DELETE( *i );
+	for (auto *i: m_CurWheelItemData)
+	{
+		SAFE_DELETE( i );
+	}
 	m_CurWheelItemData.clear();
 }
 
-void RoomWheel::Load( RString sType ) 
+void RoomWheel::Load( RString sType )
 {
 	WheelBase::Load( sType );
 
@@ -197,7 +199,7 @@ unsigned int RoomWheel::GetNumItems() const
 /*
  * (c) 2004 Josh Allen
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -207,7 +209,7 @@ unsigned int RoomWheel::GetNumItems() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

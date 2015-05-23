@@ -233,7 +233,7 @@ void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
 
 	m_frameContainer.SortByDrawOrder();
 
-	FOREACH( OptionRow*, m_pRows, p )
+	for (auto p = m_pRows.begin(); p != m_pRows.end(); ++p)
 	{
 		int iIndex = p - m_pRows.begin();
 
@@ -258,8 +258,9 @@ void ScreenOptions::RestartOptions()
 	m_exprRowPositionTransformFunction.ClearCache();
 	vector<PlayerNumber> vpns;
 	FOREACH_HumanPlayer( p )
+	{
 		vpns.push_back( p );
-
+	}
 	for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
 	{
 		OptionRow *pRow = m_pRows[r];
@@ -269,9 +270,10 @@ void ScreenOptions::RestartOptions()
 
 		// HACK: Process disabled players, too, to hide inactive underlines.
 		FOREACH_PlayerNumber( p )
+		{
 			pRow->AfterImportOptions( p );
+		}
 	}
-
 
 	FOREACH_PlayerNumber( p )
 	{
@@ -306,8 +308,9 @@ void ScreenOptions::RestartOptions()
 	}
 
 	FOREACH_PlayerNumber( p )
+	{
 		AfterChangeRow( p );
-
+	}
 	CHECKPOINT;
 }
 
@@ -318,8 +321,9 @@ void ScreenOptions::BeginScreen()
 	RestartOptions();
 
 	FOREACH_PlayerNumber( p )
+	{
 		m_bGotAtLeastOneStartPressed[p] = false;
-
+	}
 	ON_COMMAND( m_frameContainer );
 
 	FOREACH_PlayerNumber( p )
@@ -335,9 +339,10 @@ void ScreenOptions::TweenOnScreen()
 {
 	ScreenWithMenuElements::TweenOnScreen();
 
-	FOREACH( OptionRow*, m_pRows, p )
-		(*p)->RunCommands( ROW_ON_COMMAND );
-
+	for (auto *p: m_pRows)
+	{
+		p->RunCommands( ROW_ON_COMMAND );
+	}
 	m_frameContainer.SortByDrawOrder();
 }
 
@@ -345,8 +350,10 @@ void ScreenOptions::TweenOffScreen()
 {
 	ScreenWithMenuElements::TweenOffScreen();
 
-	FOREACH( OptionRow*, m_pRows, p )
-		(*p)->RunCommands( ROW_OFF_COMMAND );
+	for (auto *p: m_pRows)
+	{
+		p->RunCommands( ROW_OFF_COMMAND );
+	}
 }
 
 ScreenOptions::~ScreenOptions()
@@ -502,7 +509,7 @@ bool ScreenOptions::Input( const InputEventPlus &input )
 		if (input.DeviceI == DeviceInput( DEVICE_MOUSE, (DeviceButton)i ))
 			mouse_evt = true;
 	}
-	if (mouse_evt)	
+	if (mouse_evt)
 	{
 		return ScreenWithMenuElements::Input(input);
 	}
@@ -564,8 +571,10 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 	{
 		vector<PlayerNumber> vpns;
 		FOREACH_HumanPlayer( p )
+		{
 			vpns.push_back( p );
-		for( unsigned r=0; r<m_pRows.size(); r++ ) // foreach row
+		}
+		for( unsigned r=0; r<m_pRows.size(); r++ ) // for each row
 		{
 			if( m_pRows[r]->GetRowType() == OptionRow::RowType_Exit )
 				continue;
@@ -713,7 +722,9 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 		/* After changing a value, position underlines. Do this for both players,
 		 * since underlines for both players will change with m_bOneChoiceForAllPlayers. */
 		FOREACH_HumanPlayer( p )
+		{
 			m_pRows[r]->PositionUnderlines( p );
+		}
 		m_pRows[r]->PositionIcons( pn );
 		m_pRows[r]->SetRowHasFocus( pn, GAMESTATE->IsHumanPlayer(pn) && iCurRow == (int)r );
 		m_pRows[r]->UpdateEnabledDisabled();
@@ -729,8 +740,9 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 
 	// Update all players, since changing one player can move both cursors.
 	FOREACH_HumanPlayer( p )
+	{
 		TweenCursor( p );
-
+	}
 	FOREACH_PlayerNumber( p )
 	{
 		OptionRow &row = *m_pRows[iCurRow];
@@ -1135,7 +1147,9 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 	{
 		vector<PlayerNumber> vpns;
 		FOREACH_HumanPlayer( p )
+		{
 			vpns.push_back( p );
+		}
 		ExportOptions( iRow, vpns );
 	}
 
@@ -1344,7 +1358,7 @@ void ScreenOptions::SetOptionRowFromName( const RString& nombre )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to ScreenOptions. */ 
+/** @brief Allow Lua to have access to ScreenOptions. */
 class LunaScreenOptions: public Luna<ScreenOptions>
 {
 public:

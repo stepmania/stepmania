@@ -11,7 +11,6 @@
 #include "PrefsManager.h"
 #include "StepMania.h"
 #include "RageSoundManager.h"
-#include "Foreach.h"
 #include "OptionRowHandler.h"
 #include "ScreenOptionsMasterPrefs.h"
 #include "CommonMetrics.h"
@@ -37,7 +36,9 @@ void ScreenOptionsMaster::Init()
 	if( FORCE_ALL_PLAYERS )
 	{
 		FOREACH_PlayerNumber( pn )
+		{
 			GAMESTATE->JoinPlayer( pn );
+		}
 	}
 
 	if( NAVIGATION_MODE == "toggle" )
@@ -55,7 +56,7 @@ void ScreenOptionsMaster::Init()
 	{
 		RString sLineName = asLineNames[i];
 		RString sRowCommands = LINE(sLineName);
-		
+
 		Commands cmds;
 		ParseCommands( sRowCommands, cmds, false );
 
@@ -74,8 +75,10 @@ void ScreenOptionsMaster::Init()
 
 void ScreenOptionsMaster::ImportOptions( int r, const vector<PlayerNumber> &vpns )
 {
-	FOREACH_CONST( PlayerNumber, vpns, pn )
-		ASSERT( GAMESTATE->IsHumanPlayer(*pn) );
+	for (auto const &pn: vpns)
+	{
+		ASSERT( GAMESTATE->IsHumanPlayer(pn) );
+	}
 	OptionRow &row = *m_pRows[r];
 	row.ImportOptions( vpns );
 }
@@ -87,10 +90,10 @@ void ScreenOptionsMaster::ExportOptions( int r, const vector<PlayerNumber> &vpns
 	OptionRow &row = *m_pRows[r];
 	bool bRowHasFocus[NUM_PLAYERS];
 	ZERO( bRowHasFocus );
-	FOREACH_CONST( PlayerNumber, vpns, p )
+	for (auto const &p: vpns)
 	{
-		int iCurRow = m_iCurrentRow[*p];
-		bRowHasFocus[*p] = iCurRow == r;
+		int iCurRow = m_iCurrentRow[p];
+		bRowHasFocus[p] = iCurRow == r;
 	}
 	m_iChangeMask |= row.ExportOptions( vpns, bRowHasFocus );
 }
@@ -120,7 +123,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		/* If the theme changes, we need to reset RageDisplay to apply the new window
 		 * title and icon. If the aspect ratio changes, we need to reset RageDisplay
 		 * so that the projection matrix is re-created using the new screen dimensions. */
-		if( (m_iChangeMask & OPT_APPLY_THEME) || 
+		if( (m_iChangeMask & OPT_APPLY_THEME) ||
 			(m_iChangeMask & OPT_APPLY_GRAPHICS) ||
 			(m_iChangeMask & OPT_APPLY_ASPECT_RATIO) )
 		{
@@ -146,7 +149,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		{
 			SOUNDMAN->SetMixVolume();
 		}
-		
+
 		if( m_iChangeMask & OPT_APPLY_SONG )
 			SONGMAN->SetPreferences();
 
@@ -161,7 +164,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -171,7 +174,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

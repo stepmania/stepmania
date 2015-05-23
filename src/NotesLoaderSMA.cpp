@@ -18,7 +18,7 @@ void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, con
 {
 	vector<RString> arrayMultiplierExpressions;
 	split( sParam, ",", arrayMultiplierExpressions );
-	
+
 	for( unsigned f=0; f<arrayMultiplierExpressions.size(); f++ )
 	{
 		vector<RString> arrayMultiplierValues;
@@ -36,7 +36,7 @@ void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, con
 		const int iCombos = StringToInt( arrayMultiplierValues[1] ); // always true.
 		// hoping I'm right here: SMA files can use 6 values after the row/beat.
 		const int iMisses = (size == 2 || size == 4 ?
-							 iCombos : 
+							 iCombos :
 							 StringToInt(arrayMultiplierValues[2]));
 		out.AddSegment( ComboSegment(BeatToNoteRow(fComboBeat), iCombos, iMisses) );
 	}
@@ -46,11 +46,11 @@ void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 {
 	vector<RString> vs1;
 	split( sParam, ",", vs1 );
-	
-	FOREACH_CONST( RString, vs1, s1 )
+
+	for (auto const &s1: vs1)
 	{
 		vector<RString> vs2;
-		split( *s1, "=", vs2 );
+		split( s1, "=", vs2 );
 
 		if( vs2.size() < 2 )
 		{
@@ -89,20 +89,20 @@ void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int ro
 	vector<RString> vs1;
 	split( line, ",", vs1 );
 
-	FOREACH_CONST( RString, vs1, s1 )
+	for (auto s1 = vs1.begin(); s1 != vs1.end(); ++s1)
 	{
 		vector<RString> vs2;
 		vs2.clear(); // trying something.
 		RString loopTmp = *s1;
 		Trim( loopTmp );
 		split( loopTmp, "=", vs2 );
-		
+
 		if( vs2.size() == 2 ) // First one always seems to have 2.
 		{
 			// Aldo_MX: 4 is the default value in SMA, although SM5 requires 0 for the first segment :/
 			vs2.push_back(s1 == vs1.begin() ? "0" : "4");
 		}
-		
+
 		if( vs2.size() < 3 )
 		{
 			LOG->UserLog("Song file",
@@ -150,28 +150,28 @@ void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int ro
 bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache )
 {
 	LOG->Trace( "Song::LoadFromSMAFile(%s)", sPath.c_str() );
-	
+
 	MsdFile msd;
 	if( !msd.ReadFile( sPath, true ) )  // unescape
 	{
 		LOG->UserLog( "Song file", sPath, "couldn't be opened: %s", msd.GetError().c_str() );
 		return false;
 	}
-	
+
 	out.m_SongTiming.m_sFile = sPath; // songs still have their fallback timing.
 	out.m_sSongFileName = sPath;
-	
+
 	Steps* pNewNotes = NULL;
 	int iRowsPerBeat = -1; // Start with an invalid value: needed for checking.
 	vector< pair<float, float> > vBPMChanges, vStops;
-	
+
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
 		RString sValueName = sParams[0];
 		sValueName.MakeUpper();
-		
+
 		// handle the data
 		/* Don't use GetMainAndSubTitlesFromFullTitle; that's only for heuristically
 		 * splitting other formats that *don't* natively support #SUBTITLE. */
@@ -180,64 +180,64 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 			out.m_sMainTitle = sParams[1];
 			this->SetSongTitle(sParams[1]);
 		}
-		
+
 		else if( sValueName=="SUBTITLE" )
 			out.m_sSubTitle = sParams[1];
-		
+
 		else if( sValueName=="ARTIST" )
 			out.m_sArtist = sParams[1];
-		
+
 		else if( sValueName=="TITLETRANSLIT" )
 			out.m_sMainTitleTranslit = sParams[1];
-		
+
 		else if( sValueName=="SUBTITLETRANSLIT" )
 			out.m_sSubTitleTranslit = sParams[1];
-		
+
 		else if( sValueName=="ARTISTTRANSLIT" )
 			out.m_sArtistTranslit = sParams[1];
-		
+
 		else if( sValueName=="GENRE" )
 			out.m_sGenre = sParams[1];
-		
+
 		else if( sValueName=="CREDIT" )
 			out.m_sCredit = sParams[1];
-		
+
 		else if( sValueName=="BANNER" )
 			out.m_sBannerFile = sParams[1];
-		
+
 		else if( sValueName=="BACKGROUND" )
 			out.m_sBackgroundFile = sParams[1];
 
 		else if( sValueName=="PREVIEW" )
 			out.m_sPreviewVidFile = sParams[1];
-		
+
 		// Save "#LYRICS" for later, so we can add an internal lyrics tag.
 		else if( sValueName=="LYRICSPATH" )
 			out.m_sLyricsFile = sParams[1];
-		
+
 		else if( sValueName=="CDTITLE" )
 			out.m_sCDTitleFile = sParams[1];
-		
+
 		else if( sValueName=="MUSIC" )
 			out.m_sMusicFile = sParams[1];
-		
+
 		else if( sValueName=="INSTRUMENTTRACK" )
 		{
 			SMLoader::ProcessInstrumentTracks( out, sParams[1] );
 		}
-		
+
 		else if( sValueName=="MUSICLENGTH" )
 		{
 			continue;
 		}
-		
+
 		else if( sValueName=="LASTBEATHINT" )
 		{
 			// can't identify at this position: ignore.
 		}
 		else if( sValueName=="MUSICBYTES" )
 			; /* ignore */
-		
+
 		// Cache tags: ignore.
 		else if (sValueName=="FIRSTBEAT" || sValueName=="LASTBEAT" ||
 			 sValueName=="SONGFILENAME" || sValueName=="HASMUSIC" ||
@@ -245,28 +245,28 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 		{
 			;
 		}
-		
+
 		else if( sValueName=="SAMPLESTART" )
 			out.m_fMusicSampleStartSeconds = HHMMSSToSeconds( sParams[1] );
-		
+
 		else if( sValueName=="SAMPLELENGTH" )
 			out.m_fMusicSampleLengthSeconds = HHMMSSToSeconds( sParams[1] );
-		
+
 		// SamplePath is used when the song has a separate preview clip. -aj
 		//else if( sValueName=="SAMPLEPATH" )
 		//out.m_sMusicSamplePath = sParams[1];
-		
+
 		else if( sValueName=="LISTSORT" )
 		{
 			;
 		}
-		
+
 		else if( sValueName=="DISPLAYBPM" )
 		{
-			// #DISPLAYBPM:[xxx][xxx:xxx]|[*]; 
+			// #DISPLAYBPM:[xxx][xxx:xxx]|[*];
 			if( sParams[1] == "*" )
 				out.m_DisplayBPMType = DISPLAY_BPM_RANDOM;
-			else 
+			else
 			{
 				out.m_DisplayBPMType = DISPLAY_BPM_SPECIFIED;
 				out.m_fSpecifiedBPMMin = StringToFloat( sParams[1] );
@@ -276,12 +276,12 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 					out.m_fSpecifiedBPMMax = StringToFloat( sParams[2] );
 			}
 		}
-		
+
 		else if( sValueName=="SMAVERSION" )
 		{
 			; // ignore it.
 		}
-		
+
 		else if( sValueName=="ROWSPERBEAT" )
 		{
 			/* This value is used to help translate the timings
@@ -293,7 +293,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 			{
 				vector<RString> arrayBeatChangeExpressions;
 				split( sParams[1], ",", arrayBeatChangeExpressions );
-				
+
 				vector<RString> arrayBeatChangeValues;
 				split( arrayBeatChangeExpressions[0], "=", arrayBeatChangeValues );
 				iRowsPerBeat = StringToInt(arrayBeatChangeValues[1]);
@@ -306,13 +306,13 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 			}
 		}
-		
+
 		else if( sValueName=="BEATSPERMEASURE" )
 		{
 			TimingData &timing = ( pNewNotes ? pNewNotes->m_Timing : out.m_SongTiming);
 			ProcessBeatsPerMeasure( timing, sParams[1] );
 		}
-		
+
 		else if( sValueName=="SELECTABLE" )
 		{
 			if(sParams[1].EqualsNoCase("YES"))
@@ -336,12 +336,12 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 					     "has an unknown #SELECTABLE value, \"%s\"; ignored.",
 					     sParams[1].c_str() );
 		}
-		
+
 		else if( sValueName.Left(strlen("BGCHANGES"))=="BGCHANGES" || sValueName=="ANIMATIONS" )
 		{
 			SMLoader::ProcessBGChanges( out, sValueName, sPath, sParams[1]);
 		}
-		
+
 		else if( sValueName=="FGCHANGES" )
 		{
 			vector<RString> aFGChangeExpressions;
@@ -434,13 +434,13 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 			}
 
 			pNewNotes = new Steps(&out);
-			
-			LoadFromTokens( 
-					 sParams[1], 
-					 sParams[2], 
-					 sParams[3], 
-					 sParams[4], 
-					 sParams[5], 
+
+			LoadFromTokens(
+					 sParams[1],
+					 sParams[2],
+					 sParams[3],
+					 sParams[4],
+					 sParams[5],
 					 sParams[6],
 					 *pNewNotes );
 			pNewNotes->SetFilename(sPath);
@@ -467,7 +467,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
  * @author Aldo Fregoso, Jason Felds (c) 2009-2011
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -477,7 +477,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

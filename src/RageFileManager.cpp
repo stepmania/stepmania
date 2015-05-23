@@ -9,7 +9,6 @@
 #include "RageUtil_FileDB.h"
 #include "RageLog.h"
 #include "RageThreads.h"
-#include "Foreach.h"
 #include "arch/ArchHooks/ArchHooks.h"
 #include "LuaManager.h"
 
@@ -218,11 +217,11 @@ static RString GetDirOfExecutable( RString argv0 )
 
 			vector<RString> vPath;
 			split( path, ":", vPath );
-			FOREACH( RString, vPath, i )
+			for (auto &i: vPath)
 			{
-				if( access(*i + "/" + argv0, X_OK|R_OK) )
+				if( access(i + "/" + argv0, X_OK|R_OK) )
 					continue;
-				sPath = *i;
+				sPath = i;
 				break;
 			}
 			if( sPath.empty() )
@@ -1042,12 +1041,12 @@ bool DeleteRecursive( RageFileDriver *prfd, const RString &sDir )
 
 	vector<RString> vsFiles;
 	prfd->GetDirListing( sDir+"*", vsFiles, false, true );
-	FOREACH_CONST( RString, vsFiles, s )
+	for (auto const &s: vsFiles)
 	{
-		if( IsADirectory(*s) )
-			DeleteRecursive( *s+"/" );
+		if( IsADirectory(s) )
+			DeleteRecursive( s+"/" );
 		else
-			FILEMAN->Remove( *s );
+			FILEMAN->Remove( s );
 	}
 
 	return FILEMAN->Remove( sDir );
@@ -1059,12 +1058,12 @@ bool DeleteRecursive( const RString &sDir )
 
 	vector<RString> vsFiles;
 	GetDirListing( sDir+"*", vsFiles, false, true );
-	FOREACH_CONST( RString, vsFiles, s )
+	for (auto const &s: vsFiles)
 	{
-		if( IsADirectory(*s) )
-			DeleteRecursive( *s+"/" );
+		if( IsADirectory(s) )
+			DeleteRecursive( s+"/" );
 		else
-			FILEMAN->Remove( *s );
+			FILEMAN->Remove( s );
 	}
 
 	return FILEMAN->Remove( sDir );

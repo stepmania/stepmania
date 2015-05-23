@@ -8,7 +8,6 @@
 #include "XmlFile.h"
 #include "GameState.h"
 #include "Style.h"
-#include "Foreach.h"
 #include "GameState.h"
 #include "LocalizedString.h"
 #include "RageLog.h"
@@ -206,11 +205,11 @@ void CourseUtil::SortByMostRecentlyPlayedForMachine( vector<Course*> &vpCoursesI
 {
 	Profile *pProfile = PROFILEMAN->GetMachineProfile();
 
-	FOREACH_CONST( Course*, vpCoursesInOut, c )
+	for (auto const *c: vpCoursesInOut)
 	{
-		int iNumTimesPlayed = pProfile->GetCourseNumTimesPlayed( *c );
-		RString val = iNumTimesPlayed ? pProfile->GetCourseLastPlayedDateTime(*c).GetString() : "9999999999999";
-		course_sort_val[*c] = val;
+		int iNumTimesPlayed = pProfile->GetCourseNumTimesPlayed( c );
+		RString val = iNumTimesPlayed ? pProfile->GetCourseLastPlayedDateTime(c).GetString() : "9999999999999";
+		course_sort_val[c] = val;
 	}
 
 	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersBySortValueAscending );
@@ -234,7 +233,9 @@ void CourseUtil::AutogenEndlessFromGroup( const RString &sGroupName, Difficulty 
 	out.m_bShuffle = true;
 	out.m_iLives = -1;
 	FOREACH_ENUM( Difficulty,dc)
+	{
 		out.m_iCustomMeter[dc] = -1;
+	}
 
 	if( sGroupName == "" )
 	{
@@ -266,7 +267,7 @@ void CourseUtil::AutogenNonstopFromGroup( const RString &sGroupName, Difficulty 
 
 	out.m_bRepeat = false;
 
-	out.m_sMainTitle += " Random";	
+	out.m_sMainTitle += " Random";
 
 	// resize to 4
 	while( out.m_vEntries.size() < 4 )
@@ -284,7 +285,9 @@ void CourseUtil::AutogenOniFromArtist( const RString &sArtistName, RString sArti
 
 	out.m_iLives = 4;
 	FOREACH_ENUM( Difficulty,cd)
+	{
 		out.m_iCustomMeter[cd] = -1;
+	}
 
 	ASSERT( sArtistName != "" );
 	ASSERT( aSongs.size() > 0 );
@@ -327,12 +330,12 @@ void CourseUtil::WarnOnInvalidMods( RString sMods )
 	SongOptions so;
 	vector<RString> vs;
 	split( sMods, ",", vs, true );
-	FOREACH_CONST( RString, vs, s )
+	for (auto &s: vs)
 	{
 		bool bValid = false;
 		RString sErrorDetail;
-		bValid |= po.FromOneModString( *s, sErrorDetail );
-		bValid |= so.FromOneModString( *s, sErrorDetail );
+		bValid |= po.FromOneModString( s, sErrorDetail );
+		bValid |= so.FromOneModString( s, sErrorDetail );
 		/* ==Invalid options that used to be valid==
 		 * all noteskins (solo, note, foon, &c.)
 		 * protiming (done in Lua now)
@@ -346,7 +349,7 @@ void CourseUtil::WarnOnInvalidMods( RString sMods )
 		 */
 		if( !bValid )
 		{
-			RString sFullError = ssprintf("Error processing '%s' in '%s'", (*s).c_str(), sMods.c_str() );
+			RString sFullError = ssprintf("Error processing '%s' in '%s'", s.c_str(), sMods.c_str() );
 			if( !sErrorDetail.empty() )
 				sFullError += ": " + sErrorDetail;
 			LOG->UserLog( "", "", "%s", sFullError.c_str() );
@@ -431,12 +434,13 @@ bool EditCourseUtil::ValidateEditCourseName( const RString &sAnswer, RString &sE
 	// Check for name conflicts
 	vector<Course*> vpCourses;
 	EditCourseUtil::GetAllEditCourses( vpCourses );
-	FOREACH_CONST( Course*, vpCourses, p )
+	for (auto *p: vpCourses)
 	{
-		if( GAMESTATE->m_pCurCourse == *p )
+		if( GAMESTATE->m_pCurCourse == p )
+		{
 			continue;	// don't comepare name against ourself
-
-		if( (*p)->GetDisplayFullTitle() == sAnswer )
+		}
+		if( p->GetDisplayFullTitle() == sAnswer )
 		{
 			sErrorOut = EDIT_NAME_CONFLICTS;
 			return false;
@@ -471,10 +475,12 @@ void EditCourseUtil::GetAllEditCourses( vector<Course*> &vpCoursesOut )
 {
 	vector<Course*> vpCoursesTemp;
 	SONGMAN->GetAllCourses( vpCoursesTemp, false );
-	FOREACH_CONST( Course*, vpCoursesTemp, c )
+	for (auto *c: vpCoursesTemp)
 	{
-		if( (*c)->GetLoadedFromProfileSlot() != ProfileSlot_Invalid )
-			vpCoursesOut.push_back( *c );
+		if( c->GetLoadedFromProfileSlot() != ProfileSlot_Invalid )
+		{
+			vpCoursesOut.push_back( c );
+		}
 	}
 }
 
@@ -493,9 +499,9 @@ void EditCourseUtil::LoadDefaults( Course &out )
 
 		vector<Course*> vpCourses;
 		EditCourseUtil::GetAllEditCourses( vpCourses );
-		FOREACH_CONST( Course*, vpCourses, p )
+		for (auto *p: vpCourses)
 		{
-			if( out.m_sMainTitle == (*p)->m_sMainTitle )
+			if( out.m_sMainTitle == p->m_sMainTitle )
 			{
 				bNameInUse = true;
 				break;
@@ -583,7 +589,7 @@ XNode* CourseID::CreateNode() const
 	return pNode;
 }
 
-void CourseID::LoadFromNode( const XNode* pNode ) 
+void CourseID::LoadFromNode( const XNode* pNode )
 {
 	ASSERT( pNode->GetName() == "Course" );
 	sFullTitle = RString();
@@ -610,7 +616,7 @@ bool CourseID::IsValid() const
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -620,7 +626,7 @@ bool CourseID::IsValid() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

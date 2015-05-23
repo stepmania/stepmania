@@ -43,7 +43,7 @@
 
 // cache for frequently used metrics
 static float	g_fCharsZoomSmall;
-static float	g_fCharsZoomLarge; 
+static float	g_fCharsZoomLarge;
 static float	g_fCharsSpacingY;
 static float	g_fReceptorArrowsY;
 static int	g_iNumCharsToDrawBehind;
@@ -85,9 +85,9 @@ void ScreenNameEntry::ScrollingText::DrawPrimitives()
 		m_Stamp.SetDiffuseAlpha( fAlpha );
 		m_Stamp.SetText( c );
 		m_Stamp.SetY( fY );
-		FOREACH_CONST( float, m_Xs, x )
+		for (auto &x: m_Xs)
 		{
-			m_Stamp.SetX( *x );
+			m_Stamp.SetX( x );
 			m_Stamp.Draw();
 		}
 		fY += g_fCharsSpacingY;
@@ -108,7 +108,7 @@ float ScreenNameEntry::ScrollingText::GetClosestCharYOffset( float fFakeBeat ) c
 	if( f > 0.5f )
 		f -= 1;
 	ASSERT( f>-0.5f && f<=0.5f );
-	return -f;	
+	return -f;
 }
 
 REGISTER_SCREEN_CLASS( ScreenNameEntry );
@@ -188,7 +188,9 @@ void ScreenNameEntry::Init()
 	// reset Player and Song Options
 	{
 		FOREACH_PlayerNumber( p )
+		{
 			PO_GROUP_CALL( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, Init );
+		}
 		SO_GROUP_CALL( GAMESTATE->m_SongOptions, ModsLevel_Stage, Init );
 	}
 
@@ -215,7 +217,7 @@ void ScreenNameEntry::Init()
 	bool IsOnRanking = ( (GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP || GAMESTATE->m_PlayMode == PLAY_MODE_ONI)
 		&& !(GAMESTATE->m_pCurCourse->IsRanking()) );
 
-	if( PREFSMAN->m_GetRankingName == RANKING_OFF || 
+	if( PREFSMAN->m_GetRankingName == RANKING_OFF ||
 		(PREFSMAN->m_GetRankingName == RANKING_LIST && !IsOnRanking) )
 	{
 		// don't collect score due to ranking setting
@@ -320,8 +322,12 @@ void ScreenNameEntry::Init()
 bool ScreenNameEntry::AnyStillEntering() const
 {
 	FOREACH_PlayerNumber( p )
+	{
 		if( m_bStillEnteringName[p] )
+		{
 			return true;
+		}
+	}
 	return false;
 }
 
@@ -409,7 +415,7 @@ bool ScreenNameEntry::MenuStart( const InputEventPlus &input )
 /*
  * (c) 2001-2006 Chris Danford, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -419,7 +425,7 @@ bool ScreenNameEntry::MenuStart( const InputEventPlus &input )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

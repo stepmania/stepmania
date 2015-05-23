@@ -14,8 +14,10 @@ REGISTER_ACTOR_CLASS( CourseContentsList );
 
 CourseContentsList::~CourseContentsList()
 {
-	FOREACH( Actor *, m_vpDisplay, d )
-		delete *d;
+	for (auto *d: m_vpDisplay)
+	{
+		delete d;
+	}
 	m_vpDisplay.clear();
 }
 
@@ -50,7 +52,7 @@ void CourseContentsList::SetFromGameState()
 	const Trail *pMasterTrail = GAMESTATE->m_pCurTrail[GAMESTATE->GetMasterPlayerNumber()];
 	if( pMasterTrail == NULL )
 		return;
-	unsigned uNumEntriesToShow = pMasterTrail->m_vEntries.size(); 
+	unsigned uNumEntriesToShow = pMasterTrail->m_vEntries.size();
 	CLAMP( uNumEntriesToShow, 0, m_vpDisplay.size() );
 
 	for( int i=0; i<(int)uNumEntriesToShow; i++ )
@@ -150,7 +152,7 @@ void CourseContentsList::SetItemFromGameState( Actor *pActor, int iCourseEntryIn
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the CourseContentsList. */ 
+/** @brief Allow Lua to have access to the CourseContentsList. */
 class LunaCourseContentsList: public Luna<CourseContentsList>
 {
 public:
@@ -168,7 +170,7 @@ LUA_REGISTER_DERIVED_CLASS( CourseContentsList, ActorScroller )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -178,7 +180,7 @@ LUA_REGISTER_DERIVED_CLASS( CourseContentsList, ActorScroller )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

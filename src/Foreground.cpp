@@ -7,7 +7,6 @@
 #include "ActorUtil.h"
 #include "Song.h"
 #include "BackgroundUtil.h"
-#include "Foreach.h"
 
 Foreground::~Foreground()
 {
@@ -31,9 +30,10 @@ void Foreground::LoadFromSong( const Song *pSong )
 	TEXTUREMAN->SetDefaultTexturePolicy( RageTextureID::TEX_VOLATILE );
 
 	m_pSong = pSong;
-	FOREACH_CONST( BackgroundChange, pSong->GetForegroundChanges(), bgc )
+	auto &changes = pSong->GetForegroundChanges();
+	for (auto &bgc: changes)
 	{
-		const BackgroundChange &change = *bgc;
+		const BackgroundChange &change = bgc;
 		RString sBGName = change.m_def.m_sFile1,
 			sLuaFile = pSong->GetSongDir() + sBGName + "/default.lua",
 			sXmlFile = pSong->GetSongDir() + sBGName + "/default.xml";
@@ -139,7 +139,7 @@ void Foreground::HandleMessage( const Message &msg )
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -149,7 +149,7 @@ void Foreground::HandleMessage( const Message &msg )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

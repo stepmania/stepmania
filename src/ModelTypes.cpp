@@ -8,7 +8,8 @@
 #include "RageTextureManager.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
-#include "Foreach.h"
+
+#include <numeric>
 
 #define MS_MAX_NAME	32
 
@@ -70,7 +71,7 @@ void AnimatedTexture::Load( const RString &sTexOrIniPath )
 			RString sFileName;
 			float fDelay = 0;
 			if( pAnimatedTexture->GetAttrValue( sFileKey, sFileName ) &&
-				pAnimatedTexture->GetAttrValue( sDelayKey, fDelay ) ) 
+				pAnimatedTexture->GetAttrValue( sDelayKey, fDelay ) )
 			{
 				RString sTranslateXKey = ssprintf( "TranslateX%04d", i );
 				RString sTranslateYKey = ssprintf( "TranslateY%04d", i );
@@ -84,7 +85,7 @@ void AnimatedTexture::Load( const RString &sTexOrIniPath )
 				ID.bStretch = true;
 				ID.bHotPinkColorKey = true;
 				ID.bMipMaps = true;	// use mipmaps in Models
-				AnimatedTextureState state( 
+				AnimatedTextureState state(
 					TEXTUREMAN->LoadTexture( ID ),
 					fDelay,
 					vOffset
@@ -148,10 +149,10 @@ void AnimatedTexture::SetState( int iState )
 
 float AnimatedTexture::GetAnimationLengthSeconds() const
 {
-	float fTotalSeconds = 0;
-	FOREACH_CONST( AnimatedTextureState, vFrames, ats )
-		fTotalSeconds += ats->fDelaySecs;
-	return fTotalSeconds;
+	auto getLength = [](float total, AnimatedTextureState const &ats) {
+		return total + ats.fDelaySecs;
+	};
+	return std::accumulate(vFrames.begin(), vFrames.end(), 0.f, getLength);
 }
 
 void AnimatedTexture::SetSecondsIntoAnimation( float fSeconds )
@@ -354,7 +355,7 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -364,7 +365,7 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

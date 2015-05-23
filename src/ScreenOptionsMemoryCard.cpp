@@ -48,17 +48,17 @@ void ScreenOptionsMemoryCard::CreateMenu()
 {
 	vector<OptionRowHandler*> vHands;
 
-	FOREACH_CONST( UsbStorageDevice, m_CurrentUsbStorageDevices, iter )
+	for (auto &iter: m_CurrentUsbStorageDevices)
 	{
 		vector<RString> vs;
-		if( iter->sVolumeLabel.empty() )
+		if( iter.sVolumeLabel.empty() )
 			vs.push_back( NO_LABEL );
 		else
-			vs.push_back( iter->sVolumeLabel );
-		if( iter->iVolumeSizeMB == 0 )
+			vs.push_back( iter.sVolumeLabel );
+		if( iter.iVolumeSizeMB == 0 )
 			vs.push_back( SIZE_UNKNOWN );
 		else
-			vs.push_back( ssprintf(RString(VOLUME_SIZE).c_str(),iter->iVolumeSizeMB) );
+			vs.push_back( ssprintf(RString(VOLUME_SIZE).c_str(),iter.iVolumeSizeMB) );
 
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 
@@ -81,7 +81,7 @@ void ScreenOptionsMemoryCard::CreateMenu()
 		def.m_bAllowThemeTitle = true;
 		def.m_bOneChoiceForAllPlayers = true;
 	}
-	
+
 	InitMenu( vHands );
 }
 
@@ -224,7 +224,7 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus & )
 /*
  * (c) 2005 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -234,7 +234,7 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus & )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

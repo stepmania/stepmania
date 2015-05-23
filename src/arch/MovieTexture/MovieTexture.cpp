@@ -6,7 +6,6 @@
 #include "PrefsManager.h"
 #include "RageFile.h"
 #include "LocalizedString.h"
-#include "Foreach.h"
 #include "arch/arch_default.h"
 
 void ForceToAscii( RString &str )
@@ -50,7 +49,7 @@ bool RageMovieTexture::GetFourCC( RString fn, RString &handler, RString &type )
 	if( file.Read((char *)type.c_str(), 4) != 4 )
 		HANDLE_ERROR("Could not read.");
 	ForceToAscii( type );
-	
+
 	if( file.Seek(0xBC) != 0xBC )
 		HANDLE_ERROR("Could not seek.");
 	handler = "    ";
@@ -70,7 +69,7 @@ static void DumpAVIDebugInfo( const RString& fn )
 	RString type, handler;
 	if( !RageMovieTexture::GetFourCC( fn, handler, type ) )
 		return;
-	
+
 	LOG->Trace( "Movie %s has handler '%s', type '%s'", fn.c_str(), handler.c_str(), type.c_str() );
 }
 
@@ -81,30 +80,30 @@ static LocalizedString COULDNT_CREATE_MOVIE_DRIVER	( "Arch", "Couldn't create a 
 RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 {
 	DumpAVIDebugInfo( ID.filename );
-	
+
 	RString sDrivers = g_sMovieDrivers;
 	if( sDrivers.empty() )
 		sDrivers = DEFAULT_MOVIE_DRIVER_LIST;
-	
+
 	vector<RString> DriversToTry;
 	split( sDrivers, ",", DriversToTry, true );
-	
+
 	if( DriversToTry.empty() )
 		RageException::Throw( "%s", MOVIE_DRIVERS_EMPTY.GetValue().c_str() );
-	
+
 	RageMovieTexture *ret = NULL;
-	
-	FOREACH_CONST( RString, DriversToTry, Driver )
+
+	for (auto const &Driver: DriversToTry)
 	{
-		LOG->Trace( "Initializing driver: %s", Driver->c_str() );
-		RageDriver *pDriverBase = RageMovieTextureDriver::m_pDriverList.Create( *Driver );
-		
+		LOG->Trace( "Initializing driver: %s", Driver.c_str() );
+		RageDriver *pDriverBase = RageMovieTextureDriver::m_pDriverList.Create( Driver );
+
 		if( pDriverBase == NULL )
 		{
-			LOG->Trace( "Unknown movie driver name: %s", Driver->c_str() );
+			LOG->Trace( "Unknown movie driver name: %s", Driver.c_str() );
 			continue;
 		}
-		
+
 		RageMovieTextureDriver *pDriver = dynamic_cast<RageMovieTextureDriver *>( pDriverBase );
 		ASSERT( pDriver != NULL );
 
@@ -114,17 +113,17 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 
 		if( ret == NULL )
 		{
-			LOG->Trace( "Couldn't load driver %s: %s", Driver->c_str(), sError.c_str() );
+			LOG->Trace( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
 			SAFE_DELETE( ret );
 			continue;
 		}
 		LOG->Trace( "Created movie texture \"%s\" with driver \"%s\"",
-			    ID.filename.c_str(), Driver->c_str() );
+			    ID.filename.c_str(), Driver.c_str() );
 		break;
 	}
 	if ( !ret )
 		RageException::Throw( "%s", COULDNT_CREATE_MOVIE_DRIVER.GetValue().c_str() );
-	
+
 	return ret;
 }
 
@@ -132,7 +131,7 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -142,7 +141,7 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

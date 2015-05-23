@@ -4,7 +4,6 @@
 #include "RageUtil.h"
 #include "ThemeMetric.h"
 #include "EnumHelper.h"
-#include "Foreach.h"
 #include "LuaManager.h"
 #include "GameManager.h"
 #include "LocalizedString.h"
@@ -17,7 +16,9 @@ static vector<RString> GenerateRankingToFillInMarker()
 {
 	vector<RString> vRankings;
 	FOREACH_ENUM( PlayerNumber, pn )
+	{
 		vRankings.push_back( ssprintf("#P%d#", pn+1) );
+	}
 	return vRankings;
 }
 extern const vector<RString> RANKING_TO_FILL_IN_MARKER( GenerateRankingToFillInMarker() );
@@ -343,9 +344,9 @@ StringToX( StageAward );
 LuaFunction( StageAwardToLocalizedString, StageAwardToLocalizedString(Enum::Check<StageAward>(L, 1)) );
 LuaXType( StageAward );
 
-// Numbers are intentionally not at the front of these strings so that the 
+// Numbers are intentionally not at the front of these strings so that the
 // strings can be used as XML entity names.
-// Numbers are intentionally not at the back so that "1000" and "10000" don't 
+// Numbers are intentionally not at the back so that "1000" and "10000" don't
 // conflict when searching for theme elements.
 static const char *PeakComboAwardNames[] = {
 	"1000",
@@ -374,15 +375,18 @@ void DisplayBpms::Add( float f )
 float DisplayBpms::GetMin() const
 {
 	float fMin = FLT_MAX;
-	FOREACH_CONST( float, vfBpms, f )
+	for (auto const &f: vfBpms)
 	{
-		if( *f != -1 )
-			fMin = min( fMin, *f );
+		if( f != -1 )
+		{
+			fMin = min( fMin, f );
+		}
 	}
 	if( fMin == FLT_MAX )
+	{
 		return 0;
-	else
-		return fMin;
+	}
+	return fMin;
 }
 
 float DisplayBpms::GetMax() const
@@ -410,12 +414,10 @@ bool DisplayBpms::BpmIsConstant() const
 
 bool DisplayBpms::IsSecret() const
 {
-	FOREACH_CONST( float, vfBpms, f )
-	{
-		if( *f == -1 )
-			return true;
-	}
-	return false;
+	auto isSecret = [](float const &f) {
+		return f == -1;
+	};
+	return std::any_of(vfBpms.begin(), vfBpms.end(), isSecret);
 }
 
 static const char *StyleTypeNames[] = {
@@ -522,7 +524,7 @@ LuaXType( FailType );
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -532,7 +534,7 @@ LuaXType( FailType );
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
