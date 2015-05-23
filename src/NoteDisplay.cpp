@@ -14,7 +14,6 @@
 #include "Sprite.h"
 #include "NoteTypes.h"
 #include "LuaBinding.h"
-#include "Foreach.h"
 #include "RageMath.h"
 
 static const double PI_180= PI / 180.0;
@@ -989,7 +988,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			 * start off the strip again. */
 			if(!bAllAreTransparent)
 			{
-				FOREACH(Sprite*, vpSpr, spr)
+				for (auto spr = vpSpr.begin(); spr != vpSpr.end(); ++spr)
 				{
 					RageTexture* pTexture = (*spr)->GetTexture();
 					DISPLAY->SetTexture(TextureUnit_1, pTexture->GetTexHandle());
@@ -1152,18 +1151,18 @@ void NoteDisplay::DrawHold(const TapNote& tn,
 		;	// use the default values filled in above
 	else
 		fStartYOffset = ArrowEffects::GetYOffset( m_pPlayerState, column_args.column, fStartBeat, fThrowAway, bStartIsPastPeak );
-	
+
 	float fEndPeakYOffset	= 0;
 	bool bEndIsPastPeak = false;
 	float fEndYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, column_args.column, NoteRowToBeat(iEndRow), fEndPeakYOffset, bEndIsPastPeak );
 
-	// In boomerang, the arrows reverse direction at Y offset value fPeakAtYOffset.  
-	// If fPeakAtYOffset lies inside of the hold we're drawing, then the we 
-	// want to draw the tail at that max Y offset, or else the hold will appear 
+	// In boomerang, the arrows reverse direction at Y offset value fPeakAtYOffset.
+	// If fPeakAtYOffset lies inside of the hold we're drawing, then the we
+	// want to draw the tail at that max Y offset, or else the hold will appear
 	// to magically grow as the tail approaches the max Y offset.
 	if( bStartIsPastPeak && !bEndIsPastPeak )
 		fEndYOffset	= fEndPeakYOffset;	// use the calculated PeakYOffset so that long holds don't appear to grow
-	
+
 	// Swap in reverse, so fStartYOffset is always the offset higher on the screen.
 	if( bReverse )
 		swap( fStartYOffset, fEndYOffset );
@@ -1378,17 +1377,17 @@ void NoteDisplay::DrawTap(const TapNote& tn,
 			pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, fBeat, true, false );
 		}
 	}
-	
+
 	else if( bOnSameRowAsHoldStart  &&  cache->m_bDrawHoldHeadForTapsOnSameRow )
 	{
 		pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, fBeat, false, false );
 	}
-	
+
 	else if( bOnSameRowAsRollStart  &&  cache->m_bDrawRollHeadForTapsOnSameRow )
 	{
 		pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, fBeat, true, false );
 	}
-	
+
 	else
 	{
 		pActor = GetTapActor( m_TapNote, NotePart_Tap, fBeat );
@@ -1687,7 +1686,7 @@ LUA_REGISTER_DERIVED_CLASS(NoteColumnRenderer, Actor)
  * NoteColumnRenderer and associated spline stuff (c) Eric Reese 2014-2015
  * (c) 2001-2006 Brian Bugh, Ben Nordstrom, Chris Danford, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1697,7 +1696,7 @@ LUA_REGISTER_DERIVED_CLASS(NoteColumnRenderer, Actor)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

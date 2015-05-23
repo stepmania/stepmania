@@ -1,6 +1,5 @@
 #include "global.h"
 #include "PlayerState.h"
-#include "Foreach.h"
 #include "GameState.h"
 #include "RageLog.h"
 #include "RadarValues.h"
@@ -65,8 +64,8 @@ void PlayerState::Update( float fDelta )
 		Attack &attack = m_ActiveAttacks[s];
 
 		// You must add sattack by calling GameState::LaunchAttack,
-		// or else the sentinel value won't be 
-		// converted into the current music time.  
+		// or else the sentinel value won't be
+		// converted into the current music time.
 		ASSERT( attack.fStartSecond != ATTACK_STARTS_NOW );
 
 		bool bCurrentlyEnabled =
@@ -147,8 +146,10 @@ void PlayerState::RemoveActiveAttacks( AttackLevel al )
 
 void PlayerState::EndActiveAttacks()
 {
-	FOREACH( Attack, m_ActiveAttacks, a )
-		a->fSecsRemaining = 0;
+	for (auto &a: m_ActiveAttacks)
+	{
+		a.fSecsRemaining = 0;
+	}
 }
 
 void PlayerState::RemoveAllInventory()
@@ -219,7 +220,7 @@ const TimingData &PlayerState::GetDisplayedTiming() const
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the PlayerState. */ 
+/** @brief Allow Lua to have access to the PlayerState. */
 class LunaPlayerState: public Luna<PlayerState>
 {
 public:
@@ -297,7 +298,7 @@ LUA_REGISTER_CLASS( PlayerState )
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -307,7 +308,7 @@ LUA_REGISTER_CLASS( PlayerState )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

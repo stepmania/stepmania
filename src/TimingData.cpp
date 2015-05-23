@@ -5,7 +5,6 @@
 #include "RageLog.h"
 #include "ThemeManager.h"
 #include "NoteTypes.h"
-#include "Foreach.h"
 #include <float.h>
 
 static void EraseSegment(vector<TimingSegment*> &vSegs, int index, TimingSegment *cur);
@@ -368,7 +367,7 @@ int TimingData::GetSegmentIndexAtRow(TimingSegmentType tst, int iRow ) const
 			r = m - 1;
 		}
 	}
-	
+
 	// iRow is before the first segment of type tst
 	return INVALID_INDEX;
 }
@@ -1403,7 +1402,7 @@ LUA_REGISTER_CLASS( TimingData )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1413,7 +1412,7 @@ LUA_REGISTER_CLASS( TimingData )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
