@@ -52,12 +52,13 @@ void AttackDisplay::Init( const PlayerState* pPlayerState )
 			attacks.insert( asAttacks[att] );
 	}
 
-	for( auto it = attacks.begin(); it != attacks.end(); ++it )
+	for (auto const &attack: attacks)
 	{
-		const RString path = THEME->GetPathG( "AttackDisplay", GetAttackPieceName( *it ), true );
+		auto pieceName = GetAttackPieceName( attack );
+		const RString path = THEME->GetPathG( "AttackDisplay", pieceName, true );
 		if( path == "" )
 		{
-			LOG->Trace( "Couldn't find \"%s\"", GetAttackPieceName( *it ).c_str() );
+			LOG->Trace( "Couldn't find \"%s\"", pieceName.c_str() );
 			continue;
 		}
 

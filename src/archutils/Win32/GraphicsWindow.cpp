@@ -72,7 +72,7 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 				static std::set<RString> sLostFocusTo;
 				sLostFocusTo.insert( sName );
 				RString sStr;
-				for( auto it = sLostFocusTo.begin(); it != sLostFocusTo.end(); ++it )
+				for( auto it = sLostFocusTo.cbegin(); it != sLostFocusTo.cend(); ++it )
 					sStr += (sStr.size()?", ":"") + *it;
 
 				LOG->MapLog( "LOST_FOCUS", "Lost focus to: %s", sStr.c_str() );
