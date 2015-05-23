@@ -244,9 +244,9 @@ struct bmsCommandTree
 
 		~bmsNodeS()
 		{
-			FOREACH(bmsNodeS*, branches, b)
+			for (auto *b: branches)
 			{
-				delete *b;
+				delete b;
 			}
 		}
 	};
@@ -354,13 +354,10 @@ struct bmsCommandTree
 
 	bool triggerBranches(bmsNodeS* node, BMSHeaders &headersOut, vector<RString> &linesOut)
 	{
-		FOREACH(bmsNodeS*, node->branches, b)
-			if (evaluateNode(*b, headersOut, linesOut))
-			{
-				return true;
-			}
-
-		return false;
+		auto doesEvaluate = [this, &headersOut, &linesOut](bmsNodeS *b) {
+			return evaluateNode(b, headersOut, linesOut);
+		};
+		return std::any_of(node->branches.begin(), node->branches.end(), doesEvaluate);
 	}
 
 	bool evaluateNode(bmsNodeS* node, BMSHeaders &headersOut, vector<RString> &linesOut)

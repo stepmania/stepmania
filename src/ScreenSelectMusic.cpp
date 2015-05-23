@@ -21,7 +21,6 @@
 #include "MenuTimer.h"
 #include "StatsManager.h"
 #include "StepsUtil.h"
-#include "Foreach.h"
 #include "Style.h"
 #include "PlayerState.h"
 #include "CommonMetrics.h"
@@ -286,9 +285,12 @@ void ScreenSelectMusic::BeginScreen()
 	ZERO( m_iSelection );
 
 	if( USE_OPTIONS_LIST )
+	{
 		FOREACH_PlayerNumber( pn )
+		{
 			m_OptionsList[pn].Reset();
-
+		}
+	}
 	AfterMusicChange();
 
 	SOUND->PlayOnceFromAnnouncer( "select music intro" );
@@ -423,7 +425,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 		if (input.DeviceI == DeviceInput( DEVICE_MOUSE, (DeviceButton)i ))
 			mouse_evt = true;
 	}
-	if (mouse_evt)	
+	if (mouse_evt)
 	{
 		return ScreenWithMenuElements::Input(input);
 	}
@@ -436,7 +438,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 	// I just like being able to see untransliterated titles occasionally.
 	if( input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_F9 )
 	{
-		if( input.type != IET_FIRST_PRESS ) 
+		if( input.type != IET_FIRST_PRESS )
 			return false;
 		PREFSMAN->m_bShowNativeLanguage.Set( !PREFSMAN->m_bShowNativeLanguage );
 		MESSAGEMAN->Broadcast( "DisplayLanguageChanged" );
@@ -446,7 +448,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	if( !IsTransitioning() && m_SelectionState != SelectionState_Finalized )
 	{
-		bool bHoldingCtrl = 
+		bool bHoldingCtrl =
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL));
 
@@ -498,7 +500,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 		{
 			// Keyboard shortcut to delete a song from disk (ctrl + backspace)
 			Song* songToDelete = m_MusicWheel.GetSelectedSong();
-			if ( songToDelete && PREFSMAN->m_bAllowSongDeletion.Get() ) 
+			if ( songToDelete && PREFSMAN->m_bAllowSongDeletion.Get() )
 			{
 				m_pSongAwaitingDeletionConfirmation = songToDelete;
 				ScreenPrompt::Prompt(SM_ConfirmDeleteSong, ssprintf(PERMANENTLY_DELETE.GetValue(), songToDelete->m_sMainTitle.c_str(), songToDelete->GetSongDir().c_str()), PROMPT_YES_NO);
@@ -705,7 +707,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 			}
 
 			// Reset the repeat timer when the button is released.
-			// This fixes jumping when you release Left and Right after entering the sort 
+			// This fixes jumping when you release Left and Right after entering the sort
 			// code at the same if L & R aren't released at the exact same time.
 			if( input.type == IET_RELEASE )
 			{
@@ -892,16 +894,18 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 				else
 				{
 					// XXX: should this be called "TwoPartCancelled"?
-                    float fSeconds = m_MenuTimer->GetSeconds();
-                    if( fSeconds > 10 ) {
-                        Message msg("SongUnchosen");
-                        msg.SetParam( "Player", input.pn );
-                        MESSAGEMAN->Broadcast( msg );
-                        // unset all steps
-                        FOREACH_ENUM( PlayerNumber , p )
-                            m_bStepsChosen[p] = false;
-                        m_SelectionState = SelectionState_SelectingSong;
-                    }
+					float fSeconds = m_MenuTimer->GetSeconds();
+					if( fSeconds > 10 ) {
+						Message msg("SongUnchosen");
+						msg.SetParam( "Player", input.pn );
+						MESSAGEMAN->Broadcast( msg );
+						// unset all steps
+						FOREACH_ENUM( PlayerNumber , p )
+						{
+							m_bStepsChosen[p] = false;
+						}
+						m_SelectionState = SelectionState_SelectingSong;
+					}
 				}
 			}
 		}
@@ -1109,8 +1113,9 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 		// That way, after music change will clamp to the nearest in the StepsDisplayList.
 		GAMESTATE->m_pCurSteps[master_pn].SetWithoutBroadcast( NULL );
 		FOREACH_ENUM( PlayerNumber, p )
+		{
 			GAMESTATE->m_pCurSteps[p].SetWithoutBroadcast( NULL );
-
+		}
 		/* If a course is selected, it may no longer be playable.
 		 * Let MusicWheel know about the late join. */
 		m_MusicWheel.PlayerJoined();
@@ -1299,7 +1304,7 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			else
 				SOUND->PlayOnceFromAnnouncer( "select music comment general" );
 
-			/* If we're in event mode, we may have just played a course (putting 
+			/* If we're in event mode, we may have just played a course (putting
 			 * us in course mode). Make sure we're in a single song mode. */
 			if( GAMESTATE->IsCourseMode() )
 				GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
@@ -1578,9 +1583,8 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 		MESSAGEMAN->Broadcast("TwoPartConfirmCanceled");
 	}
 
-	FOREACH_CONST( PlayerNumber, vpns, p )
+	for (auto const &pn: vpns)
 	{
-		PlayerNumber pn = *p;
 		ASSERT( GAMESTATE->IsHumanPlayer(pn) );
 
 		if( GAMESTATE->m_pCurSong )
@@ -1638,7 +1642,7 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 			// Find the closest match to the user's preferred difficulty and StepsType.
 			int iCurDifference = -1;
 			int &iSelection = m_iSelection[pn];
-			FOREACH_CONST( Steps*, m_vpSteps, s )
+			for (auto s = m_vpSteps.begin(); s != m_vpSteps.end(); ++s)
 			{
 				int i = s - m_vpSteps.begin();
 
@@ -1675,7 +1679,7 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 			// Find the closest match to the user's preferred difficulty.
 			int iCurDifference = -1;
 			int &iSelection = m_iSelection[pn];
-			FOREACH_CONST( Trail*, m_vpTrails, t )
+			for (auto t = m_vpTrails.begin(); t != m_vpTrails.end(); ++t)
 			{
 				int i = t - m_vpTrails.begin();
 
@@ -1707,7 +1711,9 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 	if( GAMESTATE->DifficultiesLocked() )
 	{
 		FOREACH_HumanPlayer( p )
+		{
 			m_iSelection[p] = m_iSelection[GAMESTATE->GetMasterPlayerNumber()];
+		}
 	}
 }
 
@@ -1760,8 +1766,9 @@ void ScreenSelectMusic::AfterMusicChange()
 	case WheelItemDataType_Random:
 	case WheelItemDataType_Custom:
 		FOREACH_PlayerNumber( p )
+		{
 			m_iSelection[p] = -1;
-
+		}
 		g_sCDTitlePath = ""; // none
 
 		if( SAMPLE_MUSIC_PREVIEW_MODE == SampleMusicPreviewMode_LastSong )
@@ -1954,8 +1961,9 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	vector<PlayerNumber> vpns;
 	FOREACH_HumanPlayer( p )
+	{
 		vpns.push_back( p );
-
+	}
 	AfterStepsOrTrailChange( vpns );
 }
 
@@ -1999,7 +2007,7 @@ void ScreenSelectMusic::OnConfirmSongDeletion()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ScreenSelectMusic. */ 
+/** @brief Allow Lua to have access to the ScreenSelectMusic. */
 class LunaScreenSelectMusic: public Luna<ScreenSelectMusic>
 {
 public:
@@ -2024,7 +2032,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenSelectMusic, ScreenWithMenuElements )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -2034,7 +2042,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenSelectMusic, ScreenWithMenuElements )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

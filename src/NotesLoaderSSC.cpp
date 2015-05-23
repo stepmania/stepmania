@@ -640,7 +640,7 @@ void SSCLoader::ProcessBPMs( TimingData &out, const RString sParam )
 {
 	vector<RString> arrayBPMExpressions;
 	split( sParam, ",", arrayBPMExpressions );
-	
+
 	for( unsigned b=0; b<arrayBPMExpressions.size(); b++ )
 	{
 		vector<RString> arrayBPMValues;
@@ -653,7 +653,7 @@ void SSCLoader::ProcessBPMs( TimingData &out, const RString sParam )
 				     arrayBPMExpressions[b].c_str() );
 			continue;
 		}
-		
+
 		const float fBeat = StringToFloat( arrayBPMValues[0] );
 		const float fNewBPM = StringToFloat( arrayBPMValues[1] );
 		if( fBeat >= 0 && fNewBPM > 0 )
@@ -674,7 +674,7 @@ void SSCLoader::ProcessStops( TimingData &out, const RString sParam )
 {
 	vector<RString> arrayStopExpressions;
 	split( sParam, ",", arrayStopExpressions );
-	
+
 	for( unsigned b=0; b<arrayStopExpressions.size(); b++ )
 	{
 		vector<RString> arrayStopValues;
@@ -687,7 +687,7 @@ void SSCLoader::ProcessStops( TimingData &out, const RString sParam )
 				     arrayStopExpressions[b].c_str() );
 			continue;
 		}
-		
+
 		const float fBeat = StringToFloat( arrayStopValues[0] );
 		const float fNewStop = StringToFloat( arrayStopValues[1] );
 		if( fBeat >= 0 && fNewStop > 0 )
@@ -706,7 +706,7 @@ void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float
 {
 	vector<RString> arrayWarpExpressions;
 	split( sParam, ",", arrayWarpExpressions );
-	
+
 	for( unsigned b=0; b<arrayWarpExpressions.size(); b++ )
 	{
 		vector<RString> arrayWarpValues;
@@ -719,7 +719,7 @@ void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float
 				     arrayWarpExpressions[b].c_str() );
 			continue;
 		}
-		
+
 		const float fBeat = StringToFloat( arrayWarpValues[0] );
 		const float fNewBeat = StringToFloat( arrayWarpValues[1] );
 		// Early versions were absolute in beats. They should be relative.
@@ -743,7 +743,7 @@ void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
 {
 	vector<RString> arrayLabelExpressions;
 	split( sParam, ",", arrayLabelExpressions );
-	
+
 	for( unsigned b=0; b<arrayLabelExpressions.size(); b++ )
 	{
 		vector<RString> arrayLabelValues;
@@ -756,20 +756,20 @@ void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
 				     arrayLabelExpressions[b].c_str() );
 			continue;
 		}
-		
+
 		const float fBeat = StringToFloat( arrayLabelValues[0] );
 		RString sLabel = arrayLabelValues[1];
 		TrimRight(sLabel);
 		if( fBeat >= 0.0f )
 			out.AddSegment( LabelSegment(BeatToNoteRow(fBeat), sLabel) );
-		else 
+		else
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
 				     "has an invalid Label at beat %f called %s.",
 				     fBeat, sLabel.c_str() );
 		}
-		
+
 	}
 }
 
@@ -777,7 +777,7 @@ void SSCLoader::ProcessCombos( TimingData &out, const RString line, const int ro
 {
 	vector<RString> arrayComboExpressions;
 	split( line, ",", arrayComboExpressions );
-	
+
 	for( unsigned f=0; f<arrayComboExpressions.size(); f++ )
 	{
 		vector<RString> arrayComboValues;
@@ -802,12 +802,12 @@ void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 {
 	vector<RString> vs1;
 	split( sParam, ",", vs1 );
-	
-	FOREACH_CONST( RString, vs1, s1 )
+
+	for (auto const &s1: vs1)
 	{
 		vector<RString> vs2;
-		split( *s1, "=", vs2 );
-		
+		split( s1, "=", vs2 );
+
 		if( vs2.size() < 2 )
 		{
 			LOG->UserLog("Song file",
@@ -836,7 +836,7 @@ void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 {
 	LOG->Trace( "Loading notes from %s", cachePath.c_str() );
-	
+
 	MsdFile msd;
 	if (!msd.ReadFile(cachePath, true))
 	{
@@ -846,11 +846,11 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 			     msd.GetError().c_str());
 		return false;
 	}
-	
+
 	bool tryingSteps = false;
 	float storedVersion = 0;
 	const unsigned values = msd.GetNumValues();
-	
+
 	for (unsigned i = 0; i < values; i++)
 	{
 		const MsdFile::value_t &params = msd.GetValue(i);
@@ -1218,7 +1218,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 /*
  * (c) 2011 Jason Felds
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1228,7 +1228,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

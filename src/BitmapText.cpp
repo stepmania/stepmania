@@ -9,7 +9,6 @@
 #include "Font.h"
 #include "ActorUtil.h"
 #include "LuaBinding.h"
-#include "Foreach.h"
 
 REGISTER_ACTOR_CLASS( BitmapText );
 
@@ -19,7 +18,7 @@ REGISTER_ACTOR_CLASS( BitmapText );
  *
  * Better, we could go all the way, drop all of the actor-specific font aliases,
  * and do "font=header2;valign=top;...". */
- 
+
  /* XXX: Changing a whole array of diffuse colors every frame (several times) is
  * a waste, when we're usually setting them all to the same value. Rainbow and
  * fading are annoying to optimize, but rarely used. Iterating over every
@@ -342,9 +341,9 @@ void BitmapText::BuildChars()
 void BitmapText::DrawChars( bool bUseStrokeTexture )
 {
 	// bail if cropped all the way
-	if( m_pTempState->crop.left + m_pTempState->crop.right >= 1  || 
-		m_pTempState->crop.top + m_pTempState->crop.bottom >= 1 ) 
-		return; 
+	if( m_pTempState->crop.left + m_pTempState->crop.right >= 1  ||
+		m_pTempState->crop.top + m_pTempState->crop.bottom >= 1 )
+		return;
 
 	const int iNumGlyphs = m_vpFontPageTextures.size();
 	int iStartGlyph = lrintf( SCALE( m_pTempState->crop.left, 0.f, 1.f, 0, (float) iNumGlyphs ) );
@@ -429,10 +428,10 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 				DISPLAY->SetTexture( TextureUnit_1, m_vpFontPageTextures[start]->m_pTextureMain->GetTexHandle() );
 
 			// Don't bother setting texture render states for text. We never go outside of 0..1.
-			/* We should call SetTextureRenderStates because it does more than just setting 
-			 * the texture wrapping state. If setting the wrapping state is found to be slow, 
+			/* We should call SetTextureRenderStates because it does more than just setting
+			 * the texture wrapping state. If setting the wrapping state is found to be slow,
 			 * there should probably be a "don't care" texture wrapping mode set in Actor. -Chris */
-			 
+
 			// This is SLOW. We need to do something else about this. -Colby
 			//Actor::SetTextureRenderStates();
 
@@ -859,10 +858,10 @@ void BitmapText::AddAttribute( size_t iPos, const Attribute &attr )
 	// Fixup position for new lines.
 	int iLines = 0;
 	size_t iAdjustedPos = iPos;
-	
-	FOREACH_CONST( wstring, m_wTextLines, line )
+
+	for (auto &line: m_wTextLines)
 	{
-		size_t length = line->length();
+		size_t length = line.length();
 		if( length >= iAdjustedPos )
 			break;
 		iAdjustedPos -= length;
@@ -922,7 +921,7 @@ void BitmapText::Attribute::FromStack( lua_State *L, int iPos )
 // lua start
 #include "FontCharAliases.h"
 
-/** @brief Allow Lua to have access to the BitmapText. */ 
+/** @brief Allow Lua to have access to the BitmapText. */
 class LunaBitmapText: public Luna<BitmapText>
 {
 public:
@@ -1012,7 +1011,7 @@ LUA_REGISTER_DERIVED_CLASS( BitmapText, Actor )
 /*
  * (c) 2003-2007 Chris Danford, Charles Lohr, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1022,7 +1021,7 @@ LUA_REGISTER_DERIVED_CLASS( BitmapText, Actor )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -62,7 +62,7 @@ class IDebugLine
 {
 public:
 	IDebugLine()
-	{ 
+	{
 		if( g_pvpSubscribers == NULL )
 			g_pvpSubscribers = new vector<IDebugLine*>;
 		g_pvpSubscribers->push_back( this );
@@ -99,13 +99,19 @@ ScreenDebugOverlay::~ScreenDebugOverlay()
 {
 	this->RemoveAllChildren();
 
-	FOREACH( BitmapText*, m_vptextPages, p )
-		SAFE_DELETE( *p );
-	FOREACH( BitmapText*, m_vptextButton, p )
-		SAFE_DELETE( *p );
+	for (auto *p: m_vptextPages)
+	{
+		SAFE_DELETE( p );
+	}
+	for (auto *p: m_vptextButton)
+	{
+		SAFE_DELETE( p );
+	}
 	m_vptextButton.clear();
-	FOREACH( BitmapText*, m_vptextFunction, p )
-		SAFE_DELETE( *p );
+	for (auto *p: m_vptextFunction)
+	{
+		SAFE_DELETE( p );
+	}
 	m_vptextFunction.clear();
 }
 
@@ -223,12 +229,12 @@ void ScreenDebugOverlay::Init()
 
 	map<RString,int> iNextDebugButton;
 	int iNextGameplayButton = 0;
-	FOREACH( IDebugLine*, *g_pvpSubscribers, p )
+	for (auto *p: *g_pvpSubscribers)
 	{
-		RString sPageName = (*p)->GetPageName();
+		RString sPageName = p->GetPageName();
 
 		DeviceInput di;
-		switch( (*p)->GetType() )
+		switch( p->GetType() )
 		{
 		case IDebugLine::all_screens:
 			di = g_Mappings.debugButton[iNextDebugButton[sPageName]++];
@@ -237,7 +243,7 @@ void ScreenDebugOverlay::Init()
 			di = g_Mappings.gameplayButton[iNextGameplayButton++];
 			break;
 		}
-		(*p)->m_Button = di;
+		p->m_Button = di;
 
 		if( find(m_asPages.begin(), m_asPages.end(), sPageName) == m_asPages.end() )
 			m_asPages.push_back( sPageName );
@@ -258,7 +264,7 @@ void ScreenDebugOverlay::Init()
 	m_textHeader.SetText( DEBUG_MENU );
 	this->AddChild( &m_textHeader );
 
-	FOREACH_CONST( RString, m_asPages, s )
+	for (auto s = m_asPages.begin(); s != m_asPages.end(); ++s)
 	{
 		int iPage = s - m_asPages.begin();
 
@@ -279,7 +285,7 @@ void ScreenDebugOverlay::Init()
 		this->AddChild( p );
 	}
 
-	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
+	for (auto *p: *g_pvpSubscribers)
 	{
 		{
 			BitmapText *bt = new BitmapText;
@@ -335,7 +341,7 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 	if( bCenteringNeedsUpdate )
 	{
 		DISPLAY->ChangeCentering(
-			PREFSMAN->m_iCenterImageTranslateX, 
+			PREFSMAN->m_iCenterImageTranslateX,
 			PREFSMAN->m_iCenterImageTranslateY,
 			PREFSMAN->m_fCenterImageAddWidth - (int)SCREEN_WIDTH + (int)(g_fImageScaleCurrent*SCREEN_WIDTH),
 			PREFSMAN->m_fCenterImageAddHeight - (int)SCREEN_HEIGHT + (int)(g_fImageScaleCurrent*SCREEN_HEIGHT) );
@@ -352,7 +358,7 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 
 void ScreenDebugOverlay::UpdateText()
 {
-	FOREACH_CONST( RString, m_asPages, s )
+	for (auto s = m_asPages.begin(); s != m_asPages.end(); ++s)
 	{
 		int iPage = s - m_asPages.begin();
 		m_vptextPages[iPage]->PlayCommand( (iPage == m_iCurrentPage) ? "GainFocus" :  "LoseFocus" );
@@ -360,7 +366,7 @@ void ScreenDebugOverlay::UpdateText()
 
 	// todo: allow changing of various spacing/location things -aj
 	int iOffset = 0;
-	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
+	for (auto p = g_pvpSubscribers->begin(); p != g_pvpSubscribers->end(); ++p)
 	{
 		RString sPageName = (*p)->GetPageName();
 
@@ -427,7 +433,7 @@ static bool GetValueFromMap( const map<U, V> &m, const U &key, V &val )
 
 bool ScreenDebugOverlay::Input( const InputEventPlus &input )
 {
-	if( input.DeviceI == g_Mappings.holdForDebug1 || 
+	if( input.DeviceI == g_Mappings.holdForDebug1 ||
 		input.DeviceI == g_Mappings.holdForDebug2 )
 	{
 		bool bHoldingNeither =
@@ -460,7 +466,7 @@ bool ScreenDebugOverlay::Input( const InputEventPlus &input )
 		return true;
 	}
 
-	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
+	for (auto p = g_pvpSubscribers->begin(); p != g_pvpSubscribers->end(); ++p)
 	{
 		RString sPageName = (*p)->GetPageName();
 
@@ -605,8 +611,8 @@ class DebugLineAutoplay : public IDebugLine
 	{
 		ASSERT( GAMESTATE->GetMasterPlayerNumber() != PLAYER_INVALID );
 		PlayerController pc = GAMESTATE->m_pPlayerState[GAMESTATE->GetMasterPlayerNumber()]->m_PlayerController;
-		bool bHoldingShift = 
-			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) ) || 
+		bool bHoldingShift =
+			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) ) ||
 			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT) );
 		if( bHoldingShift )
 			pc = (pc==PC_CPU) ? PC_HUMAN : PC_CPU;
@@ -614,13 +620,16 @@ class DebugLineAutoplay : public IDebugLine
 			pc = (pc==PC_AUTOPLAY) ? PC_HUMAN : PC_AUTOPLAY;
 		GamePreferences::m_AutoPlay.Set( pc );
 		FOREACH_HumanPlayer(p)
+		{
 			GAMESTATE->m_pPlayerState[p]->m_PlayerController = GamePreferences::m_AutoPlay;
+		}
 		FOREACH_MultiPlayer(p)
+		{
 			GAMESTATE->m_pMultiPlayerState[p]->m_PlayerController = GamePreferences::m_AutoPlay;
-
+		}
 		// Hide Autoplay if Alt is held down
-		bool bHoldingAlt = 
-			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT) ) || 
+		bool bHoldingAlt =
+			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT) ) ||
 			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT) );
 		ScreenSyncOverlay::SetShowAutoplay( !bHoldingAlt );
 
@@ -632,7 +641,7 @@ class DebugLineAssist : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return ASSIST.GetValue(); }
 	virtual Type GetType() const { return gameplay_only; }
-	virtual RString GetDisplayValue() { 
+	virtual RString GetDisplayValue() {
 		SongOptions so;
 		so.m_bAssistClap = GAMESTATE->m_SongOptions.GetSong().m_bAssistClap;
 		so.m_bAssistMetronome = GAMESTATE->m_SongOptions.GetSong().m_bAssistMetronome;
@@ -664,7 +673,7 @@ class DebugLineAutosync : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return AUTOSYNC.GetValue(); }
 	virtual RString GetDisplayValue()
-	{ 
+	{
 		AutosyncType type = GAMESTATE->m_SongOptions.GetSong().m_AutosyncType;
 		switch( type )
 		{
@@ -682,7 +691,7 @@ class DebugLineAutosync : public IDebugLine
 	{
 		int as = GAMESTATE->m_SongOptions.GetSong().m_AutosyncType + 1;
 		bool bAllowSongAutosync = !GAMESTATE->IsCourseMode();
-		if( !bAllowSongAutosync  && 
+		if( !bAllowSongAutosync  &&
 		  ( as == AutosyncType_Song || as == AutosyncType_Tempo ) )
 			as = AutosyncType_Machine;
 		wrap( as, NUM_AutosyncType );
@@ -875,9 +884,13 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 	hs.SetMachineGuid( Profile::MakeGuid() );
 	hs.SetProductID( RandomInt(10) );
 	FOREACH_ENUM( TapNoteScore, tns )
+	{
 		hs.SetTapNoteScore( tns, RandomInt(100) );
+	}
 	FOREACH_ENUM( HoldNoteScore, hns )
+	{
 		hs.SetHoldNoteScore( hns, RandomInt(100) );
+	}
 	RadarValues rv;
 	FOREACH_ENUM( RadarCategory, rc )
 	{
@@ -890,7 +903,7 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 
 static void FillProfileStats( Profile *pProfile )
 {
-	pProfile->InitSongScores(); 
+	pProfile->InitSongScores();
 	pProfile->InitCourseScores();
 
 	static int s_iCount = 0;
@@ -900,40 +913,40 @@ static void FillProfileStats( Profile *pProfile )
 	s_iCount = (s_iCount+1)%2;
 
 
-	int iCount = pProfile->IsMachine()? 
+	int iCount = pProfile->IsMachine()?
 		PREFSMAN->m_iMaxHighScoresPerListForMachine.Get():
 		PREFSMAN->m_iMaxHighScoresPerListForPlayer.Get();
 
 	vector<Song*> vpAllSongs = SONGMAN->GetAllSongs();
-	FOREACH( Song*, vpAllSongs, pSong )
+	for (auto *pSong: vpAllSongs)
 	{
-		vector<Steps*> vpAllSteps = (*pSong)->GetAllSteps();
-		FOREACH( Steps*, vpAllSteps, pSteps )
+		vector<Steps*> vpAllSteps = pSong->GetAllSteps();
+		for (auto *pSteps: vpAllSteps)
 		{
 			if( rand() % 5 )
-				pProfile->IncrementStepsPlayCount( *pSong, *pSteps );
+				pProfile->IncrementStepsPlayCount( pSong, pSteps );
 			for( int i=0; i<iCount; i++ )
 			{
 				int iIndex = 0;
-				pProfile->AddStepsHighScore( *pSong, *pSteps, MakeRandomHighScore(fPercentDP), iIndex );
+				pProfile->AddStepsHighScore( pSong, pSteps, MakeRandomHighScore(fPercentDP), iIndex );
 			}
 		}
 	}
 
 	vector<Course*> vpAllCourses;
 	SONGMAN->GetAllCourses( vpAllCourses, true );
-	FOREACH( Course*, vpAllCourses, pCourse )
+	for (auto *pCourse: vpAllCourses)
 	{
 		vector<Trail*> vpAllTrails;
-		(*pCourse)->GetAllTrails( vpAllTrails );
-		FOREACH( Trail*, vpAllTrails, pTrail )
+		pCourse->GetAllTrails( vpAllTrails );
+		for (auto *pTrail: vpAllTrails)
 		{
 			if( rand() % 5 )
-				pProfile->IncrementCoursePlayCount( *pCourse, *pTrail );
+				pProfile->IncrementCoursePlayCount( pCourse, pTrail );
 			for( int i=0; i<iCount; i++ )
 			{
 				int iIndex = 0;
-				pProfile->AddCourseHighScore( *pCourse, *pTrail, MakeRandomHighScore(fPercentDP), iIndex );
+				pProfile->AddCourseHighScore( pCourse, pTrail, MakeRandomHighScore(fPercentDP), iIndex );
 			}
 		}
 	}
@@ -1338,7 +1351,7 @@ DECLARE_ONE( DebugLineMuteActions );
 /*
  * (c) 2001-2005 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1348,7 +1361,7 @@ DECLARE_ONE( DebugLineMuteActions );
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

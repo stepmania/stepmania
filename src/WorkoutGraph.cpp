@@ -8,7 +8,6 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "StatsManager.h"
-#include "Foreach.h"
 #include "Course.h"
 #include "Style.h"
 
@@ -23,8 +22,10 @@ WorkoutGraph::WorkoutGraph()
 
 WorkoutGraph::~WorkoutGraph()
 {
-	FOREACH( Sprite*, m_vpBars, a )
-		delete *a;
+	for (auto *a: m_vpBars)
+	{
+		delete a;
+	}
 	m_vpBars.clear();
 }
 
@@ -48,10 +49,10 @@ void WorkoutGraph::SetFromCurrentWorkout()
 
 void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 {
-	FOREACH( Sprite*, m_vpBars, p )
+	for (auto *p: m_vpBars)
 	{
-		this->RemoveChild( *p );
-		delete *p;
+		this->RemoveChild( p );
+		delete p;
 	}
 	m_vpBars.clear();
 
@@ -60,10 +61,10 @@ void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 		return;
 
 	vector<int> viMeters;
-	FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
+	for (auto &e: pTrail->m_vEntries)
 	{
-		ASSERT( e->pSteps != NULL );
-		viMeters.push_back( e->pSteps->GetMeter() );
+		ASSERT( e.pSteps != NULL );
+		viMeters.push_back( e.pSteps->GetMeter() );
 	}
 
 	int iBlocksWide = viMeters.size();
@@ -84,7 +85,7 @@ void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 	m_sprEmpty.ZoomToWidth( iBlocksWide * fBlockSize );
 	m_sprEmpty.ZoomToHeight( iBlocksHigh * fBlockSize );
 
-	FOREACH_CONST( int, viMeters, iter )
+	for (auto iter = viMeters.begin(); iter != viMeters.end(); ++iter)
 	{
 		int iIndex = iter - viMeters.begin();
 		float fOffsetFromCenter = iIndex - (iBlocksWide-1)/2.0f;
@@ -105,8 +106,10 @@ void WorkoutGraph::SetFromGameStateAndHighlightSong( int iSongIndex )
 {
 	SetInternal( iSongIndex+1 );
 
-	FOREACH( Sprite*, m_vpBars, spr )
-		(*spr)->StopEffect();
+	for (auto *spr: m_vpBars)
+	{
+		spr->StopEffect();
+	}
 
 	int iBarIndex = iSongIndex - m_iSongsChoppedOffAtBeginning;
 
@@ -118,7 +121,7 @@ void WorkoutGraph::SetFromGameStateAndHighlightSong( int iSongIndex )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the WorkoutGraph. */ 
+/** @brief Allow Lua to have access to the WorkoutGraph. */
 class LunaWorkoutGraph: public Luna<WorkoutGraph>
 {
 public:
@@ -138,7 +141,7 @@ LUA_REGISTER_DERIVED_CLASS( WorkoutGraph, ActorFrame )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -148,7 +151,7 @@ LUA_REGISTER_DERIVED_CLASS( WorkoutGraph, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

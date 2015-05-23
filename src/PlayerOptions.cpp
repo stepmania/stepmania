@@ -7,7 +7,6 @@
 #include "Course.h"
 #include "Steps.h"
 #include "ThemeManager.h"
-#include "Foreach.h"
 #include "Style.h"
 #include "CommonMetrics.h"
 #include <float.h>
@@ -332,11 +331,11 @@ void PlayerOptions::FromString( const RString &sMultipleMods )
 	vector<RString> vs;
 	split( sTemp, ",", vs, true );
 	RString sThrowAway;
-	FOREACH( RString, vs, s )
+	for (auto &s: vs)
 	{
-		if (!FromOneModString( *s, sThrowAway ))
+		if (!FromOneModString( s, sThrowAway ))
 		{
-			LOG->Trace( "Attempted to load a non-existing mod \'%s\' for the Player. Ignoring.", (*s).c_str() );
+			LOG->Trace( "Attempted to load a non-existing mod \'%s\' for the Player. Ignoring.", s.c_str() );
 		}
 	}
 }
@@ -359,31 +358,31 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	vector<RString> asParts;
 	split( sBit, " ", asParts, true );
 
-	FOREACH_CONST( RString, asParts, s )
+	for (auto const &s: asParts)
 	{
-		if( *s == "no" )
+		if( s == "no" )
 		{
 			level = 0;
 		}
-		else if( isdigit((*s)[0]) || (*s)[0] == '-' )
+		else if( isdigit(s[0]) || s[0] == '-' )
 		{
 			/* If the last character is a *, they probably said "123*" when
 			 * they meant "*123". */
-			if( s->Right(1) == "*" )
+			if( s.Right(1) == "*" )
 			{
 				// XXX: We know what they want, is there any reason not to handle it?
 				// Yes. We should be strict in handling the format. -Chris
-				sErrorOut = ssprintf("Invalid player options \"%s\"; did you mean '*%d'?", s->c_str(), StringToInt(*s) );
+				sErrorOut = ssprintf("Invalid player options \"%s\"; did you mean '*%d'?", s.c_str(), StringToInt(s) );
 				return false;
 			}
 			else
 			{
-				level = StringToFloat( *s ) / 100.0f;
+				level = StringToFloat( s ) / 100.0f;
 			}
 		}
-		else if( *s[0]=='*' )
+		else if( s[0]=='*' )
 		{
-			sscanf( *s, "*%f", &speed );
+			sscanf( s, "*%f", &speed );
 			if( !isfinite(speed) )
 				speed = 1.0f;
 		}
@@ -533,7 +532,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "tilt" ) SET_FLOAT( fPerspectiveTilt )
 	else if( sBit == "noteskin" && !on ) /* "no noteskin" */	m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
 	else if( sBit == "randomspeed" ) 			SET_FLOAT( fRandomSpeed )
-	else if( sBit == "failarcade" || 
+	else if( sBit == "failarcade" ||
 		 sBit == "failimmediate" )			m_FailType = FailType_Immediate;
 	else if( sBit == "failendofsong" ||
 		 sBit == "failimmediatecontinue" )		m_FailType = FailType_ImmediateContinue;
@@ -874,7 +873,7 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 	if( m_bTransforms[TRANSFORM_NOSTRETCH] )
 		return true;
 
-	// Inserted holds can be really easy on some songs, and scores will be 
+	// Inserted holds can be really easy on some songs, and scores will be
 	// highly hold-weighted, and very little tap score weighted.
 	if( m_bTransforms[TRANSFORM_LITTLE] )	return true;
 	if( m_bTransforms[TRANSFORM_PLANTED] )	return true;
@@ -883,13 +882,13 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 
 	// This makes songs with sparse notes easier.
 	if( m_bTransforms[TRANSFORM_ECHO] )	return true;
-	
+
 	// Removing attacks is easier in general.
 	if (m_fNoAttack || (!m_fRandAttack && pSteps->HasAttacks()))
 		return true;
-	
+
 	if( m_fCover )	return true;
-	
+
 	// M-mods make songs with indefinite BPMs easier because
 	// they ensure that the song has a scrollable speed.
 	if( m_fMaxScrollBPM != 0 )
@@ -923,22 +922,19 @@ bool PlayerOptions::IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail ) 
 	ASSERT( pCourse != NULL );
 	ASSERT( pTrail != NULL );
 
-	FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
-	{
-		if( e->pSong && IsEasierForSongAndSteps(e->pSong, e->pSteps, PLAYER_1) )
-			return true;
-	}
-	return false;
+	auto isEasier = [this](TrailEntry const &e) {
+		return e.pSong && this->IsEasierForSongAndSteps(e.pSong, e.pSteps, PLAYER_1);
+	};
+
+	return std::any_of(pTrail->m_vEntries.begin(), pTrail->m_vEntries.end(), isEasier);
 }
 
 void PlayerOptions::GetLocalizedMods( vector<RString> &AddTo ) const
 {
 	vector<RString> vMods;
 	GetMods( vMods );
-	FOREACH_CONST( RString, vMods, s )
+	for (auto const &sOneMod: vMods)
 	{
-		const RString& sOneMod = *s;
-
 		ASSERT( !sOneMod.empty() );
 
 		vector<RString> asTokens;
@@ -1043,7 +1039,7 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 #include "LuaBinding.h"
 #include "OptionsBinding.h"
 
-/** @brief Allow Lua to have access to PlayerOptions. */ 
+/** @brief Allow Lua to have access to PlayerOptions. */
 class LunaPlayerOptions: public Luna<PlayerOptions>
 {
 public:
@@ -1391,7 +1387,7 @@ public:
 		OPTIONAL_RETURN_SELF(original_top);
 		return 2;
 	}
-	
+
 	static int Distant(T* p, lua_State* L)
 	{
 		int original_top= lua_gettop(L);
@@ -1554,7 +1550,7 @@ LUA_REGISTER_CLASS( PlayerOptions )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1564,7 +1560,7 @@ LUA_REGISTER_CLASS( PlayerOptions )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

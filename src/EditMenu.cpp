@@ -8,7 +8,6 @@
 #include "Steps.h"
 #include "Song.h"
 #include "StepsUtil.h"
-#include "Foreach.h"
 #include "CommonMetrics.h"
 #include "BannerCache.h"
 #include "UnlockManager.h"
@@ -185,7 +184,7 @@ void EditMenu::Load( const RString &sType )
 
 	// fill in data structures
 	GetGroupsToShow( m_sGroups );
-	
+
 	// In EditMode_Practice this will be filled in by OnRowValueChanged()
 	if( EDIT_MODE.GetValue() != EditMode_Practice )
 		m_StepsTypes = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
@@ -384,7 +383,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 	UpdateArrows();
 
 	EditMode mode = EDIT_MODE.GetValue();
-	
+
 	switch( row )
 	{
 	case ROW_GROUP:
@@ -411,11 +410,11 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				vector<Song*> vtSongs;
 				GetSongsToShowForGroup(GetSelectedGroup(), vtSongs);
 				// Filter out songs that aren't playable.
-				FOREACH(Song*, vtSongs, s)
+				for (auto *s: vtSongs)
 				{
-					if(SongUtil::IsSongPlayable(*s))
+					if(SongUtil::IsSongPlayable(s))
 					{
-						m_pSongs.push_back(*s);
+						m_pSongs.push_back(s);
 					}
 				}
 			}
@@ -424,7 +423,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				GetSongsToShowForGroup(GetSelectedGroup(), m_pSongs);
 			}
 		}
-		
+
 		m_iSelection[ROW_SONG] = 0;
 		// fall through
 	case ROW_SONG:
@@ -462,18 +461,18 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 
 				// Only show StepsTypes for which we have valid Steps.
 				vector<StepsType> vSts = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
-				FOREACH( StepsType, vSts, st )
+				for (auto const &st: vSts)
 				{
-					if(SongUtil::GetStepsByDifficulty( GetSelectedSong(), *st, Difficulty_Invalid, false) != NULL)
-					m_StepsTypes.push_back(*st);
-					
+					if(SongUtil::GetStepsByDifficulty( GetSelectedSong(), st, Difficulty_Invalid, false) != NULL)
+					m_StepsTypes.push_back(st);
+
 					// Try to preserve the user's StepsType selection.
-					if(*st == orgSel)
+					if(st == orgSel)
 					m_iSelection[ROW_STEPS_TYPE] = m_StepsTypes.size() - 1;
 				}
 			}
 		}
-		
+
 		// fall through
 	case ROW_STEPS_TYPE:
 		if(GetSelectedStepsType() == StepsType_Invalid)
@@ -506,8 +505,10 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 								vector<Steps*> v;
 								SongUtil::GetSteps( GetSelectedSong(), v, GetSelectedStepsType(), Difficulty_Edit );
 								StepsUtil::SortStepsByDescription( v );
-								FOREACH_CONST( Steps*, v, p )
-									m_vpSteps.push_back( StepsAndDifficulty(*p,dc) );
+								for (auto *p: v)
+								{
+									m_vpSteps.push_back( StepsAndDifficulty(p,dc) );
+								}
 							}
 							break;
 						case EditMode_Home:
@@ -558,7 +559,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			}
 			StripLockedStepsAndDifficulty( m_vpSteps );
 
-			FOREACH( StepsAndDifficulty, m_vpSteps, s )
+			for (auto s = m_vpSteps.begin(); s != m_vpSteps.end(); ++s)
 			{
 				if( s->dc == dcOld )
 				{
@@ -618,8 +619,10 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 					vector<Steps*> v;
 					SongUtil::GetSteps( GetSelectedSong(), v, GetSelectedSourceStepsType(), dc );
 					StepsUtil::SortStepsByDescription( v );
-					FOREACH_CONST( Steps*, v, pSteps )
-						m_vpSourceSteps.push_back( StepsAndDifficulty(*pSteps,dc) );
+					for (auto *pSteps: v)
+					{
+						m_vpSourceSteps.push_back( StepsAndDifficulty(pSteps,dc) );
+					}
 				}
 			}
 			StripLockedStepsAndDifficulty( m_vpSteps );
@@ -708,7 +711,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -718,7 +721,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

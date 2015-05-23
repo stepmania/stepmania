@@ -3,7 +3,6 @@
 #include "GameState.h"
 #include "RageUtil.h"
 #include "Song.h"
-#include "Foreach.h"
 #include "PlayerOptions.h"
 #include "PlayerState.h"
 
@@ -11,7 +10,7 @@ void Attack::GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBe
 {
 	ASSERT( pSong != NULL );
 	ASSERT_M( fStartSecond >= 0, ssprintf("StartSecond: %f",fStartSecond) );
-	
+
 	const TimingData &timing = pSong->m_SongTiming;
 	fStartBeat = timing.GetBeatFromElapsedTime( fStartSecond );
 	fEndBeat = timing.GetBeatFromElapsedTime( fStartSecond+fSecsRemaining );
@@ -49,7 +48,7 @@ void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlay
 bool Attack::operator== ( const Attack &rhs ) const
 {
 #define EQUAL(a) (a==rhs.a)
-	return 
+	return
 		EQUAL(level) &&
 		EQUAL(fStartSecond) &&
 		EQUAL(fSecsRemaining) &&
@@ -91,39 +90,37 @@ int Attack::GetNumAttacks() const
 
 bool AttackArray::ContainsTransformOrTurn() const
 {
-	FOREACH_CONST( Attack, *this, a )
-	{
-		if( a->ContainsTransformOrTurn() )
-			return true;
-	}
-	return false;
+	auto containsTransformTurn = [](Attack const &a) {
+		return a.ContainsTransformOrTurn();
+	};
+	return std::any_of(this->begin(), this->end(), containsTransformTurn);
 }
 
 vector<RString> AttackArray::ToVectorString() const
 {
 	vector<RString> ret;
-	FOREACH_CONST( Attack, *this, a )
+	for (auto const &a: *this)
 	{
 		ret.push_back(ssprintf("TIME=%f:LEN=%f:MODS=%s",
-				       a->fStartSecond,
-				       a->fSecsRemaining,
-				       a->sModifiers.c_str()));
+				       a.fStartSecond,
+				       a.fSecsRemaining,
+				       a.sModifiers.c_str()));
 	}
 	return ret;
 }
 
 void AttackArray::UpdateStartTimes(float delta)
 {
-	FOREACH(Attack, *this, a)
+	for (auto &a: *this)
 	{
-		a->fStartSecond += delta;
+		a.fStartSecond += delta;
 	}
 }
 
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -133,7 +130,7 @@ void AttackArray::UpdateStartTimes(float delta)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -7,7 +7,6 @@
 #include "StepsDisplay.h"
 #include "StepsUtil.h"
 #include "CommonMetrics.h"
-#include "Foreach.h"
 #include "SongUtil.h"
 #include "XmlFile.h"
 
@@ -122,8 +121,9 @@ void StepsDisplayList::UpdatePositions()
 {
 	int iCurrentRow[NUM_PLAYERS];
 	FOREACH_HumanPlayer( p )
+	{
 		iCurrentRow[p] = GetCurrentRowIndex( p );
-
+	}
 	const int total = NUM_SHOWN_ITEMS;
 	const int halfsize = total / 2;
 
@@ -270,14 +270,14 @@ void StepsDisplayList::SetFromGameState()
 	if( pSong == NULL )
 	{
 		// FIXME: This clamps to between the min and the max difficulty, but
-		// it really should round to the nearest difficulty that's in 
+		// it really should round to the nearest difficulty that's in
 		// DIFFICULTIES_TO_SHOW.
 		const vector<Difficulty>& difficulties = CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue();
 		m_Rows.resize( difficulties.size() );
-		FOREACH_CONST( Difficulty, difficulties, d )
+		for (auto const &d: difficulties)
 		{
-			m_Rows[i].m_dc = *d;
-			m_Lines[i].m_Meter.SetFromStepsTypeAndMeterAndDifficultyAndCourseType( GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType, 0, *d, CourseType_Invalid );
+			m_Rows[i].m_dc = d;
+			m_Lines[i].m_Meter.SetFromStepsTypeAndMeterAndDifficultyAndCourseType( GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType, 0, d, CourseType_Invalid );
 			++i;
 		}
 	}
@@ -288,11 +288,11 @@ void StepsDisplayList::SetFromGameState()
 		// Should match the sort in ScreenSelectMusic::AfterMusicChange.
 
 		m_Rows.resize( vpSteps.size() );
-		FOREACH_CONST( Steps*, vpSteps, s )
+		for (auto *s: vpSteps)
 		{
 			//LOG->Trace(ssprintf("setting steps for row %i",i));
-			m_Rows[i].m_Steps = *s;
-			m_Lines[i].m_Meter.SetFromSteps( *s );
+			m_Rows[i].m_Steps = s;
+			m_Lines[i].m_Meter.SetFromSteps( s );
 			++i;
 		}
 	}
@@ -321,11 +321,13 @@ void StepsDisplayList::HideRows()
 void StepsDisplayList::TweenOnScreen()
 {
 	FOREACH_HumanPlayer( pn )
+	{
 		ON_COMMAND( m_Cursors[pn] );
-
+	}
 	for( int m = 0; m < MAX_METERS; ++m )
+	{
 		ON_COMMAND( m_Lines[m].m_Meter );
-
+	}
 	this->SetHibernate( 0.5f );
 	m_bShown = true;
 	for( unsigned m = 0; m < m_Rows.size(); ++m )
@@ -339,7 +341,9 @@ void StepsDisplayList::TweenOnScreen()
 	PositionItems();
 
 	FOREACH_HumanPlayer( pn )
+	{
 		COMMAND( m_Cursors[pn], "TweenOn" );
+	}
 }
 
 void StepsDisplayList::TweenOffScreen()
@@ -357,7 +361,9 @@ void StepsDisplayList::Show()
 	PositionItems();
 
 	FOREACH_HumanPlayer( pn )
+	{
 		COMMAND( m_Cursors[pn], "Show" );
+	}
 }
 
 void StepsDisplayList::Hide()
@@ -366,7 +372,9 @@ void StepsDisplayList::Hide()
 	PositionItems();
 
 	FOREACH_HumanPlayer( pn )
+	{
 		COMMAND( m_Cursors[pn], "Hide" );
+	}
 }
 
 void StepsDisplayList::HandleMessage( const Message &msg )
@@ -374,7 +382,7 @@ void StepsDisplayList::HandleMessage( const Message &msg )
 	FOREACH_ENUM( PlayerNumber, pn )
 	{
 		if( msg.GetName() == MessageIDToString((MessageID)(Message_CurrentStepsP1Changed+pn))  ||
-			msg.GetName() == MessageIDToString((MessageID)(Message_CurrentTrailP1Changed+pn)) ) 
+			msg.GetName() == MessageIDToString((MessageID)(Message_CurrentTrailP1Changed+pn)) )
 		SetFromGameState();
 	}
 
@@ -385,7 +393,7 @@ void StepsDisplayList::HandleMessage( const Message &msg )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the StepsDisplayList. */ 
+/** @brief Allow Lua to have access to the StepsDisplayList. */
 class LunaStepsDisplayList: public Luna<StepsDisplayList>
 {
 public:
@@ -403,7 +411,7 @@ LUA_REGISTER_DERIVED_CLASS( StepsDisplayList, ActorFrame )
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -413,7 +421,7 @@ LUA_REGISTER_DERIVED_CLASS( StepsDisplayList, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

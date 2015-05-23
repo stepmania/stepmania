@@ -10,10 +10,10 @@
 #include "RageTimer.h"
 #include "RageUtil.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
 #include "LuaBinding.h"
 #include "LuaManager.h"
 #include "LocalizedString.h"
+#include <numeric>
 
 const float min_state_delay= 0.0001f;
 
@@ -398,20 +398,18 @@ void ActorMultiVertex::SetState(size_t i)
 
 void ActorMultiVertex::SetAllStateDelays(float delay)
 {
-	FOREACH(State, _states, s)
+	for (auto &s: _states)
 	{
-		s->delay= delay;
+		s.delay = delay;
 	}
 }
 
 float ActorMultiVertex::GetAnimationLengthSeconds() const
 {
-	float tot= 0.0f;
-	FOREACH_CONST(State, _states, s)
-	{
-		tot+= s->delay;
-	}
-	return tot;
+	auto calcDelay = [](float total, State const &s) {
+		return total + s.delay;
+	};
+	return std::accumulate(_states.begin(), _states.end(), 0.f, calcDelay);
 }
 
 void ActorMultiVertex::SetSecondsIntoAnimation(float seconds)

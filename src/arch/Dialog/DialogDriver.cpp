@@ -1,6 +1,5 @@
 #include "global.h"
 #include "DialogDriver.h"
-#include "Foreach.h"
 #include "RageLog.h"
 
 map<istring, CreateDialogDriverFn> *RegisterDialogDriver::g_pRegistrees;
@@ -23,9 +22,9 @@ DialogDriver *DialogDriver::Create()
 
 	ASSERT( asDriversToTry.size() != 0 );
 
-	FOREACH_CONST( RString, asDriversToTry, Driver )
+	for (auto const &Driver: asDriversToTry)
 	{
-		map<istring, CreateDialogDriverFn>::const_iterator iter = RegisterDialogDriver::g_pRegistrees->find( istring(*Driver) );
+		auto iter = RegisterDialogDriver::g_pRegistrees->find( istring(Driver) );
 
 		if( iter == RegisterDialogDriver::g_pRegistrees->end() )
 			continue;
@@ -37,7 +36,7 @@ DialogDriver *DialogDriver::Create()
 		if( sError.empty() )
 			return pRet;
 		if( LOG )
-			LOG->Info( "Couldn't load driver %s: %s", Driver->c_str(), sError.c_str() );
+			LOG->Info( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
 		SAFE_DELETE( pRet );
 	}
 	return NULL;
@@ -47,7 +46,7 @@ DialogDriver *DialogDriver::Create()
 /*
  * (c) 2002-2006 Glenn Maynard, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -57,7 +56,7 @@ DialogDriver *DialogDriver::Create()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

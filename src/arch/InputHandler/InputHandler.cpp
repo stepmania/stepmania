@@ -6,7 +6,6 @@
 #include "LocalizedString.h"
 #include "arch/arch_default.h"
 #include "InputHandler_MonkeyKeyboard.h"
-#include "Foreach.h"
 
 void InputHandler::UpdateTimer()
 {
@@ -57,15 +56,15 @@ wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentK
 	case KEY_KP_EQUAL:	c = L'=';	break;
 	}
 
-	// Handle some default US keyboard modifiers for derived InputHandlers that 
+	// Handle some default US keyboard modifiers for derived InputHandlers that
 	// don't implement DeviceButtonToChar.
 	if( bUseCurrentKeyModifiers )
 	{
-		bool bHoldingShift = 
+		bool bHoldingShift =
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) ||
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT));
 
-		bool bHoldingCtrl = 
+		bool bHoldingCtrl =
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL));
 
@@ -102,7 +101,7 @@ wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentK
 		}
 
 	}
-	
+
 	return c;
 }
 
@@ -172,16 +171,16 @@ void InputHandler::Create( const RString &drivers_, vector<InputHandler *> &Add 
 	const RString drivers = drivers_.empty()? RString(DEFAULT_INPUT_DRIVER_LIST):drivers_;
 	vector<RString> DriversToTry;
 	split( drivers, ",", DriversToTry, true );
-	
+
 	if( DriversToTry.empty() )
 		RageException::Throw( "%s", INPUT_HANDLERS_EMPTY.GetValue().c_str() );
-	
-	FOREACH_CONST( RString, DriversToTry, s )
+
+	for (auto const &s: DriversToTry)
 	{
-		RageDriver *pDriver = InputHandler::m_pDriverList.Create( *s );
+		RageDriver *pDriver = InputHandler::m_pDriverList.Create( s );
 		if( pDriver == NULL )
 		{
-			LOG->Trace( "Unknown Input Handler name: %s", s->c_str() );
+			LOG->Trace( "Unknown Input Handler name: %s", s.c_str() );
 			continue;
 		}
 
@@ -198,7 +197,7 @@ void InputHandler::Create( const RString &drivers_, vector<InputHandler *> &Add 
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -208,7 +207,7 @@ void InputHandler::Create( const RString &drivers_, vector<InputHandler *> &Add 
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
