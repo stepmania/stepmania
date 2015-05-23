@@ -957,11 +957,13 @@ public:
 	{
 		using std::max;
 		/* Always allocate at least 1 entry, so &x[0] is valid. */
-		m_vPosition.resize( max(1ul, GetTotalVertices()) );
-		m_vTexture.resize( max(1ul, GetTotalVertices()) );
-		m_vNormal.resize( max(1ul, GetTotalVertices()) );
-		m_vTexMatrixScale.resize( max(1ul, GetTotalVertices()) );
-		m_vTriangles.resize( max(1ul, GetTotalTriangles()) );
+		auto vertices = static_cast<int>(GetTotalVertices());
+		auto triangles = static_cast<int>(GetTotalTriangles());
+		m_vPosition.resize( max(1, vertices) );
+		m_vTexture.resize( max(1, vertices) );
+		m_vNormal.resize( max(1, vertices) );
+		m_vTexMatrixScale.resize( max(1, vertices) );
+		m_vTriangles.resize( max(1, triangles) );
 	}
 	void Change( const vector<msMesh> &vMeshes )
 	{

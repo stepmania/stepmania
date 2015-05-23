@@ -143,7 +143,7 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 				m_BPMS.push_back(BPMS[i]); // hold
 		}
 
-		m_iCurrentBPM = min(1ul, m_BPMS.size()); // start on the first hold
+		m_iCurrentBPM = min(1, static_cast<int>(m_BPMS.size())); // start on the first hold
 		m_fBPMFrom = BPMS[0];
 		m_fBPMTo = BPMS[0];
 		m_fPercentInState = 1;

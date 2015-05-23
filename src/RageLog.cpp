@@ -334,9 +334,9 @@ void RageLog::AddToInfo( const RString &str )
 	if( staticlog_size + len > sizeof(staticlog) )
 	{
 		const RString txt( NEWLINE "Staticlog limit reached" NEWLINE );
-
-		const unsigned pos = min( static_cast<unsigned long>(staticlog_size), sizeof(staticlog) - txt.size() );
-		memcpy( staticlog+pos, txt.data(), txt.size() );
+		unsigned txtSize = static_cast<unsigned>(sizeof(staticlog) - txt.size());
+		unsigned const pos = min( staticlog_size, txtSize );
+		memcpy( staticlog + pos, txt.data(), txt.size() );
 		limit_reached = true;
 		return;
 	}
