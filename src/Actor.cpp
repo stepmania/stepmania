@@ -5,7 +5,6 @@
 #include "RageUtil.h"
 #include "RageMath.h"
 #include "RageLog.h"
-#include "Foreach.h"
 #include "XmlFile.h"
 #include "LuaBinding.h"
 #include "ThemeManager.h"

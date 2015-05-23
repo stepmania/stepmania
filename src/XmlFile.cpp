@@ -1,5 +1,5 @@
 // Adapted from http://www.codeproject.com/cpp/xmlite.asp.
-// On 2004-02-09 Cho, Kyung-Min gave us permission to use and modify this 
+// On 2004-02-09 Cho, Kyung-Min gave us permission to use and modify this
 // library.
 //
 // XmlFile : XML Lite Parser Library
@@ -11,7 +11,6 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "DateTime.h"
-#include "Foreach.h"
 #include "LuaManager.h"
 
 const RString XNode::TEXT_ATTRIBUTE = "__TEXT__";
@@ -49,7 +48,7 @@ void XNode::Free()
 	m_children_by_name.clear();
 	m_attrs.clear();
 }
-	
+
 void XNodeStringValue::GetValue( RString &out ) const		{ out = m_sValue; }
 void XNodeStringValue::GetValue( int &out ) const		{ out = StringToInt(m_sValue); }
 void XNodeStringValue::GetValue( float &out ) const		{ out = StringToFloat(m_sValue); }

@@ -1,6 +1,5 @@
 #include "global.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
 #include "IniFile.h"
 #include "RageFile.h"
 #include "RageFileManager.h"
@@ -405,7 +404,7 @@ void actor_template_t::store_field(RString const& field_name, RString const& val
 	{
 		fields[field_name]= pref + value + suf;
 	}
-	
+
 }
 void actor_template_t::store_field(RString const& field_name, XNodeValue const* value, bool cmd_convert, RString const& pref, RString const& suf)
 {
@@ -778,7 +777,7 @@ LUAFUNC_REGISTER_COMMON(convert_xml_bgs);
 /*
  * (c) 2014 Eric Reese
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -788,7 +787,7 @@ LUAFUNC_REGISTER_COMMON(convert_xml_bgs);
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

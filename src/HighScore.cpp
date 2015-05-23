@@ -5,7 +5,6 @@
 #include "PlayerNumber.h"
 #include "ThemeManager.h"
 #include "XmlFile.h"
-#include "Foreach.h"
 #include "RadarValues.h"
 
 #include <algorithm>
@@ -42,7 +41,7 @@ struct HighScoreImpl
 	bool operator!=( const HighScoreImpl& other ) const { return !(*this == other); }
 };
 
-bool HighScoreImpl::operator==( const HighScoreImpl& other ) const 
+bool HighScoreImpl::operator==( const HighScoreImpl& other ) const
 {
 #define COMPARE(x)	if( x!=other.x )	return false;
 	COMPARE( sName );
@@ -59,9 +58,13 @@ bool HighScoreImpl::operator==( const HighScoreImpl& other ) const
 	COMPARE( sMachineGuid );
 	COMPARE( iProductID );
 	FOREACH_ENUM( TapNoteScore, tns )
+	{
 		COMPARE( iTapNoteScores[tns] );
+	}
 	FOREACH_ENUM( HoldNoteScore, hns )
+	{
 		COMPARE( iHoldNoteScores[hns] );
+	}
 	COMPARE( radarValues );
 	COMPARE( fLifeRemainingSeconds );
 	COMPARE( bDisqualified );
@@ -113,12 +116,20 @@ XNode *HighScoreImpl::CreateNode() const
 	pNode->AppendChild( "ProductID",		iProductID );
 	XNode* pTapNoteScores = pNode->AppendChild( "TapNoteScores" );
 	FOREACH_ENUM( TapNoteScore, tns )
+	{
 		if( tns != TNS_None )	// HACK: don't save meaningless "none" count
+		{
 			pTapNoteScores->AppendChild( TapNoteScoreToString(tns), iTapNoteScores[tns] );
+		}
+	}
 	XNode* pHoldNoteScores = pNode->AppendChild( "HoldNoteScores" );
 	FOREACH_ENUM( HoldNoteScore, hns )
+	{
 		if( hns != HNS_None )	// HACK: don't save meaningless "none" count
+		{
 			pHoldNoteScores->AppendChild( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
+		}
+	}
 	pNode->AppendChild( radarValues.CreateNode(bWriteSimpleValues, bWriteComplexValues) );
 	pNode->AppendChild( "LifeRemainingSeconds",	fLifeRemainingSeconds );
 	pNode->AppendChild( "Disqualified",		bDisqualified);
@@ -148,15 +159,25 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 	pNode->GetChildValue( "ProductID",		iProductID );
 	const XNode* pTapNoteScores = pNode->GetChild( "TapNoteScores" );
 	if( pTapNoteScores )
+	{
 		FOREACH_ENUM( TapNoteScore, tns )
+		{
 			pTapNoteScores->GetChildValue( TapNoteScoreToString(tns), iTapNoteScores[tns] );
+		}
+	}
 	const XNode* pHoldNoteScores = pNode->GetChild( "HoldNoteScores" );
 	if( pHoldNoteScores )
+	{
 		FOREACH_ENUM( HoldNoteScore, hns )
+		{
 			pHoldNoteScores->GetChildValue( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
+		}
+	}
 	const XNode* pRadarValues = pNode->GetChild( "RadarValues" );
 	if( pRadarValues )
+	{
 		radarValues.LoadFromNode( pRadarValues );
+	}
 	pNode->GetChildValue( "LifeRemainingSeconds",	fLifeRemainingSeconds );
 	pNode->GetChildValue( "Disqualified",		bDisqualified);
 
@@ -266,7 +287,7 @@ bool HighScore::operator>=( const HighScore& other ) const
 	return !operator<(other);
 }
 
-bool HighScore::operator==( const HighScore& other ) const 
+bool HighScore::operator==( const HighScore& other ) const
 {
 	return *m_Impl == *other.m_Impl;
 }
@@ -281,7 +302,7 @@ XNode* HighScore::CreateNode() const
 	return m_Impl->CreateNode();
 }
 
-void HighScore::LoadFromNode( const XNode* pNode ) 
+void HighScore::LoadFromNode( const XNode* pNode )
 {
 	m_Impl->LoadFromNode( pNode );
 }
@@ -310,8 +331,8 @@ void HighScoreList::AddHighScore( HighScore hs, int &iIndexOut, bool bIsMachine 
 		if( hs >= vHighScores[i] )
 			break;
 	}
-	const int iMaxScores = bIsMachine ? 
-		PREFSMAN->m_iMaxHighScoresPerListForMachine : 
+	const int iMaxScores = bIsMachine ?
+		PREFSMAN->m_iMaxHighScoresPerListForMachine :
 		PREFSMAN->m_iMaxHighScoresPerListForPlayer;
 	if( i < iMaxScores )
 	{
@@ -319,7 +340,7 @@ void HighScoreList::AddHighScore( HighScore hs, int &iIndexOut, bool bIsMachine 
 		iIndexOut = i;
 
 		// Delete extra machine high scores in RemoveAllButOneOfEachNameAndClampSize
-		// and not here so that we don't end up with less than iMaxScores after 
+		// and not here so that we don't end up with less than iMaxScores after
 		// removing HighScores with duplicate names.
 		//
 		if( !bIsMachine )
@@ -406,9 +427,9 @@ void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 
 void HighScoreList::RemoveAllButOneOfEachName()
 {
-	FOREACH( HighScore, vHighScores, i )
+	for (auto i = vHighScores.begin(); i != vHighScores.end(); ++i)
 	{
-		for( vector<HighScore>::iterator j = i+1; j != vHighScores.end(); j++ )
+		for( auto j = i + 1; j != vHighScores.end(); j++ )
 		{
 			if( i->GetName() == j->GetName() )
 			{
@@ -421,8 +442,8 @@ void HighScoreList::RemoveAllButOneOfEachName()
 
 void HighScoreList::ClampSize( bool bIsMachine )
 {
-	const int iMaxScores = bIsMachine ? 
-		PREFSMAN->m_iMaxHighScoresPerListForMachine : 
+	const int iMaxScores = bIsMachine ?
+		PREFSMAN->m_iMaxHighScoresPerListForMachine :
 		PREFSMAN->m_iMaxHighScoresPerListForPlayer;
 	if( vHighScores.size() > unsigned(iMaxScores) )
 		vHighScores.erase( vHighScores.begin()+iMaxScores, vHighScores.end() );
@@ -458,7 +479,7 @@ XNode* Screenshot::CreateNode() const
 	return pNode;
 }
 
-void Screenshot::LoadFromNode( const XNode* pNode ) 
+void Screenshot::LoadFromNode( const XNode* pNode )
 {
 	ASSERT( pNode->GetName() == "Screenshot" );
 
@@ -485,7 +506,9 @@ public:
 	{
 		bool bIsFillInMarker = false;
 		FOREACH_PlayerNumber( pn )
+		{
 			bIsFillInMarker |= p->GetName() == RANKING_TO_FILL_IN_MARKER[pn];
+		}
 		lua_pushboolean( L, bIsFillInMarker );
 		return 1;
 	}
@@ -587,7 +610,7 @@ LUA_REGISTER_CLASS( HighScoreList )
 /*
  * (c) 2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -597,7 +620,7 @@ LUA_REGISTER_CLASS( HighScoreList )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

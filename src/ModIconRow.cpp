@@ -11,7 +11,6 @@
 #include "ActorUtil.h"
 #include "XmlFile.h"
 #include "LuaManager.h"
-#include "Foreach.h"
 
 int OptionToPreferredColumn( RString sOptionText );
 
@@ -26,9 +25,9 @@ ModIconRow::ModIconRow()
 
 ModIconRow::~ModIconRow()
 {
-	FOREACH( ModIcon*, m_vpModIcon, p )
+	for (auto *p: m_vpModIcon)
 	{
-		SAFE_DELETE( *p );
+		SAFE_DELETE( p );
 	}
 	this->RemoveAllChildren();
 }

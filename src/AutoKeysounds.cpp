@@ -30,7 +30,6 @@
 #include "RageSoundManager.h"
 #include "RageLog.h"
 #include "RageSoundReader_FileReader.h"
-#include "Foreach.h"
 
 void AutoKeysounds::Load( PlayerNumber pn, const NoteData& ndAutoKeysoundsOnly )
 {
@@ -77,8 +76,9 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 
 			TapNote tn[NUM_PLAYERS];
 			FOREACH_EnabledPlayer(pn)
+			{
 				tn[pn] = m_ndAutoKeysoundsOnly[pn].GetTapNote( t, iRow );
-
+			}
 			/* Do all enabled players have the same note here?  (Having no note at all
 			 * counts as having a different note.) */
 			bool bSoundIsGlobal = true;
@@ -142,10 +142,10 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 
 
 	vector<RageSoundReader *> vpSounds;
-	FOREACH( RString, vsMusicFile, s )
+	for (auto &s: vsMusicFile)
 	{
 		RString sError;
-		RageSoundReader *pSongReader = RageSoundReader_FileReader::OpenFile( *s, sError );
+		RageSoundReader *pSongReader = RageSoundReader_FileReader::OpenFile( s, sError );
 		vpSounds.push_back( pSongReader );
 	}
 
@@ -162,8 +162,10 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 	{
 		RageSoundReader_Merge *pMerge = new RageSoundReader_Merge;
 
-		FOREACH( RageSoundReader *, vpSounds, so )
-			pMerge->AddSound( *so );
+		for (auto *so: vpSounds)
+		{
+			pMerge->AddSound( so );
+		}
 		pMerge->Finish( SOUNDMAN->GetDriverSampleRate() );
 
 		RageSoundReader *pSongReader = pMerge;
@@ -182,7 +184,7 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 		// Load the buffering filter before the effects filters, so effects aren't delayed.
 		pGuitarTrackReader = new RageSoundReader_Extend( pGuitarTrackReader );
 		pGuitarTrackReader = new RageSoundReader_ThreadedBuffer( pGuitarTrackReader );
-		pPlayer1 = pGuitarTrackReader;	
+		pPlayer1 = pGuitarTrackReader;
 	}
 
 	return;
@@ -308,8 +310,10 @@ void AutoKeysounds::FinishLoading()
 	{
 		RageSoundReader_Merge *pMerge = new RageSoundReader_Merge;
 
-		FOREACH( RageSoundReader *, apSounds, ps )
-			pMerge->AddSound( *ps );
+		for (auto *ps: apSounds)
+		{
+			pMerge->AddSound( ps );
+		}
 
 		pMerge->Finish( SOUNDMAN->GetDriverSampleRate() );
 
@@ -345,7 +349,7 @@ void AutoKeysounds::Update( float fDelta )
 		FOREACH_EnabledPlayer( pn )
 		{
 			const NoteData &nd = m_ndAutoKeysoundsOnly[pn];
-		
+
 			for( int t=0; t<nd.GetNumTracks(); t++ )
 			{
 				FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( nd, t, r, iRowLastCrossed+1, iRowNow )
@@ -366,7 +370,7 @@ void AutoKeysounds::Update( float fDelta )
 /*
  * (c) 2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -376,7 +380,7 @@ void AutoKeysounds::Update( float fDelta )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

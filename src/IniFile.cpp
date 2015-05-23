@@ -1,4 +1,4 @@
-/* 
+/*
 http://en.wikipedia.org/wiki/INI_file
  - names and values are trimmed on both sides
  - semicolons start a comment line
@@ -9,7 +9,6 @@ http://en.wikipedia.org/wiki/INI_file
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageFile.h"
-#include "Foreach.h"
 
 IniFile::IniFile(): XNode("IniFile")
 {
@@ -126,7 +125,7 @@ bool IniFile::WriteFile( const RString &sPath ) const
 
 bool IniFile::WriteFile( RageFileBasic &f ) const
 {
-	FOREACH_CONST_Child( this, pKey ) 
+	FOREACH_CONST_Child( this, pKey )
 	{
 		if( f.PutLine( ssprintf("[%s]", pKey->GetName().c_str()) ) == -1 )
 		{
@@ -197,7 +196,7 @@ bool IniFile::RenameKey(const RString &from, const RString &to)
 /*
  * (c) 2001-2004 Adam Clauss, Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -207,7 +206,7 @@ bool IniFile::RenameKey(const RString &from, const RString &to)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

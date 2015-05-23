@@ -3,7 +3,6 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageTimer.h"
-#include "Foreach.h"
 
 #include <limits.h>
 #include <list>
@@ -100,7 +99,7 @@ void pos_map_queue::Insert( int64_t iSourceFrame, int iFrames, int64_t iDestFram
 	m.m_iDestFrame = iDestFrame;
 	m.m_iFrames = iFrames;
 	m.m_fSourceToDestRatio = fSourceToDestRatio;
-	
+
 	m_pImpl->Cleanup();
 }
 
@@ -171,7 +170,7 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 	 * The frame is out of the range of data we've actually sent.
 	 * Return the closest position.
 	 *
-	 * There are three cases when this happens: 
+	 * There are three cases when this happens:
 	 * 1. Before the first CommitPlayingPosition call.
 	 * 2. After GetDataToPlay returns EOF and the sound has flushed, but before
 	 *    SoundStopped has been called.
