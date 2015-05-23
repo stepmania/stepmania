@@ -654,12 +654,12 @@ XNode *LuaHelpers::GetLuaInformation()
 
 	//const RString BuiltInPackages[] = { "_G", "coroutine", "debug", "math", "package", "string", "table" };
 	std::array<RString, 7> const BuiltInPackages = { "_G", "coroutine", "debug", "math", "package", "string", "table" };
-	const RString *const end = BuiltInPackages.end();
+	auto endIter = BuiltInPackages.end();
 	FOREACH_LUATABLE( L, -1 )
 	{
 		RString sNamespace;
 		LuaHelpers::Pop( L, sNamespace );
-		if( find(BuiltInPackages.begin(), end, sNamespace) != end )
+		if( find(BuiltInPackages.begin(), endIter, sNamespace) != endIter )
 			continue;
 		vector<RString> &vNamespaceFunctions = mNamespaces[sNamespace];
 		FOREACH_LUATABLE( L, -1 )
