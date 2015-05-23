@@ -67,7 +67,7 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 		}
 	}
 
-	set<GameInput> vGIs;
+	std::set<GameInput> vGIs;
 	vector<const Style*> vStyles;
 	GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vStyles );
 	for (auto const *style: vStyles)

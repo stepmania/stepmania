@@ -76,7 +76,7 @@ NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 	NetPlayerClient = new EzSockets;
 	NetPlayerClient->blocking = false;
 	m_ServerVersion = 0;
-   
+
 	useSMserver = false;
 	isSMOnline = false;
 	FOREACH_PlayerNumber( pn )
@@ -96,7 +96,7 @@ NetworkSyncManager::~NetworkSyncManager ()
 		NetPlayerClient->close();
 	SAFE_DELETE( NetPlayerClient );
 
-	if ( BroadcastReception ) 
+	if ( BroadcastReception )
 	{
 		BroadcastReception->close();
 		SAFE_DELETE( BroadcastReception );
@@ -231,7 +231,7 @@ bool NetworkSyncManager::Connect( const RString& addy, unsigned short port )
 	return useSMserver;
 }
 
-void NetworkSyncManager::ReportNSSOnOff(int i) 
+void NetworkSyncManager::ReportNSSOnOff(int i)
 {
 	m_packet.ClearPacket();
 	m_packet.Write1( NSCSMS );
@@ -239,8 +239,8 @@ void NetworkSyncManager::ReportNSSOnOff(int i)
 	NetPlayerClient->SendPack( (char*)m_packet.Data, m_packet.Position );
 }
 
-RString NetworkSyncManager::GetServerName() 
-{ 
+RString NetworkSyncManager::GetServerName()
+{
 	return m_ServerName;
 }
 
@@ -274,22 +274,26 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	// If this assumption is false, read 16 seconds in either direction.
 	int iOffset = int( (offset+16.384)*2000.0f );
 
-	if( iOffset>65535 )
-		iOffset=65535;
-	if( iOffset<1 )
-		iOffset=1;
-
+	// TODO: Utilize clamp here.
+	if( iOffset > 65535 )
+	{
+		iOffset = 65535;
+	}
+	else if( iOffset < 1 )
+	{
+		iOffset = 1;
+	}
 	// Report 0 if hold, or miss (don't forget mines should report)
 	if( step == SMOST_HITMINE || step > SMOST_W1 )
 		iOffset = 0;
 
 	m_packet.Write2( (uint16_t)iOffset );
 
-	NetPlayerClient->SendPack( (char*)m_packet.Data, m_packet.Position ); 
+	NetPlayerClient->SendPack( (char*)m_packet.Data, m_packet.Position );
 
 }
 
-void NetworkSyncManager::ReportSongOver() 
+void NetworkSyncManager::ReportSongOver()
 {
 	if ( !useSMserver )	//Make sure that we are using the network
 		return;
@@ -298,11 +302,11 @@ void NetworkSyncManager::ReportSongOver()
 
 	m_packet.Write1( NSCGON );
 
-	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position ); 
+	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
 	return;
 }
 
-void NetworkSyncManager::ReportStyle() 
+void NetworkSyncManager::ReportStyle()
 {
 	LOG->Trace( "Sending \"Style\" to server" );
 
@@ -312,7 +316,7 @@ void NetworkSyncManager::ReportStyle()
 	m_packet.Write1( NSCSU );
 	m_packet.Write1( (int8_t)GAMESTATE->GetNumPlayersEnabled() );
 
-	FOREACH_EnabledPlayer( pn ) 
+	FOREACH_EnabledPlayer( pn )
 	{
 		m_packet.Write1( (uint8_t)pn );
 		m_packet.WriteNT( GAMESTATE->GetPlayerDisplayName(pn) );
@@ -321,7 +325,7 @@ void NetworkSyncManager::ReportStyle()
 	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
 }
 
-void NetworkSyncManager::StartRequest( short position ) 
+void NetworkSyncManager::StartRequest( short position )
 {
 	if( !useSMserver )
 		return;
@@ -407,8 +411,8 @@ void NetworkSyncManager::StartRequest( short position )
 
 	//The following packet HAS to get through, so we turn blocking on for it as well
 	//Don't block if we are serving
-	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
-	
+	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position);
+
 	LOG->Trace("Waiting for RECV");
 
 	m_packet.ClearPacket();
@@ -472,10 +476,10 @@ void NetworkSyncManager::Update(float fDeltaTime)
 				(addy<<0)>>24, (addy<<8)>>24, (addy<<16)>>24, (addy<<24)>>24, port );
 
 			//It's fairly safe to assume that users will not be on networks with more than
-			//30 or 40 servers.  Until this point, maps would be slower than vectors. 
-			//So I am going to use a vector to store all of the servers.  
+			//30 or 40 servers.  Until this point, maps would be slower than vectors.
+			//So I am going to use a vector to store all of the servers.
 			//
-			//In this situation, I will traverse the vector to find the element that 
+			//In this situation, I will traverse the vector to find the element that
 			//contains the corresponding server.
 
 			unsigned int i;
@@ -497,7 +501,7 @@ static LocalizedString CONNECTION_DROPPED( "NetworkSyncManager", "Connection to 
 void NetworkSyncManager::ProcessInput()
 {
 	//If we're disconnected, just exit
-	if ((NetPlayerClient->state!=NetPlayerClient->skCONNECTED) || 
+	if ((NetPlayerClient->state!=NetPlayerClient->skCONNECTED) ||
 			NetPlayerClient->IsError())
 	{
 		SCREENMAN->SystemMessageNoAnimate( CONNECTION_DROPPED );
@@ -538,7 +542,7 @@ void NetworkSyncManager::ProcessInput()
 		case NSCHello: // This is already taken care of by the blocking code earlier
 		case NSCGSR:   // This is taken care of by the blocking start code
 			break;
-		case NSCGON: 
+		case NSCGON:
 			{
 				int PlayersInPack = m_packet.Read1();
 				m_EvalPlayerData.resize(PlayersInPack);
@@ -550,7 +554,7 @@ void NetworkSyncManager::ProcessInput()
 					m_EvalPlayerData[i].grade = m_packet.Read1();
 				for (int i=0; i<PlayersInPack; ++i)
 					m_EvalPlayerData[i].difficulty = (Difficulty) m_packet.Read1();
-				for (int j=0; j<NETNUMTAPSCORES; ++j) 
+				for (int j=0; j<NETNUMTAPSCORES; ++j)
 					for (int i=0; i<PlayersInPack; ++i)
 						m_EvalPlayerData[i].tapScores[j] = m_packet.Read2();
 				for (int i=0; i<PlayersInPack; ++i)
@@ -677,7 +681,7 @@ void NetworkSyncManager::ProcessInput()
 	}
 }
 
-bool NetworkSyncManager::ChangedScoreboard(int Column) 
+bool NetworkSyncManager::ChangedScoreboard(int Column)
 {
 	if (!m_scoreboardchange[Column])
 		return false;
@@ -685,12 +689,12 @@ bool NetworkSyncManager::ChangedScoreboard(int Column)
 	return true;
 }
 
-void NetworkSyncManager::SendChat(const RString& message) 
+void NetworkSyncManager::SendChat(const RString& message)
 {
 	m_packet.ClearPacket();
 	m_packet.Write1( NSCCM );
 	m_packet.WriteNT( message );
-	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
+	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position);
 }
 
 void NetworkSyncManager::ReportPlayerOptions()
@@ -699,7 +703,7 @@ void NetworkSyncManager::ReportPlayerOptions()
 	m_packet.Write1( NSCUPOpts );
 	FOREACH_PlayerNumber (pn)
 		m_packet.WriteNT( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().GetString() );
-	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
+	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position);
 }
 
 void NetworkSyncManager::SelectUserSong()
@@ -836,12 +840,12 @@ void PacketFunctions::ClearPacket()
 	Position = 0;
 }
 
-RString NetworkSyncManager::MD5Hex( const RString &sInput ) 
+RString NetworkSyncManager::MD5Hex( const RString &sInput )
 {
 	return BinaryToHex( CryptManager::GetMD5ForString(sInput) ).MakeUpper();
 }
 
-void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers ) 
+void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers )
 {
 	AllServers = m_vAllLANServers;
 }
@@ -860,7 +864,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 	const RString sResource = "/stepmania/check_sm5.php";
 	const RString sUserAgent = PRODUCT_ID;
 	const RString sReferer = "http://aldo.mx/stepmania/";
-	
+
 	if( ld )
 	{
 		ld->SetIndeterminate( true );
@@ -889,7 +893,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 		);
 
 		socket->SendData(sHTTPRequest);
-		
+
 		// Aldo: EzSocket::pReadData() is a lower level function, I used it because I was having issues
 		// with EzSocket::ReadData() in 3.9, feel free to refactor this function, the low lever character
 		// manipulation might look scary to people not used to it.
@@ -915,7 +919,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 
 				vector<RString> svResponse;
 				split( sHTTPHeader, "\r\n", svResponse );
-			
+
 				// Check for 200 OK
 				if( svResponse[0].find("200") != RString::npos )
 				{
@@ -944,7 +948,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 		} // if( iBytes )
 		SAFE_DELETE( cBuffer );
 	} // if( socket->connect(sHost, uPort) )
-	
+
 	socket->close();
 	SAFE_DELETE( socket );
 
@@ -969,10 +973,10 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 }
 #endif
 
-static bool ConnectToServer( const RString &t ) 
-{ 
+static bool ConnectToServer( const RString &t )
+{
 	NSMAN->PostStartUp( t );
-	NSMAN->DisplayStartupStatus(); 
+	NSMAN->DisplayStartupStatus();
 	return true;
 }
 
@@ -995,7 +999,7 @@ LuaFunction( CloseConnection,		CloseNetworkConnection() )
 /*
  * (c) 2003-2004 Charles Lohr, Joshua Allen
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1005,7 +1009,7 @@ LuaFunction( CloseConnection,		CloseNetworkConnection() )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

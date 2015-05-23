@@ -2504,8 +2504,7 @@ public:
 		p->GetAllUsedHighScoreNames(names);
 		lua_createtable(L, names.size(), 0);
 		int next_name_index= 1;
-		for(std::set<RString>::iterator name= names.begin(); name != names.end();
-				++name)
+		for(auto name= names.begin(); name != names.end(); ++name)
 		{
 			lua_pushstring(L, name->c_str());
 			lua_rawseti(L, -2, next_name_index);

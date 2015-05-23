@@ -1269,7 +1269,7 @@ RString ThemeManager::GetString( const RString &sMetricsGroup, const RString &sV
 	return s;
 }
 
-void ThemeManager::GetMetricsThatBeginWith( const RString &sMetricsGroup_, const RString &sValueName, set<RString> &vsValueNamesOut )
+void ThemeManager::GetMetricsThatBeginWith( const RString &sMetricsGroup_, const RString &sValueName, std::set<RString> &vsValueNamesOut )
 {
 	RString sMetricsGroup( sMetricsGroup_ );
 	while( !sMetricsGroup.empty() )

@@ -44,7 +44,7 @@ RString RageDisplay_Legacy_Helpers::GLToString( GLenum e )
 	return ssprintf( "%i", int(e) );
 }
 /*
-static void GetGLExtensions( set<string> &ext )
+static void GetGLExtensions( std::set<string> &ext )
 {
 	const char *szBuf = (const char *) glGetString( GL_EXTENSIONS );
 

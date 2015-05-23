@@ -1228,7 +1228,7 @@ void NoteDataUtil::RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, 
 	}
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, r, iStartIndex, iEndIndex )
 	{
-		set<int> viTracksHeld;
+		std::set<int> viTracksHeld;
 		in.GetTracksHeldAtRow( r, viTracksHeld );
 
 		// remove the first tap note or the first hold note that starts on this row
@@ -1872,7 +1872,7 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 			DEBUG_ASSERT_M( !inout.IsHoldNoteAtRow(t1,r), ssprintf("There is a tap.type = %d inside of a hold at row %d", tn1.type, r) );
 
 			// Probe for a spot to swap with.
-			set<int> vTriedTracks;
+			std::set<int> vTriedTracks;
 			for( int i=0; i<4; i++ )	// probe max 4 times
 			{
 				int t2 = RandomInt( inout.GetNumTracks() );
@@ -2315,7 +2315,7 @@ void NoteDataUtil::Echo( NoteData &inout, int iStartIndex, int iEndIndex )
 
 		const int iRowEcho = r + rows_per_interval;
 		{
-			set<int> viTracks;
+			std::set<int> viTracks;
 			inout.GetTracksHeldAtRow( iRowEcho, viTracks );
 
 			// don't lay if holding 2 already
@@ -2374,7 +2374,7 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, 
 						break;
 					}
 
-					set<int> tracksDown;
+					std::set<int> tracksDown;
 					inout.GetTracksHeldAtRow( r2, tracksDown );
 					inout.GetTapNonEmptyTracks( r2, tracksDown );
 					iTapsLeft -= tracksDown.size();
@@ -2777,7 +2777,7 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 {
 	// throw an attack in every 30 seconds
 
-	std::array<char *, 3> const szAttacks =	{ "2x", "drunk", "dizzy" };
+	std::array<std::string, 3> const szAttacks =	{ "2x", "drunk", "dizzy" };
 
 	for( float sec=15; sec<pSong->m_fMusicLengthSeconds; sec+=30 )
 	{

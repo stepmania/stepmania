@@ -148,7 +148,7 @@ void NoteField::CacheAllUsedNoteSkins()
 
 	/* If we're changing note skins in the editor, we can have old note skins lying
 	 * around.  Remove them so they don't accumulate. */
-	set<RString> setNoteSkinsToUnload;
+	std::set<RString> setNoteSkinsToUnload;
 	for (auto &d: m_NoteDisplays)
 	{
 		bool unused = find(asSkinsLower.begin(), asSkinsLower.end(), d.first) == asSkinsLower.end();

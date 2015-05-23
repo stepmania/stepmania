@@ -932,7 +932,7 @@ bool SongUtil::ValidateCurrentStepsMusic(const RString &answer, RString &error)
 
 void SongUtil::GetAllSongGenres( vector<RString> &vsOut )
 {
-	set<RString> genres;
+	std::set<RString> genres;
 	for (auto *song: SONGMAN->GetAllSongs())
 	{
 		if( !song->m_sGenre.empty() )
@@ -960,7 +960,7 @@ void SongUtil::FilterSongs( const SongCriteria &sc, const vector<Song*> &in,
 	}
 }
 
-void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
+void SongUtil::GetPlayableStepsTypes( const Song *pSong, std::set<StepsType> &vOut )
 {
 	vector<const Style*> vpPossibleStyles;
 	// If AutoSetStyle, or a Style hasn't been chosen, check StepsTypes for all Styles.
@@ -989,7 +989,7 @@ void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 		}
 	}
 
-	set<StepsType> vStepsTypes;
+	std::set<StepsType> vStepsTypes;
 	for (auto *s: vpPossibleStyles)
 	{
 		vStepsTypes.insert( s->m_StepsType );
@@ -1018,7 +1018,7 @@ void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 
 void SongUtil::GetPlayableSteps( const Song *pSong, vector<Steps*> &vOut )
 {
-	set<StepsType> vStepsType;
+	std::set<StepsType> vStepsType;
 	GetPlayableStepsTypes( pSong, vStepsType );
 
 	for (auto const &st: vStepsType)
@@ -1033,7 +1033,7 @@ void SongUtil::GetPlayableSteps( const Song *pSong, vector<Steps*> &vOut )
 
 bool SongUtil::IsStepsTypePlayable( Song *pSong, StepsType st )
 {
-	set<StepsType> vStepsType;
+	std::set<StepsType> vStepsType;
 	GetPlayableStepsTypes( pSong, vStepsType );
 	return vStepsType.find( st ) != vStepsType.end();
 }

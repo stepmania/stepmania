@@ -149,8 +149,8 @@ private:
 
 	// These exist so that they can be revalidated when something that transforms
 	// the NoteData occurs. -Kyz
-	mutable set<all_tracks_iterator*> m_atis;
-	mutable set<all_tracks_const_iterator*> m_const_atis;
+	mutable std::set<all_tracks_iterator*> m_atis;
+	mutable std::set<all_tracks_const_iterator*> m_const_atis;
 
 	void AddATIToList(all_tracks_iterator* iter) const;
 	void AddATIToList(all_tracks_const_iterator* iter) const;
@@ -271,7 +271,7 @@ public:
 	bool IsRowEmpty( int row ) const;
 	bool IsRangeEmpty( int track, int rowBegin, int rowEnd ) const;
 	int GetNumTapNonEmptyTracks( int row ) const;
-	void GetTapNonEmptyTracks( int row, set<int>& addTo ) const;
+	void GetTapNonEmptyTracks( int row, std::set<int>& addTo ) const;
 	bool GetTapFirstNonEmptyTrack( int row, int &iNonEmptyTrackOut ) const;	// return false if no non-empty tracks at row
 	bool GetTapFirstEmptyTrack( int row, int &iEmptyTrackOut ) const;	// return false if no non-empty tracks at row
 	bool GetTapLastEmptyTrack( int row, int &iEmptyTrackOut ) const;	// return false if no empty tracks at row
@@ -283,7 +283,7 @@ public:
 
 	inline bool IsThereATapAtRow( int row ) const			{ return GetFirstTrackWithTap( row ) != -1; }
 	inline bool IsThereATapOrHoldHeadAtRow( int row ) const		{ return GetFirstTrackWithTapOrHoldHead( row ) != -1; }
-	void GetTracksHeldAtRow( int row, set<int>& addTo );
+	void GetTracksHeldAtRow( int row, std::set<int>& addTo );
 	int GetNumTracksHeldAtRow( int row );
 
 	bool IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow = NULL ) const;

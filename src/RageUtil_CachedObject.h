@@ -5,7 +5,7 @@
 
 template<typename T>
 class CachedObjectPointer;
-/** @brief Utilities for working with the 
+/** @brief Utilities for working with the
  <a class="el" href="class_cachedobject.html">CachedObjects</a>. */
 namespace CachedObjectHelpers
 {
@@ -41,7 +41,7 @@ public:
 	static void ClearCacheAll()
 	{
 		CachedObjectHelpers::Lock();
-		for( typename set<ObjectPointer *>::iterator p = m_spObjectPointers.begin(); p != m_spObjectPointers.end(); ++p )
+		for( auto p = m_spObjectPointers.begin(); p != m_spObjectPointers.end(); ++p )
 		{
 			(*p)->m_pCache = NULL;
 			(*p)->m_bCacheIsSet = false;
@@ -53,7 +53,7 @@ public:
 	static void ClearCacheSpecific( const T *pObject )
 	{
 		CachedObjectHelpers::Lock();
-		for( typename set<ObjectPointer *>::iterator p = m_spObjectPointers.begin(); p != m_spObjectPointers.end(); ++p )
+		for( auto p = m_spObjectPointers.begin(); p != m_spObjectPointers.end(); ++p )
 		{
 			if( (*p)->m_pCache == pObject )
 			{
@@ -68,7 +68,7 @@ public:
 	static void ClearCacheNegative()
 	{
 		CachedObjectHelpers::Lock();
-		for( typename set<ObjectPointer *>::iterator p = m_spObjectPointers.begin(); p != m_spObjectPointers.end(); ++p )
+		for( auto p = m_spObjectPointers.begin(); p != m_spObjectPointers.end(); ++p )
 		{
 			if( (*p)->m_pCache == NULL )
 				(*p)->m_bCacheIsSet = false;
@@ -87,7 +87,7 @@ private:
 
 	static void Unregister( ObjectPointer *p )
 	{
-		typename set<ObjectPointer *>::iterator it = m_spObjectPointers.find( p );
+		auto it = m_spObjectPointers.find( p );
 		ASSERT( it != m_spObjectPointers.end() );
 		m_spObjectPointers.erase( it );
 	}
@@ -99,9 +99,9 @@ private:
 	 * need to clear cache for an object before any CachedObjectPointers have
 	 * ever been set for it. */
 	const T *m_pObject;
-	static set<ObjectPointer *> m_spObjectPointers;
+	static std::set<ObjectPointer *> m_spObjectPointers;
 };
-template<typename T> set<CachedObjectPointer<T> *> CachedObject<T>::m_spObjectPointers = set<CachedObjectPointer<T> *>();
+template<typename T> std::set<CachedObjectPointer<T> *> CachedObject<T>::m_spObjectPointers = std::set<CachedObjectPointer<T> *>();
 
 template<typename T>
 class CachedObjectPointer
@@ -170,7 +170,7 @@ private:
 /*
  * (c) 2007 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -180,7 +180,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

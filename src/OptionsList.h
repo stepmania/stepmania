@@ -91,8 +91,8 @@ private:
 	vector<RString> m_asLoadedRows;
 	map<RString, OptionRowHandler *> m_Rows;
 	map<RString, vector<bool> > m_bSelections;
-	set<RString> m_setDirectRows;
-	set<RString> m_setTopMenus; // list of top-level menus, pointing to submenus
+	std::set<RString> m_setDirectRows;
+	std::set<RString> m_setTopMenus; // list of top-level menus, pointing to submenus
 
 	PlayerNumber m_pn;
 	AutoActor m_Cursor;

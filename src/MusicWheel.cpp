@@ -474,7 +474,7 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so )
 				// find one, then add the song.
 				// see Issue 147 for more information. -aj
 				// http://ssc.ajworld.net/sm-ssc/bugtracker/view.php?id=147
-				set<StepsType> vStepsType;
+				std::set<StepsType> vStepsType;
 				SongUtil::GetPlayableStepsTypes( pSong, vStepsType );
 
 				for (auto const &st: vStepsType)
@@ -878,7 +878,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 		{
 			WID.m_Flags.bHasBeginnerOr1Meter = WID.m_pSong->IsEasy( GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType ) && SHOW_EASY_FLAG;
 			WID.m_Flags.bEdits = false;
-			set<StepsType> vStepsType;
+			std::set<StepsType> vStepsType;
 			SongUtil::GetPlayableStepsTypes( WID.m_pSong, vStepsType );
 			for (auto const &st: vStepsType)
 			{

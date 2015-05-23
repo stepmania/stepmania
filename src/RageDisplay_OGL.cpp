@@ -1048,7 +1048,7 @@ protected:
 };
 
 class InvalidateObject;
-static set<InvalidateObject *> g_InvalidateList;
+static std::set<InvalidateObject *> g_InvalidateList;
 class InvalidateObject
 {
 public:

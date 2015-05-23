@@ -28,7 +28,7 @@ void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, R
 	sSubTitleOut = "";
 };
 
-bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &BlacklistedImages, bool load_autosave )
+bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, std::set<RString> &BlacklistedImages, bool load_autosave )
 {
 	vector<RString> list;
 

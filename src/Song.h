@@ -72,7 +72,7 @@ public:
 
 	/** @brief When should this song be displayed in the music wheel? */
 	enum SelectionDisplay
-	{ 
+	{
 		SHOW_ALWAYS,	/**< always show on the wheel. */
 		SHOW_NEVER	/**< never show on the wheel (unless song hiding is turned off). */
 	} m_SelectionDisplay;
@@ -121,11 +121,11 @@ public:
 	bool SaveToSSCFile(RString sPath, bool bSavingCache, bool autosave= false);
 	/** @brief Save to the SSC and SM files no matter what. */
 	void Save(bool autosave= false);
-	/** 
+	/**
 	  * @brief Save the current Song to a JSON file.
 	  * @return its success or failure. */
 	bool SaveToJsonFile( RString sPath );
-	/** 
+	/**
 	  * @brief Save the current Song to a cache file using the preferred format.
 	  * @return its success or failure. */
 	bool SaveToCacheFile();
@@ -133,7 +133,7 @@ public:
 	 * @brief Save the current Song to a SM file.
 	 * @return its success or failure. */
 	bool SaveToSMFile();
-	/** 
+	/**
 	 * @brief Save the current Song to a DWI file if possible.
 	 * @return its success or failure. */
 	bool SaveToDWIFile();
@@ -176,9 +176,9 @@ public:
 	bool	m_bEnabled;
 
 	/** @brief The title of the Song. */
-	RString	m_sMainTitle; 
+	RString	m_sMainTitle;
 	/** @brief The subtitle of the Song, if it exists. */
-	RString m_sSubTitle; 
+	RString m_sSubTitle;
 	/** @brief The artist of the Song, if it exists. */
 	RString m_sArtist;
 	/** @brief The transliterated title of the Song, if it exists. */
@@ -198,22 +198,22 @@ public:
 	 * @brief Retrieve the transliterated title, or the main title if there is no translit.
 	 * @return the proper title. */
 	RString GetTranslitMainTitle() const
-	{ 
-		return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle; 
+	{
+		return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle;
 	}
 	/**
 	 * @brief Retrieve the transliterated subtitle, or the main subtitle if there is no translit.
 	 * @return the proper subtitle. */
-	RString GetTranslitSubTitle() const 
-	{ 
+	RString GetTranslitSubTitle() const
+	{
 		return m_sSubTitleTranslit.size()? m_sSubTitleTranslit: m_sSubTitle;
 	}
 	/**
 	 * @brief Retrieve the transliterated artist, or the main artist if there is no translit.
 	 * @return the proper artist. */
-	RString GetTranslitArtist() const 
-	{ 
-		return m_sArtistTranslit.size()? m_sArtistTranslit:m_sArtist; 
+	RString GetTranslitArtist() const
+	{
+		return m_sArtistTranslit.size()? m_sArtistTranslit:m_sArtist;
 	}
 
 	// "title subtitle"
@@ -371,11 +371,11 @@ public:
 	void InitSteps(Steps *pSteps);
 
 	/* [splittiming]
-	float SongGetBeatFromElapsedTime( float fElapsedTime ) const 
+	float SongGetBeatFromElapsedTime( float fElapsedTime ) const
 	{
 		return m_SongTiming.GetBeatFromElapsedTime( fElapsedTime );
 	}
-	float StepsGetBeatFromElapsedTime( float fElapsedTime, const Steps &steps ) const 
+	float StepsGetBeatFromElapsedTime( float fElapsedTime, const Steps &steps ) const
 	{
 		return steps.m_Timing.GetBeatFromElapsedTime( fElapsedTime );
 	}
@@ -391,8 +391,8 @@ public:
 	*/
 
 	/* [splittiming]
-	float GetBeatFromElapsedTime( float fElapsedTime ) const 
-	{ 
+	float GetBeatFromElapsedTime( float fElapsedTime ) const
+	{
 		return m_Timing.GetBeatFromElapsedTime( fElapsedTime );
 	}
 	float GetElapsedTimeFromBeat( float fBeat ) const { return m_Timing.GetElapsedTimeFromBeat( fBeat ); }
@@ -429,7 +429,7 @@ public:
 	void AddSteps( Steps* pSteps );
 	void DeleteSteps( const Steps* pSteps, bool bReAutoGen = true );
 
-	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_Invalid, const set<Steps*> *setInUse = NULL );
+	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_Invalid, const std::set<Steps*> *setInUse = NULL );
 	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != ProfileSlot_Invalid; }
 	void GetStepsLoadedFromProfile( ProfileSlot slot, vector<Steps*> &vpStepsOut ) const;
 	int GetNumStepsLoadedFromProfile( ProfileSlot slot ) const;
@@ -472,7 +472,7 @@ private:
  * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -482,7 +482,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

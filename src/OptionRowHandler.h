@@ -44,7 +44,7 @@ struct OptionRowDefinition
 	SelectType m_selectType;
 	LayoutType m_layoutType;
 	vector<RString> m_vsChoices;
-	set<PlayerNumber> m_vEnabledForPlayers;	// only players in this set may change focus to this row
+	std::set<PlayerNumber> m_vEnabledForPlayers;	// only players in this set may change focus to this row
 	int m_iDefault;
 	bool	m_bExportOnChange;
 	/**
@@ -70,21 +70,21 @@ struct OptionRowDefinition
 	 * @brief Is this option enabled for the Player?
 	 * @param pn the Player the PlayerNumber represents.
 	 * @return true if the option is enabled, false otherwise. */
-	bool IsEnabledForPlayer( PlayerNumber pn ) const 
+	bool IsEnabledForPlayer( PlayerNumber pn ) const
 	{
-		return m_vEnabledForPlayers.find(pn) != m_vEnabledForPlayers.end(); 
+		return m_vEnabledForPlayers.find(pn) != m_vEnabledForPlayers.end();
 	}
 
 	OptionRowDefinition(): m_sName(""), m_sExplanationName(""),
 		m_bOneChoiceForAllPlayers(false), m_selectType(SELECT_ONE),
-		m_layoutType(LAYOUT_SHOW_ALL_IN_ROW), m_vsChoices(), 
+		m_layoutType(LAYOUT_SHOW_ALL_IN_ROW), m_vsChoices(),
 		m_vEnabledForPlayers(), m_iDefault(-1),
 		m_bExportOnChange(false), m_bAllowThemeItems(true),
 		m_bAllowThemeTitle(true), m_bAllowExplanation(true),
 		m_bShowChoicesListOnSelect(false)
 	{
 		FOREACH_PlayerNumber( pn )
-			m_vEnabledForPlayers.insert( pn ); 
+			m_vEnabledForPlayers.insert( pn );
 	}
 	void Init()
 	{
@@ -105,20 +105,20 @@ struct OptionRowDefinition
 		m_bShowChoicesListOnSelect = false;
 	}
 
-	OptionRowDefinition( const char *n, bool b, const char *c0=NULL, 
-			    const char *c1=NULL, const char *c2=NULL, 
-			    const char *c3=NULL, const char *c4=NULL, 
-			    const char *c5=NULL, const char *c6=NULL, 
-			    const char *c7=NULL, const char *c8=NULL, 
-			    const char *c9=NULL, const char *c10=NULL, 
-			    const char *c11=NULL, const char *c12=NULL, 
-			    const char *c13=NULL, const char *c14=NULL, 
-			    const char *c15=NULL, const char *c16=NULL, 
-			    const char *c17=NULL, const char *c18=NULL, 
+	OptionRowDefinition( const char *n, bool b, const char *c0=NULL,
+			    const char *c1=NULL, const char *c2=NULL,
+			    const char *c3=NULL, const char *c4=NULL,
+			    const char *c5=NULL, const char *c6=NULL,
+			    const char *c7=NULL, const char *c8=NULL,
+			    const char *c9=NULL, const char *c10=NULL,
+			    const char *c11=NULL, const char *c12=NULL,
+			    const char *c13=NULL, const char *c14=NULL,
+			    const char *c15=NULL, const char *c16=NULL,
+			    const char *c17=NULL, const char *c18=NULL,
 			    const char *c19=NULL ): m_sName(n),
 		m_sExplanationName(""), m_bOneChoiceForAllPlayers(b),
 		m_selectType(SELECT_ONE),
-		m_layoutType(LAYOUT_SHOW_ALL_IN_ROW), m_vsChoices(), 
+		m_layoutType(LAYOUT_SHOW_ALL_IN_ROW), m_vsChoices(),
 		m_vEnabledForPlayers(), m_iDefault(-1),
 		m_bExportOnChange(false), m_bAllowThemeItems(true),
 		m_bAllowThemeTitle(true), m_bAllowExplanation(true),
@@ -126,7 +126,7 @@ struct OptionRowDefinition
 	{
 		FOREACH_PlayerNumber( pn )
 			m_vEnabledForPlayers.insert( pn );
-		
+
 #define PUSH( c )	if(c) m_vsChoices.push_back(c);
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);
 		PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);
@@ -246,7 +246,7 @@ inline void VerifySelected(SelectType st, vector<bool> &selected, const RString 
  * @author Chris Danford (c) 2002-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -256,7 +256,7 @@ inline void VerifySelected(SelectType st, vector<bool> &selected, const RString 
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
