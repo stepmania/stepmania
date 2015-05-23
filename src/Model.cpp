@@ -751,7 +751,7 @@ void Model::RecalcAnimationLengthSeconds()
 	m_animation_length_seconds= 0;
 	for (auto &m: m_Materials)
 	{
-		m_animation_length_seconds= max(m_animation_length_seconds,
+		m_animation_length_seconds= std::max(m_animation_length_seconds,
 			m.diffuse.GetAnimationLengthSeconds());
 	}
 }

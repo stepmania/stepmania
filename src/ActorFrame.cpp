@@ -531,6 +531,7 @@ PropagateActorFrameCommand1Param( HurryTweening,	float )
 
 float ActorFrame::GetTweenTimeLeft() const
 {
+	using std::max;
 	float m = Actor::GetTweenTimeLeft();
 
 	for( unsigned i=0; i<m_SubActors.size(); i++ )

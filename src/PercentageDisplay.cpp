@@ -141,6 +141,7 @@ void PercentageDisplay::Update( float fDeltaTime )
 
 void PercentageDisplay::Refresh()
 {
+	using std::max;
 	const int iActualDancePoints = m_pPlayerStageStats->m_iActualDancePoints;
 	const int iCurPossibleDancePoints = m_pPlayerStageStats->m_iCurPossibleDancePoints;
 
@@ -210,7 +211,7 @@ bool PercentageDisplay::ShowDancePointsNotPercentage() const
 
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the PercentageDisplay. */ 
+/** @brief Allow Lua to have access to the PercentageDisplay. */
 class LunaPercentageDisplay: public Luna<PercentageDisplay>
 {
 public:
@@ -235,7 +236,7 @@ LUA_REGISTER_DERIVED_CLASS( PercentageDisplay, ActorFrame )
 /*
  * (c) 2001-2003 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -245,7 +246,7 @@ LUA_REGISTER_DERIVED_CLASS( PercentageDisplay, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

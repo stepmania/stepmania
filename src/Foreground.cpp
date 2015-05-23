@@ -73,6 +73,7 @@ void Foreground::LoadFromSong( const Song *pSong )
 
 void Foreground::Update( float fDeltaTime )
 {
+	using std::max;
 	// Calls to Update() should *not* be scaled by music rate. Undo it.
 	const float fRate = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 
@@ -109,7 +110,7 @@ void Foreground::Update( float fDeltaTime )
 		}
 
 		// This shouldn't go down, but be safe:
-		lDeltaTime = max( lDeltaTime, 0 );
+		lDeltaTime = max( lDeltaTime, 0.f );
 
 		bga.m_bga->Update( lDeltaTime / fRate );
 

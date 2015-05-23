@@ -240,6 +240,7 @@ bool BitmapText::LoadFromTextureAndChars( const RString& sTexturePath, const RSt
 
 void BitmapText::BuildChars()
 {
+	using std::max;
 	// If we don't have a font yet, we'll do this when it loads.
 	if( m_pFont == NULL )
 		return;
@@ -251,7 +252,7 @@ void BitmapText::BuildChars()
 	for( unsigned l=0; l<m_wTextLines.size(); l++ ) // for each line
 	{
 		m_iLineWidths.push_back(m_pFont->GetLineWidthInSourcePixels( m_wTextLines[l] ));
-		m_size.x = max( m_size.x, m_iLineWidths.back() );
+		m_size.x = max( m_size.x, static_cast<float>(m_iLineWidths.back()) );
 	}
 
 	/* Ensure that the width is always even. This maintains pixel alignment;

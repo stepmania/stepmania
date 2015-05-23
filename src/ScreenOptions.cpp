@@ -590,6 +590,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenOptions::PositionRows( bool bTween )
 {
+	using std::max;
 	const int total = NUM_ROWS_SHOWN;
 	const int halfsize = total / 2;
 

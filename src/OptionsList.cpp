@@ -44,6 +44,7 @@ void OptionListRow::Load( OptionsList *pOptions, const RString &sType )
 
 void OptionListRow::SetFromHandler( const OptionRowHandler *pHandler )
 {
+	using std::max;
 	this->FinishTweening();
 	this->RemoveAllChildren();
 

@@ -19,6 +19,8 @@ void RageVec3ClearBounds( RageVector3 &mins, RageVector3 &maxs )
 
 void RageVec3AddToBounds( const RageVector3 &p, RageVector3 &mins, RageVector3 &maxs )
 {
+	using std::max;
+	using std::min;
 	mins.x = min( mins.x, p.x );
 	mins.y = min( mins.y, p.y );
 	mins.z = min( mins.z, p.z );
@@ -153,7 +155,7 @@ void RageMatrixMultiply( RageMatrix* pOut, const RageMatrix* pA, const RageMatri
 		b.m30*a.m00+b.m31*a.m10+b.m32*a.m20+b.m33*a.m30,
 		b.m30*a.m01+b.m31*a.m11+b.m32*a.m21+b.m33*a.m31,
 		b.m30*a.m02+b.m31*a.m12+b.m32*a.m22+b.m33*a.m32,
-		b.m30*a.m03+b.m31*a.m13+b.m32*a.m23+b.m33*a.m33 
+		b.m30*a.m03+b.m31*a.m13+b.m32*a.m23+b.m33*a.m33
 	);
 	// phew!
 //#endif
@@ -357,7 +359,7 @@ void RageQuatMultiply( RageVector4* pOut, const RageVector4 &pA, const RageVecto
 	float dist, square;
 
 	square = out.x * out.x + out.y * out.y + out.z * out.z + out.w * out.w;
-	
+
 	if (square > 0.0)
 		dist = 1.0f / sqrtf(square);
 	else dist = 1;
@@ -468,7 +470,7 @@ void RageMatrixFromQuat( RageMatrix* pOut, const RageVector4 q )
 	float yz = q.y * (q.z + q.z);
 
 	float zz = q.z * (q.z + q.z);
-	// careful.  The param order is row-major, which is the 
+	// careful.  The param order is row-major, which is the
 	// transpose of the order shown in the OpenGL docs.
 	*pOut = RageMatrix(
 		1-(yy+zz), xy+wz,     xz-wy,     0,
@@ -513,7 +515,7 @@ void RageQuatSlerp(RageVector4 *pOut, const RageVector4 &from, const RageVector4
 	}
 	else
 	{
-		// "from" and "to" quaternions are very close 
+		// "from" and "to" quaternions are very close
 		//  ... so we can do a linear interpolation
 		scale0 = 1.0f - t;
 		scale1 = t;
@@ -566,7 +568,7 @@ RageMatrix RageLookAt(
 void RageMatrixAngles( RageMatrix* pOut, const RageVector3 &angles )
 {
 	const RageVector3 angles_radians( angles * 2*PI / 360 );
-	
+
 	const float sy = RageFastSin( angles_radians[2] );
 	const float cy = RageFastCos( angles_radians[2] );
 	const float sp = RageFastSin( angles_radians[1] );

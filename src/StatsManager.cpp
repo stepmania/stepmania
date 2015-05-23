@@ -391,7 +391,9 @@ public:
 	{
 		Grade g = Grade_Tier01;
 		FOREACH_EnabledPlayer( pn )
-			g = max( g, STATSMAN->m_CurStageStats.m_player[pn].GetGrade() );
+		{
+			g = std::max( g, STATSMAN->m_CurStageStats.m_player[pn].GetGrade() );
+		}
 		lua_pushnumber( L, g );
 		return 1;
 	}

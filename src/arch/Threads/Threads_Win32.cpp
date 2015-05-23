@@ -135,7 +135,7 @@ ThreadImpl *MakeThisThread()
 	SetThreadName( GetCurrentThreadId(), RageThread::GetCurrentThreadName() );
 
 	const HANDLE CurProc = GetCurrentProcess();
-	int ret = DuplicateHandle( CurProc, GetCurrentThread(), CurProc, 
+	int ret = DuplicateHandle( CurProc, GetCurrentThread(), CurProc,
 		&thread->ThreadHandle, 0, false, DUPLICATE_SAME_ACCESS );
 
 	if( !ret )
@@ -359,7 +359,7 @@ bool EventImpl_Win32::Wait( RageTimer *pTimeout )
 	if( pTimeout != NULL )
 	{
 		float fSecondsInFuture = -pTimeout->Ago();
-		iMilliseconds = (unsigned) max( 0, int( fSecondsInFuture * 1000 ) );
+		iMilliseconds = (unsigned) std::max( 0, int( fSecondsInFuture * 1000 ) );
 	}
 
 	// Unlock the mutex and wait for a signal.
@@ -452,12 +452,12 @@ void SemaImpl_Win32::Post()
 
 bool SemaImpl_Win32::Wait()
 {
-	int len = 15000; 
+	int len = 15000;
 	int tries = 5;
 
 	while( tries-- )
 	{
-		/* Wait for 15 seconds. If it takes longer than that, we're 
+		/* Wait for 15 seconds. If it takes longer than that, we're
 		 * probably deadlocked. */
 		if( SimpleWaitForSingleObject( sem, len ) )
 		{
@@ -491,7 +491,7 @@ SemaImpl *MakeSemaphore( int iInitialValue )
 /*
  * (c) 2001-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -501,7 +501,7 @@ SemaImpl *MakeSemaphore( int iInitialValue )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

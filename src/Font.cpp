@@ -244,6 +244,7 @@ int Font::GetLineWidthInSourcePixels( const wstring &szLine ) const
 
 int Font::GetLineHeightInSourcePixels( const wstring &szLine ) const
 {
+	using std::max;
 	int iLineHeight = 0;
 
 	// The height of a line is the height of its tallest used font page.

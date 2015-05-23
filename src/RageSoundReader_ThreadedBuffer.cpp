@@ -193,6 +193,7 @@ bool RageSoundReader_ThreadedBuffer::SetProperty( const RString &sProperty, floa
 
 void RageSoundReader_ThreadedBuffer::BufferingThread()
 {
+	using std::max;
 	m_Event.Lock();
 	while( !m_bShutdownThread )
 	{

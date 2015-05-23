@@ -8,6 +8,7 @@
 #include "RageSoundUtil.h"
 
 #include <array>
+#include <numeric>
 
 RageSoundReader_Merge::RageSoundReader_Merge()
 {
@@ -60,6 +61,7 @@ int RageSoundReader_Merge::GetSampleRateInternal() const
 
 void RageSoundReader_Merge::Finish( int iPreferredSampleRate )
 {
+	using std::max;
 	/* Figure out how many channels we have.  All sounds must either have 1 or 2 channels,
 	 * which will be converted as needed, or have the same number of channels. */
 	m_iChannels = 1;
@@ -297,18 +299,18 @@ int RageSoundReader_Merge::Read( float *pBuffer, int iFrames )
 
 int RageSoundReader_Merge::GetLength() const
 {
-	int iLength = 0;
-	for( unsigned i = 0; i < m_aSounds.size(); ++i )
-		iLength = max( iLength, m_aSounds[i]->GetLength() );
-	return iLength;
+	auto getHighest = [](int len, RageSoundReader const *sound) {
+		return std::max(len, sound->GetLength());
+	};
+	return std::accumulate(m_aSounds.begin(), m_aSounds.end(), 0, getHighest);
 }
 
 int RageSoundReader_Merge::GetLength_Fast() const
 {
-	int iLength = 0;
-	for( unsigned i = 0; i < m_aSounds.size(); ++i )
-		iLength = max( iLength, m_aSounds[i]->GetLength_Fast() );
-	return iLength;
+	auto getHighest = [](int len, RageSoundReader const *sound) {
+		return std::max(len, sound->GetLength_Fast());
+	};
+	return std::accumulate(m_aSounds.begin(), m_aSounds.end(), 0, getHighest);
 }
 
 /*

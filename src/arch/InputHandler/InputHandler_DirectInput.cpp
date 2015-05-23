@@ -282,6 +282,8 @@ static HRESULT GetDeviceState( LPDIRECTINPUTDEVICE8 dev, int size, void *ptr )
  * figure it out. Be sure to call InputHandler::Update() between each poll. */
 void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 {
+	using std::max;
+
 	switch( device.type )
 	{
 	default:
@@ -357,8 +359,8 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 						if( neg != DeviceButton_Invalid )
 						{
 							float l = SCALE( int(val), 0.0f, 100.0f, 0.0f, 1.0f );
-							ButtonPressed( DeviceInput(dev, neg, max(-l,0), tm) );
-							ButtonPressed( DeviceInput(dev, pos, max(+l,0), tm) );
+							ButtonPressed( DeviceInput(dev, neg, max(-l,0.f), tm) );
+							ButtonPressed( DeviceInput(dev, pos, max(+l,0.f), tm) );
 						}
 
 						break;
@@ -596,8 +598,8 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 						}
 						else
 						{
-						  ButtonPressed( DeviceInput(dev, up, max(-l,0), tm) );
-						  ButtonPressed( DeviceInput(dev, down, max(+l,0), tm) );
+						  ButtonPressed( DeviceInput(dev, up, max(-l,0.f), tm) );
+						  ButtonPressed( DeviceInput(dev, down, max(+l,0.f), tm) );
 						}
 					}
 					break;

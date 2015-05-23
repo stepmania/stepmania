@@ -205,7 +205,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 	else
 		sDisplayDescription = CustomDifficultyToLocalizedString( sCustomDifficulty );
 	msg.SetParam( "DisplayDescription", sDisplayDescription );
-	
+
 	RString sDisplayCredit;
 	if( params.pSteps )
 		sDisplayCredit = params.pSteps->GetCredit();
@@ -228,7 +228,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 		RString sNewText;
 		int iNumOn = min( (int)m_iMaxTicks, params.iMeter );
 		sNewText.insert( sNewText.end(), iNumOn, on );
-		int iNumOff = max( 0, m_iNumTicks-iNumOn );
+		int iNumOff = std::max( 0, m_iNumTicks-iNumOn );
 		sNewText.insert( sNewText.end(), iNumOff, off );
 		m_textTicks.SetText( sNewText );
 		m_textTicks.HandleMessage( msg );
@@ -284,13 +284,13 @@ void StepsDisplay::SetInternal( const SetParams &params )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the StepsDisplay. */ 
+/** @brief Allow Lua to have access to the StepsDisplay. */
 class LunaStepsDisplay: public Luna<StepsDisplay>
 {
 public:
 	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1), NULL ); COMMON_RETURN_SELF; }
 	static int SetFromSteps( T* p, lua_State *L )
-	{ 
+	{
 		if( lua_isnil(L,1) )
 		{
 			p->SetFromSteps( NULL );
@@ -303,7 +303,7 @@ public:
 		COMMON_RETURN_SELF;
 	}
 	static int SetFromTrail( T* p, lua_State *L )
-	{ 
+	{
 		if( lua_isnil(L,1) )
 		{
 			p->SetFromTrail( NULL );
@@ -337,7 +337,7 @@ LUA_REGISTER_DERIVED_CLASS( StepsDisplay, ActorFrame )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -347,7 +347,7 @@ LUA_REGISTER_DERIVED_CLASS( StepsDisplay, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

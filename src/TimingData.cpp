@@ -242,7 +242,7 @@ void TimingData::ShiftRange(int start_row, int end_row,
 		{
 			vector<TimingSegment*>& segs= GetTimingSegments(seg_type);
 			int first_row= min(start_row, start_row + shift_amount);
-			int last_row= max(end_row, end_row + shift_amount);
+			int last_row= std::max(end_row, end_row + shift_amount);
 			int first_affected= GetSegmentIndexAtRow(seg_type, first_row);
 			int last_affected= GetSegmentIndexAtRow(seg_type, last_row);
 			if(first_affected == INVALID_INDEX)
@@ -258,7 +258,7 @@ void TimingData::ShiftRange(int start_row, int end_row,
 				int seg_row= segs[i]->GetRow();
 				if(seg_row > 0 && seg_row >= start_row && seg_row <= end_row)
 				{
-					int dest_row= max(seg_row + shift_amount, 0);
+					int dest_row= std::max(seg_row + shift_amount, 0);
 					segs[i]->SetRow(dest_row);
 				}
 			}

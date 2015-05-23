@@ -180,7 +180,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 		float fStartBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTimeNoOffset( ToPlay.fStartSecond );
 		float fEndSec = ToPlay.fStartSecond + ToPlay.fLengthSeconds;
 		float fEndBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTimeNoOffset( fEndSec );
-		
+
 		const float fStartBeatFraction = fmodfp( fStartBeat, 1 );
 		const float fEndBeatFraction = fmodfp( fEndBeat, 1 );
 
@@ -486,6 +486,7 @@ float GameSoundManager::GetFrameTimingAdjustment( float fDeltaTime )
 
 void GameSoundManager::Update( float fDeltaTime )
 {
+	using std::max;
 	{
 		g_Mutex->Lock();
 		if( g_Playing->m_bApplyMusicRate )
@@ -538,7 +539,7 @@ void GameSoundManager::Update( float fDeltaTime )
 				g_FadeState = FADE_NONE;
 			break;
 		}
-		
+
 		RageSoundParams p = g_Playing->m_Music->GetParams();
 		if( p.m_Volume != fVolume )
 		{
@@ -636,7 +637,7 @@ void GameSoundManager::Update( float fDeltaTime )
 		static int iRowLastCrossed = 0;
 
 		FOREACH_CabinetLight( cl )
-		{	
+		{
 			// Are we "holding" the light?
 			if( lights.IsHoldNoteAtRow( cl, iSongRow ) )
 			{
@@ -666,14 +667,14 @@ RString GameSoundManager::GetMusicPath() const
 	return g_Playing->m_Music->GetLoadedFilePath();
 }
 
-void GameSoundManager::PlayMusic( 
-	RString sFile, 
-	const TimingData *pTiming, 
+void GameSoundManager::PlayMusic(
+	RString sFile,
+	const TimingData *pTiming,
 	bool bForceLoop,
-	float fStartSecond, 
-	float fLengthSeconds, 
-	float fFadeInLengthSeconds, 
-	float fFadeOutLengthSeconds, 
+	float fStartSecond,
+	float fLengthSeconds,
+	float fFadeInLengthSeconds,
+	float fFadeOutLengthSeconds,
 	bool bAlignBeat,
 	bool bApplyMusicRate
 	)
@@ -786,7 +787,7 @@ float GameSoundManager::GetPlayerBalance( PlayerNumber pn )
 
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the GameSoundManager. */ 
+/** @brief Allow Lua to have access to the GameSoundManager. */
 class LunaGameSoundManager: public Luna<GameSoundManager>
 {
 public:
@@ -856,7 +857,7 @@ public:
 
 	static int StopMusic( T* p, lua_State *L )			{ p->StopMusic(); COMMON_RETURN_SELF; }
 	static int IsTimingDelayed( T* p, lua_State *L )	{ lua_pushboolean( L, g_Playing->m_bTimingDelayed ); return 1; }
-	
+
 	LunaGameSoundManager()
 	{
 		ADD_METHOD( DimMusic );

@@ -116,6 +116,7 @@ int RageSoundReader_Chain::GetSampleRateInternal() const
 
 void RageSoundReader_Chain::Finish()
 {
+	using std::max;
 	/* Figure out how many channels we have.  All sounds must either have 1 or 2 channels,
 	 * which will be converted as needed, or have the same number of channels. */
 	m_iChannels = 1;
@@ -387,6 +388,7 @@ int RageSoundReader_Chain::Read( float *pBuffer, int iFrames )
 
 int RageSoundReader_Chain::GetLength() const
 {
+	using std::max;
 	int iLength = 0;
 	for( unsigned i = 0; i < m_aSounds.size(); ++i )
 	{
@@ -401,6 +403,7 @@ int RageSoundReader_Chain::GetLength() const
 
 int RageSoundReader_Chain::GetLength_Fast() const
 {
+	using std::max;
 	int iLength = 0;
 	for( unsigned i = 0; i < m_aSounds.size(); ++i )
 	{

@@ -367,6 +367,7 @@ void BannerCache::CacheBanner( RString sBannerPath )
 
 void BannerCache::CacheBannerInternal( RString sBannerPath )
 {
+	using std::max;
 	RString sError;
 	RageSurface *pImage = RageSurfaceUtils::LoadFile( sBannerPath, sError );
 	if( pImage == NULL )

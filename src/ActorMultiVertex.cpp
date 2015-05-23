@@ -564,6 +564,7 @@ void ActorMultiVertex::EnableAnimation(bool bEnable)
 
 void ActorMultiVertex::Update(float fDelta)
 {
+	using std::max;
 	Actor::Update(fDelta); // do tweening
 	const bool skip_this_movie_update= _skip_next_update;
 	_skip_next_update= false;
@@ -578,7 +579,7 @@ void ActorMultiVertex::Update(float fDelta)
 	UpdateAnimationState();
 	if(!skip_this_movie_update && _decode_movie)
 	{
-		_Texture->DecodeSeconds(max(0, time_passed));
+		_Texture->DecodeSeconds(max(0.f, time_passed));
 	}
 }
 

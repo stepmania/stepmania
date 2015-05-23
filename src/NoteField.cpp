@@ -1037,6 +1037,7 @@ void NoteField::DrawBoardPrimitive()
 
 void NoteField::FadeToFail()
 {
+	using std::max;
 	m_FieldRenderArgs.fail_fade = max( 0.0f, m_FieldRenderArgs.fail_fade );	// this will slowly increase every Update()
 		// don't fade all over again if this is called twice
 }

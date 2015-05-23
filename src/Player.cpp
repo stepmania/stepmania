@@ -56,7 +56,7 @@ class JudgedRows
 
 	void Resize( size_t iMin )
 	{
-		size_t iNewSize = max( 2*m_vRows.size(), iMin );
+		size_t iNewSize = std::max( 2*m_vRows.size(), iMin );
 		vector<bool> vNewRows( m_vRows.begin() + m_iOffset, m_vRows.end() );
 		vNewRows.reserve( iNewSize );
 		vNewRows.insert( vNewRows.end(), m_vRows.begin(), m_vRows.begin() + m_iOffset );
@@ -441,7 +441,7 @@ void Player::Init(
 			fMaxBPM = (M_MOD_HIGH_CAP > 0 ?
 				   bpms.GetMaxWithin(M_MOD_HIGH_CAP) :
 				   bpms.GetMax());
-			fMaxBPM = max( 0, fMaxBPM );
+			fMaxBPM = std::max( 0.f, fMaxBPM );
 		}
 
 		// we can't rely on the displayed BPMs, so manually calculate.
@@ -462,7 +462,7 @@ void Player::Init(
 					{
 						e.pSong->m_SongTiming.GetActualBPM( fThrowAway, fMaxForEntry );
 					}
-					fMaxBPM = max( fMaxForEntry, fMaxBPM );
+					fMaxBPM = std::max( fMaxForEntry, fMaxBPM );
 				}
 			}
 			else
@@ -1305,7 +1305,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 					//LOG->Trace("fLife before minus: %f",fLife);
 					fLife -= fDeltaTime/GetWindowSeconds(TW_Hold);
 					//LOG->Trace("fLife before clamp: %f",fLife);
-					fLife = max( fLife, 0 );	// clamp
+					fLife = std::max( fLife, 0.f );	// clamp
 					//LOG->Trace("fLife after: %f",fLife);
 				}
 			}
@@ -1322,7 +1322,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 
 			// Decrease life
 			fLife -= fDeltaTime/GetWindowSeconds(TW_Roll);
-			fLife = max( fLife, 0 );	// clamp
+			fLife = std::max( fLife, 0.f );	// clamp
 			break;
 		/*
 		case TapNoteSubType_Mine:
@@ -1469,7 +1469,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 			{
 				float factor = (tn.subType == TapNoteSubType_Roll ? 2.0f * fLifeFraction : 10.0f * fLifeFraction - 8.5f);
-				m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", max(0.0f, min(1.0f, factor)) * fVol);
+				m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", std::max(0.0f, min(1.0f, factor)) * fVol);
 			}
 		}
 	}
@@ -1919,7 +1919,7 @@ void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 		{
 			// Since this is being called every frame, let's not check the whole array every time.
 			// Instead, only check 1 beat back.  Even 1 is overkill.
-			const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
+			const int iStartCheckingAt = std::max( 0, iSongRow-BeatToNoteRow(1) );
 			NoteData::TrackMap::iterator begin, end;
 			m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartCheckingAt, iSongRow+1, begin, end );
 			for( ; begin != end; ++begin )
@@ -2006,7 +2006,7 @@ void Player::ScoreAllActiveHoldsLetGo()
 		{
 			// Since this is being called every frame, let's not check the whole array every time.
 			// Instead, only check 1 beat back.  Even 1 is overkill.
-			const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
+			const int iStartCheckingAt = std::max( 0, iSongRow-BeatToNoteRow(1) );
 			NoteData::TrackMap::iterator begin, end;
 			m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartCheckingAt, iSongRow+1, begin, end );
 			for( ; begin != end; ++begin )
@@ -2097,7 +2097,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		// Let's not check the whole array every time.
 		// Instead, only check 1 beat back.  Even 1 is overkill.
 		// Just update the life here and let Update judge the roll.
-		const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
+		const int iStartCheckingAt = std::max( 0, iSongRow-BeatToNoteRow(1) );
 		NoteData::TrackMap::iterator begin, end;
 		m_NoteData.GetTapNoteRangeInclusive( col, iStartCheckingAt, iSongRow+1, begin, end );
 		for( ; begin != end; ++begin )
@@ -2176,7 +2176,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			float secs_held= 0.0f;
 			for(size_t i= 0; i < GameI.size(); ++i)
 			{
-				secs_held= max(secs_held, INPUTMAPPER->GetSecsHeld( GameI[i] ));
+				secs_held= std::max(secs_held, INPUTMAPPER->GetSecsHeld( GameI[i] ));
 			}
 			if( secs_held > 0  && secs_held < m_fTimingWindowJump )
 				iNumTracksHeld++;
@@ -2215,7 +2215,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 	 * Either option would fundamentally change the grading of two quick notes
 	 * "jack hammers." Hmm.
 	 */
-	const int iStepSearchRows = max(
+	const int iStepSearchRows = std::max(
 		BeatToNoteRow( m_Timing->GetBeatFromElapsedTime( m_pPlayerState->m_Position.m_fMusicSeconds + StepSearchDistance ) ) - iSongRow,
 		iSongRow - BeatToNoteRow( m_Timing->GetBeatFromElapsedTime( m_pPlayerState->m_Position.m_fMusicSeconds - StepSearchDistance ) )
 	) + ROWS_PER_BEAT;
@@ -3213,7 +3213,7 @@ void Player::HandleTapRowScore( unsigned row )
 
 	// new max combo
 	if( m_pPlayerStageStats )
-		m_pPlayerStageStats->m_iMaxCombo = max(m_pPlayerStageStats->m_iMaxCombo, iCurCombo);
+		m_pPlayerStageStats->m_iMaxCombo = std::max(m_pPlayerStageStats->m_iMaxCombo, iCurCombo);
 
 	/* Use the real current beat, not the beat we've been passed. That's because
 	 * we want to record the current life/combo to the current time; eg. if it's
@@ -3339,6 +3339,7 @@ void Player::HandleHoldScore( const TapNote &tn )
 
 float Player::GetMaxStepDistanceSeconds()
 {
+	using std::max;
 	float fMax = 0;
 	fMax = max( fMax, GetWindowSeconds(TW_W5) );
 	fMax = max( fMax, GetWindowSeconds(TW_W4) );

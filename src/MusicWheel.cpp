@@ -1276,6 +1276,7 @@ bool MusicWheel::NextSort()		// return true if change successful
 
 bool MusicWheel::Select()	// return true if this selection ends the screen
 {
+	using std::max;
 	LOG->Trace( "MusicWheel::Select()" );
 
 	switch( m_WheelState )

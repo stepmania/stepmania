@@ -100,6 +100,7 @@ void MouseDevice::Open()
 
 void MouseDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const
 {
+	using std::max;
 	// todo: add mouse axis stuff -aj
 	const Mouse& m = m_Mouse;
 	HRESULT result;
@@ -119,8 +120,8 @@ void MouseDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementC
 	else if( m.z_axis == cookie )
 	{
 		float level = SCALE( value, m.z_min, m.z_max, -1.0f, 1.0f );
-		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELUP, max(-level,0), now) );
-		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELDOWN, max(+level,0), now) );
+		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELUP, max(-level,0.f), now) );
+		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELDOWN, max(+level,0.f), now) );
 	}
 	else
 	{

@@ -132,13 +132,13 @@ void MakeLower( wchar_t *p, size_t iLen );
  * Therefore, to keep the CStdStr declaration simple, we have these inline
  * functions.  The template calls them often.  Since they are inline (and NOT
  * exported when this is built as a DLL), they will probably be resolved away
- * to nothing. 
+ * to nothing.
  *
  * Without these functions, the CStdStr<> template would probably have to broken
  * out into two, almost identical classes.  Either that or it would be a huge,
  * convoluted mess, with tons of "if" statements all over the place checking the
  * size of template parameter CT.
- * 
+ *
  * In several cases, you will see two versions of each function.  One version is
  * the more portable, standard way of doing things, while the other is the
  * non-standard, but often significantly faster Visual C++ way.
@@ -170,7 +170,7 @@ inline char sstolower(char ch)		{ return (ch >= 'A' && ch <= 'Z')? char(ch + 'a'
 // ssasn: assignment functions -- assign "sSrc" to "sDst"
 // -----------------------------------------------------------------------------
 typedef std::string::size_type		SS_SIZETYPE; // just for shorthand, really
-typedef std::string::pointer		SS_PTRTYPE;  
+typedef std::string::pointer		SS_PTRTYPE;
 
 /**
  * @brief Assign one string to another.
@@ -250,7 +250,7 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 	}
 	else
 	{
-		sDst.append(pA); 
+		sDst.append(pA);
 	}
 }
 
@@ -269,7 +269,7 @@ inline int ssicmp(const CT* pA1, const CT* pA2)
 	CT f;
 	CT l;
 
-	do 
+	do
 	{
 		f = sstolower(*(pA1++));
 		l = sstolower(*(pA2++));
@@ -330,7 +330,7 @@ inline void ssupr(wchar_t *pT, size_t nLen)
 //		easy to use as the MFC RString class.
 //
 //		Note that although this is a template, it makes the assumption that the
-//		template argument (CT, the character type) is either char or wchar_t.  
+//		template argument (CT, the character type) is either char or wchar_t.
 // =============================================================================
 
 //#define CStdStr _SS	// avoid compiler warning 4786
@@ -356,8 +356,8 @@ CStdStr<CT> operator+(const  CStdStr<CT>& str1, const  CStdStr<CT>& str2)
  * @param str the original string.
  * @param t the string to be added.
  * @return the longer string.
- */	
-template<typename CT>	
+ */
+template<typename CT>
 inline
 CStdStr<CT> operator+(const  CStdStr<CT>& str, CT t)
 {
@@ -385,7 +385,7 @@ CStdStr<CT> operator+(const  CStdStr<CT>& str, PCSTR pA)
  * @param pA the original string.
  * @param str the string to be added.
  * @return the longer string.
- */	
+ */
 template<typename CT>
 inline
 CStdStr<CT> operator+(PCSTR pA, const  CStdStr<CT>& str)
@@ -405,16 +405,16 @@ class CStdStr : public std::basic_string<CT>
 
 	typedef typename std::basic_string<CT>		MYBASE;	 // my base class
 	typedef CStdStr<CT>				MYTYPE;	 // myself
-	typedef typename MYBASE::const_pointer		PCMYSTR; // PCSTR 
+	typedef typename MYBASE::const_pointer		PCMYSTR; // PCSTR
 	typedef typename MYBASE::pointer		PMYSTR;	 // PSTR
 	typedef typename MYBASE::iterator		MYITER;  // my iterator type
 	typedef typename MYBASE::const_iterator		MYCITER; // you get the idea...
 	typedef typename MYBASE::reverse_iterator	MYRITER;
-	typedef typename MYBASE::size_type		MYSIZE;   
-	typedef typename MYBASE::value_type		MYVAL; 
+	typedef typename MYBASE::size_type		MYSIZE;
+	typedef typename MYBASE::value_type		MYVAL;
 	typedef typename MYBASE::allocator_type		MYALLOC;
 	typedef typename MYBASE::traits_type		MYTRAITS;
-	
+
 public:
 
 	// CStdStr inline constructors
@@ -452,8 +452,8 @@ public:
 	// CStdStr inline assignment operators -- the ssasn function now takes care
 	// of fixing  the MSVC assignment bug (see knowledge base article Q172398).
 	MYTYPE& operator=(const MYTYPE& str)
-	{ 
-		ssasn(*this, str); 
+	{
+		ssasn(*this, str);
 		return *this;
 	}
 
@@ -573,7 +573,7 @@ public:
 
 		MYTYPE& assign(MYCITER iterFirst, MYCITER iterLast)
 		{
-	#if defined ( _MSC_VER ) && ( _MSC_VER < 1200 ) 
+	#if defined ( _MSC_VER ) && ( _MSC_VER < 1200 )
 			// Q172398 fix.  don't call erase() if we're assigning from ourself
 			if ( iterFirst < this->begin() || iterFirst > this->begin() + this->size() )
 				this->erase()
@@ -603,7 +603,7 @@ public:
 	MYTYPE& operator+=(const std::string& str)
 	{
 		ssadd(*this, str);
-		return *this; 
+		return *this;
 	}
 
 	MYTYPE& operator+=(PCSTR pA)
@@ -671,7 +671,7 @@ public:
 		this->resize(static_cast<MYSIZE>(nNewLen > -1 ? nNewLen : MYTRAITS::length(this->c_str())));
 	}
 
-	
+
 
 	// -------------------------------------------------------------------------
 	// RString Facade Functions:
@@ -693,8 +693,8 @@ public:
 	{
 		// Range check the count.
 
-		nCount = max(0, min(nCount, static_cast<int>(this->size())));
-		return this->substr(0, static_cast<MYSIZE>(nCount)); 
+		nCount = std::max(0, min(nCount, static_cast<int>(this->size())));
+		return this->substr(0, static_cast<MYSIZE>(nCount));
 	}
 
 	int Replace(CT chOld, CT chNew)
@@ -736,7 +736,7 @@ public:
 	{
 		// Range check the count.
 
-		nCount = max(0, min(nCount, static_cast<int>(this->size())));
+		nCount = std::max(0, min(nCount, static_cast<int>(this->size())));
 		return this->substr(this->size()-static_cast<MYSIZE>(nCount));
 	}
 
@@ -765,15 +765,15 @@ public:
 	CT& operator[](long unsigned int nIdx){
 	  return MYBASE::operator[](static_cast<MYSIZE>(nIdx));
 	}
-       
+
 	const CT& operator[](long unsigned int nIdx) const {
 	  return MYBASE::operator[](static_cast<MYSIZE>(nIdx));
 	}
-	
+
 	CT& operator[](long long unsigned int nIdx){
 	  return MYBASE::operator[](static_cast<MYSIZE>(nIdx));
 	}
-	
+
 	const CT& operator[](long long unsigned int nIdx) const {
 	  return MYBASE::operator[](static_cast<MYSIZE>(nIdx));
 	}
@@ -824,7 +824,7 @@ struct StdStringEqualsNoCase
 	{ return ssicmp(sLeft.c_str(), sRight.c_str()) == 0; }
 };
 
-// These std::swap specializations come courtesy of Mike Crusader. 
+// These std::swap specializations come courtesy of Mike Crusader.
 
 //namespace std
 //{

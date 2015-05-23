@@ -154,6 +154,7 @@ bool JoystickDevice::InitDevice( int vid, int pid )
 
 void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const
 {
+	using std::max;
 	for (auto const &js: m_vSticks)
 	{
 		if( js.x_axis == cookie )

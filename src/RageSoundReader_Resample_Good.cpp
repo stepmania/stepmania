@@ -48,9 +48,9 @@ namespace
 		}
 	}
 
-	/* 
+	/*
 	 * Kaiser window:
-	 * 
+	 *
 	 * K(n) = I0( B*sqrt(1-(n/p)^2) )
 	 *        -----------------------
 	 *                 I0(B)
@@ -59,12 +59,13 @@ namespace
 	 */
 	void ApplyKaiserWindow( float *pBuf, int iLen, float fBeta )
 	{
+		using std::max;
 		const float fDenom = BesselI0(fBeta);
 		float p = (iLen-1)/2.0f;
 		for( int n = 0; n < iLen; ++n )
 		{
 			float fN1 = fabsf((n-p)/p);
-			float fNum = fBeta * sqrtf( max(1-fN1*fN1, 0) );
+			float fNum = fBeta * sqrtf( max(1-fN1*fN1, 0.f) );
 			fNum = BesselI0( fNum );
 			float fVal = fNum/fDenom;
 			pBuf[n] *= fVal;
@@ -226,7 +227,7 @@ private:
  * input     first output sample (before decimation)
  * sample          second output sample
  *                     third output sample
- * 
+ *
  * 0         0
  * 0         1     0
  * 1592      2     1   0
@@ -300,7 +301,7 @@ int PolyphaseFilter::RunPolyphaseFilter(
 	float *pOutOrig = pOut;
 	const float *pInEnd = pIn + iSamplesIn*iSampleStride;
 	const float *pOutEnd = pOut + iSamplesOut*iSampleStride;
-	
+
 	int iFilled = State.m_iFilled;
 	int iPolyIndex = State.m_iPolyIndex;
 	while( pOut != pOutEnd )
@@ -404,7 +405,7 @@ namespace PolyphaseFilterCache
 	typedef map<pair<int,float>, PolyphaseFilter *> FilterMap;
 	static RageMutex PolyphaseFiltersLock("PolyphaseFiltersLock");
 	static FilterMap g_mapPolyphaseFilters;
-		
+
 	const PolyphaseFilter *MakePolyphaseFilter( int iUpFactor, float fCutoffFrequency )
 	{
 		PolyphaseFiltersLock.Lock();
@@ -462,7 +463,8 @@ public:
 	 * too much filtering, by not having a LPF that's high enough. */
 	RageSoundResampler_Polyphase( int iUpFactor, int iMinDownFactor, int iMaxDownFactor )
 	{
-		/* Cache filters between iMinDownFactor and iMaxDownFactor.  Do them in 
+		using std::max;
+		/* Cache filters between iMinDownFactor and iMaxDownFactor.  Do them in
 		 * iFilterIncrement increments; we'll round down to the closest match
 		 * when filtering.  This will only cause the low-pass filter to be rounded;
 		 * the conversion ratio will always be exact. */
@@ -537,7 +539,7 @@ private:
 		float fCutoffFrequency = GetCutoffFrequency( iDownFactor );
 		return PolyphaseFilterCache::FindNearestPolyphaseFilter( m_iUpFactor, fCutoffFrequency );
 	}
-	
+
 	const PolyphaseFilter *m_pPolyphase;
 	PolyphaseFilter::State *m_pState;
 	int m_iUpFactor;
