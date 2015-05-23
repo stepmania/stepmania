@@ -40,7 +40,7 @@ static void ScalarWrite( float *pDestBuf, const float *pSrcBuf, size_t iSize )
 static void ScalarRead( int16_t *pDestBuf, const int32_t *pSrcBuf, unsigned iSize )
 {
 	for( unsigned iPos = 0; iPos < iSize; ++iPos )
-		pDestBuf[iPos] = max( -32768, min(pSrcBuf[iPos]/256, 32767) );
+		pDestBuf[iPos] = std::max( -32768, min(pSrcBuf[iPos]/256, 32767) );
 }
 #endif
 
@@ -221,13 +221,13 @@ static bool CheckAlignedRead()
 	T *pDestBuf      = NEW( T, size );
 	T *pRefBuf       = NEW( T, size );
 	bool ret = true;
-	
+
 	for( int i = 0; i < 8; ++i )
 	{
 		RandBuffer( pSrcBuf, size-i );
 		Vector::FastSoundRead( pDestBuf, pSrcBuf, size-i );
 		ScalarRead( pRefBuf, pSrcBuf, size-i );
-		
+
 		if( !(ret = cmp(pRefBuf, pDestBuf, size-i)) )
 		{
 			fprintf( stderr, "%d: \n", i );
@@ -250,7 +250,7 @@ static bool CheckMisalignedRead()
 	T *pDestBuf      = NEW( T, size );
 	T *pRefBuf       = NEW( T, size );
 	bool ret = true;
-	
+
 	for( int j = 0; j < 8; ++j )
 	{
 		for( int i = 0; i < 8; ++i )
@@ -258,7 +258,7 @@ static bool CheckMisalignedRead()
 			RandBuffer( pSrcBuf, size-i );
 			Vector::FastSoundRead( pDestBuf+j, pSrcBuf, size-i-j );
 			ScalarRead( pRefBuf+j, pSrcBuf, size-i-j );
-			
+
 			if( !(ret = cmp(pRefBuf+j, pDestBuf+j, size-i-j)) )
 			{
 				fprintf( stderr, "%d, %d: \n", j, i );

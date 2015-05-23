@@ -489,6 +489,7 @@ const Profile *ProfileManager::GetLocalProfile( const RString &sProfileID ) cons
 bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 {
 	ASSERT( !sName.empty() );
+	using std::max;
 
 	// Find a directory directory name that's a number greater than all
 	// existing numbers.  This preserves the "order by create date".
@@ -837,8 +838,9 @@ int ProfileManager::GetSongNumTimesPlayed( const Song* pSong, ProfileSlot slot )
 
 void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, PlayerNumber pn, const HighScore &hs_, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
+	using std::max;
 	HighScore hs = hs_;
-	hs.SetPercentDP( max(0, hs.GetPercentDP()) ); // bump up negative scores
+	hs.SetPercentDP( max(0.f, hs.GetPercentDP()) ); // bump up negative scores
 
 	iPersonalIndexOut = -1;
 	iMachineIndexOut = -1;
@@ -892,7 +894,7 @@ void ProfileManager::IncrementStepsPlayCount( const Song* pSong, const Steps* pS
 void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail, PlayerNumber pn, const HighScore &hs_, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
 	HighScore hs = hs_;
-	hs.SetPercentDP(max( 0, hs.GetPercentDP()) ); // bump up negative scores
+	hs.SetPercentDP(max( 0.f, hs.GetPercentDP()) ); // bump up negative scores
 
 	iPersonalIndexOut = -1;
 	iMachineIndexOut = -1;

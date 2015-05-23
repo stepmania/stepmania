@@ -1639,6 +1639,7 @@ void ScreenEdit::EditMiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, S
 
 void ScreenEdit::Update( float fDeltaTime )
 {
+	using std::max;
 	m_PlayerStateEdit.Update( fDeltaTime );
 
 	if( m_pSoundMusic->IsPlaying() )
@@ -1669,7 +1670,7 @@ void ScreenEdit::Update( float fDeltaTime )
 			float fSecsHeld= 0.0f;
 			for(size_t i= 0; i < GameI.size(); ++i)
 			{
-				fSecsHeld= max(fSecsHeld, INPUTMAPPER->GetSecsHeld(GameI[i]));
+				fSecsHeld= max(fSecsHeld, static_cast<float>(INPUTMAPPER->GetSecsHeld(GameI[i])));
 			}
 			fSecsHeld = min( fSecsHeld, m_RemoveNoteButtonLastChanged.Ago() );
 			if( fSecsHeld == 0 )
@@ -2096,6 +2097,7 @@ static ThemeMetric<bool> INVERT_SCROLL_BUTTONS	( "ScreenEdit", "InvertScrollSpee
 
 bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 {
+	using std::max;
 	if( input.type == IET_RELEASE )
 	{
 		if( EditPressed( EDIT_BUTTON_SCROLL_SELECT, input.DeviceI ) )
@@ -2668,12 +2670,12 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			if( EditB == EDIT_BUTTON_SAMPLE_LENGTH_DOWN || EditB == EDIT_BUTTON_SAMPLE_LENGTH_UP )
 			{
 				m_pSong->m_fMusicSampleLengthSeconds += fDelta;
-				m_pSong->m_fMusicSampleLengthSeconds = max(m_pSong->m_fMusicSampleLengthSeconds,0);
+				m_pSong->m_fMusicSampleLengthSeconds = max(m_pSong->m_fMusicSampleLengthSeconds,0.f);
 			}
 			else
 			{
 				m_pSong->m_fMusicSampleStartSeconds += fDelta;
-				m_pSong->m_fMusicSampleStartSeconds = max(m_pSong->m_fMusicSampleStartSeconds,0);
+				m_pSong->m_fMusicSampleStartSeconds = max(m_pSong->m_fMusicSampleStartSeconds,0.f);
 			}
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play(true);
 			SetDirty( true );
@@ -3287,6 +3289,7 @@ bool ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 
 void ScreenEdit::TransitionEditState( EditState em )
 {
+	using std::max;
 	EditState old = m_EditState;
 
 	// If we're going from recording to paused, come back when we're done.
@@ -3373,7 +3376,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		m_Foreground.Unload();
 
 		// Restore the cursor position + Quantize + Clamp
-		SetBeat( max( 0, Quantize( m_fBeatToReturnTo, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) ) ) );
+		SetBeat( max( 0.f, Quantize( m_fBeatToReturnTo, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) ) ) );
 		GAMESTATE->m_bInStepEditor = true;
 		break;
 

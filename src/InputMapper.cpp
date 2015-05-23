@@ -963,6 +963,7 @@ void InputMapper::RepeatStopKey( GameButton MenuI, PlayerNumber pn )
 
 float InputMapper::GetSecsHeld( const GameInput &GameI, MultiPlayer mp ) const
 {
+	using std::max;
 	float fMaxSecsHeld = 0;
 
 	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
@@ -981,6 +982,7 @@ float InputMapper::GetSecsHeld( const GameInput &GameI, MultiPlayer mp ) const
 
 float InputMapper::GetSecsHeld( GameButton MenuI, PlayerNumber pn ) const
 {
+	using std::max;
 	float fMaxSecsHeld = 0;
 
 	vector<GameInput> GameI;
@@ -1011,6 +1013,7 @@ void InputMapper::ResetKeyRepeat( GameButton MenuI, PlayerNumber pn )
 
 float InputMapper::GetLevel( const GameInput &GameI ) const
 {
+	using std::max;
 	float fLevel = 0;
 	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
 	{
@@ -1024,6 +1027,7 @@ float InputMapper::GetLevel( const GameInput &GameI ) const
 
 float InputMapper::GetLevel( GameButton MenuI, PlayerNumber pn ) const
 {
+	using std::max;
 	vector<GameInput> GameI;
 	MenuToGame( MenuI, pn, GameI );
 

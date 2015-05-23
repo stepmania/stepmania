@@ -51,6 +51,7 @@ void PlayerState::Reset()
 
 void PlayerState::Update( float fDelta )
 {
+	using std::max;
 	// TRICKY: GAMESTATE->Update is run before any of the Screen update's,
 	// so we'll clear these flags here and let them get turned on later
 	m_bAttackBeganThisUpdate = false;
@@ -93,7 +94,7 @@ void PlayerState::Update( float fDelta )
 	m_PlayerOptions.Update( fDelta );
 
 	if( m_fSecondsUntilAttacksPhasedOut > 0 )
-		m_fSecondsUntilAttacksPhasedOut = max( 0, m_fSecondsUntilAttacksPhasedOut - fDelta );
+		m_fSecondsUntilAttacksPhasedOut = max( 0.f, m_fSecondsUntilAttacksPhasedOut - fDelta );
 }
 
 void PlayerState::SetPlayerNumber(PlayerNumber pn)

@@ -326,6 +326,7 @@ static bool CompareBySumDescending( const box &b1, const box &b2 )
 
 static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, int maxval, int newcolors )
 {
+	using std::max;
 	acolorhist_item *acolormap;
 	box_vector bv;
 	int boxes;

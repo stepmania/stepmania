@@ -33,7 +33,7 @@ public:
 	{
 		delete[] buf;
 	}
-		
+
 	void swap( CircBuf &rhs )
 	{
 		std::swap( size, rhs.size );
@@ -82,7 +82,7 @@ public:
 			/* The buffer looks like "eeeeeeeeeeee" (e = empty, D = data). */
 			return 0;
 	}
-	
+
 	/* Return the number of writable elements. */
 	unsigned num_writable() const
 	{
@@ -139,13 +139,13 @@ public:
 	{
 		write_pos = (write_pos + n) % size;
 	}
-	
+
 	/* Indicate that n elements have been read. */
 	void advance_read_pointer( int n )
 	{
 		read_pos = (read_pos + n) % size;
 	}
-	
+
 	void get_write_pointers( T *pPointers[2], unsigned pSizes[2] )
 	{
 		const int rpos = read_pos;
@@ -221,19 +221,20 @@ public:
 			pSizes[1] = 0;
 		}
 	}
-	
+
 	/* Write buffer_size elements from buffer, and advance the write pointer.  If
 	 * the data will not fit entirely, the write pointer will be unchanged
 	 * and false will be returned. */
 	bool write( const T *buffer, unsigned buffer_size )
 	{
+		using std::max;
 		T *p[2];
 		unsigned sizes[2];
 		get_write_pointers( p, sizes );
 
 		if( buffer_size > sizes[0] + sizes[1] )
 			return false;
-		
+
 		const int from_first = min( buffer_size, sizes[0] );
 		memcpy( p[0], buffer, from_first*sizeof(T) );
 		if( buffer_size > sizes[0] )
@@ -249,6 +250,7 @@ public:
 	 * and false will be returned. */
 	bool read( T *buffer, unsigned buffer_size )
 	{
+		using std::max;
 		T *p[2];
 		unsigned sizes[2];
 		get_read_pointers( p, sizes );

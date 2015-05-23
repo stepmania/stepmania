@@ -438,12 +438,13 @@ RageSoundDriver::RageSoundDriver():
 	m_bShutdownDecodeThread = false;
 	m_iMaxHardwareFrame = 0;
 	SetDecodeBufferSize( 4096 );
-	
+
 	m_DecodeThread.SetName("Decode thread");
 }
 
 RageSoundDriver::~RageSoundDriver()
 {
+	using std::max;
 	/* Signal the decoding thread to quit. */
 	if( m_DecodeThread.IsCreated() )
 	{
@@ -461,6 +462,7 @@ RageSoundDriver::~RageSoundDriver()
 
 int64_t RageSoundDriver::ClampHardwareFrame( int64_t iHardwareFrame ) const
 {
+	using std::max;
 	/* It's sometimes possible for the hardware position to move backwards, usually
 	 * on underrun.  We can try to prevent this in each driver, but it's an obscure
 	 * error, so let's clamp the result here instead. */
@@ -519,7 +521,7 @@ int64_t RageSoundDriver::GetHardwareFrame( RageTimer *pTimestamp ) const
 /*
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -529,7 +531,7 @@ int64_t RageSoundDriver::GetHardwareFrame( RageTimer *pTimestamp ) const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

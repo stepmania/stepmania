@@ -1003,7 +1003,7 @@ void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 		bool bShowThisStepsType = find( vstToShow.begin(), vstToShow.end(), st ) != vstToShow.end();
 
 		int iNumPlayers = GAMESTATE->GetNumPlayersEnabled();
-		iNumPlayers = max( iNumPlayers, 1 );
+		iNumPlayers = std::max( iNumPlayers, 1 );
 
 		bool bEnoughStages = GAMESTATE->IsAnExtraStage() ||
 			GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer() >=

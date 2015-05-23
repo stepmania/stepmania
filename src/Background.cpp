@@ -442,7 +442,7 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 		int iSegmentEndRow = (i + 1 == tSigs.size()) ? iEndRow : tSigs[i+1]->GetRow();
 
 
-		for(int j=max(ts->GetRow(),iStartRow);
+		for(int j = std::max(ts->GetRow(),iStartRow);
 			j<min(iEndRow,iSegmentEndRow);
 			j+=4*ts->GetNoteRowsPerMeasure())
 		{
@@ -801,7 +801,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 	}
 
 	/* This is unaffected by the music rate. */
-	float fDeltaTimeNoMusicRate = max( fDeltaTime / fRate, 0 );
+	float fDeltaTimeNoMusicRate = std::max( fDeltaTime / fRate, 0.f );
 
 	if( m_pCurrentBGA )
 		m_pCurrentBGA->Update( fDeltaTimeNoMusicRate );

@@ -955,12 +955,13 @@ public:
 
 	void Allocate( const vector<msMesh> &vMeshes )
 	{
+		using std::max;
 		/* Always allocate at least 1 entry, so &x[0] is valid. */
-		m_vPosition.resize( max(1u, GetTotalVertices()) );
-		m_vTexture.resize( max(1u, GetTotalVertices()) );
-		m_vNormal.resize( max(1u, GetTotalVertices()) );
-		m_vTexMatrixScale.resize( max(1u, GetTotalVertices()) );
-		m_vTriangles.resize( max(1u, GetTotalTriangles()) );
+		m_vPosition.resize( max(1ul, GetTotalVertices()) );
+		m_vTexture.resize( max(1ul, GetTotalVertices()) );
+		m_vNormal.resize( max(1ul, GetTotalVertices()) );
+		m_vTexMatrixScale.resize( max(1ul, GetTotalVertices()) );
+		m_vTriangles.resize( max(1ul, GetTotalTriangles()) );
 	}
 	void Change( const vector<msMesh> &vMeshes )
 	{
@@ -1422,6 +1423,7 @@ void RageDisplay_Legacy::DrawQuadStripInternal( const RageSpriteVertex v[], int 
 
 void RageDisplay_Legacy::DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
 {
+	using std::max;
 	int iNumPieces = (iNumVerts-3)/3;
 	int iNumTriangles = iNumPieces*4;
 	int iNumIndices = iNumTriangles*3;

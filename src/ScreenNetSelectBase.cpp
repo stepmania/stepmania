@@ -76,7 +76,7 @@ bool ScreenNetSelectBase::Input( const InputEventPlus &input )
 	if( input.type != IET_FIRST_PRESS && input.type != IET_REPEAT )
 		return false;
 
-	bool bHoldingCtrl = 
+	bool bHoldingCtrl =
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL)) ||
 		(!NSMAN->useSMserver);	// If we are disconnected, assume no chatting.
@@ -152,7 +152,7 @@ void ScreenNetSelectBase::TweenOffScreen()
 
 void ScreenNetSelectBase::UpdateTextInput()
 {
-	m_textChatInput.SetText( m_sTextInput );  
+	m_textChatInput.SetText( m_sTextInput );
 }
 
 void ScreenNetSelectBase::UpdateUsers()
@@ -278,7 +278,7 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 				iWordWidth = 0;
 				sCurrentWord = "";
 				iGlyphsSoFar++;
-			} 
+			}
 			else
 			{
 				SimpleAddLine( sCurrentLine + sCurrentWord, iLineWidth + iWordWidth );
@@ -295,7 +295,7 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 			else if( iWordWidth + iLineWidth + iCharWidth > iWrapWidthPixels )
 			{
 				SimpleAddLine( sCurrentLine, iLineWidth );
-				sCurrentLine = ""; 
+				sCurrentLine = "";
 				iLineWidth = 0;
 				sCurrentWord += curCharStr;
 				iWordWidth += iCharWidth;
@@ -323,7 +323,7 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 	UpdateBaseZoom();
 }
 
-void ColorBitmapText::SimpleAddLine( const RString &sAddition, const int iWidthPixels) 
+void ColorBitmapText::SimpleAddLine( const RString &sAddition, const int iWidthPixels)
 {
 	m_wTextLines.push_back( RStringToWstring( sAddition ) );
 	m_iLineWidths.push_back( iWidthPixels );
@@ -386,9 +386,10 @@ void ColorBitmapText::DrawPrimitives( )
 
 void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
 {
+	using std::max;
 	iNumLines = max( 0, iNumLines );
 	iNumLines = min( (int)m_wTextLines.size(), iNumLines );
-	if( iDirection == 0 ) 
+	if( iDirection == 0 )
 	{
 		// Crop all bottom lines
 		m_wTextLines.resize( iNumLines );
@@ -440,7 +441,7 @@ void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
  * (c) 2004 Charles Lohr
  * All rights reserved.
  *      Elements from ScreenTextEntry
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -450,7 +451,7 @@ void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

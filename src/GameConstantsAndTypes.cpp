@@ -401,7 +401,7 @@ float DisplayBpms::GetMaxWithin(float highest) const
 	{
 		if( f != -1 )
 		{
-			fMax = clamp(max( fMax, f ), 0.f, highest);
+			fMax = clamp(std::max( fMax, f ), 0.f, highest);
 		}
 	}
 	return fMax;

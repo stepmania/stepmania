@@ -53,6 +53,7 @@ bool CourseLoaderCRS::LoadFromBuffer( const RString &sPath, const RString &sBuff
 
 bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Course &out, bool bFromCache )
 {
+	using std::max;
 	AttackArray attacks;
 	float fGainSeconds = 0;
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )

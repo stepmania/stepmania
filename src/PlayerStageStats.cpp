@@ -180,6 +180,7 @@ Grade GetGradeFromPercent( float fPercent )
 
 Grade PlayerStageStats::GetGrade() const
 {
+	using std::max;
 	if( m_bFailed )
 		return Grade_Failed;
 
@@ -244,6 +245,7 @@ Grade PlayerStageStats::GetGrade() const
 
 float PlayerStageStats::MakePercentScore( int iActual, int iPossible )
 {
+	using std::max;
 	if( iPossible == 0 )
 		return 0; // div/0
 
@@ -256,7 +258,7 @@ float PlayerStageStats::MakePercentScore( int iActual, int iPossible )
 	float fPercent =  iActual / (float)iPossible;
 
 	// don't allow negative
-	fPercent = max( 0, fPercent );
+	fPercent = max( 0.f, fPercent );
 
 	int iPercentTotalDigits = 3 + CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES;	// "100" + "." + "00"
 
@@ -367,6 +369,7 @@ void PlayerStageStats::ResetScoreForLesson()
 
 void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 {
+	using std::max;
 	// Don't save life stats in endless courses, or could run OOM in a few hours.
 	if( GAMESTATE->m_pCurCourse && GAMESTATE->m_pCurCourse->IsEndless() )
 		return;
@@ -487,6 +490,7 @@ float PlayerStageStats::GetCurrentLife() const
  * record the amount of the first combo that comes from the previous song. */
 void PlayerStageStats::UpdateComboList( float fSecond, bool bRollover )
 {
+	using std::max;
 	// Don't save combo stats in endless courses, or could run OOM in a few hours.
 	if( GAMESTATE->m_pCurCourse && GAMESTATE->m_pCurCourse->IsEndless() )
 		return;

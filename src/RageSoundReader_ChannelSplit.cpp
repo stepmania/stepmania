@@ -181,6 +181,7 @@ int RageSoundReader_Split::Read( float *pBuf, int iFrames )
 
 int RageSoundSplitterImpl::ReadBuffer()
 {
+	using std::max;
 	/* Discard any bytes that are no longer requested by any sound. */
 	int iMinFrameRequested = INT_MAX;
 	int iMaxFrameRequested = INT_MIN;
@@ -228,6 +229,7 @@ int RageSoundSplitterImpl::ReadBuffer()
 
 void RageSoundReader_Split::AddSourceChannelToSound( int iFromChannel, int iToChannel )
 {
+	using std::max;
 	m_aChannels.push_back( ChannelMap(iFromChannel, iToChannel) );
 	m_iNumOutputChannels = max( m_iNumOutputChannels, iToChannel + 1 );
 }

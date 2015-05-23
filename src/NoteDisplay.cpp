@@ -744,6 +744,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	const NoteColumnRenderArgs& column_args,
 	const draw_hold_part_args& part_args, bool glow, int part_type)
 {
+	using std::max;
 	ASSERT(!vpSpr.empty());
 
 	float ae_zoom= ArrowEffects::GetZoom(m_pPlayerState);
@@ -1014,6 +1015,7 @@ void NoteDisplay::DrawHoldBodyInternal(vector<Sprite*>& sprite_top,
 	const float y_head, const float y_tail, const float top_beat,
 	const float bottom_beat, bool glow)
 {
+	using std::max;
 	// Draw the top cap
 	part_args.y_top= head_minus_top;
 	part_args.y_bottom= y_head;

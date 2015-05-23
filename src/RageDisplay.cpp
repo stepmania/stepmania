@@ -63,7 +63,7 @@ static const char *RagePixelFormatNames[] = {
 XToString( RagePixelFormat );
 
 /* bNeedReloadTextures is set to true if the device was re-created and we need
- * to reload textures.  On failure, an error message is returned. 
+ * to reload textures.  On failure, an error message is returned.
  * XXX: the renderer itself should probably be the one to try fallback modes */
 static LocalizedString SETVIDEOMODE_FAILED ( "RageDisplay", "SetVideoMode failed:" );
 RString RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures )
@@ -82,7 +82,7 @@ RString RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures 
 		return RString();
 	vs.push_back( err );
 
-	// "Intel(R) 82810E Graphics Controller" won't accept a 16 bpp surface if 
+	// "Intel(R) 82810E Graphics Controller" won't accept a 16 bpp surface if
 	// the desktop is 32 bpp, so try 32 bpp as well.
 	p.bpp = 32;
 	if( (err = this->TryVideoMode(p,bNeedReloadTextures)) == "" )
@@ -230,7 +230,7 @@ void RageDisplay::DrawCircleInternal( const RageSpriteVertex &p, float radius )
 	RageSpriteVertex v[subdivisions+2];
 	v[0] = p;
 
-	for(int i = 0; i < subdivisions+1; ++i) 
+	for(int i = 0; i < subdivisions+1; ++i)
 	{
 		const float fRotation = float(i) / subdivisions * 2*PI;
 		const float fX = RageFastCos(fRotation) * radius;
@@ -248,7 +248,7 @@ void RageDisplay::SetDefaultRenderStates()
 {
 	SetLighting( false );
 	SetCullMode( CULL_NONE );
-	SetZWrite( false ); 
+	SetZWrite( false );
 	SetZTestMode( ZTEST_OFF );
 	SetAlphaTest( true );
 	SetBlendMode( BLEND_NORMAL );
@@ -396,7 +396,7 @@ public:
 		RageMatrixSkewX( &m, fAmount );
 		MultMatrixLocal( m );
 	}
-	
+
 	void SkewY( float fAmount )
 	{
 		RageMatrix m;
@@ -466,13 +466,13 @@ const RageMatrix* RageDisplay::GetTextureTop() const
 	return g_TextureStack.GetTop();
 }
 
-void RageDisplay::PushMatrix() 
-{ 
+void RageDisplay::PushMatrix()
+{
 	g_WorldStack.Push();
 }
 
-void RageDisplay::PopMatrix() 
-{ 
+void RageDisplay::PopMatrix()
+{
 	g_WorldStack.Pop();
 }
 
@@ -532,13 +532,13 @@ void RageDisplay::LoadIdentity()
 }
 
 
-void RageDisplay::TexturePushMatrix() 
-{ 
+void RageDisplay::TexturePushMatrix()
+{
 	g_TextureStack.Push();
 }
 
-void RageDisplay::TexturePopMatrix() 
-{ 
+void RageDisplay::TexturePopMatrix()
+{
 	g_TextureStack.Pop();
 }
 
@@ -580,7 +580,7 @@ void RageDisplay::LoadMenuPerspective( float fovDegrees, float fWidth, float fHe
 			  1,
 			  fDistCameraFromImage+1000	) );
 
-		g_ViewStack.LoadMatrix( 
+		g_ViewStack.LoadMatrix(
 			RageLookAt(
 				-fVanishPointX+fWidth/2, -fVanishPointY+fHeight/2, fDistCameraFromImage,
 				-fVanishPointX+fWidth/2, -fVanishPointY+fHeight/2, 0,
@@ -632,7 +632,7 @@ RageSurface *RageDisplay::CreateSurfaceFromPixfmt( RagePixelFormat pixfmt,
 	const RagePixelFormatDesc *tpf = GetPixelFormatDesc(pixfmt);
 
 	RageSurface *surf = CreateSurfaceFrom(
-		width, height, tpf->bpp, 
+		width, height, tpf->bpp,
 		tpf->masks[0], tpf->masks[1], tpf->masks[2], tpf->masks[3],
 		(uint8_t *) pixels, pitch );
 
@@ -723,15 +723,15 @@ RageMatrix RageDisplay::GetCenteringMatrix( float fTranslateX, float fTranslateY
 
 	RageMatrix m1;
 	RageMatrix m2;
-	RageMatrixTranslation( 
-		&m1, 
-		fPercentShiftX, 
-		fPercentShiftY, 
+	RageMatrixTranslation(
+		&m1,
+		fPercentShiftX,
+		fPercentShiftY,
 		0 );
-	RageMatrixScaling( 
-		&m2, 
-		fPercentScaleX, 
-		fPercentScaleY, 
+	RageMatrixScaling(
+		&m2,
+		fPercentScaleX,
+		fPercentScaleY,
 		1 );
 	RageMatrix mOut;
 	RageMatrixMultiply( &mOut, &m1, &m2 );
@@ -741,7 +741,7 @@ RageMatrix RageDisplay::GetCenteringMatrix( float fTranslateX, float fTranslateY
 void RageDisplay::UpdateCentering()
 {
 	const Centering &p = g_CenteringStack.back();
-	g_CenteringMatrix = GetCenteringMatrix( 
+	g_CenteringMatrix = GetCenteringMatrix(
 		(float) p.m_iTranslateX, (float) p.m_iTranslateY, (float) p.m_iAddWidth, (float) p.m_iAddHeight );
 }
 
@@ -845,7 +845,7 @@ void RageDisplay::DrawStrip( const RageSpriteVertex v[], int iNumVerts )
 
 	this->DrawStripInternal(v,iNumVerts);
 
-	StatsAddVerts(iNumVerts); 
+	StatsAddVerts(iNumVerts);
 }
 
 void RageDisplay::DrawTriangles( const RageSpriteVertex v[], int iNumVerts )
@@ -864,7 +864,7 @@ void RageDisplay::DrawCompiledGeometry( const RageCompiledGeometry *p, int iMesh
 {
 	this->DrawCompiledGeometryInternal( p, iMeshIndex );
 
-	StatsAddVerts( vMeshes[iMeshIndex].Triangles.size() );	
+	StatsAddVerts( vMeshes[iMeshIndex].Triangles.size() );
 }
 
 void RageDisplay::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth )
@@ -906,6 +906,7 @@ void RageDisplay::DrawCircle( const RageSpriteVertex &v, float radius )
 void RageDisplay::FrameLimitBeforeVsync( int iFPS )
 {
 	ASSERT( iFPS != 0 );
+	using std::max;
 
 	int iDelayMicroseconds = 0;
 	if( g_fFrameLimitPercent.Get() > 0.0f && !g_LastFrameEndedAt.IsZero() )
@@ -995,7 +996,7 @@ void RageCompiledGeometry::Set( const vector<msMesh> &vMeshes, bool bNeedsNormal
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the RageDisplay. */ 
+/** @brief Allow Lua to have access to the RageDisplay. */
 class LunaRageDisplay: public Luna<RageDisplay>
 {
 public:
@@ -1012,26 +1013,26 @@ public:
 		LuaHelpers::Push( L, params.height );
 		return 1;
 	}
-	
+
 	static int GetFPS( T* p, lua_State *L )
 	{
 		lua_pushnumber(L, p->GetFPS());
 		return 1;
 	}
-	
+
 	static int GetVPF( T* p, lua_State *L )
 	{
 		lua_pushnumber(L, p->GetVPF());
 		return 1;
 	}
-	
+
 	static int GetCumFPS( T* p, lua_State *L )
 	{
 		lua_pushnumber(L, p->GetCumFPS());
 		return 1;
 	}
 
-	LunaRageDisplay() 
+	LunaRageDisplay()
 	{
 		ADD_METHOD( GetDisplayWidth );
 		ADD_METHOD( GetDisplayHeight );

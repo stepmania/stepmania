@@ -278,7 +278,7 @@ static void SetAlphaRGB(const RageSurface *pImg, uint8_t r, uint8_t g, uint8_t b
  *
  * A few images don't. We can only make a guess here. After the above
  * search, do the same in reverse (bottom-top-right-left). If the color
- * we find is different, just set the border color to black.  
+ * we find is different, just set the border color to black.
  */
 void RageSurfaceUtils::FixHiddenAlpha( RageSurface *pImg )
 {
@@ -304,6 +304,7 @@ void RageSurfaceUtils::FixHiddenAlpha( RageSurface *pImg )
  * color resolution; a TRAIT_NO_TRANSPARENCY could also use R5G6B5. */
 int RageSurfaceUtils::FindSurfaceTraits( const RageSurface *img )
 {
+	using std::max;
 	const int NEEDS_NO_ALPHA=0, NEEDS_BOOL_ALPHA=1, NEEDS_FULL_ALPHA=2;
 	int alpha_type = NEEDS_NO_ALPHA;
 
@@ -356,7 +357,7 @@ int RageSurfaceUtils::FindSurfaceTraits( const RageSurface *img )
 	}
 
 	int ret = 0;
-	switch( alpha_type ) 
+	switch( alpha_type )
 	{
 	case NEEDS_NO_ALPHA:	ret |= TRAIT_NO_TRANSPARENCY;	break;
 	case NEEDS_BOOL_ALPHA:	ret |= TRAIT_BOOL_TRANSPARENCY;	break;
@@ -384,7 +385,7 @@ static inline float scale( float x, float l1, float h1, float l2, float h2 )
 }
 
 // Completely unoptimized.
-void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst, 
+void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst,
 					const float fCoords[8] /* TL, BR, BL, TR */ )
 {
 	ASSERT( src->format->BytesPerPixel == dst->format->BytesPerPixel );

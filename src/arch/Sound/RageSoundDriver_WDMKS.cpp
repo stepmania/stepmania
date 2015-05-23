@@ -949,6 +949,7 @@ bool WinWdmStream::Open( WinWdmFilter *pFilter,
 			int iPreferredSampleRate,
 			RString &sError )
 {
+	using std::max;
 	/* Instantiate the output pin. */
 	m_pPlaybackPin = pFilter->InstantiateRenderPin(
 				PreferredOutputSampleFormat,

@@ -219,6 +219,7 @@ RageVector2 AnimatedTexture::GetTextureTranslate()
 
 bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 {
+	using std::max;
 	FixSlashesInPlace(sPath);
 	const RString sDir = Dirname( sPath );
 

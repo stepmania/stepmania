@@ -416,7 +416,7 @@ void Sprite::Update( float fDelta )
 
 	// If the texture is a movie, decode frames.
 	if(!bSkipThisMovieUpdate && m_DecodeMovie)
-		m_pTexture->DecodeSeconds( max(0, fTimePassed) );
+		m_pTexture->DecodeSeconds( std::max(0.f, fTimePassed) );
 
 	// update scrolling
 	if( m_fTexCoordVelocityX != 0 || m_fTexCoordVelocityY != 0 )
@@ -926,7 +926,7 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 		if( bXDimNeedsToBeCropped ) // crop X
 		{
 			float fPercentageToCutOff = (this->GetZoomedWidth() - fWidth) / this->GetZoomedWidth();
-			fPercentageToCutOff = max( fPercentageToCutOff-fScaleFudgePercent, 0 );
+			fPercentageToCutOff = std::max( fPercentageToCutOff-fScaleFudgePercent, 0.f );
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 
 			// generate a rectangle with new texture coordinates
@@ -940,7 +940,7 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 		else // crop Y
 		{
 			float fPercentageToCutOff = (this->GetZoomedHeight() - fHeight) / this->GetZoomedHeight();
-			fPercentageToCutOff = max( fPercentageToCutOff-fScaleFudgePercent, 0 );
+			fPercentageToCutOff = std::max( fPercentageToCutOff-fScaleFudgePercent, 0.f );
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 
 			// generate a rectangle with new texture coordinates

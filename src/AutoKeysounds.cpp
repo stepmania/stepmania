@@ -338,7 +338,7 @@ void AutoKeysounds::Update( float fDelta )
 		float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
 		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
-		iRowNow = max( 0, iRowNow );
+		iRowNow = std::max( 0, iRowNow );
 		static int iRowLastCrossed = 0;
 
 		float fBeatLast = roundf(NoteRowToBeat(iRowLastCrossed));

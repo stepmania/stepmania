@@ -684,6 +684,7 @@ int GameState::GetNumStagesMultiplierForSong( const Song* pSong )
 
 int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 {
+	using std::max;
 	int iNumStagesOfThisSong = 1;
 	if( m_pCurSong )
 	{
@@ -774,6 +775,7 @@ void GameState::CancelStage()
 
 void GameState::CommitStageStats()
 {
+	using std::max;
 	if( m_bDemonstrationOrJukebox )
 		return;
 
@@ -1920,11 +1922,12 @@ void setmin( T &a, const T &b )
 template<class T>
 void setmax( T &a, const T &b )
 {
-	a = max(a, b);
+	a = std::max(a, b);
 }
 
 FailType GameState::GetPlayerFailType( const PlayerState *pPlayerState ) const
 {
+	using std::max;
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 	FailType ft = pPlayerState->m_PlayerOptions.GetCurrent().m_FailType;
 
@@ -2484,7 +2487,7 @@ Difficulty GameState::GetHardestStepsDifficulty() const
 			LuaHelpers::ReportScriptErrorFmt( "GetHardestStepsDifficulty called but p%i hasn't chosen notes", p+1 );
 			continue;
 		}
-		dc = max( dc, m_pCurSteps[p]->GetDifficulty() );
+		dc = std::max( dc, m_pCurSteps[p]->GetDifficulty() );
 	}
 	return dc;
 }

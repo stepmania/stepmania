@@ -73,8 +73,9 @@ void MenuTimer::EnableStealth( bool bStealth )
 	}
 }
 
-void MenuTimer::Update( float fDeltaTime ) 
-{ 
+void MenuTimer::Update( float fDeltaTime )
+{
+	using std::max;
 	ActorFrame::Update( fDeltaTime );
 
 	if( m_bPaused )
@@ -82,13 +83,13 @@ void MenuTimer::Update( float fDeltaTime )
 
 	// run down the stall time if any
 	if( m_fStallSeconds > 0 )
-		m_fStallSeconds = max( m_fStallSeconds - fDeltaTime, 0 );
+		m_fStallSeconds = max( m_fStallSeconds - fDeltaTime, 0.f );
 	if( m_fStallSeconds > 0 )
 		return;
 
 	const float fOldSecondsLeft = m_fSecondsLeft;
 	m_fSecondsLeft -= fDeltaTime;
-	m_fSecondsLeft = max( 0, m_fSecondsLeft );
+	m_fSecondsLeft = max( 0.f, m_fSecondsLeft );
 	const float fNewSecondsLeft = m_fSecondsLeft;
 
 	SetText( fNewSecondsLeft );
@@ -199,7 +200,7 @@ void MenuTimer::SetText( float fSeconds )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the MenuTimer. */ 
+/** @brief Allow Lua to have access to the MenuTimer. */
 class LunaMenuTimer: public Luna<MenuTimer>
 {
 public:
@@ -231,7 +232,7 @@ LUA_REGISTER_DERIVED_CLASS( MenuTimer, ActorFrame )
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -241,7 +242,7 @@ LUA_REGISTER_DERIVED_CLASS( MenuTimer, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

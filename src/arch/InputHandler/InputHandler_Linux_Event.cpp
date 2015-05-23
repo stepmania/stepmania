@@ -346,6 +346,7 @@ int InputHandler_Linux_Event::InputThread_Start( void *p )
 
 void InputHandler_Linux_Event::InputThread()
 {
+	using std::max;
 	while( !m_bShutdown )
 	{
 		fd_set fdset;
@@ -426,8 +427,8 @@ void InputHandler_Linux_Event::InputThread()
 				}
 				else
 				{
-				  ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, neg, max(-l,0), now) );
-				  ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, pos, max(+l,0), now) );
+				  ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, neg, max(-l,0.f), now) );
+				  ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, pos, max(+l,0.f), now) );
 				}
 				break;
 			}

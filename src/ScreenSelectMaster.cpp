@@ -868,6 +868,7 @@ ScreenSelectMaster::Page ScreenSelectMaster::GetCurrentPage() const
 
 float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 {
+	using std::max;
 	if( m_bChosen[pn] )
 		return 0;
 
@@ -906,6 +907,7 @@ float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 
 bool ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 {
+	using std::max;
 	if( input.type != IET_FIRST_PRESS )
 		return false;
 	PlayerNumber pn = input.pn;

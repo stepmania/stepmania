@@ -342,6 +342,7 @@ void NoteDataUtil::InsertHoldTails( NoteData &inout )
 
 void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 {
+	using std::max;
 	// Get note data
 	vector<NoteData> parts;
 	float fLastBeat = -1.0f;
@@ -683,6 +684,7 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 
 int FindLongestOverlappingHoldNoteForAnyTrack( const NoteData &in, int iRow )
 {
+	using std::max;
 	int iMaxTailRow = -1;
 	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
@@ -1076,7 +1078,7 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 					++total_taps;
 					recent_notes.push_back(
 						recent_note(curr_row, curr_note.Track()));
-					max_notes_in_voltage_window= max(recent_notes.size(),
+					max_notes_in_voltage_window= std::max(recent_notes.size(),
 						max_notes_in_voltage_window);
 					// If there is one hold active, and one tap on this row, it does
 					// not count as a jump.  Hands do need to count the number of
@@ -1204,6 +1206,7 @@ void NoteDataUtil::ChangeHoldsToRolls( NoteData &in, int iStartIndex, int iEndIn
 
 void NoteDataUtil::RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, int iStartIndex, int iEndIndex )
 {
+	using std::max;
 	// Remove tap and hold notes so no more than iMaxSimultaneous buttons are being held at any
 	// given time.  Never touch data outside of the range given; if many hold notes are overlapping
 	// iStartIndex, and we'd have to change those holds to obey iMaxSimultaneous, just do the best
@@ -2975,6 +2978,7 @@ bool NoteDataUtil::GetNextEditorPosition( const NoteData& in, int &rowInOut )
 
 bool NoteDataUtil::GetPrevEditorPosition( const NoteData& in, int &rowInOut )
 {
+	using std::max;
 	int iOriginalRow = rowInOut;
 	bool bAnyHavePrevNote = in.GetPrevTapNoteRowForAllTracks( rowInOut );
 
