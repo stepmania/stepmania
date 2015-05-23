@@ -21,6 +21,7 @@ void Attack::GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBe
  * prevent popping when the attack has note modifers. */
 void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlayerState, float &fStartBeat, float &fEndBeat ) const
 {
+	using std::min;
 	ASSERT( pSong != NULL );
 
 	if( fStartSecond >= 0 )

@@ -1237,6 +1237,7 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredG
 // Return true if n1 < n2.
 bool CompareNotesPointersForExtra(const Steps *n1, const Steps *n2)
 {
+	using std::min;
 	// Equate CHALLENGE to HARD.
 	Difficulty d1 = min(n1->GetDifficulty(), Difficulty_Hard);
 	Difficulty d2 = min(n2->GetDifficulty(), Difficulty_Hard);
@@ -1770,6 +1771,7 @@ void SongManager::RefreshCourseGroupInfo()
 
 void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot )
 {
+	using std::min;
 	// Load all edit steps
 	RString sDir = sProfileDir + EDIT_STEPS_SUBDIR;
 	SSCLoader loaderSSC;
@@ -1850,6 +1852,7 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 
 void SongManager::LoadCourseEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot )
 {
+	using std::min;
 	// Load all edit courses
 	RString sDir = sProfileDir + EDIT_COURSES_SUBDIR;
 

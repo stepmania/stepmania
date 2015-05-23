@@ -261,7 +261,7 @@ void ScreenNameEntry::Init()
 		}
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle(p);
-		const int iMaxCols = min( int(ABS_MAX_RANKING_NAME_LENGTH), pStyle->m_iColsPerPlayer );
+		const int iMaxCols = std::min( int(ABS_MAX_RANKING_NAME_LENGTH), pStyle->m_iColsPerPlayer );
 		m_ColToStringIndex[p].insert(m_ColToStringIndex[p].begin(), pStyle->m_iColsPerPlayer, -1);
 		int CurrentStringIndex = 0;
 		vector<float> xs;

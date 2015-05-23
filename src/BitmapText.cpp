@@ -575,6 +575,7 @@ void BitmapText::UnSetDistortion()
 
 void BitmapText::UpdateBaseZoom()
 {
+	using std::min;
 	// don't divide by 0
 	// Never apply a zoom greater than 1.
 	// Factor in the non-base zoom so that maxwidth will be in terms of theme
@@ -593,7 +594,7 @@ void BitmapText::UpdateBaseZoom()
 		} \
 		if(dimension != 0) \
 		{ \
-			const float zoom= min(1, dimension_max / dimension); \
+			const float zoom= min(1.f, dimension_max / dimension); \
 			base_zoom_set(zoom); \
 		} \
 	}
@@ -706,7 +707,7 @@ void BitmapText::DrawPrimitives()
 			{
 				// Set the colors up to the next attribute.
 				size_t iEnd = iter == m_mAttributes.end()? m_aVertices.size():iter->first*4;
-				iEnd = min( iEnd, m_aVertices.size() );
+				iEnd = std::min( iEnd, m_aVertices.size() );
 				for( ; i < iEnd; i += 4 )
 				{
 					m_aVertices[i+0].c = m_pTempState->diffuse[0];	// top left
@@ -723,7 +724,7 @@ void BitmapText::DrawPrimitives()
 					iEnd = iter == m_mAttributes.end()? m_aVertices.size():iter->first*4;
 				else
 					iEnd = i + attr.length*4;
-				iEnd = min( iEnd, m_aVertices.size() );
+				iEnd = std::min( iEnd, m_aVertices.size() );
 				for( ; i < iEnd; i += 4 )
 				{
 					if( m_internalDiffuse != RageColor(1, 1, 1, 1) )
@@ -792,7 +793,7 @@ void BitmapText::DrawPrimitives()
 		{
 			// Set the glow up to the next attribute.
 			size_t iEnd = iter == m_mAttributes.end()? m_aVertices.size():iter->first*4;
-			iEnd = min( iEnd, m_aVertices.size() );
+			iEnd = std::min( iEnd, m_aVertices.size() );
 			for( ; i < iEnd; ++i )
 				m_aVertices[i].c = m_pTempState->glow;
 			if( iter == m_mAttributes.end() )
@@ -804,7 +805,7 @@ void BitmapText::DrawPrimitives()
 				iEnd = iter == m_mAttributes.end()? m_aVertices.size():iter->first*4;
 			else
 				iEnd = i + attr.length*4;
-			iEnd = min( iEnd, m_aVertices.size() );
+			iEnd = std::min( iEnd, m_aVertices.size() );
 			for( ; i < iEnd; ++i )
 			{
 				if( m_internalGlow.a > 0 )

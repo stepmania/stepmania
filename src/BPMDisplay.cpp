@@ -98,6 +98,7 @@ void BPMDisplay::Update( float fDeltaTime )
 
 void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 {
+	using std::min;
 	using std::max;
 	ASSERT( !bpms.vfBpms.empty() );
 
@@ -142,7 +143,7 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 				m_BPMS.push_back(BPMS[i]); // hold
 		}
 
-		m_iCurrentBPM = min(1u, m_BPMS.size()); // start on the first hold
+		m_iCurrentBPM = min(1ul, m_BPMS.size()); // start on the first hold
 		m_fBPMFrom = BPMS[0];
 		m_fBPMTo = BPMS[0];
 		m_fPercentInState = 1;

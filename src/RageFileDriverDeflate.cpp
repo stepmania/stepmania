@@ -78,6 +78,7 @@ RageFileObjInflate::~RageFileObjInflate()
 
 int RageFileObjInflate::ReadInternal( void *buf, size_t bytes )
 {
+	using std::min;
 	/* Don't read more than m_iUncompressedSize of data.  If we don't do this, it's
 	 * possible for a .gz to contain a header claiming 500k of data, but to actually
 	 * contain much more deflated data. */
@@ -145,6 +146,7 @@ int RageFileObjInflate::ReadInternal( void *buf, size_t bytes )
 
 int RageFileObjInflate::SeekInternal( int iPos )
 {
+	using std::min;
 	/* Optimization: if offset is the end of the file, it's a lseek(0,SEEK_END).  Don't
 	 * decode anything. */
 	if( iPos >= m_iUncompressedSize )

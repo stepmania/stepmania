@@ -78,7 +78,7 @@ void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 	float fTotalHeight = SCALE( iBlocksHigh, 1.0f, 10.0f, 50.0f, fMaxHeight );
 	CLAMP( fTotalHeight, 50, fMaxHeight );
 
-	float fBlockSize = min( fTotalWidth / iBlocksWide, fTotalHeight / iBlocksHigh );
+	float fBlockSize = std::min( fTotalWidth / iBlocksWide, fTotalHeight / iBlocksHigh );
 
 	m_sprEmpty.SetVertAlign( align_bottom );
 	m_sprEmpty.SetCustomImageRect( RectF(0,0,(float)iBlocksWide,(float)iBlocksHigh) );

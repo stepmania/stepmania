@@ -1293,11 +1293,16 @@ int GameState::GetNumStagesLeft( PlayerNumber pn ) const
 
 int GameState::GetSmallestNumStagesLeftForAnyHumanPlayer() const
 {
+	using std::min;
 	if( IsEventMode() )
+	{
 		return 999;
+	}
 	int iSmallest = INT_MAX;
 	FOREACH_HumanPlayer( p )
+	{
 		iSmallest = min( iSmallest, m_iPlayerStageTokens[p] );
+	}
 	return iSmallest;
 }
 
@@ -1916,7 +1921,7 @@ void GameState::AddStageToPlayer( PlayerNumber pn )
 template<class T>
 void setmin( T &a, const T &b )
 {
-	a = min(a, b);
+	a = std::min(a, b);
 }
 
 template<class T>
@@ -2464,6 +2469,7 @@ bool GameState::IsCourseDifficultyShown( CourseDifficulty cd )
 
 Difficulty GameState::GetEasiestStepsDifficulty() const
 {
+	using std::min;
 	Difficulty dc = Difficulty_Invalid;
 	FOREACH_HumanPlayer( p )
 	{

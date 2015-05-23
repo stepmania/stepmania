@@ -577,8 +577,8 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 				/* Clamp the possible adjustments to try to avoid going under 1 or over
 				 * MAX_BOTTOM_RANGE. */
-				iMinDist = min( std::max( iMinDist, -iLowMeter+1 ), iMaxDist );
-				iMaxDist = std::max( min( iMaxDist, MAX_BOTTOM_RANGE-iHighMeter ), iMinDist );
+				iMinDist = std::min( std::max( iMinDist, -iLowMeter+1 ), iMaxDist );
+				iMaxDist = std::max( std::min( iMaxDist, MAX_BOTTOM_RANGE-iHighMeter ), iMinDist );
 
 				int iAdd;
 				if( iMaxDist == iMinDist )

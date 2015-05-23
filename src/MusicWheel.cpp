@@ -1070,7 +1070,7 @@ void MusicWheel::FilterWheelItemDatas(vector<MusicWheelItemData *> &aUnFilteredD
 	/* Update the popularity.  This is affected by filtering. */
 	if( so == SORT_POPULARITY )
 	{
-		for( unsigned i=0; i< min(3u,aFilteredData.size()); i++ )
+		for( unsigned i=0; i< min(3ul,aFilteredData.size()); i++ )
 		{
 			MusicWheelItemData& WID = *aFilteredData[i];
 			WID.m_Flags.iPlayersBestNumber = i+1;

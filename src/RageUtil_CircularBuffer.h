@@ -227,6 +227,7 @@ public:
 	 * and false will be returned. */
 	bool write( const T *buffer, unsigned buffer_size )
 	{
+		using std::min;
 		using std::max;
 		T *p[2];
 		unsigned sizes[2];
@@ -251,6 +252,7 @@ public:
 	bool read( T *buffer, unsigned buffer_size )
 	{
 		using std::max;
+		using std::min;
 		T *p[2];
 		unsigned sizes[2];
 		get_read_pointers( p, sizes );

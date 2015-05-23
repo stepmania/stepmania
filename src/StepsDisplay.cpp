@@ -226,7 +226,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 		char off = '0';
 
 		RString sNewText;
-		int iNumOn = min( (int)m_iMaxTicks, params.iMeter );
+		int iNumOn = std::min( (int)m_iMaxTicks, params.iMeter );
 		sNewText.insert( sNewText.end(), iNumOn, on );
 		int iNumOff = std::max( 0, m_iNumTicks-iNumOn );
 		sNewText.insert( sNewText.end(), iNumOff, off );

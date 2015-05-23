@@ -134,7 +134,7 @@ struct WavReaderPCM: public WavReader
 		if( !iBytesLeftInDataChunk )
 			return RageSoundReader::END_OF_FILE;
 
-		len = min( len, iBytesLeftInDataChunk );
+		len = std::min( len, iBytesLeftInDataChunk );
 		int iGot = m_File.Read( buf, len );
 
 		int iGotSamples = iGot / iBytesPerSample;
@@ -286,7 +286,7 @@ public:
 		}
 
 		/* We've read the block header; read the rest.  Don't read past the end of the data chunk. */
-		int iMaxSize = min( (int) m_WavData.m_iBlockAlign - 7 * m_WavData.m_iChannels, (m_WavData.m_iDataChunkSize+m_WavData.m_iDataChunkPos) - m_File.Tell() );
+		int iMaxSize = std::min( (int) m_WavData.m_iBlockAlign - 7 * m_WavData.m_iChannels, (m_WavData.m_iDataChunkSize+m_WavData.m_iDataChunkPos) - m_File.Tell() );
 
 		char *pBuf = (char *) alloca( iMaxSize );
 		ASSERT( pBuf != NULL );

@@ -40,7 +40,7 @@ static void ScalarWrite( float *pDestBuf, const float *pSrcBuf, size_t iSize )
 static void ScalarRead( int16_t *pDestBuf, const int32_t *pSrcBuf, unsigned iSize )
 {
 	for( unsigned iPos = 0; iPos < iSize; ++iPos )
-		pDestBuf[iPos] = std::max( -32768, min(pSrcBuf[iPos]/256, 32767) );
+		pDestBuf[iPos] = std::max( -32768, std::min(pSrcBuf[iPos]/256, 32767) );
 }
 #endif
 

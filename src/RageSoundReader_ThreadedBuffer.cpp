@@ -267,6 +267,7 @@ int RageSoundReader_ThreadedBuffer::FillFrames( int iFrames )
 
 int RageSoundReader_ThreadedBuffer::FillBlock()
 {
+	using std::min;
 	if( GetEmptyFrames() == 0 )
 		return 0;
 
@@ -311,6 +312,7 @@ int RageSoundReader_ThreadedBuffer::FillBlock()
 
 int RageSoundReader_ThreadedBuffer::Read( float *pBuffer, int iFrames )
 {
+	using std::min;
 	if( !m_bEOF )
 		EnableBuffering();
 

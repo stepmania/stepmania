@@ -939,6 +939,7 @@ void SMLoader::ProcessFakes( TimingData &out, const RString line, const int rows
 
 bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression )
 {
+	using std::min;
 	vector<RString> aBGChangeValues;
 	split( sBGChangeExpression, "=", aBGChangeValues, false );
 

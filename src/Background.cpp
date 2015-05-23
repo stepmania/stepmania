@@ -428,6 +428,7 @@ BackgroundDef BackgroundImpl::Layer::CreateRandomBGA( const Song *pSong, const R
 
 void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const BackgroundChange &change )
 {
+	using std::min;
 	int iStartRow = BeatToNoteRow(fFirstBeat);
 	int iEndRow = BeatToNoteRow(fEndBeat);
 
@@ -443,7 +444,7 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 
 
 		for(int j = std::max(ts->GetRow(),iStartRow);
-			j<min(iEndRow,iSegmentEndRow);
+			j < min(iEndRow,iSegmentEndRow);
 			j+=4*ts->GetNoteRowsPerMeasure())
 		{
 			// Don't fade. It causes frame rate dip, especially on slower machines.
@@ -497,6 +498,7 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 
 void BackgroundImpl::LoadFromSong( const Song* pSong )
 {
+	using std::min;
 	Init();
 	Unload();
 	m_pSong = pSong;

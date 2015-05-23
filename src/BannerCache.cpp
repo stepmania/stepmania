@@ -204,6 +204,7 @@ struct BannerTexture: public RageTexture
 
 	void Create()
 	{
+		using std::min;
 		ASSERT( m_pImage != NULL );
 
 		/* The image is preprocessed; do as little work as possible. */
@@ -367,6 +368,7 @@ void BannerCache::CacheBanner( RString sBannerPath )
 
 void BannerCache::CacheBannerInternal( RString sBannerPath )
 {
+	using std::min;
 	using std::max;
 	RString sError;
 	RageSurface *pImage = RageSurfaceUtils::LoadFile( sBannerPath, sError );

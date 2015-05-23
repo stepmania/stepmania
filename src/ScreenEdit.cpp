@@ -1639,6 +1639,7 @@ void ScreenEdit::EditMiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, S
 
 void ScreenEdit::Update( float fDeltaTime )
 {
+	using std::min;
 	using std::max;
 	m_PlayerStateEdit.Update( fDeltaTime );
 
@@ -2097,6 +2098,7 @@ static ThemeMetric<bool> INVERT_SCROLL_BUTTONS	( "ScreenEdit", "InvertScrollSpee
 
 bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 {
+	using std::min;
 	using std::max;
 	if( input.type == IET_RELEASE )
 	{
@@ -3289,6 +3291,7 @@ bool ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 
 void ScreenEdit::TransitionEditState( EditState em )
 {
+	using std::min;
 	using std::max;
 	EditState old = m_EditState;
 

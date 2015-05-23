@@ -325,6 +325,7 @@ void HighScoreList::Init()
 
 void HighScoreList::AddHighScore( HighScore hs, int &iIndexOut, bool bIsMachine )
 {
+	using std::min;
 	int i;
 	for( i=0; i<(int)vHighScores.size(); i++ )
 	{
@@ -389,6 +390,7 @@ XNode* HighScoreList::CreateNode() const
 
 void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 {
+	using std::min;
 	Init();
 
 	ASSERT( pHighScoreList->GetName() == "HighScoreList" );

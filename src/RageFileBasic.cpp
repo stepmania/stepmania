@@ -101,6 +101,7 @@ int RageFileObj::Seek( int offset, int whence )
 
 int RageFileObj::Read( void *pBuffer, size_t iBytes )
 {
+	using std::min;
 	int iRet = 0;
 
 	while( !m_bEOF && iBytes > 0 )
@@ -161,6 +162,7 @@ int RageFileObj::Read( void *pBuffer, size_t iBytes )
 
 int RageFileObj::Read( RString &sBuffer, int iBytes )
 {
+	using std::min;
 	sBuffer.reserve( iBytes != -1? iBytes: this->GetFileSize() );
 
 	int iRet = 0;

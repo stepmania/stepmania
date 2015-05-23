@@ -1,6 +1,5 @@
 #include "global.h"
 #include "MemoryCardDriverThreaded_MacOSX.h"
-#include "Foreach.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 
@@ -60,24 +59,25 @@ MemoryCardDriverThreaded_MacOSX::~MemoryCardDriverThreaded_MacOSX()
 
 void MemoryCardDriverThreaded_MacOSX::Unmount( UsbStorageDevice *pDevice )
 {
+	using std::min;
 #if defined(SYNC_VOLUME_FULLSYNC) && defined(SYNC_VOLUME_WAIT)
-	
+
 	if( sync_volume_np( pDevice->sOsMountDir.c_str(), SYNC_VOLUME_FULLSYNC | SYNC_VOLUME_WAIT ) != 0 )
 		LOG->Warn( "Failed to flush the memory card." );
 #else
 	ParamBlockRec pb;
 	Str255 name; // A pascal string.
 	const RString& base = Basename( pDevice->sOsMountDir );
-	
+
 	memset( &pb, 0, sizeof(pb) );
 	name[0] = min( base.length(), size_t(255) );
 	strncpy( (char *)&name[1], base, name[0] );
 	pb.volumeParam.ioNamePtr = name;
 	pb.volumeParam.ioVolIndex = -1; // Use ioNamePtr to find the volume.
-	
+
 	if( PBFlushVolSync(&pb) != noErr )
 		LOG->Warn( "Failed to flush the memory card." );
-	
+
 #endif
 }
 
@@ -90,7 +90,7 @@ bool MemoryCardDriverThreaded_MacOSX::USBStorageDevicesChanged()
 static int GetIntProperty( io_registry_entry_t entry, CFStringRef key )
 {
 	CFTypeRef t = IORegistryEntryCreateCFProperty( entry, key, NULL, 0 );
-	
+
 	if( !t )
 		return -1;
 	if( CFGetTypeID( t ) != CFNumberGetTypeID() )
@@ -99,7 +99,7 @@ static int GetIntProperty( io_registry_entry_t entry, CFStringRef key )
 		return -1;
 	}
 	int num;
-	
+
 	if( !CFNumberGetValue(CFNumberRef(t), kCFNumberIntType, &num) )
 		num = -1;
 	CFRelease( t );
@@ -109,7 +109,7 @@ static int GetIntProperty( io_registry_entry_t entry, CFStringRef key )
 static RString GetStringProperty( io_registry_entry_t entry, CFStringRef key )
 {
 	CFTypeRef t = IORegistryEntryCreateCFProperty( entry, key, NULL, 0 );
-	
+
 	if( !t )
 		return RString();
 	if( CFGetTypeID( t ) != CFStringGetTypeID() )
@@ -117,12 +117,12 @@ static RString GetStringProperty( io_registry_entry_t entry, CFStringRef key )
 		CFRelease( t );
 		return RString();
 	}
-	
+
 	CFStringRef s = CFStringRef( t );
 	RString ret;
 	const size_t len = CFStringGetMaximumSizeForEncoding( CFStringGetLength(s), kCFStringEncodingUTF8 );
 	char *buf = new char[len + 1];
-		
+
 	if( CFStringGetCString( s, buf, len + 1, kCFStringEncodingUTF8 ) )
 		ret = buf;
 	delete[] buf;
@@ -136,42 +136,42 @@ void MemoryCardDriverThreaded_MacOSX::GetUSBStorageDevices( vector<UsbStorageDev
 	// First, get all device paths
 	struct statfs *fs;
 	int num = getfsstat( NULL, 0, MNT_NOWAIT );
-	
+
 	fs = new struct statfs[num];
-	
+
 	num = getfsstat( fs, num * sizeof(struct statfs), MNT_NOWAIT );
 	ASSERT( num != -1 );
-	
+
 	for( int i = 0; i < num; ++i )
 	{
 		if( strncmp(fs[i].f_mntfromname, _PATH_DEV, strlen(_PATH_DEV)) )
 			continue;
-		
+
 		const RString& sDevicePath = fs[i].f_mntfromname;
 		const RString& sDisk = Basename( sDevicePath ); // disk#[[s#] ...]
-		
+
 		// Now that we have the disk name, look up the IOServices associated with it.
 		CFMutableDictionaryRef dict;
-		
+
 		if( !(dict = IOBSDNameMatching(kIOMasterPortDefault, 0, sDisk)) )
 			continue;
-		
+
 		// Look for certain properties: Leaf, Ejectable, Writable.
 		CFDictionarySetValue( dict, CFSTR(kIOMediaLeafKey), kCFBooleanTrue );
 		CFDictionarySetValue( dict, CFSTR(kIOMediaEjectableKey), kCFBooleanTrue );
 		CFDictionarySetValue( dict, CFSTR(kIOMediaWritableKey), kCFBooleanTrue );
-		
+
 		// Get the matching iterator. As always, this consumes a reference to dict.
 		io_iterator_t iter;
 		kern_return_t ret = IOServiceGetMatchingServices( kIOMasterPortDefault, dict, &iter );
-		
+
 		if( ret != KERN_SUCCESS || iter == 0 )
 			continue;
-		
+
 		// I'm not quite sure what it means to have two services with this device.
 		// Iterate over them all. If one contains what we want, stop.
 		io_registry_entry_t device; // This is the same as an io_object_t.
-		
+
 		while( (device = IOIteratorNext(iter)) )
 		{
 			// Look at the parent of the device until we see an IOUSBMassStorageClass
@@ -192,15 +192,15 @@ void MemoryCardDriverThreaded_MacOSX::GetUSBStorageDevices( vector<UsbStorageDev
 			}
 			if( device == MACH_PORT_NULL )
 				continue;
-			
+
 			// At this point, it is pretty safe to say that we've found a USB device.
 			vDevicesOut.push_back( UsbStorageDevice() );
 			UsbStorageDevice& usbd = vDevicesOut.back();
-			
+
 			LOG->Trace( "Found memory card at path: %s.", fs[i].f_mntonname );
 			usbd.SetOsMountDir( fs[i].f_mntonname );
 			usbd.iVolumeSizeMB = int( (uint64_t(fs[i].f_blocks) * fs[i].f_bsize) >> 20 );
-		
+
 			// Now we can get some more information from the registry tree.
 			usbd.iBus = GetIntProperty( device, CFSTR("USB Address") );
 			usbd.iPort = GetIntProperty( device, CFSTR("PortNum") );
@@ -233,7 +233,7 @@ bool MemoryCardDriverThreaded_MacOSX::TestWrite( UsbStorageDevice *pDevice )
 /*
  * (c) 2005-2006, 2008 Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -243,7 +243,7 @@ bool MemoryCardDriverThreaded_MacOSX::TestWrite( UsbStorageDevice *pDevice )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

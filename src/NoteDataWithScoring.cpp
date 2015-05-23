@@ -123,6 +123,7 @@ const TapNote &NoteDataWithScoring::LastTapNoteWithResult( const NoteData &in, u
  * taps have been hit), return TNS_None or TNS_Miss. */
 TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned row, PlayerNumber plnum )
 {
+	using std::min;
 	//LOG->Trace("Hey I'm NoteDataWithScoring::MinTapNoteScore");
 	TapNoteScore score = TNS_W1;
 	for( int t=0; t<in.GetNumTracks(); t++ )

@@ -50,6 +50,7 @@ static int g_iTotalAheadCount = 0;
 
 RageSoundMixBuffer &RageSoundDriver::MixIntoBuffer( int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame )
 {
+	using std::min;
 	ASSERT_M( m_DecodeThread.IsCreated(), "RageSoundDriver::StartDecodeThread() was never called" );
 
 	if( iFrameNumber - iCurrentFrame + iFrames > 0 )

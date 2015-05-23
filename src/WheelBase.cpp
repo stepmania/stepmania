@@ -196,7 +196,7 @@ void WheelBase::Update( float fDeltaTime )
 		float fTime = fDeltaTime;
 		while( fTime > 0 )
 		{
-			float t = min( fTime, 0.1f );
+			float t = std::min( fTime, 0.1f );
 			fTime -= t;
 
 			m_fPositionOffsetFromSelection = clamp( m_fPositionOffsetFromSelection, -0.3f, +0.3f );

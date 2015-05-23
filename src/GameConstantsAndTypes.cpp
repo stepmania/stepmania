@@ -379,7 +379,7 @@ float DisplayBpms::GetMin() const
 	{
 		if( f != -1 )
 		{
-			fMin = min( fMin, f );
+			fMin = std::min( fMin, f );
 		}
 	}
 	if( fMin == FLT_MAX )

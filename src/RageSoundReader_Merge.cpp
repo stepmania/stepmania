@@ -176,6 +176,7 @@ static const int ERROR_CORRECTION_THRESHOLD = 16;
  * sounds; a sound may be needed by more than one other sound. */
 int RageSoundReader_Merge::Read( float *pBuffer, int iFrames )
 {
+	using std::min;
 	if( m_aSounds.empty() )
 		return END_OF_FILE;
 

@@ -370,6 +370,7 @@ void PlayerStageStats::ResetScoreForLesson()
 void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 {
 	using std::max;
+	using std::min;
 	// Don't save life stats in endless courses, or could run OOM in a few hours.
 	if( GAMESTATE->m_pCurCourse && GAMESTATE->m_pCurCourse->IsEndless() )
 		return;
@@ -490,6 +491,7 @@ float PlayerStageStats::GetCurrentLife() const
  * record the amount of the first combo that comes from the previous song. */
 void PlayerStageStats::UpdateComboList( float fSecond, bool bRollover )
 {
+	using std::min;
 	using std::max;
 	// Don't save combo stats in endless courses, or could run OOM in a few hours.
 	if( GAMESTATE->m_pCurCourse && GAMESTATE->m_pCurCourse->IsEndless() )
@@ -783,7 +785,7 @@ public:
 	static int GetPlayedSteps( T* p, lua_State *L )
 	{
 		lua_newtable(L);
-		for( int i = 0; i < (int) min(p->m_iStepsPlayed, (int) p->m_vpPossibleSteps.size()); ++i )
+		for( int i = 0; i < (int) std::min(p->m_iStepsPlayed, (int) p->m_vpPossibleSteps.size()); ++i )
 		{
 			p->m_vpPossibleSteps[i]->PushSelf(L);
 			lua_rawseti( L, -2, i+1 );

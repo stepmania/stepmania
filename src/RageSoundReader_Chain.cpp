@@ -300,6 +300,7 @@ float RageSoundReader_Chain::GetStreamToSourceRatio() const
  * sounds; a sound may be needed by more than one other sound. */
 int RageSoundReader_Chain::Read( float *pBuffer, int iFrames )
 {
+	using std::min;
 	while( m_iNextSound < m_aSounds.size() && m_iCurrentFrame == m_aSounds[m_iNextSound].GetOffsetFrame(m_iActualSampleRate) )
 	{
 		Sound *pSound = &m_aSounds[m_iNextSound];

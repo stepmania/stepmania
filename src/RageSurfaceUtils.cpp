@@ -649,6 +649,7 @@ static bool blit_generic( const RageSurface *src_surf, const RageSurface *dst_su
 // Blit src onto dst.
 void RageSurfaceUtils::Blit( const RageSurface *src, RageSurface *dst, int width, int height )
 {
+	using std::min;
 	if( width == -1 )
 		width = src->w;
 	if( height == -1 )
@@ -836,6 +837,7 @@ RageSurface *RageSurfaceUtils::LoadSurface( RString file )
  * This gives us a generic way to handle arbitrary 8-bit texture formats. */
 RageSurface *RageSurfaceUtils::PalettizeToGrayscale( const RageSurface *src_surf, int GrayBits, int AlphaBits )
 {
+	using std::min;
 	AlphaBits = min( AlphaBits, 8-src_surf->format->Loss[3] );
 
 	const int TotalBits = GrayBits + AlphaBits;

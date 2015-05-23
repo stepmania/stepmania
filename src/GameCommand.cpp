@@ -494,6 +494,7 @@ void GameCommand::LoadOne( const Command& cmd )
 
 int GetNumCreditsPaid()
 {
+	using std::min;
 	int iNumCreditsPaid = GAMESTATE->GetNumSidesJoined();
 
 	// players other than the first joined for free

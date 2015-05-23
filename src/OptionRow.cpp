@@ -531,6 +531,7 @@ void OptionRow::PositionIcons( PlayerNumber pn )
 // This is called when the focus changes, to update "long row" text.
 void OptionRow::UpdateText( PlayerNumber p )
 {
+	using std::min;
 	switch( m_pHand->m_Def.m_layoutType )
 	{
 		case LAYOUT_SHOW_ONE_IN_ROW:
@@ -543,7 +544,7 @@ void OptionRow::UpdateText( PlayerNumber p )
 			RString sText = GetThemedItemText( iChoiceWithFocus );
 
 			// If player_no is 2 and there is no player 1:
-			int index = min( pn, m_textItems.size()-1 );
+			int index = min( pn, static_cast<unsigned int>(m_textItems.size()-1) );
 
 			// TODO: Always have one textItem for each player
 
@@ -571,6 +572,7 @@ void OptionRow::SetDestination( Actor::TweenState &ts, bool bTween )
 
 void OptionRow::UpdateEnabledDisabled()
 {
+	using std::min;
 	bool bThisRowHasFocusByAny = false;
 	FOREACH_HumanPlayer( p )
 	{
@@ -647,7 +649,7 @@ void OptionRow::UpdateEnabledDisabled()
 			unsigned item_no = m_pHand->m_Def.m_bOneChoiceForAllPlayers ? 0 : pn;
 
 			// If player_no is 2 and there is no player 1:
-			item_no = min( item_no, m_textItems.size()-1 );
+			item_no = min( item_no, static_cast<unsigned int>(m_textItems.size()-1) );
 
 			BitmapText &bt = *m_textItems[item_no];
 

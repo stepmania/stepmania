@@ -72,7 +72,7 @@ BGAnimationLayer::~BGAnimationLayer()
 
 void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 {
-	/* Generic BGAs are new.  Animation directories with no INI are old and obsolete. 
+	/* Generic BGAs are new.  Animation directories with no INI are old and obsolete.
 	 * Don't combine them. */
 	RString lcPath = sPath;
 	lcPath.MakeLower();
@@ -227,7 +227,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 			int iSpriteArea = int( s.GetUnzoomedWidth()*s.GetUnzoomedHeight() );
 			const int iMaxArea = int(SCREEN_WIDTH*SCREEN_HEIGHT);
 			int iNumParticles = iMaxArea / iSpriteArea;
-			iNumParticles = min( iNumParticles, MAX_SPRITES );
+			iNumParticles = std::min( iNumParticles, MAX_SPRITES );
 
 			for( int i=0; i<iNumParticles; i++ )
 			{
@@ -292,9 +292,9 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 			Sprite s;
 			s.Load( ID );
 			m_iNumTilesWide = 2+int(SCREEN_WIDTH /s.GetUnzoomedWidth());
-			m_iNumTilesWide = min( m_iNumTilesWide, MAX_TILES_WIDE );
+			m_iNumTilesWide = std::min( m_iNumTilesWide, MAX_TILES_WIDE );
 			m_iNumTilesHigh = 2+int(SCREEN_HEIGHT/s.GetUnzoomedHeight());
-			m_iNumTilesHigh = min( m_iNumTilesHigh, MAX_TILES_HIGH );
+			m_iNumTilesHigh = std::min( m_iNumTilesHigh, MAX_TILES_HIGH );
 			m_fTilesStartX = s.GetUnzoomedWidth() / 2;
 			m_fTilesStartY = s.GetUnzoomedHeight() / 2;
 			m_fTilesSpacingX = s.GetUnzoomedWidth();
@@ -404,16 +404,16 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 		}
 		else if( StringToInt(type) == 1 )
 		{
-			m_Type = TYPE_SPRITE; 
-			bStretch = true; 
+			m_Type = TYPE_SPRITE;
+			bStretch = true;
 		}
 		else if( StringToInt(type) == 2 )
 		{
-			m_Type = TYPE_PARTICLES; 
+			m_Type = TYPE_PARTICLES;
 		}
 		else if( StringToInt(type) == 3 )
 		{
-			m_Type = TYPE_TILES; 
+			m_Type = TYPE_TILES;
 		}
 		else
 		{
@@ -488,7 +488,7 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 				pActor->SetXY( randomf(float(FullScreenRectF.left),float(FullScreenRectF.right)),
 							   randomf(float(FullScreenRectF.top),float(FullScreenRectF.bottom)) );
 				pActor->SetZoom( randomf(fZoomMin,fZoomMax) );
-				m_vParticleVelocity.push_back( RageVector3( 
+				m_vParticleVelocity.push_back( RageVector3(
 					randomf(fVelocityXMin,fVelocityXMax),
 					randomf(fVelocityYMin,fVelocityYMax),
 					randomf(fVelocityZMin,fVelocityZMax) ) );
@@ -573,28 +573,28 @@ void BGAnimationLayer::UpdateInternal( float fDeltaTime )
 			pActor->SetZ( pActor->GetZ() + fDeltaTime*vel.z  );
 			if( m_bParticlesBounce )
 			{
-				if( HitGuardRailLeft(pActor) )	
+				if( HitGuardRailLeft(pActor) )
 				{
 					vel.x *= -1;
 					pActor->SetX( GetGuardRailLeft(pActor) );
 				}
-				if( HitGuardRailRight(pActor) )	
+				if( HitGuardRailRight(pActor) )
 				{
 					vel.x *= -1;
 					pActor->SetX( GetGuardRailRight(pActor) );
 				}
-				if( HitGuardRailTop(pActor) )	
+				if( HitGuardRailTop(pActor) )
 				{
 					vel.y *= -1;
 					pActor->SetY( GetGuardRailTop(pActor) );
 				}
-				if( HitGuardRailBottom(pActor) )	
+				if( HitGuardRailBottom(pActor) )
 				{
 					vel.y *= -1;
 					pActor->SetY( GetGuardRailBottom(pActor) );
 				}
 			}
-			else // !m_bParticlesBounce 
+			else // !m_bParticlesBounce
 			{
 				if( vel.x<0  &&  IsOffScreenLeft(pActor) )
 					pActor->SetX( GetOffScreenRight(pActor) );
@@ -650,7 +650,7 @@ void BGAnimationLayer::UpdateInternal( float fDeltaTime )
 /*
  * (c) 2001-2004 Ben Nordstrom, Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -660,7 +660,7 @@ void BGAnimationLayer::UpdateInternal( float fDeltaTime )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -57,6 +57,7 @@ int RageSoundReader_Extend::GetEndFrame() const
 int RageSoundReader_Extend::GetData( float *pBuffer, int iFrames )
 {
 	using std::max;
+	using std::min;
 	int iFramesToRead = iFrames;
 	if( m_iLengthFrames != -1 )
 	{

@@ -472,6 +472,7 @@ void NoteDataUtil::SplitCompositeNoteData( const NoteData &in, vector<NoteData> 
 
 void NoteDataUtil::CombineCompositeNoteData( NoteData &out, const vector<NoteData> &in )
 {
+	using std::min;
 	for (auto &nd: in)
 	{
 		const int iMaxTracks = min( out.GetNumTracks(), nd.GetNumTracks() );
@@ -2078,6 +2079,7 @@ void NoteDataUtil::InsertIntelligentTaps(
 	ASSERT( iInsertOffsetRows <= iWindowSizeRows );
 	ASSERT( iWindowSizeRows <= iWindowStrideRows );
 
+	using std::min;
 	bool bRequireNoteAtBeginningOfWindow = !bSkippy;
 	bool bRequireNoteAtEndOfWindow = true;
 
@@ -2276,6 +2278,7 @@ void NoteDataUtil::AddMines( NoteData &inout, int iStartIndex, int iEndIndex )
 
 void NoteDataUtil::Echo( NoteData &inout, int iStartIndex, int iEndIndex )
 {
+	using std::min;
 	// add 8th note tap "echos" after all taps
 	int iEchoTrack = -1;
 
@@ -2946,6 +2949,7 @@ bool NoteDataUtil::AnyTapsAndHoldsInTrackRange( const NoteData& in, int iTrack, 
 /* Find the next row that either starts a TapNote, or ends a previous one. */
 bool NoteDataUtil::GetNextEditorPosition( const NoteData& in, int &rowInOut )
 {
+	using std::min;
 	int iOriginalRow = rowInOut;
 	bool bAnyHaveNextNote = in.GetNextTapNoteRowForAllTracks( rowInOut );
 

@@ -109,7 +109,7 @@ void Style::GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut 
 	fMaxXOut = FLT_MIN;
 	for( int i=0; i<m_iColsPerPlayer; i++ )
 	{
-		fMixXOut = min( fMixXOut, m_ColumnInfo[pn][i].fXOffset );
+		fMixXOut = std::min( fMixXOut, m_ColumnInfo[pn][i].fXOffset );
 		fMaxXOut = std::max( fMaxXOut, m_ColumnInfo[pn][i].fXOffset );
 	}
 }
