@@ -476,11 +476,12 @@ void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
 static bool PointsToValidCall( vm_address_t start, const void *ptr )
 {
 	using std::min;
-	const char *buf = (const char *) ptr;
-
+	const char *buf = reinterpret_cast<char const *>(ptr);
+ 
 	/* We're reading buf backwards, between buf[-7] and buf[-1].  Find out how
 	* far we can read. */
-	const int len = min( intptr_t(ptr)-start, 7U );
+	auto check = intptr_t(ptr) - start;
+	const int len = min( check, 7ul );
 
 	// Permissible CALL sequences that we care about:
 	//
