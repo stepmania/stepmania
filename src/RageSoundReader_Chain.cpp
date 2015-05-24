@@ -9,6 +9,8 @@
 #include "RageSoundMixBuffer.h"
 #include "RageSoundUtil.h"
 
+using std::vector;
+
 /*
  * Keyed sounds should pass this object to SoundReader_Preload, to preprocess it.
  * Streaming more than two or three sounds is too expensive (keyed games can play

@@ -11,6 +11,8 @@
 #include "CharacterManager.h"
 #include "OptionRowHandler.h"
 
+using std::vector;
+
 enum EditProfileRow
 {
 	ROW_CHARACTER,

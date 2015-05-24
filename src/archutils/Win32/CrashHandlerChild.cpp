@@ -34,6 +34,9 @@
 // XXX: What happens when we *don't* have version info? Does that ever actually happen?
 #include "ver.h"
 
+using std::vector;
+using std::string;
+
 // VDI symbol lookup:
 namespace VDDebugInfo
 {

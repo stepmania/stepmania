@@ -12,6 +12,8 @@
 #include "archutils/win32/GotoURL.h"
 #include "archutils/Win32/RegistryAccess.h"
 
+using std::vector;
+
 static HANDLE g_hInstanceMutex;
 static bool g_bIsMultipleInstance = false;
 

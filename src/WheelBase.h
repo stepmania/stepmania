@@ -16,8 +16,8 @@
 
 enum WheelState {
 	STATE_SELECTING,
-	STATE_FLYING_OFF_BEFORE_NEXT_SORT, 
-	STATE_FLYING_ON_AFTER_NEXT_SORT, 
+	STATE_FLYING_OFF_BEFORE_NEXT_SORT,
+	STATE_FLYING_ON_AFTER_NEXT_SORT,
 	STATE_ROULETTE_SPINNING,
 	STATE_ROULETTE_SLOWING_DOWN,
 	STATE_RANDOM_SPINNING,
@@ -86,10 +86,10 @@ protected:
 	ScrollBar	m_ScrollBar;
 	AutoActor	m_sprHighlight;
 
-	vector<WheelItemBaseData *> m_CurWheelItemData;
-	vector<WheelItemBase *> m_WheelBaseItems;
+	std::vector<WheelItemBaseData *> m_CurWheelItemData;
+	std::vector<WheelItemBase *> m_WheelBaseItems;
 	WheelItemBaseData* m_LastSelection;
-	
+
 	bool		m_bEmpty;
 	int		m_iSelection;		// index into m_CurWheelItemBaseData
 	RString		m_sExpandedSectionName;
@@ -127,7 +127,7 @@ protected:
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez, Glenn Maynard, Josh Allen
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -137,7 +137,7 @@ protected:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

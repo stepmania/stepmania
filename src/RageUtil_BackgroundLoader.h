@@ -47,7 +47,7 @@ private:
 	 * while doing expensive operations, like reading files. */
 	RageMutex m_Mutex;
 
-	vector<RString> m_CacheRequests;
+	std::vector<RString> m_CacheRequests;
 
 	/* Filename to number of completed requests */
 	std::map<RString,int> m_FinishedRequests;

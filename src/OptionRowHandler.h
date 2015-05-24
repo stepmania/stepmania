@@ -43,7 +43,7 @@ struct OptionRowDefinition
 	bool m_bOneChoiceForAllPlayers;
 	SelectType m_selectType;
 	LayoutType m_layoutType;
-	vector<RString> m_vsChoices;
+	std::vector<RString> m_vsChoices;
 	std::set<PlayerNumber> m_vEnabledForPlayers;	// only players in this set may change focus to this row
 	int m_iDefault;
 	bool	m_bExportOnChange;
@@ -141,7 +141,7 @@ class OptionRowHandler
 {
 public:
 	OptionRowDefinition m_Def;
-	vector<RString> m_vsReloadRowMessages;	// refresh this row on on these messages
+	std::vector<RString> m_vsReloadRowMessages;	// refresh this row on on these messages
 
 	OptionRowHandler(): m_Def(), m_vsReloadRowMessages() { }
 	virtual ~OptionRowHandler() { }
@@ -173,9 +173,9 @@ public:
 	virtual ReloadChanged Reload() { return RELOAD_CHANGED_NONE; }
 
 	virtual int GetDefaultOption() const { return -1; }
-	virtual void ImportOption( OptionRow *, const vector<PlayerNumber> &, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const { }
+	virtual void ImportOption( OptionRow *, const std::vector<PlayerNumber> &, std::vector<bool> vbSelectedOut[NUM_PLAYERS] ) const { }
 	// Returns an OPT mask.
-	virtual int ExportOption( const vector<PlayerNumber> &, const vector<bool> vbSelected[NUM_PLAYERS] ) const { return 0; }
+	virtual int ExportOption( const std::vector<PlayerNumber> &, const std::vector<bool> vbSelected[NUM_PLAYERS] ) const { return 0; }
 	virtual void GetIconTextAndGameCommand( int iFirstSelection, RString &sIconTextOut, GameCommand &gcOut ) const;
 	virtual RString GetScreen( int /* iChoice */ ) const { return RString(); }
 	// Exists so that a lua function can act on the selection.  Returns true if the choices should be reloaded.
@@ -190,11 +190,11 @@ namespace OptionRowHandlerUtil
 	OptionRowHandler* MakeNull();
 	OptionRowHandler* MakeSimple( const MenuRowDef &mrd );
 
-	void SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut );
-	int GetOneSelection( const vector<bool> &vbSelected );
+	void SelectExactlyOne( int iSelection, std::vector<bool> &vbSelectedOut );
+	int GetOneSelection( const std::vector<bool> &vbSelected );
 }
 
-inline void VerifySelected(SelectType st, vector<bool> &selected, const RString &sName)
+inline void VerifySelected(SelectType st, std::vector<bool> &selected, const RString &sName)
 {
 	int num_selected = 0;
 	if( st == SELECT_ONE )

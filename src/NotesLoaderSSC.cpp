@@ -14,6 +14,8 @@
 #include "Attack.h"
 #include "PrefsManager.h"
 
+using std::vector;
+
 // Everything from this line to the creation of parser_helper exists to
 // speed up parsing by allowing the use of std::map.  All these functions
 // are put into a map of function pointers which is used when loading.

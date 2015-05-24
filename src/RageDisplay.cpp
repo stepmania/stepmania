@@ -15,6 +15,8 @@
 #include "DisplayResolutions.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
+using std::vector;
+
 // Statistics stuff
 RageTimer	g_LastCheckTimer;
 int		g_iNumVerts;

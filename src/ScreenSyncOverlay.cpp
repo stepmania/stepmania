@@ -11,6 +11,8 @@
 #include "AdjustSync.h"
 #include "ActorUtil.h"
 
+using std::vector;
+
 static bool IsGameplay()
 {
 	return SCREENMAN && SCREENMAN->GetTopScreen() && SCREENMAN->GetTopScreen()->GetScreenType() == gameplay;

@@ -9,6 +9,8 @@
 #include "RageLog.h"
 #include "TimingData.h"
 
+using std::vector;
+
 namespace
 {
 

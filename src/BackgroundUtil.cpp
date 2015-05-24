@@ -9,6 +9,7 @@
 #include "RageFileManager.h"
 #include "ActorUtil.h"
 
+using std::vector;
 
 bool BackgroundDef::operator<( const BackgroundDef &other ) const
 {

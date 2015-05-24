@@ -42,6 +42,8 @@
 #include <limits.h>
 #include <set>
 
+using std::vector;
+
 class RageSoundReader_Split;
 
 /* This class is refcounted, freed when all RageSoundReader_Split and RageSoundSplitter
@@ -135,6 +137,7 @@ bool RageSoundReader_Split::SetProperty( const RString &sProperty, float fValue 
 
 int RageSoundReader_Split::Read( float *pBuf, int iFrames )
 {
+	using std::min;
 	m_iRequestFrames = iFrames;
 	int iRet = m_pImpl->ReadBuffer();
 

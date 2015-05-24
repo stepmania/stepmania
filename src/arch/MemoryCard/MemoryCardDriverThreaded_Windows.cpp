@@ -6,6 +6,8 @@
 #include "PlayerNumber.h"
 #include "MemoryCardManager.h"
 
+using std::vector;
+
 MemoryCardDriverThreaded_Windows::MemoryCardDriverThreaded_Windows()
 {
 	m_dwLastLogicalDrives = 0;

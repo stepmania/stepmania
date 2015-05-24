@@ -22,6 +22,8 @@
 #include "RageTimer.h"
 #include "RageInput.h"
 
+using std::vector;
+
 static RageTimer g_GameplayTimer;
 
 static Preference<bool> g_bNeverBoostAppPriority( "NeverBoostAppPriority", false );
@@ -78,7 +80,7 @@ static bool ChangeAppPri()
 			INPUTMAN->GetDevicesAndDescriptions(vDevices);
 			for (auto const &d: vDevices)
 			{
-				if( d.sDesc.find("NTPAD") != string::npos )
+				if( d.sDesc.find("NTPAD") != std::string::npos )
 				{
 					LOG->Trace( "Using NTPAD.  Don't boost priority." );
 					return false;

@@ -12,6 +12,8 @@
 
 #include <numeric>
 
+using std::vector;
+
 /* Arcade:	for the current stage (one song).
  * Nonstop/Oni/Endless:	 for current course (which usually contains multiple songs)
  */

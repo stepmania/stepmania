@@ -9,6 +9,8 @@
 #include "OptionRowHandler.h"
 #include "PrefsManager.h"
 
+using std::vector;
+
 void PrepareToLoadScreen( const RString &sScreenName );
 void FinishedLoadingScreen();
 

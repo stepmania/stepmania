@@ -10,6 +10,8 @@
 #include "ActorUtil.h"
 #include "LuaBinding.h"
 
+using std::vector;
+
 REGISTER_ACTOR_CLASS( BitmapText );
 
 /* XXX:
@@ -281,7 +283,7 @@ void BitmapText::BuildChars()
 	{
 		iY += m_pFont->GetHeight();
 
-		wstring sLine = m_wTextLines[i];
+		std::wstring sLine = m_wTextLines[i];
 		if( m_pFont->IsRightToLeft() )
 			reverse( sLine.begin(), sLine.end() );
 		const int iLineWidth = m_iLineWidths[i];
@@ -628,7 +630,7 @@ void BitmapText::CropLineToWidth(size_t l, int width)
 	if(l < m_wTextLines.size())
 	{
 		int used_width= width;
-		wstring& line= m_wTextLines[l];
+		std::wstring& line= m_wTextLines[l];
 		int fit= m_pFont->GetGlyphsThatFit(line, &used_width);
 		if(fit < line.size())
 		{

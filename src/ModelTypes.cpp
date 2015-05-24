@@ -43,7 +43,7 @@ void AnimatedTexture::Load( const RString &sTexOrIniPath )
 	ASSERT( vFrames.empty() );	// don't load more than once
 
 	m_bSphereMapped = sTexOrIniPath.find("sphere") != RString::npos;
-	if( sTexOrIniPath.find("add") != string::npos )
+	if( sTexOrIniPath.find("add") != std::string::npos )
 		m_BlendMode = BLEND_ADD;
 	else
 		m_BlendMode = BLEND_NORMAL;

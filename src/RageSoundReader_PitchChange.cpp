@@ -1,5 +1,5 @@
 /*
- * Implements properties: 
+ * Implements properties:
  *   "Speed" - cause the sound to play faster or slower
  *   "Pitch" - raise or lower the pitch of the sound
  *

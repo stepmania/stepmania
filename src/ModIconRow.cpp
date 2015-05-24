@@ -12,6 +12,8 @@
 #include "XmlFile.h"
 #include "LuaManager.h"
 
+using std::vector;
+
 int OptionToPreferredColumn( RString sOptionText );
 
 REGISTER_ACTOR_CLASS( ModIconRow );

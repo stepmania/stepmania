@@ -155,9 +155,12 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 	Effect effect = EFFECT_CENTER;
 
 	for( int i=0; i<NUM_EFFECTS; i++ )
-		if( lcPath.find(EFFECT_STRING[i]) != string::npos )
+	{
+		if( lcPath.find(EFFECT_STRING[i]) != std::string::npos )
+		{
 			effect = (Effect)i;
-
+		}
+	}
 	switch( effect )
 	{
 	case EFFECT_CENTER:

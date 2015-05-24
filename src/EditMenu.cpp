@@ -13,6 +13,8 @@
 #include "UnlockManager.h"
 #include "SongUtil.h"
 
+using std::vector;
+
 static const char *EditMenuRowNames[] = {
 	"Group",
 	"Song",

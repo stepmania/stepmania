@@ -15,6 +15,8 @@
 #include "RageLog.h"
 #include "RageFileBasic.h"
 
+using std::vector;
+
 namespace
 {
 	/* pBuf contains iSamples 8-bit samples; convert to 16-bit.  pBuf must

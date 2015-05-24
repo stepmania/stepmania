@@ -18,6 +18,8 @@
 #include "SongUtil.h"
 #include "LuaManager.h"
 
+using std::vector;
+
 GameSoundManager *SOUND = NULL;
 
 /*

@@ -11,6 +11,8 @@
 #include "Song.h"
 #include "XmlFile.h"
 
+using std::vector;
+
 //#define DIVIDE_LINE_WIDTH			THEME->GetMetricI(m_sName,"TexturedBottomHalf")
 REGISTER_ACTOR_CLASS( GraphDisplay );
 

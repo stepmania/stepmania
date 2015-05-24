@@ -6,6 +6,8 @@
 #include "RageLog.h"
 #include "UnlockManager.h"
 
+using std::vector;
+
 RString COLUMN_DIFFICULTY_NAME( size_t i );
 RString COLUMN_STEPS_TYPE_NAME( size_t i );
 

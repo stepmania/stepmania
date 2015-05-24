@@ -4,6 +4,8 @@
 #include "RageLog.h"
 #include "ProfileManager.h"
 
+using std::vector;
+
 static const RString TEMP_MOUNT_POINT = "/@mctemptimeout/";
 
 bool UsbStorageDevice::operator==(const UsbStorageDevice& other) const

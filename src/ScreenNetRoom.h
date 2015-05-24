@@ -47,11 +47,11 @@ private:
 
 	RageSound m_soundChangeSel;
 
-	vector < BitmapText > m_RoomList;
-	vector < RoomData > m_Rooms;
+	std::vector<BitmapText> m_RoomList;
+	std::vector<RoomData> m_Rooms;
 	int m_iRoomPlace;
 
-	string m_sLastPickedRoom;
+	std::string m_sLastPickedRoom;
 
 	RString m_newRoomName, m_newRoomDesc, m_newRoomPass;
 
@@ -73,7 +73,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

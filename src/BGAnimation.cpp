@@ -7,6 +7,8 @@
 #include "LuaManager.h"
 #include "PrefsManager.h"
 
+using std::vector;
+
 REGISTER_ACTOR_CLASS(BGAnimation);
 
 BGAnimation::BGAnimation()

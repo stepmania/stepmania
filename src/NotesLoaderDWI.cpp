@@ -14,6 +14,8 @@
 
 #include <map>
 
+using std::vector;
+
 Difficulty DwiCompatibleStringToDifficulty( const RString& sDC );
 
 static std::map<int,int> g_mapDanceNoteToNoteDataColumn;

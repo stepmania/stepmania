@@ -10,6 +10,8 @@
 #include "PlayerNumber.h"
 #include <float.h>
 
+using std::vector;
+
 RString StepsTypeToString( StepsType st );
 
 static vector<RString> GenerateRankingToFillInMarker()

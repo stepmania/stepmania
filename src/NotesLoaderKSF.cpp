@@ -9,6 +9,9 @@
 #include "Song.h"
 #include "Steps.h"
 
+using std::vector;
+using std::string;
+
 static void HandleBunki( TimingData &timing, const float fEarlyBPM,
 			const float fCurBPM, const float fGap,
 			const float fPos )

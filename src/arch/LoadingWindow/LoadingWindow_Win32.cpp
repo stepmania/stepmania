@@ -17,6 +17,9 @@
 #include "LocalizedString.h"
 
 #include "RageSurfaceUtils_Zoom.h"
+
+using std::vector;
+
 static HBITMAP g_hBitmap = NULL;
 
 /* Load a RageSurface into a GDI surface. */

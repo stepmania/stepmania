@@ -30,6 +30,9 @@
 #include <math.h>
 #include <list>
 
+using std::list;
+using std::vector;
+
 RString GetErrorString( HRESULT hr )
 {
 	return DXGetErrorString(hr);
@@ -53,7 +56,7 @@ const D3DFORMAT g_DefaultAdapterFormat = D3DFMT_X8R8G8B8;
  * palette into a slot. We need to keep track of which texture's palette is
  * stored in what slot. */
 std::map<unsigned,int>		g_TexResourceToPaletteIndex;
-list<int>			g_PaletteIndex;
+std::list<int>			g_PaletteIndex;
 struct TexturePalette { PALETTEENTRY p[256]; };
 std::map<unsigned,TexturePalette>	g_TexResourceToTexturePalette;
 

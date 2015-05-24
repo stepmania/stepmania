@@ -6,6 +6,8 @@
 #include "PlayerOptions.h"
 #include "PlayerState.h"
 
+using std::vector;
+
 void Attack::GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBeat ) const
 {
 	ASSERT( pSong != NULL );

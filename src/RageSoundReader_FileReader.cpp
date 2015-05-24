@@ -17,6 +17,8 @@
 #include "RageSoundReader_Vorbisfile.h"
 #endif
 
+using std::vector;
+
 RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBasic *pFile, RString &error, RString format, bool &bKeepTrying )
 {
 	RageSoundReader_FileReader *Sample = NULL;

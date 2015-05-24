@@ -48,7 +48,7 @@ struct Attack
 		bool bShowInAttackList_ = true ):
 		level(level_), fStartSecond(fStartSecond_),
 		fSecsRemaining(fSecsRemaining_), sModifiers(sModifiers_),
-		bOn(bOn_), bGlobal(bGlobal_), 
+		bOn(bOn_), bGlobal(bGlobal_),
 		bShowInAttackList(bShowInAttackList_) {}
 
 	void GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBeat ) const;
@@ -65,22 +65,22 @@ struct Attack
 	bool ContainsTransformOrTurn() const;
 	static Attack FromGlobalCourseModifier( const RString &sModifiers );
 	RString GetTextDescription() const;
-	
+
 	int GetNumAttacks() const;
 };
 
-struct AttackArray : public vector<Attack>
+struct AttackArray : public std::vector<Attack>
 {
 	/**
 	 * @brief Determine if the list of attacks contains a transform or turn mod.
 	 * @return true if it does, or false otherwise. */
 	bool ContainsTransformOrTurn() const;
-	
+
 	/**
 	 * @brief Return a string representation used for simfiles.
 	 * @return the string representation. */
-	vector<RString> ToVectorString() const;
-	
+	std::vector<RString> ToVectorString() const;
+
 	/**
 	 * @brief Adjust the starting time of all attacks.
 	 * @param delta the amount to change. */
@@ -94,7 +94,7 @@ struct AttackArray : public vector<Attack>
  * @author Chris Danford (c) 2003-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -104,7 +104,7 @@ struct AttackArray : public vector<Attack>
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

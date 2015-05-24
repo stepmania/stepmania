@@ -16,6 +16,8 @@
 #include <sys/stat.h>
 #include <linux/input.h>
 
+using std::vector;
+
 REGISTER_INPUT_HANDLER_CLASS2( LinuxEvent, Linux_Event );
 static Preference<bool> g_bAxisFix( "AxisFix", false );
 

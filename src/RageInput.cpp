@@ -6,6 +6,8 @@
 #include "LuaManager.h"
 #include "LocalizedString.h"
 
+using std::vector;
+
 RageInput* INPUTMAN = NULL; // global and accessible from anywhere in our program
 
 Preference<RString> g_sInputDrivers( "InputDrivers", "" ); // "" == DEFAULT_INPUT_DRIVER_LIST

@@ -9,6 +9,8 @@
 
 #include <algorithm>
 
+using std::vector;
+
 ThemeMetric<RString> EMPTY_NAME("HighScore","EmptyName");
 
 

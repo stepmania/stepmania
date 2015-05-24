@@ -70,8 +70,8 @@ public:
 	float GetLevel( const DeviceInput &di, const DeviceInputList *pButtonState = NULL ) const;
 	RString GetButtonComment( const DeviceInput &di ) const;
 
-	void GetInputEvents( vector<InputEvent> &aEventOut );
-	void GetPressedButtons( vector<DeviceInput> &array ) const;
+	void GetInputEvents( std::vector<InputEvent> &aEventOut );
+	void GetPressedButtons( std::vector<DeviceInput> &array ) const;
 
 	// cursor
 	void UpdateCursorLocation(float _fX, float _fY);
@@ -86,9 +86,9 @@ public:
 private:
 	void CheckButtonChange( ButtonState &bs, DeviceInput di, const RageTimer &now );
 	void ReportButtonChange( const DeviceInput &di, InputEventType t );
-	void MakeButtonStateList( vector<DeviceInput> &aInputOut ) const;
+	void MakeButtonStateList( std::vector<DeviceInput> &aInputOut ) const;
 
-	vector<InputEvent> queue;
+	std::vector<InputEvent> queue;
 	RageMutex *queuemutex;
 	MouseCoordinates m_MouseCoords;
 
@@ -103,7 +103,7 @@ extern InputFilter*	INPUTFILTER;	// global and accessible from anywhere in our p
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -113,7 +113,7 @@ extern InputFilter*	INPUTFILTER;	// global and accessible from anywhere in our p
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

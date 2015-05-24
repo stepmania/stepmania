@@ -13,6 +13,8 @@
 
 #include <limits.h>
 
+using std::vector;
+
 REGISTER_ACTOR_CLASS( BPMDisplay );
 
 BPMDisplay::BPMDisplay()

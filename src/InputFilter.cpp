@@ -14,6 +14,8 @@
 
 #include <set>
 
+using std::vector;
+
 static const char *InputEventTypeNames[] = {
 	"FirstPress",
 	"Repeat",

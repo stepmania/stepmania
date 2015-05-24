@@ -27,11 +27,11 @@ struct BackgroundDef
 	RString m_sColor2;	// "" == use default
 
 	XNode *CreateNode() const;
-	
+
 	/** @brief Set up the BackgroundDef with default values. */
 	BackgroundDef(): m_sEffect(""), m_sFile1(""), m_sFile2(""),
 		m_sColor1(""), m_sColor2("") {}
-	
+
 	/**
 	 * @brief Set up the BackgroundDef with some defined values.
 	 * @param effect the intended effect.
@@ -47,11 +47,11 @@ struct BackgroundChange
 	BackgroundChange(): m_def(), m_fStartBeat(-1), m_fRate(1),
 		m_sTransition("") {}
 
-	BackgroundChange( 
-		float s, 
+	BackgroundChange(
+		float s,
 		RString f1,
 		RString f2=RString(),
-		float r=1.f, 
+		float r=1.f,
 		RString e=SBE_Centered,
 		RString t=RString()
 			 ):
@@ -64,7 +64,7 @@ struct BackgroundChange
 	RString m_sTransition;
 
 	RString GetTextDescription() const;
-	
+
 	/**
 	 * @brief Get the string representation of the change.
 	 * @return the string representation. */
@@ -73,17 +73,17 @@ struct BackgroundChange
 /** @brief Shared background-related routines. */
 namespace BackgroundUtil
 {
-	void AddBackgroundChange( vector<BackgroundChange> &vBackgroundChanges, BackgroundChange seg );
-	void SortBackgroundChangesArray( vector<BackgroundChange> &vBackgroundChanges );
-	
-	void GetBackgroundEffects(	const RString &sName, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
-	void GetBackgroundTransitions(	const RString &sName, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
+	void AddBackgroundChange( std::vector<BackgroundChange> &vBackgroundChanges, BackgroundChange seg );
+	void SortBackgroundChangesArray( std::vector<BackgroundChange> &vBackgroundChanges );
 
-	void GetSongBGAnimations(	const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
-	void GetSongMovies(		const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
-	void GetSongBitmaps(		const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
-	void GetGlobalBGAnimations(	const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
-	void GetGlobalRandomMovies(	const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut, bool bTryInsideOfSongGroupAndGenreFirst = true, bool bTryInsideOfSongGroupFirst = true );
+	void GetBackgroundEffects(	const RString &sName, std::vector<RString> &vsPathsOut, std::vector<RString> &vsNamesOut );
+	void GetBackgroundTransitions(	const RString &sName, std::vector<RString> &vsPathsOut, std::vector<RString> &vsNamesOut );
+
+	void GetSongBGAnimations(	const Song *pSong, const RString &sMatch, std::vector<RString> &vsPathsOut, std::vector<RString> &vsNamesOut );
+	void GetSongMovies(		const Song *pSong, const RString &sMatch, std::vector<RString> &vsPathsOut, std::vector<RString> &vsNamesOut );
+	void GetSongBitmaps(		const Song *pSong, const RString &sMatch, std::vector<RString> &vsPathsOut, std::vector<RString> &vsNamesOut );
+	void GetGlobalBGAnimations(	const Song *pSong, const RString &sMatch, std::vector<RString> &vsPathsOut, std::vector<RString> &vsNamesOut );
+	void GetGlobalRandomMovies(	const Song *pSong, const RString &sMatch, std::vector<RString> &vsPathsOut, std::vector<RString> &vsNamesOut, bool bTryInsideOfSongGroupAndGenreFirst = true, bool bTryInsideOfSongGroupFirst = true );
 
 	void BakeAllBackgroundChanges( Song *pSong );
 };
@@ -94,7 +94,7 @@ namespace BackgroundUtil
 /*
  * (c) 2001-2004 Chris Danford, Ben Nordstrom
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -104,7 +104,7 @@ namespace BackgroundUtil
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

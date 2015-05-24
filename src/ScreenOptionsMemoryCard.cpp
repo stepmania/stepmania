@@ -9,6 +9,8 @@
 #include "LocalizedString.h"
 #include "OptionRowHandler.h"
 
+using std::vector;
+
 REGISTER_SCREEN_CLASS( ScreenOptionsMemoryCard );
 
 void ScreenOptionsMemoryCard::Init()

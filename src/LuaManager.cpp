@@ -19,6 +19,8 @@
 #include <map>
 #include <array>
 
+using std::vector;
+
 LuaManager *LUA = NULL;
 struct Impl
 {
@@ -918,7 +920,7 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 		ParseCommands( sCommands, cmds, bLegacy );
 
 		// Convert cmds to a Lua function
-		ostringstream s;
+		std::ostringstream s;
 
 		s << "return function(self)\n";
 

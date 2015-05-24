@@ -7,6 +7,8 @@
 #include "RageUtil.h"
 #include "InputEventPlus.h"
 
+using std::vector;
+
 REGISTER_SCREEN_CLASS( ScreenTestSound );
 
 void ScreenTestSound::Init()
@@ -209,7 +211,7 @@ bool ScreenTestSound::Input( const InputEventPlus &input )
 /*
  * (c) 2003 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -219,7 +221,7 @@ bool ScreenTestSound::Input( const InputEventPlus &input )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

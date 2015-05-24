@@ -3,6 +3,9 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
+using std::vector;
+using std::wstring;
+
 #if defined(_WINDOWS)
 
 #include "archutils/Win32/ErrorStrings.h"
@@ -90,16 +93,16 @@ static bool AttemptJapaneseConversion( RString &sText ) { return ConvertFromChar
 static bool ConvertFromCP( RString &sText, int iCodePage )
 {
 	CFStringEncoding encoding = CFStringConvertWindowsCodepageToEncoding( iCodePage );
-	
+
 	if( encoding == kCFStringEncodingInvalidId )
 		return false;
-	
+
 	CFStringRef old = CFStringCreateWithCString( kCFAllocatorDefault, sText, encoding );
-	
+
 	if( old == NULL )
 		return false;
 	const size_t size = CFStringGetMaximumSizeForEncoding( CFStringGetLength(old), kCFStringEncodingUTF8 );
-	
+
 	char *buf = new char[size+1];
 	buf[0] = '\0';
 	bool result = CFStringGetCString( old, buf, size, kCFStringEncodingUTF8 );

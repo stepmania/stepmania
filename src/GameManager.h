@@ -29,16 +29,16 @@ public:
 	GameManager();
 	~GameManager();
 
-	void GetStylesForGame( const Game* pGame, vector<const Style*>& aStylesAddTo, bool editor=false );
+	void GetStylesForGame( const Game* pGame, std::vector<const Style*>& aStylesAddTo, bool editor=false );
 	const Game *GetGameForStyle( const Style *pStyle );
-	void GetStepsTypesForGame( const Game* pGame, vector<StepsType>& aStepsTypeAddTo );
+	void GetStepsTypesForGame( const Game* pGame, std::vector<StepsType>& aStepsTypeAddTo );
 	const Style *GetEditorStyleForStepsType( StepsType st );
-	void GetDemonstrationStylesForGame( const Game *pGame, vector<const Style*> &vpStylesOut );
+	void GetDemonstrationStylesForGame( const Game *pGame, std::vector<const Style*> &vpStylesOut );
 	const Style *GetHowToPlayStyleForGame( const Game* pGame );
-	void GetCompatibleStyles( const Game *pGame, int iNumPlayers, vector<const Style*> &vpStylesOut );
+	void GetCompatibleStyles( const Game *pGame, int iNumPlayers, std::vector<const Style*> &vpStylesOut );
 	const Style *GetFirstCompatibleStyle( const Game *pGame, int iNumPlayers, StepsType st );
 
-	void GetEnabledGames( vector<const Game*>& aGamesOut );
+	void GetEnabledGames( std::vector<const Game*>& aGamesOut );
 	const Game* GetDefaultGame();
 	bool IsGameEnabled( const Game* pGame );
 	int GetIndexFromGame( const Game* pGame );
@@ -64,7 +64,7 @@ extern GameManager*	GAMEMAN;	// global and accessible from anywhere in our progr
  * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -74,7 +74,7 @@ extern GameManager*	GAMEMAN;	// global and accessible from anywhere in our progr
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

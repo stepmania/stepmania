@@ -5,6 +5,8 @@
 #include "RageMath.h"
 #include "RageDisplay.h"
 
+using std::vector;
+
 #define MS_MAX_NAME	32
 
 RageModelGeometry::RageModelGeometry ()
@@ -29,7 +31,7 @@ void RageModelGeometry::OptimizeBones()
 
 		// check to see if all vertices have the same bone index
 		bool bAllVertsUseSameBone = true;
-		
+
 		char iBoneIndex	= mesh.Vertices[0].bone;
 
 		for (unsigned j = 1; j < mesh.Vertices.size(); j++)

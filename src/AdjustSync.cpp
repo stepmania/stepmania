@@ -42,6 +42,8 @@
 #include "PrefsManager.h"
 #include "ScreenManager.h"
 
+using std::vector;
+
 vector<TimingData> AdjustSync::s_vpTimingDataOriginal;
 float AdjustSync::s_fGlobalOffsetSecondsOriginal = 0.0f;
 int AdjustSync::s_iAutosyncOffsetSample = 0;

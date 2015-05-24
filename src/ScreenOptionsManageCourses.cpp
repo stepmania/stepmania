@@ -19,6 +19,8 @@
 #include "RageFileManager.h"
 #include "PrefsManager.h"
 
+using std::vector;
+
 REGISTER_SCREEN_CLASS( ScreenOptionsManageCourses );
 
 struct StepsTypeAndDifficulty

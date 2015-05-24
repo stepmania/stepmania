@@ -11,6 +11,8 @@
 #include <float.h>
 #include <array>
 
+using std::vector;
+
 void RageVec3ClearBounds( RageVector3 &mins, RageVector3 &maxs )
 {
 	mins = RageVector3( FLT_MAX, FLT_MAX, FLT_MAX );

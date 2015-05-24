@@ -5,6 +5,8 @@
 #include "InputEventPlus.h"
 #include "InputMapper.h"
 
+using std::vector;
+
 InputQueue*	INPUTQUEUE = NULL;	// global and accessible from anywhere in our program
 
 const unsigned MAX_INPUT_QUEUE_LENGTH = 32;

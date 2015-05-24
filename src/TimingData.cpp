@@ -7,6 +7,8 @@
 #include "NoteTypes.h"
 #include <float.h>
 
+using std::vector;
+
 static void EraseSegment(vector<TimingSegment*> &vSegs, int index, TimingSegment *cur);
 static const int INVALID_INDEX = -1;
 
@@ -372,7 +374,7 @@ int TimingData::GetSegmentIndexAtRow(TimingSegmentType tst, int iRow ) const
 	return INVALID_INDEX;
 }
 
-struct ts_less : binary_function <TimingSegment*, TimingSegment*, bool>
+struct ts_less : std::binary_function <TimingSegment*, TimingSegment*, bool>
 {
 	bool operator() (const TimingSegment *x, const TimingSegment *y) const
 	{

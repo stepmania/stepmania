@@ -8,6 +8,9 @@
 #include "RageLog.h"
 #include "Preference.h"
 
+using std::vector;
+using std::string;
+
 FileTransfer::FileTransfer()
 {
 	m_iPackagesPos = 0;

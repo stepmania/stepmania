@@ -7,6 +7,9 @@
 #include "arch/arch_default.h"
 #include "InputHandler_MonkeyKeyboard.h"
 
+using std::vector;
+using std::wstring;
+
 void InputHandler::UpdateTimer()
 {
 	m_LastUpdate.Touch();

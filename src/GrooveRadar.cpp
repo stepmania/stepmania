@@ -13,6 +13,8 @@
 // I feel weird about this coupling, but it has to be done. -aj
 #include "GameState.h"
 
+using std::vector;
+
 REGISTER_ACTOR_CLASS(GrooveRadar);
 
 static const ThemeMetric<float>	RADAR_EDGE_WIDTH	("GrooveRadar","EdgeWidth");

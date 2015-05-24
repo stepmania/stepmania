@@ -72,6 +72,8 @@
 #include "ScreenDimensions.h"
 #include "ActorUtil.h"
 
+using std::vector;
+
 ScreenManager*	SCREENMAN = NULL;	// global and accessible from anywhere in our program
 
 static Preference<bool> g_bDelayedScreenLoad( "DelayedScreenLoad", false );

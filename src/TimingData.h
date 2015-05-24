@@ -120,7 +120,7 @@ public:
 		GetBeatStarts second;
 	lookup_item_t(float f, GetBeatStarts& s) :first(f), second(s) {}
 	};
-	typedef vector<lookup_item_t> beat_start_lookup_t;
+	typedef std::vector<lookup_item_t> beat_start_lookup_t;
 	beat_start_lookup_t m_beat_start_lookup;
 	beat_start_lookup_t m_time_start_lookup;
 
@@ -392,8 +392,8 @@ public:
 	{
 		FOREACH_ENUM( TimingSegmentType, tst )
 		{
-			const vector<TimingSegment*> &us = m_avpTimingSegments[tst];
-			const vector<TimingSegment*> &them = other.m_avpTimingSegments[tst];
+			const std::vector<TimingSegment*> &us = m_avpTimingSegments[tst];
+			const std::vector<TimingSegment*> &them = other.m_avpTimingSegments[tst];
 
 			// optimization: check vector sizes before contents
 			if( us.size() != them.size() )
@@ -428,11 +428,11 @@ public:
 
 	void SortSegments( TimingSegmentType tst );
 
-	const vector<TimingSegment*> &GetTimingSegments( TimingSegmentType tst ) const
+	const std::vector<TimingSegment*> &GetTimingSegments( TimingSegmentType tst ) const
 	{
 		return const_cast<TimingData *>(this)->GetTimingSegments(tst);
 	}
-	vector<TimingSegment *> &GetTimingSegments( TimingSegmentType tst )
+	std::vector<TimingSegment *> &GetTimingSegments( TimingSegmentType tst )
 	{
 		return m_avpTimingSegments[tst];
 	}
@@ -458,13 +458,13 @@ public:
 	float	m_fBeat0OffsetInSeconds;
 
 	// XXX: this breaks encapsulation. get rid of it ASAP
-	vector<RString> ToVectorString(TimingSegmentType tst, int dec = 6) const;
+	std::vector<RString> ToVectorString(TimingSegmentType tst, int dec = 6) const;
 protected:
 	// don't call this directly; use the derived-type overloads.
 	void AddSegment( const TimingSegment *seg );
 
 	// All of the following vectors must be sorted before gameplay.
-	vector<TimingSegment *> m_avpTimingSegments[NUM_TimingSegmentType];
+	std::vector<TimingSegment *> m_avpTimingSegments[NUM_TimingSegmentType];
 };
 
 #undef COMPARE

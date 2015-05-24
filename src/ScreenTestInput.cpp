@@ -10,6 +10,8 @@
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
 
+using std::vector;
+
 class DeviceList: public BitmapText
 {
 public:

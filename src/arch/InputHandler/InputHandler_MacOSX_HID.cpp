@@ -12,6 +12,8 @@
 #include <IOKit/IOMessage.h>
 #include <Carbon/Carbon.h>
 
+using std::vector;
+
 REGISTER_INPUT_HANDLER_CLASS2( HID, MacOSX_HID );
 
 void InputHandler_MacOSX_HID::QueueCallback( void *target, int result, void *refcon, void *sender )

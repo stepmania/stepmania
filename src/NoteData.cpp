@@ -12,6 +12,8 @@
 #include "GameState.h" // blame radar calculations.
 #include "RageUtil_AutoPtr.h"
 
+using std::vector;
+
 REGISTER_CLASS_TRAITS( NoteData, new NoteData(*pCopy) )
 
 void NoteData::Init()

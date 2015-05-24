@@ -50,7 +50,7 @@ private:
 	unsigned m_iChannels;
 
 	std::map<RString, RageSoundReader *> m_apNamedSounds;
-	vector<RageSoundReader *> m_apLoadedSounds;
+	std::vector<RageSoundReader *> m_apLoadedSounds;
 
 	struct Sound
 	{
@@ -62,12 +62,12 @@ private:
 		int GetOffsetFrame( int iSampleRate ) const { return int( int64_t(iOffsetMS) * iSampleRate / 1000 ); }
 		bool operator<( const Sound &rhs ) const { return iOffsetMS < rhs.iOffsetMS; }
 	};
-	vector<Sound> m_aSounds;
+	std::vector<Sound> m_aSounds;
 
 	/* Read state: */
 	int m_iCurrentFrame;
 	unsigned m_iNextSound;
-	vector<Sound *> m_apActiveSounds;
+	std::vector<Sound *> m_apActiveSounds;
 
 	void ActivateSound( Sound *s );
 	void ReleaseSound( Sound *s );

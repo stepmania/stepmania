@@ -14,6 +14,8 @@
 #include "Steps.h"
 #include "Attack.h"
 
+using std::vector;
+
 void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, const RString sParam )
 {
 	vector<RString> arrayMultiplierExpressions;

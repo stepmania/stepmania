@@ -33,6 +33,10 @@
 #define INVALID_SOCKET -1
 #endif
 
+using std::string;
+using std::istream;
+using std::ostream;
+
 // Returns a timeval set to the given number of milliseconds.
 inline timeval timevalFromMs(unsigned int ms)
 {
@@ -142,8 +146,8 @@ bool EzSockets::accept(EzSockets& socket)
 	#endif
 
 	int length = sizeof(socket);
-	
-	socket.sock = ::accept(sock,(struct sockaddr*) &socket.addr, 
+
+	socket.sock = ::accept(sock,(struct sockaddr*) &socket.addr,
 						   (socklen_t*) &length);
 
 	lastCode = socket.sock;
@@ -297,7 +301,7 @@ void EzSockets::SendData(const char *data, unsigned int bytes)
 }
 
 int EzSockets::ReadData(char *data, unsigned int bytes)
-{	
+{
 	int bytesRead = PeekData(data,bytes);
 	inBuffer = inBuffer.substr(bytesRead);
 	return bytesRead;
@@ -371,7 +375,7 @@ int EzSockets::PeekPack(char *data, unsigned int max)
 			return -1;
 
 	if (IsError())
-		return -1; 
+		return -1;
 	// What if we get disconnected while waiting for data?
 
 	string tBuff(inBuffer.substr(4, size));
@@ -453,7 +457,7 @@ int EzSockets::pUpdateRead()
 		inBuffer.append(tempData, bytes);
 	else if (bytes <= 0)
 		/* To get her I think CanRead was called at least once.
-		So if length equals 0 and can read says there is data than 
+		So if length equals 0 and can read says there is data than
 		the socket was closed.*/
 		state = skERROR;
 	return bytes;
@@ -486,10 +490,10 @@ int EzSockets::pWriteData(const char* data, int dataSize)
 	return send(sock, data, dataSize, 0);
 }
 
-/* 
+/*
  * (c) 2003-2004 Josh Allen, Charles Lohr, and Adam Lowman
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -499,7 +503,7 @@ int EzSockets::pWriteData(const char* data, int dataSize)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

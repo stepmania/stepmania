@@ -17,6 +17,8 @@
 #include "Font.h"
 #include "RageDisplay.h"
 
+using std::wstring;
+
 #define CHAT_TEXT_OUTPUT_WIDTH		THEME->GetMetricF(m_sName,"ChatTextOutputWidth")
 #define CHAT_TEXT_INPUT_WIDTH		THEME->GetMetricF(m_sName,"ChatTextInputWidth")
 #define SHOW_CHAT_LINES				THEME->GetMetricI(m_sName,"ChatOutputLines")

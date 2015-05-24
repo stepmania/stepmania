@@ -13,6 +13,9 @@
 #include "arch/Dialog/Dialog.h"
 #include "StepMania.h"
 
+using std::vector;
+using std::string;
+
 static void GetResolutionFromFileName( RString sPath, int &iWidth, int &iHeight )
 {
 	/* Match:

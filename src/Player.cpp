@@ -42,6 +42,8 @@
 #include "LocalizedString.h"
 #include "AdjustSync.h"
 
+using std::vector;
+
 RString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides );
 void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, RString &sNameOut, float &defaultValueOut );
 
@@ -1492,6 +1494,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 
 void Player::ApplyWaitingTransforms()
 {
+	using std::min;
 	for( unsigned j=0; j<m_pPlayerState->m_ModsToApply.size(); j++ )
 	{
 		const Attack &mod = m_pPlayerState->m_ModsToApply[j];

@@ -31,6 +31,8 @@
 #include "RageLog.h"
 #include "RageSoundReader_FileReader.h"
 
+using std::vector;
+
 void AutoKeysounds::Load( PlayerNumber pn, const NoteData& ndAutoKeysoundsOnly )
 {
 	m_ndAutoKeysoundsOnly[pn] = ndAutoKeysoundsOnly;
@@ -304,7 +306,7 @@ void AutoKeysounds::FinishLoading()
 	}
 
 	if( GAMESTATE->GetNumPlayersEnabled() == 1 && GAMESTATE->GetMasterPlayerNumber() == PLAYER_2 )
-		swap( m_pPlayerSounds[PLAYER_1], m_pPlayerSounds[PLAYER_2] );
+		std::swap( m_pPlayerSounds[PLAYER_1], m_pPlayerSounds[PLAYER_2] );
 
 	if( apSounds.size() > 1 )
 	{

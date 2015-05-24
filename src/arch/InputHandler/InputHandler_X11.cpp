@@ -13,6 +13,7 @@
 #include <X11/keysym.h>
 
 using namespace X11Helper;
+using std::vector;
 
 REGISTER_INPUT_HANDLER_CLASS( X11 );
 

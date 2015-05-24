@@ -43,6 +43,9 @@
 #include <ctime>
 #include <set>
 
+using std::vector;
+using std::string;
+
 GameState*	GAMESTATE = NULL;	// global and accessible from anywhere in our program
 
 #define NAME_BLACKLIST_FILE "/Data/NamesBlacklist.txt"

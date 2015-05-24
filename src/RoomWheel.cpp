@@ -9,6 +9,8 @@
 #include "ActorUtil.h"
 #include "LocalizedString.h"
 
+using std::vector;
+
 static LocalizedString EMPTY_STRING	( "RoomWheel", "Empty" );
 
 AutoScreenMessage( SM_BackFromRoomName );

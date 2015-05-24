@@ -745,6 +745,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	const draw_hold_part_args& part_args, bool glow, int part_type)
 {
 	using std::max;
+	using std::min;
 	ASSERT(!vpSpr.empty());
 
 	float ae_zoom= ArrowEffects::GetZoom(m_pPlayerState);
@@ -753,7 +754,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	// draw manually in small segments
 	RectF rect = *pSprite->GetCurrentTextureCoordRect();
 	if(part_args.flip_texture_vertically)
-		swap(rect.top, rect.bottom);
+		std::swap(rect.top, rect.bottom);
 	const float fFrameWidth		= pSprite->GetUnzoomedWidth();
 	const float unzoomed_frame_height= pSprite->GetUnzoomedHeight();
 
@@ -1074,8 +1075,8 @@ void NoteDisplay::DrawHoldBody(const TapNote& tn,
 	part_args.flip_texture_vertically = reverse && cache->m_bFlipHoldBodyWhenReverse;
 	if(part_args.flip_texture_vertically)
 	{
-		swap( vpSprTop, vpSprBottom );
-		swap( pSpriteTop, pSpriteBottom );
+		std::swap( vpSprTop, vpSprBottom );
+		std::swap( pSpriteTop, pSpriteBottom );
 	}
 
 	const bool bWavyPartsNeedZBuffer = ArrowEffects::NeedZBuffer();
@@ -1106,7 +1107,7 @@ void NoteDisplay::DrawHoldBody(const TapNote& tn,
 		field_args.draw_pixels_before_targets, m_fYReverseOffsetPixels);
 	if(reverse)
 	{
-		swap(part_args.y_start_pos, part_args.y_end_pos);
+		std::swap(part_args.y_start_pos, part_args.y_end_pos);
 	}
 	// So that part_args.y_start_pos can be changed when drawing the bottom.
 	const float original_y_start_pos= part_args.y_start_pos;
@@ -1133,6 +1134,7 @@ void NoteDisplay::DrawHold(const TapNote& tn,
 	const NoteColumnRenderArgs& column_args, int iRow, bool bIsBeingHeld,
 	const HoldNoteResult &Result, bool bIsAddition, float fPercentFadeToFail)
 {
+	using std::max;
 	int iEndRow = iRow + tn.iDuration;
 	float top_beat= NoteRowToVisibleBeat(m_pPlayerState, iRow);
 	float bottom_beat= NoteRowToVisibleBeat(m_pPlayerState, iEndRow);
@@ -1168,7 +1170,7 @@ void NoteDisplay::DrawHold(const TapNote& tn,
 
 	// Swap in reverse, so fStartYOffset is always the offset higher on the screen.
 	if( bReverse )
-		swap( fStartYOffset, fEndYOffset );
+		std::swap( fStartYOffset, fEndYOffset );
 
 	const float fYHead= ArrowEffects::GetYPos(column_args.column, fStartYOffset, m_fYReverseOffsetPixels);
 	const float fYTail= ArrowEffects::GetYPos(column_args.column, fEndYOffset, m_fYReverseOffsetPixels);

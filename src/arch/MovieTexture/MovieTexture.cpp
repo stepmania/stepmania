@@ -8,6 +8,8 @@
 #include "LocalizedString.h"
 #include "arch/arch_default.h"
 
+using std::vector;
+
 void ForceToAscii( RString &str )
 {
 	for( unsigned i=0; i<str.size(); ++i )

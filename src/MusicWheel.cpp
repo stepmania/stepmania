@@ -22,6 +22,8 @@
 #include "MessageManager.h"
 #include "LocalizedString.h"
 
+using std::vector;
+
 static Preference<bool> g_bMoveRandomToEnd( "MoveRandomToEnd", false );
 static Preference<bool> g_bPrecacheAllSorts( "PreCacheAllWheelSorts", false);
 

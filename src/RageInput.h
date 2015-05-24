@@ -18,7 +18,7 @@ public:
 	void LoadDrivers();
 	void Update();
 	bool DevicesChanged();
-	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vOut ) const;
+	void GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vOut ) const;
 	void WindowReset();
 	void AddHandler( InputHandler *pHandler );
 	InputHandler *GetHandlerForDevice( const InputDevice id );

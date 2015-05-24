@@ -14,6 +14,8 @@
 #include "Style.h"
 #include "Steps.h"
 
+using std::vector;
+
 static void GetStepsForSong( Song *pSong, vector<Steps*> &vpStepsOut )
 {
 	SongUtil::GetSteps( pSong, vpStepsOut, GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType );

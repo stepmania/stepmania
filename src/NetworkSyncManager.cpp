@@ -12,6 +12,9 @@ NetworkSyncManager *NSMAN;
 #include "ver.h"
 #endif
 
+using std::string;
+using std::vector;
+
 #if defined(WITHOUT_NETWORKING)
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld ) { useSMserver=false; isSMOnline = false; }
 NetworkSyncManager::~NetworkSyncManager () { }

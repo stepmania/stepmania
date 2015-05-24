@@ -8,6 +8,8 @@
 #include <unistd.h>
 #endif
 
+using std::list;
+
 /* Implement threaded read-ahead buffering.
  *
  * If a buffer is low on data, keep filling until it has a g_iMinFillFrames.

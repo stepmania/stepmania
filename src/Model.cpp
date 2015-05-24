@@ -15,6 +15,8 @@
 
 #include <numeric>
 
+using std::vector;
+
 REGISTER_ACTOR_CLASS( Model );
 
 static const float FRAMES_PER_SECOND = 30;

@@ -19,6 +19,8 @@ class Song;
 #include "StepMania.h"
 #include "ActorUtil.h"
 
+using std::vector;
+
 struct PlayAfterLaunchInfo
 {
 	RString sSongDir;

@@ -23,15 +23,15 @@ public:
 	void MountInitialFilesystems();
 	void MountUserFilesystems();
 
-	void GetDirListing( const RString &sPath, vector<RString> &AddTo, bool bOnlyDirs, bool bReturnPathToo );
+	void GetDirListing( const RString &sPath, std::vector<RString> &AddTo, bool bOnlyDirs, bool bReturnPathToo );
 	void GetDirListingWithMultipleExtensions(const RString &sPath,
-		vector<RString> const& ExtensionList, vector<RString> &AddTo,
+		std::vector<RString> const& ExtensionList, std::vector<RString> &AddTo,
 		bool bOnlyDirs= false, bool bReturnPathToo= false);
 	bool Move( const RString &sOldPath, const RString &sNewPath );
 	bool Remove( const RString &sPath );
 	bool DeleteRecursive( const RString &sPath );
 	void CreateDir( const RString &sDir );
-	
+
 	enum FileType { TYPE_FILE, TYPE_DIR, TYPE_NONE };
 	FileType GetFileType( const RString &sPath );
 
@@ -41,7 +41,7 @@ public:
 
 	int GetFileSizeInBytes( const RString &sPath );
 	int GetFileHash( const RString &sPath );
-	
+
 	/**
 	 * @brief Get the absolte path from the VPS.
 	 * @param path the VPS path.
@@ -61,7 +61,7 @@ public:
 	{
 		RString Type, Root, MountPoint;
 	};
-	void GetLoadedDrivers( vector<DriverLocation> &asMounts );
+	void GetLoadedDrivers( std::vector<DriverLocation> &asMounts );
 
 	void FlushDirCache( const RString &sPath = RString() );
 

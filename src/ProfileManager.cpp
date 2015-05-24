@@ -24,6 +24,7 @@
 #include "Character.h"
 #include "CharacterManager.h"
 
+using std::vector;
 
 ProfileManager*	PROFILEMAN = NULL;	// global and accessible from anywhere in our program
 
@@ -894,7 +895,7 @@ void ProfileManager::IncrementStepsPlayCount( const Song* pSong, const Steps* pS
 void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail, PlayerNumber pn, const HighScore &hs_, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
 	HighScore hs = hs_;
-	hs.SetPercentDP(max( 0.f, hs.GetPercentDP()) ); // bump up negative scores
+	hs.SetPercentDP(std::max( 0.f, hs.GetPercentDP()) ); // bump up negative scores
 
 	iPersonalIndexOut = -1;
 	iMachineIndexOut = -1;

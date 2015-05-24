@@ -7,6 +7,8 @@
 #include "ActorUtil.h"
 #include "LuaBinding.h"
 
+using std::vector;
+
 /* Tricky: We need ActorFrames created in Lua to auto delete their children.
  * We don't want classes that derive from ActorFrame to auto delete their
  * children. The name "ActorFrame" is widely used in Lua, so we'll have

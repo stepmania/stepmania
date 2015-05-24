@@ -41,7 +41,7 @@ public:
 
 	bool		m_bJoined;
   bool    m_bPlayerCanAchieveFullCombo;
-	vector<Steps*>  m_vpPossibleSteps;
+  std::vector<Steps*>  m_vpPossibleSteps;
 	int		m_iStepsPlayed; // how many of m_vpPossibleStepshow many of m_vpPossibleSteps were played
 	/**
 	 * @brief How far into the music did the Player last before failing?
@@ -137,7 +137,7 @@ public:
 		Combo_t(): m_fStartSecond(0), m_fSizeSeconds(0), m_cnt(0), m_rollover(0) { }
 		bool IsZero() const { return m_fStartSecond < 0; }
 	};
-	vector<Combo_t> m_ComboList;
+	std::vector<Combo_t> m_ComboList;
 	float	m_fFirstSecond;
 	float	m_fLastSecond;
 

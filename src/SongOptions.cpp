@@ -4,6 +4,8 @@
 #include "GameState.h"
 #include "CommonMetrics.h"
 
+using std::vector;
+
 static const char *AutosyncTypeNames[] = {
 	"Off",
 	"Song",

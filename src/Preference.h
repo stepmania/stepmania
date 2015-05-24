@@ -62,7 +62,7 @@ public:
 	{
 		if( !StringConversion::FromString<T>(s, m_currentValue) )
 			m_currentValue = m_defaultValue;
-		if( m_pfnValidate ) 
+		if( m_pfnValidate )
 			m_pfnValidate( m_currentValue );
 	}
 	void SetFromStack( lua_State *L )
@@ -91,7 +91,7 @@ public:
 	{
 		return m_currentValue;
 	}
-	
+
 	const T &GetDefault() const
 	{
 		return m_defaultValue;
@@ -101,7 +101,7 @@ public:
 	{
 		return Get();
 	}
-	
+
 	void Set( const T& other )
 	{
 		m_currentValue = other;
@@ -129,8 +129,8 @@ class Preference1D
 {
 public:
 	typedef Preference<T> PreferenceT;
-	vector<PreferenceT*> m_v;
-	
+	std::vector<PreferenceT*> m_v;
+
 	Preference1D( void pfn(size_t i, RString &sNameOut, T &defaultValueOut ), size_t N )
 	{
 		for( size_t i=0; i<N; ++i )
@@ -162,7 +162,7 @@ public:
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -172,7 +172,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

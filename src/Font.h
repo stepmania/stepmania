@@ -124,13 +124,13 @@ public:
 	RString m_sTexturePath;
 
 	/** @brief All glyphs in this list will point to m_pTexture. */
-	vector<glyph> m_aGlyphs;
+	std::vector<glyph> m_aGlyphs;
 
 	std::map<wchar_t,int> m_iCharToGlyphNo;
 
 private:
 	void SetExtraPixels( int iDrawExtraPixelsLeft, int DrawExtraPixelsRight );
-	void SetTextureCoords( const vector<int> &aiWidths, int iAdvanceExtraPixels );
+	void SetTextureCoords( const std::vector<int> &aiWidths, int iAdvanceExtraPixels );
 };
 
 class Font
@@ -144,11 +144,11 @@ public:
 
 	const glyph &GetGlyph( wchar_t c ) const;
 
-	int GetLineWidthInSourcePixels( const wstring &szLine ) const;
-	int GetLineHeightInSourcePixels( const wstring &szLine ) const;
-	int GetGlyphsThatFit(const wstring& line, int* width) const;
+	int GetLineWidthInSourcePixels( const std::wstring &szLine ) const;
+	int GetLineHeightInSourcePixels( const std::wstring &szLine ) const;
+	int GetGlyphsThatFit(const std::wstring& line, int* width) const;
 
-	bool FontCompleteForString( const wstring &str ) const;
+	bool FontCompleteForString( const std::wstring &str ) const;
 
 	/**
 	 * @brief Add a FontPage to this font.
@@ -179,7 +179,7 @@ public:
 
 private:
 	/** @brief List of pages and fonts that we use (and are responsible for freeing). */
-	vector<FontPage *> m_apPages;
+	std::vector<FontPage *> m_apPages;
 
 	/**
 	 * @brief This is the primary fontpage of this font.
@@ -206,7 +206,7 @@ private:
 	RString m_sChars;
 
 	void LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RString &sTexturePath, const RString &PageName, RString sChars );
-	static void GetFontPaths( const RString &sFontOrTextureFilePath, vector<RString> &sTexturePaths );
+	static void GetFontPaths( const RString &sFontOrTextureFilePath, std::vector<RString> &sTexturePaths );
 	RString GetPageNameFromFileName( const RString &sFilename );
 
 	Font(const Font& rhs);

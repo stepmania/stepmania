@@ -14,6 +14,9 @@
 #include "LuaBinding.h"
 #include "LuaManager.h"
 
+using std::vector;
+using std::string;
+
 REGISTER_ACTOR_CLASS( Sprite );
 
 const float min_state_delay= 0.0001f;

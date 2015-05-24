@@ -96,8 +96,8 @@ public:
 	// Dereferences course_entries and returns only the playable Songs and Steps
 	Trail* GetTrail( StepsType st, CourseDifficulty cd=Difficulty_Medium ) const;
 	Trail* GetTrailForceRegenCache( StepsType st, CourseDifficulty cd=Difficulty_Medium ) const;
-	void GetTrails( vector<Trail*> &AddTo, StepsType st ) const;
-	void GetAllTrails( vector<Trail*> &AddTo ) const;
+	void GetTrails( std::vector<Trail*> &AddTo, StepsType st ) const;
+	void GetAllTrails( std::vector<Trail*> &AddTo ) const;
 	int GetMeter( StepsType st, CourseDifficulty cd=Difficulty_Medium ) const;
 	bool HasMods() const;
 	bool HasTimedMods() const;
@@ -134,7 +134,7 @@ public:
 	// Call when a Song or its Steps are deleted/changed.
 	void Invalidate( const Song *pStaleSong );
 
-	void GetAllCachedTrails( vector<Trail *> &out );
+	void GetAllCachedTrails( std::vector<Trail *> &out );
 	RString GetCacheFilePath() const;
 
 	const CourseEntry *FindFixedSong( const Song *pSong ) const;
@@ -177,7 +177,7 @@ public:
 
 	bool	m_bIncomplete;
 
-	vector<CourseEntry> m_vEntries;
+	std::vector<CourseEntry> m_vEntries;
 
 	// sorting values
 	int	m_SortOrder_TotalDifficulty;

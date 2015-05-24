@@ -16,14 +16,14 @@ struct msMesh
 	RString			sName;
 	char			nMaterialIndex;
 
-	vector<RageModelVertex>	Vertices;
+	std::vector<RageModelVertex>	Vertices;
 
-	// OPTIMIZATION: If all verts in a mesh are transformed by the same bone, 
+	// OPTIMIZATION: If all verts in a mesh are transformed by the same bone,
 	// then send the transform to the graphics card for the whole mesh instead
 	// of transforming each vertex on the CPU;
 	char			m_iBoneIndex;	// -1 = no bone
 
-	vector<msTriangle>	Triangles;
+	std::vector<msTriangle>	Triangles;
 };
 
 class RageTexture;
@@ -74,7 +74,7 @@ private:
 		float		fDelaySecs;
 		RageVector2	vTranslate;
 	};
-	vector<AnimatedTextureState> vFrames;
+	std::vector<AnimatedTextureState> vFrames;
 };
 
 struct msMaterial
@@ -114,8 +114,8 @@ struct msBone
 	RageVector3		Position;
 	RageVector3		Rotation;
 
-	vector<msPositionKey>	PositionKeys;
-	vector<msRotationKey>	RotationKeys;
+	std::vector<msPositionKey>	PositionKeys;
+	std::vector<msRotationKey>	RotationKeys;
 };
 
 struct msAnimation
@@ -130,7 +130,7 @@ struct msAnimation
 
 	bool LoadMilkshapeAsciiBones( RString sAniName, RString sPath );
 
-	vector<msBone>		Bones;
+	std::vector<msBone>		Bones;
 	int			nTotalFrames;
 };
 
@@ -146,7 +146,7 @@ struct myBone_t
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -156,7 +156,7 @@ struct myBone_t
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

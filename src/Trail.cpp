@@ -9,6 +9,8 @@
 #include "CommonMetrics.h"
 #include <numeric>
 
+using std::vector;
+
 void TrailEntry::GetAttackArray( AttackArray &out ) const
 {
 	if( !Modifiers.empty() )
