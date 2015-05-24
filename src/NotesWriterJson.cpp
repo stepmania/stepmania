@@ -9,6 +9,8 @@
 #include "NoteData.h"
 #include "GameManager.h"
 
+using std::vector;
+
 static void Serialize(const TimingSegment &seg, Json::Value &root)
 {
 	root["Beat"] = seg.GetBeat();

@@ -18,6 +18,8 @@
 #include "GameManager.h"
 #include "Style.h"
 
+using std::vector;
+
 UnlockManager*	UNLOCKMAN = NULL;	// global and accessible from anywhere in our program
 
 #define UNLOCK_NAMES		THEME->GetMetric ("UnlockManager","UnlockNames")

@@ -13,6 +13,8 @@
 #include "OptionRowHandler.h"
 #include "LocalizedString.h"
 
+using std::vector;
+
 static LocalizedString NEW_PROFILE_DEFAULT_NAME( "ScreenOptionsManageProfiles", "NewProfileDefaultName" );
 
 #define SHOW_CREATE_NEW (!PROFILEMAN->FixedProfiles())

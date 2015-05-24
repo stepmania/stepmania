@@ -34,6 +34,8 @@ using namespace RageDisplay_Legacy_Helpers;
 #define glFlush()
 #endif
 
+using std::vector;
+
 //
 // Globals
 //

@@ -16,6 +16,8 @@
 #include "RageLog.h"
 #include "RageInputDevice.h"
 
+using std::vector;
+
 /* A few helper functions. */
 
 // The result needs to be released.

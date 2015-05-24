@@ -56,7 +56,7 @@ private:
 		Mapping(): iFramesBuffered(0), iPositionOfFirstFrame(0),
 			fRate(1.0f) {}
 	};
-	list<Mapping> m_StreamPosition;
+	std::list<Mapping> m_StreamPosition;
 
 	bool m_bEOF;
 

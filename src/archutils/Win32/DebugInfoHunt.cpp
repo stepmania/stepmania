@@ -7,6 +7,8 @@
 #include <windows.h>
 #include <mmsystem.h>
 
+using std::vector;
+
 static void LogVideoDriverInfo( VideoDriverInfo info )
 {
 	LOG->Info( "Video driver: %s [%s]", info.sDescription.c_str(), info.sProvider.c_str() );

@@ -16,6 +16,9 @@
 #include "CourseUtil.h"
 #include <float.h>
 
+using std::string;
+using std::vector;
+
 /** @brief Edit courses can only be so big before they are rejected. */
 const int MAX_EDIT_COURSE_SIZE_BYTES	= 32*1024;	// 32KB
 

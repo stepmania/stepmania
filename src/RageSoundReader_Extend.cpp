@@ -88,6 +88,7 @@ int RageSoundReader_Extend::GetData( float *pBuffer, int iFrames )
 
 int RageSoundReader_Extend::Read( float *pBuffer, int iFrames )
 {
+	using std::min;
 	int iFramesRead = GetData( pBuffer, iFrames );
 	if( iFramesRead == RageSoundReader::END_OF_FILE )
 	{

@@ -25,10 +25,10 @@ public:
 	 * If an empty string, don't bother using this for searching. */
 	RString m_sGroupName;
 	bool m_bUseSongGenreAllowedList;
-	vector<RString> m_vsSongGenreAllowedList;
+	std::vector<RString> m_vsSongGenreAllowedList;
 	enum Selectable { Selectable_Yes, Selectable_No, Selectable_DontCare } m_Selectable;
 	bool m_bUseSongAllowedList;
-	vector<Song*> m_vpSongAllowedList;
+	std::vector<Song*> m_vpSongAllowedList;
 	/** @brief How many songs does this take max? Don't use this if it's -1. */
 	int m_iMaxStagesForSong;		// don't filter if -1
 	// float m_fMinBPM;		// don't filter if -1
@@ -101,7 +101,7 @@ namespace SongUtil
 {
 	void GetSteps(
 		const Song *pSong,
-		vector<Steps*>& arrayAddTo,
+		std::vector<Steps*>& arrayAddTo,
 		StepsType st = StepsType_Invalid,
 		Difficulty dc = Difficulty_Invalid,
 		int iMeterLow = -1,
@@ -130,23 +130,23 @@ namespace SongUtil
 	Steps* GetClosestNotes(		const Song *pSong, StepsType st, Difficulty dc, bool bIgnoreLocked=false );
 
 	void AdjustDuplicateSteps( Song *pSong ); // part of TidyUpData
-	void DeleteDuplicateSteps( Song *pSong, vector<Steps*> &vSteps );
+	void DeleteDuplicateSteps( Song *pSong, std::vector<Steps*> &vSteps );
 
 	RString MakeSortString( RString s );
-	void SortSongPointerArrayByTitle( vector<Song*> &vpSongsInOut );
-	void SortSongPointerArrayByBPM( vector<Song*> &vpSongsInOut );
-	void SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool bDescending );
-	void SortSongPointerArrayByArtist( vector<Song*> &vpSongsInOut );
-	void SortSongPointerArrayByDisplayArtist( vector<Song*> &vpSongsInOut );
-	void SortSongPointerArrayByGenre( vector<Song*> &vpSongsInOut );
-	void SortSongPointerArrayByGroupAndTitle( vector<Song*> &vpSongsInOut );
-	void SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, ProfileSlot slot, bool bDescending );
-	void SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, const Profile* pProfile, bool bDescending );
-	void SortSongPointerArrayByStepsTypeAndMeter( vector<Song*> &vpSongsInOut, StepsType st, Difficulty dc );
+	void SortSongPointerArrayByTitle( std::vector<Song*> &vpSongsInOut );
+	void SortSongPointerArrayByBPM( std::vector<Song*> &vpSongsInOut );
+	void SortSongPointerArrayByGrades( std::vector<Song*> &vpSongsInOut, bool bDescending );
+	void SortSongPointerArrayByArtist( std::vector<Song*> &vpSongsInOut );
+	void SortSongPointerArrayByDisplayArtist( std::vector<Song*> &vpSongsInOut );
+	void SortSongPointerArrayByGenre( std::vector<Song*> &vpSongsInOut );
+	void SortSongPointerArrayByGroupAndTitle( std::vector<Song*> &vpSongsInOut );
+	void SortSongPointerArrayByNumPlays( std::vector<Song*> &vpSongsInOut, ProfileSlot slot, bool bDescending );
+	void SortSongPointerArrayByNumPlays( std::vector<Song*> &vpSongsInOut, const Profile* pProfile, bool bDescending );
+	void SortSongPointerArrayByStepsTypeAndMeter( std::vector<Song*> &vpSongsInOut, StepsType st, Difficulty dc );
 	RString GetSectionNameFromSongAndSort( const Song *pSong, SortOrder so );
-	void SortSongPointerArrayBySectionName( vector<Song*> &vpSongsInOut, SortOrder so );
-	void SortByMostRecentlyPlayedForMachine( vector<Song*> &vpSongsInOut );
-	void SortSongPointerArrayByLength( vector<Song*> &vpSongsInOut );
+	void SortSongPointerArrayBySectionName( std::vector<Song*> &vpSongsInOut, SortOrder so );
+	void SortByMostRecentlyPlayedForMachine( std::vector<Song*> &vpSongsInOut );
+	void SortSongPointerArrayByLength( std::vector<Song*> &vpSongsInOut );
 
 	int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2);
 
@@ -168,18 +168,18 @@ namespace SongUtil
 	bool ValidateCurrentSongPreview(const RString& answer, RString& error);
 	bool ValidateCurrentStepsMusic(const RString &answer, RString &error);
 
-	void GetAllSongGenres( vector<RString> &vsOut );
+	void GetAllSongGenres( std::vector<RString> &vsOut );
 	/**
 	 * @brief Filter the selection of songs to only match certain criteria.
 	 * @param sc the intended song criteria.
 	 * @param in the starting batch of songs.
 	 * @param out the resulting batch.
 	 * @param doCareAboutGame a flag to see if we should only get playable steps. */
-	void FilterSongs( const SongCriteria &sc, const vector<Song*> &in, vector<Song*> &out,
+	void FilterSongs( const SongCriteria &sc, const std::vector<Song*> &in, std::vector<Song*> &out,
 			 bool doCareAboutGame = false );
 
 	void GetPlayableStepsTypes( const Song *pSong, std::set<StepsType> &vOut );
-	void GetPlayableSteps( const Song *pSong, vector<Steps*> &vOut );
+	void GetPlayableSteps( const Song *pSong, std::vector<Steps*> &vOut );
 	bool IsStepsTypePlayable( Song *pSong, StepsType st );
 	bool IsStepsPlayable( Song *pSong, Steps *pSteps );
 

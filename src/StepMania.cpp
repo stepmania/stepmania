@@ -80,6 +80,8 @@
 #include <windows.h>
 #endif
 
+using std::vector;
+
 void ShutdownGame();
 bool HandleGlobalInputs( const InputEventPlus &input );
 void HandleInputEvents(float fDeltaTime);

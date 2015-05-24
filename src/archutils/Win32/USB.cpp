@@ -15,6 +15,8 @@ extern "C" {
 #include "archutils/Win32/ddk/hidsdi.h"
 }
 
+using std::vector;
+
 static RString GetUSBDevicePath( int iNum )
 {
 	GUID guid;

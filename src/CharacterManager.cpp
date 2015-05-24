@@ -4,6 +4,8 @@
 #include "GameState.h"
 #include "LuaManager.h"
 
+using std::vector;
+
 #define CHARACTERS_DIR "/Characters/"
 
 CharacterManager*	CHARMAN = NULL;	// global object accessible from anywhere in the program

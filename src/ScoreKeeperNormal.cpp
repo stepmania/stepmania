@@ -21,6 +21,8 @@
 #include "TimingData.h"
 #include "NoteDataWithScoring.h"
 
+using std::vector;
+
 static RString PercentScoreWeightName( size_t i ) { return "PercentScoreWeight" + ScoreEventToString( (ScoreEvent)i ); }
 static RString GradeWeightName( size_t i ) { return "GradeWeight" + ScoreEventToString( (ScoreEvent)i ); }
 

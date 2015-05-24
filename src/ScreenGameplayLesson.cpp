@@ -6,6 +6,8 @@
 #include "StatsManager.h"
 #include "Song.h"
 
+using std::vector;
+
 REGISTER_SCREEN_CLASS( ScreenGameplayLesson );
 ScreenGameplayLesson::ScreenGameplayLesson()
 {

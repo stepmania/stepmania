@@ -15,6 +15,7 @@
 #include "LuaBinding.h"
 #include "InputEventPlus.h"
 
+using std::vector;
 
 /*
  * These navigation types are provided:

@@ -11,6 +11,8 @@
 #endif
 #include <map>
 
+using std::vector;
+
 RageLog* LOG;		// global and accessible from anywhere in the program
 
 /*

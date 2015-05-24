@@ -11,6 +11,8 @@
 #include "RageSurface.h"
 #include "DisplayResolutions.h"
 
+using std::vector;
+
 static RageDisplay::RagePixelFormatDesc PIXEL_FORMAT_DESC[NUM_RagePixelFormat] = {
 	{
 		/* R8G8B8A8 */
@@ -122,12 +124,12 @@ void RageDisplay_Null::EndFrame()
 {
 	ProcessStatsOnFlip();
 }
-	
+
 
 class RageCompiledGeometryNull : public RageCompiledGeometry
 {
 public:
-	
+
 	void Allocate( const vector<msMesh> & ) {}
 	void Change( const vector<msMesh> & ) {}
 	void Draw( int iMeshIndex ) const {}

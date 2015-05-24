@@ -10,6 +10,8 @@
 #include "Style.h"
 #include "ActorUtil.h"
 
+using std::vector;
+
 const RString NEXT_ROW_NAME = "NextRow";
 const RString EXIT_NAME = "Exit";
 

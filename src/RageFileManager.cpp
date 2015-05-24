@@ -20,6 +20,8 @@
 #include <paths.h>
 #endif
 
+using std::vector;
+
 RageFileManager *FILEMAN = NULL;
 
 /* Lock this before touching any of these globals (except FILEMAN itself). */

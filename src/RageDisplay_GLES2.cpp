@@ -21,6 +21,8 @@
 #define glFlush()
 #endif
 
+using std::vector;
+
 namespace
 {
 	RageDisplay::RagePixelFormatDesc

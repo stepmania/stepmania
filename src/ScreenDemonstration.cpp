@@ -12,6 +12,8 @@
 #include "Style.h"
 #include "ScreenAttract.h"
 
+using std::vector;
+
 #define SECONDS_TO_SHOW			THEME->GetMetricF(m_sName,"SecondsToShow")
 #define ALLOW_STYLE_TYPES		THEME->GetMetric (m_sName,"AllowStyleTypes")
 

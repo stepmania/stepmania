@@ -9,6 +9,8 @@
 #include "GameCommand.h"
 #include "InputEventPlus.h"
 
+using std::vector;
+
 #define CHOICE_NAMES		THEME->GetMetric (m_sName,"ChoiceNames")
 #define CHOICE( s )		THEME->GetMetric (m_sName,ssprintf("Choice%s",s.c_str()))
 #define IDLE_TIMEOUT_SCREEN	THEME->GetMetric (m_sName,"IdleTimeoutScreen")
@@ -73,7 +75,7 @@ void ScreenSelect::Init()
 	else
 	{
 		// Instead of using NUM_CHOICES, use a comma-separated list of choices.
-		// Each element in the list is a choice name. This level of indirection 
+		// Each element in the list is a choice name. This level of indirection
 		// makes it easier to add or remove items without having to change a
 		// bunch of indices.
 		vector<RString> asChoiceNames;
@@ -149,8 +151,8 @@ bool ScreenSelect::Input( const InputEventPlus &input )
 
 	if( input.MenuI == GAME_BUTTON_START && input.type == IET_FIRST_PRESS && GAMESTATE->JoinInput(input.pn) )
 	{
-		// HACK: Only play start sound for the 2nd player who joins. The 
-		// start sound for the 1st player will be played by ScreenTitleMenu 
+		// HACK: Only play start sound for the 2nd player who joins. The
+		// start sound for the 1st player will be played by ScreenTitleMenu
 		// when the player makes a selection on the screen.
 		if( GAMESTATE->GetNumSidesJoined() > 1 )
 			SCREENMAN->PlayStartSound();
@@ -181,7 +183,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_BeginFadingOut )	// Screen is starting to tween out.
 	{
-		/* Don't call GameCommand::Apply once per player on screens that 
+		/* Don't call GameCommand::Apply once per player on screens that
 		 * have a shared selection. This can cause change messages to be
 		 * broadcast multiple times. Detect whether all players have the
 		 * same choice, and  if so, call ApplyToAll instead.
@@ -248,7 +250,7 @@ bool ScreenSelect::MenuBack( const InputEventPlus &input )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -258,7 +260,7 @@ bool ScreenSelect::MenuBack( const InputEventPlus &input )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

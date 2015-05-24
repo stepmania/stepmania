@@ -37,6 +37,8 @@
 #include "UnlockManager.h"
 #include "SpecialFiles.h"
 
+using std::vector;
+
 SongManager*	SONGMAN = NULL;	// global and accessible from anywhere in our program
 
 const RString ADDITIONAL_SONGS_DIR	= "/AdditionalSongs/";
@@ -1500,7 +1502,7 @@ void SongManager::UpdatePopular()
 			continue;
 
 		// Remove it.
-		swap( apBestSongs[j], apBestSongs.back() );
+		std::swap( apBestSongs[j], apBestSongs.back() );
 		apBestSongs.erase( apBestSongs.end()-1 );
 		--j;
 	}

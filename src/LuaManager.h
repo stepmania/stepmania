@@ -74,7 +74,7 @@ namespace LuaHelpers
 
 	/* Run the function with arguments at the top of the stack, with the given
 	 * number of arguments. The specified number of return values are left on
-	 * the Lua stack. On error, nils are left on the stack, sError is set and 
+	 * the Lua stack. On error, nils are left on the stack, sError is set and
 	 * false is returned.
 	 * If ReportError is true, Error should contain the string to prepend
 	 * when reporting.  The error is reported through LOG->Warn and
@@ -94,7 +94,7 @@ namespace LuaHelpers
 
 	/* Create a Lua array (a table with indices starting at 1) of the given vector,
 	 * and push it on the stack. */
-	void CreateTableFromArrayB( Lua *L, const vector<bool> &aIn );
+	void CreateTableFromArrayB( Lua *L, const std::vector<bool> &aIn );
 
 	// Create a Lua table with contents set from this XNode, then push it on the stack.
 	void CreateTableFromXNode( Lua *L, const XNode *pNode );
@@ -104,7 +104,7 @@ namespace LuaHelpers
 	void DeepCopy( lua_State *L );
 
 	// Read the table at the top of the stack back into a vector.
-	void ReadArrayFromTableB( Lua *L, vector<bool> &aOut );
+	void ReadArrayFromTableB( Lua *L, std::vector<bool> &aOut );
 
 	void ParseCommandList( lua_State *L, const RString &sCommands, const RString &sName, bool bLegacy );
 
@@ -127,9 +127,9 @@ namespace LuaHelpers
 		lua_pop( L, 1 );
 		return bRet;
 	}
-	
+
 	template<class T>
-	void ReadArrayFromTable( vector<T> &aOut, lua_State *L )
+	void ReadArrayFromTable( std::vector<T> &aOut, lua_State *L )
 	{
 		luaL_checktype( L, -1, LUA_TTABLE );
 
@@ -143,7 +143,7 @@ namespace LuaHelpers
 		lua_pop( L, 1 ); // pop nil
 	}
 	template<class T>
-	void CreateTableFromArray( const vector<T> &aIn, lua_State *L )
+	void CreateTableFromArray( const std::vector<T> &aIn, lua_State *L )
 	{
 		lua_newtable( L );
 		for( unsigned i = 0; i < aIn.size(); ++i )
@@ -176,18 +176,18 @@ private:
 
 	LuaReference *m_Name;
 	LuaReference *m_pOldValue;
-	
+
 	// Swallow up warnings. If they must be used, define them.
 	LuaThreadVariable& operator=(const LuaThreadVariable& rhs);
 };
 
 /**
  * @brief Iterate over all elements in the table.
- * 
- * For safety reasons, the key is pushed onto the stack and can be read (safely) 
- * as a string and popped or altered in any way. Stack management is handled 
- * automatically. That is, you need not remove all stack elements above the key. 
- * Once the loop exits normally, the top of the stack will be where it was before. 
+ *
+ * For safety reasons, the key is pushed onto the stack and can be read (safely)
+ * as a string and popped or altered in any way. Stack management is handled
+ * automatically. That is, you need not remove all stack elements above the key.
+ * Once the loop exits normally, the top of the stack will be where it was before.
  * If you break out of the loop early, you need to handle that explicitly. */
 #define FOREACH_LUATABLE(L,index) \
 for( const int SM_UNIQUE_NAME(tab) = LuaHelpers::AbsIndex(L,index), \
@@ -289,7 +289,7 @@ REGISTER_WITH_LUA_FUNCTION(LuaFunc_Register_##func_name);
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -299,7 +299,7 @@ REGISTER_WITH_LUA_FUNCTION(LuaFunc_Register_##func_name);
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

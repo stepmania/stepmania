@@ -33,8 +33,8 @@ static const char *MusicWheelItemTypeNames[] = {
 };
 XToString( MusicWheelItemType );
 
-MusicWheelItemData::MusicWheelItemData( WheelItemDataType type, Song* pSong, 
-				       RString sSectionName, Course* pCourse, 
+MusicWheelItemData::MusicWheelItemData( WheelItemDataType type, Song* pSong,
+				       RString sSectionName, Course* pCourse,
 				       RageColor color, int iSectionCount ):
 	WheelItemBaseData(type, sSectionName, color),
 	m_pCourse(pCourse), m_pSong(pSong), m_Flags(WheelNotifyIcon::Flags()),
@@ -212,7 +212,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 
 		m_TextBanner.SetFromSong( pWID->m_pSong );
 		// We can do this manually if we wanted... maybe have a metric for overrides? -aj
-		m_TextBanner.SetDiffuse( pWID->m_color ); 
+		m_TextBanner.SetDiffuse( pWID->m_color );
 		m_TextBanner.SetVisible( true );
 
 		m_WheelNotifyIcon.SetFlags( pWID->m_Flags );
@@ -391,7 +391,7 @@ void MusicWheelItem::HandleMessage( const Message &msg )
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -401,7 +401,7 @@ void MusicWheelItem::HandleMessage( const Message &msg )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

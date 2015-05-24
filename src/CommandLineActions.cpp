@@ -24,6 +24,9 @@
 #include <conio.h>
 #endif
 
+using std::string;
+using std::vector;
+
 /** @brief The directory where languages should be installed. */
 const RString INSTALLER_LANGUAGES_DIR = "Themes/_Installer/Languages/";
 

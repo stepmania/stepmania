@@ -11,6 +11,8 @@
 #include "CommonMetrics.h"
 #include <float.h>
 
+using std::vector;
+
 static const char *LifeTypeNames[] = {
 	"Bar",
 	"Battery",
@@ -383,7 +385,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		else if( s[0]=='*' )
 		{
 			sscanf( s, "*%f", &speed );
-			if( !isfinite(speed) )
+			if( !std::isfinite(speed) )
 				speed = 1.0f;
 		}
 	}
@@ -405,7 +407,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	}
 	else if( sscanf( sBit, "c%f", &level ) == 1 )
 	{
-		if( !isfinite(level) || level <= 0.0f )
+		if( !std::isfinite(level) || level <= 0.0f )
 			level = CMOD_DEFAULT;
 		SET_FLOAT( fScrollBPM )
 		SET_FLOAT( fTimeSpacing )
@@ -417,7 +419,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	{
 		// OpenITG doesn't have this block:
 		/*
-		if( !isfinite(level) || level <= 0.0f )
+		if( !std::isfinite(level) || level <= 0.0f )
 			level = CMOD_DEFAULT;
 		*/
 		SET_FLOAT( fMaxScrollBPM )
@@ -1205,7 +1207,7 @@ public:
 		if(original_top >= 1 && lua_isnumber(L, 1))
 		{
 			float speed= FArg(1);
-			if(!isfinite(speed) || speed <= 0.0f)
+			if(!std::isfinite(speed) || speed <= 0.0f)
 			{
 				luaL_error(L, "CMod speed must be finite and greater than 0.");
 			}
@@ -1266,7 +1268,7 @@ public:
 		if(lua_isnumber(L, 1) && original_top >= 1)
 		{
 			float speed= FArg(1);
-			if(!isfinite(speed) || speed <= 0.0f)
+			if(!std::isfinite(speed) || speed <= 0.0f)
 			{
 				luaL_error(L, "MMod speed must be finite and greater than 0.");
 			}

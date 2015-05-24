@@ -11,6 +11,9 @@
 #include "arch/Dialog/Dialog.h"
 #include "LuaManager.h"
 
+using std::string;
+using std::vector;
+
 bool XmlFileUtil::LoadFromFileShowErrors( XNode &xml, RageFileBasic &f )
 {
 	RString sError;

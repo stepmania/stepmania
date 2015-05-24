@@ -30,6 +30,8 @@
 #include "ScoreKeeperNormal.h"
 #include "InputEventPlus.h"
 
+using std::vector;
+
 // metrics that are common to all ScreenEvaluation classes
 #define BANNER_WIDTH			THEME->GetMetricF(m_sName,"BannerWidth")
 #define BANNER_HEIGHT			THEME->GetMetricF(m_sName,"BannerHeight")

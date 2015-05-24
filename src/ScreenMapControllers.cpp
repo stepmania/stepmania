@@ -10,6 +10,8 @@
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
 
+using std::vector;
+
 AutoScreenMessage(SM_DoSaveAndExit);
 #define BUTTONS_TO_MAP			THEME->GetMetric ( m_sName, "ButtonsToMap" )
 static LocalizedString INVALID_BUTTON   ( "ScreenMapControllers", "InvalidButton" );

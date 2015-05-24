@@ -5,6 +5,8 @@
 #include "PrefsManager.h"
 #include "ProductInfo.h"
 
+using std::vector;
+
 REGISTER_SOUND_DRIVER_CLASS( JACK );
 
 RageSoundDriver_JACK::RageSoundDriver_JACK() :

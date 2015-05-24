@@ -15,6 +15,8 @@
 #include "RageFileManager.h"
 #include "CourseWriterCRS.h"
 
+using std::vector;
+
 // Sorting stuff
 static bool CompareCoursePointersByName( const Course* pCourse1, const Course* pCourse2 )
 {

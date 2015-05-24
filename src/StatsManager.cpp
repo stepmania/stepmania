@@ -16,6 +16,8 @@
 #include "CryptManager.h"
 #include "XmlFileUtil.h"
 
+using std::vector;
+
 StatsManager*	STATSMAN = NULL;	// global object accessible from anywhere in the program
 
 void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNumber pn );

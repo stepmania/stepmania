@@ -14,6 +14,8 @@
 #include "RageFile.h"
 #include "archutils/SpecialDirs.h"
 
+using std::vector;
+
 // main page (type list)
 REGISTER_SCREEN_CLASS( ScreenOptionsExportPackage );
 

@@ -18,6 +18,8 @@
 #include <ksmedia.h>
 #include <setupapi.h>
 
+using std::vector;
+
 typedef KSDDKAPI DWORD WINAPI KSCREATEPIN(HANDLE, PKSPIN_CONNECT, ACCESS_MASK, PHANDLE);
 
 #ifndef KSAUDIO_SPEAKER_5POINT1_SURROUND

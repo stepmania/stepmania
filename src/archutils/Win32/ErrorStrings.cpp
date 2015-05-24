@@ -4,6 +4,8 @@
 
 #include <windows.h>
 
+using std::wstring;
+
 RString werr_ssprintf( int err, const char *fmt, ... )
 {
 	char buf[1024] = "";

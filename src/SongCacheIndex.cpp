@@ -7,10 +7,12 @@
 #include "Song.h"
 #include "SpecialFiles.h"
 
+using std::vector;
+
 /*
  * A quick explanation of song cache hashes: Each song has two hashes; a hash of the
  * song path, and a hash of the song directory.  The former is Song::GetCacheFilePath;
- * it stays the same if the contents of the directory change.  The latter is 
+ * it stays the same if the contents of the directory change.  The latter is
  * GetHashForDirectory(m_sSongDir), and changes on each modification.
  *
  * The file hash is used as the cache filename.  We don't want to use the directory
@@ -34,7 +36,7 @@ RString SongCacheIndex::GetCacheFilePath( const RString &sGroup, const RString &
 	/* Don't use GetHashForFile, since we don't want to spend time
 	 * checking the file size and date. */
 	RString s;
-	
+
 	if( sPath.size() > 2 && sPath[0] == '/' && sPath[sPath.size()-1] == '/' )
 		s.assign( sPath, 1, sPath.size() - 2 );
 	else if( sPath.size() > 1 && sPath[0] == '/' )
@@ -144,7 +146,7 @@ RString SongCacheIndex::MangleName( const RString &Name )
 /*
  * (c) 2002-2003 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -154,7 +156,7 @@ RString SongCacheIndex::MangleName( const RString &Name )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

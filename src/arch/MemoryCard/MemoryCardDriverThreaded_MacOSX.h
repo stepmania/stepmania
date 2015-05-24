@@ -4,6 +4,8 @@
 #include "MemoryCardDriver.h"
 #include "RageThreads.h"
 
+using std::vector;
+
 class MemoryCardDriverThreaded_MacOSX : public MemoryCardDriver
 {
 public:

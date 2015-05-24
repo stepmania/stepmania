@@ -10,6 +10,8 @@
 #include "Steps.h"
 #include "GameManager.h"
 
+using std::vector;
+
 void NotesLoaderJson::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 {
 	GetDirListing( sPath + RString("*.json"), out );

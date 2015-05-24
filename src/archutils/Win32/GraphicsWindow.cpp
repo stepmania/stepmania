@@ -15,6 +15,8 @@
 
 #include <set>
 
+using std::wstring;
+
 static const RString g_sClassName = PRODUCT_ID;
 
 static HWND g_hWndMain;

@@ -31,7 +31,7 @@ struct ConfOption
 
 	/* Return the list of available selections; Get() and Put() use indexes into
 	 * this array. UpdateAvailableOptions() should be called before using this. */
-	void MakeOptionsList( vector<RString> &out ) const;
+	void MakeOptionsList( std::vector<RString> &out ) const;
 
 	inline int Get() const { int sel; MoveData( sel, true, this ); return sel; }
 	inline void Put( int sel ) const { MoveData( sel, false, this ); }
@@ -53,7 +53,7 @@ struct ConfOption
 #undef PUSH
 
 	ConfOption( const char *n, MoveData_t m,
-			void (*lst)( vector<RString> &out ) )
+			void (*lst)( std::vector<RString> &out ) )
 	{
 		name = n;
 		MoveData = m;
@@ -64,8 +64,8 @@ struct ConfOption
 
 
 // private:
-	vector<RString> names;
-	void (*MakeOptionsListCB)( vector<RString> &out );
+	std::vector<RString> names;
+	void (*MakeOptionsListCB)( std::vector<RString> &out );
 };
 
 #endif
@@ -75,7 +75,7 @@ struct ConfOption
  * @author Glenn Maynard (c) 2003-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -85,7 +85,7 @@ struct ConfOption
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

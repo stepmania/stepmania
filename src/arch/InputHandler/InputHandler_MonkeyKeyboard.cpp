@@ -13,7 +13,7 @@ InputHandler_MonkeyKeyboard::~InputHandler_MonkeyKeyboard()
 {
 }
 
-void InputHandler_MonkeyKeyboard::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut )
+void InputHandler_MonkeyKeyboard::GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevicesOut )
 {
 	vDevicesOut.push_back( InputDeviceInfo(DEVICE_KEYBOARD, "MonkeyKeyboard") );
 }

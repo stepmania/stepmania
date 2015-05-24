@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
+using std::vector;
 
 RandomSample::RandomSample()
 {

@@ -94,7 +94,7 @@ protected:
 		float fDelayRemaining;
 	};
 	/** @brief The list of messages that are sent to a Screen. */
-	vector<QueuedScreenMessage>	m_QueuedMessages;
+	std::vector<QueuedScreenMessage>	m_QueuedMessages;
 	static bool SortMessagesByDelayRemaining(const QueuedScreenMessage &m1, const QueuedScreenMessage &m2);
 
 	InputQueueCodeSet	m_Codes;
@@ -151,7 +151,7 @@ private:
 	// to remove when removing a callback.
 	typedef void const* callback_key_t;
 	std::map<callback_key_t, LuaReference> m_InputCallbacks;
-	vector<callback_key_t> m_DelayedCallbackRemovals;
+	std::vector<callback_key_t> m_DelayedCallbackRemovals;
 	bool m_CallingInputCallbacks;
 	void InternalRemoveCallback(callback_key_t key);
 };

@@ -18,6 +18,8 @@
 #include "Game.h"
 #include "Style.h"
 
+using std::vector;
+
 static Preference<int> MAX_SONGS_IN_EDIT_COURSE( "MaxSongsInEditCourse", -1 );
 
 static const char *SongSortNames[] = {

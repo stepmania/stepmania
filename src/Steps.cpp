@@ -33,6 +33,8 @@
 /* register DisplayBPM with StringConversion */
 #include "EnumHelper.h"
 
+using std::vector;
+
 static const char *DisplayBPMNames[] =
 {
 	"Actual",
@@ -344,7 +346,7 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 	else
 	{
 		NoteDataUtil::CalculateRadarValues( tempNoteData, fMusicLengthSeconds, m_CachedRadarValues[0] );
-		fill_n( m_CachedRadarValues + 1, NUM_PLAYERS-1, m_CachedRadarValues[0] );
+		std::fill_n( m_CachedRadarValues + 1, NUM_PLAYERS-1, m_CachedRadarValues[0] );
 	}
 	GAMESTATE->SetProcessedTimingData(NULL);
 }
@@ -488,7 +490,7 @@ void Steps::DeAutogen( bool bCopyNoteData )
 	m_sChartStyle		= Real()->m_sChartStyle;
 	m_Difficulty		= Real()->m_Difficulty;
 	m_iMeter		= Real()->m_iMeter;
-	copy( Real()->m_CachedRadarValues, Real()->m_CachedRadarValues + NUM_PLAYERS, m_CachedRadarValues );
+	std::copy( Real()->m_CachedRadarValues, Real()->m_CachedRadarValues + NUM_PLAYERS, m_CachedRadarValues );
 	m_sCredit		= Real()->m_sCredit;
 	parent = NULL;
 
@@ -611,7 +613,7 @@ void Steps::SetMusicFile(const RString& file)
 void Steps::SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] )
 {
 	DeAutogen();
-	copy( v, v + NUM_PLAYERS, m_CachedRadarValues );
+	std::copy( v, v + NUM_PLAYERS, m_CachedRadarValues );
 	m_bAreCachedRadarValuesJustLoaded = true;
 }
 

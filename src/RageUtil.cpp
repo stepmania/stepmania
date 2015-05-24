@@ -19,6 +19,13 @@
 #include <sys/stat.h>
 #include <math.h>
 
+using std::vector;
+using std::string;
+using std::wstring;
+using std::istringstream;
+using std::stringstream;
+using std::isfinite;
+
 bool HexToBinary(const RString&, RString&);
 void utf8_sanitize(RString &);
 void UnicodeUpperLower(wchar_t *, size_t, const unsigned char *);
@@ -1207,7 +1214,7 @@ void SortRStringArray( vector<RString> &arrayRStrings, const bool bSortAscending
 
 float calc_mean( const float *pStart, const float *pEnd )
 {
-	return accumulate( pStart, pEnd, 0.f ) / distance( pStart, pEnd );
+	return std::accumulate( pStart, pEnd, 0.f ) / std::distance( pStart, pEnd );
 }
 
 float calc_stddev( const float *pStart, const float *pEnd, bool bSample )
@@ -1219,7 +1226,7 @@ float calc_stddev( const float *pStart, const float *pEnd, bool bSample )
 	float fDev = 0.0f;
 	for( const float *i=pStart; i != pEnd; ++i )
 		fDev += (*i - fMean) * (*i - fMean);
-	fDev /= distance( pStart, pEnd ) - (bSample ? 1 : 0);
+	fDev /= std::distance( pStart, pEnd ) - (bSample ? 1 : 0);
 	fDev = sqrtf( fDev );
 
 	return fDev;

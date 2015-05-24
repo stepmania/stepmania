@@ -12,6 +12,8 @@
 #include <set>
 #include "InputEventPlus.h"
 
+using std::vector;
+
 static const char *MenuDirNames[] = {
 	"Up",
 	"Down",

@@ -15,6 +15,8 @@
 #include "LocalizedString.h"
 #include <numeric>
 
+using std::vector;
+
 const float min_state_delay= 0.0001f;
 
 static const char *DrawModeNames[] = {

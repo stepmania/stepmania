@@ -5,6 +5,8 @@
 #include "XmlFile.h"
 #include "ThemeManager.h"
 
+using std::vector;
+
 ThemeMetric<bool> RadarValues::WRITE_SIMPLE_VALIES( "RadarValues", "WriteSimpleValues" );
 ThemeMetric<bool> RadarValues::WRITE_COMPLEX_VALIES( "RadarValues", "WriteComplexValues" );
 

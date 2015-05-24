@@ -14,8 +14,6 @@
 #endif
 #define SCALE(x, l1, h1, l2, h2)	(((x) - (l1)) * ((h2) - (l2)) / ((h1) - (l1)) + (l2))
 
-using namespace std;
-
 // This requires that allocated memory be 16 byte aligned. Apple's new
 // (and malloc) ensures this but most others only ensure that the
 // memory is type size aligned. Hack in posix_memalign. We could also

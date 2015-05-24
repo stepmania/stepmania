@@ -5,6 +5,8 @@
 #include "RageUtil_FileDB.h"
 #include <errno.h>
 
+using std::vector;
+
 struct RageFileObjMemFile
 {
 	RageFileObjMemFile():

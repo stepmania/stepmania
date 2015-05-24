@@ -3,6 +3,8 @@
 #include "RageLog.h"
 #include "arch/arch_default.h"
 
+using std::vector;
+
 DriverList LightsDriver::m_pDriverList;
 
 void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add )

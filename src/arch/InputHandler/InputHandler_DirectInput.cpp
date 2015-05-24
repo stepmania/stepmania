@@ -14,6 +14,8 @@
 
 #include "InputHandler_DirectInputHelper.h"
 
+using std::vector;
+
 REGISTER_INPUT_HANDLER_CLASS2( DirectInput, DInput );
 static Preference<bool> g_bAxisFix( "AxisFix", false );
 
@@ -452,6 +454,8 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 
 void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm )
 {
+	using std::max;
+	using std::min;
 	DWORD numevents;
 	DIDEVICEOBJECTDATA evtbuf[INPUT_QSIZE];
 

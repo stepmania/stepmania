@@ -31,6 +31,8 @@
 #include "ThemeMetric.h"
 #include "XmlToLua.h"
 
+using std::vector;
+
 static bool g_bIsDisplayed = false;
 static bool g_bIsSlow = false;
 static bool g_bIsHalt = false;

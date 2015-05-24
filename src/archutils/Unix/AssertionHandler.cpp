@@ -47,7 +47,7 @@ extern "C" void __assert_perror_fail( int errnum, const char *file, unsigned int
 #include <cxxabi.h>
 void UnexpectedExceptionHandler()
 {
-	type_info *pException = abi::__cxa_current_exception_type();
+	std::type_info *pException = abi::__cxa_current_exception_type();
 	char const *pName = pException->name();
 	int iStatus = -1;
 	char *pDem = abi::__cxa_demangle( pName, 0, 0, &iStatus );
@@ -60,13 +60,13 @@ void UnexpectedExceptionHandler()
 
 void InstallExceptionHandler()
 {
-	set_terminate( UnexpectedExceptionHandler );
+	std::set_terminate( UnexpectedExceptionHandler );
 }
 
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -76,7 +76,7 @@ void InstallExceptionHandler()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

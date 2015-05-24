@@ -23,7 +23,7 @@ struct pos_map_t
 
 struct pos_map_impl
 {
-	list<pos_map_t> m_Queue;
+	std::list<pos_map_t> m_Queue;
 	void Cleanup();
 };
 
@@ -106,7 +106,7 @@ void pos_map_queue::Insert( int64_t iSourceFrame, int iFrames, int64_t iDestFram
 void pos_map_impl::Cleanup()
 {
 	/* Scan backwards until we have at least pos_map_backlog_frames. */
-	list<pos_map_t>::iterator it = m_Queue.end();
+	std::list<pos_map_t>::iterator it = m_Queue.end();
 	int iTotalFrames = 0;
 	while( iTotalFrames < pos_map_backlog_frames )
 	{

@@ -10,6 +10,8 @@
 #include "SongUtil.h"
 #include "XmlFile.h"
 
+using std::vector;
+
 /** @brief Specifies the max number of charts available for a song.
  *
  * This includes autogenned charts. */

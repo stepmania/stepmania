@@ -60,12 +60,12 @@ private:
 	RageModelGeometry		*m_pGeometry;
 
 	float m_animation_length_seconds;
-	vector<msMaterial>		m_Materials;
+	std::vector<msMaterial>		m_Materials;
 	std::map<RString,msAnimation>	m_mapNameToAnimation;
 	const msAnimation*		m_pCurAnimation;
 
-	static void SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone_t> &vpBones );
-	vector<myBone_t>	m_vpBones;
+	static void SetBones( const msAnimation* pAnimation, float fFrame, std::vector<myBone_t> &vpBones );
+	std::vector<myBone_t>	m_vpBones;
 
 	// If any vertex has a bone weight, then then render from m_pTempGeometry.
 	// Otherwise, render directly from m_pGeometry.
@@ -75,7 +75,7 @@ private:
 	/* Keep a copy of the mesh data only if m_pTempGeometry is in use.  The normal and
 	 * position data will be changed; the rest is static and kept only to prevent making
 	 * a complete copy. */
-	vector<msMesh>	m_vTempMeshes;
+	std::vector<msMesh>	m_vTempMeshes;
 
 	void DrawMesh( int i ) const;
 	void AdvanceFrame( float fDeltaTime );

@@ -13,6 +13,8 @@
 #include "PlayerState.h"
 #include "InputEventPlus.h"
 
+using std::vector;
+
 REGISTER_SCREEN_CLASS( ScreenPlayerOptions );
 
 void ScreenPlayerOptions::Init()

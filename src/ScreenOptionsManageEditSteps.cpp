@@ -20,6 +20,8 @@
 #include "SpecialFiles.h"
 #include "NotesWriterSM.h"
 
+using std::vector;
+
 AutoScreenMessage( SM_BackFromRename );
 AutoScreenMessage( SM_BackFromDelete );
 AutoScreenMessage( SM_BackFromContextMenu );

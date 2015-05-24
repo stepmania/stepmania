@@ -27,6 +27,9 @@
 
 #include <algorithm>
 
+using std::vector;
+using std::wstring;
+
 const RString STATS_XML            = "Stats.xml";
 const RString STATS_XML_GZ         = "Stats.xml.gz";
 /** @brief The filename for where one can edit their personal profile information. */

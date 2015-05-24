@@ -10,6 +10,8 @@ http://en.wikipedia.org/wiki/INI_file
 #include "RageLog.h"
 #include "RageFile.h"
 
+using std::string;
+
 IniFile::IniFile(): XNode("IniFile")
 {
 }

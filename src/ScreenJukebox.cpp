@@ -22,6 +22,9 @@
 #include "SongUtil.h"
 #include "Song.h"
 
+using std::vector;
+using std::string;
+
 #define SHOW_COURSE_MODIFIERS_PROBABILITY	THEME->GetMetricF(m_sName,"ShowCourseModifiersProbability")
 
 REGISTER_SCREEN_CLASS( ScreenJukebox );

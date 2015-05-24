@@ -14,6 +14,8 @@
 #include "Game.h"
 #include "Style.h"
 
+using std::vector;
+
 GameManager*	GAMEMAN = NULL;	// global and accessible from anywhere in our program
 
 enum

@@ -60,19 +60,19 @@ public:
 	class _all_tracks_iterator
 	{
 		ND		*m_pNoteData;
-		vector<iter>	m_vBeginIters;
+		std::vector<iter>	m_vBeginIters;
 
 		/* There isn't a "past the beginning" iterator so this is hard to make a true bidirectional iterator.
 		* Use the "past the end" iterator in place of the "past the beginning" iterator when in reverse. */
-		vector<iter>	m_vCurrentIters;
+		std::vector<iter>	m_vCurrentIters;
 
-		vector<iter>	m_vEndIters;
+		std::vector<iter>	m_vEndIters;
 		int		m_iTrack;
 		bool		m_bReverse;
 
 		// These exist so that the iterator can be revalidated if the NoteData is
 		// transformed during this iterator's lifetime.
-		vector<int> m_PrevCurrentRows;
+		std::vector<int> m_PrevCurrentRows;
 		bool m_Inclusive;
 		int m_StartRow;
 		int m_EndRow;
@@ -95,7 +95,7 @@ public:
 		inline const TN &operator*() const	{ DEBUG_ASSERT( !IsAtEnd() ); return m_vCurrentIters[m_iTrack]->second; }
 		inline const TN *operator->() const	{ DEBUG_ASSERT( !IsAtEnd() ); return &m_vCurrentIters[m_iTrack]->second; }
 		// Use when transforming the NoteData.
-		void Revalidate(ND* notedata, vector<int> const& added_or_removed_tracks, bool added);
+		void Revalidate(ND* notedata, std::vector<int> const& added_or_removed_tracks, bool added);
 	};
 	typedef _all_tracks_iterator<NoteData, NoteData::iterator, TapNote> 			all_tracks_iterator;
 	typedef _all_tracks_iterator<const NoteData, NoteData::const_iterator, const TapNote>	all_tracks_const_iterator;
@@ -106,7 +106,7 @@ public:
 private:
 	// There's no point in inserting empty notes into the map.
 	// Any blank space in the map is defined to be empty.
-	vector<TrackMap>	m_TapNotes;
+	std::vector<TrackMap>	m_TapNotes;
 
 	/**
 	 * @brief Determine whether this note is for Player 1 or Player 2.
@@ -224,7 +224,7 @@ public:
 	}
 
 	// Call this after using any transform that changes the NoteData.
-	void RevalidateATIs(vector<int> const& added_or_removed_tracks, bool added);
+	void RevalidateATIs(std::vector<int> const& added_or_removed_tracks, bool added);
 	void TransferATIs(NoteData& to);
 
 	/* Return an iterator range include iStartRow to iEndRow.  Extend the range to include

@@ -4,6 +4,8 @@
 #include "RageUtil.h"
 #include "arch/arch_default.h"
 
+using std::vector;
+
 DriverList RageSoundDriver::m_pDriverList;
 
 RageSoundDriver *RageSoundDriver::Create( const RString& sDrivers )

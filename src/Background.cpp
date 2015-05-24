@@ -24,6 +24,9 @@
 #include "Song.h"
 #include "AutoActor.h"
 
+using std::vector;
+using std::deque;
+
 static ThemeMetric<float> LEFT_EDGE				("Background","LeftEdge");
 static ThemeMetric<float> TOP_EDGE				("Background","TopEdge");
 static ThemeMetric<float> RIGHT_EDGE				("Background","RightEdge");

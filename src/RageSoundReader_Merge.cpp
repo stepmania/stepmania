@@ -10,6 +10,8 @@
 #include <array>
 #include <numeric>
 
+using std::vector;
+
 RageSoundReader_Merge::RageSoundReader_Merge()
 {
 	m_iSampleRate = -1;

@@ -3142,6 +3142,7 @@ bool ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 
 bool ScreenEdit::InputRecordPaused( const InputEventPlus &input, EditButton EditB )
 {
+	using std::min;
 	if( input.type != IET_FIRST_PRESS )
 		return false;	// don't care
 
@@ -3502,6 +3503,8 @@ void ScreenEdit::TransitionEditState( EditState em )
 
 void ScreenEdit::ScrollTo( float fDestinationBeat )
 {
+	using std::min;
+	using std::max;
 	CLAMP( fDestinationBeat, 0, GetMaximumBeatForMoving() );
 
 	// Don't play the sound and do the hold note logic below if our position didn't change.
@@ -3559,7 +3562,7 @@ void ScreenEdit::ScrollTo( float fDestinationBeat )
 			m_NoteFieldEdit.m_iBeginMarker = m_iShiftAnchor;
 			m_NoteFieldEdit.m_iEndMarker = iDestinationRow;
 			if( m_NoteFieldEdit.m_iBeginMarker > m_NoteFieldEdit.m_iEndMarker )
-				swap( m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
+				std::swap( m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
 		}
 	}
 
@@ -4539,6 +4542,7 @@ static void ChangeStepCredit( const RString &sNew )
 
 static void ChangeStepMeter( const RString &sNew )
 {
+	using std::max;
 	int diff = StringToInt(sNew);
 	GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(max(diff, 1));
 }
@@ -4767,6 +4771,7 @@ static LocalizedString SAVE_CHANGES_BEFORE_EXITING	( "ScreenEdit", "Do you want 
 
 int ScreenEdit::GetSongOrNotesEnd()
 {
+	using std::max;
 	return max(m_iStartPlayingAt, max(m_NoteDataEdit.GetLastRow(),
 			BeatToNoteRow(m_pSteps->GetTimingData()->GetBeatFromElapsedTime(
 					GAMESTATE->m_pCurSong->m_fMusicLengthSeconds))));
@@ -4774,6 +4779,7 @@ int ScreenEdit::GetSongOrNotesEnd()
 
 void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAnswers )
 {
+	using std::max;
 	GAMESTATE->SetProcessedTimingData(m_pSteps->GetTimingData());
 	switch( c )
 	{
@@ -6185,7 +6191,7 @@ void ScreenEdit::Undo()
 {
 	if( m_bHasUndo )
 	{
-		swap( m_Undo, m_NoteDataEdit );
+		std::swap( m_Undo, m_NoteDataEdit );
 		SCREENMAN->SystemMessage( UNDO );
 	}
 	else
@@ -6270,6 +6276,7 @@ float ScreenEdit::GetMaximumBeatForNewNote() const
 
 float ScreenEdit::GetMaximumBeatForMoving() const
 {
+	using std::max;
 	float fEndBeat = GetMaximumBeatForNewNote();
 
 	/* Jump to GetLastBeat even if it's past the song's last beat

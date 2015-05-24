@@ -61,6 +61,9 @@
 #include "XmlFileUtil.h"
 #include "Profile.h" // for replay data stuff
 
+using std::vector;
+using std::string;
+
 // Defines
 #define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB(m_sName,"ShowLifeMeterForDisabledPlayers")
 #define SHOW_SCORE_IN_RAVE			THEME->GetMetricB(m_sName,"ShowScoreInRave")
@@ -3032,7 +3035,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		{
 			float fMaxAliveSeconds = 0;
 			FOREACH_EnabledPlayer(p)
-				fMaxAliveSeconds = max( fMaxAliveSeconds, STATSMAN->m_CurStageStats.m_player[p].m_fAliveSeconds );
+				fMaxAliveSeconds = std::max( fMaxAliveSeconds, STATSMAN->m_CurStageStats.m_player[p].m_fAliveSeconds );
 			m_textSurviveTime.SetText( "TIME: " + SecondsToMMSSMsMs(fMaxAliveSeconds) );
 			ON_COMMAND( m_textSurviveTime );
 		}

@@ -14,6 +14,9 @@
 #include <cstdlib>
 #include "LocalizedString.h"
 
+using std::vector;
+using std::string;
+
 AutoScreenMessage( SM_BackFromURL );
 
 REGISTER_SCREEN_CLASS( ScreenPackages );
@@ -109,7 +112,7 @@ void ScreenPackages::Init()
 	UpdateProgress();
 
 	// Workaround: For some reason, the first download sometimes
-	// corrupts; by opening and closing the RageFile, this 
+	// corrupts; by opening and closing the RageFile, this
 	// problem does not occur.  Go figure?
 
 	// XXX: This is a really dirty work around!
@@ -239,8 +242,8 @@ bool ScreenPackages::MenuLeft( const InputEventPlus &input )
 		COMMAND( m_sprExistingBG, "Away" );
 		COMMAND( m_sprWebBG, "Back" );
 	}
-	else 
-	{	
+	else
+	{
 		m_iDLorLST = 0;
 		COMMAND( m_sprExistingBG, "Back" );
 		COMMAND( m_sprWebBG, "Away" );
@@ -263,7 +266,7 @@ bool ScreenPackages::MenuRight( const InputEventPlus &input )
 		COMMAND( m_sprExistingBG, "Away" );
 		COMMAND( m_sprWebBG, "Back" );
 	}
-	else 
+	else
 	{
 		m_iDLorLST = 1;
 		COMMAND( m_sprExistingBG, "Back" );
@@ -428,7 +431,7 @@ RString ScreenPackages::StripOutContainers( const RString & In )
 
 	if( t == '\"' || t == '\'' )
 	{
-		unsigned j = i+1; 
+		unsigned j = i+1;
 		char u = In.at(j);
 		while( u != t && j < In.length() )
 		{
@@ -556,7 +559,7 @@ void ScreenPackages::EnterURL( const RString & sURL )
 		UpdateProgress();
 		return;
 	}
-	
+
 	//Produce HTTP header
 
 	RString Header="";
@@ -656,7 +659,7 @@ void ScreenPackages::HTTPUpdate()
 
 	if ( ( m_iTotalBytes <= m_iDownloaded && m_iTotalBytes != -1 ) ||
 					//We have the full doc. (And we knew how big it was)
-		( m_iTotalBytes == -1 && 
+		( m_iTotalBytes == -1 &&
 			( m_wSocket.state == EzSockets::skERROR || m_wSocket.state == EzSockets::skDISCONNECTED ) ) )
 				//We didn't know how big it was, and were disconnected
 				//So that means we have it all.
@@ -718,7 +721,7 @@ bool ScreenPackages::ParseHTTPAddress( const RString &URL, RString &sProto, RStr
 /*
  * (c) 2004 Charles Lohr
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -728,7 +731,7 @@ bool ScreenPackages::ParseHTTPAddress( const RString &URL, RString &sProto, RStr
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

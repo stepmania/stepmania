@@ -9,6 +9,8 @@
 #include "InputEventPlus.h"
 #include "InputMapper.h"
 
+using std::vector;
+
 #define NEXT_SCREEN		THEME->GetMetric (m_sName,"NextScreen")
 #define PREV_SCREEN		THEME->GetMetric (m_sName,"PrevScreen")
 #define PREPARE_SCREENS		THEME->GetMetric (m_sName,"PrepareScreens")

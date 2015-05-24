@@ -17,7 +17,7 @@ public:
 	 * @brief The original TimingData before adjustments were made.
 	 *
 	 * This is designed to work with Split Timing. */
-	static vector<TimingData> s_vpTimingDataOriginal;
+	static std::vector<TimingData> s_vpTimingDataOriginal;
 
 	static float s_fGlobalOffsetSecondsOriginal;
 	/* We only want to call the Reset methods before a song, not immediately after
@@ -35,8 +35,8 @@ public:
 	static void HandleSongEnd();
 	static void AutosyncOffset();
 	static void AutosyncTempo();
-	static void GetSyncChangeTextGlobal( vector<RString> &vsAddTo );
-	static void GetSyncChangeTextSong( vector<RString> &vsAddTo );
+	static void GetSyncChangeTextGlobal( std::vector<RString> &vsAddTo );
+	static void GetSyncChangeTextSong( std::vector<RString> &vsAddTo );
 
 	/** @brief The minimum number of steps to hit for syncing purposes. */
 	static const int OFFSET_SAMPLE_COUNT = 24;
@@ -49,7 +49,7 @@ public:
 	// reject the recorded data for the Least Squares Regression.
 	static const float ERROR_TOO_HIGH;
 
-	static vector< std::pair<float, float> > s_vAutosyncTempoData;
+	static std::vector< std::pair<float, float> > s_vAutosyncTempoData;
 	static float s_fAverageError;
 	static int s_iStepsFiltered;
 };

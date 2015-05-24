@@ -16,7 +16,7 @@ struct MenuRowDef
 	MenuRowUpdateEnabled	pfnEnabled;	// if ! NULL, used instead of bEnabled
 	EditMode	emShowIn;
 	int			iDefaultChoice;
-	vector<RString>		choices;
+	std::vector<RString>		choices;
 	bool		bThemeTitle;
 	bool		bThemeItems;
 
@@ -52,7 +52,7 @@ struct MenuRowDef
 	}
 
 	MenuRowDef(int r, RString n, bool e, EditMode s,
-			   bool bTT, bool bTI, int d, vector<RString> options):
+			   bool bTT, bool bTI, int d, std::vector<RString> options):
 			iRowCode(r), sName(n), bEnabled(e), pfnEnabled(NULL),
 			emShowIn(s), iDefaultChoice(d), choices(),
 			bThemeTitle(bTT), bThemeItems(bTI)
@@ -126,7 +126,7 @@ struct MenuRowDef
 struct MenuDef
 {
 	RString sClassName;
-	vector<MenuRowDef> rows;
+	std::vector<MenuRowDef> rows;
 
 	MenuDef( RString c, MenuRowDef r0=MenuRowDef(),
 		MenuRowDef r1=MenuRowDef(), MenuRowDef r2=MenuRowDef(),
@@ -169,8 +169,8 @@ public:
 
 protected:
 	virtual void AfterChangeValueOrRow( PlayerNumber pn );
-	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
-	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
+	virtual void ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
+	virtual void ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
 
 	virtual bool FocusedItemEndsScreen( PlayerNumber pn ) const;
 
@@ -179,14 +179,14 @@ protected:
 	ScreenMessage		m_SMSendOnOK;
 	ScreenMessage		m_SMSendOnCancel;
 
-	vector<MenuRowDef>	m_vMenuRows;
+	std::vector<MenuRowDef>	m_vMenuRows;
 
 public:
 	ScreenMiniMenu(): m_SMSendOnOK(), m_SMSendOnCancel(), m_vMenuRows() {}
 
 	static bool s_bCancelled;
 	static int s_iLastRowCode;
-	static vector<int>	s_viLastAnswers;
+	static std::vector<int>	s_viLastAnswers;
 };
 
 #endif

@@ -19,6 +19,7 @@
 
 #include "arch/Dialog/Dialog.h"
 
+using std::vector;
 
 // Actor registration
 static std::map<RString,CreateActorFn> *g_pmapRegistrees = NULL;
@@ -31,7 +32,7 @@ static bool IsRegistered( const RString& sClassName )
 void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
 {
 	if( g_pmapRegistrees == NULL )
-		g_pmapRegistrees = new map<RString,CreateActorFn>;
+		g_pmapRegistrees = new std::map<RString,CreateActorFn>;
 
 	auto iter = g_pmapRegistrees->find( sClassName );
 	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Actor class '%s' already registered.", sClassName.c_str()) );

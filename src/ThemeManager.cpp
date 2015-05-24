@@ -28,6 +28,8 @@
 #include "XmlFileUtil.h"
 #include <deque>
 
+using std::vector;
+
 ThemeManager*	THEME = NULL;	// global object accessible from anywhere in the program
 
 static const RString THEME_INFO_INI = "ThemeInfo.ini";
@@ -48,7 +50,7 @@ struct Theme
 	RString sThemeName;
 };
 // When looking for a metric or an element, search these from head to tail.
-static deque<Theme> g_vThemes;
+static std::deque<Theme> g_vThemes;
 class LoadedThemeData
 {
 public:
@@ -128,7 +130,7 @@ static void FileNameToMetricsGroupAndElement( const RString &sFileName, RString 
 {
 	// split into class name and file name
 	RString::size_type iIndexOfFirstSpace = sFileName.find(" ");
-	if( iIndexOfFirstSpace == string::npos ) // no space
+	if( iIndexOfFirstSpace == std::string::npos ) // no space
 	{
 		sMetricsGroupOut = "";
 		sElementOut = sFileName;
@@ -472,7 +474,7 @@ void ThemeManager::RunLuaScripts( const RString &sMask, bool bUseThemeDir )
 	/* TODO: verify whether this final check is necessary. */
 	const RString sCurThemeName = m_sCurThemeName;
 
-	deque<Theme>::const_iterator iter = g_vThemes.end();
+	std::deque<Theme>::const_iterator iter = g_vThemes.end();
 	do
 	{
 		--iter;

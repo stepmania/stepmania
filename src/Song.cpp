@@ -39,6 +39,8 @@
 #include <set>
 #include <float.h>
 
+using std::vector;
+using std::string;
 
 /**
  * @brief The internal version of the cache for StepMania.

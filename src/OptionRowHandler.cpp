@@ -23,6 +23,8 @@
 #include "ScreenMiniMenu.h"	// for MenuRowDef
 #include "FontCharAliases.h"
 
+using std::vector;
+
 #define ENTRY(s)		THEME->GetMetric ("ScreenOptionsMaster",s)
 #define ENTRY_MODE(s,i)		THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
 #define ENTRY_DEFAULT(s)	THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")

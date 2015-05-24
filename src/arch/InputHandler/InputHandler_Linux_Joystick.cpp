@@ -15,6 +15,8 @@
 
 #include <set>
 
+using std::vector;
+
 REGISTER_INPUT_HANDLER_CLASS2( LinuxJoystick, Linux_Joystick );
 
 InputHandler_Linux_Joystick::InputHandler_Linux_Joystick()

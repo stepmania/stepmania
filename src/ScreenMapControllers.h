@@ -58,7 +58,7 @@ private:
 		// owned by m_Line
 		BitmapText	*m_textMappedTo[NUM_GameController][NUM_SHOWN_GAME_TO_DEVICE_SLOTS];
 	};
-	vector<KeyToMap> m_KeysToMap;
+	std::vector<KeyToMap> m_KeysToMap;
 
 	BitmapText m_textDevices;
 
@@ -116,9 +116,9 @@ private:
 	void ExitAction();
 	bool SanityCheckWrapper();
 
-	vector<ActionRow> m_Actions;
+	std::vector<ActionRow> m_Actions;
 
-	vector<ActorFrame*> m_Line;
+	std::vector<ActorFrame*> m_Line;
 	ActorScroller m_LineScroller;
 
 	RageSound m_soundChange;

@@ -40,7 +40,7 @@ protected:
 		}
 
 		int		colorIndex;
-		vector<DifficultyAndStepsType> aTypes;
+		std::vector<DifficultyAndStepsType> aTypes;
 
 		// RankingPageType_Category
 		RankingCategory	category;
@@ -54,7 +54,7 @@ protected:
 
 	BitmapText m_textStepsType;	// for category, course, all_steps
 
-	vector<PageToShow>		m_vPagesToShow;
+	std::vector<PageToShow>		m_vPagesToShow;
 	unsigned			m_iNextPageToShow;
 
 	// Don't use the version in CommonMetrics because we may have multiple

@@ -22,6 +22,8 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "ScreenPrompt.h"
 
+using std::vector;
+
 static LocalizedString COULD_NOT_LAUNCH_BROWSER( "GameCommand", "Could not launch web browser." );
 
 REGISTER_CLASS_TRAITS( GameCommand, new GameCommand(*pCopy) );

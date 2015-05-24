@@ -4,6 +4,8 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "InputEventPlus.h"
 
+using std::vector;
+
 REGISTER_SCREEN_CLASS( ScreenSelectLanguage );
 
 void ScreenSelectLanguage::Init()

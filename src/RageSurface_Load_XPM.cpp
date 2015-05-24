@@ -8,6 +8,8 @@
 #include "RageSurface.h"
 #include <map>
 
+using std::vector;
+
 #define CheckLine() \
 	if( xpm[line] == NULL ) { \
 		error = "short file"; \

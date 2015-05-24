@@ -12,6 +12,9 @@
 #include <utility>
 #include <array>
 
+using std::vector;
+using std::random_shuffle;
+
 // TODO: Remove these constants that aren't time signature-aware
 static const int BEATS_PER_MEASURE = 4;
 static const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;
@@ -2080,6 +2083,7 @@ void NoteDataUtil::InsertIntelligentTaps(
 	ASSERT( iWindowSizeRows <= iWindowStrideRows );
 
 	using std::min;
+	using std::max;
 	bool bRequireNoteAtBeginningOfWindow = !bSkippy;
 	bool bRequireNoteAtEndOfWindow = true;
 

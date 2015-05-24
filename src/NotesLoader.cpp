@@ -11,6 +11,9 @@
 #include "NotesLoaderKSF.h"
 #include "RageUtil.h"
 
+using std::vector;
+using std::string;
+
 void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, RString &sMainTitleOut, RString &sSubTitleOut )
 {
 	std::array<RString, 5> sLeftSeps = { "\t", " -", " ~", " (", " [" };

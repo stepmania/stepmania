@@ -2,6 +2,8 @@
 #include "DialogDriver.h"
 #include "RageLog.h"
 
+using std::vector;
+
 std::map<istring, CreateDialogDriverFn> *RegisterDialogDriver::g_pRegistrees;
 RegisterDialogDriver::RegisterDialogDriver( const istring &sName, CreateDialogDriverFn pfn )
 {

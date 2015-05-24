@@ -27,13 +27,13 @@ public:
 	void LoadSongs( int iNumRecentScores );
 	void LoadCourses( CourseType ct, int iNumRecentScores );
 	void Load( RString sClassName );
-	void SetDisplay( const vector<DifficultyAndStepsType> &DifficultiesToShow );
+	void SetDisplay( const std::vector<DifficultyAndStepsType> &DifficultiesToShow );
 	bool Scroll( int iDir );
 	void ScrollTop();
 
 protected:
 	virtual void ConfigureActor( Actor *pActor, int iItem );
-	vector<DifficultyAndStepsType> m_DifficultiesToShow;
+	std::vector<DifficultyAndStepsType> m_DifficultiesToShow;
 
 	struct ScoreRowItemData // for all_steps and all_courses
 	{
@@ -42,7 +42,7 @@ protected:
 		Song *m_pSong;
 		Course *m_pCourse;
 	};
-	vector<ScoreRowItemData> m_vScoreRowItemData;
+	std::vector<ScoreRowItemData> m_vScoreRowItemData;
 
 	ThemeMetric<int>	SCROLLER_ITEMS_TO_DRAW;
 	ThemeMetric<float>	SCROLLER_SECONDS_PER_ITEM;

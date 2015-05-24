@@ -19,6 +19,8 @@
 #include <map>
 #include "SpecialFiles.h"
 
+using std::vector;
+
 /** @brief Have the NoteSkinManager available throughout the program. */
 NoteSkinManager*	NOTESKIN = NULL; // global and accessible from anywhere in our program
 

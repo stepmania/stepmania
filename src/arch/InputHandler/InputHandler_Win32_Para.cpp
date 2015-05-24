@@ -13,6 +13,8 @@ extern "C" {
 #include "archutils/Win32/ddk/hidsdi.h"
 }
 
+using std::vector;
+
 REGISTER_INPUT_HANDLER_CLASS2( Para, Win32_Para );
 
 static void InitHack( HANDLE h )

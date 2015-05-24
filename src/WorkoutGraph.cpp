@@ -11,6 +11,8 @@
 #include "Course.h"
 #include "Style.h"
 
+using std::vector;
+
 const int MAX_METERS_TO_SHOW = 50;
 
 REGISTER_ACTOR_CLASS( WorkoutGraph );

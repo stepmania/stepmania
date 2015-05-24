@@ -7,6 +7,7 @@
 #include "ProfileManager.h"
 #include "Profile.h"
 
+using std::vector;
 
 static const char *RankingTypeNames[] = {
 	"Category",

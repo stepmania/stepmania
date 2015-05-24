@@ -145,6 +145,7 @@ void MenuTimer::Disable()
 
 void MenuTimer::Stall()
 {
+	using std::min;
 	// Max amount of stall time we'll use:
 	const float Amt = min( 0.5f, m_fStallSecondsLeft );
 

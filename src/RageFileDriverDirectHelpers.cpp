@@ -15,6 +15,8 @@
 #include <io.h>
 #endif
 
+using std::vector;
+
 RString DoPathReplace(const RString &sPath)
 {
 	RString TempPath = sPath;

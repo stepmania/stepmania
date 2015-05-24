@@ -15,6 +15,8 @@
 #include "Song.h"
 #include "Steps.h"
 
+using std::vector;
+
 /**
  * @brief Turn a vector of lines into a single line joined by newline characters.
  * @param lines the list of lines to join.

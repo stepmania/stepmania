@@ -26,6 +26,8 @@
 #include "SongManager.h"
 #include "CodeDetector.h"
 
+using std::vector;
+
 AutoScreenMessage( SM_NoSongs );
 AutoScreenMessage( SM_ChangeSong );
 AutoScreenMessage( SM_SMOnlinePack );
@@ -101,7 +103,7 @@ bool ScreenNetSelectMusic::Input( const InputEventPlus &input )
 	if( input.type != IET_FIRST_PRESS && input.type != IET_REPEAT )
 		return false;
 
-	bool bHoldingCtrl = 
+	bool bHoldingCtrl =
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL)) ||
 		(!NSMAN->useSMserver); // If we are disconnected, assume no chatting
@@ -338,7 +340,7 @@ bool ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 	// I agree, that's a stupid idea -aj
 
 	PlayerNumber pn = input.pn;
-	if( GAMESTATE->IsPlayerEnabled( PLAYER_2 ) && 
+	if( GAMESTATE->IsPlayerEnabled( PLAYER_2 ) &&
 		!GAMESTATE->IsPlayerEnabled( PLAYER_1 ) )
 		pn = PLAYER_2;
 
@@ -471,8 +473,8 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 {
 	if( GAMESTATE->m_pCurSong == NULL )
 	{
-		m_StepsDisplays[pn].SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, Difficulty_Beginner, CourseType_Invalid ); 
-		//m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	// It will blank it out 
+		m_StepsDisplays[pn].SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, Difficulty_Beginner, CourseType_Invalid );
+		//m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	// It will blank it out
 		return;
 	}
 
@@ -498,7 +500,7 @@ void ScreenNetSelectMusic::MusicChanged()
 		// todo: handle playing section music correctly. -aj
 		// SOUND->PlayMusic( m_sSectionMusicPath, NULL, true, 0, -1 );
 		return;
-	} 
+	}
 
 	FOREACH_EnabledPlayer (pn)
 	{
@@ -572,7 +574,7 @@ void ScreenNetSelectMusic::Update( float fDeltaTime )
 /*
  * (c) 2004-2005 Charles Lohr
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -582,7 +584,7 @@ void ScreenNetSelectMusic::Update( float fDeltaTime )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

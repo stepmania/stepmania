@@ -98,10 +98,10 @@ protected:
 	AutoActor	m_sprExplanation[NUM_Page];
 	AutoActor	m_sprMore[NUM_Page];
 	// icon is the shared, per-choice piece
-	vector<AutoActor> m_vsprIcon;
+	std::vector<AutoActor> m_vsprIcon;
 
 	// preview is per-player, per-choice piece
-	vector<AutoActor> m_vsprScroll[NUM_PLAYERS];
+	std::vector<AutoActor> m_vsprScroll[NUM_PLAYERS];
 
 	ActorScroller	m_Scroller[NUM_PLAYERS];
 

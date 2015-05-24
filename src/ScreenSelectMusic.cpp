@@ -33,6 +33,8 @@
 #include "OptionsList.h"
 #include "RageFileManager.h"
 
+using std::vector;
+
 static const char *SelectionStateNames[] = {
 	"SelectingSong",
 	"SelectingSteps",

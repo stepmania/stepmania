@@ -11,6 +11,8 @@
 #include "Song.h"
 #include "Steps.h"
 
+using std::vector;
+
 RString OptimizeDWIString( RString holds, RString taps );
 
 /**
@@ -45,7 +47,7 @@ static char OptimizeDWIPair( char c1, char c2 )
 	}
 
 	if( c1 > c2 )
-		swap( c1, c2 );
+		std::swap( c1, c2 );
 
 	auto it = joins.find( cpair(c1, c2) );
 	ASSERT( it != joins.end() );

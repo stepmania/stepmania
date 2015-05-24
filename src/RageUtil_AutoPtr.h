@@ -43,8 +43,8 @@ public:
 
 	void Swap( AutoPtrCopyOnWrite<T> &rhs )
 	{
-		swap( m_pPtr, rhs.m_pPtr );
-		swap( m_iRefCount, rhs.m_iRefCount );
+		std::swap( m_pPtr, rhs.m_pPtr );
+		std::swap( m_iRefCount, rhs.m_iRefCount );
 	}
 
 	inline AutoPtrCopyOnWrite<T> &operator=( const AutoPtrCopyOnWrite &rhs )
@@ -86,12 +86,6 @@ private:
 	T *m_pPtr;
 	int *m_iRefCount;
 };
-
-template<class T>
-inline void swap( AutoPtrCopyOnWrite<T> &a, AutoPtrCopyOnWrite<T> &b )
-{
-	a.Swap(b);
-}
 
 /*
  * This smart pointer template is used to safely hide implementations from
@@ -135,22 +129,11 @@ public:
 			m_pPtr = HiddenPtrTraits<T>::Copy( cpy.m_pPtr );
 	}
 
-#if 0 // broken VC6
-	template<class U>
-	HiddenPtr( const HiddenPtr<U> &cpy )
-	{
-		if( cpy.m_pPtr == NULL )
-			m_pPtr = NULL;
-		else
-			m_pPtr = HiddenPtrTraits<U>::Copy( cpy.m_pPtr );
-	}
-#endif
-
 	~HiddenPtr()
 	{
 		HiddenPtrTraits<T>::Delete( m_pPtr );
 	}
-	void Swap( HiddenPtr<T> &rhs ) { swap( m_pPtr, rhs.m_pPtr ); }
+	void Swap( HiddenPtr<T> &rhs ) { std::swap( m_pPtr, rhs.m_pPtr ); }
 
 	HiddenPtr<T> &operator=( T *p )
 	{
@@ -166,37 +149,17 @@ public:
 		return *this;
 	}
 
-#if 0 // broken VC6
-	template<class U>
-	HiddenPtr<T> &operator=( const HiddenPtr<U> &cpy )
-	{
-		HiddenPtr<T> t( cpy );
-		Swap( t );
-		return *this;
-	}
-#endif
-
 private:
 	T *m_pPtr;
 
-#if 0 // broken VC6
-	template<class U>
-	friend class HiddenPtr;
-#endif
 };
-
-template<class T>
-inline void swap( HiddenPtr<T> &a, HiddenPtr<T> &b )
-{
-	a.Swap(b);
-}
 
 #endif
 
 /*
  * (c) 2005 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -206,7 +169,7 @@ inline void swap( HiddenPtr<T> &a, HiddenPtr<T> &b )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

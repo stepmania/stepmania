@@ -5,6 +5,8 @@
 #include "RegistryAccess.h"
 #include <windows.h>
 
+using std::vector;
+
 // this will not work on 95 and NT because of EnumDisplayDevices
 RString GetPrimaryVideoName()
 {

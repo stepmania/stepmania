@@ -14,6 +14,9 @@
 #include <map>
 #include <set>
 
+using std::vector;
+using std::string;
+
 #define TWEEN_QUEUE_MAX 50
 
 RString unique_name();

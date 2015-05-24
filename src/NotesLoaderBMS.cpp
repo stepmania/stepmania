@@ -18,6 +18,8 @@
 #include "ActorUtil.h"
 #include "RageFileManager.h"
 
+using std::vector;
+
 /* BMS encoding:	tap-hold
  * 4&8panel:	Player1		Player2
  * Left			11-51		21-61

@@ -83,8 +83,8 @@ public:
 
 	void SetTextGlowMode( TextGlowMode tgm )	{ m_TextGlowMode = tgm; }
 
-	void GetLines( vector<wstring> &wTextLines ) const { wTextLines = m_wTextLines; }
-	const vector<wstring> &GetLines() const { return m_wTextLines; }
+	void GetLines( std::vector<std::wstring> &wTextLines ) const { wTextLines = m_wTextLines; }
+	const std::vector<std::wstring> &GetLines() const { return m_wTextLines; }
 
 	RString GetText() const { return m_sText; }
 	// Return true if the string 's' will use an alternate string, if available.
@@ -111,8 +111,8 @@ protected:
 	Font		*m_pFont;
 	bool		m_bUppercase;
 	RString		m_sText;
-	vector<wstring>		m_wTextLines;
-	vector<int>		m_iLineWidths;	// in source pixels
+	std::vector<std::wstring>		m_wTextLines;
+	std::vector<int>		m_iLineWidths;	// in source pixels
 	int			m_iWrapWidthPixels;		// -1 = no wrap
 	float		m_fMaxWidth;			// 0 = no max
 	float		m_fMaxHeight;			// 0 = no max
@@ -123,9 +123,9 @@ protected:
 	float		m_fDistortion;
 	int			m_iVertSpacing;
 
-	vector<RageSpriteVertex>	m_aVertices;
+	std::vector<RageSpriteVertex>	m_aVertices;
 
-	vector<FontPageTextures*>	m_vpFontPageTextures;
+	std::vector<FontPageTextures*>	m_vpFontPageTextures;
 	std::map<size_t, Attribute>		m_mAttributes;
 	bool				m_bHasGlowAttribute;
 
@@ -138,7 +138,7 @@ protected:
 
 private:
 	void SetTextInternal();
-	vector<BMT_TweenState> BMT_Tweens;
+	std::vector<BMT_TweenState> BMT_Tweens;
 	BMT_TweenState BMT_current;
 	BMT_TweenState BMT_start;
 };

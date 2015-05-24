@@ -5,6 +5,8 @@
 #include "ThemeManager.h"
 #include "ActorUtil.h"
 
+using std::vector;
+
 REGISTER_ACTOR_CLASS( HelpDisplay );
 
 HelpDisplay::HelpDisplay()

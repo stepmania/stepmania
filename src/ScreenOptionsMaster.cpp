@@ -16,6 +16,8 @@
 #include "CommonMetrics.h"
 #include "GameLoop.h"
 
+using std::vector;
+
 #define LINE_NAMES			THEME->GetMetric (m_sName,"LineNames")
 #define LINE(sLineName)		THEME->GetMetric (m_sName,ssprintf("Line%s",sLineName.c_str()))
 #define FORCE_ALL_PLAYERS	THEME->GetMetricB(m_sName,"ForceAllPlayers")

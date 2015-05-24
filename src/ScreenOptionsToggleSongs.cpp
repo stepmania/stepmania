@@ -9,6 +9,8 @@
 #include "PrefsManager.h"
 #include "MessageManager.h"
 
+using std::vector;
+
 // main page (group list)
 REGISTER_SCREEN_CLASS( ScreenOptionsToggleSongs );
 

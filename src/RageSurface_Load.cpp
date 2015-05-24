@@ -10,6 +10,7 @@
 #include "RageLog.h"
 #include <set>
 
+using std::vector;
 
 static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error, RString format, bool &bKeepTrying )
 {

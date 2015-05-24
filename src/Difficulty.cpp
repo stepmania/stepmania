@@ -12,6 +12,8 @@
 #include "Steps.h"
 #include "Trail.h"
 
+using std::vector;
+
 static const char *DifficultyNames[] = {
 	"Beginner",
 	"Easy",

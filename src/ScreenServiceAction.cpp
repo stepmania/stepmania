@@ -17,6 +17,8 @@
 #include "StepMania.h"
 #include "NotesLoaderSSC.h"
 
+using std::vector;
+
 static LocalizedString BOOKKEEPING_DATA_CLEARED( "ScreenServiceAction", "Bookkeeping data cleared." );
 static RString ClearBookkeepingData()
 {

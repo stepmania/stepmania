@@ -4,6 +4,9 @@
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
 
+using std::vector;
+using std::string;
+
 RString Command::GetName() const
 {
 	if( m_vsArgs.empty() )

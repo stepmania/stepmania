@@ -11,6 +11,8 @@
 #include "LocalizedString.h"
 #include "arch/Dialog/Dialog.h"
 
+using std::vector;
+
 #define AUTOMAPPINGS_DIR "/Data/AutoMappings/"
 
 static Preference<RString> g_sLastSeenInputDevices( "LastSeenInputDevices", "" );

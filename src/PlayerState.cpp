@@ -6,6 +6,8 @@
 #include "Steps.h"
 #include "Song.h"
 
+using std::vector;
+
 PlayerState::PlayerState()
 {
 	m_PlayerNumber = PLAYER_INVALID;
