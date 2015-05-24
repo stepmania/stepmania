@@ -24,7 +24,7 @@ struct SMSongTagInfo
 	Song* song;
 	const MsdFile::value_t* params;
 	const RString& path;
-	vector< pair<float, float> > BPMChanges, Stops;
+	vector< std::pair<float, float> > BPMChanges, Stops;
 	SMSongTagInfo(SMLoader* l, Song* s, const RString& p)
 		:loader(l), song(s), path(p)
 	{}
@@ -437,7 +437,7 @@ void SMLoader::ProcessInstrumentTracks( Song &out, const RString &sParam )
 	}
 }
 
-void SMLoader::ParseBPMs( vector< pair<float, float> > &out, const RString line, const int rowsPerBeat )
+void SMLoader::ParseBPMs( vector< std::pair<float, float> > &out, const RString line, const int rowsPerBeat )
 {
 	vector<RString> arrayBPMChangeExpressions;
 	split( line, ",", arrayBPMChangeExpressions );
@@ -463,11 +463,11 @@ void SMLoader::ParseBPMs( vector< pair<float, float> > &out, const RString line,
 			continue;
 		}
 
-		out.push_back( make_pair(fBeat, fNewBPM) );
+		out.push_back( std::make_pair(fBeat, fNewBPM) );
 	}
 }
 
-void SMLoader::ParseStops( vector< pair<float, float> > &out, const RString line, const int rowsPerBeat )
+void SMLoader::ParseStops( vector< std::pair<float, float> > &out, const RString line, const int rowsPerBeat )
 {
 	vector<RString> arrayFreezeExpressions;
 	split( line, ",", arrayFreezeExpressions );
@@ -493,13 +493,13 @@ void SMLoader::ParseStops( vector< pair<float, float> > &out, const RString line
 			continue;
 		}
 
-		out.push_back( make_pair(fFreezeBeat, fFreezeSeconds) );
+		out.push_back( std::make_pair(fFreezeBeat, fFreezeSeconds) );
 	}
 }
 
 // Utility function for sorting timing change data
 namespace {
-	bool compare_first(pair<float, float> a, pair<float, float> b) {
+	bool compare_first(std::pair<float, float> a, std::pair<float, float> b) {
 		return a.first < b.first;
 	}
 }
@@ -509,11 +509,11 @@ namespace {
 // Postcondition: all BPM changes, stops, and warps are added to the out
 //     parameter, already sorted by beat.
 void SMLoader::ProcessBPMsAndStops(TimingData &out,
-		vector< pair<float, float> > &vBPMs,
-		vector< pair<float, float> > &vStops)
+		vector< std::pair<float, float> > &vBPMs,
+		vector< std::pair<float, float> > &vStops)
 {
-	vector< pair<float, float> >::const_iterator ibpm, ibpmend;
-	vector< pair<float, float> >::const_iterator istop, istopend;
+	vector< std::pair<float, float> >::const_iterator ibpm, ibpmend;
+	vector< std::pair<float, float> >::const_iterator istop, istopend;
 
 	// Current BPM (positive or negative)
 	float bpm = 0;
@@ -595,7 +595,7 @@ void SMLoader::ProcessBPMsAndStops(TimingData &out,
 		// Get the next change in order, with BPMs taking precedence
 		// when they fall on the same beat.
 		bool changeIsBpm = istop == istopend || (ibpm != ibpmend && ibpm->first <= istop->first);
-		const pair<float, float> & change = changeIsBpm ? *ibpm : *istop;
+		const std::pair<float, float> & change = changeIsBpm ? *ibpm : *istop;
 
 		// Calculate the effects of time at the current BPM.  "Infinite"
 		// BPMs (SM4 warps) imply that zero time passes, so skip this

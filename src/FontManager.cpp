@@ -8,7 +8,7 @@
 FontManager*	FONT	= NULL;	// global and accessible from anywhere in our program
 
 // map from file name to a texture holder
-typedef pair<RString,RString> FontName;
+typedef std::pair<RString,RString> FontName;
 static std::map<FontName, Font*> g_mapPathToFont;
 
 FontManager::FontManager()

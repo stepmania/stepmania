@@ -453,11 +453,11 @@ void AppendOctal( int n, int digits, RString &out )
 	}
 }
 
-static bool CompDescending( const pair<Song *, RString> &a, const pair<Song *, RString> &b )
+static bool CompDescending( const std::pair<Song *, RString> &a, const std::pair<Song *, RString> &b )
 {
 	return a.second > b.second;
 }
-static bool CompAscending( const pair<Song *, RString> &a, const pair<Song *, RString> &b )
+static bool CompAscending( const std::pair<Song *, RString> &a, const std::pair<Song *, RString> &b )
 {
 	return a.second < b.second;
 }
@@ -466,7 +466,7 @@ void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool b
 {
 	/* Optimize by pre-writing a string to compare, since doing
 	 * GetNumNotesWithGrade inside the sort is too slow. */
-	typedef pair< Song *, RString > val;
+	typedef std::pair< Song *, RString > val;
 	vector<val> vals;
 	vals.reserve( vpSongsInOut.size() );
 

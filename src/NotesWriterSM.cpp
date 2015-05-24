@@ -111,7 +111,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	{
 		const StopSegment *fs = ToStop( stops[i] );
 
-		allPauses.insert(pair<float, float>(fs->GetBeat(), fs->GetPause()));
+		allPauses.insert(std::pair<float, float>(fs->GetBeat(), fs->GetPause()));
 
 		// erase stops with negative length
 		if( fs->GetPause() < 0 )
@@ -122,7 +122,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	{
 		float fBeat = NoteRowToBeat( ss->GetRow()-1 );
 		float fPause = ToDelay(ss)->GetPause();
-		allPauses.insert( pair<float,float>(fBeat, fPause) );
+		allPauses.insert( std::pair<float,float>(fBeat, fPause) );
 	}
 
 	f.Write( "#STOPS:" );

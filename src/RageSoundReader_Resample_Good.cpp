@@ -402,14 +402,14 @@ namespace PolyphaseFilterCache
 {
 	/* Cache filter data, and reuse it without copying.  All operations after creation
 	 * are const, so this doesn't cause thread-safety problems. */
-	typedef std::map<pair<int,float>, PolyphaseFilter *> FilterMap;
+	typedef std::map<std::pair<int,float>, PolyphaseFilter *> FilterMap;
 	static RageMutex PolyphaseFiltersLock("PolyphaseFiltersLock");
 	static FilterMap g_mapPolyphaseFilters;
 
 	const PolyphaseFilter *MakePolyphaseFilter( int iUpFactor, float fCutoffFrequency )
 	{
 		PolyphaseFiltersLock.Lock();
-		pair<int,float> params( make_pair(iUpFactor, fCutoffFrequency) );
+		std::pair<int,float> params( std::make_pair(iUpFactor, fCutoffFrequency) );
 		FilterMap::const_iterator it = g_mapPolyphaseFilters.find(params);
 		if( it != g_mapPolyphaseFilters.end() )
 		{
@@ -440,7 +440,7 @@ namespace PolyphaseFilterCache
 		 * Round the cutoff down, if possible; it's better to filter out too much than
 		 * too little. */
 		PolyphaseFiltersLock.Lock();
-		pair<int,float> params( make_pair(iUpFactor, fCutoffFrequency + 0.0001f) );
+		std::pair<int,float> params( std::make_pair(iUpFactor, fCutoffFrequency + 0.0001f) );
 		FilterMap::const_iterator it = g_mapPolyphaseFilters.upper_bound( params );
 		if( it != g_mapPolyphaseFilters.begin() )
 			--it;

@@ -62,7 +62,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 	 * we can perform this without copying the string at all. */
 	int size = -1;
 	const int end = start + len;
-	vector<pair<const char *, const char *> > aMeasureLines;
+	vector<std::pair<const char *, const char *> > aMeasureLines;
 	for( unsigned m = 0; true; ++m )
 	{
 		/* XXX Ignoring empty seems wrong for measures. It means that ",,," is treated as
@@ -92,7 +92,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 			while( endLine > beginLine && strchr("\r\n\t ", *(endLine - 1)) )
 				--endLine;
 			if( beginLine < endLine ) // nonempty
-				aMeasureLines.push_back( pair<const char *, const char *>(beginLine, endLine) );
+				aMeasureLines.push_back( std::pair<const char *, const char *>(beginLine, endLine) );
 		}
 
 		for( unsigned l=0; l<aMeasureLines.size(); l++ )
