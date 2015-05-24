@@ -128,7 +128,7 @@ static const char *EditStateNames[] = {
 XToString( EditState );
 LuaXType( EditState );
 
-map<RString, EditButton> name_to_edit_button;
+std::map<RString, EditButton> name_to_edit_button;
 
 void ScreenEdit::InitEditMappings()
 {
@@ -538,8 +538,7 @@ void ScreenEdit::LoadKeymapSectionIntoMappingsMember(XNode const* section, MapEd
 	if(section == NULL) {return;} // Not an error, sections are optional. -Kyz
 	FOREACH_CONST_Attr(section, attr)
 	{
-		map<RString, EditButton>::iterator name_entry=
-			name_to_edit_button.find(attr->first);
+		auto name_entry = name_to_edit_button.find(attr->first);
 		if(name_entry != name_to_edit_button.end())
 		{
 			RString joined_names;

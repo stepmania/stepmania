@@ -348,7 +348,7 @@ static LocalizedString SORT_OTHER        ( "Sort", "Other" );
 
 /* Just calculating GetNumTimesPlayed within the sort is pretty slow, so let's precompute
  * it.  (This could be generalized with a template.) */
-static map<const Song*, RString> g_mapSongSortVal;
+static std::map<const Song*, RString> g_mapSongSortVal;
 
 static bool CompareSongPointersBySortValueAscending( const Song *pSong1, const Song *pSong2 )
 {

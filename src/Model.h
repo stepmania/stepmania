@@ -61,13 +61,13 @@ private:
 
 	float m_animation_length_seconds;
 	vector<msMaterial>		m_Materials;
-	map<RString,msAnimation>	m_mapNameToAnimation;
+	std::map<RString,msAnimation>	m_mapNameToAnimation;
 	const msAnimation*		m_pCurAnimation;
 
 	static void SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone_t> &vpBones );
 	vector<myBone_t>	m_vpBones;
 
-	// If any vertex has a bone weight, then then render from m_pTempGeometry.  
+	// If any vertex has a bone weight, then then render from m_pTempGeometry.
 	// Otherwise, render directly from m_pGeometry.
 	RageCompiledGeometry*		m_pTempGeometry;
 	void UpdateTempGeometry();
@@ -95,7 +95,7 @@ private:
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -105,7 +105,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

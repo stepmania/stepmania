@@ -106,7 +106,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	const vector<TimingSegment *> &stops = timing.GetTimingSegments(SEGMENT_STOP);
 	const vector<TimingSegment *> &delays = timing.GetTimingSegments(SEGMENT_DELAY);
 
-	map<float, float> allPauses;
+	std::map<float, float> allPauses;
 	for( unsigned i=0; i<stops.size(); i++ )
 	{
 		const StopSegment *fs = ToStop( stops[i] );

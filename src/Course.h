@@ -193,11 +193,11 @@ public:
 
 		CacheData(): trail(), null(false) {}
 	};
-	typedef map<CacheEntry, CacheData> TrailCache_t;
+	typedef std::map<CacheEntry, CacheData> TrailCache_t;
 	mutable TrailCache_t m_TrailCache;
 	mutable int m_iTrailCacheSeed;
 
-	typedef map<CacheEntry, RadarValues> RadarCache_t;
+	typedef std::map<CacheEntry, RadarValues> RadarCache_t;
 	RadarCache_t m_RadarCache;
 
 	// Preferred styles:

@@ -14,7 +14,7 @@ namespace
 			return;
 
 		/* Register base classes first. */
-		map<RString, LuaBinding *> mapToRegister;
+		std::map<RString, LuaBinding *> mapToRegister;
 		for (auto *p: *m_Subscribers.m_pSubscribers)
 		{
 			mapToRegister[p->GetClassName()] = p;
@@ -33,7 +33,7 @@ namespace
 					break;
 
 				RString sBase = pBinding->GetBaseClassName();
-				map<RString, LuaBinding *>::const_iterator it = mapToRegister.find(sBase);
+				auto it = mapToRegister.find(sBase);
 				if( it != mapToRegister.end() )
 				{
 					pBinding = it->second;

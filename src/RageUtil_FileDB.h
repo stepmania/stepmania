@@ -19,7 +19,7 @@ struct File
 		lname = name;
 		lname.MakeLower();
 	}
-	
+
 	bool dir;
 	int size;
 	/* Modification time of the file.  The contents of this is undefined, except that
@@ -39,7 +39,7 @@ struct File
 		SetName( fn );
 		dir=false; size=-1; hash=-1; priv=NULL; dirp=NULL;
 	}
-	
+
 	bool operator< (const File &rhs) const { return lname<rhs.lname; }
 
 	bool equal(const File &rhs) const { return lname == rhs.lname; }
@@ -123,15 +123,15 @@ protected:
 	FileSet *GetFileSet( const RString &sDir, bool create=true );
 
 	/* Directories we have cached: */
-	map<RString, FileSet *> dirs;
+	std::map<RString, FileSet *> dirs;
 
 	int ExpireSeconds;
 
 	void GetFilesEqualTo( const RString &sDir, const RString &sName, vector<RString> &asOut, bool bOnlyDirs );
 	void GetFilesMatching( const RString &sDir,
-		const RString &sBeginning, const RString &sContaining, const RString &sEnding, 
+		const RString &sBeginning, const RString &sContaining, const RString &sEnding,
 		vector<RString> &asOut, bool bOnlyDirs );
-	void DelFileSet( map<RString, FileSet *>::iterator dir );
+	void DelFileSet( std::map<RString, FileSet *>::iterator dir );
 
 	/* The given path wasn't cached.  Cache it. */
 	virtual void PopulateFileSet( FileSet & /* fs */, const RString & /* sPath */ ) { }

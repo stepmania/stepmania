@@ -98,7 +98,7 @@ XNodeValue *XNode::GetAttr( const RString &attrname )
 
 XNode *XNode::GetChild( const RString &sName )
 {
-	multimap<RString, XNode*>::iterator by_name= m_children_by_name.lower_bound(sName);
+	std::multimap<RString, XNode*>::iterator by_name= m_children_by_name.lower_bound(sName);
 	if(by_name != m_children_by_name.end() &&
 		sName == by_name->second->GetName())
 	{
@@ -121,7 +121,7 @@ bool XNode::PushChildValue( lua_State *L, const RString &sName ) const
 
 const XNode *XNode::GetChild( const RString &sName ) const
 {
-	multimap<RString, XNode*>::const_iterator by_name= m_children_by_name.lower_bound(sName);
+	std::multimap<RString, XNode*>::const_iterator by_name= m_children_by_name.lower_bound(sName);
 	if(by_name != m_children_by_name.end() &&
 		sName == by_name->second->GetName())
 	{
@@ -153,7 +153,7 @@ bool XNode::RemoveChild(XNode *node, bool bDelete)
 
 void XNode::RemoveChildFromByName(XNode* node)
 {
-	multimap<RString, XNode*>::iterator by_name= m_children_by_name.lower_bound(node->m_sName);
+	std::multimap<RString, XNode*>::iterator by_name= m_children_by_name.lower_bound(node->m_sName);
 	if(by_name != m_children_by_name.end() &&
 		node->GetName() == by_name->second->GetName())
 	{

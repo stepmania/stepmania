@@ -88,7 +88,7 @@ protected:
 	bool m_bInitted;
 	DancingCharacters*	m_pDancingCharacters;
 	const Song *m_pSong;
-	map<RString,BackgroundTransition> m_mapNameToTransition;
+	std::map<RString,BackgroundTransition> m_mapNameToTransition;
 	deque<BackgroundDef> m_RandomBGAnimations;	// random background to choose from.  These may or may not be loaded into m_BGAnimations.
 
 	void LoadFromRandom( float fFirstBeat, float fEndBeat, const BackgroundChange &change );
@@ -106,9 +106,9 @@ protected:
 		BackgroundDef CreateRandomBGA( const Song *pSong, const RString &sEffect, deque<BackgroundDef> &RandomBGAnimations, Actor *pParent );
 
 		int FindBGSegmentForBeat( float fBeat ) const;
-		void UpdateCurBGChange( const Song *pSong, float fLastMusicSeconds, float fCurrentTime, const map<RString,BackgroundTransition> &mapNameToTransition );
+		void UpdateCurBGChange( const Song *pSong, float fLastMusicSeconds, float fCurrentTime, const std::map<RString,BackgroundTransition> &mapNameToTransition );
 
-		map<BackgroundDef,Actor*> m_BGAnimations;
+		std::map<BackgroundDef,Actor*> m_BGAnimations;
 		vector<BackgroundChange> m_aBGChanges;
 		int	  m_iCurBGChangeIndex;
 		Actor *m_pCurrentBGA;
@@ -415,7 +415,7 @@ BackgroundDef BackgroundImpl::Layer::CreateRandomBGA( const Song *pSong, const R
 	if( !sEffect.empty() )
 		bd.m_sEffect = sEffect;
 
-	map<BackgroundDef,Actor*>::const_iterator iter = m_BGAnimations.find( bd );
+	auto iter = m_BGAnimations.find( bd );
 
 	// create the background if it's not already created
 	if( iter == m_BGAnimations.end() )
@@ -710,7 +710,7 @@ int BackgroundImpl::Layer::FindBGSegmentForBeat( float fBeat ) const
 }
 
 /* If the BG segment has changed, move focus to it. Send Update() calls. */
-void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMusicSeconds, float fCurrentTime, const map<RString,BackgroundTransition> &mapNameToTransition )
+void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMusicSeconds, float fCurrentTime, const std::map<RString,BackgroundTransition> &mapNameToTransition )
 {
 	ASSERT( fCurrentTime != GameState::MUSIC_SECONDS_INVALID );
 
@@ -742,7 +742,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 
 		m_pFadingBGA = m_pCurrentBGA;
 
-		map<BackgroundDef,Actor*>::const_iterator iter = m_BGAnimations.find( change.m_def );
+		auto iter = m_BGAnimations.find( change.m_def );
 		if( iter == m_BGAnimations.end() )
 		{
 			XNode *pNode = change.m_def.CreateNode();
@@ -768,7 +768,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 
 				if( !change.m_sTransition.empty() )
 				{
-					map<RString,BackgroundTransition>::const_iterator lIter = mapNameToTransition.find( change.m_sTransition );
+					auto lIter = mapNameToTransition.find( change.m_sTransition );
 					if(lIter == mapNameToTransition.end())
 					{
 						LuaHelpers::ReportScriptErrorFmt("'%s' is not the name of a BackgroundTransition file.", change.m_sTransition.c_str());

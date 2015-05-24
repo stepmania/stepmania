@@ -746,7 +746,7 @@ protected:
 
 private:
 	// commands
-	map<RString, apActorCommands> m_mapNameToCommands;
+	std::map<RString, apActorCommands> m_mapNameToCommands;
 };
 
 #endif

@@ -186,14 +186,14 @@ struct NoteResource
 	Actor *m_pActor; // todo: AutoActor me? -aj
 };
 
-static map<NoteSkinAndPath, NoteResource *> g_NoteResource;
+static std::map<NoteSkinAndPath, NoteResource *> g_NoteResource;
 
 static NoteResource *MakeNoteResource( const RString &sButton, const RString &sElement, PlayerNumber pn, GameController gc, bool bSpriteOnly )
 {
 	RString sElementAndType = ssprintf( "%s, %s", sButton.c_str(), sElement.c_str() );
 	NoteSkinAndPath nsap( NOTESKIN->GetCurrentNoteSkin(), sElementAndType, pn, gc );
 
-	map<NoteSkinAndPath, NoteResource *>::iterator it = g_NoteResource.find( nsap );
+	auto it = g_NoteResource.find( nsap );
 	if( it == g_NoteResource.end() )
 	{
 		NoteResource *pRes = new NoteResource( nsap );
@@ -638,7 +638,7 @@ void NoteDisplay::Update( float fDeltaTime )
 {
 	/* This function is static: it's called once per game loop, not once per
 	 * NoteDisplay.  Update each cached item exactly once. */
-	map<NoteSkinAndPath, NoteResource *>::iterator it;
+	std::map<NoteSkinAndPath, NoteResource *>::iterator it;
 	for( it = g_NoteResource.begin(); it != g_NoteResource.end(); ++it )
 	{
 		NoteResource *pRes = it->second;

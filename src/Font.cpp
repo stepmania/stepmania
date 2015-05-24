@@ -85,7 +85,7 @@ void FontPage::Load( const FontPageSettings &cfg )
 	// Assume each character is the width of the frame by default.
 	for( int i=0; i<m_FontPageTextures.m_pTextureMain->GetNumFrames(); i++ )
 	{
-		map<int,int>::const_iterator it = cfg.m_mapGlyphWidths.find(i);
+		auto it = cfg.m_mapGlyphWidths.find(i);
 		if( it != cfg.m_mapGlyphWidths.end() )
 			aiFrameWidths.push_back( it->second );
 		else
@@ -312,10 +312,9 @@ void Font::AddPage( FontPage *m_pPage )
 {
 	m_apPages.push_back( m_pPage );
 
-	for( map<wchar_t,int>::const_iterator it = m_pPage->m_iCharToGlyphNo.begin();
-		it != m_pPage->m_iCharToGlyphNo.end(); ++it )
+	for (auto &it: m_pPage->m_iCharToGlyphNo)
 	{
-		m_iCharToGlyph[it->first] = &m_pPage->m_aGlyphs[it->second];
+		m_iCharToGlyph[it.first] = &m_pPage->m_aGlyphs[it.second];
 	}
 }
 
@@ -328,10 +327,9 @@ void Font::MergeFont(Font &f)
 	if( m_pDefault == NULL )
 		m_pDefault = f.m_pDefault;
 
-	for(map<wchar_t,glyph*>::iterator it = f.m_iCharToGlyph.begin();
-		it != f.m_iCharToGlyph.end(); ++it)
+	for (auto &it: f.m_iCharToGlyph)
 	{
-		m_iCharToGlyph[it->first] = it->second;
+		m_iCharToGlyph[it.first] = it.second;
 	}
 
 	m_apPages.insert( m_apPages.end(), f.m_apPages.begin(), f.m_apPages.end() );
@@ -359,7 +357,7 @@ const glyph &Font::GetGlyph( wchar_t c ) const
 	}
 
 	// Try the regular character.
-	map<wchar_t,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
+	auto it = m_iCharToGlyph.find(c);
 
 	// If that's missing, use the default glyph.
 	if(it == m_iCharToGlyph.end())
@@ -373,7 +371,7 @@ const glyph &Font::GetGlyph( wchar_t c ) const
 
 bool Font::FontCompleteForString( const wstring &str ) const
 {
-	map<wchar_t,glyph*>::const_iterator mapDefault = m_iCharToGlyph.find( FONT_DEFAULT_GLYPH );
+	auto mapDefault = m_iCharToGlyph.find( FONT_DEFAULT_GLYPH );
 	if( mapDefault == m_iCharToGlyph.end() )
 		RageException::Throw( "The default glyph is missing from the font \"%s\".", path.c_str() );
 
@@ -393,7 +391,7 @@ void Font::CapsOnly()
 	 * a lowercase one. */
 	for( char c = 'A'; c <= 'Z'; ++c )
 	{
-		map<wchar_t,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
+		auto it = m_iCharToGlyph.find(c);
 
 		if(it == m_iCharToGlyph.end())
 			continue;
@@ -858,18 +856,19 @@ void Font::Load( const RString &sIniPath, RString sChars )
 		/* Expect at least as many frames as we have premapped characters. */
 		/* Make sure that we don't map characters to frames we don't actually
 		 * have.  This can happen if the font is too small for an sChars. */
-		for(map<wchar_t,int>::iterator it = pPage->m_iCharToGlyphNo.begin();
-			it != pPage->m_iCharToGlyphNo.end(); ++it)
+		for (auto &it: pPage->m_iCharToGlyphNo)
 		{
-			if( it->second < pPage->m_FontPageTextures.m_pTextureMain->GetNumFrames() )
+			if( it.second < pPage->m_FontPageTextures.m_pTextureMain->GetNumFrames() )
+			{
 				continue; /* OK */
+			}
 			LuaHelpers::ReportScriptErrorFmt(
 				"The font \"%s\" maps \"%s\" to frame %i, "
 				"but the font only has %i frames.",
-				sTexturePath.c_str(), WcharDisplayText(wchar_t(it->first)).c_str(),
-				it->second,
+				sTexturePath.c_str(), WcharDisplayText(wchar_t(it.first)).c_str(),
+				it.second,
 				pPage->m_FontPageTextures.m_pTextureMain->GetNumFrames());
-			it->second= 0;
+			it.second= 0;
 		}
 
 //		LOG->Trace( "Adding page %s (%s) to %s; %i glyphs",

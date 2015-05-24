@@ -31,7 +31,7 @@ namespace JsonUtil
 		for(unsigned i=0; i<v.size(); i++)
 			fn(*v[i], root[i]);
 	}
-	
+
 	template<class T>
 	static void SerializeVectorPointers(const vector<T*> &v, void fn(const T &, Json::Value &), Json::Value &root)
 	{
@@ -40,7 +40,7 @@ namespace JsonUtil
 		for(unsigned i=0; i<v.size(); i++)
 			fn(*v[i], root[i]);
 	}
-	
+
 	template<class T>
 	static void SerializeVectorPointers(const vector<const T*> &v, void fn(const T *, Json::Value &), Json::Value &root)
 	{
@@ -167,7 +167,7 @@ namespace JsonUtil
 			fn(*v[i], root[i]);
 		}
 	}
-	
+
 	template<class T>
 	static void DeserializeVectorPointers(vector<T*> &v, void fn(T *, const Json::Value &), const Json::Value &root)
 	{
@@ -255,7 +255,7 @@ namespace JsonUtil
 
 	// Serialize a map that has a non-string key type
 	template <typename K, typename V>
-	static void DeserializeObjectToObjectMapAsArray(map<K,V> &m, const RString &sKeyName, const RString &sValueName, const Json::Value &root)
+	static void DeserializeObjectToObjectMapAsArray(std::map<K,V> &m, const RString &sKeyName, const RString &sValueName, const Json::Value &root)
 	{
 		m.clear();
 		ASSERT( root.type() == Json::arrayValue );
@@ -273,7 +273,7 @@ namespace JsonUtil
 	}
 
 	template <typename K, typename V>
-	static void DeserializeObjectToValueMapAsArray(map<K,V> &m, const RString &sKeyName, const RString &sValueName, const Json::Value &root)
+	static void DeserializeObjectToValueMapAsArray(std::map<K,V> &m, const RString &sKeyName, const RString &sValueName, const Json::Value &root)
 	{
 		for( unsigned i=0; i<root.size(); i++ )
 		{
@@ -302,7 +302,7 @@ namespace JsonUtil
 /*
  * (c) 2010 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -312,7 +312,7 @@ namespace JsonUtil
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

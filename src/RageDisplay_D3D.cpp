@@ -52,10 +52,10 @@ const D3DFORMAT g_DefaultAdapterFormat = D3DFMT_X8R8G8B8;
 /* Direct3D doesn't associate a palette with textures. Instead, we load a
  * palette into a slot. We need to keep track of which texture's palette is
  * stored in what slot. */
-map<unsigned,int>		g_TexResourceToPaletteIndex;
+std::map<unsigned,int>		g_TexResourceToPaletteIndex;
 list<int>			g_PaletteIndex;
 struct TexturePalette { PALETTEENTRY p[256]; };
-map<unsigned,TexturePalette>	g_TexResourceToTexturePalette;
+std::map<unsigned,TexturePalette>	g_TexResourceToTexturePalette;
 
 // Load the palette, if any, for the given texture into a palette slot, and make it current.
 static void SetPalette( unsigned TexResource )
@@ -71,7 +71,7 @@ static void SetPalette( unsigned TexResource )
 		int iPalIndex = g_PaletteIndex.front();
 
 		// If any other texture is currently using this slot, mark that palette unloaded.
-		for( map<unsigned,int>::iterator i = g_TexResourceToPaletteIndex.begin(); i != g_TexResourceToPaletteIndex.end(); ++i )
+		for( auto i = g_TexResourceToPaletteIndex.begin(); i != g_TexResourceToPaletteIndex.end(); ++i )
 		{
 			if( i->second != iPalIndex )
 				continue;

@@ -27,11 +27,11 @@
 class NoteData
 {
 public:
-	typedef map<int,TapNote> TrackMap;
-	typedef map<int,TapNote>::iterator iterator;
-	typedef map<int,TapNote>::const_iterator const_iterator;
-	typedef map<int,TapNote>::reverse_iterator reverse_iterator;
-	typedef map<int,TapNote>::const_reverse_iterator const_reverse_iterator;
+	typedef std::map<int,TapNote> TrackMap;
+	typedef std::map<int,TapNote>::iterator iterator;
+	typedef std::map<int,TapNote>::const_iterator const_iterator;
+	typedef std::map<int,TapNote>::reverse_iterator reverse_iterator;
+	typedef std::map<int,TapNote>::const_reverse_iterator const_reverse_iterator;
 
 	NoteData(): m_TapNotes() {}
 

@@ -132,7 +132,7 @@ void JoystickDevice::Open()
 		ADD( x_rot );	ADD( y_rot );	ADD( z_rot );
 		ADD( hat );
 #undef ADD
-		for( std::unordered_map<IOHIDElementCookie,DeviceButton>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j )
+		for( auto j = js.mapping.cbegin(); j != js.mapping.cend(); ++j )
 		{
 			AddElementToQueue( j->first );
 		}
@@ -231,10 +231,7 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 		}
 		else
 		{
-			// This cannot be const.
-			std::unordered_map<IOHIDElementCookie, DeviceButton>::const_iterator iter;
-
-			iter = js.mapping.find( cookie );
+			auto iter = js.mapping.find( cookie );
 			if( iter != js.mapping.end() )
 			{
 				vPresses.push_back( DeviceInput(js.id, iter->second, value, now) );

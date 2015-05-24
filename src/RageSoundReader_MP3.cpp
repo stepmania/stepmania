@@ -221,7 +221,7 @@ struct madlib_t
 		}
 	};
 
-	typedef map<mad_timer_t, int, mad_timer_compare_lt> tocmap_t;
+	typedef std::map<mad_timer_t, int, mad_timer_compare_lt> tocmap_t;
 	tocmap_t tocmap;
 
 	/* Position in the file of inbuf: */

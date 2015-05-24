@@ -20,7 +20,7 @@ namespace
 {
 	// lookup for efficiency from a DeviceInput to a GameInput
 	// This is repopulated every time m_PItoDI changes by calling UpdateTempDItoPI().
-	map<DeviceInput, GameInput> g_tempDItoGI;
+	std::map<DeviceInput, GameInput> g_tempDItoGI;
 
 	PlayerNumber g_JoinControllers;
 };
@@ -551,7 +551,7 @@ void InputMapper::Unmap( InputDevice id )
 
 void InputMapper::ApplyMapping( const vector<AutoMappingEntry> &vMmaps, GameController gc, InputDevice id )
 {
-	map<GameInput, int> MappedButtons;
+	std::map<GameInput, int> MappedButtons;
 	for (auto &iter: vMmaps)
 	{
 		GameController map_gc = gc;

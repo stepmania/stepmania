@@ -53,7 +53,7 @@ public:
 	 * @brief Have the Players failed at any point during the song?
 	 *
 	 * If FAIL_OFF is in use, this is always false.
-	 * 
+	 *
 	 * If health recovery is possible after failing (requires two players),
 	 * this is only set if both players were failing at the same time. */
 	bool		m_bFailed;
@@ -77,7 +77,7 @@ public:
 	unsigned int		m_iCurMaxScore;
 	/** @brief The maximum score the Player can get this goaround. */
 	unsigned int		m_iMaxScore;
-	
+
 	/**
 	 * @brief The possible RadarValues for a song.
 	 *
@@ -98,7 +98,7 @@ public:
 	float		m_iNumControllerSteps;
 	float		m_fCaloriesBurned;
 
-	map<float,float> m_fLifeRecord;
+	std::map<float,float> m_fLifeRecord;
 	void	SetLifeRecordAt( float fLife, float fStepsSecond );
 	void	GetLifeRecord( float *fLifeOut, int iNumSamples, float fStepsEndSecond ) const;
 	float	GetLifeRecordAt( float fStepsSecond ) const;
@@ -108,7 +108,7 @@ public:
 	struct Combo_t
 	{
 		// Update GetComboList in PlayerStageStats.cpp when adding new members that should be visible from the Lua side.
-		/** 
+		/**
 		 * @brief The start time of the combo.
 		 *
 		 * This uses the same scale as the combo list mapping. */
@@ -178,7 +178,7 @@ public:
  * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -188,7 +188,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

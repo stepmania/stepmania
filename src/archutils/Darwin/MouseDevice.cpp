@@ -92,7 +92,7 @@ void MouseDevice::Open()
 #define ADD(x) if( m.x ) AddElementToQueue( m.x )
 	ADD( x_axis );	ADD( y_axis );	ADD( z_axis );
 #undef ADD
-	for( std::unordered_map<IOHIDElementCookie,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
+	for( auto i = m_Mapping.cbegin(); i != m_Mapping.cend(); ++i )
 	{
 		AddElementToQueue( i->first );
 	}
@@ -125,7 +125,7 @@ void MouseDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementC
 	}
 	else
 	{
-		std::unordered_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
+		auto iter = m_Mapping.find( cookie );
 		if( iter != m_Mapping.end() )
 			vPresses.push_back( DeviceInput(DEVICE_MOUSE, iter->second, value, now) );
 	}

@@ -15,36 +15,36 @@ void ValidateSongsPerPlay( int &val );
 const int MAX_SONGS_PER_PLAY = 7;
 
 enum MusicWheelUsesSections
-{ 
-	MusicWheelUsesSections_NEVER, 
-	MusicWheelUsesSections_ALWAYS, 
-	MusicWheelUsesSections_ABC_ONLY, 
-	NUM_MusicWheelUsesSections, 
+{
+	MusicWheelUsesSections_NEVER,
+	MusicWheelUsesSections_ALWAYS,
+	MusicWheelUsesSections_ABC_ONLY,
+	NUM_MusicWheelUsesSections,
 	MusicWheelUsesSections_Invalid
 };
 /** @brief The options for allowing the W1 timing. */
 enum AllowW1
-{ 
+{
 	ALLOW_W1_NEVER, /**< The W1 timing is not used. */
 	ALLOW_W1_COURSES_ONLY, /**< The W1 timing is used for courses only. */
 	ALLOW_W1_EVERYWHERE, /**< The W1 timing is used for all modes. */
-	NUM_AllowW1, 
+	NUM_AllowW1,
 	AllowW1_Invalid
 };
 enum Maybe
-{ 
-	Maybe_ASK, 
-	Maybe_NO, 
-	Maybe_YES, 
-	NUM_Maybe, 
-	Maybe_Invalid 
+{
+	Maybe_ASK,
+	Maybe_NO,
+	Maybe_YES,
+	NUM_Maybe,
+	Maybe_Invalid
 };
-enum GetRankingName 
-{ 
-	RANKING_OFF, 
-	RANKING_ON, 
-	RANKING_LIST, 
-	NUM_GetRankingName, 
+enum GetRankingName
+{
+	RANKING_OFF,
+	RANKING_ON,
+	RANKING_LIST,
+	NUM_GetRankingName,
 	GetRankingName_Invalid
 };
 enum RandomBackgroundMode
@@ -154,7 +154,7 @@ protected:
 		RString m_sTheme;
 		RString	m_sDefaultModifiers;
 	};
-	map<RString, GamePrefs> m_mapGameNameToGamePrefs;
+	std::map<RString, GamePrefs> m_mapGameNameToGamePrefs;
 
 public:
 	Preference<bool>	m_bWindowed;
@@ -289,7 +289,7 @@ public:
 	Preference<RString>	m_sVideoRenderers; // StepMania.cpp sets these on first run based on the card
 	Preference<bool>	m_bSmoothLines;
 	Preference<int>	m_iSoundWriteAhead;
-	Preference<RString>	m_iSoundDevice;	
+	Preference<RString>	m_iSoundDevice;
 	Preference<int>	m_iSoundPreferredSampleRate;
 	Preference<RString>	m_sLightsStepsDifficulty;
 	Preference<bool>	m_bAllowUnacceleratedRenderer;
@@ -364,7 +364,7 @@ extern PrefsManager*	PREFSMAN;	// global and accessible from anywhere in our pro
  * @author Chris Danford, Chris Gomez (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -374,7 +374,7 @@ extern PrefsManager*	PREFSMAN;	// global and accessible from anywhere in our pro
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

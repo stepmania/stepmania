@@ -349,8 +349,7 @@ bool Screen::PassInputToLua(const InputEventPlus& input)
 	lua_setfield(L, -2, "PlayerNumber");
 	Enum::Push(L, input.mp);
 	lua_setfield(L, -2, "MultiPlayer");
-	for(map<callback_key_t, LuaReference>::iterator callback= m_InputCallbacks.begin();
-			callback != m_InputCallbacks.end() && !handled; ++callback)
+	for(auto callback= m_InputCallbacks.begin(); callback != m_InputCallbacks.end() && !handled; ++callback)
 	{
 		callback->second.PushSelf(L);
 		lua_pushvalue(L, -2);
@@ -394,7 +393,7 @@ void Screen::RemoveInputCallback(lua_State* L)
 
 void Screen::InternalRemoveCallback(callback_key_t key)
 {
-	map<callback_key_t, LuaReference>::iterator iter= m_InputCallbacks.find(key);
+	auto iter = m_InputCallbacks.find(key);
 	if(iter != m_InputCallbacks.end())
 	{
 		m_InputCallbacks.erase(iter);

@@ -496,7 +496,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 		vector<Song*> vpSongs;
 		typedef vector<Steps*> StepsVector;
-		map<Song*,StepsVector> mapSongToSteps;
+		std::map<Song*,StepsVector> mapSongToSteps;
 		for (auto const &sas: vSongAndSteps)
 		{
 			StepsVector &v = mapSongToSteps[sas.pSong];

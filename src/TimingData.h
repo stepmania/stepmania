@@ -109,7 +109,7 @@ public:
 	};
 	// map can't be used for the lookup table because its find or *_bound
 	// functions would return the wrong entry.
-	// In a map<int, int> with three entries, [-1]= 3, [6]= 1, [8]= 2,
+	// In a std::map<int, int> with three entries, [-1]= 3, [6]= 1, [8]= 2,
 	// lower_bound(0) and upper_bound(0) both returned the entry at [6]= 1.
 	// So the lookup table is a vector of entries and FindEntryInLookup does a
 	// binary search.
@@ -398,7 +398,7 @@ public:
 			// optimization: check vector sizes before contents
 			if( us.size() != them.size() )
 				return false;
-			
+
 			for( unsigned i = 0; i < us.size(); ++i )
 			{
 				/* UGLY: since TimingSegment's comparison compares base data,
@@ -476,7 +476,7 @@ protected:
  * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -486,7 +486,7 @@ protected:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

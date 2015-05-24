@@ -21,7 +21,7 @@
 
 
 // Actor registration
-static map<RString,CreateActorFn>	*g_pmapRegistrees = NULL;
+static std::map<RString,CreateActorFn> *g_pmapRegistrees = NULL;
 
 static bool IsRegistered( const RString& sClassName )
 {
@@ -33,7 +33,7 @@ void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
 	if( g_pmapRegistrees == NULL )
 		g_pmapRegistrees = new map<RString,CreateActorFn>;
 
-	map<RString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClassName );
+	auto iter = g_pmapRegistrees->find( sClassName );
 	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Actor class '%s' already registered.", sClassName.c_str()) );
 
 	(*g_pmapRegistrees)[sClassName] = pfn;
@@ -196,7 +196,7 @@ Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 	if( !bHasClass && bLegacy )
 		sClass = GetLegacyActorClass( &node );
 
-	map<RString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClass );
+	auto iter = g_pmapRegistrees->find( sClass );
 	if( iter == g_pmapRegistrees->end() )
 	{
 		RString sFile;
@@ -514,8 +514,8 @@ XToString( FileType );
 LuaXType( FileType );
 
 // convenience so the for-loop lines can be shorter.
-typedef map<RString, FileType> etft_cont_t;
-typedef map<FileType, vector<RString> > fttel_cont_t;
+typedef std::map<RString, FileType> etft_cont_t;
+typedef std::map<FileType, vector<RString> > fttel_cont_t;
 etft_cont_t ExtensionToFileType;
 fttel_cont_t FileTypeToExtensionList;
 

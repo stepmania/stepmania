@@ -111,10 +111,10 @@ bool verify_arg_count(RString cmd, vector<RString>& args, size_t req)
 
 typedef void (*arg_converter_t)(vector<RString>& args);
 
-map<RString, arg_converter_t> arg_converters;
-map<RString, size_t> tween_counters;
+std::map<RString, arg_converter_t> arg_converters;
+std::map<RString, size_t> tween_counters;
 std::set<RString> fields_that_are_strings;
-map<RString, RString> chunks_to_replace;
+std::map<RString, RString> chunks_to_replace;
 
 #define COMMON_ARG_VERIFY(count) if(!verify_arg_count(args[0], args, count)) return;
 void x_conv(vector<RString>& args)
@@ -246,8 +246,7 @@ void init_parser_helpers()
 
 void convert_lua_chunk(RString& chunk_text)
 {
-	for(map<RString, RString>::iterator chunk= chunks_to_replace.begin();
-			chunk != chunks_to_replace.end(); ++chunk)
+	for(auto chunk = chunks_to_replace.begin(); chunk != chunks_to_replace.end(); ++chunk)
 	{
 		chunk_text.Replace(chunk->first, chunk->second);
 	}
@@ -257,8 +256,8 @@ void convert_lua_chunk(RString& chunk_text)
 // So condition_set_t::iterator->first is the lua to execute for the
 // condition, and condition_set_t::iterator->second is the name of the
 // condition.
-typedef map<RString, RString> condition_set_t;
-typedef map<RString, RString> field_cont_t;
+typedef std::map<RString, RString> condition_set_t;
+typedef std::map<RString, RString> field_cont_t;
 struct frame_t
 {
 	int frame;
@@ -331,12 +330,12 @@ void actor_template_t::store_cmd(RString const& cmd_name, RString const& full_cm
 				}
 				*arg= arg->substr(first_nonspace, last_nonspace - first_nonspace);
 			}
-			map<RString, arg_converter_t>::iterator conv= arg_converters.find(args[0]);
+			auto conv = arg_converters.find(args[0]);
 			if(conv != arg_converters.end())
 			{
 				conv->second(args);
 			}
-			map<RString, size_t>::iterator counter= tween_counters.find(args[0]);
+			auto counter= tween_counters.find(args[0]);
 			if(counter != tween_counters.end())
 			{
 				queue_size+= counter->second;
@@ -361,7 +360,7 @@ void actor_template_t::store_cmd(RString const& cmd_name, RString const& full_cm
 			split(*cmd, ",", args, true);
 			if(!args.empty())
 			{
-				map<RString, size_t>::iterator counter= tween_counters.find(args[0]);
+				auto counter= tween_counters.find(args[0]);
 				if(counter != tween_counters.end())
 				{
 					states_in_curr+= counter->second;

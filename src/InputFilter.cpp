@@ -80,7 +80,7 @@ namespace
 	 * optimize InputFilter::Update, so we don't have to process every button
 	 * we know about when most of them aren't in use. This set is protected
 	 * by queuemutex. */
-	typedef map<DeviceButtonPair, ButtonState> ButtonStateMap;
+	typedef std::map<DeviceButtonPair, ButtonState> ButtonStateMap;
 	ButtonStateMap g_ButtonStates;
 	ButtonState &GetButtonState( const DeviceInput &di )
 	{

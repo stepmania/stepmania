@@ -52,8 +52,8 @@ static const char chXMLTagPre			= '/';
 static const char chXMLExclamation	= '!';
 static const char chXMLDash			= '-';
 
-static map<RString,RString> g_mapEntitiesToChars;
-static map<char,RString> g_mapCharsToEntities;
+static std::map<RString,RString> g_mapEntitiesToChars;
+static std::map<char,RString> g_mapCharsToEntities;
 
 static void InitEntities()
 {

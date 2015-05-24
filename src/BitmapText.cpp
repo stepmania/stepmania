@@ -702,7 +702,7 @@ void BitmapText::DrawPrimitives()
 		else
 		{
 			size_t i = 0;
-			map<size_t,Attribute>::const_iterator iter = m_mAttributes.begin();
+			auto iter = m_mAttributes.begin();
 			while( i < m_aVertices.size() )
 			{
 				// Set the colors up to the next attribute.
@@ -788,7 +788,7 @@ void BitmapText::DrawPrimitives()
 		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
 
 		size_t i = 0;
-		map<size_t,Attribute>::const_iterator iter = m_mAttributes.begin();
+		auto iter = m_mAttributes.begin();
 		while( i < m_aVertices.size() )
 		{
 			// Set the glow up to the next attribute.

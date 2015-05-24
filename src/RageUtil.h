@@ -547,8 +547,8 @@ private:
 };
 
 
-void ReplaceEntityText( RString &sText, const map<RString,RString> &m );
-void ReplaceEntityText( RString &sText, const map<char,RString> &m );
+void ReplaceEntityText( RString &sText, const std::map<RString,RString> &m );
+void ReplaceEntityText( RString &sText, const std::map<char,RString> &m );
 void Replace_Unicode_Markers( RString &Text );
 RString WcharDisplayText( wchar_t c );
 
