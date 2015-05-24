@@ -163,7 +163,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 	Steps* pNewNotes = NULL;
 	int iRowsPerBeat = -1; // Start with an invalid value: needed for checking.
-	vector< pair<float, float> > vBPMChanges, vStops;
+	vector< std::pair<float, float> > vBPMChanges, vStops;
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{

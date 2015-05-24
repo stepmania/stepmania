@@ -185,7 +185,7 @@ public:
 
 	ProfileSlot		m_LoadedFromProfile;	// ProfileSlot_Invalid if wasn't loaded from a profile
 
-	typedef pair<StepsType,Difficulty> CacheEntry;
+	typedef std::pair<StepsType,Difficulty> CacheEntry;
 	struct CacheData
 	{
 		Trail trail;

@@ -133,7 +133,7 @@ const XNode *XNode::GetChild( const RString &sName ) const
 XNode *XNode::AppendChild( XNode *node )
 {
 	DEBUG_ASSERT( node->m_sName.size() );
-	m_children_by_name.insert(make_pair(node->m_sName, node));
+	m_children_by_name.insert(std::make_pair(node->m_sName, node));
 	m_childs.push_back( node );
 	return node;
 }
@@ -171,7 +171,7 @@ void XNode::RemoveChildFromByName(XNode* node)
 void XNode::RenameChildInByName(XNode* node)
 {
 	RemoveChildFromByName(node);
-	m_children_by_name.insert(make_pair(node->m_sName, node));
+	m_children_by_name.insert(std::make_pair(node->m_sName, node));
 }
 
 
@@ -192,7 +192,7 @@ bool XNode::RemoveAttr( const RString &sName )
 XNodeValue *XNode::AppendAttrFrom( const RString &sName, XNodeValue *pValue, bool bOverwrite )
 {
 	DEBUG_ASSERT( sName.size() );
-	pair<XAttrs::iterator,bool> ret = m_attrs.insert( make_pair(sName, (XNodeValue *) NULL) );
+	std::pair<XAttrs::iterator,bool> ret = m_attrs.insert( std::make_pair(sName, (XNodeValue *) NULL) );
 	if( !ret.second ) // already existed
 	{
 		if( bOverwrite )
@@ -214,7 +214,7 @@ XNodeValue *XNode::AppendAttrFrom( const RString &sName, XNodeValue *pValue, boo
 XNodeValue *XNode::AppendAttr( const RString &sName )
 {
 	DEBUG_ASSERT( sName.size() );
-	pair<XAttrs::iterator,bool> ret = m_attrs.insert( make_pair(sName, (XNodeValue *) NULL) );
+	std::pair<XAttrs::iterator,bool> ret = m_attrs.insert( std::make_pair(sName, (XNodeValue *) NULL) );
 	if( ret.second )
 		ret.first->second = new XNodeStringValue;
 	return ret.first->second; // already existed

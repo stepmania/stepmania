@@ -1919,7 +1919,7 @@ void ScreenEdit::UpdateTextInfo()
 	const StepsTypeCategory &cat = GAMEMAN->GetStepsTypeInfo(m_pSteps->m_StepsType).m_StepsTypeCategory;
 	if (cat == StepsTypeCategory_Couple || cat == StepsTypeCategory_Routine)
 	{
-		pair<int, int> tmp = m_NoteDataEdit.GetNumTapNotesTwoPlayer();
+		std::pair<int, int> tmp = m_NoteDataEdit.GetNumTapNotesTwoPlayer();
 		sText += ssprintf(NUM_STEPS_FORMAT_TWO_PLAYER.GetValue(),
 						  TAP_STEPS.GetValue().c_str(),
 						  tmp.first, tmp.second);
@@ -4874,7 +4874,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			const StepsTypeCategory &cat = GAMEMAN->GetStepsTypeInfo(pSteps->m_StepsType).m_StepsTypeCategory;
 			if (cat == StepsTypeCategory_Couple || cat == StepsTypeCategory_Routine)
 			{
-				pair<int, int> tmp = m_NoteDataEdit.GetNumTapNotesTwoPlayer();
+				std::pair<int, int> tmp = m_NoteDataEdit.GetNumTapNotesTwoPlayer();
 				g_StepsData.rows[tap_notes].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );
 				tmp = m_NoteDataEdit.GetNumJumpsTwoPlayer();
 				g_StepsData.rows[jumps].SetOneUnthemedChoice( ssprintf("%d / %d", tmp.first, tmp.second) );

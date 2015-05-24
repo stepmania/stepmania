@@ -143,7 +143,7 @@ private:
 	 * @return true if it's a fake, false otherwise. */
 	bool IsFake(const TapNote &tn, const int row) const;
 
-	pair<int, int> GetNumRowsWithSimultaneousTapsTwoPlayer(int minTaps = 2,
+	std::pair<int, int> GetNumRowsWithSimultaneousTapsTwoPlayer(int minTaps = 2,
 														   int startRow = 0,
 														   int endRow = MAX_NOTE_ROW) const;
 
@@ -335,32 +335,23 @@ public:
 	int GetNumFakes( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 
 	// the couple/routine style variants of the above.
-	pair<int, int> GetNumTapNotesTwoPlayer(int startRow = 0,
-										   int endRow = MAX_NOTE_ROW) const;
+	std::pair<int, int> GetNumTapNotesTwoPlayer(int startRow = 0, int endRow = MAX_NOTE_ROW) const;
 
-	pair<int, int> GetNumJumpsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
+	std::pair<int, int> GetNumJumpsTwoPlayer(int startRow = 0, int endRow = MAX_NOTE_ROW) const;
 
-	pair<int, int> GetNumHandsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
+	std::pair<int, int> GetNumHandsTwoPlayer(int startRow = 0, int endRow = MAX_NOTE_ROW) const;
 
-	pair<int, int> GetNumQuadsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
+	std::pair<int, int> GetNumQuadsTwoPlayer(int startRow = 0, int endRow = MAX_NOTE_ROW) const;
 
-	pair<int, int> GetNumHoldNotesTwoPlayer(int startRow = 0,
-											int endRow = MAX_NOTE_ROW) const;
+	std::pair<int, int> GetNumHoldNotesTwoPlayer(int startRow = 0, int endRow = MAX_NOTE_ROW) const;
 
-	pair<int, int> GetNumMinesTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
+	std::pair<int, int> GetNumMinesTwoPlayer(int startRow = 0, int endRow = MAX_NOTE_ROW) const;
 
-	pair<int, int> GetNumRollsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
+	std::pair<int, int> GetNumRollsTwoPlayer(int startRow = 0, int endRow = MAX_NOTE_ROW) const;
 
-	pair<int, int> GetNumLiftsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
+	std::pair<int, int> GetNumLiftsTwoPlayer(int startRow = 0, int endRow = MAX_NOTE_ROW) const;
 
-	pair<int, int> GetNumFakesTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
+	std::pair<int, int> GetNumFakesTwoPlayer(int startRow = 0, int endRow = MAX_NOTE_ROW) const;
 
 	// Transformations
 	void LoadTransformed(const NoteData& original,

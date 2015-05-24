@@ -240,7 +240,7 @@ void NoteField::Load(
 		{
 			sNoteSkinLower = "default";
 		}
-		m_NoteDisplays.insert(pair<RString, NoteDisplayCols *> (sNoteSkinLower, badIdea));
+		m_NoteDisplays.insert(std::pair<RString, NoteDisplayCols *> (sNoteSkinLower, badIdea));
 	}
 
 	sNoteSkinLower.MakeLower();
@@ -260,7 +260,7 @@ void NoteField::Load(
 			{
 				sNoteSkinLower = "default";
 			}
-			m_NoteDisplays.insert(pair<RString, NoteDisplayCols *> (sNoteSkinLower, badIdea));
+			m_NoteDisplays.insert(std::pair<RString, NoteDisplayCols *> (sNoteSkinLower, badIdea));
 		}
 
 		sNoteSkinLower.MakeLower();

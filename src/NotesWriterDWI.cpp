@@ -20,7 +20,7 @@ RString OptimizeDWIString( RString holds, RString taps );
  * @return the one singular character. */
 static char OptimizeDWIPair( char c1, char c2 )
 {
-	typedef pair<char,char> cpair;
+	typedef std::pair<char,char> cpair;
 	static std::map< cpair, char > joins;
 	static bool Initialized = false;
 	if(!Initialized)
