@@ -51,7 +51,7 @@ RageLog* LOG;		// global and accessible from anywhere in the program
  *
  * The identifier is never displayed, so we can use a simple local object to
  * map/unmap, using any mechanism to generate unique IDs. */
-static map<RString, RString> LogMaps;
+static std::map<RString, RString> LogMaps;
 
 #define LOG_PATH	"/Logs/log.txt"
 #define INFO_PATH	"/Logs/info.txt"

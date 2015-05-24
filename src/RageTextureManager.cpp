@@ -33,9 +33,9 @@ RageTextureManager*		TEXTUREMAN		= NULL; // global and accessible from anywhere 
 
 namespace
 {
-	map<RageTextureID, RageTexture*> m_mapPathToTexture;
-	map<RageTextureID, RageTexture*> m_textures_to_update;
-	map<RageTexture*, RageTextureID> m_texture_ids_by_pointer;
+	std::map<RageTextureID, RageTexture*> m_mapPathToTexture;
+	std::map<RageTextureID, RageTexture*> m_textures_to_update;
+	std::map<RageTexture*, RageTextureID> m_texture_ids_by_pointer;
 };
 
 RageTextureManager::RageTextureManager():
@@ -236,19 +236,16 @@ void RageTextureManager::DeleteTexture( RageTexture *t )
 	ASSERT( t->m_iRefCount == 0 );
 	LOG->Trace( "RageTextureManager: deleting '%s'.", t->GetID().filename.c_str() );
 
-	map<RageTexture*, RageTextureID>::iterator id_entry=
-		m_texture_ids_by_pointer.find(t);
+	auto id_entry =	m_texture_ids_by_pointer.find(t);
 	if(id_entry != m_texture_ids_by_pointer.end())
 	{
-		map<RageTextureID, RageTexture*>::iterator tex_entry=
-			m_mapPathToTexture.find(id_entry->second);
+		auto tex_entry = m_mapPathToTexture.find(id_entry->second);
 		if(tex_entry != m_mapPathToTexture.end())
 		{
 			m_mapPathToTexture.erase(tex_entry);
 			SAFE_DELETE(t);
 		}
-		map<RageTextureID, RageTexture*>::iterator tex_update_entry=
-			m_textures_to_update.find(id_entry->second);
+		auto tex_update_entry = m_textures_to_update.find(id_entry->second);
 		if(tex_update_entry != m_textures_to_update.end())
 		{
 			m_textures_to_update.erase(tex_update_entry);
@@ -265,8 +262,7 @@ void RageTextureManager::DeleteTexture( RageTexture *t )
 			{
 				m_mapPathToTexture.erase( i );	// remove map entry
 				SAFE_DELETE( t );	// free the texture
-				map<RageTextureID, RageTexture*>::iterator tex_update_entry=
-					m_textures_to_update.find(i->first);
+				auto tex_update_entry = m_textures_to_update.find(i->first);
 				if(tex_update_entry != m_textures_to_update.end())
 				{
 					m_textures_to_update.erase(tex_update_entry);
@@ -284,8 +280,7 @@ void RageTextureManager::GarbageCollect( GCType type )
 	// Search for old textures with refcount==0 to unload
 	LOG->Trace("Performing texture garbage collection.");
 
-	for( std::map<RageTextureID, RageTexture*>::iterator i = m_mapPathToTexture.begin();
-		i != m_mapPathToTexture.end(); )
+	for( auto i = m_mapPathToTexture.begin(); i != m_mapPathToTexture.end(); )
 	{
 		std::map<RageTextureID, RageTexture*>::iterator j = i;
 		i++;

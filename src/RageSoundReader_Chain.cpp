@@ -64,7 +64,7 @@ int RageSoundReader_Chain::LoadSound( RString sPath )
 {
 	sPath.MakeLower();
 
-	map<RString, RageSoundReader *>::const_iterator it = m_apNamedSounds.find( sPath );
+	auto it = m_apNamedSounds.find( sPath );
 	if( it != m_apNamedSounds.end() )
 	{
 		const RageSoundReader *pReader = it->second;

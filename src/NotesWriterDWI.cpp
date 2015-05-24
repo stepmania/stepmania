@@ -21,7 +21,7 @@ RString OptimizeDWIString( RString holds, RString taps );
 static char OptimizeDWIPair( char c1, char c2 )
 {
 	typedef pair<char,char> cpair;
-	static map< cpair, char > joins;
+	static std::map< cpair, char > joins;
 	static bool Initialized = false;
 	if(!Initialized)
 	{
@@ -43,13 +43,13 @@ static char OptimizeDWIPair( char c1, char c2 )
 		joins[ cpair('8', 'D') ] = 'K';
 		joins[ cpair('6', 'D') ] = 'L';
 	}
-	
+
 	if( c1 > c2 )
 		swap( c1, c2 );
-	
-	map< cpair, char >::const_iterator it = joins.find( cpair(c1, c2) );
+
+	auto it = joins.find( cpair(c1, c2) );
 	ASSERT( it != joins.end() );
-	
+
 	return it->second;
 }
 
@@ -65,17 +65,17 @@ RString OptimizeDWIString( RString holds, RString taps )
 	 * do eg. 1D, not 2I. */
 	sort( holds.begin(), holds.end() );
 	sort( taps.begin(), taps.end() );
-	
+
 	/* Combine characters as much as possible. */
 	RString comb_taps, comb_holds;
-	
+
 	/* 24 -> 1 */
 	while( taps.size() > 1 )
 	{
 		comb_taps += OptimizeDWIPair( taps[0], taps[1] );
 		taps.erase(0, 2);
 	}
-	
+
 	/* 2!24!4 -> 1!1 */
 	while( holds.size() > 1 )
 	{
@@ -83,10 +83,10 @@ RString OptimizeDWIString( RString holds, RString taps )
 		holds.erase(0, 2);
 		comb_holds += ssprintf( "%c!%c", to, to );
 	}
-	
+
 	ASSERT( taps.size() <= 1 );
 	ASSERT( holds.size() <= 1 );
-	
+
 	/* 24!4 -> 1!4 */
 	while( holds.size() == 1 && taps.size() == 1 )
 	{
@@ -95,7 +95,7 @@ RString OptimizeDWIString( RString holds, RString taps )
 		taps.erase(0, 1);
 		holds.erase(0, 1);
 	}
-	
+
 	/* Now we have at most one single tap and one hold remaining, and any
 	 * number of taps and holds in comb_taps and comb_holds. */
 	RString ret;
@@ -104,7 +104,7 @@ RString OptimizeDWIString( RString holds, RString taps )
 	if( holds.size() == 1 )
 		ret += ssprintf( "%c!%c", holds[0], holds[0] );
 	ret += comb_holds;
-	
+
 	if( ret.size() == 1 || (ret.size() == 3 && ret[1] == '!') )
 		return ret;
 	else
@@ -151,7 +151,7 @@ static RString NotesToDWIString( const TapNote tnCols[6] )
  * @param tnCol5 the fifth column.
  * @param tnCol6 the sisth column.
  * @return the DWI'ed string. */
-static RString NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, 
+static RString NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3,
 				 TapNote tnCol4, TapNote tnCol5, TapNote tnCol6 )
 {
 	TapNote tnCols[6];
@@ -199,7 +199,7 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 		switch( nt )
 		{
 		case NOTE_TYPE_4TH:
-		case NOTE_TYPE_8TH:	
+		case NOTE_TYPE_8TH:
 			fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
 			break;
 		case NOTE_TYPE_12TH:
@@ -242,8 +242,8 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 			case StepsType_dance_single:
 			case StepsType_dance_couple:
 			case StepsType_dance_double:
-				str = NotesToDWIString( 
-					notedata.GetTapNote(start+0, row), 
+				str = NotesToDWIString(
+					notedata.GetTapNote(start+0, row),
 					notedata.GetTapNote(start+1, row),
 					notedata.GetTapNote(start+2, row),
 					notedata.GetTapNote(start+3, row) );
@@ -255,7 +255,7 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 				notedata.SetTapNote(start+3, row, TAP_EMPTY);
 				break;
 			case StepsType_dance_solo:
-				str = NotesToDWIString( 
+				str = NotesToDWIString(
 					notedata.GetTapNote(0, row),
 					notedata.GetTapNote(1, row),
 					notedata.GetTapNote(2, row),
@@ -280,7 +280,7 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 		switch( nt )
 		{
 		case NOTE_TYPE_4TH:
-		case NOTE_TYPE_8TH:	
+		case NOTE_TYPE_8TH:
 			break;
 		case NOTE_TYPE_12TH:
 		case NOTE_TYPE_24TH:
@@ -414,7 +414,7 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 	}
 
 	const vector<Steps*>& vpSteps = out.GetAllSteps();
-	for( unsigned i=0; i<vpSteps.size(); i++ ) 
+	for( unsigned i=0; i<vpSteps.size(); i++ )
 	{
 		const Steps* pSteps = vpSteps[i];
 		if( pSteps->IsAutogen() )
@@ -433,14 +433,14 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 
 		f.PutLine( ";" );
 	}
-	
+
 	return true;
 }
 
 /*
  * (c) 2001-2006 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -450,7 +450,7 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

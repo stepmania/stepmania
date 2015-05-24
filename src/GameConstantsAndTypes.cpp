@@ -225,8 +225,7 @@ XToString( TapNoteScore );
 LuaXType( TapNoteScore );
 TapNoteScore StringToTapNoteScore( const RString &s )
 {
-	std::map<RString, TapNoteScore>::iterator tns=
-		tns_converter.conversion_map.find(s);
+	auto tns = tns_converter.conversion_map.find(s);
 	if(tns != tns_converter.conversion_map.end())
 	{
 		return tns->second;

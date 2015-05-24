@@ -62,7 +62,7 @@ static const GLenum RageSpriteVertexFormat = GL_T2F_C4F_N3F_V3F;
 /* If we support texture matrix scaling, a handle to the vertex program: */
 static GLhandleARB g_bTextureMatrixShader = 0;
 
-static map<unsigned, RenderTarget *> g_mapRenderTargets;
+static std::map<unsigned, RenderTarget *> g_mapRenderTargets;
 static RenderTarget *g_pCurrentRenderTarget = NULL;
 
 static LowLevelWindow *g_pWind;
@@ -2488,9 +2488,13 @@ unsigned RageDisplay_Legacy::CreateRenderTarget( const RenderTargetParam &param,
 
 unsigned RageDisplay_Legacy::GetRenderTarget( )
 {
-	for( map<unsigned, RenderTarget*>::const_iterator it = g_mapRenderTargets.begin( ); it != g_mapRenderTargets.end( ); ++it )
-	if( it->second == g_pCurrentRenderTarget )
-		return it->first;
+	for (auto &it: g_mapRenderTargets)
+	{
+		if ( it.second == g_pCurrentRenderTarget )
+		{
+			return it.first;
+		}
+	}
 	return 0;
 }
 

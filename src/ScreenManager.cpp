@@ -78,7 +78,7 @@ static Preference<bool> g_bDelayedScreenLoad( "DelayedScreenLoad", false );
 //static Preference<bool> g_bPruneFonts( "PruneFonts", true );
 
 // Screen registration
-static map<RString,CreateScreenFn>	*g_pmapRegistrees = NULL;
+static std::map<RString,CreateScreenFn>	*g_pmapRegistrees = NULL;
 
 /** @brief Utility functions for the ScreenManager. */
 namespace ScreenManagerUtil
@@ -225,9 +225,9 @@ using namespace ScreenManagerUtil;
 RegisterScreenClass::RegisterScreenClass( const RString& sClassName, CreateScreenFn pfn )
 {
 	if( g_pmapRegistrees == NULL )
-		g_pmapRegistrees = new map<RString,CreateScreenFn>;
+		g_pmapRegistrees = new std::map<RString,CreateScreenFn>;
 
-	map<RString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
+	auto iter = g_pmapRegistrees->find( sClassName );
 	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Screen class '%s' already registered.", sClassName.c_str()) );
 
 	(*g_pmapRegistrees)[sClassName] = pfn;
@@ -548,7 +548,7 @@ Screen* ScreenManager::MakeNewScreen( const RString &sScreenName )
 
 	RString sClassName = THEME->GetMetric( sScreenName,"Class" );
 
-	map<RString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
+	auto iter = g_pmapRegistrees->find( sClassName );
 	if( iter == g_pmapRegistrees->end() )
 	{
 		LuaHelpers::ReportScriptErrorFmt("Screen \"%s\" has an invalid class \"%s\".", sScreenName.c_str(), sClassName.c_str());

@@ -83,9 +83,10 @@ NoteField::~NoteField()
 
 void NoteField::Unload()
 {
-	for( map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.begin();
-		it != m_NoteDisplays.end(); ++it )
-		delete it->second;
+	for (auto &it: m_NoteDisplays)
+	{
+		delete it.second;
+	}
 	m_NoteDisplays.clear();
 	m_pCurDisplay = NULL;
 	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
@@ -164,7 +165,7 @@ void NoteField::CacheAllUsedNoteSkins()
 	NOTESKIN->ValidateNoteSkinName(sCurrentNoteSkinLower);
 	sCurrentNoteSkinLower.MakeLower();
 
-	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( sCurrentNoteSkinLower );
+	auto it = m_NoteDisplays.find( sCurrentNoteSkinLower );
 	ASSERT_M( it != m_NoteDisplays.end(), sCurrentNoteSkinLower );
 	m_pCurDisplay = it->second;
 	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
@@ -243,7 +244,7 @@ void NoteField::Load(
 	}
 
 	sNoteSkinLower.MakeLower();
-	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( sNoteSkinLower );
+	auto it = m_NoteDisplays.find( sNoteSkinLower );
 	ASSERT_M( it != m_NoteDisplays.end(), ssprintf("iterator != m_NoteDisplays.end() [sNoteSkinLower = %s]",sNoteSkinLower.c_str()) );
 	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
 	FOREACH_EnabledPlayer( pn )

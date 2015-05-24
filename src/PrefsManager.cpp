@@ -384,7 +384,7 @@ void PrefsManager::RestoreGamePrefs()
 
 	// load prefs
 	GamePrefs gp;
-	map<RString, GamePrefs>::const_iterator iter = m_mapGameNameToGamePrefs.find( m_sCurrentGame );
+	auto iter = m_mapGameNameToGamePrefs.find( m_sCurrentGame );
 	if( iter != m_mapGameNameToGamePrefs.end() )
 		gp = iter->second;
 

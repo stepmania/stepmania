@@ -1457,7 +1457,7 @@ bool Actor::HasCommand( const RString &sCmdName ) const
 
 const apActorCommands *Actor::GetCommand( const RString &sCommandName ) const
 {
-	map<RString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sCommandName );
+	auto it = m_mapNameToCommands.find( sCommandName );
 	if( it == m_mapNameToCommands.end() )
 		return NULL;
 	return &it->second;

@@ -1937,7 +1937,7 @@ RString WcharToUTF8( wchar_t c )
 }
 
 // &a; -> a
-void ReplaceEntityText( RString &sText, const map<RString,RString> &m )
+void ReplaceEntityText( RString &sText, const std::map<RString,RString> &m )
 {
 	RString sRet;
 
@@ -1973,7 +1973,7 @@ void ReplaceEntityText( RString &sText, const map<RString,RString> &m )
 		RString sElement = sText.substr( iStart+1, iEnd-iStart-1 );
 		sElement.MakeLower();
 
-		map<RString,RString>::const_iterator it = m.find( sElement );
+		auto it = m.find( sElement );
 		if( it == m.end() )
 		{
 			sRet.append( sText, iStart, iEnd-iStart+1 );
@@ -1990,7 +1990,7 @@ void ReplaceEntityText( RString &sText, const map<RString,RString> &m )
 }
 
 // abcd -> &a; &b; &c; &d;
-void ReplaceEntityText( RString &sText, const map<char,RString> &m )
+void ReplaceEntityText( RString &sText, const std::map<char,RString> &m )
 {
 	RString sFind;
 
@@ -2022,7 +2022,7 @@ void ReplaceEntityText( RString &sText, const map<char,RString> &m )
 
 		char sElement = sText[iStart];
 
-		map<char,RString>::const_iterator it = m.find( sElement );
+		auto it = m.find( sElement );
 		ASSERT( it != m.end() );
 
 		const RString &sTo = it->second;

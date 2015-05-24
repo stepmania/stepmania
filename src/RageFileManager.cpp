@@ -45,7 +45,7 @@ struct LoadedDriver
 };
 
 static vector<LoadedDriver *> g_pDrivers;
-static map<const RageFileBasic *,LoadedDriver *> g_mFileDriverMap;
+static std::map<const RageFileBasic *,LoadedDriver *> g_mFileDriverMap;
 
 static void ReferenceAllDrivers( vector<LoadedDriver *> &apDriverList )
 {
@@ -843,7 +843,7 @@ RageFileBasic *RageFileManager::Open( const RString &sPath_, int mode, int &err 
 
 void RageFileManager::CacheFile( const RageFileBasic *fb, const RString &sPath_ )
 {
-	map<const RageFileBasic *,LoadedDriver *>::iterator it = g_mFileDriverMap.find( fb );
+	auto it = g_mFileDriverMap.find( fb );
 
 	ASSERT_M( it != g_mFileDriverMap.end(), ssprintf("No recorded driver for file: %s", sPath_.c_str()) );
 

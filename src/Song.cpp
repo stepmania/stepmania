@@ -421,7 +421,7 @@ bool Song::ReloadFromSongDir( RString sDir )
 	/* Go through the steps, first setting their Song pointer to this song
 	 * (instead of the copy used above), and constructing a map to let us
 	 * easily find the new steps. */
-	map<StepsID, Steps*> mNewSteps;
+	std::map<StepsID, Steps*> mNewSteps;
 	for( vector<Steps*>::const_iterator it = m_vpSteps.begin(); it != m_vpSteps.end(); ++it )
 	{
 		(*it)->m_pSong = this;
@@ -448,7 +448,7 @@ bool Song::ReloadFromSongDir( RString sDir )
 	{
 		StepsID id;
 		id.FromSteps( *itOld );
-		map<StepsID, Steps*>::iterator itNew = mNewSteps.find( id );
+		auto itNew = mNewSteps.find( id );
 		if( itNew == mNewSteps.end() )
 		{
 			// This stepchart didn't exist in the file we reverted from
@@ -463,7 +463,7 @@ bool Song::ReloadFromSongDir( RString sDir )
 		}
 	}
 	// The leftovers in the map are steps that didn't exist before we reverted
-	for( map<StepsID, Steps*>::const_iterator it = mNewSteps.begin(); it != mNewSteps.end(); ++it )
+	for( auto it = mNewSteps.begin(); it != mNewSteps.end(); ++it )
 	{
 		Steps *NewSteps = new Steps(this);
 		*NewSteps = *(it->second);

@@ -30,7 +30,7 @@ public:
 
 	/* Return the number of added sounds. */
 	int GetNumSounds() const { return m_aSounds.size(); }
-	
+
 	int GetLength() const;
 	int GetLength_Fast() const;
 	int SetPosition( int iFrame );
@@ -49,7 +49,7 @@ private:
 	int m_iActualSampleRate;
 	unsigned m_iChannels;
 
-	map<RString, RageSoundReader *> m_apNamedSounds;
+	std::map<RString, RageSoundReader *> m_apNamedSounds;
 	vector<RageSoundReader *> m_apLoadedSounds;
 
 	struct Sound

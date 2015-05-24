@@ -855,11 +855,9 @@ void Profile::MergeScoresFromOtherProfile(Profile* other, bool skip_totals,
 			MERGE_FIELD(m_iNumStagesPassedByGrade[i]);
 		}
 #undef MERGE_FIELD
-		for(map<DateTime, Calories>::iterator other_cal=
-					other->m_mapDayToCaloriesBurned.begin();
-				other_cal != other->m_mapDayToCaloriesBurned.end(); ++other_cal)
+		for(auto other_cal = other->m_mapDayToCaloriesBurned.begin(); other_cal != other->m_mapDayToCaloriesBurned.end(); ++other_cal)
 		{
-			map<DateTime, Calories>::iterator this_cal=
+			auto this_cal=
 				m_mapDayToCaloriesBurned.find(other_cal->first);
 			if(this_cal == m_mapDayToCaloriesBurned.end())
 			{
@@ -2202,7 +2200,7 @@ XNode* Profile::SaveCalorieDataCreateNode() const
 float Profile::GetCaloriesBurnedForDay( DateTime day ) const
 {
 	day.StripTime();
-	map<DateTime,Calories>::const_iterator i = m_mapDayToCaloriesBurned.find( day );
+	auto i = m_mapDayToCaloriesBurned.find( day );
 	if( i == m_mapDayToCaloriesBurned.end() )
 		return 0;
 	else
@@ -2280,8 +2278,7 @@ void Profile::SaveCourseRecentScore( const Course* pCourse, const Trail* pTrail,
 */
 const Profile::HighScoresForASong *Profile::GetHighScoresForASong( const SongID& songID ) const
 {
-	map<SongID,HighScoresForASong>::const_iterator it;
-	it = m_SongHighScores.find( songID );
+	auto it = m_SongHighScores.find( songID );
 	if( it == m_SongHighScores.end() )
 		return NULL;
 	return &it->second;
@@ -2289,8 +2286,7 @@ const Profile::HighScoresForASong *Profile::GetHighScoresForASong( const SongID&
 
 const Profile::HighScoresForACourse *Profile::GetHighScoresForACourse( const CourseID& courseID ) const
 {
-	map<CourseID,HighScoresForACourse>::const_iterator it;
-	it = m_CourseHighScores.find( courseID );
+	auto it = m_CourseHighScores.find( courseID );
 	if( it == m_CourseHighScores.end() )
 		return NULL;
 	return &it->second;

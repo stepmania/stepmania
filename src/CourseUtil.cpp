@@ -147,7 +147,7 @@ void CourseUtil::MoveRandomToEnd( vector<Course*> &vpCoursesInOut )
 	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareRandom );
 }
 
-static map<const Course*, RString> course_sort_val;
+static std::map<const Course*, RString> course_sort_val;
 
 bool CompareCoursePointersBySortValueAscending( const Course *pSong1, const Course *pSong2 )
 {

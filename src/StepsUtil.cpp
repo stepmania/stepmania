@@ -83,7 +83,7 @@ bool StepsUtil::HasMatching( const Song *pSong, const StepsCriteria &stc )
 }
 
 // Sorting stuff
-map<const Steps*, RString> steps_sort_val;
+std::map<const Steps*, RString> steps_sort_val;
 
 static bool CompareStepsPointersBySortValueAscending(const Steps *pSteps1, const Steps *pSteps2)
 {
@@ -108,7 +108,7 @@ void StepsUtil::SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers,
 	// ugly...
 	vector<Song*> vpSongs = SONGMAN->GetAllSongs();
 	vector<Steps*> vpAllSteps;
-	map<Steps*,Song*> mapStepsToSong;
+	std::map<Steps*,Song*> mapStepsToSong;
 	{
 		for( unsigned i=0; i<vpSongs.size(); i++ )
 		{

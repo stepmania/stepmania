@@ -265,7 +265,7 @@ template <class T>
 class ThemeMetricMap : public IThemeMetric
 {
 	typedef ThemeMetric<T> ThemeMetricT;
-	map<RString,ThemeMetricT> m_metric;
+	std::map<RString,ThemeMetricT> m_metric;
 
 public:
 	ThemeMetricMap( const RString& sGroup = "", MetricNameMap pfn = NULL, const vector<RString> vsValueNames = vector<RString>() )
@@ -282,21 +282,21 @@ public:
 	}
 	void Read()
 	{
-		// HACK: GCC (3.4) takes this and pretty much nothing else.
-		// I don't know why.
-		for( typename map<RString,ThemeMetric<T> >::iterator m = m_metric.begin(); m != m_metric.end(); ++m )
-			m->second.Read();
+		for (auto &m: m_metric)
+		{
+			m.second.Read();
+		}
 	}
 	void Clear()
 	{
-		for( typename map<RString,ThemeMetric<T> >::iterator m = m_metric.begin(); m != m_metric.end(); ++m )
-			m->second.Clear();
+		for (auto &m: m_metric)
+		{
+			m.second.Clear();
+		}
 	}
 	const T& GetValue( RString s ) const
 	{
-		// HACK: GCC (3.4) takes this and pretty much nothing else.
-		// I don't know why.
-		typename map<RString,ThemeMetric<T> >::const_iterator iter = m_metric.find(s);
+		auto iter = m_metric.find(s);
 		ASSERT( iter != m_metric.end() );
 		return iter->second.GetValue();
 	}

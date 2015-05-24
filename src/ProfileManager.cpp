@@ -431,7 +431,7 @@ void ProfileManager::RefreshLocalProfilesFromDisk()
 	//   Meant for use when testing things, listed last.
 	// If the user renames a profile directory manually, that should not be a
 	// problem. -Kyz
-	map<ProfileType, vector<DirAndProfile> > categorized_profiles;
+	std::map<ProfileType, vector<DirAndProfile> > categorized_profiles;
 	// The type data for a profile is in its own file so that loading isn't
 	// slowed down by copying temporary profiles around to make sure the list
 	// is sorted.  The profiles are loaded at the end. -Kyz

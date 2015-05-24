@@ -194,7 +194,7 @@ public:
 	static RString MakeGuid();
 
 	RString m_sGuid;
-	map<RString,RString> m_sDefaultModifiers;
+	std::map<RString,RString> m_sDefaultModifiers;
 	SortOrder m_SortOrder;
 	Difficulty m_LastDifficulty;
 	CourseDifficulty m_LastCourseDifficulty;
@@ -234,7 +234,7 @@ public:
 	/* These stats count twice in the machine profile if two players are playing;
 	 * that's the only approach that makes sense for ByDifficulty and ByMeter. */
 	int m_iNumSongsPlayedByPlayMode[NUM_PlayMode];
-	map<StyleID,int> m_iNumSongsPlayedByStyle;
+	std::map<StyleID,int> m_iNumSongsPlayedByStyle;
 	int m_iNumSongsPlayedByDifficulty[NUM_Difficulty];
 	int m_iNumSongsPlayedByMeter[MAX_METER+1];
 	/**
@@ -333,7 +333,7 @@ public:
 		Calories(): fCals(0) {}
 		float fCals;
 	};
-	map<DateTime,Calories> m_mapDayToCaloriesBurned;
+	std::map<DateTime,Calories> m_mapDayToCaloriesBurned;
 	float GetCaloriesBurnedForDay( DateTime day ) const;
 
 /*

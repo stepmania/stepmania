@@ -49,7 +49,7 @@ static Preference<bool> g_bPalettedBannerCache( "PalettedBannerCache", false );
 BannerCache *BANNERCACHE; // global and accessible from anywhere in our program
 
 
-static map<RString,RageSurface *> g_BannerPathToImage;
+static std::map<RString,RageSurface *> g_BannerPathToImage;
 static int g_iDemandRefcount = 0;
 
 RString BannerCache::GetBannerCachePath( RString sBannerPath )

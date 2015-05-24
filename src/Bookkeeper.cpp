@@ -99,7 +99,7 @@ XNode* Bookkeeper::CreateNode() const
 	{
 		XNode* pData = xml->AppendChild("Data");
 
-		for( map<Date,int>::const_iterator it = m_mapCoinsForHour.begin(); it != m_mapCoinsForHour.end(); ++it )
+		for( auto it = m_mapCoinsForHour.cbegin(); it != m_mapCoinsForHour.cend(); ++it )
 		{
 			int iCoins = it->second;
 			XNode *pDay = pData->AppendChild( "Coins", iCoins );
@@ -149,7 +149,7 @@ void Bookkeeper::CoinInserted()
 }
 
 // Return the number of coins between [beginning,ending).
-int Bookkeeper::GetNumCoinsInRange( map<Date,int>::const_iterator begin, map<Date,int>::const_iterator end ) const
+int Bookkeeper::GetNumCoinsInRange( std::map<Date,int>::const_iterator begin, std::map<Date,int>::const_iterator end ) const
 {
 	int iCoins = 0;
 
@@ -211,22 +211,23 @@ void Bookkeeper::GetCoinsLastWeeks( int coins[NUM_LAST_WEEKS] ) const
 void Bookkeeper::GetCoinsByDayOfWeek( int coins[DAYS_IN_WEEK] ) const
 {
 	for( int i=0; i<DAYS_IN_WEEK; i++ )
-		coins[i] = 0;
-
-	for( map<Date,int>::const_iterator it = m_mapCoinsForHour.begin(); it != m_mapCoinsForHour.end(); ++it )
 	{
-		const Date &d = it->first;
+		coins[i] = 0;
+	}
+	for (auto &it: m_mapCoinsForHour)
+	{
+		const Date &d = it.first;
 		int iDayOfWeek = GetDayInYearAndYear( d.m_iDayOfYear, d.m_iYear ).tm_wday;
-		coins[iDayOfWeek] += it->second;
+		coins[iDayOfWeek] += it.second;
 	}
 }
 
 void Bookkeeper::GetCoinsByHour( int coins[HOURS_IN_DAY] ) const
 {
 	memset( coins, 0, sizeof(int) * HOURS_IN_DAY );
-	for( map<Date,int>::const_iterator it = m_mapCoinsForHour.begin(); it != m_mapCoinsForHour.end(); ++it )
+	for (auto &it: m_mapCoinsForHour)
 	{
-		const Date &d = it->first;
+		const Date &d = it.first;
 
 		if( d.m_iHour >= HOURS_IN_DAY )
 		{
@@ -234,7 +235,7 @@ void Bookkeeper::GetCoinsByHour( int coins[HOURS_IN_DAY] ) const
 			continue;
 		}
 
-		coins[d.m_iHour] += it->second;
+		coins[d.m_iHour] += it.second;
 	}
 }
 

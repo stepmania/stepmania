@@ -127,11 +127,10 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	const float fOtherLastSecond = other.m_fLastSecond + m_fLastSecond + 1.0f;
 	m_fLastSecond = fOtherLastSecond;
 
-	map<float,float>::const_iterator it;
-	for( it = other.m_fLifeRecord.begin(); it != other.m_fLifeRecord.end(); ++it )
+	for (auto &it: other.m_fLifeRecord)
 	{
-		const float pos = it->first;
-		const float life = it->second;
+		const float pos = it.first;
+		const float life = it.second;
 		m_fLifeRecord[fOtherFirstSecond+pos] = life;
 	}
 
@@ -392,7 +391,7 @@ void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 	// entry.  Then the second call of the frame occurs and sets the life for
 	// the current time to a lower value.
 	// -Kyz
-	map<float,float>::iterator curr= m_fLifeRecord.find(fStepsSecond);
+	auto curr= m_fLifeRecord.find(fStepsSecond);
 	if(curr != m_fLifeRecord.end())
 	{
 		if(curr->second != fLife)
@@ -413,17 +412,17 @@ void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 	// we can eliminate record B without losing data. Only check the last three
 	// records in the map since we're only inserting at the end, and we know all
 	// earlier redundant records have already been removed.
-	map<float,float>::iterator C = m_fLifeRecord.end();
+	auto C = m_fLifeRecord.end();
 	--C;
 	if( C == m_fLifeRecord.begin() ) // no earlier records left
 		return;
 
-	map<float,float>::iterator B = C;
+	auto B = C;
 	--B;
 	if( B == m_fLifeRecord.begin() ) // no earlier records left
 		return;
 
-	map<float,float>::iterator A = B;
+	auto A = B;
 	--A;
 
 	if( A->second == B->second && B->second == C->second )
@@ -436,7 +435,7 @@ float PlayerStageStats::GetLifeRecordAt( float fStepsSecond ) const
 		return 0;
 
 	// Find the first element whose key is greater than k.
-	map<float,float>::const_iterator it = m_fLifeRecord.upper_bound( fStepsSecond );
+	auto it = m_fLifeRecord.upper_bound( fStepsSecond );
 
 	// Find the last element whose key is less than or equal to k.
 	if( it != m_fLifeRecord.begin() )
@@ -452,10 +451,10 @@ float PlayerStageStats::GetLifeRecordLerpAt( float fStepsSecond ) const
 		return 0;
 
 	// Find the first element whose key is greater than k.
-	map<float,float>::const_iterator later = m_fLifeRecord.upper_bound( fStepsSecond );
+	auto later = m_fLifeRecord.upper_bound( fStepsSecond );
 
 	// Find the last element whose key is less than or equal to k.
-	map<float,float>::const_iterator earlier = later;
+	auto earlier = later;
 	if( earlier != m_fLifeRecord.begin() )
 		--earlier;
 
@@ -482,7 +481,7 @@ float PlayerStageStats::GetCurrentLife() const
 {
 	if( m_fLifeRecord.empty() )
 		return 0;
-	map<float,float>::const_iterator iter = m_fLifeRecord.end();
+	auto iter = m_fLifeRecord.end();
 	--iter;
 	return iter->second;
 }

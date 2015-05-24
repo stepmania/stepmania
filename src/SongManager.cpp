@@ -607,7 +607,7 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 
 RString SongManager::GetCourseGroupBannerPath( const RString &sCourseGroup ) const
 {
-	map<RString, CourseGroupInfo>::const_iterator iter = m_mapCourseGroupToInfo.find( sCourseGroup );
+	auto iter = m_mapCourseGroupToInfo.find( sCourseGroup );
 	if( iter == m_mapCourseGroupToInfo.end() )
 	{
 		ASSERT_M( 0, ssprintf("requested banner for course group '%s' that doesn't exist",sCourseGroup.c_str()) );
@@ -699,7 +699,7 @@ const vector<Song*> &SongManager::GetSongs( const RString &sGroupName ) const
 
 	if( sGroupName == GROUP_ALL )
 		return m_pSongs;
-	map<RString, SongPointerVector, Comp>::const_iterator iter = m_mapSongGroupIndex.find( sGroupName );
+	auto iter = m_mapSongGroupIndex.find( sGroupName );
 	if ( iter != m_mapSongGroupIndex.end() )
 		return iter->second;
 	return vEmpty;
@@ -1378,7 +1378,7 @@ Song* SongManager::GetSongFromDir(RString dir) const
 
 	dir.Replace('\\', '/');
 	dir.MakeLower();
-	map<RString, Song*>::const_iterator entry= m_SongsByDir.find(dir);
+	auto entry = m_SongsByDir.find(dir);
 	if(entry != m_SongsByDir.end())
 	{
 		return entry->second;
@@ -1549,7 +1549,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 			return;
 
 		PreferredSortSection section;
-		map<Song *, float> mapSongToPri;
+		std::map<Song *, float> mapSongToPri;
 
 		for (auto &s: asLines)
 		{

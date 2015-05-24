@@ -17,7 +17,7 @@ namespace
 		InputHandler *m_pDevice;
 	};
 	vector<LoadedInputHandler> m_InputHandlers;
-	map<InputDevice, InputHandler *> g_mapDeviceToHandler;
+	std::map<InputDevice, InputHandler *> g_mapDeviceToHandler;
 }
 
 RageInput::RageInput()
@@ -117,7 +117,7 @@ void RageInput::AddHandler( InputHandler *pHandler )
 /** @brief Return the first InputDriver for the requested InputDevice. */
 InputHandler *RageInput::GetHandlerForDevice( const InputDevice id )
 {
-	map<InputDevice, InputHandler *>::iterator it = g_mapDeviceToHandler.find(id);
+	auto it = g_mapDeviceToHandler.find(id);
 	if( it == g_mapDeviceToHandler.end() )
 		return NULL;
 	return it->second;

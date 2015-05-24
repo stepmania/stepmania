@@ -117,7 +117,7 @@ void ThemeManager::Unsubscribe( IThemeMetric *p )
 
 
 // We spend a lot of time doing redundant theme path lookups. Cache results.
-static map<RString, ThemeManager::PathInfo> g_ThemePathCache[NUM_ElementCategory];
+static std::map<RString, ThemeManager::PathInfo> g_ThemePathCache[NUM_ElementCategory];
 void ThemeManager::ClearThemePathCache()
 {
 	for( int i = 0; i < NUM_ElementCategory; ++i )
@@ -789,11 +789,9 @@ bool ThemeManager::GetPathInfo( PathInfo &out, ElementCategory category, const R
 
 	RString sFileName = MetricsGroupAndElementToFileName( sMetricsGroup, sElement );
 
-	map<RString, PathInfo> &Cache = g_ThemePathCache[category];
+	std::map<RString, PathInfo> &Cache = g_ThemePathCache[category];
 	{
-		map<RString, PathInfo>::const_iterator i;
-
-		i = Cache.find( sFileName );
+		auto i = Cache.find( sFileName );
 		if( i != Cache.end() )
 		{
 			out = i->second;

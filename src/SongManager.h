@@ -183,7 +183,7 @@ protected:
 	void AddSongToList(Song* new_song);
 	/** @brief All of the songs that can be played. */
 	vector<Song*>		m_pSongs;
-	map<RString, Song*> m_SongsByDir;
+	std::map<RString, Song*> m_SongsByDir;
 	std::set<RString> m_GroupsToNeverCache;
 	/** @brief Hold pointers to all the songs that have been deleted from disk but must at least be kept temporarily alive for smooth audio transitions. */
 	vector<Song*>       m_pDeletedSongs;
@@ -203,7 +203,7 @@ protected:
 
 	struct Comp { bool operator()(const RString& s, const RString &t) const { return CompareRStringsAsc(s,t); } };
 	typedef vector<Song*> SongPointerVector;
-	map<RString,SongPointerVector,Comp> m_mapSongGroupIndex;
+	std::map<RString,SongPointerVector,Comp> m_mapSongGroupIndex;
 
 	vector<Course*>		m_pCourses;
 	vector<Course*>		m_pPopularCourses[NUM_CourseType];
@@ -213,7 +213,7 @@ protected:
 		RString m_sBannerPath;
 		//RString m_sBackgroundPath;
 	};
-	map<RString,CourseGroupInfo> m_mapCourseGroupToInfo;
+	std::map<RString,CourseGroupInfo> m_mapCourseGroupToInfo;
 	typedef vector<Course*> CoursePointerVector;
 	vector<CoursePointerVector> m_vPreferredCourseSort;
 

@@ -89,8 +89,8 @@ private:
 	bool			m_bAcceptStartRelease;
 
 	vector<RString> m_asLoadedRows;
-	map<RString, OptionRowHandler *> m_Rows;
-	map<RString, vector<bool> > m_bSelections;
+	std::map<RString, OptionRowHandler *> m_Rows;
+	std::map<RString, vector<bool> > m_bSelections;
 	std::set<RString> m_setDirectRows;
 	std::set<RString> m_setTopMenus; // list of top-level menus, pointing to submenus
 

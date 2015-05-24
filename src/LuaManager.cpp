@@ -24,7 +24,7 @@ struct Impl
 {
 	Impl(): g_pLock("Lua") {}
 	vector<lua_State *> g_FreeStateList;
-	map<lua_State *, bool> g_ActiveStates;
+	std::map<lua_State *, bool> g_ActiveStates;
 
 	RageMutex g_pLock;
 };
@@ -564,12 +564,12 @@ XNode *LuaHelpers::GetLuaInformation()
 	XNode *pConstantsNode = pLuaNode->AppendChild( "Constants" );
 
 	vector<RString> vFunctions;
-	map<RString, LClass> mClasses;
-	map<RString, vector<RString> > mNamespaces;
-	map<RString, RString> mSingletons;
-	map<RString, float> mConstants;
-	map<RString, RString> mStringConstants;
-	map<RString, vector<RString> > mEnums;
+	std::map<RString, LClass> mClasses;
+	std::map<RString, vector<RString> > mNamespaces;
+	std::map<RString, RString> mSingletons;
+	std::map<RString, float> mConstants;
+	std::map<RString, RString> mStringConstants;
+	std::map<RString, vector<RString> > mEnums;
 
 	Lua *L = LUA->Get();
 	FOREACH_LUATABLE( L, LUA_GLOBALSINDEX )

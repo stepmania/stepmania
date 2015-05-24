@@ -581,7 +581,7 @@ NetworkPostData::~NetworkPostData()
 }
 
 /** @brief Create a MIME multipart data block from the given set of fields. */
-void NetworkPostData::CreateMimeData( const map<RString,RString> &mapNameToData, RString &sOut, RString &sMimeBoundaryOut )
+void NetworkPostData::CreateMimeData( const std::map<RString,RString> &mapNameToData, RString &sOut, RString &sMimeBoundaryOut )
 {
 	// Find a non-conflicting mime boundary.
 	while(1)
@@ -666,7 +666,7 @@ void NetworkPostData::HttpThread()
 
 	// Parse the results.
 	int iStart = 0, iSize = -1;
-	map<RString,RString> mapHeaders;
+	std::map<RString,RString> mapHeaders;
 	while( 1 )
 	{
 		split( sResult, "\n", iStart, iSize, false );
