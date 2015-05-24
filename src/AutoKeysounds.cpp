@@ -46,8 +46,7 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 	RString sSongDir = pSong->GetSongDir();
 
 	/*
-	 * Add all current autoplay sounds in both players to the chain.  If a sound is
-	 * common to both players, don't pan it; otherwise pan it to that player's side.
+	 * Add all current autoplay sounds in both players to the chain.
 	 */
 	int iNumTracks = m_ndAutoKeysoundsOnly[GAMESTATE->GetMasterPlayerNumber()].GetNumTracks();
 	for( int t = 0; t < iNumTracks; t++ )
@@ -79,21 +78,6 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 			FOREACH_EnabledPlayer(pn)
 				tn[pn] = m_ndAutoKeysoundsOnly[pn].GetTapNote( t, iRow );
 
-			/* Do all enabled players have the same note here?  (Having no note at all
-			 * counts as having a different note.) */
-			bool bSoundIsGlobal = true;
-			{
-				PlayerNumber pn = GetNextEnabledPlayer((PlayerNumber)-1);
-				const TapNote &tap = tn[pn];
-				pn = GetNextEnabledPlayer(pn);
-				while( pn != PLAYER_INVALID )
-				{
-					if( tn[pn].type != TapNoteType_AutoKeysound || tn[pn].iKeysoundIndex != tap.iKeysoundIndex )
-						bSoundIsGlobal = false;
-					pn = GetNextEnabledPlayer(pn);
-				}
-			}
-
 			FOREACH_EnabledPlayer(pn)
 			{
 				if( tn[pn] == TAP_EMPTY )
@@ -106,7 +90,8 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 					float fSeconds = GAMESTATE->m_pCurSteps[pn]->GetTimingData()->GetElapsedTimeFromBeatNoOffset( NoteRowToBeat(iRow) ) + SOUNDMAN->GetPlayLatency();
 
 					float fPan = 0;
-					if( !bSoundIsGlobal )
+					// If two players are playing, pan the keysounds to each player's respective side
+					if( GAMESTATE->GetNumPlayersEnabled() == 2 )
 						fPan = (pn == PLAYER_1)? -1.0f:+1.0f;
 					int iIndex = pChain->LoadSound( sKeysoundFilePath );
 					pChain->AddSound( iIndex, fSeconds, fPan );
@@ -182,7 +167,7 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 		// Load the buffering filter before the effects filters, so effects aren't delayed.
 		pGuitarTrackReader = new RageSoundReader_Extend( pGuitarTrackReader );
 		pGuitarTrackReader = new RageSoundReader_ThreadedBuffer( pGuitarTrackReader );
-		pPlayer1 = pGuitarTrackReader;	
+		pPlayer1 = pGuitarTrackReader;
 	}
 
 	return;
@@ -345,7 +330,7 @@ void AutoKeysounds::Update( float fDelta )
 		FOREACH_EnabledPlayer( pn )
 		{
 			const NoteData &nd = m_ndAutoKeysoundsOnly[pn];
-		
+
 			for( int t=0; t<nd.GetNumTracks(); t++ )
 			{
 				FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( nd, t, r, iRowLastCrossed+1, iRowNow )
@@ -366,7 +351,7 @@ void AutoKeysounds::Update( float fDelta )
 /*
  * (c) 2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -376,7 +361,7 @@ void AutoKeysounds::Update( float fDelta )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
