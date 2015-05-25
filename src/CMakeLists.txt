@@ -166,8 +166,22 @@ configure_file("${SM_XCODE_DIR}/plistHelper.in.hpp" "${SM_XCODE_DIR}/plistHelper
 if(APPLE)
   set(MACOSX_BUNDLE_BUNDLE_NAME ${SM_EXE_NAME})
   add_executable("${SM_EXE_NAME}" MACOSX_BUNDLE ${SMDATA_ALL_FILES_SRC} ${SMDATA_ALL_FILES_HPP})
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES MACOSX_BUNDLE TRUE)
+  set_target_properties("${SM_EXE_NAME}" PROPERTIES
+    MACOSX_BUNDLE TRUE
+    XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${SM_SRC_DIR}/global.h"
+    XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER "YES"
+  )
 else()
+  if (MSVC)
+    foreach ( sm_src_file ${SMDATA_ALL_FILES_SRC} )
+      get_filename_component(sm_src_raw "${sm_src_file}" NAME_WE)
+      if( ${sm_src_raw} MATCHES "global" )
+        set_source_files_properties("${sm_src_raw}.cpp" PROPERTIES COMPILE_FLAGS "/Ycglobal.h")
+      elseif(NOT (${sm_src_raw} MATCHES "verstub"))
+        set_source_files_properties("${sm_src_raw}.cpp" PROPERTIES COMPILE_FLAGS "/Yuglobal.h")
+      endif()
+    endforeach()
+  endif()
   add_executable("${SM_EXE_NAME}" ${SMDATA_ALL_FILES_SRC} ${SMDATA_ALL_FILES_HPP})
 endif()
 
