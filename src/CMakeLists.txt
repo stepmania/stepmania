@@ -1,6 +1,6 @@
 file(MAKE_DIRECTORY "${SM_SRC_DIR}/generated")
 
-if(WIN32)
+if(MSVC)
 # Version Updater library.
 add_subdirectory(version_updater)
 
