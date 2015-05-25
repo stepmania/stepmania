@@ -356,8 +356,23 @@ else() # Linux
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}"
   )
 
+  if(${WITH_CRASH_HANDLER})
+    sm_add_compile_definition("${SM_EXE_NAME}" CRASH_HANDLER)
+    if(LINUX)
+      # used only in the ArchHooks_Unix.cpp file
+      sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_METHOD_X86_LINUX)
+      sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_METHOD_TEXT="x86 custom backtrace")
+      sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_LOOKUP_METHOD_TEXT="backtrace_symbols")
+    endif()
+  endif()
   if (${HAS_PTHREAD})
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_LIBPTHREAD)
+
+    message("Host processor is ${CMAKE_SYSTEM_PROCESSOR}")
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+      message("Host processor is 64bit")
+      sm_add_compile_definition("${SM_EXE_NAME}" CPU_X86_64)
+    endif()
   endif()
   if (${HAS_FFMPEG})
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_FFMPEG)
