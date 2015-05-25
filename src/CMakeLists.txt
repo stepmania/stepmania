@@ -7,7 +7,7 @@ add_subdirectory(version_updater)
 # This part may move to a different file: it's the SM Data project.
 add_custom_command(
   OUTPUT ${SM_SRC_DIR}/generated/verstub.cpp
-  COMMAND VersionUpdater ${SM_SRC_DIR}/verstub.cpp
+  COMMAND VersionUpdater ${SM_SRC_DIR}/generated/verstub.cpp
   DEPENDS VersionUpdater
 )
 else()
