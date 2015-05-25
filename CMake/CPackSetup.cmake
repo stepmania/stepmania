@@ -8,7 +8,7 @@ set(CPACK_PACKAGE_VERSION "${SM_VERSION_TRADITIONAL}")
 set(CPACK_NSIS_HELP_LINK "https://github.com/stepmania/stepmania/issues")
 set(CPACK_NSIS_URL_INFO_ABOUT "http://www.stepmania.com/")
 set(CPACK_RESOURCE_FILE_README "${SM_ROOT_DIR}/README.md")
-set(CPACK_RESOURCE_FILE_LICENSE "${SM_BUILD_DIR}/license_install.txt")
+set(CPACK_RESOURCE_FILE_LICENSE "${SM_CMAKE_DIR}/license_install.txt")
 set(CPACK_PACKAGE_EXECUTABLES
   "${SM_EXE_NAME}" "StepMania ${SM_VERSION_MAJOR}" 
 )
