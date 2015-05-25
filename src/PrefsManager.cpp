@@ -316,14 +316,6 @@ PrefsManager::PrefsManager() :
 	#if defined(HAVE_VERSION_INFO)
 		,
 		m_bUpdateCheckEnable			( "UpdateCheckEnable",				true )
-		// TODO - Aldo_MX: Use PREFSMAN->m_iUpdateCheckIntervalSeconds & PREFSMAN->m_iUpdateCheckLastCheckedSecond
-		//,
-		//m_iUpdateCheckIntervalSeconds	( "UpdateCheckIntervalSeconds",		86400 ),	// 24 hours
-		//m_iUpdateCheckLastCheckedSecond	( "UpdateCheckLastCheckSecond",		0 )
-
-		// TODO - Aldo_MX: Write helpers in LuaManager.cpp to treat unsigned int/long like LUA Numbers
-		//,
-		//m_uUpdateCheckLastCheckedBuild	( "UpdateCheckLastCheckedBuild",	version_num )
 	#endif
 #endif
 

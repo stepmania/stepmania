@@ -97,7 +97,7 @@ namespace VDDebugInfo
 
 		src += 64;
 
-		pctx->nBuildNumber		= *(int *)src;
+		pctx->nBuildNumber		= 0;
 		pctx->pRVAHeap			= (const unsigned char *)(src + 20);
 		pctx->nFirstRVA			= *(const long *)(src + 16);
 		pctx->pFuncNameHeap		= (const char *)pctx->pRVAHeap - 4 + *(const long *)(src + 4);
@@ -402,10 +402,11 @@ namespace
 		if( !g_debugInfo.Loaded() )
 			return ssprintf( "debug resource file '%s': %s.\n", g_debugInfo.sFilename, g_debugInfo.sError.c_str() );
 
-		if( g_debugInfo.nBuildNumber != int(version_num) )
+		// Windows person requested here: need to know how to replace with the new product version.
+		if( g_debugInfo.nBuildNumber != 0 )
 		{
 			return ssprintf( "Incorrect %s file (build %d, expected %d) for this version of " PRODUCT_FAMILY " -- call stack unavailable.\n",
-				g_debugInfo.sFilename, g_debugInfo.nBuildNumber, int(version_num) );
+				g_debugInfo.sFilename, g_debugInfo.nBuildNumber, 0 );
 		}
 
 		RString sRet;
@@ -433,9 +434,9 @@ struct CompleteCrashData
 static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
 {
 	sOut += ssprintf(
-			"%s crash report (build %d, %s @ %s)\n"
+			"%s crash report (build %s @ %s)\n"
 			"--------------------------------------\n\n",
-			(string(PRODUCT_FAMILY) + product_version).c_str(), version_num, version_date, version_time );
+			(string(PRODUCT_FAMILY) + product_version).c_str(), version_date, version_time );
 
 	sOut += ssprintf( "Crash reason: %s\n", Data.m_CrashInfo.m_CrashReason );
 	sOut += ssprintf( "\n" );
