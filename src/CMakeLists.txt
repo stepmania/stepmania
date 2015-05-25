@@ -1,6 +1,17 @@
 file(MAKE_DIRECTORY "${SM_SRC_DIR}/generated")
 
-# Version Stub generation
+if(WIN32)
+# Version Updater library.
+add_subdirectory(version_updater)
+
+# This part may move to a different file: it's the SM Data project.
+add_custom_command(
+  OUTPUT ${SM_SRC_DIR}/generated/verstub.cpp
+  COMMAND VersionUpdater ${SM_SRC_DIR}/verstub.cpp
+  DEPENDS VersionUpdater
+)
+else()
+# Version Stub generation. Needs fixing on Windows.
 add_custom_command(
   OUTPUT ${SM_SRC_DIR}/generated/verstub.cpp
   COMMAND ${CMAKE_COMMAND}
@@ -8,14 +19,7 @@ add_custom_command(
   WORKING_DIRECTORY "${SM_ROOT_DIR}"
   DEPENDS ${SM_SRC_DIR}/generated/delete
 )
-if(WIN32)
-add_custom_command(
-  OUTPUT ${SM_SRC_DIR}/generated/delete
-  COMMAND del
-  ARGS ${SM_SRC_DIR}/generated/ver*
-  WORKING_DIRECTORY "${SM_ROOT_DIR}"
-)
-else()
+
 add_custom_command(
   OUTPUT ${SM_SRC_DIR}/generated/delete
   COMMAND rm
