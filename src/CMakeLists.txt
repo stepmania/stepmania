@@ -1,14 +1,28 @@
-# Version Updater library.
-add_subdirectory(version_updater)
+file(MAKE_DIRECTORY "${SM_SRC_DIR}/generated")
 
-# This part may move to a different file: it's the SM Data project.
+# Version Stub generation
 add_custom_command(
-  OUTPUT ${SM_SRC_DIR}/verstub.cpp
-  COMMAND VersionUpdater ${SM_SRC_DIR}/verstub.cpp
-  DEPENDS VersionUpdater
+  OUTPUT ${SM_SRC_DIR}/generated/verstub.cpp
+  COMMAND ${CMAKE_COMMAND}
+  ARGS -DSM_SRC_DIR=${SM_SRC_DIR} -P ${SM_SRC_DIR}/../CMake/VerStubUtil.cmake
+  WORKING_DIRECTORY "${SM_ROOT_DIR}"
+  DEPENDS ${SM_SRC_DIR}/generated/delete
 )
-
-source_group("Generated Files" FILES ${SM_SRC_DIR}/verstub.cpp)
+if(WIN32)
+add_custom_command(
+  OUTPUT ${SM_SRC_DIR}/generated/delete
+  COMMAND del
+  ARGS ${SM_SRC_DIR}/generated/ver*
+  WORKING_DIRECTORY "${SM_ROOT_DIR}"
+)
+else()
+add_custom_command(
+  OUTPUT ${SM_SRC_DIR}/generated/delete
+  COMMAND rm
+  ARGS -f ${SM_SRC_DIR}/generated/ver*
+  WORKING_DIRECTORY "${SM_ROOT_DIR}"
+)
+endif()
 
 # Main project is below.
 
@@ -125,7 +139,7 @@ list(APPEND SMDATA_FILE_TYPES_HPP
 source_group("File Types" FILES ${SMDATA_FILE_TYPES_SRC} ${SMDATA_FILE_TYPES_HPP})
 
 list(APPEND SMDATA_ALL_FILES_SRC
-  ${SM_SRC_DIR}/verstub.cpp
+  ${SM_SRC_DIR}/generated/verstub.cpp
   ${SMDATA_GLOBAL_FILES_SRC}
   ${SMDATA_GLOBAL_SINGLETON_SRC}
   ${SMDATA_ALL_ACTORS_SRC}
