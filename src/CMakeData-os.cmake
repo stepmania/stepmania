@@ -27,7 +27,7 @@ if(APPLE)
   
   source_group("OS Specific\\\\Darwin" FILES ${SMDATA_OS_DARWIN_SRC} ${SMDATA_OS_DARWIN_HPP})
 
-  
+
   list(APPEND SMDATA_OS_SRC
     ${SMDATA_OS_DARWIN_SRC}
   )
@@ -134,7 +134,6 @@ else()
         "archutils/Unix/StackCheck.cpp"
         "archutils/Unix/EmergencyShutdown.cpp"
       )
-        #"archutils/Android/CrashHandler.cpp"
       list(APPEND SMDATA_OS_HPP
         "archutils/Android/arch_setup.h"
         "archutils/Android/Globals.h"
@@ -145,7 +144,14 @@ else()
         "archutils/Unix/BacktraceNames.h"
         "archutils/Unix/EmergencyShutdown.h"
       )
-        #"archutils/Android/CrashHandler.h"
+      if (WITH_CRASH_HANDLER)
+        list(APPEND SMDATA_OS_SRC
+          "archutils/Android/CrashHandler.cpp"
+        )
+        list(APPEND SMDATA_OS_HPP
+          "archutils/Android/CrashHandler.h"
+        )
+      endif()
     endif()
   endif()
   source_group("OS Specific" FILES ${SMDATA_OS_SRC} ${SMDATA_OS_HPP})
@@ -171,11 +177,9 @@ if(APPLE OR LINUX)
     source_group("OS Specific\\\\Unix" FILES ${SMDATA_OS_UNIX_CRASH_SRC} ${SMDATA_OS_UNIX_CRASH_HPP})
 
     list(APPEND SMDATA_OS_SRC
-      ${SMDATA_OS_DARWIN_SRC}
       ${SMDATA_OS_UNIX_CRASH_SRC}
     )
     list(APPEND SMDATA_OS_HPP
-      ${SMDATA_OS_DARWIN_HPP}
       ${SMDATA_OS_UNIX_CRASH_HPP}
     )
   endif()

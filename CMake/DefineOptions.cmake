@@ -43,4 +43,6 @@ endif()
 if(NOT ANDROID)
   # This option handles if we use SSE2 processing.
   option(WITH_SSE2 "Build with SSE2 Optimizations." ON)
+elseif(ANDROID)
+  option(WITH_CRASH_HANDLER "Build with Crash Handler Support." ON)
 endif()
