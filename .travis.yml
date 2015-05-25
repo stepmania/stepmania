@@ -1,4 +1,4 @@
-language: c
+language: cpp
 
 compiler:
     - clang
@@ -28,7 +28,8 @@ before_script:
     - sudo apt-get install -y libglu1-mesa-dev
     - sudo apt-get install -y mesa-common-dev
     - sudo apt-get install -y libglew-dev
+    - ./.install-cmake.sh
 
 script:
-    - ./autogen.sh
-    - ./configure && make
+    - cmake -DWITH_PORTABLE_TOMCRYPT=ON -G 'Unix Makefiles'
+    - make

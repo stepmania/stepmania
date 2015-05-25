@@ -837,7 +837,7 @@ void NoteField::DrawPrimitives()
 				seg->GetRow() <= m_FieldRenderArgs.last_row && \
 				IS_ON_SCREEN(seg->GetBeat())) \
 			{ \
-				draw_timing_segment_text(str_exp, beat, side_sign, \
+				draw_timing_segment_text(str_exp, seg->GetBeat(), side_sign, \
 					caps_name##_OFFSETX, horiz_align, caps_name##_COLOR, text_glow); \
 			} \
 		}

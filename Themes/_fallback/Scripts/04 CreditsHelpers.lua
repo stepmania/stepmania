@@ -82,6 +82,7 @@ local stepmania_credits= {
 		"Mad Matt", -- new lua bindings
 		"Matt McCutchen", -- minor fix for some dance pads on linux
 		"NitroX72", -- pump/frame noteskin
+		"nixtrix", -- various BMS features and other fixes
 		"Petriform", -- default theme music
 		"psmay", -- SextetStream driver and related things
 		"桜為小鳩/Sakurana-Kobato (@sakuraponila)", -- custom scoring fixes

@@ -830,7 +830,7 @@ try_element_again:
 				GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME) + "\".";
 			LOG->UserLog("Theme element", element.c_str(), "%s", error.c_str());
 			LOG->Warn( "%s %s", element.c_str(), error.c_str());
-			LuaHelpers::ScriptErrorMessage(error);
+			LuaHelpers::ScriptErrorMessage("'" + element + "' " + error);
 		}
 
 		// Err?

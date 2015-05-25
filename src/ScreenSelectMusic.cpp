@@ -85,6 +85,7 @@ void ScreenSelectMusic::Init()
 	SAMPLE_MUSIC_LOOPS.Load( m_sName, "SampleMusicLoops" );
 	SAMPLE_MUSIC_PREVIEW_MODE.Load( m_sName, "SampleMusicPreviewMode" );
 	SAMPLE_MUSIC_FALLBACK_FADE_IN_SECONDS.Load( m_sName, "SampleMusicFallbackFadeInSeconds" );
+	SAMPLE_MUSIC_FADE_OUT_SECONDS.Load( m_sName, "SampleMusicFadeOutSeconds" );
 	DO_ROULETTE_ON_MENU_TIMER.Load( m_sName, "DoRouletteOnMenuTimer" );
 	ROULETTE_TIMER_SECONDS.Load( m_sName, "RouletteTimerSeconds" );
 	ALIGN_MUSIC_BEATS.Load( m_sName, "AlignMusicBeat" );
@@ -383,7 +384,7 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 		PlayParams.bForceLoop = SAMPLE_MUSIC_LOOPS;
 		PlayParams.fStartSecond = m_fSampleStartSeconds;
 		PlayParams.fLengthSeconds = m_fSampleLengthSeconds;
-		PlayParams.fFadeOutLengthSeconds = 1.5f;
+		PlayParams.fFadeOutLengthSeconds = SAMPLE_MUSIC_FADE_OUT_SECONDS;
 		PlayParams.bAlignBeat = ALIGN_MUSIC_BEATS;
 		PlayParams.bApplyMusicRate = true;
 

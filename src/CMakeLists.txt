@@ -1,14 +1,28 @@
-# Version Updater library.
-add_subdirectory(version_updater)
+file(MAKE_DIRECTORY "${SM_SRC_DIR}/generated")
 
-# This part may move to a different file: it's the SM Data project.
+# Version Stub generation
 add_custom_command(
-  OUTPUT ${SM_SRC_DIR}/verstub.cpp
-  COMMAND VersionUpdater ${SM_SRC_DIR}/verstub.cpp
-  DEPENDS VersionUpdater
+  OUTPUT ${SM_SRC_DIR}/generated/verstub.cpp
+  COMMAND ${CMAKE_COMMAND}
+  ARGS -DSM_SRC_DIR=${SM_SRC_DIR} -P ${SM_SRC_DIR}/../CMake/VerStubUtil.cmake
+  WORKING_DIRECTORY "${SM_ROOT_DIR}"
+  DEPENDS ${SM_SRC_DIR}/generated/delete
 )
-
-source_group("Generated Files" FILES ${SM_SRC_DIR}/verstub.cpp)
+if(WIN32)
+add_custom_command(
+  OUTPUT ${SM_SRC_DIR}/generated/delete
+  COMMAND del
+  ARGS ${SM_SRC_DIR}/generated/ver*
+  WORKING_DIRECTORY "${SM_ROOT_DIR}"
+)
+else()
+add_custom_command(
+  OUTPUT ${SM_SRC_DIR}/generated/delete
+  COMMAND rm
+  ARGS -f ${SM_SRC_DIR}/generated/ver*
+  WORKING_DIRECTORY "${SM_ROOT_DIR}"
+)
+endif()
 
 # Main project is below.
 
@@ -111,19 +125,21 @@ list(APPEND SMDATA_FILE_TYPES_SRC
   "IniFile.cpp"
   "MsdFile.cpp"
   "XmlFile.cpp"
+  "XmlToLua.cpp"
   "XmlFileUtil.cpp"
 )
 list(APPEND SMDATA_FILE_TYPES_HPP
   "IniFile.h"
   "MsdFile.h"
   "XmlFile.h"
+  "XmlToLua.h"
   "XmlFileUtil.h"
 )
 
 source_group("File Types" FILES ${SMDATA_FILE_TYPES_SRC} ${SMDATA_FILE_TYPES_HPP})
 
 list(APPEND SMDATA_ALL_FILES_SRC
-  ${SM_SRC_DIR}/verstub.cpp
+  ${SM_SRC_DIR}/generated/verstub.cpp
   ${SMDATA_GLOBAL_FILES_SRC}
   ${SMDATA_GLOBAL_SINGLETON_SRC}
   ${SMDATA_ALL_ACTORS_SRC}
@@ -217,7 +233,7 @@ set_target_properties("${SM_EXE_NAME}" PROPERTIES
 set_target_properties("${SM_EXE_NAME}" PROPERTIES
   OUTPUT_NAME_DEBUG "${SM_NAME_DEBUG}"
   OUTPUT_NAME_MINSIZEREL "${SM_NAME_MINSIZEREL}"
-  OUTPUT_NAME_RELWITHDEBINFO "${SM_RELWITHDEBINFO}"
+  OUTPUT_NAME_RELWITHDEBINFO "${SM_NAME_RELWITHDEBINFO}"
 )
 
 list(APPEND SM_WINDOWS_PROGRAM_DLLS
@@ -340,8 +356,23 @@ else() # Linux
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}"
   )
 
+  if(${WITH_CRASH_HANDLER})
+    sm_add_compile_definition("${SM_EXE_NAME}" CRASH_HANDLER)
+    if(LINUX)
+      # used only in the ArchHooks_Unix.cpp file
+      sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_METHOD_X86_LINUX)
+      sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_METHOD_TEXT="x86 custom backtrace")
+      sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_LOOKUP_METHOD_TEXT="backtrace_symbols")
+    endif()
+  endif()
   if (${HAS_PTHREAD})
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_LIBPTHREAD)
+
+    message("Host processor is ${CMAKE_SYSTEM_PROCESSOR}")
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+      message("Host processor is 64bit")
+      sm_add_compile_definition("${SM_EXE_NAME}" CPU_X86_64)
+    endif()
   endif()
   if (${HAS_FFMPEG})
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_FFMPEG)
@@ -475,7 +506,7 @@ else() # Unix / Linux
       )
     endif()
 
-    if(WITH_LIBVA AND VA_FOUND)
+    if(VA_FOUND)
       list(APPEND SMDATA_LINK_LIB ${VA_LIBRARY})
     endif()
   endif()
@@ -617,20 +648,22 @@ endif()
 
 if(NOT APPLE)
   if(WIN32)
+    set(SM_FULL_INSTALLATION_PATH_LIST "${SM_INSTALL_DESTINATION}" "Program")
+    sm_join("${SM_FULL_INSTALLATION_PATH_LIST}" "/" SM_FULL_INSTALLATION_PATH)
     # Hardcoding the values for now since the foreach loop is not working as intended.
-    install(TARGETS "${SM_EXE_NAME}" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
-    install(FILES "${SM_PROGRAM_DIR}/avcodec-53.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
-    install(FILES "${SM_PROGRAM_DIR}/avformat-53.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
-    install(FILES "${SM_PROGRAM_DIR}/avutil-51.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
-    install(FILES "${SM_PROGRAM_DIR}/jpeg.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
-    install(FILES "${SM_PROGRAM_DIR}/msvcp100.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
-    install(FILES "${SM_PROGRAM_DIR}/msvcp110.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
-    install(FILES "${SM_PROGRAM_DIR}/msvcr100.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
-    install(FILES "${SM_PROGRAM_DIR}/msvcr110.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
-    install(FILES "${SM_PROGRAM_DIR}/parallel_lights_io.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
-    install(FILES "${SM_PROGRAM_DIR}/swscale-2.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
-    install(FILES "${SM_PROGRAM_DIR}/vccorlib110.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
-    install(FILES "${SM_PROGRAM_DIR}/zlib1.dll" DESTINATION "${SM_INSTALL_DESTINATION}/bin")
+    install(TARGETS "${SM_EXE_NAME}" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
+    install(FILES "${SM_PROGRAM_DIR}/avcodec-53.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
+    install(FILES "${SM_PROGRAM_DIR}/avformat-53.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
+    install(FILES "${SM_PROGRAM_DIR}/avutil-51.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
+    install(FILES "${SM_PROGRAM_DIR}/jpeg.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
+    install(FILES "${SM_PROGRAM_DIR}/msvcp100.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
+    install(FILES "${SM_PROGRAM_DIR}/msvcp110.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
+    install(FILES "${SM_PROGRAM_DIR}/msvcr100.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
+    install(FILES "${SM_PROGRAM_DIR}/msvcr110.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
+    install(FILES "${SM_PROGRAM_DIR}/parallel_lights_io.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
+    install(FILES "${SM_PROGRAM_DIR}/swscale-2.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
+    install(FILES "${SM_PROGRAM_DIR}/vccorlib110.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
+    install(FILES "${SM_PROGRAM_DIR}/zlib1.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
 
     # foreach(SM_WINDOW_DLL "${SM_WINDOWS_PROGRAM_DLLS}")
     #   install(FILES "${SM_WINDOW_DLL}" DESTINATION "${SM_INSTALL_DESTINATION}")

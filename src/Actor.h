@@ -526,9 +526,12 @@ public:
 	// todo: account for SSC_FUTURES by adding an effect as an arg to each one -aj
 	void SetEffectColor1( RageColor c )		{ m_effectColor1 = c; }
 	void SetEffectColor2( RageColor c )		{ m_effectColor2 = c; }
+	void RecalcEffectPeriod();
 	void SetEffectPeriod( float fTime );
 	float GetEffectPeriod() const { return m_effect_period; }
-	void SetEffectTiming( float fRampUp, float fAtHalf, float fRampDown, float fAtZero );
+	bool SetEffectTiming(float ramp_toh, float at_half, float ramp_tof,
+		float at_zero, float at_full, RString& err);
+	bool SetEffectHoldAtFull(float haf, RString& err);
 	void SetEffectOffset( float fTime )		{ m_fEffectOffset = fTime; }
 	void SetEffectClock( EffectClock c )		{ m_EffectClock = c; }
 	void SetEffectClockString( const RString &s );	// convenience
@@ -686,10 +689,11 @@ protected:
 	float m_fEffectDelta;
 
 	// units depend on m_EffectClock
-	float m_fEffectRampUp;
-	float m_fEffectHoldAtHalf;
-	float m_fEffectRampDown;
-	float m_fEffectHoldAtZero;
+	float m_effect_ramp_to_half;
+	float m_effect_hold_at_half;
+	float m_effect_ramp_to_full;
+	float m_effect_hold_at_full;
+	float m_effect_hold_at_zero;
 	float m_fEffectOffset;
 	// Anything changing ramp_up, hold_at_half, ramp_down, or hold_at_zero must
 	// also update the period so the period is only calculated when changed.
