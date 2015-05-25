@@ -6,7 +6,11 @@
 #include "RageUtil.h"
 #include "RageSoundMixBuffer.h"
 #include "RageSoundUtil.h"
-#include "Foreach.h"
+
+#include <array>
+#include <numeric>
+
+using std::vector;
 
 RageSoundReader_Merge::RageSoundReader_Merge()
 {
@@ -18,8 +22,10 @@ RageSoundReader_Merge::RageSoundReader_Merge()
 
 RageSoundReader_Merge::~RageSoundReader_Merge()
 {
-	FOREACH( RageSoundReader *, m_aSounds, it )
-		delete *it;
+	for (auto *it: m_aSounds)
+	{
+		delete it;
+	}
 }
 
 RageSoundReader_Merge::RageSoundReader_Merge( const RageSoundReader_Merge &cpy ):
@@ -30,8 +36,10 @@ RageSoundReader_Merge::RageSoundReader_Merge( const RageSoundReader_Merge &cpy )
 	m_iNextSourceFrame = cpy.m_iNextSourceFrame;
 	m_fCurrentStreamToSourceRatio = cpy.m_fCurrentStreamToSourceRatio;
 
-	FOREACH_CONST( RageSoundReader *, cpy.m_aSounds, it )
-		m_aSounds.push_back( (*it)->Copy() );
+	for (auto *it: cpy.m_aSounds)
+	{
+		m_aSounds.push_back( it->Copy() );
+	}
 }
 
 void RageSoundReader_Merge::AddSound( RageSoundReader *pSound )
@@ -43,11 +51,11 @@ void RageSoundReader_Merge::AddSound( RageSoundReader *pSound )
 int RageSoundReader_Merge::GetSampleRateInternal() const
 {
 	int iRate = -1;
-	FOREACH_CONST( RageSoundReader *, m_aSounds, it )
+	for (auto *it: m_aSounds)
 	{
 		if( iRate == -1 )
-			iRate = (*it)->GetSampleRate();
-		else if( iRate != (*it)->GetSampleRate() )
+			iRate = it->GetSampleRate();
+		else if( iRate != it->GetSampleRate() )
 			return -1;
 	}
 	return iRate;
@@ -55,11 +63,14 @@ int RageSoundReader_Merge::GetSampleRateInternal() const
 
 void RageSoundReader_Merge::Finish( int iPreferredSampleRate )
 {
+	using std::max;
 	/* Figure out how many channels we have.  All sounds must either have 1 or 2 channels,
 	 * which will be converted as needed, or have the same number of channels. */
 	m_iChannels = 1;
-	FOREACH( RageSoundReader *, m_aSounds, it )
-		m_iChannels = max( m_iChannels, (*it)->GetNumChannels() );
+	for (auto *it: m_aSounds)
+	{
+		m_iChannels = max( m_iChannels, it->GetNumChannels() );
+	}
 
 	/*
 	 * We might get different sample rates from our sources.  If they're all the same
@@ -70,10 +81,8 @@ void RageSoundReader_Merge::Finish( int iPreferredSampleRate )
 	m_iSampleRate = GetSampleRateInternal();
 	if( m_iSampleRate == -1 )
 	{
-		FOREACH( RageSoundReader *, m_aSounds, it )
+		for (auto *pSound: m_aSounds)
 		{
-			RageSoundReader *&pSound = (*it);
-
 			RageSoundReader_Resample_Good *pResample = new RageSoundReader_Resample_Good( pSound, iPreferredSampleRate );
 			pSound = pResample;
 		}
@@ -82,10 +91,10 @@ void RageSoundReader_Merge::Finish( int iPreferredSampleRate )
 	}
 
 	/* If we have two channels, and any sounds have only one, convert them by adding a Pan filter. */
-	FOREACH( RageSoundReader *, m_aSounds, it )
+	for (auto *it: m_aSounds)
 	{
-		if( (*it)->GetNumChannels() != this->GetNumChannels() )
-			(*it) = new RageSoundReader_Pan( (*it) );
+		if( it->GetNumChannels() != this->GetNumChannels() )
+			it = new RageSoundReader_Pan( it );
 	}
 
 	/* If we have more than two channels, then all sounds must have the same number of
@@ -93,18 +102,18 @@ void RageSoundReader_Merge::Finish( int iPreferredSampleRate )
 	if( m_iChannels > 2 )
 	{
 		vector<RageSoundReader *> aSounds;
-		FOREACH( RageSoundReader *, m_aSounds, it )
+		for (auto *it: m_aSounds)
 		{
-			if( (*it)->GetNumChannels() != m_iChannels )
+			if( it->GetNumChannels() != m_iChannels )
 			{
 				LOG->Warn( "Discarded sound with %i channels, not %i",
-					(*it)->GetNumChannels(), m_iChannels );
-				delete (*it);
-				(*it) = NULL;
+					it->GetNumChannels(), m_iChannels );
+				delete it;
+				it = NULL;
 			}
 			else
 			{
-				aSounds.push_back( *it );
+				aSounds.push_back( it );
 			}
 		}
 		m_aSounds = aSounds;
@@ -169,13 +178,14 @@ static const int ERROR_CORRECTION_THRESHOLD = 16;
  * sounds; a sound may be needed by more than one other sound. */
 int RageSoundReader_Merge::Read( float *pBuffer, int iFrames )
 {
+	using std::min;
 	if( m_aSounds.empty() )
 		return END_OF_FILE;
 
 	/*
 	 * All sounds which are active should stay aligned; each GetNextSourceFrame should not
 	 * come out of sync.  Accomodate small rounding errors.  A larger inconsistency
-	 * happens may be a bug, such as sounds at different speeds. 
+	 * happens may be a bug, such as sounds at different speeds.
 	 */
 
 	vector<int> aNextSourceFrames;
@@ -232,8 +242,9 @@ int RageSoundReader_Merge::Read( float *pBuffer, int iFrames )
 	}
 
 	RageSoundMixBuffer mix;
-	float Buffer[2048];
-	iFrames = min( iFrames, (int) (ARRAYLEN(Buffer) / m_iChannels) );
+	int const bufferSize = 2048;
+	float Buffer[bufferSize];
+	iFrames = min( iFrames, static_cast<int>(( bufferSize + 0.f) / m_iChannels) );
 
 	/* Read iFrames from each sound. */
 	for( unsigned i = 0; i < m_aSounds.size(); ++i )
@@ -291,18 +302,18 @@ int RageSoundReader_Merge::Read( float *pBuffer, int iFrames )
 
 int RageSoundReader_Merge::GetLength() const
 {
-	int iLength = 0;
-	for( unsigned i = 0; i < m_aSounds.size(); ++i )
-		iLength = max( iLength, m_aSounds[i]->GetLength() );
-	return iLength;
+	auto getHighest = [](int len, RageSoundReader const *sound) {
+		return std::max(len, sound->GetLength());
+	};
+	return std::accumulate(m_aSounds.begin(), m_aSounds.end(), 0, getHighest);
 }
 
 int RageSoundReader_Merge::GetLength_Fast() const
 {
-	int iLength = 0;
-	for( unsigned i = 0; i < m_aSounds.size(); ++i )
-		iLength = max( iLength, m_aSounds[i]->GetLength_Fast() );
-	return iLength;
+	auto getHighest = [](int len, RageSoundReader const *sound) {
+		return std::max(len, sound->GetLength_Fast());
+	};
+	return std::accumulate(m_aSounds.begin(), m_aSounds.end(), 0, getHighest);
 }
 
 /*

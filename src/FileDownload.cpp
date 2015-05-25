@@ -7,7 +7,9 @@
 #include "SpecialFiles.h"
 #include "RageLog.h"
 #include "Preference.h"
-#include "Foreach.h"
+
+using std::vector;
+using std::string;
 
 FileTransfer::FileTransfer()
 {
@@ -23,7 +25,7 @@ FileTransfer::FileTransfer()
 	UpdateProgress();
 
 	// Workaround: For some reason, the first download sometimes corrupts;
-	// by opening and closing the RageFile, this problem does not occur. 
+	// by opening and closing the RageFile, this problem does not occur.
 	// Go figure?
 	// XXX: This is a really dirty work around! Why does RageFile do this?
 	// It's always some strange number of bytes at the end of the file when it corrupts.
@@ -176,13 +178,13 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 		if( iBytesRead == -1 )
 			FAIL_M( f.GetError() );
 
-		sRequestPayload = "--" + sBoundary + "\r\n" + 
+		sRequestPayload = "--" + sBoundary + "\r\n" +
 			"Content-Disposition: form-data; name=\"name\"\r\n" +
 			"\r\n" +
 			"Chris\r\n" +
-			"--" + sBoundary + "\r\n" + 
+			"--" + sBoundary + "\r\n" +
 			"Content-Disposition: form-data; name=\"userfile\"; filename=\"" + Basename(sSrcFile) + "\"\r\n" +
-			"Content-Type: application/zip\r\n" + 
+			"Content-Type: application/zip\r\n" +
 			"\r\n" +
 			sRequestPayload + "\r\n" +
 			"--" + sBoundary + "--";
@@ -199,8 +201,10 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 	vsHeaders.push_back( "Content-Length: " + ssprintf("%zd",sRequestPayload.size()) );
 
 	RString sHeader;
-	FOREACH_CONST( RString, vsHeaders, h )
-		sHeader += *h + "\r\n";
+	for (auto const &h: vsHeaders)
+	{
+		sHeader += h + "\r\n";
+	}
 	sHeader += "\r\n";
 
 	m_wSocket.SendData( sHeader.c_str(), sHeader.length() );
@@ -299,7 +303,7 @@ void FileTransfer::HTTPUpdate()
 
 	if ( ( m_iTotalBytes <= m_iDownloaded && m_iTotalBytes != -1 ) ||
 					//We have the full doc. (And we knew how big it was)
-		( m_iTotalBytes == -1 && 
+		( m_iTotalBytes == -1 &&
 			( m_wSocket.state == EzSockets::skERROR || m_wSocket.state == EzSockets::skDISCONNECTED ) ) )
 				// We didn't know how big it was, and were disconnected
 				// So that means we have it all.
@@ -373,7 +377,7 @@ void FileTransfer::Finish()
 /*
  * (c) 2004 Charles Lohr, Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -383,7 +387,7 @@ void FileTransfer::Finish()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

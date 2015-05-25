@@ -13,6 +13,9 @@
 #include "Attack.h"
 #include "PrefsManager.h"
 
+using std::vector;
+using std::string;
+
 // Everything from this line to the creation of sm_parser_helper exists to
 // speed up parsing by allowing the use of std::map.  All these functions
 // are put into a map of function pointers which is used when loading.
@@ -24,7 +27,7 @@ struct SMSongTagInfo
 	Song* song;
 	const MsdFile::value_t* params;
 	const RString& path;
-	vector< pair<float, float> > BPMChanges, Stops;
+	vector< std::pair<float, float> > BPMChanges, Stops;
 	SMSongTagInfo(SMLoader* l, Song* s, const RString& p)
 		:loader(l), song(s), path(p)
 	{}
@@ -281,8 +284,8 @@ float SMLoader::RowToBeat( RString line, const int rowsPerBeat )
 	}
 }
 
-void SMLoader::LoadFromTokens( 
-			     RString sStepsType, 
+void SMLoader::LoadFromTokens(
+			     RString sStepsType,
 			     RString sDescription,
 			     RString sDifficulty,
 			     RString sMeter,
@@ -322,11 +325,11 @@ void SMLoader::LoadFromTokens(
 	if( out.GetDifficulty() == Difficulty_Hard )
 	{
 		// HACK: SMANIAC used to be Difficulty_Hard with a special description.
-		if( sDescription.CompareNoCase("smaniac") == 0 ) 
+		if( sDescription.CompareNoCase("smaniac") == 0 )
 			out.SetDifficulty( Difficulty_Challenge );
 
 		// HACK: CHALLENGE used to be Difficulty_Hard with a special description.
-		if( sDescription.CompareNoCase("challenge") == 0 ) 
+		if( sDescription.CompareNoCase("challenge") == 0 )
 			out.SetDifficulty( Difficulty_Challenge );
 	}
 
@@ -348,7 +351,7 @@ void SMLoader::ProcessBGChanges( Song &out, const RString &sValueName, const RSt
 	BackgroundLayer iLayer = BACKGROUND_LAYER_1;
 	if( sscanf(sValueName, "BGCHANGES%d", &*ConvertValue<int>(&iLayer)) == 1 )
 		enum_add(iLayer, -1);	// #BGCHANGES2 = BACKGROUND_LAYER_2
-	
+
 	bool bValid = iLayer>=0 && iLayer<NUM_BackgroundLayer;
 	if( !bValid )
 	{
@@ -358,7 +361,7 @@ void SMLoader::ProcessBGChanges( Song &out, const RString &sValueName, const RSt
 	{
 		vector<RString> aBGChangeExpressions;
 		split( sParam, ",", aBGChangeExpressions );
-		
+
 		for( unsigned b=0; b<aBGChangeExpressions.size(); b++ )
 		{
 			BackgroundChange change;
@@ -383,18 +386,18 @@ void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
 {
 	Attack attack;
 	float end = -9999;
-	
+
 	for( unsigned j=1; j < params.params.size(); ++j )
 	{
 		vector<RString> sBits;
 		split( params[j], "=", sBits, false );
-		
+
 		// Need an identifer and a value for this to work
 		if( sBits.size() < 2 )
 			continue;
-		
+
 		Trim( sBits[0] );
-		
+
 		if( !sBits[0].CompareNoCase("TIME") )
 			attack.fStartSecond = strtof( sBits[1], NULL );
 		else if( !sBits[0].CompareNoCase("LEN") )
@@ -405,16 +408,16 @@ void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
 		{
 			Trim(sBits[1]);
 			attack.sModifiers = sBits[1];
-			
+
 			if( end != -9999 )
 			{
 				attack.fSecsRemaining = end - attack.fStartSecond;
 				end = -9999;
 			}
-			
+
 			if( attack.fSecsRemaining < 0.0f )
 				attack.fSecsRemaining = 0.0f;
-			
+
 			attacks.push_back( attack );
 		}
 	}
@@ -424,10 +427,10 @@ void SMLoader::ProcessInstrumentTracks( Song &out, const RString &sParam )
 {
 	vector<RString> vs1;
 	split( sParam, ",", vs1 );
-	FOREACH_CONST( RString, vs1, s )
+	for (auto const &s: vs1)
 	{
 		vector<RString> vs2;
-		split( *s, "=", vs2 );
+		split( s, "=", vs2 );
 		if( vs2.size() >= 2 )
 		{
 			InstrumentTrack it = StringToInstrumentTrack( vs2[0] );
@@ -437,7 +440,7 @@ void SMLoader::ProcessInstrumentTracks( Song &out, const RString &sParam )
 	}
 }
 
-void SMLoader::ParseBPMs( vector< pair<float, float> > &out, const RString line, const int rowsPerBeat )
+void SMLoader::ParseBPMs( vector< std::pair<float, float> > &out, const RString line, const int rowsPerBeat )
 {
 	vector<RString> arrayBPMChangeExpressions;
 	split( line, ",", arrayBPMChangeExpressions );
@@ -463,15 +466,15 @@ void SMLoader::ParseBPMs( vector< pair<float, float> > &out, const RString line,
 			continue;
 		}
 
-		out.push_back( make_pair(fBeat, fNewBPM) );
+		out.push_back( std::make_pair(fBeat, fNewBPM) );
 	}
 }
 
-void SMLoader::ParseStops( vector< pair<float, float> > &out, const RString line, const int rowsPerBeat )
+void SMLoader::ParseStops( vector< std::pair<float, float> > &out, const RString line, const int rowsPerBeat )
 {
 	vector<RString> arrayFreezeExpressions;
 	split( line, ",", arrayFreezeExpressions );
-	
+
 	for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
 	{
 		vector<RString> arrayFreezeValues;
@@ -493,13 +496,13 @@ void SMLoader::ParseStops( vector< pair<float, float> > &out, const RString line
 			continue;
 		}
 
-		out.push_back( make_pair(fFreezeBeat, fFreezeSeconds) );
+		out.push_back( std::make_pair(fFreezeBeat, fFreezeSeconds) );
 	}
 }
 
 // Utility function for sorting timing change data
 namespace {
-	bool compare_first(pair<float, float> a, pair<float, float> b) {
+	bool compare_first(std::pair<float, float> a, std::pair<float, float> b) {
 		return a.first < b.first;
 	}
 }
@@ -509,11 +512,11 @@ namespace {
 // Postcondition: all BPM changes, stops, and warps are added to the out
 //     parameter, already sorted by beat.
 void SMLoader::ProcessBPMsAndStops(TimingData &out,
-		vector< pair<float, float> > &vBPMs,
-		vector< pair<float, float> > &vStops)
+		vector< std::pair<float, float> > &vBPMs,
+		vector< std::pair<float, float> > &vStops)
 {
-	vector< pair<float, float> >::const_iterator ibpm, ibpmend;
-	vector< pair<float, float> >::const_iterator istop, istopend;
+	vector< std::pair<float, float> >::const_iterator ibpm, ibpmend;
+	vector< std::pair<float, float> >::const_iterator istop, istopend;
 
 	// Current BPM (positive or negative)
 	float bpm = 0;
@@ -595,7 +598,7 @@ void SMLoader::ProcessBPMsAndStops(TimingData &out,
 		// Get the next change in order, with BPMs taking precedence
 		// when they fall on the same beat.
 		bool changeIsBpm = istop == istopend || (ibpm != ibpmend && ibpm->first <= istop->first);
-		const pair<float, float> & change = changeIsBpm ? *ibpm : *istop;
+		const std::pair<float, float> & change = changeIsBpm ? *ibpm : *istop;
 
 		// Calculate the effects of time at the current BPM.  "Infinite"
 		// BPMs (SM4 warps) imply that zero time passes, so skip this
@@ -770,10 +773,10 @@ void SMLoader::ProcessTimeSignatures( TimingData &out, const RString line, const
 	vector<RString> vs1;
 	split( line, ",", vs1 );
 
-	FOREACH_CONST( RString, vs1, s1 )
+	for (auto const &s1: vs1)
 	{
 		vector<RString> vs2;
-		split( *s1, "=", vs2 );
+		split( s1, "=", vs2 );
 
 		if( vs2.size() < 3 )
 		{
@@ -849,7 +852,7 @@ void SMLoader::ProcessSpeeds( TimingData &out, const RString line, const int row
 	vector<RString> vs1;
 	split( line, ",", vs1 );
 
-	FOREACH_CONST( RString, vs1, s1 )
+	for (auto s1 = vs1.begin(); s1 != vs1.end(); ++s1)
 	{
 		vector<RString> vs2;
 		split( *s1, "=", vs2 );
@@ -939,6 +942,7 @@ void SMLoader::ProcessFakes( TimingData &out, const RString line, const int rows
 
 bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression )
 {
+	using std::min;
 	vector<RString> aBGChangeValues;
 	split( sBGChangeExpression, "=", aBGChangeValues, false );
 
@@ -1040,7 +1044,7 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 		const MsdFile::value_t &sParams = msd.GetValue(i);
 		RString sValueName = sParams[0];
 		sValueName.MakeUpper();
-		
+
 		// The only tag we care about is the #NOTES tag.
 		if( sValueName=="NOTES" || sValueName=="NOTES2" )
 		{
@@ -1052,7 +1056,7 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 					     iNumParams );
 				continue;
 			}
-			
+
 			RString stepsType = sParams[1];
 			RString description = sParams[2];
 			RString difficulty = sParams[3];
@@ -1068,7 +1072,7 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 			{
 				difficulty = "Challenge";
 			}
-			
+
 			/* Handle hacks that originated back when StepMania didn't have
 			 * Difficulty_Challenge. TODO: Remove the need for said hacks. */
 			if( difficulty.CompareNoCase("hard") == 0 )
@@ -1078,10 +1082,10 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 				 * Account for the rogue charts that do this. */
 				// HACK: SMANIAC used to be Difficulty_Hard with a special description.
 				if (description.CompareNoCase("smaniac") == 0 ||
-					description.CompareNoCase("challenge") == 0) 
+					description.CompareNoCase("challenge") == 0)
 					difficulty = "Challenge";
 			}
-			
+
 			if(!(out.m_StepsType == GAMEMAN->StringToStepsType( stepsType ) &&
 			     out.GetDescription() == description &&
 			     (out.GetDifficulty() == StringToDifficulty(difficulty) ||
@@ -1089,7 +1093,7 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 			{
 				continue;
 			}
-			
+
 			RString noteData = sParams[6];
 			Trim( noteData );
 			out.SetSMNoteData( noteData );
@@ -1145,12 +1149,12 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 			}
 
 			Steps* pNewNotes = out.CreateSteps();
-			LoadFromTokens( 
-				sParams[1], 
-				sParams[2], 
-				sParams[3], 
-				sParams[4], 
-				sParams[5], 
+			LoadFromTokens(
+				sParams[1],
+				sParams[2],
+				sParams[3],
+				sParams[4],
+				sParams[5],
 				sParams[6],
 				*pNewNotes);
 
@@ -1256,7 +1260,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 				return true;
 
 			Steps* pNewNotes = pSong->CreateSteps();
-			LoadFromTokens( 
+			LoadFromTokens(
 				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6],
 				*pNewNotes);
 
@@ -1357,7 +1361,7 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 /*
 * (c) 2001-2004 Chris Danford, Glenn Maynard
 * All rights reserved.
-* 
+*
 * Permission is hereby granted, free of charge, to any person obtaining a
 * copy of this software and associated documentation files (the
 * "Software"), to deal in the Software without restriction, including
@@ -1367,7 +1371,7 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 * copyright notice(s) and this permission notice appear in all copies of
 * the Software and that both the above copyright notice(s) and this
 * permission notice appear in supporting documentation.
-* 
+*
 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -9,7 +9,8 @@
 #include "Font.h"
 #include "ActorUtil.h"
 #include "LuaBinding.h"
-#include "Foreach.h"
+
+using std::vector;
 
 REGISTER_ACTOR_CLASS( BitmapText );
 
@@ -19,7 +20,7 @@ REGISTER_ACTOR_CLASS( BitmapText );
  *
  * Better, we could go all the way, drop all of the actor-specific font aliases,
  * and do "font=header2;valign=top;...". */
- 
+
  /* XXX: Changing a whole array of diffuse colors every frame (several times) is
  * a waste, when we're usually setting them all to the same value. Rainbow and
  * fading are annoying to optimize, but rarely used. Iterating over every
@@ -241,6 +242,7 @@ bool BitmapText::LoadFromTextureAndChars( const RString& sTexturePath, const RSt
 
 void BitmapText::BuildChars()
 {
+	using std::max;
 	// If we don't have a font yet, we'll do this when it loads.
 	if( m_pFont == NULL )
 		return;
@@ -252,7 +254,7 @@ void BitmapText::BuildChars()
 	for( unsigned l=0; l<m_wTextLines.size(); l++ ) // for each line
 	{
 		m_iLineWidths.push_back(m_pFont->GetLineWidthInSourcePixels( m_wTextLines[l] ));
-		m_size.x = max( m_size.x, m_iLineWidths.back() );
+		m_size.x = max( m_size.x, static_cast<float>(m_iLineWidths.back()) );
 	}
 
 	/* Ensure that the width is always even. This maintains pixel alignment;
@@ -281,7 +283,7 @@ void BitmapText::BuildChars()
 	{
 		iY += m_pFont->GetHeight();
 
-		wstring sLine = m_wTextLines[i];
+		std::wstring sLine = m_wTextLines[i];
 		if( m_pFont->IsRightToLeft() )
 			reverse( sLine.begin(), sLine.end() );
 		const int iLineWidth = m_iLineWidths[i];
@@ -342,9 +344,9 @@ void BitmapText::BuildChars()
 void BitmapText::DrawChars( bool bUseStrokeTexture )
 {
 	// bail if cropped all the way
-	if( m_pTempState->crop.left + m_pTempState->crop.right >= 1  || 
-		m_pTempState->crop.top + m_pTempState->crop.bottom >= 1 ) 
-		return; 
+	if( m_pTempState->crop.left + m_pTempState->crop.right >= 1  ||
+		m_pTempState->crop.top + m_pTempState->crop.bottom >= 1 )
+		return;
 
 	const int iNumGlyphs = m_vpFontPageTextures.size();
 	int iStartGlyph = lrintf( SCALE( m_pTempState->crop.left, 0.f, 1.f, 0, (float) iNumGlyphs ) );
@@ -429,10 +431,10 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 				DISPLAY->SetTexture( TextureUnit_1, m_vpFontPageTextures[start]->m_pTextureMain->GetTexHandle() );
 
 			// Don't bother setting texture render states for text. We never go outside of 0..1.
-			/* We should call SetTextureRenderStates because it does more than just setting 
-			 * the texture wrapping state. If setting the wrapping state is found to be slow, 
+			/* We should call SetTextureRenderStates because it does more than just setting
+			 * the texture wrapping state. If setting the wrapping state is found to be slow,
 			 * there should probably be a "don't care" texture wrapping mode set in Actor. -Chris */
-			 
+
 			// This is SLOW. We need to do something else about this. -Colby
 			//Actor::SetTextureRenderStates();
 
@@ -575,6 +577,7 @@ void BitmapText::UnSetDistortion()
 
 void BitmapText::UpdateBaseZoom()
 {
+	using std::min;
 	// don't divide by 0
 	// Never apply a zoom greater than 1.
 	// Factor in the non-base zoom so that maxwidth will be in terms of theme
@@ -593,7 +596,7 @@ void BitmapText::UpdateBaseZoom()
 		} \
 		if(dimension != 0) \
 		{ \
-			const float zoom= min(1, dimension_max / dimension); \
+			const float zoom= min(1.f, dimension_max / dimension); \
 			base_zoom_set(zoom); \
 		} \
 	}
@@ -627,7 +630,7 @@ void BitmapText::CropLineToWidth(size_t l, int width)
 	if(l < m_wTextLines.size())
 	{
 		int used_width= width;
-		wstring& line= m_wTextLines[l];
+		std::wstring& line= m_wTextLines[l];
 		int fit= m_pFont->GetGlyphsThatFit(line, &used_width);
 		if(fit < line.size())
 		{
@@ -701,12 +704,12 @@ void BitmapText::DrawPrimitives()
 		else
 		{
 			size_t i = 0;
-			map<size_t,Attribute>::const_iterator iter = m_mAttributes.begin();
+			auto iter = m_mAttributes.begin();
 			while( i < m_aVertices.size() )
 			{
 				// Set the colors up to the next attribute.
 				size_t iEnd = iter == m_mAttributes.end()? m_aVertices.size():iter->first*4;
-				iEnd = min( iEnd, m_aVertices.size() );
+				iEnd = std::min( iEnd, m_aVertices.size() );
 				for( ; i < iEnd; i += 4 )
 				{
 					m_aVertices[i+0].c = m_pTempState->diffuse[0];	// top left
@@ -723,7 +726,7 @@ void BitmapText::DrawPrimitives()
 					iEnd = iter == m_mAttributes.end()? m_aVertices.size():iter->first*4;
 				else
 					iEnd = i + attr.length*4;
-				iEnd = min( iEnd, m_aVertices.size() );
+				iEnd = std::min( iEnd, m_aVertices.size() );
 				for( ; i < iEnd; i += 4 )
 				{
 					if( m_internalDiffuse != RageColor(1, 1, 1, 1) )
@@ -787,12 +790,12 @@ void BitmapText::DrawPrimitives()
 		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
 
 		size_t i = 0;
-		map<size_t,Attribute>::const_iterator iter = m_mAttributes.begin();
+		auto iter = m_mAttributes.begin();
 		while( i < m_aVertices.size() )
 		{
 			// Set the glow up to the next attribute.
 			size_t iEnd = iter == m_mAttributes.end()? m_aVertices.size():iter->first*4;
-			iEnd = min( iEnd, m_aVertices.size() );
+			iEnd = std::min( iEnd, m_aVertices.size() );
 			for( ; i < iEnd; ++i )
 				m_aVertices[i].c = m_pTempState->glow;
 			if( iter == m_mAttributes.end() )
@@ -804,7 +807,7 @@ void BitmapText::DrawPrimitives()
 				iEnd = iter == m_mAttributes.end()? m_aVertices.size():iter->first*4;
 			else
 				iEnd = i + attr.length*4;
-			iEnd = min( iEnd, m_aVertices.size() );
+			iEnd = std::min( iEnd, m_aVertices.size() );
 			for( ; i < iEnd; ++i )
 			{
 				if( m_internalGlow.a > 0 )
@@ -859,10 +862,10 @@ void BitmapText::AddAttribute( size_t iPos, const Attribute &attr )
 	// Fixup position for new lines.
 	int iLines = 0;
 	size_t iAdjustedPos = iPos;
-	
-	FOREACH_CONST( wstring, m_wTextLines, line )
+
+	for (auto &line: m_wTextLines)
 	{
-		size_t length = line->length();
+		size_t length = line.length();
 		if( length >= iAdjustedPos )
 			break;
 		iAdjustedPos -= length;
@@ -922,7 +925,7 @@ void BitmapText::Attribute::FromStack( lua_State *L, int iPos )
 // lua start
 #include "FontCharAliases.h"
 
-/** @brief Allow Lua to have access to the BitmapText. */ 
+/** @brief Allow Lua to have access to the BitmapText. */
 class LunaBitmapText: public Luna<BitmapText>
 {
 public:
@@ -1012,7 +1015,7 @@ LUA_REGISTER_DERIVED_CLASS( BitmapText, Actor )
 /*
  * (c) 2003-2007 Chris Danford, Charles Lohr, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1022,7 +1025,7 @@ LUA_REGISTER_DERIVED_CLASS( BitmapText, Actor )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -116,7 +116,7 @@ int RageSoundReader_Vorbisfile::GetLength() const
 	if( len == OV_EINVAL )
 		RageException::Throw( "RageSoundReader_Vorbisfile::GetLength: ov_time_total returned OV_EINVAL." );
 
-	return len; 
+	return len;
 }
 
 int RageSoundReader_Vorbisfile::SetPosition( int iFrame )
@@ -158,7 +158,7 @@ int RageSoundReader_Vorbisfile::Read( float *buf, int iFrames )
 			{
 				/* The timestamps moved backwards.  Ignore it.  This file probably
 				 * won't sync correctly. */
-				LOG->Trace( "p ahead %p %i < %i, we're ahead by %i", 
+				LOG->Trace( "p ahead %p %i < %i, we're ahead by %i",
 					this, curofs, read_offset, read_offset-curofs );
 				read_offset = curofs;
 			}
@@ -170,7 +170,7 @@ int RageSoundReader_Vorbisfile::Read( float *buf, int iFrames )
 
 				/* In bytes: */
 				int iSilentFrames = curofs - read_offset;
-				iSilentFrames = min( iSilentFrames, (int) iFrames );
+				iSilentFrames = std::min( iSilentFrames, (int) iFrames );
 				int silence = iSilentFrames * bytes_per_frame;
 				CHECKPOINT_M( ssprintf("p %i,%i: %i frames of silence needed", curofs, read_offset, silence) );
 

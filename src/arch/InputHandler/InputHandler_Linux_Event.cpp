@@ -1,5 +1,8 @@
 #include "global.h"
 #include "InputHandler_Linux_Event.h"
+
+#include <array>
+
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "LinuxInputManager.h"
@@ -12,6 +15,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <linux/input.h>
+
+using std::vector;
 
 REGISTER_INPUT_HANDLER_CLASS2( LinuxEvent, Linux_Event );
 static Preference<bool> g_bAxisFix( "AxisFix", false );
@@ -107,14 +112,14 @@ bool EventDevice::Open( RString sFile, InputDevice dev )
 		if( ioctl(m_iFD, EVIOCGVERSION, &iVersion) == -1 )
 			LOG->Warn( "ioctl(EVIOCGVERSION): %s", strerror(errno) );
 		else
-			LOG->Info( "Event driver: v%i.%i.%i", (iVersion >> 16) & 0xFF, (iVersion >> 8) & 0xFF, iVersion & 0xFF ); 
+			LOG->Info( "Event driver: v%i.%i.%i", (iVersion >> 16) & 0xFF, (iVersion >> 8) & 0xFF, iVersion & 0xFF );
 	}
 
 	char szName[1024];
 	if( ioctl(m_iFD, EVIOCGNAME(sizeof(szName)), szName) == -1 )
 	{
 		LOG->Warn( "ioctl(EVIOCGNAME): %s", strerror(errno) );
-		
+
 		m_sName = "(unknown)";
 	}
 	else
@@ -174,7 +179,7 @@ bool EventDevice::Open( RString sFile, InputDevice dev )
 
 		LOG->Info( "    Event types: %s", join(", ", setEventTypes).c_str() );
 	}
-	
+
 	int iTotalKeys = 0;
 	for( int i = 0; i < KEY_MAX; ++i )
 	{
@@ -184,7 +189,12 @@ bool EventDevice::Open( RString sFile, InputDevice dev )
 	}
 
 	int iTotalAxes = 0;
-	const DeviceButton iExtraAxes[] = { JOY_LEFT_2, JOY_UP_2, JOY_AUX_1, JOY_AUX_3 };
+	std::array<DeviceButton, 4> const iExtraAxes = {
+		JOY_LEFT_2,
+		JOY_UP_2,
+		JOY_AUX_1,
+		JOY_AUX_3
+	};
 	int iNextExtraAxis = 0;
 	for( int i = 0; i < ABS_MAX; ++i )
 	{
@@ -246,7 +256,7 @@ bool EventDevice::Open( RString sFile, InputDevice dev )
 		}
 		else
 		{
-			if( iNextExtraAxis < (int) ARRAYLEN(iExtraAxes) )
+			if( iNextExtraAxis < iExtraAxes.size() )
 			{
 				aiAbsMappingLow[i] = iExtraAxes[iNextExtraAxis];
 				aiAbsMappingHigh[i] = enum_add2( aiAbsMappingLow[i], 1 );
@@ -277,7 +287,7 @@ InputHandler_Linux_Event::InputHandler_Linux_Event()
 	if( ! g_apEventDevices.empty() ) // LinuxInputManager found at least one valid device for us
 		StartThread();
 }
-	
+
 InputHandler_Linux_Event::~InputHandler_Linux_Event()
 {
 	if( m_InputThread.IsCreated() ) StopThread();
@@ -314,7 +324,7 @@ bool InputHandler_Linux_Event::TryDevice(RString devfile)
 			g_apEventDevices.push_back( pDev );
 		}
 		if( hotplug ) StartThread();
-		
+
 		m_NextDevice = enum_add2(m_NextDevice, 1);
 		m_bDevicesChanged = true;
 		return true;
@@ -338,12 +348,13 @@ int InputHandler_Linux_Event::InputThread_Start( void *p )
 
 void InputHandler_Linux_Event::InputThread()
 {
+	using std::max;
 	while( !m_bShutdown )
 	{
 		fd_set fdset;
 		FD_ZERO( &fdset );
 		int iMaxFD = -1;
-		
+
 		for( int i = 0; i < (int) g_apEventDevices.size(); ++i )
 		{
 			int iFD = g_apEventDevices[i]->m_iFD;
@@ -404,7 +415,7 @@ void InputHandler_Linux_Event::InputThread()
 				ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, enum_add2(JOY_BUTTON_1, iNum), event.value != 0, now) );
 				break;
 			}
-				
+
 			case EV_ABS: {
 				ASSERT_M( event.code < ABS_MAX, ssprintf("%i", event.code) );
 				DeviceButton neg = g_apEventDevices[i]->aiAbsMappingLow[event.code];
@@ -418,8 +429,8 @@ void InputHandler_Linux_Event::InputThread()
 				}
 				else
 				{
-				  ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, neg, max(-l,0), now) );
-				  ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, pos, max(+l,0), now) );
+				  ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, neg, max(-l,0.f), now) );
+				  ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, pos, max(+l,0.f), now) );
 				}
 				break;
 			}
@@ -439,7 +450,7 @@ void InputHandler_Linux_Event::GetDevicesAndDescriptions( vector<InputDeviceInfo
 		EventDevice *pDev = g_apEventDevices[i];
                 vDevicesOut.push_back( InputDeviceInfo(pDev->m_Dev, pDev->m_sName) );
 	}
-	
+
 	m_bDevicesChanged = false;
 }
 
@@ -447,7 +458,7 @@ void InputHandler_Linux_Event::GetDevicesAndDescriptions( vector<InputDeviceInfo
  * (c) 2003-2008 Glenn Maynard
  * (c) 2013 Ben "root" Anderson
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -457,7 +468,7 @@ void InputHandler_Linux_Event::GetDevicesAndDescriptions( vector<InputDeviceInfo
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

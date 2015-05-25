@@ -46,7 +46,7 @@ public:
 	void AddLoadedSound( const RString &sPath, RageSoundReader_Preload *pSound );
 
 private:
-	map<RString, RageSoundReader_Preload *> m_mapPreloadedSounds;
+	std::map<RString, RageSoundReader_Preload *> m_mapPreloadedSounds;
 
 	RageSoundDriver *m_pDriver;
 

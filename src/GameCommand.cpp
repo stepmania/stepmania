@@ -13,7 +13,6 @@
 #include "PrefsManager.h"
 #include "Game.h"
 #include "Style.h"
-#include "Foreach.h"
 #include "GameSoundManager.h"
 #include "PlayerState.h"
 #include "SongManager.h"
@@ -22,6 +21,8 @@
 #include "LocalizedString.h"
 #include "arch/ArchHooks/ArchHooks.h"
 #include "ScreenPrompt.h"
+
+using std::vector;
 
 static LocalizedString COULD_NOT_LAUNCH_BROWSER( "GameCommand", "Could not launch web browser." );
 
@@ -74,9 +75,12 @@ bool CompareSongOptions( const SongOptions &so1, const SongOptions &so2 );
 bool GameCommand::DescribesCurrentModeForAllPlayers() const
 {
 	FOREACH_HumanPlayer( pn )
+	{
 		if( !DescribesCurrentMode(pn) )
+		{
 			return false;
-
+		}
+	}
 	return true;
 }
 
@@ -86,15 +90,19 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 		return false;
 	if( m_pStyle && GAMESTATE->GetCurrentStyle(pn) != m_pStyle )
 		return false;
-	// HACK: don't compare m_dc if m_pSteps is set.  This causes problems 
-	// in ScreenSelectOptionsMaster::ImportOptions if m_PreferredDifficulty 
+	// HACK: don't compare m_dc if m_pSteps is set.  This causes problems
+	// in ScreenSelectOptionsMaster::ImportOptions if m_PreferredDifficulty
 	// doesn't match the difficulty of m_pCurSteps.
 	if( m_pSteps == NULL  &&  m_dc != Difficulty_Invalid )
 	{
 		// Why is this checking for all players?
 		FOREACH_HumanPlayer( human )
+		{
 			if( GAMESTATE->m_PreferredDifficulty[human] != m_dc )
+			{
 				return false;
+			}
+		}
 	}
 
 	if( m_sAnnouncer != "" && m_sAnnouncer != ANNOUNCER->GetCurAnnouncerName() )
@@ -157,8 +165,10 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 	m_bInvalid = false;
 	m_Commands = cmds;
 
-	FOREACH_CONST( Command, cmds.v, cmd )
-		LoadOne( *cmd );
+	for (auto &cmd: cmds.v)
+	{
+		LoadOne( cmd );
+	}
 }
 
 void GameCommand::LoadOne( const Command& cmd )
@@ -278,7 +288,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	{
 		CHECK_INVALID_COND(m_pSong, SONGMAN->FindSong(sValue),
 			(SONGMAN->FindSong(sValue) == NULL),
-			(ssprintf("Song \"%s\" not found", sValue.c_str()))); 
+			(ssprintf("Song \"%s\" not found", sValue.c_str())));
 	}
 
 	else if( sName == "steps" )
@@ -318,7 +328,7 @@ void GameCommand::LoadOne( const Command& cmd )
 			(SONGMAN->FindCourse("", sValue) == NULL),
 			(ssprintf( "Course \"%s\" not found", sValue.c_str())));
 	}
-	
+
 	else if( sName == "trail" )
 	{
 		RString sTrail = sValue;
@@ -348,7 +358,7 @@ void GameCommand::LoadOne( const Command& cmd )
 			}
 		}
 	}
-	
+
 	else if( sName == "setenv" )
 	{
 		if((cmd.m_vsArgs.size() - 1) % 2 != 0)
@@ -363,7 +373,7 @@ void GameCommand::LoadOne( const Command& cmd )
 			}
 		}
 	}
-	
+
 	else if( sName == "songgroup" )
 	{
 		CHECK_INVALID_COND(m_sSongGroup, sValue, (!SONGMAN->DoesSongGroupExist(sValue)), ("Song group \"" + sValue + "\" does not exist."));
@@ -486,6 +496,7 @@ void GameCommand::LoadOne( const Command& cmd )
 
 int GetNumCreditsPaid()
 {
+	using std::min;
 	int iNumCreditsPaid = GAMESTATE->GetNumSidesJoined();
 
 	// players other than the first joined for free
@@ -566,7 +577,7 @@ bool GameCommand::IsPlayable( RString *why ) const
 
 		const int iNumCreditsPaid = GetNumCreditsPaid();
 		const int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyle);
-		
+
 		/* With PREFSMAN->m_bDelayedCreditsReconcile disabled, enough credits must
 		 * be paid. (This means that enough sides must be joined.)  Enabled, simply
 		 * having enough credits lying in the machine is sufficient; we'll deduct the
@@ -662,8 +673,9 @@ void GameCommand::ApplyToAllPlayers() const
 	vector<PlayerNumber> vpns;
 
 	FOREACH_PlayerNumber( pn )
+	{
 		vpns.push_back( pn );
-
+	}
 	Apply( vpns );
 }
 
@@ -679,12 +691,12 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 	if( m_Commands.v.size() )
 	{
 		// We were filled using a GameCommand from metrics. Apply the options in order.
-		FOREACH_CONST( Command, m_Commands.v, cmd )
+		for (auto &cmd: m_Commands.v)
 		{
 			GameCommand gc;
 			gc.m_bInvalid = false;
 			gc.m_bApplyCommitsScreens = m_bApplyCommitsScreens;
-			gc.LoadOne( *cmd );
+			gc.LoadOne( cmd );
 			gc.ApplySelf( vpns );
 		}
 	}
@@ -719,7 +731,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			LOG->Trace( "Deducted %i coins, %i remaining",
 					iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit, GAMESTATE->m_iCoins.Get() );
 		}
-		
+
 		// If only one side is joined and we picked a style that requires both
 		// sides, join the other side.
 		switch( m_pStyle->m_StyleType )
@@ -731,63 +743,97 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		case StyleType_TwoPlayersSharedSides:
 			{
 				FOREACH_PlayerNumber( p )
+				{
 					GAMESTATE->JoinPlayer( p );
+				}
 			}
 			break;
 		default:
-			LuaHelpers::ReportScriptError("Invalid StyleType: " + m_pStyle->m_StyleType);
+			LuaHelpers::ReportScriptError(ssprintf("Invalid StyleType: %d", m_pStyle->m_StyleType));
 		}
 	}
 	if( m_dc != Difficulty_Invalid )
-		FOREACH_CONST( PlayerNumber, vpns, pn )
-			GAMESTATE->m_PreferredDifficulty[*pn].Set( m_dc );
+	{
+		for (auto const &pn: vpns)
+		{
+			GAMESTATE->m_PreferredDifficulty[pn].Set( m_dc );
+		}
+	}
 	if( m_sAnnouncer != "" )
+	{
 		ANNOUNCER->SwitchAnnouncer( m_sAnnouncer );
+	}
 	if( m_sPreferredModifiers != "" )
-		FOREACH_CONST( PlayerNumber, vpns, pn )
-			GAMESTATE->ApplyPreferredModifiers( *pn, m_sPreferredModifiers );
+	{
+		for (auto const &pn: vpns)
+		{
+			GAMESTATE->ApplyPreferredModifiers( pn, m_sPreferredModifiers );
+		}
+	}
 	if( m_sStageModifiers != "" )
-		FOREACH_CONST( PlayerNumber, vpns, pn )
-			GAMESTATE->ApplyStageModifiers( *pn, m_sStageModifiers );
+	{
+		for (auto const &pn: vpns)
+		{
+			GAMESTATE->ApplyStageModifiers( pn, m_sStageModifiers );
+		}
+	}
 	if( m_LuaFunction.IsSet() && !m_LuaFunction.IsNil() )
 	{
 		Lua *L = LUA->Get();
-		FOREACH_CONST( PlayerNumber, vpns, pn )
+		for (auto const &pn: vpns)
 		{
 			m_LuaFunction.PushSelf( L );
 			ASSERT( !lua_isnil(L, -1) );
 
-			lua_pushnumber( L, *pn ); // 1st parameter
+			lua_pushnumber( L, pn ); // 1st parameter
 			RString error= "Lua GameCommand error: ";
 			LuaHelpers::RunScriptOnStack(L, error, 1, 0, true);
 		}
 		LUA->Release(L);
 	}
 	if( m_sScreen != "" && m_bApplyCommitsScreens )
+	{
 		SCREENMAN->SetNewScreen( m_sScreen );
+	}
 	if( m_pSong )
 	{
 		GAMESTATE->m_pCurSong.Set( m_pSong );
 		GAMESTATE->m_pPreferredSong = m_pSong;
 	}
 	if( m_pSteps )
-		FOREACH_CONST( PlayerNumber, vpns, pn )
-			GAMESTATE->m_pCurSteps[*pn].Set( m_pSteps );
+	{
+		for (auto const &pn: vpns)
+		{
+			GAMESTATE->m_pCurSteps[pn].Set( m_pSteps );
+		}
+	}
 	if( m_pCourse )
 	{
 		GAMESTATE->m_pCurCourse.Set( m_pCourse );
 		GAMESTATE->m_pPreferredCourse = m_pCourse;
 	}
 	if( m_pTrail )
-		FOREACH_CONST( PlayerNumber, vpns, pn )
-			GAMESTATE->m_pCurTrail[*pn].Set( m_pTrail );
+	{
+		for (auto const &pn: vpns)
+		{
+			GAMESTATE->m_pCurTrail[pn].Set( m_pTrail );
+		}
+	}
 	if( m_CourseDifficulty != Difficulty_Invalid )
-		FOREACH_CONST( PlayerNumber, vpns, pn )
-			GAMESTATE->ChangePreferredCourseDifficulty( *pn, m_CourseDifficulty );
+	{
+		for (auto const &pn: vpns)
+		{
+			GAMESTATE->ChangePreferredCourseDifficulty( pn, m_CourseDifficulty );
+		}
+	}
 	if( m_pCharacter )
-		FOREACH_CONST( PlayerNumber, vpns, pn )
-			GAMESTATE->m_pCurCharacters[*pn] = m_pCharacter;
-	for( map<RString,RString>::const_iterator i = m_SetEnv.begin(); i != m_SetEnv.end(); i++ )
+	{
+		for (auto const &pn: vpns)
+		{
+			GAMESTATE->m_pCurCharacters[pn] = m_pCharacter;
+		}
+	}
+	for( auto i = m_SetEnv.begin(); i != m_SetEnv.end(); i++ )
 	{
 		Lua *L = LUA->Get();
 		GAMESTATE->m_Environment->PushSelf(L);
@@ -797,7 +843,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		lua_pop( L, 1 );
 		LUA->Release(L);
 	}
-	for(map<RString,RString>::const_iterator setting= m_SetPref.begin(); setting != m_SetPref.end(); ++setting)
+	for(auto setting = m_SetPref.begin(); setting != m_SetPref.end(); ++setting)
 	{
 		IPreference* pref= IPreference::GetPreferenceByName(setting->first);
 		if(pref != NULL)
@@ -806,23 +852,45 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		}
 	}
 	if( !m_sSongGroup.empty() )
+	{
 		GAMESTATE->m_sPreferredSongGroup.Set( m_sSongGroup );
+	}
 	if( m_SortOrder != SortOrder_Invalid )
+	{
 		GAMESTATE->m_PreferredSortOrder = m_SortOrder;
+	}
 	if( m_sSoundPath != "" )
+	{
 		SOUND->PlayOnce( THEME->GetPathS( "", m_sSoundPath ) );
+	}
 	if( m_iWeightPounds != -1 )
-		FOREACH_CONST( PlayerNumber, vpns, pn )
-			PROFILEMAN->GetProfile(*pn)->m_iWeightPounds = m_iWeightPounds;
+	{
+		for (auto const &pn: vpns)
+		{
+			PROFILEMAN->GetProfile(pn)->m_iWeightPounds = m_iWeightPounds;
+		}
+	}
 	if( m_iGoalCalories != -1 )
-		FOREACH_CONST( PlayerNumber, vpns, pn )
-			PROFILEMAN->GetProfile(*pn)->m_iGoalCalories = m_iGoalCalories;
+	{
+		for (auto const &pn: vpns)
+		{
+			PROFILEMAN->GetProfile(pn)->m_iGoalCalories = m_iGoalCalories;
+		}
+	}
 	if( m_GoalType != GoalType_Invalid )
-		FOREACH_CONST( PlayerNumber, vpns, pn )
-			PROFILEMAN->GetProfile(*pn)->m_GoalType = m_GoalType;
+	{
+		for (auto const &pn: vpns)
+		{
+			PROFILEMAN->GetProfile(pn)->m_GoalType = m_GoalType;
+		}
+	}
 	if( !m_sProfileID.empty() )
-		FOREACH_CONST( PlayerNumber, vpns, pn )
-			ProfileManager::m_sDefaultLocalProfileID[*pn].Set( m_sProfileID );
+	{
+		for (auto const &pn: vpns)
+		{
+			ProfileManager::m_sDefaultLocalProfileID[pn].Set( m_sProfileID );
+		}
+	}
 	if( !m_sUrl.empty() )
 	{
 		if( HOOKS->GoToURL( m_sUrl ) )
@@ -837,12 +905,17 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	/* If we're going to stop music, do so before preparing new screens, so we
 	 * don't stop music between preparing screens and loading screens. */
 	if( m_bStopMusic )
+	{
 		SOUND->StopMusic();
+	}
 	if( m_bFadeMusic )
+	{
 		SOUND->DimMusic(m_fMusicFadeOutVolume, m_fMusicFadeOutSeconds);
-
-	FOREACH_CONST( RString, m_vsScreensToPrepare, s )
-		SCREENMAN->PrepareScreen( *s );
+	}
+	for (auto const &s: m_vsScreensToPrepare)
+	{
+		SCREENMAN->PrepareScreen( s );
+	}
 
 	if( m_bInsertCredit )
 	{
@@ -850,8 +923,9 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	}
 
 	if( m_bClearCredits )
+	{
 		StepMania::ClearCredits();
-
+	}
 	if( m_bApplyDefaultOptions )
 	{
 		// applying options affects only the current stage
@@ -866,7 +940,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		GAMESTATE->GetDefaultSongOptions( so );
 		GAMESTATE->m_SongOptions.Assign( ModsLevel_Stage, so );
 	}
-	// HACK: Set life type to BATTERY just once here so it happens once and 
+	// HACK: Set life type to BATTERY just once here so it happens once and
 	// we don't override the user's changes if they back out.
 	FOREACH_PlayerNumber(pn)
 	{
@@ -887,11 +961,11 @@ bool GameCommand::IsZero() const
 		m_sAnnouncer != "" ||
 		m_sPreferredModifiers != "" ||
 		m_sStageModifiers != "" ||
-		m_pSong != NULL || 
-		m_pSteps != NULL || 
-		m_pCourse != NULL || 
-		m_pTrail != NULL || 
-		m_pCharacter != NULL || 
+		m_pSong != NULL ||
+		m_pSteps != NULL ||
+		m_pCourse != NULL ||
+		m_pTrail != NULL ||
+		m_pCharacter != NULL ||
 		m_CourseDifficulty != Difficulty_Invalid ||
 		!m_sSongGroup.empty() ||
 		m_SortOrder != SortOrder_Invalid ||
@@ -911,7 +985,7 @@ bool GameCommand::IsZero() const
 #include "Steps.h"
 #include "Character.h"
 
-/** @brief Allow Lua to have access to the GameCommand. */ 
+/** @brief Allow Lua to have access to the GameCommand. */
 class LunaGameCommand: public Luna<GameCommand>
 {
 public:
@@ -970,7 +1044,7 @@ LUA_REGISTER_CLASS( GameCommand )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -980,7 +1054,7 @@ LUA_REGISTER_CLASS( GameCommand )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

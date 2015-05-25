@@ -11,6 +11,8 @@
 #include "InputMapper.h"
 #include "PlayerState.h"
 
+using std::vector;
+
 #define LINE(sLineName)				THEME->GetMetric (m_sName,ssprintf("Line%s",sLineName.c_str()))
 #define MAX_ITEMS_BEFORE_SPLIT			THEME->GetMetricI(m_sName,"MaxItemsBeforeSplit")
 #define ITEMS_SPLIT_WIDTH			THEME->GetMetricF(m_sName,"ItemsSplitWidth")
@@ -44,6 +46,7 @@ void OptionListRow::Load( OptionsList *pOptions, const RString &sType )
 
 void OptionListRow::SetFromHandler( const OptionRowHandler *pHandler )
 {
+	using std::max;
 	this->FinishTweening();
 	this->RemoveAllChildren();
 
@@ -177,8 +180,10 @@ OptionsList::OptionsList()
 
 OptionsList::~OptionsList()
 {
-	FOREACHM( RString, OptionRowHandler *, m_Rows, hand )
-		delete hand->second;
+	for (auto &hand: m_Rows)
+	{
+		delete hand.second;
+	}
 }
 
 void OptionsList::Load( RString sType, PlayerNumber pn )
@@ -197,9 +202,10 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 
 	vector<RString> asDirectLines;
 	split( DIRECT_LINES, ",", asDirectLines, true );
-	FOREACH( RString, asDirectLines, s )
-		m_setDirectRows.insert( *s );
-
+	for (auto const &s: asDirectLines)
+	{
+		m_setDirectRows.insert( s );
+	}
 	vector<RString> setToLoad;
 	split( TOP_MENUS, ",", setToLoad );
 	m_setTopMenus.insert( setToLoad.begin(), setToLoad.end() );
@@ -249,9 +255,9 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 void OptionsList::Reset()
 {
 	/* Import options. */
-	FOREACHM( RString, OptionRowHandler *, m_Rows, hand )
+	for (auto &hand: m_Rows)
 	{
-		RString sLineName = hand->first;
+		RString sLineName = hand.first;
 		ImportRow( sLineName );
 	}
 }
@@ -298,7 +304,7 @@ const OptionRowHandler *OptionsList::GetCurrentHandler()
 
 int OptionsList::GetOneSelection( RString sRow, bool bAllowFail ) const
 {
-	map<RString, vector<bool> >::const_iterator it = m_bSelections.find(sRow);
+	auto it = m_bSelections.find(sRow);
 	ASSERT_M( it != m_bSelections.end(), sRow );
 	const vector<bool> &bSelections = it->second;
 	for( unsigned i=0; i<bSelections.size(); i++ )
@@ -623,7 +629,7 @@ void OptionsList::SelectItem( const RString &sRowName, int iMenuItem )
 	}
 	else	// data.selectType != SELECT_MULTIPLE
 	{
-		fill( bSelections.begin(), bSelections.end(), false ); 
+		fill( bSelections.begin(), bSelections.end(), false );
 		bSelections[iMenuItem] = true;
 	}
 
@@ -683,10 +689,10 @@ bool OptionsList::Start()
 			GAMESTATE->ResetToDefaultSongOptions( ModsLevel_Preferred );
 
 			/* Import options. */
-			FOREACHM( RString, OptionRowHandler *, m_Rows, hand )
+			for (auto &hand: m_Rows)
 			{
-				ImportRow( hand->first );
-				SelectionsChanged( hand->first );
+				ImportRow( hand.first );
+				SelectionsChanged( hand.first );
 			}
 
 			UpdateMenuFromSelections();

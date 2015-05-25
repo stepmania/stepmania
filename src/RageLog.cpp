@@ -4,13 +4,14 @@
 #include "RageTimer.h"
 #include "RageFile.h"
 #include "RageThreads.h"
-#include "Foreach.h"
 
 #include <ctime>
 #if defined(_WINDOWS)
 #include <windows.h>
 #endif
 #include <map>
+
+using std::vector;
 
 RageLog* LOG;		// global and accessible from anywhere in the program
 
@@ -52,7 +53,7 @@ RageLog* LOG;		// global and accessible from anywhere in the program
  *
  * The identifier is never displayed, so we can use a simple local object to
  * map/unmap, using any mechanism to generate unique IDs. */
-static map<RString, RString> LogMaps;
+static std::map<RString, RString> LogMaps;
 
 #define LOG_PATH	"/Logs/log.txt"
 #define INFO_PATH	"/Logs/info.txt"
@@ -90,7 +91,7 @@ m_bUserLogToDisk(false), m_bFlush(false), m_bShowLogOutput(false)
 
 	if(!g_fileTimeLog->Open(TIME_PATH, RageFile::WRITE|RageFile::STREAMED))
 	{ fprintf(stderr, "Couldn't open %s: %s\n", TIME_PATH, g_fileTimeLog->GetError().c_str()); }
-	
+
 	g_Mutex = new RageMutex( "Log" );
 }
 
@@ -159,9 +160,9 @@ void RageLog::SetUserLogToDisk( bool b )
 {
 	if( m_bUserLogToDisk == b )
 		return;
-	
+
 	m_bUserLogToDisk = b;
-	
+
 	if( !m_bUserLogToDisk )
 	{
 		if( g_fileUserLog->IsOpen() )
@@ -245,10 +246,10 @@ void RageLog::UserLog( const RString &sType, const RString &sElement, const char
 	va_start( va, fmt );
 	RString sBuf = vssprintf( fmt, va );
 	va_end( va );
-	
+
 	if( !sType.empty() )
 		sBuf = ssprintf( "%s \"%s\" %s", sType.c_str(), sElement.c_str(), sBuf.c_str() );
-	
+
 	Write( WRITE_TO_USER_LOG, sBuf );
 }
 
@@ -295,7 +296,7 @@ void RageLog::Write( int where, const RString &sLine )
 			g_fileTimeLog->PutLine(sStr);
 
 		AddToRecentLogs( sStr );
-		
+
 		if( m_bLogToDisk && g_fileLog->IsOpen() )
 			g_fileLog->PutLine( sStr );
 	}
@@ -326,17 +327,18 @@ static char staticlog[1024*32]="";
 static unsigned staticlog_size = 0;
 void RageLog::AddToInfo( const RString &str )
 {
+	using std::min;
 	static bool limit_reached = false;
 	if( limit_reached )
 		return;
-	
+
 	unsigned len = str.size() + strlen( NEWLINE );
 	if( staticlog_size + len > sizeof(staticlog) )
 	{
 		const RString txt( NEWLINE "Staticlog limit reached" NEWLINE );
-		
-		const unsigned pos = min( staticlog_size, sizeof(staticlog) - txt.size() );
-		memcpy( staticlog+pos, txt.data(), txt.size() );
+		unsigned txtSize = static_cast<unsigned>(sizeof(staticlog) - txt.size());
+		unsigned const pos = min( staticlog_size, txtSize );
+		memcpy( staticlog + pos, txt.data(), txt.size() );
 		limit_reached = true;
 		return;
 	}
@@ -393,10 +395,12 @@ static int g_AdditionalLogSize = 0;
 
 void RageLog::UpdateMappedLog()
 {
+	using std::min;
 	RString str;
-	FOREACHM_CONST( RString, RString, LogMaps, i )
-		str += ssprintf( "%s" NEWLINE, i->second.c_str() );
-
+	for (auto const &i: LogMaps)
+	{
+		str += ssprintf( "%s" NEWLINE, i.second.c_str() );
+	}
 	g_AdditionalLogSize = min( sizeof(g_AdditionalLogStr), str.size()+1 );
 	memcpy( g_AdditionalLogStr, str.c_str(), g_AdditionalLogSize );
 	g_AdditionalLogStr[ sizeof(g_AdditionalLogStr)-1 ] = 0;
@@ -404,6 +408,7 @@ void RageLog::UpdateMappedLog()
 
 const char *RageLog::GetAdditionalLog()
 {
+	using std::min;
 	int size = min( g_AdditionalLogSize, (int) sizeof(g_AdditionalLogStr)-1 );
 	g_AdditionalLogStr[size] = 0;
 	return g_AdditionalLogStr;

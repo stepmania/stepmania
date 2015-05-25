@@ -24,13 +24,13 @@ bool DifficultyIcon::Load( RString sPath )
 	Sprite::Load( sPath );
 	int iStates = GetNumStates();
 	bool bWarn = iStates != NUM_Difficulty  &&  iStates != NUM_Difficulty*2;
-	if( sPath.find("_blank") != string::npos )
+	if( sPath.find("_blank") != std::string::npos )
 		bWarn = false;
 	if( bWarn )
 	{
 		RString sError = ssprintf(
-			"The difficulty icon graphic '%s' must have %d or %d frames.  It has %d states.", 
-			sPath.c_str(), 
+			"The difficulty icon graphic '%s' must have %d or %d frames.  It has %d states.",
+			sPath.c_str(),
 			NUM_Difficulty,
 			NUM_Difficulty*2,
 			iStates );
@@ -90,18 +90,18 @@ void DifficultyIcon::SetFromDifficulty( Difficulty dc )
 	case NUM_Difficulty:		SetState( dc );				break;
 	case NUM_Difficulty*2:		SetState( dc*2+m_PlayerNumber );	break;
 	default:			m_bBlank = true;			break;
-	}	
+	}
 }
 
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the DifficultyIcon. */ 
+/** @brief Allow Lua to have access to the DifficultyIcon. */
 class LunaDifficultyIcon: public Luna<DifficultyIcon>
 {
 public:
 	static int SetFromSteps( T* p, lua_State *L )
-	{ 
+	{
 		if( lua_isnil(L,1) )
 		{
 			p->Unset();
@@ -114,7 +114,7 @@ public:
 		COMMON_RETURN_SELF;
 	}
 	static int SetFromTrail( T* p, lua_State *L )
-	{ 
+	{
 		if( lua_isnil(L,1) )
 		{
 			p->Unset();
@@ -146,7 +146,7 @@ LUA_REGISTER_DERIVED_CLASS( DifficultyIcon, Sprite )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -156,7 +156,7 @@ LUA_REGISTER_DERIVED_CLASS( DifficultyIcon, Sprite )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

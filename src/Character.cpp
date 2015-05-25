@@ -5,6 +5,8 @@
 #include "RageTextureID.h"
 #include "ActorUtil.h"
 
+using std::vector;
+
 RString GetRandomFileInDir( RString sDir );
 
 Character::Character(): m_sCharDir(""), m_sCharacterID(""),
@@ -86,8 +88,8 @@ RString Character::GetModelPath() const
 {
 	RString s = m_sCharDir + "model.txt";
 	if( DoesFileExist(s) )
-		return s; 
-	else 
+		return s;
+	else
 		return RString();
 }
 
@@ -171,7 +173,7 @@ bool Character::Has2DElems()
 	if( DoesFileExist(m_sCharDir + "2DFever/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		return true;
 	if( DoesFileExist(m_sCharDir + "2DGood/BGAnimation.ini") ) // check 2D Idle BGAnim exists
-		return true;	
+		return true;
 	if( DoesFileExist(m_sCharDir + "2DMiss/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		return true;
 	if( DoesFileExist(m_sCharDir + "2DWin/BGAnimation.ini") ) // check 2D Idle BGAnim exists
@@ -206,7 +208,7 @@ void Character::UndemandGraphics()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the Character. */ 
+/** @brief Allow Lua to have access to the Character. */
 class LunaCharacter: public Luna<Character>
 {
 public:
@@ -245,7 +247,7 @@ LUA_REGISTER_CLASS( Character )
 /*
  * (c) 2003 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -255,7 +257,7 @@ LUA_REGISTER_CLASS( Character )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -1,5 +1,8 @@
 #include "global.h"
 #include "ActorUtil.h"
+
+#include <memory>
+
 #include "ThemeManager.h"
 #include "PrefsManager.h"
 #include "RageFileManager.h"
@@ -10,16 +13,16 @@
 #include "XmlFileUtil.h"
 #include "IniFile.h"
 #include "LuaManager.h"
-#include "Foreach.h"
 #include "Song.h"
 #include "Course.h"
 #include "GameState.h"
 
 #include "arch/Dialog/Dialog.h"
 
+using std::vector;
 
 // Actor registration
-static map<RString,CreateActorFn>	*g_pmapRegistrees = NULL;
+static std::map<RString,CreateActorFn> *g_pmapRegistrees = NULL;
 
 static bool IsRegistered( const RString& sClassName )
 {
@@ -29,9 +32,9 @@ static bool IsRegistered( const RString& sClassName )
 void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
 {
 	if( g_pmapRegistrees == NULL )
-		g_pmapRegistrees = new map<RString,CreateActorFn>;
+		g_pmapRegistrees = new std::map<RString,CreateActorFn>;
 
-	map<RString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClassName );
+	auto iter = g_pmapRegistrees->find( sClassName );
 	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Actor class '%s' already registered.", sClassName.c_str()) );
 
 	(*g_pmapRegistrees)[sClassName] = pfn;
@@ -62,7 +65,7 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName, bool optional
 			switch(LuaHelpers::ReportScriptError(sError, "BROKEN_FILE_REFERENCE", true))
 			{
 			case Dialog::abort:
-				RageException::Throw( "%s", sError.c_str() ); 
+				RageException::Throw( "%s", sError.c_str() );
 				break;
 			case Dialog::retry:
 				FILEMAN->FlushDirCache();
@@ -83,7 +86,7 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName, bool optional
 			switch(LuaHelpers::ReportScriptError(sError, "BROKEN_FILE_REFERENCE", true))
 			{
 			case Dialog::abort:
-				RageException::Throw( "%s", sError.c_str() ); 
+				RageException::Throw( "%s", sError.c_str() );
 				break;
 			case Dialog::retry:
 				FILEMAN->FlushDirCache();
@@ -194,7 +197,7 @@ Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 	if( !bHasClass && bLegacy )
 		sClass = GetLegacyActorClass( &node );
 
-	map<RString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClass );
+	auto iter = g_pmapRegistrees->find( sClass );
 	if( iter == g_pmapRegistrees->end() )
 	{
 		RString sFile;
@@ -306,7 +309,7 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 	{
 	case FT_Lua:
 		{
-			auto_ptr<XNode> pNode( LoadXNodeFromLuaShowErrors(sPath) );
+			std::unique_ptr<XNode> pNode( LoadXNodeFromLuaShowErrors(sPath) );
 			if( pNode.get() == NULL )
 			{
 				// XNode will warn about the error
@@ -472,13 +475,12 @@ void ActorUtil::LoadAllCommands( Actor& actor, const RString &sMetricsGroup )
 
 void ActorUtil::LoadAllCommandsFromName( Actor& actor, const RString &sMetricsGroup, const RString &sName )
 {
-	set<RString> vsValueNames;
+	std::set<RString> vsValueNames;
 	THEME->GetMetricsThatBeginWith( sMetricsGroup, sName, vsValueNames );
 
-	FOREACHS_CONST( RString, vsValueNames, v )
+	for (auto const &sv: vsValueNames)
 	{
-		const RString &sv = *v;
-		static const RString sEnding = "Command"; 
+		static const RString sEnding = "Command";
 		if( EndsWith(sv,sEnding) )
 		{
 			RString sCommandName( sv.begin()+sName.size(), sv.end()-sEnding.size() );
@@ -513,8 +515,8 @@ XToString( FileType );
 LuaXType( FileType );
 
 // convenience so the for-loop lines can be shorter.
-typedef map<RString, FileType> etft_cont_t;
-typedef map<FileType, vector<RString> > fttel_cont_t;
+typedef std::map<RString, FileType> etft_cont_t;
+typedef std::map<FileType, vector<RString> > fttel_cont_t;
 etft_cont_t ExtensionToFileType;
 fttel_cont_t FileTypeToExtensionList;
 
@@ -667,7 +669,7 @@ namespace
 		LIST_METHOD( ResolvePath ),
 		LIST_METHOD( IsRegisteredClass ),
 		LIST_METHOD( LoadAllCommands ),
-		LIST_METHOD( LoadAllCommandsFromName ), 
+		LIST_METHOD( LoadAllCommandsFromName ),
 		LIST_METHOD( LoadAllCommandsAndSetXY ),
 		{ NULL, NULL }
 	};
@@ -678,7 +680,7 @@ LUA_REGISTER_NAMESPACE( ActorUtil )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -688,7 +690,7 @@ LUA_REGISTER_NAMESPACE( ActorUtil )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

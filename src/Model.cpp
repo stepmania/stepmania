@@ -10,9 +10,12 @@
 #include "RageLog.h"
 #include "ActorUtil.h"
 #include "ModelManager.h"
-#include "Foreach.h"
 #include "LuaBinding.h"
 #include "PrefsManager.h"
+
+#include <numeric>
+
+using std::vector;
 
 REGISTER_ACTOR_CLASS( Model );
 
@@ -298,13 +301,13 @@ void Model::DrawCelShaded()
 	DISPLAY->SetCullMode(CULL_FRONT);
 	this->SetZWrite(false); // XXX: Why on earth isn't the culling working? -Colby
 	this->Draw();
-	
+
 	// Second pass: cel shading
 	DISPLAY->SetCelShaded(2);
 	DISPLAY->SetCullMode(CULL_BACK);
 	this->SetZWrite(true);
 	this->Draw();
-	
+
 	DISPLAY->SetCelShaded(0);
 }
 
@@ -566,13 +569,13 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 void Model::SetPosition( float fSeconds )
 {
 	m_fCurFrame = FRAMES_PER_SECOND * fSeconds;
-	m_fCurFrame = clamp( m_fCurFrame, 0, (float) m_pCurAnimation->nTotalFrames );
+	m_fCurFrame = clamp( m_fCurFrame, 0.f, static_cast<float>(m_pCurAnimation->nTotalFrames) );
 }
 
 void Model::AdvanceFrame( float fDeltaTime )
 {
-	if( m_pGeometry == NULL || 
-		m_pGeometry->m_Meshes.empty() || 
+	if( m_pGeometry == NULL ||
+		m_pGeometry->m_Meshes.empty() ||
 		!m_pCurAnimation )
 	{
 		return; // bail early
@@ -592,7 +595,7 @@ void Model::AdvanceFrame( float fDeltaTime )
 		else if( m_bLoop )
 			wrap( m_fCurFrame, (float) m_pCurAnimation->nTotalFrames );
 		else
-			m_fCurFrame = clamp( m_fCurFrame, 0, (float) m_pCurAnimation->nTotalFrames );
+			m_fCurFrame = clamp( m_fCurFrame, 0.f, static_cast<float>(m_pCurAnimation->nTotalFrames) );
 	}
 
 	SetBones( m_pCurAnimation, m_fCurFrame, m_vpBones );
@@ -730,54 +733,52 @@ void Model::Update( float fDelta )
 
 int Model::GetNumStates() const
 {
-	int iMaxStates = 0;
-	FOREACH_CONST( msMaterial, m_Materials, m )
-		iMaxStates = max( iMaxStates, m->diffuse.GetNumStates() );
-	return iMaxStates;
+	auto findMax = [](int highest, msMaterial const &m) {
+		return std::max(highest, m.diffuse.GetNumStates());
+	};
+	return std::accumulate(m_Materials.begin(), m_Materials.end(), 0, findMax);
 }
 
 void Model::SetState( int iNewState )
 {
-	FOREACH( msMaterial, m_Materials, m )
+	for (auto &m: m_Materials)
 	{
-		m->diffuse.SetState( iNewState );
-		m->alpha.SetState( iNewState );
+		m.diffuse.SetState( iNewState );
+		m.alpha.SetState( iNewState );
 	}
 }
 
 void Model::RecalcAnimationLengthSeconds()
 {
 	m_animation_length_seconds= 0;
-	FOREACH_CONST(msMaterial, m_Materials, m)
+	for (auto &m: m_Materials)
 	{
-		m_animation_length_seconds= max(m_animation_length_seconds,
-			m->diffuse.GetAnimationLengthSeconds());
+		m_animation_length_seconds= std::max(m_animation_length_seconds,
+			m.diffuse.GetAnimationLengthSeconds());
 	}
 }
 
 void Model::SetSecondsIntoAnimation( float fSeconds )
 {
-	FOREACH( msMaterial, m_Materials, m )
+	for (auto &m: m_Materials)
 	{
-		m->diffuse.SetSecondsIntoAnimation( fSeconds );
-		m->alpha.SetSecondsIntoAnimation( fSeconds );
+		m.diffuse.SetSecondsIntoAnimation( fSeconds );
+		m.alpha.SetSecondsIntoAnimation( fSeconds );
 	}
 }
 
 bool Model::MaterialsNeedNormals() const
 {
-	FOREACH_CONST( msMaterial, m_Materials, m )
-	{
-		if( m->NeedsNormals() )
-			return true;
-	}
-	return false;
+	auto needsNormals = [](msMaterial const &m) {
+		return m.NeedsNormals();
+	};
+	return std::any_of(m_Materials.begin(), m_Materials.end(), needsNormals);
 }
 
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the Model. */ 
+/** @brief Allow Lua to have access to the Model. */
 class LunaModel: public Luna<Model>
 {
 public:
@@ -811,7 +812,7 @@ LUA_REGISTER_DERIVED_CLASS( Model, Actor )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -821,7 +822,7 @@ LUA_REGISTER_DERIVED_CLASS( Model, Actor )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

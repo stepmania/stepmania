@@ -1,4 +1,4 @@
-set(TOMDIR "${SM_SRC_DIR}/libtommath")
+set(TOMDIR "${SM_EXTERN_DIR}/libtommath")
 
 list(APPEND TOMMATH_SRC
   "${TOMDIR}/bn_error.c"

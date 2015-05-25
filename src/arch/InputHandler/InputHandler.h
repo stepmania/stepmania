@@ -3,7 +3,7 @@
 
 /* This is a simple class to handle special input devices. Update() will be
  * called during the input update; the derived class should send appropriate
- * events to InputHandler. 
+ * events to InputHandler.
  * Note that, if the underlying device is capable of it, you're free to start
  * a blocking thread; just store inputs in your class and send them off in a
  * batch on the next Update. This gets much more accurate timestamps; we get
@@ -22,14 +22,14 @@
 class InputHandler: public RageDriver
 {
 public:
-	static void Create( const RString &sDrivers, vector<InputHandler *> &apAdd );
+	static void Create( const RString &sDrivers, std::vector<InputHandler *> &apAdd );
 	static DriverList m_pDriverList;
 
 	InputHandler(): m_LastUpdate(), m_iInputsSinceUpdate(0) {}
 	virtual ~InputHandler() { }
 	virtual void Update() { }
 	virtual bool DevicesChanged() { return false; }
-	virtual void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut ) = 0;
+	virtual void GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevicesOut ) = 0;
 
 	// Override to return a pretty string that's specific to the controller type.
 	virtual RString GetDeviceSpecificInputString( const DeviceInput &di );
@@ -46,7 +46,7 @@ public:
 
 protected:
 	/* Convenience function: Call this to queue a received event.
-	 * This may be called in a thread. 
+	 * This may be called in a thread.
 	 *
 	 * Important detail: If the timestamp, di.ts, is zero, then it is assumed that
 	 * this is not a threaded event handler.  In that case, input is being polled,
@@ -55,7 +55,7 @@ protected:
 	 * the midpoint since the last update, which will smooth out the error.
 	 *
 	 * Note that timestamps are set to the current time by default, so for this
-	 * to happen, you need to explicitly call di.ts.SetZero(). 
+	 * to happen, you need to explicitly call di.ts.SetZero().
 	 *
 	 * If the timestamp is set, it'll be left alone. */
 	void ButtonPressed( DeviceInput di );
@@ -80,7 +80,7 @@ private:
  * @author Glenn Maynard (c) 2003-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -90,7 +90,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

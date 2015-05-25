@@ -63,7 +63,7 @@ struct InputDeviceInfo
 {
 	InputDeviceInfo( InputDevice id_, RString sDesc_ ):
 		id(id_), sDesc(sDesc_) {}
-	
+
 	InputDevice id;
 	RString sDesc;
 };
@@ -93,7 +93,7 @@ const RString& InputDeviceStateToString( InputDeviceState ids );
  * internationalized keyboards, only keys that we might actually want to test
  * for programmatically. Any other keys are mapped to KEY_OTHER_0 and up. (If we
  * want to support real international input, stick a wchar_t in DeviceInput.)  */
- 
+
 enum DeviceButton
 {
 	KEY_SPACE	= 32,
@@ -226,7 +226,7 @@ enum DeviceButton
 	KEY_LSUPER,
 	KEY_RSUPER,
 	KEY_MENU,
-	
+
 	KEY_FN, // Laptop function keys.
 
 	KEY_NUMLOCK,
@@ -265,6 +265,58 @@ enum DeviceButton
 
 	KEY_OTHER_0,
 	// ...
+	// Adding KEY_OTHER_1-50 should *probably* not affect anything else.
+	// Most code I found uses offsets from KEY_OTHER_0 anyways. -teejusb
+	KEY_OTHER_1,
+	KEY_OTHER_2,
+	KEY_OTHER_3,
+	KEY_OTHER_4,
+	KEY_OTHER_5,
+	KEY_OTHER_6,
+	KEY_OTHER_7,
+	KEY_OTHER_8,
+	KEY_OTHER_9,
+	KEY_OTHER_10,
+	KEY_OTHER_11,
+	KEY_OTHER_12,
+	KEY_OTHER_13,
+	KEY_OTHER_14,
+	KEY_OTHER_15,
+	KEY_OTHER_16,
+	KEY_OTHER_17,
+	KEY_OTHER_18,
+	KEY_OTHER_19,
+	KEY_OTHER_20,
+	KEY_OTHER_21,
+	KEY_OTHER_22,
+	KEY_OTHER_23,
+	KEY_OTHER_24,
+	KEY_OTHER_25,
+	KEY_OTHER_26,
+	KEY_OTHER_27,
+	KEY_OTHER_28,
+	KEY_OTHER_29,
+	KEY_OTHER_30,
+	KEY_OTHER_31,
+	KEY_OTHER_32,
+	KEY_OTHER_33,
+	KEY_OTHER_34,
+	KEY_OTHER_35,
+	KEY_OTHER_36,
+	KEY_OTHER_37,
+	KEY_OTHER_38,
+	KEY_OTHER_39,
+	KEY_OTHER_40,
+	KEY_OTHER_41,
+	KEY_OTHER_42,
+	KEY_OTHER_43,
+	KEY_OTHER_44,
+	KEY_OTHER_45,
+	KEY_OTHER_46,
+	KEY_OTHER_47,
+	KEY_OTHER_48,
+	KEY_OTHER_49,
+	KEY_OTHER_50,
 	KEY_LAST_OTHER=511,
 
 	/* Joystick inputs. We try to have enough input names so any input on a
@@ -279,7 +331,7 @@ enum DeviceButton
 
 	JOY_Z_UP, JOY_Z_DOWN,
 	JOY_ROT_UP, JOY_ROT_DOWN, JOY_ROT_LEFT, JOY_ROT_RIGHT, JOY_ROT_Z_UP, JOY_ROT_Z_DOWN,
-	JOY_HAT_LEFT, JOY_HAT_RIGHT, JOY_HAT_UP, JOY_HAT_DOWN, 
+	JOY_HAT_LEFT, JOY_HAT_RIGHT, JOY_HAT_UP, JOY_HAT_DOWN,
 	JOY_AUX_1, JOY_AUX_2, JOY_AUX_3, JOY_AUX_4,
 
 	// Buttons:
@@ -384,7 +436,7 @@ inline bool operator>=(DeviceInput const &lhs, DeviceInput const &rhs)
 	return !operator<(lhs, rhs);
 }
 
-typedef vector<DeviceInput> DeviceInputList;
+typedef std::vector<DeviceInput> DeviceInputList;
 
 #endif
 /*

@@ -2,10 +2,11 @@
 #include "RageInput.h"
 #include "RageLog.h"
 #include "arch/InputHandler/InputHandler.h"
-#include "Foreach.h"
 #include "Preference.h"
 #include "LuaManager.h"
 #include "LocalizedString.h"
+
+using std::vector;
 
 RageInput* INPUTMAN = NULL; // global and accessible from anywhere in our program
 
@@ -18,7 +19,7 @@ namespace
 		InputHandler *m_pDevice;
 	};
 	vector<LoadedInputHandler> m_InputHandlers;
-	map<InputDevice, InputHandler *> g_mapDeviceToHandler;
+	std::map<InputDevice, InputHandler *> g_mapDeviceToHandler;
 }
 
 RageInput::RageInput()
@@ -109,14 +110,16 @@ void RageInput::AddHandler( InputHandler *pHandler )
 
 	vector<InputDeviceInfo> aDeviceInfo;
 	hand.m_pDevice->GetDevicesAndDescriptions( aDeviceInfo );
-	FOREACH_CONST( InputDeviceInfo, aDeviceInfo, idi )
-		g_mapDeviceToHandler[idi->id] = pHandler;
+	for (auto const &idi: aDeviceInfo)
+	{
+		g_mapDeviceToHandler[idi.id] = pHandler;
+	}
 }
 
 /** @brief Return the first InputDriver for the requested InputDevice. */
 InputHandler *RageInput::GetHandlerForDevice( const InputDevice id )
 {
-	map<InputDevice, InputHandler *>::iterator it = g_mapDeviceToHandler.find(id);
+	auto it = g_mapDeviceToHandler.find(id);
 	if( it == g_mapDeviceToHandler.end() )
 		return NULL;
 	return it->second;
@@ -178,7 +181,7 @@ RString RageInput::GetDisplayDevicesString() const
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to RageInput. */ 
+/** @brief Allow Lua to have access to RageInput. */
 class LunaRageInput: public Luna<RageInput>
 {
 public:
@@ -187,8 +190,10 @@ public:
 		vector<InputDeviceInfo> vDevices;
 		p->GetDevicesAndDescriptions( vDevices );
 		vector<RString> vsDescriptions;
-		FOREACH_CONST( InputDeviceInfo, vDevices, idi )
-			vsDescriptions.push_back( idi->sDesc );
+		for (auto const &idi: vDevices)
+		{
+			vsDescriptions.push_back( idi.sDesc );
+		}
 		LuaHelpers::CreateTableFromArray( vsDescriptions, L );
 		return 1;
 	}

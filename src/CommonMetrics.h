@@ -14,9 +14,9 @@ public:
 	ThemeMetricDifficultiesToShow(): m_v() { }
 	ThemeMetricDifficultiesToShow( const RString& sGroup, const RString& sName );
 	void Read();
-	const vector<Difficulty> &GetValue() const;
+	const std::vector<Difficulty> &GetValue() const;
 private:
-	vector<Difficulty> m_v;
+	std::vector<Difficulty> m_v;
 };
 class ThemeMetricCourseDifficultiesToShow : public ThemeMetric<RString>
 {
@@ -24,9 +24,9 @@ public:
 	ThemeMetricCourseDifficultiesToShow(): m_v() { }
 	ThemeMetricCourseDifficultiesToShow( const RString& sGroup, const RString& sName );
 	void Read();
-	const vector<CourseDifficulty> &GetValue() const;
+	const std::vector<CourseDifficulty> &GetValue() const;
 private:
-	vector<CourseDifficulty> m_v;
+	std::vector<CourseDifficulty> m_v;
 };
 class ThemeMetricStepsTypesToShow : public ThemeMetric<RString>
 {
@@ -34,13 +34,13 @@ public:
 	ThemeMetricStepsTypesToShow(): m_v() { }
 	ThemeMetricStepsTypesToShow( const RString& sGroup, const RString& sName );
 	void Read();
-	const vector<StepsType> &GetValue() const;
+	const std::vector<StepsType> &GetValue() const;
 private:
-	vector<StepsType> m_v;
+	std::vector<StepsType> m_v;
 };
 
 
-/** 
+/**
  * @brief Definitions of metrics that are in the "Common" group.
  *
  * These metrics are used throughout the metrics file. */
@@ -85,7 +85,7 @@ namespace CommonMetrics
  * @author Chris Danford (c) 2003-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -95,7 +95,7 @@ namespace CommonMetrics
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

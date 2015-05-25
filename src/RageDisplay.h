@@ -8,11 +8,11 @@
 #include <set>
 
 class DisplayResolution;
-typedef set<DisplayResolution> DisplayResolutions;
+typedef std::set<DisplayResolution> DisplayResolutions;
 
 const int REFRESH_DEFAULT = 0;
 struct RageSurface;
-enum TextureUnit 
+enum TextureUnit
 {
 	TextureUnit_1,
 	TextureUnit_2,
@@ -21,17 +21,17 @@ enum TextureUnit
 	NUM_TextureUnit
 };
 
-// RageCompiledGeometry holds vertex data in a format that is most efficient 
+// RageCompiledGeometry holds vertex data in a format that is most efficient
 // for the graphics API.
 class RageCompiledGeometry
 {
 public:
 	virtual ~RageCompiledGeometry();
 
-	void Set( const vector<msMesh> &vMeshes, bool bNeedsNormals );
+	void Set( const std::vector<msMesh> &vMeshes, bool bNeedsNormals );
 
-	virtual void Allocate( const vector<msMesh> &vMeshes ) = 0;	// allocate space
-	virtual void Change( const vector<msMesh> &vMeshes ) = 0;	// new data must be the same size as was passed to Set()
+	virtual void Allocate( const std::vector<msMesh> &vMeshes ) = 0;	// allocate space
+	virtual void Change( const std::vector<msMesh> &vMeshes ) = 0;	// new data must be the same size as was passed to Set()
 	virtual void Draw( int iMeshIndex ) const = 0;
 
 protected:
@@ -46,7 +46,7 @@ protected:
 		int iTriangleCount;
 		bool m_bNeedsTextureMatrixScale;
 	};
-	vector<MeshInfo>	m_vMeshInfo;
+	std::vector<MeshInfo>	m_vMeshInfo;
 	bool m_bNeedsNormals;
 	bool m_bAnyNeedsTextureMatrixScale;
 };
@@ -77,7 +77,7 @@ class VideoModeParams
 public:
 	// Initialize with a constructor so to guarantee all paramters
 	// are filled (in case new params are added).
-	VideoModeParams( 
+	VideoModeParams(
 		bool windowed_,
 		int width_,
 		int height_,
@@ -209,17 +209,17 @@ public:
 	virtual void BeginConcurrentRendering();
 	virtual void EndConcurrentRendering() { }
 
-	/* return 0 if failed or internal texture resource handle 
+	/* return 0 if failed or internal texture resource handle
 	 * (unsigned in OpenGL, texture pointer in D3D) */
-	virtual unsigned CreateTexture( 
+	virtual unsigned CreateTexture(
 		RagePixelFormat pixfmt,		// format of img and of texture in video mem
 		RageSurface* img,		// must be in pixfmt
 		bool bGenerateMipMaps
 		) = 0;
-	virtual void UpdateTexture( 
-		unsigned iTexHandle, 
+	virtual void UpdateTexture(
+		unsigned iTexHandle,
 		RageSurface* img,
-		int xoffset, int yoffset, int width, int height 
+		int xoffset, int yoffset, int width, int height
 		) = 0;
 	virtual void DeleteTexture( unsigned iTexHandle ) = 0;
 	/* Return an object to lock pixels for streaming. If not supported, returns NULL.
@@ -265,7 +265,7 @@ public:
 
 	virtual void SetAlphaTest( bool b ) = 0;
 
-	virtual void SetMaterial( 
+	virtual void SetMaterial(
 		const RageColor &emissive,
 		const RageColor &ambient,
 		const RageColor &diffuse,
@@ -275,11 +275,11 @@ public:
 
 	virtual void SetLighting( bool b ) = 0;
 	virtual void SetLightOff( int index ) = 0;
-	virtual void SetLightDirectional( 
-		int index, 
-		const RageColor &ambient, 
-		const RageColor &diffuse, 
-		const RageColor &specular, 
+	virtual void SetLightDirectional(
+		int index,
+		const RageColor &ambient,
+		const RageColor &diffuse,
+		const RageColor &specular,
 		const RageVector3 &dir ) = 0;
 
 	virtual void SetSphereEnvironmentMapping( TextureUnit tu, bool b ) = 0;
@@ -293,7 +293,7 @@ public:
 	void DrawFan( const RageSpriteVertex v[], int iNumVerts );
 	void DrawStrip( const RageSpriteVertex v[], int iNumVerts );
 	void DrawTriangles( const RageSpriteVertex v[], int iNumVerts );
-	void DrawCompiledGeometry( const RageCompiledGeometry *p, int iMeshIndex, const vector<msMesh> &vMeshes );
+	void DrawCompiledGeometry( const RageCompiledGeometry *p, int iMeshIndex, const std::vector<msMesh> &vMeshes );
 	void DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
 	void DrawSymmetricQuadStrip( const RageSpriteVertex v[], int iNumVerts );
 	void DrawCircle( const RageSpriteVertex &v, float radius );
@@ -368,7 +368,7 @@ public:
 	void TexturePushMatrix();
 	void TexturePopMatrix();
 	void TextureTranslate( float x, float y );
-	void TextureTranslate( const RageVector2 &v ) { this->TextureTranslate( v.x, v.y ); }	
+	void TextureTranslate( const RageVector2 &v ) { this->TextureTranslate( v.x, v.y ); }
 
 	// Projection and View matrix stack functions.
 	void CameraPushMatrix();
@@ -391,8 +391,8 @@ protected:
 	RageMatrix GetPerspectiveMatrix( float fovy, float aspect, float zNear, float zFar );
 
 	// Different for D3D and OpenGL. Not sure why they're not compatible. -Chris
-	virtual RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
-	virtual RageMatrix GetFrustumMatrix( float l, float r, float b, float t, float zn, float zf ); 
+	virtual RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf );
+	virtual RageMatrix GetFrustumMatrix( float l, float r, float b, float t, float zn, float zf );
 
 	// Matrix that adjusts position and scale of image on the screen
 	RageMatrix GetCenteringMatrix( float fTranslateX, float fTranslateY, float fAddWidth, float fAddHeight ) const;

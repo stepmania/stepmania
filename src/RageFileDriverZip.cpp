@@ -95,6 +95,7 @@ bool RageFileDriverZip::ReadEndCentralRecord( int &iTotalEntries, int &iCentralD
 /* Find the end of central directory record, and seek to it. */
 bool RageFileDriverZip::SeekToEndCentralRecord()
 {
+	using std::max;
 	const int iSearchTo = max( m_pZip->GetFileSize() - 1024*32, 0 );
 	int iRealPos = m_pZip->GetFileSize();
 
@@ -273,7 +274,7 @@ bool RageFileDriverZip::ReadLocalFileHeader( FileInfo &info )
 		WARN( ssprintf("%s: %s", m_sPath.c_str(), sError.c_str()) );
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -324,7 +325,7 @@ RageFileBasic *RageFileDriverZip::Open( const RString &sPath, int iMode, int &iE
 
 	RageFileDriverSlice *pSlice = new RageFileDriverSlice( m_pZip->Copy(), info->m_iDataOffset, info->m_iCompressedSize );
 	pSlice->DeleteFileWhenFinished();
-	
+
 	switch( info->m_iCompressionMethod )
 	{
 	case STORED:

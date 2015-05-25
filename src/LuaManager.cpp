@@ -5,7 +5,6 @@
 #include "RageLog.h"
 #include "RageFile.h"
 #include "RageThreads.h"
-#include "Foreach.h"
 #include "arch/Dialog/Dialog.h"
 #include "XmlFile.h"
 #include "Command.h"
@@ -18,13 +17,16 @@
 #include <csetjmp>
 #include <cassert>
 #include <map>
+#include <array>
+
+using std::vector;
 
 LuaManager *LUA = NULL;
 struct Impl
 {
 	Impl(): g_pLock("Lua") {}
 	vector<lua_State *> g_FreeStateList;
-	map<lua_State *, bool> g_ActiveStates;
+	std::map<lua_State *, bool> g_ActiveStates;
 
 	RageMutex g_pLock;
 };
@@ -166,9 +168,9 @@ static int GetLuaStack( lua_State *L )
 {
 	RString sErr;
 	LuaHelpers::Pop( L, sErr );
-	
+
 	lua_Debug ar;
-	
+
 	for( int iLevel = 0; lua_getstack(L, iLevel, &ar); ++iLevel )
 	{
 		if( !lua_getinfo(L, "nSluf", &ar) )
@@ -177,7 +179,7 @@ static int GetLuaStack( lua_State *L )
 		const char *file = ar.source[0] == '@' ? ar.source + 1 : ar.short_src;
 		const char *name;
 		vector<RString> vArgs;
-		
+
 		if( !strcmp(ar.what, "C") )
 		{
 			for( int i = 1; i <= ar.nups && (name = lua_getupvalue(L, -1, i)) != NULL; ++i )
@@ -564,12 +566,12 @@ XNode *LuaHelpers::GetLuaInformation()
 	XNode *pConstantsNode = pLuaNode->AppendChild( "Constants" );
 
 	vector<RString> vFunctions;
-	map<RString, LClass> mClasses;
-	map<RString, vector<RString> > mNamespaces;
-	map<RString, RString> mSingletons;
-	map<RString, float> mConstants;
-	map<RString, RString> mStringConstants;
-	map<RString, vector<RString> > mEnums;
+	std::map<RString, LClass> mClasses;
+	std::map<RString, vector<RString> > mNamespaces;
+	std::map<RString, RString> mSingletons;
+	std::map<RString, float> mConstants;
+	std::map<RString, RString> mStringConstants;
+	std::map<RString, vector<RString> > mEnums;
 
 	Lua *L = LUA->Get();
 	FOREACH_LUATABLE( L, LUA_GLOBALSINDEX )
@@ -653,13 +655,13 @@ XNode *LuaHelpers::GetLuaInformation()
 	ASSERT( lua_istable(L, -1) );
 
 	//const RString BuiltInPackages[] = { "_G", "coroutine", "debug", "math", "package", "string", "table" };
-	const RString BuiltInPackages[] = { "_G", "coroutine", "debug", "math", "package", "string", "table" };
-	const RString *const end = BuiltInPackages+ARRAYLEN(BuiltInPackages);
+	std::array<RString, 7> const BuiltInPackages = { "_G", "coroutine", "debug", "math", "package", "string", "table" };
+	auto endIter = BuiltInPackages.end();
 	FOREACH_LUATABLE( L, -1 )
 	{
 		RString sNamespace;
 		LuaHelpers::Pop( L, sNamespace );
-		if( find(BuiltInPackages, end, sNamespace) != end )
+		if( find(BuiltInPackages.begin(), endIter, sNamespace) != endIter )
 			continue;
 		vector<RString> &vNamespaceFunctions = mNamespaces[sNamespace];
 		FOREACH_LUATABLE( L, -1 )
@@ -676,53 +678,53 @@ XNode *LuaHelpers::GetLuaInformation()
 
 	/* Globals */
 	sort( vFunctions.begin(), vFunctions.end() );
-	FOREACH_CONST( RString, vFunctions, func )
+	for (auto const &func: vFunctions)
 	{
 		XNode *pFunctionNode = pGlobalsNode->AppendChild( "Function" );
-		pFunctionNode->AppendAttr( "name", *func );
+		pFunctionNode->AppendAttr( "name", func );
 	}
 
 	/* Classes */
-	FOREACHM_CONST( RString, LClass, mClasses, c )
+	for (auto const &c: mClasses)
 	{
 		XNode *pClassNode = pClassesNode->AppendChild( "Class" );
 
-		pClassNode->AppendAttr( "name", c->first );
-		if( !c->second.m_sBaseName.empty() )
-			pClassNode->AppendAttr( "base", c->second.m_sBaseName );
-		FOREACH_CONST( RString, c->second.m_vMethods, m )
+		pClassNode->AppendAttr( "name", c.first );
+		if( !c.second.m_sBaseName.empty() )
+			pClassNode->AppendAttr( "base", c.second.m_sBaseName );
+		for (auto const &m: c.second.m_vMethods)
 		{
 			XNode *pMethodNode = pClassNode->AppendChild( "Function" );
-			pMethodNode->AppendAttr( "name", *m );
+			pMethodNode->AppendAttr( "name", m );
 		}
 	}
 
 	/* Singletons */
-	FOREACHM_CONST( RString, RString, mSingletons, s )
+	for (auto const &s: mSingletons)
 	{
-		if( mClasses.find(s->first) != mClasses.end() )
+		if( mClasses.find(s.first) != mClasses.end() )
 			continue;
 		XNode *pSingletonNode = pSingletonsNode->AppendChild( "Singleton" );
-		pSingletonNode->AppendAttr( "name", s->first );
-		pSingletonNode->AppendAttr( "class", s->second );
+		pSingletonNode->AppendAttr( "name", s.first );
+		pSingletonNode->AppendAttr( "class", s.second );
 	}
 
 	/* Namespaces */
-	for( map<RString, vector<RString> >::const_iterator iter = mNamespaces.begin(); iter != mNamespaces.end(); ++iter )
+	for( auto iter = mNamespaces.begin(); iter != mNamespaces.end(); ++iter )
 	{
 		XNode *pNamespaceNode = pNamespacesNode->AppendChild( "Namespace" );
 		const vector<RString> &vNamespace = iter->second;
 		pNamespaceNode->AppendAttr( "name", iter->first );
 
-		FOREACH_CONST( RString, vNamespace, func )
+		for (auto const &func: vNamespace)
 		{
 			XNode *pFunctionNode = pNamespaceNode->AppendChild( "Function" );
-			pFunctionNode->AppendAttr( "name", *func );
+			pFunctionNode->AppendAttr( "name", func );
 		}
 	}
 
 	/* Enums */
-	for( map<RString, vector<RString> >::const_iterator iter = mEnums.begin(); iter != mEnums.end(); ++iter )
+	for( auto iter = mEnums.begin(); iter != mEnums.end(); ++iter )
 	{
 		XNode *pEnumNode = pEnumsNode->AppendChild( "Enum" );
 
@@ -738,21 +740,26 @@ XNode *LuaHelpers::GetLuaInformation()
 	}
 
 	/* Constants, String Constants */
-	FOREACHM_CONST( RString, float, mConstants, c )
+	for (auto const &c: mConstants)
 	{
 		XNode *pConstantNode = pConstantsNode->AppendChild( "Constant" );
 
-		pConstantNode->AppendAttr( "name", c->first );
-		if( c->second == truncf(c->second) )
-			pConstantNode->AppendAttr( "value", int(c->second) );
+		pConstantNode->AppendAttr( "name", c.first );
+		if( c.second == truncf(c.second) )
+		{
+			pConstantNode->AppendAttr( "value", static_cast<int>(c.second) );
+		}
 		else
-			pConstantNode->AppendAttr( "value", c->second );
+		{
+			pConstantNode->AppendAttr( "value", c.second );
+		}
 	}
-	FOREACHM_CONST( RString, RString, mStringConstants, s )
+
+	for (auto const &s: mStringConstants)
 	{
 		XNode *pConstantNode = pConstantsNode->AppendChild( "Constant" );
-		pConstantNode->AppendAttr( "name", s->first );
-		pConstantNode->AppendAttr( "value", ssprintf("'%s'", s->second.c_str()) );
+		pConstantNode->AppendAttr( "name", s.first );
+		pConstantNode->AppendAttr( "value", ssprintf("'%s'", s.second.c_str()) );
 	}
 
 	return pLuaNode;
@@ -913,16 +920,15 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 		ParseCommands( sCommands, cmds, bLegacy );
 
 		// Convert cmds to a Lua function
-		ostringstream s;
+		std::ostringstream s;
 
 		s << "return function(self)\n";
 
 		if( bLegacy )
 			s << "\tparent = self:GetParent();\n";
 
-		FOREACH_CONST( Command, cmds.v, c )
+		for (auto const &cmd: cmds.v)
 		{
-			const Command& cmd = (*c);
 			RString sCmdName = cmd.GetName();
 			if( bLegacy )
 				sCmdName.MakeLower();
@@ -1133,8 +1139,10 @@ namespace
 		lua_call( L, iArgs, LUA_MULTRET );
 		int iVals = lua_gettop(L);
 
-		FOREACH( LuaThreadVariable *, apVars, v )
-			delete *v;
+		for (auto *v: apVars)
+		{
+			delete v;
+		}
 		return iVals;
 	}
 
@@ -1181,7 +1189,7 @@ LUA_REGISTER_NAMESPACE( lua )
 /*
  * (c) 2004-2006 Glenn Maynard, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1191,7 +1199,7 @@ LUA_REGISTER_NAMESPACE( lua )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

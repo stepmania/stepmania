@@ -16,7 +16,7 @@ namespace DWILoader
 	 * @param sPath a const reference to the path on the hard drive to check.
 	 * @param out a vector of files found in the path.
 	 */
-	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
+	void GetApplicableFiles( const RString &sPath, std::vector<RString> &out );
 	/**
 	 * @brief Attempt to load a song from a specified path.
 	 * @param sPath a const reference to the path on the hard drive to check.
@@ -24,8 +24,8 @@ namespace DWILoader
 	 * @param BlacklistedImages a set of images that aren't used.
 	 * @return its success or failure.
 	 */
-	bool LoadFromDir( const RString &sPath, Song &out, set<RString> &BlacklistedImages );
-	
+	bool LoadFromDir( const RString &sPath, Song &out, std::set<RString> &BlacklistedImages );
+
 	bool LoadNoteDataFromSimfile( const RString &path, Steps &out );
 }
 
@@ -36,7 +36,7 @@ namespace DWILoader
  * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -46,7 +46,7 @@ namespace DWILoader
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

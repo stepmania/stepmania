@@ -11,15 +11,15 @@
 #include "ThemeMetric.h"
 
 /** @brief What type of row is needed for the EditMenu? */
-enum EditMenuRow 
-{ 
-	ROW_GROUP, 
-	ROW_SONG, 
-	ROW_STEPS_TYPE, 
+enum EditMenuRow
+{
+	ROW_GROUP,
+	ROW_SONG,
+	ROW_STEPS_TYPE,
 	ROW_STEPS,
-	ROW_SOURCE_STEPS_TYPE, 
-	ROW_SOURCE_STEPS, 
-	ROW_ACTION, 
+	ROW_SOURCE_STEPS_TYPE,
+	ROW_SOURCE_STEPS,
+	ROW_ACTION,
 	NUM_EditMenuRow /**< The number of EditMenuRows available. */
 };
 /** @brief Loop through each EditMenuRow. */
@@ -63,10 +63,10 @@ const RString& EditMenuActionToLocalizedString( EditMenuAction ema );
 const int NUM_ARROWS = 2;
 
 /**
- * @brief UI on Edit Menu screen. 
+ * @brief UI on Edit Menu screen.
  *
  * Create Steps, delete Steps, or launch Steps in editor. */
-class EditMenu: public ActorFrame 
+class EditMenu: public ActorFrame
 {
 public:
 	/** @brief Set up the EditMenu. */
@@ -110,19 +110,19 @@ public:
 	/** @brief Retrieve the currently selected group.
 	 * @return the current group. */
 	RString	GetSelectedGroup() const
-	{ 
-		if( !SHOW_GROUPS.GetValue() ) return GROUP_ALL; 
+	{
+		if( !SHOW_GROUPS.GetValue() ) return GROUP_ALL;
 		int groups = static_cast<int>(m_sGroups.size());
 		RETURN_IF_INVALID(m_iSelection[ROW_GROUP] >= groups, "");
-		return m_sGroups[m_iSelection[ROW_GROUP]]; 
+		return m_sGroups[m_iSelection[ROW_GROUP]];
 	}
 	/** @brief Retrieve the currently selected song.
 	 * @return the current song. */
-	Song*	GetSelectedSong() const	
+	Song*	GetSelectedSong() const
 	{
 		RETURN_IF_INVALID(m_pSongs.empty() ||
 			m_iSelection[ROW_SONG] >= (int)m_pSongs.size(), NULL);
-		return m_pSongs[m_iSelection[ROW_SONG]]; 
+		return m_pSongs[m_iSelection[ROW_SONG]];
 	}
 	/** @brief Retrieve the currently selected steps type.
 	 * @return the current steps type. */
@@ -138,7 +138,7 @@ public:
 	{
 		RETURN_IF_INVALID(m_vpSteps.empty() ||
 			m_iSelection[ROW_STEPS] >= (int)m_vpSteps.size(), NULL);
-		return m_vpSteps[m_iSelection[ROW_STEPS]].pSteps; 
+		return m_vpSteps[m_iSelection[ROW_STEPS]].pSteps;
 	}
 	/** @brief Retrieve the currently selected difficulty.
 	 * @return the current difficulty. */
@@ -158,11 +158,11 @@ public:
 	}
 	/** @brief Retrieve the currently selected source steps.
 	 * @return the current source steps. */
-	Steps* GetSelectedSourceSteps() const 
+	Steps* GetSelectedSourceSteps() const
 	{
 		RETURN_IF_INVALID(m_vpSourceSteps.empty() ||
 			m_iSelection[ROW_SOURCE_STEPS] >= (int)m_vpSourceSteps.size(), NULL);
-		return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].pSteps; 
+		return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].pSteps;
 	}
 	/** @brief Retrieve the currently selected difficulty.
 	 * @return the current difficulty. */
@@ -178,7 +178,7 @@ public:
 	{
 		RETURN_IF_INVALID(m_Actions.empty() ||
 			m_iSelection[ROW_ACTION]	>= (int)m_Actions.size(), EditMenuAction_Invalid);
-		return m_Actions[m_iSelection[ROW_ACTION]]; 
+		return m_Actions[m_iSelection[ROW_ACTION]];
 	}
 
 #undef RETURN_IF_INVALID
@@ -190,9 +190,9 @@ public:
 private:
 	struct StepsAndDifficulty;
 
-	void StripLockedStepsAndDifficulty( vector<StepsAndDifficulty> &v );
-	void GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpSongsOut );
-	void GetGroupsToShow( vector<RString> &vsGroupsOut );
+	void StripLockedStepsAndDifficulty( std::vector<StepsAndDifficulty> &v );
+	void GetSongsToShowForGroup( const RString &sGroup, std::vector<Song*> &vpSongsOut );
+	void GetGroupsToShow( std::vector<RString> &vsGroupsOut );
 
 	void UpdateArrows();
 	AutoActor	m_sprArrows[NUM_ARROWS];
@@ -220,13 +220,13 @@ private:
 	};
 
 	/** @brief The list of groups. */
-	vector<RString>			m_sGroups;
+	std::vector<RString>			m_sGroups;
 	/** @brief The list of Songs in a group. */
-	vector<Song*>			m_pSongs;
-	vector<StepsType>		m_StepsTypes;
-	vector<StepsAndDifficulty>	m_vpSteps;
-	vector<StepsAndDifficulty>	m_vpSourceSteps;
-	vector<EditMenuAction>		m_Actions;
+	std::vector<Song*>			m_pSongs;
+	std::vector<StepsType>		m_StepsTypes;
+	std::vector<StepsAndDifficulty>	m_vpSteps;
+	std::vector<StepsAndDifficulty>	m_vpSourceSteps;
+	std::vector<EditMenuAction>		m_Actions;
 
 	void OnRowValueChanged( EditMenuRow row );
 	void ChangeToRow( EditMenuRow newRow );
@@ -252,7 +252,7 @@ public:
  * @author Chris Danford (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -262,7 +262,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -63,10 +63,11 @@ void ComboGraph::Load( RString sMetricsGroup )
 		else
 			LuaHelpers::ReportScriptErrorFmt( "ComboGraph: \"sMetricsGroup\" \"ComboNumber\" must be a BitmapText" );
 	}
-}	
+}
 
 void ComboGraph::Set( const StageStats &s, const PlayerStageStats &pss )
 {
+	using std::max;
 	const float fFirstSecond = 0;
 	const float fLastSecond = s.GetTotalPossibleStepsSeconds();
 
@@ -102,7 +103,7 @@ void ComboGraph::Set( const StageStats &s, const PlayerStageStats &pss )
 		const PlayerStageStats::Combo_t &combo = pss.m_ComboList[i];
 		if( combo.GetStageCnt() < MinComboSizeToShow )
 			continue; // too small
-	
+
 		if( !iMaxComboSize )
 			continue;
 
@@ -133,7 +134,7 @@ void ComboGraph::Set( const StageStats &s, const PlayerStageStats &pss )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ComboGraph. */ 
+/** @brief Allow Lua to have access to the ComboGraph. */
 class LunaComboGraph: public Luna<ComboGraph>
 {
 public:
@@ -163,7 +164,7 @@ LUA_REGISTER_DERIVED_CLASS( ComboGraph, ActorFrame )
 /*
  * (c) 2003 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -173,7 +174,7 @@ LUA_REGISTER_DERIVED_CLASS( ComboGraph, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

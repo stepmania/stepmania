@@ -14,20 +14,18 @@ ModelManager::ModelManager()
 
 ModelManager::~ModelManager()
 {
-	for( std::map<RString, RageModelGeometry*>::iterator i = m_mapFileToGeometry.begin();
-		i != m_mapFileToGeometry.end(); 
-		++i )
+	for (auto &i: m_mapFileToGeometry)
 	{
-		RageModelGeometry* pGeom = i->second;
+		RageModelGeometry* pGeom = i.second;
 		if( pGeom->m_iRefCount )
-			LOG->Trace( "MODELMAN LEAK: '%s', RefCount = %d.", i->first.c_str(), pGeom->m_iRefCount );
+			LOG->Trace( "MODELMAN LEAK: '%s', RefCount = %d.", i.first.c_str(), pGeom->m_iRefCount );
 		SAFE_DELETE( pGeom );
 	}
 }
 
 RageModelGeometry* ModelManager::LoadMilkshapeAscii( const RString& sFile, bool bNeedNormals )
 {
-	std::map<RString, RageModelGeometry*>::iterator p = m_mapFileToGeometry.find( sFile );
+	auto p = m_mapFileToGeometry.find( sFile );
 	if( p != m_mapFileToGeometry.end() )
 	{
 		/* Found the geometry.  Just increase the refcount and return it. */
@@ -51,9 +49,7 @@ void ModelManager::UnloadModel( RageModelGeometry *m )
 	if( m->m_iRefCount )
 		return; /* Can't unload models that are still referenced. */
 
-	for( std::map<RString, RageModelGeometry*>::iterator i = m_mapFileToGeometry.begin();
-		i != m_mapFileToGeometry.end(); 
-		++i )
+	for( auto i = m_mapFileToGeometry.begin(); i != m_mapFileToGeometry.end(); ++i )
 	{
 		if( i->second == m )
 		{
@@ -84,7 +80,7 @@ bool ModelManager::SetPrefs( const ModelManagerPrefs& prefs )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -94,7 +90,7 @@ bool ModelManager::SetPrefs( const ModelManagerPrefs& prefs )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

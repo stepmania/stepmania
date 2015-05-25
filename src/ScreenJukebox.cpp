@@ -22,6 +22,9 @@
 #include "SongUtil.h"
 #include "Song.h"
 
+using std::vector;
+using std::string;
+
 #define SHOW_COURSE_MODIFIERS_PROBABILITY	THEME->GetMetricF(m_sName,"ShowCourseModifiersProbability")
 
 REGISTER_SCREEN_CLASS( ScreenJukebox );
@@ -63,7 +66,9 @@ void ScreenJukebox::SetSong()
 		else
 		{
 			FOREACH_ENUM( Difficulty, dc )
+			{
 				vDifficultiesToShow.push_back( dc );
+			}
 		}
 	}
 
@@ -96,8 +101,9 @@ void ScreenJukebox::SetSong()
 		// We just changed the song. Reset the original sync data.
 		AdjustSync::ResetOriginalSyncData();
 		FOREACH_PlayerNumber( p )
+		{
 			GAMESTATE->m_pCurSteps[p].Set( pSteps );
-
+		}
 		bool bShowModifiers = randomf(0,1) <= SHOW_COURSE_MODIFIERS_PROBABILITY;
 		if( bShowModifiers )
 		{
@@ -121,9 +127,9 @@ void ScreenJukebox::SetSong()
 					AttackArray aAttacks = pEntry->attacks;
 					if( !pEntry->sModifiers.empty() )
 						aAttacks.push_back( Attack::FromGlobalCourseModifier( pEntry->sModifiers ) );
-					FOREACH_CONST( Attack, aAttacks, a )
+					for (auto const &a: aAttacks)
 					{
-						RString s = a->sModifiers;
+						RString s = a.sModifiers;
 						s.MakeLower();
 						// todo: allow themers to modify this list? -aj
 						if( s.find("dark") != string::npos ||
@@ -145,7 +151,7 @@ void ScreenJukebox::SetSong()
 			{
 				int iIndex = RandomInt( apOptions.size() );
 				m_pCourseEntry = apOptions[iIndex];
-				Course *lCourse = apPossibleCourses[iIndex]; 
+				Course *lCourse = apPossibleCourses[iIndex];
 
 				PlayMode pm = CourseTypeToPlayMode( lCourse->GetCourseType() );
 				GAMESTATE->m_PlayMode.Set( pm );
@@ -221,8 +227,9 @@ void ScreenJukebox::Init()
 	GAMESTATE->m_SongOptions.Assign( ModsLevel_Stage, so );
 
 	FOREACH_EnabledPlayer( p )
+	{
 		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_FailType, FailType_Off );
-
+	}
 	GAMESTATE->m_bDemonstrationOrJukebox = true;
 
 	// Now that we've set up, init the base class.
@@ -326,7 +333,7 @@ void ScreenJukebox::InitSongQueues()
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -336,7 +343,7 @@ void ScreenJukebox::InitSongQueues()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -7,9 +7,9 @@
 #include <map>
 
 // Map from "&foo;" to a UTF-8 string.
-typedef map<RString, wchar_t, StdString::StdStringLessNoCase> aliasmap;
+typedef std::map<RString, wchar_t, StdString::StdStringLessNoCase> aliasmap;
 static aliasmap CharAliases;
-static map<RString,RString> CharAliasRepl;
+static std::map<RString,RString> CharAliasRepl;
 
 /* Editing this file in VC6 will be rather ugly, since it contains a lot of UTF-8.
  * Just don't change anything you can't read. :) */
@@ -392,7 +392,7 @@ bool FontCharAliases::GetChar( RString &codepoint, wchar_t &ch )
 /*
  * (c) 2003 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -402,7 +402,7 @@ bool FontCharAliases::GetChar( RString &codepoint, wchar_t &ch )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

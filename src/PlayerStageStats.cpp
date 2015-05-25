@@ -2,7 +2,6 @@
 #include "PlayerStageStats.h"
 #include "RageLog.h"
 #include "ThemeManager.h"
-#include "Foreach.h"
 #include "LuaManager.h"
 #include <float.h>
 #include "GameState.h"
@@ -11,6 +10,9 @@
 #include "ScoreKeeperNormal.h"
 #include "PrefsManager.h"
 #include "CommonMetrics.h"
+#include <numeric>
+
+using std::deque;
 
 #define GRADE_PERCENT_TIER(i)	THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
 // deprecated, but no solution to replace them exists yet:
@@ -88,8 +90,10 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 {
 	m_pStyle= other.m_pStyle;
 	m_bJoined = other.m_bJoined;
-	FOREACH_CONST( Steps*, other.m_vpPossibleSteps, s )
-		m_vpPossibleSteps.push_back( *s );
+	for (auto *s: other.m_vpPossibleSteps)
+	{
+		m_vpPossibleSteps.push_back( s );
+	}
 	m_iStepsPlayed += other.m_iStepsPlayed;
 	m_fAliveSeconds += other.m_fAliveSeconds;
 	m_bFailed |= other.m_bFailed;
@@ -125,11 +129,10 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	const float fOtherLastSecond = other.m_fLastSecond + m_fLastSecond + 1.0f;
 	m_fLastSecond = fOtherLastSecond;
 
-	map<float,float>::const_iterator it;
-	for( it = other.m_fLifeRecord.begin(); it != other.m_fLifeRecord.end(); ++it )
+	for (auto &it: other.m_fLifeRecord)
 	{
-		const float pos = it->first;
-		const float life = it->second;
+		const float pos = it.first;
+		const float life = it.second;
 		m_fLifeRecord[fOtherFirstSecond+pos] = life;
 	}
 
@@ -178,6 +181,7 @@ Grade GetGradeFromPercent( float fPercent )
 
 Grade PlayerStageStats::GetGrade() const
 {
+	using std::max;
 	if( m_bFailed )
 		return Grade_Failed;
 
@@ -242,6 +246,7 @@ Grade PlayerStageStats::GetGrade() const
 
 float PlayerStageStats::MakePercentScore( int iActual, int iPossible )
 {
+	using std::max;
 	if( iPossible == 0 )
 		return 0; // div/0
 
@@ -254,7 +259,7 @@ float PlayerStageStats::MakePercentScore( int iActual, int iPossible )
 	float fPercent =  iActual / (float)iPossible;
 
 	// don't allow negative
-	fPercent = max( 0, fPercent );
+	fPercent = max( 0.f, fPercent );
 
 	int iPercentTotalDigits = 3 + CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES;	// "100" + "." + "00"
 
@@ -274,7 +279,7 @@ RString PlayerStageStats::FormatPercentScore( float fPercentDancePoints )
 {
 	int iPercentTotalDigits = 3 + CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES;	// "100" + "." + "00"
 
-	RString s = ssprintf( "%*.*f%%", iPercentTotalDigits, 
+	RString s = ssprintf( "%*.*f%%", iPercentTotalDigits,
 			     (int)CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES,
 			     fPercentDancePoints*100 );
 	return s;
@@ -335,12 +340,10 @@ int PlayerStageStats::GetLessonScoreActual() const
 
 int PlayerStageStats::GetLessonScoreNeeded() const
 {
-	float fScore = 0;
-
-	FOREACH_CONST( Steps*, m_vpPossibleSteps, steps )
-	{
-		fScore += (*steps)->GetRadarValues(PLAYER_1)[RadarCategory_TapsAndHolds];
-	}
+	auto getScore = [](float total, Steps const *step) {
+		return total + step->GetRadarValues(PLAYER_1)[RadarCategory_TapsAndHolds];
+	};
+	float fScore = std::accumulate(m_vpPossibleSteps.begin(), m_vpPossibleSteps.end(), 0.f, getScore);
 
 	return lrintf( fScore * LESSON_PASS_THRESHOLD );
 }
@@ -350,9 +353,13 @@ void PlayerStageStats::ResetScoreForLesson()
 	m_iCurPossibleDancePoints = 0;
 	m_iActualDancePoints = 0;
 	FOREACH_ENUM( TapNoteScore, tns )
+	{
 		m_iTapNoteScores[tns] = 0;
+	}
 	FOREACH_ENUM( HoldNoteScore, hns )
+	{
 		m_iHoldNoteScores[hns] = 0;
+	}
 	m_iCurCombo = 0;
 	m_iMaxCombo = 0;
 	m_iCurMissCombo = 0;
@@ -363,6 +370,8 @@ void PlayerStageStats::ResetScoreForLesson()
 
 void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 {
+	using std::max;
+	using std::min;
 	// Don't save life stats in endless courses, or could run OOM in a few hours.
 	if( GAMESTATE->m_pCurCourse && GAMESTATE->m_pCurCourse->IsEndless() )
 		return;
@@ -384,7 +393,7 @@ void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 	// entry.  Then the second call of the frame occurs and sets the life for
 	// the current time to a lower value.
 	// -Kyz
-	map<float,float>::iterator curr= m_fLifeRecord.find(fStepsSecond);
+	auto curr= m_fLifeRecord.find(fStepsSecond);
 	if(curr != m_fLifeRecord.end())
 	{
 		if(curr->second != fLife)
@@ -402,20 +411,20 @@ void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 
 	// Memory optimization:
 	// If we have three consecutive records A, B, and C all with the same fLife,
-	// we can eliminate record B without losing data. Only check the last three 
-	// records in the map since we're only inserting at the end, and we know all 
+	// we can eliminate record B without losing data. Only check the last three
+	// records in the map since we're only inserting at the end, and we know all
 	// earlier redundant records have already been removed.
-	map<float,float>::iterator C = m_fLifeRecord.end();
+	auto C = m_fLifeRecord.end();
 	--C;
 	if( C == m_fLifeRecord.begin() ) // no earlier records left
 		return;
 
-	map<float,float>::iterator B = C;
+	auto B = C;
 	--B;
 	if( B == m_fLifeRecord.begin() ) // no earlier records left
 		return;
 
-	map<float,float>::iterator A = B;
+	auto A = B;
 	--A;
 
 	if( A->second == B->second && B->second == C->second )
@@ -428,7 +437,7 @@ float PlayerStageStats::GetLifeRecordAt( float fStepsSecond ) const
 		return 0;
 
 	// Find the first element whose key is greater than k.
-	map<float,float>::const_iterator it = m_fLifeRecord.upper_bound( fStepsSecond );
+	auto it = m_fLifeRecord.upper_bound( fStepsSecond );
 
 	// Find the last element whose key is less than or equal to k.
 	if( it != m_fLifeRecord.begin() )
@@ -444,10 +453,10 @@ float PlayerStageStats::GetLifeRecordLerpAt( float fStepsSecond ) const
 		return 0;
 
 	// Find the first element whose key is greater than k.
-	map<float,float>::const_iterator later = m_fLifeRecord.upper_bound( fStepsSecond );
+	auto later = m_fLifeRecord.upper_bound( fStepsSecond );
 
 	// Find the last element whose key is less than or equal to k.
-	map<float,float>::const_iterator earlier = later;
+	auto earlier = later;
 	if( earlier != m_fLifeRecord.begin() )
 		--earlier;
 
@@ -474,8 +483,8 @@ float PlayerStageStats::GetCurrentLife() const
 {
 	if( m_fLifeRecord.empty() )
 		return 0;
-	map<float,float>::const_iterator iter = m_fLifeRecord.end();
-	--iter; 
+	auto iter = m_fLifeRecord.end();
+	--iter;
 	return iter->second;
 }
 
@@ -483,6 +492,8 @@ float PlayerStageStats::GetCurrentLife() const
  * record the amount of the first combo that comes from the previous song. */
 void PlayerStageStats::UpdateComboList( float fSecond, bool bRollover )
 {
+	using std::min;
+	using std::max;
 	// Don't save combo stats in endless courses, or could run OOM in a few hours.
 	if( GAMESTATE->m_pCurCourse && GAMESTATE->m_pCurCourse->IsEndless() )
 		return;
@@ -561,7 +572,7 @@ bool PlayerStageStats::FullComboOfScore( TapNoteScore tnsAllGreaterOrEqual ) con
 {
 	ASSERT( tnsAllGreaterOrEqual >= TNS_W5 );
 	ASSERT( tnsAllGreaterOrEqual <= TNS_W1 );
-   
+
   //if we've set MissCombo to anything besides 0, it's not a full combo
   if( !m_bPlayerCanAchieveFullCombo )
     return false;
@@ -728,7 +739,7 @@ LuaFunction( FormatPercentScore,	PlayerStageStats::FormatPercentScore( FArg(1) )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the PlayerStageStats. */ 
+/** @brief Allow Lua to have access to the PlayerStageStats. */
 class LunaPlayerStageStats: public Luna<PlayerStageStats>
 {
 public:
@@ -775,7 +786,7 @@ public:
 	static int GetPlayedSteps( T* p, lua_State *L )
 	{
 		lua_newtable(L);
-		for( int i = 0; i < (int) min(p->m_iStepsPlayed, (int) p->m_vpPossibleSteps.size()); ++i )
+		for( int i = 0; i < (int) std::min(p->m_iStepsPlayed, (int) p->m_vpPossibleSteps.size()); ++i )
 		{
 			p->m_vpPossibleSteps[i]->PushSelf(L);
 			lua_rawseti( L, -2, i+1 );
@@ -847,13 +858,13 @@ public:
 
 	static int GetRadarPossible( T* p, lua_State *L ) { p->m_radarPossible.PushSelf(L); return 1; }
 	static int GetRadarActual( T* p, lua_State *L ) { p->m_radarActual.PushSelf(L); return 1; }
-	static int SetScore( T* p, lua_State *L )                
-	{ 
+	static int SetScore( T* p, lua_State *L )
+	{
 		if( IArg(1) >= 0 )
-		{ 
-			p->m_iScore = IArg(1); 
-			return 1; 
-		} 
+		{
+			p->m_iScore = IArg(1);
+			return 1;
+		}
 		COMMON_RETURN_SELF;
 	}
 	static int SetCurMaxScore( T* p, lua_State *L )
@@ -865,7 +876,7 @@ public:
 		}
 		COMMON_RETURN_SELF;
 	}
-  
+
 	static int FailPlayer( T* p, lua_State *L )
 	{
 		p->m_bFailed = true;
@@ -927,7 +938,7 @@ LUA_REGISTER_CLASS( PlayerStageStats )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -937,7 +948,7 @@ LUA_REGISTER_CLASS( PlayerStageStats )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -28,6 +28,7 @@ RageSoundReader_Extend::RageSoundReader_Extend( RageSoundReader *pSource ):
 
 int RageSoundReader_Extend::SetPosition( int iFrame )
 {
+	using std::max;
 	m_bIgnoreFadeInFrames = false;
 
 	m_iPositionFrames = iFrame;
@@ -55,6 +56,8 @@ int RageSoundReader_Extend::GetEndFrame() const
 
 int RageSoundReader_Extend::GetData( float *pBuffer, int iFrames )
 {
+	using std::max;
+	using std::min;
 	int iFramesToRead = iFrames;
 	if( m_iLengthFrames != -1 )
 	{
@@ -85,6 +88,7 @@ int RageSoundReader_Extend::GetData( float *pBuffer, int iFrames )
 
 int RageSoundReader_Extend::Read( float *pBuffer, int iFrames )
 {
+	using std::min;
 	int iFramesRead = GetData( pBuffer, iFrames );
 	if( iFramesRead == RageSoundReader::END_OF_FILE )
 	{

@@ -9,7 +9,6 @@
 #include "CommonMetrics.h"
 #include "Course.h"
 #include "CryptManager.h"
-#include "Foreach.h"
 #include "Game.h"
 #include "GameCommand.h"
 #include "GameConstantsAndTypes.h"
@@ -43,6 +42,9 @@
 
 #include <ctime>
 #include <set>
+
+using std::vector;
+using std::string;
 
 GameState*	GAMESTATE = NULL;	// global and accessible from anywhere in our program
 
@@ -689,6 +691,7 @@ int GameState::GetNumStagesMultiplierForSong( const Song* pSong )
 
 int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 {
+	using std::max;
 	int iNumStagesOfThisSong = 1;
 	if( m_pCurSong )
 	{
@@ -779,6 +782,7 @@ void GameState::CancelStage()
 
 void GameState::CommitStageStats()
 {
+	using std::max;
 	if( m_bDemonstrationOrJukebox )
 		return;
 
@@ -1294,11 +1298,16 @@ int GameState::GetNumStagesLeft( PlayerNumber pn ) const
 
 int GameState::GetSmallestNumStagesLeftForAnyHumanPlayer() const
 {
+	using std::min;
 	if( IsEventMode() )
+	{
 		return 999;
+	}
 	int iSmallest = INT_MAX;
 	FOREACH_HumanPlayer( p )
+	{
 		iSmallest = min( iSmallest, m_iPlayerStageTokens[p] );
+	}
 	return iSmallest;
 }
 
@@ -1885,12 +1894,14 @@ void GameState::GetAllUsedNoteSkins( vector<RString> &out ) const
 			const Trail *pTrail = m_pCurTrail[pn];
 			ASSERT( pTrail != NULL );
 
-			FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
+			for (auto const &e: pTrail->m_vEntries)
 			{
 				PlayerOptions po;
-				po.FromString( e->Modifiers );
+				po.FromString( e.Modifiers );
 				if( !po.m_sNoteSkin.empty() )
+				{
 					out.push_back( po.m_sNoteSkin );
+				}
 			}
 		}
 	}
@@ -1915,17 +1926,18 @@ void GameState::AddStageToPlayer( PlayerNumber pn )
 template<class T>
 void setmin( T &a, const T &b )
 {
-	a = min(a, b);
+	a = std::min(a, b);
 }
 
 template<class T>
 void setmax( T &a, const T &b )
 {
-	a = max(a, b);
+	a = std::max(a, b);
 }
 
 FailType GameState::GetPlayerFailType( const PlayerState *pPlayerState ) const
 {
+	using std::max;
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 	FailType ft = pPlayerState->m_PlayerOptions.GetCurrent().m_FailType;
 
@@ -2277,23 +2289,39 @@ void GameState::StoreRankingName( PlayerNumber pn, RString sName )
 	if( !PREFSMAN->m_bAllowMultipleHighScoreWithSameName )
 	{
 		// erase all but the highest score for each name
-		FOREACHM( SongID, Profile::HighScoresForASong, pProfile->m_SongHighScores, iter )
-			FOREACHM( StepsID, Profile::HighScoresForASteps, iter->second.m_StepsHighScores, iter2 )
-				iter2->second.hsl.RemoveAllButOneOfEachName();
+		for (auto &iter: pProfile->m_SongHighScores)
+		{
+			for (auto &iter2: iter.second.m_StepsHighScores)
+			{
+				iter2.second.hsl.RemoveAllButOneOfEachName();
+			}
+		}
 
-		FOREACHM( CourseID, Profile::HighScoresForACourse, pProfile->m_CourseHighScores, iter )
-			FOREACHM( TrailID, Profile::HighScoresForATrail, iter->second.m_TrailHighScores, iter2 )
-				iter2->second.hsl.RemoveAllButOneOfEachName();
+		for (auto &iter: pProfile->m_CourseHighScores)
+		{
+			for (auto &iter2: iter.second.m_TrailHighScores)
+			{
+				iter2.second.hsl.RemoveAllButOneOfEachName();
+			}
+		}
 	}
 
 	// clamp high score sizes
-	FOREACHM( SongID, Profile::HighScoresForASong, pProfile->m_SongHighScores, iter )
-		FOREACHM( StepsID, Profile::HighScoresForASteps, iter->second.m_StepsHighScores, iter2 )
-			iter2->second.hsl.ClampSize( true );
+	for (auto &iter: pProfile->m_SongHighScores)
+	{
+		for (auto &iter2: iter.second.m_StepsHighScores)
+		{
+			iter2.second.hsl.ClampSize(true);
+		}
+	}
 
-	FOREACHM( CourseID, Profile::HighScoresForACourse, pProfile->m_CourseHighScores, iter )
-		FOREACHM( TrailID, Profile::HighScoresForATrail, iter->second.m_TrailHighScores, iter2 )
-			iter2->second.hsl.ClampSize( true );
+	for (auto &iter: pProfile->m_CourseHighScores)
+	{
+		for (auto &iter2: iter.second.m_TrailHighScores)
+		{
+			iter2.second.hsl.ClampSize(true);
+		}
+	}
 }
 
 bool GameState::AllAreInDangerOrWorse() const
@@ -2390,7 +2418,7 @@ Difficulty GameState::GetClosestShownDifficulty( PlayerNumber pn ) const
 
 	Difficulty iClosest = (Difficulty) 0;
 	int iClosestDist = -1;
-	FOREACH_CONST( Difficulty, v, dc )
+	for (auto dc = v.begin(); dc != v.end(); ++dc)
 	{
 		int iDist = m_PreferredDifficulty[pn] - *dc;
 		if( iDist < 0 )
@@ -2446,6 +2474,7 @@ bool GameState::IsCourseDifficultyShown( CourseDifficulty cd )
 
 Difficulty GameState::GetEasiestStepsDifficulty() const
 {
+	using std::min;
 	Difficulty dc = Difficulty_Invalid;
 	FOREACH_HumanPlayer( p )
 	{
@@ -2469,7 +2498,7 @@ Difficulty GameState::GetHardestStepsDifficulty() const
 			LuaHelpers::ReportScriptErrorFmt( "GetHardestStepsDifficulty called but p%i hasn't chosen notes", p+1 );
 			continue;
 		}
-		dc = max( dc, m_pCurSteps[p]->GetDifficulty() );
+		dc = std::max( dc, m_pCurSteps[p]->GetDifficulty() );
 	}
 	return dc;
 }
@@ -3060,9 +3089,9 @@ public:
 		{
 			vector<const Style*> vpStyles;
 			GAMEMAN->GetCompatibleStyles( p->m_pCurGame, 2, vpStyles );
-			FOREACH_CONST( const Style*, vpStyles, s )
+			for (auto const *s: vpStyles)
 			{
-				if( (*s)->m_StepsType == style->m_StepsType )
+				if( s->m_StepsType == style->m_StepsType )
 				{
 					return true;
 				}

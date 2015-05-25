@@ -8,7 +8,6 @@
 #include "LuaManager.h"
 #include "ProductInfo.h"
 #include "DateTime.h"
-#include "Foreach.h"
 #include "arch/Dialog/Dialog.h"
 #include "RageFileManager.h"
 #include "SpecialFiles.h"
@@ -25,6 +24,9 @@
 #include <conio.h>
 #endif
 
+using std::string;
+using std::vector;
+
 /** @brief The directory where languages should be installed. */
 const RString INSTALLER_LANGUAGES_DIR = "Themes/_Installer/Languages/";
 
@@ -38,17 +40,17 @@ static void Nsis()
 
 	vector<RString> vs;
 	GetDirListing(INSTALLER_LANGUAGES_DIR + "*.ini", vs, false, false);
-	FOREACH_CONST(RString, vs, s)
+	for (auto const &s: vs)
 	{
 		RString sThrowAway, sLangCode;
-		splitpath(*s, sThrowAway, sLangCode, sThrowAway);
+		splitpath(s, sThrowAway, sLangCode, sThrowAway);
 		const LanguageInfo *pLI = GetLanguageInfo(sLangCode);
 
 		RString sLangNameUpper = pLI->szEnglishName;
 		sLangNameUpper.MakeUpper();
 
 		IniFile ini;
-		if(!ini.ReadFile(INSTALLER_LANGUAGES_DIR + *s))
+		if(!ini.ReadFile(INSTALLER_LANGUAGES_DIR + s))
 			RageException::Throw("Error opening file for read.");
 		FOREACH_CONST_Child(&ini, child)
 		{
@@ -133,7 +135,7 @@ void CommandLineActions::Handle(LoadingWindow* pLW)
 /*
  * (c) 2006 Chris Danford, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -143,7 +145,7 @@ void CommandLineActions::Handle(LoadingWindow* pLW)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

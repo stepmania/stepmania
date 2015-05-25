@@ -1,6 +1,7 @@
 #include "global.h"
 #include "Game.h"
 #include "RageLog.h"
+#include <array>
 
 TapNoteScore Game::MapTapNoteScore( TapNoteScore tns ) const
 {
@@ -15,24 +16,25 @@ TapNoteScore Game::MapTapNoteScore( TapNoteScore tns ) const
 	}
 }
 
-static const Game::PerButtonInfo g_CommonButtonInfo[] =
+static std::array<Game::PerButtonInfo, 11> const g_CommonButtonInfo =
 {
-	{ GameButtonType_INVALID }, // GAME_BUTTON_MENULEFT
-	{ GameButtonType_INVALID }, // GAME_BUTTON_MENURIGHT
-	{ GameButtonType_INVALID }, // GAME_BUTTON_MENUUP
-	{ GameButtonType_INVALID }, // GAME_BUTTON_MENUDOWN
-	{ GameButtonType_INVALID }, // GAME_BUTTON_START
-	{ GameButtonType_INVALID }, // GAME_BUTTON_SELECT
-	{ GameButtonType_INVALID }, // GAME_BUTTON_BACK
-	{ GameButtonType_INVALID }, // GAME_BUTTON_COIN
-	{ GameButtonType_INVALID }, // GAME_BUTTON_OPERATOR
-	{ GameButtonType_INVALID }, // GAME_BUTTON_EFFECT_UP
-	{ GameButtonType_INVALID }, // GAME_BUTTON_EFFECT_DOWN
+	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_MENULEFT
+	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_MENURIGHT
+	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_MENUUP
+	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_MENUDOWN
+	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_START
+	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_SELECT
+	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_BACK
+	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_COIN
+	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_OPERATOR
+	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_EFFECT_UP
+	Game::PerButtonInfo{ GameButtonType_INVALID } // GAME_BUTTON_EFFECT_DOWN
 };
 
 const Game::PerButtonInfo *Game::GetPerButtonInfo( GameButton gb ) const
 {
-	COMPILE_ASSERT( GAME_BUTTON_NEXT == ARRAYLEN(g_CommonButtonInfo) );
+	// TODO: Replace the need for this compile assert.
+	COMPILE_ASSERT( GAME_BUTTON_NEXT == 11 );
 	if( gb < GAME_BUTTON_NEXT )
 		return &g_CommonButtonInfo[gb];
 	else
@@ -44,7 +46,7 @@ TapNoteScore Game::GetMapJudgmentTo( TapNoteScore tns ) const
 	switch(tns)
 	{
 		case TNS_W1: return m_mapW1To;
-		case TNS_W2: return m_mapW2To; 
+		case TNS_W2: return m_mapW2To;
 		case TNS_W3: return m_mapW3To;
 		case TNS_W4: return m_mapW4To;
 		case TNS_W5: return m_mapW5To;
@@ -55,7 +57,7 @@ TapNoteScore Game::GetMapJudgmentTo( TapNoteScore tns ) const
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the Game. */ 
+/** @brief Allow Lua to have access to the Game. */
 class LunaGame: public Luna<Game>
 {
 public:
@@ -79,7 +81,7 @@ LUA_REGISTER_CLASS( Game )
 /*
  * (c) 2001-2002 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -89,7 +91,7 @@ LUA_REGISTER_CLASS( Game )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

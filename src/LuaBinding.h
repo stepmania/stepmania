@@ -12,7 +12,7 @@ public:
 	LuaBinding();
 	virtual ~LuaBinding();
 	void Register( lua_State *L );
-	
+
 	static void RegisterTypes( lua_State *L );
 
 	bool IsDerivedClass() const { return GetClassName() != GetBaseClassName(); }
@@ -42,7 +42,7 @@ protected:
 
 	struct RegType
 	{
-		const char *szName; 
+		const char *szName;
 		binding_t *mfunc;
 	};
 
@@ -80,14 +80,14 @@ public:
 
 		return get( L, narg );
 	}
-	
+
 	static T *get( lua_State *L, int narg )
 	{
 		return (T *) GetPointerFromStack( L, m_sClassName, narg );
 	}
-	
+
 	/* Push a table or userdata for the given object.  This is called on the
-	 * base class, so we pick up the instance of the base class, if any. */ 
+	 * base class, so we pick up the instance of the base class, if any. */
 	static void PushObject( Lua *L, const RString &sDerivedClassName, T* p );
 
 protected:
@@ -109,7 +109,7 @@ private:
 		return pFunc( obj, L );  // call member function
 	}
 
-	vector<RegType> m_aMethods;
+	std::vector<RegType> m_aMethods;
 
 	static int tostring_T( lua_State *L )
 	{
@@ -184,7 +184,7 @@ float FArgGTEZero(lua_State* L, int index);
 /*
  * (c) 2001-2005 Peter Shook, Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -194,7 +194,7 @@ float FArgGTEZero(lua_State* L, int index);
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

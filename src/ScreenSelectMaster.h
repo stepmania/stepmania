@@ -80,7 +80,7 @@ protected:
 	ThemeMetric<int>	SCROLLER_SUBDIVISIONS;
 	ThemeMetric<RString>	DEFAULT_CHOICE;
 
-	map<int,int> m_mapCurrentChoiceToNextChoice[NUM_MenuDir];
+	std::map<int,int> m_mapCurrentChoiceToNextChoice[NUM_MenuDir];
 
 	virtual int GetSelectionIndex( PlayerNumber pn );
 	virtual void UpdateSelectableChoices();
@@ -98,10 +98,10 @@ protected:
 	AutoActor	m_sprExplanation[NUM_Page];
 	AutoActor	m_sprMore[NUM_Page];
 	// icon is the shared, per-choice piece
-	vector<AutoActor> m_vsprIcon;
+	std::vector<AutoActor> m_vsprIcon;
 
 	// preview is per-player, per-choice piece
-	vector<AutoActor> m_vsprScroll[NUM_PLAYERS];
+	std::vector<AutoActor> m_vsprScroll[NUM_PLAYERS];
 
 	ActorScroller	m_Scroller[NUM_PLAYERS];
 
@@ -126,7 +126,7 @@ protected:
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -136,7 +136,7 @@ protected:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -2,8 +2,9 @@
 #include "MemoryCardDriver.h"
 #include "RageFileManager.h"
 #include "RageLog.h"
-#include "Foreach.h"
 #include "ProfileManager.h"
+
+using std::vector;
 
 static const RString TEMP_MOUNT_POINT = "/@mctemptimeout/";
 
@@ -51,9 +52,9 @@ bool MemoryCardDriver::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStor
 	GetUSBStorageDevices( vStorageDevicesOut );
 
 	// log connects
-	FOREACH( UsbStorageDevice, vStorageDevicesOut, newd )
+	for (auto newd = vStorageDevicesOut.begin(); newd != vStorageDevicesOut.end(); ++newd)
 	{
-		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), *newd );
+		auto iter = find( vOld.begin(), vOld.end(), *newd );
 		if( iter == vOld.end() )    // didn't find
 			LOG->Trace( "New device connected: %s", newd->sDevice.c_str() );
 	}
@@ -104,7 +105,7 @@ bool MemoryCardDriver::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStor
 				 * profile name (by mounting a temporary, private mountpoint),
 				 * and then unmount it until Mount() is called. */
 				d.m_State = UsbStorageDevice::STATE_READY;
-			
+
 				FILEMAN->Mount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
 				d.bIsNameAvailable = PROFILEMAN->FastLoadProfileNameFromMemoryCard( TEMP_MOUNT_POINT, d.sName );
 				FILEMAN->Unmount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
@@ -132,14 +133,14 @@ MemoryCardDriver *MemoryCardDriver::Create()
 
 	if( !ret )
 		ret = new MemoryCardDriver_Null;
-	
+
 	return ret;
 }
 
 /*
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -149,7 +150,7 @@ MemoryCardDriver *MemoryCardDriver::Create()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -77,7 +77,7 @@ MovieTexture_Generic::~MovieTexture_Generic()
 
 	/* m_pSprite may reference the texture; delete it before DestroyTexture. */
 	delete m_pSprite;
-	
+
 	DestroyTexture();
 
 	delete m_pDecoder;
@@ -108,7 +108,7 @@ void MovieTexture_Generic::DestroyTexture()
 class RageMovieTexture_Generic_Intermediate : public RageTexture
 {
 public:
-	RageMovieTexture_Generic_Intermediate( RageTextureID ID, int iWidth, int iHeight, 
+	RageMovieTexture_Generic_Intermediate( RageTextureID ID, int iWidth, int iHeight,
 		int iImageWidth, int iImageHeight, int iTextureWidth, int iTextureHeight,
 		RageSurfaceFormat SurfaceFormat, RagePixelFormat pixfmt ):
 		RageTexture(ID),
@@ -117,13 +117,13 @@ public:
 		m_PixFmt = pixfmt;
 		m_iSourceWidth = iWidth;
 		m_iSourceHeight = iHeight;
-/*		int iMaxSize = min( GetID().iMaxSize, DISPLAY->GetMaxTextureSize() );
-		m_iImageWidth = min( m_iSourceWidth, iMaxSize );
-		m_iImageHeight = min( m_iSourceHeight, iMaxSize );
+/*		int iMaxSize = std::min( GetID().iMaxSize, DISPLAY->GetMaxTextureSize() );
+		m_iImageWidth = std::min( m_iSourceWidth, iMaxSize );
+		m_iImageHeight = std::min( m_iSourceHeight, iMaxSize );
 		m_iTextureWidth = power_of_two( m_iImageWidth );
 		m_iTextureHeight = power_of_two( m_iImageHeight );
 */
-		
+
 		m_iImageWidth = iImageWidth;
 		m_iImageHeight = iImageHeight;
 		m_iTextureWidth = iTextureWidth;
@@ -383,7 +383,7 @@ float MovieTexture_Generic::CheckFrameTime()
 	}
 
 	/*
-	 * We're behind by -Offset seconds.  
+	 * We're behind by -Offset seconds.
 	 *
 	 * If we're just slightly behind, don't worry about it; we'll simply
 	 * not sleep, so we'll move as fast as we can to catch up.
@@ -493,7 +493,7 @@ void MovieTexture_Generic::UpdateFrame()
 	}
 }
 
-static EffectMode EffectModes[] = 
+static EffectMode EffectModes[] =
 {
 	EffectMode_YUYV422,
 };
@@ -535,7 +535,7 @@ unsigned MovieTexture_Generic::GetTexHandle() const
 /*
  * (c) 2003-2005 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -545,7 +545,7 @@ unsigned MovieTexture_Generic::GetTexHandle() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

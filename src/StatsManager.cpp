@@ -1,8 +1,10 @@
 #include "global.h"
 #include "StatsManager.h"
+
+#include <memory>
+
 #include "RageFileManager.h"
 #include "GameState.h"
-#include "Foreach.h"
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "PrefsManager.h"
@@ -13,6 +15,8 @@
 #include "XmlFile.h"
 #include "CryptManager.h"
 #include "XmlFileUtil.h"
+
+using std::vector;
 
 StatsManager*	STATSMAN = NULL;	// global object accessible from anywhere in the program
 
@@ -42,7 +46,7 @@ void StatsManager::Reset()
 	m_CurStageStats.Init();
 	m_vPlayedStageStats.clear();
 	m_AccumPlayedStageStats.Init();
-	
+
 	CalcAccumPlayedStageStats();
 }
 
@@ -55,8 +59,10 @@ static StageStats AccumPlayedStageStats( const vector<StageStats>& vss )
 		ssreturn.m_playMode = vss[0].m_playMode;
 	}
 
-	FOREACH_CONST( StageStats, vss, ss )
-		ssreturn.AddStats( *ss );
+	for (auto &ss: vss)
+	{
+		ssreturn.AddStats( ss );
+	}
 
 	unsigned uNumSongs = ssreturn.m_vpPlayedSongs.size();
 
@@ -65,7 +71,7 @@ static StageStats AccumPlayedStageStats( const vector<StageStats>& vss )
 
 	/* Scale radar percentages back down to roughly 0..1.  Don't scale RadarCategory_TapsAndHolds
 	 * and the rest, which are counters. */
-	// FIXME: Weight each song by the number of stages it took to account for 
+	// FIXME: Weight each song by the number of stages it took to account for
 	// long, marathon.
 	FOREACH_EnabledPlayer( p )
 	{
@@ -124,7 +130,7 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 		int iMeter = clamp( pSteps->GetMeter(), 0, MAX_METER );
 		pProfile->m_iNumSongsPlayedByMeter[iMeter] ++;
 	}
-	
+
 	pProfile->m_iTotalDancePoints += ss.m_player[pn].m_iActualDancePoints;
 
 	if( ss.m_Stage == Stage_Extra1 || ss.m_Stage == Stage_Extra2 )
@@ -238,7 +244,7 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 
 	// Save recent scores
 	{
-		auto_ptr<XNode> xml( new XNode("Stats") );
+		std::unique_ptr<XNode> xml( new XNode("Stats") );
 		xml->AppendChild( "MachineGuid",  PROFILEMAN->GetMachineProfile()->m_sGuid );
 
 		XNode *recent = NULL;
@@ -272,9 +278,9 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 		const RString UPLOAD_DIR = "/Save/Upload/";
 		RString sFileNameNoExtension = Profile::MakeUniqueFileNameNoExtension(UPLOAD_DIR, sDate + " " );
 		RString fn = UPLOAD_DIR + sFileNameNoExtension + ".xml";
-		
+
 		bool bSaved = XmlFileUtil::SaveToFile( xml.get(), fn, "", false );
-		
+
 		if( bSaved )
 		{
 			RString sStatsXmlSigFile = fn + SIGNATURE_APPEND;
@@ -290,8 +296,10 @@ void StatsManager::UnjoinPlayer( PlayerNumber pn )
 	/* A player has been unjoined.  Clear his data from m_vPlayedStageStats, and
 	 * purge any m_vPlayedStageStats that no longer have any player data because
 	 * all of the players that were playing at the time have been unjoined. */
-	FOREACH( StageStats, m_vPlayedStageStats, ss )
-		ss->m_player[pn] = PlayerStageStats();
+	for (auto &ss: m_vPlayedStageStats)
+	{
+		ss.m_player[pn] = PlayerStageStats();
+	}
 
 	for( int i = 0; i < (int) m_vPlayedStageStats.size(); ++i )
 	{
@@ -311,7 +319,7 @@ void StatsManager::UnjoinPlayer( PlayerNumber pn )
 	}
 }
 
-void StatsManager::GetStepsInUse( set<Steps*> &apInUseOut ) const
+void StatsManager::GetStepsInUse( std::set<Steps*> &apInUseOut ) const
 {
 	for( int i = 0; i < (int) m_vPlayedStageStats.size(); ++i )
 	{
@@ -332,7 +340,7 @@ void StatsManager::GetStepsInUse( set<Steps*> &apInUseOut ) const
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the StatsManager. */ 
+/** @brief Allow Lua to have access to the StatsManager. */
 class LunaStatsManager: public Luna<StatsManager>
 {
 public:
@@ -376,7 +384,7 @@ public:
 	{
 		Grade g = NUM_Grade;
 		FOREACH_EnabledPlayer( pn )
-			g = min( g, STATSMAN->m_CurStageStats.m_player[pn].GetGrade() );
+			g = std::min( g, STATSMAN->m_CurStageStats.m_player[pn].GetGrade() );
 		lua_pushnumber( L, g );
 		return 1;
 	}
@@ -385,7 +393,9 @@ public:
 	{
 		Grade g = Grade_Tier01;
 		FOREACH_EnabledPlayer( pn )
-			g = max( g, STATSMAN->m_CurStageStats.m_player[pn].GetGrade() );
+		{
+			g = std::max( g, STATSMAN->m_CurStageStats.m_player[pn].GetGrade() );
+		}
 		lua_pushnumber( L, g );
 		return 1;
 	}
@@ -399,9 +409,9 @@ public:
 		{
 			// If this player failed any stage, then their final grade is an F.
 			bool bPlayerFailedOneStage = false;
-			FOREACH_CONST( StageStats, STATSMAN->m_vPlayedStageStats, ss )
+			for (auto &ss: STATSMAN->m_vPlayedStageStats)
 			{
-				if( ss->m_player[p].m_bFailed )
+				if( ss.m_player[p].m_bFailed )
 				{
 					bPlayerFailedOneStage = true;
 					break;
@@ -411,7 +421,7 @@ public:
 			if( bPlayerFailedOneStage )
 				continue;
 
-			top_grade = min( top_grade, stats.m_player[p].GetGrade() );
+			top_grade = std::min( top_grade, stats.m_player[p].GetGrade() );
 		}
 
 		Enum::Push( L, top_grade );
@@ -440,7 +450,7 @@ LUA_REGISTER_CLASS( StatsManager )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -450,7 +460,7 @@ LUA_REGISTER_CLASS( StatsManager )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

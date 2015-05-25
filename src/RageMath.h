@@ -18,7 +18,7 @@ void RageVec3AddToBounds( const RageVector3 &p, RageVector3 &mins, RageVector3 &
 
 void RageVec2Normalize( RageVector2* pOut, const RageVector2* pV );
 void RageVec3Normalize( RageVector3* pOut, const RageVector3* pV );
-void VectorFloatNormalize(vector<float>& v);
+void VectorFloatNormalize(std::vector<float>& v);
 void RageVec3Cross(RageVector3* ret, RageVector3 const* a, RageVector3 const* b);
 void RageVec3TransformCoord( RageVector3* pOut, const RageVector3* pV, const RageMatrix* pM );
 void RageVec3TransformNormal( RageVector3* pOut, const RageVector3* pV, const RageMatrix* pM );

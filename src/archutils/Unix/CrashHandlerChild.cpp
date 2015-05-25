@@ -24,6 +24,8 @@
 
 #include "ver.h"
 
+using std::vector;
+
 bool child_read( int fd, void *p, int size );
 
 const char *g_pCrashHandlerArgv0 = NULL;

@@ -8,6 +8,8 @@
 
 #pragma comment (lib,"winmm.lib")
 
+using std::vector;
+
 REGISTER_INPUT_HANDLER_CLASS2( MIDI, Win32_MIDI );
 
 static HMIDIIN g_device;

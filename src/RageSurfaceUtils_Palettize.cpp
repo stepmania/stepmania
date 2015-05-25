@@ -101,6 +101,7 @@ struct pixerror_t
 
 void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither )
 {
+	using std::min;
 	ASSERT( iColors != 0 );
 
 	acolorhist_item *acolormap=NULL;
@@ -293,7 +294,7 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 
 		if( bDither )
 		{
-			swap( thiserr, nexterr );
+			std::swap( thiserr, nexterr );
 			fs_direction = !fs_direction;
 		}
 	}
@@ -326,6 +327,8 @@ static bool CompareBySumDescending( const box &b1, const box &b2 )
 
 static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, int maxval, int newcolors )
 {
+	using std::min;
+	using std::max;
 	acolorhist_item *acolormap;
 	box_vector bv;
 	int boxes;
@@ -396,10 +399,10 @@ static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, i
 
 			switch( iMax )
 			{
-			case 0: sort( &achv[indx], &achv[indx+clrs], compare_index_0 ); break;
-			case 1: sort( &achv[indx], &achv[indx+clrs], compare_index_1 ); break;
-			case 2: sort( &achv[indx], &achv[indx+clrs], compare_index_2 ); break;
-			case 3: sort( &achv[indx], &achv[indx+clrs], compare_index_3 ); break;
+				case 0: std::sort( &achv[indx], &achv[indx+clrs], compare_index_0 ); break;
+				case 1: std::sort( &achv[indx], &achv[indx+clrs], compare_index_1 ); break;
+				case 2: std::sort( &achv[indx], &achv[indx+clrs], compare_index_2 ); break;
+				case 3: std::sort( &achv[indx], &achv[indx+clrs], compare_index_3 ); break;
 			}
 		}
 		/* Now find the median based on the counts, so that about half the
@@ -421,7 +424,7 @@ static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, i
 		bv[boxes].colors = clrs - j;
 		bv[boxes].sum = sm - lowersum;
 		++boxes;
-		sort( &bv[0], &bv[boxes], CompareBySumDescending );
+		std::sort( &bv[0], &bv[boxes], CompareBySumDescending );
 	}
 
 	/* Ok, we've got enough boxes. Now choose a representative color for

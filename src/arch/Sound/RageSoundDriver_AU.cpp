@@ -58,10 +58,15 @@ static void SetSampleRate( AudioUnit au, Float64 desiredRate )
 		return;
 	}
 	
+	AudioObjectPropertyAddress RateAddr = {
+		kAudioDevicePropertyNominalSampleRate,
+		kAudioDevicePropertyScopeOutput,
+		kAudioObjectPropertyElementWildcard
+	};
+	
 	Float64 rate = 0.0;
 	size = sizeof( Float64 );
-	if( (error = AudioDeviceGetProperty(OutputDevice, 0, false, kAudioDevicePropertyNominalSampleRate,
-					    &size, &rate)) )
+	if( (error = AudioObjectGetPropertyData(OutputDevice, &RateAddr, 0, NULL, &size, &rate)) )
 	{
 		LOG->Warn( WERROR("Couldn't get the device's sample rate", error) );
 		return;
@@ -69,8 +74,13 @@ static void SetSampleRate( AudioUnit au, Float64 desiredRate )
 	if( rate == desiredRate )
 		return;
 	
-	if( (error = AudioDeviceGetPropertyInfo(OutputDevice, 0, false, kAudioDevicePropertyAvailableNominalSampleRates,
-						&size, NULL)) )
+	AudioObjectPropertyAddress AvailableRatesAddr = {
+		kAudioDevicePropertyAvailableNominalSampleRates,
+		kAudioDevicePropertyScopeOutput,
+		kAudioObjectPropertyElementWildcard
+	};
+	
+	if( (error = AudioObjectGetPropertyData(OutputDevice, &AvailableRatesAddr, 0, NULL, &size, NULL)) )
 	{
 		LOG->Warn( WERROR("Couldn't get available nominal sample rates info", error) );
 		return;
@@ -79,8 +89,7 @@ static void SetSampleRate( AudioUnit au, Float64 desiredRate )
 	const int num = size/sizeof(AudioValueRange);
 	AudioValueRange *ranges = new AudioValueRange[num];
 	
-	if( (error = AudioDeviceGetProperty(OutputDevice, 0, false, kAudioDevicePropertyAvailableNominalSampleRates,
-					    &size, ranges)) )
+	if( (error = AudioObjectGetPropertyData(OutputDevice, &AvailableRatesAddr, 0, NULL, &size, ranges)) )
 	{
 		LOG->Warn( WERROR("Couldn't get available nominal sample rates", error) );
 		delete[] ranges;
@@ -103,9 +112,8 @@ static void SetSampleRate( AudioUnit au, Float64 desiredRate )
 	delete[] ranges;
 	if( bestRate == 0.0 )
 		return;
-		
-	if( (error = AudioDeviceSetProperty(OutputDevice, NULL, 0, false, kAudioDevicePropertyNominalSampleRate,
-					    sizeof(Float64), &bestRate)) )
+
+	if( (error = AudioObjectSetPropertyData(OutputDevice, &RateAddr, 0, NULL, sizeof(Float64), &bestRate)) )
 	{
 		LOG->Warn( WERROR("Couldn't set the device's sample rate", error) );
 	}
@@ -240,15 +248,27 @@ float RageSoundDriver_AU::GetPlayLatency() const
 		return 0.0f;
 	}
 	
+	AudioObjectPropertyAddress RateAddr = {
+		kAudioDevicePropertyNominalSampleRate,
+		kAudioDevicePropertyScopeOutput,
+		kAudioObjectPropertyElementWildcard
+	};
+	
 	size = sizeof( Float64 );
-	if( (error = AudioDeviceGetProperty(OutputDevice, 0, false, kAudioDevicePropertyNominalSampleRate, &size, &sampleRate)) )
+	if( (error = AudioObjectGetPropertyData(OutputDevice, &RateAddr, 0, NULL, &size, &sampleRate)) )
 	{
 		LOG->Warn( WERROR("Couldn't get the device sample rate", error) );
 		return 0.0f;
 	}	
 
+	AudioObjectPropertyAddress BufferAddr = {
+		kAudioDevicePropertyBufferFrameSize,
+		kAudioDevicePropertyScopeOutput,
+		kAudioObjectPropertyElementWildcard
+	};
+	
 	size = sizeof( UInt32 );
-	if( (error = AudioDeviceGetProperty(OutputDevice, 0, false, kAudioDevicePropertyBufferFrameSize, &size, &bufferSize)) )
+	if( (error = AudioObjectGetPropertyData(OutputDevice, &BufferAddr, 0, NULL, &size, &bufferSize)) )
 	{
 		LOG->Warn( WERROR("Couldn't determine buffer size", error) );
 		bufferSize = 0;
@@ -256,16 +276,28 @@ float RageSoundDriver_AU::GetPlayLatency() const
 	
 	UInt32 frames;
 	
+	AudioObjectPropertyAddress LatencyAddr = {
+		kAudioDevicePropertyLatency,
+		kAudioDevicePropertyScopeOutput,
+		kAudioObjectPropertyElementWildcard
+	};
+	
 	size = sizeof( UInt32 );
-	if( (error = AudioDeviceGetProperty(OutputDevice, 0, false, kAudioDevicePropertyLatency, &size, &frames)) )
+	if( (error = AudioObjectGetPropertyData(OutputDevice, &LatencyAddr, 0, NULL, &size, &frames)) )
 	{
 		LOG->Warn( WERROR( "Couldn't get device latency", error) );
 		frames = 0;
 	}
+	
+	AudioObjectPropertyAddress SafetyAddr = {
+		kAudioDevicePropertySafetyOffset,
+		kAudioDevicePropertyScopeOutput,
+		kAudioObjectPropertyElementWildcard
+	};
 
 	bufferSize += frames;
 	size = sizeof( UInt32 );
-	if( (error = AudioDeviceGetProperty(OutputDevice, 0, false, kAudioDevicePropertySafetyOffset, &size, &frames)) )
+	if( (error = AudioObjectGetPropertyData(OutputDevice, &SafetyAddr, 0, NULL, &size, &frames)) )
 	{
 		LOG->Warn( WERROR("Couldn't get device safety offset", error) );
 		frames = 0;
@@ -274,7 +306,13 @@ float RageSoundDriver_AU::GetPlayLatency() const
 	size = sizeof( UInt32 );
 
 	do {
-		if( (error = AudioDeviceGetPropertyInfo(OutputDevice, 0, false, kAudioDevicePropertyStreams, &size, NULL)) )
+		AudioObjectPropertyAddress StreamsAddr = {
+			kAudioDevicePropertyStreams,
+			kAudioDevicePropertyScopeOutput,
+			kAudioObjectPropertyElementWildcard
+		};
+		
+		if( (error = AudioObjectGetPropertyData(OutputDevice, &StreamsAddr, 0, NULL, &size, NULL)) )
 		{
 			LOG->Warn( WERROR("Device has no streams", error) );
 			break;
@@ -287,13 +325,20 @@ float RageSoundDriver_AU::GetPlayLatency() const
 		}
 		AudioStreamID *streams = new AudioStreamID[num];
 
-		if( (error = AudioDeviceGetProperty(OutputDevice, 0, false, kAudioDevicePropertyStreams, &size, streams)) )
+		if( (error = AudioObjectGetPropertyData(OutputDevice, &StreamsAddr, 0, NULL, &size, streams)) )
 		{
 			LOG->Warn( WERROR("Cannot get device's streams", error) );
 			delete[] streams;
 			break;
 		}
-		if( (error = AudioStreamGetProperty(streams[0], 0, kAudioDevicePropertyLatency, &size, &frames)) )
+		
+		AudioObjectPropertyAddress LatencyAddr = {
+			kAudioDevicePropertyLatency,
+			kAudioDevicePropertyScopeOutput,
+			kAudioObjectPropertyElementWildcard
+		};
+		
+		if( (error = AudioObjectGetPropertyData(streams[0], &LatencyAddr, 0, NULL, &size, &frames)) )
 		{
 			LOG->Warn( WERROR("Stream does not report latency", error) );
 			frames = 0;

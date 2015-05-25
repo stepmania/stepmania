@@ -1,4 +1,4 @@
-set(TOMDIR "${SM_SRC_DIR}/libtomcrypt")
+set(TOMDIR "${SM_EXTERN_DIR}/libtomcrypt")
 
 list(APPEND TOMCRYPT_MISC_CRYPT
   "${TOMDIR}/src/misc/crypt/crypt.c"

@@ -1,12 +1,10 @@
 #include "global.h"
 #include "MouseDevice.h"
 
-using __gnu_cxx::hash_map;
-
 Mouse::Mouse() : id( InputDevice_Invalid ),
-				x_axis( 0 ), x_min( 0 ), x_max( 0 ),
-				y_axis( 0 ), y_min( 0 ), y_max( 0 ),
-				z_axis( 0 ), z_min( 0 ), z_max( 0 )
+				x_axis( 0 ), y_axis( 0 ), z_axis( 0 ),
+				x_min( 0 ), y_min( 0 ), z_min( 0 ),
+				x_max( 0 ), y_max( 0 ), z_max( 0 )
 {
 }
 
@@ -94,12 +92,15 @@ void MouseDevice::Open()
 #define ADD(x) if( m.x ) AddElementToQueue( m.x )
 	ADD( x_axis );	ADD( y_axis );	ADD( z_axis );
 #undef ADD
-	for( hash_map<IOHIDElementCookie,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
+	for( auto i = m_Mapping.cbegin(); i != m_Mapping.cend(); ++i )
+	{
 		AddElementToQueue( i->first );
+	}
 }
 
 void MouseDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const
 {
+	using std::max;
 	// todo: add mouse axis stuff -aj
 	const Mouse& m = m_Mouse;
 	HRESULT result;
@@ -119,12 +120,12 @@ void MouseDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementC
 	else if( m.z_axis == cookie )
 	{
 		float level = SCALE( value, m.z_min, m.z_max, -1.0f, 1.0f );
-		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELUP, max(-level,0), now) );
-		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELDOWN, max(+level,0), now) );
+		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELUP, max(-level,0.f), now) );
+		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELDOWN, max(+level,0.f), now) );
 	}
 	else
 	{
-		hash_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
+		auto iter = m_Mapping.find( cookie );
 		if( iter != m_Mapping.end() )
 			vPresses.push_back( DeviceInput(DEVICE_MOUSE, iter->second, value, now) );
 	}

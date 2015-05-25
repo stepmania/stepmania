@@ -97,8 +97,8 @@ void LifeMeterBar::Load( const PlayerState *pPlayerState, PlayerStageStats *pPla
 	}
 
 	// Change life difficulty to really easy if merciful beginner on
-	m_bMercifulBeginnerInEffect = 
-		GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR  &&  
+	m_bMercifulBeginnerInEffect =
+		GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR  &&
 		GAMESTATE->IsPlayerEnabled( pPlayerState )  &&
 		GAMESTATE->m_pCurSteps[pn]->GetDifficulty() == Difficulty_Beginner  &&
 		PREFSMAN->m_bMercifulBeginner;
@@ -108,6 +108,7 @@ void LifeMeterBar::Load( const PlayerState *pPlayerState, PlayerStageStats *pPla
 
 void LifeMeterBar::ChangeLife( TapNoteScore score )
 {
+	using std::min;
 	float fDeltaLife=0.f;
 	switch( score )
 	{
@@ -134,7 +135,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	case DrainType_Normal:
 		break;
 	case DrainType_NoRecover:
-		fDeltaLife = min( fDeltaLife, 0 );
+		fDeltaLife = min( fDeltaLife, 0.f );
 		break;
 	case DrainType_SuddenDeath:
 		if( score < MIN_STAY_ALIVE )
@@ -194,6 +195,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 
 void LifeMeterBar::ChangeLife( float fDeltaLife )
 {
+	using std::max;
 	bool bUseMercifulDrain = m_bMercifulBeginnerInEffect || PREFSMAN->m_bMercifulDrain;
 	if( bUseMercifulDrain  &&  fDeltaLife < 0 )
 		fDeltaLife *= SCALE( m_fLifePercentage, 0.f, 1.f, 0.5f, 1.f);
@@ -261,17 +263,17 @@ void LifeMeterBar::AfterLifeChanged()
 }
 
 bool LifeMeterBar::IsHot() const
-{ 
-	return m_fLifePercentage >= HOT_VALUE; 
+{
+	return m_fLifePercentage >= HOT_VALUE;
 }
 
 bool LifeMeterBar::IsInDanger() const
-{ 
-	return m_fLifePercentage < DANGER_THRESHOLD; 
+{
+	return m_fLifePercentage < DANGER_THRESHOLD;
 }
 
 bool LifeMeterBar::IsFailing() const
-{ 
+{
 	return m_fLifePercentage <= m_pPlayerState->m_PlayerOptions.GetCurrent().m_fPassmark;
 }
 
@@ -371,7 +373,7 @@ void LifeMeterBar::UpdateNonstopLifebar()
 	int iLifeDifficulty = int( (1.8f - m_fLifeDifficulty)/0.2f );
 
 	// first eight values don't matter
-	float fDifficultyValues[16] = {0,0,0,0,0,0,0,0, 
+	float fDifficultyValues[16] = {0,0,0,0,0,0,0,0,
 		0.3f, 0.25f, 0.2f, 0.16f, 0.14f, 0.12f, 0.10f, 0.08f};
 
 	if( iLifeDifficulty >= 16 )
@@ -400,7 +402,7 @@ void LifeMeterBar::FillForHowToPlay( int NumW2s, int NumMisses )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -410,7 +412,7 @@ void LifeMeterBar::FillForHowToPlay( int NumW2s, int NumMisses )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

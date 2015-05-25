@@ -30,6 +30,8 @@
 #include "ScoreKeeperNormal.h"
 #include "InputEventPlus.h"
 
+using std::vector;
+
 // metrics that are common to all ScreenEvaluation classes
 #define BANNER_WIDTH			THEME->GetMetricF(m_sName,"BannerWidth")
 #define BANNER_HEIGHT			THEME->GetMetricF(m_sName,"BannerHeight")
@@ -265,13 +267,13 @@ void ScreenEvaluation::Init()
 
 				m_SmallBanner[i].LoadFromSong( pSong );
 				m_SmallBanner[i].ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
-				m_SmallBanner[i].SetName( ssprintf("SmallBanner%d",i+1) );
+				m_SmallBanner[i].SetName( ssprintf("SmallBanner%zu",i+1) );
 				ActorUtil::LoadAllCommands( m_SmallBanner[i], m_sName );
 				SET_XY( m_SmallBanner[i] );
 				this->AddChild( &m_SmallBanner[i] );
 
 				m_sprSmallBannerFrame[i].Load( THEME->GetPathG(m_sName,"BannerFrame") );
-				m_sprSmallBannerFrame[i]->SetName( ssprintf("SmallBanner%d",i+1) );
+				m_sprSmallBannerFrame[i]->SetName( ssprintf("SmallBanner%zu",i+1) );
 				ActorUtil::LoadAllCommands( *m_sprSmallBannerFrame[i], m_sName );
 				SET_XY( m_sprSmallBannerFrame[i] );
 				this->AddChild( m_sprSmallBannerFrame[i] );
@@ -565,7 +567,7 @@ void ScreenEvaluation::Init()
 
 				static const int indices[NUM_DetailLine] =
 				{
-					RadarCategory_TapsAndHolds, RadarCategory_Jumps, RadarCategory_Holds, RadarCategory_Mines, 
+					RadarCategory_TapsAndHolds, RadarCategory_Jumps, RadarCategory_Holds, RadarCategory_Mines,
 					RadarCategory_Hands, RadarCategory_Rolls, RadarCategory_Lifts, RadarCategory_Fakes
 				};
 				const int ind = indices[l];
@@ -627,7 +629,7 @@ void ScreenEvaluation::Init()
 	bool bOneHasFullW2Combo = false;
 	bool bOneHasFullW3Combo = false;
 	bool bOneHasFullW4Combo = false;
-	
+
 	FOREACH_PlayerNumber( p )
 	{
 		if(GAMESTATE->IsPlayerEnabled(p))
@@ -654,8 +656,9 @@ void ScreenEvaluation::Init()
 
 	Grade best_grade = Grade_NoData;
 	FOREACH_PlayerNumber( p )
-		best_grade = min( best_grade, grade[p] ); 
-
+	{
+		best_grade = std::min( best_grade, grade[p] );
+	}
 	if( m_pStageStats->m_EarnedExtraStage != EarnedExtraStage_No )
 	{
 		SOUND->PlayOnce( THEME->GetPathS(m_sName,"try " + EarnedExtraStageToString(m_pStageStats->m_EarnedExtraStage)) );
@@ -787,7 +790,7 @@ void ScreenEvaluation::HandleMenuStart()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ScreenEvaluation. */ 
+/** @brief Allow Lua to have access to the ScreenEvaluation. */
 class LunaScreenEvaluation: public Luna<ScreenEvaluation>
 {
 public:
@@ -805,7 +808,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenEvaluation, ScreenWithMenuElements )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -815,7 +818,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenEvaluation, ScreenWithMenuElements )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -1,6 +1,5 @@
 #include "global.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
 #include "IniFile.h"
 #include "RageFile.h"
 #include "RageFileManager.h"
@@ -14,6 +13,9 @@
 #include <vector>
 #include <map>
 #include <set>
+
+using std::vector;
+using std::string;
 
 #define TWEEN_QUEUE_MAX 50
 
@@ -112,10 +114,10 @@ bool verify_arg_count(RString cmd, vector<RString>& args, size_t req)
 
 typedef void (*arg_converter_t)(vector<RString>& args);
 
-map<RString, arg_converter_t> arg_converters;
-map<RString, size_t> tween_counters;
-set<RString> fields_that_are_strings;
-map<RString, RString> chunks_to_replace;
+std::map<RString, arg_converter_t> arg_converters;
+std::map<RString, size_t> tween_counters;
+std::set<RString> fields_that_are_strings;
+std::map<RString, RString> chunks_to_replace;
 
 #define COMMON_ARG_VERIFY(count) if(!verify_arg_count(args[0], args, count)) return;
 void x_conv(vector<RString>& args)
@@ -247,8 +249,7 @@ void init_parser_helpers()
 
 void convert_lua_chunk(RString& chunk_text)
 {
-	for(map<RString, RString>::iterator chunk= chunks_to_replace.begin();
-			chunk != chunks_to_replace.end(); ++chunk)
+	for(auto chunk = chunks_to_replace.begin(); chunk != chunks_to_replace.end(); ++chunk)
 	{
 		chunk_text.Replace(chunk->first, chunk->second);
 	}
@@ -258,8 +259,8 @@ void convert_lua_chunk(RString& chunk_text)
 // So condition_set_t::iterator->first is the lua to execute for the
 // condition, and condition_set_t::iterator->second is the name of the
 // condition.
-typedef map<RString, RString> condition_set_t;
-typedef map<RString, RString> field_cont_t;
+typedef std::map<RString, RString> condition_set_t;
+typedef std::map<RString, RString> field_cont_t;
 struct frame_t
 {
 	int frame;
@@ -332,12 +333,12 @@ void actor_template_t::store_cmd(RString const& cmd_name, RString const& full_cm
 				}
 				*arg= arg->substr(first_nonspace, last_nonspace - first_nonspace);
 			}
-			map<RString, arg_converter_t>::iterator conv= arg_converters.find(args[0]);
+			auto conv = arg_converters.find(args[0]);
 			if(conv != arg_converters.end())
 			{
 				conv->second(args);
 			}
-			map<RString, size_t>::iterator counter= tween_counters.find(args[0]);
+			auto counter= tween_counters.find(args[0]);
 			if(counter != tween_counters.end())
 			{
 				queue_size+= counter->second;
@@ -362,7 +363,7 @@ void actor_template_t::store_cmd(RString const& cmd_name, RString const& full_cm
 			split(*cmd, ",", args, true);
 			if(!args.empty())
 			{
-				map<RString, size_t>::iterator counter= tween_counters.find(args[0]);
+				auto counter= tween_counters.find(args[0]);
 				if(counter != tween_counters.end())
 				{
 					states_in_curr+= counter->second;
@@ -405,7 +406,7 @@ void actor_template_t::store_field(RString const& field_name, RString const& val
 	{
 		fields[field_name]= pref + value + suf;
 	}
-	
+
 }
 void actor_template_t::store_field(RString const& field_name, XNodeValue const* value, bool cmd_convert, RString const& pref, RString const& suf)
 {
@@ -596,6 +597,8 @@ void actor_template_t::load_node(XNode const& node, RString const& dirname, cond
 							store_field("Bones", this_relative, false);
 							handled_level= 2;
 							break;
+						default:
+							break;
 					}
 					if(!handled_level)
 					{
@@ -694,7 +697,7 @@ void actor_template_t::output_to_file(RageFile* file, RString const& indent)
 	for(field_cont_t::iterator field= fields.begin();
 		field != fields.end(); ++field)
 	{
-		set<RString>::iterator is_string= fields_that_are_strings.find(field->first);
+		std::set<RString>::iterator is_string= fields_that_are_strings.find(field->first);
 		if(is_string != fields_that_are_strings.end())
 		{
 			file->Write(subindent + field->first + "= \"" + field->second + "\",\n");
@@ -776,7 +779,7 @@ LUAFUNC_REGISTER_COMMON(convert_xml_bgs);
 /*
  * (c) 2014 Eric Reese
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -786,7 +789,7 @@ LUAFUNC_REGISTER_COMMON(convert_xml_bgs);
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

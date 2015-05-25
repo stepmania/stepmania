@@ -178,8 +178,8 @@ int RageSoundReader_SpeedChange::Step()
 	{
 		ChannelInfo &c = m_Channels[i];
 		ASSERT( c.m_iCorrelatedPos <= m_iDataBufferAvailFrames );
-		iToDelete = min( iToDelete, c.m_iCorrelatedPos );
-		//iToDelete = min( iToDelete, m_iDataBufferAvailFrames );
+		iToDelete = std::min( iToDelete, c.m_iCorrelatedPos );
+		//iToDelete = std::min( iToDelete, m_iDataBufferAvailFrames );
 	}
 	EraseData( iToDelete );
 
@@ -187,7 +187,7 @@ int RageSoundReader_SpeedChange::Step()
 	{
 		int iMaxPositionNeeded = m_iUncorrelatedPos + GetToleranceFrames() + GetWindowSizeFrames();
 		for( size_t i = 0; i < m_Channels.size(); ++i )
-			iMaxPositionNeeded = max( iMaxPositionNeeded, m_Channels[i].m_iCorrelatedPos + GetWindowSizeFrames() );
+			iMaxPositionNeeded = std::max( iMaxPositionNeeded, m_Channels[i].m_iCorrelatedPos + GetWindowSizeFrames() );
 
 		int iGot = FillData( iMaxPositionNeeded );
 		if( iGot < 0 )
@@ -223,6 +223,7 @@ int RageSoundReader_SpeedChange::Step()
 
 int RageSoundReader_SpeedChange::GetCursorAvail() const
 {
+	using std::min;
 	int iCursorAvail = GetWindowSizeFrames() - m_iPos;
 	for( size_t i = 0; i < m_Channels.size(); ++i )
 	{
@@ -235,6 +236,7 @@ int RageSoundReader_SpeedChange::GetCursorAvail() const
 
 int RageSoundReader_SpeedChange::Read( float *pBuf, int iFrames )
 {
+	using std::min;
 	while( 1 )
 	{
 		if( m_iDataBufferAvailFrames == 0 && m_fTrailingSpeedRatio == m_fSpeedRatio && m_fSpeedRatio == 1.0f )

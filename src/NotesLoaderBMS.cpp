@@ -18,6 +18,8 @@
 #include "ActorUtil.h"
 #include "RageFileManager.h"
 
+using std::vector;
+
 /* BMS encoding:	tap-hold
  * 4&8panel:	Player1		Player2
  * Left			11-51		21-61
@@ -93,6 +95,7 @@ static void SearchForDifficulty( RString sTag, Steps *pOut )
 
 static void SlideDuplicateDifficulties( Song &p )
 {
+	using std::min;
 	/* BMS files have to guess the Difficulty from the meter; this is inaccurate,
 	* and often leads to duplicates. Slide duplicate difficulties upwards.
 	* We only do this with BMS files, since a very common bug was having *all*
@@ -179,8 +182,8 @@ struct BMSMeasure
 };
 
 const int MaxBMSElements = 1296; // ZZ in b36
-typedef map<RString, RString> BMSHeaders;
-typedef map<int, BMSMeasure> BMSMeasures;
+typedef std::map<RString, RString> BMSHeaders;
+typedef std::map<int, BMSMeasure> BMSMeasures;
 typedef vector<BMSObject> BMSObjects;
 
 class BMSChart
@@ -195,7 +198,7 @@ public:
 	BMSObjects objects;
 	BMSHeaders headers;
 	BMSMeasures measures;
-	map<int, bool> referencedTracks;
+	std::map<int, bool> referencedTracks;
 
 	void TidyUpData();
 };
@@ -244,9 +247,9 @@ struct bmsCommandTree
 
 		~bmsNodeS()
 		{
-			FOREACH(bmsNodeS*, branches, b)
+			for (auto *b: branches)
 			{
-				delete *b;
+				delete b;
 			}
 		}
 	};
@@ -354,13 +357,10 @@ struct bmsCommandTree
 
 	bool triggerBranches(bmsNodeS* node, BMSHeaders &headersOut, vector<RString> &linesOut)
 	{
-		FOREACH(bmsNodeS*, node->branches, b)
-			if (evaluateNode(*b, headersOut, linesOut))
-			{
-				return true;
-			}
-
-		return false;
+		auto doesEvaluate = [this, &headersOut, &linesOut](bmsNodeS *b) {
+			return evaluateNode(b, headersOut, linesOut);
+		};
+		return std::any_of(node->branches.begin(), node->branches.end(), doesEvaluate);
 	}
 
 	bool evaluateNode(bmsNodeS* node, BMSHeaders &headersOut, vector<RString> &linesOut)
@@ -400,7 +400,7 @@ struct bmsCommandTree
 		evaluateNode(&root, headersOut, linesOut);
 	}
 
-	void doStatement(RString statement, map<int, bool> &referencedTracks)
+	void doStatement(RString statement, std::map<int, bool> &referencedTracks)
 	{
 		line++;
 
@@ -592,12 +592,12 @@ void BMSChart::TidyUpData()
 
 class BMSSong {
 
-	map<RString, int> mapKeysoundToIndex;
+	std::map<RString, int> mapKeysoundToIndex;
 	Song *out;
 
 	bool backgroundsPrecached;
 	void PrecacheBackgrounds(const RString &dir);
-	map<RString, RString> mapBackground;
+	std::map<RString, RString> mapBackground;
 
 public:
 	BMSSong( Song *song );
@@ -775,7 +775,7 @@ struct BMSChartInfo {
 	RString overrideMusicFile;
 	RString previewFile;
 
-	map<int, RString> backgroundChanges;
+	std::map<int, RString> backgroundChanges;
 };
 
 class BMSChartReader {
@@ -794,11 +794,11 @@ class BMSChartReader {
 	RString lnobj;
 
 	int nonEmptyTracksCount;
-	map<int, bool> nonEmptyTracks;
+	std::map<int, bool> nonEmptyTracks;
 
 	int GetKeysound( const BMSObject &obj );
 
-	map<RString, int> mapValueToKeysoundIndex;
+	std::map<RString, int> mapValueToKeysoundIndex;
 
 public:
 	BMSChartReader(BMSChart *chart, Steps *steps, BMSSong *song);
@@ -993,7 +993,7 @@ StepsType BMSChartReader::DetermineStepsType()
 
 int BMSChartReader::GetKeysound( const BMSObject &obj )
 {
-	map<RString, int>::iterator it = mapValueToKeysoundIndex.find(obj.value);
+	auto it = mapValueToKeysoundIndex.find(obj.value);
 	if( it == mapValueToKeysoundIndex.end() )
 	{
 		int index = -1;
@@ -1573,16 +1573,11 @@ void BMSSongLoader::AddToSong()
 				break;
 		}
 
-		map<int, RString>::const_iterator it = main.info.backgroundChanges.begin();
-
-		for (; it != main.info.backgroundChanges.end(); it++)
+		for (auto &it: main.info.backgroundChanges)
 		{
-			out->AddBackgroundChange(BACKGROUND_LAYER_1,
-									 BackgroundChange(NoteRowToBeat(it->first),
-													  it->second,
-													  "",
-													  1.f,
-													  it->second.substr(it->second.length()-4)==".lua"?SBE_Centered:SBE_StretchNoLoop));
+			auto sbe = it.second.substr(it.second.length() - 4) == ".lua" ? SBE_Centered : SBE_StretchNoLoop;
+			auto change = BackgroundChange(NoteRowToBeat(it.first), it.second, "", 1.f, sbe);
+			out->AddBackgroundChange(BACKGROUND_LAYER_1, change);
 		}
 
 		out->m_sMusicFile = main.info.musicFile;

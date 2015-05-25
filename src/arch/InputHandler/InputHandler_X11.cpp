@@ -1,5 +1,8 @@
 #include "global.h"
 #include "InputHandler_X11.h"
+
+#include <array>
+
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
@@ -10,13 +13,14 @@
 #include <X11/keysym.h>
 
 using namespace X11Helper;
+using std::vector;
 
 REGISTER_INPUT_HANDLER_CLASS( X11 );
 
 static DeviceButton XSymToDeviceButton( int key )
 {
 #define KEY_INV DeviceButton_Invalid
-	static const DeviceButton ASCIIKeySyms[] =
+	static std::array<DeviceButton, 128> const ASCIIKeySyms =
 	{
 		KEY_INV       , KEY_INV     , KEY_INV      , KEY_INV     , KEY_INV      , /* 0 - 4 */
 		KEY_INV       , KEY_INV     , KEY_INV      , KEY_INV     , KEY_INV      , /* 5 - 9 */
@@ -47,13 +51,15 @@ static DeviceButton XSymToDeviceButton( int key )
 	};
 
 	/* 32...127: */
-	if( key < int(ARRAYLEN(ASCIIKeySyms)))
+	if( key < ASCIIKeySyms.size())
+	{
 		return ASCIIKeySyms[key];
+	}
 
 	/* XK_KP_0 ... XK_KP_9 to KEY_KP_C0 ... KEY_KP_C9 */
 	if( key >= XK_KP_0 && key <= XK_KP_9 )
 		return enum_add2(KEY_KP_C0, key - XK_KP_0);
-	
+
 	switch( key )
 	{
 	/* These are needed because of the way X registers the keypad. */

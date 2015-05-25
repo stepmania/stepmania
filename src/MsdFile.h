@@ -2,7 +2,7 @@
 #define MSDFILE_H
 
 /** @brief The class that reads the various .SSC, .SM, .SMA, .DWI, and .MSD files. */
-class MsdFile  
+class MsdFile
 {
 public:
 	/**
@@ -12,10 +12,10 @@ public:
 	struct value_t
 	{
 		/** @brief The list of parameters. */
-		vector<RString> params;
+		std::vector<RString> params;
 		/** @brief Set up the parameters with default values. */
 		value_t(): params() {}
-		
+
 		/**
 		 * @brief Access the proper parameter.
 		 * @param i the index.
@@ -23,7 +23,7 @@ public:
 		 */
 		RString operator[]( unsigned i ) const { if( i >= params.size() ) return RString(); return params[i]; }
 	};
-	
+
 	MsdFile(): values(), error("") {}
 
 	/** @brief Remove the MSDFile. */
@@ -94,7 +94,7 @@ private:
 	void AddValue();
 
 	/** @brief The list of values. */
-	vector<value_t> values;
+	std::vector<value_t> values;
 	/** @brief The error string. */
 	RString error;
 };
@@ -106,7 +106,7 @@ private:
  * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -116,7 +116,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

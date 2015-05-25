@@ -52,9 +52,9 @@ public:
 	void SetValueFromStack( lua_State *L );
 };
 
-typedef map<RString,XNodeValue*> XAttrs;
+typedef std::map<RString,XNodeValue*> XAttrs;
 class XNode;
-typedef vector<XNode*> XNodes;
+typedef std::vector<XNode*> XNodes;
 /** @brief Loop through each node. */
 #define FOREACH_Attr( pNode, Var ) \
 	for( XAttrs::iterator Var = (pNode)->m_attrs.begin(); \
@@ -84,7 +84,7 @@ class XNode
 {
 private:
 	XNodes	m_childs;	// child nodes
-	multimap<RString, XNode*> m_children_by_name;
+	std::multimap<RString, XNode*> m_children_by_name;
 
 public:
 	RString m_sName;
@@ -98,8 +98,8 @@ public:
 	void GetTextValue( T &out ) const { GetAttrValue(TEXT_ATTRIBUTE, out); }
 
 	// in own attribute list
-	const XNodeValue *GetAttr( const RString &sAttrName ) const; 
-	XNodeValue *GetAttr( const RString &sAttrName ); 
+	const XNodeValue *GetAttr( const RString &sAttrName ) const;
+	XNodeValue *GetAttr( const RString &sAttrName );
 	template <typename T>
 	bool GetAttrValue( const RString &sName, T &out ) const	{ const XNodeValue *pAttr=GetAttr(sName); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
 	bool PushAttrValue( lua_State *L, const RString &sName ) const;

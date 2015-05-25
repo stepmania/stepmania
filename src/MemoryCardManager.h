@@ -42,7 +42,7 @@ public:
 	bool IsNameAvailable( PlayerNumber pn ) const;
 	RString GetName( PlayerNumber pn ) const;
 
-	const vector<UsbStorageDevice> &GetStorageDevices() { return m_vStorageDevices; }
+	const std::vector<UsbStorageDevice> &GetStorageDevices() { return m_vStorageDevices; }
 
 	static Preference1D<RString>	m_sMemoryCardOsMountPoint;
 	static Preference1D<int>	m_iMemoryCardUsbBus;
@@ -58,7 +58,7 @@ protected:
 	void UpdateAssignments();
 	void CheckStateChanges();
 
-	vector<UsbStorageDevice> m_vStorageDevices;	// all currently connected
+	std::vector<UsbStorageDevice> m_vStorageDevices;	// all currently connected
 
 	bool	m_bCardLocked[NUM_PLAYERS];
 	bool	m_bMounted[NUM_PLAYERS];	// card is currently mounted
@@ -82,7 +82,7 @@ extern MemoryCardManager*	MEMCARDMAN;	// global and accessible from anywhere in 
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -92,7 +92,7 @@ extern MemoryCardManager*	MEMCARDMAN;	// global and accessible from anywhere in 
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

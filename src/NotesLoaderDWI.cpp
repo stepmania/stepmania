@@ -14,6 +14,8 @@
 
 #include <map>
 
+using std::vector;
+
 Difficulty DwiCompatibleStringToDifficulty( const RString& sDC );
 
 static std::map<int,int> g_mapDanceNoteToNoteDataColumn;
@@ -71,7 +73,7 @@ static void DWIcharToNote( char c, GameController i, int &note1Out, int &note2Ou
 	case 'K':	note1Out = DANCE_NOTE_PAD1_UP;		note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
 	case 'L':	note1Out = DANCE_NOTE_PAD1_UPRIGHT;	note2Out = DANCE_NOTE_PAD1_RIGHT;	break;
 	case 'M':	note1Out = DANCE_NOTE_PAD1_UPLEFT;	note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
-	default:	
+	default:
 			LOG->UserLog( "Song file", sPath, "has an invalid DWI note character '%c'.", c );
 			note1Out = DANCE_NOTE_NONE;		note2Out = DANCE_NOTE_NONE;		break;
 	}
@@ -122,7 +124,7 @@ static void DWIcharToNoteCol( char c, GameController i, int &col1Out, int &col2O
  * point, <...> was changed to indicate jumps, and `' was used for
  * 1/192nds.  So, we have to do a check to figure out what it really
  * means.  If it contains 0s, it's most likely 192nds; otherwise,
- * it's most likely a jump.  Search for a 0 before the next >: 
+ * it's most likely a jump.  Search for a 0 before the next >:
  * @param sStepData the step data.
  * @param pos the position of the step data.
  * @return true if it's a 192nd note, false otherwise.
@@ -137,7 +139,7 @@ static bool Is192( const RString &sStepData, size_t pos )
 			return true;
 		++pos;
 	}
-	
+
 	return false;
 }
 /** @brief All DWI files use 4 beats per measure. */
@@ -217,10 +219,10 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 			break;
 			DEFAULT_FAIL( out.m_StepsType );
 	}
-	
+
 	NoteData newNoteData;
 	newNoteData.SetNumTracks( g_mapDanceNoteToNoteDataColumn.size() );
-	
+
 	for( int pad=0; pad<2; pad++ )		// foreach pad
 	{
 		RString sStepData;
@@ -236,15 +238,15 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 				break;
 				DEFAULT_FAIL( pad );
 		}
-		
+
 		sStepData.Replace("\n", "");
 		sStepData.Replace("\r", "");
 		sStepData.Replace("\t", "");
 		sStepData.Replace(" ", "");
-		
+
 		double fCurrentBeat = 0;
 		double fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
-		
+
 		for( size_t i=0; i<sStepData.size(); )
 		{
 			char c = sStepData[i++];
@@ -263,7 +265,7 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 				case '`':
 					fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
 					break;
-					
+
 					// ends a series
 				case ')':
 				case ']':
@@ -272,7 +274,7 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 				case '>':
 					fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
 					break;
-					
+
 				default:	// this is a note character
 				{
 					if( c == '!' )
@@ -283,7 +285,7 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 							     "has an unexpected character: '!'." );
 						continue;
 					}
-					
+
 					bool jump = false;
 					if( c == '<' )
 					{
@@ -293,21 +295,21 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 							fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
 							break;
 						}
-						
+
 						/* It's a jump.
 						 * We need to keep reading notes until we hit a >. */
 						jump = true;
 						i++;
 					}
-					
+
 					const int iIndex = BeatToNoteRow( (float)fCurrentBeat );
 					i--;
 					do {
 						c = sStepData[i++];
-						
+
 						if( jump && c == '>' )
 							break;
-						
+
 						int iCol1, iCol2;
 						DWIcharToNoteCol(
 								 c,
@@ -315,7 +317,7 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 								 iCol1,
 								 iCol2,
 								 path );
-						
+
 						if( iCol1 != -1 )
 							newNoteData.SetTapNote(iCol1,
 									       iIndex,
@@ -324,25 +326,25 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 							newNoteData.SetTapNote(iCol2,
 									       iIndex,
 									       TAP_ORIGINAL_TAP);
-						
+
 						if(i>=sStepData.length())
 						{
 							break;
 							//we ran out of data
 							//while looking for the ending > mark
 						}
-						
+
 						if( sStepData[i] == '!' )
 						{
 							i++;
 							const char holdChar = sStepData[i++];
-							
+
 							DWIcharToNoteCol(holdChar,
 									 (GameController)pad,
 									 iCol1,
 									 iCol2,
 									 path );
-							
+
 							if( iCol1 != -1 )
 								newNoteData.SetTapNote(iCol1,
 										       iIndex,
@@ -360,7 +362,7 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 			}
 		}
 	}
-	
+
 	/* Fill in iDuration. */
 	for( int t=0; t<newNoteData.GetNumTracks(); ++t )
 	{
@@ -369,7 +371,7 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 			TapNote tn = newNoteData.GetTapNote( t, iHeadRow  );
 			if( tn.type != TapNoteType_HoldHead )
 				continue;
-			
+
 			int iTailRow = iHeadRow;
 			bool bFound = false;
 			while( !bFound && newNoteData.GetNextTapNoteRowForTrack(t, iTailRow) )
@@ -383,21 +385,21 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 				newNoteData.SetTapNote( t, iHeadRow, tn );
 				bFound = true;
 			}
-			
+
 			if( !bFound )
 			{
 				/* The hold was never closed.  */
 				LOG->UserLog("Song file",
 					     path,
-					     "failed to close a hold note in \"%s\" on track %i", 
+					     "failed to close a hold note in \"%s\" on track %i",
 					     DifficultyToString(out.GetDifficulty()).c_str(),
 					     t);
-				
+
 				newNoteData.SetTapNote( t, iHeadRow, TAP_EMPTY );
 			}
 		}
 	}
-	
+
 	ASSERT( newNoteData.GetNumTracks() > 0 );
 	return newNoteData;
 }
@@ -413,11 +415,11 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
  * @param sPath the path to the file.
  * @return the success or failure of the operation.
  */
-static bool LoadFromDWITokens( 
-	RString sMode, 
+static bool LoadFromDWITokens(
+	RString sMode,
 	RString sDescription,
 	RString sNumFeet,
-	RString sStepData1, 
+	RString sStepData1,
 	RString sStepData2,
 	Steps &out,
 	const RString &sPath )
@@ -492,16 +494,16 @@ bool DWILoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 			     msd.GetError().c_str() );
 		return false;
 	}
-	
+
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &params = msd.GetValue(i);
 		RString valueName = params[0];
-		
-		if(valueName.EqualsNoCase("SINGLE")  || 
+
+		if(valueName.EqualsNoCase("SINGLE")  ||
 		   valueName.EqualsNoCase("DOUBLE")  ||
-		   valueName.EqualsNoCase("COUPLE")  || 
+		   valueName.EqualsNoCase("COUPLE")  ||
 		   valueName.EqualsNoCase("SOLO") )
 		{
 			if (out.m_StepsType != GetTypeFromMode(valueName))
@@ -519,7 +521,7 @@ bool DWILoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 	return false;
 }
 
-bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &BlacklistedImages )
+bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString> &BlacklistedImages )
 {
 	vector<RString> aFileNames;
 	GetApplicableFiles( sPath_, aFileNames );
@@ -576,7 +578,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			out.m_sArtist = sParams[1];
 			ConvertString( out.m_sArtist, "utf-8,english" );
 		}
-		
+
 		else if( sValueName.EqualsNoCase("GENRE") )
 		{
 			out.m_sGenre = sParams[1];
@@ -689,17 +691,17 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			}
 		}
 
-		else if( sValueName.EqualsNoCase("SINGLE")  || 
+		else if( sValueName.EqualsNoCase("SINGLE")  ||
 			 sValueName.EqualsNoCase("DOUBLE")  ||
-			 sValueName.EqualsNoCase("COUPLE")  || 
+			 sValueName.EqualsNoCase("COUPLE")  ||
 			 sValueName.EqualsNoCase("SOLO") )
 		{
 			Steps* pNewNotes = out.CreateSteps();
-			LoadFromDWITokens( 
-				sParams[0], 
-				sParams[1], 
-				sParams[2], 
-				sParams[3], 
+			LoadFromDWITokens(
+				sParams[0],
+				sParams[1],
+				sParams[2],
+				sParams[3],
 				(iNumParams==5) ? sParams[4] : RString(""),
 				*pNewNotes,
 				sPath
@@ -750,7 +752,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -760,7 +762,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

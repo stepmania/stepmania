@@ -34,6 +34,7 @@ RageFileDriverSlice *RageFileDriverSlice::Copy() const
 
 int RageFileDriverSlice::ReadInternal( void *buf, size_t bytes )
 {
+	using std::min;
 	/* Make sure we're reading from the right place.  We might have been constructed
 	 * with a file not pointing to iOffset. */
 	m_pFile->Seek( m_iFilePos+m_iOffset );
@@ -54,6 +55,7 @@ int RageFileDriverSlice::ReadInternal( void *buf, size_t bytes )
 
 int RageFileDriverSlice::SeekInternal( int offset )
 {
+	using std::min;
 	ASSERT( offset >= 0 );
 	offset = min( offset, m_iFileSize );
 

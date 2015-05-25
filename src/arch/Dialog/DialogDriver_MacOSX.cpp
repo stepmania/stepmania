@@ -6,6 +6,8 @@
 #include "InputFilter.h"
 #include <CoreFoundation/CoreFoundation.h>
 
+using std::vector;
+
 REGISTER_DIALOG_DRIVER_CLASS( MacOSX );
 
 static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CFStringRef OK,

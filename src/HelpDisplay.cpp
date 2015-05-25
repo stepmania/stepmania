@@ -5,6 +5,8 @@
 #include "ThemeManager.h"
 #include "ActorUtil.h"
 
+using std::vector;
+
 REGISTER_ACTOR_CLASS( HelpDisplay );
 
 HelpDisplay::HelpDisplay()
@@ -22,7 +24,7 @@ void HelpDisplay::Load( const RString &sType )
 }
 
 void HelpDisplay::SetTips( const vector<RString> &arrayTips, const vector<RString> &arrayTipsAlt )
-{ 
+{
 	ASSERT( arrayTips.size() == arrayTipsAlt.size() );
 
 	if( arrayTips == m_arrayTips && arrayTipsAlt == m_arrayTipsAlt )
@@ -41,6 +43,7 @@ void HelpDisplay::SetTips( const vector<RString> &arrayTips, const vector<RStrin
 
 void HelpDisplay::Update( float fDeltaTime )
 {
+	using std::max;
 	float fHibernate = m_fHibernateSecondsLeft;
 
 	BitmapText::Update( fDeltaTime );
@@ -48,7 +51,7 @@ void HelpDisplay::Update( float fDeltaTime )
 	if( m_arrayTips.empty() )
 		return;
 
-	m_fSecsUntilSwitch -= max( fDeltaTime - fHibernate, 0 );
+	m_fSecsUntilSwitch -= max( fDeltaTime - fHibernate, 0.f );
 	if( m_fSecsUntilSwitch > 0 )
 		return;
 
@@ -63,7 +66,7 @@ void HelpDisplay::Update( float fDeltaTime )
 #include "LuaBinding.h"
 #include "FontCharAliases.h"
 
-/** @brief Allow Lua to have access to the HelpDisplay. */ 
+/** @brief Allow Lua to have access to the HelpDisplay. */
 class LunaHelpDisplay: public Luna<HelpDisplay>
 {
 public:
@@ -127,7 +130,7 @@ LUA_REGISTER_DERIVED_CLASS( HelpDisplay, BitmapText )
 /*
  * (c) 2001-2003 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -137,7 +140,7 @@ LUA_REGISTER_DERIVED_CLASS( HelpDisplay, BitmapText )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

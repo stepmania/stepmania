@@ -4,7 +4,8 @@
 #include "RageUtil.h"
 #include "PrefsManager.h"
 #include "ProductInfo.h"
-#include "Foreach.h"
+
+using std::vector;
 
 REGISTER_SOUND_DRIVER_CLASS( JACK );
 
@@ -117,7 +118,7 @@ RString RageSoundDriver_JACK::ConnectPorts()
 	const char **ports = NULL;
 	if( portNames.size() == 0 )
 	{
-		// The user has NOT specified any ports to connect to. Search 
+		// The user has NOT specified any ports to connect to. Search
 		// for all physical sinks and use the first two.
 		ports = jack_get_ports( client, NULL, NULL, JackPortIsInput | JackPortIsPhysical );
 		if( ports == NULL )
@@ -138,15 +139,15 @@ RString RageSoundDriver_JACK::ConnectPorts()
 	else
 	{
 		// The user has specified ports to connect to. Loop through
-		// them to find two that are valid, then use them. If we find 
+		// them to find two that are valid, then use them. If we find
 		// only one that is valid, connect both channels to it.
 		// Use jack_port_by_name to ensure ports exist, then
-		// jack_port_name to use their canonical name.  (I'm not sure 
-		// if that second step is necessary, I've seen something about 
+		// jack_port_name to use their canonical name.  (I'm not sure
+		// if that second step is necessary, I've seen something about
 		// "aliases" in the docs.)
-		FOREACH( RString, portNames, portName )
+		for (auto &portName: portNames)
 		{
-			jack_port_t *out = jack_port_by_name( client, *portName );
+			jack_port_t *out = jack_port_by_name( client, portName );
 			// Make sure the port is a sink.
 			if( ! ( jack_port_flags( out ) & JackPortIsInput ) )
 				continue;
@@ -164,12 +165,12 @@ RString RageSoundDriver_JACK::ConnectPorts()
 		}
 		if( port_out_l == NULL )
 			return "All specified sinks are invalid.";
-		
+
 		if( port_out_r == NULL )
 			// Only found one valid sink. Going mono!
 			port_out_r = port_out_l;
 	}
-	
+
 	RString ret = RString();
 
 	if( jack_connect( client, jack_port_name(port_l), port_out_l ) != 0 )
@@ -231,7 +232,7 @@ int RageSoundDriver_JACK::SampleRateTrampoline(jack_nframes_t nframes, void *arg
 /*
  * (c) 2013 Devin J. Pohly
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -241,7 +242,7 @@ int RageSoundDriver_JACK::SampleRateTrampoline(jack_nframes_t nframes, void *arg
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -1,6 +1,5 @@
 #include "global.h"
 #include "RageSoundDriver_WDMKS.h"
-#include "Foreach.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "PrefsManager.h"
@@ -18,6 +17,8 @@
 #include <mmsystem.h>
 #include <ksmedia.h>
 #include <setupapi.h>
+
+using std::vector;
 
 typedef KSDDKAPI DWORD WINAPI KSCREATEPIN(HANDLE, PKSPIN_CONNECT, ACCESS_MASK, PHANDLE);
 
@@ -724,10 +725,10 @@ WinWdmPin *WinWdmFilter::InstantiateRenderPin(
 		for( size_t j = 0; j < m_apPins.size(); ++j )
 		{
 			WinWdmPin *pPin = m_apPins[j];
-			FOREACH_CONST( KSDATARANGE_AUDIO, pPin->m_dataRangesItem, range )
+			for (auto &range: pPin->m_dataRangesItem)
 			{
-				aSampleRates.push_back( range->MinimumSampleFrequency );
-				aSampleRates.push_back( range->MaximumSampleFrequency );
+				aSampleRates.push_back( range.MinimumSampleFrequency );
+				aSampleRates.push_back( range.MaximumSampleFrequency );
 			}
 		}
 
@@ -751,21 +752,21 @@ WinWdmPin *WinWdmFilter::InstantiateRenderPin(
 	aTryPCM.push_back( false );
 	aTryPCM.push_back( true );
 
-	FOREACH( bool, aTryPCM, bTryPCM )
+	for (auto &bTryPCM: aTryPCM)
 	{
-		FOREACH( int, aSampleRates, iSampleRate )
+		for (auto &iSampleRate: aSampleRates)
 		{
-			FOREACH( int, aChannels, iChannels )
+			for (auto &iChannels: aChannels)
 			{
-				FOREACH( DeviceSampleFormat, SampleFormats, fmt )
+				for (auto &fmt: SampleFormats)
 				{
-					PreferredOutputSampleFormat = *fmt;
-					iPreferredOutputChannels = *iChannels;
-					iPreferredSampleRate = *iSampleRate;
+					PreferredOutputSampleFormat = fmt;
+					iPreferredOutputChannels = iChannels;
+					iPreferredSampleRate = iSampleRate;
 
 					WAVEFORMATEXTENSIBLE wfx;
 					FillWFEXT( &wfx, PreferredOutputSampleFormat, iPreferredSampleRate, iPreferredOutputChannels );
-					if( *bTryPCM )
+					if( bTryPCM )
 					{
 						/* Try WAVE_FORMAT_PCM instead of WAVE_FORMAT_EXTENSIBLE. */
 						wfx.Format.wFormatTag = WAVE_FORMAT_PCM;
@@ -950,6 +951,7 @@ bool WinWdmStream::Open( WinWdmFilter *pFilter,
 			int iPreferredSampleRate,
 			RString &sError )
 {
+	using std::max;
 	/* Instantiate the output pin. */
 	m_pPlaybackPin = pFilter->InstantiateRenderPin(
 				PreferredOutputSampleFormat,
@@ -1177,7 +1179,7 @@ void RageSoundDriver_WDMKS::MixerThread()
 
 	/* Enable priority boosting. */
 	SetThreadPriorityBoost( GetCurrentThread(), FALSE );
-	
+
 	ASSERT( m_pStream->m_pPlaybackPin != NULL );
 
 	/* Some drivers (stock USB audio in XP) misbehave if we go from KSSTATE_STOP to
@@ -1291,22 +1293,22 @@ RString RageSoundDriver_WDMKS::Init()
 		{
 			WinWdmPin *pPin = pFilter->m_apPins[j];
 			LOG->Trace( "  Pin %i", j );
-			FOREACH_CONST( KSDATARANGE_AUDIO, pPin->m_dataRangesItem, range )
+			for (auto &range: pPin->m_dataRangesItem)
 			{
 				RString sSubFormat;
-				if( !memcmp(&range->DataRange.SubFormat, &KSDATAFORMAT_SUBTYPE_WILDCARD, sizeof(GUID)) )
+				if( !memcmp(&range.DataRange.SubFormat, &KSDATAFORMAT_SUBTYPE_WILDCARD, sizeof(GUID)) )
 					sSubFormat = "WILDCARD";
-				else if( !memcmp(&range->DataRange.SubFormat, &KSDATAFORMAT_SUBTYPE_PCM, sizeof(GUID)) )
+				else if( !memcmp(&range.DataRange.SubFormat, &KSDATAFORMAT_SUBTYPE_PCM, sizeof(GUID)) )
 					sSubFormat = "PCM";
-				else if( !memcmp(&range->DataRange.SubFormat, &KSDATAFORMAT_SUBTYPE_IEEE_FLOAT, sizeof(GUID)) )
+				else if( !memcmp(&range.DataRange.SubFormat, &KSDATAFORMAT_SUBTYPE_IEEE_FLOAT, sizeof(GUID)) )
 					sSubFormat = "FLOAT";
 
-				LOG->Trace( "     Range: %i channels, sample %i-%i, %i-%ihz (%s)", 
-					range->MaximumChannels,
-					range->MinimumBitsPerSample,
-					range->MaximumBitsPerSample,
-					range->MinimumSampleFrequency,
-					range->MaximumSampleFrequency,
+				LOG->Trace( "     Range: %i channels, sample %i-%i, %i-%ihz (%s)",
+					range.MaximumChannels,
+					range.MinimumBitsPerSample,
+					range.MaximumBitsPerSample,
+					range.MinimumSampleFrequency,
+					range.MaximumSampleFrequency,
 					sSubFormat.c_str()
 				);
 			}
@@ -1398,12 +1400,12 @@ float RageSoundDriver_WDMKS::GetPlayLatency() const
  */
 
 /*
- * The text above constitutes the entire PortAudio license; however, 
+ * The text above constitutes the entire PortAudio license; however,
  * the PortAudio community also makes the following non-binding requests:
  *
  * Any person wishing to distribute modifications to the Software is
  * requested to send the modifications to the original developer so that
- * they can be incorporated into the canonical version. It is also 
- * requested that these non-binding requests be included along with the 
+ * they can be incorporated into the canonical version. It is also
+ * requested that these non-binding requests be included along with the
  * license above.
  */

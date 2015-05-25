@@ -76,8 +76,6 @@
 #define llabs ::llabs
 #endif
 
-using namespace std;
-
 #ifdef ASSERT
 #undef ASSERT
 #endif
@@ -96,7 +94,7 @@ namespace Checkpoints
 /**
  * @brief Define a macro to tell the compiler that a function doesn't return.
  *
- * This just improves compiler warnings.  This should be placed near the 
+ * This just improves compiler warnings.  This should be placed near the
  * beginning of the function prototype (although it looks better near the end,
  * VC only accepts it at the beginning). */
 #if defined(_MSC_VER)
@@ -119,11 +117,11 @@ namespace Checkpoints
 void NORETURN sm_crash( const char *reason = "Internal error" );
 
 /**
- * @brief Assertion that sets an optional message and brings up the crash 
+ * @brief Assertion that sets an optional message and brings up the crash
  * handler, so we get a backtrace.
- * 
- * This should probably be used instead of throwing an exception in most 
- * cases we expect never to happen (but not in cases that we do expect, 
+ *
+ * This should probably be used instead of throwing an exception in most
+ * cases we expect never to happen (but not in cases that we do expect,
  * such as DSound init failure.) */
 #define FAIL_M(MESSAGE) do { CHECKPOINT_M(MESSAGE); sm_crash(MESSAGE); } while(0)
 #define ASSERT_M(COND, MESSAGE) do { if(unlikely(!(COND))) { FAIL_M(MESSAGE); } } while(0)
@@ -158,7 +156,7 @@ void ShowWarningOrTrace( const char *file, int line, const char *message, bool b
  * generating unique identifiers in other macros.  */
 #define SM_UNIQUE_NAME3(x,line) x##line
 #define SM_UNIQUE_NAME2(x,line) SM_UNIQUE_NAME3(x, line)
-#define SM_UNIQUE_NAME(x) SM_UNIQUE_NAME2(x, __LINE__)	
+#define SM_UNIQUE_NAME(x) SM_UNIQUE_NAME2(x, __LINE__)
 
 template <bool> struct CompileAssert;
 template <> struct CompileAssert<true> { };
@@ -251,7 +249,7 @@ inline float strtof( const char *s, char **se ) { return (float) strtod( s, se )
  * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -261,7 +259,7 @@ inline float strtof( const char *s, char **se ) { return (float) strtod( s, se )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

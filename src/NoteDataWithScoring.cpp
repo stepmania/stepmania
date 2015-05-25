@@ -9,6 +9,8 @@
 #include "RageLog.h"
 #include "TimingData.h"
 
+using std::vector;
+
 namespace
 {
 
@@ -29,13 +31,13 @@ int LastTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
 		if (tn.type == TapNoteType_Empty ||
 			tn.type == TapNoteType_Mine ||
 			tn.type == TapNoteType_Fake ||
-			tn.type == TapNoteType_AutoKeysound) 
+			tn.type == TapNoteType_AutoKeysound)
 			continue;
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn && pn != PLAYER_INVALID )
 			continue;
 
 		TapNoteScore tns = tn.result.tns;
-		
+
 		if( tns == TNS_Miss || tns == TNS_None )
 			return t;
 
@@ -66,7 +68,7 @@ int MinTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
 		if (tn.type == TapNoteType_Empty ||
 			tn.type == TapNoteType_Mine ||
 			tn.type == TapNoteType_Fake ||
-			tn.type == TapNoteType_AutoKeysound) 
+			tn.type == TapNoteType_AutoKeysound)
 			continue;
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn && pn != PLAYER_INVALID )
 			continue;
@@ -123,6 +125,7 @@ const TapNote &NoteDataWithScoring::LastTapNoteWithResult( const NoteData &in, u
  * taps have been hit), return TNS_None or TNS_Miss. */
 TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned row, PlayerNumber plnum )
 {
+	using std::min;
 	//LOG->Trace("Hey I'm NoteDataWithScoring::MinTapNoteScore");
 	TapNoteScore score = TNS_W1;
 	for( int t=0; t<in.GetNumTracks(); t++ )
@@ -272,6 +275,7 @@ static void UpdateHittable(int curr_row, int& first, int& last)
 void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 	const PlayerStageStats &pss, float song_seconds, RadarValues& out)
 {
+	using std::max;
 	// Anybody editing this function should also examine
 	// NoteDataUtil::CalculateRadarValues to make sure it handles things the
 	// same way.
@@ -374,6 +378,8 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 					break;
 				case TapNoteType_Fake:
 					break;
+				default:
+					break;
 			}
 		}
 		++curr_note;
@@ -386,10 +392,10 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 	int jump_count= out[RadarCategory_Jumps];
 	int hold_count= out[RadarCategory_Holds];
 	int tap_count= out[RadarCategory_TapsAndHolds];
-	float hittable_steps_length= max(0, 
+	float hittable_steps_length= max(0.f,
 		timing->GetElapsedTimeFromBeat(NoteRowToBeat(last_hittable_row)) -
 		timing->GetElapsedTimeFromBeat(NoteRowToBeat(first_hittable_row)));
-	// The for loop and the assert are used to ensure that all fields of 
+	// The for loop and the assert are used to ensure that all fields of
 	// RadarValue get set in here.
 	FOREACH_ENUM(RadarCategory, rc)
 	{
@@ -445,7 +451,7 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -455,7 +461,7 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

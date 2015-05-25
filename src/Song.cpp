@@ -22,7 +22,6 @@
 #include "SongUtil.h"
 #include "SongManager.h"
 #include "StepsUtil.h"
-#include "Foreach.h"
 #include "BackgroundUtil.h"
 #include "SpecialFiles.h"
 #include "NotesLoader.h"
@@ -40,6 +39,8 @@
 #include <set>
 #include <float.h>
 
+using std::vector;
+using std::string;
 
 /**
  * @brief The internal version of the cache for StepMania.
@@ -90,12 +91,14 @@ Song::Song()
 
 Song::~Song()
 {
-	FOREACH( Steps*, m_vpSteps, s )
-		SAFE_DELETE( *s );
-	m_vpSteps.clear();
-	FOREACH(Steps*, m_UnknownStyleSteps, s)
+	for (auto *s: m_vpSteps)
 	{
-		SAFE_DELETE(*s);
+		SAFE_DELETE( s );
+	}
+	m_vpSteps.clear();
+	for (auto *s: m_UnknownStyleSteps)
+	{
+		SAFE_DELETE(s);
 	}
 	m_UnknownStyleSteps.clear();
 
@@ -107,7 +110,9 @@ void Song::DetachSteps()
 {
 	m_vpSteps.clear();
 	FOREACH_ENUM( StepsType, st )
+	{
 		m_vpStepsByType[st].clear();
+	}
 	m_UnknownStyleSteps.clear();
 }
 
@@ -159,14 +164,16 @@ void Song::SetSpecifiedLastSecond(const float f)
 // Reset to an empty song.
 void Song::Reset()
 {
-	FOREACH( Steps*, m_vpSteps, s )
-		SAFE_DELETE( *s );
+	for (auto *s: m_vpSteps)
+	{
+		SAFE_DELETE( s );
+	}
 	m_vpSteps.clear();
 	FOREACH_ENUM( StepsType, st )
 		m_vpStepsByType[st].clear();
-	FOREACH(Steps*, m_UnknownStyleSteps, s)
+	for (auto *s: m_UnknownStyleSteps)
 	{
-		SAFE_DELETE(*s);
+		SAFE_DELETE(s);
 	}
 	m_UnknownStyleSteps.clear();
 
@@ -181,7 +188,8 @@ void Song::Reset()
 void Song::AddBackgroundChange( BackgroundLayer iLayer, BackgroundChange seg )
 {
 	// Delete old background change at this start beat, if any.
-	FOREACH( BackgroundChange, GetBackgroundChanges(iLayer), bgc )
+	auto &changes = GetBackgroundChanges(iLayer);
+	for (auto bgc = changes.begin(); bgc != changes.end(); ++bgc)
 	{
 		if( bgc->m_fStartBeat == seg.m_fStartBeat )
 		{
@@ -262,7 +270,7 @@ const RString &Song::GetSongFilePath() const
 
 /* Hack: This should be a parameter to TidyUpData, but I don't want to pull in
  * <set> into Song.h, which is heavily used. */
-static set<RString> BlacklistedImages;
+static std::set<RString> BlacklistedImages;
 
 /* If PREFSMAN->m_bFastLoad is true, always load from cache if possible.
  * Don't read the contents of sDir if we can avoid it. That means we can't call
@@ -367,11 +375,11 @@ bool Song::LoadFromSongDir( RString sDir, bool load_autosave )
 		}
 	}
 
-	FOREACH( Steps*, m_vpSteps, s )
+	for (auto *s: m_vpSteps)
 	{
 		/* Compress all Steps. During initial caching, this will remove cached
 		 * NoteData; during cached loads, this will just remove cached SMData. */
-		(*s)->Compress();
+		s->Compress();
 	}
 
 	// Load the cached banners, if it's not loaded already.
@@ -415,7 +423,7 @@ bool Song::ReloadFromSongDir( RString sDir )
 	/* Go through the steps, first setting their Song pointer to this song
 	 * (instead of the copy used above), and constructing a map to let us
 	 * easily find the new steps. */
-	map<StepsID, Steps*> mNewSteps;
+	std::map<StepsID, Steps*> mNewSteps;
 	for( vector<Steps*>::const_iterator it = m_vpSteps.begin(); it != m_vpSteps.end(); ++it )
 	{
 		(*it)->m_pSong = this;
@@ -428,8 +436,9 @@ bool Song::ReloadFromSongDir( RString sDir )
 	// Now we wipe out the new pointers, which were shallow copied and not deep copied...
 	m_vpSteps.clear();
 	FOREACH_ENUM( StepsType, i )
+	{
 		m_vpStepsByType[i].clear();
-
+	}
 	/* Then we copy as many Steps as possible on top of the old pointers.
 	 * The only pointers that change are pointers to Steps that are not in the
 	 * reverted file, which we delete, and pointers to Steps that are in the
@@ -441,7 +450,7 @@ bool Song::ReloadFromSongDir( RString sDir )
 	{
 		StepsID id;
 		id.FromSteps( *itOld );
-		map<StepsID, Steps*>::iterator itNew = mNewSteps.find( id );
+		auto itNew = mNewSteps.find( id );
 		if( itNew == mNewSteps.end() )
 		{
 			// This stepchart didn't exist in the file we reverted from
@@ -456,7 +465,7 @@ bool Song::ReloadFromSongDir( RString sDir )
 		}
 	}
 	// The leftovers in the map are steps that didn't exist before we reverted
-	for( map<StepsID, Steps*>::const_iterator it = mNewSteps.begin(); it != mNewSteps.end(); ++it )
+	for( auto it = mNewSteps.begin(); it != mNewSteps.end(); ++it )
 	{
 		Steps *NewSteps = new Steps(this);
 		*NewSteps = *(it->second);
@@ -584,9 +593,9 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 
 	m_SongTiming.TidyUpData(false);
 
-	FOREACH(Steps *, m_vpSteps, s)
+	for (auto *s: m_vpSteps)
 	{
-		(*s)->m_Timing.TidyUpData(true);
+		s->m_Timing.TidyUpData(true);
 	}
 
 	if(!from_cache)
@@ -1103,9 +1112,9 @@ void Song::ReCalculateRadarValuesAndLastSecond(bool fromCache, bool duringCache)
 			 * don't force the first beat of the whole song to 0. */
 			if( tempNoteData.GetLastRow() != 0 )
 			{
-				localFirst = min(localFirst,
+				localFirst = std::min(localFirst,
 					pSteps->GetTimingData()->GetElapsedTimeFromBeat(tempNoteData.GetFirstBeat()));
-				localLast = max(localLast,
+				localLast = std::max(localLast,
 					pSteps->GetTimingData()->GetElapsedTimeFromBeat(tempNoteData.GetLastBeat()));
 			}
 		}
@@ -1192,9 +1201,8 @@ bool Song::SaveToSMFile()
 		FileCopy( sPath, sPath + ".old" );
 
 	vector<Steps*> vpStepsToSave;
-	FOREACH_CONST( Steps*, m_vpSteps, s )
+	for (auto *pSteps: m_vpSteps)
 	{
-		Steps *pSteps = *s;
 		if( pSteps->IsAutogen() )
 			continue; // don't write autogen notes
 
@@ -1204,9 +1212,9 @@ bool Song::SaveToSMFile()
 
 		vpStepsToSave.push_back( pSteps );
 	}
-	FOREACH_CONST(Steps*, m_UnknownStyleSteps, s)
+	for (auto *s: m_UnknownStyleSteps)
 	{
-		vpStepsToSave.push_back(*s);
+		vpStepsToSave.push_back(s);
 	}
 
 	return NotesWriterSM::Write( sPath, *this, vpStepsToSave );
@@ -1230,9 +1238,8 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache, bool autosave )
 		FileCopy( path, path + ".old" );
 
 	vector<Steps*> vpStepsToSave;
-	FOREACH_CONST( Steps*, m_vpSteps, s )
+	for (auto *pSteps: m_vpSteps)
 	{
-		Steps *pSteps = *s;
 		if( pSteps->IsAutogen() )
 			continue; // don't write autogen notes
 
@@ -1244,9 +1251,9 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache, bool autosave )
 			pSteps->SetFilename(path);
 		vpStepsToSave.push_back( pSteps );
 	}
-	FOREACH_CONST(Steps*, m_UnknownStyleSteps, s)
+	for (auto *s: m_UnknownStyleSteps)
 	{
-		vpStepsToSave.push_back(*s);
+		vpStepsToSave.push_back(s);
 	}
 
 	if(bSavingCache || autosave)
@@ -1281,8 +1288,10 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache, bool autosave )
 	}
 
 	// Mark these steps saved to disk.
-	FOREACH( Steps*, vpStepsToSave, s )
-		(*s)->SetSavedToDisk( true );
+	for (auto *s: vpStepsToSave)
+	{
+		s->SetSavedToDisk( true );
+	}
 
 	return true;
 }
@@ -1454,11 +1463,11 @@ bool Song::IsEasy( StepsType st ) const
 bool Song::IsTutorial() const
 {
 	// A Song is considered a Tutorial if it has only Beginner steps.
-	FOREACH_CONST( Steps*, m_vpSteps, s )
+	for (auto *s: m_vpSteps)
 	{
-		if( (*s)->m_StepsType == StepsType_lights_cabinet )
+		if( s->m_StepsType == StepsType_lights_cabinet )
 			continue; // ignore
-		if( (*s)->GetDifficulty() != Difficulty_Beginner )
+		if( s->GetDifficulty() != Difficulty_Beginner )
 			return false;
 	}
 
@@ -1565,9 +1574,9 @@ vector<BackgroundChange> &Song::GetForegroundChanges()
 vector<RString> Song::GetChangesToVectorString(const vector<BackgroundChange> & changes) const
 {
 	vector<RString> ret;
-	FOREACH_CONST( BackgroundChange, changes, bgc )
+	for (auto &bgc: changes)
 	{
-		ret.push_back((*bgc).ToString());
+		ret.push_back(bgc.ToString());
 	}
 	return ret;
 }
@@ -1814,7 +1823,7 @@ bool Song::Matches(RString sGroup, RString sSong) const
 
 /* If apInUse is set, it contains a list of steps which are in use elsewhere,
  * and should not be deleted. */
-void Song::FreeAllLoadedFromProfile( ProfileSlot slot, const set<Steps*> *setInUse )
+void Song::FreeAllLoadedFromProfile( ProfileSlot slot, const std::set<Steps*> *setInUse )
 {
 	/* DeleteSteps will remove and recreate autogen notes, which may reorder
 	 * m_vpSteps, so be careful not to skip over entries. */

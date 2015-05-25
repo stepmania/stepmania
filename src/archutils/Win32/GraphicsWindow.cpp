@@ -15,6 +15,8 @@
 
 #include <set>
 
+using std::wstring;
+
 static const RString g_sClassName = PRODUCT_ID;
 
 static HWND g_hWndMain;
@@ -69,10 +71,10 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 			if( !g_bHasFocus )
 			{
 				RString sName = GetNewWindow();
-				static set<RString> sLostFocusTo;
+				static std::set<RString> sLostFocusTo;
 				sLostFocusTo.insert( sName );
 				RString sStr;
-				for( set<RString>::const_iterator it = sLostFocusTo.begin(); it != sLostFocusTo.end(); ++it )
+				for( auto it = sLostFocusTo.cbegin(); it != sLostFocusTo.cend(); ++it )
 					sStr += (sStr.size()?", ":"") + *it;
 
 				LOG->MapLog( "LOST_FOCUS", "Lost focus to: %s", sStr.c_str() );
@@ -196,14 +198,14 @@ static void AdjustVideoModeParams( VideoModeParams &p )
 		return;
 	}
 
-	/* On a nForce 2 IGP on Windows 98, dm.dmDisplayFrequency sometimes 
+	/* On a nForce 2 IGP on Windows 98, dm.dmDisplayFrequency sometimes
 	 * (but not always) is 0.
 	 *
-	 * MSDN: When you call the EnumDisplaySettings function, the 
-	 * dmDisplayFrequency member may return with the value 0 or 1. 
-	 * These values represent the display hardware's default refresh rate. 
-	 * This default rate is typically set by switches on a display card or 
-	 * computer motherboard, or by a configuration program that does not 
+	 * MSDN: When you call the EnumDisplaySettings function, the
+	 * dmDisplayFrequency member may return with the value 0 or 1.
+	 * These values represent the display hardware's default refresh rate.
+	 * This default rate is typically set by switches on a display card or
+	 * computer motherboard, or by a configuration program that does not
 	 * use Win32 display functions such as ChangeDisplaySettings. */
 	if( !(dm.dmFields & DM_DISPLAYFREQUENCY) ||
 		dm.dmDisplayFrequency == 0 ||
@@ -431,7 +433,7 @@ void GraphicsWindow::Initialize( bool bD3D )
 			NULL,			/* hbrBackground */
 			NULL,			/* lpszMenuName */
 			wsClassName.c_str()	/* lpszClassName */
-		}; 
+		};
 
 		m_bWideWindowClass = true;
 		if( RegisterClassW( &WindowClassW ) )
@@ -449,7 +451,7 @@ void GraphicsWindow::Initialize( bool bD3D )
 			NULL,			/* hbrBackground */
 			NULL,			/* lpszMenuName */
 			g_sClassName	/* lpszClassName */
-		}; 
+		};
 
 		m_bWideWindowClass = false;
 		if( !RegisterClassA( &WindowClassA ) )
@@ -530,7 +532,7 @@ void GraphicsWindow::GetDisplayResolutions( DisplayResolutions &out )
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -540,7 +542,7 @@ void GraphicsWindow::GetDisplayResolutions( DisplayResolutions &out )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

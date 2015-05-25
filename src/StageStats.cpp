@@ -1,7 +1,6 @@
 #include "global.h"
 #include "StageStats.h"
 #include "GameState.h"
-#include "Foreach.h"
 #include "Steps.h"
 #include "Song.h"
 #include "RageLog.h"
@@ -11,7 +10,11 @@
 #include "Profile.h"
 #include "ProfileManager.h"
 
-/* Arcade:	for the current stage (one song).  
+#include <numeric>
+
+using std::vector;
+
+/* Arcade:	for the current stage (one song).
  * Nonstop/Oni/Endless:	 for current course (which usually contains multiple songs)
  */
 
@@ -91,10 +94,14 @@ int StageStats::GetAverageMeter( PlayerNumber pn ) const
 void StageStats::AddStats( const StageStats& other )
 {
 	ASSERT( !other.m_vpPlayedSongs.empty() );
-	FOREACH_CONST( Song*, other.m_vpPlayedSongs, s )
-		m_vpPlayedSongs.push_back( *s );
-	FOREACH_CONST( Song*, other.m_vpPossibleSongs, s )
-		m_vpPossibleSongs.push_back( *s );
+	for (auto *s: other.m_vpPlayedSongs)
+	{
+		m_vpPlayedSongs.push_back( s );
+	}
+	for (auto *s: other.m_vpPossibleSongs)
+	{
+		m_vpPossibleSongs.push_back( s );
+	}
 	m_Stage = Stage_Invalid; // meaningless
 	m_iStageIndex = -1; // meaningless
 
@@ -105,30 +112,41 @@ void StageStats::AddStats( const StageStats& other )
 	m_fStepsSeconds += other.m_fStepsSeconds;
 
 	FOREACH_EnabledPlayer( p )
+	{
 		m_player[p].AddStats( other.m_player[p] );
+	}
 }
 
 bool StageStats::OnePassed() const
 {
 	FOREACH_EnabledPlayer( p )
+	{
 		if( !m_player[p].m_bFailed )
+		{
 			return true;
+		}
+	}
 	return false;
 }
 
 bool StageStats::AllFailed() const
 {
 	FOREACH_EnabledPlayer( p )
+	{
 		if( !m_player[p].m_bFailed )
+		{
 			return false;
+		}
+	}
 	return true;
 }
 
 float StageStats::GetTotalPossibleStepsSeconds() const
 {
-	float fSecs = 0;
-	FOREACH_CONST( Song*, m_vpPossibleSongs, s )
-		fSecs += (*s)->GetStepsSeconds();
+	auto getSeconds = [](float curr, Song const *s) {
+		return curr + s->GetStepsSeconds();
+	};
+	float fSecs = std::accumulate(m_vpPossibleSongs.begin(), m_vpPossibleSongs.end(), 0.f, getSeconds);
 	return fSecs / m_fMusicRate;
 }
 
@@ -229,7 +247,7 @@ void StageStats::FinalizeScores( bool bSummary )
 		if( bSummary )
 		{
 			// don't save scores if any stage was failed
-			if( m_player[p].m_bFailed ) 
+			if( m_player[p].m_bFailed )
 				continue;
 
 			int iAverageMeter = GetAverageMeter(p);
@@ -258,7 +276,7 @@ void StageStats::FinalizeScores( bool bSummary )
 	}
 
 	// If both players get a machine high score in the same HighScoreList,
-	// then one player's score may have bumped the other player. Look in 
+	// then one player's score may have bumped the other player. Look in
 	// the HighScoreList and re-get the high score index.
 	FOREACH_HumanPlayer( p )
 	{
@@ -310,7 +328,7 @@ bool StageStats::PlayerHasHighScore( PlayerNumber pn ) const
 	if( pSong->IsTutorial() == Song::SHOW_NEVER )
 		return false;
 
-	const HighScoreList &hsl = 
+	const HighScoreList &hsl =
 		GAMESTATE->IsCourseMode() ?
 		PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse, pTrail) :
 		PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong, pSteps);
@@ -321,7 +339,7 @@ bool StageStats::PlayerHasHighScore( PlayerNumber pn ) const
 	{
 		const HighScore &hs = hsl.vHighScores[h];
 		if( hs.GetName() == RANKING_TO_FILL_IN_MARKER[pn]  &&
-			hs.GetPercentDP() == fPercentDP  && 
+			hs.GetPercentDP() == fPercentDP  &&
 			hs.GetScore() == iScore )
 		{
 			return true;
@@ -333,6 +351,7 @@ bool StageStats::PlayerHasHighScore( PlayerNumber pn ) const
 
 unsigned int StageStats::GetMinimumMissCombo() const
 {
+	using std::min;
 	unsigned int iMin = INT_MAX;
 	FOREACH_HumanPlayer( p )
 		iMin = min( iMin, m_player[p].m_iCurMissCombo );
@@ -342,7 +361,7 @@ unsigned int StageStats::GetMinimumMissCombo() const
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the StageStats. */ 
+/** @brief Allow Lua to have access to the StageStats. */
 class LunaStageStats: public Luna<StageStats>
 {
 public:
@@ -406,7 +425,7 @@ LUA_REGISTER_CLASS( StageStats )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -416,7 +435,7 @@ LUA_REGISTER_CLASS( StageStats )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

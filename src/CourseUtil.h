@@ -18,25 +18,25 @@ bool CompareCoursePointersByTitle( const Course *pCourse1, const Course *pCourse
 /** @brief Utility functions that deal with Courses. */
 namespace CourseUtil
 {
-	void SortCoursePointerArrayByDifficulty( vector<Course*> &vpCoursesInOut );
-	void SortCoursePointerArrayByType( vector<Course*> &vpCoursesInOut );
-	void SortCoursePointerArrayByTitle( vector<Course*> &vpCoursesInOut );
-	void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &vpCoursesInOut );
-	void SortCoursePointerArrayByTotalDifficulty( vector<Course*> &vpCoursesInOut );
-	void SortCoursePointerArrayByRanking( vector<Course*> &vpCoursesInOut );
-	void SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInOut, ProfileSlot slot, bool bDescending );
-	void SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInOut, const Profile* pProfile, bool bDescending );
-	void SortByMostRecentlyPlayedForMachine( vector<Course*> &vpCoursesInOut );
+	void SortCoursePointerArrayByDifficulty( std::vector<Course*> &vpCoursesInOut );
+	void SortCoursePointerArrayByType( std::vector<Course*> &vpCoursesInOut );
+	void SortCoursePointerArrayByTitle( std::vector<Course*> &vpCoursesInOut );
+	void SortCoursePointerArrayByAvgDifficulty( std::vector<Course*> &vpCoursesInOut );
+	void SortCoursePointerArrayByTotalDifficulty( std::vector<Course*> &vpCoursesInOut );
+	void SortCoursePointerArrayByRanking( std::vector<Course*> &vpCoursesInOut );
+	void SortCoursePointerArrayByNumPlays( std::vector<Course*> &vpCoursesInOut, ProfileSlot slot, bool bDescending );
+	void SortCoursePointerArrayByNumPlays( std::vector<Course*> &vpCoursesInOut, const Profile* pProfile, bool bDescending );
+	void SortByMostRecentlyPlayedForMachine( std::vector<Course*> &vpCoursesInOut );
 	// sm-ssc sort additions:
-	//void SortCoursePointerArrayBySectionName( vector<Course*> &vpCoursesInOut, SortOrder so );
+	//void SortCoursePointerArrayBySectionName( std::vector<Course*> &vpCoursesInOut, SortOrder so );
 
-	void MoveRandomToEnd( vector<Course*> &vpCoursesInOut );
+	void MoveRandomToEnd( std::vector<Course*> &vpCoursesInOut );
 
 	void MakeDefaultEditCourseEntry( CourseEntry &out );
 
 	void AutogenEndlessFromGroup( const RString &sGroupName, Difficulty dc, Course &out );
 	void AutogenNonstopFromGroup( const RString &sGroupName, Difficulty dc, Course &out );
-	void AutogenOniFromArtist( const RString &sArtistName, RString sArtistNameTranslit, vector<Song*> aSongs, Difficulty dc, Course &out );
+	void AutogenOniFromArtist( const RString &sArtistName, RString sArtistNameTranslit, std::vector<Song*> aSongs, Difficulty dc, Course &out );
 
 	bool ValidateEditCourseName( const RString &sAnswer, RString &sErrorOut );
 
@@ -54,7 +54,7 @@ namespace EditCourseUtil
 	void LoadDefaults( Course &out );
 	bool RemoveAndDeleteFile( Course *pCourse );
 	bool ValidateEditCourseName( const RString &sAnswer, RString &sErrorOut );
-	void GetAllEditCourses( vector<Course*> &vpCoursesOut );
+	void GetAllEditCourses( std::vector<Course*> &vpCoursesOut );
 	bool Save( Course *pCourse );
 	bool RenameAndSave( Course *pCourse, RString sName );
 
@@ -102,7 +102,7 @@ private:
  * @author Chris Danford (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -112,7 +112,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

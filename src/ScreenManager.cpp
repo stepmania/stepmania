@@ -16,7 +16,7 @@
  * but preloading the expensive screens may use too much memory and take too long
  * to load all at once.  By calling GroupScreen(), entering these screens will not
  * trigger cleanup.
- * 
+ *
  * Example uses:
  *  - ScreenOptions1 preloads ScreenOptions2, and persists both.  Moving from Options1
  *    and Options2 and back is instant and reuses both.
@@ -29,7 +29,7 @@
  *  - ScreenAttract1 preloads and persists ScreenAttract1, 3, 5 and 7, and groups 1
  *    through 7.  1, 3, 5 and 7 will remain in memory; the rest will be loaded on
  *    demand.
- * 
+ *
  * If a screen is added to the screen stack that isn't in the current screen group
  * (added to by GroupScreen), the screen group is reset: all prepared screens are
  * unloaded and the persistence list is cleared.
@@ -70,8 +70,9 @@
 #include "FontManager.h"
 #include "Screen.h"
 #include "ScreenDimensions.h"
-#include "Foreach.h"
 #include "ActorUtil.h"
+
+using std::vector;
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessible from anywhere in our program
 
@@ -79,7 +80,7 @@ static Preference<bool> g_bDelayedScreenLoad( "DelayedScreenLoad", false );
 //static Preference<bool> g_bPruneFonts( "PruneFonts", true );
 
 // Screen registration
-static map<RString,CreateScreenFn>	*g_pmapRegistrees = NULL;
+static std::map<RString,CreateScreenFn>	*g_pmapRegistrees = NULL;
 
 /** @brief Utility functions for the ScreenManager. */
 namespace ScreenManagerUtil
@@ -107,8 +108,8 @@ namespace ScreenManagerUtil
 	RString				m_sPreviousTopScreen;
 	vector<LoadedScreen>	g_ScreenStack;  // bottommost to topmost
 	vector<Screen*>		g_OverlayScreens;
-	set<RString>		g_setGroupedScreens;
-	set<RString>		g_setPersistantScreens;
+	std::set<RString>		g_setGroupedScreens;
+	std::set<RString>		g_setPersistantScreens;
 
 	vector<LoadedScreen>    g_vPreparedScreens;
 	vector<Actor*>          g_vPreparedBackgrounds;
@@ -141,10 +142,10 @@ namespace ScreenManagerUtil
 
 	bool ScreenIsPrepped( const RString &sScreenName )
 	{
-		FOREACH( LoadedScreen, g_vPreparedScreens, s )
+		for (auto &s: g_vPreparedScreens)
 		{
-			if( s->m_pScreen->GetName() == sScreenName )
-			return true;
+			if( s.m_pScreen->GetName() == sScreenName )
+				return true;
 		}
 		return false;
 	}
@@ -153,7 +154,7 @@ namespace ScreenManagerUtil
 	 * return it in ls. */
 	bool GetPreppedScreen( const RString &sScreenName, LoadedScreen &ls )
 	{
-		FOREACH( LoadedScreen, g_vPreparedScreens, s )
+		for (auto s = g_vPreparedScreens.begin(); s != g_vPreparedScreens.end(); ++s)
 		{
 			if( s->m_pScreen->GetName() == sScreenName )
 			{
@@ -190,18 +191,22 @@ namespace ScreenManagerUtil
 	 * freed by the caller. */
 	void GrabPreparedActors( vector<Actor*> &apOut )
 	{
-		FOREACH( LoadedScreen, g_vPreparedScreens, s )
-			if( s->m_bDeleteWhenDone )
-				apOut.push_back( s->m_pScreen );
+		for (auto &s: g_vPreparedScreens)
+		{
+			if( s.m_bDeleteWhenDone )
+				apOut.push_back( s.m_pScreen );
+		}
 		g_vPreparedScreens.clear();
-		FOREACH( Actor*, g_vPreparedBackgrounds, a )
-			apOut.push_back( *a );
+		for (auto *a: g_vPreparedBackgrounds)
+		{
+			apOut.push_back( a );
+		}
 		g_vPreparedBackgrounds.clear();
 
 		g_setGroupedScreens.clear();
 		g_setPersistantScreens.clear();
 	}
-	
+
 	/* Called when changing screen groups. Delete all prepared screens,
 	 * reset the screen group and list of persistant screens. */
 	void DeletePreparedScreens()
@@ -210,8 +215,10 @@ namespace ScreenManagerUtil
 		GrabPreparedActors( apActorsToDelete );
 
 		BeforeDeleteScreen();
-		FOREACH( Actor*, apActorsToDelete, a )
-			SAFE_DELETE( *a );
+		for (auto *a: apActorsToDelete)
+		{
+			SAFE_DELETE( a );
+		}
 		AfterDeleteScreen();
 	}
 };
@@ -220,9 +227,9 @@ using namespace ScreenManagerUtil;
 RegisterScreenClass::RegisterScreenClass( const RString& sClassName, CreateScreenFn pfn )
 {
 	if( g_pmapRegistrees == NULL )
-		g_pmapRegistrees = new map<RString,CreateScreenFn>;
+		g_pmapRegistrees = new std::map<RString,CreateScreenFn>;
 
-	map<RString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
+	auto iter = g_pmapRegistrees->find( sClassName );
 	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Screen class '%s' already registered.", sClassName.c_str()) );
 
 	(*g_pmapRegistrees)[sClassName] = pfn;
@@ -338,13 +345,10 @@ Screen *ScreenManager::GetScreen( int iPosition )
 
 bool ScreenManager::AllowOperatorMenuButton() const
 {
-	FOREACH( LoadedScreen, g_ScreenStack, s )
-	{
-		if( !s->m_pScreen->AllowOperatorMenuButton() )
-			return false;
-	}
-
-	return true;
+	auto canAccessOpMenu = [](LoadedScreen const &s) {
+		return s.m_pScreen->AllowOperatorMenuButton();
+	};
+	return std::all_of(g_ScreenStack.begin(), g_ScreenStack.end(), canAccessOpMenu);
 }
 
 bool ScreenManager::IsScreenNameValid(RString const& name) const
@@ -421,7 +425,7 @@ void ScreenManager::Update( float fDeltaTime )
 
 	/* Screens take some time to load.  If we don't do this, then screens
 	 * receive an initial update that includes all of the time they spent
-	 * loading, which will chop off their tweens.  
+	 * loading, which will chop off their tweens.
 	 *
 	 * We don't want to simply cap update times; for example, the stage
 	 * screen sets a 4 second timer, preps the gameplay screen, and then
@@ -437,8 +441,8 @@ void ScreenManager::Update( float fDeltaTime )
 
 	bool bFirstUpdate = pScreen && pScreen->IsFirstUpdate();
 
-	/* Loading a new screen can take seconds and cause a big jump on the new 
-	 * Screen's first update.  Clamp the first update delta so that the 
+	/* Loading a new screen can take seconds and cause a big jump on the new
+	 * Screen's first update.  Clamp the first update delta so that the
 	 * animations don't jump. */
 	if( pScreen && m_bZeroNextUpdate )
 	{
@@ -455,7 +459,7 @@ void ScreenManager::Update( float fDeltaTime )
 		g_pSharedBGA->Update( fDeltaTime );
 
 		for( unsigned i=0; i<g_OverlayScreens.size(); i++ )
-			g_OverlayScreens[i]->Update( fDeltaTime );	
+			g_OverlayScreens[i]->Update( fDeltaTime );
 	}
 
 	/* The music may be started on the first update. If we're reading from a CD,
@@ -503,7 +507,7 @@ void ScreenManager::Draw()
 
 void ScreenManager::Input( const InputEventPlus &input )
 {
-//	LOG->Trace( "ScreenManager::Input( %d-%d, %d-%d, %d-%d, %d-%d )", 
+//	LOG->Trace( "ScreenManager::Input( %d-%d, %d-%d, %d-%d, %d-%d )",
 //		DeviceI.device, DeviceI.button, GameI.controller, GameI.button, MenuI.player, MenuI.button, StyleI.player, StyleI.col );
 
 	// First, give overlay screens a shot at the input.  If Input returns
@@ -546,7 +550,7 @@ Screen* ScreenManager::MakeNewScreen( const RString &sScreenName )
 
 	RString sClassName = THEME->GetMetric( sScreenName,"Class" );
 
-	map<RString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
+	auto iter = g_pmapRegistrees->find( sClassName );
 	if( iter == g_pmapRegistrees->end() )
 	{
 		LuaHelpers::ReportScriptErrorFmt("Screen \"%s\" has an invalid class \"%s\".", sScreenName.c_str(), sClassName.c_str());
@@ -590,11 +594,11 @@ void ScreenManager::PrepareScreen( const RString &sScreenName )
 	if( !sNewBGA.empty() && sNewBGA != g_pSharedBGA->GetName() )
 	{
 		Actor *pNewBGA = NULL;
-		FOREACH( Actor*, g_vPreparedBackgrounds, a )
+		for (auto *a: g_vPreparedBackgrounds)
 		{
-			if( (*a)->GetName() == sNewBGA )
+			if( a->GetName() == sNewBGA )
 			{
-				pNewBGA = *a;
+				pNewBGA = a;
 				break;
 			}
 		}
@@ -670,7 +674,7 @@ bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenN
 		}
 		else
 		{
-			FOREACH( Actor*, g_vPreparedBackgrounds, a )
+			for (auto a = g_vPreparedBackgrounds.begin(); a != g_vPreparedBackgrounds.end(); ++a)
 			{
 				if( (*a)->GetName() == sNewBGA )
 				{
@@ -725,7 +729,7 @@ void ScreenManager::LoadDelayedScreen()
 		/* It's time to delete all old prepared screens. Depending on
 		 * DelayedScreenLoad, we can either delete the screens before or after
 		 * we load the new screen. Either way, we must remove them from the
-		 * prepared list before we prepare new screens. 
+		 * prepared list before we prepare new screens.
 		 * If DelayedScreenLoad is true, delete them now; this lowers memory
 		 * requirements, but results in redundant loads as we unload common data. */
 		if( g_bDelayedScreenLoad )
@@ -756,8 +760,10 @@ void ScreenManager::LoadDelayedScreen()
 	if( !apActorsToDelete.empty() )
 	{
 		BeforeDeleteScreen();
-		FOREACH( Actor*, apActorsToDelete, a )
-			SAFE_DELETE( *a );
+		for (auto *a: apActorsToDelete)
+		{
+			SAFE_DELETE( a );
+		}
 		AfterDeleteScreen();
 	}
 
@@ -886,7 +892,7 @@ void ScreenManager::PlaySharedBackgroundOffCommand()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ScreenManager. */ 
+/** @brief Allow Lua to have access to the ScreenManager. */
 class LunaScreenManager: public Luna<ScreenManager>
 {
 public:
@@ -964,7 +970,7 @@ LUA_REGISTER_CLASS( ScreenManager )
 /*
  * (c) 2001-2003 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -974,7 +980,7 @@ LUA_REGISTER_CLASS( ScreenManager )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

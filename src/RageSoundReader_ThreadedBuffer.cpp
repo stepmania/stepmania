@@ -2,12 +2,13 @@
 #include "RageSoundReader_ThreadedBuffer.h"
 #include "RageUtil.h"
 #include "RageTimer.h"
-#include "Foreach.h"
 #include "RageLog.h"
 
 #if !defined(_WINDOWS)
 #include <unistd.h>
 #endif
+
+using std::list;
 
 /* Implement threaded read-ahead buffering.
  *
@@ -194,6 +195,7 @@ bool RageSoundReader_ThreadedBuffer::SetProperty( const RString &sProperty, floa
 
 void RageSoundReader_ThreadedBuffer::BufferingThread()
 {
+	using std::max;
 	m_Event.Lock();
 	while( !m_bShutdownThread )
 	{
@@ -267,6 +269,7 @@ int RageSoundReader_ThreadedBuffer::FillFrames( int iFrames )
 
 int RageSoundReader_ThreadedBuffer::FillBlock()
 {
+	using std::min;
 	if( GetEmptyFrames() == 0 )
 		return 0;
 
@@ -311,6 +314,7 @@ int RageSoundReader_ThreadedBuffer::FillBlock()
 
 int RageSoundReader_ThreadedBuffer::Read( float *pBuffer, int iFrames )
 {
+	using std::min;
 	if( !m_bEOF )
 		EnableBuffering();
 

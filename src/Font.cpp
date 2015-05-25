@@ -11,6 +11,10 @@
 #include "FontCharAliases.h"
 #include "arch/Dialog/Dialog.h"
 
+using std::string;
+using std::wstring;
+using std::vector;
+
 FontPage::FontPage(): m_iHeight(0), m_iLineSpacing(0), m_fVshift(0),
 	m_iDrawExtraPixelsLeft(0), m_iDrawExtraPixelsRight(0),
 	m_FontPageTextures(), m_sTexturePath(""), m_aGlyphs(),
@@ -85,7 +89,7 @@ void FontPage::Load( const FontPageSettings &cfg )
 	// Assume each character is the width of the frame by default.
 	for( int i=0; i<m_FontPageTextures.m_pTextureMain->GetNumFrames(); i++ )
 	{
-		map<int,int>::const_iterator it = cfg.m_mapGlyphWidths.find(i);
+		auto it = cfg.m_mapGlyphWidths.find(i);
 		if( it != cfg.m_mapGlyphWidths.end() )
 			aiFrameWidths.push_back( it->second );
 		else
@@ -167,7 +171,7 @@ void FontPage::SetTextureCoords( const vector<int> &widths, int iAdvanceExtraPix
 			if( (iSourcePixelsToChopOff % 2) == 1 )
 			{
 				/* We don't want to chop off an odd number of pixels, since that'll
-				 * put our texture coordinates between texels and make things blurrier. 
+				 * put our texture coordinates between texels and make things blurrier.
 				 * Note that, since we set m_iHadvance above, this merely expands what
 				 * we render; it doesn't advance the cursor further.  So, glyphs
 				 * that have an odd width should err to being a pixel offcenter left,
@@ -190,6 +194,7 @@ void FontPage::SetTextureCoords( const vector<int> &widths, int iAdvanceExtraPix
 
 void FontPage::SetExtraPixels( int iDrawExtraPixelsLeft, int iDrawExtraPixelsRight )
 {
+	using std::min;
 	// Most fonts don't take the stroke into account, so if it shows up, it'll
 	// be cut off. I now understand why this code was here before. -freem
 	iDrawExtraPixelsRight++;
@@ -244,6 +249,7 @@ int Font::GetLineWidthInSourcePixels( const wstring &szLine ) const
 
 int Font::GetLineHeightInSourcePixels( const wstring &szLine ) const
 {
+	using std::max;
 	int iLineHeight = 0;
 
 	// The height of a line is the height of its tallest used font page.
@@ -310,10 +316,9 @@ void Font::AddPage( FontPage *m_pPage )
 {
 	m_apPages.push_back( m_pPage );
 
-	for( map<wchar_t,int>::const_iterator it = m_pPage->m_iCharToGlyphNo.begin();
-		it != m_pPage->m_iCharToGlyphNo.end(); ++it )
+	for (auto &it: m_pPage->m_iCharToGlyphNo)
 	{
-		m_iCharToGlyph[it->first] = &m_pPage->m_aGlyphs[it->second];
+		m_iCharToGlyph[it.first] = &m_pPage->m_aGlyphs[it.second];
 	}
 }
 
@@ -326,10 +331,9 @@ void Font::MergeFont(Font &f)
 	if( m_pDefault == NULL )
 		m_pDefault = f.m_pDefault;
 
-	for(map<wchar_t,glyph*>::iterator it = f.m_iCharToGlyph.begin();
-		it != f.m_iCharToGlyph.end(); ++it)
+	for (auto &it: f.m_iCharToGlyph)
 	{
-		m_iCharToGlyph[it->first] = it->second;
+		m_iCharToGlyph[it.first] = it.second;
 	}
 
 	m_apPages.insert( m_apPages.end(), f.m_apPages.begin(), f.m_apPages.end() );
@@ -351,17 +355,19 @@ const glyph &Font::GetGlyph( wchar_t c ) const
 		c = 1;
 
 	// Fast path:
-	if( c < (int) ARRAYLEN(m_iCharToGlyphCache) && m_iCharToGlyphCache[c] )
+	if (c < m_iCharToGlyphCache.size() && m_iCharToGlyphCache[c])
+	{
 		return *m_iCharToGlyphCache[c];
+	}
 
 	// Try the regular character.
-	map<wchar_t,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
+	auto it = m_iCharToGlyph.find(c);
 
 	// If that's missing, use the default glyph.
-	if(it == m_iCharToGlyph.end()) 
+	if(it == m_iCharToGlyph.end())
 		it = m_iCharToGlyph.find(FONT_DEFAULT_GLYPH);
 
-	if(it == m_iCharToGlyph.end()) 
+	if(it == m_iCharToGlyph.end())
 		RageException::Throw( "The default glyph is missing from the font \"%s\".", path.c_str() );
 
 	return *it->second;
@@ -369,7 +375,7 @@ const glyph &Font::GetGlyph( wchar_t c ) const
 
 bool Font::FontCompleteForString( const wstring &str ) const
 {
-	map<wchar_t,glyph*>::const_iterator mapDefault = m_iCharToGlyph.find( FONT_DEFAULT_GLYPH );
+	auto mapDefault = m_iCharToGlyph.find( FONT_DEFAULT_GLYPH );
 	if( mapDefault == m_iCharToGlyph.end() )
 		RageException::Throw( "The default glyph is missing from the font \"%s\".", path.c_str() );
 
@@ -389,7 +395,7 @@ void Font::CapsOnly()
 	 * a lowercase one. */
 	for( char c = 'A'; c <= 'Z'; ++c )
 	{
-		map<wchar_t,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
+		auto it = m_iCharToGlyph.find(c);
 
 		if(it == m_iCharToGlyph.end())
 			continue;
@@ -507,7 +513,7 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 
 				wchar_t c;
 				if( sCodepoint.substr(0, 2) == "U+" && IsHexVal(sCodepoint.substr(2)) )
-					sscanf( sCodepoint.substr(2).c_str(), "%x", &c );
+					sscanf( sCodepoint.substr(2).c_str(), "%x", reinterpret_cast<unsigned int*>(&c) );
 				else if( sCodepoint.size() > 0 &&
 						utf8_get_char_len(sCodepoint[0]) == int(sCodepoint.size()) )
 				{
@@ -673,7 +679,7 @@ RString FontPageSettings::MapRange( RString sMapping, int iMapOffset, int iGlyph
 
 		/* What's a practical limit?  A 2048x2048 texture could contain 16x16
 		 * characters, which is 16384 glyphs. (Use a grayscale map and that's
-		 * only 4 megs.) Let's use that as a cap. (We don't want to go crazy 
+		 * only 4 megs.) Let's use that as a cap. (We don't want to go crazy
 		 * if someone says "range Unicode #0-FFFFFFFF".) */
 		if( iCount > 16384 )
 			return ssprintf( "Can't map %i glyphs to one font page", iCount );
@@ -854,18 +860,19 @@ void Font::Load( const RString &sIniPath, RString sChars )
 		/* Expect at least as many frames as we have premapped characters. */
 		/* Make sure that we don't map characters to frames we don't actually
 		 * have.  This can happen if the font is too small for an sChars. */
-		for(map<wchar_t,int>::iterator it = pPage->m_iCharToGlyphNo.begin();
-			it != pPage->m_iCharToGlyphNo.end(); ++it)
+		for (auto &it: pPage->m_iCharToGlyphNo)
 		{
-			if( it->second < pPage->m_FontPageTextures.m_pTextureMain->GetNumFrames() )
+			if( it.second < pPage->m_FontPageTextures.m_pTextureMain->GetNumFrames() )
+			{
 				continue; /* OK */
+			}
 			LuaHelpers::ReportScriptErrorFmt(
 				"The font \"%s\" maps \"%s\" to frame %i, "
 				"but the font only has %i frames.",
-				sTexturePath.c_str(), WcharDisplayText(wchar_t(it->first)).c_str(),
-				it->second,
+				sTexturePath.c_str(), WcharDisplayText(wchar_t(it.first)).c_str(),
+				it.second,
 				pPage->m_FontPageTextures.m_pTextureMain->GetNumFrames());
-			it->second= 0;
+			it.second= 0;
 		}
 
 //		LOG->Trace( "Adding page %s (%s) to %s; %i glyphs",
@@ -890,18 +897,19 @@ void Font::Load( const RString &sIniPath, RString sChars )
 	if( LoadStack.empty() )
 	{
 		// Cache ASCII glyphs.
-		ZERO( m_iCharToGlyphCache );
-		map<wchar_t,glyph*>::iterator it;
-		for( it = m_iCharToGlyph.begin(); it != m_iCharToGlyph.end(); ++it )
-			if( it->first < (int) ARRAYLEN(m_iCharToGlyphCache) )
+		m_iCharToGlyphCache.fill( NULL );
+		for( auto it = m_iCharToGlyph.begin(); it != m_iCharToGlyph.end(); ++it )
+			if( it->first < m_iCharToGlyphCache.size() )
+			{
 				m_iCharToGlyphCache[it->first] = it->second;
+			}
 	}
 }
 
 /*
  * (c) 2001-2004 Glenn Maynard, Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -911,7 +919,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

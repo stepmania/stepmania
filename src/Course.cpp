@@ -2,7 +2,6 @@
 #include "global.h"
 #include "Course.h"
 #include "CourseLoaderCRS.h"
-#include "Foreach.h"
 #include "GameManager.h"
 #include "GameState.h"
 #include "LocalizedString.h"
@@ -18,6 +17,8 @@
 #include "UnlockManager.h"
 #include "Game.h"
 #include "Style.h"
+
+using std::vector;
 
 static Preference<int> MAX_SONGS_IN_EDIT_COURSE( "MaxSongsInEditCourse", -1 );
 
@@ -49,7 +50,7 @@ RString CourseEntry::GetTextDescription() const
 	vector<RString> vsEntryDescription;
 	Song *pSong = songID.ToSong();
 	if( pSong )
-		vsEntryDescription.push_back( pSong->GetTranslitFullTitle() ); 
+		vsEntryDescription.push_back( pSong->GetTranslitFullTitle() );
 	else
 		vsEntryDescription.push_back( "Random" );
 	if( !songCriteria.m_sGroupName.empty() )
@@ -89,7 +90,7 @@ int CourseEntry::GetNumModChanges() const
 Course::Course(): m_bIsAutogen(false), m_sPath(""), m_sMainTitle(""),
 	m_sMainTitleTranslit(""), m_sSubTitle(""), m_sSubTitleTranslit(""),
 	m_sScripter(""), m_sDescription(""), m_sBannerPath(""), m_sBackgroundPath(""),
-	m_sCDTitlePath(""), m_sGroupName(""), m_bRepeat(false), m_fGoalSeconds(0), 
+	m_sCDTitlePath(""), m_sGroupName(""), m_bRepeat(false), m_fGoalSeconds(0),
 	m_bShuffle(false), m_iLives(-1), m_bSortByMeter(false),
 	m_bIncomplete(false), m_vEntries(), m_SortOrder_TotalDifficulty(0),
 	m_SortOrder_Ranking(0), m_LoadedFromProfile(ProfileSlot_Invalid),
@@ -104,7 +105,7 @@ CourseType Course::GetCourseType() const
 {
 	if( m_bRepeat )
 		return COURSE_TYPE_ENDLESS;
-	if( m_iLives > 0 ) 
+	if( m_iLives > 0 )
 		return COURSE_TYPE_ONI;
 	if( !m_vEntries.empty()  &&  m_vEntries[0].fGainSeconds > 0 )
 		return COURSE_TYPE_SURVIVAL;
@@ -223,9 +224,9 @@ struct SortTrailEntry
 {
 	TrailEntry entry;
 	int SortMeter;
-	
+
 	SortTrailEntry(): entry(), SortMeter(0) {}
-	
+
 	bool operator< ( const SortTrailEntry &rhs ) const { return SortMeter < rhs.SortMeter; }
 };
 
@@ -449,7 +450,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	vector<SongAndSteps> vSongAndSteps;
 
 	// Resolve each entry to a Song and Steps.
-	FOREACH_CONST( CourseEntry, entries, e )
+	for (auto e = entries.begin(); e != entries.end(); ++e)
 	{
 		SongAndSteps resolved;	// fill this in
 		SongCriteria soc = e->songCriteria;
@@ -497,14 +498,16 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 		vector<Song*> vpSongs;
 		typedef vector<Steps*> StepsVector;
-		map<Song*,StepsVector> mapSongToSteps;
-		FOREACH_CONST( SongAndSteps, vSongAndSteps, sas )
+		std::map<Song*,StepsVector> mapSongToSteps;
+		for (auto const &sas: vSongAndSteps)
 		{
-			StepsVector &v = mapSongToSteps[sas->pSong];
+			StepsVector &v = mapSongToSteps[sas.pSong];
 
-			v.push_back( sas->pSteps );
+			v.push_back( sas.pSteps );
 			if( v.size() == 1 )
-				vpSongs.push_back( sas->pSong );
+			{
+				vpSongs.push_back( sas.pSong );
+			}
 		}
 
 		CourseSortSongs( e->songSort, vpSongs, rnd );
@@ -521,8 +524,8 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			continue;
 		}
 
-		/* If we're not COURSE_DIFFICULTY_REGULAR, then we should be choosing steps that are 
-		 * either easier or harder than the base difficulty.  If no such steps exist, then 
+		/* If we're not COURSE_DIFFICULTY_REGULAR, then we should be choosing steps that are
+		 * either easier or harder than the base difficulty.  If no such steps exist, then
 		 * just use the one we already have. */
 		Difficulty dc = resolved.pSteps->GetDifficulty();
 		int iLowMeter = e->stepsCriteria.m_iLowMeter;
@@ -576,8 +579,8 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 				/* Clamp the possible adjustments to try to avoid going under 1 or over
 				 * MAX_BOTTOM_RANGE. */
-				iMinDist = min( max( iMinDist, -iLowMeter+1 ), iMaxDist );
-				iMaxDist = max( min( iMaxDist, MAX_BOTTOM_RANGE-iHighMeter ), iMinDist );
+				iMinDist = std::min( std::max( iMinDist, -iLowMeter+1 ), iMaxDist );
+				iMaxDist = std::max( std::min( iMaxDist, MAX_BOTTOM_RANGE-iHighMeter ), iMinDist );
 
 				int iAdd;
 				if( iMaxDist == iMinDist )
@@ -656,9 +659,9 @@ void Course::GetAllTrails( vector<Trail*> &AddTo ) const
 {
 	vector<StepsType> vStepsTypesToShow;
 	GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vStepsTypesToShow );
-	FOREACH( StepsType, vStepsTypesToShow, st )
+	for (auto &st: vStepsTypesToShow)
 	{
-		GetTrails( AddTo, *st );
+		GetTrails( AddTo, st );
 	}
 }
 
@@ -674,13 +677,10 @@ int Course::GetMeter( StepsType st, CourseDifficulty cd ) const
 
 bool Course::HasMods() const
 {
-	FOREACH_CONST( CourseEntry, m_vEntries, e )
-	{
-		if( !e->attacks.empty() )
-			return true;
-	}
-
-	return false;
+	auto doesEntryHaveAttacks = [](CourseEntry const &entry) {
+		return !entry.attacks.empty();
+	};
+	return std::any_of(m_vEntries.begin(), m_vEntries.end(), doesEntryHaveAttacks);
 }
 
 bool Course::HasTimedMods() const
@@ -689,13 +689,12 @@ bool Course::HasTimedMods() const
 	// HasTimedMods now searches for bGlobal in the attacks; if one of
 	// them is false, it has timed mods. Also returning false will probably
 	// take longer than expected. -aj
-	FOREACH_CONST( CourseEntry, m_vEntries, e )
+	for (auto const &e: m_vEntries)
 	{
-		if( !e->attacks.empty() )
+		if( !e.attacks.empty() )
 		{
-			for( unsigned s=0; s < e->attacks.size(); s++ )
+			for (auto const &attack: e.attacks)
 			{
-				const Attack attack = e->attacks[s];
 				if(!attack.bGlobal)
 					return true;
 			}
@@ -706,12 +705,10 @@ bool Course::HasTimedMods() const
 
 bool Course::AllSongsAreFixed() const
 {
-	FOREACH_CONST( CourseEntry, m_vEntries, e )
-	{
-		if( !e->IsFixedSong() )
-			return false;
-	}
-	return true;
+	auto isEntryFixed = [](CourseEntry const &entry) {
+		return entry.IsFixedSong();
+	};
+	return std::all_of(m_vEntries.begin(), m_vEntries.end(), isEntryFixed);
 }
 
 const Style *Course::GetCourseStyle( const Game *pGame, int iNumPlayers ) const
@@ -719,13 +716,14 @@ const Style *Course::GetCourseStyle( const Game *pGame, int iNumPlayers ) const
 	vector<const Style*> vpStyles;
 	GAMEMAN->GetCompatibleStyles( pGame, iNumPlayers, vpStyles );
 
-	for( int s=0; s < (int) vpStyles.size(); ++s ) 
+	for (auto const *pStyle: vpStyles)
 	{
-		const Style *pStyle = vpStyles[s];
-		FOREACHS_CONST( RString, m_setStyles, style )
+		for (auto const &style: m_setStyles)
 		{
-			if( !style->CompareNoCase(pStyle->m_szName) )
+			if( !style.CompareNoCase(pStyle->m_szName) )
+			{
 				return pStyle;
+			}
 		}
 	}
 	return NULL;
@@ -738,9 +736,9 @@ void Course::InvalidateTrailCache()
 
 void Course::Invalidate( const Song *pStaleSong )
 {
-	FOREACH_CONST( CourseEntry, m_vEntries, e )
+	for (auto const &e: m_vEntries)
 	{
-		Song *pSong = e->songID.ToSong();
+		Song *pSong = e.songID.ToSong();
 		if( pSong == pStaleSong )	// a fixed entry that references the stale Song
 		{
 			RevertFromDisk();
@@ -749,7 +747,7 @@ void Course::Invalidate( const Song *pStaleSong )
 	}
 
 	// Invalidate any Trails that contain this song.
-	// If we find a Trail that contains this song, then it's part of a 
+	// If we find a Trail that contains this song, then it's part of a
 	// non-fixed entry. So, regenerating the Trail will force different
 	// songs to be chosen.
 	FOREACH_ENUM( StepsType,st )
@@ -770,15 +768,15 @@ void Course::Invalidate( const Song *pStaleSong )
 void Course::RegenerateNonFixedTrails() const
 {
 	// Only need to regen Trails if the Course has a random entry.
-	// We can create these Trails on demand because we don't 
-	// calculate RadarValues for Trails with one or more non-fixed 
+	// We can create these Trails on demand because we don't
+	// calculate RadarValues for Trails with one or more non-fixed
 	// entry.
 	if( AllSongsAreFixed() )
 		return;
 
-	FOREACHM( CacheEntry, CacheData, m_TrailCache, e )
+	for (auto const &e: m_TrailCache)
 	{
-		const CacheEntry &ce = e->first;
+		const CacheEntry &ce = e.first;
 		GetTrailForceRegenCache( ce.first, ce.second );
 	}
 }
@@ -793,7 +791,7 @@ RageColor Course::GetColor() const
 	case COURSE_SORT_PREFERRED:
 		return SORT_PREFERRED_COLOR;	//This will also be used for autogen'd courses in some cases.
 
-	case COURSE_SORT_SONGS:	
+	case COURSE_SORT_SONGS:
 		if( m_vEntries.size() >= 7 )		return SORT_LEVEL2_COLOR;
 		else if( m_vEntries.size() >= 4 )	return SORT_LEVEL4_COLOR;
 		else					return SORT_LEVEL5_COLOR;
@@ -851,15 +849,10 @@ bool Course::GetTotalSeconds( StepsType st, float& fSecondsOut ) const
 
 bool Course::CourseHasBestOrWorst() const
 {
-	FOREACH_CONST( CourseEntry, m_vEntries, e )
-	{
-		if( e->songSort == SongSort_MostPlays  &&  e->iChooseIndex != -1 )
-			return true;
-		if( e->songSort == SongSort_FewestPlays  &&  e->iChooseIndex != -1 )
-			return true;
-	}
-
-	return false;
+	auto isEntryBestOrWorst = [](CourseEntry const &e) {
+		return e.iChooseIndex != -1 && ( e.songSort == SongSort_MostPlays || e.songSort == SongSort_FewestPlays );
+	};
+	return std::any_of(m_vEntries.begin(), m_vEntries.end(), isEntryBestOrWorst);
 }
 
 RString Course::GetBannerPath() const
@@ -934,12 +927,13 @@ bool Course::IsRanking() const
 
 const CourseEntry *Course::FindFixedSong( const Song *pSong ) const
 {
-	FOREACH_CONST( CourseEntry, m_vEntries, e )
+	for (auto const &entry: m_vEntries)
 	{
-		const CourseEntry &entry = *e;
 		Song *lSong = entry.songID.ToSong();
 		if( pSong == lSong )
+		{
 			return &entry;
+		}
 	}
 
 	return NULL;
@@ -1012,7 +1006,7 @@ bool Course::Matches( RString sGroup, RString sCourse ) const
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the CourseEntry. */ 
+/** @brief Allow Lua to have access to the CourseEntry. */
 class LunaCourseEntry: public Luna<CourseEntry>
 {
 public:
@@ -1032,7 +1026,7 @@ public:
 	// GetTimedModifiers - table
 	DEFINE_METHOD( GetNumModChanges, GetNumModChanges() );
 	DEFINE_METHOD( GetTextDescription, GetTextDescription() );
-	
+
 	LunaCourseEntry()
 	{
 		ADD_METHOD( GetSong );
@@ -1051,7 +1045,7 @@ public:
 LUA_REGISTER_CLASS( CourseEntry )
 
 // Now for the Course bindings:
-/** @brief Allow Lua to have access to the Course. */ 
+/** @brief Allow Lua to have access to the Course. */
 class LunaCourse: public Luna<Course>
 {
 public:
@@ -1130,8 +1124,8 @@ public:
 		ADD_METHOD( GetGroupName );
 		ADD_METHOD( IsAutogen );
 		ADD_METHOD( GetEstimatedNumStages );
-		ADD_METHOD( GetScripter ); 
-		ADD_METHOD( GetDescription ); 
+		ADD_METHOD( GetScripter );
+		ADD_METHOD( GetDescription );
 		ADD_METHOD( GetTotalSeconds );
 		ADD_METHOD( IsEndless );
 		ADD_METHOD( IsNonstop );
@@ -1153,7 +1147,7 @@ LUA_REGISTER_CLASS( Course )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1163,7 +1157,7 @@ LUA_REGISTER_CLASS( Course )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

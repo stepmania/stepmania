@@ -1,14 +1,15 @@
 #include "global.h"
 #include "EmergencyShutdown.h"
 #include "RageUtil.h"
+#include <array>
 
 typedef void (*Callback)();
-static Callback g_pEmergencyFunc[5];
+static std::array<Callback, 5> g_pEmergencyFunc;
 static unsigned g_iNumEmergencyFuncs = 0;
 
 void RegisterEmergencyShutdownCallback( void (*pFunc)() )
 {
-	ASSERT( g_iNumEmergencyFuncs+1 < ARRAYLEN(g_pEmergencyFunc) );
+	ASSERT( g_iNumEmergencyFuncs + 1 < g_pEmergencyFunc.size() );
 	g_pEmergencyFunc[ g_iNumEmergencyFuncs++ ] = pFunc;
 }
 

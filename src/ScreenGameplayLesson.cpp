@@ -6,6 +6,8 @@
 #include "StatsManager.h"
 #include "Song.h"
 
+using std::vector;
+
 REGISTER_SCREEN_CLASS( ScreenGameplayLesson );
 ScreenGameplayLesson::ScreenGameplayLesson()
 {
@@ -33,7 +35,7 @@ void ScreenGameplayLesson::Init()
 	vector<RString> vs;
 	GetDirListing( sDir+"Page*", vs, true, true );
 	m_vPages.resize( vs.size() );
-	FOREACH( RString, vs, s )
+	for (auto s = vs.begin(); s != vs.end(); ++s)
 	{
 		int i = s - vs.begin();
 		AutoActor &aa = m_vPages[i];
@@ -46,7 +48,7 @@ void ScreenGameplayLesson::Init()
 		this->AddChild( aa );
 	}
 
-	FOREACH( AutoActor, m_vPages, aa )
+	for (auto aa = m_vPages.begin(); aa != m_vPages.end(); ++aa)
 	{
 		bool bIsFirst = aa == m_vPages.begin();
 		(*aa)->PlayCommand( bIsFirst ? "Show" : "Hide" );
@@ -196,7 +198,7 @@ void ScreenGameplayLesson::ResetAndRestartCurrentSong()
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -206,7 +208,7 @@ void ScreenGameplayLesson::ResetAndRestartCurrentSong()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

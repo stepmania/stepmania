@@ -10,8 +10,9 @@
 #include "RageLog.h"
 #include "XmlFile.h"
 #include "GameState.h" // blame radar calculations.
-#include "Foreach.h"
 #include "RageUtil_AutoPtr.h"
+
+using std::vector;
 
 REGISTER_CLASS_TRAITS( NoteData, new NoteData(*pCopy) )
 
@@ -31,9 +32,13 @@ bool NoteData::IsComposite() const
 {
 	for( int track = 0; track < GetNumTracks(); ++track )
 	{
-		FOREACHM_CONST( int, TapNote, m_TapNotes[track], tn )
-			if( tn->second.pn != PLAYER_INVALID )
+		for (auto const &tn: m_TapNotes[track])
+		{
+			if (tn.second.pn != PLAYER_INVALID)
+			{
 				return true;
+			}
+		}
 	}
 	return false;
 }
@@ -199,7 +204,7 @@ int NoteData::GetNumTapNonEmptyTracks( int row ) const
 	return iNum;
 }
 
-void NoteData::GetTapNonEmptyTracks( int row, set<int>& addTo ) const
+void NoteData::GetTapNonEmptyTracks( int row, std::set<int>& addTo ) const
 {
 	for( int t=0; t<GetNumTracks(); t++ )
 		if( GetTapNote(t, row).type != TapNoteType_Empty )
@@ -304,6 +309,8 @@ int NoteData::GetLastTrackWithTapOrHoldHead( int row ) const
 
 void NoteData::AddHoldNote( int iTrack, int iStartRow, int iEndRow, TapNote tn )
 {
+	using std::min;
+	using std::max;
 	ASSERT( iStartRow>=0 && iEndRow>=0 );
 	ASSERT_M( iEndRow >= iStartRow, ssprintf("EndRow %d < StartRow %d",iEndRow,iStartRow) );
 
@@ -402,7 +409,7 @@ bool NoteData::IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow ) const
 }
 
 bool NoteData::IsEmpty() const
-{ 
+{
 	for( int t=0; t < GetNumTracks(); t++ )
 	{
 		int iRow = -1;
@@ -416,7 +423,8 @@ bool NoteData::IsEmpty() const
 }
 
 int NoteData::GetFirstRow() const
-{ 
+{
+	using std::min;
 	int iEarliestRowFoundSoFar = -1;
 
 	for( int t=0; t < GetNumTracks(); t++ )
@@ -438,7 +446,8 @@ int NoteData::GetFirstRow() const
 }
 
 int NoteData::GetLastRow() const
-{ 
+{
+	using std::max;
 	int iOldestRowFoundSoFar = 0;
 
 	for( int t=0; t < GetNumTracks(); t++ )
@@ -697,14 +706,14 @@ int NoteData::GetNumLifts( int iStartIndex, int iEndIndex ) const
 int NoteData::GetNumFakes( int iStartIndex, int iEndIndex ) const
 {
 	int iNumFakes = 0;
-	
+
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, iStartIndex, iEndIndex )
 			if( this->IsFake(GetTapNote(t, r), r))
 				iNumFakes++;
 	}
-	
+
 	return iNumFakes;
 }
 
@@ -717,9 +726,9 @@ bool NoteData::IsPlayer1(const int track, const TapNote &tn) const
 	return track < (this->GetNumTracks() / 2);
 }
 
-pair<int, int> NoteData::GetNumTapNotesTwoPlayer( int iStartIndex, int iEndIndex ) const
+std::pair<int, int> NoteData::GetNumTapNotesTwoPlayer( int iStartIndex, int iEndIndex ) const
 {
-	pair<int, int> num(0, 0);
+	std::pair<int, int> num(0, 0);
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, iStartIndex, iEndIndex )
@@ -737,14 +746,14 @@ pair<int, int> NoteData::GetNumTapNotesTwoPlayer( int iStartIndex, int iEndIndex
 	return num;
 }
 
-pair<int, int> NoteData::GetNumRowsWithSimultaneousTapsTwoPlayer(int minTaps,
+std::pair<int, int> NoteData::GetNumRowsWithSimultaneousTapsTwoPlayer(int minTaps,
 																 int startRow,
 																 int endRow) const
 {
-	pair<int, int> num(0, 0);
+	std::pair<int, int> num(0, 0);
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, startRow, endRow )
 	{
-		pair<int, int> found(0, 0);
+		std::pair<int, int> found(0, 0);
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
 			const TapNote &tn = GetTapNote(t, r);
@@ -764,24 +773,24 @@ pair<int, int> NoteData::GetNumRowsWithSimultaneousTapsTwoPlayer(int minTaps,
 	return num;
 }
 
-pair<int, int> NoteData::GetNumJumpsTwoPlayer( int iStartIndex, int iEndIndex ) const
+std::pair<int, int> NoteData::GetNumJumpsTwoPlayer( int iStartIndex, int iEndIndex ) const
 {
 	return GetNumRowsWithSimultaneousTapsTwoPlayer( 2, iStartIndex, iEndIndex );
 }
 
-pair<int, int> NoteData::GetNumHandsTwoPlayer( int iStartIndex, int iEndIndex ) const
+std::pair<int, int> NoteData::GetNumHandsTwoPlayer( int iStartIndex, int iEndIndex ) const
 {
 	return GetNumRowsWithSimultaneousTapsTwoPlayer( 3, iStartIndex, iEndIndex );
 }
 
-pair<int, int> NoteData::GetNumQuadsTwoPlayer( int iStartIndex, int iEndIndex ) const
+std::pair<int, int> NoteData::GetNumQuadsTwoPlayer( int iStartIndex, int iEndIndex ) const
 {
 	return GetNumRowsWithSimultaneousTapsTwoPlayer( 4, iStartIndex, iEndIndex );
 }
 
-pair<int, int> NoteData::GetNumHoldNotesTwoPlayer( int iStartIndex, int iEndIndex ) const
+std::pair<int, int> NoteData::GetNumHoldNotesTwoPlayer( int iStartIndex, int iEndIndex ) const
 {
-	pair<int, int> num(0, 0);
+	std::pair<int, int> num(0, 0);
 	for( int t=0; t<GetNumTracks(); ++t )
 	{
 		NoteData::TrackMap::const_iterator lBegin, lEnd;
@@ -802,9 +811,9 @@ pair<int, int> NoteData::GetNumHoldNotesTwoPlayer( int iStartIndex, int iEndInde
 	return num;
 }
 
-pair<int, int> NoteData::GetNumMinesTwoPlayer( int iStartIndex, int iEndIndex ) const
+std::pair<int, int> NoteData::GetNumMinesTwoPlayer( int iStartIndex, int iEndIndex ) const
 {
-	pair<int, int> num(0, 0);
+	std::pair<int, int> num(0, 0);
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, iStartIndex, iEndIndex )
@@ -822,9 +831,9 @@ pair<int, int> NoteData::GetNumMinesTwoPlayer( int iStartIndex, int iEndIndex ) 
 	return num;
 }
 
-pair<int, int> NoteData::GetNumRollsTwoPlayer( int iStartIndex, int iEndIndex ) const
+std::pair<int, int> NoteData::GetNumRollsTwoPlayer( int iStartIndex, int iEndIndex ) const
 {
-	pair<int, int> num(0, 0);
+	std::pair<int, int> num(0, 0);
 	for( int t=0; t<GetNumTracks(); ++t )
 	{
 		NoteData::TrackMap::const_iterator lBegin, lEnd;
@@ -845,9 +854,9 @@ pair<int, int> NoteData::GetNumRollsTwoPlayer( int iStartIndex, int iEndIndex ) 
 	return num;
 }
 
-pair<int, int> NoteData::GetNumLiftsTwoPlayer( int iStartIndex, int iEndIndex ) const
+std::pair<int, int> NoteData::GetNumLiftsTwoPlayer( int iStartIndex, int iEndIndex ) const
 {
-	pair<int, int> num(0, 0);
+	std::pair<int, int> num(0, 0);
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, iStartIndex, iEndIndex )
@@ -865,9 +874,9 @@ pair<int, int> NoteData::GetNumLiftsTwoPlayer( int iStartIndex, int iEndIndex ) 
 	return num;
 }
 
-pair<int, int> NoteData::GetNumFakesTwoPlayer( int iStartIndex, int iEndIndex ) const
+std::pair<int, int> NoteData::GetNumFakesTwoPlayer( int iStartIndex, int iEndIndex ) const
 {
-	pair<int, int> num(0, 0);
+	std::pair<int, int> num(0, 0);
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, iStartIndex, iEndIndex )
@@ -917,7 +926,7 @@ void NoteData::LoadTransformed( const NoteData& in, int iNewNumTracks, const int
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		const int iOriginalTrack = iOriginalTrackToTakeFrom[t];
-		ASSERT_M( iOriginalTrack < in.GetNumTracks(), ssprintf("from OriginalTrack %i >= %i (#tracks) (taking from %i)", 
+		ASSERT_M( iOriginalTrack < in.GetNumTracks(), ssprintf("from OriginalTrack %i >= %i (#tracks) (taking from %i)",
 			iOriginalTrack, in.GetNumTracks(), iOriginalTrackToTakeFrom[t]));
 
 		if( iOriginalTrack == -1 )
@@ -957,7 +966,7 @@ void NoteData::SetTapNote( int track, int row, const TapNote& t )
 	}
 }
 
-void NoteData::GetTracksHeldAtRow( int row, set<int>& addTo )
+void NoteData::GetTracksHeldAtRow( int row, std::set<int>& addTo )
 {
 	for( int t=0; t<GetNumTracks(); ++t )
 		if( IsHoldNoteAtRow( t, row ) )
@@ -966,7 +975,7 @@ void NoteData::GetTracksHeldAtRow( int row, set<int>& addTo )
 
 int NoteData::GetNumTracksHeldAtRow( int row )
 {
-	static set<int> viTracks;
+	static std::set<int> viTracks;
 	viTracks.clear();
 	GetTracksHeldAtRow( row, viTracks );
 	return viTracks.size();
@@ -976,7 +985,7 @@ bool NoteData::GetNextTapNoteRowForTrack( int track, int &rowInOut ) const
 {
 	const TrackMap &mapTrack = m_TapNotes[track];
 
-	// lower_bound and upper_bound have the same effect here because duplicate 
+	// lower_bound and upper_bound have the same effect here because duplicate
 	// keys aren't allowed.
 
 	// lower_bound "finds the first element whose key is not less than k" (>=);
@@ -1003,7 +1012,7 @@ bool NoteData::GetPrevTapNoteRowForTrack( int track, int &rowInOut ) const
 		return false;
 
 	// Move back by one.
-	--iter;	
+	--iter;
 	ASSERT( iter->first < rowInOut );
 	rowInOut = iter->first;
 	return true;
@@ -1119,6 +1128,7 @@ void NoteData::GetTapNoteRangeExclusive( int iTrack, int iStartRow, int iEndRow,
 
 bool NoteData::GetNextTapNoteRowForAllTracks( int &rowInOut ) const
 {
+	using std::min;
 	int iClosestNextRow = MAX_NOTE_ROW;
 	bool bAnyHaveNextNote = false;
 	for( int t=0; t<GetNumTracks(); t++ )
@@ -1145,6 +1155,7 @@ bool NoteData::GetNextTapNoteRowForAllTracks( int &rowInOut ) const
 
 bool NoteData::GetPrevTapNoteRowForAllTracks( int &rowInOut ) const
 {
+	using std::max;
 	int iClosestPrevRow = 0;
 	bool bAnyHavePrevNote = false;
 	for( int t=0; t<GetNumTracks(); t++ )
@@ -1203,7 +1214,7 @@ void NoteData::AddATIToList(all_tracks_const_iterator* iter) const
 
 void NoteData::RemoveATIFromList(all_tracks_iterator* iter) const
 {
-	set<all_tracks_iterator*>::iterator pos= m_atis.find(iter);
+	auto pos= m_atis.find(iter);
 	if(pos != m_atis.end())
 	{
 		m_atis.erase(pos);
@@ -1212,7 +1223,7 @@ void NoteData::RemoveATIFromList(all_tracks_iterator* iter) const
 
 void NoteData::RemoveATIFromList(all_tracks_const_iterator* iter) const
 {
-	set<all_tracks_const_iterator*>::iterator pos= m_const_atis.find(iter);
+	auto pos= m_const_atis.find(iter);
 	if(pos != m_const_atis.end())
 	{
 		m_const_atis.erase(pos);
@@ -1221,13 +1232,11 @@ void NoteData::RemoveATIFromList(all_tracks_const_iterator* iter) const
 
 void NoteData::RevalidateATIs(vector<int> const& added_or_removed_tracks, bool added)
 {
-	for(set<all_tracks_iterator*>::iterator cur= m_atis.begin();
-			cur != m_atis.end(); ++cur)
+	for(auto cur= m_atis.begin(); cur != m_atis.end(); ++cur)
 	{
 		(*cur)->Revalidate(this, added_or_removed_tracks, added);
 	}
-	for(set<all_tracks_const_iterator*>::iterator cur= m_const_atis.begin();
-			cur != m_const_atis.end(); ++cur)
+	for(auto cur= m_const_atis.begin(); cur != m_const_atis.end(); ++cur)
 	{
 		(*cur)->Revalidate(this, added_or_removed_tracks, added);
 	}
@@ -1462,7 +1471,7 @@ template class NoteData::_all_tracks_iterator<const NoteData, NoteData::const_it
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1472,7 +1481,7 @@ template class NoteData::_all_tracks_iterator<const NoteData, NoteData::const_it
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

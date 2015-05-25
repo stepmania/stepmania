@@ -11,9 +11,10 @@
 #include "InputFilter.h"
 #include "PrefsManager.h"
 #include "GamePreferences.h" //needed for Axis Fix
-#include "Foreach.h"
 
 #include "InputHandler_DirectInputHelper.h"
+
+using std::vector;
 
 REGISTER_INPUT_HANDLER_CLASS2( DirectInput, DInput );
 static Preference<bool> g_bAxisFix( "AxisFix", false );
@@ -283,6 +284,8 @@ static HRESULT GetDeviceState( LPDIRECTINPUTDEVICE8 dev, int size, void *ptr )
  * figure it out. Be sure to call InputHandler::Update() between each poll. */
 void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 {
+	using std::max;
+
 	switch( device.type )
 	{
 	default:
@@ -351,15 +354,15 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 							{ neg = JOY_AUX_1; pos = JOY_AUX_2;	val = state.rglSlider[0]; }
 						else if( in.ofs == DIJOFS_SLIDER(1) )
 							{ neg = JOY_AUX_3; pos = JOY_AUX_4;	val = state.rglSlider[1]; }
-						else LOG->MapLog( "unknown input", 
+						else LOG->MapLog( "unknown input",
 											"Controller '%s' is returning an unknown joystick offset, %i",
 											device.m_sName.c_str(), in.ofs );
 
 						if( neg != DeviceButton_Invalid )
 						{
 							float l = SCALE( int(val), 0.0f, 100.0f, 0.0f, 1.0f );
-							ButtonPressed( DeviceInput(dev, neg, max(-l,0), tm) );
-							ButtonPressed( DeviceInput(dev, pos, max(+l,0), tm) );
+							ButtonPressed( DeviceInput(dev, neg, max(-l,0.f), tm) );
+							ButtonPressed( DeviceInput(dev, pos, max(+l,0.f), tm) );
 						}
 
 						break;
@@ -438,7 +441,7 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 							ButtonPressed( DeviceInput(dev, pos, 0, tm) );
 						}
 					}
-					else LOG->MapLog( "unknown input", 
+					else LOG->MapLog( "unknown input",
 											"Mouse '%s' is returning an unknown mouse offset, %i",
 											device.m_sName.c_str(), in.ofs );
 					break;
@@ -451,6 +454,8 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 
 void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm )
 {
+	using std::max;
+	using std::min;
 	DWORD numevents;
 	DIDEVICEOBJECTDATA evtbuf[INPUT_QSIZE];
 
@@ -505,7 +510,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 						if( in.ofs == DIMOFS_BUTTON0 ) mouseInput = MOUSE_LEFT;
 						else if( in.ofs == DIMOFS_BUTTON1 ) mouseInput = MOUSE_RIGHT;
 						else if( in.ofs == DIMOFS_BUTTON2 ) mouseInput = MOUSE_MIDDLE;
-						else LOG->MapLog( "unknown input", 
+						else LOG->MapLog( "unknown input",
 								 "Mouse '%s' is returning an unknown mouse offset [button], %i",
 								 device.m_sName.c_str(), in.ofs );
 						ButtonPressed( DeviceInput(dev, mouseInput, !!evtbuf[i].dwData, tm) );
@@ -569,7 +574,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 								}
 							}
 						}
-						else LOG->MapLog( "unknown input", 
+						else LOG->MapLog( "unknown input",
 										 "Mouse '%s' is returning an unknown mouse offset [axis], %i",
 										 device.m_sName.c_str(), in.ofs );
 					}
@@ -584,10 +589,10 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 						else if( in.ofs == DIJOFS_RZ ) { up = JOY_ROT_Z_UP; down = JOY_ROT_Z_DOWN; }
 						else if( in.ofs == DIJOFS_SLIDER(0) ) { up = JOY_AUX_1; down = JOY_AUX_2; }
 						else if( in.ofs == DIJOFS_SLIDER(1) ) { up = JOY_AUX_3; down = JOY_AUX_4; }
-						else LOG->MapLog( "unknown input", 
+						else LOG->MapLog( "unknown input",
 										 "Controller '%s' is returning an unknown joystick offset, %i",
 										 device.m_sName.c_str(), in.ofs );
-						
+
 						float l = SCALE( int(evtbuf[i].dwData), 0.0f, 100.0f, 0.0f, 1.0f );
 						if(g_bAxisFix)
 						{
@@ -597,8 +602,8 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 						}
 						else
 						{
-						  ButtonPressed( DeviceInput(dev, up, max(-l,0), tm) );
-						  ButtonPressed( DeviceInput(dev, down, max(+l,0), tm) ); 
+						  ButtonPressed( DeviceInput(dev, up, max(-l,0.f), tm) );
+						  ButtonPressed( DeviceInput(dev, down, max(+l,0.f), tm) );
 						}
 					}
 					break;
@@ -837,24 +842,28 @@ wchar_t InputHandler_DInput::DeviceButtonToChar( DeviceButton button, bool bUseC
 		return '\0';
 	}
 
-	FOREACH_CONST( DIDevice, Devices, d )
+	for (auto &d: Devices)
 	{
-		if( d->type != DIDevice::KEYBOARD )
-			continue;
-
-		FOREACH_CONST( input_t, d->Inputs, i )
+		if( d.type != DIDevice::KEYBOARD )
 		{
-			if( button != i->num )
+			continue;
+		}
+		for (auto &i: d.Inputs)
+		{
+			if( button != i.num )
+			{
 				continue;
-
+			}
 			unsigned char keys[256];
 			ZERO( keys );
 			if( bUseCurrentKeyModifiers )
 				GetKeyboardState(keys);
 			// todo: handle Caps Lock -freem
-			wchar_t c = ScancodeAndKeysToChar( i->ofs, keys );
+			wchar_t c = ScancodeAndKeysToChar( i.ofs, keys );
 			if( c )
+			{
 				return c;
+			}
 		}
 	}
 
@@ -864,7 +873,7 @@ wchar_t InputHandler_DInput::DeviceButtonToChar( DeviceButton button, bool bUseC
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -874,7 +883,7 @@ wchar_t InputHandler_DInput::DeviceButtonToChar( DeviceButton button, bool bUseC
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
