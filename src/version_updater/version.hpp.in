@@ -12,4 +12,6 @@ char const * const smVersionFull = "@SM_VERSION_FULL@";
 #endif
 char const * const smVersionTraditional = "@SM_VERSION_TRADITIONAL@";
 
+extern char const * const smVersionDate = "@SM_TIMESTAMP_DATE@";
+extern char const * const smVersionTime = "@SM_TIMESTAMP_TIME@";
 #endif
