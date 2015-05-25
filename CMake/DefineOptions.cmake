@@ -7,9 +7,6 @@ option(WITH_EXTERNAL_WARNINGS "Build with warnings for all components, not just 
 # This option is not yet working, but will likely default to ON in the future.
 option(WITH_LTO "Build with Link Time Optimization (LTO)/Whole Program Optimization." OFF)
 
-# This option handles if we use SSE2 processing.
-option(WITH_SSE2 "Build with SSE2 Optimizations." ON)
-
 # This option may go away in the future: if it does, JPEG will always be required.
 option(WITH_JPEG "Build with JPEG Image Support." ON)
 
@@ -35,10 +32,17 @@ elseif(LINUX)
     option(WITH_CRYSTALHD_DISABLED "Build FFMPEG without Crystal HD support." OFF)
     option(WITH_TTY "Build with Linux TTY Input Support." OFF)
     option(WITH_PROFILING "Build with Profiling Support." OFF)
-    option(WITH_GLES2 "Build with OpenGL ES 2.0 Support." ON)
+    #option(WITH_GLES2 "Build with OpenGL ES 2.0 Support." OFF)
     option(WITH_GTK2 "Build with GTK2 Support." ON)
     option(WITH_OGG "Build with OGG/Vorbis Support." ON)
     option(WITH_MP3 "Build with MP3 Support." ON)
     option(WITH_PARALLEL_PORT "Build with Parallel Lights I/O Support." OFF)
     option(WITH_CRASH_HANDLER "Build with Crash Handler Support." ON)
+endif()
+
+if(NOT ANDROID)
+  # This option handles if we use SSE2 processing.
+  option(WITH_SSE2 "Build with SSE2 Optimizations." ON)
+elseif(ANDROID)
+  option(WITH_CRASH_HANDLER "Build with Crash Handler Support." ON)
 endif()

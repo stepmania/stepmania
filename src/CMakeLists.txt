@@ -153,7 +153,7 @@ list(APPEND SMDATA_ALL_FILES_HPP
   ${SMDATA_FILE_TYPES_HPP}
 )
 
-if(NOT APPLE)
+if(NOT APPLE AND NOT ANDROID)
   list(APPEND SMDATA_ALL_FILES_SRC "Main.cpp")
   source_group("" FILES "Main.cpp")
 endif()
@@ -180,6 +180,11 @@ if (WITH_PORTABLE_TOMCRYPT)
   sm_add_compile_definition("${SM_EXE_NAME}" LTC_NO_ASM)
 elseif (WITH_NO_ROLC_TOMCRYPT OR APPLE)
   sm_add_compile_definition("${SM_EXE_NAME}" LTC_NO_ROLC)
+elseif(ANDROID)
+  sm_add_compile_definition("${SM_EXE_NAME}" ENDIAN_32BITWORD)
+  sm_add_compile_definition("${SM_EXE_NAME}" ENDIAN_LITTLE)
+
+  sm_add_compile_definition("${SM_EXE_NAME}" ANDROID_TEST)
 endif()
 
 sm_add_compile_definition("${SM_EXE_NAME}" CMAKE_POWERED)
@@ -217,9 +222,11 @@ if(MSVC)
   set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} /MP2")
 endif()
 
+if(${SM_COMPILE_FLAGS})
 set_target_properties("${SM_EXE_NAME}" PROPERTIES
   COMPILE_FLAGS ${SM_COMPILE_FLAGS}
 )
+endif()
 
 set_target_properties("${SM_EXE_NAME}" PROPERTIES
   OUTPUT_NAME_DEBUG "${SM_NAME_DEBUG}"
@@ -367,6 +374,9 @@ else() # Linux
   endif()
   if (${HAS_FFMPEG})
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_FFMPEG)
+  endif()
+  if (${HAS_X11})
+    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_X11)
   endif()
   if (BSD)
     sm_add_compile_definition("${SM_EXE_NAME}" BSD)

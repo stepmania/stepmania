@@ -1,5 +1,9 @@
 include(CMakeProject-lua.cmake)
+
+if(NOT ANDROID)
 include(CMakeProject-glew.cmake)
+endif()
+
 include(CMakeProject-json.cmake)
 if (NOT SYSTEM_PCRE_FOUND)
   include(CMakeProject-pcre.cmake)
@@ -13,7 +17,7 @@ include(CMakeProject-png.cmake)
 
 if (NOT MSVC)
   include(CMakeProject-jpeg.cmake)
-  if (APPLE)
+  if (APPLE OR ANDROID)
     include(CMakeProject-mad.cmake)
   endif()
 endif()
