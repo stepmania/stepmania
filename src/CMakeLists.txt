@@ -3,17 +3,26 @@ file(MAKE_DIRECTORY "${SM_SRC_DIR}/generated")
 # Version Stub generation
 add_custom_command(
   OUTPUT ${SM_SRC_DIR}/generated/verstub.cpp
-  COMMAND cmake
+  COMMAND ${CMAKE_COMMAND}
   ARGS -DSM_SRC_DIR=${SM_SRC_DIR} -P ${SM_SRC_DIR}/../CMake/VerStubUtil.cmake
   WORKING_DIRECTORY "${SM_ROOT_DIR}"
   DEPENDS ${SM_SRC_DIR}/generated/delete
 )
+if(WIN32)
+add_custom_command(
+  OUTPUT ${SM_SRC_DIR}/generated/delete
+  COMMAND del
+  ARGS ${SM_SRC_DIR}/generated/ver*
+  WORKING_DIRECTORY "${SM_ROOT_DIR}"
+)
+else()
 add_custom_command(
   OUTPUT ${SM_SRC_DIR}/generated/delete
   COMMAND rm
   ARGS -f ${SM_SRC_DIR}/generated/ver*
   WORKING_DIRECTORY "${SM_ROOT_DIR}"
 )
+endif()
 
 # Main project is below.
 
