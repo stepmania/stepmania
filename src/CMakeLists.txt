@@ -1,12 +1,3 @@
-# Version Updater library.
-add_subdirectory(version_updater)
-
-# This part may move to a different file: it's the SM Data project.
-add_custom_command(
-  OUTPUT ${SM_SRC_DIR}/verstub.cpp
-  COMMAND VersionUpdater ${SM_SRC_DIR}/verstub.cpp
-  DEPENDS VersionUpdater
-)
 
 source_group("Generated Files" FILES ${SM_SRC_DIR}/verstub.cpp)
 
@@ -161,6 +152,7 @@ set(SM_NAME_RELWITHDEBINFO "StepMania-release-symbols")
 # Configure generated files here.
 configure_file("${SM_XCODE_DIR}/Info.plist.in.xml" "${SM_XCODE_DIR}/Info.StepMania.plist")
 configure_file("${SM_XCODE_DIR}/plistHelper.in.hpp" "${SM_XCODE_DIR}/plistHelper.hpp")
+configure_file("${SM_SRC_DIR}/verstub.in.cpp" "${SM_SRC_DIR}/verstub.cpp")
 
 # TODO: Make this actually be data and not an executable.
 if(APPLE)
