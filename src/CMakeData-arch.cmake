@@ -380,14 +380,14 @@ elseif(APPLE)
   list(APPEND SMDATA_ARCH_INPUT_HPP
     "arch/InputHandler/InputHandler_MacOSX_HID.h"
   )
-elseif(ANDROID) # Unix/Linux
+elseif(ANDROID)
   list(APPEND SMDATA_ARCH_INPUT_SRC
     "arch/InputHandler/InputHandler_Android_Gamepad.cpp"
   )
   list(APPEND SMDATA_ARCH_INPUT_HPP
     "arch/InputHandler/InputHandler_Android_Gamepad.h"
   )
-elseif(LINUX)
+elseif(LINUX) # Unix/Linux
   list(APPEND SMDATA_ARCH_INPUT_SRC
     "arch/InputHandler/LinuxInputManager.cpp"
     "arch/InputHandler/InputHandler_Linux_Joystick.cpp"
