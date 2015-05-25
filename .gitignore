@@ -25,6 +25,7 @@ StepMania-debug
 Xcode/Info.StepMania.plist
 Xcode/plistHelper.hpp
 src/version_updater/VersionUpdater
+src/generated
 
 # Text Editor Based Items
 ___*
