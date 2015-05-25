@@ -50,8 +50,6 @@ list(APPEND SMDATA_RAGE_GRAPHICS_SRC
   "RageBitmapTexture.cpp"
   "RageDisplay.cpp"
   "RageDisplay_Null.cpp"
-  "RageDisplay_OGL.cpp"
-  "RageDisplay_OGL_Helpers.cpp"
   "RageModelGeometry.cpp"
   "RageSurface.cpp"
   "RageSurface_Load.cpp"
@@ -77,8 +75,6 @@ list(APPEND SMDATA_RAGE_GRAPHICS_HPP
   "RageBitmapTexture.h"
   "RageDisplay.h"
   "RageDisplay_Null.h"
-  "RageDisplay_OGL.h"
-  "RageDisplay_OGL_Helpers.h"
   "RageModelGeometry.h"
   "RageSurface.h"
   "RageSurface_Load.h"
@@ -101,13 +97,26 @@ list(APPEND SMDATA_RAGE_GRAPHICS_HPP
   "RageTextureRenderTarget.h"
 )
 
-if(WIN32)
-  list(APPEND SMDATA_RAGE_GRAPHICS_SRC "RageDisplay_D3D.cpp")
-  list(APPEND SMDATA_RAGE_GRAPHICS_HPP "RageDisplay_D3D.h")
-elseif(LINUX)
-  if (WITH_GLES2)
-    list(APPEND SMDATA_RAGE_GRAPHICS_SRC "RageDisplay_GLES2.cpp")
-    list(APPEND SMDATA_RAGE_GRAPHICS_HPP "RageDisplay_GLES2.h")
+if(ANDROID)
+  list(APPEND SMDATA_RAGE_GRAPHICS_SRC "RageDisplay_GLES2.cpp")
+  list(APPEND SMDATA_RAGE_GRAPHICS_HPP "RageDisplay_GLES2.h")
+else()
+  list(APPEND SMDATA_RAGE_GRAPHICS_SRC
+    "RageDisplay_OGL.cpp"
+    "RageDisplay_OGL_Helpers.cpp"
+  )
+  list(APPEND SMDATA_RAGE_GRAPHICS_HPP
+    "RageDisplay_OGL.h"
+    "RageDisplay_OGL_Helpers.h"
+  )
+  if(WIN32)
+    list(APPEND SMDATA_RAGE_GRAPHICS_SRC "RageDisplay_D3D.cpp")
+    list(APPEND SMDATA_RAGE_GRAPHICS_HPP "RageDisplay_D3D.h")
+  elseif(LINUX)
+    if (WITH_GLES2)
+      list(APPEND SMDATA_RAGE_GRAPHICS_SRC "RageDisplay_GLES2.cpp")
+      list(APPEND SMDATA_RAGE_GRAPHICS_HPP "RageDisplay_GLES2.h")
+    endif()
   endif()
 endif()
 

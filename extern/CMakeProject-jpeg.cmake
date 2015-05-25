@@ -63,4 +63,6 @@ set_property(TARGET "jpeg" PROPERTY FOLDER "External Libraries")
 
 if(MSVC)
   sm_add_compile_definition("jpeg" _CRT_SECURE_NO_WARNINGS)
+elseif(ANDROID)
+  sm_add_compile_definition("jpeg" STDC_HEADERS=1)
 endif(MSVC)
