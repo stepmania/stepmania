@@ -45,6 +45,10 @@ ___*
 .cvsignore
 *.diff
 *.patch
+*_BACKUP_*
+*_BASE_*
+*_LOCAL_*
+*_REMOTE_*
 
 # Mac Programming Files
 *.pbxuser
