@@ -376,7 +376,11 @@ void GameState::JoinPlayer( PlayerNumber pn )
 {
 	// Make sure the join will be successful before doing it. -Kyz
 	{
-		int players_joined= GetNumPlayersEnabled();
+		int players_joined= 0;
+		for(int i= 0; i < NUM_PLAYERS; ++i)
+		{
+			players_joined+= m_bSideIsJoined[i];
+		}
 		if(players_joined > 0)
 		{
 			const Style* cur_style= GetCurrentStyle(PLAYER_INVALID);
@@ -1084,7 +1088,7 @@ void GameState::ForceOtherPlayersToCompatibleSteps(PlayerNumber main)
 		FOREACH_EnabledPlayer(pn)
 		{
 			Trail* pn_steps= m_pCurTrail[pn].Get();
-			bool match_failed= false;
+			bool match_failed= pn_steps == NULL;
 			if(steps_to_match != pn_steps && pn_steps != NULL)
 			{
 				StyleType pn_styletype= GAMEMAN->GetFirstCompatibleStyle(
@@ -1095,11 +1099,10 @@ void GameState::ForceOtherPlayersToCompatibleSteps(PlayerNumber main)
 				{
 					match_failed= true;
 				}
-
-				if(match_failed)
-				{
-					m_pCurTrail[pn].Set(steps_to_match);
-				}
+			}
+			if(match_failed)
+			{
+				m_pCurTrail[pn].Set(steps_to_match);
 			}
 		}
 	}
@@ -1115,7 +1118,7 @@ void GameState::ForceOtherPlayersToCompatibleSteps(PlayerNumber main)
 		FOREACH_EnabledPlayer(pn)
 		{
 			Steps* pn_steps= m_pCurSteps[pn].Get();
-			bool match_failed= false;
+			bool match_failed= pn_steps == NULL;
 			if(steps_to_match != pn_steps && pn_steps != NULL)
 			{
 				StyleType pn_styletype= GAMEMAN->GetFirstCompatibleStyle(
@@ -1130,11 +1133,10 @@ void GameState::ForceOtherPlayersToCompatibleSteps(PlayerNumber main)
 				{
 					match_failed= true;
 				}
-
-				if(match_failed)
-				{
-					m_pCurSteps[pn].Set(steps_to_match);
-				}
+			}
+			if(match_failed)
+			{
+				m_pCurSteps[pn].Set(steps_to_match);
 			}
 		}
 	}

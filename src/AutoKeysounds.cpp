@@ -47,8 +47,7 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 	RString sSongDir = pSong->GetSongDir();
 
 	/*
-	 * Add all current autoplay sounds in both players to the chain.  If a sound is
-	 * common to both players, don't pan it; otherwise pan it to that player's side.
+	 * Add all current autoplay sounds in both players to the chain.
 	 */
 	int iNumTracks = m_ndAutoKeysoundsOnly[GAMESTATE->GetMasterPlayerNumber()].GetNumTracks();
 	for( int t = 0; t < iNumTracks; t++ )
@@ -69,7 +68,9 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 				 * This leads to failure later on.
 				 * We need a better way to prevent this. */
 				if( m_ndAutoKeysoundsOnly[pn].GetNextTapNoteRowForTrack( t, iNextRowForPlayer ) )
+				{
 					iNextRow = std::min( iNextRow, iNextRowForPlayer );
+				}
 			}
 
 			if( iNextRow == INT_MAX )
@@ -80,20 +81,6 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 			FOREACH_EnabledPlayer(pn)
 			{
 				tn[pn] = m_ndAutoKeysoundsOnly[pn].GetTapNote( t, iRow );
-			}
-			/* Do all enabled players have the same note here?  (Having no note at all
-			 * counts as having a different note.) */
-			bool bSoundIsGlobal = true;
-			{
-				PlayerNumber pn = GetNextEnabledPlayer((PlayerNumber)-1);
-				const TapNote &tap = tn[pn];
-				pn = GetNextEnabledPlayer(pn);
-				while( pn != PLAYER_INVALID )
-				{
-					if( tn[pn].type != TapNoteType_AutoKeysound || tn[pn].iKeysoundIndex != tap.iKeysoundIndex )
-						bSoundIsGlobal = false;
-					pn = GetNextEnabledPlayer(pn);
-				}
 			}
 
 			FOREACH_EnabledPlayer(pn)
@@ -108,8 +95,11 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 					float fSeconds = GAMESTATE->m_pCurSteps[pn]->GetTimingData()->GetElapsedTimeFromBeatNoOffset( NoteRowToBeat(iRow) ) + SOUNDMAN->GetPlayLatency();
 
 					float fPan = 0;
-					if( !bSoundIsGlobal )
-						fPan = (pn == PLAYER_1)? -1.0f:+1.0f;
+					// If two players are playing, pan the keysounds to each player's respective side
+					if( GAMESTATE->GetNumPlayersEnabled() == 2 )
+					{
+						fPan = (pn == PLAYER_1) ? -1.0f : +1.0f;
+					}
 					int iIndex = pChain->LoadSound( sKeysoundFilePath );
 					pChain->AddSound( iIndex, fSeconds, fPan );
 				}

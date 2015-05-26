@@ -1,14 +1,32 @@
+file(MAKE_DIRECTORY "${SM_SRC_DIR}/generated")
+
+if(MSVC)
 # Version Updater library.
 add_subdirectory(version_updater)
 
 # This part may move to a different file: it's the SM Data project.
 add_custom_command(
-  OUTPUT ${SM_SRC_DIR}/verstub.cpp
-  COMMAND VersionUpdater ${SM_SRC_DIR}/verstub.cpp
+  OUTPUT ${SM_SRC_DIR}/generated/verstub.cpp
+  COMMAND VersionUpdater ${SM_SRC_DIR}/generated/verstub.cpp
   DEPENDS VersionUpdater
 )
+else()
+# Version Stub generation. Needs fixing on Windows.
+add_custom_command(
+  OUTPUT ${SM_SRC_DIR}/generated/verstub.cpp
+  COMMAND ${CMAKE_COMMAND}
+  ARGS -DSM_SRC_DIR=${SM_SRC_DIR} -P ${SM_SRC_DIR}/../CMake/VerStubUtil.cmake
+  WORKING_DIRECTORY "${SM_ROOT_DIR}"
+  DEPENDS ${SM_SRC_DIR}/generated/delete
+)
 
-source_group("Generated Files" FILES ${SM_SRC_DIR}/verstub.cpp)
+add_custom_command(
+  OUTPUT ${SM_SRC_DIR}/generated/delete
+  COMMAND rm
+  ARGS -f ${SM_SRC_DIR}/generated/ver*
+  WORKING_DIRECTORY "${SM_ROOT_DIR}"
+)
+endif()
 
 # Main project is below.
 
@@ -125,7 +143,7 @@ list(APPEND SMDATA_FILE_TYPES_HPP
 source_group("File Types" FILES ${SMDATA_FILE_TYPES_SRC} ${SMDATA_FILE_TYPES_HPP})
 
 list(APPEND SMDATA_ALL_FILES_SRC
-  ${SM_SRC_DIR}/verstub.cpp
+  ${SM_SRC_DIR}/generated/verstub.cpp
   ${SMDATA_GLOBAL_FILES_SRC}
   ${SMDATA_GLOBAL_SINGLETON_SRC}
   ${SMDATA_ALL_ACTORS_SRC}
@@ -219,7 +237,7 @@ set_target_properties("${SM_EXE_NAME}" PROPERTIES
 set_target_properties("${SM_EXE_NAME}" PROPERTIES
   OUTPUT_NAME_DEBUG "${SM_NAME_DEBUG}"
   OUTPUT_NAME_MINSIZEREL "${SM_NAME_MINSIZEREL}"
-  OUTPUT_NAME_RELWITHDEBINFO "${SM_RELWITHDEBINFO}"
+  OUTPUT_NAME_RELWITHDEBINFO "${SM_NAME_RELWITHDEBINFO}"
 )
 
 list(APPEND SM_WINDOWS_PROGRAM_DLLS
@@ -348,8 +366,23 @@ else() # Linux
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}"
   )
 
+  if(${WITH_CRASH_HANDLER})
+    sm_add_compile_definition("${SM_EXE_NAME}" CRASH_HANDLER)
+    if(LINUX)
+      # used only in the ArchHooks_Unix.cpp file
+      sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_METHOD_X86_LINUX)
+      sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_METHOD_TEXT="x86 custom backtrace")
+      sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_LOOKUP_METHOD_TEXT="backtrace_symbols")
+    endif()
+  endif()
   if (${HAS_PTHREAD})
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_LIBPTHREAD)
+
+    message("Host processor is ${CMAKE_SYSTEM_PROCESSOR}")
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+      message("Host processor is 64bit")
+      sm_add_compile_definition("${SM_EXE_NAME}" CPU_X86_64)
+    endif()
   endif()
   if (${HAS_FFMPEG})
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_FFMPEG)

@@ -18,6 +18,9 @@
 
 #if defined(CRASH_HANDLER)
 #include "archutils/Unix/CrashHandler.h"
+#if defined(LINUX)
+#include <limits.h>
+#endif
 #endif
 
 #if defined(HAVE_FFMPEG)

@@ -13,6 +13,10 @@
 #if defined(BACKTRACE_METHOD_X86_LINUX)
 #include "archutils/Common/PthreadHelpers.h"
 
+#if defined(LINUX) && !defined(ANDROID)
+#include <limits.h>
+#endif
+
 static const char *itoa(unsigned n)
 {
 	static char ret[32];
