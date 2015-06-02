@@ -812,8 +812,10 @@ static bool PathUsesSlowFlush( const RString &sPath )
 {
 	static std::array<RString, 2> const FlushPaths =
 	{
-		"/Save/",
-		"Save/"
+		{
+			"/Save/",
+			"Save/"
+		}
 	};
 
 	auto doesPathMatch = [&sPath](RString const &curPath) {

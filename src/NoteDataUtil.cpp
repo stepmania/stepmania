@@ -2781,7 +2781,12 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 {
 	// throw an attack in every 30 seconds
 
-	std::array<std::string, 3> const szAttacks =	{ "2x", "drunk", "dizzy" };
+	std::array<std::string, 3> const szAttacks =
+	{
+		{
+			"2x", "drunk", "dizzy"
+		}
+	};
 
 	for( float sec=15; sec<pSong->m_fMusicLengthSeconds; sec+=30 )
 	{
