@@ -406,6 +406,7 @@ bool OptionsList::Input( const InputEventPlus &input )
 					Message lMsg("OptionsListQuickChange");
 					lMsg.SetParam( "Player", pn );
 					lMsg.SetParam( "Direction", iDir );
+					lMsg.SetParam( "Selection", iSelection );
 					MESSAGEMAN->Broadcast( lMsg );
 				}
 			}
@@ -431,6 +432,7 @@ bool OptionsList::Input( const InputEventPlus &input )
 
 		Message lMsg("OptionsListLeft");
 		lMsg.SetParam( "Player", input.pn );
+		lMsg.SetParam( "Selection", m_iMenuStackSelection );
 		MESSAGEMAN->Broadcast( lMsg );
 		return true;
 	}
@@ -452,6 +454,7 @@ bool OptionsList::Input( const InputEventPlus &input )
 
 		Message lMsg("OptionsListRight");
 		lMsg.SetParam( "Player", input.pn );
+		lMsg.SetParam( "Selection", m_iMenuStackSelection );
 		MESSAGEMAN->Broadcast( lMsg );
 		return true;
 	}
@@ -623,7 +626,7 @@ void OptionsList::SelectItem( const RString &sRowName, int iMenuItem )
 	}
 	else	// data.selectType != SELECT_MULTIPLE
 	{
-		fill( bSelections.begin(), bSelections.end(), false ); 
+		fill( bSelections.begin(), bSelections.end(), false );
 		bSelections[iMenuItem] = true;
 	}
 
