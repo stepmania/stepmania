@@ -40,14 +40,14 @@ else()
     )
   else()
     execute_process(
-      COMMAND date "+\"%Y%m%d\""
+      COMMAND date "+%Y%m%d"
       OUTPUT_VARIABLE SM_TIMESTAMP_DATE
       RESULT_VARIABLE ret
       OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 
     execute_process(
-      COMMAND date "+\"%H:%M:%S %z"
+      COMMAND date "+%H:%M:%S %z"
       OUTPUT_VARIABLE SM_TIMESTAMP_TIME
       RESULT_VARIABLE ret
       OUTPUT_STRIP_TRAILING_WHITESPACE
