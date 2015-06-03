@@ -4052,6 +4052,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='destroy' return='void' arguments=''>
 		Safely deletes the file handle.
 	</Function>
+	<Function name='Flush' return='' arguments=''>
+		Flushes the buffer for the file handle, writing any pending output to disk.
+	</Function>
 	<Function name='GetError' return='string' arguments=''>
 		Gets the last error message and returns it.
 	</Function>
