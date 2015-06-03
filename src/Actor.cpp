@@ -538,18 +538,12 @@ void Actor::PreDraw() // calculate actor properties
 			{
 				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI ); 
 				tempState.pos += m_vEffectMagnitude * fPercentOffset;
-				tempState.pos.x = tempState.pos.x;
-				tempState.pos.y = tempState.pos.y;
-				tempState.pos.z = tempState.pos.z;
 			}
 			break;
 		case bob:
 			{
 				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI*2 ); 
 				tempState.pos += m_vEffectMagnitude * fPercentOffset;
-				tempState.pos.x = tempState.pos.x;
-				tempState.pos.y = tempState.pos.y;
-				tempState.pos.z = tempState.pos.z;
 			}
 			break;
 		case pulse:
