@@ -1370,6 +1370,7 @@
 			<Function name='AtEOF'/>
 			<Function name='ClearError'/>
 			<Function name='Close'/>
+			<Function name='Flush'/>
 			<Function name='GetError'/>
 			<Function name='GetLine'/>
 			<Function name='Open'/>

@@ -344,6 +344,12 @@ public:
 		return 1;
 	}
 
+	static int Flush(T* p, lua_State* L)
+	{
+		p->Flush();
+		COMMON_RETURN_SELF;
+	}
+
 	static int Read( T* p, lua_State *L )
 	{
 		RString string;
@@ -411,6 +417,7 @@ public:
 		ADD_METHOD( Open );
 		ADD_METHOD( Close );
 		ADD_METHOD( Write );
+		ADD_METHOD(Flush);
 		ADD_METHOD( Read );
 		ADD_METHOD( ReadBytes );
 		ADD_METHOD( Seek );

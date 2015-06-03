@@ -4,6 +4,22 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/06/03
+----------
+* [Actor] bounce and bob effects no longer round pixel coords. [kyzentun]
+* [RageFile] Exposed Flush function to Lua. [kyzentun]
+
+2015/05/29
+----------
+* [OptionsList] The OptionsListQuickChange, OptionsListLeft, and
+  OptionsListRight messages now have a Selection parameter that has the id of
+  the selection the player moved to. [nixtrix]
+
+2015/05/24
+----------
+* [Gameplay] Autokeysounds are no longer twice as loud when playing
+  keysounded charts with two players. [nixtrix]
+
 2015/05/15
 ----------
 * [BMS] .lua files defined in the #BMP tags now work as BG animations, and the
