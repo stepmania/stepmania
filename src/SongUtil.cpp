@@ -451,7 +451,7 @@ void AppendOctal( int n, int digits, RString &out )
 	{
 		const int shift = p*3;
 		int n2 = (n >> shift) & 0x7;
-		out.insert( out.end(), (char) (n2+'0') );
+		out.insert( out.end(), static_cast<char>(n2+'0') );
 	}
 }
 

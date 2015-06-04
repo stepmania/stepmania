@@ -226,9 +226,9 @@ void StepsDisplay::SetInternal( const SetParams &params )
 		char off = '0';
 
 		RString sNewText;
-		int iNumOn = std::min( (int)m_iMaxTicks, params.iMeter );
+		int iNumOn = std::min( m_iMaxTicks.GetValue(), params.iMeter );
 		sNewText.insert( sNewText.end(), iNumOn, on );
-		int iNumOff = std::max( 0, m_iNumTicks-iNumOn );
+		int iNumOff = std::max( 0, m_iNumTicks.GetValue() - iNumOn );
 		sNewText.insert( sNewText.end(), iNumOff, off );
 		m_textTicks.SetText( sNewText );
 		m_textTicks.HandleMessage( msg );

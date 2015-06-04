@@ -602,7 +602,7 @@ void FilenameDB::GetDirListing( const RString &sPath_, vector<RString> &asAddTo,
 	{
 		while( iStart < asAddTo.size() )
 		{
-			asAddTo[iStart].insert( 0, sPath );
+			asAddTo[iStart] = sPath + asAddTo[iStart];
 			iStart++;
 		}
 	}

@@ -343,8 +343,14 @@ static void NormalizePath( RString &sPath )
 {
 	FixSlashesInPlace( sPath );
 	CollapsePath( sPath, true );
-	if( sPath.size() == 0 || sPath[0] != '/' )
-		sPath.insert( sPath.begin(), '/' );
+	if (sPath.size() == 0)
+	{
+		sPath = '/';
+	}
+	else if (sPath[0] != '/')
+	{
+		sPath = '/' + sPath;
+	}
 }
 
 bool ilt( const RString &a, const RString &b ) { return a.CompareNoCase(b) < 0; }
@@ -381,12 +387,10 @@ void RageFileManager::GetDirListing( const RString &sPath_, vector<RString> &Add
 		/* If returning the path, prepend the mountpoint name to the files this driver returned. */
 		if( bReturnPathToo && pLoadedDriver->m_sMountPoint.size() > 0 )
 		{
-			for( unsigned j = OldStart; j < AddTo.size(); ++j )
-			{
+			std::for_each(AddTo.begin() + OldStart, AddTo.end(), [pLoadedDriver](RString &path) {
 				/* Skip the trailing slash on the mountpoint; there's already a slash there. */
-				RString &lPath = AddTo[j];
-				lPath.insert( 0, pLoadedDriver->m_sMountPoint, pLoadedDriver->m_sMountPoint.size()-1 );
-			}
+				path = pLoadedDriver->m_sMountPoint + path;
+			});
 		}
 	}
 
