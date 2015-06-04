@@ -71,11 +71,13 @@ static void InitEntities()
 	};
 	static std::array<Entity, 5> const EntityTable =
 	{
-		Entity{ '&',  "amp", },
-		Entity{ '\"', "quot", },
-		Entity{ '\'', "apos", },
-		Entity{ '<',  "lt", },
-		Entity{ '>',  "gt", }
+		{
+			Entity{ '&',  "amp", },
+			Entity{ '\"', "quot", },
+			Entity{ '\'', "apos", },
+			Entity{ '<',  "lt", },
+			Entity{ '>',  "gt", }
+		}
 	};
 
 	for (auto const &ent: EntityTable)

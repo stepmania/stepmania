@@ -2220,7 +2220,12 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			PlayerState *pPlayerState = const_cast<PlayerState *> (m_NoteFieldEdit.GetPlayerState());
 			float fScrollSpeed = pPlayerState->m_PlayerOptions.GetSong().m_fScrollSpeed;
 
-			std::array<float, 7> const fSpeeds = { 1.0f, 1.5f, 2.0f, 3.0f, 4.0f, 6.0f, 8.0f };
+			std::array<float, 7> const fSpeeds =
+			{
+				{
+					1.0f, 1.5f, 2.0f, 3.0f, 4.0f, 6.0f, 8.0f
+				}
+			};
 			int iSpeed = 0;
 			for( unsigned i = 0; i < fSpeeds.size(); ++i )
 			{
@@ -6324,34 +6329,36 @@ struct EditHelpLine
 // TODO: Identify which of these can be removed and sent to a readme.
 static std::array<EditHelpLine, 28> g_EditHelpLines =
 {
-	EditHelpLine( "Move cursor",					EDIT_BUTTON_SCROLL_UP_LINE,		EDIT_BUTTON_SCROLL_DOWN_LINE ),
-	EditHelpLine( "Jump measure",					EDIT_BUTTON_SCROLL_UP_PAGE,		EDIT_BUTTON_SCROLL_DOWN_PAGE ),
-	EditHelpLine( "Jump measure",					EDIT_BUTTON_SCROLL_PREV_MEASURE,	EDIT_BUTTON_SCROLL_NEXT_MEASURE ),
-	EditHelpLine( "Select region",					EDIT_BUTTON_SCROLL_SELECT ),
-	EditHelpLine( "Jump to first/last beat",			EDIT_BUTTON_SCROLL_HOME,		EDIT_BUTTON_SCROLL_END ),
-	EditHelpLine( "Change zoom",					EDIT_BUTTON_SCROLL_SPEED_UP,		EDIT_BUTTON_SCROLL_SPEED_DOWN ),
-	EditHelpLine( "Play",						EDIT_BUTTON_PLAY_SELECTION ),
-	EditHelpLine( "Play current beat to end",			EDIT_BUTTON_PLAY_FROM_CURSOR ),
-	EditHelpLine( "Play whole song",				EDIT_BUTTON_PLAY_FROM_START ),
-	EditHelpLine( "Record",						EDIT_BUTTON_RECORD_SELECTION ),
-	EditHelpLine( "Set selection",					EDIT_BUTTON_LAY_SELECT ),
-	EditHelpLine( "Next/prev steps of same StepsType", EDIT_BUTTON_OPEN_PREV_STEPS, EDIT_BUTTON_OPEN_NEXT_STEPS ),
-	EditHelpLine( "Decrease/increase BPM at cur beat",		EDIT_BUTTON_BPM_DOWN,			EDIT_BUTTON_BPM_UP ),
-	EditHelpLine( "Decrease/increase stop at cur beat",		EDIT_BUTTON_STOP_DOWN,			EDIT_BUTTON_STOP_UP ),
-	EditHelpLine( "Decrease/increase delay at cur beat",		EDIT_BUTTON_DELAY_DOWN,			EDIT_BUTTON_DELAY_UP ),
-	EditHelpLine( "Decrease/increase music offset",			EDIT_BUTTON_OFFSET_DOWN,		EDIT_BUTTON_OFFSET_UP ),
-	EditHelpLine( "Decrease/increase sample music start",		EDIT_BUTTON_SAMPLE_START_DOWN,		EDIT_BUTTON_SAMPLE_START_UP ),
-	EditHelpLine( "Decrease/increase sample music length",		EDIT_BUTTON_SAMPLE_LENGTH_DOWN,		EDIT_BUTTON_SAMPLE_LENGTH_UP ),
-	EditHelpLine( "Play sample music",				EDIT_BUTTON_PLAY_SAMPLE_MUSIC ),
-	EditHelpLine( "Add/Edit Background Change",			EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU ),
-	EditHelpLine( "Insert beat and shift down",			EDIT_BUTTON_INSERT ),
-	EditHelpLine( "Shift BPM changes and stops down one beat",	EDIT_BUTTON_INSERT_SHIFT_PAUSES ),
-	EditHelpLine( "Delete beat and shift up",			EDIT_BUTTON_DELETE ),
-	EditHelpLine( "Shift BPM changes and stops up one beat",	EDIT_BUTTON_DELETE_SHIFT_PAUSES ),
-	EditHelpLine( "Cycle between tap notes",			EDIT_BUTTON_CYCLE_TAP_LEFT,		EDIT_BUTTON_CYCLE_TAP_RIGHT ),
-	EditHelpLine( "Add to/remove from right half",			EDIT_BUTTON_RIGHT_SIDE ),
-	EditHelpLine( "Switch Timing",					EDIT_BUTTON_SWITCH_TIMINGS ),
-	EditHelpLine( "Switch player (Routine only)",			EDIT_BUTTON_SWITCH_PLAYERS ),
+	{
+		EditHelpLine( "Move cursor", EDIT_BUTTON_SCROLL_UP_LINE, EDIT_BUTTON_SCROLL_DOWN_LINE ),
+		EditHelpLine( "Jump measure", EDIT_BUTTON_SCROLL_UP_PAGE, EDIT_BUTTON_SCROLL_DOWN_PAGE ),
+		EditHelpLine( "Jump measure", EDIT_BUTTON_SCROLL_PREV_MEASURE, EDIT_BUTTON_SCROLL_NEXT_MEASURE ),
+		EditHelpLine( "Select region", EDIT_BUTTON_SCROLL_SELECT ),
+		EditHelpLine( "Jump to first/last beat", EDIT_BUTTON_SCROLL_HOME, EDIT_BUTTON_SCROLL_END ),
+		EditHelpLine( "Change zoom", EDIT_BUTTON_SCROLL_SPEED_UP, EDIT_BUTTON_SCROLL_SPEED_DOWN ),
+		EditHelpLine( "Play", EDIT_BUTTON_PLAY_SELECTION ),
+		EditHelpLine( "Play current beat to end", EDIT_BUTTON_PLAY_FROM_CURSOR ),
+		EditHelpLine( "Play whole song", EDIT_BUTTON_PLAY_FROM_START ),
+		EditHelpLine( "Record", EDIT_BUTTON_RECORD_SELECTION ),
+		EditHelpLine( "Set selection", EDIT_BUTTON_LAY_SELECT ),
+		EditHelpLine( "Next/prev steps of same StepsType", EDIT_BUTTON_OPEN_PREV_STEPS, EDIT_BUTTON_OPEN_NEXT_STEPS ),
+		EditHelpLine( "Decrease/increase BPM at cur beat", EDIT_BUTTON_BPM_DOWN, EDIT_BUTTON_BPM_UP ),
+		EditHelpLine( "Decrease/increase stop at cur beat", EDIT_BUTTON_STOP_DOWN, EDIT_BUTTON_STOP_UP ),
+		EditHelpLine( "Decrease/increase delay at cur beat", EDIT_BUTTON_DELAY_DOWN, EDIT_BUTTON_DELAY_UP ),
+		EditHelpLine( "Decrease/increase music offset", EDIT_BUTTON_OFFSET_DOWN, EDIT_BUTTON_OFFSET_UP ),
+		EditHelpLine( "Decrease/increase sample music start", EDIT_BUTTON_SAMPLE_START_DOWN, EDIT_BUTTON_SAMPLE_START_UP ),
+		EditHelpLine( "Decrease/increase sample music length", EDIT_BUTTON_SAMPLE_LENGTH_DOWN, EDIT_BUTTON_SAMPLE_LENGTH_UP ),
+		EditHelpLine( "Play sample music", EDIT_BUTTON_PLAY_SAMPLE_MUSIC ),
+		EditHelpLine( "Add/Edit Background Change", EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU ),
+		EditHelpLine( "Insert beat and shift down", EDIT_BUTTON_INSERT ),
+		EditHelpLine( "Shift BPM changes and stops down one beat", EDIT_BUTTON_INSERT_SHIFT_PAUSES ),
+		EditHelpLine( "Delete beat and shift up", EDIT_BUTTON_DELETE ),
+		EditHelpLine( "Shift BPM changes and stops up one beat", EDIT_BUTTON_DELETE_SHIFT_PAUSES ),
+		EditHelpLine( "Cycle between tap notes", EDIT_BUTTON_CYCLE_TAP_LEFT, EDIT_BUTTON_CYCLE_TAP_RIGHT ),
+		EditHelpLine( "Add to/remove from right half", EDIT_BUTTON_RIGHT_SIDE ),
+		EditHelpLine( "Switch Timing", EDIT_BUTTON_SWITCH_TIMINGS ),
+		EditHelpLine( "Switch player (Routine only)", EDIT_BUTTON_SWITCH_PLAYERS ),
+	}
 };
 
 static bool IsMapped( EditButton eb, const MapEditToDI &editmap )
