@@ -16,7 +16,12 @@ using std::string;
 
 void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, RString &sMainTitleOut, RString &sSubTitleOut )
 {
-	std::array<RString, 5> sLeftSeps = { "\t", " -", " ~", " (", " [" };
+	std::array<RString, 5> sLeftSeps =
+	{
+		{
+			"\t", " -", " ~", " (", " ["
+		}
+	};
 
 	for (auto const &sep: sLeftSeps)
 	{

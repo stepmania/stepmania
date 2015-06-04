@@ -25,6 +25,7 @@ StepMania-debug
 Xcode/Info.StepMania.plist
 Xcode/plistHelper.hpp
 src/version_updater/VersionUpdater
+src/generated
 
 # Text Editor Based Items
 ___*
@@ -44,6 +45,10 @@ ___*
 .cvsignore
 *.diff
 *.patch
+*_BACKUP_*
+*_BASE_*
+*_LOCAL_*
+*_REMOTE_*
 
 # Mac Programming Files
 *.pbxuser

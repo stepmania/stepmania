@@ -82,45 +82,47 @@ struct OptionColumnEntry
 // todo: metric these? -aj
 static std::array<OptionColumnEntry, 33> const g_OptionColumnEntries =
 {
-	OptionColumnEntry {"Boost", 0},
-	OptionColumnEntry {"Brake", 0},
-	OptionColumnEntry {"Wave", 0},
-	OptionColumnEntry {"Expand", 0},
-	OptionColumnEntry {"Boomerang", 0},
-	//--------------------//
-	OptionColumnEntry {"Drunk", 1},
-	OptionColumnEntry {"Dizzy", 1},
-	OptionColumnEntry {"Mini", 1},
-	OptionColumnEntry {"Flip", 1},
-	OptionColumnEntry {"Tornado", 1},
-	//--------------------//
-	OptionColumnEntry {"Hidden", 2},
-	OptionColumnEntry {"Sudden", 2},
-	OptionColumnEntry {"Stealth", 2},
-	OptionColumnEntry {"Blink", 2},
-	OptionColumnEntry {"RandomVanish", 2},
-	//--------------------//
-	OptionColumnEntry {"Mirror", 3},
-	OptionColumnEntry {"Left", 3},
-	OptionColumnEntry {"Right", 3},
-	OptionColumnEntry {"Shuffle", 3},
-	OptionColumnEntry {"SuperShuffle", 3},
-	//--------------------//
-	OptionColumnEntry {"Little", 4},
-	OptionColumnEntry {"NoHolds", 4},
-	OptionColumnEntry {"Dark", 4},
-	OptionColumnEntry {"Blind", 4},
-	//--------------------//
-	OptionColumnEntry {"Reverse", 5},
-	OptionColumnEntry {"Split", 5},
-	OptionColumnEntry {"Alternate", 5},
-	OptionColumnEntry {"Cross", 5},
-	OptionColumnEntry {"Centered", 5},
-	//--------------------//
-	OptionColumnEntry {"Incoming", 6},
-	OptionColumnEntry {"Space", 6},
-	OptionColumnEntry {"Hallway", 6},
-	OptionColumnEntry {"Distant", 6}
+	{
+		OptionColumnEntry {"Boost", 0},
+		OptionColumnEntry {"Brake", 0},
+		OptionColumnEntry {"Wave", 0},
+		OptionColumnEntry {"Expand", 0},
+		OptionColumnEntry {"Boomerang", 0},
+		//--------------------//
+		OptionColumnEntry {"Drunk", 1},
+		OptionColumnEntry {"Dizzy", 1},
+		OptionColumnEntry {"Mini", 1},
+		OptionColumnEntry {"Flip", 1},
+		OptionColumnEntry {"Tornado", 1},
+		//--------------------//
+		OptionColumnEntry {"Hidden", 2},
+		OptionColumnEntry {"Sudden", 2},
+		OptionColumnEntry {"Stealth", 2},
+		OptionColumnEntry {"Blink", 2},
+		OptionColumnEntry {"RandomVanish", 2},
+		//--------------------//
+		OptionColumnEntry {"Mirror", 3},
+		OptionColumnEntry {"Left", 3},
+		OptionColumnEntry {"Right", 3},
+		OptionColumnEntry {"Shuffle", 3},
+		OptionColumnEntry {"SuperShuffle", 3},
+		//--------------------//
+		OptionColumnEntry {"Little", 4},
+		OptionColumnEntry {"NoHolds", 4},
+		OptionColumnEntry {"Dark", 4},
+		OptionColumnEntry {"Blind", 4},
+		//--------------------//
+		OptionColumnEntry {"Reverse", 5},
+		OptionColumnEntry {"Split", 5},
+		OptionColumnEntry {"Alternate", 5},
+		OptionColumnEntry {"Cross", 5},
+		OptionColumnEntry {"Centered", 5},
+		//--------------------//
+		OptionColumnEntry {"Incoming", 6},
+		OptionColumnEntry {"Space", 6},
+		OptionColumnEntry {"Hallway", 6},
+		OptionColumnEntry {"Distant", 6}
+	}
 };
 
 int OptionToPreferredColumn( RString sOptionText )

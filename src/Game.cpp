@@ -18,17 +18,19 @@ TapNoteScore Game::MapTapNoteScore( TapNoteScore tns ) const
 
 static std::array<Game::PerButtonInfo, 11> const g_CommonButtonInfo =
 {
-	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_MENULEFT
-	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_MENURIGHT
-	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_MENUUP
-	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_MENUDOWN
-	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_START
-	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_SELECT
-	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_BACK
-	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_COIN
-	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_OPERATOR
-	Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_EFFECT_UP
-	Game::PerButtonInfo{ GameButtonType_INVALID } // GAME_BUTTON_EFFECT_DOWN
+	{
+		Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_MENULEFT
+		Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_MENURIGHT
+		Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_MENUUP
+		Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_MENUDOWN
+		Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_START
+		Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_SELECT
+		Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_BACK
+		Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_COIN
+		Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_OPERATOR
+		Game::PerButtonInfo{ GameButtonType_INVALID }, // GAME_BUTTON_EFFECT_UP
+		Game::PerButtonInfo{ GameButtonType_INVALID }  // GAME_BUTTON_EFFECT_DOWN
+	}
 };
 
 const Game::PerButtonInfo *Game::GetPerButtonInfo( GameButton gb ) const

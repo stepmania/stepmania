@@ -655,7 +655,18 @@ XNode *LuaHelpers::GetLuaInformation()
 	ASSERT( lua_istable(L, -1) );
 
 	//const RString BuiltInPackages[] = { "_G", "coroutine", "debug", "math", "package", "string", "table" };
-	std::array<RString, 7> const BuiltInPackages = { "_G", "coroutine", "debug", "math", "package", "string", "table" };
+	std::array<RString, 7> const BuiltInPackages =
+	{
+		{
+			"_G",
+			"coroutine",
+			"debug",
+			"math",
+			"package",
+			"string",
+			"table"
+		}
+	};
 	auto endIter = BuiltInPackages.end();
 	FOREACH_LUATABLE( L, -1 )
 	{
