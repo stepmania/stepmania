@@ -8,7 +8,7 @@ namespace CrashHandler
 
 	void do_backtrace( const void **buf, size_t size, HANDLE hProcess, HANDLE hThread, const CONTEXT *pContext );
 	void SymLookup( const void *ptr, char *buf );
-	void ForceCrash( const char *reason );
+	void ForceCrash( std::string const reason );
 	void ForceDeadlock( RString reason, uint64_t iID );
 
 	/* Inform the crash handler of a foreground window that may be fullscreen.

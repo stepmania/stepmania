@@ -323,13 +323,13 @@ static void BacktraceAllThreads( CrashData& crash )
 	}
 }
 
-void CrashHandler::ForceCrash( const char *reason )
+void CrashHandler::ForceCrash( std::string const reason )
 {
 	CrashData crash;
 	memset( &crash, 0, sizeof(crash) );
 
 	crash.type = CrashData::FORCE_CRASH;
-	strncpy( crash.reason, reason, sizeof(crash.reason) );
+	strncpy( crash.reason, reason.c_str(), sizeof(crash.reason) );
 	crash.reason[ sizeof(crash.reason)-1 ] = 0;
 
 	GetBacktrace( crash.BacktracePointers[0], BACKTRACE_MAX_SIZE, NULL );
