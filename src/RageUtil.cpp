@@ -40,7 +40,7 @@ MersenneTwister::MersenneTwister( int iSeed ) : m_iNext(0)
 void MersenneTwister::Reset( int iSeed )
 {
 	if( iSeed == 0 )
-		iSeed = time(NULL);
+		iSeed = static_cast<int>(time(NULL));
 
 	m_Values[0] = iSeed;
 	m_iNext = 0;

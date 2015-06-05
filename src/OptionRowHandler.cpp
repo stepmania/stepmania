@@ -1035,15 +1035,15 @@ public:
 		lua_pop( L, 1 );
 
 		lua_getfield(L, -1, "GoToFirstOnStart");
-		m_GoToFirstOnStart= lua_toboolean(L, -1);
+		m_GoToFirstOnStart= lua_toboolean(L, -1) != 0;
 		lua_pop(L, 1);
 
 		lua_getfield(L, -1, "OneChoiceForAllPlayers");
-		m_Def.m_bOneChoiceForAllPlayers = lua_toboolean( L, -1 );
+		m_Def.m_bOneChoiceForAllPlayers = lua_toboolean( L, -1 ) != 0;
 		lua_pop( L, 1 );
 
 		lua_getfield(L, -1, "ExportOnChange");
-		m_Def.m_bExportOnChange = lua_toboolean( L, -1 );
+		m_Def.m_bExportOnChange = lua_toboolean( L, -1 ) != 0;
 		lua_pop( L, 1 );
 
 		// TODO:  Change these to use the proper enum strings like everything

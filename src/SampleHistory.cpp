@@ -8,7 +8,7 @@ SampleHistory::SampleHistory()
 	m_iLastHistory = 0;
 	m_iHistorySamplesPerSecond = 60;
 	m_fHistorySeconds = 0.0f;
-	m_fToSample = 1 / m_iHistorySamplesPerSecond;
+	m_fToSample = 1.f / m_iHistorySamplesPerSecond;
 
 	m_fHistorySeconds = 10.0f;
 	int iSamples = lrintf( m_iHistorySamplesPerSecond * m_fHistorySeconds );

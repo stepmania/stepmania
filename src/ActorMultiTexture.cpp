@@ -53,8 +53,8 @@ void ActorMultiTexture::LoadFromNode( const XNode* pNode )
 
 void ActorMultiTexture::SetSizeFromTexture( RageTexture *pTexture )
 {
-	ActorMultiTexture::m_size.x = pTexture->GetSourceWidth();
-	ActorMultiTexture::m_size.y = pTexture->GetSourceHeight();
+	ActorMultiTexture::m_size.x = static_cast<float>(pTexture->GetSourceWidth());
+	ActorMultiTexture::m_size.y = static_cast<float>(pTexture->GetSourceHeight());
 }
 
 void ActorMultiTexture::ClearTextures()

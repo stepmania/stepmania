@@ -23,13 +23,13 @@ static void Deserialize( TimingSegment *seg, const Json::Value &root )
 	{
 		case SEGMENT_BPM:
 		{
-			float fBPM = root["BPM"].asDouble();
+			float fBPM = static_cast<float>(root["BPM"].asDouble());
 			static_cast<BPMSegment *>(seg)->SetBPM(fBPM);
 			break;
 		}
 		case SEGMENT_STOP:
 		{
-			float fStop = root["Seconds"].asDouble();
+			float fStop = static_cast<float>(root["Seconds"].asDouble());
 			static_cast<StopSegment *>(seg)->SetPause(fStop);
 			break;
 		}

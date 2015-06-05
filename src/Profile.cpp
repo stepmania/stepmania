@@ -257,7 +257,7 @@ int Profile::GetAge() const
 {
 	if(m_BirthYear == 0)
 	{
-		return (GetLocalTime().tm_year+1900) - DEFAULT_BIRTH_YEAR;
+		return (GetLocalTime().tm_year + 1900) - static_cast<int>(DEFAULT_BIRTH_YEAR);
 	}
 	return (GetLocalTime().tm_year+1900) - m_BirthYear;
 }
@@ -1796,9 +1796,9 @@ float Profile::CalculateCaloriesFromHeartRate(float HeartRate, float Duration)
 	*/
 	// Duration passed in is in seconds.  Convert it to minutes to make the code
 	// match the equations from the website.
-	Duration= Duration / 60.0;
-	float kilos= GetCalculatedWeightPounds() / 2.205;
-	float age= GetAge();
+	Duration= Duration / 60.f;
+	float kilos= GetCalculatedWeightPounds() / 2.205f;
+	float age = static_cast<float>(GetAge());
 
 	// Names for the constants in the equations.
 	// Assumes male and unknown voomax.
@@ -1835,7 +1835,7 @@ float Profile::CalculateCaloriesFromHeartRate(float HeartRate, float Duration)
 	}
 	return ((gender_factor + (heart_factor * HeartRate) +
 			(voo_factor * m_Voomax) + (weight_factor * kilos) + (age_factor + age))
-		/ 4.184) * Duration;
+		/ 4.184f) * Duration;
 }
 
 XNode* Profile::SaveSongScoresCreateNode() const

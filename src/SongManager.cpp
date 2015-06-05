@@ -479,7 +479,7 @@ void SongManager::UnlistSong(Song *song)
 	vector<Song*>* songVectors[3] = { &m_pSongs, &m_pPopularSongs, &m_pShuffledSongs };
 	for (int songVecIdx=0; songVecIdx<3; ++songVecIdx) {
 		vector<Song*>& v = *songVectors[songVecIdx];
-		for (int i=0; i<v.size(); ++i) {
+		for (auto i = 0; i < v.size(); ++i) {
 			if (v[i] == song) {
 				v.erase(v.begin()+i);
 				--i;

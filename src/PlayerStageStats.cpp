@@ -399,7 +399,7 @@ void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 		if(curr->second != fLife)
 		{
 			// 2^-8
-			m_fLifeRecord[fStepsSecond - 0.00390625]= curr->second;
+			m_fLifeRecord[fStepsSecond - 0.00390625f] = curr->second;
 		}
 	}
 	m_fLifeRecord[fStepsSecond] = fLife;

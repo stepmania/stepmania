@@ -756,7 +756,7 @@ void BitmapText::DrawPrimitives()
 
 			for( unsigned i=0; i<m_aVertices.size(); i+=4 )
 			{
-				RageVector3 jitter( rnd()%2, rnd()%3, 0 );
+				RageVector3 jitter( static_cast<float>(rnd() % 2), static_cast<float>(rnd() % 3), 0.f );
 				vGlyphJitter.push_back( jitter );
 
 				m_aVertices[i+0].p += jitter;	// top left
@@ -938,7 +938,7 @@ public:
 #undef MAX_DIMENSION
 	static int max_dimension_use_zoom(T* p, lua_State* L)
 	{
-		p->SetMaxDimUseZoom(lua_toboolean(L, 1));
+		p->SetMaxDimUseZoom(lua_toboolean(L, 1) != 0);
 		COMMON_RETURN_SELF;
 	}
 	static int vertspacing( T* p, lua_State *L )		{ p->SetVertSpacing( IArg(1) ); COMMON_RETURN_SELF; }

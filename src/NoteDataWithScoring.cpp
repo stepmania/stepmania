@@ -388,11 +388,11 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 
 	// ScreenGameplay passes in the RadarValues that were calculated by
 	// NoteDataUtil::CalculateRadarValues, so those are reused here. -Kyz
-	int note_count= out[RadarCategory_Notes];
-	int jump_count= out[RadarCategory_Jumps];
-	int hold_count= out[RadarCategory_Holds];
-	int tap_count= out[RadarCategory_TapsAndHolds];
-	float hittable_steps_length= max(0.f,
+	int note_count = static_cast<int>(out[RadarCategory_Notes]);
+	int jump_count = static_cast<int>(out[RadarCategory_Jumps]);
+	int hold_count = static_cast<int>(out[RadarCategory_Holds]);
+	int tap_count = static_cast<int>(out[RadarCategory_TapsAndHolds]);
+	float hittable_steps_length = max(0.f,
 		timing->GetElapsedTimeFromBeat(NoteRowToBeat(last_hittable_row)) -
 		timing->GetElapsedTimeFromBeat(NoteRowToBeat(first_hittable_row)));
 	// The for loop and the assert are used to ensure that all fields of
@@ -417,31 +417,31 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 				out[rc]= GetActualChaosRadarValue(in, song_seconds, pss);
 				break;
 			case RadarCategory_TapsAndHolds:
-				out[rc]= state.taps_hit;
+				out[rc] = static_cast<float>(state.taps_hit);
 				break;
 			case RadarCategory_Jumps:
-				out[rc]= state.jumps_hit;
+				out[rc] = static_cast<float>(state.jumps_hit);
 				break;
 			case RadarCategory_Holds:
-				out[rc]= state.holds_held;
+				out[rc] = static_cast<float>(state.holds_held);
 				break;
 			case RadarCategory_Mines:
-				out[rc]= state.mines_avoided;
+				out[rc] = static_cast<float>(state.mines_avoided);
 				break;
 			case RadarCategory_Hands:
-				out[rc]= state.hands_hit;
+				out[rc] = static_cast<float>(state.hands_hit);
 				break;
 			case RadarCategory_Rolls:
-				out[rc]= state.rolls_held;
+				out[rc] = static_cast<float>(state.rolls_held);
 				break;
 			case RadarCategory_Lifts:
-				out[rc]= state.lifts_hit;
+				out[rc] = static_cast<float>(state.lifts_hit);
 				break;
 			case RadarCategory_Fakes:
-				out[rc]= out[rc];
+				out[rc] = out[rc];
 				break;
 			case RadarCategory_Notes:
-				out[rc]= state.notes_hit;
+				out[rc] = static_cast<float>(state.notes_hit);
 				break;
 			DEFAULT_FAIL(rc);
 		}

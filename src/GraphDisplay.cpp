@@ -224,8 +224,8 @@ void GraphDisplay::Set( const StageStats &ss, const PlayerStageStats &pss )
 
 void GraphDisplay::Load( RString sMetricsGroup )
 {
-	m_size.x = THEME->GetMetricI( sMetricsGroup, "BodyWidth" );
-	m_size.y = THEME->GetMetricI( sMetricsGroup, "BodyHeight" );
+	m_size.x = static_cast<float>(THEME->GetMetricI(sMetricsGroup, "BodyWidth"));
+	m_size.y = static_cast<float>(THEME->GetMetricI(sMetricsGroup, "BodyHeight"));
 
 	m_sprBacking.Load( THEME->GetPathG(sMetricsGroup,"Backing") );
 	m_sprBacking->ZoomToWidth( m_size.x );

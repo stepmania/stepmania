@@ -447,7 +447,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "life" || sBit == "lives" )
 	{
 		// level is a percentage for every other option, so multiply by 100. -Kyz
-		m_BatteryLives= level * 100.0f;
+		m_BatteryLives = static_cast<int>(level * 100.0f);
 	}
 	else if( sBit == "bar" ) { m_LifeType= LifeType_Bar; }
 	else if( sBit == "battery" ) { m_LifeType= LifeType_Battery; }
