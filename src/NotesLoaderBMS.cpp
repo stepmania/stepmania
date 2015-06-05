@@ -1217,9 +1217,12 @@ bool BMSChartReader::ReadNoteData()
 			measureSize = 4.0f;
 			BMSMeasures::iterator it = in->measures.find(trackMeasure);
 			if( it != in->measures.end() ) measureSize = it->second.size * 4.0;
-			adjustedMeasureSize = measureSize;
-			if( trackMeasure < firstNoteMeasure ) adjustedMeasureSize = measureSize = 4.0f;
-
+			adjustedMeasureSize = static_cast<float>(measureSize);
+			if (trackMeasure < firstNoteMeasure)
+			{
+				measureSize = 4.0;
+				adjustedMeasureSize = 4.0f;
+			}
 			// measure size adjustment
 			{
 				bmFrac numFrac = toFraction(measureSize);
@@ -1230,10 +1233,10 @@ bool BMSChartReader::ReadNoteData()
 					num /= 2;
 					den /= 2;
 				}
-				td.SetTimeSignatureAtRow( BeatToNoteRow(measureStartBeat), num, den );
+				td.SetTimeSignatureAtRow(BeatToNoteRow(measureStartBeat), static_cast<int>(num), static_cast<int>(den));
 
 				// Since BMS measure events only last through the measure, we need to restore the default measure length.
-				td.SetTimeSignatureAtRow(BeatToNoteRow(measureStartBeat + measureSize), 4, 4);
+				td.SetTimeSignatureAtRow(BeatToNoteRow(measureStartBeat + static_cast<float>(measureSize)), 4, 4);
 			}
 			// end measure size adjustment
 		}
@@ -1247,7 +1250,10 @@ bool BMSChartReader::ReadNoteData()
 			int bpm;
 			if( sscanf(obj.value, "%x", &bpm) == 1 )
 			{
-				if( bpm > 0 ) td.SetBPMAtRow( row, measureAdjust * (currentBPM = bpm) );
+				if (bpm > 0)
+				{
+					td.SetBPMAtRow(row, measureAdjust * (currentBPM = static_cast<float>(bpm)));
+				}
 			}
 		}
 		else if( channel == 4 ) // bga change

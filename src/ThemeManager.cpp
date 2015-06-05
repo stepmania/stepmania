@@ -1347,7 +1347,7 @@ public:
 	static int get_path_name(T* p, lua_State* L) \
 	{ \
 		lua_pushstring(L, p->get_path_name( \
-				SArg(1), SArg(2), lua_toboolean(L, 3))); \
+				SArg(1), SArg(2), lua_toboolean(L, 3) != 0 )); \
 		return 1; \
 	}
 	GENERAL_GET_PATH(GetPathF);

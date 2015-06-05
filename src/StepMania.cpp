@@ -1056,7 +1056,7 @@ int sm_main(int argc, char* argv[])
 	if(pLoadingWindow == NULL)
 		RageException::Throw("%s", COULDNT_OPEN_LOADING_WINDOW.GetValue().c_str());
 
-	srand( time(NULL) ); // seed number generator
+	srand( static_cast<unsigned int>(time(NULL)) ); // seed number generator
 
 	/* Do this early, so we have debugging output if anything else fails. LOG and
 	 * Dialog must be set up first. It shouldn't take long, but it might take a
@@ -1615,8 +1615,8 @@ int LuaFunc_SaveScreenshot(lua_State *L)
 	// If pn is provided, save to that player's profile.
 	// Otherwise, save to the machine.
 	PlayerNumber pn= Enum::Check<PlayerNumber>(L, 1, true);
-	bool compress= lua_toboolean(L, 2);
-	bool sign= lua_toboolean(L, 3);
+	bool compress = lua_toboolean(L, 2) != 0;
+	bool sign = lua_toboolean(L, 3) != 0;
 	RString prefix= luaL_optstring(L, 4, "");
 	RString suffix= luaL_optstring(L, 5, "");
 	RString dir;

@@ -2289,7 +2289,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				break;
 			case EDIT_BUTTON_SCROLL_UP_TS:
 			case EDIT_BUTTON_SCROLL_DOWN_TS:
-				fBeatsToMove = beatsPerMeasure;
+				fBeatsToMove = static_cast<float>(beatsPerMeasure);
 				if( EditB == EDIT_BUTTON_SCROLL_UP_TS )
 					fBeatsToMove *= -1;
 				break;

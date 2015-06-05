@@ -1161,7 +1161,7 @@ bool RageSoundDriver_WDMKS::Fill( int iPacket, RString &sError )
 //	if( iCurrentFrame == m_iLastCursorPos )
 //		LOG->Trace( "underrun" );
 
-	Read( m_pStream->m_Packets[iPacket].Data, m_pStream->m_iFramesPerChunk, m_iLastCursorPos, iCurrentFrame );
+	Read( m_pStream->m_Packets[iPacket].Data, m_pStream->m_iFramesPerChunk, m_iLastCursorPos, static_cast<int>(iCurrentFrame) );
 
 	/* Increment m_iLastCursorPos. */
 	m_iLastCursorPos += m_pStream->m_iFramesPerChunk;

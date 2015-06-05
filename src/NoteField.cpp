@@ -446,7 +446,7 @@ void NoteField::DrawBoard( int iDrawDistanceAfterTargetsPixels, int iDrawDistanc
 		float fTexCoordOffset = m_fBoardOffsetPixels / fBoardGraphicHeightPixels;
 
 		// top half
-		const float fHeight = iDrawDistanceBeforeTargetsPixels - iDrawDistanceAfterTargetsPixels;
+		const float fHeight = static_cast<float>(iDrawDistanceBeforeTargetsPixels - iDrawDistanceAfterTargetsPixels);
 		const float fY = fYPosAt0 - ((iDrawDistanceBeforeTargetsPixels + iDrawDistanceAfterTargetsPixels) / 2.0f);
 
 		pSprite->ZoomToHeight( fHeight );
@@ -710,7 +710,7 @@ void NoteField::CalcPixelsBeforeAndAfterTargets()
 {
 	const PlayerOptions& curr_options= m_pPlayerState->m_PlayerOptions.GetCurrent();
 	// Adjust draw range depending on some effects
-	m_FieldRenderArgs.draw_pixels_after_targets= m_iDrawDistanceAfterTargetsPixels;
+	m_FieldRenderArgs.draw_pixels_after_targets = static_cast<float>(m_iDrawDistanceAfterTargetsPixels);
 	// HACK: If boomerang and centered are on, then we want to draw much
 	// earlier so that the notes don't pop on screen.
 	float centered_times_boomerang=
@@ -718,17 +718,14 @@ void NoteField::CalcPixelsBeforeAndAfterTargets()
 		curr_options.m_fAccels[PlayerOptions::ACCEL_BOOMERANG];
 	m_FieldRenderArgs.draw_pixels_after_targets +=
 		int(SCALE(centered_times_boomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2));
-	m_FieldRenderArgs.draw_pixels_before_targets =
-		m_iDrawDistanceBeforeTargetsPixels;
+	m_FieldRenderArgs.draw_pixels_before_targets = static_cast<float>(m_iDrawDistanceBeforeTargetsPixels);
 
 	float draw_scale= 1;
 	draw_scale*= 1 + 0.5f * fabsf(curr_options.m_fPerspectiveTilt);
 	draw_scale*= 1 + fabsf(curr_options.m_fEffects[PlayerOptions::EFFECT_MINI]);
 
-	m_FieldRenderArgs.draw_pixels_after_targets=
-		(int)(m_FieldRenderArgs.draw_pixels_after_targets * draw_scale);
-	m_FieldRenderArgs.draw_pixels_before_targets=
-		(int)(m_FieldRenderArgs.draw_pixels_before_targets * draw_scale);
+	m_FieldRenderArgs.draw_pixels_after_targets *= draw_scale;
+	m_FieldRenderArgs.draw_pixels_before_targets *= draw_scale;
 }
 
 void NoteField::DrawPrimitives()
@@ -744,8 +741,8 @@ void NoteField::DrawPrimitives()
 	if(m_drawing_board_primitive)
 	{
 		CalcPixelsBeforeAndAfterTargets();
-		DrawBoard(m_FieldRenderArgs.draw_pixels_after_targets,
-			m_FieldRenderArgs.draw_pixels_before_targets);
+		DrawBoard(static_cast<int>(m_FieldRenderArgs.draw_pixels_after_targets),
+			static_cast<int>(m_FieldRenderArgs.draw_pixels_before_targets));
 		return;
 	}
 	// Some might prefer an else block, instead of returning from the if, but I
@@ -756,9 +753,9 @@ void NoteField::DrawPrimitives()
 	NoteDisplayCols *cur = m_pCurDisplay;
 	// Probe for first and last notes on the screen
 	float first_beat_to_draw= FindFirstDisplayedBeat(
-		m_pPlayerState, m_FieldRenderArgs.draw_pixels_after_targets);
+		m_pPlayerState, static_cast<int>(m_FieldRenderArgs.draw_pixels_after_targets));
 	float last_beat_to_draw= FindLastDisplayedBeat(
-		m_pPlayerState, m_FieldRenderArgs.draw_pixels_before_targets);
+		m_pPlayerState, static_cast<int>(m_FieldRenderArgs.draw_pixels_before_targets));
 
 	m_pPlayerState->m_fLastDrawnBeat = last_beat_to_draw;
 
@@ -1096,7 +1093,7 @@ static void get_returned_bright(Lua* L, int index, bool& bright)
 {
 	if(lua_isboolean(L, index))
 	{
-		bright= lua_toboolean(L, index);
+		bright= lua_toboolean(L, index) != 0;
 	}
 }
 

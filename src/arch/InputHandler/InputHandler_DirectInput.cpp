@@ -421,20 +421,20 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 						neg = MOUSE_WHEELDOWN; pos = MOUSE_WHEELUP;
 						val = state.lZ;
 						//LOG->Trace("MouseWheel polled: %i",val);
-						INPUTFILTER->UpdateMouseWheel(val);
+						INPUTFILTER->UpdateMouseWheel(static_cast<float>(val));
 						if( val == 0 )
 						{
 							// release all
 							ButtonPressed( DeviceInput(dev, pos, 0, tm) );
 							ButtonPressed( DeviceInput(dev, neg, 0, tm) );
 						}
-						else if( int(val) > 0 )
+						else if( val > 0 )
 						{
 							// positive values: WheelUp
 							ButtonPressed( DeviceInput(dev, pos, 1, tm) );
 							ButtonPressed( DeviceInput(dev, neg, 0, tm) );
 						}
-						else if( int(val) < 0 )
+						else if( val < 0 )
 						{
 							// negative values: WheelDown
 							ButtonPressed( DeviceInput(dev, neg, 1, tm) );
@@ -524,7 +524,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 					DeviceButton up = DeviceButton_Invalid, down = DeviceButton_Invalid;
 					if(dev == DEVICE_MOUSE)
 					{
-						float l = int(evtbuf[i].dwData);
+						float l = static_cast<float>(evtbuf[i].dwData);
 						POINT cursorPos;
 						GetCursorPos(&cursorPos);
 						// convert screen coordinates to client
