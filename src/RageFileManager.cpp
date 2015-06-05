@@ -387,9 +387,10 @@ void RageFileManager::GetDirListing( const RString &sPath_, vector<RString> &Add
 		/* If returning the path, prepend the mountpoint name to the files this driver returned. */
 		if( bReturnPathToo && pLoadedDriver->m_sMountPoint.size() > 0 )
 		{
-			std::for_each(AddTo.begin() + OldStart, AddTo.end(), [pLoadedDriver](RString &path) {
+			auto const &mountPoint = pLoadedDriver->m_sMountPoint;
+			std::for_each(AddTo.begin() + OldStart, AddTo.end(), [&mountPoint](RString &path) {
 				/* Skip the trailing slash on the mountpoint; there's already a slash there. */
-				path = pLoadedDriver->m_sMountPoint + path;
+				path = mountPoint.substr(0, mountPoint.size() - 1) + path;
 			});
 		}
 	}
