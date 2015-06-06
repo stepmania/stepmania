@@ -53,6 +53,9 @@
 /* Everything will need string for one reason or another: */
 #include <string>
 
+/* ...and the formatting library to go with it: */
+#include "format.h"
+
 /* And vector: */
 #include <vector>
 
