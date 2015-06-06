@@ -37,7 +37,7 @@ void ScreenSelect::Init()
 	RString choice_names= CHOICE_NAMES;
 	if(BeginsWith(choice_names, "lua,"))
 	{
-		RString command= choice_names.Right(choice_names.size()-4);
+		RString command= tail(choice_names, -4);
 		Lua* L= LUA->Get();
 		if(LuaHelpers::RunExpression(L, command, m_sName + "::ChoiceNames"))
 		{

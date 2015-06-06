@@ -151,7 +151,7 @@ ProfileLoadResult ProfileManager::LoadProfile( PlayerNumber pn, RString sProfile
 	LOG->Trace( "LoadingProfile P%d, %s, %d", pn+1, sProfileDir.c_str(), bIsMemCard );
 
 	ASSERT( !sProfileDir.empty() );
-	ASSERT( sProfileDir.Right(1) == "/" );
+	ASSERT( EndsWith(sProfileDir, "/"));
 
 
 	m_sProfileDir[pn] = sProfileDir;

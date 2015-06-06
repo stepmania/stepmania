@@ -77,7 +77,7 @@ static void InstallSmzip( const RString &sZipFile, PlayAfterLaunchInfo &out )
 
 			vsFiles.push_back(s);
 
-			RString s2 = s.Right( s.length() - TEMP_ZIP_MOUNT_POINT.length() );
+			RString s2 = tail(s, s.length() - TEMP_ZIP_MOUNT_POINT.length() );
 			vsPrettyFiles.push_back( s2 );
 		}
 		sort( vsPrettyFiles.begin(), vsPrettyFiles.end() );
@@ -87,7 +87,7 @@ static void InstallSmzip( const RString &sZipFile, PlayAfterLaunchInfo &out )
 	for (auto sSrcFile: vsFiles)
 	{
 		RString sDestFile = sSrcFile;
-		sDestFile = sDestFile.Right( sDestFile.length() - TEMP_ZIP_MOUNT_POINT.length() );
+		sDestFile = tail(sDestFile, sDestFile.length() - TEMP_ZIP_MOUNT_POINT.length() );
 
 		RString sDir, sThrowAway;
 		splitpath( sDestFile, sDir, sThrowAway, sThrowAway );

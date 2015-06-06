@@ -113,7 +113,7 @@ static void StripCvsAndSvn( vector<RString> &vsPathsToStrip, vector<RString> &vs
 	ASSERT( vsPathsToStrip.size() == vsNamesToStrip.size() );
 	for( unsigned i=0; i<vsNamesToStrip.size(); i++ )
 	{
-		if( vsNamesToStrip[i].Right(3).CompareNoCase("CVS") == 0 || vsNamesToStrip[i] == ".svn" )
+		if( tail(vsNamesToStrip[i], 3).CompareNoCase("CVS") == 0 || vsNamesToStrip[i] == ".svn" )
 		{
 			vsPathsToStrip.erase( vsPathsToStrip.begin()+i );
 			vsNamesToStrip.erase( vsNamesToStrip.begin()+i );
@@ -377,7 +377,7 @@ void BackgroundUtil::GetGlobalRandomMovies(
 
 	for (auto const &s: vsPathsOut)
 	{
-		RString sName = s.Right( s.size() - RANDOMMOVIES_DIR.size() - 1 );
+		RString sName = tail(s, s.size() - RANDOMMOVIES_DIR.size() - 1 );
 		vsNamesOut.push_back( sName );
 	}
 	StripCvsAndSvn( vsPathsOut, vsNamesOut );

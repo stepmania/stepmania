@@ -288,7 +288,7 @@ static void DoPlayOnceFromDir( RString sPath )
 		return;
 
 	// make sure there's a slash at the end of this path
-	if( sPath.Right(1) != "/" )
+	if( !EndsWith(sPath, "/") )
 		sPath += "/";
 
 	vector<RString> arraySoundFiles;

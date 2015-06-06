@@ -1062,8 +1062,10 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 			RString difficulty = sParams[3];
 
 			// HACK?: If this is a .edit fudge the edit difficulty
-			if(path.Right(5).CompareNoCase(".edit") == 0) difficulty = "edit";
-
+			if(tail(path, 5).CompareNoCase(".edit") == 0)
+			{
+				difficulty = "edit";
+			}
 			Trim(stepsType);
 			Trim(description);
 			Trim(difficulty);

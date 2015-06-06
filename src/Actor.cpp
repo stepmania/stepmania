@@ -138,7 +138,7 @@ void Actor::InitState()
 
 static bool GetMessageNameFromCommandName( const RString &sCommandName, RString &sMessageNameOut )
 {
-	if( sCommandName.Right(7) == "Message" )
+	if( EndsWith(sCommandName, "Message"))
 	{
 		sMessageNameOut = head(sCommandName, -7);
 		return true;

@@ -96,8 +96,8 @@ bool IniFile::ReadFile( RageFileBasic &f )
 				size_t iEqualIndex = line.find("=");
 				if( iEqualIndex != string::npos )
 				{
-                    RString valuename = head(line, iEqualIndex);
-                    RString value = line.Right(line.size()-valuename.size()-1);
+					RString valuename = head(line, iEqualIndex);
+					RString value = tail(line, line.size()-valuename.size()-1);
 					Trim(valuename);
 					if(!valuename.empty())
 					{

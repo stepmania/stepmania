@@ -265,7 +265,7 @@ static LocalizedString LOADING_SONGS ( "SongManager", "Loading songs..." );
 void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 {
 	// Make sure sDir has a trailing slash.
-	if( sDir.Right(1) != "/" )
+	if( !EndsWith(sDir, "/") )
 		sDir += "/";
 
 	// Find all group directories in "Songs" folder
@@ -1375,8 +1375,10 @@ Course* SongManager::GetRandomCourse()
 
 Song* SongManager::GetSongFromDir(RString dir) const
 {
-	if(dir.Right(1) != "/")
-	{ dir += "/"; }
+	if(!EndsWith(dir, "/"))
+	{
+		dir += "/";
+	}
 
 	dir.Replace('\\', '/');
 	dir.MakeLower();
@@ -1566,7 +1568,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 					section = PreferredSortSection();
 				}
 
-				section.sName = sLine.Right( sLine.length() - RString("---").length() );
+				section.sName = tail(sLine, sLine.length() - RString("---").length() );
 				TrimLeft( section.sName );
 				TrimRight( section.sName );
 			}

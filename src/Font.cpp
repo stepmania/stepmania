@@ -427,7 +427,7 @@ void Font::GetFontPaths( const RString &sFontIniPath, vector<RString> &asTexture
 
 	for( unsigned i = 0; i < asFiles.size(); ++i )
 	{
-		if( !asFiles[i].Right(4).EqualsNoCase(".ini") )
+		if( !tail(asFiles[i], 4).EqualsNoCase(".ini") )
 			asTexturePathsOut.push_back( asFiles[i] );
 	}
 }

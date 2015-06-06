@@ -63,7 +63,7 @@ void BGAnimation::AddLayersFromAniDir( const RString &_sAniDir, const XNode *pNo
 				sImportDir = sAniDir + sImportDir;
 				CollapsePath( sImportDir );
 
-				if( sImportDir.Right(1) != "/" )
+				if( !EndsWith(sImportDir, "/"))
 					sImportDir += "/";
 
 				ASSERT_M( IsADirectory(sImportDir), sImportDir + " isn't a directory" );
@@ -94,7 +94,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 		 return;
 
 	RString sAniDir = _sAniDir;
-	if( sAniDir.Right(1) != "/" )
+	if( !EndsWith(sAniDir, "/"))
 		sAniDir += "/";
 
 	ASSERT_M( IsADirectory(sAniDir), sAniDir + " isn't a directory" );

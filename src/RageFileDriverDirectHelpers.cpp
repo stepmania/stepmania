@@ -150,7 +150,7 @@ void DirectFilenameDB::SetRoot( RString root_ )
 	root.Replace( "\\", "/" );
 
 	// "/abcd/" -> "/abcd":
-	if( root.Right(1) == "/" )
+	if( EndsWith(root, "/") )
 		root.erase( root.size()-1, 1 );
 }
 
@@ -221,7 +221,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 #if defined(WIN32)
 	WIN32_FIND_DATA fd;
 
-	if ( sPath.size() > 0  && sPath.Right(1) == "/" )
+	if ( sPath.size() > 0  && EndsWith(sPath, "/") )
 		sPath.erase( sPath.size() - 1 );
 
 	HANDLE hFind = DoFindFirstFile( root+sPath+"/*", &fd );
@@ -306,7 +306,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 	{
 		if( !BeginsWith( iter->lname, IGNORE_MARKER_BEGINNING ) )
 			break;
-		RString sFileLNameToIgnore = iter->lname.Right( iter->lname.length() - IGNORE_MARKER_BEGINNING.length() );
+		RString sFileLNameToIgnore = tail(iter->lname, iter->lname.length() - IGNORE_MARKER_BEGINNING.length() );
 		vsFilesToRemove.push_back( iter->name );
 		vsFilesToRemove.push_back( sFileLNameToIgnore );
 	}

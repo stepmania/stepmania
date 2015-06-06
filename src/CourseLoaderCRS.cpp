@@ -172,7 +172,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			// most played
 			if( BeginsWith(sParams[1], "BEST"))
 			{
-				int iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
+				int iChooseIndex = StringToInt( tail(sParams[1], -4)) - 1;
 				if( iChooseIndex > iNumSongs )
 				{
 					// looking up a song that doesn't exist.
@@ -189,7 +189,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			// least played
 			else if( BeginsWith(sParams[1], "WORST"))
 			{
-				int iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
+				int iChooseIndex = StringToInt( tail(sParams[1], -5)) - 1;
 				if( iChooseIndex > iNumSongs )
 				{
 					// looking up a song that doesn't exist.
@@ -206,14 +206,14 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			// best grades
 			else if( BeginsWith(sParams[1], "GRADEBEST"))
 			{
-				new_entry.iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("GRADEBEST")) ) - 1;
+				new_entry.iChooseIndex = StringToInt( tail(sParams[1], -9)) - 1;
 				CLAMP( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_TopGrades;
 			}
 			// worst grades
 			else if( BeginsWith(sParams[1], "GRADEWORST"))
 			{
-				new_entry.iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("GRADEWORST")) ) - 1;
+				new_entry.iChooseIndex = StringToInt( tail(sParams[1], -10)) - 1;
 				CLAMP( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_LowestGrades;
 			}
@@ -222,7 +222,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				//new_entry.bSecret = true;
 			}
 			// group random
-			else if( sParams[1].Right(1) == "*" )
+			else if( EndsWith(sParams[1], "*"))
 			{
 				//new_entry.bSecret = true;
 				RString sSong = sParams[1];

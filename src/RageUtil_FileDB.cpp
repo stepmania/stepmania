@@ -104,7 +104,7 @@ int FileSet::GetFileHash( const RString &sPath ) const
 static void SplitPath( RString sPath, RString &sDir, RString &sName )
 {
 	CollapsePath( sPath );
-	if( sPath.Right(1) == "/" )
+	if( EndsWith(sPath, "/") )
 		sPath.erase( sPath.size()-1 );
 
 	size_t iSep = sPath.find_last_of( '/' );

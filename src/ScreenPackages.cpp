@@ -496,7 +496,7 @@ void ScreenPackages::EnterURL( const RString & sURL )
 
 	// Determine if this is a website, or a package?
 	// Criteria: does it end with *zip?
-	if( sAddress.Right(3).CompareNoCase("zip") == 0 )
+	if( tail(sAddress, 3).CompareNoCase("zip") == 0 )
 		m_bIsPackage=true;
 	else
 		m_bIsPackage = false;
@@ -506,7 +506,7 @@ void ScreenPackages::EnterURL( const RString & sURL )
 		m_sBaseAddress += ssprintf( ":%d", Port );
 	m_sBaseAddress += "/";
 
-	if( sAddress.Right(1) != "/" )
+	if( !EndsWith(sAddress, "/") )
 	{
 		m_sEndName = Basename( sAddress );
 		m_sBaseAddress += Dirname( sAddress );

@@ -138,7 +138,7 @@ static void FileNameToMetricsGroupAndElement( const RString &sFileName, RString 
 	else
 	{
 		sMetricsGroupOut = head(sFileName, iIndexOfFirstSpace );
-		sElementOut = sFileName.Right( sFileName.size() - iIndexOfFirstSpace - 1 );
+		sElementOut = tail(sFileName, sFileName.size() - iIndexOfFirstSpace - 1 );
 	}
 }
 
