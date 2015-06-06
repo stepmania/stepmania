@@ -399,9 +399,16 @@ void MakeLower( wchar_t *p, size_t iLen );
 // We have many cases of string comparisons involving ignoring case.
 struct ci_char_traits: public std::char_traits<char>
 {
+private:
+	// As our strings are already UTF8, only focus on the ASCII characters for conversion.
+	static char smToUpper(char ch)
+	{
+		return (ch >= 'a' && ch <= 'z')? char(ch + 'A' - 'a'): ch;
+	}
+public:
 	static bool eq(char a, char b)
 	{
-		return toupper(a) == toupper(b);
+		return smToUpper(a) == smToUpper(b);
 	}
 	static bool ne(char a, char b)
 	{
@@ -409,7 +416,7 @@ struct ci_char_traits: public std::char_traits<char>
 	}
 	static bool lt(char a, char b)
 	{
-		return toupper(a) < toupper(b);
+		return smToUpper(a) < smToUpper(b);
 	}
 	static bool gt(char a, char b)
 	{
