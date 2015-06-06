@@ -837,8 +837,8 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	{
 		Lua *L = LUA->Get();
 		GAMESTATE->m_Environment->PushSelf(L);
-		lua_pushstring( L, i->first );
-		lua_pushstring( L, i->second );
+		lua_pushstring( L, i->first.c_str() );
+		lua_pushstring( L, i->second.c_str() );
 		lua_settable( L, -3 );
 		lua_pop( L, 1 );
 		LUA->Release(L);
@@ -989,23 +989,23 @@ bool GameCommand::IsZero() const
 class LunaGameCommand: public Luna<GameCommand>
 {
 public:
-	static int GetName( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sName ); return 1; }
-	static int GetText( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sText ); return 1; }
+	static int GetName( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sName.c_str() ); return 1; }
+	static int GetText( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sText.c_str() ); return 1; }
 	static int GetIndex( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iIndex ); return 1; }
 	static int GetMultiPlayer( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_MultiPlayer); return 1; }
 	static int GetStyle( T* p, lua_State *L )	{ if(p->m_pStyle==NULL) lua_pushnil(L); else {Style *pStyle = (Style*)p->m_pStyle; pStyle->PushSelf(L);} return 1; }
-	static int GetScreen( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sScreen ); return 1; }
-	static int GetProfileID( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sProfileID ); return 1; }
+	static int GetScreen( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sScreen.c_str() ); return 1; }
+	static int GetProfileID( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sProfileID.c_str() ); return 1; }
 	static int GetSong( T* p, lua_State *L )	{ if(p->m_pSong==NULL) lua_pushnil(L); else p->m_pSong->PushSelf(L); return 1; }
 	static int GetSteps( T* p, lua_State *L )	{ if(p->m_pSteps==NULL) lua_pushnil(L); else p->m_pSteps->PushSelf(L); return 1; }
 	static int GetCourse( T* p, lua_State *L )	{ if(p->m_pCourse==NULL) lua_pushnil(L); else p->m_pCourse->PushSelf(L); return 1; }
 	static int GetTrail( T* p, lua_State *L )	{ if(p->m_pTrail==NULL) lua_pushnil(L); else p->m_pTrail->PushSelf(L); return 1; }
 	static int GetCharacter( T* p, lua_State *L )	{ if(p->m_pCharacter==NULL) lua_pushnil(L); else p->m_pCharacter->PushSelf(L); return 1; }
-	static int GetSongGroup( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sSongGroup ); return 1; }
-	static int GetUrl( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sUrl ); return 1; }
-	static int GetAnnouncer( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sAnnouncer ); return 1; }
-	static int GetPreferredModifiers( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sPreferredModifiers ); return 1; }
-	static int GetStageModifiers( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sStageModifiers ); return 1; }
+	static int GetSongGroup( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sSongGroup.c_str() ); return 1; }
+	static int GetUrl( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sUrl.c_str() ); return 1; }
+	static int GetAnnouncer( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sAnnouncer.c_str() ); return 1; }
+	static int GetPreferredModifiers( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sPreferredModifiers.c_str() ); return 1; }
+	static int GetStageModifiers( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sStageModifiers.c_str() ); return 1; }
 
 	DEFINE_METHOD( GetCourseDifficulty,	m_CourseDifficulty )
 	DEFINE_METHOD( GetDifficulty,	m_dc )

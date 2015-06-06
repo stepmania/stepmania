@@ -206,7 +206,7 @@ public:
 		}
 		else
 		{
-			lua_pushstring(L, s );
+			lua_pushstring(L, s.c_str() );
 		}
 		return 1;
 	}

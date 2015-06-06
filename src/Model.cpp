@@ -785,7 +785,7 @@ public:
 	static int position( T* p, lua_State *L )	{ p->SetPosition( FArg(1) ); COMMON_RETURN_SELF; }
 	static int playanimation( T* p, lua_State *L )	{ p->PlayAnimation(SArg(1),FArg(2)); COMMON_RETURN_SELF; }
 	static int SetDefaultAnimation( T* p, lua_State *L )	{ p->SetDefaultAnimation(SArg(1),FArg(2)); COMMON_RETURN_SELF; }
-	static int GetDefaultAnimation( T* p, lua_State *L )	{ lua_pushstring( L, p->GetDefaultAnimation() ); return 1; }
+	static int GetDefaultAnimation( T* p, lua_State *L )	{ lua_pushstring( L, p->GetDefaultAnimation().c_str() ); return 1; }
 	static int loop( T* p, lua_State *L )		{ p->SetLoop(BArg(1)); COMMON_RETURN_SELF; }
 	static int rate( T* p, lua_State *L )		{ p->SetRate(FArg(1)); COMMON_RETURN_SELF; }
 	static int GetNumStates( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumStates() ); return 1; }

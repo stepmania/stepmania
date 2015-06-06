@@ -806,7 +806,7 @@ class LunaUnlockEntry: public Luna<UnlockEntry>
 {
 public:
 	static int IsLocked( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsLocked() ); return 1; }
-	static int GetDescription( T* p, lua_State *L )		{ lua_pushstring(L, p->GetDescription() ); return 1; }
+	static int GetDescription( T* p, lua_State *L )		{ lua_pushstring(L, p->GetDescription().c_str() ); return 1; }
 	static int GetUnlockRewardType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_Type ); return 1; }
 	static int GetRequirement( T* p, lua_State *L )		{ UnlockRequirement i = Enum::Check<UnlockRequirement>( L, 1 ); lua_pushnumber(L, p->m_fRequirement[i] ); return 1; }
 	static int GetRequirePassHardSteps( T* p, lua_State *L ){ lua_pushboolean(L, p->m_bRequirePassHardSteps); return 1; }
@@ -868,7 +868,7 @@ public:
 	}
 	static int GetCode( T* p, lua_State *L )
 	{
-		lua_pushstring( L, p->m_sEntryID );
+		lua_pushstring( L, p->m_sEntryID.c_str() );
 		return 1;
 	}
 
@@ -937,7 +937,7 @@ public:
 		lua_pushnumber( L, p->PointsUntilNextUnlock(ut) );
 		return 1;
 	}
-	static int FindEntryID( T* p, lua_State *L )			{ RString sName = SArg(1); RString s = p->FindEntryID(sName); if( s.empty() ) lua_pushnil(L); else lua_pushstring(L, s); return 1; }
+	static int FindEntryID( T* p, lua_State *L )			{ RString sName = SArg(1); RString s = p->FindEntryID(sName); if( s.empty() ) lua_pushnil(L); else lua_pushstring(L, s.c_str()); return 1; }
 	static int UnlockEntryID( T* p, lua_State *L )			{ RString sUnlockEntryID = SArg(1); p->UnlockEntryID(sUnlockEntryID); COMMON_RETURN_SELF; }
 	static int UnlockEntryIndex( T* p, lua_State *L )		{ int iUnlockEntryID = IArg(1); p->UnlockEntryIndex(iUnlockEntryID); COMMON_RETURN_SELF; }
 	static int LockEntryID( T * p, lua_State * L)

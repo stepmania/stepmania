@@ -1055,8 +1055,8 @@ class LunaCourse: public Luna<Course>
 {
 public:
 	DEFINE_METHOD( GetPlayMode, GetPlayMode() )
-	static int GetDisplayFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayFullTitle() ); return 1; }
-	static int GetTranslitFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitFullTitle() ); return 1; }
+	static int GetDisplayFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayFullTitle().c_str() ); return 1; }
+	static int GetTranslitFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitFullTitle().c_str() ); return 1; }
 	static int HasMods( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasMods() ); return 1; }
 	static int HasTimedMods( T* p, lua_State *L )		{ lua_pushboolean( L, p->HasTimedMods() ); return 1; }
 	DEFINE_METHOD( GetCourseType, GetCourseType() )
@@ -1080,12 +1080,12 @@ public:
 	}
 	static int GetBannerPath( T* p, lua_State *L )		{ RString s = p->GetBannerPath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
 	static int GetBackgroundPath( T* p, lua_State *L )		{ RString s = p->GetBackgroundPath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
-	static int GetCourseDir( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sPath ); return 1; }
-	static int GetGroupName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGroupName ); return 1; }
+	static int GetCourseDir( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sPath.c_str() ); return 1; }
+	static int GetGroupName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGroupName.c_str() ); return 1; }
 	static int IsAutogen( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bIsAutogen ); return 1; }
 	static int GetEstimatedNumStages( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetEstimatedNumStages() ); return 1; }
-	static int GetScripter( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sScripter ); return 1; }
-	static int GetDescription( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sDescription ); return 1; }
+	static int GetScripter( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sScripter.c_str() ); return 1; }
+	static int GetDescription( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sDescription.c_str() ); return 1; }
 	static int GetTotalSeconds( T* p, lua_State *L )
 	{
 		StepsType st = Enum::Check<StepsType>(L, 1);

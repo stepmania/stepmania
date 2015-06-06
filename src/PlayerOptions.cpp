@@ -1153,11 +1153,11 @@ public:
 		int original_top= lua_gettop(L);
 		if( p->m_sNoteSkin.empty()  )
 		{
-			lua_pushstring( L, CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue() );
+			lua_pushstring( L, CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue().c_str() );
 		}
 		else
 		{
-			lua_pushstring( L, p->m_sNoteSkin );
+			lua_pushstring( L, p->m_sNoteSkin.c_str() );
 		}
 		if(original_top >= 1 && lua_isstring(L, 1))
 		{

@@ -1644,7 +1644,7 @@ int LuaFunc_SaveScreenshot(lua_State *L)
 	}
 	RString path= dir + filename;
 	lua_pushboolean(L, !filename.empty());
-	lua_pushstring(L, path);
+	lua_pushstring(L, path.c_str());
 	return 2;
 }
 void LuaFunc_Register_SaveScreenshot(lua_State *L);

@@ -1867,7 +1867,7 @@ public:
 	static int GetHAlign( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetHorizAlign() ); return 1; }
 	static int GetVAlign( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetVertAlign() ); return 1; }
 
-	static int GetName( T* p, lua_State *L )		{ lua_pushstring( L, p->GetName() ); return 1; }
+	static int GetName( T* p, lua_State *L )		{ lua_pushstring( L, p->GetName().c_str() ); return 1; }
 	static int GetParent( T* p, lua_State *L )
 	{
 		Actor *pParent = p->GetParent();

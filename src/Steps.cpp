@@ -559,7 +559,7 @@ bool Steps::MakeValidEditDescription( RString &sPreferredDescription )
 {
 	if( int(sPreferredDescription.size()) > MAX_STEPS_DESCRIPTION_LENGTH )
 	{
-		sPreferredDescription = head(sPreferredDescription, MAX_STEPS_DESCRIPTION_LENGTH));
+		sPreferredDescription = head(sPreferredDescription, MAX_STEPS_DESCRIPTION_LENGTH);
 		return true;
 	}
 	return false;
@@ -673,7 +673,7 @@ public:
 	*/
 	static int GetChartName(T *p, lua_State *L)
 	{
-		lua_pushstring(L, p->GetChartName());
+		lua_pushstring(L, p->GetChartName().c_str());
 		return 1;
 	}
 	static int GetDisplayBpms( T* p, lua_State *L )

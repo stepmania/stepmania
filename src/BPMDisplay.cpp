@@ -342,7 +342,7 @@ public:
 		}
 		COMMON_RETURN_SELF;
 	}
-	static int GetText( T* p, lua_State *L )		{ lua_pushstring( L, p->GetText() ); return 1; }
+	static int GetText( T* p, lua_State *L )		{ lua_pushstring( L, p->GetText().c_str() ); return 1; }
 
 	LunaBPMDisplay()
 	{

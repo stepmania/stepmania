@@ -742,7 +742,7 @@ public:
 	static int GetName( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-		lua_pushstring(L, p->GetName(pn) );
+		lua_pushstring(L, p->GetName(pn).c_str() );
 		return 1;
 	}
 

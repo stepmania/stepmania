@@ -2417,13 +2417,13 @@ public:
 	DEFINE_METHOD(GetType, m_Type);
 	DEFINE_METHOD(GetPriority, m_ListPriority);
 
-	static int GetDisplayName( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sDisplayName ); return 1; }
+	static int GetDisplayName( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sDisplayName.c_str() ); return 1; }
 	static int SetDisplayName( T* p, lua_State *L )
 	{
 		p->m_sDisplayName= SArg(1);
 		COMMON_RETURN_SELF;
 	}
-	static int GetLastUsedHighScoreName( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sLastUsedHighScoreName ); return 1; }
+	static int GetLastUsedHighScoreName( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sLastUsedHighScoreName.c_str() ); return 1; }
 	static int SetLastUsedHighScoreName( T* p, lua_State *L )
 	{
 		p->m_sLastUsedHighScoreName= SArg(1);
@@ -2572,7 +2572,7 @@ public:
 	static int GetTotalGameplaySeconds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalGameplaySeconds ); return 1; }
 	static int GetSongsAndCoursesPercentCompleteAllDifficulties( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetSongsAndCoursesPercentCompleteAllDifficulties(Enum::Check<StepsType>(L, 1)) ); return 1; }
 	static int GetTotalCaloriesBurned( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_fTotalCaloriesBurned ); return 1; }
-	static int GetDisplayTotalCaloriesBurned( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayTotalCaloriesBurned() ); return 1; }
+	static int GetDisplayTotalCaloriesBurned( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayTotalCaloriesBurned().c_str() ); return 1; }
 	static int GetMostPopularSong( T* p, lua_State *L )
 	{
 		Song *p2 = p->GetMostPopularSong();

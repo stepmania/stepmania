@@ -2153,7 +2153,7 @@ public:
 	static int SongToPreferredSortSectionName( T* p, lua_State *L )
 	{
 		const Song* pSong = Luna<Song>::check(L,1);
-		lua_pushstring(L, p->SongToPreferredSortSectionName(pSong));
+		lua_pushstring(L, p->SongToPreferredSortSectionName(pSong).c_str());
 		return 1;
 	}
 	static int WasLoadedFromAdditionalSongs( T* p, lua_State *L )

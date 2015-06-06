@@ -101,17 +101,17 @@ void LuaBinding::Register( lua_State *L )
 	// to the base class.
 	if( IsDerivedClass() )
 	{
-		lua_getfield( L, LUA_GLOBALSINDEX, GetBaseClassName() );
+		lua_getfield( L, LUA_GLOBALSINDEX, GetBaseClassName().c_str() );
 		lua_setfield( L, methods_metatable, "__index" );
 
-		lua_pushstring( L, GetBaseClassName() );
+		lua_pushstring( L, GetBaseClassName().c_str() );
 		lua_setfield( L, metatable, "base" );
 	}
 
-	lua_pushstring( L, GetClassName() );
+	lua_pushstring( L, GetClassName().c_str() );
 	lua_setfield( L, methods_metatable, "class" );
 
-	lua_pushstring( L, GetClassName() );
+	lua_pushstring( L, GetClassName().c_str() );
 	LuaHelpers::PushValueFunc( L, 1 );
 	lua_setfield( L, metatable, "__type" ); // for luaL_pushtype
 
