@@ -54,14 +54,19 @@ void ModIcon::Load( RString sMetricsGroup )
 void ModIcon::Set( const RString &_sText )
 {
 	RString sText = _sText;
-
-	for( unsigned i = 0; i < m_vStopWords.size(); i++ )
-		if( sText.EqualsNoCase(m_vStopWords[i]) )
-			sText = "";
-
-	sText.Replace( " ", "\n" );
-
-	bool bVacant = (sText=="");
+	ci_string ciText(sText.c_str());
+	
+	bool bVacant = std::any_of(m_vStopWords.begin(), m_vStopWords.end(), [&ciText] (RString const &stop) {
+		return ciText == stop.c_str();
+	});
+	if (bVacant)
+	{
+		sText = "";
+	}
+	else
+	{
+		sText.Replace( " ", "\n" );
+	}
 	m_sprFilled->SetVisible( !bVacant );
 	m_sprEmpty->SetVisible( bVacant );
 

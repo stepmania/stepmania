@@ -104,7 +104,8 @@ static GameSoundManager::PlayMusicParams g_FallbackMusicParams;
 static void StartMusic( MusicToPlay &ToPlay )
 {
 	LockMutex L( *g_Mutex );
-	if( g_Playing->m_Music->IsPlaying() && g_Playing->m_Music->GetLoadedFilePath().EqualsNoCase(ToPlay.m_sFile) )
+	ci_string musicPath(g_Playing->m_Music->GetLoadedFilePath().c_str());
+	if( g_Playing->m_Music->IsPlaying() && musicPath == ToPlay.m_sFile.c_str() )
 		return;
 
 	/* We're changing or stopping the music.  If we were dimming, reset. */
