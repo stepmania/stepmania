@@ -3467,9 +3467,14 @@ RString GameManager::StyleToLocalizedString( const Style* style )
 
 const Game* GameManager::StringToGame( RString sGame )
 {
-	for( size_t i=0; i<ARRAYLEN(g_Games); ++i )
-		if( !sGame.CompareNoCase(g_Games[i]->m_szName) )
-			return g_Games[i];
+	ci_string ciGame(sGame.c_str());
+	for (auto const *game: g_Games)
+	{
+		if (ciGame == game->m_szName)
+		{
+			return game;
+		}
+	}
 
 	return NULL;
 }
@@ -3477,11 +3482,15 @@ const Game* GameManager::StringToGame( RString sGame )
 
 const Style* GameManager::GameAndStringToStyle( const Game *game, RString sStyle )
 {
+	ci_string ciStyle(sStyle.c_str());
+	
 	for( int s=0; game->m_apStyles[s]; ++s )
 	{
 		const Style* style = game->m_apStyles[s];
-		if( sStyle.CompareNoCase(style->m_szName) == 0 )
+		if( ciStyle == style->m_szName )
+		{
 			return style;
+		}
 	}
 
 	return NULL;

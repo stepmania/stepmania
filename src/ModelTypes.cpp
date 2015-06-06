@@ -44,11 +44,16 @@ void AnimatedTexture::Load( const RString &sTexOrIniPath )
 
 	m_bSphereMapped = sTexOrIniPath.find("sphere") != RString::npos;
 	if( sTexOrIniPath.find("add") != std::string::npos )
+	{
 		m_BlendMode = BLEND_ADD;
+	}
 	else
+	{
 		m_BlendMode = BLEND_NORMAL;
+	}
 
-	if( GetExtension(sTexOrIniPath).CompareNoCase("ini")==0 )
+	ci_string ini("ini");
+	if (ini == GetExtension(sTexOrIniPath).c_str())
 	{
 		IniFile ini;
 		if( !ini.ReadFile( sTexOrIniPath ) )

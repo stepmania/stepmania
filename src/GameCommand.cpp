@@ -620,7 +620,8 @@ bool GameCommand::IsPlayable( RString *why ) const
 		}
 	}
 
-	if( !m_sScreen.CompareNoCase("ScreenEditCoursesMenu") )
+	ci_string ciScreen(m_sScreen.c_str());
+	if (ciScreen == "ScreenEditCoursesMenu")
 	{
 		vector<Course*> vCourses;
 		SONGMAN->GetAllCourses( vCourses, false );
@@ -633,9 +634,8 @@ bool GameCommand::IsPlayable( RString *why ) const
 		}
 	}
 
-	if( (!m_sScreen.CompareNoCase("ScreenJukeboxMenu") ||
-		!m_sScreen.CompareNoCase("ScreenEditMenu") ||
-		!m_sScreen.CompareNoCase("ScreenEditCoursesMenu")) )
+	if (ciScreen == "ScreenJukeboxMenu" || ciScreen == "ScreenEditMenu" ||
+		ciScreen == "ScreenEditCoursesMenu")
 	{
 		if( SONGMAN->GetNumSongs() == 0 )
 		{
