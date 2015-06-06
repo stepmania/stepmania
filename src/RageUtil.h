@@ -395,6 +395,9 @@ void MakeLower( char *p, size_t iLen );
 void MakeUpper( wchar_t *p, size_t iLen );
 void MakeLower( wchar_t *p, size_t iLen );
 
+char GetAsciiUpper(char const &ch);
+char GetAsciiLower(char const &ch);
+
 // Borrowed from http://stackoverflow.com/a/2886589/445373
 // We have many cases of string comparisons involving ignoring case.
 struct ci_char_traits: public std::char_traits<char>

@@ -1869,6 +1869,16 @@ void MakeLower( wchar_t *p, size_t iLen )
 	UnicodeUpperLower( p, iLen, g_LowerCase );
 }
 
+char GetAsciiUpper(char const &ch)
+{
+	return (ch >= 'a' && ch <= 'z')? char(ch + 'A' - 'a'): ch;
+}
+
+char GetAsciiLower(char const &ch)
+{
+	return (ch >= 'A' && ch <= 'Z')? char(ch + 'a' - 'A'): ch;
+}
+
 std::string head(std::string const &source, int32_t const length)
 {
 	if (std::abs(length) >= source.size())
