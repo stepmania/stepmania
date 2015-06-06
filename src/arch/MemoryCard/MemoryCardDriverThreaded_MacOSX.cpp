@@ -153,7 +153,7 @@ void MemoryCardDriverThreaded_MacOSX::GetUSBStorageDevices( vector<UsbStorageDev
 		// Now that we have the disk name, look up the IOServices associated with it.
 		CFMutableDictionaryRef dict;
 
-		if( !(dict = IOBSDNameMatching(kIOMasterPortDefault, 0, sDisk)) )
+		if( !(dict = IOBSDNameMatching(kIOMasterPortDefault, 0, sDisk.c_str())) )
 			continue;
 
 		// Look for certain properties: Leaf, Ejectable, Writable.
