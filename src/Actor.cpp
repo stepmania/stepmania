@@ -1022,13 +1022,35 @@ void Actor::ScaleTo( const RectF &rect, StretchType st )
 
 void Actor::SetEffectClockString( const RString &s )
 {
-	if     (s.EqualsNoCase("timer"))	this->SetEffectClock( CLOCK_TIMER );
-	else if(s.EqualsNoCase("timerglobal"))	this->SetEffectClock( CLOCK_TIMER_GLOBAL );
-	else if(s.EqualsNoCase("beat"))		this->SetEffectClock( CLOCK_BGM_BEAT );
-	else if(s.EqualsNoCase("music"))	this->SetEffectClock( CLOCK_BGM_TIME );
-	else if(s.EqualsNoCase("bgm"))		this->SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
-	else if(s.EqualsNoCase("musicnooffset"))this->SetEffectClock( CLOCK_BGM_TIME_NO_OFFSET );
-	else if(s.EqualsNoCase("beatnooffset"))	this->SetEffectClock( CLOCK_BGM_BEAT_NO_OFFSET );
+	ci_string effect(s.c_str());
+	if(effect == "timer")
+	{
+		this->SetEffectClock( CLOCK_TIMER );
+	}
+	else if(effect == "timerglobal")
+	{
+		this->SetEffectClock( CLOCK_TIMER_GLOBAL );
+	}
+	else if(effect == "beat")
+	{
+		this->SetEffectClock( CLOCK_BGM_BEAT );
+	}
+	else if(effect == "music")
+	{
+		this->SetEffectClock( CLOCK_BGM_TIME );
+	}
+	else if(effect == "bgm")
+	{
+		this->SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
+	}
+	else if(effect == "musicnooffset")
+	{
+		this->SetEffectClock( CLOCK_BGM_TIME_NO_OFFSET );
+	}
+	else if(effect == "beatnooffset")
+	{
+		this->SetEffectClock( CLOCK_BGM_BEAT_NO_OFFSET );
+	}
 	else
 	{
 		CabinetLight cl = StringToCabinetLight( s );

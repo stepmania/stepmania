@@ -121,9 +121,10 @@ RString AnnouncerManager::GetPathTo( RString sAnnouncerName, RString sFolderName
 
 	/* Search for the announcer folder in the list of aliases. */
 	int i;
+	ci_string ciFolderName(sFolderName.c_str());
 	for(i = 0; aliases[i][0] != NULL; ++i)
 	{
-		if(!sFolderName.EqualsNoCase(aliases[i][0]))
+		if(ciFolderName != aliases[i][0])
 			continue; /* no match */
 
 		if( !DirectoryIsEmpty(AnnouncerPath+aliases[i][1]+"/") )
@@ -166,8 +167,12 @@ void AnnouncerManager::NextAnnouncer()
 	{
 		unsigned i;
 		for( i=0; i<as.size(); i++ )
-			if( as[i].EqualsNoCase(m_sCurAnnouncerName) )
+		{
+			ci_string announcer(as[i].c_str());
+			ci_string currName(m_sCurAnnouncerName.c_str());
+			if( announcer == currName )
 				break;
+		}
 		if( i==as.size()-1 )
 			SwitchAnnouncer( "" );
 		else

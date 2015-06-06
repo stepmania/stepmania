@@ -132,8 +132,9 @@ namespace
 		RString sFile;
 		if (pActor->GetAttrValue("File", sFile) && sFile != "")
 		{
+			ci_string ciFile(sFile.c_str());
 			// Backward compatibility hacks for "special" filenames
-			if (sFile.EqualsNoCase("songbackground"))
+			if (ciFile == "songbackground")
 			{
 				XNodeStringValue *pVal = new XNodeStringValue;
 				Song *pSong = GAMESTATE->m_pCurSong;
@@ -144,7 +145,7 @@ namespace
 				pActor->AppendAttrFrom("Texture", pVal, false);
 				return "Sprite";
 			}
-			else if (sFile.EqualsNoCase("songbanner"))
+			else if (ciFile == "songbanner")
 			{
 				XNodeStringValue *pVal = new XNodeStringValue;
 				Song *pSong = GAMESTATE->m_pCurSong;
@@ -155,7 +156,7 @@ namespace
 				pActor->AppendAttrFrom("Texture", pVal, false);
 				return "Sprite";
 			}
-			else if (sFile.EqualsNoCase("coursebanner"))
+			else if (ciFile == "coursebanner")
 			{
 				XNodeStringValue *pVal = new XNodeStringValue;
 				Course *pCourse = GAMESTATE->m_pCurCourse;

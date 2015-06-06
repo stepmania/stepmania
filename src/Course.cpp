@@ -986,6 +986,7 @@ bool Course::Matches( RString sGroup, RString sCourse ) const
 	if( sGroup.size() && sGroup.CompareNoCase(this->m_sGroupName) != 0)
 		return false;
 
+	ci_string ciCourse(sCourse.c_str());
 	RString sFile = m_sPath;
 	if( !sFile.empty() )
 	{
@@ -993,11 +994,11 @@ bool Course::Matches( RString sGroup, RString sCourse ) const
 		vector<RString> bits;
 		split( sFile, "/", bits );
 		const RString &sLastBit = bits[bits.size()-1];
-		if( sCourse.EqualsNoCase(sLastBit) )
+		if( ciCourse == sLastBit.c_str() )
 			return true;
 	}
 
-	if( sCourse.EqualsNoCase(this->GetTranslitFullTitle()) )
+	if( ciCourse == this->GetTranslitFullTitle().c_str() )
 		return true;
 
 	return false;
