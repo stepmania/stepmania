@@ -1,5 +1,6 @@
 include(CMakeProject-lua.cmake)
 include(CMakeProject-glew.cmake)
+include(CMakeProject-cppformat.cmake)
 include(CMakeProject-json.cmake)
 if (NOT SYSTEM_PCRE_FOUND)
   include(CMakeProject-pcre.cmake)
