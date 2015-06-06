@@ -1002,7 +1002,7 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 
 /* Like luaL_typerror, but without the special case for argument 1 being "self"
  * in method calls, so we give a correct error message after we remove self. */
-int LuaHelpers::TypeError( Lua *L, int iArgNo, const char *szName )
+int LuaHelpers::TypeError( Lua *L, int iArgNo, std::string const &szName )
 {
 	RString sType;
 	luaL_pushtype( L, iArgNo );
@@ -1012,13 +1012,13 @@ int LuaHelpers::TypeError( Lua *L, int iArgNo, const char *szName )
 	if( !lua_getstack( L, 0, &debug ) )
 	{
 		return luaL_error( L, "invalid type (%s expected, got %s)",
-			szName, sType.c_str() );
+			szName.c_str(), sType.c_str() );
 	}
 	else
 	{
 		lua_getinfo( L, "n", &debug );
 		return luaL_error( L, "bad argument #%d to \"%s\" (%s expected, got %s)",
-			iArgNo, debug.name? debug.name:"(unknown)", szName, sType.c_str() );
+			iArgNo, debug.name? debug.name:"(unknown)", szName.c_str(), sType.c_str() );
 	}
 }
 
