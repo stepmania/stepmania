@@ -86,7 +86,7 @@
 /** @brief RageThreads defines (don't pull in all of RageThreads.h here) */
 namespace Checkpoints
 {
-	void SetCheckpoint( const char *file, int line, const char *message );
+	void SetCheckpoint( const char *file, int line, std::string const &message );
 }
 /** @brief Set a checkpoint with no message. */
 #define CHECKPOINT (Checkpoints::SetCheckpoint(__FILE__, __LINE__, NULL))
@@ -117,7 +117,7 @@ namespace Checkpoints
  * @param reason the crash reason as determined by prior function calls.
  * @return nothing: there is no escape without quitting the program.
  */
-void NORETURN sm_crash( std::string const reason = "Internal error" );
+void NORETURN sm_crash( std::string const &reason = "Internal error" );
 
 /**
  * @brief Assertion that sets an optional message and brings up the crash

@@ -323,7 +323,7 @@ static void BacktraceAllThreads( CrashData& crash )
 	}
 }
 
-void CrashHandler::ForceCrash( std::string const reason )
+void CrashHandler::ForceCrash( std::string const &reason )
 {
 	CrashData crash;
 	memset( &crash, 0, sizeof(crash) );
