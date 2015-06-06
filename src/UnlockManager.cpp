@@ -230,16 +230,25 @@ const UnlockEntry *UnlockManager::FindStepsType(const Song *pSong,
 const UnlockEntry *UnlockManager::FindCourse( const Course *pCourse ) const
 {
 	for (auto &e: m_UnlockEntries)
+	{
 		if( e.m_Course.ToCourse() == pCourse )
+		{
 			return &e;
+		}
+	}
 	return NULL;
 }
 
 const UnlockEntry *UnlockManager::FindModifier( const RString &sOneMod ) const
 {
+	ci_string ciMod(sOneMod.c_str());
 	for (auto &e: m_UnlockEntries)
-		if( e.GetModifier().CompareNoCase(sOneMod) == 0 )
+	{
+		if (ciMod == e.GetModifier().c_str())
+		{
 			return &e;
+		}
+	}
 	return NULL;
 }
 

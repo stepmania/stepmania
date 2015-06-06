@@ -209,12 +209,11 @@ bool ThemeManager::DoesThemeExist( const RString &sThemeName )
 {
 	vector<RString> asThemeNames;
 	GetThemeNames( asThemeNames );
-	for( unsigned i=0; i<asThemeNames.size(); i++ )
-	{
-		if( !sThemeName.CompareNoCase(asThemeNames[i]) )
-			return true;
-	}
-	return false;
+	ci_string ciThemeName(sThemeName.c_str());
+	auto doesThemeExist = [&ciThemeName] (RString const &name) {
+		return ciThemeName == name.c_str();
+	};
+	return std::any_of(asThemeNames.begin(), asThemeNames.end(), doesThemeExist);
 }
 
 bool ThemeManager::IsThemeSelectable( const RString &sThemeName )
@@ -273,11 +272,12 @@ bool ThemeManager::DoesLanguageExist( const RString &sLanguage )
 {
 	vector<RString> asLanguages;
 	GetLanguages( asLanguages );
-
-	for( unsigned i=0; i<asLanguages.size(); i++ )
-		if( sLanguage.CompareNoCase(asLanguages[i])==0 )
-			return true;
-	return false;
+	ci_string ciLang(sLanguage.c_str());
+	auto doesLangExist = [&ciLang](RString const &lang) {
+		return ciLang == lang.c_str();
+	};
+	
+	return std::any_of(asLanguages.begin(), asLanguages.end(), doesLangExist);
 }
 
 void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &sLanguage_ )
@@ -297,7 +297,7 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 	m_sCurLanguage = sLanguage;
 
 	bool bLoadedBase = false;
-	while(1)
+	for(;;)
 	{
 		ASSERT_M( g_vThemes.size() < 20, "Circular theme fallback references detected." );
 
@@ -318,10 +318,14 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 			}
 		}
 		iniStrings.ReadFile( GetLanguageIniPath(sThemeName,SpecialFiles::BASE_LANGUAGE) );
-		if( sLanguage.CompareNoCase(SpecialFiles::BASE_LANGUAGE) )
+		ci_string ciBaseLang(SpecialFiles::BASE_LANGUAGE.c_str());
+		if (ciBaseLang != sLanguage.c_str())
+		{
 			iniStrings.ReadFile( GetLanguageIniPath(sThemeName,sLanguage) );
+		}
 
-		bool bIsBaseTheme = !sThemeName.CompareNoCase(SpecialFiles::BASE_THEME_NAME);
+		ci_string ciBaseTheme(SpecialFiles::BASE_THEME_NAME.c_str());
+		bool bIsBaseTheme = ciBaseTheme == sThemeName.c_str();
 		iniMetrics.GetValue( "Global", "IsBaseTheme", bIsBaseTheme );
 		if( bIsBaseTheme )
 			bLoadedBase = true;
@@ -333,8 +337,10 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 		RString sFallback;
 		if( !iniMetrics.GetValue("Global","FallbackTheme",sFallback) )
 		{
-			if( sThemeName.CompareNoCase( SpecialFiles::BASE_THEME_NAME ) && !bLoadedBase )
+			if (ciBaseTheme != sThemeName.c_str() && !bLoadedBase)
+			{
 				sFallback = SpecialFiles::BASE_THEME_NAME;
+			}
 		}
 
 		/* We actually want to load themes bottom-to-top, loading fallback themes
@@ -710,9 +716,8 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 
 
 	RString sPath = asElementPaths[0];
-	bool bIsARedirect = GetExtension(sPath).CompareNoCase("redir")==0;
-
-	if( !bIsARedirect )
+	ci_string redir("redir");
+	if ( redir != GetExtension(sPath).c_str())
 	{
 		out.sResolvedPath = sPath;
 		out.sMatchingMetricsGroup = sMetricsGroup;
@@ -1125,9 +1130,14 @@ RString ThemeManager::GetNextTheme()
 	vector<RString> as;
 	GetThemeNames( as );
 	unsigned i;
+	ci_string ciTheme(m_sCurThemeName.c_str());
 	for( i=0; i<as.size(); i++ )
-		if( as[i].CompareNoCase(m_sCurThemeName)==0 )
+	{
+		if( ciTheme == as[i].c_str() )
+		{
 			break;
+		}
+	}
 	int iNewIndex = (i+1)%as.size();
 	return as[iNewIndex];
 }
@@ -1137,9 +1147,14 @@ RString ThemeManager::GetNextSelectableTheme()
 	vector<RString> as;
 	GetSelectableThemeNames( as );
 	unsigned i;
+	ci_string ciTheme(m_sCurThemeName.c_str());
 	for( i=0; i<as.size(); i++ )
-		if( as[i].CompareNoCase(m_sCurThemeName)==0 )
+	{
+		if( ciTheme == as[i].c_str() )
+		{
 			break;
+		}
+	}
 	int iNewIndex = (i+1)%as.size();
 	return as[iNewIndex];
 }
@@ -1149,13 +1164,14 @@ void ThemeManager::GetLanguagesForTheme( const RString &sThemeName, vector<RStri
 	RString sLanguageDir = GetThemeDirFromName(sThemeName) + SpecialFiles::LANGUAGES_SUBDIR;
 	vector<RString> as;
 	GetDirListing( sLanguageDir + "*.ini", as );
-
+	ci_string ciMetrics(SpecialFiles::METRICS_FILE.c_str());
 	for (auto const &s: as)
 	{
 		// ignore metrics.ini
-		if( s.CompareNoCase(SpecialFiles::METRICS_FILE)==0 )
+		if (ciMetrics == s.c_str())
+		{
 			continue;
-
+		}
 		// Ignore filenames with a space.  These are optional language inis that probably came from a mounted package.
 		if( s.find(" ") != RString::npos )
 			continue;
