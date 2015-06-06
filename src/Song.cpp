@@ -703,8 +703,8 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 				LOG->Trace("Song '%s' points to a music file that doesn't exist, found music file '%s'", m_sSongDir.c_str(), music_list[0].c_str());
 				m_bHasMusic= true;
 				m_sMusicFile= music_list[0];
-				if(music_list.size() > 1 &&
-					!head(m_sMusicFile, 5).CompareNoCase("intro"))
+				ci_string intro(head(m_sMusicFile, 5).c_str());
+				if(music_list.size() > 1 && intro == "intro")
 				{
 					m_sMusicFile= music_list[1];
 				}
@@ -1809,9 +1809,11 @@ void Song::DeleteSteps( const Steps* pSteps, bool bReAutoGen )
 
 bool Song::Matches(RString sGroup, RString sSong) const
 {
-	if( sGroup.size() && sGroup.CompareNoCase(this->m_sGroupName) != 0)
+	ci_string ciGroup(sGroup.c_str());
+	if( sGroup.size() && ciGroup != this->m_sGroupName.c_str())
+	{
 		return false;
-
+	}
 	RString sDir = this->GetSongDir();
 	sDir.Replace("\\","/");
 	vector<RString> bits;
@@ -1820,11 +1822,11 @@ bool Song::Matches(RString sGroup, RString sSong) const
 	const RString &sLastBit = bits[bits.size()-1];
 
 	// match on song dir or title (ala DWI)
-	if( !sSong.CompareNoCase(sLastBit) )
+	ci_string ciSong(sSong.c_str());
+	if (ciSong == sLastBit.c_str() || ciSong == this->GetTranslitFullTitle().c_str())
+	{
 		return true;
-	if( !sSong.CompareNoCase(this->GetTranslitFullTitle()) )
-		return true;
-
+	}
 	return false;
 }
 

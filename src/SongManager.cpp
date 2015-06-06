@@ -939,7 +939,9 @@ void SongManager::InitAutogenCourses()
 		do {
 			RString sArtist = i >= apSongs.size()? RString(""): apSongs[i]->GetDisplayArtist();
 			RString sTranslitArtist = i >= apSongs.size()? RString(""): apSongs[i]->GetTranslitArtist();
-			if( i < apSongs.size() && !sCurArtist.CompareNoCase(sArtist) )
+			ci_string ciCurrentArtist(sCurArtist.c_str());
+			ci_string ciCurrentTransl(sTranslitArtist.c_str());
+			if( i < apSongs.size() && ciCurrentArtist == sArtist.c_str() )
 			{
 				aSongs.push_back( apSongs[i] );
 				++iCurArtistCount;
@@ -948,9 +950,9 @@ void SongManager::InitAutogenCourses()
 
 			/* Different artist, or we're at the end. If we have enough entries for
 			 * the last artist, add it. Skip blanks and "Unknown artist". */
-			if( iCurArtistCount >= 3 && sCurArtistTranslit != "" &&
-				sCurArtistTranslit.CompareNoCase("Unknown artist") &&
-				sCurArtist.CompareNoCase("Unknown artist") )
+			if (iCurArtistCount >= 3 && sCurArtistTranslit != "" &&
+				ciCurrentTransl != "Unknown artist" &&
+				ciCurrentArtist != "Unknown artist" )
 			{
 				pCourse = new Course;
 				CourseUtil::AutogenOniFromArtist( sCurArtist, sCurArtistTranslit, aSongs, Difficulty_Hard, *pCourse );
@@ -1396,10 +1398,13 @@ Course* SongManager::GetCourseFromPath( RString sPath ) const
 	if( sPath == "" )
 		return NULL;
 
+	ci_string ciPath(sPath.c_str());
 	for (auto *c: m_pCourses)
 	{
-		if( sPath.CompareNoCase(c->m_sPath) == 0 )
+		if (ciPath == c->m_sPath.c_str())
+		{
 			return c;
+		}
 	}
 
 	return NULL;
@@ -1410,9 +1415,10 @@ Course* SongManager::GetCourseFromName( RString sName ) const
 	if( sName == "" )
 		return NULL;
 
+	ci_string ciName(sName.c_str());
 	for (auto *course: m_pCourses)
 	{
-		if( sName.CompareNoCase(course->GetDisplayFullTitle()) == 0 )
+		if (ciName == course->GetDisplayFullTitle().c_str())
 		{
 			return course;
 		}
@@ -1751,10 +1757,10 @@ void SongManager::UpdateRankingCourses()
 	{
 		bool bLotsOfStages = c->GetEstimatedNumStages() > 7;
 		c->m_SortOrder_Ranking = bLotsOfStages? 3 : 2;
-
-		for( unsigned j = 0; j < RankingCourses.size(); j++ )
+		ci_string ciPath(c->m_sPath.c_str());
+		for (auto const &rank: RankingCourses)
 		{
-			if( !RankingCourses[j].CompareNoCase(c->m_sPath) )
+			if (ciPath == rank.c_str())
 			{
 				c->m_SortOrder_Ranking = 1;
 			}

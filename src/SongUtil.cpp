@@ -393,13 +393,22 @@ static bool CompareSongPointersByTitle( const Song *pSong1, const Song *pSong2 )
 	s1 = SongUtil::MakeSortString(s1);
 	s2 = SongUtil::MakeSortString(s2);
 
-	int ret = strcmp( s1, s2 );
-	if(ret < 0) return true;
-	if(ret > 0) return false;
+	ci_string x1(s1.c_str());
+	ci_string x2(s2.c_str());
+	if (x1 < x2)
+	{
+		return true;
+	}
+	if (x1 > x2)
+	{
+		return false;
+	}
 
 	/* The titles are the same.  Ensure we get a consistent ordering
 	 * by comparing the unique SongFilePaths. */
-	return pSong1->GetSongFilePath().CompareNoCase(pSong2->GetSongFilePath()) < 0;
+	ci_string t1(pSong1->GetSongFilePath().c_str());
+	ci_string t2(pSong2->GetSongFilePath().c_str());
+	return t1 < t2;
 }
 
 void SongUtil::SortSongPointerArrayByTitle( vector<Song*> &vpSongsInOut )
