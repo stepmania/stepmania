@@ -123,7 +123,7 @@ static void Lua##X(lua_State* L) \
 	FOREACH_ENUM( X, i ) \
 	{ \
 		RString s = X##ToString( i ); \
-		lua_pushstring( L, (#X "_")+s ); \
+		lua_pushstring( L, ((#X "_")+s).c_str() ); \
 		lua_rawseti( L, -2, i+1 ); /* 1-based */ \
 	} \
 	EnumTraits<X>::EnumToString.SetFromStack( L ); \
@@ -134,12 +134,12 @@ static void Lua##X(lua_State* L) \
 	FOREACH_ENUM( X, i ) \
 	{ \
 		RString s = X##ToString( i ); \
-		lua_pushstring( L, (#X "_")+s ); \
+		lua_pushstring( L, ((#X "_")+s).c_str() ); \
 		lua_pushnumber( L, i ); /* 0-based */ \
 		lua_rawset( L, -3 ); \
 		/* Compatibility with old, case-insensitive values */ \
-		s.MakeLower(); \
-		lua_pushstring( L, s ); \
+		std::transform(s.begin(), s.end(), s.begin(), ::tolower); \
+		lua_pushstring( L, s.c_str() ); \
 		lua_pushnumber( L, i ); /* 0-based */ \
 		lua_rawset( L, -3 ); \
 		/* Compatibility with old, raw values */ \
