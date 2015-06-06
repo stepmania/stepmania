@@ -1864,6 +1864,32 @@ void MakeLower( wchar_t *p, size_t iLen )
 	UnicodeUpperLower( p, iLen, g_LowerCase );
 }
 
+std::string head(std::string const &source, int32_t const length)
+{
+	if (std::abs(length) >= source.size())
+	{
+		return source;
+	}
+	if (length < 0)
+	{
+		return source.substr(0, source.size() + length);
+	}
+	return source.substr(length);
+}
+
+std::string tail(std::string const &source, int32_t const length)
+{
+	if (std::abs(length) >= source.size())
+	{
+		return source;
+	}
+	if (length < 0)
+	{
+		return source.substr(-length);
+	}
+	return source.substr(source.size() - length);
+}
+
 int StringToInt( const RString &sString )
 {
 	int ret;

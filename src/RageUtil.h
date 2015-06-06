@@ -394,6 +394,12 @@ void MakeUpper( char *p, size_t iLen );
 void MakeLower( char *p, size_t iLen );
 void MakeUpper( wchar_t *p, size_t iLen );
 void MakeLower( wchar_t *p, size_t iLen );
+
+// Borrowed from http://stackoverflow.com/a/7597469/445373
+// with negative extensions allowed and opposite function provided.
+std::string head(std::string const &source, int32_t const length);
+std::string tail(std::string const &source, int32_t const length);
+
 /**
  * @brief Have a standard way of converting Strings to integers.
  * @param sString the string to convert.
