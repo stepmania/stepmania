@@ -78,13 +78,17 @@ RageFileDriver *RageFileManager::GetFileDriver( RString sMountpoint )
 
 	g_Mutex->Lock();
 	RageFileDriver *pRet = NULL;
+	ci_string ciMount(sMountpoint.c_str());
 	for( unsigned i = 0; i < g_pDrivers.size(); ++i )
 	{
 		if( g_pDrivers[i]->m_sType == "mountpoints" )
+		{
 			continue;
-		if( g_pDrivers[i]->m_sMountPoint.CompareNoCase( sMountpoint ) )
+		}
+		if( ciMount == g_pDrivers[i]->m_sMountPoint.c_str() )
+		{
 			continue;
-
+		}
 		pRet = g_pDrivers[i]->m_pDriver;
 		++g_pDrivers[i]->m_iRefs;
 		break;
@@ -331,9 +335,11 @@ RString LoadedDriver::GetPath( const RString &sPath ) const
 			return RString();
 	}
 
-	if( head(sPath, m_sMountPoint.size()).CompareNoCase(m_sMountPoint) )
+	ci_string ciPath(head(sPath, m_sMountPoint.size()).c_str());
+	if( ciPath != m_sMountPoint.c_str() )
+	{
 		return RString(); /* no match */
-
+	}
 	/* Add one, so we don't cut off the leading slash. */
 	RString sRet = tail(sPath, sPath.size() - m_sMountPoint.size() + 1 );
 	return sRet;
@@ -353,8 +359,16 @@ static void NormalizePath( RString &sPath )
 	}
 }
 
-bool ilt( const RString &a, const RString &b ) { return a.CompareNoCase(b) < 0; }
-bool ieq( const RString &a, const RString &b ) { return a.CompareNoCase(b) == 0; }
+bool ilt( const RString &a, const RString &b )
+{
+	ci_string x(a.c_str());
+	return x < b.c_str();
+}
+bool ieq( const RString &a, const RString &b )
+{
+	ci_string x(a.c_str());
+	return x == b.c_str();
+}
 void RageFileManager::GetDirListing( const RString &sPath_, vector<RString> &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 	RString sPath = sPath_;
@@ -588,15 +602,23 @@ void RageFileManager::Unmount( const RString &sType, const RString &sRoot_, cons
 	 * into aDriverListToUnmount. */
 	vector<LoadedDriver *> apDriverListToUnmount;
 	g_Mutex->Lock();
+	ci_string ciType(sType.c_str());
+	ci_string ciRoot(sRoot.c_str());
+	ci_string ciMount(sMountPoint.c_str());
 	for( unsigned i = 0; i < g_pDrivers.size(); ++i )
 	{
-		if( !sType.empty() && g_pDrivers[i]->m_sType.CompareNoCase( sType ) )
+		if( !sType.empty() && ciType != g_pDrivers[i]->m_sType.c_str() )
+		{
 			continue;
-		if( !sRoot.empty() && g_pDrivers[i]->m_sRoot.CompareNoCase( sRoot ) )
+		}
+		if( !sRoot.empty() && ciRoot != g_pDrivers[i]->m_sRoot.c_str() )
+		{
 			continue;
-		if( !sMountPoint.empty() && g_pDrivers[i]->m_sMountPoint.CompareNoCase( sMountPoint ) )
+		}
+		if( !sMountPoint.empty() && ciMount != g_pDrivers[i]->m_sMountPoint.c_str() )
+		{
 			continue;
-
+		}
 		++g_pDrivers[i]->m_iRefs;
 		apDriverListToUnmount.push_back( g_pDrivers[i] );
 		g_pDrivers.erase( g_pDrivers.begin()+i );
@@ -645,12 +667,10 @@ void RageFileManager::Remount( RString sMountpoint, RString sPath )
 bool RageFileManager::IsMounted( RString MountPoint )
 {
 	LockMut( *g_Mutex );
-
-	for( unsigned i = 0; i < g_pDrivers.size(); ++i )
-		if( !g_pDrivers[i]->m_sMountPoint.CompareNoCase( MountPoint ) )
-			return true;
-
-	return false;
+	ci_string ciMount(MountPoint.c_str());
+	return std::any_of(g_pDrivers.begin(), g_pDrivers.end(), [&ciMount](LoadedDriver const *driver) {
+		return ciMount == driver->m_sMountPoint.c_str();
+	});
 }
 
 void RageFileManager::GetLoadedDrivers( vector<DriverLocation> &asMounts )

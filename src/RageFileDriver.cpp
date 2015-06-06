@@ -86,9 +86,14 @@ FileDriverEntry::~FileDriverEntry()
 
 RageFileDriver *MakeFileDriver( const RString &sType, const RString &sRoot )
 {
+	ci_string ciType(sType.c_str());
 	for( const FileDriverEntry *p = g_pFileDriverList; p; p = p->m_pLink )
-		if( !p->m_sType.CompareNoCase(sType) )
+	{
+		if( ciType == p->m_sType.c_str() )
+		{
 			return p->Create( sRoot );
+		}
+	}
 	return NULL;
 }
 
