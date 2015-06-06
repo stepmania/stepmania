@@ -291,10 +291,6 @@ elseif(APPLE)
     XCODE_ATTRIBUTE_LIBRARY_SEARCH_PATHS "${SM_XCODE_DIR}/ffmpeg/lib ${SM_XCODE_DIR}/Libraries"
     XCODE_ATTRIBUTE_OTHER_LDFLAGS "-lbz2"
   )
-  set_target_properties("jsoncpp" PROPERTIES
-    XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "gnu++14"
-    XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++"
-  )
 
   sm_add_compile_definition("${SM_EXE_NAME}" _XOPEN_SOURCE)
   
@@ -401,11 +397,9 @@ else() # Linux
   endif()
 
   sm_add_compile_flag("${SM_EXE_NAME}" "-std=gnu++11")
-  sm_add_compile_flag("jsoncpp" "-std=gnu++11")
   if (CMAKE_CXX_COMPILER MATCHES "clang")
     sm_add_compile_flag("${SM_EXE_NAME}" "-stdlib=libc++")
     set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS "-stdlib=libc++")
-    sm_add_compile_flag("jsoncpp" "-stdlib=libc++")
   endif()
 endif()
 
