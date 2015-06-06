@@ -752,8 +752,8 @@ static vector<RString> LoadStack;
  */
 void Font::Load( const RString &sIniPath, RString sChars )
 {
-	ci_string ini("ini");
-	if (ini != GetExtension(sIniPath).c_str())
+	ci_string ext("ini");
+	if (ext != GetExtension(sIniPath).c_str())
 	{
 		LuaHelpers::ReportScriptErrorFmt(
 			"%s is not an ini file.  Fonts can only be loaded from ini files.",
