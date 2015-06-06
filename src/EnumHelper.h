@@ -97,9 +97,12 @@ const RString &X##ToLocalizedString( X x ) \
 X StringTo##X(const RString&); \
 X StringTo##X( const RString& s ) \
 {	\
+	ci_string tmpName(s.c_str()); \
 	for( unsigned i = 0; i < ARRAYLEN(X##Names); ++i )	\
-		if( !s.CompareNoCase(X##Names[i]) )	\
-			return (X)i;	\
+		if (tmpName == X##Names[i]) \
+		{ \
+			return (X)i; \
+		} \
 	return X##_Invalid;	\
 } \
 namespace StringConversion \

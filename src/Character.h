@@ -30,7 +30,8 @@ public:
 
 	bool IsDefaultCharacter() const
 	{
-		return m_sCharacterID.CompareNoCase("default") == 0;
+		ci_string defChar("default");
+		return defChar == m_sCharacterID.c_str();
 	}
 
 	void DemandGraphics();

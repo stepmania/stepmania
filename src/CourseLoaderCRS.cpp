@@ -40,9 +40,14 @@ const char *g_CRSDifficultyNames[] =
  */
 static CourseDifficulty CRSStringToDifficulty( const RString& s )
 {
+	ci_string diff(s.c_str());
 	FOREACH_ENUM( Difficulty,i)
-		if( !s.CompareNoCase(g_CRSDifficultyNames[i]) )
+	{
+		if (diff == g_CRSDifficultyNames[i])
+		{
 			return i;
+		}
+	}
 	return Difficulty_Invalid;
 }
 

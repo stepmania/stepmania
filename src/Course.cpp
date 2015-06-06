@@ -718,9 +718,10 @@ const Style *Course::GetCourseStyle( const Game *pGame, int iNumPlayers ) const
 
 	for (auto const *pStyle: vpStyles)
 	{
+		ci_string ciStyle(pStyle->m_szName);
 		for (auto const &style: m_setStyles)
 		{
-			if( !style.CompareNoCase(pStyle->m_szName) )
+			if( ciStyle == style.c_str() )
 			{
 				return pStyle;
 			}
@@ -917,12 +918,13 @@ bool Course::IsRanking() const
 	vector<RString> rankingsongs;
 
 	split(THEME->GetMetric("ScreenRanking", "CoursesToShow"), ",", rankingsongs);
-
-	for(unsigned i=0; i < rankingsongs.size(); i++)
-		if (rankingsongs[i].CompareNoCase(m_sPath))
-			return true;
-
-	return false;
+	ci_string ciPath(m_sPath.c_str());
+	
+	return std::any_of(rankingsongs.begin(), rankingsongs.end(), [&ciPath] (RString const &song) {
+		// This feels inverted. It was previously just CompareNoCase,
+		// which returns 0 on a match.
+		return ciPath != song.c_str();
+	});
 }
 
 const CourseEntry *Course::FindFixedSong( const Song *pSong ) const
@@ -983,9 +985,11 @@ void Course::CalculateRadarValues()
 
 bool Course::Matches( RString sGroup, RString sCourse ) const
 {
-	if( sGroup.size() && sGroup.CompareNoCase(this->m_sGroupName) != 0)
+	ci_string ciGroup(sGroup.c_str());
+	if( sGroup.size() && ci_string != this->m_sGroupName.c_str())
+	{
 		return false;
-
+	}
 	ci_string ciCourse(sCourse.c_str());
 	RString sFile = m_sPath;
 	if( !sFile.empty() )
