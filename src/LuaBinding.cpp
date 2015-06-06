@@ -123,7 +123,7 @@ void LuaBinding::Register( lua_State *L )
 		int iIndex = 0;
 		while( !sClass.empty() )
 		{
-			lua_pushstring( L, sClass );
+			lua_pushstring( L, sClass.c_str() );
 			lua_pushinteger( L, iIndex );
 			lua_rawset( L, iHeirarchyTable );
 			++iIndex;
