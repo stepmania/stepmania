@@ -395,6 +395,63 @@ void MakeLower( char *p, size_t iLen );
 void MakeUpper( wchar_t *p, size_t iLen );
 void MakeLower( wchar_t *p, size_t iLen );
 
+// Borrowed from http://stackoverflow.com/a/2886589/445373
+// We have many cases of string comparisons involving ignoring case.
+struct ci_char_traits: public std::char_traits<char>
+{
+	static bool eq(char a, char b)
+	{
+		return toupper(a) == toupper(b);
+	}
+	static bool ne(char a, char b)
+	{
+		return !eq(a, b);
+	}
+	static bool lt(char a, char b)
+	{
+		return toupper(a) < toupper(b);
+	}
+	static bool gt(char a, char b)
+	{
+		return lt(b, a);
+	}
+	static bool le(char a, char b)
+	{
+		return !lt(b, a);
+	}
+	static bool ge(char a, char b)
+	{
+		return !lt(a, b);
+	}
+	static int compare(char const *a, char const *b, size_t n)
+	{
+		while (n-- != 0)
+		{
+			if (lt(*a, *b))
+			{
+				return -1;
+			}
+			if (gt(*a, *b))
+			{
+				return 1;
+			}
+			++a;
+			++b;
+		}
+		
+		return 0;
+	}
+	static char const *find(char const *s, int n, char a)
+	{
+		while (n-- > 0 && ne(*s, a))
+		{
+			++s;
+		}
+		return s;
+	}
+};
+typedef std::basic_string<char, ci_char_traits> ci_string;
+
 // Borrowed from http://stackoverflow.com/a/7597469/445373
 // with negative extensions allowed and opposite function provided.
 std::string head(std::string const &source, int32_t const length);
