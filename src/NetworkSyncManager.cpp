@@ -932,16 +932,16 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 						RString::size_type sFieldPos = svResponse[h].find(": ");
 						if( sFieldPos != RString::npos )
 						{
-							RString sFieldName = svResponse[h].Left(sFieldPos),
-								sFieldValue = svResponse[h].substr(sFieldPos+2);
+							RString sFieldName = head(svResponse[h] ,sFieldPos);
+							RString sFieldValue = svResponse[h].substr(sFieldPos+2);
 
 							Trim( sFieldName );
 							Trim( sFieldValue );
 
-							if( 0 == stricmp(sFieldName,"X-SM-Build") )
+							if( 0 == stricmp(sFieldName.c_str(),"X-SM-Build") )
 							{
 								bSuccess = true;
-								uCurrentSMBuild = strtoul( sFieldValue, NULL, 10 );
+								uCurrentSMBuild = strtoul( sFieldValue.c_str(), NULL, 10 );
 								break;
 							}
 						}

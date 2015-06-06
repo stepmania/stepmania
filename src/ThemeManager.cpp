@@ -137,7 +137,7 @@ static void FileNameToMetricsGroupAndElement( const RString &sFileName, RString 
 	}
 	else
 	{
-		sMetricsGroupOut = sFileName.Left( iIndexOfFirstSpace );
+		sMetricsGroupOut = head(sFileName, iIndexOfFirstSpace );
 		sElementOut = sFileName.Right( sFileName.size() - iIndexOfFirstSpace - 1 );
 	}
 }
@@ -222,7 +222,7 @@ bool ThemeManager::IsThemeSelectable( const RString &sThemeName )
 	if( !DoesThemeExist(sThemeName) )
 		return false;
 
-	return sThemeName.Left(1) != "_";
+	return !BeginsWith(sThemeName, "_");
 }
 
 RString ThemeManager::GetThemeDisplayName( const RString &sThemeName )
@@ -1160,7 +1160,7 @@ void ThemeManager::GetLanguagesForTheme( const RString &sThemeName, vector<RStri
 			continue;
 
 		// strip ".ini"
-		RString s2 = s.Left( s.size()-4 );
+		RString s2 = head(s, -4 );
 
 		asLanguagesOut.push_back( s2 );
 	}
@@ -1281,7 +1281,7 @@ void ThemeManager::GetMetricsThatBeginWith( const RString &sMetricsGroup_, const
 			for( XAttrs::const_iterator j = cur->m_attrs.lower_bound( sValueName ); j != cur->m_attrs.end(); ++j )
 			{
 				const RString &sv = j->first;
-				if( sv.Left(sValueName.size()) == sValueName )
+				if( head(sv, sValueName.size()) == sValueName )
 					vsValueNamesOut.insert( sv );
 				else	// we passed the last metric that matched sValueName
 					break;

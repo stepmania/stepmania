@@ -140,7 +140,7 @@ static bool GetMessageNameFromCommandName( const RString &sCommandName, RString 
 {
 	if( sCommandName.Right(7) == "Message" )
 	{
-		sMessageNameOut = sCommandName.Left(sCommandName.size()-7);
+		sMessageNameOut = head(sCommandName, -7);
 		return true;
 	}
 	else
@@ -275,7 +275,7 @@ void Actor::LoadFromNode( const XNode* pNode )
 			LuaReference *pRef = new LuaReference;
 			pValue->PushValue( L );
 			pRef->SetFromStack( L );
-			RString sCmdName = sKeyName.Left( sKeyName.size()-7 );
+			RString sCmdName = head(sKeyName, -7);
 			AddCommand( sCmdName, apActorCommands( pRef ) );
 		}
 		else if( sKeyName == "Name" )			SetName( pValue->GetValue<RString>() );
@@ -773,10 +773,14 @@ void Actor::UpdateTweening( float fDeltaTime )
 			// access TI or TS after, since this may modify the tweening queue.
 			if( !sCommand.empty() )
 			{
-				if( sCommand.Left(1) == "!" )
+				if( BeginsWith(sCommand, "!"))
+				{
 					MESSAGEMAN->Broadcast( sCommand.substr(1) );
+				}
 				else
+				{
 					this->PlayCommand( sCommand );
+				}
 			}
 		}
 	}

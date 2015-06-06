@@ -173,7 +173,7 @@ void ScreenBookkeeping::UpdateView()
 						iCount = pProfile->GetSongNumTimesPlayed( pSong );
 						RString sTitle = ssprintf("%4d",iCount) + " " + pSong->GetDisplayFullTitle();
 						if( sTitle.length() > 22 )
-							sTitle = sTitle.Left(20) + "...";
+							sTitle = head(sTitle, 20) + "...";
 						s += sTitle + "\n";
 						iSongIndex++;
 					}

@@ -1357,7 +1357,7 @@ void StripCvsAndSvn( vector<RString> &vs )
 
 static bool MacResourceFork( const RString& s )
 {
-	return s.Left(2).EqualsNoCase("._");
+	return BeginsWith(s, "._");
 }
 
 void StripMacResourceForks( vector<RString> &vs )

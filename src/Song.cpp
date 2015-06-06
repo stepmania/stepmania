@@ -575,7 +575,7 @@ void FixupPath( RString &path, const RString &sSongPath )
 void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 {
 	// We need to do this before calling any of HasMusic, HasHasCDTitle, etc.
-	ASSERT_M(m_sSongDir.Left(3) != "../", m_sSongDir); // meaningless
+	ASSERT_M(!BeginsWith(m_sSongDir, "../"), m_sSongDir); // meaningless
 	FixupPath(m_sSongDir, "");
 	FixupPath(m_sMusicFile, m_sSongDir);
 	FOREACH_ENUM(InstrumentTrack, i)
@@ -704,7 +704,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 				m_bHasMusic= true;
 				m_sMusicFile= music_list[0];
 				if(music_list.size() > 1 &&
-					!m_sMusicFile.Left(5).CompareNoCase("intro"))
+					!head(m_sMusicFile, 5).CompareNoCase("intro"))
 				{
 					m_sMusicFile= music_list[1];
 				}
@@ -1626,7 +1626,7 @@ RString Song::GetSongAssetPath( RString sPath, const RString &sSongPath )
 		return sRelPath;
 
 	// The song contains a path; treat it as relative to the top SM directory.
-	if( sPath.Left(3) == "../" )
+	if( BeginsWith(sPath, "../"))
 	{
 		// The path begins with "../".  Resolve it wrt. the song directory.
 		sPath = sRelPath;
@@ -1636,7 +1636,7 @@ RString Song::GetSongAssetPath( RString sPath, const RString &sSongPath )
 
 	/* If the path still begins with "../", then there were an unreasonable number
 	 * of them at the beginning of the path. Ignore the path entirely. */
-	if( sPath.Left(3) == "../" )
+	if( BeginsWith(sPath, "../"))
 		return RString();
 
 	return sPath;

@@ -983,7 +983,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				{
 					handler->second(reused_song_info);
 				}
-				else if(sValueName.Left(strlen("BGCHANGES"))=="BGCHANGES")
+				else if(BeginsWith(sValueName, "BGCHANGES"))
 				{
 					SetBGChanges(reused_song_info);
 				}

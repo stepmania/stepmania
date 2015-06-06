@@ -331,7 +331,7 @@ RString LoadedDriver::GetPath( const RString &sPath ) const
 			return RString();
 	}
 
-	if( sPath.Left(m_sMountPoint.size()).CompareNoCase(m_sMountPoint) )
+	if( head(sPath, m_sMountPoint.size()).CompareNoCase(m_sMountPoint) )
 		return RString(); /* no match */
 
 	/* Add one, so we don't cut off the leading slash. */
@@ -495,12 +495,12 @@ static void AdjustMountpoint( RString &sMountPoint )
 {
 	FixSlashesInPlace( sMountPoint );
 
-	ASSERT_M( sMountPoint.Left(1) == "/", "Mountpoints must be absolute: " + sMountPoint );
+	ASSERT_M( BeginsWith(sMountPoint, "/"), "Mountpoints must be absolute: " + sMountPoint );
 
 	if( sMountPoint.size() && sMountPoint.Right(1) != "/" )
 		sMountPoint += '/';
 
-	if( sMountPoint.Left(1) != "/" )
+	if( !BeginsWith(sMountPoint, "/") )
 		sMountPoint = "/" + sMountPoint;
 
 }

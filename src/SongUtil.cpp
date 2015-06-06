@@ -594,7 +594,7 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			else if( s[0] < 'A' || s[0] > 'Z')
 				return SORT_OTHER.GetValue();
 			else
-				return s.Left(1);
+				return head(s, 1);
 		}
 	case SORT_GENRE:
 		if( !pSong->m_sGenre.empty() )
@@ -775,7 +775,7 @@ RString SongUtil::MakeUniqueEditDescription( const Song *pSong, StepsType st, co
 	{
 		// make name "My Edit" -> "My Edit2"
 		RString sNum = ssprintf("%d", i+1);
-		sTemp = sPreferredDescription.Left( MAX_STEPS_DESCRIPTION_LENGTH - sNum.size() ) + sNum;
+		sTemp = head(sPreferredDescription, MAX_STEPS_DESCRIPTION_LENGTH - sNum.size() ) + sNum;
 
 		if( IsEditDescriptionUnique(pSong, st, sTemp, NULL) )
 			return sTemp;
@@ -1122,7 +1122,7 @@ void SongID::FromSong( const Song *p )
 
 	// HACK for backwards compatibility:
 	// Strip off leading "/".  2005/05/21 file layer changes added a leading slash.
-	if( sDir.Left(1) == "/" )
+	if( BeginsWith(sDir, "/"))
 		sDir.erase( sDir.begin() );
 
 	m_Cache.Unset();
@@ -1136,7 +1136,7 @@ Song *SongID::ToSong() const
 		// HACK for backwards compatibility: Re-add the leading "/".
 		// 2005/05/21 file layer changes added a leading slash.
 		RString sDir2 = sDir;
-		if( sDir2.Left(1) != "/" )
+		if( !BeginsWith(sDir2, "/"))
 			sDir2 = "/" + sDir2;
 
 		if( !sDir2.empty() )
