@@ -236,8 +236,8 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 
 		if( m_sText.length() > 8 && i < m_sText.length() - 9 )
 		{
-			RString FirstThree = m_sText.substr( i, 3 );
-			if( FirstThree.CompareNoCase("|c0") == 0 && iCharsLeft > 8 )
+			ci_string firstThree = m_sText.substr( i, 3 ).c_str();
+			if( firstThree == "|c0" && iCharsLeft > 8 )
 			{
 				ColorChange cChange;
 				unsigned int r, g, b;

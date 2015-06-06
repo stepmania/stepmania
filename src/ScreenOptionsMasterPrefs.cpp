@@ -898,13 +898,14 @@ int ConfOption::GetEffects() const
 ConfOption *ConfOption::Find( RString name )
 {
 	InitializeConfOptions();
-	for( unsigned i = 0; i < g_ConfOptions.size(); ++i )
+	ci_string ciName(name.c_str());
+	for (auto &opt: g_ConfOptions)
 	{
-		ConfOption *opt = &g_ConfOptions[i];
-		RString match(opt->name);
-		if( match.CompareNoCase(name) )
-			continue;
-		return opt;
+		RString match(opt.name);
+		if (ciName == match.c_str())
+		{
+			return &opt;
+		}
 	}
 
 	return NULL;

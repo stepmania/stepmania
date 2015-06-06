@@ -496,10 +496,8 @@ void ScreenPackages::EnterURL( const RString & sURL )
 
 	// Determine if this is a website, or a package?
 	// Criteria: does it end with *zip?
-	if( tail(sAddress, 3).CompareNoCase("zip") == 0 )
-		m_bIsPackage=true;
-	else
-		m_bIsPackage = false;
+	ci_string zip(tail(sAddress, 3).c_str());
+	m_bIsPackage = ( zip == "zip" );
 
 	m_sBaseAddress = "http://" + Server;
 	if( Port != 80 )

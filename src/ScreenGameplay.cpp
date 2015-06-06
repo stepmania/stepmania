@@ -1435,7 +1435,8 @@ void ScreenGameplay::LoadLights()
 	Difficulty d1 = Difficulty_Invalid;
 	if( asDifficulties.size() > 0 )
 	{
-		if( asDifficulties[0].CompareNoCase("selected") == 0 )
+		ci_string ciDiff(asDifficulties[0].c_str());
+		if (ciDiff == "selected")
 		{
 			// Base lights off current difficulty of active player
 			// Can be either P1 or P2 if they're individual or P1 if both are active
