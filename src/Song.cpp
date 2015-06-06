@@ -910,25 +910,32 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 				continue;	// skip
 
 			// Skip any image that we've already classified
+			ci_string usedImage = image_list[i].c_str();
 
-			if(m_bHasBanner && m_sBannerFile.EqualsNoCase(image_list[i]))
+			if(m_bHasBanner && usedImage == m_sBannerFile.c_str())
+			{
 				continue;	// skip
-
-			if(m_bHasBackground && m_sBackgroundFile.EqualsNoCase(image_list[i]))
+			}
+			if(m_bHasBackground && usedImage == m_sBackgroundFile.c_str())
+			{
 				continue;	// skip
-
-			if(has_cdtitle && m_sCDTitleFile.EqualsNoCase(image_list[i]))
+			}
+			if(has_cdtitle && usedImage == m_sCDTitleFile.c_str())
+			{
 				continue;	// skip
-
-			if(has_jacket && m_sJacketFile.EqualsNoCase(image_list[i]))
+			}
+			if(has_jacket && usedImage == m_sJacketFile.c_str())
+			{
 				continue;	// skip
-
-			if(has_disc && m_sDiscFile.EqualsNoCase(image_list[i]))
+			}
+			if(has_disc && usedImage == m_sDiscFile.c_str())
+			{
 				continue;	// skip
-
-			if(has_cdimage && m_sCDFile.EqualsNoCase(image_list[i]))
+			}
+			if(has_cdimage && usedImage == m_sCDFile.c_str())
+			{
 				continue;	// skip
-
+			}
 			RString sPath = m_sSongDir + image_list[i];
 
 			// We only care about the dimensions.

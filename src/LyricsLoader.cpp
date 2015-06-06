@@ -65,7 +65,8 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 		StripCrnl(sValueData);
 
 		// handle the data
-		if( sValueName.EqualsNoCase("COLOUR") || sValueName.EqualsNoCase("COLOR") )
+		ci_string ciValueName(sValueName.c_str());
+		if( ciValueName == "COLOUR" || ciValueName == "COLOR" )
 		{
 			// set color var here for this segment
 			int r, g, b;

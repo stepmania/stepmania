@@ -172,6 +172,8 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
 		RString sValueName = sParams[0];
+		ci_string ciValueName( sValueName.c_str());
+		
 		sValueName.MakeUpper();
 
 		// handle the data
@@ -317,26 +319,36 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 		else if( sValueName=="SELECTABLE" )
 		{
-			if(sParams[1].EqualsNoCase("YES"))
+			ci_string ciParam(sParams[1].c_str());
+			if(ciParam == "YES")
+			{
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
-			else if(sParams[1].EqualsNoCase("NO"))
+			}
+			else if(ciParam == "NO")
+			{
 				out.m_SelectionDisplay = out.SHOW_NEVER;
+			}
 			// ROULETTE from 3.9. It was removed since UnlockManager can serve
 			// the same purpose somehow. This, of course, assumes you're using
 			// unlocks. -aj
-			else if(sParams[1].EqualsNoCase("ROULETTE"))
+			else if(ciParam == "ROULETTE")
+			{
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
+			}
 			/* The following two cases are just fixes to make sure simfiles that
 			 * used 3.9+ features are not excluded here */
-			else if(sParams[1].EqualsNoCase("ES") || sParams[1].EqualsNoCase("OMES"))
+			else if(ciParam == "ES" || ciParam == "OMES")
+			{
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
+			}
 			else if( StringToInt(sParams[1]) > 0 )
+			{
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
+			}
 			else
-				LOG->UserLog("Song file",
-					     sPath,
-					     "has an unknown #SELECTABLE value, \"%s\"; ignored.",
-					     sParams[1].c_str() );
+			{
+				LOG->UserLog("Song file", sPath, "has an unknown #SELECTABLE value, \"%s\"; ignored.", sParams[1].c_str() );
+			}
 		}
 
 		else if( BeginsWith(sValueName, "BGCHANGES") || sValueName=="ANIMATIONS" )

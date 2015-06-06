@@ -50,10 +50,15 @@ static void Parse( const RString &sDir, PlayAfterLaunchInfo &out )
 {
 	vector<RString> vsDirParts;
 	split( sDir, "/", vsDirParts, true );
-	if( vsDirParts.size() == 3 && vsDirParts[0].EqualsNoCase("Songs") )
+	ci_string dirPart(vsDirParts[0].c_str());
+	if( vsDirParts.size() == 3 && dirPart == "Songs" )
+	{
 		out.sSongDir = "/" + sDir;
-	else if( vsDirParts.size() == 2 && vsDirParts[0].EqualsNoCase("Themes") )
+	}
+	else if( vsDirParts.size() == 2 && dirPart == "Themes" )
+	{
 		out.sTheme = vsDirParts[1];
+	}
 }
 
 static const RString TEMP_ZIP_MOUNT_POINT = "/@temp-zip/";
@@ -70,11 +75,13 @@ static void InstallSmzip( const RString &sZipFile, PlayAfterLaunchInfo &out )
 		GetDirListingRecursive( TEMP_ZIP_MOUNT_POINT, "*", vsRawFiles);
 
 		vector<RString> vsPrettyFiles;
+		ci_string ctl("ctl");
 		for (auto const &s: vsRawFiles)
 		{
-			if( GetExtension(s).EqualsNoCase("ctl") )
+			if ( ctl == GetExtension(s).c_str() )
+			{
 				continue;
-
+			}
 			vsFiles.push_back(s);
 
 			RString s2 = tail(s, s.length() - TEMP_ZIP_MOUNT_POINT.length() );
@@ -287,8 +294,8 @@ static bool IsStepManiaProtocol(const RString &arg)
 
 static bool IsPackageFile(const RString &arg)
 {
-	RString ext = GetExtension(arg);
-	return ext.EqualsNoCase("smzip") || ext.EqualsNoCase("zip");
+	ci_string ext = GetExtension(arg).c_str();
+	return ext == "smzip" || ext == "zip";
 }
 
 PlayAfterLaunchInfo DoInstalls( CommandLineActions::CommandLineArgs args )

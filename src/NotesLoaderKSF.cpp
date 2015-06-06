@@ -479,16 +479,14 @@ static void LoadTags( const RString &str, Song &out )
 	vector<RString> asBits;
 	split( str, " - ", asBits, false );
 	// Ignore the difficulty, since we get that elsewhere.
-	if( asBits.size() == 3 && (
-		asBits[2].EqualsNoCase("double") ||
-		asBits[2].EqualsNoCase("easy") ||
-		asBits[2].EqualsNoCase("normal") ||
-		asBits[2].EqualsNoCase("hard") ||
-		asBits[2].EqualsNoCase("crazy") ||
-		asBits[2].EqualsNoCase("nightmare"))
-		)
+	if (asBits.size() == 3)
 	{
-		asBits.erase( asBits.begin()+2, asBits.begin()+3 );
+		ci_string csBit(asBits[2].c_str());
+		if (csBit == "double" || csBit == "easy" || csBit == "normal" ||
+			csBit == "hard" || csBit == "crazy" || csBit == "nightmare")
+		{
+			asBits.erase( asBits.begin()+2, asBits.begin()+3 );
+		}
 	}
 
 	RString title, artist;

@@ -697,9 +697,10 @@ void GetLanguageInfos( vector<const LanguageInfo*> &vAddTo )
 
 const LanguageInfo *GetLanguageInfo( const RString &sIsoCode )
 {
+	ci_string ciIsoCode(sIsoCode.c_str());
 	for (auto const &lang: g_langs)
 	{
-		if ( sIsoCode.EqualsNoCase(lang.szIsoCode))
+		if ( ciIsoCode == lang.szIsoCode )
 		{
 			return &lang;
 		}
@@ -1345,9 +1346,10 @@ RString URLEncode( const RString &sStr )
 // remove various version control-related files
 static bool CVSOrSVN( const RString& s )
 {
-	return tail(s, 3).EqualsNoCase("CVS") ||
-			tail(s, 4) == ".svn" ||
-			tail(s, 3).EqualsNoCase(".hg");
+	ci_string version3(s.c_str());
+	ci_string version4(s.c_str());
+	return version3 == "CVS" || version4 == ".svn" ||
+		version3 == ".hg" || version4 == ".git";
 }
 
 void StripCvsAndSvn( vector<RString> &vs )
