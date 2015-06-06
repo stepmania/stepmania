@@ -73,7 +73,7 @@ public:
 		if( !LuaBinding::CheckLuaObjectType(L, narg, m_sClassName) )
 		{
 			if( bIsSelf )
-				luaL_typerror( L, narg, m_sClassName );
+				luaL_typerror( L, narg, m_sClassName.c_str() );
 			else
 				LuaHelpers::TypeError( L, narg, m_sClassName );
 		}
