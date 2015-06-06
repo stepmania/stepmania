@@ -140,11 +140,16 @@ void NoteSkinManager::LoadNoteSkinDataRecursive( const RString &sNoteSkinName_, 
 		// read global fallback the current NoteSkin (if any)
 		IniFile ini;
 		ini.ReadFile( sDir+"metrics.ini" );
+		ci_string ciName(sNoteSkinName.c_str());
 
-		if( !sNoteSkinName.CompareNoCase(GAME_BASE_NOTESKIN_NAME) )
+		if ( ciName == GAME_BASE_NOTESKIN_NAME.c_str())
+		{
 			bLoadedBase = true;
-		if( !sNoteSkinName.CompareNoCase(GAME_COMMON_NOTESKIN_NAME) )
+		}
+		else if ( ciName == GAME_COMMON_NOTESKIN_NAME.c_str())
+		{
 			bLoadedCommon = true;
+		}
 
 		RString sFallback;
 		if( !ini.GetValue("Global","FallbackNoteSkin", sFallback) )

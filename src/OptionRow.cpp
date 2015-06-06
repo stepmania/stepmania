@@ -212,7 +212,8 @@ RString OptionRow::GetRowTitle() const
 	RString sTitle = m_pHand->OptionTitle();
 
 	// HACK: tack the BPM onto the name of the speed line
-	if( m_pHand->m_Def.m_sName.CompareNoCase("speed")==0 )
+	ci_string ciName(m_pHand->m_Def.m_sName.c_str());
+	if (ciName == "speed")
 	{
 		bool bShowBpmInSpeedTitle = m_pParentType->SHOW_BPM_IN_SPEED_TITLE;
 

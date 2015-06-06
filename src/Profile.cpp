@@ -224,9 +224,10 @@ Character *Profile::GetCharacter() const
 {
 	vector<Character*> vpCharacters;
 	CHARMAN->GetCharacters( vpCharacters );
+	ci_string ciChar(m_sCharacterID.c_str());
 	for (auto *c: vpCharacters)
 	{
-		if( c->m_sCharacterID.CompareNoCase(m_sCharacterID)==0 )
+		if (ciChar == c->m_sCharacterID.c_str())
 		{
 			return c;
 		}
@@ -1995,12 +1996,13 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 				RString sDir, sFName, sExt;
 				splitpath( courseID.GetPath(), sDir, sFName, sExt );
 				RString sFullFileName = sFName + sExt;
+				ci_string ciFull(sFullFileName.c_str());
 
 				for (auto *c: vpAllCourses)
 				{
 					RString sOther = tail(c->m_sPath, sFullFileName.size());
 
-					if( sFullFileName.CompareNoCase(sOther) == 0 )
+					if (ciFull == sOther.c_str())
 					{
 						pC = c;
 						courseID.FromCourse( pC );

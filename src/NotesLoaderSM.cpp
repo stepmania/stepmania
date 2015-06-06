@@ -337,12 +337,13 @@ void SMLoader::LoadFromTokens(
 	// Difficulty_Challenge. (At least v1.64, possibly v3.0 final...)
 	if( out.GetDifficulty() == Difficulty_Hard )
 	{
+		ci_string ciDesc(sDescription.c_str());
 		// HACK: SMANIAC used to be Difficulty_Hard with a special description.
-		if( sDescription.CompareNoCase("smaniac") == 0 )
+		if( ciDesc == "smaniac" )
 			out.SetDifficulty( Difficulty_Challenge );
 
 		// HACK: CHALLENGE used to be Difficulty_Hard with a special description.
-		if( sDescription.CompareNoCase("challenge") == 0 )
+		else if( ciDesc == "challenge" )
 			out.SetDifficulty( Difficulty_Challenge );
 	}
 
@@ -410,14 +411,21 @@ void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
 			continue;
 
 		Trim( sBits[0] );
-
-		if( !sBits[0].CompareNoCase("TIME") )
-			attack.fStartSecond = strtof( sBits[1], NULL );
-		else if( !sBits[0].CompareNoCase("LEN") )
-			attack.fSecsRemaining = strtof( sBits[1], NULL );
-		else if( !sBits[0].CompareNoCase("END") )
-			end = strtof( sBits[1], NULL );
-		else if( !sBits[0].CompareNoCase("MODS") )
+		ci_string ciBit(sBits[0].c_str());
+		
+		if (ciBit == "TIME")
+		{
+			attack.fStartSecond = std::strtof( sBits[1].c_str(), NULL );
+		}
+		else if(ciBit == "LEN")
+		{
+			attack.fSecsRemaining = std::strtof( sBits[1].c_str(), NULL );
+		}
+		else if(ciBit == "END")
+		{
+			end = std::strtof( sBits[1].c_str(), NULL );
+		}
+		else if(ciBit == "MODS")
 		{
 			Trim(sBits[1]);
 			attack.sModifiers = sBits[1];
@@ -1075,30 +1083,34 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 			RString difficulty = sParams[3];
 
 			// HACK?: If this is a .edit fudge the edit difficulty
-			if(tail(path, 5).CompareNoCase(".edit") == 0)
+			ci_string ciPath(tail(path, 5).c_str());
+			if(ciPath == ".edit")
 			{
 				difficulty = "edit";
 			}
 			Trim(stepsType);
 			Trim(description);
 			Trim(difficulty);
+			ci_string ciDiff(difficulty.c_str());
 			// Remember our old versions.
-			if (difficulty.CompareNoCase("smaniac") == 0)
+			if (ciDiff == "smaniac")
 			{
 				difficulty = "Challenge";
 			}
 
 			/* Handle hacks that originated back when StepMania didn't have
 			 * Difficulty_Challenge. TODO: Remove the need for said hacks. */
-			if( difficulty.CompareNoCase("hard") == 0 )
+			if( ciDiff == "hard" )
 			{
 				/* HACK: Both SMANIAC and CHALLENGE used to be Difficulty_Hard.
 				 * They were differentiated via aspecial description.
 				 * Account for the rogue charts that do this. */
 				// HACK: SMANIAC used to be Difficulty_Hard with a special description.
-				if (description.CompareNoCase("smaniac") == 0 ||
-					description.CompareNoCase("challenge") == 0)
+				ci_string ciDesc(description.c_str());
+				if ( ciDesc == "smaniac" || ciDesc == "challenge")
+				{
 					difficulty = "Challenge";
+				}
 			}
 
 			if(!(out.m_StepsType == GAMEMAN->StringToStepsType( stepsType ) &&
@@ -1334,9 +1346,10 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 		 * with a very high beat, search the whole list. */
 		bool bHasNoSongBgTag = false;
 
+		ci_string ciNoSong(NO_SONG_BG_FILE.c_str());
 		for( unsigned i = 0; !bHasNoSongBgTag && i < bg.size(); ++i )
 		{
-			if( !bg[i].m_def.m_sFile1.CompareNoCase(NO_SONG_BG_FILE) )
+			if (ciNoSong == bg[i].m_def.m_sFile1.c_str())
 			{
 				bg.erase( bg.begin()+i );
 				bHasNoSongBgTag = true;
@@ -1358,12 +1371,15 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 				break;
 
 			// If the last BGA is already the song BGA, don't add a duplicate.
-			if( !bg.empty() && !bg.back().m_def.m_sFile1.CompareNoCase(song.m_sBackgroundFile) )
+			ci_string ciSongBack(song.m_sBackgroundFile.c_str());
+			if( !bg.empty() && ciSongBack == bg.back().m_def.m_sFile1.c_str())
+			{
 				break;
-
+			}
 			if( !IsAFile( song.GetBackgroundPath() ) )
+			{
 				break;
-
+			}
 			bg.push_back( BackgroundChange(lastBeat,song.m_sBackgroundFile) );
 		} while(0);
 	}
