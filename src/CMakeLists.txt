@@ -410,6 +410,7 @@ list(APPEND SMDATA_LINK_LIB
   "tomcrypt"
   "tommath"
   "zlib"
+  "cppformat"
   "jsoncpp"
   "mad"
   "png"
@@ -485,6 +486,7 @@ elseif(APPLE)
     "tomcrypt"
     "tommath"
     "zlib"
+    "cppformat"
     "jsoncpp"
     "mad"
     "png"
@@ -601,6 +603,7 @@ list(APPEND SM_INCLUDE_DIRS
   "${SM_EXTERN_DIR}/vorbis"
   "${SM_EXTERN_DIR}/libtommath"
   "${SM_EXTERN_DIR}/libtomcrypt/src/headers"
+  "${SM_EXTERN_DIR}/cppformat"
 )
 if(NOT APPLE)
   list(APPEND SM_INCLUDE_DIRS
