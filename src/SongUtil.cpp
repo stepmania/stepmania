@@ -814,9 +814,9 @@ bool SongUtil::ValidateCurrentEditStepsDescription( const RString &sAnswer, RStr
 	}
 
 	static const RString sInvalidChars = "\\/:*?\"<>|";
-	if( strpbrk(sAnswer, sInvalidChars) != NULL )
+	if( strpbrk(sAnswer.c_str(), sInvalidChars.c_str()) != NULL )
 	{
-		sErrorOut = ssprintf( EDIT_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
+		sErrorOut = fmt::sprintf( EDIT_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;
 	}
 
@@ -864,9 +864,9 @@ bool SongUtil::ValidateCurrentStepsChartName(const RString &answer, RString &err
 	if (answer.empty()) return true;
 
 	static const RString sInvalidChars = "\\/:*?\"<>|";
-	if( strpbrk(answer, sInvalidChars) != NULL )
+	if( strpbrk(answer.c_str(), sInvalidChars.c_str()) != NULL )
 	{
-		error = ssprintf( CHART_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
+		error = fmt::sprintf( CHART_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;
 	}
 
@@ -898,9 +898,9 @@ bool SongUtil::ValidateCurrentStepsCredit( const RString &sAnswer, RString &sErr
 
 	// Borrow from EditDescription testing. Perhaps this should be abstracted? -Wolfman2000
 	static const RString sInvalidChars = "\\/:*?\"<>|";
-	if( strpbrk(sAnswer, sInvalidChars) != NULL )
+	if( strpbrk(sAnswer.c_str(), sInvalidChars.c_str()) != NULL )
 	{
-		sErrorOut = ssprintf( AUTHOR_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
+		sErrorOut = fmt::sprintf( AUTHOR_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;
 	}
 
@@ -920,7 +920,7 @@ bool SongUtil::ValidateCurrentSongPreview(const RString& answer, RString& error)
 	song->m_PreviewFile= real_file;
 	if(!valid)
 	{
-		error= ssprintf(PREVIEW_DOES_NOT_EXIST.GetValue(), answer.c_str());
+		error= fmt::sprintf(PREVIEW_DOES_NOT_EXIST.GetValue(), answer.c_str());
 	}
 	return valid;
 }
@@ -938,7 +938,7 @@ bool SongUtil::ValidateCurrentStepsMusic(const RString &answer, RString &error)
 	pSteps->SetMusicFile(real_file);
 	if(!valid)
 	{
-		error= ssprintf(MUSIC_DOES_NOT_EXIST.GetValue(), answer.c_str());
+		error= fmt::sprintf(MUSIC_DOES_NOT_EXIST.GetValue(), answer.c_str());
 	}
 	return valid;
 }

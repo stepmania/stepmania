@@ -211,14 +211,10 @@ void NoteSkinManager::GetNoteSkinNames( const Game* pGame, vector<RString> &AddT
 
 bool NoteSkinManager::NoteSkinNameInList(const RString name, vector<RString> name_list)
 {
-	for(size_t i= 0; i < name_list.size(); ++i)
-	{
-		if(0 == stricmp(name, name_list[i]))
-		{
-			return true;
-		}
-	}
-	return false;
+	ci_string ciName(name.c_str());
+	return std::any_of(name_list.begin(), name_list.end(), [&ciName](RString const &item) {
+		return ciName == item.c_str();
+	});
 }
 
 bool NoteSkinManager::DoesNoteSkinExist( const RString &sSkinName )

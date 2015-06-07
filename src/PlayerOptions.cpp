@@ -384,7 +384,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		}
 		else if( s[0]=='*' )
 		{
-			sscanf( s, "*%f", &speed );
+			sscanf( s.c_str(), "*%f", &speed );
 			if( !std::isfinite(speed) )
 				speed = 1.0f;
 		}
@@ -405,7 +405,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		m_fTimeSpacing = 0;
 		m_fMaxScrollBPM = 0;
 	}
-	else if( sscanf( sBit, "c%f", &level ) == 1 )
+	else if( sscanf( sBit.c_str(), "c%f", &level ) == 1 )
 	{
 		if( !std::isfinite(level) || level <= 0.0f )
 			level = CMOD_DEFAULT;
@@ -415,7 +415,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		m_fMaxScrollBPM = 0;
 	}
 	// oITG's m-mods
-	else if( sscanf( sBit, "m%f", &level ) == 1 )
+	else if( sscanf( sBit.c_str(), "m%f", &level ) == 1 )
 	{
 		// OpenITG doesn't have this block:
 		/*

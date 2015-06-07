@@ -125,7 +125,7 @@ void RollingNumbers::UpdateText()
 	{
 		return;
 	}
-	RString s = ssprintf( TEXT_FORMAT.GetValue(), m_fCurrentNumber );
+	RString s = fmt::sprintf( TEXT_FORMAT.GetValue(), m_fCurrentNumber );
 	if(COMMIFY)
 	{
 		s = Commify( s );

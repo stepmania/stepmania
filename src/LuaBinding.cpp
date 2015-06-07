@@ -75,7 +75,7 @@ void LuaBinding::Register( lua_State *L )
 	int methods = lua_gettop( L );
 
 	/* Create a metatable for the userdata objects. */
-	luaL_newmetatable( L, GetClassName() );
+	luaL_newmetatable( L, GetClassName().c_str() );
 	int metatable = lua_gettop( L );
 
 	// We use the metatable to determine the type of the table, so don't
@@ -128,7 +128,7 @@ void LuaBinding::Register( lua_State *L )
 			lua_rawset( L, iHeirarchyTable );
 			++iIndex;
 
-			luaL_getmetatable( L, sClass );
+			luaL_getmetatable( L, sClass.c_str() );
 			ASSERT( !lua_isnil(L, -1) );
 			lua_getfield( L, -1, "base" );
 
@@ -159,7 +159,7 @@ void LuaBinding::CreateMethodsTable( lua_State *L, const RString &sName )
 {
 	lua_newtable( L );
 	lua_pushvalue( L, -1 );
-	lua_setfield( L, LUA_GLOBALSINDEX, sName );
+	lua_setfield( L, LUA_GLOBALSINDEX, sName.c_str() );
 }
 
 int LuaBinding::PushEqual( lua_State *L )
@@ -290,7 +290,7 @@ void LuaBinding::ApplyDerivedType( Lua *L, const RString &sClassName, void *pSel
 		lua_settop( L, iTable );
 	}
 
-	luaL_getmetatable( L, sClassName );
+	luaL_getmetatable( L, sClassName.c_str() );
 	lua_setmetatable( L, iTable );
 }
 

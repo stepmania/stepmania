@@ -1183,7 +1183,7 @@ void ScreenGameplay::LoadNextSong()
 	{
 		pi->GetPlayerStageStats()->m_iSongsPlayed++;
 		if( pi->m_ptextCourseSongNumber )
-			pi->m_ptextCourseSongNumber->SetText( ssprintf(SONG_NUMBER_FORMAT.GetValue(), pi->GetPlayerStageStats()->m_iSongsPassed+1) );
+			pi->m_ptextCourseSongNumber->SetText( fmt::sprintf(SONG_NUMBER_FORMAT.GetValue(), pi->GetPlayerStageStats()->m_iSongsPassed+1) );
 	}
 
 	if( GAMESTATE->m_bMultiplayer )

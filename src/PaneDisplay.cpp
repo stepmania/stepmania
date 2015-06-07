@@ -261,7 +261,7 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 				case PaneCategory_Hands:
 				case PaneCategory_Lifts:
 				case PaneCategory_Fakes:
-					sTextOut = ssprintf( COUNT_FORMAT.GetValue(), fLevelOut );
+					sTextOut = fmt::sprintf( COUNT_FORMAT.GetValue(), fLevelOut );
 					break;
 				default: break;
 			}

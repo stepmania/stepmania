@@ -55,7 +55,7 @@ static RageFileObjDirect *MakeFileObjDirect( RString sPath, int iMode, int &iErr
 	int iFD;
 	if( iMode & RageFile::READ )
 	{
-		iFD = DoOpen( sPath, O_BINARY|O_RDONLY, 0666 );
+		iFD = DoOpen( sPath.c_str(), O_BINARY|O_RDONLY, 0666 );
 
 		/* XXX: Windows returns EACCES if we try to open a file on a CDROM that isn't
 		 * ready, instead of something like ENODEV.  We want to return that case as
@@ -70,7 +70,7 @@ static RageFileObjDirect *MakeFileObjDirect( RString sPath, int iMode, int &iErr
 			sOut = MakeTempFilename(sPath);
 
 		/* Open a temporary file for writing. */
-		iFD = DoOpen( sOut, O_BINARY|O_WRONLY|O_CREAT|O_TRUNC, 0666 );
+		iFD = DoOpen( sOut.c_str(), O_BINARY|O_WRONLY|O_CREAT|O_TRUNC, 0666 );
 	}
 
 	if( iFD == -1 )
@@ -129,7 +129,7 @@ bool RageFileDriverDirect::Move( const RString &sOldPath_, const RString &sNewPa
 	int size = FDB->GetFileSize( sOldPath );
 	int hash = FDB->GetFileHash( sOldPath );
 	TRACE( ssprintf("rename \"%s\" -> \"%s\"", (m_sRoot + sOldPath).c_str(), (m_sRoot + sNewPath).c_str()) );
-	if( DoRename(m_sRoot + sOldPath, m_sRoot + sNewPath) == -1 )
+	if( DoRename((m_sRoot + sOldPath).c_str(), (m_sRoot + sNewPath).c_str()) == -1 )
 	{
 		WARN( ssprintf("rename(%s,%s) failed: %s", (m_sRoot + sOldPath).c_str(), (m_sRoot + sNewPath).c_str(), strerror(errno)) );
 		return false;
@@ -149,7 +149,7 @@ bool RageFileDriverDirect::Remove( const RString &sPath_ )
 	{
 	case RageFileManager::TYPE_FILE:
 		TRACE( ssprintf("remove '%s'", (m_sRoot + sPath).c_str()) );
-		if( DoRemove(m_sRoot + sPath) == -1 )
+		if( DoRemove((m_sRoot + sPath).c_str()) == -1 )
 		{
 			WARN( ssprintf("remove(%s) failed: %s", (m_sRoot + sPath).c_str(), strerror(errno)) );
 			return false;
@@ -159,7 +159,7 @@ bool RageFileDriverDirect::Remove( const RString &sPath_ )
 
 	case RageFileManager::TYPE_DIR:
 		TRACE( ssprintf("rmdir '%s'", (m_sRoot + sPath).c_str()) );
-		if( DoRmdir(m_sRoot + sPath) == -1 )
+		if( DoRmdir((m_sRoot + sPath).c_str()) == -1 )
 		{
 			WARN( ssprintf("rmdir(%s) failed: %s", (m_sRoot + sPath).c_str(), strerror(errno)) );
 			return false;
@@ -234,7 +234,7 @@ namespace
 	bool FlushDir( RString sPath, RString &sError )
 	{
 		/* Wait for the directory to be flushed. */
-		int dirfd = open( sPath, O_RDONLY );
+		int dirfd = open( sPath.c_str(), O_RDONLY );
 		if( dirfd == -1 )
 		{
 			sError = strerror(errno);
@@ -337,7 +337,7 @@ RageFileObjDirect::~RageFileObjDirect()
 		SetError( error );
 		break;
 #else
-		if( rename( sOldPath, sNewPath ) == -1 )
+		if( rename( sOldPath.c_str(), sNewPath.c_str() ) == -1 )
 		{
 			WARN( ssprintf("Error renaming \"%s\" to \"%s\": %s", 
 					sOldPath.c_str(), sNewPath.c_str(), strerror(errno)) );
@@ -362,7 +362,7 @@ RageFileObjDirect::~RageFileObjDirect()
 	} while(0);
 
 	// The write or the rename failed. Delete the incomplete temporary file.
-	DoRemove( MakeTempFilename(m_sPath) );
+	DoRemove( MakeTempFilename(m_sPath).c_str() );
 }
 
 int RageFileObjDirect::ReadInternal( void *pBuf, size_t iBytes )

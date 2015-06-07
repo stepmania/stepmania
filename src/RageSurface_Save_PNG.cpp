@@ -22,7 +22,7 @@ static void SafePngError( png_struct *pPng, const RString &sStr )
 	 * GetError().c_str() to it, a temporary may be created; since control
 	 * never returns, it may never be destructed and leak. */
 	static char error[256];
-	strncpy( error, sStr, sizeof(error) );
+	strncpy( error, sStr.c_str(), sizeof(error) );
 	error[sizeof(error)-1] = 0;
 	png_error( pPng, error );
 }

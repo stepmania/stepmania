@@ -250,7 +250,7 @@ bool HexToBinary( const RString &s, unsigned char *stringOut )
 		RString sByte = s.substr( i*2, 2 );
 
 		uint8_t val = 0;
-		if( sscanf( sByte, "%hhx", &val ) != 1 )
+		if( sscanf( sByte.c_str(), "%hhx", &val ) != 1 )
 			return false;
 		stringOut[i] = val;
 	}
@@ -497,47 +497,6 @@ RString vssprintf( const char *szFormat, va_list argList )
 #endif
 	return sStr;
 }
-
-/* Windows uses %I64i to format a 64-bit int, instead of %lli. Convert "a b %lli %-3llu c d"
- * to "a b %I64 %-3I64u c d". This assumes a well-formed format string; invalid format strings
- * should not crash, but the results are undefined. */
-#if defined(WIN32)
-RString ConvertI64FormatString( const RString &sStr )
-{
-	RString sRet;
-	sRet.reserve( sStr.size() + 16 );
-
-	size_t iOffset = 0;
-	while( iOffset < sStr.size() )
-	{
-		size_t iPercent = sStr.find( '%', iOffset );
-		if( iPercent != sStr.npos )
-		{
-			sRet.append( sStr, iOffset, iPercent - iOffset );
-			iOffset = iPercent;
-		}
-
-		size_t iEnd = sStr.find_first_of( "diouxXeEfFgGaAcsCSpnm%", iOffset + 1 );
-		if( iEnd != sStr.npos && iEnd - iPercent >= 3 && iPercent > 2 && sStr[iEnd-2] == 'l' && sStr[iEnd-1] == 'l' )
-		{
-			sRet.append( sStr, iPercent, iEnd - iPercent - 2 ); // %
-			sRet.append( "I64" ); // %I64
-			sRet.append( sStr, iEnd, 1 ); // %I64i
-			iOffset = iEnd + 1;
-		}
-		else
-		{
-			if( iEnd == sStr.npos )
-				iEnd = sStr.size() - 1;
-			sRet.append( sStr, iOffset, iEnd - iOffset + 1 );
-			iOffset = iEnd + 1;
-		}
-	}
-	return sRet;
-}
-#else
-RString ConvertI64FormatString( const RString &sStr ) { return sStr; }
-#endif
 
 /* ISO-639-1 codes: http://www.loc.gov/standards/iso639-2/php/code_list.php
  * native forms: http://people.w3.org/rishida/names/languages.html
@@ -1921,7 +1880,7 @@ RString IntToString( const int &iNum )
 
 float StringToFloat( const RString &sString )
 {
-	float ret = strtof( sString, NULL );
+	float ret = strtof( sString.c_str(), NULL );
 
 	if( !isfinite(ret) )
 		ret = 0.0f;
@@ -1932,7 +1891,7 @@ bool StringToFloat( const RString &sString, float &fOut )
 {
 	char *endPtr;
 
-	fOut = strtof( sString, &endPtr );
+	fOut = strtof( sString.c_str(), &endPtr );
 	return sString.size() && *endPtr == '\0' && isfinite( fOut );
 }
 
@@ -2358,7 +2317,7 @@ namespace StringConversion
 	template<> bool FromString<float>( const RString &sValue, float &out )
 	{
 		const char *endptr = sValue.data() + sValue.size();
-		out = strtof( sValue, (char **) &endptr );
+		out = strtof( sValue.c_str(), (char **) &endptr );
 		if( endptr != sValue.data() && isfinite( out ) )
 			return true;
 		out = 0;

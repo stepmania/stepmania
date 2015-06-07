@@ -986,7 +986,7 @@ void Course::CalculateRadarValues()
 bool Course::Matches( RString sGroup, RString sCourse ) const
 {
 	ci_string ciGroup(sGroup.c_str());
-	if( sGroup.size() && ci_string != this->m_sGroupName.c_str())
+	if( sGroup.size() && ciGroup != this->m_sGroupName.c_str())
 	{
 		return false;
 	}

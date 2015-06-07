@@ -202,12 +202,12 @@ void ScreenOptionsEditCourse::BeginScreen()
 	for( int i=0; i<NUM_SONG_ROWS; i++ )
 	{
 		{
-			MenuRowDef mrd = MenuRowDef( -1, "---", true, EditMode_Practice, true, false, 0, EMPTY.GetValue() );
+			MenuRowDef mrd = MenuRowDef( -1, "---", true, EditMode_Practice, true, false, 0, EMPTY.GetValue().c_str() );
 			for (auto *s: m_vpSongs)
 			{
 				mrd.choices.push_back( s->GetDisplayFullTitle() );
 			}
-			mrd.sName = ssprintf(SONG.GetValue() + " %d",i+1);
+			mrd.sName = fmt::sprintf(SONG.GetValue() + " %d",i+1);
 			OptionRowHandler *pHand = OptionRowHandlerUtil::MakeSimple( mrd );
 			pHand->m_Def.m_bAllowThemeTitle = false;	// already themed
 			pHand->m_Def.m_sExplanationName = "Choose Song";
@@ -220,7 +220,7 @@ void ScreenOptionsEditCourse::BeginScreen()
 			EditCourseOptionRowHandlerSteps *pHand = new EditCourseOptionRowHandlerSteps;
 			pHand->Load( i );
 			pHand->m_Def.m_vsChoices.push_back( "n/a" );
-			pHand->m_Def.m_sName = ssprintf(STEPS.GetValue() + " %d",i+1);
+			pHand->m_Def.m_sName = fmt::sprintf(STEPS.GetValue() + " %d",i+1);
 			pHand->m_Def.m_bAllowThemeTitle = false;	// already themed
 			pHand->m_Def.m_bAllowThemeItems = false;	// already themed
 			pHand->m_Def.m_sExplanationName = "Choose Steps";
@@ -314,7 +314,7 @@ void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber
 		case EditCourseRow_Minutes:
 			GAMESTATE->m_pCurCourse->m_fGoalSeconds = 0;
 			int mins;
-			if( sscanf( sValue, "%d", &mins ) == 1 )
+			if( sscanf( sValue.c_str(), "%d", &mins ) == 1 )
 				GAMESTATE->m_pCurCourse->m_fGoalSeconds = mins * 60;
 			break;
 		}
@@ -498,7 +498,7 @@ void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
 
 	if( m_pRows[iRow]->GetRowType() == OptionRow::RowType_Exit  &&  iSongCount < unsigned(MIN_ENABLED_SONGS) )
 	{
-		ScreenPrompt::Prompt( SM_None, ssprintf(MUST_ENABLE_AT_LEAST.GetValue(),MIN_ENABLED_SONGS) );
+		ScreenPrompt::Prompt( SM_None, fmt::sprintf(MUST_ENABLE_AT_LEAST.GetValue(),MIN_ENABLED_SONGS) );
 		return;
 	}
 

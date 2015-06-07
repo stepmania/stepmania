@@ -225,7 +225,7 @@ static RString GetDirOfExecutable( RString argv0 )
 			split( path, ":", vPath );
 			for (auto &i: vPath)
 			{
-				if( access(i + "/" + argv0, X_OK|R_OK) )
+				if( access((i + "/" + argv0).c_str(), X_OK|R_OK) )
 					continue;
 				sPath = i;
 				break;
@@ -263,7 +263,7 @@ static void ChangeToDirOfExecutable( const RString &argv0 )
 	 * through a symlink. Assume this is the case and change to the dir of the symlink. */
 	if( Basename(RageFileManagerUtil::sDirOfExecutable) == "MacOS" )
 		CollapsePath( RageFileManagerUtil::sDirOfExecutable += "/../../../" );
-	chdir( RageFileManagerUtil::sDirOfExecutable );
+	chdir( RageFileManagerUtil::sDirOfExecutable.c_str() );
 #endif
 }
 
@@ -540,7 +540,7 @@ bool RageFileManager::Mount( const RString &sType, const RString &sRoot_, const 
 	const RString &sPaths = ssprintf( "\"%s\", \"%s\", \"%s\"", sType.c_str(), sRoot.c_str(), sMountPoint.c_str() );
 	CHECKPOINT_M( sPaths );
 #if defined(DEBUG)
-	puts( sPaths );
+	puts( sPaths.c_str() );
 #endif
 
 	// Unmount anything that was previously mounted here.
@@ -845,7 +845,7 @@ static bool PathUsesSlowFlush( const RString &sPath )
 	};
 
 	auto doesPathMatch = [&sPath](RString const &curPath) {
-		return !strncmp(sPath, curPath, strlen(curPath));
+		return !strncmp(sPath.c_str(), curPath.c_str(), strlen(curPath.c_str()));
 	};
 
 	return std::any_of(FlushPaths.begin(), FlushPaths.end(), doesPathMatch);

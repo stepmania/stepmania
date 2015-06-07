@@ -37,10 +37,15 @@ void AnnouncerManager::GetAnnouncerNames( vector<RString>& AddTo )
 	StripCvsAndSvn( AddTo );
 	StripMacResourceForks( AddTo );
 
+	ci_string ciEmpty(EMPTY_ANNOUNCER_NAME.c_str());
 	// strip out the empty announcer folder
 	for( int i=AddTo.size()-1; i>=0; i-- )
-		if( !stricmp( AddTo[i], EMPTY_ANNOUNCER_NAME ) )
+	{
+		if (ciEmpty == AddTo[i].c_str())
+		{
 			AddTo.erase(AddTo.begin()+i, AddTo.begin()+i+1 );
+		}
+	}
 }
 
 bool AnnouncerManager::DoesAnnouncerExist( RString sAnnouncerName )
@@ -50,10 +55,11 @@ bool AnnouncerManager::DoesAnnouncerExist( RString sAnnouncerName )
 
 	vector<RString> asAnnouncerNames;
 	GetAnnouncerNames( asAnnouncerNames );
-	for( unsigned i=0; i<asAnnouncerNames.size(); i++ )
-		if( 0==stricmp(sAnnouncerName, asAnnouncerNames[i]) )
-			return true;
-	return false;
+	ci_string ciName(sAnnouncerName.c_str());
+	auto doesExist = [&ciName](RString const &name) {
+		return ciName == name.c_str();
+	};
+	return std::any_of(asAnnouncerNames.begin(), asAnnouncerNames.end(), doesExist);
 }
 
 RString AnnouncerManager::GetAnnouncerDirFromName( RString sAnnouncerName )

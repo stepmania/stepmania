@@ -525,14 +525,14 @@ bool NotesWriterSSC::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, R
 		pSteps->GetFilename() != sPath;
 	if( bFileNameChanging  &&  DoesFileExist(sPath) )
 	{
-		sErrorOut = ssprintf( DESTINATION_ALREADY_EXISTS.GetValue(), sPath.c_str() );
+		sErrorOut = fmt::sprintf( DESTINATION_ALREADY_EXISTS.GetValue(), sPath.c_str() );
 		return false;
 	}
 
 	RageFile f;
 	if( !f.Open(sPath, RageFile::WRITE | RageFile::SLOW_FLUSH) )
 	{
-		sErrorOut = ssprintf( ERROR_WRITING_FILE.GetValue(), sPath.c_str() );
+		sErrorOut = fmt::sprintf( ERROR_WRITING_FILE.GetValue(), sPath.c_str() );
 		return false;
 	}
 
@@ -540,7 +540,7 @@ bool NotesWriterSSC::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, R
 	GetEditFileContents( pSong, pSteps, sTag );
 	if( f.PutLine(sTag) == -1 || f.Flush() == -1 )
 	{
-		sErrorOut = ssprintf( ERROR_WRITING_FILE.GetValue(), sPath.c_str() );
+		sErrorOut = fmt::sprintf( ERROR_WRITING_FILE.GetValue(), sPath.c_str() );
 		return false;
 	}
 

@@ -25,9 +25,9 @@ static bool CompareLayerNames( const RString& s1, const RString& s2 )
 	int i1, i2;
 	int ret;
 
-	ret = sscanf( s1, "Layer%d", &i1 );
+	ret = sscanf( s1.c_str(), "Layer%d", &i1 );
 	ASSERT( ret == 1 );
-	ret = sscanf( s2, "Layer%d", &i2 );
+	ret = sscanf( s2.c_str(), "Layer%d", &i2 );
 	ASSERT( ret == 1 );
 	return i1 < i2;
 }
@@ -40,7 +40,7 @@ void BGAnimation::AddLayersFromAniDir( const RString &_sAniDir, const XNode *pNo
 		vector<RString> vsLayerNames;
 		FOREACH_CONST_Child( pNode, pLayer )
 		{
-			if( strncmp(pLayer->GetName(), "Layer", 5) == 0 )
+			if( strncmp(pLayer->GetName().c_str(), "Layer", 5) == 0 )
 				vsLayerNames.push_back( pLayer->GetName() );
 		}
 

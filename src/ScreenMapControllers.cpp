@@ -94,7 +94,7 @@ void ScreenMapControllers::Init()
 			text.LoadFromFont( THEME->GetPathF(m_sName,"title") );
 			PlayerNumber pn = (PlayerNumber)c;
 			text.SetName( "Label"+PlayerNumberToString(pn) );
-			RString sText = ssprintf(PLAYER_SLOTS.GetValue(), PlayerNumberToLocalizedString(pn).c_str());
+			RString sText = fmt::sprintf(PLAYER_SLOTS.GetValue(), PlayerNumberToLocalizedString(pn).c_str());
 			text.SetText( sText );
 			ActorUtil::LoadAllCommands( text, m_sName );
 			m_Line.back()->AddChild( &m_textLabel[c] );

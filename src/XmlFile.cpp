@@ -53,7 +53,7 @@ void XNodeStringValue::GetValue( RString &out ) const		{ out = m_sValue; }
 void XNodeStringValue::GetValue( int &out ) const		{ out = StringToInt(m_sValue); }
 void XNodeStringValue::GetValue( float &out ) const		{ out = StringToFloat(m_sValue); }
 void XNodeStringValue::GetValue( bool &out ) const		{ out = StringToInt(m_sValue) != 0; }
-void XNodeStringValue::GetValue( unsigned &out ) const		{ out = strtoul(m_sValue,NULL,0); }
+void XNodeStringValue::GetValue( unsigned &out ) const		{ out = strtoul(m_sValue.c_str(),NULL,0); }
 void XNodeStringValue::PushValue( lua_State *L ) const
 {
 	LuaHelpers::Push( L, m_sValue );

@@ -281,7 +281,7 @@ void RageLog::Write( int where, const RString &sLine )
 			sStr = sWarning + sStr;
 		}
 		if( m_bShowLogOutput || (where&WRITE_TO_INFO) )
-			puts(sStr); //fputws( (const wchar_t *)sStr.c_str(), stdout );
+			puts(sStr.c_str()); //fputws( (const wchar_t *)sStr.c_str(), stdout );
 		if( where & WRITE_TO_INFO )
 			AddToInfo( sStr );
 		if( m_bLogToDisk && (where&WRITE_TO_INFO) && g_fileInfo->IsOpen() )
@@ -365,7 +365,7 @@ void RageLog::AddToRecentLogs( const RString &str )
 	if( len > sizeof(backlog[backlog_start])-1 )
 		len = sizeof(backlog[backlog_start])-1;
 
-	strncpy( backlog[backlog_start], str, len );
+	strncpy( backlog[backlog_start], str.c_str(), len );
 	backlog[backlog_start] [ len ] = 0;
 
 	backlog_start++;

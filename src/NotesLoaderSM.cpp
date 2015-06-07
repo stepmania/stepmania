@@ -363,7 +363,7 @@ void SMLoader::LoadFromTokens(
 void SMLoader::ProcessBGChanges( Song &out, const RString &sValueName, const RString &sPath, const RString &sParam )
 {
 	BackgroundLayer iLayer = BACKGROUND_LAYER_1;
-	if( sscanf(sValueName, "BGCHANGES%d", &*ConvertValue<int>(&iLayer)) == 1 )
+	if( sscanf(sValueName.c_str(), "BGCHANGES%d", &*ConvertValue<int>(&iLayer)) == 1 )
 		enum_add(iLayer, -1);	// #BGCHANGES2 = BACKGROUND_LAYER_2
 
 	bool bValid = iLayer>=0 && iLayer<NUM_BackgroundLayer;
@@ -862,7 +862,7 @@ void SMLoader::ProcessTickcounts( TimingData &out, const RString line, const int
 		}
 
 		const float fTickcountBeat = RowToBeat( arrayTickcountValues[0], rowsPerBeat );
-		int iTicks = clamp(atoi( arrayTickcountValues[1] ), 0, ROWS_PER_BEAT);
+		int iTicks = clamp(atoi( arrayTickcountValues[1].c_str() ), 0, ROWS_PER_BEAT);
 
 		out.AddSegment( TickcountSegment(BeatToNoteRow(fTickcountBeat), iTicks) );
 	}

@@ -151,7 +151,7 @@ void ScreenPackages::Update( float fDeltaTime )
 	if ( m_fLastUpdate >= 1.0 )
 	{
 		if ( m_bIsDownloading && m_bGotHeader )
-			m_sStatus = ssprintf( DOWNLOAD_PROGRESS.GetValue(), int((m_iDownloaded-m_bytesLastUpdate)/1024) );
+			m_sStatus = fmt::sprintf( DOWNLOAD_PROGRESS.GetValue(), int((m_iDownloaded-m_bytesLastUpdate)/1024) );
 
 		m_bytesLastUpdate = m_iDownloaded;
 		UpdateProgress();

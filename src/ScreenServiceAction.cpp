@@ -60,7 +60,7 @@ static RString ClearMachineEdits()
 	PROFILEMAN->LoadMachineProfile();
 
 	int iNumErrors = iNumAttempted-iNumSuccessful;
-	return ssprintf(MACHINE_EDITS_CLEARED.GetValue(),iNumSuccessful,iNumErrors);
+	return fmt::sprintf(MACHINE_EDITS_CLEARED.GetValue(),iNumSuccessful,iNumErrors);
 }
 
 static PlayerNumber GetFirstReadyMemoryCard()
@@ -92,7 +92,7 @@ static RString ClearMemoryCardEdits()
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
 
-	RString sDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
+	RString sDir = MEM_CARD_MOUNT_POINT[pn] + PREFSMAN->m_sMemoryCardProfileSubdir.Get() + "/";
 	vector<RString> vsEditFiles;
 	GetDirListing( sDir+EDIT_STEPS_SUBDIR+"*.edit", vsEditFiles, false, true );
 	GetDirListing( sDir+EDIT_COURSES_SUBDIR+"*.crs", vsEditFiles, false, true );
@@ -106,7 +106,7 @@ static RString ClearMemoryCardEdits()
 
 	MEMCARDMAN->UnmountCard(pn);
 
-	return ssprintf(EDITS_CLEARED.GetValue(),iNumSuccessful,iNumAttempted-iNumSuccessful);
+	return fmt::sprintf(EDITS_CLEARED.GetValue(),iNumSuccessful,iNumAttempted-iNumSuccessful);
 }
 
 
@@ -130,9 +130,9 @@ static RString TransferStatsMachineToMemoryCard()
 	MEMCARDMAN->UnmountCard(pn);
 
 	if( bSaved )
-		return ssprintf(MACHINE_STATS_SAVED.GetValue(),pn+1);
+		return fmt::sprintf(MACHINE_STATS_SAVED.GetValue(),pn+1);
 	else
-		return ssprintf(ERROR_SAVING_MACHINE_STATS.GetValue(),pn+1);
+		return fmt::sprintf(ERROR_SAVING_MACHINE_STATS.GetValue(),pn+1);
 }
 
 static LocalizedString STATS_NOT_LOADED		( "ScreenServiceAction", "Stats not loaded - No memory cards ready." );
@@ -158,15 +158,15 @@ static RString TransferStatsMemoryCardToMachine()
 	switch( lr )
 	{
 	case ProfileLoadResult_Success:
-		s = ssprintf(MACHINE_STATS_LOADED.GetValue(),pn+1);
+		s = fmt::sprintf(MACHINE_STATS_LOADED.GetValue(),pn+1);
 		break;
 	case ProfileLoadResult_FailedNoProfile:
 		*PROFILEMAN->GetMachineProfile() = backup;
-		s = ssprintf(THERE_IS_NO_PROFILE.GetValue(),pn+1);
+		s = fmt::sprintf(THERE_IS_NO_PROFILE.GetValue(),pn+1);
 		break;
 	case ProfileLoadResult_FailedTampered:
 		*PROFILEMAN->GetMachineProfile() = backup;
-		s = ssprintf(PROFILE_CORRUPT.GetValue(),pn+1);
+		s = fmt::sprintf(PROFILE_CORRUPT.GetValue(),pn+1);
 		break;
 	default:
 		FAIL_M(ssprintf("Invalid profile load result: %i", lr));
@@ -194,7 +194,7 @@ static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfile
 		{
 			if( DoesFileExist(sToDir+i) )
 				iNumOverwritten++;
-			bool bSuccess = FileCopy( sFromDir+*i, sToDir+i );
+			bool bSuccess = FileCopy( sFromDir+i, sToDir+i );
 			if( bSuccess )
 				iNumSucceeded++;
 			else
@@ -251,11 +251,11 @@ static RString CopyEdits( const RString &sFromProfileDir, const RString &sToProf
 
 	vector<RString> vs;
 	vs.push_back( sDisplayDir );
-	vs.push_back( ssprintf( COPIED.GetValue(), iNumSucceeded ) + ", " + ssprintf( OVERWRITTEN.GetValue(), iNumOverwritten ) );
+	vs.push_back( fmt::sprintf( COPIED.GetValue(), iNumSucceeded ) + ", " + fmt::sprintf( OVERWRITTEN.GetValue(), iNumOverwritten ) );
 	if( iNumIgnored )
-		vs.push_back( ssprintf( IGNORED.GetValue(), iNumIgnored ) );
+		vs.push_back( fmt::sprintf( IGNORED.GetValue(), iNumIgnored ) );
 	if( iNumErrored )
-		vs.push_back( ssprintf( FAILED.GetValue(), iNumErrored ) );
+		vs.push_back( fmt::sprintf( FAILED.GetValue(), iNumErrored ) );
 	return join( "\n", vs );
 }
 
@@ -322,10 +322,10 @@ static RString CopyEditsMachineToMemoryCard()
 		MEMCARDMAN->MountCard(pn);
 
 	RString sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
-	RString sToDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
+	RString sToDir = MEM_CARD_MOUNT_POINT[pn] + PREFSMAN->m_sMemoryCardProfileSubdir.Get() + "/";
 
 	vector<RString> vs;
-	vs.push_back( ssprintf( COPIED_TO_CARD.GetValue(), pn+1 ) );
+	vs.push_back( fmt::sprintf( COPIED_TO_CARD.GetValue(), pn+1 ) );
 	RString s = CopyEdits( sFromDir, sToDir, PREFSMAN->m_sMemoryCardProfileSubdir );
 	vs.push_back( s );
 
@@ -349,17 +349,17 @@ static RString SyncEditsMachineToMemoryCard()
 	int iNumFailed = 0;
 
 	RString sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
-	RString sToDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
+	RString sToDir = MEM_CARD_MOUNT_POINT[pn] + PREFSMAN->m_sMemoryCardProfileSubdir.Get() + "/";
 	SyncEdits( sFromDir, sToDir, iNumAdded, iNumDeleted, iNumOverwritten, iNumFailed );
 
 	MEMCARDMAN->UnmountCard(pn);
 
-	RString sRet = ssprintf( COPIED_TO_CARD.GetValue(), pn+1 ) + " ";
-	sRet += ssprintf( ADDED.GetValue(), iNumAdded ) + ", " + ssprintf( OVERWRITTEN.GetValue(), iNumOverwritten );
+	RString sRet = fmt::sprintf( COPIED_TO_CARD.GetValue(), pn+1 ) + " ";
+	sRet += fmt::sprintf( ADDED.GetValue(), iNumAdded ) + ", " + fmt::sprintf( OVERWRITTEN.GetValue(), iNumOverwritten );
 	if( iNumDeleted )
-		sRet += RString(" ") + ssprintf( DELETED.GetValue(), iNumDeleted );
+		sRet += RString(" ") + fmt::sprintf( DELETED.GetValue(), iNumDeleted );
 	if( iNumFailed )
-		sRet += RString("; ") + ssprintf( FAILED.GetValue(), iNumFailed );
+		sRet += RString("; ") + fmt::sprintf( FAILED.GetValue(), iNumFailed );
 	return sRet;
 }
 
@@ -377,7 +377,7 @@ static RString CopyEditsMemoryCardToMachine()
 	ProfileManager::GetMemoryCardProfileDirectoriesToTry( vsSubDirs );
 
 	vector<RString> vs;
-	vs.push_back( ssprintf( COPIED_FROM_CARD.GetValue(), pn+1 ) );
+	vs.push_back( fmt::sprintf( COPIED_FROM_CARD.GetValue(), pn+1 ) );
 
 	for (auto &sSubDir: vsSubDirs)
 	{

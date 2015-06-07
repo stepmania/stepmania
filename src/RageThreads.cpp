@@ -262,7 +262,7 @@ RageThreadRegister::RageThreadRegister( const RString &sName )
 
 	m_pSlot = &g_ThreadSlots[iSlot];
 
-	strcpy( m_pSlot->m_szName, sName );
+	strcpy( m_pSlot->m_szName, sName.c_str() );
 	sprintf( m_pSlot->m_szThreadFormattedOutput, "Thread: %s", sName.c_str() );
 
 	m_pSlot->m_iID = GetThisThreadId();

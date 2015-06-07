@@ -576,7 +576,7 @@ void ScreenEvaluation::Init()
 
 				// todo: check if format string is valid
 				// (two integer values in DETAILLINE_FORMAT) -aj
-				m_textDetailText[l][p].SetText( ssprintf(DETAILLINE_FORMAT,iActual,iPossible) );
+				m_textDetailText[l][p].SetText( fmt::sprintf(DETAILLINE_FORMAT,iActual,iPossible) );
 			}
 		}
 	}

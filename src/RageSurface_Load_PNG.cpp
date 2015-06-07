@@ -29,7 +29,7 @@ void RageFile_png_read( png_struct *png, png_byte *p, png_size_t size )
 		 * GetError().c_str() to it, a temporary may be created; since control
 		 * never returns here, it may never be destructed and we could leak. */
 		static char error[256];
-		strncpy( error, f->GetError(), sizeof(error) );
+		strncpy( error, f->GetError().c_str(), sizeof(error) );
 		error[sizeof(error)-1] = 0;
 		png_error( png, error );
 	}

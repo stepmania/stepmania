@@ -450,7 +450,7 @@ void NetworkSyncManager::DisplayStartupStatus()
 		//Networking wasn't attepmpted
 		return;
 	case 1:
-		sMessage = ssprintf( CONNECTION_SUCCESSFUL.GetValue(), m_ServerName.c_str() );
+		sMessage = fmt::sprintf( CONNECTION_SUCCESSFUL.GetValue(), m_ServerName.c_str() );
 		break;
 	case 2:
 		sMessage = CONNECTION_FAILED.GetValue();
