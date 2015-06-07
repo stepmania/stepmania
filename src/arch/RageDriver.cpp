@@ -15,7 +15,7 @@ RageDriver *DriverList::Create( const RString &sDriverName )
 	if( m_pRegistrees == NULL )
 		return NULL;
 
-	auto iter = m_pRegistrees->find( istring(sDriverName) );
+	auto iter = m_pRegistrees->find( istring(sDriverName.c_str()) );
 	if( iter == m_pRegistrees->end() )
 		return NULL;
 	return (iter->second)();

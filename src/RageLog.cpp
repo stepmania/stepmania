@@ -444,7 +444,7 @@ void ShowWarningOrTrace( const char *file, int line, std::string const &message,
 	void (RageLog::*method)(const char *fmt, ...) = bWarning ? &RageLog::Warn : &RageLog::Trace;
 
 	if( LOG )
-		(LOG->*method)( "%s:%i: %s", file, line, message );
+		(LOG->*method)( "%s:%i: %s", file, line, message.c_str() );
 	else
 		fprintf( stderr, "%s:%i: %s\n", file, line, message.c_str() );
 }
