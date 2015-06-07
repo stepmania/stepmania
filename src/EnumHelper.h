@@ -141,7 +141,7 @@ static void Lua##X(lua_State* L) \
 		lua_pushnumber( L, i ); /* 0-based */ \
 		lua_rawset( L, -3 ); \
 		/* Compatibility with old, case-insensitive values */ \
-		std::transform(s.begin(), s.end(), s.begin(), GetAsciiLower); \
+		s = MakeLower(s); \
 		lua_pushstring( L, s.c_str() ); \
 		lua_pushnumber( L, i ); /* 0-based */ \
 		lua_rawset( L, -3 ); \

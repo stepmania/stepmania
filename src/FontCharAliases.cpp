@@ -362,9 +362,8 @@ static void InitCharAliases()
 
 	for(aliasmap::const_iterator i = CharAliases.begin(); i != CharAliases.end(); ++i)
 	{
-		RString from = i->first;
+		RString from = MakeLower(i->first);
 		RString to = WcharToUTF8(i->second);
-		std::transform(from.begin(), from.end(), from.begin(), GetAsciiLower);
 		CharAliasRepl[from] = to;
 	}
 }

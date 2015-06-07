@@ -145,7 +145,7 @@ void string_arg_conv(vector<RString>& args)
 }
 void lower_string_conv(vector<RString>& args)
 {
-	args[0].MakeLower();
+	args[0] = MakeLower(args[0]);
 }
 void hidden_conv(vector<RString>& args)
 {
@@ -184,8 +184,7 @@ void blend_conv(vector<RString>& args)
 	COMMON_ARG_VERIFY(2);
 	for(int i= 0; i < NUM_BlendMode; ++i)
 	{
-		RString blend_str= BlendModeToString(static_cast<BlendMode>(i));
-		blend_str.MakeLower();
+		RString blend_str = MakeLower(BlendModeToString(static_cast<BlendMode>(i)));
 		if(args[1] == blend_str)
 		{
 			args[1]= "\"BlendMode_" + BlendModeToString(static_cast<BlendMode>(i)) + "\"";
@@ -198,8 +197,7 @@ void cull_conv(vector<RString>& args)
 	COMMON_ARG_VERIFY(2);
 	for(int i= 0; i < NUM_CullMode; ++i)
 	{
-		RString cull_str= CullModeToString(static_cast<CullMode>(i));
-		cull_str.MakeLower();
+		RString cull_str = MakeLower(CullModeToString(static_cast<CullMode>(i)));
 		if(args[1] == cull_str)
 		{
 			args[1]= "\"CullMode_" + CullModeToString(static_cast<CullMode>(i)) + "\"";
@@ -393,7 +391,7 @@ void actor_template_t::store_cmd(RString const& cmd_name, RString const& full_cm
 void actor_template_t::store_field(RString const& field_name, RString const& value, bool cmd_convert, RString const& pref, RString const& suf)
 {
 	// OITG apparently allowed "Oncommand" as valid.
-	if(tail(field_name, 7).MakeLower() != "command")
+	if(MakeLower(tail(field_name, 7)) != "command")
 	{
 		cmd_convert= false;
 	}

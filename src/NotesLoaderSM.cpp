@@ -986,8 +986,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		// fall through
 	case 8:
 	{
-		RString tmp = aBGChangeValues[7];
-		tmp.MakeLower();
+		RString tmp = MakeLower(aBGChangeValues[7]);
 		if( ( tmp.find(".ini") != string::npos || tmp.find(".xml") != string::npos )
 		   && !PREFSMAN->m_bQuirksMode )
 		{
@@ -1030,8 +1029,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		// fall through
 	case 2:
 	{
-		RString tmp = aBGChangeValues[1];
-		tmp.MakeLower();
+		RString tmp = MakeLower(aBGChangeValues[1]);
 		if( ( tmp.find(".ini") != string::npos || tmp.find(".xml") != string::npos )
 		   && !PREFSMAN->m_bQuirksMode )
 		{
@@ -1063,8 +1061,7 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
+		RString sValueName = MakeUpper(sParams[0]);
 
 		// The only tag we care about is the #NOTES tag.
 		if( sValueName=="NOTES" || sValueName=="NOTES2" )
@@ -1151,8 +1148,7 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
+		RString sValueName = MakeUpper(sParams[0]);
 
 		reused_song_info.params= &sParams;
 		song_handler_map_t::iterator handler=
@@ -1237,8 +1233,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
+		RString sValueName = MakeUpper(sParams[0]);
 
 		// handle the data
 		if( sValueName=="SONG" )

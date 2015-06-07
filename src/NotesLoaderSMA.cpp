@@ -171,10 +171,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		ci_string ciValueName( sValueName.c_str());
-		
-		sValueName.MakeUpper();
+		RString sValueName = MakeUpper(sParams[0]);
 
 		// handle the data
 		/* Don't use GetMainAndSubTitlesFromFullTitle; that's only for heuristically

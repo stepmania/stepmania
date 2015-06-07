@@ -346,8 +346,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 {
 	ASSERT_M( NOTESKIN != NULL, "The Noteskin Manager must be loaded in order to process mods." );
 
-	RString sBit = sOneMod;
-	sBit.MakeLower();
+	RString sBit = MakeLower(sOneMod);
 	Trim( sBit );
 
 	/* "drunk"

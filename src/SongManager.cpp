@@ -1383,7 +1383,7 @@ Song* SongManager::GetSongFromDir(RString dir) const
 	}
 
 	dir.Replace('\\', '/');
-	dir.MakeLower();
+	dir = MakeLower(dir);
 	auto entry = m_SongsByDir.find(dir);
 	if(entry != m_SongsByDir.end())
 	{
@@ -1903,8 +1903,7 @@ void SongManager::AddSongToList(Song* new_song)
 {
 	new_song->SetEnabled(true);
 	m_pSongs.push_back(new_song);
-	RString dir= new_song->GetSongDir();
-	dir.MakeLower();
+	RString dir= MakeLower(new_song->GetSongDir());
 	m_SongsByDir.insert(std::make_pair(dir, new_song));
 }
 

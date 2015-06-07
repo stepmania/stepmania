@@ -557,15 +557,13 @@ struct CompareLanguageTag
 	RString m_sLanguageString;
 	CompareLanguageTag( const RString &sLang )
 	{
-		m_sLanguageString = RString("(lang ") + sLang + ")";
+		m_sLanguageString = MakeLower("(lang " + sLang + ")");
 		LOG->Trace( "try \"%s\"", sLang.c_str() );
-		m_sLanguageString.MakeLower();
 	}
 
 	bool operator()( const RString &sFile ) const
 	{
-		RString sLower( sFile );
-		sLower.MakeLower();
+		RString sLower = MakeLower( sFile );
 		size_t iPos = sLower.find( m_sLanguageString );
 		return iPos != RString::npos;
 	}

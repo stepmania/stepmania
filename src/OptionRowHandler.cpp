@@ -707,8 +707,7 @@ class OptionRowHandlerListCharacters: public OptionRowHandlerList
 		for( unsigned i=0; i<vpCharacters.size(); i++ )
 		{
 			Character* pCharacter = vpCharacters[i];
-			RString s = pCharacter->GetDisplayName();
-			s.MakeUpper();
+			RString s = MakeUpper(pCharacter->GetDisplayName());
 
 			m_Def.m_vsChoices.push_back( s );
 			GameCommand mc;

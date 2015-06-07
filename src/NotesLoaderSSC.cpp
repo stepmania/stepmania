@@ -869,8 +869,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 	for (unsigned i = 0; i < values; i++)
 	{
 		const MsdFile::value_t &params = msd.GetValue(i);
-		RString valueName = params[0];
-		valueName.MakeUpper();
+		RString valueName = MakeUpper(params[0]);
 		RString matcher = params[1]; // mainly for debugging.
 		Trim(matcher);
 
@@ -911,7 +910,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 						// tag. -Kyz
 						if(out.GetDifficulty() != StringToDifficulty(matcher) &&
 							!(out.GetDifficulty() == Difficulty_Edit &&
-								GetExtension(cachePath).MakeLower() == "edit"))
+								MakeLower(GetExtension(cachePath)) == "edit"))
 						{ tryingSteps = false; }
 						break;
 					case LNDID_meter:
@@ -982,8 +981,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 	for( unsigned i = 0; i < values; i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
+		RString sValueName = MakeUpper(sParams[0]);
 
 		switch (state)
 		{
@@ -1101,8 +1099,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
+		RString sValueName = MakeUpper(sParams[0]);
 
 		if(pSong != NULL)
 		{

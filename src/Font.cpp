@@ -489,9 +489,8 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 	{
 		FOREACH_CONST_Attr( pNode, pAttr )
 		{
-			RString sName = pAttr->first;
+			RString sName = MakeUpper(pAttr->first);
 			const XNodeValue *pValue = pAttr->second;
-			std::transform(sName.begin(), sName.end(), sName.begin(), GetAsciiUpper);
 
 			// If val is an integer, it's a width, eg. "10=27".
 			if( IsAnInt(sName) )

@@ -365,7 +365,7 @@ static bool CompareSongPointersBySortValueDescending( const Song *pSong1, const 
 
 RString SongUtil::MakeSortString( RString s )
 {
-	s.MakeUpper();
+	s = MakeUpper(s);
 
 	// Make sure that non-alphanumeric strings are placed at the very end.
 	if( s.size() > 0 )

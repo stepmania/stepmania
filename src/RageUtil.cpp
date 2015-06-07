@@ -1004,8 +1004,7 @@ bool FindFirstFilenameContaining(const vector<RString>& filenames,
 {
 	for(size_t i= 0; i < filenames.size(); ++i)
 	{
-		RString lower= GetFileNameWithoutExtension(filenames[i]);
-		lower.MakeLower();
+		RString lower= MakeLower(GetFileNameWithoutExtension(filenames[i]));
 		for(size_t s= 0; s < starts_with.size(); ++s)
 		{
 			if(!lower.compare(0, starts_with[s].size(), starts_with[s]))
@@ -1828,6 +1827,20 @@ void MakeLower( wchar_t *p, size_t iLen )
 	UnicodeUpperLower( p, iLen, g_LowerCase );
 }
 
+std::string MakeUpper( std::string const &str)
+{
+	auto *cstr = const_cast<char *>(str.c_str());
+	MakeUpper(cstr, str.size());
+	return std::string(cstr);
+}
+
+std::string MakeLower( std::string const &str)
+{
+	auto *cstr = const_cast<char *>(str.c_str());
+	MakeLower(cstr, str.size());
+	return std::string(cstr);
+}
+
 char GetAsciiUpper(char const &ch)
 {
 	return (ch >= 'a' && ch <= 'z')? char(ch + 'A' - 'a'): ch;
@@ -1979,8 +1992,7 @@ void ReplaceEntityText( RString &sText, const std::map<RString,RString> &m )
 			continue;
 		}
 
-		RString sElement = sText.substr( iStart+1, iEnd-iStart-1 );
-		sElement.MakeLower();
+		RString sElement = MakeLower(sText.substr( iStart+1, iEnd-iStart-1 ));
 
 		auto it = m.find( sElement );
 		if( it == m.end() )
@@ -2425,10 +2437,10 @@ LuaFunction( SecondsToMSS, SecondsToMSS( FArg(1) ) )
 LuaFunction( SecondsToMMSS, SecondsToMMSS( FArg(1) ) )
 LuaFunction( FormatNumberAndSuffix, FormatNumberAndSuffix( IArg(1) ) )
 LuaFunction( Basename, Basename( SArg(1) ) )
-static RString MakeLower( RString s ) { s.MakeLower(); return s; }
-LuaFunction( Lowercase, MakeLower( SArg(1) ) )
-static RString MakeUpper( RString s ) { s.MakeUpper(); return s; }
-LuaFunction( Uppercase, MakeUpper( SArg(1) ) )
+static RString MakeLowercase( RString s ) { return MakeLower(s); }
+LuaFunction( Lowercase, MakeLowercase( SArg(1) ) )
+static RString MakeUppercase( RString s ) { return MakeUpper(s); }
+LuaFunction( Uppercase, MakeUppercase( SArg(1) ) )
 LuaFunction( mbstrlen, (int)RStringToWstring(SArg(1)).length() )
 LuaFunction( URLEncode, URLEncode( SArg(1) ) );
 LuaFunction( PrettyPercent, PrettyPercent( FArg(1), FArg(2) ) );

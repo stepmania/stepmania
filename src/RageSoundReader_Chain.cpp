@@ -64,7 +64,7 @@ void RageSoundReader_Chain::AddSound( int iIndex, float fOffsetSecs, float fPan 
 
 int RageSoundReader_Chain::LoadSound( RString sPath )
 {
-	sPath.MakeLower();
+	sPath = MakeLower(sPath);
 
 	auto it = m_apNamedSounds.find( sPath );
 	if( it != m_apNamedSounds.end() )

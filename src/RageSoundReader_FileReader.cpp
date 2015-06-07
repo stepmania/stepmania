@@ -139,8 +139,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
 		FileTypes.insert(*curr);
 	}
 
-	RString format = GetExtension( filename );
-	format.MakeLower();
+	RString format = MakeLower(GetExtension( filename ));
 
 	error = "";
 

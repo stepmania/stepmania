@@ -16,8 +16,7 @@ struct File
 	void SetName( const RString &fn )
 	{
 		name = fn;
-		lname = name;
-		lname.MakeLower();
+		lname = MakeLower(name);
 	}
 
 	bool dir;
@@ -45,8 +44,7 @@ struct File
 	bool equal(const File &rhs) const { return lname == rhs.lname; }
 	bool equal(const RString &rhs) const
 	{
-		RString l = rhs;
-		l.MakeLower();
+		RString l = MakeLower(rhs);
 		return lname == l;
 	}
 };

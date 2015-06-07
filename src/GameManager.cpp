@@ -3446,10 +3446,10 @@ const StepsTypeInfo &GameManager::GetStepsTypeInfo( StepsType st )
 
 StepsType GameManager::StringToStepsType( RString sStepsType )
 {
-	std::transform(sStepsType.begin(), sStepsType.end(), sStepsType.begin(), GetAsciiLower);
+	RString stepType = MakeLower(sStepsType);
 
 	for( int i=0; i<NUM_StepsType; i++ )
-		if( g_StepsTypeInfos[i].szName == sStepsType )
+		if( g_StepsTypeInfos[i].szName == stepType )
 			return StepsType(i);
 
 	return StepsType_Invalid;

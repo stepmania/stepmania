@@ -670,7 +670,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 				filename != song_dir_listing.end(); ++filename)
 		{
 			bool matched_something= false;
-			RString file_ext= GetExtension(*filename).MakeLower();
+			RString file_ext= MakeLower(GetExtension(*filename));
 			if(!file_ext.empty())
 			{
 				for(size_t tf= 0; tf < lists_to_fill.size(); ++ tf)
@@ -904,8 +904,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 				break; // done
 
 			// ignore DWI "-char" graphics
-			RString lower = image_list[i];
-			lower.MakeLower();
+			RString lower = MakeLower(image_list[i]);
 			if(BlacklistedImages.find(lower) != BlacklistedImages.end())
 				continue;	// skip
 

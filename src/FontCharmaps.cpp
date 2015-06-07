@@ -222,9 +222,9 @@ static void Init()
 const wchar_t *FontCharmaps::get_char_map(RString name)
 {
 	Init();
-	std::transform(name.begin(), name.end(), name.begin(), GetAsciiLower);
+	RString lowerName = MakeLower(name);
 
-	auto i = charmaps.find(name);
+	auto i = charmaps.find(lowerName);
 	if(i == charmaps.end())
 		return NULL;
 

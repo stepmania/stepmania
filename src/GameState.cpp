@@ -2244,7 +2244,7 @@ bool GameState::AnyPlayerHasRankingFeats() const
 void GameState::StoreRankingName( PlayerNumber pn, RString sName )
 {
 	// The theme can upper it if desired. -Kyz
-	// sName.MakeUpper();
+	// sName = MakeUpper(sName);
 
 	if( USE_NAME_BLACKLIST )
 	{
@@ -2261,7 +2261,7 @@ void GameState::StoreRankingName( PlayerNumber pn, RString sName )
 					break;
 				}
 
-				std::transform(sLine.begin(), sLine.end(), sLine.begin(), GetAsciiUpper);
+				sLine = MakeUpper(sLine);
 				if( !sLine.empty() && sName.find(sLine) != string::npos )	// name contains a bad word
 				{
 					LOG->Trace( "entered '%s' matches blacklisted item '%s'", sName.c_str(), sLine.c_str() );

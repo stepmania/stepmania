@@ -393,6 +393,8 @@ void MakeUpper( char *p, size_t iLen );
 void MakeLower( char *p, size_t iLen );
 void MakeUpper( wchar_t *p, size_t iLen );
 void MakeLower( wchar_t *p, size_t iLen );
+std::string MakeUpper( std::string const &str );
+std::string MakeLower( std::string const &str );
 
 char GetAsciiUpper(char const &ch);
 char GetAsciiLower(char const &ch);

@@ -50,8 +50,7 @@ RString GradeToOldString( Grade g )
 
 Grade StringToGrade( const RString &sGrade )
 {
-	RString s = sGrade;
-	std::transform(s.begin(), s.end(), s.begin(), GetAsciiUpper);
+	RString s = MakeUpper(sGrade);
 
 	// new style
 	int iTier;

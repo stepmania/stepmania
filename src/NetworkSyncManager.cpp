@@ -845,9 +845,7 @@ void PacketFunctions::ClearPacket()
 
 RString NetworkSyncManager::MD5Hex( const RString &sInput )
 {
-	auto hex = BinaryToHex( CryptManager::GetMD5ForString(sInput));
-	std::transform(hex.begin(), hex.end(), hex.begin(), GetAsciiUpper);
-	return hex;
+	return MakeUpper(BinaryToHex( CryptManager::GetMD5ForString(sInput)));
 }
 
 void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers )

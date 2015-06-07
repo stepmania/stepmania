@@ -806,8 +806,7 @@ void ScreenMapControllers::ActionRow::Load(RString const& scr_name,
 	ActorFrame* line, ActorScroller* scroller)
 {
 	m_action= action;
-	RString lower_name= name;
-	lower_name.MakeLower();
+	RString lower_name = MakeLower(name);
 	// Make the specific actor optional, use a fallback if it doesn't exist.
 	RString path= THEME->GetPathG(scr_name, lower_name, true);
 	if(path.empty())
