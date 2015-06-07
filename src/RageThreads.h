@@ -75,7 +75,7 @@ private:
 namespace Checkpoints
 {
 	void LogCheckpoints( bool yes=true );
-	void SetCheckpoint( const char *file, int line, const char *message );
+	void SetCheckpoint( const char *file, int line, std::string const &message );
 	void GetLogs( char *pBuf, int iSize, const char *delim );
 };
 
