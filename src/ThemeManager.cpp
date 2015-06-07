@@ -1206,24 +1206,24 @@ void ThemeManager::GetOptionNames( vector<RString>& AddTo )
 
 static RString PseudoLocalize( RString s )
 {
-	s.Replace( "a", "àá" );
-	s.Replace( "A", "ÀÀ" );
-	s.Replace( "e", "éé" );
-	s.Replace( "E", "ÉÉ" );
-	s.Replace( "i", "íí" );
-	s.Replace( "I", "ÍÍ" );
-	s.Replace( "o", "óó" );
-	s.Replace( "O", "ÓÓ" );
-	s.Replace( "u", "üü" );
-	s.Replace( "U", "ÜÜ" );
-	s.Replace( "n", "ñ" );
-	s.Replace( "N", "Ñ" );
-	s.Replace( "c", "ç" );
-	s.Replace( "C", "Ç" );
+	ReplaceAll(s, "a", "àá" );
+	ReplaceAll(s, "A", "ÀÀ" );
+	ReplaceAll(s, "e", "éé" );
+	ReplaceAll(s, "E", "ÉÉ" );
+	ReplaceAll(s, "i", "íí" );
+	ReplaceAll(s, "I", "ÍÍ" );
+	ReplaceAll(s, "o", "óó" );
+	ReplaceAll(s, "O", "ÓÓ" );
+	ReplaceAll(s, "u", "üü" );
+	ReplaceAll(s, "U", "ÜÜ" );
+	ReplaceAll(s, "n", "ñ" );
+	ReplaceAll(s, "N", "Ñ" );
+	ReplaceAll(s, "c", "ç" );
+	ReplaceAll(s, "C", "Ç" );
 	// transformations that help expose punctuation assumptions
-	//s.Replace( ":", " :" );	// this messes up "::" help text tip separator markers
-	s.Replace( "?", " ?" );
-	s.Replace( "!", " !" );
+	//ReplaceAll(s, ":", " :" );	// this messes up "::" help text tip separator markers
+	ReplaceAll(s, "?", " ?" );
+	ReplaceAll(s, "!", " !" );
 
 	return s;
 }
@@ -1241,8 +1241,8 @@ RString ThemeManager::GetString( const RString &sMetricsGroup, const RString &sV
 	DEBUG_ASSERT( sValueName.find('=') == sValueName.npos );
 
 	// TODO: Move this escaping into IniFile?
-	sValueName.Replace( "\r\n", "\\n" );
-	sValueName.Replace( "\n", "\\n" );
+	ReplaceAll(sValueName, "\r\n", "\\n" );
+	ReplaceAll(sValueName, "\n", "\\n" );
 
 	ASSERT( g_pLoadedThemeData != NULL );
 	RString s = GetMetricRaw( g_pLoadedThemeData->iniStrings, sMetricsGroup, sValueName );
@@ -1251,7 +1251,7 @@ RString ThemeManager::GetString( const RString &sMetricsGroup, const RString &sV
 	// Don't EvalulateString.  Strings are raw and shouldn't allow Lua.
 	//EvaluateString( s );
 
-	s.Replace( "\\n", "\n" );
+	ReplaceAll(s, "\\n", "\n" );
 
 	if( m_bPseudoLocalize )
 	{
@@ -1344,16 +1344,16 @@ public:
 		{
 			luaL_error(L, "Cannot fetch string with empty group name or empty value name.");
 		}
-		lua_pushstring(L, p->GetString(group, name));
+		lua_pushstring(L, p->GetString(group, name).c_str());
 		return 1;
 	}
 	static int GetPathInfoB( T* p, lua_State *L )
 	{
 		ThemeManager::PathInfo pi;
 		p->GetPathInfo( pi, EC_BGANIMATIONS, SArg(1), SArg(2) );
-		lua_pushstring(L, pi.sResolvedPath);
-		lua_pushstring(L, pi.sMatchingMetricsGroup);
-		lua_pushstring(L, pi.sMatchingElement);
+		lua_pushstring(L, pi.sResolvedPath.c_str());
+		lua_pushstring(L, pi.sMatchingMetricsGroup.c_str());
+		lua_pushstring(L, pi.sMatchingElement.c_str());
 		return 3;
 	}
 	// GENERAL_GET_PATH uses lua_toboolean instead of BArg because that makes
@@ -1362,7 +1362,7 @@ public:
 	static int get_path_name(T* p, lua_State* L) \
 	{ \
 		lua_pushstring(L, p->get_path_name( \
-				SArg(1), SArg(2), lua_toboolean(L, 3) != 0 )); \
+				SArg(1), SArg(2), lua_toboolean(L, 3) != 0 ).c_str()); \
 		return 1; \
 	}
 	GENERAL_GET_PATH(GetPathF);
@@ -1388,8 +1388,8 @@ public:
 
 	DEFINE_METHOD( GetCurrentThemeDirectory, GetCurThemeDir() );
 	DEFINE_METHOD( GetCurLanguage, GetCurLanguage() );
-	static int GetThemeDisplayName( T* p, lua_State *L )			{  lua_pushstring(L, p->GetThemeDisplayName(p->GetCurThemeName())); return 1; }
-	static int GetThemeAuthor( T* p, lua_State *L )			{  lua_pushstring(L, p->GetThemeAuthor(p->GetCurThemeName())); return 1; }
+	static int GetThemeDisplayName( T* p, lua_State *L )			{  lua_pushstring(L, p->GetThemeDisplayName(p->GetCurThemeName()).c_str()); return 1; }
+	static int GetThemeAuthor( T* p, lua_State *L )			{  lua_pushstring(L, p->GetThemeAuthor(p->GetCurThemeName()).c_str()); return 1; }
 	DEFINE_METHOD( DoesThemeExist, DoesThemeExist(SArg(1)) );
 	DEFINE_METHOD( IsThemeSelectable, IsThemeSelectable(SArg(1)) );
 	DEFINE_METHOD( DoesLanguageExist, DoesLanguageExist(SArg(1)) );

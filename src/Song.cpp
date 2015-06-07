@@ -1814,7 +1814,7 @@ bool Song::Matches(RString sGroup, RString sSong) const
 		return false;
 	}
 	RString sDir = this->GetSongDir();
-	sDir.Replace("\\","/");
+	std::replace(sDir.begin(), sDir.end(), '\\', '/');
 	vector<RString> bits;
 	split( sDir, "/", bits );
 	ASSERT(bits.size() >= 2); // should always have at least two parts

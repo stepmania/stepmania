@@ -249,7 +249,7 @@ void convert_lua_chunk(RString& chunk_text)
 {
 	for(auto chunk = chunks_to_replace.begin(); chunk != chunks_to_replace.end(); ++chunk)
 	{
-		chunk_text.Replace(chunk->first, chunk->second);
+		ReplaceAll(chunk_text, chunk->first, chunk->second);
 	}
 }
 

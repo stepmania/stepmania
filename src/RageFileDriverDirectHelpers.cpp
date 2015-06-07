@@ -147,7 +147,7 @@ void DirectFilenameDB::SetRoot( RString root_ )
 	root = root_;
 
 	// "\abcd\" -> "/abcd/":
-	root.Replace( "\\", "/" );
+	std::transform(root.begin(), root.end(), '\\', '/');
 
 	// "/abcd/" -> "/abcd":
 	if( EndsWith(root, "/") )

@@ -878,7 +878,7 @@ void SMLoader::ProcessSpeeds( TimingData &out, const RString line, const int row
 		vector<RString> vs2;
 		split( *s1, "=", vs2 );
 
-		if( vs2[0] == 0 && vs2.size() == 2 ) // First one always seems to have 2.
+		if( vs2[0][0] == '0' && vs2.size() == 2 ) // First one always seems to have 2.
 		{
 			vs2.push_back("0");
 		}
@@ -973,12 +973,12 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 	{
 	case 11:
 		change.m_def.m_sColor2 = aBGChangeValues[10];
-		change.m_def.m_sColor2.Replace( '^', ',' );
+		ReplaceAll(change.m_def.m_sColor2, "^", ",");
 		change.m_def.m_sColor2 = RageColor::NormalizeColorString( change.m_def.m_sColor2 );
 		// fall through
 	case 10:
 		change.m_def.m_sColor1 = aBGChangeValues[9];
-		change.m_def.m_sColor1.Replace( '^', ',' );
+		ReplaceAll(change.m_def.m_sColor1, "^", ",");
 		change.m_def.m_sColor1 = RageColor::NormalizeColorString( change.m_def.m_sColor1 );
 		// fall through
 	case 9:
@@ -1248,7 +1248,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 
 			RString sSongFullTitle = sParams[1];
 			this->SetSongTitle(sParams[1]);
-			sSongFullTitle.Replace( '\\', '/' );
+			ReplaceAll(sSongFullTitle, "\\", "/");
 
 			pSong = SONGMAN->FindSong( sSongFullTitle );
 			if( pSong == NULL )

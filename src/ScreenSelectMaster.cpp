@@ -93,7 +93,7 @@ void ScreenSelectMaster::Init()
 		{
 			RString sElement = "Cursor" + PLAYER_APPEND_NO_SPACE(p);
 			m_sprCursor[p].Load( THEME->GetPathG(m_sName,sElement) );
-			sElement.Replace( " ", "" );
+			ReplaceAll(sElement, " ", "");
 			m_sprCursor[p]->SetName( sElement );
 			this->AddChild( m_sprCursor[p] );
 			LOAD_ALL_COMMANDS( m_sprCursor[p] );

@@ -97,7 +97,7 @@ static bool ConvertFromCP( RString &sText, int iCodePage )
 	if( encoding == kCFStringEncodingInvalidId )
 		return false;
 
-	CFStringRef old = CFStringCreateWithCString( kCFAllocatorDefault, sText, encoding );
+	CFStringRef old = CFStringCreateWithCString( kCFAllocatorDefault, sText.c_str(), encoding );
 
 	if( old == NULL )
 		return false;

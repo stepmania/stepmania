@@ -994,7 +994,7 @@ bool Course::Matches( RString sGroup, RString sCourse ) const
 	RString sFile = m_sPath;
 	if( !sFile.empty() )
 	{
-		sFile.Replace("\\","/");
+		std::replace(sFile.begin(), sFile.end(), '\\', '/');
 		vector<RString> bits;
 		split( sFile, "/", bits );
 		const RString &sLastBit = bits[bits.size()-1];

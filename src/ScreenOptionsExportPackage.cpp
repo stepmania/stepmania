@@ -185,13 +185,19 @@ void ScreenOptionsExportPackageSubPage::BeginScreen()
 static RString ReplaceInvalidFileNameChars( RString sOldFileName )
 {
 	RString sNewFileName = sOldFileName;
-	const char charsToReplace[] = {
+	std::array<char, 26> charsToReplace = {
+		{
 		' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
 		'+', '=', '[', ']', '{', '}', '|', ':', '\"', '\\',
 		'<', '>', ',', '?', '/'
+		}
 	};
-	for( unsigned i=0; i<sizeof(charsToReplace); i++ )
-		sNewFileName.Replace( charsToReplace[i], '_' );
+	
+	for (auto const &ch: charsToReplace)
+	{
+		std::replace(sNewFileName.begin(), sNewFileName.end(), ch, '_');
+	}
+	
 	return sNewFileName;
 }
 

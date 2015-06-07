@@ -193,7 +193,7 @@ static RString GetDirOfExecutable( RString argv0 )
 	sPath = argv0;
 #endif
 
-	sPath.Replace( "\\", "/" );
+	std::transform(sPath.begin(), sPath.end(), '\\', '/');
 
 	bool bIsAbsolutePath = false;
 	if( sPath.size() == 0 || sPath[0] == '/' )

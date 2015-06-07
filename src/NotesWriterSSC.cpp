@@ -43,18 +43,32 @@ struct TimingTagWriter {
 
 	TimingTagWriter( vector<RString> *pvsLines ): m_pvsLines (pvsLines) { }
 
-	void Write( const int row, const char *value )
+	void Write( const int row, std::string const &value )
 	{
-		m_pvsLines->push_back( m_sNext + ssprintf( "%.6f=%s", NoteRowToBeat(row), value ) );
+		m_pvsLines->push_back( m_sNext + fmt::sprintf( "%.6f=%s", NoteRowToBeat(row), value ) );
 		m_sNext = ",";
 	}
 
-	void Write( const int row, const float value )        { Write( row, ssprintf( "%.6f",  value ) ); }
-	void Write( const int row, const int value )          { Write( row, ssprintf( "%d",    value ) ); }
-	void Write( const int row, const int a, const int b ) { Write( row, ssprintf( "%d=%d", a, b ) );  }
-	void Write( const int row, const float a, const float b ) { Write( row, ssprintf( "%.6f=%.6f", a, b) ); }
+	void Write( const int row, const float value )
+	{
+		Write( row, fmt::sprintf( "%.6f", value ) );
+	}
+	void Write( const int row, const int value )
+	{
+		Write( row, fmt::sprintf( "%d", value ) );
+	}
+	void Write( const int row, const int a, const int b )
+	{
+		Write( row, fmt::sprintf( "%d=%d", a, b ) );
+	}
+	void Write( const int row, const float a, const float b )
+	{
+		Write( row, fmt::sprintf( "%.6f=%.6f", a, b) );
+	}
 	void Write( const int row, const float a, const float b, const unsigned short c )
-		{ Write( row, ssprintf( "%.6f=%.6f=%hd", a, b, c) ); }
+	{
+		Write( row, fmt::sprintf( "%.6f=%.6f=%hd", a, b, c) );
+	}
 
 	void Init( const RString sTag ) { m_sNext = "#" + sTag + ":"; }
 	void Finish( ) { m_pvsLines->push_back( ( m_sNext != "," ? m_sNext : "" ) + ";" ); }

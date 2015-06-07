@@ -1522,7 +1522,7 @@ bool Regex::Replace( const RString &sReplacement, const RString &sSubject, RStri
 	{
 		RString sFrom = ssprintf( "\\${%d}", i );
 		RString sTo = asMatches[i];
-		sOut.Replace(sFrom, sTo);
+		ReplaceAll(sOut, sFrom, sTo);
 	}
 
 	return true;
@@ -1839,6 +1839,14 @@ std::string MakeLower( std::string const &str)
 	auto *cstr = const_cast<char *>(str.c_str());
 	MakeLower(cstr, str.size());
 	return std::string(cstr);
+}
+
+void ReplaceAll(std::string &str, std::string const & from, std::string const & to) {
+	size_t start_pos = 0;
+	while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+		str.replace(start_pos, from.length(), to);
+		start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+	}
 }
 
 char GetAsciiUpper(char const &ch)

@@ -3,6 +3,7 @@
 
 #include <set>
 #include <map>
+#include "RageUtil.h"
 #include "RageTimer.h"
 #include "RageThreads.h"
 #include "RageFileManager.h"

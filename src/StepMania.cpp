@@ -1235,9 +1235,9 @@ RString StepMania::SaveScreenshot( RString Dir, bool SaveCompressed, bool MakeSi
 	 * As before, we ignore the extension. -aj */
 	RString FileNameNoExtension = NamePrefix + DateTime::GetNowDateTime().GetString() + NameSuffix;
 	// replace space with underscore.
-	FileNameNoExtension.Replace(" ","_");
+	ReplaceAll(FileNameNoExtension, " ", "_");
 	// colons are illegal in filenames.
-	FileNameNoExtension.Replace(":","");
+	ReplaceAll(FileNameNoExtension, ":", "");
 
 	// Save the screenshot. If writing lossy to a memcard, use
 	// SAVE_LOSSY_LOW_QUAL, so we don't eat up lots of space.

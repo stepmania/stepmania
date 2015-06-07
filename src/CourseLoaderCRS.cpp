@@ -245,7 +245,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			{
 				//new_entry.bSecret = true;
 				RString sSong = sParams[1];
-				sSong.Replace( "\\", "/" );
+				std::replace(sSong.begin(), sSong.end(), '\\', '/');
 				vector<RString> bits;
 				split( sSong, "/", bits );
 				if( bits.size() == 2 )
@@ -269,7 +269,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			else
 			{
 				RString sSong = sParams[1];
-				sSong.Replace( "\\", "/" );
+				std::replace(sSong.begin(), sSong.end(), '\\', '/');
 				vector<RString> bits;
 				split( sSong, "/", bits );
 

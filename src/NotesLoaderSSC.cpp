@@ -1202,7 +1202,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 
 				RString sSongFullTitle = sParams[1];
 				this->SetSongTitle(sParams[1]);
-				sSongFullTitle.Replace('\\', '/');
+				ReplaceAll(sSongFullTitle, "\\", "/");
 				pSong = SONGMAN->FindSong(sSongFullTitle);
 				reused_steps_info.song= pSong;
 				if(pSong == NULL)

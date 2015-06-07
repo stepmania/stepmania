@@ -263,7 +263,7 @@ RageSurfaceUtils::OpenResult RageSurface_Load_PNG( const RString &sPath, RageSur
 	}
 
 	char errorbuf[1024];
-	ret = RageSurface_Load_PNG( &f, sPath, errorbuf, bHeaderOnly );
+	ret = RageSurface_Load_PNG( &f, sPath.c_str(), errorbuf, bHeaderOnly );
 	if( ret == NULL )
 	{
 		error = errorbuf;

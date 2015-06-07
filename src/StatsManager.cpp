@@ -273,7 +273,7 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 		}
 
 		RString sDate = DateTime::GetNowDate().GetString();
-		sDate.Replace(":","-");
+		std::replace(sDate.begin(), sDate.end(), ':', '-');
 
 		const RString UPLOAD_DIR = "/Save/Upload/";
 		RString sFileNameNoExtension = Profile::MakeUniqueFileNameNoExtension(UPLOAD_DIR, sDate + " " );

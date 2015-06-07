@@ -3753,8 +3753,8 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		if ( !GetAppropriateTiming().DoesLabelExist(sLabel) )
 		{
 			// XXX: these should be in the NotesWriters where they're needed.
-			sLabel.Replace("=", "_");
-			sLabel.Replace(",", "_");
+			std::replace(sLabel.begin(), sLabel.end(), '=', '_');
+			std::replace(sLabel.begin(), sLabel.end(), ',', '_');
 			GetAppropriateTimingForUpdate().AddSegment( LabelSegment(GetRow(), sLabel) );
 			SetDirty( true );
 		}
@@ -6374,7 +6374,7 @@ static bool IsMapped( EditButton eb, const MapEditToDI &editmap )
 
 static void ProcessKeyName( RString &s )
 {
-	s.Replace( "Key_", "" );
+	ReplaceAll(s, "Key_", "");
 }
 
 static void ProcessKeyNames( vector<RString> &vs, bool doSort )

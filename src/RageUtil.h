@@ -396,6 +396,10 @@ void MakeLower( wchar_t *p, size_t iLen );
 std::string MakeUpper( std::string const &str );
 std::string MakeLower( std::string const &str );
 
+// Borrowed from http://stackoverflow.com/a/24315631/445373
+// Allow string replacing strings within strings.
+void ReplaceAll( std::string &str, std::string const &from, std::string const &to );
+
 char GetAsciiUpper(char const &ch);
 char GetAsciiLower(char const &ch);
 
