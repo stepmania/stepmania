@@ -424,12 +424,9 @@ RString ssprintf( const char *fmt, ...)
 	return vssprintf(fmt, va);
 }
 
-#define FMT_BLOCK_SIZE		2048 // # of bytes to increment per try
-
-RString vssprintf( const char *szFormat, va_list argList )
+RString vssprintf_win( char const *szFormat, va_list argList )
 {
 	RString sStr;
-
 #if defined(WIN32)
 	char *pBuf = NULL;
 	int iChars = 1;
@@ -447,7 +444,16 @@ RString vssprintf( const char *szFormat, va_list argList )
 
 	// assign whatever we managed to format
 	sStr.assign( pBuf, iUsed );
-#else
+#endif
+	return sStr;
+}
+
+#define FMT_BLOCK_SIZE		2048 // # of bytes to increment per try
+
+RString vssprintf_unx( char const *szFormat, va_list argList )
+{
+	RString sStr;
+#if !defined(WIN32)
 	static bool bExactSizeSupported;
 	static bool bInitialized = false;
 	if( !bInitialized )
@@ -496,6 +502,15 @@ RString vssprintf( const char *szFormat, va_list argList )
 	}
 #endif
 	return sStr;
+}
+
+RString vssprintf( const char *szFormat, va_list argList )
+{
+#if defined(WIN32)
+	return vssprintf_win(szFormat, argList);
+#else
+	return vssprintf_unx(szFormat, argList);
+#endif
 }
 
 /* ISO-639-1 codes: http://www.loc.gov/standards/iso639-2/php/code_list.php
