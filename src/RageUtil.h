@@ -683,6 +683,24 @@ struct char_traits_char_nocase: public std::char_traits<char>
 };
 typedef std::basic_string<char,char_traits_char_nocase> istring;
 
+struct ci_std_string_lt: std::binary_function<std::string, std::string, bool>
+{
+	inline bool operator()(std::string const &a, std::string const &b) const
+	{
+		istring x(a.c_str());
+		return x < b.c_str();
+	}
+};
+
+struct ci_std_string_eq: std::binary_function<std::string, std::string, bool>
+{
+	inline bool operator()(std::string const &a, std::string const &b) const
+	{
+		istring x(a.c_str());
+		return x < b.c_str();
+	}
+};
+
 /* Compatibility/convenience shortcuts. These are actually defined in RageFileManager.h, but
  * declared here since they're used in many places. */
 void GetDirListing( const RString &sPath, std::vector<RString> &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );

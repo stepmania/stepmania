@@ -65,7 +65,7 @@ void ModIcon::Set( const RString &_sText )
 	}
 	else
 	{
-		std::transform(sText.begin(), sText.end(), ' ', '\n');
+		ReplaceAll(sText, " ", "\n");
 	}
 	m_sprFilled->SetVisible( !bVacant );
 	m_sprEmpty->SetVisible( bVacant );
