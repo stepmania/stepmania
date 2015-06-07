@@ -2179,11 +2179,11 @@ RString Capitalize( const RString &s )
 		return RString();
 
 	RString s2 = s;
-	char *pBuf = s2.GetBuffer();
-	UnicodeDoUpper( pBuf, s2.size(), g_UpperCase );
-	s2.ReleaseBuffer();
-
-	return s2;
+	auto *t = const_cast<char *>(s2.c_str());
+	UnicodeDoUpper( t, s2.size(), g_UpperCase );
+	RString ret(t);
+	delete t;
+	return ret;
 }
 
 unsigned char g_UpperCase[256] =
