@@ -273,7 +273,7 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn, bool bLoadEdits
 	/* If we imported a profile fallback directory, change the memory card
 	 * directory back to the preferred directory: never write over imported
 	 * scores. */
-	m_sProfileDir[pn] = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
+	m_sProfileDir[pn] = MEM_CARD_MOUNT_POINT[pn] + PREFSMAN->m_sMemoryCardProfileSubdir.Get() + "/";
 
 	/* Load edits from all fallback directories, newest first. */
 	if( bLoadEdits )
@@ -648,7 +648,7 @@ void ProfileManager::SaveMachineProfile() const
 	// If the machine name has changed, make sure we use the new name.
 	// It's important that this name be applied before the Player profiles
 	// are saved, so that the Player's profiles show the right machine name.
-	const_cast<ProfileManager *> (this)->m_pMachineProfile->m_sDisplayName = PREFSMAN->m_sMachineName;
+	const_cast<ProfileManager *> (this)->m_pMachineProfile->m_sDisplayName = PREFSMAN->m_sMachineName.Get();
 
 	m_pMachineProfile->SaveAllToDir( MACHINE_PROFILE_DIR, false ); /* don't sign machine profiles */
 }
@@ -663,7 +663,7 @@ void ProfileManager::LoadMachineProfile()
 	}
 
 	// If the machine name has changed, make sure we use the new name
-	m_pMachineProfile->m_sDisplayName = PREFSMAN->m_sMachineName;
+	m_pMachineProfile->m_sDisplayName = PREFSMAN->m_sMachineName.Get();
 
 	LoadMachineProfileEdits();
 }

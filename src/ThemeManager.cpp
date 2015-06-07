@@ -396,7 +396,7 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	// select. This requires a preference, which allows it to be adapted for
 	// other purposes (e.g. PARASTAR).
 	if( !IsThemeSelectable(sThemeName) )
-		sThemeName = PREFSMAN->m_sDefaultTheme;
+		sThemeName = PREFSMAN->m_sDefaultTheme.Get();
 #endif
 
 	ASSERT( IsThemeSelectable(sThemeName) );

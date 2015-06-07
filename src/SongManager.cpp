@@ -183,8 +183,7 @@ void SongManager::SanityCheckGroupDir( RString sDir ) const
 		{
 			if(ext == aud)
 			{
-				RageException::Throw(
-					FOLDER_CONTAINS_MUSIC_FILES.GetValue(), sDir.c_str());
+				RageException::Throw( FOLDER_CONTAINS_MUSIC_FILES.GetValue().c_str(), sDir.c_str());
 			}
 		}
 	}

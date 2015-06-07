@@ -845,7 +845,9 @@ void PacketFunctions::ClearPacket()
 
 RString NetworkSyncManager::MD5Hex( const RString &sInput )
 {
-	return BinaryToHex( CryptManager::GetMD5ForString(sInput) ).MakeUpper();
+	auto hex = BinaryToHex( CryptManager::GetMD5ForString(sInput));
+	std::transform(hex.begin(), hex.end(), hex.begin(), GetAsciiUpper);
+	return hex;
 }
 
 void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers )
@@ -985,7 +987,7 @@ static bool ConnectToServer( const RString &t )
 
 extern Preference<RString> g_sLastServer;
 
-LuaFunction( ConnectToServer, 		ConnectToServer( ( RString(SArg(1)).length()==0 ) ? RString(g_sLastServer) : RString(SArg(1) ) ) )
+LuaFunction( ConnectToServer, ConnectToServer( ( RString(SArg(1)).length()==0 ) ? g_sLastServer.Get() : RString(SArg(1) ) ) )
 
 #endif
 

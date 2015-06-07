@@ -47,7 +47,7 @@ static void Nsis()
 		const LanguageInfo *pLI = GetLanguageInfo(sLangCode);
 
 		RString sLangNameUpper = pLI->szEnglishName;
-		sLangNameUpper.MakeUpper();
+		std::transform(sLangNameUpper.begin(), sLangNameUpper.end(), sLangNameUpper.begin(), GetAsciiUpper);
 
 		IniFile ini;
 		if(!ini.ReadFile(INSTALLER_LANGUAGES_DIR + s))

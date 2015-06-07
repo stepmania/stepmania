@@ -3446,7 +3446,7 @@ const StepsTypeInfo &GameManager::GetStepsTypeInfo( StepsType st )
 
 StepsType GameManager::StringToStepsType( RString sStepsType )
 {
-	sStepsType.MakeLower();
+	std::transform(sStepsType.begin(), sStepsType.end(), sStepsType.begin(), GetAsciiLower);
 
 	for( int i=0; i<NUM_StepsType; i++ )
 		if( g_StepsTypeInfos[i].szName == sStepsType )

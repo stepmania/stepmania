@@ -2,6 +2,7 @@
 #include "FontCharmaps.h"
 
 #include <map>
+#include "RageUtil.h"
 
 const wchar_t FontCharmaps::M_SKIP = 0xFEFF;
 
@@ -221,8 +222,7 @@ static void Init()
 const wchar_t *FontCharmaps::get_char_map(RString name)
 {
 	Init();
-
-	name.MakeLower();
+	std::transform(name.begin(), name.end(), name.begin(), GetAsciiLower);
 
 	auto i = charmaps.find(name);
 	if(i == charmaps.end())

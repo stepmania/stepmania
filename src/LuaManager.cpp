@@ -942,7 +942,9 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 		{
 			RString sCmdName = cmd.GetName();
 			if( bLegacy )
-				sCmdName.MakeLower();
+			{
+				std::transform(sCmdName.begin(), sCmdName.end(), sCmdName.begin(), GetAsciiLower);
+			}
 			s << "\tself:" << sCmdName << "(";
 
 			bool bFirstParamIsString = bLegacy && (

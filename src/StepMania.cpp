@@ -783,7 +783,7 @@ RageDisplay *CreateDisplay()
 		}
 		else
 		{
-			RageException::Throw( ERROR_UNKNOWN_VIDEO_RENDERER.GetValue(), sRenderer.c_str() );
+			RageException::Throw( ERROR_UNKNOWN_VIDEO_RENDERER.GetValue().c_str(), sRenderer.c_str() );
 		}
 
 		if( pRet == NULL )

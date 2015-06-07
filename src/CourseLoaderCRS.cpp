@@ -89,7 +89,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 		else if( sValueName == "REPEAT" )
 		{
 			RString str = sParams[1];
-			str.MakeLower();
+			std::transform(str.begin(), str.end(), str.begin(), GetAsciiLower);
 			if( str.find("yes") != string::npos )
 				out.m_bRepeat = true;
 		}

@@ -600,7 +600,7 @@ void ActorUtil::AddTypeExtensionsToList(FileType ft, vector<RString>& add_to)
 FileType ActorUtil::GetFileType( const RString &sPath )
 {
 	RString sExt = GetExtension( sPath );
-	sExt.MakeLower();
+	std::transform(sExt.begin(), sExt.end(), sExt.begin(), GetAsciiLower);
 
 	etft_cont_t::iterator conversion_entry= ExtensionToFileType.find(sExt);
 	if(conversion_entry != ExtensionToFileType.end())

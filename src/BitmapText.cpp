@@ -455,8 +455,9 @@ void BitmapText::SetText( const RString& _sText, const RString& _sAlternateText,
 	RString sNewText = StringWillUseAlternate(_sText,_sAlternateText) ? _sAlternateText : _sText;
 
 	if( m_bUppercase )
-		sNewText.MakeUpper();
-
+	{
+		std::transform(sNewText.begin(), sNewText.end(), sNewText.begin(), GetAsciiUpper);
+	}
 	if( iWrapWidthPixels == -1 )	// wrap not specified
 		iWrapWidthPixels = m_iWrapWidthPixels;
 

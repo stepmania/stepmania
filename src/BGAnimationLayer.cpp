@@ -75,7 +75,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 	/* Generic BGAs are new.  Animation directories with no INI are old and obsolete.
 	 * Don't combine them. */
 	RString lcPath = sPath;
-	lcPath.MakeLower();
+	std::transform(lcPath.begin(), lcPath.end(), lcPath.begin(), GetAsciiLower);
 
 	if( lcPath.find("usesongbg") != RString::npos )
 	{
@@ -349,7 +349,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 
 
 	RString sHint = sPath;
-	sHint.MakeLower();
+	std::transform(sHint.begin(), sHint.end(), sHint.begin(), GetAsciiLower);
 
 	if( sHint.find("cyclecolor") != RString::npos )
 		for( unsigned i=0; i<m_SubActors.size(); i++ )

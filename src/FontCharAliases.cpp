@@ -364,7 +364,7 @@ static void InitCharAliases()
 	{
 		RString from = i->first;
 		RString to = WcharToUTF8(i->second);
-		from.MakeLower();
+		std::transform(from.begin(), from.end(), from.begin(), GetAsciiLower);
 		CharAliasRepl[from] = to;
 	}
 }
