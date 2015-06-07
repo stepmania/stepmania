@@ -474,31 +474,28 @@ RString vssprintf_unx( char const *szFormat, va_list argList )
 		int iNeeded = vsnprintf( &ignore, 0, szFormat, tmp );
 		va_end(tmp);
 
-		char *buf = sStr.GetBuffer( iNeeded+1 );
-		vsnprintf( buf, iNeeded+1, szFormat, argList );
-		sStr.ReleaseBuffer( iNeeded );
-		return sStr;
+		char buffer[8192];
+		vsnprintf( buffer, iNeeded+1, szFormat, argList );
+		return string(buffer);
 	}
 
 	int iChars = FMT_BLOCK_SIZE;
 	int iTry = 1;
-	while( 1 )
+	for(;;)
 	{
 		// Grow more than linearly (e.g. 512, 1536, 3072, etc)
-		char *buf = sStr.GetBuffer(iChars);
-		int iUsed = vsnprintf(buf, iChars-1, szFormat, argList);
+		char buffer[iChars];
+		int iUsed = vsnprintf(buffer, iChars-1, szFormat, argList);
 
 		if( iUsed == -1 )
 		{
 			iChars += ((iTry+1) * FMT_BLOCK_SIZE);
-			sStr.ReleaseBuffer();
 			++iTry;
 			continue;
 		}
 
 		/* OK */
-		sStr.ReleaseBuffer(iUsed);
-		break;
+		return string(buffer);
 	}
 #endif
 	return sStr;
