@@ -354,9 +354,17 @@ void StepMania::ResetGame()
 ThemeMetric<RString>	INITIAL_SCREEN	("Common","InitialScreen");
 RString StepMania::GetInitialScreen()
 {
-	if( PREFSMAN->m_sTestInitialScreen.Get() != "" )
+	if(PREFSMAN->m_sTestInitialScreen.Get() != "" &&
+		SCREENMAN->IsScreenNameValid(PREFSMAN->m_sTestInitialScreen))
+	{
 		return PREFSMAN->m_sTestInitialScreen;
-	return INITIAL_SCREEN.GetValue();
+	}
+	RString screen_name= INITIAL_SCREEN.GetValue();
+	if(!SCREENMAN->IsScreenNameValid(screen_name))
+	{
+		screen_name= "ScreenInitialScreenIsInvalid";
+	}
+	return screen_name;
 }
 ThemeMetric<RString>	SELECT_MUSIC_SCREEN	("Common","SelectMusicScreen");
 RString StepMania::GetSelectMusicScreen()
