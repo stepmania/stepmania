@@ -295,20 +295,23 @@ void ScreenOptions::RestartOptions()
 	}
 
 
-	CHECKPOINT;
+	CHECKPOINT_M("About to get the rows positioned right.");
 
 	PositionRows( false );
 	FOREACH_HumanPlayer( pn )
 	{
 		for( unsigned r=0; r<m_pRows.size(); ++r )
+		{
 			this->RefreshIcons( r, pn );
+		}
 		PositionCursor( pn );
 	}
 
 	FOREACH_PlayerNumber( p )
+	{
 		AfterChangeRow( p );
-
-	CHECKPOINT;
+	}
+	CHECKPOINT_M("Rows positioned.");
 }
 
 void ScreenOptions::BeginScreen()

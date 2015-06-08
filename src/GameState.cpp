@@ -1992,15 +1992,16 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 
 	// Check for feats even if the PlayMode is rave or battle because the player
 	// may have made high scores then switched modes.
-	CHECKPOINT_M( ssprintf("PlayMode %i", int(m_PlayMode)) );
-	switch( m_PlayMode )
+	PlayMode mode = m_PlayMode.Get();
+	char const *modeStr = PlayModeToString(mode).c_str();
+	
+	CHECKPOINT_M( ssprintf("Getting the feats for %s", modeStr));
+	switch( mode )
 	{
 	case PLAY_MODE_REGULAR:
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
 		{
-			CHECKPOINT;
-
 			StepsType st = GetCurrentStyle(pn)->m_StepsType;
 
 			// Find unique Song and Steps combinations that were played.
@@ -2021,14 +2022,14 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 				ASSERT( sas.pSteps != NULL );
 				vSongAndSteps.push_back( sas );
 			}
-			CHECKPOINT;
+			CHECKPOINT_M( ssprintf("All songs/steps from %s gathered", modeStr));
 
 			sort( vSongAndSteps.begin(), vSongAndSteps.end() );
 
 			vector<SongAndSteps>::iterator toDelete = unique( vSongAndSteps.begin(), vSongAndSteps.end() );
 			vSongAndSteps.erase(toDelete, vSongAndSteps.end());
 
-			CHECKPOINT;
+			CHECKPOINT_M( "About to find records from the gathered.");
 			for( unsigned i=0; i<vSongAndSteps.size(); i++ )
 			{
 				Song* pSong = vSongAndSteps[i].pSong;
@@ -2094,7 +2095,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 				}
 			}
 
-			CHECKPOINT;
+			CHECKPOINT_M("Getting the final evaluation stage stats.");
 			StageStats stats;
 			STATSMAN->GetFinalEvalStageStats( stats );
 
@@ -2154,7 +2155,6 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		{
-			CHECKPOINT;
 			Course* pCourse = m_pCurCourse;
 			ASSERT( pCourse != NULL );
 			Trail *pTrail = m_pCurTrail[pn];

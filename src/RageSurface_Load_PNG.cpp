@@ -19,7 +19,7 @@ namespace
 {
 void RageFile_png_read( png_struct *png, png_byte *p, png_size_t size )
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Reading the png file.");
 	RageFile *f = (RageFile *) png_get_io_ptr(png);
 
 	int got = f->Read( p, size );
@@ -45,7 +45,7 @@ struct error_info
 
 void PNG_Error( png_struct *png, const char *error )
 {
-	CHECKPOINT;
+	CHECKPOINT_M(ssprintf("PNG error during processing: %s", error));
 	error_info *info = (error_info *) png_get_error_ptr(png);
 	strncpy( info->err, error, 1024 );
 	info->err[1023] = 0;
@@ -56,7 +56,7 @@ void PNG_Error( png_struct *png, const char *error )
 void PNG_Warning( png_struct *png, const char *warning )
 {
 	// FIXME: Mismatched libpng headers vs. library causes a segfault here on MinGW
-	CHECKPOINT;
+	CHECKPOINT_M(ssprintf("PNG warning during processing: %s", warning));
 	error_info *info = (error_info *) png_get_io_ptr(png);
 	LOG->Trace( "loading \"%s\": warning: %s", info->fn, warning );
 }
@@ -86,14 +86,13 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	}
 
 	RageSurface *volatile img = NULL;
-	CHECKPOINT;
+	CHECKPOINT_M("Potential issue with png jump about to be analyzed.");
 	if( setjmp(png_jmpbuf(png) ))
 	{
 		png_destroy_read_struct( &png, &info_ptr, NULL );
 		delete img;
 		return NULL;
 	}
-	CHECKPOINT;
 
 	png_set_read_fn( png, f, RageFile_png_read );
 
@@ -107,15 +106,13 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	 * the image.  Just return an empty surface with only the width and height set. */
 	if( bHeaderOnly )
 	{
-		CHECKPOINT;
+		CHECKPOINT_M("Header only png about to be processed.");
 		img = CreateSurfaceFrom( width, height, 32, 0, 0, 0, 0, NULL, width*4 );
 		png_destroy_read_struct( &png, &info_ptr, NULL );
 
 		return img;
 	}
 
-
-	CHECKPOINT;
 	png_set_strip_16(png); /* 16bit->8bit */
 	png_set_packing( png ); /* 1,2,4 bit->8 bit */
 
@@ -161,7 +158,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		FAIL_M(ssprintf( "%i", color_type) );
 	}
 
-	CHECKPOINT;
+	CHECKPOINT_M("PNG color analysis about to begin.");
 	if( color_type == PNG_COLOR_TYPE_GRAY )
 	{
 		png_color_16 *trans;
@@ -205,7 +202,6 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 	png_set_interlace_handling( png );
 
-	CHECKPOINT;
 	png_read_update_info( png, info_ptr );
 
 	switch( type )
@@ -241,10 +237,8 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		row_pointers[y] = p + img->pitch*y;
 	}
 
-	CHECKPOINT;
 	png_read_image( png, row_pointers );
 
-	CHECKPOINT;
 	png_read_end( png, info_ptr );
 	png_destroy_read_struct( &png, &info_ptr, NULL );
 
