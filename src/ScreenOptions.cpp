@@ -298,7 +298,7 @@ void ScreenOptions::RestartOptions()
 	}
 
 
-	CHECKPOINT;
+	CHECKPOINT_M("Finalizing the resetting.");
 
 	PositionRows( false );
 	FOREACH_HumanPlayer( pn )
@@ -312,7 +312,7 @@ void ScreenOptions::RestartOptions()
 	{
 		AfterChangeRow( p );
 	}
-	CHECKPOINT;
+	CHECKPOINT_M("Resetting done.");
 }
 
 void ScreenOptions::BeginScreen()

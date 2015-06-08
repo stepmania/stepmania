@@ -113,7 +113,7 @@ void StatsManager::CalcAccumPlayedStageStats()
 void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNumber pn )
 {
 	ss.AssertValid( pn );
-	CHECKPOINT;
+	CHECKPOINT_M("About to add player stats.");
 
 	StyleID sID;
 	sID.FromStyle( ss.m_player[pn].m_pStyle );
@@ -215,12 +215,12 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 	pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
 	pMachineProfile->m_iNumTotalSongsPlayed += pSS->m_vpPlayedSongs.size();
 
-	CHECKPOINT;
+	CHECKPOINT_M("Multiplayer check.");
 	if( !GAMESTATE->m_bMultiplayer )	// FIXME
 	{
 		FOREACH_HumanPlayer( pn )
 		{
-			CHECKPOINT;
+			CHECKPOINT_M("Analyzing a player now.");
 
 			Profile* pPlayerProfile = PROFILEMAN->GetProfile( pn );
 			if( pPlayerProfile )
@@ -238,7 +238,7 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 				AddPlayerStatsToProfile( pPlayerProfile, *pSS, pn );
 			}
 
-			CHECKPOINT;
+			CHECKPOINT_M("Done analyzing a player.");
 		}
 	}
 

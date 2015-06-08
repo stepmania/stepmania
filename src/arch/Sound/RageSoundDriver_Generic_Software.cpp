@@ -198,7 +198,7 @@ void RageSoundDriver::DecodeThread()
 			if( s.m_State != Sound::PLAYING )
 				continue;
 
-			CHECKPOINT;
+			CHECKPOINT_M("About to set a sound to stop playing fully.");
 			while( s.m_Buffer.num_writable() )
 			{
 				int iWrote = GetDataForSound( s );

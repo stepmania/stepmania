@@ -208,9 +208,9 @@ int MovieDecoder_FFMpeg::ReadPacket()
 	if( m_iEOF > 0 )
 		return 0;
 
-	while( 1 )
+	for(;;)
 	{
-		CHECKPOINT;
+		CHECKPOINT_M("Analyzing the ffmpeg packets.");
 		if( m_iCurrentPacketOffset != -1 )
 		{
 			m_iCurrentPacketOffset = -1;
@@ -261,7 +261,7 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 			(m_pStream->codec->frame_number % 2) == 0;
 
 		int iGotFrame;
-		CHECKPOINT;
+		CHECKPOINT_M("About to unleash the ffmpeg hack.");
 		/* Hack: we need to send size = 0 to flush frames at the end, but we have
 		 * to give it a buffer to read from since it tries to read anyway. */
 		m_Packet.data = m_Packet.size ? m_Packet.data : NULL;
@@ -269,7 +269,7 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 				m_pStream->codec, 
 				&m_Frame, &iGotFrame,
 				&m_Packet );
-		CHECKPOINT;
+		CHECKPOINT_M("Done with ffmpeg hack.");
 
 		if( len < 0 )
 		{

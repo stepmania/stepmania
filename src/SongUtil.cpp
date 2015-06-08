@@ -267,9 +267,9 @@ void SongUtil::AdjustDuplicateSteps( Song *pSong )
 			 * bug in an earlier version. */
 			DeleteDuplicateSteps( pSong, vSteps );
 
-			CHECKPOINT;
+			CHECKPOINT_M("Before sorting the notes.");
 			StepsUtil::SortNotesArrayByDifficulty( vSteps );
-			CHECKPOINT;
+			CHECKPOINT_M("After sorting the notes.");
 			for( unsigned k=1; k<vSteps.size(); k++ )
 			{
 				vSteps[k]->SetDifficulty( Difficulty_Edit );
@@ -304,15 +304,15 @@ void SongUtil::DeleteDuplicateSteps( Song *pSong, vector<Steps*> &vSteps )
 {
 	/* vSteps have the same StepsType and Difficulty.  Delete them if they have the
 	 * same m_sDescription, m_sCredit, m_iMeter and SMNoteData. */
-	CHECKPOINT;
+	CHECKPOINT_M("Before the steps loop.");
 	for( unsigned i=0; i<vSteps.size(); i++ )
 	{
-		CHECKPOINT;
+		CHECKPOINT_M("Inside the steps loop.");
 		const Steps *s1 = vSteps[i];
 
 		for( unsigned j=i+1; j<vSteps.size(); j++ )
 		{
-			CHECKPOINT;
+			CHECKPOINT_M("Analyzing another step for duplication.");
 			const Steps *s2 = vSteps[j];
 
 			if( s1->GetDescription() != s2->GetDescription() )

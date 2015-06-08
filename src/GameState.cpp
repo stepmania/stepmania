@@ -2011,7 +2011,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
 		{
-			CHECKPOINT;
+			CHECKPOINT_M("Getting the proper combination.");
 
 			StepsType st = GetCurrentStyle(pn)->m_StepsType;
 
@@ -2033,14 +2033,14 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 				ASSERT( sas.pSteps != NULL );
 				vSongAndSteps.push_back( sas );
 			}
-			CHECKPOINT;
+			CHECKPOINT_M("About to sort the findings.");
 
 			sort( vSongAndSteps.begin(), vSongAndSteps.end() );
 
 			vector<SongAndSteps>::iterator toDelete = unique( vSongAndSteps.begin(), vSongAndSteps.end() );
 			vSongAndSteps.erase(toDelete, vSongAndSteps.end());
 
-			CHECKPOINT;
+			CHECKPOINT_M("Finding the records.");
 			for( unsigned i=0; i<vSongAndSteps.size(); i++ )
 			{
 				Song* pSong = vSongAndSteps[i].pSong;
@@ -2106,7 +2106,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 				}
 			}
 
-			CHECKPOINT;
+			CHECKPOINT_M("About to get the final stats.");
 			StageStats stats;
 			STATSMAN->GetFinalEvalStageStats( stats );
 
@@ -2166,7 +2166,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		{
-			CHECKPOINT;
+			CHECKPOINT_M("Course style records.");
 			Course* pCourse = m_pCurCourse;
 			ASSERT( pCourse != NULL );
 			Trail *pTrail = m_pCurTrail[pn];

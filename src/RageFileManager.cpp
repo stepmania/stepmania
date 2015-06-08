@@ -546,11 +546,11 @@ bool RageFileManager::Mount( const RString &sType, const RString &sRoot_, const 
 	// Unmount anything that was previously mounted here.
 	Unmount( sType, sRoot, sMountPoint );
 
-	CHECKPOINT;
+	CHECKPOINT_M("About to make a file driver.");
 	RageFileDriver *pDriver = MakeFileDriver( sType, sRoot );
 	if( pDriver == NULL )
 	{
-		CHECKPOINT;
+		CHECKPOINT_M("Could not find a file driver to make.");
 
 		if( LOG )
 			LOG->Warn("Can't mount unknown VFS type \"%s\", root \"%s\"", sType.c_str(), sRoot.c_str() );
@@ -559,7 +559,7 @@ bool RageFileManager::Mount( const RString &sType, const RString &sRoot_, const 
 		return false;
 	}
 
-	CHECKPOINT;
+	CHECKPOINT_M("We have a file driver.");
 
 	LoadedDriver *pLoadedDriver = new LoadedDriver;
 	pLoadedDriver->m_pDriver = pDriver;
