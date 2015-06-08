@@ -262,7 +262,7 @@ RageThreadRegister::RageThreadRegister( const RString &sName )
 
 	m_pSlot = &g_ThreadSlots[iSlot];
 
-	strcpy( m_pSlot->m_szName, sName );
+	strcpy( m_pSlot->m_szName, sName.c_str() );
 	sprintf( m_pSlot->m_szThreadFormattedOutput, "Thread: %s", sName.c_str() );
 
 	m_pSlot->m_iID = GetThisThreadId();
@@ -378,7 +378,7 @@ void Checkpoints::LogCheckpoints( bool on )
 	g_LogCheckpoints = on;
 }
 
-void Checkpoints::SetCheckpoint( const char *file, int line, const char *message )
+void Checkpoints::SetCheckpoint( const char *file, int line, std::string const &message )
 {
 	using std::max;
 	ThreadSlot *slot = GetCurThreadSlot();
@@ -392,7 +392,7 @@ void Checkpoints::SetCheckpoint( const char *file, int line, const char *message
 	const char *temp = strstr( file, "src/" );
 	if( temp )
 		file = temp + 4;
-	slot->m_Checkpoints[slot->m_iCurCheckpoint].Set( file, line, message );
+	slot->m_Checkpoints[slot->m_iCurCheckpoint].Set( file, line, message.c_str() );
 
 	if( g_LogCheckpoints )
 		LOG->Trace( "%s", slot->m_Checkpoints[slot->m_iCurCheckpoint].m_szFormattedBuf );

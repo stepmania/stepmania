@@ -58,7 +58,7 @@ void LuaManager::SetGlobal( const RString &sName, int val )
 {
 	Lua *L = Get();
 	LuaHelpers::Push( L, val );
-	lua_setglobal( L, sName );
+	lua_setglobal( L, sName.c_str() );
 	Release( L );
 }
 
@@ -66,7 +66,7 @@ void LuaManager::SetGlobal( const RString &sName, const RString &val )
 {
 	Lua *L = Get();
 	LuaHelpers::Push( L, val );
-	lua_setglobal( L, sName );
+	lua_setglobal( L, sName.c_str() );
 	Release( L );
 }
 
@@ -74,7 +74,7 @@ void LuaManager::UnsetGlobal( const RString &sName )
 {
 	Lua *L = Get();
 	lua_pushnil( L );
-	lua_setglobal( L, sName );
+	lua_setglobal( L, sName.c_str() );
 	Release( L );
 }
 
@@ -137,7 +137,7 @@ namespace
 
 		FOREACH_CONST_Attr( pNode, pAttr )
 		{
-			lua_pushstring( L, pAttr->first );			// push key
+			lua_pushstring( L, pAttr->first.c_str() );			// push key
 			pNode->PushAttrValue( L, pAttr->first );	// push value
 
 			//add key-value pair to our table
@@ -147,7 +147,7 @@ namespace
 		FOREACH_CONST_Child( pNode, c )
 		{
 			const XNode *pChild = c;
-			lua_pushstring( L, pChild->m_sName ); // push key
+			lua_pushstring( L, pChild->m_sName.c_str() ); // push key
 
 			// push value (more correctly, build this child's table and leave it there)
 			CreateTableFromXNodeRecursive( L, pChild );
@@ -801,7 +801,7 @@ bool LuaHelpers::RunScriptFile( const RString &sFile )
 bool LuaHelpers::LoadScript( Lua *L, const RString &sScript, const RString &sName, RString &sError )
 {
 	// load string
-	int ret = luaL_loadbuffer( L, sScript.data(), sScript.size(), sName );
+	int ret = luaL_loadbuffer( L, sScript.data(), sScript.size(), sName.c_str() );
 	if( ret )
 	{
 		LuaHelpers::Pop( L, sError );
@@ -942,7 +942,9 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 		{
 			RString sCmdName = cmd.GetName();
 			if( bLegacy )
-				sCmdName.MakeLower();
+			{
+				sCmdName = MakeLower(sCmdName);
+			}
 			s << "\tself:" << sCmdName << "(";
 
 			bool bFirstParamIsString = bLegacy && (
@@ -967,7 +969,7 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 
 				if( i==1 && bFirstParamIsString ) // string literal, legacy only
 				{
-					sArg.Replace( "'", "\\'" );	// escape quote
+					ReplaceAll(sArg, "'", "\\'"); // escape quote
 					s << "'" << sArg << "'";
 				}
 				else if( sArg[0] == '#' )	// HTML color
@@ -1002,7 +1004,7 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 
 /* Like luaL_typerror, but without the special case for argument 1 being "self"
  * in method calls, so we give a correct error message after we remove self. */
-int LuaHelpers::TypeError( Lua *L, int iArgNo, const char *szName )
+int LuaHelpers::TypeError( Lua *L, int iArgNo, std::string const &szName )
 {
 	RString sType;
 	luaL_pushtype( L, iArgNo );
@@ -1012,13 +1014,13 @@ int LuaHelpers::TypeError( Lua *L, int iArgNo, const char *szName )
 	if( !lua_getstack( L, 0, &debug ) )
 	{
 		return luaL_error( L, "invalid type (%s expected, got %s)",
-			szName, sType.c_str() );
+			szName.c_str(), sType.c_str() );
 	}
 	else
 	{
 		lua_getinfo( L, "n", &debug );
 		return luaL_error( L, "bad argument #%d to \"%s\" (%s expected, got %s)",
-			iArgNo, debug.name? debug.name:"(unknown)", szName, sType.c_str() );
+			iArgNo, debug.name? debug.name:"(unknown)", szName.c_str(), sType.c_str() );
 	}
 }
 

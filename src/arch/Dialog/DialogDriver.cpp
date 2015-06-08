@@ -26,7 +26,7 @@ DialogDriver *DialogDriver::Create()
 
 	for (auto const &Driver: asDriversToTry)
 	{
-		auto iter = RegisterDialogDriver::g_pRegistrees->find( istring(Driver) );
+		auto iter = RegisterDialogDriver::g_pRegistrees->find( istring(Driver.c_str()) );
 
 		if( iter == RegisterDialogDriver::g_pRegistrees->end() )
 			continue;

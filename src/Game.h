@@ -29,6 +29,7 @@ class Style;
 struct Game
 {
 	const char *		m_szName;
+	// TODO: Make this a proper collection of styles.
 	const Style * const*	m_apStyles;
 
 	/** @brief Do we count multiple notes in a row as separate notes, or as one note? */

@@ -138,9 +138,9 @@ void Actor::InitState()
 
 static bool GetMessageNameFromCommandName( const RString &sCommandName, RString &sMessageNameOut )
 {
-	if( sCommandName.Right(7) == "Message" )
+	if( EndsWith(sCommandName, "Message"))
 	{
-		sMessageNameOut = sCommandName.Left(sCommandName.size()-7);
+		sMessageNameOut = head(sCommandName, -7);
 		return true;
 	}
 	else
@@ -275,7 +275,7 @@ void Actor::LoadFromNode( const XNode* pNode )
 			LuaReference *pRef = new LuaReference;
 			pValue->PushValue( L );
 			pRef->SetFromStack( L );
-			RString sCmdName = sKeyName.Left( sKeyName.size()-7 );
+			RString sCmdName = head(sKeyName, -7);
 			AddCommand( sCmdName, apActorCommands( pRef ) );
 		}
 		else if( sKeyName == "Name" )			SetName( pValue->GetValue<RString>() );
@@ -773,10 +773,14 @@ void Actor::UpdateTweening( float fDeltaTime )
 			// access TI or TS after, since this may modify the tweening queue.
 			if( !sCommand.empty() )
 			{
-				if( sCommand.Left(1) == "!" )
+				if( BeginsWith(sCommand, "!"))
+				{
 					MESSAGEMAN->Broadcast( sCommand.substr(1) );
+				}
 				else
+				{
 					this->PlayCommand( sCommand );
+				}
 			}
 		}
 	}
@@ -1018,13 +1022,35 @@ void Actor::ScaleTo( const RectF &rect, StretchType st )
 
 void Actor::SetEffectClockString( const RString &s )
 {
-	if     (s.EqualsNoCase("timer"))	this->SetEffectClock( CLOCK_TIMER );
-	else if(s.EqualsNoCase("timerglobal"))	this->SetEffectClock( CLOCK_TIMER_GLOBAL );
-	else if(s.EqualsNoCase("beat"))		this->SetEffectClock( CLOCK_BGM_BEAT );
-	else if(s.EqualsNoCase("music"))	this->SetEffectClock( CLOCK_BGM_TIME );
-	else if(s.EqualsNoCase("bgm"))		this->SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
-	else if(s.EqualsNoCase("musicnooffset"))this->SetEffectClock( CLOCK_BGM_TIME_NO_OFFSET );
-	else if(s.EqualsNoCase("beatnooffset"))	this->SetEffectClock( CLOCK_BGM_BEAT_NO_OFFSET );
+	ci_string effect(s.c_str());
+	if(effect == "timer")
+	{
+		this->SetEffectClock( CLOCK_TIMER );
+	}
+	else if(effect == "timerglobal")
+	{
+		this->SetEffectClock( CLOCK_TIMER_GLOBAL );
+	}
+	else if(effect == "beat")
+	{
+		this->SetEffectClock( CLOCK_BGM_BEAT );
+	}
+	else if(effect == "music")
+	{
+		this->SetEffectClock( CLOCK_BGM_TIME );
+	}
+	else if(effect == "bgm")
+	{
+		this->SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
+	}
+	else if(effect == "musicnooffset")
+	{
+		this->SetEffectClock( CLOCK_BGM_TIME_NO_OFFSET );
+	}
+	else if(effect == "beatnooffset")
+	{
+		this->SetEffectClock( CLOCK_BGM_BEAT_NO_OFFSET );
+	}
 	else
 	{
 		CabinetLight cl = StringToCabinetLight( s );
@@ -1841,7 +1867,7 @@ public:
 	static int GetHAlign( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetHorizAlign() ); return 1; }
 	static int GetVAlign( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetVertAlign() ); return 1; }
 
-	static int GetName( T* p, lua_State *L )		{ lua_pushstring( L, p->GetName() ); return 1; }
+	static int GetName( T* p, lua_State *L )		{ lua_pushstring( L, p->GetName().c_str() ); return 1; }
 	static int GetParent( T* p, lua_State *L )
 	{
 		Actor *pParent = p->GetParent();

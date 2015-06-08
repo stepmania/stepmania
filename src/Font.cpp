@@ -43,7 +43,7 @@ void FontPage::Load( const FontPageSettings &cfg )
 	// "arial 20 16x16 [main].png" => "arial 20 16x16 [main-stroke].png"
 	if( ID2.filename.find("]") != string::npos )
 	{
-		ID2.filename.Replace( "]", "-stroke]" );
+		ReplaceAll(ID2.filename, "]", "-stroke]");
 		if( IsAFile(ID2.filename) )
 		{
 			m_FontPageTextures.m_pTextureStroke = TEXTUREMAN->LoadTexture( ID2 );
@@ -425,10 +425,13 @@ void Font::GetFontPaths( const RString &sFontIniPath, vector<RString> &asTexture
 	vector<RString> asFiles;
 	GetDirListing( sPrefix + "*", asFiles, false, true );
 
-	for( unsigned i = 0; i < asFiles.size(); ++i )
+	for (auto const &file: asFiles)
 	{
-		if( !asFiles[i].Right(4).EqualsNoCase(".ini") )
-			asTexturePathsOut.push_back( asFiles[i] );
+		ci_string ext(tail(file, 4).c_str());
+		if (ext != ".ini")
+		{
+			asTexturePathsOut.push_back(file);
+		}
 	}
 }
 
@@ -486,10 +489,8 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 	{
 		FOREACH_CONST_Attr( pNode, pAttr )
 		{
-			RString sName = pAttr->first;
+			RString sName = MakeUpper(pAttr->first);
 			const XNodeValue *pValue = pAttr->second;
-
-			sName.MakeUpper();
 
 			// If val is an integer, it's a width, eg. "10=27".
 			if( IsAnInt(sName) )
@@ -671,7 +672,8 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 
 RString FontPageSettings::MapRange( RString sMapping, int iMapOffset, int iGlyphNo, int iCount )
 {
-	if( !sMapping.CompareNoCase("Unicode") )
+	ci_string uni("Unicode");
+	if (uni == sMapping.c_str())
 	{
 		// Special case.
 		if( iCount == -1 )
@@ -748,7 +750,8 @@ static vector<RString> LoadStack;
  */
 void Font::Load( const RString &sIniPath, RString sChars )
 {
-	if(GetExtension(sIniPath).CompareNoCase("ini"))
+	ci_string ext("ini");
+	if (ext != GetExtension(sIniPath).c_str())
 	{
 		LuaHelpers::ReportScriptErrorFmt(
 			"%s is not an ini file.  Fonts can only be loaded from ini files.",

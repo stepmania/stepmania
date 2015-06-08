@@ -354,7 +354,7 @@ public:
 	{
 		RString string;
 		p->Read(string);
-		lua_pushstring( L, string );
+		lua_pushstring( L, string.c_str() );
 		return 1;
 	}
 	
@@ -362,7 +362,7 @@ public:
 	{
 		RString string;
 		p->Read( string, IArg(1) );
-		lua_pushstring( L, string );
+		lua_pushstring( L, string.c_str() );
 		return 1;
 	}
 
@@ -382,7 +382,7 @@ public:
 	{
 		RString string;
 		p->GetLine(string);
-		lua_pushstring( L, string );
+		lua_pushstring( L, string.c_str() );
 		return 1;
 	}
 
@@ -394,9 +394,8 @@ public:
 	
 	static int GetError( T* p, lua_State *L )
 	{
-		RString error;
-		error = p->GetError();
-		lua_pushstring( L, error );
+		RString error = p->GetError();
+		lua_pushstring( L, error.c_str() );
 		return 1;
 	}
 	

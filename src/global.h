@@ -53,6 +53,9 @@
 /* Everything will need string for one reason or another: */
 #include <string>
 
+/* ...and the formatting library to go with it: */
+#include "format.h"
+
 /* And vector: */
 #include <vector>
 
@@ -83,13 +86,10 @@
 /** @brief RageThreads defines (don't pull in all of RageThreads.h here) */
 namespace Checkpoints
 {
-	void SetCheckpoint( const char *file, int line, const char *message );
+	void SetCheckpoint( const char *file, int line, std::string const &message );
 }
-/** @brief Set a checkpoint with no message. */
-#define CHECKPOINT (Checkpoints::SetCheckpoint(__FILE__, __LINE__, NULL))
 /** @brief Set a checkpoint with a specified message. */
 #define CHECKPOINT_M(m) (Checkpoints::SetCheckpoint(__FILE__, __LINE__, m))
-
 
 /**
  * @brief Define a macro to tell the compiler that a function doesn't return.
@@ -114,7 +114,7 @@ namespace Checkpoints
  * @param reason the crash reason as determined by prior function calls.
  * @return nothing: there is no escape without quitting the program.
  */
-void NORETURN sm_crash( const char *reason = "Internal error" );
+void NORETURN sm_crash( std::string const &reason = "Internal error" );
 
 /**
  * @brief Assertion that sets an optional message and brings up the crash
@@ -134,7 +134,7 @@ void NORETURN sm_crash( const char *reason = "Internal error" );
 /** @brief Use this to catch switching on invalid values */
 #define DEFAULT_FAIL(i) 	default: FAIL_M( ssprintf("%s = %i", #i, (i)) )
 
-void ShowWarningOrTrace( const char *file, int line, const char *message, bool bWarning ); // don't pull in LOG here
+void ShowWarningOrTrace( const char *file, int line, std::string const &message, bool bWarning ); // don't pull in LOG here
 #define WARN(MESSAGE) (ShowWarningOrTrace(__FILE__, __LINE__, MESSAGE, true))
 #if !defined(CO_EXIST_WITH_MFC)
 #define TRACE(MESSAGE) (ShowWarningOrTrace(__FILE__, __LINE__, MESSAGE, false))
@@ -175,9 +175,8 @@ template<int> struct CompileAssertDecl { };
 #define CONST_FUNCTION
 #endif
 
-#include "StdString.h"
 /** @brief Use RStrings throughout the program. */
-typedef StdString::CStdString RString;
+typedef std::string RString;
 
 #if !defined(WIN32)
 /** @brief Define stricmp to be strcasecmp. */

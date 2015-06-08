@@ -90,8 +90,7 @@ void NoteSkinManager::RefreshNoteSkinData( const Game* pGame )
 	g_mapNameToData.clear();
 	for( unsigned j=0; j<asNoteSkinNames.size(); j++ )
 	{
-		RString sName = asNoteSkinNames[j];
-		sName.MakeLower();
+		RString sName = MakeLower(asNoteSkinNames[j]);
 		LoadNoteSkinData( sName, g_mapNameToData[sName] );
 	}
 }
@@ -140,11 +139,16 @@ void NoteSkinManager::LoadNoteSkinDataRecursive( const RString &sNoteSkinName_, 
 		// read global fallback the current NoteSkin (if any)
 		IniFile ini;
 		ini.ReadFile( sDir+"metrics.ini" );
+		ci_string ciName(sNoteSkinName.c_str());
 
-		if( !sNoteSkinName.CompareNoCase(GAME_BASE_NOTESKIN_NAME) )
+		if ( ciName == GAME_BASE_NOTESKIN_NAME.c_str())
+		{
 			bLoadedBase = true;
-		if( !sNoteSkinName.CompareNoCase(GAME_COMMON_NOTESKIN_NAME) )
+		}
+		else if ( ciName == GAME_COMMON_NOTESKIN_NAME.c_str())
+		{
 			bLoadedCommon = true;
+		}
 
 		RString sFallback;
 		if( !ini.GetValue("Global","FallbackNoteSkin", sFallback) )
@@ -206,14 +210,10 @@ void NoteSkinManager::GetNoteSkinNames( const Game* pGame, vector<RString> &AddT
 
 bool NoteSkinManager::NoteSkinNameInList(const RString name, vector<RString> name_list)
 {
-	for(size_t i= 0; i < name_list.size(); ++i)
-	{
-		if(0 == stricmp(name, name_list[i]))
-		{
-			return true;
-		}
-	}
-	return false;
+	ci_string ciName(name.c_str());
+	return std::any_of(name_list.begin(), name_list.end(), [&ciName](RString const &item) {
+		return ciName == item.c_str();
+	});
 }
 
 bool NoteSkinManager::DoesNoteSkinExist( const RString &sSkinName )
@@ -285,8 +285,7 @@ RString NoteSkinManager::GetMetric( const RString &sButtonName, const RString &s
 		LuaHelpers::ReportScriptError("NOTESKIN:GetMetric: No noteskin currently set.", "NOTESKIN_ERROR");
 		return "";
 	}
-	RString sNoteSkinName = m_sCurrentNoteSkin;
-	sNoteSkinName.MakeLower();
+	RString sNoteSkinName = MakeLower(m_sCurrentNoteSkin);
 	auto it = g_mapNameToData.find(sNoteSkinName);
 	ASSERT_M( it != g_mapNameToData.end(), sNoteSkinName );	// this NoteSkin doesn't exist!
 	const NoteSkinData& data = it->second;
@@ -337,8 +336,7 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 		LuaHelpers::ReportScriptError("NOTESKIN:GetPath: No noteskin currently set.", "NOTESKIN_ERROR");
 		return "";
 	}
-	RString sNoteSkinName = m_sCurrentNoteSkin;
-	sNoteSkinName.MakeLower();
+	RString sNoteSkinName = MakeLower(m_sCurrentNoteSkin);
 	auto iter = g_mapNameToData.find( sNoteSkinName );
 	ASSERT( iter != g_mapNameToData.end() );
 	const NoteSkinData &data = iter->second;

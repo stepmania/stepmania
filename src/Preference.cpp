@@ -22,9 +22,10 @@ IPreference::~IPreference()
 
 IPreference *IPreference::GetPreferenceByName( const RString &sName )
 {
+	ci_string ciName(sName.c_str());
 	for (auto *p: *m_Subscribers.m_pSubscribers)
 	{
-		if( !p->GetName().CompareNoCase( sName ) )
+		if (ciName == p->GetName().c_str())
 		{
 			return p;
 		}

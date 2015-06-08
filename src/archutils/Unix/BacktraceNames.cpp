@@ -42,7 +42,7 @@ void BacktraceNames::Demangle()
 		return;
 	
 	int status = 0;
-	char *name = abi::__cxa_demangle( Symbol, NULL, NULL, &status );
+	char *name = abi::__cxa_demangle( Symbol.c_str(), NULL, NULL, &status );
 	if( name )
 	{
 		Symbol = name;
@@ -278,13 +278,13 @@ void BacktraceNames::FromAddr( const void *p )
 	 * __start   -> _start
 	 * __ZN7RageLog5TraceEPKcz -> _ZN7RageLog5TraceEPKcz (so demangling will work)
 	 */
-	if( Symbol.Left(1) == "_" )
+	if( BeginsWith(Symbol, "_" ))
 		Symbol = Symbol.substr(1);
 	/* After stripping off the leading _
 	 * _GLOBAL__I__ZN5ModelC2Ev -> _ZN5ModelC2Ev
 	 * _GLOBAL__D__Z12ForceToAsciiR7CStdStrIcE -> _Z12ForceToAsciiR7CStdStrIcE
 	 */
-	if( Symbol.Left(9) == "_GLOBAL__" )
+	if( BeginsWith(Symbol, "_GLOBAL__" ))
 		Symbol = Symbol.substr(11);
 	
 }

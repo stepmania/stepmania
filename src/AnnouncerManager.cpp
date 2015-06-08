@@ -37,10 +37,15 @@ void AnnouncerManager::GetAnnouncerNames( vector<RString>& AddTo )
 	StripCvsAndSvn( AddTo );
 	StripMacResourceForks( AddTo );
 
+	ci_string ciEmpty(EMPTY_ANNOUNCER_NAME.c_str());
 	// strip out the empty announcer folder
 	for( int i=AddTo.size()-1; i>=0; i-- )
-		if( !stricmp( AddTo[i], EMPTY_ANNOUNCER_NAME ) )
+	{
+		if (ciEmpty == AddTo[i].c_str())
+		{
 			AddTo.erase(AddTo.begin()+i, AddTo.begin()+i+1 );
+		}
+	}
 }
 
 bool AnnouncerManager::DoesAnnouncerExist( RString sAnnouncerName )
@@ -50,10 +55,11 @@ bool AnnouncerManager::DoesAnnouncerExist( RString sAnnouncerName )
 
 	vector<RString> asAnnouncerNames;
 	GetAnnouncerNames( asAnnouncerNames );
-	for( unsigned i=0; i<asAnnouncerNames.size(); i++ )
-		if( 0==stricmp(sAnnouncerName, asAnnouncerNames[i]) )
-			return true;
-	return false;
+	ci_string ciName(sAnnouncerName.c_str());
+	auto doesExist = [&ciName](RString const &name) {
+		return ciName == name.c_str();
+	};
+	return std::any_of(asAnnouncerNames.begin(), asAnnouncerNames.end(), doesExist);
 }
 
 RString AnnouncerManager::GetAnnouncerDirFromName( RString sAnnouncerName )
@@ -121,9 +127,10 @@ RString AnnouncerManager::GetPathTo( RString sAnnouncerName, RString sFolderName
 
 	/* Search for the announcer folder in the list of aliases. */
 	int i;
+	ci_string ciFolderName(sFolderName.c_str());
 	for(i = 0; aliases[i][0] != NULL; ++i)
 	{
-		if(!sFolderName.EqualsNoCase(aliases[i][0]))
+		if(ciFolderName != aliases[i][0])
 			continue; /* no match */
 
 		if( !DirectoryIsEmpty(AnnouncerPath+aliases[i][1]+"/") )
@@ -166,8 +173,12 @@ void AnnouncerManager::NextAnnouncer()
 	{
 		unsigned i;
 		for( i=0; i<as.size(); i++ )
-			if( as[i].EqualsNoCase(m_sCurAnnouncerName) )
+		{
+			ci_string announcer(as[i].c_str());
+			ci_string currName(m_sCurAnnouncerName.c_str());
+			if( announcer == currName )
 				break;
+		}
 		if( i==as.size()-1 )
 			SwitchAnnouncer( "" );
 		else
@@ -201,7 +212,7 @@ public:
 		}
 		else
 		{
-			lua_pushstring(L, s );
+			lua_pushstring(L, s.c_str() );
 		}
 		return 1;
 	}

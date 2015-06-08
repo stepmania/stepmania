@@ -281,7 +281,7 @@ void RageLog::Write( int where, const RString &sLine )
 			sStr = sWarning + sStr;
 		}
 		if( m_bShowLogOutput || (where&WRITE_TO_INFO) )
-			puts(sStr); //fputws( (const wchar_t *)sStr.c_str(), stdout );
+			puts(sStr.c_str()); //fputws( (const wchar_t *)sStr.c_str(), stdout );
 		if( where & WRITE_TO_INFO )
 			AddToInfo( sStr );
 		if( m_bLogToDisk && (where&WRITE_TO_INFO) && g_fileInfo->IsOpen() )
@@ -365,7 +365,7 @@ void RageLog::AddToRecentLogs( const RString &str )
 	if( len > sizeof(backlog[backlog_start])-1 )
 		len = sizeof(backlog[backlog_start])-1;
 
-	strncpy( backlog[backlog_start], str, len );
+	strncpy( backlog[backlog_start], str.c_str(), len );
 	backlog[backlog_start] [ len ] = 0;
 
 	backlog_start++;
@@ -434,7 +434,7 @@ void RageLog::UnmapLog( const RString &key )
 	UpdateMappedLog();
 }
 
-void ShowWarningOrTrace( const char *file, int line, const char *message, bool bWarning )
+void ShowWarningOrTrace( const char *file, int line, std::string const &message, bool bWarning )
 {
 	/* Ignore everything up to and including the first "src/". */
 	const char *temp = strstr( file, "src/" );
@@ -444,9 +444,9 @@ void ShowWarningOrTrace( const char *file, int line, const char *message, bool b
 	void (RageLog::*method)(const char *fmt, ...) = bWarning ? &RageLog::Warn : &RageLog::Trace;
 
 	if( LOG )
-		(LOG->*method)( "%s:%i: %s", file, line, message );
+		(LOG->*method)( "%s:%i: %s", file, line, message.c_str() );
 	else
-		fprintf( stderr, "%s:%i: %s\n", file, line, message );
+		fprintf( stderr, "%s:%i: %s\n", file, line, message.c_str() );
 }
 
 

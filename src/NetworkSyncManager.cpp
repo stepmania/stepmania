@@ -450,7 +450,7 @@ void NetworkSyncManager::DisplayStartupStatus()
 		//Networking wasn't attepmpted
 		return;
 	case 1:
-		sMessage = ssprintf( CONNECTION_SUCCESSFUL.GetValue(), m_ServerName.c_str() );
+		sMessage = fmt::sprintf( CONNECTION_SUCCESSFUL.GetValue(), m_ServerName.c_str() );
 		break;
 	case 2:
 		sMessage = CONNECTION_FAILED.GetValue();
@@ -608,7 +608,7 @@ void NetworkSyncManager::ProcessInput()
 			{
 				m_sChatText += m_packet.ReadNT() + " \n ";
 				//10000 chars backlog should be more than enough
-				m_sChatText = m_sChatText.Right(10000);
+				m_sChatText = tail(m_sChatText, 10000);
 				SCREENMAN->SendMessageToTopScreen( SM_AddToChat );
 			}
 			break;
@@ -845,7 +845,7 @@ void PacketFunctions::ClearPacket()
 
 RString NetworkSyncManager::MD5Hex( const RString &sInput )
 {
-	return BinaryToHex( CryptManager::GetMD5ForString(sInput) ).MakeUpper();
+	return MakeUpper(BinaryToHex( CryptManager::GetMD5ForString(sInput)));
 }
 
 void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers )
@@ -932,16 +932,16 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 						RString::size_type sFieldPos = svResponse[h].find(": ");
 						if( sFieldPos != RString::npos )
 						{
-							RString sFieldName = svResponse[h].Left(sFieldPos),
-								sFieldValue = svResponse[h].substr(sFieldPos+2);
+							RString sFieldName = head(svResponse[h] ,sFieldPos);
+							RString sFieldValue = svResponse[h].substr(sFieldPos+2);
 
 							Trim( sFieldName );
 							Trim( sFieldValue );
 
-							if( 0 == stricmp(sFieldName,"X-SM-Build") )
+							if( 0 == stricmp(sFieldName.c_str(),"X-SM-Build") )
 							{
 								bSuccess = true;
-								uCurrentSMBuild = strtoul( sFieldValue, NULL, 10 );
+								uCurrentSMBuild = strtoul( sFieldValue.c_str(), NULL, 10 );
 								break;
 							}
 						}
@@ -985,7 +985,7 @@ static bool ConnectToServer( const RString &t )
 
 extern Preference<RString> g_sLastServer;
 
-LuaFunction( ConnectToServer, 		ConnectToServer( ( RString(SArg(1)).length()==0 ) ? RString(g_sLastServer) : RString(SArg(1) ) ) )
+LuaFunction( ConnectToServer, ConnectToServer( ( RString(SArg(1)).length()==0 ) ? g_sLastServer.Get() : RString(SArg(1) ) ) )
 
 #endif
 

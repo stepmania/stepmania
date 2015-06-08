@@ -156,7 +156,7 @@ void ScreenBookkeeping::UpdateView()
 				iCount += pProfile->GetSongNumTimesPlayed( pSong );
 				vpSongs.push_back( pSong );
 			}
-			m_textTitle.SetText( ssprintf(SONG_PLAYS.GetValue(), iCount) );
+			m_textTitle.SetText( fmt::sprintf(SONG_PLAYS.GetValue(), iCount) );
 			SongUtil::SortSongPointerArrayByNumPlays( vpSongs, pProfile, true );
 
 			const int iSongPerCol = 15;
@@ -173,7 +173,7 @@ void ScreenBookkeeping::UpdateView()
 						iCount = pProfile->GetSongNumTimesPlayed( pSong );
 						RString sTitle = ssprintf("%4d",iCount) + " " + pSong->GetDisplayFullTitle();
 						if( sTitle.length() > 22 )
-							sTitle = sTitle.Left(20) + "...";
+							sTitle = head(sTitle, 20) + "...";
 						s += sTitle + "\n";
 						iSongIndex++;
 					}
@@ -185,7 +185,7 @@ void ScreenBookkeeping::UpdateView()
 		break;
 	case BookkeepingView_LastDays:
 		{
-			m_textTitle.SetText( ssprintf(LAST_DAYS.GetValue(), NUM_LAST_DAYS) );
+			m_textTitle.SetText( fmt::sprintf(LAST_DAYS.GetValue(), NUM_LAST_DAYS) );
 
 			int coins[NUM_LAST_DAYS];
 			BOOKKEEPER->GetCoinsLastDays( coins );
@@ -212,7 +212,7 @@ void ScreenBookkeeping::UpdateView()
 		break;
 	case BookkeepingView_LastWeeks:
 		{
-			m_textTitle.SetText( ssprintf(LAST_WEEKS.GetValue(), NUM_LAST_WEEKS) );
+			m_textTitle.SetText( fmt::sprintf(LAST_WEEKS.GetValue(), NUM_LAST_WEEKS) );
 
 			int coins[NUM_LAST_WEEKS];
 			BOOKKEEPER->GetCoinsLastWeeks( coins );

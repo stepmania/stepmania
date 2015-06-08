@@ -151,7 +151,7 @@ void ScreenPackages::Update( float fDeltaTime )
 	if ( m_fLastUpdate >= 1.0 )
 	{
 		if ( m_bIsDownloading && m_bGotHeader )
-			m_sStatus = ssprintf( DOWNLOAD_PROGRESS.GetValue(), int((m_iDownloaded-m_bytesLastUpdate)/1024) );
+			m_sStatus = fmt::sprintf( DOWNLOAD_PROGRESS.GetValue(), int((m_iDownloaded-m_bytesLastUpdate)/1024) );
 
 		m_bytesLastUpdate = m_iDownloaded;
 		UpdateProgress();
@@ -496,17 +496,15 @@ void ScreenPackages::EnterURL( const RString & sURL )
 
 	// Determine if this is a website, or a package?
 	// Criteria: does it end with *zip?
-	if( sAddress.Right(3).CompareNoCase("zip") == 0 )
-		m_bIsPackage=true;
-	else
-		m_bIsPackage = false;
+	ci_string zip(tail(sAddress, 3).c_str());
+	m_bIsPackage = ( zip == "zip" );
 
 	m_sBaseAddress = "http://" + Server;
 	if( Port != 80 )
 		m_sBaseAddress += ssprintf( ":%d", Port );
 	m_sBaseAddress += "/";
 
-	if( sAddress.Right(1) != "/" )
+	if( !EndsWith(sAddress, "/") )
 	{
 		m_sEndName = Basename( sAddress );
 		m_sBaseAddress += Dirname( sAddress );

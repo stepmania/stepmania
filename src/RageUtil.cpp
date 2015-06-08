@@ -250,7 +250,7 @@ bool HexToBinary( const RString &s, unsigned char *stringOut )
 		RString sByte = s.substr( i*2, 2 );
 
 		uint8_t val = 0;
-		if( sscanf( sByte, "%hhx", &val ) != 1 )
+		if( sscanf( sByte.c_str(), "%hhx", &val ) != 1 )
 			return false;
 		stringOut[i] = val;
 	}
@@ -424,12 +424,9 @@ RString ssprintf( const char *fmt, ...)
 	return vssprintf(fmt, va);
 }
 
-#define FMT_BLOCK_SIZE		2048 // # of bytes to increment per try
-
-RString vssprintf( const char *szFormat, va_list argList )
+RString vssprintf_win( char const *szFormat, va_list argList )
 {
 	RString sStr;
-
 #if defined(WIN32)
 	char *pBuf = NULL;
 	int iChars = 1;
@@ -447,7 +444,16 @@ RString vssprintf( const char *szFormat, va_list argList )
 
 	// assign whatever we managed to format
 	sStr.assign( pBuf, iUsed );
-#else
+#endif
+	return sStr;
+}
+
+#define FMT_BLOCK_SIZE		2048 // # of bytes to increment per try
+
+RString vssprintf_unx( char const *szFormat, va_list argList )
+{
+	RString sStr;
+#if !defined(WIN32)
 	static bool bExactSizeSupported;
 	static bool bInitialized = false;
 	if( !bInitialized )
@@ -468,76 +474,41 @@ RString vssprintf( const char *szFormat, va_list argList )
 		int iNeeded = vsnprintf( &ignore, 0, szFormat, tmp );
 		va_end(tmp);
 
-		char *buf = sStr.GetBuffer( iNeeded+1 );
-		vsnprintf( buf, iNeeded+1, szFormat, argList );
-		sStr.ReleaseBuffer( iNeeded );
-		return sStr;
+		char buffer[8192];
+		vsnprintf( buffer, iNeeded+1, szFormat, argList );
+		return string(buffer);
 	}
 
 	int iChars = FMT_BLOCK_SIZE;
 	int iTry = 1;
-	while( 1 )
+	for(;;)
 	{
 		// Grow more than linearly (e.g. 512, 1536, 3072, etc)
-		char *buf = sStr.GetBuffer(iChars);
-		int iUsed = vsnprintf(buf, iChars-1, szFormat, argList);
+		char buffer[iChars];
+		int iUsed = vsnprintf(buffer, iChars-1, szFormat, argList);
 
 		if( iUsed == -1 )
 		{
 			iChars += ((iTry+1) * FMT_BLOCK_SIZE);
-			sStr.ReleaseBuffer();
 			++iTry;
 			continue;
 		}
 
 		/* OK */
-		sStr.ReleaseBuffer(iUsed);
-		break;
+		return string(buffer);
 	}
 #endif
 	return sStr;
 }
 
-/* Windows uses %I64i to format a 64-bit int, instead of %lli. Convert "a b %lli %-3llu c d"
- * to "a b %I64 %-3I64u c d". This assumes a well-formed format string; invalid format strings
- * should not crash, but the results are undefined. */
-#if defined(WIN32)
-RString ConvertI64FormatString( const RString &sStr )
+RString vssprintf( const char *szFormat, va_list argList )
 {
-	RString sRet;
-	sRet.reserve( sStr.size() + 16 );
-
-	size_t iOffset = 0;
-	while( iOffset < sStr.size() )
-	{
-		size_t iPercent = sStr.find( '%', iOffset );
-		if( iPercent != sStr.npos )
-		{
-			sRet.append( sStr, iOffset, iPercent - iOffset );
-			iOffset = iPercent;
-		}
-
-		size_t iEnd = sStr.find_first_of( "diouxXeEfFgGaAcsCSpnm%", iOffset + 1 );
-		if( iEnd != sStr.npos && iEnd - iPercent >= 3 && iPercent > 2 && sStr[iEnd-2] == 'l' && sStr[iEnd-1] == 'l' )
-		{
-			sRet.append( sStr, iPercent, iEnd - iPercent - 2 ); // %
-			sRet.append( "I64" ); // %I64
-			sRet.append( sStr, iEnd, 1 ); // %I64i
-			iOffset = iEnd + 1;
-		}
-		else
-		{
-			if( iEnd == sStr.npos )
-				iEnd = sStr.size() - 1;
-			sRet.append( sStr, iOffset, iEnd - iOffset + 1 );
-			iOffset = iEnd + 1;
-		}
-	}
-	return sRet;
-}
+#if defined(WIN32)
+	return vssprintf_win(szFormat, argList);
 #else
-RString ConvertI64FormatString( const RString &sStr ) { return sStr; }
+	return vssprintf_unx(szFormat, argList);
 #endif
+}
 
 /* ISO-639-1 codes: http://www.loc.gov/standards/iso639-2/php/code_list.php
  * native forms: http://people.w3.org/rishida/names/languages.html
@@ -697,9 +668,10 @@ void GetLanguageInfos( vector<const LanguageInfo*> &vAddTo )
 
 const LanguageInfo *GetLanguageInfo( const RString &sIsoCode )
 {
+	ci_string ciIsoCode(sIsoCode.c_str());
 	for (auto const &lang: g_langs)
 	{
-		if ( sIsoCode.EqualsNoCase(lang.szIsoCode))
+		if ( ciIsoCode == lang.szIsoCode )
 		{
 			return &lang;
 		}
@@ -1044,8 +1016,7 @@ bool FindFirstFilenameContaining(const vector<RString>& filenames,
 {
 	for(size_t i= 0; i < filenames.size(); ++i)
 	{
-		RString lower= GetFileNameWithoutExtension(filenames[i]);
-		lower.MakeLower();
+		RString lower= MakeLower(GetFileNameWithoutExtension(filenames[i]));
 		for(size_t s= 0; s < starts_with.size(); ++s)
 		{
 			if(!lower.compare(0, starts_with[s].size(), starts_with[s]))
@@ -1101,7 +1072,7 @@ void GetCommandLineArguments( int &argc, char **&argv )
  * If argument is non-NULL, accept an argument. */
 bool GetCommandlineArgument( const RString &option, RString *argument, int iIndex )
 {
-	const RString optstr = "--" + option;
+	ci_string optstr = ("--" + option).c_str();
 
 	for( int arg = 1; arg < g_argc; ++arg )
 	{
@@ -1109,9 +1080,10 @@ bool GetCommandlineArgument( const RString &option, RString *argument, int iInde
 
 		const size_t i = CurArgument.find( "=" );
 		RString CurOption = CurArgument.substr(0,i);
-		if( CurOption.CompareNoCase(optstr) )
+		if (optstr != CurOption.c_str())
+		{
 			continue; // no match
-
+		}
 		// Found it.
 		if( iIndex )
 		{
@@ -1200,12 +1172,14 @@ bool DirectoryIsEmpty( const RString &sDir )
 
 bool CompareRStringsAsc( const RString &sStr1, const RString &sStr2 )
 {
-	return sStr1.CompareNoCase( sStr2 ) < 0;
+	ci_string x(sStr1.c_str());
+	return x < sStr2.c_str();
 }
 
 bool CompareRStringsDesc( const RString &sStr1, const RString &sStr2 )
 {
-	return sStr1.CompareNoCase( sStr2 ) > 0;
+	ci_string x(sStr1.c_str());
+	return x > sStr2.c_str();
 }
 
 void SortRStringArray( vector<RString> &arrayRStrings, const bool bSortAscending )
@@ -1345,9 +1319,10 @@ RString URLEncode( const RString &sStr )
 // remove various version control-related files
 static bool CVSOrSVN( const RString& s )
 {
-	return s.Right(3).EqualsNoCase("CVS") ||
-			s.Right(4) == ".svn" ||
-			s.Right(3).EqualsNoCase(".hg");
+	ci_string version3(s.c_str());
+	ci_string version4(s.c_str());
+	return version3 == "CVS" || version4 == ".svn" ||
+		version3 == ".hg" || version4 == ".git";
 }
 
 void StripCvsAndSvn( vector<RString> &vs )
@@ -1357,7 +1332,7 @@ void StripCvsAndSvn( vector<RString> &vs )
 
 static bool MacResourceFork( const RString& s )
 {
-	return s.Left(2).EqualsNoCase("._");
+	return BeginsWith(s, "._");
 }
 
 void StripMacResourceForks( vector<RString> &vs )
@@ -1559,7 +1534,7 @@ bool Regex::Replace( const RString &sReplacement, const RString &sSubject, RStri
 	{
 		RString sFrom = ssprintf( "\\${%d}", i );
 		RString sTo = asMatches[i];
-		sOut.Replace(sFrom, sTo);
+		ReplaceAll(sOut, sFrom, sTo);
 	}
 
 	return true;
@@ -1864,6 +1839,64 @@ void MakeLower( wchar_t *p, size_t iLen )
 	UnicodeUpperLower( p, iLen, g_LowerCase );
 }
 
+std::string MakeUpper( std::string const &str)
+{
+	auto *cstr = const_cast<char *>(str.c_str());
+	MakeUpper(cstr, str.size());
+	return std::string(cstr);
+}
+
+std::string MakeLower( std::string const &str)
+{
+	auto *cstr = const_cast<char *>(str.c_str());
+	MakeLower(cstr, str.size());
+	return std::string(cstr);
+}
+
+void ReplaceAll(std::string &str, std::string const & from, std::string const & to) {
+	size_t start_pos = 0;
+	while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+		str.replace(start_pos, from.length(), to);
+		start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+	}
+}
+
+char GetAsciiUpper(char const &ch)
+{
+	return (ch >= 'a' && ch <= 'z')? char(ch + 'A' - 'a'): ch;
+}
+
+char GetAsciiLower(char const &ch)
+{
+	return (ch >= 'A' && ch <= 'Z')? char(ch + 'a' - 'A'): ch;
+}
+
+std::string head(std::string const &source, int32_t const length)
+{
+	if (std::abs(length) >= source.size())
+	{
+		return source;
+	}
+	if (length < 0)
+	{
+		return source.substr(0, source.size() + length);
+	}
+	return source.substr(length);
+}
+
+std::string tail(std::string const &source, int32_t const length)
+{
+	if (std::abs(length) >= source.size())
+	{
+		return source;
+	}
+	if (length < 0)
+	{
+		return source.substr(-length);
+	}
+	return source.substr(source.size() - length);
+}
+
 int StringToInt( const RString &sString )
 {
 	int ret;
@@ -1880,7 +1913,7 @@ RString IntToString( const int &iNum )
 
 float StringToFloat( const RString &sString )
 {
-	float ret = strtof( sString, NULL );
+	float ret = strtof( sString.c_str(), NULL );
 
 	if( !isfinite(ret) )
 		ret = 0.0f;
@@ -1891,7 +1924,7 @@ bool StringToFloat( const RString &sString, float &fOut )
 {
 	char *endPtr;
 
-	fOut = strtof( sString, &endPtr );
+	fOut = strtof( sString.c_str(), &endPtr );
 	return sString.size() && *endPtr == '\0' && isfinite( fOut );
 }
 
@@ -1979,8 +2012,7 @@ void ReplaceEntityText( RString &sText, const std::map<RString,RString> &m )
 			continue;
 		}
 
-		RString sElement = sText.substr( iStart+1, iEnd-iStart-1 );
-		sElement.MakeLower();
+		RString sElement = MakeLower(sText.substr( iStart+1, iEnd-iStart-1 ));
 
 		auto it = m.find( sElement );
 		if( it == m.end() )
@@ -2159,11 +2191,11 @@ RString Capitalize( const RString &s )
 		return RString();
 
 	RString s2 = s;
-	char *pBuf = s2.GetBuffer();
-	UnicodeDoUpper( pBuf, s2.size(), g_UpperCase );
-	s2.ReleaseBuffer();
-
-	return s2;
+	auto *t = const_cast<char *>(s2.c_str());
+	UnicodeDoUpper( t, s2.size(), g_UpperCase );
+	RString ret(t);
+	delete t;
+	return ret;
 }
 
 unsigned char g_UpperCase[256] =
@@ -2317,7 +2349,7 @@ namespace StringConversion
 	template<> bool FromString<float>( const RString &sValue, float &out )
 	{
 		const char *endptr = sValue.data() + sValue.size();
-		out = strtof( sValue, (char **) &endptr );
+		out = strtof( sValue.c_str(), (char **) &endptr );
 		if( endptr != sValue.data() && isfinite( out ) )
 			return true;
 		out = 0;
@@ -2356,7 +2388,8 @@ namespace StringConversion
 
 bool FileCopy( const RString &sSrcFile, const RString &sDstFile )
 {
-	if( !sSrcFile.CompareNoCase(sDstFile) )
+	ci_string x(sSrcFile.c_str());
+	if( x == sDstFile.c_str() )
 	{
 		LOG->Warn( "Tried to copy \"%s\" over itself", sSrcFile.c_str() );
 		return false;
@@ -2424,10 +2457,10 @@ LuaFunction( SecondsToMSS, SecondsToMSS( FArg(1) ) )
 LuaFunction( SecondsToMMSS, SecondsToMMSS( FArg(1) ) )
 LuaFunction( FormatNumberAndSuffix, FormatNumberAndSuffix( IArg(1) ) )
 LuaFunction( Basename, Basename( SArg(1) ) )
-static RString MakeLower( RString s ) { s.MakeLower(); return s; }
-LuaFunction( Lowercase, MakeLower( SArg(1) ) )
-static RString MakeUpper( RString s ) { s.MakeUpper(); return s; }
-LuaFunction( Uppercase, MakeUpper( SArg(1) ) )
+static RString MakeLowercase( RString s ) { return MakeLower(s); }
+LuaFunction( Lowercase, MakeLowercase( SArg(1) ) )
+static RString MakeUppercase( RString s ) { return MakeUpper(s); }
+LuaFunction( Uppercase, MakeUppercase( SArg(1) ) )
 LuaFunction( mbstrlen, (int)RStringToWstring(SArg(1)).length() )
 LuaFunction( URLEncode, URLEncode( SArg(1) ) );
 LuaFunction( PrettyPercent, PrettyPercent( FArg(1), FArg(2) ) );

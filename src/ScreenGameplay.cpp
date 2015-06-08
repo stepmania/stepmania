@@ -1183,7 +1183,7 @@ void ScreenGameplay::LoadNextSong()
 	{
 		pi->GetPlayerStageStats()->m_iSongsPlayed++;
 		if( pi->m_ptextCourseSongNumber )
-			pi->m_ptextCourseSongNumber->SetText( ssprintf(SONG_NUMBER_FORMAT.GetValue(), pi->GetPlayerStageStats()->m_iSongsPassed+1) );
+			pi->m_ptextCourseSongNumber->SetText( fmt::sprintf(SONG_NUMBER_FORMAT.GetValue(), pi->GetPlayerStageStats()->m_iSongsPassed+1) );
 	}
 
 	if( GAMESTATE->m_bMultiplayer )
@@ -1435,7 +1435,8 @@ void ScreenGameplay::LoadLights()
 	Difficulty d1 = Difficulty_Invalid;
 	if( asDifficulties.size() > 0 )
 	{
-		if( asDifficulties[0].CompareNoCase("selected") == 0 )
+		ci_string ciDiff(asDifficulties[0].c_str());
+		if (ciDiff == "selected")
 		{
 			// Base lights off current difficulty of active player
 			// Can be either P1 or P2 if they're individual or P1 if both are active
@@ -2976,7 +2977,19 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM >= SM_BattleTrickLevel1 && SM <= SM_BattleTrickLevel3 )
 	{
-		int iTrickLevel = SM-SM_BattleTrickLevel1+1;
+		int iTrickLevel;
+		if (SM == SM_BattleTrickLevel1)
+		{
+			iTrickLevel = 1;
+		}
+		else if (SM == SM_BattleTrickLevel2)
+		{
+			iTrickLevel = 2;
+		}
+		else
+		{
+			iTrickLevel = 3;
+		}
 		PlayAnnouncer( ssprintf("gameplay battle trick level%d",iTrickLevel), 3 );
 		if( SM == SM_BattleTrickLevel1 ) m_soundBattleTrickLevel1.Play(false);
 		else if( SM == SM_BattleTrickLevel2 ) m_soundBattleTrickLevel2.Play(false);
@@ -2984,7 +2997,19 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM >= SM_BattleDamageLevel1 && SM <= SM_BattleDamageLevel3 )
 	{
-		int iDamageLevel = SM-SM_BattleDamageLevel1+1;
+		int iDamageLevel;
+		if (SM == SM_BattleDamageLevel1)
+		{
+			iDamageLevel = 1;
+		}
+		else if (SM == SM_BattleDamageLevel2)
+		{
+			iDamageLevel = 2;
+		}
+		else
+		{
+			iDamageLevel = 3;
+		}
 		PlayAnnouncer( ssprintf("gameplay battle damage level%d",iDamageLevel), 3 );
 	}
 	else if( SM == SM_DoPrevScreen )

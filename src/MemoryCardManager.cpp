@@ -376,9 +376,11 @@ void MemoryCardManager::UpdateAssignments()
 
 		for (auto d = vUnassignedDevices.begin(); d != vUnassignedDevices.end(); ++d)
 		{
+			auto &mount = m_sMemoryCardOsMountPoint[p].Get();
+			ci_string ciMount(mount.c_str());
+			
 			// search for card dir match
-			if( !m_sMemoryCardOsMountPoint[p].Get().empty() &&
-				d->sOsMountDir.CompareNoCase(m_sMemoryCardOsMountPoint[p].Get()) )
+			if( !mount.empty() && ciMount != d->sOsMountDir.c_str())
 				continue; // not a match
 
 			// search for USB bus match
@@ -683,8 +685,11 @@ bool MemoryCardManager::PathIsMemCard( RString sDir ) const
 {
 	FOREACH_PlayerNumber( p )
 	{
-		if( !sDir.Left(MEM_CARD_MOUNT_POINT[p].size()).CompareNoCase( MEM_CARD_MOUNT_POINT[p] ) )
+		ci_string mount(MEM_CARD_MOUNT_POINT[p].c_str());
+		if (mount == head(sDir, MEM_CARD_MOUNT_POINT[p].size()).c_str())
+		{
 			return true;
+		}
 	}
 	return false;
 }
@@ -737,7 +742,7 @@ public:
 	static int GetName( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-		lua_pushstring(L, p->GetName(pn) );
+		lua_pushstring(L, p->GetName(pn).c_str() );
 		return 1;
 	}
 

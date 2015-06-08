@@ -104,7 +104,8 @@ static GameSoundManager::PlayMusicParams g_FallbackMusicParams;
 static void StartMusic( MusicToPlay &ToPlay )
 {
 	LockMutex L( *g_Mutex );
-	if( g_Playing->m_Music->IsPlaying() && g_Playing->m_Music->GetLoadedFilePath().EqualsNoCase(ToPlay.m_sFile) )
+	ci_string musicPath(g_Playing->m_Music->GetLoadedFilePath().c_str());
+	if( g_Playing->m_Music->IsPlaying() && musicPath == ToPlay.m_sFile.c_str() )
 		return;
 
 	/* We're changing or stopping the music.  If we were dimming, reset. */
@@ -288,7 +289,7 @@ static void DoPlayOnceFromDir( RString sPath )
 		return;
 
 	// make sure there's a slash at the end of this path
-	if( sPath.Right(1) != "/" )
+	if( !EndsWith(sPath, "/") )
 		sPath += "/";
 
 	vector<RString> arraySoundFiles;
@@ -355,7 +356,7 @@ static void StartQueuedSounds()
 			StartMusic( aMusicsToPlay[i] );
 		else
 		{
-			CHECKPOINT;
+			CHECKPOINT_M("Stopping old sound");
 			/* StopPlaying() can take a while, so don't hold the lock while we stop the sound. */
 			g_Mutex->Lock();
 			RageSound *pOldSound = g_Playing->m_Music;

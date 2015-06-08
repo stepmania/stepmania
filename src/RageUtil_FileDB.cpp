@@ -12,12 +12,9 @@ void FileSet::GetFilesMatching( const RString &sBeginning_, const RString &sCont
 {
 	/* "files" is a case-insensitive mapping, by filename.  Use lower_bound to figure
 	 * out where to start. */
-	RString sBeginning = sBeginning_;
-	sBeginning.MakeLower();
-	RString sContaining = sContaining_;
-	sContaining.MakeLower();
-	RString sEnding = sEnding_;
-	sEnding.MakeLower();
+	RString sBeginning = MakeLower(sBeginning_);
+	RString sContaining = MakeLower(sContaining_);
+	RString sEnding = MakeLower(sEnding_);
 
 	std::set<File>::const_iterator i = files.lower_bound( File(sBeginning) );
 	for( ; i != files.end(); ++i )
@@ -104,7 +101,7 @@ int FileSet::GetFileHash( const RString &sPath ) const
 static void SplitPath( RString sPath, RString &sDir, RString &sName )
 {
 	CollapsePath( sPath );
-	if( sPath.Right(1) == "/" )
+	if( EndsWith(sPath, "/") )
 		sPath.erase( sPath.size()-1 );
 
 	size_t iSep = sPath.find_last_of( '/' );
@@ -276,14 +273,13 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 		LOG->Warn( "FilenameDB::GetFileSet: m_Mutex was locked" );
 
 	/* Normalize the path. */
-	sDir.Replace("\\", "/"); /* foo\bar -> foo/bar */
-	sDir.Replace("//", "/"); /* foo//bar -> foo/bar */
+	ReplaceAll(sDir, "\\", "/"); /* foo\bar -> foo/bar */
+	ReplaceAll(sDir, "//", "/"); /* foo//bar -> foo/bar */
 
 	if( sDir == "" )
 		sDir = "/";
 
-	RString sLower = sDir;
-	sLower.MakeLower();
+	RString sLower = MakeLower(sDir);
 
 	m_Mutex.Lock();
 
@@ -463,8 +459,7 @@ void FilenameDB::DelFileSet( std::map<RString, FileSet *>::iterator dir )
 void FilenameDB::DelFile( const RString &sPath )
 {
 	LockMut(m_Mutex);
-	RString lower = sPath;
-	lower.MakeLower();
+	RString lower = MakeLower(sPath);
 
 	auto fsi = dirs.find( lower );
 	DelFileSet( fsi );
@@ -520,7 +515,7 @@ void FilenameDB::FlushDirCache( const RString & /* sDir */ )
 				RString sParent = Dirname( sDir );
 				if( sParent == "./" )
 					sParent = "";
-				sParent.MakeLower();
+				sParent = MakeLower(sParent);
 				it = dirs.find( sParent );
 				if( it != dirs.end() )
 				{

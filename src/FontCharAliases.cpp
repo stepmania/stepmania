@@ -7,7 +7,7 @@
 #include <map>
 
 // Map from "&foo;" to a UTF-8 string.
-typedef std::map<RString, wchar_t, StdString::StdStringLessNoCase> aliasmap;
+typedef std::map<RString, wchar_t, ci_std_string_lt> aliasmap;
 static aliasmap CharAliases;
 static std::map<RString,RString> CharAliasRepl;
 
@@ -362,9 +362,8 @@ static void InitCharAliases()
 
 	for(aliasmap::const_iterator i = CharAliases.begin(); i != CharAliases.end(); ++i)
 	{
-		RString from = i->first;
+		RString from = MakeLower(i->first);
 		RString to = WcharToUTF8(i->second);
-		from.MakeLower();
 		CharAliasRepl[from] = to;
 	}
 }

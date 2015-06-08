@@ -104,8 +104,7 @@ bool Steps::GetNoteDataFromSimfile()
 {
 	// Replace the line below with the Steps' cache file.
 	RString stepFile = this->GetFilename();
-	RString extension = GetExtension(stepFile);
-	extension.MakeLower(); // must do this because the code is expecting lowercase
+	RString extension = MakeLower(GetExtension(stepFile));
 
 	if (extension.empty() || extension == "ssc"
 		|| extension == "ats") // remember cache files.
@@ -124,7 +123,7 @@ bool Steps::GetNoteDataFromSimfile()
 			*/
 			SMLoader backup_loader;
 			RString transformedStepFile = stepFile;
-			transformedStepFile.Replace(".ssc", ".sm");
+			ReplaceAll(transformedStepFile, ".ssc", ".sm");
 
 			return backup_loader.LoadNoteDataFromSimfile(transformedStepFile, *this);
 		}
@@ -559,7 +558,7 @@ bool Steps::MakeValidEditDescription( RString &sPreferredDescription )
 {
 	if( int(sPreferredDescription.size()) > MAX_STEPS_DESCRIPTION_LENGTH )
 	{
-		sPreferredDescription = sPreferredDescription.Left( MAX_STEPS_DESCRIPTION_LENGTH );
+		sPreferredDescription = head(sPreferredDescription, MAX_STEPS_DESCRIPTION_LENGTH);
 		return true;
 	}
 	return false;
@@ -673,7 +672,7 @@ public:
 	*/
 	static int GetChartName(T *p, lua_State *L)
 	{
-		lua_pushstring(L, p->GetChartName());
+		lua_pushstring(L, p->GetChartName().c_str());
 		return 1;
 	}
 	static int GetDisplayBpms( T* p, lua_State *L )

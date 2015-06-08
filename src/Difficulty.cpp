@@ -80,8 +80,7 @@ struct OldStyleStringToDifficultyMapHolder
 OldStyleStringToDifficultyMapHolder OldStyleStringToDifficulty_converter;
 Difficulty OldStyleStringToDifficulty( const RString& sDC )
 {
-	RString s2 = sDC;
-	s2.MakeLower();
+	RString s2 = MakeLower(sDC);
 	std::map<RString, Difficulty>::iterator diff=
 		OldStyleStringToDifficulty_converter.conversion_map.find(s2);
 	if(diff != OldStyleStringToDifficulty_converter.conversion_map.end())

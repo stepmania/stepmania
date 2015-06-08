@@ -20,7 +20,7 @@ public:
 	virtual const RString &GetBaseClassName() const = 0;
 
 	static void ApplyDerivedType( Lua *L, const RString &sClassname, void *pSelf );
-	static bool CheckLuaObjectType( lua_State *L, int narg, const char *szType );
+	static bool CheckLuaObjectType( lua_State *L, int narg, std::string const &szType );
 
 protected:
 	virtual void Register( Lua *L, int iMethods, int iMetatable ) = 0;
@@ -73,7 +73,7 @@ public:
 		if( !LuaBinding::CheckLuaObjectType(L, narg, m_sClassName) )
 		{
 			if( bIsSelf )
-				luaL_typerror( L, narg, m_sClassName );
+				luaL_typerror( L, narg, m_sClassName.c_str() );
 			else
 				LuaHelpers::TypeError( L, narg, m_sClassName );
 		}

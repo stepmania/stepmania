@@ -2011,7 +2011,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
 		{
-			CHECKPOINT;
+			CHECKPOINT_M("Getting the proper combination.");
 
 			StepsType st = GetCurrentStyle(pn)->m_StepsType;
 
@@ -2033,14 +2033,14 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 				ASSERT( sas.pSteps != NULL );
 				vSongAndSteps.push_back( sas );
 			}
-			CHECKPOINT;
+			CHECKPOINT_M("About to sort the findings.");
 
 			sort( vSongAndSteps.begin(), vSongAndSteps.end() );
 
 			vector<SongAndSteps>::iterator toDelete = unique( vSongAndSteps.begin(), vSongAndSteps.end() );
 			vSongAndSteps.erase(toDelete, vSongAndSteps.end());
 
-			CHECKPOINT;
+			CHECKPOINT_M("Finding the records.");
 			for( unsigned i=0; i<vSongAndSteps.size(); i++ )
 			{
 				Song* pSong = vSongAndSteps[i].pSong;
@@ -2106,7 +2106,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 				}
 			}
 
-			CHECKPOINT;
+			CHECKPOINT_M("About to get the final stats.");
 			StageStats stats;
 			STATSMAN->GetFinalEvalStageStats( stats );
 
@@ -2166,7 +2166,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		{
-			CHECKPOINT;
+			CHECKPOINT_M("Course style records.");
 			Course* pCourse = m_pCurCourse;
 			ASSERT( pCourse != NULL );
 			Trail *pTrail = m_pCurTrail[pn];
@@ -2244,7 +2244,7 @@ bool GameState::AnyPlayerHasRankingFeats() const
 void GameState::StoreRankingName( PlayerNumber pn, RString sName )
 {
 	// The theme can upper it if desired. -Kyz
-	// sName.MakeUpper();
+	// sName = MakeUpper(sName);
 
 	if( USE_NAME_BLACKLIST )
 	{
@@ -2261,7 +2261,7 @@ void GameState::StoreRankingName( PlayerNumber pn, RString sName )
 					break;
 				}
 
-				sLine.MakeUpper();
+				sLine = MakeUpper(sLine);
 				if( !sLine.empty() && sName.find(sLine) != string::npos )	// name contains a bad word
 				{
 					LOG->Trace( "entered '%s' matches blacklisted item '%s'", sName.c_str(), sLine.c_str() );
@@ -2838,7 +2838,7 @@ public:
 	{
 		SongOptions so;
 		p->GetDefaultSongOptions( so );
-		lua_pushstring(L, so.GetString());
+		lua_pushstring(L, so.GetString().c_str());
 		return 1;
 	}
 	static int ApplyPreferredSongOptionsToOtherLevels(T* p, lua_State* L)
@@ -2923,8 +2923,8 @@ public:
 			const Steps* pSteps = vpStepsToShow[i];
 			RString sDifficulty = CustomDifficultyToLocalizedString( GetCustomDifficulty( pSteps->m_StepsType, pSteps->GetDifficulty(), CourseType_Invalid ) );
 
-			lua_pushstring( L, sDifficulty );
-			lua_pushstring( L, pSteps->GetDescription() );
+			lua_pushstring( L, sDifficulty.c_str() );
+			lua_pushstring( L, pSteps->GetDescription().c_str() );
 		}
 
 		return vpStepsToShow.size()*2;
@@ -3004,7 +3004,7 @@ public:
 			p->m_pCurCharacters[Enum::Check<PlayerNumber>(L, 1)] = c;
 		COMMON_RETURN_SELF;
 	}
-	static int GetExpandedSectionName( T* p, lua_State *L )				{ lua_pushstring(L, p->sExpandedSectionName); return 1; }
+	static int GetExpandedSectionName( T* p, lua_State *L )				{ lua_pushstring(L, p->sExpandedSectionName.c_str()); return 1; }
 	static int AddStageToPlayer( T* p, lua_State *L )				{ p->AddStageToPlayer(Enum::Check<PlayerNumber>(L, 1)); COMMON_RETURN_SELF; }
 	static int InsertCoin( T* p, lua_State *L )
 	{

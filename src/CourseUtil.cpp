@@ -20,9 +20,9 @@ using std::vector;
 // Sorting stuff
 static bool CompareCoursePointersByName( const Course* pCourse1, const Course* pCourse2 )
 {
-	RString sName1 = pCourse1->GetDisplayFullTitle();
+	ci_string sName1 = pCourse1->GetDisplayFullTitle().c_str();
 	RString sName2 = pCourse2->GetDisplayFullTitle();
-	return sName1.CompareNoCase( sName2 ) < 0;
+	return sName1 < sName2.c_str();
 }
 
 static bool CompareCoursePointersByAutogen( const Course* pCourse1, const Course* pCourse2 )
@@ -427,9 +427,9 @@ bool EditCourseUtil::ValidateEditCourseName( const RString &sAnswer, RString &sE
 	}
 
 	static const RString sInvalidChars = "\\/:*?\"<>|";
-	if( strpbrk(sAnswer, sInvalidChars) != NULL )
+	if( std::strpbrk(sAnswer.c_str(), sInvalidChars.c_str()) != NULL )
 	{
-		sErrorOut = ssprintf( EDIT_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
+		sErrorOut = fmt::sprintf( EDIT_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;
 	}
 
@@ -552,7 +552,7 @@ void CourseID::FromCourse( const Course *p )
 
 	// HACK for backwards compatibility:
 	// Strip off leading "/".  2005/05/21 file layer changes added a leading slash.
-	if( sPath.Left(1) == "/" )
+	if( BeginsWith(sPath, "/"))
 		sPath.erase( sPath.begin() );
 
 	m_Cache.Unset();
@@ -563,7 +563,7 @@ Course *CourseID::ToCourse() const
 	// HACK for backwards compatibility:
 	// Re-add the leading "/".  2005/05/21 file layer changes added a leading slash.
 	RString sPath2 = sPath;
-	if( sPath2.Left(1) != "/" )
+	if( !BeginsWith(sPath2, "/"))
 		sPath2 = "/" + sPath2;
 
 	Course *pCourse = NULL;

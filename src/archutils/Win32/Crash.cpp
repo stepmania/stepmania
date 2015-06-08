@@ -624,9 +624,9 @@ void CrashHandler::ForceDeadlock( RString reason, uint64_t iID )
 	debug_crash();
 }
 
-void CrashHandler::ForceCrash( const char *reason )
+void CrashHandler::ForceCrash( std::string const reason )
 {
-	strncpy( g_CrashInfo.m_CrashReason, reason, sizeof(g_CrashInfo.m_CrashReason) );
+	strncpy( g_CrashInfo.m_CrashReason, reason.c_str(), sizeof(g_CrashInfo.m_CrashReason) );
 	g_CrashInfo.m_CrashReason[ sizeof(g_CrashInfo.m_CrashReason)-1 ] = 0;
 
 	debug_crash();

@@ -145,23 +145,36 @@ void SMSetDisplayBPM(SMSongTagInfo& info)
 }
 void SMSetSelectable(SMSongTagInfo& info)
 {
-	if((*info.params)[1].EqualsNoCase("YES"))
-	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
-	else if((*info.params)[1].EqualsNoCase("NO"))
-	{ info.song->m_SelectionDisplay = info.song->SHOW_NEVER; }
+	ci_string ciParam( (*info.params)[1].c_str());
+	if(ciParam == "YES")
+	{
+		info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS;
+	}
+	else if(ciParam == "NO")
+	{
+		info.song->m_SelectionDisplay = info.song->SHOW_NEVER;
+	}
 	// ROULETTE from 3.9. It was removed since UnlockManager can serve
 	// the same purpose somehow. This, of course, assumes you're using
 	// unlocks. -aj
-	else if((*info.params)[1].EqualsNoCase("ROULETTE"))
-	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
+	else if(ciParam == "ROULETTE")
+	{
+		info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS;
+	}
 	/* The following two cases are just fixes to make sure simfiles that
 	 * used 3.9+ features are not excluded here */
-	else if((*info.params)[1].EqualsNoCase("ES") || (*info.params)[1].EqualsNoCase("OMES"))
-	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
+	else if(ciParam == "ES" || ciParam == "OMES")
+	{
+		info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS;
+	}
 	else if(StringToInt((*info.params)[1]) > 0)
-	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
+	{
+		info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS;
+	}
 	else
-	{ LOG->UserLog("Song file", info.path, "has an unknown #SELECTABLE value, \"%s\"; ignored.", (*info.params)[1].c_str()); }
+	{
+		LOG->UserLog("Song file", info.path, "has an unknown #SELECTABLE value, \"%s\"; ignored.", (*info.params)[1].c_str());
+	}
 }
 void SMSetBGChanges(SMSongTagInfo& info)
 {
@@ -324,12 +337,13 @@ void SMLoader::LoadFromTokens(
 	// Difficulty_Challenge. (At least v1.64, possibly v3.0 final...)
 	if( out.GetDifficulty() == Difficulty_Hard )
 	{
+		ci_string ciDesc(sDescription.c_str());
 		// HACK: SMANIAC used to be Difficulty_Hard with a special description.
-		if( sDescription.CompareNoCase("smaniac") == 0 )
+		if( ciDesc == "smaniac" )
 			out.SetDifficulty( Difficulty_Challenge );
 
 		// HACK: CHALLENGE used to be Difficulty_Hard with a special description.
-		if( sDescription.CompareNoCase("challenge") == 0 )
+		else if( ciDesc == "challenge" )
 			out.SetDifficulty( Difficulty_Challenge );
 	}
 
@@ -349,7 +363,7 @@ void SMLoader::LoadFromTokens(
 void SMLoader::ProcessBGChanges( Song &out, const RString &sValueName, const RString &sPath, const RString &sParam )
 {
 	BackgroundLayer iLayer = BACKGROUND_LAYER_1;
-	if( sscanf(sValueName, "BGCHANGES%d", &*ConvertValue<int>(&iLayer)) == 1 )
+	if( sscanf(sValueName.c_str(), "BGCHANGES%d", &*ConvertValue<int>(&iLayer)) == 1 )
 		enum_add(iLayer, -1);	// #BGCHANGES2 = BACKGROUND_LAYER_2
 
 	bool bValid = iLayer>=0 && iLayer<NUM_BackgroundLayer;
@@ -397,14 +411,21 @@ void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
 			continue;
 
 		Trim( sBits[0] );
-
-		if( !sBits[0].CompareNoCase("TIME") )
-			attack.fStartSecond = strtof( sBits[1], NULL );
-		else if( !sBits[0].CompareNoCase("LEN") )
-			attack.fSecsRemaining = strtof( sBits[1], NULL );
-		else if( !sBits[0].CompareNoCase("END") )
-			end = strtof( sBits[1], NULL );
-		else if( !sBits[0].CompareNoCase("MODS") )
+		ci_string ciBit(sBits[0].c_str());
+		
+		if (ciBit == "TIME")
+		{
+			attack.fStartSecond = std::strtof( sBits[1].c_str(), NULL );
+		}
+		else if(ciBit == "LEN")
+		{
+			attack.fSecsRemaining = std::strtof( sBits[1].c_str(), NULL );
+		}
+		else if(ciBit == "END")
+		{
+			end = std::strtof( sBits[1].c_str(), NULL );
+		}
+		else if(ciBit == "MODS")
 		{
 			Trim(sBits[1]);
 			attack.sModifiers = sBits[1];
@@ -841,7 +862,7 @@ void SMLoader::ProcessTickcounts( TimingData &out, const RString line, const int
 		}
 
 		const float fTickcountBeat = RowToBeat( arrayTickcountValues[0], rowsPerBeat );
-		int iTicks = clamp(atoi( arrayTickcountValues[1] ), 0, ROWS_PER_BEAT);
+		int iTicks = clamp(atoi( arrayTickcountValues[1].c_str() ), 0, ROWS_PER_BEAT);
 
 		out.AddSegment( TickcountSegment(BeatToNoteRow(fTickcountBeat), iTicks) );
 	}
@@ -857,7 +878,7 @@ void SMLoader::ProcessSpeeds( TimingData &out, const RString line, const int row
 		vector<RString> vs2;
 		split( *s1, "=", vs2 );
 
-		if( vs2[0] == 0 && vs2.size() == 2 ) // First one always seems to have 2.
+		if( vs2[0][0] == '0' && vs2.size() == 2 ) // First one always seems to have 2.
 		{
 			vs2.push_back("0");
 		}
@@ -952,12 +973,12 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 	{
 	case 11:
 		change.m_def.m_sColor2 = aBGChangeValues[10];
-		change.m_def.m_sColor2.Replace( '^', ',' );
+		ReplaceAll(change.m_def.m_sColor2, "^", ",");
 		change.m_def.m_sColor2 = RageColor::NormalizeColorString( change.m_def.m_sColor2 );
 		// fall through
 	case 10:
 		change.m_def.m_sColor1 = aBGChangeValues[9];
-		change.m_def.m_sColor1.Replace( '^', ',' );
+		ReplaceAll(change.m_def.m_sColor1, "^", ",");
 		change.m_def.m_sColor1 = RageColor::NormalizeColorString( change.m_def.m_sColor1 );
 		// fall through
 	case 9:
@@ -965,8 +986,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		// fall through
 	case 8:
 	{
-		RString tmp = aBGChangeValues[7];
-		tmp.MakeLower();
+		RString tmp = MakeLower(aBGChangeValues[7]);
 		if( ( tmp.find(".ini") != string::npos || tmp.find(".xml") != string::npos )
 		   && !PREFSMAN->m_bQuirksMode )
 		{
@@ -1009,8 +1029,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		// fall through
 	case 2:
 	{
-		RString tmp = aBGChangeValues[1];
-		tmp.MakeLower();
+		RString tmp = MakeLower(aBGChangeValues[1]);
 		if( ( tmp.find(".ini") != string::npos || tmp.find(".xml") != string::npos )
 		   && !PREFSMAN->m_bQuirksMode )
 		{
@@ -1042,8 +1061,7 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
+		RString sValueName = MakeUpper(sParams[0]);
 
 		// The only tag we care about is the #NOTES tag.
 		if( sValueName=="NOTES" || sValueName=="NOTES2" )
@@ -1062,28 +1080,34 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 			RString difficulty = sParams[3];
 
 			// HACK?: If this is a .edit fudge the edit difficulty
-			if(path.Right(5).CompareNoCase(".edit") == 0) difficulty = "edit";
-
+			ci_string ciPath(tail(path, 5).c_str());
+			if(ciPath == ".edit")
+			{
+				difficulty = "edit";
+			}
 			Trim(stepsType);
 			Trim(description);
 			Trim(difficulty);
+			ci_string ciDiff(difficulty.c_str());
 			// Remember our old versions.
-			if (difficulty.CompareNoCase("smaniac") == 0)
+			if (ciDiff == "smaniac")
 			{
 				difficulty = "Challenge";
 			}
 
 			/* Handle hacks that originated back when StepMania didn't have
 			 * Difficulty_Challenge. TODO: Remove the need for said hacks. */
-			if( difficulty.CompareNoCase("hard") == 0 )
+			if( ciDiff == "hard" )
 			{
 				/* HACK: Both SMANIAC and CHALLENGE used to be Difficulty_Hard.
 				 * They were differentiated via aspecial description.
 				 * Account for the rogue charts that do this. */
 				// HACK: SMANIAC used to be Difficulty_Hard with a special description.
-				if (description.CompareNoCase("smaniac") == 0 ||
-					description.CompareNoCase("challenge") == 0)
+				ci_string ciDesc(description.c_str());
+				if ( ciDesc == "smaniac" || ciDesc == "challenge")
+				{
 					difficulty = "Challenge";
+				}
 			}
 
 			if(!(out.m_StepsType == GAMEMAN->StringToStepsType( stepsType ) &&
@@ -1124,8 +1148,7 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
+		RString sValueName = MakeUpper(sParams[0]);
 
 		reused_song_info.params= &sParams;
 		song_handler_map_t::iterator handler=
@@ -1136,7 +1159,7 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 		 * splitting other formats that *don't* natively support #SUBTITLE. */
 			handler->second(reused_song_info);
 		}
-		else if(sValueName.Left(strlen("BGCHANGES")) == "BGCHANGES")
+		else if(BeginsWith(sValueName, "BGCHANGES"))
 		{
 			SMSetBGChanges(reused_song_info);
 		}
@@ -1210,8 +1233,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
+		RString sValueName = MakeUpper(sParams[0]);
 
 		// handle the data
 		if( sValueName=="SONG" )
@@ -1226,7 +1248,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 
 			RString sSongFullTitle = sParams[1];
 			this->SetSongTitle(sParams[1]);
-			sSongFullTitle.Replace( '\\', '/' );
+			ReplaceAll(sSongFullTitle, "\\", "/");
 
 			pSong = SONGMAN->FindSong( sSongFullTitle );
 			if( pSong == NULL )
@@ -1319,9 +1341,10 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 		 * with a very high beat, search the whole list. */
 		bool bHasNoSongBgTag = false;
 
+		ci_string ciNoSong(NO_SONG_BG_FILE.c_str());
 		for( unsigned i = 0; !bHasNoSongBgTag && i < bg.size(); ++i )
 		{
-			if( !bg[i].m_def.m_sFile1.CompareNoCase(NO_SONG_BG_FILE) )
+			if (ciNoSong == bg[i].m_def.m_sFile1.c_str())
 			{
 				bg.erase( bg.begin()+i );
 				bHasNoSongBgTag = true;
@@ -1343,12 +1366,15 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 				break;
 
 			// If the last BGA is already the song BGA, don't add a duplicate.
-			if( !bg.empty() && !bg.back().m_def.m_sFile1.CompareNoCase(song.m_sBackgroundFile) )
+			ci_string ciSongBack(song.m_sBackgroundFile.c_str());
+			if( !bg.empty() && ciSongBack == bg.back().m_def.m_sFile1.c_str())
+			{
 				break;
-
+			}
 			if( !IsAFile( song.GetBackgroundPath() ) )
+			{
 				break;
-
+			}
 			bg.push_back( BackgroundChange(lastBeat,song.m_sBackgroundFile) );
 		} while(0);
 	}

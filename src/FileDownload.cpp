@@ -107,7 +107,7 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 		m_sBaseAddress += ssprintf( ":%d", Port );
 	m_sBaseAddress += "/";
 
-	if( sAddress.Right(1) != "/" )
+	if( !EndsWith(sAddress, "/"))
 	{
 		m_sEndName = Basename( sAddress );
 		m_sBaseAddress += Dirname( sAddress );
@@ -210,7 +210,7 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 	m_wSocket.SendData( sHeader.c_str(), sHeader.length() );
 	m_wSocket.SendData( "\r\n" );
 
-	m_wSocket.SendData( sRequestPayload.GetBuffer(), sRequestPayload.size() );
+	m_wSocket.SendData( sRequestPayload.c_str(), sRequestPayload.size() );
 
 	m_sStatus = "Header Sent.";
 	m_wSocket.blocking = false;

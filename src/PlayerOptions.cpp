@@ -346,8 +346,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 {
 	ASSERT_M( NOTESKIN != NULL, "The Noteskin Manager must be loaded in order to process mods." );
 
-	RString sBit = sOneMod;
-	sBit.MakeLower();
+	RString sBit = MakeLower(sOneMod);
 	Trim( sBit );
 
 	/* "drunk"
@@ -370,7 +369,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		{
 			/* If the last character is a *, they probably said "123*" when
 			 * they meant "*123". */
-			if( s.Right(1) == "*" )
+			if( EndsWith(s, "*") )
 			{
 				// XXX: We know what they want, is there any reason not to handle it?
 				// Yes. We should be strict in handling the format. -Chris
@@ -384,7 +383,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		}
 		else if( s[0]=='*' )
 		{
-			sscanf( s, "*%f", &speed );
+			sscanf( s.c_str(), "*%f", &speed );
 			if( !std::isfinite(speed) )
 				speed = 1.0f;
 		}
@@ -405,7 +404,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		m_fTimeSpacing = 0;
 		m_fMaxScrollBPM = 0;
 	}
-	else if( sscanf( sBit, "c%f", &level ) == 1 )
+	else if( sscanf( sBit.c_str(), "c%f", &level ) == 1 )
 	{
 		if( !std::isfinite(level) || level <= 0.0f )
 			level = CMOD_DEFAULT;
@@ -415,7 +414,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		m_fMaxScrollBPM = 0;
 	}
 	// oITG's m-mods
-	else if( sscanf( sBit, "m%f", &level ) == 1 )
+	else if( sscanf( sBit.c_str(), "m%f", &level ) == 1 )
 	{
 		// OpenITG doesn't have this block:
 		/*
@@ -1153,11 +1152,11 @@ public:
 		int original_top= lua_gettop(L);
 		if( p->m_sNoteSkin.empty()  )
 		{
-			lua_pushstring( L, CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue() );
+			lua_pushstring( L, CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue().c_str() );
 		}
 		else
 		{
-			lua_pushstring( L, p->m_sNoteSkin );
+			lua_pushstring( L, p->m_sNoteSkin.c_str() );
 		}
 		if(original_top >= 1 && lua_isstring(L, 1))
 		{

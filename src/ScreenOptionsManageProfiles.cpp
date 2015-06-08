@@ -322,14 +322,14 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 			case ProfileAction_Delete:
 				{
 					RString sTitle = pProfile->m_sDisplayName;
-					RString sMessage = ssprintf( CONFIRM_DELETE_PROFILE.GetValue(), sTitle.c_str() );
+					RString sMessage = fmt::sprintf( CONFIRM_DELETE_PROFILE.GetValue(), sTitle.c_str() );
 					ScreenPrompt::Prompt( SM_BackFromDeleteConfirm, sMessage, PROMPT_YES_NO );
 				}
 				break;
 			case ProfileAction_Clear:
 				{
 					RString sTitle = pProfile->m_sDisplayName;
-					RString sMessage = ssprintf( CONFIRM_CLEAR_PROFILE.GetValue(), sTitle.c_str() );
+					RString sMessage = fmt::sprintf( CONFIRM_CLEAR_PROFILE.GetValue(), sTitle.c_str() );
 					ScreenPrompt::Prompt( SM_BackFromClearConfirm, sMessage, PROMPT_YES_NO );
 				}
 				break;

@@ -93,7 +93,7 @@ void ScreenSelectMaster::Init()
 		{
 			RString sElement = "Cursor" + PLAYER_APPEND_NO_SPACE(p);
 			m_sprCursor[p].Load( THEME->GetPathG(m_sName,sElement) );
-			sElement.Replace( " ", "" );
+			ReplaceAll(sElement, " ", "");
 			m_sprCursor[p]->SetName( sElement );
 			this->AddChild( m_sprCursor[p] );
 			LOAD_ALL_COMMANDS( m_sprCursor[p] );
@@ -276,7 +276,7 @@ void ScreenSelectMaster::Init()
 		for( unsigned part = 0; part < parts.size(); ++part )
 		{
 			int from, to;
-			if( sscanf( parts[part], "%d:%d", &from, &to ) != 2 )
+			if( sscanf( parts[part].c_str(), "%d:%d", &from, &to ) != 2 )
 			{
 				LuaHelpers::ReportScriptErrorFmt( "%s::OptionOrder%s parse error", m_sName.c_str(), MenuDirToString(dir).c_str() );
 				continue;

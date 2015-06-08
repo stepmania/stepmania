@@ -40,9 +40,14 @@ const char *g_CRSDifficultyNames[] =
  */
 static CourseDifficulty CRSStringToDifficulty( const RString& s )
 {
+	ci_string diff(s.c_str());
 	FOREACH_ENUM( Difficulty,i)
-		if( !s.CompareNoCase(g_CRSDifficultyNames[i]) )
+	{
+		if (diff == g_CRSDifficultyNames[i])
+		{
 			return i;
+		}
+	}
 	return Difficulty_Invalid;
 }
 
@@ -63,41 +68,48 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 	{
 		RString sValueName = msd.GetParam(i, 0);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-
+		ci_string ciValueName(sValueName.c_str());
 		// handle the data
-		if( sValueName.EqualsNoCase("COURSE") )
-			out.m_sMainTitle = sParams[1];
-		else if( sValueName.EqualsNoCase("COURSETRANSLIT") )
-			out.m_sMainTitleTranslit = sParams[1];
-		else if( sValueName.EqualsNoCase("SCRIPTER") )
-			out.m_sScripter = sParams[1];
-		else if( sValueName.EqualsNoCase("DESCRIPTION") )
-			out.m_sDescription = sParams[1];
-		else if( sValueName.EqualsNoCase("REPEAT") )
+		if( sValueName == "COURSE" )
 		{
-			RString str = sParams[1];
-			str.MakeLower();
+			out.m_sMainTitle = sParams[1];
+		}
+		else if( sValueName == "COURSETRANSLIT" )
+		{
+			out.m_sMainTitleTranslit = sParams[1];
+		}
+		else if( sValueName == "SCRIPTER" )
+		{
+			out.m_sScripter = sParams[1];
+		}
+		else if( sValueName == "DESCRIPTION" )
+		{
+			out.m_sDescription = sParams[1];
+		}
+		else if( sValueName == "REPEAT" )
+		{
+			RString str = MakeLower(sParams[1]);
 			if( str.find("yes") != string::npos )
 				out.m_bRepeat = true;
 		}
 
-		else if( sValueName.EqualsNoCase("BANNER") )
+		else if( sValueName == "BANNER" )
 		{
 			out.m_sBannerPath = sParams[1];
 		}
-		else if( sValueName.EqualsNoCase("BACKGROUND") )
+		else if( sValueName == "BACKGROUND" )
 		{
 			out.m_sBackgroundPath = sParams[1];
 		}
-		else if( sValueName.EqualsNoCase("LIVES") )
+		else if( sValueName == "LIVES" )
 		{
 			out.m_iLives = max( StringToInt(sParams[1]), 0 );
 		}
-		else if( sValueName.EqualsNoCase("GAINSECONDS") )
+		else if( sValueName == "GAINSECONDS" )
 		{
 			fGainSeconds = StringToFloat( sParams[1] );
 		}
-		else if( sValueName.EqualsNoCase("METER") )
+		else if( sValueName == "METER" )
 		{
 			if( sParams.params.size() == 2 )
 			{
@@ -115,7 +127,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			}
 		}
 
-		else if( sValueName.EqualsNoCase("MODS") )
+		else if( sValueName == "MODS" )
 		{
 			Attack attack;
 			float end = -9999;
@@ -127,13 +139,20 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 					continue;
 
 				Trim( sBits[0] );
-				if( !sBits[0].CompareNoCase("TIME") )
+				ci_string ciBits(sBits[0].c_str());
+				if( ciBits == "TIME")
+				{
 					attack.fStartSecond = max( StringToFloat(sBits[1]), 0.0f );
-				else if( !sBits[0].CompareNoCase("LEN") )
+				}
+				else if( ciBits == "LEN")
+				{
 					attack.fSecsRemaining = StringToFloat( sBits[1] );
-				else if( !sBits[0].CompareNoCase("END") )
+				}
+				else if( ciBits == "END")
+				{
 					end = StringToFloat( sBits[1] );
-				else if( !sBits[0].CompareNoCase("MODS") )
+				}
+				else if( ciBits == "MODS")
 				{
 					attack.sModifiers = sBits[1];
 
@@ -161,7 +180,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			}
 
 		}
-		else if( sValueName.EqualsNoCase("SONG") )
+		else if( sValueName == "SONG" )
 		{
 			CourseEntry new_entry;
 
@@ -170,9 +189,9 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			// to a lack of songs. -aj
 			int iNumSongs = SONGMAN->GetNumSongs();
 			// most played
-			if( sParams[1].Left(strlen("BEST")) == "BEST" )
+			if( BeginsWith(sParams[1], "BEST"))
 			{
-				int iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
+				int iChooseIndex = StringToInt( tail(sParams[1], -4)) - 1;
 				if( iChooseIndex > iNumSongs )
 				{
 					// looking up a song that doesn't exist.
@@ -187,9 +206,9 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				new_entry.songSort = SongSort_MostPlays;
 			}
 			// least played
-			else if( sParams[1].Left(strlen("WORST")) == "WORST" )
+			else if( BeginsWith(sParams[1], "WORST"))
 			{
-				int iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
+				int iChooseIndex = StringToInt( tail(sParams[1], -5)) - 1;
 				if( iChooseIndex > iNumSongs )
 				{
 					// looking up a song that doesn't exist.
@@ -204,16 +223,16 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				new_entry.songSort = SongSort_FewestPlays;
 			}
 			// best grades
-			else if( sParams[1].Left(strlen("GRADEBEST")) == "GRADEBEST" )
+			else if( BeginsWith(sParams[1], "GRADEBEST"))
 			{
-				new_entry.iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("GRADEBEST")) ) - 1;
+				new_entry.iChooseIndex = StringToInt( tail(sParams[1], -9)) - 1;
 				CLAMP( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_TopGrades;
 			}
 			// worst grades
-			else if( sParams[1].Left(strlen("GRADEWORST")) == "GRADEWORST" )
+			else if( BeginsWith(sParams[1], "GRADEWORST"))
 			{
-				new_entry.iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("GRADEWORST")) ) - 1;
+				new_entry.iChooseIndex = StringToInt( tail(sParams[1], -10)) - 1;
 				CLAMP( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_LowestGrades;
 			}
@@ -222,11 +241,11 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				//new_entry.bSecret = true;
 			}
 			// group random
-			else if( sParams[1].Right(1) == "*" )
+			else if( EndsWith(sParams[1], "*"))
 			{
 				//new_entry.bSecret = true;
 				RString sSong = sParams[1];
-				sSong.Replace( "\\", "/" );
+				std::replace(sSong.begin(), sSong.end(), '\\', '/');
 				vector<RString> bits;
 				split( sSong, "/", bits );
 				if( bits.size() == 2 )
@@ -250,7 +269,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			else
 			{
 				RString sSong = sParams[1];
-				sSong.Replace( "\\", "/" );
+				std::replace(sSong.begin(), sSong.end(), '\\', '/');
 				vector<RString> bits;
 				split( sSong, "/", bits );
 
@@ -281,7 +300,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
         new_entry.stepsCriteria.m_difficulty = StringToDifficulty( sParams[2] );
 			if( new_entry.stepsCriteria.m_difficulty == Difficulty_Invalid )
 			{
-				int retval = sscanf( sParams[2], "%d..%d", &new_entry.stepsCriteria.m_iLowMeter, &new_entry.stepsCriteria.m_iHighMeter );
+				int retval = sscanf( sParams[2].c_str(), "%d..%d", &new_entry.stepsCriteria.m_iLowMeter, &new_entry.stepsCriteria.m_iHighMeter );
 				if( retval == 1 )
 					new_entry.stepsCriteria.m_iHighMeter = new_entry.stepsCriteria.m_iLowMeter;
 				else if( retval != 2 )
@@ -305,16 +324,35 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 					RString &sMod = mods[j];
 					TrimLeft( sMod );
 					TrimRight( sMod );
-					if( !sMod.CompareNoCase("showcourse") )
+					ci_string ciMod(sMod.c_str());
+					if( ciMod == "showcourse")
+					{
 						new_entry.bSecret = false;
-					else if( !sMod.CompareNoCase("noshowcourse") )
+					}
+					else if( ciMod == "noshowcourse")
+					{
 						new_entry.bSecret = true;
-					else if( !sMod.CompareNoCase("nodifficult") )
+					}
+					else if( ciMod == "nodifficult")
+					{
 						new_entry.bNoDifficult = true;
-					else if( sMod.length() > 5 && !sMod.Left(5).CompareNoCase("award") )
-						new_entry.iGainLives = StringToInt( sMod.substr(5) );
+					}
+					else if (ciMod.length() > 5)
+					{
+						ci_string awardMod(head(sMod, 5).c_str());
+						if (awardMod == "award")
+						{
+							new_entry.iGainLives = StringToInt(sMod.substr(5));
+						}
+						else
+						{
+							continue;
+						}
+					}
 					else
+					{
 						continue;
+					}
 					mods.erase( mods.begin() + j );
 				}
 				new_entry.sModifiers = join( ",", mods );
@@ -326,13 +364,13 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 
 			out.m_vEntries.push_back( new_entry );
 		}
-		else if( !sValueName.EqualsNoCase("DISPLAYCOURSE") || !sValueName.EqualsNoCase("COMBO") ||
-			 !sValueName.EqualsNoCase("COMBOMODE") )
+		else if( sValueName == "DISPLAYCOURSE" || sValueName == "COMBO" ||
+			 sValueName == "COMBOMODE" )
 		{
 			// Ignore
 		}
 
-		else if( bFromCache && !sValueName.EqualsNoCase("RADAR") )
+		else if( bFromCache && sValueName == "RADAR" )
 		{
 			StepsType st = (StepsType) StringToInt(sParams[1]);
 			CourseDifficulty cd = (CourseDifficulty) StringToInt( sParams[2] );
@@ -341,7 +379,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			rv.FromString( sParams[3] );
 			out.m_RadarCache[Course::CacheEntry(st, cd)] = rv;
 		}
-		else if( sValueName.EqualsNoCase("STYLE") )
+		else if( sValueName == "STYLE" )
 		{
 			RString sStyles = sParams[1];
 			vector<RString> asStyles;

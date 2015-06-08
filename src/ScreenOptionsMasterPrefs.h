@@ -49,7 +49,13 @@ struct ConfOption
 #define PUSH( c )	if(c) names.push_back(c);
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);
 	}
-	void AddOption( const RString &sName ) { PUSH(sName); }
+	void AddOption( const RString &sName )
+	{
+		if (sName.size() > 0)
+		{
+			names.push_back(sName);
+		}
+	}
 #undef PUSH
 
 	ConfOption( const char *n, MoveData_t m,

@@ -160,39 +160,38 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		// First check to see if this song is already selected. This is so that if
 		// you have multiple copies of the "same" song you can chose which copy to play.
 		Song* CurSong = m_MusicWheel.GetSelectedSong();
-
+		ci_string ciTitle(NSMAN->m_sMainTitle.c_str());
+		ci_string ciSubTitle(NSMAN->m_sSubTitle.c_str());
+		ci_string ciArtist(NSMAN->m_sArtist.c_str());
 		if(CurSong != NULL )
-
-			if( ( !CurSong->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
-					( !CurSong->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&
-					( !CurSong->GetTranslitSubTitle().CompareNoCase( NSMAN->m_sSubTitle ) ) )
 		{
-			switch ( NSMAN->m_iSelectMode )
+			if (ciTitle == CurSong->GetTranslitMainTitle().c_str() &&
+				ciSubTitle == CurSong->GetTranslitSubTitle().c_str() &&
+				ciArtist == CurSong->GetTranslitArtist().c_str())
 			{
-			case 0:
-			case 1:
-				NSMAN->m_iSelectMode = 0;
-				NSMAN->SelectUserSong();
-				break;
-			case 2:	// Proper starting of song
-			case 3:	// Blind starting of song
-				StartSelectedSong();
-				goto done;
+				switch ( NSMAN->m_iSelectMode )
+				{
+				case 0:
+				case 1:
+					NSMAN->m_iSelectMode = 0;
+					NSMAN->SelectUserSong();
+					break;
+				case 2:	// Proper starting of song
+				case 3:	// Blind starting of song
+					StartSelectedSong();
+					goto done;
+				}
 			}
 		}
 
 		vector <Song *> AllSongs = SONGMAN->GetAllSongs();
-		unsigned i;
-		for( i=0; i < AllSongs.size(); i++ )
-		{
-			m_cSong = AllSongs[i];
-			if( ( !m_cSong->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
-					( !m_cSong->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&
-					( !m_cSong->GetTranslitSubTitle().CompareNoCase( NSMAN->m_sSubTitle ) ) )
-					break;
-		}
-
-		bool haveSong = i != AllSongs.size();
+		
+		auto doesSongExist = [&ciTitle, &ciSubTitle, &ciArtist] (Song const *song) {
+			return ciTitle == song->GetTranslitMainTitle().c_str() &&
+			ciSubTitle == song->GetTranslitSubTitle().c_str() &&
+			ciArtist == song->GetTranslitArtist().c_str();
+		};
+		bool haveSong = std::any_of(AllSongs.begin(), AllSongs.end(), doesSongExist);
 
 		switch (NSMAN->m_iSelectMode)
 		{
@@ -546,7 +545,8 @@ void ScreenNetSelectMusic::MusicChanged()
 	if( GAMESTATE->m_pCurSong->HasMusic() )
 	{
 		// don't play the same sound over and over
-		if(SOUND->GetMusicPath().CompareNoCase(GAMESTATE->m_pCurSong->GetMusicPath()))
+		ci_string ciSoundPath(SOUND->GetMusicPath().c_str());
+		if (ciSoundPath != GAMESTATE->m_pCurSong->GetMusicPath().c_str())
 		{
 			SOUND->StopMusic();
 			SOUND->PlayMusic(

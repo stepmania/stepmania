@@ -177,16 +177,16 @@ DeviceButton StringToDeviceButton( const RString& s )
 		return (DeviceButton) s[0];
 
 	int i;
-	if( sscanf(s, "unk %i", &i) == 1 )
+	if( sscanf(s.c_str(), "unk %i", &i) == 1 )
 		return enum_add2( KEY_OTHER_0, i );
 
-	if( sscanf(s, "B%i", &i) == 1 )
+	if( sscanf(s.c_str(), "B%i", &i) == 1 )
 		return enum_add2( JOY_BUTTON_1, i-1 );
 
-	if( sscanf(s, "Midi %i", &i) == 1 )
+	if( sscanf(s.c_str(), "Midi %i", &i) == 1 )
 		return enum_add2( MIDI_FIRST, i );
 
-	if( sscanf(s, "Mouse %i", &i) == 1 )
+	if( sscanf(s.c_str(), "Mouse %i", &i) == 1 )
 		return enum_add2( MOUSE_LEFT, i );
 
 	auto it = g_mapStringToNames.find( s );
@@ -256,7 +256,7 @@ bool DeviceInput::FromString( const RString &s )
 	char szDevice[32] = "";
 	char szButton[32] = "";
 
-	if( 2 != sscanf( s, "%31[^_]_%31[^_]", szDevice, szButton ) )
+	if( 2 != sscanf( s.c_str(), "%31[^_]_%31[^_]", szDevice, szButton ) )
 	{
 		device = InputDevice_Invalid;
 		return false;

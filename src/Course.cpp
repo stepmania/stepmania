@@ -718,9 +718,10 @@ const Style *Course::GetCourseStyle( const Game *pGame, int iNumPlayers ) const
 
 	for (auto const *pStyle: vpStyles)
 	{
+		ci_string ciStyle(pStyle->m_szName);
 		for (auto const &style: m_setStyles)
 		{
-			if( !style.CompareNoCase(pStyle->m_szName) )
+			if( ciStyle == style.c_str() )
 			{
 				return pStyle;
 			}
@@ -917,12 +918,13 @@ bool Course::IsRanking() const
 	vector<RString> rankingsongs;
 
 	split(THEME->GetMetric("ScreenRanking", "CoursesToShow"), ",", rankingsongs);
-
-	for(unsigned i=0; i < rankingsongs.size(); i++)
-		if (rankingsongs[i].CompareNoCase(m_sPath))
-			return true;
-
-	return false;
+	ci_string ciPath(m_sPath.c_str());
+	
+	return std::any_of(rankingsongs.begin(), rankingsongs.end(), [&ciPath] (RString const &song) {
+		// This feels inverted. It was previously just CompareNoCase,
+		// which returns 0 on a match.
+		return ciPath != song.c_str();
+	});
 }
 
 const CourseEntry *Course::FindFixedSong( const Song *pSong ) const
@@ -983,21 +985,24 @@ void Course::CalculateRadarValues()
 
 bool Course::Matches( RString sGroup, RString sCourse ) const
 {
-	if( sGroup.size() && sGroup.CompareNoCase(this->m_sGroupName) != 0)
+	ci_string ciGroup(sGroup.c_str());
+	if( sGroup.size() && ciGroup != this->m_sGroupName.c_str())
+	{
 		return false;
-
+	}
+	ci_string ciCourse(sCourse.c_str());
 	RString sFile = m_sPath;
 	if( !sFile.empty() )
 	{
-		sFile.Replace("\\","/");
+		std::replace(sFile.begin(), sFile.end(), '\\', '/');
 		vector<RString> bits;
 		split( sFile, "/", bits );
 		const RString &sLastBit = bits[bits.size()-1];
-		if( sCourse.EqualsNoCase(sLastBit) )
+		if( ciCourse == sLastBit.c_str() )
 			return true;
 	}
 
-	if( sCourse.EqualsNoCase(this->GetTranslitFullTitle()) )
+	if( ciCourse == this->GetTranslitFullTitle().c_str() )
 		return true;
 
 	return false;
@@ -1050,8 +1055,8 @@ class LunaCourse: public Luna<Course>
 {
 public:
 	DEFINE_METHOD( GetPlayMode, GetPlayMode() )
-	static int GetDisplayFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayFullTitle() ); return 1; }
-	static int GetTranslitFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitFullTitle() ); return 1; }
+	static int GetDisplayFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayFullTitle().c_str() ); return 1; }
+	static int GetTranslitFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitFullTitle().c_str() ); return 1; }
 	static int HasMods( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasMods() ); return 1; }
 	static int HasTimedMods( T* p, lua_State *L )		{ lua_pushboolean( L, p->HasTimedMods() ); return 1; }
 	DEFINE_METHOD( GetCourseType, GetCourseType() )
@@ -1075,12 +1080,12 @@ public:
 	}
 	static int GetBannerPath( T* p, lua_State *L )		{ RString s = p->GetBannerPath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
 	static int GetBackgroundPath( T* p, lua_State *L )		{ RString s = p->GetBackgroundPath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
-	static int GetCourseDir( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sPath ); return 1; }
-	static int GetGroupName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGroupName ); return 1; }
+	static int GetCourseDir( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sPath.c_str() ); return 1; }
+	static int GetGroupName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGroupName.c_str() ); return 1; }
 	static int IsAutogen( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bIsAutogen ); return 1; }
 	static int GetEstimatedNumStages( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetEstimatedNumStages() ); return 1; }
-	static int GetScripter( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sScripter ); return 1; }
-	static int GetDescription( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sDescription ); return 1; }
+	static int GetScripter( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sScripter.c_str() ); return 1; }
+	static int GetDescription( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sDescription.c_str() ); return 1; }
 	static int GetTotalSeconds( T* p, lua_State *L )
 	{
 		StepsType st = Enum::Check<StepsType>(L, 1);

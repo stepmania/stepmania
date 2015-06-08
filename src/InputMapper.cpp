@@ -614,11 +614,13 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 		}
 
 		// hard-coded automaps
-		for( unsigned j=0; j<ARRAYLEN(g_AutoMappings); j++ )
+		ci_string schemeName(m_pInputScheme->m_szName);
+		for (auto const &mapping: g_AutoMappings)
 		{
-			const AutoMappings& mapping = g_AutoMappings[j];
-			if( mapping.m_sGame.EqualsNoCase(m_pInputScheme->m_szName) )
-				vAutoMappings.push_back( mapping );
+			if ( schemeName == mapping.m_sGame.c_str() )
+			{
+				vAutoMappings.push_back(mapping);
+			}
 		}
 	}
 
@@ -1056,10 +1058,14 @@ MultiPlayer InputMapper::InputDeviceToMultiPlayer( InputDevice id )
 
 GameButton InputScheme::ButtonNameToIndex( const RString &sButtonName ) const
 {
+	ci_string ciName(sButtonName.c_str());
 	for( GameButton gb=(GameButton) 0; gb<m_iButtonsPerController; gb=(GameButton)(gb+1) )
-		if( stricmp(GetGameButtonName(gb), sButtonName) == 0 )
+	{
+		if (ciName == GetGameButtonName(gb))
+		{
 			return gb;
-
+		}
+	}
 	return GameButton_Invalid;
 }
 

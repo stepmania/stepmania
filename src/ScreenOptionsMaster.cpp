@@ -107,7 +107,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		// Override ScreenOptions's calling of ExportOptions
 		m_iChangeMask = 0;
 
-		CHECKPOINT;
+		CHECKPOINT_M("Starting the export screen");
 
 		vector<PlayerNumber> vpns;
 		FOREACH_OptionsPlayer( p )
@@ -155,7 +155,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		if( m_iChangeMask & OPT_APPLY_SONG )
 			SONGMAN->SetPreferences();
 
-		CHECKPOINT;
+		CHECKPOINT_M("About to go to the next screen.");
 		this->HandleScreenMessage( SM_GoToNextScreen );
 		return;
 	}

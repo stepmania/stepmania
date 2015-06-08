@@ -74,8 +74,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 {
 	/* Generic BGAs are new.  Animation directories with no INI are old and obsolete.
 	 * Don't combine them. */
-	RString lcPath = sPath;
-	lcPath.MakeLower();
+	RString lcPath = MakeLower(sPath);
 
 	if( lcPath.find("usesongbg") != RString::npos )
 	{
@@ -348,8 +347,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 	}
 
 
-	RString sHint = sPath;
-	sHint.MakeLower();
+	RString sHint = MakeLower(sPath);
 
 	if( sHint.find("cyclecolor") != RString::npos )
 		for( unsigned i=0; i<m_SubActors.size(); i++ )
@@ -384,7 +382,7 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 	{
 		RString type = "sprite";
 		pNode->GetAttrValue( "Type", type );
-		type.MakeLower();
+		ci_string ciType(type.c_str());
 
 		/* The preferred way of stretching a sprite to fit the screen is "Type=sprite"
 		 * and "stretch=1".  "type=1" is for backwards-compatibility. */
@@ -393,15 +391,15 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 		// Check for string match first, then do integer match.
 		// "if(StringType(type)==0)" was matching against all string matches.
 		// -Chris
-		if( type.EqualsNoCase("sprite") )
+		if( ciType == "sprite" )
 		{
 			m_Type = TYPE_SPRITE;
 		}
-		else if( type.EqualsNoCase("particles") )
+		else if( ciType == "particles" )
 		{
 			m_Type = TYPE_PARTICLES;
 		}
-		else if( type.EqualsNoCase("tiles") )
+		else if( ciType == "tiles" )
 		{
 			m_Type = TYPE_TILES;
 		}

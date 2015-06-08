@@ -362,7 +362,6 @@ struct tm GetLocalTime();
 
 RString ssprintf( const char *fmt, ...) PRINTF(1,2);
 RString vssprintf( const char *fmt, va_list argList );
-RString ConvertI64FormatString( const RString &sStr );
 
 /*
  * Splits a Path into 4 parts (Directory, Drive, Filename, Extention).  Supports UNC path names.
@@ -394,6 +393,85 @@ void MakeUpper( char *p, size_t iLen );
 void MakeLower( char *p, size_t iLen );
 void MakeUpper( wchar_t *p, size_t iLen );
 void MakeLower( wchar_t *p, size_t iLen );
+std::string MakeUpper( std::string const &str );
+std::string MakeLower( std::string const &str );
+
+// Borrowed from http://stackoverflow.com/a/24315631/445373
+// Allow string replacing strings within strings.
+void ReplaceAll( std::string &str, std::string const &from, std::string const &to );
+
+char GetAsciiUpper(char const &ch);
+char GetAsciiLower(char const &ch);
+
+// Borrowed from http://stackoverflow.com/a/2886589/445373
+// We have many cases of string comparisons involving ignoring case.
+struct ci_char_traits: public std::char_traits<char>
+{
+private:
+	// As our strings are already UTF8, only focus on the ASCII characters for conversion.
+	static char smToUpper(char ch)
+	{
+		return (ch >= 'a' && ch <= 'z')? char(ch + 'A' - 'a'): ch;
+	}
+public:
+	static bool eq(char a, char b)
+	{
+		return smToUpper(a) == smToUpper(b);
+	}
+	static bool ne(char a, char b)
+	{
+		return !eq(a, b);
+	}
+	static bool lt(char a, char b)
+	{
+		return smToUpper(a) < smToUpper(b);
+	}
+	static bool gt(char a, char b)
+	{
+		return lt(b, a);
+	}
+	static bool le(char a, char b)
+	{
+		return !lt(b, a);
+	}
+	static bool ge(char a, char b)
+	{
+		return !lt(a, b);
+	}
+	static int compare(char const *a, char const *b, size_t n)
+	{
+		while (n-- != 0)
+		{
+			if (lt(*a, *b))
+			{
+				return -1;
+			}
+			if (gt(*a, *b))
+			{
+				return 1;
+			}
+			++a;
+			++b;
+		}
+		
+		return 0;
+	}
+	static char const *find(char const *s, int n, char a)
+	{
+		while (n-- > 0 && ne(*s, a))
+		{
+			++s;
+		}
+		return s;
+	}
+};
+typedef std::basic_string<char, ci_char_traits> ci_string;
+
+// Borrowed from http://stackoverflow.com/a/7597469/445373
+// with negative extensions allowed and opposite function provided.
+std::string head(std::string const &source, int32_t const length);
+std::string tail(std::string const &source, int32_t const length);
+
 /**
  * @brief Have a standard way of converting Strings to integers.
  * @param sString the string to convert.
@@ -604,6 +682,24 @@ struct char_traits_char_nocase: public std::char_traits<char>
 	}
 };
 typedef std::basic_string<char,char_traits_char_nocase> istring;
+
+struct ci_std_string_lt: std::binary_function<std::string, std::string, bool>
+{
+	inline bool operator()(std::string const &a, std::string const &b) const
+	{
+		istring x(a.c_str());
+		return x < b.c_str();
+	}
+};
+
+struct ci_std_string_eq: std::binary_function<std::string, std::string, bool>
+{
+	inline bool operator()(std::string const &a, std::string const &b) const
+	{
+		istring x(a.c_str());
+		return x < b.c_str();
+	}
+};
 
 /* Compatibility/convenience shortcuts. These are actually defined in RageFileManager.h, but
  * declared here since they're used in many places. */

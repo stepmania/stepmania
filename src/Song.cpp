@@ -283,7 +283,7 @@ bool Song::LoadFromSongDir( RString sDir, bool load_autosave )
 	ASSERT_M( sDir != "", "Songs can't be loaded from an empty directory!" );
 
 	// make sure there is a trailing slash at the end of sDir
-	if( sDir.Right(1) != "/" )
+	if( !EndsWith(sDir, "/") )
 		sDir += "/";
 
 	// save song dir
@@ -575,7 +575,7 @@ void FixupPath( RString &path, const RString &sSongPath )
 void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 {
 	// We need to do this before calling any of HasMusic, HasHasCDTitle, etc.
-	ASSERT_M(m_sSongDir.Left(3) != "../", m_sSongDir); // meaningless
+	ASSERT_M(!BeginsWith(m_sSongDir, "../"), m_sSongDir); // meaningless
 	FixupPath(m_sSongDir, "");
 	FixupPath(m_sMusicFile, m_sSongDir);
 	FOREACH_ENUM(InstrumentTrack, i)
@@ -670,7 +670,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 				filename != song_dir_listing.end(); ++filename)
 		{
 			bool matched_something= false;
-			RString file_ext= GetExtension(*filename).MakeLower();
+			RString file_ext= MakeLower(GetExtension(*filename));
 			if(!file_ext.empty())
 			{
 				for(size_t tf= 0; tf < lists_to_fill.size(); ++ tf)
@@ -703,8 +703,8 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 				LOG->Trace("Song '%s' points to a music file that doesn't exist, found music file '%s'", m_sSongDir.c_str(), music_list[0].c_str());
 				m_bHasMusic= true;
 				m_sMusicFile= music_list[0];
-				if(music_list.size() > 1 &&
-					!m_sMusicFile.Left(5).CompareNoCase("intro"))
+				ci_string intro(head(m_sMusicFile, 5).c_str());
+				if(music_list.size() > 1 && intro == "intro")
 				{
 					m_sMusicFile= music_list[1];
 				}
@@ -904,31 +904,37 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 				break; // done
 
 			// ignore DWI "-char" graphics
-			RString lower = image_list[i];
-			lower.MakeLower();
+			RString lower = MakeLower(image_list[i]);
 			if(BlacklistedImages.find(lower) != BlacklistedImages.end())
 				continue;	// skip
 
 			// Skip any image that we've already classified
+			ci_string usedImage = image_list[i].c_str();
 
-			if(m_bHasBanner && m_sBannerFile.EqualsNoCase(image_list[i]))
+			if(m_bHasBanner && usedImage == m_sBannerFile.c_str())
+			{
 				continue;	// skip
-
-			if(m_bHasBackground && m_sBackgroundFile.EqualsNoCase(image_list[i]))
+			}
+			if(m_bHasBackground && usedImage == m_sBackgroundFile.c_str())
+			{
 				continue;	// skip
-
-			if(has_cdtitle && m_sCDTitleFile.EqualsNoCase(image_list[i]))
+			}
+			if(has_cdtitle && usedImage == m_sCDTitleFile.c_str())
+			{
 				continue;	// skip
-
-			if(has_jacket && m_sJacketFile.EqualsNoCase(image_list[i]))
+			}
+			if(has_jacket && usedImage == m_sJacketFile.c_str())
+			{
 				continue;	// skip
-
-			if(has_disc && m_sDiscFile.EqualsNoCase(image_list[i]))
+			}
+			if(has_disc && usedImage == m_sDiscFile.c_str())
+			{
 				continue;	// skip
-
-			if(has_cdimage && m_sCDFile.EqualsNoCase(image_list[i]))
+			}
+			if(has_cdimage && usedImage == m_sCDFile.c_str())
+			{
 				continue;	// skip
-
+			}
 			RString sPath = m_sSongDir + image_list[i];
 
 			// We only care about the dimensions.
@@ -1626,7 +1632,7 @@ RString Song::GetSongAssetPath( RString sPath, const RString &sSongPath )
 		return sRelPath;
 
 	// The song contains a path; treat it as relative to the top SM directory.
-	if( sPath.Left(3) == "../" )
+	if( BeginsWith(sPath, "../"))
 	{
 		// The path begins with "../".  Resolve it wrt. the song directory.
 		sPath = sRelPath;
@@ -1636,7 +1642,7 @@ RString Song::GetSongAssetPath( RString sPath, const RString &sSongPath )
 
 	/* If the path still begins with "../", then there were an unreasonable number
 	 * of them at the beginning of the path. Ignore the path entirely. */
-	if( sPath.Left(3) == "../" )
+	if( BeginsWith(sPath, "../"))
 		return RString();
 
 	return sPath;
@@ -1802,22 +1808,24 @@ void Song::DeleteSteps( const Steps* pSteps, bool bReAutoGen )
 
 bool Song::Matches(RString sGroup, RString sSong) const
 {
-	if( sGroup.size() && sGroup.CompareNoCase(this->m_sGroupName) != 0)
+	ci_string ciGroup(sGroup.c_str());
+	if( sGroup.size() && ciGroup != this->m_sGroupName.c_str())
+	{
 		return false;
-
+	}
 	RString sDir = this->GetSongDir();
-	sDir.Replace("\\","/");
+	std::replace(sDir.begin(), sDir.end(), '\\', '/');
 	vector<RString> bits;
 	split( sDir, "/", bits );
 	ASSERT(bits.size() >= 2); // should always have at least two parts
 	const RString &sLastBit = bits[bits.size()-1];
 
 	// match on song dir or title (ala DWI)
-	if( !sSong.CompareNoCase(sLastBit) )
+	ci_string ciSong(sSong.c_str());
+	if (ciSong == sLastBit.c_str() || ciSong == this->GetTranslitFullTitle().c_str())
+	{
 		return true;
-	if( !sSong.CompareNoCase(this->GetTranslitFullTitle()) )
-		return true;
-
+	}
 	return false;
 }
 
@@ -1937,43 +1945,43 @@ class LunaSong: public Luna<Song>
 public:
 	static int GetDisplayFullTitle( T* p, lua_State *L )
 	{
-		lua_pushstring(L, p->GetDisplayFullTitle() ); return 1;
+		lua_pushstring(L, p->GetDisplayFullTitle().c_str() ); return 1;
 	}
 	static int GetTranslitFullTitle( T* p, lua_State *L )
 	{
-		lua_pushstring(L, p->GetTranslitFullTitle() ); return 1;
+		lua_pushstring(L, p->GetTranslitFullTitle().c_str() ); return 1;
 	}
 	static int GetDisplayMainTitle( T* p, lua_State *L )
 	{
-		lua_pushstring(L, p->GetDisplayMainTitle() ); return 1;
+		lua_pushstring(L, p->GetDisplayMainTitle().c_str() ); return 1;
 	}
 	static int GetTranslitMainTitle( T* p, lua_State *L )
 	{
-		lua_pushstring(L, p->GetTranslitMainTitle() ); return 1;
+		lua_pushstring(L, p->GetTranslitMainTitle().c_str() ); return 1;
 	}
 	static int GetDisplaySubTitle( T* p, lua_State *L )
 	{
-		lua_pushstring(L, p->GetDisplaySubTitle() ); return 1;
+		lua_pushstring(L, p->GetDisplaySubTitle().c_str() ); return 1;
 	}
 	static int GetTranslitSubTitle( T* p, lua_State *L )
 	{
-		lua_pushstring(L, p->GetTranslitSubTitle() ); return 1;
+		lua_pushstring(L, p->GetTranslitSubTitle().c_str() ); return 1;
 	}
 	static int GetDisplayArtist( T* p, lua_State *L )
 	{
-		lua_pushstring(L, p->GetDisplayArtist() ); return 1;
+		lua_pushstring(L, p->GetDisplayArtist().c_str() ); return 1;
 	}
 	static int GetTranslitArtist( T* p, lua_State *L )
 	{
-		lua_pushstring(L, p->GetTranslitArtist() ); return 1;
+		lua_pushstring(L, p->GetTranslitArtist().c_str() ); return 1;
 	}
 	static int GetGenre( T* p, lua_State *L )
 	{
-		lua_pushstring(L, p->m_sGenre ); return 1;
+		lua_pushstring(L, p->m_sGenre.c_str() ); return 1;
 	}
 	static int GetOrigin( T* p, lua_State *L )
 	{
-		lua_pushstring(L, p->m_sOrigin ); return 1;
+		lua_pushstring(L, p->m_sOrigin.c_str() ); return 1;
 	}
 	static int GetAllSteps( T* p, lua_State *L )
 	{
@@ -1990,14 +1998,14 @@ public:
 	}
 	static int GetSongDir( T* p, lua_State *L )
 	{
-		lua_pushstring(L, p->GetSongDir() );
+		lua_pushstring(L, p->GetSongDir().c_str() );
 		return 1;
 	}
 	static int GetMusicPath( T* p, lua_State *L )
 	{
 		RString s = p->GetMusicPath();
 		if( !s.empty() )
-			lua_pushstring(L, s);
+			lua_pushstring(L, s.c_str());
 		else
 			lua_pushnil(L);
 		return 1;
@@ -2006,7 +2014,7 @@ public:
 	{
 		RString s = p->GetBannerPath();
 		if( !s.empty() )
-			lua_pushstring(L, s);
+			lua_pushstring(L, s.c_str());
 		else
 			lua_pushnil(L);
 		return 1;
@@ -2015,7 +2023,7 @@ public:
 	{
 		RString s = p->GetBackgroundPath();
 		if( !s.empty() )
-			lua_pushstring(L, s);
+			lua_pushstring(L, s.c_str());
 		else
 			lua_pushnil(L);
 		return 1;
@@ -2024,7 +2032,7 @@ public:
 	{
 		RString s = p->GetPreviewVidPath();
 		if( !s.empty() )
-			lua_pushstring(L, s);
+			lua_pushstring(L, s.c_str());
 		else
 			lua_pushnil(L);
 		return 1;
@@ -2032,14 +2040,14 @@ public:
 	static int GetPreviewMusicPath(T* p, lua_State* L)
 	{
 		RString s= p->GetPreviewMusicPath();
-		lua_pushstring(L, s);
+		lua_pushstring(L, s.c_str());
 		return 1;
 	}
 	static int GetJacketPath( T* p, lua_State *L )
 	{
 		RString s = p->GetJacketPath();
 		if( !s.empty() )
-			lua_pushstring(L, s);
+			lua_pushstring(L, s.c_str());
 		else
 			lua_pushnil(L);
 		return 1;
@@ -2048,7 +2056,7 @@ public:
 	{
 		RString s = p->GetCDImagePath();
 		if( !s.empty() )
-			lua_pushstring(L, s);
+			lua_pushstring(L, s.c_str());
 		else
 			lua_pushnil(L);
 		return 1;
@@ -2057,7 +2065,7 @@ public:
 	{
 		RString s = p->GetDiscPath();
 		if( !s.empty() )
-			lua_pushstring(L, s);
+			lua_pushstring(L, s.c_str());
 		else
 			lua_pushnil(L);
 		return 1;
@@ -2066,7 +2074,7 @@ public:
 	{
 		RString s = p->GetCDTitlePath();
 		if( !s.empty() )
-			lua_pushstring(L, s);
+			lua_pushstring(L, s.c_str());
 		else
 			lua_pushnil(L);
 		return 1;
@@ -2075,14 +2083,14 @@ public:
 	{
 		RString s = p->GetLyricsPath();
 		if( !s.empty() )
-			lua_pushstring(L, s);
+			lua_pushstring(L, s.c_str());
 		else
 			lua_pushnil(L);
 		return 1;
 	}
 	static int GetSongFilePath(  T* p, lua_State *L )
 	{
-		lua_pushstring(L, p->GetSongFilePath() );
+		lua_pushstring(L, p->GetSongFilePath().c_str() );
 		return 1;
 	}
 	static int IsTutorial( T* p, lua_State *L )
@@ -2097,7 +2105,7 @@ public:
 	}
 	static int GetGroupName( T* p, lua_State *L )
 	{
-		lua_pushstring(L, p->m_sGroupName);
+		lua_pushstring(L, p->m_sGroupName.c_str());
 		return 1;
 	}
 	static int MusicLengthSeconds( T* p, lua_State *L )

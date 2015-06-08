@@ -73,7 +73,7 @@ static RString FindLargestInitialSubstring( const RString &string1, const RStrin
 
 static void SearchForDifficulty( RString sTag, Steps *pOut )
 {
-	sTag.MakeLower();
+	sTag = MakeLower(sTag);
 
 	// Only match "Light" in parentheses.
 	if( sTag.find( "(light" ) != sTag.npos )
@@ -416,12 +416,11 @@ struct bmsCommandTree
 		statement = statement.substr(hash);
 
 		size_t space = statement.find(' ');
-		RString name = statement.substr(0, space);
+		RString name = MakeLower(statement.substr(0, space));
 		RString value = "";
 
 		if (space != statement.npos)
 			value = statement.substr(space + 1);
-		name.MakeLower();
 
 		if (name == "#if")
 		{
@@ -570,7 +569,7 @@ bool BMSChart::Load( const RString &chartPath )
 				RString value = data.substr(2 * i, 2);
 				if (value != "00")
 				{
-					value.MakeLower();
+					value = MakeLower(value);
 					BMSObject o = { channel, measure, (float)i / count, flag, value };
 					objects.push_back(o);
 				}
@@ -884,8 +883,7 @@ void BMSChartReader::ReadHeaders()
 		}
 		else if( it->first == "#lnobj" )
 		{
-			lnobj = it->second;
-			lnobj.MakeLower();
+			lnobj = MakeLower(it->second);
 		}
 		else if( it->first == "#playlevel" )
 		{
@@ -1248,7 +1246,7 @@ bool BMSChartReader::ReadNoteData()
 		if( channel == 3 ) // bpm change
 		{
 			int bpm;
-			if( sscanf(obj.value, "%x", &bpm) == 1 )
+			if( sscanf(obj.value.c_str(), "%x", &bpm) == 1 )
 			{
 				if (bpm > 0)
 				{
@@ -1505,8 +1503,7 @@ void BMSSongLoader::AddToSong()
 
 			if( title != "" && title.size() != commonSubstring.size() )
 			{
-				RString tag = title.substr( commonSubstring.size(), title.size() - commonSubstring.size() );
-				tag.MakeLower();
+				RString tag = MakeLower(title.substr( commonSubstring.size(), title.size() - commonSubstring.size() ));
 
 				// XXX: We should do this with filenames too, I have plenty of examples.
 				// however, filenames will be trickier, as stuff at the beginning AND

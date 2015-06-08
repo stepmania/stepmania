@@ -114,7 +114,7 @@ bool DateTime::FromString( const RString sDateTime )
 
 	int ret;
 
-	ret = sscanf( sDateTime, "%d-%d-%d %d:%d:%d", 
+	ret = sscanf( sDateTime.c_str(), "%d-%d-%d %d:%d:%d",
 		&tm_year,
 		&tm_mon,
 		&tm_mday,
@@ -123,7 +123,7 @@ bool DateTime::FromString( const RString sDateTime )
 		&tm_sec );
 	if( ret != 6 )
 	{
-		ret = sscanf( sDateTime, "%d-%d-%d", 
+		ret = sscanf( sDateTime.c_str(), "%d-%d-%d",
 			&tm_year,
 			&tm_mon,
 			&tm_mday );
@@ -148,7 +148,7 @@ RString DayInYearToString( int iDayInYear )
 int StringToDayInYear( RString sDayInYear )
 {
 	int iDayInYear;
-	if( sscanf( sDayInYear, "DayInYear%d", &iDayInYear ) != 1 )
+	if( sscanf( sDayInYear.c_str(), "DayInYear%d", &iDayInYear ) != 1 )
 		return -1;
 	return iDayInYear;
 }
@@ -222,16 +222,16 @@ RString LastWeekToString( int iLastWeekIndex )
 RString LastDayToLocalizedString( int iLastDayIndex )
 {
 	RString s = LastDayToString( iLastDayIndex );
-	s.Replace( "Day", "" );
-	s.Replace( "Ago", " Ago" );
+	ReplaceAll(s, "Day", "");
+	ReplaceAll(s, "Ago", " Ago");
 	return s;
 }
 
 RString LastWeekToLocalizedString( int iLastWeekIndex )
 {
 	RString s = LastWeekToString( iLastWeekIndex );
-	s.Replace( "Week", "" );
-	s.Replace( "Ago", " Ago" );
+	ReplaceAll(s, "Week", "");
+	ReplaceAll(s, "Ago", " Ago");
 	return s;
 }
 

@@ -190,14 +190,14 @@ void LuaTable::Set( Lua *L, const RString &sKey )
 	int iTop = lua_gettop( L );
 	this->PushSelf( L );
 	lua_pushvalue( L, iTop ); // push the value
-	lua_setfield( L, -2, sKey );
+	lua_setfield( L, -2, sKey.c_str() );
 	lua_settop( L, iTop-1 ); // remove all of the above
 }
 
 void LuaTable::Get( Lua *L, const RString &sKey )
 {
 	this->PushSelf( L );
-	lua_getfield( L, -1, sKey );
+	lua_getfield( L, -1, sKey.c_str() );
 	lua_remove( L, -2 ); // remove self
 }
 

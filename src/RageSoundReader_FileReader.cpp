@@ -22,19 +22,26 @@ using std::vector;
 RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBasic *pFile, RString &error, RString format, bool &bKeepTrying )
 {
 	RageSoundReader_FileReader *Sample = NULL;
+	ci_string ciFormat(format.c_str());
 
 #ifndef NO_WAV_SUPPORT
-	if( !format.CompareNoCase("wav") )
+	if( ciFormat == "wav" )
+	{
 		Sample = new RageSoundReader_WAV;
+}
 #endif
 #ifndef NO_MP3_SUPPORT
-	if( !format.CompareNoCase("mp3") )
+	if( format == "mp3" )
+	{
 		Sample = new RageSoundReader_MP3;
+}
 #endif
 
 #ifndef NO_VORBIS_SUPPORT
-	if( !format.CompareNoCase("oga") || !format.CompareNoCase("ogg") )
+	if( format == "oga" || format == "ogg" )
+	{
 		Sample = new RageSoundReader_Vorbisfile;
+	}
 #endif
 
 	if( !Sample )
@@ -132,8 +139,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
 		FileTypes.insert(*curr);
 	}
 
-	RString format = GetExtension( filename );
-	format.MakeLower();
+	RString format = MakeLower(GetExtension( filename ));
 
 	error = "";
 

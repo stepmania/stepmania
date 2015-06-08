@@ -317,7 +317,7 @@ void AdjustSync::GetSyncChangeTextGlobal( vector<RString> &vsAddTo )
 
 		if( fabsf(fDelta) > 0.0001f )
 		{
-			vsAddTo.push_back( ssprintf(
+			vsAddTo.push_back( fmt::sprintf(
 				GLOBAL_OFFSET_FROM.GetValue(),
 				fOld, fNew,
 				(fDelta > 0 ? EARLIER:LATER).GetValue().c_str() ));
@@ -347,7 +347,7 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 
 			if( fabsf(fDelta) > 0.0001f )
 			{
-				vsAddTo.push_back( ssprintf(
+				vsAddTo.push_back( fmt::sprintf(
 					SONG_OFFSET_FROM.GetValue(),
 					fOld,
 					fNew,
@@ -372,8 +372,7 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 				break;
 			}
 
-			RString s = ssprintf( TEMPO_SEGMENT_FROM.GetValue(),
-					FormatNumberAndSuffix(i+1).c_str(), fOld, fNew );
+      			RString s = fmt::sprintf( TEMPO_SEGMENT_FROM.GetValue(), FormatNumberAndSuffix(i+1).c_str(), fOld, fNew );
 
 			vsAddTo.push_back( s );
 		}
@@ -397,7 +396,7 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 				break;
 			}
 
-			RString s = ssprintf( CHANGED_STOP.GetValue(), i+1, fOld, fNew, fDelta );
+			RString s = fmt::sprintf( CHANGED_STOP.GetValue(), i+1, fOld, fNew, fDelta );
 			vsAddTo.push_back( s );
 		}
 
@@ -423,18 +422,17 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 				break;
 			}
 
-			RString s = ssprintf( CHANGED_STOP.GetValue(),
-				i+1, fOld, fNew, fDelta );
+			RString s = fmt::sprintf( CHANGED_STOP.GetValue(), i+1, fOld, fNew, fDelta );
 			vsAddTo.push_back( s );
 		}
 
 		if( vsAddTo.size() > iOriginalSize && s_fAverageError > 0.0f )
 		{
-			vsAddTo.push_back( ssprintf(ERROR.GetValue(), s_fAverageError) );
+			vsAddTo.push_back( fmt::sprintf(ERROR.GetValue(), s_fAverageError) );
 		}
 		if( vsAddTo.size() > iOriginalSize && s_iStepsFiltered > 0 )
 		{
-			vsAddTo.push_back( ssprintf(TAPS_IGNORED.GetValue(), s_iStepsFiltered) );
+			vsAddTo.push_back( fmt::sprintf(TAPS_IGNORED.GetValue(), s_iStepsFiltered) );
 		}
 #undef SEGMENTS_MISMATCH_MESSAGE
 	}

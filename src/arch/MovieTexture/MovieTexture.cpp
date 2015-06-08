@@ -21,15 +21,13 @@ bool RageMovieTexture::GetFourCC( RString fn, RString &handler, RString &type )
 {
 	RString ignore, ext;
 	splitpath( fn, ignore, ignore, ext);
-	if( !ext.CompareNoCase(".mpg") ||
-		!ext.CompareNoCase(".mpeg") ||
-		!ext.CompareNoCase(".mpv") ||
-		!ext.CompareNoCase(".mpe") )
+	ci_string ciExt(ext.c_str());
+	if (ciExt == ".mpg" || ciExt == ".mpeg" || ciExt == ".mpv" || ciExt == ".mpe")
 	{
 		handler = type = "MPEG";
 		return true;
 	}
-	if( !ext.CompareNoCase(".ogv") )
+	if( ciExt == ".ogv" )
 	{
 		handler = type = "Ogg";
 		return true;

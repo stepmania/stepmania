@@ -373,9 +373,9 @@ void PrefsManager::StoreGamePrefs()
 
 	// save off old values
 	GamePrefs &gp = m_mapGameNameToGamePrefs[m_sCurrentGame.ToString()];
-	gp.m_sAnnouncer = m_sAnnouncer;
-	gp.m_sTheme = m_sTheme;
-	gp.m_sDefaultModifiers = m_sDefaultModifiers;
+	gp.m_sAnnouncer = m_sAnnouncer.Get();
+	gp.m_sTheme = m_sTheme.Get();
+	gp.m_sDefaultModifiers = m_sDefaultModifiers.Get();
 }
 
 void PrefsManager::RestoreGamePrefs()
@@ -472,7 +472,7 @@ void PrefsManager::ReadGamePrefsFromIni( const RString &sIni )
 		if( !BeginsWith(section_name, GAME_SECTION_PREFIX) )
 			continue;
 
-		RString sGame = section_name.Right( section_name.length() - GAME_SECTION_PREFIX.length() );
+		RString sGame = tail(section_name, section_name.length() - GAME_SECTION_PREFIX.length() );
 		GamePrefs &gp = m_mapGameNameToGamePrefs[ sGame ];
 
 		// todo: read more prefs here? -aj

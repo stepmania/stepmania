@@ -15,7 +15,7 @@ RString GetAttackPieceName( const RString &sAttack )
 
 	/* 1.5x -> 1_5x.  If we pass a period to THEME->GetPathTo, it'll think
 	 * we're looking for a specific file and not search. */
-	ret.Replace( ".", "_" );
+	std::replace(ret.begin(), ret.end(), '.', '_');
 
 	return ret;
 }

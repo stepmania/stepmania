@@ -142,7 +142,7 @@ void ScreenHowToPlay::Init()
 		RString sStepsPath = THEME->GetPathO(m_sName, "steps");
 		SSCLoader loaderSSC;
 		SMLoader loaderSM;
-		if( sStepsPath.Right(4) == ".ssc" )
+		if( EndsWith(sStepsPath, ".ssc") )
 			loaderSSC.LoadFromSimfile( sStepsPath, m_Song, false );
 		else
 			loaderSM.LoadFromSimfile( sStepsPath, m_Song, false );

@@ -35,9 +35,9 @@ void ScreenSelect::Init()
 	// Load choices
 	// Allow lua as an alternative to metrics.
 	RString choice_names= CHOICE_NAMES;
-	if(choice_names.Left(4) == "lua,")
+	if(BeginsWith(choice_names, "lua,"))
 	{
-		RString command= choice_names.Right(choice_names.size()-4);
+		RString command= tail(choice_names, -4);
 		Lua* L= LUA->Get();
 		if(LuaHelpers::RunExpression(L, command, m_sName + "::ChoiceNames"))
 		{
@@ -53,7 +53,7 @@ void ScreenSelect::Init()
 					lua_rawgeti(L, 1, i);
 					if(!lua_isstring(L, -1))
 					{
-						LuaHelpers::ReportScriptErrorFmt(m_sName + "::ChoiceNames element %zu is not a string.", i);
+						LuaHelpers::ReportScriptError(fmt::sprintf("%s::ChoiceNames element %zu is not a string.", m_sName, i));
 					}
 					else
 					{

@@ -455,37 +455,32 @@ class LunaCryptManager: public Luna<CryptManager>
 public:
 	static int MD5String( T* p, lua_State *L )
 	{
-		RString md5out;
-		md5out = p->GetMD5ForString(SArg(1));
-		lua_pushstring( L, md5out );
+		RString md5out = p->GetMD5ForString(SArg(1));
+		lua_pushstring( L, md5out.c_str() );
 		return 1;
 	}
 	static int MD5File( T* p, lua_State *L )
 	{
-		RString md5fout;
-		md5fout = p->GetMD5ForFile(SArg(1));
-		lua_pushstring( L, md5fout );
+		RString md5fout = p->GetMD5ForFile(SArg(1));
+		lua_pushstring( L, md5fout.c_str() );
 		return 1;
 	}
 	static int SHA1String( T* p, lua_State *L )
 	{
-		RString sha1out;
-		sha1out = p->GetSHA1ForString(SArg(1));
-		lua_pushstring( L, sha1out );
+		RString sha1out = p->GetSHA1ForString(SArg(1));
+		lua_pushstring( L, sha1out.c_str() );
 		return 1;
 	}
 	static int SHA1File( T* p, lua_State *L )
 	{
-		RString sha1fout;
-		sha1fout = p->GetSHA1ForFile(SArg(1));
-		lua_pushstring( L, sha1fout );
+		RString sha1fout = p->GetSHA1ForFile(SArg(1));
+		lua_pushstring( L, sha1fout.c_str() );
 		return 1;
 	}
 	static int GenerateRandomUUID( T* p, lua_State *L )
 	{
-		RString uuidOut;
-		uuidOut = p->GenerateRandomUUID();
-		lua_pushstring( L, uuidOut );
+		RString uuidOut = p->GenerateRandomUUID();
+		lua_pushstring( L, uuidOut.c_str() );
 		return 1;
 	}
 

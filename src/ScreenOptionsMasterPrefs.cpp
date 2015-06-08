@@ -179,13 +179,18 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 	if( ToSel )
 	{
-		const RString sCurGameName = PREFSMAN->GetCurrentGame();
+		ci_string sCurGameName = PREFSMAN->GetCurrentGame().c_str();
 
 		sel = 0;
 		for(unsigned i = 0; i < choices.size(); ++i)
-			if( !stricmp(choices[i], sCurGameName) )
+		{
+			if (sCurGameName == choices[i].c_str())
+			{
 				sel = i;
-	} else {
+			}
+		}
+	}
+	else {
 		vector<const Game*> aGames;
 		GAMEMAN->GetEnabledGames( aGames );
 		PREFSMAN->SetCurrentGame(aGames[sel]->m_szName);
@@ -221,15 +226,23 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 	if( ToSel )
 	{
 		sel = -1;
+		ci_string ciThemeLang(THEME->GetCurLanguage().c_str());
 		for( unsigned i=0; sel == -1 && i < vs.size(); ++i )
-			if( !stricmp(vs[i], THEME->GetCurLanguage()) )
+		{
+			if (ciThemeLang == vs[i].c_str())
+			{
 				sel = i;
-
+			}
+		}
 		// If the current language doesn't exist, we'll show BASE_LANGUAGE, so select that.
+		ci_string ciBaseLang(SpecialFiles::BASE_LANGUAGE.c_str());
 		for( unsigned i=0; sel == -1 && i < vs.size(); ++i )
-			if( !stricmp(vs[i], SpecialFiles::BASE_LANGUAGE) )
+		{
+			if (ciBaseLang == vs[i].c_str())
+			{
 				sel = i;
-
+			}
+		}
 		if( sel == -1 )
 		{
 			LOG->Warn( "Couldn't find language \"%s\" or fallback \"%s\"; using \"%s\"",
@@ -277,9 +290,14 @@ static void RequestedTheme( int &sel, bool ToSel, const ConfOption *pConfOption 
 	if( ToSel )
 	{
 		sel = 0;
+		ci_string ciTheme(PREFSMAN->m_sTheme.Get().c_str());
 		for( unsigned i=1; i<vsThemeNames.size(); i++ )
-			if( !stricmp(vsThemeNames[i], PREFSMAN->m_sTheme.Get()) )
+		{
+			if (ciTheme == vsThemeNames[i].c_str())
+			{
 				sel = i;
+			}
+		}
 	}
 	else
 	{
@@ -303,9 +321,14 @@ static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 	if( ToSel )
 	{
 		sel = 0;
+		ci_string ciAnnouncer(ANNOUNCER->GetCurAnnouncerName().c_str());
 		for( unsigned i=1; i<choices.size(); i++ )
-			if( !stricmp(choices[i], ANNOUNCER->GetCurAnnouncerName()) )
+		{
+			if (ciAnnouncer == choices[i].c_str())
+			{
 				sel = i;
+			}
+		}
 	}
 	else
 	{
@@ -330,9 +353,14 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 		PlayerOptions po;
 		po.FromString( PREFSMAN->m_sDefaultModifiers );
 		sel = 0;
+		ci_string ciSkin(po.m_sNoteSkin.c_str());
 		for( unsigned i=0; i < choices.size(); i++ )
-			if( !stricmp(choices[i], po.m_sNoteSkin) )
+		{
+			if (ciSkin == choices[i].c_str())
+			{
 				sel = i;
+			}
+		}
 	}
 	else
 	{
@@ -898,13 +926,14 @@ int ConfOption::GetEffects() const
 ConfOption *ConfOption::Find( RString name )
 {
 	InitializeConfOptions();
-	for( unsigned i = 0; i < g_ConfOptions.size(); ++i )
+	ci_string ciName(name.c_str());
+	for (auto &opt: g_ConfOptions)
 	{
-		ConfOption *opt = &g_ConfOptions[i];
-		RString match(opt->name);
-		if( match.CompareNoCase(name) )
-			continue;
-		return opt;
+		RString match(opt.name);
+		if (ciName == match.c_str())
+		{
+			return &opt;
+		}
 	}
 
 	return NULL;

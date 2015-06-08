@@ -255,7 +255,7 @@ void ScreenOptionsManageEditSteps::ProcessMenuStart( const InputEventPlus & )
 		SONGMAN->GetStepsLoadedFromProfile( v, ProfileSlot_Machine );
 		if( v.size() >= size_t(MAX_EDIT_STEPS_PER_PROFILE) )
 		{
-			RString s = ssprintf( YOU_HAVE_MAX_STEP_EDITS.GetValue()+"\n\n"+YOU_MUST_DELETE.GetValue(), MAX_EDIT_STEPS_PER_PROFILE );
+			RString s = fmt::sprintf( YOU_HAVE_MAX_STEP_EDITS.GetValue()+"\n\n"+YOU_MUST_DELETE.GetValue(), MAX_EDIT_STEPS_PER_PROFILE );
 			ScreenPrompt::Prompt( SM_None, s );
 			return;
 		}

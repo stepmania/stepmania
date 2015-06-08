@@ -267,9 +267,9 @@ void SongUtil::AdjustDuplicateSteps( Song *pSong )
 			 * bug in an earlier version. */
 			DeleteDuplicateSteps( pSong, vSteps );
 
-			CHECKPOINT;
+			CHECKPOINT_M("Before sorting the notes.");
 			StepsUtil::SortNotesArrayByDifficulty( vSteps );
-			CHECKPOINT;
+			CHECKPOINT_M("After sorting the notes.");
 			for( unsigned k=1; k<vSteps.size(); k++ )
 			{
 				vSteps[k]->SetDifficulty( Difficulty_Edit );
@@ -304,15 +304,15 @@ void SongUtil::DeleteDuplicateSteps( Song *pSong, vector<Steps*> &vSteps )
 {
 	/* vSteps have the same StepsType and Difficulty.  Delete them if they have the
 	 * same m_sDescription, m_sCredit, m_iMeter and SMNoteData. */
-	CHECKPOINT;
+	CHECKPOINT_M("Before the steps loop.");
 	for( unsigned i=0; i<vSteps.size(); i++ )
 	{
-		CHECKPOINT;
+		CHECKPOINT_M("Inside the steps loop.");
 		const Steps *s1 = vSteps[i];
 
 		for( unsigned j=i+1; j<vSteps.size(); j++ )
 		{
-			CHECKPOINT;
+			CHECKPOINT_M("Analyzing another step for duplication.");
 			const Steps *s2 = vSteps[j];
 
 			if( s1->GetDescription() != s2->GetDescription() )
@@ -365,7 +365,7 @@ static bool CompareSongPointersBySortValueDescending( const Song *pSong1, const 
 
 RString SongUtil::MakeSortString( RString s )
 {
-	s.MakeUpper();
+	s = MakeUpper(s);
 
 	// Make sure that non-alphanumeric strings are placed at the very end.
 	if( s.size() > 0 )
@@ -393,13 +393,22 @@ static bool CompareSongPointersByTitle( const Song *pSong1, const Song *pSong2 )
 	s1 = SongUtil::MakeSortString(s1);
 	s2 = SongUtil::MakeSortString(s2);
 
-	int ret = strcmp( s1, s2 );
-	if(ret < 0) return true;
-	if(ret > 0) return false;
+	ci_string x1(s1.c_str());
+	ci_string x2(s2.c_str());
+	if (x1 < x2)
+	{
+		return true;
+	}
+	if (x1 > x2)
+	{
+		return false;
+	}
 
 	/* The titles are the same.  Ensure we get a consistent ordering
 	 * by comparing the unique SongFilePaths. */
-	return pSong1->GetSongFilePath().CompareNoCase(pSong2->GetSongFilePath()) < 0;
+	ci_string t1(pSong1->GetSongFilePath().c_str());
+	ci_string t2(pSong2->GetSongFilePath().c_str());
+	return t1 < t2;
 }
 
 void SongUtil::SortSongPointerArrayByTitle( vector<Song*> &vpSongsInOut )
@@ -594,7 +603,7 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			else if( s[0] < 'A' || s[0] > 'Z')
 				return SORT_OTHER.GetValue();
 			else
-				return s.Left(1);
+				return head(s, 1);
 		}
 	case SORT_GENRE:
 		if( !pSong->m_sGenre.empty() )
@@ -775,7 +784,7 @@ RString SongUtil::MakeUniqueEditDescription( const Song *pSong, StepsType st, co
 	{
 		// make name "My Edit" -> "My Edit2"
 		RString sNum = ssprintf("%d", i+1);
-		sTemp = sPreferredDescription.Left( MAX_STEPS_DESCRIPTION_LENGTH - sNum.size() ) + sNum;
+		sTemp = head(sPreferredDescription, MAX_STEPS_DESCRIPTION_LENGTH - sNum.size() ) + sNum;
 
 		if( IsEditDescriptionUnique(pSong, st, sTemp, NULL) )
 			return sTemp;
@@ -805,9 +814,9 @@ bool SongUtil::ValidateCurrentEditStepsDescription( const RString &sAnswer, RStr
 	}
 
 	static const RString sInvalidChars = "\\/:*?\"<>|";
-	if( strpbrk(sAnswer, sInvalidChars) != NULL )
+	if( strpbrk(sAnswer.c_str(), sInvalidChars.c_str()) != NULL )
 	{
-		sErrorOut = ssprintf( EDIT_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
+		sErrorOut = fmt::sprintf( EDIT_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;
 	}
 
@@ -855,9 +864,9 @@ bool SongUtil::ValidateCurrentStepsChartName(const RString &answer, RString &err
 	if (answer.empty()) return true;
 
 	static const RString sInvalidChars = "\\/:*?\"<>|";
-	if( strpbrk(answer, sInvalidChars) != NULL )
+	if( strpbrk(answer.c_str(), sInvalidChars.c_str()) != NULL )
 	{
-		error = ssprintf( CHART_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
+		error = fmt::sprintf( CHART_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;
 	}
 
@@ -889,9 +898,9 @@ bool SongUtil::ValidateCurrentStepsCredit( const RString &sAnswer, RString &sErr
 
 	// Borrow from EditDescription testing. Perhaps this should be abstracted? -Wolfman2000
 	static const RString sInvalidChars = "\\/:*?\"<>|";
-	if( strpbrk(sAnswer, sInvalidChars) != NULL )
+	if( strpbrk(sAnswer.c_str(), sInvalidChars.c_str()) != NULL )
 	{
-		sErrorOut = ssprintf( AUTHOR_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
+		sErrorOut = fmt::sprintf( AUTHOR_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;
 	}
 
@@ -911,7 +920,7 @@ bool SongUtil::ValidateCurrentSongPreview(const RString& answer, RString& error)
 	song->m_PreviewFile= real_file;
 	if(!valid)
 	{
-		error= ssprintf(PREVIEW_DOES_NOT_EXIST.GetValue(), answer.c_str());
+		error= fmt::sprintf(PREVIEW_DOES_NOT_EXIST.GetValue(), answer.c_str());
 	}
 	return valid;
 }
@@ -929,7 +938,7 @@ bool SongUtil::ValidateCurrentStepsMusic(const RString &answer, RString &error)
 	pSteps->SetMusicFile(real_file);
 	if(!valid)
 	{
-		error= ssprintf(MUSIC_DOES_NOT_EXIST.GetValue(), answer.c_str());
+		error= fmt::sprintf(MUSIC_DOES_NOT_EXIST.GetValue(), answer.c_str());
 	}
 	return valid;
 }
@@ -1122,7 +1131,7 @@ void SongID::FromSong( const Song *p )
 
 	// HACK for backwards compatibility:
 	// Strip off leading "/".  2005/05/21 file layer changes added a leading slash.
-	if( sDir.Left(1) == "/" )
+	if( BeginsWith(sDir, "/"))
 		sDir.erase( sDir.begin() );
 
 	m_Cache.Unset();
@@ -1136,7 +1145,7 @@ Song *SongID::ToSong() const
 		// HACK for backwards compatibility: Re-add the leading "/".
 		// 2005/05/21 file layer changes added a leading slash.
 		RString sDir2 = sDir;
-		if( sDir2.Left(1) != "/" )
+		if( !BeginsWith(sDir2, "/"))
 			sDir2 = "/" + sDir2;
 
 		if( !sDir2.empty() )

@@ -187,7 +187,7 @@ namespace
 		// game type.  So if a theme name isn't passed in, fetch from the prefs.
 		if(g_NewTheme.empty())
 		{
-			g_NewTheme= PREFSMAN->m_sTheme;
+			g_NewTheme = PREFSMAN->m_sTheme.Get();
 		}
 		if(g_NewTheme != THEME->GetCurThemeName() && THEME->IsThemeSelectable(g_NewTheme))
 		{

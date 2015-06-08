@@ -65,7 +65,7 @@ RString MovieTexture_Generic::Init()
 
 	UpdateFrame();
 
-	CHECKPOINT;
+	CHECKPOINT_M("Done initializing.");
 
 	return RString();
 }
@@ -185,7 +185,7 @@ void MovieTexture_Generic::CreateTexture()
 	if( m_uTexHandle || m_pRenderTarget != NULL )
 		return;
 
-	CHECKPOINT;
+	CHECKPOINT_M("About to create a texture.");
 
 	m_iSourceWidth  = m_pDecoder->GetWidth();
 	m_iSourceHeight = m_pDecoder->GetHeight();
@@ -327,7 +327,7 @@ bool MovieTexture_Generic::DecodeFrame()
 			m_fClock = -fDelay;
 		}
 
-		CHECKPOINT;
+		CHECKPOINT_M("Decoding: about to read a frame.");
 
 		/* Read a frame. */
 		float fTargetTime = -1;
@@ -436,7 +436,7 @@ void MovieTexture_Generic::DecodeSeconds( float fSeconds )
 		if( fTime > 0 )
 			return;
 
-		CHECKPOINT;
+		CHECKPOINT_M("Time to update the frame.");
 
 		UpdateFrame();
 
@@ -465,7 +465,7 @@ void MovieTexture_Generic::UpdateFrame()
 
 	if( m_pRenderTarget != NULL )
 	{
-		CHECKPOINT;
+		CHECKPOINT_M("Uploading a texture.");
 
 		/* If we have no m_pTextureLock, we still have to upload the texture. */
 		if( m_pTextureLock == NULL )
@@ -474,7 +474,7 @@ void MovieTexture_Generic::UpdateFrame()
 				m_pSurface,
 				0, 0,
 				m_pSurface->w, m_pSurface->h );
-		CHECKPOINT;
+		CHECKPOINT_M("Uploaded the texture.");
 
 		m_pRenderTarget->BeginRenderingTo( false );
 		m_pSprite->Draw();
@@ -482,14 +482,14 @@ void MovieTexture_Generic::UpdateFrame()
 	}
 	else
 	{
-		CHECKPOINT;
+		CHECKPOINT_M("Uploading a texture.");
 		if( m_pTextureLock == NULL )
 			DISPLAY->UpdateTexture(
 				m_uTexHandle,
 				m_pSurface,
 				0, 0,
 				m_iImageWidth, m_iImageHeight );
-		CHECKPOINT;
+		CHECKPOINT_M("Uploaded the texture.");
 	}
 }
 

@@ -46,8 +46,7 @@ static void Nsis()
 		splitpath(s, sThrowAway, sLangCode, sThrowAway);
 		const LanguageInfo *pLI = GetLanguageInfo(sLangCode);
 
-		RString sLangNameUpper = pLI->szEnglishName;
-		sLangNameUpper.MakeUpper();
+		RString sLangNameUpper = MakeUpper(pLI->szEnglishName);
 
 		IniFile ini;
 		if(!ini.ReadFile(INSTALLER_LANGUAGES_DIR + s))
@@ -58,7 +57,7 @@ static void Nsis()
 			{
 				RString sName = attr->first;
 				RString sValue = attr->second->GetValue<RString>();
-				sValue.Replace("\\n", "$\\n");
+				ReplaceAll(sValue, "\\n", "$\\n");
 				RString sLine = ssprintf("LangString %s ${LANG_%s} \"%s\"", sName.c_str(), sLangNameUpper.c_str(), sValue.c_str());
 				out.PutLine(sLine);
 			}

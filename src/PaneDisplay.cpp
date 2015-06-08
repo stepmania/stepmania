@@ -223,7 +223,7 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 			case PaneCategory_ProfileHighScore:
 			case PaneCategory_MachineHighName: // set fLevelOut for color
 			case PaneCategory_MachineHighScore:
-				CHECKPOINT;
+				CHECKPOINT_M("High score being placed.");
 				fLevelOut = pHSL->GetTopScore().GetPercentDP();
 				break;
 			default: break;
@@ -261,7 +261,7 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 				case PaneCategory_Hands:
 				case PaneCategory_Lifts:
 				case PaneCategory_Fakes:
-					sTextOut = ssprintf( COUNT_FORMAT.GetValue(), fLevelOut );
+					sTextOut = fmt::sprintf( COUNT_FORMAT.GetValue(), fLevelOut );
 					break;
 				default: break;
 			}

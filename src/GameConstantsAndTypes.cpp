@@ -52,7 +52,7 @@ RString StepsTypeToString( StepsType st )
 {
 	RString s = GAMEMAN->GetStepsTypeInfo( st ).szName; // "dance-single"
 	/* foo-bar -> Foo_Bar */
-	s.Replace('-','_');
+	ReplaceAll(s, "-", "_");
 
 	bool bCapitalizeNextLetter = true;
 	for( int i=0; i<(int)s.length(); i++ )

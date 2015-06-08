@@ -132,8 +132,9 @@ namespace
 		RString sFile;
 		if (pActor->GetAttrValue("File", sFile) && sFile != "")
 		{
+			ci_string ciFile(sFile.c_str());
 			// Backward compatibility hacks for "special" filenames
-			if (sFile.EqualsNoCase("songbackground"))
+			if (ciFile == "songbackground")
 			{
 				XNodeStringValue *pVal = new XNodeStringValue;
 				Song *pSong = GAMESTATE->m_pCurSong;
@@ -144,7 +145,7 @@ namespace
 				pActor->AppendAttrFrom("Texture", pVal, false);
 				return "Sprite";
 			}
-			else if (sFile.EqualsNoCase("songbanner"))
+			else if (ciFile == "songbanner")
 			{
 				XNodeStringValue *pVal = new XNodeStringValue;
 				Song *pSong = GAMESTATE->m_pCurSong;
@@ -155,7 +156,7 @@ namespace
 				pActor->AppendAttrFrom("Texture", pVal, false);
 				return "Sprite";
 			}
-			else if (sFile.EqualsNoCase("coursebanner"))
+			else if (ciFile == "coursebanner")
 			{
 				XNodeStringValue *pVal = new XNodeStringValue;
 				Course *pCourse = GAMESTATE->m_pCurCourse;
@@ -205,10 +206,14 @@ Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 		{
 			RString sPath;
 			// Handle absolute paths correctly
-			if (sFile.Left(1) == "/")
+			if (BeginsWith(sFile, "/"))
+			{
 				sPath = sFile;
+			}
 			else
+			{
 				sPath = Dirname(GetSourcePath(&node)) + sFile;
+			}
 			if (ResolvePath(sPath, GetWhere(&node)))
 			{
 				Actor *pNewActor = MakeActor(sPath, pParentActor);
@@ -334,7 +339,7 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 		}
 	case FT_Directory:
 		{
-			if( sPath.Right(1) != "/" )
+			if( !EndsWith(sPath, "/"))
 				sPath += '/';
 
 			RString sXml = sPath + "default.xml";
@@ -414,7 +419,7 @@ bool ActorUtil::GetAttrPath( const XNode *pNode, const RString &sName, RString &
 	if( !pNode->GetAttrValue(sName, sOut) )
 		return false;
 
-	bool bIsRelativePath = sOut.Left(1) != "/";
+	bool bIsRelativePath = !BeginsWith(sOut, "/");
 	if( bIsRelativePath )
 	{
 		RString sDir;
@@ -594,8 +599,7 @@ void ActorUtil::AddTypeExtensionsToList(FileType ft, vector<RString>& add_to)
 
 FileType ActorUtil::GetFileType( const RString &sPath )
 {
-	RString sExt = GetExtension( sPath );
-	sExt.MakeLower();
+	RString sExt = MakeLower(GetExtension( sPath ));
 
 	etft_cont_t::iterator conversion_entry= ExtensionToFileType.find(sExt);
 	if(conversion_entry != ExtensionToFileType.end())

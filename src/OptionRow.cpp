@@ -212,7 +212,8 @@ RString OptionRow::GetRowTitle() const
 	RString sTitle = m_pHand->OptionTitle();
 
 	// HACK: tack the BPM onto the name of the speed line
-	if( m_pHand->m_Def.m_sName.CompareNoCase("speed")==0 )
+	ci_string ciName(m_pHand->m_Def.m_sName.c_str());
+	if (ciName == "speed")
 	{
 		bool bShowBpmInSpeedTitle = m_pParentType->SHOW_BPM_IN_SPEED_TITLE;
 
@@ -1003,7 +1004,7 @@ public:
 	DEFINE_METHOD( FirstItemGoesDown, GetFirstItemGoesDown() )
 	static int GetChoiceInRowWithFocus( T* p, lua_State *L ) { lua_pushnumber( L, p->GetChoiceInRowWithFocus(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
 	DEFINE_METHOD( GetLayoutType, GetHandler()->m_Def.m_layoutType )
-	static int GetName( T* p, lua_State *L ) { lua_pushstring( L, p->GetHandler()->m_Def.m_sName ); return 1; }
+	static int GetName( T* p, lua_State *L ) { lua_pushstring( L, p->GetHandler()->m_Def.m_sName.c_str() ); return 1; }
 	static int GetNumChoices( T* p, lua_State *L ) { lua_pushnumber( L, p->GetHandler()->m_Def.m_vsChoices.size() ); return 1; }
 	DEFINE_METHOD( GetSelectType, GetHandler()->m_Def.m_selectType )
 	DEFINE_METHOD( GetRowTitle, GetRowTitle() )

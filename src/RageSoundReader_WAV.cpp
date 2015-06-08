@@ -457,11 +457,9 @@ RString ReadString( RageFileBasic &f, int iSize, RString &sError )
 	if( sError.size() != 0 )
 		return RString();
 
-	RString sBuf;
-	char *pBuf = sBuf.GetBuffer( iSize );
+	char pBuf[iSize];
 	FileReading::ReadBytes( f, pBuf, iSize, sError );
-	sBuf.ReleaseBuffer( iSize );
-	return sBuf;
+	return std::string(pBuf);
 }
 
 #define FATAL_ERROR(s) \

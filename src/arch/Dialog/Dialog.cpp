@@ -28,15 +28,25 @@ DialogDriver *MakeDialogDriver()
 	for( unsigned i = 0; pRet == NULL && i < asDriversToTry.size(); ++i )
 	{
 		sDriver = asDriversToTry[i];
+		ci_string ciDriver(sDriver.c_str());
 
 #ifdef USE_DIALOG_DRIVER_COCOA
-		if( !asDriversToTry[i].CompareNoCase("Cocoa") )	pRet = new DialogDriver_MacOSX;
+		if( ciDriver == "Cocoa" )
+		{
+			pRet = new DialogDriver_MacOSX;
+		}
 #endif
 #ifdef USE_DIALOG_DRIVER_WIN32
-		if( !asDriversToTry[i].CompareNoCase("Win32") )	pRet = new DialogDriver_Win32;
+		if( ciDriver == "Win32" )
+		{
+			pRet = new DialogDriver_Win32;
+		}
 #endif
 #ifdef USE_DIALOG_DRIVER_NULL
-		if( !asDriversToTry[i].CompareNoCase("Null") )	pRet = new DialogDriver_Null;
+		if( ciDriver == "Null" )
+		{
+			pRet = new DialogDriver_Null;
+		}
 #endif
 
 		if( pRet == NULL )
@@ -87,11 +97,13 @@ static bool MessageIsIgnored( RString sID )
 #if !defined(SMPACKAGE)
 	vector<RString> asList;
 	split( g_sIgnoredDialogs, ",", asList );
-	for( unsigned i = 0; i < asList.size(); ++i )
-		if( !sID.CompareNoCase(asList[i]) )
-			return true;
-#endif
+	ci_string cid(sID.c_str());
+	return std::any_of(asList.begin(), asList.end(), [&cid](RString const &item) {
+		return cid == item.c_str();
+	});
+#else
 	return false;
+#endif
 }
 
 void Dialog::IgnoreMessage( RString sID )

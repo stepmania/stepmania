@@ -224,9 +224,10 @@ Character *Profile::GetCharacter() const
 {
 	vector<Character*> vpCharacters;
 	CHARMAN->GetCharacters( vpCharacters );
+	ci_string ciChar(m_sCharacterID.c_str());
 	for (auto *c: vpCharacters)
 	{
-		if( c->m_sCharacterID.CompareNoCase(m_sCharacterID)==0 )
+		if (ciChar == c->m_sCharacterID.c_str())
 		{
 			return c;
 		}
@@ -418,14 +419,14 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: n %s = %p", sid.ToString().c_str(), pSteps) );
 			if( pSteps->GetDifficulty() != dc )
 				continue;	// skip
-			CHECKPOINT;
+			CHECKPOINT_M("Proper difficulty gotten.");
 
 			const HighScoresForASteps& h = j.second;
 			const HighScoreList& hsl = h.hsl;
 
 			fTotalPercents += hsl.GetTopScore().GetPercentDP();
 		}
-		CHECKPOINT;
+		CHECKPOINT_M("All scores covered.");
 	}
 
 	return fTotalPercents;
@@ -1075,11 +1076,11 @@ void Profile::LoadCustomFunction( RString sDir )
 
 ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature )
 {
-	CHECKPOINT;
+	CHECKPOINT_M("About to load all from the directory.");
 
 	LOG->Trace( "Profile::LoadAllFromDir( %s )", sDir.c_str() );
 
-	ASSERT( sDir.Right(1) == "/" );
+	ASSERT( EndsWith(sDir, "/") );
 
 	InitAll();
 
@@ -1840,7 +1841,7 @@ float Profile::CalculateCaloriesFromHeartRate(float HeartRate, float Duration)
 
 XNode* Profile::SaveSongScoresCreateNode() const
 {
-	CHECKPOINT;
+	CHECKPOINT_M("About to save song scores.");
 
 	const Profile* pProfile = this;
 	ASSERT( pProfile != NULL );
@@ -1884,7 +1885,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 
 void Profile::LoadSongScoresFromNode( const XNode* pSongScores )
 {
-	CHECKPOINT;
+	CHECKPOINT_M("About to load song scores.");
 
 	ASSERT( pSongScores->GetName() == "SongScores" );
 
@@ -1923,7 +1924,7 @@ void Profile::LoadSongScoresFromNode( const XNode* pSongScores )
 
 XNode* Profile::SaveCourseScoresCreateNode() const
 {
-	CHECKPOINT;
+	CHECKPOINT_M("About to save course scores.");
 
 	const Profile* pProfile = this;
 	ASSERT( pProfile != NULL );
@@ -1963,7 +1964,7 @@ XNode* Profile::SaveCourseScoresCreateNode() const
 
 void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 {
-	CHECKPOINT;
+	CHECKPOINT_M("About to load course scores.");
 
 	ASSERT( pCourseScores->GetName() == "CourseScores" );
 
@@ -1995,12 +1996,13 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 				RString sDir, sFName, sExt;
 				splitpath( courseID.GetPath(), sDir, sFName, sExt );
 				RString sFullFileName = sFName + sExt;
+				ci_string ciFull(sFullFileName.c_str());
 
 				for (auto *c: vpAllCourses)
 				{
-					RString sOther = c->m_sPath.Right(sFullFileName.size());
+					RString sOther = tail(c->m_sPath, sFullFileName.size());
 
-					if( sFullFileName.CompareNoCase(sOther) == 0 )
+					if (ciFull == sOther.c_str())
 					{
 						pC = c;
 						courseID.FromCourse( pC );
@@ -2033,7 +2035,7 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 
 XNode* Profile::SaveCategoryScoresCreateNode() const
 {
-	CHECKPOINT;
+	CHECKPOINT_M("About to save category scores.");
 
 	const Profile* pProfile = this;
 	ASSERT( pProfile != NULL );
@@ -2069,7 +2071,7 @@ XNode* Profile::SaveCategoryScoresCreateNode() const
 
 void Profile::LoadCategoryScoresFromNode( const XNode* pCategoryScores )
 {
-	CHECKPOINT;
+	CHECKPOINT_M("About to load category scores.");
 
 	ASSERT( pCategoryScores->GetName() == "CategoryScores" );
 
@@ -2124,7 +2126,7 @@ void Profile::AddScreenshot( const Screenshot &screenshot )
 
 void Profile::LoadScreenshotDataFromNode( const XNode* pScreenshotData )
 {
-	CHECKPOINT;
+	CHECKPOINT_M("About to load screenshot data.");
 
 	ASSERT( pScreenshotData->GetName() == "ScreenshotData" );
 	FOREACH_CONST_Child( pScreenshotData, pScreenshot )
@@ -2141,7 +2143,7 @@ void Profile::LoadScreenshotDataFromNode( const XNode* pScreenshotData )
 
 XNode* Profile::SaveScreenshotDataCreateNode() const
 {
-	CHECKPOINT;
+	CHECKPOINT_M("About to save screenshot data.");
 
 	const Profile* pProfile = this;
 	ASSERT( pProfile != NULL );
@@ -2158,7 +2160,7 @@ XNode* Profile::SaveScreenshotDataCreateNode() const
 
 void Profile::LoadCalorieDataFromNode( const XNode* pCalorieData )
 {
-	CHECKPOINT;
+	CHECKPOINT_M("About to load calorie data.");
 
 	ASSERT( pCalorieData->GetName() == "CalorieData" );
 	FOREACH_CONST_Child( pCalorieData, pCaloriesBurned )
@@ -2183,7 +2185,7 @@ void Profile::LoadCalorieDataFromNode( const XNode* pCalorieData )
 
 XNode* Profile::SaveCalorieDataCreateNode() const
 {
-	CHECKPOINT;
+	CHECKPOINT_M("About to save calorie data.");
 
 	const Profile* pProfile = this;
 	ASSERT( pProfile != NULL );
@@ -2304,7 +2306,7 @@ bool Profile::IsMachine() const
 
 XNode* Profile::SaveCoinDataCreateNode() const
 {
-	CHECKPOINT;
+	CHECKPOINT_M("About to save coin data.");
 
 	const Profile* pProfile = this;
 	ASSERT( pProfile != NULL );
@@ -2415,13 +2417,13 @@ public:
 	DEFINE_METHOD(GetType, m_Type);
 	DEFINE_METHOD(GetPriority, m_ListPriority);
 
-	static int GetDisplayName( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sDisplayName ); return 1; }
+	static int GetDisplayName( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sDisplayName.c_str() ); return 1; }
 	static int SetDisplayName( T* p, lua_State *L )
 	{
 		p->m_sDisplayName= SArg(1);
 		COMMON_RETURN_SELF;
 	}
-	static int GetLastUsedHighScoreName( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sLastUsedHighScoreName ); return 1; }
+	static int GetLastUsedHighScoreName( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sLastUsedHighScoreName.c_str() ); return 1; }
 	static int SetLastUsedHighScoreName( T* p, lua_State *L )
 	{
 		p->m_sLastUsedHighScoreName= SArg(1);
@@ -2570,7 +2572,7 @@ public:
 	static int GetTotalGameplaySeconds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalGameplaySeconds ); return 1; }
 	static int GetSongsAndCoursesPercentCompleteAllDifficulties( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetSongsAndCoursesPercentCompleteAllDifficulties(Enum::Check<StepsType>(L, 1)) ); return 1; }
 	static int GetTotalCaloriesBurned( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_fTotalCaloriesBurned ); return 1; }
-	static int GetDisplayTotalCaloriesBurned( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayTotalCaloriesBurned() ); return 1; }
+	static int GetDisplayTotalCaloriesBurned( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayTotalCaloriesBurned().c_str() ); return 1; }
 	static int GetMostPopularSong( T* p, lua_State *L )
 	{
 		Song *p2 = p->GetMostPopularSong();

@@ -137,8 +137,8 @@ static void FileNameToMetricsGroupAndElement( const RString &sFileName, RString 
 	}
 	else
 	{
-		sMetricsGroupOut = sFileName.Left( iIndexOfFirstSpace );
-		sElementOut = sFileName.Right( sFileName.size() - iIndexOfFirstSpace - 1 );
+		sMetricsGroupOut = head(sFileName, iIndexOfFirstSpace );
+		sElementOut = tail(sFileName, sFileName.size() - iIndexOfFirstSpace - 1 );
 	}
 }
 
@@ -209,12 +209,11 @@ bool ThemeManager::DoesThemeExist( const RString &sThemeName )
 {
 	vector<RString> asThemeNames;
 	GetThemeNames( asThemeNames );
-	for( unsigned i=0; i<asThemeNames.size(); i++ )
-	{
-		if( !sThemeName.CompareNoCase(asThemeNames[i]) )
-			return true;
-	}
-	return false;
+	ci_string ciThemeName(sThemeName.c_str());
+	auto doesThemeExist = [&ciThemeName] (RString const &name) {
+		return ciThemeName == name.c_str();
+	};
+	return std::any_of(asThemeNames.begin(), asThemeNames.end(), doesThemeExist);
 }
 
 bool ThemeManager::IsThemeSelectable( const RString &sThemeName )
@@ -222,7 +221,7 @@ bool ThemeManager::IsThemeSelectable( const RString &sThemeName )
 	if( !DoesThemeExist(sThemeName) )
 		return false;
 
-	return sThemeName.Left(1) != "_";
+	return !BeginsWith(sThemeName, "_");
 }
 
 RString ThemeManager::GetThemeDisplayName( const RString &sThemeName )
@@ -253,7 +252,8 @@ RString ThemeManager::GetThemeAuthor( const RString &sThemeName )
 
 static bool EqualsNoCase( const RString &s1, const RString &s2 )
 {
-	return s1.EqualsNoCase(s2);
+	ci_string ci1(s1.c_str());
+	return ci1 == s2.c_str();
 }
 void ThemeManager::GetLanguages( vector<RString>& AddTo )
 {
@@ -272,11 +272,12 @@ bool ThemeManager::DoesLanguageExist( const RString &sLanguage )
 {
 	vector<RString> asLanguages;
 	GetLanguages( asLanguages );
-
-	for( unsigned i=0; i<asLanguages.size(); i++ )
-		if( sLanguage.CompareNoCase(asLanguages[i])==0 )
-			return true;
-	return false;
+	ci_string ciLang(sLanguage.c_str());
+	auto doesLangExist = [&ciLang](RString const &lang) {
+		return ciLang == lang.c_str();
+	};
+	
+	return std::any_of(asLanguages.begin(), asLanguages.end(), doesLangExist);
 }
 
 void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &sLanguage_ )
@@ -296,7 +297,7 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 	m_sCurLanguage = sLanguage;
 
 	bool bLoadedBase = false;
-	while(1)
+	for(;;)
 	{
 		ASSERT_M( g_vThemes.size() < 20, "Circular theme fallback references detected." );
 
@@ -317,10 +318,14 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 			}
 		}
 		iniStrings.ReadFile( GetLanguageIniPath(sThemeName,SpecialFiles::BASE_LANGUAGE) );
-		if( sLanguage.CompareNoCase(SpecialFiles::BASE_LANGUAGE) )
+		ci_string ciBaseLang(SpecialFiles::BASE_LANGUAGE.c_str());
+		if (ciBaseLang != sLanguage.c_str())
+		{
 			iniStrings.ReadFile( GetLanguageIniPath(sThemeName,sLanguage) );
+		}
 
-		bool bIsBaseTheme = !sThemeName.CompareNoCase(SpecialFiles::BASE_THEME_NAME);
+		ci_string ciBaseTheme(SpecialFiles::BASE_THEME_NAME.c_str());
+		bool bIsBaseTheme = ciBaseTheme == sThemeName.c_str();
 		iniMetrics.GetValue( "Global", "IsBaseTheme", bIsBaseTheme );
 		if( bIsBaseTheme )
 			bLoadedBase = true;
@@ -332,8 +337,10 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 		RString sFallback;
 		if( !iniMetrics.GetValue("Global","FallbackTheme",sFallback) )
 		{
-			if( sThemeName.CompareNoCase( SpecialFiles::BASE_THEME_NAME ) && !bLoadedBase )
+			if (ciBaseTheme != sThemeName.c_str() && !bLoadedBase)
+			{
 				sFallback = SpecialFiles::BASE_THEME_NAME;
+			}
 		}
 
 		/* We actually want to load themes bottom-to-top, loading fallback themes
@@ -389,7 +396,7 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	// select. This requires a preference, which allows it to be adapted for
 	// other purposes (e.g. PARASTAR).
 	if( !IsThemeSelectable(sThemeName) )
-		sThemeName = PREFSMAN->m_sDefaultTheme;
+		sThemeName = PREFSMAN->m_sDefaultTheme.Get();
 #endif
 
 	ASSERT( IsThemeSelectable(sThemeName) );
@@ -550,15 +557,13 @@ struct CompareLanguageTag
 	RString m_sLanguageString;
 	CompareLanguageTag( const RString &sLang )
 	{
-		m_sLanguageString = RString("(lang ") + sLang + ")";
+		m_sLanguageString = MakeLower("(lang " + sLang + ")");
 		LOG->Trace( "try \"%s\"", sLang.c_str() );
-		m_sLanguageString.MakeLower();
 	}
 
 	bool operator()( const RString &sFile ) const
 	{
-		RString sLower( sFile );
-		sLower.MakeLower();
+		RString sLower = MakeLower( sFile );
 		size_t iPos = sLower.find( m_sLanguageString );
 		return iPos != RString::npos;
 	}
@@ -709,9 +714,8 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 
 
 	RString sPath = asElementPaths[0];
-	bool bIsARedirect = GetExtension(sPath).CompareNoCase("redir")==0;
-
-	if( !bIsARedirect )
+	ci_string redir("redir");
+	if ( redir != GetExtension(sPath).c_str())
 	{
 		out.sResolvedPath = sPath;
 		out.sMatchingMetricsGroup = sMetricsGroup;
@@ -1124,9 +1128,14 @@ RString ThemeManager::GetNextTheme()
 	vector<RString> as;
 	GetThemeNames( as );
 	unsigned i;
+	ci_string ciTheme(m_sCurThemeName.c_str());
 	for( i=0; i<as.size(); i++ )
-		if( as[i].CompareNoCase(m_sCurThemeName)==0 )
+	{
+		if( ciTheme == as[i].c_str() )
+		{
 			break;
+		}
+	}
 	int iNewIndex = (i+1)%as.size();
 	return as[iNewIndex];
 }
@@ -1136,9 +1145,14 @@ RString ThemeManager::GetNextSelectableTheme()
 	vector<RString> as;
 	GetSelectableThemeNames( as );
 	unsigned i;
+	ci_string ciTheme(m_sCurThemeName.c_str());
 	for( i=0; i<as.size(); i++ )
-		if( as[i].CompareNoCase(m_sCurThemeName)==0 )
+	{
+		if( ciTheme == as[i].c_str() )
+		{
 			break;
+		}
+	}
 	int iNewIndex = (i+1)%as.size();
 	return as[iNewIndex];
 }
@@ -1148,19 +1162,20 @@ void ThemeManager::GetLanguagesForTheme( const RString &sThemeName, vector<RStri
 	RString sLanguageDir = GetThemeDirFromName(sThemeName) + SpecialFiles::LANGUAGES_SUBDIR;
 	vector<RString> as;
 	GetDirListing( sLanguageDir + "*.ini", as );
-
+	ci_string ciMetrics(SpecialFiles::METRICS_FILE.c_str());
 	for (auto const &s: as)
 	{
 		// ignore metrics.ini
-		if( s.CompareNoCase(SpecialFiles::METRICS_FILE)==0 )
+		if (ciMetrics == s.c_str())
+		{
 			continue;
-
+		}
 		// Ignore filenames with a space.  These are optional language inis that probably came from a mounted package.
 		if( s.find(" ") != RString::npos )
 			continue;
 
 		// strip ".ini"
-		RString s2 = s.Left( s.size()-4 );
+		RString s2 = head(s, -4 );
 
 		asLanguagesOut.push_back( s2 );
 	}
@@ -1191,24 +1206,24 @@ void ThemeManager::GetOptionNames( vector<RString>& AddTo )
 
 static RString PseudoLocalize( RString s )
 {
-	s.Replace( "a", "àá" );
-	s.Replace( "A", "ÀÀ" );
-	s.Replace( "e", "éé" );
-	s.Replace( "E", "ÉÉ" );
-	s.Replace( "i", "íí" );
-	s.Replace( "I", "ÍÍ" );
-	s.Replace( "o", "óó" );
-	s.Replace( "O", "ÓÓ" );
-	s.Replace( "u", "üü" );
-	s.Replace( "U", "ÜÜ" );
-	s.Replace( "n", "ñ" );
-	s.Replace( "N", "Ñ" );
-	s.Replace( "c", "ç" );
-	s.Replace( "C", "Ç" );
+	ReplaceAll(s, "a", "àá" );
+	ReplaceAll(s, "A", "ÀÀ" );
+	ReplaceAll(s, "e", "éé" );
+	ReplaceAll(s, "E", "ÉÉ" );
+	ReplaceAll(s, "i", "íí" );
+	ReplaceAll(s, "I", "ÍÍ" );
+	ReplaceAll(s, "o", "óó" );
+	ReplaceAll(s, "O", "ÓÓ" );
+	ReplaceAll(s, "u", "üü" );
+	ReplaceAll(s, "U", "ÜÜ" );
+	ReplaceAll(s, "n", "ñ" );
+	ReplaceAll(s, "N", "Ñ" );
+	ReplaceAll(s, "c", "ç" );
+	ReplaceAll(s, "C", "Ç" );
 	// transformations that help expose punctuation assumptions
-	//s.Replace( ":", " :" );	// this messes up "::" help text tip separator markers
-	s.Replace( "?", " ?" );
-	s.Replace( "!", " !" );
+	//ReplaceAll(s, ":", " :" );	// this messes up "::" help text tip separator markers
+	ReplaceAll(s, "?", " ?" );
+	ReplaceAll(s, "!", " !" );
 
 	return s;
 }
@@ -1226,8 +1241,8 @@ RString ThemeManager::GetString( const RString &sMetricsGroup, const RString &sV
 	DEBUG_ASSERT( sValueName.find('=') == sValueName.npos );
 
 	// TODO: Move this escaping into IniFile?
-	sValueName.Replace( "\r\n", "\\n" );
-	sValueName.Replace( "\n", "\\n" );
+	ReplaceAll(sValueName, "\r\n", "\\n" );
+	ReplaceAll(sValueName, "\n", "\\n" );
 
 	ASSERT( g_pLoadedThemeData != NULL );
 	RString s = GetMetricRaw( g_pLoadedThemeData->iniStrings, sMetricsGroup, sValueName );
@@ -1236,7 +1251,7 @@ RString ThemeManager::GetString( const RString &sMetricsGroup, const RString &sV
 	// Don't EvalulateString.  Strings are raw and shouldn't allow Lua.
 	//EvaluateString( s );
 
-	s.Replace( "\\n", "\n" );
+	ReplaceAll(s, "\\n", "\n" );
 
 	if( m_bPseudoLocalize )
 	{
@@ -1281,7 +1296,7 @@ void ThemeManager::GetMetricsThatBeginWith( const RString &sMetricsGroup_, const
 			for( XAttrs::const_iterator j = cur->m_attrs.lower_bound( sValueName ); j != cur->m_attrs.end(); ++j )
 			{
 				const RString &sv = j->first;
-				if( sv.Left(sValueName.size()) == sValueName )
+				if( head(sv, sValueName.size()) == sValueName )
 					vsValueNamesOut.insert( sv );
 				else	// we passed the last metric that matched sValueName
 					break;
@@ -1329,16 +1344,16 @@ public:
 		{
 			luaL_error(L, "Cannot fetch string with empty group name or empty value name.");
 		}
-		lua_pushstring(L, p->GetString(group, name));
+		lua_pushstring(L, p->GetString(group, name).c_str());
 		return 1;
 	}
 	static int GetPathInfoB( T* p, lua_State *L )
 	{
 		ThemeManager::PathInfo pi;
 		p->GetPathInfo( pi, EC_BGANIMATIONS, SArg(1), SArg(2) );
-		lua_pushstring(L, pi.sResolvedPath);
-		lua_pushstring(L, pi.sMatchingMetricsGroup);
-		lua_pushstring(L, pi.sMatchingElement);
+		lua_pushstring(L, pi.sResolvedPath.c_str());
+		lua_pushstring(L, pi.sMatchingMetricsGroup.c_str());
+		lua_pushstring(L, pi.sMatchingElement.c_str());
 		return 3;
 	}
 	// GENERAL_GET_PATH uses lua_toboolean instead of BArg because that makes
@@ -1347,7 +1362,7 @@ public:
 	static int get_path_name(T* p, lua_State* L) \
 	{ \
 		lua_pushstring(L, p->get_path_name( \
-				SArg(1), SArg(2), lua_toboolean(L, 3) != 0 )); \
+				SArg(1), SArg(2), lua_toboolean(L, 3) != 0 ).c_str()); \
 		return 1; \
 	}
 	GENERAL_GET_PATH(GetPathF);
@@ -1373,8 +1388,8 @@ public:
 
 	DEFINE_METHOD( GetCurrentThemeDirectory, GetCurThemeDir() );
 	DEFINE_METHOD( GetCurLanguage, GetCurLanguage() );
-	static int GetThemeDisplayName( T* p, lua_State *L )			{  lua_pushstring(L, p->GetThemeDisplayName(p->GetCurThemeName())); return 1; }
-	static int GetThemeAuthor( T* p, lua_State *L )			{  lua_pushstring(L, p->GetThemeAuthor(p->GetCurThemeName())); return 1; }
+	static int GetThemeDisplayName( T* p, lua_State *L )			{  lua_pushstring(L, p->GetThemeDisplayName(p->GetCurThemeName()).c_str()); return 1; }
+	static int GetThemeAuthor( T* p, lua_State *L )			{  lua_pushstring(L, p->GetThemeAuthor(p->GetCurThemeName()).c_str()); return 1; }
 	DEFINE_METHOD( DoesThemeExist, DoesThemeExist(SArg(1)) );
 	DEFINE_METHOD( IsThemeSelectable, IsThemeSelectable(SArg(1)) );
 	DEFINE_METHOD( DoesLanguageExist, DoesLanguageExist(SArg(1)) );

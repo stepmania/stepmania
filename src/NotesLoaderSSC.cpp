@@ -189,21 +189,34 @@ void SetDisplayBPM(SongTagInfo& info)
 }
 void SetSelectable(SongTagInfo& info)
 {
-	if((*info.params)[1].EqualsNoCase("YES"))
-	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
-	else if((*info.params)[1].EqualsNoCase("NO"))
-	{ info.song->m_SelectionDisplay = info.song->SHOW_NEVER; }
+	ci_string ciParam = (*info.params)[1].c_str();
+	if(ciParam == "YES")
+	{
+		info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS;
+	}
+	else if(ciParam == "NO")
+	{
+		info.song->m_SelectionDisplay = info.song->SHOW_NEVER;
+	}
 	// ROULETTE from 3.9 is no longer in use.
-	else if((*info.params)[1].EqualsNoCase("ROULETTE"))
-	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
+	else if(ciParam == "ROULETTE")
+	{
+		info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS;
+	}
 	/* The following two cases are just fixes to make sure simfiles that
 	 * used 3.9+ features are not excluded here */
-	else if((*info.params)[1].EqualsNoCase("ES") || (*info.params)[1].EqualsNoCase("OMES"))
-	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
+	else if(ciParam == "ES" || ciParam == "OMES")
+	{
+		info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS;
+	}
 	else if(StringToInt((*info.params)[1]) > 0)
-	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
+	{
+		info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS;
+	}
 	else
-	{ LOG->UserLog("Song file", info.path, "has an unknown #SELECTABLE value, \"%s\"; ignored.", (*info.params)[1].c_str()); }
+	{
+		LOG->UserLog("Song file", info.path, "has an unknown #SELECTABLE value, \"%s\"; ignored.", (*info.params)[1].c_str());
+	}
 }
 void SetBGChanges(SongTagInfo& info)
 {
@@ -856,8 +869,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 	for (unsigned i = 0; i < values; i++)
 	{
 		const MsdFile::value_t &params = msd.GetValue(i);
-		RString valueName = params[0];
-		valueName.MakeUpper();
+		RString valueName = MakeUpper(params[0]);
 		RString matcher = params[1]; // mainly for debugging.
 		Trim(matcher);
 
@@ -898,7 +910,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 						// tag. -Kyz
 						if(out.GetDifficulty() != StringToDifficulty(matcher) &&
 							!(out.GetDifficulty() == Difficulty_Edit &&
-								GetExtension(cachePath).MakeLower() == "edit"))
+								MakeLower(GetExtension(cachePath)) == "edit"))
 						{ tryingSteps = false; }
 						break;
 					case LNDID_meter:
@@ -969,8 +981,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 	for( unsigned i = 0; i < values; i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
+		RString sValueName = MakeUpper(sParams[0]);
 
 		switch (state)
 		{
@@ -983,7 +994,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				{
 					handler->second(reused_song_info);
 				}
-				else if(sValueName.Left(strlen("BGCHANGES"))=="BGCHANGES")
+				else if(BeginsWith(sValueName, "BGCHANGES"))
 				{
 					SetBGChanges(reused_song_info);
 				}
@@ -1088,8 +1099,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
+		RString sValueName = MakeUpper(sParams[0]);
 
 		if(pSong != NULL)
 		{
@@ -1192,7 +1202,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 
 				RString sSongFullTitle = sParams[1];
 				this->SetSongTitle(sParams[1]);
-				sSongFullTitle.Replace('\\', '/');
+				ReplaceAll(sSongFullTitle, "\\", "/");
 				pSong = SONGMAN->FindSong(sSongFullTitle);
 				reused_steps_info.song= pSong;
 				if(pSong == NULL)

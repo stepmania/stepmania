@@ -31,20 +31,25 @@ CharacterManager::CharacterManager()
 	StripMacResourceForks( as );
 
 	bool FoundDefault = false;
+	ci_string defChar("default");
 	for( unsigned i=0; i<as.size(); i++ )
 	{
 		RString sCharName, sDummy;
 		splitpath(as[i], sDummy, sCharName, sDummy);
-		sCharName.MakeLower();
-
-		if( sCharName.CompareNoCase("default")==0 )
+		if (defChar == sCharName.c_str())
+		{
 			FoundDefault = true;
+		}
 
 		Character* pChar = new Character;
 		if( pChar->Load( as[i] ) )
+		{
 			m_pCharacters.push_back( pChar );
+		}
 		else
+		{
 			delete pChar;
+		}
 	}
 
 	if( !FoundDefault )

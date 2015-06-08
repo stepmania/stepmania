@@ -75,7 +75,7 @@ void LuaBinding::Register( lua_State *L )
 	int methods = lua_gettop( L );
 
 	/* Create a metatable for the userdata objects. */
-	luaL_newmetatable( L, GetClassName() );
+	luaL_newmetatable( L, GetClassName().c_str() );
 	int metatable = lua_gettop( L );
 
 	// We use the metatable to determine the type of the table, so don't
@@ -101,17 +101,17 @@ void LuaBinding::Register( lua_State *L )
 	// to the base class.
 	if( IsDerivedClass() )
 	{
-		lua_getfield( L, LUA_GLOBALSINDEX, GetBaseClassName() );
+		lua_getfield( L, LUA_GLOBALSINDEX, GetBaseClassName().c_str() );
 		lua_setfield( L, methods_metatable, "__index" );
 
-		lua_pushstring( L, GetBaseClassName() );
+		lua_pushstring( L, GetBaseClassName().c_str() );
 		lua_setfield( L, metatable, "base" );
 	}
 
-	lua_pushstring( L, GetClassName() );
+	lua_pushstring( L, GetClassName().c_str() );
 	lua_setfield( L, methods_metatable, "class" );
 
-	lua_pushstring( L, GetClassName() );
+	lua_pushstring( L, GetClassName().c_str() );
 	LuaHelpers::PushValueFunc( L, 1 );
 	lua_setfield( L, metatable, "__type" ); // for luaL_pushtype
 
@@ -123,12 +123,12 @@ void LuaBinding::Register( lua_State *L )
 		int iIndex = 0;
 		while( !sClass.empty() )
 		{
-			lua_pushstring( L, sClass );
+			lua_pushstring( L, sClass.c_str() );
 			lua_pushinteger( L, iIndex );
 			lua_rawset( L, iHeirarchyTable );
 			++iIndex;
 
-			luaL_getmetatable( L, sClass );
+			luaL_getmetatable( L, sClass.c_str() );
 			ASSERT( !lua_isnil(L, -1) );
 			lua_getfield( L, -1, "base" );
 
@@ -159,7 +159,7 @@ void LuaBinding::CreateMethodsTable( lua_State *L, const RString &sName )
 {
 	lua_newtable( L );
 	lua_pushvalue( L, -1 );
-	lua_setfield( L, LUA_GLOBALSINDEX, sName );
+	lua_setfield( L, LUA_GLOBALSINDEX, sName.c_str() );
 }
 
 int LuaBinding::PushEqual( lua_State *L )
@@ -217,7 +217,7 @@ bool LuaBinding::Equal( lua_State *L )
  * Get a userdata, and check that it's either szType or a type
  * derived from szType, by checking the heirarchy table.
  */
-bool LuaBinding::CheckLuaObjectType( lua_State *L, int iArg, const char *szType )
+bool LuaBinding::CheckLuaObjectType( lua_State *L, int iArg, std::string const &szType )
 {
 #if defined(FAST_LUA)
 	return true;
@@ -233,7 +233,7 @@ bool LuaBinding::CheckLuaObjectType( lua_State *L, int iArg, const char *szType 
 		return false;
 	}
 
-	lua_getfield( L, -1, szType );
+	lua_getfield( L, -1, szType.c_str() );
 	bool bRet = !lua_isnil( L, -1 );
 	lua_pop( L, 2 );
 
@@ -290,7 +290,7 @@ void LuaBinding::ApplyDerivedType( Lua *L, const RString &sClassName, void *pSel
 		lua_settop( L, iTable );
 	}
 
-	luaL_getmetatable( L, sClassName );
+	luaL_getmetatable( L, sClassName.c_str() );
 	lua_setmetatable( L, iTable );
 }
 

@@ -195,10 +195,10 @@ static void child_process()
 #endif
 	sCrashInfoPath += "/crashinfo.txt";
 	
-	FILE *CrashDump = fopen( sCrashInfoPath, "w+" );
+	FILE *CrashDump = fopen( sCrashInfoPath.c_str(), "w+" );
 	if(CrashDump == NULL)
 	{
-		fprintf( stderr, "Couldn't open " + sCrashInfoPath + ": %s\n", strerror(errno) );
+		fprintf( stderr, "Couldn't open %s: %s\n", sCrashInfoPath.c_str(), strerror(errno) );
 		exit(1);
 	}
 	
@@ -247,7 +247,7 @@ static void child_process()
 	
 	fprintf(CrashDump, "Checkpoints:\n");
 	for( unsigned i=0; i<Checkpoints.size(); ++i )
-		fputs( Checkpoints[i], CrashDump );
+		fputs( Checkpoints[i].c_str(), CrashDump );
 	fprintf( CrashDump, "\n" );
 	
 	for( int i = 0; i < CrashData::MAX_BACKTRACE_THREADS; ++i )

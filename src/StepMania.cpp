@@ -134,7 +134,7 @@ static RString GetActualGraphicOptionsString()
 {
 	const VideoModeParams &params = DISPLAY->GetActualVideoModeParams();
 	RString sFormat = "%s %s %dx%d %d "+COLOR.GetValue()+" %d "+TEXTURE.GetValue()+" %dHz %s %s";
-	RString sLog = ssprintf( sFormat,
+	RString sLog = fmt::sprintf( sFormat,
 		DISPLAY->GetApiDescription().c_str(),
 		(params.windowed? WINDOWED : FULLSCREEN).GetValue().c_str(),
 		(int)params.width,
@@ -348,7 +348,7 @@ void StepMania::ResetGame()
 	{
 		RString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
 		if( !THEME->DoesThemeExist(sGameName) )
-			sGameName = PREFSMAN->m_sDefaultTheme; // was previously "default" -aj
+			sGameName = PREFSMAN->m_sDefaultTheme.Get(); // was previously "default" -aj
 		THEME->SwitchThemeAndLanguage( sGameName, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize );
 		TEXTUREMAN->DoDelayedDelete();
 	}
@@ -674,6 +674,7 @@ bool CheckVideoDefaultSettings()
 		LOG->Trace( "Video card has changed from %s to %s.  Applying new defaults.", PREFSMAN->m_sLastSeenVideoDriver.Get().c_str(), sVideoDriver.c_str() );
 	}
 
+	ci_string ciRenderer(PREFSMAN->m_sVideoRenderers.Get().c_str());
 	if( bSetDefaultVideoParams )
 	{
 		PREFSMAN->m_sVideoRenderers.Set( defaults.sVideoRenderers );
@@ -692,7 +693,7 @@ bool CheckVideoDefaultSettings()
 		// Update last seen video card
 		PREFSMAN->m_sLastSeenVideoDriver.Set( GetVideoDriverName() );
 	}
-	else if( PREFSMAN->m_sVideoRenderers.Get().CompareNoCase(defaults.sVideoRenderers) )
+	else if( ciRenderer != defaults.sVideoRenderers.c_str() )
 	{
 		LOG->Warn("Video renderer list has been changed from '%s' to '%s'",
 				defaults.sVideoRenderers.c_str(), PREFSMAN->m_sVideoRenderers.Get().c_str() );
@@ -743,7 +744,7 @@ RageDisplay *CreateDisplay()
 	RString error = ERROR_INITIALIZING_CARD.GetValue()+"\n\n"+
 		ERROR_DONT_FILE_BUG.GetValue()+"\n\n"
 		VIDEO_TROUBLESHOOTING_URL "\n\n"+
-		ssprintf(ERROR_VIDEO_DRIVER.GetValue(), GetVideoDriverName().c_str())+"\n\n";
+		fmt::sprintf(ERROR_VIDEO_DRIVER.GetValue(), GetVideoDriverName().c_str())+"\n\n";
 
 	vector<RString> asRenderers;
 	split( PREFSMAN->m_sVideoRenderers, ",", asRenderers, true );
@@ -755,33 +756,34 @@ RageDisplay *CreateDisplay()
 	for( unsigned i=0; i<asRenderers.size(); i++ )
 	{
 		RString sRenderer = asRenderers[i];
+		ci_string ciRenderer(sRenderer.c_str());
 
-		if( sRenderer.CompareNoCase("opengl")==0 )
+		if( ciRenderer == "opengl" )
 		{
 #if defined(SUPPORT_OPENGL)
 			pRet = new RageDisplay_Legacy;
 #endif
 		}
-		else if( sRenderer.CompareNoCase("gles2")==0 )
+		else if( ciRenderer == "gles2" )
 		{
 #if defined(SUPPORT_GLES2)
 			pRet = new RageDisplay_GLES2;
 #endif
 		}
-		else if( sRenderer.CompareNoCase("d3d")==0 )
+		else if( ciRenderer == "d3d" )
 		{
 // TODO: ANGLE/RageDisplay_Modern
 #if defined(SUPPORT_D3D)
 			pRet = new RageDisplay_D3D;
 #endif
 		}
-		else if( sRenderer.CompareNoCase("null")==0 )
+		else if( ciRenderer == "null" )
 		{
 			return new RageDisplay_Null;
 		}
 		else
 		{
-			RageException::Throw( ERROR_UNKNOWN_VIDEO_RENDERER.GetValue(), sRenderer.c_str() );
+			RageException::Throw( ERROR_UNKNOWN_VIDEO_RENDERER.GetValue().c_str(), sRenderer.c_str() );
 		}
 
 		if( pRet == NULL )
@@ -790,7 +792,7 @@ RageDisplay *CreateDisplay()
 		RString sError = pRet->Init( params, PREFSMAN->m_bAllowUnacceleratedRenderer );
 		if( !sError.empty() )
 		{
-			error += ssprintf(ERROR_INITIALIZING.GetValue(), sRenderer.c_str())+"\n" + sError;
+			error += fmt::sprintf(ERROR_INITIALIZING.GetValue(), sRenderer.c_str())+"\n" + sError;
 			SAFE_DELETE( pRet );
 			error += "\n\n\n";
 			continue;
@@ -1233,9 +1235,9 @@ RString StepMania::SaveScreenshot( RString Dir, bool SaveCompressed, bool MakeSi
 	 * As before, we ignore the extension. -aj */
 	RString FileNameNoExtension = NamePrefix + DateTime::GetNowDateTime().GetString() + NameSuffix;
 	// replace space with underscore.
-	FileNameNoExtension.Replace(" ","_");
+	ReplaceAll(FileNameNoExtension, " ", "_");
 	// colons are illegal in filenames.
-	FileNameNoExtension.Replace(":","");
+	ReplaceAll(FileNameNoExtension, ":", "");
 
 	// Save the screenshot. If writing lossy to a memcard, use
 	// SAVE_LOSSY_LOW_QUAL, so we don't eat up lots of space.
@@ -1642,7 +1644,7 @@ int LuaFunc_SaveScreenshot(lua_State *L)
 	}
 	RString path= dir + filename;
 	lua_pushboolean(L, !filename.empty());
-	lua_pushstring(L, path);
+	lua_pushstring(L, path.c_str());
 	return 2;
 }
 void LuaFunc_Register_SaveScreenshot(lua_State *L);
