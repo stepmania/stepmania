@@ -335,8 +335,8 @@ void ActorMultiVertex::SetVertsFromSplinesInternal(size_t num_splines, size_t of
 	size_t first= AMV_DestTweenState().FirstToDraw + offset;
 	size_t num_verts= AMV_DestTweenState().GetSafeNumToDraw(AMV_DestTweenState()._DrawMode, AMV_DestTweenState().NumToDraw) - offset;
 	vector<float> tper(num_splines, 0.0f);
-	float num_parts= static_cast<float>(num_verts) /
-		static_cast<float>(num_splines);
+	float num_parts= (static_cast<float>(num_verts) /
+		static_cast<float>(num_splines)) - 1.0f;
 	for(size_t i= 0; i < num_splines; ++i)
 	{
 		tper[i]= _splines[i].get_max_t() / num_parts;
