@@ -196,9 +196,10 @@ void RageSoundDriver::DecodeThread()
 		for (auto &s: m_Sounds)
 		{
 			if( s.m_State != Sound::PLAYING )
+			{	
 				continue;
-
-			CHECKPOINT;
+			}
+			CHECKPOINT_M("Processing the sound while buffers are available.");
 			while( s.m_Buffer.num_writable() )
 			{
 				int iWrote = GetDataForSound( s );

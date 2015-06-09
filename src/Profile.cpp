@@ -417,15 +417,17 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 
 			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: n %s = %p", sid.ToString().c_str(), pSteps) );
 			if( pSteps->GetDifficulty() != dc )
+			{
 				continue;	// skip
-			CHECKPOINT;
+			}
+			
+			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: difficulty %s is correct", DifficultyToString(dc).c_str()));
 
 			const HighScoresForASteps& h = j.second;
 			const HighScoreList& hsl = h.hsl;
 
 			fTotalPercents += hsl.GetTopScore().GetPercentDP();
 		}
-		CHECKPOINT;
 	}
 
 	return fTotalPercents;
@@ -1075,8 +1077,6 @@ void Profile::LoadCustomFunction( RString sDir )
 
 ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature )
 {
-	CHECKPOINT;
-
 	LOG->Trace( "Profile::LoadAllFromDir( %s )", sDir.c_str() );
 
 	ASSERT( sDir.Right(1) == "/" );
@@ -1840,7 +1840,7 @@ float Profile::CalculateCaloriesFromHeartRate(float HeartRate, float Duration)
 
 XNode* Profile::SaveSongScoresCreateNode() const
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Getting the node to save song scores.");
 
 	const Profile* pProfile = this;
 	ASSERT( pProfile != NULL );
@@ -1884,7 +1884,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 
 void Profile::LoadSongScoresFromNode( const XNode* pSongScores )
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Loading the node that contains song scores.");
 
 	ASSERT( pSongScores->GetName() == "SongScores" );
 
@@ -1923,7 +1923,7 @@ void Profile::LoadSongScoresFromNode( const XNode* pSongScores )
 
 XNode* Profile::SaveCourseScoresCreateNode() const
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Getting the node to save course scores.");
 
 	const Profile* pProfile = this;
 	ASSERT( pProfile != NULL );
@@ -1963,7 +1963,7 @@ XNode* Profile::SaveCourseScoresCreateNode() const
 
 void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Loading the node that contains course scores.");
 
 	ASSERT( pCourseScores->GetName() == "CourseScores" );
 
@@ -2033,7 +2033,7 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 
 XNode* Profile::SaveCategoryScoresCreateNode() const
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Getting the node that saves category scores.");
 
 	const Profile* pProfile = this;
 	ASSERT( pProfile != NULL );
@@ -2069,7 +2069,7 @@ XNode* Profile::SaveCategoryScoresCreateNode() const
 
 void Profile::LoadCategoryScoresFromNode( const XNode* pCategoryScores )
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Loading the node that contains category scores.");
 
 	ASSERT( pCategoryScores->GetName() == "CategoryScores" );
 
@@ -2124,7 +2124,7 @@ void Profile::AddScreenshot( const Screenshot &screenshot )
 
 void Profile::LoadScreenshotDataFromNode( const XNode* pScreenshotData )
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Loading the node containing screenshot data.");
 
 	ASSERT( pScreenshotData->GetName() == "ScreenshotData" );
 	FOREACH_CONST_Child( pScreenshotData, pScreenshot )
@@ -2141,7 +2141,7 @@ void Profile::LoadScreenshotDataFromNode( const XNode* pScreenshotData )
 
 XNode* Profile::SaveScreenshotDataCreateNode() const
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Getting the node containing screenshot data.");
 
 	const Profile* pProfile = this;
 	ASSERT( pProfile != NULL );
@@ -2158,7 +2158,7 @@ XNode* Profile::SaveScreenshotDataCreateNode() const
 
 void Profile::LoadCalorieDataFromNode( const XNode* pCalorieData )
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Loading the node containing calorie data.");
 
 	ASSERT( pCalorieData->GetName() == "CalorieData" );
 	FOREACH_CONST_Child( pCalorieData, pCaloriesBurned )
@@ -2183,7 +2183,7 @@ void Profile::LoadCalorieDataFromNode( const XNode* pCalorieData )
 
 XNode* Profile::SaveCalorieDataCreateNode() const
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Getting the node containing calorie data.");
 
 	const Profile* pProfile = this;
 	ASSERT( pProfile != NULL );
@@ -2304,7 +2304,7 @@ bool Profile::IsMachine() const
 
 XNode* Profile::SaveCoinDataCreateNode() const
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Getting the node containing coin data.");
 
 	const Profile* pProfile = this;
 	ASSERT( pProfile != NULL );

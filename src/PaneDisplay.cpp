@@ -212,20 +212,54 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 
 		switch( c )
 		{
-			case PaneCategory_NumSteps:	fLevelOut = rv[RadarCategory_TapsAndHolds]; break;
-			case PaneCategory_Jumps:		fLevelOut = rv[RadarCategory_Jumps]; break;
-			case PaneCategory_Holds:		fLevelOut = rv[RadarCategory_Holds]; break;
-			case PaneCategory_Rolls:		fLevelOut = rv[RadarCategory_Rolls]; break;
-			case PaneCategory_Mines:		fLevelOut = rv[RadarCategory_Mines]; break;
-			case PaneCategory_Hands:		fLevelOut = rv[RadarCategory_Hands]; break;
-			case PaneCategory_Lifts:		fLevelOut = rv[RadarCategory_Lifts]; break;
-			case PaneCategory_Fakes:		fLevelOut = rv[RadarCategory_Fakes]; break;
+			case PaneCategory_NumSteps:
+			{
+				fLevelOut = rv[RadarCategory_TapsAndHolds];
+				break;
+			}
+			case PaneCategory_Jumps:
+			{
+				fLevelOut = rv[RadarCategory_Jumps];
+				break;
+			}
+			case PaneCategory_Holds:
+			{
+				fLevelOut = rv[RadarCategory_Holds];
+				break;
+			}
+			case PaneCategory_Rolls:
+			{
+				fLevelOut = rv[RadarCategory_Rolls];
+				break;
+			}
+			case PaneCategory_Mines:
+			{
+				fLevelOut = rv[RadarCategory_Mines];
+				break;
+			}
+			case PaneCategory_Hands:
+			{
+				fLevelOut = rv[RadarCategory_Hands];
+				break;
+			}
+			case PaneCategory_Lifts:
+			{
+				fLevelOut = rv[RadarCategory_Lifts];
+				break;
+			}
+			case PaneCategory_Fakes:
+			{
+				fLevelOut = rv[RadarCategory_Fakes];
+				break;
+			}
 			case PaneCategory_ProfileHighScore:
 			case PaneCategory_MachineHighName: // set fLevelOut for color
 			case PaneCategory_MachineHighScore:
-				CHECKPOINT;
+			{
+				CHECKPOINT_M("Getting data from a high score instead of a radar value.");
 				fLevelOut = pHSL->GetTopScore().GetPercentDP();
 				break;
+			}
 			default: break;
 		};
 

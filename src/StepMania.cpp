@@ -189,6 +189,13 @@ bool StepMania::GetHighResolutionTextures()
 	}
 }
 
+static void update_centering()
+{
+	DISPLAY->ChangeCentering(
+		PREFSMAN->m_iCenterImageTranslateX, PREFSMAN->m_iCenterImageTranslateY,
+		PREFSMAN->m_fCenterImageAddWidth, PREFSMAN->m_fCenterImageAddHeight);
+}
+
 static void StartDisplay()
 {
 	if( DISPLAY != NULL )
@@ -196,11 +203,7 @@ static void StartDisplay()
 
 	DISPLAY = CreateDisplay();
 
-	DISPLAY->ChangeCentering(
-		PREFSMAN->m_iCenterImageTranslateX,
-		PREFSMAN->m_iCenterImageTranslateY,
-		PREFSMAN->m_fCenterImageAddWidth,
-		PREFSMAN->m_fCenterImageAddHeight );
+	update_centering();
 
 	TEXTUREMAN	= new RageTextureManager;
 	TEXTUREMAN->SetPrefs(
@@ -232,11 +235,7 @@ void StepMania::ApplyGraphicOptions()
 	if( sError != "" )
 		RageException::Throw( "%s", sError.c_str() );
 
-	DISPLAY->ChangeCentering(
-		PREFSMAN->m_iCenterImageTranslateX,
-		PREFSMAN->m_iCenterImageTranslateY,
-		PREFSMAN->m_fCenterImageAddWidth,
-		PREFSMAN->m_fCenterImageAddHeight );
+	update_centering();
 
 	bNeedReload |= TEXTUREMAN->SetPrefs(
 		RageTextureManagerPrefs(
@@ -359,9 +358,17 @@ void StepMania::ResetGame()
 ThemeMetric<RString>	INITIAL_SCREEN	("Common","InitialScreen");
 RString StepMania::GetInitialScreen()
 {
-	if( PREFSMAN->m_sTestInitialScreen.Get() != "" )
+	if(PREFSMAN->m_sTestInitialScreen.Get() != "" &&
+		SCREENMAN->IsScreenNameValid(PREFSMAN->m_sTestInitialScreen))
+	{
 		return PREFSMAN->m_sTestInitialScreen;
-	return INITIAL_SCREEN.GetValue();
+	}
+	RString screen_name= INITIAL_SCREEN.GetValue();
+	if(!SCREENMAN->IsScreenNameValid(screen_name))
+	{
+		screen_name= "ScreenInitialScreenIsInvalid";
+	}
+	return screen_name;
 }
 ThemeMetric<RString>	SELECT_MUSIC_SCREEN	("Common","SelectMusicScreen");
 RString StepMania::GetSelectMusicScreen()
@@ -1649,6 +1656,13 @@ void LuaFunc_Register_SaveScreenshot(lua_State *L);
 void LuaFunc_Register_SaveScreenshot(lua_State *L)
 { lua_register(L, "SaveScreenshot", LuaFunc_SaveScreenshot); }
 REGISTER_WITH_LUA_FUNCTION(LuaFunc_Register_SaveScreenshot);
+
+static int LuaFunc_update_centering(lua_State* L)
+{
+	update_centering();
+	return 0;
+}
+LUAFUNC_REGISTER_COMMON(update_centering);
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
