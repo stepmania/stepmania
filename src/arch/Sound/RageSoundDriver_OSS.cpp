@@ -54,7 +54,7 @@ void RageSoundDriver_OSS::MixerThread()
 		usleep( 10000 );
 
 		struct timeval tv = { 0, 10000 };
-		select(fd+1, NULL, &f, NULL, &tv);
+		select(fd+1, nullptr, &f, nullptr, &tv);
 	}
 }
 
@@ -77,7 +77,7 @@ bool RageSoundDriver_OSS::GetData()
 		
 	const int chunksize = ab.fragsize;
 	
-	static int16_t *buf = NULL;
+	static int16_t *buf = nullptr;
 	if(!buf)
 		buf = new int16_t[chunksize / sizeof(int16_t)];
 

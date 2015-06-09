@@ -5,12 +5,12 @@
 
 REGISTER_SOUND_DRIVER_CLASS(Win32Parallel);
 
-HINSTANCE hDLL = NULL;
+HINSTANCE hDLL = nullptr;
 
 typedef void (WINAPI PORTOUT)(short int Port, char Data);
-PORTOUT* PortOut = NULL;
+PORTOUT* PortOut = nullptr;
 typedef short int (WINAPI ISDRIVERINSTALLED)();
-ISDRIVERINSTALLED* IsDriverInstalled = NULL;
+ISDRIVERINSTALLED* IsDriverInstalled = nullptr;
 
 const int LIGHTS_PER_PARALLEL_PORT = 8;
 // xxx: don't hardcode the port addresses. -aj
@@ -44,9 +44,9 @@ LightsDriver_Win32Parallel::LightsDriver_Win32Parallel()
 {
 	// init io.dll
 	hDLL = LoadLibrary("parallel_lights_io.dll");
-	if(hDLL == NULL)
+	if(hDLL == nullptr)
 	{
-		MessageBox(NULL, "Could not LoadLibrary( parallel_lights_io.dll ).", "ERROR", MB_OK );
+		MessageBox(nullptr, "Could not LoadLibrary( parallel_lights_io.dll ).", "ERROR", MB_OK );
 		return;
 	}
 

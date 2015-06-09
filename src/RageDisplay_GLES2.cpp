@@ -222,7 +222,7 @@ RageDisplay_GLES2::RageDisplay_GLES2()
 	FixLittleEndian();
 //	RageDisplay_GLES2_Helpers::Init();
 
-	g_pWind = NULL;
+	g_pWind = nullptr;
 }
 
 RString
@@ -739,7 +739,7 @@ void RageDisplay_Legacy::SetBlendMode( BlendMode mode )
 {
 	glEnable(GL_BLEND);
 
-	if (glBlendEquation != NULL)
+	if (glBlendEquation != nullptr)
 	{
 		if (mode == BLEND_INVERT_DEST)
 			glBlendEquation( GL_FUNC_SUBTRACT );

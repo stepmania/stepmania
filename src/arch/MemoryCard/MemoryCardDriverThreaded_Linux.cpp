@@ -80,7 +80,7 @@ static void GetFileList( const RString &sPath, vector<RString> &out )
 	out.clear();
 
 	DIR *dp = opendir( sPath );
-	if( dp == NULL )
+	if( dp == nullptr )
 		return; // false; // XXX warn
 
 	while( const struct dirent *ent = readdir(dp) )
@@ -314,7 +314,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 			 * /dev.  This allows us to specify persistent names in
 			 * /etc/fstab using things like /dev/device/by-path. */
 			char szUnderlyingDevice[PATH_MAX];
-			if( realpath(szScsiDevice, szUnderlyingDevice) == NULL )
+			if( realpath(szScsiDevice, szUnderlyingDevice) == nullptr )
 			{
 				// "No such file or directory" is understandable
 				if (errno != ENOENT)

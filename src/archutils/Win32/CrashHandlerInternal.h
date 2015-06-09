@@ -18,7 +18,7 @@ struct CrashInfo
 		m_CrashReason[0] = 0;
 		memset( m_AlternateThreadBacktrace, 0, sizeof(m_AlternateThreadBacktrace) );
 		memset( m_AlternateThreadName, 0, sizeof(m_AlternateThreadName) );
-		m_BacktracePointers[0] = NULL;
+		m_BacktracePointers[0] = nullptr;
 	}
 };
 
