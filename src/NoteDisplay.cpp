@@ -768,8 +768,9 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 
 	// top to bottom
 	bool bAllAreTransparent = true;
-	bool bLast = false;
-	float fAddToTexCoord = 0;
+	bool last_vert_set = false;
+	bool first_vert_set= true;
+	float add_to_tex_coord = 0;
 
 	// The caps should always use the full texture.
 	if(part_type == hpt_body)
@@ -779,7 +780,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			float tex_coord_bottom= SCALE(part_args.y_bottom - part_args.y_top,
 				0, unzoomed_frame_height, rect.top, rect.bottom);
 			float want_tex_coord_bottom	= ceilf(tex_coord_bottom - 0.0001f);
-			fAddToTexCoord = want_tex_coord_bottom - tex_coord_bottom;
+			add_to_tex_coord = want_tex_coord_bottom - tex_coord_bottom;
 		}
 
 		if(part_args.wrapping)
@@ -788,9 +789,15 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			 * don't send very large values to the renderer. */
 			const float fDistFromTop	= y_start_pos - part_args.y_top;
 			float fTexCoordTop		= SCALE(fDistFromTop, 0, unzoomed_frame_height, rect.top, rect.bottom);
-			fTexCoordTop += fAddToTexCoord;
-			fAddToTexCoord -= floorf(fTexCoordTop);
+			fTexCoordTop += add_to_tex_coord;
+			add_to_tex_coord -= floorf(fTexCoordTop);
 		}
+	}
+	// The bottom caps mysteriously hate me and their texture coords need to be
+	// shifted by one pixel or there is a seam. -Kyz
+	if(part_type == hpt_bottom)
+	{
+		add_to_tex_coord= SCALE(1.0f, 0.0f, power_of_two(unzoomed_frame_height), 0.0f, 1.0f);
 	}
 
 	DISPLAY->ClearAllTextures();
@@ -804,12 +811,12 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	static const RageVector3 pos_y_vec(0.0f, 1.0f, 0.0f);
 
 	StripBuffer queue;
-	for(float fY = y_start_pos; !bLast; fY += part_args.y_step)
+	for(float fY = y_start_pos; !last_vert_set; fY += part_args.y_step)
 	{
 		if(fY >= y_end_pos)
 		{
 			fY = y_end_pos;
-			bLast = true;
+			last_vert_set = true;
 		}
 
 		const float fYOffset= ArrowEffects::GetYOffsetFromYPos(column_args.column, fY, m_fYReverseOffsetPixels);
@@ -924,7 +931,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			sp_pos.y + ae_pos.y, sp_pos.z + ae_pos.z);
 
 		// Special case for hold caps, which have the same top and bottom beat.
-		if(part_args.top_beat == part_args.bottom_beat && fY != y_start_pos)
+		if(part_args.top_beat == part_args.bottom_beat && !first_vert_set)
 		{
 			center_vert.x+= render_forward.x;
 			center_vert.y+= render_forward.y;
@@ -956,7 +963,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 
 		const float fDistFromTop	= (fY - y_start_pos) / ae_zoom;
 		float fTexCoordTop		= SCALE(fDistFromTop, 0, unzoomed_frame_height, rect.top, rect.bottom);
-		fTexCoordTop += fAddToTexCoord;
+		fTexCoordTop += add_to_tex_coord;
 
 		const float fAlpha		= ArrowGetAlphaOrGlow(glow, m_pPlayerState, column_args.column, fYOffset, part_args.percent_fade_to_fail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets);
 		const RageColor color= RageColor(
@@ -973,7 +980,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		queue.v[2].p = right_vert;  queue.v[2].c = color; queue.v[2].t = RageVector2(fTexCoordRight, fTexCoordTop);
 		queue.v+=3;
 
-		if(queue.Free() < 3 || bLast)
+		if(queue.Free() < 3 || last_vert_set)
 		{
 			/* The queue is full.  Render it, clear the buffer, and move back a step to
 			 * start off the strip again. */
@@ -993,6 +1000,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			bAllAreTransparent = true;
 			fY -= part_args.y_step;
 		}
+		first_vert_set= false;
 	}
 }
 
@@ -1023,6 +1031,7 @@ void NoteDisplay::DrawHoldBodyInternal(vector<Sprite*>& sprite_top,
 	part_args.y_bottom= tail_plus_bottom;
 	part_args.top_beat= bottom_beat;
 	part_args.y_start_pos= max(part_args.y_start_pos, y_head);
+	part_args.wrapping= false;
 	DrawHoldPart(sprite_bottom, field_args, column_args, part_args, glow, hpt_bottom);
 }
 

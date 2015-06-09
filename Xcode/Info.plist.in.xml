@@ -34,7 +34,7 @@
     <key>CFBundleIconFile</key>
     <string>smicon.icns</string>
     <key>CFBundleIdentifier</key>
-    <string>com.@SM_EXE_NAME@ @SM_VERSION_MAJOR@</string>
+    <string>com.@SM_EXE_NAME@-@SM_VERSION_MAJOR@</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>

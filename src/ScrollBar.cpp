@@ -64,7 +64,7 @@ void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
 	fStartPercent	= fmodf( fStartPercent+1, 1 );
 	fEndPercent	= fmodf( fEndPercent+1, 1 );
 
-	CHECKPOINT;
+	CHECKPOINT_M("Percentages set.");
 	float fPartTopY[2], fPartBottomY[2];
 
 	if( fStartPercent < fEndPercent )	// we only need to one 1 stretch thumb part
@@ -82,8 +82,6 @@ void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
 		fPartBottomY[1]	= SCALE( 1.0f,		0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
 	}
 
-	CHECKPOINT;
-
 	for( unsigned i=0; i<ARRAYLEN(m_sprScrollStretchThumb); i++ )
 	{
 		RectF rect(
@@ -94,7 +92,6 @@ void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
 			);
 		m_sprScrollStretchThumb[i]->StretchTo( rect );
 	}
-	CHECKPOINT;
 }
 
 /*

@@ -353,7 +353,7 @@ static void StartQueuedSounds()
 			StartMusic( aMusicsToPlay[i] );
 		else
 		{
-			CHECKPOINT;
+			CHECKPOINT_M( ssprintf("Removing old sound at index %d", i));
 			/* StopPlaying() can take a while, so don't hold the lock while we stop the sound. */
 			g_Mutex->Lock();
 			RageSound *pOldSound = g_Playing->m_Music;

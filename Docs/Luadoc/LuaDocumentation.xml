@@ -622,6 +622,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='URLEncode' return='string' arguments='string sInput'>
 		Returns a string with characters escaped for URLs. (e.g. a space becomes '%20')
 	</Function>
+	<Function name='update_centering' return='' arguments=''>
+		This tells Stepmania to update the screen position for any changes to these preferences: CenterImageAddWidth, CenterImageAddHeight, CenterImageTranslateX, CenterImageTranslateY.<br />
+		This way, a theme can implement a custom interactive screen for adjusting those preferences.
+	</Function>
 	<Function name='Var' theme='_fallback' return='ThreadVariable' arguments=''>
 		[01 base.lua] Alias for <Link class="lua" function="GetThreadVariable">lua.GetThreadVariable</Link>.
 	</Function>
@@ -4051,6 +4055,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='destroy' return='void' arguments=''>
 		Safely deletes the file handle.
+	</Function>
+	<Function name='Flush' return='' arguments=''>
+		Flushes the buffer for the file handle, writing any pending output to disk.
 	</Function>
 	<Function name='GetError' return='string' arguments=''>
 		Gets the last error message and returns it.

@@ -201,7 +201,7 @@ void RageSoundDriver::DecodeThread()
 
 			Sound *pSound = &m_Sounds[i];
 
-			CHECKPOINT;
+			CHECKPOINT_M("Processing the sound while buffers are available.");
 			while( pSound->m_Buffer.num_writable() )
 			{
 				int iWrote = GetDataForSound( *pSound );

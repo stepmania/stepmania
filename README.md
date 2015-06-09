@@ -7,7 +7,7 @@ Advanced cross-platform rhythm game for home and arcade use.
 
 ##Installing from Source##
 
-StepMania can be compiled using [CMake](http://http://www.cmake.org/). More information about using CMake can be found in both the `Build` directory and CMake's documentation.
+StepMania can be compiled using [CMake](http://www.cmake.org/). More information about using CMake can be found in both the `Build` directory and CMake's documentation.
 
 ##Build Status##
 

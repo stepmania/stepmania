@@ -179,12 +179,8 @@ float fmodfp(float x, float y)
 
 int power_of_two( int iInput )
 {
-	int iValue = 1;
-
-	while( iValue < iInput )
-		iValue <<= 1;
-
-	return iValue;
+	return static_cast<int>(powf(2.0f, ceilf(
+		log(static_cast<float>(iInput)) / log(2.0f))));
 }
 
 bool IsAnInt( const RString &s )
