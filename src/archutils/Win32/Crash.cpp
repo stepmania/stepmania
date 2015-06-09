@@ -50,7 +50,7 @@ static const struct ExceptionLookup {
 	{ EXCEPTION_INVALID_HANDLE,		"Invalid handle"		},
 	{ EXCEPTION_STACK_OVERFLOW,		"Stack overflow"		},
 	{ 0xe06d7363,				"Unhandled Microsoft C++ Exception",	},
-	{ nullptr },
+	{ NULL },
 };
 
 static const char *LookupException( DWORD code )
@@ -473,7 +473,7 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 	 * due to stack corruption, we might not be able to get any frames from the
 	 * stack. Pull it out of pContext->Eip, which is always valid, and then
 	 * discard the first stack frame if it's the same. */
-	if( buf+1 != pLast && pContext->Eip != nullptr )
+	if( buf+1 != pLast && pContext->Eip != NULL )
 	{
 		*buf = (void *) pContext->Eip;
 		++buf;

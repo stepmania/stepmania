@@ -124,7 +124,7 @@ RString RageSoundDriver_WaveOut::Init()
 	fmt.nBlockAlign = fmt.nChannels * fmt.wBitsPerSample / 8;
 	fmt.nAvgBytesPerSec = fmt.nSamplesPerSec * fmt.nBlockAlign;
 
-	MMRESULT ret = waveOutOpen( &m_hWaveOut, WAVE_MAPPER, &fmt, (DWORD_PTR) m_hSoundEvent, nullptr, CALLBACK_EVENT );
+	MMRESULT ret = waveOutOpen( &m_hWaveOut, WAVE_MAPPER, &fmt, (DWORD_PTR) m_hSoundEvent, NULL, CALLBACK_EVENT );
 	if( ret != MMSYSERR_NOERROR )
 		return wo_ssprintf( ret, "waveOutOpen failed" );
 

@@ -169,7 +169,7 @@ NetworkStream_Win32::NetworkStream_Win32():
 {
 	m_iPort = -1;
 	m_State = STATE_IDLE;
-	m_Socket = nullptr;
+	m_Socket = NULL;
 #if defined(WINDOWS)
 	m_hResolve = nullptr;
 	m_hResolveHwnd = nullptr;

@@ -773,7 +773,7 @@ WinWdmPin *WinWdmFilter::InstantiateRenderPin(
 						wfx.Format.cbSize = 0;
 						wfx.Samples.wValidBitsPerSample = 0;
 						wfx.dwChannelMask = 0;
-						wfx.SubFormat = GUID_nullptr;
+						wfx.SubFormat = GUID_NULL;
 					}
 
 					LOG->Trace( "KS: trying format: %i channels: %i samplerate: %i format: %04x",
