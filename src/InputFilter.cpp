@@ -112,7 +112,7 @@ namespace
  * this won't cause timing problems, because the event timestamp is preserved. */
 static Preference<float> g_fInputDebounceTime( "InputDebounceTime", 0 );
 
-InputFilter*	INPUTFILTER = NULL;	// global and accessible from anywhere in our program
+InputFilter*	INPUTFILTER = nullptr;	// global and accessible from anywhere in our program
 
 static const float TIME_BEFORE_REPEATS = 0.375f;
 
@@ -391,7 +391,7 @@ const T *FindItemBinarySearch( IT begin, IT end, const T &i )
 {
 	IT it = lower_bound( begin, end, i );
 	if( it == end || *it != i )
-		return NULL;
+		return nullptr;
 
 	return &*it;
 }
@@ -399,19 +399,19 @@ const T *FindItemBinarySearch( IT begin, IT end, const T &i )
 bool InputFilter::IsBeingPressed( const DeviceInput &di, const DeviceInputList *pButtonState ) const
 {
 	LockMut(*queuemutex);
-	if( pButtonState == NULL )
+	if( pButtonState == nullptr )
 		pButtonState = &g_CurrentState;
 	const DeviceInput *pDI = FindItemBinarySearch( pButtonState->begin(), pButtonState->end(), di );
-	return pDI != NULL && pDI->bDown;
+	return pDI != nullptr && pDI->bDown;
 }
 
 float InputFilter::GetSecsHeld( const DeviceInput &di, const DeviceInputList *pButtonState ) const
 {
 	LockMut(*queuemutex);
-	if( pButtonState == NULL )
+	if( pButtonState == nullptr )
 		pButtonState = &g_CurrentState;
 	const DeviceInput *pDI = FindItemBinarySearch( pButtonState->begin(), pButtonState->end(), di );
-	if( pDI == NULL )
+	if( pDI == nullptr )
 		return 0;
 	return pDI->ts.Ago();
 }
@@ -419,10 +419,10 @@ float InputFilter::GetSecsHeld( const DeviceInput &di, const DeviceInputList *pB
 float InputFilter::GetLevel( const DeviceInput &di, const DeviceInputList *pButtonState ) const
 {
 	LockMut(*queuemutex);
-	if( pButtonState == NULL )
+	if( pButtonState == nullptr )
 		pButtonState = &g_CurrentState;
 	const DeviceInput *pDI = FindItemBinarySearch( pButtonState->begin(), pButtonState->end(), di );
-	if( pDI == NULL )
+	if( pDI == nullptr )
 		return 0.0f;
 	return pDI->level;
 }

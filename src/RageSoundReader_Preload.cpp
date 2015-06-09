@@ -47,7 +47,7 @@ int RageSoundReader_Preload::GetTotalFrames() const
 
 bool RageSoundReader_Preload::Open( RageSoundReader *pSource )
 {
-	ASSERT( pSource != NULL );
+	ASSERT( pSource != nullptr );
 	m_iSampleRate = pSource->GetSampleRate();
 	m_iChannels = pSource->GetNumChannels();
 	m_fRate = pSource->GetStreamToSourceRatio();

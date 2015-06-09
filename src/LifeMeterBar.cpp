@@ -29,7 +29,7 @@ LifeMeterBar::LifeMeterBar()
 	EXTRA_STAGE_LIFE_DIFFICULTY.Load	("LifeMeterBar","ExtraStageLifeDifficulty");
 	m_fLifePercentChange.Load( "LifeMeterBar", LIFE_PERCENT_CHANGE_NAME, NUM_ScoreEvent );
 
-	m_pPlayerState = NULL;
+	m_pPlayerState = nullptr;
 
 	const RString sType = "LifeMeterBar";
 

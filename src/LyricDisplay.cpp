@@ -46,7 +46,7 @@ void LyricDisplay::Update( float fDeltaTime )
 
 	ActorFrame::Update( fDeltaTime );
 
-	if( GAMESTATE->m_pCurSong == NULL )
+	if( GAMESTATE->m_pCurSong == nullptr )
 		return;
 
 	// If the song has changed (in a course), reset.

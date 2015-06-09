@@ -7,7 +7,7 @@ using std::vector;
 std::map<istring, CreateDialogDriverFn> *RegisterDialogDriver::g_pRegistrees;
 RegisterDialogDriver::RegisterDialogDriver( const istring &sName, CreateDialogDriverFn pfn )
 {
-	if( g_pRegistrees == NULL )
+	if( g_pRegistrees == nullptr )
 		g_pRegistrees = new std::map<istring, CreateDialogDriverFn>;
 
 	ASSERT( g_pRegistrees->find(sName) == g_pRegistrees->end() );
@@ -41,7 +41,7 @@ DialogDriver *DialogDriver::Create()
 			LOG->Info( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
 		SAFE_DELETE( pRet );
 	}
-	return NULL;
+	return nullptr;
 }
 
 

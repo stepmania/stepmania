@@ -35,8 +35,8 @@ protected:
 	{
 		PageToShow()
 		{
-			pCourse = NULL;
-			pTrail = NULL;
+			pCourse = nullptr;
+			pTrail = nullptr;
 		}
 
 		int		colorIndex;

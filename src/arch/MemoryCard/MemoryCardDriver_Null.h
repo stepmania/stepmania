@@ -1,5 +1,5 @@
-#ifndef MEMORY_CARD_ENUMERATOR_NULL_H
-#define MEMORY_CARD_ENUMERATOR_NULL_H
+#ifndef MEMORY_CARD_ENUMERATOR_nullptr_H
+#define MEMORY_CARD_ENUMERATOR_nullptr_H
 
 #include "MemoryCardDriver.h"
 

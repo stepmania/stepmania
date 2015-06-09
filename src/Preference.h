@@ -48,7 +48,7 @@ template <class T>
 class Preference : public IPreference
 {
 public:
-	Preference( const RString& sName, const T& defaultValue, void (pfnValidate)(T& val) = NULL ):
+	Preference( const RString& sName, const T& defaultValue, void (pfnValidate)(T& val) = nullptr ):
 		IPreference( sName ),
 		m_currentValue( defaultValue ),
 		m_defaultValue( defaultValue ),

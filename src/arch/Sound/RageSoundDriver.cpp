@@ -16,14 +16,14 @@ RageSoundDriver *RageSoundDriver::Create( const RString& sDrivers )
 	for (auto const &Driver: DriversToTry)
 	{
 		RageDriver *pDriver = m_pDriverList.Create( Driver );
-		if( pDriver == NULL )
+		if( pDriver == nullptr )
 		{
 			LOG->Trace( "Unknown sound driver: %s", Driver.c_str() );
 			continue;
 		}
 
 		RageSoundDriver *pRet = dynamic_cast<RageSoundDriver *>( pDriver );
-		ASSERT( pRet != NULL );
+		ASSERT( pRet != nullptr );
 
 		const RString sError = pRet->Init();
 		if( sError.empty() )
@@ -34,7 +34,7 @@ RageSoundDriver *RageSoundDriver::Create( const RString& sDrivers )
 		LOG->Info( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
 		SAFE_DELETE( pRet );
 	}
-	return NULL;
+	return nullptr;
 }
 
 /*

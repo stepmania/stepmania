@@ -445,7 +445,7 @@ void actor_template_t::load_frames_from_file(RString const& fname, RString const
 		return;
 	}
 	XNode const* sprite_node= ini.GetChild("Sprite");
-	if(sprite_node != NULL)
+	if(sprite_node != nullptr)
 	{
 		FOREACH_CONST_Attr(sprite_node, attr)
 		{
@@ -485,7 +485,7 @@ void actor_template_t::load_model_from_file(RString const& fname, RString const&
 		return;
 	}
 	XNode const* model_node= ini.GetChild("Model");
-	if(model_node != NULL)
+	if(model_node != nullptr)
 	{
 		FOREACH_CONST_Attr(model_node, attr)
 		{
@@ -640,7 +640,7 @@ void actor_template_t::load_node(XNode const& node, RString const& dirname, cond
 		rename_field("File", "Texture");
 	}
 	XNode const* xren= node.GetChild("children");
-	if(xren != NULL)
+	if(xren != nullptr)
 	{
 		FOREACH_CONST_Child(xren, child)
 		{

@@ -416,7 +416,7 @@ void ScreenServiceAction::BeginScreen()
 	vector<RString> vsResults;
 	for (auto &s: vsActions)
 	{
-		RString (*pfn)() = NULL;
+		RString (*pfn)() = nullptr;
 
 		if(	 s == "ClearBookkeepingData" )			pfn = ClearBookkeepingData;
 		else if( s == "ClearMachineStats" )			pfn = ClearMachineStats;
@@ -429,7 +429,7 @@ void ScreenServiceAction::BeginScreen()
 		else if( s == "SyncEditsMachineToMemoryCard" )		pfn = SyncEditsMachineToMemoryCard;
 		else if( s == "ResetPreferences" )			pfn = ResetPreferences;
 
-		ASSERT_M( pfn != NULL, s );
+		ASSERT_M( pfn != nullptr, s );
 
 		RString sResult = pfn();
 		vsResults.push_back( sResult );

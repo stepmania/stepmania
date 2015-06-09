@@ -29,7 +29,7 @@ Grade GetGradeFromPercent( float fPercent );
 
 void PlayerStageStats::InternalInit()
 {
-	m_pStyle= NULL;
+	m_pStyle= nullptr;
 	m_for_multiplayer= false;
 	m_player_number= PLAYER_1;
 	m_multiplayer_number= MultiPlayer_P1;

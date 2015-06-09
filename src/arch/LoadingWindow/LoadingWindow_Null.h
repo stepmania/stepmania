@@ -1,5 +1,5 @@
-#ifndef LOADING_WINDOW_NULL_H
-#define LOADING_WINDOW_NULL_H
+#ifndef LOADING_WINDOW_nullptr_H
+#define LOADING_WINDOW_nullptr_H
 
 #include "LoadingWindow.h"
 
@@ -9,7 +9,7 @@ public:
 	void SetText( RString str ) { }
 	void SetSplash( const RageSurface *pSplash ) { }
 };
-#define USE_LOADING_WINDOW_NULL
+#define USE_LOADING_WINDOW_nullptr
 
 #endif
 

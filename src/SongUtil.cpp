@@ -159,7 +159,7 @@ Steps* SongUtil::GetOneSteps(
 	vector<Steps*> vpSteps;
 	GetSteps( pSong, vpSteps, st, dc, iMeterLow, iMeterHigh, sDescription, sCredit, bIncludeAutoGen, uHash, 1 );	// get max 1
 	if( vpSteps.empty() )
-		return NULL;
+		return nullptr;
 	else
 		return vpSteps[0];
 }
@@ -179,7 +179,7 @@ Steps* SongUtil::GetStepsByDifficulty( const Song *pSong, StepsType st, Difficul
 		return pSteps;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Steps* SongUtil::GetStepsByMeter( const Song *pSong, StepsType st, int iMeterLow, int iMeterHigh )
@@ -197,7 +197,7 @@ Steps* SongUtil::GetStepsByMeter( const Song *pSong, StepsType st, int iMeterLow
 		return pSteps;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Steps* SongUtil::GetStepsByDescription( const Song *pSong, StepsType st, RString sDescription )
@@ -205,7 +205,7 @@ Steps* SongUtil::GetStepsByDescription( const Song *pSong, StepsType st, RString
 	vector<Steps*> vNotes;
 	GetSteps( pSong, vNotes, st, Difficulty_Invalid, -1, -1, sDescription, "" );
 	if( vNotes.size() == 0 )
-		return NULL;
+		return nullptr;
 	else
 		return vNotes[0];
 }
@@ -215,7 +215,7 @@ Steps* SongUtil::GetStepsByCredit( const Song *pSong, StepsType st, RString sCre
 	vector<Steps*> vNotes;
 	GetSteps(pSong, vNotes, st, Difficulty_Invalid, -1, -1, "", sCredit );
 	if( vNotes.size() == 0 )
-		return NULL;
+		return nullptr;
 	else
 		return vNotes[0];
 }
@@ -226,7 +226,7 @@ Steps* SongUtil::GetClosestNotes( const Song *pSong, StepsType st, Difficulty dc
 	ASSERT( dc != Difficulty_Invalid );
 
 	const vector<Steps*>& vpSteps = (st == StepsType_Invalid)? pSong->GetAllSteps() : pSong->GetStepsByStepsType(st);
-	Steps *pClosest = NULL;
+	Steps *pClosest = nullptr;
 	int iClosestDistance = 999;
 	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
 	{
@@ -476,7 +476,7 @@ void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool b
 
 		int iCounts[NUM_Grade];
 		const Profile *pProfile = PROFILEMAN->GetMachineProfile();
-		ASSERT( pProfile != NULL );
+		ASSERT( pProfile != nullptr );
 		pProfile->GetGrades( pSong, GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType, iCounts );
 
 		RString foo;
@@ -553,7 +553,7 @@ void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, Prof
 
 void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, const Profile* pProfile, bool bDescending )
 {
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 	for(unsigned i = 0; i < vpSongsInOut.size(); ++i)
 		g_mapSongSortVal[vpSongsInOut[i]] = ssprintf("%9i", pProfile->GetSongNumTimesPlayed(vpSongsInOut[i]));
 	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), bDescending ? CompareSongPointersBySortValueDescending : CompareSongPointersBySortValueAscending );
@@ -562,7 +562,7 @@ void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, cons
 
 RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so )
 {
-	if( pSong == NULL )
+	if( pSong == nullptr )
 		return RString();
 
 	switch( so )
@@ -764,7 +764,7 @@ bool SongUtil::IsChartNameUnique( const Song* pSong, StepsType st, const RString
 
 RString SongUtil::MakeUniqueEditDescription( const Song *pSong, StepsType st, const RString &sPreferredDescription )
 {
-	if( IsEditDescriptionUnique( pSong, st, sPreferredDescription, NULL ) )
+	if( IsEditDescriptionUnique( pSong, st, sPreferredDescription, nullptr ) )
 		return sPreferredDescription;
 
 	RString sTemp;
@@ -775,7 +775,7 @@ RString SongUtil::MakeUniqueEditDescription( const Song *pSong, StepsType st, co
 		RString sNum = ssprintf("%d", i+1);
 		sTemp = sPreferredDescription.Left( MAX_STEPS_DESCRIPTION_LENGTH - sNum.size() ) + sNum;
 
-		if( IsEditDescriptionUnique(pSong, st, sTemp, NULL) )
+		if( IsEditDescriptionUnique(pSong, st, sTemp, nullptr) )
 			return sTemp;
 	}
 
@@ -803,7 +803,7 @@ bool SongUtil::ValidateCurrentEditStepsDescription( const RString &sAnswer, RStr
 	}
 
 	static const RString sInvalidChars = "\\/:*?\"<>|";
-	if( strpbrk(sAnswer, sInvalidChars) != NULL )
+	if( strpbrk(sAnswer, sInvalidChars) != nullptr )
 	{
 		sErrorOut = ssprintf( EDIT_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;
@@ -853,7 +853,7 @@ bool SongUtil::ValidateCurrentStepsChartName(const RString &answer, RString &err
 	if (answer.empty()) return true;
 
 	static const RString sInvalidChars = "\\/:*?\"<>|";
-	if( strpbrk(answer, sInvalidChars) != NULL )
+	if( strpbrk(answer, sInvalidChars) != nullptr )
 	{
 		error = ssprintf( CHART_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;
@@ -887,7 +887,7 @@ bool SongUtil::ValidateCurrentStepsCredit( const RString &sAnswer, RString &sErr
 
 	// Borrow from EditDescription testing. Perhaps this should be abstracted? -Wolfman2000
 	static const RString sInvalidChars = "\\/:*?\"<>|";
-	if( strpbrk(sAnswer, sInvalidChars) != NULL )
+	if( strpbrk(sAnswer, sInvalidChars) != nullptr )
 	{
 		sErrorOut = ssprintf( AUTHOR_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;
@@ -966,7 +966,7 @@ void SongUtil::GetPlayableStepsTypes( const Song *pSong, std::set<StepsType> &vO
 {
 	vector<const Style*> vpPossibleStyles;
 	// If AutoSetStyle, or a Style hasn't been chosen, check StepsTypes for all Styles.
-	if( CommonMetrics::AUTO_SET_STYLE || GAMESTATE->GetCurrentStyle(PLAYER_INVALID) == NULL )
+	if( CommonMetrics::AUTO_SET_STYLE || GAMESTATE->GetCurrentStyle(PLAYER_INVALID) == nullptr )
 		GAMEMAN->GetCompatibleStyles( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), vpPossibleStyles );
 	else
 		vpPossibleStyles.push_back( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) );
@@ -1128,7 +1128,7 @@ void SongID::FromSong( const Song *p )
 
 Song *SongID::ToSong() const
 {
-	Song *pRet = NULL;
+	Song *pRet = nullptr;
 	if( !m_Cache.Get(&pRet) )
 	{
 		// HACK for backwards compatibility: Re-add the leading "/".
@@ -1165,7 +1165,7 @@ RString SongID::ToString() const
 
 bool SongID::IsValid() const
 {
-	return ToSong() != NULL;
+	return ToSong() != nullptr;
 }
 
 // lua start
@@ -1203,7 +1203,7 @@ namespace
 		LIST_METHOD( GetPlayableSteps ),
 		LIST_METHOD( IsStepsTypePlayable ),
 		LIST_METHOD( IsStepsPlayable ),
-		{ NULL, NULL }
+		{ nullptr, nullptr }
 	};
 }
 

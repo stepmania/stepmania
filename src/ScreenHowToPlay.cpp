@@ -71,9 +71,9 @@ ScreenHowToPlay::ScreenHowToPlay()
 	m_iNumW2s = NUM_W2S;
 
 	// initialize these because they might not be used.
-	m_pLifeMeterBar = NULL;
-	m_pmCharacter = NULL;
-	m_pmDancePad = NULL;
+	m_pLifeMeterBar = nullptr;
+	m_pmCharacter = nullptr;
+	m_pmDancePad = nullptr;
 }
 
 void ScreenHowToPlay::Init()
@@ -151,7 +151,7 @@ void ScreenHowToPlay::Init()
 		const Style* pStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
 
 		Steps *pSteps = SongUtil::GetClosestNotes( &m_Song, pStyle->m_StepsType, Difficulty_Beginner );
-		if(pSteps == NULL)
+		if(pSteps == nullptr)
 		{
 			LuaHelpers::ReportScriptErrorFmt("No playable steps of StepsType '%s' for ScreenHowToPlay in file %s", StringConversion::ToString(pStyle->m_StepsType).c_str(), sStepsPath.c_str());
 		}
@@ -169,7 +169,7 @@ void ScreenHowToPlay::Init()
 			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_AUTOPLAY;
 
 			m_Player->Init("Player", GAMESTATE->m_pPlayerState[PLAYER_1],
-				NULL, m_pLifeMeterBar, NULL, NULL, NULL, NULL, NULL, NULL);
+				nullptr, m_pLifeMeterBar, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
 			m_Player.Load( m_NoteData );
 			m_Player->SetName( "Player" );
 			this->AddChild( m_Player );
@@ -246,7 +246,7 @@ void ScreenHowToPlay::Step()
 
 void ScreenHowToPlay::Update( float fDelta )
 {
-	if( GAMESTATE->m_pCurSong != NULL )
+	if( GAMESTATE->m_pCurSong != nullptr )
 	{
 		RageTimer tm;
 		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong, GAMESTATE->m_pCurSong->m_SongTiming, tm );

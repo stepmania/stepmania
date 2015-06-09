@@ -129,7 +129,7 @@ float Style::GetWidth(PlayerNumber pn) const
 RString Style::ColToButtonName( int iCol ) const
 {
 	const char *pzColumnName = m_ColumnInfo[PLAYER_1][iCol].pzName;
-	if( pzColumnName != NULL )
+	if( pzColumnName != nullptr )
 		return pzColumnName;
 
 	vector<GameInput> GI;

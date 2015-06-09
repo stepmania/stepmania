@@ -35,7 +35,7 @@ private:
 	EffectMode m_EffectMode;
 	struct TextureUnitState
 	{
-		TextureUnitState(): m_pTexture(NULL), m_TextureMode(TextureMode_Modulate) {}
+		TextureUnitState(): m_pTexture(nullptr), m_TextureMode(TextureMode_Modulate) {}
 		RageTexture *m_pTexture;
 		TextureMode m_TextureMode;
 	};

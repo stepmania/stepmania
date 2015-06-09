@@ -1,5 +1,5 @@
-#ifndef MOVIE_TEXTURE_NULL_H
-#define MOVIE_TEXTURE_NULL_H
+#ifndef MOVIE_TEXTURE_nullptr_H
+#define MOVIE_TEXTURE_nullptr_H
 
 #include "MovieTexture.h"
 

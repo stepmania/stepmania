@@ -31,10 +31,10 @@ public:
 	virtual float GetStreamToSourceRatio() const { return 1.0f; }
 	virtual RString GetError() const { return m_sError; }
 
-	/* Open a file.  If pPrebuffer is non-NULL, and the file is sufficiently small,
+	/* Open a file.  If pPrebuffer is non-nullptr, and the file is sufficiently small,
 	 * the (possibly compressed) data will be loaded entirely into memory, and pPrebuffer
 	 * will be set to true. */
-	static RageSoundReader_FileReader *OpenFile( RString filename, RString &error, bool *pPrebuffer = NULL );
+	static RageSoundReader_FileReader *OpenFile( RString filename, RString &error, bool *pPrebuffer = nullptr );
 
 protected:
 	void SetError( RString sError ) const { m_sError = sError; }

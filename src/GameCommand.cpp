@@ -36,7 +36,7 @@ void GameCommand::Init()
 	m_bInvalid = true;
 	m_iIndex = -1;
 	m_MultiPlayer = MultiPlayer_Invalid;
-	m_pStyle = NULL;
+	m_pStyle = nullptr;
 	m_pm = PlayMode_Invalid;
 	m_dc = Difficulty_Invalid;
 	m_CourseDifficulty = Difficulty_Invalid;
@@ -45,11 +45,11 @@ void GameCommand::Init()
 	m_sAnnouncer = "";
 	m_sScreen = "";
 	m_LuaFunction.Unset();
-	m_pSong = NULL;
-	m_pSteps = NULL;
-	m_pCourse = NULL;
-	m_pTrail = NULL;
-	m_pCharacter = NULL;
+	m_pSong = nullptr;
+	m_pSteps = nullptr;
+	m_pCourse = nullptr;
+	m_pTrail = nullptr;
+	m_pCharacter = nullptr;
 	m_SortOrder = SortOrder_Invalid;
 	m_sSoundPath = "";
 	m_vsScreensToPrepare.clear();
@@ -93,7 +93,7 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 	// HACK: don't compare m_dc if m_pSteps is set.  This causes problems
 	// in ScreenSelectOptionsMaster::ImportOptions if m_PreferredDifficulty
 	// doesn't match the difficulty of m_pCurSteps.
-	if( m_pSteps == NULL  &&  m_dc != Difficulty_Invalid )
+	if( m_pSteps == nullptr  &&  m_dc != Difficulty_Invalid )
 	{
 		// Why is this checking for all players?
 		FOREACH_HumanPlayer( human )
@@ -206,7 +206,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	if( sName == "style" )
 	{
 		const Style* style = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_pCurGame, sValue );
-		CHECK_INVALID_VALUE(m_pStyle, style, NULL, style);
+		CHECK_INVALID_VALUE(m_pStyle, style, nullptr, style);
 	}
 
 	else if( sName == "playmode" )
@@ -287,7 +287,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "song" )
 	{
 		CHECK_INVALID_COND(m_pSong, SONGMAN->FindSong(sValue),
-			(SONGMAN->FindSong(sValue) == NULL),
+			(SONGMAN->FindSong(sValue) == nullptr),
 			(ssprintf("Song \"%s\" not found", sValue.c_str())));
 	}
 
@@ -298,9 +298,9 @@ void GameCommand::LoadOne( const Command& cmd )
 		// This must be processed after "song" and "style" commands.
 		if( !m_bInvalid )
 		{
-			Song *pSong = (m_pSong != NULL)? m_pSong:GAMESTATE->m_pCurSong;
+			Song *pSong = (m_pSong != nullptr)? m_pSong:GAMESTATE->m_pCurSong;
 			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber());
-			if( pSong == NULL || pStyle == NULL )
+			if( pSong == nullptr || pStyle == nullptr )
 			{
 				MAKE_INVALID("Must set Song and Style to set Steps.");
 			}
@@ -316,7 +316,7 @@ void GameCommand::LoadOne( const Command& cmd )
 				{
 					st = SongUtil::GetStepsByDescription( pSong, pStyle->m_StepsType, sSteps );
 				}
-				CHECK_INVALID_COND(m_pSteps, st, (st == NULL),
+				CHECK_INVALID_COND(m_pSteps, st, (st == nullptr),
 					(ssprintf("Steps \"%s\" not found", sSteps.c_str())));
 			}
 		}
@@ -325,7 +325,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "course" )
 	{
 		CHECK_INVALID_COND(m_pCourse, SONGMAN->FindCourse("", sValue),
-			(SONGMAN->FindCourse("", sValue) == NULL),
+			(SONGMAN->FindCourse("", sValue) == nullptr),
 			(ssprintf( "Course \"%s\" not found", sValue.c_str())));
 	}
 
@@ -336,9 +336,9 @@ void GameCommand::LoadOne( const Command& cmd )
 		// This must be processed after "course" and "style" commands.
 		if( !m_bInvalid )
 		{
-			Course *pCourse = (m_pCourse != NULL)? m_pCourse:GAMESTATE->m_pCurCourse;
+			Course *pCourse = (m_pCourse != nullptr)? m_pCourse:GAMESTATE->m_pCurCourse;
 			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber());
-			if( pCourse == NULL || pStyle == NULL )
+			if( pCourse == nullptr || pStyle == nullptr )
 			{
 				MAKE_INVALID("Must set Course and Style to set Trail.");
 			}
@@ -352,7 +352,7 @@ void GameCommand::LoadOne( const Command& cmd )
 				else
 				{
 					Trail* tr = pCourse->GetTrail(pStyle->m_StepsType, cd);
-					CHECK_INVALID_COND(m_pTrail, tr, (tr == NULL),
+					CHECK_INVALID_COND(m_pTrail, tr, (tr == nullptr),
 						("Trail \"" + sTrail + "\" not found."));
 				}
 			}
@@ -459,7 +459,7 @@ void GameCommand::LoadOne( const Command& cmd )
 		{
 			for(size_t i= 1; i < cmd.m_vsArgs.size(); i+= 2)
 			{
-				if(IPreference::GetPreferenceByName(cmd.m_vsArgs[i]) == NULL)
+				if(IPreference::GetPreferenceByName(cmd.m_vsArgs[i]) == nullptr)
 				{
 					MAKE_INVALID("Unknown preference \"" + cmd.m_vsArgs[i] + "\".");
 				}
@@ -536,7 +536,7 @@ int GetCreditsRequiredToPlayStyle( const Style *style )
 
 static bool AreStyleAndPlayModeCompatible( const Style *style, PlayMode pm )
 {
-	if( style == NULL || pm == PlayMode_Invalid )
+	if( style == nullptr || pm == PlayMode_Invalid )
 		return true;
 
 	switch( pm )
@@ -606,10 +606,10 @@ bool GameCommand::IsPlayable( RString *why ) const
 
 	/* Don't allow a PlayMode that's incompatible with our current Style (if set),
 	 * and vice versa. */
-	if( m_pm != PlayMode_Invalid || m_pStyle != NULL )
+	if( m_pm != PlayMode_Invalid || m_pStyle != nullptr )
 	{
 		const PlayMode pm = (m_pm != PlayMode_Invalid) ? m_pm : GAMESTATE->m_PlayMode;
-		const Style *style = (m_pStyle != NULL)? m_pStyle: GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber());
+		const Style *style = (m_pStyle != nullptr)? m_pStyle: GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber());
 		if( !AreStyleAndPlayModeCompatible( style, pm ) )
 		{
 			if( why )
@@ -715,7 +715,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( m_pm != PlayMode_Invalid )
 		GAMESTATE->m_PlayMode.Set( m_pm );
 
-	if( m_pStyle != NULL )
+	if( m_pStyle != nullptr )
 	{
 		GAMESTATE->SetCurrentStyle( m_pStyle, GAMESTATE->GetMasterPlayerNumber() );
 
@@ -846,7 +846,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	for(auto setting = m_SetPref.begin(); setting != m_SetPref.end(); ++setting)
 	{
 		IPreference* pref= IPreference::GetPreferenceByName(setting->first);
-		if(pref != NULL)
+		if(pref != nullptr)
 		{
 			pref->FromString(setting->second);
 		}
@@ -956,16 +956,16 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 bool GameCommand::IsZero() const
 {
 	if( 	m_pm != PlayMode_Invalid ||
-		m_pStyle != NULL ||
+		m_pStyle != nullptr ||
 		m_dc != Difficulty_Invalid ||
 		m_sAnnouncer != "" ||
 		m_sPreferredModifiers != "" ||
 		m_sStageModifiers != "" ||
-		m_pSong != NULL ||
-		m_pSteps != NULL ||
-		m_pCourse != NULL ||
-		m_pTrail != NULL ||
-		m_pCharacter != NULL ||
+		m_pSong != nullptr ||
+		m_pSteps != nullptr ||
+		m_pCourse != nullptr ||
+		m_pTrail != nullptr ||
+		m_pCharacter != nullptr ||
 		m_CourseDifficulty != Difficulty_Invalid ||
 		!m_sSongGroup.empty() ||
 		m_SortOrder != SortOrder_Invalid ||
@@ -993,14 +993,14 @@ public:
 	static int GetText( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sText ); return 1; }
 	static int GetIndex( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iIndex ); return 1; }
 	static int GetMultiPlayer( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_MultiPlayer); return 1; }
-	static int GetStyle( T* p, lua_State *L )	{ if(p->m_pStyle==NULL) lua_pushnil(L); else {Style *pStyle = (Style*)p->m_pStyle; pStyle->PushSelf(L);} return 1; }
+	static int GetStyle( T* p, lua_State *L )	{ if(p->m_pStyle==nullptr) lua_pushnil(L); else {Style *pStyle = (Style*)p->m_pStyle; pStyle->PushSelf(L);} return 1; }
 	static int GetScreen( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sScreen ); return 1; }
 	static int GetProfileID( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sProfileID ); return 1; }
-	static int GetSong( T* p, lua_State *L )	{ if(p->m_pSong==NULL) lua_pushnil(L); else p->m_pSong->PushSelf(L); return 1; }
-	static int GetSteps( T* p, lua_State *L )	{ if(p->m_pSteps==NULL) lua_pushnil(L); else p->m_pSteps->PushSelf(L); return 1; }
-	static int GetCourse( T* p, lua_State *L )	{ if(p->m_pCourse==NULL) lua_pushnil(L); else p->m_pCourse->PushSelf(L); return 1; }
-	static int GetTrail( T* p, lua_State *L )	{ if(p->m_pTrail==NULL) lua_pushnil(L); else p->m_pTrail->PushSelf(L); return 1; }
-	static int GetCharacter( T* p, lua_State *L )	{ if(p->m_pCharacter==NULL) lua_pushnil(L); else p->m_pCharacter->PushSelf(L); return 1; }
+	static int GetSong( T* p, lua_State *L )	{ if(p->m_pSong==nullptr) lua_pushnil(L); else p->m_pSong->PushSelf(L); return 1; }
+	static int GetSteps( T* p, lua_State *L )	{ if(p->m_pSteps==nullptr) lua_pushnil(L); else p->m_pSteps->PushSelf(L); return 1; }
+	static int GetCourse( T* p, lua_State *L )	{ if(p->m_pCourse==nullptr) lua_pushnil(L); else p->m_pCourse->PushSelf(L); return 1; }
+	static int GetTrail( T* p, lua_State *L )	{ if(p->m_pTrail==nullptr) lua_pushnil(L); else p->m_pTrail->PushSelf(L); return 1; }
+	static int GetCharacter( T* p, lua_State *L )	{ if(p->m_pCharacter==nullptr) lua_pushnil(L); else p->m_pCharacter->PushSelf(L); return 1; }
 	static int GetSongGroup( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sSongGroup ); return 1; }
 	static int GetUrl( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sUrl ); return 1; }
 	static int GetAnnouncer( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sAnnouncer ); return 1; }

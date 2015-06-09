@@ -20,7 +20,7 @@
 
 using std::vector;
 
-GameSoundManager *SOUND = NULL;
+GameSoundManager *SOUND = nullptr;
 
 /*
  * When playing music, automatically search for an SM file for timing data.  If one is
@@ -412,7 +412,7 @@ int MusicThread_start( void *p )
 GameSoundManager::GameSoundManager()
 {
 	/* Init RageSoundMan first: */
-	ASSERT( SOUNDMAN != NULL );
+	ASSERT( SOUNDMAN != nullptr );
 
 	g_Mutex = new RageEvent("GameSoundManager");
 	g_Playing = new MusicPlaying( new RageSound );
@@ -853,7 +853,7 @@ public:
 		{
 			alignBeat = BArg(8);
 		}
-		p->PlayMusic(musicPath, NULL, loop, musicStart, musicLength,
+		p->PlayMusic(musicPath, nullptr, loop, musicStart, musicLength,
 			fadeIn, fadeOut, alignBeat, applyRate);
 		COMMON_RETURN_SELF;
 	}

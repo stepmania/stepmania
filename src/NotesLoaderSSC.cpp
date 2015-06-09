@@ -960,7 +960,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 	int state = GETTING_SONG_INFO;
 	const unsigned values = msd.GetNumValues();
-	Steps* pNewNotes = NULL;
+	Steps* pNewNotes = nullptr;
 	TimingData stepsTiming;
 
 	SongTagInfo reused_song_info(&*this, &out, sPath, bFromCache);
@@ -1045,7 +1045,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 	return true;
 }
 
-bool SSCLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =NULL */ )
+bool SSCLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =nullptr */ )
 {
 	LOG->Trace( "SSCLoader::LoadEditFromFile(%s)", sEditFilePath.c_str() );
 
@@ -1074,10 +1074,10 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 				const RString &sEditFilePath,
 				ProfileSlot slot,
 				bool bAddStepsToSong,
-				Song *givenSong /* =NULL */ )
+				Song *givenSong /* =nullptr */ )
 {
 	Song* pSong = givenSong;
-	Steps* pNewNotes = NULL;
+	Steps* pNewNotes = nullptr;
 	TimingData stepsTiming;
 
 	StepsTagInfo reused_steps_info(&*this, pSong, sEditFilePath, false);
@@ -1091,12 +1091,12 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 		RString sValueName = sParams[0];
 		sValueName.MakeUpper();
 
-		if(pSong != NULL)
+		if(pSong != nullptr)
 		{
 			reused_steps_info.params= &sParams;
 			steps_handler_map_t::iterator handler=
 				parser_helper.steps_tag_handlers.find(sValueName);
-			if(pNewNotes != NULL && handler != parser_helper.steps_tag_handlers.end())
+			if(pNewNotes != nullptr && handler != parser_helper.steps_tag_handlers.end())
 			{
 				handler->second(reused_steps_info);
 			}
@@ -1108,7 +1108,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 			}
 			else if(sValueName=="NOTES")
 			{
-				if(pSong == NULL)
+				if(pSong == nullptr)
 				{
 					LOG->UserLog("Edit file", sEditFilePath,
 						"doesn't have a #SONG tag preceeding the first #NOTES tag,"
@@ -1135,7 +1135,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 				// Force the difficulty to edit in case the edit set its own
 				// difficulty because IsEditAlreadyLoaded has an assert and edits
 				// shouldn't be able to add charts of other difficulties. -Kyz
-				if(pNewNotes != NULL)
+				if(pNewNotes != nullptr)
 				{
 					pNewNotes->SetDifficulty(Difficulty_Edit);
 					if(pSong->IsEditAlreadyLoaded(pNewNotes))
@@ -1195,7 +1195,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 				sSongFullTitle.Replace('\\', '/');
 				pSong = SONGMAN->FindSong(sSongFullTitle);
 				reused_steps_info.song= pSong;
-				if(pSong == NULL)
+				if(pSong == nullptr)
 				{
 					LOG->UserLog("Edit file", sEditFilePath,
 						"requires a song \"%s\" that isn't present.",

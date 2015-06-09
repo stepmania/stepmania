@@ -58,7 +58,7 @@ void RageSoundReader_Chain::AddSound( int iIndex, float fOffsetSecs, float fPan 
 	s.iIndex = iIndex;
 	s.iOffsetMS = lrintf( fOffsetSecs * 1000 );
 	s.fPan = fPan;
-	s.pSound = NULL;
+	s.pSound = nullptr;
 	m_aSounds.push_back( s );
 }
 
@@ -80,7 +80,7 @@ int RageSoundReader_Chain::LoadSound( RString sPath )
 	RString sError;
 	bool bPrebuffer;
 	RageSoundReader *pReader = RageSoundReader_FileReader::OpenFile( sPath, sError, &bPrebuffer );
-	if( pReader == NULL )
+	if( pReader == nullptr )
 	{
 		LOG->Warn( "RageSoundReader_Chain: error opening sound \"%s\": %s",
 			sPath.c_str(), sError.c_str() );
@@ -136,7 +136,7 @@ void RageSoundReader_Chain::Finish()
 				LOG->Warn( "Discarded sound with %i channels, not %i",
 					it->GetNumChannels(), m_iChannels );
 				delete it;
-				it = NULL;
+				it = nullptr;
 			}
 		}
 	}
@@ -146,7 +146,7 @@ void RageSoundReader_Chain::Finish()
 	{
 		Sound &sound = m_aSounds[i];
 
-		if( m_apLoadedSounds[sound.iIndex] == NULL )
+		if( m_apLoadedSounds[sound.iIndex] == nullptr )
 		{
 			m_aSounds.erase( m_aSounds.begin()+i );
 			continue;
@@ -246,7 +246,7 @@ void RageSoundReader_Chain::ReleaseSound( Sound *s )
 	RageSoundReader *&pSound = s->pSound;
 
 	delete pSound;
-	pSound = NULL;
+	pSound = nullptr;
 
 	m_apActiveSounds.erase( it );
 }

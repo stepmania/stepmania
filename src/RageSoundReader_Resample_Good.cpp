@@ -469,7 +469,7 @@ public:
 		 * when filtering.  This will only cause the low-pass filter to be rounded;
 		 * the conversion ratio will always be exact. */
 		m_iUpFactor = iUpFactor;
-		m_pPolyphase = NULL;
+		m_pPolyphase = nullptr;
 
 		int iFilterIncrement = max( (iMaxDownFactor - iMinDownFactor)/10, 1 );
 		for( int iDownFactor = iMinDownFactor; iDownFactor <= iMaxDownFactor; iDownFactor += iFilterIncrement )
@@ -669,7 +669,7 @@ int RageSoundReader_Resample_Good::Read( float *pBuf, int iFrames )
 	{
 		int iFramesNeeded = m_apResamplers[0]->NumInputsForOutputSamples(iFrames);
 		float *pTmpBuf = (float *) alloca( iFramesNeeded * sizeof(float) * iChannels );
-		ASSERT( pTmpBuf != NULL );
+		ASSERT( pTmpBuf != nullptr );
 		int iFramesIn = m_pSource->Read( pTmpBuf, iFramesNeeded );
 		if( iFramesIn < 0 )
 			return iFramesIn;

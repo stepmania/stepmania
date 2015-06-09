@@ -73,7 +73,7 @@ public:
 	Command m_cmd;
 
 	/* A cached pointer to the song or course this entry refers to.  Only one of
-	 * these will be non-NULL. */
+	 * these will be non-nullptr. */
 	SongID	m_Song;
 	Difficulty m_dc;
 	CourseID m_Course;

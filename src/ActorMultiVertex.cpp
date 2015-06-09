@@ -102,13 +102,13 @@ ActorMultiVertex::ActorMultiVertex( const ActorMultiVertex &cpy ):
 	CPY(_states);
 #undef CPY
 
-	if( cpy._Texture != NULL )
+	if( cpy._Texture != nullptr )
 	{
 		_Texture = TEXTUREMAN->CopyTexture( cpy._Texture );
 	}
 	else
 	{
-		_Texture = NULL;
+		_Texture = nullptr;
 	}
 }
 
@@ -139,7 +139,7 @@ void ActorMultiVertex::SetTexture( RageTexture *Texture )
 
 void ActorMultiVertex::LoadFromTexture( RageTextureID ID )
 {
-	RageTexture *Texture = NULL;
+	RageTexture *Texture = nullptr;
 	if( _Texture && _Texture->GetID() == ID )
 	{
 		return;
@@ -150,10 +150,10 @@ void ActorMultiVertex::LoadFromTexture( RageTextureID ID )
 
 void ActorMultiVertex::UnloadTexture()
 {
-	if( _Texture != NULL )
+	if( _Texture != nullptr )
 	{
 		TEXTUREMAN->UnloadTexture( _Texture );
-		_Texture = NULL;
+		_Texture = nullptr;
 	}
 }
 
@@ -948,7 +948,7 @@ public:
 	static void FillStateFromLua(lua_State *L, ActorMultiVertex::State& state,
 		RageTexture* tex, int index)
 	{
-		if(tex == NULL)
+		if(tex == nullptr)
 		{
 			luaL_error(L, "The texture must be set before adding states.");
 		}
@@ -1017,7 +1017,7 @@ public:
 	static int GetStateData(T* p, lua_State *L)
 	{
 		RageTexture* tex= p->GetTexture();
-		if(tex == NULL)
+		if(tex == nullptr)
 		{
 			luaL_error(L, "The texture must be set before adding states.");
 		}
@@ -1055,7 +1055,7 @@ public:
 			luaL_error(L, "The states must be inside a table.");
 		}
 		RageTexture* tex= p->GetTexture();
-		if(tex == NULL)
+		if(tex == nullptr)
 		{
 			luaL_error(L, "The texture must be set before adding states.");
 		}
@@ -1138,7 +1138,7 @@ public:
 	static int GetTexture(T* p, lua_State *L)
 	{
 		RageTexture *texture = p->GetTexture();
-		if(texture != NULL)
+		if(texture != nullptr)
 		{
 			texture->PushSelf(L);
 		}

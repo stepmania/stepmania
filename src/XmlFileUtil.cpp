@@ -292,7 +292,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 
 	// open/close tag <TAG ..> ... </TAG>
 	//                        ^- current pointer
-	if( pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == NULL )
+	if( pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == nullptr )
 	{
 		// Text Value
 		++iOffset;
@@ -375,7 +375,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 		}
 		else	// Alone child Tag Loaded
 		{
-			if( pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == NULL && iOffset < xml.size() && xml[iOffset] != chXMLTagOpen )
+			if( pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == nullptr && iOffset < xml.size() && xml[iOffset] != chXMLTagOpen )
 			{
 				// Text Value
 				RString::size_type iEnd = xml.find( chXMLTagOpen, iOffset );
@@ -427,7 +427,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 		WRITE( "'" );
 	}
 
-	if( pNode->ChildrenEmpty() && pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == NULL )
+	if( pNode->ChildrenEmpty() && pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == nullptr )
 	{
 		// <TAG Attr1="Val1"/> alone tag
 		WRITE( "/>" );
@@ -446,7 +446,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 
 		// Text Value
 		const XNodeValue *pText = pNode->GetAttr( XNode::TEXT_ATTRIBUTE );
-		if( pText != NULL )
+		if( pText != nullptr )
 		{
 			if( !pNode->ChildrenEmpty() )
 			{
@@ -796,7 +796,7 @@ void XmlFileUtil::MergeIniUnder( XNode *pFrom, XNode *pTo )
 		// If this node doesn't exist in pTo, just move the whole node.
 		XNode *pSectionNode = *it;
 		XNode *pChildNode = pTo->GetChild( pSectionNode->GetName() );
-		if( pChildNode == NULL )
+		if( pChildNode == nullptr )
 		{
 			aToMove.push_back( it );
 		}

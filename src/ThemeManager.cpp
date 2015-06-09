@@ -30,7 +30,7 @@
 
 using std::vector;
 
-ThemeManager*	THEME = NULL;	// global object accessible from anywhere in the program
+ThemeManager*	THEME = nullptr;	// global object accessible from anywhere in the program
 
 static const RString THEME_INFO_INI = "ThemeInfo.ini";
 
@@ -62,7 +62,7 @@ public:
 		iniStrings.Clear();
 	}
 };
-LoadedThemeData *g_pLoadedThemeData = NULL;
+LoadedThemeData *g_pLoadedThemeData = nullptr;
 
 
 // For self-registering metrics
@@ -281,7 +281,7 @@ bool ThemeManager::DoesLanguageExist( const RString &sLanguage )
 
 void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &sLanguage_ )
 {
-	if( g_pLoadedThemeData == NULL )
+	if( g_pLoadedThemeData == nullptr )
 		g_pLoadedThemeData = new LoadedThemeData;
 
 	// Don't delete and recreate LoadedThemeData.  There are references iniMetrics and iniStrings
@@ -419,7 +419,7 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	{
 #if !defined(SMPACKAGE)
 		// reload common sounds
-		if( SCREENMAN != NULL )
+		if( SCREENMAN != nullptr )
 			SCREENMAN->ThemeChanged();
 
 #endif
@@ -430,7 +430,7 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 		UpdateLuaGlobals();
 
 		// Reload MachineProfile with new theme's CustomLoadFunction
-		if( PROFILEMAN != NULL )
+		if( PROFILEMAN != nullptr )
 		{
 			Profile* pProfile = PROFILEMAN->GetMachineProfile();
 			pProfile->LoadCustomFunction( "/Save/MachineProfile/" );
@@ -921,7 +921,7 @@ void ThemeManager::ReloadMetrics()
 
 RString ThemeManager::GetMetricsGroupFallback( const RString &sMetricsGroup )
 {
-	ASSERT( g_pLoadedThemeData != NULL );
+	ASSERT( g_pLoadedThemeData != nullptr );
 
 	// always look in iniMetrics for "Fallback"
 	RString sFallback;
@@ -1229,7 +1229,7 @@ RString ThemeManager::GetString( const RString &sMetricsGroup, const RString &sV
 	sValueName.Replace( "\r\n", "\\n" );
 	sValueName.Replace( "\n", "\\n" );
 
-	ASSERT( g_pLoadedThemeData != NULL );
+	ASSERT( g_pLoadedThemeData != nullptr );
 	RString s = GetMetricRaw( g_pLoadedThemeData->iniStrings, sMetricsGroup, sValueName );
 	FontCharAliases::ReplaceMarkers( s );
 
@@ -1275,7 +1275,7 @@ void ThemeManager::GetMetricsThatBeginWith( const RString &sMetricsGroup_, const
 	while( !sMetricsGroup.empty() )
 	{
 		const XNode *cur = g_pLoadedThemeData->iniMetrics.GetChild( sMetricsGroup );
-		if( cur != NULL )
+		if( cur != nullptr )
 		{
 			// Iterate over all metrics that match.
 			for( XAttrs::const_iterator j = cur->m_attrs.lower_bound( sValueName ); j != cur->m_attrs.end(); ++j )
@@ -1384,7 +1384,7 @@ public:
 	{
 		RString group_name= SArg(1);
 		const XNode* metric_node= ini.GetChild(group_name);
-		if(metric_node != NULL)
+		if(metric_node != nullptr)
 		{
 			// Placed in a table indexed by number, so the order is always the same.
 			lua_createtable(L, metric_node->m_attrs.size(), 0);

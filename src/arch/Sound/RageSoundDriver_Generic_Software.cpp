@@ -18,7 +18,7 @@ static int underruns = 0, logged_underruns = 0;
 
 RageSoundDriver::Sound::Sound()
 {
-	m_pSound = NULL;
+	m_pSound = nullptr;
 	m_State = AVAILABLE;
 	m_bPaused = false;
 }
@@ -254,7 +254,7 @@ void RageSoundDriver::Update()
 			while( s.m_PosMapQueue.read( &p, 1 ) )
 			{
 				RageSoundBase *pSound = s.m_pSound;
-				if( pSound != NULL )
+				if( pSound != nullptr )
 				{
 					pSound->CommitPlayingPosition( p.iStreamFrame, p.iHardwareFrame, p.iFrames );
 				}
@@ -277,7 +277,7 @@ void RageSoundDriver::Update()
 			continue;
 
 		s.m_pSound->SoundIsFinishedPlaying();
-		s.m_pSound = NULL;
+		s.m_pSound = nullptr;
 
 		/* This sound is done.  Set it to HALTING, since the mixer thread might
 		 * be accessing it; it'll change it back to STOPPED once it's ready to
@@ -385,7 +385,7 @@ void RageSoundDriver::StopMixing( RageSoundBase *pSound )
 
 	/* Invalidate the m_pSound pointer to guarantee we don't make any further references to
 	 * it.  Once this call returns, the sound may no longer exist. */
-	m_Sounds[i].m_pSound = NULL;
+	m_Sounds[i].m_pSound = nullptr;
 //	LOG->Trace("end StopMixing");
 
 	m_Mutex.Unlock();
@@ -487,7 +487,7 @@ int64_t RageSoundDriver::ClampHardwareFrame( int64_t iHardwareFrame ) const
 
 int64_t RageSoundDriver::GetHardwareFrame( RageTimer *pTimestamp ) const
 {
-	if( pTimestamp == NULL )
+	if( pTimestamp == nullptr )
 		return ClampHardwareFrame( GetPosition() );
 
 	/*

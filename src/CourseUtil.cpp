@@ -111,7 +111,7 @@ void CourseUtil::SortCoursePointerArrayByTotalDifficulty( vector<Course*> &vpCou
 #if 0
 RString GetSectionNameFromCourseAndSort( const Course *pCourse, SortOrder so )
 {
-	if( pCourse == NULL )
+	if( pCourse == nullptr )
 		return RString();
 	// more code here
 }
@@ -196,7 +196,7 @@ void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInO
 
 void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInOut, const Profile* pProfile, bool bDescending )
 {
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 	for(unsigned i = 0; i < vpCoursesInOut.size(); ++i)
 		course_sort_val[vpCoursesInOut[i]] = ssprintf( "%09i", pProfile->GetCourseNumTimesPlayed(vpCoursesInOut[i]) );
 	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), bDescending ? CompareCoursePointersBySortValueDescending : CompareCoursePointersBySortValueAscending );
@@ -427,7 +427,7 @@ bool EditCourseUtil::ValidateEditCourseName( const RString &sAnswer, RString &sE
 	}
 
 	static const RString sInvalidChars = "\\/:*?\"<>|";
-	if( strpbrk(sAnswer, sInvalidChars) != NULL )
+	if( strpbrk(sAnswer, sInvalidChars) != nullptr )
 	{
 		sErrorOut = ssprintf( EDIT_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;
@@ -454,9 +454,9 @@ bool EditCourseUtil::ValidateEditCourseName( const RString &sAnswer, RString &sE
 
 void EditCourseUtil::UpdateAndSetTrail()
 {
-	ASSERT( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) != NULL );
+	ASSERT( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) != nullptr );
 	StepsType st = GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType;
-	Trail *pTrail = NULL;
+	Trail *pTrail = nullptr;
 	if( GAMESTATE->m_pCurCourse )
 		pTrail = GAMESTATE->m_pCurCourse->GetTrailForceRegenCache( st );
 	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
@@ -464,7 +464,7 @@ void EditCourseUtil::UpdateAndSetTrail()
 
 void EditCourseUtil::PrepareForPlay()
 {
-	GAMESTATE->m_pCurSong.Set( NULL );	// CurSong will be set if we back out.  Set it back to NULL so that ScreenStage won't show the last song.
+	GAMESTATE->m_pCurSong.Set( nullptr );	// CurSong will be set if we back out.  Set it back to nullptr so that ScreenStage won't show the last song.
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_ENDLESS );
 	GAMESTATE->m_bSideIsJoined[0] = true;
 
@@ -566,13 +566,13 @@ Course *CourseID::ToCourse() const
 	if( sPath2.Left(1) != "/" )
 		sPath2 = "/" + sPath2;
 
-	Course *pCourse = NULL;
+	Course *pCourse = nullptr;
 	if( m_Cache.Get(&pCourse) )
 		return pCourse;
-	if( pCourse == NULL && !sPath2.empty() )
+	if( pCourse == nullptr && !sPath2.empty() )
 		pCourse = SONGMAN->GetCourseFromPath( sPath2 );
 
-	if( pCourse == NULL && !sFullTitle.empty() )
+	if( pCourse == nullptr && !sFullTitle.empty() )
 		pCourse = SONGMAN->GetCourseFromName( sFullTitle );
 	m_Cache.Set( pCourse );
 

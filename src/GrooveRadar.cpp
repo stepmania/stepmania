@@ -60,7 +60,7 @@ void GrooveRadar::LoadFromNode( const XNode* pNode )
 
 void GrooveRadar::SetEmpty( PlayerNumber pn )
 {
-	SetFromSteps( pn, NULL );
+	SetFromSteps( pn, nullptr );
 }
 
 void GrooveRadar::SetFromRadarValues( PlayerNumber pn, const RadarValues &rv )
@@ -68,9 +68,9 @@ void GrooveRadar::SetFromRadarValues( PlayerNumber pn, const RadarValues &rv )
 	m_GrooveRadarValueMap[pn].SetFromSteps( rv );
 }
 
-void GrooveRadar::SetFromSteps( PlayerNumber pn, Steps* pSteps ) // NULL means no Song
+void GrooveRadar::SetFromSteps( PlayerNumber pn, Steps* pSteps ) // nullptr means no Song
 {
-	if( pSteps == NULL )
+	if( pSteps == nullptr )
 	{
 		m_GrooveRadarValueMap[pn].SetEmpty();
 		return;

@@ -254,7 +254,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				vector<RString> bits;
 				split( sSong, "/", bits );
 
-				Song *pSong = NULL;
+				Song *pSong = nullptr;
 				if( bits.size() == 2 )
 				{
 					new_entry.songCriteria.m_sGroupName = bits[0];
@@ -266,7 +266,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				}
 				new_entry.songID.FromSong( pSong );
 
-				if( pSong == NULL )
+				if( pSong == nullptr )
 				{
 					LOG->UserLog( "Course file", sPath, "contains a fixed song entry \"%s\" that does not exist. "
 						      "This entry will be ignored.", sSong.c_str());

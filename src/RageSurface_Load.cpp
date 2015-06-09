@@ -14,7 +14,7 @@ using std::vector;
 
 static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error, RString format, bool &bKeepTrying )
 {
-	RageSurface *ret = NULL;
+	RageSurface *ret = nullptr;
 	RageSurfaceUtils::OpenResult result;
 	if( !format.CompareNoCase("png") )
 		result = RageSurface_Load_PNG( sPath, ret, bHeaderOnly, error );
@@ -28,12 +28,12 @@ static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error
 	{
 		error = "Unsupported format";
 		bKeepTrying = true;
-		return NULL;
+		return nullptr;
 	}
 
 	if( result == RageSurfaceUtils::OPEN_OK )
 	{
-		ASSERT( ret != NULL );
+		ASSERT( ret != nullptr );
 		return ret;
 	}
 
@@ -72,7 +72,7 @@ static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error
 		default: break;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, bool bHeaderOnly )
@@ -82,7 +82,7 @@ RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, b
 		if( !TestOpen.Open( sPath ) )
 		{
 			error = TestOpen.GetError();
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -118,7 +118,7 @@ RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, b
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /*

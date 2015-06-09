@@ -27,7 +27,7 @@ public:
 
 	/**
 	 * @brief Attempt to load the banner from a song.
-	 * @param pSong the song in question. If NULL, there is no song.
+	 * @param pSong the song in question. If nullptr, there is no song.
 	 */
 	void LoadFromSong( Song* pSong );
 	void LoadMode();

@@ -89,7 +89,7 @@ bool MemoryCardDriverThreaded_MacOSX::USBStorageDevicesChanged()
 
 static int GetIntProperty( io_registry_entry_t entry, CFStringRef key )
 {
-	CFTypeRef t = IORegistryEntryCreateCFProperty( entry, key, NULL, 0 );
+	CFTypeRef t = IORegistryEntryCreateCFProperty( entry, key, nullptr, 0 );
 
 	if( !t )
 		return -1;
@@ -108,7 +108,7 @@ static int GetIntProperty( io_registry_entry_t entry, CFStringRef key )
 
 static RString GetStringProperty( io_registry_entry_t entry, CFStringRef key )
 {
-	CFTypeRef t = IORegistryEntryCreateCFProperty( entry, key, NULL, 0 );
+	CFTypeRef t = IORegistryEntryCreateCFProperty( entry, key, nullptr, 0 );
 
 	if( !t )
 		return RString();
@@ -135,7 +135,7 @@ void MemoryCardDriverThreaded_MacOSX::GetUSBStorageDevices( vector<UsbStorageDev
 	LockMut( m_ChangedLock );
 	// First, get all device paths
 	struct statfs *fs;
-	int num = getfsstat( NULL, 0, MNT_NOWAIT );
+	int num = getfsstat( nullptr, 0, MNT_NOWAIT );
 
 	fs = new struct statfs[num];
 

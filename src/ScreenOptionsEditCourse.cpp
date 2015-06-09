@@ -58,7 +58,7 @@ public:
 		else
 		{
 			m_Def.m_vsChoices.push_back( "n/a" );
-			m_vpSteps.push_back( NULL );
+			m_vpSteps.push_back( nullptr );
 			m_Def.m_vEnabledForPlayers.clear();
 		}
 
@@ -154,7 +154,7 @@ void ScreenOptionsEditCourse::Init()
 
 const MenuRowDef g_MenuRows[] =
 {
-	MenuRowDef( -1,	"Max Minutes",	true, EditMode_Practice, true, false, 0, NULL ),
+	MenuRowDef( -1,	"Max Minutes",	true, EditMode_Practice, true, false, 0, nullptr ),
 };
 
 static LocalizedString EMPTY	("ScreenOptionsEditCourse","-Empty-");
@@ -278,7 +278,7 @@ void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber
 			DEFAULT_FAIL( rowType );
 			case RowType_Song:
 				{
-					Song *pSong = NULL;
+					Song *pSong = nullptr;
 					if( iEntryIndex < (int)GAMESTATE->m_pCurCourse->m_vEntries.size() )
 						pSong = GAMESTATE->m_pCurCourse->m_vEntries[iEntryIndex].songID.ToSong();
 
@@ -339,7 +339,7 @@ void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber
 				if( pSong )
 				{
 					Steps *pSteps = this->GetStepsForEntry( iEntryIndex );
-					ASSERT_M( pSteps != NULL, "No Steps for this Song!" );
+					ASSERT_M( pSteps != nullptr, "No Steps for this Song!" );
 					CourseEntry ce;
 					ce.songID.FromSong( pSong );
 					ce.stepsCriteria.m_difficulty = pSteps->GetDifficulty();
@@ -383,14 +383,14 @@ void ScreenOptionsEditCourse::SetCurrentSong()
 
 	if( row.GetRowType() == OptionRow::RowType_Exit )
 	{
-		GAMESTATE->m_pCurSong.Set( NULL );
-		GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
+		GAMESTATE->m_pCurSong.Set( nullptr );
+		GAMESTATE->m_pCurSteps[PLAYER_1].Set( nullptr );
 	}
 	else
 	{
 		iRow = m_iCurrentRow[PLAYER_1];
 		int iEntryIndex = RowToEntryIndex( iRow );
-		Song *pSong = NULL;
+		Song *pSong = nullptr;
 		if( iEntryIndex != -1 )
 		{
 			int iCurrentSongRow = EntryIndexAndRowTypeToRow(iEntryIndex,RowType_Song);
@@ -399,7 +399,7 @@ void ScreenOptionsEditCourse::SetCurrentSong()
 			if( index != 0 )
 				pSong = m_vpSongs[ index - 1 ];
 		}
-		if ( pSong != NULL )
+		if ( pSong != nullptr )
 		{
 			GAMESTATE->m_pCurSong.Set( pSong );
 		}
@@ -416,13 +416,13 @@ void ScreenOptionsEditCourse::SetCurrentSteps()
 		OptionRow &row = *m_pRows[ EntryIndexAndRowTypeToRow(iEntryIndex, RowType_Steps) ];
 		int iStepsIndex = row.GetOneSharedSelection();
 		const EditCourseOptionRowHandlerSteps *pHand = dynamic_cast<const EditCourseOptionRowHandlerSteps *>( row.GetHandler() );
-		ASSERT( pHand != NULL );
+		ASSERT( pHand != nullptr );
 		Steps *pSteps = pHand->GetSteps( iStepsIndex );
 		GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 	}
 	else
 	{
-		GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
+		GAMESTATE->m_pCurSteps[PLAYER_1].Set( nullptr );
 	}
 }
 
@@ -433,7 +433,7 @@ Song *ScreenOptionsEditCourse::GetSongForEntry( int iEntryIndex )
 
 	int index = row.GetOneSharedSelection();
 	if( index == 0 )
-		return NULL;
+		return nullptr;
 	return m_vpSongs[ index - 1 ];
 }
 

@@ -255,7 +255,7 @@ void RenderTarget_MacOSX::Create( const RenderTargetParam &param, int &iTextureW
 	
 	glTexImage2D( GL_TEXTURE_2D, 0, param.bWithAlpha? GL_RGBA8:GL_RGB8,
 		      iTextureWidth, iTextureHeight, 0, param.bWithAlpha? GL_RGBA:GL_RGB,
-		      GL_UNSIGNED_BYTE, NULL );
+		      GL_UNSIGNED_BYTE, nullptr );
 	GLenum error = glGetError();
 	ASSERT_M(error == GL_NO_ERROR, RageDisplay_Legacy_Helpers::GLToString(error));
 	
@@ -293,7 +293,7 @@ void RenderTarget_MacOSX::FinishRenderingTo()
 }
 
 
-LowLevelWindow_MacOSX::LowLevelWindow_MacOSX() : m_Context(nil), m_BGContext(nil), m_CurrentDisplayMode(NULL), m_DisplayID(0)
+LowLevelWindow_MacOSX::LowLevelWindow_MacOSX() : m_Context(nil), m_BGContext(nil), m_CurrentDisplayMode(nullptr), m_DisplayID(0)
 {
 	POOL;
 	m_WindowDelegate = [[SMWindowDelegate alloc] init];
@@ -323,12 +323,12 @@ void *LowLevelWindow_MacOSX::GetProcAddress( RString s )
 	// Both functions mentioned in there are deprecated in 10.4.
 	const RString& symbolName( '_' + s );
 	const uint32_t count = _dyld_image_count();
-	NSSymbol symbol = NULL;
+	NSSymbol symbol = nullptr;
 	const uint32_t options = NSLOOKUPSYMBOLINIMAGE_OPTION_RETURN_ON_ERROR;
 	
 	for( uint32_t i = 0; i < count && !symbol; ++i )
 		symbol = NSLookupSymbolInImage( _dyld_get_image_header(i), symbolName, options );
-	return symbol ? NSAddressOfSymbol( symbol ) : NULL;
+	return symbol ? NSAddressOfSymbol( symbol ) : nullptr;
 }
 
 RString LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool& newDeviceOut )
@@ -462,13 +462,13 @@ void LowLevelWindow_MacOSX::ShutDownFullScreen()
 	ASSERT( err == kCGErrorSuccess );
 	SetActualParamsFromMode( m_CurrentDisplayMode );
 	// We don't own this so we cannot release it.
-	m_CurrentDisplayMode = NULL;
+	m_CurrentDisplayMode = nullptr;
 	m_CurrentParams.windowed = true;
 }
 
 int LowLevelWindow_MacOSX::ChangeDisplayMode( const VideoModeParams& p )
 {	
-	CFDictionaryRef mode = NULL;
+	CFDictionaryRef mode = nullptr;
 	CFDictionaryRef newMode;
 	CGDisplayErr err;
 	
@@ -483,10 +483,10 @@ int LowLevelWindow_MacOSX::ChangeDisplayMode( const VideoModeParams& p )
 	}
 	
 	if( p.rate == REFRESH_DEFAULT )
-		newMode = CGDisplayBestModeForParameters( kCGDirectMainDisplay, p.bpp, p.width, p.height, NULL );
+		newMode = CGDisplayBestModeForParameters( kCGDirectMainDisplay, p.bpp, p.width, p.height, nullptr );
 	else
 		newMode = CGDisplayBestModeForParametersAndRefreshRate( kCGDirectMainDisplay, p.bpp,
-									p.width, p.height, p.rate, NULL );
+									p.width, p.height, p.rate, nullptr );
 	
 	
 	err = CGDisplaySwitchToMode( kCGDirectMainDisplay, newMode );

@@ -26,7 +26,7 @@
 
 using std::vector;
 
-ProfileManager*	PROFILEMAN = NULL;	// global and accessible from anywhere in our program
+ProfileManager*	PROFILEMAN = nullptr;	// global and accessible from anywhere in our program
 
 #define ID_DIGITS 8
 #define ID_DIGITS_STR "8"
@@ -127,12 +127,12 @@ void ProfileManager::Init()
 		{
 			RString sCharacterID = FIXED_PROFILE_CHARACTER_ID( i );
 			Character *pCharacter = CHARMAN->GetCharacterFromID( sCharacterID );
-			ASSERT_M( pCharacter != NULL, sCharacterID );
+			ASSERT_M( pCharacter != nullptr, sCharacterID );
 			RString sProfileID;
 			bool b = CreateLocalProfile( pCharacter->GetDisplayName(), sProfileID );
 			ASSERT( b );
 			Profile* pProfile = GetLocalProfile( sProfileID );
-			ASSERT_M( pProfile != NULL, sProfileID );
+			ASSERT_M( pProfile != nullptr, sProfileID );
 			pProfile->m_sCharacterID = sCharacterID;
 			SaveLocalProfile( sProfileID );
 		}
@@ -208,7 +208,7 @@ bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 	m_bWasLoadedFromMemoryCard[pn] = false;
 	m_bLastLoadWasFromLastGood[pn] = false;
 
-	if( GetLocalProfile(sProfileID) == NULL )
+	if( GetLocalProfile(sProfileID) == nullptr )
 	{
 		m_sProfileDir[pn] = "";
 		return false;
@@ -356,7 +356,7 @@ bool ProfileManager::SaveProfile( PlayerNumber pn ) const
 bool ProfileManager::SaveLocalProfile( RString sProfileID )
 {
 	const Profile *pProfile = GetLocalProfile( sProfileID );
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 	RString sDir = LocalProfileIDToDir( sProfileID );
 	bool b = pProfile->SaveAllToDir( sDir, PREFSMAN->m_bSignProfileData );
 	return b;
@@ -484,7 +484,7 @@ const Profile *ProfileManager::GetLocalProfile( const RString &sProfileID ) cons
 			return &dap.profile;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
@@ -529,7 +529,7 @@ bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 	RString profile_id = ssprintf( "%0" ID_DIGITS_STR "d", profile_number );
 
 	// make sure this id doesn't already exist
-	ASSERT_M(GetLocalProfile(profile_id) == NULL,
+	ASSERT_M(GetLocalProfile(profile_id) == nullptr,
 		ssprintf("creating profile with ID \"%s\" that already exists",
 		profile_id.c_str()));
 
@@ -581,7 +581,7 @@ static void InsertProfileIntoList(DirAndProfile& derp)
 void ProfileManager::AddLocalProfileByID( Profile *pProfile, RString sProfileID )
 {
 	// make sure this id doesn't already exist
-	ASSERT_M( GetLocalProfile(sProfileID) == NULL,
+	ASSERT_M( GetLocalProfile(sProfileID) == nullptr,
 		ssprintf("creating \"%s\" \"%s\" that already exists",
 		pProfile->m_sDisplayName.c_str(), sProfileID.c_str()) );
 
@@ -596,7 +596,7 @@ bool ProfileManager::RenameLocalProfile( RString sProfileID, RString sNewName )
 	ASSERT( !sProfileID.empty() );
 
 	Profile *pProfile = ProfileManager::GetLocalProfile( sProfileID );
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 	pProfile->m_sDisplayName = sNewName;
 
 	RString sProfileDir = LocalProfileIDToDir( sProfileID );
@@ -606,7 +606,7 @@ bool ProfileManager::RenameLocalProfile( RString sProfileID, RString sNewName )
 bool ProfileManager::DeleteLocalProfile( RString sProfileID )
 {
 	Profile *pProfile = ProfileManager::GetLocalProfile( sProfileID );
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 	RString sProfileDir = LocalProfileIDToDir( sProfileID );
 
 	// flush directory cache in an attempt to get this working
@@ -741,7 +741,7 @@ void ProfileManager::MergeLocalProfiles(RString const& from_id, RString const& t
 {
 	Profile* from= GetLocalProfile(from_id);
 	Profile* to= GetLocalProfile(to_id);
-	if(from == NULL || to == NULL)
+	if(from == nullptr || to == nullptr)
 	{
 		return;
 	}
@@ -752,7 +752,7 @@ void ProfileManager::MergeLocalProfiles(RString const& from_id, RString const& t
 void ProfileManager::MergeLocalProfileIntoMachine(RString const& from_id, bool skip_totals)
 {
 	Profile* from= GetLocalProfile(from_id);
-	if(from == NULL)
+	if(from == nullptr)
 	{
 		return;
 	}
@@ -1022,7 +1022,7 @@ class LunaProfileManager: public Luna<ProfileManager>
 {
 public:
 	static int IsPersistentProfile( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsPersistentProfile(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
-	static int GetProfile( T* p, lua_State *L )				{ PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1); Profile* pP = p->GetProfile(pn); ASSERT(pP != NULL); pP->PushSelf(L); return 1; }
+	static int GetProfile( T* p, lua_State *L )				{ PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1); Profile* pP = p->GetProfile(pn); ASSERT(pP != nullptr); pP->PushSelf(L); return 1; }
 	static int GetMachineProfile( T* p, lua_State *L )		{ p->GetMachineProfile()->PushSelf(L); return 1; }
 	static int SaveMachineProfile( T* p, lua_State * )		{ p->SaveMachineProfile(); return 0; }
 	static int GetLocalProfile( T* p, lua_State *L )
@@ -1042,7 +1042,7 @@ public:
 			luaL_error(L, "Profile index %d out of range.", index);
 		}
 		Profile *pProfile = p->GetLocalProfileFromIndex(index);
-		if(pProfile == NULL)
+		if(pProfile == nullptr)
 		{
 			luaL_error(L, "No profile at index %d.", index);
 		}

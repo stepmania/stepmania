@@ -267,7 +267,7 @@ RString Course::GetTranslitFullTitle() const
 /* This is called by many simple functions, like Course::GetTotalSeconds, and may
  * be called on all songs to sort.  It can take time to execute, so we cache the
  * results.  Returned pointers remain valid for the lifetime of the Course.  If the
- * course difficulty doesn't exist, NULL is returned. */
+ * course difficulty doesn't exist, nullptr is returned. */
 Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 {
 	ASSERT( cd != Difficulty_Invalid );
@@ -286,7 +286,7 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 		{
 			CacheData &cache = it->second;
 			if( cache.null )
-				return NULL;
+				return nullptr;
 			return &cache.trail;
 		}
 	}
@@ -304,7 +304,7 @@ Trail* Course::GetTrailForceRegenCache( StepsType st, CourseDifficulty cd ) cons
 	{
 		// This course difficulty doesn't exist.
 		cache.null = true;
-		return NULL;
+		return nullptr;
 	}
 
 	// If we have cached RadarValues for this trail, insert them.
@@ -649,7 +649,7 @@ void Course::GetTrails( vector<Trail*> &AddTo, StepsType st ) const
 	FOREACH_ShownCourseDifficulty( cd )
 	{
 		Trail *pTrail = GetTrail( st, cd );
-		if( pTrail == NULL )
+		if( pTrail == nullptr )
 			continue;
 		AddTo.push_back( pTrail );
 	}
@@ -670,7 +670,7 @@ int Course::GetMeter( StepsType st, CourseDifficulty cd ) const
 	if( m_iCustomMeter[cd] != -1 )
 		return m_iCustomMeter[cd];
 	const Trail* pTrail = GetTrail( st );
-	if( pTrail != NULL )
+	if( pTrail != nullptr )
 		return pTrail->GetMeter();
 	return 0;
 }
@@ -726,7 +726,7 @@ const Style *Course::GetCourseStyle( const Game *pGame, int iNumPlayers ) const
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void Course::InvalidateTrailCache()
@@ -891,7 +891,7 @@ void Course::UpdateCourseStats( StepsType st )
 	for(unsigned i = 0; i < m_vEntries.size(); i++)
 	{
 		Song *pSong = m_vEntries[i].songID.ToSong();
-		if( pSong != NULL )
+		if( pSong != nullptr )
 			continue;
 
 		if ( m_SortOrder_Ranking == 2 )
@@ -902,7 +902,7 @@ void Course::UpdateCourseStats( StepsType st )
 
 	const Trail* pTrail = GetTrail( st, Difficulty_Medium );
 
-	m_SortOrder_TotalDifficulty += pTrail != NULL? pTrail->GetTotalMeter():0;
+	m_SortOrder_TotalDifficulty += pTrail != nullptr? pTrail->GetTotalMeter():0;
 
 	// OPTIMIZATION: Ranking info isn't dependent on style, so call it
 	// sparingly. It's handled on startup and when themes change.
@@ -936,7 +936,7 @@ const CourseEntry *Course::FindFixedSong( const Song *pSong ) const
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void Course::GetAllCachedTrails( vector<Trail *> &out )
@@ -968,7 +968,7 @@ void Course::CalculateRadarValues()
 			if( AllSongsAreFixed() )
 			{
 				Trail *pTrail = GetTrail( st, cd );
-				if( pTrail == NULL )
+				if( pTrail == nullptr )
 					continue;
 				RadarValues rv = pTrail->GetRadarValues();
 				m_RadarCache[CacheEntry(st, cd)] = rv;
