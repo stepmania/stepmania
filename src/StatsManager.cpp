@@ -18,7 +18,7 @@
 
 using std::vector;
 
-StatsManager*	STATSMAN = NULL;	// global object accessible from anywhere in the program
+StatsManager*	STATSMAN = nullptr;	// global object accessible from anywhere in the program
 
 void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNumber pn );
 XNode* MakeRecentScoreNode( const StageStats &ss, Trail *pTrail, const PlayerStageStats &pss, MultiPlayer mp );
@@ -113,7 +113,6 @@ void StatsManager::CalcAccumPlayedStageStats()
 void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNumber pn )
 {
 	ss.AssertValid( pn );
-	CHECKPOINT;
 
 	StyleID sID;
 	sID.FromStyle( ss.m_player[pn].m_pStyle );
@@ -152,7 +151,7 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 
 XNode* MakeRecentScoreNode( const StageStats &ss, Trail *pTrail, const PlayerStageStats &pss, MultiPlayer mp )
 {
-	XNode* pNode = NULL;
+	XNode* pNode = nullptr;
 	if( GAMESTATE->IsCourseMode() )
 	{
 		pNode = new XNode( "HighScoreForACourseAndTrail" );
@@ -215,13 +214,10 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 	pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
 	pMachineProfile->m_iNumTotalSongsPlayed += pSS->m_vpPlayedSongs.size();
 
-	CHECKPOINT;
 	if( !GAMESTATE->m_bMultiplayer )	// FIXME
 	{
 		FOREACH_HumanPlayer( pn )
 		{
-			CHECKPOINT;
-
 			Profile* pPlayerProfile = PROFILEMAN->GetProfile( pn );
 			if( pPlayerProfile )
 			{
@@ -237,8 +233,6 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 				LOG->Trace("Adding stats to player profile...");
 				AddPlayerStatsToProfile( pPlayerProfile, *pSS, pn );
 			}
-
-			CHECKPOINT;
 		}
 	}
 
@@ -247,7 +241,7 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 		std::unique_ptr<XNode> xml( new XNode("Stats") );
 		xml->AppendChild( "MachineGuid",  PROFILEMAN->GetMachineProfile()->m_sGuid );
 
-		XNode *recent = NULL;
+		XNode *recent = nullptr;
 		if( GAMESTATE->IsCourseMode() )
 			recent = xml->AppendChild( new XNode("RecentCourseScores") );
 		else

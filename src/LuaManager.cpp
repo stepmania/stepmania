@@ -21,7 +21,7 @@
 
 using std::vector;
 
-LuaManager *LUA = NULL;
+LuaManager *LUA = nullptr;
 struct Impl
 {
 	Impl(): g_pLock("Lua") {}
@@ -30,7 +30,7 @@ struct Impl
 
 	RageMutex g_pLock;
 };
-static Impl *pImpl = NULL;
+static Impl *pImpl = nullptr;
 
 #if defined(_MSC_VER)
 	/* "interaction between '_setjmp' and C++ object destruction is non-portable"
@@ -94,12 +94,12 @@ namespace LuaHelpers
 	{
 		size_t iLen;
 		const char *pStr = lua_tolstring( L, iOffset, &iLen );
-		if( pStr != NULL )
+		if( pStr != nullptr )
 			Object.assign( pStr, iLen );
 		else
 			Object.clear();
 
-		return pStr != NULL;
+		return pStr != nullptr;
 	}
 }
 
@@ -182,7 +182,7 @@ static int GetLuaStack( lua_State *L )
 
 		if( !strcmp(ar.what, "C") )
 		{
-			for( int i = 1; i <= ar.nups && (name = lua_getupvalue(L, -1, i)) != NULL; ++i )
+			for( int i = 1; i <= ar.nups && (name = lua_getupvalue(L, -1, i)) != nullptr; ++i )
 			{
 				vArgs.push_back( ssprintf("%s = %s", name, lua_tostring(L, -1)) );
 				lua_pop( L, 1 ); // pop value
@@ -190,7 +190,7 @@ static int GetLuaStack( lua_State *L )
 		}
 		else
 		{
-			for( int i = 1; (name = lua_getlocal(L, &ar, i)) != NULL; ++i )
+			for( int i = 1; (name = lua_getlocal(L, &ar, i)) != nullptr; ++i )
 			{
 				vArgs.push_back( ssprintf("%s = %s", name, lua_tostring(L, -1)) );
 				lua_pop( L, 1 ); // pop value
@@ -234,11 +234,11 @@ static int LuaPanic( lua_State *L )
 }
 
 // Actor registration
-static vector<RegisterWithLuaFn>	*g_vRegisterActorTypes = NULL;
+static vector<RegisterWithLuaFn>	*g_vRegisterActorTypes = nullptr;
 
 void LuaManager::Register( RegisterWithLuaFn pfn )
 {
-	if( g_vRegisterActorTypes == NULL )
+	if( g_vRegisterActorTypes == nullptr )
 		g_vRegisterActorTypes = new vector<RegisterWithLuaFn>;
 
 	g_vRegisterActorTypes->push_back( pfn );
@@ -251,7 +251,7 @@ LuaManager::LuaManager()
 	LUA = this; // so that LUA is available when we call the Register functions
 
 	lua_State *L = lua_open();
-	ASSERT( L != NULL );
+	ASSERT( L != nullptr );
 
 	lua_atpanic( L, LuaPanic );
 	m_pLuaMain = L;
@@ -323,7 +323,7 @@ void LuaManager::Release( Lua *&p )
 
 	if( bDoUnlock )
 		pImpl->g_pLock.Unlock();
-	p = NULL;
+	p = nullptr;
 }
 
 /*
@@ -1191,7 +1191,7 @@ namespace
 		LIST_METHOD( RunWithThreadVariables ),
 		LIST_METHOD( GetThreadVariable ),
 		LIST_METHOD( ReportScriptError ),
-		{ NULL, NULL }
+		{ nullptr, nullptr }
 	};
 }
 

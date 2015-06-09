@@ -22,7 +22,7 @@ public:
 
 	static const char *GetAdditionalLog();
 	static const char *GetInfo();
-	/* Returns NULL if past the last recent log. */
+	/* Returns nullptr if past the last recent log. */
 	static const char *GetRecentLog( int n );
 
 	void SetShowLogOutput( bool show ); // enable or disable logging to stdout

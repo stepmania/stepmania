@@ -81,7 +81,7 @@ static bool ValidateLocalProfileName( const RString &sAnswer, RString &sErrorOut
 	}
 
 	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
-	if( pProfile != NULL && sAnswer == pProfile->m_sDisplayName )
+	if( pProfile != nullptr && sAnswer == pProfile->m_sDisplayName )
 		return true; // unchanged
 
 	vector<RString> vsProfileNames;
@@ -132,7 +132,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 	for (auto &s: m_vsLocalProfileID)
 	{
 		Profile *pProfile = PROFILEMAN->GetLocalProfile( s );
-		ASSERT( pProfile != NULL );
+		ASSERT( pProfile != nullptr );
 
 		RString sCommand = ssprintf( "gamecommand;screen,ScreenOptionsCustomizeProfile;profileid,%s;name,dummy", s.c_str() );
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands(sCommand) );
@@ -283,7 +283,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 		if( !ScreenMiniMenu::s_bCancelled )
 		{
 			Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
-			ASSERT( pProfile != NULL );
+			ASSERT( pProfile != nullptr );
 
 			switch( ScreenMiniMenu::s_iLastRowCode )
 			{

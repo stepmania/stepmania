@@ -257,7 +257,7 @@ int Profile::GetAge() const
 {
 	if(m_BirthYear == 0)
 	{
-		return (GetLocalTime().tm_year+1900) - DEFAULT_BIRTH_YEAR;
+		return (GetLocalTime().tm_year + 1900) - static_cast<int>(DEFAULT_BIRTH_YEAR);
 	}
 	return (GetLocalTime().tm_year+1900) - m_BirthYear;
 }
@@ -331,7 +331,7 @@ int Profile::GetTotalTrailsWithTopGrade( StepsType st, CourseDifficulty d, Grade
 
 		vector<Trail*> vTrails;
 		Trail* pTrail = pCourse->GetTrail( st, d );
-		if( pTrail == NULL )
+		if( pTrail == nullptr )
 			continue;
 
 		const HighScoreList &hsl = GetCourseHighScoreList( pCourse, pTrail );
@@ -392,7 +392,7 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 
 		// If the Song isn't loaded on the current machine, then we can't
 		// get radar values to compute dance points.
-		if( pSong == NULL )
+		if( pSong == nullptr )
 			continue;
 
 		if( !pSong->NormallyDisplayed() )
@@ -409,7 +409,7 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 
 			// If the Steps isn't loaded on the current machine, then we can't
 			// get radar values to compute dance points.
-			if( pSteps == NULL )
+			if( pSteps == nullptr )
 				continue;
 
 			if( pSteps->m_StepsType != st )
@@ -417,15 +417,17 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 
 			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: n %s = %p", sid.ToString().c_str(), pSteps) );
 			if( pSteps->GetDifficulty() != dc )
+			{
 				continue;	// skip
-			CHECKPOINT;
+			}
+			
+			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: difficulty %s is correct", DifficultyToString(dc).c_str()));
 
 			const HighScoresForASteps& h = j.second;
 			const HighScoreList& hsl = h.hsl;
 
 			fTotalPercents += hsl.GetTopScore().GetPercentDP();
 		}
-		CHECKPOINT;
 	}
 
 	return fTotalPercents;
@@ -461,7 +463,7 @@ float Profile::GetCoursesPossible( StepsType st, CourseDifficulty cd ) const
 	for (auto const *c: vpCourses)
 	{
 		Trail* pTrail = c->GetTrail(st,cd);
-		if( pTrail == NULL )
+		if( pTrail == nullptr )
 			continue;
 
 		iTotalTrails++;
@@ -479,7 +481,7 @@ float Profile::GetCoursesActual( StepsType st, CourseDifficulty cd ) const
 	for (auto const *c: vpCourses)
 	{
 		Trail *pTrail = c->GetTrail( st, cd );
-		if( pTrail == NULL )
+		if( pTrail == nullptr )
 			continue;
 
 		const HighScoreList& hsl = GetCourseHighScoreList( c, pTrail );
@@ -521,7 +523,7 @@ int Profile::GetSongNumTimesPlayed( const Song* pSong ) const
 int Profile::GetSongNumTimesPlayed( const SongID& songID ) const
 {
 	const HighScoresForASong *hsSong = GetHighScoresForASong( songID );
-	if( hsSong == NULL )
+	if( hsSong == nullptr )
 		return 0;
 
 	int iTotalNumTimesPlayed = 0;
@@ -573,7 +575,7 @@ Song *Profile::GetMostPopularSong() const
 	for (auto const &i: m_SongHighScores)
 	{
 		int iNumTimesPlayed = i.second.GetNumTimesPlayed();
-		if(i.first.ToSong() != NULL && iNumTimesPlayed > iMaxNumTimesPlayed)
+		if(i.first.ToSong() != nullptr && iNumTimesPlayed > iMaxNumTimesPlayed)
 		{
 			id = i.first;
 			iMaxNumTimesPlayed = iNumTimesPlayed;
@@ -590,7 +592,7 @@ Course *Profile::GetMostPopularCourse() const
 	for (auto const &i: m_CourseHighScores)
 	{
 		int iNumTimesPlayed = i.second.GetNumTimesPlayed();
-		if(i.first.ToCourse() != NULL && iNumTimesPlayed > iMaxNumTimesPlayed)
+		if(i.first.ToCourse() != nullptr && iNumTimesPlayed > iMaxNumTimesPlayed)
 		{
 			id = i.first;
 			iMaxNumTimesPlayed = iNumTimesPlayed;
@@ -687,7 +689,7 @@ void Profile::GetGrades( const Song* pSong, StepsType st, int iCounts[NUM_Grade]
 
 	memset( iCounts, 0, sizeof(int)*NUM_Grade );
 	const HighScoresForASong *hsSong = GetHighScoresForASong( songID );
-	if( hsSong == NULL )
+	if( hsSong == nullptr )
 		return;
 
 	FOREACH_ENUM( Grade,g)
@@ -741,7 +743,7 @@ int Profile::GetCourseNumTimesPlayed( const Course* pCourse ) const
 int Profile::GetCourseNumTimesPlayed( const CourseID &courseID ) const
 {
 	const HighScoresForACourse *hsCourse = GetHighScoresForACourse( courseID );
-	if( hsCourse == NULL )
+	if( hsCourse == nullptr )
 		return 0;
 
 	int iTotalNumTimesPlayed = 0;
@@ -1048,7 +1050,7 @@ void Profile::IncrementCategoryPlayCount( StepsType st, RankingCategory rc )
 #define WARN_AND_BREAK_M(m) { WARN_M(m); break; }
 #define LOAD_NODE(X)	{ \
 	const XNode* X = xml->GetChild(#X); \
-	if( X==NULL ) LOG->Warn("Failed to read section " #X); \
+	if( X==nullptr ) LOG->Warn("Failed to read section " #X); \
 	else Load##X##FromNode(X); }
 
 void Profile::LoadCustomFunction( RString sDir )
@@ -1075,8 +1077,6 @@ void Profile::LoadCustomFunction( RString sDir )
 
 ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature )
 {
-	CHECKPOINT;
-
 	LOG->Trace( "Profile::LoadAllFromDir( %s )", sDir.c_str() );
 
 	ASSERT( sDir.Right(1) == "/" );
@@ -1101,7 +1101,7 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 
 	int iError;
 	std::unique_ptr<RageFileBasic> pFile( FILEMAN->Open(fn, RageFile::READ, iError) );
-	if( pFile.get() == NULL )
+	if( pFile.get() == nullptr )
 	{
 		LOG->Trace( "Error opening %s: %s", fn.c_str(), strerror(iError) );
 		return ProfileLoadResult_FailedTampered;
@@ -1112,7 +1112,7 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 		RString sError;
 		uint32_t iCRC32;
 		RageFileObjInflate *pInflate = GunzipFile( pFile.release(), sError, &iCRC32 );
-		if( pInflate == NULL )
+		if( pInflate == nullptr )
 		{
 			LOG->Trace( "Error opening %s: %s", fn.c_str(), sError.c_str() );
 			return ProfileLoadResult_FailedTampered;
@@ -1182,7 +1182,7 @@ void Profile::LoadTypeFromDir(RString dir)
 		if(ini.ReadFile(fn))
 		{
 			XNode const* data= ini.GetChild("ListPosition");
-			if(data != NULL)
+			if(data != nullptr)
 			{
 				RString type_str;
 				if(data->GetAttrValue("Type", type_str))
@@ -1796,9 +1796,9 @@ float Profile::CalculateCaloriesFromHeartRate(float HeartRate, float Duration)
 	*/
 	// Duration passed in is in seconds.  Convert it to minutes to make the code
 	// match the equations from the website.
-	Duration= Duration / 60.0;
-	float kilos= GetCalculatedWeightPounds() / 2.205;
-	float age= GetAge();
+	Duration= Duration / 60.f;
+	float kilos= GetCalculatedWeightPounds() / 2.205f;
+	float age = static_cast<float>(GetAge());
 
 	// Names for the constants in the equations.
 	// Assumes male and unknown voomax.
@@ -1835,15 +1835,15 @@ float Profile::CalculateCaloriesFromHeartRate(float HeartRate, float Duration)
 	}
 	return ((gender_factor + (heart_factor * HeartRate) +
 			(voo_factor * m_Voomax) + (weight_factor * kilos) + (age_factor + age))
-		/ 4.184) * Duration;
+		/ 4.184f) * Duration;
 }
 
 XNode* Profile::SaveSongScoresCreateNode() const
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Getting the node to save song scores.");
 
 	const Profile* pProfile = this;
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 
 	XNode* pNode = new XNode( "SongScores" );
 
@@ -1884,7 +1884,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 
 void Profile::LoadSongScoresFromNode( const XNode* pSongScores )
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Loading the node that contains song scores.");
 
 	ASSERT( pSongScores->GetName() == "SongScores" );
 
@@ -1911,7 +1911,7 @@ void Profile::LoadSongScoresFromNode( const XNode* pSongScores )
 				WARN_AND_CONTINUE;
 
 			const XNode *pHighScoreListNode = pSteps->GetChild("HighScoreList");
-			if( pHighScoreListNode == NULL )
+			if( pHighScoreListNode == nullptr )
 				WARN_AND_CONTINUE;
 
 			HighScoreList &hsl = m_SongHighScores[songID].m_StepsHighScores[stepsID].hsl;
@@ -1923,10 +1923,10 @@ void Profile::LoadSongScoresFromNode( const XNode* pSongScores )
 
 XNode* Profile::SaveCourseScoresCreateNode() const
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Getting the node to save course scores.");
 
 	const Profile* pProfile = this;
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 
 	XNode* pNode = new XNode( "CourseScores" );
 
@@ -1963,7 +1963,7 @@ XNode* Profile::SaveCourseScoresCreateNode() const
 
 void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Loading the node that contains course scores.");
 
 	ASSERT( pCourseScores->GetName() == "CourseScores" );
 
@@ -1990,7 +1990,7 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 		// and search for matches of just the file name.
 		{
 			Course *pC = courseID.ToCourse();
-			if( pC == NULL )
+			if( pC == nullptr )
 			{
 				RString sDir, sFName, sExt;
 				splitpath( courseID.GetPath(), sDir, sFName, sExt );
@@ -2022,7 +2022,7 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 				WARN_AND_CONTINUE;
 
 			const XNode *pHighScoreListNode = pTrail->GetChild("HighScoreList");
-			if( pHighScoreListNode == NULL )
+			if( pHighScoreListNode == nullptr )
 				WARN_AND_CONTINUE;
 
 			HighScoreList &hsl = m_CourseHighScores[courseID].m_TrailHighScores[trailID].hsl;
@@ -2033,10 +2033,10 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 
 XNode* Profile::SaveCategoryScoresCreateNode() const
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Getting the node that saves category scores.");
 
 	const Profile* pProfile = this;
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 
 	XNode* pNode = new XNode( "CategoryScores" );
 
@@ -2069,7 +2069,7 @@ XNode* Profile::SaveCategoryScoresCreateNode() const
 
 void Profile::LoadCategoryScoresFromNode( const XNode* pCategoryScores )
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Loading the node that contains category scores.");
 
 	ASSERT( pCategoryScores->GetName() == "CategoryScores" );
 
@@ -2097,7 +2097,7 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pCategoryScores )
 				WARN_AND_CONTINUE_M( str );
 
 			const XNode *pHighScoreListNode = pRadarCategory->GetChild("HighScoreList");
-			if( pHighScoreListNode == NULL )
+			if( pHighScoreListNode == nullptr )
 				WARN_AND_CONTINUE;
 
 			HighScoreList &hsl = this->GetCategoryHighScoreList( st, rc );
@@ -2108,7 +2108,7 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pCategoryScores )
 
 void Profile::SaveStatsWebPageToDir( RString sDir ) const
 {
-	ASSERT( PROFILEMAN != NULL );
+	ASSERT( PROFILEMAN != nullptr );
 }
 
 void Profile::SaveMachinePublicKeyToDir( RString sDir ) const
@@ -2124,7 +2124,7 @@ void Profile::AddScreenshot( const Screenshot &screenshot )
 
 void Profile::LoadScreenshotDataFromNode( const XNode* pScreenshotData )
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Loading the node containing screenshot data.");
 
 	ASSERT( pScreenshotData->GetName() == "ScreenshotData" );
 	FOREACH_CONST_Child( pScreenshotData, pScreenshot )
@@ -2141,10 +2141,10 @@ void Profile::LoadScreenshotDataFromNode( const XNode* pScreenshotData )
 
 XNode* Profile::SaveScreenshotDataCreateNode() const
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Getting the node containing screenshot data.");
 
 	const Profile* pProfile = this;
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 
 	XNode* pNode = new XNode( "ScreenshotData" );
 
@@ -2158,7 +2158,7 @@ XNode* Profile::SaveScreenshotDataCreateNode() const
 
 void Profile::LoadCalorieDataFromNode( const XNode* pCalorieData )
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Loading the node containing calorie data.");
 
 	ASSERT( pCalorieData->GetName() == "CalorieData" );
 	FOREACH_CONST_Child( pCalorieData, pCaloriesBurned )
@@ -2183,10 +2183,10 @@ void Profile::LoadCalorieDataFromNode( const XNode* pCalorieData )
 
 XNode* Profile::SaveCalorieDataCreateNode() const
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Getting the node containing calorie data.");
 
 	const Profile* pProfile = this;
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 
 	XNode* pNode = new XNode( "CalorieData" );
 
@@ -2283,7 +2283,7 @@ const Profile::HighScoresForASong *Profile::GetHighScoresForASong( const SongID&
 {
 	auto it = m_SongHighScores.find( songID );
 	if( it == m_SongHighScores.end() )
-		return NULL;
+		return nullptr;
 	return &it->second;
 }
 
@@ -2291,7 +2291,7 @@ const Profile::HighScoresForACourse *Profile::GetHighScoresForACourse( const Cou
 {
 	auto it = m_CourseHighScores.find( courseID );
 	if( it == m_CourseHighScores.end() )
-		return NULL;
+		return nullptr;
 	return &it->second;
 }
 
@@ -2304,10 +2304,10 @@ bool Profile::IsMachine() const
 
 XNode* Profile::SaveCoinDataCreateNode() const
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Getting the node containing coin data.");
 
 	const Profile* pProfile = this;
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 
 	XNode* pNode = new XNode( "CoinData" );
 

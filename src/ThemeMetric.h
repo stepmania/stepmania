@@ -193,7 +193,7 @@ public:
 	}
 	ThemeMetric1D()
 	{
-		Load( RString(), NULL, 0 );
+		Load( RString(), nullptr, 0 );
 	}
 	void Load( const RString& sGroup, MetricName1D pfn, size_t N )
 	{
@@ -227,7 +227,7 @@ class ThemeMetric2D : public IThemeMetric
 	std::vector<ThemeMetricTVector> m_metric;
 
 public:
-	ThemeMetric2D( const RString& sGroup = "", MetricName2D pfn = NULL, size_t N = 0, size_t M = 0 )
+	ThemeMetric2D( const RString& sGroup = "", MetricName2D pfn = nullptr, size_t N = 0, size_t M = 0 )
 	{
 		Load( sGroup, pfn, N, M );
 	}
@@ -268,7 +268,7 @@ class ThemeMetricMap : public IThemeMetric
 	std::map<RString,ThemeMetricT> m_metric;
 
 public:
-	ThemeMetricMap( const RString& sGroup = "", MetricNameMap pfn = NULL, const std::vector<RString> vsValueNames = std::vector<RString>() )
+	ThemeMetricMap( const RString& sGroup = "", MetricNameMap pfn = nullptr, const std::vector<RString> vsValueNames = std::vector<RString>() )
 	{
 		Load( sGroup, pfn, vsValueNames );
 	}

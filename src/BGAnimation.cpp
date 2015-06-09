@@ -50,7 +50,7 @@ void BGAnimation::AddLayersFromAniDir( const RString &_sAniDir, const XNode *pNo
 		for (auto const &sLayer: vsLayerNames)
 		{
 			const XNode* pKey = pNode->GetChild( sLayer );
-			ASSERT( pKey != NULL );
+			ASSERT( pKey != nullptr );
 
 			RString sImportDir;
 			if( pKey->GetAttrValue("Import", sImportDir) )
@@ -113,7 +113,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 
 			XNode* pBGAnimation = ini.GetChild( "BGAnimation" );
 			XNode dummy( "BGAnimation" );
-			if( pBGAnimation == NULL )
+			if( pBGAnimation == nullptr )
 				pBGAnimation = &dummy;
 
 			LoadFromNode( pBGAnimation );

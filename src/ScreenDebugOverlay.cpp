@@ -59,13 +59,13 @@ static LocalizedString MUTE_ACTIONS_ON ("ScreenDebugOverlay", "Mute actions on")
 static LocalizedString MUTE_ACTIONS_OFF ("ScreenDebugOverlay", "Mute actions off");
 
 class IDebugLine;
-static vector<IDebugLine*> *g_pvpSubscribers = NULL;
+static vector<IDebugLine*> *g_pvpSubscribers = nullptr;
 class IDebugLine
 {
 public:
 	IDebugLine()
 	{
-		if( g_pvpSubscribers == NULL )
+		if( g_pvpSubscribers == nullptr )
 			g_pvpSubscribers = new vector<IDebugLine*>;
 		g_pvpSubscribers->push_back( this );
 	}

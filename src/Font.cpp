@@ -30,7 +30,7 @@ void FontPage::Load( const FontPageSettings &cfg )
 		ID1.AdditionalTextureHints = cfg.m_sTextureHints;
 
 	m_FontPageTextures.m_pTextureMain = TEXTUREMAN->LoadTexture( ID1 );
-	if(m_FontPageTextures.m_pTextureMain == NULL)
+	if(m_FontPageTextures.m_pTextureMain == nullptr)
 	{
 		LuaHelpers::ReportScriptErrorFmt(
 			"Failed to load main texture %s for font page.",
@@ -47,7 +47,7 @@ void FontPage::Load( const FontPageSettings &cfg )
 		if( IsAFile(ID2.filename) )
 		{
 			m_FontPageTextures.m_pTextureStroke = TEXTUREMAN->LoadTexture( ID2 );
-			if(m_FontPageTextures.m_pTextureStroke == NULL)
+			if(m_FontPageTextures.m_pTextureStroke == nullptr)
 			{
 				LuaHelpers::ReportScriptErrorFmt(
 					"Failed to load stroke texture %s for font page.",
@@ -225,15 +225,15 @@ void FontPage::SetExtraPixels( int iDrawExtraPixelsLeft, int iDrawExtraPixelsRig
 
 FontPage::~FontPage()
 {
-	if( m_FontPageTextures.m_pTextureMain != NULL )
+	if( m_FontPageTextures.m_pTextureMain != nullptr )
 	{
 		TEXTUREMAN->UnloadTexture( m_FontPageTextures.m_pTextureMain );
-		m_FontPageTextures.m_pTextureMain = NULL;
+		m_FontPageTextures.m_pTextureMain = nullptr;
 	}
-	if( m_FontPageTextures.m_pTextureStroke != NULL )
+	if( m_FontPageTextures.m_pTextureStroke != nullptr )
 	{
 		TEXTUREMAN->UnloadTexture( m_FontPageTextures.m_pTextureStroke );
-		m_FontPageTextures.m_pTextureStroke = NULL;
+		m_FontPageTextures.m_pTextureStroke = nullptr;
 	}
 }
 
@@ -277,7 +277,7 @@ int Font::GetGlyphsThatFit(const wstring& line, int* width) const
 	return i;
 }
 
-Font::Font(): m_iRefCount(1), path(""), m_apPages(), m_pDefault(NULL),
+Font::Font(): m_iRefCount(1), path(""), m_apPages(), m_pDefault(nullptr),
 	m_iCharToGlyph(), m_bRightToLeft(false),
 	// strokes aren't shown by default, hence the Color.
 	m_DefaultStrokeColor(RageColor(0,0,0,0)), m_sChars("") {}
@@ -294,7 +294,7 @@ void Font::Unload()
 	m_apPages.clear();
 
 	m_iCharToGlyph.clear();
-	m_pDefault = NULL;
+	m_pDefault = nullptr;
 
 	/* Don't clear the refcount. We've unloaded, but that doesn't mean things
 	 * aren't still pointing to us. */
@@ -328,7 +328,7 @@ void Font::MergeFont(Font &f)
 	 * page.  It'll usually be overridden later on by one of our own font
 	 * pages; this will be used only if we don't have any font pages at
 	 * all. */
-	if( m_pDefault == NULL )
+	if( m_pDefault == nullptr )
 		m_pDefault = f.m_pDefault;
 
 	for (auto &it: f.m_iCharToGlyph)
@@ -406,7 +406,7 @@ void Font::CapsOnly()
 
 void Font::SetDefaultGlyph( FontPage *pPage )
 {
-	ASSERT( pPage != NULL );
+	ASSERT( pPage != nullptr );
 	if(pPage->m_aGlyphs.empty())
 	{
 		LuaHelpers::ReportScriptErrorFmt(
@@ -696,7 +696,7 @@ RString FontPageSettings::MapRange( RString sMapping, int iMapOffset, int iGlyph
 	}
 
 	const wchar_t *pMapping = FontCharmaps::get_char_map( sMapping );
-	if( pMapping == NULL )
+	if( pMapping == nullptr )
 		return "Unknown mapping";
 
 	while( *pMapping != 0 && iMapOffset )
@@ -897,7 +897,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 	if( LoadStack.empty() )
 	{
 		// Cache ASCII glyphs.
-		m_iCharToGlyphCache.fill( NULL );
+		m_iCharToGlyphCache.fill( nullptr );
 		for( auto it = m_iCharToGlyph.begin(); it != m_iCharToGlyph.end(); ++it )
 			if( it->first < m_iCharToGlyphCache.size() )
 			{

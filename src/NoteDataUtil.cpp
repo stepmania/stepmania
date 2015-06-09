@@ -459,7 +459,7 @@ void NoteDataUtil::SplitCompositeNoteData( const NoteData &in, vector<NoteData> 
 			 Hopefully this hack can be removed soon. -- Jason "Wolfman2000" Felds
 			 */
 			const Style *curStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
-			if( (curStyle == NULL || curStyle->m_StyleType == StyleType_TwoPlayersSharedSides )
+			if( (curStyle == nullptr || curStyle->m_StyleType == StyleType_TwoPlayersSharedSides )
 				&& int( tn.pn ) > NUM_PlayerNumber )
 			{
 				tn.pn = PLAYER_1;

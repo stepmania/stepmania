@@ -65,7 +65,7 @@ void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 	EMPTY_MACHINE_HIGH_SCORE_NAME.Load( sMetricsGroup, "EmptyMachineHighScoreName" );
 	NOT_AVAILABLE.Load( sMetricsGroup, "NotAvailable" );
 	COUNT_FORMAT.Load( sMetricsGroup, "CountFormat" );
-	NULL_COUNT_STRING.Load( sMetricsGroup, "NullCountString" );
+	nullptr_COUNT_STRING.Load( sMetricsGroup, "NullCountString" );
 
 	FOREACH_ENUM( PaneCategory, pc )
 	{
@@ -130,11 +130,11 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 	const Steps *pSteps = GAMESTATE->m_pCurSteps[m_PlayerNumber];
 	const Course *pCourse = GAMESTATE->m_pCurCourse;
 	const Trail *pTrail = GAMESTATE->m_pCurTrail[m_PlayerNumber];
-	const Profile *pProfile = PROFILEMAN->IsPersistentProfile(m_PlayerNumber) ? PROFILEMAN->GetProfile(m_PlayerNumber) : NULL;
+	const Profile *pProfile = PROFILEMAN->IsPersistentProfile(m_PlayerNumber) ? PROFILEMAN->GetProfile(m_PlayerNumber) : nullptr;
 	bool bIsPlayerEdit = pSteps && pSteps->IsAPlayerEdit();
 
 	// Defaults, will be filled in later
-	sTextOut = NULL_COUNT_STRING;
+	sTextOut = nullptr_COUNT_STRING;
 	fLevelOut = 0;
 
 	if(GAMESTATE->IsCourseMode() && !pTrail)
@@ -190,7 +190,7 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 
 	{
 		RadarValues rv;
-		HighScoreList *pHSL = NULL;
+		HighScoreList *pHSL = nullptr;
 		ProfileSlot slot = ProfileSlot_Machine;
 		switch( c )
 		{
@@ -212,20 +212,54 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 
 		switch( c )
 		{
-			case PaneCategory_NumSteps:	fLevelOut = rv[RadarCategory_TapsAndHolds]; break;
-			case PaneCategory_Jumps:		fLevelOut = rv[RadarCategory_Jumps]; break;
-			case PaneCategory_Holds:		fLevelOut = rv[RadarCategory_Holds]; break;
-			case PaneCategory_Rolls:		fLevelOut = rv[RadarCategory_Rolls]; break;
-			case PaneCategory_Mines:		fLevelOut = rv[RadarCategory_Mines]; break;
-			case PaneCategory_Hands:		fLevelOut = rv[RadarCategory_Hands]; break;
-			case PaneCategory_Lifts:		fLevelOut = rv[RadarCategory_Lifts]; break;
-			case PaneCategory_Fakes:		fLevelOut = rv[RadarCategory_Fakes]; break;
+			case PaneCategory_NumSteps:
+			{
+				fLevelOut = rv[RadarCategory_TapsAndHolds];
+				break;
+			}
+			case PaneCategory_Jumps:
+			{
+				fLevelOut = rv[RadarCategory_Jumps];
+				break;
+			}
+			case PaneCategory_Holds:
+			{
+				fLevelOut = rv[RadarCategory_Holds];
+				break;
+			}
+			case PaneCategory_Rolls:
+			{
+				fLevelOut = rv[RadarCategory_Rolls];
+				break;
+			}
+			case PaneCategory_Mines:
+			{
+				fLevelOut = rv[RadarCategory_Mines];
+				break;
+			}
+			case PaneCategory_Hands:
+			{
+				fLevelOut = rv[RadarCategory_Hands];
+				break;
+			}
+			case PaneCategory_Lifts:
+			{
+				fLevelOut = rv[RadarCategory_Lifts];
+				break;
+			}
+			case PaneCategory_Fakes:
+			{
+				fLevelOut = rv[RadarCategory_Fakes];
+				break;
+			}
 			case PaneCategory_ProfileHighScore:
 			case PaneCategory_MachineHighName: // set fLevelOut for color
 			case PaneCategory_MachineHighScore:
-				CHECKPOINT;
+			{
+				CHECKPOINT_M("Getting data from a high score instead of a radar value.");
 				fLevelOut = pHSL->GetTopScore().GetPercentDP();
 				break;
+			}
 			default: break;
 		};
 

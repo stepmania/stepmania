@@ -490,7 +490,7 @@ public:
 		MYTYPE& assign(const MYTYPE& str, MYSIZE nStart, MYSIZE nChars)
 		{
 			// This overload of basic_string::assign is supposed to assign up to
-			// <nChars> or the NULL terminator, whichever comes first.  Since we
+			// <nChars> or the nullptr terminator, whichever comes first.  Since we
 			// are about to call a less forgiving overload (in which <nChars>
 			// must be a valid length), we must adjust the length here to a safe
 			// value.  Thanks to Ullrich Pollähne for catching this bug
@@ -521,7 +521,7 @@ public:
 		MYTYPE& assign(const MYBASE& str, MYSIZE nStart, MYSIZE nChars)
 		{
 			// This overload of basic_string::assign is supposed to assign up to
-			// <nChars> or the NULL terminator, whichever comes first.  Since we
+			// <nChars> or the nullptr terminator, whichever comes first.  Since we
 			// are about to call a less forgiving overload (in which <nChars>
 			// must be a valid length), we must adjust the length here to a safe
 			// value. Thanks to Ullrich Pollähne for catching this bug

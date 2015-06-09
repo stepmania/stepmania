@@ -20,7 +20,7 @@ public:
 	virtual ~DialogDriver() { }
 };
 class DialogDriver_Null : public DialogDriver { };
-#define USE_DIALOG_DRIVER_NULL
+#define USE_DIALOG_DRIVER_nullptr
 
 typedef DialogDriver *(*CreateDialogDriverFn)();
 struct RegisterDialogDriver

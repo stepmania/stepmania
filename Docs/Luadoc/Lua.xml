@@ -193,6 +193,7 @@
 		<Function name='URLEncode'/>
 		<Function name='UndocumentedFeature'/>
 		<Function name='UnlockRewardTypeToLocalizedString'/>
+		<Function name='update_centering'/>
 		<Function name='Var'/>
 		<Function name='VersionDate'/>
 		<Function name='VersionTime'/>

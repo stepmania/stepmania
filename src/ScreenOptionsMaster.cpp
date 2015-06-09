@@ -63,7 +63,7 @@ void ScreenOptionsMaster::Init()
 		ParseCommands( sRowCommands, cmds, false );
 
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( cmds );
-		if( pHand == NULL )
+		if( pHand == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt("Invalid OptionRowHandler \"%s\" in \"%s:Line:%s\".", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), sLineName.c_str());
 		}
@@ -107,7 +107,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		// Override ScreenOptions's calling of ExportOptions
 		m_iChangeMask = 0;
 
-		CHECKPOINT;
+		CHECKPOINT_M("Starting the export handling.");
 
 		vector<PlayerNumber> vpns;
 		FOREACH_OptionsPlayer( p )
@@ -155,7 +155,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		if( m_iChangeMask & OPT_APPLY_SONG )
 			SONGMAN->SetPreferences();
 
-		CHECKPOINT;
+		CHECKPOINT_M("Transferring to the next screen now.");
 		this->HandleScreenMessage( SM_GoToNextScreen );
 		return;
 	}

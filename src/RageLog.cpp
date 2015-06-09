@@ -277,8 +277,9 @@ void RageLog::Write( int where, const RString &sLine )
 		RString &sStr = asLines[i];
 
 		if( sWarning.size() )
-			sStr.insert( 0, sWarning );
-
+		{
+			sStr = sWarning + sStr;
+		}
 		if( m_bShowLogOutput || (where&WRITE_TO_INFO) )
 			puts(sStr); //fputws( (const wchar_t *)sStr.c_str(), stdout );
 		if( where & WRITE_TO_INFO )
@@ -290,7 +291,7 @@ void RageLog::Write( int where, const RString &sLine )
 
 		/* Add a timestamp to log.txt and RecentLogs, but not the rest of info.txt
 		 * and stdout. */
-		sStr.insert( 0, sTimestamp );
+		sStr = sTimestamp + sStr;
 
 		if(where & WRITE_TO_TIME)
 			g_fileTimeLog->PutLine(sStr);
@@ -376,7 +377,7 @@ void RageLog::AddToRecentLogs( const RString &str )
 const char *RageLog::GetRecentLog( int n )
 {
 	if( n >= BACKLOG_LINES || n >= backlog_cnt )
-		return NULL;
+		return nullptr;
 
 	if( backlog_cnt == BACKLOG_LINES )
 	{

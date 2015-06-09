@@ -29,7 +29,7 @@
 
 #include <map>
 
-RageTextureManager*		TEXTUREMAN		= NULL; // global and accessible from anywhere in our program
+RageTextureManager*		TEXTUREMAN		= nullptr; // global and accessible from anywhere in our program
 
 namespace
 {
@@ -204,7 +204,7 @@ void RageTextureManager::VolatileTexture( RageTextureID ID )
 
 void RageTextureManager::UnloadTexture( RageTexture *t )
 {
-	if( t == NULL )
+	if( t == nullptr )
 		return;
 
 	t->m_iRefCount--;

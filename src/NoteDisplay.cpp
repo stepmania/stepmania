@@ -173,7 +173,7 @@ struct NoteResource
 	NoteResource( const NoteSkinAndPath &nsap ): m_nsap(nsap)
 	{
 		m_iRefCount = 0;
-		m_pActor = NULL;
+		m_pActor = nullptr;
 	}
 
 	~NoteResource()
@@ -201,8 +201,8 @@ static NoteResource *MakeNoteResource( const RString &sButton, const RString &sE
 		NOTESKIN->SetPlayerNumber( pn );
 		NOTESKIN->SetGameController( gc );
 
-		pRes->m_pActor = NOTESKIN->LoadActor( sButton, sElement, NULL, bSpriteOnly );
-		ASSERT( pRes->m_pActor != NULL );
+		pRes->m_pActor = NOTESKIN->LoadActor( sButton, sElement, nullptr, bSpriteOnly );
+		ASSERT( pRes->m_pActor != nullptr );
 
 		g_NoteResource[nsap] = pRes;
 		it = g_NoteResource.find( nsap );
@@ -215,7 +215,7 @@ static NoteResource *MakeNoteResource( const RString &sButton, const RString &sE
 
 static void DeleteNoteResource( NoteResource *pRes )
 {
-	ASSERT( pRes != NULL );
+	ASSERT( pRes != nullptr );
 
 	ASSERT_M( pRes->m_iRefCount > 0, ssprintf("RefCount %i > 0", pRes->m_iRefCount) );
 	--pRes->m_iRefCount;
@@ -230,7 +230,7 @@ static void DeleteNoteResource( NoteResource *pRes )
 
 NoteColorActor::NoteColorActor()
 {
-	m_p = NULL;
+	m_p = nullptr;
 }
 
 NoteColorActor::~NoteColorActor()
@@ -254,7 +254,7 @@ Actor *NoteColorActor::Get()
 
 NoteColorSprite::NoteColorSprite()
 {
-	m_p = NULL;
+	m_p = nullptr;
 }
 
 NoteColorSprite::~NoteColorSprite()
@@ -390,9 +390,9 @@ void NoteColumnRenderArgs::SetPRZForActor(Actor* actor,
 	actor->SetX(sp_pos.x + ae_pos.x);
 	actor->SetY(sp_pos.y + ae_pos.y);
 	actor->SetZ(sp_pos.z + ae_pos.z);
-	actor->SetRotationX(sp_rot.x * PI_180R + ae_rot.x);
-	actor->SetRotationY(sp_rot.y * PI_180R + ae_rot.y);
-	actor->SetRotationZ(sp_rot.z * PI_180R + ae_rot.z);
+	actor->SetRotationX(static_cast<float>(sp_rot.x * PI_180R + ae_rot.x));
+	actor->SetRotationY(static_cast<float>(sp_rot.y * PI_180R + ae_rot.y));
+	actor->SetRotationZ(static_cast<float>(sp_rot.z * PI_180R + ae_rot.z));
 	actor->SetZoomX(sp_zoom.x + ae_zoom.x);
 	actor->SetZoomY(sp_zoom.y + ae_zoom.y);
 	actor->SetZoomZ(sp_zoom.z + ae_zoom.z);
@@ -549,7 +549,8 @@ bool NoteDisplay::DrawTapsInRange(const NoteFieldRenderArgs& field_args,
 		// [first_row,last_row] aren't necessarily visible.
 		// Test every note to make sure it's on screen before drawing.
 		if(!IsOnScreen(NoteRowToBeat(tap_row), column_args.column,
-				field_args.draw_pixels_after_targets, field_args.draw_pixels_before_targets))
+			static_cast<int>(field_args.draw_pixels_after_targets),
+			static_cast<int>(field_args.draw_pixels_before_targets)))
 		{
 			continue; // skip
 		}
@@ -773,8 +774,9 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 
 	// top to bottom
 	bool bAllAreTransparent = true;
-	bool bLast = false;
-	float fAddToTexCoord = 0;
+	bool last_vert_set = false;
+	bool first_vert_set= true;
+	float add_to_tex_coord = 0;
 
 	// The caps should always use the full texture.
 	if(part_type == hpt_body)
@@ -784,7 +786,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			float tex_coord_bottom= SCALE(part_args.y_bottom - part_args.y_top,
 				0, unzoomed_frame_height, rect.top, rect.bottom);
 			float want_tex_coord_bottom	= ceilf(tex_coord_bottom - 0.0001f);
-			fAddToTexCoord = want_tex_coord_bottom - tex_coord_bottom;
+			add_to_tex_coord = want_tex_coord_bottom - tex_coord_bottom;
 		}
 
 		if(part_args.wrapping)
@@ -793,9 +795,15 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			 * don't send very large values to the renderer. */
 			const float fDistFromTop	= y_start_pos - part_args.y_top;
 			float fTexCoordTop		= SCALE(fDistFromTop, 0, unzoomed_frame_height, rect.top, rect.bottom);
-			fTexCoordTop += fAddToTexCoord;
-			fAddToTexCoord -= floorf(fTexCoordTop);
+			fTexCoordTop += add_to_tex_coord;
+			add_to_tex_coord -= floorf(fTexCoordTop);
 		}
+	}
+	// The bottom caps mysteriously hate me and their texture coords need to be
+	// shifted by one pixel or there is a seam. -Kyz
+	if(part_type == hpt_bottom)
+	{
+		add_to_tex_coord= SCALE(1.0f, 0.0f, power_of_two(unzoomed_frame_height), 0.0f, 1.0f);
 	}
 
 	DISPLAY->ClearAllTextures();
@@ -809,12 +817,12 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	static const RageVector3 pos_y_vec(0.0f, 1.0f, 0.0f);
 
 	StripBuffer queue;
-	for(float fY = y_start_pos; !bLast; fY += part_args.y_step)
+	for(float fY = y_start_pos; !last_vert_set; fY += part_args.y_step)
 	{
 		if(fY >= y_end_pos)
 		{
 			fY = y_end_pos;
-			bLast = true;
+			last_vert_set = true;
 		}
 
 		const float fYOffset= ArrowEffects::GetYOffsetFromYPos(column_args.column, fY, m_fYReverseOffsetPixels);
@@ -918,10 +926,10 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		{
 			case NCSM_Disabled:
 				// XXX: Actor rotations use degrees, Math uses radians. Convert here.
-				ae_rot.y= ArrowEffects::GetRotationY(fYOffset) * PI_180;
+				ae_rot.y= ArrowEffects::GetRotationY(fYOffset) * static_cast<float>(PI_180);
 				break;
 			case NCSM_Offset:
-				ae_rot.y= ArrowEffects::GetRotationY(fYOffset) * PI_180;
+				ae_rot.y = ArrowEffects::GetRotationY(fYOffset) * static_cast<float>(PI_180);
 				column_args.rot_handler->EvalForBeat(column_args.song_beat, cur_beat, sp_rot);
 				break;
 			case NCSM_Position:
@@ -935,7 +943,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			sp_pos.y + ae_pos.y, sp_pos.z + ae_pos.z);
 
 		// Special case for hold caps, which have the same top and bottom beat.
-		if(part_args.top_beat == part_args.bottom_beat && fY != y_start_pos)
+		if(part_args.top_beat == part_args.bottom_beat && !first_vert_set)
 		{
 			center_vert.x+= render_forward.x;
 			center_vert.y+= render_forward.y;
@@ -967,7 +975,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 
 		const float fDistFromTop	= (fY - y_start_pos) / ae_zoom;
 		float fTexCoordTop		= SCALE(fDistFromTop, 0, unzoomed_frame_height, rect.top, rect.bottom);
-		fTexCoordTop += fAddToTexCoord;
+		fTexCoordTop += add_to_tex_coord;
 
 		const float fAlpha		= ArrowGetAlphaOrGlow(glow, m_pPlayerState, column_args.column, fYOffset, part_args.percent_fade_to_fail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets);
 		const RageColor color= RageColor(
@@ -984,7 +992,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		queue.v[2].p = right_vert;  queue.v[2].c = color; queue.v[2].t = RageVector2(fTexCoordRight, fTexCoordTop);
 		queue.v+=3;
 
-		if(queue.Free() < 3 || bLast)
+		if(queue.Free() < 3 || last_vert_set)
 		{
 			/* The queue is full.  Render it, clear the buffer, and move back a step to
 			 * start off the strip again. */
@@ -1004,6 +1012,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			bAllAreTransparent = true;
 			fY -= part_args.y_step;
 		}
+		first_vert_set= false;
 	}
 }
 
@@ -1036,6 +1045,7 @@ void NoteDisplay::DrawHoldBodyInternal(vector<Sprite*>& sprite_top,
 	part_args.y_bottom= tail_plus_bottom;
 	part_args.top_beat= bottom_beat;
 	part_args.y_start_pos= max(part_args.y_start_pos, y_head);
+	part_args.wrapping= false;
 	DrawHoldPart(sprite_bottom, field_args, column_args, part_args, glow, hpt_bottom);
 }
 
@@ -1335,7 +1345,7 @@ void NoteDisplay::DrawTap(const TapNote& tn,
 	bool bOnSameRowAsHoldStart, bool bOnSameRowAsRollStart,
 	bool bIsAddition, float fPercentFadeToFail)
 {
-	Actor* pActor = NULL;
+	Actor* pActor = nullptr;
 	NotePart part = NotePart_Tap;
 	/*
 	if( tn.source == TapNoteSource_Addition )

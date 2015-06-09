@@ -208,7 +208,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 void ScreenOptionsManageCourses::AfterChangeRow( PlayerNumber pn )
 {
 	Course *pCourse = GetCourseWithFocus();
-	Trail *pTrail = pCourse ? pCourse->GetTrail( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit ) : NULL;
+	Trail *pTrail = pCourse ? pCourse->GetTrail( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit ) : nullptr;
 
 	GAMESTATE->m_pCurCourse.Set( pCourse );
 	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
@@ -275,9 +275,9 @@ Course *ScreenOptionsManageCourses::GetCourseWithFocus() const
 {
 	int iCurRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 	if( iCurRow == 0 )
-		return NULL;
+		return nullptr;
 	else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )
-		return NULL;
+		return nullptr;
 
 	// a course
 	int index = iCurRow - 1;

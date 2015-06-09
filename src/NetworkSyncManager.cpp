@@ -72,8 +72,8 @@ int NetworkSyncManager::GetSMOnlineSalt()
 static LocalizedString INITIALIZING_CLIENT_NETWORK	( "NetworkSyncManager", "Initializing Client Network..." );
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 {
-	LANserver = NULL;	//So we know if it has been created yet
-	BroadcastReception = NULL;
+	LANserver = nullptr;	//So we know if it has been created yet
+	BroadcastReception = nullptr;
 
 	ld->SetText( INITIALIZING_CLIENT_NETWORK );
 	NetPlayerClient = new EzSockets;
@@ -346,11 +346,11 @@ void NetworkSyncManager::StartRequest( short position )
 
 	Steps * tSteps;
 	tSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-	if( tSteps!=NULL && GAMESTATE->IsPlayerEnabled(PLAYER_1) )
+	if( tSteps!=nullptr && GAMESTATE->IsPlayerEnabled(PLAYER_1) )
 		ctr = uint8_t(ctr+tSteps->GetMeter()*16);
 
 	tSteps = GAMESTATE->m_pCurSteps[PLAYER_2];
-	if( tSteps!=NULL && GAMESTATE->IsPlayerEnabled(PLAYER_2) )
+	if( tSteps!=nullptr && GAMESTATE->IsPlayerEnabled(PLAYER_2) )
 		ctr = uint8_t( ctr+tSteps->GetMeter() );
 
 	m_packet.Write1( ctr );
@@ -358,11 +358,11 @@ void NetworkSyncManager::StartRequest( short position )
 	ctr=0;
 
 	tSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-	if( tSteps!=NULL && GAMESTATE->IsPlayerEnabled(PLAYER_1) )
+	if( tSteps!=nullptr && GAMESTATE->IsPlayerEnabled(PLAYER_1) )
 		ctr = uint8_t( ctr + (int)tSteps->GetDifficulty()*16 );
 
 	tSteps = GAMESTATE->m_pCurSteps[PLAYER_2];
-	if( tSteps!=NULL && GAMESTATE->IsPlayerEnabled(PLAYER_2) )
+	if( tSteps!=nullptr && GAMESTATE->IsPlayerEnabled(PLAYER_2) )
 		ctr = uint8_t( ctr + (int)tSteps->GetDifficulty() );
 
 	m_packet.Write1( ctr );
@@ -371,7 +371,7 @@ void NetworkSyncManager::StartRequest( short position )
 	ctr = char( position*16 );
 	m_packet.Write1( ctr );
 
-	if( GAMESTATE->m_pCurSong != NULL )
+	if( GAMESTATE->m_pCurSong != nullptr )
 	{
 		m_packet.WriteNT( GAMESTATE->m_pCurSong->m_sMainTitle );
 		m_packet.WriteNT( GAMESTATE->m_pCurSong->m_sSubTitle );
@@ -384,7 +384,7 @@ void NetworkSyncManager::StartRequest( short position )
 		m_packet.WriteNT( "" );
 	}
 
-	if( GAMESTATE->m_pCurCourse != NULL )
+	if( GAMESTATE->m_pCurCourse != nullptr )
 		m_packet.WriteNT( GAMESTATE->m_pCurCourse->GetDisplayFullTitle() );
 	else
 		m_packet.WriteNT( RString() );
@@ -399,7 +399,7 @@ void NetworkSyncManager::StartRequest( short position )
 		m_packet.WriteNT( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetCurrent().GetString() );
 	}
 	for (int i=0; i<2-players; ++i)
-		m_packet.WriteNT("");	//Write a NULL if no player
+		m_packet.WriteNT("");	//Write a nullptr if no player
 
 	//This needs to be reset before ScreenEvaluation could possibly be called
 	m_EvalPlayerData.clear();
@@ -907,7 +907,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 		{
 			// \r\n\r\n = Separator from HTTP Header and Body
 			char* cBodyStart = strstr(cBuffer, "\r\n\r\n");
-			if( cBodyStart != NULL )
+			if( cBodyStart != nullptr )
 			{
 				// Get the HTTP Header only
 				int iHeaderLength = cBodyStart - cBuffer;
@@ -941,13 +941,13 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 							if( 0 == stricmp(sFieldName,"X-SM-Build") )
 							{
 								bSuccess = true;
-								uCurrentSMBuild = strtoul( sFieldValue, NULL, 10 );
+								uCurrentSMBuild = strtoul( sFieldValue, nullptr, 10 );
 								break;
 							}
 						}
 					}
 				} // if( svResponse[0].find("200") != RString::npos )
-			} // if( cBodyStart != NULL )
+			} // if( cBodyStart != nullptr )
 		} // if( iBytes )
 		SAFE_DELETE( cBuffer );
 	} // if( socket->connect(sHost, uPort) )

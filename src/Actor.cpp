@@ -88,7 +88,7 @@ void Actor::InitState()
 {
 	this->StopTweening();
 
-	m_pTempState = NULL;
+	m_pTempState = nullptr;
 
 	m_baseRotation = RageVector3( 0, 0, 0 );
 	m_baseScale = RageVector3( 1, 1, 1 );
@@ -163,8 +163,8 @@ Actor::Actor()
 
 	m_size = RageVector2( 1, 1 );
 	InitState();
-	m_pParent = NULL;
-	m_FakeParent= NULL;
+	m_pParent = nullptr;
+	m_FakeParent= nullptr;
 	m_bFirstUpdate = true;
 }
 
@@ -183,8 +183,8 @@ Actor::Actor( const Actor &cpy ):
 	MessageSubscriber( cpy )
 {
 	/* Don't copy an Actor in the middle of rendering. */
-	ASSERT( cpy.m_pTempState == NULL );
-	m_pTempState = NULL;
+	ASSERT( cpy.m_pTempState == nullptr );
+	m_pTempState = nullptr;
 
 #define CPY(x) x = cpy.x
 	CPY( m_sName );
@@ -384,7 +384,7 @@ void Actor::Draw()
 			this->SetInternalGlow(last_glow);
 		}
 		this->PreDraw();
-		ASSERT( m_pTempState != NULL );
+		ASSERT( m_pTempState != nullptr );
 		if(PartiallyOpaque())
 		{
 			this->BeginDraw();
@@ -402,16 +402,16 @@ void Actor::Draw()
 		}
 		abort_with_end_draw= true;
 		state->PostDraw();
-		state->m_pTempState= NULL;
+		state->m_pTempState= nullptr;
 	}
 
 	if(m_FakeParent)
 	{
 		m_FakeParent->EndDraw();
 		m_FakeParent->PostDraw();
-		m_FakeParent->m_pTempState= NULL;
+		m_FakeParent->m_pTempState= nullptr;
 	}
-	m_pTempState = NULL;
+	m_pTempState = nullptr;
 }
 
 void Actor::PostDraw() // reset internal diffuse and glow
@@ -836,7 +836,7 @@ void Actor::UpdateInternal(float delta_time)
 			}
 			break;
 		case CLOCK_TIMER_GLOBAL:
-			generic_global_timer_update(RageTimer::GetUsecsSinceStart(),
+			generic_global_timer_update(static_cast<float>(RageTimer::GetUsecsSinceStart()),
 				m_fEffectDelta, m_fSecsIntoEffect);
 			break;
 		case CLOCK_BGM_BEAT:
@@ -1279,7 +1279,7 @@ void Actor::RunCommands( const LuaReference& cmds, const LuaReference *pParamTab
 	this->PushSelf( L );
 
 	// 2nd parameter
-	if( pParamTable == NULL )
+	if( pParamTable == nullptr )
 		lua_pushnil( L );
 	else
 		pParamTable->PushSelf( L );
@@ -1448,14 +1448,14 @@ void Actor::AddCommand( const RString &sCmdName, apActorCommands apac, bool warn
 
 bool Actor::HasCommand( const RString &sCmdName ) const
 {
-	return GetCommand(sCmdName) != NULL;
+	return GetCommand(sCmdName) != nullptr;
 }
 
 const apActorCommands *Actor::GetCommand( const RString &sCommandName ) const
 {
 	auto it = m_mapNameToCommands.find( sCommandName );
 	if( it == m_mapNameToCommands.end() )
-		return NULL;
+		return nullptr;
 	return &it->second;
 }
 
@@ -1467,7 +1467,7 @@ void Actor::HandleMessage( const Message &msg )
 void Actor::PlayCommandNoRecurse( const Message &msg )
 {
 	const apActorCommands *pCmd = GetCommand( msg.GetName() );
-	if( pCmd != NULL )
+	if( pCmd != nullptr )
 		RunCommands( *pCmd, &msg.GetParamTable() );
 }
 
@@ -1497,7 +1497,7 @@ void Actor::SetParent( Actor *pParent )
 
 Actor::TweenInfo::TweenInfo()
 {
-	m_pTween = NULL;
+	m_pTween = nullptr;
 }
 
 Actor::TweenInfo::~TweenInfo()
@@ -1507,14 +1507,14 @@ Actor::TweenInfo::~TweenInfo()
 
 Actor::TweenInfo::TweenInfo( const TweenInfo &cpy )
 {
-	m_pTween = NULL;
+	m_pTween = nullptr;
 	*this = cpy;
 }
 
 Actor::TweenInfo &Actor::TweenInfo::operator=( const TweenInfo &rhs )
 {
 	delete m_pTween;
-	m_pTween = (rhs.m_pTween? rhs.m_pTween->Copy():NULL);
+	m_pTween = (rhs.m_pTween? rhs.m_pTween->Copy():nullptr);
 	m_fTimeLeftInTween = rhs.m_fTimeLeftInTween;
 	m_fTweenTime = rhs.m_fTweenTime;
 	m_sCommandName = rhs.m_sCommandName;
@@ -1593,7 +1593,7 @@ public:
 			COMMON_RETURN_SELF;
 		}
 		ITween *pTween = ITween::CreateFromStack( L, 2 );
-		if(pTween != NULL)
+		if(pTween != nullptr)
 		{
 			p->BeginTweening(fTime, pTween);
 		}
@@ -1787,7 +1787,7 @@ public:
 	static int GetCommand( T* p, lua_State *L )
 	{
 		const apActorCommands *pCommand = p->GetCommand(SArg(1));
-		if( pCommand == NULL )
+		if( pCommand == nullptr )
 			lua_pushnil( L );
 		else
 			(*pCommand)->PushSelf(L);
@@ -1845,7 +1845,7 @@ public:
 	static int GetParent( T* p, lua_State *L )
 	{
 		Actor *pParent = p->GetParent();
-		if( pParent == NULL )
+		if( pParent == nullptr )
 			lua_pushnil( L );
 		else
 			pParent->PushSelf(L);
@@ -1854,7 +1854,7 @@ public:
 	static int GetFakeParent(T* p, lua_State *L)
 	{
 		Actor* fake= p->GetFakeParent();
-		if(fake == NULL)
+		if(fake == nullptr)
 		{
 			lua_pushnil(L);
 		}
@@ -1868,7 +1868,7 @@ public:
 	{
 		if(lua_isnoneornil(L, 1))
 		{
-			p->SetFakeParent(NULL);
+			p->SetFakeParent(nullptr);
 		}
 		else
 		{

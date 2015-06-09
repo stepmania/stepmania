@@ -122,7 +122,7 @@ void ActorFrame::LoadChildrenFromNode( const XNode* pNode )
 	// Load children
 	const XNode* pChildren = pNode->GetChild("children");
 	bool bArrayOnly = false;
-	if( pChildren == NULL )
+	if( pChildren == nullptr )
 	{
 		bArrayOnly = true;
 		pChildren = pNode;
@@ -149,7 +149,7 @@ void ActorFrame::AddChild( Actor *pActor )
 		Dialog::OK( ssprintf("Actor \"%s\" adds child \"%s\" more than once", GetLineage().c_str(), pActor->GetName().c_str()) );
 #endif
 
-	ASSERT( pActor != NULL );
+	ASSERT( pActor != nullptr );
 	ASSERT( (void*)pActor != (void*)0xC0000005 );
 	m_SubActors.push_back( pActor );
 
@@ -181,7 +181,7 @@ Actor* ActorFrame::GetChild( const RString &sName )
 			return a;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void ActorFrame::RemoveAllChildren()
@@ -443,14 +443,14 @@ void ActorFrame::PushChildTable(lua_State* L, const RString &sName)
 void ActorFrame::PlayCommandOnChildren( const RString &sCommandName, const LuaReference *pParamTable )
 {
 	const apActorCommands *pCmd = GetCommand( sCommandName );
-	if( pCmd != NULL )
+	if( pCmd != nullptr )
 		RunCommandsOnChildren( *pCmd, pParamTable );
 }
 
 void ActorFrame::PlayCommandOnLeaves( const RString &sCommandName, const LuaReference *pParamTable )
 {
 	const apActorCommands *pCmd = GetCommand( sCommandName );
-	if( pCmd != NULL )
+	if( pCmd != nullptr )
 		RunCommandsOnLeaves( **pCmd, pParamTable );
 }
 
@@ -726,7 +726,7 @@ public:
 	{
 		// this one is tricky, we need to get an Actor from Lua.
 		Actor *pActor = ActorUtil::MakeActor( SArg(1) );
-		if ( pActor == NULL )
+		if ( pActor == nullptr )
 		{
 			lua_pushboolean( L, 0 );
 			return 1;

@@ -77,7 +77,7 @@ void RageBitmapTexture::Create()
 
 	/* Load the image into a RageSurface. */
 	RString error;
-	RageSurface *pImg= NULL;
+	RageSurface *pImg= nullptr;
 	if(actualID.filename == TEXTUREMAN->GetScreenTextureID().filename)
 	{
 		pImg= TEXTUREMAN->GetScreenSurface();
@@ -88,14 +88,14 @@ void RageBitmapTexture::Create()
 	}
 
 	/* Tolerate corrupt/unknown images. */
-	if( pImg == NULL )
+	if( pImg == nullptr )
 	{
 		RString warning = ssprintf("RageBitmapTexture: Couldn't load %s: %s",
 			actualID.filename.c_str(), error.c_str());
 		LOG->Warn("%s", warning.c_str());
 		Dialog::OK(warning, "missing_texture");
 		pImg = RageSurfaceUtils::MakeDummySurface( 64, 64 );
-		ASSERT( pImg != NULL );
+		ASSERT( pImg != nullptr );
 	}
 
 	if( actualID.bHotPinkColorKey )

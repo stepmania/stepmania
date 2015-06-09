@@ -150,15 +150,15 @@ static RageColor GetBrightnessColor( float fBrightnessPercent )
 BackgroundImpl::BackgroundImpl()
 {
 	m_bInitted = false;
-	m_pDancingCharacters = NULL;
-	m_pSong = NULL;
+	m_pDancingCharacters = nullptr;
+	m_pSong = nullptr;
 }
 
 BackgroundImpl::Layer::Layer()
 {
 	m_iCurBGChangeIndex = -1;
-	m_pCurrentBGA = NULL;
-	m_pFadingBGA = NULL;
+	m_pCurrentBGA = nullptr;
+	m_pFadingBGA = nullptr;
 }
 
 void BackgroundImpl::Init()
@@ -245,7 +245,7 @@ void BackgroundImpl::Unload()
 {
 	FOREACH_BackgroundLayer( i )
 		m_Layer[i].Unload();
-	m_pSong = NULL;
+	m_pSong = nullptr;
 	m_fLastMusicSeconds	= -9999;
 	m_RandomBGAnimations.clear();
 }
@@ -259,8 +259,8 @@ void BackgroundImpl::Layer::Unload()
 	m_BGAnimations.clear();
 	m_aBGChanges.clear();
 
-	m_pCurrentBGA = NULL;
-	m_pFadingBGA = NULL;
+	m_pCurrentBGA = nullptr;
+	m_pFadingBGA = nullptr;
 	m_iCurBGChangeIndex = -1;
 }
 
@@ -387,7 +387,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 
 	Actor *pActor = ActorUtil::MakeActor( sEffectFile );
 
-	if( pActor == NULL )
+	if( pActor == nullptr )
 		pActor = new Actor;
 	m_BGAnimations[bd] = pActor;
 
@@ -760,7 +760,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 
 		if( m_pFadingBGA == m_pCurrentBGA )
 		{
-			m_pFadingBGA = NULL;
+			m_pFadingBGA = nullptr;
 			//LOG->Trace( "bg didn't actually change.  Ignoring." );
 		}
 		else
@@ -802,7 +802,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 	if( m_pFadingBGA )
 	{
 		if( m_pFadingBGA->GetTweenTimeLeft() == 0 )
-			m_pFadingBGA = NULL;
+			m_pFadingBGA = nullptr;
 	}
 
 	/* This is unaffected by the music rate. */

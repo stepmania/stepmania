@@ -62,9 +62,9 @@ struct SMLoader
 	 * @param out a vector of files found in the path.
 	 */
 	virtual void GetApplicableFiles( const RString &sPath, std::vector<RString> &out, bool load_autosave= false );
-	virtual bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong=NULL );
-	virtual bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot, Song *givenSong=NULL );
-	virtual bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong=NULL );
+	virtual bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong=nullptr );
+	virtual bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot, Song *givenSong=nullptr );
+	virtual bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong=nullptr );
 	virtual bool LoadFromBGChangesString(BackgroundChange &change,
 					     const RString &sBGChangeExpression );
 

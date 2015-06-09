@@ -50,7 +50,7 @@ void OptionListRow::SetFromHandler( const OptionRowHandler *pHandler )
 	this->FinishTweening();
 	this->RemoveAllChildren();
 
-	if( pHandler == NULL )
+	if( pHandler == nullptr )
 		return;
 
 	int iNum = max( pHandler->m_Def.m_vsChoices.size(), m_Text.size() )+1;
@@ -104,7 +104,7 @@ void OptionListRow::SetFromHandler( const OptionRowHandler *pHandler )
 
 void OptionListRow::SetTextFromHandler( const OptionRowHandler *pHandler )
 {
-	ASSERT( pHandler != NULL );
+	ASSERT( pHandler != nullptr );
 	for( unsigned i = 0; i < pHandler->m_Def.m_vsChoices.size(); ++i )
 	{
 		// init text
@@ -175,7 +175,7 @@ void OptionListRow::PositionCursor( Actor *pCursor, int iSelection )
 OptionsList::OptionsList()
 {
 	m_iCurrentRow = 0;
-	m_pLinked = NULL;
+	m_pLinked = nullptr;
 }
 
 OptionsList::~OptionsList()
@@ -223,7 +223,7 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 		ParseCommands( sRowCommands, cmds, false );
 
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( cmds );
-		if( pHand == NULL )
+		if( pHand == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt("Invalid OptionRowHandler '%s' in %s::Line%s", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), sLineName.c_str());
 			continue;
@@ -275,7 +275,7 @@ void OptionsList::Open()
 	Push( TOP_MENU );
 
 	this->FinishTweening();
-	m_Row[!m_iCurrentRow].SetFromHandler( NULL );
+	m_Row[!m_iCurrentRow].SetFromHandler( nullptr );
 	this->PlayCommand( "TweenOn" );
 }
 
@@ -536,7 +536,7 @@ void OptionsList::ImportRow( RString sRow )
 	vpns.push_back( m_pn );
 	OptionRowHandler *pHandler = m_Rows[sRow];
 	aSelections[ m_pn ].resize( pHandler->m_Def.m_vsChoices.size() );
-	pHandler->ImportOption( NULL, vpns, aSelections );
+	pHandler->ImportOption( nullptr, vpns, aSelections );
 	m_bSelections[sRow] = aSelections[ m_pn ];
 
 	if( m_setTopMenus.find(sRow) != m_setTopMenus.end() )
@@ -645,7 +645,7 @@ void OptionsList::SelectionsChanged( const RString &sRowName )
 	const OptionRowHandler *pHandler = m_Rows[sRowName];
 	vector<bool> &bSelections = m_bSelections[sRowName];
 
-	if( pHandler->m_Def.m_bOneChoiceForAllPlayers && m_pLinked != NULL )
+	if( pHandler->m_Def.m_bOneChoiceForAllPlayers && m_pLinked != nullptr )
 	{
 		vector<bool> &bLinkedSelections = m_pLinked->m_bSelections[sRowName];
 		bLinkedSelections = bSelections;

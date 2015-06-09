@@ -93,27 +93,27 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 	if( DriversToTry.empty() )
 		RageException::Throw( "%s", MOVIE_DRIVERS_EMPTY.GetValue().c_str() );
 
-	RageMovieTexture *ret = NULL;
+	RageMovieTexture *ret = nullptr;
 
 	for (auto const &Driver: DriversToTry)
 	{
 		LOG->Trace( "Initializing driver: %s", Driver.c_str() );
 		RageDriver *pDriverBase = RageMovieTextureDriver::m_pDriverList.Create( Driver );
 
-		if( pDriverBase == NULL )
+		if( pDriverBase == nullptr )
 		{
 			LOG->Trace( "Unknown movie driver name: %s", Driver.c_str() );
 			continue;
 		}
 
 		RageMovieTextureDriver *pDriver = dynamic_cast<RageMovieTextureDriver *>( pDriverBase );
-		ASSERT( pDriver != NULL );
+		ASSERT( pDriver != nullptr );
 
 		RString sError;
 		ret = pDriver->Create( ID, sError );
 		delete pDriver;
 
-		if( ret == NULL )
+		if( ret == nullptr )
 		{
 			LOG->Trace( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
 			SAFE_DELETE( ret );

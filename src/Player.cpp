@@ -219,27 +219,27 @@ Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 	m_drawing_notefield_board= false;
 	m_bLoaded = false;
 
-	m_pPlayerState = NULL;
-	m_pPlayerStageStats = NULL;
+	m_pPlayerState = nullptr;
+	m_pPlayerStageStats = nullptr;
 	m_fNoteFieldHeight = 0;
 
-	m_pLifeMeter = NULL;
-	m_pCombinedLifeMeter = NULL;
-	m_pScoreDisplay = NULL;
-	m_pSecondaryScoreDisplay = NULL;
-	m_pPrimaryScoreKeeper = NULL;
-	m_pSecondaryScoreKeeper = NULL;
-	m_pInventory = NULL;
-	m_pIterNeedsTapJudging = NULL;
-	m_pIterNeedsHoldJudging = NULL;
-	m_pIterUncrossedRows = NULL;
-	m_pIterUnjudgedRows = NULL;
-	m_pIterUnjudgedMineRows = NULL;
+	m_pLifeMeter = nullptr;
+	m_pCombinedLifeMeter = nullptr;
+	m_pScoreDisplay = nullptr;
+	m_pSecondaryScoreDisplay = nullptr;
+	m_pPrimaryScoreKeeper = nullptr;
+	m_pSecondaryScoreKeeper = nullptr;
+	m_pInventory = nullptr;
+	m_pIterNeedsTapJudging = nullptr;
+	m_pIterNeedsHoldJudging = nullptr;
+	m_pIterUncrossedRows = nullptr;
+	m_pIterUnjudgedRows = nullptr;
+	m_pIterUnjudgedMineRows = nullptr;
 
 	m_bPaused = false;
 	m_bDelay = false;
 
-	m_pAttackDisplay = NULL;
+	m_pAttackDisplay = nullptr;
 	if( bVisibleParts )
 	{
 		m_pAttackDisplay = new AttackDisplay;
@@ -248,7 +248,7 @@ Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 
 	PlayerAI::InitFromDisk();
 
-	m_pNoteField = NULL;
+	m_pNoteField = nullptr;
 	if( bVisibleParts )
 	{
 		m_pNoteField = new NoteField;
@@ -417,12 +417,12 @@ void Player::Init(
 
 		if( GAMESTATE->IsCourseMode() )
 		{
-			ASSERT( GAMESTATE->m_pCurTrail[pn] != NULL );
+			ASSERT( GAMESTATE->m_pCurTrail[pn] != nullptr );
 			GAMESTATE->m_pCurTrail[pn]->GetDisplayBpms( bpms );
 		}
 		else
 		{
-			ASSERT( GAMESTATE->m_pCurSong != NULL );
+			ASSERT( GAMESTATE->m_pCurSong != nullptr );
 			GAMESTATE->m_pCurSong->GetDisplayBpms( bpms );
 		}
 
@@ -506,14 +506,14 @@ void Player::Init(
 	}
 	else
 	{
-		m_pActorWithComboPosition = NULL;
-		m_pActorWithJudgmentPosition = NULL;
+		m_pActorWithComboPosition = nullptr;
+		m_pActorWithJudgmentPosition = nullptr;
 	}
 
 	// Load HoldJudgments
 	m_vpHoldJudgment.resize( GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer );
 	for( int i = 0; i < GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer; ++i )
-		m_vpHoldJudgment[i] = NULL;
+		m_vpHoldJudgment[i] = nullptr;
 
 	if( HasVisibleParts() )
 	{
@@ -639,7 +639,7 @@ void Player::Load()
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 	bool bOniDead = m_pPlayerState->m_PlayerOptions.GetStage().m_LifeType == LifeType_Battery  &&
-		(m_pPlayerStageStats == NULL || m_pPlayerStageStats->m_bFailed);
+		(m_pPlayerStageStats == nullptr || m_pPlayerStageStats->m_bFailed);
 
 	/* The editor reuses Players ... so we really need to make sure everything
 	 * is reset and not tweening.  Perhaps ActorFrame should recurse to subactors;
@@ -806,7 +806,7 @@ void Player::Update( float fDeltaTime )
 
 	//LOG->Trace( "Player::Update(%f)", fDeltaTime );
 
-	if( GAMESTATE->m_pCurSong==NULL || IsOniDead() )
+	if( GAMESTATE->m_pCurSong==nullptr || IsOniDead() )
 		return;
 
 	ActorFrame::Update( fDeltaTime );
@@ -898,14 +898,14 @@ void Player::Update( float fDeltaTime )
 		const bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(0) == 1;
 		float fPercentCentered = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fScrolls[PlayerOptions::SCROLL_CENTERED];
 
-		if( m_pActorWithJudgmentPosition != NULL )
+		if( m_pActorWithJudgmentPosition != nullptr )
 		{
 			const Actor::TweenState &ts1 = m_tsJudgment[bReverse?1:0][0];
 			const Actor::TweenState &ts2 = m_tsJudgment[bReverse?1:0][1];
 			Actor::TweenState::MakeWeightedAverage( m_pActorWithJudgmentPosition->DestTweenState(), ts1, ts2, fPercentCentered );
 		}
 
-		if( m_pActorWithComboPosition != NULL )
+		if( m_pActorWithComboPosition != nullptr )
 		{
 			const Actor::TweenState &ts1 = m_tsCombo[bReverse?1:0][0];
 			const Actor::TweenState &ts2 = m_tsCombo[bReverse?1:0][1];
@@ -915,9 +915,9 @@ void Player::Update( float fDeltaTime )
 		float fNoteFieldZoom = 1 - fMiniPercent*0.5f;
 		if( m_pNoteField )
 			m_pNoteField->SetZoom( fNoteFieldZoom );
-		if( m_pActorWithJudgmentPosition != NULL )
+		if( m_pActorWithJudgmentPosition != nullptr )
 			m_pActorWithJudgmentPosition->SetZoom( m_pActorWithJudgmentPosition->GetZoom() * fJudgmentZoom );
-		if( m_pActorWithComboPosition != NULL )
+		if( m_pActorWithComboPosition != nullptr )
 			m_pActorWithComboPosition->SetZoom( m_pActorWithComboPosition->GetZoom() * fJudgmentZoom );
 	}
 
@@ -938,7 +938,7 @@ void Player::Update( float fDeltaTime )
 	ASSERT_M( iNumCols <= MAX_COLS_PER_PLAYER, ssprintf("%i > %i", iNumCols, MAX_COLS_PER_PLAYER) );
 	for( int col=0; col < iNumCols; ++col )
 	{
-		ASSERT( m_pPlayerState != NULL );
+		ASSERT( m_pPlayerState != nullptr );
 
 		// TODO: Remove use of PlayerNumber.
 		vector<GameInput> GameI;
@@ -1232,7 +1232,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 				if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 				{
 					STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
-					if( m_pPlayerStageStats != NULL )
+					if( m_pPlayerStageStats != nullptr )
 						m_pPlayerStageStats->m_bDisqualified = true;
 				}
 			}
@@ -1466,7 +1466,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		// otherwise, it causes problems on holds. At least, that hapened on my Mac. -wolfman2000
 
 		Preference<float> *pVolume = Preference<float>::GetPreferenceByName("SoundVolume");
-		if (pVolume != NULL)
+		if (pVolume != nullptr)
 		{
 			float fVol = pVolume->Get();
 
@@ -1608,7 +1608,7 @@ Player::PlayerNoteFieldPositioner::PlayerNoteFieldPositioner(
 	:player(p)
 {
 	player->PushPlayerMatrix(x, skew, center_y);
-	float reverse_mult= (reverse ? -1 : 1);
+	float reverse_mult= (reverse ? -1.f : 1.f);
 	original_y= player->m_pNoteField->GetY();
 	float tilt_degrees= SCALE(tilt, -1.f, +1.f, +30, -30) * reverse_mult;
 	float zoom= SCALE(mini, 0.f, 1.f, 1.f, .5f);
@@ -2275,7 +2275,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		const float fSecondsFromExact = fabsf( fNoteOffset );
 
 		TapNote tnDummy = TAP_ORIGINAL_TAP;
-		TapNote *pTN = NULL;
+		TapNote *pTN = nullptr;
 		switch( pbt )
 		{
 		DEFAULT_FAIL(pbt);
@@ -3176,9 +3176,9 @@ void Player::HandleTapRowScore( unsigned row )
 			m_pSecondaryScoreKeeper->HandleTapScore( tn );
 	}
 
-	if( m_pPrimaryScoreKeeper != NULL )
+	if( m_pPrimaryScoreKeeper != nullptr )
 		m_pPrimaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
-	if( m_pSecondaryScoreKeeper != NULL )
+	if( m_pSecondaryScoreKeeper != nullptr )
 		m_pSecondaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
 
 	const unsigned int iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;

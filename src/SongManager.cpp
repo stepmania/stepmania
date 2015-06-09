@@ -39,7 +39,7 @@
 
 using std::vector;
 
-SongManager*	SONGMAN = NULL;	// global and accessible from anywhere in our program
+SongManager*	SONGMAN = nullptr;	// global and accessible from anywhere in our program
 
 const RString ADDITIONAL_SONGS_DIR	= "/AdditionalSongs/";
 const RString ADDITIONAL_COURSES_DIR	= "/AdditionalCourses/";
@@ -479,7 +479,7 @@ void SongManager::UnlistSong(Song *song)
 	vector<Song*>* songVectors[3] = { &m_pSongs, &m_pPopularSongs, &m_pShuffledSongs };
 	for (int songVecIdx=0; songVecIdx<3; ++songVecIdx) {
 		vector<Song*>& v = *songVectors[songVecIdx];
-		for (int i=0; i<v.size(); ++i) {
+		for (auto i = 0; i < v.size(); ++i) {
 			if (v[i] == song) {
 				v.erase(v.begin()+i);
 				--i;
@@ -541,7 +541,7 @@ RageColor SongManager::GetSongGroupColor( const RString &sSongGroup ) const
 
 RageColor SongManager::GetSongColor( const Song* pSong ) const
 {
-	ASSERT( pSong != NULL );
+	ASSERT( pSong != nullptr );
 
 	// protected by royal freem corporation. any modification/removal of
 	// this code will result in prosecution.
@@ -1260,10 +1260,10 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 	RString sGroup = GAMESTATE->m_sPreferredSongGroup;
 	if( sGroup == GROUP_ALL )
 	{
-		if( GAMESTATE->m_pCurSong == NULL )
+		if( GAMESTATE->m_pCurSong == nullptr )
 		{
 			// This normally shouldn't happen, but it's helpful to permit it for testing.
-			LuaHelpers::ReportScriptErrorFmt( "GetExtraStageInfo() called in GROUP_ALL, but GAMESTATE->m_pCurSong == NULL" );
+			LuaHelpers::ReportScriptErrorFmt( "GetExtraStageInfo() called in GROUP_ALL, but GAMESTATE->m_pCurSong == nullptr" );
 			GAMESTATE->m_pCurSong.Set( GetRandomSong() );
 		}
 		sGroup = GAMESTATE->m_pCurSong->m_sGroupName;
@@ -1283,10 +1283,10 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 		return;
 
 	// Choose a hard song for the extra stage
-	Song*	pExtra1Song = NULL;		// the absolute hardest Song and Steps.  Use this for extra stage 1.
-	Steps*	pExtra1Notes = NULL;
-	Song*	pExtra2Song = NULL;		// a medium-hard Song and Steps.  Use this for extra stage 2.
-	Steps*	pExtra2Notes = NULL;
+	Song*	pExtra1Song = nullptr;		// the absolute hardest Song and Steps.  Use this for extra stage 1.
+	Steps*	pExtra1Notes = nullptr;
+	Song*	pExtra2Song = nullptr;		// a medium-hard Song and Steps.  Use this for extra stage 2.
+	Steps*	pExtra2Notes = nullptr;
 
 	auto &apSongs = GetSongs( sGroup );
 	for (auto *pSong: apSongs)
@@ -1295,7 +1295,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 		SongUtil::GetSteps( pSong, apSteps, sd->m_StepsType );
 		for (auto *pSteps: apSteps)
 		{
-			if( pExtra1Notes == NULL || CompareNotesPointersForExtra(pExtra1Notes,pSteps) )	// pSteps is harder than pHardestNotes
+			if( pExtra1Notes == nullptr || CompareNotesPointersForExtra(pExtra1Notes,pSteps) )	// pSteps is harder than pHardestNotes
 			{
 				pExtra1Song = pSong;
 				pExtra1Notes = pSteps;
@@ -1304,7 +1304,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 			// for extra 2, we don't want to choose the hardest notes possible.  So, we'll disgard Steps with meter > 8 (assuming dance)
 			if( bExtra2 && pSteps->GetMeter() > EXTRA_STAGE2_DIFFICULTY_MAX )
 				continue;	// skip
-			if( pExtra2Notes == NULL  ||  CompareNotesPointersForExtra(pExtra2Notes,pSteps) )	// pSteps is harder than pHardestNotes
+			if( pExtra2Notes == nullptr  ||  CompareNotesPointersForExtra(pExtra2Notes,pSteps) )	// pSteps is harder than pHardestNotes
 			{
 				pExtra2Song = pSong;
 				pExtra2Notes = pSteps;
@@ -1312,7 +1312,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 		}
 	}
 
-	if( pExtra2Song == NULL  &&  pExtra1Song != NULL )
+	if( pExtra2Song == nullptr  &&  pExtra1Song != nullptr )
 	{
 		pExtra2Song = pExtra1Song;
 		pExtra2Notes = pExtra1Notes;
@@ -1330,7 +1330,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 Song* SongManager::GetRandomSong()
 {
 	if( m_pShuffledSongs.empty() )
-		return NULL;
+		return nullptr;
 
 	static int i = 0;
 
@@ -1346,13 +1346,13 @@ Song* SongManager::GetRandomSong()
 		return pSong;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Course* SongManager::GetRandomCourse()
 {
 	if( m_pShuffledCourses.empty() )
-		return NULL;
+		return nullptr;
 
 	static int i = 0;
 
@@ -1370,7 +1370,7 @@ Course* SongManager::GetRandomCourse()
 		return pCourse;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Song* SongManager::GetSongFromDir(RString dir) const
@@ -1385,13 +1385,13 @@ Song* SongManager::GetSongFromDir(RString dir) const
 	{
 		return entry->second;
 	}
-	return NULL;
+	return nullptr;
 }
 
 Course* SongManager::GetCourseFromPath( RString sPath ) const
 {
 	if( sPath == "" )
-		return NULL;
+		return nullptr;
 
 	for (auto *c: m_pCourses)
 	{
@@ -1399,13 +1399,13 @@ Course* SongManager::GetCourseFromPath( RString sPath ) const
 			return c;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Course* SongManager::GetCourseFromName( RString sName ) const
 {
 	if( sName == "" )
-		return NULL;
+		return nullptr;
 
 	for (auto *course: m_pCourses)
 	{
@@ -1415,7 +1415,7 @@ Course* SongManager::GetCourseFromName( RString sName ) const
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -1443,7 +1443,7 @@ Song *SongManager::FindSong( RString sPath ) const
 	else if( bits.size() == 2 )
 		return FindSong( bits[0], bits[1] );
 
-	return NULL;
+	return nullptr;
 }
 
 Song *SongManager::FindSong( RString sGroup, RString sSong ) const
@@ -1458,7 +1458,7 @@ Song *SongManager::FindSong( RString sGroup, RString sSong ) const
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Course *SongManager::FindCourse( RString sPath ) const
@@ -1472,7 +1472,7 @@ Course *SongManager::FindCourse( RString sPath ) const
 	else if( bits.size() == 2 )
 		return FindCourse( bits[0], bits[1] );
 
-	return NULL;
+	return nullptr;
 }
 
 Course *SongManager::FindCourse( RString sGroup, RString sName ) const
@@ -1485,7 +1485,7 @@ Course *SongManager::FindCourse( RString sGroup, RString sName ) const
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void SongManager::UpdatePopular()
@@ -1539,7 +1539,7 @@ void SongManager::UpdateShuffled()
 
 void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferredCourses)
 {
-	ASSERT( UNLOCKMAN != NULL );
+	ASSERT( UNLOCKMAN != nullptr );
 
 	{
 		m_vPreferredSongSort.clear();
@@ -1591,7 +1591,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 				}
 
 				Song *pSong = FindSong( sLine );
-				if( pSong == NULL )
+				if( pSong == nullptr )
 					continue;
 				if( UNLOCKMAN->SongIsLocked(pSong) & LOCKED_SELECTABLE )
 					continue;
@@ -1644,7 +1644,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 		{
 			for (auto const *j: i.vpSongs)
 			{
-				ASSERT( j != NULL );
+				ASSERT( j != nullptr );
 			}
 		}
 	}
@@ -1674,7 +1674,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 			}
 
 			Course *pCourse = FindCourse( sLine );
-			if( pCourse == NULL )
+			if( pCourse == nullptr )
 				continue;
 			if( UNLOCKMAN->CourseIsLocked(pCourse) & LOCKED_SELECTABLE )
 				continue;
@@ -1726,7 +1726,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 		{
 			for (auto const *j: i)
 			{
-				ASSERT( j != NULL );
+				ASSERT( j != nullptr );
 			}
 		}
 	}
@@ -1825,7 +1825,7 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 			// XXX There doesn't appear to be a songdir const?
 			Song *given = GetSongFromDir( "/Songs/"+sSongDir );
 			// NOTE: We don't have to check the return value of GetSongFromDir here,
-			// because if it fails, it returns NULL, which is then passed to NotesLoader*.LoadEditFromFile(),
+			// because if it fails, it returns nullptr, which is then passed to NotesLoader*.LoadEditFromFile(),
 			// which will interpret that as "we couldn't infer the song from the path",
 			// which is what we want in that case anyway.
 			GetDirListing(sDir+sSongDir+"/*.edit", vsEdits, false, true );
@@ -2048,8 +2048,8 @@ public:
 	/* Note: this could now be implemented as Luna<Steps>::GetSong */
 	static int GetSongFromSteps( T* p, lua_State *L )
 	{
-		Song *pSong = NULL;
-		if( lua_isnil(L,1) ) { pSong = NULL; }
+		Song *pSong = nullptr;
+		if( lua_isnil(L,1) ) { pSong = nullptr; }
 		else { Steps *pSteps = Luna<Steps>::check(L,1); pSong = pSteps->m_pSong; }
 		if(pSong) pSong->PushSelf(L);
 		else lua_pushnil(L);

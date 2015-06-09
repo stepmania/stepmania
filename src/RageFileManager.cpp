@@ -22,7 +22,7 @@
 
 using std::vector;
 
-RageFileManager *FILEMAN = NULL;
+RageFileManager *FILEMAN = nullptr;
 
 /* Lock this before touching any of these globals (except FILEMAN itself). */
 static RageEvent *g_Mutex;
@@ -42,7 +42,7 @@ struct LoadedDriver
 
 	int m_iRefs;
 
-	LoadedDriver() { m_pDriver = NULL; m_iRefs = 0; }
+	LoadedDriver() { m_pDriver = nullptr; m_iRefs = 0; }
 	RString GetPath( const RString &sPath ) const;
 };
 
@@ -77,7 +77,7 @@ RageFileDriver *RageFileManager::GetFileDriver( RString sMountpoint )
 		sMountpoint += '/';
 
 	g_Mutex->Lock();
-	RageFileDriver *pRet = NULL;
+	RageFileDriver *pRet = nullptr;
 	for( unsigned i = 0; i < g_pDrivers.size(); ++i )
 	{
 		if( g_pDrivers[i]->m_sType == "mountpoints" )
@@ -96,7 +96,7 @@ RageFileDriver *RageFileManager::GetFileDriver( RString sMountpoint )
 
 void RageFileManager::ReleaseFileDriver( RageFileDriver *pDriver )
 {
-	ASSERT( pDriver != NULL );
+	ASSERT( pDriver != nullptr );
 
 	g_Mutex->Lock();
 	unsigned i;
@@ -158,7 +158,7 @@ public:
 	RageFileBasic *Open( const RString &sPath, int iMode, int &iError )
 	{
 		iError = (iMode == RageFile::WRITE)? ERROR_WRITING_NOT_SUPPORTED:ENOENT;
-		return NULL;
+		return nullptr;
 	}
 	/* Never flush FDB, except in LoadFromDrivers. */
 	void FlushDirCache( const RString &sPath ) { }
@@ -174,7 +174,7 @@ public:
 				FDB->AddFile( apDrivers[i]->m_sMountPoint, 0, 0 );
 	}
 };
-static RageFileDriverMountpoints *g_Mountpoints = NULL;
+static RageFileDriverMountpoints *g_Mountpoints = nullptr;
 
 static RString GetDirOfExecutable( RString argv0 )
 {
@@ -183,7 +183,7 @@ static RString GetDirOfExecutable( RString argv0 )
 	RString sPath;
 #if defined(WIN32)
 	char szBuf[MAX_PATH];
-	GetModuleFileName( NULL, szBuf, sizeof(szBuf) );
+	GetModuleFileName( nullptr, szBuf, sizeof(szBuf) );
 	sPath = szBuf;
 #else
 	sPath = argv0;
@@ -315,10 +315,10 @@ RageFileManager::~RageFileManager()
 	g_pDrivers.clear();
 
 //	delete g_Mountpoints; // g_Mountpoints was in g_pDrivers
-	g_Mountpoints = NULL;
+	g_Mountpoints = nullptr;
 
 	delete g_Mutex;
-	g_Mutex = NULL;
+	g_Mutex = nullptr;
 }
 
 /* path must be normalized (FixSlashesInPlace, CollapsePath). */
@@ -343,8 +343,14 @@ static void NormalizePath( RString &sPath )
 {
 	FixSlashesInPlace( sPath );
 	CollapsePath( sPath, true );
-	if( sPath.size() == 0 || sPath[0] != '/' )
-		sPath.insert( sPath.begin(), '/' );
+	if (sPath.size() == 0)
+	{
+		sPath = '/';
+	}
+	else if (sPath[0] != '/')
+	{
+		sPath = '/' + sPath;
+	}
 }
 
 bool ilt( const RString &a, const RString &b ) { return a.CompareNoCase(b) < 0; }
@@ -381,12 +387,12 @@ void RageFileManager::GetDirListing( const RString &sPath_, vector<RString> &Add
 		/* If returning the path, prepend the mountpoint name to the files this driver returned. */
 		if( bReturnPathToo && pLoadedDriver->m_sMountPoint.size() > 0 )
 		{
-			for( unsigned j = OldStart; j < AddTo.size(); ++j )
-			{
-				/* Skip the trailing slash on the mountpoint; there's already a slash there. */
-				RString &lPath = AddTo[j];
-				lPath.insert( 0, pLoadedDriver->m_sMountPoint, pLoadedDriver->m_sMountPoint.size()-1 );
-			}
+			auto const &mountPoint = pLoadedDriver->m_sMountPoint;
+			/* Skip the trailing slash on the mountpoint; there's already a slash there. */
+			auto const &trimPoint = mountPoint.substr(0, mountPoint.size() - 1);
+			std::for_each(AddTo.begin() + OldStart, AddTo.end(), [&trimPoint](RString &path) {
+				path = trimPoint + path;
+			});
 		}
 	}
 
@@ -526,11 +532,11 @@ bool RageFileManager::Mount( const RString &sType, const RString &sRoot_, const 
 	// Unmount anything that was previously mounted here.
 	Unmount( sType, sRoot, sMountPoint );
 
-	CHECKPOINT;
+	CHECKPOINT_M( ssprintf("About to make a driver with \"%s\", \"%s\"", sType.c_str(), sRoot.c_str()));
 	RageFileDriver *pDriver = MakeFileDriver( sType, sRoot );
-	if( pDriver == NULL )
+	if( pDriver == nullptr )
 	{
-		CHECKPOINT;
+		CHECKPOINT_M( ssprintf("Can't mount unknown VFS type \"%s\", root \"%s\"", sType.c_str(), sRoot.c_str() ) );
 
 		if( LOG )
 			LOG->Warn("Can't mount unknown VFS type \"%s\", root \"%s\"", sType.c_str(), sRoot.c_str() );
@@ -539,7 +545,7 @@ bool RageFileManager::Mount( const RString &sType, const RString &sRoot_, const 
 		return false;
 	}
 
-	CHECKPOINT;
+	CHECKPOINT_M("Driver %s successfully made.");
 
 	LoadedDriver *pLoadedDriver = new LoadedDriver;
 	pLoadedDriver->m_pDriver = pDriver;
@@ -621,7 +627,7 @@ void RageFileManager::Unmount( const RString &sType, const RString &sRoot_, cons
 void RageFileManager::Remount( RString sMountpoint, RString sPath )
 {
 	RageFileDriver *pDriver = GetFileDriver( sMountpoint );
-	if( pDriver == NULL )
+	if( pDriver == nullptr )
 	{
 		if( LOG )
 			LOG->Warn( "Remount(%s,%s): mountpoint not found", sMountpoint.c_str(), sPath.c_str() );
@@ -884,7 +890,7 @@ RageFileBasic *RageFileManager::OpenForReading( const RString &sPath, int mode, 
 	}
 	UnreferenceAllDrivers( apDriverList );
 
-	return NULL;
+	return nullptr;
 }
 
 RageFileBasic *RageFileManager::OpenForWriting( const RString &sPath, int mode, int &iError )
@@ -965,7 +971,7 @@ RageFileBasic *RageFileManager::OpenForWriting( const RString &sPath, int mode, 
 
 	UnreferenceAllDrivers( apDriverList );
 
-	return NULL;
+	return nullptr;
 }
 
 bool RageFileManager::IsAFile( const RString &sPath ) { return GetFileType(sPath) == TYPE_FILE; }

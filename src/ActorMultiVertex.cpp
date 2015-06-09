@@ -102,13 +102,13 @@ ActorMultiVertex::ActorMultiVertex( const ActorMultiVertex &cpy ):
 	CPY(_states);
 #undef CPY
 
-	if( cpy._Texture != NULL )
+	if( cpy._Texture != nullptr )
 	{
 		_Texture = TEXTUREMAN->CopyTexture( cpy._Texture );
 	}
 	else
 	{
-		_Texture = NULL;
+		_Texture = nullptr;
 	}
 }
 
@@ -139,7 +139,7 @@ void ActorMultiVertex::SetTexture( RageTexture *Texture )
 
 void ActorMultiVertex::LoadFromTexture( RageTextureID ID )
 {
-	RageTexture *Texture = NULL;
+	RageTexture *Texture = nullptr;
 	if( _Texture && _Texture->GetID() == ID )
 	{
 		return;
@@ -150,10 +150,10 @@ void ActorMultiVertex::LoadFromTexture( RageTextureID ID )
 
 void ActorMultiVertex::UnloadTexture()
 {
-	if( _Texture != NULL )
+	if( _Texture != nullptr )
 	{
 		TEXTUREMAN->UnloadTexture( _Texture );
-		_Texture = NULL;
+		_Texture = nullptr;
 	}
 }
 
@@ -239,10 +239,10 @@ void ActorMultiVertex::DrawPrimitives()
 		for( size_t i=0; i < TS.vertices.size(); i++ )
 		{
 			// RageVColor * RageColor
-			TS.vertices[i].c.b *= m_pTempState->diffuse[0].b;
-			TS.vertices[i].c.r *= m_pTempState->diffuse[0].r;
-			TS.vertices[i].c.g *= m_pTempState->diffuse[0].g;
-			TS.vertices[i].c.a *= m_pTempState->diffuse[0].a;
+			TS.vertices[i].c.b *= static_cast<uint8_t>(m_pTempState->diffuse[0].b);
+			TS.vertices[i].c.r *= static_cast<uint8_t>(m_pTempState->diffuse[0].r);
+			TS.vertices[i].c.g *= static_cast<uint8_t>(m_pTempState->diffuse[0].g);
+			TS.vertices[i].c.a *= static_cast<uint8_t>(m_pTempState->diffuse[0].a);
 		}
 
 	}
@@ -339,8 +339,8 @@ void ActorMultiVertex::SetVertsFromSplinesInternal(size_t num_splines, size_t of
 	size_t first= AMV_DestTweenState().FirstToDraw + offset;
 	size_t num_verts= AMV_DestTweenState().GetSafeNumToDraw(AMV_DestTweenState()._DrawMode, AMV_DestTweenState().NumToDraw) - offset;
 	vector<float> tper(num_splines, 0.0f);
-	float num_parts= static_cast<float>(num_verts) /
-		static_cast<float>(num_splines);
+	float num_parts= (static_cast<float>(num_verts) /
+		static_cast<float>(num_splines)) - 1.0f;
 	for(size_t i= 0; i < num_splines; ++i)
 	{
 		tper[i]= _splines[i].get_max_t() / num_parts;
@@ -948,7 +948,7 @@ public:
 	static void FillStateFromLua(lua_State *L, ActorMultiVertex::State& state,
 		RageTexture* tex, int index)
 	{
-		if(tex == NULL)
+		if(tex == nullptr)
 		{
 			luaL_error(L, "The texture must be set before adding states.");
 		}
@@ -1017,7 +1017,7 @@ public:
 	static int GetStateData(T* p, lua_State *L)
 	{
 		RageTexture* tex= p->GetTexture();
-		if(tex == NULL)
+		if(tex == nullptr)
 		{
 			luaL_error(L, "The texture must be set before adding states.");
 		}
@@ -1055,7 +1055,7 @@ public:
 			luaL_error(L, "The states must be inside a table.");
 		}
 		RageTexture* tex= p->GetTexture();
-		if(tex == NULL)
+		if(tex == nullptr)
 		{
 			luaL_error(L, "The texture must be set before adding states.");
 		}
@@ -1138,7 +1138,7 @@ public:
 	static int GetTexture(T* p, lua_State *L)
 	{
 		RageTexture *texture = p->GetTexture();
-		if(texture != NULL)
+		if(texture != nullptr)
 		{
 			texture->PushSelf(L);
 		}

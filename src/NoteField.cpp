@@ -38,8 +38,8 @@ static ThemeMetric1D<RString> ROUTINE_NOTESKIN( "NoteField", RoutineNoteSkinName
 
 NoteField::NoteField()
 {
-	m_pNoteData = NULL;
-	m_pCurDisplay = NULL;
+	m_pNoteData = nullptr;
+	m_pCurDisplay = nullptr;
 	m_drawing_board_primitive= false;
 
 	m_textMeasureNumber.LoadFromFont( THEME->GetPathF("NoteField","MeasureNumber") );
@@ -88,7 +88,7 @@ void NoteField::Unload()
 		delete it.second;
 	}
 	m_NoteDisplays.clear();
-	m_pCurDisplay = NULL;
+	m_pCurDisplay = nullptr;
 	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
 }
 
@@ -211,7 +211,7 @@ void NoteField::Load(
 	int iDrawDistanceAfterTargetsPixels,
 	int iDrawDistanceBeforeTargetsPixels )
 {
-	ASSERT( pNoteData != NULL );
+	ASSERT( pNoteData != nullptr );
 	m_pNoteData = pNoteData;
 	m_iDrawDistanceAfterTargetsPixels = iDrawDistanceAfterTargetsPixels;
 	m_iDrawDistanceBeforeTargetsPixels = iDrawDistanceBeforeTargetsPixels;
@@ -431,7 +431,7 @@ void NoteField::DrawBoard( int iDrawDistanceAfterTargetsPixels, int iDrawDistanc
 {
 	// todo: make this an AutoActor instead? -aj
 	Sprite *pSprite = dynamic_cast<Sprite *>( (Actor*)m_sprBoard );
-	if( pSprite == NULL )
+	if( pSprite == nullptr )
 	{
 		m_sprBoard->Draw();
 	}
@@ -446,7 +446,7 @@ void NoteField::DrawBoard( int iDrawDistanceAfterTargetsPixels, int iDrawDistanc
 		float fTexCoordOffset = m_fBoardOffsetPixels / fBoardGraphicHeightPixels;
 
 		// top half
-		const float fHeight = iDrawDistanceBeforeTargetsPixels - iDrawDistanceAfterTargetsPixels;
+		const float fHeight = static_cast<float>(iDrawDistanceBeforeTargetsPixels - iDrawDistanceAfterTargetsPixels);
 		const float fY = fYPosAt0 - ((iDrawDistanceBeforeTargetsPixels + iDrawDistanceAfterTargetsPixels) / 2.0f);
 
 		pSprite->ZoomToHeight( fHeight );
@@ -710,7 +710,7 @@ void NoteField::CalcPixelsBeforeAndAfterTargets()
 {
 	const PlayerOptions& curr_options= m_pPlayerState->m_PlayerOptions.GetCurrent();
 	// Adjust draw range depending on some effects
-	m_FieldRenderArgs.draw_pixels_after_targets= m_iDrawDistanceAfterTargetsPixels;
+	m_FieldRenderArgs.draw_pixels_after_targets = static_cast<float>(m_iDrawDistanceAfterTargetsPixels);
 	// HACK: If boomerang and centered are on, then we want to draw much
 	// earlier so that the notes don't pop on screen.
 	float centered_times_boomerang=
@@ -718,17 +718,14 @@ void NoteField::CalcPixelsBeforeAndAfterTargets()
 		curr_options.m_fAccels[PlayerOptions::ACCEL_BOOMERANG];
 	m_FieldRenderArgs.draw_pixels_after_targets +=
 		int(SCALE(centered_times_boomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2));
-	m_FieldRenderArgs.draw_pixels_before_targets =
-		m_iDrawDistanceBeforeTargetsPixels;
+	m_FieldRenderArgs.draw_pixels_before_targets = static_cast<float>(m_iDrawDistanceBeforeTargetsPixels);
 
 	float draw_scale= 1;
 	draw_scale*= 1 + 0.5f * fabsf(curr_options.m_fPerspectiveTilt);
 	draw_scale*= 1 + fabsf(curr_options.m_fEffects[PlayerOptions::EFFECT_MINI]);
 
-	m_FieldRenderArgs.draw_pixels_after_targets=
-		(int)(m_FieldRenderArgs.draw_pixels_after_targets * draw_scale);
-	m_FieldRenderArgs.draw_pixels_before_targets=
-		(int)(m_FieldRenderArgs.draw_pixels_before_targets * draw_scale);
+	m_FieldRenderArgs.draw_pixels_after_targets *= draw_scale;
+	m_FieldRenderArgs.draw_pixels_before_targets *= draw_scale;
 }
 
 void NoteField::DrawPrimitives()
@@ -736,7 +733,7 @@ void NoteField::DrawPrimitives()
 	//LOG->Trace( "NoteField::DrawPrimitives()" );
 
 	// This should be filled in on the first update.
-	ASSERT( m_pCurDisplay != NULL );
+	ASSERT( m_pCurDisplay != nullptr );
 
 	// ArrowEffects::Update call moved because having it happen once per
 	// NoteField (which means twice in two player) seemed wasteful. -Kyz
@@ -744,8 +741,8 @@ void NoteField::DrawPrimitives()
 	if(m_drawing_board_primitive)
 	{
 		CalcPixelsBeforeAndAfterTargets();
-		DrawBoard(m_FieldRenderArgs.draw_pixels_after_targets,
-			m_FieldRenderArgs.draw_pixels_before_targets);
+		DrawBoard(static_cast<int>(m_FieldRenderArgs.draw_pixels_after_targets),
+			static_cast<int>(m_FieldRenderArgs.draw_pixels_before_targets));
 		return;
 	}
 	// Some might prefer an else block, instead of returning from the if, but I
@@ -756,9 +753,9 @@ void NoteField::DrawPrimitives()
 	NoteDisplayCols *cur = m_pCurDisplay;
 	// Probe for first and last notes on the screen
 	float first_beat_to_draw= FindFirstDisplayedBeat(
-		m_pPlayerState, m_FieldRenderArgs.draw_pixels_after_targets);
+		m_pPlayerState, static_cast<int>(m_FieldRenderArgs.draw_pixels_after_targets));
 	float last_beat_to_draw= FindLastDisplayedBeat(
-		m_pPlayerState, m_FieldRenderArgs.draw_pixels_before_targets);
+		m_pPlayerState, static_cast<int>(m_FieldRenderArgs.draw_pixels_before_targets));
 
 	m_pPlayerState->m_fLastDrawnBeat = last_beat_to_draw;
 
@@ -783,7 +780,7 @@ void NoteField::DrawPrimitives()
 
 	unsigned i = 0;
 	// Draw beat bars
-	if( ( GAMESTATE->IsEditing() || SHOW_BEAT_BARS ) && pTiming != NULL )
+	if( ( GAMESTATE->IsEditing() || SHOW_BEAT_BARS ) && pTiming != nullptr )
 	{
 		const vector<TimingSegment *> &tSigs = *segs[SEGMENT_TIME_SIG];
 		int iMeasureIndex = 0;
@@ -823,9 +820,9 @@ void NoteField::DrawPrimitives()
 		}
 	}
 
-	if( GAMESTATE->IsEditing() && pTiming != NULL )
+	if( GAMESTATE->IsEditing() && pTiming != nullptr )
 	{
-		ASSERT(GAMESTATE->m_pCurSong != NULL);
+		ASSERT(GAMESTATE->m_pCurSong != nullptr);
 
 		const TimingData &timing = *pTiming;
 		const RageColor text_glow= RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f);
@@ -1096,7 +1093,7 @@ static void get_returned_bright(Lua* L, int index, bool& bright)
 {
 	if(lua_isboolean(L, index))
 	{
-		bright= lua_toboolean(L, index);
+		bright= lua_toboolean(L, index) != 0;
 	}
 }
 

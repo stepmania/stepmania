@@ -118,9 +118,9 @@ void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
 	const ScoreRowItemData &data = m_vScoreRowItemData[iItem];
 
 	Message msg("Set");
-	if( data.m_pSong != NULL )
+	if( data.m_pSong != nullptr )
 		msg.SetParam( "Song", data.m_pSong );
-	if( data.m_pCourse != NULL )
+	if( data.m_pCourse != nullptr )
 		msg.SetParam( "Course", data.m_pCourse );
 
 
@@ -135,21 +135,21 @@ void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
 		Difficulty dc = iter->first;
 		StepsType st = iter->second;
 
-		if( data.m_pSong != NULL )
+		if( data.m_pSong != nullptr )
 		{
 			const Song* pSong = data.m_pSong;
 			Steps *pSteps = SongUtil::GetStepsByDifficulty( pSong, st, dc, false );
 			if( pSteps  &&  UNLOCKMAN->StepsIsLocked(pSong, pSteps) )
-				pSteps = NULL;
+				pSteps = nullptr;
 			LuaHelpers::Push( L, pSteps );
 		}
-		else if( data.m_pCourse != NULL )
+		else if( data.m_pCourse != nullptr )
 		{
 			const Course* pCourse = data.m_pCourse;
 			Trail *pTrail = pCourse->GetTrail( st, dc );
 			LuaHelpers::Push( L, pTrail );
 		}
-		// Because pSteps or pTrail can be NULL, what we're creating in Lua is not an array.
+		// Because pSteps or pTrail can be nullptr, what we're creating in Lua is not an array.
 		// It must be iterated using pairs(), not ipairs().
 		lua_setfield( L, -2, ssprintf("%d",i+1) );
 	}
@@ -189,7 +189,7 @@ void ScoreScroller::Load( RString sMetricsGroup )
 	for( int i=0; i<iNumCopies; ++i )
 	{
 		Actor *pActor = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"ScrollerItem") );
-		if( pActor != NULL )
+		if( pActor != nullptr )
 			this->AddChild( pActor );
 	}
 

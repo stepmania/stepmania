@@ -9,6 +9,12 @@ add_library("GtkModule"
 )
 sm_add_compile_definition("GtkModule" "${ENDIANNESS}")
 
+sm_add_compile_flag("GtkModule" "-std=gnu++11")
+if (CMAKE_CXX_COMPILER MATCHES "clang")
+  sm_add_compile_flag("GtkModule" "-stdlib=libc++")
+  set_target_properties("GtkModule" PROPERTIES LINK_FLAGS "-stdlib=libc++")
+endif()
+
 # It is normally not appropriate to set the prefix to the empty string.
 # This is to maintain compatibility with the current source.
 # At some point, it may be worth being more flexible.

@@ -7,7 +7,7 @@
 
 using std::vector;
 
-InputQueue*	INPUTQUEUE = NULL;	// global and accessible from anywhere in our program
+InputQueue*	INPUTQUEUE = nullptr;	// global and accessible from anywhere in our program
 
 const unsigned MAX_INPUT_QUEUE_LENGTH = 32;
 
@@ -41,7 +41,7 @@ bool InputQueue::WasPressedRecently( GameController c, const GameButton button, 
 		if( iep.GameI.button != button )
 			continue;
 
-		if( pIEP != NULL )
+		if( pIEP != nullptr )
 			*pIEP = iep;
 
 		return true;
@@ -99,7 +99,7 @@ bool InputQueueCode::EnteredCode( GameController controller ) const
 		int iMinSearchIndexUsed = iQueueIndex;
 		for( int b=0; b<(int) Press.m_aButtonsToPress.size(); ++b )
 		{
-			const InputEventPlus *pIEP = NULL;
+			const InputEventPlus *pIEP = nullptr;
 			int iQueueSearchIndex = iQueueIndex;
 			for( ; iQueueSearchIndex>=0; --iQueueSearchIndex )	// iterate newest to oldest
 			{
@@ -116,7 +116,7 @@ bool InputQueueCode::EnteredCode( GameController controller ) const
 					break;
 				}
 			}
-			if( pIEP == NULL )
+			if( pIEP == nullptr )
 				break;	// didn't find the button
 
 			// Check that m_aButtonsToHold were being held when the buttons were pressed.

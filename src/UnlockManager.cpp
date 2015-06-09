@@ -20,7 +20,7 @@
 
 using std::vector;
 
-UnlockManager*	UNLOCKMAN = NULL;	// global and accessible from anywhere in our program
+UnlockManager*	UNLOCKMAN = nullptr;	// global and accessible from anywhere in our program
 
 #define UNLOCK_NAMES		THEME->GetMetric ("UnlockManager","UnlockNames")
 #define UNLOCK(x)		THEME->GetMetricR("UnlockManager", ssprintf("Unlock%sCommand",x.c_str()));
@@ -92,20 +92,20 @@ void UnlockManager::UnlockSong( const Song *song )
 
 RString UnlockManager::FindEntryID( const RString &sName ) const
 {
-	const UnlockEntry *pEntry = NULL;
+	const UnlockEntry *pEntry = nullptr;
 
 	const Song *pSong = SONGMAN->FindSong( sName );
-	if( pSong != NULL )
+	if( pSong != nullptr )
 		pEntry = FindSong( pSong );
 
 	const Course *pCourse = SONGMAN->FindCourse( sName );
-	if( pCourse != NULL )
+	if( pCourse != nullptr )
 		pEntry = FindCourse( pCourse );
 
-	if( pEntry == NULL )
+	if( pEntry == nullptr )
 		pEntry = FindModifier( sName );
 
-	if( pEntry == NULL )
+	if( pEntry == nullptr )
 	{
 		LuaHelpers::ReportScriptErrorFmt( "Couldn't find locked entry \"%s\"", sName.c_str() );
 		return "";
@@ -121,7 +121,7 @@ int UnlockManager::CourseIsLocked( const Course *pCourse ) const
 	if( PREFSMAN->m_bUseUnlockSystem )
 	{
 		const UnlockEntry *p = FindCourse( pCourse );
-		if( p == NULL )
+		if( p == nullptr )
 			return false;
 		if( p->IsLocked() )
 			iRet |= LOCKED_LOCK;
@@ -131,7 +131,7 @@ int UnlockManager::CourseIsLocked( const Course *pCourse ) const
 	for (auto const &ce: pCourse->m_vEntries)
 	{
 		const Song *pSong = ce.songID.ToSong();
-		if( pSong == NULL )
+		if( pSong == nullptr )
 			continue;
 		int iSongLock = SongIsLocked( pSong );
 		if( iSongLock & LOCKED_DISABLED )
@@ -147,7 +147,7 @@ int UnlockManager::SongIsLocked( const Song *pSong ) const
 	if( PREFSMAN->m_bUseUnlockSystem )
 	{
 		const UnlockEntry *p = FindSong( pSong );
-		if( p != NULL && p->IsLocked() )
+		if( p != nullptr && p->IsLocked() )
 		{
 			iRet |= LOCKED_LOCK;
 			if( !p->m_sEntryID.empty() && m_RouletteCodes.find( p->m_sEntryID ) != m_RouletteCodes.end() )
@@ -169,7 +169,7 @@ bool UnlockManager::StepsIsLocked( const Song *pSong, const Steps *pSteps ) cons
 		return false;
 
 	const UnlockEntry *p = FindSteps( pSong, pSteps );
-	if( p == NULL )
+	if( p == nullptr )
 		return false;
 
 	return p->IsLocked();
@@ -181,7 +181,7 @@ bool UnlockManager::StepsTypeIsLocked(const Song *pSong, const Steps *pSteps, co
 		return false;
 
 	const UnlockEntry *p = FindStepsType( pSong, pSteps, pSType );
-	if( p == NULL )
+	if( p == nullptr )
 		return false;
 
 	return p->IsLocked();
@@ -193,7 +193,7 @@ bool UnlockManager::ModifierIsLocked( const RString &sOneMod ) const
 		return false;
 
 	const UnlockEntry *p = FindModifier( sOneMod );
-	if( p == NULL )
+	if( p == nullptr )
 		return false;
 
 	return p->IsLocked();
@@ -204,7 +204,7 @@ const UnlockEntry *UnlockManager::FindSong( const Song *pSong ) const
 	for (auto &e: m_UnlockEntries)
 		if( e.m_Song.ToSong() == pSong  &&  e.m_dc == Difficulty_Invalid )
 			return &e;
-	return NULL;
+	return nullptr;
 }
 
 const UnlockEntry *UnlockManager::FindSteps( const Song *pSong, const Steps *pSteps ) const
@@ -213,7 +213,7 @@ const UnlockEntry *UnlockManager::FindSteps( const Song *pSong, const Steps *pSt
 	for (auto &e: m_UnlockEntries)
 		if( e.m_Song.ToSong() == pSong  &&  e.m_dc == pSteps->GetDifficulty() )
 			return &e;
-	return NULL;
+	return nullptr;
 }
 
 const UnlockEntry *UnlockManager::FindStepsType(const Song *pSong,
@@ -224,7 +224,7 @@ const UnlockEntry *UnlockManager::FindStepsType(const Song *pSong,
 	for (auto &e: m_UnlockEntries)
 		if(e.m_Song.ToSong() == pSong && e.m_dc == pSteps->GetDifficulty() && e.m_StepsType == pSteps->m_StepsType)
 		return &e;
-	return NULL;
+	return nullptr;
 }
 
 const UnlockEntry *UnlockManager::FindCourse( const Course *pCourse ) const
@@ -232,7 +232,7 @@ const UnlockEntry *UnlockManager::FindCourse( const Course *pCourse ) const
 	for (auto &e: m_UnlockEntries)
 		if( e.m_Course.ToCourse() == pCourse )
 			return &e;
-	return NULL;
+	return nullptr;
 }
 
 const UnlockEntry *UnlockManager::FindModifier( const RString &sOneMod ) const
@@ -240,7 +240,7 @@ const UnlockEntry *UnlockManager::FindModifier( const RString &sOneMod ) const
 	for (auto &e: m_UnlockEntries)
 		if( e.GetModifier().CompareNoCase(sOneMod) == 0 )
 			return &e;
-	return NULL;
+	return nullptr;
 }
 
 static float GetArcadePoints( const Profile *pProfile )
@@ -515,11 +515,11 @@ void UnlockManager::Load()
 		for (auto *s: SONGMAN->GetAllSongs())
 		{
 			// If no hard steps to play to unlock, skip
-			if( SongUtil::GetOneSteps(s, StepsType_Invalid, Difficulty_Hard) == NULL )
+			if( SongUtil::GetOneSteps(s, StepsType_Invalid, Difficulty_Hard) == nullptr )
 				continue;
 
 			// If no challenge steps to unlock, skip
-			if( SongUtil::GetOneSteps(s, StepsType_Invalid, Difficulty_Challenge) == NULL )
+			if( SongUtil::GetOneSteps(s, StepsType_Invalid, Difficulty_Challenge) == nullptr )
 				continue;
 
 			if( SONGS_NOT_ADDITIONAL && SONGMAN->WasLoadedFromAdditionalSongs(s) )
@@ -540,11 +540,11 @@ void UnlockManager::Load()
 		for (auto *s: SONGMAN->GetAllSongs())
 		{
 			// no challenge steps to play: skip.
-			if (SongUtil::GetOneSteps(s, StepsType_Invalid, Difficulty_Challenge) == NULL)
+			if (SongUtil::GetOneSteps(s, StepsType_Invalid, Difficulty_Challenge) == nullptr)
 				continue;
 
 			// no edit steps to unlock: skip.
-			if (SongUtil::GetOneSteps(s, StepsType_Invalid, Difficulty_Edit) == NULL)
+			if (SongUtil::GetOneSteps(s, StepsType_Invalid, Difficulty_Edit) == nullptr)
 				continue;
 
 			// don't add additional songs.
@@ -721,7 +721,7 @@ void UnlockManager::PreferUnlockEntryID( RString sUnlockEntryID )
 		if( pEntry.m_sEntryID != sUnlockEntryID )
 			continue;
 
-		if( pEntry.m_Song.ToSong() != NULL )
+		if( pEntry.m_Song.ToSong() != nullptr )
 			GAMESTATE->m_pPreferredSong = pEntry.m_Song.ToSong();
 		if( pEntry.m_Course.ToCourse() )
 			GAMESTATE->m_pPreferredCourse = pEntry.m_Course.ToCourse();

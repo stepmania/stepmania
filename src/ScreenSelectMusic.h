@@ -98,7 +98,7 @@ protected:
 	ThemeMetric<bool>		WRAP_CHANGE_STEPS;
 	ThemeMetric<bool>		CHANGE_STEPS_WITH_GAME_BUTTONS;
 	ThemeMetric<bool>		CHANGE_GROUPS_WITH_GAME_BUTTONS;
-	ThemeMetric<RString>	NULL_SCORE_STRING;
+	ThemeMetric<RString>	nullptr_SCORE_STRING;
 	ThemeMetric<bool>		PLAY_SOUND_ON_ENTERING_OPTIONS_MENU;
 
 	bool CanChangeSong() const { return m_SelectionState == SelectionState_SelectingSong; }

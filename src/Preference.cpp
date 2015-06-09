@@ -30,7 +30,7 @@ IPreference *IPreference::GetPreferenceByName( const RString &sName )
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void IPreference::LoadAllDefaults()
@@ -43,7 +43,7 @@ void IPreference::LoadAllDefaults()
 
 void IPreference::ReadAllPrefsFromNode( const XNode* pNode, bool bIsStatic )
 {
-	ASSERT( pNode != NULL );
+	ASSERT( pNode != nullptr );
 	for (auto *p: *m_Subscribers.m_pSubscribers)
 	{
 		p->ReadFrom( pNode, bIsStatic );
@@ -60,7 +60,7 @@ void IPreference::SavePrefsToNode( XNode* pNode )
 
 void IPreference::ReadAllDefaultsFromNode( const XNode* pNode )
 {
-	if( pNode == NULL )
+	if( pNode == nullptr )
 	{
 		return;
 	}

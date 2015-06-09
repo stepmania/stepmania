@@ -127,7 +127,7 @@ public:
 	~GraphBody()
 	{
 		TEXTUREMAN->UnloadTexture( m_pTexture );
-		m_pTexture = NULL;
+		m_pTexture = nullptr;
 	}
 
 	void DrawPrimitives()
@@ -151,8 +151,8 @@ public:
 
 GraphDisplay::GraphDisplay()
 {
-	m_pGraphLine = NULL;
-	m_pGraphBody = NULL;
+	m_pGraphLine = nullptr;
+	m_pGraphBody = nullptr;
 }
 
 GraphDisplay::~GraphDisplay()
@@ -224,8 +224,8 @@ void GraphDisplay::Set( const StageStats &ss, const PlayerStageStats &pss )
 
 void GraphDisplay::Load( RString sMetricsGroup )
 {
-	m_size.x = THEME->GetMetricI( sMetricsGroup, "BodyWidth" );
-	m_size.y = THEME->GetMetricI( sMetricsGroup, "BodyHeight" );
+	m_size.x = static_cast<float>(THEME->GetMetricI(sMetricsGroup, "BodyWidth"));
+	m_size.y = static_cast<float>(THEME->GetMetricI(sMetricsGroup, "BodyHeight"));
 
 	m_sprBacking.Load( THEME->GetPathG(sMetricsGroup,"Backing") );
 	m_sprBacking->ZoomToWidth( m_size.x );
@@ -292,11 +292,11 @@ public:
 	{
 		StageStats *pStageStats = Luna<StageStats>::check( L, 1 );
 		PlayerStageStats *pPlayerStageStats = Luna<PlayerStageStats>::check( L, 2 );
-		if(pStageStats == NULL)
+		if(pStageStats == nullptr)
 		{
 			luaL_error(L, "The StageStats passed to GraphDisplay:Set are nil.");
 		}
-		if(pPlayerStageStats == NULL)
+		if(pPlayerStageStats == nullptr)
 		{
 			luaL_error(L, "The PlayerStageStats passed to GraphDisplay:Set are nil.");
 		}

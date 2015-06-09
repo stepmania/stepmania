@@ -175,7 +175,7 @@ bool FilenameDB::ResolvePath( RString &sPath )
 
 	/* Resolve each component. */
 	RString ret = "";
-	const FileSet *fs = NULL;
+	const FileSet *fs = nullptr;
 
 	static const RString slash("/");
 	for(;;)
@@ -184,7 +184,7 @@ bool FilenameDB::ResolvePath( RString &sPath )
 		if( iBegin == (int) sPath.size() )
 			break;
 
-		if( fs == NULL )
+		if( fs == nullptr )
 			fs = GetFileSet( ret );
 		else
 			m_Mutex.Lock(); /* for access to fs */
@@ -294,7 +294,7 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 		if( !bCreate )
 		{
 			if( i == dirs.end() )
-				return NULL;
+				return nullptr;
 			return i->second;
 		}
 
@@ -343,7 +343,7 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 	 * to the newly-created directory.  Find the pointer we need to set.  Be careful of
 	 * order of operations, here: since we just unlocked, any this->dirs searches we did
 	 * previously are no longer valid. */
-	FileSet **pParentDirp = NULL;
+	FileSet **pParentDirp = nullptr;
 	if( sDir != "/" )
 	{
 		RString sParent = Dirname( sDir );
@@ -352,7 +352,7 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 
 		/* This also re-locks m_Mutex for us. */
 		FileSet *pParent = GetFileSet( sParent );
-		if( pParent != NULL )
+		if( pParent != nullptr )
 		{
 			std::set<File>::iterator it = pParent->files.find( File(Basename(sDir)) );
 			if( it != pParent->files.end() )
@@ -364,7 +364,7 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 		m_Mutex.Lock();
 	}
 
-	if( pParentDirp != NULL )
+	if( pParentDirp != nullptr )
 		*pParentDirp = pRet;
 
 	pRet->age.Touch();
@@ -452,7 +452,7 @@ void FilenameDB::DelFileSet( std::map<RString, FileSet *>::iterator dir )
 		{
 			File &ff = (File &) *f;
 			if( ff.dirp == fs )
-				ff.dirp = NULL;
+				ff.dirp = nullptr;
 		}
 	}
 
@@ -481,7 +481,7 @@ void FilenameDB::DelFile( const RString &sPath )
 
 void FilenameDB::FlushDirCache( const RString & /* sDir */ )
 {
-	FileSet *pFileSet = NULL;
+	FileSet *pFileSet = nullptr;
 	m_Mutex.Lock();
 
 	for(;;)
@@ -527,7 +527,7 @@ void FilenameDB::FlushDirCache( const RString & /* sDir */ )
 					FileSet *pParent = it->second;
 					std::set<File>::iterator fileit = pParent->files.find( File(Basename(sDir)) );
 					if( fileit != pParent->files.end() )
-						fileit->dirp = NULL;
+						fileit->dirp = nullptr;
 				}
 			}
 		}
@@ -550,7 +550,7 @@ const File *FilenameDB::GetFile( const RString &sPath )
 
 	std::set<File>::iterator it = fs->files.find( File(Name) );
 	if( it == fs->files.end() )
-		return NULL;
+		return nullptr;
 
 	return &*it;
 }
@@ -560,8 +560,8 @@ void *FilenameDB::GetFilePriv( const RString &path )
 	ASSERT( !m_Mutex.IsLockedByThisThread() );
 
 	const File *pFile = GetFile( path );
-	void *pRet = NULL;
-	if( pFile != NULL )
+	void *pRet = nullptr;
+	if( pFile != nullptr )
 		pRet = pFile->priv;
 
 	m_Mutex.Unlock(); /* locked by GetFileSet */
@@ -602,7 +602,7 @@ void FilenameDB::GetDirListing( const RString &sPath_, vector<RString> &asAddTo,
 	{
 		while( iStart < asAddTo.size() )
 		{
-			asAddTo[iStart].insert( 0, sPath );
+			asAddTo[iStart] = sPath + asAddTo[iStart];
 			iStart++;
 		}
 	}

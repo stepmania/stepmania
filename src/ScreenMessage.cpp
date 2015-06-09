@@ -22,7 +22,7 @@ static std::map<RString, ScreenMessage> *m_pScreenMessages;
 
 ScreenMessage ScreenMessageHelpers::ToScreenMessage( const RString &sName )
 {
-	if( m_pScreenMessages == NULL )
+	if( m_pScreenMessages == nullptr )
 		m_pScreenMessages = new std::map<RString, ScreenMessage>;
 
 	if( m_pScreenMessages->find( sName ) == m_pScreenMessages->end() )

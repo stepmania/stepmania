@@ -127,7 +127,7 @@ void StepsUtil::SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers,
 		}
 	}
 
-	ASSERT( pProfile != NULL );
+	ASSERT( pProfile != nullptr );
 	for(unsigned i = 0; i < vStepsPointers.size(); ++i)
 	{
 		Steps* pSteps = vStepsPointers[i];
@@ -209,7 +209,7 @@ void StepsUtil::RemoveLockedSteps( const Song *pSong, vector<Steps*> &vpSteps )
 
 void StepsID::FromSteps( const Steps *p )
 {
-	if( p == NULL )
+	if( p == nullptr )
 	{
 		st = StepsType_Invalid;
 		dc = Difficulty_Invalid;
@@ -247,12 +247,12 @@ void StepsID::FromSteps( const Steps *p )
 Steps *StepsID::ToSteps( const Song *p, bool bAllowNull ) const
 {
 	if( st == StepsType_Invalid || dc == Difficulty_Invalid )
-		return NULL;
+		return nullptr;
 
 	SongID songID;
 	songID.FromSong( p );
 
-	Steps *pRet = NULL;
+	Steps *pRet = nullptr;
 	if( dc == Difficulty_Edit )
 	{
 		pRet = SongUtil::GetOneSteps( p, st, dc, -1, -1, sDescription, "", uHash, true );
@@ -262,7 +262,7 @@ Steps *StepsID::ToSteps( const Song *p, bool bAllowNull ) const
 		pRet = SongUtil::GetOneSteps( p, st, dc, -1, -1, "", "", 0, true );
 	}
 
-	if( !bAllowNull && pRet == NULL )
+	if( !bAllowNull && pRet == nullptr )
 		FAIL_M( ssprintf("%i, %i, \"%s\"", st, dc, sDescription.c_str()) );
 
 	m_Cache.Set( pRet );

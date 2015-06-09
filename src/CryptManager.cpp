@@ -13,7 +13,7 @@
 
 using std::vector;
 
-CryptManager*	CRYPTMAN	= NULL;	// global and accessible from anywhere in our program
+CryptManager*	CRYPTMAN	= nullptr;	// global and accessible from anywhere in our program
 
 static const RString PRIVATE_KEY_PATH = "Data/private.rsa";
 static const RString PUBLIC_KEY_PATH = "Data/public.rsa";
@@ -81,7 +81,7 @@ static const int KEY_LENGTH = 1024;
  *
  */
 
-static PRNGWrapper *g_pPRNG = NULL;
+static PRNGWrapper *g_pPRNG = nullptr;
 
 
 CryptManager::CryptManager()

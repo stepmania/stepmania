@@ -14,7 +14,7 @@
 
 using std::vector;
 
-MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessible from anywhere in our program
+MemoryCardManager*	MEMCARDMAN = nullptr;	// global and accessible from anywhere in our program
 
 static void MemoryCardOsMountPointInit( size_t /*PlayerNumber*/ i, RString &sNameOut, RString &defaultValueOut )
 {
@@ -254,11 +254,11 @@ bool ThreadedMemoryCardWorker::Unmount( const UsbStorageDevice *pDevice )
 	return true;
 }
 
-static ThreadedMemoryCardWorker *g_pWorker = NULL;
+static ThreadedMemoryCardWorker *g_pWorker = nullptr;
 
 MemoryCardManager::MemoryCardManager()
 {
-	ASSERT( g_pWorker == NULL );
+	ASSERT( g_pWorker == nullptr );
 
 	// Register with Lua.
 	{
@@ -299,7 +299,7 @@ MemoryCardManager::~MemoryCardManager()
 	// Unregister with Lua.
 	LUA->UnsetGlobal( "MEMCARDMAN" );
 
-	ASSERT( g_pWorker != NULL );
+	ASSERT( g_pWorker != nullptr );
 	SAFE_DELETE(g_pWorker);
 
 	FOREACH_PlayerNumber( pn )
@@ -613,7 +613,7 @@ bool MemoryCardManager::MountCard( PlayerNumber pn, int iTimeout )
 	m_bMounted[pn] = true;
 
 	RageFileDriver *pDriver = FILEMAN->GetFileDriver( MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
-	if( pDriver == NULL )
+	if( pDriver == nullptr )
 	{
 		LOG->Warn( "FILEMAN->GetFileDriver(%s) failed", MEM_CARD_MOUNT_POINT_INTERNAL[pn].c_str() );
 		return true;

@@ -59,13 +59,13 @@ void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 	m_vpBars.clear();
 
 	Trail *pTrail = GAMESTATE->m_pCurTrail[PLAYER_1];
-	if( pTrail == NULL )
+	if( pTrail == nullptr )
 		return;
 
 	vector<int> viMeters;
 	for (auto &e: pTrail->m_vEntries)
 	{
-		ASSERT( e.pSteps != NULL );
+		ASSERT( e.pSteps != nullptr );
 		viMeters.push_back( e.pSteps->GetMeter() );
 	}
 

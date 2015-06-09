@@ -429,7 +429,7 @@ public:
 	void AddSteps( Steps* pSteps );
 	void DeleteSteps( const Steps* pSteps, bool bReAutoGen = true );
 
-	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_Invalid, const std::set<Steps*> *setInUse = NULL );
+	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_Invalid, const std::set<Steps*> *setInUse = nullptr );
 	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != ProfileSlot_Invalid; }
 	void GetStepsLoadedFromProfile( ProfileSlot slot, std::vector<Steps*> &vpStepsOut ) const;
 	int GetNumStepsLoadedFromProfile( ProfileSlot slot ) const;

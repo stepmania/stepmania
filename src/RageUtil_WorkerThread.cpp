@@ -109,13 +109,13 @@ bool RageWorkerThread::DoRequest( int iRequest )
 
 void RageWorkerThread::WorkerMain()
 {
-	while(1)
+	for(;;)
 	{
 		bool bTimeToRunHeartbeat = false;
 		m_WorkerEvent.Lock();
 		while( m_iRequest == REQ_NONE && !bTimeToRunHeartbeat )
 		{
-			if( !m_WorkerEvent.Wait( m_fHeartbeat != -1? &m_NextHeartbeat:NULL ) )
+			if( !m_WorkerEvent.Wait( m_fHeartbeat != -1? &m_NextHeartbeat:nullptr ) )
 				bTimeToRunHeartbeat = true;
 		}
 		const int iRequest = m_iRequest;
@@ -166,8 +166,6 @@ void RageWorkerThread::WorkerMain()
 
 				/* Clear the time-out flag, indicating that we can work again. */
 				m_bTimedOut = false;
-
-				CHECKPOINT;
 			}
 			else
 			{

@@ -3,13 +3,17 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 
+inline float sample_step_size(int samples_per_second)
+{
+	return 1.0f / samples_per_second;
+}
+
 SampleHistory::SampleHistory()
 {
 	m_iLastHistory = 0;
 	m_iHistorySamplesPerSecond = 60;
 	m_fHistorySeconds = 0.0f;
-	m_fToSample = 1 / m_iHistorySamplesPerSecond;
-
+	m_fToSample = sample_step_size(m_iHistorySamplesPerSecond);
 	m_fHistorySeconds = 10.0f;
 	int iSamples = lrintf( m_iHistorySamplesPerSecond * m_fHistorySeconds );
 	m_afHistory.resize( iSamples );
@@ -57,7 +61,7 @@ void SampleHistory::AddSample( float fSample, float fDeltaTime )
 		{
 			++m_iLastHistory;
 			m_iLastHistory %= m_afHistory.size();
-			m_fToSample += 1.0f / m_iHistorySamplesPerSecond;
+			m_fToSample += sample_step_size(m_iHistorySamplesPerSecond);
 		}
 
 		m_afHistory[m_iLastHistory] = fSample;

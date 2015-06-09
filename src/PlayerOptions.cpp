@@ -344,7 +344,7 @@ void PlayerOptions::FromString( const RString &sMultipleMods )
 
 bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 {
-	ASSERT_M( NOTESKIN != NULL, "The Noteskin Manager must be loaded in order to process mods." );
+	ASSERT_M( NOTESKIN != nullptr, "The Noteskin Manager must be loaded in order to process mods." );
 
 	RString sBit = sOneMod;
 	sBit.MakeLower();
@@ -447,7 +447,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "life" || sBit == "lives" )
 	{
 		// level is a percentage for every other option, so multiply by 100. -Kyz
-		m_BatteryLives= level * 100.0f;
+		m_BatteryLives = static_cast<int>(level * 100.0f);
 	}
 	else if( sBit == "bar" ) { m_LifeType= LifeType_Bar; }
 	else if( sBit == "battery" ) { m_LifeType= LifeType_Battery; }
@@ -729,7 +729,7 @@ float PlayerOptions::GetReversePercentForColumn( int iCol ) const
 {
 	float f = 0;
 	ASSERT(m_pn == PLAYER_1 || m_pn == PLAYER_2);
-	ASSERT(GAMESTATE->GetCurrentStyle(m_pn) != NULL);
+	ASSERT(GAMESTATE->GetCurrentStyle(m_pn) != nullptr);
 	int iNumCols = GAMESTATE->GetCurrentStyle(m_pn)->m_iColsPerPlayer;
 
 	f += m_fScrolls[SCROLL_REVERSE];
@@ -921,8 +921,8 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 
 bool PlayerOptions::IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail ) const
 {
-	ASSERT( pCourse != NULL );
-	ASSERT( pTrail != NULL );
+	ASSERT( pCourse != nullptr );
+	ASSERT( pTrail != nullptr );
 
 	auto isEasier = [this](TrailEntry const &e) {
 		return e.pSong && this->IsEasierForSongAndSteps(e.pSong, e.pSteps, PLAYER_1);

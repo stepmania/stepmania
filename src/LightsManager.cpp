@@ -102,7 +102,7 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 	}
 }
 
-LightsManager*	LIGHTSMAN = NULL;	// global and accessible from anywhere in our program
+LightsManager*	LIGHTSMAN = nullptr;	// global and accessible from anywhere in our program
 
 LightsManager::LightsManager()
 {

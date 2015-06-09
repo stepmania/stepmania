@@ -19,7 +19,7 @@ namespace
 {
 void RageFile_png_read( png_struct *png, png_byte *p, png_size_t size )
 {
-	CHECKPOINT;
+	CHECKPOINT_M("Reading the png file.");
 	RageFile *f = (RageFile *) png_get_io_ptr(png);
 
 	int got = f->Read( p, size );
@@ -45,7 +45,7 @@ struct error_info
 
 void PNG_Error( png_struct *png, const char *error )
 {
-	CHECKPOINT;
+	CHECKPOINT_M(ssprintf("PNG error during processing: %s", error));
 	error_info *info = (error_info *) png_get_error_ptr(png);
 	strncpy( info->err, error, 1024 );
 	info->err[1023] = 0;
@@ -56,7 +56,7 @@ void PNG_Error( png_struct *png, const char *error )
 void PNG_Warning( png_struct *png, const char *warning )
 {
 	// FIXME: Mismatched libpng headers vs. library causes a segfault here on MinGW
-	CHECKPOINT;
+	CHECKPOINT_M(ssprintf("PNG warning during processing: %s", warning));
 	error_info *info = (error_info *) png_get_io_ptr(png);
 	LOG->Trace( "loading \"%s\": warning: %s", info->fn, warning );
 }
@@ -71,29 +71,28 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 	png_struct *png = png_create_read_struct( PNG_LIBPNG_VER_STRING, &error, PNG_Error, PNG_Warning );
 
-	if( png == NULL )
+	if( png == nullptr )
 	{
 		sprintf( errorbuf, "creating png_create_read_struct failed");
-		return NULL;
+		return nullptr;
 	}
 
 	png_info *info_ptr = png_create_info_struct(png);
-	if( info_ptr == NULL )
+	if( info_ptr == nullptr )
 	{
-		png_destroy_read_struct( &png, NULL, NULL );
+		png_destroy_read_struct( &png, nullptr, nullptr );
 		sprintf( errorbuf, "creating png_create_info_struct failed");
-		return NULL;
+		return nullptr;
 	}
 
-	RageSurface *volatile img = NULL;
-	CHECKPOINT;
+	RageSurface *volatile img = nullptr;
+	CHECKPOINT_M("Potential issue with png jump about to be analyzed.");
 	if( setjmp(png_jmpbuf(png) ))
 	{
-		png_destroy_read_struct( &png, &info_ptr, NULL );
+		png_destroy_read_struct( &png, &info_ptr, nullptr );
 		delete img;
-		return NULL;
+		return nullptr;
 	}
-	CHECKPOINT;
 
 	png_set_read_fn( png, f, RageFile_png_read );
 
@@ -101,21 +100,19 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 	png_uint_32 width, height;
 	int bit_depth, color_type;
-	png_get_IHDR( png, info_ptr, &width, &height, &bit_depth, &color_type, NULL, NULL, NULL );
+	png_get_IHDR( png, info_ptr, &width, &height, &bit_depth, &color_type, nullptr, nullptr, nullptr );
 
 	/* If bHeaderOnly is true, don't allocate the pixel storage space or decompress
 	 * the image.  Just return an empty surface with only the width and height set. */
 	if( bHeaderOnly )
 	{
-		CHECKPOINT;
-		img = CreateSurfaceFrom( width, height, 32, 0, 0, 0, 0, NULL, width*4 );
-		png_destroy_read_struct( &png, &info_ptr, NULL );
+		CHECKPOINT_M("Header only png about to be processed.");
+		img = CreateSurfaceFrom( width, height, 32, 0, 0, 0, 0, nullptr, width*4 );
+		png_destroy_read_struct( &png, &info_ptr, nullptr );
 
 		return img;
 	}
 
-
-	CHECKPOINT;
 	png_set_strip_16(png); /* 16bit->8bit */
 	png_set_packing( png ); /* 1,2,4 bit->8 bit */
 
@@ -161,11 +158,11 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		FAIL_M(ssprintf( "%i", color_type) );
 	}
 
-	CHECKPOINT;
+	CHECKPOINT_M("PNG color analysis about to begin.");
 	if( color_type == PNG_COLOR_TYPE_GRAY )
 	{
 		png_color_16 *trans;
-		if( png_get_tRNS( png, info_ptr, NULL, NULL, &trans ) == PNG_INFO_tRNS )
+		if( png_get_tRNS( png, info_ptr, nullptr, nullptr, &trans ) == PNG_INFO_tRNS )
 			iColorKey = trans->gray;
 	}
 	else if( color_type == PNG_COLOR_TYPE_PALETTE )
@@ -175,9 +172,9 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		int ret = png_get_PLTE( png, info_ptr, &palette, &num_palette );
 		ASSERT( ret == PNG_INFO_PLTE );
 
-		png_byte *trans = NULL;
+		png_byte *trans = nullptr;
 		int num_trans = 0;
-		png_get_tRNS( png, info_ptr, &trans, &num_trans, NULL );
+		png_get_tRNS( png, info_ptr, &trans, &num_trans, nullptr );
 
 		for( int i = 0; i < num_palette; ++i )
 		{
@@ -205,7 +202,6 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 	png_set_interlace_handling( png );
 
-	CHECKPOINT;
 	png_read_update_info( png, info_ptr );
 
 	switch( type )
@@ -229,7 +225,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	default:
 		FAIL_M(ssprintf( "%i", type) );
 	}
-	ASSERT( img != NULL );
+	ASSERT( img != nullptr );
 
 	/* alloca to prevent memleaks if libpng longjmps us */
 	png_byte **row_pointers = (png_byte **) alloca( sizeof(png_byte*) * height );
@@ -241,12 +237,10 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		row_pointers[y] = p + img->pitch*y;
 	}
 
-	CHECKPOINT;
 	png_read_image( png, row_pointers );
 
-	CHECKPOINT;
 	png_read_end( png, info_ptr );
-	png_destroy_read_struct( &png, &info_ptr, NULL );
+	png_destroy_read_struct( &png, &info_ptr, nullptr );
 
 	return img;
 }
@@ -264,7 +258,7 @@ RageSurfaceUtils::OpenResult RageSurface_Load_PNG( const RString &sPath, RageSur
 
 	char errorbuf[1024];
 	ret = RageSurface_Load_PNG( &f, sPath, errorbuf, bHeaderOnly );
-	if( ret == NULL )
+	if( ret == nullptr )
 	{
 		error = errorbuf;
 		return RageSurfaceUtils::OPEN_UNKNOWN_FILE_FORMAT; // XXX

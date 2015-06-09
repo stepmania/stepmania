@@ -399,11 +399,11 @@ void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
 		Trim( sBits[0] );
 
 		if( !sBits[0].CompareNoCase("TIME") )
-			attack.fStartSecond = strtof( sBits[1], NULL );
+			attack.fStartSecond = strtof( sBits[1], nullptr );
 		else if( !sBits[0].CompareNoCase("LEN") )
-			attack.fSecsRemaining = strtof( sBits[1], NULL );
+			attack.fSecsRemaining = strtof( sBits[1], nullptr );
 		else if( !sBits[0].CompareNoCase("END") )
-			end = strtof( sBits[1], NULL );
+			end = strtof( sBits[1], nullptr );
 		else if( !sBits[0].CompareNoCase("MODS") )
 		{
 			Trim(sBits[1]);
@@ -1174,7 +1174,7 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 	return true;
 }
 
-bool SMLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =NULL */ )
+bool SMLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =nullptr */ )
 {
 	LOG->Trace( "SMLoader::LoadEditFromFile(%s)", sEditFilePath.c_str() );
 
@@ -1202,7 +1202,7 @@ bool SMLoader::LoadEditFromBuffer( const RString &sBuffer, const RString &sEditF
 	return LoadEditFromMsd( msd, sEditFilePath, slot, true, givenSong );
 }
 
-bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =NULL */ )
+bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =nullptr */ )
 {
 	Song* pSong = givenSong;
 
@@ -1229,7 +1229,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 			sSongFullTitle.Replace( '\\', '/' );
 
 			pSong = SONGMAN->FindSong( sSongFullTitle );
-			if( pSong == NULL )
+			if( pSong == nullptr )
 			{
 				LOG->UserLog( "Edit file", sEditFilePath, "requires a song \"%s\" that isn't present.", sSongFullTitle.c_str() );
 				return false;
@@ -1244,7 +1244,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 
 		else if( sValueName=="NOTES" )
 		{
-			if( pSong == NULL )
+			if( pSong == nullptr )
 			{
 				LOG->UserLog( "Edit file", sEditFilePath, "doesn't have a #SONG tag preceeding the first #NOTES tag, and is not in a valid song-specific folder." );
 				return false;

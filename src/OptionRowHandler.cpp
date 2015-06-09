@@ -530,8 +530,8 @@ public:
 	void Init()
 	{
 		OptionRowHandler::Init();
-		m_ppStepsToFill = NULL;
-		m_pDifficultyToFill = NULL;
+		m_ppStepsToFill = nullptr;
+		m_pDifficultyToFill = nullptr;
 		m_vSteps.clear();
 		m_vDifficulties.clear();
 	}
@@ -555,7 +555,7 @@ public:
 			m_ppStepsToFill = &GAMESTATE->m_pEditSourceSteps;
 			m_pst = &GAMESTATE->m_stEditSource;
 			m_vsReloadRowMessages.push_back( MessageIDToString(Message_EditSourceStepsTypeChanged) );
-			if( GAMESTATE->m_pCurSteps[0].Get() != NULL )
+			if( GAMESTATE->m_pCurSteps[0].Get() != nullptr )
 				m_Def.m_vEnabledForPlayers.clear();	// hide row
 		}
 		else
@@ -588,7 +588,7 @@ public:
 
 			if( sParam == "EditSteps" )
 			{
-				m_vSteps.push_back( NULL );
+				m_vSteps.push_back( nullptr );
 				m_vDifficulties.push_back( Difficulty_Edit );
 			}
 
@@ -615,7 +615,7 @@ public:
 		else
 		{
 			m_vDifficulties.push_back( Difficulty_Edit );
-			m_vSteps.push_back( NULL );
+			m_vSteps.push_back( nullptr );
 			m_Def.m_vsChoices.push_back( "none" );
 		}
 
@@ -696,7 +696,7 @@ class OptionRowHandlerListCharacters: public OptionRowHandlerList
 		{
 			m_Def.m_vsChoices.push_back( OFF );
 			GameCommand mc;
-			mc.m_pCharacter = NULL;
+			mc.m_pCharacter = nullptr;
 			m_aListEntries.push_back( mc );
 		}
 
@@ -810,7 +810,7 @@ class OptionRowHandlerListSongsInCurrentSongGroup: public OptionRowHandlerList
 	{
 		const vector<Song*> &vpSongs = SONGMAN->GetSongs( GAMESTATE->m_sPreferredSongGroup );
 
-		if( GAMESTATE->m_pCurSong == NULL )
+		if( GAMESTATE->m_pCurSong == nullptr )
 			GAMESTATE->m_pCurSong.Set( vpSongs[0] );
 
 		m_Def.m_sName = "SongsInCurrentSongGroup";
@@ -857,7 +857,7 @@ public:
 		m_pLuaTable->PushSelf(L);
 		lua_getfield(L, -1, "Name");
 		const char *pStr = lua_tostring(L, -1);
-		if( pStr == NULL )
+		if( pStr == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"Name\" entry is not a string.", RowName.c_str());
 			return false;
@@ -866,7 +866,7 @@ public:
 
 		lua_getfield(L, -1, "LayoutType");
 		pStr = lua_tostring(L, -1);
-		if(pStr == NULL || StringToLayoutType(pStr) == LayoutType_Invalid)
+		if(pStr == nullptr || StringToLayoutType(pStr) == LayoutType_Invalid)
 		{
 			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"LayoutType\" entry is not a string.", RowName.c_str());
 			return false;
@@ -875,7 +875,7 @@ public:
 
 		lua_getfield(L, -1, "SelectType");
 		pStr = lua_tostring(L, -1);
-		if(pStr == NULL || StringToSelectType(pStr) == SelectType_Invalid)
+		if(pStr == nullptr || StringToSelectType(pStr) == SelectType_Invalid)
 		{
 			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"SelectType\" entry is not a string.", RowName.c_str());
 			return false;
@@ -1035,15 +1035,15 @@ public:
 		lua_pop( L, 1 );
 
 		lua_getfield(L, -1, "GoToFirstOnStart");
-		m_GoToFirstOnStart= lua_toboolean(L, -1);
+		m_GoToFirstOnStart= lua_toboolean(L, -1) != 0;
 		lua_pop(L, 1);
 
 		lua_getfield(L, -1, "OneChoiceForAllPlayers");
-		m_Def.m_bOneChoiceForAllPlayers = lua_toboolean( L, -1 );
+		m_Def.m_bOneChoiceForAllPlayers = lua_toboolean( L, -1 ) != 0;
 		lua_pop( L, 1 );
 
 		lua_getfield(L, -1, "ExportOnChange");
-		m_Def.m_bExportOnChange = lua_toboolean( L, -1 );
+		m_Def.m_bExportOnChange = lua_toboolean( L, -1 ) != 0;
 		lua_pop( L, 1 );
 
 		// TODO:  Change these to use the proper enum strings like everything
@@ -1274,7 +1274,7 @@ public:
 	void Init()
 	{
 		OptionRowHandler::Init();
-		m_pOpt = NULL;
+		m_pOpt = nullptr;
 	}
 	virtual bool LoadInternal( const Commands &cmds )
 	{
@@ -1289,7 +1289,7 @@ public:
 		m_Def.m_bOneChoiceForAllPlayers = true;
 
 		ConfOption *pConfOption = ConfOption::Find( sParam );
-		ROW_INVALID_IF(pConfOption == NULL, "Invalid Conf type \"" + sParam + "\".", false);
+		ROW_INVALID_IF(pConfOption == nullptr, "Invalid Conf type \"" + sParam + "\".", false);
 
 		pConfOption->UpdateAvailableOptions();
 
@@ -1349,7 +1349,7 @@ public:
 	void Init()
 	{
 		OptionRowHandler::Init();
-		m_pstToFill = NULL;
+		m_pstToFill = nullptr;
 		m_vStepsTypesToShow.clear();
 	}
 
@@ -1369,7 +1369,7 @@ public:
 			m_pstToFill = &GAMESTATE->m_stEditSource;
 			m_vsReloadRowMessages.push_back( MessageIDToString(Message_CurrentStepsP1Changed) );
 			m_vsReloadRowMessages.push_back( MessageIDToString(Message_EditStepsTypeChanged) );
-			if( GAMESTATE->m_pCurSteps[0].Get() != NULL )
+			if( GAMESTATE->m_pCurSteps[0].Get() != nullptr )
 				m_Def.m_vEnabledForPlayers.clear();	// hide row
 		}
 		else
@@ -1490,12 +1490,12 @@ public:
 
 OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 {
-	OptionRowHandler* pHand = NULL;
+	OptionRowHandler* pHand = nullptr;
 
-	ROW_INVALID_IF(cmds.v.size() == 0, "No commands for constructing row.", NULL);
+	ROW_INVALID_IF(cmds.v.size() == 0, "No commands for constructing row.", nullptr);
 	const RString &name = cmds.v[0].GetName();
 	ROW_INVALID_IF(name != "gamecommand" && cmds.v.size() != 1,
-		"Row must be constructed from single command.", NULL);
+		"Row must be constructed from single command.", nullptr);
 
 	bool load_succeeded= false;
 #define MAKE( type )	{ type *p = new type; load_succeeded= p->Load( cmds ); pHand = p; }
@@ -1506,7 +1506,7 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 		const Command &command = cmds.v[0];
 		RString sParam = command.GetArg(1).s;
 		ROW_INVALID_IF(command.m_vsArgs.size() != 2 || !sParam.size(),
-			"list row command must be 'list,name' or 'list,type'.", NULL);
+			"list row command must be 'list,name' or 'list,type'.", nullptr);
 
 		if(	 sParam.CompareNoCase("NoteSkins")==0 )		MAKE( OptionRowHandlerListNoteSkins )
 		else if( sParam.CompareNoCase("Steps")==0 )		MAKE( OptionRowHandlerListSteps )
@@ -1529,19 +1529,19 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 	else if( name == "gamecommand" )	MAKE( OptionRowHandlerGameCommand )
 	else
 	{
-		ROW_INVALID_IF(true, "Invalid row type.", NULL);
+		ROW_INVALID_IF(true, "Invalid row type.", nullptr);
 	}
 
 	if(load_succeeded)
 	{
 		return pHand;
 	}
-	return NULL;
+	return nullptr;
 }
 
 OptionRowHandler* OptionRowHandlerUtil::MakeNull()
 {
-	OptionRowHandler* pHand = NULL;
+	OptionRowHandler* pHand = nullptr;
 	bool load_succeeded= false; // Part of the MAKE macro, but unused.
 	Commands cmds;
 	MAKE( OptionRowHandlerNull )
@@ -1549,7 +1549,7 @@ OptionRowHandler* OptionRowHandlerUtil::MakeNull()
 	{
 		return pHand;
 	}
-	return NULL;
+	return nullptr;
 }
 
 OptionRowHandler* OptionRowHandlerUtil::MakeSimple( const MenuRowDef &mr )

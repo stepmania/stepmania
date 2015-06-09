@@ -58,7 +58,7 @@ bool DateTime::operator>( const DateTime& other ) const
 
 DateTime DateTime::GetNowDateTime()
 {
-	time_t now = time(NULL);
+	time_t now = time(nullptr);
 	tm tNow;
 	localtime_r( &now, &tNow );
 	DateTime dtNow;
