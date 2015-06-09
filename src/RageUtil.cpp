@@ -40,7 +40,7 @@ MersenneTwister::MersenneTwister( int iSeed ) : m_iNext(0)
 void MersenneTwister::Reset( int iSeed )
 {
 	if( iSeed == 0 )
-		iSeed = static_cast<int>(time(NULL));
+		iSeed = static_cast<int>(time(nullptr));
 
 	m_Values[0] = iSeed;
 	m_iNext = 0;
@@ -158,7 +158,7 @@ namespace
 	{
 		LIST_METHOD( Seed ),
 		LIST_METHOD( Random ),
-		{ NULL, NULL }
+		{ nullptr, nullptr }
 	};
 }
 
@@ -407,7 +407,7 @@ RString FormatNumberAndSuffix( int i )
 
 struct tm GetLocalTime()
 {
-	const time_t t = time(NULL);
+	const time_t t = time(nullptr);
 	struct tm tm;
 	localtime_r( &t, &tm );
 	return tm;
@@ -427,7 +427,7 @@ RString vssprintf( const char *szFormat, va_list argList )
 	RString sStr;
 
 #if defined(WIN32)
-	char *pBuf = NULL;
+	char *pBuf = nullptr;
 	int iChars = 1;
 	int iUsed = 0;
 	int iTry = 0;
@@ -701,7 +701,7 @@ const LanguageInfo *GetLanguageInfo( const RString &sIsoCode )
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 RString join( const RString &sDeliminator, const vector<RString> &sSource)
@@ -1076,7 +1076,7 @@ bool FindFirstFilenameContaining(const vector<RString>& filenames,
 }
 
 int g_argc = 0;
-char **g_argv = NULL;
+char **g_argv = nullptr;
 
 void SetCommandlineArguments( int argc, char **argv )
 {
@@ -1094,7 +1094,7 @@ void GetCommandLineArguments( int &argc, char **&argv )
  * option "--test".  All commandline arguments are getopt_long style: --foo;
  * short arguments (-x) are not supported.  (These are not intended for
  * common, general use, so having short options isn't currently needed.)
- * If argument is non-NULL, accept an argument. */
+ * If argument is non-nullptr, accept an argument. */
 bool GetCommandlineArgument( const RString &option, RString *argument, int iIndex )
 {
 	const RString optstr = "--" + option;
@@ -1132,7 +1132,7 @@ bool GetCommandlineArgument( const RString &option, RString *argument, int iInde
 RString GetCwd()
 {
 	char buf[PATH_MAX];
-	bool ret = getcwd(buf, PATH_MAX) != NULL;
+	bool ret = getcwd(buf, PATH_MAX) != nullptr;
 	ASSERT(ret);
 	return buf;
 }
@@ -1456,12 +1456,12 @@ void Regex::Compile()
 {
 	const char *error;
 	int offset;
-	m_pReg = pcre_compile( m_sPattern.c_str(), PCRE_CASELESS, &error, &offset, NULL );
+	m_pReg = pcre_compile( m_sPattern.c_str(), PCRE_CASELESS, &error, &offset, nullptr );
 
-	if( m_pReg == NULL )
+	if( m_pReg == nullptr )
 		RageException::Throw( "Invalid regex: \"%s\" (%s).", m_sPattern.c_str(), error );
 
-	int iRet = pcre_fullinfo( (pcre *) m_pReg, NULL, PCRE_INFO_CAPTURECOUNT, &m_iBackrefs );
+	int iRet = pcre_fullinfo( (pcre *) m_pReg, nullptr, PCRE_INFO_CAPTURECOUNT, &m_iBackrefs );
 	ASSERT( iRet >= 0 );
 
 	++m_iBackrefs;
@@ -1478,16 +1478,16 @@ void Regex::Set( const RString &sStr )
 void Regex::Release()
 {
 	pcre_free( m_pReg );
-	m_pReg = NULL;
+	m_pReg = nullptr;
 	m_sPattern = RString();
 }
 
-Regex::Regex( const RString &sStr ): m_pReg(NULL), m_iBackrefs(0), m_sPattern(RString())
+Regex::Regex( const RString &sStr ): m_pReg(nullptr), m_iBackrefs(0), m_sPattern(RString())
 {
 	Set( sStr );
 }
 
-Regex::Regex( const Regex &rhs ): m_pReg(NULL), m_iBackrefs(0), m_sPattern(RString())
+Regex::Regex( const Regex &rhs ): m_pReg(nullptr), m_iBackrefs(0), m_sPattern(RString())
 {
 	Set( rhs.m_sPattern );
 }
@@ -1507,7 +1507,7 @@ Regex::~Regex()
 bool Regex::Compare( const RString &sStr )
 {
 	int iMat[128*3];
-	int iRet = pcre_exec( (pcre *) m_pReg, NULL, sStr.data(), sStr.size(), 0, 0, iMat, 128*3 );
+	int iRet = pcre_exec( (pcre *) m_pReg, nullptr, sStr.data(), sStr.size(), 0, 0, iMat, 128*3 );
 
 	if( iRet < -1 )
 		RageException::Throw( "Unexpected return from pcre_exec('%s'): %i.", m_sPattern.c_str(), iRet );
@@ -1520,7 +1520,7 @@ bool Regex::Compare( const RString &sStr, vector<RString> &asMatches )
 	asMatches.clear();
 
 	int iMat[128*3];
-	int iRet = pcre_exec( (pcre *) m_pReg, NULL, sStr.data(), sStr.size(), 0, 0, iMat, 128*3 );
+	int iRet = pcre_exec( (pcre *) m_pReg, nullptr, sStr.data(), sStr.size(), 0, 0, iMat, 128*3 );
 
 	if( iRet < -1 )
 		RageException::Throw( "Unexpected return from pcre_exec('%s'): %i.", m_sPattern.c_str(), iRet );
@@ -1876,7 +1876,7 @@ RString IntToString( const int &iNum )
 
 float StringToFloat( const RString &sString )
 {
-	float ret = strtof( sString, NULL );
+	float ret = strtof( sString, nullptr );
 
 	if( !isfinite(ret) )
 		ret = 0.0f;
@@ -2385,7 +2385,7 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 		if( in.Read(data, 1024*32) == -1 )
 		{
 			sError = ssprintf( "read error: %s", in.GetError().c_str() );
-			if( bReadError != NULL )
+			if( bReadError != nullptr )
 				*bReadError = true;
 			return false;
 		}
@@ -2395,7 +2395,7 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 		if( i == -1 )
 		{
 			sError = ssprintf( "write error: %s", out.GetError().c_str() );
-			if( bReadError != NULL )
+			if( bReadError != nullptr )
 				*bReadError = false;
 			return false;
 		}
@@ -2404,7 +2404,7 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 	if( out.Flush() == -1 )
 	{
 		sError = ssprintf( "write error: %s", out.GetError().c_str() );
-		if( bReadError != NULL )
+		if( bReadError != nullptr )
 			*bReadError = false;
 		return false;
 	}

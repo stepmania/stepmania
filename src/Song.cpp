@@ -718,14 +718,14 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			/* XXX: Checking if the music file exists eliminates a warning
 			 * originating from BMS files (which have no music file, per se)
 			 * but it's something of a hack. */
-			if(Sample == NULL && m_sMusicFile != "")
+			if(Sample == nullptr && m_sMusicFile != "")
 			{
 				LOG->UserLog("Sound file", GetMusicPath(), "couldn't be opened: %s", error.c_str());
 
 				// Don't use this file.
 				m_sMusicFile = "";
 			}
-			else if(Sample != NULL)
+			else if(Sample != nullptr)
 			{
 				m_fMusicLengthSeconds = Sample->GetLength() / 1000.0f;
 				delete Sample;
@@ -760,7 +760,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 		if(!m_PreviewFile.empty() && m_fMusicSampleLengthSeconds <= 0.00f) { // if there's a preview file and sample length isn't specified, set sample length to length of preview file
 			RString error;
 			RageSoundReader *Sample = RageSoundReader_FileReader::OpenFile(GetPreviewMusicPath(), error);
-			if(Sample == NULL && m_sMusicFile != "")
+			if(Sample == nullptr && m_sMusicFile != "")
 			{
 				LOG->UserLog("Sound file", GetPreviewMusicPath(), "couldn't be opened: %s", error.c_str());
 
@@ -768,7 +768,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 				m_PreviewFile = "";
 				m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
 			}
-			else if(Sample != NULL)
+			else if(Sample != nullptr)
 			{
 				m_fMusicSampleLengthSeconds = Sample->GetLength() / 1000.0f;
 				delete Sample;
@@ -1141,12 +1141,12 @@ bool Song::SongCompleteForStyle( const Style *st ) const
 
 bool Song::HasStepsType( StepsType st ) const
 {
-	return SongUtil::GetOneSteps( this, st ) != NULL;
+	return SongUtil::GetOneSteps( this, st ) != nullptr;
 }
 
 bool Song::HasStepsTypeAndDifficulty( StepsType st, Difficulty dc ) const
 {
-	return SongUtil::GetOneSteps( this, st, dc ) != NULL;
+	return SongUtil::GetOneSteps( this, st, dc ) != nullptr;
 }
 
 void Song::Save(bool autosave)
@@ -1491,7 +1491,7 @@ bool Song::HasEdits( StepsType st ) const
 
 bool Song::NormallyDisplayed() const
 {
-	return UNLOCKMAN == NULL || !UNLOCKMAN->SongIsLocked(this);
+	return UNLOCKMAN == nullptr || !UNLOCKMAN->SongIsLocked(this);
 }
 
 bool Song::ShowInDemonstrationAndRanking() const { return !IsTutorial() && NormallyDisplayed(); }
@@ -1835,7 +1835,7 @@ void Song::FreeAllLoadedFromProfile( ProfileSlot slot, const std::set<Steps*> *s
 			continue;
 		if( slot != ProfileSlot_Invalid && pSteps->GetLoadedFromProfileSlot() != slot )
 			continue;
-		if( setInUse != NULL && setInUse->find(pSteps) != setInUse->end() )
+		if( setInUse != nullptr && setInUse->find(pSteps) != setInUse->end() )
 			continue;
 		apToRemove.push_back( pSteps );
 	}

@@ -163,7 +163,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 	out.m_SongTiming.m_sFile = sPath; // songs still have their fallback timing.
 	out.m_sSongFileName = sPath;
 
-	Steps* pNewNotes = NULL;
+	Steps* pNewNotes = nullptr;
 	int iRowsPerBeat = -1; // Start with an invalid value: needed for checking.
 	vector< std::pair<float, float> > vBPMChanges, vStops;
 

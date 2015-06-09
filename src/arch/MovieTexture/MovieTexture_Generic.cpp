@@ -25,11 +25,11 @@ MovieTexture_Generic::MovieTexture_Generic( RageTextureID ID, MovieDecoder *pDec
 	m_pDecoder = pDecoder;
 
 	m_uTexHandle = 0;
-	m_pRenderTarget = NULL;
-	m_pTextureIntermediate = NULL;
+	m_pRenderTarget = nullptr;
+	m_pTextureIntermediate = nullptr;
 	m_bLoop = true;
-	m_pSurface = NULL;
-	m_pTextureLock = NULL;
+	m_pSurface = nullptr;
+	m_pTextureLock = nullptr;
 	m_ImageWaiting = FRAME_NONE;
 	m_fRate = 1;
 	m_bWantRewind = false;
@@ -88,10 +88,10 @@ MovieTexture_Generic::~MovieTexture_Generic()
 void MovieTexture_Generic::DestroyTexture()
 {
 	delete m_pSurface;
-	m_pSurface = NULL;
+	m_pSurface = nullptr;
 
 	delete m_pTextureLock;
-	m_pTextureLock = NULL;
+	m_pTextureLock = nullptr;
 
 	if( m_uTexHandle )
 	{
@@ -100,9 +100,9 @@ void MovieTexture_Generic::DestroyTexture()
 	}
 
 	delete m_pRenderTarget;
-	m_pRenderTarget = NULL;
+	m_pRenderTarget = nullptr;
 	delete m_pTextureIntermediate;
-	m_pTextureIntermediate = NULL;
+	m_pTextureIntermediate = nullptr;
 }
 
 class RageMovieTexture_Generic_Intermediate : public RageTexture
@@ -162,7 +162,7 @@ private:
 			m_SurfaceFormat.Mask[0],
 			m_SurfaceFormat.Mask[1],
 			m_SurfaceFormat.Mask[2],
-			m_SurfaceFormat.Mask[3], NULL, 1 );
+			m_SurfaceFormat.Mask[3], nullptr, 1 );
 
 		m_uTexHandle = DISPLAY->CreateTexture( m_PixFmt, pSurface, false );
 		delete pSurface;
@@ -176,13 +176,13 @@ private:
 void MovieTexture_Generic::Invalidate()
 {
 	m_uTexHandle = 0;
-	if( m_pTextureIntermediate != NULL )
+	if( m_pTextureIntermediate != nullptr )
 		m_pTextureIntermediate->Invalidate();
 }
 
 void MovieTexture_Generic::CreateTexture()
 {
-	if( m_uTexHandle || m_pRenderTarget != NULL )
+	if( m_uTexHandle || m_pRenderTarget != nullptr )
 		return;
 
 	CHECKPOINT_M("About to create a generic texture.");
@@ -207,18 +207,18 @@ void MovieTexture_Generic::CreateTexture()
 	m_iTextureWidth = power_of_two( m_iImageWidth );
 	m_iTextureHeight = power_of_two( m_iImageHeight );
 	MovieDecoderPixelFormatYCbCr fmt = PixelFormatYCbCr_Invalid;
-	if( m_pSurface == NULL )
+	if( m_pSurface == nullptr )
 	{
-		ASSERT( m_pTextureLock == NULL );
+		ASSERT( m_pTextureLock == nullptr );
 		if( g_bMovieTextureDirectUpdates )
 			m_pTextureLock = DISPLAY->CreateTextureLock();
 
 		m_pSurface = m_pDecoder->CreateCompatibleSurface( m_iImageWidth, m_iImageHeight,
 			TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32, fmt );
-		if( m_pTextureLock != NULL )
+		if( m_pTextureLock != nullptr )
 		{
 			delete [] m_pSurface->pixels;
-			m_pSurface->pixels = NULL;
+			m_pSurface->pixels = nullptr;
 		}
 
 	}
@@ -447,22 +447,22 @@ void MovieTexture_Generic::UpdateFrame()
 	/* Just in case we were invalidated: */
 	CreateTexture();
 
-	if( m_pTextureLock != NULL )
+	if( m_pTextureLock != nullptr )
 	{
-		int iHandle = m_pTextureIntermediate != NULL? m_pTextureIntermediate->GetTexHandle(): this->GetTexHandle();
+		int iHandle = m_pTextureIntermediate != nullptr? m_pTextureIntermediate->GetTexHandle(): this->GetTexHandle();
 		m_pTextureLock->Lock( iHandle, m_pSurface );
 	}
 
 	m_pDecoder->GetFrame( m_pSurface );
-	if( m_pTextureLock != NULL )
+	if( m_pTextureLock != nullptr )
 		m_pTextureLock->Unlock( m_pSurface, true );
 
-	if( m_pRenderTarget != NULL )
+	if( m_pRenderTarget != nullptr )
 	{
 		CHECKPOINT_M( "About to upload the texture.");
 
 		/* If we have no m_pTextureLock, we still have to upload the texture. */
-		if( m_pTextureLock == NULL )
+		if( m_pTextureLock == nullptr )
 		{
 			DISPLAY->UpdateTexture(
 				m_pTextureIntermediate->GetTexHandle(),
@@ -476,7 +476,7 @@ void MovieTexture_Generic::UpdateFrame()
 	}
 	else
 	{
-		if( m_pTextureLock == NULL )
+		if( m_pTextureLock == nullptr )
 		{
 			DISPLAY->UpdateTexture(
 				m_uTexHandle,
@@ -520,7 +520,7 @@ void MovieTexture_Generic::SetPosition( float fSeconds )
 
 unsigned MovieTexture_Generic::GetTexHandle() const
 {
-	if( m_pRenderTarget != NULL )
+	if( m_pRenderTarget != nullptr )
 		return m_pRenderTarget->GetTexHandle();
 
 	return m_uTexHandle;

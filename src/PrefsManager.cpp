@@ -19,7 +19,7 @@
 //STATIC_INI_PATH	= "Data/Static.ini";		// overlay on the 2 above, can't be overridden
 //TYPE_TXT_FILE	= "Data/Type.txt";
 
-PrefsManager*	PREFSMAN = NULL;	// global and accessible from anywhere in our program
+PrefsManager*	PREFSMAN = nullptr;	// global and accessible from anywhere in our program
 
 static const char *MusicWheelUsesSectionsNames[] = {
 	"Never",
@@ -447,7 +447,7 @@ void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const RString &sSection
 
 	/*
 	IPreference *pPref = PREFSMAN->GetPreferenceByName( *sName );
-	if( pPref == NULL )
+	if( pPref == nullptr )
 	{
 		LOG->Warn( "Unknown preference in [%s]: %s", sClassName.c_str(), sName->c_str() );
 		continue;
@@ -515,7 +515,7 @@ void PrefsManager::SavePrefsToIni( IniFile &ini )
 		StoreGamePrefs();
 
 	XNode* pNode = ini.GetChild( "Options" );
-	if( pNode == NULL )
+	if( pNode == nullptr )
 		pNode = ini.AppendChild( "Options" );
 	IPreference::SavePrefsToNode( pNode );
 
@@ -556,7 +556,7 @@ public:
 	{
 		RString sName = SArg(1);
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
-		if( pPref == NULL )
+		if( pPref == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt( "GetPreference: unknown preference \"%s\"", sName.c_str() );
 			lua_pushnil( L );
@@ -571,7 +571,7 @@ public:
 		RString sName = SArg(1);
 
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
-		if( pPref == NULL )
+		if( pPref == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt( "SetPreference: unknown preference \"%s\"", sName.c_str() );
 			COMMON_RETURN_SELF;
@@ -586,7 +586,7 @@ public:
 		RString sName = SArg(1);
 
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
-		if( pPref == NULL )
+		if( pPref == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt( "SetPreferenceToDefault: unknown preference \"%s\"", sName.c_str() );
 			COMMON_RETURN_SELF;
@@ -601,7 +601,7 @@ public:
 		RString sName = SArg(1);
 
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
-		if( pPref == NULL )
+		if( pPref == nullptr )
 		{
 			lua_pushboolean( L, false );
 			return 1;

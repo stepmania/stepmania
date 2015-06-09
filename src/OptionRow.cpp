@@ -34,9 +34,9 @@ RString MOD_ICON_X_NAME( size_t p )		{ return ssprintf("ModIconP%dX",int(p+1)); 
 OptionRow::OptionRow( const OptionRowType *pSource )
 {
 	m_pParentType = pSource;
-	m_pHand = NULL;
+	m_pHand = nullptr;
 
-	m_textTitle = NULL;
+	m_textTitle = nullptr;
 	ZERO( m_ModIcons );
 
 	Clear();
@@ -64,7 +64,7 @@ void OptionRow::Clear()
 	{
 		m_Underline[p].clear();
 	}
-	if( m_pHand != NULL )
+	if( m_pHand != nullptr )
 	{
 		for (auto const &m: m_pHand->m_vsReloadRowMessages)
 		{
@@ -115,7 +115,7 @@ void OptionRowType::Load( const RString &sMetricsGroup, Actor *pParent )
 	ActorUtil::LoadAllCommandsAndSetXY( m_textTitle, sMetricsGroup );
 
 	Actor *pActor = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"Frame"), pParent );
-	if( pActor == NULL )
+	if( pActor == nullptr )
 		pActor = new Actor;
 	m_sprFrame.Load( pActor );
 	m_sprFrame->SetName( "Frame" );
@@ -219,7 +219,7 @@ RString OptionRow::GetRowTitle() const
 		if( GAMESTATE->m_pCurCourse )
 		{
 			const Trail* pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->GetMasterPlayerNumber()];
-			ASSERT( pTrail != NULL );
+			ASSERT( pTrail != nullptr );
 			const int iNumCourseEntries = pTrail->m_vEntries.size();
 			if( iNumCourseEntries > CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
 				bShowBpmInSpeedTitle = false;
@@ -238,7 +238,7 @@ RString OptionRow::GetRowTitle() const
 				const Course *pCourse = GAMESTATE->m_pCurCourse;
 				StepsType st = GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType;
 				const Trail* pTrail = pCourse->GetTrail( st );
-				ASSERT( pTrail != NULL );
+				ASSERT( pTrail != nullptr );
 				pTrail->GetDisplayBpms( bpms );
 			}
 
@@ -524,7 +524,7 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 void OptionRow::PositionIcons( PlayerNumber pn )
 {
 	ModIcon *pIcon = m_ModIcons[pn];
-	if( pIcon == NULL )
+	if( pIcon == nullptr )
 		return;
 
 	pIcon->SetX( m_pParentType->MOD_ICON_X.GetValue(pn) );
@@ -675,7 +675,7 @@ void OptionRow::SetModIcon( PlayerNumber pn, const RString &sText, GameCommand &
 	msg.SetParam( "GameCommand", &gc );
 	msg.SetParam( "Text", sText );
 	m_sprFrame->HandleMessage( msg );
-	if( m_ModIcons[pn] != NULL )
+	if( m_ModIcons[pn] != nullptr )
 		m_ModIcons[pn]->Set( sText );
 }
 

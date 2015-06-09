@@ -352,13 +352,13 @@ void NoteData::AddHoldNote( int iTrack, int iStartRow, int iEndRow, TapNote tn )
 }
 
 /* Determine if a hold note lies on the given spot.  Return true if so.  If
- * pHeadRow is non-NULL, return the row of the head. */
+ * pHeadRow is non-nullptr, return the row of the head. */
 bool NoteData::IsHoldHeadOrBodyAtRow( int iTrack, int iRow, int *pHeadRow ) const
 {
 	const TapNote &tn = GetTapNote( iTrack, iRow );
 	if( tn.type == TapNoteType_HoldHead )
 	{
-		if( pHeadRow != NULL )
+		if( pHeadRow != nullptr )
 			*pHeadRow = iRow;
 		return true;
 	}
@@ -367,13 +367,13 @@ bool NoteData::IsHoldHeadOrBodyAtRow( int iTrack, int iRow, int *pHeadRow ) cons
 }
 
 /* Determine if a hold note lies on the given spot. Return true if so.  If
- * pHeadRow is non-NULL, return the row of the head. (Note that this returns
+ * pHeadRow is non-nullptr, return the row of the head. (Note that this returns
  * false if a hold head lies on iRow itself.) */
 /* XXX: rename this to IsHoldBodyAtRow */
 bool NoteData::IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow ) const
 {
 	int iDummy;
-	if( pHeadRow == NULL )
+	if( pHeadRow == nullptr )
 		pHeadRow = &iDummy;
 
 	/* Starting at iRow, search upwards. If we find a TapNoteType_HoldHead, we're within
@@ -1338,7 +1338,7 @@ NoteData::_all_tracks_iterator<ND, iter, TN>::_all_tracks_iterator( const _all_t
 template<typename ND, typename iter, typename TN>
 	NoteData::_all_tracks_iterator<ND, iter, TN>::~_all_tracks_iterator()
 {
-	if(m_pNoteData != NULL)
+	if(m_pNoteData != nullptr)
 	{
 		m_pNoteData->RemoveATIFromList(this);
 	}

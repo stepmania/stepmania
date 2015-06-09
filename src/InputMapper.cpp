@@ -27,12 +27,12 @@ namespace
 	PlayerNumber g_JoinControllers;
 };
 
-InputMapper*	INPUTMAPPER = NULL;	// global and accessible from anywhere in our program
+InputMapper*	INPUTMAPPER = nullptr;	// global and accessible from anywhere in our program
 
 InputMapper::InputMapper()
 {
 	g_JoinControllers = PLAYER_INVALID;
-	m_pInputScheme = NULL;
+	m_pInputScheme = nullptr;
 }
 
 InputMapper::~InputMapper()
@@ -1228,7 +1228,7 @@ void InputMappings::WriteMappings( const InputScheme *pInputScheme, RString sFil
 	ini.DeleteKey( pInputScheme->m_szName );
 
 	XNode *pKey = ini.GetChild( pInputScheme->m_szName );
-	if( pKey != NULL )
+	if( pKey != nullptr )
 		ini.RemoveChild( pKey );
 	pKey = ini.AppendChild( pInputScheme->m_szName );
 

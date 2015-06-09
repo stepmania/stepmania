@@ -20,7 +20,7 @@ void Foreground::Unload()
 	m_BGAnimations.clear();
 	m_SubActors.clear();
 	m_fLastMusicSeconds = -9999;
-	m_pSong = NULL;
+	m_pSong = nullptr;
 }
 
 void Foreground::LoadFromSong( const Song *pSong )
@@ -51,7 +51,7 @@ void Foreground::LoadFromSong( const Song *pSong )
 		{
 			bga.m_bga = ActorUtil::MakeActor( pSong->GetSongDir() + sBGName, this );
 		}
-		if( bga.m_bga == NULL )
+		if( bga.m_bga == nullptr )
 			continue;
 		bga.m_bga->SetName( sBGName );
 		// ActorUtil::MakeActor calls LoadFromNode to load the actor, and

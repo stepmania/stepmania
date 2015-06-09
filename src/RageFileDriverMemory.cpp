@@ -38,7 +38,7 @@ struct RageFileObjMemFile
 
 RageFileObjMem::RageFileObjMem( RageFileObjMemFile *pFile )
 {
-	if( pFile == NULL )
+	if( pFile == nullptr )
 		pFile = new RageFileObjMemFile;
 
 	m_pFile = pFile;
@@ -150,10 +150,10 @@ RageFileBasic *RageFileDriverMem::Open( const RString &sPath, int mode, int &err
 	}
 
 	RageFileObjMemFile *pFile = (RageFileObjMemFile *) FDB->GetFilePriv( sPath );
-	if( pFile == NULL )
+	if( pFile == nullptr )
 	{
 		err = ENOENT;
-		return NULL;
+		return nullptr;
 	}
 
 	return new RageFileObjMem( pFile );
@@ -164,7 +164,7 @@ bool RageFileDriverMem::Remove( const RString &sPath )
 	LockMut(m_Mutex);
 
 	RageFileObjMemFile *pFile = (RageFileObjMemFile *) FDB->GetFilePriv( sPath );
-	if( pFile == NULL )
+	if( pFile == nullptr )
 		return false;
 
 	/* Unregister the file. */

@@ -18,7 +18,7 @@
 
 using std::vector;
 
-StatsManager*	STATSMAN = NULL;	// global object accessible from anywhere in the program
+StatsManager*	STATSMAN = nullptr;	// global object accessible from anywhere in the program
 
 void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNumber pn );
 XNode* MakeRecentScoreNode( const StageStats &ss, Trail *pTrail, const PlayerStageStats &pss, MultiPlayer mp );
@@ -151,7 +151,7 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 
 XNode* MakeRecentScoreNode( const StageStats &ss, Trail *pTrail, const PlayerStageStats &pss, MultiPlayer mp )
 {
-	XNode* pNode = NULL;
+	XNode* pNode = nullptr;
 	if( GAMESTATE->IsCourseMode() )
 	{
 		pNode = new XNode( "HighScoreForACourseAndTrail" );
@@ -241,7 +241,7 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 		std::unique_ptr<XNode> xml( new XNode("Stats") );
 		xml->AppendChild( "MachineGuid",  PROFILEMAN->GetMachineProfile()->m_sGuid );
 
-		XNode *recent = NULL;
+		XNode *recent = nullptr;
 		if( GAMESTATE->IsCourseMode() )
 			recent = xml->AppendChild( new XNode("RecentCourseScores") );
 		else

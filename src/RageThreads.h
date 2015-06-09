@@ -31,7 +31,7 @@ public:
 	static const char *GetThreadNameByID( uint64_t iID );
 	static bool EnumThreadIDs( int n, uint64_t &iID );
 	int Wait();
-	bool IsCreated() const { return m_pSlot != NULL; }
+	bool IsCreated() const { return m_pSlot != nullptr; }
 
 	/* A system can define HAVE_TLS, indicating that it can compile thread_local
 	 * code, but an individual environment may not actually have functional TLS.
@@ -131,9 +131,9 @@ class LockMutex
 
 public:
 	LockMutex(RageMutex &mut, const char *file, int line);
-	LockMutex(RageMutex &mut): mutex(mut), file(NULL), line(-1), locked_at(-1), locked(true) { mutex.Lock(); }
+	LockMutex(RageMutex &mut): mutex(mut), file(nullptr), line(-1), locked_at(-1), locked(true) { mutex.Lock(); }
 	~LockMutex();
-	LockMutex(LockMutex &cpy): mutex(cpy.mutex), file(NULL), line(-1), locked_at(cpy.locked_at), locked(true) { mutex.Lock(); }
+	LockMutex(LockMutex &cpy): mutex(cpy.mutex), file(nullptr), line(-1), locked_at(cpy.locked_at), locked(true) { mutex.Lock(); }
 
 	/**
 	 * @brief Unlock the mutex (before this would normally go out of scope).
@@ -155,12 +155,12 @@ public:
 	~RageEvent();
 
 	/*
-	 * If pTimeout is non-NULL, the event will be automatically signalled at the given
+	 * If pTimeout is non-nullptr, the event will be automatically signalled at the given
 	 * time.  Note that implementing this timeout is optional; not all archs support it. 
 	 * If false is returned, the wait timed out (and the mutex is locked, as if the
 	 * event had been signalled).
 	 */
-	bool Wait( RageTimer *pTimeout = NULL );
+	bool Wait( RageTimer *pTimeout = nullptr );
 	void Signal();
 	void Broadcast();
 	bool WaitTimeoutSupported() const;

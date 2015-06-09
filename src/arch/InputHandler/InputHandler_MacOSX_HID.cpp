@@ -31,7 +31,7 @@ void InputHandler_MacOSX_HID::QueueCallback( void *target, int result, void *ref
 
 	while( (result = CALL(queue, getNextEvent, &event, zeroTime, 0)) == kIOReturnSuccess )
 	{
-		if( event.longValueSize != 0 && event.longValue != NULL )
+		if( event.longValueSize != 0 && event.longValue != nullptr )
 		{
 			free( event.longValue );
 			continue;
@@ -69,7 +69,7 @@ int InputHandler_MacOSX_HID::Run( void *data )
 	{
 		/* The function copies the information out of the structure, so the memory
 		 * pointed to by context does not need to persist beyond the function call. */
-		CFRunLoopObserverContext context = { 0, &This->m_Sem, NULL, NULL, NULL };
+		CFRunLoopObserverContext context = { 0, &This->m_Sem, nullptr, nullptr, nullptr };
 		CFRunLoopObserverRef o = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopEntry,
 								  false, 0, RunLoopStarted, &context);
 		CFRunLoopAddObserver( This->m_LoopRef, o, kCFRunLoopDefaultMode );
@@ -86,7 +86,7 @@ int InputHandler_MacOSX_HID::Run( void *data )
 		void *info = This->m_LoopRef;
 		void (*perform)(void *) = (void (*)(void *))CFRunLoopStop;
 		// { version, info, retain, release, copyDescription, equal, hash, schedule, cancel, perform }
-		CFRunLoopSourceContext context = { 0, info, NULL, NULL, NULL, NULL, NULL, NULL, NULL, perform };
+		CFRunLoopSourceContext context = { 0, info, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, perform };
 
 		// Pass 1 so that it is called after all inputs have been handled (they will have order = 0)
 		This->m_SourceRef = CFRunLoopSourceCreate( kCFAllocatorDefault, 1, &context );
@@ -161,7 +161,7 @@ static CFDictionaryRef GetMatchingDictionary( int usagePage, int usage )
 	// Build the matching dictionary.
 	CFMutableDictionaryRef dict;
 
-	if( (dict = IOServiceMatching(kIOHIDDeviceKey)) == NULL )
+	if( (dict = IOServiceMatching(kIOHIDDeviceKey)) == nullptr )
 		FAIL_M( "Couldn't create a matching dictionary." );
 	// Refine the search by only looking for joysticks
 	CFNumberRef usagePageRef = CFInt( usagePage );
@@ -190,7 +190,7 @@ static HIDDevice *MakeDevice( InputDevice id )
 		return new JoystickDevice;
 	if( IsPump(id) )
 		return new PumpDevice;
-	return NULL;
+	return nullptr;
 }
 
 void InputHandler_MacOSX_HID::AddDevices( int usagePage, int usage, InputDevice &id )
@@ -391,7 +391,7 @@ static wchar_t KeyCodeToChar(CGKeyCode keyCode, unsigned int modifierFlags)
 {
 	TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardInputSource();
 	CFDataRef uchr = (CFDataRef)TISGetInputSourceProperty(currentKeyboard, kTISPropertyUnicodeKeyLayoutData);
-	const UCKeyboardLayout *keyboardLayout = uchr ? (const UCKeyboardLayout*)CFDataGetBytePtr(uchr) : NULL;
+	const UCKeyboardLayout *keyboardLayout = uchr ? (const UCKeyboardLayout*)CFDataGetBytePtr(uchr) : nullptr;
 
 	if( keyboardLayout )
 	{

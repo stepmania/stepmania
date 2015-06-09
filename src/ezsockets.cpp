@@ -185,7 +185,7 @@ bool EzSockets::connect(const std::string& host, unsigned short port)
 
 	struct hostent* phe;
 	phe = gethostbyname(host.c_str());
-	if (phe == NULL)
+	if (phe == nullptr)
 		return false;
 	memcpy(&addr.sin_addr, phe->h_addr, sizeof(struct in_addr));
 
@@ -205,7 +205,7 @@ inline bool checkCanRead(int sock, timeval& timeout)
 	FD_ZERO(&fds);
 	FD_SET((unsigned)sock, &fds);
 
-	return select(sock+1, &fds, NULL, NULL, &timeout) > 0;
+	return select(sock+1, &fds, nullptr, nullptr, &timeout) > 0;
 }
 
 bool EzSockets::CanRead()
@@ -227,7 +227,7 @@ bool EzSockets::IsError()
 	FD_ZERO(scks);
 	FD_SET((unsigned)sock, scks);
 
-	if (select(sock+1, NULL, NULL, scks, times) >=0 )
+	if (select(sock+1, nullptr, nullptr, scks, times) >=0 )
 		return false;
 
 	state = skERROR;
@@ -240,7 +240,7 @@ inline bool checkCanWrite(int sock, timeval& timeout)
 	FD_ZERO(&fds);
 	FD_SET((unsigned)sock, &fds);
 
-	return select(sock+1, NULL, &fds, NULL, &timeout) > 0;
+	return select(sock+1, nullptr, &fds, nullptr, &timeout) > 0;
 }
 
 bool EzSockets::CanWrite()

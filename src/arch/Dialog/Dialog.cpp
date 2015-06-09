@@ -23,9 +23,9 @@ DialogDriver *MakeDialogDriver()
 	ASSERT( asDriversToTry.size() != 0 );
 
 	RString sDriver;
-	DialogDriver *pRet = NULL;
+	DialogDriver *pRet = nullptr;
 
-	for( unsigned i = 0; pRet == NULL && i < asDriversToTry.size(); ++i )
+	for( unsigned i = 0; pRet == nullptr && i < asDriversToTry.size(); ++i )
 	{
 		sDriver = asDriversToTry[i];
 
@@ -35,11 +35,11 @@ DialogDriver *MakeDialogDriver()
 #ifdef USE_DIALOG_DRIVER_WIN32
 		if( !asDriversToTry[i].CompareNoCase("Win32") )	pRet = new DialogDriver_Win32;
 #endif
-#ifdef USE_DIALOG_DRIVER_NULL
+#ifdef USE_DIALOG_DRIVER_nullptr
 		if( !asDriversToTry[i].CompareNoCase("Null") )	pRet = new DialogDriver_Null;
 #endif
 
-		if( pRet == NULL )
+		if( pRet == nullptr )
 		{
 			continue;
 		}
@@ -56,7 +56,7 @@ DialogDriver *MakeDialogDriver()
 	return pRet;
 }
 
-static DialogDriver *g_pImpl = NULL;
+static DialogDriver *g_pImpl = nullptr;
 static DialogDriver_Null g_NullDriver;
 static bool g_bWindowed = true; // Start out true so that we'll show errors before DISPLAY is init'd.
 
@@ -67,19 +67,19 @@ static bool DialogsEnabled()
 
 void Dialog::Init()
 {
-	if( g_pImpl != NULL )
+	if( g_pImpl != nullptr )
 		return;
 
 	g_pImpl = DialogDriver::Create();
 
 	// DialogDriver_Null should have worked, at least.
-	ASSERT( g_pImpl != NULL );
+	ASSERT( g_pImpl != nullptr );
 }
 
 void Dialog::Shutdown()
 {
 	delete g_pImpl;
-	g_pImpl = NULL;
+	g_pImpl = nullptr;
 }
 
 static bool MessageIsIgnored( RString sID )
@@ -98,7 +98,7 @@ void Dialog::IgnoreMessage( RString sID )
 {
 	// We can't ignore messages before PREFSMAN is around.
 #if !defined(SMPACKAGE)
-	if( PREFSMAN == NULL )
+	if( PREFSMAN == nullptr )
 	{
 		if( sID != "" && LOG )
 			LOG->Warn( "Dialog: message \"%s\" set ID too early for ignorable messages", sID.c_str() );

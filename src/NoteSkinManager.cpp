@@ -22,7 +22,7 @@
 using std::vector;
 
 /** @brief Have the NoteSkinManager available throughout the program. */
-NoteSkinManager*	NOTESKIN = NULL; // global and accessible from anywhere in our program
+NoteSkinManager*	NOTESKIN = nullptr; // global and accessible from anywhere in our program
 
 const RString GAME_COMMON_NOTESKIN_NAME = "common";
 const RString GAME_BASE_NOTESKIN_NAME = "default";
@@ -51,7 +51,7 @@ namespace
 
 NoteSkinManager::NoteSkinManager()
 {
-	m_pCurGame = NULL;
+	m_pCurGame = nullptr;
 	m_PlayerNumber = PlayerNumber_Invalid;
 	m_GameController = GameController_Invalid;
 
@@ -491,7 +491,7 @@ Actor *NoteSkinManager::LoadActor( const RString &sButton, const RString &sEleme
 	}
 
 	std::unique_ptr<XNode> pNode( XmlFileUtil::XNodeFromTable(L) );
-	if( pNode.get() == NULL )
+	if( pNode.get() == nullptr )
 	{
 		// XNode will warn about the error
 		return Sprite::NewBlankSprite();
@@ -505,7 +505,7 @@ Actor *NoteSkinManager::LoadActor( const RString &sButton, const RString &sEleme
 	{
 		// Make sure pActor is a Sprite (or something derived from Sprite).
 		Sprite *pSprite = dynamic_cast<Sprite *>( pRet );
-		if( pSprite == NULL )
+		if( pSprite == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt("%s: %s %s must be a Sprite", m_sCurrentNoteSkin.c_str(), sButton.c_str(), sElement.c_str());
 			delete pRet;

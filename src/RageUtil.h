@@ -9,9 +9,9 @@
 class RageFileDriver;
 
 /** @brief Safely delete pointers. */
-#define SAFE_DELETE(p)       do { delete (p);     (p)=NULL; } while( false )
+#define SAFE_DELETE(p)       do { delete (p);     (p)=nullptr; } while( false )
 /** @brief Safely delete array pointers. */
-#define SAFE_DELETE_ARRAY(p) do { delete[] (p);   (p)=NULL; } while( false )
+#define SAFE_DELETE_ARRAY(p) do { delete[] (p);   (p)=nullptr; } while( false )
 
 /** @brief Zero out the memory. */
 #define ZERO(x)	memset(&(x), 0, sizeof(x))
@@ -455,7 +455,7 @@ RString GetCwd();
 
 void SetCommandlineArguments( int argc, char **argv );
 void GetCommandLineArguments( int &argc, char **&argv );
-bool GetCommandlineArgument( const RString &option, RString *argument=NULL, int iIndex=0 );
+bool GetCommandlineArgument( const RString &option, RString *argument=nullptr, int iIndex=0 );
 extern int g_argc;
 extern char **g_argv;
 
@@ -600,7 +600,7 @@ struct char_traits_char_nocase: public std::char_traits<char>
 
 		if(fasttoupper(*s) == a)
 			return s;
-		return NULL;
+		return nullptr;
 	}
 };
 typedef std::basic_string<char,char_traits_char_nocase> istring;
@@ -636,7 +636,7 @@ namespace StringConversion
 
 class RageFileBasic;
 bool FileCopy( const RString &sSrcFile, const RString &sDstFile );
-bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bReadError = NULL );
+bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bReadError = nullptr );
 
 template<class T>
 void GetAsNotInBs( const std::vector<T> &as, const std::vector<T> &bs, std::vector<T> &difference )

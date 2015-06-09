@@ -72,7 +72,7 @@ void PlayerAI::InitFromDisk()
 			RString sKey = ssprintf("Skill%d", i);
 			XNode* pNode = ini.GetChild(sKey);
 			TapScoreDistribution& dist = g_Distributions[i];
-			if( pNode == NULL )
+			if( pNode == nullptr )
 			{
 				LuaHelpers::ReportScriptErrorFmt("AI.ini: \"%s\" section doesn't exist.", sKey.c_str());
 				dist.SetDefaultWeights();

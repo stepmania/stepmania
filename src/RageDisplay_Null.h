@@ -1,7 +1,7 @@
 /* RageDisplay_Null - No-op diagnostic renderer. */
 
-#ifndef RAGE_DISPLAY_NULL_H
-#define RAGE_DISPLAY_NULL_H
+#ifndef RAGE_DISPLAY_nullptr_H
+#define RAGE_DISPLAY_nullptr_H
 
 class RageDisplay_Null: public RageDisplay
 {

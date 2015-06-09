@@ -479,21 +479,21 @@ bool TimingData::IsFakeAtRow( int iNoteRow ) const
  * indiscriminate calls to get segments at arbitrary rows, I think it's the
  * best solution we've got for now.
  *
- * Note that types whose SegmentEffectAreas are "Indefinite" are NULL here,
+ * Note that types whose SegmentEffectAreas are "Indefinite" are nullptr here,
  * because they should never need to be used; we always have at least one such
  * segment in the TimingData, and if not, we'll crash anyway. -- vyhd */
 static const TimingSegment* DummySegments[NUM_TimingSegmentType] =
 {
-	NULL, // BPMSegment
+	nullptr, // BPMSegment
 	new StopSegment,
 	new DelaySegment,
-	NULL, // TimeSignatureSegment
+	nullptr, // TimeSignatureSegment
 	new WarpSegment,
-	NULL, // LabelSegment
-	NULL, // TickcountSegment
-	NULL, // ComboSegment
-	NULL, // SpeedSegment
-	NULL, // ScrollSegment
+	nullptr, // LabelSegment
+	nullptr, // TickcountSegment
+	nullptr, // ComboSegment
+	nullptr, // SpeedSegment
+	nullptr, // ScrollSegment
 	new FakeSegment
 };
 
@@ -1052,7 +1052,7 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 		// Don't delete the indefinite segments that are still in effect
 		// at the end row; rather, shift them so they start there.
 		TimingSegment *tsEnd = GetSegmentAtRow(iStartRow + iRowsToDelete, tst);
-		if (tsEnd != NULL && tsEnd->GetEffectType() == SegmentEffectType_Indefinite &&
+		if (tsEnd != nullptr && tsEnd->GetEffectType() == SegmentEffectType_Indefinite &&
 				iStartRow <= tsEnd->GetRow() &&
 				tsEnd->GetRow() < iStartRow + iRowsToDelete)
 		{

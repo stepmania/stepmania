@@ -347,7 +347,7 @@ static void InitCharAliases()
 		{ "auxrt",	INTERNAL },
 		{ "auxback",	INTERNAL },
 
-		{ NULL, 	0 }
+		{ nullptr, 	0 }
 	};
 
 	int iNextInternalUseCodepoint = 0xE000;

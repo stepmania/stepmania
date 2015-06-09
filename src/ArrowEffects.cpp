@@ -60,7 +60,7 @@ static ThemeMetric<float>	TINY_PERCENT_BASE( "ArrowEffects", "TinyPercentBase" )
 static ThemeMetric<float>	TINY_PERCENT_GATE( "ArrowEffects", "TinyPercentGate" );
 static ThemeMetric<bool>	DIZZY_HOLD_HEADS( "ArrowEffects", "DizzyHoldHeads" );
 
-static const PlayerOptions* curr_options= NULL;
+static const PlayerOptions* curr_options= nullptr;
 
 float ArrowGetPercentVisible(float fYPosWithoutReverse);
 
@@ -1085,7 +1085,7 @@ namespace
 		LIST_METHOD( NeedZBuffer ),
 		LIST_METHOD( GetZoom ),
 		LIST_METHOD( GetFrameWidthScale ),
-		{ NULL, NULL }
+		{ nullptr, nullptr }
 	};
 }
 

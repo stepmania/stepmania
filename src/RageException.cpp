@@ -15,7 +15,7 @@ using CrashHandler::DebugBreak;
 #endif
 
 static uint64_t g_HandlerThreadID = RageThread::GetInvalidThreadID();
-static void (*g_CleanupHandler)( const RString &sError ) = NULL;
+static void (*g_CleanupHandler)( const RString &sError ) = nullptr;
 void RageException::SetCleanupHandler( void (*pHandler)(const RString &sError) )
 {
 	g_HandlerThreadID = RageThread::GetCurrentThreadID();
@@ -55,7 +55,7 @@ void RageException::Throw( const char *sFmt, ... )
 
 	ASSERT_M( g_HandlerThreadID == RageThread::GetInvalidThreadID() || g_HandlerThreadID == RageThread::GetCurrentThreadID(),
 		  ssprintf("RageException::Throw() on another thread: %s", error.c_str()) );
-	if( g_CleanupHandler != NULL )
+	if( g_CleanupHandler != nullptr )
 		g_CleanupHandler( error );
 
 	exit(1);

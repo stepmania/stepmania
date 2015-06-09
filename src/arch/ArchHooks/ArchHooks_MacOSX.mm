@@ -74,14 +74,14 @@ void ArchHooks_MacOSX::Init()
 
 	// Now that the crash handler is set up, disable crash reporter.
 	// Breaks gdb
-	// task_set_exception_ports( mach_task_self(), EXC_MASK_ALL, MACH_PORT_NULL, EXCEPTION_DEFAULT, 0 );
+	// task_set_exception_ports( mach_task_self(), EXC_MASK_ALL, MACH_PORT_nullptr, EXCEPTION_DEFAULT, 0 );
 
 	// CF*Copy* functions' return values need to be released, CF*Get* functions' do not.
 	CFStringRef key = CFSTR( "ApplicationBundlePath" );
 
 	CFBundleRef bundle = CFBundleGetMainBundle();
 	CFStringRef appID = CFBundleGetIdentifier( bundle );
-	if( appID == NULL )
+	if( appID == nullptr )
 	{
 		// We were probably launched through a symlink. Don't bother hunting down the real path.
 		return;
@@ -90,12 +90,12 @@ void ArchHooks_MacOSX::Init()
 	CFPropertyListRef old = CFPreferencesCopyAppValue( key, appID );
 	CFURLRef path = CFBundleCopyBundleURL( bundle );
 	CFPropertyListRef value = CFURLCopyFileSystemPath( path, kCFURLPOSIXPathStyle );
-	CFMutableDictionaryRef newDict = NULL;
+	CFMutableDictionaryRef newDict = nullptr;
 
 	if( old && CFGetTypeID(old) != CFDictionaryGetTypeID() )
 	{
 		CFRelease( old );
-		old = NULL;
+		old = nullptr;
 	}
 
 	if( !old )
@@ -152,7 +152,7 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 	}
 
 	size_t size;
-#define GET_PARAM( name, var ) (size = sizeof(var), sysctlbyname(name, &var, &size, NULL, 0) )
+#define GET_PARAM( name, var ) (size = sizeof(var), sysctlbyname(name, &var, &size, nullptr, 0) )
 	// Get memory
 	float fRam;
 	char ramPower;
@@ -202,27 +202,27 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 			break;
 		}
 		sModel = szModel;
-		CFURLRef urlRef = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("Hardware.plist"), NULL, NULL );
+		CFURLRef urlRef = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("Hardware.plist"), nullptr, nullptr );
 
-		if( urlRef == NULL )
+		if( urlRef == nullptr )
 			break;
-		CFDataRef dataRef = NULL;
+		CFDataRef dataRef = nullptr;
 		SInt32 error;
-		CFURLCreateDataAndPropertiesFromResource( NULL, urlRef, &dataRef, NULL, NULL, &error );
+		CFURLCreateDataAndPropertiesFromResource( nullptr, urlRef, &dataRef, nullptr, nullptr, &error );
 		CFRelease( urlRef );
-		if( dataRef == NULL )
+		if( dataRef == nullptr )
 			break;
 		// This also works with binary property lists for some reason.
-		CFPropertyListRef plRef = CFPropertyListCreateFromXMLData( NULL, dataRef, kCFPropertyListImmutable, NULL );
+		CFPropertyListRef plRef = CFPropertyListCreateFromXMLData( nullptr, dataRef, kCFPropertyListImmutable, nullptr );
 		CFRelease( dataRef );
-		if( plRef == NULL )
+		if( plRef == nullptr )
 			break;
 		if( CFGetTypeID(plRef) != CFDictionaryGetTypeID() )
 		{
 			CFRelease( plRef );
 			break;
 		}
-		CFStringRef keyRef = CFStringCreateWithCStringNoCopy( NULL, szModel, kCFStringEncodingMacRoman, kCFAllocatorNull );
+		CFStringRef keyRef = CFStringCreateWithCStringNoCopy( nullptr, szModel, kCFStringEncodingMacRoman, kCFAllocatorNull );
 		CFStringRef modelRef = (CFStringRef)CFDictionaryGetValue( (CFDictionaryRef)plRef, keyRef );
 		if( modelRef )
 			sModel = CFStringGetCStringPtr( modelRef, kCFStringEncodingMacRoman );
@@ -244,7 +244,7 @@ RString ArchHooks::GetPreferredLanguage()
 	CFTypeRef t = CFPreferencesCopyAppValue( CFSTR("AppleLanguages"), app );
 	RString ret = "en";
 
-	if( t == NULL )
+	if( t == nullptr )
 		return ret;
 	if( CFGetTypeID(t) != CFArrayGetTypeID() )
 	{
@@ -256,7 +256,7 @@ RString ArchHooks::GetPreferredLanguage()
 	CFStringRef lang;
 
 	if( CFArrayGetCount(languages) > 0 &&
-		(lang = (CFStringRef)CFArrayGetValueAtIndex(languages, 0)) != NULL )
+		(lang = (CFStringRef)CFArrayGetValueAtIndex(languages, 0)) != nullptr )
 	{
 		// MacRoman agrees with ASCII in the low-order 7 bits.
 		const char *str = CFStringGetCStringPtr( lang, kCFStringEncodingMacRoman );
@@ -273,8 +273,8 @@ RString ArchHooks::GetPreferredLanguage()
 bool ArchHooks_MacOSX::GoToURL( RString sUrl )
 {
 	CFURLRef url = CFURLCreateWithBytes( kCFAllocatorDefault, (const UInt8*)sUrl.data(),
-						 sUrl.length(), kCFStringEncodingUTF8, NULL );
-	OSStatus result = LSOpenCFURLRef( url, NULL );
+						 sUrl.length(), kCFStringEncodingUTF8, nullptr );
+	OSStatus result = LSOpenCFURLRef( url, nullptr );
 
 	CFRelease( url );
 	return result == 0;
@@ -310,7 +310,7 @@ static void PathForFolderType( char dir[PATH_MAX], OSType folderType )
 void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
 	char dir[PATH_MAX];
-	CFURLRef dataUrl = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("StepMania"), CFSTR("smzip"), NULL );
+	CFURLRef dataUrl = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("StepMania"), CFSTR("smzip"), nullptr );
 
 	FILEMAN->Mount( "dir", sDirOfExecutable, "/" );
 

@@ -8,7 +8,7 @@ using std::vector;
 
 #define CHARACTERS_DIR "/Characters/"
 
-CharacterManager*	CHARMAN = NULL;	// global object accessible from anywhere in the program
+CharacterManager*	CHARMAN = nullptr;	// global object accessible from anywhere in the program
 
 CharacterManager::CharacterManager()
 {
@@ -91,7 +91,7 @@ Character* CharacterManager::GetDefaultCharacter()
 
 	/* We always have the default character. */
 	FAIL_M("There must be a default character available!");
-	return NULL;
+	return nullptr;
 }
 
 void CharacterManager::DemandGraphics()
@@ -118,7 +118,7 @@ Character* CharacterManager::GetCharacterFromID( RString sCharacterID )
 			return m_pCharacters[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -132,7 +132,7 @@ public:
 	static int GetCharacter( T* p, lua_State *L )
 	{
 		Character *pCharacter = p->GetCharacterFromID(SArg(1));
-		if( pCharacter != NULL )
+		if( pCharacter != nullptr )
 			pCharacter->PushSelf( L );
 		else
 			lua_pushnil( L );
@@ -142,7 +142,7 @@ public:
 	static int GetRandomCharacter( T* p, lua_State *L )
 	{
 		Character *pCharacter = p->GetRandomCharacter();
-		if( pCharacter != NULL )
+		if( pCharacter != nullptr )
 			pCharacter->PushSelf( L );
 		else
 			lua_pushnil( L );

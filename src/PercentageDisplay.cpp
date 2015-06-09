@@ -16,8 +16,8 @@ REGISTER_ACTOR_CLASS( PercentageDisplay );
 
 PercentageDisplay::PercentageDisplay()
 {
-	m_pPlayerState = NULL;
-	m_pPlayerStageStats = NULL;
+	m_pPlayerState = nullptr;
+	m_pPlayerStageStats = nullptr;
 
 	m_Last = -1;
 	m_LastMax = -1;
@@ -53,7 +53,7 @@ void PercentageDisplay::LoadFromNode( const XNode* pNode )
 	}
 
 	const XNode *pChild = pNode->GetChild( "Percent" );
-	if( pChild == NULL )
+	if( pChild == nullptr )
 	{
 		LuaHelpers::ReportScriptError(ActorUtil::GetWhere(pNode) + ": PercentageDisplay: missing the node \"Percent\"");
 		// Make a BitmapText just so we don't crash.
@@ -66,7 +66,7 @@ void PercentageDisplay::LoadFromNode( const XNode* pNode )
 	this->AddChild( &m_textPercent );
 
 	pChild = pNode->GetChild( "PercentRemainder" );
-	if( !ShowDancePointsNotPercentage()  &&  pChild != NULL )
+	if( !ShowDancePointsNotPercentage()  &&  pChild != nullptr )
 	{
 		m_bUseRemainder = true;
 		m_textPercentRemainder.LoadFromNode( pChild );
