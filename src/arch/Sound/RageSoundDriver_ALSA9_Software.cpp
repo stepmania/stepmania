@@ -53,12 +53,12 @@ bool RageSoundDriver_ALSA9_Software::GetData()
 	if( frames_to_fill <= 0 )
 		return false;
 
-	static int16_t *buf = NULL;
+	static int16_t *buf = nullptr;
 	static int bufsize = 0;
 	if( buf && bufsize < frames_to_fill )
 	{
 		delete[] buf;
-		buf = NULL;
+		buf = nullptr;
 	}
 	if( !buf )
 	{
@@ -89,7 +89,7 @@ void RageSoundDriver_ALSA9_Software::SetupDecodingThread()
 
 RageSoundDriver_ALSA9_Software::RageSoundDriver_ALSA9_Software()
 {
-	m_pPCM = NULL;
+	m_pPCM = nullptr;
 	m_bShutdown = false;
 }
 

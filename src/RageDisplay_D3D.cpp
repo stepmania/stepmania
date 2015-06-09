@@ -39,9 +39,9 @@ RString GetErrorString( HRESULT hr )
 }
 
 // Globals
-HMODULE				g_D3D9_Module = NULL;
-LPDIRECT3D9			g_pd3d = NULL;
-LPDIRECT3DDEVICE9	g_pd3dDevice = NULL;
+HMODULE				g_D3D9_Module = nullptr;
+LPDIRECT3D9			g_pd3d = nullptr;
+LPDIRECT3DDEVICE9	g_pd3dDevice = nullptr;
 D3DCAPS9			g_DeviceCaps;
 D3DDISPLAYMODE		g_DesktopMode;
 D3DPRESENT_PARAMETERS	g_d3dpp;
@@ -255,13 +255,13 @@ RageDisplay_D3D::~RageDisplay_D3D()
 	if( g_pd3dDevice )
 	{
 		g_pd3dDevice->Release();
-		g_pd3dDevice = NULL;
+		g_pd3dDevice = nullptr;
 	}
 
 	if( g_pd3d )
 	{
 		g_pd3d->Release();
-		g_pd3d = NULL;
+		g_pd3d = nullptr;
 	}
 
 	/* Even after we call Release(), D3D may still affect our window. It seems
@@ -270,7 +270,7 @@ RageDisplay_D3D::~RageDisplay_D3D()
 	if( g_D3D9_Module )
 	{
 		FreeLibrary( g_D3D9_Module );
-		g_D3D9_Module = NULL;
+		g_D3D9_Module = nullptr;
 	}
 }
 
@@ -348,7 +348,7 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 
 RString SetD3DParams( bool &bNewDeviceOut )
 {
-	if( g_pd3dDevice == NULL ) // device is not yet created. We need to create it
+	if( g_pd3dDevice == nullptr ) // device is not yet created. We need to create it
 	{
 		bNewDeviceOut = true;
 		HRESULT hr = g_pd3d->CreateDevice(
@@ -577,7 +577,7 @@ bool RageDisplay_D3D::BeginFrame()
 		}
 	}
 
-	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
+	g_pd3dDevice->Clear( 0, nullptr, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
 						 D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
 	g_pd3dDevice->BeginScene();
 
@@ -625,7 +625,7 @@ bool RageDisplay_D3D::SupportsThreadedRendering()
 
 RageSurface* RageDisplay_D3D::CreateScreenshot()
 {
-	RageSurface * result = NULL;
+	RageSurface * result = nullptr;
 
 	// Get the back buffer.
 	IDirect3DSurface9* pSurface;
@@ -637,9 +637,9 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 
 		// Copy the back buffer into a surface of a type we support.
 		IDirect3DSurface9* pCopy;
-		if( SUCCEEDED( g_pd3dDevice->CreateOffscreenPlainSurface( desc.Width, desc.Height, D3DFMT_A8R8G8B8, D3DPOOL_SCRATCH, &pCopy, NULL ) ) )
+		if( SUCCEEDED( g_pd3dDevice->CreateOffscreenPlainSurface( desc.Width, desc.Height, D3DFMT_A8R8G8B8, D3DPOOL_SCRATCH, &pCopy, nullptr ) ) )
 		{
-			if( SUCCEEDED( D3DXLoadSurfaceFromSurface( pCopy, NULL, NULL, pSurface, NULL, NULL, D3DX_FILTER_NONE, 0) ) )
+			if( SUCCEEDED( D3DXLoadSurfaceFromSurface( pCopy, nullptr, nullptr, pSurface, nullptr, nullptr, D3DX_FILTER_NONE, 0) ) )
 			{
 				// Update desc from the copy.
 				pCopy->GetDesc( &desc );
@@ -657,7 +657,7 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 				}
 
 				RageSurface *surface = CreateSurfaceFromPixfmt( RagePixelFormat_RGBA8, lr.pBits, desc.Width, desc.Height, lr.Pitch);
-				ASSERT( surface != NULL );
+				ASSERT( surface != nullptr );
 
 				// We need to make a copy, since lr.pBits will go away when we call UnlockRect().
 				result =
@@ -706,9 +706,9 @@ void RageDisplay_D3D::SendCurrentMatrices()
 		g_pd3dDevice->SetTextureStageState( tu, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2 );
 
 		// If no texture is set for this texture unit, don't bother setting it up.
-		IDirect3DBaseTexture9* pTexture = NULL;
+		IDirect3DBaseTexture9* pTexture = nullptr;
 		g_pd3dDevice->GetTexture( tu, &pTexture );
-		if( pTexture == NULL )
+		if( pTexture == nullptr )
 			 continue;
 		pTexture->Release();
 
@@ -1037,7 +1037,7 @@ void RageDisplay_D3D::SetTexture( TextureUnit tu, unsigned iTexture )
 
 	if( iTexture == 0 )
 	{
-		g_pd3dDevice->SetTexture( tu, NULL );
+		g_pd3dDevice->SetTexture( tu, nullptr );
 
 		/* Intentionally commented out. Don't mess with texture stage state
 		 * when just setting the texture. Model sets its texture modes before
@@ -1229,7 +1229,7 @@ void RageDisplay_D3D::SetZTestMode( ZTestMode mode )
 
 void RageDisplay_D3D::ClearZBuffer()
 {
-	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
+	g_pd3dDevice->Clear( 0, nullptr, D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
 }
 
 void RageDisplay_D3D::SetTextureWrapping( TextureUnit tu, bool b )
@@ -1360,7 +1360,7 @@ unsigned RageDisplay_D3D::CreateTexture(
 {
 	HRESULT hr;
 	IDirect3DTexture9* pTex;
-	hr = g_pd3dDevice->CreateTexture( power_of_two(img->w), power_of_two(img->h), 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex, NULL );
+	hr = g_pd3dDevice->CreateTexture( power_of_two(img->w), power_of_two(img->h), 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex, nullptr );
 
 	if( FAILED(hr) )
 		RageException::Throw( "CreateTexture(%i,%i,%s) failed: %s",
@@ -1397,7 +1397,7 @@ void RageDisplay_D3D::UpdateTexture(
 	int xoffset, int yoffset, int width, int height )
 {
 	IDirect3DTexture9* pTex = (IDirect3DTexture9*)uTexHandle;
-	ASSERT( pTex != NULL );
+	ASSERT( pTex != nullptr );
 
 	RECT rect;
 	rect.left = xoffset;
@@ -1420,7 +1420,7 @@ void RageDisplay_D3D::UpdateTexture(
 	ASSERT( texpixfmt != NUM_RagePixelFormat );
 
 	RageSurface *Texture = CreateSurfaceFromPixfmt(RagePixelFormat(texpixfmt), lr.pBits, width, height, lr.Pitch);
-	ASSERT( Texture != NULL );
+	ASSERT( Texture != nullptr );
 	RageSurfaceUtils::Blit( img, Texture, width, height );
 
 	delete Texture;

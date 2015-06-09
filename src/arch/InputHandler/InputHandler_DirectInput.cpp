@@ -122,23 +122,23 @@ InputHandler_DInput::InputHandler_DInput()
 	g_iNumJoysticks = 0;
 
 	AppInstance inst;
-	HRESULT hr = DirectInput8Create(inst.Get(), DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID *) &g_dinput, NULL);
+	HRESULT hr = DirectInput8Create(inst.Get(), DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID *) &g_dinput, nullptr);
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: DirectInputCreate") );
 
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_KEYBOARD)" );
-	hr = g_dinput->EnumDevices( DI8DEVCLASS_KEYBOARD, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DI8DEVCLASS_KEYBOARD, EnumDevicesCallback, nullptr, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_JOYSTICK)" );
-	hr = g_dinput->EnumDevices( DI8DEVCLASS_GAMECTRL, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DI8DEVCLASS_GAMECTRL, EnumDevicesCallback, nullptr, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
 	// mouse
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_MOUSE)" );
-	hr = g_dinput->EnumDevices( DI8DEVCLASS_POINTER, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DI8DEVCLASS_POINTER, EnumDevicesCallback, nullptr, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
@@ -202,7 +202,7 @@ InputHandler_DInput::~InputHandler_DInput()
 
 	Devices.clear();
 	g_dinput->Release();
-	g_dinput = NULL;
+	g_dinput = nullptr;
 }
 
 void InputHandler_DInput::WindowReset()
@@ -727,7 +727,7 @@ void InputHandler_DInput::InputThreadMain()
 	SetThreadPriorityBoost( GetCurrentThread(), FALSE );
 
 	vector<DIDevice*> BufferedDevices;
-	HANDLE Handle = CreateEvent( NULL, FALSE, FALSE, NULL );
+	HANDLE Handle = CreateEvent( nullptr, FALSE, FALSE, nullptr );
 	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
 		if( !Devices[i].buffered )
@@ -778,7 +778,7 @@ void InputHandler_DInput::InputThreadMain()
 			continue;
 
 		Devices[i].Device->Unacquire();
-		Devices[i].Device->SetEventNotification( NULL );
+		Devices[i].Device->SetEventNotification( nullptr );
 	}
 
 	CloseHandle(Handle);
@@ -810,7 +810,7 @@ static wchar_t ScancodeAndKeysToChar( DWORD scancode, unsigned char keys[256] )
 	unsigned short result[2]; // ToAscii writes a max of 2 chars
 	ZERO( result );
 
-	if( pToUnicodeEx != NULL )
+	if( pToUnicodeEx != nullptr )
 	{
 		int iNum = pToUnicodeEx( vk, scancode, keys, (LPWSTR)result, 2, 0, layout );
 		if( iNum == 1 )

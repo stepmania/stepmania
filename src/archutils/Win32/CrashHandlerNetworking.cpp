@@ -157,7 +157,7 @@ NetworkStream *CreateNetworkStream()
 		WSADATA WSAData;
 		WORD iVersionRequested = MAKEWORD(2,0);
 		if( WSAStartup(iVersionRequested, &WSAData) != 0 )
-			return NULL;
+			return nullptr;
 	}
 
 	return new NetworkStream_Win32;
@@ -169,11 +169,11 @@ NetworkStream_Win32::NetworkStream_Win32():
 {
 	m_iPort = -1;
 	m_State = STATE_IDLE;
-	m_Socket = NULL;
+	m_Socket = nullptr;
 #if defined(WINDOWS)
-	m_hResolve = NULL;
-	m_hResolveHwnd = NULL;
-	m_hCompletionEvent = CreateEvent( NULL, true, false, NULL );
+	m_hResolve = nullptr;
+	m_hResolveHwnd = nullptr;
+	m_hCompletionEvent = CreateEvent( nullptr, true, false, nullptr );
 #endif
 }
 
@@ -354,7 +354,7 @@ void NetworkStream_Win32::Open( const RString &sHost, int iPort, ConnectionType 
 	m_iPort = iPort;
 
 	// Look up the hostname.
-	hostent *pHost = NULL;
+	hostent *pHost = nullptr;
 	char pBuf[MAXGETHOSTSTRUCT];
 	{
 		pHost = (hostent *) pBuf;
@@ -373,8 +373,8 @@ void NetworkStream_Win32::Open( const RString &sHost, int iPort, ConnectionType 
 		mw.Run();
 
 		m_Mutex.Lock();
-		m_hResolve = NULL;
-		m_hResolveHwnd = NULL;
+		m_hResolve = nullptr;
+		m_hResolveHwnd = nullptr;
 		if( m_State == STATE_CANCELLED )
 		{
 			m_Mutex.Unlock();
@@ -474,7 +474,7 @@ void NetworkStream_Win32::Cancel()
 	m_State = STATE_CANCELLED;
 
 	// If resolving, abort the resolve.
-	if( m_hResolve != NULL )
+	if( m_hResolve != nullptr )
 	{
 		/* When we cancel the request, no message at all will be sent to the window,
 		 * so we need to do it ourself to inform it that it was cancelled. Be sure

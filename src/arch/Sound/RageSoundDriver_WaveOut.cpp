@@ -104,9 +104,9 @@ RageSoundDriver_WaveOut::RageSoundDriver_WaveOut()
 	m_bShutdown = false;
 	m_iLastCursorPos = 0;
 
-	m_hSoundEvent = CreateEvent( NULL, false, true, NULL );
+	m_hSoundEvent = CreateEvent( nullptr, false, true, nullptr );
 
-	m_hWaveOut = NULL;
+	m_hWaveOut = nullptr;
 }
 
 RString RageSoundDriver_WaveOut::Init()
@@ -124,7 +124,7 @@ RString RageSoundDriver_WaveOut::Init()
 	fmt.nBlockAlign = fmt.nChannels * fmt.wBitsPerSample / 8;
 	fmt.nAvgBytesPerSec = fmt.nSamplesPerSec * fmt.nBlockAlign;
 
-	MMRESULT ret = waveOutOpen( &m_hWaveOut, WAVE_MAPPER, &fmt, (DWORD_PTR) m_hSoundEvent, NULL, CALLBACK_EVENT );
+	MMRESULT ret = waveOutOpen( &m_hWaveOut, WAVE_MAPPER, &fmt, (DWORD_PTR) m_hSoundEvent, nullptr, CALLBACK_EVENT );
 	if( ret != MMSYSERR_NOERROR )
 		return wo_ssprintf( ret, "waveOutOpen failed" );
 
@@ -164,9 +164,9 @@ RageSoundDriver_WaveOut::~RageSoundDriver_WaveOut()
 		LOG->Trace( "Mixer thread shut down." );
 	}
 
-	if( m_hWaveOut != NULL )
+	if( m_hWaveOut != nullptr )
 	{
-		for( int b = 0; b < num_chunks && m_aBuffers[b].lpData != NULL; ++b )
+		for( int b = 0; b < num_chunks && m_aBuffers[b].lpData != nullptr; ++b )
 		{
 			waveOutUnprepareHeader( m_hWaveOut, &m_aBuffers[b], sizeof(m_aBuffers[b]) );
 			delete [] m_aBuffers[b].lpData;

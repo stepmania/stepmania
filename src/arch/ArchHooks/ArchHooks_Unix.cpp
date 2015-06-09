@@ -108,7 +108,7 @@ static void TestTLS()
 
 	RageThread TestThread;
 	TestThread.SetName( "TestTLS" );
-	TestThread.Create( TestTLSThread, NULL );
+	TestThread.Create( TestTLSThread, nullptr );
 	TestThread.Wait();
 
 	if( g_iTestTLS == 1 )
@@ -165,7 +165,7 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 {
 	struct timeval tv;
-	gettimeofday( &tv, NULL );
+	gettimeofday( &tv, nullptr );
 
 	int64_t iRet = int64_t(tv.tv_sec) * 1000000 + int64_t(tv.tv_usec);
 	ret = FixupTimeIfBackwards( ret );
@@ -222,7 +222,7 @@ bool ArchHooks_Unix::GoToURL( RString sUrl )
 	else if ( p == 0 )
 	{
 		// Child
-		const char * const argv[] = { "xdg-open", sUrl.c_str(), NULL };
+		const char * const argv[] = { "xdg-open", sUrl.c_str(), nullptr };
 		execv( "/usr/bin/xdg-open", const_cast<char * const *>( argv ));
 		// If we reach here, the call to execvp failed
 		exit( 1 );

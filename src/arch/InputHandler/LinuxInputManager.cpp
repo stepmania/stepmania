@@ -14,11 +14,11 @@ RString getDevice(RString inputDir, RString type)
 {
 	RString result = "";
 	DIR* dir = opendir( inputDir.c_str() );
-	if(dir == NULL)
+	if(dir == nullptr)
 		{ LOG->Warn("LinuxInputManager: Couldn't open %s: %s.", inputDir.c_str(), strerror(errno) ); return ""; }
 
 	struct dirent* d;
-	while( ( d = readdir(dir) ) != NULL)
+	while( ( d = readdir(dir) ) != nullptr)
 		if( strncmp( type.c_str(), d->d_name, type.size() ) == 0)
 		{
 			result = RString("/dev/input/") + d->d_name;
@@ -37,12 +37,12 @@ LinuxInputManager::LinuxInputManager()
 	if( g_sInputDrivers.Get() == "" )
 		{ m_bEventEnabled = true; m_bJoystickEnabled = true; }
 
-	m_EventDriver = NULL;
-	m_JoystickDriver = NULL;
+	m_EventDriver = nullptr;
+	m_JoystickDriver = nullptr;
 
 	// XXX: Can I use RageFile for this?
 	DIR* sysClassInput = opendir("/sys/class/input");
-	if( sysClassInput == NULL )
+	if( sysClassInput == nullptr )
 	{
 		// XXX: Probably should throw a Dialog. But Linux doesn't have a DialogDriver yet so eh.
 		LOG->Warn("Couldn't open /sys/class/input: %s. Joysticks will not work!", strerror(errno) );
@@ -50,7 +50,7 @@ LinuxInputManager::LinuxInputManager()
 	}
 
 	struct dirent* d;
-	while( ( d = readdir(sysClassInput) ) != NULL)
+	while( ( d = readdir(sysClassInput) ) != nullptr)
 	{
 		if( strncmp( "input", d->d_name, 5) != 0) continue;
 
@@ -81,7 +81,7 @@ void LinuxInputManager::InitDriver(InputHandler_Linux_Event* driver)
 		if( ! driver->TryDevice(devFile) && m_bJoystickEnabled && getDevice(dev, "js") != "" )
 			m_vsPendingJoystickDevices.push_back(dev);
 	}
-	if( m_JoystickDriver != NULL ) InitDriver(m_JoystickDriver);
+	if( m_JoystickDriver != nullptr ) InitDriver(m_JoystickDriver);
 
 	m_vsPendingEventDevices.clear();
 }
@@ -101,7 +101,7 @@ void LinuxInputManager::InitDriver(InputHandler_Linux_Joystick* driver)
 	m_vsPendingJoystickDevices.clear();
 }
 
-LinuxInputManager* LINUXINPUT = NULL; // global and accessible anywhere in our program
+LinuxInputManager* LINUXINPUT = nullptr; // global and accessible anywhere in our program
 
 /*
  * (c) 2013 Ben "root" Anderson
