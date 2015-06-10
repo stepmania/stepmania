@@ -208,6 +208,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetLifeDifficulty' return='int' arguments=''>
 		Returns the current Life Difficulty.
 	</Function>
+	<Function name='get_music_file_length' return='float' arguments='string path'>
+		Returns the length of the music file found at path.<br />
+		If you are loading the sound into an ActorSound, ActorSound:get to get its RageSound then use RageSound's get_length function instead to avoid loading the file twice.
+	</Function>
 	<Function name='GetOSName' return='string' arguments=''>
 		Returns a string representing the name of the operating system being used. (e.g. "Windows", "Linux", "Mac, "Unknown")
 	</Function>
@@ -402,9 +406,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='MonthToString' return='string' arguments='Month m'>
 		Returns Month <code>m</code> as a string.
 	</Function>
-	<Function name='multiapproach' return='table' arguments='table currents, table goals, table speeds'>
+	<Function name='multiapproach' return='table' arguments='table currents, table goals, table speeds, float multiplier'>
 		Similar to approach, but operates on tables of values instead of single values.  This will modify the contents of <code>currents</code> in place, as well as returning <code>currents</code>.<br />
 		<code>currents</code>, <code>goals</code>, and <code>speeds</code> must all be the same size and contain only numbers.<br />
+		<code>multiplier</code> is optional.  The speeds in the speeds table will be multiplied by <code>multiplier</code>.  This makes it more convenient to use multiapproach in a per-frame update: pass in the frame delta and the speeds will be scaled to the time that passed.<br />
 		Note:  When you see the error "approach: speed 1 is negative." it means that a speed value passed was negative.  The 1 tells you which entry in the table was invalid.
 	</Function>
 	<Function name='next' return='void' arguments='table t, int index'>
@@ -4112,6 +4117,9 @@ save yourself some time, copy this for undocumented things:
 	<Description>
 		See <Link class='ActorSound' /> for loading a sound.
 	</Description>
+	<Function name='get_length' return='float' arguments=''>
+		Returns the length of the sound loaded into this RageSound.  Returns -1 if no sound is loaded.
+	</Function>
 	<Function name='SetParam' return='void' arguments='string sProperty, float fVal'>
 		Actually sets the value of <code>sProperty</code> to <code>fVal</code>. The supported properties depend on how the associated <Link class='ActorSound' /> was loaded.
 	</Function>
