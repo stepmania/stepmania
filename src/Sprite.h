@@ -52,7 +52,7 @@ public:
 	virtual void EnableAnimation( bool bEnable );
 
 	virtual int GetNumStates() const;
-	virtual void SetState( int iNewState );
+	virtual void SetState( size_t iNewState );
 	int GetState() { return m_iCurState; }
 	virtual float GetAnimationLengthSeconds() const
 	{ return m_animation_length_seconds; }

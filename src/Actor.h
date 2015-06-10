@@ -610,7 +610,7 @@ public:
 
 	// Animation
 	virtual int GetNumStates() const { return 1; }
-	virtual void SetState( int /* iNewState */ ) {}
+	virtual void SetState( size_t /* iNewState */ ) {}
 	virtual float GetAnimationLengthSeconds() const { return 0; }
 	virtual void SetSecondsIntoAnimation( float ) {}
 	virtual void SetUpdateRate( float ) {}
