@@ -800,8 +800,8 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		if (!part_args.anchor_to_top)
 		{
 			float offset = unzoomed_frame_height - (y_end_pos - y_start_pos);
-			// ƒƒ“ƒOƒm[ƒg–{‘Ì‚Ì’·‚³‚ªunzoomed_frame_height¨0‚Ì‚Æ‚«‚ÉAadd_to_tex_coord‚ð0¨1‚É‚·‚ê‚ÎOK
-			// ‚Â‚Ü‚èAoffset‚ð0¨unzoomed_frame_height‚É‚·‚é‚Æ—‘z’Ê‚è‚Ì•\Ž¦‚É‚È‚é -A.C
+			// ãƒ­ãƒ³ã‚°ãƒŽãƒ¼ãƒˆæœ¬ä½“ã®é•·ã•ãŒunzoomed_frame_heightâ†’0ã®ã¨ãã«ã€add_to_tex_coordã‚’0â†’1ã«ã™ã‚Œã°OK
+			// ã¤ã¾ã‚Šã€offsetã‚’0â†’unzoomed_frame_heightã«ã™ã‚‹ã¨ç†æƒ³é€šã‚Šã®è¡¨ç¤ºã«ãªã‚‹ -A.C
 			// Shift texture coord to fit hold length If hold length is less than
 			// bottomcap frame size. (translated by hanubeki)
 			if (offset>0){
