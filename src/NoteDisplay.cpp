@@ -802,6 +802,8 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			float offset = unzoomed_frame_height - (y_end_pos - y_start_pos);
 			// ロングノート本体の長さがunzoomed_frame_height→0のときに、add_to_tex_coordを0→1にすればOK
 			// つまり、offsetを0→unzoomed_frame_heightにすると理想通りの表示になる -A.C
+			// Shift texture coord to fit hold length If hold length is less than
+			// bottomcap frame size. (translated by hanubeki)
 			if (offset>0){
 				add_to_tex_coord = SCALE(offset, 0.0f, unzoomed_frame_height, 0.0f, 1.0f);
 			}
@@ -809,9 +811,6 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 				add_to_tex_coord = 0.0f;
 			}
 		}
-	// これは無いほうが綺麗につながっているように見える
-	// I seem to be better this does not exist has led to clean. -A.C
-	//	add_to_tex_coord= SCALE(1.0f, 0.0f, power_of_two(unzoomed_frame_height), 0.0f, 1.0f);
 	}
 
 	DISPLAY->ClearAllTextures();
