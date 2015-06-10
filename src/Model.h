@@ -42,7 +42,7 @@ public:
 	void	SetCelShading( bool bShading ) { m_bDrawCelShaded = bShading; }
 
 	virtual int GetNumStates() const;
-	virtual void SetState( int iNewState );
+	virtual void SetState( size_t iNewState );
 	virtual float GetAnimationLengthSeconds() const
 	{ return m_animation_length_seconds; }
 	virtual void RecalcAnimationLengthSeconds();

@@ -739,7 +739,7 @@ int Model::GetNumStates() const
 	return std::accumulate(m_Materials.begin(), m_Materials.end(), 0, findMax);
 }
 
-void Model::SetState( int iNewState )
+void Model::SetState( size_t iNewState )
 {
 	for (auto &m: m_Materials)
 	{

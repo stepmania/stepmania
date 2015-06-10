@@ -746,7 +746,7 @@ int Sprite::GetNumStates() const
 	return m_States.size();
 }
 
-void Sprite::SetState( int iNewState )
+void Sprite::SetState( size_t iNewState )
 {
 	/*
 	 * This assert will likely trigger if the "missing" theme element graphic
@@ -755,7 +755,7 @@ void Sprite::SetState( int iNewState )
 	 */
 
 	// Never warn about setting state 0.
-	if( iNewState != 0 && (iNewState < 0  ||  iNewState >= (int)m_States.size()) )
+	if( iNewState != 0 && iNewState >= m_States.size() )
 	{
 		// Don't warn about number of states in "_blank" or "_missing".
 		if( !m_pTexture || (m_pTexture->GetID().filename.find("_blank") == string::npos &&
@@ -763,7 +763,7 @@ void Sprite::SetState( int iNewState )
 		{
 			RString sError;
 			if( m_pTexture )
-				sError = ssprintf("A Sprite '%s' (\"%s\") tried to set state to frame %d, but it has only %u frames.",
+				sError = ssprintf("A Sprite '%s' (\"%s\") tried to set state to frame %lu, but it has only %u frames.",
 					/*
 					 * Using the state directly tends to give you an error message like "tried to set frame 6 of 6"
 					 * which is very confusing if you don't know that one is 0-indexed and the other is 1-indexed.
@@ -771,7 +771,7 @@ void Sprite::SetState( int iNewState )
 					 */
 					m_pTexture->GetID().filename.c_str(), this->m_sName.c_str(), iNewState+1, unsigned(m_States.size()));
 			else
-				sError = ssprintf("A Sprite (\"%s\") tried to set state index %d, but no texture is loaded.",
+				sError = ssprintf("A Sprite (\"%s\") tried to set state index %lu, but no texture is loaded.",
 					this->m_sName.c_str(), iNewState );
 			LuaHelpers::ReportScriptError(sError, "SPRITE_INVALID_FRAME");
 		}
