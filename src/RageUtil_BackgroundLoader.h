@@ -54,8 +54,6 @@ private:
 
 	bool m_sThreadIsActive;
 	bool m_sThreadShouldAbort;
-
-	RageFileDriverCached *m_pDriver;
 };
 
 #endif

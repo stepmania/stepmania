@@ -287,8 +287,7 @@ void ScreenDebugOverlay::Init()
 		this->AddChild( p );
 	}
 
-	for (auto *p: *g_pvpSubscribers)
-	{
+	auto onEachLine = [this](IDebugLine *line) {
 		{
 			BitmapText *bt = new BitmapText;
 			bt->SetName( "ButtonText" );
@@ -309,8 +308,9 @@ void ScreenDebugOverlay::Init()
 			m_vptextFunction.push_back( bt );
 			this->AddChild( bt );
 		}
-	}
-
+	};
+	
+	std::for_each(g_pvpSubscribers->begin(), g_pvpSubscribers->end(), onEachLine);
 	this->SetVisible( false );
 }
 

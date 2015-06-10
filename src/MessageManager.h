@@ -218,7 +218,14 @@ private:
 public:
 	explicit BroadcastOnChange( MessageID m ) { mSendWhenChanged = m; }
 	const T Get() const { return val; }
-	void Set( T t ) { val = t; MESSAGEMAN->Broadcast( MessageIDToString(mSendWhenChanged) ); }
+	void Set( T t )
+	{
+		val = t;
+		if (MESSAGEMAN != nullptr)
+		{
+		MESSAGEMAN->Broadcast( MessageIDToString(mSendWhenChanged) );
+		}
+	}
 	operator T () const { return val; }
 	bool operator == ( const T &other ) const { return val == other; }
 	bool operator != ( const T &other ) const { return val != other; }

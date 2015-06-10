@@ -13,8 +13,6 @@
 
 using std::vector;
 
-const int MAX_METERS_TO_SHOW = 50;
-
 REGISTER_ACTOR_CLASS( WorkoutGraph );
 
 WorkoutGraph::WorkoutGraph()

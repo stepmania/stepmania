@@ -103,18 +103,13 @@ void MouseDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementC
 	using std::max;
 	// todo: add mouse axis stuff -aj
 	const Mouse& m = m_Mouse;
-	HRESULT result;
-	IOHIDEventStruct hidEvent;
-	// result = (*m_Interface)->getElementValue(hidDeviceInterface,cookie,&hidEvent);
 
 	if( m.x_axis == cookie )
 	{
-		//INPUTFILTER->UpdateCursorLocation(value,m.y_axis);
 		LOG->Trace("Mouse X: Value = %i",value);
 	}
 	else if( m.y_axis == cookie )
 	{
-		//INPUTFILTER->UpdateCursorLocation(m.x_axis,value);
 		LOG->Trace("Mouse Y: Value = %i",value);
 	}
 	else if( m.z_axis == cookie )
