@@ -793,18 +793,17 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			add_to_tex_coord -= floorf(fTexCoordTop);
 		}
 	}
-	//part_args.y_start_pos = max(part_args.y_start_pos, y_head);
 	// The bottom caps mysteriously hate me and their texture coords need to be
 	// shifted by one pixel or there is a seam. -Kyz
 	if(part_type == hpt_bottom)
 	{
 		if (!part_args.anchor_to_top)
 		{
-			const float fYOffset = ArrowEffects::GetYOffsetFromYPos(column_args.column, y_start_pos, m_fYReverseOffsetPixels);
-			float offset = (unzoomed_frame_height - fYOffset)/4;
-			if (offset>=0){
+			float offset = unzoomed_frame_height - (y_end_pos - y_start_pos);
+			// ロングノート本体の長さがunzoomed_frame_height→0のときに、add_to_tex_coordを0→1にすればOK
+			// つまり、offsetを0→unzoomed_frame_heightにすると理想通りの表示になる -A.C
+			if (offset>0){
 				add_to_tex_coord = SCALE(offset, 0.0f, unzoomed_frame_height, 0.0f, 1.0f);
-				//add_to_tex_coord = 0.5f;
 			}
 			else{
 				add_to_tex_coord = 0.0f;
