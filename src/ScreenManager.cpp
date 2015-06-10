@@ -80,7 +80,7 @@ static Preference<bool> g_bDelayedScreenLoad( "DelayedScreenLoad", false );
 //static Preference<bool> g_bPruneFonts( "PruneFonts", true );
 
 // Screen registration
-static std::map<RString,CreateScreenFn>	*g_pmapRegistrees = nullptr;
+static std::unordered_map<std::string,CreateScreenFn>	*g_pmapRegistrees = nullptr;
 
 /** @brief Utility functions for the ScreenManager. */
 namespace ScreenManagerUtil
@@ -227,9 +227,9 @@ using namespace ScreenManagerUtil;
 RegisterScreenClass::RegisterScreenClass( const RString& sClassName, CreateScreenFn pfn )
 {
 	if( g_pmapRegistrees == nullptr )
-		g_pmapRegistrees = new std::map<RString,CreateScreenFn>;
+	g_pmapRegistrees = new std::unordered_map<std::string,CreateScreenFn>;
 
-	auto iter = g_pmapRegistrees->find( sClassName );
+	auto iter = g_pmapRegistrees->find(sClassName);
 	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Screen class '%s' already registered.", sClassName.c_str()) );
 
 	(*g_pmapRegistrees)[sClassName] = pfn;
@@ -357,8 +357,8 @@ bool ScreenManager::IsScreenNameValid(RString const& name) const
 	{
 		return false;
 	}
-	RString ClassName = THEME->GetMetric(name, "Class");
-	return g_pmapRegistrees->find(ClassName) != g_pmapRegistrees->end();
+	std::string class_name = THEME->GetMetric(name, "Class");
+	return g_pmapRegistrees->find(class_name) != g_pmapRegistrees->end();
 }
 
 bool ScreenManager::IsStackedScreen( const Screen *pScreen ) const
@@ -548,12 +548,12 @@ Screen* ScreenManager::MakeNewScreen( const RString &sScreenName )
 	RageTimer t;
 	LOG->Trace( "Loading screen: \"%s\"", sScreenName.c_str() );
 
-	RString sClassName = THEME->GetMetric( sScreenName,"Class" );
+	std::string class_name = THEME->GetMetric( sScreenName,"Class" );
 
-	auto iter = g_pmapRegistrees->find( sClassName );
+	auto iter = g_pmapRegistrees->find(class_name);
 	if( iter == g_pmapRegistrees->end() )
 	{
-		LuaHelpers::ReportScriptErrorFmt("Screen \"%s\" has an invalid class \"%s\".", sScreenName.c_str(), sClassName.c_str());
+		LuaHelpers::ReportScriptErrorFmt("Screen \"%s\" has an invalid class \"%s\".", sScreenName.c_str(), class_name.c_str());
 		return nullptr;
 	}
 
@@ -562,7 +562,7 @@ Screen* ScreenManager::MakeNewScreen( const RString &sScreenName )
 	CreateScreenFn pfn = iter->second;
 	Screen *ret = pfn( sScreenName );
 
-	LOG->Trace( "Loaded \"%s\" (\"%s\") in %f", sScreenName.c_str(), sClassName.c_str(), t.GetDeltaTime() );
+	LOG->Trace( "Loaded \"%s\" (\"%s\") in %f", sScreenName.c_str(), class_name.c_str(), t.GetDeltaTime() );
 
 	return ret;
 }
@@ -907,10 +907,10 @@ public:
 			SCREENMAN->SystemMessage(errstr);
 			luaL_error(L, errstr.c_str());
 		}
-		RString ClassName= THEME->GetMetric(name, "Class");
-		if(g_pmapRegistrees->find(ClassName) == g_pmapRegistrees->end())
+		std::string class_name= THEME->GetMetric(name, "Class");
+		if(g_pmapRegistrees->find(class_name) == g_pmapRegistrees->end())
 		{
-			RString errstr= "Screen \"" + name + "\" has an invalid class \"" + ClassName + "\".";
+			RString errstr= "Screen \"" + name + "\" has an invalid class \"" + class_name + "\".";
 			SCREENMAN->SystemMessage(errstr);
 			luaL_error(L, errstr.c_str());
 		}

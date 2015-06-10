@@ -4,6 +4,7 @@
 #include "ScreenEdit.h"
 
 #include <array>
+#include <unordered_map>
 
 #include "ActorUtil.h"
 #include "AdjustSync.h"
@@ -128,7 +129,7 @@ static const char *EditStateNames[] = {
 XToString( EditState );
 LuaXType( EditState );
 
-std::map<RString, EditButton> name_to_edit_button;
+std::unordered_map<std::string, EditButton> name_to_edit_button;
 
 void ScreenEdit::InitEditMappings()
 {

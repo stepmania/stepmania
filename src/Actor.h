@@ -6,7 +6,7 @@
 #include "RageUtil_AutoPtr.h"
 #include "LuaReference.h"
 #include "EnumHelper.h"
-#include <map>
+#include <unordered_map>
 #include <array>
 class XNode;
 struct lua_State;
@@ -746,7 +746,7 @@ protected:
 
 private:
 	// commands
-	std::map<RString, apActorCommands> m_mapNameToCommands;
+	std::unordered_map<std::string, apActorCommands> m_mapNameToCommands;
 };
 
 #endif

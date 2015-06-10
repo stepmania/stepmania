@@ -660,7 +660,6 @@ void GetConnectsDisconnects( const std::vector<T> &before, const std::vector<T> 
 	GetAsNotInBs( after, before, connects );
 }
 
-
 #endif
 
 /**

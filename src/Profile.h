@@ -3,9 +3,6 @@
 
 #include "GameConstantsAndTypes.h"
 #include "Grade.h"
-#include <map>
-#include <set>
-#include <deque>
 #include "HighScore.h"
 #include "DateTime.h"
 #include "SongUtil.h"	// for SongID
@@ -13,7 +10,13 @@
 #include "CourseUtil.h"	// for CourseID
 #include "TrailUtil.h"	// for TrailID
 #include "StyleUtil.h"	// for StyleID
+#include "IDUtil.h" // For hash specializations.
 #include "LuaReference.h"
+
+#include <unordered_map>
+#include <map>
+#include <set>
+#include <deque>
 
 class XNode;
 struct lua_State;
@@ -194,7 +197,9 @@ public:
 	static RString MakeGuid();
 
 	RString m_sGuid;
-	std::map<RString,RString> m_sDefaultModifiers;
+	// Probably not a problem if the per-game sections are written to prefs in
+	// random order. -Kyz
+	std::unordered_map<std::string,RString> m_sDefaultModifiers;
 	SortOrder m_SortOrder;
 	Difficulty m_LastDifficulty;
 	CourseDifficulty m_LastCourseDifficulty;
@@ -234,7 +239,7 @@ public:
 	/* These stats count twice in the machine profile if two players are playing;
 	 * that's the only approach that makes sense for ByDifficulty and ByMeter. */
 	int m_iNumSongsPlayedByPlayMode[NUM_PlayMode];
-	std::map<StyleID,int> m_iNumSongsPlayedByStyle;
+	std::unordered_map<StyleID,int> m_iNumSongsPlayedByStyle;
 	int m_iNumSongsPlayedByDifficulty[NUM_Difficulty];
 	int m_iNumSongsPlayedByMeter[MAX_METER+1];
 	/**
@@ -256,11 +261,13 @@ public:
 	};
 	struct HighScoresForASong
 	{
-		std::map<StepsID,HighScoresForASteps>	m_StepsHighScores;
+		std::unordered_map<StepsID,HighScoresForASteps>	m_StepsHighScores;
 		int GetNumTimesPlayed() const;
 		HighScoresForASong(): m_StepsHighScores() {}
 	};
-	std::map<SongID,HighScoresForASong>	m_SongHighScores;
+	// No, I don't care if having the song scores in random order confuses
+	// people reading the raw file.  I want fast lookup. -Kyz
+	std::unordered_map<SongID,HighScoresForASong>	m_SongHighScores;
 
 	void AddStepsHighScore( const Song* pSong, const Steps* pSteps, HighScore hs, int &iIndexOut );
 	const HighScoreList& GetStepsHighScoreList( const Song* pSong, const Steps* pSteps ) const;
@@ -284,11 +291,11 @@ public:
 	};
 	struct HighScoresForACourse
 	{
-		std::map<TrailID,HighScoresForATrail>	m_TrailHighScores;
+		std::unordered_map<TrailID,HighScoresForATrail>	m_TrailHighScores;
 		int GetNumTimesPlayed() const;
 		HighScoresForACourse(): m_TrailHighScores() {}
 	};
-	std::map<CourseID,HighScoresForACourse>	m_CourseHighScores;
+	std::unordered_map<CourseID,HighScoresForACourse>	m_CourseHighScores;
 
 	void AddCourseHighScore( const Course* pCourse, const Trail* pTrail, HighScore hs, int &iIndexOut );
 	HighScoreList& GetCourseHighScoreList( const Course* pCourse, const Trail* pTrail );
@@ -333,6 +340,8 @@ public:
 		Calories(): fCals(0) {}
 		float fCals;
 	};
+	// Probably not used enough to require fast lookup, so leave it sorted for
+	// reading convenience. -Kyz
 	std::map<DateTime,Calories> m_mapDayToCaloriesBurned;
 	float GetCaloriesBurnedForDay( DateTime day ) const;
 

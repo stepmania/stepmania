@@ -33,9 +33,9 @@ RageTextureManager*		TEXTUREMAN		= nullptr; // global and accessible from anywhe
 
 namespace
 {
-	std::map<RageTextureID, RageTexture*> m_mapPathToTexture;
-	std::map<RageTextureID, RageTexture*> m_textures_to_update;
-	std::map<RageTexture*, RageTextureID> m_texture_ids_by_pointer;
+	std::unordered_map<RageTextureID, RageTexture*> m_mapPathToTexture;
+	std::unordered_map<RageTextureID, RageTexture*> m_textures_to_update;
+	std::unordered_map<RageTexture*, RageTextureID> m_texture_ids_by_pointer;
 };
 
 RageTextureManager::RageTextureManager():
@@ -89,7 +89,7 @@ void RageTextureManager::RegisterTexture( RageTextureID ID, RageTexture *pTextur
 
 	/* Make sure we don't already have a texture with this ID.  If we do, the
 	 * caller should have used it. */
-	std::map<RageTextureID, RageTexture*>::iterator p = m_mapPathToTexture.find(ID);
+	auto p = m_mapPathToTexture.find(ID);
 	if( p != m_mapPathToTexture.end() )
 	{
 		/* Oops, found the texture. */
@@ -148,7 +148,7 @@ RageTexture* RageTextureManager::LoadTextureInternal( RageTextureID ID )
 
 	/* We could have two copies of the same bitmap if there are equivalent but
 	 * different paths, e.g. "Bitmaps\me.bmp" and "..\Rage PC Edition\Bitmaps\me.bmp". */
-	std::map<RageTextureID, RageTexture*>::iterator p = m_mapPathToTexture.find(ID);
+	auto p = m_mapPathToTexture.find(ID);
 	if( p != m_mapPathToTexture.end() )
 	{
 		/* Found the texture.  Just increase the refcount and return it. */
@@ -282,7 +282,7 @@ void RageTextureManager::GarbageCollect( GCType type )
 
 	for( auto i = m_mapPathToTexture.begin(); i != m_mapPathToTexture.end(); )
 	{
-		std::map<RageTextureID, RageTexture*>::iterator j = i;
+		auto j = i;
 		i++;
 
 		RString sPath = j->first.filename;

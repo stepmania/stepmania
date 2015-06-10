@@ -1435,15 +1435,17 @@ void Actor::AddCommand( const RString &sCmdName, apActorCommands apac, bool warn
 	}
 
 	RString sMessage;
+	std::string command_name;
 	if( GetMessageNameFromCommandName(sCmdName, sMessage) )
 	{
 		SubscribeToMessage( sMessage );
-		m_mapNameToCommands[sMessage] = apac;	// sCmdName w/o "Message" at the end
+		command_name= sMessage;	// sCmdName w/o "Message" at the end
 	}
 	else
 	{
-		m_mapNameToCommands[sCmdName] = apac;
+		command_name= sCmdName;
 	}
+	m_mapNameToCommands[command_name] = apac;
 }
 
 bool Actor::HasCommand( const RString &sCmdName ) const
@@ -1453,7 +1455,7 @@ bool Actor::HasCommand( const RString &sCmdName ) const
 
 const apActorCommands *Actor::GetCommand( const RString &sCommandName ) const
 {
-	auto it = m_mapNameToCommands.find( sCommandName );
+	auto it = m_mapNameToCommands.find(sCommandName);
 	if( it == m_mapNameToCommands.end() )
 		return nullptr;
 	return &it->second;

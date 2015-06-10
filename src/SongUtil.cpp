@@ -18,6 +18,8 @@
 #include "LuaBinding.h"
 #include "EnumHelper.h"
 
+#include <unordered_map>
+
 using std::vector;
 
 ThemeMetric<int> SORT_BPM_DIVISION ( "MusicWheel", "SortBPMDivision" );
@@ -348,7 +350,7 @@ static LocalizedString SORT_OTHER        ( "Sort", "Other" );
 
 /* Just calculating GetNumTimesPlayed within the sort is pretty slow, so let's precompute
  * it.  (This could be generalized with a template.) */
-static std::map<const Song*, RString> g_mapSongSortVal;
+static std::unordered_map<const Song*, RString> g_mapSongSortVal;
 
 static bool CompareSongPointersBySortValueAscending( const Song *pSong1, const Song *pSong2 )
 {

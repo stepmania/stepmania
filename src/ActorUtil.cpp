@@ -19,10 +19,13 @@
 
 #include "arch/Dialog/Dialog.h"
 
+#include <unordered_map>
+
+using std::string;
 using std::vector;
 
 // Actor registration
-static std::map<RString,CreateActorFn> *g_pmapRegistrees = nullptr;
+static std::unordered_map<string,CreateActorFn> *g_pmapRegistrees = nullptr;
 
 static bool IsRegistered( const RString& sClassName )
 {
@@ -32,9 +35,10 @@ static bool IsRegistered( const RString& sClassName )
 void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
 {
 	if( g_pmapRegistrees == nullptr )
-		g_pmapRegistrees = new std::map<RString,CreateActorFn>;
-
-	auto iter = g_pmapRegistrees->find( sClassName );
+	{
+		g_pmapRegistrees = new std::unordered_map<string,CreateActorFn>;
+	}
+	auto iter = g_pmapRegistrees->find(sClassName);
 	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Actor class '%s' already registered.", sClassName.c_str()) );
 
 	(*g_pmapRegistrees)[sClassName] = pfn;
@@ -197,7 +201,7 @@ Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 	if( !bHasClass && bLegacy )
 		sClass = GetLegacyActorClass( &node );
 
-	auto iter = g_pmapRegistrees->find( sClass );
+	auto iter = g_pmapRegistrees->find(sClass);
 	if( iter == g_pmapRegistrees->end() )
 	{
 		RString sFile;
@@ -515,8 +519,8 @@ XToString( FileType );
 LuaXType( FileType );
 
 // convenience so the for-loop lines can be shorter.
-typedef std::map<RString, FileType> etft_cont_t;
-typedef std::map<FileType, vector<RString> > fttel_cont_t;
+typedef std::unordered_map<string, FileType> etft_cont_t;
+typedef std::unordered_map<FileType, vector<RString> > fttel_cont_t;
 etft_cont_t ExtensionToFileType;
 fttel_cont_t FileTypeToExtensionList;
 

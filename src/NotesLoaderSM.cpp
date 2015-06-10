@@ -13,6 +13,8 @@
 #include "Attack.h"
 #include "PrefsManager.h"
 
+#include <unordered_map>
+
 using std::vector;
 using std::string;
 
@@ -189,7 +191,7 @@ void SMSetAttacks(SMSongTagInfo& info)
 	info.loader->ProcessAttacks(info.song->m_Attacks, (*info.params));
 }
 
-typedef std::map<RString, song_tag_func_t> song_handler_map_t;
+typedef std::unordered_map<string, song_tag_func_t> song_handler_map_t;
 
 struct sm_parser_helper_t
 {
@@ -1124,8 +1126,7 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
+		string sValueName = sParams[0];
 
 		reused_song_info.params= &sParams;
 		song_handler_map_t::iterator handler=
@@ -1136,7 +1137,7 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 		 * splitting other formats that *don't* natively support #SUBTITLE. */
 			handler->second(reused_song_info);
 		}
-		else if(sValueName.Left(strlen("BGCHANGES")) == "BGCHANGES")
+		else if(sValueName.substr(0, strlen("BGCHANGES")) == "BGCHANGES")
 		{
 			SMSetBGChanges(reused_song_info);
 		}

@@ -100,8 +100,8 @@ void RageSoundManager::Update()
 	/* Scan m_mapPreloadedSounds for sounds that are no longer loaded, and delete them. */
 	g_SoundManMutex.Lock(); /* lock for access to m_mapPreloadedSounds, owned_sounds */
 	{
-		std::map<RString, RageSoundReader_Preload *>::iterator it, next;
-		it = m_mapPreloadedSounds.begin();
+		auto it= m_mapPreloadedSounds.begin();
+		auto next= it;
 
 		while( it != m_mapPreloadedSounds.end() )
 		{
@@ -147,7 +147,7 @@ RageSoundReader *RageSoundManager::GetLoadedSound( const RString &sPath_ )
 
 	RString sPath(sPath_);
 	sPath.MakeLower();
-	auto it = m_mapPreloadedSounds.find( sPath );
+	auto it = m_mapPreloadedSounds.find(sPath);
 	if( it == m_mapPreloadedSounds.end() )
 		return nullptr;
 
@@ -165,8 +165,8 @@ void RageSoundManager::AddLoadedSound( const RString &sPath_, RageSoundReader_Pr
 	 * used in GetLoadedSound. */
 	RString sPath(sPath_);
 	sPath.MakeLower();
-	auto it = m_mapPreloadedSounds.find( sPath );
-	ASSERT_M( it == m_mapPreloadedSounds.end(), sPath );
+	auto it = m_mapPreloadedSounds.find(sPath);
+	ASSERT_M( it == m_mapPreloadedSounds.end(), sPath.c_str());
 
 	m_mapPreloadedSounds[sPath] = pSound->Copy();
 }

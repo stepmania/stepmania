@@ -183,7 +183,7 @@ protected:
 	void AddSongToList(Song* new_song);
 	/** @brief All of the songs that can be played. */
 	std::vector<Song*>		m_pSongs;
-	std::map<RString, Song*> m_SongsByDir;
+	std::unordered_map<std::string, Song*> m_SongsByDir;
 	std::set<RString> m_GroupsToNeverCache;
 	/** @brief Hold pointers to all the songs that have been deleted from disk but must at least be kept temporarily alive for smooth audio transitions. */
 	std::vector<Song*>       m_pDeletedSongs;
@@ -201,9 +201,8 @@ protected:
 	std::vector<RString>		m_sSongGroupBannerPaths; // each song group may have a banner associated with it
 	//std::vector<RString>		m_sSongGroupBackgroundPaths; // each song group may have a background associated with it (very rarely)
 
-	struct Comp { bool operator()(const RString& s, const RString &t) const { return CompareRStringsAsc(s,t); } };
 	typedef std::vector<Song*> SongPointerVector;
-	std::map<RString,SongPointerVector,Comp> m_mapSongGroupIndex;
+	std::unordered_map<std::string,SongPointerVector> m_mapSongGroupIndex;
 
 	std::vector<Course*>		m_pCourses;
 	std::vector<Course*>		m_pPopularCourses[NUM_CourseType];
@@ -213,7 +212,7 @@ protected:
 		RString m_sBannerPath;
 		//RString m_sBackgroundPath;
 	};
-	std::map<RString,CourseGroupInfo> m_mapCourseGroupToInfo;
+	std::unordered_map<std::string,CourseGroupInfo> m_mapCourseGroupToInfo;
 	typedef std::vector<Course*> CoursePointerVector;
 	std::vector<CoursePointerVector> m_vPreferredCourseSort;
 

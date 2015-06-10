@@ -14,7 +14,10 @@
 #include "Attack.h"
 #include "PrefsManager.h"
 
+#include <unordered_map>
+
 using std::vector;
+using std::string;
 
 // Everything from this line to the creation of parser_helper exists to
 // speed up parsing by allowing the use of std::map.  All these functions
@@ -518,9 +521,9 @@ void SetStepsDisplayBPM(StepsTagInfo& info)
 }
 
 
-typedef std::map<RString, steps_tag_func_t> steps_handler_map_t;
-typedef std::map<RString, song_tag_func_t> song_handler_map_t;
-typedef std::map<RString, LoadNoteDataTagIDs> load_note_data_handler_map_t;
+typedef std::unordered_map<string, steps_tag_func_t> steps_handler_map_t;
+typedef std::unordered_map<string, song_tag_func_t> song_handler_map_t;
+typedef std::unordered_map<string, LoadNoteDataTagIDs> load_note_data_handler_map_t;
 
 struct ssc_parser_helper_t
 {
@@ -856,8 +859,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 	for (unsigned i = 0; i < values; i++)
 	{
 		const MsdFile::value_t &params = msd.GetValue(i);
-		RString valueName = params[0];
-		valueName.MakeUpper();
+		string valueName = params[0];
 		RString matcher = params[1]; // mainly for debugging.
 		Trim(matcher);
 
@@ -969,8 +971,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 	for( unsigned i = 0; i < values; i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
+		string sValueName = sParams[0];
 
 		switch (state)
 		{
@@ -983,7 +984,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				{
 					handler->second(reused_song_info);
 				}
-				else if(sValueName.Left(strlen("BGCHANGES"))=="BGCHANGES")
+				else if(sValueName.substr(0, strlen("BGCHANGES"))=="BGCHANGES")
 				{
 					SetBGChanges(reused_song_info);
 				}
@@ -1088,8 +1089,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
+		string sValueName = sParams[0];
 
 		if(pSong != nullptr)
 		{

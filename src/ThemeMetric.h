@@ -4,7 +4,7 @@
 #define THEME_METRIC_H
 
 #include "ThemeManager.h"
-#include <map>
+#include <unordered_map>
 #include "LuaManager.h"
 #include "RageUtil.h"
 
@@ -265,7 +265,7 @@ template <class T>
 class ThemeMetricMap : public IThemeMetric
 {
 	typedef ThemeMetric<T> ThemeMetricT;
-	std::map<RString,ThemeMetricT> m_metric;
+	std::unordered_map<std::string,ThemeMetricT> m_metric;
 
 public:
 	ThemeMetricMap( const RString& sGroup = "", MetricNameMap pfn = nullptr, const std::vector<RString> vsValueNames = std::vector<RString>() )

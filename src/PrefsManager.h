@@ -4,6 +4,8 @@
 #include "Preference.h"
 #include "GameConstantsAndTypes.h"
 
+#include <unordered_map>
+
 class IniFile;
 
 void ValidateDisplayAspectRatio( float &val );
@@ -154,7 +156,9 @@ protected:
 		RString m_sTheme;
 		RString	m_sDefaultModifiers;
 	};
-	std::map<RString, GamePrefs> m_mapGameNameToGamePrefs;
+	// Probably not a problem if the per-game sections are written to prefs in
+	// random order. -Kyz
+	std::unordered_map<std::string, GamePrefs> m_mapGameNameToGamePrefs;
 
 public:
 	Preference<bool>	m_bWindowed;

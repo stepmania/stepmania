@@ -18,6 +18,8 @@
 #include "Game.h"
 #include "Style.h"
 
+#include <unordered_map>
+
 using std::vector;
 
 static Preference<int> MAX_SONGS_IN_EDIT_COURSE( "MaxSongsInEditCourse", -1 );
@@ -498,7 +500,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 		vector<Song*> vpSongs;
 		typedef vector<Steps*> StepsVector;
-		std::map<Song*,StepsVector> mapSongToSteps;
+		std::unordered_map<Song*,StepsVector> mapSongToSteps;
 		for (auto const &sas: vSongAndSteps)
 		{
 			StepsVector &v = mapSongToSteps[sas.pSong];

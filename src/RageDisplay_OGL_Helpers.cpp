@@ -6,12 +6,12 @@
 #include "RageUtil.h"
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 
-#include <map>
+#include <unordered_map>
 #include <set>
 
 namespace
 {
-	std::map<GLenum, RString> g_Strings;
+	std::unordered_map<GLenum, RString> g_Strings;
 	void InitStringMap()
 	{
 		static bool bInitialized = false;

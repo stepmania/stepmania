@@ -12,6 +12,9 @@
 #include "Steps.h"
 #include "Trail.h"
 
+#include <unordered_map>
+
+using std::string;
 using std::vector;
 
 static const char *DifficultyNames[] = {
@@ -54,7 +57,7 @@ CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty cd )
 
 struct OldStyleStringToDifficultyMapHolder
 {
-	std::map<RString, Difficulty> conversion_map;
+	std::unordered_map<string, Difficulty> conversion_map;
 	OldStyleStringToDifficultyMapHolder()
 	{
 		conversion_map["beginner"]= Difficulty_Beginner;
@@ -82,8 +85,7 @@ Difficulty OldStyleStringToDifficulty( const RString& sDC )
 {
 	RString s2 = sDC;
 	s2.MakeLower();
-	std::map<RString, Difficulty>::iterator diff=
-		OldStyleStringToDifficulty_converter.conversion_map.find(s2);
+	auto diff= OldStyleStringToDifficulty_converter.conversion_map.find(s2);
 	if(diff != OldStyleStringToDifficulty_converter.conversion_map.end())
 	{
 		return diff->second;

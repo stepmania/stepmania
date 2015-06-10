@@ -126,6 +126,8 @@ protected:
 	std::vector<RageSpriteVertex>	m_aVertices;
 
 	std::vector<FontPageTextures*>	m_vpFontPageTextures;
+	// This cannot be an unordered_map because the logic for applying the
+	// attributes requires them to be in order. -Kyz
 	std::map<size_t, Attribute>		m_mAttributes;
 	bool				m_bHasGlowAttribute;
 

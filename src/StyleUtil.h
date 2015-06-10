@@ -16,12 +16,34 @@ public:
 	void FromStyle( const Style *p );
 	const Style *ToStyle() const;
 	bool operator<( const StyleID &rhs ) const;
+	bool operator==(const StyleID& rhs) const
+	{ return sGame == rhs.sGame && sStyle == rhs.sStyle; }
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
 	bool IsValid() const;
 	static void FlushCache( Song* pStaleSong );
+
+	std::string get_game() const { return sGame; }
+	std::string get_style() const { return sStyle; }
 };
+
+namespace std
+{
+	template<>
+    struct hash<StyleID>
+	{
+		typedef StyleID argument_type;
+		typedef std::size_t result_type;
+
+		result_type operator()(argument_type const& s) const
+		{
+			result_type const h1(std::hash<std::string>()(s.get_game()));
+			result_type const h2(std::hash<std::string>()(s.get_style()));
+			return h1 ^ (h2 << 1);
+		}
+	};
+}
 
 #endif
 

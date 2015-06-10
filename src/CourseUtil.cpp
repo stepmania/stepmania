@@ -15,6 +15,8 @@
 #include "RageFileManager.h"
 #include "CourseWriterCRS.h"
 
+#include <unordered_map>
+
 using std::vector;
 
 // Sorting stuff
@@ -149,7 +151,7 @@ void CourseUtil::MoveRandomToEnd( vector<Course*> &vpCoursesInOut )
 	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareRandom );
 }
 
-static std::map<const Course*, RString> course_sort_val;
+static std::unordered_map<const Course*, RString> course_sort_val;
 
 bool CompareCoursePointersBySortValueAscending( const Course *pSong1, const Course *pSong2 )
 {

@@ -360,6 +360,19 @@ enum DeviceButton
 	NUM_DeviceButton,
 	DeviceButton_Invalid
 };
+namespace std
+{
+	template<>
+		struct hash<DeviceButton>
+	{
+		typedef DeviceButton argument_type;
+		typedef std::size_t result_type;
+		result_type operator()(argument_type const& s) const
+		{
+			return std::hash<size_t>()(static_cast<size_t>(s));
+		}
+	};
+}
 
 RString DeviceButtonToString( DeviceButton i );
 DeviceButton StringToDeviceButton( const RString& s );
