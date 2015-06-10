@@ -775,7 +775,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	// The caps should always use the full texture.
 	if(part_type == hpt_body)
 	{
-		if(!part_args.anchor_to_top)
+		if (!part_args.anchor_to_top)
 		{
 			float tex_coord_bottom= SCALE(part_args.y_bottom - part_args.y_top,
 				0, unzoomed_frame_height, rect.top, rect.bottom);
@@ -793,11 +793,26 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			add_to_tex_coord -= floorf(fTexCoordTop);
 		}
 	}
+	//part_args.y_start_pos = max(part_args.y_start_pos, y_head);
 	// The bottom caps mysteriously hate me and their texture coords need to be
 	// shifted by one pixel or there is a seam. -Kyz
 	if(part_type == hpt_bottom)
 	{
-		add_to_tex_coord= SCALE(1.0f, 0.0f, power_of_two(unzoomed_frame_height), 0.0f, 1.0f);
+		if (!part_args.anchor_to_top)
+		{
+			const float fYOffset = ArrowEffects::GetYOffsetFromYPos(column_args.column, y_start_pos, m_fYReverseOffsetPixels);
+			float offset = (unzoomed_frame_height - fYOffset)/4;
+			if (offset>=0){
+				add_to_tex_coord = SCALE(offset, 0.0f, unzoomed_frame_height, 0.0f, 1.0f);
+				//add_to_tex_coord = 0.5f;
+			}
+			else{
+				add_to_tex_coord = 0.0f;
+			}
+		}
+	// ‚±‚ê‚Í–³‚¢‚Ù‚¤‚ªãY—í‚É‚Â‚È‚ª‚Á‚Ä‚¢‚é‚æ‚¤‚ÉŒ©‚¦‚é
+	// I seem to be better this does not exist has led to clean. -A.C
+	//	add_to_tex_coord= SCALE(1.0f, 0.0f, power_of_two(unzoomed_frame_height), 0.0f, 1.0f);
 	}
 
 	DISPLAY->ClearAllTextures();
@@ -809,7 +824,6 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	// pos_z_vec will be used later to orient the hold.  Read below. -Kyz
 	static const RageVector3 pos_z_vec(0.0f, 0.0f, 1.0f);
 	static const RageVector3 pos_y_vec(0.0f, 1.0f, 0.0f);
-
 	StripBuffer queue;
 	for(float fY = y_start_pos; !last_vert_set; fY += part_args.y_step)
 	{
@@ -1028,9 +1042,9 @@ void NoteDisplay::DrawHoldBodyInternal(vector<Sprite*>& sprite_top,
 	DrawHoldPart(sprite_body, field_args, column_args, part_args, glow, hpt_body);
 	// Draw the bottom cap
 	part_args.y_top= y_tail;
-	part_args.y_bottom= tail_plus_bottom;
-	part_args.top_beat= bottom_beat;
-	part_args.y_start_pos= max(part_args.y_start_pos, y_head);
+	part_args.y_bottom = tail_plus_bottom;
+	part_args.top_beat = bottom_beat;
+	part_args.y_start_pos = max(part_args.y_start_pos, y_head);
 	part_args.wrapping= false;
 	DrawHoldPart(sprite_bottom, field_args, column_args, part_args, glow, hpt_bottom);
 }
