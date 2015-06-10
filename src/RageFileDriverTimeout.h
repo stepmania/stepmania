@@ -22,7 +22,6 @@ public:
 	static void ResetTimeout() { SetTimeout( -1 ); }
 
 private:
-	RageFileDriver *m_pChild;
 	ThreadedFileWorker *m_pWorker;
 };
 

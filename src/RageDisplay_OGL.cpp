@@ -57,10 +57,6 @@ static int g_gluVersion;
 
 static int g_iMaxTextureUnits = 0;
 
-/* We don't actually use normals (we don't turn on lighting), there's just
- * no GL_T2F_C4F_V3F. */
-static const GLenum RageSpriteVertexFormat = GL_T2F_C4F_N3F_V3F;
-
 /* If we support texture matrix scaling, a handle to the vertex program: */
 static GLhandleARB g_bTextureMatrixShader = 0;
 

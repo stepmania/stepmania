@@ -3195,7 +3195,7 @@ public:
 			return 0;
 		}
 		StepsType stype= Enum::Check<StepsType>(L, 3);
-		Difficulty diff= Enum::Check<Difficulty>(L, 4);
+		Enum::Check<Difficulty>(L, 4);
 		Steps* new_steps= song->CreateSteps();
 		RString edit_name;
 		// Form 2.

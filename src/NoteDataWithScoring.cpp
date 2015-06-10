@@ -391,7 +391,6 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 	int note_count = static_cast<int>(out[RadarCategory_Notes]);
 	int jump_count = static_cast<int>(out[RadarCategory_Jumps]);
 	int hold_count = static_cast<int>(out[RadarCategory_Holds]);
-	int tap_count = static_cast<int>(out[RadarCategory_TapsAndHolds]);
 	float hittable_steps_length = max(0.f,
 		timing->GetElapsedTimeFromBeat(NoteRowToBeat(last_hittable_row)) -
 		timing->GetElapsedTimeFromBeat(NoteRowToBeat(first_hittable_row)));
