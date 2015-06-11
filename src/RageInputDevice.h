@@ -365,9 +365,7 @@ namespace std
 	template<>
 		struct hash<DeviceButton>
 	{
-		typedef DeviceButton argument_type;
-		typedef std::size_t result_type;
-		result_type operator()(argument_type const& s) const
+		std::size_t operator()(DeviceButton const& s) const
 		{
 			return std::hash<size_t>()(static_cast<size_t>(s));
 		}

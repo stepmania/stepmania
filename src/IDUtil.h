@@ -11,10 +11,7 @@ namespace std
 	template<>
     struct hash<SongID>
 	{
-		typedef SongID argument_type;
-		typedef std::size_t result_type;
- 
-		result_type operator()(argument_type const& s) const
+		std::size_t operator()(SongID const& s) const
 		{
 			return std::hash<std::string>()(std::string(s.ToString()));
 		}
@@ -22,10 +19,7 @@ namespace std
 	template<>
     struct hash<CourseID>
 	{
-		typedef CourseID argument_type;
-		typedef std::size_t result_type;
- 
-		result_type operator()(argument_type const& s) const
+		std::size_t operator()(CourseID const& s) const
 		{
 			return std::hash<std::string>()(std::string(s.ToString()));
 		}
@@ -33,10 +27,7 @@ namespace std
 	template<>
     struct hash<StepsID>
 	{
-		typedef StepsID argument_type;
-		typedef std::size_t result_type;
- 
-		result_type operator()(argument_type const& s) const
+		std::size_t operator()(StepsID const& s) const
 		{
 			return std::hash<std::string>()(std::string(s.ToString()));
 		}
@@ -44,10 +35,7 @@ namespace std
 	template<>
     struct hash<TrailID>
 	{
-		typedef TrailID argument_type;
-		typedef std::size_t result_type;
- 
-		result_type operator()(argument_type const& s) const
+		std::size_t operator()(TrailID const& s) const
 		{
 			return std::hash<std::string>()(std::string(s.ToString()));
 		}

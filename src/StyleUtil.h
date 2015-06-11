@@ -33,13 +33,10 @@ namespace std
 	template<>
     struct hash<StyleID>
 	{
-		typedef StyleID argument_type;
-		typedef std::size_t result_type;
-
-		result_type operator()(argument_type const& s) const
+		std::size_t operator()(StyleID const& s) const
 		{
-			result_type const h1(std::hash<std::string>()(s.get_game()));
-			result_type const h2(std::hash<std::string>()(s.get_style()));
+			std::size_t const h1(std::hash<std::string>()(s.get_game()));
+			std::size_t const h2(std::hash<std::string>()(s.get_style()));
 			return h1 ^ (h2 << 1);
 		}
 	};

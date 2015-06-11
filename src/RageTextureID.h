@@ -127,11 +127,9 @@ namespace std
 	template<>
 		struct hash<RageTextureID>
 	{
-		typedef RageTextureID argument_type;
-		typedef std::size_t result_type;
-		result_type operator()(argument_type const& s) const
+		std::size_t operator()(RageTextureID const& s) const
 		{
-			vector<result_type> const hashes{
+			vector<std::size_t> const hashes{
 				std::hash<std::string>()(s.filename),
 					std::hash<int>()(s.iMaxSize),
 					std::hash<bool>()(s.bMipMaps),
@@ -143,7 +141,7 @@ namespace std
 					std::hash<bool>()(s.bHotPinkColorKey),
 					std::hash<std::string>()(s.AdditionalTextureHints)
 					};
-			result_type curr_hash= 0;
+			std::size_t curr_hash= 0;
 			for(auto const& h: hashes)
 			{
 				curr_hash= curr_hash ^ (h << 1);

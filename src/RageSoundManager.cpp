@@ -101,11 +101,10 @@ void RageSoundManager::Update()
 	g_SoundManMutex.Lock(); /* lock for access to m_mapPreloadedSounds, owned_sounds */
 	{
 		auto it= m_mapPreloadedSounds.begin();
-		auto next= it;
 
 		while( it != m_mapPreloadedSounds.end() )
 		{
-			next = it; ++next;
+			auto next= it; ++next;
 			if( it->second->GetReferenceCount() == 1 )
 			{
 				LOG->Trace( "Deleted old sound \"%s\"", it->first.c_str() );

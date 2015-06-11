@@ -227,7 +227,9 @@ using namespace ScreenManagerUtil;
 RegisterScreenClass::RegisterScreenClass( const RString& sClassName, CreateScreenFn pfn )
 {
 	if( g_pmapRegistrees == nullptr )
-	g_pmapRegistrees = new std::unordered_map<std::string,CreateScreenFn>;
+	{
+		g_pmapRegistrees = new std::unordered_map<std::string,CreateScreenFn>;
+	}
 
 	auto iter = g_pmapRegistrees->find(sClassName);
 	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Screen class '%s' already registered.", sClassName.c_str()) );

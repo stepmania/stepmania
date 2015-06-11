@@ -859,7 +859,8 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 	for (unsigned i = 0; i < values; i++)
 	{
 		const MsdFile::value_t &params = msd.GetValue(i);
-		string valueName = params[0];
+		RString valueName = params[0];
+		valueName.MakeUpper();
 		RString matcher = params[1]; // mainly for debugging.
 		Trim(matcher);
 
@@ -971,7 +972,8 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 	for( unsigned i = 0; i < values; i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		string sValueName = sParams[0];
+		RString sValueName = sParams[0];
+		sValueName.MakeUpper();
 
 		switch (state)
 		{
@@ -1089,7 +1091,8 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		string sValueName = sParams[0];
+		RString sValueName = sParams[0];
+		sValueName.MakeUpper();
 
 		if(pSong != nullptr)
 		{

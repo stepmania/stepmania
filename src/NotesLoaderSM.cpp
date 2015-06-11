@@ -1126,8 +1126,8 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		string sValueName = sParams[0];
-
+		RString sValueName = sParams[0];
+		sValueName.MakeUpper();
 		reused_song_info.params= &sParams;
 		song_handler_map_t::iterator handler=
 			sm_parser_helper.song_tag_handlers.find(sValueName);

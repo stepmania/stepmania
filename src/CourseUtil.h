@@ -87,6 +87,10 @@ public:
 	{
 		return sPath == rhs.sPath && sFullTitle == rhs.sFullTitle;
 	}
+	bool operator!=(const CourseID& rhs) const
+	{
+		return !operator==(rhs);
+	}
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );

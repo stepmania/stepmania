@@ -787,8 +787,8 @@ void Profile::IncrementCoursePlayCount( const Course* pCourse, const Trail* pTra
 void Profile::GetAllUsedHighScoreNames(std::set<RString>& names)
 {
 #define GET_NAMES_FROM_MAP(main_member, main_key_type, main_value_type, sub_member, sub_key_type, sub_value_type) \
-	for(auto main_entry= \
-				main_member.begin(); main_entry != main_member.end(); ++main_entry) \
+	for(auto main_entry= main_member.begin(); \
+			main_entry != main_member.end(); ++main_entry) \
 	{ \
 		for(auto sub_entry= main_entry->second.sub_member.begin(); \
 				sub_entry != main_entry->second.sub_member.end(); ++sub_entry) \
@@ -873,9 +873,8 @@ void Profile::MergeScoresFromOtherProfile(Profile* other, bool skip_totals,
 		}
 	}
 #define MERGE_SCORES_IN_MEMBER(main_member, main_key_type, main_value_type, sub_member, sub_key_type, sub_value_type) \
-	for(auto main_entry= \
-				other->main_member.begin(); main_entry != other->main_member.end(); \
-			++main_entry) \
+	for(auto main_entry= other->main_member.begin(); \
+			main_entry != other->main_member.end(); ++main_entry) \
 	{ \
 		auto this_entry= main_member.find(main_entry->first); \
 		if(this_entry == main_member.end()) \
