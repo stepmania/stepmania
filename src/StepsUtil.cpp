@@ -10,6 +10,8 @@
 #include "UnlockManager.h"
 #include "SongUtil.h"
 
+#include <unordered_map>
+
 using std::vector;
 
 bool StepsCriteria::Matches( const Song *pSong, const Steps *pSteps ) const
@@ -85,7 +87,7 @@ bool StepsUtil::HasMatching( const Song *pSong, const StepsCriteria &stc )
 }
 
 // Sorting stuff
-std::map<const Steps*, RString> steps_sort_val;
+std::unordered_map<const Steps*, RString> steps_sort_val;
 
 static bool CompareStepsPointersBySortValueAscending(const Steps *pSteps1, const Steps *pSteps2)
 {
@@ -110,7 +112,7 @@ void StepsUtil::SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers,
 	// ugly...
 	vector<Song*> vpSongs = SONGMAN->GetAllSongs();
 	vector<Steps*> vpAllSteps;
-	std::map<Steps*,Song*> mapStepsToSong;
+	std::unordered_map<Steps*,Song*> mapStepsToSong;
 	{
 		for( unsigned i=0; i<vpSongs.size(); i++ )
 		{

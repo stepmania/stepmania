@@ -57,6 +57,8 @@ private:
 	int GetNumCoins( Date beginning, Date ending ) const;
 	int GetNumCoinsInRange( std::map<Date,int>::const_iterator begin, std::map<Date,int>::const_iterator end ) const;
 
+	// This cannot be an unordered_map because GetNumCoinsInRange requires a
+	// fixed order. -Kyz
 	std::map<Date,int> m_mapCoinsForHour;
 };
 

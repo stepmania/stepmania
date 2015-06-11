@@ -96,6 +96,7 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
   "GameManager.h"
   "GameSoundManager.h"
   "GameState.h"
+  "IDUtil.h"
   "InputFilter.h"
   "InputMapper.h"
   "InputQueue.h"

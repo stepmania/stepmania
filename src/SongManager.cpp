@@ -37,6 +37,8 @@
 #include "UnlockManager.h"
 #include "SpecialFiles.h"
 
+#include <unordered_map>
+
 using std::vector;
 
 SongManager*	SONGMAN = nullptr;	// global and accessible from anywhere in our program
@@ -609,7 +611,7 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 
 RString SongManager::GetCourseGroupBannerPath( const RString &sCourseGroup ) const
 {
-	auto iter = m_mapCourseGroupToInfo.find( sCourseGroup );
+	auto iter = m_mapCourseGroupToInfo.find(sCourseGroup);
 	if( iter == m_mapCourseGroupToInfo.end() )
 	{
 		ASSERT_M( 0, ssprintf("requested banner for course group '%s' that doesn't exist",sCourseGroup.c_str()) );
@@ -631,7 +633,7 @@ void SongManager::GetCourseGroupNames( vector<RString> &AddTo ) const
 
 bool SongManager::DoesCourseGroupExist( const RString &sCourseGroup ) const
 {
-	return m_mapCourseGroupToInfo.find( sCourseGroup ) != m_mapCourseGroupToInfo.end();
+	return m_mapCourseGroupToInfo.find(sCourseGroup) != m_mapCourseGroupToInfo.end();
 }
 
 RageColor SongManager::GetCourseGroupColor( const RString &sCourseGroup ) const
@@ -701,7 +703,7 @@ const vector<Song*> &SongManager::GetSongs( const RString &sGroupName ) const
 
 	if( sGroupName == GROUP_ALL )
 		return m_pSongs;
-	auto iter = m_mapSongGroupIndex.find( sGroupName );
+	auto iter = m_mapSongGroupIndex.find(sGroupName);
 	if ( iter != m_mapSongGroupIndex.end() )
 		return iter->second;
 	return vEmpty;
@@ -1551,7 +1553,6 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 			return;
 
 		PreferredSortSection section;
-		std::map<Song *, float> mapSongToPri;
 
 		for (auto &s: asLines)
 		{
@@ -1897,7 +1898,7 @@ void SongManager::AddSongToList(Song* new_song)
 	m_pSongs.push_back(new_song);
 	RString dir= new_song->GetSongDir();
 	dir.MakeLower();
-	m_SongsByDir.insert(std::make_pair(dir, new_song));
+	m_SongsByDir.insert(std::make_pair(std::string(dir), new_song));
 }
 
 void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )

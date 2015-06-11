@@ -4,7 +4,7 @@
 #define RAGE_SOUND_MANAGER_H
 
 #include <set>
-#include <map>
+#include <unordered_map>
 #include "RageUtil_CircularBuffer.h"
 
 class RageSound;
@@ -46,7 +46,7 @@ public:
 	void AddLoadedSound( const RString &sPath, RageSoundReader_Preload *pSound );
 
 private:
-	std::map<RString, RageSoundReader_Preload *> m_mapPreloadedSounds;
+	std::unordered_map<std::string, RageSoundReader_Preload *> m_mapPreloadedSounds;
 
 	RageSoundDriver *m_pDriver;
 

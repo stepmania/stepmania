@@ -787,15 +787,13 @@ void Profile::IncrementCoursePlayCount( const Course* pCourse, const Trail* pTra
 void Profile::GetAllUsedHighScoreNames(std::set<RString>& names)
 {
 #define GET_NAMES_FROM_MAP(main_member, main_key_type, main_value_type, sub_member, sub_key_type, sub_value_type) \
-	for(std::map<main_key_type, main_value_type>::iterator main_entry= \
-				main_member.begin(); main_entry != main_member.end(); ++main_entry) \
+	for(auto main_entry= main_member.begin(); \
+			main_entry != main_member.end(); ++main_entry) \
 	{ \
-		for(std::map<sub_key_type, sub_value_type>::iterator sub_entry= \
-					main_entry->second.sub_member.begin(); \
+		for(auto sub_entry= main_entry->second.sub_member.begin(); \
 				sub_entry != main_entry->second.sub_member.end(); ++sub_entry) \
 		{ \
-			for(vector<HighScore>::iterator high_score= \
-						sub_entry->second.hsl.vHighScores.begin(); \
+			for(auto high_score= sub_entry->second.hsl.vHighScores.begin(); \
 					high_score != sub_entry->second.hsl.vHighScores.end(); \
 					++high_score) \
 			{ \
@@ -875,24 +873,20 @@ void Profile::MergeScoresFromOtherProfile(Profile* other, bool skip_totals,
 		}
 	}
 #define MERGE_SCORES_IN_MEMBER(main_member, main_key_type, main_value_type, sub_member, sub_key_type, sub_value_type) \
-	for(std::map<main_key_type, main_value_type>::iterator main_entry= \
-				other->main_member.begin(); main_entry != other->main_member.end(); \
-			++main_entry) \
+	for(auto main_entry= other->main_member.begin(); \
+			main_entry != other->main_member.end(); ++main_entry) \
 	{ \
-		std::map<main_key_type, main_value_type>::iterator this_entry= \
-			main_member.find(main_entry->first); \
+		auto this_entry= main_member.find(main_entry->first); \
 		if(this_entry == main_member.end()) \
 		{ \
 			main_member[main_entry->first]= main_entry->second; \
 		} \
 		else \
 		{ \
-			for(std::map<sub_key_type, sub_value_type>::iterator sub_entry= \
-						main_entry->second.sub_member.begin(); \
+			for(auto sub_entry= main_entry->second.sub_member.begin(); \
 					sub_entry != main_entry->second.sub_member.end(); ++sub_entry) \
 			{ \
-				std::map<sub_key_type, sub_value_type>::iterator this_sub= \
-					this_entry->second.sub_member.find(sub_entry->first); \
+				auto this_sub= this_entry->second.sub_member.find(sub_entry->first); \
 				if(this_sub == this_entry->second.sub_member.end()) \
 				{ \
 					this_entry->second.sub_member[sub_entry->first]= sub_entry->second; \
@@ -2467,15 +2461,13 @@ public:
 		arga_id.From##arga_type(parga); \
 		argb_type##ID argb_id; \
 		argb_id.From##argb_type(pargb); \
-		std::map<arga_type##ID, Profile::HighScoresForA##arga_type>::iterator \
-			main_scores= p->m_##arga_type##HighScores.find(arga_id); \
+		auto main_scores= p->m_##arga_type##HighScores.find(arga_id); \
 		if(main_scores == p->m_##arga_type##HighScores.end()) \
 		{ \
 			lua_pushnil(L); \
 			return 1; \
 		} \
-		std::map<argb_type##ID, Profile::HighScoresForA##argb_type>::iterator \
-			sub_scores= main_scores->second.m_##argb_type##HighScores.find(argb_id); \
+		auto sub_scores= main_scores->second.m_##argb_type##HighScores.find(argb_id); \
 		if(sub_scores == main_scores->second.m_##argb_type##HighScores.end()) \
 		{ \
 			lua_pushnil(L); \

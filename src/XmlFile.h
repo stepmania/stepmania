@@ -4,6 +4,7 @@
 #define XML_FILE_H
 
 #include <map>
+#include <unordered_map>
 struct DateTime;
 class RageFileBasic;
 struct lua_State;
@@ -84,7 +85,7 @@ class XNode
 {
 private:
 	XNodes	m_childs;	// child nodes
-	std::multimap<RString, XNode*> m_children_by_name;
+	std::unordered_multimap<std::string, XNode*> m_children_by_name;
 
 public:
 	RString m_sName;

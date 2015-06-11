@@ -202,6 +202,7 @@ public:
 
 	StepsType GetStepsType() const { return st; }
 	Difficulty GetDifficulty() const { return dc; }
+	std::string to_std_string() const { return ToString(); }
 };
 
 #endif

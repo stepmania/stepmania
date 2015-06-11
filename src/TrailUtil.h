@@ -40,6 +40,10 @@ public:
 	Trail *ToTrail( const Course *p, bool bAllowNull ) const;
 	bool operator<( const TrailID &rhs ) const;
 	bool MatchesStepsType( StepsType s ) const { return st == s; }
+	bool operator==(const TrailID& rhs) const
+	{
+		return st == rhs.st && cd == rhs.cd;
+	}
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );

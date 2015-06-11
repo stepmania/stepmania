@@ -6,6 +6,7 @@
 #include "GameConstantsAndTypes.h"
 #include "Difficulty.h"
 #include "RageUtil_CachedObject.h"
+#include "RageUtil.h"
 #include <set>
 
 class Song;
@@ -221,7 +222,6 @@ public:
 	RString ToString() const;
 	bool IsValid() const;
 };
-
 
 #endif
 

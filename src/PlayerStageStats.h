@@ -98,6 +98,8 @@ public:
 	float		m_iNumControllerSteps;
 	float		m_fCaloriesBurned;
 
+	// This cannot be an unordered_map because the logic for removing
+	// unnecessary entries requires order. -Kyz
 	std::map<float,float> m_fLifeRecord;
 	void	SetLifeRecordAt( float fLife, float fStepsSecond );
 	void	GetLifeRecord( float *fLifeOut, int iNumSamples, float fStepsEndSecond ) const;

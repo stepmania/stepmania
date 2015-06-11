@@ -6,6 +6,8 @@
 #include "RageUtil.h"
 #include "LocalizedString.h"
 
+#include <unordered_map>
+
 static const char *InputDeviceStateNames[] = {
 	"Connected",
 	"Unplugged",
@@ -16,8 +18,8 @@ XToString( InputDeviceState );
 XToLocalizedString( InputDeviceState );
 LuaXType(InputDevice);
 
-static std::map<DeviceButton,RString> g_mapNamesToString;
-static std::map<RString,DeviceButton> g_mapStringToNames;
+static std::unordered_map<DeviceButton,std::string> g_mapNamesToString;
+static std::unordered_map<std::string,DeviceButton> g_mapStringToNames;
 static void InitNames()
 {
 	if( !g_mapNamesToString.empty() )

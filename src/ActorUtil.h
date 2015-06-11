@@ -42,6 +42,17 @@ enum FileType
 	NUM_FileType,
 	FileType_Invalid
 };
+namespace std
+{
+	template<>
+		struct hash<FileType>
+	{
+		std::size_t operator()(FileType const& s) const
+		{
+			return std::hash<size_t>()(static_cast<size_t>(s));
+		}
+	};
+}
 const RString& FileTypeToString( FileType ft );
 
 /** @brief Utility functions for creating and manipulating Actors. */

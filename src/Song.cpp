@@ -34,6 +34,8 @@
 #include "UnlockManager.h"
 #include "LyricsLoader.h"
 #include "ActorUtil.h"
+#include "TrailUtil.h"
+#include "IDUtil.h"
 
 #include <time.h>
 #include <set>
@@ -423,7 +425,7 @@ bool Song::ReloadFromSongDir( RString sDir )
 	/* Go through the steps, first setting their Song pointer to this song
 	 * (instead of the copy used above), and constructing a map to let us
 	 * easily find the new steps. */
-	std::map<StepsID, Steps*> mNewSteps;
+	std::unordered_map<StepsID, Steps*> mNewSteps;
 	for( vector<Steps*>::const_iterator it = m_vpSteps.begin(); it != m_vpSteps.end(); ++it )
 	{
 		(*it)->m_pSong = this;

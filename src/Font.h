@@ -6,7 +6,7 @@
 #include "RageTextureID.h"
 #include "RageUtil.h"
 #include "RageTypes.h"
-#include <map>
+#include <unordered_map>
 #include <array>
 
 class FontPage;
@@ -71,9 +71,9 @@ struct FontPageSettings
 	float m_fScaleAllWidthsBy;
 	RString m_sTextureHints;
 
-	std::map<wchar_t,int> CharToGlyphNo;
+	std::unordered_map<wchar_t,int> CharToGlyphNo;
 	// If a value is missing, the width of the texture frame is used.
-	std::map<int,int> m_mapGlyphWidths;
+	std::unordered_map<int,int> m_mapGlyphWidths;
 
 	/** @brief The initial settings for the FontPage. */
 	FontPageSettings(): m_sTexturePath(""),
@@ -126,7 +126,7 @@ public:
 	/** @brief All glyphs in this list will point to m_pTexture. */
 	std::vector<glyph> m_aGlyphs;
 
-	std::map<wchar_t,int> m_iCharToGlyphNo;
+	std::unordered_map<wchar_t,int> m_iCharToGlyphNo;
 
 private:
 	void SetExtraPixels( int iDrawExtraPixelsLeft, int DrawExtraPixelsRight );
@@ -189,7 +189,7 @@ private:
 	FontPage *m_pDefault;
 
 	/** @brief Map from characters to glyphs. */
-	std::map<wchar_t,glyph*> m_iCharToGlyph;
+	std::unordered_map<wchar_t,glyph*> m_iCharToGlyph;
 	/** @brief Each glyph is part of one of the pages[]. */
 	std::array<glyph *, 128> m_iCharToGlyphCache;
 

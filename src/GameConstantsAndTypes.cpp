@@ -10,6 +10,8 @@
 #include "PlayerNumber.h"
 #include <float.h>
 
+#include <unordered_map>
+
 using std::vector;
 
 RString StepsTypeToString( StepsType st );
@@ -207,7 +209,7 @@ static const char *TapNoteScoreNames[] = {
 };
 struct tns_conversion_helper
 {
-	std::map<RString, TapNoteScore> conversion_map;
+	std::unordered_map<std::string, TapNoteScore> conversion_map;
 	tns_conversion_helper()
 	{
 		FOREACH_ENUM(TapNoteScore, tns)
