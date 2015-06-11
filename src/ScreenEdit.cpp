@@ -89,6 +89,7 @@ AutoScreenMessage( SM_BackFromInsertCourseAttack );
 AutoScreenMessage( SM_BackFromInsertCourseAttackPlayerOptions );
 AutoScreenMessage( SM_BackFromCourseModeMenu );
 AutoScreenMessage( SM_BackFromKeysoundTrack );
+AutoScreenMessage( SM_BackFromJudgmentChoice );
 AutoScreenMessage( SM_BackFromNewKeysound );
 AutoScreenMessage( SM_DoRevertToLastSave );
 AutoScreenMessage( SM_DoRevertFromDisk );
@@ -425,6 +426,15 @@ void ScreenEdit::InitEditMappings()
 
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_TAP_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cn);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_TAP_RIGHT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cm);
+	
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_TAP_JUDGMENT_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cn);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_TAP_JUDGMENT_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_TAP_JUDGMENT_LEFT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+	
+	m_EditMappingsDeviceInput.button
+	[EDIT_BUTTON_CYCLE_TAP_JUDGMENT_RIGHT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cm);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_TAP_JUDGMENT_RIGHT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_TAP_JUDGMENT_RIGHT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
 
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_SEGMENT_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cn);
 	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_CYCLE_SEGMENT_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
@@ -774,8 +784,14 @@ static MenuDef g_IndividualAttack(
 );
 
 static MenuDef g_KeysoundTrack(
-							   "ScreenMiniMenuKeysoundTrack"
-							   ); // fill this in dynamically
+	"ScreenMiniMenuKeysoundTrack"
+	// fill this in dynamically
+);
+
+static MenuDef g_JudgmentChoices(
+	"ScreenMiniMenuJudgmentChoices"
+	// fill this in dynamically
+);
 
 static MenuDef g_MainMenu(
 	"ScreenMiniMenuMainMenu",
@@ -942,8 +958,8 @@ static MenuDef g_AreaMenu(
 		true, EditMode_CourseMods, true, true, 0, NULL),
 	MenuRowDef(ScreenEdit::modify_keysounds_at_row,
 		"Modify Keysounds at current beat",
-		true, EditMode_Full, true, true, 0, NULL)
-			  
+		true, EditMode_Full, true, true, 0, NULL),
+	MenuRowDef(ScreenEdit::modify_judgments_at_row, "Modify Judgments at current beat", true, EditMode_Full, true, true, 0, NULL)
 );
 
 static MenuDef g_StepsInformation(
@@ -1425,6 +1441,7 @@ void ScreenEdit::Init()
 	m_fBeatToReturnTo = 0;
 	
 	m_selectedTap = TAP_ORIGINAL_TAP;
+	m_judgmentType = JudgmentType_Normal;
 
 	GAMESTATE->m_bGameplayLeadIn.Set( true );
 	GAMESTATE->m_EditMode = EDIT_MODE.GetValue();
@@ -1793,6 +1810,7 @@ static LocalizedString STEP_AUTHOR("ScreenEdit", "Step Author");
 static LocalizedString MAIN_TITLE("ScreenEdit", "Main title");
 static LocalizedString SUBTITLE("ScreenEdit", "Subtitle");
 static LocalizedString TAP_NOTE_TYPE("ScreenEdit", "Tap Note");
+static LocalizedString TAP_NOTE_JUDGMENT("ScreenEdit", "Tap Note Judgment");
 static LocalizedString SEGMENT_TYPE("ScreenEdit", "Segment");
 static LocalizedString TAP_STEPS("ScreenEdit", "Tap Steps");
 static LocalizedString JUMPS("ScreenEdit", "Jumps");
@@ -1825,6 +1843,7 @@ static ThemeMetric<RString> STEP_AUTHOR_FORMAT("ScreenEdit", "StepAuthorFormat")
 static ThemeMetric<RString> MAIN_TITLE_FORMAT("ScreenEdit", "MainTitleFormat");
 static ThemeMetric<RString> SUBTITLE_FORMAT("ScreenEdit", "SubtitleFormat");
 static ThemeMetric<RString> TAP_NOTE_TYPE_FORMAT("ScreenEdit", "TapNoteTypeFormat");
+static ThemeMetric<RString> TAP_NOTE_JUDGMENT_FORMAT("ScreenEdit", "TapNoteJudgmentFormat");
 static ThemeMetric<RString> SEGMENT_TYPE_FORMAT("ScreenEdit", "SegmentTypeFormat");
 static ThemeMetric<RString> NUM_STEPS_FORMAT("ScreenEdit", "NumStepsFormat");
 static ThemeMetric<RString> NUM_JUMPS_FORMAT("ScreenEdit", "NumJumpsFormat");
@@ -1903,7 +1922,7 @@ void ScreenEdit::UpdateTextInfo()
 		sText += ssprintf( SEGMENT_TYPE_FORMAT.GetValue(), SEGMENT_TYPE.GetValue().c_str(), TimingSegmentTypeToString(currentCycleSegment).c_str() );
         const RString tapnoteType = TapNoteTypeToString( m_selectedTap.type );
 		sText += ssprintf( TAP_NOTE_TYPE_FORMAT.GetValue(), TAP_NOTE_TYPE.GetValue().c_str(), tapnoteType.c_str() );
-		
+		sText += ssprintf( TAP_NOTE_JUDGMENT_FORMAT.GetValue(), TAP_NOTE_JUDGMENT.GetValue().c_str(), JudgmentTypeToString(m_judgmentType).c_str());
 		AttackArray &attacks =
 			(GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks);
 		float beat = GetAppropriateTiming().GetElapsedTimeFromBeat(GetBeat());
@@ -2162,6 +2181,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				SetDirty( true );
 				SaveUndo();
 				TapNote tn = m_selectedTap;
+				tn.judgmentType = m_judgmentType;
 				tn.pn = m_InputPlayerNumber;
 				m_NoteDataEdit.SetTapNote(iCol, iSongIndex, tn );
 				CheckNumberOfNotesAndUndo();
@@ -2173,10 +2193,15 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		{
 			switch ( m_selectedTap.type )
 			{
-				case TapNoteType_Tap:	m_selectedTap = TAP_ORIGINAL_FAKE;	break;
-				case TapNoteType_Mine:	m_selectedTap = TAP_ORIGINAL_TAP;	break;
-				case TapNoteType_Lift:	m_selectedTap = TAP_ORIGINAL_MINE;	break;
-				case TapNoteType_Fake:	m_selectedTap = TAP_ORIGINAL_LIFT;	break;
+				case TapNoteType_Tap:
+					m_selectedTap = TAP_ORIGINAL_LIFT;
+					break;
+				case TapNoteType_Mine:
+					m_selectedTap = TAP_ORIGINAL_TAP;
+					break;
+				case TapNoteType_Lift:
+					m_selectedTap = TAP_ORIGINAL_MINE;
+					break;
 				DEFAULT_FAIL( m_selectedTap.type );
 			}
 			return true;
@@ -2185,14 +2210,38 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		{
 			switch ( m_selectedTap.type )
 			{
-				case TapNoteType_Tap:	m_selectedTap = TAP_ORIGINAL_MINE;	break;
-				case TapNoteType_Mine:	m_selectedTap = TAP_ORIGINAL_LIFT;	break;
-				case TapNoteType_Lift:	m_selectedTap = TAP_ORIGINAL_FAKE;	break;
-				case TapNoteType_Fake:	m_selectedTap = TAP_ORIGINAL_TAP;	break;
+				case TapNoteType_Tap:
+					m_selectedTap = TAP_ORIGINAL_MINE;
+					break;
+				case TapNoteType_Mine:
+					m_selectedTap = TAP_ORIGINAL_LIFT;
+					break;
+				case TapNoteType_Lift:
+					m_selectedTap = TAP_ORIGINAL_TAP;
+					break;
 				DEFAULT_FAIL( m_selectedTap.type );
 			}
 			return true;
 		}
+	/*
+	 * For now, cycling judgments are the same regardless.
+	 * When bonus and evil judgments are tried again, there will be a difference.
+	 */
+	case EDIT_BUTTON_CYCLE_TAP_JUDGMENT_LEFT:
+	case EDIT_BUTTON_CYCLE_TAP_JUDGMENT_RIGHT:
+	{
+		switch ( m_judgmentType )
+		{
+			case JudgmentType_Normal:
+				m_judgmentType = JudgmentType_Fake;
+				break;
+			case JudgmentType_Fake:
+				m_judgmentType = JudgmentType_Normal;
+				break;
+			DEFAULT_FAIL(m_judgmentType);
+		}
+		return true;
+	}
 	case EDIT_BUTTON_CYCLE_SEGMENT_LEFT:
 	{
 		int tmp = enum_add2( this->currentCycleSegment, -1 );
@@ -3527,6 +3576,7 @@ void ScreenEdit::ScrollTo( float fDestinationBeat )
 		TapNote tn = EditIsBeingPressed(EDIT_BUTTON_LAY_ROLL) ? TAP_ORIGINAL_ROLL_HEAD : TAP_ORIGINAL_HOLD_HEAD;
 
 		tn.pn = m_InputPlayerNumber;
+		tn.judgmentType = m_judgmentType;
 		m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, tn );
 	}
 
@@ -3853,7 +3903,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 				return;
 			}
 			const TapNote &oldNote = m_NoteDataEdit.GetTapNote(track, row);
-			TapNote newNote = oldNote; // need to lose the const. not feeling like casting.
+			TapNote newNote(oldNote);
 			if (sound < kses.size())
 			{
 				// set note at this row to use this keysound file.
@@ -3884,7 +3934,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 				FOREACH_NONEMPTY_ROW_IN_TRACK(m_NoteDataEdit, t, r)
 				{
 					const TapNote &oldNote = m_NoteDataEdit.GetTapNote(t, r);
-					TapNote newNote = oldNote; // need to lose the const. not feeling like casting.
+					TapNote newNote(oldNote);
 					if (newNote.iKeysoundIndex == static_cast<int>(sound))
 					{
 						newNote.iKeysoundIndex = -1;
@@ -3899,6 +3949,28 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			}
 		}
 		SetDirty(true);
+	}
+	else if (SM == SM_BackFromJudgmentChoice && !ScreenTextEntry::s_bCancelledLast)
+	{
+		int const row = GetRow();
+		bool didModifyJudgments = false;
+		for (int i = 0; i < m_NoteDataEdit.GetNumTracks(); ++i)
+		{
+			TapNote const &oldNote = m_NoteDataEdit.GetTapNote(i, row);
+			if (oldNote.type != TapNoteType_Empty)
+			{
+				int judgmentIndex = ScreenMiniMenu::s_viLastAnswers[i];
+				JudgmentType judgment = static_cast<JudgmentType>(judgmentIndex);
+				TapNote newNote(oldNote);
+				if (newNote.judgmentType != judgment)
+				{
+					didModifyJudgments = true;
+					newNote.judgmentType = judgment;
+					m_NoteDataEdit.SetTapNote(i, row, newNote);
+				}
+			}
+		}
+		SetDirty(didModifyJudgments);
 	}
 	else if (SM == SM_BackFromNewKeysound && !ScreenTextEntry::s_bCancelledLast)
 	{
@@ -3948,6 +4020,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		TapNote tn(
 			TapNoteType_Attack, 
 			TapNoteSubType_Invalid,
+			JudgmentType_Normal,
 			TapNoteSource_Original, 
 			sMods,
 			g_fLastInsertAttackDurationSeconds, 
@@ -4745,7 +4818,6 @@ void ScreenEdit::DisplayTimingMenu()
 
 void ScreenEdit::DisplayTimingChangeMenu()
 {
-	int row= GetRow();
 	EditMiniMenu(&g_TimingDataChangeInformation, SM_BackFromTimingDataChangeInformation);
 }
 
@@ -5538,6 +5610,11 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		case modify_keysounds_at_row:
 		{
 			this->DoKeyboardTrackMenu();
+			break;
+		}
+		case modify_judgments_at_row:
+		{
+			this->DoJudgmentTrackMenu();
 			break;
 		}
 	};
@@ -6467,6 +6544,37 @@ void ScreenEdit::DoKeyboardTrackMenu()
 											  foundKeysounds > 0, EditMode_Full, false, false, 0, kses));
 	
 	EditMiniMenu(&g_KeysoundTrack, SM_BackFromKeysoundTrack);
+}
+
+void ScreenEdit::DoJudgmentTrackMenu()
+{
+	vector<MenuRowDef> &rows = g_JudgmentChoices.rows;
+	rows.clear();
+	vector<RString> choices;
+	FOREACH_ENUM(JudgmentType, judg)
+	{
+		choices.push_back(JudgmentTypeToString(judg));
+	}
+	
+	for (int i = 0; i < m_NoteDataEdit.GetNumTracks(); ++i)
+	{
+		TapNote const &tn = m_NoteDataEdit.GetTapNote(i, GetRow());
+		JudgmentType currentType = tn.judgmentType;
+		int currentIndex = static_cast<int>(currentType);
+		MenuRowDef def(
+			i,
+			ssprintf(TRACK_NUM.GetValue(), i + 1),
+			true,
+			EditMode_Full,
+			false,
+			false,
+			currentIndex,
+			choices
+		);
+		rows.push_back(def);
+	}
+	
+	EditMiniMenu(&g_JudgmentChoices, SM_BackFromJudgmentChoice);
 }
 
 void ScreenEdit::DoHelp()

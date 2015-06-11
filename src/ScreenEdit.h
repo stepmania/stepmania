@@ -61,6 +61,9 @@ enum EditButton
 	EDIT_BUTTON_CYCLE_TAP_LEFT, /**< Rotate the available tap notes once to the "left". */
 	EDIT_BUTTON_CYCLE_TAP_RIGHT, /**< Rotate the available tap notes once to the "right". */
 
+	EDIT_BUTTON_CYCLE_TAP_JUDGMENT_LEFT, /**< Rotate the available judgments for notes once to the "left". */
+	EDIT_BUTTON_CYCLE_TAP_JUDGMENT_RIGHT, /**< Rotate the available judgments for notes once to the "right". */
+  
 	EDIT_BUTTON_CYCLE_SEGMENT_LEFT, /**< Select one segment to the left for jumping. */
 	EDIT_BUTTON_CYCLE_SEGMENT_RIGHT, /**< Select one segment to the right for jumping. */
 	
@@ -262,6 +265,11 @@ protected:
 
 	/** @brief Display the step attack menu for the current row. */
 	void DoStepAttackMenu();
+  
+	/**
+	 * @brief Display the judgment attribute menu for the current row.
+	 */
+	void DoJudgmentTrackMenu();
 	
 	void DoHelp();
 	
@@ -302,6 +310,9 @@ protected:
 	
 	/** @brief The current TapNote that would be inserted. */
 	TapNote			m_selectedTap;
+  
+	/** @brief The current JudgmentType that would be applied to the note. */
+	JudgmentType m_judgmentType;
 
 	/** @brief The type of segment users will jump back and forth between. */
 	TimingSegmentType	currentCycleSegment;
@@ -455,6 +466,7 @@ public:
 		clear_clipboard, /**< Clear the clipboards. */
 		modify_attacks_at_row, /**< Modify the chart attacks at this row. */
 		modify_keysounds_at_row, /**< Modify the keysounds at this row. */
+		modify_judgments_at_row, /**< Modify the judgments at this row. */
 		NUM_AREA_MENU_CHOICES
 	};
 	void HandleArbitraryRemapping(RString const& mapstr);

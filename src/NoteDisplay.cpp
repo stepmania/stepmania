@@ -28,7 +28,6 @@ static const char *NotePartNames[] = {
 	"TapNote",
 	"TapMine",
 	"TapLift",
-	"TapFake",
 	"HoldHead",
 	"HoldTail",
 	"HoldTopCap",
@@ -1359,11 +1358,6 @@ void NoteDisplay::DrawTap(const TapNote& tn,
 		pActor = GetTapActor( m_TapMine, NotePart_Mine, fBeat );
 		part = NotePart_Mine;
 	}
-	else if( tn.type == TapNoteType_Fake )
-	{
-		pActor = GetTapActor( m_TapFake, NotePart_Fake, fBeat );
-		part = NotePart_Fake;
-	}
 	// TODO: Simplify all of the below.
 	else if (bOnSameRowAsHoldStart && bOnSameRowAsRollStart)
 	{
@@ -1511,7 +1505,6 @@ void NoteColumnRenderer::DrawPrimitives()
 			case TapNoteType_Lift:
 			case TapNoteType_Attack:
 			case TapNoteType_AutoKeysound:
-			case TapNoteType_Fake:
 				if(!tn.result.bHidden)
 				{
 					taps[tn.pn].push_back(begin);

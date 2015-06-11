@@ -387,7 +387,6 @@ bool NoteData::IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow ) const
 		case TapNoteType_Mine:
 		case TapNoteType_Attack:
 		case TapNoteType_Lift:
-		case TapNoteType_Fake:
 			return false;
 
 		case TapNoteType_Empty:
@@ -461,28 +460,47 @@ int NoteData::GetLastRow() const
 
 bool NoteData::IsTap(const TapNote &tn, const int row) const
 {
+	if (tn.IsJudgmentFake())
+	{
+		return false;
+	}
+
 	return (tn.type != TapNoteType_Empty && tn.type != TapNoteType_Mine
-			&& tn.type != TapNoteType_Lift && tn.type != TapNoteType_Fake
+			&& tn.type != TapNoteType_Lift
 			&& tn.type != TapNoteType_AutoKeysound
 			&& GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(row));
 }
 
 bool NoteData::IsMine(const TapNote &tn, const int row) const
 {
+	if (tn.IsJudgmentFake())
+	{
+	return false;
+	}
+
 	return (tn.type == TapNoteType_Mine
 			&& GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(row));
 }
 
 bool NoteData::IsLift(const TapNote &tn, const int row) const
 {
+	if (tn.IsJudgmentFake())
+	{
+	return false;
+	}
+
 	return (tn.type == TapNoteType_Lift
 			&& GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(row));
 }
 
 bool NoteData::IsFake(const TapNote &tn, const int row) const
 {
-	return (tn.type == TapNoteType_Fake
-			|| !GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(row));
+	if (tn.IsJudgmentFake())
+	{
+	return true;
+	}
+
+	return !GAMESTATE->GetProcessedTimingData()->IsJudgableAtRow(row);
 }
 
 int NoteData::GetNumTapNotes( int iStartIndex, int iEndIndex ) const
@@ -566,11 +584,14 @@ bool NoteData::RowNeedsAtLeastSimultaneousPresses( int iMinSimultaneousPresses, 
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		const TapNote &tn = GetTapNote(t, row);
+		if ( tn.IsJudgmentFake() )
+		{
+			continue;
+		}
 		switch( tn.type )
 		{
 			case TapNoteType_Mine:
 			case TapNoteType_Empty:
-			case TapNoteType_Fake:
 			case TapNoteType_Lift: // you don't "press" on a lift.
 			case TapNoteType_AutoKeysound:
 				continue;	// skip these types - they don't count
@@ -627,9 +648,12 @@ int NoteData::GetNumRowsWithSimultaneousTaps( int iMinTaps, int iStartIndex, int
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
 			const TapNote &tn = GetTapNote(t, r);
+			if ( tn.IsJudgmentFake() )
+			{
+				continue;
+			}
 			if (tn.type != TapNoteType_Mine &&     // mines don't count.
 				tn.type != TapNoteType_Empty &&
-				tn.type != TapNoteType_Fake &&
 				tn.type != TapNoteType_AutoKeysound)
 				iNumNotesThisIndex++;
 		}

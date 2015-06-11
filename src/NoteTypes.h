@@ -92,7 +92,6 @@ enum TapNoteType
 	TapNoteType_Lift,		/**< Lift your foot up when it crosses the target area. */
 	TapNoteType_Attack,		/**< Hitting this note causes an attack to take place. */
 	TapNoteType_AutoKeysound,	/**< A special sound is played when this note crosses the target area. */
-	TapNoteType_Fake,		/**< This arrow can't be scored for or against the player. */
 	NUM_TapNoteType,
 	TapNoteType_Invalid
 };
@@ -113,6 +112,18 @@ const RString& TapNoteSubTypeToString( TapNoteSubType tnst );
 const RString& TapNoteSubTypeToLocalizedString( TapNoteSubType tnst );
 LuaDeclareType( TapNoteSubType );
 
+/** @brief The different ways a TapNote can be judged. */
+enum JudgmentType
+{
+	JudgmentType_Normal,
+	JudgmentType_Fake,
+	NUM_JudgmentType,
+	JudgmentType_Invalid
+};
+RString const &JudgmentTypeToString( JudgmentType judg );
+RString const &JudgmentTypeToLocalizedString( JudgmentType judg );
+LuaDeclareType( JudgmentType );
+
 /** @brief The different places a TapNote could come from. */
 enum TapNoteSource
 {
@@ -132,6 +143,8 @@ struct TapNote
 	TapNoteType		type;
 	/** @brief The sub type of the note. This is only used if the type is hold_head. */
 	TapNoteSubType		subType;
+	/** @brief The types of judgments allowed for this note. */
+	JudgmentType judgmentType;
 	/** @brief The originating source of the TapNote. */
 	TapNoteSource		source;
 	/** @brief The result of hitting or missing the TapNote. */
@@ -152,6 +165,15 @@ struct TapNote
 	int		iDuration;
 	HoldNoteResult	HoldResult;
 	
+	TapNote();
+	void Init();
+	TapNote(TapNoteType type_, TapNoteSubType subType_,
+			JudgmentType judgmentType_, TapNoteSource source_,
+			RString sAttackModifiers_, float fAttackDurationSeconds_,
+			int iKeysoundIndex_ );
+
+	bool IsJudgmentFake() const;
+  
 	// XML
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
@@ -159,64 +181,17 @@ struct TapNote
 	// Lua
 	void PushSelf( lua_State *L );
 
-	TapNote(): type(TapNoteType_Empty), subType(TapNoteSubType_Invalid),
-		source(TapNoteSource_Original),	result(), pn(PLAYER_INVALID), 
-		bHopoPossible(false), sAttackModifiers(""), fAttackDurationSeconds(0), 
-		iKeysoundIndex(-1), iDuration(0), HoldResult() {}
-	void Init()
-	{
-		type = TapNoteType_Empty;
-		subType = TapNoteSubType_Invalid; 
-		source = TapNoteSource_Original; 
-		pn = PLAYER_INVALID, 
-		bHopoPossible = false;
-		fAttackDurationSeconds = 0.f; 
-		iKeysoundIndex = -1;
-		iDuration = 0;
-	}
-	TapNote( 
-		TapNoteType type_,
-		TapNoteSubType subType_,
-		TapNoteSource source_, 
-		RString sAttackModifiers_,
-		float fAttackDurationSeconds_,
-		int iKeysoundIndex_ ):
-		type(type_), subType(subType_), source(source_), result(),
-		pn(PLAYER_INVALID), bHopoPossible(false),
-		sAttackModifiers(sAttackModifiers_),
-		fAttackDurationSeconds(fAttackDurationSeconds_),
-		iKeysoundIndex(iKeysoundIndex_), iDuration(0), HoldResult()
-	{
-		if (type_ > TapNoteType_Fake )
-		{
-			LOG->Trace("Invalid tap note type %s (most likely) due to random vanish issues. Assume it doesn't need judging.", TapNoteTypeToString(type_).c_str() );
-			type = TapNoteType_Empty;
-		}
-	}
-
 	/**
 	 * @brief Determine if the two TapNotes are equal to each other.
 	 * @param other the other TapNote we're checking.
 	 * @return true if the two TapNotes are equal, or false otherwise. */
-	bool operator==( const TapNote &other ) const
-	{
-#define COMPARE(x)	if(x!=other.x) return false
-		COMPARE(type);
-		COMPARE(subType);
-		COMPARE(source);
-		COMPARE(sAttackModifiers);
-		COMPARE(fAttackDurationSeconds);
-		COMPARE(iKeysoundIndex);
-		COMPARE(iDuration);
-		COMPARE(pn);
-#undef COMPARE
-		return true;
-	}
+	bool operator==( const TapNote &other ) const;
+
 	/**
 	 * @brief Determine if the two TapNotes are not equal to each other.
 	 * @param other the other TapNote we're checking.
 	 * @return true if the two TapNotes are not equal, or false otherwise. */
-	bool operator!=( const TapNote &other ) const { return !operator==( other ); }
+	inline bool operator!=( const TapNote &other ) const { return !operator==( other ); }
 };
 
 extern TapNote TAP_EMPTY;			// '0'
@@ -227,7 +202,6 @@ extern TapNote TAP_ORIGINAL_MINE;		// 'M'
 extern TapNote TAP_ORIGINAL_LIFT;		// 'L'
 extern TapNote TAP_ORIGINAL_ATTACK;		// 'A'
 extern TapNote TAP_ORIGINAL_AUTO_KEYSOUND;	// 'K'
-extern TapNote TAP_ORIGINAL_FAKE;		// 'F'
 //extern TapNote TAP_ORIGINAL_MINE_HEAD;	// 'N' (tentative, we'll see when iDance gets ripped.)
 extern TapNote TAP_ADDITION_TAP;
 extern TapNote TAP_ADDITION_MINE;

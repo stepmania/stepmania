@@ -429,27 +429,32 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 			TapNote tap;
 			switch( sRowString[t] )
 			{
-			case '0':	tap = TAP_EMPTY;		break;
-			case '1':	tap = TAP_ORIGINAL_TAP;		break;
+				case '0':
+					tap = TAP_EMPTY;
+					break;
+				case '1':
+					tap = TAP_ORIGINAL_TAP;
+					break;
 				//allow setting more notetypes on ksf files, this may come in handy (it should) -DaisuMaster
-			case 'M':
-			case 'm':
-						tap = TAP_ORIGINAL_MINE;
-						break;
-			case 'F':
-			case 'f':
-						tap = TAP_ORIGINAL_FAKE;
-						break;
-			case 'L':
-			case 'l':
-						tap = TAP_ORIGINAL_LIFT;
-						break;
-			default:
-				LOG->UserLog( "Song file", sPath, "has an invalid row \"%s\"; corrupt notes ignored.",
-					      sRowString.c_str() );
-				//return false;
-				tap = TAP_EMPTY;
-				break;
+				case 'M':
+				case 'm':
+					tap = TAP_ORIGINAL_MINE;
+					break;
+				case 'F':
+				case 'f':
+					tap = TAP_ORIGINAL_TAP;
+					tap.judgmentType = JudgmentType_Fake;
+					break;
+				case 'L':
+				case 'l':
+					tap = TAP_ORIGINAL_LIFT;
+					break;
+				default:
+					LOG->UserLog( "Song file", sPath, "has an invalid row \"%s\"; corrupt notes ignored.",
+							  sRowString.c_str() );
+					//return false;
+					tap = TAP_EMPTY;
+					break;
 			}
 
 			notedata.SetTapNote(t, BeatToNoteRow(fCurBeat), tap);
