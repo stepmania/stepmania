@@ -1,3 +1,4 @@
+local label_text= false
 return Def.ActorFrame {
 	LoadFont("Common Normal") .. {
 		Text=GetTimingDifficulty();
