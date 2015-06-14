@@ -221,6 +221,7 @@
 		<Function name='getenv'/>
 		<Function name='getfenv'/>
 		<Function name='getmetatable'/>
+		<Function name='get_music_file_length'/>
 		<Function name='ipairs'/>
 		<Function name='ivalues'/>
 		<Function name='join'/>
@@ -1393,6 +1394,7 @@
 			<Function name='GetDescriptions'/>
 		</Class>
 		<Class name='RageSound'>
+			<Function name='get_length'/>
 			<Function name='SetParam'/>
 			<Function name='SetProperty'/>
 			<Function name='pitch'/>
