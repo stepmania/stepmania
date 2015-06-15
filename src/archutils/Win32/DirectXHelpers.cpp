@@ -9,7 +9,11 @@
 #include <dxerr.h>
 #endif
 #if defined(_MSC_VER)
+#if defined(USE_DXERR9)
+#  pragma comment(lib, "dxerr9.lib")
+#else
 #  pragma comment(lib, "dxerr.lib")
+#endif
 #endif
 
 RString hr_ssprintf( int hr, const char *fmt, ... )
