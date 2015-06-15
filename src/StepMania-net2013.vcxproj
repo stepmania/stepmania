@@ -549,6 +549,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
     <ClCompile Include="MsdFile.cpp" />
     <ClCompile Include="XmlFile.cpp" />
     <ClCompile Include="XmlFileUtil.cpp" />
+    <ClCompile Include="XmlToLua.cpp" />
     <ClCompile Include="GameLoop.cpp" />
     <ClCompile Include="global.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -1870,6 +1871,7 @@ cl /Zl /nologo /c verstub.cpp /Fo"$(IntDir)"</Command>
     <ClInclude Include="MsdFile.h" />
     <ClInclude Include="XmlFile.h" />
     <ClInclude Include="XmlFileUtil.h" />
+    <ClInclude Include="XmlToLua.h" />
     <ClInclude Include="GameLoop.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="ProductInfo.h" />
