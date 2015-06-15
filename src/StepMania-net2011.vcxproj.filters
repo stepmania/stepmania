@@ -606,6 +606,9 @@
     <ClCompile Include="XmlFileUtil.cpp">
       <Filter>File Types</Filter>
     </ClCompile>
+    <ClCompile Include="XmlToLua.cpp">
+      <Filter>File Types</Filter>
+    </ClCompile>
     <ClCompile Include="GameLoop.cpp">
       <Filter>StepMania</Filter>
     </ClCompile>
@@ -1968,6 +1971,9 @@
       <Filter>File Types</Filter>
     </ClInclude>
     <ClInclude Include="XmlFileUtil.h">
+      <Filter>File Types</Filter>
+    </ClInclude>
+    <ClInclude Include="XmlToLua.h">
       <Filter>File Types</Filter>
     </ClInclude>
     <ClInclude Include="GameLoop.h">

@@ -1876,6 +1876,14 @@
 				RelativePath="XmlFileUtil.h"
 				>
 			</File>
+			<File
+				RelativePath="XmlToLua.cpp"
+				>
+			</File>
+			<File
+				RelativePath="XmlToLua.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="StepMania"
