@@ -771,7 +771,7 @@ bool LuaHelpers::RunScriptFile( const RString &sFile )
 	{
 		LUA->Release( L );
 		sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
-		Dialog::OK( sError, "LUA_ERROR" );
+		LuaHelpers::ReportScriptError(sError);
 		return false;
 	}
 	LUA->Release( L );
