@@ -645,6 +645,19 @@ void RageSound::SetStopModeFromString( const RString &sStopMode )
 class LunaRageSound: public Luna<RageSound>
 {
 public:
+	static int get_length(T* p, lua_State* L)
+	{
+		RageSoundReader* reader= p->GetSoundReader();
+		if(reader == NULL)
+		{
+			lua_pushnumber(L, -1.0f);
+		}
+		else
+		{
+			lua_pushnumber(L, reader->GetLength() / 1000.0f);
+		}
+		return 1;
+	}
 	static int pitch( T* p, lua_State *L )
 	{
 		RageSoundParams params( p->GetParams() );
@@ -703,6 +716,7 @@ public:
 
 	LunaRageSound()
 	{
+		ADD_METHOD(get_length);
 		ADD_METHOD( pitch );
 		ADD_METHOD( speed );
 		ADD_METHOD( volume );

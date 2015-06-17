@@ -4,6 +4,14 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/06/10
+----------
+* [global] get_music_file_length lua function added. [kyzentun]
+  multiapproach lua function now takes an optional 4th argument to multiply
+  the speeds by. [kyzentun]
+* [NoteDisplay] 1px seam in hold cap rendering fixed. [A.C/waiei]
+* [RageSound] get_length lua function added. [kyzentun]
+
 2015/06/06
 ----------
 * [ScreenInitialScreenIsInvalid] Error screen for themes that set an invalid
