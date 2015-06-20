@@ -493,6 +493,7 @@ elseif(APPLE)
   )
 else() # Unix / Linux
   # TODO: Remember to find and locate the zip archive files.
+  sm_list_replace(SMDATA_LINK_LIB 8 "${JPEG_LIBRARY}")
   if (HAS_FFMPEG)
     if(WITH_SYSTEM_FFMPEG)
       list(APPEND SMDATA_LINK_LIB
@@ -596,14 +597,17 @@ if(NOT APPLE)
   list(APPEND SM_INCLUDE_DIRS
     "${SM_EXTERN_DIR}/glew-1.5.8/include"
     "${SM_EXTERN_DIR}/jsoncpp/include"
-    "${SM_EXTERN_DIR}/libjpeg"
     "${SM_EXTERN_DIR}/zlib"
   )
   if(MSVC)
     list(APPEND SM_INCLUDE_DIRS
       "${SM_EXTERN_DIR}/ffmpeg/include"
+      "${SM_EXTERN_DIR}/libjpeg"
     )
   else()
+    list(APPEND SM_INCLUDE_DIRS
+      "${JPEG_INCLUDE_DIR}"
+    )
     if (HAS_FFMPEG)
       if (WITH_SYSTEM_FFMPEG)
         list(APPEND SM_INCLUDE_DIRS "${FFMPEG_INCLUDE_DIR}")
