@@ -58,6 +58,7 @@ local stepmania_credits= {
 		"Grégory Doche (French)",
 		"Jarosław Pietras (Polish)",
 		"Alejandro G. de la Muñoza (Spanish)",
+		"Raymund Zacharias (German)",
 	},
 	{
 		name= "Other Contributors",
