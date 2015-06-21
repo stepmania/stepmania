@@ -51,7 +51,7 @@
 //			- Jim Cline
 //			- Jeff Kohn
 //			- Todd Heckel
-//			- Ullrich Poll‰hne
+//			- Ullrich Poll√§hne
 //			- Joe Vitaterna
 //			- Joe Woodbury
 //			- Aaron (no last name)
@@ -103,16 +103,6 @@ typedef char*			PSTR;
 #include <cstdlib>
 #include <cstdarg>
 #include <cstring>
-
-// a very shorthand way of applying the fix for KB problem Q172398
-// (basic_string assignment bug)
-
-#if defined ( _MSC_VER ) && ( _MSC_VER < 1200 )
-	#define HAVE_ASSIGN_FIX
-	#define Q172398(x) (x).erase()
-#else
-	#define Q172398(x)
-#endif
 
 /* In RageUtil: */
 void MakeUpper( char *p, size_t iLen );
@@ -181,7 +171,6 @@ inline void	ssasn(std::string& sDst, const std::string& sSrc)
 {
 	if ( sDst.c_str() != sSrc.c_str() )
 	{
-		sDst.erase();
 		sDst.assign(sSrc);
 	}
 }
@@ -192,29 +181,8 @@ inline void	ssasn(std::string& sDst, const std::string& sSrc)
  */
 inline void	ssasn(std::string& sDst, PCSTR pA)
 {
-#if defined(HAVE_ASSIGN_FIX)
-	// If pA actually points to part of sDst, we must NOT erase(), but
-	// rather take a substring
-
-	if ( pA >= sDst.c_str() && pA <= sDst.c_str() + sDst.size() )
-	{
-		sDst =sDst.substr(static_cast<SS_SIZETYPE>(pA-sDst.c_str()));
-	}
-
-	// Otherwise (most cases) apply the assignment bug fix, if applicable
-	// and do the assignment
-
-	else
-	{
-		Q172398(sDst);
 		sDst.assign(pA);
-	}
-	else
-#else
-		sDst.assign(pA);
-#endif
 }
-#undef StrSizeType
 
 
 // -----------------------------------------------------------------------------
@@ -281,20 +249,6 @@ inline int ssicmp(const CT* pA1, const CT* pA2)
 // -----------------------------------------------------------------------------
 // ssupr/sslwr: Uppercase/Lowercase conversion functions
 // -----------------------------------------------------------------------------
-#if 0
-	template<typename CT>
-	inline void sslwr(CT* pT, size_t nLen)
-	{
-		for ( CT* p = pT; static_cast<size_t>(p - pT) < nLen; ++p)
-			*p = (CT)sstolower(*p);
-	}
-	template<typename CT>
-	inline void ssupr(CT* pT, size_t nLen)
-	{
-		for ( CT* p = pT; static_cast<size_t>(p - pT) < nLen; ++p)
-			*p = (CT)sstoupper(*p);
-	}
-#endif
 
 inline void sslwr(char *pT, size_t nLen)
 {
@@ -449,8 +403,7 @@ public:
 	{
 	}
 
-	// CStdStr inline assignment operators -- the ssasn function now takes care
-	// of fixing  the MSVC assignment bug (see knowledge base article Q172398).
+	// CStdStr inline assignment operators
 	MYTYPE& operator=(const MYTYPE& str)
 	{
 		ssasn(*this, str);
@@ -471,125 +424,9 @@ public:
 
 	MYTYPE& operator=(CT t)
 	{
-		Q172398(*this);
 		this->assign(1, t);
 		return *this;
 	}
-
-	// Overloads  also needed to fix the MSVC assignment bug (KB: Q172398)
-	//  *** Thanks to Pete The Plumber for catching this one ***
-	// They also are compiled if you have explicitly turned off refcounting
-	#if ( defined(_MSC_VER) && ( _MSC_VER < 1200 ) )
-
-		MYTYPE& assign(const MYTYPE& str)
-		{
-			ssasn(*this, str);
-			return *this;
-		}
-
-		MYTYPE& assign(const MYTYPE& str, MYSIZE nStart, MYSIZE nChars)
-		{
-			// This overload of basic_string::assign is supposed to assign up to
-			// <nChars> or the nullptr terminator, whichever comes first.  Since we
-			// are about to call a less forgiving overload (in which <nChars>
-			// must be a valid length), we must adjust the length here to a safe
-			// value.  Thanks to Ullrich Poll‰hne for catching this bug
-
-			nChars		= std::min(nChars, str.length() - nStart);
-
-			// Watch out for assignment to self
-
-			if ( this == &str )
-			{
-				MYTYPE strTemp(str.c_str()+nStart, nChars);
-				MYBASE::assign(strTemp);
-			}
-			else
-			{
-				Q172398(*this);
-				MYBASE::assign(str.c_str()+nStart, nChars);
-			}
-			return *this;
-		}
-
-		MYTYPE& assign(const MYBASE& str)
-		{
-			ssasn(*this, str);
-			return *this;
-		}
-
-		MYTYPE& assign(const MYBASE& str, MYSIZE nStart, MYSIZE nChars)
-		{
-			// This overload of basic_string::assign is supposed to assign up to
-			// <nChars> or the nullptr terminator, whichever comes first.  Since we
-			// are about to call a less forgiving overload (in which <nChars>
-			// must be a valid length), we must adjust the length here to a safe
-			// value. Thanks to Ullrich Poll‰hne for catching this bug
-
-			nChars		= std::min(nChars, str.length() - nStart);
-
-			// Watch out for assignment to self
-
-			if ( this == &str )	// watch out for assignment to self
-			{
-				MYTYPE strTemp(str.c_str() + nStart, nChars);
-				MYBASE::assign(strTemp);
-			}
-			else
-			{
-				Q172398(*this);
-				MYBASE::assign(str.c_str()+nStart, nChars);
-			}
-			return *this;
-		}
-
-		MYTYPE& assign(const CT* pC, MYSIZE nChars)
-		{
-			// Q172398 only fix -- erase before assigning, but not if we're
-			// assigning from our own buffer
-
-	#if defined ( _MSC_VER ) && ( _MSC_VER < 1200 )
-			if ( !this->empty() &&
-				( pC < this->data() || pC > this->data() + this->capacity() ) )
-			{
-				this->erase();
-			}
-	#endif
-			MYBASE::assign(pC, nChars);
-			return *this;
-		}
-
-		MYTYPE& assign(MYSIZE nChars, MYVAL val)
-		{
-			Q172398(*this);
-			MYBASE::assign(nChars, val);
-			return *this;
-		}
-
-		MYTYPE& assign(const CT* pT)
-		{
-			return this->assign(pT, MYBASE::traits_type::length(pT));
-		}
-
-		MYTYPE& assign(MYCITER iterFirst, MYCITER iterLast)
-		{
-	#if defined ( _MSC_VER ) && ( _MSC_VER < 1200 )
-			// Q172398 fix.  don't call erase() if we're assigning from ourself
-			if ( iterFirst < this->begin() || iterFirst > this->begin() + this->size() )
-				this->erase()
-	#endif
-				this->replace(this->begin(), this->end(), iterFirst, iterLast);
-			return *this;
-		}
-	#endif
-
-	/* VC6 string is missing clear(). */
-	#if defined(_MSC_VER) && ( _MSC_VER < 1300 )	/* VC6, not VC7 */
-	void clear()
-	{
-		this->erase();
-	}
-	#endif
 
 	// -------------------------------------------------------------------------
 	// CStdStr inline concatenation.
@@ -621,16 +458,10 @@ public:
 
 	// addition operators -- global friend functions.
 
-#if defined(_MSC_VER) && _MSC_VER < 1300 /* VC6, not VC7 */
-/* work around another stupid vc6 bug */
-#define EMP_TEMP
-#else
-#define EMP_TEMP <>
-#endif
-	friend	MYTYPE	operator+ EMP_TEMP(const MYTYPE& str1,	const MYTYPE& str2);
-	friend	MYTYPE	operator+ EMP_TEMP(const MYTYPE& str,	CT t);
-	friend	MYTYPE	operator+ EMP_TEMP(const MYTYPE& str,	PCSTR sz);
-	friend	MYTYPE	operator+ EMP_TEMP(PCSTR pA,				const MYTYPE& str);
+	friend	MYTYPE	operator+ <>(const MYTYPE& str1,	const MYTYPE& str2);
+	friend	MYTYPE	operator+ <>(const MYTYPE& str,	CT t);
+	friend	MYTYPE	operator+ <>(const MYTYPE& str,	PCSTR sz);
+	friend	MYTYPE	operator+ <>(PCSTR pA,				const MYTYPE& str);
 
 	// -------------------------------------------------------------------------
 	// Case changing functions
