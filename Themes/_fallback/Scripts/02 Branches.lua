@@ -160,14 +160,12 @@ Branch = {
 	end,
 	PlayerOptions = function()
 		local pm = GAMESTATE:GetPlayMode()
-		local restricted = { "PlayMode_Oni", "PlayMode_Rave",
+		local restricted = { PlayMode_Oni= true, PlayMode_Rave= true,
 			--"PlayMode_Battle" -- ??
 		}
 		local optionsScreen = "ScreenPlayerOptions"
-		for i=1,#restricted do
-			if restricted[i] == pm then
-				optionsScreen = "ScreenPlayerOptionsRestricted"
-			end
+		if restricted[pm] then
+			optionsScreen = "ScreenPlayerOptionsRestricted"
 		end
 		if SCREENMAN:GetTopScreen():GetGoToOptions() then
 			return optionsScreen

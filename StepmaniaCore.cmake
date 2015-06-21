@@ -56,23 +56,23 @@ if(WIN32)
   set(HAS_MP3 TRUE)
   set(SYSTEM_PCRE_FOUND FALSE)
   find_package(DirectX REQUIRED)
-  
+
   # FFMPEG...it can be evil.
   find_library(LIB_SWSCALE NAMES "swscale"
     PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
   )
   get_filename_component(LIB_SWSCALE ${LIB_SWSCALE} NAME)
-  
+
   find_library(LIB_AVCODEC NAMES "avcodec"
     PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
   )
   get_filename_component(LIB_AVCODEC ${LIB_AVCODEC} NAME)
-  
+
   find_library(LIB_AVFORMAT NAMES "avformat"
     PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
   )
   get_filename_component(LIB_AVFORMAT ${LIB_AVFORMAT} NAME)
-  
+
   find_library(LIB_AVUTIL NAMES "avutil"
     PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
   )
@@ -101,7 +101,7 @@ elseif(MACOSX)
   find_library(MAC_FRAME_IOKIT IOKit ${CMAKE_SYSTEM_FRAMEWORK_PATH})
   find_library(MAC_FRAME_OPENGL OpenGL ${CMAKE_SYSTEM_FRAMEWORK_PATH})
   find_library(MAC_FRAME_QUICKTIME QuickTime ${CMAKE_SYSTEM_FRAMEWORK_PATH})
-  
+
   mark_as_advanced(
     MAC_FRAME_ACCELERATE
     MAC_FRAME_APPKIT
@@ -156,6 +156,11 @@ elseif(LINUX)
   find_package("ZLIB")
   if (NOT(${ZLIB_FOUND}))
     message(FATAL_ERROR "zlib support required.")
+  endif()
+
+  find_package("JPEG")
+  if(NOT(${JPEG_FOUND}))
+    message(FATAL_ERROR "jpeg support required.")
   endif()
 
   find_library(DL_LIBRARY dl)

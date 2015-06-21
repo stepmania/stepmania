@@ -1,3 +1,10 @@
+# Borrowed from http://stackoverflow.com/a/3323227/445373
+function(sm_list_replace container index newvalue)
+  list(INSERT ${container} ${index} ${newvalue})
+  math(EXPR __INDEX "${index} + 1")
+  list(REMOVE_AT ${container} ${__INDEX})
+endfunction()
+
 function(sm_append_simple_target_property target property str)
   get_target_property(current_property ${target} ${property})
   if (current_property)

@@ -106,7 +106,7 @@ static bool RageSurface_Save_PNG( RageFile &f, char szErrorbuf[1024], RageSurfac
 	png_set_write_fn( pPng, &f, RageFile_png_write, RageFile_png_flush );
 	png_set_compression_level( pPng, 1 );
 
-	png_set_IHDR( pPng, pInfo, pImg->w, pImg->h, 8, bAlpha? PNG_COLOR_TYPE_RGBA:PNG_COLOR_TYPE_RGB,
+	png_set_IHDR( pPng, pInfo, pImg->w, pImg->h, 8, PNG_COLOR_TYPE_RGB,
 		PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE );
 
 	png_write_info( pPng, pInfo );

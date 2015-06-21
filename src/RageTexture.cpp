@@ -77,7 +77,7 @@ void RageTexture::GetFrameDimensionsFromFileName( RString sPath, int* piFramesWi
 
 const RectF *RageTexture::GetTextureCoordRect( int iFrameNo ) const
 {
-	return &m_TextureCoordRects[iFrameNo];
+	return &m_TextureCoordRects[iFrameNo % GetNumFrames()];
 }
 
 // lua start
