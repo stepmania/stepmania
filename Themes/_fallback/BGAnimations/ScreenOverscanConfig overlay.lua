@@ -77,6 +77,19 @@ end
 local function input(event)
 	if event.type == "InputEventType_Release" then return false end
 	local button= ToEnumShortString(event.DeviceInput.button)
+	local gamebutton = event.GameButton
+	local input_functions = {
+		Start= function()
+			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
+			SOUND:PlayOnce(THEME:GetPathS("Common", "Start"), true)
+		end,
+		Back= function()
+			SCREENMAN:GetTopScreen():Cancel()
+		end
+	};
+	if input_functions[gamebutton] then
+		input_functions[gamebutton]()
+	end
 	for valname, button_set in pairs(valtex_buttons) do
 		if button == button_set[1] then
 			change_center_val(valname, 1)
