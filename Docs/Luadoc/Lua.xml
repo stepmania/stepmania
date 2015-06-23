@@ -1361,6 +1361,14 @@
 		<Class name='RadarValues'>
 			<Function name='GetValue'/>
 		</Class>
+		<Class name='RageBezier2D'>
+			<Function name='destroy'/>
+			<Function name='evaluate'/>
+			<Function name='evaluate_y_from_x'/>
+			<Function name='get_x'/>
+			<Function name='get_y'/>
+			<Function name='set_from_bezier'/>
+		</Class>
 		<Class name='RageDisplay'>
 			<Function name='GetCumFPS'/>
 			<Function name='GetDisplayHeight'/>
@@ -1392,6 +1400,15 @@
 		</Class>
 		<Class name='RageInput'>
 			<Function name='GetDescriptions'/>
+		</Class>
+		<Class name='RageQuadratic'>
+			<Function name='evaluate'/>
+			<Function name='get_bezier'/>
+			<Function name='get_bezier_end'/>
+			<Function name='get_bezier_start'/>
+			<Function name='get_slope'/>
+			<Function name='set_from_bezier'/>
+			<Function name='set_from_cubic'/>
 		</Class>
 		<Class name='RageSound'>
 			<Function name='get_length'/>

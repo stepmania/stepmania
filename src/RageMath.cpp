@@ -729,6 +729,119 @@ void RageBezier2D::SetFromBezier(
 	m_Y.SetFromBezier( fC1Y, fC2Y, fC3Y, fC4Y );
 }
 
+#include "LuaBinding.h"
+
+struct LunaRageQuadratic : Luna<RageQuadratic>
+{
+	static int evaluate(T* p, lua_State* L)
+	{
+		lua_pushnumber(L, p->Evaluate(FArg(1)));
+		return 1;
+	}
+	static int get_bezier(T* p, lua_State* L)
+	{
+		float a, b, c, d;
+		p->GetBezier(a, b, c, d);
+		lua_pushnumber(L, a);
+		lua_pushnumber(L, b);
+		lua_pushnumber(L, c);
+		lua_pushnumber(L, d);
+		return 4;
+	}
+	static int get_bezier_end(T* p, lua_State* L)
+	{
+		lua_pushnumber(L, p->GetBezierEnd());
+		return 1;
+	}
+	static int get_bezier_start(T* p, lua_State* L)
+	{
+		lua_pushnumber(L, p->GetBezierStart());
+		return 1;
+	}
+	static int get_slope(T* p, lua_State* L)
+	{
+		lua_pushnumber(L, p->GetSlope(FArg(1)));
+		return 1;
+	}
+	static int set_from_bezier(T* p, lua_State* L)
+	{
+		p->SetFromBezier(FArg(1), FArg(2), FArg(3), FArg(4));
+		COMMON_RETURN_SELF;
+	}
+	static int set_from_cubic(T* p, lua_State* L)
+	{
+		p->SetFromCubic(FArg(1), FArg(2), FArg(3), FArg(4));
+		COMMON_RETURN_SELF;
+	}
+	LunaRageQuadratic()
+	{
+		ADD_METHOD(evaluate);
+		ADD_METHOD(get_bezier);
+		ADD_METHOD(get_bezier_end);
+		ADD_METHOD(get_bezier_start);
+		ADD_METHOD(get_slope);
+		ADD_METHOD(set_from_bezier);
+		ADD_METHOD(set_from_cubic);
+	}
+};
+LUA_REGISTER_CLASS(RageQuadratic);
+
+struct LunaRageBezier2D : Luna<RageBezier2D>
+{
+	static int evaluate(T* p, lua_State* L)
+	{
+		float x, y;
+		p->Evaluate(FArg(1), &x, &y);
+		lua_pushnumber(L, x);
+		lua_pushnumber(L, y);
+		return 2;
+	}
+	static int evaluate_y_from_x(T* p, lua_State* L)
+	{
+		lua_pushnumber(L, p->EvaluateYFromX(FArg(1)));
+		return 1;
+	}
+	static int get_x(T* p, lua_State* L)
+	{
+		p->get_x().PushSelf(L);
+		return 1;
+	}
+	static int get_y(T* p, lua_State* L)
+	{
+		p->get_y().PushSelf(L);
+		return 1;
+	}
+	static int set_from_bezier(T* p, lua_State* L)
+	{
+		p->SetFromBezier(FArg(1), FArg(2), FArg(3), FArg(4), FArg(5), FArg(6), FArg(7), FArg(8));
+		COMMON_RETURN_SELF;
+	}
+	static int destroy(T* p, lua_State* L)
+	{
+		SAFE_DELETE(p);
+		return 0;
+	}
+	LunaRageBezier2D()
+	{
+		ADD_METHOD(destroy);
+		ADD_METHOD(evaluate);
+		ADD_METHOD(evaluate_y_from_x);
+		ADD_METHOD(get_x);
+		ADD_METHOD(get_y);
+		ADD_METHOD(set_from_bezier);
+	}
+};
+LUA_REGISTER_CLASS(RageBezier2D);
+
+int LuaFunc_create_bezier(lua_State* L);
+int LuaFunc_create_bezier(lua_State* L)
+{
+	RageBezier2D* bezier= new RageBezier2D;
+	bezier->PushSelf(L);
+	return 1;
+}
+LUAFUNC_REGISTER_COMMON(create_bezier);
+
 /*
  * Copyright (c) 2001-2006 Chris Danford, Glenn Maynard
  * All rights reserved.
