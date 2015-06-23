@@ -54,12 +54,12 @@ ret.PartsToRotate =
 };
 ret.Rotate =
 {
-	Up = 180,
+	Up = 0,
 	Down = 0,
-	Left = 90,
-	Right = -90,
-	UpLeft = 135,
-	UpRight = 225,
+	Left = 0,
+	Right = 0,
+	UpLeft = 0,
+	UpRight = 0,
 };
 
 ret.Blank =
