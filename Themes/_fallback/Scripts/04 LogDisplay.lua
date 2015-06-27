@@ -145,7 +145,7 @@ local log_display_mt= {
 				end,
 				[name_mess]= function(subself, mess)
 					if PREFSMAN:GetPreference("IgnoredDialogs") ~= "" then
-						self:visible(false)
+						subself:visible(false)
 						return
 					end
 					if not mess.message then return end
