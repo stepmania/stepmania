@@ -4,6 +4,18 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/07/02
+----------
+* [Gameplay] Random background video behavior is now controlled by these
+  three metrics in the Background section:
+  RandomBGStartBeat sets the beat of the music the first random bg occurs on.
+  RandomBGChangeMeasures sets the number of measures between changes.
+  RandomBGChangesWhenBPMChangesAtMeasureStart toggles the behavior in its name.
+
+================================================================================
+StepMania 5.0.9 | 20150520
+--------------------------------------------------------------------------------
+
 2015/06/10
 ----------
 * [global] get_music_file_length lua function added. [kyzentun]
