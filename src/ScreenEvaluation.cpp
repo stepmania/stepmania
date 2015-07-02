@@ -66,9 +66,10 @@ XToString( DetailLine );
 #define SHOW_SCORE_AREA				THEME->GetMetricB(m_sName,"ShowScoreArea")
 #define SHOW_TIME_AREA				THEME->GetMetricB(m_sName,"ShowTimeArea")
 #define SHOW_RECORDS_AREA			THEME->GetMetricB(m_sName,"ShowRecordsArea")
-#define PLAYER_OPTIONS_HIDE_FAIL_TYPE	THEME->GetMetricB(m_sName,"PlayerOptionsHideFailType")
-#define PLAYER_OPTIONS_SEPARATOR	THEME->GetMetric (m_sName,"PlayerOptionsSeparator")
-#define CHECKPOINTS_WITH_JUDGMENTS	THEME->GetMetricB(m_sName,"CheckpointsWithJudgments")
+#define PLAYER_OPTIONS_HIDE_FAIL_TYPE		THEME->GetMetricB(m_sName,"PlayerOptionsHideFailType")
+#define PLAYER_OPTIONS_SEPARATOR		THEME->GetMetric (m_sName,"PlayerOptionsSeparator")
+#define CHECKPOINTS_WITH_JUDGMENTS		THEME->GetMetricB(m_sName,"CheckpointsWithJudgments")
+#define PLAY_ANNOUNCER				THEME->GetMetricB(m_sName,"PlayAnnouncer")
 
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
@@ -656,47 +657,50 @@ void ScreenEvaluation::Init()
 	FOREACH_PlayerNumber( p )
 		best_grade = min( best_grade, grade[p] ); 
 
-	if( m_pStageStats->m_EarnedExtraStage != EarnedExtraStage_No )
-	{
-		SOUND->PlayOnce( THEME->GetPathS(m_sName,"try " + EarnedExtraStageToString(m_pStageStats->m_EarnedExtraStage)) );
-	}
-	else if( bOneHasNewTopRecord && ANNOUNCER->HasSoundsFor("evaluation new record") )
-	{
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation new record") );
-	}
-	else if( bOneHasFullW4Combo && ANNOUNCER->HasSoundsFor("evaluation full combo W4") )
-	{
-		SOUND->PlayOnceFromDir(ANNOUNCER->GetPathTo("evaluation full combo W4"));
-	}
-	else if( (bOneHasFullW1Combo || bOneHasFullW2Combo || bOneHasFullW3Combo) )
-	{
-		RString sComboType = bOneHasFullW1Combo ? "W1" : ( bOneHasFullW2Combo ? "W2" : "W3" );
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation full combo "+sComboType) );
-	}
-	else
-	{
-		if( SUMMARY || GAMESTATE->IsCourseMode() )
+	if( PLAY_ANNOUNCER )
+ 	{
+ 		if( m_pStageStats->m_EarnedExtraStage != EarnedExtraStage_No )
 		{
-			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final "+GradeToOldString(best_grade)) );
+			SOUND->PlayOnce( THEME->GetPathS(m_sName,"try " + EarnedExtraStageToString(m_pStageStats->m_EarnedExtraStage)) );
+		}
+		else if( bOneHasNewTopRecord && ANNOUNCER->HasSoundsFor("evaluation new record") )
+		{
+			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation new record") );
+		}
+		else if( bOneHasFullW4Combo && ANNOUNCER->HasSoundsFor("evaluation full combo W4") )
+		{
+			SOUND->PlayOnceFromDir(ANNOUNCER->GetPathTo("evaluation full combo W4"));
+		}
+		else if( (bOneHasFullW1Combo || bOneHasFullW2Combo || bOneHasFullW3Combo) )
+		{
+			RString sComboType = bOneHasFullW1Combo ? "W1" : ( bOneHasFullW2Combo ? "W2" : "W3" );
+			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation full combo "+sComboType) );
 		}
 		else
 		{
-			switch( GAMESTATE->m_PlayMode )
+			if( SUMMARY || GAMESTATE->IsCourseMode() )
 			{
-			case PLAY_MODE_BATTLE:
+				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final "+GradeToOldString(best_grade)) );
+			}
+			else
+			{
+				switch( GAMESTATE->m_PlayMode )
 				{
-					bool bWon = GAMESTATE->GetStageResult(GAMESTATE->GetMasterPlayerNumber()) == RESULT_WIN;
-					RString sResult = bWon ? "win" : "lose";
-					SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation "+sResult) );
+				case PLAY_MODE_BATTLE:
+					{
+						bool bWon = GAMESTATE->GetStageResult(GAMESTATE->GetMasterPlayerNumber()) == RESULT_WIN;
+						RString sResult = bWon ? "win" : "lose";
+						SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation "+sResult) );
+					}
+					break;
+				default:
+					SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation "+GradeToOldString(best_grade)) );
+					break;
 				}
-				break;
-			default:
-				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation "+GradeToOldString(best_grade)) );
-				break;
 			}
 		}
-	}
-
+ 	}
+ 	
 	switch( best_grade )
 	{
 		case Grade_Tier01:
