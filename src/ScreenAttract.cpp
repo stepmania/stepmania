@@ -108,8 +108,8 @@ bool ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 	{
 		case GAME_BUTTON_LEFT:
 		case GAME_BUTTON_RIGHT:
-			SCREENMAN->PostMessageToTopScreen( SM_BeginFadingOut, 0 );
-			return true;
+			// SCREENMAN->PostMessageToTopScreen( SM_BeginFadingOut, 0 );
+			// return true;
 		default:
 			return false;
 	}
