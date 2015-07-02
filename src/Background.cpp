@@ -452,7 +452,8 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 			{
 				BackgroundChange c = change;
 				c.m_def = bd;
-				c.m_fStartBeat = NoteRowToBeat(j);
+				// c.m_fStartBeat = NoteRowToBeat(j);
+				c.m_fStartBeat = -10000;
 				m_Layer[0].m_aBGChanges.push_back( c );
 			}
 		}
