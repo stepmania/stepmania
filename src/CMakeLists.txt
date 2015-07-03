@@ -171,10 +171,17 @@ if(NOT APPLE)
   source_group("" FILES "Main.cpp")
 endif()
 
-set(SM_NAME_RELEASE "StepMania")
-set(SM_NAME_DEBUG "StepMania-debug")
-set(SM_NAME_MINSIZEREL "StepMania-min-size")
-set(SM_NAME_RELWITHDEBINFO "StepMania-release-symbols")
+if(MSVC OR APPLE)
+  set(SM_NAME_RELEASE "StepMania")
+  set(SM_NAME_DEBUG "StepMania-debug")
+  set(SM_NAME_MINSIZEREL "StepMania-min-size")
+  set(SM_NAME_RELWITHDEBINFO "StepMania-release-symbols")
+else()
+  set(SM_NAME_RELEASE "stepmania")
+  set(SM_NAME_DEBUG "stepmania-debug")
+  set(SM_NAME_MINSIZEREL "stepmania-min-size")
+  set(SM_NAME_RELWITHDEBINFO "stepmania-release-symbols")
+endif()
 
 # Configure generated files here.
 configure_file("${SM_XCODE_DIR}/Info.plist.in.xml" "${SM_XCODE_DIR}/Info.StepMania.plist")
@@ -188,6 +195,14 @@ if(APPLE)
 else()
   add_executable("${SM_EXE_NAME}" ${SMDATA_ALL_FILES_SRC} ${SMDATA_ALL_FILES_HPP})
 endif()
+
+set_target_properties("${SM_EXE_NAME}" PROPERTIES
+  OUTPUT_NAME "${SM_NAME_RELEASE}"
+  RELEASE_OUTPUT_NAME "${SM_NAME_RELEASE}"
+  DEBUG_OUTPUT_NAME "${SM_NAME_DEBUG}"
+  MINSIZEREL_OUTPUT_NAME "${SM_NAME_MINSIZEREL}"
+  RELWITHDEBINFO_OUTPUT_NAME "${SM_NAME_RELWITHDEBINFO}"
+)
 
 if (WITH_PORTABLE_TOMCRYPT)
   sm_add_compile_definition("${SM_EXE_NAME}" LTC_NO_ASM)
