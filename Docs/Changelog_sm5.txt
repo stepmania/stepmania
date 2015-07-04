@@ -11,6 +11,7 @@ ________________________________________________________________________________
   RandomBGStartBeat sets the beat of the music the first random bg occurs on.
   RandomBGChangeMeasures sets the number of measures between changes.
   RandomBGChangesWhenBPMChangesAtMeasureStart toggles the behavior in its name.
+  RandomBGEndsAtLastBeat toggles the behavior in its name.
 
 ================================================================================
 StepMania 5.0.9 | 20150520

@@ -34,6 +34,7 @@ static ThemeMetric<bool> USE_STATIC_BG		("Background","UseStaticBackground");
 static ThemeMetric<float> RAND_BG_START_BEAT("Background", "RandomBGStartBeat");
 static ThemeMetric<float> RAND_BG_CHANGE_MEASURES("Background", "RandomBGChangeMeasures");
 static ThemeMetric<bool> RAND_BG_CHANGES_WHEN_BPM_CHANGES("Background", "RandomBGChangesWhenBPMChangesAtMeasureStart");
+static ThemeMetric<bool> RAND_BG_ENDS_AT_LAST_BEAT("Background", "RandomBGEndsAtLastBeat");
 
 
 static Preference<bool>	g_bShowDanger( "ShowDanger", true );
@@ -613,11 +614,14 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 
 		LoadFromRandom( firstBeat, lastBeat, BackgroundChange() );
 
-		// end showing the static song background
-		BackgroundChange change;
-		change.m_def = m_StaticBackgroundDef;
-		change.m_fStartBeat = lastBeat;
-		layer.m_aBGChanges.push_back( change );
+		if(RAND_BG_ENDS_AT_LAST_BEAT)
+		{
+			// end showing the static song background
+			BackgroundChange change;
+			change.m_def = m_StaticBackgroundDef;
+			change.m_fStartBeat = lastBeat;
+			layer.m_aBGChanges.push_back( change );
+		}
 	}
 
 	// sort segments
