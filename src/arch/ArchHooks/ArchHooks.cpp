@@ -67,6 +67,19 @@ RString ArchHooks::GetClipboard()
 	return "";
 }
 
+/* XXX: Most singletons register with lua in their constructor.  ArchHooks is
+ * instantiated before Lua, so we encounter a dependency problem when
+ * trying to register HOOKS. Work around it by registering HOOKS function
+ * which sm_main will call after instantiating Lua. */
+void ArchHooks::RegisterWithLua()
+{
+	Lua *L = LUA->Get();
+	lua_pushstring( L, "HOOKS" );
+	HOOKS->PushSelf( L );
+	lua_settable( L, LUA_GLOBALSINDEX );
+	LUA->Release( L );
+}
+
 // lua start
 #include "LuaBinding.h"
 #include "LuaReference.h"
@@ -84,18 +97,6 @@ public:
 	}
 };
 LUA_REGISTER_CLASS( ArchHooks );
-
-/* XXX: ArchHooks is instantiated before Lua, so we encounter a dependency problem when
- * trying to register HOOKS. Work around it by registering HOOKS in a static function,
- * which LuaManager will call when it is instantiated. */
-void LuaFunc_Register_Hooks( lua_State *L )
-{
-	lua_pushstring( L, "HOOKS" );
-	HOOKS->PushSelf( L );
-	lua_settable( L, LUA_GLOBALSINDEX );
-}
-
-REGISTER_WITH_LUA_FUNCTION( LuaFunc_Register_Hooks );
 
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford

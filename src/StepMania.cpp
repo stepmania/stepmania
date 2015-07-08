@@ -977,6 +977,7 @@ int sm_main(int argc, char* argv[])
 	HOOKS->Init();
 
 	LUA		= new LuaManager;
+	HOOKS->RegisterWithLua();
 
 	// Initialize the file extension type lists so everything can ask ActorUtil
 	// what the type of a file is.
