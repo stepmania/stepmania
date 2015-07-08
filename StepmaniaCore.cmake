@@ -170,7 +170,7 @@ elseif(LINUX)
   if (${XRANDR_FOUND})
     set(HAS_XRANDR TRUE)
   else()
-    set(HAX_XRANDR FALSE)
+    set(HAS_XRANDR FALSE)
   endif()
 
   if (WITH_OGG)
