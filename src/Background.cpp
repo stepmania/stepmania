@@ -633,15 +633,10 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 
 	Layer &mainlayer = m_Layer[0];
 
-	/* If the first BGAnimation isn't negative, add a lead-in image showing
-	 * the song background. */
-	if( mainlayer.m_aBGChanges.empty() || mainlayer.m_aBGChanges.front().m_fStartBeat >= 0 )
-	{
-		BackgroundChange change;
-		change.m_def = m_StaticBackgroundDef;
-		change.m_fStartBeat = -10000;
-		mainlayer.m_aBGChanges.insert( mainlayer.m_aBGChanges.begin(), change );
-	}
+	BackgroundChange change;
+	change.m_def = m_StaticBackgroundDef;
+	change.m_fStartBeat = -10000;
+	mainlayer.m_aBGChanges.insert( mainlayer.m_aBGChanges.begin(), change );
 
 	// If any BGChanges use the background image, load it.
 	bool bStaticBackgroundUsed = false;
