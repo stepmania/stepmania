@@ -144,7 +144,8 @@ local log_display_mt= {
 					end
 				end,
 				[name_mess]= function(subself, mess)
-					if PREFSMAN:GetPreference("IgnoredDialogs") ~= "" then
+					if not PREFSMAN:GetPreference("ShowThemeErrors")
+					and self.name == "ScriptError" then
 						subself:visible(false)
 						return
 					end

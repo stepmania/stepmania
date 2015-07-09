@@ -308,7 +308,8 @@ PrefsManager::PrefsManager() :
 	m_bLogSkips			( "LogSkips",		false ),
 	m_bLogCheckpoints		( "LogCheckpoints",	false ),
 	m_bShowLoadingWindow		( "ShowLoadingWindow",	true ),
-	m_bPseudoLocalize		( "PseudoLocalize",	false )
+	m_bPseudoLocalize		( "PseudoLocalize",	false ),
+	m_show_theme_errors("ShowThemeErrors", false)
 
 #if !defined(WITHOUT_NETWORKING)
 	,

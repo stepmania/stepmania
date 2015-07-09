@@ -815,7 +815,7 @@ Dialog::Result LuaHelpers::ReportScriptError(RString const& Error, RString Error
 		RString with_correct= Error + "  Correct this and click Retry, or Cancel to break.";
 		return Dialog::AbortRetryIgnore(with_correct, ErrorType);
 	}
-	Dialog::OK(Error, ErrorType);
+	//Dialog::OK(Error, ErrorType);
 	return Dialog::ok;
 }
 

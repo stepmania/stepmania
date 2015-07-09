@@ -425,7 +425,7 @@ list(APPEND SMDATA_LINK_LIB
 )
 
 if (NOT SYSTEM_PCRE_FOUND)
-  list(INSERT SMDATA_LINK_LIB 8 "pcre")
+  list(APPEND SMDATA_LINK_LIB "pcre")
 endif()
 
 if (WIN32)
