@@ -398,8 +398,15 @@ void ScreenEvaluation::Init()
 			// todo: convert this to use category names instead of numbers? -aj
 			for( int r=0; r<NUM_SHOWN_RADAR_CATEGORIES; r++ )	// foreach line
 			{
+				float possible= m_pStageStats->m_player[p].m_radarPossible[r];
+				float actual= m_pStageStats->m_player[p].m_radarActual[r];
+				if(possible > 1.0)
+				{
+					actual /= possible;
+					possible /= possible;
+				}
 				m_sprPossibleBar[p][r].Load( THEME->GetPathG(m_sName,ssprintf("BarPossible p%d",p+1)) );
-				m_sprPossibleBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * m_pStageStats->m_player[p].m_radarPossible[r] * fDivider );
+				m_sprPossibleBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * possible * fDivider );
 				m_sprPossibleBar[p][r].SetName( ssprintf("BarPossible%dP%d",r+1,p+1) );
 				ActorUtil::LoadAllCommands( m_sprPossibleBar[p][r], m_sName );
 				SET_XY( m_sprPossibleBar[p][r] );
@@ -407,7 +414,7 @@ void ScreenEvaluation::Init()
 
 				m_sprActualBar[p][r].Load( THEME->GetPathG(m_sName,ssprintf("BarActual p%d",p+1)) );
 				// should be out of the possible bar, not actual (whatever value that is at)
-				m_sprActualBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * m_pStageStats->m_player[p].m_radarActual[r] * fDivider );
+				m_sprActualBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * actual * fDivider );
 
 				float value = (float)100 * m_sprActualBar[p][r].GetUnzoomedWidth() / m_sprPossibleBar[p][r].GetUnzoomedWidth();
 				LOG->Trace("Radar bar %d of 5 - %f percent", r,  value);
@@ -418,7 +425,7 @@ void ScreenEvaluation::Init()
 
 				// .99999 is fairly close to 1.00, so we use that.
 				// todo: allow extra commands for AAA/AAAA? -aj
-				if( m_pStageStats->m_player[p].m_radarActual[r] > 0.99999f )
+				if( actual > 0.99999f )
 					m_sprActualBar[p][r].RunCommands( BAR_ACTUAL_MAX_COMMAND );
 				this->AddChild( &m_sprActualBar[p][r] );
 			}
