@@ -3375,6 +3375,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 	case STATE_PLAYING:
 	case STATE_RECORDING:
 	{
+		m_NoteDataEdit.RevalidateATIs(vector<int>(), false);
 		if( bStateChanging )
 			AdjustSync::ResetOriginalSyncData();
 
@@ -3388,7 +3389,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		if (!GAMESTATE->m_bIsUsingStepTiming)
 		{
 			// Substitute the song timing for the step timing during
-			// previuw if we're in song mode
+			// preview if we're in song mode
 			backupStepTiming = GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing;
 			GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing.Clear();
 		}
@@ -6092,9 +6093,10 @@ void ScreenEdit::SetupCourseAttacks()
 			{
 				FOREACH(Attack, attacks, attack)
 				{
-					float fBeat = GetAppropriateTiming().GetBeatFromElapsedTime(attack->fStartSecond);
-					if (fBeat >= GetBeat())
-						GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( *attack );
+					// LaunchAttack is actually a misnomer.  The function actually adds
+					// the attack to a list in the PlayerState which is checked and
+					// updated every tick to see which ones to actually activate. -Kyz
+					GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( *attack );
 				}
 			}
 		}
