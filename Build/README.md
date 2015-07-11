@@ -1,10 +1,39 @@
 Warning
 ==
+
 Using CMake is considered stable, but not every single combination is known to work.
 Using the defaults as suggested should cause minimal problems.
 
+Install CMake
+==
+
+At first, you have to install CMake.
+
+Windows
+===
+
+Describe Later.
+
+Mac OS X
+===
+
+install by Homebrew:
+
+    $brew install cmake
+
+install by MacPorts:
+
+    $port install cmake
+
+Linux
+===
+
+Describe Later.
+
+
 CMake Installation
 ==
+
 There are two ways of working with cmake: the command line and the GUI.
 
 CMake Command Line
