@@ -4,6 +4,14 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/07/11
+----------
+* [ScreenMapControllers] If the AutoDismissWarningSecs metric is less than
+  .25 seconds, the warning will not be shown (the TweenOn command for it will
+  not be played).  Instead, the NeverShow command will be played.  If the
+  NeverShow command does not exist for the warning actor, the warning actor
+  will be set to hibernate forever. [kyzentun]
+
 2015/07/02
 ----------
 * [Gameplay] Random background video behavior is now controlled by these
