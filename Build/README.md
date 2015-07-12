@@ -54,6 +54,10 @@ If any cmake project file changes, you can just run `cmake .. && cmake ..` to ge
 If this by itself doesn't work, you may have to clean the cmake cache.
 Use `rm -rf CMakeCache.txt CMakeScripts/ CMakeFiles/ cmake_install.txt` to do that, and then run the generator command again.
 
+for example(Use Xcode):
+
+    $cmake -G Xcode .. && cmake ..
+
 The reason for running cmake at least twice is to make sure that all of the variables get set up appropriately.
 
 Environment variables can be modified at this stage. If you want to pass `-ggdb` or any other flag that is not set up by default,
