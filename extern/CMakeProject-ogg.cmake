@@ -14,6 +14,6 @@ add_library("ogg" ${OGG_SRC} ${OGG_HPP})
 
 set_property(TARGET "ogg" PROPERTY FOLDER "External Libraries")
 
-target_include_directories("ogg" PUBLIC "libogg-1.3.2/include")
-
 disable_project_warnings("ogg")
+
+target_include_directories("ogg" PUBLIC "libogg-1.3.2/include")

@@ -1,3 +1,4 @@
+
 file(MAKE_DIRECTORY "${SM_SRC_DIR}/generated")
 
 if(MSVC)
@@ -648,7 +649,7 @@ if(WIN32)
   )
 else()
   list(APPEND SM_INCLUDE_DIRS
-    "${SM_EXTERN_DIR}/libpng/include"
+    "${SM_EXTERN_DIR}/libpng-1.6.17/include"
   )
 endif()
 

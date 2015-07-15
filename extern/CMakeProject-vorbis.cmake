@@ -73,7 +73,7 @@ add_library("vorbis" ${VORBIS_SRC} ${VORBIS_HPP})
 
 set_property(TARGET "vorbis" PROPERTY FOLDER "External Libraries")
 
+disable_project_warnings("vorbis")
+
 target_include_directories("vorbis" PUBLIC "libogg-1.3.2/include")
 target_include_directories("vorbis" PUBLIC "libvorbis-1.3.5/include")
-
-disable_project_warnings("vorbis")
