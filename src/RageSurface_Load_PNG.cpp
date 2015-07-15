@@ -4,15 +4,10 @@
 #include "RageLog.h"
 #include "RageFile.h"
 #include "RageSurface.h"
+#include <png.h>
 
 #if defined(_MSC_VER)
-#include "../extern/libpng/include/png.h"
-#if defined(_BINARY_PNG)
-#pragma comment(lib, "libpng.lib")
-#endif
 #pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
-#else
-#include <png.h>
 #endif // _MSC_VER
 
 namespace
