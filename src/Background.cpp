@@ -34,6 +34,10 @@ static ThemeMetric<float> BOTTOM_EDGE				("Background","BottomEdge");
 static ThemeMetric<float> CLAMP_OUTPUT_PERCENT			("Background","ClampOutputPercent");
 static ThemeMetric<bool> SHOW_DANCING_CHARACTERS		("Background","ShowDancingCharacters");
 static ThemeMetric<bool> USE_STATIC_BG		("Background","UseStaticBackground");
+static ThemeMetric<float> RAND_BG_START_BEAT("Background", "RandomBGStartBeat");
+static ThemeMetric<float> RAND_BG_CHANGE_MEASURES("Background", "RandomBGChangeMeasures");
+static ThemeMetric<bool> RAND_BG_CHANGES_WHEN_BPM_CHANGES("Background", "RandomBGChangesWhenBPMChangesAtMeasureStart");
+static ThemeMetric<bool> RAND_BG_ENDS_AT_LAST_BEAT("Background", "RandomBGEndsAtLastBeat");
 
 
 static Preference<bool>	g_bShowDanger( "ShowDanger", true );
@@ -446,9 +450,10 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 		int iSegmentEndRow = (i + 1 == tSigs.size()) ? iEndRow : tSigs[i+1]->GetRow();
 
 
-		for(int j = std::max(ts->GetRow(),iStartRow);
-			j < min(iEndRow,iSegmentEndRow);
-			j+=4*ts->GetNoteRowsPerMeasure())
+		int time_signature_start = std::max(ts->GetRow(), iStartRow);
+		for(int j = time_signature_start;
+			j < std::min(iEndRow, iSegmentEndRow);
+			j+= RAND_BG_CHANGE_MEASURES * ts->GetNoteRowsPerMeasure())
 		{
 			// Don't fade. It causes frame rate dip, especially on slower machines.
 			BackgroundDef bd = m_Layer[0].CreateRandomBGA(m_pSong,
@@ -458,43 +463,53 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 			{
 				BackgroundChange c = change;
 				c.m_def = bd;
-				c.m_fStartBeat = NoteRowToBeat(j);
+				if(j == time_signature_start && i == 0)
+				{
+					c.m_fStartBeat = RAND_BG_START_BEAT;
+				}
+				else
+				{
+					c.m_fStartBeat = NoteRowToBeat(j);
+				}
 				m_Layer[0].m_aBGChanges.push_back( c );
 			}
 		}
 	}
 
-	// change BG every BPM change that is at the beginning of a measure
-	const vector<TimingSegment *> &bpms = timing.GetTimingSegments(SEGMENT_BPM);
-	for( unsigned i=0; i<bpms.size(); i++ )
+	if(RAND_BG_CHANGES_WHEN_BPM_CHANGES)
 	{
-		bool bAtBeginningOfMeasure = false;
-		for (unsigned j=0; j<tSigs.size(); j++)
+		// change BG every BPM change that is at the beginning of a measure
+		const vector<TimingSegment *> &bpms = timing.GetTimingSegments(SEGMENT_BPM);
+		for( unsigned i=0; i<bpms.size(); i++ )
 		{
-			TimeSignatureSegment *ts = static_cast<TimeSignatureSegment *>(tSigs[j]);
-			if ((bpms[i]->GetRow() - ts->GetRow()) % ts->GetNoteRowsPerMeasure() == 0)
+			bool bAtBeginningOfMeasure = false;
+			for (unsigned j=0; j<tSigs.size(); j++)
 			{
-				bAtBeginningOfMeasure = true;
-				break;
+				TimeSignatureSegment *ts = static_cast<TimeSignatureSegment *>(tSigs[j]);
+				if ((bpms[i]->GetRow() - ts->GetRow()) % ts->GetNoteRowsPerMeasure() == 0)
+				{
+					bAtBeginningOfMeasure = true;
+					break;
+				}
 			}
-		}
 
-		if( !bAtBeginningOfMeasure )
+			if( !bAtBeginningOfMeasure )
 			continue; // skip
 
-		// start so that we don't create a BGChange right on top of fEndBeat
-		bool bInRange = bpms[i]->GetRow() >= iStartRow && bpms[i]->GetRow() < iEndRow;
-		if( !bInRange )
+			// start so that we don't create a BGChange right on top of fEndBeat
+			bool bInRange = bpms[i]->GetRow() >= iStartRow && bpms[i]->GetRow() < iEndRow;
+			if( !bInRange )
 			continue; // skip
 
-		BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, change.m_def.m_sEffect, m_RandomBGAnimations, this );
-		if( !bd.IsEmpty() )
-		{
-			BackgroundChange c = change;
-			c.m_def.m_sFile1 = bd.m_sFile1;
-			c.m_def.m_sFile2 = bd.m_sFile2;
-			c.m_fStartBeat = bpms[i]->GetBeat();
-			m_Layer[0].m_aBGChanges.push_back( c );
+			BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, change.m_def.m_sEffect, m_RandomBGAnimations, this );
+			if( !bd.IsEmpty() )
+			{
+				BackgroundChange c = change;
+				c.m_def.m_sFile1 = bd.m_sFile1;
+				c.m_def.m_sFile2 = bd.m_sFile2;
+				c.m_fStartBeat = bpms[i]->GetBeat();
+				m_Layer[0].m_aBGChanges.push_back( c );
+			}
 		}
 	}
 }
@@ -607,11 +622,14 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 
 		LoadFromRandom( firstBeat, lastBeat, BackgroundChange() );
 
-		// end showing the static song background
-		BackgroundChange change;
-		change.m_def = m_StaticBackgroundDef;
-		change.m_fStartBeat = lastBeat;
-		layer.m_aBGChanges.push_back( change );
+		if(RAND_BG_ENDS_AT_LAST_BEAT)
+		{
+			// end showing the static song background
+			BackgroundChange change;
+			change.m_def = m_StaticBackgroundDef;
+			change.m_fStartBeat = lastBeat;
+			layer.m_aBGChanges.push_back( change );
+		}
 	}
 
 	// sort segments
@@ -623,15 +641,10 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 
 	Layer &mainlayer = m_Layer[0];
 
-	/* If the first BGAnimation isn't negative, add a lead-in image showing
-	 * the song background. */
-	if( mainlayer.m_aBGChanges.empty() || mainlayer.m_aBGChanges.front().m_fStartBeat >= 0 )
-	{
-		BackgroundChange change;
-		change.m_def = m_StaticBackgroundDef;
-		change.m_fStartBeat = -10000;
-		mainlayer.m_aBGChanges.insert( mainlayer.m_aBGChanges.begin(), change );
-	}
+	BackgroundChange change;
+	change.m_def = m_StaticBackgroundDef;
+	change.m_fStartBeat = -10000;
+	mainlayer.m_aBGChanges.insert( mainlayer.m_aBGChanges.begin(), change );
 
 	// If any BGChanges use the background image, load it.
 	bool bStaticBackgroundUsed = false;

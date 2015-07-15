@@ -126,6 +126,9 @@ save yourself some time, copy this for undocumented things:
 		converts them to equivalent lua files.  See Docs/Themerdocs/XmlToLua.txt
 		for details.
 	</Function>
+	<Function name='create_bezier' return='RageBezier2D' arguments=''>
+		Creates a RageBezier2D for you to use.  Make sure you destroy the RageBezier2D when you're done with it, or you will have a memory leak.
+	</Function>
 	<Function name='create_spline' return='CubicSplineN' arguments=''>
 		Creates a CubicSplineN for you to use.  Make sure you destroy the CubicSplineN when you're done with it, or you will have a memory leak.
 	</Function>
@@ -1369,7 +1372,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='texturewrapping' return='void' arguments='bool bWrap'>
 		Determines if the Actor should use texture wrapping or not.
 	</Function>
-	<!-- tween -->
+	<Function name='tween' return= '' arguments='float time, TweenType type, table params'>
+		Uses type to determine the tween to use.  The type must be one of the TweenType enum values.  If the type is note TweenType_Bezier, the params table is ignored.  If the type is TweenType_Bezier, then the params table must have 4 or 8 numbers.  4 numbers in the params creates a 1 dimensional bezier curve, 8 numbers creates a 2 dimensional bezier curve.<br />
+		It's usually more convenient to use Actor:linear, Actor:accelerate, and so on, rather than using Actor:tween directly.
+	</Function>
 	<Function name='valign' return='void' arguments='float fAlign'>
 		Set the fractional vertical alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is top aligned while an alignment of 1 is bottom aligned. See <Link function="vertalign" /> for the common case.
 	</Function>
@@ -1431,8 +1437,8 @@ save yourself some time, copy this for undocumented things:
 		Sets z writing to <code>true</code> or <code>false</code> based on <code>bWrite</code>.
 	</Function>
 	<!-- addons from scripts that come with sm-ssc (non-compat) -->
-	<Function name='bezier' theme='_fallback' return='void' arguments=''>
-		[02 Actor.lua]
+	<Function name='bezier' theme='_fallback' return='' arguments='float time, table curve'>
+		[02 Actor.lua] Plays the commands that follow using a bezier curve to determine the rate.  The curve must have 4 or 8 elements.  This is a convenience wrapper around calling Actor:tween with TweenType_Bezier.
 	</Function>
 	<Function name='FullScreen' theme='_fallback' return='void' arguments=''>
 		[02 Actor.lua] Stretches an Actor to cover the screen. (equivalent to <code>stretchto,0,0,SCREEN_WIDTH,SCREEN_HEIGHT</code>)
@@ -4027,6 +4033,32 @@ save yourself some time, copy this for undocumented things:
 		Returns the value of <code>rc</code> from <Link class='Steps' function='GetRadarValues' />.
 	</Function>
 </Class>
+<Class name='RageBezier2D'>
+	<Description>
+		You must call create_bezier to create a RageBezier2D to use any of these functions.  When you are done with the object, destroy it with its destroy function to avoid a memory leak.<br />
+		A RageBezier2D is two RageQuadratics, one for the x coordinate and one for the y.<br />
+		This class is provided as a tool for designers working with bezier tweens who need a tool that displays the tween curve visually.<br />
+		If you use Actor:tween(time, "TweenType_Bezier", {xa, ya, xb, yb, xc, yc, xd, yd}) to tween an actor, the actor creates a RageBezier2D internally and calls evaluate_y_from_x each frame to set where it is in the tween.
+	</Description>
+	<Function name='destroy' return='' arguments=''>
+		Destroys the RageBezier2D.  Do not attempt to use it after it has been destroyed.
+	</Function>
+	<Function name='evaluate' return='float,float' arguments='float t'>
+		Evaluates the bezier curve at the given t and returns the x and y values.  This is equivalent to using get_x and get_y to fetch the quadratic parts and calling evaluate on them directly.
+	</Function>
+	<Function name='evaluate_y_from_x' return='float' arguments='float x'>
+		Takes the x given and converts it to a t value, then evaluates the y quadratic with the t value and returns the result.
+	</Function>
+	<Function name='get_x' return='RageQuadratic' arguments=''>
+		Returns the RageQuadratic used for the x component.
+	</Function>
+	<Function name='get_y' return='RageQuadratic' arguments=''>
+		Returns the RageQuadratic used for the y component.
+	</Function>
+	<Function name='set_from_bezier' return='' arguments='float xa, float ya, float xb, float yb, float xc, float yc, float xd, float yd'>
+		Sets the values used by the two quadratics.  This is equivalent to using get_x and get_y to get the quadratics and setting them directly.  Note that the components for the x quadratic and the y quadratic are interleaved.
+	</Function>
+</Class>
 <Class name='RageDisplay'>
 	<Function name='GetDisplayHeight' return='int' arguments=''>
 		Return the height of the display.
@@ -4111,6 +4143,33 @@ save yourself some time, copy this for undocumented things:
 <Class name='RageInput'>
 	<Function name='GetDescriptions' return='{string}' arguments=''>
 		Return an array of connected input device descriptions.
+	</Function>
+</Class>
+<Class name='RageQuadratic'>
+	<Description>
+		If you use Actor:tween(time, "TweenType_Bezier", {a, b, c, d}) to tween an actor, the actor creates a RageQuadratic internally and calls evaluate each frame to set where it is in the tween.
+	</Description>
+	<Function name='evaluate' return='float' arguments='float t'>
+		Evaluates the quadratic at the given t value and returns the result.
+	</Function>
+	<Function name='get_bezier' return='float,float,float,float' arguments=''>
+		Returns the four values that form the quadratic equation.  This function returns multiple values, so you must do something like this to get them:<br />
+		a, b, c, d= quadratic:get_bezier()
+	</Function>
+	<Function name='get_bezier_end' return='float' arguments=''>
+		Equivalent to evaluate(1), but faster.
+	</Function>
+	<Function name='get_bezier_start' return='float' arguments=''>
+		Equivalent to evaluate(0), but faster.
+	</Function>
+	<Function name='get_slope' return='float' arguments='float t'>
+		Returns the slope of the curve at the given t value.
+	</Function>
+	<Function name='set_from_bezier' return='' arguments='float a, float b, float c, float d'>
+		Sets the four values that form the quadratic equation.
+	</Function>
+	<Function name='set_from_cubic' return='' arguments='float a, float b, float c, float d'>
+		Sets the four values that form the quadratic equation, treating the arguments as from a cubic equation instead of as from a bezier curve.
 	</Function>
 </Class>
 <Class name='RageSound'>

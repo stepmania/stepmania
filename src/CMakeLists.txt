@@ -172,10 +172,17 @@ if(NOT APPLE)
   source_group("" FILES "Main.cpp")
 endif()
 
-set(SM_NAME_RELEASE "StepMania")
-set(SM_NAME_DEBUG "StepMania-debug")
-set(SM_NAME_MINSIZEREL "StepMania-min-size")
-set(SM_NAME_RELWITHDEBINFO "StepMania-release-symbols")
+if(MSVC OR APPLE)
+  set(SM_NAME_RELEASE "StepMania")
+  set(SM_NAME_DEBUG "StepMania-debug")
+  set(SM_NAME_MINSIZEREL "StepMania-min-size")
+  set(SM_NAME_RELWITHDEBINFO "StepMania-release-symbols")
+else()
+  set(SM_NAME_RELEASE "stepmania")
+  set(SM_NAME_DEBUG "stepmania-debug")
+  set(SM_NAME_MINSIZEREL "stepmania-min-size")
+  set(SM_NAME_RELWITHDEBINFO "stepmania-release-symbols")
+endif()
 
 # Configure generated files here.
 configure_file("${SM_XCODE_DIR}/Info.plist.in.xml" "${SM_XCODE_DIR}/Info.StepMania.plist")
@@ -189,6 +196,14 @@ if(APPLE)
 else()
   add_executable("${SM_EXE_NAME}" ${SMDATA_ALL_FILES_SRC} ${SMDATA_ALL_FILES_HPP})
 endif()
+
+set_target_properties("${SM_EXE_NAME}" PROPERTIES
+  OUTPUT_NAME "${SM_NAME_RELEASE}"
+  RELEASE_OUTPUT_NAME "${SM_NAME_RELEASE}"
+  DEBUG_OUTPUT_NAME "${SM_NAME_DEBUG}"
+  MINSIZEREL_OUTPUT_NAME "${SM_NAME_MINSIZEREL}"
+  RELWITHDEBINFO_OUTPUT_NAME "${SM_NAME_RELWITHDEBINFO}"
+)
 
 if (WITH_PORTABLE_TOMCRYPT)
   sm_add_compile_definition("${SM_EXE_NAME}" LTC_NO_ASM)
@@ -420,7 +435,7 @@ list(APPEND SMDATA_LINK_LIB
 )
 
 if (NOT SYSTEM_PCRE_FOUND)
-  list(INSERT SMDATA_LINK_LIB 8 "pcre")
+  list(APPEND SMDATA_LINK_LIB "pcre")
 endif()
 
 if (WIN32)
@@ -504,7 +519,8 @@ elseif(APPLE)
   )
 else() # Unix / Linux
   # TODO: Remember to find and locate the zip archive files.
-  sm_list_replace(SMDATA_LINK_LIB 8 "${JPEG_LIBRARY}")
+  list(FIND SMDATA_LINK_LIB "jpeg" JPEG_INDEX)
+  sm_list_replace(SMDATA_LINK_LIB ${JPEG_INDEX} "${JPEG_LIBRARY}")
   if (HAS_FFMPEG)
     if(WITH_SYSTEM_FFMPEG)
       list(APPEND SMDATA_LINK_LIB

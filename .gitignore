@@ -22,6 +22,7 @@ Release/
 Contents/
 verdata.*
 StepMania-debug
+stepmania-debug
 Xcode/Info.StepMania.plist
 Xcode/plistHelper.hpp
 src/version_updater/VersionUpdater

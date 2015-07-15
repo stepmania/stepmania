@@ -8,6 +8,7 @@
 #define RadianToDegree( radian ) ((radian) * (180.0f / PI))
 
 
+struct lua_State;
 struct RageVector2;
 struct RageVector3;
 struct RageVector4;
@@ -70,6 +71,7 @@ public:
 	float GetBezierStart() const { return m_fD; }
 	float GetBezierEnd() const { return m_fA + m_fB + m_fC + m_fD; }
 
+	void PushSelf(lua_State* L);
 private:
 	float m_fA, m_fB, m_fC, m_fD;
 };
@@ -83,6 +85,9 @@ public:
 	void Evaluate( float fT, float *pX, float *pY ) const;
 	float EvaluateYFromX( float fX ) const;
 
+	RageQuadratic& get_x() { return m_X; }
+	RageQuadratic& get_y() { return m_Y; }
+	void PushSelf(lua_State* L);
 private:
 	RageQuadratic m_X;
 	RageQuadratic m_Y;

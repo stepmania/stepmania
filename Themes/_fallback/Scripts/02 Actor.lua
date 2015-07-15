@@ -209,16 +209,10 @@ function Actor:CenterX() self:x(SCREEN_CENTER_X) return self end
 function Actor:CenterY() self:y(SCREEN_CENTER_Y) return self end
 function Actor:Center() self:xy(SCREEN_CENTER_X,SCREEN_CENTER_Y) return self end
 
-function Actor:bezier(...)
-	local a = {...}
-	local b = {}
-	local c = 0
-	assert((a == 9 or a == 5), "bad number of arguments for Actor:bezier()")
-	for i=3,c do
-		b[#b+1] = a[i]
-	end
-	self:tween(a[2], "TweenMode_Bezier", b)
-	return self
+function Actor:bezier(time, curve)
+	assert(type(time) == "number", "bezier tween time must be a number")
+	assert((#curve == 4 or #curve == 8), "bezier tween curve must have 4 or 8 elements")
+	return self:tween(time, "TweenType_Bezier", curve)
 end
 
 function Actor:Real()

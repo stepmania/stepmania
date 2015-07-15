@@ -14,11 +14,7 @@ set(SM_DOC_DIR "${CMAKE_CURRENT_LIST_DIR}/Docs")
 set(SM_ROOT_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
 # TODO: Reconsile the OS dependent naming scheme.
-if (WIN32 OR APPLE)
-  set(SM_EXE_NAME "StepMania")
-else()
-  set(SM_EXE_NAME "stepmania")
-endif()
+set(SM_EXE_NAME "StepMania")
 
 # Some OS specific helpers.
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
