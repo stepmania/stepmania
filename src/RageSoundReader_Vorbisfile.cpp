@@ -10,12 +10,6 @@
 #include <vorbis/vorbisfile.h>
 #endif
 
-#if defined(_MSC_VER)
-#pragma comment(lib, "ogg_static.lib")
-#pragma comment(lib, "vorbis_static.lib")
-#pragma comment(lib, "vorbisfile_static.lib")
-#endif // _MSC_VER
-
 #include <cstring>
 #include <cerrno>
 #include "RageFile.h"

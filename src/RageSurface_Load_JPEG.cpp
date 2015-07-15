@@ -14,11 +14,6 @@
 #include "jpeglib.h"
 #include "jerror.h"
 
-#if defined(_MSC_VER)
-#pragma comment(lib, "jpeg.lib")
-#pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
-#endif
-
 #else
 extern "C" {
 #if defined(MACOSX)

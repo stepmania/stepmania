@@ -1,9 +1,4 @@
 list(APPEND JPEG_SRC
-  "libjpeg/ansi2knr.c"
-  "libjpeg/cdjpeg.c"
-  "libjpeg/cjpeg.c"
-  "libjpeg/ckconfig.c"
-  "libjpeg/djpeg.c"
   "libjpeg/jaricom.c"
   "libjpeg/jcapimin.c"
   "libjpeg/jcapistd.c"
@@ -25,6 +20,7 @@ list(APPEND JPEG_SRC
   "libjpeg/jdapistd.c"
   "libjpeg/jdarith.c"
   "libjpeg/jdatadst.c"
+  "libjpeg/jdatasrc.c"
   "libjpeg/jdcoefct.c"
   "libjpeg/jdcolor.c"
   "libjpeg/jddctmgr.c"
@@ -41,25 +37,41 @@ list(APPEND JPEG_SRC
   "libjpeg/jfdctflt.c"
   "libjpeg/jfdctfst.c"
   "libjpeg/jfdctint.c"
-  "libjpeg/jutils.c"
   "libjpeg/jidctflt.c"
   "libjpeg/jidctfst.c"
   "libjpeg/jidctint.c"
-  "libjpeg/jmemansi.c"
   "libjpeg/jmemmgr.c"
-  "libjpeg/jmemname.c"
   "libjpeg/jmemnobs.c"
   "libjpeg/jquant1.c"
   "libjpeg/jquant2.c"
+  "libjpeg/jutils.c"
 )
 
-source_group("" FILES ${JPEG_SRC})
+if(APPLE)
+  list(APPEND JPEG_SRC "jmemmac.c")
+endif()
 
-add_library("jpeg" ${JPEG_SRC})
+list(APPEND JPEG_HPP
+  "libjpeg/jconfig.h"
+  "libjpeg/jdct.h"
+  "libjpeg/jerror.h"
+  "libjpeg/jinclude.h"
+  "libjpeg/jmemsys.h"
+  "libjpeg/jmorecfg.h"
+  "libjpeg/jpegint.h"
+  "libjpeg/jpeglib.h"
+  "libjpeg/jversion.h"
+)
+
+source_group("" FILES ${JPEG_SRC} ${JPEG_HPP})
+
+add_library("jpeg" ${JPEG_SRC} ${JPEG_HPP})
 
 disable_project_warnings("jpeg")
 
 set_property(TARGET "jpeg" PROPERTY FOLDER "External Libraries")
+
+target_include_directories("jpeg" PUBLIC "libjpeg")
 
 if(MSVC)
   sm_add_compile_definition("jpeg" _CRT_SECURE_NO_WARNINGS)
