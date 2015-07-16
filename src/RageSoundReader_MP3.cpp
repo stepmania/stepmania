@@ -9,11 +9,7 @@
 #include <cerrno>
 #include <map>
 
-#if defined(_WINDOWS) || defined(MACOSX)
-#include "../extern/mad-0.15.1b/mad.h"
-#else
 #include <mad.h>
-#endif // _WINDOWS
 
 // ID3 code from libid3:
 enum tagtype {
