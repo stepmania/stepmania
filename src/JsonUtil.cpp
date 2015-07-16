@@ -13,7 +13,7 @@ bool JsonUtil::LoadFromString(Json::Value &root, RString sData, RString &sErrorO
 	bool parsingSuccessful = reader.parse(sData, root);
 	if (!parsingSuccessful)
 	{
-		RString err = reader.getFormatedErrorMessages();
+		RString err = reader.getFormattedErrorMessages();
 		LOG->Warn("JSON: LoadFromFileShowErrors failed: %s", err.c_str());
 		return false;
 	}
