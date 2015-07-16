@@ -623,13 +623,14 @@ namespace
 	{
 		RString sPath( SArg(1) );
 		int iLevel = IArg(2);
+		bool optional= lua_toboolean(L, 3);
 		luaL_where( L, iLevel );
 		RString sWhere = lua_tostring( L, -1 );
 		if( sWhere.size() > 2 && sWhere.substr(sWhere.size()-2, 2) == ": " )
 			sWhere = sWhere.substr( 0, sWhere.size()-2 ); // remove trailing ": "
 
 		LUA->YieldLua();
-		bool bRet = ActorUtil::ResolvePath( sPath, sWhere );
+		bool bRet = ActorUtil::ResolvePath(sPath, sWhere, optional);
 		LUA->UnyieldLua();
 
 		if( !bRet )

@@ -79,7 +79,7 @@ setmetatable( Def, {
 	end,
 })
 
-function ResolveRelativePath( path, level )
+function ResolveRelativePath(path, level, optional)
 	if path:sub(1,1) ~= "/" then
 		-- "Working directory":
 		local sDir = DebugPathToRealPath( debug.getinfo(level+1,"S").source )
@@ -88,7 +88,7 @@ function ResolveRelativePath( path, level )
 		path = sDir .. path
 	end
 
-	path = ActorUtil.ResolvePath( path, level+1 )
+	path = ActorUtil.ResolvePath(path, level+1, optional)
 	return path
 end
 
