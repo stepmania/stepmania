@@ -603,7 +603,7 @@ list(APPEND SM_INCLUDE_DIRS
 )
 if(NOT APPLE)
   list(APPEND SM_INCLUDE_DIRS
-    "${SM_EXTERN_DIR}/glew-1.5.8/include"
+    "${SM_EXTERN_DIR}/glew-1.12.0/include"
     "${SM_EXTERN_DIR}/jsoncpp/include"
     "${SM_EXTERN_DIR}/zlib"
   )
