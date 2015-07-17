@@ -63,7 +63,8 @@ list(APPEND JPEG_HPP
   "libjpeg/src/jversion.h"
 )
 
-source_group("" FILES ${JPEG_SRC} ${JPEG_HPP})
+source_group("Source Files" FILES ${JPEG_SRC})
+source_group("Header Files" FILES ${JPEG_HPP})
 
 add_library("jpeg" ${JPEG_SRC} ${JPEG_HPP})
 
