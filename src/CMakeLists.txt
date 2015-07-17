@@ -270,6 +270,7 @@ if(WIN32)
   sm_add_compile_definition("${SM_EXE_NAME}" _CRT_SECURE_NO_WARNINGS)
   sm_add_compile_definition("${SM_EXE_NAME}" _WINSOCK_DEPRECATED_NO_WARNINGS)
   sm_add_compile_definition("${SM_EXE_NAME}" GLEW_STATIC)
+  sm_add_compile_definition("${SM_EXE_NAME}" PCRE_STATIC)
   
   set_target_properties("${SM_EXE_NAME}" PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${SM_PROGRAM_DIR}"
@@ -605,7 +606,7 @@ if(NOT APPLE)
   list(APPEND SM_INCLUDE_DIRS
     "${SM_EXTERN_DIR}/glew-1.12.0/include"
     "${SM_EXTERN_DIR}/jsoncpp-0.10.4/include"
-    "${SM_EXTERN_DIR}/zlib"
+    "${SM_EXTERN_DIR}/zlib-1.2.8/include"
   )
   if(MSVC)
     list(APPEND SM_INCLUDE_DIRS

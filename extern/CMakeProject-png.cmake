@@ -1,33 +1,35 @@
+set(PNG_DIR "libpng-1.6.17")
+
 set(PNG_SRC
-  "libpng-1.6.17/src/png.c"
-  "libpng-1.6.17/src/pngerror.c"
-  "libpng-1.6.17/src/pngget.c"
-  "libpng-1.6.17/src/pngmem.c"
-  "libpng-1.6.17/src/pngpread.c"
-  "libpng-1.6.17/src/pngread.c"
-  "libpng-1.6.17/src/pngrio.c"
-  "libpng-1.6.17/src/pngrtran.c"
-  "libpng-1.6.17/src/pngrutil.c"
-  "libpng-1.6.17/src/pngset.c"
-  "libpng-1.6.17/src/pngtrans.c"
-  "libpng-1.6.17/src/pngwio.c"
-  "libpng-1.6.17/src/pngwrite.c"
-  "libpng-1.6.17/src/pngwtran.c"
-  "libpng-1.6.17/src/pngwutil.c"
+  "${PNG_DIR}/src/png.c"
+  "${PNG_DIR}/src/pngerror.c"
+  "${PNG_DIR}/src/pngget.c"
+  "${PNG_DIR}/src/pngmem.c"
+  "${PNG_DIR}/src/pngpread.c"
+  "${PNG_DIR}/src/pngread.c"
+  "${PNG_DIR}/src/pngrio.c"
+  "${PNG_DIR}/src/pngrtran.c"
+  "${PNG_DIR}/src/pngrutil.c"
+  "${PNG_DIR}/src/pngset.c"
+  "${PNG_DIR}/src/pngtrans.c"
+  "${PNG_DIR}/src/pngwio.c"
+  "${PNG_DIR}/src/pngwrite.c"
+  "${PNG_DIR}/src/pngwtran.c"
+  "${PNG_DIR}/src/pngwutil.c"
 )
 
 set(PNG_HPP
-  "libpng-1.6.17/include/png.h"
-  "libpng-1.6.17/include/pngconf.h"
-  "libpng-1.6.17/src/pngdebug.h"
-  "libpng-1.6.17/src/pnginfo.h"
-  "libpng-1.6.17/include/pnglibconf.h"
-  "libpng-1.6.17/src/pngpriv.h"
-  "libpng-1.6.17/src/pngstruct.h"
+  "${PNG_DIR}/include/png.h"
+  "${PNG_DIR}/include/pngconf.h"
+  "${PNG_DIR}/src/pngdebug.h"
+  "${PNG_DIR}/src/pnginfo.h"
+  "${PNG_DIR}/include/pnglibconf.h"
+  "${PNG_DIR}/src/pngpriv.h"
+  "${PNG_DIR}/src/pngstruct.h"
 )
 
-source_group("" FILES ${PNG_SRC})
-source_group("" FILES ${PNG_HPP})
+source_group("Source Files" FILES ${PNG_SRC})
+source_group("Header Files" FILES ${PNG_HPP})
 
 add_library("png" ${PNG_SRC} ${PNG_HPP})
 
@@ -39,5 +41,8 @@ if(MSVC)
   sm_add_compile_definition("png" _CRT_SECURE_NO_WARNINGS)
 endif()
 
-target_include_directories("png" PUBLIC "libpng-1.6.17/include")
-target_include_directories("png" PUBLIC "zlib")
+target_include_directories("png" PUBLIC "${PNG_DIR}/include")
+
+if(APPLE OR MSVC)
+  target_include_directories("png" PRIVATE "${ZLIB_DIR}/include")
+endif()

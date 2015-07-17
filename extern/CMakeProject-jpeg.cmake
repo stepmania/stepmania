@@ -1,4 +1,4 @@
-list(APPEND JPEG_SRC
+set(JPEG_SRC
   "libjpeg/src/jaricom.c"
   "libjpeg/src/jcapimin.c"
   "libjpeg/src/jcapistd.c"
@@ -51,7 +51,7 @@ if(APPLE)
   list(APPEND JPEG_SRC "jmemmac.c")
 endif()
 
-list(APPEND JPEG_HPP
+set(JPEG_HPP
   "libjpeg/include/jconfig.h"
   "libjpeg/src/jdct.h"
   "libjpeg/include/jerror.h"

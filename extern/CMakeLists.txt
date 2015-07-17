@@ -1,18 +1,17 @@
 include(CMakeProject-glew.cmake)
 include(CMakeProject-json.cmake)
 include(CMakeProject-lua.cmake)
-include(CMakeProject-png.cmake)
-include(CMakeProject-tomcrypt.cmake)
-include(CMakeProject-tommath.cmake)
-
-if (NOT SYSTEM_PCRE_FOUND)
-  include(CMakeProject-pcre.cmake)
-endif()
-
 if (APPLE OR MSVC)
   include(CMakeProject-jpeg.cmake)
   include(CMakeProject-mad.cmake)
   include(CMakeProject-zlib.cmake)
+endif()
+include(CMakeProject-png.cmake)
+include(CMakeProject-tommath.cmake)
+include(CMakeProject-tomcrypt.cmake)
+
+if (NOT SYSTEM_PCRE_FOUND)
+  include(CMakeProject-pcre.cmake)
 endif()
 
 if (MSVC)

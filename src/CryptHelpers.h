@@ -3,7 +3,7 @@
 
 #if !defined(DISABLE_CRYPTO)
 
-#include "libtomcrypt/src/headers/tomcrypt.h"
+#include <tomcrypt.h>
 
 class PRNGWrapper
 {

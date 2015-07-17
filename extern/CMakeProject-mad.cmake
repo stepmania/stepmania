@@ -1,38 +1,40 @@
-list(APPEND MAD_SRC
-  "libmad-0.15.1b/src/bit.c"
-  "libmad-0.15.1b/src/decoder.c"
-  "libmad-0.15.1b/src/fixed.c"
-  "libmad-0.15.1b/src/frame.c"
-  "libmad-0.15.1b/src/huffman.c"
-  "libmad-0.15.1b/src/layer12.c"
-  "libmad-0.15.1b/src/layer3.c"
-  "libmad-0.15.1b/src/stream.c"
-  "libmad-0.15.1b/src/synth.c"
-  "libmad-0.15.1b/src/timer.c"
-  "libmad-0.15.1b/src/version.c"
+set(MAD_DIR "libmad-0.15.1b")
+
+set(MAD_SRC
+  "${MAD_DIR}/src/bit.c"
+  "${MAD_DIR}/src/decoder.c"
+  "${MAD_DIR}/src/fixed.c"
+  "${MAD_DIR}/src/frame.c"
+  "${MAD_DIR}/src/huffman.c"
+  "${MAD_DIR}/src/layer12.c"
+  "${MAD_DIR}/src/layer3.c"
+  "${MAD_DIR}/src/stream.c"
+  "${MAD_DIR}/src/synth.c"
+  "${MAD_DIR}/src/timer.c"
+  "${MAD_DIR}/src/version.c"
 )
 
-list(APPEND MAD_HPP
-  "libmad-0.15.1b/src/bit.h"
-  "libmad-0.15.1b/src/decoder.h"
-  "libmad-0.15.1b/src/fixed.h"
-  "libmad-0.15.1b/src/frame.h"
-  "libmad-0.15.1b/src/global.h"
-  "libmad-0.15.1b/src/huffman.h"
-  "libmad-0.15.1b/src/layer12.h"
-  "libmad-0.15.1b/src/layer3.h"
-  "libmad-0.15.1b/src/stream.h"
-  "libmad-0.15.1b/src/synth.h"
-  "libmad-0.15.1b/src/timer.h"
-  "libmad-0.15.1b/src/version.h"
+set(MAD_HPP
+  "${MAD_DIR}/src/bit.h"
+  "${MAD_DIR}/src/decoder.h"
+  "${MAD_DIR}/src/fixed.h"
+  "${MAD_DIR}/src/frame.h"
+  "${MAD_DIR}/src/global.h"
+  "${MAD_DIR}/src/huffman.h"
+  "${MAD_DIR}/src/layer12.h"
+  "${MAD_DIR}/src/layer3.h"
+  "${MAD_DIR}/src/stream.h"
+  "${MAD_DIR}/src/synth.h"
+  "${MAD_DIR}/src/timer.h"
+  "${MAD_DIR}/src/version.h"
 )
 
-list(APPEND MAD_DAT
-  "libmad-0.15.1b/src/D.dat"
-  "libmad-0.15.1b/src/imdct_s.dat"
-  "libmad-0.15.1b/src/qc_table.dat"
-  "libmad-0.15.1b/src/rq_table.dat"
-  "libmad-0.15.1b/src/sf_table.dat"
+set(MAD_DAT
+  "${MAD_DIR}/src/D.dat"
+  "${MAD_DIR}/src/imdct_s.dat"
+  "${MAD_DIR}/src/qc_table.dat"
+  "${MAD_DIR}/src/rq_table.dat"
+  "${MAD_DIR}/src/sf_table.dat"
 )
 
 source_group("Source Files" FILES ${MAD_SRC})
@@ -89,4 +91,4 @@ elseif(APPLE)
   sm_add_compile_definition("mad" FPM_64BIT=1)
 endif(MSVC)
 
-target_include_directories("mad" PUBLIC "libmad-0.15.1b/include")
+target_include_directories("mad" PUBLIC "${MAD_DIR}/include")

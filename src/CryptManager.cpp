@@ -9,7 +9,7 @@
 #include "LuaReference.h"
 #include "LuaManager.h"
 
-#include "libtomcrypt/src/headers/tomcrypt.h"
+#include <tomcrypt.h>
 
 CryptManager*	CRYPTMAN	= NULL;	// global and accessible from anywhere in our program
 
@@ -258,7 +258,7 @@ bool CryptManager::Sign( RString sPath, RString &sSignatureOut, RString sPrivKey
 	int iRet = rsa_sign_hash_ex(
 			buf_hash, sizeof(buf_hash),
 			signature, &signature_len,
-			LTC_PKCS_1_V1_5, &g_pPRNG->m_PRNG, g_pPRNG->m_iPRNG, iHash,
+			LTC_LTC_PKCS_1_V1_5, &g_pPRNG->m_PRNG, g_pPRNG->m_iPRNG, iHash,
 			0, &key.m_Key);
 	if( iRet != CRYPT_OK )
 	{
@@ -335,7 +335,7 @@ bool CryptManager::Verify( RageFileBasic &file, RString sSignature, RString sPub
 	int iMatch;
 	int iRet = rsa_verify_hash_ex( (const unsigned char *) sSignature.data(), sSignature.size(),
 			buf_hash, sizeof(buf_hash),
-			LTC_PKCS_1_EMSA, iHash, 0, &iMatch, &key.m_Key );
+			LTC_LTC_PKCS_1_EMSA, iHash, 0, &iMatch, &key.m_Key );
 
 	if( iRet != CRYPT_OK )
 	{

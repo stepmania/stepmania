@@ -1,11 +1,13 @@
-list(APPEND OGG_SRC
-  "libogg-1.3.2/src/bitwise.c"
-  "libogg-1.3.2/src/framing.c"
+set(OGG_DIR "libogg-1.3.2")
+
+set(OGG_SRC
+  "${OGG_DIR}/src/bitwise.c"
+  "${OGG_DIR}/src/framing.c"
 )
 
-list(APPEND OGG_HPP
-  "libogg-1.3.2/include/ogg/ogg.h"
-  "libogg-1.3.2/include/ogg/os_types.h"
+set(OGG_HPP
+  "${OGG_DIR}/include/ogg/ogg.h"
+  "${OGG_DIR}/include/ogg/os_types.h"
 )
 
 source_group("" FILES ${OGG_SRC} ${OGG_HPP})
@@ -16,4 +18,4 @@ set_property(TARGET "ogg" PROPERTY FOLDER "External Libraries")
 
 disable_project_warnings("ogg")
 
-target_include_directories("ogg" PUBLIC "libogg-1.3.2/include")
+target_include_directories("ogg" PUBLIC "${OGG_DIR}/include")

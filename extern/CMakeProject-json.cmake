@@ -1,23 +1,25 @@
-list(APPEND JSON_SRC
-  "jsoncpp-0.10.4/src/lib_json/json_reader.cpp"
-  "jsoncpp-0.10.4/src/lib_json/json_value.cpp"
-  "jsoncpp-0.10.4/src/lib_json/json_writer.cpp"
+set(JSON_DIR "jsoncpp-0.10.4")
+
+set(JSON_SRC
+  "${JSON_DIR}/src/lib_json/json_reader.cpp"
+  "${JSON_DIR}/src/lib_json/json_value.cpp"
+  "${JSON_DIR}/src/lib_json/json_writer.cpp"
 )
 
-list(APPEND JSON_HPP
-  "jsoncpp-0.10.4/src/lib_json/json_tool.h"
-  "jsoncpp-0.10.4/src/lib_json/json_valueiterator.inl"
+set(JSON_HPP
+  "${JSON_DIR}/src/lib_json/json_tool.h"
+  "${JSON_DIR}/src/lib_json/json_valueiterator.inl"
 )
 
-list(APPEND JSON_API
-  "jsoncpp-0.10.4/include/json/assertions.h"
-  "jsoncpp-0.10.4/include/json/config.h"
-  "jsoncpp-0.10.4/include/json/features.h"
-  "jsoncpp-0.10.4/include/json/forwards.h"
-  "jsoncpp-0.10.4/include/json/reader.h"
-  "jsoncpp-0.10.4/include/json/value.h"
-  "jsoncpp-0.10.4/include/json/version.h"
-  "jsoncpp-0.10.4/include/json/writer.h"
+set(JSON_API
+  "${JSON_DIR}/include/json/assertions.h"
+  "${JSON_DIR}/include/json/config.h"
+  "${JSON_DIR}/include/json/features.h"
+  "${JSON_DIR}/include/json/forwards.h"
+  "${JSON_DIR}/include/json/reader.h"
+  "${JSON_DIR}/include/json/value.h"
+  "${JSON_DIR}/include/json/version.h"
+  "${JSON_DIR}/include/json/writer.h"
 )
 
 source_group("Source Files" FILES ${JSON_SRC})
@@ -34,4 +36,4 @@ endif()
 
 disable_project_warnings("jsoncpp")
 
-target_include_directories("jsoncpp" PUBLIC "jsoncpp-0.10.4/include")
+target_include_directories("jsoncpp" PUBLIC "${JSON_DIR}/include")

@@ -180,8 +180,18 @@ float fmodfp(float x, float y)
 
 int power_of_two( int iInput )
 {
-	return static_cast<int>(powf(2.0f, ceilf(
-		log(static_cast<float>(iInput)) / log(2.0f))));
+	int n = 31, i = iInput;
+	if (i >> 16) i >>= 16;
+	else n -= 16;
+	if (i >> 8) i >>= 8;
+	else n -= 8;
+	if (i >> 4) i >>= 4;
+	else n -= 4;
+	if (i >> 2) i >>= 2;
+	else n -= 2;
+	if (i >> 1 == 0) n -= 1;
+	int value = 1 << n;
+	return (iInput == value) ? value : (value << 1);
 }
 
 bool IsAnInt( const RString &s )
@@ -1429,11 +1439,7 @@ bool GetFileContents( const RString &sFile, vector<RString> &asOut )
 	return true;
 }
 
-#ifndef USE_SYSTEM_PCRE
-#include "../extern/pcre/pcre.h"
-#else
 #include <pcre.h>
-#endif
 void Regex::Compile()
 {
 	const char *error;
