@@ -134,8 +134,8 @@ void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, RString &sNameOut, floa
 		case TW_Attack:
 			defaultValueOut = 0.135f;
 			break;
-		case TW_Checkpoint: // similar to TW_Hold, but a little more strict typically.
-			defaultValueOut = 0.2f;
+		case TW_Checkpoint: // similar to TW_Hold, but a little more strict/accurate to Pump play.
+			defaultValueOut = 0.1664f;
 			break;
 		default:
 			FAIL_M(ssprintf("Invalid timing window: %i", static_cast<int>(i)));
