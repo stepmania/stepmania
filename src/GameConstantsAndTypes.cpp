@@ -280,6 +280,7 @@ static const char *TimingWindowNames[] = {
 	"Attack",
 	"Hold",
 	"Roll",
+	"Checkpoint"
 };
 XToString( TimingWindow );
 
