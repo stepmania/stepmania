@@ -222,7 +222,7 @@ struct garv_state
 	TapNoteScore lifts_tns;
 	bool judgable;
 	garv_state()
-		:curr_row(0), notes_hit_for_stream(0), jumps_hit_for_air(0),
+		:curr_row(-1), notes_hit_for_stream(0), jumps_hit_for_air(0),
 		 holds_held(0), rolls_held(0), notes_hit(0), taps_hit(0), jumps_hit(0),
 		 hands_hit(0), mines_avoided(0), lifts_hit(0), num_notes_on_curr_row(0),
 		 num_holds_on_curr_row(0), num_notes_hit_on_curr_row(0),

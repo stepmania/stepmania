@@ -1437,8 +1437,19 @@
 			<Function name='FinishRenderingTo'/>
 		</Class>
 		<Class base='BitmapText' name='RollingNumbers'>
-			<Function name='Load'/>
-			<Function name='targetnumber'/>
+			<Function name='get_approach_seconds'/>
+			<Function name='get_chars_wide'/>
+			<Function name='get_commify'/>
+			<Function name='get_leading_glyph'/>
+			<Function name='get_text_format'/>
+			<Function name='set_approach_seconds'/>
+			<Function name='set_chars_wide'/>
+			<Function name='set_commify'/>
+			<Function name='set_leading_attribute'/>
+			<Function name='set_number_attribute'/>
+			<Function name='set_leading_glyph'/>
+			<Function name='set_text_format'/>
+			<Function name='target_number'/>
 		</Class>
 		<Class base='BitmapText' name='ScoreDisplayAliveTime'/>
 		<Class base='BitmapText' name='ScoreDisplayCalories'/>
