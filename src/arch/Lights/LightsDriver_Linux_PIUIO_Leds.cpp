@@ -24,14 +24,14 @@ namespace {
 
 	const char *dance_leds[NUM_GameController][NUM_GameButton] = {
 		{
-			NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 			"/sys/class/leds/piuio::output20/brightness",
 			"/sys/class/leds/piuio::output21/brightness",
 			"/sys/class/leds/piuio::output18/brightness",
 			"/sys/class/leds/piuio::output19/brightness",
 		},
 		{
-			NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 			"/sys/class/leds/piuio::output4/brightness",
 			"/sys/class/leds/piuio::output5/brightness",
 			"/sys/class/leds/piuio::output2/brightness",
@@ -41,7 +41,7 @@ namespace {
 
 	const char *pump_leds[NUM_GameController][NUM_GameButton] = {
 		{
-			NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 			"/sys/class/leds/piuio::output2/brightness",
 			"/sys/class/leds/piuio::output3/brightness",
 			"/sys/class/leds/piuio::output4/brightness",
@@ -49,7 +49,7 @@ namespace {
 			"/sys/class/leds/piuio::output6/brightness",
 		},
 		{
-			NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+			nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 			"/sys/class/leds/piuio::output18/brightness",
 			"/sys/class/leds/piuio::output19/brightness",
 			"/sys/class/leds/piuio::output20/brightness",
@@ -60,10 +60,10 @@ namespace {
 
 	bool SetLight(const char *filename, bool on)
 	{
-		if (filename == NULL)
+		if (filename == nullptr)
 			return true;
 		FILE *f = fopen(filename, "w");
-		if (f == NULL)
+		if (f == nullptr)
 		{
 			return false;
 		}

@@ -4,7 +4,7 @@
 /** @brief The different fields to potentially translate. */
 struct TitleFields
 {
-	void SaveToStrings( 
+	void SaveToStrings(
 		RString &sTitle, RString &sSubtitle, RString &sArtist,
 		RString &sTitleTranslit, RString &sSubtitleTranslit, RString &sArtistTranslit ) const
 	{
@@ -16,7 +16,7 @@ struct TitleFields
 		sArtistTranslit = ArtistTranslit;
 	}
 
-	void LoadFromStrings( 
+	void LoadFromStrings(
 		RString sTitle, RString sSubtitle, RString sArtist,
 		RString sTitleTranslit, RString sSubtitleTranslit, RString sArtistTranslit )
 	{
@@ -34,7 +34,7 @@ struct TitleTrans;
 /** @brief Automatic translation for Song titles. */
 class TitleSubst
 {
-	vector<TitleTrans *> ttab;
+	std::vector<TitleTrans *> ttab;
 
 	void AddTrans(const TitleTrans &tr);
 public:
@@ -53,7 +53,7 @@ public:
  * @author Glenn Maynard (c) 2003-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -63,7 +63,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

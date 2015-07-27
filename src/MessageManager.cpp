@@ -1,6 +1,5 @@
 #include "global.h"
 #include "MessageManager.h"
-#include "Foreach.h"
 #include "RageUtil.h"
 #include "RageThreads.h"
 #include "EnumHelper.h"
@@ -10,7 +9,7 @@
 #include <set>
 #include <map>
 
-MessageManager*	MESSAGEMAN = NULL;	// global and accessible from anywhere in our program
+MessageManager*	MESSAGEMAN = nullptr;	// global and accessible from anywhere in our program
 
 
 static const char *MessageIDNames[] = {
@@ -92,8 +91,8 @@ XToString( MessageID );
 
 static RageMutex g_Mutex( "MessageManager" );
 
-typedef set<IMessageSubscriber*> SubscribersSet;
-static map<RString,SubscribersSet> g_MessageToSubscribers;
+typedef std::set<IMessageSubscriber*> SubscribersSet;
+static std::map<RString,SubscribersSet> g_MessageToSubscribers;
 
 Message::Message( const RString &s )
 {
@@ -208,7 +207,7 @@ void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, MessageID m )
 void MessageManager::Broadcast( Message &msg ) const
 {
 	// GAMESTATE is created before MESSAGEMAN, and has several BroadcastOnChangePtr members, so they all broadcast when they're initialized.
-	if(this != NULL && m_Logging)
+	if(m_Logging)
 	{
 		LOG->Trace("MESSAGEMAN:Broadcast: %s", msg.GetName().c_str());
 	}
@@ -216,13 +215,12 @@ void MessageManager::Broadcast( Message &msg ) const
 
 	LockMut(g_Mutex);
 
-	map<RString,SubscribersSet>::const_iterator iter = g_MessageToSubscribers.find( msg.GetName() );
+	auto iter = g_MessageToSubscribers.find( msg.GetName() );
 	if( iter == g_MessageToSubscribers.end() )
 		return;
 
-	FOREACHS_CONST( IMessageSubscriber*, iter->second, p )
+	for (auto *pSub: iter->second)
 	{
-		IMessageSubscriber *pSub = *p;
 		pSub->HandleMessage( msg );
 	}
 }
@@ -243,7 +241,7 @@ bool MessageManager::IsSubscribedToMessage( IMessageSubscriber* pSubscriber, con
 {
 	SubscribersSet& subs = g_MessageToSubscribers[sMessage];
 	return subs.find( pSubscriber ) != subs.end();
-}	
+}
 
 void IMessageSubscriber::ClearMessages( const RString sMessage )
 {
@@ -252,8 +250,10 @@ void IMessageSubscriber::ClearMessages( const RString sMessage )
 MessageSubscriber::MessageSubscriber( const MessageSubscriber &cpy ):
 	IMessageSubscriber(cpy)
 {
-	FOREACH_CONST( RString, cpy.m_vsSubscribedTo, msg )
-		this->SubscribeToMessage( *msg );
+	for (auto const &msg: cpy.m_vsSubscribedTo)
+	{
+		this->SubscribeToMessage(msg);
+	}
 }
 
 MessageSubscriber &MessageSubscriber::operator=(const MessageSubscriber &cpy)
@@ -263,8 +263,10 @@ MessageSubscriber &MessageSubscriber::operator=(const MessageSubscriber &cpy)
 
 	UnsubscribeAll();
 
-	FOREACH_CONST( RString, cpy.m_vsSubscribedTo, msg )
-		this->SubscribeToMessage( *msg );
+	for (auto const &msg: cpy.m_vsSubscribedTo)
+	{
+		this->SubscribeToMessage(msg);
+	}
 
 	return *this;
 }
@@ -283,8 +285,10 @@ void MessageSubscriber::SubscribeToMessage( MessageID message )
 
 void MessageSubscriber::UnsubscribeAll()
 {
-	FOREACH_CONST( RString, m_vsSubscribedTo, s )
-		MESSAGEMAN->Unsubscribe( this, *s );
+	for (auto const &s: m_vsSubscribedTo)
+	{
+		MESSAGEMAN->Unsubscribe( this, s );
+	}
 	m_vsSubscribedTo.clear();
 }
 
@@ -292,7 +296,7 @@ void MessageSubscriber::UnsubscribeAll()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the MessageManager. */ 
+/** @brief Allow Lua to have access to the MessageManager. */
 class LunaMessageManager: public Luna<MessageManager>
 {
 public:
@@ -311,7 +315,7 @@ public:
 	}
 	static int SetLogging(T* p, lua_State *L)
 	{
-		p->SetLogging(lua_toboolean(L, -1));
+		p->SetLogging(lua_toboolean(L, -1) != 0);
 		COMMON_RETURN_SELF;
 	}
 
@@ -328,7 +332,7 @@ LUA_REGISTER_CLASS( MessageManager )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -338,7 +342,7 @@ LUA_REGISTER_CLASS( MessageManager )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

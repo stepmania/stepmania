@@ -31,19 +31,19 @@ struct ConfOption
 
 	/* Return the list of available selections; Get() and Put() use indexes into
 	 * this array. UpdateAvailableOptions() should be called before using this. */
-	void MakeOptionsList( vector<RString> &out ) const;
+	void MakeOptionsList( std::vector<RString> &out ) const;
 
 	inline int Get() const { int sel; MoveData( sel, true, this ); return sel; }
 	inline void Put( int sel ) const { MoveData( sel, false, this ); }
 	int GetEffects() const;
 
 	ConfOption( const char *n, MoveData_t m,
-		const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL )
+		const char *c0=nullptr, const char *c1=nullptr, const char *c2=nullptr, const char *c3=nullptr, const char *c4=nullptr, const char *c5=nullptr, const char *c6=nullptr, const char *c7=nullptr, const char *c8=nullptr, const char *c9=nullptr, const char *c10=nullptr, const char *c11=nullptr, const char *c12=nullptr, const char *c13=nullptr, const char *c14=nullptr, const char *c15=nullptr, const char *c16=nullptr, const char *c17=nullptr, const char *c18=nullptr, const char *c19=nullptr )
 	{
 		name = n;
 		m_sPrefName = name; // copy from name (not n), to allow refcounting
 		MoveData = m;
-		MakeOptionsListCB = NULL;
+		MakeOptionsListCB = nullptr;
 		m_iEffects = 0;
 		m_bAllowThemeItems = true;
 #define PUSH( c )	if(c) names.push_back(c);
@@ -53,7 +53,7 @@ struct ConfOption
 #undef PUSH
 
 	ConfOption( const char *n, MoveData_t m,
-			void (*lst)( vector<RString> &out ) )
+			void (*lst)( std::vector<RString> &out ) )
 	{
 		name = n;
 		MoveData = m;
@@ -64,8 +64,8 @@ struct ConfOption
 
 
 // private:
-	vector<RString> names;
-	void (*MakeOptionsListCB)( vector<RString> &out );
+	std::vector<RString> names;
+	void (*MakeOptionsListCB)( std::vector<RString> &out );
 };
 
 #endif
@@ -75,7 +75,7 @@ struct ConfOption
  * @author Glenn Maynard (c) 2003-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -85,7 +85,7 @@ struct ConfOption
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

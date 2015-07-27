@@ -8,9 +8,10 @@
 #include "RageLog.h"
 #include "RageMath.h"
 #include "StageStats.h"
-#include "Foreach.h"
 #include "Song.h"
 #include "XmlFile.h"
+
+using std::vector;
 
 //#define DIVIDE_LINE_WIDTH			THEME->GetMetricI(m_sName,"TexturedBottomHalf")
 REGISTER_ACTOR_CLASS( GraphDisplay );
@@ -28,7 +29,7 @@ public:
 
 		DISPLAY->ClearAllTextures();
 
-		// Must call this after setting the texture or else texture 
+		// Must call this after setting the texture or else texture
 		// parameters have no effect.
 		Actor::SetTextureRenderStates();
 
@@ -67,7 +68,7 @@ public:
 		{
 			MakeCircle( m_LineStrip[i], &m_pCircles[0] + iCircleVertices*i, iSubdivisions, 1 );
 		}
-		
+
 		int iNumLines = iSize-1;
 		m_Quads.resize( iNumLines * 4 );
 		for( int i = 0; i < iNumLines; ++i )
@@ -89,7 +90,7 @@ public:
 			int iLineWidth = 2;
 			float ydist = lsin * iLineWidth/2;
 			float xdist = lcos * iLineWidth/2;
-			
+
 			v[0].p.x += xdist;
 			v[0].p.y -= ydist;
 			v[1].p.x -= xdist;
@@ -126,7 +127,7 @@ public:
 	~GraphBody()
 	{
 		TEXTUREMAN->UnloadTexture( m_pTexture );
-		m_pTexture = NULL;
+		m_pTexture = nullptr;
 	}
 
 	void DrawPrimitives()
@@ -136,7 +137,7 @@ public:
 		DISPLAY->ClearAllTextures();
 		DISPLAY->SetTexture( TextureUnit_1, m_pTexture->GetTexHandle() );
 
-		// Must call this after setting the texture or else texture 
+		// Must call this after setting the texture or else texture
 		// parameters have no effect.
 		Actor::SetTextureRenderStates();
 
@@ -150,14 +151,16 @@ public:
 
 GraphDisplay::GraphDisplay()
 {
-	m_pGraphLine = NULL;
-	m_pGraphBody = NULL;
+	m_pGraphLine = nullptr;
+	m_pGraphBody = nullptr;
 }
 
 GraphDisplay::~GraphDisplay()
 {
-	FOREACH( Actor*, m_vpSongBoundaries, p )
-		SAFE_DELETE( *p );
+	for (auto *p: m_vpSongBoundaries)
+	{
+		SAFE_DELETE( p );
+	}
 	m_vpSongBoundaries.clear();
 	SAFE_DELETE( m_pGraphLine );
 	SAFE_DELETE( m_pGraphBody );
@@ -176,9 +179,10 @@ void GraphDisplay::Set( const StageStats &ss, const PlayerStageStats &pss )
 
 	// Show song boundaries
 	float fSec = 0;
-	FOREACH_CONST( Song*, ss.m_vpPossibleSongs, song )
+	auto &songs = ss.m_vpPossibleSongs;
+	for (auto song = songs.begin(); song != songs.end(); ++song)
 	{
-		if( song == ss.m_vpPossibleSongs.end()-1 )
+		if( song == songs.end()-1 )
 			continue;
 		fSec += (*song)->GetStepsSeconds();
 
@@ -220,8 +224,8 @@ void GraphDisplay::Set( const StageStats &ss, const PlayerStageStats &pss )
 
 void GraphDisplay::Load( RString sMetricsGroup )
 {
-	m_size.x = THEME->GetMetricI( sMetricsGroup, "BodyWidth" );
-	m_size.y = THEME->GetMetricI( sMetricsGroup, "BodyHeight" );
+	m_size.x = static_cast<float>(THEME->GetMetricI(sMetricsGroup, "BodyWidth"));
+	m_size.y = static_cast<float>(THEME->GetMetricI(sMetricsGroup, "BodyHeight"));
 
 	m_sprBacking.Load( THEME->GetPathG(sMetricsGroup,"Backing") );
 	m_sprBacking->ZoomToWidth( m_size.x );
@@ -275,7 +279,7 @@ void GraphDisplay::UpdateVerts()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the GraphDisplay. */ 
+/** @brief Allow Lua to have access to the GraphDisplay. */
 class LunaGraphDisplay: public Luna<GraphDisplay>
 {
 public:
@@ -288,11 +292,11 @@ public:
 	{
 		StageStats *pStageStats = Luna<StageStats>::check( L, 1 );
 		PlayerStageStats *pPlayerStageStats = Luna<PlayerStageStats>::check( L, 2 );
-		if(pStageStats == NULL)
+		if(pStageStats == nullptr)
 		{
 			luaL_error(L, "The StageStats passed to GraphDisplay:Set are nil.");
 		}
-		if(pPlayerStageStats == NULL)
+		if(pPlayerStageStats == nullptr)
 		{
 			luaL_error(L, "The PlayerStageStats passed to GraphDisplay:Set are nil.");
 		}
@@ -313,7 +317,7 @@ LUA_REGISTER_DERIVED_CLASS( GraphDisplay, ActorFrame )
 /*
  * (c) 2003 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -323,7 +327,7 @@ LUA_REGISTER_DERIVED_CLASS( GraphDisplay, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

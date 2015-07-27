@@ -2,12 +2,13 @@
 #include "CharacterManager.h"
 #include "Character.h"
 #include "GameState.h"
-#include "Foreach.h"
 #include "LuaManager.h"
+
+using std::vector;
 
 #define CHARACTERS_DIR "/Characters/"
 
-CharacterManager*	CHARMAN = NULL;	// global object accessible from anywhere in the program
+CharacterManager*	CHARMAN = nullptr;	// global object accessible from anywhere in the program
 
 CharacterManager::CharacterManager()
 {
@@ -45,7 +46,7 @@ CharacterManager::CharacterManager()
 		else
 			delete pChar;
 	}
-	
+
 	if( !FoundDefault )
 		RageException::Throw( "'Characters/default' is missing." );
 
@@ -90,19 +91,23 @@ Character* CharacterManager::GetDefaultCharacter()
 
 	/* We always have the default character. */
 	FAIL_M("There must be a default character available!");
-	return NULL;
+	return nullptr;
 }
 
 void CharacterManager::DemandGraphics()
 {
-	FOREACH( Character*, m_pCharacters, c )
-		(*c)->DemandGraphics();
+	for (auto *c: m_pCharacters)
+	{
+		c->DemandGraphics();
+	}
 }
 
 void CharacterManager::UndemandGraphics()
 {
-	FOREACH( Character*, m_pCharacters, c )
-		(*c)->UndemandGraphics();
+	for (auto *c: m_pCharacters)
+	{
+		c->UndemandGraphics();
+	}
 }
 
 Character* CharacterManager::GetCharacterFromID( RString sCharacterID )
@@ -113,21 +118,21 @@ Character* CharacterManager::GetCharacterFromID( RString sCharacterID )
 			return m_pCharacters[i];
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the CharacterManager. */ 
+/** @brief Allow Lua to have access to the CharacterManager. */
 class LunaCharacterManager: public Luna<CharacterManager>
 {
 public:
 	static int GetCharacter( T* p, lua_State *L )
 	{
 		Character *pCharacter = p->GetCharacterFromID(SArg(1));
-		if( pCharacter != NULL )
+		if( pCharacter != nullptr )
 			pCharacter->PushSelf( L );
 		else
 			lua_pushnil( L );
@@ -137,7 +142,7 @@ public:
 	static int GetRandomCharacter( T* p, lua_State *L )
 	{
 		Character *pCharacter = p->GetRandomCharacter();
-		if( pCharacter != NULL )
+		if( pCharacter != nullptr )
 			pCharacter->PushSelf( L );
 		else
 			lua_pushnil( L );
@@ -177,7 +182,7 @@ LUA_REGISTER_CLASS( CharacterManager )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -187,7 +192,7 @@ LUA_REGISTER_CLASS( CharacterManager )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

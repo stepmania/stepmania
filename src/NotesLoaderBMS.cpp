@@ -18,6 +18,8 @@
 #include "ActorUtil.h"
 #include "RageFileManager.h"
 
+using std::vector;
+
 /* BMS encoding:	tap-hold
  * 4&8panel:	Player1		Player2
  * Left			11-51		21-61
@@ -93,6 +95,7 @@ static void SearchForDifficulty( RString sTag, Steps *pOut )
 
 static void SlideDuplicateDifficulties( Song &p )
 {
+	using std::min;
 	/* BMS files have to guess the Difficulty from the meter; this is inaccurate,
 	* and often leads to duplicates. Slide duplicate difficulties upwards.
 	* We only do this with BMS files, since a very common bug was having *all*
@@ -178,9 +181,8 @@ struct BMSMeasure
 	float size;
 };
 
-const int MaxBMSElements = 1296; // ZZ in b36
-typedef map<RString, RString> BMSHeaders;
-typedef map<int, BMSMeasure> BMSMeasures;
+typedef std::map<RString, RString> BMSHeaders;
+typedef std::map<int, BMSMeasure> BMSMeasures;
 typedef vector<BMSObject> BMSObjects;
 
 class BMSChart
@@ -195,7 +197,7 @@ public:
 	BMSObjects objects;
 	BMSHeaders headers;
 	BMSMeasures measures;
-	map<int, bool> referencedTracks;
+	std::map<int, bool> referencedTracks;
 
 	void TidyUpData();
 };
@@ -218,7 +220,7 @@ struct bmsCommandTree
 	struct bmsNodeS { // Each of these imply one branching level.
 		int branchHeight;
 		enum {
-			CT_NULL,
+			CT_nullptr,
 			CT_CONDITIONALCHAIN,
 			CT_IF,
 			CT_ELSEIF,
@@ -237,16 +239,16 @@ struct bmsCommandTree
 
 		bmsNodeS()
 		{
-			parent = NULL;
+			parent = nullptr;
 			conditionValue = 0;
-			conditionType = CT_NULL;
+			conditionType = CT_nullptr;
 		}
 
 		~bmsNodeS()
 		{
-			FOREACH(bmsNodeS*, branches, b)
+			for (auto *b: branches)
 			{
-				delete *b;
+				delete b;
 			}
 		}
 	};
@@ -264,8 +266,8 @@ struct bmsCommandTree
 		root.branchHeight = 0;
 		root.conditionValue = 0;
 		root.conditionTriggerValue = -1;
-		root.parent = NULL;
-		root.conditionType = bmsNodeS::CT_NULL;
+		root.parent = nullptr;
+		root.conditionType = bmsNodeS::CT_nullptr;
 
 		currentNode = &root;
 	}
@@ -354,13 +356,10 @@ struct bmsCommandTree
 
 	bool triggerBranches(bmsNodeS* node, BMSHeaders &headersOut, vector<RString> &linesOut)
 	{
-		FOREACH(bmsNodeS*, node->branches, b)
-			if (evaluateNode(*b, headersOut, linesOut))
-			{
-				return true;
-			}
-
-		return false;
+		auto doesEvaluate = [this, &headersOut, &linesOut](bmsNodeS *b) {
+			return evaluateNode(b, headersOut, linesOut);
+		};
+		return std::any_of(node->branches.begin(), node->branches.end(), doesEvaluate);
 	}
 
 	bool evaluateNode(bmsNodeS* node, BMSHeaders &headersOut, vector<RString> &linesOut)
@@ -384,7 +383,7 @@ struct bmsCommandTree
 				triggerBranches(node, headersOut, linesOut);
 				return true;
 			break;
-		case bmsNodeS::CT_NULL:
+		case bmsNodeS::CT_nullptr:
 			appendNodeElements(node, headersOut, linesOut);
 			triggerBranches(node, headersOut, linesOut);
 		default:
@@ -400,7 +399,7 @@ struct bmsCommandTree
 		evaluateNode(&root, headersOut, linesOut);
 	}
 
-	void doStatement(RString statement, map<int, bool> &referencedTracks)
+	void doStatement(RString statement, std::map<int, bool> &referencedTracks)
 	{
 		line++;
 
@@ -438,7 +437,7 @@ struct bmsCommandTree
 		}
 		else if (name == "#else")
 		{
-			if (currentNode->parent != NULL) // Not the root node.
+			if (currentNode->parent != nullptr) // Not the root node.
 			{
 				if (currentNode->parent->conditionType == bmsNodeS::CT_CONDITIONALCHAIN)
 				{
@@ -452,7 +451,7 @@ struct bmsCommandTree
 		}
 		else if (name == "#elseif")
 		{
-			if (currentNode->parent != NULL) // Not the root node.
+			if (currentNode->parent != nullptr) // Not the root node.
 			{
 				if (currentNode->parent->conditionType == bmsNodeS::CT_CONDITIONALCHAIN)
 				{
@@ -464,7 +463,7 @@ struct bmsCommandTree
 		}
 		else if (name == "#endif" || name == "#end")
 		{
-			if (currentNode->parent != NULL) // not the root node
+			if (currentNode->parent != nullptr) // not the root node
 			{
 				currentNode = currentNode->parent;
 			}
@@ -592,12 +591,12 @@ void BMSChart::TidyUpData()
 
 class BMSSong {
 
-	map<RString, int> mapKeysoundToIndex;
+	std::map<RString, int> mapKeysoundToIndex;
 	Song *out;
 
 	bool backgroundsPrecached;
 	void PrecacheBackgrounds(const RString &dir);
-	map<RString, RString> mapBackground;
+	std::map<RString, RString> mapBackground;
 
 public:
 	BMSSong( Song *song );
@@ -775,7 +774,7 @@ struct BMSChartInfo {
 	RString overrideMusicFile;
 	RString previewFile;
 
-	map<int, RString> backgroundChanges;
+	std::map<int, RString> backgroundChanges;
 };
 
 class BMSChartReader {
@@ -794,11 +793,11 @@ class BMSChartReader {
 	RString lnobj;
 
 	int nonEmptyTracksCount;
-	map<int, bool> nonEmptyTracks;
+	std::map<int, bool> nonEmptyTracks;
 
 	int GetKeysound( const BMSObject &obj );
 
-	map<RString, int> mapValueToKeysoundIndex;
+	std::map<RString, int> mapValueToKeysoundIndex;
 
 public:
 	BMSChartReader(BMSChart *chart, Steps *steps, BMSSong *song);
@@ -993,7 +992,7 @@ StepsType BMSChartReader::DetermineStepsType()
 
 int BMSChartReader::GetKeysound( const BMSObject &obj )
 {
-	map<RString, int>::iterator it = mapValueToKeysoundIndex.find(obj.value);
+	auto it = mapValueToKeysoundIndex.find(obj.value);
 	if( it == mapValueToKeysoundIndex.end() )
 	{
 		int index = -1;
@@ -1030,7 +1029,7 @@ bmFrac toFraction(double f)
 	long long upper = 1LL, lower = 1LL;
 	df = 1;
 
-	while (abs(df - f) > 0.000001)
+	while (std::abs(df - f) > 0.000001)
 	{
 		if (df < f)
 		{
@@ -1217,9 +1216,12 @@ bool BMSChartReader::ReadNoteData()
 			measureSize = 4.0f;
 			BMSMeasures::iterator it = in->measures.find(trackMeasure);
 			if( it != in->measures.end() ) measureSize = it->second.size * 4.0;
-			adjustedMeasureSize = measureSize;
-			if( trackMeasure < firstNoteMeasure ) adjustedMeasureSize = measureSize = 4.0f;
-
+			adjustedMeasureSize = static_cast<float>(measureSize);
+			if (trackMeasure < firstNoteMeasure)
+			{
+				measureSize = 4.0;
+				adjustedMeasureSize = 4.0f;
+			}
 			// measure size adjustment
 			{
 				bmFrac numFrac = toFraction(measureSize);
@@ -1230,10 +1232,10 @@ bool BMSChartReader::ReadNoteData()
 					num /= 2;
 					den /= 2;
 				}
-				td.SetTimeSignatureAtRow( BeatToNoteRow(measureStartBeat), num, den );
+				td.SetTimeSignatureAtRow(BeatToNoteRow(measureStartBeat), static_cast<int>(num), static_cast<int>(den));
 
 				// Since BMS measure events only last through the measure, we need to restore the default measure length.
-				td.SetTimeSignatureAtRow(BeatToNoteRow(measureStartBeat + measureSize), 4, 4);
+				td.SetTimeSignatureAtRow(BeatToNoteRow(measureStartBeat + static_cast<float>(measureSize)), 4, 4);
 			}
 			// end measure size adjustment
 		}
@@ -1247,7 +1249,10 @@ bool BMSChartReader::ReadNoteData()
 			int bpm;
 			if( sscanf(obj.value, "%x", &bpm) == 1 )
 			{
-				if( bpm > 0 ) td.SetBPMAtRow( row, measureAdjust * (currentBPM = bpm) );
+				if (bpm > 0)
+				{
+					td.SetBPMAtRow(row, measureAdjust * (currentBPM = static_cast<float>(bpm)));
+				}
 			}
 		}
 		else if( channel == 4 ) // bga change
@@ -1573,16 +1578,11 @@ void BMSSongLoader::AddToSong()
 				break;
 		}
 
-		map<int, RString>::const_iterator it = main.info.backgroundChanges.begin();
-
-		for (; it != main.info.backgroundChanges.end(); it++)
+		for (auto &it: main.info.backgroundChanges)
 		{
-			out->AddBackgroundChange(BACKGROUND_LAYER_1,
-									 BackgroundChange(NoteRowToBeat(it->first),
-													  it->second,
-													  "",
-													  1.f,
-													  it->second.substr(it->second.length()-4)==".lua"?SBE_Centered:SBE_StretchNoLoop));
+			auto sbe = it.second.substr(it.second.length() - 4) == ".lua" ? SBE_Centered : SBE_StretchNoLoop;
+			auto change = BackgroundChange(NoteRowToBeat(it.first), it.second, "", 1.f, sbe);
+			out->AddBackgroundChange(BACKGROUND_LAYER_1, change);
 		}
 
 		out->m_sMusicFile = main.info.musicFile;

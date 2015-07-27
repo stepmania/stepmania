@@ -18,9 +18,9 @@ public:
 	~NoteSkinManager();
 
 	void RefreshNoteSkinData( const Game* game );
-	void GetNoteSkinNames( const Game* game, vector<RString> &AddTo );
-	void GetNoteSkinNames( vector<RString> &AddTo );	// looks up current const Game* in GAMESTATE
-	bool NoteSkinNameInList(const RString name, vector<RString> name_list);
+	void GetNoteSkinNames( const Game* game, std::vector<RString> &AddTo );
+	void GetNoteSkinNames( std::vector<RString> &AddTo );	// looks up current const Game* in GAMESTATE
+	bool NoteSkinNameInList(const RString name, std::vector<RString> name_list);
 	bool DoesNoteSkinExist( const RString &sNoteSkin );	// looks up current const Game* in GAMESTATE
 	bool DoNoteSkinsExistForGame( const Game *pGame );
 	RString GetDefaultNoteSkinName();	// looks up current const Game* in GAMESTATE
@@ -33,7 +33,7 @@ public:
 	void SetGameController( GameController gc ) { m_GameController = gc; }
 	RString GetPath( const RString &sButtonName, const RString &sElement );
 	bool PushActorTemplate( Lua *L, const RString &sButton, const RString &sElement, bool bSpriteOnly );
-	Actor *LoadActor( const RString &sButton, const RString &sElement, Actor *pParent = NULL, bool bSpriteOnly = false );
+	Actor *LoadActor( const RString &sButton, const RString &sElement, Actor *pParent = nullptr, bool bSpriteOnly = false );
 
 	RString		GetMetric( const RString &sButtonName, const RString &sValue );
 	int		GetMetricI( const RString &sButtonName, const RString &sValueName );
@@ -46,7 +46,7 @@ public:
 
 protected:
 	RString GetPathFromDirAndFile( const RString &sDir, const RString &sFileName );
-	void GetAllNoteSkinNamesForGame( const Game *pGame, vector<RString> &AddTo );
+	void GetAllNoteSkinNamesForGame( const Game *pGame, std::vector<RString> &AddTo );
 
 	void LoadNoteSkinData( const RString &sNoteSkinName, NoteSkinData& data_out );
 	void LoadNoteSkinDataRecursive( const RString &sNoteSkinName, NoteSkinData& data_out );
@@ -75,7 +75,7 @@ public:
  * @author Chris Danford (c) 2003-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -85,7 +85,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

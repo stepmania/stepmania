@@ -20,10 +20,12 @@
 REGISTER_SCREEN_CLASS( ScreenWithMenuElements );
 ScreenWithMenuElements::ScreenWithMenuElements()
 {
-	m_MenuTimer = NULL;
+	m_MenuTimer = nullptr;
 	FOREACH_PlayerNumber( p )
-		m_MemoryCardDisplay[p] = NULL;
-	m_MenuTimer = NULL;
+	{
+		m_MemoryCardDisplay[p] = nullptr;
+	}
+	m_MenuTimer = nullptr;
 	m_bShouldAllowLateJoin= false;
 }
 
@@ -43,7 +45,7 @@ void ScreenWithMenuElements::Init()
 	{
 		FOREACH_PlayerNumber( p )
 		{
-			ASSERT( m_MemoryCardDisplay[p] == NULL );
+			ASSERT( m_MemoryCardDisplay[p] == nullptr );
 			m_MemoryCardDisplay[p] = new MemoryCardDisplay;
 			m_MemoryCardDisplay[p]->Load( p );
 			m_MemoryCardDisplay[p]->SetName( ssprintf("MemoryCardDisplayP%d",p+1) );
@@ -54,7 +56,7 @@ void ScreenWithMenuElements::Init()
 
 	if( TIMER_SECONDS != -1 )
 	{
-		ASSERT( m_MenuTimer == NULL );	// don't load twice
+		ASSERT( m_MenuTimer == nullptr );	// don't load twice
 		m_MenuTimer = new MenuTimer;
 		m_MenuTimer->Load( TIMER_METRICS_GROUP.GetValue() );
 		m_MenuTimer->SetName( "Timer" );
@@ -87,8 +89,10 @@ void ScreenWithMenuElements::Init()
 		if( pFrame )
 		{
 			m_vDecorations = pFrame->GetChildren();
-			FOREACH( Actor*, m_vDecorations, child )
-				this->AddChild( *child );
+			for (auto *child: m_vDecorations)
+			{
+				this->AddChild( child );
+			}
 			pFrame->RemoveAllChildren();
 		}
 	}
@@ -134,7 +138,7 @@ void ScreenWithMenuElements::BeginScreen()
 
 	/* Evaluate FirstUpdateCommand. */
 	this->PlayCommand( "FirstUpdate" );
-	
+
 	/* If AutoJoin and a player is already joined, then try to join a player.  (If no players
 	 * are joined, they'll join on the first JoinInput.) */
 	if( GAMESTATE->GetCoinMode() == CoinMode_Pay && GAMESTATE->m_bAutoJoin.Get() )
@@ -164,11 +168,13 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 	SAFE_DELETE( m_MenuTimer );
 	FOREACH_PlayerNumber( p )
 	{
-		if( m_MemoryCardDisplay[p] != NULL )
+		if( m_MemoryCardDisplay[p] != nullptr )
 			SAFE_DELETE( m_MemoryCardDisplay[p] );
 	}
-	FOREACH( Actor*, m_vDecorations, actor )
-		delete *actor;
+	for (auto *actor: m_vDecorations)
+	{
+		delete actor;
+	}
 }
 
 void ScreenWithMenuElements::SetHelpText( RString s )
@@ -180,7 +186,7 @@ void ScreenWithMenuElements::SetHelpText( RString s )
 
 void ScreenWithMenuElements::StartPlayingMusic()
 {
-	/* Some screens should leave the music alone (eg. ScreenPlayerOptions music 
+	/* Some screens should leave the music alone (eg. ScreenPlayerOptions music
 	 * sample left over from ScreenSelectMusic). */
 	if( PLAY_MUSIC )
 	{
@@ -257,7 +263,7 @@ void ScreenWithMenuElements::Update( float fDeltaTime )
 
 void ScreenWithMenuElements::ResetTimer()
 {
-	if( m_MenuTimer == NULL )
+	if( m_MenuTimer == nullptr )
 		return;
 
 	if( TIMER_SECONDS > 0.0f && (PREFSMAN->m_bMenuTimer || FORCE_TIMER) )
@@ -273,15 +279,16 @@ void ScreenWithMenuElements::ResetTimer()
 
 void ScreenWithMenuElements::StartTransitioningScreen( ScreenMessage smSendWhenDone )
 {
+	using std::max;
 	TweenOffScreen();
 
 	m_Out.StartTransitioning( smSendWhenDone );
 	if( WAIT_FOR_CHILDREN_BEFORE_TWEENING_OUT )
 	{
-		// Time the transition so that it finishes exactly when all actors have 
+		// Time the transition so that it finishes exactly when all actors have
 		// finished tweening.
 		float fSecondsUntilFinished = GetTweenTimeLeft();
-		float fSecondsUntilBeginOff = max( fSecondsUntilFinished - m_Out.GetTweenTimeLeft(), 0 );
+		float fSecondsUntilBeginOff = max( fSecondsUntilFinished - m_Out.GetTweenTimeLeft(), 0.f );
 		m_Out.SetHibernate( fSecondsUntilBeginOff );
 	}
 }
@@ -369,7 +376,7 @@ bool ScreenWithMenuElementsSimple::MenuBack( const InputEventPlus &input )
 
 // lua start
 #include "LuaBinding.h"
-/** @brief Allow Lua to have access to the ScreenWithMenuElements. */ 
+/** @brief Allow Lua to have access to the ScreenWithMenuElements. */
 class LunaScreenWithMenuElements: public Luna<ScreenWithMenuElements>
 {
 public:
@@ -400,7 +407,7 @@ public:
 
 LUA_REGISTER_DERIVED_CLASS( ScreenWithMenuElements, Screen )
 
-/** @brief Allow Lua to have access to the ScreenWithMenuElementsSimple. */ 
+/** @brief Allow Lua to have access to the ScreenWithMenuElementsSimple. */
 class LunaScreenWithMenuElementsSimple: public Luna<ScreenWithMenuElementsSimple>
 {
 public:
@@ -416,7 +423,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenWithMenuElementsSimple, ScreenWithMenuElements
 /*
  * (c) 2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -426,7 +433,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenWithMenuElementsSimple, ScreenWithMenuElements
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

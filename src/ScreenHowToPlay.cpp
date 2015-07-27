@@ -19,6 +19,8 @@
 #include "Character.h"
 #include "LifeMeterBar.h"
 
+using std::vector;
+
 static const ThemeMetric<int>		NUM_W2S		("ScreenHowToPlay","NumW2s");
 static const ThemeMetric<int>		NUM_MISSES	("ScreenHowToPlay","NumMisses");
 static const ThemeMetric<bool>	USE_CHARACTER	("ScreenHowToPlay","UseCharacter");
@@ -69,9 +71,9 @@ ScreenHowToPlay::ScreenHowToPlay()
 	m_iNumW2s = NUM_W2S;
 
 	// initialize these because they might not be used.
-	m_pLifeMeterBar = NULL;
-	m_pmCharacter = NULL;
-	m_pmDancePad = NULL;
+	m_pLifeMeterBar = nullptr;
+	m_pmCharacter = nullptr;
+	m_pmDancePad = nullptr;
 }
 
 void ScreenHowToPlay::Init()
@@ -149,7 +151,7 @@ void ScreenHowToPlay::Init()
 		const Style* pStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
 
 		Steps *pSteps = SongUtil::GetClosestNotes( &m_Song, pStyle->m_StepsType, Difficulty_Beginner );
-		if(pSteps == NULL)
+		if(pSteps == nullptr)
 		{
 			LuaHelpers::ReportScriptErrorFmt("No playable steps of StepsType '%s' for ScreenHowToPlay in file %s", StringConversion::ToString(pStyle->m_StepsType).c_str(), sStepsPath.c_str());
 		}
@@ -167,7 +169,7 @@ void ScreenHowToPlay::Init()
 			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_AUTOPLAY;
 
 			m_Player->Init("Player", GAMESTATE->m_pPlayerState[PLAYER_1],
-				NULL, m_pLifeMeterBar, NULL, NULL, NULL, NULL, NULL, NULL);
+				nullptr, m_pLifeMeterBar, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
 			m_Player.Load( m_NoteData );
 			m_Player->SetName( "Player" );
 			this->AddChild( m_Player );
@@ -244,7 +246,7 @@ void ScreenHowToPlay::Step()
 
 void ScreenHowToPlay::Update( float fDelta )
 {
-	if( GAMESTATE->m_pCurSong != NULL )
+	if( GAMESTATE->m_pCurSong != nullptr )
 	{
 		RageTimer tm;
 		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong, GAMESTATE->m_pCurSong->m_SongTiming, tm );
@@ -306,7 +308,7 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ScreenHowToPlay. */ 
+/** @brief Allow Lua to have access to the ScreenHowToPlay. */
 class LunaScreenHowToPlay: public Luna<ScreenHowToPlay>
 {
 public:
@@ -330,7 +332,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenHowToPlay, ScreenAttract )
 /*
  * (c) 2001-2004 Chris Danford, Thad Ward
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -340,7 +342,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenHowToPlay, ScreenAttract )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

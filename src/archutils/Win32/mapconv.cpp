@@ -36,7 +36,7 @@ char *strtack(char *s, const char *t, const char *s_max) {
 		++s, ++t;
 
 	if (s == s_max)
-		return NULL;
+		return nullptr;
 
 	return s+1;
 }

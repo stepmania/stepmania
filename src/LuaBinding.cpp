@@ -2,7 +2,6 @@
 #include "LuaBinding.h"
 #include "LuaReference.h"
 #include "RageUtil.h"
-#include "Foreach.h"
 
 #include "SubscriptionManager.h"
 static SubscriptionManager<LuaBinding> m_Subscribers;
@@ -11,15 +10,17 @@ namespace
 {
 	void RegisterTypes( lua_State *L )
 	{
-		if( m_Subscribers.m_pSubscribers == NULL )
+		if( m_Subscribers.m_pSubscribers == nullptr )
 			return;
 
 		/* Register base classes first. */
-		map<RString, LuaBinding *> mapToRegister;
-		FOREACHS( LuaBinding*, *m_Subscribers.m_pSubscribers, p )
-			mapToRegister[(*p)->GetClassName()] = (*p);
+		std::map<RString, LuaBinding *> mapToRegister;
+		for (auto *p: *m_Subscribers.m_pSubscribers)
+		{
+			mapToRegister[p->GetClassName()] = p;
+		}
 
-		set<RString> setRegisteredAlready;
+		std::set<RString> setRegisteredAlready;
 
 		while( !mapToRegister.empty() )
 		{
@@ -32,7 +33,7 @@ namespace
 					break;
 
 				RString sBase = pBinding->GetBaseClassName();
-				map<RString, LuaBinding *>::const_iterator it = mapToRegister.find(sBase);
+				auto it = mapToRegister.find(sBase);
 				if( it != mapToRegister.end() )
 				{
 					pBinding = it->second;
@@ -321,7 +322,7 @@ void *LuaBinding::GetPointerFromStack( Lua *L, const RString &sType, int iArg )
 		return *pData;
 	}
 	else
-		return NULL;
+		return nullptr;
 }
 
 /* Tricky: when an instance table is copied, we want to do a deep
@@ -353,7 +354,7 @@ LuaClass &LuaClass::operator=( const LuaClass &cpy )
 
 LuaClass::~LuaClass()
 {
-	if( LUA == NULL )
+	if( LUA == nullptr )
 		return;
 
 	Lua *L = LUA->Get();
@@ -393,7 +394,7 @@ float FArgGTEZero(lua_State* L, int index)
 /*
  * (c) 2005 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -403,7 +404,7 @@ float FArgGTEZero(lua_State* L, int index)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

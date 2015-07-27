@@ -16,7 +16,7 @@ struct AutoMappingEntry
 	AutoMappingEntry( int i, DeviceButton db, GameButton gb, bool b ):
 		m_iSlotIndex(i), m_deviceButton(db),
 		m_gb(gb), m_bSecondController(b) {}
-	AutoMappingEntry(): m_iSlotIndex(-1), 
+	AutoMappingEntry(): m_iSlotIndex(-1),
 		m_deviceButton(DeviceButton_Invalid), m_gb(GameButton_Invalid),
 		m_bSecondController(false) {}
 	bool IsEmpty() const { return m_deviceButton == DeviceButton_Invalid  &&  m_gb == GameButton_Invalid; }
@@ -35,49 +35,49 @@ struct AutoMappingEntry
 
 struct AutoMappings
 {
-	AutoMappings( 
-		RString s1, 
-		RString s2, 
-		RString s3, 
-		AutoMappingEntry im0 = AutoMappingEntry(), 
-		AutoMappingEntry im1 = AutoMappingEntry(), 
-		AutoMappingEntry im2 = AutoMappingEntry(), 
-		AutoMappingEntry im3 = AutoMappingEntry(), 
-		AutoMappingEntry im4 = AutoMappingEntry(), 
-		AutoMappingEntry im5 = AutoMappingEntry(), 
-		AutoMappingEntry im6 = AutoMappingEntry(), 
-		AutoMappingEntry im7 = AutoMappingEntry(), 
-		AutoMappingEntry im8 = AutoMappingEntry(), 
-		AutoMappingEntry im9 = AutoMappingEntry(), 
-		AutoMappingEntry im10 = AutoMappingEntry(), 
-		AutoMappingEntry im11 = AutoMappingEntry(), 
-		AutoMappingEntry im12 = AutoMappingEntry(), 
-		AutoMappingEntry im13 = AutoMappingEntry(), 
-		AutoMappingEntry im14 = AutoMappingEntry(), 
-		AutoMappingEntry im15 = AutoMappingEntry(), 
-		AutoMappingEntry im16 = AutoMappingEntry(), 
-		AutoMappingEntry im17 = AutoMappingEntry(), 
-		AutoMappingEntry im18 = AutoMappingEntry(), 
+	AutoMappings(
+		RString s1,
+		RString s2,
+		RString s3,
+		AutoMappingEntry im0 = AutoMappingEntry(),
+		AutoMappingEntry im1 = AutoMappingEntry(),
+		AutoMappingEntry im2 = AutoMappingEntry(),
+		AutoMappingEntry im3 = AutoMappingEntry(),
+		AutoMappingEntry im4 = AutoMappingEntry(),
+		AutoMappingEntry im5 = AutoMappingEntry(),
+		AutoMappingEntry im6 = AutoMappingEntry(),
+		AutoMappingEntry im7 = AutoMappingEntry(),
+		AutoMappingEntry im8 = AutoMappingEntry(),
+		AutoMappingEntry im9 = AutoMappingEntry(),
+		AutoMappingEntry im10 = AutoMappingEntry(),
+		AutoMappingEntry im11 = AutoMappingEntry(),
+		AutoMappingEntry im12 = AutoMappingEntry(),
+		AutoMappingEntry im13 = AutoMappingEntry(),
+		AutoMappingEntry im14 = AutoMappingEntry(),
+		AutoMappingEntry im15 = AutoMappingEntry(),
+		AutoMappingEntry im16 = AutoMappingEntry(),
+		AutoMappingEntry im17 = AutoMappingEntry(),
+		AutoMappingEntry im18 = AutoMappingEntry(),
 		AutoMappingEntry im19 = AutoMappingEntry(),
-		AutoMappingEntry im20 = AutoMappingEntry(), 
-		AutoMappingEntry im21 = AutoMappingEntry(), 
-		AutoMappingEntry im22 = AutoMappingEntry(), 
-		AutoMappingEntry im23 = AutoMappingEntry(), 
-		AutoMappingEntry im24 = AutoMappingEntry(), 
-		AutoMappingEntry im25 = AutoMappingEntry(), 
-		AutoMappingEntry im26 = AutoMappingEntry(), 
-		AutoMappingEntry im27 = AutoMappingEntry(), 
-		AutoMappingEntry im28 = AutoMappingEntry(), 
+		AutoMappingEntry im20 = AutoMappingEntry(),
+		AutoMappingEntry im21 = AutoMappingEntry(),
+		AutoMappingEntry im22 = AutoMappingEntry(),
+		AutoMappingEntry im23 = AutoMappingEntry(),
+		AutoMappingEntry im24 = AutoMappingEntry(),
+		AutoMappingEntry im25 = AutoMappingEntry(),
+		AutoMappingEntry im26 = AutoMappingEntry(),
+		AutoMappingEntry im27 = AutoMappingEntry(),
+		AutoMappingEntry im28 = AutoMappingEntry(),
 		AutoMappingEntry im29 = AutoMappingEntry(),
-		AutoMappingEntry im30 = AutoMappingEntry(), 
-		AutoMappingEntry im31 = AutoMappingEntry(), 
-		AutoMappingEntry im32 = AutoMappingEntry(), 
-		AutoMappingEntry im33 = AutoMappingEntry(), 
-		AutoMappingEntry im34 = AutoMappingEntry(), 
-		AutoMappingEntry im35 = AutoMappingEntry(), 
-		AutoMappingEntry im36 = AutoMappingEntry(), 
-		AutoMappingEntry im37 = AutoMappingEntry(), 
-		AutoMappingEntry im38 = AutoMappingEntry(), 
+		AutoMappingEntry im30 = AutoMappingEntry(),
+		AutoMappingEntry im31 = AutoMappingEntry(),
+		AutoMappingEntry im32 = AutoMappingEntry(),
+		AutoMappingEntry im33 = AutoMappingEntry(),
+		AutoMappingEntry im34 = AutoMappingEntry(),
+		AutoMappingEntry im35 = AutoMappingEntry(),
+		AutoMappingEntry im36 = AutoMappingEntry(),
+		AutoMappingEntry im37 = AutoMappingEntry(),
+		AutoMappingEntry im38 = AutoMappingEntry(),
 		AutoMappingEntry im39 = AutoMappingEntry() )
 	: m_sGame(s1), m_sDriverRegex(s2), m_sControllerName(s3), m_vMaps()
 	{
@@ -92,7 +92,7 @@ struct AutoMappings
 	RString m_sDriverRegex;		// reported by InputHandler
 	RString m_sControllerName;	// the product name of the controller
 
-	vector<AutoMappingEntry> m_vMaps;
+	std::vector<AutoMappingEntry> m_vMaps;
 };
 
 class InputScheme
@@ -111,8 +111,8 @@ public:
 
 	GameButton ButtonNameToIndex( const RString &sButtonName ) const;
 	GameButton GameButtonToMenuButton( GameButton gb ) const;
-	void MenuButtonToGameInputs( GameButton MenuI, PlayerNumber pn, vector<GameInput> &GameIout ) const;
-	void MenuButtonToGameButtons( GameButton MenuI, vector<GameButton> &aGameButtons ) const;
+	void MenuButtonToGameInputs( GameButton MenuI, PlayerNumber pn, std::vector<GameInput> &GameIout ) const;
+	void MenuButtonToGameButtons( GameButton MenuI, std::vector<GameButton> &aGameButtons ) const;
 	const GameButtonInfo *GetGameButtonInfo( GameButton gb ) const;
 	const char *GetGameButtonName( GameButton gb ) const;
 };
@@ -152,8 +152,8 @@ public:
 	void ReadMappingsFromDisk();
 	void SaveMappingsToDisk();
 	void ResetMappingsToDefault();
-	void CheckButtonAndAddToReason(GameButton menu, vector<RString>& full_reason, RString const& sub_reason);
-	void SanityCheckMappings(vector<RString>& reason);
+	void CheckButtonAndAddToReason(GameButton menu, std::vector<RString>& full_reason, RString const& sub_reason);
+	void SanityCheckMappings(std::vector<RString>& reason);
 
 	void ClearAllMappings();
 
@@ -171,15 +171,15 @@ public:
 	bool GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInput& DeviceI ) const;	// return true if there is a mapping from pad to device
 
 	GameButton GameButtonToMenuButton( GameButton gb ) const;
-	void MenuToGame( GameButton MenuI, PlayerNumber pn, vector<GameInput> &GameIout ) const;
+	void MenuToGame( GameButton MenuI, PlayerNumber pn, std::vector<GameInput> &GameIout ) const;
 	PlayerNumber ControllerToPlayerNumber( GameController controller ) const;
 
 	float GetSecsHeld( const GameInput &GameI, MultiPlayer mp = MultiPlayer_Invalid ) const;
 	float GetSecsHeld( GameButton MenuI, PlayerNumber pn ) const;
 
-	bool IsBeingPressed( const GameInput &GameI, MultiPlayer mp = MultiPlayer_Invalid, const DeviceInputList *pButtonState = NULL ) const;
+	bool IsBeingPressed( const GameInput &GameI, MultiPlayer mp = MultiPlayer_Invalid, const DeviceInputList *pButtonState = nullptr ) const;
 	bool IsBeingPressed( GameButton MenuI, PlayerNumber pn ) const;
-	bool IsBeingPressed(const vector<GameInput>& GameI, MultiPlayer mp = MultiPlayer_Invalid, const DeviceInputList *pButtonState = NULL ) const;
+	bool IsBeingPressed(const std::vector<GameInput>& GameI, MultiPlayer mp = MultiPlayer_Invalid, const DeviceInputList *pButtonState = nullptr ) const;
 
 	void ResetKeyRepeat( const GameInput &GameI );
 	void ResetKeyRepeat( GameButton MenuI, PlayerNumber pn );
@@ -194,14 +194,14 @@ public:
 	static MultiPlayer InputDeviceToMultiPlayer( InputDevice id );
 
 	void Unmap( InputDevice device );
-	void ApplyMapping( const vector<AutoMappingEntry> &vMmaps, GameController gc, InputDevice id );
+	void ApplyMapping( const std::vector<AutoMappingEntry> &vMmaps, GameController gc, InputDevice id );
 
 protected:
 	InputMappings m_mappings;
 
 	void UpdateTempDItoGI();
 	const InputScheme *m_pInputScheme;
-	
+
 private:
 	InputMapper(const InputMapper& rhs);
 	InputMapper& operator=(const InputMapper& rhs);
@@ -214,7 +214,7 @@ extern InputMapper*	INPUTMAPPER;	// global and accessible from anywhere in our p
 /*
  * (c) 2001-2003 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -224,7 +224,7 @@ extern InputMapper*	INPUTMAPPER;	// global and accessible from anywhere in our p
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

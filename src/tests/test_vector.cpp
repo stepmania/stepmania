@@ -14,8 +14,6 @@
 #endif
 #define SCALE(x, l1, h1, l2, h2)	(((x) - (l1)) * ((h2) - (l2)) / ((h1) - (l1)) + (l2))
 
-using namespace std;
-
 // This requires that allocated memory be 16 byte aligned. Apple's new
 // (and malloc) ensures this but most others only ensure that the
 // memory is type size aligned. Hack in posix_memalign. We could also
@@ -40,7 +38,7 @@ static void ScalarWrite( float *pDestBuf, const float *pSrcBuf, size_t iSize )
 static void ScalarRead( int16_t *pDestBuf, const int32_t *pSrcBuf, unsigned iSize )
 {
 	for( unsigned iPos = 0; iPos < iSize; ++iPos )
-		pDestBuf[iPos] = max( -32768, min(pSrcBuf[iPos]/256, 32767) );
+		pDestBuf[iPos] = std::max( -32768, std::min(pSrcBuf[iPos]/256, 32767) );
 }
 #endif
 
@@ -221,13 +219,13 @@ static bool CheckAlignedRead()
 	T *pDestBuf      = NEW( T, size );
 	T *pRefBuf       = NEW( T, size );
 	bool ret = true;
-	
+
 	for( int i = 0; i < 8; ++i )
 	{
 		RandBuffer( pSrcBuf, size-i );
 		Vector::FastSoundRead( pDestBuf, pSrcBuf, size-i );
 		ScalarRead( pRefBuf, pSrcBuf, size-i );
-		
+
 		if( !(ret = cmp(pRefBuf, pDestBuf, size-i)) )
 		{
 			fprintf( stderr, "%d: \n", i );
@@ -250,7 +248,7 @@ static bool CheckMisalignedRead()
 	T *pDestBuf      = NEW( T, size );
 	T *pRefBuf       = NEW( T, size );
 	bool ret = true;
-	
+
 	for( int j = 0; j < 8; ++j )
 	{
 		for( int i = 0; i < 8; ++i )
@@ -258,7 +256,7 @@ static bool CheckMisalignedRead()
 			RandBuffer( pSrcBuf, size-i );
 			Vector::FastSoundRead( pDestBuf+j, pSrcBuf, size-i-j );
 			ScalarRead( pRefBuf+j, pSrcBuf, size-i-j );
-			
+
 			if( !(ret = cmp(pRefBuf+j, pDestBuf+j, size-i-j)) )
 			{
 				fprintf( stderr, "%d, %d: \n", j, i );

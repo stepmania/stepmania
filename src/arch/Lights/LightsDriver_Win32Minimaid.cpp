@@ -10,15 +10,15 @@
 
 REGISTER_SOUND_DRIVER_CLASS( Win32Minimaid );
 
-HINSTANCE hMMMAGICDLL = NULL;
+HINSTANCE hMMMAGICDLL = nullptr;
 
 LightsDriver_Win32Minimaid::LightsDriver_Win32Minimaid()
 {
 	_mmmagic_loaded=false;
 	hMMMAGICDLL = LoadLibraryW(L"mmmagic.dll");
-	if(hMMMAGICDLL == NULL)
+	if(hMMMAGICDLL == nullptr)
 	{
-		MessageBox(NULL, "Could not LoadLibrary( mmmagic.dll ).", "ERROR", MB_OK );
+		MessageBox(nullptr, "Could not LoadLibrary( mmmagic.dll ).", "ERROR", MB_OK );
 		return;
 	}
 	_mmmagic_loaded=true;

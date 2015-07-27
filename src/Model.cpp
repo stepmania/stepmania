@@ -10,9 +10,12 @@
 #include "RageLog.h"
 #include "ActorUtil.h"
 #include "ModelManager.h"
-#include "Foreach.h"
 #include "LuaBinding.h"
 #include "PrefsManager.h"
+
+#include <numeric>
+
+using std::vector;
 
 REGISTER_ACTOR_CLASS( Model );
 
@@ -24,13 +27,13 @@ Model::Model()
 	m_bTextureWrapping = true;
 	SetUseZBuffer( true );
 	SetCullMode( CULL_BACK );
-	m_pGeometry = NULL;
-	m_pCurAnimation = NULL;
+	m_pGeometry = nullptr;
+	m_pCurAnimation = nullptr;
 	m_fDefaultAnimationRate = 1;
 	m_fCurAnimationRate = 1;
 	m_bLoop = true;
 	m_bDrawCelShaded = false;
-	m_pTempGeometry = NULL;
+	m_pTempGeometry = nullptr;
 }
 
 Model::~Model()
@@ -43,12 +46,12 @@ void Model::Clear()
 	if( m_pGeometry )
 	{
 		MODELMAN->UnloadModel( m_pGeometry );
-		m_pGeometry = NULL;
+		m_pGeometry = nullptr;
 	}
 	m_vpBones.clear();
 	m_Materials.clear();
 	m_mapNameToAnimation.clear();
-	m_pCurAnimation = NULL;
+	m_pCurAnimation = nullptr;
 	RecalcAnimationLengthSeconds();
 
 	if( m_pTempGeometry )
@@ -81,7 +84,7 @@ void Model::LoadPieces( const RString &sMeshesPath, const RString &sMaterialsPat
 	// TRICKY: Load materials before geometry so we can figure out whether the materials require normals.
 	LoadMaterialsFromMilkshapeAscii( sMaterialsPath );
 
-	ASSERT( m_pGeometry == NULL );
+	ASSERT( m_pGeometry == nullptr );
 	m_pGeometry = MODELMAN->LoadMilkshapeAscii( sMeshesPath, this->MaterialsNeedNormals() );
 
 	// Validate material indices.
@@ -288,7 +291,7 @@ bool Model::LoadMilkshapeAsciiBones( const RString &sAniName, const RString &sPa
 
 bool Model::EarlyAbortDraw() const
 {
-	return m_pGeometry == NULL || m_pGeometry->m_Meshes.empty();
+	return m_pGeometry == nullptr || m_pGeometry->m_Meshes.empty();
 }
 
 void Model::DrawCelShaded()
@@ -298,13 +301,13 @@ void Model::DrawCelShaded()
 	DISPLAY->SetCullMode(CULL_FRONT);
 	this->SetZWrite(false); // XXX: Why on earth isn't the culling working? -Colby
 	this->Draw();
-	
+
 	// Second pass: cel shading
 	DISPLAY->SetCelShaded(2);
 	DISPLAY->SetCullMode(CULL_BACK);
 	this->SetZWrite(true);
 	this->Draw();
-	
+
 	DISPLAY->SetCelShaded(0);
 }
 
@@ -566,13 +569,13 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 void Model::SetPosition( float fSeconds )
 {
 	m_fCurFrame = FRAMES_PER_SECOND * fSeconds;
-	m_fCurFrame = clamp( m_fCurFrame, 0, (float) m_pCurAnimation->nTotalFrames );
+	m_fCurFrame = clamp( m_fCurFrame, 0.f, static_cast<float>(m_pCurAnimation->nTotalFrames) );
 }
 
 void Model::AdvanceFrame( float fDeltaTime )
 {
-	if( m_pGeometry == NULL || 
-		m_pGeometry->m_Meshes.empty() || 
+	if( m_pGeometry == nullptr ||
+		m_pGeometry->m_Meshes.empty() ||
 		!m_pCurAnimation )
 	{
 		return; // bail early
@@ -592,7 +595,7 @@ void Model::AdvanceFrame( float fDeltaTime )
 		else if( m_bLoop )
 			wrap( m_fCurFrame, (float) m_pCurAnimation->nTotalFrames );
 		else
-			m_fCurFrame = clamp( m_fCurFrame, 0, (float) m_pCurAnimation->nTotalFrames );
+			m_fCurFrame = clamp( m_fCurFrame, 0.f, static_cast<float>(m_pCurAnimation->nTotalFrames) );
 	}
 
 	SetBones( m_pCurAnimation, m_fCurFrame, m_vpBones );
@@ -611,7 +614,7 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 		}
 
 		// search for the adjacent position keys
-		const msPositionKey *pLastPositionKey = NULL, *pThisPositionKey = NULL;
+		const msPositionKey *pLastPositionKey = nullptr, *pThisPositionKey = nullptr;
 		for( size_t j = 0; j < pBone->PositionKeys.size(); ++j )
 		{
 			const msPositionKey *pPositionKey = &pBone->PositionKeys[j];
@@ -624,18 +627,18 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 		}
 
 		RageVector3 vPos;
-		if( pLastPositionKey != NULL && pThisPositionKey != NULL )
+		if( pLastPositionKey != nullptr && pThisPositionKey != nullptr )
 		{
 			const float s = SCALE( fFrame, pLastPositionKey->fTime, pThisPositionKey->fTime, 0, 1 );
 			vPos = pLastPositionKey->Position + (pThisPositionKey->Position - pLastPositionKey->Position) * s;
 		}
-		else if( pLastPositionKey == NULL )
+		else if( pLastPositionKey == nullptr )
 			vPos = pThisPositionKey->Position;
-		else if( pThisPositionKey == NULL )
+		else if( pThisPositionKey == nullptr )
 			vPos = pLastPositionKey->Position;
 
 		// search for the adjacent rotation keys
-		const msRotationKey *pLastRotationKey = NULL, *pThisRotationKey = NULL;
+		const msRotationKey *pLastRotationKey = nullptr, *pThisRotationKey = nullptr;
 		for( size_t j = 0; j < pBone->RotationKeys.size(); ++j )
 		{
 			const msRotationKey *pRotationKey = &pBone->RotationKeys[j];
@@ -648,16 +651,16 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 		}
 
 		RageVector4 vRot;
-		if( pLastRotationKey != NULL && pThisRotationKey != NULL )
+		if( pLastRotationKey != nullptr && pThisRotationKey != nullptr )
 		{
 			const float s = SCALE( fFrame, pLastRotationKey->fTime, pThisRotationKey->fTime, 0, 1 );
 			RageQuatSlerp( &vRot, pLastRotationKey->Rotation, pThisRotationKey->Rotation, s );
 		}
-		else if( pLastRotationKey == NULL )
+		else if( pLastRotationKey == nullptr )
 		{
 			vRot = pThisRotationKey->Rotation;
 		}
-		else if( pThisRotationKey == NULL )
+		else if( pThisRotationKey == nullptr )
 		{
 			vRot = pLastRotationKey->Rotation;
 		}
@@ -682,7 +685,7 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 
 void Model::UpdateTempGeometry()
 {
-	if( m_pGeometry == NULL || m_pTempGeometry == NULL )
+	if( m_pGeometry == nullptr || m_pTempGeometry == nullptr )
 		return;
 
 	for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
@@ -730,54 +733,52 @@ void Model::Update( float fDelta )
 
 int Model::GetNumStates() const
 {
-	int iMaxStates = 0;
-	FOREACH_CONST( msMaterial, m_Materials, m )
-		iMaxStates = max( iMaxStates, m->diffuse.GetNumStates() );
-	return iMaxStates;
+	auto findMax = [](int highest, msMaterial const &m) {
+		return std::max(highest, m.diffuse.GetNumStates());
+	};
+	return std::accumulate(m_Materials.begin(), m_Materials.end(), 0, findMax);
 }
 
-void Model::SetState( int iNewState )
+void Model::SetState( size_t iNewState )
 {
-	FOREACH( msMaterial, m_Materials, m )
+	for (auto &m: m_Materials)
 	{
-		m->diffuse.SetState( iNewState );
-		m->alpha.SetState( iNewState );
+		m.diffuse.SetState( iNewState );
+		m.alpha.SetState( iNewState );
 	}
 }
 
 void Model::RecalcAnimationLengthSeconds()
 {
 	m_animation_length_seconds= 0;
-	FOREACH_CONST(msMaterial, m_Materials, m)
+	for (auto &m: m_Materials)
 	{
-		m_animation_length_seconds= max(m_animation_length_seconds,
-			m->diffuse.GetAnimationLengthSeconds());
+		m_animation_length_seconds= std::max(m_animation_length_seconds,
+			m.diffuse.GetAnimationLengthSeconds());
 	}
 }
 
 void Model::SetSecondsIntoAnimation( float fSeconds )
 {
-	FOREACH( msMaterial, m_Materials, m )
+	for (auto &m: m_Materials)
 	{
-		m->diffuse.SetSecondsIntoAnimation( fSeconds );
-		m->alpha.SetSecondsIntoAnimation( fSeconds );
+		m.diffuse.SetSecondsIntoAnimation( fSeconds );
+		m.alpha.SetSecondsIntoAnimation( fSeconds );
 	}
 }
 
 bool Model::MaterialsNeedNormals() const
 {
-	FOREACH_CONST( msMaterial, m_Materials, m )
-	{
-		if( m->NeedsNormals() )
-			return true;
-	}
-	return false;
+	auto needsNormals = [](msMaterial const &m) {
+		return m.NeedsNormals();
+	};
+	return std::any_of(m_Materials.begin(), m_Materials.end(), needsNormals);
 }
 
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the Model. */ 
+/** @brief Allow Lua to have access to the Model. */
 class LunaModel: public Luna<Model>
 {
 public:
@@ -811,7 +812,7 @@ LUA_REGISTER_DERIVED_CLASS( Model, Actor )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -821,7 +822,7 @@ LUA_REGISTER_DERIVED_CLASS( Model, Actor )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

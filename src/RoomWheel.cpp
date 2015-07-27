@@ -9,6 +9,8 @@
 #include "ActorUtil.h"
 #include "LocalizedString.h"
 
+using std::vector;
+
 static LocalizedString EMPTY_STRING	( "RoomWheel", "Empty" );
 
 AutoScreenMessage( SM_BackFromRoomName );
@@ -17,12 +19,14 @@ AutoScreenMessage( SM_RoomInfoDeploy );
 
 RoomWheel::~RoomWheel()
 {
-	FOREACH( WheelItemBaseData*, m_CurWheelItemData, i )
-		SAFE_DELETE( *i );
+	for (auto *i: m_CurWheelItemData)
+	{
+		SAFE_DELETE( i );
+	}
 	m_CurWheelItemData.clear();
 }
 
-void RoomWheel::Load( RString sType ) 
+void RoomWheel::Load( RString sType )
 {
 	WheelBase::Load( sType );
 
@@ -127,9 +131,9 @@ void RoomWheel::RemoveItem( int index )
 	vector<WheelItemBaseData *>::iterator i = m_CurWheelItemData.begin();
 	i += index;
 
-	// If this item's data happened to be last selected, make it NULL.
+	// If this item's data happened to be last selected, make it nullptr.
 	if( m_LastSelection == *i )
-		m_LastSelection = NULL;
+		m_LastSelection = nullptr;
 
 	SAFE_DELETE( *i );
 	m_CurWheelItemData.erase( i );
@@ -152,8 +156,8 @@ bool RoomWheel::Select()
 		return WheelBase::Select();
 	if( m_iSelection == 0 )
 	{
-		// Since this is not actually an option outside of this wheel, NULL is a good idea.
-		m_LastSelection = NULL;
+		// Since this is not actually an option outside of this wheel, nullptr is a good idea.
+		m_LastSelection = nullptr;
 		ScreenTextEntry::TextEntry( SM_BackFromRoomName, ENTER_ROOM_NAME, "", 255 );
 	}
 	return false;
@@ -178,7 +182,7 @@ void RoomWheel::Move( int n )
 	if( n == 0 && m_iSelection >= m_offset )
 	{
 		const RoomWheelItemData* data = GetItem( m_iSelection-m_offset );
-		if( data != NULL )
+		if( data != nullptr )
 			SCREENMAN->PostMessageToTopScreen( SM_RoomInfoDeploy, 0 );
 	}
 	else
@@ -197,7 +201,7 @@ unsigned int RoomWheel::GetNumItems() const
 /*
  * (c) 2004 Josh Allen
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -207,7 +211,7 @@ unsigned int RoomWheel::GetNumItems() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

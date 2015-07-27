@@ -30,7 +30,8 @@
 #include "RageSoundManager.h"
 #include "RageLog.h"
 #include "RageSoundReader_FileReader.h"
-#include "Foreach.h"
+
+using std::vector;
 
 void AutoKeysounds::Load( PlayerNumber pn, const NoteData& ndAutoKeysoundsOnly )
 {
@@ -67,7 +68,9 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 				 * This leads to failure later on.
 				 * We need a better way to prevent this. */
 				if( m_ndAutoKeysoundsOnly[pn].GetNextTapNoteRowForTrack( t, iNextRowForPlayer ) )
-					iNextRow = min( iNextRow, iNextRowForPlayer );
+				{
+					iNextRow = std::min( iNextRow, iNextRowForPlayer );
+				}
 			}
 
 			if( iNextRow == INT_MAX )
@@ -76,7 +79,9 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 
 			TapNote tn[NUM_PLAYERS];
 			FOREACH_EnabledPlayer(pn)
+			{
 				tn[pn] = m_ndAutoKeysoundsOnly[pn].GetTapNote( t, iRow );
+			}
 
 			FOREACH_EnabledPlayer(pn)
 			{
@@ -92,7 +97,9 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 					float fPan = 0;
 					// If two players are playing, pan the keysounds to each player's respective side
 					if( GAMESTATE->GetNumPlayersEnabled() == 2 )
-						fPan = (pn == PLAYER_1)? -1.0f:+1.0f;
+					{
+						fPan = (pn == PLAYER_1) ? -1.0f : +1.0f;
+					}
 					int iIndex = pChain->LoadSound( sKeysoundFilePath );
 					pChain->AddSound( iIndex, fSeconds, fPan );
 				}
@@ -107,9 +114,9 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 	// two-track sound.
 	//bool bTwoPlayers = GAMESTATE->GetNumPlayersEnabled() == 2;
 
-	pPlayer1 = NULL;
-	pPlayer2 = NULL;
-	pShared = NULL;
+	pPlayer1 = nullptr;
+	pPlayer2 = nullptr;
+	pShared = nullptr;
 
 	vector<RString> vsMusicFile;
 	const RString sMusicPath = GAMESTATE->m_pCurSteps[GAMESTATE->GetMasterPlayerNumber()]->GetMusicPath();
@@ -127,10 +134,10 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 
 
 	vector<RageSoundReader *> vpSounds;
-	FOREACH( RString, vsMusicFile, s )
+	for (auto &s: vsMusicFile)
 	{
 		RString sError;
-		RageSoundReader *pSongReader = RageSoundReader_FileReader::OpenFile( *s, sError );
+		RageSoundReader *pSongReader = RageSoundReader_FileReader::OpenFile( s, sError );
 		vpSounds.push_back( pSongReader );
 	}
 
@@ -147,8 +154,10 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 	{
 		RageSoundReader_Merge *pMerge = new RageSoundReader_Merge;
 
-		FOREACH( RageSoundReader *, vpSounds, so )
-			pMerge->AddSound( *so );
+		for (auto *so: vpSounds)
+		{
+			pMerge->AddSound( so );
+		}
 		pMerge->Finish( SOUNDMAN->GetDriverSampleRate() );
 
 		RageSoundReader *pSongReader = pMerge;
@@ -263,14 +272,14 @@ void AutoKeysounds::FinishLoading()
 			delete pChain;
 		}
 	}
-	ASSERT_M( m_pSharedSound != NULL, ssprintf("No keysounds were loaded for the song %s!", pSong->m_sMainTitle.c_str() ));
+	ASSERT_M( m_pSharedSound != nullptr, ssprintf("No keysounds were loaded for the song %s!", pSong->m_sMainTitle.c_str() ));
 
 	m_pSharedSound = new RageSoundReader_PitchChange( m_pSharedSound );
 	m_pSharedSound = new RageSoundReader_PostBuffering( m_pSharedSound );
 	m_pSharedSound = new RageSoundReader_Pan( m_pSharedSound );
 	apSounds.push_back( m_pSharedSound );
 
-	if( m_pPlayerSounds[0] != NULL )
+	if( m_pPlayerSounds[0] != nullptr )
 	{
 		m_pPlayerSounds[0] = new RageSoundReader_PitchChange( m_pPlayerSounds[0] );
 		m_pPlayerSounds[0] = new RageSoundReader_PostBuffering( m_pPlayerSounds[0] );
@@ -278,7 +287,7 @@ void AutoKeysounds::FinishLoading()
 		apSounds.push_back( m_pPlayerSounds[0] );
 	}
 
-	if( m_pPlayerSounds[1] != NULL )
+	if( m_pPlayerSounds[1] != nullptr )
 	{
 		m_pPlayerSounds[1] = new RageSoundReader_PitchChange( m_pPlayerSounds[1] );
 		m_pPlayerSounds[1] = new RageSoundReader_PostBuffering( m_pPlayerSounds[1] );
@@ -287,14 +296,16 @@ void AutoKeysounds::FinishLoading()
 	}
 
 	if( GAMESTATE->GetNumPlayersEnabled() == 1 && GAMESTATE->GetMasterPlayerNumber() == PLAYER_2 )
-		swap( m_pPlayerSounds[PLAYER_1], m_pPlayerSounds[PLAYER_2] );
+		std::swap( m_pPlayerSounds[PLAYER_1], m_pPlayerSounds[PLAYER_2] );
 
 	if( apSounds.size() > 1 )
 	{
 		RageSoundReader_Merge *pMerge = new RageSoundReader_Merge;
 
-		FOREACH( RageSoundReader *, apSounds, ps )
-			pMerge->AddSound( *ps );
+		for (auto *ps: apSounds)
+		{
+			pMerge->AddSound( ps );
+		}
 
 		pMerge->Finish( SOUNDMAN->GetDriverSampleRate() );
 
@@ -319,7 +330,7 @@ void AutoKeysounds::Update( float fDelta )
 		float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
 		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
-		iRowNow = max( 0, iRowNow );
+		iRowNow = std::max( 0, iRowNow );
 		static int iRowLastCrossed = 0;
 
 		float fBeatLast = roundf(NoteRowToBeat(iRowLastCrossed));

@@ -47,7 +47,7 @@ public:
 	bool bNoDifficult;		// if true, CourseDifficulty doesn't affect this entry
 
 	SongSort songSort;		// sort by this after filtering
-	int iChooseIndex;		// 
+	int iChooseIndex;		//
 
 	RString sModifiers;		// set player and song options using these
 	AttackArray attacks;	// timed sModifiers
@@ -96,8 +96,8 @@ public:
 	// Dereferences course_entries and returns only the playable Songs and Steps
 	Trail* GetTrail( StepsType st, CourseDifficulty cd=Difficulty_Medium ) const;
 	Trail* GetTrailForceRegenCache( StepsType st, CourseDifficulty cd=Difficulty_Medium ) const;
-	void GetTrails( vector<Trail*> &AddTo, StepsType st ) const;
-	void GetAllTrails( vector<Trail*> &AddTo ) const;
+	void GetTrails( std::vector<Trail*> &AddTo, StepsType st ) const;
+	void GetAllTrails( std::vector<Trail*> &AddTo ) const;
 	int GetMeter( StepsType st, CourseDifficulty cd=Difficulty_Medium ) const;
 	bool HasMods() const;
 	bool HasTimedMods() const;
@@ -134,7 +134,7 @@ public:
 	// Call when a Song or its Steps are deleted/changed.
 	void Invalidate( const Song *pStaleSong );
 
-	void GetAllCachedTrails( vector<Trail *> &out );
+	void GetAllCachedTrails( std::vector<Trail *> &out );
 	RString GetCacheFilePath() const;
 
 	const CourseEntry *FindFixedSong( const Song *pSong ) const;
@@ -177,7 +177,7 @@ public:
 
 	bool	m_bIncomplete;
 
-	vector<CourseEntry> m_vEntries;
+	std::vector<CourseEntry> m_vEntries;
 
 	// sorting values
 	int	m_SortOrder_TotalDifficulty;
@@ -185,7 +185,7 @@ public:
 
 	ProfileSlot		m_LoadedFromProfile;	// ProfileSlot_Invalid if wasn't loaded from a profile
 
-	typedef pair<StepsType,Difficulty> CacheEntry;
+	typedef std::pair<StepsType,Difficulty> CacheEntry;
 	struct CacheData
 	{
 		Trail trail;
@@ -193,15 +193,15 @@ public:
 
 		CacheData(): trail(), null(false) {}
 	};
-	typedef map<CacheEntry, CacheData> TrailCache_t;
+	typedef std::map<CacheEntry, CacheData> TrailCache_t;
 	mutable TrailCache_t m_TrailCache;
 	mutable int m_iTrailCacheSeed;
 
-	typedef map<CacheEntry, RadarValues> RadarCache_t;
+	typedef std::map<CacheEntry, RadarValues> RadarCache_t;
 	RadarCache_t m_RadarCache;
 
 	// Preferred styles:
-	set<RString> m_setStyles;
+	std::set<RString> m_setStyles;
 
 	CachedObject<Course> m_CachedObject;
 };
@@ -211,7 +211,7 @@ public:
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -221,7 +221,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

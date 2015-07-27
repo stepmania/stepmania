@@ -6,6 +6,8 @@
 #include "RageLog.h"
 #include "UnlockManager.h"
 
+using std::vector;
+
 RString COLUMN_DIFFICULTY_NAME( size_t i );
 RString COLUMN_STEPS_TYPE_NAME( size_t i );
 
@@ -24,13 +26,13 @@ REGISTER_SCREEN_CLASS( ScreenHighScores );
 static void GetAllSongsToShow( vector<Song*> &vpOut, int iNumMostRecentScoresToShow )
 {
 	vpOut.clear();
-	FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), s )
+	for (auto *s: SONGMAN->GetAllSongs())
 	{
-		if( !(*s)->NormallyDisplayed() )
+		if( !s->NormallyDisplayed() )
 			continue;	// skip
-		if( !(*s)->ShowInDemonstrationAndRanking() )
+		if( !s->ShowInDemonstrationAndRanking() )
 			continue;	// skip
-		vpOut.push_back( *s );
+		vpOut.push_back( s );
 	}
 
 	if( (int)vpOut.size() > iNumMostRecentScoresToShow )
@@ -51,13 +53,13 @@ static void GetAllCoursesToShow( vector<Course*> &vpOut, CourseType ct, int iNum
 	else
 		SONGMAN->GetCourses( ct, vpCourses, false );
 
-	FOREACH_CONST( Course*, vpCourses, c)
+	for (auto *c: vpCourses)
 	{
-		if( UNLOCKMAN->CourseIsLocked(*c) )
+		if( UNLOCKMAN->CourseIsLocked(c) )
 			continue;	// skip
-		if( !(*c)->ShowInDemonstrationAndRanking() )
+		if( !c->ShowInDemonstrationAndRanking() )
 			continue;	// skip
-		vpOut.push_back( *c );
+		vpOut.push_back( c );
 	}
 	if( (int)vpOut.size() > iNumMostRecentScoresToShow )
 	{
@@ -116,9 +118,9 @@ void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
 	const ScoreRowItemData &data = m_vScoreRowItemData[iItem];
 
 	Message msg("Set");
-	if( data.m_pSong != NULL )
+	if( data.m_pSong != nullptr )
 		msg.SetParam( "Song", data.m_pSong );
-	if( data.m_pCourse != NULL )
+	if( data.m_pCourse != nullptr )
 		msg.SetParam( "Course", data.m_pCourse );
 
 
@@ -127,27 +129,27 @@ void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
 	lua_pushvalue( L, -1 );
 	msg.SetParamFromStack( L, "Entries" );
 
-	FOREACH( DifficultyAndStepsType, m_DifficultiesToShow, iter )
+	for (auto iter = m_DifficultiesToShow.begin(); iter != m_DifficultiesToShow.end(); ++iter)
 	{
 		int i = iter-m_DifficultiesToShow.begin();
 		Difficulty dc = iter->first;
 		StepsType st = iter->second;
 
-		if( data.m_pSong != NULL )
+		if( data.m_pSong != nullptr )
 		{
 			const Song* pSong = data.m_pSong;
 			Steps *pSteps = SongUtil::GetStepsByDifficulty( pSong, st, dc, false );
 			if( pSteps  &&  UNLOCKMAN->StepsIsLocked(pSong, pSteps) )
-				pSteps = NULL;
+				pSteps = nullptr;
 			LuaHelpers::Push( L, pSteps );
 		}
-		else if( data.m_pCourse != NULL )
+		else if( data.m_pCourse != nullptr )
 		{
 			const Course* pCourse = data.m_pCourse;
 			Trail *pTrail = pCourse->GetTrail( st, dc );
 			LuaHelpers::Push( L, pTrail );
 		}
-		// Because pSteps or pTrail can be NULL, what we're creating in Lua is not an array.
+		// Because pSteps or pTrail can be nullptr, what we're creating in Lua is not an array.
 		// It must be iterated using pairs(), not ipairs().
 		lua_setfield( L, -2, ssprintf("%d",i+1) );
 	}
@@ -181,13 +183,13 @@ void ScoreScroller::Load( RString sMetricsGroup )
 {
 	SCROLLER_ITEMS_TO_DRAW.Load(sMetricsGroup, "ScrollerItemsToDraw");
 	SCROLLER_SECONDS_PER_ITEM.Load(sMetricsGroup, "ScrollerSecondsPerItem");
-	
+
 
 	int iNumCopies = SCROLLER_ITEMS_TO_DRAW+1;
 	for( int i=0; i<iNumCopies; ++i )
 	{
 		Actor *pActor = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"ScrollerItem") );
-		if( pActor != NULL )
+		if( pActor != nullptr )
 			this->AddChild( pActor );
 	}
 
@@ -329,7 +331,7 @@ void ScreenHighScores::DoScroll( int iDir )
 /*
  * (c) 2001-2007 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -339,7 +341,7 @@ void ScreenHighScores::DoScroll( int iDir )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -1,10 +1,12 @@
 #include "global.h"
 #include "RageUtil.h"
+
+#include <array>
+
 #include "RageMath.h"
 #include "RageLog.h"
 #include "RageFile.h"
 #include "RageSoundReader_FileReader.h"
-#include "Foreach.h"
 #include "LocalizedString.h"
 #include "LuaBinding.h"
 #include "LuaManager.h"
@@ -17,6 +19,13 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <math.h>
+
+using std::vector;
+using std::string;
+using std::wstring;
+using std::istringstream;
+using std::stringstream;
+using std::isfinite;
 
 bool HexToBinary(const RString&, RString&);
 void utf8_sanitize(RString &);
@@ -32,7 +41,7 @@ MersenneTwister::MersenneTwister( int iSeed ) : m_iNext(0)
 void MersenneTwister::Reset( int iSeed )
 {
 	if( iSeed == 0 )
-		iSeed = time(NULL);
+		iSeed = static_cast<int>(time(nullptr));
 
 	m_Values[0] = iSeed;
 	m_iNext = 0;
@@ -150,7 +159,7 @@ namespace
 	{
 		LIST_METHOD( Seed ),
 		LIST_METHOD( Random ),
-		{ NULL, NULL }
+		{ nullptr, nullptr }
 	};
 }
 
@@ -202,7 +211,7 @@ bool IsHexVal( const RString &s )
 		return false;
 
 	for( size_t i=0; i < s.size(); ++i )
-		if( !(s[i] >= '0' && s[i] <= '9') && 
+		if( !(s[i] >= '0' && s[i] <= '9') &&
 			!(toupper(s[i]) >= 'A' && toupper(s[i]) <= 'F'))
 			return false;
 
@@ -277,6 +286,7 @@ RString SecondsToHHMMSS( float fSecs )
 
 RString SecondsToMMSSMsMs( float fSecs )
 {
+	using std::min;
 	const int iMinsDisplay = (int)fSecs/60;
 	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
 	const int iLeftoverDisplay = (int) ( (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100 );
@@ -286,6 +296,7 @@ RString SecondsToMMSSMsMs( float fSecs )
 
 RString SecondsToMSSMsMs( float fSecs )
 {
+	using std::min;
 	const int iMinsDisplay = (int)fSecs/60;
 	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
 	const int iLeftoverDisplay = (int) ( (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100 );
@@ -295,6 +306,7 @@ RString SecondsToMSSMsMs( float fSecs )
 
 RString SecondsToMMSSMsMsMs( float fSecs )
 {
+	using std::min;
 	const int iMinsDisplay = (int)fSecs/60;
 	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
 	const int iLeftoverDisplay = (int) ( (fSecs - iMinsDisplay*60 - iSecsDisplay) * 1000 );
@@ -323,7 +335,7 @@ RString PrettyPercent( float fNumerator, float fDenominator)
 	return ssprintf("%0.2f%%",fNumerator/fDenominator*100);
 }
 
-RString Commify( int iNum ) 
+RString Commify( int iNum )
 {
 	RString sNum = ssprintf("%d",iNum);
 	return Commify( sNum );
@@ -396,7 +408,7 @@ RString FormatNumberAndSuffix( int i )
 
 struct tm GetLocalTime()
 {
-	const time_t t = time(NULL);
+	const time_t t = time(nullptr);
 	struct tm tm;
 	localtime_r( &t, &tm );
 	return tm;
@@ -416,7 +428,7 @@ RString vssprintf( const char *szFormat, va_list argList )
 	RString sStr;
 
 #if defined(WIN32)
-	char *pBuf = NULL;
+	char *pBuf = nullptr;
 	int iChars = 1;
 	int iUsed = 0;
 	int iTry = 0;
@@ -527,164 +539,170 @@ RString ConvertI64FormatString( const RString &sStr ) { return sStr; }
 /* ISO-639-1 codes: http://www.loc.gov/standards/iso639-2/php/code_list.php
  * native forms: http://people.w3.org/rishida/names/languages.html
  * We don't use 3-letter codes, so we don't bother supporting them. */
-static const LanguageInfo g_langs[] =
+static std::array<LanguageInfo, 139> const g_langs =
 {
-	{"aa", "Afar"},
-	{"ab", "Abkhazian"},
-	{"af", "Afrikaans"},
-	{"am", "Amharic"},
-	{"ar", "Arabic"},
-	{"as", "Assamese"},
-	{"ay", "Aymara"},
-	{"az", "Azerbaijani"},
-	{"ba", "Bashkir"},
-	{"be", "Byelorussian"},
-	{"bg", "Bulgarian"},
-	{"bh", "Bihari"},
-	{"bi", "Bislama"},
-	{"bn", "Bengali"},
-	{"bo", "Tibetan"},
-	{"br", "Breton"},
-	{"ca", "Catalan"},
-	{"co", "Corsican"},
-	{"cs", "Czech"},
-	{"cy", "Welsh"},
-	{"da", "Danish"},
-	{"de", "German"},
-	{"dz", "Bhutani"},
-	{"el", "Greek"},
-	{"en", "English"},
-	{"eo", "Esperanto"},
-	{"es", "Spanish"},
-	{"et", "Estonian"},
-	{"eu", "Basque"},
-	{"fa", "Persian"},
-	{"fi", "Finnish"},
-	{"fj", "Fiji"},
-	{"fo", "Faeroese"},
-	{"fr", "French"},
-	{"fy", "Frisian"},
-	{"ga", "Irish"},
-	{"gd", "Gaelic"},
-	{"gl", "Galician"},
-	{"gn", "Guarani"},
-	{"gu", "Gujarati"},
-	{"ha", "Hausa"},
-	{"he", "Hebrew"},
-	{"hi", "Hindi"},
-	{"hr", "Croatian"},
-	{"hu", "Hungarian"},
-	{"hy", "Armenian"},
-	{"ia", "Interlingua"},
-	{"id", "Indonesian"},
-	{"ie", "Interlingue"},
-	{"ik", "Inupiak"},
-	{"in", "Indonesian"}, // compatibility
-	{"is", "Icelandic"},
-	{"it", "Italian"},
-	{"iw", "Hebrew"}, // compatibility
-	{"ja", "Japanese"},
-	{"ji", "Yiddish"}, // compatibility
-	{"jw", "Javanese"},
-	{"ka", "Georgian"},
-	{"kk", "Kazakh"},
-	{"kl", "Greenlandic"},
-	{"km", "Cambodian"},
-	{"kn", "Kannada"},
-	{"ko", "Korean"},
-	{"ks", "Kashmiri"},
-	{"ku", "Kurdish"},
-	{"ky", "Kirghiz"},
-	{"la", "Latin"},
-	{"ln", "Lingala"},
-	{"lo", "Laothian"},
-	{"lt", "Lithuanian"},
-	{"lv", "Latvian"},
-	{"mg", "Malagasy"},
-	{"mi", "Maori"},
-	{"mk", "Macedonian"},
-	{"ml", "Malayalam"},
-	{"mn", "Mongolian"},
-	{"mo", "Moldavian"},
-	{"mr", "Marathi"},
-	{"ms", "Malay"},
-	{"mt", "Maltese"},
-	{"my", "Burmese"},
-	{"na", "Nauru"},
-	{"ne", "Nepali"},
-	{"nl", "Dutch"},
-	{"no", "Norwegian"},
-	{"oc", "Occitan"},
-	{"om", "Oromo"},
-	{"or", "Oriya"},
-	{"pa", "Punjabi"},
-	{"pl", "Polish"},
-	{"ps", "Pashto"},
-	{"pt", "Portuguese"},
-	{"qu", "Quechua"},
-	{"rm", "Rhaeto-Romance"},
-	{"rn", "Kirundi"},
-	{"ro", "Romanian"},
-	{"ru", "Russian"},
-	{"rw", "Kinyarwanda"},
-	{"sa", "Sanskrit"},
-	{"sd", "Sindhi"},
-	{"sg", "Sangro"},
-	{"sh", "Serbo-Croatian"},
-	{"si", "Singhalese"},
-	{"sk", "Slovak"},
-	{"sl", "Slovenian"},
-	{"sm", "Samoan"},
-	{"sn", "Shona"},
-	{"so", "Somali"},
-	{"sq", "Albanian"},
-	{"sr", "Serbian"},
-	{"ss", "Siswati"},
-	{"st", "Sesotho"},
-	{"su", "Sudanese"},
-	{"sv", "Swedish"},
-	{"sw", "Swahili"},
-	{"ta", "Tamil"},
-	{"te", "Tegulu"},
-	{"tg", "Tajik"},
-	{"th", "Thai"},
-	{"ti", "Tigrinya"},
-	{"tk", "Turkmen"},
-	{"tl", "Tagalog"},
-	{"tn", "Setswana"},
-	{"to", "Tonga"},
-	{"tr", "Turkish"},
-	{"ts", "Tsonga"},
-	{"tt", "Tatar"},
-	{"tw", "Twi"},
-	{"uk", "Ukrainian"},
-	{"ur", "Urdu"},
-	{"uz", "Uzbek"},
-	{"vi", "Vietnamese"},
-	{"vo", "Volapuk"},
-	{"wo", "Wolof"},
-	{"xh", "Xhosa"},
-	{"yi", "Yiddish"},
-	{"yo", "Yoruba"},
-	{"zh", "Chinese"},
-	{"zu", "Zulu"},
+	{
+		LanguageInfo{"aa", "Afar"},
+		LanguageInfo{"ab", "Abkhazian"},
+		LanguageInfo{"af", "Afrikaans"},
+		LanguageInfo{"am", "Amharic"},
+		LanguageInfo{"ar", "Arabic"},
+		LanguageInfo{"as", "Assamese"},
+		LanguageInfo{"ay", "Aymara"},
+		LanguageInfo{"az", "Azerbaijani"},
+		LanguageInfo{"ba", "Bashkir"},
+		LanguageInfo{"be", "Byelorussian"},
+		LanguageInfo{"bg", "Bulgarian"},
+		LanguageInfo{"bh", "Bihari"},
+		LanguageInfo{"bi", "Bislama"},
+		LanguageInfo{"bn", "Bengali"},
+		LanguageInfo{"bo", "Tibetan"},
+		LanguageInfo{"br", "Breton"},
+		LanguageInfo{"ca", "Catalan"},
+		LanguageInfo{"co", "Corsican"},
+		LanguageInfo{"cs", "Czech"},
+		LanguageInfo{"cy", "Welsh"},
+		LanguageInfo{"da", "Danish"},
+		LanguageInfo{"de", "German"},
+		LanguageInfo{"dz", "Bhutani"},
+		LanguageInfo{"el", "Greek"},
+		LanguageInfo{"en", "English"},
+		LanguageInfo{"eo", "Esperanto"},
+		LanguageInfo{"es", "Spanish"},
+		LanguageInfo{"et", "Estonian"},
+		LanguageInfo{"eu", "Basque"},
+		LanguageInfo{"fa", "Persian"},
+		LanguageInfo{"fi", "Finnish"},
+		LanguageInfo{"fj", "Fiji"},
+		LanguageInfo{"fo", "Faeroese"},
+		LanguageInfo{"fr", "French"},
+		LanguageInfo{"fy", "Frisian"},
+		LanguageInfo{"ga", "Irish"},
+		LanguageInfo{"gd", "Gaelic"},
+		LanguageInfo{"gl", "Galician"},
+		LanguageInfo{"gn", "Guarani"},
+		LanguageInfo{"gu", "Gujarati"},
+		LanguageInfo{"ha", "Hausa"},
+		LanguageInfo{"he", "Hebrew"},
+		LanguageInfo{"hi", "Hindi"},
+		LanguageInfo{"hr", "Croatian"},
+		LanguageInfo{"hu", "Hungarian"},
+		LanguageInfo{"hy", "Armenian"},
+		LanguageInfo{"ia", "Interlingua"},
+		LanguageInfo{"id", "Indonesian"},
+		LanguageInfo{"ie", "Interlingue"},
+		LanguageInfo{"ik", "Inupiak"},
+		LanguageInfo{"in", "Indonesian"}, // compatibility
+		LanguageInfo{"is", "Icelandic"},
+		LanguageInfo{"it", "Italian"},
+		LanguageInfo{"iw", "Hebrew"}, // compatibility
+		LanguageInfo{"ja", "Japanese"},
+		LanguageInfo{"ji", "Yiddish"}, // compatibility
+		LanguageInfo{"jw", "Javanese"},
+		LanguageInfo{"ka", "Georgian"},
+		LanguageInfo{"kk", "Kazakh"},
+		LanguageInfo{"kl", "Greenlandic"},
+		LanguageInfo{"km", "Cambodian"},
+		LanguageInfo{"kn", "Kannada"},
+		LanguageInfo{"ko", "Korean"},
+		LanguageInfo{"ks", "Kashmiri"},
+		LanguageInfo{"ku", "Kurdish"},
+		LanguageInfo{"ky", "Kirghiz"},
+		LanguageInfo{"la", "Latin"},
+		LanguageInfo{"ln", "Lingala"},
+		LanguageInfo{"lo", "Laothian"},
+		LanguageInfo{"lt", "Lithuanian"},
+		LanguageInfo{"lv", "Latvian"},
+		LanguageInfo{"mg", "Malagasy"},
+		LanguageInfo{"mi", "Maori"},
+		LanguageInfo{"mk", "Macedonian"},
+		LanguageInfo{"ml", "Malayalam"},
+		LanguageInfo{"mn", "Mongolian"},
+		LanguageInfo{"mo", "Moldavian"},
+		LanguageInfo{"mr", "Marathi"},
+		LanguageInfo{"ms", "Malay"},
+		LanguageInfo{"mt", "Maltese"},
+		LanguageInfo{"my", "Burmese"},
+		LanguageInfo{"na", "Nauru"},
+		LanguageInfo{"ne", "Nepali"},
+		LanguageInfo{"nl", "Dutch"},
+		LanguageInfo{"no", "Norwegian"},
+		LanguageInfo{"oc", "Occitan"},
+		LanguageInfo{"om", "Oromo"},
+		LanguageInfo{"or", "Oriya"},
+		LanguageInfo{"pa", "Punjabi"},
+		LanguageInfo{"pl", "Polish"},
+		LanguageInfo{"ps", "Pashto"},
+		LanguageInfo{"pt", "Portuguese"},
+		LanguageInfo{"qu", "Quechua"},
+		LanguageInfo{"rm", "Rhaeto-Romance"},
+		LanguageInfo{"rn", "Kirundi"},
+		LanguageInfo{"ro", "Romanian"},
+		LanguageInfo{"ru", "Russian"},
+		LanguageInfo{"rw", "Kinyarwanda"},
+		LanguageInfo{"sa", "Sanskrit"},
+		LanguageInfo{"sd", "Sindhi"},
+		LanguageInfo{"sg", "Sangro"},
+		LanguageInfo{"sh", "Serbo-Croatian"},
+		LanguageInfo{"si", "Singhalese"},
+		LanguageInfo{"sk", "Slovak"},
+		LanguageInfo{"sl", "Slovenian"},
+		LanguageInfo{"sm", "Samoan"},
+		LanguageInfo{"sn", "Shona"},
+		LanguageInfo{"so", "Somali"},
+		LanguageInfo{"sq", "Albanian"},
+		LanguageInfo{"sr", "Serbian"},
+		LanguageInfo{"ss", "Siswati"},
+		LanguageInfo{"st", "Sesotho"},
+		LanguageInfo{"su", "Sudanese"},
+		LanguageInfo{"sv", "Swedish"},
+		LanguageInfo{"sw", "Swahili"},
+		LanguageInfo{"ta", "Tamil"},
+		LanguageInfo{"te", "Tegulu"},
+		LanguageInfo{"tg", "Tajik"},
+		LanguageInfo{"th", "Thai"},
+		LanguageInfo{"ti", "Tigrinya"},
+		LanguageInfo{"tk", "Turkmen"},
+		LanguageInfo{"tl", "Tagalog"},
+		LanguageInfo{"tn", "Setswana"},
+		LanguageInfo{"to", "Tonga"},
+		LanguageInfo{"tr", "Turkish"},
+		LanguageInfo{"ts", "Tsonga"},
+		LanguageInfo{"tt", "Tatar"},
+		LanguageInfo{"tw", "Twi"},
+		LanguageInfo{"uk", "Ukrainian"},
+		LanguageInfo{"ur", "Urdu"},
+		LanguageInfo{"uz", "Uzbek"},
+		LanguageInfo{"vi", "Vietnamese"},
+		LanguageInfo{"vo", "Volapuk"},
+		LanguageInfo{"wo", "Wolof"},
+		LanguageInfo{"xh", "Xhosa"},
+		LanguageInfo{"yi", "Yiddish"},
+		LanguageInfo{"yo", "Yoruba"},
+		LanguageInfo{"zh", "Chinese"},
+		LanguageInfo{"zu", "Zulu"}
+	}
 };
 
 void GetLanguageInfos( vector<const LanguageInfo*> &vAddTo )
 {
-	for( unsigned i=0; i<ARRAYLEN(g_langs); ++i )
-		vAddTo.push_back( &g_langs[i] );
+	for (auto const &lang: g_langs)
+	{
+		vAddTo.push_back( &lang );
+	}
 }
 
 const LanguageInfo *GetLanguageInfo( const RString &sIsoCode )
 {
-	for( unsigned i=0; i<ARRAYLEN(g_langs); ++i )
+	for (auto const &lang: g_langs)
 	{
-		if( sIsoCode.EqualsNoCase(g_langs[i].szIsoCode) )
-			return &g_langs[i];
+		if ( sIsoCode.EqualsNoCase(lang.szIsoCode))
+		{
+			return &lang;
+		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 RString join( const RString &sDeliminator, const vector<RString> &sSource)
@@ -873,6 +891,7 @@ while( 1 )
 template <class S>
 void do_split( const S &Source, const S &Delimitor, int &begin, int &size, int len, const bool bIgnoreEmpty )
 {
+	using std::min;
 	if( size != -1 )
 	{
 		// Start points to the beginning of the last delimiter. Move it up.
@@ -934,9 +953,9 @@ void splitpath( const RString &sPath, RString &sDir, RString &sFilename, RString
 	vector<RString> asMatches;
 
 	/*
-	 * One level of escapes for the regex, one for C. Ew. 
+	 * One level of escapes for the regex, one for C. Ew.
 	 * This is really:
-	 * ^(.*[\\/])?(.*)$ 
+	 * ^(.*[\\/])?(.*)$
 	 */
 	static Regex sep("^(.*[\\\\/])?(.*)$");
 	bool bCheck = sep.Compare( sPath, asMatches );
@@ -1058,7 +1077,7 @@ bool FindFirstFilenameContaining(const vector<RString>& filenames,
 }
 
 int g_argc = 0;
-char **g_argv = NULL;
+char **g_argv = nullptr;
 
 void SetCommandlineArguments( int argc, char **argv )
 {
@@ -1076,7 +1095,7 @@ void GetCommandLineArguments( int &argc, char **&argv )
  * option "--test".  All commandline arguments are getopt_long style: --foo;
  * short arguments (-x) are not supported.  (These are not intended for
  * common, general use, so having short options isn't currently needed.)
- * If argument is non-NULL, accept an argument. */
+ * If argument is non-nullptr, accept an argument. */
 bool GetCommandlineArgument( const RString &option, RString *argument, int iIndex )
 {
 	const RString optstr = "--" + option;
@@ -1114,7 +1133,7 @@ bool GetCommandlineArgument( const RString &option, RString *argument, int iInde
 RString GetCwd()
 {
 	char buf[PATH_MAX];
-	bool ret = getcwd(buf, PATH_MAX) != NULL;
+	bool ret = getcwd(buf, PATH_MAX) != nullptr;
 	ASSERT(ret);
 	return buf;
 }
@@ -1194,7 +1213,7 @@ void SortRStringArray( vector<RString> &arrayRStrings, const bool bSortAscending
 
 float calc_mean( const float *pStart, const float *pEnd )
 {
-	return accumulate( pStart, pEnd, 0.f ) / distance( pStart, pEnd );
+	return std::accumulate( pStart, pEnd, 0.f ) / std::distance( pStart, pEnd );
 }
 
 float calc_stddev( const float *pStart, const float *pEnd, bool bSample )
@@ -1206,19 +1225,19 @@ float calc_stddev( const float *pStart, const float *pEnd, bool bSample )
 	float fDev = 0.0f;
 	for( const float *i=pStart; i != pEnd; ++i )
 		fDev += (*i - fMean) * (*i - fMean);
-	fDev /= distance( pStart, pEnd ) - (bSample ? 1 : 0);
+	fDev /= std::distance( pStart, pEnd ) - (bSample ? 1 : 0);
 	fDev = sqrtf( fDev );
 
 	return fDev;
 }
 
-bool CalcLeastSquares( const vector< pair<float, float> > &vCoordinates,
+bool CalcLeastSquares( const vector< std::pair<float, float> > &vCoordinates,
                        float &fSlope, float &fIntercept, float &fError )
 {
-	if( vCoordinates.empty() ) 
+	if( vCoordinates.empty() )
 		return false;
 	float fSumXX = 0.0f, fSumXY = 0.0f, fSumX = 0.0f, fSumY = 0.0f;
-	for( unsigned i = 0; i < vCoordinates.size(); ++i ) 
+	for( unsigned i = 0; i < vCoordinates.size(); ++i )
 	{
 		fSumXX += vCoordinates[i].first * vCoordinates[i].first;
 		fSumXY += vCoordinates[i].first * vCoordinates[i].second;
@@ -1230,7 +1249,7 @@ bool CalcLeastSquares( const vector< pair<float, float> > &vCoordinates,
 	fIntercept = (fSumXX * fSumY - fSumX * fSumXY) / fDenominator;
 
 	fError = 0.0f;
-	for( unsigned i = 0; i < vCoordinates.size(); ++i ) 
+	for( unsigned i = 0; i < vCoordinates.size(); ++i )
 	{
 		const float fOneError = fIntercept + fSlope * vCoordinates[i].first - vCoordinates[i].second;
 		fError += fOneError * fOneError;
@@ -1240,7 +1259,7 @@ bool CalcLeastSquares( const vector< pair<float, float> > &vCoordinates,
 	return true;
 }
 
-void FilterHighErrorPoints( vector< pair<float, float> > &vCoordinates,
+void FilterHighErrorPoints( vector< std::pair<float, float> > &vCoordinates,
                             float fSlope, float fIntercept, float fCutoff )
 {
 	unsigned int iOut = 0;
@@ -1438,12 +1457,12 @@ void Regex::Compile()
 {
 	const char *error;
 	int offset;
-	m_pReg = pcre_compile( m_sPattern.c_str(), PCRE_CASELESS, &error, &offset, NULL );
+	m_pReg = pcre_compile( m_sPattern.c_str(), PCRE_CASELESS, &error, &offset, nullptr );
 
-	if( m_pReg == NULL )
+	if( m_pReg == nullptr )
 		RageException::Throw( "Invalid regex: \"%s\" (%s).", m_sPattern.c_str(), error );
 
-	int iRet = pcre_fullinfo( (pcre *) m_pReg, NULL, PCRE_INFO_CAPTURECOUNT, &m_iBackrefs );
+	int iRet = pcre_fullinfo( (pcre *) m_pReg, nullptr, PCRE_INFO_CAPTURECOUNT, &m_iBackrefs );
 	ASSERT( iRet >= 0 );
 
 	++m_iBackrefs;
@@ -1460,16 +1479,16 @@ void Regex::Set( const RString &sStr )
 void Regex::Release()
 {
 	pcre_free( m_pReg );
-	m_pReg = NULL;
+	m_pReg = nullptr;
 	m_sPattern = RString();
 }
 
-Regex::Regex( const RString &sStr ): m_pReg(NULL), m_iBackrefs(0), m_sPattern(RString())
+Regex::Regex( const RString &sStr ): m_pReg(nullptr), m_iBackrefs(0), m_sPattern(RString())
 {
 	Set( sStr );
 }
 
-Regex::Regex( const Regex &rhs ): m_pReg(NULL), m_iBackrefs(0), m_sPattern(RString())
+Regex::Regex( const Regex &rhs ): m_pReg(nullptr), m_iBackrefs(0), m_sPattern(RString())
 {
 	Set( rhs.m_sPattern );
 }
@@ -1489,7 +1508,7 @@ Regex::~Regex()
 bool Regex::Compare( const RString &sStr )
 {
 	int iMat[128*3];
-	int iRet = pcre_exec( (pcre *) m_pReg, NULL, sStr.data(), sStr.size(), 0, 0, iMat, 128*3 );
+	int iRet = pcre_exec( (pcre *) m_pReg, nullptr, sStr.data(), sStr.size(), 0, 0, iMat, 128*3 );
 
 	if( iRet < -1 )
 		RageException::Throw( "Unexpected return from pcre_exec('%s'): %i.", m_sPattern.c_str(), iRet );
@@ -1502,7 +1521,7 @@ bool Regex::Compare( const RString &sStr, vector<RString> &asMatches )
 	asMatches.clear();
 
 	int iMat[128*3];
-	int iRet = pcre_exec( (pcre *) m_pReg, NULL, sStr.data(), sStr.size(), 0, 0, iMat, 128*3 );
+	int iRet = pcre_exec( (pcre *) m_pReg, nullptr, sStr.data(), sStr.size(), 0, 0, iMat, 128*3 );
 
 	if( iRet < -1 )
 		RageException::Throw( "Unexpected return from pcre_exec('%s'): %i.", m_sPattern.c_str(), iRet );
@@ -1858,7 +1877,7 @@ RString IntToString( const int &iNum )
 
 float StringToFloat( const RString &sString )
 {
-	float ret = strtof( sString, NULL );
+	float ret = strtof( sString, nullptr );
 
 	if( !isfinite(ret) )
 		ret = 0.0f;
@@ -1896,7 +1915,7 @@ wstring RStringToWstring( const RString &s )
 			++start;
 			continue;
 		}
-		
+
 		wchar_t ch = L'\0';
 		if( !utf8_to_wchar( s.data(), s.size(), start, ch ) )
 			ch = INVALID_CHAR;
@@ -1924,7 +1943,7 @@ RString WcharToUTF8( wchar_t c )
 }
 
 // &a; -> a
-void ReplaceEntityText( RString &sText, const map<RString,RString> &m )
+void ReplaceEntityText( RString &sText, const std::map<RString,RString> &m )
 {
 	RString sRet;
 
@@ -1960,7 +1979,7 @@ void ReplaceEntityText( RString &sText, const map<RString,RString> &m )
 		RString sElement = sText.substr( iStart+1, iEnd-iStart-1 );
 		sElement.MakeLower();
 
-		map<RString,RString>::const_iterator it = m.find( sElement );
+		auto it = m.find( sElement );
 		if( it == m.end() )
 		{
 			sRet.append( sText, iStart, iEnd-iStart+1 );
@@ -1977,12 +1996,14 @@ void ReplaceEntityText( RString &sText, const map<RString,RString> &m )
 }
 
 // abcd -> &a; &b; &c; &d;
-void ReplaceEntityText( RString &sText, const map<char,RString> &m )
+void ReplaceEntityText( RString &sText, const std::map<char,RString> &m )
 {
 	RString sFind;
 
-	FOREACHM_CONST( char, RString, m, c )
-		sFind.append( 1, c->first );
+	for (auto const &c: m)
+	{
+		sFind.append(1, c.first);
+	}
 
 	RString sRet;
 
@@ -2007,7 +2028,7 @@ void ReplaceEntityText( RString &sText, const map<char,RString> &m )
 
 		char sElement = sText[iStart];
 
-		map<char,RString>::const_iterator it = m.find( sElement );
+		auto it = m.find( sElement );
 		ASSERT( it != m.end() );
 
 		const RString &sTo = it->second;
@@ -2129,7 +2150,7 @@ RString Dirname( const RString &dir )
 	return dir.substr(0, pos+1);
 }
 
-RString Capitalize( const RString &s )	
+RString Capitalize( const RString &s )
 {
 	if( s.empty() )
 		return RString();
@@ -2266,7 +2287,7 @@ void CollapsePath( RString &sPath, bool bRemoveLeadingDot )
 
 		sOut.append( sPath, iPos, iNext-iPos );
 	}
-	
+
 	sOut.swap( sPath );
 }
 
@@ -2365,7 +2386,7 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 		if( in.Read(data, 1024*32) == -1 )
 		{
 			sError = ssprintf( "read error: %s", in.GetError().c_str() );
-			if( bReadError != NULL )
+			if( bReadError != nullptr )
 				*bReadError = true;
 			return false;
 		}
@@ -2375,7 +2396,7 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 		if( i == -1 )
 		{
 			sError = ssprintf( "write error: %s", out.GetError().c_str() );
-			if( bReadError != NULL )
+			if( bReadError != nullptr )
 				*bReadError = false;
 			return false;
 		}
@@ -2384,7 +2405,7 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 	if( out.Flush() == -1 )
 	{
 		sError = ssprintf( "write error: %s", out.GetError().c_str() );
-		if( bReadError != NULL )
+		if( bReadError != nullptr )
 			*bReadError = false;
 		return false;
 	}
@@ -2517,7 +2538,7 @@ int LuaFunc_get_music_file_length(lua_State* L)
 	RString path= SArg(1);
 	RString error;
 	RageSoundReader* sample= RageSoundReader_FileReader::OpenFile(path, error);
-	if(sample == NULL)
+	if(sample == nullptr)
 	{
 		luaL_error(L, "The music file '%s' does not exist.", path.c_str());
 	}

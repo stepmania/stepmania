@@ -7,7 +7,10 @@ class Steps;
 class Trail;
 struct lua_State;
 
-#define ONE( arr ) { for( unsigned Z = 0; Z < ARRAYLEN(arr); ++Z ) arr[Z]=1.0f; }
+#define ONE( arr ) { \
+for( unsigned Z = 0; Z < ARRAYLEN(arr); ++Z ) \
+arr[Z]=1.0f; \
+}
 
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
@@ -77,15 +80,15 @@ public:
 	RString GetString( bool bForceNoteSkin = false ) const;
 	RString GetSavedPrefsString() const;	// only the basic options that players would want for every song
 	enum ResetPrefsType
-	{ 
-		saved_prefs, 
+	{
+		saved_prefs,
 		saved_prefs_invalid_for_course
 	};
 	void ResetPrefs( ResetPrefsType type );
 	void ResetSavedPrefs() { ResetPrefs(saved_prefs); };
 	void ResetSavedPrefsInvalidForCourse() { ResetPrefs(saved_prefs_invalid_for_course); }
-	void GetMods( vector<RString> &AddTo, bool bForceNoteSkin = false ) const;
-	void GetLocalizedMods( vector<RString> &AddTo ) const;
+	void GetMods( std::vector<RString> &AddTo, bool bForceNoteSkin = false ) const;
+	void GetLocalizedMods( std::vector<RString> &AddTo ) const;
 	void FromString( const RString &sMultipleMods );
 	bool FromOneModString( const RString &sOneMod, RString &sErrorDetailOut );	// On error, return false and optionally set sErrorDetailOut
 	void ChooseRandomModifiers();
@@ -145,7 +148,7 @@ public:
 		TURN_SHUFFLE, /**< Some of the arrow columns are changed throughout the whole song. */
 		TURN_SOFT_SHUFFLE, /**< Only shuffle arrow columns on an axis of symmetry. */
 		TURN_SUPER_SHUFFLE, /**< Every arrow is placed on a random column. */
-		NUM_TURNS 
+		NUM_TURNS
 	};
 	enum Transform {
 		TRANSFORM_NOHOLDS,
@@ -257,7 +260,7 @@ public:
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -267,7 +270,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -2,8 +2,9 @@
 #include "RageSoundDriver.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "Foreach.h"
 #include "arch/arch_default.h"
+
+using std::vector;
 
 DriverList RageSoundDriver::m_pDriverList;
 
@@ -11,35 +12,35 @@ RageSoundDriver *RageSoundDriver::Create( const RString& sDrivers )
 {
 	vector<RString> DriversToTry;
 	split( sDrivers.empty()? DEFAULT_SOUND_DRIVER_LIST:sDrivers, ",", DriversToTry, true );
-	
-	FOREACH_CONST( RString, DriversToTry, Driver )
+
+	for (auto const &Driver: DriversToTry)
 	{
-		RageDriver *pDriver = m_pDriverList.Create( *Driver );
-		if( pDriver == NULL )
+		RageDriver *pDriver = m_pDriverList.Create( Driver );
+		if( pDriver == nullptr )
 		{
-			LOG->Trace( "Unknown sound driver: %s", Driver->c_str() );
+			LOG->Trace( "Unknown sound driver: %s", Driver.c_str() );
 			continue;
 		}
 
 		RageSoundDriver *pRet = dynamic_cast<RageSoundDriver *>( pDriver );
-		ASSERT( pRet != NULL );
+		ASSERT( pRet != nullptr );
 
 		const RString sError = pRet->Init();
 		if( sError.empty() )
 		{
-			LOG->Info( "Sound driver: %s", Driver->c_str() );
+			LOG->Info( "Sound driver: %s", Driver.c_str() );
 			return pRet;
 		}
-		LOG->Info( "Couldn't load driver %s: %s", Driver->c_str(), sError.c_str() );
+		LOG->Info( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
 		SAFE_DELETE( pRet );
 	}
-	return NULL;
+	return nullptr;
 }
 
 /*
  * (c) 2002-2006 Glenn Maynard, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -49,7 +50,7 @@ RageSoundDriver *RageSoundDriver::Create( const RString& sDrivers )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -10,6 +10,8 @@
 #include "Song.h"
 #include "Course.h"
 
+using std::vector;
+
 #define UNLOCK_TEXT_SCROLL_X		THEME->GetMetricF("ScreenUnlockStatus","UnlockTextScrollX");
 #define UNLOCK_TEXT_SCROLL_START_Y	THEME->GetMetricF("ScreenUnlockStatus","UnlockTextScrollStartY")
 #define UNLOCK_TEXT_SCROLL_END_Y	THEME->GetMetricF("ScreenUnlockStatus","UnlockTextScrollEndY")
@@ -50,7 +52,7 @@ void ScreenUnlockStatus::Init()
 		const UnlockEntry &entry = UNLOCKMAN->m_UnlockEntries[i-1];
 		const Song *pSong = entry.m_Song.ToSong();
 
-		if( pSong == NULL)
+		if( pSong == nullptr)
 			continue;
 
 		Sprite* pSpr = new Sprite;
@@ -80,7 +82,7 @@ void ScreenUnlockStatus::Init()
 		float MaxWidth = UNLOCK_TEXT_SCROLL_MAX_WIDTH;
 
 		float SecondsToScroll = TIME_TO_DISPLAY;
-		
+
 		if (SecondsToScroll > 2) SecondsToScroll--;
 
 		float SECS_PER_CYCLE = 0;
@@ -93,7 +95,7 @@ void ScreenUnlockStatus::Init()
 		for(unsigned i = 1; i <= NumUnlocks; i++)
 		{
 			const UnlockEntry &entry = UNLOCKMAN->m_UnlockEntries[i-1];
-			
+
 			BitmapText* text = new BitmapText;
 
 			text->LoadFromFont( THEME->GetPathF("ScreenUnlockStatus","text") );
@@ -105,8 +107,8 @@ void ScreenUnlockStatus::Init()
 			case UnlockRewardType_Song:
 				{
 					const Song *pSong = entry.m_Song.ToSong();
-					ASSERT( pSong != NULL );
-		
+					ASSERT( pSong != nullptr );
+
 					RString title = pSong->GetDisplayMainTitle();
 					RString subtitle = pSong->GetDisplaySubTitle();
 					if( subtitle != "" )
@@ -118,7 +120,7 @@ void ScreenUnlockStatus::Init()
 			case UnlockRewardType_Course:
 				{
 					const Course *pCourse = entry.m_Course.ToCourse();
-					ASSERT( pCourse != NULL );
+					ASSERT( pCourse != nullptr );
 
 					text->SetMaxWidth( MaxWidth );
 					text->SetText( pCourse->GetDisplayFullTitle() );
@@ -200,7 +202,7 @@ void ScreenUnlockStatus::Init()
 				ItemIcons.push_back(IconCount);
 
 				//LOG->Trace("Added unlock text %d", i);
-					
+
 				if (UNLOCK_TEXT_SCROLL == 3)
 				{
 					if ( !entry.IsLocked() )
@@ -229,7 +231,7 @@ void ScreenUnlockStatus::Init()
 
 			const UnlockEntry &entry = UNLOCKMAN->m_UnlockEntries[NextIcon-1];
 			const Song *pSong = entry.m_Song.ToSong();
-			if( pSong == NULL )
+			if( pSong == nullptr )
 				continue;
 
 			BitmapText* NewText = new BitmapText;
@@ -271,7 +273,7 @@ void ScreenUnlockStatus::Init()
 		}
 	}
 
-	// NOTE: the following two loops require the iterator to 
+	// NOTE: the following two loops require the iterator to
 	// be ints because if you decrement an unsigned when it
 	// equals zero, you get the maximum value of an unsigned,
 	// which is still greater than 0.  By typecasting it as
@@ -284,19 +286,19 @@ void ScreenUnlockStatus::Init()
 		this->AddChild(ItemIcons[i]);
 
 	PointsUntilNextUnlock.SetName( "PointsDisplay" );
-	
+
 	RString PointDisplay = TYPE_TO_DISPLAY;
 	if (PointDisplay == "DP" || PointDisplay == "Dance")
 	{
 		RString sDP = ssprintf( "%d", (int)UNLOCKMAN->PointsUntilNextUnlock(UnlockRequirement_DancePoints) );
 		PointsUntilNextUnlock.SetText( sDP );
 	}
-	else if (PointDisplay == "AP" || PointDisplay == "Arcade") 
+	else if (PointDisplay == "AP" || PointDisplay == "Arcade")
 	{
 		RString sAP = ssprintf( "%d", (int)UNLOCKMAN->PointsUntilNextUnlock(UnlockRequirement_ArcadePoints) );
 		PointsUntilNextUnlock.SetText( sAP );
 	}
-	else if (PointDisplay == "SP" || PointDisplay == "Song") 
+	else if (PointDisplay == "SP" || PointDisplay == "Song")
 	{
 		RString sSP = ssprintf( "%d", (int)UNLOCKMAN->PointsUntilNextUnlock(UnlockRequirement_SongPoints) );
 		PointsUntilNextUnlock.SetText( sSP );
@@ -336,7 +338,7 @@ ScreenUnlockStatus::~ScreenUnlockStatus()
 /*
  * (c) 2003 Andrew Wong
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -346,7 +348,7 @@ ScreenUnlockStatus::~ScreenUnlockStatus()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

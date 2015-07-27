@@ -15,7 +15,7 @@ class Profile;
 class NoteData;
 struct lua_State;
 
-/** 
+/**
  * @brief Enforce a limit on the number of chars for the description.
  *
  * In In The Groove, this limit was 12: we do not need such a limit now.
@@ -34,7 +34,7 @@ enum DisplayBPM
 const RString& DisplayBPMToString( DisplayBPM dbpm );
 LuaDeclareType( DisplayBPM );
 
-/** 
+/**
  * @brief Holds note information for a Song.
  *
  * A Song may have one or more Notes. */
@@ -54,11 +54,11 @@ public:
 	void Compress() const;
 	void Decompress() const;
 	void Decompress();
-	/** 
+	/**
 	 * @brief Determine if these steps were created by the autogenerator.
 	 * @return true if they were, false otherwise.
 	 */
-	bool IsAutogen() const				{ return parent != NULL; }
+	bool IsAutogen() const				{ return parent != nullptr; }
 
 	/**
 	 * @brief Determine if this set of Steps is an edit.
@@ -109,7 +109,7 @@ public:
 	/** @brief The list of attacks. */
 	AttackArray m_Attacks;
 	/** @brief The stringified list of attacks. */
-	vector<RString> m_sAttackString;
+	std::vector<RString> m_sAttackString;
 
 	RString GetChartName() const			{ return parent ? Real()->GetChartName() : this->chartName; }
 	void SetChartName(const RString name)	{ this->chartName = name; }
@@ -151,7 +151,7 @@ public:
 	void TidyUpData();
 	void CalculateRadarValues( float fMusicLengthSeconds );
 
-	/** 
+	/**
 	 * @brief The TimingData used by the Steps.
 	 *
 	 * This is required to allow Split Timing. */
@@ -213,7 +213,7 @@ private:
 	const Steps			*parent;
 
 	/* We can have one or both of these; if we have both, they're always identical.
-	 * Call Compress() to force us to only have m_sNoteDataCompressed; otherwise, creation of 
+	 * Call Compress() to force us to only have m_sNoteDataCompressed; otherwise, creation of
 	 * these is transparent. */
 	mutable HiddenPtr<NoteData>	m_pNoteData;
 	mutable bool			m_bNoteDataIsFilled;
@@ -264,7 +264,7 @@ private:
  * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -274,7 +274,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -6,12 +6,12 @@
 #include "RageUtil.h"
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 
-#include <map>
+#include <unordered_map>
 #include <set>
 
 namespace
 {
-	map<GLenum, RString> g_Strings;
+	std::unordered_map<GLenum, RString> g_Strings;
 	void InitStringMap()
 	{
 		static bool bInitialized = false;
@@ -44,7 +44,7 @@ RString RageDisplay_Legacy_Helpers::GLToString( GLenum e )
 	return ssprintf( "%i", int(e) );
 }
 /*
-static void GetGLExtensions( set<string> &ext )
+static void GetGLExtensions( std::set<string> &ext )
 {
 	const char *szBuf = (const char *) glGetString( GL_EXTENSIONS );
 

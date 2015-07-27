@@ -8,6 +8,8 @@
 
 #pragma comment (lib,"winmm.lib")
 
+using std::vector;
+
 REGISTER_INPUT_HANDLER_CLASS2( MIDI, Win32_MIDI );
 
 static HMIDIIN g_device;
@@ -24,7 +26,7 @@ InputHandler_Win32_MIDI::InputHandler_Win32_MIDI()
 {
 	int device_id = 0;
 
-	g_device = NULL;
+	g_device = nullptr;
 
 	if( device_id >= (int) midiInGetNumDevs() )
 	{

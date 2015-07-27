@@ -5,7 +5,6 @@
 #include "RageUtil.h"
 #include "RageMath.h"
 #include "RageLog.h"
-#include "Foreach.h"
 #include "XmlFile.h"
 #include "LuaBinding.h"
 #include "ThemeManager.h"
@@ -15,6 +14,8 @@
 #include "ActorUtil.h"
 #include "Preference.h"
 #include <typeinfo>
+
+using std::vector;
 
 static Preference<bool> g_bShowMasks("ShowMasks", false);
 static const float default_effect_period= 1.0f;
@@ -87,7 +88,7 @@ void Actor::InitState()
 {
 	this->StopTweening();
 
-	m_pTempState = NULL;
+	m_pTempState = nullptr;
 
 	m_baseRotation = RageVector3( 0, 0, 0 );
 	m_baseScale = RageVector3( 1, 1, 1 );
@@ -159,11 +160,11 @@ Actor::Actor()
 		lua_setfield( L, -2, "ctx" );
 		lua_pop( L, 1 );
 	LUA->Release( L );
-	
+
 	m_size = RageVector2( 1, 1 );
 	InitState();
-	m_pParent = NULL;
-	m_FakeParent= NULL;
+	m_pParent = nullptr;
+	m_FakeParent= nullptr;
 	m_bFirstUpdate = true;
 }
 
@@ -182,8 +183,8 @@ Actor::Actor( const Actor &cpy ):
 	MessageSubscriber( cpy )
 {
 	/* Don't copy an Actor in the middle of rendering. */
-	ASSERT( cpy.m_pTempState == NULL );
-	m_pTempState = NULL;
+	ASSERT( cpy.m_pTempState == nullptr );
+	m_pTempState = nullptr;
 
 #define CPY(x) x = cpy.x
 	CPY( m_sName );
@@ -288,7 +289,7 @@ void Actor::LoadFromNode( const XNode* pNode )
 
 	LUA->Release( L );
 
-	// Don't recurse Init.  It gets called once for every Actor when the 
+	// Don't recurse Init.  It gets called once for every Actor when the
 	// Actor is loaded, and we don't want to call it again.
 	PlayCommandNoRecurse( Message("Init") );
 }
@@ -303,7 +304,7 @@ bool Actor::PartiallyOpaque()
 void Actor::Draw()
 {
 	if( !m_bVisible ||
-		m_fHibernateSecondsLeft > 0 || 
+		m_fHibernateSecondsLeft > 0 ||
 		this->EarlyAbortDraw() )
 	{
 		return; // early abort
@@ -383,7 +384,7 @@ void Actor::Draw()
 			this->SetInternalGlow(last_glow);
 		}
 		this->PreDraw();
-		ASSERT( m_pTempState != NULL );
+		ASSERT( m_pTempState != nullptr );
 		if(PartiallyOpaque())
 		{
 			this->BeginDraw();
@@ -401,16 +402,16 @@ void Actor::Draw()
 		}
 		abort_with_end_draw= true;
 		state->PostDraw();
-		state->m_pTempState= NULL;
+		state->m_pTempState= nullptr;
 	}
 
 	if(m_FakeParent)
 	{
 		m_FakeParent->EndDraw();
 		m_FakeParent->PostDraw();
-		m_FakeParent->m_pTempState= NULL;
+		m_FakeParent->m_pTempState= nullptr;
 	}
-	m_pTempState = NULL;
+	m_pTempState = nullptr;
 }
 
 void Actor::PostDraw() // reset internal diffuse and glow
@@ -466,7 +467,7 @@ void Actor::PreDraw() // calculate actor properties
 		{
 			fPercentThroughEffect = 0;
 		}
-		ASSERT_M( fPercentThroughEffect >= 0 && fPercentThroughEffect <= 1, 
+		ASSERT_M( fPercentThroughEffect >= 0 && fPercentThroughEffect <= 1,
 			ssprintf("PercentThroughEffect: %f", fPercentThroughEffect) );
 
 		bool bBlinkOn = fPercentThroughEffect > 0.5f;
@@ -479,7 +480,7 @@ void Actor::PreDraw() // calculate actor properties
 		switch( m_Effect )
 		{
 		case diffuse_blink:
-			/* XXX: Should diffuse_blink and diffuse_shift multiply the tempState color? 
+			/* XXX: Should diffuse_blink and diffuse_shift multiply the tempState color?
 			 * (That would have the same effect with 1,1,1,1, and allow tweening the diffuse
 			 * while blinking and shifting.) */
 			for(int i=0; i<NUM_DIFFUSE_COLORS; i++)
@@ -536,13 +537,13 @@ void Actor::PreDraw() // calculate actor properties
 			break;
 		case bounce:
 			{
-				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI ); 
+				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI );
 				tempState.pos += m_vEffectMagnitude * fPercentOffset;
 			}
 			break;
 		case bob:
 			{
-				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI*2 ); 
+				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI*2 );
 				tempState.pos += m_vEffectMagnitude * fPercentOffset;
 			}
 			break;
@@ -550,7 +551,7 @@ void Actor::PreDraw() // calculate actor properties
 			{
 				float fMinZoom = m_vEffectMagnitude[0];
 				float fMaxZoom = m_vEffectMagnitude[1];
-				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI ); 
+				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI );
 				float fZoom = SCALE( fPercentOffset, 0.f, 1.f, fMinZoom, fMaxZoom );
 				tempState.scale *= fZoom;
 
@@ -600,11 +601,11 @@ void Actor::BeginDraw() // set the world matrix
 {
 	DISPLAY->PushMatrix();
 
-	if( m_pTempState->pos.x != 0 || m_pTempState->pos.y != 0 || m_pTempState->pos.z != 0 )	
+	if( m_pTempState->pos.x != 0 || m_pTempState->pos.y != 0 || m_pTempState->pos.z != 0 )
 	{
 		RageMatrix m;
-		RageMatrixTranslate( 
-			&m, 
+		RageMatrixTranslate(
+			&m,
 			m_pTempState->pos.x,
 			m_pTempState->pos.y,
 			m_pTempState->pos.z
@@ -620,7 +621,7 @@ void Actor::BeginDraw() // set the world matrix
 		const float fRotateY = m_pTempState->rotation.y + m_baseRotation.y;
 		const float fRotateZ = m_pTempState->rotation.z + m_baseRotation.z;
 
-		if( fRotateX != 0 || fRotateY != 0 || fRotateZ != 0 )	
+		if( fRotateX != 0 || fRotateY != 0 || fRotateZ != 0 )
 		{
 			RageMatrix m;
 			RageMatrixRotationXYZ( &m, fRotateX, fRotateY, fRotateZ );
@@ -637,7 +638,7 @@ void Actor::BeginDraw() // set the world matrix
 		if( fScaleX != 1 || fScaleY != 1 || fScaleZ != 1 )
 		{
 			RageMatrix m;
-			RageMatrixScale( 
+			RageMatrixScale(
 				&m,
 				fScaleX,
 				fScaleY,
@@ -652,8 +653,8 @@ void Actor::BeginDraw() // set the world matrix
 		float fX = SCALE( m_fHorizAlign, 0.0f, 1.0f, +m_size.x/2.0f, -m_size.x/2.0f );
 		float fY = SCALE( m_fVertAlign, 0.0f, 1.0f, +m_size.y/2.0f, -m_size.y/2.0f );
 		RageMatrix m;
-		RageMatrixTranslate( 
-			&m, 
+		RageMatrixTranslate(
+			&m,
 			fX,
 			fY,
 			0
@@ -725,6 +726,7 @@ void Actor::EndDraw()
 
 void Actor::UpdateTweening( float fDeltaTime )
 {
+	using std::min;
 	while( !m_Tweens.empty() // something to do
 		&& fDeltaTime > 0 )	// something will change
 	{
@@ -745,7 +747,7 @@ void Actor::UpdateTweening( float fDeltaTime )
 			m_start = m_current;	// set the start position
 			SetCurrentTweenStart();
 		}
-	
+
 		if( TI.m_fTimeLeftInTween == 0 )	// Current tween is over.  Stop.
 		{
 			m_current = TS;
@@ -834,7 +836,7 @@ void Actor::UpdateInternal(float delta_time)
 			}
 			break;
 		case CLOCK_TIMER_GLOBAL:
-			generic_global_timer_update(RageTimer::GetUsecsSinceStart(),
+			generic_global_timer_update(static_cast<float>(RageTimer::GetUsecsSinceStart()),
 				m_fEffectDelta, m_fSecsIntoEffect);
 			break;
 		case CLOCK_BGM_BEAT:
@@ -890,7 +892,7 @@ void Actor::UpdateInternal(float delta_time)
 RString Actor::GetLineage() const
 {
 	RString sPath;
-	
+
 	if( m_pParent )
 		sPath = m_pParent->GetLineage() + '/';
 	sPath += ssprintf( "<type %s> %s", typeid(*this).name(), m_sName.c_str() );
@@ -921,7 +923,7 @@ void Actor::BeginTweening( float time, ITween *pTween )
 {
 	ASSERT( time >= 0 );
 
-	// If the number of tweens to ever gets this large, there's probably an infinitely 
+	// If the number of tweens to ever gets this large, there's probably an infinitely
 	// recursing ActorCommand.
 	if( m_Tweens.size() > 50 )
 	{
@@ -1277,7 +1279,7 @@ void Actor::RunCommands( const LuaReference& cmds, const LuaReference *pParamTab
 	this->PushSelf( L );
 
 	// 2nd parameter
-	if( pParamTable == NULL )
+	if( pParamTable == nullptr )
 		lua_pushnil( L );
 	else
 		pParamTable->PushSelf( L );
@@ -1314,9 +1316,9 @@ void Actor::SetGlobalDiffuseColor( RageColor c )
 	{
 		for( unsigned ts = 0; ts < m_Tweens.size(); ++ts )
 		{
-			m_Tweens[ts]->state.diffuse[i].r = c.r; 
-			m_Tweens[ts]->state.diffuse[i].g = c.g; 
-			m_Tweens[ts]->state.diffuse[i].b = c.b; 
+			m_Tweens[ts]->state.diffuse[i].r = c.r;
+			m_Tweens[ts]->state.diffuse[i].g = c.g;
+			m_Tweens[ts]->state.diffuse[i].b = c.b;
 		}
 		m_current.diffuse[i].r = c.r;
 		m_current.diffuse[i].g = c.g;
@@ -1365,7 +1367,7 @@ bool Actor::TweenState::operator==( const TweenState &other ) const
 	COMPARE( fSkewY );
 	COMPARE( crop );
 	COMPARE( fade );
-	for( unsigned i=0; i<ARRAYLEN(diffuse); i++ )
+	for( unsigned i=0; i < diffuse.size(); ++i )
 		COMPARE( diffuse[i] );
 	COMPARE( glow );
 	COMPARE( aux );
@@ -1404,7 +1406,7 @@ void Actor::Sleep( float time )
 	ASSERT( time >= 0 );
 
 	BeginTweening( time, TWEEN_LINEAR );
-	BeginTweening( 0, TWEEN_LINEAR ); 
+	BeginTweening( 0, TWEEN_LINEAR );
 }
 
 void Actor::QueueCommand( const RString& sCommandName )
@@ -1433,27 +1435,29 @@ void Actor::AddCommand( const RString &sCmdName, apActorCommands apac, bool warn
 	}
 
 	RString sMessage;
+	std::string command_name;
 	if( GetMessageNameFromCommandName(sCmdName, sMessage) )
 	{
 		SubscribeToMessage( sMessage );
-		m_mapNameToCommands[sMessage] = apac;	// sCmdName w/o "Message" at the end
+		command_name= sMessage;	// sCmdName w/o "Message" at the end
 	}
 	else
 	{
-		m_mapNameToCommands[sCmdName] = apac;
+		command_name= sCmdName;
 	}
+	m_mapNameToCommands[command_name] = apac;
 }
 
 bool Actor::HasCommand( const RString &sCmdName ) const
 {
-	return GetCommand(sCmdName) != NULL;
+	return GetCommand(sCmdName) != nullptr;
 }
 
 const apActorCommands *Actor::GetCommand( const RString &sCommandName ) const
 {
-	map<RString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sCommandName );
+	auto it = m_mapNameToCommands.find(sCommandName);
 	if( it == m_mapNameToCommands.end() )
-		return NULL;
+		return nullptr;
 	return &it->second;
 }
 
@@ -1465,7 +1469,7 @@ void Actor::HandleMessage( const Message &msg )
 void Actor::PlayCommandNoRecurse( const Message &msg )
 {
 	const apActorCommands *pCmd = GetCommand( msg.GetName() );
-	if( pCmd != NULL )
+	if( pCmd != nullptr )
 		RunCommands( *pCmd, &msg.GetParamTable() );
 }
 
@@ -1495,7 +1499,7 @@ void Actor::SetParent( Actor *pParent )
 
 Actor::TweenInfo::TweenInfo()
 {
-	m_pTween = NULL;
+	m_pTween = nullptr;
 }
 
 Actor::TweenInfo::~TweenInfo()
@@ -1505,14 +1509,14 @@ Actor::TweenInfo::~TweenInfo()
 
 Actor::TweenInfo::TweenInfo( const TweenInfo &cpy )
 {
-	m_pTween = NULL;
+	m_pTween = nullptr;
 	*this = cpy;
 }
 
 Actor::TweenInfo &Actor::TweenInfo::operator=( const TweenInfo &rhs )
 {
 	delete m_pTween;
-	m_pTween = (rhs.m_pTween? rhs.m_pTween->Copy():NULL);
+	m_pTween = (rhs.m_pTween? rhs.m_pTween->Copy():nullptr);
 	m_fTimeLeftInTween = rhs.m_fTimeLeftInTween;
 	m_fTweenTime = rhs.m_fTweenTime;
 	m_sCommandName = rhs.m_sCommandName;
@@ -1522,7 +1526,7 @@ Actor::TweenInfo &Actor::TweenInfo::operator=( const TweenInfo &rhs )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the Actor. */ 
+/** @brief Allow Lua to have access to the Actor. */
 class LunaActor : public Luna<Actor>
 {
 public:
@@ -1591,7 +1595,7 @@ public:
 			COMMON_RETURN_SELF;
 		}
 		ITween *pTween = ITween::CreateFromStack( L, 2 );
-		if(pTween != NULL)
+		if(pTween != nullptr)
 		{
 			p->BeginTweening(fTime, pTween);
 		}
@@ -1785,7 +1789,7 @@ public:
 	static int GetCommand( T* p, lua_State *L )
 	{
 		const apActorCommands *pCommand = p->GetCommand(SArg(1));
-		if( pCommand == NULL )
+		if( pCommand == nullptr )
 			lua_pushnil( L );
 		else
 			(*pCommand)->PushSelf(L);
@@ -1843,7 +1847,7 @@ public:
 	static int GetParent( T* p, lua_State *L )
 	{
 		Actor *pParent = p->GetParent();
-		if( pParent == NULL )
+		if( pParent == nullptr )
 			lua_pushnil( L );
 		else
 			pParent->PushSelf(L);
@@ -1852,7 +1856,7 @@ public:
 	static int GetFakeParent(T* p, lua_State *L)
 	{
 		Actor* fake= p->GetFakeParent();
-		if(fake == NULL)
+		if(fake == nullptr)
 		{
 			lua_pushnil(L);
 		}
@@ -1866,7 +1870,7 @@ public:
 	{
 		if(lua_isnoneornil(L, 1))
 		{
-			p->SetFakeParent(NULL);
+			p->SetFakeParent(nullptr);
 		}
 		else
 		{
@@ -2099,7 +2103,7 @@ LUA_REGISTER_INSTANCED_BASE_CLASS( Actor )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -2109,7 +2113,7 @@ LUA_REGISTER_INSTANCED_BASE_CLASS( Actor )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

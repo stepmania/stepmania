@@ -35,11 +35,11 @@ private:
 	EffectMode m_EffectMode;
 	struct TextureUnitState
 	{
-		TextureUnitState(): m_pTexture(NULL), m_TextureMode(TextureMode_Modulate) {}
+		TextureUnitState(): m_pTexture(nullptr), m_TextureMode(TextureMode_Modulate) {}
 		RageTexture *m_pTexture;
 		TextureMode m_TextureMode;
 	};
-	vector<TextureUnitState> m_aTextureUnits;
+	std::vector<TextureUnitState> m_aTextureUnits;
 	RectF m_Rect;
 };
 
@@ -50,7 +50,7 @@ private:
  * @author Chris Danford (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -60,7 +60,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

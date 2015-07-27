@@ -24,6 +24,9 @@
 #include "Song.h"
 #include "AutoActor.h"
 
+using std::vector;
+using std::deque;
+
 static ThemeMetric<float> LEFT_EDGE				("Background","LeftEdge");
 static ThemeMetric<float> TOP_EDGE				("Background","TopEdge");
 static ThemeMetric<float> RIGHT_EDGE				("Background","RightEdge");
@@ -92,7 +95,7 @@ protected:
 	bool m_bInitted;
 	DancingCharacters*	m_pDancingCharacters;
 	const Song *m_pSong;
-	map<RString,BackgroundTransition> m_mapNameToTransition;
+	std::map<RString,BackgroundTransition> m_mapNameToTransition;
 	deque<BackgroundDef> m_RandomBGAnimations;	// random background to choose from.  These may or may not be loaded into m_BGAnimations.
 
 	void LoadFromRandom( float fFirstBeat, float fEndBeat, const BackgroundChange &change );
@@ -110,9 +113,9 @@ protected:
 		BackgroundDef CreateRandomBGA( const Song *pSong, const RString &sEffect, deque<BackgroundDef> &RandomBGAnimations, Actor *pParent );
 
 		int FindBGSegmentForBeat( float fBeat ) const;
-		void UpdateCurBGChange( const Song *pSong, float fLastMusicSeconds, float fCurrentTime, const map<RString,BackgroundTransition> &mapNameToTransition );
+		void UpdateCurBGChange( const Song *pSong, float fLastMusicSeconds, float fCurrentTime, const std::map<RString,BackgroundTransition> &mapNameToTransition );
 
-		map<BackgroundDef,Actor*> m_BGAnimations;
+		std::map<BackgroundDef,Actor*> m_BGAnimations;
 		vector<BackgroundChange> m_aBGChanges;
 		int	  m_iCurBGChangeIndex;
 		Actor *m_pCurrentBGA;
@@ -151,15 +154,15 @@ static RageColor GetBrightnessColor( float fBrightnessPercent )
 BackgroundImpl::BackgroundImpl()
 {
 	m_bInitted = false;
-	m_pDancingCharacters = NULL;
-	m_pSong = NULL;
+	m_pDancingCharacters = nullptr;
+	m_pSong = nullptr;
 }
 
 BackgroundImpl::Layer::Layer()
 {
 	m_iCurBGChangeIndex = -1;
-	m_pCurrentBGA = NULL;
-	m_pFadingBGA = NULL;
+	m_pCurrentBGA = nullptr;
+	m_pFadingBGA = nullptr;
 }
 
 void BackgroundImpl::Init()
@@ -246,20 +249,22 @@ void BackgroundImpl::Unload()
 {
 	FOREACH_BackgroundLayer( i )
 		m_Layer[i].Unload();
-	m_pSong = NULL;
+	m_pSong = nullptr;
 	m_fLastMusicSeconds	= -9999;
 	m_RandomBGAnimations.clear();
 }
 
 void BackgroundImpl::Layer::Unload()
 {
-	FOREACHM( BackgroundDef, Actor*, m_BGAnimations, iter )
-		delete iter->second;
+	for (auto &iter: m_BGAnimations)
+	{
+		delete iter.second;
+	}
 	m_BGAnimations.clear();
 	m_aBGChanges.clear();
 
-	m_pCurrentBGA = NULL;
-	m_pFadingBGA = NULL;
+	m_pCurrentBGA = nullptr;
+	m_pFadingBGA = nullptr;
 	m_iCurBGChangeIndex = -1;
 }
 
@@ -386,7 +391,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 
 	Actor *pActor = ActorUtil::MakeActor( sEffectFile );
 
-	if( pActor == NULL )
+	if( pActor == nullptr )
 		pActor = new Actor;
 	m_BGAnimations[bd] = pActor;
 
@@ -417,7 +422,7 @@ BackgroundDef BackgroundImpl::Layer::CreateRandomBGA( const Song *pSong, const R
 	if( !sEffect.empty() )
 		bd.m_sEffect = sEffect;
 
-	map<BackgroundDef,Actor*>::const_iterator iter = m_BGAnimations.find( bd );
+	auto iter = m_BGAnimations.find( bd );
 
 	// create the background if it's not already created
 	if( iter == m_BGAnimations.end() )
@@ -430,6 +435,7 @@ BackgroundDef BackgroundImpl::Layer::CreateRandomBGA( const Song *pSong, const R
 
 void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const BackgroundChange &change )
 {
+	using std::min;
 	int iStartRow = BeatToNoteRow(fFirstBeat);
 	int iEndRow = BeatToNoteRow(fEndBeat);
 
@@ -444,9 +450,9 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 		int iSegmentEndRow = (i + 1 == tSigs.size()) ? iEndRow : tSigs[i+1]->GetRow();
 
 
-		int time_signature_start= max(ts->GetRow(),iStartRow);
-		for(int j= time_signature_start;
-			j<min(iEndRow,iSegmentEndRow);
+		int time_signature_start = std::max(ts->GetRow(), iStartRow);
+		for(int j = time_signature_start;
+			j < std::min(iEndRow, iSegmentEndRow);
 			j+= RAND_BG_CHANGE_MEASURES * ts->GetNoteRowsPerMeasure())
 		{
 			// Don't fade. It causes frame rate dip, especially on slower machines.
@@ -510,6 +516,7 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 
 void BackgroundImpl::LoadFromSong( const Song* pSong )
 {
+	using std::min;
 	Init();
 	Unload();
 	m_pSong = pSong;
@@ -542,10 +549,10 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 		int iSize = min( (int)g_iNumBackgrounds, (int)vsNames.size() );
 		vsNames.resize( iSize );
 
-		FOREACH_CONST( RString, vsNames, s )
+		for (auto &s: vsNames)
 		{
 			BackgroundDef bd;
-			bd.m_sFile1 = *s;
+			bd.m_sFile1 = s;
 			m_RandomBGAnimations.push_back( bd );
 		}
 	}
@@ -574,11 +581,12 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 			Layer &layer = m_Layer[i];
 
 			// Load all song-specified backgrounds
-			FOREACH_CONST( BackgroundChange, pSong->GetBackgroundChanges(i), bgc )
+			auto &changes = pSong->GetBackgroundChanges(i);
+			for (auto bgc = changes.begin(); bgc != changes.end(); ++bgc)
 			{
 				BackgroundChange change = *bgc;
 				BackgroundDef &bd = change.m_def;
-				
+
 				bool bIsAlreadyLoaded = layer.m_BGAnimations.find(bd) != layer.m_BGAnimations.end();
 
 				if( bd.m_sFile1 != RANDOM_BACKGROUND_FILE  &&  !bIsAlreadyLoaded )
@@ -600,7 +608,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 						}
 					}
 				}
-			
+
 				if( !bd.IsEmpty() )
 					layer.m_aBGChanges.push_back( change );
 			}
@@ -643,7 +651,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	FOREACH_BackgroundLayer( i )
 	{
 		Layer &layer = m_Layer[i];
-		FOREACH_CONST( BackgroundChange, layer.m_aBGChanges, bgc )
+		for (auto bgc = layer.m_aBGChanges.begin(); bgc != layer.m_aBGChanges.end(); ++bgc)
 		{
 			const BackgroundDef &bd = bgc->m_def;
 			if( bd == m_StaticBackgroundDef )
@@ -718,7 +726,7 @@ int BackgroundImpl::Layer::FindBGSegmentForBeat( float fBeat ) const
 }
 
 /* If the BG segment has changed, move focus to it. Send Update() calls. */
-void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMusicSeconds, float fCurrentTime, const map<RString,BackgroundTransition> &mapNameToTransition )
+void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMusicSeconds, float fCurrentTime, const std::map<RString,BackgroundTransition> &mapNameToTransition )
 {
 	ASSERT( fCurrentTime != GameState::MUSIC_SECONDS_INVALID );
 
@@ -750,7 +758,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 
 		m_pFadingBGA = m_pCurrentBGA;
 
-		map<BackgroundDef,Actor*>::const_iterator iter = m_BGAnimations.find( change.m_def );
+		auto iter = m_BGAnimations.find( change.m_def );
 		if( iter == m_BGAnimations.end() )
 		{
 			XNode *pNode = change.m_def.CreateNode();
@@ -765,7 +773,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 
 		if( m_pFadingBGA == m_pCurrentBGA )
 		{
-			m_pFadingBGA = NULL;
+			m_pFadingBGA = nullptr;
 			//LOG->Trace( "bg didn't actually change.  Ignoring." );
 		}
 		else
@@ -773,10 +781,10 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 			if( m_pFadingBGA )
 			{
 				m_pFadingBGA->PlayCommand( "LoseFocus" );
-				
+
 				if( !change.m_sTransition.empty() )
 				{
-					map<RString,BackgroundTransition>::const_iterator lIter = mapNameToTransition.find( change.m_sTransition );
+					auto lIter = mapNameToTransition.find( change.m_sTransition );
 					if(lIter == mapNameToTransition.end())
 					{
 						LuaHelpers::ReportScriptErrorFmt("'%s' is not the name of a BackgroundTransition file.", change.m_sTransition.c_str());
@@ -807,11 +815,11 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 	if( m_pFadingBGA )
 	{
 		if( m_pFadingBGA->GetTweenTimeLeft() == 0 )
-			m_pFadingBGA = NULL;
+			m_pFadingBGA = nullptr;
 	}
 
 	/* This is unaffected by the music rate. */
-	float fDeltaTimeNoMusicRate = max( fDeltaTime / fRate, 0 );
+	float fDeltaTimeNoMusicRate = std::max( fDeltaTime / fRate, 0.f );
 
 	if( m_pCurrentBGA )
 		m_pCurrentBGA->Update( fDeltaTimeNoMusicRate );
@@ -988,7 +996,7 @@ void Background::GetLoadedBackgroundChanges( vector<BackgroundChange> *pBackgrou
 /*
  * (c) 2001-2004 Chris Danford, Ben Nordstrom
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -998,7 +1006,7 @@ void Background::GetLoadedBackgroundChanges( vector<BackgroundChange> *pBackgrou
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

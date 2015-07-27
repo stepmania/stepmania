@@ -18,7 +18,9 @@
 #include "SongUtil.h"
 #include "LuaManager.h"
 
-GameSoundManager *SOUND = NULL;
+using std::vector;
+
+GameSoundManager *SOUND = nullptr;
 
 /*
  * When playing music, automatically search for an SM file for timing data.  If one is
@@ -180,7 +182,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 		float fStartBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTimeNoOffset( ToPlay.fStartSecond );
 		float fEndSec = ToPlay.fStartSecond + ToPlay.fLengthSeconds;
 		float fEndBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTimeNoOffset( fEndSec );
-		
+
 		const float fStartBeatFraction = fmodfp( fStartBeat, 1 );
 		const float fEndBeatFraction = fmodfp( fEndBeat, 1 );
 
@@ -238,7 +240,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 
 		const float fSecondToStartOn = g_Playing->m_Timing.GetElapsedTimeFromBeatNoOffset( fCurBeatToStartOn );
 		const float fMaximumDistance = 2;
-		const float fDistance = min( fSecondToStartOn - GAMESTATE->m_Position.m_fMusicSeconds, fMaximumDistance );
+		const float fDistance = std::min( fSecondToStartOn - GAMESTATE->m_Position.m_fMusicSeconds, fMaximumDistance );
 
 		when = GAMESTATE->m_Position.m_LastBeatUpdate + fDistance;
 	}
@@ -410,7 +412,7 @@ int MusicThread_start( void *p )
 GameSoundManager::GameSoundManager()
 {
 	/* Init RageSoundMan first: */
-	ASSERT( SOUNDMAN != NULL );
+	ASSERT( SOUNDMAN != nullptr );
 
 	g_Mutex = new RageEvent("GameSoundManager");
 	g_Playing = new MusicPlaying( new RageSound );
@@ -451,6 +453,7 @@ GameSoundManager::~GameSoundManager()
 
 float GameSoundManager::GetFrameTimingAdjustment( float fDeltaTime )
 {
+	using std::min;
 	/*
 	 * We get one update per frame, and we're updated early, almost immediately after vsync,
 	 * near the beginning of the game loop.  However, it's very likely that we'll lose the
@@ -481,11 +484,12 @@ float GameSoundManager::GetFrameTimingAdjustment( float fDeltaTime )
 		return 0;
 
 	/* Subtract the extra delay. */
-	return min( -fExtraDelay, 0 );
+	return min( -fExtraDelay, 0.f );
 }
 
 void GameSoundManager::Update( float fDeltaTime )
 {
+	using std::max;
 	{
 		g_Mutex->Lock();
 		if( g_Playing->m_bApplyMusicRate )
@@ -538,7 +542,7 @@ void GameSoundManager::Update( float fDeltaTime )
 				g_FadeState = FADE_NONE;
 			break;
 		}
-		
+
 		RageSoundParams p = g_Playing->m_Music->GetParams();
 		if( p.m_Volume != fVolume )
 		{
@@ -636,7 +640,7 @@ void GameSoundManager::Update( float fDeltaTime )
 		static int iRowLastCrossed = 0;
 
 		FOREACH_CabinetLight( cl )
-		{	
+		{
 			// Are we "holding" the light?
 			if( lights.IsHoldNoteAtRow( cl, iSongRow ) )
 			{
@@ -666,14 +670,14 @@ RString GameSoundManager::GetMusicPath() const
 	return g_Playing->m_Music->GetLoadedFilePath();
 }
 
-void GameSoundManager::PlayMusic( 
-	RString sFile, 
-	const TimingData *pTiming, 
+void GameSoundManager::PlayMusic(
+	RString sFile,
+	const TimingData *pTiming,
 	bool bForceLoop,
-	float fStartSecond, 
-	float fLengthSeconds, 
-	float fFadeInLengthSeconds, 
-	float fFadeOutLengthSeconds, 
+	float fStartSecond,
+	float fLengthSeconds,
+	float fFadeInLengthSeconds,
+	float fFadeOutLengthSeconds,
 	bool bAlignBeat,
 	bool bApplyMusicRate
 	)
@@ -786,7 +790,7 @@ float GameSoundManager::GetPlayerBalance( PlayerNumber pn )
 
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the GameSoundManager. */ 
+/** @brief Allow Lua to have access to the GameSoundManager. */
 class LunaGameSoundManager: public Luna<GameSoundManager>
 {
 public:
@@ -849,14 +853,14 @@ public:
 		{
 			alignBeat = BArg(8);
 		}
-		p->PlayMusic(musicPath, NULL, loop, musicStart, musicLength,
+		p->PlayMusic(musicPath, nullptr, loop, musicStart, musicLength,
 			fadeIn, fadeOut, alignBeat, applyRate);
 		COMMON_RETURN_SELF;
 	}
 
 	static int StopMusic( T* p, lua_State *L )			{ p->StopMusic(); COMMON_RETURN_SELF; }
 	static int IsTimingDelayed( T* p, lua_State *L )	{ lua_pushboolean( L, g_Playing->m_bTimingDelayed ); return 1; }
-	
+
 	LunaGameSoundManager()
 	{
 		ADD_METHOD( DimMusic );

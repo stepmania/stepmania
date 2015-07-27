@@ -42,22 +42,23 @@ void AttackDisplay::Init( const PlayerState* pPlayerState )
 		GAMESTATE->m_PlayMode != PLAY_MODE_RAVE )
 		return;
 
-	set<RString> attacks;
+	std::set<RString> attacks;
 	for( int al=0; al<NUM_ATTACK_LEVELS; al++ )
 	{
 		const Character *ch = GAMESTATE->m_pCurCharacters[pn];
-		ASSERT( ch != NULL );
+		ASSERT( ch != nullptr );
 		const RString* asAttacks = ch->m_sAttacks[al];
 		for( int att = 0; att < NUM_ATTACKS_PER_LEVEL; ++att )
 			attacks.insert( asAttacks[att] );
 	}
 
-	for( set<RString>::const_iterator it = attacks.begin(); it != attacks.end(); ++it )
+	for (auto const &attack: attacks)
 	{
-		const RString path = THEME->GetPathG( "AttackDisplay", GetAttackPieceName( *it ), true );
+		auto pieceName = GetAttackPieceName( attack );
+		const RString path = THEME->GetPathG( "AttackDisplay", pieceName, true );
 		if( path == "" )
 		{
-			LOG->Trace( "Couldn't find \"%s\"", GetAttackPieceName( *it ).c_str() );
+			LOG->Trace( "Couldn't find \"%s\"", pieceName.c_str() );
 			continue;
 		}
 
@@ -115,7 +116,7 @@ void AttackDisplay::SetAttack( const RString &sText )
 /*
  * (c) 2003 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -125,7 +126,7 @@ void AttackDisplay::SetAttack( const RString &sText )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

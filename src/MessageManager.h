@@ -127,7 +127,7 @@ struct Message
 	}
 
 	template<typename T>
-	void SetParam( const RString &sName, const vector<T> &val )
+	void SetParam( const RString &sName, const std::vector<T> &val )
 	{
 		Lua *L = LUA->Get();
 		LuaHelpers::CreateTableFromArray( val, L );
@@ -179,7 +179,7 @@ public:
 	void UnsubscribeAll();
 
 private:
-	vector<RString> m_vsSubscribedTo;
+	std::vector<RString> m_vsSubscribedTo;
 };
 
 /** @brief Deliver messages to any part of the program as needed. */
@@ -218,7 +218,14 @@ private:
 public:
 	explicit BroadcastOnChange( MessageID m ) { mSendWhenChanged = m; }
 	const T Get() const { return val; }
-	void Set( T t ) { val = t; MESSAGEMAN->Broadcast( MessageIDToString(mSendWhenChanged) ); }
+	void Set( T t )
+	{
+		val = t;
+		if (MESSAGEMAN != nullptr)
+		{
+		MESSAGEMAN->Broadcast( MessageIDToString(mSendWhenChanged) );
+		}
+	}
 	operator T () const { return val; }
 	bool operator == ( const T &other ) const { return val == other; }
 	bool operator != ( const T &other ) const { return val != other; }
@@ -227,10 +234,10 @@ public:
 /** @brief Utilities for working with Lua. */
 namespace LuaHelpers
 {
-	template<class T> void Push( lua_State *L, const BroadcastOnChange<T> &Object ) 
-	{ 
+	template<class T> void Push( lua_State *L, const BroadcastOnChange<T> &Object )
+	{
 		LuaHelpers::Push<T>( L, Object.Get() );
-	} 
+	}
 }
 
 template<class T, int N>
@@ -238,7 +245,7 @@ class BroadcastOnChange1D
 {
 private:
 	typedef BroadcastOnChange<T> MyType;
-	vector<MyType> val;
+	std::vector<MyType> val;
 public:
 	explicit BroadcastOnChange1D( MessageID m )
 	{
@@ -256,7 +263,7 @@ private:
 	MessageID mSendWhenChanged;
 	T *val;
 public:
-	explicit BroadcastOnChangePtr( MessageID m ) { mSendWhenChanged = m; val = NULL; }
+	explicit BroadcastOnChangePtr( MessageID m ) { mSendWhenChanged = m; val = nullptr; }
 	T* Get() const { return val; }
 	void Set( T* t ) { val = t; if(MESSAGEMAN) MESSAGEMAN->Broadcast( MessageIDToString(mSendWhenChanged) ); }
 	/* This is only intended to be used for setting temporary values; always
@@ -272,7 +279,7 @@ class BroadcastOnChangePtr1D
 {
 private:
 	typedef BroadcastOnChangePtr<T> MyType;
-	vector<MyType> val;
+	std::vector<MyType> val;
 public:
 	explicit BroadcastOnChangePtr1D( MessageID m )
 	{
@@ -288,7 +295,7 @@ public:
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -298,7 +305,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -39,7 +39,7 @@ enum UnlockRewardType {
 	UnlockRewardType_Steps_Type, /**< A step pattern for a specific style is unlocked. */
 	UnlockRewardType_Course, /**< A course is unlocked. */
 	UnlockRewardType_Modifier, /**< A modifier is unlocked. */
-	NUM_UnlockRewardType, 
+	NUM_UnlockRewardType,
 	UnlockRewardType_Invalid
 };
 const RString& UnlockRewardTypeToString( UnlockRewardType i );
@@ -47,9 +47,9 @@ const RString& UnlockRewardTypeToLocalizedString( UnlockRewardType i );
 LuaDeclareType( UnlockRewardType );
 
 enum UnlockEntryStatus {
-	UnlockEntryStatus_RequrementsNotMet, 
-	UnlockEntryStatus_RequirementsMet, 
-	UnlockEntryStatus_Unlocked, 
+	UnlockEntryStatus_RequrementsNotMet,
+	UnlockEntryStatus_RequirementsMet,
+	UnlockEntryStatus_Unlocked,
 };
 
 class UnlockEntry
@@ -73,7 +73,7 @@ public:
 	Command m_cmd;
 
 	/* A cached pointer to the song or course this entry refers to.  Only one of
-	 * these will be non-NULL. */
+	 * these will be non-nullptr. */
 	SongID	m_Song;
 	Difficulty m_dc;
 	CourseID m_Course;
@@ -157,11 +157,11 @@ public:
 	RString FindEntryID( const RString &sName ) const;
 
 	// All locked songs are stored here
-	vector<UnlockEntry>	m_UnlockEntries;
+	std::vector<UnlockEntry>	m_UnlockEntries;
 
-	void GetUnlocksByType( UnlockRewardType t, vector<UnlockEntry *> &apEntries );
-	void GetSongsUnlockedByEntryID( vector<Song *> &apSongsOut, RString sEntryID );
-	void GetStepsUnlockedByEntryID( vector<Song *> &apSongsOut, vector<Difficulty> &apStepsOut, RString sEntryID );
+	void GetUnlocksByType( UnlockRewardType t, std::vector<UnlockEntry *> &apEntries );
+	void GetSongsUnlockedByEntryID( std::vector<Song *> &apSongsOut, RString sEntryID );
+	void GetStepsUnlockedByEntryID( std::vector<Song *> &apSongsOut, std::vector<Difficulty> &apStepsOut, RString sEntryID );
 
 	const UnlockEntry *FindSong( const Song *pSong ) const;
 	const UnlockEntry *FindSteps( const Song *pSong, const Steps *pSteps ) const;
@@ -175,8 +175,8 @@ public:
 private:
 	// read unlocks
 	void Load();
-	
-	set<RString> m_RouletteCodes; // "codes" which are available in roulette and which unlock if rouletted
+
+	std::set<RString> m_RouletteCodes; // "codes" which are available in roulette and which unlock if rouletted
 };
 
 extern UnlockManager*	UNLOCKMAN;  // global and accessible from anywhere in program
@@ -186,7 +186,7 @@ extern UnlockManager*	UNLOCKMAN;  // global and accessible from anywhere in prog
 /*
  * (c) 2001-2004 Kevin Slaughter, Andrew Wong, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -196,7 +196,7 @@ extern UnlockManager*	UNLOCKMAN;  // global and accessible from anywhere in prog
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -11,7 +11,7 @@ struct RageFileObjMemFile;
 class RageFileObjMem: public RageFileObj
 {
 public:
-	RageFileObjMem( RageFileObjMemFile *pFile = NULL );
+	RageFileObjMem( RageFileObjMemFile *pFile = nullptr );
 	RageFileObjMem( const RageFileObjMem &cpy );
 	~RageFileObjMem();
 
@@ -43,7 +43,7 @@ public:
 
 private:
 	RageMutex m_Mutex;
-	vector<RageFileObjMemFile *> m_Files;
+	std::vector<RageFileObjMemFile *> m_Files;
 };
 
 #endif
@@ -51,7 +51,7 @@ private:
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -61,7 +61,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

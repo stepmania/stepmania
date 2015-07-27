@@ -13,6 +13,8 @@
 #include "OptionRowHandler.h"
 #include "LocalizedString.h"
 
+using std::vector;
+
 static LocalizedString NEW_PROFILE_DEFAULT_NAME( "ScreenOptionsManageProfiles", "NewProfileDefaultName" );
 
 #define SHOW_CREATE_NEW (!PROFILEMAN->FixedProfiles())
@@ -79,7 +81,7 @@ static bool ValidateLocalProfileName( const RString &sAnswer, RString &sErrorOut
 	}
 
 	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
-	if( pProfile != NULL && sAnswer == pProfile->m_sDisplayName )
+	if( pProfile != nullptr && sAnswer == pProfile->m_sDisplayName )
 		return true; // unchanged
 
 	vector<RString> vsProfileNames;
@@ -127,12 +129,12 @@ void ScreenOptionsManageProfiles::BeginScreen()
 
 	PROFILEMAN->GetLocalProfileIDs( m_vsLocalProfileID );
 
-	FOREACH_CONST( RString, m_vsLocalProfileID, s )
+	for (auto &s: m_vsLocalProfileID)
 	{
-		Profile *pProfile = PROFILEMAN->GetLocalProfile( *s );
-		ASSERT( pProfile != NULL );
+		Profile *pProfile = PROFILEMAN->GetLocalProfile( s );
+		ASSERT( pProfile != nullptr );
 
-		RString sCommand = ssprintf( "gamecommand;screen,ScreenOptionsCustomizeProfile;profileid,%s;name,dummy", s->c_str() );
+		RString sCommand = ssprintf( "gamecommand;screen,ScreenOptionsCustomizeProfile;profileid,%s;name,dummy", s.c_str() );
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands(sCommand) );
 		OptionRowDefinition &def = pHand->m_Def;
 		def.m_layoutType = LAYOUT_SHOW_ALL_IN_ROW;
@@ -143,8 +145,10 @@ void ScreenOptionsManageProfiles::BeginScreen()
 
 		PlayerNumber pn = PLAYER_INVALID;
 		FOREACH_PlayerNumber( p )
-			if( *s == ProfileManager::m_sDefaultLocalProfileID[p].Get() )
+		{
+			if( s == ProfileManager::m_sDefaultLocalProfileID[p].Get() )
 				pn = p;
+		}
 		if( pn != PLAYER_INVALID )
 			def.m_vsChoices.push_back( PlayerNumberToLocalizedString(pn) );
 		OptionRowHandlers.push_back( pHand );
@@ -217,7 +221,8 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 			if( iNumProfiles < NUM_PLAYERS )
 			{
 				int iFirstUnused = -1;
-				FOREACH_CONST( Preference<RString>*, PROFILEMAN->m_sDefaultLocalProfileID.m_v, i )
+				auto &profiles = PROFILEMAN->m_sDefaultLocalProfileID.m_v;
+				for (auto i = profiles.begin(); i != profiles.end(); ++i)
 				{
 					RString sLocalProfileID = (*i)->Get();
 					if( sLocalProfileID.empty() )
@@ -240,7 +245,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
 			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
-		
+
 			RString sNewName = ScreenTextEntry::s_sLastAnswer;
 			PROFILEMAN->RenameLocalProfile( GAMESTATE->m_sEditLocalProfileID, sNewName );
 
@@ -278,7 +283,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 		if( !ScreenMiniMenu::s_bCancelled )
 		{
 			Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
-			ASSERT( pProfile != NULL );
+			ASSERT( pProfile != nullptr );
 
 			switch( ScreenMiniMenu::s_iLastRowCode )
 			{
@@ -293,7 +298,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 
 					PlayerNumber pn = (PlayerNumber)(ScreenMiniMenu::s_iLastRowCode - ProfileAction_SetDefaultP1);
 					ProfileManager::m_sDefaultLocalProfileID[pn].Set( GetLocalProfileIDWithFocus() );
-		
+
 					SCREENMAN->SetNewScreen( this->m_sName ); // reload
 				}
 				break;
@@ -306,11 +311,11 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 				break;
 			case ProfileAction_Rename:
 				{
-					ScreenTextEntry::TextEntry( 
-						SM_BackFromRename, 
-						ENTER_PROFILE_NAME, 
-						pProfile->m_sDisplayName, 
-						PROFILE_MAX_DISPLAY_NAME_LENGTH, 
+					ScreenTextEntry::TextEntry(
+						SM_BackFromRename,
+						ENTER_PROFILE_NAME,
+						pProfile->m_sDisplayName,
+						PROFILE_MAX_DISPLAY_NAME_LENGTH,
 						ValidateLocalProfileName );
 				}
 				break;
@@ -396,7 +401,7 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus & )
 
 	int iCurRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 	OptionRow &row = *m_pRows[iCurRow];
-	
+
 	if( SHOW_CREATE_NEW && iCurRow == 0 )	// "create new"
 	{
 		vector<RString> vsUsedNames;
@@ -410,11 +415,11 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus & )
 			if( !bNameIsUsed )
 				break;
 		}
-		ScreenTextEntry::TextEntry( 
-			SM_BackFromEnterNameForNew, 
-			ENTER_PROFILE_NAME, 
-			sPotentialName, 
-			PROFILE_MAX_DISPLAY_NAME_LENGTH, 
+		ScreenTextEntry::TextEntry(
+			SM_BackFromEnterNameForNew,
+			ENTER_PROFILE_NAME,
+			sPotentialName,
+			PROFILE_MAX_DISPLAY_NAME_LENGTH,
 			ValidateLocalProfileName );
 	}
 	else if( row.GetRowType() == OptionRow::RowType_Exit )
@@ -495,7 +500,7 @@ RString ScreenOptionsManageProfiles::GetLocalProfileIDWithFocus() const
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -505,7 +510,7 @@ RString ScreenOptionsManageProfiles::GetLocalProfileIDWithFocus() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

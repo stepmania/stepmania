@@ -1,7 +1,6 @@
 #include "global.h"
 
 #include "BannerCache.h"
-#include "Foreach.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
 #include "RageLog.h"
@@ -50,7 +49,7 @@ static Preference<bool> g_bPalettedBannerCache( "PalettedBannerCache", false );
 BannerCache *BANNERCACHE; // global and accessible from anywhere in our program
 
 
-static map<RString,RageSurface *> g_BannerPathToImage;
+static std::map<RString,RageSurface *> g_BannerPathToImage;
 static int g_iDemandRefcount = 0;
 
 RString BannerCache::GetBannerCachePath( RString sBannerPath )
@@ -66,7 +65,7 @@ void BannerCache::Demand()
 	++g_iDemandRefcount;
 	if( g_iDemandRefcount > 1 )
 		return;
-	
+
 	if( PREFSMAN->m_BannerCache != BNCACHE_LOW_RES_LOAD_ON_DEMAND )
 		return;
 
@@ -79,7 +78,7 @@ void BannerCache::Demand()
 
 		const RString sCachePath = GetBannerCachePath(sBannerPath);
 		RageSurface *pImage = RageSurfaceUtils::LoadSurface( sCachePath );
-		if( pImage == NULL )
+		if( pImage == nullptr )
 		{
 			continue; /* doesn't exist */
 		}
@@ -94,7 +93,7 @@ void BannerCache::Undemand()
 	--g_iDemandRefcount;
 	if( g_iDemandRefcount != 0 )
 		return;
-	
+
 	if( PREFSMAN->m_BannerCache != BNCACHE_LOW_RES_LOAD_ON_DEMAND )
 		return;
 
@@ -123,7 +122,7 @@ void BannerCache::LoadBanner( RString sBannerPath )
 
 		CHECKPOINT_M( ssprintf( "BannerCache::LoadBanner: %s", sCachePath.c_str() ) );
 		RageSurface *pImage = RageSurfaceUtils::LoadSurface( sCachePath );
-		if( pImage == NULL )
+		if( pImage == nullptr )
 		{
 			if( tries == 0 )
 			{
@@ -150,9 +149,9 @@ void BannerCache::LoadBanner( RString sBannerPath )
 void BannerCache::OutputStats() const
 {
 	int iTotalSize = 0;
-	FOREACHM_CONST( RString, RageSurface *, g_BannerPathToImage, it )
+	for (auto const &it: g_BannerPathToImage)
 	{
-		const RageSurface *pImage = it->second;
+		const RageSurface *pImage = it.second;
 		const int iSize = pImage->pitch * pImage->h;
 		iTotalSize += iSize;
 	}
@@ -161,8 +160,10 @@ void BannerCache::OutputStats() const
 
 void BannerCache::UnloadAllBanners()
 {
-	FOREACHM( RString, RageSurface *, g_BannerPathToImage, it )
-		delete it->second;
+	for (auto &it: g_BannerPathToImage)
+	{
+		delete it.second;
+	}
 
 	g_BannerPathToImage.clear();
 }
@@ -197,13 +198,14 @@ struct BannerTexture: public RageTexture
 	}
 
 	~BannerTexture()
-	{ 
+	{
 		Destroy();
 	}
-	
+
 	void Create()
 	{
-		ASSERT( m_pImage != NULL );
+		using std::min;
+		ASSERT( m_pImage != nullptr );
 
 		/* The image is preprocessed; do as little work as possible. */
 
@@ -211,10 +213,10 @@ struct BannerTexture: public RageTexture
 		m_iSourceWidth = m_iWidth;
 		m_iSourceHeight = m_iHeight;
 
-		/* The image width (within the texture) is always the entire texture. 
+		/* The image width (within the texture) is always the entire texture.
 		 * Only resize if the max texture size requires it; since these images
 		 * are already scaled down, this shouldn't happen often. */
-		if( m_pImage->w > DISPLAY->GetMaxTextureSize() || 
+		if( m_pImage->w > DISPLAY->GetMaxTextureSize() ||
 			m_pImage->h > DISPLAY->GetMaxTextureSize() )
 		{
 			LOG->Warn( "Converted %s at runtime", GetID().filename.c_str() );
@@ -239,7 +241,7 @@ struct BannerTexture: public RageTexture
 
 		ASSERT( DISPLAY->SupportsTextureFormat(pf) );
 
-		ASSERT(m_pImage != NULL);
+		ASSERT(m_pImage != nullptr);
 		m_uTexHandle = DISPLAY->CreateTexture( pf, m_pImage, false );
 
 		CreateFrameRects();
@@ -290,7 +292,7 @@ RageTextureID BannerCache::LoadCachedBanner( RString sBannerPath )
 	 * when converting; this way, the conversion will end up in the map so we
 	 * only have to convert once. */
 	RageSurface *&pImage = g_BannerPathToImage[sBannerPath];
-	ASSERT( pImage != NULL );
+	ASSERT( pImage != nullptr );
 
 	int iSourceWidth = 0, iSourceHeight = 0;
 	BannerData.GetValue( sBannerPath, "Width", iSourceWidth );
@@ -366,9 +368,11 @@ void BannerCache::CacheBanner( RString sBannerPath )
 
 void BannerCache::CacheBannerInternal( RString sBannerPath )
 {
+	using std::min;
+	using std::max;
 	RString sError;
 	RageSurface *pImage = RageSurfaceUtils::LoadFile( sBannerPath, sError );
-	if( pImage == NULL )
+	if( pImage == nullptr )
 	{
 		LOG->UserLog( "Cache file", sBannerPath, "couldn't be loaded: %s", sError.c_str() );
 		return;
@@ -457,7 +461,7 @@ void BannerCache::CacheBannerInternal( RString sBannerPath )
 /*
  * (c) 2003 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -467,7 +471,7 @@ void BannerCache::CacheBannerInternal( RString sBannerPath )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

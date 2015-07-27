@@ -66,14 +66,14 @@ namespace Enum
 	void SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &EnumIndexTable, const char *szName );
 };
 
-const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_ptr<RString> *pNameCache ); // XToString helper
+const RString &EnumToString( int iVal, int iMax, const char **szNameArray, std::unique_ptr<RString> *pNameCache ); // XToString helper
 
 #define XToString(X) \
 const RString& X##ToString(X x); \
 COMPILE_ASSERT( NUM_##X == ARRAYLEN(X##Names) ); \
 const RString& X##ToString( X x ) \
 {	\
-	static auto_ptr<RString> as_##X##Name[NUM_##X+2]; \
+	static std::unique_ptr<RString> as_##X##Name[NUM_##X+2]; \
 	return EnumToString( x, NUM_##X, X##Names, as_##X##Name ); \
 } \
 namespace StringConversion { template<> RString ToString<X>( const X &value ) { return X##ToString(value); } }
@@ -82,12 +82,12 @@ namespace StringConversion { template<> RString ToString<X>( const X &value ) { 
 const RString &X##ToLocalizedString(X x); \
 const RString &X##ToLocalizedString( X x ) \
 {       \
-	static auto_ptr<LocalizedString> g_##X##Name[NUM_##X]; \
-	if( g_##X##Name[0].get() == NULL ) { \
+	static std::unique_ptr<LocalizedString> g_##X##Name[NUM_##X]; \
+	if( g_##X##Name[0].get() == nullptr ) { \
 		for( unsigned i = 0; i < NUM_##X; ++i ) \
 		{ \
-			auto_ptr<LocalizedString> ap( new LocalizedString(#X, X##ToString((X)i)) ); \
-			g_##X##Name[i] = ap; \
+			std::unique_ptr<LocalizedString> ap( new LocalizedString(#X, X##ToString((X)i)) ); \
+			g_##X##Name[i] = std::move(ap); \
 		} \
 	} \
 	return g_##X##Name[x]->GetValue();  \
@@ -176,7 +176,7 @@ namespace LuaHelpers \
  * @author Chris Danford, Glenn Maynard (c) 2004-2006
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -186,7 +186,7 @@ namespace LuaHelpers \
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

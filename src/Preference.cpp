@@ -5,7 +5,6 @@
 #include "LuaManager.h"
 #include "MessageManager.h"
 #include "SubscriptionManager.h"
-#include "Foreach.h"
 
 static SubscriptionManager<IPreference> m_Subscribers;
 
@@ -23,40 +22,52 @@ IPreference::~IPreference()
 
 IPreference *IPreference::GetPreferenceByName( const RString &sName )
 {
-	FOREACHS( IPreference*, *m_Subscribers.m_pSubscribers, p )
+	for (auto *p: *m_Subscribers.m_pSubscribers)
 	{
-		if( !(*p)->GetName().CompareNoCase( sName ) )
-			return *p;
+		if( !p->GetName().CompareNoCase( sName ) )
+		{
+			return p;
+		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void IPreference::LoadAllDefaults()
 {
-	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
-		(*p)->LoadDefault();
+	for (auto *p: *m_Subscribers.m_pSubscribers)
+	{
+		p->LoadDefault();
+	}
 }
 
 void IPreference::ReadAllPrefsFromNode( const XNode* pNode, bool bIsStatic )
 {
-	ASSERT( pNode != NULL );
-	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
-		(*p)->ReadFrom( pNode, bIsStatic );
+	ASSERT( pNode != nullptr );
+	for (auto *p: *m_Subscribers.m_pSubscribers)
+	{
+		p->ReadFrom( pNode, bIsStatic );
+	}
 }
 
 void IPreference::SavePrefsToNode( XNode* pNode )
 {
-	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
-		(*p)->WriteTo( pNode );
+	for (auto *p: *m_Subscribers.m_pSubscribers)
+	{
+		p->WriteTo( pNode );
+	}
 }
 
 void IPreference::ReadAllDefaultsFromNode( const XNode* pNode )
 {
-	if( pNode == NULL )
+	if( pNode == nullptr )
+	{
 		return;
-	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
-		(*p)->ReadDefaultFrom( pNode );
+	}
+	for (auto *p: *m_Subscribers.m_pSubscribers)
+	{
+		p->ReadDefaultFrom( pNode );
+	}
 }
 
 void IPreference::PushValue( lua_State *L ) const
@@ -109,7 +120,7 @@ void BroadcastPreferenceChanged( const RString& sPreferenceName )
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -119,7 +130,7 @@ void BroadcastPreferenceChanged( const RString& sPreferenceName )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

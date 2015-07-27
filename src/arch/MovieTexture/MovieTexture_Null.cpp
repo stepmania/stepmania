@@ -19,7 +19,6 @@ public:
 	void SetLooping(bool looping=true) { loop = looping; }
 
 private:
-	bool playing;
 	bool loop;
 	unsigned texHandle;
 };

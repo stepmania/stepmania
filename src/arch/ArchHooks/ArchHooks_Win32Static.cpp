@@ -13,6 +13,7 @@
 #pragma comment(lib, "winmm.lib")
 #endif
 
+using std::vector;
 
 static bool g_bTimerInitialized;
 

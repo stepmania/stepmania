@@ -1,4 +1,4 @@
-/* 
+/*
 http://en.wikipedia.org/wiki/INI_file
  - names and values are trimmed on both sides
  - semicolons start a comment line
@@ -9,7 +9,8 @@ http://en.wikipedia.org/wiki/INI_file
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageFile.h"
-#include "Foreach.h"
+
+using std::string;
 
 IniFile::IniFile(): XNode("IniFile")
 {
@@ -35,7 +36,7 @@ bool IniFile::ReadFile( RageFileBasic &f )
 {
 	RString keyname;
 	// keychild is used to cache the node that values are being added to. -Kyz
-	XNode* keychild= NULL;
+	XNode* keychild= nullptr;
 	while( 1 )
 	{
 		RString line;
@@ -81,7 +82,7 @@ bool IniFile::ReadFile( RageFileBasic &f )
 					// New section.
 					keyname = line.substr(1, line.size()-2);
 					keychild= GetChild(keyname);
-					if(keychild == NULL)
+					if(keychild == nullptr)
 					{
 						keychild= AppendChild(keyname);
 					}
@@ -89,7 +90,7 @@ bool IniFile::ReadFile( RageFileBasic &f )
 				}
 			default:
 			keyvalue:
-				if(keychild == NULL)
+				if(keychild == nullptr)
 				{ break; }
 				// New value.
 				size_t iEqualIndex = line.find("=");
@@ -126,7 +127,7 @@ bool IniFile::WriteFile( const RString &sPath ) const
 
 bool IniFile::WriteFile( RageFileBasic &f ) const
 {
-	FOREACH_CONST_Child( this, pKey ) 
+	FOREACH_CONST_Child( this, pKey )
 	{
 		if( f.PutLine( ssprintf("[%s]", pKey->GetName().c_str()) ) == -1 )
 		{
@@ -163,7 +164,7 @@ bool IniFile::WriteFile( RageFileBasic &f ) const
 bool IniFile::DeleteValue(const RString &keyname, const RString &valuename)
 {
 	XNode* pNode = GetChild( keyname );
-	if( pNode == NULL )
+	if( pNode == nullptr )
 		return false;
 	return pNode->RemoveAttr( valuename );
 }
@@ -172,7 +173,7 @@ bool IniFile::DeleteValue(const RString &keyname, const RString &valuename)
 bool IniFile::DeleteKey(const RString &keyname)
 {
 	XNode* pNode = GetChild( keyname );
-	if( pNode == NULL )
+	if( pNode == nullptr )
 		return false;
 	return RemoveChild( pNode );
 }
@@ -180,11 +181,11 @@ bool IniFile::DeleteKey(const RString &keyname)
 bool IniFile::RenameKey(const RString &from, const RString &to)
 {
 	// If to already exists, do nothing.
-	if( GetChild(to) != NULL )
+	if( GetChild(to) != nullptr )
 		return false;
 
 	XNode* pNode = GetChild( from );
-	if( pNode == NULL )
+	if( pNode == nullptr )
 		return false;
 
 	pNode->SetName( to );
@@ -197,7 +198,7 @@ bool IniFile::RenameKey(const RString &from, const RString &to)
 /*
  * (c) 2001-2004 Adam Clauss, Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -207,7 +208,7 @@ bool IniFile::RenameKey(const RString &from, const RString &to)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

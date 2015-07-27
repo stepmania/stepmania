@@ -32,7 +32,7 @@ void MeterDisplay::LoadFromNode( const XNode* pNode )
 	LOG->Trace( "MeterDisplay::LoadFromNode(%s)", ActorUtil::GetWhere(pNode).c_str() );
 
 	const XNode *pStream = pNode->GetChild( "Stream" );
-	if( pStream == NULL )
+	if( pStream == nullptr )
 	{
 		LuaHelpers::ReportScriptErrorFmt("%s: MeterDisplay: missing the \"Stream\" attribute", ActorUtil::GetWhere(pNode).c_str());
 		return;
@@ -43,7 +43,7 @@ void MeterDisplay::LoadFromNode( const XNode* pNode )
 	this->AddChild( m_sprStream );
 
 	const XNode* pChild = pNode->GetChild( "Tip" );
-	if( pChild != NULL )
+	if( pChild != nullptr )
 	{
 		m_sprTip.LoadActorFromNode( pChild, this );
 		m_sprTip->SetName( "Tip" );

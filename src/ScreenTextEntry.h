@@ -10,12 +10,12 @@
 /** @brief The list of possible keyboard rows. */
 enum KeyboardRow
 {
-	R1, 
-	R2, 
-	R3, 
-	R4, 
-	R5, 
-	R6, 
+	R1,
+	R2,
+	R3,
+	R4,
+	R5,
+	R6,
 	R7,
 	KEYBOARD_ROW_SPECIAL,
 	NUM_KeyboardRow,
@@ -38,36 +38,36 @@ enum KeyboardRowSpecialKey
 class ScreenTextEntry : public ScreenWithMenuElements
 {
 public:
-	static void SetTextEntrySettings( 
-		RString sQuestion, 
-		RString sInitialAnswer, 
-		int iMaxInputLength, 
-		bool(*Validate)(const RString &sAnswer,RString &sErrorOut) = NULL, 
-		void(*OnOK)(const RString &sAnswer) = NULL, 
-		void(*OnCancel)() = NULL,
+	static void SetTextEntrySettings(
+		RString sQuestion,
+		RString sInitialAnswer,
+		int iMaxInputLength,
+		bool(*Validate)(const RString &sAnswer,RString &sErrorOut) = nullptr,
+		void(*OnOK)(const RString &sAnswer) = nullptr,
+		void(*OnCancel)() = nullptr,
 		bool bPassword = false,
-		bool (*ValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend) = NULL,
-		RString (*FormatAnswerForDisplay)(const RString &sAnswer) = NULL
+		bool (*ValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend) = nullptr,
+		RString (*FormatAnswerForDisplay)(const RString &sAnswer) = nullptr
 		);
-	static void TextEntry( 
-		ScreenMessage smSendOnPop, 
-		RString sQuestion, 
-		RString sInitialAnswer, 
-		int iMaxInputLength, 
-		bool(*Validate)(const RString &sAnswer,RString &sErrorOut) = NULL, 
-		void(*OnOK)(const RString &sAnswer) = NULL, 
-		void(*OnCancel)() = NULL,
+	static void TextEntry(
+		ScreenMessage smSendOnPop,
+		RString sQuestion,
+		RString sInitialAnswer,
+		int iMaxInputLength,
+		bool(*Validate)(const RString &sAnswer,RString &sErrorOut) = nullptr,
+		void(*OnOK)(const RString &sAnswer) = nullptr,
+		void(*OnCancel)() = nullptr,
 		bool bPassword = false,
-		bool (*ValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend) = NULL,
-		RString (*FormatAnswerForDisplay)(const RString &sAnswer) = NULL
+		bool (*ValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend) = nullptr,
+		RString (*FormatAnswerForDisplay)(const RString &sAnswer) = nullptr
 		);
-	static void Password( 
-		ScreenMessage smSendOnPop, 
-		const RString &sQuestion, 
-		void(*OnOK)(const RString &sPassword) = NULL, 
-		void(*OnCancel)() = NULL )
+	static void Password(
+		ScreenMessage smSendOnPop,
+		const RString &sQuestion,
+		void(*OnOK)(const RString &sPassword) = nullptr,
+		void(*OnCancel)() = nullptr )
 	{
-		TextEntry( smSendOnPop, sQuestion, "", 255, NULL, OnOK, OnCancel, true );
+		TextEntry( smSendOnPop, sQuestion, "", 255, nullptr, OnOK, OnCancel, true );
 	}
 
 	struct TextEntrySettings {
@@ -123,7 +123,7 @@ private:
 
 	void UpdateAnswerText();
 
-	wstring		m_sAnswer;
+	std::wstring		m_sAnswer;
 	bool		m_bShowAnswerCaret;
 	// todo: allow Left/Right to change caret location -aj
 	//int			m_iCaretLocation;
@@ -178,7 +178,7 @@ protected:
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -188,7 +188,7 @@ protected:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

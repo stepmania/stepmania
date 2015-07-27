@@ -21,6 +21,8 @@
 #define glFlush()
 #endif
 
+using std::vector;
+
 namespace
 {
 	RageDisplay::RagePixelFormatDesc
@@ -220,7 +222,7 @@ RageDisplay_GLES2::RageDisplay_GLES2()
 	FixLittleEndian();
 //	RageDisplay_GLES2_Helpers::Init();
 
-	g_pWind = NULL;
+	g_pWind = nullptr;
 }
 
 RString
@@ -388,8 +390,10 @@ RString RageDisplay_GLES2::TryVideoMode( const VideoModeParams &p, bool &bNewDev
 
 		/* Delete all render targets.  They may have associated resources other than
 		 * the texture itself. */
-		//FOREACHM( unsigned, RenderTarget *, g_mapRenderTargets, rt )
-		//	delete rt->second;
+		//for (auto &rt: g_mapRenderTargets)
+		//{
+		// 	delete rt.second;
+		//}
 		//g_mapRenderTargets.clear();
 
 		/* Recreate all vertex buffers. */
@@ -484,7 +488,7 @@ RageDisplay_GLES2::GetOrthoMatrix( float l, float r, float b, float t, float zn,
 class RageCompiledGeometryGLES2 : public RageCompiledGeometry
 {
 public:
-	
+
 	void Allocate( const vector<msMesh> &vMeshes )
 	{
 		// TODO
@@ -571,10 +575,10 @@ RageDisplay_GLES2::CreateTexture(
 }
 
 void
-RageDisplay_GLES2::UpdateTexture( 
-	unsigned iTexHandle, 
+RageDisplay_GLES2::UpdateTexture(
+	unsigned iTexHandle,
 	RageSurface* img,
-	int xoffset, int yoffset, int width, int height 
+	int xoffset, int yoffset, int width, int height
 	)
 {
 	// TODO
@@ -629,7 +633,7 @@ RageDisplay_GLES2::SetTexture( TextureUnit tu, unsigned iTexture )
 	}
 }
 
-void 
+void
 RageDisplay_GLES2::SetTextureMode( TextureUnit tu, TextureMode tm )
 {
 	// TODO
@@ -645,7 +649,7 @@ void
 RageDisplay_GLES2::SetTextureFiltering( TextureUnit tu, bool b )
 {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, b ? GL_LINEAR : GL_NEAREST);
-	
+
 	GLint iMinFilter = 0;
 	if (b)
 	{
@@ -735,7 +739,7 @@ void RageDisplay_Legacy::SetBlendMode( BlendMode mode )
 {
 	glEnable(GL_BLEND);
 
-	if (glBlendEquation != NULL)
+	if (glBlendEquation != nullptr)
 	{
 		if (mode == BLEND_INVERT_DEST)
 			glBlendEquation( GL_FUNC_SUBTRACT );
@@ -849,7 +853,7 @@ RageDisplay_GLES2::SetAlphaTest( bool b )
 }
 
 void
-RageDisplay_GLES2::SetMaterial( 
+RageDisplay_GLES2::SetMaterial(
 	const RageColor &emissive,
 	const RageColor &ambient,
 	const RageColor &diffuse,
@@ -893,11 +897,11 @@ RageDisplay_GLES2::SetLightOff( int index )
 }
 
 void
-RageDisplay_GLES2::SetLightDirectional( 
-	int index, 
-	const RageColor &ambient, 
-	const RageColor &diffuse, 
-	const RageColor &specular, 
+RageDisplay_GLES2::SetLightDirectional(
+	int index,
+	const RageColor &ambient,
+	const RageColor &diffuse,
+	const RageColor &specular,
 	const RageVector3 &dir )
 {
 	// TODO
@@ -946,7 +950,7 @@ RageDisplay_GLES2::DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVe
 }
 
 void
-RageDisplay_GLES2::DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int 
+RageDisplay_GLES2::DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int
 	iMeshIndex )
 {
 	// TODO

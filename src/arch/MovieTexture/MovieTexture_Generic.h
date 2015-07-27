@@ -108,8 +108,6 @@ private:
 	bool m_bLoop;
 	bool m_bWantRewind;
 
-	enum State { DECODER_QUIT, DECODER_RUNNING } m_State;
-
 	unsigned m_uTexHandle;
 	RageTextureRenderTarget *m_pRenderTarget;
 	RageTexture *m_pTextureIntermediate;

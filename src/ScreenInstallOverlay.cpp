@@ -19,6 +19,8 @@ class Song;
 #include "StepMania.h"
 #include "ActorUtil.h"
 
+using std::vector;
+
 struct PlayAfterLaunchInfo
 {
 	RString sSongDir;
@@ -68,23 +70,23 @@ static void InstallSmzip( const RString &sZipFile, PlayAfterLaunchInfo &out )
 		GetDirListingRecursive( TEMP_ZIP_MOUNT_POINT, "*", vsRawFiles);
 
 		vector<RString> vsPrettyFiles;
-		FOREACH_CONST( RString, vsRawFiles, s )
+		for (auto const &s: vsRawFiles)
 		{
-			if( GetExtension(*s).EqualsNoCase("ctl") )
+			if( GetExtension(s).EqualsNoCase("ctl") )
 				continue;
 
-			vsFiles.push_back( *s);
+			vsFiles.push_back(s);
 
-			RString s2 = s->Right( s->length() - TEMP_ZIP_MOUNT_POINT.length() );
+			RString s2 = s.Right( s.length() - TEMP_ZIP_MOUNT_POINT.length() );
 			vsPrettyFiles.push_back( s2 );
 		}
 		sort( vsPrettyFiles.begin(), vsPrettyFiles.end() );
 	}
 
 	RString sResult = "Success installing " + sZipFile;
-	FOREACH_CONST( RString, vsFiles, sSrcFile )
+	for (auto sSrcFile: vsFiles)
 	{
-		RString sDestFile = *sSrcFile;
+		RString sDestFile = sSrcFile;
 		sDestFile = sDestFile.Right( sDestFile.length() - TEMP_ZIP_MOUNT_POINT.length() );
 
 		RString sDir, sThrowAway;
@@ -95,7 +97,7 @@ static void InstallSmzip( const RString &sZipFile, PlayAfterLaunchInfo &out )
 
 		FILEMAN->CreateDir( sDir );
 
-		if( !FileCopy( *sSrcFile, sDestFile ) )
+		if( !FileCopy( sSrcFile, sDestFile ) )
 		{
 			sResult = "Error extracting " + sDestFile;
 			break;
@@ -154,7 +156,7 @@ public:
 	}
 	RString GetStatus()
 	{
-		if( m_pTransfer == NULL )
+		if( m_pTransfer == nullptr )
 			return "";
 		else
 			return m_pTransfer->GetStatus();
@@ -226,7 +228,7 @@ public:
 					RString sUrl = m_vsQueuedPackageUrls.back();
 					m_vsQueuedPackageUrls.pop_back();
 					m_sCurrentPackageTempFile = MakeTempFileName(sUrl);
-					ASSERT(m_pTransfer == NULL);
+					ASSERT(m_pTransfer == nullptr);
 					m_pTransfer = new FileTransfer();
 					m_pTransfer->StartDownload( sUrl, m_sCurrentPackageTempFile );
 				}
@@ -245,16 +247,16 @@ public:
 					RString sUrl = m_vsQueuedPackageUrls.back();
 					m_vsQueuedPackageUrls.pop_back();
 					m_sCurrentPackageTempFile = MakeTempFileName(sUrl);
-					ASSERT(m_pTransfer == NULL);
+					ASSERT(m_pTransfer == nullptr);
 					m_pTransfer = new FileTransfer();
 					m_pTransfer->StartDownload( sUrl, m_sCurrentPackageTempFile );
 				}
 			}
 			break;
 		}
-		bool bFinished = m_DownloadState == packages  &&  
-			m_vsQueuedPackageUrls.empty() && 
-			m_pTransfer == NULL;
+		bool bFinished = m_DownloadState == packages  &&
+			m_vsQueuedPackageUrls.empty() &&
+			m_pTransfer == nullptr;
 		if( bFinished )
 		{
 			Message msg( "DownloadFinished" );
@@ -363,19 +365,19 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
 
 	{
 		vector<RString> vsMessages;
-		FOREACH_CONST( DownloadTask*, g_pDownloadTasks, pDT )
+		for (auto *pDT: g_pDownloadTasks)
 		{
-			vsMessages.push_back( (*pDT)->GetStatus() );
+			vsMessages.push_back( pDT->GetStatus() );
 		}
 		m_textStatus.SetText( join("\n", vsMessages) );
 	}
 #endif
 	if( playAfterLaunchInfo.bAnySongChanged )
-		SONGMAN->Reload( false, NULL );
+		SONGMAN->Reload( false, nullptr );
 
 	if( !playAfterLaunchInfo.sSongDir.empty() )
 	{
-		Song* pSong = NULL;
+		Song* pSong = nullptr;
 		GAMESTATE->Reset();
 		RString sInitialScreen;
 		if( playAfterLaunchInfo.sSongDir.length() > 0 )
@@ -406,7 +408,7 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
 /*
  * (c) 2001-2005 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -416,7 +418,7 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -11,9 +11,11 @@
 #include "RageTimer.h"
 #include "RageUtil.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
 #include "LuaBinding.h"
 #include "LuaManager.h"
+
+using std::vector;
+using std::string;
 
 REGISTER_ACTOR_CLASS( Sprite );
 
@@ -21,7 +23,7 @@ const float min_state_delay= 0.0001f;
 
 Sprite::Sprite()
 {
-	m_pTexture = NULL;
+	m_pTexture = nullptr;
 	m_iCurState = 0;
 	m_fSecsIntoState = 0.0f;
 	m_animation_length_seconds= 0.0f;
@@ -30,7 +32,7 @@ Sprite::Sprite()
 	m_bSkipNextUpdate = true;
 	m_DecodeMovie= true;
 	m_EffectMode = EffectMode_Normal;
-	
+
 	m_fRememberedClipWidth = -1;
 	m_fRememberedClipHeight = -1;
 
@@ -76,10 +78,10 @@ Sprite::Sprite( const Sprite &cpy ):
 	CPY( m_fTexCoordVelocityY );
 #undef CPY
 
-	if( cpy.m_pTexture != NULL )
+	if( cpy.m_pTexture != nullptr )
 		m_pTexture = TEXTUREMAN->CopyTexture( cpy.m_pTexture );
 	else
-		m_pTexture = NULL;
+		m_pTexture = nullptr;
 }
 
 void Sprite::InitState()
@@ -143,7 +145,7 @@ RageTextureID Sprite::SongBannerTexture( RageTextureID ID )
 
 void Sprite::Load( RageTextureID ID )
 {
-	if( !ID.filename.empty() ) 
+	if( !ID.filename.empty() )
 		LoadFromTexture( ID );
 
 	LoadStatesFromTexture();
@@ -165,14 +167,14 @@ void Sprite::LoadFromNode( const XNode* pNode )
 
 		LoadStatesFromTexture();
 
-		// Read in frames and delays from the sprite file, 
+		// Read in frames and delays from the sprite file,
 		// overwriting the states that LoadFromTexture created.
 		// If the .sprite file doesn't define any states, leave
 		// frames and delays created during LoadFromTexture().
 		vector<State> aStates;
 
 		const XNode *pFrames = pNode->GetChild( "Frames" );
-		if( pFrames != NULL )
+		if( pFrames != nullptr )
 		{
 			/* All attributes are optional.  If Frame is omitted, use the previous state's
 			 * frame (or 0 if the first).
@@ -184,7 +186,7 @@ void Sprite::LoadFromNode( const XNode* pNode )
 			for( int i=0; true; i++ )
 			{
 				const XNode *pFrame = pFrames->GetChild( ssprintf("%i", i+1) ); // +1 for Lua's arrays
-				if( pFrame == NULL )
+				if( pFrame == nullptr )
 					break;
 
 				State newState;
@@ -202,7 +204,7 @@ void Sprite::LoadFromNode( const XNode* pNode )
 				newState.rect = *m_pTexture->GetTextureCoordRect( iFrameIndex );
 
 				const XNode *pPoints[2] = { pFrame->GetChild( "1" ), pFrame->GetChild( "2" ) };
-				if( pPoints[0] != NULL && pPoints[1] != NULL )
+				if( pPoints[0] != nullptr && pPoints[1] != nullptr )
 				{
 					RectF r = newState.rect;
 
@@ -257,10 +259,10 @@ void Sprite::LoadFromNode( const XNode* pNode )
 
 void Sprite::UnloadTexture()
 {
-	if( m_pTexture != NULL ) // If there was a previous bitmap...
+	if( m_pTexture != nullptr ) // If there was a previous bitmap...
 	{
 		TEXTUREMAN->UnloadTexture( m_pTexture ); // Unload it.
-		m_pTexture = NULL;
+		m_pTexture = nullptr;
 
 		/* Make sure we're reset to frame 0, so if we're reused, we aren't left
 		 * on a frame number that may be greater than the number of frames in
@@ -270,9 +272,9 @@ void Sprite::UnloadTexture()
 }
 
 void Sprite::EnableAnimation( bool bEnable )
-{ 
+{
 	bool bWasEnabled = m_bIsAnimating;
-	Actor::EnableAnimation( bEnable ); 
+	Actor::EnableAnimation( bEnable );
 
 	if( bEnable && !bWasEnabled )
 	{
@@ -298,7 +300,7 @@ void Sprite::EnableAnimation( bool bEnable )
 
 void Sprite::SetTexture( RageTexture *pTexture )
 {
-	ASSERT( pTexture != NULL );
+	ASSERT( pTexture != nullptr );
 
 	if( m_pTexture != pTexture )
 	{
@@ -326,7 +328,7 @@ void Sprite::LoadFromTexture( RageTextureID ID )
 {
 	// LOG->Trace( "Sprite::LoadFromTexture( %s )", ID.filename.c_str() );
 
-	RageTexture *pTexture = NULL;
+	RageTexture *pTexture = nullptr;
 	if( m_pTexture && m_pTexture->GetID() == ID )
 		pTexture = m_pTexture;
 	else
@@ -340,7 +342,7 @@ void Sprite::LoadStatesFromTexture()
 	// Assume the frames of this animation play in sequential order with 0.1 second delay.
 	m_States.clear();
 
-	if( m_pTexture == NULL )
+	if( m_pTexture == nullptr )
 	{
 		State newState;
 		newState.fDelay = 0.1f;
@@ -361,7 +363,7 @@ void Sprite::LoadStatesFromTexture()
 
 void Sprite::UpdateAnimationState()
 {
-	// Don't bother with state switching logic if there's only one state.  
+	// Don't bother with state switching logic if there's only one state.
 	// We already know what's going to show.
 	if( m_States.size() > 1 )
 	{
@@ -421,17 +423,17 @@ void Sprite::Update( float fDelta )
 
 	// If the texture is a movie, decode frames.
 	if(!bSkipThisMovieUpdate && m_DecodeMovie)
-		m_pTexture->DecodeSeconds( max(0, fTimePassed) );
+		m_pTexture->DecodeSeconds( std::max(0.f, fTimePassed) );
 
 	// update scrolling
 	if( m_fTexCoordVelocityX != 0 || m_fTexCoordVelocityY != 0 )
 	{
 		float fTexCoords[8];
 		Sprite::GetActiveTextureCoords( fTexCoords );
- 
+
 		// top left, bottom left, bottom right, top right
 		fTexCoords[0] += fDelta*m_fTexCoordVelocityX;
-		fTexCoords[1] += fDelta*m_fTexCoordVelocityY; 
+		fTexCoords[1] += fDelta*m_fTexCoordVelocityY;
 		fTexCoords[2] += fDelta*m_fTexCoordVelocityX;
 		fTexCoords[3] += fDelta*m_fTexCoordVelocityY;
 		fTexCoords[4] += fDelta*m_fTexCoordVelocityX;
@@ -474,10 +476,10 @@ void Sprite::DrawTexture( const TweenState *state )
 	Actor::SetGlobalRenderStates(); // set Actor-specified render states
 
 	RectF crop = state->crop;
-	// bail if cropped all the way 
-	if( crop.left + crop.right >= 1  || 
-		crop.top + crop.bottom >= 1 ) 
-		return; 
+	// bail if cropped all the way
+	if( crop.left + crop.right >= 1  ||
+		crop.top + crop.bottom >= 1 )
+		return;
 
 	// use m_temp_* variables to draw the object
 	RectF quadVerticies;
@@ -486,24 +488,24 @@ void Sprite::DrawTexture( const TweenState *state )
 	quadVerticies.top    = -m_size.y/2.0f;
 	quadVerticies.bottom = +m_size.y/2.0f;
 
-	/* Don't draw anything outside of the texture's image area.  Texels outside 
+	/* Don't draw anything outside of the texture's image area.  Texels outside
 	 * of the image area aren't guaranteed to be initialized. */
-	/* HACK: Clamp the crop values. It would be more accurate to clip the 
+	/* HACK: Clamp the crop values. It would be more accurate to clip the
 	 * vertices so that the diffuse value is adjusted. */
 	CLAMP( crop.left, 0, 1 );
 	CLAMP( crop.right, 0, 1 );
 	CLAMP( crop.top, 0, 1 );
 	CLAMP( crop.bottom, 0, 1 );
 
-	RectF croppedQuadVerticies = quadVerticies; 
+	RectF croppedQuadVerticies = quadVerticies;
 #define IF_CROP_POS(side,opp_side) \
 	if(state->crop.side!=0) \
 		croppedQuadVerticies.side = \
 			SCALE( crop.side, 0.f, 1.f, quadVerticies.side, quadVerticies.opp_side )
-	IF_CROP_POS( left, right ); 
-	IF_CROP_POS( top, bottom ); 
-	IF_CROP_POS( right, left ); 
-	IF_CROP_POS( bottom, top ); 
+	IF_CROP_POS( left, right );
+	IF_CROP_POS( top, bottom );
+	IF_CROP_POS( right, left );
+	IF_CROP_POS( bottom, top );
 
 	static RageSpriteVertex v[4];
 	v[0].p = RageVector3( croppedQuadVerticies.left,	croppedQuadVerticies.top,	0 );	// top left
@@ -522,7 +524,7 @@ void Sprite::DrawTexture( const TweenState *state )
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetTexture( TextureUnit_1, m_pTexture? m_pTexture->GetTexHandle():0 );
 
-	// Must call this after setting the texture or else texture 
+	// Must call this after setting the texture or else texture
 	// parameters have no effect.
 	Actor::SetTextureRenderStates(); // set Actor-specified render states
 	DISPLAY->SetEffectMode( m_EffectMode );
@@ -570,7 +572,7 @@ void Sprite::DrawTexture( const TweenState *state )
 	}
 
 	// Draw if we're not fully transparent
-	if( state->diffuse[0].a > 0 || 
+	if( state->diffuse[0].a > 0 ||
 		state->diffuse[1].a > 0 ||
 		state->diffuse[2].a > 0 ||
 		state->diffuse[3].a > 0 )
@@ -609,7 +611,7 @@ void Sprite::DrawTexture( const TweenState *state )
 
 bool Sprite::EarlyAbortDraw() const
 {
-	return m_pTexture == NULL;
+	return m_pTexture == nullptr;
 }
 
 void Sprite::DrawPrimitives()
@@ -745,19 +747,19 @@ void Sprite::DrawPrimitives()
 
 int Sprite::GetNumStates() const
 {
-	return m_States.size(); 
+	return m_States.size();
 }
 
-void Sprite::SetState( int iNewState )
+void Sprite::SetState( size_t iNewState )
 {
 	/*
-	 * This assert will likely trigger if the "missing" theme element graphic 
+	 * This assert will likely trigger if the "missing" theme element graphic
 	 * is loaded in place of a multi-frame sprite. We want to know about these
 	 * problems in debug builds, but they're not fatal.
 	 */
 
 	// Never warn about setting state 0.
-	if( iNewState != 0 && (iNewState < 0  ||  iNewState >= (int)m_States.size()) )
+	if( iNewState != 0 && iNewState >= m_States.size() )
 	{
 		// Don't warn about number of states in "_blank" or "_missing".
 		if( !m_pTexture || (m_pTexture->GetID().filename.find("_blank") == string::npos &&
@@ -765,7 +767,7 @@ void Sprite::SetState( int iNewState )
 		{
 			RString sError;
 			if( m_pTexture )
-				sError = ssprintf("A Sprite '%s' (\"%s\") tried to set state to frame %d, but it has only %u frames.",
+				sError = ssprintf("A Sprite '%s' (\"%s\") tried to set state to frame %lu, but it has only %u frames.",
 					/*
 					 * Using the state directly tends to give you an error message like "tried to set frame 6 of 6"
 					 * which is very confusing if you don't know that one is 0-indexed and the other is 1-indexed.
@@ -773,7 +775,7 @@ void Sprite::SetState( int iNewState )
 					 */
 					m_pTexture->GetID().filename.c_str(), this->m_sName.c_str(), iNewState+1, unsigned(m_States.size()));
 			else
-				sError = ssprintf("A Sprite (\"%s\") tried to set state index %d, but no texture is loaded.", 
+				sError = ssprintf("A Sprite (\"%s\") tried to set state index %lu, but no texture is loaded.",
 					this->m_sName.c_str(), iNewState );
 			LuaHelpers::ReportScriptError(sError, "SPRITE_INVALID_FRAME");
 		}
@@ -787,9 +789,9 @@ void Sprite::SetState( int iNewState )
 void Sprite::RecalcAnimationLengthSeconds()
 {
 	m_animation_length_seconds = 0;
-	FOREACH_CONST(State, m_States, s)
+	for (auto &s: m_States)
 	{
-		m_animation_length_seconds += s->fDelay;
+		m_animation_length_seconds += s.fDelay;
 	}
 }
 
@@ -804,25 +806,25 @@ void Sprite::SetSecondsIntoAnimation( float fSeconds )
 
 RString	Sprite::GetTexturePath() const
 {
-	if( m_pTexture==NULL )
+	if( m_pTexture==nullptr )
 		return RString();
 
 	return m_pTexture->GetID().filename;
 }
 
-void Sprite::SetCustomTextureRect( const RectF &new_texcoord_frect ) 
-{ 
+void Sprite::SetCustomTextureRect( const RectF &new_texcoord_frect )
+{
 	m_bUsingCustomTexCoords = true;
 	m_bTextureWrapping = true;
 	TexCoordArrayFromRect( m_CustomTexCoords, new_texcoord_frect );
 }
 
 void Sprite::SetCustomTextureCoords( float fTexCoords[8] ) // order: top left, bottom left, bottom right, top right
-{ 
+{
 	m_bUsingCustomTexCoords = true;
 	m_bTextureWrapping = true;
 	for( int i=0; i<8; i++ )
-		m_CustomTexCoords[i] = fTexCoords[i]; 
+		m_CustomTexCoords[i] = fTexCoords[i];
 }
 
 void Sprite::SetCustomImageRect( RectF rectImageCoords )
@@ -830,8 +832,8 @@ void Sprite::SetCustomImageRect( RectF rectImageCoords )
 	// Convert to a rectangle in texture coordinate space.
 	rectImageCoords.left	*= m_pTexture->GetImageWidth()	/ (float)m_pTexture->GetTextureWidth();
 	rectImageCoords.right	*= m_pTexture->GetImageWidth()	/ (float)m_pTexture->GetTextureWidth();
-	rectImageCoords.top	*= m_pTexture->GetImageHeight()	/ (float)m_pTexture->GetTextureHeight(); 
-	rectImageCoords.bottom	*= m_pTexture->GetImageHeight()	/ (float)m_pTexture->GetTextureHeight(); 
+	rectImageCoords.top	*= m_pTexture->GetImageHeight()	/ (float)m_pTexture->GetTextureHeight();
+	rectImageCoords.bottom	*= m_pTexture->GetImageHeight()	/ (float)m_pTexture->GetTextureHeight();
 
 	SetCustomTextureRect( rectImageCoords );
 }
@@ -841,8 +843,8 @@ void Sprite::SetCustomImageCoords( float fImageCoords[8] )	// order: top left, b
 	// convert image coords to texture coords in place
 	for( int i=0; i<8; i+=2 )
 	{
-		fImageCoords[i+0] *= m_pTexture->GetImageWidth()	/ (float)m_pTexture->GetTextureWidth(); 
-		fImageCoords[i+1] *= m_pTexture->GetImageHeight()	/ (float)m_pTexture->GetTextureHeight(); 
+		fImageCoords[i+0] *= m_pTexture->GetImageWidth()	/ (float)m_pTexture->GetTextureWidth();
+		fImageCoords[i+1] *= m_pTexture->GetImageHeight()	/ (float)m_pTexture->GetTextureHeight();
 	}
 
 	SetCustomTextureCoords( fImageCoords );
@@ -873,11 +875,11 @@ const RectF *Sprite::GetTextureCoordRectForState( int iState ) const
  * coordinates for the current state. */
 void Sprite::GetActiveTextureCoords( float fTexCoordsOut[8] ) const
 {
-	if(m_bUsingCustomTexCoords) 
+	if(m_bUsingCustomTexCoords)
 	{
 		// GetCustomTextureCoords
 		for( int i=0; i<8; i++ )
-			fTexCoordsOut[i] = m_CustomTexCoords[i]; 
+			fTexCoordsOut[i] = m_CustomTexCoords[i];
 	}
 	else
 	{
@@ -927,32 +929,32 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 		Sprite::ScaleToCover( RectF(0, 0, fWidth, fHeight) );
 		// find which dimension is larger
 		bool bXDimNeedsToBeCropped = GetZoomedWidth() > fWidth+0.01;
-		
+
 		if( bXDimNeedsToBeCropped ) // crop X
 		{
 			float fPercentageToCutOff = (this->GetZoomedWidth() - fWidth) / this->GetZoomedWidth();
-			fPercentageToCutOff = max( fPercentageToCutOff-fScaleFudgePercent, 0 );
+			fPercentageToCutOff = std::max( fPercentageToCutOff-fScaleFudgePercent, 0.f );
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 
 			// generate a rectangle with new texture coordinates
-			RectF fCustomImageRect( 
-				fPercentageToCutOffEachSide, 
-				0, 
-				1 - fPercentageToCutOffEachSide, 
+			RectF fCustomImageRect(
+				fPercentageToCutOffEachSide,
+				0,
+				1 - fPercentageToCutOffEachSide,
 				1 );
 			SetCustomImageRect( fCustomImageRect );
 		}
 		else // crop Y
 		{
 			float fPercentageToCutOff = (this->GetZoomedHeight() - fHeight) / this->GetZoomedHeight();
-			fPercentageToCutOff = max( fPercentageToCutOff-fScaleFudgePercent, 0 );
+			fPercentageToCutOff = std::max( fPercentageToCutOff-fScaleFudgePercent, 0.f );
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 
 			// generate a rectangle with new texture coordinates
-			RectF fCustomImageRect( 
-				0, 
+			RectF fCustomImageRect(
+				0,
 				fPercentageToCutOffEachSide,
-				1, 
+				1,
 				1 - fPercentageToCutOffEachSide );
 			SetCustomImageRect( fCustomImageRect );
 		}
@@ -988,17 +990,17 @@ void Sprite::CropTo( float fWidth, float fHeight )
 		Sprite::ScaleToCover( RectF(0, 0, fWidth, fHeight) );
 		// find which dimension is larger
 		bool bXDimNeedsToBeCropped = GetZoomedWidth() > fWidth+0.01;
-		
+
 		if( bXDimNeedsToBeCropped )	// crop X
 		{
 			float fPercentageToCutOff = (this->GetZoomedWidth() - fWidth) / this->GetZoomedWidth();
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 
 			// generate a rectangle with new texture coordinates
-			RectF fCustomImageRect( 
-				fPercentageToCutOffEachSide, 
-				0, 
-				1 - fPercentageToCutOffEachSide, 
+			RectF fCustomImageRect(
+				fPercentageToCutOffEachSide,
+				0,
+				1 - fPercentageToCutOffEachSide,
 				1 );
 			SetCustomImageRect( fCustomImageRect );
 		}
@@ -1008,10 +1010,10 @@ void Sprite::CropTo( float fWidth, float fHeight )
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 
 			// generate a rectangle with new texture coordinates
-			RectF fCustomImageRect( 
-				0, 
+			RectF fCustomImageRect(
+				0,
 				fPercentageToCutOffEachSide,
-				1, 
+				1,
 				1 - fPercentageToCutOffEachSide );
 			SetCustomImageRect( fCustomImageRect );
 		}
@@ -1056,7 +1058,7 @@ void Sprite::AddImageCoords( float fX, float fY )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the Sprite. */ 
+/** @brief Allow Lua to have access to the Sprite. */
 class LunaSprite: public Luna<Sprite>
 {
 public:
@@ -1090,7 +1092,7 @@ public:
 		return 1;
 	}
 
-	/* Commands that go in the tweening queue: 
+	/* Commands that go in the tweening queue:
 	 * Commands that take effect immediately (ignoring the tweening queue): */
 	static int customtexturerect( T* p, lua_State *L )	{ p->SetCustomTextureRect( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); COMMON_RETURN_SELF; }
 	static int SetCustomImageRect( T* p, lua_State *L )	{ p->SetCustomImageRect( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); COMMON_RETURN_SELF; }
@@ -1205,7 +1207,7 @@ public:
 	static int GetTexture( T* p, lua_State *L )
 	{
 		RageTexture *pTexture = p->GetTexture();
-		if( pTexture != NULL )
+		if( pTexture != nullptr )
 			pTexture->PushSelf(L);
 		else
 			lua_pushnil( L );
@@ -1265,7 +1267,7 @@ LUA_REGISTER_DERIVED_CLASS( Sprite, Actor )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1275,7 +1277,7 @@ LUA_REGISTER_DERIVED_CLASS( Sprite, Actor )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

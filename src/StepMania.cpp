@@ -2,6 +2,8 @@
 
 #include "StepMania.h"
 
+#include <array>
+
 // Rage global classes
 #include "RageLog.h"
 #include "RageTextureManager.h"
@@ -77,6 +79,8 @@
 #if defined(WIN32)
 #include <windows.h>
 #endif
+
+using std::vector;
 
 void ShutdownGame();
 bool HandleGlobalInputs( const InputEventPlus &input );
@@ -194,7 +198,7 @@ static void update_centering()
 
 static void StartDisplay()
 {
-	if( DISPLAY != NULL )
+	if( DISPLAY != nullptr )
 		return; // already started
 
 	DISPLAY = CreateDisplay();
@@ -273,7 +277,7 @@ void StepMania::ResetPreferences()
 
 /* Shutdown all global singletons. Note that this may be called partway through
  * initialization, due to an object failing to initialize, in which case some of
- * these may still be NULL. */
+ * these may still be nullptr. */
 void ShutdownGame()
 {
 	/* First, tell SOUNDMAN that we're shutting down. This signals sound drivers to
@@ -468,160 +472,164 @@ struct VideoCardDefaults
 		iTextureSize = iTextureSize_;
 		bSmoothLines = bSmoothLines_;
 	}
-} const g_VideoCardDefaults[] =
+};
+
+std::array<VideoCardDefaults, 17> const g_VideoCardDefaults =
 {
-	VideoCardDefaults(
-		"Voodoo *5",
-		"d3d,opengl",	// received 3 reports of opengl crashing. -Chris
-		640,480,
-		32,32,32,
-		2048,
-		true	// accelerated
-	),
-	VideoCardDefaults(
-		"Voodoo|3dfx", // all other Voodoos: some drivers don't identify which one
-		"d3d,opengl",
-		640,480,
-		16,16,16,
-		256,
-		false	// broken, causes black screen
-	),
-	VideoCardDefaults(
-		"Radeon.* 7|Wonder 7500|ArcadeVGA",	// Radeon 7xxx, RADEON Mobility 7500
-		"d3d,opengl",	// movie texture performance is terrible in OpenGL, but fine in D3D.
-		640,480,
-		16,16,16,
-		2048,
-		true	// accelerated
-	),
-	VideoCardDefaults(
-		"GeForce|Radeon|Wonder 9|Quadro",
-		"opengl,d3d",
-		640,480,
-		32,32,32,	// 32 bit textures are faster to load
-		2048,
-		true	// hardware accelerated
-	),
-	VideoCardDefaults(
-		"TNT|Vanta|M64",
-		"opengl,d3d",
-		640,480,
-		16,16,16,	// Athlon 1.2+TNT demonstration w/ movies: 70fps w/ 32bit textures, 86fps w/ 16bit textures
-		2048,
-		true	// hardware accelerated
-	),
-	VideoCardDefaults(
-		"G200|G250|G400",
-		"d3d,opengl",
-		640,480,
-		16,16,16,
-		2048,
-		false	// broken, causes black screen
-	),
-	VideoCardDefaults(
-		"Savage",
-		"d3d",
-			// OpenGL is unusable on my Savage IV with even the latest drivers.
-			// It draws 30 frames of gibberish then crashes. This happens even with
-			// simple NeHe demos. -Chris
-		640,480,
-		16,16,16,
-		2048,
-		false
-	),
-	VideoCardDefaults(
-		"XPERT@PLAY|IIC|RAGE PRO|RAGE LT PRO",	// Rage Pro chip, Rage IIC chip
-		"d3d",
-			// OpenGL is not hardware accelerated, despite the fact that the
-			// drivers come with an ICD.  Also, the WinXP driver performance
-			// is terrible and supports only 640. The ATI driver is usable.
-			// -Chris
-		320,240,	// lower resolution for 60fps. In-box WinXP driver doesn't support 400x300.
-		16,16,16,
-		256,
-		false
-	),
-	VideoCardDefaults(
-		"RAGE MOBILITY-M1",
-		"d3d,opengl",	// Vertex alpha is broken in OpenGL, but not D3D. -Chris
-		400,300,	// lower resolution for 60fps
-		16,16,16,
-		256,
-		false
-	),
-	VideoCardDefaults(
-		"Mobility M3",	// ATI Rage Mobility 128 (AKA "M3")
-		"d3d,opengl",	// bad movie texture performance in opengl
-		640,480,
-		16,16,16,
-		1024,
-		false
-	),
-	VideoCardDefaults(
-		"Intel.*82810|Intel.*82815",
-		"opengl,d3d",// OpenGL is 50%+ faster than D3D w/ latest Intel drivers.  -Chris
-		512,384,	// lower resolution for 60fps
-		16,16,16,
-		512,
-		false
-	),
-	VideoCardDefaults(
-		"Intel*Extreme Graphics",
-		"d3d",	// OpenGL blue screens w/ XP drivers from 6-21-2002
-		640,480,
-		16,16,16,	// slow at 32bpp
-		1024,
-		false
-	),
-	VideoCardDefaults(
-		"Intel.*", /* fallback: all unknown Intel cards to D3D, since Intel is notoriously bad at OpenGL */
-		"d3d,opengl",
-		640,480,
-		16,16,16,
-		2048,
-		false
-	),
-	VideoCardDefaults(
-		// Cards that have problems with OpenGL:
-		// ASSERT fail somewhere in RageDisplay_OpenGL "Trident Video Accelerator CyberBlade"
-		// bug 764499: ASSERT fail after glDeleteTextures for "SiS 650_651_740"
-		// bug 764830: ASSERT fail after glDeleteTextures for "VIA Tech VT8361/VT8601 Graphics Controller"
-		// bug 791950: AV in glsis630!DrvSwapBuffers for "SiS 630/730"
-		"Trident Video Accelerator CyberBlade|VIA.*VT|SiS 6*",
-		"d3d,opengl",
-		640,480,
-		16,16,16,
-		2048,
-		false
-	),
-	VideoCardDefaults(
-		/* Unconfirmed texture problems on this; let's try D3D, since it's
-		 * a VIA/S3 chipset. */
-		"VIA/S3G KM400/KN400",
-		"d3d,opengl",
-		640,480,
-		16,16,16,
-		2048,
-		false
-	),
-	VideoCardDefaults(
-		"OpenGL",	// This matches all drivers in Mac and Linux. -Chris
-		"opengl",
-		640,480,
-		16,16,16,
-		2048,
-		true // Right now, they've got to have NVidia or ATi Cards anyway..
-	),
-	VideoCardDefaults(
-		// Default graphics settings used for all cards that don't match above.
-		// This must be the very last entry!
-		"",
-		"opengl,d3d",
-		640,480,
-		32,32,32,
-		2048,
-		false  // AA is slow on some cards, so let's selectively enable HW accelerated cards.
-	),
+	{
+		VideoCardDefaults(
+			"Voodoo *5",
+			"d3d,opengl",	// received 3 reports of opengl crashing. -Chris
+			640,480,
+			32,32,32,
+			2048,
+			true	// accelerated
+		),
+		VideoCardDefaults(
+			"Voodoo|3dfx", // all other Voodoos: some drivers don't identify which one
+			"d3d,opengl",
+			640,480,
+			16,16,16,
+			256,
+			false	// broken, causes black screen
+		),
+		VideoCardDefaults(
+			"Radeon.* 7|Wonder 7500|ArcadeVGA",	// Radeon 7xxx, RADEON Mobility 7500
+			"d3d,opengl",	// movie texture performance is terrible in OpenGL, but fine in D3D.
+			640,480,
+			16,16,16,
+			2048,
+			true	// accelerated
+		),
+		VideoCardDefaults(
+			"GeForce|Radeon|Wonder 9|Quadro",
+			"opengl,d3d",
+			640,480,
+			32,32,32,	// 32 bit textures are faster to load
+			2048,
+			true	// hardware accelerated
+		),
+		VideoCardDefaults(
+			"TNT|Vanta|M64",
+			"opengl,d3d",
+			640,480,
+			16,16,16,	// Athlon 1.2+TNT demonstration w/ movies: 70fps w/ 32bit textures, 86fps w/ 16bit textures
+			2048,
+			true	// hardware accelerated
+		),
+		VideoCardDefaults(
+			"G200|G250|G400",
+			"d3d,opengl",
+			640,480,
+			16,16,16,
+			2048,
+			false	// broken, causes black screen
+		),
+		VideoCardDefaults(
+			"Savage",
+			"d3d",
+				// OpenGL is unusable on my Savage IV with even the latest drivers.
+				// It draws 30 frames of gibberish then crashes. This happens even with
+				// simple NeHe demos. -Chris
+			640,480,
+			16,16,16,
+			2048,
+			false
+		),
+		VideoCardDefaults(
+			"XPERT@PLAY|IIC|RAGE PRO|RAGE LT PRO",	// Rage Pro chip, Rage IIC chip
+			"d3d",
+				// OpenGL is not hardware accelerated, despite the fact that the
+				// drivers come with an ICD.  Also, the WinXP driver performance
+				// is terrible and supports only 640. The ATI driver is usable.
+				// -Chris
+			320,240,	// lower resolution for 60fps. In-box WinXP driver doesn't support 400x300.
+			16,16,16,
+			256,
+			false
+		),
+		VideoCardDefaults(
+			"RAGE MOBILITY-M1",
+			"d3d,opengl",	// Vertex alpha is broken in OpenGL, but not D3D. -Chris
+			400,300,	// lower resolution for 60fps
+			16,16,16,
+			256,
+			false
+		),
+		VideoCardDefaults(
+			"Mobility M3",	// ATI Rage Mobility 128 (AKA "M3")
+			"d3d,opengl",	// bad movie texture performance in opengl
+			640,480,
+			16,16,16,
+			1024,
+			false
+		),
+		VideoCardDefaults(
+			"Intel.*82810|Intel.*82815",
+			"opengl,d3d",// OpenGL is 50%+ faster than D3D w/ latest Intel drivers.  -Chris
+			512,384,	// lower resolution for 60fps
+			16,16,16,
+			512,
+			false
+		),
+		VideoCardDefaults(
+			"Intel*Extreme Graphics",
+			"d3d",	// OpenGL blue screens w/ XP drivers from 6-21-2002
+			640,480,
+			16,16,16,	// slow at 32bpp
+			1024,
+			false
+		),
+		VideoCardDefaults(
+			"Intel.*", /* fallback: all unknown Intel cards to D3D, since Intel is notoriously bad at OpenGL */
+			"d3d,opengl",
+			640,480,
+			16,16,16,
+			2048,
+			false
+		),
+		VideoCardDefaults(
+			// Cards that have problems with OpenGL:
+			// ASSERT fail somewhere in RageDisplay_OpenGL "Trident Video Accelerator CyberBlade"
+			// bug 764499: ASSERT fail after glDeleteTextures for "SiS 650_651_740"
+			// bug 764830: ASSERT fail after glDeleteTextures for "VIA Tech VT8361/VT8601 Graphics Controller"
+			// bug 791950: AV in glsis630!DrvSwapBuffers for "SiS 630/730"
+			"Trident Video Accelerator CyberBlade|VIA.*VT|SiS 6*",
+			"d3d,opengl",
+			640,480,
+			16,16,16,
+			2048,
+			false
+		),
+		VideoCardDefaults(
+			/* Unconfirmed texture problems on this; let's try D3D, since it's
+			 * a VIA/S3 chipset. */
+			"VIA/S3G KM400/KN400",
+			"d3d,opengl",
+			640,480,
+			16,16,16,
+			2048,
+			false
+		),
+		VideoCardDefaults(
+			"OpenGL",	// This matches all drivers in Mac and Linux. -Chris
+			"opengl",
+			640,480,
+			16,16,16,
+			2048,
+			true // Right now, they've got to have NVidia or ATi Cards anyway..
+		),
+		VideoCardDefaults(
+			// Default graphics settings used for all cards that don't match above.
+			// This must be the very last entry!
+			"",
+			"opengl,d3d",
+			640,480,
+			32,32,32,
+			2048,
+			false  // AA is slow on some cards, so let's selectively enable HW accelerated cards.
+		)
+	}
 };
 
 
@@ -644,7 +652,7 @@ bool CheckVideoDefaultSettings()
 	VideoCardDefaults defaults;
 
 	unsigned i;
-	for( i=0; i<ARRAYLEN(g_VideoCardDefaults); i++ )
+	for( i = 0; i < g_VideoCardDefaults.size(); ++i )
 	{
 		defaults = g_VideoCardDefaults[i];
 
@@ -656,7 +664,7 @@ bool CheckVideoDefaultSettings()
 			break;
 		}
 	}
-	if (i >= ARRAYLEN(g_VideoCardDefaults))
+	if (i >= g_VideoCardDefaults.size())
 	{
 		FAIL_M("Failed to match video driver");
 	}
@@ -750,7 +758,7 @@ RageDisplay *CreateDisplay()
 	if( asRenderers.empty() )
 		RageException::Throw( "%s", ERROR_NO_VIDEO_RENDERERS.GetValue().c_str() );
 
-	RageDisplay *pRet = NULL;
+	RageDisplay *pRet = nullptr;
 	for( unsigned i=0; i<asRenderers.size(); i++ )
 	{
 		RString sRenderer = asRenderers[i];
@@ -783,7 +791,7 @@ RageDisplay *CreateDisplay()
 			RageException::Throw( ERROR_UNKNOWN_VIDEO_RENDERER.GetValue(), sRenderer.c_str() );
 		}
 
-		if( pRet == NULL )
+		if( pRet == nullptr )
 			continue;
 
 		RString sError = pRet->Init( params, PREFSMAN->m_bAllowUnacceleratedRenderer );
@@ -798,7 +806,7 @@ RageDisplay *CreateDisplay()
 		break; // the display is ready to go
 	}
 
-	if( pRet == NULL)
+	if( pRet == nullptr)
 		RageException::Throw( "%s", error.c_str() );
 
 	return pRet;
@@ -809,7 +817,7 @@ static void SwitchToLastPlayedGame()
 	const Game *pGame = GAMEMAN->StringToGame( PREFSMAN->GetCurrentGame() );
 
 	// If the active game type isn't actually available, revert to the default.
-	if( pGame == NULL )
+	if( pGame == nullptr )
 		pGame = GAMEMAN->GetDefaultGame();
 
 	if( !GAMEMAN->IsGameEnabled( pGame ) && pGame != GAMEMAN->GetDefaultGame() )
@@ -827,10 +835,10 @@ static void SwitchToLastPlayedGame()
 // This function is meant to only be called during start up.
 void StepMania::InitializeCurrentGame( const Game* g )
 {
-	ASSERT( g != NULL );
-	ASSERT( GAMESTATE != NULL );
-	ASSERT( ANNOUNCER != NULL );
-	ASSERT( THEME != NULL );
+	ASSERT( g != nullptr );
+	ASSERT( GAMESTATE != nullptr );
+	ASSERT( ANNOUNCER != nullptr );
+	ASSERT( THEME != nullptr );
 
 	GAMESTATE->SetCurGame( g );
 
@@ -845,7 +853,7 @@ void StepMania::InitializeCurrentGame( const Game* g )
 	if( GetCommandlineArgument( "game", &argCurGame) && argCurGame != sGametype )
 	{
 		Game const* new_game= GAMEMAN->StringToGame(argCurGame);
-		if(new_game == NULL)
+		if(new_game == nullptr)
 		{
 			LOG->Warn("%s is not a known game type, ignoring.", argCurGame.c_str());
 		}
@@ -855,7 +863,7 @@ void StepMania::InitializeCurrentGame( const Game* g )
 			GAMESTATE->SetCurGame(new_game);
 		}
 	}
-	
+
 	// It doesn't matter if sTheme is blank or invalid, THEME->STAL will set
 	// a selectable theme for us. -Kyz
 
@@ -1053,10 +1061,10 @@ int sm_main(int argc, char* argv[])
 
 	// This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow.
 	LoadingWindow *pLoadingWindow = LoadingWindow::Create();
-	if(pLoadingWindow == NULL)
+	if(pLoadingWindow == nullptr)
 		RageException::Throw("%s", COULDNT_OPEN_LOADING_WINDOW.GetValue().c_str());
 
-	srand( time(NULL) ); // seed number generator
+	srand( static_cast<unsigned int>(time(nullptr)) ); // seed number generator
 
 	/* Do this early, so we have debugging output if anything else fails. LOG and
 	 * Dialog must be set up first. It shouldn't take long, but it might take a
@@ -1125,11 +1133,11 @@ int sm_main(int argc, char* argv[])
 		 * theme into the loading window. */
 		RString sError;
 		RageSurface *pSurface = RageSurfaceUtils::LoadFile( THEME->GetPathG( "Common", "window icon" ), sError );
-		if( pSurface != NULL )
+		if( pSurface != nullptr )
 			pLoadingWindow->SetIcon( pSurface );
 		delete pSurface;
 		pSurface = RageSurfaceUtils::LoadFile( THEME->GetPathG("Common","splash"), sError );
-		if( pSurface != NULL )
+		if( pSurface != nullptr )
 			pLoadingWindow->SetSplash( pSurface );
 		delete pSurface;
 	}
@@ -1278,14 +1286,14 @@ void StepMania::InsertCoin( int iNum, bool bCountInBookkeeping )
 	{
 		GAMESTATE->m_iCoins.Set( GAMESTATE->m_iCoins + iNum );
 	}
-	
+
 	int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
 	bool bMaxCredits = iCredits >= MAX_NUM_CREDITS;
 	if( bMaxCredits )
 	{
 		GAMESTATE->m_iCoins.Set( MAX_NUM_CREDITS * PREFSMAN->m_iCoinsPerCredit );
 	}
-	
+
 	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins.Get(), PREFSMAN->m_iCoinsPerCredit.Get() );
 
 	// If inserting coins, play an appropriate sound; if deducting coins, don't play anything.
@@ -1615,8 +1623,8 @@ int LuaFunc_SaveScreenshot(lua_State *L)
 	// If pn is provided, save to that player's profile.
 	// Otherwise, save to the machine.
 	PlayerNumber pn= Enum::Check<PlayerNumber>(L, 1, true);
-	bool compress= lua_toboolean(L, 2);
-	bool sign= lua_toboolean(L, 3);
+	bool compress = lua_toboolean(L, 2) != 0;
+	bool sign = lua_toboolean(L, 3) != 0;
 	RString prefix= luaL_optstring(L, 4, "");
 	RString suffix= luaL_optstring(L, 5, "");
 	RString dir;

@@ -8,7 +8,8 @@
 #include "RageUtil.h"
 #include "RageSoundMixBuffer.h"
 #include "RageSoundUtil.h"
-#include "Foreach.h"
+
+using std::vector;
 
 /*
  * Keyed sounds should pass this object to SoundReader_Preload, to preprocess it.
@@ -33,8 +34,10 @@ RageSoundReader_Chain::~RageSoundReader_Chain()
 	while( !m_apActiveSounds.empty() )
 		ReleaseSound( m_apActiveSounds.front() );
 
-	FOREACH( RageSoundReader *, m_apLoadedSounds, it )
-		delete *it;
+	for (auto *it: m_apLoadedSounds)
+	{
+		delete it;
+	}
 }
 
 RageSoundReader_Chain *RageSoundReader_Chain::Copy() const
@@ -55,7 +58,7 @@ void RageSoundReader_Chain::AddSound( int iIndex, float fOffsetSecs, float fPan 
 	s.iIndex = iIndex;
 	s.iOffsetMS = lrintf( fOffsetSecs * 1000 );
 	s.fPan = fPan;
-	s.pSound = NULL;
+	s.pSound = nullptr;
 	m_aSounds.push_back( s );
 }
 
@@ -63,7 +66,7 @@ int RageSoundReader_Chain::LoadSound( RString sPath )
 {
 	sPath.MakeLower();
 
-	map<RString, RageSoundReader *>::const_iterator it = m_apNamedSounds.find( sPath );
+	auto it = m_apNamedSounds.find( sPath );
 	if( it != m_apNamedSounds.end() )
 	{
 		const RageSoundReader *pReader = it->second;
@@ -77,7 +80,7 @@ int RageSoundReader_Chain::LoadSound( RString sPath )
 	RString sError;
 	bool bPrebuffer;
 	RageSoundReader *pReader = RageSoundReader_FileReader::OpenFile( sPath, sError, &bPrebuffer );
-	if( pReader == NULL )
+	if( pReader == nullptr )
 	{
 		LOG->Warn( "RageSoundReader_Chain: error opening sound \"%s\": %s",
 			sPath.c_str(), sError.c_str() );
@@ -85,7 +88,7 @@ int RageSoundReader_Chain::LoadSound( RString sPath )
 	}
 
 	m_apNamedSounds[sPath] = pReader;
-	
+
 	m_apLoadedSounds.push_back( m_apNamedSounds[sPath] );
 	return m_apLoadedSounds.size()-1;
 }
@@ -103,11 +106,11 @@ int RageSoundReader_Chain::GetSampleRateInternal() const
 		return m_iPreferredSampleRate;
 
 	int iRate = -1;
-	FOREACH_CONST( RageSoundReader *, m_apLoadedSounds, it )
+	for (auto const *it: m_apLoadedSounds)
 	{
 		if( iRate == -1 )
-			iRate = (*it)->GetSampleRate();
-		else if( iRate != (*it)->GetSampleRate() )
+			iRate = it->GetSampleRate();
+		else if( iRate != it->GetSampleRate() )
 			return -1;
 	}
 	return iRate;
@@ -115,22 +118,25 @@ int RageSoundReader_Chain::GetSampleRateInternal() const
 
 void RageSoundReader_Chain::Finish()
 {
+	using std::max;
 	/* Figure out how many channels we have.  All sounds must either have 1 or 2 channels,
 	 * which will be converted as needed, or have the same number of channels. */
 	m_iChannels = 1;
-	FOREACH( RageSoundReader *, m_apLoadedSounds, it )
-		m_iChannels = max( m_iChannels, (*it)->GetNumChannels() );
+	for (auto const *it: m_apLoadedSounds)
+	{
+		m_iChannels = max( m_iChannels, it->GetNumChannels() );
+	}
 
 	if( m_iChannels > 2 )
 	{
-		FOREACH( RageSoundReader *, m_apLoadedSounds, it )
+		for (auto *it: m_apLoadedSounds)
 		{
-			if( (*it)->GetNumChannels() != m_iChannels )
+			if( it->GetNumChannels() != m_iChannels )
 			{
 				LOG->Warn( "Discarded sound with %i channels, not %i",
-					(*it)->GetNumChannels(), m_iChannels );
-				delete (*it);
-				(*it) = NULL;
+					it->GetNumChannels(), m_iChannels );
+				delete it;
+				it = nullptr;
 			}
 		}
 	}
@@ -140,7 +146,7 @@ void RageSoundReader_Chain::Finish()
 	{
 		Sound &sound = m_aSounds[i];
 
-		if( m_apLoadedSounds[sound.iIndex] == NULL )
+		if( m_apLoadedSounds[sound.iIndex] == nullptr )
 		{
 			m_aSounds.erase( m_aSounds.begin()+i );
 			continue;
@@ -158,10 +164,8 @@ void RageSoundReader_Chain::Finish()
 	m_iActualSampleRate = GetSampleRateInternal();
 	if( m_iActualSampleRate == -1 )
 	{
-		FOREACH( RageSoundReader *, m_apLoadedSounds, it )
+		for (auto *pSound: m_apLoadedSounds)
 		{
-			RageSoundReader *&pSound = (*it);
-
 			RageSoundReader_Resample_Good *pResample = new RageSoundReader_Resample_Good( pSound, m_iPreferredSampleRate );
 			pSound = pResample;
 		}
@@ -170,9 +174,8 @@ void RageSoundReader_Chain::Finish()
 	}
 
 	/* Attempt to preload all sounds. */
-	FOREACH( RageSoundReader *, m_apLoadedSounds, it )
+	for (auto *pSound: m_apLoadedSounds)
 	{
-		RageSoundReader *&pSound = (*it);
 		RageSoundReader_Preload::PreloadSound( pSound );
 	}
 
@@ -243,7 +246,7 @@ void RageSoundReader_Chain::ReleaseSound( Sound *s )
 	RageSoundReader *&pSound = s->pSound;
 
 	delete pSound;
-	pSound = NULL;
+	pSound = nullptr;
 
 	m_apActiveSounds.erase( it );
 }
@@ -299,6 +302,7 @@ float RageSoundReader_Chain::GetStreamToSourceRatio() const
  * sounds; a sound may be needed by more than one other sound. */
 int RageSoundReader_Chain::Read( float *pBuffer, int iFrames )
 {
+	using std::min;
 	while( m_iNextSound < m_aSounds.size() && m_iCurrentFrame == m_aSounds[m_iNextSound].GetOffsetFrame(m_iActualSampleRate) )
 	{
 		Sound *pSound = &m_aSounds[m_iNextSound];
@@ -344,8 +348,9 @@ int RageSoundReader_Chain::Read( float *pBuffer, int iFrames )
 
 	RageSoundMixBuffer mix;
 	/* Read iFrames from each sound. */
-	float Buffer[2048];
-	iFrames = min( iFrames, (int) (ARRAYLEN(Buffer) / m_iChannels) );
+	int const bufferSize = 2048;
+	float Buffer[bufferSize];
+	iFrames = min( iFrames, static_cast<int>((bufferSize + 0.f) / m_iChannels) );
 	for( unsigned i = 0; i < m_apActiveSounds.size(); )
 	{
 		RageSoundReader *pSound = m_apActiveSounds[i]->pSound;
@@ -386,6 +391,7 @@ int RageSoundReader_Chain::Read( float *pBuffer, int iFrames )
 
 int RageSoundReader_Chain::GetLength() const
 {
+	using std::max;
 	int iLength = 0;
 	for( unsigned i = 0; i < m_aSounds.size(); ++i )
 	{
@@ -400,6 +406,7 @@ int RageSoundReader_Chain::GetLength() const
 
 int RageSoundReader_Chain::GetLength_Fast() const
 {
+	using std::max;
 	int iLength = 0;
 	for( unsigned i = 0; i < m_aSounds.size(); ++i )
 	{

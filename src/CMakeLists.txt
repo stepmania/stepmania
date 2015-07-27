@@ -96,6 +96,7 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
   "GameManager.h"
   "GameSoundManager.h"
   "GameState.h"
+  "IDUtil.h"
   "InputFilter.h"
   "InputMapper.h"
   "InputQueue.h"
@@ -292,6 +293,8 @@ elseif(APPLE)
     RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_ROOT_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}"
     MACOSX_BUNDLE_INFO_PLIST "${SM_XCODE_DIR}/Info.StepMania.plist"
+    XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "gnu++14"
+    XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++"
     XCODE_ATTRIBUTE_INFOPLIST_FILE "${SM_XCODE_DIR}/Info.StepMania.plist"
     XCODE_ATTRIBUTE_INFOPLIST_PREPROCESS "YES"
     XCODE_ATTRIBUTE_INFOPLIST_PREPROCESSOR_DEFINITIONS[variant=Release] "RELEASE"
@@ -411,6 +414,12 @@ else() # Linux
   if("${CMAKE_SYSTEM}" MATCHES "Linux")
     sm_add_compile_definition("${SM_EXE_NAME}" LINUX)
   endif()
+
+  sm_add_compile_flag("${SM_EXE_NAME}" "-std=gnu++11")
+  if (CMAKE_CXX_COMPILER MATCHES "clang")
+    sm_add_compile_flag("${SM_EXE_NAME}" "-stdlib=libc++")
+    set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS "-stdlib=libc++")
+  endif()
 endif()
 
 set_property(TARGET "${SM_EXE_NAME}" PROPERTY FOLDER "Internal Libraries")
@@ -420,6 +429,7 @@ list(APPEND SMDATA_LINK_LIB
   "tomcrypt"
   "tommath"
   "zlib"
+  "cppformat"
   "jsoncpp"
   "mad"
   "png"
@@ -495,6 +505,7 @@ elseif(APPLE)
     "tomcrypt"
     "tommath"
     "zlib"
+    "cppformat"
     "jsoncpp"
     "mad"
     "png"
@@ -611,6 +622,9 @@ target_link_libraries("${SM_EXE_NAME}" ${SMDATA_LINK_LIB})
 list(APPEND SM_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
   "${SM_EXTERN_DIR}/vorbis"
+  "${SM_EXTERN_DIR}/libtommath"
+  "${SM_EXTERN_DIR}/libtomcrypt/src/headers"
+  "${SM_EXTERN_DIR}/cppformat"
 )
 if(NOT APPLE)
   list(APPEND SM_INCLUDE_DIRS

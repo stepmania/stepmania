@@ -38,10 +38,11 @@
 #include "RageUtil.h"
 #include "RageSoundMixBuffer.h"
 #include "RageSoundUtil.h"
-#include "Foreach.h"
 
 #include <limits.h>
 #include <set>
+
+using std::vector;
 
 class RageSoundReader_Split;
 
@@ -75,7 +76,7 @@ public:
 
 	RageSoundReader *m_pSource;
 
-	set<RageSoundReader_Split *> m_apSounds;
+	std::set<RageSoundReader_Split *> m_apSounds;
 
 	/* m_sBuffer[0] corresponds to frame number m_iBufferPositionFrames. */
 	int m_iBufferPositionFrames;
@@ -136,6 +137,7 @@ bool RageSoundReader_Split::SetProperty( const RString &sProperty, float fValue 
 
 int RageSoundReader_Split::Read( float *pBuf, int iFrames )
 {
+	using std::min;
 	m_iRequestFrames = iFrames;
 	int iRet = m_pImpl->ReadBuffer();
 
@@ -182,13 +184,15 @@ int RageSoundReader_Split::Read( float *pBuf, int iFrames )
 
 int RageSoundSplitterImpl::ReadBuffer()
 {
+	using std::max;
+	using std::min;
 	/* Discard any bytes that are no longer requested by any sound. */
 	int iMinFrameRequested = INT_MAX;
 	int iMaxFrameRequested = INT_MIN;
-	FOREACHS( RageSoundReader_Split *, m_apSounds, snd )
+	for (auto *snd: m_apSounds)
 	{
-		iMinFrameRequested = min( iMinFrameRequested, (*snd)->m_iPositionFrame );
-		iMaxFrameRequested = max( iMaxFrameRequested, (*snd)->m_iPositionFrame + (*snd)->m_iRequestFrames );
+		iMinFrameRequested = min( iMinFrameRequested, snd->m_iPositionFrame );
+		iMaxFrameRequested = max( iMaxFrameRequested, snd->m_iPositionFrame + snd->m_iRequestFrames );
 	}
 
 	if( iMinFrameRequested > m_iBufferPositionFrames )
@@ -229,6 +233,7 @@ int RageSoundSplitterImpl::ReadBuffer()
 
 void RageSoundReader_Split::AddSourceChannelToSound( int iFromChannel, int iToChannel )
 {
+	using std::max;
 	m_aChannels.push_back( ChannelMap(iFromChannel, iToChannel) );
 	m_iNumOutputChannels = max( m_iNumOutputChannels, iToChannel + 1 );
 }

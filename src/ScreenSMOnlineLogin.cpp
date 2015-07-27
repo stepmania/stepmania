@@ -15,6 +15,8 @@
 #include "LocalizedString.h"
 #include "OptionRowHandler.h"
 
+using std::vector;
+
 REGISTER_SCREEN_CLASS(ScreenSMOnlineLogin);
 
 AutoScreenMessage( SM_SMOnlinePack );
@@ -136,7 +138,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 				m_iPlayer++;
 				if( GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer) && m_iPlayer < NUM_PLAYERS )
 				{
-					ScreenTextEntry::Password(SM_PasswordDone, sLoginQuestion, NULL );
+					ScreenTextEntry::Password(SM_PasswordDone, sLoginQuestion, nullptr );
 				}
 				else
 				{
@@ -147,7 +149,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 			else
 			{
 				RString Response = NSMAN->m_SMOnlinePacket.ReadNT();
-				ScreenTextEntry::Password( SM_PasswordDone, Response + "\n\n" + sLoginQuestion, NULL );
+				ScreenTextEntry::Password( SM_PasswordDone, Response + "\n\n" + sLoginQuestion, nullptr );
 			}
 		}
 	}
@@ -177,7 +179,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 			while(!GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer))
 				++m_iPlayer;
 			sLoginQuestion = YOU_ARE_LOGGING_ON_AS.GetValue() + "\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n" + ENTER_YOUR_PASSWORD.GetValue();
-			ScreenTextEntry::Password(SM_PasswordDone, sLoginQuestion, NULL );
+			ScreenTextEntry::Password(SM_PasswordDone, sLoginQuestion, nullptr );
 		}
 		return;
 	}
@@ -229,7 +231,7 @@ void ScreenSMOnlineLogin::SendLogin( RString sPassword )
 /*
  * (c) 2004-2005 Charles Lohr, Adam Lowman
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -239,7 +241,7 @@ void ScreenSMOnlineLogin::SendLogin( RString sPassword )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

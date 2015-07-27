@@ -11,6 +11,8 @@
 #include "AdjustSync.h"
 #include "ActorUtil.h"
 
+using std::vector;
+
 static bool IsGameplay()
 {
 	return SCREENMAN && SCREENMAN->GetTopScreen() && SCREENMAN->GetTopScreen()->GetScreenType() == gameplay;
@@ -27,7 +29,7 @@ static LocalizedString HOLD_ALT			( "ScreenSyncOverlay", "(hold Alt for smaller 
 void ScreenSyncOverlay::Init()
 {
 	Screen::Init();
-	
+
 	m_quad.SetDiffuse( RageColor(0,0,0,0) );
 	m_quad.SetHorizAlign(align_right);
 	m_quad.SetVertAlign(align_top);
@@ -39,7 +41,7 @@ void ScreenSyncOverlay::Init()
 	m_textHelp.SetVertAlign(align_top);
 	m_textHelp.SetDiffuseAlpha( 0 );
 	m_textHelp.SetShadowLength( 2 );
-	m_textHelp.SetText( 
+	m_textHelp.SetText(
 		REVERT_SYNC_CHANGES.GetValue()+":\n"
 		"    F4\n" +
 		CURRENT_BPM.GetValue()+":\n"
@@ -52,9 +54,9 @@ void ScreenSyncOverlay::Init()
 	m_textHelp.SetXY(SCREEN_WIDTH - m_textHelp.GetZoomedWidth() - 10,
 		SCREEN_TOP + 10);
 	this->AddChild( &m_textHelp );
-	
-	m_quad.ZoomToWidth( m_textHelp.GetZoomedWidth()+20 ); 
-	m_quad.ZoomToHeight( m_textHelp.GetZoomedHeight()+20 ); 
+
+	m_quad.ZoomToWidth( m_textHelp.GetZoomedWidth()+20 );
+	m_quad.ZoomToHeight( m_textHelp.GetZoomedHeight()+20 );
 
 	m_textStatus.SetName( "Status" );
 	m_textStatus.LoadFromFont( THEME->GetPathF(m_sName, "status") );
@@ -65,7 +67,7 @@ void ScreenSyncOverlay::Init()
 	m_textAdjustments.LoadFromFont( THEME->GetPathF(m_sName,"Adjustments") );
 	ActorUtil::LoadAllCommandsAndOnCommand( m_textAdjustments, m_sName );
 	this->AddChild( &m_textAdjustments );
-	
+
 	Update( 0 );
 }
 
@@ -127,7 +129,7 @@ void ScreenSyncOverlay::UpdateText()
 		FAIL_M(ssprintf("Invalid autosync type: %i", type));
 	}
 
-	if( GAMESTATE->m_pCurSong != NULL  &&  !GAMESTATE->IsCourseMode() )	// sync controls available
+	if( GAMESTATE->m_pCurSong != nullptr  &&  !GAMESTATE->IsCourseMode() )	// sync controls available
 	{
 		AdjustSync::GetSyncChangeTextGlobal( vs );
 		AdjustSync::GetSyncChangeTextSong( vs );
@@ -240,15 +242,15 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 				}
 				default: break;
 			}
-			if( GAMESTATE->m_pCurSong != NULL )
+			if( GAMESTATE->m_pCurSong != nullptr )
 			{
 				TimingData &sTiming = GAMESTATE->m_pCurSong->m_SongTiming;
 				BPMSegment * seg = sTiming.GetBPMSegmentAtBeat( GAMESTATE->m_Position.m_fSongBeat );
 				seg->SetBPS( seg->GetBPS() + fDelta );
-				const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
-				FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
+				auto const & vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+				for (auto *s: vpSteps)
 				{
-					TimingData &pTiming = (*s)->m_Timing;
+					TimingData &pTiming = s->m_Timing;
 					// Empty means it inherits song timing,
 					// which has already been updated.
 					if( pTiming.empty() )
@@ -292,17 +294,19 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 
 				case ChangeSongOffset:
 				{
-					if( GAMESTATE->m_pCurSong != NULL )
+					if( GAMESTATE->m_pCurSong != nullptr )
 					{
 						GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += fDelta;
-						const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
-						FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
+						auto const & vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+						for (auto *s: vpSteps)
 						{
 							// Empty means it inherits song timing,
 							// which has already been updated.
-							if( (*s)->m_Timing.empty() )
+							if( s->m_Timing.empty() )
+							{
 								continue;
-							(*s)->m_Timing.m_fBeat0OffsetInSeconds += fDelta;
+							}
+							s->m_Timing.m_fBeat0OffsetInSeconds += fDelta;
 						}
 					}
 					break;
@@ -349,7 +353,7 @@ void ScreenSyncOverlay::HideHelp()
 /*
  * (c) 2001-2005 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -359,7 +363,7 @@ void ScreenSyncOverlay::HideHelp()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

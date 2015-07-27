@@ -9,6 +9,10 @@ Advanced cross-platform rhythm game for home and arcade use.
 
 StepMania can be compiled using [CMake](http://www.cmake.org/). More information about using CMake can be found in both the `Build` directory and CMake's documentation.
 
+###Submodules###
+
+This repository now uses submodules to attempt to keep the repository size down. Utilize `git submodule init` and `git submodule update` to get the necessary submodules.
+
 ##Build Status##
 
 We use Travis as our continuous integration server. The status can be found below.

@@ -8,9 +8,8 @@ struct Mouse
 {
 	InputDevice id;
 	IOHIDElementCookie x_axis, y_axis, z_axis;
-	int x_min, x_max;
-	int y_min, y_max;
-	int z_min, z_max;
+	int x_min, y_min, z_min;
+	int x_max, y_max, z_max;
 
 	Mouse();
 };
@@ -18,7 +17,7 @@ struct Mouse
 class MouseDevice : public HIDDevice
 {
 private:
-	__gnu_cxx::hash_map<IOHIDElementCookie, DeviceButton> m_Mapping;
+	std::unordered_map<IOHIDElementCookie, DeviceButton> m_Mapping;
 	Mouse m_Mouse;
 
 protected:

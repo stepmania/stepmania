@@ -22,6 +22,8 @@
 #include "RageTimer.h"
 #include "RageInput.h"
 
+using std::vector;
+
 static RageTimer g_GameplayTimer;
 
 static Preference<bool> g_bNeverBoostAppPriority( "NeverBoostAppPriority", false );
@@ -76,9 +78,9 @@ static bool ChangeAppPri()
 		if( INPUTMAN )
 		{
 			INPUTMAN->GetDevicesAndDescriptions(vDevices);
-			FOREACH_CONST( InputDeviceInfo, vDevices, d )
+			for (auto const &d: vDevices)
 			{
-				if( d->sDesc.find("NTPAD") != string::npos )
+				if( d.sDesc.find("NTPAD") != std::string::npos )
 				{
 					LOG->Trace( "Using NTPAD.  Don't boost priority." );
 					return false;
@@ -177,7 +179,7 @@ namespace
 	void DoChangeGame()
 	{
 		const Game* g= GAMEMAN->StringToGame(g_NewGame);
-		ASSERT(g != NULL);
+		ASSERT(g != nullptr);
 		GAMESTATE->SetCurGame(g);
 
 		bool theme_changing= false;
@@ -269,7 +271,7 @@ void GameLoop::RunGameLoop()
 
 		if( g_fConstantUpdateDeltaSeconds > 0 )
 			fDeltaTime = g_fConstantUpdateDeltaSeconds;
-		
+
 		CheckGameLoopTimerSkips( fDeltaTime );
 
 		fDeltaTime *= g_fUpdateRate;
@@ -280,7 +282,7 @@ void GameLoop::RunGameLoop()
 		SOUNDMAN->Update();
 
 		/* Update song beat information -before- calling update on all the classes that
-		 * depend on it. If you don't do this first, the classes are all acting on old 
+		 * depend on it. If you don't do this first, the classes are all acting on old
 		 * information and will lag. (but no longer fatally, due to timestamping -glenn) */
 		SOUND->Update( fDeltaTime );
 		TEXTUREMAN->Update( fDeltaTime );
@@ -334,7 +336,7 @@ private:
 	enum State { RENDERING_IDLE, RENDERING_START, RENDERING_ACTIVE, RENDERING_END };
 	State m_State;
 };
-static ConcurrentRenderer *g_pConcurrentRenderer = NULL;
+static ConcurrentRenderer *g_pConcurrentRenderer = nullptr;
 
 ConcurrentRenderer::ConcurrentRenderer():
 	m_Event("ConcurrentRenderer")
@@ -381,7 +383,7 @@ void ConcurrentRenderer::Stop()
 
 void ConcurrentRenderer::RenderThread()
 {
-	ASSERT( SCREENMAN != NULL );
+	ASSERT( SCREENMAN != nullptr );
 
 	while( !m_bShutdown )
 	{
@@ -438,7 +440,7 @@ int ConcurrentRenderer::StartRenderThread( void *p )
 
 void GameLoop::StartConcurrentRendering()
 {
-	if( g_pConcurrentRenderer == NULL )
+	if( g_pConcurrentRenderer == nullptr )
 		g_pConcurrentRenderer = new ConcurrentRenderer;
 	g_pConcurrentRenderer->Start();
 }

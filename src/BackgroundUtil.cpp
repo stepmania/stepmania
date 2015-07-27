@@ -2,7 +2,6 @@
 #include "BackgroundUtil.h"
 #include "RageUtil.h"
 #include "Song.h"
-#include "Foreach.h"
 #include "IniFile.h"
 #include "RageLog.h"
 #include <set>
@@ -10,6 +9,7 @@
 #include "RageFileManager.h"
 #include "ActorUtil.h"
 
+using std::vector;
 
 bool BackgroundDef::operator<( const BackgroundDef &other ) const
 {
@@ -25,7 +25,7 @@ bool BackgroundDef::operator<( const BackgroundDef &other ) const
 
 bool BackgroundDef::operator==( const BackgroundDef &other ) const
 {
-	return 
+	return
 		m_sEffect == other.m_sEffect &&
 		m_sFile1 == other.m_sFile1 &&
 		m_sFile2 == other.m_sFile2 &&
@@ -148,8 +148,10 @@ void BackgroundUtil::GetBackgroundEffects( const RString &_sName, vector<RString
 	GetDirListing( BACKGROUND_EFFECTS_DIR+sName+".lua", vsPathsOut, false, true );
 
 	vsNamesOut.clear();
-	FOREACH_CONST( RString, vsPathsOut, s )
-		vsNamesOut.push_back( GetFileNameWithoutExtension(*s) );
+	for (auto const &s: vsPathsOut)
+	{
+		vsNamesOut.push_back( GetFileNameWithoutExtension(s) );
+	}
 
 	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }
@@ -166,8 +168,10 @@ void BackgroundUtil::GetBackgroundTransitions( const RString &_sName, vector<RSt
 	GetDirListing( BACKGROUND_TRANSITIONS_DIR+sName+".lua", vsPathsOut, false, true );
 
 	vsNamesOut.clear();
-	FOREACH_CONST( RString, vsPathsOut, s )
-		vsNamesOut.push_back( GetFileNameWithoutExtension(*s) );
+	for (auto const &s: vsPathsOut)
+	{
+		vsNamesOut.push_back( GetFileNameWithoutExtension(s) );
+	}
 
 	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }
@@ -185,8 +189,10 @@ void BackgroundUtil::GetSongBGAnimations( const Song *pSong, const RString &sMat
 	}
 
 	vsNamesOut.clear();
-	FOREACH_CONST( RString, vsPathsOut, s )
-		vsNamesOut.push_back( Basename(*s) );
+	for (auto const &s: vsPathsOut)
+	{
+		vsNamesOut.push_back( Basename(s) );
+	}
 
 	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }
@@ -205,8 +211,10 @@ void BackgroundUtil::GetSongMovies( const Song *pSong, const RString &sMatch, ve
 	}
 
 	vsNamesOut.clear();
-	FOREACH_CONST( RString, vsPathsOut, s )
-		vsNamesOut.push_back( Basename(*s) );
+	for (auto const &s: vsPathsOut)
+	{
+		vsNamesOut.push_back( Basename(s) );
+	}
 
 	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }
@@ -225,13 +233,15 @@ void BackgroundUtil::GetSongBitmaps( const Song *pSong, const RString &sMatch, v
 	}
 
 	vsNamesOut.clear();
-	FOREACH_CONST( RString, vsPathsOut, s )
-		vsNamesOut.push_back( Basename(*s) );
+	for (auto const &s: vsPathsOut)
+	{
+		vsNamesOut.push_back( Basename(s) );
+	}
 
 	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }
 
-static void GetFilterToFileNames( const RString sBaseDir, const Song *pSong, set<RString> &vsPossibleFileNamesOut )
+static void GetFilterToFileNames( const RString sBaseDir, const Song *pSong, std::set<RString> &vsPossibleFileNamesOut )
 {
 	vsPossibleFileNamesOut.clear();
 
@@ -252,14 +262,16 @@ static void GetFilterToFileNames( const RString sBaseDir, const Song *pSong, set
 	}
 
 	XNode *pSection = ini.GetChild( sSection );
-	if( pSection == NULL )
+	if( pSection == nullptr )
 	{
 		ASSERT_M( 0, ssprintf("File '%s' refers to a section '%s' that is missing.", sPath.c_str(), sSection.c_str()) );
 		return;
 	}
 
 	FOREACH_CONST_Attr( pSection, p )
+	{
 		vsPossibleFileNamesOut.insert( p->first );
+	}
 }
 
 void BackgroundUtil::GetGlobalBGAnimations( const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut )
@@ -270,8 +282,10 @@ void BackgroundUtil::GetGlobalBGAnimations( const Song *pSong, const RString &sM
 		GetDirListing( BG_ANIMS_DIR+sMatch+"*.xml", vsPathsOut, false, true );
 
 	vsNamesOut.clear();
-	FOREACH_CONST( RString, vsPathsOut, s )
-		vsNamesOut.push_back( Basename(*s) );
+	for (auto const &s: vsPathsOut)
+	{
+		vsNamesOut.push_back( Basename(s) );
+	}
 
 	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }
@@ -301,7 +315,7 @@ namespace {
 		}
 
 		// Search for the most appropriate background
-		set<RString> ssFileNameWhitelist;
+		std::set<RString> ssFileNameWhitelist;
 		if( bTryInsideOfSongGroupAndGenreFirst  &&  pSong  &&  !pSong->m_sGenre.empty() )
 			GetFilterToFileNames( RANDOMMOVIES_DIR, pSong, ssFileNameWhitelist );
 
@@ -313,22 +327,24 @@ namespace {
 		}
 		vsDirsToTry.push_back( RANDOMMOVIES_DIR );
 
-		FOREACH_CONST( RString, vsDirsToTry, sDir )
+		for (auto const &sDir: vsDirsToTry)
 		{
-			GetDirListing( *sDir+"*.ogv", vsPathsOut, false, true );
-			GetDirListing( *sDir+"*.avi", vsPathsOut, false, true );
-			GetDirListing( *sDir+"*.mpg", vsPathsOut, false, true );
-			GetDirListing( *sDir+"*.mpeg", vsPathsOut, false, true );
+			GetDirListing( sDir+"*.ogv", vsPathsOut, false, true );
+			GetDirListing( sDir+"*.avi", vsPathsOut, false, true );
+			GetDirListing( sDir+"*.mpg", vsPathsOut, false, true );
+			GetDirListing( sDir+"*.mpeg", vsPathsOut, false, true );
 
 			if( !ssFileNameWhitelist.empty() )
 			{
 				vector<RString> vsMatches;
-				FOREACH_CONST( RString, vsPathsOut, s )
+				for (auto const &s: vsPathsOut)
 				{
-					RString sBasename = Basename( *s );
+					RString sBasename = Basename( s );
 					bool bFound = ssFileNameWhitelist.find(sBasename) != ssFileNameWhitelist.end();
 					if( bFound )
-						vsMatches.push_back(*s);
+					{
+						vsMatches.push_back(s);
+					}
 				}
 				// If we found any that match the whitelist, use only them.
 				// If none match the whitelist, ignore the whitelist..
@@ -359,9 +375,9 @@ void BackgroundUtil::GetGlobalRandomMovies(
 
 	GetGlobalRandomMoviePaths( pSong, sMatch, vsPathsOut, bTryInsideOfSongGroupAndGenreFirst, bTryInsideOfSongGroupFirst );
 
-	FOREACH_CONST( RString, vsPathsOut, s )
+	for (auto const &s: vsPathsOut)
 	{
-		RString sName = s->Right( s->size() - RANDOMMOVIES_DIR.size() - 1 );
+		RString sName = s.Right( s.size() - RANDOMMOVIES_DIR.size() - 1 );
 		vsNamesOut.push_back( sName );
 	}
 	StripCvsAndSvn( vsPathsOut, vsNamesOut );
@@ -373,14 +389,16 @@ void BackgroundUtil::BakeAllBackgroundChanges( Song *pSong )
 	bg.LoadFromSong( pSong );
 	vector<BackgroundChange> *vBGChanges[NUM_BackgroundLayer];
 	FOREACH_BackgroundLayer( i )
+	{
 		vBGChanges[i] = &pSong->GetBackgroundChanges(i);
+	}
 	bg.GetLoadedBackgroundChanges( vBGChanges );
 }
 
 /*
  * (c) 2001-2004 Chris Danford, Ben Nordstrom
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -390,7 +408,7 @@ void BackgroundUtil::BakeAllBackgroundChanges( Song *pSong )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

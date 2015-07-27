@@ -18,7 +18,7 @@ static int underruns = 0, logged_underruns = 0;
 
 RageSoundDriver::Sound::Sound()
 {
-	m_pSound = NULL;
+	m_pSound = nullptr;
 	m_State = AVAILABLE;
 	m_bPaused = false;
 }
@@ -50,6 +50,7 @@ static int g_iTotalAheadCount = 0;
 
 RageSoundMixBuffer &RageSoundDriver::MixIntoBuffer( int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame )
 {
+	using std::min;
 	ASSERT_M( m_DecodeThread.IsCreated(), "RageSoundDriver::StartDecodeThread() was never called" );
 
 	if( iFrameNumber - iCurrentFrame + iFrames > 0 )
@@ -60,10 +61,8 @@ RageSoundMixBuffer &RageSoundDriver::MixIntoBuffer( int iFrames, int64_t iFrameN
 
 	static RageSoundMixBuffer mix;
 
-	for( unsigned i = 0; i < ARRAYLEN(m_Sounds); ++i )
+	for (auto &s: m_Sounds)
 	{
-		/* s.m_pSound can not safely be accessed from here. */
-		Sound &s = m_Sounds[i];
 		if( s.m_State == Sound::HALTING )
 		{
 			/* This indicates that this stream can be reused. */
@@ -78,7 +77,7 @@ RageSoundMixBuffer &RageSoundDriver::MixIntoBuffer( int iFrames, int64_t iFrameN
 			continue;
 
 		/* STOPPING or PLAYING.  Read sound data. */
-		if( m_Sounds[i].m_bPaused )
+		if( s.m_bPaused )
 			continue;
 
 		int iGotFrames = 0;
@@ -120,8 +119,8 @@ RageSoundMixBuffer &RageSoundDriver::MixIntoBuffer( int iFrames, int64_t iFrameN
 					continue; // more data
 
 				/* We've used up p[0].  Try p[1]. */
-				swap( p[0], p[1] );
-				swap( pSize[0], pSize[1] );
+				std::swap( p[0], p[1] );
+				std::swap( pSize[0], pSize[1] );
 				continue;
 			}
 
@@ -194,25 +193,23 @@ void RageSoundDriver::DecodeThread()
 		LockMut( m_Mutex );
 //		LOG->Trace("begin mix");
 
-		for( unsigned i = 0; i < ARRAYLEN(m_Sounds); ++i )
+		for (auto &s: m_Sounds)
 		{
-			if( m_Sounds[i].m_State != Sound::PLAYING )
+			if( s.m_State != Sound::PLAYING )
+			{	
 				continue;
-
-			Sound *pSound = &m_Sounds[i];
-
+			}
 			CHECKPOINT_M("Processing the sound while buffers are available.");
-			while( pSound->m_Buffer.num_writable() )
+			while( s.m_Buffer.num_writable() )
 			{
-				int iWrote = GetDataForSound( *pSound );
+				int iWrote = GetDataForSound( s );
 				if( iWrote == RageSoundReader::WOULD_BLOCK )
 					break;
 				if( iWrote < 0 )
 				{
 					/* This sound is finishing. */
-					pSound->m_State = Sound::STOPPING;
+					s.m_State = Sound::STOPPING;
 					break;
-//					LOG->Trace("mixer: (#%i) eof (%p)", i, pSound->m_pSound );
 				}
 			}
 		}
@@ -250,23 +247,25 @@ int RageSoundDriver::GetDataForSound( Sound &s )
 void RageSoundDriver::Update()
 {
 	m_Mutex.Lock();
-	for( unsigned i = 0; i < ARRAYLEN(m_Sounds); ++i )
+	for (auto &s: m_Sounds)
 	{
 		{
 			Sound::QueuedPosMap p;
-			while( m_Sounds[i].m_PosMapQueue.read( &p, 1 ) )
+			while( s.m_PosMapQueue.read( &p, 1 ) )
 			{
-				RageSoundBase *pSound = m_Sounds[i].m_pSound;
-				if( pSound != NULL )
+				RageSoundBase *pSound = s.m_pSound;
+				if( pSound != nullptr )
+				{
 					pSound->CommitPlayingPosition( p.iStreamFrame, p.iHardwareFrame, p.iFrames );
+				}
 			}
 		}
 
-		switch( m_Sounds[i].m_State )
+		switch( s.m_State )
 		{
 		case Sound::STOPPED:
-			m_Sounds[i].Deallocate();
-			m_Sounds[i].m_State = Sound::AVAILABLE;
+			s.Deallocate();
+			s.m_State = Sound::AVAILABLE;
 			continue;
 		case Sound::STOPPING:
 			break;
@@ -274,19 +273,16 @@ void RageSoundDriver::Update()
 			continue;
 		}
 
-		if( m_Sounds[i].m_Buffer.num_readable() != 0 )
+		if( s.m_Buffer.num_readable() != 0 )
 			continue;
 
-//		LOG->Trace("finishing sound %i", i);
-
-		m_Sounds[i].m_pSound->SoundIsFinishedPlaying();
-		m_Sounds[i].m_pSound = NULL;
+		s.m_pSound->SoundIsFinishedPlaying();
+		s.m_pSound = nullptr;
 
 		/* This sound is done.  Set it to HALTING, since the mixer thread might
 		 * be accessing it; it'll change it back to STOPPED once it's ready to
 		 * be used again. */
-		m_Sounds[i].m_State = Sound::HALTING;
-//		LOG->Trace("set (#%i) %p from STOPPING to HALTING", i, m_Sounds[i].m_pSound);
+		s.m_State = Sound::HALTING;
 	}
 
 	static float fNext = 0;
@@ -389,7 +385,7 @@ void RageSoundDriver::StopMixing( RageSoundBase *pSound )
 
 	/* Invalidate the m_pSound pointer to guarantee we don't make any further references to
 	 * it.  Once this call returns, the sound may no longer exist. */
-	m_Sounds[i].m_pSound = NULL;
+	m_Sounds[i].m_pSound = nullptr;
 //	LOG->Trace("end StopMixing");
 
 	m_Mutex.Unlock();
@@ -444,12 +440,13 @@ RageSoundDriver::RageSoundDriver():
 	m_bShutdownDecodeThread = false;
 	m_iMaxHardwareFrame = 0;
 	SetDecodeBufferSize( 4096 );
-	
+
 	m_DecodeThread.SetName("Decode thread");
 }
 
 RageSoundDriver::~RageSoundDriver()
 {
+	using std::max;
 	/* Signal the decoding thread to quit. */
 	if( m_DecodeThread.IsCreated() )
 	{
@@ -467,6 +464,7 @@ RageSoundDriver::~RageSoundDriver()
 
 int64_t RageSoundDriver::ClampHardwareFrame( int64_t iHardwareFrame ) const
 {
+	using std::max;
 	/* It's sometimes possible for the hardware position to move backwards, usually
 	 * on underrun.  We can try to prevent this in each driver, but it's an obscure
 	 * error, so let's clamp the result here instead. */
@@ -489,7 +487,7 @@ int64_t RageSoundDriver::ClampHardwareFrame( int64_t iHardwareFrame ) const
 
 int64_t RageSoundDriver::GetHardwareFrame( RageTimer *pTimestamp ) const
 {
-	if( pTimestamp == NULL )
+	if( pTimestamp == nullptr )
 		return ClampHardwareFrame( GetPosition() );
 
 	/*
@@ -525,7 +523,7 @@ int64_t RageSoundDriver::GetHardwareFrame( RageTimer *pTimestamp ) const
 /*
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -535,7 +533,7 @@ int64_t RageSoundDriver::GetHardwareFrame( RageTimer *pTimestamp ) const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -12,8 +12,8 @@ public:
 	void SendLogin( RString sPassword );
 
 private:
-	void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
-	void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
+	void ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
+	void ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
 	RString GetSelectedProfileID();
 	int	m_iPlayer;
 };
@@ -33,7 +33,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

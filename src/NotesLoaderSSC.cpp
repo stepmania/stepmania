@@ -14,6 +14,11 @@
 #include "Attack.h"
 #include "PrefsManager.h"
 
+#include <unordered_map>
+
+using std::vector;
+using std::string;
+
 // Everything from this line to the creation of parser_helper exists to
 // speed up parsing by allowing the use of std::map.  All these functions
 // are put into a map of function pointers which is used when loading.
@@ -516,9 +521,9 @@ void SetStepsDisplayBPM(StepsTagInfo& info)
 }
 
 
-typedef std::map<RString, steps_tag_func_t> steps_handler_map_t;
-typedef std::map<RString, song_tag_func_t> song_handler_map_t;
-typedef std::map<RString, LoadNoteDataTagIDs> load_note_data_handler_map_t;
+typedef std::unordered_map<string, steps_tag_func_t> steps_handler_map_t;
+typedef std::unordered_map<string, song_tag_func_t> song_handler_map_t;
+typedef std::unordered_map<string, LoadNoteDataTagIDs> load_note_data_handler_map_t;
 
 struct ssc_parser_helper_t
 {
@@ -640,7 +645,7 @@ void SSCLoader::ProcessBPMs( TimingData &out, const RString sParam )
 {
 	vector<RString> arrayBPMExpressions;
 	split( sParam, ",", arrayBPMExpressions );
-	
+
 	for( unsigned b=0; b<arrayBPMExpressions.size(); b++ )
 	{
 		vector<RString> arrayBPMValues;
@@ -653,7 +658,7 @@ void SSCLoader::ProcessBPMs( TimingData &out, const RString sParam )
 				     arrayBPMExpressions[b].c_str() );
 			continue;
 		}
-		
+
 		const float fBeat = StringToFloat( arrayBPMValues[0] );
 		const float fNewBPM = StringToFloat( arrayBPMValues[1] );
 		if( fBeat >= 0 && fNewBPM > 0 )
@@ -674,7 +679,7 @@ void SSCLoader::ProcessStops( TimingData &out, const RString sParam )
 {
 	vector<RString> arrayStopExpressions;
 	split( sParam, ",", arrayStopExpressions );
-	
+
 	for( unsigned b=0; b<arrayStopExpressions.size(); b++ )
 	{
 		vector<RString> arrayStopValues;
@@ -687,7 +692,7 @@ void SSCLoader::ProcessStops( TimingData &out, const RString sParam )
 				     arrayStopExpressions[b].c_str() );
 			continue;
 		}
-		
+
 		const float fBeat = StringToFloat( arrayStopValues[0] );
 		const float fNewStop = StringToFloat( arrayStopValues[1] );
 		if( fBeat >= 0 && fNewStop > 0 )
@@ -706,7 +711,7 @@ void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float
 {
 	vector<RString> arrayWarpExpressions;
 	split( sParam, ",", arrayWarpExpressions );
-	
+
 	for( unsigned b=0; b<arrayWarpExpressions.size(); b++ )
 	{
 		vector<RString> arrayWarpValues;
@@ -719,7 +724,7 @@ void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float
 				     arrayWarpExpressions[b].c_str() );
 			continue;
 		}
-		
+
 		const float fBeat = StringToFloat( arrayWarpValues[0] );
 		const float fNewBeat = StringToFloat( arrayWarpValues[1] );
 		// Early versions were absolute in beats. They should be relative.
@@ -743,7 +748,7 @@ void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
 {
 	vector<RString> arrayLabelExpressions;
 	split( sParam, ",", arrayLabelExpressions );
-	
+
 	for( unsigned b=0; b<arrayLabelExpressions.size(); b++ )
 	{
 		vector<RString> arrayLabelValues;
@@ -756,20 +761,20 @@ void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
 				     arrayLabelExpressions[b].c_str() );
 			continue;
 		}
-		
+
 		const float fBeat = StringToFloat( arrayLabelValues[0] );
 		RString sLabel = arrayLabelValues[1];
 		TrimRight(sLabel);
 		if( fBeat >= 0.0f )
 			out.AddSegment( LabelSegment(BeatToNoteRow(fBeat), sLabel) );
-		else 
+		else
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
 				     "has an invalid Label at beat %f called %s.",
 				     fBeat, sLabel.c_str() );
 		}
-		
+
 	}
 }
 
@@ -777,7 +782,7 @@ void SSCLoader::ProcessCombos( TimingData &out, const RString line, const int ro
 {
 	vector<RString> arrayComboExpressions;
 	split( line, ",", arrayComboExpressions );
-	
+
 	for( unsigned f=0; f<arrayComboExpressions.size(); f++ )
 	{
 		vector<RString> arrayComboValues;
@@ -802,12 +807,12 @@ void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 {
 	vector<RString> vs1;
 	split( sParam, ",", vs1 );
-	
-	FOREACH_CONST( RString, vs1, s1 )
+
+	for (auto const &s1: vs1)
 	{
 		vector<RString> vs2;
-		split( *s1, "=", vs2 );
-		
+		split( s1, "=", vs2 );
+
 		if( vs2.size() < 2 )
 		{
 			LOG->UserLog("Song file",
@@ -836,7 +841,7 @@ void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 {
 	LOG->Trace( "Loading notes from %s", cachePath.c_str() );
-	
+
 	MsdFile msd;
 	if (!msd.ReadFile(cachePath, true))
 	{
@@ -846,11 +851,11 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 			     msd.GetError().c_str());
 		return false;
 	}
-	
+
 	bool tryingSteps = false;
 	float storedVersion = 0;
 	const unsigned values = msd.GetNumValues();
-	
+
 	for (unsigned i = 0; i < values; i++)
 	{
 		const MsdFile::value_t &params = msd.GetValue(i);
@@ -913,6 +918,8 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 						out.TidyUpData();
 						return true;
 						break;
+					default:
+						break;
 				}
 			}
 			else
@@ -926,6 +933,8 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 						break;
 					case LNDID_notedata:
 						tryingSteps = true;
+						break;
+					default:
 						break;
 				}
 			}
@@ -954,7 +963,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 	int state = GETTING_SONG_INFO;
 	const unsigned values = msd.GetNumValues();
-	Steps* pNewNotes = NULL;
+	Steps* pNewNotes = nullptr;
 	TimingData stepsTiming;
 
 	SongTagInfo reused_song_info(&*this, &out, sPath, bFromCache);
@@ -977,7 +986,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 				{
 					handler->second(reused_song_info);
 				}
-				else if(sValueName.Left(strlen("BGCHANGES"))=="BGCHANGES")
+				else if(sValueName.substr(0, strlen("BGCHANGES"))=="BGCHANGES")
 				{
 					SetBGChanges(reused_song_info);
 				}
@@ -1039,7 +1048,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 	return true;
 }
 
-bool SSCLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =NULL */ )
+bool SSCLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =nullptr */ )
 {
 	LOG->Trace( "SSCLoader::LoadEditFromFile(%s)", sEditFilePath.c_str() );
 
@@ -1068,10 +1077,10 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 				const RString &sEditFilePath,
 				ProfileSlot slot,
 				bool bAddStepsToSong,
-				Song *givenSong /* =NULL */ )
+				Song *givenSong /* =nullptr */ )
 {
 	Song* pSong = givenSong;
-	Steps* pNewNotes = NULL;
+	Steps* pNewNotes = nullptr;
 	TimingData stepsTiming;
 
 	StepsTagInfo reused_steps_info(&*this, pSong, sEditFilePath, false);
@@ -1085,12 +1094,12 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 		RString sValueName = sParams[0];
 		sValueName.MakeUpper();
 
-		if(pSong != NULL)
+		if(pSong != nullptr)
 		{
 			reused_steps_info.params= &sParams;
 			steps_handler_map_t::iterator handler=
 				parser_helper.steps_tag_handlers.find(sValueName);
-			if(pNewNotes != NULL && handler != parser_helper.steps_tag_handlers.end())
+			if(pNewNotes != nullptr && handler != parser_helper.steps_tag_handlers.end())
 			{
 				handler->second(reused_steps_info);
 			}
@@ -1102,7 +1111,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 			}
 			else if(sValueName=="NOTES")
 			{
-				if(pSong == NULL)
+				if(pSong == nullptr)
 				{
 					LOG->UserLog("Edit file", sEditFilePath,
 						"doesn't have a #SONG tag preceeding the first #NOTES tag,"
@@ -1129,7 +1138,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 				// Force the difficulty to edit in case the edit set its own
 				// difficulty because IsEditAlreadyLoaded has an assert and edits
 				// shouldn't be able to add charts of other difficulties. -Kyz
-				if(pNewNotes != NULL)
+				if(pNewNotes != nullptr)
 				{
 					pNewNotes->SetDifficulty(Difficulty_Edit);
 					if(pSong->IsEditAlreadyLoaded(pNewNotes))
@@ -1189,7 +1198,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 				sSongFullTitle.Replace('\\', '/');
 				pSong = SONGMAN->FindSong(sSongFullTitle);
 				reused_steps_info.song= pSong;
-				if(pSong == NULL)
+				if(pSong == nullptr)
 				{
 					LOG->UserLog("Edit file", sEditFilePath,
 						"requires a song \"%s\" that isn't present.",
@@ -1214,7 +1223,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 /*
  * (c) 2011 Jason Felds
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1224,7 +1233,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

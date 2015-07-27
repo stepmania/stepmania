@@ -47,7 +47,7 @@ class ScoreKeeperNormal: public ScoreKeeper
 	ThemeMetric<TapNoteScore> m_toasty_min_tns;
 	ThemeMetric<LuaReference> m_toasty_trigger;
 
-	vector<Steps*>	m_apSteps;
+	std::vector<Steps*>	m_apSteps;
 
 	virtual void AddTapScore( TapNoteScore tns );
 	virtual void AddHoldScore( HoldNoteScore hns );
@@ -62,9 +62,9 @@ public:
 	ScoreKeeperNormal( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats );
 
 	void Load(
-		const vector<Song*>& apSongs,
-		const vector<Steps*>& apSteps,
-		const vector<AttackArray> &asModifiers );
+		const std::vector<Song*>& apSongs,
+		const std::vector<Steps*>& apSteps,
+		const std::vector<AttackArray> &asModifiers );
 
 	// before a song plays (called multiple times if course)
 	void OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData );
@@ -76,7 +76,7 @@ public:
 	void HandleHoldCheckpointScore( const NoteData &nd, int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow );
 	void HandleTapScoreNone();
 
-	// This must be calculated using only cached radar values so that we can 
+	// This must be calculated using only cached radar values so that we can
 	// do it quickly.
 	static int GetPossibleDancePoints( NoteData* nd, const TimingData* td, float fSongSeconds );
 	static int GetPossibleDancePoints( NoteData* ndPre, NoteData* ndPost, const TimingData* td, float fSongSeconds );
@@ -110,7 +110,7 @@ private:
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -120,7 +120,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

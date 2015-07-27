@@ -30,7 +30,7 @@ public:
 
 	/* Return the number of added sounds. */
 	int GetNumSounds() const { return m_aSounds.size(); }
-	
+
 	int GetLength() const;
 	int GetLength_Fast() const;
 	int SetPosition( int iFrame );
@@ -49,25 +49,25 @@ private:
 	int m_iActualSampleRate;
 	unsigned m_iChannels;
 
-	map<RString, RageSoundReader *> m_apNamedSounds;
-	vector<RageSoundReader *> m_apLoadedSounds;
+	std::map<RString, RageSoundReader *> m_apNamedSounds;
+	std::vector<RageSoundReader *> m_apLoadedSounds;
 
 	struct Sound
 	{
 		int iIndex; // into m_apLoadedSounds
 		int iOffsetMS;
 		float fPan;
-		RageSoundReader *pSound; // NULL if not activated
+		RageSoundReader *pSound; // nullptr if not activated
 
 		int GetOffsetFrame( int iSampleRate ) const { return int( int64_t(iOffsetMS) * iSampleRate / 1000 ); }
 		bool operator<( const Sound &rhs ) const { return iOffsetMS < rhs.iOffsetMS; }
 	};
-	vector<Sound> m_aSounds;
+	std::vector<Sound> m_aSounds;
 
 	/* Read state: */
 	int m_iCurrentFrame;
 	unsigned m_iNextSound;
-	vector<Sound *> m_apActiveSounds;
+	std::vector<Sound *> m_apActiveSounds;
 
 	void ActivateSound( Sound *s );
 	void ReleaseSound( Sound *s );

@@ -5,7 +5,6 @@
 #include "RageLog.h"
 #include "FontCharAliases.h"
 #include "RageFile.h"
-#include "Foreach.h"
 #include "LuaManager.h"
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
@@ -75,10 +74,8 @@ void TitleSubst::AddTrans(const TitleTrans &tr)
 
 void TitleSubst::Subst( TitleFields &tf )
 {
-	FOREACH_CONST( TitleTrans*, ttab, iter )
+	for (auto *tt: ttab)
 	{
-		TitleTrans* tt = *iter;
-
 		TitleFields to;
 		if( !tt->Matches(tf,to) )
 			continue;
@@ -124,7 +121,7 @@ void TitleSubst::Subst( TitleFields &tf )
 			FontCharAliases::ReplaceMarkers( tf.ArtistTranslit );
 		}
 
-		// Matched once.  Keep processing to allow multiple matching entries.  For example, allow 
+		// Matched once.  Keep processing to allow multiple matching entries.  For example, allow
 		// one entry to translate a title, and another entry to translate the artist.
 	}
 }
@@ -146,7 +143,7 @@ void TitleSubst::Load(const RString &filename, const RString &section)
 	}
 
 	XNode *pGroup = xml.GetChild( section );
-	if( pGroup == NULL )
+	if( pGroup == nullptr )
 		return;
 	FOREACH_CONST_Child( pGroup, child )
 	{
@@ -168,7 +165,7 @@ TitleSubst::~TitleSubst()
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -178,7 +175,7 @@ TitleSubst::~TitleSubst()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -3,6 +3,9 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
+using std::vector;
+using std::wstring;
+
 #if defined(_WINDOWS)
 
 #include "archutils/Win32/ErrorStrings.h"
@@ -11,7 +14,7 @@
 /* Convert from the given codepage to UTF-8.  Return true if successful. */
 static bool CodePageConvert( RString &sText, int iCodePage )
 {
-	int iSize = MultiByteToWideChar( iCodePage, MB_ERR_INVALID_CHARS, sText.data(), sText.size(), NULL, 0 );
+	int iSize = MultiByteToWideChar( iCodePage, MB_ERR_INVALID_CHARS, sText.data(), sText.size(), nullptr, 0 );
 	if( iSize == 0 )
 	{
 		LOG->Trace( "%s\n", werr_ssprintf(GetLastError(), "err: ").c_str() );
@@ -90,16 +93,16 @@ static bool AttemptJapaneseConversion( RString &sText ) { return ConvertFromChar
 static bool ConvertFromCP( RString &sText, int iCodePage )
 {
 	CFStringEncoding encoding = CFStringConvertWindowsCodepageToEncoding( iCodePage );
-	
+
 	if( encoding == kCFStringEncodingInvalidId )
 		return false;
-	
+
 	CFStringRef old = CFStringCreateWithCString( kCFAllocatorDefault, sText, encoding );
-	
-	if( old == NULL )
+
+	if( old == nullptr )
 		return false;
 	const size_t size = CFStringGetMaximumSizeForEncoding( CFStringGetLength(old), kCFStringEncodingUTF8 );
-	
+
 	char *buf = new char[size+1];
 	buf[0] = '\0';
 	bool result = CFStringGetCString( old, buf, size, kCFStringEncodingUTF8 );

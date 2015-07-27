@@ -19,7 +19,7 @@ struct File
 		lname = name;
 		lname.MakeLower();
 	}
-	
+
 	bool dir;
 	int size;
 	/* Modification time of the file.  The contents of this is undefined, except that
@@ -29,17 +29,17 @@ struct File
 	/* Private data, for RageFileDrivers. */
 	void *priv;
 
-	/* If this is non-NULL, and dir is true, this is a pointer to the FileSet containing
+	/* If this is non-nullptr, and dir is true, this is a pointer to the FileSet containing
 	 * the directory contents.  (This is a cache; it isn't always set.) */
 	const FileSet *dirp;
 
-	File() { dir=false; dirp=NULL; size=-1; hash=-1; priv=NULL;}
+	File() { dir=false; dirp=nullptr; size=-1; hash=-1; priv=nullptr;}
 	File( const RString &fn )
 	{
 		SetName( fn );
-		dir=false; size=-1; hash=-1; priv=NULL; dirp=NULL;
+		dir=false; size=-1; hash=-1; priv=nullptr; dirp=nullptr;
 	}
-	
+
 	bool operator< (const File &rhs) const { return lname<rhs.lname; }
 
 	bool equal(const File &rhs) const { return lname == rhs.lname; }
@@ -63,7 +63,7 @@ inline bool operator!=(File const &lhs, File const &rhs)
 /** @brief This represents a directory. */
 struct FileSet
 {
-	set<File> files;
+	std::set<File> files;
 	RageTimer age;
 
 	/*
@@ -77,8 +77,8 @@ struct FileSet
 
 	void GetFilesMatching(
 		const RString &sBeginning, const RString &sContaining, const RString &sEnding,
-		vector<RString> &asOut, bool bOnlyDirs ) const;
-	void GetFilesEqualTo( const RString &pat, vector<RString> &out, bool bOnlyDirs ) const;
+		std::vector<RString> &asOut, bool bOnlyDirs ) const;
+	void GetFilesEqualTo( const RString &pat, std::vector<RString> &out, bool bOnlyDirs ) const;
 
 	RageFileManager::FileType GetFileType( const RString &sPath ) const;
 	int GetFileSize( const RString &sPath ) const;
@@ -92,13 +92,13 @@ public:
 		m_Mutex("FilenameDB"), ExpireSeconds( -1 ) { }
 	virtual ~FilenameDB() { FlushDirCache(); }
 
-	void AddFile( const RString &sPath, int iSize, int iHash, void *pPriv=NULL );
+	void AddFile( const RString &sPath, int iSize, int iHash, void *pPriv=nullptr );
 	void DelFile( const RString &sPath );
 	void *GetFilePriv( const RString &sPath );
 
 	/* This handles at most two * wildcards.  If we need anything more complicated,
 	 * we'll need to use fnmatch or regex. */
-	void GetFilesSimpleMatch( const RString &sDir, const RString &sFile, vector<RString> &asOut, bool bOnlyDirs );
+	void GetFilesSimpleMatch( const RString &sDir, const RString &sFile, std::vector<RString> &asOut, bool bOnlyDirs );
 
 	/* Search for "path" case-insensitively and replace it with the correct
 	 * case.  If only a portion of the path exists, resolve as much as possible.
@@ -108,7 +108,7 @@ public:
 	RageFileManager::FileType GetFileType( const RString &sPath );
 	int GetFileSize( const RString &sPath );
 	int GetFileHash( const RString &sFilePath );
-	void GetDirListing( const RString &sPath, vector<RString> &asAddTo, bool bOnlyDirs, bool bReturnPathToo );
+	void GetDirListing( const RString &sPath, std::vector<RString> &asAddTo, bool bOnlyDirs, bool bReturnPathToo );
 
 	void FlushDirCache( const RString &sDir = RString() );
 
@@ -123,15 +123,15 @@ protected:
 	FileSet *GetFileSet( const RString &sDir, bool create=true );
 
 	/* Directories we have cached: */
-	map<RString, FileSet *> dirs;
+	std::map<RString, FileSet *> dirs;
 
 	int ExpireSeconds;
 
-	void GetFilesEqualTo( const RString &sDir, const RString &sName, vector<RString> &asOut, bool bOnlyDirs );
+	void GetFilesEqualTo( const RString &sDir, const RString &sName, std::vector<RString> &asOut, bool bOnlyDirs );
 	void GetFilesMatching( const RString &sDir,
-		const RString &sBeginning, const RString &sContaining, const RString &sEnding, 
-		vector<RString> &asOut, bool bOnlyDirs );
-	void DelFileSet( map<RString, FileSet *>::iterator dir );
+		const RString &sBeginning, const RString &sContaining, const RString &sEnding,
+		std::vector<RString> &asOut, bool bOnlyDirs );
+	void DelFileSet( std::map<RString, FileSet *>::iterator dir );
 
 	/* The given path wasn't cached.  Cache it. */
 	virtual void PopulateFileSet( FileSet & /* fs */, const RString & /* sPath */ ) { }

@@ -24,7 +24,7 @@ RageFileDriverZip::RageFileDriverZip():
 	m_Mutex( "RageFileDriverZip" )
 {
 	m_bFileOwned = false;
-	m_pZip = NULL;
+	m_pZip = nullptr;
 }
 
 RageFileDriverZip::RageFileDriverZip( const RString &sPath ):
@@ -32,13 +32,13 @@ RageFileDriverZip::RageFileDriverZip( const RString &sPath ):
 	m_Mutex( "RageFileDriverZip" )
 {
 	m_bFileOwned = false;
-	m_pZip = NULL;
+	m_pZip = nullptr;
 	Load( sPath );
 }
 
 bool RageFileDriverZip::Load( const RString &sPath )
 {
-	ASSERT( m_pZip == NULL ); /* don't load twice */
+	ASSERT( m_pZip == nullptr ); /* don't load twice */
 
 	m_bFileOwned = true;
 	m_sPath = sPath;
@@ -60,7 +60,7 @@ bool RageFileDriverZip::Load( const RString &sPath )
 
 bool RageFileDriverZip::Load( RageFileBasic *pFile )
 {
-	ASSERT( m_pZip == NULL ); /* don't load twice */
+	ASSERT( m_pZip == nullptr ); /* don't load twice */
 	m_sPath = ssprintf("%p", pFile);
 	m_Mutex.SetName( ssprintf("RageFileDriverZip(%p)", pFile) );
 
@@ -95,6 +95,7 @@ bool RageFileDriverZip::ReadEndCentralRecord( int &iTotalEntries, int &iCentralD
 /* Find the end of central directory record, and seek to it. */
 bool RageFileDriverZip::SeekToEndCentralRecord()
 {
+	using std::max;
 	const int iSearchTo = max( m_pZip->GetFileSize() - 1024*32, 0 );
 	int iRealPos = m_pZip->GetFileSize();
 
@@ -273,7 +274,7 @@ bool RageFileDriverZip::ReadLocalFileHeader( FileInfo &info )
 		WARN( ssprintf("%s: %s", m_sPath.c_str(), sError.c_str()) );
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -296,14 +297,14 @@ RageFileBasic *RageFileDriverZip::Open( const RString &sPath, int iMode, int &iE
 	if( iMode & RageFile::WRITE )
 	{
 		iErr = ERROR_WRITING_NOT_SUPPORTED;
-		return NULL;
+		return nullptr;
 	}
 
 	FileInfo *info = (FileInfo *) FDB->GetFilePriv( sPath );
-	if( info == NULL )
+	if( info == nullptr )
 	{
 		iErr = ENOENT;
-		return NULL;
+		return nullptr;
 	}
 
 	m_Mutex.Lock();
@@ -314,7 +315,7 @@ RageFileBasic *RageFileDriverZip::Open( const RString &sPath, int iMode, int &iE
 		if( !ReadLocalFileHeader(*info) )
 		{
 			m_Mutex.Unlock();
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -324,7 +325,7 @@ RageFileBasic *RageFileDriverZip::Open( const RString &sPath, int iMode, int &iE
 
 	RageFileDriverSlice *pSlice = new RageFileDriverSlice( m_pZip->Copy(), info->m_iDataOffset, info->m_iCompressedSize );
 	pSlice->DeleteFileWhenFinished();
-	
+
 	switch( info->m_iCompressionMethod )
 	{
 	case STORED:
@@ -338,7 +339,7 @@ RageFileBasic *RageFileDriverZip::Open( const RString &sPath, int iMode, int &iE
 	default:
 		/* unknown compression method */
 		iErr = ENOSYS;
-		return NULL;
+		return nullptr;
 	}
 }
 

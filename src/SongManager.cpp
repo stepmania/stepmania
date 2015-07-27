@@ -9,7 +9,6 @@
 #include "Course.h"
 #include "CourseLoaderCRS.h"
 #include "CourseUtil.h"
-#include "Foreach.h"
 #include "GameManager.h"
 #include "GameState.h"
 #include "LocalizedString.h"
@@ -38,7 +37,11 @@
 #include "UnlockManager.h"
 #include "SpecialFiles.h"
 
-SongManager*	SONGMAN = NULL;	// global and accessible from anywhere in our program
+#include <unordered_map>
+
+using std::vector;
+
+SongManager*	SONGMAN = nullptr;	// global and accessible from anywhere in our program
 
 const RString ADDITIONAL_SONGS_DIR	= "/AdditionalSongs/";
 const RString ADDITIONAL_COURSES_DIR	= "/AdditionalCourses/";
@@ -175,12 +178,12 @@ void SongManager::SanityCheckGroupDir( RString sDir ) const
 	vector<RString> arrayFiles;
 	GetDirListing( sDir + "/*", arrayFiles );
 	const vector<RString>& audio_exts= ActorUtil::GetTypeExtensionList(FT_Sound);
-	FOREACH(RString, arrayFiles, fname)
+	for (auto const &fname: arrayFiles)
 	{
-		const RString ext= GetExtension(*fname);
-		FOREACH_CONST(RString, audio_exts, aud)
+		const RString ext= GetExtension(fname);
+		for (auto const &aud: audio_exts)
 		{
-			if(ext == *aud)
+			if(ext == aud)
 			{
 				RageException::Throw(
 					FOLDER_CONTAINS_MUSIC_FILES.GetValue(), sDir.c_str());
@@ -252,7 +255,7 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 	}
 */
 	/*
-	LOG->Trace( "Group banner for '%s' is '%s'.", sGroupDirName.c_str(), 
+	LOG->Trace( "Group banner for '%s' is '%s'.", sGroupDirName.c_str(),
 				sBannerPath != ""? sBannerPath.c_str():"(none)" );
 	*/
 	m_sSongGroupNames.push_back( sGroupDirName );
@@ -285,9 +288,8 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 		ld->SetTotalWork(arrayGroupDirs.size());
 	}
 	int sanity_index= 0;
-	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
+	for (auto const &sGroupDirName: arrayGroupDirs)
 	{
-		RString sGroupDirName = *s;
 		if(ld)
 		{
 			ld->SetProgress(sanity_index);
@@ -318,9 +320,8 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 
 	groupIndex = 0;
 	songIndex = 0;
-	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
+	for (auto const &sGroupDirName: arrayGroupDirs)
 	{
-		RString sGroupDirName = *s;	
 		vector<RString> &arraySongDirs = arrayGroupSongDirs[groupIndex++];
 
 		LOG->Trace("Attempting to load %i songs from \"%s\"", int(arraySongDirs.size()),
@@ -459,7 +460,7 @@ void SongManager::FreeSongs()
 	m_SongsByDir.clear();
 
 	// also free the songs that have been deleted from disk
-	for ( unsigned i=0; i<m_pDeletedSongs.size(); ++i ) 
+	for ( unsigned i=0; i<m_pDeletedSongs.size(); ++i )
 		SAFE_DELETE( m_pDeletedSongs[i] );
 	m_pDeletedSongs.clear();
 
@@ -480,7 +481,7 @@ void SongManager::UnlistSong(Song *song)
 	vector<Song*>* songVectors[3] = { &m_pSongs, &m_pPopularSongs, &m_pShuffledSongs };
 	for (int songVecIdx=0; songVecIdx<3; ++songVecIdx) {
 		vector<Song*>& v = *songVectors[songVecIdx];
-		for (int i=0; i<v.size(); ++i) {
+		for (auto i = 0; i < v.size(); ++i) {
 			if (v[i] == song) {
 				v.erase(v.begin()+i);
 				--i;
@@ -498,7 +499,7 @@ RString SongManager::GetSongGroupBannerPath( RString sSongGroup ) const
 {
 	for( unsigned i = 0; i < m_sSongGroupNames.size(); ++i )
 	{
-		if( sSongGroup == m_sSongGroupNames[i] ) 
+		if( sSongGroup == m_sSongGroupNames[i] )
 			return m_sSongGroupBannerPaths[i];
 	}
 
@@ -509,7 +510,7 @@ RString SongManager::GetSongGroupBackgroundPath( RString sSongGroup ) const
 {
 	for( unsigned i = 0; i < m_sSongGroupNames.size(); ++i )
 	{
-		if( sSongGroup == m_sSongGroupNames[i] ) 
+		if( sSongGroup == m_sSongGroupNames[i] )
 			return m_sSongGroupBackgroundPaths[i];
 	}
 
@@ -542,7 +543,7 @@ RageColor SongManager::GetSongGroupColor( const RString &sSongGroup ) const
 
 RageColor SongManager::GetSongColor( const Song* pSong ) const
 {
-	ASSERT( pSong != NULL );
+	ASSERT( pSong != nullptr );
 
 	// protected by royal freem corporation. any modification/removal of
 	// this code will result in prosecution.
@@ -557,11 +558,11 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 
 	if( USE_PREFERRED_SORT_COLOR )
 	{
-		FOREACH_CONST( PreferredSortSection, m_vPreferredSongSort, v )
+		for (auto v = m_vPreferredSongSort.begin(); v != m_vPreferredSongSort.end(); ++v)
 		{
-			FOREACH_CONST( Song*, v->vpSongs, s )
+			for (auto const *s: v->vpSongs)
 			{
-				if( *s == pSong )
+				if( s == pSong )
 				{
 					int i = v - m_vPreferredSongSort.begin();
 					return SONG_GROUP_COLOR.GetValue( i%NUM_SONG_GROUP_COLORS );
@@ -580,7 +581,7 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 		 * For now, only look at notes for the current note type. This means
 		 * that if a song has 10-foot steps on Doubles, it'll only show up red
 		 * in Doubles. That's not too bad, I think. This will also change it
-		 * in the song scroll, which is a little odd but harmless. 
+		 * in the song scroll, which is a little odd but harmless.
 		 *
 		 * XXX: Ack. This means this function can only be called when we have
 		 * a style set up, which is too restrictive. How to handle this? */
@@ -610,13 +611,13 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 
 RString SongManager::GetCourseGroupBannerPath( const RString &sCourseGroup ) const
 {
-	map<RString, CourseGroupInfo>::const_iterator iter = m_mapCourseGroupToInfo.find( sCourseGroup );
+	auto iter = m_mapCourseGroupToInfo.find(sCourseGroup);
 	if( iter == m_mapCourseGroupToInfo.end() )
 	{
 		ASSERT_M( 0, ssprintf("requested banner for course group '%s' that doesn't exist",sCourseGroup.c_str()) );
 		return RString();
 	}
-	else 
+	else
 	{
 		return iter->second.m_sBannerPath;
 	}
@@ -624,22 +625,26 @@ RString SongManager::GetCourseGroupBannerPath( const RString &sCourseGroup ) con
 
 void SongManager::GetCourseGroupNames( vector<RString> &AddTo ) const
 {
-	FOREACHM_CONST( RString, CourseGroupInfo, m_mapCourseGroupToInfo, iter )
-		AddTo.push_back( iter->first );
+	for (auto const &iter: m_mapCourseGroupToInfo)
+	{
+		AddTo.push_back( iter.first );
+	}
 }
 
 bool SongManager::DoesCourseGroupExist( const RString &sCourseGroup ) const
 {
-	return m_mapCourseGroupToInfo.find( sCourseGroup ) != m_mapCourseGroupToInfo.end();
+	return m_mapCourseGroupToInfo.find(sCourseGroup) != m_mapCourseGroupToInfo.end();
 }
 
 RageColor SongManager::GetCourseGroupColor( const RString &sCourseGroup ) const
 {
 	int iIndex = 0;
-	FOREACHM_CONST( RString, CourseGroupInfo, m_mapCourseGroupToInfo, iter )
+	for (auto const &iter: m_mapCourseGroupToInfo)
 	{
-		if( iter->first == sCourseGroup )
+		if( iter.first == sCourseGroup )
+		{
 			return SONG_GROUP_COLOR.GetValue( iIndex%NUM_SONG_GROUP_COLORS );
+		}
 		iIndex++;
 	}
 
@@ -656,11 +661,11 @@ RageColor SongManager::GetCourseColor( const Course* pCourse ) const
 
 	if( USE_PREFERRED_SORT_COLOR )
 	{
-		FOREACH_CONST( CoursePointerVector, m_vPreferredCourseSort, v )
+		for (auto v = m_vPreferredCourseSort.begin(); v != m_vPreferredCourseSort.end(); ++v)
 		{
-			FOREACH_CONST( Course*, *v, s )
+			for (auto const *s: *v)
 			{
-				if( *s == pCourse )
+				if( s == pCourse )
 				{
 					int i = v - m_vPreferredCourseSort.begin();
 					CHECKPOINT_M( ssprintf( "%i, NUM_COURSE_GROUP_COLORS = %i", i, NUM_COURSE_GROUP_COLORS.GetValue()) );
@@ -698,7 +703,7 @@ const vector<Song*> &SongManager::GetSongs( const RString &sGroupName ) const
 
 	if( sGroupName == GROUP_ALL )
 		return m_pSongs;
-	map<RString, SongPointerVector, Comp>::const_iterator iter = m_mapSongGroupIndex.find( sGroupName );
+	auto iter = m_mapSongGroupIndex.find(sGroupName);
 	if ( iter != m_mapSongGroupIndex.end() )
 		return iter->second;
 	return vEmpty;
@@ -712,18 +717,22 @@ void SongManager::GetPreferredSortSongs( vector<Song*> &AddTo ) const
 		return;
 	}
 
-	FOREACH_CONST( PreferredSortSection, m_vPreferredSongSort, v )
-		AddTo.insert( AddTo.end(), v->vpSongs.begin(), v->vpSongs.end() );
+	for (auto const &v: m_vPreferredSongSort)
+	{
+		AddTo.insert( AddTo.end(), v.vpSongs.begin(), v.vpSongs.end() );
+	}
 }
 
 RString SongManager::SongToPreferredSortSectionName( const Song *pSong ) const
 {
-	FOREACH_CONST( PreferredSortSection, m_vPreferredSongSort, v )
+	for (auto const &v: m_vPreferredSongSort)
 	{
-		FOREACH_CONST( Song*, v->vpSongs, s )
+		for (auto const *s: v.vpSongs)
 		{
-			if( *s == pSong )
-				return v->sName;
+			if( s == pSong )
+			{
+				return v.sName;
+			}
 		}
 	}
 	return RString();
@@ -737,13 +746,14 @@ void SongManager::GetPreferredSortCourses( CourseType ct, vector<Course*> &AddTo
 		return;
 	}
 
-	FOREACH_CONST( CoursePointerVector, m_vPreferredCourseSort, v )
+	for (auto const &v: m_vPreferredCourseSort)
 	{
-		FOREACH_CONST( Course*, *v, c )
+		for (auto *pCourse: v)
 		{
-			Course *pCourse = *c;
 			if( pCourse->GetCourseType() == ct )
+			{
 				AddTo.push_back( pCourse );
+			}
 		}
 	}
 }
@@ -755,51 +765,34 @@ int SongManager::GetNumSongs() const
 
 int SongManager::GetNumLockedSongs() const
 {
-	int iNum = 0;
-	FOREACH_CONST( Song*, m_pSongs, i )
-	{
-		// If locked for any reason, regardless of how it's locked.
-		if( UNLOCKMAN->SongIsLocked(*i) )
-			++iNum;
-	}
-	return iNum;
+	auto isSongLocked = [](Song const *s) {
+		return UNLOCKMAN->SongIsLocked(s);
+	};
+	return std::count_if(m_pSongs.begin(), m_pSongs.end(), isSongLocked);
 }
 
 int SongManager::GetNumUnlockedSongs() const
 {
-	int iNum = 0;
-	FOREACH_CONST( Song*, m_pSongs, i )
-	{
-		// If locked for any reason other than LOCKED_LOCK:
-		if( UNLOCKMAN->SongIsLocked(*i) & ~LOCKED_LOCK )
-			continue;
-		++iNum;
-	}
-	return iNum;
+	auto isSongLocked = [](Song const *s) {
+		return UNLOCKMAN->SongIsLocked(s) & ~LOCKED_LOCK;
+	};
+	return std::count_if(m_pSongs.begin(), m_pSongs.end(), isSongLocked);
 }
 
 int SongManager::GetNumSelectableAndUnlockedSongs() const
 {
-	int iNum = 0;
-	FOREACH_CONST( Song*, m_pSongs, i )
-	{
-		// If locked for any reason other than LOCKED_LOCK or LOCKED_SELECTABLE:
-		if( UNLOCKMAN->SongIsLocked(*i) & ~(LOCKED_LOCK|LOCKED_SELECTABLE) )
-			continue;
-		++iNum;
-	}
-	return iNum;
+	auto isSongLocked = [](Song const *s) {
+		return UNLOCKMAN->SongIsLocked(s) & ~(LOCKED_LOCK | LOCKED_SELECTABLE);
+	};
+	return std::count_if(m_pSongs.begin(), m_pSongs.end(), isSongLocked);
 }
 
 int SongManager::GetNumAdditionalSongs() const
 {
-	int iNum = 0;
-	FOREACH_CONST( Song*, m_pSongs, i )
-	{
-		if( WasLoadedFromAdditionalSongs( *i ) )
-			++iNum;
-	}
-	return iNum;
+	auto wasLoadedFromAdditional = [this](Song const *s) {
+		return WasLoadedFromAdditionalSongs(s);
+	};
+	return std::count_if(m_pSongs.begin(), m_pSongs.end(), wasLoadedFromAdditional);
 }
 
 int SongManager::GetNumSongGroups() const
@@ -814,13 +807,10 @@ int SongManager::GetNumCourses() const
 
 int SongManager::GetNumAdditionalCourses() const
 {
-	int iNum = 0;
-	FOREACH_CONST( Course*, m_pCourses, i )
-	{
-		if( WasLoadedFromAdditionalCourses( *i ) )
-			++iNum;
-	}
-	return iNum;
+	auto wasLoadedFromAdditional = [this](Course const *c) {
+		return WasLoadedFromAdditionalCourses(c);
+	};
+	return std::count_if(m_pCourses.begin(), m_pCourses.end(), wasLoadedFromAdditional);
 }
 
 int SongManager::GetNumCourseGroups() const
@@ -848,10 +838,10 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 	vsCourseDirs.push_back( ADDITIONAL_COURSES_DIR );
 
 	vector<RString> vsCourseGroupNames;
-	FOREACH_CONST( RString, vsCourseDirs, sDir )
+	for (auto const &sDir: vsCourseDirs)
 	{
 		// Find all group directories in Courses dir
-		GetDirListing( *sDir + "*", vsCourseGroupNames, true, true );
+		GetDirListing( sDir + "*", vsCourseGroupNames, true, true );
 		StripCvsAndSvn( vsCourseGroupNames );
 		StripMacResourceForks( vsCourseGroupNames );
 	}
@@ -861,11 +851,11 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 	SortRStringArray( vsCourseGroupNames );
 
 	int courseIndex = 0;
-	FOREACH_CONST( RString, vsCourseGroupNames, sCourseGroup )	// for each dir in /Courses/
+	for (auto const &sCourseGroup: vsCourseGroupNames)
 	{
 		// Find all CRS files in this group directory
 		vector<RString> vsCoursePaths;
-		GetDirListing( *sCourseGroup + "/*.crs", vsCoursePaths, false, true );
+		GetDirListing( sCourseGroup + "/*.crs", vsCoursePaths, false, true );
 		SortRStringArray( vsCoursePaths );
 
 		if( ld )
@@ -874,18 +864,18 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 			ld->SetTotalWork( vsCoursePaths.size() );
 		}
 
-		FOREACH_CONST( RString, vsCoursePaths, sCoursePath )
+		for (auto const &sCoursePath: vsCoursePaths)
 		{
 			if( ld )
 			{
 				ld->SetProgress(courseIndex);
 				ld->SetText( LOADING_COURSES.GetValue()+ssprintf("\n%s\n%s",
-					Basename(*sCourseGroup).c_str(),
-					Basename(*sCoursePath).c_str()));
+					Basename(sCourseGroup).c_str(),
+					Basename(sCoursePath).c_str()));
 			}
 
 			Course* pCourse = new Course;
-			CourseLoaderCRS::LoadFromCRSFile( *sCoursePath, *pCourse );
+			CourseLoaderCRS::LoadFromCRSFile( sCoursePath, *pCourse );
 
 			if( g_bHideIncompleteCourses.Get() && pCourse->m_bIncomplete )
 			{
@@ -911,10 +901,8 @@ void SongManager::InitAutogenCourses()
 	vector<RString> saGroupNames;
 	this->GetSongGroupNames( saGroupNames );
 	Course* pCourse;
-	for( unsigned g=0; g<saGroupNames.size(); g++ )	// foreach Group
+	for (auto const &sGroupName: saGroupNames)
 	{
-		RString sGroupName = saGroupNames[g];
-
 		// Generate random courses from each group.
 		pCourse = new Course;
 		CourseUtil::AutogenEndlessFromGroup( sGroupName, Difficulty_Medium, *pCourse );
@@ -1031,7 +1019,9 @@ void SongManager::FreeCourses()
 	m_pCourses.clear();
 
 	FOREACH_CourseType( ct )
+	{
 		m_pPopularCourses[ct].clear();
+	}
 	m_pShuffledCourses.clear();
 
 	m_mapCourseGroupToInfo.clear();
@@ -1077,12 +1067,12 @@ void SongManager::DeleteCourse( Course *pCourse )
 
 void SongManager::InvalidateCachedTrails()
 {
-	FOREACH_CONST( Course *, m_pCourses, pCourse )
+	for (auto const *pCourse: m_pCourses)
 	{
-		const Course &c = **pCourse;
-		
-		if( c.IsAnEdit() )
-			c.m_TrailCache.clear();
+		if( pCourse->IsAnEdit() )
+		{
+			pCourse->m_TrailCache.clear();
+		}
 	}
 }
 
@@ -1090,15 +1080,13 @@ void SongManager::InvalidateCachedTrails()
  * change screens. */
 void SongManager::Cleanup()
 {
-	for( unsigned i=0; i<m_pSongs.size(); i++ )
+	for (auto *pSong: m_pSongs)
 	{
-		Song* pSong = m_pSongs[i];
 		if (pSong)
 		{
-			const vector<Steps*>& vpSteps = pSong->GetAllSteps();
-			for( unsigned n=0; n<vpSteps.size(); n++ )
+			auto &vpSteps = pSong->GetAllSteps();
+			for (auto *pSteps: vpSteps)
 			{
-				Steps* pSteps = vpSteps[n];
 				pSteps->Compress();
 			}
 		}
@@ -1115,9 +1103,9 @@ void SongManager::Invalidate( const Song *pStaleSong )
 	// Can we regenerate only the autogen courses that are affected?
 	DeleteAutogenCourses();
 
-	FOREACH( Course*, this->m_pCourses, pCourse )
+	for (auto *pCourse: this->m_pCourses)
 	{
-		(*pCourse)->Invalidate( pStaleSong );
+		pCourse->Invalidate( pStaleSong );
 	}
 
 	InitAutogenCourses();
@@ -1149,10 +1137,9 @@ void SongManager::SaveEnabledSongsToPref()
 
 	// Intentionally drop disabled song entries for songs that aren't currently loaded.
 
-	const vector<Song*> &apSongs = SONGMAN->GetAllSongs();
-	FOREACH_CONST( Song *, apSongs, s )
+	auto &apSongs = SONGMAN->GetAllSongs();
+	for (auto const *pSong: apSongs)
 	{
-		Song *pSong = (*s);
 		SongID sid;
 		sid.FromSong( pSong );
 		if( !pSong->GetEnabled() )
@@ -1166,10 +1153,10 @@ void SongManager::LoadEnabledSongsFromPref()
 	vector<RString> asDisabledSongs;
 	split( g_sDisabledSongs, ";", asDisabledSongs, true );
 
-	FOREACH_CONST( RString, asDisabledSongs, s )
+	for (auto &s: asDisabledSongs)
 	{
 		SongID sid;
-		sid.FromString( *s );
+		sid.FromString( s );
 		Song *pSong = sid.ToSong();
 		if( pSong )
 			pSong->SetEnabled( false );
@@ -1178,10 +1165,10 @@ void SongManager::LoadEnabledSongsFromPref()
 
 void SongManager::GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot slot ) const
 {
-	const vector<Song*> &vSongs = GetAllSongs();
-	FOREACH_CONST( Song*, vSongs, song )
+	auto &vSongs = GetAllSongs();
+	for (auto const *song: vSongs)
 	{
-		(*song)->GetStepsLoadedFromProfile( slot, AddTo );
+		song->GetStepsLoadedFromProfile( slot, AddTo );
 	}
 }
 
@@ -1254,13 +1241,14 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredG
 // Return true if n1 < n2.
 bool CompareNotesPointersForExtra(const Steps *n1, const Steps *n2)
 {
+	using std::min;
 	// Equate CHALLENGE to HARD.
 	Difficulty d1 = min(n1->GetDifficulty(), Difficulty_Hard);
 	Difficulty d2 = min(n2->GetDifficulty(), Difficulty_Hard);
 
 	if(d1 < d2) return true;
 	if(d1 > d2) return false;
-	// n1 difficulty == n2 difficulty 
+	// n1 difficulty == n2 difficulty
 
 	if(StepsUtil::CompareNotesPointersByMeter(n1,n2)) return true;
 	if(StepsUtil::CompareNotesPointersByMeter(n2,n1)) return false;
@@ -1274,10 +1262,10 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 	RString sGroup = GAMESTATE->m_sPreferredSongGroup;
 	if( sGroup == GROUP_ALL )
 	{
-		if( GAMESTATE->m_pCurSong == NULL )
+		if( GAMESTATE->m_pCurSong == nullptr )
 		{
 			// This normally shouldn't happen, but it's helpful to permit it for testing.
-			LuaHelpers::ReportScriptErrorFmt( "GetExtraStageInfo() called in GROUP_ALL, but GAMESTATE->m_pCurSong == NULL" );
+			LuaHelpers::ReportScriptErrorFmt( "GetExtraStageInfo() called in GROUP_ALL, but GAMESTATE->m_pCurSong == nullptr" );
 			GAMESTATE->m_pCurSong.Set( GetRandomSong() );
 		}
 		sGroup = GAMESTATE->m_pCurSong->m_sGroupName;
@@ -1297,32 +1285,28 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 		return;
 
 	// Choose a hard song for the extra stage
-	Song*	pExtra1Song = NULL;		// the absolute hardest Song and Steps.  Use this for extra stage 1.
-	Steps*	pExtra1Notes = NULL;
-	Song*	pExtra2Song = NULL;		// a medium-hard Song and Steps.  Use this for extra stage 2.
-	Steps*	pExtra2Notes = NULL;
-	
-	const vector<Song*> &apSongs = GetSongs( sGroup );
-	for( unsigned s=0; s<apSongs.size(); s++ )	// foreach song
-	{
-		Song* pSong = apSongs[s];
+	Song*	pExtra1Song = nullptr;		// the absolute hardest Song and Steps.  Use this for extra stage 1.
+	Steps*	pExtra1Notes = nullptr;
+	Song*	pExtra2Song = nullptr;		// a medium-hard Song and Steps.  Use this for extra stage 2.
+	Steps*	pExtra2Notes = nullptr;
 
+	auto &apSongs = GetSongs( sGroup );
+	for (auto *pSong: apSongs)
+	{
 		vector<Steps*> apSteps;
 		SongUtil::GetSteps( pSong, apSteps, sd->m_StepsType );
-		for( unsigned n=0; n<apSteps.size(); n++ )	// foreach Steps
+		for (auto *pSteps: apSteps)
 		{
-			Steps* pSteps = apSteps[n];
-
-			if( pExtra1Notes == NULL || CompareNotesPointersForExtra(pExtra1Notes,pSteps) )	// pSteps is harder than pHardestNotes
+			if( pExtra1Notes == nullptr || CompareNotesPointersForExtra(pExtra1Notes,pSteps) )	// pSteps is harder than pHardestNotes
 			{
 				pExtra1Song = pSong;
 				pExtra1Notes = pSteps;
 			}
 
 			// for extra 2, we don't want to choose the hardest notes possible.  So, we'll disgard Steps with meter > 8 (assuming dance)
-			if( bExtra2 && pSteps->GetMeter() > EXTRA_STAGE2_DIFFICULTY_MAX )	
+			if( bExtra2 && pSteps->GetMeter() > EXTRA_STAGE2_DIFFICULTY_MAX )
 				continue;	// skip
-			if( pExtra2Notes == NULL  ||  CompareNotesPointersForExtra(pExtra2Notes,pSteps) )	// pSteps is harder than pHardestNotes
+			if( pExtra2Notes == nullptr  ||  CompareNotesPointersForExtra(pExtra2Notes,pSteps) )	// pSteps is harder than pHardestNotes
 			{
 				pExtra2Song = pSong;
 				pExtra2Notes = pSteps;
@@ -1330,7 +1314,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 		}
 	}
 
-	if( pExtra2Song == NULL  &&  pExtra1Song != NULL )
+	if( pExtra2Song == nullptr  &&  pExtra1Song != nullptr )
 	{
 		pExtra2Song = pExtra1Song;
 		pExtra2Notes = pExtra1Notes;
@@ -1348,7 +1332,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 Song* SongManager::GetRandomSong()
 {
 	if( m_pShuffledSongs.empty() )
-		return NULL;
+		return nullptr;
 
 	static int i = 0;
 
@@ -1364,13 +1348,13 @@ Song* SongManager::GetRandomSong()
 		return pSong;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Course* SongManager::GetRandomCourse()
 {
 	if( m_pShuffledCourses.empty() )
-		return NULL;
+		return nullptr;
 
 	static int i = 0;
 
@@ -1388,7 +1372,7 @@ Course* SongManager::GetRandomCourse()
 		return pCourse;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Song* SongManager::GetSongFromDir(RString dir) const
@@ -1398,43 +1382,47 @@ Song* SongManager::GetSongFromDir(RString dir) const
 
 	dir.Replace('\\', '/');
 	dir.MakeLower();
-	map<RString, Song*>::const_iterator entry= m_SongsByDir.find(dir);
+	auto entry = m_SongsByDir.find(dir);
 	if(entry != m_SongsByDir.end())
 	{
 		return entry->second;
 	}
-	return NULL;
+	return nullptr;
 }
 
 Course* SongManager::GetCourseFromPath( RString sPath ) const
 {
 	if( sPath == "" )
-		return NULL;
+		return nullptr;
 
-	FOREACH_CONST( Course*, m_pCourses, c )
+	for (auto *c: m_pCourses)
 	{
-		if( sPath.CompareNoCase((*c)->m_sPath) == 0 )
-			return *c;
+		if( sPath.CompareNoCase(c->m_sPath) == 0 )
+			return c;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Course* SongManager::GetCourseFromName( RString sName ) const
 {
 	if( sName == "" )
-		return NULL;
+		return nullptr;
 
-	for( unsigned int i=0; i<m_pCourses.size(); i++ )
-		if( sName.CompareNoCase(m_pCourses[i]->GetDisplayFullTitle()) == 0 )
-			return m_pCourses[i];
+	for (auto *course: m_pCourses)
+	{
+		if( sName.CompareNoCase(course->GetDisplayFullTitle()) == 0 )
+		{
+			return course;
+		}
+	}
 
-	return NULL;
+	return nullptr;
 }
 
 
 /* GetSongDir() contains a path to the song, possibly a full path, eg:
- * Songs\Group\SongName                   or 
+ * Songs\Group\SongName                   or
  * My Other Song Folder\Group\SongName    or
  * c:\Corny J-pop\Group\SongName
  *
@@ -1457,20 +1445,22 @@ Song *SongManager::FindSong( RString sPath ) const
 	else if( bits.size() == 2 )
 		return FindSong( bits[0], bits[1] );
 
-	return NULL;
+	return nullptr;
 }
 
 Song *SongManager::FindSong( RString sGroup, RString sSong ) const
 {
 	// foreach song
 	const vector<Song *> &vSongs = GetSongs( sGroup.empty()? GROUP_ALL:sGroup );
-	FOREACH_CONST( Song*, vSongs, s )
+	for (auto *s: vSongs)
 	{
-		if( (*s)->Matches(sGroup, sSong) )
-			return *s;
+		if( s->Matches(sGroup, sSong) )
+		{
+			return s;
+		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Course *SongManager::FindCourse( RString sPath ) const
@@ -1484,18 +1474,20 @@ Course *SongManager::FindCourse( RString sPath ) const
 	else if( bits.size() == 2 )
 		return FindCourse( bits[0], bits[1] );
 
-	return NULL;
+	return nullptr;
 }
 
 Course *SongManager::FindCourse( RString sGroup, RString sName ) const
 {
-	FOREACH_CONST( Course*, m_pCourses, c )
+	for (auto *c: m_pCourses)
 	{
-		if( (*c)->Matches(sGroup, sName) )
-			return *c;
+		if( c->Matches(sGroup, sName) )
+		{
+			return c;
+		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void SongManager::UpdatePopular()
@@ -1512,7 +1504,7 @@ void SongManager::UpdatePopular()
 			continue;
 
 		// Remove it.
-		swap( apBestSongs[j], apBestSongs.back() );
+		std::swap( apBestSongs[j], apBestSongs.back() );
 		apBestSongs.erase( apBestSongs.end()-1 );
 		--j;
 	}
@@ -1549,7 +1541,7 @@ void SongManager::UpdateShuffled()
 
 void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferredCourses)
 {
-	ASSERT( UNLOCKMAN != NULL );
+	ASSERT( UNLOCKMAN != nullptr );
 
 	{
 		m_vPreferredSongSort.clear();
@@ -1561,11 +1553,10 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 			return;
 
 		PreferredSortSection section;
-		map<Song *, float> mapSongToPri;
 
-		FOREACH( RString, asLines, s )
+		for (auto &s: asLines)
 		{
-			RString sLine = *s;
+			RString sLine = s;
 
 			bool bSectionDivider = BeginsWith(sLine, "---");
 			if( bSectionDivider )
@@ -1590,18 +1581,18 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 					if( DoesSongGroupExist(group) )
 					{
 						// add all songs in group
-						const vector<Song *> &vSongs = GetSongs( group );
-						FOREACH_CONST( Song*, vSongs, song )
+						auto const &vSongs = GetSongs( group );
+						for (auto *song: vSongs)
 						{
-							if( UNLOCKMAN->SongIsLocked(*song) & LOCKED_SELECTABLE )
+							if( UNLOCKMAN->SongIsLocked(song) & LOCKED_SELECTABLE )
 								continue;
-							section.vpSongs.push_back( *song );
+							section.vpSongs.push_back( song );
 						}
 					}
 				}
 
 				Song *pSong = FindSong( sLine );
-				if( pSong == NULL )
+				if( pSong == nullptr )
 					continue;
 				if( UNLOCKMAN->SongIsLocked(pSong) & LOCKED_SELECTABLE )
 					continue;
@@ -1620,24 +1611,24 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 			// move all unlock songs to a group at the bottom
 			PreferredSortSection PFSection;
 			PFSection.sName = "Unlocks";
-			FOREACH( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
+			for (auto const &ue: UNLOCKMAN->m_UnlockEntries)
 			{
-				if( ue->m_Type == UnlockRewardType_Song )
+				if( ue.m_Type == UnlockRewardType_Song )
 				{
-					Song *pSong = ue->m_Song.ToSong();
+					Song *pSong = ue.m_Song.ToSong();
 					if( pSong )
 						PFSection.vpSongs.push_back( pSong );
 				}
 			}
 
-			FOREACH( PreferredSortSection, m_vPreferredSongSort, v )
+			for (auto &v: m_vPreferredSongSort)
 			{
-				for( int i=v->vpSongs.size()-1; i>=0; i-- )
+				for( int i=v.vpSongs.size()-1; i>=0; i-- )
 				{
-					Song *pSong = v->vpSongs[i];
+					Song *pSong = v.vpSongs[i];
 					if( find(PFSection.vpSongs.begin(),PFSection.vpSongs.end(),pSong) != PFSection.vpSongs.end() )
 					{
-						v->vpSongs.erase( v->vpSongs.begin()+i );
+						v.vpSongs.erase( v.vpSongs.begin()+i );
 					}
 				}
 			}
@@ -1650,9 +1641,13 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 			if( m_vPreferredSongSort[i].vpSongs.empty() )
 				m_vPreferredSongSort.erase( m_vPreferredSongSort.begin()+i );
 
-		FOREACH( PreferredSortSection, m_vPreferredSongSort, i )
-			FOREACH( Song*, i->vpSongs, j )
-				ASSERT( *j != NULL );
+		for (auto const &i: m_vPreferredSongSort)
+		{
+			for (auto const *j: i.vpSongs)
+			{
+				ASSERT( j != nullptr );
+			}
+		}
 	}
 
 	{
@@ -1665,9 +1660,9 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 
 		vector<Course*> vpCourses;
 
-		FOREACH( RString, asLines, s )
+		for (auto &s: asLines)
 		{
-			RString sLine = *s;
+			RString sLine = s;
 			bool bSectionDivider = BeginsWith( sLine, "---" );
 			if( bSectionDivider )
 			{
@@ -1680,7 +1675,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 			}
 
 			Course *pCourse = FindCourse( sLine );
-			if( pCourse == NULL )
+			if( pCourse == nullptr )
 				continue;
 			if( UNLOCKMAN->CourseIsLocked(pCourse) & LOCKED_SELECTABLE )
 				continue;
@@ -1697,21 +1692,25 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 		{
 			// move all unlock Courses to a group at the bottom
 			vector<Course*> vpUnlockCourses;
-			FOREACH( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
+			for (auto const &ue: UNLOCKMAN->m_UnlockEntries)
 			{
-				if( ue->m_Type == UnlockRewardType_Course )
-					if( ue->m_Course.IsValid() )
-						vpUnlockCourses.push_back( ue->m_Course.ToCourse() );
+				if( ue.m_Type == UnlockRewardType_Course )
+				{
+					if( ue.m_Course.IsValid() )
+					{
+						vpUnlockCourses.push_back( ue.m_Course.ToCourse() );
+					}
+				}
 			}
 
-			FOREACH( CoursePointerVector, m_vPreferredCourseSort, v )
+			for (auto &v: m_vPreferredCourseSort)
 			{
-				for( int i=v->size()-1; i>=0; i-- )
+				for( int i=v.size()-1; i>=0; i-- )
 				{
-					Course *pCourse = (*v)[i];
+					Course *pCourse = v[i];
 					if( find(vpUnlockCourses.begin(),vpUnlockCourses.end(),pCourse) != vpUnlockCourses.end() )
 					{
-						v->erase( v->begin()+i );
+						v.erase( v.begin()+i );
 					}
 				}
 			}
@@ -1724,9 +1723,13 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 			if( m_vPreferredCourseSort[i].empty() )
 				m_vPreferredCourseSort.erase( m_vPreferredCourseSort.begin()+i );
 
-		FOREACH( CoursePointerVector, m_vPreferredCourseSort, i )
-			FOREACH( Course*, *i, j )
-				ASSERT( *j != NULL );
+		for (auto const &i: m_vPreferredCourseSort)
+		{
+			for (auto const *j: i)
+			{
+				ASSERT( j != nullptr );
+			}
+		}
 	}
 }
 
@@ -1742,14 +1745,18 @@ void SongManager::UpdateRankingCourses()
 	vector<RString> RankingCourses;
 	split( THEME->GetMetric("ScreenRanking","CoursesToShow"),",", RankingCourses);
 
-	FOREACH( Course*, m_pCourses, c )
+	for (auto *c: m_pCourses)
 	{
-		bool bLotsOfStages = (*c)->GetEstimatedNumStages() > 7;
-		(*c)->m_SortOrder_Ranking = bLotsOfStages? 3 : 2;
-			
+		bool bLotsOfStages = c->GetEstimatedNumStages() > 7;
+		c->m_SortOrder_Ranking = bLotsOfStages? 3 : 2;
+
 		for( unsigned j = 0; j < RankingCourses.size(); j++ )
-			if( !RankingCourses[j].CompareNoCase((*c)->m_sPath) )
-				(*c)->m_SortOrder_Ranking = 1;
+		{
+			if( !RankingCourses[j].CompareNoCase(c->m_sPath) )
+			{
+				c->m_SortOrder_Ranking = 1;
+			}
+		}
 	}
 }
 
@@ -1757,19 +1764,17 @@ void SongManager::RefreshCourseGroupInfo()
 {
 	m_mapCourseGroupToInfo.clear();
 
-	FOREACH_CONST( Course*, m_pCourses, c )
+	for (auto const *c: m_pCourses)
 	{
-		m_mapCourseGroupToInfo[(*c)->m_sGroupName];	// insert
+		m_mapCourseGroupToInfo[c->m_sGroupName];	// insert
 	}
 
 	// TODO: Search for course group banners
-	FOREACHM( RString, CourseGroupInfo, m_mapCourseGroupToInfo, iter )
-	{
-	}
 }
 
 void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot )
 {
+	using std::min;
 	// Load all edit steps
 	RString sDir = sProfileDir + EDIT_STEPS_SUBDIR;
 	SSCLoader loaderSSC;
@@ -1780,7 +1785,7 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 	vector<RString> vsFiles;
 	int size = min( (int) vsFiles.size(), MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded );
 	GetDirListing( sDir+"*.edit", vsFiles, false, true );
-	
+
 	// XXX: If some edits are invalid and they're close to the edit limit, this may erroneously skip some edits, and won't warn.
 	for( int i=0; i<size; i++ )
 	{
@@ -1793,7 +1798,7 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 			loaderSM.LoadEditFromFile( fn, slot, true );
 		}
 	}
-	
+
 	if( (int) vsFiles.size() > MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded )
 	{
 		LuaHelpers::ReportScriptErrorFmt("Profile %s has too many edits; some have been skipped.", ProfileSlotToString( slot ).c_str() );
@@ -1802,18 +1807,18 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 
 	// Some .edit files may have been invalid, so re-query instead of just += size.
 	iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
-	
+
 	// Pass 2: Group and song folders with #SONG inferred from folder (optional new style)
 	vector<RString> vsGroups;
 	GetDirListing( sDir+"*", vsGroups, true, false );
-	
+
 	// XXX: Same as above, edits may be skipped in error in some cases
 	for( unsigned i=0; i<vsGroups.size(); i++ )
 	{
 		RString sGroupDir = vsGroups[i]+"/";
 		vector<RString> vsSongs;
 		GetDirListing(sDir+sGroupDir+"*", vsSongs, true, false );
-		
+
 		for( unsigned j=0; j<vsSongs.size(); j++ )
 		{
 			vector<RString> vsEdits;
@@ -1821,12 +1826,12 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 			// XXX There doesn't appear to be a songdir const?
 			Song *given = GetSongFromDir( "/Songs/"+sSongDir );
 			// NOTE: We don't have to check the return value of GetSongFromDir here,
-			// because if it fails, it returns NULL, which is then passed to NotesLoader*.LoadEditFromFile(),
+			// because if it fails, it returns nullptr, which is then passed to NotesLoader*.LoadEditFromFile(),
 			// which will interpret that as "we couldn't infer the song from the path",
 			// which is what we want in that case anyway.
 			GetDirListing(sDir+sSongDir+"/*.edit", vsEdits, false, true );
 			size = min( (int) vsEdits.size(), MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded );
-			
+
 			for( int k=0; k<size; k++ )
 			{
 				RString fn = vsEdits[k];
@@ -1835,13 +1840,13 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 				if( !bLoadedFromSSC )
 					loaderSM.LoadEditFromFile( fn, slot, true, given );
 			}
-			
+
 			if( (int) vsEdits.size() > MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded )
 			{
 				LuaHelpers::ReportScriptErrorFmt("Profile %s has too many edits; some have been skipped.", ProfileSlotToString( slot ).c_str() );
 				return;
 			}
-			
+
 			// Some .edit files may have been invalid, so re-query instead of just += size.
 			iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
 		}
@@ -1850,6 +1855,7 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 
 void SongManager::LoadCourseEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot )
 {
+	using std::min;
 	// Load all edit courses
 	RString sDir = sProfileDir + EDIT_COURSES_SUBDIR;
 
@@ -1892,21 +1898,20 @@ void SongManager::AddSongToList(Song* new_song)
 	m_pSongs.push_back(new_song);
 	RString dir= new_song->GetSongDir();
 	dir.MakeLower();
-	m_SongsByDir.insert(make_pair(dir, new_song));
+	m_SongsByDir.insert(std::make_pair(std::string(dir), new_song));
 }
 
 void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
 {
 	// Profile courses may refer to profile steps, so free profile courses first.
 	vector<Course*> apToDelete;
-	FOREACH( Course*, m_pCourses, c )
+	for (auto *pCourse: m_pCourses)
 	{
-		Course *pCourse = *c;
 		if( pCourse->GetLoadedFromProfileSlot() == ProfileSlot_Invalid )
 			continue;
 
 		if( slot == ProfileSlot_Invalid || pCourse->GetLoadedFromProfileSlot() == slot )
-			apToDelete.push_back( *c );
+			apToDelete.push_back( pCourse );
 	}
 
 	/* We don't use DeleteCourse here, so we don't UpdatePopular and
@@ -1925,25 +1930,27 @@ void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
 	RefreshCourseGroupInfo();
 
 	// Free profile steps.
-	set<Steps*> setInUse;
+	std::set<Steps*> setInUse;
 	if( STATSMAN )
 		STATSMAN->GetStepsInUse( setInUse );
-	FOREACH( Song*, m_pSongs, s )
-		(*s)->FreeAllLoadedFromProfile( slot, &setInUse );
+	for (auto *s: m_pSongs)
+	{
+		s->FreeAllLoadedFromProfile( slot, &setInUse );
+	}
 }
 
 int SongManager::GetNumStepsLoadedFromProfile()
 {
+	// TODO: Find a way to utilize std::count or std::accumulate.
 	int iCount = 0;
-	FOREACH( Song*, m_pSongs, s )
+	auto isProfileValid = [](Steps const *step) {
+		return step->GetLoadedFromProfileSlot() != ProfileSlot_Invalid;
+	};
+	for (auto const *s: m_pSongs)
 	{
-		vector<Steps*> vpAllSteps = (*s)->GetAllSteps();
+		vector<Steps*> vpAllSteps = s->GetAllSteps();
 
-		FOREACH( Steps*, vpAllSteps, ss )
-		{
-			if( (*ss)->GetLoadedFromProfileSlot() != ProfileSlot_Invalid )
-				iCount++;
-		}
+		iCount += std::count_if(vpAllSteps.begin(), vpAllSteps.end(), isProfileValid);
 	}
 
 	return iCount;
@@ -1960,7 +1967,7 @@ int FindCourseIndexOfSameMode( T begin, T end, const Course *p )
 		if( *it == p )
 			return n;
 
-		/* If it's not playable in this mode, don't increment. It might result in 
+		/* If it's not playable in this mode, don't increment. It might result in
 		 * different output in different modes, but that's better than having holes. */
 		if( !(*it)->IsPlayableIn( GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType ) )
 			continue;
@@ -1981,7 +1988,7 @@ int SongManager::GetSongRank(Song* pSong)
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the SongManager. */ 
+/** @brief Allow Lua to have access to the SongManager. */
 class LunaSongManager: public Luna<SongManager>
 {
 public:
@@ -2042,8 +2049,8 @@ public:
 	/* Note: this could now be implemented as Luna<Steps>::GetSong */
 	static int GetSongFromSteps( T* p, lua_State *L )
 	{
-		Song *pSong = NULL;
-		if( lua_isnil(L,1) ) { pSong = NULL; }
+		Song *pSong = nullptr;
+		if( lua_isnil(L,1) ) { pSong = nullptr; }
 		else { Steps *pSteps = Luna<Steps>::check(L,1); pSong = pSteps->m_pSong; }
 		if(pSong) pSong->PushSelf(L);
 		else lua_pushnil(L);
@@ -2204,7 +2211,7 @@ LUA_REGISTER_CLASS( SongManager )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -2214,7 +2221,7 @@ LUA_REGISTER_CLASS( SongManager )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

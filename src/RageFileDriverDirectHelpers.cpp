@@ -2,7 +2,6 @@
 #include "RageFileDriverDirectHelpers.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "Foreach.h"
 
 #include <cerrno>
 #include <sys/types.h>
@@ -15,6 +14,8 @@
 #include <windows.h>
 #include <io.h>
 #endif
+
+using std::vector;
 
 RString DoPathReplace(const RString &sPath)
 {
@@ -158,7 +159,7 @@ void DirectFilenameDB::CacheFile( const RString &sPath )
 	CHECKPOINT_M( root+sPath );
 	RString sDir = Dirname( sPath );
 	FileSet *pFileSet = GetFileSet( sDir, false );
-	if( pFileSet == NULL )
+	if( pFileSet == nullptr )
 	{
 		// This directory isn't cached so do nothing.
 		m_Mutex.Unlock(); // Locked by GetFileSet()
@@ -201,10 +202,10 @@ void DirectFilenameDB::CacheFile( const RString &sPath )
 		f.size = (int)st.st_size;
 		f.hash = st.st_mtime;
 	}
-	
+
 	pFileSet->files.insert(f);
 #endif
-	m_Mutex.Unlock(); // Locked by GetFileSet()	
+	m_Mutex.Unlock(); // Locked by GetFileSet()
 }
 
 void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
@@ -249,9 +250,9 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 	 * use absolute paths, which forces the system to re-parse the directory
 	 * for each file.  This isn't a major issue, since most large directory
 	 * scans are I/O-bound. */
-	 
+
 	DIR *pDir = opendir(root+sPath);
-	if( pDir == NULL )
+	if( pDir == nullptr )
 		return;
 
 	while( struct dirent *pEnt = readdir(pDir) )
@@ -260,7 +261,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 			continue;
 		if( !strcmp(pEnt->d_name, "..") )
 			continue;
-		
+
 		File f( pEnt->d_name );
 
 		struct stat st;
@@ -270,7 +271,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 			/* If it's a broken symlink, ignore it.  Otherwise, warn. */
 			if( lstat(root+sPath + "/" + pEnt->d_name, &st) == 0 )
 				continue;
-			
+
 			/* Huh? */
 			WARN( ssprintf("Got file '%s' in '%s' from list, but can't stat? (%s)",
 					pEnt->d_name, sPath.c_str(), strerror(iError)) );
@@ -285,25 +286,23 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 
 		fs.files.insert(f);
 	}
-	       
+
 	closedir( pDir );
 #endif
 
 	/*
-	 * Check for any ".ignore" markers.  If a marker exists, hide the marker and its 
+	 * Check for any ".ignore" markers.  If a marker exists, hide the marker and its
 	 * corresponding file.
-	 * For example, if "file.xml.ignore" exists, hide both it and "file.xml" by 
+	 * For example, if "file.xml.ignore" exists, hide both it and "file.xml" by
 	 * removing them from the file set.
-	 * Ignore markers are used for convenience during build staging and are not used in 
-	 * performance-critical situations.  To avoid incurring some of the overheard 
+	 * Ignore markers are used for convenience during build staging and are not used in
+	 * performance-critical situations.  To avoid incurring some of the overheard
 	 * due to ignore markers, delete the file instead instead of using an ignore marker.
 	 */
 	static const RString IGNORE_MARKER_BEGINNING = "ignore-";
 
 	vector<RString> vsFilesToRemove;
-	for( set<File>::iterator iter = fs.files.lower_bound(IGNORE_MARKER_BEGINNING); 
-		 iter != fs.files.end(); 
-		 ++iter )
+	for( auto iter = fs.files.lower_bound(IGNORE_MARKER_BEGINNING); iter != fs.files.end(); ++iter )
 	{
 		if( !BeginsWith( iter->lname, IGNORE_MARKER_BEGINNING ) )
 			break;
@@ -311,13 +310,13 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 		vsFilesToRemove.push_back( iter->name );
 		vsFilesToRemove.push_back( sFileLNameToIgnore );
 	}
-	
-	FOREACH_CONST( RString, vsFilesToRemove, iter )
+
+	for (auto const &iter: vsFilesToRemove)
 	{
 		// Erase the file corresponding to the ignore marker
 		File fileToDelete;
-		fileToDelete.SetName( *iter );
-		set<File>::iterator iter2 = fs.files.find( fileToDelete );
+		fileToDelete.SetName( iter );
+		std::set<File>::iterator iter2 = fs.files.find( fileToDelete );
 		if( iter2 != fs.files.end() )
 			fs.files.erase( iter2 );
 	}

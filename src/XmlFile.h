@@ -4,6 +4,7 @@
 #define XML_FILE_H
 
 #include <map>
+#include <unordered_map>
 struct DateTime;
 class RageFileBasic;
 struct lua_State;
@@ -52,9 +53,9 @@ public:
 	void SetValueFromStack( lua_State *L );
 };
 
-typedef map<RString,XNodeValue*> XAttrs;
+typedef std::map<RString,XNodeValue*> XAttrs;
 class XNode;
-typedef vector<XNode*> XNodes;
+typedef std::vector<XNode*> XNodes;
 /** @brief Loop through each node. */
 #define FOREACH_Attr( pNode, Var ) \
 	for( XAttrs::iterator Var = (pNode)->m_attrs.begin(); \
@@ -67,16 +68,16 @@ typedef vector<XNode*> XNodes;
 		++Var )
 /** @brief Loop through each child. */
 #define FOREACH_Child( pNode, Var ) \
-	XNode *Var = NULL; \
+	XNode *Var = nullptr; \
 	for( XNodes::iterator Var##Iter = (pNode)->GetChildrenBegin(); \
-		Var = (Var##Iter != (pNode)->GetChildrenEnd())? *Var##Iter:NULL, \
+		Var = (Var##Iter != (pNode)->GetChildrenEnd())? *Var##Iter:nullptr, \
 		Var##Iter != (pNode)->GetChildrenEnd(); \
 		++Var##Iter )
 /** @brief Loop through each child, using a constant iterator. */
 #define FOREACH_CONST_Child( pNode, Var ) \
-	const XNode *Var = NULL; \
+	const XNode *Var = nullptr; \
 	for( XNodes::const_iterator Var##Iter = (pNode)->GetChildrenBegin(); \
-		Var = (Var##Iter != (pNode)->GetChildrenEnd())? *Var##Iter:NULL, \
+		Var = (Var##Iter != (pNode)->GetChildrenEnd())? *Var##Iter:nullptr, \
 		Var##Iter != (pNode)->GetChildrenEnd(); \
 		++Var##Iter )
 
@@ -84,7 +85,7 @@ class XNode
 {
 private:
 	XNodes	m_childs;	// child nodes
-	multimap<RString, XNode*> m_children_by_name;
+	std::unordered_multimap<std::string, XNode*> m_children_by_name;
 
 public:
 	RString m_sName;
@@ -98,10 +99,10 @@ public:
 	void GetTextValue( T &out ) const { GetAttrValue(TEXT_ATTRIBUTE, out); }
 
 	// in own attribute list
-	const XNodeValue *GetAttr( const RString &sAttrName ) const; 
-	XNodeValue *GetAttr( const RString &sAttrName ); 
+	const XNodeValue *GetAttr( const RString &sAttrName ) const;
+	XNodeValue *GetAttr( const RString &sAttrName );
 	template <typename T>
-	bool GetAttrValue( const RString &sName, T &out ) const	{ const XNodeValue *pAttr=GetAttr(sName); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	bool GetAttrValue( const RString &sName, T &out ) const	{ const XNodeValue *pAttr=GetAttr(sName); if(pAttr==nullptr) return false; pAttr->GetValue(out); return true; }
 	bool PushAttrValue( lua_State *L, const RString &sName ) const;
 
 	XNodes::iterator GetChildrenBegin() { return m_childs.begin(); }
@@ -114,7 +115,7 @@ public:
 	const XNode *GetChild( const RString &sName ) const;
 	XNode *GetChild( const RString &sName );
 	template <typename T>
-	bool GetChildValue( const RString &sName, T &out ) const { const XNode *pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetTextValue(out); return true; }
+	bool GetChildValue( const RString &sName, T &out ) const { const XNode *pChild=GetChild(sName); if(pChild==nullptr) return false; pChild->GetTextValue(out); return true; }
 	bool PushChildValue( lua_State *L, const RString &sName ) const;
 
 	// modify DOM

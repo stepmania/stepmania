@@ -26,6 +26,8 @@
 #include "SongManager.h"
 #include "CodeDetector.h"
 
+using std::vector;
+
 AutoScreenMessage( SM_NoSongs );
 AutoScreenMessage( SM_ChangeSong );
 AutoScreenMessage( SM_SMOnlinePack );
@@ -50,7 +52,7 @@ void ScreenNetSelectMusic::Init()
 		m_DC[p] = GAMESTATE->m_PreferredDifficulty[p];
 
 		m_StepsDisplays[p].SetName( ssprintf("StepsDisplayP%d",p+1) );
-		m_StepsDisplays[p].Load( "StepsDisplayNet", NULL );
+		m_StepsDisplays[p].Load( "StepsDisplayNet", nullptr );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_StepsDisplays[p] );
 		this->AddChild( &m_StepsDisplays[p] );
 	}
@@ -101,7 +103,7 @@ bool ScreenNetSelectMusic::Input( const InputEventPlus &input )
 	if( input.type != IET_FIRST_PRESS && input.type != IET_REPEAT )
 		return false;
 
-	bool bHoldingCtrl = 
+	bool bHoldingCtrl =
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL)) ||
 		(!NSMAN->useSMserver); // If we are disconnected, assume no chatting
@@ -159,7 +161,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		// you have multiple copies of the "same" song you can chose which copy to play.
 		Song* CurSong = m_MusicWheel.GetSelectedSong();
 
-		if(CurSong != NULL )
+		if(CurSong != nullptr )
 
 			if( ( !CurSong->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
 					( !CurSong->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&
@@ -338,11 +340,11 @@ bool ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 	// I agree, that's a stupid idea -aj
 
 	PlayerNumber pn = input.pn;
-	if( GAMESTATE->IsPlayerEnabled( PLAYER_2 ) && 
+	if( GAMESTATE->IsPlayerEnabled( PLAYER_2 ) &&
 		!GAMESTATE->IsPlayerEnabled( PLAYER_1 ) )
 		pn = PLAYER_2;
 
-	if( GAMESTATE->m_pCurSong == NULL )
+	if( GAMESTATE->m_pCurSong == nullptr )
 		return false;
 	StepsType st = GAMESTATE->GetCurrentStyle(pn)->m_StepsType;
 	vector <Steps *> MultiSteps;
@@ -400,7 +402,7 @@ bool ScreenNetSelectMusic::MenuStart( const InputEventPlus &input )
 
 	Song * pSong = m_MusicWheel.GetSelectedSong();
 
-	if( pSong == NULL )
+	if( pSong == nullptr )
 		return false;
 
 	GAMESTATE->m_pCurSong.Set( pSong );
@@ -469,10 +471,10 @@ void ScreenNetSelectMusic::StartSelectedSong()
 
 void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 {
-	if( GAMESTATE->m_pCurSong == NULL )
+	if( GAMESTATE->m_pCurSong == nullptr )
 	{
-		m_StepsDisplays[pn].SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, Difficulty_Beginner, CourseType_Invalid ); 
-		//m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	// It will blank it out 
+		m_StepsDisplays[pn].SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, Difficulty_Beginner, CourseType_Invalid );
+		//m_DifficultyIcon[pn].SetFromSteps( pn, nullptr );	// It will blank it out
 		return;
 	}
 
@@ -489,16 +491,16 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 
 void ScreenNetSelectMusic::MusicChanged()
 {
-	if( GAMESTATE->m_pCurSong == NULL )
+	if( GAMESTATE->m_pCurSong == nullptr )
 	{
 		FOREACH_EnabledPlayer (pn)
 			UpdateDifficulties( pn );
 
 		SOUND->StopMusic();
 		// todo: handle playing section music correctly. -aj
-		// SOUND->PlayMusic( m_sSectionMusicPath, NULL, true, 0, -1 );
+		// SOUND->PlayMusic( m_sSectionMusicPath, nullptr, true, 0, -1 );
 		return;
-	} 
+	}
 
 	FOREACH_EnabledPlayer (pn)
 	{
@@ -549,7 +551,7 @@ void ScreenNetSelectMusic::MusicChanged()
 			SOUND->StopMusic();
 			SOUND->PlayMusic(
 				GAMESTATE->m_pCurSong->GetPreviewMusicPath(),
-				NULL,
+				nullptr,
 				true,
 				GAMESTATE->m_pCurSong->GetPreviewStartSeconds(),
 				GAMESTATE->m_pCurSong->m_fMusicSampleLengthSeconds );
@@ -572,7 +574,7 @@ void ScreenNetSelectMusic::Update( float fDeltaTime )
 /*
  * (c) 2004-2005 Charles Lohr
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -582,7 +584,7 @@ void ScreenNetSelectMusic::Update( float fDeltaTime )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

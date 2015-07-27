@@ -5,6 +5,8 @@
 #include "RageUtil_FileDB.h"
 #include <errno.h>
 
+using std::vector;
+
 struct RageFileObjMemFile
 {
 	RageFileObjMemFile():
@@ -36,7 +38,7 @@ struct RageFileObjMemFile
 
 RageFileObjMem::RageFileObjMem( RageFileObjMemFile *pFile )
 {
-	if( pFile == NULL )
+	if( pFile == nullptr )
 		pFile = new RageFileObjMemFile;
 
 	m_pFile = pFile;
@@ -51,6 +53,7 @@ RageFileObjMem::~RageFileObjMem()
 
 int RageFileObjMem::ReadInternal( void *buffer, size_t bytes )
 {
+	using std::min;
 	LockMut(m_pFile->m_Mutex);
 
 	m_iFilePos = min( m_iFilePos, GetFileSize() );
@@ -147,10 +150,10 @@ RageFileBasic *RageFileDriverMem::Open( const RString &sPath, int mode, int &err
 	}
 
 	RageFileObjMemFile *pFile = (RageFileObjMemFile *) FDB->GetFilePriv( sPath );
-	if( pFile == NULL )
+	if( pFile == nullptr )
 	{
 		err = ENOENT;
-		return NULL;
+		return nullptr;
 	}
 
 	return new RageFileObjMem( pFile );
@@ -161,7 +164,7 @@ bool RageFileDriverMem::Remove( const RString &sPath )
 	LockMut(m_Mutex);
 
 	RageFileObjMemFile *pFile = (RageFileObjMemFile *) FDB->GetFilePriv( sPath );
-	if( pFile == NULL )
+	if( pFile == nullptr )
 		return false;
 
 	/* Unregister the file. */
@@ -184,7 +187,7 @@ static struct FileDriverEntry_MEM: public FileDriverEntry
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -194,7 +197,7 @@ static struct FileDriverEntry_MEM: public FileDriverEntry
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

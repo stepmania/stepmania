@@ -26,12 +26,12 @@ public:
 	virtual void RemoveChild( Actor *pActor );
 	void TransferChildren( ActorFrame *pTo );
 	Actor* GetChild( const RString &sName );
-	vector<Actor*> GetChildren() { return m_SubActors; }
+	std::vector<Actor*> GetChildren() { return m_SubActors; }
 	int GetNumChildren() const { return m_SubActors.size(); }
 
 	/** @brief Remove all of the children from the frame. */
 	void RemoveAllChildren();
-	/** 
+	/**
 	 * @brief Move a particular actor to the tail.
 	 * @param pActor the actor to go to the tail.
 	 */
@@ -56,13 +56,13 @@ public:
 	virtual void PushSelf( lua_State *L );
 	void PushChildrenTable( lua_State *L );
 	void PushChildTable( lua_State *L, const RString &sName );
-	void PlayCommandOnChildren( const RString &sCommandName, const LuaReference *pParamTable = NULL );
-	void PlayCommandOnLeaves( const RString &sCommandName, const LuaReference *pParamTable = NULL );
+	void PlayCommandOnChildren( const RString &sCommandName, const LuaReference *pParamTable = nullptr );
+	void PlayCommandOnLeaves( const RString &sCommandName, const LuaReference *pParamTable = nullptr );
 
-	virtual void RunCommandsRecursively( const LuaReference& cmds, const LuaReference *pParamTable = NULL );
-	virtual void RunCommandsOnChildren( const LuaReference& cmds, const LuaReference *pParamTable = NULL ); /* but not on self */
-	void RunCommandsOnChildren( const apActorCommands& cmds, const LuaReference *pParamTable = NULL ) { this->RunCommandsOnChildren( *cmds, pParamTable ); }	// convenience
-	virtual void RunCommandsOnLeaves( const LuaReference& cmds, const LuaReference *pParamTable = NULL ); /* but not on self */
+	virtual void RunCommandsRecursively( const LuaReference& cmds, const LuaReference *pParamTable = nullptr );
+	virtual void RunCommandsOnChildren( const LuaReference& cmds, const LuaReference *pParamTable = nullptr ); /* but not on self */
+	void RunCommandsOnChildren( const apActorCommands& cmds, const LuaReference *pParamTable = nullptr ) { this->RunCommandsOnChildren( *cmds, pParamTable ); }	// convenience
+	virtual void RunCommandsOnLeaves( const LuaReference& cmds, const LuaReference *pParamTable = nullptr ); /* but not on self */
 
 	virtual void UpdateInternal( float fDeltaTime );
 	virtual void BeginDraw();
@@ -92,14 +92,14 @@ public:
 	virtual float GetTweenTimeLeft() const;
 
 	virtual void HandleMessage( const Message &msg );
-	virtual void RunCommands( const LuaReference& cmds, const LuaReference *pParamTable = NULL );
-	void RunCommands( const apActorCommands& cmds, const LuaReference *pParamTable = NULL ) { this->RunCommands( *cmds, pParamTable ); }	// convenience
+	virtual void RunCommands( const LuaReference& cmds, const LuaReference *pParamTable = nullptr );
+	void RunCommands( const apActorCommands& cmds, const LuaReference *pParamTable = nullptr ) { this->RunCommands( *cmds, pParamTable ); }	// convenience
 
 protected:
 	void LoadChildrenFromNode( const XNode* pNode );
 
 	/** @brief The children Actors used by the ActorFrame. */
-	vector<Actor*>	m_SubActors;
+	std::vector<Actor*> m_SubActors;
 	bool m_bPropagateCommands;
 	bool m_bDeleteChildren;
 	bool m_bDrawByZPosition;
@@ -140,7 +140,7 @@ public:
  * @author Chris Danford (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -150,7 +150,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -3,7 +3,6 @@
 #include <cstring>
 #include "NotesWriterSSC.h"
 #include "BackgroundUtil.h"
-#include "Foreach.h"
 #include "GameManager.h"
 #include "LocalizedString.h"
 #include "NoteTypes.h"
@@ -15,6 +14,8 @@
 #include "RageUtil.h"
 #include "Song.h"
 #include "Steps.h"
+
+using std::vector;
 
 /**
  * @brief Turn a vector of lines into a single line joined by newline characters.
@@ -259,18 +260,20 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 
 	switch( out.m_DisplayBPMType )
 	{
-	case DISPLAY_BPM_ACTUAL:
-		// write nothing
-		break;
-	case DISPLAY_BPM_SPECIFIED:
-		if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
-			f.PutLine( ssprintf( "#DISPLAYBPM:%.6f;", out.m_fSpecifiedBPMMin ) );
-		else
-			f.PutLine( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
-		break;
-	case DISPLAY_BPM_RANDOM:
-		f.PutLine( ssprintf( "#DISPLAYBPM:*;" ) );
-		break;
+		case DISPLAY_BPM_ACTUAL:
+			// write nothing
+			break;
+		case DISPLAY_BPM_SPECIFIED:
+			if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
+				f.PutLine( ssprintf( "#DISPLAYBPM:%.6f;", out.m_fSpecifiedBPMMin ) );
+			else
+				f.PutLine( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
+			break;
+		case DISPLAY_BPM_RANDOM:
+			f.PutLine( ssprintf( "#DISPLAYBPM:*;" ) );
+			break;
+		default:
+			break;
 	}
 
 	WriteTimingTags( f, out.m_SongTiming, true );
@@ -287,8 +290,10 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 		else
 			f.Write( ssprintf("#BGCHANGES%d:", b+1) );
 
-		FOREACH_CONST( BackgroundChange, out.GetBackgroundChanges(b), bgc )
-			f.PutLine( (*bgc).ToString() +"," );
+		for (auto &bgc: out.GetBackgroundChanges(b))
+		{
+			f.PutLine( bgc.ToString() +"," );
+		}
 
 		/* If there's an animation plan at all, add a dummy "-nosongbg-" tag to
 		 * indicate that this file doesn't want a song BG entry added at the end.
@@ -302,9 +307,9 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	if( out.GetForegroundChanges().size() )
 	{
 		f.Write( "#FGCHANGES:" );
-		FOREACH_CONST( BackgroundChange, out.GetForegroundChanges(), bgc )
+		for (auto const &bgc: out.GetForegroundChanges())
 		{
-			f.PutLine( (*bgc).ToString() +"," );
+			f.PutLine( bgc.ToString() +"," );
 		}
 		f.PutLine( ";" );
 	}
@@ -373,7 +378,9 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	{
 		const RadarValues &rv = in.GetRadarValues( pn );
 		FOREACH_ENUM( RadarCategory, rc )
+		{
 			asRadarValues.push_back( ssprintf("%.6f", rv[rc]) );
+		}
 	}
 	lines.push_back( ssprintf( "#RADARVALUES:%s;", join(",",asRadarValues).c_str() ) );
 
@@ -408,6 +415,8 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 		}
 		case DISPLAY_BPM_RANDOM:
 			lines.push_back( ssprintf( "#DISPLAYBPM:*;" ) );
+			break;
+		default:
 			break;
 	}
 	if (bSavingCache)
@@ -446,7 +455,7 @@ bool NotesWriterSSC::Write( RString sPath, const Song &out, const vector<Steps*>
 	}
 
 	WriteGlobalTags( f, out );
-	
+
 	if( bSavingCache )
 	{
 		f.PutLine( ssprintf( "// cache tags:" ) );
@@ -460,9 +469,8 @@ bool NotesWriterSSC::Write( RString sPath, const Song &out, const vector<Steps*>
 	}
 
 	// Save specified Steps to this file
-	FOREACH_CONST( Steps*, vpStepsToSave, s ) 
+	for (auto const *pSteps: vpStepsToSave)
 	{
-		const Steps* pSteps = *s;
 		RString sTag = GetSSCNoteData( out, *pSteps, bSavingCache );
 		f.PutLine( sTag );
 	}
@@ -512,8 +520,8 @@ bool NotesWriterSSC::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, R
 	RString sPath = sDir + GetEditFileName(pSong,pSteps);
 
 	// Check to make sure that we're not clobering an existing file before opening.
-	bool bFileNameChanging = 
-		pSteps->GetSavedToDisk()  && 
+	bool bFileNameChanging =
+		pSteps->GetSavedToDisk()  &&
 		pSteps->GetFilename() != sPath;
 	if( bFileNameChanging  &&  DoesFileExist(sPath) )
 	{
@@ -549,7 +557,7 @@ bool NotesWriterSSC::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, R
 /*
  * (c) 2011 Jason Felds
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -559,7 +567,7 @@ bool NotesWriterSSC::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, R
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

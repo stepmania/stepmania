@@ -122,6 +122,35 @@ inline bool operator>=(RageTextureID const &lhs, RageTextureID const &rhs)
   return !operator<(lhs, rhs);
 }
 
+namespace std
+{
+	template<>
+		struct hash<RageTextureID>
+	{
+		std::size_t operator()(RageTextureID const& s) const
+		{
+			vector<std::size_t> const hashes{
+				std::hash<std::string>()(s.filename),
+					std::hash<int>()(s.iMaxSize),
+					std::hash<bool>()(s.bMipMaps),
+					std::hash<int>()(s.iAlphaBits),
+					std::hash<int>()(s.iGrayscaleBits),
+					std::hash<int>()(s.iColorDepth),
+					std::hash<bool>()(s.bDither),
+					std::hash<bool>()(s.bStretch),
+					std::hash<bool>()(s.bHotPinkColorKey),
+					std::hash<std::string>()(s.AdditionalTextureHints)
+					};
+			std::size_t curr_hash= 0;
+			for(auto const& h: hashes)
+			{
+				curr_hash= curr_hash ^ (h << 1);
+			}
+			return curr_hash;
+		}
+	};
+}
+
 #endif
 
 /*

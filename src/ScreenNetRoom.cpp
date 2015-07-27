@@ -11,6 +11,8 @@
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
 
+using std::vector;
+
 AutoScreenMessage( SM_SMOnlinePack );
 AutoScreenMessage( SM_BackFromRoomName );
 AutoScreenMessage( SM_BackFromRoomDesc );
@@ -177,7 +179,7 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 	{
 		int i = m_RoomWheel.GetCurrentIndex() - m_RoomWheel.GetPerminateOffset();
 		const RoomWheelItemData* data = m_RoomWheel.GetItem(i);
-		if( data != NULL )
+		if( data != nullptr )
 			m_roomInfo.SetRoom( data );
 	}
 
@@ -192,14 +194,14 @@ void ScreenNetRoom::TweenOffScreen()
 bool ScreenNetRoom::MenuStart( const InputEventPlus &input )
 {
 	m_RoomWheel.Select();
-	RoomWheelItemData* rwd = dynamic_cast<RoomWheelItemData*>( m_RoomWheel.LastSelected() ); 
+	RoomWheelItemData* rwd = dynamic_cast<RoomWheelItemData*>( m_RoomWheel.LastSelected() );
 	if( rwd )
 	{
 		if ( rwd->m_iFlags % 2 )
 		{
 			m_sLastPickedRoom = rwd->m_sText;
 			ScreenTextEntry::TextEntry( SM_BackFromReqPass, ENTER_ROOM_REQPASSWORD, "", 255 );
-		} 
+		}
 		else
 		{
 			NSMAN->m_SMOnlinePacket.ClearPacket();
@@ -250,7 +252,7 @@ bool ScreenNetRoom::MenuRight( const InputEventPlus &input )
 void ScreenNetRoom::UpdateRoomsList()
 {
 	int difference = 0;
-	RoomWheelItemData* itemData = NULL;
+	RoomWheelItemData* itemData = nullptr;
 
 	difference = m_RoomWheel.GetNumItems() - m_Rooms.size();
 
@@ -318,7 +320,7 @@ void ScreenNetRoom::CreateNewRoom( const RString& rName,  const RString& rDesc, 
  * (c) 2004 Charles Lohr, Josh Allen
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -328,7 +330,7 @@ void ScreenNetRoom::CreateNewRoom( const RString& rName,  const RString& rDesc, 
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

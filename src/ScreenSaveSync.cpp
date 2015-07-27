@@ -6,6 +6,8 @@
 #include "LocalizedString.h"
 #include "AdjustSync.h"
 
+using std::vector;
+
 static LocalizedString CHANGED_TIMING_OF	("ScreenSaveSync","You have changed the timing of");
 static LocalizedString WOULD_YOU_LIKE_TO_SAVE	("ScreenSaveSync","Would you like to save these changes?");
 static LocalizedString CHOOSING_NO_WILL_DISCARD	("ScreenSaveSync","Choosing NO will discard your changes.");
@@ -25,10 +27,10 @@ static RString GetPromptText()
 		AdjustSync::GetSyncChangeTextSong( vs );
 		if( !vs.empty() )
 		{
-			s += ssprintf( 
+			s += ssprintf(
 				CHANGED_TIMING_OF.GetValue()+"\n"
 				"%s:\n"
-				"\n", 
+				"\n",
 				GAMESTATE->m_pCurSong->GetDisplayFullTitle().c_str() );
 
 			s += join( "\n", vs ) + "\n\n";
@@ -39,7 +41,7 @@ static RString GetPromptText()
 		CHOOSING_NO_WILL_DISCARD.GetValue();
 	return s;
 }
-			
+
 static void SaveSyncChanges( void* pThrowAway )
 {
 	AdjustSync::SaveSyncChanges();
@@ -55,31 +57,31 @@ void ScreenSaveSync::Init()
 	ScreenPrompt::Init();
 
 	ScreenPrompt::SetPromptSettings(
-		GetPromptText(), 
-		PROMPT_YES_NO, 
-		ANSWER_YES, 
-		SaveSyncChanges, 
-		RevertSyncChanges, 
-		NULL );
+		GetPromptText(),
+		PROMPT_YES_NO,
+		ANSWER_YES,
+		SaveSyncChanges,
+		RevertSyncChanges,
+		nullptr );
 }
 
 void ScreenSaveSync::PromptSaveSync( ScreenMessage sm )
 {
 	ScreenPrompt::Prompt(
 		sm,
-		GetPromptText(), 
-		PROMPT_YES_NO, 
-		ANSWER_YES, 
-		SaveSyncChanges, 
-		RevertSyncChanges, 
-		NULL );
+		GetPromptText(),
+		PROMPT_YES_NO,
+		ANSWER_YES,
+		SaveSyncChanges,
+		RevertSyncChanges,
+		nullptr );
 }
 
 
 /*
  * (c) 2001-2005 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -89,7 +91,7 @@ void ScreenSaveSync::PromptSaveSync( ScreenMessage sm )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

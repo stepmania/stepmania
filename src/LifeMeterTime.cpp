@@ -50,7 +50,7 @@ LifeMeterTime::LifeMeterTime()
 {
 	m_fLifeTotalGainedSeconds = 0;
 	m_fLifeTotalLostSeconds = 0;
-	m_pStream = NULL;
+	m_pStream = nullptr;
 }
 
 LifeMeterTime::~LifeMeterTime()
@@ -100,7 +100,7 @@ void LifeMeterTime::OnLoadSong()
 	if(GAMESTATE->IsCourseMode())
 	{
 		Course* pCourse = GAMESTATE->m_pCurCourse;
-		ASSERT( pCourse != NULL );
+		ASSERT( pCourse != nullptr );
 		fGainSeconds= pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()].fGainSeconds;
 	}
 	else
@@ -108,10 +108,10 @@ void LifeMeterTime::OnLoadSong()
 		// Placeholderish, at least this way it won't crash when someone tries it
 		// out in non-course mode. -Kyz
 		Song* song= GAMESTATE->m_pCurSong;
-		ASSERT(song != NULL);
+		ASSERT(song != nullptr);
 		float song_len= song->m_fMusicLengthSeconds;
 		Steps* steps= GAMESTATE->m_pCurSteps[m_pPlayerState->m_PlayerNumber];
-		ASSERT(steps != NULL);
+		ASSERT(steps != nullptr);
 		RadarValues radars= steps->GetRadarValues(m_pPlayerState->m_PlayerNumber);
 		float scorable_things= radars[RadarCategory_TapsAndHolds] +
 			radars[RadarCategory_Lifts];
@@ -212,11 +212,12 @@ bool LifeMeterTime::IsFailing() const
 
 void LifeMeterTime::Update( float fDeltaTime )
 {
+	using std::max;
 	// update current stage stats so ScoreDisplayLifeTime can show the right thing
 	float fSecs = GetLifeSeconds();
-	fSecs = max( 0, fSecs );
+	fSecs = max( 0.f, fSecs );
 	m_pPlayerStageStats->m_fLifeRemainingSeconds = fSecs;
-	
+
 	LifeMeter::Update( fDeltaTime );
 
 	m_pStream->SetPercent( GetLife() );
@@ -245,7 +246,7 @@ float LifeMeterTime::GetLifeSeconds() const
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -255,7 +256,7 @@ float LifeMeterTime::GetLifeSeconds() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -11,10 +11,11 @@
 #include "ThemeManager.h"
 #include "RageTextureManager.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
 #include "Style.h"
 #include "ThemeMetric.h"
 #include "ScreenDimensions.h"
+
+using std::vector;
 
 const int MAX_WHEEL_SOUND_SPEED = 15;
 AutoScreenMessage( SM_SongChanged ); // TODO: Replace this with a Message and MESSAGEMAN
@@ -34,19 +35,21 @@ LuaXType( WheelState );
 
 WheelBase::~WheelBase()
 {
-	FOREACH( WheelItemBase*, m_WheelBaseItems, i )
-		SAFE_DELETE( *i );
+	for (auto *i: m_WheelBaseItems)
+	{
+		SAFE_DELETE( i );
+	}
 	m_WheelBaseItems.clear();
-	m_LastSelection = NULL;
+	m_LastSelection = nullptr;
 }
 
-void WheelBase::Load( RString sType ) 
+void WheelBase::Load( RString sType )
 {
 	LOG->Trace( "WheelBase::Load('%s')", sType.c_str() );
 	ASSERT( this->GetNumChildren() == 0 ); // only load once
 
 	m_bEmpty = false;
-	m_LastSelection = NULL;
+	m_LastSelection = nullptr;
 	m_iSelection = 0;
 	m_fTimeLeftInState = 0;
 	m_fPositionOffsetFromSelection = 0;
@@ -86,7 +89,7 @@ void WheelBase::Load( RString sType )
 	ActorUtil::LoadAllCommands( *m_sprHighlight, m_sName );
 
 	m_ScrollBar.SetName( "ScrollBar" );
-	m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT ); 
+	m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT );
 	this->AddChild( &m_ScrollBar );
 	ActorUtil::LoadAllCommands( m_ScrollBar, m_sName );
 
@@ -180,7 +183,7 @@ void WheelBase::Update( float fDeltaTime )
 	if( m_Moving )
 	{
 		m_TimeBeforeMovingBegins -= fDeltaTime;
-		m_TimeBeforeMovingBegins = max(m_TimeBeforeMovingBegins, 0);
+		m_TimeBeforeMovingBegins = std::max(m_TimeBeforeMovingBegins, 0.f);
 	}
 
 	// update wheel state
@@ -195,7 +198,7 @@ void WheelBase::Update( float fDeltaTime )
 		float fTime = fDeltaTime;
 		while( fTime > 0 )
 		{
-			float t = min( fTime, 0.1f );
+			float t = std::min( fTime, 0.1f );
 			fTime -= t;
 
 			m_fPositionOffsetFromSelection = clamp( m_fPositionOffsetFromSelection, -0.3f, +0.3f );
@@ -317,7 +320,7 @@ WheelItemBaseData* WheelBase::GetItem( unsigned int iIndex )
 	if( !m_bEmpty && iIndex < m_CurWheelItemData.size() )
 		return m_CurWheelItemData[iIndex];
 
-	return NULL;
+	return nullptr;
 }
 
 int WheelBase::IsMoving() const
@@ -396,8 +399,8 @@ bool WheelBase::MoveSpecific( int n )
 {
 	/* If we're not selecting, discard this.  We won't ignore it; we'll
 	 * get called again every time the key is repeated. */
-	/* Still process Move(0) so we sometimes continue moving immediate 
-	 * after the sort change finished and before the repeat event causes a 
+	/* Still process Move(0) so we sometimes continue moving immediate
+	 * after the sort change finished and before the repeat event causes a
 	 * Move(0). -Chris */
 	switch( m_WheelState )
 	{
@@ -499,7 +502,7 @@ void WheelBase::RebuildWheelItems( int iDist )
 WheelItemBaseData* WheelBase::LastSelected()
 {
 	if( m_bEmpty )
-		return NULL;
+		return nullptr;
 	else
 		return m_LastSelection;
 }
@@ -510,7 +513,7 @@ int WheelBase::FirstVisibleIndex()
 	int iFirstVisibleIndex = m_iSelection;
 	if( m_iSelection >= int(m_CurWheelItemData.size()) )
 		m_iSelection = 0;
-	
+
 	// find the first wheel item shown
 	iFirstVisibleIndex -= NUM_WHEEL_ITEMS/2;
 
@@ -521,7 +524,7 @@ int WheelBase::FirstVisibleIndex()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the WheelBase. */ 
+/** @brief Allow Lua to have access to the WheelBase. */
 class LunaWheelBase: public Luna<WheelBase>
 {
 public:
@@ -531,7 +534,7 @@ public:
 		int iItem = IArg(1);
 
 		WheelItemBase *pItem = p->GetWheelItem( iItem );
-		if( pItem == NULL )
+		if( pItem == nullptr )
 			luaL_error( L, "%i out of bounds", iItem );
 		pItem->PushSelf( L );
 
@@ -572,7 +575,7 @@ LUA_REGISTER_DERIVED_CLASS( WheelBase, ActorFrame )
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez, Glenn Maynard, Josh Allen
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -582,7 +585,7 @@ LUA_REGISTER_DERIVED_CLASS( WheelBase, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

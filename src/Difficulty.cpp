@@ -1,5 +1,8 @@
 #include "global.h"
 #include "Difficulty.h"
+
+#include <memory>
+
 #include "GameState.h"
 #include "ThemeMetric.h"
 #include "LuaManager.h"
@@ -8,6 +11,11 @@
 #include "GameManager.h"
 #include "Steps.h"
 #include "Trail.h"
+
+#include <unordered_map>
+
+using std::string;
+using std::vector;
 
 static const char *DifficultyNames[] = {
 	"Beginner",
@@ -23,13 +31,13 @@ LuaXType( Difficulty );
 
 const RString &CourseDifficultyToLocalizedString( CourseDifficulty x )
 {
-	static auto_ptr<LocalizedString> g_CourseDifficultyName[NUM_Difficulty];
-	if( g_CourseDifficultyName[0].get() == NULL )
+	static std::unique_ptr<LocalizedString> g_CourseDifficultyName[NUM_Difficulty];
+	if( g_CourseDifficultyName[0].get() == nullptr )
 	{
 		FOREACH_ENUM( Difficulty,i)
 		{
-			auto_ptr<LocalizedString> ap( new LocalizedString("CourseDifficulty", DifficultyToString(i)) );
-			g_CourseDifficultyName[i] = ap;
+			std::unique_ptr<LocalizedString> ap( new LocalizedString("CourseDifficulty", DifficultyToString(i)) );
+			g_CourseDifficultyName[i] = std::move(ap);
 		}
 	}
 	return g_CourseDifficultyName[x]->GetValue();
@@ -49,7 +57,7 @@ CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty cd )
 
 struct OldStyleStringToDifficultyMapHolder
 {
-	std::map<RString, Difficulty> conversion_map;
+	std::unordered_map<string, Difficulty> conversion_map;
 	OldStyleStringToDifficultyMapHolder()
 	{
 		conversion_map["beginner"]= Difficulty_Beginner;
@@ -77,8 +85,7 @@ Difficulty OldStyleStringToDifficulty( const RString& sDC )
 {
 	RString s2 = sDC;
 	s2.MakeLower();
-	std::map<RString, Difficulty>::iterator diff=
-		OldStyleStringToDifficulty_converter.conversion_map.find(s2);
+	auto diff= OldStyleStringToDifficulty_converter.conversion_map.find(s2);
 	if(diff != OldStyleStringToDifficulty_converter.conversion_map.end())
 	{
 		return diff->second;
@@ -114,18 +121,18 @@ RString GetCustomDifficulty( StepsType st, Difficulty dc, CourseType ct )
 	// OPTIMIZATION OPPORTUNITY: cache these metrics and cache the splitting
 	vector<RString> vsNames;
 	split( NAMES, ",", vsNames );
-	FOREACH( RString, vsNames, sName )
+	for (auto &sName: vsNames)
 	{
-		ThemeMetric<StepsType> STEPS_TYPE("CustomDifficulty",(*sName)+"StepsType");
+		ThemeMetric<StepsType> STEPS_TYPE("CustomDifficulty",sName+"StepsType");
 		if( STEPS_TYPE == StepsType_Invalid  ||  st == STEPS_TYPE )	// match
 		{
-			ThemeMetric<Difficulty> DIFFICULTY("CustomDifficulty",(*sName)+"Difficulty");
+			ThemeMetric<Difficulty> DIFFICULTY("CustomDifficulty",sName+"Difficulty");
 			if( DIFFICULTY == Difficulty_Invalid  ||  dc == DIFFICULTY )	// match
 			{
-				ThemeMetric<CourseType> COURSE_TYPE("CustomDifficulty",(*sName)+"CourseType");
+				ThemeMetric<CourseType> COURSE_TYPE("CustomDifficulty",sName+"CourseType");
 				if( COURSE_TYPE == CourseType_Invalid  ||  ct == COURSE_TYPE )	// match
 				{
-					ThemeMetric<RString> STRING("CustomDifficulty",(*sName)+"String");
+					ThemeMetric<RString> STRING("CustomDifficulty",sName+"String");
 					return STRING.GetValue();
 				}
 			}
@@ -165,7 +172,7 @@ LuaFunction( TrailToCustomDifficulty, TrailToCustomDifficulty(Luna<Trail>::check
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -175,7 +182,7 @@ LuaFunction( TrailToCustomDifficulty, TrailToCustomDifficulty(Luna<Trail>::check
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

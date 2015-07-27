@@ -3,12 +3,13 @@
 #include "ScreenManager.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
-#include "Foreach.h"
 #include "ScreenDimensions.h"
 #include "GameState.h"
 #include "FontCharAliases.h"
 #include "OptionRowHandler.h"
 #include "PrefsManager.h"
+
+using std::vector;
 
 void PrepareToLoadScreen( const RString &sScreenName );
 void FinishedLoadingScreen();
@@ -27,7 +28,7 @@ void FinishedLoadingScreen() {}
 // Settings:
 namespace
 {
-	const MenuDef* g_pMenuDef = NULL;
+	const MenuDef* g_pMenuDef = nullptr;
 	ScreenMessage g_SendOnOK;
 	ScreenMessage g_SendOnCancel;
 };
@@ -59,12 +60,12 @@ void ScreenMiniMenu::Init()
 
 void ScreenMiniMenu::BeginScreen()
 {
-	ASSERT( g_pMenuDef != NULL );
+	ASSERT( g_pMenuDef != nullptr );
 
 	LoadMenu( g_pMenuDef );
 	m_SMSendOnOK = g_SendOnOK;
 	m_SMSendOnCancel = g_SendOnCancel;
-	g_pMenuDef = NULL;
+	g_pMenuDef = nullptr;
 
 	ScreenOptions::BeginScreen();
 
@@ -159,7 +160,7 @@ bool ScreenMiniMenu::FocusedItemEndsScreen( PlayerNumber pn ) const
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -169,7 +170,7 @@ bool ScreenMiniMenu::FocusedItemEndsScreen( PlayerNumber pn ) const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

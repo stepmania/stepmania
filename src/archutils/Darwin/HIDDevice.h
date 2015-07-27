@@ -11,10 +11,12 @@
 #include <mach/mach_error.h>
 #include <vector>
 #include <utility>
-#include <ext/hash_map>
+#include <unordered_map>
 
 #include "RageLog.h"
 #include "RageInputDevice.h"
+
+using std::vector;
 
 /* A few helper functions. */
 
@@ -41,20 +43,6 @@ inline Boolean LongValue( CFTypeRef o, long &n )
 	if( !o || CFGetTypeID(o) != CFNumberGetTypeID() )
 		return false;
 	return CFNumberGetValue( CFNumberRef(o), kCFNumberLongType, &n );
-}
-
-namespace __gnu_cxx
-{
-#ifndef __LP64__
-	template<>
-	struct hash<IOHIDElementCookie> : private hash<uintptr_t>
-	{
-		size_t operator()( const IOHIDElementCookie& cookie ) const
-		{
-			return hash<unsigned long>::operator()( uintptr_t(cookie) );
-		}
-	};
-#endif
 }
 
 /* This is just awful, these aren't objects, treating them as such
@@ -101,7 +89,7 @@ protected:
 	// Perform a synchronous set report on the HID interface.
 	inline IOReturn SetReport( IOHIDReportType type, UInt32 reportID, void *buffer, UInt32 size, UInt32 timeoutMS )
 	{
-		return CALL( m_Interface, setReport, type, reportID, buffer, size, timeoutMS, NULL, NULL, NULL );
+		return CALL( m_Interface, setReport, type, reportID, buffer, size, timeoutMS, nullptr, nullptr, nullptr );
 	}
 public:
 	HIDDevice();

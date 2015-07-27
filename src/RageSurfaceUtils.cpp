@@ -134,7 +134,7 @@ void RageSurfaceUtils::CopySurface( const RageSurface *src, RageSurface *dest )
 	// Copy the palette, if we have one.
 	if( src->format->BitsPerPixel == 8 && dest->format->BitsPerPixel == 8 )
 	{
-		ASSERT( dest->fmt.palette != NULL );
+		ASSERT( dest->fmt.palette != nullptr );
 		*dest->fmt.palette = *src->fmt.palette;
 	}
 
@@ -151,7 +151,7 @@ bool RageSurfaceUtils::ConvertSurface( const RageSurface *src, RageSurface *&dst
 	if( width == src->w && height == src->h && src->format->Equivalent( *dst->format ) )
 	{
 		delete dst;
-		dst = NULL;
+		dst = nullptr;
 		return false;
 	}
 
@@ -278,7 +278,7 @@ static void SetAlphaRGB(const RageSurface *pImg, uint8_t r, uint8_t g, uint8_t b
  *
  * A few images don't. We can only make a guess here. After the above
  * search, do the same in reverse (bottom-top-right-left). If the color
- * we find is different, just set the border color to black.  
+ * we find is different, just set the border color to black.
  */
 void RageSurfaceUtils::FixHiddenAlpha( RageSurface *pImg )
 {
@@ -304,6 +304,7 @@ void RageSurfaceUtils::FixHiddenAlpha( RageSurface *pImg )
  * color resolution; a TRAIT_NO_TRANSPARENCY could also use R5G6B5. */
 int RageSurfaceUtils::FindSurfaceTraits( const RageSurface *img )
 {
+	using std::max;
 	const int NEEDS_NO_ALPHA=0, NEEDS_BOOL_ALPHA=1, NEEDS_FULL_ALPHA=2;
 	int alpha_type = NEEDS_NO_ALPHA;
 
@@ -356,7 +357,7 @@ int RageSurfaceUtils::FindSurfaceTraits( const RageSurface *img )
 	}
 
 	int ret = 0;
-	switch( alpha_type ) 
+	switch( alpha_type )
 	{
 	case NEEDS_NO_ALPHA:	ret |= TRAIT_NO_TRANSPARENCY;	break;
 	case NEEDS_BOOL_ALPHA:	ret |= TRAIT_BOOL_TRANSPARENCY;	break;
@@ -384,7 +385,7 @@ static inline float scale( float x, float l1, float h1, float l2, float h2 )
 }
 
 // Completely unoptimized.
-void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst, 
+void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst,
 					const float fCoords[8] /* TL, BR, BL, TR */ )
 {
 	ASSERT( src->format->BytesPerPixel == dst->format->BytesPerPixel );
@@ -648,6 +649,7 @@ static bool blit_generic( const RageSurface *src_surf, const RageSurface *dst_su
 // Blit src onto dst.
 void RageSurfaceUtils::Blit( const RageSurface *src, RageSurface *dst, int width, int height )
 {
+	using std::min;
 	if( width == -1 )
 		width = src->w;
 	if( height == -1 )
@@ -772,26 +774,26 @@ RageSurface *RageSurfaceUtils::LoadSurface( RString file )
 {
 	RageFile f;
 	if( !f.Open( file ) )
-		return NULL;
+		return nullptr;
 
 	SurfaceHeader h;
 	if( f.Read( &h, sizeof(h) ) != sizeof(h) )
-		return NULL;
+		return nullptr;
 
 	RageSurfacePalette palette;
 	if( h.bpp == 8 )
 	{
 		if( f.Read( &palette.ncolors, sizeof(palette.ncolors) ) != sizeof(palette.ncolors) )
-			return NULL;
+			return nullptr;
 		ASSERT_M( palette.ncolors <= 256, ssprintf("%i", palette.ncolors) );
 		if( f.Read( palette.colors, palette.ncolors * sizeof(RageSurfaceColor) ) != int(palette.ncolors * sizeof(RageSurfaceColor)) )
-			return NULL;
+			return nullptr;
 	}
 
 	// Create the surface.
 	RageSurface *img = CreateSurface( h.width, h.height, h.bpp,
 			h.Rmask, h.Gmask, h.Bmask, h.Amask );
-	ASSERT( img != NULL );
+	ASSERT( img != nullptr );
 
 	/* If the pitch has changed, this surface is either corrupt, or was
 	 * created with a different version whose CreateSurface() behavior
@@ -801,13 +803,13 @@ RageSurface *RageSurfaceUtils::LoadSurface( RString file )
 		LOG->Trace( "Error loading \"%s\": expected pitch %i, got %i (%ibpp, %i width)",
 				file.c_str(), h.pitch, img->pitch, h.bpp, h.width );
 		delete img;
-		return NULL;
+		return nullptr;
 	}
 
 	if( f.Read( img->pixels, h.height * h.pitch ) != h.height * h.pitch )
 	{
 		delete img;
-		return NULL;
+		return nullptr;
 	}
 
 	// Set the palette.
@@ -835,6 +837,7 @@ RageSurface *RageSurfaceUtils::LoadSurface( RString file )
  * This gives us a generic way to handle arbitrary 8-bit texture formats. */
 RageSurface *RageSurfaceUtils::PalettizeToGrayscale( const RageSurface *src_surf, int GrayBits, int AlphaBits )
 {
+	using std::min;
 	AlphaBits = min( AlphaBits, 8-src_surf->format->Loss[3] );
 
 	const int TotalBits = GrayBits + AlphaBits;

@@ -10,7 +10,6 @@
 #include "Course.h"
 #include "Style.h"
 #include "ActorUtil.h"
-#include "Foreach.h"
 #include "LuaManager.h"
 #include "XmlFile.h"
 #include "PlayerStageStats.h"
@@ -66,7 +65,7 @@ void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 	EMPTY_MACHINE_HIGH_SCORE_NAME.Load( sMetricsGroup, "EmptyMachineHighScoreName" );
 	NOT_AVAILABLE.Load( sMetricsGroup, "NotAvailable" );
 	COUNT_FORMAT.Load( sMetricsGroup, "CountFormat" );
-	NULL_COUNT_STRING.Load( sMetricsGroup, "NullCountString" );
+	nullptr_COUNT_STRING.Load( sMetricsGroup, "NullCountString" );
 
 	FOREACH_ENUM( PaneCategory, pc )
 	{
@@ -131,11 +130,11 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 	const Steps *pSteps = GAMESTATE->m_pCurSteps[m_PlayerNumber];
 	const Course *pCourse = GAMESTATE->m_pCurCourse;
 	const Trail *pTrail = GAMESTATE->m_pCurTrail[m_PlayerNumber];
-	const Profile *pProfile = PROFILEMAN->IsPersistentProfile(m_PlayerNumber) ? PROFILEMAN->GetProfile(m_PlayerNumber) : NULL;
+	const Profile *pProfile = PROFILEMAN->IsPersistentProfile(m_PlayerNumber) ? PROFILEMAN->GetProfile(m_PlayerNumber) : nullptr;
 	bool bIsPlayerEdit = pSteps && pSteps->IsAPlayerEdit();
 
 	// Defaults, will be filled in later
-	sTextOut = NULL_COUNT_STRING;
+	sTextOut = nullptr_COUNT_STRING;
 	fLevelOut = 0;
 
 	if(GAMESTATE->IsCourseMode() && !pTrail)
@@ -191,7 +190,7 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 
 	{
 		RadarValues rv;
-		HighScoreList *pHSL = NULL;
+		HighScoreList *pHSL = nullptr;
 		ProfileSlot slot = ProfileSlot_Machine;
 		switch( c )
 		{
@@ -336,7 +335,7 @@ void PaneDisplay::SetFromGameState()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the PaneDisplay. */ 
+/** @brief Allow Lua to have access to the PaneDisplay. */
 class LunaPaneDisplay: public Luna<PaneDisplay>
 {
 public:
@@ -354,7 +353,7 @@ LUA_REGISTER_DERIVED_CLASS( PaneDisplay, ActorFrame )
 /*
  * (c) 2003 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -364,7 +363,7 @@ LUA_REGISTER_DERIVED_CLASS( PaneDisplay, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -1,17 +1,17 @@
 /*
- * AdjustSync defines two methods for fixing the sync.  
+ * AdjustSync defines two methods for fixing the sync.
  *
- * The first method adjusts either the song or the machine by the 
+ * The first method adjusts either the song or the machine by the
  * average offset of the user's steps.  In other words, if the user
  * averages to step early by 10 ms, either the song or the global
- * offset is adjusted by 10 ms to compensate for that.  These 
+ * offset is adjusted by 10 ms to compensate for that.  These
  * adjustments only require a small set of data, so this method
  * updates the offset while the song is playing.
  *
  * The second method adjusts both the offset and the tempo of an
  * individual song.  It records all of the steps during a play of
  * the song and uses linear least squares regression to minimize the
- * error of those steps.  It makes one adjustment for the tempo of 
+ * error of those steps.  It makes one adjustment for the tempo of
  * the entire song, rather than adding many different tempo segments
  * to match the steps.  If there are already several tempo segments
  * in the stepfile, this method makes a proportional change to each
@@ -19,8 +19,8 @@
  * also change 200 bpm to 202 bpm.  This method also adjusts the stops.
  * It assumes that a given stop is measured in terms of beats and makes
  * the appropriate change.
- * 
- * If we use this method on a small set of data late in the song, it 
+ *
+ * If we use this method on a small set of data late in the song, it
  * can have very chaotic effects on the early settings.  For example,
  * it may change the offset by several hundred milliseconds and make a
  * large change to the BPM to compensate if that would minimize the
@@ -29,7 +29,7 @@
  * perform the least squares regression once on all of the data
  * collected, rather than adjusting the sync every time we get another
  * 50 or so data points.  In fact, if we are playing in edit mode and
- * the user loops through the song more than once, we use all of the 
+ * the user loops through the song more than once, we use all of the
  * steps made.
  */
 
@@ -41,14 +41,15 @@
 #include "LocalizedString.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"
-#include "Foreach.h"
+
+using std::vector;
 
 vector<TimingData> AdjustSync::s_vpTimingDataOriginal;
 float AdjustSync::s_fGlobalOffsetSecondsOriginal = 0.0f;
 int AdjustSync::s_iAutosyncOffsetSample = 0;
 float AdjustSync::s_fAutosyncOffset[AdjustSync::OFFSET_SAMPLE_COUNT];
 float AdjustSync::s_fStandardDeviation = 0.0f;
-vector< pair<float, float> > AdjustSync::s_vAutosyncTempoData;
+vector< std::pair<float, float> > AdjustSync::s_vAutosyncTempoData;
 float AdjustSync::s_fAverageError = 0.0f;
 const float AdjustSync::ERROR_TOO_HIGH = 0.025f;
 int AdjustSync::s_iStepsFiltered = 0;
@@ -60,10 +61,10 @@ void AdjustSync::ResetOriginalSyncData()
 	if( GAMESTATE->m_pCurSong )
 	{
 		s_vpTimingDataOriginal.push_back(GAMESTATE->m_pCurSong->m_SongTiming);
-		const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
-		FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
+		auto const & vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+		for (auto *s: vpSteps)
 		{
-			s_vpTimingDataOriginal.push_back((*s)->m_Timing);
+			s_vpTimingDataOriginal.push_back(s->m_Timing);
 		}
 	}
 	else
@@ -127,10 +128,10 @@ void AdjustSync::RevertSyncChanges()
 	GAMESTATE->m_pCurSong->m_SongTiming = s_vpTimingDataOriginal[0];
 
 	unsigned location = 1;
-	const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
-	FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
+	auto const & vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+	for (auto *s: vpSteps)
 	{
-		(*s)->m_Timing = s_vpTimingDataOriginal[location];
+		s->m_Timing = s_vpTimingDataOriginal[location];
 		location++;
 	}
 
@@ -152,7 +153,7 @@ void AdjustSync::HandleAutosync( float fNoteOffBySeconds, float fStepTime )
 	case AutosyncType_Tempo:
 	{
 		// We collect all of the data and process it at the end
-		s_vAutosyncTempoData.push_back( make_pair(fStepTime, fNoteOffBySeconds) );
+		s_vAutosyncTempoData.push_back( std::make_pair(fStepTime, fNoteOffBySeconds) );
 		break;
 	}
 	case AutosyncType_Machine:
@@ -161,7 +162,7 @@ void AdjustSync::HandleAutosync( float fNoteOffBySeconds, float fStepTime )
 		s_fAutosyncOffset[s_iAutosyncOffsetSample] = fNoteOffBySeconds;
 		++s_iAutosyncOffsetSample;
 
-		if( s_iAutosyncOffsetSample < OFFSET_SAMPLE_COUNT ) 
+		if( s_iAutosyncOffsetSample < OFFSET_SAMPLE_COUNT )
 			break; // need more
 
 		AutosyncOffset();
@@ -198,14 +199,14 @@ void AdjustSync::AutosyncOffset()
 			case AutosyncType_Song:
 			{
 				GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += mean;
-				const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
-				FOREACH( Steps*, const_cast<vector<Steps *>&>(vpSteps), s )
+				auto const & vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+				for (auto *s: vpSteps)
 				{
 					// Empty TimingData means it's inherited
 					// from the song and is already changed.
-					if( (*s)->m_Timing.empty() )
+					if( s->m_Timing.empty() )
 						continue;
-					(*s)->m_Timing.m_fBeat0OffsetInSeconds += mean;
+					s->m_Timing.m_fBeat0OffsetInSeconds += mean;
 				}
 				break;
 			}
@@ -298,7 +299,7 @@ static LocalizedString GLOBAL_OFFSET_FROM	( "AdjustSync", "Global Offset from %+
 // We need to limit the length of lines so each one fits on one line of the SM console.
 // The tempo and stop change message can get very long in a complicated song, and at
 // a low resolution, the keep/revert menu would be pushed off the bottom of the screen
-// if we didn't limit the length of the message.  Keeping the lines short lets us fit 
+// if we didn't limit the length of the message.  Keeping the lines short lets us fit
 // more information on the screen.
 static LocalizedString SONG_OFFSET_FROM		( "AdjustSync", "Song offset from %+.3f to %+.3f (notes %s)" );
 static LocalizedString TEMPO_SEGMENT_FROM	( "AdjustSync", "%s BPM from %.3f BPM to %.3f BPM." );
@@ -316,7 +317,7 @@ void AdjustSync::GetSyncChangeTextGlobal( vector<RString> &vsAddTo )
 
 		if( fabsf(fDelta) > 0.0001f )
 		{
-			vsAddTo.push_back( ssprintf( 
+			vsAddTo.push_back( ssprintf(
 				GLOBAL_OFFSET_FROM.GetValue(),
 				fOld, fNew,
 				(fDelta > 0 ? EARLIER:LATER).GetValue().c_str() ));
@@ -346,9 +347,9 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 
 			if( fabsf(fDelta) > 0.0001f )
 			{
-				vsAddTo.push_back( ssprintf( 
+				vsAddTo.push_back( ssprintf(
 					SONG_OFFSET_FROM.GetValue(),
-					fOld, 
+					fOld,
 					fNew,
 					(fDelta > 0 ? EARLIER:LATER).GetValue().c_str() ) );
 			}
@@ -442,7 +443,7 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 /*
  * (c) 2003-2006 Chris Danford, John Bauer
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -452,7 +453,7 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

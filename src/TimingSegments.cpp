@@ -2,6 +2,8 @@
 #include "TimingSegments.h"
 #include "EnumHelper.h"
 
+using std::vector;
+
 const double TimingSegment::EPSILON = 1e-6;
 
 static const char *TimingSegmentTypeNames[] = {
@@ -173,8 +175,8 @@ RString ComboSegment::ToString(int dec) const
 vector<float> ComboSegment::GetValues() const
 {
 	vector<float> ret;
-	ret.push_back(GetCombo());
-	ret.push_back(GetMissCombo());
+	ret.push_back(static_cast<float>(GetCombo()));
+	ret.push_back(static_cast<float>(GetMissCombo()));
 	return ret;
 }
 
@@ -200,8 +202,8 @@ RString TimeSignatureSegment::ToString(int dec) const
 vector<float> TimeSignatureSegment::GetValues() const
 {
 	vector<float> ret;
-	ret.push_back(GetNum());
-	ret.push_back(GetDen());
+	ret.push_back(static_cast<float>(GetNum()));
+	ret.push_back(static_cast<float>(GetDen()));
 	return ret;
 }
 
@@ -219,7 +221,7 @@ vector<float> SpeedSegment::GetValues() const
 	vector<float> ret;
 	ret.push_back(GetRatio());
 	ret.push_back(GetDelay());
-	ret.push_back(GetUnit());
+	ret.push_back(static_cast<float>(GetUnit()));
 	return ret;
 }
 
@@ -269,7 +271,7 @@ RString DelaySegment::ToString(int dec) const
  * @author Jason Felds (c) 2011
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -279,7 +281,7 @@ RString DelaySegment::ToString(int dec) const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

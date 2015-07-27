@@ -80,24 +80,24 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 }
 
 // szNameArray is of size iMax; pNameCache is of size iMax+2.
-const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_ptr<RString> *pNameCache )
+const RString &EnumToString( int iVal, int iMax, const char **szNameArray, std::unique_ptr<RString> *pNameCache )
 {
-	if( unlikely(pNameCache[0].get() == NULL) )
+	if( unlikely(pNameCache[0].get() == nullptr) )
 	{
 		for( int i = 0; i < iMax; ++i )
 		{
-			auto_ptr<RString> ap( new RString( szNameArray[i] ) );
-			pNameCache[i] = ap;
+			std::unique_ptr<RString> ap( new RString( szNameArray[i] ) );
+			pNameCache[i] = std::move(ap);
 		}
 
-		auto_ptr<RString> ap( new RString );
-		pNameCache[iMax+1] = ap;
+		std::unique_ptr<RString> ap( new RString );
+		pNameCache[iMax+1] = std::move(ap);
 	}
 
 	// iMax+1 is "Invalid".  iMax+0 is the NUM_ size value, which can not be converted
 	// to a string.
-	// Maybe we should assert on _Invalid?  It seems better to make 
-	// the caller check that they're supplying a valid enum value instead of 
+	// Maybe we should assert on _Invalid?  It seems better to make
+	// the caller check that they're supplying a valid enum value instead of
 	// returning an inconspicuous garbage value (empty string). -Chris
 	if (iVal < 0)
 		FAIL_M(ssprintf("Value %i cannot be negative for enums! Enum hint: %s", iVal, szNameArray[0]));
@@ -123,7 +123,7 @@ namespace
 
 		return 1;
 	}
-	
+
 	int Reverse( lua_State *L )
 	{
 		luaL_checktype( L, 1, LUA_TTABLE );
@@ -140,7 +140,7 @@ namespace
 static const luaL_Reg EnumLib[] = {
 	{ "GetName", GetName },
 	{ "Reverse", Reverse },
-	{ NULL, NULL }
+	{ nullptr, nullptr }
 };
 
 static void PushEnumMethodTable( lua_State *L )
@@ -174,7 +174,7 @@ void Enum::SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &En
 /*
  * (c) 2006 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -184,7 +184,7 @@ void Enum::SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &En
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

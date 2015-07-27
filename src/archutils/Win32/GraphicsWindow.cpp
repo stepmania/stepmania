@@ -15,6 +15,8 @@
 
 #include <set>
 
+using std::wstring;
+
 static const RString g_sClassName = PRODUCT_ID;
 
 static HWND g_hWndMain;
@@ -22,7 +24,7 @@ static HDC g_HDC;
 static VideoModeParams g_CurrentParams;
 static bool g_bResolutionChanged = false;
 static bool g_bHasFocus = true;
-static HICON g_hIcon = NULL;
+static HICON g_hIcon = nullptr;
 static bool m_bWideWindowClass;
 static bool g_bD3D = false;
 
@@ -35,8 +37,8 @@ static UINT g_iQueryCancelAutoPlayMessage = 0;
 static RString GetNewWindow()
 {
 	HWND h = GetForegroundWindow();
-	if( h == NULL )
-		return "(NULL)";
+	if( h == nullptr )
+		return "(nullptr)";
 
 	DWORD iProcessID;
 	GetWindowThreadProcessId( h, &iProcessID );
@@ -69,10 +71,10 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 			if( !g_bHasFocus )
 			{
 				RString sName = GetNewWindow();
-				static set<RString> sLostFocusTo;
+				static std::set<RString> sLostFocusTo;
 				sLostFocusTo.insert( sName );
 				RString sStr;
-				for( set<RString>::const_iterator it = sLostFocusTo.begin(); it != sLostFocusTo.end(); ++it )
+				for( auto it = sLostFocusTo.cbegin(); it != sLostFocusTo.cend(); ++it )
 					sStr += (sStr.size()?", ":"") + *it;
 
 				LOG->MapLog( "LOST_FOCUS", "Lost focus to: %s", sStr.c_str() );
@@ -91,7 +93,7 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 				}
 				else if( !g_bHasFocus && bHadFocus )
 				{
-					ChangeDisplaySettings( NULL, 0 );
+					ChangeDisplaySettings( nullptr, 0 );
 				}
 			}
 
@@ -110,7 +112,7 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 		case WM_SETCURSOR:
 			if( !g_CurrentParams.windowed )
 			{
-				SetCursor( NULL );
+				SetCursor( nullptr );
 				return 1;
 			}
 			break;
@@ -189,21 +191,21 @@ static void AdjustVideoModeParams( VideoModeParams &p )
 	DEVMODE dm;
 	ZERO( dm );
 	dm.dmSize = sizeof(dm);
-	if( !EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dm) )
+	if( !EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &dm) )
 	{
 		p.rate = 60;
 		LOG->Warn( "%s", werr_ssprintf(GetLastError(), "EnumDisplaySettings failed").c_str() );
 		return;
 	}
 
-	/* On a nForce 2 IGP on Windows 98, dm.dmDisplayFrequency sometimes 
+	/* On a nForce 2 IGP on Windows 98, dm.dmDisplayFrequency sometimes
 	 * (but not always) is 0.
 	 *
-	 * MSDN: When you call the EnumDisplaySettings function, the 
-	 * dmDisplayFrequency member may return with the value 0 or 1. 
-	 * These values represent the display hardware's default refresh rate. 
-	 * This default rate is typically set by switches on a display card or 
-	 * computer motherboard, or by a configuration program that does not 
+	 * MSDN: When you call the EnumDisplaySettings function, the
+	 * dmDisplayFrequency member may return with the value 0 or 1.
+	 * These values represent the display hardware's default refresh rate.
+	 * This default rate is typically set by switches on a display card or
+	 * computer motherboard, or by a configuration program that does not
 	 * use Win32 display functions such as ChangeDisplaySettings. */
 	if( !(dm.dmFields & DM_DISPLAYFREQUENCY) ||
 		dm.dmDisplayFrequency == 0 ||
@@ -225,7 +227,7 @@ RString GraphicsWindow::SetScreenMode( const VideoModeParams &p )
 	if( p.windowed )
 	{
 		// We're going windowed. If we were previously fullscreen, reset.
-		ChangeDisplaySettings( NULL, 0 );
+		ChangeDisplaySettings( nullptr, 0 );
 
 		return RString();
 	}
@@ -243,7 +245,7 @@ RString GraphicsWindow::SetScreenMode( const VideoModeParams &p )
 		DevMode.dmDisplayFrequency = p.rate;
 		DevMode.dmFields |= DM_DISPLAYFREQUENCY;
 	}
-	ChangeDisplaySettings( NULL, 0 );
+	ChangeDisplaySettings( nullptr, 0 );
 
 	int ret = ChangeDisplaySettings( &DevMode, CDS_FULLSCREEN );
 	if( ret != DISP_CHANGE_SUCCESSFUL && (DevMode.dmFields & DM_DISPLAYFREQUENCY) )
@@ -277,20 +279,20 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 	// Adjust g_CurrentParams to reflect the actual display settings.
 	AdjustVideoModeParams( g_CurrentParams );
 
-	if( g_hWndMain == NULL || bForceRecreateWindow )
+	if( g_hWndMain == nullptr || bForceRecreateWindow )
 	{
 		int iWindowStyle = GetWindowStyle( p.windowed );
 
 		AppInstance inst;
 		HWND hWnd = CreateWindow( g_sClassName, "app", iWindowStyle,
-						0, 0, 0, 0, NULL, NULL, inst, NULL );
-		if( hWnd == NULL )
+						0, 0, 0, 0, nullptr, nullptr, inst, nullptr );
+		if( hWnd == nullptr )
 			RageException::Throw( "%s", werr_ssprintf( GetLastError(), "CreateWindow" ).c_str() );
 
 		/* If an old window exists, transfer focus to the new window before
 		 * deleting it, or some other window may temporarily get focus, which
 		 * can cause it to be resized. */
-		if( g_hWndMain != NULL )
+		if( g_hWndMain != nullptr )
 		{
 			// While we change to the new window, don't do ChangeDisplaySettings in WM_ACTIVATE.
 			g_bRecreatingVideoMode = true;
@@ -318,14 +320,14 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 	} while(0);
 
 	// Update the window icon.
-	if( g_hIcon != NULL )
+	if( g_hIcon != nullptr )
 	{
-		SetClassLong( g_hWndMain, GCL_HICON, (LONG) LoadIcon(NULL,IDI_APPLICATION) );
+		SetClassLong( g_hWndMain, GCL_HICON, (LONG) LoadIcon(nullptr,IDI_APPLICATION) );
 		DestroyIcon( g_hIcon );
-		g_hIcon = NULL;
+		g_hIcon = nullptr;
 	}
 	g_hIcon = IconFromFile( p.sIconFile );
-	if( g_hIcon != NULL )
+	if( g_hIcon != nullptr )
 		SetClassLong( g_hWndMain, GCL_HICON, (LONG) g_hIcon );
 
 	/* The window style may change as a result of switching to or from fullscreen;
@@ -363,9 +365,9 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 	 * If we don't do this, then starting up in a D3D fullscreen window may
 	 * cause all other windows on the system to be resized. */
 	MSG msg;
-	while( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
+	while( PeekMessage( &msg, nullptr, 0, 0, PM_NOREMOVE ) )
 	{
-		GetMessage( &msg, NULL, 0, 0 );
+		GetMessage( &msg, nullptr, 0, 0 );
 		DispatchMessage( &msg );
 	}
 }
@@ -373,36 +375,36 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 /** @brief Shut down the window, but don't reset the video mode. */
 void GraphicsWindow::DestroyGraphicsWindow()
 {
-	if( g_HDC != NULL )
+	if( g_HDC != nullptr )
 	{
 		ReleaseDC( g_hWndMain, g_HDC );
-		g_HDC = NULL;
+		g_HDC = nullptr;
 	}
 
 	CHECKPOINT;
 
-	if( g_hWndMain != NULL )
+	if( g_hWndMain != nullptr )
 	{
 		DestroyWindow( g_hWndMain );
-		g_hWndMain = NULL;
+		g_hWndMain = nullptr;
 		CrashHandler::SetForegroundWindow( g_hWndMain );
 	}
 
 	CHECKPOINT;
 
-	if( g_hIcon != NULL )
+	if( g_hIcon != nullptr )
 	{
 		DestroyIcon( g_hIcon );
-		g_hIcon = NULL;
+		g_hIcon = nullptr;
 	}
 
 	CHECKPOINT;
 
 	MSG msg;
-	while( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
+	while( PeekMessage( &msg, nullptr, 0, 0, PM_NOREMOVE ) )
 	{
 		CHECKPOINT;
-		GetMessage( &msg, NULL, 0, 0 );
+		GetMessage( &msg, nullptr, 0, 0 );
 		CHECKPOINT;
 		DispatchMessage( &msg );
 	}
@@ -426,12 +428,12 @@ void GraphicsWindow::Initialize( bool bD3D )
 			0,				/* cbClsExtra */
 			0,				/* cbWndExtra */
 			inst,			/* hInstance */
-			NULL,			/* set icon later */
-			LoadCursor( NULL, IDC_ARROW ),	/* default cursor */
-			NULL,			/* hbrBackground */
-			NULL,			/* lpszMenuName */
+			nullptr,			/* set icon later */
+			LoadCursor( nullptr, IDC_ARROW ),	/* default cursor */
+			nullptr,			/* hbrBackground */
+			nullptr,			/* lpszMenuName */
 			wsClassName.c_str()	/* lpszClassName */
-		}; 
+		};
 
 		m_bWideWindowClass = true;
 		if( RegisterClassW( &WindowClassW ) )
@@ -444,12 +446,12 @@ void GraphicsWindow::Initialize( bool bD3D )
 			0,				/* cbClsExtra */
 			0,				/* cbWndExtra */
 			inst,			/* hInstance */
-			NULL,			/* set icon later */
-			LoadCursor( NULL, IDC_ARROW ),	/* default cursor */
-			NULL,			/* hbrBackground */
-			NULL,			/* lpszMenuName */
+			nullptr,			/* set icon later */
+			LoadCursor( nullptr, IDC_ARROW ),	/* default cursor */
+			nullptr,			/* hbrBackground */
+			nullptr,			/* lpszMenuName */
 			g_sClassName	/* lpszClassName */
-		}; 
+		};
 
 		m_bWideWindowClass = false;
 		if( !RegisterClassA( &WindowClassA ) )
@@ -467,7 +469,7 @@ void GraphicsWindow::Shutdown()
 	 * It'd be nice to not do this: Windows will do it when we quit, and if
 	 * we're shutting down OpenGL to try D3D, this will cause extra mode
 	 * switches. However, we need to do this before displaying dialogs. */
-	ChangeDisplaySettings( NULL, 0 );
+	ChangeDisplaySettings( nullptr, 0 );
 
 	AppInstance inst;
 	UnregisterClass( g_sClassName, inst );
@@ -475,7 +477,7 @@ void GraphicsWindow::Shutdown()
 
 HDC GraphicsWindow::GetHDC()
 {
-	ASSERT( g_HDC != NULL );
+	ASSERT( g_HDC != nullptr );
 	return g_HDC;
 }
 
@@ -487,15 +489,15 @@ const VideoModeParams &GraphicsWindow::GetParams()
 void GraphicsWindow::Update()
 {
 	MSG msg;
-	while( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
+	while( PeekMessage( &msg, nullptr, 0, 0, PM_NOREMOVE ) )
 	{
-		GetMessage( &msg, NULL, 0, 0 );
+		GetMessage( &msg, nullptr, 0, 0 );
 		DispatchMessage( &msg );
 	}
 
 	HOOKS->SetHasFocus( g_bHasFocus );
 
-	if( g_bResolutionChanged && DISPLAY != NULL )
+	if( g_bResolutionChanged && DISPLAY != nullptr )
 	{
 		//LOG->Warn( "Changing resolution" );
 
@@ -517,7 +519,7 @@ void GraphicsWindow::GetDisplayResolutions( DisplayResolutions &out )
 	ZERO( dm );
 	dm.dmSize = sizeof(dm);
 	int i=0;
-	while(EnumDisplaySettings(NULL, i++, &dm))
+	while(EnumDisplaySettings(nullptr, i++, &dm))
 	{
 		if(ChangeDisplaySettings(&dm, CDS_TEST)==DISP_CHANGE_SUCCESSFUL)
 		{
@@ -530,7 +532,7 @@ void GraphicsWindow::GetDisplayResolutions( DisplayResolutions &out )
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -540,7 +542,7 @@ void GraphicsWindow::GetDisplayResolutions( DisplayResolutions &out )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

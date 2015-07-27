@@ -28,8 +28,6 @@ private:
 	int m_iPackagesPos;
 	int m_iLinksPos;
 
-	int m_iDLorLST;
-
 	// HTTP portion
 	void HTTPUpdate();
 

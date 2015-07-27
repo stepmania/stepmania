@@ -87,7 +87,7 @@ bool Alsa9Buf::SetSWParams()
 	/* If this fails, we might have bound dsnd_pcm_sw_params_set_avail_min to
 	 * the old SW API. */
 //	ASSERT( err <= 0 );
-	
+
 	/* Disable SND_PCM_STATE_XRUN. */
 	snd_pcm_uframes_t boundary = 0;
 	err = dsnd_pcm_sw_params_get_boundary( swparams, &boundary );
@@ -135,7 +135,7 @@ static RString DeviceName()
 
 void Alsa9Buf::GetSoundCardDebugInfo()
 {
-	static bool done = false;	
+	static bool done = false;
 	if( done )
 		return;
 	done = true;
@@ -200,7 +200,7 @@ void Alsa9Buf::GetSoundCardDebugInfo()
 
 	if( card == 0 )
 		LOG->Info( "No ALSA sound cards were found.");
-	
+
 	if( !PREFSMAN->m_iSoundDevice.Get().empty() )
 		LOG->Info( "ALSA device overridden to \"%s\"", PREFSMAN->m_iSoundDevice.Get().c_str() );
 }
@@ -212,7 +212,7 @@ Alsa9Buf::Alsa9Buf()
 	last_cursor_pos = 0;
 	preferred_writeahead = 8192;
 	preferred_chunksize = 1024;
-	pcm = NULL;
+	pcm = nullptr;
 }
 
 RString Alsa9Buf::Init( int channels_,
@@ -227,11 +227,11 @@ RString Alsa9Buf::Init( int channels_,
 		samplerate = 44100;
 	else
 		samplerate = iSampleRate;
-	
+
 	GetSoundCardDebugInfo();
-		
+
 	InitializeErrorHandler();
-	
+
 	/* Open the device. */
 	int err;
 	err = dsnd_pcm_open( &pcm, DeviceName(), SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
@@ -258,7 +258,7 @@ RString Alsa9Buf::Init( int channels_,
 
 Alsa9Buf::~Alsa9Buf()
 {
-	if( pcm != NULL )
+	if( pcm != nullptr )
 		dsnd_pcm_close( pcm );
 }
 
@@ -268,12 +268,13 @@ Alsa9Buf::~Alsa9Buf()
  * hardware parameters require it, they can be ignored.) */
 int Alsa9Buf::GetNumFramesToFill()
 {
+	using std::max;
 	/* Make sure we can write ahead at least two chunks.  Otherwise, we'll only
 	 * fill one chunk ahead, and underrun. */
 	int ActualWriteahead = max( writeahead, chunksize*2 );
 
 	snd_pcm_sframes_t avail_frames = dsnd_pcm_avail_update(pcm);
-	
+
 	int total_frames = writeahead;
 	if( avail_frames > total_frames )
 	{
@@ -293,7 +294,7 @@ int Alsa9Buf::GetNumFramesToFill()
 			dsnd_pcm_forward( pcm, size );
 		}
 	}
-	
+
 	if( avail_frames < 0 )
 		avail_frames = dsnd_pcm_avail_update(pcm);
 
@@ -416,7 +417,7 @@ RString Alsa9Buf::GetHardwareID( RString name )
 
 	if( name.empty() )
 		name = DeviceName();
-	
+
 	snd_ctl_t *handle;
 	int err;
 	err = dsnd_ctl_open( &handle, name, 0 );
@@ -439,7 +440,7 @@ RString Alsa9Buf::GetHardwareID( RString name )
 /*
  * (c) 2002-2004 Glenn Maynard, Aaron VonderHaar
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -449,7 +450,7 @@ RString Alsa9Buf::GetHardwareID( RString name )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
