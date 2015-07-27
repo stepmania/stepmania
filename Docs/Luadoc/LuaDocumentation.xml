@@ -472,8 +472,8 @@ save yourself some time, copy this for undocumented things:
 		"Sets the real value of <code>t[index]</code> to <code>value</code>, without invoking any metamethod."
 		The modified <code>t</code> is then returned.
 	</Function>
-	<Function name='ResolveRelativePath' theme='_fallback' return='string' arguments='string path, int level'>
-		[02 ActorDef.lua]
+	<Function name='ResolveRelativePath' theme='_fallback' return='string' arguments='string path, int level, bool optional'>
+		[02 ActorDef.lua] Used internally by LoadActor to resolve a path.  If <code>optional</code> is true, then a nil path is returned instead of emitting an error if no file is found.
 	</Function>
 	<Function name='ReadFile' theme='_fallback' return='string' arguments='string path'>
 		[04 FileUtils.lua] Reads the file at <code>path</code> and returns its contents.
@@ -700,7 +700,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='LoadAllCommandsAndSetXY' return='void' arguments='Actor a'>
 		Loads all commands and sets X and Y for the specified Actor.
 	</Function>
-	<Function name='ResolvePath' return='string' arguments='string sPath, int iLevel' />
+	<Function name='ResolvePath' return='string' arguments='string sPath, int iLevel, bool optional'>
+		Used internally by LoadActor to resolve a path.  If <code>optional</code> is true, then a nil path is returned instead of emitting an error if no file is found.
+	</Function>
 </Namespace>
 <Namespace name='ArrowEffects'>
 	<Function name='Update' return='void' arguments=''>

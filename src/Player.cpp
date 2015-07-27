@@ -109,17 +109,38 @@ void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, RString &sNameOut, floa
 	sNameOut = "TimingWindowSeconds" + TimingWindowToString( (TimingWindow)i );
 	switch( i )
 	{
-	default:
-		FAIL_M(ssprintf("Invalid timing window: %i", static_cast<int>(i)));
-	case TW_W1:	defaultValueOut = 0.0225f;	break;
-	case TW_W2:	defaultValueOut = 0.045f;	break;
-	case TW_W3:	defaultValueOut = 0.090f;	break;
-	case TW_W4:	defaultValueOut = 0.135f;	break;
-	case TW_W5:	defaultValueOut = 0.180f;	break;
-	case TW_Mine:	defaultValueOut = 0.090f;	break;	// same as great
-	case TW_Hold:	defaultValueOut = 0.250f;	break;	// allow enough time to take foot off and put back on
-	case TW_Roll:	defaultValueOut = 0.500f;	break;
-	case TW_Attack:	defaultValueOut = 0.135f;	break;
+		case TW_W1:
+			defaultValueOut = 0.0225f;
+			break;
+		case TW_W2:
+			defaultValueOut = 0.045f;
+			break;
+		case TW_W3:
+			defaultValueOut = 0.090f;
+			break;
+		case TW_W4:
+			defaultValueOut = 0.135f;
+			break;
+		case TW_W5:
+			defaultValueOut = 0.180f;
+			break;
+		case TW_Mine: // same as great
+			defaultValueOut = 0.090f;
+			break;
+		case TW_Hold: // allow enough time to take foot off and put back on
+			defaultValueOut = 0.250f;
+			break;
+		case TW_Roll:
+			defaultValueOut = 0.500f;
+			break;
+		case TW_Attack:
+			defaultValueOut = 0.135f;
+			break;
+		case TW_Checkpoint: // similar to TW_Hold, but a little more strict/accurate to Pump play.
+			defaultValueOut = 0.1664f;
+			break;
+		default:
+			FAIL_M(ssprintf("Invalid timing window: %i", static_cast<int>(i)));
 	}
 }
 
@@ -1299,19 +1320,12 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 					LOG->Trace("[ ] Holding Button");
 				*/
 
-				// For tickholds, the concept of "life" doesn't really apply.
-				// XXX: if IMMEDIATE_HOLD_LET_GO this will kill holds if it's EVER let go,
-				// not just at the first missed checkpoint.
-				if( m_bTickHolds ) fLife = 0.0;
-				else
-				{
-					// Decrease life
-					//LOG->Trace("fLife before minus: %f",fLife);
-					fLife -= fDeltaTime/GetWindowSeconds(TW_Hold);
-					//LOG->Trace("fLife before clamp: %f",fLife);
-					fLife = std::max( fLife, 0.f );	// clamp
-					//LOG->Trace("fLife after: %f",fLife);
-				}
+				TimingWindow window = m_bTickHolds ? TW_Checkpoint : TW_Hold;
+				//LOG->Trace("fLife before minus: %f",fLife);
+				fLife -= fDeltaTime / GetWindowSeconds(window);
+				//LOG->Trace("fLife before clamp: %f",fLife);
+				fLife = max(0, fLife);
+				//LOG->Trace("fLife after: %f",fLife);
 			}
 			break;
 		case TapNoteSubType_Roll:

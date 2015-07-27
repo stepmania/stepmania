@@ -293,6 +293,7 @@ enum TimingWindow
 	TW_Attack,
 	TW_Hold,
 	TW_Roll,
+	TW_Checkpoint,
 	NUM_TimingWindow
 };
 const RString& TimingWindowToString( TimingWindow tw );

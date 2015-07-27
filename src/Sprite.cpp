@@ -377,6 +377,10 @@ void Sprite::UpdateAnimationState()
 			// increment frame and reset the counter
 			m_fSecsIntoState -= m_States[m_iCurState].fDelay;		// leave the left over time for the next frame
 			m_iCurState = (m_iCurState+1) % m_States.size();
+			if(m_iCurState == 0)
+			{
+				PlayCommand("AnimationFinished");
+			}
 		}
 	}
 }
