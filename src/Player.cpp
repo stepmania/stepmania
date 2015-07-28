@@ -1324,7 +1324,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 				//LOG->Trace("fLife before minus: %f",fLife);
 				fLife -= fDeltaTime / GetWindowSeconds(window);
 				//LOG->Trace("fLife before clamp: %f",fLife);
-				fLife = std::max(0, fLife);
+				fLife = std::max(0.f, fLife);
 				//LOG->Trace("fLife after: %f",fLife);
 			}
 			break;
