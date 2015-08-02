@@ -799,11 +799,11 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	{
 		if (!part_args.anchor_to_top)
 		{
-			float offset = unzoomed_frame_height - (y_end_pos - y_start_pos);
+			float offset = unzoomed_frame_height - (y_end_pos - y_start_pos) / ae_zoom;
 			// ロングノート本体の長さがunzoomed_frame_height→0のときに、add_to_tex_coordを0→1にすればOK
 			// つまり、offsetを0→unzoomed_frame_heightにすると理想通りの表示になる -A.C
 			// Shift texture coord to fit hold length If hold length is less than
-			// bottomcap frame size. (translated by hanubeki)
+			// bottomcap frame height. (translated by hanubeki)
 			if (offset>0){
 				add_to_tex_coord = SCALE(offset, 0.0f, unzoomed_frame_height, 0.0f, 1.0f);
 			}
