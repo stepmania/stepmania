@@ -85,6 +85,13 @@ void LightsDriver_Linux_PIUIO_Leds::Set( const LightsState *ls )
 {
 	FOREACH_CabinetLight(light)
 	{
+		// Only SetLight if LightsState has changed since previous iteration.
+		// This reduces unncessary strain on udev.  -dguzek
+		if (ls->m_bCabinetLights[light] == previousLS.m_bCabinetLights[light] )
+		{
+			continue;
+		}
+
 		if (!SetLight(cabinet_leds[light], ls->m_bCabinetLights[light]))
 		{
 			LOG->Warn("Error setting cabinet light %s",
@@ -101,6 +108,11 @@ void LightsDriver_Linux_PIUIO_Leds::Set( const LightsState *ls )
 		{
 			FOREACH_GameButton_Custom(gb)
 			{
+				if (ls->m_bGameButtonLights[c][gb] == previousLS.m_bGameButtonLights[c][gb])
+				{
+					continue;
+				}
+
 				if (!SetLight(dance_leds[c][gb], ls->m_bGameButtonLights[c][gb]))
 				{
 					LOG->Warn("Error setting button light %s",
@@ -116,6 +128,11 @@ void LightsDriver_Linux_PIUIO_Leds::Set( const LightsState *ls )
 		{
 			FOREACH_GameButton_Custom(gb)
 			{
+				if (ls->m_bGameButtonLights[c][gb] == previousLS.m_bGameButtonLights[c][gb])
+				{
+					continue;
+				}
+
 				if (!SetLight(pump_leds[c][gb], ls->m_bGameButtonLights[c][gb]))
 				{
 					LOG->Warn("Error setting button light %s",
@@ -129,12 +146,14 @@ void LightsDriver_Linux_PIUIO_Leds::Set( const LightsState *ls )
 	{
 		return;
 	}
+
+	previousLS = *ls;
 }
 
 /*
  * (c) 2014 StepMania team
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -144,7 +163,7 @@ void LightsDriver_Linux_PIUIO_Leds::Set( const LightsState *ls )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
