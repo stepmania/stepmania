@@ -1,4 +1,4 @@
-if(NOT GTK2_FOUND)
+if(NOT GTK3_FOUND)
   return()
 endif()
 
@@ -19,11 +19,11 @@ set_target_properties("GtkModule" PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "$
 set_target_properties("GtkModule" PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${SM_ROOT_DIR}")
 set_target_properties("GtkModule" PROPERTIES LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL "${SM_ROOT_DIR}")
 set_target_properties("GtkModule" PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}")
-target_link_libraries("GtkModule" ${GTK2_LIBRARIES})
+target_link_libraries("GtkModule" ${GTK3_LIBRARIES})
 set_property(TARGET "GtkModule" PROPERTY FOLDER "Internal Libraries")
 list(APPEND SM_GTK_INCLUDE_DIRS
   "${SM_SRC_DIR}"
   "${SM_SRC_DIR}/arch/LoadingWindow"
-  "${GTK2_INCLUDE_DIRS}"
+  "${GTK3_INCLUDE_DIRS}"
 )
 target_include_directories("GtkModule" PUBLIC ${SM_GTK_INCLUDE_DIRS})
