@@ -403,7 +403,7 @@ else() # Linux
     sm_add_compile_definition("${SM_EXE_NAME}" BSD)
   endif()
 
-  if (GTK2_FOUND)
+  if (GTK3_FOUND)
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_GTK)
   endif()
 
@@ -557,9 +557,9 @@ else() # Unix / Linux
     "${OPENGL_LIBRARY}"
   )
 
-  if(GTK2_FOUND)
+  if(GTK3_FOUND)
     list(APPEND SMDATA_LINK_LIB
-      "${GTK2_LIBRARIES}"
+      "${GTK3_LIBRARIES}"
     )
   endif()
 
@@ -638,8 +638,8 @@ if(NOT APPLE)
         )
       endif()
     endif()
-    if (HAS_GTK2)
-      list(APPEND SM_INCLUDE_DIRS "${GTK2_INCLUDE_DIRS}")
+    if (HAS_GTK3)
+      list(APPEND SM_INCLUDE_DIRS "${GTK3_INCLUDE_DIRS}")
     endif()
     if (X11_FOUND)
       list(APPEND SM_INCLUDE_DIRS "${X11_INCLUDE_DIR}")
