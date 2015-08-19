@@ -24,7 +24,9 @@
 #pragma warning (disable : 4005) // macro redefinitions (ARRAYSIZE)
 #endif
 
+#if _MSC_VER < 1900 // VS2015 disallows defining snprintf
 #define snprintf _snprintf // Unsure if this goes with __MINGW32__ right now.
+#endif
 
 /*
 The following warnings are disabled in all builds.
