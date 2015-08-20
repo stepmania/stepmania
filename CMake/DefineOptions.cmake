@@ -27,7 +27,7 @@ option(WITH_NO_ROLC_TOMCRYPT "Build without the ROLC assembly instructions for t
 option(WITH_GPL_LIBS "Build with GPL libraries." ON)
 
 if(WIN32)
-  option(WITH_MINIMAID "Build with Mimimaid Lights Support." ON)
+  option(WITH_MINIMAID "Build with Minimaid Lights Support." ON)
 elseif(LINUX)
     option(WITH_FFMPEG "Build with FFMPEG." ON)
     # Builder beware: later versions of ffmpeg may break!
