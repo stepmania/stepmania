@@ -678,6 +678,10 @@ void Player::Load()
 
 	m_Timing = GAMESTATE->m_pCurSteps[pn]->GetTimingData();
 
+	// az: Hide mines in warp areas when a cmod is enabled.
+	if (m_pPlayerState->m_PlayerOptions.GetStage().m_fTimeSpacing != 0)
+		NoteDataUtil::RemoveObjectsInWarps(m_NoteData, m_Timing);
+
 	// Generate some cache data structure.
 	GenerateCacheDataStructure(m_pPlayerState, m_NoteData);
 
@@ -2870,12 +2874,11 @@ void Player::UpdateJudgedRows()
 		for( ; !iter.IsAtEnd()  &&  iter.Row() <= iEndRow; ++iter )
 		{
 			int iRow = iter.Row();
+			TapNote &tn = *iter;
 
 			// Do not worry about mines in WarpSegments or FakeSegments
 			if (!m_Timing->IsJudgableAtRow(iRow))
 				continue;
-
-			TapNote &tn = *iter;
 
 			if( iRow != iLastSeenRow )
 			{

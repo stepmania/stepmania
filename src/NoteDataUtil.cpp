@@ -2393,6 +2393,20 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, 
 	inout.RevalidateATIs(vector<int>(), false);
 }
 
+void NoteDataUtil::RemoveObjectsInWarps(NoteData &inout, TimingData* td)
+{
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(inout, r, 0, MAX_NOTE_ROW)
+	{
+		for (int t1 = 0; t1 < inout.GetNumTracks(); t1++)
+		{
+			bool isInWarp = td->IsWarpAtRow(r);
+			if (isInWarp)
+				inout.SetTapNote(t1, r, TAP_EMPTY);
+		}
+	}
+	inout.RevalidateATIs(vector<int>(), false);
+}
+
 void NoteDataUtil::Stomp( NoteData &inout, StepsType st, int iStartIndex, int iEndIndex )
 {
 	// Make all non jumps with ample space around them into jumps.
