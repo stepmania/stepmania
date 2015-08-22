@@ -961,7 +961,8 @@ StepsType BMSChartReader::DetermineStepsType()
 					// type, since they are more common.
 					//return StepsType_dance_solo;
 					return StepsType_beat_single5;
-				case 7:
+				// az: Allow kb7 style charts
+				case 7:		return StepsType_kb7_single;
 				case 8:		return StepsType_beat_single7;
 				case 9:		return StepsType_popn_nine;
 				// XXX: Some double files doesn't have #player.
@@ -1074,10 +1075,19 @@ bool BMSChartReader::ReadNoteData()
 	switch( out->m_StepsType )
 	{
 	case StepsType_dance_single:
-		transform[0] = BMS_RAW_P1_KEY1;
-		transform[1] = BMS_RAW_P1_KEY3;
-		transform[2] = BMS_RAW_P1_KEY5;
-		transform[3] = BMS_RAW_P1_TURN;
+		if (nonEmptyTracks.find(BMS_RAW_P1_KEY5) != nonEmptyTracks.end()) // Old style 4k charts
+		{
+			transform[0] = BMS_RAW_P1_KEY1;
+			transform[1] = BMS_RAW_P1_KEY3;
+			transform[2] = BMS_RAW_P1_KEY5;
+			transform[3] = BMS_RAW_P1_TURN;
+		} else // myo2/rd style 4k chart
+		{
+			transform[0] = BMS_RAW_P1_TURN;
+			transform[1] = BMS_RAW_P1_KEY1;
+			transform[2] = BMS_RAW_P1_KEY2;
+			transform[3] = BMS_RAW_P1_KEY3;
+		}
 		break;
 	case StepsType_dance_double:
 	case StepsType_dance_couple:
@@ -1135,6 +1145,7 @@ bool BMSChartReader::ReadNoteData()
 		transform[11] = BMS_RAW_P2_TURN;
 		break;
 	case StepsType_beat_single7:
+	case StepsType_kb7_single:
 		if(    nonEmptyTracks.find(BMS_RAW_P1_KEY7) == nonEmptyTracks.end()
 			&& nonEmptyTracks.find(BMS_RAW_P1_TURN) != nonEmptyTracks.end() )
 		{
