@@ -216,7 +216,7 @@ struct bmsCommandTree
 {
 
 	struct bmsNodeS { // Each of these imply one branching level.
-		int branchHeight;
+		unsigned int branchHeight;
 		enum {
 			CT_NULL,
 			CT_CONDITIONALCHAIN,
@@ -772,10 +772,11 @@ struct BMSChartInfo {
 	RString backgroundFile;
 	RString stageFile;
 	RString musicFile;
-	RString overrideMusicFile;
 	RString previewFile;
 
 	map<int, RString> backgroundChanges;
+	float previewStart;
+	BMSChartInfo() { previewStart = 0; }
 };
 
 class BMSChartReader {
@@ -865,10 +866,6 @@ void BMSChartReader::ReadHeaders()
 		{
 			info.stageFile = it->second;
 		}
-		else if( it->first == "#wav" )
-		{
-			info.musicFile = it->second;
-		}
 		else if( it->first == "#bpm" )
 		{
 			initialBPM = StringToFloat(it->second);
@@ -901,7 +898,8 @@ void BMSChartReader::ReadHeaders()
 		}
 		else if (it->first == "#music")
 		{
-			info.overrideMusicFile = it->second;
+			info.musicFile = it->second;
+			out->SetMusicFile(it->second);
 		}
 		else if (it->first == "#preview")
 		{
@@ -909,12 +907,15 @@ void BMSChartReader::ReadHeaders()
 		}
 		else if (it->first == "#offset")
 		{
+			// This gets copied into the real timing data later.
 			out->m_Timing.m_fBeat0OffsetInSeconds = -StringToFloat(it->second);
 		}
 		else if (it->first == "#maker")
 		{
 			out->SetCredit(it->second);
 		}
+		else if (it->first == "#previewpoint")
+			info.previewStart = StringToFloat(it->second);
 	}
 }
 
@@ -1061,6 +1062,8 @@ bool BMSChartReader::ReadNoteData()
 	NoteData   nd;
 	TimingData td;
 
+	td.m_fBeat0OffsetInSeconds = out->m_Timing.m_fBeat0OffsetInSeconds;
+	
 	nd.SetNumTracks( tracks );
 	td.SetBPMAtRow( 0, currentBPM = initialBPM );
 
@@ -1103,12 +1106,22 @@ bool BMSChartReader::ReadNoteData()
 	case StepsType_dance_solo:
 	case StepsType_beat_single5:
 		// Hey! Why are these exactly the same? :-)
-		transform[0] = BMS_RAW_P1_KEY1;
-		transform[1] = BMS_RAW_P1_KEY2;
-		transform[2] = BMS_RAW_P1_KEY3;
-		transform[3] = BMS_RAW_P1_KEY4;
-		transform[4] = BMS_RAW_P1_KEY5;
-		transform[5] = BMS_RAW_P1_TURN;
+		if (nonEmptyTracks.find(BMS_RAW_P1_TURN) != nonEmptyTracks.end()) { // Linear beat-5 layout
+			transform[0] = BMS_RAW_P1_KEY1;
+			transform[1] = BMS_RAW_P1_KEY2;
+			transform[2] = BMS_RAW_P1_KEY3;
+			transform[3] = BMS_RAW_P1_KEY4;
+			transform[4] = BMS_RAW_P1_KEY5;
+			transform[5] = BMS_RAW_P1_TURN;
+		} else // Linear solo layout
+		{
+			transform[0] = BMS_RAW_P1_KEY1;
+			transform[1] = BMS_RAW_P1_KEY2;
+			transform[2] = BMS_RAW_P1_KEY3;
+			transform[3] = BMS_RAW_P1_KEY4;
+			transform[4] = BMS_RAW_P1_KEY5;
+			transform[5] = BMS_RAW_P1_KEY6;
+		}
 		break;
 	case StepsType_popn_five:
 		transform[0] = BMS_RAW_P1_KEY3;
@@ -1158,7 +1171,9 @@ bool BMSChartReader::ReadNoteData()
 			transform[4] = BMS_RAW_P1_KEY4;
 			transform[5] = BMS_RAW_P1_KEY5;
 			transform[6] = BMS_RAW_P1_KEY6;
-			transform[7] = BMS_RAW_P1_KEY7;
+
+			if (tracks != 7)
+				transform[7] = BMS_RAW_P1_KEY7;
 		}
 		else
 		{
@@ -1169,7 +1184,9 @@ bool BMSChartReader::ReadNoteData()
 			transform[4] = BMS_RAW_P1_KEY5;
 			transform[5] = BMS_RAW_P1_KEY6;
 			transform[6] = BMS_RAW_P1_KEY7;
-			transform[7] = BMS_RAW_P1_TURN;
+
+			if (tracks != 7)
+				transform[7] = BMS_RAW_P1_TURN;
 		}
 		break;
 	case StepsType_beat_double7:
@@ -1559,6 +1576,7 @@ void BMSSongLoader::AddToSong()
 
 	{
 		const BMSStepsInfo &main = loadedSteps[mainIndex];
+
 		out->m_sSongFileName = main.steps->GetFilename();
 		if( main.info.title != "" )
 			NotesLoader::GetMainAndSubTitlesFromFullTitle( main.info.title, out->m_sMainTitle, out->m_sSubTitle );
@@ -1597,8 +1615,15 @@ void BMSSongLoader::AddToSong()
 		}
 
 		out->m_sMusicFile = main.info.musicFile;
-		out->m_PreviewFile= main.info.previewFile;
-		out->m_fMusicSampleLengthSeconds = 0.00f; // to ensure whole preview file is heard
+
+		// Preview file only if it's different from one specified on #MUSIC so that previewStart is valid. -az
+		if (main.info.previewFile.length() && main.info.previewFile != main.info.musicFile)
+		{
+			out->m_PreviewFile = main.info.previewFile;
+			out->m_fMusicSampleLengthSeconds = 0.00f; // to ensure whole preview file is heard
+		}
+
+		out->m_fMusicSampleStartSeconds = main.info.previewStart;
 		out->m_SongTiming = main.steps->m_Timing;
 	}
 
