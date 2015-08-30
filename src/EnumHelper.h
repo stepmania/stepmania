@@ -7,7 +7,7 @@
 
 extern "C"
 {
-#include "../extern/lua-5.1/src/lua.h"
+#include "lua.h"
 }
 
 /** @brief A general foreach loop for enumerators, going up to a max value. */

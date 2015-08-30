@@ -1,37 +1,39 @@
-list(APPEND ZLIB_SRC
-  "zlib/adler32.c"
-  "zlib/compress.c"
-  "zlib/crc32.c"
-  "zlib/deflate.c"
-  "zlib/gzclose.c"
-  "zlib/gzlib.c"
-  "zlib/gzread.c"
-  "zlib/gzwrite.c"
-  "zlib/infback.c"
-  "zlib/inffast.c"
-  "zlib/inflate.c"
-  "zlib/inftrees.c"
-  "zlib/minigzip.c"
-  "zlib/trees.c"
-  "zlib/uncompr.c"
-  "zlib/zutil.c"
+set(ZLIB_DIR "zlib-1.2.8")
+
+set(ZLIB_SRC
+  "${ZLIB_DIR}/src/adler32.c"
+  "${ZLIB_DIR}/src/compress.c"
+  "${ZLIB_DIR}/src/crc32.c"
+  "${ZLIB_DIR}/src/deflate.c"
+  "${ZLIB_DIR}/src/gzclose.c"
+  "${ZLIB_DIR}/src/gzlib.c"
+  "${ZLIB_DIR}/src/gzread.c"
+  "${ZLIB_DIR}/src/gzwrite.c"
+  "${ZLIB_DIR}/src/infback.c"
+  "${ZLIB_DIR}/src/inffast.c"
+  "${ZLIB_DIR}/src/inflate.c"
+  "${ZLIB_DIR}/src/inftrees.c"
+  "${ZLIB_DIR}/src/trees.c"
+  "${ZLIB_DIR}/src/uncompr.c"
+  "${ZLIB_DIR}/src/zutil.c"
 )
 
-list(APPEND ZLIB_HPP
-  "zlib/crc32.h"
-  "zlib/deflate.h"
-  "zlib/gzguts.h"
-  "zlib/inffast.h"
-  "zlib/inffixed.h"
-  "zlib/inflate.h"
-  "zlib/inftrees.h"
-  "zlib/trees.h"
-  "zlib/zconf.h"
-  "zlib/zlib.h"
-  "zlib/zutil.h"
+set(ZLIB_HPP
+  "${ZLIB_DIR}/src/crc32.h"
+  "${ZLIB_DIR}/src/deflate.h"
+  "${ZLIB_DIR}/src/gzguts.h"
+  "${ZLIB_DIR}/src/inffast.h"
+  "${ZLIB_DIR}/src/inffixed.h"
+  "${ZLIB_DIR}/src/inflate.h"
+  "${ZLIB_DIR}/src/inftrees.h"
+  "${ZLIB_DIR}/src/trees.h"
+  "${ZLIB_DIR}/include/zconf.h"
+  "${ZLIB_DIR}/include/zlib.h"
+  "${ZLIB_DIR}/src/zutil.h"
 )
 
-source_group("" FILES ${ZLIB_SRC} ${ZLIB_HPP})
+source_group("Source Files" FILES ${ZLIB_SRC})
+source_group("Header Files" FILES ${ZLIB_HPP})
 
 add_library("zlib" ${ZLIB_SRC} ${ZLIB_HPP})
 
@@ -42,3 +44,5 @@ disable_project_warnings("zlib")
 if(MSVC)
   sm_add_compile_definition("zlib" _MBCS)
 endif(MSVC)
+
+target_include_directories("zlib" PUBLIC "${ZLIB_DIR}/include")

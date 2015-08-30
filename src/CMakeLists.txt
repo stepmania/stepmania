@@ -1,3 +1,4 @@
+
 file(MAKE_DIRECTORY "${SM_SRC_DIR}/generated")
 
 if(MSVC)
@@ -259,15 +260,8 @@ list(APPEND SM_WINDOWS_PROGRAM_DLLS
   "${SM_PROGRAM_DIR}/avcodec-53.dll"
   "${SM_PROGRAM_DIR}/avformat-53.dll"
   "${SM_PROGRAM_DIR}/avutil-51.dll"
-  "${SM_PROGRAM_DIR}/jpeg.dll"
-  "${SM_PROGRAM_DIR}/msvcp100.dll"
-  "${SM_PROGRAM_DIR}/msvcp110.dll"
-  "${SM_PROGRAM_DIR}/msvcr100.dll"
-  "${SM_PROGRAM_DIR}/msvcr110.dll"
   "${SM_PROGRAM_DIR}/parallel_lights_io.dll"
   "${SM_PROGRAM_DIR}/swscale-2.dll"
-  "${SM_PROGRAM_DIR}/vccorlib110.dll"
-  "${SM_PROGRAM_DIR}/zlib1.dll"
 )
 
 if(WIN32)
@@ -276,6 +270,7 @@ if(WIN32)
   sm_add_compile_definition("${SM_EXE_NAME}" _CRT_SECURE_NO_WARNINGS)
   sm_add_compile_definition("${SM_EXE_NAME}" _WINSOCK_DEPRECATED_NO_WARNINGS)
   sm_add_compile_definition("${SM_EXE_NAME}" GLEW_STATIC)
+  sm_add_compile_definition("${SM_EXE_NAME}" PCRE_STATIC)
   
   set_target_properties("${SM_EXE_NAME}" PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${SM_PROGRAM_DIR}"
@@ -416,15 +411,15 @@ endif()
 set_property(TARGET "${SM_EXE_NAME}" PROPERTY FOLDER "Internal Libraries")
 
 list(APPEND SMDATA_LINK_LIB
+  "glew"
+  "jpeg"
+  "jsoncpp"
   "lua-5.1"
+  "mad"
+  "png"
   "tomcrypt"
   "tommath"
   "zlib"
-  "jsoncpp"
-  "mad"
-  "png"
-  "glew"
-  "jpeg"
 )
 
 if (NOT SYSTEM_PCRE_FOUND)
@@ -434,28 +429,22 @@ endif()
 if (WIN32)
   list(APPEND SMDATA_LINK_LIB
     # The misc libraries are here.
-    "${LIB_SWSCALE}"
+    "ogg"
+    "vorbis"
+    "vorbisfile"
     "${LIB_AVCODEC}"
     "${LIB_AVFORMAT}"
     "${LIB_AVUTIL}"
-    "libmad.lib"
-    "ogg_static.lib"
-    "vorbis_static.lib"
-    "vorbisfile_static.lib"
+    "${LIB_SWSCALE}"
     "dbghelp.lib"
     "setupapi.lib"
     "hid.lib"
   )
-  # Mad is not built in Windows.
-  list(REMOVE_ITEM SMDATA_LINK_LIB "mad")
   
   get_filename_component(DIRECTX_LIBRARY_DIR "${DIRECTX_LIBRARIES}" DIRECTORY)
   
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${DIRECTX_LIBRARY_DIR}\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/ffmpeg/lib\"")
-  sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/libjpeg\"")
-  sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/mad-0.15.1b/msvc++/Release\"")
-  sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/vorbis/win32\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_SRC_DIR}/archutils/Win32/ddk\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/ERRORREPORT:SEND")
   sm_add_link_flag("${SM_EXE_NAME}" "/MAPINFO:EXPORTS")
@@ -610,18 +599,18 @@ target_link_libraries("${SM_EXE_NAME}" ${SMDATA_LINK_LIB})
 
 list(APPEND SM_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
-  "${SM_EXTERN_DIR}/vorbis"
+  "${SM_EXTERN_DIR}/libogg-1.3.2/include"
+  "${SM_EXTERN_DIR}/libvorbis-1.3.5/include"
 )
 if(NOT APPLE)
   list(APPEND SM_INCLUDE_DIRS
-    "${SM_EXTERN_DIR}/glew-1.5.8/include"
-    "${SM_EXTERN_DIR}/jsoncpp/include"
-    "${SM_EXTERN_DIR}/zlib"
+    "${SM_EXTERN_DIR}/glew-1.12.0/include"
+    "${SM_EXTERN_DIR}/jsoncpp-0.10.4/include"
+    "${SM_EXTERN_DIR}/zlib-1.2.8/include"
   )
   if(MSVC)
     list(APPEND SM_INCLUDE_DIRS
       "${SM_EXTERN_DIR}/ffmpeg/include"
-      "${SM_EXTERN_DIR}/libjpeg"
     )
   else()
     list(APPEND SM_INCLUDE_DIRS
@@ -661,7 +650,7 @@ if(WIN32)
   )
 else()
   list(APPEND SM_INCLUDE_DIRS
-    "${SM_EXTERN_DIR}/libpng/include"
+    "${SM_EXTERN_DIR}/libpng-1.6.17/include"
   )
 endif()
 
@@ -682,15 +671,8 @@ if(NOT APPLE)
     install(FILES "${SM_PROGRAM_DIR}/avcodec-53.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/avformat-53.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/avutil-51.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/jpeg.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/msvcp100.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/msvcp110.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/msvcr100.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/msvcr110.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/parallel_lights_io.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/swscale-2.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/vccorlib110.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/zlib1.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
 
     # foreach(SM_WINDOW_DLL "${SM_WINDOWS_PROGRAM_DLLS}")
     #   install(FILES "${SM_WINDOW_DLL}" DESTINATION "${SM_INSTALL_DESTINATION}")

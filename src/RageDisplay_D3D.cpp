@@ -15,7 +15,11 @@
 
 #include <D3dx9tex.h>
 #include <d3d9.h>
+#if defined(USE_DXERR9)
+#include <dxerr9.h>
+#else
 #include <dxerr.h>
+#endif
 
 #include "archutils/Win32/GraphicsWindow.h"
 
@@ -24,7 +28,11 @@
 #if defined(_MSC_VER)
 	#pragma comment(lib, "d3d9.lib")
 	#pragma comment(lib, "d3dx9.lib")
+#if defined(USE_DXERR9)
+	#pragma comment(lib, "DxErr9.lib")
+#else
 	#pragma comment(lib, "DxErr.lib")
+#endif
 #endif
 
 #include <math.h>
@@ -32,7 +40,11 @@
 
 RString GetErrorString( HRESULT hr )
 {
+#if defined(USE_DXERR9)
+	return DXGetErrorString9(hr);
+#else
 	return DXGetErrorString(hr);
+#endif
 }
 
 // Globals

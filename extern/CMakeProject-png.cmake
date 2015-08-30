@@ -1,34 +1,35 @@
+set(PNG_DIR "libpng-1.6.17")
+
 set(PNG_SRC
-  "libpng/include/png.c"
-  "libpng/include/pngerror.c"
-  "libpng/include/pngget.c"
-  "libpng/include/pngmem.c"
-  "libpng/include/pngpread.c"
-  "libpng/include/pngread.c"
-  "libpng/include/pngrio.c"
-  "libpng/include/pngrtran.c"
-  "libpng/include/pngrutil.c"
-  "libpng/include/pngset.c"
-  "libpng/include/pngtest.c"
-  "libpng/include/pngtrans.c"
-  "libpng/include/pngwio.c"
-  "libpng/include/pngwrite.c"
-  "libpng/include/pngwtran.c"
-  "libpng/include/pngwutil.c"
+  "${PNG_DIR}/src/png.c"
+  "${PNG_DIR}/src/pngerror.c"
+  "${PNG_DIR}/src/pngget.c"
+  "${PNG_DIR}/src/pngmem.c"
+  "${PNG_DIR}/src/pngpread.c"
+  "${PNG_DIR}/src/pngread.c"
+  "${PNG_DIR}/src/pngrio.c"
+  "${PNG_DIR}/src/pngrtran.c"
+  "${PNG_DIR}/src/pngrutil.c"
+  "${PNG_DIR}/src/pngset.c"
+  "${PNG_DIR}/src/pngtrans.c"
+  "${PNG_DIR}/src/pngwio.c"
+  "${PNG_DIR}/src/pngwrite.c"
+  "${PNG_DIR}/src/pngwtran.c"
+  "${PNG_DIR}/src/pngwutil.c"
 )
 
 set(PNG_HPP
-  "libpng/include/png.h"
-  "libpng/include/pngconf.h"
-  "libpng/include/pngdebug.h"
-  "libpng/include/pnginfo.h"
-  "libpng/include/pnglibconf.h"
-  "libpng/include/pngpriv.h"
-  "libpng/include/pngstruct.h"
+  "${PNG_DIR}/include/png.h"
+  "${PNG_DIR}/include/pngconf.h"
+  "${PNG_DIR}/src/pngdebug.h"
+  "${PNG_DIR}/src/pnginfo.h"
+  "${PNG_DIR}/include/pnglibconf.h"
+  "${PNG_DIR}/src/pngpriv.h"
+  "${PNG_DIR}/src/pngstruct.h"
 )
 
-source_group("" FILES ${PNG_SRC})
-source_group("" FILES ${PNG_HPP})
+source_group("Source Files" FILES ${PNG_SRC})
+source_group("Header Files" FILES ${PNG_HPP})
 
 add_library("png" ${PNG_SRC} ${PNG_HPP})
 
@@ -40,5 +41,8 @@ if(MSVC)
   sm_add_compile_definition("png" _CRT_SECURE_NO_WARNINGS)
 endif()
 
-target_include_directories("png" PUBLIC "zlib")
+target_include_directories("png" PUBLIC "${PNG_DIR}/include")
 
+if(APPLE OR MSVC)
+  target_include_directories("png" PRIVATE "${ZLIB_DIR}/include")
+endif()

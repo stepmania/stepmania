@@ -134,19 +134,20 @@ static inline int64_t llabs( int64_t i ) { return i >= 0? i: -i; }
 
 // Windows is missing some basic math functions:
 // But MinGW isn't.
-#if !defined(__MINGW32__)
+#if !defined(__MINGW32__) \
+		/* VC++ 2012 added support of cstdint and truncf */\
+		&& (!defined(_MSC_VER) || _MSC_VER < 1700)
 #define NEED_TRUNCF
-#define NEED_ROUNDF
-#define NEED_STRTOF
 #define MISSING_STDINT_H
 #endif
 
 // MinGW provides us with this function already
 
 #if !defined(__MINGW32__) \
-		/* VC++ 2013 added the support of lrintf	*/\
+		/* VC++ 2013 added support of lrintf, roundf and strtof */\
 		&& (!defined(_MSC_VER) || _MSC_VER < 1800)
-
+#define NEED_ROUNDF
+#define NEED_STRTOF
 inline long int lrintf( float f )
 {
 	int retval;
@@ -174,7 +175,11 @@ inline long int lrintf( float f )
 
 #if defined(__GNUC__) // It might be MinGW or Cygwin(?)
 #include "archutils/Common/gcc_byte_swaps.h"
-#else // XXX: Should we test for MSVC?
+#elif defined(_MSC_VER) && (_MSC_VER >= 1310) /* Byte swap functions were first implemented in Visual Studio .NET 2003 */
+#define ArchSwap32(n) _byteswap_ulong(n)
+#define ArchSwap24(n) _byteswap_ulong(n) >> 8
+#define ArchSwap16(n) _byteswap_ushort(n)
+#else
 #define HAVE_BYTE_SWAPS
 
 inline uint32_t ArchSwap32( uint32_t n )

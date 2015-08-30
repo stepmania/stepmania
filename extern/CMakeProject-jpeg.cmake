@@ -1,61 +1,72 @@
-list(APPEND JPEG_SRC
-  "libjpeg/ansi2knr.c"
-  "libjpeg/cdjpeg.c"
-  "libjpeg/cjpeg.c"
-  "libjpeg/ckconfig.c"
-  "libjpeg/djpeg.c"
-  "libjpeg/jaricom.c"
-  "libjpeg/jcapimin.c"
-  "libjpeg/jcapistd.c"
-  "libjpeg/jcarith.c"
-  "libjpeg/jccoefct.c"
-  "libjpeg/jccolor.c"
-  "libjpeg/jcdctmgr.c"
-  "libjpeg/jchuff.c"
-  "libjpeg/jcinit.c"
-  "libjpeg/jcmainct.c"
-  "libjpeg/jcmarker.c"
-  "libjpeg/jcmaster.c"
-  "libjpeg/jcomapi.c"
-  "libjpeg/jcparam.c"
-  "libjpeg/jcprepct.c"
-  "libjpeg/jcsample.c"
-  "libjpeg/jctrans.c"
-  "libjpeg/jdapimin.c"
-  "libjpeg/jdapistd.c"
-  "libjpeg/jdarith.c"
-  "libjpeg/jdatadst.c"
-  "libjpeg/jdcoefct.c"
-  "libjpeg/jdcolor.c"
-  "libjpeg/jddctmgr.c"
-  "libjpeg/jdhuff.c"
-  "libjpeg/jdinput.c"
-  "libjpeg/jdmainct.c"
-  "libjpeg/jdmarker.c"
-  "libjpeg/jdmaster.c"
-  "libjpeg/jdmerge.c"
-  "libjpeg/jdpostct.c"
-  "libjpeg/jdsample.c"
-  "libjpeg/jdtrans.c"
-  "libjpeg/jerror.c"
-  "libjpeg/jfdctflt.c"
-  "libjpeg/jfdctfst.c"
-  "libjpeg/jfdctint.c"
-  "libjpeg/jutils.c"
-  "libjpeg/jidctflt.c"
-  "libjpeg/jidctfst.c"
-  "libjpeg/jidctint.c"
-  "libjpeg/jmemansi.c"
-  "libjpeg/jmemmgr.c"
-  "libjpeg/jmemname.c"
-  "libjpeg/jmemnobs.c"
-  "libjpeg/jquant1.c"
-  "libjpeg/jquant2.c"
+set(JPEG_SRC
+  "libjpeg/src/jaricom.c"
+  "libjpeg/src/jcapimin.c"
+  "libjpeg/src/jcapistd.c"
+  "libjpeg/src/jcarith.c"
+  "libjpeg/src/jccoefct.c"
+  "libjpeg/src/jccolor.c"
+  "libjpeg/src/jcdctmgr.c"
+  "libjpeg/src/jchuff.c"
+  "libjpeg/src/jcinit.c"
+  "libjpeg/src/jcmainct.c"
+  "libjpeg/src/jcmarker.c"
+  "libjpeg/src/jcmaster.c"
+  "libjpeg/src/jcomapi.c"
+  "libjpeg/src/jcparam.c"
+  "libjpeg/src/jcprepct.c"
+  "libjpeg/src/jcsample.c"
+  "libjpeg/src/jctrans.c"
+  "libjpeg/src/jdapimin.c"
+  "libjpeg/src/jdapistd.c"
+  "libjpeg/src/jdarith.c"
+  "libjpeg/src/jdatadst.c"
+  "libjpeg/src/jdatasrc.c"
+  "libjpeg/src/jdcoefct.c"
+  "libjpeg/src/jdcolor.c"
+  "libjpeg/src/jddctmgr.c"
+  "libjpeg/src/jdhuff.c"
+  "libjpeg/src/jdinput.c"
+  "libjpeg/src/jdmainct.c"
+  "libjpeg/src/jdmarker.c"
+  "libjpeg/src/jdmaster.c"
+  "libjpeg/src/jdmerge.c"
+  "libjpeg/src/jdpostct.c"
+  "libjpeg/src/jdsample.c"
+  "libjpeg/src/jdtrans.c"
+  "libjpeg/src/jerror.c"
+  "libjpeg/src/jfdctflt.c"
+  "libjpeg/src/jfdctfst.c"
+  "libjpeg/src/jfdctint.c"
+  "libjpeg/src/jidctflt.c"
+  "libjpeg/src/jidctfst.c"
+  "libjpeg/src/jidctint.c"
+  "libjpeg/src/jmemmgr.c"
+  "libjpeg/src/jmemnobs.c"
+  "libjpeg/src/jquant1.c"
+  "libjpeg/src/jquant2.c"
+  "libjpeg/src/jutils.c"
 )
 
-source_group("" FILES ${JPEG_SRC})
+if(APPLE)
+  list(APPEND JPEG_SRC "jmemmac.c")
+endif()
 
-add_library("jpeg" ${JPEG_SRC})
+set(JPEG_HPP
+  "libjpeg/include/jconfig.h"
+  "libjpeg/src/jdct.h"
+  "libjpeg/include/jerror.h"
+  "libjpeg/src/jinclude.h"
+  "libjpeg/src/jmemsys.h"
+  "libjpeg/include/jmorecfg.h"
+  "libjpeg/include/jpegint.h"
+  "libjpeg/include/jpeglib.h"
+  "libjpeg/src/jversion.h"
+)
+
+source_group("Source Files" FILES ${JPEG_SRC})
+source_group("Header Files" FILES ${JPEG_HPP})
+
+add_library("jpeg" ${JPEG_SRC} ${JPEG_HPP})
 
 disable_project_warnings("jpeg")
 
@@ -64,3 +75,5 @@ set_property(TARGET "jpeg" PROPERTY FOLDER "External Libraries")
 if(MSVC)
   sm_add_compile_definition("jpeg" _CRT_SECURE_NO_WARNINGS)
 endif(MSVC)
+
+target_include_directories("jpeg" PUBLIC "libjpeg/include")
