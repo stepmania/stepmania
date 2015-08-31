@@ -1,5 +1,5 @@
 include(CMakeProject-lua.cmake)
-if (NOT ${GLEW_FOUND})
+if (NOT BSD)
   include(CMakeProject-glew.cmake)
 endif()
 include(CMakeProject-json.cmake)
