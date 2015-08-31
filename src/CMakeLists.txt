@@ -535,7 +535,7 @@ else() # Unix / Linux
     endif()
   endif()
 
-  if (HAS_LIBDL)
+  if (LINUX)
     list(APPEND SMDATA_LINK_LIB
       "${DL_LIBRARY}"
     )
