@@ -259,15 +259,8 @@ list(APPEND SM_WINDOWS_PROGRAM_DLLS
   "${SM_PROGRAM_DIR}/avcodec-53.dll"
   "${SM_PROGRAM_DIR}/avformat-53.dll"
   "${SM_PROGRAM_DIR}/avutil-51.dll"
-  "${SM_PROGRAM_DIR}/jpeg.dll"
-  "${SM_PROGRAM_DIR}/msvcp100.dll"
-  "${SM_PROGRAM_DIR}/msvcp110.dll"
-  "${SM_PROGRAM_DIR}/msvcr100.dll"
-  "${SM_PROGRAM_DIR}/msvcr110.dll"
   "${SM_PROGRAM_DIR}/parallel_lights_io.dll"
   "${SM_PROGRAM_DIR}/swscale-2.dll"
-  "${SM_PROGRAM_DIR}/vccorlib110.dll"
-  "${SM_PROGRAM_DIR}/zlib1.dll"
 )
 
 if(WIN32)
@@ -682,15 +675,8 @@ if(NOT APPLE)
     install(FILES "${SM_PROGRAM_DIR}/avcodec-53.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/avformat-53.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/avutil-51.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/jpeg.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/msvcp100.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/msvcp110.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/msvcr100.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/msvcr110.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/parallel_lights_io.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/swscale-2.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/vccorlib110.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/zlib1.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
 
     # foreach(SM_WINDOW_DLL "${SM_WINDOWS_PROGRAM_DLLS}")
     #   install(FILES "${SM_WINDOW_DLL}" DESTINATION "${SM_INSTALL_DESTINATION}")
