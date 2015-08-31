@@ -535,9 +535,11 @@ else() # Unix / Linux
     endif()
   endif()
 
-  list(APPEND SMDATA_LINK_LIB
-    "${DL_LIBRARY}"
-  )
+  if (HAS_LIBDL)
+    list(APPEND SMDATA_LINK_LIB
+      "${DL_LIBRARY}"
+    )
+  endif()
 
   if(HAS_OGG)
     list(APPEND SMDATA_LINK_LIB

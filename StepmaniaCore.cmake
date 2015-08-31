@@ -113,7 +113,7 @@ elseif(MACOSX)
     MAC_FRAME_OPENGL
     MAC_FRAME_QUICKTIME
   )
-elseif(LINUX)
+elseif(LINUX OR BSD)
   include(TestBigEndian)
   include(ExternalProject)
 
