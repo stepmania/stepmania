@@ -122,11 +122,14 @@ typedef unsigned __int64 uint64_t;
 #define UINT64_C(i) i##ui64
 #endif
 #endif // #if _MSC_VER < 1700
-#if _MSC_VER < 1600	// 1600 = VC++ 2010
-static inline int64_t llabs( int64_t i ) { return i >= 0? i: -i; }
-#endif // #if _MSC_VER < 1600
-#endif
-#endif
+#if (_MSC_VER >= 1400) && (_MSC_VER < 1800) // 1800 = VC++ 2013
+#define llabs(i) _abs64(i)
+#endif // #if (_MSC_VER >= 1400) && (_MSC_VER < 1800)
+#if _MSC_VER < 1400 // 1400 = VC++ 2005
+int64_t llabs( int64_t i ) { return i >= 0 ? i : -i; }
+#endif // #if _MSC_VER < 1400
+#endif // #if defined(_MSC_VER)
+#endif // #if !defined(__MINGW32__)
 
 #undef min
 #undef max
@@ -134,19 +137,16 @@ static inline int64_t llabs( int64_t i ) { return i >= 0? i: -i; }
 
 // Windows is missing some basic math functions:
 // But MinGW isn't.
-#if !defined(__MINGW32__)
+#if !defined(__MINGW32__) && (!defined(_MSC_VER) || _MSC_VER < 1700) // cstdint and truncf were first implemented in Visual Studio 2012
 #define NEED_TRUNCF
-#define NEED_ROUNDF
-#define NEED_STRTOF
 #define MISSING_STDINT_H
 #endif
 
 // MinGW provides us with this function already
 
-#if !defined(__MINGW32__) \
-		/* VC++ 2013 added the support of lrintf	*/\
-		&& (!defined(_MSC_VER) || _MSC_VER < 1800)
-
+#if !defined(__MINGW32__) && (!defined(_MSC_VER) || _MSC_VER < 1800) // lrintf, roundf and strtof were first implemented in Visual Studio 2013
+#define NEED_ROUNDF
+#define NEED_STRTOF
 inline long int lrintf( float f )
 {
 	int retval;
@@ -174,7 +174,11 @@ inline long int lrintf( float f )
 
 #if defined(__GNUC__) // It might be MinGW or Cygwin(?)
 #include "archutils/Common/gcc_byte_swaps.h"
-#else // XXX: Should we test for MSVC?
+#elif defined(_MSC_VER) && (_MSC_VER >= 1310) // Byte swap functions were first implemented in Visual Studio .NET 2003
+#define ArchSwap32(n) _byteswap_ulong(n)
+#define ArchSwap24(n) _byteswap_ulong(n) >> 8
+#define ArchSwap16(n) _byteswap_ushort(n)
+#else
 #define HAVE_BYTE_SWAPS
 
 inline uint32_t ArchSwap32( uint32_t n )
