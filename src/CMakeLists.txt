@@ -419,15 +419,15 @@ endif()
 set_property(TARGET "${SM_EXE_NAME}" PROPERTY FOLDER "Internal Libraries")
 
 list(APPEND SMDATA_LINK_LIB
+  "glew"
+  "jpeg"
+  "jsoncpp"
   "lua-5.1"
+  "mad"
+  "png"
   "tomcrypt"
   "tommath"
   "zlib"
-  "jsoncpp"
-  "mad"
-  "png"
-  "glew"
-  "jpeg"
 )
 
 if (NOT SYSTEM_PCRE_FOUND)
@@ -437,11 +437,10 @@ endif()
 if (WIN32)
   list(APPEND SMDATA_LINK_LIB
     # The misc libraries are here.
-    "${LIB_SWSCALE}"
     "${LIB_AVCODEC}"
     "${LIB_AVFORMAT}"
     "${LIB_AVUTIL}"
-    "libmad.lib"
+    "${LIB_SWSCALE}"
     "ogg_static.lib"
     "vorbis_static.lib"
     "vorbisfile_static.lib"
@@ -449,15 +448,12 @@ if (WIN32)
     "setupapi.lib"
     "hid.lib"
   )
-  # Mad is not built in Windows.
-  list(REMOVE_ITEM SMDATA_LINK_LIB "mad")
   
   get_filename_component(DIRECTX_LIBRARY_DIR "${DIRECTX_LIBRARIES}" DIRECTORY)
   
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${DIRECTX_LIBRARY_DIR}\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/ffmpeg/lib\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/libjpeg\"")
-  sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/mad-0.15.1b/msvc++/Release\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/vorbis/win32\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_SRC_DIR}/archutils/Win32/ddk\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/ERRORREPORT:SEND")
