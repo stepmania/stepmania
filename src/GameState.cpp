@@ -331,6 +331,7 @@ void GameState::Reset()
 
 	m_SongOptions.Init();
 
+	m_paused= false;
 	ResetMusicStatistics();
 	ResetStageStatistics();
 	AdjustSync::ResetOriginalSyncData();
@@ -1251,7 +1252,7 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 	 * driver, like so: 13.120953,13.130975,13.130975,13.130975,13.140998,...
 	 * This causes visual stuttering of the arrows. To compensate, keep a
 	 * RageTimer since the last change. */
-	if (fPositionSeconds == m_LastPositionSeconds)
+	if(fPositionSeconds == m_LastPositionSeconds && !m_paused)
 		fPositionSeconds += m_LastPositionTimer.Ago();
 	else
 	{
