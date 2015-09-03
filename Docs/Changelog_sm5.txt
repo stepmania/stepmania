@@ -4,6 +4,75 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+
+2015/09/03
+----------
+* [Fonts] Respliced large kanji sprite sheets from 32x106 and 32x61 to 63x54
+  and 48x41 to bring them under 4096 pixels tall, which was causing a forced
+  resize and slowing down loading time. [kyzentun]
+* [Gameplay] Fixed song position updating logic so that the
+  ScreenGameplay:PauseGame lua function actually pauses the game.  Start,
+  Select, and Back are all used for different ways of giving up, so the
+  feature remains unused in the default theme. [kyzentun]
+
+2015/09/02
+----------
+* [Gameplay] Fixed Player logic that spammed TNS_AvoidMine repeatedly. [kyzentun]
+
+2015/08/29
+----------
+* [Edit Mode] Fixed crash on entering edit mode caused by entering edit mode
+  as Player 2.  Edit Mode only works as Player 1. [kyzentun]
+
+2015/08/23
+----------
+* [BMS] Added myo2 channel layout and kb7 charts.  Added preview point and
+  fixed offset support and linear solo bms layout. [zardoru]
+* [Linux] Symbolic links will be followed to find the actual executable dir. [Wallacoloo]
+
+2015/08/20
+----------
+* [Minimaid] Minimaid support built in by default instead of off by default. [wolfman]
+* [Options] Put AllowExtraStage on Advanced Options screen in default. [kyzentun]
+
+2015/08/19
+----------
+* [Gameplay] RandomBGEndsAtLastBeat metric defaults to true to be similar to
+  old behavior. [wolfy852]
+
+2015/08/08
+----------
+* [General] When the HighResolutionTextures preference is set to Auto,
+  StepMania checks whether the display height is greater than the theme
+  height instead of whether it's greater than 480. [shakesoda]
+
+2015/08/04
+----------
+* [PIUIO] Only send LightState changes to PIUIO when there is a change. [dbk2]
+
+2015/08/02
+----------
+* [NoteField] Fixed bottomcap when NoteDisplay is zoomed out. [hanubeki]
+
+2015/07/22
+----------
+* [Compiling] Fixed building on 32bit linux. [kyzentun]
+
+2015/07/19
+----------
+* [Pump] Added TimingWindowSecondsCheckpoint for the timing window that
+  checkpoint holds allow you to release for. [wolfman]
+
+2015/07/18
+----------
+* [General] Fixed bug that skipped notes on beat 0 in score. [kyzentun]
+
+2015/07/16
+----------
+* [ActorUtil] ActorUtil.ResolvePath and ResolveRelativePath now take a
+  boolean flag to tell if the thing is optional. [kyzentun]
+* [CryptMan] Fixed bug that clipped hash strings with zeros. [kyzentun]
+
 2015/07/15
 ----------
 * [Sprite] Sprite now executes the AnimationFinished command when it reaches
