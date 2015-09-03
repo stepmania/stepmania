@@ -244,7 +244,7 @@ else()
       "arch/LoadingWindow/LoadingWindow_MacOSX.h"
     )
   elseif(LINUX)
-    if (GTK2_FOUND)
+    if (GTK3_FOUND)
       list(APPEND SMDATA_ARCH_LOADING_SRC
         "arch/LoadingWindow/LoadingWindow_Gtk.cpp"
       )
