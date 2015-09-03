@@ -176,6 +176,42 @@ public:
 };
 static RageFileDriverMountpoints *g_Mountpoints = nullptr;
 
+static RString ExtractDirectory( RString sPath )
+{
+	// return the directory containing sPath
+	size_t n = sPath.find_last_of("/");
+	if( n != sPath.npos )
+		sPath.erase(n);
+	else
+		sPath.erase();
+	return sPath;
+}
+
+static RString ReadlinkRecursive( RString sPath )
+{
+#if defined(UNIX) || defined(MACOSX)
+	// unices support symbolic links; dereference them
+	RString dereferenced = sPath;
+	do
+	{
+		sPath = dereferenced;
+		char derefPath[512];
+		ssize_t linkSize = readlink(sPath, derefPath, sizeof(derefPath));
+		if ( linkSize != -1 && linkSize != sizeof(derefPath) )
+		{
+			dereferenced = RString( derefPath, linkSize );
+			if (derefPath[0] != '/')
+			{
+				// relative link
+				dereferenced = RString( ExtractDirectory(sPath) + "/" + dereferenced);
+			}
+		}
+	} while (sPath != dereferenced);
+#endif
+
+	return sPath;
+}
+
 static RString GetDirOfExecutable( RString argv0 )
 {
 	// argv[0] can be wrong in most OS's; try to avoid using it.
@@ -200,11 +236,7 @@ static RString GetDirOfExecutable( RString argv0 )
 #endif
 
 	// strip off executable name
-	size_t n = sPath.find_last_of("/");
-	if( n != sPath.npos )
-		sPath.erase(n);
-	else
-		sPath.erase();
+	sPath = ExtractDirectory(sPath);
 
 	if( !bIsAbsolutePath )
 	{
@@ -223,17 +255,18 @@ static RString GetDirOfExecutable( RString argv0 )
 			{
 				if( access(i + "/" + argv0, X_OK|R_OK) )
 					continue;
-				sPath = i;
+				sPath = ExtractDirectory(ReadlinkRecursive(i + "/" + argv0));
 				break;
 			}
 			if( sPath.empty() )
 				sPath = GetCwd(); // What?
 			else if( sPath[0] != '/' ) // For example, if . is in $PATH.
 				sPath = GetCwd() + "/" + sPath;
+
 		}
 		else
 		{
-			sPath = GetCwd() + "/" + sPath;
+			sPath = ExtractDirectory(ReadlinkRecursive(GetCwd() + "/" + argv0));
 		}
 #else
 		sPath = GetCwd() + "/" + sPath;

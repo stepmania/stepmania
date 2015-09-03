@@ -180,7 +180,7 @@ bool StepMania::GetHighResolutionTextures()
 	case HighResolutionTextures_Auto:
 		{
 			int height = PREFSMAN->m_iDisplayHeight;
-			return height > 480;
+			return height > THEME->GetMetricI("Common", "ScreenHeight");
 		}
 	case HighResolutionTextures_ForceOn:
 		return true;

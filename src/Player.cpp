@@ -2803,7 +2803,6 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		if( tn.type == TapNoteType_Mine )
 		{
 			tn.result.tns = TNS_AvoidMine;
-
 			/* The only real way to tell if a mine has been scored is if it has disappeared
 			 * but this only works for hit mines so update the scores for avoided mines here. */
 			if( m_pPrimaryScoreKeeper )
@@ -2909,6 +2908,7 @@ void Player::UpdateJudgedRows()
 				continue;
 			case TNS_AvoidMine:
 				SetMineJudgment( tn.result.tns , iter.Track() );
+				tn.result.bHidden= true;
 				continue;
 			case TNS_HitMine:
 				SetMineJudgment( tn.result.tns , iter.Track() );
@@ -2951,6 +2951,12 @@ void Player::UpdateJudgedRows()
 			if( m_pSecondaryScoreKeeper )
 				m_pSecondaryScoreKeeper->HandleTapScore( tn );
 			tn.result.bHidden = true;
+		}
+		// If we hit the end of the loop, m_pIterUnjudgedMineRows needs to be
+		// updated. -Kyz
+		if((iter.IsAtEnd() || iLastSeenRow == iEndRow) && bAllJudged)
+		{
+			*m_pIterUnjudgedMineRows= iter;
 		}
 
 		for (auto *s: setSounds)

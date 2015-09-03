@@ -38,6 +38,14 @@ void ScreenEditMenu::Init()
 	FOREACH_PlayerNumber( pn )
 		GAMESTATE->JoinPlayer( pn );
 
+	// Edit mode DOES NOT WORK if the master player is not player 1.  The same
+	// is true of various parts of this poorly designed screen. -Kyz
+	if(GAMESTATE->GetMasterPlayerNumber() != PLAYER_1)
+	{
+		LOG->Warn("Master player number was not player 1, forcing it to player 1 so that edit mode will work.  If playing in edit mode doesn't work, this might be related.");
+		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
+	}
+
 	ScreenWithMenuElements::Init();
 
 	m_Selector.SetName( "EditMenu" );

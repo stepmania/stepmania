@@ -187,10 +187,25 @@ float fmodfp(float x, float y)
 	return x;
 }
 
-int power_of_two( int iInput )
+int power_of_two( int input )
 {
-	return static_cast<int>(powf(2.0f, ceilf(
-		log(static_cast<float>(iInput)) / log(2.0f))));
+	int exp = 31, i = input;
+	if (i >> 16)
+		i >>= 16;
+	else exp -= 16;
+	if (i >> 8)
+		i >>= 8;
+	else exp -= 8;
+	if (i >> 4)
+		i >>= 4;
+	else exp -= 4;
+	if (i >> 2)
+		i >>= 2;
+	else exp -= 2;
+	if (i >> 1 == 0)
+		exp -= 1;
+	int value = 1 << exp;
+	return (input == value) ? value : (value << 1);
 }
 
 bool IsAnInt( const RString &s )

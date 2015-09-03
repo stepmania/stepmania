@@ -251,7 +251,12 @@ protected:
 		NUM_DANCING_STATES
 	}
 	/** @brief The specific point within ScreenGameplay. */ m_DancingState;
+	private:
 	bool			m_bPaused;
+	// set_paused_internal exists because GameState's pause variable needs to
+	// be kept in sync with ScreenGameplay's.
+	void set_paused_internal(bool p);
+	protected:
 
 	GameController		m_PauseController;
 	/**
