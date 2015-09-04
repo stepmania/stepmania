@@ -1,5 +1,7 @@
 include(CMakeProject-lua.cmake)
-include(CMakeProject-glew.cmake)
+if (NOT BSD)
+  include(CMakeProject-glew.cmake)
+endif()
 include(CMakeProject-json.cmake)
 if (NOT SYSTEM_PCRE_FOUND)
   include(CMakeProject-pcre.cmake)
