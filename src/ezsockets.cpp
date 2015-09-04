@@ -15,7 +15,9 @@
 #elif !defined(__MINGW32__)
 #include <sys/types.h>
 #include <sys/socket.h>
+#if defined(HAVE_UNISTD_H)
 #include <unistd.h>
+#endif
 #include <arpa/inet.h>
 #include <netdb.h>
 #endif

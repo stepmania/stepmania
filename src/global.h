@@ -1,7 +1,9 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-#ifdef HAVE_CONFIG_H
+#if defined(CMAKE_POWERED)
+#include "config.hpp"
+#elif defined(HAVE_CONFIG_H)
 #include "config.h"
 #endif
 
@@ -23,30 +25,6 @@
 #include "archutils/Unix/arch_setup.h"
 #endif
 
-/* Set one of these in arch_setup.h.  (Don't bother trying to fall back on BYTE_ORDER
- * if it was already set; too many systems are missing endian.h.) */
-#if !defined(ENDIAN_LITTLE) && !defined(ENDIAN_BIG)
-#error Neither ENDIAN_LITTLE nor ENDIAN_BIG defined
-#endif
-
-/* Define standard endianness macros, if they're missing. */
-#if defined(HAVE_ENDIAN_H)
-#include <endian.h>
-#elif defined(HAVE_MACHINE_ENDIAN_H)
-#include <machine/endian.h>
-#else
-/** @brief The macro for little endian order. */
-#define LITTLE_ENDIAN 1234
-/** @brief The macro for big endian order. */
-#define BIG_ENDIAN 4321
-#if defined(ENDIAN_LITTLE)
-#define BYTE_ORDER LITTLE_ENDIAN
-#elif defined(ENDIAN_BIG)
-#define BYTE_ORDER BIG_ENDIAN
-#endif
-
-#endif
-
 /* Make sure everyone has min and max: */
 #include <algorithm>
 
@@ -56,7 +34,7 @@
 /* And vector: */
 #include <vector>
 
-#if !defined(MISSING_STDINT_H) /* need to define int64_t if so */
+#if defined(HAVE_STDINT_H) /* need to define int64_t if so */
 #include <stdint.h>
 #endif
 #if defined(HAVE_INTTYPES_H)
@@ -108,7 +86,7 @@ namespace Checkpoints
 #endif
 
 /**
- * @brief A crash has occured, and we're not getting out of it easily.
+ * @brief A crash has occurred, and we're not getting out of it easily.
  *
  * For most users, this will result in a crashinfo.txt file being generated.
  * For anyone that is using a debug build, a debug break will be thrown to
@@ -165,18 +143,6 @@ template <> struct CompileAssert<true> { };
 template<int> struct CompileAssertDecl { };
 #define COMPILE_ASSERT(COND) typedef CompileAssertDecl< sizeof(CompileAssert<!!(COND)>) > CompileAssertInst
 
-#if defined(__GNUC__)
-/** @brief Define a macro to tell the compiler that a function has printf()
- * semantics, to aid warning output. */
-#define PRINTF(a,b) __attribute__((format(__printf__,a,b)))
-#define CONST_FUNCTION __attribute__((const))
-#else
-/** @brief A dummy define to keep things going smoothly. */
-#define PRINTF(a,b)
-/** @brief A dummy define to keep things going smoothly. */
-#define CONST_FUNCTION
-#endif
-
 #include "StdString.h"
 /** @brief Use RStrings throughout the program. */
 typedef StdString::CStdString RString;
@@ -192,55 +158,6 @@ typedef StdString::CStdString RString;
 
 /* Define a few functions if necessary */
 #include <cmath>
-
-#ifndef M_PI
-/** @brief Define Pi to many digits. */
-#define M_PI 3.1415926535897932384626433832795
-#endif
-
-#ifdef NEED_POWF
-inline float powf( float x, float y ) CONST_FUNCTION;
-float powf( float x, float y ) { return float( pow(double(x), double(y)) ); }
-#endif
-
-#ifdef NEED_SQRTF
-inline float sqrtf( float x ) CONST_FUNCTION;
-float sqrtf( float x ) { return float( sqrt(double(x)) ); }
-#endif
-
-#ifdef NEED_SINF
-inline float sinf( float x ) CONST_FUNCTION;
-float sinf( float x ) { return float( sin(double(x)) ); }
-#endif
-
-#ifdef NEED_TANF
-inline float tanf( float x ) CONST_FUNCTION;
-float tanf( float x ) { return float( tan(double(x)) ); }
-#endif
-
-#ifdef NEED_COSF
-inline float cosf( float x ) CONST_FUNCTION;
-float cosf( float x ){ return float( cos(double(x)) ); }
-#endif
-
-#ifdef NEED_ACOSF
-inline float acosf( float x ) CONST_FUNCTION;
-float acosf( float x ) { return float( acos(double(x)) ); }
-#endif
-
-#ifdef NEED_TRUNCF
-inline float truncf( float f ) CONST_FUNCTION;
-float truncf( float f ) { return float( int(f) ); }
-#endif
-
-#ifdef NEED_ROUNDF
-inline float roundf( float f ) CONST_FUNCTION;
-float roundf( float f ) { if( f < 0.0f ) return truncf( f-0.5f ); return truncf( f+0.5f ); }
-#endif
-
-#ifdef NEED_STRTOF
-inline float strtof( const char *s, char **se ) { return (float) strtod( s, se ); }
-#endif
 
 /* Don't include our own headers here, since they tend to change often. */
 

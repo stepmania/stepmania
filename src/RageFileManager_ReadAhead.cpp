@@ -3,7 +3,9 @@
 #include "RageThreads.h"
 #include "RageLog.h"
 
+#if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
+#endif
 #include <cerrno>
 #if defined(WIN32)
 #include <io.h>

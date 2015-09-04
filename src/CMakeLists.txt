@@ -38,6 +38,7 @@ list(APPEND SMDATA_GLOBAL_FILES_SRC
 )
 
 list(APPEND SMDATA_GLOBAL_FILES_HPP
+  "generated/config.hpp"
   "GameLoop.h"
   "global.h"
   "ProductInfo.h" # TODO: Have this be auto-generated.
@@ -204,6 +205,10 @@ set_target_properties("${SM_EXE_NAME}" PROPERTIES
   RELWITHDEBINFO_OUTPUT_NAME "${SM_NAME_RELWITHDEBINFO}"
 )
 
+if (WITH_VERSION_INFO)
+  sm_add_compile_definition("${SM_EXE_NAME}" HAVE_VERSION_INFO)
+endif()
+
 if (WITH_PORTABLE_TOMCRYPT)
   sm_add_compile_definition("${SM_EXE_NAME}" LTC_NO_ASM)
 elseif (WITH_NO_ROLC_TOMCRYPT OR APPLE)
@@ -365,8 +370,6 @@ elseif(APPLE)
     COMMAND ${CMAKE_COMMAND} -E copy "${SM_XCODE_DIR}/Hardware.plist" "$<TARGET_FILE_DIR:StepMania>/../Resources/"
   )
 else() # Linux
-  # TODO: Have this compile definition be used all over. Currently fixed for Windows and Mac, but in headers.
-  sm_add_compile_definition("${SM_EXE_NAME}" "${ENDIANNESS}")
   set_target_properties("${SM_EXE_NAME}" PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${SM_ROOT_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_ROOT_DIR}"
@@ -610,6 +613,7 @@ target_link_libraries("${SM_EXE_NAME}" ${SMDATA_LINK_LIB})
 
 list(APPEND SM_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
+  "${SM_SRC_DIR}/generated"
   "${SM_EXTERN_DIR}/vorbis"
 )
 if(NOT APPLE)

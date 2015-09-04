@@ -6,8 +6,12 @@
 #include "RageSoundManager.h"
 #include "RageUtil.h"
 
+#if defined(HAVE_UNISTD_H)
 #include <unistd.h>
+#endif
+#if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
+#endif
 #include <errno.h>
 #include <string.h>
 #include <sys/ioctl.h>

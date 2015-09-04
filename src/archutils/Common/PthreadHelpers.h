@@ -1,7 +1,9 @@
 #ifndef PID_THREAD_HELPERS_H
 #define PID_THREAD_HELPERS_H
 
+#if defined(HAVE_STDINT_H)
 #include <stdint.h>
+#endif
 #include "global.h"
 
 RString ThreadsVersion();

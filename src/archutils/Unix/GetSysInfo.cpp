@@ -1,7 +1,9 @@
 #include "global.h"
 #include "GetSysInfo.h"
 
+#if defined(HAVE_SYS_UTSNAME_H)
 #include <sys/utsname.h>
+#endif
 
 void GetKernel( RString &sys, int &iVersion )
 {
