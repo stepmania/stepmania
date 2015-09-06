@@ -26,6 +26,7 @@ addons:
             - libjack-dev
             - libc6-dev
             - libogg-dev
+            - libvorbis-dev
             - libbz2-dev
             - libjpeg8-dev
             - libpng12-dev
