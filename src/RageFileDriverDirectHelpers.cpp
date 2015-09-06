@@ -9,8 +9,11 @@
 #include <sys/stat.h>
 
 #if !defined(WIN32)
+
+#if defined(HAVE_DIRENT_H)
 #include <dirent.h>
-#include <fcntl.h>
+#endif
+
 #else
 #include <windows.h>
 #include <io.h>

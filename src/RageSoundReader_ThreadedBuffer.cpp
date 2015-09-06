@@ -5,10 +5,6 @@
 #include "Foreach.h"
 #include "RageLog.h"
 
-#if !defined(_WINDOWS)
-#include <unistd.h>
-#endif
-
 /* Implement threaded read-ahead buffering.
  *
  * If a buffer is low on data, keep filling until it has a g_iMinFillFrames.

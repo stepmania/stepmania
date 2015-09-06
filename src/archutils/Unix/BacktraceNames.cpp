@@ -6,7 +6,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstdarg>
+#if defined(HAVE_UNISTD_H)
 #include <unistd.h>
+#endif
 #include <cstring>
 #include <cerrno>
 

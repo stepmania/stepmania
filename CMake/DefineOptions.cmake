@@ -1,5 +1,10 @@
 # Prep options that are needed for each platform.
+
+# This option allows for networking support with StepMania.
 option(WITH_NETWORKING "Build with networking support." ON)
+
+# This option allows for additional version information to be built-in.
+option(WITH_VERSION_INFO "Build with version information." ON)
 
 # This option quiets warnings that are a part of external projects.
 option(WITH_EXTERNAL_WARNINGS "Build with warnings for all components, not just StepMania." OFF)

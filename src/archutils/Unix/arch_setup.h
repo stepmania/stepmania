@@ -9,7 +9,7 @@
 #include <alloca.h>
 #endif
 
-#if !defined(MISSING_STDINT_H) /* need to define int64_t if so */
+#if defined(HAVE_STDINT_H) /* need to define int64_t if so */
 #include <stdint.h>
 #endif
 
@@ -19,13 +19,7 @@
 #ifdef BSD
 #undef ALIGN
 #undef MACHINE
-#if defined(__NetBSD_Version__) && __NetBSD_Version__ < 299000900
-#define lrintf(x) ((int)rint(x))
 #endif
-#endif
-
-/* For RageLog */
-#define HAVE_VERSION_INFO
 
 #include "archutils/Common/gcc_byte_swaps.h"
 

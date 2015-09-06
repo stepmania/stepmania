@@ -55,3 +55,4 @@ function(disable_project_warnings projectName)
     endif()
   endif()
 endfunction()
+

@@ -45,8 +45,67 @@ include("${CMAKE_CURRENT_LIST_DIR}/CMake/SMDefs.cmake")
 # Put the predefined targets in separate groups.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+# Checks the standard include directories for c-style headers.
+# We may use C++ in this project, but the check works better with plain C headers.
+include(CheckIncludeFiles)
+check_include_files(math.h HAVE_MATH_H)
+check_include_files(alloca.h HAVE_ALLOCA_H)
+check_include_files(dirent.h HAVE_DIRENT_H)
+check_include_files(inttypes.h HAVE_INTTYPES_H)
+check_include_files(stdint.h HAVE_STDINT_H)
+check_include_files(endian.h HAVE_ENDIAN_H)
+check_include_files(sys/endian.h HAVE_SYS_ENDIAN_H)
+check_include_files(machine/endian.h HAVE_MACHINE_ENDIAN_H)
+check_include_files(sys/param.h HAVE_SYS_PARAM_H)
+check_include_files(sys/utsname.h HAVE_SYS_UTSNAME_H)
+check_include_files(fcntl.h HAVE_FCNTL_H)
+check_include_files(unistd.h HAVE_UNISTD_H)
+
+include(CheckFunctionExists)
+include(CheckSymbolExists)
+include(CheckCXXSymbolExists)
+if (WIN32 AND MSVC)
+  check_function_exists(_mkdir HAVE__MKDIR)
+  check_function_exists(_snprintf HAVE__SNPRINTF)
+else()
+  check_function_exists(mkdir HAVE_MKDIR)
+  check_function_exists(snprintf HAVE_SNPRINTF)
+endif()
+check_cxx_symbol_exists(powf cmath HAVE_POWF)
+check_cxx_symbol_exists(sqrtf cmath HAVE_SQRTF)
+check_cxx_symbol_exists(sinf cmath HAVE_SINF)
+check_cxx_symbol_exists(tanf cmath HAVE_TANF)
+check_cxx_symbol_exists(cosf cmath HAVE_COSF)
+check_cxx_symbol_exists(acosf cmath HAVE_ACOSF)
+check_cxx_symbol_exists(truncf cmath HAVE_TRUNCF)
+check_cxx_symbol_exists(roundf cmath HAVE_ROUNDF)
+check_cxx_symbol_exists(lrintf cmath HAVE_LRINTF)
+check_cxx_symbol_exists(strtof cstdlib HAVE_STRTOF)
+check_symbol_exists(M_PI math.h HAVE_M_PI)
+
+# Checks to make it easier to work with 32-bit/64-bit builds if required.
+include(CheckTypeSize)
+check_type_size(intptr_t SIZEOF_INTPTR_T)
+check_type_size(pid_t SIZEOF_PID_T)
+check_type_size(size_t SIZEOF_SIZE_T)
+check_type_size(ssize_t SIZEOF_SSIZE_T)
+
+include(TestBigEndian)
+test_big_endian(BIGENDIAN)
+if (${BIGENDIAN})
+  set(ENDIAN_BIG 1)
+else()
+  set(ENDIAN_LITTLE 1)
+endif()
+
+if (WITH_VERSION_INFO)
+  set(HAVE_VERSION_INFO 1)
+endif()
+
+configure_file("${SM_SRC_DIR}/config.in.hpp" "${SM_SRC_DIR}/generated/config.hpp")
+
 # Dependencies go here.
-set(ENDIANNESS "ENDIAN_LITTLE")
+
 if(WIN32)
   set(HAS_OGG TRUE)
   set(HAS_MP3 TRUE)
@@ -114,7 +173,6 @@ elseif(MACOSX)
     MAC_FRAME_QUICKTIME
   )
 elseif(LINUX)
-  include(TestBigEndian)
   include(ExternalProject)
 
   if(NOT WITH_GPL_LIBS)
@@ -319,11 +377,6 @@ elseif(LINUX)
   find_package(GLEW REQUIRED)
   if (NOT ${GLEW_FOUND})
     message(FATAL_ERROR "GLEW required to compile StepMania.")
-  endif()
-
-  test_big_endian(BIGENDIAN)
-  if (${BIGENDIAN})
-    set(ENDIANNESS "ENDIAN_BIG")
   endif()
 
 endif()
