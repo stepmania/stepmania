@@ -1,4 +1,4 @@
-set(MAD_DIR "libmad-0.15.1b")
+set(MAD_DIR "${SM_EXTERN_DIR}/libmad-0.15.1b")
 
 check_include_file(assert.h HAVE_ASSERT_H)
 check_include_file(dlfcn.h HAVE_DLFCN_H)
@@ -21,7 +21,7 @@ check_type_size(long SIZEOF_LONG)
 check_type_size("long long" SIZEOF_LONG_LONG)
 check_include_files("stdlib.h;stdarg.h;string.h;float.h" STDC_HEADERS)
 
-configure_file("${MAD_DIR}/config.h.in" "${SM_EXTERN_DIR}/${MAD_DIR}/config.h")
+configure_file("${MAD_DIR}/config.h.in" "${MAD_DIR}/config.h")
 
 set(MAD_SRC
   "${MAD_DIR}/bit.c"
