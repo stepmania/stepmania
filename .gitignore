@@ -27,6 +27,7 @@ Xcode/Info.StepMania.plist
 Xcode/plistHelper.hpp
 src/version_updater/VersionUpdater
 src/generated
+extern/mad-0.15.1b/config.h
 
 # Text Editor Based Items
 ___*
@@ -183,4 +184,3 @@ BuildLog.htm
 *.swp
 *.pc
 *.d
-
