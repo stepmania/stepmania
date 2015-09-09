@@ -642,21 +642,31 @@ namespace
 		lua_pushboolean( L, IsRegistered(SArg(1)) );
 		return 1;
 	}
+	static void name_error(Actor* p, lua_State* L)
+	{
+		if(p->GetName() == "")
+		{
+			luaL_error(L, "LoadAllCommands requires the actor to have a name.");
+		}
+	}
 	static int LoadAllCommands( lua_State *L )
 	{
 		Actor *p = Luna<Actor>::check( L, 1 );
+		name_error(p, L);
 		ActorUtil::LoadAllCommands( p, SArg(2) );
 		return 0;
 	}
 	static int LoadAllCommandsFromName( lua_State *L )
 	{
 		Actor *p = Luna<Actor>::check( L, 1 );
+		name_error(p, L);
 		ActorUtil::LoadAllCommandsFromName( *p, SArg(2), SArg(3) );
 		return 0;
 	}
 	static int LoadAllCommandsAndSetXY( lua_State *L )
 	{
 		Actor *p = Luna<Actor>::check( L, 1 );
+		name_error(p, L);
 		ActorUtil::LoadAllCommandsAndSetXY( p, SArg(2) );
 		return 0;
 	}

@@ -3,6 +3,7 @@
 #include "RageMath.h"
 #include "RageLog.h"
 #include "RageFile.h"
+#include "RageSoundReader_FileReader.h"
 #include "Foreach.h"
 #include "LocalizedString.h"
 #include "LuaBinding.h"
@@ -2431,8 +2432,8 @@ int LuaFunc_commify(lua_State* L)
 }
 LUAFUNC_REGISTER_COMMON(commify);
 
-void luafunc_approach_internal(lua_State* L, int valind, int goalind, int speedind);
-void luafunc_approach_internal(lua_State* L, int valind, int goalind, int speedind, int process_index)
+void luafunc_approach_internal(lua_State* L, int valind, int goalind, int speedind, const float mult);
+void luafunc_approach_internal(lua_State* L, int valind, int goalind, int speedind, const float mult, int process_index)
 {
 #define TONUMBER_NICE(dest, num_name, index) \
 	if(!lua_isnumber(L, index)) \
@@ -2451,7 +2452,7 @@ void luafunc_approach_internal(lua_State* L, int valind, int goalind, int speedi
 	{
 		luaL_error(L, "approach: speed %d is negative.", process_index);
 	}
-	fapproach(val, goal, speed);
+	fapproach(val, goal, speed*mult);
 	lua_pushnumber(L, val);
 }
 
@@ -2460,7 +2461,7 @@ int LuaFunc_approach(lua_State* L)
 {
 	// Args:  current, goal, speed
 	// Returns:  new_current
-	luafunc_approach_internal(L, 1, 2, 3, 1);
+	luafunc_approach_internal(L, 1, 2, 3, 1.0f, 1);
 	return 1;
 }
 LUAFUNC_REGISTER_COMMON(approach);
@@ -2468,16 +2469,24 @@ LUAFUNC_REGISTER_COMMON(approach);
 int LuaFunc_multiapproach(lua_State* L);
 int LuaFunc_multiapproach(lua_State* L)
 {
-	// Args:  {currents}, {goals}, {speeds}
+	// Args:  {currents}, {goals}, {speeds}, speed_multiplier
+	// speed_multiplier is optional, and is intended to be the delta time for
+	// the frame, so that this can be used every frame and have the current
+	// approach the goal at a framerate independent speed.
 	// Returns:  {currents}
 	// Modifies the values in {currents} in place.
-	if(lua_gettop(L) != 3)
+	if(lua_gettop(L) < 3)
 	{
 		luaL_error(L, "multiapproach:  A table of current values, a table of goal values, and a table of speeds must be passed.");
 	}
 	size_t currents_len= lua_objlen(L, 1);
 	size_t goals_len= lua_objlen(L, 2);
 	size_t speeds_len= lua_objlen(L, 3);
+	float mult= 1.0f;
+	if(lua_isnumber(L, 4))
+	{
+		mult= lua_tonumber(L, 4);
+	}
 	if(currents_len != goals_len || currents_len != speeds_len)
 	{
 		luaL_error(L, "multiapproach:  There must be the same number of current values, goal values, and speeds.");
@@ -2491,7 +2500,7 @@ int LuaFunc_multiapproach(lua_State* L)
 		lua_rawgeti(L, 1, i);
 		lua_rawgeti(L, 2, i);
 		lua_rawgeti(L, 3, i);
-		luafunc_approach_internal(L, -3, -2, -1, i);
+		luafunc_approach_internal(L, -3, -2, -1, mult, i);
 		lua_rawseti(L, 1, i);
 		lua_pop(L, 3);
 	}
@@ -2499,6 +2508,23 @@ int LuaFunc_multiapproach(lua_State* L)
 	return 1;
 }
 LUAFUNC_REGISTER_COMMON(multiapproach);
+
+int LuaFunc_get_music_file_length(lua_State* L);
+int LuaFunc_get_music_file_length(lua_State* L)
+{
+	// Args:  file_path
+	// Returns:  The length of the music in seconds.
+	RString path= SArg(1);
+	RString error;
+	RageSoundReader* sample= RageSoundReader_FileReader::OpenFile(path, error);
+	if(sample == NULL)
+	{
+		luaL_error(L, "The music file '%s' does not exist.", path.c_str());
+	}
+	lua_pushnumber(L, sample->GetLength() / 1000.0f);
+	return 1;
+}
+LUAFUNC_REGISTER_COMMON(get_music_file_length);
 
 /*
  * Copyright (c) 2001-2005 Chris Danford, Glenn Maynard
