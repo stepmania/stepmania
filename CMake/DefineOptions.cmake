@@ -22,7 +22,7 @@ option(WITH_JPEG "Build with JPEG Image Support." ON)
 option(WITH_FULL_RELEASE "Build as a proper, full release." OFF)
 
 # Turn this on to compile tomcrypt with no assembly data. This is a portable mode.
-option(WITH_PORTABLE_TOMCRYPT "Build with assembly/free tomcrypt, making it portable." OFF)
+option(WITH_PORTABLE_TOMCRYPT "Build with assembly/free tomcrypt, making it portable." ON)
 
 # Turn this on to not use the ROLC assembly featurs of tomcrypt.
 # If WITH_PORTABLE_TOMCRYPT is ON, this will automatically have no effect.
