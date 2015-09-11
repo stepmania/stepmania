@@ -205,6 +205,8 @@ set_target_properties("${SM_EXE_NAME}" PROPERTIES
   RELWITHDEBINFO_OUTPUT_NAME "${SM_NAME_RELWITHDEBINFO}"
 )
 
+sm_add_compile_definition("${SM_EXE_NAME}" LTM_DESC)
+
 if (WITH_VERSION_INFO)
   sm_add_compile_definition("${SM_EXE_NAME}" HAVE_VERSION_INFO)
 endif()
@@ -610,6 +612,7 @@ target_link_libraries("${SM_EXE_NAME}" ${SMDATA_LINK_LIB})
 list(APPEND SM_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
   "${SM_SRC_DIR}/generated"
+  "${SM_EXTERN_DIR}/tomcrypt/src/headers"
   "${SM_EXTERN_DIR}/vorbis"
 )
 if(NOT APPLE)
