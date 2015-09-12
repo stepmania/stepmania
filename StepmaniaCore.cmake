@@ -131,13 +131,22 @@ if (WITH_VERSION_INFO)
   set(HAVE_VERSION_INFO 1)
 endif()
 
-configure_file("${SM_SRC_DIR}/config.in.hpp" "${SM_SRC_DIR}/generated/config.hpp")
-
 # Dependencies go here.
+if(WITH_MP3)
+  if(WIN32 OR MACOSX)
+    set(HAS_MP3 TRUE)
+  else()
+    find_package(Mad)
+    if(NOT LIBMAD_FOUND)
+      message(FATAL_ERROR "Libmad library not found. If you wish to skip mp3 support, set WITH_MP3 to OFF when configuring.")
+    else()
+      set(HAS_MP3 TRUE)
+    endif()
+  endif()
+endif()
 
 if(WIN32)
   set(HAS_OGG TRUE)
-  set(HAS_MP3 TRUE)
   set(SYSTEM_PCRE_FOUND FALSE)
   find_package(DirectX REQUIRED)
 
@@ -163,7 +172,6 @@ if(WIN32)
   get_filename_component(LIB_AVUTIL ${LIB_AVUTIL} NAME)
 elseif(MACOSX)
   set(HAS_OGG TRUE)
-  set(HAS_MP3 TRUE)
   set(SYSTEM_PCRE_FOUND FALSE)
   set(WITH_CRASH_HANDLER TRUE)
   # Apple Archs needs to be 32-bit for now.
@@ -269,15 +277,6 @@ elseif(LINUX)
       message(FATAL_ERROR "Not all vorbis libraries were found. If you wish to skip vorbis support, set WITH_OGG to OFF when configuring.")
     else()
       set(HAS_OGG TRUE)
-    endif()
-  endif()
-
-  if (WITH_MP3)
-    find_package(Mad)
-    if(NOT LIBMAD_FOUND)
-      message(FATAL_ERROR "Libmad library not found. If you wish to skip mp3 support, set WITH_MP3 to OFF when configuring.")
-    else()
-      set(HAS_MP3 TRUE)
     endif()
   endif()
 
@@ -409,6 +408,8 @@ elseif(LINUX)
   endif()
 
 endif()
+
+configure_file("${SM_SRC_DIR}/config.in.hpp" "${SM_SRC_DIR}/generated/config.hpp")
 
 # Define installer based items for cpack.
 include("${CMAKE_CURRENT_LIST_DIR}/CMake/CPackSetup.cmake")
