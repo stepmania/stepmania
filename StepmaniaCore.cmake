@@ -132,6 +132,18 @@ if (WITH_VERSION_INFO)
 endif()
 
 # Dependencies go here.
+include(ExternalProject)
+
+if(NOT WITH_GPL_LIBS)
+  message("Disabling GPL exclusive libraries: no MP3 support.")
+  set(WITH_MP3 OFF)
+endif()
+
+if(WITH_WAV)
+  # TODO: Identify which headers to check for ensuring this will always work.
+  set(HAS_WAV TRUE)
+endif()
+
 if(WITH_MP3)
   if(WIN32 OR MACOSX)
     set(HAS_MP3 TRUE)
@@ -145,8 +157,23 @@ if(WITH_MP3)
   endif()
 endif()
 
+if(WITH_OGG)
+  if(WIN32 OR MACOSX)
+    set(HAS_OGG TRUE)
+  else()
+    find_package(Ogg)
+    find_package(Vorbis)
+    find_package(VorbisFile)
+
+    if(NOT (OGG_FOUND AND VORBIS_FOUND AND VORBISFILE_FOUND) )
+      message(FATAL_ERROR "Not all vorbis libraries were found. If you wish to skip vorbis support, set WITH_OGG to OFF when configuring.")
+    else()
+      set(HAS_OGG TRUE)
+    endif()
+  endif()
+endif()
+
 if(WIN32)
-  set(HAS_OGG TRUE)
   set(SYSTEM_PCRE_FOUND FALSE)
   find_package(DirectX REQUIRED)
 
@@ -171,7 +198,6 @@ if(WIN32)
   )
   get_filename_component(LIB_AVUTIL ${LIB_AVUTIL} NAME)
 elseif(MACOSX)
-  set(HAS_OGG TRUE)
   set(SYSTEM_PCRE_FOUND FALSE)
   set(WITH_CRASH_HANDLER TRUE)
   # Apple Archs needs to be 32-bit for now.
@@ -210,13 +236,6 @@ elseif(MACOSX)
     MAC_FRAME_QUICKTIME
   )
 elseif(LINUX)
-  include(ExternalProject)
-
-  if(NOT WITH_GPL_LIBS)
-    message("Disabling GPL exclusive libraries: no MP3 support.")
-    set(WITH_MP3 OFF)
-  endif()
-
   if(WITH_GTK2)
     find_package("GTK2" 2.0)
     if (${GTK2_FOUND})
@@ -266,18 +285,6 @@ elseif(LINUX)
     set(HAS_XRANDR TRUE)
   else()
     set(HAX_XRANDR FALSE)
-  endif()
-
-  if (WITH_OGG)
-    find_package(Ogg)
-    find_package(Vorbis)
-    find_package(VorbisFile)
-
-    if(NOT (OGG_FOUND AND VORBIS_FOUND AND VORBISFILE_FOUND) )
-      message(FATAL_ERROR "Not all vorbis libraries were found. If you wish to skip vorbis support, set WITH_OGG to OFF when configuring.")
-    else()
-      set(HAS_OGG TRUE)
-    endif()
   endif()
 
   find_package(PulseAudio)
