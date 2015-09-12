@@ -136,9 +136,11 @@ typedef long ssize_t;
 #endif
 
 /* Ensure we have a function that acts like a size limited sprintf. */
-#if defined(HAVE__SNPRINTF)
+#if defined(HAVE_SNPRINTF)
+/* Nothing to change. */
+#elif defined(HAVE__SNPRINTF)
 #define snprintf _snprintf
-#elif !defined(HAVE_SNPRINTF)
+#else
 #error "No size limited sprintf function available. Aborting."
 #endif
 
