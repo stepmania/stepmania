@@ -424,11 +424,19 @@ list(APPEND SMDATA_LINK_LIB
   "tommath"
   "zlib"
   "jsoncpp"
-  "mad"
   "png"
   "glew"
   "jpeg"
 )
+
+if (HAS_MP3)
+  list(FIND SMDATA_LINK_LIB "jsoncpp" JSON_INDEX)
+  if (WIN32 OR MACOSX)
+    list(INSERT SMDATA_LINK_LIB ${JSON_INDEX} "mad")
+  else()
+    list(INSERT SMDATA_LINK_LIB ${JSON_INDEX} ${LIBMAD_LIBRARY})
+  endif()
+endif()
 
 if (NOT SYSTEM_PCRE_FOUND)
   list(APPEND SMDATA_LINK_LIB "pcre")
@@ -472,10 +480,8 @@ elseif(APPLE)
 #    ${MAC_FRAME_APPKIT}
 #    ${MAC_FRAME_FOUNDATION}
 #    "ffmpeg"
-  
-  # TODO: Adjust the target when StepMania-Data returns.
-  # TODO: Find a cleaner way besides just setting to wipe the slate clean.
-  set(SMDATA_LINK_LIB
+
+  list(INSERT SMDATA_LINK_LIB 0
     ${MAC_FRAME_ACCELERATE}
     ${MAC_FRAME_CARBON}
     ${MAC_FRAME_COCOA}
@@ -490,16 +496,9 @@ elseif(APPLE)
     "ogg"
     "theora"
     "vorbis"
-    "lua-5.1"
-    "tomcrypt"
-    "tommath"
-    "zlib"
-    "jsoncpp"
-    "mad"
-    "png"
-    "glew"
+  )
+  list(APPEND SMDATA_LINK_LIB
     "pcre"
-    "jpeg"
     "avcodec"
     "avdevice"
     "avfilter"
@@ -543,12 +542,6 @@ else() # Unix / Linux
       "${VORBISFILE_LIBRARY}"
       "${VORBIS_LIBRARY}"
       "${OGG_LIBRARY}"
-    )
-  endif()
-
-  if(HAS_MP3)
-    list(APPEND SMDATA_LINK_LIB
-      "${LIBMAD_LIBRARY}"
     )
   endif()
 
