@@ -114,8 +114,14 @@ typedef long ssize_t;
 /* Defined to 1 if version information will be printed out. */
 #cmakedefine HAVE_VERSION_INFO 1
 
+/* Defined to 1 if compiling with WAV support. */
+#cmakedefine HAS_WAV 1
+
 /* Defined to 1 if compiling with MP3 support. */
 #cmakedefine HAS_MP3 1
+
+/* Defined to 1 if compiling with OGG support. */
+#cmakedefine HAS_OGG 1
 
 #if defined(__GNUC__)
 /** @brief Define a macro to tell the compiler that a function has printf()
