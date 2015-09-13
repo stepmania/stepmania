@@ -36,11 +36,11 @@ else()
 endif()
 
 # Allow for finding our libraries in a standard location.
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}" "${CMAKE_CURRENT_LIST_DIR}/CMake/Modules/")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}" "${SM_CMAKE_DIR}/Modules/")
 
-include("${CMAKE_CURRENT_LIST_DIR}/CMake/DefineOptions.cmake")
+include("${SM_CMAKE_DIR}/DefineOptions.cmake")
 
-include("${CMAKE_CURRENT_LIST_DIR}/CMake/SMDefs.cmake")
+include("${SM_CMAKE_DIR}/SMDefs.cmake")
 
 # Put the predefined targets in separate groups.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -105,10 +105,16 @@ check_cxx_symbol_exists(roundf cmath HAVE_ROUNDF)
 check_cxx_symbol_exists(lrintf cmath HAVE_LRINTF)
 check_cxx_symbol_exists(strtof cstdlib HAVE_STRTOF)
 check_symbol_exists(M_PI math.h HAVE_M_PI)
+check_symbol_exists(size_t stddef.h HAVE_SIZE_T_STDDEF)
+check_symbol_exists(size_t stdlib.h HAVE_SIZE_T_STDLIB)
+check_symbol_exists(size_t stdio.h HAVE_SIZE_T_STDIO)
 
 # Checks to make it easier to work with 32-bit/64-bit builds if required.
 include(CheckTypeSize)
+check_type_size(char SIZEOF_CHAR)
+check_type_size("unsigned char" SIZEOF_UNSIGNED_CHAR)
 check_type_size(short SIZEOF_SHORT)
+check_type_size("unsigned short" SIZEOF_UNSIGNED_SHORT)
 check_type_size(int SIZEOF_INT)
 check_type_size(long SIZEOF_LONG)
 check_type_size("long long" SIZEOF_LONG_LONG)
@@ -125,6 +131,24 @@ if (${BIGENDIAN})
   set(ENDIAN_BIG 1)
 else()
   set(ENDIAN_LITTLE 1)
+endif()
+
+check_compile_features("${SM_CMAKE_DIR}/TestCode" "${SM_CMAKE_DIR}/TestCode/test_prototype.c" "Checking for function prototype capabilities" "found" "not found" SM_IGNORED_PROTOTYPE_CALL FALSE)
+
+if(NOT SM_IGNORED_PROTOTYPE_CALL)
+  set(HAVE_PROTOTYPES TRUE)
+endif()
+
+check_compile_features("${SM_CMAKE_DIR}/TestCode" "${SM_CMAKE_DIR}/TestCode/test_external.c" "Checking for external name shortening requirements" "not needed" "needed" SM_BUILT_LONG_NAME TRUE)
+
+if (NOT SM_BUILT_LONG_NAME)
+  set(NEED_SHORT_EXTERNAL_NAMES 1)
+endif()
+
+check_compile_features("${SM_CMAKE_DIR}/TestCode" "${SM_CMAKE_DIR}/TestCode/test_broken.c" "Checking if incomplete types are broken." "not broken" "broken" SM_BUILT_INCOMPLETE_TYPE FALSE)
+
+if (SM_BUILT_INCOMPLETE_TYPE)
+  set(INCOMPLETE_TYPES_BROKEN 1)
 endif()
 
 if (WITH_VERSION_INFO)
