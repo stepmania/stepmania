@@ -7,10 +7,6 @@ if (NOT HAVE_PROTOTYPES)
 endif()
 
 list(APPEND JPEG_SRC
-  "${JPEG_DIR}/cdjpeg.c"
-  "${JPEG_DIR}/cjpeg.c"
-  "${JPEG_DIR}/ckconfig.c"
-  "${JPEG_DIR}/djpeg.c"
   "${JPEG_DIR}/jaricom.c"
   "${JPEG_DIR}/jcapimin.c"
   "${JPEG_DIR}/jcapistd.c"
