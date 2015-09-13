@@ -28,7 +28,7 @@ addons:
             - libogg-dev
             - libvorbis-dev
             - libbz2-dev
-            - libjpeg8-dev
+            - libjpeg9-dev
             - libpng12-dev
             - libxtst-dev
             - libxrandr-dev
