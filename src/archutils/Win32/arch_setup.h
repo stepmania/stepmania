@@ -62,10 +62,6 @@ C4355: 'this' : used in base member initializer list
 // Disable false deprecation warnings in VC2008.
 #define _CRT_NONSTDC_NO_WARNINGS
 
-#if defined(_MSC_VER) && _MSC_VER >= 1400 // this is needed in VC8 but breaks VC7
-#define _HAS_EXCEPTIONS 0
-#endif
-
 // Don't include windows.h everywhere; when we do eventually include it, use these:
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
