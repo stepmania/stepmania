@@ -468,30 +468,30 @@ RString vssprintf( const char *szFormat, va_list argList )
 		int iNeeded = vsnprintf( &ignore, 0, szFormat, tmp );
 		va_end(tmp);
 
-		char *buf = sStr.GetBuffer( iNeeded+1 );
+		char *buf = new char[iNeeded + 1];
 		vsnprintf( buf, iNeeded+1, szFormat, argList );
-		sStr.ReleaseBuffer( iNeeded );
-		return sStr;
+		RString ret(buf);
+		delete [] buf;
+		return ret;
 	}
 
 	int iChars = FMT_BLOCK_SIZE;
 	int iTry = 1;
-	while( 1 )
+	char *buf = new char[iChars];
+	for (;;)
 	{
 		// Grow more than linearly (e.g. 512, 1536, 3072, etc)
-		char *buf = sStr.GetBuffer(iChars);
-		int iUsed = vsnprintf(buf, iChars-1, szFormat, argList);
-
-		if( iUsed == -1 )
+		int used = vsnprintf( buf, iChars - 1, szFormat, argList );
+		if ( used == -1 )
 		{
-			iChars += ((iTry+1) * FMT_BLOCK_SIZE);
-			sStr.ReleaseBuffer();
-			++iTry;
+			iChars += ( ++iTry * FMT_BLOCK_SIZE );
+			delete [] buf;
 			continue;
 		}
-
+		
 		/* OK */
-		sStr.ReleaseBuffer(iUsed);
+		sStr.assign( buf, used );
+		delete [] buf;
 		break;
 	}
 #endif
@@ -2149,12 +2149,11 @@ RString Capitalize( const RString &s )
 	if( s.empty() )
 		return RString();
 
-	RString s2 = s;
-	char *pBuf = s2.GetBuffer();
-	UnicodeDoUpper( pBuf, s2.size(), g_UpperCase );
-	s2.ReleaseBuffer();
+	char *buf = const_cast<char *>(s.c_str());
+	
+	UnicodeDoUpper( buf, s.size(), g_UpperCase );
 
-	return s2;
+	return buf;
 }
 
 unsigned char g_UpperCase[256] =
