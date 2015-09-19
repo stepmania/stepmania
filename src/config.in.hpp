@@ -81,6 +81,9 @@
 /* Defined to 1 if the underlying system provides the M_PI constant. */
 #cmakedefine HAVE_M_PI 1
 
+/* Defined to 1 if the underlying system provides the posix_fadvise function. */
+#cmakedefine HAVE_POSIX_FADVISE 1
+
 /* Provide a fallback if intptr_t is not defined. */
 #cmakedefine HAVE_SIZEOF_INTPTR_T 1
 #if !defined(HAVE_SIZEOF_INTPTR_T)
