@@ -113,6 +113,7 @@ check_symbol_exists(M_PI math.h HAVE_M_PI)
 check_symbol_exists(size_t stddef.h HAVE_SIZE_T_STDDEF)
 check_symbol_exists(size_t stdlib.h HAVE_SIZE_T_STDLIB)
 check_symbol_exists(size_t stdio.h HAVE_SIZE_T_STDIO)
+check_symbol_exists(posix_fadvise fcntl.h HAVE_POSIX_FADVISE)
 
 # Checks to make it easier to work with 32-bit/64-bit builds if required.
 include(CheckTypeSize)

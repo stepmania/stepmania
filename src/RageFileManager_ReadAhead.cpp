@@ -79,14 +79,13 @@ private:
 	
 	void WorkerMain()
 	{
-		RString sBuffer;
 		int iFDCopy = dup( m_iFD );
 		if( iFDCopy != -1 )
 		{
-			char *pBuf = sBuffer.GetBuffer( m_iBytes );
+			char [] buf = new char[m_iBytes];
 			lseek( iFDCopy, m_iFrom, SEEK_SET );
-			read( iFDCopy, pBuf, m_iBytes );
-			sBuffer.ReleaseBuffer( m_iBytes );
+			read( iFDCopy, buf, m_iBytes );
+			delete [] buf;
 
 			close( iFDCopy );
 			LOG->Trace("read");
@@ -154,9 +153,9 @@ void RageFileManagerReadAhead::DiscardCache( RageFileBasic *pFile, int iRelative
 #endif
 #endif
 
-#if defined(HAVE_POSIX_FADVISE)
 void RageFileManagerReadAhead::CacheHintStreaming( RageFileBasic *pFile )
 {
+#if defined(HAVE_POSIX_FADVISE)
 	/* This guesses at the actual size of the file on disk, which may be smaller if this file is compressed.
 	 * Since this is usually used on music and video files, it generally shouldn't be. */
 	int iFD = pFile->GetFD();
@@ -166,10 +165,8 @@ void RageFileManagerReadAhead::CacheHintStreaming( RageFileBasic *pFile )
 	int iFrom = lseek( iFD, 0, SEEK_CUR );
 	int iBytes = pFile->GetFileSize() - iPos;
 	posix_fadvise( iFD, iFrom, iBytes, POSIX_FADV_SEQUENTIAL );
-}
-#else
-void RageFileManagerReadAhead::CacheHintStreaming( RageFileBasic *pFile ) { }
 #endif
+}
 
 
 /*
