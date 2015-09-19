@@ -10,6 +10,10 @@ add_custom_command(
   COMMAND VersionUpdater ${SM_SRC_DIR}/generated/verstub.cpp
   DEPENDS VersionUpdater
 )
+
+# Add the mapconv program of the past to allow for debugging information.
+include("CMakeProject-mapconv.cmake")
+
 else()
 # Version Stub generation. Needs fixing on Windows.
 add_custom_command(
@@ -288,6 +292,16 @@ if(WIN32)
     RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_PROGRAM_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_PROGRAM_DIR}"
   )
+  
+  if(MSVC)
+    # Allow for getting a virtualdub stack trace.    
+    
+    add_custom_command(TARGET "${SM_EXE_NAME}"
+      POST_BUILD
+      COMMAND "mapconv" "${SM_PROGRAM_DIR}/$<$<CONFIG:DEBUG>:${SM_NAME_DEBUG}>$<$<CONFIG:MINSIZEREL>:${SM_NAME_MINSIZEREL}>$<$<CONFIG:RELWITHDEBINFO>:${SM_NAME_RELWITHDEBINFO}>$<$<CONFIG:RELEASE>:${SM_NAME_RELEASE}>.map" "${SM_PROGRAM_DIR}/$<$<CONFIG:DEBUG>:${SM_NAME_DEBUG}>$<$<CONFIG:MINSIZEREL>:${SM_NAME_MINSIZEREL}>$<$<CONFIG:RELWITHDEBINFO>:${SM_NAME_RELWITHDEBINFO}>$<$<CONFIG:RELEASE>:${SM_NAME_RELEASE}>.vdi"
+      COMMENT "Generating file to allow for easier stack traces."
+    )
+  endif()
 elseif(APPLE)
   set_target_properties("${SM_EXE_NAME}" PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${SM_ROOT_DIR}"
@@ -442,6 +456,7 @@ if (NOT SYSTEM_PCRE_FOUND)
 endif()
 
 if (WIN32)
+  
   list(APPEND SMDATA_LINK_LIB
     # The misc libraries are here.
     "${LIB_SWSCALE}"
@@ -473,6 +488,7 @@ if (WIN32)
   set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt.lib")
   set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
   set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS")
+  
 elseif(APPLE)
   # The following were removed from SMDATA_LINK_LIB to "match" StepMania's pbxproj.
 #    ${MAC_FRAME_APPKIT}
@@ -680,6 +696,7 @@ if(NOT APPLE)
     install(FILES "${SM_PROGRAM_DIR}/swscale-2.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/vccorlib110.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/zlib1.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
+    install(FILES "${SM_PROGRAM_DIR}/StepMania.vdi" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
 
     # foreach(SM_WINDOW_DLL "${SM_WINDOWS_PROGRAM_DLLS}")
     #   install(FILES "${SM_WINDOW_DLL}" DESTINATION "${SM_INSTALL_DESTINATION}")
