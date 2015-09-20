@@ -137,14 +137,15 @@ namespace VDDebugInfo
 			if( dwFileSize == INVALID_FILE_SIZE )
 				break;
 
-			char *pBuf = pctx->sRawBlock.GetBuffer( dwFileSize );
-			if( pBuf == NULL )
+			char *buffer = new char[dwFileSize];
+			if( buffer == NULL )
 				break;
 
 			DWORD dwActual;
-			int iRet = ReadFile(h, pBuf, dwFileSize, &dwActual, NULL);
+			int iRet = ReadFile(h, buffer, dwFileSize, &dwActual, NULL);
 			CloseHandle(h);
-			pctx->sRawBlock.ReleaseBuffer( dwActual );
+			pctx->sRawBlock = buffer;
+			delete[] buffer;
 
 			if( !iRet || dwActual != dwFileSize )
 				break;
@@ -326,13 +327,21 @@ namespace SymbolLookup
 
 		int iFD = fileno(stdin);
 		int iSize;
-		if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
+		if (!ReadFromParent(iFD, &iSize, sizeof(iSize)))
+		{
 			return "???";
+		}
 		RString sName;
-		char *pBuf = sName.GetBuffer( iSize );
-		if( !ReadFromParent(iFD, pBuf, iSize) )
-			return "???";
-		sName.ReleaseBuffer( iSize );
+		char *buffer = new char[iSize];
+		if (!ReadFromParent(iFD, buffer, iSize))
+		{
+			sName = "???";
+		}
+		else
+		{
+			sName = buffer;
+		}
+		delete[] buffer;
 		return sName;
 	}
 
@@ -509,19 +518,29 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
 		return false;
 
-	char *pBuf = Data.m_sInfo.GetBuffer( iSize );
-	if( !ReadFromParent(iFD, pBuf, iSize) )
+	char *buffer = new char[iSize];
+	bool wasReadSuccessful = ReadFromParent(iFD, buffer, iSize);
+	RString tmp = buffer;
+	delete[] buffer;
+	if (!wasReadSuccessful)
+	{
 		return false;
-	Data.m_sInfo.ReleaseBuffer( iSize );
+	}
+	Data.m_sInfo = tmp;
 
 	// 3. Read AdditionalLog.
 	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
 		return false;
 
-	pBuf = Data.m_sAdditionalLog.GetBuffer( iSize );
-	if( !ReadFromParent(iFD, pBuf, iSize) )
+	buffer = new char[iSize];
+	wasReadSuccessful = ReadFromParent(iFD, buffer, iSize);
+	tmp = buffer;
+	delete[] buffer;
+	if (!wasReadSuccessful)
+	{
 		return false;
-	Data.m_sAdditionalLog.ReleaseBuffer( iSize );
+	}
+	Data.m_sAdditionalLog = tmp;
 
 	// 4. Read RecentLogs.
 	int iCnt = 0;
@@ -531,33 +550,43 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 	{
 		if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
 			return false;
-		RString sBuf;
-		pBuf = sBuf.GetBuffer( iSize );
-		if( !ReadFromParent(iFD, pBuf, iSize) )
+		buffer = new char[iSize];
+		wasReadSuccessful = ReadFromParent(iFD, buffer, iSize);
+		tmp = buffer;
+		delete[] buffer;
+		if (!wasReadSuccessful)
+		{
 			return false;
-		Data.m_asRecent.push_back( sBuf );
-		sBuf.ReleaseBuffer( iSize );
+		}
+		Data.m_asRecent.push_back(tmp);
 	}
 
 	// 5. Read CHECKPOINTs.
 	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
 		return false;
 
-	RString sBuf;
-	pBuf = sBuf.GetBuffer( iSize );
-	if( !ReadFromParent(iFD, pBuf, iSize) )
+	buffer = new char[iSize];
+	wasReadSuccessful = ReadFromParent(iFD, buffer, iSize);
+	tmp = buffer;
+	delete[] buffer;
+	if (!wasReadSuccessful)
+	{
 		return false;
-
-	split( sBuf, "$$", Data.m_asCheckpoints );
-	sBuf.ReleaseBuffer( iSize );
+	}
+	split(tmp, "$$", Data.m_asCheckpoints);
 
 	// 6. Read the crashed thread's name.
 	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
 		return false;
-	pBuf = Data.m_sCrashedThread.GetBuffer( iSize );
-	if( !ReadFromParent(iFD, pBuf, iSize) )
+	buffer = new char[iSize];
+	wasReadSuccessful = ReadFromParent(iFD, buffer, iSize);
+	tmp = buffer;
+	delete[] buffer;
+	if (!wasReadSuccessful)
+	{
 		return false;
-	Data.m_sCrashedThread.ReleaseBuffer();
+	}
+	Data.m_sCrashedThread = tmp;
 
 	return true;
 }

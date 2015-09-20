@@ -166,7 +166,7 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 				RString sCommand = "notepad \"" + sAppDataDir + PRODUCT_ID + "/Logs/log.txt\"";
 				CreateProcess(
 					NULL,		// pointer to name of executable module
-					sCommand.GetBuffer(),	// pointer to command line string
+					const_cast<char *>(sCommand.c_str()),	// pointer to command line string
 					NULL,  // process security attributes
 					NULL,   // thread security attributes
 					false,  // handle inheritance flag
