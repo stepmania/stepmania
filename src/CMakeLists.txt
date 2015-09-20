@@ -463,7 +463,15 @@ if (WIN32)
     "${LIB_AVCODEC}"
     "${LIB_AVFORMAT}"
     "${LIB_AVUTIL}"
-    "ogg_static.lib"
+  )
+  
+  if (WITH_OGG)
+    list(APPEND SMDATA_LINK_LIB
+      "ogg"
+    )
+  endif()
+  
+  list(APPEND SMDATA_LINK_LIB
     "vorbis_static.lib"
     "vorbisfile_static.lib"
     "dbghelp.lib"
@@ -627,6 +635,7 @@ if(NOT APPLE)
   )
   if(MSVC)
     list(APPEND SM_INCLUDE_DIRS
+      "${SM_EXTERN_DIR}/newogg/include"
       "${SM_EXTERN_DIR}/ffmpeg/include"
     )
   else()
