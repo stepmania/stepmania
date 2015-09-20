@@ -6,12 +6,19 @@
 #if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
 #endif
+#if defined(HAVE_UNISTD_H)
+#include <unistd.h>
+#endif
+#if defined(HAVE_SYS_TYPES_H)
+#include <sys/types.h>
+#endif
 #include <cerrno>
 #if defined(WIN32)
 #include <io.h>
 #endif
 
 #if defined(HAVE_POSIX_FADVISE)
+
 void RageFileManagerReadAhead::Init() { }
 void RageFileManagerReadAhead::Shutdown() { }
 void RageFileManagerReadAhead::ReadAhead( RageFileBasic *pFile, int iBytes )
@@ -76,7 +83,7 @@ private:
 		((RageFileReadAheadThread *) (pThis))->WorkerMain();
 		return 0;
 	}
-	
+
 	void WorkerMain()
 	{
 		int iFDCopy = dup( m_iFD );
@@ -132,7 +139,7 @@ void RageFileManagerReadAhead::ReadAhead( RageFileBasic *pFile, int iBytes )
 
 	RageFileReadAheadThread *pReadAhead = new RageFileReadAheadThread( iFD, iStart, iBytes );
 	g_apReadAheads.push_back( pReadAhead );
-	
+
 	for( size_t i = 0; i < g_apReadAheads.size(); ++i )
 	{
 		if( g_apReadAheads[i]->IsFinished() )
