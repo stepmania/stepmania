@@ -468,12 +468,12 @@ if (WIN32)
   if (WITH_OGG)
     list(APPEND SMDATA_LINK_LIB
       "ogg"
+      "vorbis"
+      "vorbisfile"
     )
   endif()
   
   list(APPEND SMDATA_LINK_LIB
-    "vorbis_static.lib"
-    "vorbisfile_static.lib"
     "dbghelp.lib"
     "setupapi.lib"
     "hid.lib"
@@ -483,7 +483,6 @@ if (WIN32)
   
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${DIRECTX_LIBRARY_DIR}\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/ffmpeg/lib\"")
-  sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/vorbis/win32\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_SRC_DIR}/archutils/Win32/ddk\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/ERRORREPORT:SEND")
   sm_add_link_flag("${SM_EXE_NAME}" "/MAPINFO:EXPORTS")
@@ -625,7 +624,6 @@ target_link_libraries("${SM_EXE_NAME}" ${SMDATA_LINK_LIB})
 list(APPEND SM_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
   "${SM_SRC_DIR}/generated"
-  "${SM_EXTERN_DIR}/vorbis"
 )
 if(NOT APPLE)
   list(APPEND SM_INCLUDE_DIRS
@@ -634,11 +632,22 @@ if(NOT APPLE)
     "${SM_EXTERN_DIR}/zlib"
   )
   if(MSVC)
+    if (WITH_OGG)
+      list(APPEND SM_INCLUDE_DIRS
+        "${SM_EXTERN_DIR}/newogg/include"
+        "${SM_EXTERN_DIR}/newvorbis/lib"
+        "${SM_EXTERN_DIR}/newvorbis/include"
+      )
+    endif()
     list(APPEND SM_INCLUDE_DIRS
-      "${SM_EXTERN_DIR}/newogg/include"
       "${SM_EXTERN_DIR}/ffmpeg/include"
     )
   else()
+    if(WITH_OGG)
+      list(APPEND SM_INCLUDE_DIRS
+        "${SM_EXTERN_DIR}/vorbis"
+      )
+    endif()
     list(APPEND SM_INCLUDE_DIRS
       "${JPEG_INCLUDE_DIR}"
     )
@@ -664,7 +673,12 @@ if(NOT APPLE)
     endif()
   endif()
 else()
-  list(APPEND SM_INCLUDE_DIRS
+  if(WITH_OGG)
+    list(APPEND SM_INCLUDE_DIRS
+      "${SM_EXTERN_DIR}/vorbis"
+    )
+  endif()
+list(APPEND SM_INCLUDE_DIRS
     "${SM_XCODE_DIR}/ffmpeg/include"
     "archutils/Unix"
   )
