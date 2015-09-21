@@ -49,7 +49,7 @@ install:
         export ORIG_BUILD_DIR=$(pwd);
         cd ~;
         wget https://github.com/Viq111/travis-container-packets/releases/download/clang%2Blibcxx-3.4.2/clang_libcxx.tar.bz2;
-        tar -xjf clang_libcxx.tar.bz2
+        tar -xjf clang_libcxx.tar.bz2;
         rm clang_libcxx.tar.bz2 && mv clang_libcxx clang;
         export PATH=$(pwd)/clang/bin:$PATH;
         export LIBRARY_PATH=$(pwd)/clang/lib:$LIBRARY_PATH;
