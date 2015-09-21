@@ -757,7 +757,12 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	/* Only draw the section that's within the range specified.  If a hold note is
 	 * very long, don't process or draw the part outside of the range.  Don't change
 	 * part_args.y_top or part_args.y_bottom; they need to be left alone to calculate texture coordinates. */
-	const float y_start_pos = max(part_args.y_top, part_args.y_start_pos);
+	// If hold body, draw texture to the outside screen.(fix by A.C)
+	float y_start_pos = (part_type == hpt_body) ? part_args.y_top : max(part_args.y_top, part_args.y_start_pos);
+	if (part_args.y_top < part_args.y_start_pos - unzoomed_frame_height)
+	{
+		y_start_pos = fmod((y_start_pos - part_args.y_start_pos), unzoomed_frame_height) + part_args.y_start_pos;
+	}
 	float y_end_pos = min(part_args.y_bottom, part_args.y_end_pos);
 	const float color_scale= glow ? 1 : part_args.color_scale;
 	if(part_type == hpt_body)
@@ -788,8 +793,8 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		{
 			/* For very large hold notes, shift the texture coordinates to be near 0, so we
 			 * don't send very large values to the renderer. */
-			const float fDistFromTop	= y_start_pos - part_args.y_top;
-			float fTexCoordTop		= SCALE(fDistFromTop, 0, unzoomed_frame_height, rect.top, rect.bottom);
+			const float fDistFromTop = y_start_pos - part_args.y_top;
+			float fTexCoordTop = SCALE(fDistFromTop, 0, unzoomed_frame_height, rect.top, rect.bottom);
 			fTexCoordTop += add_to_tex_coord;
 			add_to_tex_coord -= floorf(fTexCoordTop);
 		}

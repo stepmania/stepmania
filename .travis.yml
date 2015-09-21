@@ -1,5 +1,11 @@
 language: cpp
 
+cache:
+    directories:
+      - $HOME/cmake
+
+sudo: false
+
 compiler:
     - clang
     - gcc
@@ -8,71 +14,33 @@ notifications:
     email: false
     irc: "chat.freenode.net#stepmania-devs"
 
-before_install:
-    - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-    - sudo apt-get update -qq
-    - sudo apt-get autoremove -qq
-    - echo "apt-get ready for installing."
+addons:
+    apt:
+        packages:
+            - nasm
+            - libmad0-dev
+            - libgtk2.0-dev
+            - binutils-dev
+            - libasound-dev
+            - libpulse-dev
+            - libjack-dev
+            - libc6-dev
+            - libogg-dev
+            - libvorbis-dev
+            - libbz2-dev
+            - libjpeg8-dev
+            - libpng12-dev
+            - libxtst-dev
+            - libxrandr-dev
+            - libglu1-mesa-dev
+            - mesa-common-dev
+            - libglew-dev
 
-install:
-    - sudo apt-get install -y nasm -qq
-    - sudo apt-get install -y libmad0-dev -qq
-    - sudo apt-get install -y libgtk2.0-dev -qq
-    - sudo apt-get install -y binutils-dev -qq
-    - sudo apt-get install -y libasound-dev -qq
-    - sudo apt-get install -y libpulse-dev -qq
-    - sudo apt-get install -y libjack-dev -qq
-    - sudo apt-get install -y libc6-dev -qq
-    - sudo apt-get install -y libogg-dev -qq
-    - sudo apt-get install -y libvorbis-dev -qq
-    - sudo apt-get install -y libbz2-dev -qq
-    - sudo apt-get install -y zlib1g-dev -qq
-    - sudo apt-get install -y libjpeg8-dev -qq
-    - sudo apt-get install -y libpng12-dev -qq
-    - sudo apt-get install -y libxtst-dev -qq
-    - sudo apt-get install -y libxrandr-dev -qq
-    - sudo apt-get install -y libglu1-mesa-dev -qq
-    - sudo apt-get install -y mesa-common-dev -qq
-    - sudo apt-get install -y libglew-dev -qq
-    - sudo apt-get install -y libstdc++-4.8-dev -qq
-
-    - 
-      if [ "$CXX" == "g++" ]; then
-        sudo apt-get install gcc-4.8 g++-4.8 -qq;
-        export CXX="g++-4.8";
-        export CC="gcc-4.8";
-      fi
-    - 
-      if [ "$CXX" == "clang++" ]; then
-        export ORIG_BUILD_DIR=$(pwd);
-        export CXX_FLAGS="-std=c++11 -stdlib=libc++";
-        cd ~;
-        mkdir llvm-holder;
-        cd llvm-holder;
-        svn co --quiet http://llvm.org/svn/llvm-project/libcxx/trunk libcxx;
-        cd libcxx/lib && bash buildit;
-        sudo cp ./libc++.so.1.0 /usr/lib;
-        sudo mkdir /usr/include/c++/v1;
-        cd .. && sudo cp -r include/* /usr/include/c++/v1;
-        cd /usr/lib && sudo ln -sf libc++.so.1.0 libc++.so;
-        sudo ln -sf libc++.so.1.0 libc++.so.1;
-        cd ~/llvm-holder;
-        svn co --quiet http://llvm.org/svn/llvm-project/libcxxabi/trunk libcxxabi;
-        cd libcxxabi/lib && bash buildit;
-        cd ..;
-        sudo cp -r include/* /usr/include/c++/v1;
-        sudo cp libc++abi.so.1.0 /usr/lib;
-        cd /usr/lib;
-        sudo ln -s libc++abi.so.1.0 libc++abi.so.1;
-        sudo ln -s libc++abi.so.1.0 libc++abi.so;
-        cd $ORIG_BUILD_DIR;
-      fi
-
-    - echo "apt-get packages installed."
-
-    - ./.travis-install-cmake.sh
+before_script:
+    - bash .install-cmake.sh
 
 script:
     - echo "Building StepMania now."
-    - cmake -DWITH_PORTABLE_TOMCRYPT=ON -G 'Unix Makefiles'
-    - make -j2
+    - cd Build
+    - $HOME/cmake/bin/cmake -G 'Unix Makefiles' ..
+    - make

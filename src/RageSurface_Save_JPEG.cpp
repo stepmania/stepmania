@@ -12,18 +12,9 @@ namespace jpeg
 {
 	extern "C"
 	{
-#if defined(MACOSX)
-#include <../extern/libjpeg/jpeglib.h>
-#else
 #include "jpeglib.h"
-#endif
 	}
 }
-
-// Pull in JPEG library here.
-#if defined _MSC_VER
-#pragma comment(lib, "jpeg.lib")
-#endif
 
 #define OUTPUT_BUFFER_SIZE	4096
 typedef struct

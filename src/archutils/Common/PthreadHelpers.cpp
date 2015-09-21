@@ -10,9 +10,13 @@
 #endif
 
 #if defined(LINUX)
+#if defined(HAVE_UNISTD_H)
 #include <unistd.h>
+#endif
 #include <stdlib.h>
+#if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
+#endif
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>

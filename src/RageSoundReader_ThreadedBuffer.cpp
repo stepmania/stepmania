@@ -4,7 +4,7 @@
 #include "RageTimer.h"
 #include "RageLog.h"
 
-#if !defined(_WINDOWS)
+#if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #endif
 

@@ -1,9 +1,15 @@
 #include "global.h"
 #include <stdio.h>
+#if defined(HAVE_UNISTD_H)
 #include <unistd.h>
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
+
+#if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
+#endif
+
 #include <termios.h>
 #include <errno.h>
 #include "LightsDriver_LinuxWeedTech.h"

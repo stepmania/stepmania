@@ -1,5 +1,9 @@
 #include "global.h"
 
+#if defined(HAVE_UNISTD_H)
+#include <unistd.h>
+#endif
+
 #if defined(_WINDOWS)
 #  if defined(CRASH_HANDLER)
 #    define _WIN32_WINDOWS 0x0410 // include Win98 stuff
@@ -9,11 +13,8 @@
 #elif defined(MACOSX)
 #  include "archutils/Darwin/Crash.h"
 #  include <stdlib.h>
-#  include <unistd.h>
 using CrashHandler::IsDebuggerPresent;
 using CrashHandler::DebugBreak;
-#else
-#  include <unistd.h>
 #endif
 
 #if defined(CRASH_HANDLER) && (defined(UNIX) || defined(MACOSX))

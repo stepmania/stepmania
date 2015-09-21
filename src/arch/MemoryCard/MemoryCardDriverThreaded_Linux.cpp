@@ -6,8 +6,14 @@
 #include "RageTimer.h"
 
 #include <cerrno>
+#if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
+#endif
+
+#if defined(HAVE_DIRENT_H)
 #include <dirent.h>
+#endif
+
 #include <limits.h>
 #include <stdlib.h>
 #include <sys/types.h>

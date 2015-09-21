@@ -7,7 +7,9 @@
 #include <commctrl.h>
 #include "archutils/Win32/ddk/dbghelp.h"
 #include <io.h>
+#if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
+#endif
 #include <shellapi.h>
 
 #include "arch/ArchHooks/ArchHooks.h"

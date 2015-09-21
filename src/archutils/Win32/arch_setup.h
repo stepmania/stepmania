@@ -24,8 +24,6 @@
 #pragma warning (disable : 4005) // macro redefinitions (ARRAYSIZE)
 #endif
 
-#define snprintf _snprintf // Unsure if this goes with __MINGW32__ right now.
-
 /*
 The following warnings are disabled in all builds.
 Enable them in the project file at your peril (or if you feel like
@@ -64,10 +62,6 @@ C4355: 'this' : used in base member initializer list
 // Disable false deprecation warnings in VC2008.
 #define _CRT_NONSTDC_NO_WARNINGS
 
-#if defined(_MSC_VER) && _MSC_VER >= 1400 // this is needed in VC8 but breaks VC7
-#define _HAS_EXCEPTIONS 0
-#endif
-
 // Don't include windows.h everywhere; when we do eventually include it, use these:
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
@@ -82,16 +76,12 @@ C4355: 'this' : used in base member initializer list
 
 #endif
 
-#include <direct.h> // has stuff that should be in unistd.h
 #include <wchar.h> // needs to be included before our fixes below
 
 #define lstat stat
 #define fsync _commit
 #define isnan _isnan
 #define isfinite _finite
-
-// mkdir is missing the mode arg
-#define mkdir(p,m) mkdir(p)
 
 typedef time_t time_t;
 struct tm;
@@ -135,41 +125,10 @@ int64_t llabs( int64_t i ) { return i >= 0 ? i : -i; }
 #undef max
 #define NOMINMAX // make sure Windows doesn't try to define this
 
-// Windows is missing some basic math functions:
-// But MinGW isn't.
-#if !defined(__MINGW32__) && (!defined(_MSC_VER) || _MSC_VER < 1700) // cstdint and truncf were first implemented in Visual Studio 2012
-#define NEED_TRUNCF
-#define MISSING_STDINT_H
-#endif
-
-// MinGW provides us with this function already
-
-#if !defined(__MINGW32__) && (!defined(_MSC_VER) || _MSC_VER < 1800) // lrintf, roundf and strtof were first implemented in Visual Studio 2013
-#define NEED_ROUNDF
-#define NEED_STRTOF
-inline long int lrintf( float f )
-{
-	int retval;
-
-	_asm fld f;
-	_asm fistp retval;
-
-	return retval;
-}
-#endif
-
-// For RageLog.
-#define HAVE_VERSION_INFO
-
 /* We implement the crash handler interface (though that interface isn't
  * completely uniform across platforms yet). */
 #if !defined(SMPACKAGE)
 #define CRASH_HANDLER
-#endif
-
-// autoconf does this for us
-#if !defined(__MINGW32__)
-#define ENDIAN_LITTLE
 #endif
 
 #if defined(__GNUC__) // It might be MinGW or Cygwin(?)

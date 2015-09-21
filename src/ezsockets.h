@@ -16,7 +16,9 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
+#endif
 #include <ctype.h>
 
 #if defined(_WINDOWS)
