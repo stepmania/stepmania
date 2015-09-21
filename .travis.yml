@@ -17,8 +17,6 @@ notifications:
 addons:
     apt:
         packages:
-            - gcc-4.9
-            - g++-4.9
             - nasm
             - libmad0-dev
             - libgtk2.0-dev
@@ -41,8 +39,7 @@ addons:
 install:
     -
       if [ "$CXX" == "g++" ]; then
-        export CXX="g++-4.9";
-        export CC="gcc-4.9";
+        echo "TODO: Replace with source built version."
       fi
     -
       if [ "$CXX" == "clang++" ]; then
@@ -52,6 +49,11 @@ install:
         tar -xjf clang_libcxx.tar.bz2;
         rm clang_libcxx.tar.bz2;
         mv clang_libcxx clang;
+        export PATH=$(pwd)/clang/bin:$PATH;
+        export LIBRARY_PATH=$(pwd)/clang/lib:$LIBRARY_PATH;
+        export LD_LIBRARY_PATH=$(pwd)/clang/lib:$LD_LIBRARY_PATH;
+        export CPLUS_INCLUDE_PATH=$(pwd)/clang/include/c++/v1:$CPLUS_INCLUDE_PATH;
+        export CXXFLAGS="-std=c++11 -stdlib=libc++";
         cd $ORIG_BUILD_DIR;
       fi
 
@@ -61,5 +63,5 @@ before_script:
 script:
     - echo "Building StepMania now."
     - cd Build
-    - $HOME/cmake/bin/cmake -DWITH_MP3=OFF -G 'Unix Makefiles' ..
+    - $HOME/cmake/bin/cmake -G 'Unix Makefiles' ..
     - make
