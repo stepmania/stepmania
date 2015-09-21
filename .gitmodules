@@ -1,3 +1,6 @@
 [submodule "extern/cppformat"]
 	path = extern/cppformat
 	url = https://github.com/cppformat/cppformat.git
+[submodule "extern/ffmpeg-git"]
+	path = extern/ffmpeg-git
+	url = git://source.ffmpeg.org/ffmpeg.git
