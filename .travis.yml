@@ -17,8 +17,8 @@ notifications:
 addons:
     apt:
         packages:
-            - gcc-4.8
-            - g++-4.8
+            - gcc-4.9
+            - g++-4.9
             - nasm
             - libmad0-dev
             - libgtk2.0-dev
@@ -41,13 +41,17 @@ addons:
 install:
     -
       if [ "$CXX" == "g++" ]; then
-        export CXX="g++-4.8";
-        export CC="gcc-4.8";
+        export CXX="g++-4.9";
+        export CC="gcc-4.9";
       fi
     -
       if [ "$CXX" == "clang++" ]; then
         export ORIG_BUILD_DIR=$(pwd);
         cd ~;
+        wget https://github.com/Viq111/travis-container-packets/releases/download/clang%2Blibcxx-3.4.2/clang_libcxx.tar.bz2;
+        tar -xjf clang_libcxx.tar.bz2;
+        rm clang_libcxx.tar.bz2;
+        mv clang_libcxx clang;
         cd $ORIG_BUILD_DIR;
       fi
 
@@ -57,5 +61,5 @@ before_script:
 script:
     - echo "Building StepMania now."
     - cd Build
-    - $HOME/cmake/bin/cmake -G 'Unix Makefiles' ..
+    - $HOME/cmake/bin/cmake -DWITH_MP3=OFF -G 'Unix Makefiles' ..
     - make
