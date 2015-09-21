@@ -255,7 +255,7 @@ elseif(LINUX)
       endif()
     else()
       set(SM_FFMPEG_VERSION "2.1.3")
-      set(SM_FFMPEG_SRC_LIST "${SM_EXTERN_DIR}" "/ffmpeg-linux-" "${SM_FFMPEG_VERSION}")
+      set(SM_FFMPEG_SRC_LIST "${SM_EXTERN_DIR}" "/ffmpeg-git")
       sm_join("${SM_FFMPEG_SRC_LIST}" "" SM_FFMPEG_SRC_DIR)
       set(SM_FFMPEG_ROOT "${CMAKE_BINARY_DIR}/ffmpeg-prefix/src/ffmpeg-build")
       list(APPEND FFMPEG_CONFIGURE
@@ -295,15 +295,7 @@ elseif(LINUX)
           TEST_COMMAND ""
         )
       else()
-        # --shlibdir=$our_installdir/stepmania-$VERSION
-        externalproject_add("ffmpeg"
-          DOWNLOAD_COMMAND git clone "--branch" "n${SM_FFMPEG_VERSION}" "--depth" "1" "git://source.ffmpeg.org/ffmpeg.git" "${SM_FFMPEG_SRC_DIR}"
-          CONFIGURE_COMMAND "${FFMPEG_CONFIGURE}"
-          BUILD_COMMAND "make"
-          UPDATE_COMMAND ""
-          INSTALL_COMMAND ""
-          TEST_COMMAND ""
-        )
+        message(ERROR "Submodule missing. Run git submodule init && git submodule update first.")
       endif()
       set(HAS_FFMPEG TRUE)
     endif()
@@ -330,3 +322,4 @@ endif()
 
 # Define installer based items for cpack.
 include("${CMAKE_CURRENT_LIST_DIR}/CMake/CPackSetup.cmake")
+
