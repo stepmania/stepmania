@@ -9,7 +9,9 @@ if [ "$CXX" == "g++" ]; then
 	export LIBRARY_PATH=$(pwd)/gcc/lib64:$LIBRARY_PATH
 	export LD_LIBRARY_PATH=$(pwd)/gcc/lib64:$LD_LIBRARY_PATH
 	export CPLUS_INCLUDE_PATH=$(pwd)/gcc/include/c++/4.9.2:$CPLUS_INCLUDE_PATH
-	export CXXFLAGS="-std=c++11"
+	export CXXFLAGS="--std=c++11"
+	export CXX="g++-4.9.2"
+	export CC="gcc-4.9.2"
 	cd $ORIG_BUILD_DIR
 fi
 
@@ -24,6 +26,8 @@ if [ "$CXX" == "clang++" ]; then
 	export LD_LIBRARY_PATH=$(pwd)/clang/lib:$LD_LIBRARY_PATH
 	export CPLUS_INCLUDE_PATH=$(pwd)/clang/include/c++/v1:$CPLUS_INCLUDE_PATH
 	export CXXFLAGS="-std=c++11 -stdlib=libc++"
+	export CXX="clang++-3.5.1"
+	export CC="clang-3.5.1"
 	cd $ORIG_BUILD_DIR
 fi
 
