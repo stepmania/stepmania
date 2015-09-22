@@ -13,6 +13,9 @@ if [ "$CXX" == "g++" ]; then
 	export CXX="g++-4.9.2"
 	export CC="gcc-4.9.2"
 	cd $ORIG_BUILD_DIR
+	echo "New path for GCC: $(PATH)"
+	echo "New library path for GCC: $(LIBRARY_PATH)"
+	echo "CXX flags: $(CXXFLAGS)"
 fi
 
 if [ "$CXX" == "clang++" ]; then
@@ -29,5 +32,8 @@ if [ "$CXX" == "clang++" ]; then
 	export CXX="clang++-3.5.1"
 	export CC="clang-3.5.1"
 	cd $ORIG_BUILD_DIR
+	echo "New path for clang: $(PATH)"
+	echo "New library path for clang: $(LIBRARY_PATH)"
+	echo "CXX flags: $(CXXFLAGS)"
 fi
 
