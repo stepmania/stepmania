@@ -36,11 +36,31 @@ addons:
             - mesa-common-dev
             - libglew-dev
 
+install:
+    -
+      if [ "$CXX" == "g++" ]; then
+        echo "TODO: Replace with source built version."
+      fi
+    -
+      if [ "$CXX" == "clang++" ]; then
+        export ORIG_BUILD_DIR=$(pwd);
+        cd ~;
+        wget https://github.com/Viq111/travis-container-packets/releases/download/clang%2Blibcxx-3.4.2/clang_libcxx.tar.bz2;
+        tar -xjf clang_libcxx.tar.bz2;
+        rm clang_libcxx.tar.bz2;
+        mv clang_libcxx clang;
+        export PATH=$(pwd)/clang/bin:$PATH;
+        export LIBRARY_PATH=$(pwd)/clang/lib:$LIBRARY_PATH;
+        export LD_LIBRARY_PATH=$(pwd)/clang/lib:$LD_LIBRARY_PATH;
+        export CPLUS_INCLUDE_PATH=$(pwd)/clang/include/c++/v1:$CPLUS_INCLUDE_PATH;
+        export CXXFLAGS="-std=c++11 -stdlib=libc++";
+        cd $ORIG_BUILD_DIR;
+      fi
+
 before_script:
     - bash .install-cmake.sh
 
 script:
-    - echo "Building StepMania now."
     - cd Build
     - $HOME/cmake/bin/cmake -G 'Unix Makefiles' ..
     - make
