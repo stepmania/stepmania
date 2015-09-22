@@ -61,7 +61,6 @@ before_script:
     - bash .install-cmake.sh
 
 script:
-    - echo "Building StepMania now."
     - cd Build
     - $HOME/cmake/bin/cmake -G 'Unix Makefiles' ..
     - make
