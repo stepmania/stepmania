@@ -5,6 +5,32 @@ from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
 
+2015/09/21
+----------
+* [Sprite] Added set_use_effect_clock_for_texcoords for toggling whether the
+  tex coord velocity uses the effect clock instead of the time.
+
+2015/09/10
+----------
+* [MusicWheel] Fixed SetItemPosition so that it actually passes the item
+  index and the number of items to the transform function. [kyzentun]
+
+2015/09/09
+----------
+* [Notefield] Fixed bug where the hold body doesn't scroll if it goes off the
+  top of the screen. [waiei]
+
+2015/09/08
+----------
+* [Compiling] Compiling stepmania on Windows with the locale set to Japanese
+  should work now. [wolfman]
+
+2015/09/06
+----------
+* [Preferences] Fixed crash on Advanced Input Options on OS X caused by the
+  Axis Fix preference not existing on OS X.  The preference does nothing on
+  OS X, but the game no longer crashes on that screen. [kyzentun]
+
 2015/09/03
 ----------
 * [Fonts] Respliced large kanji sprite sheets from 32x106 and 32x61 to 63x54

@@ -1699,10 +1699,12 @@
 			<Function name='addimagecoords'/>
 			<Function name='cropto'/>
 			<Function name='customtexturerect'/>
+			<Function name='get_use_effect_clock_for_texcoords'/>
 			<Function name='loop'/>
 			<Function name='position'/>
 			<Function name='rate'/>
 			<Function name='scaletoclipped'/>
+			<Function name='set_use_effect_clock_for_texcoords'/>
 			<Function name='setstate'/>
 			<Function name='stretchtexcoords'/>
 			<Function name='texcoordvelocity'/>

@@ -4969,6 +4969,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='customtexturerect' return='void' arguments='float fLeft, float fTop, float fRight, float fBottom'>
 		Allows the themer to set a custom texture rectangle that effects the way the texture is drawn.
 	</Function>
+	<Function name='get_use_effect_clock_for_texcoords' return='bool' arguments=''>
+		Returns true if the sprite is using the effect clock for texcoordvelocity.
+	</Function>
 	<Function name='loop' theme='_fallback' return='void' arguments='bool bLoop'>
 		[02 Sprite.lua] Call <Link class='RageTexture' function='loop'><code>RageTexture:loop</code></Link><code>( bLoop )</code> on the texture.
 	</Function>
@@ -4984,11 +4987,14 @@ save yourself some time, copy this for undocumented things:
 	<Function name='setstate' return='void' arguments='int iNewState'>
 		Set the Sprite's state to <code>iNewState</code>.
 	</Function>
+	<Function name='set_use_effect_clock_for_texcoords' return='' arguments='bool use'>
+		If <code>use</code> is true, then the sprite will use the effect clock for texcoordvelocity.
+	</Function>
 	<Function name='stretchtexcoords' return='void' arguments='float fX, float fY'>
 		<!-- XXX: What does this do? -->
 	</Function>
 	<Function name='texcoordvelocity' return='void' arguments='float fVelX, float fVelY'>
-		Set the texture coordinate velocity which controls how the Sprite changes as it animates. <!-- XXX: Can we be more specific? -->
+		Set the texture coordinate velocity which controls how the Sprite changes as it animates.  A velocity of 1 makes the texture scroll all the way once per second.
 	</Function>
 	<!-- sm-ssc addons -->
 	<Function name='CropTo' return='void' arguments='float fWidth, float fHeight'>
