@@ -36,6 +36,9 @@ addons:
             - mesa-common-dev
             - libglew-dev
 
+install:
+    - bash .travis.update-compilers.sh
+
 before_script:
     - bash .install-cmake.sh
 
