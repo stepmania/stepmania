@@ -1,10 +1,6 @@
 language: cpp
 sudo: false
 
-compiler:
-    - clang
-    - gcc
-
 notifications:
     email: false
     irc: "chat.freenode.net#stepmania-devs"
@@ -12,6 +8,7 @@ notifications:
 matrix:
     include:
         - env: COMPILER=clang++3.6 BUILD_TYPE=Release
+          compiler: clang
           addons: &clang36
             apt:
                 sources:
@@ -38,9 +35,11 @@ matrix:
                     - libglew-dev
         
         - env: COMPILER=clang++-3.6 BUILD_TYPE=Debug
+          compiler: clang
           addons: *clang36
 
         - env: COMPILER=g++-5 BUILD_TYPE=Release
+          compiler: gcc
           addons: &gcc5
             apt:
                 sources:
@@ -68,14 +67,15 @@ matrix:
                     - libglew-dev
         
         - env: COMPILER=g++-5 BUILD_TYPE=Debug
+          compiler: gcc
           addons: *gcc5
 
 install:
-    - bash .travis.setup.sh
+    - bash -c $@ .travis.setup.sh
 
 before_script:
-    - bash .travis.cmake.sh
+    - bash -c $@ .travis.cmake.sh
 
 script:
-    - bash .travis.build.sh
+    - bash -c $@ .travis.build.sh
 
