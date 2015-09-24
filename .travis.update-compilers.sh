@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 if [ "$CXX" == "g++" ]; then
-	export CC=/usr/bin/gcc-4.9
-        export CXX=/usr/bin/g++-4.9
+	export CC="gcc-4.8"
+	export CXX="g++-4.8"
 	export CXXFLAGS="--std=c++11"
 	echo "CXX flags: $CXXFLAGS"
 fi

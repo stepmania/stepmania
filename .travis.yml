@@ -18,6 +18,9 @@ addons:
     apt:
         packages:
             - nasm
+            - gcc-4.8
+            - g++-4.8
+            - clang
             - libmad0-dev
             - libgtk2.0-dev
             - binutils-dev
