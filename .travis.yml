@@ -1,9 +1,4 @@
 language: cpp
-
-cache:
-    directories:
-      - $HOME/cmake
-
 sudo: false
 
 compiler:
@@ -14,38 +9,72 @@ notifications:
     email: false
     irc: "chat.freenode.net#stepmania-devs"
 
-addons:
-    apt:
-        sources:
-            - ubuntu-toolchain-r-test
-        packages:
-            - nasm
-            - gcc-4.8
-            - g++-4.8
-            - clang
-            - libmad0-dev
-            - libgtk2.0-dev
-            - binutils-dev
-            - libasound-dev
-            - libpulse-dev
-            - libjack-dev
-            - libc6-dev
-            - libogg-dev
-            - libvorbis-dev
-            - libbz2-dev
-            - libjpeg8-dev
-            - libpng12-dev
-            - libxtst-dev
-            - libxrandr-dev
-            - libglu1-mesa-dev
-            - mesa-common-dev
-            - libglew-dev
+matrix:
+    include:
+        - env: COMPILER=clang++3.6 BUILD_TYPE=Release
+          addons: &clang36
+            apt:
+                sources:
+                    - llvm-toolchain-precise-3.6
+                packages:
+                    - nasm
+                    - clang-3.6
+                    - libmad0-dev
+                    - libgtk2.0-dev
+                    - binutils-dev
+                    - libasound-dev
+                    - libpulse-dev
+                    - libjack-dev
+                    - libc6-dev
+                    - libogg-dev
+                    - libvorbis-dev
+                    - libbz2-dev
+                    - libjpeg8-dev
+                    - libpng12-dev
+                    - libxtst-dev
+                    - libxrandr-dev
+                    - libglu1-mesa-dev
+                    - mesa-common-dev
+                    - libglew-dev
+        
+        - env: COMPILER=clang++-3.6 BUILD_TYPE=Debug
+          addons: *clang36
+
+        - env: COMPILER=g++-5 BUILD_TYPE=Release
+          addons: &gcc5
+            apt:
+                sources:
+                    - ubuntu-toolchain-r-test
+                packages:
+                    - nasm
+                    - gcc-5
+                    - g++-5
+                    - libmad0-dev
+                    - libgtk2.0-dev
+                    - binutils-dev
+                    - libasound-dev
+                    - libpulse-dev
+                    - libjack-dev
+                    - libc6-dev
+                    - libogg-dev
+                    - libvorbis-dev
+                    - libbz2-dev
+                    - libjpeg8-dev
+                    - libpng12-dev
+                    - libxtst-dev
+                    - libxrandr-dev
+                    - libglu1-mesa-dev
+                    - mesa-common-dev
+                    - libglew-dev
+        
+        - env: COMPILER=g++-5 BUILD_TYPE=Debug
+          addons: *gcc5
 
 install:
-    - bash .travis.update-compilers.sh
+    - bash .travis.setup.sh
 
 before_script:
-    - bash .install-cmake.sh
+    - bash .travis.cmake.sh
 
 script:
     - bash .travis.build.sh
