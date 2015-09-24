@@ -16,6 +16,8 @@ notifications:
 
 addons:
     apt:
+        sources:
+            - ubuntu-toolchain-r-test
         packages:
             - nasm
             - gcc-4.8
