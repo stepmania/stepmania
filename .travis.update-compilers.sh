@@ -1,19 +1,9 @@
 #!/bin/sh
 set -e
 if [ "$CXX" == "g++" ]; then
-	export ORIG_BUILD_DIR=$(pwd)
-	cd ~
-	wget https://github.com/Viq111/travis-container-packets/releases/download/gcc-4.9.2/gcc.tar.bz2
-	tar -xjf gcc.tar.bz2
-	rm gcc.tar.bz2
-	export PATH=$(pwd)/gcc/bin:$PATH
-	export LIBRARY_PATH=$(pwd)/gcc/lib64:$LIBRARY_PATH
-	export LD_LIBRARY_PATH=$(pwd)/gcc/lib64:$LD_LIBRARY_PATH
-	export CPLUS_INCLUDE_PATH=$(pwd)/gcc/include/c++/4.9.2:$CPLUS_INCLUDE_PATH
+	export CC=/usr/bin/gcc-4.9
+        export CXX=/usr/bin/g++-4.9
 	export CXXFLAGS="--std=c++11"
-	cd $ORIG_BUILD_DIR
-	echo "New path for GCC: $PATH"
-	echo "New library path for GCC: $LIBRARY_PATH"
 	echo "CXX flags: $CXXFLAGS"
 fi
 
