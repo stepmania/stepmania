@@ -96,5 +96,6 @@ before_script:
     - cmake .. -DCMAKE_CXX_COMPILER=${CXX_COMPILER} -DCMAKE_C_COMPILER=${CC_COMPILER} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DWITH_FFMPEG=${WITH_FFMPEG}
 
 script:
-    - make -j2
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then make VERBOSE=1; fi
+    - if [[ "${CXX_COMPILER}" != "clang++-3.6" ]]; then make -j2; fi
 
