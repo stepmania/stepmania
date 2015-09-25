@@ -10,7 +10,6 @@ mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
 export CMAKE_URL=http://www.cmake.org/files/v3.3/cmake-3.3.1-Linux-x86_64.tar.gz
 mkdir cmake
 wget --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
-export PATH=${PWD}/cmake/bin:${PATH}
 
 # Ensure libc++ and libc++abi are available for clang.
 if [[ "${COMPILER}" == "clang++-3.6" ]]; then
