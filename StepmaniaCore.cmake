@@ -368,7 +368,7 @@ elseif(LINUX)
   endif()
 
   find_package(yasm)
-  if (NOT YASM_FOUND)
+  if (WITH_FFMPEG AND NOT YASM_FOUND)
     message("YASM was not found. Please install if you wish for ffmpeg support.")
     set(WITH_FFMPEG OFF)
   endif()

@@ -1,46 +1,100 @@
 language: cpp
-
-cache:
-    directories:
-      - $HOME/cmake
-
 sudo: false
-
-compiler:
-    - clang
-    - gcc
-
+git:
+    submodules: false
 notifications:
     email: false
     irc: "chat.freenode.net#stepmania-devs"
 
-addons:
-    apt:
-        packages:
-            - nasm
-            - libmad0-dev
-            - libgtk2.0-dev
-            - binutils-dev
-            - libasound-dev
-            - libpulse-dev
-            - libjack-dev
-            - libc6-dev
-            - libogg-dev
-            - libvorbis-dev
-            - libbz2-dev
-            - libjpeg8-dev
-            - libpng12-dev
-            - libxtst-dev
-            - libxrandr-dev
-            - libglu1-mesa-dev
-            - mesa-common-dev
-            - libglew-dev
+matrix:
+    include:
+        -
+            env: CXX_COMPILER=clang++-3.6 CC_COMPILER=clang-3.6 BUILD_TYPE=Release WITH_FFMPEG=OFF
+            compiler: clang
+            addons: &clang36
+                apt:
+                    sources:
+                        - ubuntu-toolchain-r-test
+                        - llvm-toolchain-precise-3.6
+                    packages:
+                        - nasm
+                        - clang-3.6
+                        - libmad0-dev
+                        - libgtk2.0-dev
+                        - binutils-dev
+                        - libasound-dev
+                        - libpulse-dev
+                        - libjack-dev
+                        - libc6-dev
+                        - libogg-dev
+                        - libvorbis-dev
+                        - libxtst-dev
+                        - libxrandr-dev
+                        - libglew-dev
+
+        -
+            env: CXX_COMPILER=g++-5 CC_COMPILER=gcc-5 BUILD_TYPE=Release WITH_FFMPEG=OFF
+            compiler: gcc
+            addons: &gcc5
+                apt:
+                    sources:
+                        - ubuntu-toolchain-r-test
+                    packages:
+                        - nasm
+                        - gcc-5
+                        - g++-5
+                        - libmad0-dev
+                        - libgtk2.0-dev
+                        - binutils-dev
+                        - libasound-dev
+                        - libpulse-dev
+                        - libjack-dev
+                        - libc6-dev
+                        - libogg-dev
+                        - libvorbis-dev
+                        - libxtst-dev
+                        - libxrandr-dev
+                        - libglew-dev
+
+before_install:
+    # Set up valid submodules.
+    - git submodule init
+    - git submodule update extern/cppformat
+    - if [[ "${WITH_FFMPEG}" == "ON" ]]; then git submodule update extern/ffmpeg-git; fi
+
+install:
+    # Setup a directory for necessary dependencies.
+    - cd ~
+    - export DEPS_DIR="${PWD}/deps"
+    - mkdir ${DEPS_DIR}
+    - cd ${DEPS_DIR}
+    # Use the binary for cmake instead of building it now.
+    - export CMAKE_URL=http://www.cmake.org/files/v3.3/cmake-3.3.1-Linux-x86_64.tar.gz
+    - mkdir cmake
+    - wget --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
+    - export PATH=${PWD}/cmake/bin:${PATH}
+    # If using clang, set up libc++ and libc++abi.
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export LLVM_URL="http://llvm.org/releases/3.6.1/llvm-3.6.1.src.tar.xz"; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export LIBCXX_URL="http://llvm.org/releases/3.6.1/libcxx-3.6.1.src.tar.xz"; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export LIBCXXABI_URL="http://llvm.org/releases/3.6.1/libcxxabi-3.6.1.src.tar.xz"; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export TAR_FMT="-xJ"; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then mkdir -p llvm llvm/build llvm/projects/libcxx llvm/projects/libcxxabi; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then wget --quiet -O - ${LLVM_URL} | tar --strip-components=1 ${TAR_FMT} -C llvm; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then wget --quiet -O - ${LIBCXX_URL} | tar --strip-components=1 ${TAR_FMT} -C llvm/projects/libcxx; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then wget --quiet -O - ${LIBCXXABI_URL} | tar --strip-components=1 ${TAR_FMT} -C llvm/projects/libcxxabi; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then cd llvm/build; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then cmake .. -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then make cxx -j2; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then cd ../..; fi
 
 before_script:
-    - bash .install-cmake.sh
+    - cd ${TRAVIS_BUILD_DIR}
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export CXXFLAGS="-I${DEPS_DIR}/llvm/build/include/c++/v1 -I${DEPS_DIR}/llvm/projects/libcxx/include -I${DEPS_DIR}/llvm/projects/libcxxabi/include"; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export LDFLAGS="-L ${DEPS_DIR}/llvm/build/lib -l c++ -l c++abi"; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${DEPS_DIR}/llvm/build/lib"; fi
+    - cd Build
+    - cmake .. -DCMAKE_CXX_COMPILER=${CXX_COMPILER} -DCMAKE_C_COMPILER=${CC_COMPILER} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DWITH_FFMPEG=${WITH_FFMPEG}
 
 script:
-    - echo "Building StepMania now."
-    - cd Build
-    - $HOME/cmake/bin/cmake -G 'Unix Makefiles' ..
-    - make
+    - make -j2
+
