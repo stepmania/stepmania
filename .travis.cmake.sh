@@ -10,6 +10,9 @@ if [ "${COMPILER}" == "clang++" ]; then
   export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${DEPS_DIR}/llvm/build/lib"
 fi
 
+pwd
+echo $PATH
+
 cd Build
 cmake .. -DCMAKE_CXX_COMPILER=${COMPILER} -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
 

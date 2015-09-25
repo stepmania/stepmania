@@ -13,7 +13,7 @@ wget --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
 export PATH=${PWD}/cmake/bin:${PATH}
 
 # Ensure libc++ and libc++abi are available for clang.
-if [ "${COMPILER}" =~ clang\+\+-3\.6 ]; then
+if [[ "${COMPILER}" == "clang++-3.6" ]]; then
   export LLVM_URL="http://llvm.org/releases/3.6.1/llvm-3.6.1.src.tar.xz"
   export LIBCXX_URL="http://llvm.org/releases/3.6.1/libcxx-3.6.1.src.tar.xz"
   export LIBCXXABI_URL="http://llvm.org/releases/3.6.1/libcxxabi-3.6.1.src.tar.xz"
