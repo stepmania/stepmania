@@ -68,8 +68,8 @@ matrix:
 before_install:
     # Set up valid submodules.
     - git submodule init
-    - git submodule update cppformat
-    - if [[ "${WITH_FFMPEG}" == "ON" ]]; then git submodule update ffmpeg-git; fi
+    - git submodule update extern/cppformat
+    - if [[ "${WITH_FFMPEG}" == "ON" ]]; then git submodule update extern/ffmpeg-git; fi
 
 install:
     # Setup a directory for necessary dependencies.
