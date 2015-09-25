@@ -10,6 +10,7 @@ export PATH=${PWD}/cmake/bin:${PATH}
 cd ${TRAVIS_BUILD_DIR}
 
 if [ "${COMPILER}" == "clang++" ]; then
+  export DEPS_DIR="/home/travis/deps"
   echo ${DEPS_DIR}
   export CXXFLAGS="-I ${DEPS_DIR}/llvm/build/include/c++/v1"
   export LDFLAGS="-L ${DEPS_DIR}/llvm/build/lib -l c++ -l c++abi"
@@ -20,5 +21,5 @@ pwd
 echo $PATH
 
 cd Build
-cmake .. -DCMAKE_CXX_COMPILER=${COMPILER} -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+~/cmake/bin/cmake .. -DCMAKE_CXX_COMPILER=${COMPILER} -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
 
