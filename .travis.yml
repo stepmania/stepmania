@@ -34,11 +34,7 @@ matrix:
                     - mesa-common-dev
                     - libglew-dev
         
-        - env: COMPILER=clang++-3.6 BUILD_TYPE=Debug
-          compiler: clang
-          addons: *clang36
-
-        - env: COMPILER=g++-5 BUILD_TYPE=Release
+       - env: COMPILER=g++-5 BUILD_TYPE=Release
           compiler: gcc
           addons: &gcc5
             apt:
@@ -66,16 +62,21 @@ matrix:
                     - mesa-common-dev
                     - libglew-dev
         
-        - env: COMPILER=g++-5 BUILD_TYPE=Debug
-          compiler: gcc
-          addons: *gcc5
+        # Turning off for now as a sanity test.
+        #- env: COMPILER=clang++-3.6 BUILD_TYPE=Debug
+        #  compiler: clang
+        #  addons: *clang36
+
+        # - env: COMPILER=g++-5 BUILD_TYPE=Debug
+        #  compiler: gcc
+        #  addons: *gcc5
 
 install:
-    - bash -c $@ .travis.setup.sh
+    - bash .travis.setup.sh
 
 before_script:
-    - bash -c $@ .travis.cmake.sh
+    - bash .travis.cmake.sh
 
 script:
-    - bash -c $@ .travis.build.sh
+    - bash .travis.build.sh
 
