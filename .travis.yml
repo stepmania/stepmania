@@ -61,15 +61,6 @@ matrix:
                     - libglu1-mesa-dev
                     - mesa-common-dev
                     - libglew-dev
-        
-        # Turning off for now as a sanity test.
-        #- env: COMPILER=clang++-3.6 BUILD_TYPE=Debug
-        #  compiler: clang
-        #  addons: *clang36
-
-        # - env: COMPILER=g++-5 BUILD_TYPE=Debug
-        #  compiler: gcc
-        #  addons: *gcc5
 
 install:
     - bash .travis.setup.sh
