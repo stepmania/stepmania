@@ -89,13 +89,12 @@ install:
 
 before_script:
     - cd ${TRAVIS_BUILD_DIR}
-    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export CXXFLAGS="-I ${DEPS_DIR}/llvm/build/include/c++/v1"; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export CXXFLAGS="-I${DEPS_DIR}/llvm/build/include/c++/v1 -I${DEPS_DIR}/llvm/projects/libcxx/include -I${DEPS_DIR}/llvm/projects/libcxxabi/include"; fi
     - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export LDFLAGS="-L ${DEPS_DIR}/llvm/build/lib -l c++ -l c++abi"; fi
     - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${DEPS_DIR}/llvm/build/lib"; fi
     - cd Build
     - cmake .. -DCMAKE_CXX_COMPILER=${CXX_COMPILER} -DCMAKE_C_COMPILER=${CC_COMPILER} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DWITH_FFMPEG=${WITH_FFMPEG}
 
 script:
-    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then make VERBOSE=1; fi
-    - if [[ "${CXX_COMPILER}" != "clang++-3.6" ]]; then make -j2; fi
+    - then make -j2
 
