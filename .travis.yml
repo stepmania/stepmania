@@ -9,7 +9,7 @@ matrix:
     include:
         - env: COMPILER=clang++3.6 BUILD_TYPE=Release
           compiler: clang
-          addons: &clang36
+          addons:
             apt:
                 sources:
                     - llvm-toolchain-precise-3.6
@@ -36,7 +36,7 @@ matrix:
         
        - env: COMPILER=g++-5 BUILD_TYPE=Release
           compiler: gcc
-          addons: &gcc5
+          addons:
             apt:
                 sources:
                     - ubuntu-toolchain-r-test
