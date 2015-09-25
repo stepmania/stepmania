@@ -78,7 +78,7 @@ install:
     - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export LIBCXX_URL="http://llvm.org/releases/3.6.1/libcxx-3.6.1.src.tar.xz"; fi
     - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export LIBCXXABI_URL="http://llvm.org/releases/3.6.1/libcxxabi-3.6.1.src.tar.xz"; fi
     - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export TAR_FMT="-xJ"; fi
-    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then mkdir -p llvm llvm/build llvm-projects/libcxx llvm/projects/libcxxabi; fi
+    - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then mkdir -p llvm llvm/build llvm/projects/libcxx llvm/projects/libcxxabi; fi
     - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then wget --quiet -O - ${LLVM_URL} | tar --strip-components=1 ${TAR_FMT} -C llvm; fi
     - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then wget --quiet -O - ${LIBCXX_URL} | tar --strip-components=1 ${TAR_FMT} -C llvm/projects/libcxx; fi
     - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then wget --quiet -O - ${LIBCXXABI_URL} | tar --strip-components=1 ${TAR_FMT} -C llvm/projects/libcxxabi; fi
