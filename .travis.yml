@@ -33,6 +33,11 @@ matrix:
                         - libglew-dev
 
         -
+            env: CXX_COMPILER=clang++-3.6 CC_COMPILER=clang-3.6 BUILD_TYPE=Release WITH_FFMPEG=ON
+            compiler: clang
+            addons: *clang36
+
+        -
             env: CXX_COMPILER=g++-5 CC_COMPILER=gcc-5 BUILD_TYPE=Release WITH_FFMPEG=OFF
             compiler: gcc
             addons: &gcc5
