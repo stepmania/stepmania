@@ -1,0 +1,18 @@
+list(APPEND SMDATA_FILE_TYPES_SRC
+  "${SM_SRC_FILETYPES_DIR}/CsvFile.cpp"
+  "${SM_SRC_FILETYPES_DIR}/IniFile.cpp"
+  "${SM_SRC_FILETYPES_DIR}/MsdFile.cpp"
+  "${SM_SRC_FILETYPES_DIR}/XmlFile.cpp"
+  "${SM_SRC_FILETYPES_DIR}/XmlToLua.cpp"
+  "${SM_SRC_FILETYPES_DIR}/XmlFileUtil.cpp"
+)
+list(APPEND SMDATA_FILE_TYPES_HPP
+  "${SM_SRC_FILETYPES_DIR}/CsvFile.h"
+  "${SM_SRC_FILETYPES_DIR}/IniFile.h"
+  "${SM_SRC_FILETYPES_DIR}/MsdFile.h"
+  "${SM_SRC_FILETYPES_DIR}/XmlFile.h"
+  "${SM_SRC_FILETYPES_DIR}/XmlToLua.h"
+  "${SM_SRC_FILETYPES_DIR}/XmlFileUtil.h"
+)
+
+source_group("File Types" FILES ${SMDATA_FILE_TYPES_SRC} ${SMDATA_FILE_TYPES_HPP})
