@@ -22,7 +22,9 @@ target_link_libraries("GtkModule" ${GTK2_LIBRARIES})
 set_property(TARGET "GtkModule" PROPERTY FOLDER "Internal Libraries")
 list(APPEND SM_GTK_INCLUDE_DIRS
   "${SM_SRC_DIR}"
-  "${SM_SRC_DIR}/generated"
+  "${SM_SRC_GENERATED_DIR}"
+  "${SM_SRC_GLOBALS_DIR}"
+  "${SM_SRC_RAGE_DIR}"
   "${SM_SRC_DIR}/arch/LoadingWindow"
   "${GTK2_INCLUDE_DIRS}"
 )
