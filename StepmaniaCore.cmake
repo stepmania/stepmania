@@ -212,6 +212,9 @@ if(WITH_OGG)
   endif()
 endif()
 
+find_package(nasm)
+find_package(yasm)
+
 if(WIN32)
   set(SYSTEM_PCRE_FOUND FALSE)
   find_package(DirectX REQUIRED)
@@ -367,9 +370,8 @@ elseif(LINUX)
     set(HAS_PTHREAD FALSE)
   endif()
 
-  find_package(yasm)
-  if (WITH_FFMPEG AND NOT YASM_FOUND)
-    message("YASM was not found. Please install if you wish for ffmpeg support.")
+  if (WITH_FFMPEG AND NOT YASM_FOUND AND NOT NASM_FOUND)
+    message("Neither NASM nor YASM were found. Please install at least one of them if you wish for ffmpeg support.")
     set(WITH_FFMPEG OFF)
   endif()
 
