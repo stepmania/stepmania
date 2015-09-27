@@ -651,6 +651,7 @@ void NetworkPostData::HttpThread()
 	{
 		sBuf.clear();
 		char * buffer = new char[1024];
+		std::fill(buffer, buffer + 1024, '\0');
 		int iGot = m_pStream->Read( static_cast<void *>(buffer), 1024 );
 		RString tmp = buffer;
 		delete[] buffer;
