@@ -481,6 +481,7 @@ RString vssprintf( const char *szFormat, va_list argList )
 		va_end(tmp);
 
 		char *buf = new char[iNeeded + 1];
+		std::fill(buf, buf + iNeeded + 1, '\0');
 		vsnprintf( buf, iNeeded+1, szFormat, argList );
 		RString ret(buf);
 		delete [] buf;
@@ -489,22 +490,27 @@ RString vssprintf( const char *szFormat, va_list argList )
 
 	int iChars = FMT_BLOCK_SIZE;
 	int iTry = 1;
-	char *buf = new char[iChars];
 	for (;;)
 	{
 		// Grow more than linearly (e.g. 512, 1536, 3072, etc)
+		char *buf = new char[iChars];
+		std::fill(buf, buf + iChars, '\0');
 		int used = vsnprintf( buf, iChars - 1, szFormat, argList );
 		if ( used == -1 )
 		{
 			iChars += ( ++iTry * FMT_BLOCK_SIZE );
-			delete [] buf;
-			continue;
+		}
+		else
+		{
+			/* OK */
+			sStr.assign(buf, used);
 		}
 		
-		/* OK */
-		sStr.assign( buf, used );
 		delete [] buf;
-		break;
+		if (used != -1)
+		{
+			break;
+		}
 	}
 #endif
 	return sStr;

@@ -24,9 +24,8 @@ InputHandler_Win32_Pump::InputHandler_Win32_Pump()
 	m_pDevice = new USBDevice[NUM_PUMPS];
 
 	int iNumFound = 0;
-	for( int p = 0; p < ARRAYSIZE(pump_usb_pids); ++p )
+	for ( auto const pump_usb_pid : pump_usb_pids )
 	{
-		const int pump_usb_pid = pump_usb_pids[p];
 		for( int i = 0; i < NUM_PUMPS; ++i )
 		{
 			if( m_pDevice[i].Open(pump_usb_vid, pump_usb_pid, sizeof(long), i, nullptr) )

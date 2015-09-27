@@ -5,7 +5,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/CMake/CMakeMacros.cmake)
 # Set up helper variables for future configuring.
 set(SM_CMAKE_DIR "${CMAKE_CURRENT_LIST_DIR}/CMake")
 set(SM_EXTERN_DIR "${CMAKE_CURRENT_LIST_DIR}/extern")
-set(SM_BUNDLE_DIR "${CMAKE_CURRENT_LIST_DIR}/bundle")
+set(SM_INSTALLER_DIR "${CMAKE_CURRENT_LIST_DIR}/Installer")
 set(SM_XCODE_DIR "${CMAKE_CURRENT_LIST_DIR}/Xcode")
 set(SM_PROGRAM_DIR "${CMAKE_CURRENT_LIST_DIR}/Program")
 set(SM_BUILD_DIR "${CMAKE_CURRENT_LIST_DIR}/Build")
@@ -115,6 +115,12 @@ check_symbol_exists(size_t stdlib.h HAVE_SIZE_T_STDLIB)
 check_symbol_exists(size_t stdio.h HAVE_SIZE_T_STDIO)
 check_symbol_exists(posix_fadvise fcntl.h HAVE_POSIX_FADVISE)
 
+if (MINGW)
+  set(NEED_WINDOWS_LOADING_WINDOW TRUE)
+  check_symbol_exists(PBS_MARQUEE commctrl.h HAVE_PBS_MARQUEE)
+  check_symbol_exists(PBM_SETMARQUEE commctrl.h HAVE_PBM_SETMARQUEE)
+endif()
+
 # Checks to make it easier to work with 32-bit/64-bit builds if required.
 include(CheckTypeSize)
 check_type_size(int16_t SIZEOF_INT16_T)
@@ -215,30 +221,42 @@ endif()
 find_package(nasm)
 find_package(yasm)
 
+find_package(Threads)
+if (${Threads_FOUND})
+  set(HAS_PTHREAD TRUE)
+else()
+  set(HAS_PTHREAD FALSE)
+endif()
+
 if(WIN32)
   set(SYSTEM_PCRE_FOUND FALSE)
   find_package(DirectX REQUIRED)
 
-  # FFMPEG...it can be evil.
-  find_library(LIB_SWSCALE NAMES "swscale"
-    PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
-  )
-  get_filename_component(LIB_SWSCALE ${LIB_SWSCALE} NAME)
+  if (MINGW)
+    include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
+    set(HAS_FFMPEG TRUE)
+  else()
+    # FFMPEG...it can be evil.
+    find_library(LIB_SWSCALE NAMES "swscale"
+      PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
+    )
+    get_filename_component(LIB_SWSCALE ${LIB_SWSCALE} NAME)
 
-  find_library(LIB_AVCODEC NAMES "avcodec"
-    PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
-  )
-  get_filename_component(LIB_AVCODEC ${LIB_AVCODEC} NAME)
+    find_library(LIB_AVCODEC NAMES "avcodec"
+      PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
+    )
+    get_filename_component(LIB_AVCODEC ${LIB_AVCODEC} NAME)
 
-  find_library(LIB_AVFORMAT NAMES "avformat"
-    PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
-  )
-  get_filename_component(LIB_AVFORMAT ${LIB_AVFORMAT} NAME)
+    find_library(LIB_AVFORMAT NAMES "avformat"
+      PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
+    )
+    get_filename_component(LIB_AVFORMAT ${LIB_AVFORMAT} NAME)
 
-  find_library(LIB_AVUTIL NAMES "avutil"
-    PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
-  )
-  get_filename_component(LIB_AVUTIL ${LIB_AVUTIL} NAME)
+    find_library(LIB_AVUTIL NAMES "avutil"
+      PATHS "${SM_EXTERN_DIR}/ffmpeg/lib" NO_DEFAULT_PATH
+    )
+    get_filename_component(LIB_AVUTIL ${LIB_AVUTIL} NAME)
+  endif()
 elseif(MACOSX)
   set(SYSTEM_PCRE_FOUND FALSE)
   set(WITH_CRASH_HANDLER TRUE)
@@ -363,13 +381,6 @@ elseif(LINUX)
     message(STATUS "-- At least one sound library was found. Do not worry if any were not found at this stage.")
   endif()
 
-  find_package(Threads)
-  if (${Threads_FOUND})
-    set(HAS_PTHREAD TRUE)
-  else()
-    set(HAS_PTHREAD FALSE)
-  endif()
-
   if (WITH_FFMPEG AND NOT YASM_FOUND AND NOT NASM_FOUND)
     message("Neither NASM nor YASM were found. Please install at least one of them if you wish for ffmpeg support.")
     set(WITH_FFMPEG OFF)
@@ -388,49 +399,7 @@ elseif(LINUX)
         set(HAS_FFMPEG TRUE)
       endif()
     else()
-      set(SM_FFMPEG_VERSION "2.1.3")
-      set(SM_FFMPEG_SRC_LIST "${SM_EXTERN_DIR}" "/ffmpeg-git")
-      sm_join("${SM_FFMPEG_SRC_LIST}" "" SM_FFMPEG_SRC_DIR)
-      set(SM_FFMPEG_ROOT "${CMAKE_BINARY_DIR}/ffmpeg-prefix/src/ffmpeg-build")
-      list(APPEND FFMPEG_CONFIGURE
-        "${SM_FFMPEG_SRC_DIR}/configure"
-        "--disable-programs"
-        "--disable-doc"
-        "--disable-avdevice"
-        "--disable-swresample"
-        "--disable-postproc"
-        "--disable-avfilter"
-        "--disable-shared"
-        "--enable-static"
-      )
-      if(WITH_GPL_LIBS)
-        list(APPEND FFMPEG_CONFIGURE
-          "--enable-gpl"
-        )
-      endif()
-
-      if (WITH_CRYSTALHD_DISABLED)
-        list(APPEND FFMPEG_CONFIGURE "--disable-crystalhd")
-      endif()
-
-      if (NOT WITH_EXTERNAL_WARNINGS)
-        list(APPEND FFMPEG_CONFIGURE
-          "--extra-cflags=-w"
-        )
-      endif()
-
-      if (IS_DIRECTORY "${SM_FFMPEG_SRC_DIR}")
-        externalproject_add("ffmpeg"
-          SOURCE_DIR "${SM_FFMPEG_SRC_DIR}"
-          CONFIGURE_COMMAND ${FFMPEG_CONFIGURE}
-          BUILD_COMMAND "make"
-          UPDATE_COMMAND ""
-          INSTALL_COMMAND ""
-          TEST_COMMAND ""
-        )
-      else()
-        message(ERROR "Submodule missing. Run git submodule init && git submodule update first.")
-      endif()
+      include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
       set(HAS_FFMPEG TRUE)
     endif()
   else()

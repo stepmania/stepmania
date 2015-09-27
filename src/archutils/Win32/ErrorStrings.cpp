@@ -36,11 +36,11 @@ RString ConvertWstringToCodepage( wstring s, int iCodePage )
 					nullptr, 0, nullptr, FALSE );
 	ASSERT_M( iBytes > 0, werr_ssprintf( GetLastError(), "WideCharToMultiByte" ).c_str() );
 
-	RString ret;
-	WideCharToMultiByte( CP_ACP, 0, s.data(), s.size(), 
-					ret.GetBuffer( iBytes ), iBytes, nullptr, FALSE );
-	ret.ReleaseBuffer( iBytes );
-
+	char * buf = new char[iBytes + 1];
+	std::fill(buf, buf + iBytes + 1, '\0');
+	WideCharToMultiByte( CP_ACP, 0, s.data(), s.size(), buf, iBytes, nullptr, FALSE );
+	RString ret( buf );
+	delete[] buf;
 	return ret;
 }
 
