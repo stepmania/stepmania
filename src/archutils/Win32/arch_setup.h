@@ -89,8 +89,10 @@ struct tm *my_localtime_r( const time_t *timep, struct tm *result );
 #define localtime_r my_localtime_r
 struct tm *my_gmtime_r( const time_t *timep, struct tm *result );
 #define gmtime_r my_gmtime_r
+#if defined(_MSC_VER)
 void my_usleep( unsigned long usec );
 #define usleep my_usleep
+#endif
 
 // Missing stdint types:
 #if !defined(__MINGW32__) // MinGW headers define these for us
