@@ -34,7 +34,8 @@ RString ConvertWstringToCodepage( wstring s, int iCodePage )
 					NULL, 0, NULL, FALSE );
 	ASSERT_M( iBytes > 0, werr_ssprintf( GetLastError(), "WideCharToMultiByte" ).c_str() );
 
-	char * buf = new char[iBytes];
+	char * buf = new char[iBytes + 1];
+	std::fill(buf, buf + iBytes + 1, '\0');
 	WideCharToMultiByte( CP_ACP, 0, s.data(), s.size(), 
 					buf, iBytes, NULL, FALSE );
 	RString ret( buf );

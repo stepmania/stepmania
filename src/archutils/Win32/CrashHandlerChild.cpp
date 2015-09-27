@@ -137,9 +137,8 @@ namespace VDDebugInfo
 			if( dwFileSize == INVALID_FILE_SIZE )
 				break;
 
-			char *buffer = new char[dwFileSize];
-			if( buffer == NULL )
-				break;
+			char *buffer = new char[dwFileSize + 1];
+			std::fill(buffer, buffer + dwFileSize + 1, '\0' );
 
 			DWORD dwActual;
 			int iRet = ReadFile(h, buffer, dwFileSize, &dwActual, NULL);
@@ -332,7 +331,8 @@ namespace SymbolLookup
 			return "???";
 		}
 		RString sName;
-		char *buffer = new char[iSize];
+		char *buffer = new char[iSize + 1];
+		std::fill(buffer, buffer + iSize + 1, '\0');
 		if (!ReadFromParent(iFD, buffer, iSize))
 		{
 			sName = "???";
@@ -518,7 +518,8 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
 		return false;
 
-	char *buffer = new char[iSize];
+	char *buffer = new char[iSize + 1];
+	std::fill(buffer, buffer + iSize + 1, '\0');
 	bool wasReadSuccessful = ReadFromParent(iFD, buffer, iSize);
 	RString tmp = buffer;
 	delete[] buffer;
@@ -532,7 +533,8 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
 		return false;
 
-	buffer = new char[iSize];
+	buffer = new char[iSize + 1];
+	std::fill(buffer, buffer + iSize + 1, '\0');
 	wasReadSuccessful = ReadFromParent(iFD, buffer, iSize);
 	tmp = buffer;
 	delete[] buffer;
@@ -550,7 +552,8 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 	{
 		if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
 			return false;
-		buffer = new char[iSize];
+		buffer = new char[iSize + 1];
+		std::fill(buffer, buffer + iSize + 1, '\0');
 		wasReadSuccessful = ReadFromParent(iFD, buffer, iSize);
 		tmp = buffer;
 		delete[] buffer;
@@ -565,7 +568,8 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
 		return false;
 
-	buffer = new char[iSize];
+	buffer = new char[iSize + 1];
+	std::fill(buffer, buffer + iSize + 1, '\0');
 	wasReadSuccessful = ReadFromParent(iFD, buffer, iSize);
 	tmp = buffer;
 	delete[] buffer;
@@ -578,7 +582,8 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 	// 6. Read the crashed thread's name.
 	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
 		return false;
-	buffer = new char[iSize];
+	buffer = new char[iSize + 1];
+	std::fill(buffer, buffer + iSize + 1, '\0');
 	wasReadSuccessful = ReadFromParent(iFD, buffer, iSize);
 	tmp = buffer;
 	delete[] buffer;
