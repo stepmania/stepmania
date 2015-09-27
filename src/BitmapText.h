@@ -96,6 +96,13 @@ public:
 		int		length;
 		RageColor	diffuse[NUM_DIFFUSE_COLORS];
 		RageColor	glow;
+		void set_diffuse(RageColor const& c)
+		{
+			for(size_t i= 0; i < NUM_DIFFUSE_COLORS; ++i)
+			{
+				diffuse[i]= c;
+			}
+		}
 
 		void FromStack( lua_State *L, int iPos );
 	};

@@ -4239,10 +4239,36 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='RollingNumbers'>
-	<Function name='Load' return='void' arguments='string sGroupName'>
-		Loads the metrics for this RollingNumbers from <code>sGroupName</code>.
+	<Description>
+		Starts at a value of 0 and approaches the target number in a given number of seconds.  The number is formatted by the text_format string, and commified if commify is true.  The leading glyphs added to are colored by the leading attribute.  The number is colored by the number attribute.
+	</Description>
+	<Function name='set_approach_seconds' return='' arguments='float s'>
+		The number will take <code>s</code> seconds to reach the target value.
+		<br />Default value is 1.
 	</Function>
-	<Function name='targetnumber' return='void' arguments='float f'>
+	<Function name='set_chars_wide' return='' arguments='int s'>
+		The text will be filled to width <code>s</code> by repeating the glyph set by <code>set_leading_glyph</code>.
+		<br />Default value is 9.
+	</Function>
+	<Function name='set_commify' return='' arguments='bool s'>
+		If true, the number will be commified.
+		<br />Default value is false.
+	</Function>
+	<Function name='set_leading_attribute' return='' arguments='Attribute attr'>
+		Sets the attribute used to color the leading glyphs.  The attribute is identical to an attribute of a normal BitmapText.  Read BitmapText:AddAttribute explanation.  The length given will be ignored.
+	</Function>
+	<Function name='set_number_attribute' return='' arguments='Attribute attr'>
+		Sets the attribute used to color the number.  The attribute is identical to an attribute of a normal BitmapText.  Read BitmapText:AddAttribute explanation.  The length given will be ignored.
+	</Function>
+	<Function name='set_leading_glyph' return='' arguments='string s'>
+		Sets the string that is used to fill the number to the desired width.
+		<br />Default value is "0".
+	</Function>
+	<Function name='set_text_format' return='' arguments='string s'>
+		Sets the string that is used to format the number.
+		<br />Default value is "%.0f".
+	</Function>
+	<Function name='target_number' return='void' arguments='float f'>
 		Sets the target number to <code>f</code>.
 	</Function>
 </Class>

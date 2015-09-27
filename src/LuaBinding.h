@@ -167,6 +167,15 @@ public:
 	AddMethod( #method_name, method_name )
 #define ADD_GET_SET_METHODS(method_name) \
 	ADD_METHOD(get_##method_name); ADD_METHOD(set_##method_name);
+#define LUA_SET_MEMBER(member, arg_conv) \
+static int set_##member(T* p, lua_State* L) \
+{ \
+	p->m_##member= arg_conv(1); \
+	COMMON_RETURN_SELF; \
+}
+#define GET_SET_MEMBER(member, arg_conv) \
+DEFINE_METHOD(get_##member, m_##member); \
+LUA_SET_MEMBER(member, arg_conv);
 
 #define LUA_REGISTER_NAMESPACE( T ) \
 	static void Register##T( lua_State *L ) { luaL_register( L, #T, T##Table ); lua_pop( L, 1 ); } \
