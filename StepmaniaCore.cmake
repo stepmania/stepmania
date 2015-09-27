@@ -5,7 +5,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/CMake/CMakeMacros.cmake)
 # Set up helper variables for future configuring.
 set(SM_CMAKE_DIR "${CMAKE_CURRENT_LIST_DIR}/CMake")
 set(SM_EXTERN_DIR "${CMAKE_CURRENT_LIST_DIR}/extern")
-set(SM_BUNDLE_DIR "${CMAKE_CURRENT_LIST_DIR}/bundle")
+set(SM_INSTALLER_DIR "${CMAKE_CURRENT_LIST_DIR}/Installer")
 set(SM_XCODE_DIR "${CMAKE_CURRENT_LIST_DIR}/Xcode")
 set(SM_PROGRAM_DIR "${CMAKE_CURRENT_LIST_DIR}/Program")
 set(SM_BUILD_DIR "${CMAKE_CURRENT_LIST_DIR}/Build")
