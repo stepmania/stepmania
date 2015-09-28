@@ -64,6 +64,8 @@ include(CMakeData-screen.cmake)
 include(CMakeData-data.cmake)
 include(CMakeData-gtk.cmake)
 
+include(CMakeProject-rage.cmake)
+
 list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
   "AnnouncerManager.cpp"
   "Bookkeeper.cpp"
@@ -462,6 +464,7 @@ list(APPEND SMDATA_LINK_LIB
   "png"
   "glew"
   "jpeg"
+  "rage"
 )
 
 if (HAS_MP3)
@@ -646,6 +649,7 @@ target_link_libraries("${SM_EXE_NAME}" ${SMDATA_LINK_LIB})
 list(APPEND SM_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
   "${SM_SRC_DIR}/generated"
+  "${SM_SRC_DIR}/rage"
   "${SM_EXTERN_DIR}/vorbis"
   "${SM_EXTERN_DIR}/libtommath"
   "${SM_EXTERN_DIR}/libtomcrypt/src/headers"
@@ -776,3 +780,4 @@ if(NOT APPLE)
   endif()
 endif()
 
+include(CMakeProject-rage-test.cmake)

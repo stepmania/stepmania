@@ -540,22 +540,22 @@ RageMatrix RageLookAt(
 	RageVector3 Y(upx, upy, upz);
 
 	RageVector3 X(
-		 Y[1] * Z[2] - Y[2] * Z[1],
-		-Y[0] * Z[2] + Y[2] * Z[0],
-		 Y[0] * Z[1] - Y[1] * Z[0]);
+		 Y.y * Z.z - Y.z * Z.y,
+		-Y.x * Z.z + Y.z * Z.x,
+		 Y.x * Z.y - Y.y * Z.x);
 
 	Y = RageVector3(
-		 Z[1] * X[2] - Z[2] * X[1],
-		 -Z[0] * X[2] + Z[2] * X[0],
-		 Z[0] * X[1] - Z[1] * X[0] );
+		 Z.y * X.z - Z.z * X.y,
+		 -Z.x * X.z + Z.z * X.x,
+		 Z.x * X.y - Z.y * X.x );
 
 	RageVec3Normalize(&X, &X);
 	RageVec3Normalize(&Y, &Y);
 
 	RageMatrix mat(
-		X[0], Y[0], Z[0], 0,
-		X[1], Y[1], Z[1], 0,
-		X[2], Y[2], Z[2], 0,
+		X.x, Y.x, Z.x, 0,
+		X.y, Y.y, Z.y, 0,
+		X.z, Y.z, Z.z, 0,
 		0,    0,    0,    1 );
 
 	RageMatrix mat2;
@@ -571,12 +571,12 @@ void RageMatrixAngles( RageMatrix* pOut, const RageVector3 &angles )
 {
 	const RageVector3 angles_radians( angles * 2*PI / 360 );
 
-	const float sy = RageFastSin( angles_radians[2] );
-	const float cy = RageFastCos( angles_radians[2] );
-	const float sp = RageFastSin( angles_radians[1] );
-	const float cp = RageFastCos( angles_radians[1] );
-	const float sr = RageFastSin( angles_radians[0] );
-	const float cr = RageFastCos( angles_radians[0] );
+	const float sy = RageFastSin( angles_radians.z );
+	const float cy = RageFastCos( angles_radians.z );
+	const float sp = RageFastSin( angles_radians.y );
+	const float cp = RageFastCos( angles_radians.y );
+	const float sr = RageFastSin( angles_radians.x );
+	const float cr = RageFastCos( angles_radians.x );
 
 	RageMatrixIdentity( pOut );
 

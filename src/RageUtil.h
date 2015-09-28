@@ -40,7 +40,7 @@ T clamp( T val, T low, T high)
 template<typename T, typename U>
 inline U lerp( T x, U l, U h )
 {
-	return U(x * (h - l) + l);
+	return U((h - l) * x + l);
 }
 
 template<typename T, typename U, typename V>

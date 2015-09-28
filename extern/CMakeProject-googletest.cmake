@@ -1,0 +1,36 @@
+if (NOT IS_DIRECTORY "${SM_EXTERN_DIR}/googletest")
+  message(ERROR "Submodule missing. Run git submodule init && git submodule update first.")
+  return()
+endif()
+
+list(APPEND GOOGLETEST_SRC
+  "${SM_EXTERN_DIR}/googletest/googletest/src/gtest-all.cc"
+)
+
+source_group("" FILES ${GOOGLETEST_SRC})
+
+add_library("googletest" ${GOOGLETEST_SRC})
+
+set_property(TARGET "googletest" PROPERTY FOLDER "External Libraries")
+
+disable_project_warnings("googletest")
+
+target_include_directories("googletest" SYSTEM PUBLIC "${SM_EXTERN_DIR}/googletest/googletest/include")
+target_include_directories("googletest" PUBLIC "${SM_EXTERN_DIR}/googletest/googletest")
+
+if (MSVC)
+
+elseif(APPLE)
+  set_target_properties("googletest" PROPERTIES
+    XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "gnu++14"
+    XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++"
+  )
+else()
+  sm_add_compile_flag("googletest" "-std=gnu++11")
+  if (CMAKE_CXX_COMPILER MATCHES "clang")
+    sm_add_compile_flag("googletest" "-stdlib=libc++")
+  endif()
+  if (CMAKE_CXX_COMPILER MATCHES "gcc")
+    sm_add_compile_flag("googletest" "-pthread")
+  endif()
+endif()

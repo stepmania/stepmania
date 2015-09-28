@@ -174,8 +174,8 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 
 					if( sscanf(sLine, "%d %f %f %f %f %f %d",
 								&nFlags,
-								&v.p[0], &v.p[1], &v.p[2],
-								&v.t[0], &v.t[1],
+								&v.p.x, &v.p.y, &v.p.z,
+								&v.t.x, &v.t.y,
 								&nIndex
 						   ) != 7 )
 					{
@@ -189,8 +189,8 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 						v.TextureMatrixScale.y = 0;
 					if( nFlags & 4 )
 					{
-						v.t[0] = v.p[0] / v.t[0];
-						v.t[1] = v.p[1] / v.t[1];
+						v.t.x = v.p.x / v.t.x;
+						v.t.y = v.p.y / v.t.y;
 					}
 					v.bone = (uint8_t) nIndex;
 					RageVec3AddToBounds( v.p, m_vMins, m_vMaxs );
@@ -215,7 +215,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 						THROW;
 
 					RageVector3 Normal;
-					if( sscanf(sLine, "%f %f %f", &Normal[0], &Normal[1], &Normal[2]) != 3 )
+					if( sscanf(sLine, "%f %f %f", &Normal.x, &Normal.y, &Normal.z) != 3 )
 						THROW;
 
 					RageVec3Normalize( (RageVector3*)&Normal, (RageVector3*)&Normal );

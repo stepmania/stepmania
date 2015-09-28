@@ -183,7 +183,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
 				RageVector4 Ambient;
-				if( sscanf(sLine, "%f %f %f %f", &Ambient[0], &Ambient[1], &Ambient[2], &Ambient[3]) != 4 )
+				if( sscanf(sLine, "%f %f %f %f", &Ambient.x, &Ambient.y, &Ambient.z, &Ambient.w) != 4 )
 					THROW;
 				memcpy( &Material.Ambient, &Ambient, sizeof(Material.Ambient) );
 
@@ -191,7 +191,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
 				RageVector4 Diffuse;
-				if( sscanf(sLine, "%f %f %f %f", &Diffuse[0], &Diffuse[1], &Diffuse[2], &Diffuse[3]) != 4 )
+				if( sscanf(sLine, "%f %f %f %f", &Diffuse.x, &Diffuse.y, &Diffuse.z, &Diffuse.w) != 4 )
 					THROW;
 				memcpy( &Material.Diffuse, &Diffuse, sizeof(Material.Diffuse) );
 
@@ -199,7 +199,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
 				RageVector4 Specular;
-				if( sscanf(sLine, "%f %f %f %f", &Specular[0], &Specular[1], &Specular[2], &Specular[3]) != 4 )
+				if( sscanf(sLine, "%f %f %f %f", &Specular.x, &Specular.y, &Specular.z, &Specular.w) != 4 )
 					THROW;
 				memcpy( &Material.Specular, &Specular, sizeof(Material.Specular) );
 
@@ -207,7 +207,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
 				RageVector4 Emissive;
-				if( sscanf (sLine, "%f %f %f %f", &Emissive[0], &Emissive[1], &Emissive[2], &Emissive[3]) != 4 )
+				if( sscanf (sLine, "%f %f %f %f", &Emissive.x, &Emissive.y, &Emissive.z, &Emissive.w) != 4 )
 					THROW;
 				memcpy( &Material.Emissive, &Emissive, sizeof(Material.Emissive) );
 
@@ -518,9 +518,9 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 
 		RageMatrixAngles( &m_vpBones[i].m_Relative, vRot );
 
-		m_vpBones[i].m_Relative.m[3][0] = pBone->Position[0];
-		m_vpBones[i].m_Relative.m[3][1] = pBone->Position[1];
-		m_vpBones[i].m_Relative.m[3][2] = pBone->Position[2];
+		m_vpBones[i].m_Relative.m[3][0] = pBone->Position.x;
+		m_vpBones[i].m_Relative.m[3][1] = pBone->Position.y;
+		m_vpBones[i].m_Relative.m[3][2] = pBone->Position.z;
 
 		int nParentBone = m_pCurAnimation->FindBoneByName( pBone->sParentName );
 		if( nParentBone != -1 )
@@ -546,9 +546,9 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 			int8_t bone = Vertices[j].bone;
 			if( bone != -1 )
 			{
-				pos[0] -= m_vpBones[bone].m_Absolute.m[3][0];
-				pos[1] -= m_vpBones[bone].m_Absolute.m[3][1];
-				pos[2] -= m_vpBones[bone].m_Absolute.m[3][2];
+				pos.x -= m_vpBones[bone].m_Absolute.m[3][0];
+				pos.y -= m_vpBones[bone].m_Absolute.m[3][1];
+				pos.z -= m_vpBones[bone].m_Absolute.m[3][2];
 
 				RageVector3 vTmp;
 
@@ -668,9 +668,9 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 		RageMatrix m;
 		RageMatrixIdentity( &m );
 		RageMatrixFromQuat( &m, vRot );
-		m.m[3][0] = vPos[0];
-		m.m[3][1] = vPos[1];
-		m.m[3][2] = vPos[2];
+		m.m[3][0] = vPos.x;
+		m.m[3][1] = vPos.y;
+		m.m[3][2] = vPos.z;
 
 		RageMatrix RelativeFinal;
 		RageMatrixMultiply( &RelativeFinal, &vpBones[i].m_Relative, &m );

@@ -1,6 +1,7 @@
 include(CMakeProject-lua.cmake)
 include(CMakeProject-glew.cmake)
 include(CMakeProject-cppformat.cmake)
+include(CMakeProject-googletest.cmake)
 include(CMakeProject-json.cmake)
 if (APPLE OR MSVC)
   include(CMakeProject-mad.cmake)
