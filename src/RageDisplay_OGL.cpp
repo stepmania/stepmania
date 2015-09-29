@@ -889,18 +889,18 @@ static void SetupVertices( const RageSpriteVertex v[], int iNumVerts )
 
 	for( unsigned i = 0; i < unsigned(iNumVerts); ++i )
 	{
-		Vertex[i*3+0]  = v[i].p[0];
-		Vertex[i*3+1]  = v[i].p[1];
-		Vertex[i*3+2]  = v[i].p[2];
+		Vertex[i*3+0]  = v[i].p.x;
+		Vertex[i*3+1]  = v[i].p.y;
+		Vertex[i*3+2]  = v[i].p.z;
 		Color[i*4+0]   = v[i].c.r;
 		Color[i*4+1]   = v[i].c.g;
 		Color[i*4+2]   = v[i].c.b;
 		Color[i*4+3]   = v[i].c.a;
-		Texture[i*2+0] = v[i].t[0];
-		Texture[i*2+1] = v[i].t[1];
-		Normal[i*3+0] = v[i].n[0];
-		Normal[i*3+1] = v[i].n[1];
-		Normal[i*3+2] = v[i].n[2];
+		Texture[i*2+0] = v[i].t.x;
+		Texture[i*2+1] = v[i].t.y;
+		Normal[i*3+0] = v[i].n.x;
+		Normal[i*3+1] = v[i].n.y;
+		Normal[i*3+2] = v[i].n.z;
 	}
 	glEnableClientState( GL_VERTEX_ARRAY );
 	glVertexPointer( 3, GL_FLOAT, 0, Vertex );

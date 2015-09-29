@@ -549,8 +549,8 @@ void Actor::PreDraw() // calculate actor properties
 			break;
 		case pulse:
 			{
-				float fMinZoom = m_vEffectMagnitude[0];
-				float fMaxZoom = m_vEffectMagnitude[1];
+				float fMinZoom = m_vEffectMagnitude.x;
+				float fMaxZoom = m_vEffectMagnitude.y;
 				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI );
 				float fZoom = SCALE( fPercentOffset, 0.f, 1.f, fMinZoom, fMaxZoom );
 				tempState.scale *= fZoom;
@@ -878,7 +878,7 @@ void Actor::UpdateInternal(float delta_time)
 	switch( m_Effect )
 	{
 		case spin:
-			m_current.rotation += m_fEffectDelta*m_vEffectMagnitude;
+			m_current.rotation += ( m_vEffectMagnitude * m_fEffectDelta );
 			wrap( m_current.rotation.x, 360 );
 			wrap( m_current.rotation.y, 360 );
 			wrap( m_current.rotation.z, 360 );
@@ -1236,8 +1236,8 @@ void Actor::SetEffectPulse( float fPeriod, float fMinZoom, float fMaxZoom )
 	// todo: account for SSC_FUTURES -aj
 	m_Effect = pulse;
 	SetEffectPeriod( fPeriod );
-	m_vEffectMagnitude[0] = fMinZoom;
-	m_vEffectMagnitude[1] = fMaxZoom;
+	m_vEffectMagnitude.x = fMinZoom;
+	m_vEffectMagnitude.y = fMaxZoom;
 }
 
 
@@ -1740,7 +1740,7 @@ public:
 	static int effectoffset( T* p, lua_State *L )		{ p->SetEffectOffset(FArg(1)); COMMON_RETURN_SELF; }
 	static int effectclock( T* p, lua_State *L )		{ p->SetEffectClockString(SArg(1)); COMMON_RETURN_SELF; }
 	static int effectmagnitude( T* p, lua_State *L )	{ p->SetEffectMagnitude( RageVector3(FArg(1),FArg(2),FArg(3)) ); COMMON_RETURN_SELF; }
-	static int geteffectmagnitude( T* p, lua_State *L )	{ RageVector3 v = p->GetEffectMagnitude(); lua_pushnumber(L, v[0]); lua_pushnumber(L, v[1]); lua_pushnumber(L, v[2]); return 3; }
+	static int geteffectmagnitude( T* p, lua_State *L )	{ RageVector3 v = p->GetEffectMagnitude(); lua_pushnumber(L, v.x); lua_pushnumber(L, v.y); lua_pushnumber(L, v.z); return 3; }
 	static int scaletocover( T* p, lua_State *L )		{ p->ScaleToCover( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); COMMON_RETURN_SELF; }
 	static int scaletofit( T* p, lua_State *L )		{ p->ScaleToFitInside( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); COMMON_RETURN_SELF; }
 	static int animate( T* p, lua_State *L )		{ p->EnableAnimation(BIArg(1)); COMMON_RETURN_SELF; }
