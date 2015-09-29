@@ -569,7 +569,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 					break;
 				}
 			}
-			CLAMP( m_iSelection[ROW_STEPS], 0, m_vpSteps.size()-1 );
+			m_iSelection[ROW_STEPS] = clamp( m_iSelection[ROW_STEPS], 0, static_cast<int>(m_vpSteps.size())-1 );
 		}
 		// fall through
 	case ROW_STEPS:
@@ -628,7 +628,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				}
 			}
 			StripLockedStepsAndDifficulty( m_vpSteps );
-			CLAMP( m_iSelection[ROW_SOURCE_STEPS], 0, m_vpSourceSteps.size()-1 );
+        m_iSelection[ROW_SOURCE_STEPS] = clamp( m_iSelection[ROW_SOURCE_STEPS], 0, static_cast<int>(m_vpSourceSteps.size())-1 );
 		}
 		// fall through
 	case ROW_SOURCE_STEPS:

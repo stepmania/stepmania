@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ScreenDebugOverlay.h"
+#include "RageMath.hpp"
 #include "ScreenDimensions.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
@@ -464,7 +465,7 @@ bool ScreenDebugOverlay::Input( const InputEventPlus &input )
 		if( input.type != IET_FIRST_PRESS )
 			return true; // eat the input but do nothing
 		m_iCurrentPage = iPage;
-		CLAMP( m_iCurrentPage, 0, (int) m_asPages.size()-1 );
+		m_iCurrentPage = clamp( m_iCurrentPage, 0, (int) m_asPages.size()-1 );
 		return true;
 	}
 
@@ -533,7 +534,7 @@ void ChangeVolume( float fDelta )
 	Preference<float> *pRet = Preference<float>::GetPreferenceByName("SoundVolume");
 	float fVol = pRet->Get();
 	fVol += fDelta;
-	CLAMP( fVol, 0.0f, 1.0f );
+	fVol = clamp( fVol, 0.0f, 1.0f );
 	pRet->Set( fVol );
 	SOUNDMAN->SetMixVolume();
 }
@@ -543,7 +544,7 @@ void ChangeVisualDelay( float fDelta )
 	Preference<float> *pRet = Preference<float>::GetPreferenceByName("VisualDelaySeconds");
 	float fSecs = pRet->Get();
 	fSecs += fDelta;
-	CLAMP( fSecs, -1.0f, 1.0f );
+	fSecs = clamp( fSecs, -1.0f, 1.0f );
 	pRet->Set( fSecs );
 }
 
@@ -872,7 +873,7 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 {
 	HighScore hs;
 	hs.SetName( "FAKE" );
-	Grade g = (Grade)SCALE( RandomInt(6), 0, 4, Grade_Tier01, Grade_Tier06 );
+	Grade g = (Grade)scale( RandomInt(6), 0, 4, static_cast<int>(Grade_Tier01), static_cast<int>(Grade_Tier06) );
 	if( g == Grade_Tier06 )
 		g = Grade_Failed;
 	hs.SetGrade( g );

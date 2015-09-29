@@ -1,6 +1,7 @@
 #include <limits.h>
 #include "global.h"
 #include "Course.h"
+#include "RageMath.hpp"
 #include "CourseLoaderCRS.h"
 #include "GameManager.h"
 #include "GameState.h"

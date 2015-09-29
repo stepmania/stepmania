@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageSurfaceUtils.h"
+#include "RageMath.hpp"
 #include "RageSurface.h"
 #include "RageUtil.h"
 #include "RageLog.h"
@@ -379,11 +380,6 @@ static inline void GetRawRGBAV_XY( const RageSurface *src, uint8_t *v, int x, in
 	RageSurfaceUtils::GetRawRGBAV( srcpx, src->fmt, v );
 }
 
-static inline float scale( float x, float l1, float h1, float l2, float h2 )
-{
-	return ((x - l1) / (h1 - l1) * (h2 - l2) + l2);
-}
-
 // Completely unoptimized.
 void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst,
 					const float fCoords[8] /* TL, BR, BL, TR */ )
@@ -405,16 +401,16 @@ void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst,
 		uint8_t *dstp = (uint8_t *) dst->pixels + (y * dst->pitch); /* line */
 		uint8_t *dstpx = dstp; // pixel
 
-		const float start_y = scale(float(y), 0, float(dst->h), Coords[TL_Y], Coords[BL_Y]);
-		const float end_y = scale(float(y), 0, float(dst->h), Coords[TR_Y], Coords[BR_Y]);
+		const float start_y = scale(float(y), 0.f, float(dst->h), Coords[TL_Y], Coords[BL_Y]);
+		const float end_y = scale(float(y), 0.f, float(dst->h), Coords[TR_Y], Coords[BR_Y]);
 
-		const float start_x = scale(float(y), 0, float(dst->h), Coords[TL_X], Coords[BL_X]);
-		const float end_x = scale(float(y), 0, float(dst->h), Coords[TR_X], Coords[BR_X]);
+		const float start_x = scale(float(y), 0.f, float(dst->h), Coords[TL_X], Coords[BL_X]);
+		const float end_x = scale(float(y), 0.f, float(dst->h), Coords[TR_X], Coords[BR_X]);
 
 		for( int x = 0; x < dst->w; ++x )
 		{
-			const float src_xp = scale(float(x), 0, float(dst->w), start_x, end_x);
-			const float src_yp = scale(float(x), 0, float(dst->w), start_y, end_y);
+			const float src_xp = scale(float(x), 0.f, float(dst->w), start_x, end_x);
+			const float src_yp = scale(float(x), 0.f, float(dst->w), start_y, end_y);
 
 			/* If the surface is two pixels wide, src_xp is 0..2.  .5 indicates
 			 * pixel[0]; 1 indicates 50% pixel[0], 50% pixel[1]; 1.5 indicates
@@ -567,12 +563,13 @@ static bool blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *d
 			 *
 			 * Having separate formulas for increasing and decreasing resolution seems
 			 * strange; what's wrong here? */
+			uint32_t zero = 0;
 			if( max_src_val > max_dst_val )
 				for( uint32_t i = 0; i <= max_src_val; ++i )
-					lookup[c][i] = (uint8_t) SCALE( i, 0, max_src_val+1, 0, max_dst_val+1 );
+					lookup[c][i] = (uint8_t) scale( i, zero, max_src_val+1, zero, max_dst_val+1 );
 			else
 				for( uint32_t i = 0; i <= max_src_val; ++i )
-					lookup[c][i] = (uint8_t) SCALE( i, 0, max_src_val, 0, max_dst_val );
+					lookup[c][i] = (uint8_t) scale( i, zero, max_src_val, zero, max_dst_val );
 		}
 	}
 

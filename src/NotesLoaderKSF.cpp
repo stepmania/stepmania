@@ -1,5 +1,6 @@
 #include "global.h"
 #include "NotesLoaderKSF.h"
+#include "RageMath.hpp"
 #include "RageUtil_CharConversions.h"
 #include "MsdFile.h"
 #include "RageLog.h"
@@ -520,7 +521,7 @@ static void ProcessTickcounts( const RString & value, int & ticks, TimingData & 
 	 * and stops. It will be called again in LoadFromKSFFile for the
 	 * actual steps. */
 	ticks = StringToInt( value );
-	CLAMP( ticks, 0, ROWS_PER_BEAT );
+	ticks = clamp( ticks, 0, ROWS_PER_BEAT );
 
 	if( ticks == 0 )
 		ticks = TickcountSegment::DEFAULT_TICK_COUNT;

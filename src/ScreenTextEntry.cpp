@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ScreenTextEntry.h"
+#include "RageMath.hpp"
 #include "RageUtil.h"
 #include "Preference.h"
 #include "ScreenManager.h"
@@ -682,8 +683,8 @@ void ScreenTextEntryVisual::BeginScreen()
 		for( int x=0; x<KEYS_PER_ROW; ++x )
 		{
 			BitmapText &bt = *m_ptextKeys[r][x];
-			float fX = roundf( SCALE( x, 0, KEYS_PER_ROW-1, ROW_START_X, ROW_END_X ) );
-			float fY = roundf( SCALE( r, 0, NUM_KeyboardRow-1, ROW_START_Y, ROW_END_Y ) );
+			float fX = roundf( scale( x + 0.f, 0.f, KEYS_PER_ROW-1.f, ROW_START_X.GetValue(), ROW_END_X.GetValue() ) );
+			float fY = roundf( scale( r + 0.f, 0.f, NUM_KeyboardRow-1.f, ROW_START_Y.GetValue(), ROW_END_Y.GetValue() ) );
 			bt.SetXY( fX, fY );
 		}
 	}

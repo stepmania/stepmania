@@ -233,7 +233,7 @@ void LifeMeterTime::Update( float fDeltaTime )
 float LifeMeterTime::GetLife() const
 {
 	float fPercent = GetLifeSeconds() / FULL_LIFE_SECONDS;
-	CLAMP( fPercent, 0, 1 );
+	fPercent = clamp( fPercent, 0.f, 1.f );
 	return fPercent;
 }
 

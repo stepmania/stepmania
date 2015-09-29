@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ArrowEffects.h"
+#include "RageMath.hpp"
 #include "Steps.h"
 #include "GameConstantsAndTypes.h"
 #include "GameManager.h"
@@ -125,8 +126,8 @@ void ArrowEffects::Update()
 
 			int iStartCol = iColNum - iTornadoWidth;
 			int iEndCol = iColNum + iTornadoWidth;
-			CLAMP( iStartCol, 0, pStyle->m_iColsPerPlayer-1 );
-			CLAMP( iEndCol, 0, pStyle->m_iColsPerPlayer-1 );
+			iEndCol = clamp( iStartCol, 0, pStyle->m_iColsPerPlayer-1 );
+			iEndCol = clamp( iEndCol, 0, pStyle->m_iColsPerPlayer-1 );
 
 			data.m_fMinTornadoX[iColNum] = FLT_MAX;
 			data.m_fMaxTornadoX[iColNum] = FLT_MIN;
@@ -174,7 +175,7 @@ void ArrowEffects::Update()
 			if( iFirstColOnSide == iLastColOnSide )
 				iNewColOnSide = 0;
 			else
-				iNewColOnSide = SCALE( iColOnSide, iFirstColOnSide, iLastColOnSide, iLastColOnSide, iFirstColOnSide );
+				iNewColOnSide = scale( iColOnSide, iFirstColOnSide, iLastColOnSide, iLastColOnSide, iFirstColOnSide );
 			const int iNewCol = iSideIndex*iNumColsPerSide + iNewColOnSide;
 
 			const float fOldPixelOffset = pCols[iColNum].fXOffset;
@@ -231,10 +232,10 @@ void ArrowEffects::Update()
 
 			if( fBeat < fAccelTime )
 			{
-				data.m_fBeatFactor = SCALE( fBeat, 0.0f, fAccelTime, 0.0f, 1.0f);
+				data.m_fBeatFactor = scale( fBeat, 0.0f, fAccelTime, 0.0f, 1.0f);
 				data.m_fBeatFactor *= data.m_fBeatFactor;
 			} else /* fBeat < fTotalTime */ {
-				data.m_fBeatFactor = SCALE( fBeat, fAccelTime, fTotalTime, 1.0f, 0.0f);
+				data.m_fBeatFactor = scale( fBeat, fAccelTime, fTotalTime, 1.0f, 0.0f);
 				data.m_fBeatFactor = 1 - (1-data.m_fBeatFactor) * (1-data.m_fBeatFactor);
 			}
 
@@ -347,17 +348,17 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		float fNewYOffset = fYOffset * 1.5f / ((fYOffset+fEffectHeight/1.2f)/fEffectHeight);
 		float fAccelYAdjust =	fAccels[PlayerOptions::ACCEL_BOOST] * (fNewYOffset - fYOffset);
 		// TRICKY: Clamp this value, or else BOOST+BOOMERANG will draw a ton of arrows on the screen.
-		CLAMP( fAccelYAdjust, BOOST_MOD_MIN_CLAMP, BOOST_MOD_MAX_CLAMP );
+		fAccelYAdjust = clamp( fAccelYAdjust, BOOST_MOD_MIN_CLAMP + 0.f, BOOST_MOD_MAX_CLAMP + 0.f );
 		fYAdjust += fAccelYAdjust;
 	}
 	if( fAccels[PlayerOptions::ACCEL_BRAKE] != 0 )
 	{
 		float fEffectHeight = GetNoteFieldHeight();
-		float fScale = SCALE( fYOffset, 0.f, fEffectHeight, 0, 1.f );
+		float fScale = scale( fYOffset, 0.f, fEffectHeight, 0.f, 1.f );
 		float fNewYOffset = fYOffset * fScale;
 		float fBrakeYAdjust = fAccels[PlayerOptions::ACCEL_BRAKE] * (fNewYOffset - fYOffset);
 		// TRICKY: Clamp this value the same way as BOOST so that in BOOST+BRAKE, BRAKE doesn't overpower BOOST
-		CLAMP( fBrakeYAdjust, BRAKE_MOD_MIN_CLAMP, BRAKE_MOD_MAX_CLAMP );
+		fBrakeYAdjust = clamp( fBrakeYAdjust, BRAKE_MOD_MIN_CLAMP + 0.f, BRAKE_MOD_MAX_CLAMP + 0.f );
 		fYAdjust += fBrakeYAdjust;
 	}
 	if( fAccels[PlayerOptions::ACCEL_WAVE] != 0 )
@@ -387,7 +388,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		/* Random speed always increases speed: a random speed of 10 indicates
 		 * [1,11]. This keeps it consistent with other mods: 0 means no effect. */
 		fScrollSpeed *=
-				SCALE( fRandom,
+				scale( fRandom,
 						0.0f, 1.0f,
 						1.0f, curr_options->m_fRandomSpeed + 1.0f );
 	}
@@ -397,12 +398,12 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		// TODO: Don't index by PlayerNumber.
 		PerPlayerData &data = g_EffectData[pPlayerState->m_PlayerNumber];
 
-		float fExpandMultiplier = SCALE( RageFastCos(data.m_fExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY),
-						EXPAND_MULTIPLIER_SCALE_FROM_LOW, EXPAND_MULTIPLIER_SCALE_FROM_HIGH,
-						EXPAND_MULTIPLIER_SCALE_TO_LOW, EXPAND_MULTIPLIER_SCALE_TO_HIGH );
-		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_EXPAND],
-				      EXPAND_SPEED_SCALE_FROM_LOW, EXPAND_SPEED_SCALE_FROM_HIGH,
-				      EXPAND_SPEED_SCALE_TO_LOW, fExpandMultiplier );
+		float fExpandMultiplier = scale( RageFastCos(data.m_fExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY),
+						EXPAND_MULTIPLIER_SCALE_FROM_LOW + 0.f, EXPAND_MULTIPLIER_SCALE_FROM_HIGH + 0.f,
+						EXPAND_MULTIPLIER_SCALE_TO_LOW + 0.f, EXPAND_MULTIPLIER_SCALE_TO_HIGH + 0.f );
+		fScrollSpeed *=	scale( fAccels[PlayerOptions::ACCEL_EXPAND],
+				      EXPAND_SPEED_SCALE_FROM_LOW + 0.f, EXPAND_SPEED_SCALE_FROM_HIGH + 0.f,
+				      EXPAND_SPEED_SCALE_TO_LOW + 0.f, fExpandMultiplier );
 	}
 
 	fYOffset *= fScrollSpeed;
@@ -422,11 +423,11 @@ static void ArrowGetReverseShiftAndScale(int iCol, float fYReverseOffsetPixels, 
 		fZoom = 0.01f;
 
 	float fPercentReverse = curr_options->GetReversePercentForColumn(iCol);
-	fShiftOut = SCALE( fPercentReverse, 0.f, 1.f, -fYReverseOffsetPixels/fZoom/2, fYReverseOffsetPixels/fZoom/2 );
+	fShiftOut = scale( fPercentReverse, 0.f, 1.f, -fYReverseOffsetPixels/fZoom/2, fYReverseOffsetPixels/fZoom/2 );
 	float fPercentCentered = curr_options->m_fScrolls[PlayerOptions::SCROLL_CENTERED];
-	fShiftOut = SCALE( fPercentCentered, 0.f, 1.f, fShiftOut, 0.0f );
+	fShiftOut = scale( fPercentCentered, 0.f, 1.f, fShiftOut, 0.0f );
 
-	fScaleOut = SCALE( fPercentReverse, 0.f, 1.f, 1.f, -1.f );
+	fScaleOut = scale( fPercentReverse, 0.f, 1.f, 1.f, -1.f );
 }
 
 float ArrowEffects::GetYPos(int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse)
@@ -491,12 +492,12 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	if( fEffects[PlayerOptions::EFFECT_TORNADO] != 0 )
 	{
 		const float fRealPixelOffset = pCols[iColNum].fXOffset * pPlayerState->m_NotefieldZoom;
-		const float fPositionBetween = SCALE( fRealPixelOffset, data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum],
-						     TORNADO_POSITION_SCALE_TO_LOW, TORNADO_POSITION_SCALE_TO_HIGH );
+		const float fPositionBetween = scale( fRealPixelOffset, data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum],
+						     TORNADO_POSITION_SCALE_TO_LOW + 0.f, TORNADO_POSITION_SCALE_TO_HIGH + 0.f );
 		float fRads = acosf( fPositionBetween );
 		fRads += fYOffset * TORNADO_OFFSET_FREQUENCY / SCREEN_HEIGHT;
 
-		const float fAdjustedPixelOffset = SCALE( RageFastCos(fRads), TORNADO_OFFSET_SCALE_FROM_LOW, TORNADO_OFFSET_SCALE_FROM_HIGH,
+		const float fAdjustedPixelOffset = scale( RageFastCos(fRads), TORNADO_OFFSET_SCALE_FROM_LOW + 0.f, TORNADO_OFFSET_SCALE_FROM_HIGH + 0.f,
 							 data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum] );
 
 		fPixelOffsetFromCenter += (fAdjustedPixelOffset - fRealPixelOffset) * fEffects[PlayerOptions::EFFECT_TORNADO];
@@ -510,7 +511,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	{
 		const int iFirstCol = 0;
 		const int iLastCol = pStyle->m_iColsPerPlayer-1;
-		const int iNewCol = SCALE( iColNum, iFirstCol, iLastCol, iLastCol, iFirstCol );
+		const int iNewCol = scale( iColNum, iFirstCol, iLastCol, iLastCol, iFirstCol );
 		const float fOldPixelOffset = pCols[iColNum].fXOffset * pPlayerState->m_NotefieldZoom;
 		const float fNewPixelOffset = pCols[iNewCol].fXOffset * pPlayerState->m_NotefieldZoom;
 		const float fDistance = fNewPixelOffset - fOldPixelOffset;
@@ -662,28 +663,28 @@ static float GetHiddenSudden()
 static float GetHiddenEndLine()
 {
 	return GetCenterLine() +
-		FADE_DIST_Y * SCALE( GetHiddenSudden(), 0.f, 1.f, -1.0f, -1.25f ) +
+		FADE_DIST_Y * scale( GetHiddenSudden(), 0.f, 1.f, -1.0f, -1.25f ) +
 		GetCenterLine() * curr_options->m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN_OFFSET];
 }
 
 static float GetHiddenStartLine()
 {
 	return GetCenterLine() +
-		FADE_DIST_Y * SCALE( GetHiddenSudden(), 0.f, 1.f, +0.0f, -0.25f ) +
+		FADE_DIST_Y * scale( GetHiddenSudden(), 0.f, 1.f, +0.0f, -0.25f ) +
 		GetCenterLine() * curr_options->m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN_OFFSET];
 }
 
 static float GetSuddenEndLine()
 {
 	return GetCenterLine() +
-		FADE_DIST_Y * SCALE( GetHiddenSudden(), 0.f, 1.f, -0.0f, +0.25f ) +
+		FADE_DIST_Y * scale( GetHiddenSudden(), 0.f, 1.f, -0.0f, +0.25f ) +
 		GetCenterLine() * curr_options->m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN_OFFSET];
 }
 
 static float GetSuddenStartLine()
 {
 	return GetCenterLine() +
-		FADE_DIST_Y * SCALE( GetHiddenSudden(), 0.f, 1.f, +1.0f, +1.25f ) +
+		FADE_DIST_Y * scale( GetHiddenSudden(), 0.f, 1.f, +1.0f, +1.25f ) +
 		GetCenterLine() * curr_options->m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN_OFFSET];
 }
 
@@ -701,14 +702,14 @@ float ArrowGetPercentVisible(float fYPosWithoutReverse)
 
 	if( fAppearances[PlayerOptions::APPEARANCE_HIDDEN] != 0 )
 	{
-		float fHiddenVisibleAdjust = SCALE( fYPosWithoutReverse, GetHiddenStartLine(), GetHiddenEndLine(), 0, -1 );
-		CLAMP( fHiddenVisibleAdjust, -1, 0 );
+		float fHiddenVisibleAdjust = scale( fYPosWithoutReverse, GetHiddenStartLine(), GetHiddenEndLine(), 0.f, -1.f );
+		fHiddenVisibleAdjust = clamp( fHiddenVisibleAdjust, -1.f, 0.f );
 		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_HIDDEN] * fHiddenVisibleAdjust;
 	}
 	if( fAppearances[PlayerOptions::APPEARANCE_SUDDEN] != 0 )
 	{
-		float fSuddenVisibleAdjust = SCALE( fYPosWithoutReverse, GetSuddenStartLine(), GetSuddenEndLine(), -1, 0 );
-		CLAMP( fSuddenVisibleAdjust, -1, 0 );
+		float fSuddenVisibleAdjust = scale( fYPosWithoutReverse, GetSuddenStartLine(), GetSuddenEndLine(), -1.f, 0.f );
+		fSuddenVisibleAdjust = clamp( fSuddenVisibleAdjust, -1.f, 0.f );
 		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_SUDDEN] * fSuddenVisibleAdjust;
 	}
 
@@ -718,12 +719,12 @@ float ArrowGetPercentVisible(float fYPosWithoutReverse)
 	{
 		float f = RageFastSin(RageTimer::GetTimeSinceStartFast()*10);
 		f = Quantize( f, BLINK_MOD_FREQUENCY );
-		fVisibleAdjust += SCALE( f, 0, 1, -1, 0 );
+		fVisibleAdjust += scale( f, 0.f, 1.f, -1.f, 0.f );
 	}
 	if( fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] != 0 )
 	{
 		const float fRealFadeDist = 80;
-		fVisibleAdjust += SCALE( fabsf(fDistFromCenterLine), fRealFadeDist, 2*fRealFadeDist, -1, 0 )
+		fVisibleAdjust += scale( fabsf(fDistFromCenterLine), fRealFadeDist, 2*fRealFadeDist, -1.f, 0.f )
 			* fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH];
 	}
 
@@ -744,7 +745,7 @@ float ArrowEffects::GetAlpha(int iCol, float fYOffset, float fPercentFadeToFail,
 	float fFullAlphaY = fDrawDistanceBeforeTargetsPixels*(1-fFadeInPercentOfDrawFar);
 	if( fYPosWithoutReverse > fFullAlphaY )
 	{
-		float f = SCALE( fYPosWithoutReverse, fFullAlphaY, fDrawDistanceBeforeTargetsPixels, 1.0f, 0.0f );
+		float f = scale( fYPosWithoutReverse, fFullAlphaY, fDrawDistanceBeforeTargetsPixels, 1.0f, 0.0f );
 		return f;
 	}
 	return (fPercentVisible>0.5f) ? 1.0f : 0.0f;
@@ -761,7 +762,7 @@ float ArrowEffects::GetGlow(int iCol, float fYOffset, float fPercentFadeToFail, 
 		fPercentVisible = 1 - fPercentFadeToFail;
 
 	const float fDistFromHalf = fabsf( fPercentVisible - 0.5f );
-	return SCALE( fDistFromHalf, 0, 0.5f, 1.3f, 0 );
+	return scale( fDistFromHalf, 0.f, 0.5f, 1.3f, 0.f );
 }
 
 float ArrowEffects::GetBrightness( const PlayerState* pPlayerState, float fNoteBeat )
@@ -772,8 +773,8 @@ float ArrowEffects::GetBrightness( const PlayerState* pPlayerState, float fNoteB
 	float fSongBeat = pPlayerState->m_Position.m_fSongBeatVisible;
 	float fBeatsUntilStep = fNoteBeat - fSongBeat;
 
-	float fBrightness = SCALE( fBeatsUntilStep, 0, -1, 1.f, 0.f );
-	CLAMP( fBrightness, 0, 1 );
+	float fBrightness = scale( fBeatsUntilStep, 0.f, -1.f, 1.f, 0.f );
+	fBrightness = clamp( fBrightness, 0.f, 1.f );
 	return fBrightness;
 }
 
@@ -839,15 +840,15 @@ float ArrowEffects::GetFrameWidthScale( const PlayerState* pPlayerState, float f
 		float fFromEndOfOverlapped = fOverlappedTime - fSecond;
 		float fTrailingPixels = FRAME_WIDTH_LOCK_EFFECTS_TWEEN_PIXELS;
 		float fTrailingSeconds = fTrailingPixels / fPixelsPerSecond;
-		float fScaleEffect = SCALE( fFromEndOfOverlapped, 0.0f, fTrailingSeconds, 0.0f, 1.0f );
-		CLAMP( fScaleEffect, 0.0f, 1.0f );
+		float fScaleEffect = scale( fFromEndOfOverlapped, 0.0f, fTrailingSeconds, 0.0f, 1.0f );
+		fScaleEffect = clamp( fScaleEffect, 0.0f, 1.0f );
 		fWidthEffect *= fScaleEffect;
 	}
 
 	if( fWidthEffect > 0 )
-		fFrameWidthMultiplier *= SCALE( fWidthEffect, 0.0f, 1.0f, 1.0f, FRAME_WIDTH_EFFECTS_MAX_MULTIPLIER );
+		fFrameWidthMultiplier *= scale( fWidthEffect, 0.0f, 1.0f, 1.0f, FRAME_WIDTH_EFFECTS_MAX_MULTIPLIER + 0.f );
 	else if( fWidthEffect < 0 )
-		fFrameWidthMultiplier *= SCALE( fWidthEffect, 0.0f, -1.0f, 1.0f, FRAME_WIDTH_EFFECTS_MIN_MULTIPLIER );
+		fFrameWidthMultiplier *= scale( fWidthEffect, 0.0f, -1.0f, 1.0f, FRAME_WIDTH_EFFECTS_MIN_MULTIPLIER + 0.f );
 
 	return fFrameWidthMultiplier;
 }

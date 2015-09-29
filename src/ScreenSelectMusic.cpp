@@ -1591,7 +1591,7 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 
 		if( GAMESTATE->m_pCurSong )
 		{
-			CLAMP( m_iSelection[pn], 0, m_vpSteps.size()-1 );
+			m_iSelection[pn] = clamp( m_iSelection[pn], 0, static_cast<int>(m_vpSteps.size())-1 );
 
 			Song* pSong = GAMESTATE->m_pCurSong;
 			Steps* pSteps = m_vpSteps.empty()? nullptr: m_vpSteps[m_iSelection[pn]];
@@ -1610,7 +1610,7 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 		}
 		else if( GAMESTATE->m_pCurCourse )
 		{
-			CLAMP( m_iSelection[pn], 0, m_vpTrails.size()-1 );
+			m_iSelection[pn] = clamp( m_iSelection[pn], 0, static_cast<int>(m_vpTrails.size())-1 );
 
 			Course* pCourse = GAMESTATE->m_pCurCourse;
 			Trail* pTrail = m_vpTrails.empty()? nullptr: m_vpTrails[m_iSelection[pn]];
@@ -1671,7 +1671,7 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 				}
 			}
 
-			CLAMP( iSelection, 0, m_vpSteps.size()-1 );
+			iSelection = clamp( iSelection, 0, static_cast<int>(m_vpSteps.size())-1 );
 		}
 	}
 	else
@@ -1706,7 +1706,7 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 				}
 			}
 
-			CLAMP( iSelection, 0, m_vpTrails.size()-1 );
+			iSelection = clamp( iSelection, 0, static_cast<int>(m_vpTrails.size())-1 );
 		}
 	}
 

@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ScoreKeeperRave.h"
+#include "RageMath.hpp"
 #include "ThemeManager.h"
 #include "RageUtil.h"
 #include "GameState.h"
@@ -117,7 +118,7 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 	if( PREFSMAN->m_bMercifulDrain  &&  fUnscaledPercentChange<0 )
 	{
 		float fSuperPercentage = m_pPlayerState->m_fSuperMeter / NUM_ATTACK_LEVELS;
-		fUnscaledPercentChange *= SCALE( fSuperPercentage, 0.f, 1.f, 0.5f, 1.f);
+		fUnscaledPercentChange *= scale( fSuperPercentage, 0.f, 1.f, 0.5f, 1.f);
 	}
 
 	// more mercy: Grow super meter slower or faster depending on life.
@@ -131,22 +132,22 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 		default:
 			FAIL_M(ssprintf("Invalid player number: %i", m_pPlayerState->m_PlayerNumber));
 		}
-		CLAMP( fLifePercentage, 0.f, 1.f );
+		fLifePercentage = clamp( fLifePercentage, 0.f, 1.f );
 		if( fUnscaledPercentChange > 0 )
-			fUnscaledPercentChange *= SCALE( fLifePercentage, 0.f, 1.f, 1.7f, 0.3f);
+			fUnscaledPercentChange *= scale( fLifePercentage, 0.f, 1.f, 1.7f, 0.3f);
 		else	// fUnscaledPercentChange <= 0
-			fUnscaledPercentChange /= SCALE( fLifePercentage, 0.f, 1.f, 1.7f, 0.3f);
+			fUnscaledPercentChange /= scale( fLifePercentage, 0.f, 1.f, 1.7f, 0.3f);
 	}
 
 	// mercy: drop super meter faster if at a higher level
 	if( fUnscaledPercentChange < 0 )
-		fUnscaledPercentChange *= SCALE( m_pPlayerState->m_fSuperMeter, 0.f, 1.f, 0.01f, 1.f );
+		fUnscaledPercentChange *= scale( m_pPlayerState->m_fSuperMeter, 0.f, 1.f, 0.01f, 1.f );
 
 	AttackLevel oldAL = (AttackLevel)(int)m_pPlayerState->m_fSuperMeter;
 
 	float fPercentToMove = fUnscaledPercentChange;
 	m_pPlayerState->m_fSuperMeter += fPercentToMove * m_pPlayerState->m_fSuperMeterGrowthScale;
-	CLAMP( m_pPlayerState->m_fSuperMeter, 0.f, NUM_ATTACK_LEVELS );
+	m_pPlayerState->m_fSuperMeter = clamp( m_pPlayerState->m_fSuperMeter, 0.f, NUM_ATTACK_LEVELS + 0.f );
 
 	AttackLevel newAL = (AttackLevel)(int)m_pPlayerState->m_fSuperMeter;
 

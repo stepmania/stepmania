@@ -53,7 +53,7 @@ void CourseContentsList::SetFromGameState()
 	if( pMasterTrail == nullptr )
 		return;
 	unsigned uNumEntriesToShow = pMasterTrail->m_vEntries.size();
-	CLAMP( uNumEntriesToShow, 0, m_vpDisplay.size() );
+	uNumEntriesToShow = clamp( uNumEntriesToShow, static_cast<unsigned>(0), static_cast<unsigned>(m_vpDisplay.size()) );
 
 	for( int i=0; i<(int)uNumEntriesToShow; i++ )
 	{

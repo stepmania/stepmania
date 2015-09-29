@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageFileDriverMemory.h"
+#include "RageMath.hpp"
 #include "RageFile.h"
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"

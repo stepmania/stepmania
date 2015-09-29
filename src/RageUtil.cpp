@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageUtil.h"
+#include "RageMath.hpp"
 
 #include <array>
 

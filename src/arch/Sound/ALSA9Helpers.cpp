@@ -2,6 +2,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "ALSA9Helpers.h"
+#include "RageMath.hpp"
 #include "ALSA9Dynamic.h"
 #include "PrefsManager.h"
 

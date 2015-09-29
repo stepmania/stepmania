@@ -1,5 +1,6 @@
 #include "global.h"
 #include "StatsManager.h"
+#include "RageMath.hpp"
 
 #include <memory>
 

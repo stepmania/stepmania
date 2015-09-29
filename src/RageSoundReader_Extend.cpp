@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageSoundReader_Extend.h"
+#include "RageMath.hpp"
 #include "RageLog.h"
 #include "RageSoundUtil.h"
 #include "RageUtil.h"
@@ -126,8 +127,8 @@ int RageSoundReader_Extend::Read( float *pBuffer, int iFrames )
 		{
 			const int iStartSecond = m_iPositionFrames;
 			const int iEndSecond = m_iPositionFrames + iFramesRead;
-			const float fStartVolume = SCALE( iStartSecond, iFullVolumePositionFrames, iSilencePositionFrames, 1.0f, 0.0f );
-			const float fEndVolume = SCALE( iEndSecond, iFullVolumePositionFrames, iSilencePositionFrames, 1.0f, 0.0f );
+			const float fStartVolume = scale( iStartSecond + 0.f, iFullVolumePositionFrames + 0.f, iSilencePositionFrames + 0.f, 1.0f, 0.0f );
+			const float fEndVolume = scale( iEndSecond + 0.f, iFullVolumePositionFrames + 0.f, iSilencePositionFrames + 0.f, 1.0f, 0.0f );
 			RageSoundUtil::Fade( pBuffer, iFramesRead, this->GetNumChannels(), fStartVolume, fEndVolume );
 		}
 

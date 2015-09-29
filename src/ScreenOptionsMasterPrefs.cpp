@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ScreenOptionsMasterPrefs.h"
+#include "RageMath.hpp"
 #include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "AnnouncerManager.h"
@@ -681,7 +682,7 @@ static void GlobalOffsetSeconds( int &sel, bool ToSel, const ConfOption *pConfOp
 {
 	float mapping[41];
 	for( int i = 0; i < 41; ++i )
-		mapping[i] = SCALE( i, 0.0f, 40.0f, -0.1f, +0.1f );
+		mapping[i] = scale( i + 0.f, 0.0f, 40.0f, -0.1f, +0.1f );
 
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }

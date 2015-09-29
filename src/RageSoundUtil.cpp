@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageSoundUtil.h"
+#include "RageMath.hpp"
 #include "RageUtil.h"
 
 void RageSoundUtil::Attenuate( float *pBuf, int iSamples, float fVolume )
@@ -24,8 +25,8 @@ void RageSoundUtil::Pan( float *buffer, int frames, float fPos )
 	float fLeftFactors[2] ={ 1-fPos, 0 };
 	float fRightFactors[2] =
 	{
-		SCALE( fPos, 0, 1, 0.5f, 0 ),
-		SCALE( fPos, 0, 1, 0.5f, 1 )
+		scale( fPos, 0.f, 1.f, 0.5f, 0.f ),
+		scale( fPos, 0.f, 1.f, 0.5f, 1.f )
 	};
 
 	if( bSwap )
@@ -52,7 +53,7 @@ void RageSoundUtil::Fade( float *pBuffer, int iFrames, int iChannels, float fSta
 
 	for( int iFrame = 0; iFrame < iFrames; ++iFrame )
 	{
-		float fVolPercent = SCALE( iFrame, 0, iFrames, fStartVolume, fEndVolume );
+		float fVolPercent = scale( iFrame + 0.f, 0 + 0.f, iFrames + 0.f, fStartVolume, fEndVolume );
 
 		fVolPercent = clamp( fVolPercent, 0.f, 1.f );
 		for( int i = 0; i < iChannels; ++i )

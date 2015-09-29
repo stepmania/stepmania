@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageSurfaceUtils_Dither.h"
+#include "RageMath.hpp"
 #include "RageUtil.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
@@ -154,7 +155,7 @@ static uint8_t EDDitherPixel( int x, int y, int intensity, int conv, int32_t &ac
 	accumError = out_intensity - clamped_intensity;
 
 	// Reduce funky streaks in low-bit channels by clamping error.
-	CLAMP( accumError, -128 * 65536, +128 * 65536 );
+	accumError = clamp( accumError, -128 * 65536, +128 * 65536 );
 
 	return ret;
 }

@@ -1,5 +1,6 @@
 #include "global.h"
 #include "SampleHistory.h"
+#include "RageMath.hpp"
 #include "RageLog.h"
 #include "RageUtil.h"
 

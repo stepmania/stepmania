@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageSurfaceUtils_Zoom.h"
+#include "RageMath.hpp"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "RageUtil.h"

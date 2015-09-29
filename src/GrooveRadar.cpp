@@ -1,5 +1,6 @@
 #include "global.h"
 #include "GrooveRadar.h"
+#include "RageMath.hpp"
 #include "RageUtil.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
