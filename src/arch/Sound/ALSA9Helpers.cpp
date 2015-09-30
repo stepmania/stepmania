@@ -309,7 +309,7 @@ int Alsa9Buf::GetNumFramesToFill()
 	const snd_pcm_sframes_t filled_frames = max( 0l, total_frames - avail_frames );
 
 	/* Number of frames that don't have data, that are within the writeahead: */
-	snd_pcm_sframes_t unfilled_frames = clamp( ActualWriteahead - filled_frames, 0l, (snd_pcm_sframes_t)ActualWriteahead );
+	snd_pcm_sframes_t unfilled_frames = Rage::clamp( ActualWriteahead - filled_frames, 0l, (snd_pcm_sframes_t)ActualWriteahead );
 
 //	LOG->Trace( "total_fr: %i; avail_fr: %i; filled_fr: %i; ActualWr %i; chunksize %i; unfilled_frames %i ",
 //			total_frames, avail_frames, filled_frames, ActualWriteahead, chunksize, unfilled_frames );

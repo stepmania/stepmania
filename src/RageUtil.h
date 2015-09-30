@@ -252,7 +252,7 @@ inline float RandomFloat()
  */
 inline float RandomFloat( float fLow, float fHigh )
 {
-	return scale( RandomFloat(), 0.0f, 1.0f, fLow, fHigh );
+  return Rage::scale( RandomFloat(), 0.0f, 1.0f, fLow, fHigh );
 }
 
 // Returns an integer between nLow and nHigh inclusive

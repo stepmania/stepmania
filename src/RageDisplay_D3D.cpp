@@ -1194,8 +1194,8 @@ void RageDisplay_D3D::SetZBias( float f )
 {
 	D3DVIEWPORT9 viewData;
 	g_pd3dDevice->GetViewport( &viewData );
-	viewData.MinZ = scale( f, 0.0f, 1.0f, 0.05f, 0.0f );
-	viewData.MaxZ = scale( f, 0.0f, 1.0f, 1.0f, 0.95f );
+	viewData.MinZ = Rage::scale( f, 0.0f, 1.0f, 0.05f, 0.0f );
+	viewData.MaxZ = Rage::scale( f, 0.0f, 1.0f, 1.0f, 0.95f );
 	g_pd3dDevice->SetViewport( &viewData );
 }
 
@@ -1294,7 +1294,7 @@ void RageDisplay_D3D::SetLightDirectional(
 	const RageColor &ambient,
 	const RageColor &diffuse,
 	const RageColor &specular,
-	const RageVector3 &dir )
+	const Rage::Vector3 &dir )
 {
 	g_pd3dDevice->LightEnable( index, true );
 

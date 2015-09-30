@@ -210,7 +210,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 				FullScreenRectF.bottom+200 );
 
 			pSprite->ScaleToCover( StretchedFullScreenRectF );
-			pSprite->SetEffectSpin( RageVector3(0,0,60) );
+			pSprite->SetEffectSpin( Rage::Vector3(0,0,60) );
 		}
 		break;
 	case EFFECT_PARTICLES_SPIRAL_OUT:
@@ -251,22 +251,22 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 				{
 				case EFFECT_PARTICLES_FLOAT_UP:
 				case EFFECT_PARTICLES_SPIRAL_OUT:
-					m_vParticleVelocity.push_back( RageVector3( 0, -PARTICLE_SPEED*pSprite->GetZoom(), 0 ) );
+					m_vParticleVelocity.push_back( Rage::Vector3( 0, -PARTICLE_SPEED*pSprite->GetZoom(), 0 ) );
 					break;
 				case EFFECT_PARTICLES_FLOAT_DOWN:
 				case EFFECT_PARTICLES_SPIRAL_IN:
-					m_vParticleVelocity.push_back( RageVector3( 0, PARTICLE_SPEED*pSprite->GetZoom(), 0 ) );
+					m_vParticleVelocity.push_back( Rage::Vector3( 0, PARTICLE_SPEED*pSprite->GetZoom(), 0 ) );
 					break;
 				case EFFECT_PARTICLES_FLOAT_LEFT:
-					m_vParticleVelocity.push_back( RageVector3( -PARTICLE_SPEED*pSprite->GetZoom(), 0, 0 ) );
+					m_vParticleVelocity.push_back( Rage::Vector3( -PARTICLE_SPEED*pSprite->GetZoom(), 0, 0 ) );
 					break;
 				case EFFECT_PARTICLES_FLOAT_RIGHT:
-					m_vParticleVelocity.push_back( RageVector3( +PARTICLE_SPEED*pSprite->GetZoom(), 0, 0 ) );
+					m_vParticleVelocity.push_back( Rage::Vector3( +PARTICLE_SPEED*pSprite->GetZoom(), 0, 0 ) );
 					break;
 				case EFFECT_PARTICLES_BOUNCE:
 					m_bParticlesBounce = true;
 					pSprite->SetZoom( 1 );
-					m_vParticleVelocity.push_back( RageVector3( randomf(), randomf(), 0 ) );
+					m_vParticleVelocity.push_back( Rage::Vector3( randomf(), randomf(), 0 ) );
 					RageVec3Normalize( &m_vParticleVelocity[i], &m_vParticleVelocity[i] );
 					m_vParticleVelocity[i].x *= PARTICLE_SPEED;
 					m_vParticleVelocity[i].y *= PARTICLE_SPEED;
@@ -325,10 +325,10 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 						m_fTileVelocityY = +PARTICLE_SPEED;
 						break;
 					case EFFECT_TILE_FLIP_X:
-						pSprite->SetEffectSpin( RageVector3(180,0,0) );
+						pSprite->SetEffectSpin( Rage::Vector3(180,0,0) );
 						break;
 					case EFFECT_TILE_FLIP_Y:
-						pSprite->SetEffectSpin( RageVector3(0,180,0) );
+						pSprite->SetEffectSpin( Rage::Vector3(0,180,0) );
 						break;
 					case EFFECT_TILE_PULSE:
 						pSprite->SetEffectPulse( 1, 0.3f, 1.f );
@@ -488,7 +488,7 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 				pActor->SetXY( randomf(float(FullScreenRectF.left),float(FullScreenRectF.right)),
 							   randomf(float(FullScreenRectF.top),float(FullScreenRectF.bottom)) );
 				pActor->SetZoom( randomf(fZoomMin,fZoomMax) );
-				m_vParticleVelocity.push_back( RageVector3(
+				m_vParticleVelocity.push_back( Rage::Vector3(
 					randomf(fVelocityXMin,fVelocityXMax),
 					randomf(fVelocityYMin,fVelocityYMax),
 					randomf(fVelocityZMin,fVelocityZMax) ) );
@@ -566,7 +566,7 @@ void BGAnimationLayer::UpdateInternal( float fDeltaTime )
 		for( unsigned i=0; i<m_SubActors.size(); i++ )
 		{
 			Actor* pActor = m_SubActors[i];
-			RageVector3 &vel = m_vParticleVelocity[i];
+			Rage::Vector3 &vel = m_vParticleVelocity[i];
 
 			m_SubActors[i]->SetX( pActor->GetX() + fDeltaTime*vel.x );
 			m_SubActors[i]->SetY( pActor->GetY() + fDeltaTime*vel.y );

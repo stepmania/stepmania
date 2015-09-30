@@ -562,13 +562,13 @@ void RageDisplay::LoadMenuPerspective( float fovDegrees, float fWidth, float fHe
 	}
 	else
 	{
-		fovDegrees = clamp( fovDegrees, 0.1f, 179.9f );
+		fovDegrees = Rage::clamp( fovDegrees, 0.1f, 179.9f );
 		float fovRadians = fovDegrees / 180.f * PI;
 		float theta = fovRadians/2;
 		float fDistCameraFromImage = fWidth/2 / tanf( theta );
 
-		fVanishPointX = scale( fVanishPointX, 0.f, fWidth, fWidth, 0.f );
-		fVanishPointY = scale( fVanishPointY, 0.f, fHeight, fHeight, 0.f );
+		fVanishPointX = Rage::scale( fVanishPointX, 0.f, fWidth, fWidth, 0.f );
+		fVanishPointY = Rage::scale( fVanishPointY, 0.f, fHeight, fHeight, 0.f );
 
 		fVanishPointX -= fWidth/2;
 		fVanishPointY -= fHeight/2;
@@ -607,7 +607,7 @@ void RageDisplay::CameraPopMatrix()
 
 /* gluLookAt. The result is pre-multiplied to the matrix (M = L * M) instead of
  * post-multiplied. */
-void RageDisplay::LoadLookAt( float fFOV, const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up )
+void RageDisplay::LoadLookAt( float fFOV, const Rage::Vector3 &Eye, const Rage::Vector3 &At, const Rage::Vector3 &Up )
 {
 	float fAspect = GetActualVideoModeParams().fDisplayAspectRatio;
 	g_ProjectionStack.LoadMatrix( GetPerspectiveMatrix(fFOV, fAspect, 1, 1000) );
@@ -719,10 +719,10 @@ RageMatrix RageDisplay::GetCenteringMatrix( float fTranslateX, float fTranslateY
 	// in screen space, left edge = -1, right edge = 1, bottom edge = -1. top edge = 1
 	float fWidth = (float) GetActualVideoModeParams().width;
 	float fHeight = (float) GetActualVideoModeParams().height;
-	float fPercentShiftX = scale( fTranslateX, 0.f, fWidth, 0.f, +2.0f );
-	float fPercentShiftY = scale( fTranslateY, 0.f, fHeight, 0.f, -2.0f );
-	float fPercentScaleX = scale( fAddWidth, 0.f, fWidth, 1.0f, 2.0f );
-	float fPercentScaleY = scale( fAddHeight, 0.f, fHeight, 1.0f, 2.0f );
+	float fPercentShiftX = Rage::scale( fTranslateX, 0.f, fWidth, 0.f, +2.0f );
+	float fPercentShiftY = Rage::scale( fTranslateY, 0.f, fHeight, 0.f, -2.0f );
+	float fPercentScaleX = Rage::scale( fAddWidth, 0.f, fWidth, 1.0f, 2.0f );
+	float fPercentScaleY = Rage::scale( fAddHeight, 0.f, fHeight, 1.0f, 2.0f );
 
 	RageMatrix m1;
 	RageMatrix m2;

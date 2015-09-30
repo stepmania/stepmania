@@ -84,7 +84,7 @@ public:
 	void SetAmbientLightColor( RageColor c ) { m_ambientColor = c; }
 	void SetDiffuseLightColor( RageColor c ) { m_diffuseColor = c; }
 	void SetSpecularLightColor( RageColor c ) { m_specularColor = c; }
-	void SetLightDirection( RageVector3 vec ) { m_lightDirection = vec; }
+	void SetLightDirection( Rage::Vector3 vec ) { m_lightDirection = vec; }
 
 	virtual void SetPropagateCommands( bool b );
 
@@ -122,7 +122,7 @@ protected:
 	RageColor m_ambientColor;
 	RageColor m_diffuseColor;
 	RageColor m_specularColor;
-	RageVector3 m_lightDirection;
+	Rage::Vector3 m_lightDirection;
 };
 /** @brief an ActorFrame that handles deleting children Actors automatically. */
 class ActorFrameAutoDeleteChildren : public ActorFrame

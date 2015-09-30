@@ -110,7 +110,7 @@ void GrooveRadar::GrooveRadarValueMap::SetFromSteps( const RadarValues &rv )
 	{
 		const float fValueCurrent = m_fValuesOld[c] * (1-m_PercentTowardNew) + m_fValuesNew[c] * m_PercentTowardNew;
 		m_fValuesOld[c] = fValueCurrent;
-		m_fValuesNew[c] = clamp(static_cast<float>(rv[c]), 0.f, 1.f);
+		m_fValuesNew[c] = Rage::clamp(static_cast<float>(rv[c]), 0.f, 1.f);
 	}
 
 	if( !m_bValuesVisible ) // the values WERE invisible
@@ -162,7 +162,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 	// use a fan to draw the volume
 	RageColor color = this->m_pTempState->diffuse[0];
 	color.a = 0.5f;
-	v[0].p = RageVector3( 0, 0, 0 );
+	v[0].p = Rage::Vector3( 0, 0, 0 );
 	RageColor midcolor = color;
 	midcolor.a = RADAR_CENTER_ALPHA;
 	v[0].c = midcolor;
@@ -177,7 +177,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		const float fX = RageFastCos(fRotation) * fDistFromCenter;
 		const float fY = -RageFastSin(fRotation) * fDistFromCenter;
 
-		v[1+i].p = RageVector3( fX, fY, 0 );
+		v[1+i].p = Rage::Vector3( fX, fY, 0 );
 		v[1+i].c = v[1].c;
 	}
 
@@ -193,7 +193,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		const float fX = RageFastCos(fRotation) * fDistFromCenter;
 		const float fY = -RageFastSin(fRotation) * fDistFromCenter;
 
-		v[i].p = RageVector3( fX, fY, 0 );
+		v[i].p = Rage::Vector3( fX, fY, 0 );
 		v[i].c = this->m_pTempState->diffuse[0];
 	}
 

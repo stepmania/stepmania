@@ -1016,11 +1016,11 @@ void ScreenGameplay::InitSongQueues()
 				if( iter != vpSteps.end() )
 				{
 					iIndexBase = iter - vpSteps.begin();
-					iIndexBase = clamp( iIndexBase, 0, static_cast<int>(vpSteps.size()) - GAMESTATE->m_iNumMultiplayerNoteFields );
+					iIndexBase = Rage::clamp( iIndexBase, 0, static_cast<int>(vpSteps.size()) - GAMESTATE->m_iNumMultiplayerNoteFields );
 				}
 
 				int iIndexToUse = iIndexBase + pi->m_iAddToDifficulty;
-				iIndexToUse = clamp( iIndexToUse, 0, static_cast<int>(vpSteps.size())-1 );
+				iIndexToUse = Rage::clamp( iIndexToUse, 0, static_cast<int>(vpSteps.size())-1 );
 
 				Steps *pSteps = vpSteps[iIndexToUse];
 				pi->m_vpStepsQueue[i] = pSteps;
@@ -1273,9 +1273,9 @@ void ScreenGameplay::LoadNextSong()
 			{
 				pi->GetPlayerState()->m_PlayerController = PC_CPU;
 				int iMeter = pSteps->GetMeter();
-				int iNewSkill = scale( iMeter, MIN_METER, MAX_METER, 0, NUM_SKILL_LEVELS-1 );
+				int iNewSkill = Rage::scale( iMeter, MIN_METER, MAX_METER, 0, NUM_SKILL_LEVELS-1 );
 				/* Watch out: songs aren't actually bound by MAX_METER. */
-				iNewSkill = clamp( iNewSkill, 0, NUM_SKILL_LEVELS-1 );
+				iNewSkill = Rage::clamp( iNewSkill, 0, NUM_SKILL_LEVELS-1 );
 				pi->GetPlayerState()->m_iCpuSkill = iNewSkill;
 			}
 			else
@@ -2102,7 +2102,7 @@ void ScreenGameplay::UpdateHasteRate()
 
 		if( bAnyPlayerHitAllNotes )
 			GAMESTATE->m_fHasteRate += 0.1f;
-		GAMESTATE->m_fHasteRate = clamp( GAMESTATE->m_fHasteRate, -1.0f, +1.0f );
+		GAMESTATE->m_fHasteRate = Rage::clamp( GAMESTATE->m_fHasteRate, -1.0f, +1.0f );
 
 		GAMESTATE->m_fLastHasteUpdateMusicSeconds = GAMESTATE->m_Position.m_fMusicSeconds;
 	}
@@ -2125,8 +2125,8 @@ void ScreenGameplay::UpdateHasteRate()
 		}
 	}
 	if( fMaxLife <= m_fHasteLifeSwitchPoint )
-		GAMESTATE->m_fHasteRate = scale( fMaxLife, 0.0f, m_fHasteLifeSwitchPoint, -1.0f, 0.0f );
-	GAMESTATE->m_fHasteRate = clamp( GAMESTATE->m_fHasteRate, -1.0f, +1.0f );
+		GAMESTATE->m_fHasteRate = Rage::scale( fMaxLife, 0.0f, m_fHasteLifeSwitchPoint, -1.0f, 0.0f );
+	GAMESTATE->m_fHasteRate = Rage::clamp( GAMESTATE->m_fHasteRate, -1.0f, +1.0f );
 
 	float fSpeed = 1.0f;
 	// If there are no turning points or no add amounts, the bad themer probably thinks that's a way to disable haste.
@@ -2156,12 +2156,12 @@ void ScreenGameplay::UpdateHasteRate()
 		scale_to_low= m_HasteAddAmounts[turning_point];
 	}
 	// If negative haste is being used, the game instead slows down when the player does well.
-	float speed_add= scale(GAMESTATE->m_fHasteRate, scale_from_low, scale_from_high, scale_to_low, scale_to_high) * options_haste;
+	float speed_add= Rage::scale(GAMESTATE->m_fHasteRate, scale_from_low, scale_from_high, scale_to_low, scale_to_high) * options_haste;
 	if(scale_from_low == scale_from_high)
 	{
 		speed_add= scale_to_high * options_haste;
 	}
-	speed_add = clamp(speed_add, -1.0f, 1.0f);
+	speed_add = Rage::clamp(speed_add, -1.0f, 1.0f);
 
 	// Only adjust speed_add by AccumulatedHasteSeconds when the player is losing seconds.  Otherwise, gaining the first second is interfered with.
 	bool losing_seconds= false;

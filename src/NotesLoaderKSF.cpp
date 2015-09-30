@@ -351,7 +351,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 				// duh
 				iTickCount = static_cast<int>(numTemp);
 				// I have been owned by the man -DaisuMaster
-				stepsTiming.SetTickcountAtBeat( fCurBeat, clamp(iTickCount, 0, ROWS_PER_BEAT) );
+				stepsTiming.SetTickcountAtBeat( fCurBeat, Rage::clamp(iTickCount, 0, ROWS_PER_BEAT) );
 			}
 			else if (BeginsWith(sRowString, "|B"))
 			{
@@ -521,7 +521,7 @@ static void ProcessTickcounts( const RString & value, int & ticks, TimingData & 
 	 * and stops. It will be called again in LoadFromKSFFile for the
 	 * actual steps. */
 	ticks = StringToInt( value );
-	ticks = clamp( ticks, 0, ROWS_PER_BEAT );
+	ticks = Rage::clamp( ticks, 0, ROWS_PER_BEAT );
 
 	if( ticks == 0 )
 		ticks = TickcountSegment::DEFAULT_TICK_COUNT;

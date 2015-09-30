@@ -465,7 +465,7 @@ bool ScreenDebugOverlay::Input( const InputEventPlus &input )
 		if( input.type != IET_FIRST_PRESS )
 			return true; // eat the input but do nothing
 		m_iCurrentPage = iPage;
-		m_iCurrentPage = clamp( m_iCurrentPage, 0, (int) m_asPages.size()-1 );
+		m_iCurrentPage = Rage::clamp( m_iCurrentPage, 0, (int) m_asPages.size()-1 );
 		return true;
 	}
 
@@ -534,7 +534,7 @@ void ChangeVolume( float fDelta )
 	Preference<float> *pRet = Preference<float>::GetPreferenceByName("SoundVolume");
 	float fVol = pRet->Get();
 	fVol += fDelta;
-	fVol = clamp( fVol, 0.0f, 1.0f );
+	fVol = Rage::clamp( fVol, 0.0f, 1.0f );
 	pRet->Set( fVol );
 	SOUNDMAN->SetMixVolume();
 }
@@ -544,7 +544,7 @@ void ChangeVisualDelay( float fDelta )
 	Preference<float> *pRet = Preference<float>::GetPreferenceByName("VisualDelaySeconds");
 	float fSecs = pRet->Get();
 	fSecs += fDelta;
-	fSecs = clamp( fSecs, -1.0f, 1.0f );
+	fSecs = Rage::clamp( fSecs, -1.0f, 1.0f );
 	pRet->Set( fSecs );
 }
 
@@ -873,7 +873,7 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 {
 	HighScore hs;
 	hs.SetName( "FAKE" );
-	Grade g = (Grade)scale( RandomInt(6), 0, 4, static_cast<int>(Grade_Tier01), static_cast<int>(Grade_Tier06) );
+	Grade g = (Grade)Rage::scale( RandomInt(6), 0, 4, static_cast<int>(Grade_Tier01), static_cast<int>(Grade_Tier06) );
 	if( g == Grade_Tier06 )
 		g = Grade_Failed;
 	hs.SetGrade( g );

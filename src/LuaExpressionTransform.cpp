@@ -60,7 +60,7 @@ void LuaExpressionTransform::TransformItemCached( Actor &a, float fPositionOffse
 		const Actor::TweenState &tsFloor = GetTransformCached( fFloor, iItemIndex, iNumItems );
 		const Actor::TweenState &tsCeil = GetTransformCached( fCeil, iItemIndex, iNumItems );
 
-		float fPercentTowardCeil = scale( fPositionOffsetFromCenter, fFloor, fCeil, 0.0f, 1.0f );
+		float fPercentTowardCeil = Rage::scale( fPositionOffsetFromCenter, fFloor, fCeil, 0.0f, 1.0f );
 		Actor::TweenState::MakeWeightedAverage( a.DestTweenState(), tsFloor, tsCeil, fPercentTowardCeil );
 	}
 }

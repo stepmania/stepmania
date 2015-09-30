@@ -2,6 +2,10 @@
 #include "RageMath.hpp"
 #include "RageVector2.hpp"
 
+using Rage::clamp;
+using Rage::lerp;
+using Rage::scale;
+
 GTEST_TEST(clamp, within_range)
 {
 	int actual = clamp(4, 2, 6);
@@ -46,11 +50,11 @@ GTEST_TEST(lerp, interlopant_point5)
 
 GTEST_TEST(lerp, vectors_too)
 {
-	RageVector2 a { 0, 0 };
-	RageVector2 b { 10, 20 };
+	Rage::Vector2 a { 0, 0 };
+	Rage::Vector2 b { 10, 20 };
 	
-	RageVector2 actual = lerp(0.6, a, b);
-	EXPECT_EQ( (RageVector2{6, 12}), actual);
+	Rage::Vector2 actual = lerp(0.6, a, b);
+	EXPECT_EQ( (Rage::Vector2{6, 12}), actual);
 	
 }
 

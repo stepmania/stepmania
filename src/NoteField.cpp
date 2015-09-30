@@ -392,15 +392,15 @@ void NoteField::DrawBeatBar( const float fBeat, BeatBarType type, int iMeasureIn
 				iState = 1;
 				break;
 			case half_beat:
-				fAlpha = scale(fScrollSpeed,1.0f,2.0f,0.0f,BAR_8TH_ALPHA + 0.f);
+				fAlpha = Rage::scale(fScrollSpeed,1.0f,2.0f,0.0f,BAR_8TH_ALPHA + 0.f);
 				iState = 2;
 				break;
 			case quarter_beat:
-				fAlpha = scale(fScrollSpeed,2.0f,4.0f,0.0f,BAR_16TH_ALPHA + 0.f);
+				fAlpha = Rage::scale(fScrollSpeed,2.0f,4.0f,0.0f,BAR_16TH_ALPHA + 0.f);
 				iState = 3;
 				break;
 		}
-		fAlpha = clamp( fAlpha, 0.f, 1.f );
+		fAlpha = Rage::clamp( fAlpha, 0.f, 1.f );
 	}
 
 	float fWidth = GetWidth();
@@ -410,7 +410,7 @@ void NoteField::DrawBeatBar( const float fBeat, BeatBarType type, int iMeasureIn
 	m_sprBeatBars.SetY( fYPos );
 	m_sprBeatBars.SetDiffuse( RageColor(1,1,1,fAlpha) );
 	m_sprBeatBars.SetState( iState );
-	m_sprBeatBars.SetCustomTextureRect( RectF(0,scale(iState + 0.f,0.f,4.f,0.f,1.f), fWidth/fFrameWidth, scale(iState+1.f,0.f,4.f,0.f,1.f)) );
+	m_sprBeatBars.SetCustomTextureRect( RectF(0,Rage::scale(iState + 0.f,0.f,4.f,0.f,1.f), fWidth/fFrameWidth, Rage::scale(iState+1.f,0.f,4.f,0.f,1.f)) );
 	m_sprBeatBars.SetZoomX( fWidth/m_sprBeatBars.GetUnzoomedWidth() );
 	m_sprBeatBars.Draw();
 
@@ -718,7 +718,7 @@ void NoteField::CalcPixelsBeforeAndAfterTargets()
 		curr_options.m_fScrolls[PlayerOptions::SCROLL_CENTERED] *
 		curr_options.m_fAccels[PlayerOptions::ACCEL_BOOMERANG];
 	m_FieldRenderArgs.draw_pixels_after_targets +=
-		int(scale(centered_times_boomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2));
+		int(Rage::scale(centered_times_boomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2));
 	m_FieldRenderArgs.draw_pixels_before_targets = static_cast<float>(m_iDrawDistanceBeforeTargetsPixels);
 
 	float draw_scale= 1;
@@ -981,8 +981,8 @@ void NoteField::DrawPrimitives()
 		{
 			int iBegin = m_iBeginMarker;
 			int iEnd = m_iEndMarker;
-			iBegin = clamp( iBegin, m_FieldRenderArgs.first_row, m_FieldRenderArgs.last_row );
-			iEnd = clamp( iEnd, m_FieldRenderArgs.first_row, m_FieldRenderArgs.last_row );
+			iBegin = Rage::clamp( iBegin, m_FieldRenderArgs.first_row, m_FieldRenderArgs.last_row );
+			iEnd = Rage::clamp( iEnd, m_FieldRenderArgs.first_row, m_FieldRenderArgs.last_row );
 			DrawAreaHighlight( iBegin, iEnd );
 		}
 		else if( m_iBeginMarker != -1 )
@@ -1011,7 +1011,7 @@ void NoteField::DrawPrimitives()
 	if(*m_FieldRenderArgs.selection_begin_marker != -1 &&
 		*m_FieldRenderArgs.selection_end_marker != -1)
 	{
-		m_FieldRenderArgs.selection_glow= scale(
+		m_FieldRenderArgs.selection_glow= Rage::scale(
 			RageFastCos(RageTimer::GetTimeSinceStartFast()*2), -1.f, 1.f, 0.1f, 0.3f);
 	}
 	m_FieldRenderArgs.fade_before_targets= FADE_BEFORE_TARGETS_PERCENT;

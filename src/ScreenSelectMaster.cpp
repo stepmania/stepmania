@@ -107,7 +107,7 @@ void ScreenSelectMaster::Init()
 	{
 		m_vsprScroll[p].resize( m_aGameCommands.size() );
 	}
-	vector<RageVector3> positions;
+	vector<Rage::Vector3> positions;
 	bool positions_set_by_lua= false;
 	if(THEME->HasMetric(m_sName, "IconChoicePosFunction"))
 	{
@@ -141,7 +141,7 @@ void ScreenSelectMaster::Init()
 					for(size_t p= 1; p <= poses; ++p)
 					{
 						lua_rawgeti(L, -1, p);
-						RageVector3 pos(0.0f, 0.0f, 0.0f);
+						Rage::Vector3 pos(0.0f, 0.0f, 0.0f);
 						if(!lua_istable(L, -1))
 						{
 							LuaHelpers::ReportScriptErrorFmt("Position %zu is not a table.", p);
@@ -311,7 +311,7 @@ void ScreenSelectMaster::Init()
 				if( dir == MenuDir_Auto || (bool)WRAP_CURSOR )
 					wrap( m_mapCurrentChoiceToNextChoice[dir][c], m_aGameCommands.size() );
 				else
-					m_mapCurrentChoiceToNextChoice[dir][c] = clamp( m_mapCurrentChoiceToNextChoice[dir][c], 0, (int)m_aGameCommands.size()-1 );
+					m_mapCurrentChoiceToNextChoice[dir][c] = Rage::clamp( m_mapCurrentChoiceToNextChoice[dir][c], 0, (int)m_aGameCommands.size()-1 );
 			}
 		}
 	}
@@ -341,7 +341,7 @@ void ScreenSelectMaster::BeginScreen()
 	FOREACH_PlayerNumber( p )
 	{
 		m_iChoice[p] = (iDefaultChoice!=-1) ? iDefaultChoice : 0;
-		m_iChoice[p] = clamp( m_iChoice[p], 0, (int)m_aGameCommands.size()-1 );
+		m_iChoice[p] = Rage::clamp( m_iChoice[p], 0, (int)m_aGameCommands.size()-1 );
 		m_bChosen[p] = false;
 		m_bDoubleChoice[p] = false;
 	}

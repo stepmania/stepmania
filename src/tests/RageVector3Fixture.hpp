@@ -9,12 +9,12 @@ class RageVector3Fixture : public ::testing::Test
 protected:
 	virtual void SetUp();
 
-	RageVector3 a;
-	RageVector3 b;
-	RageVector3 sum;
-	RageVector3 difference;
-	RageVector3 product;
-	RageVector3 quotient;
+	Rage::Vector3 a;
+	Rage::Vector3 b;
+	Rage::Vector3 sum;
+	Rage::Vector3 difference;
+	Rage::Vector3 product;
+	Rage::Vector3 quotient;
 };
 
 #endif

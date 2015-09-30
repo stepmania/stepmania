@@ -536,7 +536,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		if( cd != Difficulty_Medium  &&  !e->bNoDifficult )
 		{
 			Difficulty new_dc = (Difficulty)(dc + cd - Difficulty_Medium);
-			new_dc = clamp( new_dc, (Difficulty)0, (Difficulty)(Difficulty_Edit-1) );
+			new_dc = Rage::clamp( new_dc, (Difficulty)0, (Difficulty)(Difficulty_Edit-1) );
 			/*
 			// re-edit this code to work using the metric.
 			Difficulty new_dc;
@@ -544,12 +544,12 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			{
 				// don't factor in the course difficulty if we're including
 				// beginner steps -aj
-				new_dc = clamp( dc, Difficulty_Beginner, (Difficulty)(Difficulty_Edit-1) );
+				new_dc = Rage::clamp( dc, Difficulty_Beginner, (Difficulty)(Difficulty_Edit-1) );
 			}
 			else
 			{
 				new_dc = (Difficulty)(dc + cd - Difficulty_Medium);
-				new_dc = clamp( new_dc, (Difficulty)0, (Difficulty)(Difficulty_Edit-1) );
+				new_dc = Rage::clamp( new_dc, (Difficulty)0, (Difficulty)(Difficulty_Edit-1) );
 			}
 			*/
 

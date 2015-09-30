@@ -1091,7 +1091,7 @@ namespace
 		{
 			float *pOutBuf = (float *) pOut;
 			for( int i = 0; i < iSamples; ++i )
-				pOutBuf[i] = scale( pIn[i] + 0.f, -32768.f, +32767.f, -1.0f, +1.0f ); // [-32768, 32767] -> [-1,+1]
+				pOutBuf[i] = Rage::scale( pIn[i] + 0.f, -32768.f, +32767.f, -1.0f, +1.0f ); // [-32768, 32767] -> [-1,+1]
 			break;
 		}
 		case DeviceSampleFormat_Int24:

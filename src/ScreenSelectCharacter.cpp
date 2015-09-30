@@ -261,7 +261,7 @@ void ScreenSelectCharacter::AfterValueChange( PlayerNumber pn )
 				Banner &banner = m_sprIcons[pnAffected][i];
 				banner.LoadIconFromCharacter( pCharacter );
 				float fX = (pnAffected==PLAYER_1) ? 320-ICON_WIDTH : 320+ICON_WIDTH;
-				float fY = scale( i + 0.f, 0.f, MAX_CHAR_ICONS_TO_SHOW-1.f, 240.f-(MAX_CHAR_ICONS_TO_SHOW/2*ICON_HEIGHT), 240.f+(MAX_CHAR_ICONS_TO_SHOW/2*ICON_HEIGHT));
+				float fY = Rage::scale( i + 0.f, 0.f, MAX_CHAR_ICONS_TO_SHOW-1.f, 240.f-(MAX_CHAR_ICONS_TO_SHOW/2*ICON_HEIGHT), 240.f+(MAX_CHAR_ICONS_TO_SHOW/2*ICON_HEIGHT));
 				banner.SetXY( fX, fY );
 			}
 		}

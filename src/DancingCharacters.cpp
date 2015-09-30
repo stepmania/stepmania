@@ -189,8 +189,8 @@ void DancingCharacters::Update( float fDelta )
 	{
 		// make the characters move
 		float fBPM = GAMESTATE->m_Position.m_fCurBPS*60;
-		float fUpdateScale = scale( fBPM, 60.f, 300.f, 0.75f, 1.5f );
-		fUpdateScale = clamp( fUpdateScale, 0.75f, 1.5f );
+		float fUpdateScale = Rage::scale( fBPM, 60.f, 300.f, 0.75f, 1.5f );
+		fUpdateScale = Rage::clamp( fUpdateScale, 0.75f, 1.5f );
 
 		/* It's OK for the animation to go slower than natural when we're
 		 * at a very low music rate. */
@@ -317,21 +317,21 @@ void DancingCharacters::DrawPrimitives()
 	if(m_fThisCameraStartBeat == m_fThisCameraEndBeat)
 		fPercentIntoSweep = 0;
 	else 
-		fPercentIntoSweep = scale(GAMESTATE->m_Position.m_fSongBeat, m_fThisCameraStartBeat, m_fThisCameraEndBeat, 0.f, 1.f );
-	float fCameraPanY = scale( fPercentIntoSweep, 0.f, 1.f, m_CameraPanYStart, m_CameraPanYEnd );
-	float fCameraHeight = scale( fPercentIntoSweep, 0.f, 1.f, m_fCameraHeightStart, m_fCameraHeightEnd );
+		fPercentIntoSweep = Rage::scale(GAMESTATE->m_Position.m_fSongBeat, m_fThisCameraStartBeat, m_fThisCameraEndBeat, 0.f, 1.f );
+	float fCameraPanY = Rage::scale( fPercentIntoSweep, 0.f, 1.f, m_CameraPanYStart, m_CameraPanYEnd );
+	float fCameraHeight = Rage::scale( fPercentIntoSweep, 0.f, 1.f, m_fCameraHeightStart, m_fCameraHeightEnd );
 
-	RageVector3 m_CameraPoint( 0, fCameraHeight, -m_CameraDistance );
+	Rage::Vector3 m_CameraPoint( 0, fCameraHeight, -m_CameraDistance );
 	RageMatrix CameraRot;
 	RageMatrixRotationY( &CameraRot, fCameraPanY );
 	RageVec3TransformCoord( &m_CameraPoint, &m_CameraPoint, &CameraRot );
 
-	RageVector3 m_LookAt( 0, m_fLookAtHeight, 0 );
+	Rage::Vector3 m_LookAt( 0, m_fLookAtHeight, 0 );
 
 	DISPLAY->LoadLookAt( 45,
 		m_CameraPoint,
 		m_LookAt,
-		RageVector3(0,1,0) );
+		Rage::Vector3(0,1,0) );
 
 	FOREACH_EnabledPlayer( p )
 	{
@@ -348,7 +348,7 @@ void DancingCharacters::DrawPrimitives()
 			ambient, 
 			diffuse,
 			specular,
-			RageVector3(-3, -7.5f, +9) );
+			Rage::Vector3(-3, -7.5f, +9) );
 
 		if( PREFSMAN->m_bCelShadeModels )
 		{

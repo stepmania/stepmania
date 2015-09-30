@@ -174,7 +174,7 @@ public:
 		Effect() : m_Action(EffectAction_None), m_Type(EffectType_Invalid), m_fSecsIntoEffect(0),
 				m_fEffectDelta(0), m_fEffectRampUp(0.5f), m_fEffectHoldAtHalf(0),
 				m_fEffectRampDown(0.5f), m_fEffectHoldAtZero(0), m_fEffectOffset(0),
-				m_EffectClock(CLOCK_TIMER), m_vEffectMagnitude(RageVector3(0,0,10)),
+				m_EffectClock(CLOCK_TIMER), m_vEffectMagnitude(Rage::Vector3(0,0,10)),
 				m_effectColor1(RageColor(1,1,1,1)), m_effectColor2(RageColor(1,1,1,1))
 		{ }
 
@@ -185,7 +185,7 @@ public:
 		float			m_fEffectDelta;
 		RageColor		m_EffectColor1;
 		RageColor		m_EffectColor2;
-		RageVector3		m_vEffectMagnitude;
+		Rage::Vector3		m_vEffectMagnitude;
 		EffectClock		m_EffectClock;
 		// units depend on m_EffectClock
 		float			m_fEffectRampUp;
@@ -207,10 +207,10 @@ public:
 		bool operator!=( const TweenState &other ) const { return !operator==(other); }
 
 		// start and end position for tweening
-		RageVector3	pos;
-		RageVector3	rotation;
-		RageVector4	quat;
-		RageVector3	scale;
+		Rage::Vector3	pos;
+		Rage::Vector3	rotation;
+		Rage::Vector4	quat;
+		Rage::Vector3	scale;
 		float		fSkewX, fSkewY;
 		/**
 		 * @brief The amount of cropping involved.
@@ -363,11 +363,11 @@ public:
 	void  SetBaseZoomY( float zoom )		{ m_baseScale.y = zoom; }
 	float GetBaseZoomZ() const			{ return m_baseScale.z;	}
 	void  SetBaseZoomZ( float zoom )		{ m_baseScale.z = zoom; }
-	void  SetBaseZoom( float zoom )			{ m_baseScale = RageVector3(zoom,zoom,zoom); }
+	void  SetBaseZoom( float zoom )			{ m_baseScale = Rage::Vector3(zoom,zoom,zoom); }
 	void  SetBaseRotationX( float rot )		{ m_baseRotation.x = rot; }
 	void  SetBaseRotationY( float rot )		{ m_baseRotation.y = rot; }
 	void  SetBaseRotationZ( float rot )		{ m_baseRotation.z = rot; }
-	void  SetBaseRotation( const RageVector3 &rot )	{ m_baseRotation = rot; }
+	void  SetBaseRotation( const Rage::Vector3 &rot )	{ m_baseRotation = rot; }
 	virtual void  SetBaseAlpha( float fAlpha )	{ m_fBaseAlpha = fAlpha; }
 	void  SetInternalDiffuse( const RageColor &c )	{ m_internalDiffuse = c; }
 	void  SetInternalGlow( const RageColor &c )	{ m_internalGlow = c; }
@@ -537,8 +537,8 @@ public:
 	void SetEffectClock( EffectClock c )		{ m_EffectClock = c; }
 	void SetEffectClockString( const RString &s );	// convenience
 
-	void SetEffectMagnitude( RageVector3 vec )	{ m_vEffectMagnitude = vec; }
-	RageVector3 GetEffectMagnitude() const		{ return m_vEffectMagnitude; }
+	void SetEffectMagnitude( Rage::Vector3 vec )	{ m_vEffectMagnitude = vec; }
+	Rage::Vector3 GetEffectMagnitude() const		{ return m_vEffectMagnitude; }
 
 	void ResetEffectTimeIfDifferent(Effect new_effect);
 	void SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
@@ -548,12 +548,12 @@ public:
 	void SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
 	void SetEffectGlowRamp( float fEffectPeriodSeconds, RageColor c1, RageColor c2 );
 	void SetEffectRainbow( float fEffectPeriodSeconds );
-	void SetEffectWag( float fPeriod, RageVector3 vect );
-	void SetEffectBounce( float fPeriod, RageVector3 vect );
-	void SetEffectBob( float fPeriod, RageVector3 vect );
+	void SetEffectWag( float fPeriod, Rage::Vector3 vect );
+	void SetEffectBounce( float fPeriod, Rage::Vector3 vect );
+	void SetEffectBob( float fPeriod, Rage::Vector3 vect );
 	void SetEffectPulse( float fPeriod, float fMinZoom, float fMaxZoom );
-	void SetEffectSpin( RageVector3 vect );
-	void SetEffectVibrate( RageVector3 vect );
+	void SetEffectSpin( Rage::Vector3 vect );
+	void SetEffectVibrate( Rage::Vector3 vect );
 
 
 	// other properties
@@ -649,13 +649,13 @@ protected:
 		RString		m_sCommandName;
 	};
 
-	RageVector3	m_baseRotation;
-	RageVector3	m_baseScale;
+	Rage::Vector3	m_baseRotation;
+	Rage::Vector3	m_baseScale;
 	float m_fBaseAlpha;
 	RageColor m_internalDiffuse;
 	RageColor m_internalGlow;
 
-	RageVector2	m_size;
+	Rage::Vector2	m_size;
 	TweenState	m_current;
 	TweenState	m_start;
 	struct TweenStateAndInfo
@@ -709,7 +709,7 @@ protected:
 	// todo: account for SSC_FUTURES by having these be vectors too -aj
 	RageColor	m_effectColor1;
 	RageColor	m_effectColor2;
-	RageVector3	m_vEffectMagnitude;
+	Rage::Vector3	m_vEffectMagnitude;
 
 	// other properties
 	bool		m_bVisible;
@@ -727,7 +727,7 @@ protected:
 	BlendMode	m_BlendMode;
 	ZTestMode	m_ZTestMode;
 	CullMode	m_CullMode;
-	RageVector2	m_texTranslate;
+	Rage::Vector2	m_texTranslate;
 	bool		m_bTextureWrapping;
 	bool		m_bTextureFiltering;
 	bool		m_bClearZBuffer;

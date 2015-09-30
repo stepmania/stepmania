@@ -2248,7 +2248,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				INVERT_SCROLL_BUTTONS ? --iSpeed : ++iSpeed;
 				break;
 			}
-			iSpeed = clamp( iSpeed, 0, static_cast<int>(fSpeeds.size()) - 1 );
+			iSpeed = Rage::clamp( iSpeed, 0, static_cast<int>(fSpeeds.size()) - 1 );
 
 			if( fSpeeds[iSpeed] != fScrollSpeed )
 			{
@@ -3513,7 +3513,7 @@ void ScreenEdit::ScrollTo( float fDestinationBeat )
 {
 	using std::min;
 	using std::max;
-	fDestinationBeat = clamp( fDestinationBeat, 0.f, GetMaximumBeatForMoving() );
+	fDestinationBeat = Rage::clamp( fDestinationBeat, 0.f, GetMaximumBeatForMoving() );
 
 	// Don't play the sound and do the hold note logic below if our position didn't change.
 	const float fOriginalBeat = GetAppropriatePosition().m_fSongBeat;

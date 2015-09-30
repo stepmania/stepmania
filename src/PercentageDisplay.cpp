@@ -162,7 +162,7 @@ void PercentageDisplay::Refresh()
 		float fPercentDancePoints = m_pPlayerStageStats->GetPercentDancePoints();
 
 		// clamp percentage - feedback is that negative numbers look weird here.
-		fPercentDancePoints = clamp( fPercentDancePoints, 0.f, 1.f );
+		fPercentDancePoints = Rage::clamp( fPercentDancePoints, 0.f, 1.f );
 
 		if( m_bUseRemainder )
 		{

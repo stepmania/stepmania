@@ -489,14 +489,14 @@ public:
 	static int GetMouseX( T* p, lua_State *L ){
 		float fX = p->GetCursorX();
 		// Scale input to the theme's dimensions
-		fX = scale( fX, 0.f, (PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio), SCREEN_LEFT + 0.f, SCREEN_RIGHT + 0.f );
+		fX = Rage::scale( fX, 0.f, (PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio), SCREEN_LEFT + 0.f, SCREEN_RIGHT + 0.f );
 		lua_pushnumber( L, fX );
 		return 1;
 	}
 	static int GetMouseY( T* p, lua_State *L ){
 		float fY = p->GetCursorY();
 		// Scale input to the theme's dimensions
-		fY = scale( fY, 0.f, PREFSMAN->m_iDisplayHeight + 0.f, SCREEN_TOP + 0.f, SCREEN_BOTTOM + 0.f );
+		fY = Rage::scale( fY, 0.f, PREFSMAN->m_iDisplayHeight + 0.f, SCREEN_TOP + 0.f, SCREEN_BOTTOM + 0.f );
 		lua_pushnumber( L, fY );
 		return 1;
 	}

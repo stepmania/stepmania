@@ -1039,11 +1039,11 @@ public:
 	}
 
 protected:
-	vector<RageVector3> m_vPosition;
-	vector<RageVector2> m_vTexture;
-	vector<RageVector3> m_vNormal;
+	vector<Rage::Vector3> m_vPosition;
+	vector<Rage::Vector2> m_vTexture;
+	vector<Rage::Vector3> m_vNormal;
 	vector<msTriangle>	m_vTriangles;
-	vector<RageVector2>	m_vTexMatrixScale;
+	vector<Rage::Vector2>	m_vTexMatrixScale;
 };
 
 class InvalidateObject;
@@ -1159,7 +1159,7 @@ void RageCompiledGeometryHWOGL::UploadData()
 	DebugAssertNoGLError();
 	glBufferDataARB(
 		GL_ARRAY_BUFFER_ARB,
-		GetTotalVertices()*sizeof(RageVector3),
+		GetTotalVertices()*sizeof(Rage::Vector3),
 		&m_vPosition[0],
 		GL_STATIC_DRAW_ARB);
 	DebugAssertNoGLError();
@@ -1168,7 +1168,7 @@ void RageCompiledGeometryHWOGL::UploadData()
 	DebugAssertNoGLError();
 	glBufferDataARB(
 		GL_ARRAY_BUFFER_ARB,
-		GetTotalVertices()*sizeof(RageVector2),
+		GetTotalVertices()*sizeof(Rage::Vector2),
 		&m_vTexture[0],
 		GL_STATIC_DRAW_ARB);
 	DebugAssertNoGLError();
@@ -1177,7 +1177,7 @@ void RageCompiledGeometryHWOGL::UploadData()
 	DebugAssertNoGLError();
 	glBufferDataARB(
 		GL_ARRAY_BUFFER_ARB,
-		GetTotalVertices()*sizeof(RageVector3),
+		GetTotalVertices()*sizeof(Rage::Vector3),
 		&m_vNormal[0],
 		GL_STATIC_DRAW_ARB);
 	DebugAssertNoGLError();
@@ -1198,7 +1198,7 @@ void RageCompiledGeometryHWOGL::UploadData()
 		DebugAssertNoGLError();
 		glBufferDataARB(
 			GL_ARRAY_BUFFER_ARB,
-			GetTotalVertices()*sizeof(RageVector2),
+			GetTotalVertices()*sizeof(Rage::Vector2),
 			&m_vTexMatrixScale[0],
 			GL_STATIC_DRAW_ARB);
 		DebugAssertNoGLError();
@@ -1226,7 +1226,7 @@ void RageCompiledGeometryHWOGL::Allocate( const vector<msMesh> &vMeshes )
 	DebugAssertNoGLError();
 	glBufferDataARB(
 		GL_ARRAY_BUFFER_ARB,
-		GetTotalVertices()*sizeof(RageVector3),
+		GetTotalVertices()*sizeof(Rage::Vector3),
 		nullptr,
 		GL_STATIC_DRAW_ARB );
 	DebugAssertNoGLError();
@@ -1235,7 +1235,7 @@ void RageCompiledGeometryHWOGL::Allocate( const vector<msMesh> &vMeshes )
 	DebugAssertNoGLError();
 	glBufferDataARB(
 		GL_ARRAY_BUFFER_ARB,
-		GetTotalVertices()*sizeof(RageVector2),
+		GetTotalVertices()*sizeof(Rage::Vector2),
 		nullptr,
 		GL_STATIC_DRAW_ARB );
 	DebugAssertNoGLError();
@@ -1244,7 +1244,7 @@ void RageCompiledGeometryHWOGL::Allocate( const vector<msMesh> &vMeshes )
 	DebugAssertNoGLError();
 	glBufferDataARB(
 		GL_ARRAY_BUFFER_ARB,
-		GetTotalVertices()*sizeof(RageVector3),
+		GetTotalVertices()*sizeof(Rage::Vector3),
 		nullptr,
 		GL_STATIC_DRAW_ARB );
 	DebugAssertNoGLError();
@@ -1262,7 +1262,7 @@ void RageCompiledGeometryHWOGL::Allocate( const vector<msMesh> &vMeshes )
 	DebugAssertNoGLError();
 	glBufferDataARB(
 		GL_ARRAY_BUFFER_ARB,
-		GetTotalVertices()*sizeof(RageVector2),
+		GetTotalVertices()*sizeof(Rage::Vector2),
 		nullptr,
 		GL_STATIC_DRAW_ARB );
 }
@@ -1530,8 +1530,8 @@ void RageDisplay_Legacy::DrawLineStripInternal( const RageSpriteVertex v[], int 
 
 	/* Clamp the width to the hardware max for both lines and points (whichever
 	 * is more restrictive). */
-	fLineWidth = clamp( fLineWidth, g_line_range[0], g_line_range[1] );
-	fLineWidth = clamp( fLineWidth, g_point_range[0], g_point_range[1] );
+	fLineWidth = Rage::clamp( fLineWidth, g_line_range[0], g_line_range[1] );
+	fLineWidth = Rage::clamp( fLineWidth, g_point_range[0], g_point_range[1] );
 
 	/* Hmm.  The granularity of lines and points might be different; for example,
 	 * if lines are .5 and points are .25, we might want to snap the width to the
@@ -1846,8 +1846,8 @@ void RageDisplay_Legacy::SetZWrite( bool b )
 
 void RageDisplay_Legacy::SetZBias( float f )
 {
-	float fNear = scale( f, 0.0f, 1.0f, 0.05f, 0.0f );
-	float fFar = scale( f, 0.0f, 1.0f, 1.0f, 0.95f );
+	float fNear = Rage::scale( f, 0.0f, 1.0f, 0.05f, 0.0f );
+	float fFar = Rage::scale( f, 0.0f, 1.0f, 1.0f, 0.95f );
 
 	glDepthRange( fNear, fFar );
 }
@@ -1929,7 +1929,7 @@ void RageDisplay_Legacy::SetLightDirectional(
 	const RageColor &ambient,
 	const RageColor &diffuse,
 	const RageColor &specular,
-	const RageVector3 &dir )
+	const Rage::Vector3 &dir )
 {
 	// Light coordinates are transformed by the modelview matrix, but
 	// we are being passed in world-space coords.
@@ -2071,10 +2071,10 @@ void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfac
 	uint8_t twoFiftyFiveSquared = 65535;
 	for( int i = 0; i < palette->ncolors; ++i )
 	{
-		buf[0][i] = scale( palette->colors[i].r, zero, twoFiftyFive, zero, twoFiftyFiveSquared );
-		buf[1][i] = scale( palette->colors[i].g, zero, twoFiftyFive, zero, twoFiftyFiveSquared );
-		buf[2][i] = scale( palette->colors[i].b, zero, twoFiftyFive, zero, twoFiftyFiveSquared );
-		buf[3][i] = scale( palette->colors[i].a, zero, twoFiftyFive, zero, twoFiftyFiveSquared );
+		buf[0][i] = Rage::scale( palette->colors[i].r, zero, twoFiftyFive, zero, twoFiftyFiveSquared );
+		buf[1][i] = Rage::scale( palette->colors[i].g, zero, twoFiftyFive, zero, twoFiftyFiveSquared );
+		buf[2][i] = Rage::scale( palette->colors[i].b, zero, twoFiftyFive, zero, twoFiftyFiveSquared );
+		buf[3][i] = Rage::scale( palette->colors[i].a, zero, twoFiftyFive, zero, twoFiftyFiveSquared );
 	}
 
 	DebugFlushGLErrors();

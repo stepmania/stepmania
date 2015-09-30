@@ -18,8 +18,8 @@ AnimatedTexture::AnimatedTexture()
 	m_iCurState = 0;
 	m_fSecsIntoFrame = 0;
 	m_bSphereMapped = false;
-	m_vTexOffset = RageVector2(0,0);
-	m_vTexVelocity = RageVector2(0,0);
+	m_vTexOffset = Rage::Vector2(0,0);
+	m_vTexVelocity = Rage::Vector2(0,0);
 	m_BlendMode = BLEND_NORMAL;
 }
 
@@ -33,7 +33,7 @@ void AnimatedTexture::LoadBlank()
 	AnimatedTextureState state(
 		nullptr,
 		1,
-		RageVector2(0,0)
+		Rage::Vector2(0,0)
 		);
 	vFrames.push_back( state );
 }
@@ -76,7 +76,7 @@ void AnimatedTexture::Load( const RString &sTexOrIniPath )
 				RString sTranslateXKey = ssprintf( "TranslateX%04d", i );
 				RString sTranslateYKey = ssprintf( "TranslateY%04d", i );
 
-				RageVector2 vOffset(0,0);
+				Rage::Vector2 vOffset(0,0);
 				pAnimatedTexture->GetAttrValue( sTranslateXKey, vOffset.x );
 				pAnimatedTexture->GetAttrValue( sTranslateYKey, vOffset.y );
 
@@ -108,7 +108,7 @@ void AnimatedTexture::Load( const RString &sTexOrIniPath )
 		AnimatedTextureState state(
 			TEXTUREMAN->LoadTexture( ID ),
 			1,
-			RageVector2(0,0)
+			Rage::Vector2(0,0)
 			);
 		vFrames.push_back( state );
 	}
@@ -143,7 +143,7 @@ int AnimatedTexture::GetNumStates() const
 
 void AnimatedTexture::SetState( int iState )
 {
-	iState = clamp( iState, 0, GetNumStates()-1 );
+	iState = Rage::clamp( iState, 0, GetNumStates()-1 );
 	m_iCurState = iState;
 }
 
@@ -201,10 +201,10 @@ void AnimatedTexture::Unload()
 	m_fSecsIntoFrame = 0;
 }
 
-RageVector2 AnimatedTexture::GetTextureTranslate()
+Rage::Vector2 AnimatedTexture::GetTextureTranslate()
 {
 	float fPercentIntoAnimation = GetSecondsIntoAnimation() / GetAnimationLengthSeconds();
-	RageVector2 v = m_vTexVelocity * fPercentIntoAnimation + m_vTexOffset;
+	Rage::Vector2 v = m_vTexVelocity * fPercentIntoAnimation + m_vTexOffset;
 
 	if( vFrames.empty() )
 		return v;
@@ -269,7 +269,7 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 			Bone.sParentName = szName;
 
 			// flags, position, rotation
-			RageVector3 Position, Rotation;
+			Rage::Vector3 Position, Rotation;
 			if( f.GetLine( sLine ) <= 0 )
 				THROW;
 
@@ -307,7 +307,7 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 
 				msPositionKey key;
 				key.fTime = fTime;
-				key.Position = RageVector3( Position.x, Position.y, Position.z );
+				key.Position = Rage::Vector3( Position.x, Position.y, Position.z );
 				Bone.PositionKeys[j] = key;
 			}
 
@@ -332,7 +332,7 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 
 				msRotationKey key;
 				key.fTime = fTime;
-				Rotation = RageVector3( Rotation.x, Rotation.y, Rotation.z );
+				Rotation = Rage::Vector3( Rotation.x, Rotation.y, Rotation.z );
 				RageQuatFromHPR( &key.Rotation, Rotation );
 				Bone.RotationKeys[j] = key;
 			}

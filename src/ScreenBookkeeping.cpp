@@ -48,7 +48,7 @@ void ScreenBookkeeping::Init()
 		m_textData[i].LoadFromFont( THEME->GetPathF(m_sName,"data") );
 		m_textData[i].SetName( "Data" );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_textData[i] );
-		float fX = scale( i + 0.f, 0.f, NUM_BOOKKEEPING_COLS-1.f, SCREEN_LEFT+50.f, SCREEN_RIGHT-160.f );
+		float fX = Rage::scale( i + 0.f, 0.f, NUM_BOOKKEEPING_COLS-1.f, SCREEN_LEFT+50.f, SCREEN_RIGHT-160.f );
 		m_textData[i].SetX( fX );
 		this->AddChild( &m_textData[i] );
 	}
@@ -82,7 +82,7 @@ bool ScreenBookkeeping::Input( const InputEventPlus &input )
 bool ScreenBookkeeping::MenuLeft( const InputEventPlus &input )
 {
 	m_iViewIndex--;
-	m_iViewIndex = clamp( m_iViewIndex, 0, static_cast<int>(m_vBookkeepingViews.size())-1 );
+	m_iViewIndex = Rage::clamp( m_iViewIndex, 0, static_cast<int>(m_vBookkeepingViews.size())-1 );
 
 	UpdateView();
 	return true;
@@ -91,7 +91,7 @@ bool ScreenBookkeeping::MenuLeft( const InputEventPlus &input )
 bool ScreenBookkeeping::MenuRight( const InputEventPlus &input )
 {
 	m_iViewIndex++;
-	m_iViewIndex = clamp( m_iViewIndex, 0, static_cast<int>(m_vBookkeepingViews.size())-1 );
+	m_iViewIndex = Rage::clamp( m_iViewIndex, 0, static_cast<int>(m_vBookkeepingViews.size())-1 );
 
 	UpdateView();
 	return true;

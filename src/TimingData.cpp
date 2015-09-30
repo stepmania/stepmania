@@ -311,7 +311,7 @@ void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut, float highe
 	for (unsigned i = 0; i < bpms.size(); i++)
 	{
 		const float fBPM = ToBPM(bpms[i])->GetBPM();
-		fMaxBPMOut = clamp(std::max( fBPM, fMaxBPMOut ), 0.f, highest);
+		fMaxBPMOut = Rage::clamp(std::max( fBPM, fMaxBPMOut ), 0.f, highest);
 		fMinBPMOut = std::min( fBPM, fMinBPMOut );
 	}
 }

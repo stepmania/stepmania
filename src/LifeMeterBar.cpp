@@ -199,7 +199,7 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	using std::max;
 	bool bUseMercifulDrain = m_bMercifulBeginnerInEffect || PREFSMAN->m_bMercifulDrain;
 	if( bUseMercifulDrain  &&  fDeltaLife < 0 )
-		fDeltaLife *= scale( m_fLifePercentage, 0.f, 1.f, 0.5f, 1.f);
+		fDeltaLife *= Rage::scale( m_fLifePercentage, 0.f, 1.f, 0.5f, 1.f);
 
 	// handle progressiveness and ComboToRegainLife here
 	if( fDeltaLife >= 0 )
@@ -242,7 +242,7 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	}
 
 	m_fLifePercentage += fDeltaLife;
-	m_fLifePercentage = clamp( m_fLifePercentage, 0.f, LIFE_MULTIPLIER + 0.f );
+	m_fLifePercentage = Rage::clamp( m_fLifePercentage, 0.f, LIFE_MULTIPLIER + 0.f );
 	AfterLifeChanged();
 }
 
@@ -284,10 +284,10 @@ void LifeMeterBar::Update( float fDeltaTime )
 	LifeMeter::Update( fDeltaTime );
 
 	m_fPassingAlpha += !IsFailing() ? +fDeltaTime*2 : -fDeltaTime*2;
-	m_fPassingAlpha = clamp( m_fPassingAlpha, 0.f, 1.f );
+	m_fPassingAlpha = Rage::clamp( m_fPassingAlpha, 0.f, 1.f );
 
 	m_fHotAlpha  += IsHot() ? + fDeltaTime*2 : -fDeltaTime*2;
-	m_fHotAlpha = clamp( m_fHotAlpha, 0.f, 1.f );
+	m_fHotAlpha = Rage::clamp( m_fHotAlpha, 0.f, 1.f );
 
 	m_pStream->SetPassingAlpha( m_fPassingAlpha );
 	m_pStream->SetHotAlpha( m_fHotAlpha );
@@ -396,7 +396,7 @@ void LifeMeterBar::FillForHowToPlay( int NumW2s, int NumMisses )
 	float AmountForMiss	= NumMisses / m_fLifeDifficulty * 0.08f;
 
 	m_fLifePercentage = AmountForMiss - AmountForW2;
-	m_fLifePercentage = clamp( m_fLifePercentage, 0.0f, 1.0f );
+	m_fLifePercentage = Rage::clamp( m_fLifePercentage, 0.0f, 1.0f );
 	AfterLifeChanged();
 }
 

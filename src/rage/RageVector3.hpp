@@ -1,24 +1,24 @@
 #ifndef RAGE_VECTOR_3_HPP_
 #define RAGE_VECTOR_3_HPP_
 
-struct RageVector3
+namespace Rage
+{
+struct Vector3
 {
 public:
-	RageVector3();
-	RageVector3(float a, float b, float c);
+	Vector3();
+	Vector3(float a, float b, float c);
 		
 	// assignment operators
-	RageVector3& operator += (const RageVector3& rhs);
-	RageVector3& operator -= (const RageVector3& rhs);
-	RageVector3& operator *= (float rhs);
-	RageVector3& operator /= (float rhs);
+	Vector3& operator += (const Vector3& rhs);
+	Vector3& operator -= (const Vector3& rhs);
+	Vector3& operator *= (float rhs);
+	Vector3& operator /= (float rhs);
 	
 	float x, y, z;
 };
 
-#endif
-
-inline bool operator==(RageVector3 const & lhs, RageVector3 const & rhs)
+inline bool operator==(Vector3 const & lhs, Vector3 const & rhs)
 {
 	return
 		lhs.x == rhs.x &&
@@ -26,31 +26,34 @@ inline bool operator==(RageVector3 const & lhs, RageVector3 const & rhs)
 		lhs.z == rhs.z;
 }
 
-inline bool operator!=(RageVector3 const & lhs, RageVector3 const & rhs)
+inline bool operator!=(Vector3 const & lhs, Vector3 const & rhs)
 {
 	return !operator==(lhs, rhs);
 }
 
-inline RageVector3 operator+(RageVector3 lhs, RageVector3 const & rhs)
+inline Vector3 operator+(Vector3 lhs, Vector3 const & rhs)
 {
 	lhs += rhs;
 	return lhs;
 }
 
-inline RageVector3 operator-(RageVector3 lhs, RageVector3 const & rhs)
+inline Vector3 operator-(Vector3 lhs, Vector3 const & rhs)
 {
 	lhs -= rhs;
 	return lhs;
 }
 
-inline RageVector3 operator*(RageVector3 lhs, float rhs)
+inline Vector3 operator*(Vector3 lhs, float rhs)
 {
 	lhs *= rhs;
 	return lhs;
 }
 
-inline RageVector3 operator/(RageVector3 lhs, float rhs)
+inline Vector3 operator/(Vector3 lhs, float rhs)
 {
 	lhs /= rhs;
 	return lhs;
 }
+}
+
+#endif
