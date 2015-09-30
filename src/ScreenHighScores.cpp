@@ -93,7 +93,7 @@ bool ScoreScroller::Scroll( int iDir )
 	fDest += iDir;
 	float fLowClamp = (SCROLLER_ITEMS_TO_DRAW-1)/2.0f;
 	float fHighClamp = m_vScoreRowItemData.size()-(SCROLLER_ITEMS_TO_DRAW-1)/2.0f-1;
-	CLAMP( fDest, fLowClamp, fHighClamp );
+	fDest = clamp( fDest, fLowClamp, fHighClamp );
 	if( fOldDest != fDest )
 	{
 		SetDestinationItem( fDest );

@@ -2,6 +2,7 @@
 #include <cassert>
 
 #include "ActorMultiVertex.h"
+#include "RageMath.hpp"
 #include "RageTextureManager.h"
 #include "XmlFile.h"
 #include "RageLog.h"

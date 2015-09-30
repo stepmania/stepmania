@@ -3,6 +3,7 @@
 #include <float.h>
 
 #include "Sprite.h"
+#include "RageMath.hpp"
 #include "RageTextureManager.h"
 #include "XmlFile.h"
 #include "RageLog.h"
@@ -213,13 +214,13 @@ void Sprite::LoadFromNode( const XNode* pNode )
 					float fX = 1.0f, fY = 1.0f;
 					pPoints[0]->GetAttrValue( "x", fX );
 					pPoints[0]->GetAttrValue( "y", fY );
-					newState.rect.left = SCALE( fX, 0.0f, 1.0f, r.left, r.right );
-					newState.rect.top = SCALE( fY, 0.0f, 1.0f, r.top, r.bottom );
+					newState.rect.left = scale( fX, 0.0f, 1.0f, r.left, r.right );
+					newState.rect.top = scale( fY, 0.0f, 1.0f, r.top, r.bottom );
 
 					pPoints[1]->GetAttrValue( "x", fX );
 					pPoints[1]->GetAttrValue( "y", fY );
-					newState.rect.right = SCALE( fX, 0.0f, 1.0f, r.left, r.right );
-					newState.rect.bottom = SCALE( fY, 0.0f, 1.0f, r.top, r.bottom );
+					newState.rect.right = scale( fX, 0.0f, 1.0f, r.left, r.right );
+					newState.rect.bottom = scale( fY, 0.0f, 1.0f, r.top, r.bottom );
 				}
 
 				aStates.push_back( newState );
@@ -499,16 +500,16 @@ void Sprite::DrawTexture( const TweenState *state )
 	 * of the image area aren't guaranteed to be initialized. */
 	/* HACK: Clamp the crop values. It would be more accurate to clip the
 	 * vertices so that the diffuse value is adjusted. */
-	CLAMP( crop.left, 0, 1 );
-	CLAMP( crop.right, 0, 1 );
-	CLAMP( crop.top, 0, 1 );
-	CLAMP( crop.bottom, 0, 1 );
+	crop.left = clamp( crop.left, 0.f, 1.f );
+	crop.right = clamp( crop.right, 0.f, 1.f );
+	crop.top = clamp( crop.top, 0.f, 1.f );
+	crop.bottom = clamp( crop.bottom, 0.f, 1.f );
 
 	RectF croppedQuadVerticies = quadVerticies;
 #define IF_CROP_POS(side,opp_side) \
 	if(state->crop.side!=0) \
 		croppedQuadVerticies.side = \
-			SCALE( crop.side, 0.f, 1.f, quadVerticies.side, quadVerticies.opp_side )
+			scale( crop.side, 0.f, 1.f, quadVerticies.side, quadVerticies.opp_side )
 	IF_CROP_POS( left, right );
 	IF_CROP_POS( top, bottom );
 	IF_CROP_POS( right, left );
@@ -554,13 +555,13 @@ void Sprite::DrawTexture( const TweenState *state )
 			{
 				RageSpriteVertex *pVert = &v[i];
 
-				float fTopX = SCALE( pVert->p.x, quadVerticies.left, quadVerticies.right, texCoords[0].x, texCoords[3].x );
-				float fBottomX = SCALE( pVert->p.x, quadVerticies.left, quadVerticies.right, texCoords[1].x, texCoords[2].x );
-				pVert->t.x = SCALE( pVert->p.y, quadVerticies.top, quadVerticies.bottom, fTopX, fBottomX );
+				float fTopX = scale( pVert->p.x, quadVerticies.left, quadVerticies.right, texCoords[0].x, texCoords[3].x );
+				float fBottomX = scale( pVert->p.x, quadVerticies.left, quadVerticies.right, texCoords[1].x, texCoords[2].x );
+				pVert->t.x = scale( pVert->p.y, quadVerticies.top, quadVerticies.bottom, fTopX, fBottomX );
 
-				float fLeftY = SCALE( pVert->p.y, quadVerticies.top, quadVerticies.bottom, texCoords[0].y, texCoords[1].y );
-				float fRightY = SCALE( pVert->p.y, quadVerticies.top, quadVerticies.bottom, texCoords[3].y, texCoords[2].y );
-				pVert->t.y = SCALE( pVert->p.x, quadVerticies.left, quadVerticies.right, fLeftY, fRightY );
+				float fLeftY = scale( pVert->p.y, quadVerticies.top, quadVerticies.bottom, texCoords[0].y, texCoords[1].y );
+				float fRightY = scale( pVert->p.y, quadVerticies.top, quadVerticies.bottom, texCoords[3].y, texCoords[2].y );
+				pVert->t.y = scale( pVert->p.x, quadVerticies.left, quadVerticies.right, fLeftY, fRightY );
 			}
 		}
 		else
@@ -654,10 +655,10 @@ void Sprite::DrawPrimitives()
 		}
 
 		// Alpha value of the un-faded side of each fade rect:
-		const float RightAlpha  = SCALE( FadeSize.right,  FadeDist.right,  0, 1, 0 );
-		const float LeftAlpha   = SCALE( FadeSize.left,   FadeDist.left,   0, 1, 0 );
-		const float TopAlpha    = SCALE( FadeSize.top,    FadeDist.top,    0, 1, 0 );
-		const float BottomAlpha = SCALE( FadeSize.bottom, FadeDist.bottom, 0, 1, 0 );
+		const float RightAlpha  = scale( FadeSize.right,  FadeDist.right,  0.f, 1.f, 0.f );
+		const float LeftAlpha   = scale( FadeSize.left,   FadeDist.left,   0.f, 1.f, 0.f );
+		const float TopAlpha    = scale( FadeSize.top,    FadeDist.top,    0.f, 1.f, 0.f );
+		const float BottomAlpha = scale( FadeSize.bottom, FadeDist.bottom, 0.f, 1.f, 0.f );
 
 		// Draw the inside:
 		TweenState ts = *m_pTempState;
@@ -788,7 +789,7 @@ void Sprite::SetState( size_t iNewState )
 		}
 	}
 
-	CLAMP(iNewState, 0, (int)m_States.size()-1);
+	iNewState = clamp(static_cast<int>(iNewState), 0, static_cast<int>(m_States.size())-1);
 	m_iCurState = iNewState;
 	m_fSecsIntoState = 0.0f;
 }
@@ -1185,10 +1186,10 @@ public:
 				// I have no idea why the points are from 0 to 1 and make it use only
 				// a portion of the state.  This is just copied from LoadFromNode.
 				// -Kyz
-				new_state.rect.left= SCALE(FArg(-1), 0.0f, 1.0f, r.left, r.right);
+				new_state.rect.left= scale(FArg(-1), 0.0f, 1.0f, r.left, r.right);
 				lua_pop(L, 1);
 				lua_rawgeti(L, -1, 2);
-				new_state.rect.top= SCALE(FArg(-1), 0.0f, 1.0f, r.top, r.bottom);
+				new_state.rect.top= scale(FArg(-1), 0.0f, 1.0f, r.top, r.bottom);
 				lua_pop(L, 1);
 			}
 			lua_pop(L, 1);
@@ -1199,10 +1200,10 @@ public:
 				// I have no idea why the points are from 0 to 1 and make it use only
 				// a portion of the state.  This is just copied from LoadFromNode.
 				// -Kyz
-				new_state.rect.right= SCALE(FArg(-1), 0.0f, 1.0f, r.left, r.right);
+				new_state.rect.right= scale(FArg(-1), 0.0f, 1.0f, r.left, r.right);
 				lua_pop(L, 1);
 				lua_rawgeti(L, -1, 2);
-				new_state.rect.bottom= SCALE(FArg(-1), 0.0f, 1.0f, r.top, r.bottom);
+				new_state.rect.bottom= scale(FArg(-1), 0.0f, 1.0f, r.top, r.bottom);
 				lua_pop(L, 1);
 			}
 			lua_pop(L, 1);

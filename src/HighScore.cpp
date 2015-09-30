@@ -1,5 +1,6 @@
 #include "global.h"
 #include "HighScore.h"
+#include "RageMath.hpp"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"

@@ -7,6 +7,7 @@
  */
 #include "global.h"
 #include "RageSoundReader_Resample_Good.h"
+#include "RageMath.hpp"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageMath.h"
@@ -648,7 +649,11 @@ RageSoundReader_Resample_Good::~RageSoundReader_Resample_Good()
 int RageSoundReader_Resample_Good::SetPosition( int iFrame )
 {
 	Reset();
-	iFrame = (int) SCALE( iFrame, 0, (int64_t) m_iSampleRate, 0, (int64_t) m_pSource->GetSampleRate() );
+	int64_t zero = 0;
+	int64_t frame = iFrame;
+	int64_t sampleRate = m_iSampleRate;
+	int64_t sourceRate = m_pSource->GetSampleRate();
+	iFrame = scale( frame, zero, sampleRate, zero, sourceRate );
 	return m_pSource->SetPosition( iFrame );
 }
 

@@ -1,5 +1,6 @@
 #include "global.h"
 #include "WorkoutGraph.h"
+#include "RageMath.hpp"
 #include "RageUtil.h"
 #include "ActorUtil.h"
 #include "Sprite.h"
@@ -71,12 +72,12 @@ void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 	int iBlocksHigh = MAX_METER;
 
 	const float fMaxWidth = 300;
-	float fTotalWidth = SCALE( iBlocksWide, 1.0f, 10.0f, 50.0f, fMaxWidth );
-	CLAMP( fTotalWidth, 50, fMaxWidth );
+	float fTotalWidth = scale( iBlocksWide + 0.f, 1.0f, 10.0f, 50.0f, fMaxWidth );
+	fTotalWidth = CLAMP( fTotalWidth, 50.f, fMaxWidth );
 
 	const float fMaxHeight = 130;
-	float fTotalHeight = SCALE( iBlocksHigh, 1.0f, 10.0f, 50.0f, fMaxHeight );
-	CLAMP( fTotalHeight, 50, fMaxHeight );
+	float fTotalHeight = scale( iBlocksHigh + 0.f, 1.0f, 10.0f, 50.0f, fMaxHeight );
+	fTotalHeight = clamp( fTotalHeight, 50.f, fMaxHeight );
 
 	float fBlockSize = std::min( fTotalWidth / iBlocksWide, fTotalHeight / iBlocksHigh );
 

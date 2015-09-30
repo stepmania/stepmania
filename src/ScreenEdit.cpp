@@ -2,6 +2,7 @@
 #include <utility>
 #include <float.h>
 #include "ScreenEdit.h"
+#include "RageMath.hpp"
 
 #include <array>
 #include <unordered_map>
@@ -3512,7 +3513,7 @@ void ScreenEdit::ScrollTo( float fDestinationBeat )
 {
 	using std::min;
 	using std::max;
-	CLAMP( fDestinationBeat, 0, GetMaximumBeatForMoving() );
+	fDestinationBeat = clamp( fDestinationBeat, 0.f, GetMaximumBeatForMoving() );
 
 	// Don't play the sound and do the hold note logic below if our position didn't change.
 	const float fOriginalBeat = GetAppropriatePosition().m_fSongBeat;

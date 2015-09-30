@@ -1,5 +1,6 @@
 #include "global.h"
 #include "CombinedLifeMeterTug.h"
+#include "RageMath.hpp"
 #include "ThemeManager.h"
 #include "GameState.h"
 #include "PrefsManager.h"
@@ -57,12 +58,12 @@ CombinedLifeMeterTug::CombinedLifeMeterTug()
 void CombinedLifeMeterTug::Update( float fDelta )
 {
 	float fPercentToShow = GAMESTATE->m_fTugLifePercentP1;
-	CLAMP( fPercentToShow, 0.f, 1.f );
+	fPercentToShow = clamp( fPercentToShow, 0.f, 1.f );
 
 	m_Stream[PLAYER_1].SetPercent( fPercentToShow );
 	m_Stream[PLAYER_2].SetPercent( 1-fPercentToShow );
 
-	float fSeparatorX = SCALE( fPercentToShow, 0.f, 1.f, -METER_WIDTH/2.f, +METER_WIDTH/2.f );
+	float fSeparatorX = scale( fPercentToShow, 0.f, 1.f, -METER_WIDTH/2.f, +METER_WIDTH/2.f );
 
 	m_sprSeparator->SetX( fSeparatorX );
 
@@ -125,7 +126,7 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, float fPercentToMove )
 
 		/* Clamp the life meter only for calculating the multiplier. */
 		fLifePercentage = clamp( fLifePercentage, 0.0f, 1.0f );
-		fPercentToMove *= SCALE( fLifePercentage, 0.f, 1.f, 0.2f, 1.f);
+		fPercentToMove *= scale( fLifePercentage, 0.f, 1.f, 0.2f, 1.f);
 	}
 
 	switch( pn )

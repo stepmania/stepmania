@@ -2,6 +2,7 @@
 
 #include "global.h"
 #include "RageSurfaceUtils_Palettize.h"
+#include "RageMath.hpp"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "RageUtil.h"

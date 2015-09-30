@@ -1,5 +1,6 @@
 #include "global.h"
 #include "MouseDevice.h"
+#include "RageMath.hpp"
 
 Mouse::Mouse() : id( InputDevice_Invalid ),
 				x_axis( 0 ), y_axis( 0 ), z_axis( 0 ),
@@ -114,7 +115,7 @@ void MouseDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementC
 	}
 	else if( m.z_axis == cookie )
 	{
-		float level = SCALE( value, m.z_min, m.z_max, -1.0f, 1.0f );
+		float level = scale( value + 0.f, m.z_min + 0.f, m.z_max + 0.f, -1.0f, 1.0f );
 		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELUP, max(-level,0.f), now) );
 		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELDOWN, max(+level,0.f), now) );
 	}

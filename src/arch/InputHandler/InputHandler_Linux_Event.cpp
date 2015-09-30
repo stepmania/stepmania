@@ -1,6 +1,6 @@
 #include "global.h"
 #include "InputHandler_Linux_Event.h"
-
+#include "RageMath.hpp"
 #include <array>
 
 #include "RageLog.h"
@@ -425,7 +425,7 @@ void InputHandler_Linux_Event::InputThread()
 				DeviceButton neg = g_apEventDevices[i]->aiAbsMappingLow[event.code];
 				DeviceButton pos = g_apEventDevices[i]->aiAbsMappingHigh[event.code];
 
-				float l = SCALE( int(event.value), (float) g_apEventDevices[i]->aiAbsMin[event.code], (float) g_apEventDevices[i]->aiAbsMax[event.code], -1.0f, 1.0f );
+				float l = scale( static_cast<float>(event.value), static_cast<float>(g_apEventDevices[i]->aiAbsMin[event.code]), static_cast<float>(g_apEventDevices[i]->aiAbsMax[event.code]), -1.0f, 1.0f );
 				if (GamePreferences::m_AxisFix)
 				{
 				  ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, neg, (l < -0.5)||((l > 0.0001)&&(l < 0.5)), now) ); //Up if between 0.0001 and 0.5 or if less than -0.5

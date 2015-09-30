@@ -1,5 +1,6 @@
 #include "global.h"
 #include "WheelBase.h"
+#include "RageMath.hpp"
 #include "RageUtil.h"
 #include "GameManager.h"
 #include "PrefsManager.h"

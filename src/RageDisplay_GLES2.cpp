@@ -2,6 +2,7 @@
 
 #include "RageDisplay.h"
 #include "RageDisplay_GLES2.h"
+#include "RageMath.hpp"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageTimer.h"
@@ -703,8 +704,8 @@ RageDisplay_GLES2::SetZWrite( bool b )
 void
 RageDisplay_GLES2::SetZBias( float f )
 {
-	float fNear = SCALE( f, 0.0f, 1.0f, 0.05f, 0.0f );
-	float fFar = SCALE( f, 0.0f, 1.0f, 1.0f, 0.95f );
+	float fNear = scale( f, 0.0f, 1.0f, 0.05f, 0.0f );
+	float fFar = scale( f, 0.0f, 1.0f, 1.0f, 0.95f );
 
 	glDepthRange( fNear, fFar );
 }

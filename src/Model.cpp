@@ -1,5 +1,6 @@
 #include "global.h"
 #include "Model.h"
+#include "RageMath.hpp"
 #include "ModelTypes.h"
 #include "RageMath.h"
 #include "RageDisplay.h"
@@ -629,7 +630,7 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 		RageVector3 vPos;
 		if( pLastPositionKey != nullptr && pThisPositionKey != nullptr )
 		{
-			const float s = SCALE( fFrame, pLastPositionKey->fTime, pThisPositionKey->fTime, 0, 1 );
+			const float s = scale( fFrame, pLastPositionKey->fTime, pThisPositionKey->fTime, 0.f, 1.f );
 			vPos = pLastPositionKey->Position + (pThisPositionKey->Position - pLastPositionKey->Position) * s;
 		}
 		else if( pLastPositionKey == nullptr )
@@ -653,7 +654,7 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 		RageVector4 vRot;
 		if( pLastRotationKey != nullptr && pThisRotationKey != nullptr )
 		{
-			const float s = SCALE( fFrame, pLastRotationKey->fTime, pThisRotationKey->fTime, 0, 1 );
+			const float s = scale( fFrame, pLastRotationKey->fTime, pThisRotationKey->fTime, 0.f, 1.f );
 			RageQuatSlerp( &vRot, pLastRotationKey->Rotation, pThisRotationKey->Rotation, s );
 		}
 		else if( pLastRotationKey == nullptr )

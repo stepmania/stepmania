@@ -1,5 +1,6 @@
 #include "global.h"
 #include "PlayerStageStats.h"
+#include "RageMath.hpp"
 #include "RageLog.h"
 #include "ThemeManager.h"
 #include "LuaManager.h"
@@ -467,14 +468,14 @@ float PlayerStageStats::GetLifeRecordLerpAt( float fStepsSecond ) const
 		return earlier->second;
 
 	// earlier <= pos <= later
-	return SCALE( fStepsSecond, earlier->first, later->first, earlier->second, later->second );
+	return scale( fStepsSecond, earlier->first, later->first, earlier->second, later->second );
 }
 
 void PlayerStageStats::GetLifeRecord( float *fLifeOut, int iNumSamples, float fStepsEndSecond ) const
 {
 	for( int i = 0; i < iNumSamples; ++i )
 	{
-		float from = SCALE( i, 0, (float)iNumSamples, 0.0f, fStepsEndSecond );
+		float from = scale( i + 0.f, 0.f, iNumSamples + 0.f, 0.0f, fStepsEndSecond );
 		fLifeOut[i] = GetLifeRecordLerpAt( from );
 	}
 }
@@ -848,7 +849,7 @@ public:
 		for(int i= 0; i < samples; ++i)
 		{
 			// The scale from range is [0, samples-1] because that is i's range.
-			float from= SCALE(i, 0, (float)samples-1.0f, 0.0f, last_second);
+			float from= scale(i + 0.f, 0.f, samples-1.0f, 0.0f, last_second);
 			float curr= p->GetLifeRecordLerpAt(from);
 			lua_pushnumber(L, curr);
 			lua_rawseti(L, -2, i+1);

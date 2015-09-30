@@ -1,6 +1,7 @@
 #include "global.h"
 
 #include "RageDisplay_OGL.h"
+#include "RageMath.hpp"
 #include "RageDisplay_OGL_Helpers.h"
 using namespace RageDisplay_Legacy_Helpers;
 
@@ -1845,8 +1846,8 @@ void RageDisplay_Legacy::SetZWrite( bool b )
 
 void RageDisplay_Legacy::SetZBias( float f )
 {
-	float fNear = SCALE( f, 0.0f, 1.0f, 0.05f, 0.0f );
-	float fFar = SCALE( f, 0.0f, 1.0f, 1.0f, 0.95f );
+	float fNear = scale( f, 0.0f, 1.0f, 0.05f, 0.0f );
+	float fFar = scale( f, 0.0f, 1.0f, 1.0f, 0.95f );
 
 	glDepthRange( fNear, fFar );
 }
@@ -2065,12 +2066,15 @@ void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfac
 	GLushort buf[4][256];
 	memset( buf, 0, sizeof(buf) );
 
+	uint8_t zero = 0;
+	uint8_t twoFiftyFive = 255;
+	uint8_t twoFiftyFiveSquared = 65535;
 	for( int i = 0; i < palette->ncolors; ++i )
 	{
-		buf[0][i] = SCALE( palette->colors[i].r, 0, 255, 0, 65535 );
-		buf[1][i] = SCALE( palette->colors[i].g, 0, 255, 0, 65535 );
-		buf[2][i] = SCALE( palette->colors[i].b, 0, 255, 0, 65535 );
-		buf[3][i] = SCALE( palette->colors[i].a, 0, 255, 0, 65535 );
+		buf[0][i] = scale( palette->colors[i].r, zero, twoFiftyFive, zero, twoFiftyFiveSquared );
+		buf[1][i] = scale( palette->colors[i].g, zero, twoFiftyFive, zero, twoFiftyFiveSquared );
+		buf[2][i] = scale( palette->colors[i].b, zero, twoFiftyFive, zero, twoFiftyFiveSquared );
+		buf[3][i] = scale( palette->colors[i].a, zero, twoFiftyFive, zero, twoFiftyFiveSquared );
 	}
 
 	DebugFlushGLErrors();

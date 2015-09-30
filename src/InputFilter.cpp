@@ -478,6 +478,7 @@ void InputFilter::UpdateMouseWheel(float _fZ)
 
 // lua start
 #include "LuaBinding.h"
+#include "RageMath.hpp"
 
 /** @brief Allow Lua to have access to InputFilter. */
 class LunaInputFilter: public Luna<InputFilter>
@@ -488,14 +489,14 @@ public:
 	static int GetMouseX( T* p, lua_State *L ){
 		float fX = p->GetCursorX();
 		// Scale input to the theme's dimensions
-		fX = SCALE( fX, 0, (PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio), SCREEN_LEFT, SCREEN_RIGHT );
+		fX = scale( fX, 0.f, (PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio), SCREEN_LEFT + 0.f, SCREEN_RIGHT + 0.f );
 		lua_pushnumber( L, fX );
 		return 1;
 	}
 	static int GetMouseY( T* p, lua_State *L ){
 		float fY = p->GetCursorY();
 		// Scale input to the theme's dimensions
-		fY = SCALE( fY, 0, PREFSMAN->m_iDisplayHeight, SCREEN_TOP, SCREEN_BOTTOM );
+		fY = scale( fY, 0.f, PREFSMAN->m_iDisplayHeight + 0.f, SCREEN_TOP + 0.f, SCREEN_BOTTOM + 0.f );
 		lua_pushnumber( L, fY );
 		return 1;
 	}

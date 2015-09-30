@@ -1,5 +1,6 @@
 #include "global.h"
 #include "CubicSpline.h"
+#include "RageMath.hpp"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include <list>
@@ -567,7 +568,7 @@ void CubicSplineN::weighted_average(CubicSplineN& out,
 		out_size= to_size + static_cast<size_t>(
 			static_cast<float>(from_size - to_size) * between);
 	}
-	CLAMP(out_size, 0, limit);
+	out_size = clamp(out_size, static_cast<size_t>(0), limit);
 	out.resize(out_size);
 
 	for(size_t spli= 0; spli < out.m_splines.size(); ++spli)

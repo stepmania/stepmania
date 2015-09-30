@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ScreenNameEntry.h"
+#include "RageMath.hpp"
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
 #include "PrefsManager.h"
@@ -75,11 +76,11 @@ void ScreenNameEntry::ScrollingText::DrawPrimitives()
 		float fAlpha = 1.f;
 
 		if( iCharIndex == iClosestIndex )
-			fZoom = SCALE( fabs(fClosestYOffset), 0, 0.5f, g_fCharsZoomLarge, g_fCharsZoomSmall );
+			fZoom = scale( static_cast<float>(fabs(fClosestYOffset)), 0.f, 0.5f, g_fCharsZoomLarge, g_fCharsZoomSmall );
 		if( i == 0 )
-			fAlpha *= SCALE( fClosestYOffset, -0.5f, 0.f, 0.f, 1.f );
+			fAlpha *= scale( fClosestYOffset, -0.5f, 0.f, 0.f, 1.f );
 		if( i == g_iNumCharsToDrawTotal-1 )
-			fAlpha *= SCALE( fClosestYOffset, 0.f, 0.5f, 1.f, 0.f );
+			fAlpha *= scale( fClosestYOffset, 0.f, 0.5f, 1.f, 0.f );
 
 		m_Stamp.SetZoom( fZoom );
 		m_Stamp.SetDiffuseAlpha( fAlpha );

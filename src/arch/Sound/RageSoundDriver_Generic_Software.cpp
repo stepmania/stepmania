@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageSoundDriver.h"
+#include "RageMath.hpp"
 
 #include "RageLog.h"
 #include "RageSound.h"

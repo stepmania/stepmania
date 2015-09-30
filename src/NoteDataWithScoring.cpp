@@ -1,5 +1,6 @@
 #include "global.h"
 #include "NoteDataWithScoring.h"
+#include "RageMath.hpp"
 #include "NoteData.h"
 #include "PlayerStageStats.h"
 #include "Game.h"
@@ -161,7 +162,7 @@ float GetActualVoltageRadarValue( const NoteData &in, float fSongSeconds, const 
 	 * length of the longest recorded combo. This is only subtly different:
 	 * it's the percent of the song the longest combo took to get. */
 	const PlayerStageStats::Combo_t MaxCombo = pss.GetMaxCombo();
-	float fComboPercent = SCALE(MaxCombo.m_fSizeSeconds, 0, fSongSeconds, 0.0f, 1.0f);
+	float fComboPercent = scale(MaxCombo.m_fSizeSeconds, 0.f, fSongSeconds, 0.0f, 1.0f);
 	return clamp( fComboPercent, 0.0f, 1.0f );
 }
 

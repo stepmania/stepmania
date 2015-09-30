@@ -1,5 +1,6 @@
 #include "global.h"
 #include "GameConstantsAndTypes.h"
+#include "RageMath.hpp"
 #include "GameState.h"
 #include "RageUtil.h"
 #include "ThemeMetric.h"

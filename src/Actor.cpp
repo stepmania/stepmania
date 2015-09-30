@@ -1,5 +1,6 @@
 #include "global.h"
 #include "Actor.h"
+#include "RageMath.hpp"
 #include "ActorFrame.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
@@ -447,8 +448,8 @@ void Actor::PreDraw() // calculate actor properties
 		const float rupathrdown_plus_atf= rupath_plus_rdown + m_effect_hold_at_full;
 		if(fTimeIntoEffect < m_effect_ramp_to_half)
 		{
-			fPercentThroughEffect = SCALE(fTimeIntoEffect,
-				0, m_effect_ramp_to_half, 0.0f, 0.5f);
+			fPercentThroughEffect = scale(fTimeIntoEffect,
+				0.f, m_effect_ramp_to_half, 0.0f, 0.5f);
 		}
 		else if(fTimeIntoEffect < rup_plus_ath)
 		{
@@ -456,7 +457,7 @@ void Actor::PreDraw() // calculate actor properties
 		}
 		else if(fTimeIntoEffect < rupath_plus_rdown)
 		{
-			fPercentThroughEffect = SCALE(fTimeIntoEffect,
+			fPercentThroughEffect = scale(fTimeIntoEffect,
 				rup_plus_ath, rupath_plus_rdown, 0.5f, 1.0f);
 		}
 		else if(fTimeIntoEffect < rupathrdown_plus_atf)
@@ -552,14 +553,12 @@ void Actor::PreDraw() // calculate actor properties
 				float fMinZoom = m_vEffectMagnitude.x;
 				float fMaxZoom = m_vEffectMagnitude.y;
 				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI );
-				float fZoom = SCALE( fPercentOffset, 0.f, 1.f, fMinZoom, fMaxZoom );
+				float fZoom = scale( fPercentOffset, 0.f, 1.f, fMinZoom, fMaxZoom );
 				tempState.scale *= fZoom;
 
-				// Use the color as a Vector3 to scale the effect for added control
-				RageColor c = SCALE( fPercentOffset, 0.f, 1.f, m_effectColor1, m_effectColor2 );
-				tempState.scale.x *= c.r;
-				tempState.scale.y *= c.g;
-				tempState.scale.z *= c.b;
+				tempState.scale.x *= scale( fPercentOffset, 0.f, 1.f, m_effectColor1.r, m_effectColor2.r );
+				tempState.scale.y *= scale( fPercentOffset, 0.f, 1.f, m_effectColor1.g, m_effectColor2.g );
+				tempState.scale.z *= scale( fPercentOffset, 0.f, 1.f, m_effectColor1.b, m_effectColor2.b );
 			}
 			break;
 		default:
@@ -650,8 +649,8 @@ void Actor::BeginDraw() // set the world matrix
 	// handle alignment; most actors have default alignment.
 	if( unlikely(m_fHorizAlign != 0.5f || m_fVertAlign != 0.5f) )
 	{
-		float fX = SCALE( m_fHorizAlign, 0.0f, 1.0f, +m_size.x/2.0f, -m_size.x/2.0f );
-		float fY = SCALE( m_fVertAlign, 0.0f, 1.0f, +m_size.y/2.0f, -m_size.y/2.0f );
+		float fX = scale( m_fHorizAlign, 0.0f, 1.0f, +m_size.x/2.0f, -m_size.x/2.0f );
+		float fY = scale( m_fVertAlign, 0.0f, 1.0f, +m_size.y/2.0f, -m_size.y/2.0f );
 		RageMatrix m;
 		RageMatrixTranslate(
 			&m,

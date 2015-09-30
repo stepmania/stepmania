@@ -1,6 +1,6 @@
 #include "global.h"
 #include "InputHandler_DirectInput.h"
-
+#include "RageMath.hpp"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "archutils/Win32/AppInstance.h"
@@ -359,7 +359,7 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 
 						if( neg != DeviceButton_Invalid )
 						{
-							float l = SCALE( int(val), 0.0f, 100.0f, 0.0f, 1.0f );
+							float l = scale( int(val) + 0.f, 0.0f, 100.0f, 0.0f, 1.0f );
 							ButtonPressed( DeviceInput(dev, neg, max(-l,0.f), tm) );
 							ButtonPressed( DeviceInput(dev, pos, max(+l,0.f), tm) );
 						}
@@ -539,7 +539,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 							{
 								up = MOUSE_WHEELUP; down = MOUSE_WHEELDOWN;
 								float fWheelDelta = l;
-								//l = SCALE( int(evtbuf[i].dwData), -WHEEL_DELTA, WHEEL_DELTA, 1.0f, -1.0f );
+								//l = scale( int(evtbuf[i].dwData) + 0.f, -WHEEL_DELTA, WHEEL_DELTA, 1.0f, -1.0f );
 								if( l > 0 )
 								{
 									DeviceInput diUp = DeviceInput(dev, up, 1.0f, tm);
@@ -592,7 +592,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 										 "Controller '%s' is returning an unknown joystick offset, %i",
 										 device.m_sName.c_str(), in.ofs );
 
-						float l = SCALE( int(evtbuf[i].dwData), 0.0f, 100.0f, 0.0f, 1.0f );
+						float l = scale( int(evtbuf[i].dwData) + 0.f, 0.0f, 100.0f, 0.0f, 1.0f );
 						if(GamePreferences::m_AxisFix)
 						{
 						  ButtonPressed( DeviceInput(dev, up, (l == 0) || (l == -1), tm) );

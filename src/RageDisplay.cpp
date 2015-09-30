@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageDisplay.h"
+#include "RageMath.hpp"
 #include "RageTimer.h"
 #include "RageLog.h"
 #include "RageMath.h"
@@ -561,13 +562,13 @@ void RageDisplay::LoadMenuPerspective( float fovDegrees, float fWidth, float fHe
 	}
 	else
 	{
-		CLAMP( fovDegrees, 0.1f, 179.9f );
+		fovDegrees = clamp( fovDegrees, 0.1f, 179.9f );
 		float fovRadians = fovDegrees / 180.f * PI;
 		float theta = fovRadians/2;
 		float fDistCameraFromImage = fWidth/2 / tanf( theta );
 
-		fVanishPointX = SCALE( fVanishPointX, 0, fWidth, fWidth, 0 );
-		fVanishPointY = SCALE( fVanishPointY, 0, fHeight, fHeight, 0 );
+		fVanishPointX = scale( fVanishPointX, 0.f, fWidth, fWidth, 0.f );
+		fVanishPointY = scale( fVanishPointY, 0.f, fHeight, fHeight, 0.f );
 
 		fVanishPointX -= fWidth/2;
 		fVanishPointY -= fHeight/2;
@@ -718,10 +719,10 @@ RageMatrix RageDisplay::GetCenteringMatrix( float fTranslateX, float fTranslateY
 	// in screen space, left edge = -1, right edge = 1, bottom edge = -1. top edge = 1
 	float fWidth = (float) GetActualVideoModeParams().width;
 	float fHeight = (float) GetActualVideoModeParams().height;
-	float fPercentShiftX = SCALE( fTranslateX, 0, fWidth, 0, +2.0f );
-	float fPercentShiftY = SCALE( fTranslateY, 0, fHeight, 0, -2.0f );
-	float fPercentScaleX = SCALE( fAddWidth, 0, fWidth, 1.0f, 2.0f );
-	float fPercentScaleY = SCALE( fAddHeight, 0, fHeight, 1.0f, 2.0f );
+	float fPercentShiftX = scale( fTranslateX, 0.f, fWidth, 0.f, +2.0f );
+	float fPercentShiftY = scale( fTranslateY, 0.f, fHeight, 0.f, -2.0f );
+	float fPercentScaleX = scale( fAddWidth, 0.f, fWidth, 1.0f, 2.0f );
+	float fPercentScaleY = scale( fAddHeight, 0.f, fHeight, 1.0f, 2.0f );
 
 	RageMatrix m1;
 	RageMatrix m2;

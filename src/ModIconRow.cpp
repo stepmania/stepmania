@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ModIconRow.h"
+#include "RageMath.hpp"
 
 #include <array>
 
@@ -50,7 +51,7 @@ void ModIconRow::Load( const RString &sMetricsGroup, PlayerNumber pn )
 	{
 		ModIcon *p = new ModIcon;
 		p->SetName( "ModIcon" );
-		float fOffset = SCALE( i, 0, NUM_OPTION_ICONS-1, -(NUM_OPTION_ICONS-1)/2.0f, (float)(NUM_OPTION_ICONS-1)/2.0f );
+		float fOffset = scale( i + 0.f, 0.f, NUM_OPTION_ICONS-1.f, -(NUM_OPTION_ICONS-1)/2.0f, (NUM_OPTION_ICONS-1)/2.0f );
 		p->SetXY( fOffset*SPACING_X, fOffset*SPACING_Y );
 		p->Load( OPTION_ICON_METRICS_GROUP );
 		ActorUtil::LoadAllCommands( p, sMetricsGroup );

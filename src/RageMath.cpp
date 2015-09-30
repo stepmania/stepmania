@@ -6,6 +6,7 @@
 
 #include "global.h"
 #include "RageLog.h"
+#include "RageMath.hpp"
 #include "RageMath.h"
 #include "RageTypes.h"
 #include <float.h>
@@ -612,7 +613,7 @@ float RageFastSin( float x )
 		bInited = true;
 		for( unsigned i=0; i < table.size(); i++ )
 		{
-			float z = SCALE(i, 0, table.size(), 0.0f, PI);
+			float z = scale(i + 0.f, 0.f, table.size() + 0.f, 0.0f, PI);
 			table[i] = sinf(z);
 		}
 	}
@@ -621,7 +622,7 @@ float RageFastSin( float x )
 	if( x == 0 )
 		return 0;
 
-	float fIndex = SCALE( x, 0.0f, PI*2, 0, table.size() * 2 );
+	float fIndex = scale( x, 0.0f, PI*2, 0.f, table.size() * 2.f );
 
 	// lerp using samples from the table
 	std::array<int, 2> iSampleIndex;
@@ -654,7 +655,7 @@ float RageFastSin( float x )
 		}
 	}
 
-	return SCALE( fRemainder, 0.0f, 1.0f, fValue[0], fValue[1] );
+	return scale( fRemainder, 0.0f, 1.0f, fValue[0], fValue[1] );
 }
 
 float RageFastCos( float x )
@@ -710,7 +711,7 @@ float RageBezier2D::EvaluateYFromX( float fX ) const
 	/* Quickly approximate T using Newton-Raphelson successive optimization (see
 	 * http://www.tinaja.com/text/bezmath.html).  This usually finds T within an
 	 * acceptable error margin in a few steps. */
-	float fT = SCALE( fX, m_X.GetBezierStart(), m_X.GetBezierEnd(), 0, 1 );
+	float fT = scale( fX, m_X.GetBezierStart(), m_X.GetBezierEnd(), 0.f, 1.f );
 	// Don't try more than 100 times, the curve might be a bit nonsensical. -Kyz
 	for(int i= 0; i < 100; ++i)
 	{

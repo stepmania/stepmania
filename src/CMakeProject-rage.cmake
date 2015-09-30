@@ -5,6 +5,7 @@ list(APPEND RAGE_SRC
 )
 
 list(APPEND RAGE_HPP
+  "${SM_SRC_DIR}/rage/RageMath.hpp"
   "${SM_SRC_DIR}/rage/RageVector2.hpp"
   "${SM_SRC_DIR}/rage/RageVector3.hpp"
   "${SM_SRC_DIR}/rage/RageVector4.hpp"

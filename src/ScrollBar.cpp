@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ScrollBar.h"
+#include "RageMath.hpp"
 #include "ThemeManager.h"
 #include "RageUtil.h"
 
@@ -53,7 +54,7 @@ void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
 
 	/* Set tick thumb */
 	{
-		float fY = SCALE( fCenterPercent, 0.0f, 1.0f, -iBarContentHeight/2.0f, iBarContentHeight/2.0f );
+		float fY = scale( fCenterPercent, 0.0f, 1.0f, -iBarContentHeight/2.0f, iBarContentHeight/2.0f );
 		fY = roundf( fY );
 		m_sprScrollTickThumb->SetY( fY );
 	}
@@ -71,17 +72,17 @@ void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
 
 	if( fStartPercent < fEndPercent )	// we only need to one 1 stretch thumb part
 	{
-		fPartTopY[0]	= SCALE( fStartPercent,0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
-		fPartBottomY[0]	= SCALE( fEndPercent,  0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
+		fPartTopY[0]	= scale( fStartPercent,0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
+		fPartBottomY[0]	= scale( fEndPercent,  0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
 		fPartTopY[1]	= 0;
 		fPartBottomY[1]	= 0;
 	}
 	else	// we need two stretch thumb parts
 	{
-		fPartTopY[0]	= SCALE( 0.0f,		0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
-		fPartBottomY[0]	= SCALE( fEndPercent,	0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
-		fPartTopY[1]	= SCALE( fStartPercent,	0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
-		fPartBottomY[1]	= SCALE( 1.0f,		0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
+		fPartTopY[0]	= scale( 0.0f,		0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
+		fPartBottomY[0]	= scale( fEndPercent,	0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
+		fPartTopY[1]	= scale( fStartPercent,	0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
+		fPartBottomY[1]	= scale( 1.0f,		0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f );
 	}
 
 	for( unsigned i = 0; i < m_sprScrollStretchThumb.size(); ++i )

@@ -6,6 +6,7 @@
 
 #include "global.h"
 #include "NoteData.h"
+#include "RageMath.hpp"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "XmlFile.h"

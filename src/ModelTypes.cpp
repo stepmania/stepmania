@@ -143,7 +143,7 @@ int AnimatedTexture::GetNumStates() const
 
 void AnimatedTexture::SetState( int iState )
 {
-	CLAMP( iState, 0, GetNumStates()-1 );
+	iState = clamp( iState, 0, GetNumStates()-1 );
 	m_iCurState = iState;
 }
 

@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageSoundMixBuffer.h"
+#include "RageMath.hpp"
 #include "RageUtil.h"
 
 #if defined(MACOSX)

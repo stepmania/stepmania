@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageTypes.h"
+#include "RageMath.hpp"
 #include "LuaManager.h"
 
 void RageColor::PushTable( lua_State *L ) const

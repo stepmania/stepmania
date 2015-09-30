@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ScreenSelectMaster.h"
+#include "RageMath.hpp"
 #include "ScreenManager.h"
 #include "GameManager.h"
 #include "ThemeManager.h"
@@ -340,7 +341,7 @@ void ScreenSelectMaster::BeginScreen()
 	FOREACH_PlayerNumber( p )
 	{
 		m_iChoice[p] = (iDefaultChoice!=-1) ? iDefaultChoice : 0;
-		CLAMP( m_iChoice[p], 0, (int)m_aGameCommands.size()-1 );
+		m_iChoice[p] = clamp( m_iChoice[p], 0, (int)m_aGameCommands.size()-1 );
 		m_bChosen[p] = false;
 		m_bDoubleChoice[p] = false;
 	}

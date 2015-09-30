@@ -14,6 +14,7 @@
 
 #include "MovieTexture_DShowHelper.h"
 #include "MovieTexture_DShow.h"
+#include "RageMath.hpp"
 
 /* for TEXTUREMAN->GetTextureColorDepth() */
 #include "RageTextureManager.h"

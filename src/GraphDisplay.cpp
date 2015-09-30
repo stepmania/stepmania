@@ -1,5 +1,6 @@
 #include "global.h"
 #include "GraphDisplay.h"
+#include "RageMath.hpp"
 #include "ThemeManager.h"
 #include "RageTextureManager.h"
 #include "RageDisplay.h"
@@ -172,8 +173,10 @@ void GraphDisplay::Set( const StageStats &ss, const PlayerStageStats &pss )
 
 	m_Values.resize( VALUE_RESOLUTION );
 	pss.GetLifeRecord( &m_Values[0], VALUE_RESOLUTION, ss.GetTotalPossibleStepsSeconds() );
-	for( unsigned i=0; i<ARRAYLEN(m_Values); i++ )
-		CLAMP( m_Values[i], 0.f, 1.f );
+    for (auto &value: m_Values)
+    {
+        value = clamp( value, 0.f, 1.f );
+    }
 
 	UpdateVerts();
 
@@ -188,7 +191,7 @@ void GraphDisplay::Set( const StageStats &ss, const PlayerStageStats &pss )
 
 		Actor *p = m_sprSongBoundary->Copy();
 		m_vpSongBoundaries.push_back( p );
-		float fX = SCALE( fSec, 0, fTotalStepSeconds, m_quadVertices.left, m_quadVertices.right );
+		float fX = scale( fSec, 0.f, fTotalStepSeconds, m_quadVertices.left, m_quadVertices.right );
 		p->SetX( fX );
 		this->AddChild( p );
 	}
@@ -211,7 +214,7 @@ void GraphDisplay::Set( const StageStats &ss, const PlayerStageStats &pss )
 
 		if( fMinLifeSoFar > 0.0f  &&  fMinLifeSoFar < 0.1f )
 		{
-			float fX = SCALE( float(iMinLifeSoFarAt), 0.0f, float(VALUE_RESOLUTION-1), m_quadVertices.left, m_quadVertices.right );
+			float fX = scale( float(iMinLifeSoFarAt), 0.0f, float(VALUE_RESOLUTION-1), m_quadVertices.left, m_quadVertices.right );
 			m_sprBarely->SetX( fX );
 		}
 		else
@@ -255,16 +258,16 @@ void GraphDisplay::UpdateVerts()
 	RageSpriteVertex LineStrip[VALUE_RESOLUTION];
 	for( int i = 0; i < VALUE_RESOLUTION; ++i )
 	{
-		const float fX = SCALE( float(i), 0.0f, float(VALUE_RESOLUTION-1), m_quadVertices.left, m_quadVertices.right );
-		const float fY = SCALE( m_Values[i], 0.0f, 1.0f, m_quadVertices.bottom, m_quadVertices.top );
+		const float fX = scale( float(i), 0.0f, float(VALUE_RESOLUTION-1), m_quadVertices.left, m_quadVertices.right );
+		const float fY = scale( m_Values[i], 0.0f, 1.0f, m_quadVertices.bottom, m_quadVertices.top );
 
 		m_pGraphBody->m_Slices[i*2+0].p = RageVector3( fX, fY, 0 );
 		m_pGraphBody->m_Slices[i*2+1].p = RageVector3( fX, m_quadVertices.bottom, 0 );
 
 		const RectF *pRect = m_pGraphBody->m_pTexture->GetTextureCoordRect( 0 );
 
-		const float fU = SCALE( fX, m_quadVertices.left, m_quadVertices.right, pRect->left, pRect->right );
-		const float fV = SCALE( fY, m_quadVertices.top, m_quadVertices.bottom, pRect->top, pRect->bottom );
+		const float fU = scale( fX, m_quadVertices.left, m_quadVertices.right, pRect->left, pRect->right );
+		const float fV = scale( fY, m_quadVertices.top, m_quadVertices.bottom, pRect->top, pRect->bottom );
 		m_pGraphBody->m_Slices[i*2+0].t = RageVector2( fU, fV );
 		m_pGraphBody->m_Slices[i*2+1].t = RageVector2( fU, pRect->bottom );
 

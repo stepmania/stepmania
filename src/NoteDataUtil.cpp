@@ -550,7 +550,7 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 				iCurTrackOffset += bOffsetIncreasing ? 1 : -1;
 				if( iCurTrackOffset == iTrackOffsetMin  ||  iCurTrackOffset == iTrackOffsetMax )
 					bOffsetIncreasing ^= true;
-				CLAMP( iCurTrackOffset, iTrackOffsetMin, iTrackOffsetMax );
+				iCurTrackOffset = clamp( iCurTrackOffset, iTrackOffsetMin, iTrackOffsetMax );
 			}
 		}
 
@@ -2027,13 +2027,13 @@ void NoteDataUtil::Wide( NoteData &inout, int iStartIndex, int iEndIndex )
 		int iBeat = lrintf( NoteRowToBeat(i) );
 		int iTrackOfNote = inout.GetFirstTrackWithTap(i);
 		int iTrackToAdd = iTrackOfNote + (iBeat%5)-2;	// won't be more than 2 tracks away from the existing note
-		CLAMP( iTrackToAdd, 0, inout.GetNumTracks()-1 );
+		iTrackToAdd = clamp( iTrackToAdd, 0, inout.GetNumTracks()-1 );
 		if( iTrackToAdd == iTrackOfNote )
 			iTrackToAdd++;
-		CLAMP( iTrackToAdd, 0, inout.GetNumTracks()-1 );
+		iTrackToAdd = clamp( iTrackToAdd, 0, inout.GetNumTracks()-1 );
 		if( iTrackToAdd == iTrackOfNote )
 			iTrackToAdd--;
-		CLAMP( iTrackToAdd, 0, inout.GetNumTracks()-1 );
+		iTrackToAdd = clamp( iTrackToAdd, 0, inout.GetNumTracks()-1 );
 
 		if( inout.GetTapNote(iTrackToAdd, i).type != TapNoteType_Empty  &&  inout.GetTapNote(iTrackToAdd, i).type != TapNoteType_Fake )
 		{

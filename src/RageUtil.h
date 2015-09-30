@@ -6,6 +6,9 @@
 #include <map>
 #include <vector>
 #include <sstream>
+
+#include "RageMath.hpp"
+
 class RageFileDriver;
 
 /** @brief Safely delete pointers. */
@@ -20,29 +23,8 @@ class RageFileDriver;
 /** @brief Get the length of the array. */
 #define ARRAYLEN(a) (sizeof(a) / sizeof((a)[0]))
 
-/** @brief If outside the range from low to high, bring it within range. */
-template<typename T>
-T clamp( T val, T low, T high)
-{
-    return std::max(low, std::min(val, high));
-}
-
-/**
- * @brief Scales x so that l1 corresponds to l2 and h1 corresponds to h2.
- *
- * This does not modify x, so it MUST assign the result to something!
- * Do the multiply before the divide to that integer scales have more precision.
- *
- * One such example: SCALE(x, 0, 1, L, H); interpolate between L and H.
- */
-#define SCALE(x, l1, h1, l2, h2)	(((x) - (l1)) * ((h2) - (l2)) / ((h1) - (l1)) + (l2))
-
-template<typename T, typename U>
-inline U lerp( T x, U l, U h )
-{
-	return U((h - l) * x + l);
-}
-
+// TODO: Rename this to TryClamp or something a little more accurate
+// so as to not be confusing.
 template<typename T, typename U, typename V>
 inline bool CLAMP(T& x, U l, V h)
 {
@@ -270,7 +252,7 @@ inline float RandomFloat()
  */
 inline float RandomFloat( float fLow, float fHigh )
 {
-	return SCALE( RandomFloat(), 0.0f, 1.0f, fLow, fHigh );
+	return scale( RandomFloat(), 0.0f, 1.0f, fLow, fHigh );
 }
 
 // Returns an integer between nLow and nHigh inclusive

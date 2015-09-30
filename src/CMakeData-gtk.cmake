@@ -29,6 +29,7 @@ set_property(TARGET "GtkModule" PROPERTY FOLDER "Internal Libraries")
 list(APPEND SM_GTK_INCLUDE_DIRS
   "${SM_SRC_DIR}"
   "${SM_SRC_DIR}/generated"
+  "${SM_SRC_DIR}/rage"
   "${SM_SRC_DIR}/arch/LoadingWindow"
   "${GTK2_INCLUDE_DIRS}"
 )
@@ -36,3 +37,10 @@ list(APPEND SM_GTK_INCLUDE_DIRS
 sm_add_compile_definition("GtkModule" CMAKE_POWERED)
 
 target_include_directories("GtkModule" PUBLIC ${SM_GTK_INCLUDE_DIRS})
+
+list(APPEND SM_GTK_LINK_LIB
+  "rage"
+)
+
+target_link_libraries("GtkModule" ${SM_GTK_LINK_LIB})
+
