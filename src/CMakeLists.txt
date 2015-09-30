@@ -224,6 +224,9 @@ set_target_properties("${SM_EXE_NAME}" PROPERTIES
   RELWITHDEBINFO_OUTPUT_NAME "${SM_NAME_RELWITHDEBINFO}"
 )
 
+# Required for usage of tomcrypt and tommath.
+sm_add_compile_definition("${SM_EXE_NAME}" LTM_DESC)
+
 if (WITH_VERSION_INFO)
   sm_add_compile_definition("${SM_EXE_NAME}" HAVE_VERSION_INFO)
 endif()
@@ -651,8 +654,8 @@ list(APPEND SM_INCLUDE_DIRS
   "${SM_SRC_DIR}/generated"
   "${SM_SRC_DIR}/rage"
   "${SM_EXTERN_DIR}/vorbis"
-  "${SM_EXTERN_DIR}/libtommath"
-  "${SM_EXTERN_DIR}/libtomcrypt/src/headers"
+  "${SM_EXTERN_DIR}/tommath"
+  "${SM_EXTERN_DIR}/tomcrypt/src/headers"
   "${SM_EXTERN_DIR}/cppformat"
 )
 if(NOT APPLE)

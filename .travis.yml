@@ -65,6 +65,8 @@ before_install:
     # Set up valid submodules.
     - git submodule init
     - git submodule update extern/cppformat
+    - git submodule update extern/tommath
+    - git submodule update extern/tomcrypt
     - git submodule update extern/googletest
     - if [[ "${WITH_FFMPEG}" == "ON" ]]; then git submodule update extern/ffmpeg-git; fi
 
