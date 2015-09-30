@@ -1569,7 +1569,7 @@ ProfileLoadResult Profile::LoadEditableDataFromDir( RString sDir )
 	m_sDisplayName = WStringToRString(wstr);
 	// TODO: strip invalid chars?
 	if( m_iWeightPounds != 0 )
-		m_iWeightPounds = clamp( m_iWeightPounds, 20, 1000 );
+		m_iWeightPounds = Rage::clamp( m_iWeightPounds, 20, 1000 );
 
 	return ProfileLoadResult_Success;
 }

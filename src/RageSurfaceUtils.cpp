@@ -401,16 +401,16 @@ void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst,
 		uint8_t *dstp = (uint8_t *) dst->pixels + (y * dst->pitch); /* line */
 		uint8_t *dstpx = dstp; // pixel
 
-		const float start_y = scale(float(y), 0.f, float(dst->h), Coords[TL_Y], Coords[BL_Y]);
-		const float end_y = scale(float(y), 0.f, float(dst->h), Coords[TR_Y], Coords[BR_Y]);
+		const float start_y = Rage::scale(float(y), 0.f, float(dst->h), Coords[TL_Y], Coords[BL_Y]);
+		const float end_y = Rage::scale(float(y), 0.f, float(dst->h), Coords[TR_Y], Coords[BR_Y]);
 
-		const float start_x = scale(float(y), 0.f, float(dst->h), Coords[TL_X], Coords[BL_X]);
-		const float end_x = scale(float(y), 0.f, float(dst->h), Coords[TR_X], Coords[BR_X]);
+		const float start_x = Rage::scale(float(y), 0.f, float(dst->h), Coords[TL_X], Coords[BL_X]);
+		const float end_x = Rage::scale(float(y), 0.f, float(dst->h), Coords[TR_X], Coords[BR_X]);
 
 		for( int x = 0; x < dst->w; ++x )
 		{
-			const float src_xp = scale(float(x), 0.f, float(dst->w), start_x, end_x);
-			const float src_yp = scale(float(x), 0.f, float(dst->w), start_y, end_y);
+			const float src_xp = Rage::scale(float(x), 0.f, float(dst->w), start_x, end_x);
+			const float src_yp = Rage::scale(float(x), 0.f, float(dst->w), start_y, end_y);
 
 			/* If the surface is two pixels wide, src_xp is 0..2.  .5 indicates
 			 * pixel[0]; 1 indicates 50% pixel[0], 50% pixel[1]; 1.5 indicates
@@ -424,10 +424,10 @@ void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst,
 			src_y[1] = src_y[0] + 1;
 
 			// Emulate GL_REPEAT.
-			src_x[0] = clamp(src_x[0], 0, src->w);
-			src_x[1] = clamp(src_x[1], 0, src->w);
-			src_y[0] = clamp(src_y[0], 0, src->h);
-			src_y[1] = clamp(src_y[1], 0, src->h);
+			src_x[0] = Rage::clamp(src_x[0], 0, src->w);
+			src_x[1] = Rage::clamp(src_x[1], 0, src->w);
+			src_y[0] = Rage::clamp(src_y[0], 0, src->h);
+			src_y[1] = Rage::clamp(src_y[1], 0, src->h);
 
 			// Decode our four pixels.
 			uint8_t v[4][4];
@@ -449,7 +449,7 @@ void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst,
 				sum += v[1][i] * (1-weight_x) * (weight_y);
 				sum += v[2][i] * (weight_x)   * (1-weight_y);
 				sum += v[3][i] * (weight_x)   * (weight_y);
-				out[i] = (uint8_t) clamp( lrintf(sum), 0L, 255L );
+				out[i] = (uint8_t) Rage::clamp( lrintf(sum), 0L, 255L );
 			}
 
 			// If the source has no alpha, set the destination to opaque.
@@ -566,10 +566,10 @@ static bool blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *d
 			uint32_t zero = 0;
 			if( max_src_val > max_dst_val )
 				for( uint32_t i = 0; i <= max_src_val; ++i )
-					lookup[c][i] = (uint8_t) scale( i, zero, max_src_val+1, zero, max_dst_val+1 );
+					lookup[c][i] = (uint8_t) Rage::scale( i, zero, max_src_val+1, zero, max_dst_val+1 );
 			else
 				for( uint32_t i = 0; i <= max_src_val; ++i )
-					lookup[c][i] = (uint8_t) scale( i, zero, max_src_val, zero, max_dst_val );
+					lookup[c][i] = (uint8_t) Rage::scale( i, zero, max_src_val, zero, max_dst_val );
 		}
 	}
 
@@ -864,13 +864,13 @@ RageSurface *RageSurfaceUtils::PalettizeToGrayscale( const RageSurface *src_surf
 		if( Ivalues == 1 )
 			ScaledI = 255; // if only one intensity value, always fullbright
 		else
-			ScaledI = clamp( lrintf(I * (255.0f / (Ivalues-1))), 0L, 255L );
+			ScaledI = Rage::clamp( lrintf(I * (255.0f / (Ivalues-1))), 0L, 255L );
 
 		int ScaledA;
 		if( Avalues == 1 )
 			ScaledA = 255; // if only one alpha value, always opaque
 		else
-			ScaledA = clamp( lrintf(A * (255.0f / (Avalues-1))), 0L, 255L );
+			ScaledA = Rage::clamp( lrintf(A * (255.0f / (Avalues-1))), 0L, 255L );
 
 		RageSurfaceColor c;
 		c.r = uint8_t(ScaledI);

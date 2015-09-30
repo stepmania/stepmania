@@ -38,7 +38,7 @@ ActorFrame::ActorFrame()
 	m_ambientColor = RageColor(1,1,1,1);
 	m_diffuseColor = RageColor(1,1,1,1);
 	m_specularColor = RageColor(1,1,1,1);
-	m_lightDirection = RageVector3(0,0,1);
+	m_lightDirection = Rage::Vector3(0,0,1);
 }
 
 ActorFrame::~ActorFrame()
@@ -110,7 +110,7 @@ void ActorFrame::LoadFromNode( const XNode* pNode )
 	m_diffuseColor.FromString(sTemp2);
 	pNode->GetAttrValue( "SpecularColor", sTemp3 );
 	m_specularColor.FromString(sTemp3);
-	// Values need to be converted into a RageVector3, so more work needs to be done...
+	// Values need to be converted into a Rage::Vector3, so more work needs to be done...
 	//pNode->GetAttrValue( "LightDirection", m_lightDirection );
 }
 
@@ -717,7 +717,7 @@ public:
 		{
 			//error
 		}
-		RageVector3 vTmp = RageVector3( coords[0], coords[1], coords[2] );
+		Rage::Vector3 vTmp = Rage::Vector3( coords[0], coords[1], coords[2] );
 		p->SetLightDirection( vTmp );
 		COMMON_RETURN_SELF;
 	}

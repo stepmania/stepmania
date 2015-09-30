@@ -261,7 +261,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 			vector<RString>::const_iterator iter = find( m_vsLocalProfileID.begin(), m_vsLocalProfileID.end(), GAMESTATE->m_sEditLocalProfileID.Get() );
 			if( iter != m_vsLocalProfileID.end() )
 				iIndex = iter - m_vsLocalProfileID.begin();
-			iIndex = clamp( iIndex, 0, static_cast<int>(m_vsLocalProfileID.size())-1 );
+			iIndex = Rage::clamp( iIndex, 0, static_cast<int>(m_vsLocalProfileID.size())-1 );
 			GAMESTATE->m_sEditLocalProfileID.Set( m_vsLocalProfileID[iIndex] );
 
 			PROFILEMAN->DeleteLocalProfile( GetLocalProfileIDWithFocus() );

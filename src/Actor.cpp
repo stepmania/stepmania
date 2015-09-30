@@ -91,8 +91,8 @@ void Actor::InitState()
 
 	m_pTempState = nullptr;
 
-	m_baseRotation = RageVector3( 0, 0, 0 );
-	m_baseScale = RageVector3( 1, 1, 1 );
+	m_baseRotation = Rage::Vector3( 0, 0, 0 );
+	m_baseScale = Rage::Vector3( 1, 1, 1 );
 	m_fBaseAlpha = 1;
 	m_internalDiffuse = RageColor( 1, 1, 1, 1 );
 	m_internalGlow = RageColor( 0, 0, 0, 0 );
@@ -113,7 +113,7 @@ void Actor::InitState()
 	SetEffectPeriod(default_effect_period);
 	m_fEffectOffset = 0;
 	m_EffectClock = CLOCK_TIMER;
-	m_vEffectMagnitude = RageVector3(0,0,10);
+	m_vEffectMagnitude = Rage::Vector3(0,0,10);
 	m_effectColor1 = RageColor(1,1,1,1);
 	m_effectColor2 = RageColor(1,1,1,1);
 
@@ -127,7 +127,7 @@ void Actor::InitState()
 
 	m_bTextureWrapping = false;
 	m_bTextureFiltering = true;
-	m_texTranslate = RageVector2( 0, 0 );
+	m_texTranslate = Rage::Vector2( 0, 0 );
 
 	m_BlendMode = BLEND_NORMAL;
 	m_fZBias = 0;
@@ -162,7 +162,7 @@ Actor::Actor()
 		lua_pop( L, 1 );
 	LUA->Release( L );
 
-	m_size = RageVector2( 1, 1 );
+	m_size = Rage::Vector2( 1, 1 );
 	InitState();
 	m_pParent = nullptr;
 	m_FakeParent= nullptr;
@@ -448,7 +448,7 @@ void Actor::PreDraw() // calculate actor properties
 		const float rupathrdown_plus_atf= rupath_plus_rdown + m_effect_hold_at_full;
 		if(fTimeIntoEffect < m_effect_ramp_to_half)
 		{
-			fPercentThroughEffect = scale(fTimeIntoEffect,
+			fPercentThroughEffect = Rage::scale(fTimeIntoEffect,
 				0.f, m_effect_ramp_to_half, 0.0f, 0.5f);
 		}
 		else if(fTimeIntoEffect < rup_plus_ath)
@@ -457,7 +457,7 @@ void Actor::PreDraw() // calculate actor properties
 		}
 		else if(fTimeIntoEffect < rupath_plus_rdown)
 		{
-			fPercentThroughEffect = scale(fTimeIntoEffect,
+			fPercentThroughEffect = Rage::scale(fTimeIntoEffect,
 				rup_plus_ath, rupath_plus_rdown, 0.5f, 1.0f);
 		}
 		else if(fTimeIntoEffect < rupathrdown_plus_atf)
@@ -553,12 +553,12 @@ void Actor::PreDraw() // calculate actor properties
 				float fMinZoom = m_vEffectMagnitude.x;
 				float fMaxZoom = m_vEffectMagnitude.y;
 				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI );
-				float fZoom = scale( fPercentOffset, 0.f, 1.f, fMinZoom, fMaxZoom );
+				float fZoom = Rage::scale( fPercentOffset, 0.f, 1.f, fMinZoom, fMaxZoom );
 				tempState.scale *= fZoom;
 
-				tempState.scale.x *= scale( fPercentOffset, 0.f, 1.f, m_effectColor1.r, m_effectColor2.r );
-				tempState.scale.y *= scale( fPercentOffset, 0.f, 1.f, m_effectColor1.g, m_effectColor2.g );
-				tempState.scale.z *= scale( fPercentOffset, 0.f, 1.f, m_effectColor1.b, m_effectColor2.b );
+				tempState.scale.x *= Rage::scale( fPercentOffset, 0.f, 1.f, m_effectColor1.r, m_effectColor2.r );
+				tempState.scale.y *= Rage::scale( fPercentOffset, 0.f, 1.f, m_effectColor1.g, m_effectColor2.g );
+				tempState.scale.z *= Rage::scale( fPercentOffset, 0.f, 1.f, m_effectColor1.b, m_effectColor2.b );
 			}
 			break;
 		default:
@@ -649,8 +649,8 @@ void Actor::BeginDraw() // set the world matrix
 	// handle alignment; most actors have default alignment.
 	if( unlikely(m_fHorizAlign != 0.5f || m_fVertAlign != 0.5f) )
 	{
-		float fX = scale( m_fHorizAlign, 0.0f, 1.0f, +m_size.x/2.0f, -m_size.x/2.0f );
-		float fY = scale( m_fVertAlign, 0.0f, 1.0f, +m_size.y/2.0f, -m_size.y/2.0f );
+		float fX = Rage::scale( m_fHorizAlign, 0.0f, 1.0f, +m_size.x/2.0f, -m_size.x/2.0f );
+		float fY = Rage::scale( m_fVertAlign, 0.0f, 1.0f, +m_size.y/2.0f, -m_size.y/2.0f );
 		RageMatrix m;
 		RageMatrixTranslate(
 			&m,
@@ -1183,7 +1183,7 @@ void Actor::SetEffectRainbow( float fEffectPeriodSeconds )
 	SetEffectPeriod( fEffectPeriodSeconds );
 }
 
-void Actor::SetEffectWag( float fPeriod, RageVector3 vect )
+void Actor::SetEffectWag( float fPeriod, Rage::Vector3 vect )
 {
 	ASSERT( fPeriod > 0 );
 	// todo: account for SSC_FUTURES -aj
@@ -1192,7 +1192,7 @@ void Actor::SetEffectWag( float fPeriod, RageVector3 vect )
 	m_vEffectMagnitude = vect;
 }
 
-void Actor::SetEffectBounce( float fPeriod, RageVector3 vect )
+void Actor::SetEffectBounce( float fPeriod, Rage::Vector3 vect )
 {
 	ASSERT( fPeriod > 0 );
 	// todo: account for SSC_FUTURES -aj
@@ -1202,7 +1202,7 @@ void Actor::SetEffectBounce( float fPeriod, RageVector3 vect )
 	m_fSecsIntoEffect = 0;
 }
 
-void Actor::SetEffectBob( float fPeriod, RageVector3 vect )
+void Actor::SetEffectBob( float fPeriod, Rage::Vector3 vect )
 {
 	ASSERT( fPeriod > 0 );
 	// todo: account for SSC_FUTURES -aj
@@ -1215,14 +1215,14 @@ void Actor::SetEffectBob( float fPeriod, RageVector3 vect )
 	m_vEffectMagnitude = vect;
 }
 
-void Actor::SetEffectSpin( RageVector3 vect )
+void Actor::SetEffectSpin( Rage::Vector3 vect )
 {
 	// todo: account for SSC_FUTURES -aj
 	m_Effect = spin;
 	m_vEffectMagnitude = vect;
 }
 
-void Actor::SetEffectVibrate( RageVector3 vect )
+void Actor::SetEffectVibrate( Rage::Vector3 vect )
 {
 	// todo: account for SSC_FUTURES -aj
 	m_Effect = vibrate;
@@ -1341,10 +1341,10 @@ void Actor::SetDiffuseColor( RageColor c )
 
 void Actor::TweenState::Init()
 {
-	pos = RageVector3( 0, 0, 0 );
-	rotation = RageVector3( 0, 0, 0 );
-	quat = RageVector4( 0, 0, 0, 1 );
-	scale = RageVector3( 1, 1, 1 );
+	pos = Rage::Vector3( 0, 0, 0 );
+	rotation = Rage::Vector3( 0, 0, 0 );
+	quat = Rage::Vector4( 0, 0, 0, 1 );
+	scale = Rage::Vector3( 1, 1, 1 );
 	fSkewX = 0;
 	fSkewY = 0;
 	crop = RectF( 0,0,0,0 );
@@ -1376,28 +1376,28 @@ bool Actor::TweenState::operator==( const TweenState &other ) const
 
 void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween )
 {
-	average_out.pos		= lerp( fPercentBetween, ts1.pos,         ts2.pos );
-	average_out.scale	= lerp( fPercentBetween, ts1.scale,       ts2.scale );
-	average_out.rotation	= lerp( fPercentBetween, ts1.rotation,    ts2.rotation );
+  average_out.pos		= Rage::lerp( fPercentBetween, ts1.pos,         ts2.pos );
+  average_out.scale	= Rage::lerp( fPercentBetween, ts1.scale,       ts2.scale );
+  average_out.rotation	= Rage::lerp( fPercentBetween, ts1.rotation,    ts2.rotation );
 	RageQuatSlerp( &average_out.quat, ts1.quat, ts2.quat, fPercentBetween );
-	average_out.fSkewX	= lerp( fPercentBetween, ts1.fSkewX,      ts2.fSkewX );
-	average_out.fSkewY	= lerp( fPercentBetween, ts1.fSkewY,      ts2.fSkewY );
+	average_out.fSkewX	= Rage::lerp( fPercentBetween, ts1.fSkewX,      ts2.fSkewX );
+	average_out.fSkewY	= Rage::lerp( fPercentBetween, ts1.fSkewY,      ts2.fSkewY );
 
-	average_out.crop.left	= lerp( fPercentBetween, ts1.crop.left,   ts2.crop.left	);
-	average_out.crop.top	= lerp( fPercentBetween, ts1.crop.top,    ts2.crop.top );
-	average_out.crop.right	= lerp( fPercentBetween, ts1.crop.right,  ts2.crop.right );
-	average_out.crop.bottom	= lerp( fPercentBetween, ts1.crop.bottom, ts2.crop.bottom );
+	average_out.crop.left	= Rage::lerp( fPercentBetween, ts1.crop.left,   ts2.crop.left	);
+	average_out.crop.top	= Rage::lerp( fPercentBetween, ts1.crop.top,    ts2.crop.top );
+	average_out.crop.right	= Rage::lerp( fPercentBetween, ts1.crop.right,  ts2.crop.right );
+	average_out.crop.bottom	= Rage::lerp( fPercentBetween, ts1.crop.bottom, ts2.crop.bottom );
 
-	average_out.fade.left	= lerp( fPercentBetween, ts1.fade.left,   ts2.fade.left );
-	average_out.fade.top	= lerp( fPercentBetween, ts1.fade.top,    ts2.fade.top );
-	average_out.fade.right	= lerp( fPercentBetween, ts1.fade.right,  ts2.fade.right );
-	average_out.fade.bottom	= lerp( fPercentBetween, ts1.fade.bottom, ts2.fade.bottom );
+	average_out.fade.left	= Rage::lerp( fPercentBetween, ts1.fade.left,   ts2.fade.left );
+	average_out.fade.top	= Rage::lerp( fPercentBetween, ts1.fade.top,    ts2.fade.top );
+	average_out.fade.right	= Rage::lerp( fPercentBetween, ts1.fade.right,  ts2.fade.right );
+	average_out.fade.bottom	= Rage::lerp( fPercentBetween, ts1.fade.bottom, ts2.fade.bottom );
 
 	for( int i=0; i<NUM_DIFFUSE_COLORS; ++i )
-		average_out.diffuse[i] = lerp( fPercentBetween, ts1.diffuse[i], ts2.diffuse[i] );
+		average_out.diffuse[i] = Rage::lerp( fPercentBetween, ts1.diffuse[i], ts2.diffuse[i] );
 
-	average_out.glow	= lerp( fPercentBetween, ts1.glow,        ts2.glow );
-	average_out.aux		= lerp( fPercentBetween, ts1.aux,         ts2.aux );
+	average_out.glow	= Rage::lerp( fPercentBetween, ts1.glow,        ts2.glow );
+	average_out.aux		= Rage::lerp( fPercentBetween, ts1.aux,         ts2.aux );
 }
 
 void Actor::Sleep( float time )
@@ -1688,12 +1688,12 @@ public:
 	static int glowshift( T* p, lua_State *L )		{ p->SetEffectGlowShift(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); COMMON_RETURN_SELF; }
 	static int glowramp( T* p, lua_State *L )		{ p->SetEffectGlowRamp(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); COMMON_RETURN_SELF; }
 	static int rainbow( T* p, lua_State *L )			{ p->SetEffectRainbow(2.0f); COMMON_RETURN_SELF; }
-	static int wag( T* p, lua_State *L )			{ p->SetEffectWag(2.0f, RageVector3(0,0,20)); COMMON_RETURN_SELF; }
-	static int bounce( T* p, lua_State *L )			{ p->SetEffectBounce(2.0f, RageVector3(0,20,0)); COMMON_RETURN_SELF; }
-	static int bob( T* p, lua_State *L )			{ p->SetEffectBob(2.0f, RageVector3(0,20,0)); COMMON_RETURN_SELF; }
+	static int wag( T* p, lua_State *L )			{ p->SetEffectWag(2.0f, Rage::Vector3(0,0,20)); COMMON_RETURN_SELF; }
+	static int bounce( T* p, lua_State *L )			{ p->SetEffectBounce(2.0f, Rage::Vector3(0,20,0)); COMMON_RETURN_SELF; }
+	static int bob( T* p, lua_State *L )			{ p->SetEffectBob(2.0f, Rage::Vector3(0,20,0)); COMMON_RETURN_SELF; }
 	static int pulse( T* p, lua_State *L )			{ p->SetEffectPulse(2.0f, 0.5f, 1.0f); COMMON_RETURN_SELF; }
-	static int spin( T* p, lua_State *L )			{ p->SetEffectSpin(RageVector3(0,0,180)); COMMON_RETURN_SELF; }
-	static int vibrate( T* p, lua_State *L )			{ p->SetEffectVibrate(RageVector3(10,10,10)); COMMON_RETURN_SELF; }
+	static int spin( T* p, lua_State *L )			{ p->SetEffectSpin(Rage::Vector3(0,0,180)); COMMON_RETURN_SELF; }
+	static int vibrate( T* p, lua_State *L )			{ p->SetEffectVibrate(Rage::Vector3(10,10,10)); COMMON_RETURN_SELF; }
 	static int stopeffect( T* p, lua_State *L )		{ p->StopEffect(); COMMON_RETURN_SELF; }
 	static int effectcolor1( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetEffectColor1( c ); COMMON_RETURN_SELF; }
 	static int effectcolor2( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetEffectColor2( c ); COMMON_RETURN_SELF; }
@@ -1738,8 +1738,8 @@ public:
 	}
 	static int effectoffset( T* p, lua_State *L )		{ p->SetEffectOffset(FArg(1)); COMMON_RETURN_SELF; }
 	static int effectclock( T* p, lua_State *L )		{ p->SetEffectClockString(SArg(1)); COMMON_RETURN_SELF; }
-	static int effectmagnitude( T* p, lua_State *L )	{ p->SetEffectMagnitude( RageVector3(FArg(1),FArg(2),FArg(3)) ); COMMON_RETURN_SELF; }
-	static int geteffectmagnitude( T* p, lua_State *L )	{ RageVector3 v = p->GetEffectMagnitude(); lua_pushnumber(L, v.x); lua_pushnumber(L, v.y); lua_pushnumber(L, v.z); return 3; }
+	static int effectmagnitude( T* p, lua_State *L )	{ p->SetEffectMagnitude( Rage::Vector3(FArg(1),FArg(2),FArg(3)) ); COMMON_RETURN_SELF; }
+	static int geteffectmagnitude( T* p, lua_State *L )	{ Rage::Vector3 v = p->GetEffectMagnitude(); lua_pushnumber(L, v.x); lua_pushnumber(L, v.y); lua_pushnumber(L, v.z); return 3; }
 	static int scaletocover( T* p, lua_State *L )		{ p->ScaleToCover( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); COMMON_RETURN_SELF; }
 	static int scaletofit( T* p, lua_State *L )		{ p->ScaleToFitInside( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); COMMON_RETURN_SELF; }
 	static int animate( T* p, lua_State *L )		{ p->EnableAnimation(BIArg(1)); COMMON_RETURN_SELF; }

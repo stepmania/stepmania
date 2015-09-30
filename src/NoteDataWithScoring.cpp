@@ -162,8 +162,8 @@ float GetActualVoltageRadarValue( const NoteData &in, float fSongSeconds, const 
 	 * length of the longest recorded combo. This is only subtly different:
 	 * it's the percent of the song the longest combo took to get. */
 	const PlayerStageStats::Combo_t MaxCombo = pss.GetMaxCombo();
-	float fComboPercent = scale(MaxCombo.m_fSizeSeconds, 0.f, fSongSeconds, 0.0f, 1.0f);
-	return clamp( fComboPercent, 0.0f, 1.0f );
+	float fComboPercent = Rage::scale(MaxCombo.m_fSizeSeconds, 0.f, fSongSeconds, 0.0f, 1.0f);
+	return Rage::clamp( fComboPercent, 0.0f, 1.0f );
 }
 
 // Return the ratio of actual to possible dance points.
@@ -174,7 +174,7 @@ float GetActualChaosRadarValue( const NoteData &in, float fSongSeconds, const Pl
 		return 1;
 
 	const int ActualDP = pss.m_iActualDancePoints;
-	return clamp( float(ActualDP)/iPossibleDP, 0.0f, 1.0f );
+	return Rage::clamp( float(ActualDP)/iPossibleDP, 0.0f, 1.0f );
 }
 }
 
@@ -402,16 +402,16 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 		switch(rc)
 		{
 			case RadarCategory_Stream:
-				out[rc]= clamp(float(state.notes_hit_for_stream) / note_count, 0.0f, 1.0f);
+				out[rc]= Rage::clamp(float(state.notes_hit_for_stream) / note_count, 0.0f, 1.0f);
 				break;
 			case RadarCategory_Voltage:
 				out[rc]= GetActualVoltageRadarValue(in, hittable_steps_length, pss);
 				break;
 			case RadarCategory_Air:
-				out[rc]= clamp(float(state.jumps_hit_for_air) / jump_count, 0.0f, 1.0f);
+				out[rc]= Rage::clamp(float(state.jumps_hit_for_air) / jump_count, 0.0f, 1.0f);
 				break;
 			case RadarCategory_Freeze:
-				out[rc]= clamp(float(state.holds_held) / hold_count, 0.0f, 1.0f);
+				out[rc]= Rage::clamp(float(state.holds_held) / hold_count, 0.0f, 1.0f);
 				break;
 			case RadarCategory_Chaos:
 				out[rc]= GetActualChaosRadarValue(in, song_seconds, pss);

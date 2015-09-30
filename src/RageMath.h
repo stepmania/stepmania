@@ -9,21 +9,26 @@
 
 
 struct lua_State;
-struct RageVector2;
-struct RageVector3;
-struct RageVector4;
+
+namespace Rage
+{
+	struct Vector2;
+	struct Vector3;
+	struct Vector4;
+}
+
 struct RageMatrix;
 
-void RageVec3ClearBounds( RageVector3 &mins, RageVector3 &maxs );
-void RageVec3AddToBounds( const RageVector3 &p, RageVector3 &mins, RageVector3 &maxs );
+void RageVec3ClearBounds( Rage::Vector3 &mins, Rage::Vector3 &maxs );
+void RageVec3AddToBounds( const Rage::Vector3 &p, Rage::Vector3 &mins, Rage::Vector3 &maxs );
 
-void RageVec2Normalize( RageVector2* pOut, const RageVector2* pV );
-void RageVec3Normalize( RageVector3* pOut, const RageVector3* pV );
+void RageVec2Normalize( Rage::Vector2* pOut, const Rage::Vector2* pV );
+void RageVec3Normalize( Rage::Vector3* pOut, const Rage::Vector3* pV );
 void VectorFloatNormalize(std::vector<float>& v);
-void RageVec3Cross(RageVector3* ret, RageVector3 const* a, RageVector3 const* b);
-void RageVec3TransformCoord( RageVector3* pOut, const RageVector3* pV, const RageMatrix* pM );
-void RageVec3TransformNormal( RageVector3* pOut, const RageVector3* pV, const RageMatrix* pM );
-void RageVec4TransformCoord( RageVector4* pOut, const RageVector4* pV, const RageMatrix* pM );
+void RageVec3Cross(Rage::Vector3* ret, Rage::Vector3 const* a, Rage::Vector3 const* b);
+void RageVec3TransformCoord( Rage::Vector3* pOut, const Rage::Vector3* pV, const RageMatrix* pM );
+void RageVec3TransformNormal( Rage::Vector3* pOut, const Rage::Vector3* pV, const RageMatrix* pM );
+void RageVec4TransformCoord( Rage::Vector4* pOut, const Rage::Vector4* pV, const RageMatrix* pM );
 void RageMatrixIdentity( RageMatrix* pOut );
 // pOut = pB * pA
 void RageMatrixMultiply( RageMatrix* pOut, const RageMatrix* pA, const RageMatrix* pB );
@@ -37,20 +42,20 @@ void RageMatrixRotationX( RageMatrix* pOut, float fTheta );
 void RageMatrixRotationY( RageMatrix* pOut, float fTheta );
 void RageMatrixRotationZ( RageMatrix* pOut, float fTheta );
 void RageMatrixRotationXYZ( RageMatrix* pOut, float rX, float rY, float rZ );
-void RageAARotate(RageVector3* inret, RageVector3 const* axis, float angle);
-void RageQuatFromHPR(RageVector4* pOut, RageVector3 hpr );
-void RageQuatFromPRH(RageVector4* pOut, RageVector3 prh );
-void RageMatrixFromQuat( RageMatrix* pOut, const RageVector4 q );
-void RageQuatSlerp(RageVector4 *pOut, const RageVector4 &from, const RageVector4 &to, float t);
-RageVector4 RageQuatFromH(float theta);
-RageVector4 RageQuatFromP(float theta);
-RageVector4 RageQuatFromR(float theta);
-void RageQuatMultiply( RageVector4* pOut, const RageVector4 &pA, const RageVector4 &pB );
+void RageAARotate(Rage::Vector3* inret, Rage::Vector3 const* axis, float angle);
+void RageQuatFromHPR(Rage::Vector4* pOut, Rage::Vector3 hpr );
+void RageQuatFromPRH(Rage::Vector4* pOut, Rage::Vector3 prh );
+void RageMatrixFromQuat( RageMatrix* pOut, const Rage::Vector4 q );
+void RageQuatSlerp(Rage::Vector4 *pOut, const Rage::Vector4 &from, const Rage::Vector4 &to, float t);
+Rage::Vector4 RageQuatFromH(float theta);
+Rage::Vector4 RageQuatFromP(float theta);
+Rage::Vector4 RageQuatFromR(float theta);
+void RageQuatMultiply( Rage::Vector4* pOut, const Rage::Vector4 &pA, const Rage::Vector4 &pB );
 RageMatrix RageLookAt(
 	float eyex, float eyey, float eyez,
 	float centerx, float centery, float centerz,
 	float upx, float upy, float upz );
-void RageMatrixAngles( RageMatrix* pOut, const RageVector3 &angles );
+void RageMatrixAngles( RageMatrix* pOut, const Rage::Vector3 &angles );
 void RageMatrixTranspose( RageMatrix* pOut, const RageMatrix* pIn );
 
 float RageFastSin( float x ) CONST_FUNCTION;

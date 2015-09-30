@@ -704,8 +704,8 @@ RageDisplay_GLES2::SetZWrite( bool b )
 void
 RageDisplay_GLES2::SetZBias( float f )
 {
-	float fNear = scale( f, 0.0f, 1.0f, 0.05f, 0.0f );
-	float fFar = scale( f, 0.0f, 1.0f, 1.0f, 0.95f );
+	float fNear = Rage::scale( f, 0.0f, 1.0f, 0.05f, 0.0f );
+	float fFar = Rage::scale( f, 0.0f, 1.0f, 1.0f, 0.95f );
 
 	glDepthRange( fNear, fFar );
 }
@@ -903,7 +903,7 @@ RageDisplay_GLES2::SetLightDirectional(
 	const RageColor &ambient,
 	const RageColor &diffuse,
 	const RageColor &specular,
-	const RageVector3 &dir )
+	const Rage::Vector3 &dir )
 {
 	// TODO
 }

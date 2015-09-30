@@ -2,7 +2,7 @@
 
 TEST_F(RageVector4Fixture, addition)
 {
-	RageVector4 c = a + b;
+	Rage::Vector4 c = a + b;
 
 	EXPECT_EQ(sum.x, c.x);
 	EXPECT_EQ(sum.y, c.y);
@@ -13,7 +13,7 @@ TEST_F(RageVector4Fixture, addition)
 
 TEST_F(RageVector4Fixture, subtraction)
 {
-	RageVector4 c = a - b;
+	Rage::Vector4 c = a - b;
 
 	EXPECT_EQ(difference.x, c.x);
 	EXPECT_EQ(difference.y, c.y);
@@ -24,7 +24,7 @@ TEST_F(RageVector4Fixture, subtraction)
 
 TEST_F(RageVector4Fixture, multiplication)
 {
-	RageVector4 c = a * 2.5;
+	Rage::Vector4 c = a * 2.5;
 
 	EXPECT_EQ(product.x, c.x);
 	EXPECT_EQ(product.y, c.y);
@@ -35,7 +35,7 @@ TEST_F(RageVector4Fixture, multiplication)
 
 TEST_F(RageVector4Fixture, division)
 {
-	RageVector4 c = b / 4.f;
+	Rage::Vector4 c = b / 4.f;
 
 	EXPECT_EQ(quotient.x, c.x);
 	EXPECT_EQ(quotient.y, c.y);

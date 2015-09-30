@@ -55,7 +55,7 @@ XToString(NoteColumnSplineMode);
 StringToX(NoteColumnSplineMode);
 LuaXType(NoteColumnSplineMode);
 
-static bool IsVectorZero( const RageVector2 &v )
+static bool IsVectorZero( const Rage::Vector2 &v )
 {
 	return v.x == 0  &&  v.y == 0;
 }
@@ -68,8 +68,8 @@ struct NoteMetricCache_t
 	bool m_bTapHoldRollOnRowMeansHold;
 	float m_fAnimationLength[NUM_NotePart];
 	bool m_bAnimationIsVivid[NUM_NotePart];
-	RageVector2 m_fAdditionTextureCoordOffset[NUM_NotePart];
-	RageVector2 m_fNoteColorTextureCoordSpacing[NUM_NotePart];
+	Rage::Vector2 m_fAdditionTextureCoordOffset[NUM_NotePart];
+	Rage::Vector2 m_fNoteColorTextureCoordSpacing[NUM_NotePart];
 
 	int m_iNoteColorCount[NUM_NotePart];
 	NoteColorType m_NoteColorType[NUM_NotePart];
@@ -298,19 +298,19 @@ float NCSplineHandler::BeatToTValue(float song_beat, float note_beat) const
 	return relative_beat / m_beats_per_t;
 }
 
-void NCSplineHandler::EvalForBeat(float song_beat, float note_beat, RageVector3& ret) const
+void NCSplineHandler::EvalForBeat(float song_beat, float note_beat, Rage::Vector3& ret) const
 {
 	float t_value= BeatToTValue(song_beat, note_beat);
 	m_spline.evaluate(t_value, ret);
 }
 
-void NCSplineHandler::EvalDerivForBeat(float song_beat, float note_beat, RageVector3& ret) const
+void NCSplineHandler::EvalDerivForBeat(float song_beat, float note_beat, Rage::Vector3& ret) const
 {
 	float t_value= BeatToTValue(song_beat, note_beat);
 	m_spline.evaluate_derivative(t_value, ret);
 }
 
-void NCSplineHandler::EvalForReceptor(float song_beat, RageVector3& ret) const
+void NCSplineHandler::EvalForReceptor(float song_beat, Rage::Vector3& ret) const
 {
 	float t_value= m_receptor_t;
 	if(!m_subtract_song_beat_from_curr)
@@ -341,7 +341,7 @@ void NCSplineHandler::MakeWeightedAverage(NCSplineHandler& out,
 
 void NoteColumnRenderArgs::spae_pos_for_beat(const PlayerState* player_state,
 	float beat, float y_offset, float y_reverse_offset,
-	RageVector3& sp_pos, RageVector3& ae_pos) const
+	Rage::Vector3& sp_pos, Rage::Vector3& ae_pos) const
 {
 	switch(pos_handler->m_spline_mode)
 	{
@@ -360,7 +360,7 @@ void NoteColumnRenderArgs::spae_pos_for_beat(const PlayerState* player_state,
 	}
 }
 void NoteColumnRenderArgs::spae_zoom_for_beat(const PlayerState* state, float beat,
-	RageVector3& sp_zoom, RageVector3& ae_zoom) const
+	Rage::Vector3& sp_zoom, Rage::Vector3& ae_zoom) const
 {
 	switch(zoom_handler->m_spline_mode)
 	{
@@ -379,9 +379,9 @@ void NoteColumnRenderArgs::spae_zoom_for_beat(const PlayerState* state, float be
 	}
 }
 void NoteColumnRenderArgs::SetPRZForActor(Actor* actor,
-	const RageVector3& sp_pos, const RageVector3& ae_pos,
-	const RageVector3& sp_rot, const RageVector3& ae_rot,
-	const RageVector3& sp_zoom, const RageVector3& ae_zoom) const
+	const Rage::Vector3& sp_pos, const Rage::Vector3& ae_pos,
+	const Rage::Vector3& sp_rot, const Rage::Vector3& ae_rot,
+	const Rage::Vector3& sp_zoom, const Rage::Vector3& ae_zoom) const
 {
 	actor->SetX(sp_pos.x + ae_pos.x);
 	actor->SetY(sp_pos.y + ae_pos.y);
@@ -784,7 +784,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	{
 		if (!part_args.anchor_to_top)
 		{
-			float tex_coord_bottom= scale(part_args.y_bottom - part_args.y_top,
+			float tex_coord_bottom= Rage::scale(part_args.y_bottom - part_args.y_top,
 				0.f, unzoomed_frame_height, rect.top, rect.bottom);
 			float want_tex_coord_bottom	= ceilf(tex_coord_bottom - 0.0001f);
 			add_to_tex_coord = want_tex_coord_bottom - tex_coord_bottom;
@@ -795,7 +795,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			/* For very large hold notes, shift the texture coordinates to be near 0, so we
 			 * don't send very large values to the renderer. */
 			const float fDistFromTop = y_start_pos - part_args.y_top;
-			float fTexCoordTop = scale(fDistFromTop, 0.f, unzoomed_frame_height, rect.top, rect.bottom);
+			float fTexCoordTop = Rage::scale(fDistFromTop, 0.f, unzoomed_frame_height, rect.top, rect.bottom);
 			fTexCoordTop += add_to_tex_coord;
 			add_to_tex_coord -= floorf(fTexCoordTop);
 		}
@@ -812,7 +812,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			// Shift texture coord to fit hold length If hold length is less than
 			// bottomcap frame height. (translated by hanubeki)
 			if (offset>0){
-				add_to_tex_coord = scale(offset, 0.0f, unzoomed_frame_height, 0.0f, 1.0f);
+				add_to_tex_coord = Rage::scale(offset, 0.0f, unzoomed_frame_height, 0.0f, 1.0f);
 			}
 			else{
 				add_to_tex_coord = 0.0f;
@@ -827,8 +827,8 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	const float fTexCoordCenter	= (fTexCoordLeft+fTexCoordRight)/2;
 
 	// pos_z_vec will be used later to orient the hold.  Read below. -Kyz
-	static const RageVector3 pos_z_vec(0.0f, 0.0f, 1.0f);
-	static const RageVector3 pos_y_vec(0.0f, 1.0f, 0.0f);
+	static const Rage::Vector3 pos_z_vec(0.0f, 0.0f, 1.0f);
+	static const Rage::Vector3 pos_y_vec(0.0f, 1.0f, 0.0f);
 	StripBuffer queue;
 	for(float fY = y_start_pos; !last_vert_set; fY += part_args.y_step)
 	{
@@ -843,7 +843,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		float cur_beat= part_args.top_beat;
 		if(part_args.top_beat != part_args.bottom_beat)
 		{
-			cur_beat= scale(fY, part_args.y_top, part_args.y_bottom, part_args.top_beat, part_args.bottom_beat);
+			cur_beat= Rage::scale(fY, part_args.y_top, part_args.y_bottom, part_args.top_beat, part_args.bottom_beat);
 		}
 
 		// Fun times ahead with vector math.  If the notes are being moved by the
@@ -866,18 +866,18 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		// TODO:  Figure out whether it's worth the time investment to figure out
 		// a way to skip the complex vector handling if the spline is disabled.
 
-		RageVector3 sp_pos;
-		RageVector3 sp_pos_forward;
-		RageVector3 sp_rot;
-		RageVector3 sp_zoom;
-		RageVector3 ae_pos;
-		RageVector3 ae_rot;
+		Rage::Vector3 sp_pos;
+		Rage::Vector3 sp_pos_forward;
+		Rage::Vector3 sp_rot;
+		Rage::Vector3 sp_zoom;
+		Rage::Vector3 ae_pos;
+		Rage::Vector3 ae_rot;
 
 		// (step 1 of vector handling, part 1)
 		// ArrowEffects only contributes to the Y component of the vector to
 		// maintain the old behavior of how holds are drawn when they wave back
 		// and forth. -Kyz
-		RageVector3 render_forward(0.0f, 1.0f, 0.0f);
+		Rage::Vector3 render_forward(0.0f, 1.0f, 0.0f);
 		column_args.spae_pos_for_beat(m_pPlayerState, cur_beat,
 			fYOffset, m_fYReverseOffsetPixels, sp_pos, ae_pos);
 		// fX and fZ are sp_pos.x + ae_pos.x and sp_pos.z + ae_pos.z. -Kyz
@@ -952,7 +952,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 				break;
 		}
 
-		RageVector3 center_vert(sp_pos.x + ae_pos.x,
+		Rage::Vector3 center_vert(sp_pos.x + ae_pos.x,
 			sp_pos.y + ae_pos.y, sp_pos.z + ae_pos.z);
 
 		// Special case for hold caps, which have the same top and bottom beat.
@@ -966,7 +966,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		const float render_roty= (sp_rot.y + ae_rot.y);
 
 		// (step 2 of vector handling)
-		RageVector3 render_left;
+		Rage::Vector3 render_left;
 		if(std::abs(render_forward.z) > 0.9f) // 0.9 arbitrariliy picked.
 		{
 			RageVec3Cross(&render_left, &pos_y_vec, &render_forward);
@@ -981,13 +981,13 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		render_left.y*= half_width;
 		render_left.z*= half_width;
 
-		const RageVector3 left_vert(center_vert.x + render_left.x,
+		const Rage::Vector3 left_vert(center_vert.x + render_left.x,
 			center_vert.y + render_left.y, center_vert.z + render_left.z);
-		const RageVector3 right_vert(center_vert.x - render_left.x,
+		const Rage::Vector3 right_vert(center_vert.x - render_left.x,
 			center_vert.y - render_left.y, center_vert.z - render_left.z);
 
 		const float fDistFromTop	= (fY - y_start_pos) / ae_zoom;
-		float fTexCoordTop		= scale(fDistFromTop, 0.f, unzoomed_frame_height, rect.top, rect.bottom);
+		float fTexCoordTop		= Rage::scale(fDistFromTop, 0.f, unzoomed_frame_height, rect.top, rect.bottom);
 		fTexCoordTop += add_to_tex_coord;
 
 		const float fAlpha		= ArrowGetAlphaOrGlow(glow, m_pPlayerState, column_args.column, fYOffset, part_args.percent_fade_to_fail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets);
@@ -1000,9 +1000,9 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		if(fAlpha > 0)
 			bAllAreTransparent = false;
 
-		queue.v[0].p = left_vert;  queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
-		queue.v[1].p = center_vert; queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordCenter, fTexCoordTop);
-		queue.v[2].p = right_vert;  queue.v[2].c = color; queue.v[2].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		queue.v[0].p = left_vert;  queue.v[0].c = color; queue.v[0].t = Rage::Vector2(fTexCoordLeft,  fTexCoordTop);
+		queue.v[1].p = center_vert; queue.v[1].c = color; queue.v[1].t = Rage::Vector2(fTexCoordCenter, fTexCoordTop);
+		queue.v[2].p = right_vert;  queue.v[2].c = color; queue.v[2].t = Rage::Vector2(fTexCoordRight, fTexCoordTop);
 		queue.v+=3;
 
 		if(queue.Free() < 3 || last_vert_set)
@@ -1198,7 +1198,7 @@ void NoteDisplay::DrawHold(const TapNote& tn,
 	const float fYHead= ArrowEffects::GetYPos(column_args.column, fStartYOffset, m_fYReverseOffsetPixels);
 	const float fYTail= ArrowEffects::GetYPos(column_args.column, fEndYOffset, m_fYReverseOffsetPixels);
 
-	const float fColorScale		= scale( tn.HoldResult.fLife, 0.0f, 1.0f, cache->m_fHoldLetGoGrayPercent, 1.0f );
+	const float fColorScale		= Rage::scale( tn.HoldResult.fLife, 0.0f, 1.0f, cache->m_fHoldLetGoGrayPercent, 1.0f );
 
 	bool bFlipHeadAndTail = bReverse && cache->m_bFlipHeadAndTailWhenReverse;
 
@@ -1284,12 +1284,12 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 
 	// same logical structure as in UpdateReceptorGhostStuff, I just haven't
 	// figured out a good way to combine them. -Kyz
-	RageVector3 sp_pos;
-	RageVector3 sp_rot;
-	RageVector3 sp_zoom;
-	RageVector3 ae_pos;
-	RageVector3 ae_rot;
-	RageVector3 ae_zoom;
+	Rage::Vector3 sp_pos;
+	Rage::Vector3 sp_rot;
+	Rage::Vector3 sp_zoom;
+	Rage::Vector3 ae_pos;
+	Rage::Vector3 ae_rot;
+	Rage::Vector3 ae_zoom;
 	column_args.spae_pos_for_beat(m_pPlayerState, spline_beat,
 		fYOffset, m_fYReverseOffsetPixels, sp_pos, ae_pos);
 
@@ -1333,7 +1333,7 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 		{
 			case NoteColorType_Denominator:
 				color = float( BeatToNoteType( fBeat ) );
-				color = clamp( color, 0.f, static_cast<float>(cache->m_iNoteColorCount[part]-1) );
+				color = Rage::clamp( color, 0.f, static_cast<float>(cache->m_iNoteColorCount[part]-1) );
 				break;
 			case NoteColorType_Progress:
 				color = fmodf( ceilf( fBeat * cache->m_iNoteColorCount[part] ), (float)cache->m_iNoteColorCount[part] );
@@ -1341,7 +1341,7 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 			default:
 				FAIL_M(ssprintf("Invalid NoteColorType: %i", cache->m_NoteColorType[part]));
 		}
-		DISPLAY->TextureTranslate( (bIsAddition ? cache->m_fAdditionTextureCoordOffset[part] : RageVector2(0,0)) + cache->m_fNoteColorTextureCoordSpacing[part]*color );
+		DISPLAY->TextureTranslate( (bIsAddition ? cache->m_fAdditionTextureCoordOffset[part] : Rage::Vector2(0,0)) + cache->m_fNoteColorTextureCoordSpacing[part]*color );
 	}
 
 	pActor->Draw();
@@ -1446,12 +1446,12 @@ void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
 	// sp_* will be zeroes in NCSM_Disabled, and ae_* will be zeroes in
 	// NCSM_Position, so the setting step won't have to check the mode. -Kyz
 	// sp_* are sized by the spline evaluate function.
-	RageVector3 sp_pos;
-	RageVector3 sp_rot;
-	RageVector3 sp_zoom;
-	RageVector3 ae_pos;
-	RageVector3 ae_rot;
-	RageVector3 ae_zoom;
+	Rage::Vector3 sp_pos;
+	Rage::Vector3 sp_rot;
+	Rage::Vector3 sp_zoom;
+	Rage::Vector3 ae_pos;
+	Rage::Vector3 ae_rot;
+	Rage::Vector3 ae_zoom;
 	switch(NCR_current.m_pos_handler.m_spline_mode)
 	{
 		case NCSM_Disabled:

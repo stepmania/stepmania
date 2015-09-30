@@ -51,7 +51,7 @@ static RString FourCCToString( int fcc )
 
 	RString s;
 	for( int i = 0; i < 4; ++i )
-		s += clamp( c[i], '\x20', '\x7e' );
+		s += Rage::clamp( c[i], '\x20', '\x7e' );
 
 	return s;
 }

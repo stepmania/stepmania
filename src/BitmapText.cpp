@@ -166,10 +166,10 @@ void BitmapText::FinishTweening()
 void BitmapText::BMT_TweenState::MakeWeightedAverage(BMT_TweenState& out,
 	BMT_TweenState const& from, BMT_TweenState const& to, float between)
 {
-	out.m_stroke_color.b= lerp(between, from.m_stroke_color.b, to.m_stroke_color.b);
-	out.m_stroke_color.g= lerp(between, from.m_stroke_color.g, to.m_stroke_color.g);
-	out.m_stroke_color.r= lerp(between, from.m_stroke_color.r, to.m_stroke_color.r);
-	out.m_stroke_color.a= lerp(between, from.m_stroke_color.a, to.m_stroke_color.a);
+	out.m_stroke_color.b= Rage::lerp(between, from.m_stroke_color.b, to.m_stroke_color.b);
+	out.m_stroke_color.g= Rage::lerp(between, from.m_stroke_color.g, to.m_stroke_color.g);
+	out.m_stroke_color.r= Rage::lerp(between, from.m_stroke_color.r, to.m_stroke_color.r);
+	out.m_stroke_color.a= Rage::lerp(between, from.m_stroke_color.a, to.m_stroke_color.a);
 }
 
 void BitmapText::LoadFromNode( const XNode* node )
@@ -289,7 +289,7 @@ void BitmapText::BuildChars()
 			reverse( sLine.begin(), sLine.end() );
 		const int iLineWidth = m_iLineWidths[i];
 
-		float fX = scale( m_fHorizAlign, 0.0f, 1.0f, -m_size.x/2.0f, +m_size.x/2.0f - iLineWidth );
+		float fX = Rage::scale( m_fHorizAlign, 0.0f, 1.0f, -m_size.x/2.0f, +m_size.x/2.0f - iLineWidth );
 		int iX = lrintf( fX );
 
 		for( unsigned j = 0; j < sLine.size(); ++j )
@@ -302,20 +302,20 @@ void BitmapText::BuildChars()
 				iX -= g.m_iHadvance;
 
 			// set vertex positions
-			v[0].p = RageVector3( iX+g.m_fHshift,			iY+g.m_pPage->m_fVshift,		0 );	// top left
-			v[1].p = RageVector3( iX+g.m_fHshift,			iY+g.m_pPage->m_fVshift+g.m_fHeight,	0 );	// bottom left
-			v[2].p = RageVector3( iX+g.m_fHshift+g.m_fWidth,	iY+g.m_pPage->m_fVshift+g.m_fHeight,	0 );	// bottom right
-			v[3].p = RageVector3( iX+g.m_fHshift+g.m_fWidth,	iY+g.m_pPage->m_fVshift,		0 );	// top right
+			v[0].p = Rage::Vector3( iX+g.m_fHshift,			iY+g.m_pPage->m_fVshift,		0 );	// top left
+			v[1].p = Rage::Vector3( iX+g.m_fHshift,			iY+g.m_pPage->m_fVshift+g.m_fHeight,	0 );	// bottom left
+			v[2].p = Rage::Vector3( iX+g.m_fHshift+g.m_fWidth,	iY+g.m_pPage->m_fVshift+g.m_fHeight,	0 );	// bottom right
+			v[3].p = Rage::Vector3( iX+g.m_fHshift+g.m_fWidth,	iY+g.m_pPage->m_fVshift,		0 );	// top right
 
 			// Advance the cursor.
 			if( !m_pFont->IsRightToLeft() )
 				iX += g.m_iHadvance;
 
 			// set texture coordinates
-			v[0].t = RageVector2( g.m_TexRect.left,	g.m_TexRect.top );
-			v[1].t = RageVector2( g.m_TexRect.left,	g.m_TexRect.bottom );
-			v[2].t = RageVector2( g.m_TexRect.right,	g.m_TexRect.bottom );
-			v[3].t = RageVector2( g.m_TexRect.right,	g.m_TexRect.top );
+			v[0].t = Rage::Vector2( g.m_TexRect.left,	g.m_TexRect.top );
+			v[1].t = Rage::Vector2( g.m_TexRect.left,	g.m_TexRect.bottom );
+			v[2].t = Rage::Vector2( g.m_TexRect.right,	g.m_TexRect.bottom );
+			v[3].t = Rage::Vector2( g.m_TexRect.right,	g.m_TexRect.top );
 
 			m_aVertices.insert( m_aVertices.end(), &v[0], &v[4] );
 			m_vpFontPageTextures.push_back( g.GetFontPageTextures() );
@@ -350,10 +350,10 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 		return;
 
 	const int iNumGlyphs = m_vpFontPageTextures.size();
-	int iStartGlyph = lrintf( scale( m_pTempState->crop.left, 0.f, 1.f, 0.f, iNumGlyphs + 0.f ) );
-	int iEndGlyph = lrintf( scale( m_pTempState->crop.right, 0.f, 1.f, iNumGlyphs + 0.f, 0.f ) );
-	iStartGlyph = clamp( iStartGlyph, 0, iNumGlyphs );
-	iEndGlyph = clamp( iEndGlyph, 0, iNumGlyphs );
+	int iStartGlyph = lrintf( Rage::scale( m_pTempState->crop.left, 0.f, 1.f, 0.f, iNumGlyphs + 0.f ) );
+	int iEndGlyph = lrintf( Rage::scale( m_pTempState->crop.right, 0.f, 1.f, iNumGlyphs + 0.f, 0.f ) );
+	iStartGlyph = Rage::clamp( iStartGlyph, 0, iNumGlyphs );
+	iEndGlyph = Rage::clamp( iEndGlyph, 0, iNumGlyphs );
 
 	if( m_pTempState->fade.top > 0 ||
 		m_pTempState->fade.bottom > 0 ||
@@ -378,18 +378,18 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 
 		/* We fade from 0 to LeftColor, then from RightColor to 0. (We won't fade
 		 * all the way to 0 if the crop is beyond the outer edge.) */
-		const float fRightAlpha  = scale( FadeSize.right,  FadeDist.right,  0.f, 1.f, 0.f );
-		const float fLeftAlpha   = scale( FadeSize.left,   FadeDist.left,   0.f, 1.f, 0.f );
+		const float fRightAlpha  = Rage::scale( FadeSize.right,  FadeDist.right,  0.f, 1.f, 0.f );
+		const float fLeftAlpha   = Rage::scale( FadeSize.left,   FadeDist.left,   0.f, 1.f, 0.f );
 
 		const float fStartFadeLeftPercent = m_pTempState->crop.left;
 		const float fStopFadeLeftPercent = m_pTempState->crop.left + FadeSize.left;
-		const float fLeftFadeStartGlyph = scale( fStartFadeLeftPercent, 0.f, 1.f, 0.f, iNumGlyphs + 0.f );
-		const float fLeftFadeStopGlyph = scale( fStopFadeLeftPercent, 0.f, 1.f, 0.f, iNumGlyphs + 0.f );
+		const float fLeftFadeStartGlyph = Rage::scale( fStartFadeLeftPercent, 0.f, 1.f, 0.f, iNumGlyphs + 0.f );
+		const float fLeftFadeStopGlyph = Rage::scale( fStopFadeLeftPercent, 0.f, 1.f, 0.f, iNumGlyphs + 0.f );
 
 		const float fStartFadeRightPercent = 1-(m_pTempState->crop.right + FadeSize.right);
 		const float fStopFadeRightPercent = 1-(m_pTempState->crop.right);
-		const float fRightFadeStartGlyph = scale( fStartFadeRightPercent, 0.f, 1.f, 0.f, iNumGlyphs + 0.f );
-		const float fRightFadeStopGlyph = scale( fStopFadeRightPercent, 0.f, 1.f, 0.f, iNumGlyphs + 0.f );
+		const float fRightFadeStartGlyph = Rage::scale( fStartFadeRightPercent, 0.f, 1.f, 0.f, iNumGlyphs + 0.f );
+		const float fRightFadeStopGlyph = Rage::scale( fStopFadeRightPercent, 0.f, 1.f, 0.f, iNumGlyphs + 0.f );
 
 		for( int start = iStartGlyph; start < iEndGlyph; ++start )
 		{
@@ -399,15 +399,15 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 			if( FadeSize.left > 0.001f )
 			{
 				// Add .5, so we fade wrt. the center of the vert, not the left side.
-				float fPercent = scale( start+0.5f, fLeftFadeStartGlyph, fLeftFadeStopGlyph, 0.0f, 1.0f );
-				fPercent = clamp( fPercent, 0.0f, 1.0f );
+				float fPercent = Rage::scale( start+0.5f, fLeftFadeStartGlyph, fLeftFadeStopGlyph, 0.0f, 1.0f );
+				fPercent = Rage::clamp( fPercent, 0.0f, 1.0f );
 				fAlpha *= fPercent * fLeftAlpha;
 			}
 
 			if( FadeSize.right > 0.001f )
 			{
-				float fPercent = scale( start+0.5f, fRightFadeStartGlyph, fRightFadeStopGlyph, 1.0f, 0.0f );
-				fPercent = clamp( fPercent, 0.0f, 1.0f );
+				float fPercent = Rage::scale( start+0.5f, fRightFadeStartGlyph, fRightFadeStopGlyph, 1.0f, 0.0f );
+				fPercent = Rage::clamp( fPercent, 0.0f, 1.0f );
 				fAlpha *= fPercent * fRightAlpha;
 			}
 
@@ -749,7 +749,7 @@ void BitmapText::DrawPrimitives()
 		}
 
 		// apply jitter to verts
-		vector<RageVector3> vGlyphJitter;
+		vector<Rage::Vector3> vGlyphJitter;
 		if( m_bJitter )
 		{
 			int iSeed = lrintf( RageTimer::GetTimeSinceStartFast()*8 );
@@ -757,7 +757,7 @@ void BitmapText::DrawPrimitives()
 
 			for( unsigned i=0; i<m_aVertices.size(); i+=4 )
 			{
-				RageVector3 jitter( static_cast<float>(rnd() % 2), static_cast<float>(rnd() % 3), 0.f );
+				Rage::Vector3 jitter( static_cast<float>(rnd() % 2), static_cast<float>(rnd() % 3), 0.f );
 				vGlyphJitter.push_back( jitter );
 
 				m_aVertices[i+0].p += jitter;	// top left
@@ -775,7 +775,7 @@ void BitmapText::DrawPrimitives()
 			ASSERT( vGlyphJitter.size() == m_aVertices.size()/4 );
 			for( unsigned i=0; i<m_aVertices.size(); i+=4 )
 			{
-				const RageVector3 &jitter = vGlyphJitter[i/4];;
+				const Rage::Vector3 &jitter = vGlyphJitter[i/4];;
 
 				m_aVertices[i+0].p -= jitter;	// top left
 				m_aVertices[i+1].p -= jitter;	// bottom left

@@ -267,8 +267,8 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 	int iLastItemToDraw = (int) ceilf( fLastItemToDraw );
 	if( !m_bLoop && !m_bWrap )
 	{
-		iFirstItemToDraw = clamp( iFirstItemToDraw, 0, m_iNumItems );
-		iLastItemToDraw = clamp( iLastItemToDraw, 0, m_iNumItems );
+		iFirstItemToDraw = Rage::clamp( iFirstItemToDraw, 0, m_iNumItems );
+    iLastItemToDraw = Rage::clamp( iLastItemToDraw, 0, m_iNumItems );
 	}
 
 	vector<Actor*> subs;

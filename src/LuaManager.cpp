@@ -1067,9 +1067,9 @@ extern char const * const version_time;
 LuaFunction( VersionDate, (RString) version_date );
 LuaFunction( VersionTime, (RString) version_time );
 
-LuaFunction( scale, scale(FArg(1), FArg(2), FArg(3), FArg(4), FArg(5)) );
+LuaFunction( scale, Rage::scale(FArg(1), FArg(2), FArg(3), FArg(4), FArg(5)) );
 
-LuaFunction( clamp, clamp(FArg(1), FArg(2), FArg(3)) );
+LuaFunction( clamp, Rage::clamp(FArg(1), FArg(2), FArg(3)) );
 
 #include "LuaBinding.h"
 namespace

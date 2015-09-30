@@ -568,7 +568,7 @@ void CubicSplineN::weighted_average(CubicSplineN& out,
 		out_size= to_size + static_cast<size_t>(
 			static_cast<float>(from_size - to_size) * between);
 	}
-	out_size = clamp(out_size, static_cast<size_t>(0), limit);
+	out_size = Rage::clamp(out_size, static_cast<size_t>(0), limit);
 	out.resize(out_size);
 
 	for(size_t spli= 0; spli < out.m_splines.size(); ++spli)
@@ -604,7 +604,7 @@ void CubicSplineN::weighted_average(CubicSplineN& out,
 			float oc[4]= {0.0f, 0.0f, 0.0f, 0.0f};
 			for(int i= 0; i < 4; ++i)
 			{
-				oc[i]= lerp(between, fc[i], tc[i]);
+				oc[i]= Rage::lerp(between, fc[i], tc[i]);
 			}
 			out.m_splines[spli].set_point_and_coefficients(p, oc[0], oc[1], oc[2],
 				oc[3]);
@@ -668,7 +668,7 @@ CSN_EVAL_SOMETHING(evaluate_third_derivative);
 #undef CSN_EVAL_SOMETHING
 
 #define CSN_EVAL_RV_SOMETHING(something) \
-void CubicSplineN::something(float t, RageVector3& v) const \
+void CubicSplineN::something(float t, Rage::Vector3& v) const \
 { \
 	ASSERT(m_splines.size() == 3); \
 	v.x= m_splines[0].something(t, m_loop); \

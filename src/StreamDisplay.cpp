@@ -91,14 +91,14 @@ void StreamDisplay::Update( float fDeltaSecs )
 				m_fVelocity += fViscousForce * fDeltaSecs;
 		}
 
-		m_fVelocity = clamp( m_fVelocity, VELOCITY_MIN + 0.f, VELOCITY_MAX + 0.f );
+		m_fVelocity = Rage::clamp( m_fVelocity, VELOCITY_MIN + 0.f, VELOCITY_MAX + 0.f );
 
 		m_fTrailingPercent += m_fVelocity * fDeltaSecs;
 	}
 
 	// Don't clamp life percentage a little outside the visible range so
 	// that the clamp doesn't dampen the "jiggle" of the meter.
-	m_fTrailingPercent = clamp( m_fTrailingPercent, -0.1f, 1.1f );
+	m_fTrailingPercent = Rage::clamp( m_fTrailingPercent, -0.1f, 1.1f );
 
 
 	// set crop of pills
@@ -108,8 +108,8 @@ void StreamDisplay::Update( float fDeltaSecs )
 		for( int i=0; i<(int)m_vpSprPill[st].size(); i++ )
 		{
 			Sprite *pSpr = m_vpSprPill[st][i];
-			float fPercentFilledThisPill = scale( m_fTrailingPercent, fPillWidthPercent*i, fPillWidthPercent*(i+1), 0.0f, 1.0f );
-			fPercentFilledThisPill = clamp( fPercentFilledThisPill, 0.0f, 1.0f );
+			float fPercentFilledThisPill = Rage::scale( m_fTrailingPercent, fPillWidthPercent*i, fPillWidthPercent*(i+1), 0.0f, 1.0f );
+			fPercentFilledThisPill = Rage::clamp( fPercentFilledThisPill, 0.0f, 1.0f );
 
 			// XXX scale by current song speed
 

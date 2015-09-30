@@ -204,7 +204,7 @@ void ActorMultiVertex::AddVertices( int Add )
 
 void ActorMultiVertex::SetVertexPos( int index, float x, float y, float z )
 {
-	AMV_DestTweenState().vertices[index].p = RageVector3( x, y, z );
+	AMV_DestTweenState().vertices[index].p = Rage::Vector3( x, y, z );
 }
 
 void ActorMultiVertex::SetVertexColor( int index, RageColor c )
@@ -214,7 +214,7 @@ void ActorMultiVertex::SetVertexColor( int index, RageColor c )
 
 void ActorMultiVertex::SetVertexCoords( int index, float TexCoordX, float TexCoordY )
 {
-	AMV_DestTweenState().vertices[index].t = RageVector2( TexCoordX, TexCoordY );
+	AMV_DestTweenState().vertices[index].t = Rage::Vector2( TexCoordX, TexCoordY );
 }
 
 void ActorMultiVertex::DrawPrimitives()
@@ -651,7 +651,7 @@ void ActorMultiVertex::AMV_TweenState::SetDrawState( DrawMode dm, int first, int
 
 void ActorMultiVertex::AMV_TweenState::MakeWeightedAverage(AMV_TweenState& average_out, const AMV_TweenState& ts1, const AMV_TweenState& ts2, float percent_between)
 {
-	average_out.line_width= lerp(percent_between, ts1.line_width, ts2.line_width);
+	average_out.line_width= Rage::lerp(percent_between, ts1.line_width, ts2.line_width);
 	for(size_t v= 0; v < average_out.vertices.size(); ++v)
 	{
 		WeightedAvergeOfRSVs(average_out.vertices[v], ts1.vertices[v], ts2.vertices[v], percent_between);

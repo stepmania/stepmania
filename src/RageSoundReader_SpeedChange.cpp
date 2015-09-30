@@ -274,7 +274,7 @@ int RageSoundReader_SpeedChange::Read( float *pBuf, int iFrames )
 				ChannelInfo &c = m_Channels[i];
 				float i1 = c.m_DataBuffer[c.m_iCorrelatedPos+m_iPos];
 				float i2 = c.m_DataBuffer[c.m_iLastCorrelatedPos+m_iPos];
-				*pBuf++ = scale( m_iPos + 0.f, 0.f, iWindowSizeFrames + 0.f, i2, i1 );
+				*pBuf++ = Rage::scale( m_iPos + 0.f, 0.f, iWindowSizeFrames + 0.f, i2, i1 );
 			}
 
 			++m_iPos;

@@ -154,7 +154,7 @@ void ValidateDisplayAspectRatio( float &val )
 
 void ValidateSongsPerPlay( int &val )
 {
-	val = clamp(val,0,MAX_SONGS_PER_PLAY);
+	val = Rage::clamp(val,0,MAX_SONGS_PER_PLAY);
 }
 
 PrefsManager::PrefsManager() :

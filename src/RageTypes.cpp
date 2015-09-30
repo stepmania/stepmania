@@ -54,10 +54,10 @@ void RageColor::FromStackCompat( lua_State *L, int iPos )
 
 RString RageColor::ToString() const
 {
-	int iR = clamp( (int) lrintf(r * 255), 0, 255 );
-	int iG = clamp( (int) lrintf(g * 255), 0, 255 );
-	int iB = clamp( (int) lrintf(b * 255), 0, 255 );
-	int iA = clamp( (int) lrintf(a * 255), 0, 255 );
+	int iR = Rage::clamp( (int) lrintf(r * 255), 0, 255 );
+	int iG = Rage::clamp( (int) lrintf(g * 255), 0, 255 );
+	int iB = Rage::clamp( (int) lrintf(b * 255), 0, 255 );
+	int iA = Rage::clamp( (int) lrintf(a * 255), 0, 255 );
 
 	if( iA == 255 )
 		return ssprintf( "#%02X%02X%02X", iR, iG, iB );
@@ -77,21 +77,21 @@ RString RageColor::NormalizeColorString( RString sColor )
 
 void lerp_rage_color(RageColor& out, RageColor const& a, RageColor const& b, float t)
 {
-	out.b= lerp(t, a.b, b.b);
-	out.g= lerp(t, a.g, b.g);
-	out.r= lerp(t, a.r, b.r);
-	out.a= lerp(t, a.a, b.a);
+	out.b= Rage::lerp(t, a.b, b.b);
+	out.g= Rage::lerp(t, a.g, b.g);
+	out.r= Rage::lerp(t, a.r, b.r);
+	out.a= Rage::lerp(t, a.a, b.a);
 }
 
 void WeightedAvergeOfRSVs(RageSpriteVertex& average_out, RageSpriteVertex const& rsv1, RageSpriteVertex const& rsv2, float percent_between)
 {
-	average_out.p= lerp(percent_between, rsv1.p, rsv2.p);
-	average_out.n= lerp(percent_between, rsv1.n, rsv2.n);
-	average_out.c.b= lerp(percent_between, rsv1.c.b, rsv2.c.b);
-	average_out.c.g= lerp(percent_between, rsv1.c.g, rsv2.c.g);
-	average_out.c.r= lerp(percent_between, rsv1.c.r, rsv2.c.r);
-	average_out.c.a= lerp(percent_between, rsv1.c.a, rsv2.c.a);
-	average_out.t= lerp(percent_between, rsv1.t, rsv2.t);
+	average_out.p= Rage::lerp(percent_between, rsv1.p, rsv2.p);
+	average_out.n= Rage::lerp(percent_between, rsv1.n, rsv2.n);
+	average_out.c.b= Rage::lerp(percent_between, rsv1.c.b, rsv2.c.b);
+	average_out.c.g= Rage::lerp(percent_between, rsv1.c.g, rsv2.c.g);
+	average_out.c.r= Rage::lerp(percent_between, rsv1.c.r, rsv2.c.r);
+	average_out.c.a= Rage::lerp(percent_between, rsv1.c.a, rsv2.c.a);
+	average_out.t= Rage::lerp(percent_between, rsv1.t, rsv2.t);
 }
 
 /** @brief Utilities for working with Lua. */

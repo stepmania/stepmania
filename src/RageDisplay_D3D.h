@@ -61,7 +61,7 @@ public:
 		const RageColor &ambient, 
 		const RageColor &diffuse, 
 		const RageColor &specular, 
-		const RageVector3 &dir );
+		const Rage::Vector3 &dir );
 
 	void SetSphereEnvironmentMapping( TextureUnit tu, bool b );
 	void SetCelShaded( int stage );

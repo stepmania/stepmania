@@ -58,7 +58,7 @@ public:
 		const RageColor & /* unreferenced: ambient */, 
 		const RageColor & /* unreferenced: diffuse */, 
 		const RageColor & /* unreferenced: specular */, 
-		const RageVector3 & /* unreferenced: dir */ ) { }
+		const Rage::Vector3 & /* unreferenced: dir */ ) { }
 
 	void SetSphereEnvironmentMapping( TextureUnit /* tu */, bool /* b */ ) { }
 	void SetCelShaded( int /* stage */ ) { }

@@ -51,7 +51,7 @@ void ModIconRow::Load( const RString &sMetricsGroup, PlayerNumber pn )
 	{
 		ModIcon *p = new ModIcon;
 		p->SetName( "ModIcon" );
-		float fOffset = scale( i + 0.f, 0.f, NUM_OPTION_ICONS-1.f, -(NUM_OPTION_ICONS-1)/2.0f, (NUM_OPTION_ICONS-1)/2.0f );
+		float fOffset = Rage::scale( i + 0.f, 0.f, NUM_OPTION_ICONS-1.f, -(NUM_OPTION_ICONS-1)/2.0f, (NUM_OPTION_ICONS-1)/2.0f );
 		p->SetXY( fOffset*SPACING_X, fOffset*SPACING_Y );
 		p->Load( OPTION_ICON_METRICS_GROUP );
 		ActorUtil::LoadAllCommands( p, sMetricsGroup );
@@ -165,7 +165,7 @@ void ModIconRow::SetFromGameState()
 	{
 		RString sOption = vsOptions[i];
 		int iPerferredCol = OptionToPreferredColumn( sOption );
-		clamp( iPerferredCol, 0, (int)m_vpModIcon.size()-1 );
+		Rage::clamp( iPerferredCol, 0, (int)m_vpModIcon.size()-1 );
 
 		if( iPerferredCol == -1 )
 			continue;	// skip

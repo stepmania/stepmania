@@ -899,8 +899,8 @@ void Player::Update( float fDeltaTime )
 			for( int c=0; c<GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer; c++ )
 			{
 				float fPercentReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(c);
-				float fHoldJudgeYPos = scale( fPercentReverse, 0.f, 1.f, HOLD_JUDGMENT_Y_STANDARD + 0.f, HOLD_JUDGMENT_Y_REVERSE + 0.f );
-				//float fGrayYPos = scale( fPercentReverse, 0.f, 1.f, GRAY_ARROWS_Y_STANDARD + 0.f, GRAY_ARROWS_Y_REVERSE + 0.f );
+				float fHoldJudgeYPos = Rage::scale( fPercentReverse, 0.f, 1.f, HOLD_JUDGMENT_Y_STANDARD + 0.f, HOLD_JUDGMENT_Y_REVERSE + 0.f );
+				//float fGrayYPos = Rage::scale( fPercentReverse, 0.f, 1.f, GRAY_ARROWS_Y_STANDARD + 0.f, GRAY_ARROWS_Y_REVERSE + 0.f );
 
 				float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
 				const float fZ = ArrowEffects::GetZPos(c, 0);
@@ -1602,7 +1602,7 @@ void Player::PushPlayerMatrix(float x, float skew, float center_y)
 	DISPLAY->CameraPushMatrix();
 	DISPLAY->PushMatrix();
 	DISPLAY->LoadMenuPerspective(45, SCREEN_WIDTH, SCREEN_HEIGHT,
-		scale(skew, 0.1f, 1.0f, x, SCREEN_CENTER_X), center_y);
+		Rage::scale(skew, 0.1f, 1.0f, x, SCREEN_CENTER_X), center_y);
 }
 
 void Player::PopPlayerMatrix()
@@ -1625,21 +1625,21 @@ Player::PlayerNoteFieldPositioner::PlayerNoteFieldPositioner(
 	player->PushPlayerMatrix(x, skew, center_y);
 	float reverse_mult= (reverse ? -1.f : 1.f);
 	original_y= player->m_pNoteField->GetY();
-	float tilt_degrees= scale(tilt, -1.f, +1.f, +30.f, -30.f) * reverse_mult;
-	float zoom= scale(mini, 0.f, 1.f, 1.f, .5f);
+	float tilt_degrees= Rage::scale(tilt, -1.f, +1.f, +30.f, -30.f) * reverse_mult;
+	float zoom= Rage::scale(mini, 0.f, 1.f, 1.f, .5f);
 	// Something strange going on here.  Notice that the range for tilt's
 	// effect on y_offset goes to -45 when positive, but -20 when negative.
 	// I don't know why it's done this why, simply preserving old behavior.
 	// -Kyz
 	if(tilt > 0)
 	{
-		zoom*= scale(tilt, 0.f, 1.f, 1.f, 0.9f);
-		y_offset= scale(tilt, 0.f, 1.f, 0.f, -45.f) * reverse_mult;
+		zoom*= Rage::scale(tilt, 0.f, 1.f, 1.f, 0.9f);
+		y_offset= Rage::scale(tilt, 0.f, 1.f, 0.f, -45.f) * reverse_mult;
 	}
 	else
 	{
-		zoom*= scale(tilt, 0.f, -1.f, 1.f, 0.9f);
-		y_offset= scale(tilt, 0.f, -1.f, 0.f, -20.f) * reverse_mult;
+		zoom*= Rage::scale(tilt, 0.f, -1.f, 1.f, 0.9f);
+		y_offset= Rage::scale(tilt, 0.f, -1.f, 0.f, -20.f) * reverse_mult;
 	}
 	player->m_pNoteField->SetY(original_y + y_offset);
 	player->m_pNoteField->SetZoom(zoom);
@@ -2211,9 +2211,9 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			// fall through
 		default:
 			{
-				float fCalsFor100Lbs = scale( iNumTracksHeld + 0.f, 1.f, 2.f, 0.023f, 0.077f );
-				float fCalsFor200Lbs = scale( iNumTracksHeld + 0.f, 1.f, 2.f, 0.041f, 0.133f );
-				fCals = scale( pProfile->GetCalculatedWeightPounds() + 0.f, 100.f, 200.f, fCalsFor100Lbs, fCalsFor200Lbs );
+				float fCalsFor100Lbs = Rage::scale( iNumTracksHeld + 0.f, 1.f, 2.f, 0.023f, 0.077f );
+				float fCalsFor200Lbs = Rage::scale( iNumTracksHeld + 0.f, 1.f, 2.f, 0.041f, 0.133f );
+				fCals = Rage::scale( pProfile->GetCalculatedWeightPounds() + 0.f, 100.f, 200.f, fCalsFor100Lbs, fCalsFor200Lbs );
 			}
 			break;
 		}

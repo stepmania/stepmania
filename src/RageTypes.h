@@ -253,10 +253,10 @@ typedef StepMania::Rect<float> RectF;
 struct RageSpriteVertex	// has color
 {
 	RageSpriteVertex(): p(), n(), c(), t() {}
-	RageVector3 p; // position
-	RageVector3 n; // normal
+	Rage::Vector3 p; // position
+	Rage::Vector3 n; // normal
 	RageVColor  c; // diffuse color
-	RageVector2 t; // texture coordinates
+	Rage::Vector2 t; // texture coordinates
 };
 
 void lerp_rage_color(RageColor& out, RageColor const& a, RageColor const& b, float t);
@@ -272,11 +272,11 @@ struct RageModelVertex	// doesn't have color.  Relies on material color
 		bone(0),
 		TextureMatrixScale(1,1)
 		{ }
-	RageVector3 p;	// position
-	RageVector3 n;	// normal
-	RageVector2 t;	// texture coordinates
+	Rage::Vector3 p;	// position
+	Rage::Vector3 n;	// normal
+	Rage::Vector2 t;	// texture coordinates
 	int8_t      bone;
-	RageVector2 TextureMatrixScale; // usually 1,1
+	Rage::Vector2 TextureMatrixScale; // usually 1,1
 };
 
 

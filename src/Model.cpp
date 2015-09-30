@@ -183,7 +183,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				// ambient
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
-				RageVector4 Ambient;
+				Rage::Vector4 Ambient;
 				if( sscanf(sLine, "%f %f %f %f", &Ambient.x, &Ambient.y, &Ambient.z, &Ambient.w) != 4 )
 					THROW;
 				memcpy( &Material.Ambient, &Ambient, sizeof(Material.Ambient) );
@@ -191,7 +191,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				// diffuse
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
-				RageVector4 Diffuse;
+				Rage::Vector4 Diffuse;
 				if( sscanf(sLine, "%f %f %f %f", &Diffuse.x, &Diffuse.y, &Diffuse.z, &Diffuse.w) != 4 )
 					THROW;
 				memcpy( &Material.Diffuse, &Diffuse, sizeof(Material.Diffuse) );
@@ -199,7 +199,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				// specular
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
-				RageVector4 Specular;
+				Rage::Vector4 Specular;
 				if( sscanf(sLine, "%f %f %f %f", &Specular.x, &Specular.y, &Specular.z, &Specular.w) != 4 )
 					THROW;
 				memcpy( &Material.Specular, &Specular, sizeof(Material.Specular) );
@@ -207,7 +207,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				// emissive
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
-				RageVector4 Emissive;
+				Rage::Vector4 Emissive;
 				if( sscanf (sLine, "%f %f %f %f", &Emissive.x, &Emissive.y, &Emissive.z, &Emissive.w) != 4 )
 					THROW;
 				memcpy( &Material.Emissive, &Emissive, sizeof(Material.Emissive) );
@@ -348,7 +348,7 @@ void Model::DrawPrimitives()
 
 				DISPLAY->SetMaterial( Emissive, Ambient, Diffuse, mat.Specular, mat.fShininess );
 
-				RageVector2 vTexTranslate = mat.diffuse.GetTextureTranslate();
+				Rage::Vector2 vTexTranslate = mat.diffuse.GetTextureTranslate();
 				if( vTexTranslate.x != 0  ||  vTexTranslate.y != 0 )
 				{
 					DISPLAY->TexturePushMatrix();
@@ -515,7 +515,7 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 	for( unsigned i = 0; i < m_pCurAnimation->Bones.size(); i++ )
 	{
 		const msBone *pBone = &m_pCurAnimation->Bones[i];
-		const RageVector3 &vRot = pBone->Rotation;
+		const Rage::Vector3 &vRot = pBone->Rotation;
 
 		RageMatrixAngles( &m_vpBones[i].m_Relative, vRot );
 
@@ -543,7 +543,7 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 		for( unsigned j = 0; j < Vertices.size(); j++ )
 		{
 			// int iBoneIndex = (pMesh->m_iBoneIndex!=-1) ? pMesh->m_iBoneIndex : bone;
-			RageVector3 &pos = Vertices[j].p;
+			Rage::Vector3 &pos = Vertices[j].p;
 			int8_t bone = Vertices[j].bone;
 			if( bone != -1 )
 			{
@@ -551,7 +551,7 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 				pos.y -= m_vpBones[bone].m_Absolute.m[3][1];
 				pos.z -= m_vpBones[bone].m_Absolute.m[3][2];
 
-				RageVector3 vTmp;
+				Rage::Vector3 vTmp;
 
 				RageMatrix inverse;
 				RageMatrixTranspose( &inverse, &m_vpBones[bone].m_Absolute );	// transpose = inverse for rotation matrices
@@ -570,7 +570,7 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 void Model::SetPosition( float fSeconds )
 {
 	m_fCurFrame = FRAMES_PER_SECOND * fSeconds;
-	m_fCurFrame = clamp( m_fCurFrame, 0.f, static_cast<float>(m_pCurAnimation->nTotalFrames) );
+	m_fCurFrame = Rage::clamp( m_fCurFrame, 0.f, static_cast<float>(m_pCurAnimation->nTotalFrames) );
 }
 
 void Model::AdvanceFrame( float fDeltaTime )
@@ -596,7 +596,7 @@ void Model::AdvanceFrame( float fDeltaTime )
 		else if( m_bLoop )
 			wrap( m_fCurFrame, (float) m_pCurAnimation->nTotalFrames );
 		else
-			m_fCurFrame = clamp( m_fCurFrame, 0.f, static_cast<float>(m_pCurAnimation->nTotalFrames) );
+			m_fCurFrame = Rage::clamp( m_fCurFrame, 0.f, static_cast<float>(m_pCurAnimation->nTotalFrames) );
 	}
 
 	SetBones( m_pCurAnimation, m_fCurFrame, m_vpBones );
@@ -627,10 +627,10 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 			pLastPositionKey = pPositionKey;
 		}
 
-		RageVector3 vPos;
+		Rage::Vector3 vPos;
 		if( pLastPositionKey != nullptr && pThisPositionKey != nullptr )
 		{
-			const float s = scale( fFrame, pLastPositionKey->fTime, pThisPositionKey->fTime, 0.f, 1.f );
+			const float s = Rage::scale( fFrame, pLastPositionKey->fTime, pThisPositionKey->fTime, 0.f, 1.f );
 			vPos = pLastPositionKey->Position + (pThisPositionKey->Position - pLastPositionKey->Position) * s;
 		}
 		else if( pLastPositionKey == nullptr )
@@ -651,10 +651,10 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 			pLastRotationKey = pRotationKey;
 		}
 
-		RageVector4 vRot;
+		Rage::Vector4 vRot;
 		if( pLastRotationKey != nullptr && pThisRotationKey != nullptr )
 		{
-			const float s = scale( fFrame, pLastRotationKey->fTime, pThisRotationKey->fTime, 0.f, 1.f );
+			const float s = Rage::scale( fFrame, pLastRotationKey->fTime, pThisRotationKey->fTime, 0.f, 1.f );
 			RageQuatSlerp( &vRot, pLastRotationKey->Rotation, pThisRotationKey->Rotation, s );
 		}
 		else if( pLastRotationKey == nullptr )
@@ -697,10 +697,10 @@ void Model::UpdateTempGeometry()
 		vector<RageModelVertex> &tempVertices = tempMesh.Vertices;
 		for( unsigned j = 0; j < origVertices.size(); j++ )
 		{
-			RageVector3 &tempPos =			tempVertices[j].p;
-			RageVector3 &tempNormal =		tempVertices[j].n;
-			const RageVector3 &originalPos =	origVertices[j].p;
-			const RageVector3 &originalNormal =	origVertices[j].n;
+			Rage::Vector3 &tempPos =			tempVertices[j].p;
+			Rage::Vector3 &tempNormal =		tempVertices[j].n;
+			const Rage::Vector3 &originalPos =	origVertices[j].p;
+			const Rage::Vector3 &originalNormal =	origVertices[j].n;
 			int8_t bone =				origVertices[j].bone;
 
 			if( bone == -1 )

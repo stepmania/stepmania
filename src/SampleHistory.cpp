@@ -38,7 +38,7 @@ float SampleHistory::GetSampleNum( float fSamplesAgo ) const
 	wrap( iNextSample, m_afHistory.size() );
 
 	float p = fSample - f;
-	float fRet = lerp( p, m_afHistory[iSample], m_afHistory[iNextSample] );
+	float fRet = Rage::lerp( p, m_afHistory[iSample], m_afHistory[iNextSample] );
 //	LOG->Trace( "%.3f: %i, %i, %.3f (f %.3f, %.3f)", fSample, iSample, iNextSample, fRet, f, p );
 	return fRet;
 }

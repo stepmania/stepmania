@@ -71,8 +71,8 @@ static void InitVectors( vector<int> &s0, vector<int> &s1, vector<uint32_t> &per
 			const float sax = sx*x;
 
 			// source x coordinates of left and right pixels to sample
-			s0.push_back( clamp(int(sax), 0, src-1));
-			s1.push_back( clamp(int(sax+1), 0, src-1) );
+			s0.push_back( Rage::clamp(int(sax), 0, src-1));
+			s1.push_back( Rage::clamp(int(sax+1), 0, src-1) );
 
 			const float p = (1.0f - (sax - floorf(sax))) * 16777216.0f;
 			percent.push_back( uint32_t(p) );
@@ -155,8 +155,8 @@ void RageSurfaceUtils::Zoom( RageSurface *&src, int dstwidth, int dstheight )
 		/* Our filter is a simple linear filter, so it can't scale to less than
 		 * 1:2 or more than 2:1 very well. If we need to go beyond that, do it
 		 * iteratively. */
-		xscale = clamp( xscale, .5f, 2.0f );
-		yscale = clamp( yscale, .5f, 2.0f );
+		xscale = Rage::clamp( xscale, .5f, 2.0f );
+		yscale = Rage::clamp( yscale, .5f, 2.0f );
 
 		int target_width = lrintf( src->w*xscale );
 		int target_height = lrintf( src->h*yscale );

@@ -1,14 +1,14 @@
 #include "RageVector4.hpp"
 
-RageVector4::RageVector4() : x(0), y(0), z(0), w(0)
+Rage::Vector4::Vector4() : x(0), y(0), z(0), w(0)
 {
 }
 
-RageVector4::RageVector4(float a, float b, float c, float d) : x(a), y(b), z(c), w(d)
+Rage::Vector4::Vector4(float a, float b, float c, float d) : x(a), y(b), z(c), w(d)
 {
 }
 
-RageVector4 & RageVector4::operator+=(const RageVector4 & rhs)
+Rage::Vector4 & Rage::Vector4::operator+=(const Rage::Vector4 & rhs)
 {
 	x += rhs.x;
 	y += rhs.y;
@@ -17,7 +17,7 @@ RageVector4 & RageVector4::operator+=(const RageVector4 & rhs)
 	return *this;
 }
 
-RageVector4 & RageVector4::operator-=(const RageVector4 & rhs)
+Rage::Vector4 & Rage::Vector4::operator-=(const Rage::Vector4 & rhs)
 {
 	x -= rhs.x;
 	y -= rhs.y;
@@ -26,7 +26,7 @@ RageVector4 & RageVector4::operator-=(const RageVector4 & rhs)
 	return *this;
 }
 
-RageVector4 & RageVector4::operator*=(float rhs)
+Rage::Vector4 & Rage::Vector4::operator*=(float rhs)
 {
 	x *= rhs;
 	y *= rhs;
@@ -35,7 +35,7 @@ RageVector4 & RageVector4::operator*=(float rhs)
 	return *this;
 }
 
-RageVector4 & RageVector4::operator/=(float rhs)
+Rage::Vector4 & Rage::Vector4::operator/=(float rhs)
 {
 	x /= rhs;
 	y /= rhs;

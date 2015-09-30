@@ -41,7 +41,7 @@ void SoundEffectControl::Update( float fDeltaTime )
 
 	float fLevel = INPUTMAPPER->GetLevel( GAME_BUTTON_EFFECT_UP, m_pPlayerState->m_PlayerNumber );
 	fLevel -= INPUTMAPPER->GetLevel( GAME_BUTTON_EFFECT_DOWN, m_pPlayerState->m_PlayerNumber );
-	fLevel = clamp( fLevel, -1.0f, +1.0f );
+	fLevel = Rage::clamp( fLevel, -1.0f, +1.0f );
 
 	if( LOCK_TO_HOLD )
 	{
@@ -77,9 +77,9 @@ void SoundEffectControl::Update( float fDeltaTime )
 
 	float fCurrent;
 	if( m_fSample < 0 )
-		fCurrent = scale( m_fSample, 0.0f, -1.0f, fPropertyCenter, fPropertyMin );
+		fCurrent = Rage::scale( m_fSample, 0.0f, -1.0f, fPropertyCenter, fPropertyMin );
 	else
-		fCurrent = scale( m_fSample, 0.0f, +1.0f, fPropertyCenter, fPropertyMax );
+		fCurrent = Rage::scale( m_fSample, 0.0f, +1.0f, fPropertyCenter, fPropertyMax );
 
 	if( m_pSoundReader )
 		m_pSoundReader->SetProperty( SOUND_PROPERTY, fCurrent );

@@ -88,10 +88,10 @@ void ComboGraph::Set( const StageStats &s, const PlayerStageStats &pss )
 		LOG->Trace( "combo %i is %f+%f of %f", i, combo.m_fStartSecond, combo.m_fSizeSeconds, fLastSecond );
 		Actor *pSprite = bIsMax? m_pMaxCombo->Copy() : m_pNormalCombo->Copy();
 
-		const float fStart = scale( combo.m_fStartSecond, fFirstSecond, fLastSecond, 0.0f, 1.0f );
-		const float fSize = scale( combo.m_fSizeSeconds, 0.f, fLastSecond-fFirstSecond, 0.0f, 1.0f );
-		pSprite->SetCropLeft ( scale( fSize, 0.0f, 1.0f, 0.5f, 0.0f ) );
-		pSprite->SetCropRight( scale( fSize, 0.0f, 1.0f, 0.5f, 0.0f ) );
+		const float fStart = Rage::scale( combo.m_fStartSecond, fFirstSecond, fLastSecond, 0.0f, 1.0f );
+		const float fSize = Rage::scale( combo.m_fSizeSeconds, 0.f, fLastSecond-fFirstSecond, 0.0f, 1.0f );
+		pSprite->SetCropLeft ( Rage::scale( fSize, 0.0f, 1.0f, 0.5f, 0.0f ) );
+		pSprite->SetCropRight( Rage::scale( fSize, 0.0f, 1.0f, 0.5f, 0.0f ) );
 
 		pSprite->SetCropLeft( fStart );
 		pSprite->SetCropRight( 1 - (fSize + fStart) );
@@ -114,11 +114,11 @@ void ComboGraph::Set( const StageStats &s, const PlayerStageStats &pss )
 
 		BitmapText *pText = m_pComboNumber->Copy();
 
-		const float fStart = scale( combo.m_fStartSecond, fFirstSecond, fLastSecond, 0.0f, 1.0f );
-		const float fSize = scale( combo.m_fSizeSeconds, 0.f, fLastSecond-fFirstSecond, 0.0f, 1.0f );
+		const float fStart = Rage::scale( combo.m_fStartSecond, fFirstSecond, fLastSecond, 0.0f, 1.0f );
+		const float fSize = Rage::scale( combo.m_fSizeSeconds, 0.f, fLastSecond-fFirstSecond, 0.0f, 1.0f );
 
 		const float fCenterPercent = fStart + fSize/2;
-		const float fCenterXPos = scale( fCenterPercent, 0.0f, 1.0f, -BODY_WIDTH/2.0f, BODY_WIDTH/2.0f );
+		const float fCenterXPos = Rage::scale( fCenterPercent, 0.0f, 1.0f, -BODY_WIDTH/2.0f, BODY_WIDTH/2.0f );
 		pText->SetX( fCenterXPos );
 
 		pText->SetText( ssprintf("%i",combo.GetStageCnt()) );

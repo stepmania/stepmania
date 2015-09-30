@@ -1,6 +1,9 @@
 #ifndef RAGE_MATH_HPP_
 #define RAGE_MATH_HPP_
 
+namespace Rage
+{
+
 /** @brief Bring a value within range. */
 template<typename T>
 T clamp( T const & val, T const & low, T const & high )
@@ -30,6 +33,8 @@ T scale(T x, T l1, T h1, T l2, T h2)
 		return lerp(x, l2, h2);
 	}
 	return (x - l1) * (h2 - l2) / (h1 - l1) + l2;
+}
+
 }
 
 #endif
