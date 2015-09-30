@@ -7,3 +7,9 @@
 [submodule "extern/googletest"]
 	path = extern/googletest
 	url = https://github.com/google/googletest.git
+[submodule "extern/tomcrypt"]
+	path = extern/tomcrypt
+	url = https://github.com/libtom/libtomcrypt.git
+[submodule "extern/tommath"]
+	path = extern/tommath
+	url = https://github.com/libtom/libtommath.git
