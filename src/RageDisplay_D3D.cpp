@@ -1244,10 +1244,10 @@ void RageDisplay_D3D::SetTextureWrapping( TextureUnit tu, bool b )
 }
 
 void RageDisplay_D3D::SetMaterial(
-	const RageColor &emissive,
-	const RageColor &ambient,
-	const RageColor &diffuse,
-	const RageColor &specular,
+	const Rage::Color &emissive,
+	const Rage::Color &ambient,
+	const Rage::Color &diffuse,
+	const Rage::Color &specular,
 	float shininess
 	)
 {
@@ -1270,7 +1270,7 @@ void RageDisplay_D3D::SetMaterial(
 	}
 	else
 	{
-		RageColor c = diffuse;
+		Rage::Color c = diffuse;
 		c.r += emissive.r + ambient.r;
 		c.g += emissive.g + ambient.g;
 		c.b += emissive.b + ambient.b;
@@ -1291,9 +1291,9 @@ void RageDisplay_D3D::SetLightOff( int index )
 }
 void RageDisplay_D3D::SetLightDirectional(
 	int index,
-	const RageColor &ambient,
-	const RageColor &diffuse,
-	const RageColor &specular,
+	const Rage::Color &ambient,
+	const Rage::Color &diffuse,
+	const Rage::Color &specular,
 	const Rage::Vector3 &dir )
 {
 	g_pd3dDevice->LightEnable( index, true );

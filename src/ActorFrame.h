@@ -81,9 +81,9 @@ public:
 	void SetVanishPoint( float fX, float fY) { m_fVanishX = fX; m_fVanishY = fY; }
 
 	void SetCustomLighting( bool bCustomLighting ) { m_bOverrideLighting = bCustomLighting; }
-	void SetAmbientLightColor( RageColor c ) { m_ambientColor = c; }
-	void SetDiffuseLightColor( RageColor c ) { m_diffuseColor = c; }
-	void SetSpecularLightColor( RageColor c ) { m_specularColor = c; }
+	void SetAmbientLightColor( Rage::Color c ) { m_ambientColor = c; }
+	void SetDiffuseLightColor( Rage::Color c ) { m_diffuseColor = c; }
+	void SetSpecularLightColor( Rage::Color c ) { m_specularColor = c; }
 	void SetLightDirection( Rage::Vector3 vec ) { m_lightDirection = vec; }
 
 	virtual void SetPropagateCommands( bool b );
@@ -119,9 +119,9 @@ protected:
 	bool m_bLighting;
 
 	// lighting variables
-	RageColor m_ambientColor;
-	RageColor m_diffuseColor;
-	RageColor m_specularColor;
+	Rage::Color m_ambientColor;
+	Rage::Color m_diffuseColor;
+	Rage::Color m_specularColor;
 	Rage::Vector3 m_lightDirection;
 };
 /** @brief an ActorFrame that handles deleting children Actors automatically. */

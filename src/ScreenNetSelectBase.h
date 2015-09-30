@@ -21,7 +21,7 @@ public:
 protected:
 	struct ColorChange
 	{
-		RageColor c;	// Color to change to
+		Rage::Color c;	// Color to change to
 		int l;			// Change Location
 	};
 	std::vector<ColorChange> m_vColors;

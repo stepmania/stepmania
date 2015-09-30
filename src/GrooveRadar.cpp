@@ -160,10 +160,10 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		return;
 
 	// use a fan to draw the volume
-	RageColor color = this->m_pTempState->diffuse[0];
+	Rage::Color color = this->m_pTempState->diffuse[0];
 	color.a = 0.5f;
 	v[0].p = Rage::Vector3( 0, 0, 0 );
-	RageColor midcolor = color;
+	Rage::Color midcolor = color;
 	midcolor.a = RADAR_CENTER_ALPHA;
 	v[0].c = midcolor;
 	v[1].c = color;

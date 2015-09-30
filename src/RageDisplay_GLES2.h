@@ -43,19 +43,19 @@ public:
 	void SetCullMode( CullMode mode );
 	void SetAlphaTest( bool b );
 	void SetMaterial( 
-		const RageColor &emissive,
-		const RageColor &ambient,
-		const RageColor &diffuse,
-		const RageColor &specular,
+		const Rage::Color &emissive,
+		const Rage::Color &ambient,
+		const Rage::Color &diffuse,
+		const Rage::Color &specular,
 		float shininess
 		);
 	void SetLighting( bool b );
 	void SetLightOff( int index );
 	void SetLightDirectional( 
 		int index, 
-		const RageColor &ambient, 
-		const RageColor &diffuse, 
-		const RageColor &specular, 
+		const Rage::Color &ambient, 
+		const Rage::Color &diffuse, 
+		const Rage::Color &specular, 
 		const Rage::Vector3 &dir );
 
 	void SetSphereEnvironmentMapping( TextureUnit tu, bool b );

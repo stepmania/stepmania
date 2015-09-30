@@ -991,7 +991,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		fTexCoordTop += add_to_tex_coord;
 
 		const float fAlpha		= ArrowGetAlphaOrGlow(glow, m_pPlayerState, column_args.column, fYOffset, part_args.percent_fade_to_fail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets);
-		const RageColor color= RageColor(
+		const Rage::Color color= Rage::Color(
 			column_args.diffuse.r * color_scale,
 			column_args.diffuse.g * color_scale,
 			column_args.diffuse.b * color_scale,
@@ -1254,16 +1254,16 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 
 	const float fAlpha= ArrowEffects::GetAlpha(column_args.column, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets);
 	const float fGlow= ArrowEffects::GetGlow(column_args.column, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, field_args.draw_pixels_before_targets, field_args.fade_before_targets);
-	const RageColor diffuse	= RageColor(
+	const Rage::Color diffuse	= Rage::Color(
 		column_args.diffuse.r * fColorScale,
 		column_args.diffuse.g * fColorScale,
 		column_args.diffuse.b * fColorScale,
 		column_args.diffuse.a * fAlpha);
-	const RageColor glow = RageColor(1, 1, 1, fGlow);
+	const Rage::Color glow = Rage::Color(1, 1, 1, fGlow);
 	// We can't actually use the glow color from the effect on the colum actor
 	// because it's used by the stealth modifier. -Kyz
 	/*
-	const RageColor glow	= RageColor(
+	const Rage::Color glow	= Rage::Color(
 		column_args.glow.r * fColorScale,
 		column_args.glow.g * fColorScale,
 		column_args.glow.b * fColorScale,

@@ -354,7 +354,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 
 	if( sHint.find("cyclealpha") != RString::npos )
 		for( unsigned i=0; i<m_SubActors.size(); i++ )
-			m_SubActors[i]->SetEffectDiffuseShift( 2, RageColor(1,1,1,1), RageColor(1,1,1,0) );
+			m_SubActors[i]->SetEffectDiffuseShift( 2, Rage::Color(1,1,1,1), Rage::Color(1,1,1,0) );
 
 	if( sHint.find("startonrandomframe") != RString::npos )
 		for( unsigned i=0; i<m_SubActors.size(); i++ )

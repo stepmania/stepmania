@@ -50,11 +50,11 @@ const RString EDIT_SUBDIR		= "Edits/";
 /** @brief The file that contains various random attacks. */
 const RString ATTACK_FILE		= "/Data/RandomAttacks.txt";
 
-static const ThemeMetric<RageColor>	EXTRA_COLOR			( "SongManager", "ExtraColor" );
+static const ThemeMetric<Rage::Color>	EXTRA_COLOR			( "SongManager", "ExtraColor" );
 static const ThemeMetric<int>		EXTRA_COLOR_METER		( "SongManager", "ExtraColorMeter" );
 static const ThemeMetric<bool>		USE_PREFERRED_SORT_COLOR	( "SongManager", "UsePreferredSortColor" );
 static const ThemeMetric<bool>		USE_UNLOCK_COLOR		( "SongManager", "UseUnlockColor" );
-static const ThemeMetric<RageColor>	UNLOCK_COLOR			( "SongManager", "UnlockColor" );
+static const ThemeMetric<Rage::Color>	UNLOCK_COLOR			( "SongManager", "UnlockColor" );
 static const ThemeMetric<bool>		MOVE_UNLOCKS_TO_BOTTOM_OF_PREFERRED_SORT	( "SongManager", "MoveUnlocksToBottomOfPreferredSort" );
 static const ThemeMetric<int>		EXTRA_STAGE2_DIFFICULTY_MAX	( "SongManager", "ExtraStage2DifficultyMax" );
 
@@ -527,7 +527,7 @@ bool SongManager::DoesSongGroupExist( RString sSongGroup ) const
 	return find( m_sSongGroupNames.begin(), m_sSongGroupNames.end(), sSongGroup ) != m_sSongGroupNames.end();
 }
 
-RageColor SongManager::GetSongGroupColor( const RString &sSongGroup ) const
+Rage::Color SongManager::GetSongGroupColor( const RString &sSongGroup ) const
 {
 	for( unsigned i=0; i<m_sSongGroupNames.size(); i++ )
 	{
@@ -538,17 +538,17 @@ RageColor SongManager::GetSongGroupColor( const RString &sSongGroup ) const
 	}
 
 	ASSERT_M( 0, ssprintf("requested color for song group '%s' that doesn't exist",sSongGroup.c_str()) );
-	return RageColor(1,1,1,1);
+	return Rage::Color(1,1,1,1);
 }
 
-RageColor SongManager::GetSongColor( const Song* pSong ) const
+Rage::Color SongManager::GetSongColor( const Song* pSong ) const
 {
 	ASSERT( pSong != nullptr );
 
 	// protected by royal freem corporation. any modification/removal of
 	// this code will result in prosecution.
 	if( pSong->m_sMainTitle == "DVNO")
-		return RageColor(1.0f,0.8f,0.0f,1.0f);
+		return Rage::Color(1.0f,0.8f,0.0f,1.0f);
 	// end royal freem protection
 
 	// Use unlock color if applicable
@@ -602,7 +602,7 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 			//	continue;
 
 			if( pSteps->GetMeter() >= EXTRA_COLOR_METER )
-				return (RageColor)EXTRA_COLOR;
+				return (Rage::Color)EXTRA_COLOR;
 		}
 
 		return GetSongGroupColor( pSong->m_sGroupName );
@@ -636,7 +636,7 @@ bool SongManager::DoesCourseGroupExist( const RString &sCourseGroup ) const
 	return m_mapCourseGroupToInfo.find(sCourseGroup) != m_mapCourseGroupToInfo.end();
 }
 
-RageColor SongManager::GetCourseGroupColor( const RString &sCourseGroup ) const
+Rage::Color SongManager::GetCourseGroupColor( const RString &sCourseGroup ) const
 {
 	int iIndex = 0;
 	for (auto const &iter: m_mapCourseGroupToInfo)
@@ -649,10 +649,10 @@ RageColor SongManager::GetCourseGroupColor( const RString &sCourseGroup ) const
 	}
 
 	ASSERT_M( 0, ssprintf("requested color for course group '%s' that doesn't exist",sCourseGroup.c_str()) );
-	return RageColor(1,1,1,1);
+	return Rage::Color(1,1,1,1);
 }
 
-RageColor SongManager::GetCourseColor( const Course* pCourse ) const
+Rage::Color SongManager::GetCourseColor( const Course* pCourse ) const
 {
 	// Use unlock color if applicable
 	const UnlockEntry *pUE = UNLOCKMAN->FindCourse( pCourse );

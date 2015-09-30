@@ -1,6 +1,7 @@
 #include "global.h"
 #include "BitmapText.h"
 #include "RageMath.hpp"
+#include "RageTypes.h"
 #include "XmlFile.h"
 #include "FontManager.h"
 #include "RageLog.h"
@@ -29,7 +30,7 @@ REGISTER_ACTOR_CLASS( BitmapText );
 #define NUM_RAINBOW_COLORS	THEME->GetMetricI("BitmapText","NumRainbowColors")
 #define RAINBOW_COLOR(n)	THEME->GetMetricC("BitmapText",ssprintf("RainbowColor%i", n+1))
 
-static vector<RageColor> RAINBOW_COLORS;
+static vector<Rage::Color> RAINBOW_COLORS;
 
 BitmapText::BitmapText()
 {
@@ -670,7 +671,7 @@ void BitmapText::DrawPrimitives()
 			DISPLAY->PushMatrix();
 			DISPLAY->TranslateWorld( m_fShadowLengthX, m_fShadowLengthY, 0 );
 
-			RageColor c = m_ShadowColor;
+			Rage::Color c = m_ShadowColor;
 			c.a *= m_pTempState->diffuse[0].a;
 			for( unsigned i=0; i<m_aVertices.size(); i++ )
 				m_aVertices[i].c = c;
@@ -680,7 +681,7 @@ void BitmapText::DrawPrimitives()
 		}
 
 		// render the stroke
-		RageColor stroke_color= GetCurrStrokeColor();
+		Rage::Color stroke_color= GetCurrStrokeColor();
 		if( stroke_color.a > 0 )
 		{
 			stroke_color.a *= m_pTempState->diffuse[0].a;
@@ -695,7 +696,7 @@ void BitmapText::DrawPrimitives()
 			int color_index = int(RageTimer::GetTimeSinceStartFast() / 0.200) % RAINBOW_COLORS.size();
 			for( unsigned i=0; i<m_aVertices.size(); i+=4 )
 			{
-				const RageColor color = RAINBOW_COLORS[color_index];
+				const Rage::Color color = RAINBOW_COLORS[color_index];
 				for( unsigned j=i; j<i+4; j++ )
 					m_aVertices[j].c = color;
 
@@ -730,7 +731,7 @@ void BitmapText::DrawPrimitives()
 				iEnd = std::min( iEnd, m_aVertices.size() );
 				for( ; i < iEnd; i += 4 )
 				{
-					if( m_internalDiffuse != RageColor(1, 1, 1, 1) )
+					if( m_internalDiffuse != Rage::Color(1, 1, 1, 1) )
 					{
 						m_aVertices[i+0].c = attr.diffuse[0] * m_internalDiffuse;
 						m_aVertices[i+1].c = attr.diffuse[2] * m_internalDiffuse;
@@ -902,7 +903,7 @@ void BitmapText::Attribute::FromStack( lua_State *L, int iPos )
 		for( int i = 1; i <= NUM_DIFFUSE_COLORS; ++i )
 		{
 			lua_rawgeti( L, -i, i );
-			diffuse[i-1].FromStack( L, -1 );
+			::FromStack( diffuse[i-1], L, -1 );
 		}
 	}
 	lua_settop( L, iTab );
@@ -911,14 +912,14 @@ void BitmapText::Attribute::FromStack( lua_State *L, int iPos )
 	lua_getfield( L, iTab, "Diffuse" );
 	if( !lua_isnil(L, -1) )
 	{
-		diffuse[0].FromStack( L, -1 );
+		::FromStack( diffuse[0], L, -1 );
 		diffuse[1] = diffuse[2] = diffuse[3] = diffuse[0];
 	}
 	lua_settop( L, iTab );
 
 	// Get the glow color.
 	lua_getfield( L, iTab, "Glow" );
-	glow.FromStack( L, -1 );
+	::FromStack( glow, L, -1 );
 
 	lua_settop( L, iTab - 1 );
 }
@@ -980,7 +981,13 @@ public:
 		COMMON_RETURN_SELF;
 	}
 	static int ClearAttributes( T* p, lua_State *L )	{ p->ClearAttributes(); COMMON_RETURN_SELF; }
-	static int strokecolor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetStrokeColor( c ); COMMON_RETURN_SELF; }
+	static int strokecolor( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetStrokeColor( c );
+		COMMON_RETURN_SELF;
+	}
 	DEFINE_METHOD(getstrokecolor, GetStrokeColor());
 	static int uppercase( T* p, lua_State *L )		{ p->SetUppercase( BArg(1) ); COMMON_RETURN_SELF; }
 	static int textglowmode( T* p, lua_State *L )	{ p->SetTextGlowMode( Enum::Check<TextGlowMode>(L, 1) ); COMMON_RETURN_SELF; }

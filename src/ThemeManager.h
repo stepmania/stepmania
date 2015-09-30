@@ -78,7 +78,7 @@ public:
 	int			GetMetricI( const RString &sMetricsGroup, const RString &sValueName );
 	float		GetMetricF( const RString &sMetricsGroup, const RString &sValueName );
 	bool		GetMetricB( const RString &sMetricsGroup, const RString &sValueName );
-	RageColor	GetMetricC( const RString &sMetricsGroup, const RString &sValueName );
+	Rage::Color	GetMetricC( const RString &sMetricsGroup, const RString &sValueName );
 	LuaReference	GetMetricR( const RString &sMetricsGroup, const RString &sValueName );
 #if !defined(SMPACKAGE)
 	apActorCommands	GetMetricA( const RString &sMetricsGroup, const RString &sValueName );

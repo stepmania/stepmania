@@ -973,7 +973,7 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 				}
 				else if( sArg[0] == '#' )	// HTML color
 				{
-					RageColor col;	// in case FromString fails
+					Rage::Color col;	// in case FromString fails
 					col.FromString( sArg );
 					// col is still valid if FromString fails
 					s << col.r << "," << col.g << "," << col.b << "," << col.a;

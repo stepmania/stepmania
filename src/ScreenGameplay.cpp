@@ -755,7 +755,7 @@ void ScreenGameplay::Init()
 			pi->m_ptextCourseSongNumber->SetName( ssprintf("SongNumber%s",pi->GetName().c_str()) );
 			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_ptextCourseSongNumber );
 			pi->m_ptextCourseSongNumber->SetText( "" );
-			//pi->m_ptextCourseSongNumber->SetDiffuse( RageColor(0,0.5f,1,1) );	// light blue
+			//pi->m_ptextCourseSongNumber->SetDiffuse( Rage::Color(0,0.5f,1,1) );	// light blue
 			this->AddChild( pi->m_ptextCourseSongNumber );
 		}
 
@@ -849,7 +849,7 @@ void ScreenGameplay::Init()
 			m_textSurviveTime.SetName( "SurviveTime" );
 			LOAD_ALL_COMMANDS_AND_SET_XY( m_textSurviveTime );
 			m_textSurviveTime.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
-			m_textSurviveTime.SetDiffuse( RageColor(1,1,1,0) );
+			m_textSurviveTime.SetDiffuse( Rage::Color(1,1,1,0) );
 			this->AddChild( &m_textSurviveTime );
 		}
 
@@ -2409,7 +2409,7 @@ void ScreenGameplay::AbortGiveUpText(bool show_abort_text)
 	// otherwise tween out the text that's there
 
 	m_textDebug.BeginTweening(1/2.f);
-	m_textDebug.SetDiffuse(RageColor(1,1,1,0));
+	m_textDebug.SetDiffuse(Rage::Color(1,1,1,0));
 }
 
 void ScreenGameplay::AbortSkipSong(bool show_text)

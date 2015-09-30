@@ -10,8 +10,8 @@ public:
 	Vector2(float x1, float y1);
 
 	// assignment operators
-	Vector2& operator += (Rage::Vector2 const & rhs);
-	Vector2& operator -= (Rage::Vector2 const & rhs);
+	Vector2& operator += (Vector2 const & rhs);
+	Vector2& operator -= (Vector2 const & rhs);
 	Vector2& operator *= (float rhs);
 	Vector2& operator /= (float rhs);
 

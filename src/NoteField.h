@@ -77,12 +77,12 @@ protected:
 	void DrawAreaHighlight( int iStartBeat, int iEndBeat );
 	void set_text_measure_number_for_draw(
 		const float beat, const float side_sign, float x_offset,
-		const float horiz_align, const RageColor& color, const RageColor& glow);
+		const float horiz_align, const Rage::Color& color, const Rage::Color& glow);
 	void draw_timing_segment_text(const RString& text,
 		const float beat, const float side_sign, float x_offset,
-		const float horiz_align, const RageColor& color, const RageColor& glow);
-	void DrawAttackText(const float beat, const Attack &attack, const RageColor& glow);
-	void DrawBGChangeText(const float beat, const RString new_bg_name, const RageColor& glow);
+		const float horiz_align, const Rage::Color& color, const Rage::Color& glow);
+	void DrawAttackText(const float beat, const Attack &attack, const Rage::Color& glow);
+	void DrawBGChangeText(const float beat, const RString new_bg_name, const Rage::Color& glow);
 	float GetWidth() const;
 
 	const NoteData *m_pNoteData;

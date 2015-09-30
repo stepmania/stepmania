@@ -215,7 +215,7 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 	// Set up the first color.
 	m_vColors.clear();
 	ColorChange change;
-	change.c = RageColor (1, 1, 1, 1);
+	change.c = Rage::Color (1, 1, 1, 1);
 	change.l = 0;
 	m_vColors.push_back( change );
 
@@ -242,7 +242,7 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 				ColorChange cChange;
 				unsigned int r, g, b;
 				sscanf( m_sText.substr( i, 9 ).c_str(), "|%*c0%2x%2x%2x", &r, &g, &b );
-				cChange.c = RageColor( r/255.f, g/255.f, b/255.f, 1.f );
+				cChange.c = Rage::Color( r/255.f, g/255.f, b/255.f, 1.f );
 				cChange.l = iGlyphsSoFar;
 				if( iGlyphsSoFar == 0 )
 					m_vColors[0] = cChange;
@@ -345,7 +345,7 @@ void ColorBitmapText::DrawPrimitives( )
 		{
 			DISPLAY->PushMatrix();
 			DISPLAY->TranslateWorld( m_fShadowLengthX, m_fShadowLengthY, 0 );	// shift by 5 units
-			RageColor c = m_ShadowColor;
+			Rage::Color c = m_ShadowColor;
 			c.a *= m_pTempState->diffuse[0].a;
 			for( unsigned i=0; i<m_aVertices.size(); i++ )
 				m_aVertices[i].c = c;
@@ -356,7 +356,7 @@ void ColorBitmapText::DrawPrimitives( )
 
 		// render the diffuse pass
 		int loc = 0, cur = 0;
-		RageColor c = m_pTempState->diffuse[0];
+		Rage::Color c = m_pTempState->diffuse[0];
 
 		for( unsigned i=0; i<m_aVertices.size(); i+=4 )
 		{
@@ -409,7 +409,7 @@ void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
 
 		// When we're cutting out text, we need to maintain the last
 		// color, so our text at the top doesn't become colorless.
-		RageColor LastColor;
+		Rage::Color LastColor;
 
 		for( unsigned i = 0; i < m_vColors.size(); i++ )
 		{

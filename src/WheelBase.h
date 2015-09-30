@@ -119,7 +119,7 @@ protected:
 	ThemeMetric<int>	SCROLL_BAR_HEIGHT;
 	LuaExpressionTransform	m_exprItemTransformFunction;
 	ThemeMetric<float>	NUM_WHEEL_ITEMS_TO_DRAW;
-	ThemeMetric<RageColor>	WHEEL_ITEM_LOCKED_COLOR;
+	ThemeMetric<Rage::Color>	WHEEL_ITEM_LOCKED_COLOR;
 };
 
 #endif

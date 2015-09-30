@@ -1058,9 +1058,9 @@ bool ThemeManager::GetMetricB( const RString &sMetricsGroup, const RString &sVal
 	return bRet;
 }
 
-RageColor ThemeManager::GetMetricC( const RString &sMetricsGroup, const RString &sValueName )
+Rage::Color ThemeManager::GetMetricC( const RString &sMetricsGroup, const RString &sValueName )
 {
-	RageColor ret;
+	Rage::Color ret;
 	GetAndConvertMetric( sMetricsGroup, sValueName, ret );
 	return ret;
 }

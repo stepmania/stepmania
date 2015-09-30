@@ -784,7 +784,7 @@ void Course::RegenerateNonFixedTrails() const
 	}
 }
 
-RageColor Course::GetColor() const
+Rage::Color Course::GetColor() const
 {
 	// FIXME: Calculate the meter.
 	int iMeter = 5;
@@ -820,7 +820,7 @@ RageColor Course::GetColor() const
 		else					return SORT_LEVEL4_COLOR;
 	default:
 		FAIL_M( ssprintf("Invalid course sort %d.", int(PREFSMAN->m_CourseSortOrder)) );
-		return RageColor(1,1,1,1);  // white; should never reach here
+		return Rage::Color(1,1,1,1);  // white; should never reach here
 	}
 }
 

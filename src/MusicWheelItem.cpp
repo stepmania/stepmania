@@ -35,7 +35,7 @@ XToString( MusicWheelItemType );
 
 MusicWheelItemData::MusicWheelItemData( WheelItemDataType type, Song* pSong,
 				       RString sSectionName, Course* pCourse,
-				       RageColor color, int iSectionCount ):
+				       Rage::Color color, int iSectionCount ):
 	WheelItemBaseData(type, sSectionName, color),
 	m_pCourse(pCourse), m_pSong(pSong), m_Flags(WheelNotifyIcon::Flags()),
 	m_iSectionCount(iSectionCount), m_sLabel(""), m_pAction() {}

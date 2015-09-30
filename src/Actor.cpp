@@ -94,8 +94,8 @@ void Actor::InitState()
 	m_baseRotation = Rage::Vector3( 0, 0, 0 );
 	m_baseScale = Rage::Vector3( 1, 1, 1 );
 	m_fBaseAlpha = 1;
-	m_internalDiffuse = RageColor( 1, 1, 1, 1 );
-	m_internalGlow = RageColor( 0, 0, 0, 0 );
+	m_internalDiffuse = Rage::Color( 1, 1, 1, 1 );
+	m_internalGlow = Rage::Color( 0, 0, 0, 0 );
 
 	m_start.Init();
 	m_current.Init();
@@ -114,13 +114,13 @@ void Actor::InitState()
 	m_fEffectOffset = 0;
 	m_EffectClock = CLOCK_TIMER;
 	m_vEffectMagnitude = Rage::Vector3(0,0,10);
-	m_effectColor1 = RageColor(1,1,1,1);
-	m_effectColor2 = RageColor(1,1,1,1);
+	m_effectColor1 = Rage::Color(1,1,1,1);
+	m_effectColor2 = Rage::Color(1,1,1,1);
 
 	m_bVisible = true;
 	m_fShadowLengthX = 0;
 	m_fShadowLengthY = 0;
-	m_ShadowColor = RageColor(0,0,0,0.5f);
+	m_ShadowColor = Rage::Color(0,0,0,0.5f);
 	m_bIsAnimating = true;
 	m_fHibernateSecondsLeft = 0;
 	m_iDrawOrder = 0;
@@ -330,8 +330,8 @@ void Actor::Draw()
 		m_FakeParent->BeginDraw();
 	}
 	size_t wrapper_states_used= 0;
-	RageColor last_diffuse;
-	RageColor last_glow;
+	Rage::Color last_diffuse;
+	Rage::Color last_glow;
 	bool use_last_diffuse= false;
 	// dont_abort_draw exists because if one of the layers is invisible,
 	// there's no point in continuing. -Kyz
@@ -417,7 +417,7 @@ void Actor::Draw()
 
 void Actor::PostDraw() // reset internal diffuse and glow
 {
-	m_internalDiffuse = RageColor(1, 1, 1, 1);
+	m_internalDiffuse = Rage::Color(1, 1, 1, 1);
 	m_internalGlow.a = 0;
 }
 
@@ -517,7 +517,7 @@ void Actor::PreDraw() // calculate actor properties
 			tempState.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
 			break;
 		case rainbow:
-			tempState.diffuse[0] = RageColor(
+			tempState.diffuse[0] = Rage::Color(
 				RageFastCos( fPercentBetweenColors*2*PI ) * 0.5f + 0.5f,
 				RageFastCos( fPercentBetweenColors*2*PI + PI * 2.0f / 3.0f ) * 0.5f + 0.5f,
 				RageFastCos( fPercentBetweenColors*2*PI + PI * 4.0f / 3.0f) * 0.5f + 0.5f,
@@ -569,7 +569,7 @@ void Actor::PreDraw() // calculate actor properties
 	if( m_fBaseAlpha != 1 )
 		m_internalDiffuse.a *= m_fBaseAlpha;
 
-	if( m_internalDiffuse != RageColor(1, 1, 1, 1) )
+	if( m_internalDiffuse != Rage::Color(1, 1, 1, 1) )
 	{
 		if( m_pTempState != &tempState )
 		{
@@ -1115,7 +1115,7 @@ void Actor::ResetEffectTimeIfDifferent(Effect new_effect)
 	}
 }
 
-void Actor::SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
+void Actor::SetEffectDiffuseBlink( float fEffectPeriodSeconds, Rage::Color c1, Rage::Color c2 )
 {
 	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
@@ -1125,7 +1125,7 @@ void Actor::SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, Rag
 	m_effectColor2 = c2;
 }
 
-void Actor::SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
+void Actor::SetEffectDiffuseShift( float fEffectPeriodSeconds, Rage::Color c1, Rage::Color c2 )
 {
 	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
@@ -1135,7 +1135,7 @@ void Actor::SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, Rag
 	m_effectColor2 = c2;
 }
 
-void Actor::SetEffectDiffuseRamp( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
+void Actor::SetEffectDiffuseRamp( float fEffectPeriodSeconds, Rage::Color c1, Rage::Color c2 )
 {
 	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
@@ -1145,7 +1145,7 @@ void Actor::SetEffectDiffuseRamp( float fEffectPeriodSeconds, RageColor c1, Rage
 	m_effectColor2 = c2;
 }
 
-void Actor::SetEffectGlowBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
+void Actor::SetEffectGlowBlink( float fEffectPeriodSeconds, Rage::Color c1, Rage::Color c2 )
 {
 	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
@@ -1155,7 +1155,7 @@ void Actor::SetEffectGlowBlink( float fEffectPeriodSeconds, RageColor c1, RageCo
 	m_effectColor2 = c2;
 }
 
-void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
+void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, Rage::Color c1, Rage::Color c2 )
 {
 	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
@@ -1165,7 +1165,7 @@ void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageCo
 	m_effectColor2 = c2;
 }
 
-void Actor::SetEffectGlowRamp( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
+void Actor::SetEffectGlowRamp( float fEffectPeriodSeconds, Rage::Color c1, Rage::Color c2 )
 {
 	ASSERT( fEffectPeriodSeconds > 0 );
 	// todo: account for SSC_FUTURES -aj
@@ -1309,7 +1309,7 @@ float Actor::GetTweenTimeLeft() const
  * we can simply say eg. "for x in states(Actor) do x.SetDiffuseColor(c) end".
  * However, we'd then have to give every TweenState a userdata in Lua while it's
  * being manipulated, which would add overhead ... */
-void Actor::SetGlobalDiffuseColor( RageColor c )
+void Actor::SetGlobalDiffuseColor( Rage::Color c )
 {
 	for( int i=0; i<NUM_DIFFUSE_COLORS; i++ ) // color, not alpha
 	{
@@ -1328,7 +1328,7 @@ void Actor::SetGlobalDiffuseColor( RageColor c )
 	}
 }
 
-void Actor::SetDiffuseColor( RageColor c )
+void Actor::SetDiffuseColor( Rage::Color c )
 {
 	for( int i=0; i<NUM_DIFFUSE_COLORS; i++ )
 	{
@@ -1350,8 +1350,8 @@ void Actor::TweenState::Init()
 	crop = RectF( 0,0,0,0 );
 	fade = RectF( 0,0,0,0 );
 	for( int i=0; i<NUM_DIFFUSE_COLORS; i++ )
-		diffuse[i] = RageColor( 1, 1, 1, 1 );
-	glow = RageColor( 1, 1, 1, 0 );
+		diffuse[i] = Rage::Color( 1, 1, 1, 1 );
+	glow = Rage::Color( 1, 1, 1, 0 );
 	aux = 0;
 }
 
@@ -1644,18 +1644,88 @@ public:
 	static int fadetop( T* p, lua_State *L )		{ p->SetFadeTop(FArg(1)); COMMON_RETURN_SELF; }
 	static int faderight( T* p, lua_State *L )		{ p->SetFadeRight(FArg(1)); COMMON_RETURN_SELF; }
 	static int fadebottom( T* p, lua_State *L )		{ p->SetFadeBottom(FArg(1)); COMMON_RETURN_SELF; }
-	static int diffuse( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuse( c ); COMMON_RETURN_SELF; }
-	static int diffuseupperleft( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseUpperLeft( c ); COMMON_RETURN_SELF; }
-	static int diffuseupperright( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseUpperRight( c ); COMMON_RETURN_SELF; }
-	static int diffuselowerleft( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLowerLeft( c ); COMMON_RETURN_SELF; }
-	static int diffuselowerright( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLowerRight( c ); COMMON_RETURN_SELF; }
-	static int diffuseleftedge( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLeftEdge( c ); COMMON_RETURN_SELF; }
-	static int diffuserightedge( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseRightEdge( c ); COMMON_RETURN_SELF; }
-	static int diffusetopedge( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseTopEdge( c ); COMMON_RETURN_SELF; }
-	static int diffusebottomedge( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseBottomEdge( c ); COMMON_RETURN_SELF; }
-	static int diffusealpha( T* p, lua_State *L )		{ p->SetDiffuseAlpha(FArg(1)); COMMON_RETURN_SELF; }
-	static int diffusecolor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseColor( c ); COMMON_RETURN_SELF; }
-	static int glow( T* p, lua_State *L )			{ RageColor c; c.FromStackCompat( L, 1 ); p->SetGlow( c ); COMMON_RETURN_SELF; }
+	static int diffuse( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuse( c );
+		COMMON_RETURN_SELF;
+	}
+	static int diffuseupperleft( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuseUpperLeft( c );
+		COMMON_RETURN_SELF;
+	}
+	static int diffuseupperright( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuseUpperRight( c );
+		COMMON_RETURN_SELF;
+	}
+	static int diffuselowerleft( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuseLowerLeft( c );
+		COMMON_RETURN_SELF;
+	}
+	static int diffuselowerright( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuseLowerRight( c );
+		COMMON_RETURN_SELF;
+	}
+	static int diffuseleftedge( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuseLeftEdge( c );
+		COMMON_RETURN_SELF;
+	}
+	static int diffuserightedge( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuseRightEdge( c );
+		COMMON_RETURN_SELF;
+	}
+	static int diffusetopedge( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuseTopEdge( c );
+		COMMON_RETURN_SELF;
+	}
+	static int diffusebottomedge( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuseBottomEdge( c );
+		COMMON_RETURN_SELF;
+	}
+	static int diffusealpha( T* p, lua_State *L )
+	{
+		p->SetDiffuseAlpha(FArg(1));
+		COMMON_RETURN_SELF;
+	}
+	static int diffusecolor( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuseColor( c );
+		COMMON_RETURN_SELF;
+	}
+	static int glow( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetGlow( c );
+		COMMON_RETURN_SELF;
+	}
 	static int aux( T* p, lua_State *L )			{ p->SetAux( FArg(1) ); COMMON_RETURN_SELF; }
 	static int getaux( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetAux() ); return 1; }
 	static int rotationx( T* p, lua_State *L )		{ p->SetRotationX(FArg(1)); COMMON_RETURN_SELF; }
@@ -1676,17 +1746,23 @@ public:
 	static int shadowlength( T* p, lua_State *L )		{ p->SetShadowLength(FArg(1)); COMMON_RETURN_SELF; }
 	static int shadowlengthx( T* p, lua_State *L )		{ p->SetShadowLengthX(FArg(1)); COMMON_RETURN_SELF; }
 	static int shadowlengthy( T* p, lua_State *L )		{ p->SetShadowLengthY(FArg(1)); COMMON_RETURN_SELF; }
-	static int shadowcolor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetShadowColor( c ); COMMON_RETURN_SELF; }
+	static int shadowcolor( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetShadowColor( c );
+		COMMON_RETURN_SELF;
+	}
 	static int horizalign( T* p, lua_State *L )		{ p->SetHorizAlign(Enum::Check<HorizAlign>(L, 1)); COMMON_RETURN_SELF; }
 	static int vertalign( T* p, lua_State *L )		{ p->SetVertAlign(Enum::Check<VertAlign>(L, 1)); COMMON_RETURN_SELF; }
 	static int halign( T* p, lua_State *L )			{ p->SetHorizAlign(FArg(1)); COMMON_RETURN_SELF; }
 	static int valign( T* p, lua_State *L )			{ p->SetVertAlign(FArg(1)); COMMON_RETURN_SELF; }
-	static int diffuseblink( T* p, lua_State *L )		{ p->SetEffectDiffuseBlink(1.0f, RageColor(0.5f,0.5f,0.5f,0.5f), RageColor(1,1,1,1)); COMMON_RETURN_SELF; }
-	static int diffuseshift( T* p, lua_State *L )		{ p->SetEffectDiffuseShift(1.0f, RageColor(0,0,0,1), RageColor(1,1,1,1)); COMMON_RETURN_SELF; }
-	static int diffuseramp( T* p, lua_State *L )		{ p->SetEffectDiffuseRamp(1.0f, RageColor(0,0,0,1), RageColor(1,1,1,1)); COMMON_RETURN_SELF; }
-	static int glowblink( T* p, lua_State *L )		{ p->SetEffectGlowBlink(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); COMMON_RETURN_SELF; }
-	static int glowshift( T* p, lua_State *L )		{ p->SetEffectGlowShift(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); COMMON_RETURN_SELF; }
-	static int glowramp( T* p, lua_State *L )		{ p->SetEffectGlowRamp(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f)); COMMON_RETURN_SELF; }
+	static int diffuseblink( T* p, lua_State *L )		{ p->SetEffectDiffuseBlink(1.0f, Rage::Color(0.5f,0.5f,0.5f,0.5f), Rage::Color(1,1,1,1)); COMMON_RETURN_SELF; }
+	static int diffuseshift( T* p, lua_State *L )		{ p->SetEffectDiffuseShift(1.0f, Rage::Color(0,0,0,1), Rage::Color(1,1,1,1)); COMMON_RETURN_SELF; }
+	static int diffuseramp( T* p, lua_State *L )		{ p->SetEffectDiffuseRamp(1.0f, Rage::Color(0,0,0,1), Rage::Color(1,1,1,1)); COMMON_RETURN_SELF; }
+	static int glowblink( T* p, lua_State *L )		{ p->SetEffectGlowBlink(1.0f, Rage::Color(1,1,1,0.2f), Rage::Color(1,1,1,0.8f)); COMMON_RETURN_SELF; }
+	static int glowshift( T* p, lua_State *L )		{ p->SetEffectGlowShift(1.0f, Rage::Color(1,1,1,0.2f), Rage::Color(1,1,1,0.8f)); COMMON_RETURN_SELF; }
+	static int glowramp( T* p, lua_State *L )		{ p->SetEffectGlowRamp(1.0f, Rage::Color(1,1,1,0.2f), Rage::Color(1,1,1,0.8f)); COMMON_RETURN_SELF; }
 	static int rainbow( T* p, lua_State *L )			{ p->SetEffectRainbow(2.0f); COMMON_RETURN_SELF; }
 	static int wag( T* p, lua_State *L )			{ p->SetEffectWag(2.0f, Rage::Vector3(0,0,20)); COMMON_RETURN_SELF; }
 	static int bounce( T* p, lua_State *L )			{ p->SetEffectBounce(2.0f, Rage::Vector3(0,20,0)); COMMON_RETURN_SELF; }
@@ -1695,8 +1771,20 @@ public:
 	static int spin( T* p, lua_State *L )			{ p->SetEffectSpin(Rage::Vector3(0,0,180)); COMMON_RETURN_SELF; }
 	static int vibrate( T* p, lua_State *L )			{ p->SetEffectVibrate(Rage::Vector3(10,10,10)); COMMON_RETURN_SELF; }
 	static int stopeffect( T* p, lua_State *L )		{ p->StopEffect(); COMMON_RETURN_SELF; }
-	static int effectcolor1( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetEffectColor1( c ); COMMON_RETURN_SELF; }
-	static int effectcolor2( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetEffectColor2( c ); COMMON_RETURN_SELF; }
+	static int effectcolor1( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetEffectColor1( c );
+		COMMON_RETURN_SELF;
+	}
+	static int effectcolor2( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetEffectColor2( c );
+		COMMON_RETURN_SELF;
+	}
 	static int effectperiod( T* p, lua_State *L )
 	{
 		float fPeriod = FArg(1);

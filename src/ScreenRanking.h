@@ -76,7 +76,7 @@ protected:
 	BitmapText m_textScores[NUM_RANKING_LINES];	// for category and course
 	BitmapText m_textPoints[NUM_RANKING_LINES];	// for course
 	BitmapText m_textTime[NUM_RANKING_LINES];	// for course
-	ThemeMetric1D<RageColor>	STEPS_TYPE_COLOR;
+	ThemeMetric1D<Rage::Color>	STEPS_TYPE_COLOR;
 
 	LocalizedString		NO_SCORE_NAME;
 	ThemeMetric<float>	ROW_SPACING_X;

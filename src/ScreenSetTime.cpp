@@ -50,23 +50,23 @@ void ScreenSetTime::Init()
 		BitmapText &value = m_textValue[s];
 
 		title.LoadFromFont( THEME->GetPathF("Common","title") );
-		title.SetDiffuse( RageColor(1,1,1,1) );
+		title.SetDiffuse( Rage::Color(1,1,1,1) );
 		title.SetText( SetTimeSelectionToString(s) );
 		title.SetXY( GetTitleX(s), GetTitleY(s) );
 		this->AddChild( &title );
 
-		title.SetDiffuse( RageColor(1,1,1,0) );
+		title.SetDiffuse( Rage::Color(1,1,1,0) );
 		title.BeginTweening( 0.3f, TWEEN_LINEAR );
-		title.SetDiffuse( RageColor(1,1,1,1) );
+		title.SetDiffuse( Rage::Color(1,1,1,1) );
 
 		value.LoadFromFont( THEME->GetPathF("Common","normal") );
-		value.SetDiffuse( RageColor(1,1,1,1) );
+		value.SetDiffuse( Rage::Color(1,1,1,1) );
 		value.SetXY( GetValueX(s), GetValueY(s) );
 		this->AddChild( &value );
 
-		value.SetDiffuse( RageColor(1,1,1,0) );
+		value.SetDiffuse( Rage::Color(1,1,1,0) );
 		value.BeginTweening( 0.3f, TWEEN_LINEAR );
-		value.SetDiffuse( RageColor(1,1,1,1) );
+		value.SetDiffuse( Rage::Color(1,1,1,1) );
 	}
 
 	m_soundChangeSelection.Load( THEME->GetPathS("ScreenSetTime","ChangeSelection") );
@@ -152,8 +152,8 @@ void ScreenSetTime::ChangeSelection( int iDirection )
 
 	m_textValue[OldSelection].StopEffect();
 	m_textValue[m_Selection].SetEffectDiffuseShift( 1.f,
-		RageColor(0.3f,0.3f,0.3f,1), 
-		RageColor(1,1,1,1) );
+		Rage::Color(0.3f,0.3f,0.3f,1), 
+		Rage::Color(1,1,1,1) );
 
 	if( iDirection != 0 )
 		m_soundChangeSelection.Play(true);
@@ -210,11 +210,11 @@ bool ScreenSetTime::MenuStart( const InputEventPlus &input )
 		{
 			BitmapText &title = m_textTitle[s];
 			title.BeginTweening( 0.3f, TWEEN_LINEAR );
-			title.SetDiffuse( RageColor(1,1,1,0) );
+			title.SetDiffuse( Rage::Color(1,1,1,0) );
 
 			BitmapText &value = m_textValue[s];
 			value.BeginTweening( 0.3f, TWEEN_LINEAR );
-			value.SetDiffuse( RageColor(1,1,1,0) );
+			value.SetDiffuse( Rage::Color(1,1,1,0) );
 		}
 
 		SCREENMAN->PlayStartSound();

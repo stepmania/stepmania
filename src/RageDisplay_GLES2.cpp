@@ -855,10 +855,10 @@ RageDisplay_GLES2::SetAlphaTest( bool b )
 
 void
 RageDisplay_GLES2::SetMaterial(
-	const RageColor &emissive,
-	const RageColor &ambient,
-	const RageColor &diffuse,
-	const RageColor &specular,
+	const Rage::Color &emissive,
+	const Rage::Color &ambient,
+	const Rage::Color &diffuse,
+	const Rage::Color &specular,
 	float shininess
 	)
 {
@@ -900,9 +900,9 @@ RageDisplay_GLES2::SetLightOff( int index )
 void
 RageDisplay_GLES2::SetLightDirectional(
 	int index,
-	const RageColor &ambient,
-	const RageColor &diffuse,
-	const RageColor &specular,
+	const Rage::Color &ambient,
+	const Rage::Color &diffuse,
+	const Rage::Color &specular,
 	const Rage::Vector3 &dir )
 {
 	// TODO

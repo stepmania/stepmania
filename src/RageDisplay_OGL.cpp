@@ -1878,10 +1878,10 @@ void RageDisplay_Legacy::SetTextureWrapping( TextureUnit tu, bool b )
 }
 
 void RageDisplay_Legacy::SetMaterial(
-	const RageColor &emissive,
-	const RageColor &ambient,
-	const RageColor &diffuse,
-	const RageColor &specular,
+	const Rage::Color &emissive,
+	const Rage::Color &ambient,
+	const Rage::Color &diffuse,
+	const Rage::Color &specular,
 	float shininess
 	)
 {
@@ -1895,19 +1895,19 @@ void RageDisplay_Legacy::SetMaterial(
 
 	if (bLighting)
 	{
-		glMaterialfv( GL_FRONT, GL_EMISSION, emissive );
-		glMaterialfv( GL_FRONT, GL_AMBIENT, ambient );
-		glMaterialfv( GL_FRONT, GL_DIFFUSE, diffuse );
-		glMaterialfv( GL_FRONT, GL_SPECULAR, specular );
+		glMaterialfv( GL_FRONT, GL_EMISSION, &emissive.r );
+		glMaterialfv( GL_FRONT, GL_AMBIENT, &ambient.r );
+		glMaterialfv( GL_FRONT, GL_DIFFUSE, &diffuse.r );
+		glMaterialfv( GL_FRONT, GL_SPECULAR, &specular.r );
 		glMaterialf( GL_FRONT, GL_SHININESS, shininess );
 	}
 	else
 	{
-		RageColor c = diffuse;
+		Rage::Color c = diffuse;
 		c.r += emissive.r + ambient.r;
 		c.g += emissive.g + ambient.g;
 		c.b += emissive.b + ambient.b;
-		glColor4fv( c );
+		glColor4fv( &c.r );
 	}
 }
 
@@ -1926,9 +1926,9 @@ void RageDisplay_Legacy::SetLightOff( int index )
 
 void RageDisplay_Legacy::SetLightDirectional(
 	int index,
-	const RageColor &ambient,
-	const RageColor &diffuse,
-	const RageColor &specular,
+	const Rage::Color &ambient,
+	const Rage::Color &diffuse,
+	const Rage::Color &specular,
 	const Rage::Vector3 &dir )
 {
 	// Light coordinates are transformed by the modelview matrix, but
@@ -1937,9 +1937,9 @@ void RageDisplay_Legacy::SetLightDirectional(
 	glLoadIdentity();
 
 	glEnable( GL_LIGHT0+index );
-	glLightfv( GL_LIGHT0+index, GL_AMBIENT, ambient );
-	glLightfv( GL_LIGHT0+index, GL_DIFFUSE, diffuse );
-	glLightfv( GL_LIGHT0+index, GL_SPECULAR, specular );
+	glLightfv( GL_LIGHT0+index, GL_AMBIENT, &ambient.r );
+	glLightfv( GL_LIGHT0+index, GL_DIFFUSE, &diffuse.r );
+	glLightfv( GL_LIGHT0+index, GL_SPECULAR, &specular.r );
 	float position[4] = {dir.x, dir.y, dir.z, 0};
 	glLightfv( GL_LIGHT0+index, GL_POSITION, position );
 

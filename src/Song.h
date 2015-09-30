@@ -59,7 +59,7 @@ struct LyricSegment
 {
 	float	m_fStartTime; /** @brief When does the lyric show up? */
 	RString m_sLyric; /** @brief The lyrics themselves. */
-	RageColor m_Color; /** @brief The color of the lyrics. */
+	Rage::Color m_Color; /** @brief The color of the lyrics. */
 };
 
 /** @brief Holds all music metadata and steps for one song. */
