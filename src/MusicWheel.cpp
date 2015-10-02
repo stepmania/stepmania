@@ -693,7 +693,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 
 						// new section, make a section item
 						// todo: preferred sort section color handling? -aj
-						RageColor colorSection = (so==SORT_GROUP) ? SONGMAN->GetSongGroupColor(pSong->m_sGroupName) : SECTION_COLORS.GetValue(iSectionColorIndex);
+						Rage::Color colorSection = (so==SORT_GROUP) ? SONGMAN->GetSongGroupColor(pSong->m_sGroupName) : SECTION_COLORS.GetValue(iSectionColorIndex);
 						iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
 						arrayWheelItemDatas.push_back( new MusicWheelItemData(WheelItemDataType_Section, nullptr, sThisSection, nullptr, colorSection, iSectionCount) );
 						sLastSection = sThisSection;
@@ -856,13 +856,13 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 
 				if( sThisSection != sLastSection )	// new section, make a section item
 				{
-					RageColor c = SECTION_COLORS.GetValue(iSectionColorIndex);
+					Rage::Color c = SECTION_COLORS.GetValue(iSectionColorIndex);
 					iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
 					arrayWheelItemDatas.push_back( new MusicWheelItemData(WheelItemDataType_Section, nullptr, sThisSection, nullptr, c, 0) );
 					sLastSection = sThisSection;
 				}
 
-				RageColor c = ( pCourse->m_sGroupName.size() == 0 ) ? pCourse->GetColor() : SONGMAN->GetCourseColor(pCourse);
+				Rage::Color c = ( pCourse->m_sGroupName.size() == 0 ) ? pCourse->GetColor() : SONGMAN->GetCourseColor(pCourse);
 				arrayWheelItemDatas.push_back( new MusicWheelItemData(WheelItemDataType_Course, nullptr, sThisSection, pCourse, c, 0) );
 			}
 			break;

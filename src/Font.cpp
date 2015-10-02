@@ -280,7 +280,7 @@ int Font::GetGlyphsThatFit(const wstring& line, int* width) const
 Font::Font(): m_iRefCount(1), path(""), m_apPages(), m_pDefault(nullptr),
 	m_iCharToGlyph(), m_bRightToLeft(false),
 	// strokes aren't shown by default, hence the Color.
-	m_DefaultStrokeColor(RageColor(0,0,0,0)), m_sChars("") {}
+	m_DefaultStrokeColor(Rage::Color(0,0,0,0)), m_sChars("") {}
 Font::~Font()
 {
 	Unload();

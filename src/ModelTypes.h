@@ -81,10 +81,10 @@ struct msMaterial
 {
 	int		nFlags;
 	RString		sName;
-	RageColor	Ambient;
-	RageColor	Diffuse;
-	RageColor	Specular;
-	RageColor	Emissive;
+	Rage::Color	Ambient;
+	Rage::Color	Diffuse;
+	Rage::Color	Specular;
+	Rage::Color	Emissive;
 	float		fShininess;
 	float		fTransparency;
 

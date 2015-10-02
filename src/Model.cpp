@@ -338,9 +338,9 @@ void Model::DrawPrimitives()
 				// apply material
 				msMaterial& mat = m_Materials[ pMesh->nMaterialIndex ];
 
-				RageColor Emissive = mat.Emissive;
-				RageColor Ambient = mat.Ambient;
-				RageColor Diffuse = mat.Diffuse;
+				Rage::Color Emissive = mat.Emissive;
+				Rage::Color Ambient = mat.Ambient;
+				Rage::Color Diffuse = mat.Diffuse;
 
 				Emissive *= m_pTempState->diffuse[0];
 				Ambient *= m_pTempState->diffuse[0];
@@ -416,10 +416,10 @@ void Model::DrawPrimitives()
 			}
 			else
 			{
-				static const RageColor emissive( 0,0,0,0 );
-				static const RageColor ambient( 0.2f,0.2f,0.2f,1 );
-				static const RageColor diffuse( 0.7f,0.7f,0.7f,1 );
-				static const RageColor specular( 0.2f,0.2f,0.2f,1 );
+				static const Rage::Color emissive( 0,0,0,0 );
+				static const Rage::Color ambient( 0.2f,0.2f,0.2f,1 );
+				static const Rage::Color diffuse( 0.7f,0.7f,0.7f,1 );
+				static const Rage::Color specular( 0.2f,0.2f,0.2f,1 );
 				static const float shininess = 1;
 				DISPLAY->SetMaterial( emissive, ambient, diffuse, specular, shininess );
 				DISPLAY->ClearAllTextures();
@@ -442,10 +442,10 @@ void Model::DrawPrimitives()
 			const msMesh *pMesh = &m_pGeometry->m_Meshes[i];
 
 			// apply material
-			RageColor emissive = RageColor(0,0,0,0);
-			RageColor ambient = RageColor(0,0,0,0);
-			RageColor diffuse = m_pTempState->glow;
-			RageColor specular = RageColor(0,0,0,0);
+			Rage::Color emissive = Rage::Color(0,0,0,0);
+			Rage::Color ambient = Rage::Color(0,0,0,0);
+			Rage::Color diffuse = m_pTempState->glow;
+			Rage::Color specular = Rage::Color(0,0,0,0);
 			float shininess = 1;
 
 			DISPLAY->SetMaterial( emissive, ambient, diffuse, specular, shininess );

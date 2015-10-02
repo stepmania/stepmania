@@ -48,7 +48,7 @@ NoteField::NoteField()
 	m_textMeasureNumber.SetShadowLength( 2 );
 	m_textMeasureNumber.SetWrapWidthPixels( 300 );
 
-	m_rectMarkerBar.SetEffectDiffuseShift( 2, RageColor(1,1,1,0.5f), RageColor(0.5f,0.5f,0.5f,0.5f) );
+	m_rectMarkerBar.SetEffectDiffuseShift( 2, Rage::Color(1,1,1,0.5f), Rage::Color(0.5f,0.5f,0.5f,0.5f) );
 
 	m_sprBoard.Load( THEME->GetPathG("NoteField","board") );
 	m_sprBoard->SetName("Board");
@@ -408,7 +408,7 @@ void NoteField::DrawBeatBar( const float fBeat, BeatBarType type, int iMeasureIn
 
 	m_sprBeatBars.SetX( 0 );
 	m_sprBeatBars.SetY( fYPos );
-	m_sprBeatBars.SetDiffuse( RageColor(1,1,1,fAlpha) );
+	m_sprBeatBars.SetDiffuse( Rage::Color(1,1,1,fAlpha) );
 	m_sprBeatBars.SetState( iState );
 	m_sprBeatBars.SetCustomTextureRect( RectF(0,Rage::scale(iState + 0.f,0.f,4.f,0.f,1.f), fWidth/fFrameWidth, Rage::scale(iState+1.f,0.f,4.f,0.f,1.f)) );
 	m_sprBeatBars.SetZoomX( fWidth/m_sprBeatBars.GetUnzoomedWidth() );
@@ -419,8 +419,8 @@ void NoteField::DrawBeatBar( const float fBeat, BeatBarType type, int iMeasureIn
 	{
 		int iMeasureNoDisplay = iMeasureIndex;
 
-		m_textMeasureNumber.SetDiffuse( RageColor(1,1,1,1) );
-		m_textMeasureNumber.SetGlow( RageColor(1,1,1,0) );
+		m_textMeasureNumber.SetDiffuse( Rage::Color(1,1,1,1) );
+		m_textMeasureNumber.SetGlow( Rage::Color(1,1,1,0) );
 		m_textMeasureNumber.SetHorizAlign( align_right );
 		m_textMeasureNumber.SetText( ssprintf("%d", iMeasureNoDisplay) );
 		m_textMeasureNumber.SetXY( -fWidth/2, fYPos );
@@ -473,7 +473,7 @@ void NoteField::DrawMarkerBar( int iBeat )
 	m_rectMarkerBar.Draw();
 }
 
-static ThemeMetric<RageColor> AREA_HIGHLIGHT_COLOR("NoteField", "AreaHighlightColor");
+static ThemeMetric<Rage::Color> AREA_HIGHLIGHT_COLOR("NoteField", "AreaHighlightColor");
 void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
 {
 	float fStartBeat = NoteRowToBeat( iStartBeat );
@@ -494,17 +494,17 @@ void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
 
 // todo: add DrawWarpAreaBG? -aj
 
-static ThemeMetric<RageColor> BPM_COLOR ( "NoteField", "BPMColor" );
-static ThemeMetric<RageColor> STOP_COLOR ( "NoteField", "StopColor" );
-static ThemeMetric<RageColor> DELAY_COLOR ( "NoteField", "DelayColor" );
-static ThemeMetric<RageColor> WARP_COLOR ( "NoteField", "WarpColor" );
-static ThemeMetric<RageColor> TIME_SIG_COLOR ( "NoteField", "TimeSignatureColor" );
-static ThemeMetric<RageColor> TICKCOUNT_COLOR ( "NoteField", "TickcountColor" );
-static ThemeMetric<RageColor> COMBO_COLOR ( "NoteField", "ComboColor" );
-static ThemeMetric<RageColor> LABEL_COLOR ( "NoteField", "LabelColor" );
-static ThemeMetric<RageColor> SPEED_COLOR ( "NoteField", "SpeedColor" );
-static ThemeMetric<RageColor> SCROLL_COLOR ( "NoteField", "ScrollColor" );
-static ThemeMetric<RageColor> FAKE_COLOR ("NoteField", "FakeColor" );
+static ThemeMetric<Rage::Color> BPM_COLOR ( "NoteField", "BPMColor" );
+static ThemeMetric<Rage::Color> STOP_COLOR ( "NoteField", "StopColor" );
+static ThemeMetric<Rage::Color> DELAY_COLOR ( "NoteField", "DelayColor" );
+static ThemeMetric<Rage::Color> WARP_COLOR ( "NoteField", "WarpColor" );
+static ThemeMetric<Rage::Color> TIME_SIG_COLOR ( "NoteField", "TimeSignatureColor" );
+static ThemeMetric<Rage::Color> TICKCOUNT_COLOR ( "NoteField", "TickcountColor" );
+static ThemeMetric<Rage::Color> COMBO_COLOR ( "NoteField", "ComboColor" );
+static ThemeMetric<Rage::Color> LABEL_COLOR ( "NoteField", "LabelColor" );
+static ThemeMetric<Rage::Color> SPEED_COLOR ( "NoteField", "SpeedColor" );
+static ThemeMetric<Rage::Color> SCROLL_COLOR ( "NoteField", "ScrollColor" );
+static ThemeMetric<Rage::Color> FAKE_COLOR ("NoteField", "FakeColor" );
 static ThemeMetric<bool> BPM_IS_LEFT_SIDE ( "NoteField", "BPMIsLeftSide" );
 static ThemeMetric<bool> STOP_IS_LEFT_SIDE ( "NoteField", "StopIsLeftSide" );
 static ThemeMetric<bool> DELAY_IS_LEFT_SIDE ( "NoteField", "DelayIsLeftSide" );
@@ -530,7 +530,7 @@ static ThemeMetric<float> FAKE_OFFSETX ( "NoteField", "FakeOffsetX" );
 
 void NoteField::set_text_measure_number_for_draw(
 	const float beat, const float side_sign, float x_offset,
-	const float horiz_align, const RageColor& color, const RageColor& glow)
+	const float horiz_align, const Rage::Color& color, const Rage::Color& glow)
 {
 	const float y_offset= ArrowEffects::GetYOffset(m_pPlayerState, 0, beat);
 	const float y_pos= ArrowEffects::GetYPos(0, y_offset, m_fYReverseOffsetPixels);
@@ -547,7 +547,7 @@ void NoteField::set_text_measure_number_for_draw(
 
 void NoteField::draw_timing_segment_text(const RString& text,
 	const float beat, const float side_sign, float x_offset,
-	const float horiz_align, const RageColor& color, const RageColor& glow)
+	const float horiz_align, const Rage::Color& color, const Rage::Color& glow)
 {
 	set_text_measure_number_for_draw(beat, side_sign, x_offset, horiz_align,
 		color, glow);
@@ -556,18 +556,18 @@ void NoteField::draw_timing_segment_text(const RString& text,
 }
 
 void NoteField::DrawAttackText(const float beat, const Attack &attack,
-	const RageColor& glow)
+	const Rage::Color& glow)
 {
 	set_text_measure_number_for_draw(beat, 1, 10, align_left,
-		RageColor(0,0.8f,0.8f,1), glow);
+		Rage::Color(0,0.8f,0.8f,1), glow);
 	m_textMeasureNumber.SetText( attack.GetTextDescription() );
 	m_textMeasureNumber.Draw();
 }
 
 void NoteField::DrawBGChangeText(const float beat, const RString new_bg_name,
-	const RageColor& glow)
+	const Rage::Color& glow)
 {
-	set_text_measure_number_for_draw(beat, 1, 0, align_left, RageColor(0,1,0,1),
+	set_text_measure_number_for_draw(beat, 1, 0, align_left, Rage::Color(0,1,0,1),
 		glow);
 	m_textMeasureNumber.SetText(new_bg_name);
 	m_textMeasureNumber.Draw();
@@ -826,7 +826,7 @@ void NoteField::DrawPrimitives()
 		ASSERT(GAMESTATE->m_pCurSong != nullptr);
 
 		const TimingData &timing = *pTiming;
-		const RageColor text_glow= RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f);
+		const Rage::Color text_glow= Rage::Color(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f);
 
 		float horiz_align= align_right;
 		float side_sign= 1;

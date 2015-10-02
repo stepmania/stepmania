@@ -124,12 +124,12 @@ void ScreenUnlockStatus::Init()
 
 					text->SetMaxWidth( MaxWidth );
 					text->SetText( pCourse->GetDisplayFullTitle() );
-					text->SetDiffuse( RageColor(0,1,0,1) );
+					text->SetDiffuse( Rage::Color(0,1,0,1) );
 				}
 				break;
 			default:
 				text->SetText( "" );
-				text->SetDiffuse( RageColor(0.5f,0,0,1) );
+				text->SetDiffuse( Rage::Color(0.5f,0,0,1) );
 				break;
 			}
 
@@ -142,7 +142,7 @@ void ScreenUnlockStatus::Init()
 			{
 				// unlocked. change color
 				const Song *pSong = entry.m_Song.ToSong();
-				RageColor color = RageColor(1,1,1,1);
+				Rage::Color color = Rage::Color(1,1,1,1);
 				if( pSong )
 					color = SONGMAN->GetSongGroupColor(pSong->m_sGroupName);
 				text->SetGlobalDiffuseColor(color);
@@ -248,7 +248,7 @@ void ScreenUnlockStatus::Init()
 			NewText->SetMaxWidth( MaxWidth );
 			NewText->SetText( title );
 
-			RageColor color = SONGMAN->GetSongGroupColor(pSong->m_sGroupName);
+			Rage::Color color = SONGMAN->GetSongGroupColor(pSong->m_sGroupName);
 			NewText->SetGlobalDiffuseColor(color);
 
 			NewText->SetXY(ScrollingTextX, ScrollingTextStartY);

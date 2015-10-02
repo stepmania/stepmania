@@ -28,10 +28,10 @@ void RollingNumbers::Load(const RString& metrics_group)
 	HAS_GET("TextFormat", m_text_format, GetMetric);
 	HAS_GET("ApproachSeconds", m_approach_seconds, GetMetricF);
 	HAS_GET("Commify", m_commify, GetMetricB);
-	RageColor lead_color;
+	Rage::Color lead_color;
 	HAS_GET("LeadingColor", lead_color, GetMetricC);
 	m_leading_text_attr.set_diffuse(lead_color);
-	RageColor number_color;
+	Rage::Color number_color;
 	HAS_GET("NumberColor", number_color, GetMetricC);
 	m_number_text_attr.set_diffuse(number_color);
 #undef HAS_GET

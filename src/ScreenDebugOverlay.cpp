@@ -42,9 +42,9 @@ static float g_fImageScaleCurrent = 1;
 static float g_fImageScaleDestination = 1;
 
 // DebugLine theming
-static const ThemeMetric<RageColor>	BACKGROUND_COLOR	("ScreenDebugOverlay", "BackgroundColor");
-static const ThemeMetric<RageColor>	LINE_ON_COLOR	("ScreenDebugOverlay", "LineOnColor");
-static const ThemeMetric<RageColor>	LINE_OFF_COLOR	("ScreenDebugOverlay", "LineOffColor");
+static const ThemeMetric<Rage::Color>	BACKGROUND_COLOR	("ScreenDebugOverlay", "BackgroundColor");
+static const ThemeMetric<Rage::Color>	LINE_ON_COLOR	("ScreenDebugOverlay", "LineOnColor");
+static const ThemeMetric<Rage::Color>	LINE_OFF_COLOR	("ScreenDebugOverlay", "LineOffColor");
 static const ThemeMetric<float>		LINE_START_Y	("ScreenDebugOverlay", "LineStartY");
 static const ThemeMetric<float>		LINE_SPACING	("ScreenDebugOverlay", "LineSpacing");
 static const ThemeMetric<float>		LINE_BUTTON_X	("ScreenDebugOverlay", "LineButtonX");

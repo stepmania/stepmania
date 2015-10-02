@@ -38,9 +38,9 @@ private:
 	ThemeMetric1D<float>	ITEMS_LONG_ROW_X;
 	ThemeMetric<float>		ITEMS_LONG_ROW_SHARED_X;
 	ThemeMetric1D<float>	MOD_ICON_X;
-	ThemeMetric<RageColor>	COLOR_SELECTED;
-	ThemeMetric<RageColor>	COLOR_NOT_SELECTED;
-	ThemeMetric<RageColor>	COLOR_DISABLED;
+	ThemeMetric<Rage::Color>	COLOR_SELECTED;
+	ThemeMetric<Rage::Color>	COLOR_NOT_SELECTED;
+	ThemeMetric<Rage::Color>	COLOR_DISABLED;
 	ThemeMetric<float>		TWEEN_SECONDS;
 	ThemeMetric<bool>		SHOW_BPM_IN_SPEED_TITLE;
 	ThemeMetric<bool>		SHOW_MOD_ICONS;

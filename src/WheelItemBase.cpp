@@ -17,7 +17,7 @@ XToString( WheelItemDataType );
 StringToX( WheelItemDataType );
 LuaXType( WheelItemDataType );
 
-WheelItemBaseData::WheelItemBaseData( WheelItemDataType type, RString sText, RageColor color )
+WheelItemBaseData::WheelItemBaseData( WheelItemDataType type, RString sText, Rage::Color color )
 {
 	m_Type = type;
 	m_sText = sText;
@@ -46,7 +46,7 @@ WheelItemBase::WheelItemBase(RString sType)
 
 void WheelItemBase::Load( RString sType )
 {
-	m_colorLocked = RageColor(0,0,0,0.25f);
+	m_colorLocked = Rage::Color(0,0,0,0.25f);
 }
 
 void WheelItemBase::LoadFromWheelItemData( const WheelItemBaseData* pWID, int iIndex, bool bHasFocus, int iDrawIndex )
@@ -60,11 +60,11 @@ void WheelItemBase::DrawGrayBar( Actor& bar )
 	if( m_colorLocked.a == 0 )
 		return;
 
-	RageColor glow = bar.GetGlow();
-	RageColor diffuse = bar.GetDiffuse();
+	Rage::Color glow = bar.GetGlow();
+	Rage::Color diffuse = bar.GetDiffuse();
 
 	bar.SetGlow( m_colorLocked );
-	bar.SetDiffuse( RageColor(0,0,0,0) );
+	bar.SetDiffuse( Rage::Color(0,0,0,0) );
 
 	bar.Draw();
 

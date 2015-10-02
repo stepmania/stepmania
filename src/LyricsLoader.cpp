@@ -30,7 +30,7 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 		return false;
 	}
 
-	RageColor CurrentColor = LYRICS_DEFAULT_COLOR;
+	Rage::Color CurrentColor = LYRICS_DEFAULT_COLOR;
 
 	out.m_LyricSegments.clear();
 
@@ -79,7 +79,7 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 				continue;
 			}
 
-			CurrentColor = RageColor(r / 256.0f, g / 256.0f, b / 256.0f, 1);
+			CurrentColor = Rage::Color(r / 256.0f, g / 256.0f, b / 256.0f, 1);
 			continue;
 		}
 

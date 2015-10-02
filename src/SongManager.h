@@ -74,15 +74,15 @@ public:
 	//RString GetSongGroupBackgroundPath( RString sSongGroup ) const;
 	void GetSongGroupNames( std::vector<RString> &AddTo ) const;
 	bool DoesSongGroupExist( RString sSongGroup ) const;
-	RageColor GetSongGroupColor( const RString &sSongGroupName ) const;
-	RageColor GetSongColor( const Song* pSong ) const;
+	Rage::Color GetSongGroupColor( const RString &sSongGroupName ) const;
+	Rage::Color GetSongColor( const Song* pSong ) const;
 
 	RString GetCourseGroupBannerPath( const RString &sCourseGroup ) const;
 	//RString GetCourseGroupBackgroundPath( const RString &sCourseGroup ) const;
 	void GetCourseGroupNames( std::vector<RString> &AddTo ) const;
 	bool DoesCourseGroupExist( const RString &sCourseGroup ) const;
-	RageColor GetCourseGroupColor( const RString &sCourseGroupName ) const;
-	RageColor GetCourseColor( const Course* pCourse ) const;
+	Rage::Color GetCourseGroupColor( const RString &sCourseGroupName ) const;
+	Rage::Color GetCourseColor( const Course* pCourse ) const;
 
 	void ResetGroupColors();
 
@@ -219,9 +219,9 @@ protected:
 	RageTexturePreloader m_TexturePreload;
 
 	ThemeMetric<int>		NUM_SONG_GROUP_COLORS;
-	ThemeMetric1D<RageColor>	SONG_GROUP_COLOR;
+	ThemeMetric1D<Rage::Color>	SONG_GROUP_COLOR;
 	ThemeMetric<int>		NUM_COURSE_GROUP_COLORS;
-	ThemeMetric1D<RageColor>	COURSE_GROUP_COLOR;
+	ThemeMetric1D<Rage::Color>	COURSE_GROUP_COLOR;
 };
 
 extern SongManager*	SONGMAN;	// global and accessible from anywhere in our program

@@ -135,15 +135,15 @@ protected:
 };
 
 
-static RageColor GetBrightnessColor( float fBrightnessPercent )
+static Rage::Color GetBrightnessColor( float fBrightnessPercent )
 {
-	RageColor cBrightness = RageColor( 0,0,0,1-fBrightnessPercent );
-	RageColor cClamp = RageColor( 0.5f,0.5f,0.5f,CLAMP_OUTPUT_PERCENT );
+	Rage::Color cBrightness = Rage::Color( 0,0,0,1-fBrightnessPercent );
+	Rage::Color cClamp = Rage::Color( 0.5f,0.5f,0.5f,CLAMP_OUTPUT_PERCENT );
 
 	// blend the two colors above as if cBrightness is drawn, then cClamp drawn on top
 	cBrightness.a *= (1-cClamp.a);	// premultiply alpha
 
-	RageColor ret;
+	Rage::Color ret;
 	ret.a = cBrightness.a + cClamp.a;
 	ret.r = (cBrightness.r * cBrightness.a + cClamp.r * cClamp.a) / ret.a;
 	ret.g = (cBrightness.g * cBrightness.a + cClamp.g * cClamp.a) / ret.a;
@@ -220,7 +220,7 @@ void BackgroundImpl::Init()
 	if( bOneOrMoreChars && !bShowingBeginnerHelper && SHOW_DANCING_CHARACTERS )
 		m_pDancingCharacters = new DancingCharacters;
 
-	RageColor c = GetBrightnessColor(0);
+	Rage::Color c = GetBrightnessColor(0);
 
 	m_quadBorderLeft.StretchTo( RectF(SCREEN_LEFT,SCREEN_TOP,LEFT_EDGE,SCREEN_BOTTOM) );
 	m_quadBorderLeft.SetDiffuse( c );
@@ -959,8 +959,8 @@ void BrightnessOverlay::SetActualBrightness()
 	if( !GAMESTATE->IsHumanPlayer(PLAYER_2) )
 		fRightBrightness = fLeftBrightness;
 
-	RageColor LeftColor = GetBrightnessColor(fLeftBrightness);
-	RageColor RightColor = GetBrightnessColor(fRightBrightness);
+	Rage::Color LeftColor = GetBrightnessColor(fLeftBrightness);
+	Rage::Color RightColor = GetBrightnessColor(fRightBrightness);
 
 	m_quadBGBrightness[PLAYER_1].SetDiffuse( LeftColor );
 	m_quadBGBrightness[PLAYER_2].SetDiffuse( RightColor );
@@ -970,7 +970,7 @@ void BrightnessOverlay::SetActualBrightness()
 
 void BrightnessOverlay::Set( float fBrightness )
 {
-	RageColor c = GetBrightnessColor(fBrightness);
+	Rage::Color c = GetBrightnessColor(fBrightness);
 
 	FOREACH_PlayerNumber(pn)
 		m_quadBGBrightness[pn].SetDiffuse( c );

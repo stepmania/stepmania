@@ -85,8 +85,8 @@ RString BackgroundChange::ToString() const
 			this->m_def.m_sEffect.c_str(),
 			this->m_def.m_sFile2.c_str(),
 			this->m_sTransition.c_str(),
-			SmEscape(RageColor::NormalizeColorString(this->m_def.m_sColor1)).c_str(),
-			SmEscape(RageColor::NormalizeColorString(this->m_def.m_sColor2)).c_str());
+			SmEscape(Rage::Color::NormalizeColorString(this->m_def.m_sColor1)).c_str(),
+			SmEscape(Rage::Color::NormalizeColorString(this->m_def.m_sColor2)).c_str());
 }
 
 

@@ -4,6 +4,7 @@
 #define RAGETYPES_H
 
 #include "EnumHelper.h"
+#include "RageColor.hpp"
 #include "RageVector2.hpp"
 #include "RageVector3.hpp"
 #include "RageVector4.hpp"
@@ -100,75 +101,9 @@ LuaDeclareType( TextGlowMode );
 
 struct lua_State;
 
-struct RageColor
-{
-public:
-	RageColor(): r(0), g(0), b(0), a(0) {}
-	explicit RageColor( const float * f ): r(f[0]), g(f[1]), b(f[2]), a(f[3]) {}
-	RageColor( float r1, float g1, float b1, float a1 ): r(r1), g(g1), b(b1), a(a1) {}
-	
-	// casting
-	operator float* ()					{ return &r; };
-	operator const float* () const				{ return &r; };
-	
-	// assignment operators
-	RageColor& operator += ( const RageColor& other )	{ r+=other.r; g+=other.g; b+=other.b; a+=other.a; return *this; }
-	RageColor& operator -= ( const RageColor& other )	{ r-=other.r; g-=other.g; b-=other.b; a-=other.a; return *this; }
-	RageColor& operator *= ( const RageColor& other )	{ r*=other.r; g*=other.g; b*=other.b; a*=other.a; return *this; }
-	RageColor& operator *= ( float f )			{ r*=f; g*=f; b*=f; a*=f; return *this; }
-	/* Divide is rarely useful: you can always use multiplication, and you don't have to
-		* worry about div/0. */
-	//    RageColor& operator /= ( float f )		{ r/=f; g/=f; b/=f; a/=f; return *this; }
-	
-	// binary operators
-	RageColor operator + ( const RageColor& other ) const	{ return RageColor( r+other.r, g+other.g, b+other.b, a+other.a ); }
-	RageColor operator - ( const RageColor& other ) const	{ return RageColor( r-other.r, g-other.g, b-other.b, a-other.a ); }
-	RageColor operator * ( const RageColor& other ) const	{ return RageColor( r*other.r, g*other.g, b*other.b, a*other.a ); }
-	RageColor operator * ( float f ) const			{ return RageColor( r*f, g*f, b*f, a*f ); }
-	// Divide is useful for using with the SCALE macro
-	RageColor operator / ( float f ) const			{ return RageColor( r/f, g/f, b/f, a/f ); }
-	
-	friend RageColor operator * ( float f, const RageColor& other )	{ return other*f; } // What is this for?  Did I add this?  -Chris
-	
-	bool operator == ( const RageColor& other ) const	{ return r==other.r && g==other.g && b==other.b && a==other.a; }
-	bool operator != ( const RageColor& other ) const	{ return !operator==(other); }
-	
-	bool FromString( const RString &str )
-	{
-		int result = sscanf( str, "%f,%f,%f,%f", &r, &g, &b, &a );
-		if( result == 3 )
-		{
-			a = 1;
-			return true;
-		}
-		if( result == 4 )
-			return true;
-		
-		int ir=255, ib=255, ig=255, ia=255;
-		result = sscanf( str, "#%2x%2x%2x%2x", &ir, &ig, &ib, &ia );
-		if( result >= 3 )
-		{
-			r = ir / 255.0f; g = ig / 255.0f; b = ib / 255.0f;
-			if( result == 4 )
-				a = ia / 255.0f;
-			else
-				a = 1;
-			return true;
-		}
-		
-		r=1; b=1; g=1; a=1;
-		return false;
-	}
-
-	RString ToString() const;
-	static RString NormalizeColorString( RString sColor );
-
-	void PushTable( lua_State *L ) const;
-	void FromStack( lua_State *L, int iPos );
-	void FromStackCompat( lua_State *L, int iPos );
-
-	float r, g, b, a;
-};
+void PushTable( Rage::Color const &color, lua_State *L );
+void FromStack( Rage::Color &color, lua_State *L, int pos);
+void FromStackCompat( Rage::Color &color, lua_State *L, int pos);
 
 /* Convert floating-point 0..1 value to integer 0..255 value. *
  *
@@ -199,8 +134,8 @@ inline unsigned char FTOC(float a)
 /* Color type used only in vertex lists.  OpenGL expects colors in
  * r, g, b, a order, independent of endianness, so storing them this
  * way avoids endianness problems.  Don't try to manipulate this; only
- * manip RageColors. */
-/* Perhaps the math in RageColor could be moved to RageVColor.  We don't need the 
+ * manip Rage::Colors. */
+/* Perhaps the math in Rage::Color could be moved to RageVColor.  We don't need the 
  * precision of a float for our calculations anyway.   -Chris */
 class RageVColor
 {
@@ -208,8 +143,8 @@ public:
 	uint8_t b,g,r,a;	// specific ordering required by Direct3D
 
 	RageVColor(): b(0), g(0), r(0), a(0) { }
-	RageVColor(const RageColor &rc): b(0), g(0), r(0), a(0) { *this = rc; }
-	RageVColor &operator= (const RageColor &rc)
+	RageVColor(const Rage::Color &rc): b(0), g(0), r(0), a(0) { *this = rc; }
+	RageVColor &operator= (const Rage::Color &rc)
 	{
 		r = FTOC(rc.r); g = FTOC(rc.g); b = FTOC(rc.b); a = FTOC(rc.a);
 		return *this;
@@ -259,7 +194,7 @@ struct RageSpriteVertex	// has color
 	Rage::Vector2 t; // texture coordinates
 };
 
-void lerp_rage_color(RageColor& out, RageColor const& a, RageColor const& b, float t);
+void lerp_rage_color(Rage::Color& out, Rage::Color const& a, Rage::Color const& b, float t);
 void WeightedAvergeOfRSVs(RageSpriteVertex& average_out, RageSpriteVertex const& rsv1, RageSpriteVertex const& rsv2, float percent_between);
 
 struct RageModelVertex	// doesn't have color.  Relies on material color

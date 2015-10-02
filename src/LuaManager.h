@@ -255,7 +255,7 @@ inline bool TableContainsOnlyStrings(lua_State* L, int index)
 #define BIArg(n) (MyLua_checkintboolean(L,(n)))
 #define IArg(n) (luaL_checkint(L,(n)))
 #define BArg(n) (MyLua_checkboolean(L,(n)))
-#define FArg(n) ((float) luaL_checknumber(L,(n)))
+#define FArg(n) (static_cast<float>(luaL_checknumber(L,(n))))
 
 // SafeFArg is for places that need to get a number off the lua stack, but
 // can't risk an error being raised.  IArg and luaL_optnumber would both raise

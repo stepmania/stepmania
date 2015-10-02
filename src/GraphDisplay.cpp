@@ -121,7 +121,7 @@ public:
 
 		for( int i = 0; i < 2*VALUE_RESOLUTION; ++i )
 		{
-			m_Slices[i].c = RageColor(1,1,1,1);
+			m_Slices[i].c = Rage::Color(1,1,1,1);
 			m_Slices[i].t = Rage::Vector2( 0,0 );
 		}
 	}
@@ -272,7 +272,7 @@ void GraphDisplay::UpdateVerts()
 		m_pGraphBody->m_Slices[i*2+1].t = Rage::Vector2( fU, pRect->bottom );
 
 		LineStrip[i].p = Rage::Vector3( fX, fY, 0 );
-		LineStrip[i].c = RageColor( 1,1,1,1 );
+		LineStrip[i].c = Rage::Color( 1,1,1,1 );
 		LineStrip[i].t = Rage::Vector2( 0,0 );
 	}
 

@@ -28,11 +28,11 @@ LuaDeclareType( WheelItemDataType );
 struct WheelItemBaseData
 {
 	WheelItemBaseData() {}
-	WheelItemBaseData( WheelItemDataType type, RString sText, RageColor color );
+	WheelItemBaseData( WheelItemDataType type, RString sText, Rage::Color color );
 	virtual ~WheelItemBaseData() {}
 	WheelItemDataType m_Type;
 	RString		m_sText;
-	RageColor	m_color;	// either text color or section background color
+	Rage::Color	m_color;	// either text color or section background color
 };
 /** @brief An item on the wheel. */
 class WheelItemBase : public ActorFrame
@@ -49,10 +49,10 @@ public:
 
 	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID, int iIndex, bool bHasFocus, int iDrawIndex );
 
-	RageColor m_colorLocked;
+	Rage::Color m_colorLocked;
 
 	const RString GetText(){ ASSERT(m_pData != nullptr); return m_pData->m_sText; }
-	const RageColor GetColor(){ ASSERT(m_pData != nullptr); return m_pData->m_color; }
+	const Rage::Color GetColor(){ ASSERT(m_pData != nullptr); return m_pData->m_color; }
 	WheelItemDataType GetType(){ ASSERT(m_pData != nullptr); return m_pData->m_Type; }
 	bool IsLoaded(){ return m_pData != nullptr; }
 

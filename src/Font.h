@@ -175,7 +175,7 @@ public:
 	void SetDefaultGlyph( FontPage *pPage );
 
 	bool IsRightToLeft() const { return m_bRightToLeft; };
-	const RageColor &GetDefaultStrokeColor() const { return m_DefaultStrokeColor; };
+	const Rage::Color &GetDefaultStrokeColor() const { return m_DefaultStrokeColor; };
 
 private:
 	/** @brief List of pages and fonts that we use (and are responsible for freeing). */
@@ -200,7 +200,7 @@ private:
 	 * There may be a better way to handle this. */
 	bool m_bRightToLeft;
 
-	RageColor m_DefaultStrokeColor;
+	Rage::Color m_DefaultStrokeColor;
 
 	/** @brief We keep this around only for reloading. */
 	RString m_sChars;

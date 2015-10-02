@@ -107,7 +107,7 @@ public:
 	int GetEstimatedNumStages() const { return m_vEntries.size(); }
 	bool IsPlayableIn( StepsType st ) const;
 	bool CourseHasBestOrWorst() const;
-	RageColor GetColor() const;
+	Rage::Color GetColor() const;
 	bool GetTotalSeconds( StepsType st, float& fSecondsOut ) const;
 
 	bool IsNonstop() const { return GetPlayMode() == PLAY_MODE_NONSTOP; }

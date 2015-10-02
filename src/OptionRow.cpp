@@ -593,7 +593,7 @@ void OptionRow::UpdateEnabledDisabled()
 	else if( bRowEnabled )		sCmdName = "LoseFocus";
 	else				sCmdName = "Disabled";
 
-	RageColor color;
+	Rage::Color color;
 	if( bThisRowHasFocusByAny )	color = m_pParentType->COLOR_SELECTED;
 	else if( bRowEnabled )		color = m_pParentType->COLOR_NOT_SELECTED;
 	else				color = m_pParentType->COLOR_DISABLED;

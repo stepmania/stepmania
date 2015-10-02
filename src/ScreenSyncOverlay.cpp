@@ -30,7 +30,7 @@ void ScreenSyncOverlay::Init()
 {
 	Screen::Init();
 
-	m_quad.SetDiffuse( RageColor(0,0,0,0) );
+	m_quad.SetDiffuse( Rage::Color(0,0,0,0) );
 	m_quad.SetHorizAlign(align_right);
 	m_quad.SetVertAlign(align_top);
 	m_quad.SetXY(SCREEN_WIDTH, SCREEN_TOP);

@@ -1,4 +1,6 @@
 list(APPEND RAGE_TEST_SRC
+  "${SM_SRC_DIR}/tests/RageColorFixture.cpp"
+  "${SM_SRC_DIR}/tests/RageColorTest.cpp"
   "${SM_SRC_DIR}/tests/RageMathTest.cpp"
   "${SM_SRC_DIR}/tests/RageVector2Fixture.cpp"
   "${SM_SRC_DIR}/tests/RageVector2Test.cpp"
@@ -10,6 +12,7 @@ list(APPEND RAGE_TEST_SRC
 )
 
 list(APPEND RAGE_TEST_HPP
+  "${SM_SRC_DIR}/tests/RageColorFixture.hpp"
   "${SM_SRC_DIR}/tests/RageVector2Fixture.hpp"
   "${SM_SRC_DIR}/tests/RageVector3Fixture.hpp"
   "${SM_SRC_DIR}/tests/RageVector4Fixture.hpp"

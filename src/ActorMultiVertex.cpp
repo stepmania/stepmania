@@ -207,7 +207,7 @@ void ActorMultiVertex::SetVertexPos( int index, float x, float y, float z )
 	AMV_DestTweenState().vertices[index].p = Rage::Vector3( x, y, z );
 }
 
-void ActorMultiVertex::SetVertexColor( int index, RageColor c )
+void ActorMultiVertex::SetVertexColor( int index, Rage::Color c )
 {
 	AMV_DestTweenState().vertices[index].c = c;
 }
@@ -234,12 +234,12 @@ void ActorMultiVertex::DrawPrimitives()
 	TS = AMV_current;
 
 	// skip if no change or fully transparent
-	if( m_pTempState->diffuse[0] != RageColor(1, 1, 1, 1) && m_pTempState->diffuse[0].a > 0 )
+	if( m_pTempState->diffuse[0] != Rage::Color(1, 1, 1, 1) && m_pTempState->diffuse[0].a > 0 )
 	{
 
 		for( size_t i=0; i < TS.vertices.size(); i++ )
 		{
-			// RageVColor * RageColor
+			// RageVColor * Rage::Color
 			TS.vertices[i].c.b *= static_cast<uint8_t>(m_pTempState->diffuse[0].b);
 			TS.vertices[i].c.r *= static_cast<uint8_t>(m_pTempState->diffuse[0].r);
 			TS.vertices[i].c.g *= static_cast<uint8_t>(m_pTempState->diffuse[0].g);
@@ -731,10 +731,10 @@ public:
 			}
 			else if(DataPieceElements == 4)
 			{
-				// RageColor pops the things it pushes onto the stack, so we don't need to.
-				RageColor c;
+				// Rage::Color pops the things it pushes onto the stack, so we don't need to.
+				Rage::Color c;
 				// Does not use FromStackCompat because we are not compatible with passing a color in non-table form.
-				c.FromStack(L, DataPieceIndex);
+				FromStack(c, L, DataPieceIndex);
 				p->SetVertexColor(VertexIndex, c);
 			}
 			else

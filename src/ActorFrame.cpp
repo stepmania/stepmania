@@ -35,9 +35,9 @@ ActorFrame::ActorFrame()
 	m_fVanishY = SCREEN_CENTER_Y;
 	m_bOverrideLighting = false;
 	m_bLighting = false;
-	m_ambientColor = RageColor(1,1,1,1);
-	m_diffuseColor = RageColor(1,1,1,1);
-	m_specularColor = RageColor(1,1,1,1);
+	m_ambientColor = Rage::Color(1,1,1,1);
+	m_diffuseColor = Rage::Color(1,1,1,1);
+	m_specularColor = Rage::Color(1,1,1,1);
 	m_lightDirection = Rage::Vector3(0,0,1);
 }
 
@@ -255,8 +255,8 @@ void ActorFrame::DrawPrimitives()
 		return;
 	}
 
-	RageColor diffuse = m_pTempState->diffuse[0];
-	RageColor glow = m_pTempState->glow;
+	Rage::Color diffuse = m_pTempState->diffuse[0];
+	Rage::Color glow = m_pTempState->glow;
 
 	// Word of warning:  Actor::Draw duplicates the structure of how an Actor
 	// is drawn inside of an ActorFrame for its wrapping feature.  So if
@@ -703,9 +703,27 @@ public:
 	static int SortByDrawOrder( T* p, lua_State *L )		{ p->SortByDrawOrder(); COMMON_RETURN_SELF; }
 
 	//static int CustomLighting( T* p, lua_State *L )			{ p->SetCustomLighting(BArg(1)); COMMON_RETURN_SELF; }
-	static int SetAmbientLightColor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetAmbientLightColor( c ); COMMON_RETURN_SELF; }
-	static int SetDiffuseLightColor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLightColor( c ); COMMON_RETURN_SELF; }
-	static int SetSpecularLightColor( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetSpecularLightColor( c ); COMMON_RETURN_SELF; }
+	static int SetAmbientLightColor( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetAmbientLightColor( c );
+		COMMON_RETURN_SELF;
+	}
+	static int SetDiffuseLightColor( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetDiffuseLightColor( c );
+		COMMON_RETURN_SELF;
+	}
+	static int SetSpecularLightColor( T* p, lua_State *L )
+	{
+		Rage::Color c;
+		FromStackCompat( c, L, 1 );
+		p->SetSpecularLightColor( c );
+		COMMON_RETURN_SELF;
+	}
 	static int SetLightDirection( T* p, lua_State *L )
 	{
 		luaL_checktype( L, 1, LUA_TTABLE );

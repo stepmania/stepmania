@@ -45,19 +45,19 @@ public:
 	void SetCullMode( CullMode ) { }
 	void SetAlphaTest( bool ) { }
 	void SetMaterial( 
-		const RageColor & /* unreferenced: emissive */,
-		const RageColor & /* unreferenced: ambient */,
-		const RageColor & /* unreferenced: diffuse */,
-		const RageColor & /* unreferenced: specular */,
+		const Rage::Color & /* unreferenced: emissive */,
+		const Rage::Color & /* unreferenced: ambient */,
+		const Rage::Color & /* unreferenced: diffuse */,
+		const Rage::Color & /* unreferenced: specular */,
 		float /* unreferenced: shininess */
 		) { }
 	void SetLighting( bool ) { }
 	void SetLightOff( int /* index */ ) { }
 	void SetLightDirectional( 
 		int /* index */, 
-		const RageColor & /* unreferenced: ambient */, 
-		const RageColor & /* unreferenced: diffuse */, 
-		const RageColor & /* unreferenced: specular */, 
+		const Rage::Color & /* unreferenced: ambient */, 
+		const Rage::Color & /* unreferenced: diffuse */, 
+		const Rage::Color & /* unreferenced: specular */, 
 		const Rage::Vector3 & /* unreferenced: dir */ ) { }
 
 	void SetSphereEnvironmentMapping( TextureUnit /* tu */, bool /* b */ ) { }

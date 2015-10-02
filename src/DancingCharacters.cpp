@@ -340,9 +340,9 @@ void DancingCharacters::DrawPrimitives()
 
 		DISPLAY->SetLighting( true );
 
-		RageColor ambient  = bFailed ? RageColor(0.2f,0.1f,0.1f,1) : (bDanger ? RageColor(0.4f,0.1f,0.1f,1) : RageColor(0.4f,0.4f,0.4f,1));
-		RageColor diffuse  = bFailed ? RageColor(0.4f,0.1f,0.1f,1) : (bDanger ? RageColor(0.8f,0.1f,0.1f,1) : RageColor(1,0.95f,0.925f,1));
-		RageColor specular = RageColor(0.8f,0.8f,0.8f,1);
+		Rage::Color ambient  = bFailed ? Rage::Color(0.2f,0.1f,0.1f,1) : (bDanger ? Rage::Color(0.4f,0.1f,0.1f,1) : Rage::Color(0.4f,0.4f,0.4f,1));
+		Rage::Color diffuse  = bFailed ? Rage::Color(0.4f,0.1f,0.1f,1) : (bDanger ? Rage::Color(0.8f,0.1f,0.1f,1) : Rage::Color(1,0.95f,0.925f,1));
+		Rage::Color specular = Rage::Color(0.8f,0.8f,0.8f,1);
 		DISPLAY->SetLightDirectional( 
 			0,
 			ambient, 

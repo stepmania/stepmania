@@ -23,15 +23,15 @@ public:
 	{
 		// We'd be better off not adding strokes to things we can't control
 		// themewise (ScreenDebugOverlay for example). -Midiman
-		BMT_TweenState(): m_stroke_color(RageColor(0,0,0,0)) {}
+		BMT_TweenState(): m_stroke_color(Rage::Color(0,0,0,0)) {}
 		static void MakeWeightedAverage(BMT_TweenState& out,
 			BMT_TweenState const& from, BMT_TweenState const& to, float between);
 		bool operator==(BMT_TweenState const& other) const;
 		bool operator!=(BMT_TweenState const& other) const { return !operator==(other); }
-		void SetStrokeColor(RageColor const& c) { m_stroke_color= c; }
-		RageColor const& GetStrokeColor() { return m_stroke_color; }
+		void SetStrokeColor(Rage::Color const& c) { m_stroke_color= c; }
+		Rage::Color const& GetStrokeColor() { return m_stroke_color; }
 	private:
-		RageColor m_stroke_color;
+		Rage::Color m_stroke_color;
 	};
 
 	BMT_TweenState& BMT_DestTweenState()
@@ -76,10 +76,10 @@ public:
 
 	void SetHorizAlign( float f );
 
-	void SetStrokeColor(RageColor c) { BMT_DestTweenState().SetStrokeColor(c); }
-	RageColor const& GetStrokeColor()		{ return BMT_DestTweenState().GetStrokeColor(); }
-	void SetCurrStrokeColor(RageColor c) { BMT_current.SetStrokeColor(c); }
-	RageColor const& GetCurrStrokeColor() { return BMT_current.GetStrokeColor(); }
+	void SetStrokeColor(Rage::Color c) { BMT_DestTweenState().SetStrokeColor(c); }
+	Rage::Color const& GetStrokeColor()		{ return BMT_DestTweenState().GetStrokeColor(); }
+	void SetCurrStrokeColor(Rage::Color c) { BMT_current.SetStrokeColor(c); }
+	Rage::Color const& GetCurrStrokeColor() { return BMT_current.GetStrokeColor(); }
 
 	void SetTextGlowMode( TextGlowMode tgm )	{ m_TextGlowMode = tgm; }
 
@@ -94,9 +94,9 @@ public:
 	{
 		Attribute() : length(-1), glow() { }
 		int		length;
-		RageColor	diffuse[NUM_DIFFUSE_COLORS];
-		RageColor	glow;
-		void set_diffuse(RageColor const& c)
+		Rage::Color	diffuse[NUM_DIFFUSE_COLORS];
+		Rage::Color	glow;
+		void set_diffuse(Rage::Color const& c)
 		{
 			for(size_t i= 0; i < NUM_DIFFUSE_COLORS; ++i)
 			{

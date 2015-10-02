@@ -248,9 +248,9 @@ void BeginnerHelper::DrawPrimitives()
 			DISPLAY->SetLighting( true );
 			DISPLAY->SetLightDirectional( 
 				0, 
-				RageColor(0.5f,0.5f,0.5f,1), 
-				RageColor(1,1,1,1),
-				RageColor(0,0,0,1),
+				Rage::Color(0.5f,0.5f,0.5f,1), 
+				Rage::Color(1,1,1,1),
+				Rage::Color(0,0,0,1),
 				Rage::Vector3(0, 0, 1) );
 
 			m_pDancePad->Draw();
@@ -277,9 +277,9 @@ void BeginnerHelper::DrawPrimitives()
 		DISPLAY->SetLighting( true );
 		DISPLAY->SetLightDirectional( 
 			0, 
-			RageColor(0.5f,0.5f,0.5f,1), 
-			RageColor(1,1,1,1),
-			RageColor(0,0,0,1),
+			Rage::Color(0.5f,0.5f,0.5f,1), 
+			Rage::Color(1,1,1,1),
+			Rage::Color(0,0,0,1),
 			Rage::Vector3(0, 0, 1) );
 
 		FOREACH_PlayerNumber( pn )

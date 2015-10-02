@@ -271,8 +271,8 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 
 				if( bRecentHighScore )
 				{
-					m_textNames[l].SetEffectGlowBlink(0.1f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f));
-					m_textScores[l].SetEffectGlowBlink(0.1f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f));
+					m_textNames[l].SetEffectGlowBlink(0.1f, Rage::Color(1,1,1,0.2f), Rage::Color(1,1,1,0.8f));
+					m_textScores[l].SetEffectGlowBlink(0.1f, Rage::Color(1,1,1,0.2f), Rage::Color(1,1,1,0.8f));
 				}
 				else
 				{
@@ -322,8 +322,8 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 
 				if( bRecentHighScore )
 				{
-					m_textNames[l].SetEffectGlowBlink(0.1f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f));
-					m_textScores[l].SetEffectGlowBlink(0.1f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f));
+					m_textNames[l].SetEffectGlowBlink(0.1f, Rage::Color(1,1,1,0.2f), Rage::Color(1,1,1,0.8f));
+					m_textScores[l].SetEffectGlowBlink(0.1f, Rage::Color(1,1,1,0.2f), Rage::Color(1,1,1,0.8f));
 				}
 				else
 				{

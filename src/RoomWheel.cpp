@@ -94,7 +94,7 @@ void RoomWheelItem::Load( RString sType )
 void RoomWheel::BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemDatas )
 {
 	if( arrayWheelItemDatas.empty() )
-		arrayWheelItemDatas.push_back( new RoomWheelItemData(WheelItemDataType_Generic, EMPTY_STRING, "", RageColor(1,0,0,1)) );
+		arrayWheelItemDatas.push_back( new RoomWheelItemData(WheelItemDataType_Generic, EMPTY_STRING, "", Rage::Color(1,0,0,1)) );
 }
 
 void RoomWheel::AddPermanentItem( RoomWheelItemData *itemdata  )
@@ -141,7 +141,7 @@ void RoomWheel::RemoveItem( int index )
 	if( m_CurWheelItemData.size() < 1 )
 	{
 		m_bEmpty = true;
-		m_CurWheelItemData.push_back( new WheelItemBaseData(WheelItemDataType_Generic, "- EMPTY -", RageColor(1,0,0,1)) );
+		m_CurWheelItemData.push_back( new WheelItemBaseData(WheelItemDataType_Generic, "- EMPTY -", Rage::Color(1,0,0,1)) );
 	}
 
 	RebuildWheelItems();

@@ -163,7 +163,7 @@ void WheelBase::Update( float fDeltaTime )
 		if( m_WheelState == STATE_LOCKED  &&  i != NUM_WHEEL_ITEMS/2 )
 			pDisplay->m_colorLocked = WHEEL_ITEM_LOCKED_COLOR.GetValue();
 		else
-			pDisplay->m_colorLocked = RageColor(0,0,0,0);
+			pDisplay->m_colorLocked = Rage::Color(0,0,0,0);
 	}
 
 	// Moved to CommonUpdateProcedure, seems to work fine. Revert if it happens
