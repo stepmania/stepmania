@@ -353,11 +353,11 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 					{
 						if(curr_note->subType == TapNoteSubType_Hold)
 						{
-							state.holds_held+= (curr_note->HoldResult.hns >= HNS_Held);
+							state.holds_held+= (curr_note->HoldResult.hns == HNS_Held);
 						}
 						else if(curr_note->subType == TapNoteSubType_Roll)
 						{
-							state.rolls_held+= (curr_note->HoldResult.hns >= HNS_Held);
+							state.rolls_held+= (curr_note->HoldResult.hns == HNS_Held);
 						}
 						state.hold_ends.push_back(
 							hold_status(state.curr_row + curr_note->iDuration,
