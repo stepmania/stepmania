@@ -1157,7 +1157,12 @@ void Song::Save(bool autosave)
 		return;
 	}
 	SaveToCacheFile();
-	SaveToSMFile();
+	// If one of the charts uses split timing, then it cannot be accurately
+	// saved in the .sm format.  So saving the .sm is disabled.
+	if(!AnyChartUsesSplitTiming())
+	{
+		SaveToSMFile();
+	}
 	//SaveToDWIFile();
 
 	/* We've safely written our files and created backups. Rename non-SM and
@@ -1882,6 +1887,18 @@ bool Song::IsStepsUsingDifferentTiming(Steps *pSteps) const
 {
 	// XXX This no longer depends on Song at all
 	return !pSteps->m_Timing.empty();
+}
+
+bool Song::AnyChartUsesSplitTiming() const
+{
+	FOREACH_CONST(Steps*, m_vpSteps, s)
+	{
+		if(!(*s)->m_Timing.empty())
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 bool Song::HasSignificantBpmChangesOrStops() const

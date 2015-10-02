@@ -4,6 +4,10 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/10/02
+----------
+* [Edit Mode] .sm files will no longer be saved when split timing is used
+  because per-chart timing cannot be done in the .sm format. [kyzentun]
 
 2015/09/21
 ----------
