@@ -25,7 +25,6 @@ set(LUA_SRC
   "lua-5.1/src/ltable.c"
   "lua-5.1/src/ltablib.c"
   "lua-5.1/src/ltm.c"
-  "lua-5.1/src/lua.c"
   "lua-5.1/src/lundump.c"
   "lua-5.1/src/lvm.c"
   "lua-5.1/src/lzio.c"
