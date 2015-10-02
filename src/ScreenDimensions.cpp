@@ -24,7 +24,7 @@ float ScreenDimensions::GetThemeAspectRatio()
 	return THEME_NATIVE_ASPECT;
 }
 
-/* ceilf was originally lrintf. However, lrintf causes odd resolutions like
+/* ceilf was originally std::lrint. However, std::lrint causes odd resolutions like
  * 639x480 (4:3) and 853x480 (16:9). ceilf gives the correct values of 640x480
  * and 854x480 (should really be 852 so that SCREEN_CENTER_X == 426 and not 427)
  * respectively. -aj */

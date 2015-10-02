@@ -16,7 +16,7 @@ SampleHistory::SampleHistory()
 	m_fHistorySeconds = 0.0f;
 	m_fToSample = sample_step_size(m_iHistorySamplesPerSecond);
 	m_fHistorySeconds = 10.0f;
-	int iSamples = lrintf( m_iHistorySamplesPerSecond * m_fHistorySeconds );
+	int iSamples = std::lrint( m_iHistorySamplesPerSecond * m_fHistorySeconds );
 	m_afHistory.resize( iSamples );
 }
 
@@ -32,7 +32,7 @@ float SampleHistory::GetSampleNum( float fSamplesAgo ) const
 	float fSample = m_iLastHistory - fSamplesAgo - 1;
 
 	float f = floorf( fSample );
-	int iSample = lrintf(f);
+	int iSample = std::lrint(f);
 	int iNextSample = iSample + 1;
 	wrap( iSample, m_afHistory.size() );
 	wrap( iNextSample, m_afHistory.size() );

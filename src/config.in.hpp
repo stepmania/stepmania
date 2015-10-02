@@ -72,9 +72,6 @@
 /* Defined to 1 if the underlying system provides the roundf function. */
 #cmakedefine HAVE_ROUNDF 1
 
-/* Defined to 1 if the underlying system provides the lrintf function. */
-#cmakedefine HAVE_LRINTF 1
-
 /* Defined to 1 if the underlying system provides the strtof function. */
 #cmakedefine HAVE_STRTOF 1
 
@@ -231,22 +228,6 @@ float roundf( float f ) { if( f < 0.0f ) return truncf( f-0.5f ); return truncf(
 /* Ensure we have a function for converting a string to a float. */
 #if !defined(HAVE_STRTOF)
 inline float strtof( const char *s, char **se ) { return (float) strtod( s, se ); }
-#endif
-
-#if !defined(HAVE_LRINTF)
-#if defined(_MSC_VER)
-inline long lrintf( float f )
-{
-	int retval;
-
-	_asm fld f;
-	_asm fistp retval;
-
-	return retval;
-}
-#else
-#define lrintf(x) ((int)rint(x))
-#endif
 #endif
 
 #if !defined(HAVE_M_PI)

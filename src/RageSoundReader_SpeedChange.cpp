@@ -162,7 +162,7 @@ int RageSoundReader_SpeedChange::Step()
 		 * by 2.0 frames, and advance by 0.3 more the next time around. */
 		float fAdvanceFrames = GetWindowSizeFrames() * m_fTrailingSpeedRatio;
 		fAdvanceFrames += m_fErrorFrames;
-		int iTrailingDeltaFrames = lrintf( fAdvanceFrames );
+		int iTrailingDeltaFrames = std::lrint( fAdvanceFrames );
 		m_fErrorFrames = fAdvanceFrames - iTrailingDeltaFrames;
 		m_iUncorrelatedPos += iTrailingDeltaFrames;
 
@@ -309,7 +309,7 @@ int RageSoundReader_SpeedChange::GetNextSourceFrame() const
 	float fRatio = m_fTrailingSpeedRatio;
 
 	int iSourceFrame = RageSoundReader_Filter::GetNextSourceFrame();
-	int iPos = lrintf(m_iPos * fRatio);
+	int iPos = std::lrint(m_iPos * fRatio);
 
 	iSourceFrame -= m_iDataBufferAvailFrames;
 	iSourceFrame += m_iUncorrelatedPos + iPos;

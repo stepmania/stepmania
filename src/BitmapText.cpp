@@ -279,7 +279,7 @@ void BitmapText::BuildChars()
 	m_size.y += iPadding * int(m_wTextLines.size()-1);
 
 	// the top position of the first row of characters
-	int iY = lrintf(-m_size.y/2.0f);
+	int iY = std::lrint(-m_size.y/2.0f);
 
 	for( unsigned i=0; i<m_wTextLines.size(); i++ ) // foreach line
 	{
@@ -291,7 +291,7 @@ void BitmapText::BuildChars()
 		const int iLineWidth = m_iLineWidths[i];
 
 		float fX = Rage::scale( m_fHorizAlign, 0.0f, 1.0f, -m_size.x/2.0f, +m_size.x/2.0f - iLineWidth );
-		int iX = lrintf( fX );
+		int iX = std::lrint( fX );
 
 		for( unsigned j = 0; j < sLine.size(); ++j )
 		{
@@ -328,7 +328,7 @@ void BitmapText::BuildChars()
 
 	if( m_bUsingDistortion )
 	{
-		int iSeed = lrintf( RageTimer::GetTimeSinceStartFast()*500000.0f );
+		int iSeed = std::lrint( RageTimer::GetTimeSinceStartFast()*500000.0f );
 		RandomGen rnd( iSeed );
 		for(unsigned int i= 0; i < m_aVertices.size(); i+=4)
 		{
@@ -351,8 +351,8 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 		return;
 
 	const int iNumGlyphs = m_vpFontPageTextures.size();
-	int iStartGlyph = lrintf( Rage::scale( m_pTempState->crop.left, 0.f, 1.f, 0.f, iNumGlyphs + 0.f ) );
-	int iEndGlyph = lrintf( Rage::scale( m_pTempState->crop.right, 0.f, 1.f, iNumGlyphs + 0.f, 0.f ) );
+	int iStartGlyph = std::lrint( Rage::scale( m_pTempState->crop.left, 0.f, 1.f, 0.f, iNumGlyphs + 0.f ) );
+	int iEndGlyph = std::lrint( Rage::scale( m_pTempState->crop.right, 0.f, 1.f, iNumGlyphs + 0.f, 0.f ) );
 	iStartGlyph = Rage::clamp( iStartGlyph, 0, iNumGlyphs );
 	iEndGlyph = Rage::clamp( iEndGlyph, 0, iNumGlyphs );
 
@@ -753,7 +753,7 @@ void BitmapText::DrawPrimitives()
 		vector<Rage::Vector3> vGlyphJitter;
 		if( m_bJitter )
 		{
-			int iSeed = lrintf( RageTimer::GetTimeSinceStartFast()*8 );
+			int iSeed = std::lrint( RageTimer::GetTimeSinceStartFast()*8 );
 			RandomGen rnd( iSeed );
 
 			for( unsigned i=0; i<m_aVertices.size(); i+=4 )

@@ -63,7 +63,7 @@ void ScreenNameEntry::ScrollingText::Init( const RString &sName, const vector<fl
 void ScreenNameEntry::ScrollingText::DrawPrimitives()
 {
 	const float fFakeBeat = GAMESTATE->m_Position.m_fSongBeat;
-	const size_t iClosestIndex = lrintf( fFakeBeat ) % CHARS_CHOICES.size();
+	const size_t iClosestIndex = std::lrint( fFakeBeat ) % CHARS_CHOICES.size();
 	const float fClosestYOffset = GetClosestCharYOffset( fFakeBeat );
 
 	size_t iCharIndex = ( iClosestIndex - NUM_CHARS_TO_DRAW_BEHIND + CHARS_CHOICES.size() ) % CHARS_CHOICES.size();
@@ -99,7 +99,7 @@ void ScreenNameEntry::ScrollingText::DrawPrimitives()
 char ScreenNameEntry::ScrollingText::GetClosestChar( float fFakeBeat ) const
 {
 	ASSERT( fFakeBeat >= 0.f );
-	return CHARS_CHOICES[lrintf(fFakeBeat) % CHARS_CHOICES.size()];
+	return CHARS_CHOICES[std::lrint(fFakeBeat) % CHARS_CHOICES.size()];
 }
 
 // return value is relative to gray arrows

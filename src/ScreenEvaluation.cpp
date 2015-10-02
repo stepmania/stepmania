@@ -578,8 +578,8 @@ void ScreenEvaluation::Init()
 					RadarCategory_Hands, RadarCategory_Rolls, RadarCategory_Lifts, RadarCategory_Fakes
 				};
 				const int ind = indices[l];
-				const int iActual = lrintf(m_pStageStats->m_player[p].m_radarActual[ind]);
-				const int iPossible = lrintf(m_pStageStats->m_player[p].m_radarPossible[ind]);
+				const int iActual = std::lrint(m_pStageStats->m_player[p].m_radarActual[ind]);
+				const int iPossible = std::lrint(m_pStageStats->m_player[p].m_radarPossible[ind]);
 
 				// todo: check if format string is valid
 				// (two integer values in DETAILLINE_FORMAT) -aj

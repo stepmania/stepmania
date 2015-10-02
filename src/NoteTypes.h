@@ -284,14 +284,14 @@ inline int   BeatToNoteRow( float fBeatNum )
 {
 	float fraction = fBeatNum - truncf(fBeatNum);
 	int integer = int(fBeatNum) * ROWS_PER_BEAT;
-	return integer + lrintf(fraction * ROWS_PER_BEAT);
+	return integer + std::lrint(fraction * ROWS_PER_BEAT);
 }
 */
 /**
  * @brief Convert the beat into a note row.
  * @param fBeatNum the beat to convert.
  * @return the note row. */
-inline int   BeatToNoteRow( float fBeatNum )		{ return lrintf( fBeatNum * ROWS_PER_BEAT ); }	// round
+inline int   BeatToNoteRow( float fBeatNum )		{ return std::lrint( fBeatNum * ROWS_PER_BEAT ); }	// round
 /**
  * @brief Convert the beat into a note row without rounding.
  * @param fBeatNum the beat to convert.

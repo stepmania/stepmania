@@ -158,8 +158,8 @@ void RageSurfaceUtils::Zoom( RageSurface *&src, int dstwidth, int dstheight )
 		xscale = Rage::clamp( xscale, .5f, 2.0f );
 		yscale = Rage::clamp( yscale, .5f, 2.0f );
 
-		int target_width = lrintf( src->w*xscale );
-		int target_height = lrintf( src->h*yscale );
+		int target_width = std::lrint( src->w*xscale );
+		int target_height = std::lrint( src->h*yscale );
 
 		RageSurface *dst =
 			CreateSurface(target_width, target_height, 32,

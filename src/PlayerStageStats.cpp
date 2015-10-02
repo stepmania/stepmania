@@ -346,7 +346,7 @@ int PlayerStageStats::GetLessonScoreNeeded() const
 	};
 	float fScore = std::accumulate(m_vpPossibleSteps.begin(), m_vpPossibleSteps.end(), 0.f, getScore);
 
-	return lrintf( fScore * LESSON_PASS_THRESHOLD );
+	return std::lrint( fScore * LESSON_PASS_THRESHOLD );
 }
 
 void PlayerStageStats::ResetScoreForLesson()

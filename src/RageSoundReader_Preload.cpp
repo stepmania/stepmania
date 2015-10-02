@@ -60,7 +60,7 @@ bool RageSoundReader_Preload::Open( RageSoundReader *pSource )
 	{
 		float fSecs = iLen / 1000.f;
 
-		int iFrames = lrintf( fSecs * m_iSampleRate ); /* seconds -> frames */
+		int iFrames = std::lrint( fSecs * m_iSampleRate ); /* seconds -> frames */
 		int iSamples = unsigned( iFrames * m_iChannels ); /* frames -> samples */
 		if( iSamples > iMaxSamples )
 			return false; /* Don't bother trying to preload it. */
@@ -119,7 +119,7 @@ int RageSoundReader_Preload::GetLength_Fast() const
 int RageSoundReader_Preload::SetPosition( int iFrame )
 {
 	m_iPosition = iFrame;
-	m_iPosition = lrintf(m_iPosition / m_fRate);
+	m_iPosition = std::lrint(m_iPosition / m_fRate);
 
 	if( m_iPosition >= int(m_Buffer->size() / framesize) )
 	{
@@ -132,7 +132,7 @@ int RageSoundReader_Preload::SetPosition( int iFrame )
 
 int RageSoundReader_Preload::GetNextSourceFrame() const
 {
-	return lrintf(m_iPosition * m_fRate);
+	return std::lrint(m_iPosition * m_fRate);
 }
 
 int RageSoundReader_Preload::Read( float *pBuffer, int iFrames )

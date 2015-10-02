@@ -2,6 +2,7 @@ list(APPEND RAGE_TEST_SRC
   "${SM_SRC_DIR}/tests/RageColorFixture.cpp"
   "${SM_SRC_DIR}/tests/RageColorTest.cpp"
   "${SM_SRC_DIR}/tests/RageMathTest.cpp"
+  "${SM_SRC_DIR}/tests/RageVColorTest.cpp"
   "${SM_SRC_DIR}/tests/RageVector2Fixture.cpp"
   "${SM_SRC_DIR}/tests/RageVector2Test.cpp"
   "${SM_SRC_DIR}/tests/RageVector3Fixture.cpp"

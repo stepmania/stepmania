@@ -449,7 +449,7 @@ void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst,
 				sum += v[1][i] * (1-weight_x) * (weight_y);
 				sum += v[2][i] * (weight_x)   * (1-weight_y);
 				sum += v[3][i] * (weight_x)   * (weight_y);
-				out[i] = (uint8_t) Rage::clamp( lrintf(sum), 0L, 255L );
+				out[i] = (uint8_t) Rage::clamp( std::lrint(sum), 0L, 255L );
 			}
 
 			// If the source has no alpha, set the destination to opaque.
@@ -544,7 +544,7 @@ static bool blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *d
 			 * { 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3 }
 			 * SCALE( i, 0, max_src_val, 0, max_dst_val );
 			 * { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3 }
-			 * lrintf( ((float) i / max_src_val) * max_dst_val )
+			 * std::lrint( ((float) i / max_src_val) * max_dst_val )
 			 * { 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3 }
 			 *
 			 * We use the first for increasing resolution, since it gives the most even
@@ -555,7 +555,7 @@ static bool blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *d
 			 * { 0, 4, 8, 12 }
 			 * SCALE( i, 0, max_src_val, 0, max_dst_val );
 			 * { 0, 5, 10, 15 }
-			 * lrintf( ((float) i / max_src_val) * max_dst_val )
+			 * std::lrint( ((float) i / max_src_val) * max_dst_val )
 			 * { 0, 5, 10, 15 }
 			 *
 			 * The latter two are equivalent and give an even distribution; we use the
@@ -864,13 +864,13 @@ RageSurface *RageSurfaceUtils::PalettizeToGrayscale( const RageSurface *src_surf
 		if( Ivalues == 1 )
 			ScaledI = 255; // if only one intensity value, always fullbright
 		else
-			ScaledI = Rage::clamp( lrintf(I * (255.0f / (Ivalues-1))), 0L, 255L );
+			ScaledI = Rage::clamp( std::lrint(I * (255.0f / (Ivalues-1))), 0L, 255L );
 
 		int ScaledA;
 		if( Avalues == 1 )
 			ScaledA = 255; // if only one alpha value, always opaque
 		else
-			ScaledA = Rage::clamp( lrintf(A * (255.0f / (Avalues-1))), 0L, 255L );
+			ScaledA = Rage::clamp( std::lrint(A * (255.0f / (Avalues-1))), 0L, 255L );
 
 		RageSurfaceColor c;
 		c.r = uint8_t(ScaledI);
