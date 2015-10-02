@@ -1261,10 +1261,10 @@ void RageDisplay_D3D::SetMaterial(
 	if( bLighting )
 	{
 		D3DMATERIAL9 mat;
-		memcpy( &mat.Diffuse, diffuse, sizeof(float)*4 );
-		memcpy( &mat.Ambient, ambient, sizeof(float)*4 );
-		memcpy( &mat.Specular, specular, sizeof(float)*4 );
-		memcpy( &mat.Emissive, emissive, sizeof(float)*4 );
+		memcpy( &mat.Diffuse, &diffuse, sizeof(float)*4 );
+		memcpy( &mat.Ambient, &ambient, sizeof(float)*4 );
+		memcpy( &mat.Specular, &specular, sizeof(float)*4 );
+		memcpy( &mat.Emissive, &emissive, sizeof(float)*4 );
 		mat.Power = shininess;
 		g_pd3dDevice->SetMaterial( &mat );
 	}
@@ -1308,9 +1308,9 @@ void RageDisplay_D3D::SetLightDirectional(
 	 * why we don't see other weirdness. -Chris */
 	float position[] = { dir.x, dir.y, -dir.z };
 	memcpy( &light.Direction, position, sizeof(position) );
-	memcpy( &light.Diffuse, diffuse, sizeof(diffuse) );
-	memcpy( &light.Ambient, ambient, sizeof(ambient) );
-	memcpy( &light.Specular, specular, sizeof(specular) );
+	memcpy( &light.Diffuse, &diffuse, sizeof(diffuse) );
+	memcpy( &light.Ambient, &ambient, sizeof(ambient) );
+	memcpy( &light.Specular, &specular, sizeof(specular) );
 
 	// Same as OpenGL defaults.  Not used in directional lights.
 //	light.Attenuation0 = 1;
