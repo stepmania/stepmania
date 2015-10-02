@@ -67,7 +67,7 @@ static void AddPart( vector<RString> &AddTo, float level, RString name )
 	if( level == 0 )
 		return;
 
-	const RString LevelStr = (level == 1)? RString(""): ssprintf( "%ld%% ", lrintf(level*100) );
+	const RString LevelStr = (level == 1)? RString(""): ssprintf( "%ld%% ", std::lrint(level*100) );
 
 	AddTo.push_back( LevelStr + name );
 }

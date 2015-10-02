@@ -73,10 +73,10 @@ std::string Rage::Color::NormalizeColorString(std::string color)
 
 std::string Rage::Color::ToString() const
 {
-	int iR = Rage::clamp( static_cast<int>(lrintf(r * 255) ), 0, 255 );
-	int iG = Rage::clamp( static_cast<int>(lrintf(g * 255) ), 0, 255 );
-	int iB = Rage::clamp( static_cast<int>(lrintf(b * 255) ), 0, 255 );
-	int iA = Rage::clamp( static_cast<int>(lrintf(a * 255) ), 0, 255 );
+	int iR = Rage::clamp( static_cast<int>(std::lrint(r * 255) ), 0, 255 );
+	int iG = Rage::clamp( static_cast<int>(std::lrint(g * 255) ), 0, 255 );
+	int iB = Rage::clamp( static_cast<int>(std::lrint(b * 255) ), 0, 255 );
+	int iA = Rage::clamp( static_cast<int>(std::lrint(a * 255) ), 0, 255 );
 	
 	if( iA == 255 )
 	{

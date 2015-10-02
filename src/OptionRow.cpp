@@ -706,9 +706,9 @@ void OptionRow::GetWidthXY( PlayerNumber pn, int iChoiceOnRow, int &iWidthOut, i
 {
 	const BitmapText &text = GetTextItemForRow( pn, iChoiceOnRow );
 
-	iWidthOut = lrintf( text.GetZoomedWidth() );
-	iXOut = lrintf( text.GetDestX() );
-	iYOut = lrintf( m_Frame.GetDestY() );
+	iWidthOut = std::lrint( text.GetZoomedWidth() );
+	iXOut = std::lrint( text.GetDestX() );
+	iYOut = std::lrint( m_Frame.GetDestY() );
 }
 
 int OptionRow::GetOneSelection( PlayerNumber pn, bool bAllowFail ) const

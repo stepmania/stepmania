@@ -120,9 +120,9 @@ void RageDisplay::ProcessStatsOnFlip()
 	{
 		float fActualTime = g_LastCheckTimer.GetDeltaTime();
 		g_iNumChecksSinceLastReset++;
-		g_iFPS = lrintf( g_iFramesRenderedSinceLastCheck / fActualTime );
+		g_iFPS = std::lrint( g_iFramesRenderedSinceLastCheck / fActualTime );
 		g_iCFPS = g_iFramesRenderedSinceLastReset / g_iNumChecksSinceLastReset;
-		g_iCFPS = lrintf( g_iCFPS / fActualTime );
+		g_iCFPS = std::lrint( g_iCFPS / fActualTime );
 		g_iVPF = g_iVertsRenderedSinceLastCheck / g_iFramesRenderedSinceLastCheck;
 		g_iFramesRenderedSinceLastCheck = g_iVertsRenderedSinceLastCheck = 0;
 		if( LOG_FPS )
@@ -761,7 +761,7 @@ bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 		// Maintain the DAR.
 		ASSERT( GetActualVideoModeParams().fDisplayAspectRatio > 0 );
 		int iHeight = 480;
-		// This used to be lrintf. However, lrintf causes odd resolutions like
+		// This used to be std::lrint. However, std::lrint causes odd resolutions like
 		// 639x480 (4:3) and 853x480 (16:9). ceilf gives correct values. -aj
 		int iWidth = static_cast<int>(ceilf( iHeight * GetActualVideoModeParams().fDisplayAspectRatio ));
 		timer.Touch();

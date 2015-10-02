@@ -5,6 +5,7 @@
 
 #include "EnumHelper.h"
 #include "RageColor.hpp"
+#include "RageVColor.hpp"
 #include "RageVector2.hpp"
 #include "RageVector3.hpp"
 #include "RageVector4.hpp"
@@ -105,51 +106,6 @@ void PushTable( Rage::Color const &color, lua_State *L );
 void FromStack( Rage::Color &color, lua_State *L, int pos);
 void FromStackCompat( Rage::Color &color, lua_State *L, int pos);
 
-/* Convert floating-point 0..1 value to integer 0..255 value. *
- *
- * As a test case,
- *
- * int cnts[1000]; memset(cnts, 0, sizeof(cnts));
- * for( float n = 0; n <= 1.0; n += 0.0001 ) cnts[FTOC(n)]++;
- * for( int i = 0; i < 256; ++i ) printf("%i ", cnts[i]);
- *
- * should output the same value (+-1) 256 times.  If this function is
- * incorrect, the first and/or last values may be biased. */
-inline unsigned char FTOC(float a)
-{
-        /* lfintf is much faster than C casts.  We don't care which way negative values
-         * are rounded, since we'll clamp them to zero below.  Be sure to truncate (not
-         * round) positive values.  The highest value that should be converted to 1 is
-         * roughly (1/256 - 0.00001); if we don't truncate, values up to (1/256 + 0.5)
-         * will be converted to 1, which is wrong. */
-        int ret = lrintf(a*256.f - 0.5f);
-
-        /* Benchmarking shows that clamping here, as integers, is much faster than clamping
-         * before the conversion, as floats. */
-        if( ret<0 ) return 0;
-        else if( ret>255 ) return 255;
-        else return (unsigned char) ret;
-}
-
-/* Color type used only in vertex lists.  OpenGL expects colors in
- * r, g, b, a order, independent of endianness, so storing them this
- * way avoids endianness problems.  Don't try to manipulate this; only
- * manip Rage::Colors. */
-/* Perhaps the math in Rage::Color could be moved to RageVColor.  We don't need the 
- * precision of a float for our calculations anyway.   -Chris */
-class RageVColor
-{
-public:
-	uint8_t b,g,r,a;	// specific ordering required by Direct3D
-
-	RageVColor(): b(0), g(0), r(0), a(0) { }
-	RageVColor(const Rage::Color &rc): b(0), g(0), r(0), a(0) { *this = rc; }
-	RageVColor &operator= (const Rage::Color &rc)
-	{
-		r = FTOC(rc.r); g = FTOC(rc.g); b = FTOC(rc.b); a = FTOC(rc.a);
-		return *this;
-	}
-};
 
 namespace StepMania
 {
@@ -190,7 +146,7 @@ struct RageSpriteVertex	// has color
 	RageSpriteVertex(): p(), n(), c(), t() {}
 	Rage::Vector3 p; // position
 	Rage::Vector3 n; // normal
-	RageVColor  c; // diffuse color
+	Rage::VColor  c; // diffuse color
 	Rage::Vector2 t; // texture coordinates
 };
 

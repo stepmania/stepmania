@@ -239,7 +239,7 @@ void ActorMultiVertex::DrawPrimitives()
 
 		for( size_t i=0; i < TS.vertices.size(); i++ )
 		{
-			// RageVColor * Rage::Color
+			// Rage::VColor * Rage::Color
 			TS.vertices[i].c.b *= static_cast<uint8_t>(m_pTempState->diffuse[0].b);
 			TS.vertices[i].c.r *= static_cast<uint8_t>(m_pTempState->diffuse[0].r);
 			TS.vertices[i].c.g *= static_cast<uint8_t>(m_pTempState->diffuse[0].g);
