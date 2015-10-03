@@ -1080,6 +1080,7 @@ int sm_main(int argc, char* argv[])
 	CommandLineActions::Handle(pLoadingWindow);
 
 	// Aldo: Check for updates here!
+#if 0
 	if( /* PREFSMAN->m_bUpdateCheckEnable (do this later) */ 0 )
 	{
 		// TODO - Aldo_MX: Use PREFSMAN->m_iUpdateCheckIntervalSeconds & PREFSMAN->m_iUpdateCheckLastCheckedSecond
@@ -1115,7 +1116,7 @@ int sm_main(int argc, char* argv[])
 			LOG->Info( "Unable to check for updates. The server might be offline." );
 		}
 	}
-
+#endif
 	if( GetCommandlineArgument("dopefish") )
 		GAMESTATE->m_bDopefish = true;
 

@@ -202,7 +202,7 @@ static void child_process()
 	
 	fprintf( CrashDump, "%s%s crash report", PRODUCT_FAMILY, product_version );
 #if defined(HAVE_VERSION_INFO)
-	fprintf( CrashDump, " (build %lu, %s @ %s)", version_num, version_date, version_time );
+	fprintf( CrashDump, " (build %s, %s @ %s)", ::sm_version_git_hash, version_date, version_time );
 #endif
 	fprintf( CrashDump, "\n" );
 	fprintf( CrashDump, "--------------------------------------\n" );
