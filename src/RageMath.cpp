@@ -36,14 +36,14 @@ void RageVec3AddToBounds( const Rage::Vector3 &p, Rage::Vector3 &mins, Rage::Vec
 
 void RageVec2Normalize( Rage::Vector2* pOut, const Rage::Vector2* pV )
 {
-	float scale = 1.0f / sqrtf( pV->x*pV->x + pV->y*pV->y );
+  float scale = 1.0f / std::sqrt( pV->x*pV->x + pV->y*pV->y );
 	pOut->x = pV->x * scale;
 	pOut->y = pV->y * scale;
 }
 
 void RageVec3Normalize( Rage::Vector3* pOut, const Rage::Vector3* pV )
 {
-	float scale = 1.0f / sqrtf( pV->x*pV->x + pV->y*pV->y + pV->z*pV->z );
+  float scale = 1.0f / std::sqrt( pV->x*pV->x + pV->y*pV->y + pV->z*pV->z );
 	pOut->x = pV->x * scale;
 	pOut->y = pV->y * scale;
 	pOut->z = pV->z * scale;
@@ -52,7 +52,7 @@ void RageVec3Normalize( Rage::Vector3* pOut, const Rage::Vector3* pV )
 void VectorFloatNormalize(vector<float>& v)
 {
 	ASSERT_M(v.size() == 3, "Can't normalize a non-3D vector.");
-	float scale = 1.0f / sqrtf(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+  float scale = 1.0f / std::sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
 	v[0]*= scale;
 	v[1]*= scale;
 	v[2]*= scale;
@@ -351,7 +351,7 @@ void RageQuatMultiply( Rage::Vector4* pOut, const Rage::Vector4 &pA, const Rage:
 	square = out.x * out.x + out.y * out.y + out.z * out.z + out.w * out.w;
 
 	if (square > 0.0)
-		dist = 1.0f / sqrtf(square);
+    dist = 1.0f / std::sqrt(square);
 	else dist = 1;
 
 	out.x *= dist;
@@ -498,7 +498,7 @@ void RageQuatSlerp(Rage::Vector4 *pOut, const Rage::Vector4 &from, const Rage::V
 	if ( cosom < 0.9999f )
 	{
 		// standard case (slerp)
-		float omega = acosf(cosom);
+		float omega = std::acos(cosom);
 		float sinom = RageFastSin(omega);
 		scale0 = RageFastSin((1.0f - t) * omega) / sinom;
 		scale1 = RageFastSin(t * omega) / sinom;
@@ -601,7 +601,7 @@ float RageFastSin( float x )
 		for( unsigned i=0; i < table.size(); i++ )
 		{
 			float z = Rage::scale(i + 0.f, 0.f, table.size() + 0.f, 0.0f, PI);
-			table[i] = sinf(z);
+			table[i] = std::sin(z);
 		}
 	}
 

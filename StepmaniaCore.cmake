@@ -99,12 +99,6 @@ check_function_exists(waitpid HAVE_WAITPID)
 
 
 # Mostly universal symbols.
-check_cxx_symbol_exists(powf cmath HAVE_POWF)
-check_cxx_symbol_exists(sqrtf cmath HAVE_SQRTF)
-check_cxx_symbol_exists(sinf cmath HAVE_SINF)
-check_cxx_symbol_exists(tanf cmath HAVE_TANF)
-check_cxx_symbol_exists(cosf cmath HAVE_COSF)
-check_cxx_symbol_exists(acosf cmath HAVE_ACOSF)
 check_cxx_symbol_exists(strtof cstdlib HAVE_STRTOF)
 check_symbol_exists(M_PI math.h HAVE_M_PI)
 check_symbol_exists(size_t stddef.h HAVE_SIZE_T_STDDEF)

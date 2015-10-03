@@ -24,7 +24,7 @@ namespace
 	{
 		if( f == 0 )
 			return 1;
-		return sinf(f)/f;
+		return std::sin(f)/f;
 	}
 
 	/* Modified Bessel function I0.  From Abramowitz and Stegun "Handbook of Mathematical
@@ -66,7 +66,7 @@ namespace
 		for( int n = 0; n < iLen; ++n )
 		{
 			float fN1 = fabsf((n-p)/p);
-			float fNum = fBeta * sqrtf( max(1-fN1*fN1, 0.f) );
+      float fNum = fBeta * std::sqrt( max(1-fN1*fN1, 0.f) );
 			fNum = BesselI0( fNum );
 			float fVal = fNum/fDenom;
 			pBuf[n] *= fVal;
