@@ -21,7 +21,10 @@
 #ifndef AVUTIL_BPRINT_H
 #define AVUTIL_BPRINT_H
 
+#include <stdarg.h>
+
 #include "attributes.h"
+#include "avstring.h"
 
 /**
  * Define a structure with extra padding to a fixed size
@@ -73,13 +76,21 @@
  */
 typedef struct AVBPrint {
     FF_PAD_STRUCTURE(1024,
-    char *str;         /** string so far */
-    unsigned len;      /** length so far */
-    unsigned size;     /** allocated memory */
-    unsigned size_max; /** maximum allocated memory */
+    char *str;         /**< string so far */
+    unsigned len;      /**< length so far */
+    unsigned size;     /**< allocated memory */
+    unsigned size_max; /**< maximum allocated memory */
     char reserved_internal_buffer[1];
     )
 } AVBPrint;
+
+/**
+ * Convenience macros for special values for av_bprint_init() size_max
+ * parameter.
+ */
+#define AV_BPRINT_SIZE_UNLIMITED  ((unsigned)-1)
+#define AV_BPRINT_SIZE_AUTOMATIC  1
+#define AV_BPRINT_SIZE_COUNT_ONLY 0
 
 /**
  * Init a print buffer.
@@ -88,26 +99,79 @@ typedef struct AVBPrint {
  * @param size_init  initial size (including the final 0)
  * @param size_max   maximum size;
  *                   0 means do not write anything, just count the length;
- *                   1 is replaced by the maximum value for automatic storage
+ *                   1 is replaced by the maximum value for automatic storage;
+ *                   any large value means that the internal buffer will be
+ *                   reallocated as needed up to that limit; -1 is converted to
+ *                   UINT_MAX, the largest limit possible.
+ *                   Check also AV_BPRINT_SIZE_* macros.
  */
 void av_bprint_init(AVBPrint *buf, unsigned size_init, unsigned size_max);
 
 /**
- * Convenience macros for special values for size_max.
+ * Init a print buffer using a pre-existing buffer.
+ *
+ * The buffer will not be reallocated.
+ *
+ * @param buf     buffer structure to init
+ * @param buffer  byte buffer to use for the string data
+ * @param size    size of buffer
  */
-#define AV_BPRINT_SIZE_UNLIMITED  ((unsigned)-1)
-#define AV_BPRINT_SIZE_AUTOMATIC  1
-#define AV_BPRINT_SIZE_COUNT_ONLY 0
+void av_bprint_init_for_buffer(AVBPrint *buf, char *buffer, unsigned size);
 
 /**
- * Append a formated string to a print buffer.
+ * Append a formatted string to a print buffer.
  */
 void av_bprintf(AVBPrint *buf, const char *fmt, ...) av_printf_format(2, 3);
+
+/**
+ * Append a formatted string to a print buffer.
+ */
+void av_vbprintf(AVBPrint *buf, const char *fmt, va_list vl_arg);
 
 /**
  * Append char c n times to a print buffer.
  */
 void av_bprint_chars(AVBPrint *buf, char c, unsigned n);
+
+/**
+ * Append data to a print buffer.
+ *
+ * param buf  bprint buffer to use
+ * param data pointer to data
+ * param size size of data
+ */
+void av_bprint_append_data(AVBPrint *buf, const char *data, unsigned size);
+
+struct tm;
+/**
+ * Append a formatted date and time to a print buffer.
+ *
+ * param buf  bprint buffer to use
+ * param fmt  date and time format string, see strftime()
+ * param tm   broken-down time structure to translate
+ *
+ * @note due to poor design of the standard strftime function, it may
+ * produce poor results if the format string expands to a very long text and
+ * the bprint buffer is near the limit stated by the size_max option.
+ */
+void av_bprint_strftime(AVBPrint *buf, const char *fmt, const struct tm *tm);
+
+/**
+ * Allocate bytes in the buffer for external use.
+ *
+ * @param[in]  buf          buffer structure
+ * @param[in]  size         required size
+ * @param[out] mem          pointer to the memory area
+ * @param[out] actual_size  size of the memory area after allocation;
+ *                          can be larger or smaller than size
+ */
+void av_bprint_get_buffer(AVBPrint *buf, unsigned size,
+                          unsigned char **mem, unsigned *actual_size);
+
+/**
+ * Reset the string to "" but keep internal allocated data.
+ */
+void av_bprint_clear(AVBPrint *buf);
 
 /**
  * Test if the print buffer is complete (not truncated).
@@ -132,5 +196,21 @@ static inline int av_bprint_is_complete(AVBPrint *buf)
  * @return  0 for success or error code (probably AVERROR(ENOMEM))
  */
 int av_bprint_finalize(AVBPrint *buf, char **ret_str);
+
+/**
+ * Escape the content in src and append it to dstbuf.
+ *
+ * @param dstbuf        already inited destination bprint buffer
+ * @param src           string containing the text to escape
+ * @param special_chars string containing the special characters which
+ *                      need to be escaped, can be NULL
+ * @param mode          escape mode to employ, see AV_ESCAPE_MODE_* macros.
+ *                      Any unknown value for mode will be considered equivalent to
+ *                      AV_ESCAPE_MODE_BACKSLASH, but this behaviour can change without
+ *                      notice.
+ * @param flags         flags which control how to escape, see AV_ESCAPE_FLAG_* macros
+ */
+void av_bprint_escape(AVBPrint *dstbuf, const char *src, const char *special_chars,
+                      enum AVEscapeMode mode, int flags);
 
 #endif /* AVUTIL_BPRINT_H */
