@@ -5,6 +5,8 @@
 
 #include "EnumHelper.h"
 #include "RageColor.hpp"
+#include "RageModelVertex.hpp"
+#include "RageSpriteVertex.hpp"
 #include "RageVColor.hpp"
 #include "RageVector2.hpp"
 #include "RageVector3.hpp"
@@ -139,67 +141,8 @@ public:
 typedef StepMania::Rect<int> RectI;
 typedef StepMania::Rect<float> RectF;
 
-/* Structure for our custom vertex type.  Note that these data structes 
- * have the same layout that D3D expects. */
-struct RageSpriteVertex	// has color
-{
-	RageSpriteVertex(): p(), n(), c(), t() {}
-	Rage::Vector3 p; // position
-	Rage::Vector3 n; // normal
-	Rage::VColor  c; // diffuse color
-	Rage::Vector2 t; // texture coordinates
-};
-
 void lerp_rage_color(Rage::Color& out, Rage::Color const& a, Rage::Color const& b, float t);
-void WeightedAvergeOfRSVs(RageSpriteVertex& average_out, RageSpriteVertex const& rsv1, RageSpriteVertex const& rsv2, float percent_between);
-
-struct RageModelVertex	// doesn't have color.  Relies on material color
-{
-	/* Zero out by default. */
-	RageModelVertex():
-		p(0,0,0),
-		n(0,0,0),
-		t(0,0),
-		bone(0),
-		TextureMatrixScale(1,1)
-		{ }
-	Rage::Vector3 p;	// position
-	Rage::Vector3 n;	// normal
-	Rage::Vector2 t;	// texture coordinates
-	int8_t      bone;
-	Rage::Vector2 TextureMatrixScale; // usually 1,1
-};
-
-
-// RageMatrix elements are specified in row-major order.  This
-// means that the translate terms are located in the fourth row and the
-// projection terms in the fourth column.  This is consistent with the way
-// MAX, Direct3D, and OpenGL all handle matrices.  Even though the OpenGL
-// documentation is in column-major form, the OpenGL code is designed to
-// handle matrix operations in row-major form.
-struct RageMatrix
-{
-public:
-	RageMatrix() {};
-	RageMatrix( const float *f )	{ for(int i=0; i<4; i++) for(int j=0; j<4; j++) m[j][i]=f[j*4+i]; }
-	RageMatrix( const RageMatrix& other )	{ for(int i=0; i<4; i++) for(int j=0; j<4; j++) m[j][i]=other.m[j][i]; }
-	RageMatrix( float v00, float v01, float v02, float v03,
-                float v10, float v11, float v12, float v13,
-                float v20, float v21, float v22, float v23,
-                float v30, float v31, float v32, float v33 );
-
-	// access grants
-	float& operator () ( int iRow, int iCol )	{ return m[iCol][iRow]; }
-	float  operator () ( int iRow, int iCol ) const { return m[iCol][iRow]; }
-
-	// casting operators
-	operator float* ()				{ return m[0]; }
-	operator const float* () const			{ return m[0]; }
-
-	RageMatrix GetTranspose() const;
-
-	float m[4][4];
-};
+void WeightedAvergeOfRSVs(Rage::SpriteVertex& average_out, Rage::SpriteVertex const& rsv1, Rage::SpriteVertex const& rsv2, float percent_between);
 
 #endif
 

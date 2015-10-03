@@ -288,17 +288,17 @@ public:
 	virtual RageCompiledGeometry* CreateCompiledGeometry() = 0;
 	virtual void DeleteCompiledGeometry( RageCompiledGeometry* p ) = 0;
 
-	void DrawQuads( const RageSpriteVertex v[], int iNumVerts );
-	void DrawQuadStrip( const RageSpriteVertex v[], int iNumVerts );
-	void DrawFan( const RageSpriteVertex v[], int iNumVerts );
-	void DrawStrip( const RageSpriteVertex v[], int iNumVerts );
-	void DrawTriangles( const RageSpriteVertex v[], int iNumVerts );
+	void DrawQuads( const Rage::SpriteVertex v[], int iNumVerts );
+	void DrawQuadStrip( const Rage::SpriteVertex v[], int iNumVerts );
+	void DrawFan( const Rage::SpriteVertex v[], int iNumVerts );
+	void DrawStrip( const Rage::SpriteVertex v[], int iNumVerts );
+	void DrawTriangles( const Rage::SpriteVertex v[], int iNumVerts );
 	void DrawCompiledGeometry( const RageCompiledGeometry *p, int iMeshIndex, const std::vector<msMesh> &vMeshes );
-	void DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
-	void DrawSymmetricQuadStrip( const RageSpriteVertex v[], int iNumVerts );
-	void DrawCircle( const RageSpriteVertex &v, float radius );
+	void DrawLineStrip( const Rage::SpriteVertex v[], int iNumVerts, float LineWidth );
+	void DrawSymmetricQuadStrip( const Rage::SpriteVertex v[], int iNumVerts );
+	void DrawCircle( const Rage::SpriteVertex &v, float radius );
 
-	void DrawQuad( const RageSpriteVertex v[] ) { DrawQuads(v,4); } /* alias. upper-left, upper-right, lower-left, lower-right */
+	void DrawQuad( const Rage::SpriteVertex v[] ) { DrawQuads(v,4); } /* alias. upper-left, upper-right, lower-left, lower-right */
 
 	// hacks for cell-shaded models
 	virtual void SetPolygonMode( PolygonMode ) {}
@@ -318,22 +318,22 @@ public:
 	virtual RageSurface *GetTexture( unsigned /* iTexture */ ) { return nullptr; } // allocates a surface.  Caller must delete it.
 
 protected:
-	virtual void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
-	virtual void DrawQuadStripInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
-	virtual void DrawFanInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
-	virtual void DrawStripInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
-	virtual void DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
+	virtual void DrawQuadsInternal( const Rage::SpriteVertex v[], int iNumVerts ) = 0;
+	virtual void DrawQuadStripInternal( const Rage::SpriteVertex v[], int iNumVerts ) = 0;
+	virtual void DrawFanInternal( const Rage::SpriteVertex v[], int iNumVerts ) = 0;
+	virtual void DrawStripInternal( const Rage::SpriteVertex v[], int iNumVerts ) = 0;
+	virtual void DrawTrianglesInternal( const Rage::SpriteVertex v[], int iNumVerts ) = 0;
 	virtual void DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex ) = 0;
-	virtual void DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
-	virtual void DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
-	virtual void DrawCircleInternal( const RageSpriteVertex &v, float radius );
+	virtual void DrawLineStripInternal( const Rage::SpriteVertex v[], int iNumVerts, float LineWidth );
+	virtual void DrawSymmetricQuadStripInternal( const Rage::SpriteVertex v[], int iNumVerts ) = 0;
+	virtual void DrawCircleInternal( const Rage::SpriteVertex &v, float radius );
 
 	// return RString() if mode change was successful, an error message otherwise.
 	// bNewDeviceOut is set true if a new device was created and textures
 	// need to be reloaded.
 	virtual RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut ) = 0;
 
-	void DrawPolyLine( const RageSpriteVertex &p1, const RageSpriteVertex &p2, float LineWidth );
+	void DrawPolyLine( const Rage::SpriteVertex &p1, const Rage::SpriteVertex &p2, float LineWidth );
 
 	// Stuff in RageDisplay.cpp
 	void SetDefaultRenderStates();
@@ -359,9 +359,9 @@ public:
 	void RotateZ( float deg );
 	void SkewX( float fAmount );
 	void SkewY( float fAmount );
-	void MultMatrix( const RageMatrix &f ) { this->PostMultMatrix(f); } /* alias */
-	void PostMultMatrix( const RageMatrix &f );
-	void PreMultMatrix( const RageMatrix &f );
+	void MultMatrix( const Rage::Matrix &f ) { this->PostMultMatrix(f); } /* alias */
+	void PostMultMatrix( const Rage::Matrix &f );
+	void PreMultMatrix( const Rage::Matrix &f );
 	void LoadIdentity();
 
 	// Texture matrix functions
@@ -388,22 +388,22 @@ public:
 	void PushSelf( lua_State *L );
 
 protected:
-	RageMatrix GetPerspectiveMatrix( float fovy, float aspect, float zNear, float zFar );
+	Rage::Matrix GetPerspectiveMatrix( float fovy, float aspect, float zNear, float zFar );
 
 	// Different for D3D and OpenGL. Not sure why they're not compatible. -Chris
-	virtual RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf );
-	virtual RageMatrix GetFrustumMatrix( float l, float r, float b, float t, float zn, float zf );
+	virtual Rage::Matrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf );
+	virtual Rage::Matrix GetFrustumMatrix( float l, float r, float b, float t, float zn, float zf );
 
 	// Matrix that adjusts position and scale of image on the screen
-	RageMatrix GetCenteringMatrix( float fTranslateX, float fTranslateY, float fAddWidth, float fAddHeight ) const;
+	Rage::Matrix GetCenteringMatrix( float fTranslateX, float fTranslateY, float fAddWidth, float fAddHeight ) const;
 	void UpdateCentering();
 
 	// Called by the RageDisplay derivitives
-	const RageMatrix* GetCentering() const;
-	const RageMatrix* GetProjectionTop() const;
-	const RageMatrix* GetViewTop() const;
-	const RageMatrix* GetWorldTop() const;
-	const RageMatrix* GetTextureTop() const;
+	const Rage::Matrix* GetCentering() const;
+	const Rage::Matrix* GetProjectionTop() const;
+	const Rage::Matrix* GetViewTop() const;
+	const Rage::Matrix* GetWorldTop() const;
+	const Rage::Matrix* GetTextureTop() const;
 
 	// To limit the framerate, call FrameLimitBeforeVsync before waiting
 	// for vsync and FrameLimitAfterVsync after.

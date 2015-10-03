@@ -515,7 +515,7 @@ void Sprite::DrawTexture( const TweenState *state )
 	IF_CROP_POS( right, left );
 	IF_CROP_POS( bottom, top );
 
-	static RageSpriteVertex v[4];
+	static Rage::SpriteVertex v[4];
 	v[0].p = Rage::Vector3( croppedQuadVerticies.left,	croppedQuadVerticies.top,	0 );	// top left
 	v[1].p = Rage::Vector3( croppedQuadVerticies.left,	croppedQuadVerticies.bottom,	0 );	// bottom left
 	v[2].p = Rage::Vector3( croppedQuadVerticies.right,	croppedQuadVerticies.bottom,	0 );	// bottom right
@@ -553,7 +553,7 @@ void Sprite::DrawTexture( const TweenState *state )
 
 			for( int i = 0; i < 4; ++i )
 			{
-				RageSpriteVertex *pVert = &v[i];
+				Rage::SpriteVertex *pVert = &v[i];
 
 				float fTopX = Rage::scale( pVert->p.x, quadVerticies.left, quadVerticies.right, texCoords[0].x, texCoords[3].x );
 				float fBottomX = Rage::scale( pVert->p.x, quadVerticies.left, quadVerticies.right, texCoords[1].x, texCoords[2].x );

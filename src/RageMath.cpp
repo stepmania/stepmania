@@ -8,6 +8,7 @@
 #include "RageLog.h"
 #include "RageMath.hpp"
 #include "RageMath.h"
+#include "RageMatrix.hpp"
 #include "RageTypes.h"
 #include <float.h>
 #include <array>
@@ -63,14 +64,14 @@ void RageVec3Cross(Rage::Vector3* ret, Rage::Vector3 const* a, Rage::Vector3 con
 	ret->z= (a->x * b->y) - (a->y * b->x);
 }
 
-void RageVec3TransformCoord( Rage::Vector3* pOut, const Rage::Vector3* pV, const RageMatrix* pM )
+void RageVec3TransformCoord( Rage::Vector3* pOut, const Rage::Vector3* pV, const Rage::Matrix* pM )
 {
 	Rage::Vector4 temp( pV->x, pV->y, pV->z, 1.0f );	// translate
 	RageVec4TransformCoord( &temp, &temp, pM );
 	*pOut = Rage::Vector3( temp.x/temp.w, temp.y/temp.w, temp.z/temp.w );
 }
 
-void RageVec3TransformNormal( Rage::Vector3* pOut, const Rage::Vector3* pV, const RageMatrix* pM )
+void RageVec3TransformNormal( Rage::Vector3* pOut, const Rage::Vector3* pV, const Rage::Matrix* pM )
 {
 	Rage::Vector4 temp( pV->x, pV->y, pV->z, 0.0f );	// don't translate
 	RageVec4TransformCoord( &temp, &temp, pM );
@@ -94,9 +95,9 @@ void RageVec3TransformNormal( Rage::Vector3* pOut, const Rage::Vector3* pV, cons
 #define m32 m[3][2]
 #define m33 m[3][3]
 
-void RageVec4TransformCoord( Rage::Vector4* pOut, const Rage::Vector4* pV, const RageMatrix* pM )
+void RageVec4TransformCoord( Rage::Vector4* pOut, const Rage::Vector4* pV, const Rage::Matrix* pM )
 {
-	const RageMatrix &a = *pM;
+	const Rage::Matrix &a = *pM;
 	const Rage::Vector4 &v = *pV;
 	*pOut = Rage::Vector4(
 		a.m00*v.x+a.m10*v.y+a.m20*v.z+a.m30*v.w,
@@ -105,22 +106,12 @@ void RageVec4TransformCoord( Rage::Vector4* pOut, const Rage::Vector4* pV, const
 		a.m03*v.x+a.m13*v.y+a.m23*v.z+a.m33*v.w );
 }
 
-RageMatrix::RageMatrix( float v00, float v01, float v02, float v03,
-						float v10, float v11, float v12, float v13,
-						float v20, float v21, float v22, float v23,
-						float v30, float v31, float v32, float v33 )
-{
-	m00=v00; m01=v01; m02=v02; m03=v03;
-	m10=v10; m11=v11; m12=v12; m13=v13;
-	m20=v20; m21=v21; m22=v22; m23=v23;
-	m30=v30; m31=v31; m32=v32; m33=v33;
-}
 
-void RageMatrixIdentity( RageMatrix* pOut )
+void RageMatrixIdentity( Rage::Matrix* pOut )
 {
 	static float identity[16] = {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
 	memcpy(&pOut->m00, identity, sizeof(identity));
-/*	*pOut = RageMatrix(
+/*	*pOut = Rage::Matrix(
 		1,0,0,0,
 		0,1,0,0,
 		0,0,1,0,
@@ -128,21 +119,16 @@ void RageMatrixIdentity( RageMatrix* pOut )
 */
 }
 
-RageMatrix RageMatrix::GetTranspose() const
-{
-	return RageMatrix(m00,m10,m20,m30,m01,m11,m21,m31,m02,m12,m22,m32,m03,m13,m23,m33);
-}
-
-void RageMatrixMultiply( RageMatrix* pOut, const RageMatrix* pA, const RageMatrix* pB )
+void RageMatrixMultiply( Rage::Matrix* pOut, const Rage::Matrix* pA, const Rage::Matrix* pB )
 {
 //#if defined(_WINDOWS)
 //	// <30 cycles for theirs versus >100 for ours.
 //	D3DXMatrixMultiply( (D3DMATRIX*)pOut, (D3DMATRIX*)pA, (D3DMATRIX*)pB );
 //#else
-	const RageMatrix &a = *pA;
-	const RageMatrix &b = *pB;
+	const Rage::Matrix &a = *pA;
+	const Rage::Matrix &b = *pB;
 
-	*pOut = RageMatrix(
+	*pOut = Rage::Matrix(
 		b.m00*a.m00+b.m01*a.m10+b.m02*a.m20+b.m03*a.m30,
 		b.m00*a.m01+b.m01*a.m11+b.m02*a.m21+b.m03*a.m31,
 		b.m00*a.m02+b.m01*a.m12+b.m02*a.m22+b.m03*a.m32,
@@ -164,7 +150,7 @@ void RageMatrixMultiply( RageMatrix* pOut, const RageMatrix* pA, const RageMatri
 //#endif
 }
 
-void RageMatrixTranslation( RageMatrix* pOut, float x, float y, float z )
+void RageMatrixTranslation( Rage::Matrix* pOut, float x, float y, float z )
 {
 	RageMatrixIdentity(pOut);
 	pOut->m[3][0] = x;
@@ -172,7 +158,7 @@ void RageMatrixTranslation( RageMatrix* pOut, float x, float y, float z )
 	pOut->m[3][2] = z;
 }
 
-void RageMatrixScaling( RageMatrix* pOut, float x, float y, float z )
+void RageMatrixScaling( Rage::Matrix* pOut, float x, float y, float z )
 {
 	RageMatrixIdentity(pOut);
 	pOut->m[0][0] = x;
@@ -180,13 +166,13 @@ void RageMatrixScaling( RageMatrix* pOut, float x, float y, float z )
 	pOut->m[2][2] = z;
 }
 
-void RageMatrixSkewX( RageMatrix* pOut, float fAmount )
+void RageMatrixSkewX( Rage::Matrix* pOut, float fAmount )
 {
 	RageMatrixIdentity(pOut);
 	pOut->m[1][0] = fAmount;
 }
 
-void RageMatrixSkewY( RageMatrix* pOut, float fAmount )
+void RageMatrixSkewY( Rage::Matrix* pOut, float fAmount )
 {
 	RageMatrixIdentity(pOut);
 	pOut->m[0][1] = fAmount;
@@ -195,13 +181,13 @@ void RageMatrixSkewY( RageMatrix* pOut, float fAmount )
 /*
  * Return:
  *
- * RageMatrix translate;
- * RageMatrixTranslation( &translate, fTransX, fTransY, fTransZ );
- * RageMatrix scale;
- * RageMatrixScaling( &scale, fScaleX, float fScaleY, float fScaleZ );
- * RageMatrixMultiply( pOut, &translate, &scale );
+ * Rage::Matrix translate;
+ * Rage::MatrixTranslation( &translate, fTransX, fTransY, fTransZ );
+ * Rage::Matrix scale;
+ * Rage::MatrixScaling( &scale, fScaleX, float fScaleY, float fScaleZ );
+ * Rage::MatrixMultiply( pOut, &translate, &scale );
  */
-void RageMatrixTranslate( RageMatrix* pOut, float fTransX, float fTransY, float fTransZ )
+void RageMatrixTranslate( Rage::Matrix* pOut, float fTransX, float fTransY, float fTransZ )
 {
 	pOut->m00 = 1;
 	pOut->m01 = 0;
@@ -224,7 +210,7 @@ void RageMatrixTranslate( RageMatrix* pOut, float fTransX, float fTransY, float 
 	pOut->m33 = 1;
 }
 
-void RageMatrixScale( RageMatrix* pOut, float fScaleX, float fScaleY, float fScaleZ )
+void RageMatrixScale( Rage::Matrix* pOut, float fScaleX, float fScaleY, float fScaleZ )
 {
 	pOut->m00 = fScaleX;
 	pOut->m01 = 0;
@@ -247,7 +233,7 @@ void RageMatrixScale( RageMatrix* pOut, float fScaleX, float fScaleY, float fSca
 	pOut->m33 = 1;
 }
 
-void RageMatrixRotationX( RageMatrix* pOut, float theta )
+void RageMatrixRotationX( Rage::Matrix* pOut, float theta )
 {
 	theta *= PI/180;
 
@@ -259,7 +245,7 @@ void RageMatrixRotationX( RageMatrix* pOut, float theta )
 	pOut->m[1][2] = -pOut->m[2][1];
 }
 
-void RageMatrixRotationY( RageMatrix* pOut, float theta )
+void RageMatrixRotationY( Rage::Matrix* pOut, float theta )
 {
 	theta *= PI/180;
 
@@ -271,7 +257,7 @@ void RageMatrixRotationY( RageMatrix* pOut, float theta )
 	pOut->m[2][0] = -pOut->m[0][2];
 }
 
-void RageMatrixRotationZ( RageMatrix* pOut, float theta )
+void RageMatrixRotationZ( Rage::Matrix* pOut, float theta )
 {
 	theta *= PI/180;
 
@@ -283,10 +269,10 @@ void RageMatrixRotationZ( RageMatrix* pOut, float theta )
 	pOut->m[1][0] = -pOut->m[0][1];
 }
 
-/* Return RageMatrixRotationX(rX) * RageMatrixRotationY(rY) * RageMatrixRotationZ(rZ)
+/* Return Rage::MatrixRotationX(rX) * Rage::MatrixRotationY(rY) * Rage::MatrixRotationZ(rZ)
  * quickly (without actually doing two complete matrix multiplies), by removing the
  * parts of the matrix multiplies that we know will be 0. */
-void RageMatrixRotationXYZ( RageMatrix* pOut, float rX, float rY, float rZ )
+void RageMatrixRotationXYZ( Rage::Matrix* pOut, float rX, float rY, float rZ )
 {
 	rX *= PI/180;
 	rY *= PI/180;
@@ -301,7 +287,7 @@ void RageMatrixRotationXYZ( RageMatrix* pOut, float rX, float rY, float rZ )
 
 	/*
 	 * X*Y:
-	 * RageMatrix(
+	 * Rage::Matrix(
 	 *	cY,  sY*sX, sY*cX, 0,
 	 *	0,   cX,    -sX,   0,
 	 *	-sY, cY*sX, cY*cX, 0,
@@ -310,7 +296,7 @@ void RageMatrixRotationXYZ( RageMatrix* pOut, float rX, float rY, float rZ )
 	 *
 	 * X*Y*Z:
 	 *
-	 * RageMatrix(
+	 * Rage::Matrix(
 	 *	cZ*cY, cZ*sY*sX+sZ*cX, cZ*sY*cX+sZ*(-sX), 0,
 	 *	(-sZ)*cY, (-sZ)*sY*sX+cZ*cX, (-sZ)*sY*cX+cZ*(-sX), 0,
 	 *	-sY, cY*sX, cY*cX, 0,
@@ -459,7 +445,7 @@ void RageQuatFromPRH(Rage::Vector4* pOut, Rage::Vector3 prh )
 	pOut->z = cX * cY * sZ - sX * sY * cZ;
 }
 
-void RageMatrixFromQuat( RageMatrix* pOut, const Rage::Vector4 q )
+void RageMatrixFromQuat( Rage::Matrix* pOut, const Rage::Vector4 q )
 {
 	float xx = q.x * (q.x + q.x);
 	float xy = q.x * (q.y + q.y);
@@ -475,7 +461,7 @@ void RageMatrixFromQuat( RageMatrix* pOut, const Rage::Vector4 q )
 	float zz = q.z * (q.z + q.z);
 	// careful.  The param order is row-major, which is the
 	// transpose of the order shown in the OpenGL docs.
-	*pOut = RageMatrix(
+	*pOut = Rage::Matrix(
 		1-(yy+zz), xy+wz,     xz-wy,     0,
 		xy-wz,     1-(xx+zz), yz+wx,     0,
 		xz+wy,     yz-wx,     1-(xx+yy), 0,
@@ -530,7 +516,7 @@ void RageQuatSlerp(Rage::Vector4 *pOut, const Rage::Vector4 &from, const Rage::V
 	pOut->w = scale0 * from.w + scale1 * to1[3];
 }
 
-RageMatrix RageLookAt(
+Rage::Matrix RageLookAt(
 	float eyex, float eyey, float eyez,
 	float centerx, float centery, float centerz,
 	float upx, float upy, float upz )
@@ -553,22 +539,22 @@ RageMatrix RageLookAt(
 	RageVec3Normalize(&X, &X);
 	RageVec3Normalize(&Y, &Y);
 
-	RageMatrix mat(
+	Rage::Matrix mat(
 		X.x, Y.x, Z.x, 0,
 		X.y, Y.y, Z.y, 0,
 		X.z, Y.z, Z.z, 0,
 		0,    0,    0,    1 );
 
-	RageMatrix mat2;
+	Rage::Matrix mat2;
 	RageMatrixTranslation(&mat2, -eyex, -eyey, -eyez);
 
-	RageMatrix ret;
+	Rage::Matrix ret;
 	RageMatrixMultiply(&ret, &mat, &mat2);
 
 	return ret;
 }
 
-void RageMatrixAngles( RageMatrix* pOut, const Rage::Vector3 &angles )
+void RageMatrixAngles( Rage::Matrix* pOut, const Rage::Vector3 &angles )
 {
 	const Rage::Vector3 angles_radians( angles * 2*PI / 360 );
 
@@ -594,7 +580,7 @@ void RageMatrixAngles( RageMatrix* pOut, const Rage::Vector3 &angles )
 	pOut->m[2][2] = cr*cp;
 }
 
-void RageMatrixTranspose( RageMatrix* pOut, const RageMatrix* pIn )
+void RageMatrixTranspose( Rage::Matrix* pOut, const Rage::Matrix* pIn )
 {
 	for( int i=0; i<4; i++)
 		for( int j=0; j<4; j++)

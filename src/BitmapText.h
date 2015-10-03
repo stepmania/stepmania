@@ -130,7 +130,7 @@ protected:
 	float		m_fDistortion;
 	int			m_iVertSpacing;
 
-	std::vector<RageSpriteVertex>	m_aVertices;
+	std::vector<Rage::SpriteVertex>	m_aVertices;
 
 	std::vector<FontPageTextures*>	m_vpFontPageTextures;
 	// This cannot be an unordered_map because the logic for applying the

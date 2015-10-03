@@ -48,7 +48,7 @@ public:
 		void SetDrawState( DrawMode dm, int first, int num );
 		int GetSafeNumToDraw( DrawMode dm, int num ) const;
 
-		std::vector<RageSpriteVertex> vertices;
+		std::vector<Rage::SpriteVertex> vertices;
 		std::vector<size_t> quad_states;
 
 		DrawMode _DrawMode;
@@ -153,7 +153,7 @@ public:
 private:
 	RageTexture* _Texture;
 
-	std::vector<RageSpriteVertex> _Vertices;
+	std::vector<Rage::SpriteVertex> _Vertices;
 	std::vector<AMV_TweenState> AMV_Tweens;
 	AMV_TweenState AMV_current;
 	AMV_TweenState AMV_start;

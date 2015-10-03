@@ -137,7 +137,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 			for( int i = 0; i < nNumMeshes; i++ )
 			{
 				msMesh &mesh = m_Meshes[i];
-				vector<RageModelVertex> &Vertices = mesh.Vertices;
+				vector<Rage::ModelVertex> &Vertices = mesh.Vertices;
 				vector<msTriangle> &Triangles = mesh.Triangles;
 
 				if( f.GetLine( sLine ) <= 0 )
@@ -167,7 +167,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 
 				for( int j = 0; j < nNumVertices; j++ )
 				{
-					RageModelVertex &v = Vertices[j];
+					Rage::ModelVertex &v = Vertices[j];
 
 					if( f.GetLine( sLine ) <= 0 )
 						THROW;
@@ -258,7 +258,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 							szName, j, nIndices[k], int(Vertices.size())) );
 						ASSERT_M( nNormalIndices[k] < Normals.size(), ssprintf("mesh \"%s\" tri #%i accesses normal %i, but we only have %i",
 							szName, j, nNormalIndices[k], int(Normals.size())) );
-						RageModelVertex& vertex = Vertices[ nIndices[k] ];
+						Rage::ModelVertex& vertex = Vertices[ nIndices[k] ];
 						Rage::Vector3& normal = Normals[ nNormalIndices[k] ];
 						vertex.n = normal;
 						//mesh.Vertices[nIndices[k]].n = Normals[ nNormalIndices[k] ];

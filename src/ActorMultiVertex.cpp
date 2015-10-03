@@ -184,10 +184,10 @@ void ActorMultiVertex::AddVertex()
 {
 	for( size_t i = 0; i < AMV_Tweens.size(); ++i )
 	{
-		AMV_Tweens[i].vertices.push_back( RageSpriteVertex() );
+		AMV_Tweens[i].vertices.push_back( Rage::SpriteVertex() );
 	}
-	AMV_current.vertices.push_back( RageSpriteVertex() );
-	AMV_start.vertices.push_back( RageSpriteVertex() );
+	AMV_current.vertices.push_back( Rage::SpriteVertex() );
+	AMV_start.vertices.push_back( Rage::SpriteVertex() );
 }
 
 void ActorMultiVertex::AddVertices( int Add )
@@ -336,7 +336,7 @@ bool ActorMultiVertex::EarlyAbortDraw() const
 
 void ActorMultiVertex::SetVertsFromSplinesInternal(size_t num_splines, size_t offset)
 {
-	vector<RageSpriteVertex>& verts= AMV_DestTweenState().vertices;
+	vector<Rage::SpriteVertex>& verts= AMV_DestTweenState().vertices;
 	size_t first= AMV_DestTweenState().FirstToDraw + offset;
 	size_t num_verts= AMV_DestTweenState().GetSafeNumToDraw(AMV_DestTweenState()._DrawMode, AMV_DestTweenState().NumToDraw) - offset;
 	vector<float> tper(num_splines, 0.0f);
@@ -429,7 +429,7 @@ void ActorMultiVertex::SetSecondsIntoAnimation(float seconds)
 void ActorMultiVertex::UpdateAnimationState(bool force_update)
 {
 	AMV_TweenState& dest= AMV_DestTweenState();
-	vector<RageSpriteVertex>& verts= dest.vertices;
+	vector<Rage::SpriteVertex>& verts= dest.vertices;
 	vector<size_t>& qs= dest.quad_states;
 	if(!_use_animation_state || _states.empty() ||
 		dest._DrawMode == DrawMode_LineStrip || qs.empty())

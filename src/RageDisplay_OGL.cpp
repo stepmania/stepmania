@@ -870,7 +870,7 @@ VideoModeParams RageDisplay_Legacy::GetActualVideoModeParams() const
 	return g_pWind->GetActualVideoModeParams();
 }
 
-static void SetupVertices( const RageSpriteVertex v[], int iNumVerts )
+static void SetupVertices( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	static float *Vertex, *Texture, *Normal;
 	static GLubyte *Color;
@@ -926,12 +926,12 @@ static void SetupVertices( const RageSpriteVertex v[], int iNumVerts )
 
 void RageDisplay_Legacy::SendCurrentMatrices()
 {
-	RageMatrix projection;
+	Rage::Matrix projection;
 	RageMatrixMultiply( &projection, GetCentering(), GetProjectionTop() );
 
 	if (g_bInvertY)
 	{
-		RageMatrix flip;
+		Rage::Matrix flip;
 		RageMatrixScale( &flip, +1, -1, +1 );
 		RageMatrixMultiply( &projection, &flip, &projection );
 	}
@@ -939,7 +939,7 @@ void RageDisplay_Legacy::SendCurrentMatrices()
 	glLoadMatrixf( (const float*)&projection );
 
 	// OpenGL has just "modelView", whereas D3D has "world" and "view"
-	RageMatrix modelView;
+	Rage::Matrix modelView;
 	RageMatrixMultiply( &modelView, GetViewTop(), GetWorldTop() );
 	glMatrixMode( GL_MODELVIEW );
 	glLoadMatrixf( (const float*)&modelView );
@@ -970,7 +970,7 @@ public:
 		{
 			const MeshInfo& meshInfo = m_vMeshInfo[i];
 			const msMesh& mesh = vMeshes[i];
-			const vector<RageModelVertex> &Vertices = mesh.Vertices;
+			const vector<Rage::ModelVertex> &Vertices = mesh.Vertices;
 			const vector<msTriangle> &Triangles = mesh.Triangles;
 
 			for( unsigned j=0; j<Vertices.size(); j++ )
@@ -1010,7 +1010,7 @@ public:
 		{
 			// Kill the texture translation.
 			// XXX: Change me to scale the translation by the TextureTranslationScale of the first vertex.
-			RageMatrix mat;
+			Rage::Matrix mat;
 			glGetFloatv( GL_TEXTURE_MATRIX , (float*)mat );
 
 			/*
@@ -1345,7 +1345,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 		{
 			// Kill the texture translation.
 			// XXX: Change me to scale the translation by the TextureTranslationScale of the first vertex.
-			RageMatrix mat;
+			Rage::Matrix mat;
 			glGetFloatv( GL_TEXTURE_MATRIX , (float*)mat );
 
 			/*
@@ -1404,7 +1404,7 @@ void RageDisplay_Legacy::DeleteCompiledGeometry( RageCompiledGeometry* p )
 	delete p;
 }
 
-void RageDisplay_Legacy::DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_Legacy::DrawQuadsInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	TurnOffHardwareVBO();
 	SendCurrentMatrices();
@@ -1413,7 +1413,7 @@ void RageDisplay_Legacy::DrawQuadsInternal( const RageSpriteVertex v[], int iNum
 	glDrawArrays( GL_QUADS, 0, iNumVerts );
 }
 
-void RageDisplay_Legacy::DrawQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_Legacy::DrawQuadStripInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	TurnOffHardwareVBO();
 	SendCurrentMatrices();
@@ -1422,7 +1422,7 @@ void RageDisplay_Legacy::DrawQuadStripInternal( const RageSpriteVertex v[], int 
 	glDrawArrays( GL_QUAD_STRIP, 0, iNumVerts );
 }
 
-void RageDisplay_Legacy::DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_Legacy::DrawSymmetricQuadStripInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	using std::max;
 	int iNumPieces = (iNumVerts-3)/3;
@@ -1462,7 +1462,7 @@ void RageDisplay_Legacy::DrawSymmetricQuadStripInternal( const RageSpriteVertex 
 		&vIndices[0] );
 }
 
-void RageDisplay_Legacy::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_Legacy::DrawFanInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	TurnOffHardwareVBO();
 	SendCurrentMatrices();
@@ -1471,7 +1471,7 @@ void RageDisplay_Legacy::DrawFanInternal( const RageSpriteVertex v[], int iNumVe
 	glDrawArrays( GL_TRIANGLE_FAN, 0, iNumVerts );
 }
 
-void RageDisplay_Legacy::DrawStripInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_Legacy::DrawStripInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	TurnOffHardwareVBO();
 	SendCurrentMatrices();
@@ -1480,7 +1480,7 @@ void RageDisplay_Legacy::DrawStripInternal( const RageSpriteVertex v[], int iNum
 	glDrawArrays( GL_TRIANGLE_STRIP, 0, iNumVerts );
 }
 
-void RageDisplay_Legacy::DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_Legacy::DrawTrianglesInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	TurnOffHardwareVBO();
 	SendCurrentMatrices();
@@ -1497,7 +1497,7 @@ void RageDisplay_Legacy::DrawCompiledGeometryInternal( const RageCompiledGeometr
 	p->Draw( iMeshIndex );
 }
 
-void RageDisplay_Legacy::DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float fLineWidth )
+void RageDisplay_Legacy::DrawLineStripInternal( const Rage::SpriteVertex v[], int iNumVerts, float fLineWidth )
 {
 	TurnOffHardwareVBO();
 
@@ -1520,7 +1520,7 @@ void RageDisplay_Legacy::DrawLineStripInternal( const RageSpriteVertex v[], int 
 	 * if object space is 640x480, and we have a 1280x960 window, we'll double the
 	 * width. */
 	{
-		const RageMatrix* pMat = GetProjectionTop();
+		const Rage::Matrix* pMat = GetProjectionTop();
 		float fW = 2 / pMat->m[0][0];
 		float fH = -2 / pMat->m[1][1];
 		float fWidthVal = float(g_pWind->GetActualVideoModeParams().width) / fW;
@@ -1557,7 +1557,7 @@ void RageDisplay_Legacy::DrawLineStripInternal( const RageSpriteVertex v[], int 
 	 * use this for anything 3d at the moment anyway ...)  This is needed
 	 * because points aren't scaled like regular polys--a zero-size point
 	 * will still be drawn. */
-	RageMatrix mat;
+	Rage::Matrix mat;
 	glGetFloatv( GL_MODELVIEW_MATRIX, (float*)mat );
 
 	if (mat.m[0][0] < 1e-5 && mat.m[1][1] < 1e-5)

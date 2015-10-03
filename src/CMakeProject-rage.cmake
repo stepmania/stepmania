@@ -1,5 +1,8 @@
 list(APPEND RAGE_SRC
   "${SM_SRC_DIR}/rage/RageColor.cpp"
+  "${SM_SRC_DIR}/rage/RageMatrix.cpp"
+  "${SM_SRC_DIR}/rage/RageModelVertex.cpp"
+  "${SM_SRC_DIR}/rage/RageSpriteVertex.cpp"
   "${SM_SRC_DIR}/rage/RageVColor.cpp"
   "${SM_SRC_DIR}/rage/RageVector2.cpp"
   "${SM_SRC_DIR}/rage/RageVector3.cpp"
@@ -9,6 +12,9 @@ list(APPEND RAGE_SRC
 list(APPEND RAGE_HPP
   "${SM_SRC_DIR}/rage/RageColor.hpp"
   "${SM_SRC_DIR}/rage/RageMath.hpp"
+  "${SM_SRC_DIR}/rage/RageMatrix.hpp"
+  "${SM_SRC_DIR}/rage/RageModelVertex.hpp"
+  "${SM_SRC_DIR}/rage/RageSpriteVertex.hpp"
   "${SM_SRC_DIR}/rage/RageVColor.hpp"
   "${SM_SRC_DIR}/rage/RageVector2.hpp"
   "${SM_SRC_DIR}/rage/RageVector3.hpp"

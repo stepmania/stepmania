@@ -1,6 +1,7 @@
 #include "global.h"
 #include "DancingCharacters.h"
 #include "RageMath.hpp"
+#include "RageMatrix.hpp"
 #include "GameConstantsAndTypes.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
@@ -322,7 +323,7 @@ void DancingCharacters::DrawPrimitives()
 	float fCameraHeight = Rage::scale( fPercentIntoSweep, 0.f, 1.f, m_fCameraHeightStart, m_fCameraHeightEnd );
 
 	Rage::Vector3 m_CameraPoint( 0, fCameraHeight, -m_CameraDistance );
-	RageMatrix CameraRot;
+	Rage::Matrix CameraRot;
 	RageMatrixRotationY( &CameraRot, fCameraPanY );
 	RageVec3TransformCoord( &m_CameraPoint, &m_CameraPoint, &CameraRot );
 

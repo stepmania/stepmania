@@ -4,6 +4,7 @@
 #define MODEL_TYPES_H
 
 #include "RageTypes.h"
+#include "RageMatrix.hpp"
 
 struct msTriangle
 {
@@ -16,7 +17,7 @@ struct msMesh
 	RString			sName;
 	char			nMaterialIndex;
 
-	std::vector<RageModelVertex>	Vertices;
+	std::vector<Rage::ModelVertex>	Vertices;
 
 	// OPTIMIZATION: If all verts in a mesh are transformed by the same bone,
 	// then send the transform to the graphics card for the whole mesh instead
@@ -136,9 +137,9 @@ struct msAnimation
 
 struct myBone_t
 {
-	RageMatrix		m_Relative;
-	RageMatrix		m_Absolute;
-	RageMatrix		m_Final;
+	Rage::Matrix		m_Relative;
+	Rage::Matrix		m_Absolute;
+	Rage::Matrix		m_Final;
 };
 
 #endif
