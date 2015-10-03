@@ -55,7 +55,7 @@ void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
 	/* Set tick thumb */
 	{
 		float fY = Rage::scale( fCenterPercent, 0.0f, 1.0f, -iBarContentHeight/2.0f, iBarContentHeight/2.0f );
-		fY = roundf( fY );
+		fY = std::roundf( fY );
 		m_sprScrollTickThumb->SetY( fY );
 	}
 

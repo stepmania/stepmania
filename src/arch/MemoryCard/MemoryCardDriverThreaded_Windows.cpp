@@ -174,7 +174,7 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 				&dwNumberOfFreeClusters,
 				&dwTotalNumberOfClusters ) )
 		{
-			usbd.iVolumeSizeMB = (int)roundf( dwTotalNumberOfClusters * (float)dwSectorsPerCluster * dwBytesPerSector / (1024*1024) );
+			usbd.iVolumeSizeMB = (int)std::round( dwTotalNumberOfClusters * (float)dwSectorsPerCluster * dwBytesPerSector / (1024*1024) );
 		}
 	}
 }
