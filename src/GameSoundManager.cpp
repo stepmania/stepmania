@@ -234,7 +234,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 		const float fStartBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTimeNoOffset( ToPlay.fStartSecond );
 		const float fStartBeatFraction = fmodfp( fStartBeat, 1 );
 
-		float fCurBeatToStartOn = truncf(fCurBeat) + fStartBeatFraction;
+    float fCurBeatToStartOn = std::trunc(fCurBeat) + fStartBeatFraction;
 		if( fCurBeatToStartOn < fCurBeat )
 			fCurBeatToStartOn += 1.0f;
 

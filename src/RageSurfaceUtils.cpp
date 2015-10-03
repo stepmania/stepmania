@@ -417,10 +417,10 @@ void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst,
 			 * pixel[1]; 2 indicates 50% pixel[1], 50% pixel[2] (which is clamped
 			 * to pixel[1]). */
 			int src_x[2], src_y[2];
-			src_x[0] = (int) truncf(src_xp - 0.5f);
+      src_x[0] = static_cast<int>(std::trunc(src_xp - 0.5f));
 			src_x[1] = src_x[0] + 1;
 
-			src_y[0] = (int) truncf(src_yp - 0.5f);
+      src_y[0] = static_cast<int>(std::trunc(src_yp - 0.5f));
 			src_y[1] = src_y[0] + 1;
 
 			// Emulate GL_REPEAT.

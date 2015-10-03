@@ -757,7 +757,7 @@ XNode *LuaHelpers::GetLuaInformation()
 		XNode *pConstantNode = pConstantsNode->AppendChild( "Constant" );
 
 		pConstantNode->AppendAttr( "name", c.first );
-		if( c.second == truncf(c.second) )
+    if( c.second == std::trunc(c.second) )
 		{
 			pConstantNode->AppendAttr( "value", static_cast<int>(c.second) );
 		}

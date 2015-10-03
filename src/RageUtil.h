@@ -54,7 +54,7 @@ inline void wrap( unsigned &x, unsigned n )
 inline void wrap( float &x, float n )
 {
 	if (x<0)
-		x += truncf(((-x/n)+1))*n;
+    x += std::trunc(((-x/n)+1))*n;
 	x = fmodf(x,n);
 }
 

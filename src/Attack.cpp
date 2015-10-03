@@ -36,13 +36,13 @@ void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlay
 
 	/* If reasonable, push the attack forward 8 beats so that notes on screen don't change suddenly. */
 	fStartBeat = min( GAMESTATE->m_Position.m_fSongBeat+8, pPlayerState->m_fLastDrawnBeat );
-	fStartBeat = truncf(fStartBeat)+1;
+	fStartBeat = std::trunc(fStartBeat)+1;
 
 	const TimingData &timing = pSong->m_SongTiming;
 	const float lStartSecond = timing.GetElapsedTimeFromBeat( fStartBeat );
 	const float fEndSecond = lStartSecond + fSecsRemaining;
 	fEndBeat = timing.GetBeatFromElapsedTime( fEndSecond );
-	fEndBeat = truncf(fEndBeat)+1;
+	fEndBeat = std::trunc(fEndBeat)+1;
 
 	// loading the course should have caught this.
 	ASSERT_M( fEndBeat >= fStartBeat, ssprintf("EndBeat %f >= StartBeat %f", fEndBeat, fStartBeat) );

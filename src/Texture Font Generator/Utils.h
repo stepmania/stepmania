@@ -1,10 +1,6 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <cmath>
-
-inline float truncf( float f )	{ return float(int(f)); };
-
 struct Surface
 {
 	Surface() { pRGBA = NULL; }
