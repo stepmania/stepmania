@@ -394,8 +394,7 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 		for( unsigned i=0; i<stops.size(); i++ )
 		{
 			const StopSegment *fs = static_cast<StopSegment *>(stops[i]);
-			f.Write( ssprintf("%.3f=%.3f", fs->GetRow() * 4.0f / ROWS_PER_BEAT,
-				roundf(fs->GetPause()*1000)) );
+			f.Write( ssprintf("%.3f=%.3f", fs->GetRow() * 4.0f / ROWS_PER_BEAT, std::round(fs->GetPause()*1000)) );
 			if( i != stops.size()-1 )
 				f.Write( "," );
 		}

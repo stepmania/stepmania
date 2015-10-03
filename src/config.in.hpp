@@ -69,9 +69,6 @@
 /* Defined to 1 if the underlying system provides the truncf function. */
 #cmakedefine HAVE_TRUNCF 1
 
-/* Defined to 1 if the underlying system provides the roundf function. */
-#cmakedefine HAVE_ROUNDF 1
-
 /* Defined to 1 if the underlying system provides the strtof function. */
 #cmakedefine HAVE_STRTOF 1
 
@@ -217,12 +214,6 @@ float acosf( float x ) { return float( acos(double(x)) ); }
 #if !defined(HAVE_TRUNCF)
 inline float truncf( float f ) CONST_FUNCTION;
 float truncf( float f ) { return float( int(f) ); }
-#endif
-
-/* Ensure we have a function for rounding a number to a float. */
-#if !defined(HAVE_ROUNDF)
-inline float roundf( float f ) CONST_FUNCTION;
-float roundf( float f ) { if( f < 0.0f ) return truncf( f-0.5f ); return truncf( f+0.5f ); }
 #endif
 
 /* Ensure we have a function for converting a string to a float. */
