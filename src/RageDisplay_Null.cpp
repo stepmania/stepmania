@@ -109,9 +109,9 @@ const RageDisplay::RagePixelFormatDesc *RageDisplay_Null::GetPixelFormatDesc(Rag
 }
 
 
-RageMatrix RageDisplay_Null::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
+Rage::Matrix RageDisplay_Null::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
 {
-	RageMatrix m(
+	Rage::Matrix m(
 		2/(r-l),      0,            0,           0,
 		0,            2/(t-b),      0,           0,
 		0,            0,            -2/(zf-zn),   0,

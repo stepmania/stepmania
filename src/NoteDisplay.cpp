@@ -705,11 +705,11 @@ static float ArrowGetAlphaOrGlow( bool bGlow, const PlayerState* pPlayerState, i
 struct StripBuffer
 {
 	enum { size = 512 };
-	RageSpriteVertex *buf;
-	RageSpriteVertex *v;
+	Rage::SpriteVertex *buf;
+	Rage::SpriteVertex *v;
 	StripBuffer()
 	{
-		buf = (RageSpriteVertex *) malloc( size * sizeof(RageSpriteVertex) );
+		buf = (Rage::SpriteVertex *) malloc( size * sizeof(Rage::SpriteVertex) );
 		Init();
 	}
 	~StripBuffer()

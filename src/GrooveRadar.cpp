@@ -152,7 +152,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Modulate );
-	RageSpriteVertex v[12]; // needed to draw 5 fan primitives and 10 strip primitives
+	Rage::SpriteVertex v[12]; // needed to draw 5 fan primitives and 10 strip primitives
 
 	// xxx: We could either make the values invisible or draw a dot
 	// (simulating real DDR). TODO: Make that choice up to the themer. -aj

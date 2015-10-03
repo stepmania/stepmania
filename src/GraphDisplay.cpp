@@ -46,7 +46,7 @@ public:
 			DISPLAY->DrawFan( &m_pCircles[0]+iCircleVertices*i, iCircleVertices );
 	}
 
-	static void MakeCircle( const RageSpriteVertex &v, RageSpriteVertex *pVerts, int iSubdivisions, float fRadius )
+	static void MakeCircle( const Rage::SpriteVertex &v, Rage::SpriteVertex *pVerts, int iSubdivisions, float fRadius )
 	{
 		pVerts[0] = v;
 
@@ -61,7 +61,7 @@ public:
 		}
 	}
 
-	void Set( const RageSpriteVertex *m_LineStrip, int iSize )
+	void Set( const Rage::SpriteVertex *m_LineStrip, int iSize )
 	{
 		m_pCircles.resize( iSize * iCircleVertices );
 
@@ -74,8 +74,8 @@ public:
 		m_Quads.resize( iNumLines * 4 );
 		for( int i = 0; i < iNumLines; ++i )
 		{
-			const RageSpriteVertex &p1 = m_LineStrip[i];
-			const RageSpriteVertex &p2 = m_LineStrip[i+1];
+			const Rage::SpriteVertex &p1 = m_LineStrip[i];
+			const Rage::SpriteVertex &p2 = m_LineStrip[i+1];
 
 			float opp = p2.p.x - p1.p.x;
 			float adj = p2.p.y - p1.p.y;
@@ -84,7 +84,7 @@ public:
 			float lsin = opp/hyp;
 			float lcos = adj/hyp;
 
-			RageSpriteVertex *v = &m_Quads[i*4];
+			Rage::SpriteVertex *v = &m_Quads[i*4];
 			v[0] = v[1] = p1;
 			v[2] = v[3] = p2;
 
@@ -107,8 +107,8 @@ public:
 	virtual GraphLine *Copy() const;
 
 private:
-	vector<RageSpriteVertex> m_Quads;
-	vector<RageSpriteVertex> m_pCircles;
+	vector<Rage::SpriteVertex> m_Quads;
+	vector<Rage::SpriteVertex> m_pCircles;
 };
 REGISTER_ACTOR_CLASS( GraphLine );
 
@@ -147,7 +147,7 @@ public:
 	}
 
 	RageTexture* m_pTexture;
-	RageSpriteVertex m_Slices[2*VALUE_RESOLUTION];
+	Rage::SpriteVertex m_Slices[2*VALUE_RESOLUTION];
 };
 
 GraphDisplay::GraphDisplay()
@@ -255,7 +255,7 @@ void GraphDisplay::UpdateVerts()
 	m_quadVertices.top = -m_size.y/2;
 	m_quadVertices.bottom = m_size.y/2;
 
-	RageSpriteVertex LineStrip[VALUE_RESOLUTION];
+	Rage::SpriteVertex LineStrip[VALUE_RESOLUTION];
 	for( int i = 0; i < VALUE_RESOLUTION; ++i )
 	{
 		const float fX = Rage::scale( float(i), 0.0f, float(VALUE_RESOLUTION-1), m_quadVertices.left, m_quadVertices.right );

@@ -64,7 +64,7 @@ void lerp_rage_color(Rage::Color& out, Rage::Color const& a, Rage::Color const& 
 	out.a= Rage::lerp(t, a.a, b.a);
 }
 
-void WeightedAvergeOfRSVs(RageSpriteVertex& average_out, RageSpriteVertex const& rsv1, RageSpriteVertex const& rsv2, float percent_between)
+void WeightedAvergeOfRSVs(Rage::SpriteVertex& average_out, Rage::SpriteVertex const& rsv1, Rage::SpriteVertex const& rsv2, float percent_between)
 {
 	average_out.p= Rage::lerp(percent_between, rsv1.p, rsv2.p);
 	average_out.n= Rage::lerp(percent_between, rsv1.n, rsv2.n);

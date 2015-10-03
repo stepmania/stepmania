@@ -475,10 +475,10 @@ RageDisplay_GLES2::GetPixelFormatDesc(RagePixelFormat pf) const
 	return &PIXEL_FORMAT_DESC[pf];
 }
 
-RageMatrix
+  Rage::Matrix
 RageDisplay_GLES2::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
 {
-	RageMatrix m(
+	Rage::Matrix m(
 		2/(r-l),      0,            0,           0,
 		0,            2/(t-b),      0,           0,
 		0,            0,            -2/(zf-zn),   0,
@@ -921,31 +921,31 @@ RageDisplay_GLES2::SetCelShaded( int stage )
 }
 
 void
-RageDisplay_GLES2::DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts )
+RageDisplay_GLES2::DrawQuadsInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	// TODO
 }
 
 void
-RageDisplay_GLES2::DrawQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
+RageDisplay_GLES2::DrawQuadStripInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	// TODO
 }
 
 void
-RageDisplay_GLES2::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts )
+RageDisplay_GLES2::DrawFanInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	// TODO
 }
 
 void
-RageDisplay_GLES2::DrawStripInternal( const RageSpriteVertex v[], int iNumVerts )
+RageDisplay_GLES2::DrawStripInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	// TODO
 }
 
 void
-RageDisplay_GLES2::DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts )
+RageDisplay_GLES2::DrawTrianglesInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	// TODO
 }
@@ -958,14 +958,14 @@ RageDisplay_GLES2::DrawCompiledGeometryInternal( const RageCompiledGeometry *p, 
 }
 
 void
-RageDisplay_GLES2::DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth )
+RageDisplay_GLES2::DrawLineStripInternal( const Rage::SpriteVertex v[], int iNumVerts, float LineWidth )
 {
 	// TODO
 }
 
 // Is this even used?
 void
-RageDisplay_GLES2::DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
+RageDisplay_GLES2::DrawSymmetricQuadStripInternal( const Rage::SpriteVertex v[], int iNumVerts )
 {
 	// TODO
 }

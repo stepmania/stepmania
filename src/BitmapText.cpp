@@ -295,7 +295,7 @@ void BitmapText::BuildChars()
 
 		for( unsigned j = 0; j < sLine.size(); ++j )
 		{
-			RageSpriteVertex v[4];
+			Rage::SpriteVertex v[4];
 			const glyph &g = m_pFont->GetGlyph( sLine[j] );
 
 			// Advance the cursor early for RTL(?)

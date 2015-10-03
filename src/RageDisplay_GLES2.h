@@ -68,18 +68,18 @@ public:
 	void DeleteCompiledGeometry( RageCompiledGeometry* p );
 
 protected:
-	void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts );
-	void DrawQuadStripInternal( const RageSpriteVertex v[], int iNumVerts );
-	void DrawFanInternal( const RageSpriteVertex v[], int iNumVerts );
-	void DrawStripInternal( const RageSpriteVertex v[], int iNumVerts );
-	void DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts );
+	void DrawQuadsInternal( const Rage::SpriteVertex v[], int iNumVerts );
+	void DrawQuadStripInternal( const Rage::SpriteVertex v[], int iNumVerts );
+	void DrawFanInternal( const Rage::SpriteVertex v[], int iNumVerts );
+	void DrawStripInternal( const Rage::SpriteVertex v[], int iNumVerts );
+	void DrawTrianglesInternal( const Rage::SpriteVertex v[], int iNumVerts );
 	void DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex );
-	void DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
-	void DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], int iNumVerts );
+	void DrawLineStripInternal( const Rage::SpriteVertex v[], int iNumVerts, float LineWidth );
+	void DrawSymmetricQuadStripInternal( const Rage::SpriteVertex v[], int iNumVerts );
 
 	RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
 	RageSurface* CreateScreenshot();
-	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
+	Rage::Matrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
 	bool SupportsSurfaceFormat( RagePixelFormat pixfmt );
 	bool SupportsRenderToTexture() const { return true; }
 };
