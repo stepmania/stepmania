@@ -90,7 +90,7 @@ static void Version()
 		RString sProductID = ssprintf("%s", (string(PRODUCT_FAMILY) + product_version).c_str() );
 		RString sVersion = "(StepMania was built without HAVE_VERSION_INFO)";
 		#if defined(HAVE_VERSION_INFO)
-			sVersion = ssprintf("build %lu\nCompile Date: %s @ %s", version_num, version_date, version_time);
+			sVersion = ssprintf("build %s\nCompile Date: %s @ %s", ::sm_version_git_hash, version_date, version_time);
 		#endif // HAVE_VERSION_INFO
 
 		AllocConsole();
