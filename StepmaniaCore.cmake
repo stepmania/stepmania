@@ -419,6 +419,7 @@ elseif(LINUX)
 endif()
 
 configure_file("${SM_SRC_DIR}/config.in.hpp" "${SM_SRC_DIR}/generated/config.hpp")
+configure_file("${SM_SRC_DIR}/verstub.in.cpp" "${SM_SRC_DIR}/generated/verstub.cpp")
 
 # Define installer based items for cpack.
 include("${CMAKE_CURRENT_LIST_DIR}/CMake/CPackSetup.cmake")

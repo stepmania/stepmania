@@ -1,35 +1,8 @@
 file(MAKE_DIRECTORY "${SM_SRC_DIR}/generated")
 
 if(MSVC)
-# Version Updater library.
-add_subdirectory(version_updater)
-
-# This part may move to a different file: it's the SM Data project.
-add_custom_command(
-  OUTPUT ${SM_SRC_DIR}/generated/verstub.cpp
-  COMMAND VersionUpdater ${SM_SRC_DIR}/generated/verstub.cpp
-  DEPENDS VersionUpdater
-)
-
-# Add the mapconv program of the past to allow for debugging information.
-include("CMakeProject-mapconv.cmake")
-
-else()
-# Version Stub generation. Needs fixing on Windows.
-add_custom_command(
-  OUTPUT ${SM_SRC_DIR}/generated/verstub.cpp
-  COMMAND ${CMAKE_COMMAND}
-  ARGS -DSM_SRC_DIR=${SM_SRC_DIR} -P ${SM_SRC_DIR}/../CMake/VerStubUtil.cmake
-  WORKING_DIRECTORY "${SM_ROOT_DIR}"
-  DEPENDS ${SM_SRC_DIR}/generated/delete
-)
-
-add_custom_command(
-  OUTPUT ${SM_SRC_DIR}/generated/delete
-  COMMAND rm
-  ARGS -f ${SM_SRC_DIR}/generated/ver*
-  WORKING_DIRECTORY "${SM_ROOT_DIR}"
-)
+  # Add the mapconv program of the past to allow for debugging information.
+  include("CMakeProject-mapconv.cmake")
 endif()
 
 # Main project is below.
@@ -39,6 +12,7 @@ list(APPEND SMDATA_GLOBAL_FILES_SRC
   "global.cpp"
   "SpecialFiles.cpp"
   "StepMania.cpp" # TODO: Refactor into separate main project.
+  "${SM_SRC_DIR}/generated/verstub.cpp"
 )
 
 list(APPEND SMDATA_GLOBAL_FILES_HPP
@@ -148,7 +122,6 @@ list(APPEND SMDATA_FILE_TYPES_HPP
 source_group("File Types" FILES ${SMDATA_FILE_TYPES_SRC} ${SMDATA_FILE_TYPES_HPP})
 
 list(APPEND SMDATA_ALL_FILES_SRC
-  ${SM_SRC_DIR}/generated/verstub.cpp
   ${SMDATA_GLOBAL_FILES_SRC}
   ${SMDATA_GLOBAL_SINGLETON_SRC}
   ${SMDATA_ALL_ACTORS_SRC}
@@ -306,8 +279,7 @@ if(WIN32)
   )
   
   if(MSVC)
-    # Allow for getting a virtualdub stack trace.    
-    
+    # Allow for getting a virtualdub stack trace.
     add_custom_command(TARGET "${SM_EXE_NAME}"
       POST_BUILD
       COMMAND "mapconv" "${SM_PROGRAM_DIR}/$<$<CONFIG:DEBUG>:${SM_NAME_DEBUG}>$<$<CONFIG:MINSIZEREL>:${SM_NAME_MINSIZEREL}>$<$<CONFIG:RELWITHDEBINFO>:${SM_NAME_RELWITHDEBINFO}>$<$<CONFIG:RELEASE>:${SM_NAME_RELEASE}>.map" "${SM_PROGRAM_DIR}/$<$<CONFIG:DEBUG>:${SM_NAME_DEBUG}>$<$<CONFIG:MINSIZEREL>:${SM_NAME_MINSIZEREL}>$<$<CONFIG:RELWITHDEBINFO>:${SM_NAME_RELWITHDEBINFO}>$<$<CONFIG:RELEASE>:${SM_NAME_RELEASE}>.vdi"

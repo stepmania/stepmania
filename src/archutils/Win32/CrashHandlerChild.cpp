@@ -412,13 +412,13 @@ namespace
 	{
 		if( !g_debugInfo.Loaded() )
 			return ssprintf( "debug resource file '%s': %s.\n", g_debugInfo.sFilename, g_debugInfo.sError.c_str() );
-
+		/*
 		if( g_debugInfo.nBuildNumber != int(version_num) )
 		{
 			return ssprintf( "Incorrect %s file (build %d, expected %d) for this version of " PRODUCT_FAMILY " -- call stack unavailable.\n",
 				g_debugInfo.sFilename, g_debugInfo.nBuildNumber, int(version_num) );
 		}
-
+		*/
 		RString sRet;
 		for( int i = 0; Backtrace[i]; ++i )
 		{
@@ -444,9 +444,9 @@ struct CompleteCrashData
 static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
 {
 	sOut += ssprintf(
-			"%s crash report (build %d, %s @ %s)\n"
+			"%s crash report (build %s, %s @ %s)\n"
 			"--------------------------------------\n\n",
-			(string(PRODUCT_FAMILY) + product_version).c_str(), version_num, version_date, version_time );
+			(string(PRODUCT_FAMILY) + product_version).c_str(), ::sm_version_git_hash, version_date, version_time );
 
 	sOut += ssprintf( "Crash reason: %s\n", Data.m_CrashInfo.m_CrashReason );
 	sOut += ssprintf( "\n" );
