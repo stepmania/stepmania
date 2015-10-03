@@ -5,12 +5,7 @@
 
 #include "EnumHelper.h"
 #include "RageColor.hpp"
-#include "RageModelVertex.hpp"
 #include "RageSpriteVertex.hpp"
-#include "RageVColor.hpp"
-#include "RageVector2.hpp"
-#include "RageVector3.hpp"
-#include "RageVector4.hpp"
 
 enum BlendMode
 {

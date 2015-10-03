@@ -1,6 +1,8 @@
 #ifndef RAGE_DISPLAY_GLES2_H
 #define RAGE_DISPLAY_GLES2_H
 
+#include "RageVector3.hpp"
+
 class RageDisplay_GLES2: public RageDisplay
 {
 public:

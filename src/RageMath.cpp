@@ -9,6 +9,7 @@
 #include "RageMath.hpp"
 #include "RageMath.h"
 #include "RageMatrix.hpp"
+#include "RageVector4.hpp"
 #include "RageTypes.h"
 #include <float.h>
 #include <array>
