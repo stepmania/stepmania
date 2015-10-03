@@ -282,7 +282,7 @@ bool IsNoteOfType( int row, NoteType t );
 /*
 inline int   BeatToNoteRow( float fBeatNum )
 {
-	float fraction = fBeatNum - truncf(fBeatNum);
+	float fraction = fBeatNum - std::trunc(fBeatNum);
 	int integer = int(fBeatNum) * ROWS_PER_BEAT;
 	return integer + std::lrint(fraction * ROWS_PER_BEAT);
 }

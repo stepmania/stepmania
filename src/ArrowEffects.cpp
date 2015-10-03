@@ -223,9 +223,9 @@ void ArrowEffects::Update()
 				break;
 
 			// -100.2 -> -0.2 -> 0.2
-			fBeat -= truncf( fBeat );
+			fBeat -= std::trunc( fBeat );
 			fBeat += 1;
-			fBeat -= truncf( fBeat );
+			fBeat -= std::trunc( fBeat );
 
 			if( fBeat >= fTotalTime )
 				break;

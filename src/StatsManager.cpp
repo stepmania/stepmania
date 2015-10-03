@@ -210,7 +210,7 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 	// Update profile stats
 	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
 
-	int iGameplaySeconds = (int)truncf(pSS->m_fGameplaySeconds);
+  int iGameplaySeconds = static_cast<int>(std::trunc(pSS->m_fGameplaySeconds));
 
 	pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
 	pMachineProfile->m_iNumTotalSongsPlayed += pSS->m_vpPlayedSongs.size();
