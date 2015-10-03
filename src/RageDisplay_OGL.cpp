@@ -2,6 +2,8 @@
 
 #include "RageDisplay_OGL.h"
 #include "RageMath.hpp"
+#include "RageModelVertex.hpp"
+#include "RageVector2.hpp"
 #include "RageDisplay_OGL_Helpers.h"
 using namespace RageDisplay_Legacy_Helpers;
 

@@ -5,6 +5,8 @@
 
 #include "RageTypes.h"
 #include "RageMatrix.hpp"
+#include "RageModelVertex.hpp"
+#include "RageVector4.hpp"
 
 struct msTriangle
 {

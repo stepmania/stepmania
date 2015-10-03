@@ -3,6 +3,7 @@
 
 #include "PlayerNumber.h"
 #include "RageTypes.h"
+#include "RageVector4.hpp"
 #include "RageUtil_AutoPtr.h"
 #include "LuaReference.h"
 #include "EnumHelper.h"
