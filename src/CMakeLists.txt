@@ -1,60 +1,17 @@
 file(MAKE_DIRECTORY "${SM_SRC_DIR}/generated")
 
 if(MSVC)
-# Version Updater library.
-add_subdirectory(version_updater)
-
-# This part may move to a different file: it's the SM Data project.
-add_custom_command(
-  OUTPUT ${SM_SRC_DIR}/generated/verstub.cpp
-  COMMAND VersionUpdater ${SM_SRC_DIR}/generated/verstub.cpp
-  DEPENDS VersionUpdater
-)
-
-# Add the mapconv program of the past to allow for debugging information.
-include("CMakeProject-mapconv.cmake")
-
-else()
-# Version Stub generation. Needs fixing on Windows.
-add_custom_command(
-  OUTPUT ${SM_SRC_DIR}/generated/verstub.cpp
-  COMMAND ${CMAKE_COMMAND}
-  ARGS -DSM_SRC_DIR=${SM_SRC_DIR} -P ${SM_SRC_DIR}/../CMake/VerStubUtil.cmake
-  WORKING_DIRECTORY "${SM_ROOT_DIR}"
-  DEPENDS ${SM_SRC_DIR}/generated/delete
-)
-
-add_custom_command(
-  OUTPUT ${SM_SRC_DIR}/generated/delete
-  COMMAND rm
-  ARGS -f ${SM_SRC_DIR}/generated/ver*
-  WORKING_DIRECTORY "${SM_ROOT_DIR}"
-)
+  # Add the mapconv program of the past to allow for debugging information.
+  include("CMakeProject-mapconv.cmake")
 endif()
-
-# Main project is below.
-
-list(APPEND SMDATA_GLOBAL_FILES_SRC
-  "GameLoop.cpp"
-  "global.cpp"
-  "SpecialFiles.cpp"
-  "StepMania.cpp" # TODO: Refactor into separate main project.
-)
-
-list(APPEND SMDATA_GLOBAL_FILES_HPP
-  "generated/config.hpp"
-  "GameLoop.h"
-  "global.h"
-  "ProductInfo.h" # TODO: Have this be auto-generated.
-  "SpecialFiles.h"
-  "StdString.h" # TODO: Remove the need for this file, transition to std::string.
-  "StepMania.h" # TODO: Refactor into separate main project.
-)
-
-source_group("Global Files" FILES ${SMDATA_GLOBAL_FILES_SRC} ${SMDATA_GLOBAL_FILES_HPP})
 
 # Keep the module path local for easier grabbing.
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+
+include(CMakeProject-rage.cmake)
+include(CMakeProject-rage-test.cmake)
+
+# Main project is below.
 
 include(CMakeData-arch.cmake)
 include(CMakeData-rage.cmake)
@@ -63,95 +20,11 @@ include(CMakeData-actor.cmake)
 include(CMakeData-screen.cmake)
 include(CMakeData-data.cmake)
 include(CMakeData-gtk.cmake)
-
-include(CMakeProject-rage.cmake)
-
-list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
-  "AnnouncerManager.cpp"
-  "Bookkeeper.cpp"
-  "CharacterManager.cpp"
-  "CommandLineActions.cpp"
-  "CryptManager.cpp"
-  "FontManager.cpp"
-  "GameManager.cpp"
-  "GameSoundManager.cpp"
-  "GameState.cpp"
-  "InputFilter.cpp"
-  "InputMapper.cpp"
-  "InputQueue.cpp"
-  "LightsManager.cpp"
-  "LuaManager.cpp"
-  "MemoryCardManager.cpp"
-  "MessageManager.cpp"
-  "NetworkSyncManager.cpp"
-  "NoteSkinManager.cpp"
-  "PrefsManager.cpp"
-  "ProfileManager.cpp"
-  "ScreenManager.cpp"
-  "SongManager.cpp"
-  "StatsManager.cpp"
-  "ThemeManager.cpp"
-  "UnlockManager.cpp"
-)
-list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
-  "AnnouncerManager.h"
-  "Bookkeeper.h"
-  "CharacterManager.h"
-  "CommandLineActions.h"
-  "CryptManager.h"
-  "FontManager.h"
-  "GameManager.h"
-  "GameSoundManager.h"
-  "GameState.h"
-  "IDUtil.h"
-  "InputFilter.h"
-  "InputMapper.h"
-  "InputQueue.h"
-  "LightsManager.h"
-  "LuaManager.h"
-  "MemoryCardManager.h"
-  "MessageManager.h"
-  "NetworkSyncManager.h"
-  "NoteSkinManager.h"
-  "PrefsManager.h"
-  "ProfileManager.h"
-  "ScreenManager.h"
-  "SongManager.h"
-  "StatsManager.h"
-  "ThemeManager.h"
-  "UnlockManager.h"
-)
-
-if(WITH_NETWORKING)
-  list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
-    "ezsockets.cpp"
-  )
-  list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
-    "ezsockets.h"
-  )
-endif()
-
-source_group("Global Singletons" FILES ${SMDATA_GLOBAL_SINGLETON_SRC} ${SMDATA_GLOBAL_SINGLETON_HPP})
-
-list(APPEND SMDATA_FILE_TYPES_SRC
-  "IniFile.cpp"
-  "MsdFile.cpp"
-  "XmlFile.cpp"
-  "XmlToLua.cpp"
-  "XmlFileUtil.cpp"
-)
-list(APPEND SMDATA_FILE_TYPES_HPP
-  "IniFile.h"
-  "MsdFile.h"
-  "XmlFile.h"
-  "XmlToLua.h"
-  "XmlFileUtil.h"
-)
-
-source_group("File Types" FILES ${SMDATA_FILE_TYPES_SRC} ${SMDATA_FILE_TYPES_HPP})
+include(CMakeData-file-types.cmake)
+include(CMakeData-globals.cmake)
+include(CMakeData-singletons.cmake)
 
 list(APPEND SMDATA_ALL_FILES_SRC
-  ${SM_SRC_DIR}/generated/verstub.cpp
   ${SMDATA_GLOBAL_FILES_SRC}
   ${SMDATA_GLOBAL_SINGLETON_SRC}
   ${SMDATA_ALL_ACTORS_SRC}
@@ -312,8 +185,7 @@ if(WIN32)
   )
   
   if(MSVC)
-    # Allow for getting a virtualdub stack trace.    
-    
+    # Allow for getting a virtualdub stack trace.
     add_custom_command(TARGET "${SM_EXE_NAME}"
       POST_BUILD
       COMMAND "mapconv" "${SM_PROGRAM_DIR}/$<$<CONFIG:DEBUG>:${SM_NAME_DEBUG}>$<$<CONFIG:MINSIZEREL>:${SM_NAME_MINSIZEREL}>$<$<CONFIG:RELWITHDEBINFO>:${SM_NAME_RELWITHDEBINFO}>$<$<CONFIG:RELEASE>:${SM_NAME_RELEASE}>.map" "${SM_PROGRAM_DIR}/$<$<CONFIG:DEBUG>:${SM_NAME_DEBUG}>$<$<CONFIG:MINSIZEREL>:${SM_NAME_MINSIZEREL}>$<$<CONFIG:RELWITHDEBINFO>:${SM_NAME_RELWITHDEBINFO}>$<$<CONFIG:RELEASE>:${SM_NAME_RELEASE}>.vdi"
@@ -782,5 +654,3 @@ if(NOT APPLE)
     install(FILES "${SM_ROOT_DIR}/Songs/instructions.txt" DESTINATION "${SM_INSTALL_DESTINATION}/Songs")
   endif()
 endif()
-
-include(CMakeProject-rage-test.cmake)

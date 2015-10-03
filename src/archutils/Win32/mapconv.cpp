@@ -106,7 +106,6 @@ struct RVASorter {
 };
 
 int main(int argc, char **argv) {
-	int ver=0;
 	int i;
 	long load_addr;
 
@@ -115,13 +114,8 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 
-	if (f=fopen("version.bin", "rb")) {
-		fread(&ver,4,1,f);
-		fclose(f);
-	} else {
-		printf("can't read version file\n");
-		return 20;
-	}
+	// TODO: Choose a better default for the vdi file.
+	int ver = 20151002;
 
 	if (!(f=fopen(argv[1], "r"))) {
 		printf("can't open listing file \"%s\"\n", argv[1]);

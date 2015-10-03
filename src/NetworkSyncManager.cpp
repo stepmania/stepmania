@@ -35,11 +35,7 @@ void NetworkSyncManager::SelectUserSong() { }
 RString NetworkSyncManager::MD5Hex( const RString &sInput ) { return RString(); }
 int NetworkSyncManager::GetSMOnlineSalt() { return 0; }
 void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers ) { }
-	#if defined(HAVE_VERSION_INFO)
-		unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld ) { return version_num; }
-	#else
-		unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld ) { return 0; }
-	#endif
+unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld ) { return 0; }
 #else
 #include "ezsockets.h"
 #include "ProfileManager.h"
@@ -856,7 +852,7 @@ void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers 
 // Aldo: Please move this method to a new class, I didn't want to create new files because I don't know how to properly update the files for each platform.
 // I preferred to misplace code rather than cause unneeded headaches to non-windows users, although it would be nice to have in the wiki which files to
 // update when adding new files and how (Xcode/stepmania_xcode4.3.xcodeproj has a really crazy structure :/).
-#if !defined(HAVE_VERSION_INFO)
+#if !defined(HAVE_VERSION_INFO) || defined(CMAKE_POWERED)
 unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld ) { return 0; }
 #else
 unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
@@ -874,7 +870,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 		ld->SetText("Checking for updates...");
 	}
 
-	unsigned long uCurrentSMBuild = version_num;
+	unsigned long uCurrentSMBuild = 0;
 	bool bSuccess = false;
 	EzSockets* socket = new EzSockets();
 	socket->create();
@@ -892,7 +888,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 			"\r\n",
 			sResource.c_str(), sHost.c_str(),
 			sUserAgent.c_str(), sReferer.c_str(),
-			version_num
+			0
 		);
 
 		socket->SendData(sHTTPRequest);

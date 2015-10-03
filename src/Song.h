@@ -436,6 +436,7 @@ public:
 	bool IsEditAlreadyLoaded( Steps* pSteps ) const;
 
 	bool IsStepsUsingDifferentTiming(Steps *pSteps ) const;
+	bool AnyChartUsesSplitTiming() const;
 
 	/**
 	 * @brief An array of keysound file names (e.g. "beep.wav").
