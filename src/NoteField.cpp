@@ -410,7 +410,7 @@ void NoteField::DrawBeatBar( const float fBeat, BeatBarType type, int iMeasureIn
 	m_sprBeatBars.SetY( fYPos );
 	m_sprBeatBars.SetDiffuse( Rage::Color(1,1,1,fAlpha) );
 	m_sprBeatBars.SetState( iState );
-	m_sprBeatBars.SetCustomTextureRect( RectF(0,Rage::scale(iState + 0.f,0.f,4.f,0.f,1.f), fWidth/fFrameWidth, Rage::scale(iState+1.f,0.f,4.f,0.f,1.f)) );
+	m_sprBeatBars.SetCustomTextureRect( Rage::RectF(0,Rage::scale(iState + 0.f,0.f,4.f,0.f,1.f), fWidth/fFrameWidth, Rage::scale(iState+1.f,0.f,4.f,0.f,1.f)) );
 	m_sprBeatBars.SetZoomX( fWidth/m_sprBeatBars.GetUnzoomedWidth() );
 	m_sprBeatBars.Draw();
 
@@ -442,7 +442,7 @@ void NoteField::DrawBoard( int iDrawDistanceAfterTargetsPixels, int iDrawDistanc
 		// the draw distance changes with modifiers.
 		const float fYPosAt0= ArrowEffects::GetYPos(0, 0, m_fYReverseOffsetPixels);
 
-		RectF rect = *pSprite->GetCurrentTextureCoordRect();
+		Rage::RectF rect = *pSprite->GetCurrentTextureCoordRect();
 		const float fBoardGraphicHeightPixels = pSprite->GetUnzoomedHeight();
 		float fTexCoordOffset = m_fBoardOffsetPixels / fBoardGraphicHeightPixels;
 
@@ -469,7 +469,7 @@ void NoteField::DrawMarkerBar( int iBeat )
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
 	const float fYPos	= ArrowEffects::GetYPos(0, fYOffset, m_fYReverseOffsetPixels);
 
-	m_rectMarkerBar.StretchTo( RectF(-GetWidth()/2, fYPos-ARROW_SIZE/2, GetWidth()/2, fYPos+ARROW_SIZE/2) );
+	m_rectMarkerBar.StretchTo( Rage::RectF(-GetWidth()/2, fYPos-ARROW_SIZE/2, GetWidth()/2, fYPos+ARROW_SIZE/2) );
 	m_rectMarkerBar.Draw();
 }
 
@@ -487,7 +487,7 @@ void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
 	ASSERT( fYStartPos > -1000 );
 	ASSERT( fYEndPos < +5000 );
 
-	m_rectAreaHighlight.StretchTo( RectF(-GetWidth()/2, fYStartPos, GetWidth()/2, fYEndPos) );
+	m_rectAreaHighlight.StretchTo( Rage::RectF(-GetWidth()/2, fYStartPos, GetWidth()/2, fYEndPos) );
 	m_rectAreaHighlight.SetDiffuse( AREA_HIGHLIGHT_COLOR );
 	m_rectAreaHighlight.Draw();
 }

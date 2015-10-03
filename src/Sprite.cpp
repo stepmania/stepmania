@@ -209,7 +209,7 @@ void Sprite::LoadFromNode( const XNode* pNode )
 				const XNode *pPoints[2] = { pFrame->GetChild( "1" ), pFrame->GetChild( "2" ) };
 				if( pPoints[0] != nullptr && pPoints[1] != nullptr )
 				{
-					RectF r = newState.rect;
+					Rage::RectF r = newState.rect;
 
 					float fX = 1.0f, fY = 1.0f;
 					pPoints[0]->GetAttrValue( "x", fX );
@@ -349,7 +349,7 @@ void Sprite::LoadStatesFromTexture()
 	{
 		State newState;
 		newState.fDelay = 0.1f;
-		newState.rect = RectF( 0, 0, 1, 1 );
+		newState.rect = Rage::RectF( 0, 0, 1, 1 );
 		m_States.push_back( newState );
 		return;
 	}
@@ -471,7 +471,7 @@ void Sprite::Update( float fDelta )
 	}
 }
 
-void TexCoordArrayFromRect( float fImageCoords[8], const RectF &rect )
+void TexCoordArrayFromRect( float fImageCoords[8], const Rage::RectF &rect )
 {
 	fImageCoords[0] = rect.left;	fImageCoords[1] = rect.top;	// top left
 	fImageCoords[2] = rect.left;	fImageCoords[3] = rect.bottom;	// bottom left
@@ -483,14 +483,14 @@ void Sprite::DrawTexture( const TweenState *state )
 {
 	Actor::SetGlobalRenderStates(); // set Actor-specified render states
 
-	RectF crop = state->crop;
+	Rage::RectF crop = state->crop;
 	// bail if cropped all the way
 	if( crop.left + crop.right >= 1  ||
 		crop.top + crop.bottom >= 1 )
 		return;
 
 	// use m_temp_* variables to draw the object
-	RectF quadVerticies;
+	Rage::RectF quadVerticies;
 	quadVerticies.left   = -m_size.x/2.0f;
 	quadVerticies.right  = +m_size.x/2.0f;
 	quadVerticies.top    = -m_size.y/2.0f;
@@ -505,7 +505,7 @@ void Sprite::DrawTexture( const TweenState *state )
 	crop.top = Rage::clamp( crop.top, 0.f, 1.f );
 	crop.bottom = Rage::clamp( crop.bottom, 0.f, 1.f );
 
-	RectF croppedQuadVerticies = quadVerticies;
+	Rage::RectF croppedQuadVerticies = quadVerticies;
 #define IF_CROP_POS(side,opp_side) \
 	if(state->crop.side!=0) \
 		croppedQuadVerticies.side = \
@@ -630,10 +630,10 @@ void Sprite::DrawPrimitives()
 		m_pTempState->fade.right > 0 )
 	{
 		// We're fading the edges.
-		const RectF &FadeDist = m_pTempState->fade;
+		const Rage::RectF &FadeDist = m_pTempState->fade;
 
 		// Actual size of the fade on each side:
-		RectF FadeSize = FadeDist;
+		Rage::RectF FadeSize = FadeDist;
 
 		// If the cropped size is less than the fade distance in either dimension, clamp.
 		const float HorizRemaining = 1.0f - (m_pTempState->crop.left + m_pTempState->crop.right);
@@ -820,7 +820,7 @@ RString	Sprite::GetTexturePath() const
 	return m_pTexture->GetID().filename;
 }
 
-void Sprite::SetCustomTextureRect( const RectF &new_texcoord_frect )
+void Sprite::SetCustomTextureRect( const Rage::RectF &new_texcoord_frect )
 {
 	m_bUsingCustomTexCoords = true;
 	m_bTextureWrapping = true;
@@ -835,7 +835,7 @@ void Sprite::SetCustomTextureCoords( float fTexCoords[8] ) // order: top left, b
 		m_CustomTexCoords[i] = fTexCoords[i];
 }
 
-void Sprite::SetCustomImageRect( RectF rectImageCoords )
+void Sprite::SetCustomImageRect( Rage::RectF rectImageCoords )
 {
 	// Convert to a rectangle in texture coordinate space.
 	rectImageCoords.left	*= m_pTexture->GetImageWidth()	/ (float)m_pTexture->GetTextureWidth();
@@ -867,12 +867,12 @@ void Sprite::SetCustomPosCoords( float fPosCoords[8] )	// order: top left, botto
 	}
 }
 
-const RectF *Sprite::GetCurrentTextureCoordRect() const
+const Rage::RectF *Sprite::GetCurrentTextureCoordRect() const
 {
 	return GetTextureCoordRectForState( m_iCurState );
 }
 
-const RectF *Sprite::GetTextureCoordRectForState( int iState ) const
+const Rage::RectF *Sprite::GetTextureCoordRectForState( int iState ) const
 {
 	ASSERT_M( iState < (int) m_States.size(), ssprintf("%d, %d", int(iState), int(m_States.size())) );
 
@@ -892,7 +892,7 @@ void Sprite::GetActiveTextureCoords( float fTexCoordsOut[8] ) const
 	else
 	{
 		// GetCurrentTextureCoords
-		const RectF *pTexCoordRect = GetCurrentTextureCoordRect();
+		const Rage::RectF *pTexCoordRect = GetCurrentTextureCoordRect();
 		TexCoordArrayFromRect( fTexCoordsOut, *pTexCoordRect );
 	}
 }
@@ -934,7 +934,7 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 		Sprite::StopUsingCustomCoords();
 
 		// first find the correct zoom
-		Sprite::ScaleToCover( RectF(0, 0, fWidth, fHeight) );
+		Sprite::ScaleToCover( Rage::RectF(0, 0, fWidth, fHeight) );
 		// find which dimension is larger
 		bool bXDimNeedsToBeCropped = GetZoomedWidth() > fWidth+0.01;
 
@@ -945,7 +945,7 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 
 			// generate a rectangle with new texture coordinates
-			RectF fCustomImageRect(
+			Rage::RectF fCustomImageRect(
 				fPercentageToCutOffEachSide,
 				0,
 				1 - fPercentageToCutOffEachSide,
@@ -959,7 +959,7 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 
 			// generate a rectangle with new texture coordinates
-			RectF fCustomImageRect(
+			Rage::RectF fCustomImageRect(
 				0,
 				fPercentageToCutOffEachSide,
 				1,
@@ -995,7 +995,7 @@ void Sprite::CropTo( float fWidth, float fHeight )
 		Sprite::StopUsingCustomCoords();
 
 		// first find the correct zoom
-		Sprite::ScaleToCover( RectF(0, 0, fWidth, fHeight) );
+		Sprite::ScaleToCover( Rage::RectF(0, 0, fWidth, fHeight) );
 		// find which dimension is larger
 		bool bXDimNeedsToBeCropped = GetZoomedWidth() > fWidth+0.01;
 
@@ -1005,7 +1005,7 @@ void Sprite::CropTo( float fWidth, float fHeight )
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 
 			// generate a rectangle with new texture coordinates
-			RectF fCustomImageRect(
+			Rage::RectF fCustomImageRect(
 				fPercentageToCutOffEachSide,
 				0,
 				1 - fPercentageToCutOffEachSide,
@@ -1018,7 +1018,7 @@ void Sprite::CropTo( float fWidth, float fHeight )
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 
 			// generate a rectangle with new texture coordinates
-			RectF fCustomImageRect(
+			Rage::RectF fCustomImageRect(
 				0,
 				fPercentageToCutOffEachSide,
 				1,
@@ -1102,8 +1102,8 @@ public:
 
 	/* Commands that go in the tweening queue:
 	 * Commands that take effect immediately (ignoring the tweening queue): */
-	static int customtexturerect( T* p, lua_State *L )	{ p->SetCustomTextureRect( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); COMMON_RETURN_SELF; }
-	static int SetCustomImageRect( T* p, lua_State *L )	{ p->SetCustomImageRect( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); COMMON_RETURN_SELF; }
+	static int customtexturerect( T* p, lua_State *L )	{ p->SetCustomTextureRect( Rage::RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); COMMON_RETURN_SELF; }
+	static int SetCustomImageRect( T* p, lua_State *L )	{ p->SetCustomImageRect( Rage::RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); COMMON_RETURN_SELF; }
 	static int SetCustomPosCoords( T* p, lua_State *L )
 	{
 		float coords[8];
@@ -1178,7 +1178,7 @@ public:
 				new_state.fDelay= FArg(-1);
 			}
 			lua_pop(L, 1);
-			RectF r= new_state.rect;
+			Rage::RectF r= new_state.rect;
 			lua_rawgeti(L, -1, 1);
 			if(lua_istable(L, -1))
 			{

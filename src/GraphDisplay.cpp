@@ -264,7 +264,7 @@ void GraphDisplay::UpdateVerts()
 		m_pGraphBody->m_Slices[i*2+0].p = Rage::Vector3( fX, fY, 0 );
 		m_pGraphBody->m_Slices[i*2+1].p = Rage::Vector3( fX, m_quadVertices.bottom, 0 );
 
-		const RectF *pRect = m_pGraphBody->m_pTexture->GetTextureCoordRect( 0 );
+		const Rage::RectF *pRect = m_pGraphBody->m_pTexture->GetTextureCoordRect( 0 );
 
 		const float fU = Rage::scale( fX, m_quadVertices.left, m_quadVertices.right, pRect->left, pRect->right );
 		const float fV = Rage::scale( fY, m_quadVertices.top, m_quadVertices.bottom, pRect->top, pRect->bottom );

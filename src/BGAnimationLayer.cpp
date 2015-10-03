@@ -185,7 +185,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 			ID.bStretch = true;
 			pSprite->Load( Sprite::SongBGTexture(ID) );
 			pSprite->StretchTo( FullScreenRectF );
-			pSprite->SetCustomTextureRect( RectF(0,0,1,1) );
+			pSprite->SetCustomTextureRect( Rage::RectF(0,0,1,1) );
 
 			switch( effect )
 			{
@@ -203,7 +203,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 			Sprite* pSprite = new Sprite;
 			this->AddChild( pSprite );
 			pSprite->Load( Sprite::SongBGTexture(sPath) );
-			const RectF StretchedFullScreenRectF(
+			const Rage::RectF StretchedFullScreenRectF(
 				FullScreenRectF.left-200,
 				FullScreenRectF.top-200,
 				FullScreenRectF.right+200,

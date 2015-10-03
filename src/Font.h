@@ -3,6 +3,7 @@
 #ifndef FONT_H
 #define FONT_H
 
+#include "RageRect.hpp"
 #include "RageTextureID.h"
 #include "RageUtil.h"
 #include "RageTypes.h"
@@ -48,7 +49,7 @@ struct glyph
 	float m_fHshift; // , m_fVshift;
 
 	/** @brief Texture coordinate rect. */
-	RectF m_TexRect;
+	Rage::RectF m_TexRect;
 
 	/** @brief Set up the glyph with default values. */
 	glyph() : m_pPage(nullptr), m_FontPageTextures(), m_iHadvance(0),

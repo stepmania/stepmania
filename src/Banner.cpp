@@ -85,7 +85,7 @@ void Banner::Update( float fDeltaTime )
 		m_fPercentScrolling += fDeltaTime/(float)SCROLL_SPEED_DIVISOR;
 		m_fPercentScrolling -= (int)m_fPercentScrolling;
 
-		const RectF *pTextureRect = GetCurrentTextureCoordRect();
+		const Rage::RectF *pTextureRect = GetCurrentTextureCoordRect();
  
 		float fTexCoords[8] = 
 		{

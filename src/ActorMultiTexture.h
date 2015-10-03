@@ -26,7 +26,7 @@ public:
 	void SetTextureMode( int iIndex, TextureMode tm );
 
 	void SetSizeFromTexture( RageTexture *pTexture );
-	void SetTextureCoords( const RectF &r );
+	void SetTextureCoords( const Rage::RectF &r );
 	void SetEffectMode( EffectMode em ) { m_EffectMode = em; }
 
 	virtual void PushSelf( lua_State *L );
@@ -40,7 +40,7 @@ private:
 		TextureMode m_TextureMode;
 	};
 	std::vector<TextureUnitState> m_aTextureUnits;
-	RectF m_Rect;
+	Rage::RectF m_Rect;
 };
 
 #endif

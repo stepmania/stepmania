@@ -116,7 +116,7 @@ public:
 
 	struct State
 	{
-		RectF rect;
+		Rage::RectF rect;
 		float delay;
 	};
 	int GetNumStates() const { return _states.size(); }

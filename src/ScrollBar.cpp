@@ -87,7 +87,7 @@ void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
 
 	for( unsigned i = 0; i < m_sprScrollStretchThumb.size(); ++i )
 	{
-		RectF rect(
+		Rage::RectF rect(
 			-m_sprScrollStretchThumb[i]->GetUnzoomedWidth()/2,
 			fPartTopY[i],
 			+m_sprScrollStretchThumb[i]->GetUnzoomedWidth()/2,

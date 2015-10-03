@@ -27,7 +27,7 @@ private:
 
 	std::vector<float> m_Values;
 
-	RectF m_quadVertices;
+	Rage::RectF m_quadVertices;
 
 	std::vector<Actor*> m_vpSongBoundaries;
 	AutoActor m_sprBarely;

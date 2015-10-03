@@ -133,8 +133,6 @@ public:
 		T left, top, right, bottom;
 	};
 }
-typedef StepMania::Rect<int> RectI;
-typedef StepMania::Rect<float> RectF;
 
 void lerp_rage_color(Rage::Color& out, Rage::Color const& a, Rage::Color const& b, float t);
 void WeightedAvergeOfRSVs(Rage::SpriteVertex& average_out, Rage::SpriteVertex const& rsv1, Rage::SpriteVertex const& rsv2, float percent_between);

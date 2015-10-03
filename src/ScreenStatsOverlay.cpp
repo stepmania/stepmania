@@ -32,7 +32,7 @@ void ScreenStatsOverlay::Init()
 		SKIP_SPACING_Y.Load( m_sName, "SkipSpacingY" );
 		SKIP_WIDTH.Load( m_sName, "SkipWidth" );
 
-		RectF rectSkips = RectF(
+		Rage::RectF rectSkips = Rage::RectF(
 			SKIP_X-SKIP_WIDTH/2, 
 			SKIP_Y-(SKIP_SPACING_Y*NUM_SKIPS_TO_SHOW)/2 - 10, 
 			SKIP_X+SKIP_WIDTH/2, 
