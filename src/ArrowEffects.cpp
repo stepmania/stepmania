@@ -494,7 +494,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		const float fRealPixelOffset = pCols[iColNum].fXOffset * pPlayerState->m_NotefieldZoom;
 		const float fPositionBetween = Rage::scale( fRealPixelOffset, data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum],
 						     TORNADO_POSITION_SCALE_TO_LOW + 0.f, TORNADO_POSITION_SCALE_TO_HIGH + 0.f );
-		float fRads = acosf( fPositionBetween );
+		float fRads = std::acos( fPositionBetween );
 		fRads += fYOffset * TORNADO_OFFSET_FREQUENCY / SCREEN_HEIGHT;
 
 		const float fAdjustedPixelOffset = Rage::scale( RageFastCos(fRads), TORNADO_OFFSET_SCALE_FROM_LOW + 0.f, TORNADO_OFFSET_SCALE_FROM_HIGH + 0.f,
@@ -564,7 +564,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	{
 		// Allow Tiny to pull tracks together, but not to push them apart.
 		float fTinyPercent = fEffects[PlayerOptions::EFFECT_TINY];
-		fTinyPercent = std::min( powf(TINY_PERCENT_BASE, fTinyPercent), (float)TINY_PERCENT_GATE );
+		fTinyPercent = std::min( std::pow(TINY_PERCENT_BASE, fTinyPercent), static_cast<float>(TINY_PERCENT_GATE) );
 		fPixelOffsetFromCenter *= fTinyPercent;
 	}
 
@@ -815,7 +815,7 @@ float ArrowEffects::GetZoom( const PlayerState* pPlayerState )
 	float fTinyPercent = curr_options->m_fEffects[PlayerOptions::EFFECT_TINY];
 	if( fTinyPercent != 0 )
 	{
-		fTinyPercent = powf( 0.5f, fTinyPercent );
+		fTinyPercent = std::pow( 0.5f, fTinyPercent );
 		fZoom *= fTinyPercent;
 	}
 	return fZoom;

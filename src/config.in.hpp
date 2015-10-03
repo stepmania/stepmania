@@ -48,24 +48,6 @@
 /* Defined to 1 if the underlying system provides the snprintf function. */
 #cmakedefine HAVE_SNPRINTF 1
 
-/* Defined to 1 if the underlying system provides the powf function. */
-#cmakedefine HAVE_POWF 1
-
-/* Defined to 1 if the underlying system provides the sqrtf function. */
-#cmakedefine HAVE_SQRTF 1
-
-/* Defined to 1 if the underlying system provides the sinf function. */
-#cmakedefine HAVE_SINF 1
-
-/* Defined to 1 if the underlying system provides the tanf function. */
-#cmakedefine HAVE_TANF 1
-
-/* Defined to 1 if the underlying system provides the cos function. */
-#cmakedefine HAVE_COSF 1
-
-/* Defined to 1 if the underlying system provides the acos function. */
-#cmakedefine HAVE_ACOSF 1
-
 /* Defined to 1 if the underlying system provides the strtof function. */
 #cmakedefine HAVE_STRTOF 1
 
@@ -169,42 +151,6 @@ typedef long ssize_t;
 #define mkdir(path, mode) mkdir(path)
 #endif
 #endif
-#endif
-
-/* Ensure we have a function for raising a number by a power to a float. */
-#if !defined(HAVE_POWF)
-inline float powf( float x, float y ) CONST_FUNCTION;
-float powf( float x, float y ) { return float( pow(double(x), double(y)) ); }
-#endif
-
-/* Ensure we have a function for getting the square root of a number to a float. */
-#if !defined(HAVE_SQRTF)
-inline float sqrtf( float x ) CONST_FUNCTION;
-float sqrtf( float x ) { return float( sqrt(double(x)) ); }
-#endif
-
-/* Ensure we have a function for getting the sin of a number to a float. */
-#if !defined(HAVE_SINF)
-inline float sinf( float x ) CONST_FUNCTION;
-float sinf( float x ) { return float( sin(double(x)) ); }
-#endif
-
-/* Ensure we have a function for getting the tan of a number to a float. */
-#if !defined(HAVE_TANF)
-inline float tanf( float x ) CONST_FUNCTION;
-float tanf( float x ) { return float( tan(double(x)) ); }
-#endif
-
-/* Ensure we have a function for getting the cos of a number to a float. */
-#if !defined(HAVE_COSF)
-inline float cosf( float x ) CONST_FUNCTION;
-float cosf( float x ){ return float( cos(double(x)) ); }
-#endif
-
-/* Ensure we have a function for getting the arc cos of a number to a float. */
-#if !defined(HAVE_ACOSF)
-inline float acosf( float x ) CONST_FUNCTION;
-float acosf( float x ) { return float( acos(double(x)) ); }
 #endif
 
 /* Ensure we have a function for converting a string to a float. */

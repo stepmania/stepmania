@@ -79,7 +79,7 @@ public:
 
 			float opp = p2.p.x - p1.p.x;
 			float adj = p2.p.y - p1.p.y;
-			float hyp = powf(opp*opp + adj*adj, 0.5f);
+			float hyp = std::pow(opp*opp + adj*adj, 0.5f);
 
 			float lsin = opp/hyp;
 			float lcos = adj/hyp;

@@ -266,7 +266,7 @@ float PlayerStageStats::MakePercentScore( int iActual, int iPossible )
 
 	// TRICKY: printf will round, but we want to truncate. Otherwise, we may display
 	// a percent score that's too high and doesn't match up with the calculated grade.
-	float fTruncInterval = powf( 0.1f, (float)iPercentTotalDigits-1 );
+	float fTruncInterval = std::pow( 0.1f,iPercentTotalDigits-1.f );
 
 	// TRICKY: ftruncf is rounding 1.0000000 to 0.99990004. Give a little boost
 	// to fPercentDancePoints to correct for this.

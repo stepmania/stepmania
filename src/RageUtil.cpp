@@ -1248,7 +1248,7 @@ float calc_stddev( const float *pStart, const float *pEnd, bool bSample )
 	for( const float *i=pStart; i != pEnd; ++i )
 		fDev += (*i - fMean) * (*i - fMean);
 	fDev /= std::distance( pStart, pEnd ) - (bSample ? 1 : 0);
-	fDev = sqrtf( fDev );
+  fDev = std::sqrt( fDev );
 
 	return fDev;
 }
@@ -1277,7 +1277,7 @@ bool CalcLeastSquares( const vector< std::pair<float, float> > &vCoordinates,
 		fError += fOneError * fOneError;
 	}
 	fError /= vCoordinates.size();
-	fError = sqrtf( fError );
+  fError = std::sqrt( fError );
 	return true;
 }
 

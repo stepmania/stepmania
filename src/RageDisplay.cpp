@@ -186,7 +186,7 @@ void RageDisplay::DrawPolyLine(const Rage::SpriteVertex &p1, const Rage::SpriteV
 	// soh cah toa strikes strikes again!
 	float opp = p2.p.x - p1.p.x;
 	float adj = p2.p.y - p1.p.y;
-	float hyp = powf(opp*opp + adj*adj, 0.5f);
+	float hyp = std::pow(opp*opp + adj*adj, 0.5f);
 
 	float lsin = opp/hyp;
 	float lcos = adj/hyp;
@@ -565,7 +565,7 @@ void RageDisplay::LoadMenuPerspective( float fovDegrees, float fWidth, float fHe
 		fovDegrees = Rage::clamp( fovDegrees, 0.1f, 179.9f );
 		float fovRadians = fovDegrees / 180.f * PI;
 		float theta = fovRadians/2;
-		float fDistCameraFromImage = fWidth/2 / tanf( theta );
+		float fDistCameraFromImage = fWidth/2 / std::tan( theta );
 
 		fVanishPointX = Rage::scale( fVanishPointX, 0.f, fWidth, fWidth, 0.f );
 		fVanishPointY = Rage::scale( fVanishPointY, 0.f, fHeight, fHeight, 0.f );
@@ -621,7 +621,7 @@ void RageDisplay::LoadLookAt( float fFOV, const Rage::Vector3 &Eye, const Rage::
 
 Rage::Matrix RageDisplay::GetPerspectiveMatrix(float fovy, float aspect, float zNear, float zFar)
 {
-	float ymax = zNear * tanf(fovy * PI / 360.0f);
+	float ymax = zNear * std::tan(fovy * PI / 360.0f);
 	float ymin = -ymax;
 	float xmin = ymin * aspect;
 	float xmax = ymax * aspect;
