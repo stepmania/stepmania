@@ -986,7 +986,7 @@ void Actor::HurryTweening( float factor )
 	}
 }
 
-void Actor::ScaleTo( const RectF &rect, StretchType st )
+void Actor::ScaleTo( const Rage::RectF &rect, StretchType st )
 {
 	// width and height of rectangle
 	float rect_width = rect.GetWidth();
@@ -1039,7 +1039,7 @@ void Actor::SetEffectClockString( const RString &s )
 	}
 }
 
-void Actor::StretchTo( const RectF &r )
+void Actor::StretchTo( const Rage::RectF &r )
 {
 	// width and height of rectangle
 	float width = r.GetWidth();
@@ -1348,8 +1348,8 @@ void Actor::TweenState::Init()
 	scale = Rage::Vector3( 1, 1, 1 );
 	fSkewX = 0;
 	fSkewY = 0;
-	crop = RectF( 0,0,0,0 );
-	fade = RectF( 0,0,0,0 );
+	crop = Rage::RectF( 0,0,0,0 );
+	fade = Rage::RectF( 0,0,0,0 );
 	for( int i=0; i<NUM_DIFFUSE_COLORS; i++ )
 		diffuse[i] = Rage::Color( 1, 1, 1, 1 );
 	glow = Rage::Color( 1, 1, 1, 0 );
@@ -1636,7 +1636,7 @@ public:
 	static int basezoomx( T* p, lua_State *L )		{ p->SetBaseZoomX(FArg(1)); COMMON_RETURN_SELF; }
 	static int basezoomy( T* p, lua_State *L )		{ p->SetBaseZoomY(FArg(1)); COMMON_RETURN_SELF; }
 	static int basezoomz( T* p, lua_State *L )		{ p->SetBaseZoomZ(FArg(1)); COMMON_RETURN_SELF; }
-	static int stretchto( T* p, lua_State *L )		{ p->StretchTo( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); COMMON_RETURN_SELF; }
+	static int stretchto( T* p, lua_State *L )		{ p->StretchTo( Rage::RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); COMMON_RETURN_SELF; }
 	static int cropleft( T* p, lua_State *L )		{ p->SetCropLeft(FArg(1)); COMMON_RETURN_SELF; }
 	static int croptop( T* p, lua_State *L )		{ p->SetCropTop(FArg(1)); COMMON_RETURN_SELF; }
 	static int cropright( T* p, lua_State *L )		{ p->SetCropRight(FArg(1)); COMMON_RETURN_SELF; }
@@ -1829,8 +1829,8 @@ public:
 	static int effectclock( T* p, lua_State *L )		{ p->SetEffectClockString(SArg(1)); COMMON_RETURN_SELF; }
 	static int effectmagnitude( T* p, lua_State *L )	{ p->SetEffectMagnitude( Rage::Vector3(FArg(1),FArg(2),FArg(3)) ); COMMON_RETURN_SELF; }
 	static int geteffectmagnitude( T* p, lua_State *L )	{ Rage::Vector3 v = p->GetEffectMagnitude(); lua_pushnumber(L, v.x); lua_pushnumber(L, v.y); lua_pushnumber(L, v.z); return 3; }
-	static int scaletocover( T* p, lua_State *L )		{ p->ScaleToCover( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); COMMON_RETURN_SELF; }
-	static int scaletofit( T* p, lua_State *L )		{ p->ScaleToFitInside( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); COMMON_RETURN_SELF; }
+	static int scaletocover( T* p, lua_State *L )		{ p->ScaleToCover( Rage::RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); COMMON_RETURN_SELF; }
+	static int scaletofit( T* p, lua_State *L )		{ p->ScaleToFitInside( Rage::RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); COMMON_RETURN_SELF; }
 	static int animate( T* p, lua_State *L )		{ p->EnableAnimation(BIArg(1)); COMMON_RETURN_SELF; }
 	static int play( T* p, lua_State *L )			{ p->EnableAnimation(true); COMMON_RETURN_SELF; }
 	static int pause( T* p, lua_State *L )			{ p->EnableAnimation(false); COMMON_RETURN_SELF; }

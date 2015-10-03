@@ -222,13 +222,13 @@ void BackgroundImpl::Init()
 
 	Rage::Color c = GetBrightnessColor(0);
 
-	m_quadBorderLeft.StretchTo( RectF(SCREEN_LEFT,SCREEN_TOP,LEFT_EDGE,SCREEN_BOTTOM) );
+	m_quadBorderLeft.StretchTo( Rage::RectF(SCREEN_LEFT,SCREEN_TOP,LEFT_EDGE,SCREEN_BOTTOM) );
 	m_quadBorderLeft.SetDiffuse( c );
-	m_quadBorderTop.StretchTo( RectF(LEFT_EDGE,SCREEN_TOP,RIGHT_EDGE,TOP_EDGE) );
+	m_quadBorderTop.StretchTo( Rage::RectF(LEFT_EDGE,SCREEN_TOP,RIGHT_EDGE,TOP_EDGE) );
 	m_quadBorderTop.SetDiffuse( c );
-	m_quadBorderRight.StretchTo( RectF(RIGHT_EDGE,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	m_quadBorderRight.StretchTo( Rage::RectF(RIGHT_EDGE,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 	m_quadBorderRight.SetDiffuse( c );
-	m_quadBorderBottom.StretchTo( RectF(LEFT_EDGE,BOTTOM_EDGE,RIGHT_EDGE,SCREEN_BOTTOM) );
+	m_quadBorderBottom.StretchTo( Rage::RectF(LEFT_EDGE,BOTTOM_EDGE,RIGHT_EDGE,SCREEN_BOTTOM) );
 	m_quadBorderBottom.SetDiffuse( c );
 
 	this->AddChild( &m_quadBorderLeft );
@@ -912,9 +912,9 @@ BrightnessOverlay::BrightnessOverlay()
 	float fQuadWidth = (RIGHT_EDGE-LEFT_EDGE)/2;
 	fQuadWidth -= g_fBackgroundCenterWidth/2;
 
-	m_quadBGBrightness[0].StretchTo( RectF(LEFT_EDGE,TOP_EDGE,LEFT_EDGE+fQuadWidth,BOTTOM_EDGE) );
-	m_quadBGBrightnessFade.StretchTo( RectF(LEFT_EDGE+fQuadWidth,TOP_EDGE,RIGHT_EDGE-fQuadWidth,BOTTOM_EDGE) );
-	m_quadBGBrightness[1].StretchTo( RectF(RIGHT_EDGE-fQuadWidth,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE) );
+	m_quadBGBrightness[0].StretchTo( Rage::RectF(LEFT_EDGE,TOP_EDGE,LEFT_EDGE+fQuadWidth,BOTTOM_EDGE) );
+	m_quadBGBrightnessFade.StretchTo( Rage::RectF(LEFT_EDGE+fQuadWidth,TOP_EDGE,RIGHT_EDGE-fQuadWidth,BOTTOM_EDGE) );
+	m_quadBGBrightness[1].StretchTo( Rage::RectF(RIGHT_EDGE-fQuadWidth,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE) );
 
 	m_quadBGBrightness[0].SetName( "BrightnessOverlay" );
 	ActorUtil::LoadAllCommands( m_quadBGBrightness[0], "Background" );

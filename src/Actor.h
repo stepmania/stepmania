@@ -2,6 +2,7 @@
 #define ACTOR_H
 
 #include "PlayerNumber.h"
+#include "RageRect.hpp"
 #include "RageTypes.h"
 #include "RageVector4.hpp"
 #include "RageUtil_AutoPtr.h"
@@ -217,12 +218,12 @@ public:
 		 * @brief The amount of cropping involved.
 		 *
 		 * If 0, there is no cropping. If 1, it's fully cropped. */
-		RectF		crop;
+		Rage::RectF		crop;
 		/**
 		 * @brief The amount of fading involved.
 		 *
 		 * If 0, there is no fade. If 1, it's fully faded. */
-		RectF		fade;
+		Rage::RectF		fade;
 		/**
 		 * @brief Four values making up the diffuse in this TweenState.
 		 *
@@ -500,11 +501,11 @@ public:
 		cover /**< Have the Actor cover its parent, using the larger zoom. */
 	};
 
-	void ScaleToCover( const RectF &rect )		{ ScaleTo( rect, cover ); }
-	void ScaleToFitInside( const RectF &rect )	{ ScaleTo( rect, fit_inside); };
-	void ScaleTo( const RectF &rect, StretchType st );
+	void ScaleToCover( const Rage::RectF &rect )		{ ScaleTo( rect, cover ); }
+	void ScaleToFitInside( const Rage::RectF &rect )	{ ScaleTo( rect, fit_inside); };
+	void ScaleTo( const Rage::RectF &rect, StretchType st );
 
-	void StretchTo( const RectF &rect );
+	void StretchTo( const Rage::RectF &rect );
 
 	// Alignment settings.  These need to be virtual for BitmapText
 	virtual void SetHorizAlign( float f ) { m_fHorizAlign = f; }

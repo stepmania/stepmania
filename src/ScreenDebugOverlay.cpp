@@ -255,7 +255,7 @@ void ScreenDebugOverlay::Init()
 	m_iCurrentPage = 0;
 	m_bForcedHidden = false;
 
-	m_Quad.StretchTo( RectF( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) );
+	m_Quad.StretchTo( Rage::RectF( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) );
 	m_Quad.SetDiffuse( BACKGROUND_COLOR );
 	this->AddChild( &m_Quad );
 

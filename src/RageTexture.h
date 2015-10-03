@@ -3,6 +3,7 @@
 #ifndef RAGE_TEXTURE_H
 #define RAGE_TEXTURE_H
 
+#include "RageRect.hpp"
 #include "RageTypes.h"
 #include "RageTextureID.h"
 
@@ -49,7 +50,7 @@ public:
 	float GetImageToTexCoordsRatioY() const { return 1.0f / GetTextureHeight(); }
 	float GetSourceToTexCoordsRatioY() const { return GetSourceToImageCoordsRatioY() * GetImageToTexCoordsRatioY(); }
 
-	const RectF *GetTextureCoordRect( int frameNo ) const;
+	const Rage::RectF *GetTextureCoordRect( int frameNo ) const;
 	int   GetNumFrames() const { return m_iFramesWide*m_iFramesHigh; }
 
 	// Used by RageTextureManager. Order is important; see RageTextureManager.cpp.
@@ -77,7 +78,7 @@ protected:
 	int		m_iTextureWidth,	m_iTextureHeight;	// dimensions of the texture in memory
 	int		m_iImageWidth,		m_iImageHeight;		// dimensions of the image in the texture
 	int		m_iFramesWide,		m_iFramesHigh;		// The number of frames of animation in each row and column of this texture
-	std::vector<RectF>	m_TextureCoordRects;	// size = m_iFramesWide * m_iFramesHigh
+	std::vector<Rage::RectF>	m_TextureCoordRects;	// size = m_iFramesWide * m_iFramesHigh
 
 	virtual void CreateFrameRects();
 };

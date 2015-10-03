@@ -32,7 +32,7 @@ void RageTexture::CreateFrameRects()
 	{
 		for( int i=0; i<m_iFramesWide; i++ )	// traverse along X (important that this is the inner loop)
 		{
-			RectF frect( (i+0)/(float)m_iFramesWide*m_iImageWidth /(float)m_iTextureWidth,	// these will all be between 0.0 and 1.0
+			Rage::RectF frect( (i+0)/(float)m_iFramesWide*m_iImageWidth /(float)m_iTextureWidth,	// these will all be between 0.0 and 1.0
 						 (j+0)/(float)m_iFramesHigh*m_iImageHeight/(float)m_iTextureHeight,
 						 (i+1)/(float)m_iFramesWide*m_iImageWidth /(float)m_iTextureWidth,
 						 (j+1)/(float)m_iFramesHigh*m_iImageHeight/(float)m_iTextureHeight );
@@ -75,7 +75,7 @@ void RageTexture::GetFrameDimensionsFromFileName( RString sPath, int* piFramesWi
 	*piFramesHigh = maybe_height;
 }
 
-const RectF *RageTexture::GetTextureCoordRect( int iFrameNo ) const
+const Rage::RectF *RageTexture::GetTextureCoordRect( int iFrameNo ) const
 {
 	return &m_TextureCoordRects[iFrameNo % GetNumFrames()];
 }
@@ -92,7 +92,7 @@ public:
 	static int rate( T* p, lua_State *L )			{ p->SetPlaybackRate( FArg(1) ); COMMON_RETURN_SELF; }
 	static int GetTextureCoordRect( T* p, lua_State *L )
 	{
-		const RectF *pRect = p->GetTextureCoordRect( IArg(1) );
+		const Rage::RectF *pRect = p->GetTextureCoordRect( IArg(1) );
 		lua_pushnumber( L, pRect->left );
 		lua_pushnumber( L, pRect->top );
 		lua_pushnumber( L, pRect->right );

@@ -40,14 +40,14 @@ ActorMultiTexture::ActorMultiTexture( const ActorMultiTexture &cpy ):
 	}
 }
 
-void ActorMultiTexture::SetTextureCoords( const RectF &r )
+void ActorMultiTexture::SetTextureCoords( const Rage::RectF &r )
 {
 	m_Rect = r;
 }
 
 void ActorMultiTexture::LoadFromNode( const XNode* pNode )
 {
-	m_Rect = RectF( 0, 0, 1, 1 );
+	m_Rect = Rage::RectF( 0, 0, 1, 1 );
 	Actor::LoadFromNode( pNode );
 }
 
@@ -94,7 +94,7 @@ void ActorMultiTexture::DrawPrimitives()
 {
 	Actor::SetGlobalRenderStates();	// set Actor-specified render states
 
-	RectF quadVerticies;
+	Rage::RectF quadVerticies;
 	quadVerticies.left   = -m_size.x/2.0f;
 	quadVerticies.right  = +m_size.x/2.0f;
 	quadVerticies.top    = -m_size.y/2.0f;
@@ -117,7 +117,7 @@ void ActorMultiTexture::DrawPrimitives()
 	v[2].p = Rage::Vector3( quadVerticies.right,	quadVerticies.bottom,	0 );	// bottom right
 	v[3].p = Rage::Vector3( quadVerticies.right,	quadVerticies.top,	0 );	// top right
 
-	const RectF *pTexCoordRect = &m_Rect;
+	const Rage::RectF *pTexCoordRect = &m_Rect;
 	v[0].t = Rage::Vector2( pTexCoordRect->left, pTexCoordRect->top );	// top left
 	v[1].t = Rage::Vector2( pTexCoordRect->left, pTexCoordRect->bottom );	// bottom left
 	v[2].t = Rage::Vector2( pTexCoordRect->right, pTexCoordRect->bottom );	// bottom right
@@ -170,7 +170,7 @@ public:
 	}
 	static int SetTextureCoords( T* p, lua_State *L )
 	{
-		p->SetTextureCoords( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) );
+		p->SetTextureCoords( Rage::RectF(FArg(1), FArg(2), FArg(3), FArg(4)) );
 		COMMON_RETURN_SELF;
 	}
 	static int SetSizeFromTexture( T* p, lua_State *L )

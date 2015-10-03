@@ -82,7 +82,7 @@ void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 	float fBlockSize = std::min( fTotalWidth / iBlocksWide, fTotalHeight / iBlocksHigh );
 
 	m_sprEmpty.SetVertAlign( align_bottom );
-	m_sprEmpty.SetCustomImageRect( RectF(0,0,(float)iBlocksWide,(float)iBlocksHigh) );
+	m_sprEmpty.SetCustomImageRect( Rage::RectF(0,0,(float)iBlocksWide,(float)iBlocksHigh) );
 	m_sprEmpty.ZoomToWidth( iBlocksWide * fBlockSize );
 	m_sprEmpty.ZoomToHeight( iBlocksHigh * fBlockSize );
 
@@ -95,7 +95,7 @@ void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 		p->SetVertAlign( align_bottom );
 		p->ZoomToWidth( fBlockSize );
 		int iMetersToCover = (MAX_METER - *iter);
-		p->SetCustomImageRect( RectF(0,(float)iMetersToCover/(float)iBlocksHigh,1,1) );
+		p->SetCustomImageRect( Rage::RectF(0,(float)iMetersToCover/(float)iBlocksHigh,1,1) );
 		p->ZoomToHeight( *iter * fBlockSize );
 		p->SetX( fOffsetFromCenter * fBlockSize );
 		m_vpBars.push_back( p );

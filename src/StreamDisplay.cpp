@@ -55,7 +55,7 @@ void StreamDisplay::Load( const RString & /* unreferenced: _sMetricsGroup  */)
 
 			m_transformPill.TransformItemDirect( *pSpr, -1, i, iNumPills );
 			float f = 1 / fTextureCoordScaleX;
-			pSpr->SetCustomTextureRect( RectF(f*i,0,f*(i+1),1) );
+			pSpr->SetCustomTextureRect( Rage::RectF(f*i,0,f*(i+1),1) );
 
 			this->AddChild( pSpr );
 		}

@@ -4,7 +4,7 @@
 #include "Actor.h"
 #include "RageTextureID.h"
 
-void TexCoordArrayFromRect( float fImageCoords[8], const RectF &rect );
+void TexCoordArrayFromRect( float fImageCoords[8], const Rage::RectF &rect );
 
 class RageTexture;
 /** @brief A bitmap Actor that animates and moves around. */
@@ -14,7 +14,7 @@ public:
 	/** @brief The Sprite's present state. */
 	struct State
 	{
-		RectF rect;
+		Rage::RectF rect;
 		/** @brief The number of "seconds to show". */
 		float fDelay;
 	};
@@ -63,13 +63,13 @@ public:
 
 	RString	GetTexturePath() const;
 
-	void SetCustomTextureRect( const RectF &new_texcoord_frect );
+	void SetCustomTextureRect( const Rage::RectF &new_texcoord_frect );
 	void SetCustomTextureCoords( float fTexCoords[8] );
-	void SetCustomImageRect( RectF rectImageCoords );	// in image pixel space
+	void SetCustomImageRect( Rage::RectF rectImageCoords );	// in image pixel space
 	void SetCustomImageCoords( float fImageCoords[8] );
 	void SetCustomPosCoords( float fPosCoords[8] );
-	const RectF *GetCurrentTextureCoordRect() const;
-	const RectF *GetTextureCoordRectForState( int iState ) const;
+	const Rage::RectF *GetCurrentTextureCoordRect() const;
+	const Rage::RectF *GetTextureCoordRectForState( int iState ) const;
 	void StopUsingCustomCoords();
 	void StopUsingCustomPosCoords();
 	void GetActiveTextureCoords(float fTexCoordsOut[8]) const;

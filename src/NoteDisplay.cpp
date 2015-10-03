@@ -749,7 +749,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 	Sprite *pSprite = vpSpr.front();
 
 	// draw manually in small segments
-	RectF rect = *pSprite->GetCurrentTextureCoordRect();
+	Rage::RectF rect = *pSprite->GetCurrentTextureCoordRect();
 	if(part_args.flip_texture_vertically)
 		std::swap(rect.top, rect.bottom);
 	const float fFrameWidth		= pSprite->GetUnzoomedWidth();
