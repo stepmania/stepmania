@@ -28,8 +28,8 @@ option(WITH_PORTABLE_TOMCRYPT "Build with assembly/free tomcrypt, making it port
 # If WITH_PORTABLE_TOMCRYPT is ON, this will automatically have no effect.
 option(WITH_NO_ROLC_TOMCRYPT "Build without the ROLC assembly instructions for tomcrypt. (Ignored by Apple builds)" OFF)
 
-# Turn this option off to not use the GPL exclusive components.
-option(WITH_GPL_LIBS "Build with GPL libraries." ON)
+# Turn this option on to use the GPL exclusive components.
+option(WITH_GPL_LIBS "Build with GPL libraries." OFF)
 
 # Turn this option off to disable using WAV files with the game.
 # Note that it is recommended to keep this on.
