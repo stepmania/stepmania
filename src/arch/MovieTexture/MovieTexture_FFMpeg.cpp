@@ -112,6 +112,7 @@ MovieDecoder_FFMpeg::MovieDecoder_FFMpeg()
 	m_fctx = NULL;
 	m_pStream = NULL;
 	m_iCurrentPacketOffset = -1;
+	m_Frame = avcodec::av_frame_alloc();
 
 	Init();
 }
@@ -265,7 +266,7 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 		m_Packet.data = m_Packet.size ? m_Packet.data : NULL;
 		int len = avcodec::avcodec_decode_video2(
 				m_pStream->codec, 
-				&m_Frame, &iGotFrame,
+				m_Frame, &iGotFrame,
 				&m_Packet );
 
 		if( len < 0 )
@@ -283,9 +284,9 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 			continue;
 		}
 
-		if( m_Frame.pkt_dts != AV_NOPTS_VALUE )
+		if( m_Frame->pkt_dts != AV_NOPTS_VALUE )
 		{
-			m_fTimestamp = (float) (m_Frame.pkt_dts * av_q2d(m_pStream->time_base));
+			m_fTimestamp = (float) (m_Frame->pkt_dts * av_q2d(m_pStream->time_base));
 		}
 		else
 		{
@@ -296,7 +297,7 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 
 		/* Length of this frame: */
 		m_fLastFrameDelay = (float) av_q2d(m_pStream->time_base);
-		m_fLastFrameDelay += m_Frame.repeat_pict * (m_fLastFrameDelay * 0.5f);
+		m_fLastFrameDelay += m_Frame->repeat_pict * (m_fLastFrameDelay * 0.5f);
 
 		++m_iFrameNumber;
 
@@ -347,7 +348,7 @@ void MovieDecoder_FFMpeg::GetFrame( RageSurface *pSurface )
 	}
 
 	avcodec::sws_scale( m_swsctx,
-			m_Frame.data, m_Frame.linesize, 0, GetHeight(),
+			m_Frame->data, m_Frame->linesize, 0, GetHeight(),
 			pict.data, pict.linesize );
 }
 
