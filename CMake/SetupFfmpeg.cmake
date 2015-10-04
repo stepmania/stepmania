@@ -1,7 +1,6 @@
 set(SM_FFMPEG_VERSION "2.1.3")
 set(SM_FFMPEG_SRC_LIST "${SM_EXTERN_DIR}" "/ffmpeg-linux-" "${SM_FFMPEG_VERSION}")
 sm_join("${SM_FFMPEG_SRC_LIST}" "" SM_FFMPEG_SRC_DIR)
-set(SM_FFMPEG_ROOT "${CMAKE_BINARY_DIR}/ffmpeg-prefix/src/ffmpeg-build")
 set(SM_FFMPEG_CONFIGURE_EXE "${SM_FFMPEG_SRC_DIR}/configure")
 if (MINGW)
   # Borrow from http://stackoverflow.com/q/11845823
@@ -22,6 +21,15 @@ list(APPEND FFMPEG_CONFIGURE
   "--disable-shared"
   "--enable-static"
 )
+
+if(MACOSX)
+  # TODO: Remove these two items when Mac OS X StepMania builds in 64-bit.
+  list(APPEND FFMPEG_CONFIGURE
+    "--arch=i386"
+    "--cc=clang -m32"
+  )
+endif()
+
 if(WITH_GPL_LIBS)
   list(APPEND FFMPEG_CONFIGURE
     "--enable-gpl"
@@ -58,3 +66,7 @@ else()
     TEST_COMMAND ""
   )
 endif()
+
+externalproject_get_property("ffmpeg" BINARY_DIR)
+set(SM_FFMPEG_ROOT ${BINARY_DIR})
+

@@ -41,10 +41,13 @@ option(WITH_MP3 "Build with MP3 Support." ON)
 # Turn this option off to disable using OGG files with the game.
 option(WITH_OGG "Build with OGG/Vorbis Support." ON)
 
+if(NOT MSVC)
+  option(WITH_FFMPEG "Build with FFMPEG." ON)
+endif()
+
 if(WIN32)
   option(WITH_MINIMAID "Build with Minimaid Lights Support." ON)
 elseif(LINUX)
-    option(WITH_FFMPEG "Build with FFMPEG." ON)
     # Builder beware: later versions of ffmpeg may break!
     option(WITH_SYSTEM_FFMPEG "Build with the system's FFMPEG." OFF)
     option(WITH_CRYSTALHD_DISABLED "Build FFMPEG without Crystal HD support." OFF)

@@ -239,7 +239,7 @@ if(WIN32)
   set(SYSTEM_PCRE_FOUND FALSE)
   find_package(DirectX REQUIRED)
 
-  if (MINGW)
+  if (MINGW AND WITH_FFMPEG)
     include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
     set(HAS_FFMPEG TRUE)
   else()
@@ -265,6 +265,12 @@ if(WIN32)
     get_filename_component(LIB_AVUTIL ${LIB_AVUTIL} NAME)
   endif()
 elseif(MACOSX)
+
+  if (WITH_FFMPEG)
+    include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
+    set(HAS_FFMPEG TRUE)
+  endif()
+
   set(SYSTEM_PCRE_FOUND FALSE)
   set(WITH_CRASH_HANDLER TRUE)
   # Apple Archs needs to be 32-bit for now.
