@@ -48,6 +48,6 @@ if (IS_DIRECTORY "${SM_FFMPEG_SRC_DIR}")
     TEST_COMMAND ""
   )
 else()
-  message(ERROR "Submodule missing. Run git submodule init && git submodule update first.")
+  message(ERROR "Submodule for ffmpeg missing. Run git submodule init && git submodule update first.")
 endif()
 

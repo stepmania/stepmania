@@ -1,5 +1,10 @@
 set(TOMDIR "${SM_EXTERN_DIR}/tomcrypt")
 
+if (NOT IS_DIRECTORY "${TOMDIR}")
+  message(ERROR "Submodule for tomcrypt missing. Run git submodule init && git submodule update first.")
+  return()
+endif()
+
 list(APPEND TOMCRYPT_MISC_CRYPT
   "${TOMDIR}/src/misc/crypt/crypt.c"
   "${TOMDIR}/src/misc/crypt/crypt_argchk.c"

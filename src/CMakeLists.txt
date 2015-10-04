@@ -9,7 +9,9 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 include(CMakeProject-rage.cmake)
-include(CMakeProject-rage-test.cmake)
+if (CAN_COMPILE_TESTS)
+  include(CMakeProject-rage-test.cmake)
+endif()
 
 # Main project is below.
 
