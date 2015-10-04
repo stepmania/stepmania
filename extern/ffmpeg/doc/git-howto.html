@@ -1,6 +1,6 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+<!DOCTYPE html>
 <html>
-<!-- Created on January 27, 2012 by texi2html 1.82 -->
+<!-- Created on January 21, 2014 by texi2html 1.82 -->
 <!--
 texi2html was written by: 
             Lionel Cons <Lionel.Cons@cern.ch> (original author)
@@ -12,79 +12,20 @@ Send bugs and suggestions to <texi2html-bug@nongnu.org>
 
 -->
 <head>
-<title>FFmpeg documentation : : </title>
+<title>FFmpeg documentation : Using git to develop FFmpeg: </title>
 
-<meta name="description" content=": ">
-<meta name="keywords" content="FFmpeg documentation : : ">
-<meta name="resource-type" content="document">
-<meta name="distribution" content="global">
+<meta name="description" content="Using git to develop FFmpeg: ">
+<meta name="keywords" content="FFmpeg documentation : Using git to develop FFmpeg: ">
 <meta name="Generator" content="texi2html 1.82">
-
-<style type="text/css">
-<!--
-a.summary-letter { text-decoration: none }
-a { color: #2D6198; }
-a:visited { color: #884488; }
-h1 a, h2 a, h3 a { text-decoration: inherit; color: inherit; }
-p { margin-left: 1em; margin-right: 1em; }
-table { margin-left: 2em; }
-pre { margin-left: 2em; }
-#footer { text-align: center; }
-#body { margin-left: 1em; margin-right: 1em; }
-body { background-color: #313131; margin: 0; }
-
-#container {
-    background-color: white;
-    color: #202020;
-    margin-left: 1em;
-    margin-right: 1em;
-}
-
-h1 {
-    background-color: #7BB37B;
-    border: 1px solid #6A996A;
-    color: #151515;
-    font-size: 1.2em;
-    padding-bottom: 0.2em;
-    padding-left: 0.4em;
-    padding-top: 0.2em;
-}
-
-h2 {
-    color: #313131;
-    font-size: 1.2em;
-}
-
-h3 {
-    color: #313131;
-    font-size: 0.8em;
-    margin-bottom: -8px;
-}
-
-.note {
-    margin: 1em;
-    border: 1px solid #bbc9d8;
-    background-color: #dde1e1;
-}
-
-.important {
-    margin: 1em;
-    border: 1px solid #d26767;
-    background-color: #f8e1e1;
-}
-
--->
-</style>
-
-<link rel="icon" href="favicon.png" type="image/png" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" type="text/css" href="default.css" />
 
+<link rel="icon" href="favicon.png" type="image/png" />
 </head>
-
-<body >
+<body>
 <div id="container">
-
 <div id="body">
+
 <a name="SEC_Top"></a>
 <h1 class="settitle">Using git to develop FFmpeg</h1>
 
@@ -109,13 +50,19 @@ h3 {
     <li><a name="toc-Sending-patches-for-review" href="#Sending-patches-for-review">2.11 Sending patches for review</a></li>
     <li><a name="toc-Renaming_002fmoving_002fcopying-files-or-contents-of-files" href="#Renaming_002fmoving_002fcopying-files-or-contents-of-files">2.12 Renaming/moving/copying files or contents of files</a></li>
   </ul></li>
-  <li><a name="toc-FFmpeg-specific" href="#FFmpeg-specific">3. FFmpeg specific</a>
+  <li><a name="toc-Git-configuration" href="#Git-configuration">3. Git configuration</a>
   <ul class="toc">
-    <li><a name="toc-Reverting-broken-commits" href="#Reverting-broken-commits">3.1 Reverting broken commits</a></li>
-    <li><a name="toc-Pushing-changes-to-remote-trees" href="#Pushing-changes-to-remote-trees">3.2 Pushing changes to remote trees</a></li>
-    <li><a name="toc-Finding-a-specific-svn-revision" href="#Finding-a-specific-svn-revision">3.3 Finding a specific svn revision</a></li>
+    <li><a name="toc-Personal-Git-installation" href="#Personal-Git-installation">3.1 Personal Git installation</a></li>
+    <li><a name="toc-Repository-configuration" href="#Repository-configuration">3.2 Repository configuration</a></li>
   </ul></li>
-  <li><a name="toc-Server-Issues" href="#Server-Issues">4. Server Issues</a></li>
+  <li><a name="toc-FFmpeg-specific" href="#FFmpeg-specific">4. FFmpeg specific</a>
+  <ul class="toc">
+    <li><a name="toc-Reverting-broken-commits" href="#Reverting-broken-commits">4.1 Reverting broken commits</a></li>
+    <li><a name="toc-Pushing-changes-to-remote-trees" href="#Pushing-changes-to-remote-trees">4.2 Pushing changes to remote trees</a></li>
+    <li><a name="toc-Finding-a-specific-svn-revision" href="#Finding-a-specific-svn-revision">4.3 Finding a specific svn revision</a></li>
+  </ul></li>
+  <li><a name="toc-pre_002dpush-checklist" href="#pre_002dpush-checklist">5. pre-push checklist</a></li>
+  <li><a name="toc-Server-Issues" href="#Server-Issues">6. Server Issues</a></li>
 </ul>
 </div>
 
@@ -174,6 +121,13 @@ Most distribution and operating system provide a package for it.
 <p>This will put the FFmpeg sources into the directory <var>&lt;target&gt;</var> and let
 you push back your changes to the remote repository.
 </p>
+<p>Make sure that you do not have Windows line endings in your checkouts,
+otherwise you may experience spurious compilation failures. One way to
+achieve this is to run
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">git config --global core.autocrlf false
+</pre></td></tr></table>
+
 
 <a name="Updating-the-source-tree-to-the-latest-revision"></a>
 <h2 class="section"><a href="git-howto.html#toc-Updating-the-source-tree-to-the-latest-revision">2.3 Updating the source tree to the latest revision</a></h2>
@@ -185,7 +139,7 @@ you push back your changes to the remote repository.
 can be remote. By default the master branch tracks the branch master in
 the remote origin.
 </p>
-<div class="float important">
+<div class="float alert alert-warning">
 <p><code>--rebase</code> (see below) is recommended.
 </p></div>
 <a name="Rebasing-your-local-branches"></a>
@@ -350,11 +304,38 @@ git commit
 </pre></td></tr></table>
 
 
+<a name="Git-configuration"></a>
+<h1 class="chapter"><a href="git-howto.html#toc-Git-configuration">3. Git configuration</a></h1>
+
+<p>In order to simplify a few workflows, it is advisable to configure both
+your personal Git installation and your local FFmpeg repository.
+</p>
+<a name="Personal-Git-installation"></a>
+<h2 class="section"><a href="git-howto.html#toc-Personal-Git-installation">3.1 Personal Git installation</a></h2>
+
+<p>Add the following to your &lsquo;<tt>~/.gitconfig</tt>&rsquo; to help <code>git send-email</code>
+and <code>git format-patch</code> detect renames:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">[diff]
+        renames = copy
+</pre></td></tr></table>
+
+<a name="Repository-configuration"></a>
+<h2 class="section"><a href="git-howto.html#toc-Repository-configuration">3.2 Repository configuration</a></h2>
+
+<p>In order to have <code>git send-email</code> automatically send patches
+to the ffmpeg-devel mailing list, add the following stanza
+to &lsquo;<tt>/path/to/ffmpeg/repository/.git/config</tt>&rsquo;:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">[sendemail]
+        to = ffmpeg-devel@ffmpeg.org
+</pre></td></tr></table>
+
 <a name="FFmpeg-specific"></a>
-<h1 class="chapter"><a href="git-howto.html#toc-FFmpeg-specific">3. FFmpeg specific</a></h1>
+<h1 class="chapter"><a href="git-howto.html#toc-FFmpeg-specific">4. FFmpeg specific</a></h1>
 
 <a name="Reverting-broken-commits"></a>
-<h2 class="section"><a href="git-howto.html#toc-Reverting-broken-commits">3.1 Reverting broken commits</a></h2>
+<h2 class="section"><a href="git-howto.html#toc-Reverting-broken-commits">4.1 Reverting broken commits</a></h2>
 
 <table><tr><td>&nbsp;</td><td><pre class="example">git reset &lt;commit&gt;
 </pre></td></tr></table>
@@ -373,7 +354,7 @@ the current branch history.
 <p>will replay local commits over the main repository allowing to edit, merge
 or remove some of them in the process.
 </p>
-<div class="float note">
+<div class="float alert alert-info">
 <p><code>git reset</code>, <code>git commit --amend</code> and <code>git rebase</code>
 rewrite history, so you should use them ONLY on your local or topic branches.
 The main repository will reject those changes.
@@ -385,7 +366,7 @@ The main repository will reject those changes.
 faulty commit disappear from the history.
 </p>
 <a name="Pushing-changes-to-remote-trees"></a>
-<h2 class="section"><a href="git-howto.html#toc-Pushing-changes-to-remote-trees">3.2 Pushing changes to remote trees</a></h2>
+<h2 class="section"><a href="git-howto.html#toc-Pushing-changes-to-remote-trees">4.2 Pushing changes to remote trees</a></h2>
 
 <table><tr><td>&nbsp;</td><td><pre class="example">git push
 </pre></td></tr></table>
@@ -408,7 +389,7 @@ Omitting <var>&lt;refspec&gt;</var> makes <code>git push</code> update all the r
 branches matching the local ones.
 </p>
 <a name="Finding-a-specific-svn-revision"></a>
-<h2 class="section"><a href="git-howto.html#toc-Finding-a-specific-svn-revision">3.3 Finding a specific svn revision</a></h2>
+<h2 class="section"><a href="git-howto.html#toc-Finding-a-specific-svn-revision">4.3 Finding a specific svn revision</a></h2>
 
 <p>Since version 1.7.1 git supports <var>:/foo</var> syntax for specifying commits
 based on a regular expression. see man gitrevisions
@@ -431,19 +412,48 @@ This commit can be checked out with
 
 <p>where <var>$SHA1</var> is the commit hash from the <code>git log</code> output.
 </p>
+
+<a name="pre_002dpush-checklist"></a>
+<h1 class="chapter"><a href="git-howto.html#toc-pre_002dpush-checklist">5. pre-push checklist</a></h1>
+
+<p>Once you have a set of commits that you feel are ready for pushing,
+work through the following checklist to doublecheck everything is in
+proper order. This list tries to be exhaustive. In case you are just
+pushing a typo in a comment, some of the steps may be unnecessary.
+Apply your common sense, but if in doubt, err on the side of caution.
+</p>
+<p>First, make sure that the commits and branches you are going to push
+match what you want pushed and that nothing is missing, extraneous or
+wrong. You can see what will be pushed by running the git push command
+with &ndash;dry-run first. And then inspecting the commits listed with
+<code>git log -p 1234567..987654</code>. The <code>git status</code> command
+may help in finding local changes that have been forgotten to be added.
+</p>
+<p>Next let the code pass through a full run of our testsuite.
+</p>
+<ul>
+<li> <code>make distclean</code>
+</li><li> <code>/path/to/ffmpeg/configure</code>
+</li><li> <code>make check</code>
+</li><li> if fate fails due to missing samples run <code>make fate-rsync</code> and retry
+</li></ul>
+
+<p>Make sure all your changes have been checked before pushing them, the
+testsuite only checks against regressions and that only to some extend. It does
+obviously not check newly added features/code to be working unless you have
+added a test for that (which is recommended).
+</p>
+<p>Also note that every single commit should pass the test suite, not just
+the result of a series of patches.
+</p>
+<p>Once everything passed, push the changes to your public ffmpeg clone and post a
+merge request to ffmpeg-devel. You can also push them directly but this is not
+recommended.
+</p>
 <a name="Server-Issues"></a>
-<h1 class="chapter"><a href="git-howto.html#toc-Server-Issues">4. Server Issues</a></h1>
+<h1 class="chapter"><a href="git-howto.html#toc-Server-Issues">6. Server Issues</a></h1>
 
 <p>Contact the project admins <a href="mailto:root@ffmpeg.org">root@ffmpeg.org</a> if you have technical
 problems with the GIT server.
-</p><div id="footer">
-<p>
- <font size="-1">
-  This document was generated by <em>Kyle</em> on <em>January 27, 2012</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
- </font>
- <br>
-</div></div>
-</p>
-</body>
-</html>
-</div>
+</p><footer class="footer pagination-right">
+<span class="label label-info">This document was generated by <em>Kyle Schwarz</em> on <em>January 21, 2014</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.</span></footer></div></div></body>
