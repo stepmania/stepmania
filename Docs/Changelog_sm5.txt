@@ -4,6 +4,10 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/10/04
+----------
+* [FFmpeg] Upgrade FFmpeg to 2.1.3 for Windows. [wolfman2000]
+
 2015/10/03
 ----------
 * [FFmpeg] Upgrade FFmpeg to 2.1.3 for Mac OS X. [wolfman2000]
