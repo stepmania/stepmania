@@ -1,3 +1,8 @@
+if (NOT IS_DIRECTORY "${SM_EXTERN_DIR}/cppformat")
+  message(ERROR "Submodule for cppformat missing. Run git submodule init && git submodule update first.")
+  return()
+endif()
+
 list(APPEND CPPFORMAT_SRC
   "cppformat/format.cc"
 )

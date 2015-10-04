@@ -1,5 +1,10 @@
+if (NOT CAN_COMPILE_TESTS)
+  message(STATUS "Unit test support disabled. If you wish to compile and run the unit tests, please update your compiler.")
+  return()
+endif()
+
 if (NOT IS_DIRECTORY "${SM_EXTERN_DIR}/googletest")
-  message(ERROR "Submodule missing. Run git submodule init && git submodule update first.")
+  message(ERROR "Submodule for googletest missing. Run git submodule init && git submodule update first.")
   return()
 endif()
 

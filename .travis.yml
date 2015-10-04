@@ -61,13 +61,37 @@ matrix:
                         - libxrandr-dev
                         - libglew-dev
 
+        -
+            env: CXX_COMPILER=g++-4.9 CC_COMPILER=gcc-4.9 BUILD_TYPE=Release WITH_FFMPEG=OFF
+            compiler: gcc
+            addons: &gcc49
+                apt:
+                    sources:
+                        - ubuntu-toolchain-r-test
+                    packages:
+                        - nasm
+                        - gcc-4.9
+                        - g++-4.9
+                        - libmad0-dev
+                        - libgtk2.0-dev
+                        - binutils-dev
+                        - libasound-dev
+                        - libpulse-dev
+                        - libjack-dev
+                        - libc6-dev
+                        - libogg-dev
+                        - libvorbis-dev
+                        - libxtst-dev
+                        - libxrandr-dev
+                        - libglew-dev
+
 before_install:
     # Set up valid submodules.
     - git submodule init
     - git submodule update extern/cppformat
     - git submodule update extern/tommath
     - git submodule update extern/tomcrypt
-    - git submodule update extern/googletest
+    - if [[ "${CXX_COMPILER}" != "g++-4.9" ]]; then git submodule update extern/googletest; fi
     - if [[ "${WITH_FFMPEG}" == "ON" ]]; then git submodule update extern/ffmpeg-git; fi
 
 install:

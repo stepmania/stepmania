@@ -45,6 +45,18 @@ include("${SM_CMAKE_DIR}/SMDefs.cmake")
 # Put the predefined targets in separate groups.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+# Determine which projects can be compiled in.
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+  message(STATUS "Using GNU compiler.")
+  if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
+    set(CAN_COMPILE_TESTS OFF)
+  else()
+    set(CAN_COMPILE_TESTS ON)
+  endif()
+else()
+  set(CAN_COMPILE_TESTS ON)
+endif()
+
 # Checks the standard include directories for c-style headers.
 # We may use C++ in this project, but the check works better with plain C headers.
 include(CheckIncludeFiles)
@@ -256,7 +268,7 @@ elseif(MACOSX)
   set(CMAKE_OSX_ARCHITECTURES "i386")
   set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")
   set(CMAKE_OSX_DEPLOYMENT_TARGET_FULL "10.7.0")
-  
+
   find_library(MAC_FRAME_ACCELERATE Accelerate ${CMAKE_SYSTEM_FRAMEWORK_PATH})
   find_library(MAC_FRAME_APPKIT AppKit ${CMAKE_SYSTEM_FRAMEWORK_PATH})
   find_library(MAC_FRAME_AUDIOTOOLBOX AudioToolbox ${CMAKE_SYSTEM_FRAMEWORK_PATH})
