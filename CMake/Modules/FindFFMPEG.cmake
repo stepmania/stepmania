@@ -36,91 +36,15 @@
 # Originally from VTK project
 
 
-find_path(FFMPEG_INCLUDE_DIR1 avformat.h
+find_path(FFMPEG_INCLUDE_DIR libavformat/avformat.h
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
-  $ENV{FFMPEG_DIR}/libavformat
-  $ENV{FFMPEG_DIR}/include/libavformat
   $ENV{FFMPEG_DIR}/include/ffmpeg
   /usr/local/include/ffmpeg
   /usr/include/ffmpeg
-  /usr/include/libavformat
-  /usr/include/ffmpeg/libavformat
-  /usr/local/include/libavformat
+  /usr/include/
+  /usr/local/include/
 )
-
-find_path(FFMPEG_INCLUDE_DIR2 avutil.h
-  $ENV{FFMPEG_DIR}
-  $ENV{FFMPEG_DIR}/ffmpeg
-  $ENV{FFMPEG_DIR}/libavutil
-  $ENV{FFMPEG_DIR}/include/libavutil
-  $ENV{FFMPEG_DIR}/include/ffmpeg
-  /usr/local/include/ffmpeg
-  /usr/include/ffmpeg
-  /usr/include/libavutil
-  /usr/include/ffmpeg/libavutil
-  /usr/local/include/libavutil
-)
-
-find_path(FFMPEG_INCLUDE_DIR3 avcodec.h
-  $ENV{FFMPEG_DIR}
-  $ENV{FFMPEG_DIR}/ffmpeg
-  $ENV{FFMPEG_DIR}/libavcodec
-  $ENV{FFMPEG_DIR}/include/libavcodec
-  $ENV{FFMPEG_DIR}/include/ffmpeg
-  /usr/local/include/ffmpeg
-  /usr/include/ffmpeg
-  /usr/include/libavcodec
-  /usr/include/ffmpeg/libavcodec
-  /usr/local/include/libavcodec
-)
-
-find_path(FFMPEG_INCLUDE_DIR4 swscale.h
-  $ENV{FFMPEG_DIR}
-  $ENV{FFMPEG_DIR}/ffmpeg
-  $ENV{FFMPEG_DIR}/libswscale
-  $ENV{FFMPEG_DIR}/include/libswscale
-  $ENV{FFMPEG_DIR}/include/ffmpeg
-  /usr/local/include/ffmpeg
-  /usr/include/ffmpeg
-  /usr/include/libswscale
-  /usr/include/ffmpeg/libswscale
-  /usr/local/include/libswscale
-)
-
-find_path(FFMPEG_INCLUDE_DIR5 avdevice.h
-  $ENV{FFMPEG_DIR}
-  $ENV{FFMPEG_DIR}/ffmpeg
-  $ENV{FFMPEG_DIR}/libavdevice
-  $ENV{FFMPEG_DIR}/include/libavdevice
-  $ENV{FFMPEG_DIR}/include/ffmpeg
-  /usr/local/include/ffmpeg
-  /usr/include/ffmpeg
-  /usr/include/libavdevice
-  /usr/include/ffmpeg/libavdevice
-  /usr/local/include/libavdevice
-)
-
-if(FFMPEG_INCLUDE_DIR1)
-  if(FFMPEG_INCLUDE_DIR2)
-    if(FFMPEG_INCLUDE_DIR3)
-      set(FFMPEG_INCLUDE_DIR ${FFMPEG_INCLUDE_DIR1}
-                             ${FFMPEG_INCLUDE_DIR2}
-                             ${FFMPEG_INCLUDE_DIR3})
-    endif()
-  endif()
-endif()
-
-if(FFMPEG_INCLUDE_DIR4)
-  set(FFMPEG_INCLUDE_DIR ${FFMPEG_INCLUDE_DIR}
-                         ${FFMPEG_INCLUDE_DIR4})
-endif()
-
-if(FFMPEG_INCLUDE_DIR5)
-  set(FFMPEG_INCLUDE_DIR ${FFMPEG_INCLUDE_DIR}
-                         ${FFMPEG_INCLUDE_DIR5}
-                         ${FFMPEG_INCLUDE_DIR5}/..)
-endif()
 
 find_library(FFMPEG_avformat_LIBRARY avformat
   $ENV{FFMPEG_DIR}
