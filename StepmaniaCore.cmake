@@ -1,5 +1,5 @@
-
 # Include the macros and functions.
+
 include(${CMAKE_CURRENT_LIST_DIR}/CMake/CMakeMacros.cmake)
 
 # Set up helper variables for future configuring.
@@ -221,6 +221,13 @@ endif()
 find_package(nasm)
 find_package(yasm)
 
+find_package(BZip2)
+if (NOT ${BZIP2_FOUND} AND NOT MSVC)
+  message(FATAL_ERROR "Bzip2 support required.")
+endif()
+
+find_package(Iconv)
+
 find_package(Threads)
 if (${Threads_FOUND})
   set(HAS_PTHREAD TRUE)
@@ -317,11 +324,6 @@ elseif(LINUX)
 
   find_package(Pcre)
   set(SYSTEM_PCRE_FOUND ${PCRE_FOUND})
-
-  find_package("BZip2")
-  if (NOT(${BZIP2_FOUND}))
-    message(FATAL_ERROR "Bzip2 support required.")
-  endif()
 
   find_package("ZLIB")
   if (NOT(${ZLIB_FOUND}))
