@@ -20,7 +20,7 @@ public:
 	/* Return values for Read(). */
 	enum {
 		/* An error occurred; GetError() will return a description of the error. */
-		ERROR = -1,
+		_ERROR = -1,
 		END_OF_FILE = -2,
 
 		/* A nonblocking buffer in the filter chain has underrun, and no data is

@@ -176,16 +176,16 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 		if( iBytesRead == -1 )
 			FAIL_M( f.GetError() );
 
-		sRequestPayload = "--" + sBoundary + "\r\n" + 
+		sRequestPayload = "--" + RString(sBoundary) + "\r\n" + 
 			"Content-Disposition: form-data; name=\"name\"\r\n" +
 			"\r\n" +
 			"Chris\r\n" +
-			"--" + sBoundary + "\r\n" + 
+			"--" + RString(sBoundary) + "\r\n" + 
 			"Content-Disposition: form-data; name=\"userfile\"; filename=\"" + Basename(sSrcFile) + "\"\r\n" +
 			"Content-Type: application/zip\r\n" + 
 			"\r\n" +
 			sRequestPayload + "\r\n" +
-			"--" + sBoundary + "--";
+			"--" + RString(sBoundary) + "--";
 	}
 	/*
 	if( sRequestPayload.size() > 0 )

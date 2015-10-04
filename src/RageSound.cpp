@@ -279,7 +279,7 @@ int RageSound::GetDataToPlay( float *pBuffer, int iFrames, int64_t &iStreamFrame
 		/* Read data from our source. */
 		int iGotFrames = m_pSource->RetriedRead( pBuffer + (iFramesStored * m_pSource->GetNumChannels()), iFrames, &iSourceFrame, &fRate );
 
-		if( iGotFrames == RageSoundReader::ERROR )
+		if( iGotFrames == RageSoundReader::_ERROR )
 		{
 			m_sError = m_pSource->GetError();
 			LOG->Warn( "Decoding %s failed: %s", GetLoadedFilePath().c_str(), m_sError.c_str() );

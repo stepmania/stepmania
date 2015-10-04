@@ -7,6 +7,7 @@
 #else
 #define _tcslen strlen
 #define _tcscpy strcpy
+#define MAX_PATH 1024
 typedef char TCHAR;
 #endif
 
@@ -14,8 +15,6 @@ typedef char TCHAR;
 #include "CreateZip.h"
 #include "RageFile.h"
 #include "RageUtil.h"
-
-#define MAX_PATH 1024
 
 // TODO: remove header "extra fields" (the 3 dates)
 // Adapted for StepMania from http://www.codeproject.com/KB/files/zip_utils.aspx

@@ -37,7 +37,13 @@ static void init_destination( jpeg::j_compress_ptr cinfo )
 }
 
 /* Empty the output buffer; called whenever buffer is full. */
-static jpeg::boolean empty_output_buffer( jpeg::j_compress_ptr cinfo )
+static
+#if defined(WIN32)
+boolean
+#else
+jpeg::boolean
+#endif
+empty_output_buffer(jpeg::j_compress_ptr cinfo)
 {
 	my_destination_mgr * dest = (my_destination_mgr *) cinfo->dest;
 	dest->f->Write( dest->buffer, OUTPUT_BUFFER_SIZE );

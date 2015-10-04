@@ -35,7 +35,7 @@ RageFileObjInflate::RageFileObjInflate( RageFileBasic *pFile, int iUncompressedS
 	if( err == Z_MEM_ERROR )
 		RageException::Throw( "inflateInit2( %i ): out of memory.", -MAX_WBITS );
 	if( err != Z_OK )
-		WARN( ssprintf("Huh? inflateInit2() err = %i", err) );
+		_WARN( ssprintf("Huh? inflateInit2() err = %i", err) );
 
 	decomp_buf_ptr = decomp_buf;
 	m_iFilePos = 0;
@@ -71,7 +71,7 @@ RageFileObjInflate::~RageFileObjInflate()
 
 	int err = inflateEnd( m_pInflate );
 	if( err != Z_OK )
-		WARN( ssprintf("Huh? inflateEnd() err = %i", err) );
+		_WARN( ssprintf("Huh? inflateEnd() err = %i", err) );
 
 	delete m_pInflate;
 }
@@ -126,7 +126,7 @@ int RageFileObjInflate::ReadInternal( void *buf, size_t bytes )
 		case Z_OK:
 			break;
 		default:
-			WARN( ssprintf("Huh? inflate err %i", err) );
+			_WARN( ssprintf("Huh? inflate err %i", err) );
 		}
 
 		const int used = (char *)m_pInflate->next_in - decomp_buf_ptr;
@@ -203,7 +203,7 @@ RageFileObjDeflate::RageFileObjDeflate( RageFileBasic *pFile )
 	if( err == Z_MEM_ERROR )
 		RageException::Throw( "inflateInit2( %i ): out of memory.", -MAX_WBITS );
 	if( err != Z_OK )
-		WARN( ssprintf("Huh? inflateInit2() err = %i", err) );
+		_WARN( ssprintf("Huh? inflateInit2() err = %i", err) );
 
 }
 
@@ -216,7 +216,7 @@ RageFileObjDeflate::~RageFileObjDeflate()
 
 	int err = deflateEnd( m_pDeflate );
 	if( err != Z_OK )
-		WARN( ssprintf("Huh? deflateEnd() err = %i", err) );
+		_WARN( ssprintf("Huh? deflateEnd() err = %i", err) );
 
 	delete m_pDeflate;
 }

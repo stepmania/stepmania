@@ -97,7 +97,7 @@ RString add_extension_to_relative_path_from_found_file(
 	size_t rel_last_slash= after_slash_or_zero(relative_path);
 	size_t found_last_slash= after_slash_or_zero(found_file);
 	return relative_path.Left(rel_last_slash) +
-		found_file.substr(found_last_slash, string::npos);
+		RString(found_file.substr(found_last_slash, string::npos));
 }
 
 bool verify_arg_count(RString cmd, vector<RString>& args, size_t req)
@@ -392,7 +392,7 @@ void actor_template_t::store_cmd(RString const& cmd_name, RString const& full_cm
 void actor_template_t::store_field(RString const& field_name, RString const& value, bool cmd_convert, RString const& pref, RString const& suf)
 {
 	// OITG apparently allowed "Oncommand" as valid.
-	if(field_name.Right(7).MakeLower() != "command")
+	if(field_name.Right(7).ToLower() != "command")
 	{
 		cmd_convert= false;
 	}

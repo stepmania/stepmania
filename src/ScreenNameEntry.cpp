@@ -98,7 +98,7 @@ void ScreenNameEntry::ScrollingText::DrawPrimitives()
 char ScreenNameEntry::ScrollingText::GetClosestChar( float fFakeBeat ) const
 {
 	ASSERT( fFakeBeat >= 0.f );
-	return CHARS_CHOICES[lrintf(fFakeBeat) % CHARS_CHOICES.size()];
+	return CHARS_CHOICES[(int)lrintf(fFakeBeat) % CHARS_CHOICES.size()];
 }
 
 // return value is relative to gray arrows

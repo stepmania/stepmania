@@ -232,7 +232,7 @@ FontPage::~FontPage()
 	}
 }
 
-int Font::GetLineWidthInSourcePixels( const wstring &szLine ) const
+int SMFont::GetLineWidthInSourcePixels( const wstring &szLine ) const
 {
 	int iLineWidth = 0;
 
@@ -242,7 +242,7 @@ int Font::GetLineWidthInSourcePixels( const wstring &szLine ) const
 	return iLineWidth;
 }
 
-int Font::GetLineHeightInSourcePixels( const wstring &szLine ) const
+int SMFont::GetLineHeightInSourcePixels( const wstring &szLine ) const
 {
 	int iLineHeight = 0;
 
@@ -254,7 +254,7 @@ int Font::GetLineHeightInSourcePixels( const wstring &szLine ) const
 }
 
 // width is a pointer so that we can return the used width through it.
-int Font::GetGlyphsThatFit(const wstring& line, int* width) const
+int SMFont::GetGlyphsThatFit(const wstring& line, int* width) const
 {
 	if(*width == 0)
 	{
@@ -271,16 +271,16 @@ int Font::GetGlyphsThatFit(const wstring& line, int* width) const
 	return i;
 }
 
-Font::Font(): m_iRefCount(1), path(""), m_apPages(), m_pDefault(NULL),
+SMFont::SMFont(): m_iRefCount(1), path(""), m_apPages(), m_pDefault(NULL),
 	m_iCharToGlyph(), m_bRightToLeft(false),
 	// strokes aren't shown by default, hence the Color.
 	m_DefaultStrokeColor(RageColor(0,0,0,0)), m_sChars("") {}
-Font::~Font()
+SMFont::~SMFont()
 {
 	Unload();
 }
 
-void Font::Unload()
+void SMFont::Unload()
 {
 	//LOG->Trace("Font:Unload '%s'",path.c_str());
 	for( unsigned i = 0; i < m_apPages.size(); ++i )
@@ -294,7 +294,7 @@ void Font::Unload()
 	 * aren't still pointing to us. */
 }
 
-void Font::Reload()
+void SMFont::Reload()
 {
 	if(path.empty())
 	{
@@ -306,7 +306,7 @@ void Font::Reload()
 }
 
 
-void Font::AddPage( FontPage *m_pPage )
+void SMFont::AddPage( FontPage *m_pPage )
 {
 	m_apPages.push_back( m_pPage );
 
@@ -317,7 +317,7 @@ void Font::AddPage( FontPage *m_pPage )
 	}
 }
 
-void Font::MergeFont(Font &f)
+void SMFont::MergeFont(SMFont &f)
 {
 	/* If we don't have a font page yet, and f does, grab the default font
 	 * page.  It'll usually be overridden later on by one of our own font
@@ -337,7 +337,7 @@ void Font::MergeFont(Font &f)
 	f.m_apPages.clear();
 }
 
-const glyph &Font::GetGlyph( wchar_t c ) const
+const glyph &SMFont::GetGlyph( wchar_t c ) const
 {
 	/* XXX: This is kind of nasty, but the parts that touch this are dark and
 	 * scary. --Colby
@@ -367,7 +367,7 @@ const glyph &Font::GetGlyph( wchar_t c ) const
 	return *it->second;
 }
 
-bool Font::FontCompleteForString( const wstring &str ) const
+bool SMFont::FontCompleteForString( const wstring &str ) const
 {
 	map<wchar_t,glyph*>::const_iterator mapDefault = m_iCharToGlyph.find( FONT_DEFAULT_GLYPH );
 	if( mapDefault == m_iCharToGlyph.end() )
@@ -383,7 +383,7 @@ bool Font::FontCompleteForString( const wstring &str ) const
 	return true;
 }
 
-void Font::CapsOnly()
+void SMFont::CapsOnly()
 {
 	/* For each uppercase character that we have a mapping for, add
 	 * a lowercase one. */
@@ -398,7 +398,7 @@ void Font::CapsOnly()
 	}
 }
 
-void Font::SetDefaultGlyph( FontPage *pPage )
+void SMFont::SetDefaultGlyph( FontPage *pPage )
 {
 	ASSERT( pPage != NULL );
 	if(pPage->m_aGlyphs.empty())
@@ -413,7 +413,7 @@ void Font::SetDefaultGlyph( FontPage *pPage )
 
 
 // Given the INI for a font, find all of the texture pages for the font.
-void Font::GetFontPaths( const RString &sFontIniPath, vector<RString> &asTexturePathsOut )
+void SMFont::GetFontPaths( const RString &sFontIniPath, vector<RString> &asTexturePathsOut )
 {
 	RString sPrefix = SetExtension( sFontIniPath, "" );
 	vector<RString> asFiles;
@@ -426,7 +426,7 @@ void Font::GetFontPaths( const RString &sFontIniPath, vector<RString> &asTexture
 	}
 }
 
-RString Font::GetPageNameFromFileName( const RString &sFilename )
+RString SMFont::GetPageNameFromFileName( const RString &sFilename )
 {
 	size_t begin = sFilename.find_first_of( '[' );
 	if( begin == string::npos )
@@ -443,7 +443,7 @@ RString Font::GetPageNameFromFileName( const RString &sFilename )
 	return sFilename.substr( begin, end-begin+1 );
 }
 
-void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RString &sTexturePath, const RString &sPageName, RString sChars )
+void SMFont::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RString &sTexturePath, const RString &sPageName, RString sChars )
 {
 	cfg.m_sTexturePath = sTexturePath;
 
@@ -740,7 +740,7 @@ static vector<RString> LoadStack;
  * However, if it doesn't, we don't know what it is and the font will receive
  * no default mapping.  A font isn't useful with no characters mapped.
  */
-void Font::Load( const RString &sIniPath, RString sChars )
+void SMFont::Load( const RString &sIniPath, RString sChars )
 {
 	if(GetExtension(sIniPath).CompareNoCase("ini"))
 	{
@@ -822,7 +822,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 				continue;
 			}
 
-			Font subfont;
+			SMFont subfont;
 			subfont.Load(sPath,"");
 			MergeFont(subfont);
 		}

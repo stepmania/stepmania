@@ -355,7 +355,7 @@ bool UnlockEntry::IsValid() const
 		return true;
 
 	default:
-		WARN( ssprintf("%i", m_Type) );
+		_WARN( ssprintf("%i", m_Type) );
 		return false;
 	}
 }

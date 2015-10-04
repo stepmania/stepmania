@@ -661,7 +661,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 				filename != song_dir_listing.end(); ++filename)
 		{
 			bool matched_something= false;
-			RString file_ext= GetExtension(*filename).MakeLower();
+			RString file_ext= GetExtension(*filename).ToLower();
 			if(!file_ext.empty())
 			{
 				for(size_t tf= 0; tf < lists_to_fill.size(); ++ tf)
