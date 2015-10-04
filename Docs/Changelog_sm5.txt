@@ -4,6 +4,14 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/10/04
+----------
+* [FFmpeg] Upgrade FFmpeg to 2.1.3 for Windows. [wolfman2000]
+
+2015/10/03
+----------
+* [FFmpeg] Upgrade FFmpeg to 2.1.3 for Mac OS X. [wolfman2000]
+
 2015/10/02
 ----------
 * [Edit Mode] .sm files will no longer be saved when split timing is used
@@ -26,8 +34,7 @@ ________________________________________________________________________________
 
 2015/09/08
 ----------
-* [Compiling] Compiling stepmania on Windows with the locale set to Japanese
-  should work now. [wolfman]
+* [Compiling] Compiling stepmania on Windows with the locale set to Japanese should work now. [wolfman2000]
 
 2015/09/06
 ----------
@@ -62,7 +69,7 @@ ________________________________________________________________________________
 
 2015/08/20
 ----------
-* [Minimaid] Minimaid support built in by default instead of off by default. [wolfman]
+* [Minimaid] Minimaid support built in by default instead of off by default. [wolfman2000]
 * [Options] Put AllowExtraStage on Advanced Options screen in default. [kyzentun]
 
 2015/08/19
@@ -91,7 +98,7 @@ ________________________________________________________________________________
 2015/07/19
 ----------
 * [Pump] Added TimingWindowSecondsCheckpoint for the timing window that
-  checkpoint holds allow you to release for. [wolfman]
+  checkpoint holds allow you to release for. [wolfman2000]
 
 2015/07/18
 ----------

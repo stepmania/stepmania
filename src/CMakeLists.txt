@@ -158,9 +158,9 @@ set_target_properties("${SM_EXE_NAME}" PROPERTIES
 )
 
 list(APPEND SM_WINDOWS_PROGRAM_DLLS
-  "${SM_PROGRAM_DIR}/avcodec-53.dll"
-  "${SM_PROGRAM_DIR}/avformat-53.dll"
-  "${SM_PROGRAM_DIR}/avutil-51.dll"
+  "${SM_PROGRAM_DIR}/avcodec-55.dll"
+  "${SM_PROGRAM_DIR}/avformat-55.dll"
+  "${SM_PROGRAM_DIR}/avutil-52.dll"
   "${SM_PROGRAM_DIR}/msvcp100.dll"
   "${SM_PROGRAM_DIR}/msvcp110.dll"
   "${SM_PROGRAM_DIR}/msvcr100.dll"
@@ -213,12 +213,15 @@ elseif(APPLE)
     XCODE_ATTRIBUTE_INFOPLIST_PREFIX_HEADER "${SM_XCODE_DIR}/plistHelper.hpp"
     XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/archutils/Darwin/StepMania.pch"
     XCODE_ATTRIBUTE_GCC_ENABLE_CPP_EXCEPTIONS "NO"
-    XCODE_ATTRIBUTE_LIBRARY_SEARCH_PATHS "${SM_XCODE_DIR}/ffmpeg/lib ${SM_XCODE_DIR}/Libraries"
-    XCODE_ATTRIBUTE_OTHER_LDFLAGS "-lbz2"
+    XCODE_ATTRIBUTE_LIBRARY_SEARCH_PATHS "${SM_XCODE_DIR}/Libraries"
   )
 
   sm_add_compile_definition("${SM_EXE_NAME}" _XOPEN_SOURCE)
-  
+
+  if (${HAS_FFMPEG})
+    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_FFMPEG)
+  endif()
+
   if (CMAKE_BUILD_TYPE EQUAL "Debug")
     set(SM_APP_RELEASE_NAME "${SM_NAME_DEBUG}")
   elseif(CMAKE_BUILD_TYPE EQUAL "MinSizeRel")
@@ -421,15 +424,19 @@ elseif(APPLE)
     "vorbis"
   )
   list(APPEND SMDATA_LINK_LIB
+    "${BZIP2_LIBRARY_RELEASE}"
+    "${ICONV_LIBRARIES}"
     "pcre"
-    "avcodec"
-    "avdevice"
-    "avfilter"
-    "avformat"
-    "avutil"
-    "swresample"
-    "swscale"
   )
+
+  if(HAS_FFMPEG)
+    list(APPEND SMDATA_LINK_LIB
+      "${SM_FFMPEG_ROOT}/libavformat/libavformat.a"
+      "${SM_FFMPEG_ROOT}/libavcodec/libavcodec.a"
+      "${SM_FFMPEG_ROOT}/libswscale/libswscale.a"
+      "${SM_FFMPEG_ROOT}/libavutil/libavutil.a"
+    )
+  endif()
 else() # Unix / Linux
   # TODO: Remember to find and locate the zip archive files.
   list(FIND SMDATA_LINK_LIB "jpeg" JPEG_INDEX)
@@ -585,10 +592,16 @@ else()
       "${SM_EXTERN_DIR}/vorbis"
     )
   endif()
-list(APPEND SM_INCLUDE_DIRS
-    "${SM_XCODE_DIR}/ffmpeg/include"
+  list(APPEND SM_INCLUDE_DIRS
     "archutils/Unix"
   )
+  if(HAS_FFMPEG)
+    add_dependencies("${SM_EXE_NAME}" "ffmpeg")
+    list(APPEND SM_INCLUDE_DIRS
+      "${SM_FFMPEG_SRC_DIR}"
+      "${SM_FFMPEG_ROOT}"
+    )
+  endif()
 endif()
 
 if(WIN32)
@@ -615,9 +628,9 @@ if(NOT APPLE)
     sm_join("${SM_FULL_INSTALLATION_PATH_LIST}" "/" SM_FULL_INSTALLATION_PATH)
     # Hardcoding the values for now since the foreach loop is not working as intended.
     install(TARGETS "${SM_EXE_NAME}" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/avcodec-53.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/avformat-53.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/avutil-51.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
+    install(FILES "${SM_PROGRAM_DIR}/avcodec-55.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
+    install(FILES "${SM_PROGRAM_DIR}/avformat-55.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
+    install(FILES "${SM_PROGRAM_DIR}/avutil-52.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/msvcp100.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/msvcp110.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/msvcr100.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")

@@ -1,5 +1,5 @@
-
 # Include the macros and functions.
+
 include(${CMAKE_CURRENT_LIST_DIR}/CMake/CMakeMacros.cmake)
 
 # Set up helper variables for future configuring.
@@ -224,6 +224,13 @@ endif()
 find_package(nasm)
 find_package(yasm)
 
+find_package(BZip2)
+if (NOT ${BZIP2_FOUND} AND NOT MSVC)
+  message(FATAL_ERROR "Bzip2 support required.")
+endif()
+
+find_package(Iconv)
+
 find_package(Threads)
 if (${Threads_FOUND})
   set(HAS_PTHREAD TRUE)
@@ -235,7 +242,7 @@ if(WIN32)
   set(SYSTEM_PCRE_FOUND FALSE)
   find_package(DirectX REQUIRED)
 
-  if (MINGW)
+  if (MINGW AND WITH_FFMPEG)
     include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
     set(HAS_FFMPEG TRUE)
   else()
@@ -261,6 +268,12 @@ if(WIN32)
     get_filename_component(LIB_AVUTIL ${LIB_AVUTIL} NAME)
   endif()
 elseif(MACOSX)
+
+  if (WITH_FFMPEG)
+    include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
+    set(HAS_FFMPEG TRUE)
+  endif()
+
   set(SYSTEM_PCRE_FOUND FALSE)
   set(WITH_CRASH_HANDLER TRUE)
   # Apple Archs needs to be 32-bit for now.
@@ -320,11 +333,6 @@ elseif(LINUX)
 
   find_package(Pcre)
   set(SYSTEM_PCRE_FOUND ${PCRE_FOUND})
-
-  find_package("BZip2")
-  if (NOT(${BZIP2_FOUND}))
-    message(FATAL_ERROR "Bzip2 support required.")
-  endif()
 
   find_package("ZLIB")
   if (NOT(${ZLIB_FOUND}))
