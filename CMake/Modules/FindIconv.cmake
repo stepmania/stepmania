@@ -6,8 +6,6 @@
 # ICONV_INCLUDE_DIR - The Iconv include directory.
 # ICONV_LIBRARIES - The library file to link to.
 
-include(CheckCxxSourceCompiles)
-
 if (ICONV_INCLUDE_DIR AND ICONV_LIBRARIES)
   # Already in cache, so don't repeat the finding procedures.
   set(ICONV_FIND_QUIETLY TRUE)
