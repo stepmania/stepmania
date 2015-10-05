@@ -10,7 +10,7 @@ install:
 - cmd: >-
     choco install cmake
 
-    choco install git --package-parameters=GitAndUnixToolsOnPath
+    choco install git
 before_build:
 - cmd: >-
     echo Running cmake now...
