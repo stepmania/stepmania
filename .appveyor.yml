@@ -1,0 +1,24 @@
+version: 5.0.9.{build}.{branch}
+pull_requests:
+  do_not_increment_build_number: true
+skip_tags: true
+os: Visual Studio 2015
+configuration: Release
+shallow_clone: true
+clone_folder: C:\Repos\wolfmania
+install:
+- cmd: >-
+    choco install cmake
+
+    choco install git /GitAndUnixToolsOnPath
+before_build:
+- cmd: >-
+    echo Running cmake now...
+
+    cd C:\Repos\wolfmania\Build
+
+    cmake -G "Visual Studio 14 2015" ..
+build:
+  project: C:\Repos\wolfmania\Build\StepMania.sln
+  verbosity: normal
+
