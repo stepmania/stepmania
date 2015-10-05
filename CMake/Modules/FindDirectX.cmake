@@ -10,16 +10,20 @@ if(NOT WIN32)
   return()
 endif()
 
+# TODO: See if the paths listed below are enough.
+
 set(DIRECTX_INCLUDE_SEARCH_PATHS
   # TODO: Do not be limited to x86 in the future.
   "C:/Program Files (x86)/Microsoft DirectX SDK (June 2010)/Include"
   "C:/DXSDK/Include"
+  "C:/Program Files (x86)/Microsoft DirectX SDK/Include"
 )
 
 set(DIRECTX_LIBRARY_SEARCH_PATHS
   # TODO: Do not be limited to x86 in the future.
   "C:/Program Files (x86)/Microsoft DirectX SDK (June 2010)/Lib/x86"
   "C:/DXSDK/Include/Lib/x86"
+  "C:/Program Files (x86)/Microsoft DirectX SDK/Lib/x86"
 )
 
 find_path(DIRECTX_INCLUDE_DIR
