@@ -9,12 +9,14 @@ clone_folder: C:\Repos\wolfmania
 install:
 - cmd: >-
     choco install cmake
-
-    choco install git
-
-    setx PATH %PATH%
 before_build:
 - cmd: >-
+    git parse-rev --short HEAD > gitRev.txt
+
+    set /p GIT_COMMIT=<gitRev.txt
+
+    echo Working on git commit %GIT_COMMIT%
+    
     echo Running cmake now...
 
     cd C:\Repos\wolfmania\Build
