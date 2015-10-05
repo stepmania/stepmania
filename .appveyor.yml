@@ -9,11 +9,6 @@ clone_depth: 1
 clone_folder: C:\Repos\wolfmania
 install:
 - cmd: >-
-    choco install cmake
-before_build:
-- cmd: >-
-    cd C:\Repos\wolfmania\Build
-
     git rev-parse --short HEAD > gitRev.txt
 
     set /p GIT_COMMIT=<gitRev.txt
@@ -21,6 +16,11 @@ before_build:
     echo Working on git commit %GIT_COMMIT%
     
     echo Running cmake now...
+
+    choco install cmake
+before_build:
+- cmd: >-
+    cd Build
 
     cmake -G "Visual Studio 14 2015" ..
 build:
