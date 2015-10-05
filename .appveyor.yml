@@ -11,7 +11,7 @@ install:
     choco install cmake
 before_build:
 - cmd: >-
-    git parse-rev --short HEAD > gitRev.txt
+    git rev-parse --short HEAD > gitRev.txt
 
     set /p GIT_COMMIT=<gitRev.txt
 
