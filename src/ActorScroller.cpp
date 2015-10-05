@@ -7,6 +7,7 @@
 #include "RageLog.h"
 #include "ActorUtil.h"
 #include "LuaBinding.h"
+#include <limits>
 
 using std::vector;
 
@@ -236,7 +237,7 @@ void ActorScroller::PositionItems()
  * in m_SubActors[0]. */
 void ActorScroller::ShiftSubActors( int iDist )
 {
-	if( iDist != INT_MAX )
+	if( iDist != std::numeric_limits<int>::max() )
 		CircularShift( m_SubActors, iDist );
 }
 

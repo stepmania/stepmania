@@ -42,6 +42,7 @@
 
 #include <ctime>
 #include <set>
+#include <limits>
 
 using std::vector;
 using std::string;
@@ -1304,7 +1305,7 @@ int GameState::GetSmallestNumStagesLeftForAnyHumanPlayer() const
 	{
 		return 999;
 	}
-	int iSmallest = INT_MAX;
+	int iSmallest = std::numeric_limits<int>::max();
 	FOREACH_HumanPlayer( p )
 	{
 		iSmallest = min( iSmallest, m_iPlayerStageTokens[p] );

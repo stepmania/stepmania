@@ -9,7 +9,7 @@
 #include "GameManager.h"
 #include "LocalizedString.h"
 #include "PlayerNumber.h"
-#include <float.h>
+#include <limits>
 
 #include <unordered_map>
 
@@ -379,7 +379,8 @@ void DisplayBpms::Add( float f )
 
 float DisplayBpms::GetMin() const
 {
-	float fMin = FLT_MAX;
+	float const maxFloat = std::numeric_limits<float>::max();
+	float fMin = maxFloat;
 	for (auto const &f: vfBpms)
 	{
 		if( f != -1 )
@@ -387,7 +388,7 @@ float DisplayBpms::GetMin() const
 			fMin = std::min( fMin, f );
 		}
 	}
-	if( fMin == FLT_MAX )
+	if( fMin == maxFloat )
 	{
 		return 0;
 	}

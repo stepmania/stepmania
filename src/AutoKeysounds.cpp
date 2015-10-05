@@ -30,6 +30,7 @@
 #include "RageSoundManager.h"
 #include "RageLog.h"
 #include "RageSoundReader_FileReader.h"
+#include <limits>
 
 using std::vector;
 
@@ -50,13 +51,14 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 	 * Add all current autoplay sounds in both players to the chain.
 	 */
 	int iNumTracks = m_ndAutoKeysoundsOnly[GAMESTATE->GetMasterPlayerNumber()].GetNumTracks();
+	int const maxInt = std::numeric_limits<int>::max();
 	for( int t = 0; t < iNumTracks; t++ )
 	{
 		int iRow = -1;
-		while(1)
+		for(;;)
 		{
 			/* Find the next row that either player has a note on. */
-			int iNextRow = INT_MAX;
+			int iNextRow = maxInt;
 			FOREACH_EnabledPlayer(pn)
 			{
 				// XXX Hack. Enabled players need not have their own note data.
@@ -73,7 +75,7 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 				}
 			}
 
-			if( iNextRow == INT_MAX )
+			if( iNextRow == maxInt )
 				break;
 			iRow = iNextRow;
 

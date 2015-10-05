@@ -7,7 +7,6 @@
 #include <unistd.h>
 #endif
 #include <cerrno>
-#include <limits.h>
 #if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
 #endif

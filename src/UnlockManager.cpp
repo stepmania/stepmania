@@ -12,7 +12,7 @@
 #include "Profile.h"
 #include "ThemeManager.h"
 #include "Steps.h"
-#include <float.h>
+#include <limits>
 #include "CommonMetrics.h"
 #include "LuaManager.h"
 #include "GameManager.h"
@@ -679,12 +679,13 @@ float UnlockManager::PointsUntilNextUnlock( UnlockRequirement t ) const
 	ZERO( fScores );
 	GetPoints( PROFILEMAN->GetMachineProfile(), fScores );
 
-	float fSmallestPoints = FLT_MAX;   // or an arbitrarily large value
+	float const maxFloat = std::numeric_limits<float>::max();
+	float fSmallestPoints = maxFloat;   // or an arbitrarily large value
 	for( unsigned a=0; a<m_UnlockEntries.size(); a++ )
 		if( m_UnlockEntries[a].m_fRequirement[t] > fScores[t] )
 			fSmallestPoints = std::min( fSmallestPoints, m_UnlockEntries[a].m_fRequirement[t] );
 
-	if( fSmallestPoints == FLT_MAX )
+	if( fSmallestPoints == maxFloat )
 		return 0;  // no match found
 	return fSmallestPoints - fScores[t];
 }

@@ -11,14 +11,15 @@
 #include "RageMatrix.hpp"
 #include "RageVector4.hpp"
 #include "RageTypes.h"
-#include <float.h>
+#include <limits>
 #include <array>
 
 using std::vector;
 
 void RageVec3ClearBounds( Rage::Vector3 &mins, Rage::Vector3 &maxs )
 {
-	mins = Rage::Vector3( FLT_MAX, FLT_MAX, FLT_MAX );
+	float const maxFloat = std::numeric_limits<float>::max();
+	mins = Rage::Vector3( maxFloat, maxFloat, maxFloat );
 	maxs = mins * -1;
 }
 

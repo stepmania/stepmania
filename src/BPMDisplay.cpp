@@ -11,7 +11,7 @@
 #include "Song.h"
 #include "Steps.h"
 
-#include <limits.h>
+#include <limits>
 
 using std::vector;
 
@@ -117,8 +117,8 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 
 	if( !(bool)CYCLE )
 	{
-		int MinBPM = INT_MAX;
-		int MaxBPM = INT_MIN;
+		int MinBPM = std::numeric_limits<int>::max();
+		int MaxBPM = std::numeric_limits<int>::min();
 		for( unsigned i = 0; i < BPMS.size(); ++i )
 		{
 			MinBPM = min( MinBPM, static_cast<int>(std::round(BPMS[i])));

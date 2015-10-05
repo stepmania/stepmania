@@ -39,7 +39,7 @@
 
 #include <time.h>
 #include <set>
-#include <float.h>
+#include <limits>
 
 using std::vector;
 using std::string;
@@ -1082,7 +1082,7 @@ void Song::ReCalculateRadarValuesAndLastSecond(bool fromCache, bool duringCache)
 		return;
 	}
 
-	float localFirst = FLT_MAX; // inf
+	float localFirst = std::numeric_limits<float>::max(); // inf
 	// Make sure we're at least as long as the specified amount below.
 	float localLast = this->specifiedLastSecond;
 
@@ -1382,7 +1382,7 @@ void Song::AddAutoGenNotes()
 
 		// look for closest match
 		StepsType stBestMatch = StepsType_Invalid;
-		int			iBestTrackDifference = INT_MAX;
+		int			iBestTrackDifference = std::numeric_limits<int>::max();
 
 		FOREACH_ENUM( StepsType, st )
 		{

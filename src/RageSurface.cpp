@@ -2,8 +2,7 @@
 #include "RageSurface.h"
 #include "RageUtil.h"
 
-#include <limits.h>
-
+#include <limits>
 
 int32_t RageSurfacePalette::FindColor( const RageSurfaceColor &color ) const
 {
@@ -17,7 +16,7 @@ int32_t RageSurfacePalette::FindColor( const RageSurfaceColor &color ) const
 int32_t RageSurfacePalette::FindClosestColor( const RageSurfaceColor &color ) const
 {
 	int iBest = -1;
-	int iBestDist = INT_MAX;
+	int iBestDist = std::numeric_limits<int>::max();
 	for( int i = 0; i < ncolors; ++i )
 	{
 		if( colors[i] == color )

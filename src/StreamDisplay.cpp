@@ -2,7 +2,6 @@
 #include "StreamDisplay.h"
 #include "RageMath.hpp"
 #include "GameState.h"
-#include <float.h>
 #include "RageDisplay.h"
 #include "ThemeManager.h"
 #include "EnumHelper.h"

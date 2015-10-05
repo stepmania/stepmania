@@ -5,6 +5,7 @@
 #include "Song.h"
 #include "RageLog.h"
 #include "UnlockManager.h"
+#include <limits>
 
 using std::vector;
 
@@ -80,7 +81,7 @@ ScoreScroller::ScoreScroller()
 void ScoreScroller::SetDisplay( const vector<DifficultyAndStepsType> &DifficultiesToShow )
 {
 	m_DifficultiesToShow = DifficultiesToShow;
-	ShiftSubActors( INT_MAX );
+	ShiftSubActors( std::numeric_limits<int>::max() );
 }
 
 bool ScoreScroller::Scroll( int iDir )

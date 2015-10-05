@@ -4,7 +4,7 @@
 #include "RageUtil.h"
 #include "RageTimer.h"
 
-#include <limits.h>
+#include <limits>
 #include <list>
 
 /* The number of frames we should keep pos_map data for.  This being too high
@@ -60,7 +60,7 @@ void pos_map_queue::Insert( int64_t iSourceFrame, int iFrames, int64_t iDestFram
 		pos_map_t &last = m_pImpl->m_Queue.back();
 		if( last.m_iSourceFrame + last.m_iFrames == iSourceFrame &&
 		    last.m_fSourceToDestRatio == fSourceToDestRatio &&
-		    llabs(last.m_iDestFrame + std::lrint(last.m_iFrames * last.m_fSourceToDestRatio) - iDestFrame) <= 1 )
+		   std::llabs(last.m_iDestFrame + std::lrint(last.m_iFrames * last.m_fSourceToDestRatio) - iDestFrame) <= 1 )
 		{
 			last.m_iFrames += iFrames;
 
@@ -133,7 +133,7 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 
 	/* iSourceFrame is probably in pos_map.  Search to figure out what position
 	 * it maps to. */
-	int64_t iClosestPosition = 0, iClosestPositionDist = INT_MAX;
+	int64_t iClosestPosition = 0, iClosestPositionDist = std::numeric_limits<int>::max();
 	const pos_map_t *pClosestBlock = &*m_pImpl->m_Queue.begin(); /* print only */
 	for (auto const &pm: m_pImpl->m_Queue)
 	{
@@ -148,7 +148,7 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 		}
 
 		/* See if the current position is close to the beginning of this block. */
-		int64_t dist = llabs( pm.m_iSourceFrame - iSourceFrame );
+		int64_t dist = std::llabs( pm.m_iSourceFrame - iSourceFrame );
 		if( dist < iClosestPositionDist )
 		{
 			iClosestPositionDist = dist;
@@ -157,7 +157,7 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 		}
 
 		/* See if the current position is close to the end of this block. */
-		dist = llabs( pm.m_iSourceFrame + pm.m_iFrames - iSourceFrame );
+		dist = std::llabs( pm.m_iSourceFrame + pm.m_iFrames - iSourceFrame );
 		if( dist < iClosestPositionDist )
 		{
 			iClosestPositionDist = dist;
