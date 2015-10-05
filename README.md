@@ -11,9 +11,10 @@ StepMania can be compiled using [CMake](http://www.cmake.org/). More information
 
 ##Build Status##
 
-We use Travis as our continuous integration server. The status can be found below.
+We currently have two integration servers in place. Their statuses are listed below.
 
-[![Build Status](https://travis-ci.org/stepmania/stepmania.svg?branch=master)](https://travis-ci.org/stepmania/stepmania)
+* Travis (Linux): [![Build Status](https://travis-ci.org/stepmania/stepmania.svg?branch=master)](https://travis-ci.org/stepmania/stepmania)
+* AppVeyor (Windows): [![Build status](https://ci.appveyor.com/api/projects/status/08182seiqah5ujp1?svg=true)](https://ci.appveyor.com/project/wolfman2000/stepmania)
 
 ##Resources##
 
