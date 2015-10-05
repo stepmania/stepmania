@@ -10,7 +10,6 @@
 #include "ThemeManager.h"
 #include "Style.h"
 #include "CommonMetrics.h"
-#include <float.h>
 
 using std::vector;
 

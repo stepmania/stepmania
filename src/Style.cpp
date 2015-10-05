@@ -19,7 +19,7 @@
 #include "RageUtil.h"
 #include "InputMapper.h"
 #include "NoteData.h"
-#include <float.h>
+#include <limits>
 
 using std::vector;
 
@@ -107,8 +107,8 @@ void Style::GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut 
 {
 	ASSERT( pn != PLAYER_INVALID );
 
-	fMixXOut = FLT_MAX;
-	fMaxXOut = FLT_MIN;
+	fMixXOut = std::numeric_limits<float>::max();
+	fMaxXOut = std::numeric_limits<float>::min();
 	for( int i=0; i<m_iColsPerPlayer; i++ )
 	{
 		fMixXOut = std::min( fMixXOut, m_ColumnInfo[pn][i].fXOffset );

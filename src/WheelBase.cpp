@@ -15,6 +15,7 @@
 #include "Style.h"
 #include "ThemeMetric.h"
 #include "ScreenDimensions.h"
+#include <limits>
 
 using std::vector;
 
@@ -458,7 +459,7 @@ void WheelBase::RebuildWheelItems( int iDist )
 	int iFirst = 0;
 	int iLast = NUM_WHEEL_ITEMS-1;
 
-	if( iDist != INT_MAX )
+	if( iDist != std::numeric_limits<int>::max() )
 	{
 		// Shift items and refresh only those that have changed.
 		CircularShift( items, iDist );

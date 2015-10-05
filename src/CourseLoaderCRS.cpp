@@ -14,7 +14,6 @@
 #include "CourseWriterCRS.h"
 #include "RageUtil.h"
 #include "CourseUtil.h"
-#include <float.h>
 
 using std::string;
 using std::vector;

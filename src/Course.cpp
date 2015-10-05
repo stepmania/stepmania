@@ -1,4 +1,3 @@
-#include <limits.h>
 #include "global.h"
 #include "Course.h"
 #include "RageMath.hpp"
@@ -20,6 +19,7 @@
 #include "Style.h"
 
 #include <unordered_map>
+#include <limits>
 
 using std::vector;
 
@@ -899,7 +899,7 @@ void Course::UpdateCourseStats( StepsType st )
 
 		if ( m_SortOrder_Ranking == 2 )
 			m_SortOrder_Ranking = 3;
-		m_SortOrder_TotalDifficulty = INT_MAX;
+		m_SortOrder_TotalDifficulty = std::numeric_limits<int>::max();
 		return;
 	}
 

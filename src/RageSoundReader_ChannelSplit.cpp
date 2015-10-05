@@ -39,7 +39,7 @@
 #include "RageSoundMixBuffer.h"
 #include "RageSoundUtil.h"
 
-#include <limits.h>
+#include <limits>
 #include <set>
 
 using std::vector;
@@ -187,8 +187,8 @@ int RageSoundSplitterImpl::ReadBuffer()
 	using std::max;
 	using std::min;
 	/* Discard any bytes that are no longer requested by any sound. */
-	int iMinFrameRequested = INT_MAX;
-	int iMaxFrameRequested = INT_MIN;
+	int iMinFrameRequested = std::numeric_limits<int>::max();
+	int iMaxFrameRequested = std::numeric_limits<int>::min();
 	for (auto *snd: m_apSounds)
 	{
 		iMinFrameRequested = min( iMinFrameRequested, snd->m_iPositionFrame );

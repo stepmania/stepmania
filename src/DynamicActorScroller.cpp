@@ -6,6 +6,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "LuaBinding.h"
+#include <limits>
 
 DynamicActorScroller *DynamicActorScroller::Copy() const { return new DynamicActorScroller(*this); }
 
@@ -62,7 +63,7 @@ void DynamicActorScroller::LoadFromNode( const XNode *pNode )
 
 	/* Reconfigure all items, so the loaded actors actually correspond with
 	 * m_iFirstSubActorIndex. */
-	ShiftSubActors( INT_MAX );
+	ShiftSubActors( std::numeric_limits<int>::max() );
 }
 
 /* Shift m_SubActors forward by iDist, and then fill in the new entries.

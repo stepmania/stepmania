@@ -11,6 +11,7 @@
 #include "WheelItemBase.h"
 #include "ThemeMetric.h"
 #include "LuaExpressionTransform.h"
+#include <limits>
 
 #define NUM_WHEEL_ITEMS		((int)ceil(NUM_WHEEL_ITEMS_TO_DRAW+2))
 
@@ -55,7 +56,7 @@ public:
 
 	WheelState GetWheelState() { return m_WheelState; }
 	bool WheelIsLocked() { return (m_WheelState == STATE_LOCKED ? true : false); }
-	void RebuildWheelItems( int dist = INT_MAX );	// INT_MAX = refresh all
+	void RebuildWheelItems( int dist = std::numeric_limits<int>::max() );	// std::numeric_limits<int>::max() = refresh all
 	// Update the list of songs to match whatever songs are indexed by the song manager (SONGMAN)
 	virtual void ReloadSongList() {}
 

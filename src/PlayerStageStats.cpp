@@ -4,13 +4,13 @@
 #include "RageLog.h"
 #include "ThemeManager.h"
 #include "LuaManager.h"
-#include <float.h>
 #include "GameState.h"
 #include "Course.h"
 #include "Steps.h"
 #include "ScoreKeeperNormal.h"
 #include "PrefsManager.h"
 #include "CommonMetrics.h"
+#include <limits>
 #include <numeric>
 
 using std::deque;
@@ -63,7 +63,7 @@ void PlayerStageStats::InternalInit()
 	m_radarPossible.Zero();
 	m_radarActual.Zero();
 
-	m_fFirstSecond = FLT_MAX;
+	m_fFirstSecond = std::numeric_limits<float>::max();
 	m_fLastSecond = 0;
 
 	m_StageAward = StageAward_Invalid;

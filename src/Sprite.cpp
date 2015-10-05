@@ -1,6 +1,5 @@
 #include "global.h"
 #include <cassert>
-#include <float.h>
 
 #include "Sprite.h"
 #include "RageMath.hpp"

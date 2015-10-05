@@ -6,7 +6,6 @@
 #include "RageLog.h"
 #include "ThemeManager.h"
 #include "NoteTypes.h"
-#include <float.h>
 
 using std::vector;
 
@@ -79,13 +78,13 @@ void TimingData::PrepareLookup()
 		GetBeatStarts beat_start;
 		beat_start.last_time= -m_fBeat0OffsetInSeconds;
 		GetBeatArgs args;
-		args.elapsed_time= FLT_MAX;
+		args.elapsed_time= std::numeric_limits<float>::max();
 		GetBeatInternal(beat_start, args, curr_segment);
 		m_beat_start_lookup.push_back(lookup_item_t(args.elapsed_time, beat_start));
 
 		GetBeatStarts time_start;
 		time_start.last_time= -m_fBeat0OffsetInSeconds;
-		GetElapsedTimeInternal(time_start, FLT_MAX, curr_segment);
+		GetElapsedTimeInternal(time_start, std::numeric_limits<float>::max(), curr_segment);
 		m_time_start_lookup.push_back(lookup_item_t(NoteRowToBeat(time_start.last_row), time_start));
 	}
 	// If there are less than two entries, then FindEntryInLookup in lookup
@@ -304,7 +303,7 @@ void TimingData::ShiftRange(int start_row, int end_row,
 
 void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut, float highest ) const
 {
-	fMinBPMOut = FLT_MAX;
+	fMinBPMOut = std::numeric_limits<float>::max();
 	fMaxBPMOut = 0;
 	const std::vector<TimingSegment*> &bpms = GetTimingSegments(SEGMENT_BPM);
 
@@ -393,7 +392,7 @@ void TimingData::MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float f
 		BPMSegment *bs = ToBPM(bpms[i]);
 		const int iStartIndexThisSegment = bs->GetRow();
 		const bool bIsLastBPMSegment = i == bpms.size()-1;
-		const int iStartIndexNextSegment = bIsLastBPMSegment ? INT_MAX : bpms[i+1]->GetRow();
+		const int iStartIndexNextSegment = bIsLastBPMSegment ? std::numeric_limits<int>::max() : bpms[i+1]->GetRow();
 
 		if( iStartIndexThisSegment <= iStartIndex && iStartIndexNextSegment <= iStartIndex )
 			continue;
@@ -777,7 +776,7 @@ void TimingData::GetBeatInternal(GetBeatStarts& start, GetBeatArgs& args,
 
 	while(curr_segment < max_segment)
 	{
-		int event_row= INT_MAX;
+		int event_row= std::numeric_limits<int>::max();
 		int event_type= NOT_FOUND;
 		FindEvent(event_row, event_type, start, 0, false, bpms, warps, stops,
 			delays);
@@ -858,7 +857,7 @@ void TimingData::GetBeatInternal(GetBeatStarts& start, GetBeatArgs& args,
 		start.last_row= event_row;
 	}
 #undef INC_INDEX
-	if(args.elapsed_time == FLT_MAX)
+	if(args.elapsed_time == std::numeric_limits<float>::max())
 	{
 		args.elapsed_time= start.last_time;
 	}
@@ -877,7 +876,7 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset(GetBeatArgs& args) const
 	{
 		start= looked_up_start->second;
 	}
-	GetBeatInternal(start, args, INT_MAX);
+	GetBeatInternal(start, args, std::numeric_limits<int>::max());
 }
 
 float TimingData::GetElapsedTimeInternal(GetBeatStarts& start, float beat,
@@ -892,11 +891,11 @@ float TimingData::GetElapsedTimeInternal(GetBeatStarts& start, float beat,
 
 	float bps= GetBPMAtRow(start.last_row) / 60.0f;
 #define INC_INDEX(index) ++curr_segment; ++index;
-	bool find_marker= beat < FLT_MAX;
+	bool find_marker= beat < std::numeric_limits<float>::max();
 
 	while(curr_segment < max_segment)
 	{
-		int event_row= INT_MAX;
+		int event_row= std::numeric_limits<int>::max();
 		int event_type= NOT_FOUND;
 		FindEvent(event_row, event_type, start, beat, find_marker, bpms, warps, stops,
 			delays);
@@ -962,7 +961,7 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 	{
 		start= looked_up_start->second;
 	}
-	GetElapsedTimeInternal(start, fBeat, INT_MAX);
+	GetElapsedTimeInternal(start, fBeat, std::numeric_limits<int>::max());
 	return start.last_time;
 }
 
@@ -1223,7 +1222,7 @@ void TimingData::NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, i
 	for (unsigned i = 0; i < tSigs.size(); i++)
 	{
 		TimeSignatureSegment *curSig = ToTimeSignature(tSigs[i]);
-		int iSegmentEndRow = (i + 1 == tSigs.size()) ? INT_MAX : curSig->GetRow();
+		int iSegmentEndRow = (i + 1 == tSigs.size()) ? std::numeric_limits<int>::max() : curSig->GetRow();
 
 		int iRowsPerMeasureThisSegment = curSig->GetNoteRowsPerMeasure();
 

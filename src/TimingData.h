@@ -4,7 +4,7 @@
 #include "NoteTypes.h"
 #include "TimingSegments.h"
 #include "PrefsManager.h"
-#include <float.h> // max float
+#include <limits> // max float
 struct lua_State;
 
 /** @brief Compare a TimingData segment's properties with one another. */
@@ -160,7 +160,7 @@ public:
 	 * @param fMaxBPMOut the maximum specified BPM.
 	 * @param highest the highest allowed max BPM.
 	 */
-	void GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut, float highest = FLT_MAX ) const;
+    void GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut, float highest = std::numeric_limits<float>::max() ) const;
 
 	/**
 	 * @brief Retrieve the TimingSegment at the specified row.

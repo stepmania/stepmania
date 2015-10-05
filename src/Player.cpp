@@ -42,6 +42,7 @@
 #include "GameCommand.h"
 #include "LocalizedString.h"
 #include "AdjustSync.h"
+#include <limits>
 
 using std::vector;
 
@@ -1124,7 +1125,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	*/
 
 	int iStartRow = vTN[0].iRow;
-	int iMaxEndRow = INT_MIN;
+	int iMaxEndRow = std::numeric_limits<int>::min();
 	int iFirstTrackWithMaxEndRow = -1;
 
 	TapNoteSubType subType = TapNoteSubType_Invalid;

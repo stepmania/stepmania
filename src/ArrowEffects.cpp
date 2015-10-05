@@ -13,7 +13,7 @@
 #include "GameState.h"
 #include "Style.h"
 #include "ThemeMetric.h"
-#include <float.h>
+#include <limits>
 
 static ThemeMetric<float>	ARROW_SPACING( "ArrowEffects", "ArrowSpacing" );
 static ThemeMetric<bool>	QUANTIZE_ARROW_Y( "ArrowEffects", "QuantizeArrowYPosition");
@@ -128,9 +128,9 @@ void ArrowEffects::Update()
 			int iEndCol = iColNum + iTornadoWidth;
 			iEndCol = Rage::clamp( iStartCol, 0, pStyle->m_iColsPerPlayer-1 );
 			iEndCol = Rage::clamp( iEndCol, 0, pStyle->m_iColsPerPlayer-1 );
-
-			data.m_fMinTornadoX[iColNum] = FLT_MAX;
-			data.m_fMaxTornadoX[iColNum] = FLT_MIN;
+			
+			data.m_fMinTornadoX[iColNum] = std::numeric_limits<float>::max();
+			data.m_fMaxTornadoX[iColNum] = std::numeric_limits<float>::min();
 
 			for( int i=iStartCol; i<=iEndCol; i++ )
 			{
@@ -282,7 +282,7 @@ static float GetDisplayedBeat( const PlayerState* pPlayerState, float beat )
 float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float fNoteBeat, float &fPeakYOffsetOut, bool &bIsPastPeakOut, bool bAbsolute )
 {
 	// Default values that are returned if boomerang is off.
-	fPeakYOffsetOut = FLT_MAX;
+	fPeakYOffsetOut = std::numeric_limits<float>::max();
 	bIsPastPeakOut = true;
 
 	float fYOffset = 0;

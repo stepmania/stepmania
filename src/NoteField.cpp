@@ -16,11 +16,11 @@
 #include "PlayerState.h"
 #include "Style.h"
 #include "CommonMetrics.h"
-#include <float.h>
 #include "BackgroundUtil.h"
 #include "Course.h"
 #include "NoteData.h"
 #include "RageDisplay.h"
+#include <limits>
 
 float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceAfterTargetsPixels );
 float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceBeforeTargetsPixels );
@@ -920,9 +920,9 @@ void NoteField::DrawPrimitives()
 						FOREACH_BackgroundLayer( j )
 							iter[j] = GAMESTATE->m_pCurSong->GetBackgroundChanges(j).begin();
 
-						while( 1 )
+						for(;;)
 						{
-							float fLowestBeat = FLT_MAX;
+							float fLowestBeat = std::numeric_limits<float>::max();
 							vector<BackgroundLayer> viLowestIndex;
 
 							FOREACH_BackgroundLayer( j )

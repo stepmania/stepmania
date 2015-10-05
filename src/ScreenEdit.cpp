@@ -1,6 +1,5 @@
 #include "global.h"
 #include <utility>
-#include <float.h>
 #include "ScreenEdit.h"
 #include "RageMath.hpp"
 

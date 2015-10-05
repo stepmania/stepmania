@@ -11,8 +11,6 @@
 #pragma once
 #endif // _MSC_VER >= 1000
 
-/** @brief This macro is for INT8_MIN, etc. */
-#define __STDC_LIMIT_MACROS
 /** @brief This macro is for INT64_C, etc. */
 #define __STDC_CONSTANT_MACROS
 
@@ -48,10 +46,6 @@
 #else
 #define likely(x) (x)
 #define unlikely(x) (x)
-#endif
-
-#if defined(NEED_CSTDLIB_WORKAROUND)
-#define llabs ::llabs
 #endif
 
 #ifdef ASSERT

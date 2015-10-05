@@ -12,6 +12,7 @@
 #include "XmlFile.h"
 #include "GameState.h" // blame radar calculations.
 #include "RageUtil_AutoPtr.h"
+#include <limits>
 
 using std::vector;
 
@@ -1250,7 +1251,7 @@ void NoteData::_all_tracks_iterator<ND, iter, TN>::Find( bool bReverse )
 	m_iTrack = -1;
 	if( bReverse )
 	{
-		int iMaxRow = INT_MIN;
+		int iMaxRow = std::numeric_limits<int>::min();
 		for( int iTrack = m_pNoteData->GetNumTracks() - 1; iTrack >= 0; --iTrack )
 		{
 			iter &i( m_vCurrentIters[iTrack] );
@@ -1265,7 +1266,7 @@ void NoteData::_all_tracks_iterator<ND, iter, TN>::Find( bool bReverse )
 	else
 	{
 
-		int iMinRow = INT_MAX;
+		int iMinRow = std::numeric_limits<int>::max();
 		for( int iTrack = 0; iTrack < m_pNoteData->GetNumTracks(); ++iTrack )
 		{
 			iter &i = m_vCurrentIters[iTrack];

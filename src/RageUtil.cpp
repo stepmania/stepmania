@@ -11,7 +11,6 @@
 #include "LocalizedString.h"
 #include "LuaBinding.h"
 #include "LuaManager.h"
-#include <float.h>
 
 #include <numeric>
 #include <ctime>

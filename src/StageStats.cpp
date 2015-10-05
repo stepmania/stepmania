@@ -352,7 +352,7 @@ bool StageStats::PlayerHasHighScore( PlayerNumber pn ) const
 unsigned int StageStats::GetMinimumMissCombo() const
 {
 	using std::min;
-	unsigned int iMin = INT_MAX;
+	unsigned int iMin = std::numeric_limits<unsigned int>::max();
 	FOREACH_HumanPlayer( p )
 		iMin = min( iMin, m_player[p].m_iCurMissCombo );
 	return iMin;
