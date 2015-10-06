@@ -14,20 +14,14 @@ init:
 - cmd: >-
     git config --global credential.helper store
 
-    echo Sanity check git commit %APPVEYOR_REPO_COMMIT%
-
-    echo Sanity check build version %APPVEYOR_BUILD_VERSION%
-
     set GITHUB_API_URL=https://api.github.com/repos/wolfman2000/stepmania/statuses/%APPVEYOR_REPO_COMMIT%
 
     set GITHUB_API_PENDING="{"""state""": """pending""", """target_url""": """https://ci.appveyor.com/project/wolfman2000/stepmania/build/%APPVEYOR_BUILD_VERSION%""", """description""": """Starting the appveyor build.""", """context""": """continuous-integration/appveyor"""}"
 
-    curl -u wolfman2000:%access_token% -H "application/vnd.github.v3+json" -H "Content-Type: application/json" -X POST -d %GITHUB_API_PENDING% %GITHUB_API_URL%
+    curl -s -u wolfman2000:%access_token% -H "application/vnd.github.v3+json" -H "Content-Type: application/json" -X POST -d %GITHUB_API_PENDING% %GITHUB_API_URL%
 
 install:
 - cmd: >-
-    echo Working on git commit %APPVEYOR_REPO_COMMIT%
-    
     choco install cmake
 before_build:
 - cmd: >-
@@ -41,10 +35,10 @@ on_success:
 - cmd: >-
     set GITHUB_API_SUCCESS="{"""state""": """success""", """target_url""": """https://ci.appveyor.com/project/wolfman2000/stepmania/build/%APPVEYOR_BUILD_VERSION%""", """description""": """Successfully compiled in appveyor.""", """context""": """continuous-integration/appveyor"""}"
 
-    curl -u wolfman2000:%access_token% -H "application/vnd.github.v3+json" -H "Content-Type: application/json" -X POST -d %GITHUB_API_SUCCESS% %GITHUB_API_URL%
+    curl -s -u wolfman2000:%access_token% -H "application/vnd.github.v3+json" -H "Content-Type: application/json" -X POST -d %GITHUB_API_SUCCESS% %GITHUB_API_URL%
 on_failure:
 - cmd: >-
     set GITHUB_API_FAILURE="{"""state""": """failure""", """target_url""": "https://ci.appveyor.com/project/wolfman2000/stepmania/build/%APPVEYOR_BUILD_VERSION%""", """description""": """Build failure on appveyor.""", """context""": """continuous-integration/appveyor"""}"
 
-    curl -u wolfman2000:%access_token% -H "application/vnd.github.v3+json" -H "Content-Type: application/json" -X POST -d %GITHUB_API_FAILURE%  %GITHUB_API_URL%
+    curl -s -u wolfman2000:%access_token% -H "application/vnd.github.v3+json" -H "Content-Type: application/json" -X POST -d %GITHUB_API_FAILURE%  %GITHUB_API_URL%
 
