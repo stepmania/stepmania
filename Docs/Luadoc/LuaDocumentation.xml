@@ -4982,7 +4982,7 @@ save yourself some time, copy this for undocumented things:
 		[02 Sprite.lua] Call <Link class='RageTexture' function='rate'><code>RageTexture:rate</code></Link><code>( fRate )</code> on the texture.
 	</Function>
 	<Function name='scaletoclipped' return='void' arguments='float fWidth, float fHeight'>
-		Scale the Sprite to width <code>fWidth</code> and height <code>fHeight</code> clipping dimension that would stick out.
+		Scale the Sprite to width <code>fWidth</code> and height <code>fHeight</code> clipping if the dimensions do not match.
 	</Function>
 	<Function name='setstate' return='void' arguments='int iNewState'>
 		Set the Sprite's state to <code>iNewState</code>.

@@ -33,8 +33,6 @@ Sprite::Sprite()
 	
 	m_fRememberedClipWidth = -1;
 	m_fRememberedClipHeight = -1;
-	m_fRememberedCropWidth = -1;
-	m_fRememberedCropHeight = -1;
 
 	m_fTexCoordVelocityX = 0;
 	m_fTexCoordVelocityY = 0;
@@ -75,8 +73,6 @@ Sprite::Sprite( const Sprite &cpy ):
 	memcpy( m_CustomPosCoords, cpy.m_CustomPosCoords, sizeof(m_CustomPosCoords) );
 	CPY( m_fRememberedClipWidth );
 	CPY( m_fRememberedClipHeight );
-	CPY( m_fRememberedCropWidth );
-	CPY( m_fRememberedCropHeight );
 	CPY( m_fTexCoordVelocityX );
 	CPY( m_fTexCoordVelocityY );
 	CPY(m_use_effect_clock_for_texcoords);
@@ -322,11 +318,6 @@ void Sprite::SetTexture( RageTexture *pTexture )
 	// apply clipping (if any)
 	if( m_fRememberedClipWidth != -1 && m_fRememberedClipHeight != -1 )
 		ScaleToClipped( m_fRememberedClipWidth, m_fRememberedClipHeight );
-
-	if( m_fRememberedCropWidth != -1 && m_fRememberedCropHeight != -1 )
-	{
-		CropTo(m_fRememberedCropWidth, m_fRememberedCropHeight);
-	}
 
 	// Load default states if we haven't before.
 	if( m_States.empty() )
@@ -920,97 +911,125 @@ void Sprite::SetTexCoordVelocity(float fVelX, float fVelY)
 	m_fTexCoordVelocityY = fVelY;
 }
 
-void Sprite::ScaleToClipped( float width, float height )
+void Sprite::ScaleToClipped( float fWidth, float fHeight )
 {
-	m_fRememberedClipWidth = width;
-	m_fRememberedClipHeight = height;
+	m_fRememberedClipWidth = fWidth;
+	m_fRememberedClipHeight = fHeight;
 
 	if( !m_pTexture )
-	{
 		return;
-	}
-	// -1 means do nothing because it's the default value and means no
-	// remembered dimensions.
-	if(width == -1 || height == -1)
+
+	float fScaleFudgePercent = 0.15f;	// scale up to this amount in one dimension to avoid clipping.
+
+	// save the original X and Y.  We're going to restore them later.
+	float fOriginalX = GetX();
+	float fOriginalY = GetY();
+
+	if( fWidth != -1 && fHeight != -1 )
 	{
-		return;
+		// this is probably a background graphic or something not intended to be a CroppedSprite
+		Sprite::StopUsingCustomCoords();
+
+		// first find the correct zoom
+		Sprite::ScaleToCover( RectF(0, 0, fWidth, fHeight) );
+		// find which dimension is larger
+		bool bXDimNeedsToBeCropped = GetZoomedWidth() > fWidth+0.01;
+		
+		if( bXDimNeedsToBeCropped ) // crop X
+		{
+			float fPercentageToCutOff = (this->GetZoomedWidth() - fWidth) / this->GetZoomedWidth();
+			fPercentageToCutOff = max( fPercentageToCutOff-fScaleFudgePercent, 0 );
+			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
+
+			// generate a rectangle with new texture coordinates
+			RectF fCustomImageRect( 
+				fPercentageToCutOffEachSide, 
+				0, 
+				1 - fPercentageToCutOffEachSide, 
+				1 );
+			SetCustomImageRect( fCustomImageRect );
+		}
+		else // crop Y
+		{
+			float fPercentageToCutOff = (this->GetZoomedHeight() - fHeight) / this->GetZoomedHeight();
+			fPercentageToCutOff = max( fPercentageToCutOff-fScaleFudgePercent, 0 );
+			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
+
+			// generate a rectangle with new texture coordinates
+			RectF fCustomImageRect( 
+				0, 
+				fPercentageToCutOffEachSide,
+				1, 
+				1 - fPercentageToCutOffEachSide );
+			SetCustomImageRect( fCustomImageRect );
+		}
+		m_size = RageVector2( fWidth, fHeight );
+		SetZoom( 1 );
 	}
-	// The previous implementation used a custom image rect and ended with a
-	// zoom of 1, didn't actually clip unless the dest was larger, and didn't
-	// reverse itself correctly, so it couldn't be used on an image that
-	// changed.  It also included a fudge factor which apparently existed
-	// solely to make the function only work when scaling up.
-	// Also, ScaleToClipped and CropTo were both setting RememberedClip, so
-	// after SetTexture, what was a CropTo operation was turned into a
-	// ScaleToClipped operation.
-	// This is much a much simpler implementation without the problems.
-	// The only caveat to this implementation is that GetWidth doesn't factor
-	// in cropping, so someone using GetWidth to put an outline around the
-	// sprite afterwards will end up with the wrong size. -Kyz
-	SetCropTop(0);
-	SetCropBottom(0);
-	SetCropLeft(0);
-	SetCropRight(0);
-	float uzw= GetUnzoomedWidth();
-	float uzh= GetUnzoomedHeight();
-	float xz= width / uzw;
-	float yz= height / uzh;
-	if(xz > yz)
-	{
-		SetZoom(xz);
-		float clip_amount= (1 - (height / (uzh * xz))) / 2;
-		SetCropTop(clip_amount);
-		SetCropBottom(clip_amount);
-	}
-	else
-	{
-		SetZoom(yz);
-		float clip_amount= (1 - (width / (uzw * yz))) / 2;
-		SetCropLeft(clip_amount);
-		SetCropRight(clip_amount);
-	}
+
+	// restore original XY
+	SetXY( fOriginalX, fOriginalY );
 }
 
 
-void Sprite::CropTo( float width, float height )
+// magic hurr
+// This code should either be removed or refactored in the future -aj
+void Sprite::CropTo( float fWidth, float fHeight )
 {
-	m_fRememberedCropWidth= width;
-	m_fRememberedCropHeight= height;
+	m_fRememberedClipWidth = fWidth;
+	m_fRememberedClipHeight = fHeight;
+
 	if( !m_pTexture )
-	{
 		return;
-	}
-	// -1 means do nothing because it's the default value and means no
-	// remembered dimensions.
-	if(width == -1 || height == -1)
+
+	// save the original X&Y.  We're going to restore them later.
+	float fOriginalX = GetX();
+	float fOriginalY = GetY();
+
+	if( fWidth != -1 && fHeight != -1 )
 	{
-		return;
+		// this is probably a background graphic or something not intended to be a CroppedSprite
+		Sprite::StopUsingCustomCoords();
+
+		// first find the correct zoom
+		Sprite::ScaleToCover( RectF(0, 0, fWidth, fHeight) );
+		// find which dimension is larger
+		bool bXDimNeedsToBeCropped = GetZoomedWidth() > fWidth+0.01;
+		
+		if( bXDimNeedsToBeCropped )	// crop X
+		{
+			float fPercentageToCutOff = (this->GetZoomedWidth() - fWidth) / this->GetZoomedWidth();
+			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
+
+			// generate a rectangle with new texture coordinates
+			RectF fCustomImageRect( 
+				fPercentageToCutOffEachSide, 
+				0, 
+				1 - fPercentageToCutOffEachSide, 
+				1 );
+			SetCustomImageRect( fCustomImageRect );
+		}
+		else		// crop Y
+		{
+			float fPercentageToCutOff = (this->GetZoomedHeight() - fHeight) / this->GetZoomedHeight();
+			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
+
+			// generate a rectangle with new texture coordinates
+			RectF fCustomImageRect( 
+				0, 
+				fPercentageToCutOffEachSide,
+				1, 
+				1 - fPercentageToCutOffEachSide );
+			SetCustomImageRect( fCustomImageRect );
+		}
+		m_size = RageVector2( fWidth, fHeight );
+		SetZoom( 1 );
 	}
-	// The previous implementation was identical to ScaleToClipped's previous
-	// implementation (including the not working correctly part), but without
-	// the fudge factor.  Why was a function named "CropTo" changing the scale
-	// of the sprite?  That just seems strange and counterintuitive to me, so
-	// this implementation doesn't change the scale at all.
-	// Again, this has the caveat that GetWidth doesn't factor in cropping. -Kyz
-	float zw= GetZoomedWidth();
-	float zh= GetZoomedHeight();
-	float xf= width / zw;
-	float yf= height / zh;
-	float xc= (1 - xf) / 2;
-	float yc= (1 - yf) / 2;
-	if(xf > 1)
-	{
-		xc= 0;
-	}
-	if(yf > 1)
-	{
-		yc= 0;
-	}
-	SetCropLeft(xc);
-	SetCropRight(xc);
-	SetCropTop(yc);
-	SetCropBottom(yc);
+
+	// restore original XY
+	SetXY( fOriginalX, fOriginalY );
 }
+// end magic
 
 void Sprite::StretchTexCoords( float fX, float fY )
 {
