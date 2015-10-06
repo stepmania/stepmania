@@ -15,7 +15,7 @@ install:
 
     echo Sanity check build id %APPVEYOR_BUILD_ID%
 
-    curl -H "Content-Type: application/json" -X POST -d '{"state": "pending", "description": "Starting the appveyor build.", "context": "continuous-integration/appveyor"}' https://api.github.com/repos/wolfman2000/stepmania/statuses/%GIT_COMMIT%
+    curl -H "Content-Type: application/json" -X POST -d "{"""state""": """pending""", """description""": """Starting the appveyor build.""", """context""": """continuous-integration/appveyor"""}" https://api.github.com/repos/wolfman2000/stepmania/statuses/%GIT_COMMIT%
     
     echo Working on git commit %GIT_COMMIT%
     
@@ -32,8 +32,8 @@ build:
   verbosity: normal
 on_success:
 - cmd: >-
-    curl -H "Content-Type: application/json" -X POST -d '{"state": "success", "description": "Successfully compiled in appveyor.", "context": "continuous-integration/appveyor"}' https://api.github.com/repos/wolfman2000/stepmania/statuses/%GIT_COMMIT%
+    curl -H "Content-Type: application/json" -X POST -d "{"""state""": """success""", """description""": """Successfully compiled in appveyor.""", """context""": """continuous-integration/appveyor"""}" https://api.github.com/repos/wolfman2000/stepmania/statuses/%GIT_COMMIT%
 on_failure:
 - cmd: >-
-    curl -H "Content-Type: application/json" -X POST -d '{"state": "success", "description": "Build failure on appveyor.", "context": "continuous-integration/appveyor"}' https://api.github.com/repos/wolfman2000/stepmania/statuses/%GIT_COMMIT%
+    curl -H "Content-Type: application/json" -X POST -d "{"""state""": """failure""", """description""": """Build failure on appveyor.""", """context""": """continuous-integration/appveyor"""}" https://api.github.com/repos/wolfman2000/stepmania/statuses/%GIT_COMMIT%
 
