@@ -1,0 +1,44 @@
+version: 5.0.9.{build}.{branch}
+environment:
+  access_token:
+    secure: vsDaeFdGCIGlIxWSEdsDomYtr5mKS5IPGHc4NwuDZ5D6mCna0STrDvMZ6IP6mOBK
+pull_requests:
+  do_not_increment_build_number: true
+skip_tags: true
+os: Visual Studio 2015
+configuration: Release
+shallow_clone: false
+clone_depth: 1
+clone_folder: C:\Repos\wolfmania
+init:
+- cmd: >-
+    git config --global credential.helper store
+
+    set GITHUB_API_URL=https://api.github.com/repos/wolfman2000/stepmania/statuses/%APPVEYOR_REPO_COMMIT%
+
+    set GITHUB_API_PENDING="{"""state""": """pending""", """target_url""": """https://ci.appveyor.com/project/wolfman2000/stepmania/build/%APPVEYOR_BUILD_VERSION%""", """description""": """Starting the appveyor build.""", """context""": """continuous-integration/appveyor"""}"
+
+    curl -u wolfman2000:%access_token% -H "User-Agent: Appveyor-wolfman2000-stepmania-app" -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" -X POST -d %GITHUB_API_PENDING% %GITHUB_API_URL%
+
+install:
+- cmd: >-
+    choco install cmake
+before_build:
+- cmd: >-
+    cd Build
+
+    cmake -G "Visual Studio 14 2015" ..
+build:
+  project: C:\Repos\wolfmania\Build\StepMania.sln
+  verbosity: normal
+on_success:
+- cmd: >-
+    set GITHUB_API_SUCCESS="{"""state""": """success""", """target_url""": """https://ci.appveyor.com/project/wolfman2000/stepmania/build/%APPVEYOR_BUILD_VERSION%""", """description""": """Successfully compiled in appveyor.""", """context""": """continuous-integration/appveyor"""}"
+
+    curl -u wolfman2000:%access_token% -H "User-Agent: Appveyor-wolfman2000-stepmania-app" -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" -X POST -d %GITHUB_API_SUCCESS% %GITHUB_API_URL%
+on_failure:
+- cmd: >-
+    set GITHUB_API_FAILURE="{"""state""": """failure""", """target_url""": "https://ci.appveyor.com/project/wolfman2000/stepmania/build/%APPVEYOR_BUILD_VERSION%""", """description""": """Build failure on appveyor.""", """context""": """continuous-integration/appveyor"""}"
+
+    curl -u wolfman2000:%access_token% -H "User-Agent: Appveyor-wolfman2000-stepmania-app" -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" -X POST -d %GITHUB_API_FAILURE%  %GITHUB_API_URL%
+
