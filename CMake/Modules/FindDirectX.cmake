@@ -10,16 +10,18 @@ if(NOT WIN32)
   return()
 endif()
 
+if(NOT EXISTS "$ENV{DXSDK_DIR}")
+  message(FATAL_ERROR "Could not find Microsoft DirectX SDK installation!")
+endif()
+
 set(DIRECTX_INCLUDE_SEARCH_PATHS
   # TODO: Do not be limited to x86 in the future.
-  "C:/Program Files (x86)/Microsoft DirectX SDK (June 2010)/Include"
-  "C:/DXSDK/Include"
+  "$ENV{DXSDK_DIR}/Include"
 )
 
 set(DIRECTX_LIBRARY_SEARCH_PATHS
   # TODO: Do not be limited to x86 in the future.
-  "C:/Program Files (x86)/Microsoft DirectX SDK (June 2010)/Lib/x86"
-  "C:/DXSDK/Include/Lib/x86"
+  "$ENV{DXSDK_DIR}/Lib/x86"
 )
 
 find_path(DIRECTX_INCLUDE_DIR
