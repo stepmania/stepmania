@@ -22,6 +22,16 @@ init:
 
 install:
 - cmd: >-
+    git submodule init
+
+    git submodule update extern/cppformat
+
+    git submodule update extern/tommath
+
+    git submodule extern/tomcrypt
+
+    git submodule update extern/googletest
+
     choco install cmake
 before_build:
 - cmd: >-
