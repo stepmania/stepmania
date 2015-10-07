@@ -30,12 +30,6 @@ void RageVec3TransformNormal( Rage::Vector3* pOut, const Rage::Vector3* pV, cons
 void RageVec4TransformCoord( Rage::Vector4* pOut, const Rage::Vector4* pV, const Rage::Matrix* pM );
 // pOut = pB * pA
 void RageMatrixMultiply( Rage::Matrix* pOut, const Rage::Matrix* pA, const Rage::Matrix* pB );
-void RageMatrixTranslation( Rage::Matrix* pOut, float x, float y, float z );
-void RageMatrixScaling( Rage::Matrix* pOut, float x, float y, float z );
-void RageMatrixSkewX( Rage::Matrix* pOut, float fAmount );
-void RageMatrixSkewY( Rage::Matrix* pOut, float fAmount );
-void RageMatrixTranslate( Rage::Matrix* pOut, float fTransX, float fTransY, float fTransZ );
-void RageMatrixScale( Rage::Matrix* pOut, float fScaleX, float fScaleY, float fScaleZ );
 void RageMatrixRotationX( Rage::Matrix* pOut, float fTheta );
 void RageMatrixRotationY( Rage::Matrix* pOut, float fTheta );
 void RageMatrixRotationZ( Rage::Matrix* pOut, float fTheta );

@@ -41,6 +41,18 @@ namespace Rage
 		/** @brief Get the identity matrix. */
 		static Matrix GetIdentity();
 
+		/** @brief Get the translation matrix. */
+		static Matrix GetTranslation(float x, float y, float z);
+
+		/** @brief Get the scaling matrix. */
+		static Matrix GetScaling(float x, float y, float z);
+
+		/** @brief Get the skewed X matrix. */
+		static Matrix GetSkewX(float x);
+
+		/** @brief Get the skewed Y matrix. */
+		static Matrix GetSkewY(float y);
+
 		// It is preferable to use the std::array syntax, but switch for temporary backwards compatibility.
 		//std::array<std::array<float, 4>, 4> m;
 		float m[4][4];
