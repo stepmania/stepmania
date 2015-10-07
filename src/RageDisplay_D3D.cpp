@@ -3,6 +3,7 @@
 #include "RageDisplay_D3D.h"
 #include "RageVColor.hpp"
 #include "RageMath.hpp"
+#include "RageMatrix.hpp"
 #include "RageModelVertex.hpp"
 #include "RageUtil.h"
 #include "RageLog.h"
