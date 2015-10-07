@@ -37,7 +37,10 @@ namespace Rage
 		}
 		
 		Matrix GetTranspose() const;
-		
+
+		/** @brief Get the identity matrix. */
+		static Matrix GetIdentity();
+
 		// It is preferable to use the std::array syntax, but switch for temporary backwards compatibility.
 		//std::array<std::array<float, 4>, 4> m;
 		float m[4][4];

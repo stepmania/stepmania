@@ -28,7 +28,6 @@ void RageVec3Cross(Rage::Vector3* ret, Rage::Vector3 const* a, Rage::Vector3 con
 void RageVec3TransformCoord( Rage::Vector3* pOut, const Rage::Vector3* pV, const Rage::Matrix* pM );
 void RageVec3TransformNormal( Rage::Vector3* pOut, const Rage::Vector3* pV, const Rage::Matrix* pM );
 void RageVec4TransformCoord( Rage::Vector4* pOut, const Rage::Vector4* pV, const Rage::Matrix* pM );
-void RageMatrixIdentity( Rage::Matrix* pOut );
 // pOut = pB * pA
 void RageMatrixMultiply( Rage::Matrix* pOut, const Rage::Matrix* pA, const Rage::Matrix* pB );
 void RageMatrixTranslation( Rage::Matrix* pOut, float x, float y, float z );

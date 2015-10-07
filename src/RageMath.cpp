@@ -108,19 +108,6 @@ void RageVec4TransformCoord( Rage::Vector4* pOut, const Rage::Vector4* pV, const
 		a.m03*v.x+a.m13*v.y+a.m23*v.z+a.m33*v.w );
 }
 
-
-void RageMatrixIdentity( Rage::Matrix* pOut )
-{
-	static float identity[16] = {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
-	memcpy(&pOut->m00, identity, sizeof(identity));
-/*	*pOut = Rage::Matrix(
-		1,0,0,0,
-		0,1,0,0,
-		0,0,1,0,
-		0,0,0,1 );
-*/
-}
-
 void RageMatrixMultiply( Rage::Matrix* pOut, const Rage::Matrix* pA, const Rage::Matrix* pB )
 {
 //#if defined(_WINDOWS)
@@ -154,7 +141,7 @@ void RageMatrixMultiply( Rage::Matrix* pOut, const Rage::Matrix* pA, const Rage:
 
 void RageMatrixTranslation( Rage::Matrix* pOut, float x, float y, float z )
 {
-	RageMatrixIdentity(pOut);
+	*pOut = Rage::Matrix::GetIdentity();
 	pOut->m[3][0] = x;
 	pOut->m[3][1] = y;
 	pOut->m[3][2] = z;
@@ -162,7 +149,7 @@ void RageMatrixTranslation( Rage::Matrix* pOut, float x, float y, float z )
 
 void RageMatrixScaling( Rage::Matrix* pOut, float x, float y, float z )
 {
-	RageMatrixIdentity(pOut);
+	*pOut = Rage::Matrix::GetIdentity();
 	pOut->m[0][0] = x;
 	pOut->m[1][1] = y;
 	pOut->m[2][2] = z;
@@ -170,13 +157,13 @@ void RageMatrixScaling( Rage::Matrix* pOut, float x, float y, float z )
 
 void RageMatrixSkewX( Rage::Matrix* pOut, float fAmount )
 {
-	RageMatrixIdentity(pOut);
+	*pOut = Rage::Matrix::GetIdentity();
 	pOut->m[1][0] = fAmount;
 }
 
 void RageMatrixSkewY( Rage::Matrix* pOut, float fAmount )
 {
-	RageMatrixIdentity(pOut);
+	*pOut = Rage::Matrix::GetIdentity();
 	pOut->m[0][1] = fAmount;
 }
 
@@ -239,7 +226,7 @@ void RageMatrixRotationX( Rage::Matrix* pOut, float theta )
 {
 	theta *= PI/180;
 
-	RageMatrixIdentity(pOut);
+	*pOut = Rage::Matrix::GetIdentity();
 	pOut->m[1][1] = RageFastCos(theta);
 	pOut->m[2][2] = pOut->m[1][1];
 
@@ -251,7 +238,7 @@ void RageMatrixRotationY( Rage::Matrix* pOut, float theta )
 {
 	theta *= PI/180;
 
-	RageMatrixIdentity(pOut);
+	*pOut = Rage::Matrix::GetIdentity();
 	pOut->m[0][0] = RageFastCos(theta);
 	pOut->m[2][2] = pOut->m[0][0];
 
@@ -263,7 +250,7 @@ void RageMatrixRotationZ( Rage::Matrix* pOut, float theta )
 {
 	theta *= PI/180;
 
-	RageMatrixIdentity(pOut);
+	*pOut = Rage::Matrix::GetIdentity();
 	pOut->m[0][0] = RageFastCos(theta);
 	pOut->m[1][1] = pOut->m[0][0];
 
@@ -567,7 +554,7 @@ void RageMatrixAngles( Rage::Matrix* pOut, const Rage::Vector3 &angles )
 	const float sr = RageFastSin( angles_radians.x );
 	const float cr = RageFastCos( angles_radians.x );
 
-	RageMatrixIdentity( pOut );
+	*pOut = Rage::Matrix::GetIdentity();
 
 
 	// matrix = (Z * Y) * X
