@@ -38,7 +38,7 @@ void AnnouncerManager::GetAnnouncerNames( vector<RString>& AddTo )
 
 	// strip out the empty announcer folder
 	for( int i=AddTo.size()-1; i>=0; i-- )
-		if( !stricmp( AddTo[i], EMPTY_ANNOUNCER_NAME ) )
+		if( !strcasecmp( AddTo[i], EMPTY_ANNOUNCER_NAME ) )
 			AddTo.erase(AddTo.begin()+i, AddTo.begin()+i+1 );
 }
 
@@ -50,7 +50,7 @@ bool AnnouncerManager::DoesAnnouncerExist( RString sAnnouncerName )
 	vector<RString> asAnnouncerNames;
 	GetAnnouncerNames( asAnnouncerNames );
 	for( unsigned i=0; i<asAnnouncerNames.size(); i++ )
-		if( 0==stricmp(sAnnouncerName, asAnnouncerNames[i]) )
+		if( 0==strcasecmp(sAnnouncerName, asAnnouncerNames[i]) )
 			return true;
 	return false;
 }

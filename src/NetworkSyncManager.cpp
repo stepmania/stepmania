@@ -927,7 +927,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 							Trim( sFieldName );
 							Trim( sFieldValue );
 
-							if( 0 == stricmp(sFieldName,"X-SM-Build") )
+							if( 0 == strcasecmp(sFieldName,"X-SM-Build") )
 							{
 								bSuccess = true;
 								uCurrentSMBuild = strtoul( sFieldValue, NULL, 10 );
