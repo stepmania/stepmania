@@ -881,7 +881,7 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 	if( m_bTransforms[TRANSFORM_ECHO] )	return true;
 	
 	// Removing attacks is easier in general.
-	if (m_fNoAttack || (!m_fRandAttack && pSteps->HasAttacks()))
+	if ((m_fNoAttack && pSteps->HasAttacks()) || m_fRandAttack)
 		return true;
 	
 	if( m_fCover )	return true;
