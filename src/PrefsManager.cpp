@@ -202,6 +202,7 @@ PrefsManager::PrefsManager() :
 
 
 	m_iRegenComboAfterMiss		( "RegenComboAfterMiss",	5 ),
+	m_iMaxRegenComboAfterMiss	( "MaxRegenComboAfterMiss",	5 ), // this was 10 by default in SM3.95 -dguzek
 	m_bMercifulDrain		( "MercifulDrain",		false ),	// negative life deltas are scaled by the players life percentage
 	m_HarshHotLifePenalty		( "HarshHotLifePenalty",	true ),
 	m_bMinimum1FullSongInCourses	( "Minimum1FullSongInCourses",	false ),	// FEoS for 1st song, FailImmediate thereafter
