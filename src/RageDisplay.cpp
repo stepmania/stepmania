@@ -362,8 +362,7 @@ public:
 	// matrix. (transformation is about the current world origin)
 	void Scale( float x, float y, float z )
  	{
-		Rage::Matrix m;
-		RageMatrixScaling( &m, x, y, z );
+		auto m = Rage::Matrix::GetScaling(x, y, z);
 		MultMatrix( m );
 	}
 
@@ -371,8 +370,7 @@ public:
 	// matrix. (transformation is about the local origin of the object)
 	void ScaleLocal( float x, float y, float z )
  	{
-		Rage::Matrix m;
-		RageMatrixScaling( &m, x, y, z );
+		auto m = Rage::Matrix::GetScaling(x, y, z);
 		MultMatrixLocal( m );
 	}
 
@@ -380,8 +378,7 @@ public:
 	// matrix. (transformation is about the current world origin)
 	void Translate( float x, float y, float z )
  	{
-		Rage::Matrix m;
-		RageMatrixTranslation( &m, x, y, z );
+		auto m = Rage::Matrix::GetTranslation(x, y, z);
 		MultMatrix( m );
 	}
 
@@ -389,22 +386,19 @@ public:
 	// matrix. (transformation is about the local origin of the object)
 	void TranslateLocal( float x, float y, float z )
  	{
-		Rage::Matrix m;
-		RageMatrixTranslation( &m, x, y, z );
+		auto m = Rage::Matrix::GetTranslation(x, y, z);
 		MultMatrixLocal( m );
 	}
 
 	void SkewX( float fAmount )
 	{
-		Rage::Matrix m;
-		RageMatrixSkewX( &m, fAmount );
+		auto m = Rage::Matrix::GetSkewX(fAmount);
 		MultMatrixLocal( m );
 	}
 
 	void SkewY( float fAmount )
 	{
-		Rage::Matrix m;
-		RageMatrixSkewY( &m, fAmount );
+		auto m = Rage::Matrix::GetSkewY(fAmount);
 		MultMatrixLocal( m );
 	}
 
@@ -725,18 +719,8 @@ Rage::Matrix RageDisplay::GetCenteringMatrix( float fTranslateX, float fTranslat
 	float fPercentScaleX = Rage::scale( fAddWidth, 0.f, fWidth, 1.0f, 2.0f );
 	float fPercentScaleY = Rage::scale( fAddHeight, 0.f, fHeight, 1.0f, 2.0f );
 
-	Rage::Matrix m1;
-	Rage::Matrix m2;
-	RageMatrixTranslation(
-		&m1,
-		fPercentShiftX,
-		fPercentShiftY,
-		0 );
-	RageMatrixScaling(
-		&m2,
-		fPercentScaleX,
-		fPercentScaleY,
-		1 );
+	auto m1 = Rage::Matrix::GetTranslation(fPercentShiftX, fPercentShiftY, 0);
+	auto m2 = Rage::Matrix::GetScaling(fPercentScaleX, fPercentScaleY, 1);
 	Rage::Matrix mOut;
 	RageMatrixMultiply( &mOut, &m1, &m2 );
 	return mOut;

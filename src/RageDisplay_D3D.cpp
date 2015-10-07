@@ -3,6 +3,7 @@
 #include "RageDisplay_D3D.h"
 #include "RageVColor.hpp"
 #include "RageMath.hpp"
+#include "RageMatrix.hpp"
 #include "RageModelVertex.hpp"
 #include "RageUtil.h"
 #include "RageLog.h"
@@ -1443,11 +1444,10 @@ Rage::Matrix RageDisplay_D3D::GetOrthoMatrix( float l, float r, float b, float t
 	Rage::Matrix m = RageDisplay::GetOrthoMatrix( l, r, b, t, zn, zf );
 
 	// Convert from OpenGL's [-1,+1] Z values to D3D's [0,+1].
-	Rage::Matrix tmp;
-	RageMatrixScaling( &tmp, 1, 1, 0.5f );
+	auto tmp = Rage::Matrix::GetScaling(1, 1, 0.5f);
 	RageMatrixMultiply( &m, &tmp, &m );
 
-	RageMatrixTranslation( &tmp, 0, 0, 0.5f );
+	tmp = Rage::Matrix::GetTranslation(0, 0, 0.5f);
 	RageMatrixMultiply( &m, &tmp, &m );
 
 	return m;

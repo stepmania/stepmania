@@ -139,88 +139,11 @@ void RageMatrixMultiply( Rage::Matrix* pOut, const Rage::Matrix* pA, const Rage:
 //#endif
 }
 
-void RageMatrixTranslation( Rage::Matrix* pOut, float x, float y, float z )
-{
-	*pOut = Rage::Matrix::GetIdentity();
-	pOut->m[3][0] = x;
-	pOut->m[3][1] = y;
-	pOut->m[3][2] = z;
-}
-
-void RageMatrixScaling( Rage::Matrix* pOut, float x, float y, float z )
-{
-	*pOut = Rage::Matrix::GetIdentity();
-	pOut->m[0][0] = x;
-	pOut->m[1][1] = y;
-	pOut->m[2][2] = z;
-}
-
-void RageMatrixSkewX( Rage::Matrix* pOut, float fAmount )
-{
-	*pOut = Rage::Matrix::GetIdentity();
-	pOut->m[1][0] = fAmount;
-}
-
-void RageMatrixSkewY( Rage::Matrix* pOut, float fAmount )
-{
-	*pOut = Rage::Matrix::GetIdentity();
-	pOut->m[0][1] = fAmount;
-}
-
 /*
  * Return:
  *
- * Rage::Matrix translate;
- * Rage::MatrixTranslation( &translate, fTransX, fTransY, fTransZ );
- * Rage::Matrix scale;
- * Rage::MatrixScaling( &scale, fScaleX, float fScaleY, float fScaleZ );
  * Rage::MatrixMultiply( pOut, &translate, &scale );
  */
-void RageMatrixTranslate( Rage::Matrix* pOut, float fTransX, float fTransY, float fTransZ )
-{
-	pOut->m00 = 1;
-	pOut->m01 = 0;
-	pOut->m02 = 0;
-	pOut->m03 = 0;
-
-	pOut->m10 = 0;
-	pOut->m11 = 1;
-	pOut->m12 = 0;
-	pOut->m13 = 0;
-
-	pOut->m20 = 0;
-	pOut->m21 = 0;
-	pOut->m22 = 1;
-	pOut->m23 = 0;
-
-	pOut->m30 = fTransX;
-	pOut->m31 = fTransY;
-	pOut->m32 = fTransZ;
-	pOut->m33 = 1;
-}
-
-void RageMatrixScale( Rage::Matrix* pOut, float fScaleX, float fScaleY, float fScaleZ )
-{
-	pOut->m00 = fScaleX;
-	pOut->m01 = 0;
-	pOut->m02 = 0;
-	pOut->m03 = 0;
-
-	pOut->m10 = 0;
-	pOut->m11 = fScaleY;
-	pOut->m12 = 0;
-	pOut->m13 = 0;
-
-	pOut->m20 = 0;
-	pOut->m21 = 0;
-	pOut->m22 = fScaleZ;
-	pOut->m23 = 0;
-
-	pOut->m30 = 0;
-	pOut->m31 = 0;
-	pOut->m32 = 0;
-	pOut->m33 = 1;
-}
 
 void RageMatrixRotationX( Rage::Matrix* pOut, float theta )
 {
@@ -534,8 +457,7 @@ Rage::Matrix RageLookAt(
 		X.z, Y.z, Z.z, 0,
 		0,    0,    0,    1 );
 
-	Rage::Matrix mat2;
-	RageMatrixTranslation(&mat2, -eyex, -eyey, -eyez);
+	auto mat2 = Rage::Matrix::GetTranslation(-eyex, -eyey, -eyez);
 
 	Rage::Matrix ret;
 	RageMatrixMultiply(&ret, &mat, &mat2);

@@ -933,8 +933,7 @@ void RageDisplay_Legacy::SendCurrentMatrices()
 
 	if (g_bInvertY)
 	{
-		Rage::Matrix flip;
-		RageMatrixScale( &flip, +1, -1, +1 );
+		auto flip = Rage::Matrix::GetScaling(1, -1, 1);
 		RageMatrixMultiply( &projection, &flip, &projection );
 	}
 	glMatrixMode( GL_PROJECTION );

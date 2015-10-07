@@ -600,16 +600,10 @@ void Actor::PreDraw() // calculate actor properties
 void Actor::BeginDraw() // set the world matrix
 {
 	DISPLAY->PushMatrix();
-
-	if( m_pTempState->pos.x != 0 || m_pTempState->pos.y != 0 || m_pTempState->pos.z != 0 )
+	auto const &pos = m_pTempState->pos;
+	if( pos.x != 0 || pos.y != 0 || pos.z != 0 )
 	{
-		Rage::Matrix m;
-		RageMatrixTranslate(
-			&m,
-			m_pTempState->pos.x,
-			m_pTempState->pos.y,
-			m_pTempState->pos.z
-			);
+		auto m = Rage::Matrix::GetTranslation(pos.x, pos.y, pos.z);
 		DISPLAY->PreMultMatrix( m );
 	}
 
@@ -637,12 +631,7 @@ void Actor::BeginDraw() // set the world matrix
 
 		if( fScaleX != 1 || fScaleY != 1 || fScaleZ != 1 )
 		{
-			Rage::Matrix m;
-			RageMatrixScale(
-				&m,
-				fScaleX,
-				fScaleY,
-				fScaleZ );
+			auto m = Rage::Matrix::GetScaling(fScaleX, fScaleY, fScaleZ);
 			DISPLAY->PreMultMatrix( m );
 		}
 	}
@@ -652,13 +641,7 @@ void Actor::BeginDraw() // set the world matrix
 	{
 		float fX = Rage::scale( m_fHorizAlign, 0.0f, 1.0f, +m_size.x/2.0f, -m_size.x/2.0f );
 		float fY = Rage::scale( m_fVertAlign, 0.0f, 1.0f, +m_size.y/2.0f, -m_size.y/2.0f );
-		Rage::Matrix m;
-		RageMatrixTranslate(
-			&m,
-			fX,
-			fY,
-			0
-			);
+		auto m = Rage::Matrix::GetTranslation(fX, fY, 0);
 		DISPLAY->PreMultMatrix( m );
 	}
 
