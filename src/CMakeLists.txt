@@ -561,7 +561,8 @@ if(NOT APPLE)
 else()
   if(WITH_OGG)
     list(APPEND SM_INCLUDE_DIRS
-      "${SM_EXTERN_DIR}/vorbis"
+      "${SM_EXTERN_DIR}/newogg/include"
+      "${SM_EXTERN_DIR}/newvorbis/include"
     )
   endif()
   list(APPEND SM_INCLUDE_DIRS
