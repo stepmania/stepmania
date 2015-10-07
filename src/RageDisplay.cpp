@@ -290,7 +290,8 @@ public:
 	// Loads identity in the current matrix.
 	void LoadIdentity()
 	{
-		RageMatrixIdentity( &stack.back() );
+		auto &tmp = stack.back();
+		tmp = Rage::Matrix::GetIdentity();
 	}
 
 	// Loads the given matrix into the current matrix
@@ -422,7 +423,7 @@ static MatrixStack g_TextureStack;
 
 RageDisplay::RageDisplay()
 {
-	RageMatrixIdentity( &g_CenteringMatrix );
+	g_CenteringMatrix = Rage::Matrix::GetIdentity();
 	g_ProjectionStack = MatrixStack();
 	g_ViewStack = MatrixStack();
 	g_WorldStack = MatrixStack();

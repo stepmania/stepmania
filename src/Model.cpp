@@ -667,8 +667,7 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 			vRot = pLastRotationKey->Rotation;
 		}
 
-		Rage::Matrix m;
-		RageMatrixIdentity( &m );
+		auto m = Rage::Matrix::GetIdentity();
 		RageMatrixFromQuat( &m, vRot );
 		m.m[3][0] = vPos.x;
 		m.m[3][1] = vPos.y;
