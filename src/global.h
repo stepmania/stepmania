@@ -148,10 +148,10 @@ template<int> struct CompileAssertDecl { };
 typedef StdString::CStdString RString;
 
 #if !defined(WIN32)
-/** @brief Define stricmp to be strcasecmp. */
-#define stricmp strcasecmp
-/** @brief Define strnicmp to be strncasecmp. */
-#define strnicmp strncasecmp
+/** @brief Define _stricmp to be strcasecmp. */
+#define _stricmp strcasecmp
+/** @brief Define _strnicmp to be strncasecmp. */
+#define _strnicmp strncasecmp
 #endif
 
 #include "RageException.h"
