@@ -933,18 +933,18 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 		Sprite::StopUsingCustomCoords();
 
 		// first find the correct zoom
-		Sprite::ScaleToCover( RectF(0, 0, fWidth, fHeight) );
+		Sprite::ScaleToCover( Rage::RectF(0, 0, fWidth, fHeight) );
 		// find which dimension is larger
 		bool bXDimNeedsToBeCropped = GetZoomedWidth() > fWidth+0.01;
 		
 		if( bXDimNeedsToBeCropped ) // crop X
 		{
 			float fPercentageToCutOff = (this->GetZoomedWidth() - fWidth) / this->GetZoomedWidth();
-			fPercentageToCutOff = max( fPercentageToCutOff-fScaleFudgePercent, 0 );
+			fPercentageToCutOff = std::max( fPercentageToCutOff-fScaleFudgePercent, 0.f );
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 
 			// generate a rectangle with new texture coordinates
-			RectF fCustomImageRect( 
+			Rage::RectF fCustomImageRect(
 				fPercentageToCutOffEachSide, 
 				0, 
 				1 - fPercentageToCutOffEachSide, 
@@ -954,18 +954,18 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 		else // crop Y
 		{
 			float fPercentageToCutOff = (this->GetZoomedHeight() - fHeight) / this->GetZoomedHeight();
-			fPercentageToCutOff = max( fPercentageToCutOff-fScaleFudgePercent, 0 );
+			fPercentageToCutOff = std::max( fPercentageToCutOff-fScaleFudgePercent, 0.f );
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 
 			// generate a rectangle with new texture coordinates
-			RectF fCustomImageRect( 
+			Rage::RectF fCustomImageRect(
 				0, 
 				fPercentageToCutOffEachSide,
 				1, 
 				1 - fPercentageToCutOffEachSide );
 			SetCustomImageRect( fCustomImageRect );
 		}
-		m_size = RageVector2( fWidth, fHeight );
+		m_size = Rage::Vector2{ fWidth, fHeight };
 		SetZoom( 1 );
 	}
 
@@ -994,7 +994,7 @@ void Sprite::CropTo( float fWidth, float fHeight )
 		Sprite::StopUsingCustomCoords();
 
 		// first find the correct zoom
-		Sprite::ScaleToCover( RectF(0, 0, fWidth, fHeight) );
+		Sprite::ScaleToCover( Rage::RectF(0, 0, fWidth, fHeight) );
 		// find which dimension is larger
 		bool bXDimNeedsToBeCropped = GetZoomedWidth() > fWidth+0.01;
 		
@@ -1004,7 +1004,7 @@ void Sprite::CropTo( float fWidth, float fHeight )
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 
 			// generate a rectangle with new texture coordinates
-			RectF fCustomImageRect( 
+			Rage::RectF fCustomImageRect(
 				fPercentageToCutOffEachSide, 
 				0, 
 				1 - fPercentageToCutOffEachSide, 
@@ -1017,14 +1017,14 @@ void Sprite::CropTo( float fWidth, float fHeight )
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 
 			// generate a rectangle with new texture coordinates
-			RectF fCustomImageRect( 
+			Rage::RectF fCustomImageRect(
 				0, 
 				fPercentageToCutOffEachSide,
 				1, 
 				1 - fPercentageToCutOffEachSide );
 			SetCustomImageRect( fCustomImageRect );
 		}
-		m_size = RageVector2( fWidth, fHeight );
+		m_size = Rage::Vector2{ fWidth, fHeight };
 		SetZoom( 1 );
 	}
 
