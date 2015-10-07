@@ -1444,10 +1444,10 @@ Rage::Matrix RageDisplay_D3D::GetOrthoMatrix( float l, float r, float b, float t
 	Rage::Matrix m = RageDisplay::GetOrthoMatrix( l, r, b, t, zn, zf );
 
 	// Convert from OpenGL's [-1,+1] Z values to D3D's [0,+1].
-	auto tmp = Rage::Matrix::Scaling(1, 1, 0.5f);
+	auto tmp = Rage::Matrix::GetScaling(1, 1, 0.5f);
 	RageMatrixMultiply( &m, &tmp, &m );
 
-	tmp = Rage::Matrix::Multiply(0, 0, 0.5f);
+	tmp = Rage::Matrix::GetTranslation(0, 0, 0.5f);
 	RageMatrixMultiply( &m, &tmp, &m );
 
 	return m;
