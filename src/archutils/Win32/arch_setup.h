@@ -20,6 +20,7 @@
 #if defined(_MSC_VER)
 
 #if _MSC_VER == 1400 // VC8 specific warnings
+// Prcuvu: Pending for removal since C++11 implementation requests VS2013 or higher.
 #pragma warning (disable : 4996) // deprecated functions vs "ISO C++ conformant names". (stricmp vs _stricmp)
 #pragma warning (disable : 4005) // macro redefinitions (ARRAYSIZE)
 #endif
@@ -94,34 +95,46 @@ void my_usleep( unsigned long usec );
 #define usleep my_usleep
 #endif
 
-// Missing stdint types:
-#if !defined(__MINGW32__) // MinGW headers define these for us
-typedef signed char int8_t;
-typedef signed short int16_t;
-typedef int int32_t;
+// Missing stdint types and macros:
+#if !defined(__MINGW32__) && !defined(HAVE_STDINT_H) // MinGW headers define these for us
+#if defined(_MSC_VER) // Use MSVC sized integers if possible
+/* Prcuvu: Pending for removal since C++11 implementation requests VS2013 or higher,
+           and VS2013 provides stdint.h with INT64_C macros. */
+typedef signed __int8 int8_t;
+typedef __int16 int16_t;
+typedef __int32 int32_t;
 typedef __int64 int64_t;
-typedef unsigned char uint8_t;
-typedef signed short int16_t;
-typedef unsigned short uint16_t;
-typedef int int32_t;
-typedef unsigned int uint32_t;
-typedef __int64 int64_t;
+typedef unsigned __int8 uint8_t;
+typedef unsigned __int16 uint16_t;
+typedef unsigned __int32 uint32_t;
 typedef unsigned __int64 uint64_t;
-#if defined(_MSC_VER)
 #if _MSC_VER < 1700	// 1700 = VC++ 2011
 #define INT64_C(i) i##i64
 #ifndef UINT64_C
 #define UINT64_C(i) i##ui64
 #endif
 #endif // #if _MSC_VER < 1700
+#else
+typedef signed char int8_t;
+typedef short int16_t;
+typedef int int32_t;
+typedef long long int64_t;
+typedef unsigned char uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned int uint32_t;
+typedef unsigned long long uint64_t;
+#endif // #if defined(_MSC_VER)
+#endif // #if !defined(__MINGW32__) && !defined(HAVE_STDINT_H)
+
+// Missing llabs function:
+// Prcuvu: Pending for removal since C++11 implementation requests VS2013 or higher.
+#if defined(_MSC_VER)
 #if (_MSC_VER >= 1400) && (_MSC_VER < 1800) // 1800 = VC++ 2013
 #define llabs(i) _abs64(i)
-#endif // #if (_MSC_VER >= 1400) && (_MSC_VER < 1800)
-#if _MSC_VER < 1400 // 1400 = VC++ 2005
+#elif _MSC_VER < 1400 // 1400 = VC++ 2005
 int64_t llabs( int64_t i ) { return i >= 0 ? i : -i; }
 #endif // #if _MSC_VER < 1400
 #endif // #if defined(_MSC_VER)
-#endif // #if !defined(__MINGW32__)
 
 #undef min
 #undef max
