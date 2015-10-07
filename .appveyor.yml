@@ -28,7 +28,7 @@ install:
 
     git submodule update extern/tommath
 
-    git submodule extern/tomcrypt
+    git submodule update extern/tomcrypt
 
     git submodule update extern/googletest
 
