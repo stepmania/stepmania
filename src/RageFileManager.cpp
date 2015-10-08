@@ -410,11 +410,12 @@ void RageFileManager::GetDirListing( const RString &sPath_, vector<RString> &Add
 		/* If returning the path, prepend the mountpoint name to the files this driver returned. */
 		if( bReturnPathToo && pLoadedDriver->m_sMountPoint.size() > 0 )
 		{
+			RString const &mountPoint = pLoadedDriver->m_sMountPoint;
+			/* Skip the trailing slash on the mountpoint; there's already a slash there. */
+			RString const &trimPoint = mountPoint.substr(0, mountPoint.size() - 1);
 			for( unsigned j = OldStart; j < AddTo.size(); ++j )
 			{
-				/* Skip the trailing slash on the mountpoint; there's already a slash there. */
-				RString &lPath = AddTo[j];
-				lPath.insert( 0, pLoadedDriver->m_sMountPoint, pLoadedDriver->m_sMountPoint.size()-1 );
+				AddTo[j] = trimPoint + AddTo[j];
 			}
 		}
 	}
