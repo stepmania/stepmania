@@ -281,7 +281,7 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 			{
 				THROW;
 			}
-			Rotation = RadianToDegree(Rotation);
+			Rotation = Rage::RadiansToDegrees(Rotation);
 
 			Bone.nFlags = nFlags;
 			memcpy( &Bone.Position, &Position, sizeof(Bone.Position) );
@@ -328,7 +328,7 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 				float fTime;
 				if (sscanf (sLine, "%f %f %f %f", &fTime, &Rotation.x, &Rotation.y, &Rotation.z) != 4)
 					THROW;
-				Rotation = RadianToDegree(Rotation);
+				Rotation = Rage::RadiansToDegrees(Rotation);
 
 				msRotationKey key;
 				key.fTime = fTime;

@@ -21,7 +21,7 @@ REGISTER_ACTOR_CLASS(GrooveRadar);
 static const ThemeMetric<float>	RADAR_EDGE_WIDTH	("GrooveRadar","EdgeWidth");
 static const ThemeMetric<float>	RADAR_CENTER_ALPHA	("GrooveRadar","CenterAlpha");
 
-static float RADAR_VALUE_ROTATION( int iValueIndex ) {	return PI/2 + PI*2 / 5.0f * iValueIndex; }
+static float RADAR_VALUE_ROTATION( int iValueIndex ) {	return Rage::PI / 2 + Rage::PI * 2 / 5.f * iValueIndex; }
 
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 

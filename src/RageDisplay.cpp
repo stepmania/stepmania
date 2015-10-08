@@ -235,7 +235,7 @@ void RageDisplay::DrawCircleInternal( const Rage::SpriteVertex &p, float radius 
 
 	for(int i = 0; i < subdivisions+1; ++i)
 	{
-		const float fRotation = float(i) / subdivisions * 2*PI;
+		const float fRotation = float(i) / subdivisions * 2 * Rage::PI;
 		const float fX = RageFastCos(fRotation) * radius;
 		const float fY = -RageFastSin(fRotation) * radius;
 		v[1+i] = v[0];
@@ -558,7 +558,7 @@ void RageDisplay::LoadMenuPerspective( float fovDegrees, float fWidth, float fHe
 	else
 	{
 		fovDegrees = Rage::clamp( fovDegrees, 0.1f, 179.9f );
-		float fovRadians = fovDegrees / 180.f * PI;
+		float fovRadians = fovDegrees / 180.f * Rage::PI;
 		float theta = fovRadians/2;
 		float fDistCameraFromImage = fWidth/2 / std::tan( theta );
 
@@ -616,7 +616,7 @@ void RageDisplay::LoadLookAt( float fFOV, const Rage::Vector3 &Eye, const Rage::
 
 Rage::Matrix RageDisplay::GetPerspectiveMatrix(float fovy, float aspect, float zNear, float zFar)
 {
-	float ymax = zNear * std::tan(fovy * PI / 360.0f);
+	float ymax = zNear * std::tan(fovy * Rage::PI / 360.0f);
 	float ymin = -ymax;
 	float xmin = ymin * aspect;
 	float xmax = ymax * aspect;

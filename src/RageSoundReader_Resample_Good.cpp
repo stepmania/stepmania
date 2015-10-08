@@ -85,7 +85,7 @@ namespace
 		for( int n = 0; n < iWinSize; ++n )
 		{
 			float fN1 = (n-p);
-			float fVal = sincf(2*PI*fCutoff * fN1)*(2*fCutoff);
+			float fVal = sincf(2 * Rage::PI * fCutoff * fN1)*(2*fCutoff);
 			// printf( "n %i, %f, %f -> %f\n", n, p, fN1, fVal );
 			pFIR[n] = fVal;
 		}
@@ -93,7 +93,7 @@ namespace
 		float *pFIRp = pFIR+iWinSize/2;
 		for(int i=-iWinSize/2;i<=iWinSize/2;i++)
 		{
-			float ff = sinc(2*M_PI*fCutoff * (i + 0.0))*(2*fCutoff);
+			float ff = sinc(2 * Rage::PI * fCutoff * (i + 0.0))*(2*fCutoff);
 
 			printf( "%i: %f\n", i, ff );
 

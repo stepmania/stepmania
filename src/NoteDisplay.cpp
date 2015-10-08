@@ -17,8 +17,8 @@
 #include "LuaBinding.h"
 #include "RageMath.h"
 
-static const double PI_180= PI / 180.0;
-static const double PI_180R= 180.0 / PI;
+static double constexpr PI_180= Rage::PI / 180.0;
+static double constexpr PI_180R= 180.0 / Rage::PI;
 
 const RString& NoteNotePartToString( NotePart i );
 /** @brief A foreach loop going through the different NoteParts. */
@@ -1617,9 +1617,9 @@ void NoteColumnRenderer::FinishTweening()
 
 NoteColumnRenderer::NCR_TweenState::NCR_TweenState()
 {
-	m_rot_handler.m_spline.set_spatial_extent(0, PI*2.0f);
-	m_rot_handler.m_spline.set_spatial_extent(1, PI*2.0f);
-	m_rot_handler.m_spline.set_spatial_extent(2, PI*2.0f);
+	m_rot_handler.m_spline.set_spatial_extent(0, Rage::PI * 2.0f);
+	m_rot_handler.m_spline.set_spatial_extent(1, Rage::PI * 2.0f);
+	m_rot_handler.m_spline.set_spatial_extent(2, Rage::PI * 2.0f);
 }
 
 void NoteColumnRenderer::NCR_TweenState::MakeWeightedAverage(
