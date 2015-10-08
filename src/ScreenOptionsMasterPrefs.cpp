@@ -184,7 +184,7 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 		sel = 0;
 		for(unsigned i = 0; i < choices.size(); ++i)
-			if( !stricmp(choices[i], sCurGameName) )
+			if( !strcasecmp(choices[i], sCurGameName) )
 				sel = i;
 	} else {
 		vector<const Game*> aGames;
@@ -223,12 +223,12 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 	{
 		sel = -1;
 		for( unsigned i=0; sel == -1 && i < vs.size(); ++i )
-			if( !stricmp(vs[i], THEME->GetCurLanguage()) )
+			if( !strcasecmp(vs[i], THEME->GetCurLanguage()) )
 				sel = i;
 
 		// If the current language doesn't exist, we'll show BASE_LANGUAGE, so select that.
 		for( unsigned i=0; sel == -1 && i < vs.size(); ++i )
-			if( !stricmp(vs[i], SpecialFiles::BASE_LANGUAGE) )
+			if( !strcasecmp(vs[i], SpecialFiles::BASE_LANGUAGE) )
 				sel = i;
 
 		if( sel == -1 )
@@ -279,7 +279,7 @@ static void RequestedTheme( int &sel, bool ToSel, const ConfOption *pConfOption 
 	{
 		sel = 0;
 		for( unsigned i=1; i<vsThemeNames.size(); i++ )
-			if( !stricmp(vsThemeNames[i], PREFSMAN->m_sTheme.Get()) )
+			if( !strcasecmp(vsThemeNames[i], PREFSMAN->m_sTheme.Get()) )
 				sel = i;
 	}
 	else
@@ -305,7 +305,7 @@ static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 	{
 		sel = 0;
 		for( unsigned i=1; i<choices.size(); i++ )
-			if( !stricmp(choices[i], ANNOUNCER->GetCurAnnouncerName()) )
+			if( !strcasecmp(choices[i], ANNOUNCER->GetCurAnnouncerName()) )
 				sel = i;
 	}
 	else
@@ -332,7 +332,7 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 		po.FromString( PREFSMAN->m_sDefaultModifiers );
 		sel = 0;
 		for( unsigned i=0; i < choices.size(); i++ )
-			if( !stricmp(choices[i], po.m_sNoteSkin) )
+			if( !strcasecmp(choices[i], po.m_sNoteSkin) )
 				sel = i;
 	}
 	else

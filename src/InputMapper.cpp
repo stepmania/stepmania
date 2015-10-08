@@ -1056,8 +1056,8 @@ MultiPlayer InputMapper::InputDeviceToMultiPlayer( InputDevice id )
 
 GameButton InputScheme::ButtonNameToIndex( const RString &sButtonName ) const
 {
-	for( GameButton gb=(GameButton) 0; gb<m_iButtonsPerController; gb=(GameButton)(gb+1) )
-		if( stricmp(GetGameButtonName(gb), sButtonName) == 0 )
+	for( GameButton gb=(GameButton) 0; gb<m_iButtonsPerController; gb=(GameButton)(gb+1) ) 
+		if( strcasecmp(GetGameButtonName(gb), sButtonName) == 0 )
 			return gb;
 
 	return GameButton_Invalid;
