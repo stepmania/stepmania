@@ -36,26 +36,26 @@ static void output_stack_trace( FILE *out, const void **BacktracePointers )
 		fprintf( out, "No backtrace method available.\n");
 		return;
 	}
-	
+
 	if( !BacktracePointers[0] )
 	{
 		fprintf( out, "Backtrace was empty.\n");
 		return;
 	}
-	
+
 	for( int i = 0; BacktracePointers[i]; ++i)
 	{
 		BacktraceNames bn;
-		bn.FromAddr( BacktracePointers[i] );
+		bn.FromAddr( const_cast<void *>(BacktracePointers[i]) );
 		bn.Demangle();
-		
+
 		/* Don't show the main module name. */
 		if( bn.File == g_pCrashHandlerArgv0 && !bn.Symbol.empty() )
 			bn.File = "";
-		
+
 		if( bn.Symbol == "__libc_start_main" )
 			break;
-		
+
 		fprintf( out, "%s\n", bn.Format().c_str() );
 	}
 }
@@ -74,16 +74,16 @@ bool child_read( int fd, void *p, int size )
 			fprintf( stderr, "Crash handler: error communicating with parent: %s\n", strerror(errno) );
 			return false;
 		}
-		
+
 		if( ret == 0 )
 		{
 			fprintf( stderr, "Crash handler: EOF communicating with parent.\n" );
 			return false;
 		}
-		
+
 		got += ret;
 	}
-	
+
 	return true;
 }
 
@@ -95,7 +95,7 @@ static void child_process()
 	CrashData crash;
 	if( !child_read(3, &crash, sizeof(CrashData)) )
 		return;
-	
+
 	/* 2. Read info. */
 	int size;
 	if( !child_read(3, &size, sizeof(size)) )
@@ -103,15 +103,15 @@ static void child_process()
 	char *Info = new char [size];
 	if( !child_read(3, Info, size) )
 		return;
-	
+
 	/* 3. Read AdditionalLog. */
 	if( !child_read(3, &size, sizeof(size)) )
 		return;
-	
+
 	char *AdditionalLog = new char [size];
 	if( !child_read(3, AdditionalLog, size) )
 		return;
-	
+
 	/* 4. Read RecentLogs. */
 	int cnt = 0;
 	if( !child_read(3, &cnt, sizeof(cnt)) )
@@ -125,19 +125,19 @@ static void child_process()
 		if( !child_read(3, Recent[i], size) )
 			return;
 	}
-	
+
 	/* 5. Read CHECKPOINTs. */
 	if( !child_read(3, &size, sizeof(size)) )
 		return;
-	
+
 	char *temp = new char [size];
 	if( !child_read(3, temp, size) )
 		return;
-	
+
 	vector<RString> Checkpoints;
 	split(temp, "$$", Checkpoints);
 	delete [] temp;
-	
+
 	/* 6. Read the crashed thread's name. */
 	if( !child_read(3, &size, sizeof(size)) )
 		return;
@@ -146,15 +146,15 @@ static void child_process()
 		return;
 	const RString CrashedThread(temp);
 	delete[] temp;
-	
+
 	/* Wait for the child to either finish cleaning up or die. */
 	fd_set rs;
 	struct timeval timeout = { 5, 0 }; // 5 seconds
-	
+
 	FD_ZERO( &rs );
 	FD_SET( 3, &rs );
 	int ret = select( 4, &rs, NULL, NULL, &timeout );
-	
+
 	if( ret == 0 )
 	{
 		fputs( "Timeout exceeded.\n", stderr );
@@ -165,10 +165,10 @@ static void child_process()
 		// Keep going.
 	}
 	else
-	{		
+	{
 		char x;
-		
-		// No need to check FD_ISSET( 3, &rs ) because it was the only descriptor in the set. 
+
+		// No need to check FD_ISSET( 3, &rs ) because it was the only descriptor in the set.
 		ret = read( 3, &x, sizeof(x) );
 		if( ret > 0 )
 		{
@@ -182,7 +182,7 @@ static void child_process()
 			/* keep going */
 		}
 	}
-		
+
 	RString sCrashInfoPath = "/tmp";
 #if defined(MACOSX)
 	sCrashInfoPath = CrashHandler::GetLogsDirectory();
@@ -192,14 +192,14 @@ static void child_process()
 		sCrashInfoPath = home;
 #endif
 	sCrashInfoPath += "/crashinfo.txt";
-	
+
 	FILE *CrashDump = fopen( sCrashInfoPath, "w+" );
 	if(CrashDump == NULL)
 	{
 		fprintf( stderr, "Couldn't open " + sCrashInfoPath + ": %s\n", strerror(errno) );
 		exit(1);
 	}
-	
+
 	fprintf( CrashDump, "%s%s crash report", PRODUCT_FAMILY, product_version );
 #if defined(HAVE_VERSION_INFO)
 	fprintf( CrashDump, " (build %s, %s @ %s)", ::sm_version_git_hash, version_date, version_time );
@@ -207,14 +207,14 @@ static void child_process()
 	fprintf( CrashDump, "\n" );
 	fprintf( CrashDump, "--------------------------------------\n" );
 	fprintf( CrashDump, "\n" );
-	
+
 	RString reason;
 	switch( crash.type )
 	{
 	case CrashData::SIGNAL:
 	{
 		reason = ssprintf( "%s - %s", SignalName(crash.signal), SignalCodeName(crash.signal, crash.si.si_code) );
-		
+
 		/* Linux puts the PID that sent the signal in si_addr for SI_USER. */
 		if( crash.si.si_code == SI_USER )
 		{
@@ -238,16 +238,16 @@ static void child_process()
 		reason = crash.reason;
 		break;
 	}
-	
+
 	fprintf( CrashDump, "Architecture:   %s\n", HOOKS->GetArchName().c_str() );
 	fprintf( CrashDump, "Crash reason:   %s\n", reason.c_str() );
 	fprintf( CrashDump, "Crashed thread: %s\n\n", CrashedThread.c_str() );
-	
+
 	fprintf(CrashDump, "Checkpoints:\n");
 	for( unsigned i=0; i<Checkpoints.size(); ++i )
 		fputs( Checkpoints[i], CrashDump );
 	fprintf( CrashDump, "\n" );
-	
+
 	for( int i = 0; i < CrashData::MAX_BACKTRACE_THREADS; ++i )
 	{
 		if( !crash.BacktracePointers[i][0] )
@@ -256,7 +256,7 @@ static void child_process()
 		output_stack_trace( CrashDump, crash.BacktracePointers[i] );
 		fprintf( CrashDump, "\n" );
 	}
-	
+
 	fprintf( CrashDump, "Static log:\n" );
 	fprintf( CrashDump, "%s", Info );
 	fprintf( CrashDump, "%s", AdditionalLog );
@@ -266,7 +266,7 @@ static void child_process()
 	fprintf( CrashDump, "\n" );
 	fprintf( CrashDump, "-- End of report\n" );
 	fclose( CrashDump) ;
-	
+
 #if defined(MACOSX)
 	CrashHandler::InformUserOfCrash( sCrashInfoPath );
 #else
@@ -275,7 +275,7 @@ static void child_process()
 	FILE *tty = fopen( "/dev/tty", "w" );
 	if( tty == NULL )
 		tty = stderr;
-	
+
 	fputs( 	"\n"
 		 PRODUCT_ID " has crashed.  Debug information has been output to\n"
 		 "\n"
@@ -302,7 +302,7 @@ void CrashHandler::CrashHandlerHandleArgs( int argc, char* argv[] )
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -312,7 +312,7 @@ void CrashHandler::CrashHandlerHandleArgs( int argc, char* argv[] )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

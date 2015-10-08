@@ -97,7 +97,7 @@ RString BacktraceNames::Format() const
 #if defined(BACKTRACE_LOOKUP_METHOD_DLADDR)
 /* This version simply asks libdl, which is more robust. */
 #include <dlfcn.h>
-void BacktraceNames::FromAddr( const void *p )
+void BacktraceNames::FromAddr( void * const p )
 {
     Address = (intptr_t) p;
 
@@ -222,7 +222,7 @@ static const char *osx_find_link_edit( const struct mach_header *header )
 	return NULL;
 }
 
-void BacktraceNames::FromAddr( const void *p )
+void BacktraceNames::FromAddr( void * const p )
 {
 	Address = (intptr_t) p;
 
@@ -294,7 +294,7 @@ void BacktraceNames::FromAddr( const void *p )
 #elif defined(BACKTRACE_LOOKUP_METHOD_BACKTRACE_SYMBOLS)
 /* This version parses backtrace_symbols(), an doesn't need libdl. */
 #include <execinfo.h>
-void BacktraceNames::FromAddr( const void *p )
+void BacktraceNames::FromAddr( void * const p )
 {
     Address = (intptr_t) p;
 
@@ -342,7 +342,7 @@ void BacktraceNames::FromString( RString s )
 }
 #else
 #warning Undefined BACKTRACE_LOOKUP_METHOD_*
-void BacktraceNames::FromAddr( const void *p )
+void BacktraceNames::FromAddr( void * const p )
 {
     Address = intptr_t(p);
     Offset = 0;
