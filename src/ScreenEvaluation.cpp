@@ -265,13 +265,13 @@ void ScreenEvaluation::Init()
 
 				m_SmallBanner[i].LoadFromSong( pSong );
 				m_SmallBanner[i].ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
-				m_SmallBanner[i].SetName( ssprintf("SmallBanner%d",i+1) );
+				m_SmallBanner[i].SetName( ssprintf("SmallBanner%zu",i+1) );
 				ActorUtil::LoadAllCommands( m_SmallBanner[i], m_sName );
 				SET_XY( m_SmallBanner[i] );
 				this->AddChild( &m_SmallBanner[i] );
 
 				m_sprSmallBannerFrame[i].Load( THEME->GetPathG(m_sName,"BannerFrame") );
-				m_sprSmallBannerFrame[i]->SetName( ssprintf("SmallBanner%d",i+1) );
+				m_sprSmallBannerFrame[i]->SetName( ssprintf("SmallBanner%zu",i+1) );
 				ActorUtil::LoadAllCommands( *m_sprSmallBannerFrame[i], m_sName );
 				SET_XY( m_sprSmallBannerFrame[i] );
 				this->AddChild( m_sprSmallBannerFrame[i] );

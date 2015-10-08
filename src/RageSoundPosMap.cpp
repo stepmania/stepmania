@@ -180,17 +180,17 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 	 * 3. Underflow; we'll be given a larger frame number than we know about.
 	 */
 #if defined(WIN32)
-#define LI "%I64i"
-#elif defined(PRIi64)
-#define LI "%" PRIi64
+#define I64F "%I64i"
+#elif defined(__x86_64__)
+#define I64F "%li"
 #else
-#define LI "%lli"
+#define I64F "%lli"
 #endif
 	static RageTimer last;
 	if( last.PeekDeltaTime() >= 1.0f )
 	{
 		last.GetDeltaTime();
-		LOG->Trace( "Approximate sound time: driver frame " LI ", m_pImpl->m_Queue frame " LI ".." LI " (dist " LI "), closest position is " LI,
+		LOG->Trace( "Approximate sound time: driver frame " I64F ", m_pImpl->m_Queue frame " I64F ".." I64F " (dist " I64F "), closest position is " I64F,
 			iSourceFrame, pClosestBlock->m_iDestFrame, pClosestBlock->m_iDestFrame+pClosestBlock->m_iFrames,
 			iClosestPositionDist, iClosestPosition );
 	}
