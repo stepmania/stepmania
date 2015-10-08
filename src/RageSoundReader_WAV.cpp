@@ -454,8 +454,8 @@ RString ReadString( RageFileBasic &f, int iSize, RString &sError )
 	if( sError.size() != 0 )
 		return RString();
 
-	char *buf = new char[iSize];
-	std::fill(buf, buf + iSize, '\0');
+	char *buf = new char[iSize + 1];
+	std::fill(buf, buf + iSize + 1, '\0');
 	FileReading::ReadBytes( f, buf, iSize, sError );
 	RString ret(buf);
 	delete [] buf;
