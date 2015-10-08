@@ -280,6 +280,11 @@ else() # Linux
       sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_METHOD_X86_LINUX)
       sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_METHOD_TEXT="x86 custom backtrace")
       sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_LOOKUP_METHOD_TEXT="backtrace_symbols")
+      if (${DL_FOUND})
+        sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_LOOKUP_METHOD_DLADDR)
+      else()
+        sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_LOOKUP_METHOD_BACKTRACE_SYMBOLS)
+      endif()
     endif()
   endif()
   if (${HAS_PTHREAD})
@@ -440,9 +445,9 @@ else() # Unix / Linux
     endif()
   endif()
 
-  list(APPEND SMDATA_LINK_LIB
-    "${DL_LIBRARY}"
-  )
+  if (${DL_FOUND})
+    list(APPEND SMDATA_LINK_LIB ${DL_LIBRARIES})
+  endif()
 
   if(HAS_OGG)
     list(APPEND SMDATA_LINK_LIB
@@ -556,6 +561,9 @@ if(NOT APPLE)
     endif()
     if (PCRE_FOUND)
       list(APPEND SM_INCLUDE_DIRS "${PCRE_INCLUDE_DIR}")
+    endif()
+    if (DL_FOUND)
+      list(APPEND SM_INCLUDE_DIRS "${DL_INCLUDE_DIR}")
     endif()
   endif()
 else()
