@@ -51,9 +51,6 @@
 /* Defined to 1 if the underlying system provides the strtof function. */
 #cmakedefine HAVE_STRTOF 1
 
-/* Defined to 1 if the underlying system provides the M_PI constant. */
-#cmakedefine HAVE_M_PI 1
-
 /* Defined to 1 if the underlying system provides the posix_fadvise function. */
 #cmakedefine HAVE_POSIX_FADVISE 1
 
@@ -156,11 +153,6 @@ typedef long ssize_t;
 /* Ensure we have a function for converting a string to a float. */
 #if !defined(HAVE_STRTOF)
 inline float strtof( const char *s, char **se ) { return (float) strtod( s, se ); }
-#endif
-
-#if !defined(HAVE_M_PI)
-/* This is only called if the math header files don't include it: stating it here is fine. */
-#define M_PI 3.1415926535897932384626433832795
 #endif
 
 /* Ensure we have an endianness defined. */

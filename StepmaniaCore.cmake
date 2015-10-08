@@ -110,7 +110,6 @@ check_function_exists(waitpid HAVE_WAITPID)
 
 # Mostly universal symbols.
 check_cxx_symbol_exists(strtof cstdlib HAVE_STRTOF)
-check_symbol_exists(M_PI math.h HAVE_M_PI)
 check_symbol_exists(size_t stddef.h HAVE_SIZE_T_STDDEF)
 check_symbol_exists(size_t stdlib.h HAVE_SIZE_T_STDLIB)
 check_symbol_exists(size_t stdio.h HAVE_SIZE_T_STDIO)

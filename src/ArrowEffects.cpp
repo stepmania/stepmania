@@ -105,7 +105,7 @@ void ArrowEffects::Update()
 		if( !position.m_bFreeze || !position.m_bDelay )
 		{
 			data.m_fExpandSeconds += fTime - fLastTime;
-			data.m_fExpandSeconds = fmodf( data.m_fExpandSeconds, PI*2 );
+			data.m_fExpandSeconds = fmodf( data.m_fExpandSeconds, Rage::PI * 2 );
 		}
 
 		// Update Tornado
@@ -522,7 +522,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 	if( fEffects[PlayerOptions::EFFECT_BEAT] != 0 )
 	{
-		const float fShift = data.m_fBeatFactor*RageFastSin( fYOffset / BEAT_OFFSET_HEIGHT + PI/BEAT_PI_HEIGHT );
+		const float fShift = data.m_fBeatFactor*RageFastSin( fYOffset / BEAT_OFFSET_HEIGHT + Rage::PI / BEAT_PI_HEIGHT );
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BEAT] * fShift;
 	}
 
@@ -606,8 +606,8 @@ float ArrowEffects::GetRotationZ( const PlayerState* pPlayerState, float fNoteBe
 		const float fSongBeat = pPlayerState->m_Position.m_fSongBeatVisible;
 		float fDizzyRotation = fNoteBeat - fSongBeat;
 		fDizzyRotation *= fEffects[PlayerOptions::EFFECT_DIZZY];
-		fDizzyRotation = fmodf( fDizzyRotation, 2*PI );
-		fDizzyRotation *= 180/PI;
+		fDizzyRotation = fmodf( fDizzyRotation, 2 * Rage::PI );
+		fDizzyRotation *= 180 / Rage::PI;
 		fRotation += fDizzyRotation;
 	}
 	return fRotation;
@@ -622,8 +622,8 @@ float ArrowEffects::ReceptorGetRotationZ( const PlayerState* pPlayerState )
 	{
 		float fConfRotation = pPlayerState->m_Position.m_fSongBeatVisible;
 		fConfRotation *= fEffects[PlayerOptions::EFFECT_CONFUSION];
-		fConfRotation = fmodf( fConfRotation, 2*PI );
-		fConfRotation *= -180/PI;
+		fConfRotation = fmodf( fConfRotation, 2 * Rage::PI );
+		fConfRotation *= -180 / Rage::PI;
 		fRotation += fConfRotation;
 	}
 	return fRotation;

@@ -52,7 +52,7 @@ public:
 
 		for( int i = 0; i < iSubdivisions+1; ++i )
 		{
-			const float fRotation = float(i) / iSubdivisions * 2*PI;
+			const float fRotation = float(i) / iSubdivisions * 2 * Rage::PI;
 			const float fX = RageFastCos(fRotation) * fRadius;
 			const float fY = -RageFastSin(fRotation) * fRadius;
 			pVerts[1+i] = v;
