@@ -342,12 +342,7 @@ elseif(LINUX)
     message(FATAL_ERROR "jpeg support required.")
   endif()
 
-  find_library(DL_LIBRARY dl)
-  if(${LIBDL_FOUND})
-    set(HAS_LIBDL TRUE)
-  else()
-    set(HAS_LIBDL FALSE)
-  endif()
+  find_package(Dl)
 
   find_package(Xrandr)
   if (${XRANDR_FOUND})
