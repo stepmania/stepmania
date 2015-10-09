@@ -284,16 +284,20 @@ static void ChangeToDirOfExecutable( const RString &argv0 )
 	/* Set the CWD.  Any effects of this is platform-specific; most files are read and
 	 * written through RageFile.  See also RageFileManager::RageFileManager. */
 #if defined(_WINDOWS)
-	chdir( RageFileManagerUtil::sDirOfExecutable + "/.." );
+	if( _chdir( RageFileManagerUtil::sDirOfExecutable + "/.." ) )
 #elif defined(UNIX)
-	chdir( RageFileManagerUtil::sDirOfExecutable + "/" );
+	if( chdir( RageFileManagerUtil::sDirOfExecutable + "/" ) )
 #elif defined(MACOSX)
 	/* If the basename is not MacOS, then we've likely been launched via the command line
 	 * through a symlink. Assume this is the case and change to the dir of the symlink. */
 	if( Basename(RageFileManagerUtil::sDirOfExecutable) == "MacOS" )
 		CollapsePath( RageFileManagerUtil::sDirOfExecutable += "/../../../" );
-	chdir( RageFileManagerUtil::sDirOfExecutable );
+	if( chdir( RageFileManagerUtil::sDirOfExecutable ) )
 #endif
+	{
+		LOG->Warn("Can't set current working directory to %s", RageFileManagerUtil::sDirOfExecutable.c_str());
+		return;
+	}
 }
 
 RageFileManager::RageFileManager( const RString &argv0 )
