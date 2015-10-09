@@ -218,7 +218,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 					if( sscanf(sLine, "%f %f %f", &Normal.x, &Normal.y, &Normal.z) != 3 )
 						THROW;
 
-					RageVec3Normalize( (Rage::Vector3*)&Normal, (Rage::Vector3*)&Normal );
+					Normal = Normal.GetNormalized();
 					Normals[j] = Normal;
 				}
 

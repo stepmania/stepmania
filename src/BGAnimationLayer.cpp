@@ -267,7 +267,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 					m_bParticlesBounce = true;
 					pSprite->SetZoom( 1 );
 					m_vParticleVelocity.push_back( Rage::Vector3( randomf(), randomf(), 0 ) );
-					RageVec3Normalize( &m_vParticleVelocity[i], &m_vParticleVelocity[i] );
+					m_vParticleVelocity[i] = m_vParticleVelocity[i].GetNormalized();
 					m_vParticleVelocity[i].x *= PARTICLE_SPEED;
 					m_vParticleVelocity[i].y *= PARTICLE_SPEED;
 					break;
@@ -494,7 +494,7 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 					randomf(fVelocityZMin,fVelocityZMax) ) );
 				if( fOverrideSpeed != 0 )
 				{
-					RageVec3Normalize( &m_vParticleVelocity[i], &m_vParticleVelocity[i] );
+					m_vParticleVelocity[i] = m_vParticleVelocity[i].GetNormalized();
 					m_vParticleVelocity[i] *= fOverrideSpeed;
 				}
 			}

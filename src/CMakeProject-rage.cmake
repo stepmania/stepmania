@@ -1,5 +1,6 @@
 list(APPEND RAGE_SRC
   "${SM_SRC_DIR}/rage/RageColor.cpp"
+  "${SM_SRC_DIR}/rage/RageMath.cpp"
   "${SM_SRC_DIR}/rage/RageMatrix.cpp"
   "${SM_SRC_DIR}/rage/RageModelVertex.cpp"
   "${SM_SRC_DIR}/rage/RageSpriteVertex.cpp"

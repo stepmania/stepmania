@@ -236,8 +236,8 @@ void RageDisplay::DrawCircleInternal( const Rage::SpriteVertex &p, float radius 
 	for(int i = 0; i < subdivisions+1; ++i)
 	{
 		const float fRotation = float(i) / subdivisions * 2 * Rage::PI;
-		const float fX = RageFastCos(fRotation) * radius;
-		const float fY = -RageFastSin(fRotation) * radius;
+		const float fX = Rage::FastCos(fRotation) * radius;
+		const float fY = -Rage::FastSin(fRotation) * radius;
 		v[1+i] = v[0];
 		v[1+i].p.x += fX;
 		v[1+i].p.y += fY;

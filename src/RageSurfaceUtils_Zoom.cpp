@@ -74,7 +74,7 @@ static void InitVectors( vector<int> &s0, vector<int> &s1, vector<uint32_t> &per
 			s0.push_back( Rage::clamp(int(sax), 0, src-1));
 			s1.push_back( Rage::clamp(int(sax+1), 0, src-1) );
 
-			const float p = (1.0f - (sax - floorf(sax))) * 16777216.0f;
+			const float p = (1.0f - (sax - std::floor(sax))) * 16777216.0f;
 			percent.push_back( uint32_t(p) );
 		}
 	}

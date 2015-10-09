@@ -195,10 +195,10 @@ void ArrowEffects::Update()
 				TIPSY_OFFSET_ARROW_MAGNITUDE;
 			for(int col= 0; col < MAX_COLS_PER_PLAYER; ++col)
 			{
-				data.m_tipsy_result[col]= RageFastCos(
+				data.m_tipsy_result[col]= Rage::FastCos(
 					time_times_timer + (col * TIPSY_COLUMN_FREQUENCY)) *
 					arrow_times_mag;
-				data.m_tipsy_offset_result[col]= RageFastCos(
+				data.m_tipsy_offset_result[col]= Rage::FastCos(
 					time_times_offset_timer + (col * TIPSY_OFFSET_COLUMN_FREQUENCY)) *
 					arrow_times_offset_mag;
 			}
@@ -362,7 +362,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		fYAdjust += fBrakeYAdjust;
 	}
 	if( fAccels[PlayerOptions::ACCEL_WAVE] != 0 )
-		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * WAVE_MOD_MAGNITUDE *RageFastSin( fYOffset/WAVE_MOD_HEIGHT );
+		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * WAVE_MOD_MAGNITUDE *Rage::FastSin( fYOffset/WAVE_MOD_HEIGHT );
 
 	fYOffset += fYAdjust;
 
@@ -398,7 +398,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		// TODO: Don't index by PlayerNumber.
 		PerPlayerData &data = g_EffectData[pPlayerState->m_PlayerNumber];
 
-		float fExpandMultiplier = Rage::scale( RageFastCos(data.m_fExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY),
+		float fExpandMultiplier = Rage::scale( Rage::FastCos(data.m_fExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY),
 						EXPAND_MULTIPLIER_SCALE_FROM_LOW + 0.f, EXPAND_MULTIPLIER_SCALE_FROM_HIGH + 0.f,
 						EXPAND_MULTIPLIER_SCALE_TO_LOW + 0.f, EXPAND_MULTIPLIER_SCALE_TO_HIGH + 0.f );
 		fScrollSpeed *=	Rage::scale( fAccels[PlayerOptions::ACCEL_EXPAND],
@@ -497,7 +497,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		float fRads = std::acos( fPositionBetween );
 		fRads += fYOffset * TORNADO_OFFSET_FREQUENCY / SCREEN_HEIGHT;
 
-		const float fAdjustedPixelOffset = Rage::scale( RageFastCos(fRads), TORNADO_OFFSET_SCALE_FROM_LOW + 0.f, TORNADO_OFFSET_SCALE_FROM_HIGH + 0.f,
+		const float fAdjustedPixelOffset = Rage::scale( Rage::FastCos(fRads), TORNADO_OFFSET_SCALE_FROM_LOW + 0.f, TORNADO_OFFSET_SCALE_FROM_HIGH + 0.f,
 							 data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum] );
 
 		fPixelOffsetFromCenter += (fAdjustedPixelOffset - fRealPixelOffset) * fEffects[PlayerOptions::EFFECT_TORNADO];
@@ -505,7 +505,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK] != 0 )
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] *
-			( RageFastCos( RageTimer::GetTimeSinceStartFast() + iColNum*DRUNK_COLUMN_FREQUENCY
+			( Rage::FastCos( RageTimer::GetTimeSinceStartFast() + iColNum*DRUNK_COLUMN_FREQUENCY
 				      + fYOffset*DRUNK_OFFSET_FREQUENCY/SCREEN_HEIGHT) * ARROW_SIZE*DRUNK_ARROW_MAGNITUDE );
 	if( fEffects[PlayerOptions::EFFECT_FLIP] != 0 )
 	{
@@ -522,7 +522,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 	if( fEffects[PlayerOptions::EFFECT_BEAT] != 0 )
 	{
-		const float fShift = data.m_fBeatFactor*RageFastSin( fYOffset / BEAT_OFFSET_HEIGHT + Rage::PI / BEAT_PI_HEIGHT );
+		const float fShift = data.m_fBeatFactor*Rage::FastSin( fYOffset / BEAT_OFFSET_HEIGHT + Rage::PI / BEAT_PI_HEIGHT );
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BEAT] * fShift;
 	}
 
@@ -717,7 +717,7 @@ float ArrowGetPercentVisible(float fYPosWithoutReverse)
 		fVisibleAdjust -= fAppearances[PlayerOptions::APPEARANCE_STEALTH];
 	if( fAppearances[PlayerOptions::APPEARANCE_BLINK] != 0 )
 	{
-		float f = RageFastSin(RageTimer::GetTimeSinceStartFast()*10);
+		float f = Rage::FastSin(RageTimer::GetTimeSinceStartFast()*10);
 		f = Quantize( f, BLINK_MOD_FREQUENCY );
 		fVisibleAdjust += Rage::scale( f, 0.f, 1.f, -1.f, 0.f );
 	}
@@ -785,7 +785,7 @@ float ArrowEffects::GetZPos(int iCol, float fYOffset)
 	const float* fEffects = curr_options->m_fEffects;
 
 	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 )
-		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin( fYOffset/16.0f );
+		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*Rage::FastSin( fYOffset/16.0f );
 
 	return fZPos;
 }

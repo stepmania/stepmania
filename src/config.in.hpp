@@ -127,12 +127,9 @@ typedef long ssize_t;
 /** @brief Define a macro to tell the compiler that a function has printf()
  * semantics, to aid warning output. */
 #define PRINTF(a,b) __attribute__((format(__printf__,a,b)))
-#define CONST_FUNCTION __attribute__((const))
 #else
 /** @brief A dummy define to keep things going smoothly. */
 #define PRINTF(a,b)
-/** @brief A dummy define to keep things going smoothly. */
-#define CONST_FUNCTION
 #endif
 
 /* Ensure we have a function that acts like a size limited sprintf. */

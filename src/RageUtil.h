@@ -310,7 +310,7 @@ inline int QuantizeDown( int i, int iInterval )
 
 inline float QuantizeDown( float i, float iInterval )
 {
-	return floorf( i/iInterval ) * iInterval;
+	return std::floor( i/iInterval ) * iInterval;
 }
 
 // Move val toward other_val by to_move.

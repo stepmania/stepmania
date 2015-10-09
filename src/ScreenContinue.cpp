@@ -69,7 +69,7 @@ bool ScreenContinue::Input( const InputEventPlus &input )
 			case GAME_BUTTON_LEFT:
 			case GAME_BUTTON_RIGHT:
 			{
-				float fSeconds = floorf(m_MenuTimer->GetSeconds()) - 0.0001f;
+				float fSeconds = std::floor(m_MenuTimer->GetSeconds()) - 0.0001f;
 				fSeconds = std::max( fSeconds, 0.0001f ); // don't set to 0
 				m_MenuTimer->SetSeconds( fSeconds );
 				Message msg("HurryTimer");

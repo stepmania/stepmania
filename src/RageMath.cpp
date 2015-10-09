@@ -35,51 +35,6 @@ void RageVec3AddToBounds( const Rage::Vector3 &p, Rage::Vector3 &mins, Rage::Vec
 	maxs.z = max( maxs.z, p.z );
 }
 
-void RageVec2Normalize( Rage::Vector2* pOut, const Rage::Vector2* pV )
-{
-  float scale = 1.0f / std::sqrt( pV->x*pV->x + pV->y*pV->y );
-	pOut->x = pV->x * scale;
-	pOut->y = pV->y * scale;
-}
-
-void RageVec3Normalize( Rage::Vector3* pOut, const Rage::Vector3* pV )
-{
-  float scale = 1.0f / std::sqrt( pV->x*pV->x + pV->y*pV->y + pV->z*pV->z );
-	pOut->x = pV->x * scale;
-	pOut->y = pV->y * scale;
-	pOut->z = pV->z * scale;
-}
-
-void VectorFloatNormalize(vector<float>& v)
-{
-	ASSERT_M(v.size() == 3, "Can't normalize a non-3D vector.");
-  float scale = 1.0f / std::sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
-	v[0]*= scale;
-	v[1]*= scale;
-	v[2]*= scale;
-}
-
-void RageVec3Cross(Rage::Vector3* ret, Rage::Vector3 const* a, Rage::Vector3 const* b)
-{
-	ret->x= (a->y * b->z) - (a->z * b->y);
-	ret->y= ((a->x * b->z) - (a->z * b->x));
-	ret->z= (a->x * b->y) - (a->y * b->x);
-}
-
-void RageVec3TransformCoord( Rage::Vector3* pOut, const Rage::Vector3* pV, const Rage::Matrix* pM )
-{
-	Rage::Vector4 temp( pV->x, pV->y, pV->z, 1.0f );	// translate
-	RageVec4TransformCoord( &temp, &temp, pM );
-	*pOut = Rage::Vector3( temp.x/temp.w, temp.y/temp.w, temp.z/temp.w );
-}
-
-void RageVec3TransformNormal( Rage::Vector3* pOut, const Rage::Vector3* pV, const Rage::Matrix* pM )
-{
-	Rage::Vector4 temp( pV->x, pV->y, pV->z, 0.0f );	// don't translate
-	RageVec4TransformCoord( &temp, &temp, pM );
-	*pOut = Rage::Vector3( temp.x, temp.y, temp.z );
-}
-
 #define m00 m[0][0]
 #define m01 m[0][1]
 #define m02 m[0][2]
@@ -96,17 +51,6 @@ void RageVec3TransformNormal( Rage::Vector3* pOut, const Rage::Vector3* pV, cons
 #define m31 m[3][1]
 #define m32 m[3][2]
 #define m33 m[3][3]
-
-void RageVec4TransformCoord( Rage::Vector4* pOut, const Rage::Vector4* pV, const Rage::Matrix* pM )
-{
-	const Rage::Matrix &a = *pM;
-	const Rage::Vector4 &v = *pV;
-	*pOut = Rage::Vector4(
-		a.m00*v.x+a.m10*v.y+a.m20*v.z+a.m30*v.w,
-		a.m01*v.x+a.m11*v.y+a.m21*v.z+a.m31*v.w,
-		a.m02*v.x+a.m12*v.y+a.m22*v.z+a.m32*v.w,
-		a.m03*v.x+a.m13*v.y+a.m23*v.z+a.m33*v.w );
-}
 
 void RageMatrixMultiply( Rage::Matrix* pOut, const Rage::Matrix* pA, const Rage::Matrix* pB )
 {
@@ -150,10 +94,10 @@ void RageMatrixRotationX( Rage::Matrix* pOut, float theta )
 	theta *= Rage::PI / 180;
 
 	*pOut = Rage::Matrix::GetIdentity();
-	pOut->m[1][1] = RageFastCos(theta);
+	pOut->m[1][1] = Rage::FastCos(theta);
 	pOut->m[2][2] = pOut->m[1][1];
 
-	pOut->m[2][1] = RageFastSin(theta);
+	pOut->m[2][1] = Rage::FastSin(theta);
 	pOut->m[1][2] = -pOut->m[2][1];
 }
 
@@ -162,10 +106,10 @@ void RageMatrixRotationY( Rage::Matrix* pOut, float theta )
 	theta *= Rage::PI / 180;
 
 	*pOut = Rage::Matrix::GetIdentity();
-	pOut->m[0][0] = RageFastCos(theta);
+	pOut->m[0][0] = Rage::FastCos(theta);
 	pOut->m[2][2] = pOut->m[0][0];
 
-	pOut->m[0][2] = RageFastSin(theta);
+	pOut->m[0][2] = Rage::FastSin(theta);
 	pOut->m[2][0] = -pOut->m[0][2];
 }
 
@@ -174,10 +118,10 @@ void RageMatrixRotationZ( Rage::Matrix* pOut, float theta )
 	theta *= Rage::PI / 180;
 
 	*pOut = Rage::Matrix::GetIdentity();
-	pOut->m[0][0] = RageFastCos(theta);
+	pOut->m[0][0] = Rage::FastCos(theta);
 	pOut->m[1][1] = pOut->m[0][0];
 
-	pOut->m[0][1] = RageFastSin(theta);
+	pOut->m[0][1] = Rage::FastSin(theta);
 	pOut->m[1][0] = -pOut->m[0][1];
 }
 
@@ -190,12 +134,12 @@ void RageMatrixRotationXYZ( Rage::Matrix* pOut, float rX, float rY, float rZ )
 	rY *= Rage::PI / 180;
 	rZ *= Rage::PI / 180;
 
-	const float cX = RageFastCos(rX);
-	const float sX = RageFastSin(rX);
-	const float cY = RageFastCos(rY);
-	const float sY = RageFastSin(rY);
-	const float cZ = RageFastCos(rZ);
-	const float sZ = RageFastSin(rZ);
+	const float cX = Rage::FastCos(rX);
+	const float sX = Rage::FastSin(rX);
+	const float cY = Rage::FastCos(rY);
+	const float sY = Rage::FastSin(rY);
+	const float cZ = Rage::FastCos(rZ);
+	const float sZ = Rage::FastSin(rZ);
 
 	/*
 	 * X*Y:
@@ -237,8 +181,8 @@ void RageMatrixRotationXYZ( Rage::Matrix* pOut, float rX, float rY, float rZ )
 void RageAARotate(Rage::Vector3* inret, Rage::Vector3 const* axis, float angle)
 {
 	float ha= angle/2.0f;
-	float ca2= RageFastCos(ha);
-	float sa2= RageFastSin(ha);
+	float ca2= Rage::FastCos(ha);
+	float sa2= Rage::FastSin(ha);
 	Rage::Vector4 quat(axis->x * sa2, axis->y * sa2, axis->z * sa2, ca2);
 	Rage::Vector4 quatc(-quat.x, -quat.y, -quat.z, ca2);
 	Rage::Vector4 point(inret->x, inret->y, inret->z, 0.0f);
@@ -278,8 +222,8 @@ Rage::Vector4 RageQuatFromH(float theta )
 	theta *= Rage::PI / 180.0f;
 	theta /= 2.0f;
 	theta *= -1;
-	const float c = RageFastCos(theta);
-	const float s = RageFastSin(theta);
+	const float c = Rage::FastCos(theta);
+	const float s = Rage::FastSin(theta);
 
 	return Rage::Vector4(0, s, 0, c);
 }
@@ -289,8 +233,8 @@ Rage::Vector4 RageQuatFromP(float theta )
 	theta *= Rage::PI / 180.0f;
 	theta /= 2.0f;
 	theta *= -1;
-	const float c = RageFastCos(theta);
-	const float s = RageFastSin(theta);
+	const float c = Rage::FastCos(theta);
+	const float s = Rage::FastSin(theta);
 
 	return Rage::Vector4(s, 0, 0, c);
 }
@@ -300,8 +244,8 @@ Rage::Vector4 RageQuatFromR(float theta )
 	theta *= Rage::PI / 180.0f;
 	theta /= 2.0f;
 	theta *= -1;
-	const float c = RageFastCos(theta);
-	const float s = RageFastSin(theta);
+	const float c = Rage::FastCos(theta);
+	const float s = Rage::FastSin(theta);
 
 	return Rage::Vector4(0, 0, s, c);
 }
@@ -316,12 +260,12 @@ void RageQuatFromHPR(Rage::Vector4* pOut, Rage::Vector3 hpr )
 	hpr /= 180.0f;
 	hpr /= 2.0f;
 
-	const float sX = RageFastSin(hpr.x);
-	const float cX = RageFastCos(hpr.x);
-	const float sY = RageFastSin(hpr.y);
-	const float cY = RageFastCos(hpr.y);
-	const float sZ = RageFastSin(hpr.z);
-	const float cZ = RageFastCos(hpr.z);
+	const float sX = Rage::FastSin(hpr.x);
+	const float cX = Rage::FastCos(hpr.x);
+	const float sY = Rage::FastSin(hpr.y);
+	const float cY = Rage::FastCos(hpr.y);
+	const float sZ = Rage::FastSin(hpr.z);
+	const float cZ = Rage::FastCos(hpr.z);
 
 	pOut->w = cX * cY * cZ + sX * sY * sZ;
 	pOut->x = sX * cY * cZ - cX * sY * sZ;
@@ -344,12 +288,12 @@ void RageQuatFromPRH(Rage::Vector4* pOut, Rage::Vector3 prh )
 	/* Set cX to the cosine of the angle we want to rotate on the X axis,
 	 * and so on.  Here, hpr.z (roll) rotates on the Z axis, hpr.x (heading)
 	 * on Y, and hpr.y (pitch) on X. */
-	const float sX = RageFastSin(prh.y);
-	const float cX = RageFastCos(prh.y);
-	const float sY = RageFastSin(prh.x);
-	const float cY = RageFastCos(prh.x);
-	const float sZ = RageFastSin(prh.z);
-	const float cZ = RageFastCos(prh.z);
+	const float sX = Rage::FastSin(prh.y);
+	const float cX = Rage::FastCos(prh.y);
+	const float sY = Rage::FastSin(prh.x);
+	const float cY = Rage::FastCos(prh.x);
+	const float sZ = Rage::FastSin(prh.z);
+	const float cZ = Rage::FastCos(prh.z);
 
 	pOut->w = cX * cY * cZ + sX * sY * sZ;
 	pOut->x = sX * cY * cZ - cX * sY * sZ;
@@ -410,9 +354,9 @@ void RageQuatSlerp(Rage::Vector4 *pOut, const Rage::Vector4 &from, const Rage::V
 	{
 		// standard case (slerp)
 		float omega = std::acos(cosom);
-		float sinom = RageFastSin(omega);
-		scale0 = RageFastSin((1.0f - t) * omega) / sinom;
-		scale1 = RageFastSin(t * omega) / sinom;
+		float sinom = Rage::FastSin(omega);
+		scale0 = Rage::FastSin((1.0f - t) * omega) / sinom;
+		scale1 = Rage::FastSin(t * omega) / sinom;
 	}
 	else
 	{
@@ -434,7 +378,7 @@ Rage::Matrix RageLookAt(
 	float upx, float upy, float upz )
 {
 	Rage::Vector3 Z(eyex - centerx, eyey - centery, eyez - centerz);
-	RageVec3Normalize(&Z, &Z);
+	Z = Z.GetNormalized();
 
 	Rage::Vector3 Y(upx, upy, upz);
 
@@ -448,8 +392,8 @@ Rage::Matrix RageLookAt(
 		 -Z.x * X.z + Z.z * X.x,
 		 Z.x * X.y - Z.y * X.x );
 
-	RageVec3Normalize(&X, &X);
-	RageVec3Normalize(&Y, &Y);
+	X = X.GetNormalized();
+	Y = Y.GetNormalized();
 
 	Rage::Matrix mat(
 		X.x, Y.x, Z.x, 0,
@@ -469,12 +413,12 @@ void RageMatrixAngles( Rage::Matrix* pOut, const Rage::Vector3 &angles )
 {
 	const Rage::Vector3 angles_radians( angles * 2 * Rage::PI / 360 );
 
-	const float sy = RageFastSin( angles_radians.z );
-	const float cy = RageFastCos( angles_radians.z );
-	const float sp = RageFastSin( angles_radians.y );
-	const float cp = RageFastCos( angles_radians.y );
-	const float sr = RageFastSin( angles_radians.x );
-	const float cr = RageFastCos( angles_radians.x );
+	const float sy = Rage::FastSin( angles_radians.z );
+	const float cy = Rage::FastCos( angles_radians.z );
+	const float sp = Rage::FastSin( angles_radians.y );
+	const float cp = Rage::FastCos( angles_radians.y );
+	const float sr = Rage::FastSin( angles_radians.x );
+	const float cr = Rage::FastCos( angles_radians.x );
 
 	*pOut = Rage::Matrix::GetIdentity();
 
@@ -489,75 +433,6 @@ void RageMatrixAngles( Rage::Matrix* pOut, const Rage::Vector3 &angles )
 	pOut->m[2][0] = (cr*sp*cy+-sr*-sy);
 	pOut->m[2][1] = (cr*sp*sy+-sr*cy);
 	pOut->m[2][2] = cr*cp;
-}
-
-void RageMatrixTranspose( Rage::Matrix* pOut, const Rage::Matrix* pIn )
-{
-	for( int i=0; i<4; i++)
-		for( int j=0; j<4; j++)
-			pOut->m[j][i] = pIn->m[i][j];
-}
-
-float RageFastSin( float x )
-{
-	// from 0 to PI
-	// sizeof(table) == 4096 == one page of memory in Windows
-	static std::array<float, 1024> table;
-
-	static bool bInited = false;
-	if( !bInited )
-	{
-		bInited = true;
-		for( unsigned i=0; i < table.size(); i++ )
-		{
-			float z = Rage::scale(i + 0.f, 0.f, table.size() + 0.f, 0.0f, Rage::PI);
-			table[i] = std::sin(z);
-		}
-	}
-
-	// optimization
-	if( x == 0 )
-		return 0;
-
-	float fIndex = Rage::scale( x, 0.0f, Rage::PI * 2, 0.f, table.size() * 2.f );
-
-	// lerp using samples from the table
-	std::array<int, 2> iSampleIndex;
-	iSampleIndex[0] = (int)floorf(fIndex);
-	iSampleIndex[1] = iSampleIndex[0]+1;
-
-	float fRemainder = fIndex - iSampleIndex[0];
-	for( unsigned i=0; i < iSampleIndex.size(); ++i )
-	{
-		iSampleIndex[i] %= table.size() * 2;
-	}
-	DEBUG_ASSERT( fRemainder>=0 && fRemainder<=1 );
-
-	std::array<float, 2> fValue;
-	for( unsigned i=0; i < fValue.size(); ++i )
-	{
-		int &iSample = iSampleIndex[i];
-		float &fVal = fValue[i];
-
-		if( iSample >= table.size() )	// PI <= iSample < 2*PI
-		{
-			// sin(x) == -sin(PI+x)
-			iSample -= table.size();
-			DEBUG_ASSERT( iSample>=0 && iSample < table.size() );
-			fVal = -table[iSample];
-		}
-		else
-		{
-			fVal = table[iSample];
-		}
-	}
-
-	return Rage::scale( fRemainder, 0.0f, 1.0f, fValue[0], fValue[1] );
-}
-
-float RageFastCos( float x )
-{
-	return RageFastSin( x + 0.5f * Rage::PI );
 }
 
 float RageQuadratic::Evaluate( float fT ) const

@@ -826,7 +826,7 @@ void NoteField::DrawPrimitives()
 		ASSERT(GAMESTATE->m_pCurSong != nullptr);
 
 		const TimingData &timing = *pTiming;
-		const Rage::Color text_glow= Rage::Color(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f);
+		const Rage::Color text_glow= Rage::Color(1,1,1,Rage::FastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f);
 
 		float horiz_align= align_right;
 		float side_sign= 1;
@@ -1012,7 +1012,7 @@ void NoteField::DrawPrimitives()
 		*m_FieldRenderArgs.selection_end_marker != -1)
 	{
 		m_FieldRenderArgs.selection_glow= Rage::scale(
-			RageFastCos(RageTimer::GetTimeSinceStartFast()*2), -1.f, 1.f, 0.1f, 0.3f);
+			Rage::FastCos(RageTimer::GetTimeSinceStartFast()*2), -1.f, 1.f, 0.1f, 0.3f);
 	}
 	m_FieldRenderArgs.fade_before_targets= FADE_BEFORE_TARGETS_PERCENT;
 
