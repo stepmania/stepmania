@@ -16,12 +16,6 @@ namespace Rage
 void RageVec3ClearBounds( Rage::Vector3 &mins, Rage::Vector3 &maxs );
 void RageVec3AddToBounds( const Rage::Vector3 &p, Rage::Vector3 &mins, Rage::Vector3 &maxs );
 
-// pOut = pB * pA
-void RageMatrixMultiply( Rage::Matrix* pOut, const Rage::Matrix* pA, const Rage::Matrix* pB );
-void RageMatrixRotationX( Rage::Matrix* pOut, float fTheta );
-void RageMatrixRotationY( Rage::Matrix* pOut, float fTheta );
-void RageMatrixRotationZ( Rage::Matrix* pOut, float fTheta );
-void RageMatrixRotationXYZ( Rage::Matrix* pOut, float rX, float rY, float rZ );
 void RageAARotate(Rage::Vector3* inret, Rage::Vector3 const* axis, float angle);
 void RageQuatFromHPR(Rage::Vector4* pOut, Rage::Vector3 hpr );
 void RageQuatFromPRH(Rage::Vector4* pOut, Rage::Vector3 prh );

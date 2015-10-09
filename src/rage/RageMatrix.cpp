@@ -1,4 +1,5 @@
 #include "RageMatrix.hpp"
+#include "RageMath.hpp"
 
 using namespace Rage;
 
@@ -35,6 +36,27 @@ Matrix::Matrix(float v00, float v01, float v02, float v03, float v10, float v11,
 	m[3][1] = v31;
 	m[3][2] = v32;
 	m[3][3] = v33;
+}
+
+Rage::Matrix Rage::operator*(Rage::Matrix const &lhs, const Rage::Matrix &rhs)
+{
+	Matrix result;
+	
+	for (size_t row = 0; row < 4; ++row)
+	{
+		for (size_t col = 0; col < 4; ++col)
+		{
+			float sum = 0;
+			for (size_t i = 0; i < 4; ++i)
+			{
+				auto tmp = lhs(i, row) * rhs(col, i);
+				sum += tmp;
+			}
+			result(col, row) = sum;
+		}
+	}
+	
+	return result;
 }
 
 float & Matrix::operator()(int row, int col)
@@ -104,5 +126,87 @@ Matrix Matrix::GetSkewY(float y)
 		0, 1, 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1
+	};
+}
+
+Matrix Matrix::GetRotationX(float degrees)
+{
+	float theta = Rage::DegreesToRadians(degrees);
+	
+	float cos = Rage::FastCos(theta);
+	float sin = Rage::FastSin(theta);
+	
+	return Matrix
+	{
+		1, 0, 0, 0,
+		0, cos, -sin, 0,
+		0, sin, cos, 0,
+		0, 0, 0, 1
+	};
+}
+
+Matrix Matrix::GetRotationY(float degrees)
+{
+	float theta = Rage::DegreesToRadians(degrees);
+	
+	float cos = Rage::FastCos(theta);
+	float sin = Rage::FastSin(theta);
+	
+	return Matrix
+	{
+		cos, 0, sin, 0,
+		0, 1, 0, 0,
+		-sin, 0, cos, 0,
+		0, 0, 0, 1
+	};
+}
+
+Matrix Matrix::GetRotationZ(float degrees)
+{
+	float theta = Rage::DegreesToRadians(degrees);
+	
+	float cos = Rage::FastCos(theta);
+	float sin = Rage::FastSin(theta);
+	
+	return Matrix
+	{
+		cos, sin, 0, 0,
+		-sin, cos, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1
+	};
+}
+
+Matrix Matrix::GetRotationXYZ(float degreesX, float degreesY, float degreesZ)
+{
+	float const rX = DegreesToRadians(degreesX);
+	float const rY = DegreesToRadians(degreesY);
+	float const rZ = DegreesToRadians(degreesZ);
+	
+	float const cX = Rage::FastCos(rX);
+	float const sX = Rage::FastSin(rX);
+	float const cY = Rage::FastCos(rY);
+	float const sY = Rage::FastSin(rY);
+	float const cZ = Rage::FastCos(rZ);
+	float const sZ = Rage::FastSin(rZ);
+	
+	return Matrix
+	{
+		cZ * cY,
+		cZ * sY * sX + sZ * cX,
+		cZ * sY * cX + sZ * (-sX),
+		0,
+		(-sZ) * cY,
+		(-sZ) * sY * sX + cZ * cX,
+		(-sZ) * sY * cX + cZ * (-sX),
+		0,
+		-sY,
+		cY * sX,
+		cY * cX,
+		0,
+		0,
+		0,
+		0,
+		1
 	};
 }

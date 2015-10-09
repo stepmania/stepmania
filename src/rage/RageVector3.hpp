@@ -20,13 +20,19 @@ public:
 	/** @brief Get the cross product. */
 	Vector3& operator *= (Vector3 const & rhs);
 	
-	/** @brief Get a normalized version of the vector. */
+	/** @brief Get a normalized version of the vector.
+	 *
+	 * For documentation support, look into D3DXVec3Normalize. */
 	Vector3 GetNormalized() const;
 
-	/** @brief Get the transformed coordinate version of the vector. */
+	/** @brief Get the transformed coordinate version of the vector.
+	 *
+	 * For documentation support, look into D3DXVec3TransformCoord. */
 	Vector3 TransformCoords(Matrix const &mat) const;
 
-	/** @brief Get the transformed normal version of the vector. */
+	/** @brief Get the transformed normal version of the vector.
+	 *
+	 * For documentation support, look into D3DXVec3TransformNormal. */
 	Vector3 TransformNormal(Matrix const &mat) const;
 
 	float x, y, z;

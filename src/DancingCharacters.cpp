@@ -323,8 +323,7 @@ void DancingCharacters::DrawPrimitives()
 	float fCameraHeight = Rage::scale( fPercentIntoSweep, 0.f, 1.f, m_fCameraHeightStart, m_fCameraHeightEnd );
 
 	Rage::Vector3 m_CameraPoint( 0, fCameraHeight, -m_CameraDistance );
-	Rage::Matrix CameraRot;
-	RageMatrixRotationY( &CameraRot, fCameraPanY );
+	Rage::Matrix CameraRot = Rage::Matrix::GetRotationY(fCameraPanY);
 	m_CameraPoint = m_CameraPoint.TransformCoords(CameraRot);
 
 	Rage::Vector3 m_LookAt( 0, m_fLookAtHeight, 0 );

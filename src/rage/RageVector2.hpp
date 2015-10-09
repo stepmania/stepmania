@@ -15,7 +15,9 @@ public:
 	Vector2& operator *= (float rhs);
 	Vector2& operator /= (float rhs);
 
-	/** @brief Get a normalized version of the vector. */
+	/** @brief Get a normalized version of the vector. 
+	 *
+	 * For documentation support, look into D3DXVec2Normalize. */
 	Vector2 GetNormalized() const;
 	
 	float x, y;
