@@ -31,7 +31,7 @@ float SampleHistory::GetSampleNum( float fSamplesAgo ) const
 
 	float fSample = m_iLastHistory - fSamplesAgo - 1;
 
-	float f = floorf( fSample );
+	float f = std::floor( fSample );
 	int iSample = std::lrint(f);
 	int iNextSample = iSample + 1;
 	wrap( iSample, m_afHistory.size() );

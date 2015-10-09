@@ -15,6 +15,9 @@ public:
 	Vector2& operator *= (float rhs);
 	Vector2& operator /= (float rhs);
 
+	/** @brief Get a normalized version of the vector. */
+	Vector2 GetNormalized() const;
+	
 	float x, y;
 };
 

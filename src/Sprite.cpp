@@ -454,8 +454,8 @@ void Sprite::Update( float fDelta )
 		 * coordinates by the same amount, this won't be visible. */
 		if( m_bTextureWrapping )
 		{
-			const float fXAdjust = floorf( fTexCoords[0] );
-			const float fYAdjust = floorf( fTexCoords[1] );
+			const float fXAdjust = std::floor( fTexCoords[0] );
+			const float fYAdjust = std::floor( fTexCoords[1] );
 			fTexCoords[0] -= fXAdjust;
 			fTexCoords[2] -= fXAdjust;
 			fTexCoords[4] -= fXAdjust;

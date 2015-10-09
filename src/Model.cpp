@@ -554,9 +554,8 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 
 				Rage::Vector3 vTmp;
 
-				Rage::Matrix inverse;
-				RageMatrixTranspose( &inverse, &m_vpBones[bone].m_Absolute );	// transpose = inverse for rotation matrices
-				RageVec3TransformNormal( &vTmp, &pos, &inverse );
+				Rage::Matrix inverse = m_vpBones[bone].m_Absolute.GetTranspose(); // transpose = inverse for rotation matrices
+				vTmp = pos.TransformNormal(inverse);
 
 				pos = vTmp;
 			}
@@ -710,8 +709,8 @@ void Model::UpdateTempGeometry()
 			}
 			else
 			{
-				RageVec3TransformNormal( &tempNormal, &originalNormal, &m_vpBones[bone].m_Final );
-				RageVec3TransformCoord( &tempPos, &originalPos, &m_vpBones[bone].m_Final );
+				tempNormal = originalNormal.TransformNormal(m_vpBones[bone].m_Final);
+				tempPos = originalPos.TransformCoords(m_vpBones[bone].m_Final);
 			}
 		}
 	}

@@ -325,7 +325,7 @@ void DancingCharacters::DrawPrimitives()
 	Rage::Vector3 m_CameraPoint( 0, fCameraHeight, -m_CameraDistance );
 	Rage::Matrix CameraRot;
 	RageMatrixRotationY( &CameraRot, fCameraPanY );
-	RageVec3TransformCoord( &m_CameraPoint, &m_CameraPoint, &CameraRot );
+	m_CameraPoint = m_CameraPoint.TransformCoords(CameraRot);
 
 	Rage::Vector3 m_LookAt( 0, m_fLookAtHeight, 0 );
 

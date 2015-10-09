@@ -797,7 +797,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			const float fDistFromTop = y_start_pos - part_args.y_top;
 			float fTexCoordTop = Rage::scale(fDistFromTop, 0.f, unzoomed_frame_height, rect.top, rect.bottom);
 			fTexCoordTop += add_to_tex_coord;
-			add_to_tex_coord -= floorf(fTexCoordTop);
+			add_to_tex_coord -= std::floor(fTexCoordTop);
 		}
 	}
 	// The bottom caps mysteriously hate me and their texture coords need to be
@@ -891,13 +891,13 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 			case NCSM_Offset:
 				ae_pos.y= fY;
 				column_args.pos_handler->EvalDerivForBeat(column_args.song_beat, cur_beat, sp_pos_forward);
-				RageVec3Normalize(&sp_pos_forward, &sp_pos_forward);
+				sp_pos_forward = sp_pos_forward.GetNormalized();
 				break;
 			case NCSM_Position:
 				ae_pos.y= 0.0f;
 				render_forward.y= 0.0f;
 				column_args.pos_handler->EvalDerivForBeat(column_args.song_beat, cur_beat, sp_pos_forward);
-				RageVec3Normalize(&sp_pos_forward, &sp_pos_forward);
+				sp_pos_forward = sp_pos_forward.GetNormalized();
 				break;
 			default:
 				break;
@@ -908,7 +908,7 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		render_forward.z+= sp_pos_forward.z;
 		// Normalize the vector so it'll be easy to test when determining whether
 		// to use pos_z_vec or pos_y_vec for the cross product in step 2.
-		RageVec3Normalize(&render_forward, &render_forward);
+		render_forward = render_forward.GetNormalized();
 
 		// Holds are only affected by the x axis of the zoom spline because they
 		// are flat sprites. -Kyz
@@ -969,11 +969,11 @@ void NoteDisplay::DrawHoldPart(vector<Sprite*> &vpSpr,
 		Rage::Vector3 render_left;
 		if(std::abs(render_forward.z) > 0.9f) // 0.9 arbitrariliy picked.
 		{
-			RageVec3Cross(&render_left, &pos_y_vec, &render_forward);
+			render_left = pos_y_vec * render_forward;
 		}
 		else
 		{
-			RageVec3Cross(&render_left, &pos_z_vec, &render_forward);
+			render_left = pos_z_vec * render_forward;
 		}
 		RageAARotate(&render_left, &render_forward, render_roty);
 		const float half_width= fScaledFrameWidth * .5f;

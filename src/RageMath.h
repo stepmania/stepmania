@@ -16,13 +16,6 @@ namespace Rage
 void RageVec3ClearBounds( Rage::Vector3 &mins, Rage::Vector3 &maxs );
 void RageVec3AddToBounds( const Rage::Vector3 &p, Rage::Vector3 &mins, Rage::Vector3 &maxs );
 
-void RageVec2Normalize( Rage::Vector2* pOut, const Rage::Vector2* pV );
-void RageVec3Normalize( Rage::Vector3* pOut, const Rage::Vector3* pV );
-void VectorFloatNormalize(std::vector<float>& v);
-void RageVec3Cross(Rage::Vector3* ret, Rage::Vector3 const* a, Rage::Vector3 const* b);
-void RageVec3TransformCoord( Rage::Vector3* pOut, const Rage::Vector3* pV, const Rage::Matrix* pM );
-void RageVec3TransformNormal( Rage::Vector3* pOut, const Rage::Vector3* pV, const Rage::Matrix* pM );
-void RageVec4TransformCoord( Rage::Vector4* pOut, const Rage::Vector4* pV, const Rage::Matrix* pM );
 // pOut = pB * pA
 void RageMatrixMultiply( Rage::Matrix* pOut, const Rage::Matrix* pA, const Rage::Matrix* pB );
 void RageMatrixRotationX( Rage::Matrix* pOut, float fTheta );
@@ -43,10 +36,6 @@ Rage::Matrix RageLookAt(
 	float centerx, float centery, float centerz,
 	float upx, float upy, float upz );
 void RageMatrixAngles( Rage::Matrix* pOut, const Rage::Vector3 &angles );
-void RageMatrixTranspose( Rage::Matrix* pOut, const Rage::Matrix* pIn );
-
-float RageFastSin( float x ) CONST_FUNCTION;
-float RageFastCos( float x ) CONST_FUNCTION;
 
 class RageQuadratic
 {
