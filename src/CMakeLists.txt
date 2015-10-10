@@ -538,6 +538,7 @@ list(APPEND SM_INCLUDE_DIRS
   "${SM_EXTERN_DIR}/tommath"
   "${SM_EXTERN_DIR}/tomcrypt/src/headers"
   "${SM_EXTERN_DIR}/cppformat"
+  "${SM_EXTERN_DIR}/enum-flags/"
 )
 if(NOT APPLE)
   list(APPEND SM_INCLUDE_DIRS

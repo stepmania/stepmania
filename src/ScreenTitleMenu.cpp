@@ -44,7 +44,11 @@ static LocalizedString ANNOUNCER_	("ScreenTitleMenu","Announcer");
 bool ScreenTitleMenu::Input( const InputEventPlus &input )
 {
 #if defined(DEBUG)
-	LOG->Trace( "ScreenTitleMenu::Input( %d-%d )", input.DeviceI.device, input.DeviceI.button );	// debugging gameport joystick problem
+	auto const &device = input.DeviceI;
+	LOG->Trace( "ScreenTitleMenu::Input( %d-%d )", // debugging gameport joystick problem
+		static_cast<int>(device.device),
+		static_cast<int>(input.DeviceI.button)
+	);	
 #endif
 
 	if( m_In.IsTransitioning() || m_Cancel.IsTransitioning() ) /* not m_Out */

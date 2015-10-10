@@ -3,21 +3,76 @@
 #ifndef RAGE_LOG_H
 #define RAGE_LOG_H
 
+#include "enum_flags.h"
+#include "format.h"
+
+ENUM_FLAGS(WriteDest);
+/** @brief The possible destinations/options for writing the logs. */
+enum class WriteDest
+{
+	NoDest = 0x00, /**< No destination is set for writing the log. */
+	Info = 0x01, /**< If this is set, the message will also be written to info.txt. (info and warnings) */
+	UserLog = 0x02, /**< If this is set, the message will also be written to userlog.txt. (user warnings only) */
+	Loud = 0x04, /**< Whether this line should be loud when written to log.txt (warnings). */
+	Time = 0x08 /**< If this is set, we write the time. */
+};
+
 class RageLog
 {
 public:
 	RageLog();
 	~RageLog();
-	
-	void Trace( const char *fmt, ... ) PRINTF(2,3);
-	void Warn( const char *fmt, ... ) PRINTF(2,3);
-	void Info( const char *fmt, ... ) PRINTF(2,3);
+
+	template<typename... Args>
+	void Trace(std::string const &msg, Args const & ...args)
+	{
+		Write(WriteDest::NoDest, fmt::sprintf(msg, args...));
+	}
+
+	template<typename... Args>
+	void Warn(std::string const &msg, Args const & ...args)
+	{
+		Write(WriteDest::Info | WriteDest::Loud, fmt::sprintf(msg, args...));
+	}
+
+	/** @brief Log data with a severity of info.
+	 *
+	 * Use this for more important information; it'll always be included
+	 * in crash dumps. */
+	template<typename... Args>
+	void Info(std::string const &msg, Args const & ...args)
+	{
+		Write(WriteDest::Info, fmt::sprintf(msg, args...));
+	}
+
 	// Time is purely for writing profiling time data to the time log. -Kyz
-	void Time( const char *fmt, ... ) PRINTF(2,3);
-	void UserLog( const RString &sType, const RString &sElement, const char *fmt, ... ) PRINTF(4,5);
+	template<typename... Args>
+	void Time(std::string const &msg, Args const & ...args)
+	{
+		Write(WriteDest::Time, fmt::sprintf(msg, args...));
+	}
+
+	template<typename... Args>
+	void UserLog(RString const &sType, RString const &sElement, std::string const &msg, Args const & ...args)
+	{
+		std::string result = fmt::sprintf(msg, args...);
+		if (!sType.empty())
+		{
+			result = fmt::sprintf("%s \"%s\" %s", sType.c_str(), sElement.c_str(), result.c_str());
+		}
+
+		Write(WriteDest::UserLog, result);
+	}
+
 	void Flush();
 
-	void MapLog( const RString &key, const char *fmt, ... ) PRINTF(3,4);
+	template<typename... Args>
+	void MapLog(RString const &key, std::string const &msg, Args const & ...args)
+	{
+		std::string result = fmt::sprintf(msg, args...);
+		StoreMapLog(key, result);
+	}
+
 	void UnmapLog( const RString &key );
 
 	static const char *GetAdditionalLog();
@@ -37,7 +92,8 @@ private:
 	bool m_bUserLogToDisk;
 	bool m_bFlush;
 	bool m_bShowLogOutput;
-	void Write( int, const RString &str );
+	void Write(WriteDest dest, std::string const &line);
+	void StoreMapLog(RString const &key, std::string const &result);
 	void UpdateMappedLog();
 	void AddToInfo( const RString &buf );
 	void AddToRecentLogs( const RString &buf );

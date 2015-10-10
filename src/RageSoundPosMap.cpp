@@ -176,18 +176,13 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 	 *    SoundStopped has been called.
 	 * 3. Underflow; we'll be given a larger frame number than we know about.
 	 */
-#if defined(WIN32)
-#define I64F "%I64i"
-#elif defined(__x86_64__)
-#define I64F "%li"
-#else
-#define I64F "%lli"
-#endif
+
 	static RageTimer last;
 	if( last.PeekDeltaTime() >= 1.0f )
 	{
 		last.GetDeltaTime();
-		LOG->Trace( "Approximate sound time: driver frame " I64F ", m_pImpl->m_Queue frame " I64F ".." I64F " (dist " I64F "), closest position is " I64F,
+		// Since we're using fmt::sprintf now, use the POSIX standard.
+		LOG->Trace( "Approximate sound time: driver frame %lli, m_pImpl->m_Queue frame %lli..%lli (dist %lli), closest position is %lli",
 			iSourceFrame, pClosestBlock->m_iDestFrame, pClosestBlock->m_iDestFrame+pClosestBlock->m_iFrames,
 			iClosestPositionDist, iClosestPosition );
 	}
