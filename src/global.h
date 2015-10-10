@@ -86,7 +86,7 @@ namespace Checkpoints
  * @param reason the crash reason as determined by prior function calls.
  * @return nothing: there is no escape without quitting the program.
  */
-void NORETURN sm_crash( const char *reason = "Internal error" );
+void NORETURN sm_crash( std::string const &reason );
 
 /**
  * @brief Assertion that sets an optional message and brings up the crash
