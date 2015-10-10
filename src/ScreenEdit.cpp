@@ -1866,7 +1866,8 @@ void ScreenEdit::UpdateTextInfo()
 
 	RString sText;
 	sText += ssprintf( CURRENT_BEAT_FORMAT.GetValue(), CURRENT_BEAT.GetValue().c_str(), GetBeat() );
-	sText += ssprintf( CURRENT_SECOND_FORMAT.GetValue(), CURRENT_SECOND.GetValue().c_str(), GetAppropriateTiming().GetElapsedTimeFromBeat(GetBeat()) );
+	float second= GetAppropriateTiming().GetElapsedTimeFromBeatNoOffset(GetBeat());
+	sText += ssprintf( CURRENT_SECOND_FORMAT.GetValue(), CURRENT_SECOND.GetValue().c_str(), second );
 	switch( EDIT_MODE.GetValue() )
 	{
 	DEFAULT_FAIL( EDIT_MODE.GetValue() );
