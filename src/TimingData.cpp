@@ -537,7 +537,7 @@ TimingSegment* TimingData::GetSegmentAtRow( int iNoteRow, TimingSegmentType tst 
 static void EraseSegment( vector<TimingSegment*> &vSegs, int index, TimingSegment *cur )
 {
 #ifdef DEBUG
-	LOG->Trace( "EraseSegment(%d, %p)", index, cur );
+	LOG->Trace( "Erasing segment at index %d", index );
 	cur->DebugPrint();
 #endif
 

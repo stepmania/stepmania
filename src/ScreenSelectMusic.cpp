@@ -1021,7 +1021,7 @@ void ScreenSelectMusic::UpdateSelectButton( PlayerNumber pn, bool bSelectIsDown 
 
 void ScreenSelectMusic::ChangeSteps( PlayerNumber pn, int dir )
 {
-	LOG->Trace( "ScreenSelectMusic::ChangeSteps( %d, %d )", pn, dir );
+	LOG->Trace( "ScreenSelectMusic::ChangeSteps( Player %d, %d )", static_cast<int>(pn) + 1, dir );
 
 	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
 

@@ -133,14 +133,17 @@ bool Rage::Color::FromCommaString(std::string const &colorString)
 
 bool Rage::Color::FromString(std::string const &colorString)
 {
-	bool wasSuccessful;
-	if ( colorString.front() == '#' )
+	bool wasSuccessful = false;
+	if (!colorString.empty())
 	{
-		wasSuccessful = FromHexString(colorString.substr( 1 ));
-	}
-	else
-	{
-		wasSuccessful = FromCommaString(colorString);
+		if (colorString.front() == '#')
+		{
+			wasSuccessful = FromHexString(colorString.substr(1));
+		}
+		else
+		{
+			wasSuccessful = FromCommaString(colorString);
+		}
 	}
 	
 	if ( !wasSuccessful )

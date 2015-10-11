@@ -95,7 +95,7 @@ RageSurface *RageMovieTextureDriver_FFMpeg::AVCodecCreateCompatibleSurface( int 
 	iAVTexfmt = pfd->pf;
 	fmtout = pfd->YUV;
 
-	LOG->Trace( "Texture pixel format: %i %i (%ibpp, %08x %08x %08x %08x)", iAVTexfmt, fmtout,
+	LOG->Trace( "Texture pixel format: %i %i (%ibpp, %08x %08x %08x %08x)", iAVTexfmt, static_cast<int>(fmtout),
 		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
 
 	if( pfd->YUV == PixelFormatYCbCr_YUYV422 )

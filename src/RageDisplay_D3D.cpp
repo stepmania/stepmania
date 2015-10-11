@@ -216,7 +216,7 @@ RString RageDisplay_D3D::Init( const VideoModeParams &p, bool /* bAllowUnacceler
 
 	D3DADAPTER_IDENTIFIER9	identifier;
 	g_pd3d->GetAdapterIdentifier( D3DADAPTER_DEFAULT, 0, &identifier );
-
+	
 	LOG->Trace(
 		"Driver: %s\n"
 		"Description: %s\n"
@@ -226,16 +226,17 @@ RString RageDisplay_D3D::Init( const VideoModeParams &p, bool /* bAllowUnacceler
 		identifier.Description,
 		g_DeviceCaps.MaxTextureWidth,
 		(g_DeviceCaps.TextureCaps & D3DPTEXTURECAPS_ALPHAPALETTE) ? "yes" : "no" );
-
+	
 	LOG->Trace( "This display adaptor supports the following modes:" );
 	D3DDISPLAYMODE mode;
 
 	UINT modeCount = g_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT, g_DefaultAdapterFormat);
 
 	for( UINT u=0; u < modeCount; u++ )
-		if( SUCCEEDED( g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, g_DefaultAdapterFormat, u, &mode ) ) )
-			LOG->Trace( "  %ux%u %uHz, format %d", mode.Width, mode.Height, mode.RefreshRate, mode.Format );
-
+		if (SUCCEEDED(g_pd3d->EnumAdapterModes(D3DADAPTER_DEFAULT, g_DefaultAdapterFormat, u, &mode)))
+		{
+			LOG->Trace("  %ux%u %uHz, format %u", mode.Width, mode.Height, mode.RefreshRate, static_cast<unsigned int>(mode.Format));
+		}
 	g_PaletteIndex.clear();
 	for( int i = 0; i < 256; ++i )
 		g_PaletteIndex.push_back(i);
@@ -288,7 +289,7 @@ void RageDisplay_D3D::GetDisplayResolutions( DisplayResolutions &out ) const
 		D3DDISPLAYMODE mode;
 		g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, g_DefaultAdapterFormat, i, &mode );
 
-		DisplayResolution res = { mode.Width, mode.Height };
+		DisplayResolution res = {static_cast<int>(mode.Width), static_cast<int>(mode.Height) };
 		out.insert( res );
 	}
 }
@@ -331,10 +332,10 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 			fmtDisplay = g_DesktopMode.Format;
 		else	// Fullscreen
 			fmtDisplay = vBackBufferFormats[i];
-
-		LOG->Trace( "Testing format: display %d, back buffer %d, windowed %d...",
-					fmtDisplay, fmtBackBuffer, bWindowed );
-
+		
+		LOG->Trace( "Testing format: display %u, back buffer %u, windowed %d...",
+					static_cast<unsigned int>(fmtDisplay), static_cast<unsigned int>(fmtBackBuffer), bWindowed );
+					
 		hr = g_pd3d->CheckDeviceType( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
 			fmtDisplay, fmtBackBuffer, bWindowed );
 
@@ -491,14 +492,28 @@ static void SetPresentParametersFromVideoModeParams( const VideoModeParams &p, D
 		pD3Dpp->FullScreen_RefreshRateInHz = p.rate;
 
 	pD3Dpp->Flags = 0;
-
-	LOG->Trace( "Present Parameters: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d",
-		pD3Dpp->BackBufferWidth, pD3Dpp->BackBufferHeight, pD3Dpp->BackBufferFormat,
-		pD3Dpp->BackBufferCount,
-		pD3Dpp->MultiSampleType, pD3Dpp->SwapEffect, pD3Dpp->hDeviceWindow,
-		pD3Dpp->Windowed, pD3Dpp->EnableAutoDepthStencil, pD3Dpp->AutoDepthStencilFormat,
-		pD3Dpp->Flags, pD3Dpp->FullScreen_RefreshRateInHz,
+	
+	LOG->Trace("Back Buffer: %d x %d with format %u and count %d",
+		pD3Dpp->BackBufferWidth, pD3Dpp->BackBufferHeight,
+		static_cast<unsigned int>(pD3Dpp->BackBufferFormat), pD3Dpp->BackBufferCount
+	);
+	LOG->Trace("Multi Sample is %u, Swap Effect is %u",
+		static_cast<unsigned int>(pD3Dpp->MultiSampleType),
+		static_cast<unsigned int>(pD3Dpp->SwapEffect)
+	);
+	LOG->Trace("Windowed state is %d",
+		pD3Dpp->Windowed
+	);
+	LOG->Trace("Auto Depth: Enabled is %d, Format is %u",
+		pD3Dpp->EnableAutoDepthStencil,
+		static_cast<unsigned int>(pD3Dpp->AutoDepthStencilFormat)
+	);
+	LOG->Trace("Refresh rate is %d, Presentation internval is %d",
+		pD3Dpp->FullScreen_RefreshRateInHz,
 		pD3Dpp->PresentationInterval
+	);
+	LOG->Trace( "Remaining Flags: %d",
+		pD3Dpp->Flags 
 	);
 }
 

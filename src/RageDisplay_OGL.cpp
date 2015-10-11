@@ -2180,7 +2180,7 @@ unsigned RageDisplay_Legacy::CreateTexture(
 		GLToString(glTexFormat).c_str(),
 		pImg->w, pImg->h,
 		GLToString(glImageFormat).c_str(),
-		GLToString(glImageType).c_str(), pixfmt, SurfacePixFmt );
+		GLToString(glImageType).c_str(), static_cast<int>(pixfmt), static_cast<int>(SurfacePixFmt) );
 
 	DebugFlushGLErrors();
 

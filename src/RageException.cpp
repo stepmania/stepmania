@@ -24,13 +24,8 @@ void RageException::SetCleanupHandler( void (*pHandler)(const RString &sError) )
 
 /* This is no longer actually implemented by throwing an exception, but it acts
  * the same way to code in practice. */
-void RageException::Throw( const char *sFmt, ... )
+void RageException::FinishThrow( std::string const &error )
 {
-	va_list	va;
-	va_start( va, sFmt );
-	RString error = vssprintf( sFmt, va );
-	va_end( va );
-
 	RString msg = ssprintf(
 		"\n"
 		"//////////////////////////////////////////////////////\n"

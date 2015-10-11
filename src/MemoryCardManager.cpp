@@ -583,7 +583,7 @@ void MemoryCardManager::UnlockCard( PlayerNumber pn )
 // Called just before reading or writing to the memory card. Should block.
 bool MemoryCardManager::MountCard( PlayerNumber pn, int iTimeout )
 {
-	LOG->Trace( "MemoryCardManager::MountCard(%i)", pn );
+	LOG->Trace( "MemoryCardManager::MountCard(Player %i)", static_cast<int>(pn) + 1 );
 	if( GetCardState(pn) != MemoryCardState_Ready )
 		return false;
 	ASSERT( !m_Device[pn].IsBlank() );
@@ -644,7 +644,7 @@ bool MemoryCardManager::MountCard( PlayerNumber pn, const UsbStorageDevice &d, i
  * will block until flushed. */
 void MemoryCardManager::UnmountCard( PlayerNumber pn )
 {
-	LOG->Trace( "MemoryCardManager::UnmountCard(%i) (mounted: %i)", pn, m_bMounted[pn] );
+	LOG->Trace( "MemoryCardManager::UnmountCard(Player %i) (mounted: %i)", static_cast<int>(pn) + 1, m_bMounted[pn] );
 	if( m_Device[pn].IsBlank() )
 		return;
 

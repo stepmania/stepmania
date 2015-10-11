@@ -101,7 +101,7 @@ void SpeedSegment::DebugPrint() const
 {
 	LOG->Trace( "\t%s(%d [%f], %f, %f, %d)",
 		TimingSegmentTypeToString(GetType()).c_str(),
-		GetRow(), GetBeat(), GetRatio(), GetDelay(), GetUnit()
+		GetRow(), GetBeat(), GetRatio(), GetDelay(), static_cast<int>(GetUnit())
 	);
 }
 
