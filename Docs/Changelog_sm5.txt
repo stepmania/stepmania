@@ -4,6 +4,15 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/10/11
+----------
+* [Song] Changed song loading to allow a song to have a blank MusicFile field
+  if the song has any keysounds.  A blank MusicFile entry can result from
+  having '#' in the music file name, or be intended for bms files.  Do not use
+  '#' in any fields, the .sm and .ssc file formats do not support it.  The
+  engine has to detect that the field was loaded blank and look through the
+  song folder to figure out what was supposed to be there. [kyzentun]
+
 2015/10/09
 ----------
 * [Edit Mode] Changed Current Second field to not have the global offset
