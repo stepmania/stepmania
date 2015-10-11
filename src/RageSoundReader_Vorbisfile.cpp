@@ -36,12 +36,10 @@ static long OggRageFile_tell_func( void *datasource )
 	return f->Tell();
 }
 
-static RString ov_ssprintf( int err, const char *fmt, ...)
+template<typename... Args>
+static std::string ov_format( int err, std::string const &msg, Args const & ...args)
 {
-	va_list	va;
-	va_start( va, fmt );
-	RString s = vssprintf( fmt, va );
-	va_end( va );
+	std::string s = fmt::sprintf(msg, args...);
 
 	RString errstr;
 	switch( err )
@@ -79,7 +77,7 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open( RageFil
 	int ret = ov_open_callbacks( pFile, vf, nullptr, 0, callbacks );
 	if( ret < 0 )
 	{
-		SetError( ov_ssprintf(ret, "ov_open failed") );
+		SetError( ov_format(ret, "ov_open failed") );
 		delete vf;
 		vf = nullptr;
 		switch( ret )
@@ -128,7 +126,7 @@ int RageSoundReader_Vorbisfile::SetPosition( int iFrame )
 			eof = true;
 			return 0;
 		}
-		SetError( ov_ssprintf(ret, "ogg: SetPosition failed") );
+		SetError( ov_format(ret, "ogg: SetPosition failed") );
 		return -1;
 	}
 	read_offset = (int) ov_pcm_tell(vf);

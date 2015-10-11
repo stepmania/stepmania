@@ -365,7 +365,7 @@ void RageLog::UnmapLog( const RString &key )
 	UpdateMappedLog();
 }
 
-void ShowWarningOrTrace( const char *file, int line, const char *message, bool bWarning )
+void ShowWarningOrTrace( const char *file, int line, std::string const &message, bool bWarning )
 {
 	/* Ignore everything up to and including the first "src/". */
 	const char *temp = strstr( file, "src/" );
@@ -385,7 +385,7 @@ void ShowWarningOrTrace( const char *file, int line, const char *message, bool b
 	}
 	else
 	{
-		fprintf(stderr, "%s:%i: %s\n", file, line, message);
+		fprintf(stderr, "%s:%i: %s\n", file, line, message.c_str());
 	}
 }
 

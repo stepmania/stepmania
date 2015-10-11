@@ -627,11 +627,10 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 
 				if(int(wdata.size()) > num_frames_wide)
 				{
-					LuaHelpers::ReportScriptErrorFmt(
-						"The font definition \"%s\" assigns %i characters to row %i"
-						"(\"%ls\"), but the font  is only %i characters wide.",
-						ini.GetPath().c_str(), (int)wdata.size(), row, wdata.c_str(),
-						num_frames_wide);
+					// wstrings don't work. Convert to RString first.
+					std::string error = fmt::format("The font definition \"{0}\" assigns {1} characters to row {2} (\"{3}\"), but the font is only {4} characters wide.",
+						ini.GetPath(), wdata.size(), row, WStringToRString(wdata), num_frames_wide);
+					LuaHelpers::ReportScriptErrorFmt(error);
 					continue;
 				}
 
