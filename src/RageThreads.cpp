@@ -18,6 +18,7 @@
 
 #include <cerrno>
 #include <set>
+#include <cstring>
 
 #include "arch/Threads/Threads.h"
 #include "arch/Dialog/Dialog.h"
@@ -39,7 +40,7 @@ bool RageThread::s_bIsShowingDialog = false;
 
 struct ThreadSlot
 {
-	mutable char m_szName[1024]; /* mutable so we can force nul-termination */
+	mutable std::string m_szName; /* mutable so we can force nul-termination */
 
 	/* Format this beforehand, since it's easier to do that than to do it under crash conditions. */
 	char m_szThreadFormattedOutput[1024];
@@ -83,7 +84,7 @@ struct ThreadSlot
 		Init();
 	}
 
-	const char *GetThreadName() const;
+	std::string const &GetThreadName() const;
 };
 
 
@@ -176,7 +177,7 @@ static void InitThreads()
 
 	/* Register the "unknown thread" slot. */
 	int slot = FindEmptyThreadSlot();
-	strcpy( g_ThreadSlots[slot].m_szName, "Unknown thread" );
+	g_ThreadSlots[slot].m_szName = "Unknown thread";
 	g_ThreadSlots[slot].m_iID = GetInvalidThreadId();
 	sprintf( g_ThreadSlots[slot].m_szThreadFormattedOutput, "Unknown thread" );
 	g_pUnknownThreadSlot = &g_ThreadSlots[slot];
@@ -219,12 +220,8 @@ RageThread::~RageThread()
 		Wait();
 }
 
-const char *ThreadSlot::GetThreadName() const
+std::string const &ThreadSlot::GetThreadName() const
 {
-	/* This function may be called in crash conditions, so guarantee the string
-	 * is null-terminated. */
-	m_szName[sizeof(m_szName)-1] = 0;
-
 	return m_szName;
 }
 
@@ -241,7 +238,7 @@ void RageThread::Create( int (*fn)(void *), void *data )
 	int slotno = FindEmptyThreadSlot();
 	m_pSlot = &g_ThreadSlots[slotno];
 
-	strcpy( m_pSlot->m_szName, m_sName.c_str() );
+	m_pSlot->m_szName = m_sName;
 
 	if( LOG )
 		LOG->Trace( "Starting thread: %s", m_sName.c_str() );
@@ -262,7 +259,7 @@ RageThreadRegister::RageThreadRegister( const RString &sName )
 
 	m_pSlot = &g_ThreadSlots[iSlot];
 
-	strcpy( m_pSlot->m_szName, sName );
+	m_pSlot->m_szName = sName;
 	sprintf( m_pSlot->m_szThreadFormattedOutput, "Thread: %s", sName.c_str() );
 
 	m_pSlot->m_iID = GetThisThreadId();
@@ -289,7 +286,7 @@ const char *RageThread::GetThreadNameByID( uint64_t iID )
 	if( slot == nullptr )
 		return "???";
 
-	return slot->GetThreadName();
+	return slot->GetThreadName().c_str();
 }
 
 bool RageThread::EnumThreadIDs( int n, uint64_t &iID )
@@ -378,7 +375,7 @@ void Checkpoints::LogCheckpoints( bool on )
 	g_LogCheckpoints = on;
 }
 
-void Checkpoints::SetCheckpoint( const char *file, int line, const char *message )
+void Checkpoints::SetCheckpoint( const char *file, int line, std::string const &message )
 {
 	using std::max;
 	ThreadSlot *slot = GetCurThreadSlot();
@@ -392,7 +389,7 @@ void Checkpoints::SetCheckpoint( const char *file, int line, const char *message
 	const char *temp = strstr( file, "src/" );
 	if( temp )
 		file = temp + 4;
-	slot->m_Checkpoints[slot->m_iCurCheckpoint].Set( file, line, message );
+	slot->m_Checkpoints[slot->m_iCurCheckpoint].Set( file, line, message.c_str() );
 
 	if( g_LogCheckpoints )
 		LOG->Trace( "%s", slot->m_Checkpoints[slot->m_iCurCheckpoint].m_szFormattedBuf );
@@ -598,9 +595,9 @@ void RageMutex::Lock()
 		RString ThisSlotName = "(???" ")"; // stupid trigraph warnings
 		RString OtherSlotName = "(???" ")"; // stupid trigraph warnings
 		if( ThisSlot )
-			ThisSlotName = ssprintf( "%s (%i)", ThisSlot->GetThreadName(), (int) ThisSlot->m_iID );
+			ThisSlotName = ssprintf( "%s (%i)", ThisSlot->GetThreadName().c_str(), (int) ThisSlot->m_iID );
 		if( OtherSlot )
-			OtherSlotName = ssprintf( "%s (%i)", OtherSlot->GetThreadName(), (int) OtherSlot->m_iID );
+			OtherSlotName = ssprintf( "%s (%i)", OtherSlot->GetThreadName().c_str(), (int) OtherSlot->m_iID );
 		const RString sReason = ssprintf( "Thread deadlock on mutex %s between %s and %s",
 			GetName().c_str(), ThisSlotName.c_str(), OtherSlotName.c_str() );
 
@@ -762,7 +759,7 @@ void RageSemaphore::Wait( bool bFailOnTimeout )
 	 * tell which thread we're stuck on. */
 	const ThreadSlot *ThisSlot = GetThreadSlotFromID( GetThisThreadId() );
 	const RString sReason = ssprintf( "Semaphore timeout on mutex %s on thread %s",
-		GetName().c_str(), ThisSlot? ThisSlot->GetThreadName(): "(???" ")" ); // stupid trigraph warnings
+		GetName().c_str(), ThisSlot? ThisSlot->GetThreadName().c_str(): "(???" ")" ); // stupid trigraph warnings
 #if defined(CRASH_HANDLER)
 	CrashHandler::ForceDeadlock( sReason, GetInvalidThreadId() );
 #else

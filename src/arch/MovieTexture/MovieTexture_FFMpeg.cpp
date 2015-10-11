@@ -352,14 +352,12 @@ void MovieDecoder_FFMpeg::GetFrame( RageSurface *pSurface )
 			pict.data, pict.linesize );
 }
 
-static RString averr_ssprintf( int err, const char *fmt, ... )
+template<typename... Args>
+static std::string averr_format( int err, std::string const &msg, Args const & ...args)
 {
 	ASSERT( err < 0 );
-
-	va_list     va;
-	va_start(va, fmt);
-	RString s = vssprintf( fmt, va );
-	va_end(va); 
+	
+	std::string s = fmt::sprintf(msg, args...);
 
 	size_t errbuf_size = 512;
 	char* errbuf = new char[errbuf_size];
@@ -425,11 +423,11 @@ RString MovieDecoder_FFMpeg::Open( RString sFile )
 	m_fctx->pb = m_avioContext;
 	int ret = avcodec::avformat_open_input( &m_fctx, sFile.c_str(), nullptr, nullptr );
 	if( ret < 0 )
-		return RString( averr_ssprintf(ret, "AVCodec: Couldn't open \"%s\"", sFile.c_str()) );
+		return RString( averr_format(ret, "AVCodec: Couldn't open \"%s\"", sFile.c_str()) );
 
 	ret = avcodec::avformat_find_stream_info( m_fctx, nullptr );
 	if( ret < 0 )
-		return RString( averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec parameters", sFile.c_str()) );
+		return RString( averr_format(ret, "AVCodec (%s): Couldn't find codec parameters", sFile.c_str()) );
 
 	int stream_idx = avcodec::av_find_best_stream( m_fctx, avcodec::AVMEDIA_TYPE_VIDEO, -1, -1, nullptr, 0 );
 	if ( stream_idx < 0 ||
@@ -474,7 +472,7 @@ RString MovieDecoder_FFMpeg::OpenCodec()
 
 	int ret = avcodec::avcodec_open2( m_pStream->codec, pCodec, nullptr );
 	if( ret < 0 )
-		return RString( averr_ssprintf(ret, "Couldn't open codec \"%s\"", pCodec->name) );
+		return RString( averr_format(ret, "Couldn't open codec \"%s\"", pCodec->name) );
 	ASSERT( m_pStream->codec->codec != nullptr );
 
 	return RString();

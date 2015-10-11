@@ -217,7 +217,7 @@ bool LuaBinding::Equal( lua_State *L )
  * Get a userdata, and check that it's either szType or a type
  * derived from szType, by checking the heirarchy table.
  */
-bool LuaBinding::CheckLuaObjectType( lua_State *L, int iArg, const char *szType )
+bool LuaBinding::CheckLuaObjectType( lua_State *L, int iArg, std::string const &szType )
 {
 #if defined(FAST_LUA)
 	return true;
@@ -233,7 +233,7 @@ bool LuaBinding::CheckLuaObjectType( lua_State *L, int iArg, const char *szType 
 		return false;
 	}
 
-	lua_getfield( L, -1, szType );
+	lua_getfield( L, -1, szType.c_str() );
 	bool bRet = !lua_isnil( L, -1 );
 	lua_pop( L, 2 );
 

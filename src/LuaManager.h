@@ -69,8 +69,14 @@ namespace LuaHelpers
 	Dialog::Result ReportScriptError(RString const& Error, RString ErrorType= "LUA_ERROR", bool UseAbort= false);
 	// Just the broadcast message part, for things that need to do the rest differently.
 	void ScriptErrorMessage(RString const& Error);
-	// For convenience when replacing uses of LOG->Warn.
-	void ReportScriptErrorFmt(const char *fmt, ...);
+	
+	/** @brief A convenience method to use when replacing uses of LOG->Warn. */
+	template<typename... Args>
+	void ReportScriptErrorFmt(std::string const &msg, Args const & ...args)
+	{
+		std::string result = fmt::sprintf(msg, args...);
+		ReportScriptError(result);
+	}
 
 	/* Run the function with arguments at the top of the stack, with the given
 	 * number of arguments. The specified number of return values are left on
@@ -153,7 +159,7 @@ namespace LuaHelpers
 		}
 	}
 
-	int TypeError( Lua *L, int narg, const char *tname );
+	int TypeError( Lua *L, int narg, std::string const &tname );
 	inline int AbsIndex( Lua *L, int i ) { if( i > 0 || i <= LUA_REGISTRYINDEX ) return i; return lua_gettop( L ) + i + 1; }
 }
 
