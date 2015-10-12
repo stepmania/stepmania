@@ -474,6 +474,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 		}
 		else if( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
 		{
+			std::string const sortChar{static_cast<char>(c)};
 			// Only allow changing the sort order if the wheel is not locked
 			// and we're not in course mode. -aj
 			if( !m_MusicWheel.WheelIsLocked() && !GAMESTATE->IsCourseMode() )
@@ -487,12 +488,13 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 				GAMESTATE->m_PreferredSortOrder = so;
 				GAMESTATE->m_SortOrder.Set( so );
 				// Odd, changing the sort order requires us to call SetOpenSection more than once
+				// Currently if you do not change it twice, the transition looks bad.
 				m_MusicWheel.ChangeSort( so );
-				m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
+				m_MusicWheel.SetOpenSection( sortChar );
 
-				m_MusicWheel.SelectSection( ssprintf("%c", c ) );
+				m_MusicWheel.SelectSection( sortChar );
 				m_MusicWheel.ChangeSort( so );
-				m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
+				m_MusicWheel.SetOpenSection( sortChar );
 				AfterMusicChange();
 				return true;
 			}

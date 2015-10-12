@@ -115,6 +115,7 @@ bool ScreenNetSelectMusic::Input( const InputEventPlus &input )
 	bool handled = false;
 	if( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
 	{
+		std::string const sortChar{static_cast<char>(c)};
 		SortOrder so = GAMESTATE->m_SortOrder;
 		if( ( so != SORT_TITLE ) && ( so != SORT_ARTIST ) )
 		{
@@ -124,11 +125,11 @@ bool ScreenNetSelectMusic::Input( const InputEventPlus &input )
 			GAMESTATE->m_SortOrder.Set( so );
 			// Odd, changing the sort order requires us to call SetOpenSection more than once
 			m_MusicWheel.ChangeSort( so );
-			m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
+			m_MusicWheel.SetOpenSection( sortChar );
 		}
-		m_MusicWheel.SelectSection( ssprintf("%c", c ) );
+		m_MusicWheel.SelectSection( sortChar );
 		m_MusicWheel.ChangeSort( so );
-		m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
+		m_MusicWheel.SetOpenSection( sortChar );
 		m_MusicWheel.Move(+1);
 		handled = true;
 	}
