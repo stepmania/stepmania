@@ -236,11 +236,22 @@ void ActorMultiVertex::DrawPrimitives()
 
 		for( size_t i=0; i < TS.vertices.size(); i++ )
 		{
+			// RageVColor uses a uint8_t for each channel.  0-255.
+			// RageColor uses a float. 0-1.
+			// So each channel of the RageVColor needs to be converted to a float,
+			// multiplied by the channel from the RageColor, then the result
+			// converted to uint8_t.  If implicit conversion is allowed to happen,
+			// sometimes the compiler decides to turn the RageColor into a uint8_t,
+			// which makes any value other than 1 into 0.  Thus, the explicit
+			// conversions.  -Kyz
+#define MULT_COLOR_ELEMENTS(color_a, color_b) \
+	color_a= static_cast<uint8_t>(static_cast<float>(color_a) * color_b);
 			// RageVColor * RageColor
-			TS.vertices[i].c.b *= m_pTempState->diffuse[0].b;
-			TS.vertices[i].c.r *= m_pTempState->diffuse[0].r;
-			TS.vertices[i].c.g *= m_pTempState->diffuse[0].g;
-			TS.vertices[i].c.a *= m_pTempState->diffuse[0].a;
+			MULT_COLOR_ELEMENTS(TS.vertices[i].c.b, m_pTempState->diffuse[0].b);
+			MULT_COLOR_ELEMENTS(TS.vertices[i].c.r, m_pTempState->diffuse[0].r);
+			MULT_COLOR_ELEMENTS(TS.vertices[i].c.g, m_pTempState->diffuse[0].g);
+			MULT_COLOR_ELEMENTS(TS.vertices[i].c.a, m_pTempState->diffuse[0].a);
+#undef MULT_COLOR_ELEMENTS
 		}
 	
 	}
