@@ -43,9 +43,9 @@ struct TimingTagWriter {
 
 	TimingTagWriter( vector<RString> *pvsLines ): m_pvsLines (pvsLines) { }
 
-	void Write( const int row, const char *value )
+	void Write( const int row, std::string const &value )
 	{
-		m_pvsLines->push_back( m_sNext + ssprintf( "%.6f=%s", NoteRowToBeat(row), value ) );
+		m_pvsLines->push_back( m_sNext + ssprintf( "%.6f=%s", NoteRowToBeat(row), value.c_str() ) );
 		m_sNext = ",";
 	}
 
