@@ -24,7 +24,7 @@ BackgroundLoader::BackgroundLoader():
 	if( !g_bEnableBackgroundLoading )
 		return;
 
-	m_sCachePathPrefix = ssprintf( "@mem/%p", this );
+	m_sCachePathPrefix = ssprintf( "@mem/%p", static_cast<void *>(this) );
 
 	m_bShutdownThread = false;
 	m_sThreadIsActive = m_sThreadShouldAbort = false;

@@ -70,7 +70,7 @@ RageSoundMixBuffer &RageSoundDriver::MixIntoBuffer( int iFrames, int64_t iFrameN
 			s.m_bPaused = false;
 			s.m_State = Sound::STOPPED;
 
-//			LOG->Trace("set %p from HALTING to STOPPED", m_Sounds[i].m_pSound);
+//			LOG->Trace("set %p from HALTING to STOPPED", static_cast<void *>(m_Sounds[i].m_pSound));
 			continue;
 		}
 
@@ -144,7 +144,7 @@ RageSoundMixBuffer &RageSoundDriver::MixIntoBuffer( int iFrames, int64_t iFrameN
 			p[0]->m_iPosition += frames_to_read;
 
 //			LOG->Trace( "incr fr rd += %i (state %i) (%p)",
-//				(int) frames_to_read, s.m_State, s.m_pSound );
+//				static_cast<int>(frames_to_read), s.m_State, static_cast<void *>(s.m_pSound) );
 
 			iGotFrames += frames_to_read;
 			iFramesLeft -= frames_to_read;
@@ -239,7 +239,7 @@ int RageSoundDriver::GetDataForSound( Sound &s )
 	}
 
 //	LOG->Trace( "incr fr wr %i (state %i) (%p)",
-//		(int) pBlock->m_FramesInBuffer, s.m_State, s.m_pSound );
+//		static_cast<int>(pBlock->m_FramesInBuffer), s.m_State, static_cast<void *>(s.m_pSound) );
 
 	return iRet;
 }
@@ -337,12 +337,12 @@ void RageSoundDriver::StartMixing( RageSoundBase *pSound )
 
 	s.Allocate( BufferSize );
 
-//	LOG->Trace("StartMixing(%s) (%p)", s.m_pSound->GetLoadedFilePath().c_str(), s.m_pSound );
+//	LOG->Trace("StartMixing(%s) (%p)", s.m_pSound->GetLoadedFilePath().c_str(), static_cast<void *>(s.m_pSound) );
 
 	/* Prebuffer some frames before changing the sound to PLAYING. */
 	while( s.m_Buffer.num_writable() )
 	{
-//		LOG->Trace("StartMixing: (#%i) buffering %i (%i writable) (%p)", i, (int) frames_to_buffer, s.buffer.num_writable(), s.m_pSound );
+//		LOG->Trace("StartMixing: (#%i) buffering %i (%i writable) (%p)", i, static_cast<int>(frames_to_buffer), s.buffer.num_writable(), static_cast<void *>(s.m_pSound) );
 		int iWrote = GetDataForSound( s );
 		if( iWrote < 0 )
 			break;
@@ -350,7 +350,7 @@ void RageSoundDriver::StartMixing( RageSoundBase *pSound )
 
 	s.m_State = Sound::PLAYING;
 
-//	LOG->Trace("StartMixing: (#%i) finished prebuffering(%s) (%p)", i, s.m_pSound->GetLoadedFilePath().c_str(), s.m_pSound );
+//	LOG->Trace("StartMixing: (#%i) finished prebuffering(%s) (%p)", i, s.m_pSound->GetLoadedFilePath().c_str(), static_cast<void *>(s.m_pSound) );
 }
 
 void RageSoundDriver::StopMixing( RageSoundBase *pSound )
@@ -378,7 +378,7 @@ void RageSoundDriver::StopMixing( RageSoundBase *pSound )
 		return;
 	}
 
-//	LOG->Trace("StopMixing: set %p (%s) to HALTING", m_Sounds[i].m_pSound, m_Sounds[i].m_pSound->GetLoadedFilePath().c_str());
+//	LOG->Trace("StopMixing: set %p (%s) to HALTING", static_cast<void *>(m_Sounds[i].m_pSound), m_Sounds[i].m_pSound->GetLoadedFilePath().c_str());
 
 	/* Tell the mixing thread to flush the buffer.  We don't have to worry about
 	 * the decoding thread, since we've locked m_Mutex. */

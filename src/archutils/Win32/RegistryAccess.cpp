@@ -134,7 +134,7 @@ bool RegistryAccess::GetRegSubKeys( const RString &sKey, vector<RString> &lst, c
 
 		if( iRet != ERROR_SUCCESS )
 		{
-			LOG->Warn( werr_ssprintf(iRet, "GetRegSubKeys(%p,%i) error", hKey, index) );
+			LOG->Warn( werr_ssprintf(iRet, "GetRegSubKeys(%p,%i) error", static_cast<void *>(hKey), index) );
 			bError = true;
 			break;
 		}
