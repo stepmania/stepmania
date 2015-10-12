@@ -437,7 +437,7 @@ int RageFileObj::FillReadBuf()
 	 * the two is old data that we've read.  (Don't mangle that data; we can use it
 	 * for seeking backwards.) */
 	const int iBufAvail = BSIZE - (m_pReadBuf-m_pReadBuffer) - m_iReadBufAvail;
-	ASSERT_M( iBufAvail >= 0, ssprintf("%p, %p, %i", m_pReadBuf, m_pReadBuffer, (int) BSIZE ) );
+	ASSERT_M( iBufAvail >= 0, ssprintf("%p, %p, %i", static_cast<void *>(m_pReadBuf), static_cast<void *>(m_pReadBuffer), static_cast<int>(BSIZE) ) );
 	const int iSize = this->ReadInternal( m_pReadBuf+m_iReadBufAvail, iBufAvail );
 
 	if( iSize > 0 )

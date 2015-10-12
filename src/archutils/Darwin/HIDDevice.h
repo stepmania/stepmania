@@ -83,7 +83,7 @@ protected:
 	{
 		IOReturn ret = CALL( m_Queue, addElement, cookie, 0 );
 		if( ret != KERN_SUCCESS )
-			LOG->Warn( "Failed to add HID element with cookie %p to queue: %u", cookie, ret );
+			LOG->Warn( "Failed to add HID element with cookie %p to queue: %u", static_cast<void *>(cookie), ret );
 	}
 
 	// Perform a synchronous set report on the HID interface.

@@ -61,8 +61,8 @@ bool RageFileDriverZip::Load( const RString &sPath )
 bool RageFileDriverZip::Load( RageFileBasic *pFile )
 {
 	ASSERT( m_pZip == nullptr ); /* don't load twice */
-	m_sPath = ssprintf("%p", pFile);
-	m_Mutex.SetName( ssprintf("RageFileDriverZip(%p)", pFile) );
+	m_sPath = ssprintf("%p", static_cast<void *>(pFile));
+	m_Mutex.SetName( ssprintf("RageFileDriverZip(%p)", static_cast<void *>(pFile)) );
 
 	m_pZip = pFile;
 

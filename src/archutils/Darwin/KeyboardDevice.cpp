@@ -160,10 +160,10 @@ void KeyboardDevice::AddElement( int usagePage, int usage, IOHIDElementCookie co
 
 void KeyboardDevice::Open()
 {
-	for( auto i = m_Mapping.cbegin(); i != m_Mapping.cend(); ++i )
+	for (auto &mapping : m_Mapping)
 	{
-		//LOG->Trace( "Adding %s to queue, cookie %p", DeviceButtonToString(i->second).c_str(), i->first );
-		AddElementToQueue( i->first );
+		//LOG->Trace( "Adding %s to queue, cookie %p", DeviceButtonToString(i->second).c_str(), static_cast<void *>(mapping.first) );
+		AddElementToQueue(mapping.first);
 	}
 }
 

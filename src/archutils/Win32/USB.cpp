@@ -159,6 +159,7 @@ void WindowsFileIO::queue_read()
 
 int WindowsFileIO::finish_read( void *p )
 {
+	LOG->Trace("this is %p, p is %p", static_cast<void *>(this), static_cast<void *>(p));
 	/* We do; get the result.  It'll go into the original m_pBuffer
 	 * we supplied on the original call; that's why m_pBuffer is a
 	 * member instead of a local. */

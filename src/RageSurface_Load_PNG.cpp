@@ -229,7 +229,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 	/* alloca to prevent memleaks if libpng longjmps us */
 	png_byte **row_pointers = (png_byte **) alloca( sizeof(png_byte*) * height );
-	CHECKPOINT_M( ssprintf("%p",row_pointers) );
+	CHECKPOINT_M( ssprintf("%p", static_cast<void *>(row_pointers) ) );
 
 	for( unsigned y = 0; y < height; ++y )
 	{

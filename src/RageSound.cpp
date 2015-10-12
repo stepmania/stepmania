@@ -267,7 +267,7 @@ int RageSound::GetDataToPlay( float *pBuffer, int iFrames, int64_t &iStreamFrame
 	/* We only update m_iStreamFrame; only take a shared lock, so we don't block the main thread. */
 //	LockMut(m_Mutex);
 
-	ASSERT_M( m_bPlaying, ssprintf("%p", this) );
+	ASSERT_M( m_bPlaying, ssprintf("%p", static_cast<void *>(this)) );
 	ASSERT( m_pSource != nullptr );
 
 	iFramesStored = 0;
@@ -333,7 +333,7 @@ void RageSound::StartPlaying()
 			GetLoadedFilePath().c_str(), m_Param.m_StartTime.Ago() );
 
 	/* Tell the sound manager to start mixing us. */
-//	LOG->Trace("set playing true for %p (StartPlaying) (%s)", this, this->GetLoadedFilePath().c_str());
+//	LOG->Trace("set playing true for %p (StartPlaying) (%s)", static_cast<void *>(this), this->GetLoadedFilePath().c_str());
 
 	m_bPlaying = true;
 
@@ -347,7 +347,7 @@ void RageSound::StartPlaying()
 
 	SOUNDMAN->StartMixing( this );
 
-//	LOG->Trace("StartPlaying %p finished (%s)", this, this->GetLoadedFilePath().c_str());
+//	LOG->Trace("StartPlaying %p finished (%s)", static_cast<void *>(this), this->GetLoadedFilePath().c_str());
 }
 
 void RageSound::StopPlaying()
@@ -383,13 +383,13 @@ void RageSound::SoundIsFinishedPlaying()
 	if( !m_HardwareToStreamMap.IsEmpty() && !m_StreamToSourceMap.IsEmpty() )
 		m_iStoppedSourceFrame = (int) GetSourceFrameFromHardwareFrame( iCurrentHardwareFrame );
 
-//	LOG->Trace("set playing false for %p (SoundIsFinishedPlaying) (%s)", this, this->GetLoadedFilePath().c_str());
+//	LOG->Trace("set playing false for %p (SoundIsFinishedPlaying) (%s)", static_cast<void *>(this), this->GetLoadedFilePath().c_str());
 	m_bPlaying = false;
 
 	m_HardwareToStreamMap.Clear();
 	m_StreamToSourceMap.Clear();
 
-//	LOG->Trace("SoundIsFinishedPlaying %p finished (%s)", this, this->GetLoadedFilePath().c_str());
+//	LOG->Trace("SoundIsFinishedPlaying %p finished (%s)", static_cast<void *>(this), this->GetLoadedFilePath().c_str());
 
 	m_Mutex.Unlock();
 }
