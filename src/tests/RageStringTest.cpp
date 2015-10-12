@@ -63,3 +63,12 @@ GTEST_TEST(RageString, tail_song_group_name_check)
 	
 	EXPECT_EQ("StepMix 5", target);
 }
+
+GTEST_TEST(RageString, hexify_ascii)
+{
+	wchar_t test = 'a';
+
+	std::string target = Rage::hexify(test, 4);
+
+	EXPECT_EQ("0061", target);
+}

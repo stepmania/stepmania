@@ -1,6 +1,7 @@
 #include "global.h"
 #include "RageUtil.h"
 #include "RageMath.hpp"
+#include "RageString.hpp"
 
 #include <array>
 
@@ -2116,11 +2117,20 @@ void Replace_Unicode_Markers( RString &sText )
 // Form a string to identify a wchar_t with ASCII.
 RString WcharDisplayText( wchar_t c )
 {
-	RString sChr;
-	sChr = ssprintf( "U+%4.4x", c );
-	if( c < 128 )
-		sChr += ssprintf( " ('%c')", char(c) );
-	return sChr;
+	char ascii = '\0';
+	if (c < 128)
+	{
+		ascii = static_cast<char>(c);
+	}
+
+	std::string hex = Rage::hexify(c, 4);
+
+	if (ascii != '\0')
+	{
+		hex = fmt::format("U+{0} ('{1}')", hex, ascii);
+	}
+
+	return hex;
 }
 
 /* Return the last named component of dir:
