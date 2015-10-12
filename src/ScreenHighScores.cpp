@@ -152,7 +152,7 @@ void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
 		}
 		// Because pSteps or pTrail can be nullptr, what we're creating in Lua is not an array.
 		// It must be iterated using pairs(), not ipairs().
-		lua_setfield( L, -2, ssprintf("%d",i+1) );
+		lua_setfield( L, -2, ssprintf("%d",i+1).c_str() );
 	}
 	lua_pop( L, 1 );
 	LUA->Release( L );
