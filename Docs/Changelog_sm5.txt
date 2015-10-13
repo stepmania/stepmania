@@ -4,18 +4,68 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/10/11
+----------
+* [Song] Changed song loading to allow a song to have a blank MusicFile field
+  if the song has any keysounds.  A blank MusicFile entry can result from
+  having '#' in the music file name, or be intended for bms files.  Do not use
+  '#' in any fields, the .sm and .ssc file formats do not support it.  The
+  engine has to detect that the field was loaded blank and look through the
+  song folder to figure out what was supposed to be there. [kyzentun]
+
+2015/10/09
+----------
+* [Edit Mode] Changed Current Second field to not have the global offset
+  added in.  People were using one global offset for syncing to workaround
+  the problem and sync by comparing the Current Second in Edit Mode to the
+  current second in a music editor.  The workaround of using a different
+  global offset for syncing should no longer be necessary. [kyzentun]
+* [Input] Fixed input lockup caused by scrolling the mouse wheel.  Why wasn't
+  this reported sooner? [kyzentun]
+
+2015/10/07
+----------
+* [ActorFrame] ActorFrame:SetDrawByZPosition now returns self.  Missed a spot
+  when implementing function chaining. [kyzentun]
+* [Gameplay] MaxRegenComboAfterMiss preference brought in.  When a step is
+  missed in gameplay, the combo has to get back up to RegenComboAfterMiss
+  before the player starts regaining life.  If MaxRegenComboAfterMiss is
+  greater than RegenComboAfterMiss, then each successive miss increases
+  RegenComboAfterMiss until it reaches RegenComboAfterMiss.
+  MaxRegenComboAfterMiss defaults to 5, the same as RegenComboAfterMiss, so
+  there should be no behavior change unless the preference is manually
+  changed. [dbk2]
+* [Gameplay] When disqualification was turned on via Preferences, the old
+  logic exhibited two problems:
+  1. charts with attacks were always disqualified from ranking
+  2. charts without attacks could be disqualified from ranking if the attack
+    modifier was set to "Off"
+  So, this commit fixes those problems.  If a chart has attacks, and the
+  attack modifier is used to turn them "Off", then disqualification is
+  enforced.
+  Additionally, disqualification is enforced if the attack modifier is set to
+  "Random Attacks."  This part might not be necessary, but I acted on the
+  assumption that random attacks could theoretically make a chart easier.
+  [dbk2]
+
 2015/10/04
 ----------
 * [FFmpeg] Upgrade FFmpeg to 2.1.3 for Windows. [wolfman2000]
+* [FFmpeg] Fixed cmake WITH_SYSTEM_FFMPEG option. [lthls]
 
 2015/10/03
 ----------
 * [FFmpeg] Upgrade FFmpeg to 2.1.3 for Mac OS X. [wolfman2000]
+* [Gameplay] Fixed timing to apply the current music rate to the global
+  offset so that playing at different music rates doesn't make a chart off
+  sync. [Matt McCutchen]
 
 2015/10/02
 ----------
 * [Edit Mode] .sm files will no longer be saved when split timing is used
   because per-chart timing cannot be done in the .sm format. [kyzentun]
+* [Scoring] Fixed bug that caused missed holds to be recorded as held in the
+  value returned by PlayerStageStats:GetRadarActual(). [kyzentun]
 
 2015/09/21
 ----------
