@@ -146,12 +146,12 @@ void ScreenSyncOverlay::UpdateText()
 		float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
 		float fOld = AdjustSync::s_fGlobalOffsetSecondsOriginal;
 		float fStdDev = AdjustSync::s_fStandardDeviation;
-		RString s;
-		s += OLD_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fOld );
-		s += NEW_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fNew );
-		s += STANDARD_DEVIATION.GetValue() + ssprintf( ": %0.3f\n", fStdDev );
-		s += COLLECTING_SAMPLE.GetValue() + ssprintf( ": %d / %d", AdjustSync::s_iAutosyncOffsetSample+1, AdjustSync::OFFSET_SAMPLE_COUNT );
-		m_textAdjustments.SetText( s );
+		std::stringstream builder;
+		builder << OLD_OFFSET.GetValue() + fmt::sprintf( ": %0.3f\n", fOld );
+		builder << NEW_OFFSET.GetValue() + fmt::sprintf( ": %0.3f\n", fNew );
+		builder << STANDARD_DEVIATION.GetValue() + fmt::sprintf( ": 0.3f\n", fStdDev );
+		builder << COLLECTING_SAMPLE.GetValue() + fmt::sprintf( ": %d / %d", AdjustSync::s_iAutosyncOffsetSample + 1, AdjustSync::OFFSET_SAMPLE_COUNT );
+		m_textAdjustments.SetText( builder.str() );
 	}
 }
 
