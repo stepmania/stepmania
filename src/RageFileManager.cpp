@@ -376,8 +376,14 @@ static void NormalizePath( RString &sPath )
 {
 	FixSlashesInPlace( sPath );
 	CollapsePath( sPath, true );
-	if( sPath.size() == 0 || sPath[0] != '/' )
-		sPath.insert( sPath.begin(), '/' );
+	if (sPath.size() == 0)
+	{
+		sPath = '/';
+	}
+	else if (sPath[0] != '/')
+	{
+		sPath = '/' + sPath;
+	}
 }
 
 bool ilt( const RString &a, const RString &b ) { return a.CompareNoCase(b) < 0; }
