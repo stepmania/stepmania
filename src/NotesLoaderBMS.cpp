@@ -962,8 +962,8 @@ StepsType BMSChartReader::DetermineStepsType()
 					// type, since they are more common.
 					//return StepsType_dance_solo;
 					return StepsType_beat_single5;
-				// az: Allow kb7 style charts
-				case 7:		return StepsType_kb7_single;
+				// az: Allow kb7 style charts - this breaks IIDX files right now. Waiting for a proper way to determine steps type.
+				// case 7:		return StepsType_kb7_single;
 				case 8:		return StepsType_beat_single7;
 				case 9:		return StepsType_popn_nine;
 				// XXX: Some double files doesn't have #player.
@@ -1063,7 +1063,7 @@ bool BMSChartReader::ReadNoteData()
 	TimingData td;
 
 	td.m_fBeat0OffsetInSeconds = out->m_Timing.m_fBeat0OffsetInSeconds;
-	
+
 	nd.SetNumTracks( tracks );
 	td.SetBPMAtRow( 0, currentBPM = initialBPM );
 
