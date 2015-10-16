@@ -2,6 +2,7 @@
 #include "RegistryAccess.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageString.hpp"
 #include "archutils/Win32/ErrorStrings.h"
 
 #include <windows.h>
@@ -19,13 +20,29 @@ static bool GetRegKeyType( const RString &sIn, RString &sOut, HKEY &key )
 		return false;
 	}
 
+	Rage::ci_ascii_string type{ sIn.substr(0, iBackslash).c_str() };
 	RString sType = sIn.substr( 0, iBackslash );
 
-	if( !sType.CompareNoCase( "HKEY_CLASSES_ROOT" ) )		key = HKEY_CLASSES_ROOT;
-	else if( !sType.CompareNoCase( "HKEY_CURRENT_CONFIG" ) )	key = HKEY_CURRENT_CONFIG;
-	else if( !sType.CompareNoCase( "HKEY_CURRENT_USER" ) )	key = HKEY_CURRENT_USER;
-	else if( !sType.CompareNoCase( "HKEY_LOCAL_MACHINE" ) )	key = HKEY_LOCAL_MACHINE;
-	else if( !sType.CompareNoCase( "HKEY_USERS" ) )			key = HKEY_USERS;
+	if (type == "HKEY_CLASSES_ROOT")
+	{
+		key = HKEY_CLASSES_ROOT;
+	}
+	else if (type == "HKEY_CURRENT_CONFIG")
+	{
+		key = HKEY_CURRENT_CONFIG;
+	}
+	else if (type == "HKEY_CURRENT_USER")
+	{
+		key = HKEY_CURRENT_USER;
+	}
+	else if (type == "HKEY_LOCAL_MACHINE")
+	{
+		key = HKEY_LOCAL_MACHINE;
+	}
+	else if (type == "HKEY_USERS")
+	{
+		key = HKEY_USERS;
+	}
 	else
 	{
 		LOG->Warn( "Invalid registry key: \"%s\" ", sIn.c_str() );

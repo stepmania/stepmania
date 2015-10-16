@@ -814,9 +814,12 @@ bool LuaHelpers::LoadScript( Lua *L, const RString &sScript, const RString &sNam
 
 void LuaHelpers::ScriptErrorMessage(RString const& Error)
 {
-	Message msg("ScriptError");
-	msg.SetParam("message", Error);
-	MESSAGEMAN->Broadcast(msg);
+	if (MESSAGEMAN != nullptr)
+	{
+		Message msg("ScriptError");
+		msg.SetParam("message", Error);
+		MESSAGEMAN->Broadcast(msg);
+	}
 }
 
 Dialog::Result LuaHelpers::ReportScriptError(RString const& Error, RString ErrorType, bool UseAbort)

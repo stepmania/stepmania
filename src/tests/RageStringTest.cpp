@@ -72,3 +72,63 @@ GTEST_TEST(RageString, hexify_ascii)
 
 	EXPECT_EQ("0061", target);
 }
+
+GTEST_TEST(RageString, ci_already_lower_two_vars)
+{
+	Rage::ci_ascii_string target{"hello"};
+	Rage::ci_ascii_string other{"hello"};
+	EXPECT_EQ(target == other, true);
+}
+
+GTEST_TEST(RageString, ci_already_lower_one_var_c)
+{
+	Rage::ci_ascii_string target{"hello"};
+	EXPECT_EQ(target == "hello", true);
+}
+
+GTEST_TEST(RageString, ci_already_lower_one_var_std)
+{
+	Rage::ci_ascii_string target{"hello"};
+	std::string other{"hello"};
+	EXPECT_EQ(target == other, true);
+}
+
+GTEST_TEST(RageString, ci_upper_vs_lower_two_vars)
+{
+	Rage::ci_ascii_string target{"HOWDY"};
+	Rage::ci_ascii_string other{"howdy"};
+	EXPECT_EQ(target == other, true);
+}
+
+GTEST_TEST(RageString, ci_upper_vs_lower_one_var_c)
+{
+	Rage::ci_ascii_string target{"HOWDY"};
+	EXPECT_EQ(target == "howdy", true);
+}
+
+GTEST_TEST(RageString, ci_upper_vs_lower_one_var_std)
+{
+	Rage::ci_ascii_string target{"HOWDY"};
+	std::string other{"howdy"};
+	EXPECT_EQ(target == other, true);
+}
+
+GTEST_TEST(RageString, ci_mixed_all_over_two_vars)
+{
+	Rage::ci_ascii_string target{"HoLa"};
+	Rage::ci_ascii_string other{"hOlA"};
+	EXPECT_EQ(target == other, true);
+}
+
+GTEST_TEST(RageString, ci_mixed_all_over_one_var_c)
+{
+	Rage::ci_ascii_string target{"HoLa"};
+	EXPECT_EQ(target == "hOlA", true);
+}
+
+GTEST_TEST(RageString, ci_mixed_all_over_one_var_std)
+{
+	Rage::ci_ascii_string target{"HoLa"};
+	std::string other{"hOlA"};
+	EXPECT_EQ(target == other, true);
+}

@@ -3,6 +3,7 @@
 
 #include "LuaReference.h"
 #include "RageUtil.h"
+#include "RageString.hpp"
 #include <memory>
 
 extern "C"
@@ -93,13 +94,16 @@ const RString &X##ToLocalizedString( X x ) \
 	return g_##X##Name[x]->GetValue();  \
 }
 
-#define StringToX(X)	\
+#define StringToX(X) \
 X StringTo##X(const RString&); \
 X StringTo##X( const RString& s ) \
 {	\
-	for( unsigned i = 0; i < ARRAYLEN(X##Names); ++i )	\
-		if( !s.CompareNoCase(X##Names[i]) )	\
-			return (X)i;	\
+	Rage::ci_ascii_string target{s}; \
+	for( unsigned i = 0; i < ARRAYLEN(X##Names); ++i ) \
+	{ \
+		if ( target == (X##Names[i]) ) \
+			return (X)i; \
+	} \
 	return X##_Invalid;	\
 } \
 namespace StringConversion \
