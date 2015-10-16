@@ -962,8 +962,56 @@ StepsType BMSChartReader::DetermineStepsType()
 					// type, since they are more common.
 					//return StepsType_dance_solo;
 					return StepsType_beat_single5;
-				// az: Allow kb7 style charts - this breaks IIDX files right now. Waiting for a proper way to determine steps type.
-				// case 7:		return StepsType_kb7_single;
+					// az: Allow kb7 style charts
+				case 7:
+				{
+					// az (for nixtrix): kb7 layouts do not leave any gaps using either of these layouts.
+					// if we find a compatible layout that doesn't have gaps, we've stumbled upon a real
+					// kb7 file.
+					BmsRawChannel layoutA[] = {
+						BMS_RAW_P1_TURN,
+						BMS_RAW_P1_KEY1,
+						BMS_RAW_P1_KEY2,
+						BMS_RAW_P1_KEY3,
+						BMS_RAW_P1_KEY4,
+						BMS_RAW_P1_KEY5,
+						BMS_RAW_P1_KEY6,
+					};
+
+					BmsRawChannel layoutB[] = {
+						BMS_RAW_P1_KEY1,
+						BMS_RAW_P1_KEY2,
+						BMS_RAW_P1_KEY3,
+						BMS_RAW_P1_KEY4,
+						BMS_RAW_P1_KEY5,
+						BMS_RAW_P1_KEY6,
+						BMS_RAW_P1_KEY7,
+					};
+
+					int gaps = 0;
+					for (int i = 0; i < 7; i++)
+					{
+						if (nonEmptyTracks.find(layoutA[i]) == nonEmptyTracks.end())
+							gaps++;
+					}
+
+					if (gaps == 0) // kb7 file is a layout A file
+						return StepsType_kb7_single;
+
+					gaps = 0;
+					for (int i = 0; i < 7; i++)
+					{
+						if (nonEmptyTracks.find(layoutB[i]) == nonEmptyTracks.end())
+							gaps++;
+					}
+
+					if (gaps == 0) // kb7 file is a layout B file
+						return StepsType_kb7_single;
+
+					// neither huh, then it's a beatmania file that for some reason
+					// um, chose to not fill in a lane.
+					return StepsType_beat_single7;
+				}
 				case 8:		return StepsType_beat_single7;
 				case 9:		return StepsType_popn_nine;
 				// XXX: Some double files doesn't have #player.
@@ -1063,7 +1111,11 @@ bool BMSChartReader::ReadNoteData()
 	TimingData td;
 
 	td.m_fBeat0OffsetInSeconds = out->m_Timing.m_fBeat0OffsetInSeconds;
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> abfff53c2b8aa3033ffa3bc5fc5d05088708067f
 	nd.SetNumTracks( tracks );
 	td.SetBPMAtRow( 0, currentBPM = initialBPM );
 
@@ -1718,4 +1770,8 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
+<<<<<<< HEAD
  */
+=======
+ */
+>>>>>>> abfff53c2b8aa3033ffa3bc5fc5d05088708067f
