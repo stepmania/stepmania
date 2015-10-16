@@ -1111,11 +1111,6 @@ bool BMSChartReader::ReadNoteData()
 	TimingData td;
 
 	td.m_fBeat0OffsetInSeconds = out->m_Timing.m_fBeat0OffsetInSeconds;
-<<<<<<< HEAD
-
-=======
-	
->>>>>>> abfff53c2b8aa3033ffa3bc5fc5d05088708067f
 	nd.SetNumTracks( tracks );
 	td.SetBPMAtRow( 0, currentBPM = initialBPM );
 
@@ -1770,8 +1765,4 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
-<<<<<<< HEAD
  */
-=======
- */
->>>>>>> abfff53c2b8aa3033ffa3bc5fc5d05088708067f
