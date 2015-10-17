@@ -24,6 +24,7 @@
 #include <stdarg.h>
 #include "avutil.h"
 #include "attributes.h"
+#include "version.h"
 
 typedef enum {
     AV_CLASS_CATEGORY_NA = 0,
@@ -37,8 +38,24 @@ typedef enum {
     AV_CLASS_CATEGORY_BITSTREAM_FILTER,
     AV_CLASS_CATEGORY_SWSCALER,
     AV_CLASS_CATEGORY_SWRESAMPLER,
+    AV_CLASS_CATEGORY_DEVICE_VIDEO_OUTPUT = 40,
+    AV_CLASS_CATEGORY_DEVICE_VIDEO_INPUT,
+    AV_CLASS_CATEGORY_DEVICE_AUDIO_OUTPUT,
+    AV_CLASS_CATEGORY_DEVICE_AUDIO_INPUT,
+    AV_CLASS_CATEGORY_DEVICE_OUTPUT,
+    AV_CLASS_CATEGORY_DEVICE_INPUT,
     AV_CLASS_CATEGORY_NB, ///< not part of ABI/API
 }AVClassCategory;
+
+#define AV_IS_INPUT_DEVICE(category) \
+    (((category) == AV_CLASS_CATEGORY_DEVICE_VIDEO_INPUT) || \
+     ((category) == AV_CLASS_CATEGORY_DEVICE_AUDIO_INPUT) || \
+     ((category) == AV_CLASS_CATEGORY_DEVICE_INPUT))
+
+#define AV_IS_OUTPUT_DEVICE(category) \
+    (((category) == AV_CLASS_CATEGORY_DEVICE_VIDEO_OUTPUT) || \
+     ((category) == AV_CLASS_CATEGORY_DEVICE_AUDIO_OUTPUT) || \
+     ((category) == AV_CLASS_CATEGORY_DEVICE_OUTPUT))
 
 struct AVOptionRanges;
 
@@ -179,11 +196,26 @@ typedef struct AVClass {
  */
 #define AV_LOG_DEBUG    48
 
-#define AV_LOG_MAX_OFFSET (AV_LOG_DEBUG - AV_LOG_QUIET)
+/**
+ * Extremely verbose debugging, useful for libav* development.
+ */
+#define AV_LOG_TRACE    56
+
+#define AV_LOG_MAX_OFFSET (AV_LOG_TRACE - AV_LOG_QUIET)
 
 /**
  * @}
  */
+
+/**
+ * Sets additional colors for extended debugging sessions.
+ * @code
+   av_log(ctx, AV_LOG_DEBUG|AV_LOG_C(134), "Message in purple\n");
+   @endcode
+ * Requires 256color terminal support. Uses outside debugging is not
+ * recommended.
+ */
+#define AV_LOG_C(x) ((x) << 8)
 
 /**
  * Send the specified message to the log if the level is less than or equal
@@ -193,7 +225,7 @@ typedef struct AVClass {
  * @see av_log_set_callback
  *
  * @param avcl A pointer to an arbitrary struct of which the first field is a
- *        pointer to an AVClass struct.
+ *        pointer to an AVClass struct or NULL if general log.
  * @param level The importance level of the message expressed using a @ref
  *        lavu_log_constants "Logging Constant".
  * @param fmt The format string (printf-compatible) that specifies how
@@ -260,9 +292,10 @@ void av_log_set_callback(void (*callback)(void*, int, const char*, va_list));
  *        lavu_log_constants "Logging Constant".
  * @param fmt The format string (printf-compatible) that specifies how
  *        subsequent arguments are converted to output.
- * @param ap The arguments referenced by the format string.
+ * @param vl The arguments referenced by the format string.
  */
-void av_log_default_callback(void* ptr, int level, const char* fmt, va_list vl);
+void av_log_default_callback(void *avcl, int level, const char *fmt,
+                             va_list vl);
 
 /**
  * Return the context name
@@ -276,7 +309,7 @@ AVClassCategory av_default_get_category(void *ptr);
 
 /**
  * Format a line of log the same way as the default callback.
- * @param line          buffer to receive the formated line
+ * @param line          buffer to receive the formatted line
  * @param line_size     size of the buffer
  * @param print_prefix  used to store whether the prefix must be printed;
  *                      must point to a persistent integer initially set to 1
@@ -284,8 +317,10 @@ AVClassCategory av_default_get_category(void *ptr);
 void av_log_format_line(void *ptr, int level, const char *fmt, va_list vl,
                         char *line, int line_size, int *print_prefix);
 
+#if FF_API_DLOG
 /**
  * av_dlog macros
+ * @deprecated unused
  * Useful to print debug messages that shouldn't get compiled in normally.
  */
 
@@ -294,6 +329,7 @@ void av_log_format_line(void *ptr, int level, const char *fmt, va_list vl,
 #else
 #    define av_dlog(pctx, ...) do { if (0) av_log(pctx, AV_LOG_DEBUG, __VA_ARGS__); } while (0)
 #endif
+#endif /* FF_API_DLOG */
 
 /**
  * Skip repeated messages, this requires the user app to use av_log() instead of
@@ -304,7 +340,17 @@ void av_log_format_line(void *ptr, int level, const char *fmt, va_list vl,
  * call av_log(NULL, AV_LOG_QUIET, "%s", ""); at the end
  */
 #define AV_LOG_SKIP_REPEATED 1
+
+/**
+ * Include the log severity in messages originating from codecs.
+ *
+ * Results in messages such as:
+ * [rawvideo @ 0xDEADBEEF] [error] encode did not produce valid pts
+ */
+#define AV_LOG_PRINT_LEVEL 2
+
 void av_log_set_flags(int arg);
+int av_log_get_flags(void);
 
 /**
  * @}
