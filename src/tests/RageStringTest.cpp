@@ -165,3 +165,15 @@ GTEST_TEST(RageString, ci_extensions_different_ne)
 	EXPECT_EQ(ini != png, true);
 }
 
+GTEST_TEST(RageString, starts_with_sanity)
+{
+	std::string stepmania{"Stepmania"};
+	EXPECT_EQ(Rage::starts_with(stepmania, "Step"), true);
+}
+
+GTEST_TEST(RageString, ends_with_sanity)
+{
+	std::string stepmania{"Stepmania"};
+	EXPECT_EQ(Rage::ends_with(stepmania, "mania"), true);
+}
+

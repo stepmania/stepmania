@@ -28,6 +28,16 @@ std::string Rage::tail(std::string const &source, int32_t const length)
 	return source.substr(source.size() - length);
 }
 
+bool Rage::starts_with(std::string const &source, std::string const &target)
+{
+	return Rage::head(source, target.size()) == target;
+}
+
+bool Rage::ends_with(std::string const &source, std::string const &target)
+{
+	return Rage::tail(source, target.size()) == target;
+}
+
 std::string Rage::hexify(wchar_t const src, unsigned int dstlen)
 {
 	static char const alphabet[] = "0123456789abcdef";

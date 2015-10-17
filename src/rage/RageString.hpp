@@ -17,6 +17,12 @@ namespace Rage
      */
     std::string tail(std::string const &source, int32_t const length);
 
+	/** @brief Determine if the source string begins with the specified content. */
+	bool starts_with(std::string const &source, std::string const &target);
+
+	/** @brief Determine if the source string ends with the specified content. */
+	bool ends_with(std::string const &source, std::string const &target);
+
 	/** @brief Offer a clean way of hexify-ing a wide character. Primarily used for fonts.
 	 *
 	 * See http://stackoverflow.com/a/8024386 */
