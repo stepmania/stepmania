@@ -107,7 +107,7 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 		m_sBaseAddress += ssprintf( ":%d", Port );
 	m_sBaseAddress += "/";
 
-	if( sAddress.Right(1) != "/" )
+	if (!Rage::ends_with( sAddress, "/"))
 	{
 		m_sEndName = Basename( sAddress );
 		m_sBaseAddress += Dirname( sAddress );

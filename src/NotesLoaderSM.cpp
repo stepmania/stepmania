@@ -1054,6 +1054,7 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 			     msd.GetError().c_str() );
 		return false;
 	}
+	Rage::ci_ascii_string edit{ ".edit" };
 	for (unsigned i = 0; i<msd.GetNumValues(); i++)
 	{
 		int iNumParams = msd.GetNumParams(i);
@@ -1078,8 +1079,10 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 			RString difficulty = sParams[3];
 
 			// HACK?: If this is a .edit fudge the edit difficulty
-			if(path.Right(5).CompareNoCase(".edit") == 0) difficulty = "edit";
-
+			if (edit == Rage::tail(path, 5))
+			{
+				difficulty = "edit";
+			}
 			Trim(stepsType);
 			Trim(description);
 			Trim(difficulty);

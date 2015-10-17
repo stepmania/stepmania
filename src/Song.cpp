@@ -286,9 +286,10 @@ bool Song::LoadFromSongDir( RString sDir, bool load_autosave )
 	ASSERT_M( sDir != "", "Songs can't be loaded from an empty directory!" );
 
 	// make sure there is a trailing slash at the end of sDir
-	if( sDir.Right(1) != "/" )
+	if (!Rage::ends_with(sDir, "/"))
+	{
 		sDir += "/";
-
+	}
 	// save song dir
 	m_sSongDir = sDir;
 

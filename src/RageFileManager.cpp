@@ -74,7 +74,7 @@ static void UnreferenceAllDrivers( vector<LoadedDriver *> &apDriverList )
 RageFileDriver *RageFileManager::GetFileDriver( RString sMountpoint )
 {
 	FixSlashesInPlace( sMountpoint );
-	if( sMountpoint.size() && sMountpoint.Right(1) != "/" )
+	if( sMountpoint.size() && !Rage::ends_with( sMountpoint, "/") )
 		sMountpoint += '/';
 
 	g_Mutex->Lock();
@@ -375,8 +375,7 @@ RString LoadedDriver::GetPath( const RString &sPath ) const
 		return ""; /* no match */
 	}
 	/* Add one, so we don't cut off the leading slash. */
-	RString sRet = sPath.Right( sPath.size() - m_sMountPoint.size() + 1 );
-	return sRet;
+	return Rage::tail(sPath, sPath.size() - m_sMountPoint.size() + 1);
 }
 
 static void NormalizePath( RString &sPath )
@@ -537,9 +536,10 @@ static void AdjustMountpoint( RString &sMountPoint )
 
 	ASSERT_M( Rage::starts_with( sMountPoint, "/" ), "Mountpoints must be absolute: " + sMountPoint );
 
-	if( sMountPoint.size() && sMountPoint.Right(1) != "/" )
+	if (sMountPoint.size() && !Rage::ends_with(sMountPoint, "/"))
+	{
 		sMountPoint += '/';
-
+	}
 	if (!Rage::starts_with(sMountPoint, "/"))
 	{
 		sMountPoint = "/" + sMountPoint;
@@ -622,9 +622,10 @@ void RageFileManager::Unmount( const RString &sType, const RString &sRoot_, cons
 	FixSlashesInPlace( sRoot );
 	FixSlashesInPlace( sMountPoint );
 
-	if( sMountPoint.size() && sMountPoint.Right(1) != "/" )
+	if (sMountPoint.size() && !Rage::ends_with(sMountPoint, "/"))
+	{
 		sMountPoint += '/';
-
+	}
 	/* Find all drivers we want to delete.  Remove them from g_pDrivers, and move them
 	 * into aDriverListToUnmount. */
 	vector<LoadedDriver *> apDriverListToUnmount;
@@ -1046,7 +1047,7 @@ void GetDirListing( const RString &sPath, vector<RString> &AddTo, bool bOnlyDirs
 
 void GetDirListingRecursive( const RString &sDir, const RString &sMatch, vector<RString> &AddTo )
 {
-	ASSERT( sDir.Right(1) == "/" );
+	ASSERT(Rage::ends_with(sDir, "/"));
 	vector<RString> vsFiles;
 	GetDirListing( sDir+sMatch, vsFiles, false, true );
 	vector<RString> vsDirs;
@@ -1067,7 +1068,7 @@ void GetDirListingRecursive( const RString &sDir, const RString &sMatch, vector<
 
 void GetDirListingRecursive( RageFileDriver *prfd, const RString &sDir, const RString &sMatch, vector<RString> &AddTo )
 {
-	ASSERT( sDir.Right(1) == "/" );
+	ASSERT(Rage::ends_with(sDir, "/"));
 	vector<RString> vsFiles;
 	prfd->GetDirListing( sDir+sMatch, vsFiles, false, true );
 	vector<RString> vsDirs;
@@ -1088,7 +1089,7 @@ void GetDirListingRecursive( RageFileDriver *prfd, const RString &sDir, const RS
 
 bool DeleteRecursive( RageFileDriver *prfd, const RString &sDir )
 {
-	ASSERT( sDir.Right(1) == "/" );
+	ASSERT(Rage::ends_with(sDir, "/"));
 
 	vector<RString> vsFiles;
 	prfd->GetDirListing( sDir+"*", vsFiles, false, true );
@@ -1105,7 +1106,7 @@ bool DeleteRecursive( RageFileDriver *prfd, const RString &sDir )
 
 bool DeleteRecursive( const RString &sDir )
 {
-	ASSERT( sDir.Right(1) == "/" );
+	ASSERT(Rage::ends_with(sDir, "/"));
 
 	vector<RString> vsFiles;
 	GetDirListing( sDir+"*", vsFiles, false, true );

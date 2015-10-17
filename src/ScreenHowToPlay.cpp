@@ -142,11 +142,14 @@ void ScreenHowToPlay::Init()
 		RString sStepsPath = THEME->GetPathO(m_sName, "steps");
 		SSCLoader loaderSSC;
 		SMLoader loaderSM;
-		if( sStepsPath.Right(4) == ".ssc" )
-			loaderSSC.LoadFromSimfile( sStepsPath, m_Song, false );
+		if (Rage::ends_with(sStepsPath, ".ssc"))
+		{
+			loaderSSC.LoadFromSimfile(sStepsPath, m_Song, false);
+		}
 		else
-			loaderSM.LoadFromSimfile( sStepsPath, m_Song, false );
-		m_Song.AddAutoGenNotes();
+		{
+			loaderSM.LoadFromSimfile(sStepsPath, m_Song, false);
+		}m_Song.AddAutoGenNotes();
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
 

@@ -496,17 +496,15 @@ void ScreenPackages::EnterURL( const RString & sURL )
 
 	// Determine if this is a website, or a package?
 	// Criteria: does it end with *zip?
-	if( sAddress.Right(3).CompareNoCase("zip") == 0 )
-		m_bIsPackage=true;
-	else
-		m_bIsPackage = false;
+	Rage::ci_ascii_string zip{ "zip" };
+	m_bIsPackage = (zip == Rage::tail(sAddress, 3));
 
 	m_sBaseAddress = "http://" + Server;
 	if( Port != 80 )
 		m_sBaseAddress += ssprintf( ":%d", Port );
 	m_sBaseAddress += "/";
 
-	if( sAddress.Right(1) != "/" )
+	if (!Rage::ends_with(sAddress, "/"))
 	{
 		m_sEndName = Basename( sAddress );
 		m_sBaseAddress += Dirname( sAddress );

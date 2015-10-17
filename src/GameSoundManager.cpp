@@ -289,9 +289,10 @@ static void DoPlayOnceFromDir( RString sPath )
 		return;
 
 	// make sure there's a slash at the end of this path
-	if( sPath.Right(1) != "/" )
+	if (!Rage::ends_with(sPath, "/"))
+	{
 		sPath += "/";
-
+	}
 	vector<RString> arraySoundFiles;
 	GetDirListing( sPath + "*.mp3", arraySoundFiles );
 	GetDirListing( sPath + "*.wav", arraySoundFiles );

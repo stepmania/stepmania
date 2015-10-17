@@ -343,9 +343,10 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 		}
 	case FT_Directory:
 		{
-			if( sPath.Right(1) != "/" )
+			if (!Rage::ends_with(sPath, "/"))
+			{
 				sPath += '/';
-
+			}
 			RString sXml = sPath + "default.xml";
 			if (DoesFileExist(sXml))
 				return MakeActor(sXml, pParentActor);
