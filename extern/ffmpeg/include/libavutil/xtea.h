@@ -23,8 +23,11 @@
 #define AVUTIL_XTEA_H
 
 #include <stdint.h>
+#include "version.h"
 
 /**
+ * @file
+ * @brief Public header for libavutil XTEA algorithm
  * @defgroup lavu_xtea XTEA
  * @ingroup lavu_crypto
  * @{
@@ -33,6 +36,11 @@
 typedef struct AVXTEA {
     uint32_t key[16];
 } AVXTEA;
+
+/**
+ * Allocate an AVXTEA context.
+ */
+AVXTEA *av_xtea_alloc(void);
 
 /**
  * Initialize an AVXTEA context.
