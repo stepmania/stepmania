@@ -425,10 +425,14 @@ void Font::GetFontPaths( const RString &sFontIniPath, vector<RString> &asTexture
 	vector<RString> asFiles;
 	GetDirListing( sPrefix + "*", asFiles, false, true );
 
-	for( unsigned i = 0; i < asFiles.size(); ++i )
+	Rage::ci_ascii_string ini{ ".ini" };
+	for (auto const &file : asFiles)
 	{
-		if( !asFiles[i].Right(4).EqualsNoCase(".ini") )
-			asTexturePathsOut.push_back( asFiles[i] );
+		std::string ext{ Rage::tail(file, 4) };
+		if (ini != ext)
+		{
+			asTexturePathsOut.push_back(file);
+		}
 	}
 }
 

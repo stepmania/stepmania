@@ -907,28 +907,29 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 
 			// ignore DWI "-char" graphics
 			RString lower = image_list[i];
+			Rage::ci_ascii_string lowerImage{ image_list[i] };
 			lower.MakeLower();
 			if(BlacklistedImages.find(lower) != BlacklistedImages.end())
 				continue;	// skip
 
 			// Skip any image that we've already classified
-
-			if(m_bHasBanner && m_sBannerFile.EqualsNoCase(image_list[i]))
+			
+			if(m_bHasBanner && lowerImage == m_sBannerFile)
 				continue;	// skip
 
-			if(m_bHasBackground && m_sBackgroundFile.EqualsNoCase(image_list[i]))
+			if(m_bHasBackground && lowerImage == m_sBackgroundFile)
 				continue;	// skip
 
-			if(has_cdtitle && m_sCDTitleFile.EqualsNoCase(image_list[i]))
+			if(has_cdtitle && lowerImage == m_sCDTitleFile)
 				continue;	// skip
 
-			if(has_jacket && m_sJacketFile.EqualsNoCase(image_list[i]))
+			if(has_jacket && lowerImage == m_sJacketFile)
 				continue;	// skip
 
-			if(has_disc && m_sDiscFile.EqualsNoCase(image_list[i]))
+			if(has_disc && lowerImage == m_sDiscFile)
 				continue;	// skip
 
-			if(has_cdimage && m_sCDFile.EqualsNoCase(image_list[i]))
+			if(has_cdimage && lowerImage == m_sCDFile)
 				continue;	// skip
 
 			RString sPath = m_sSongDir + image_list[i];

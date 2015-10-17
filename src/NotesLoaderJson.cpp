@@ -156,9 +156,9 @@ static void Deserialize( Steps &o, const Json::Value &root )
 	o.SetCachedRadarValues( rv );
 }
 
-static void Deserialize( Song &out, const Json::Value &root )
+static void Deserialize(Song &out, const Json::Value &root)
 {
-	out.SetSongDir( root["SongDir"].asString() );
+	out.SetSongDir(root["SongDir"].asString());
 	out.m_sGroupName = root["GroupName"].asString();
 	out.m_sMainTitle = root["Title"].asString();
 	out.m_sSubTitle = root["SubTitle"].asString();
@@ -175,12 +175,15 @@ static void Deserialize( Song &out, const Json::Value &root )
 	out.m_SongTiming.m_fBeat0OffsetInSeconds = (float)root["Offset"].asDouble();
 	out.m_fMusicSampleStartSeconds = (float)root["SampleStart"].asDouble();
 	out.m_fMusicSampleLengthSeconds = (float)root["SampleLength"].asDouble();
-	RString sSelectable = root["Selectable"].asString();
-	if( sSelectable.EqualsNoCase("YES") )
+	Rage::ci_ascii_string selectable { root["Selectable"].asString().c_str() };
+	if (selectable == "YES")
+	{
 		out.m_SelectionDisplay = out.SHOW_ALWAYS;
-	else if( sSelectable.EqualsNoCase("NO") )
+	}
+	else if (selectable == "NO")
+	{
 		out.m_SelectionDisplay = out.SHOW_NEVER;
-
+	}
 	out.m_sSongFileName = root["SongFileName"].asString();
 	out.m_bHasMusic = root["HasMusic"].asBool();
 	out.m_bHasBanner = root["HasBanner"].asBool();

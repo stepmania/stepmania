@@ -136,8 +136,9 @@ namespace
 		RString sFile;
 		if (pActor->GetAttrValue("File", sFile) && sFile != "")
 		{
+			Rage::ci_ascii_string hackFile{ sFile };
 			// Backward compatibility hacks for "special" filenames
-			if (sFile.EqualsNoCase("songbackground"))
+			if (hackFile == "songbackground")
 			{
 				XNodeStringValue *pVal = new XNodeStringValue;
 				Song *pSong = GAMESTATE->m_pCurSong;
@@ -148,7 +149,7 @@ namespace
 				pActor->AppendAttrFrom("Texture", pVal, false);
 				return "Sprite";
 			}
-			else if (sFile.EqualsNoCase("songbanner"))
+			else if ( hackFile == "songbanner")
 			{
 				XNodeStringValue *pVal = new XNodeStringValue;
 				Song *pSong = GAMESTATE->m_pCurSong;
@@ -159,7 +160,7 @@ namespace
 				pActor->AppendAttrFrom("Texture", pVal, false);
 				return "Sprite";
 			}
-			else if (sFile.EqualsNoCase("coursebanner"))
+			else if (hackFile == "coursebanner")
 			{
 				XNodeStringValue *pVal = new XNodeStringValue;
 				Course *pCourse = GAMESTATE->m_pCurCourse;

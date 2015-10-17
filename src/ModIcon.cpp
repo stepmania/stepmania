@@ -54,10 +54,15 @@ void ModIcon::Load( RString sMetricsGroup )
 void ModIcon::Set( const RString &_sText )
 {
 	RString sText = _sText;
+	Rage::ci_ascii_string stopText{ sText };
 
-	for( unsigned i = 0; i < m_vStopWords.size(); i++ )
-		if( sText.EqualsNoCase(m_vStopWords[i]) )
+	for (auto const &word : m_vStopWords)
+	{
+		if (stopText == word)
+		{
 			sText = "";
+		}
+	}
 
 	sText.Replace( " ", "\n" );
 

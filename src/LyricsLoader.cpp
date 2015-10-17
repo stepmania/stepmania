@@ -65,7 +65,8 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 		StripCrnl(sValueData);
 
 		// handle the data
-		if( sValueName.EqualsNoCase("COLOUR") || sValueName.EqualsNoCase("COLOR") )
+		Rage::ci_ascii_string color{ sValueName };
+		if (color == "COLOUR" || color == "COLOR")
 		{
 			// set color var here for this segment
 			int r, g, b;

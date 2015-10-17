@@ -121,11 +121,13 @@ RString AnnouncerManager::GetPathTo( RString sAnnouncerName, RString sFolderName
 
 	/* Search for the announcer folder in the list of aliases. */
 	int i;
+	Rage::ci_ascii_string folder{ sFolderName };
 	for(i = 0; aliases[i][0] != nullptr; ++i)
 	{
-		if(!sFolderName.EqualsNoCase(aliases[i][0]))
+		if (folder != aliases[i][0])
+		{
 			continue; /* no match */
-
+		}
 		if( !DirectoryIsEmpty(AnnouncerPath+aliases[i][1]+"/") )
 			return AnnouncerPath+aliases[i][1]+"/";
 	}
@@ -165,10 +167,15 @@ void AnnouncerManager::NextAnnouncer()
 	else
 	{
 		unsigned i;
-		for( i=0; i<as.size(); i++ )
-			if( as[i].EqualsNoCase(m_sCurAnnouncerName) )
+		Rage::ci_ascii_string announcer{ m_sCurAnnouncerName };
+		for (i = 0; i < as.size(); i++)
+		{
+			if (announcer == as[i])
+			{
 				break;
-		if( i==as.size()-1 )
+			}
+		}
+		if (i == as.size() - 1)
 			SwitchAnnouncer( "" );
 		else
 		{

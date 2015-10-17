@@ -104,7 +104,8 @@ static GameSoundManager::PlayMusicParams g_FallbackMusicParams;
 static void StartMusic( MusicToPlay &ToPlay )
 {
 	LockMutex L( *g_Mutex );
-	if( g_Playing->m_Music->IsPlaying() && g_Playing->m_Music->GetLoadedFilePath().EqualsNoCase(ToPlay.m_sFile) )
+	Rage::ci_ascii_string fileToPlay{ ToPlay.m_sFile };
+	if( g_Playing->m_Music->IsPlaying() && fileToPlay == g_Playing->m_Music->GetLoadedFilePath() )
 		return;
 
 	/* We're changing or stopping the music.  If we were dimming, reset. */

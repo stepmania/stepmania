@@ -1000,7 +1000,7 @@ void SongManager::InitRandomAttacks()
 					continue;
 				}
 
-				if( !sType.EqualsNoCase("ATTACK") )
+				if (Rage::ci_ascii_string{ sType } != "ATTACK")
 				{
 					LuaHelpers::ReportScriptErrorFmt( "Got \"%s:%s\" tag with wrong declaration", sType.c_str(), sAttack.c_str() );
 					continue;

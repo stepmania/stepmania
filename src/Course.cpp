@@ -990,20 +990,20 @@ bool Course::Matches( RString sGroup, RString sCourse ) const
 		return false;
 
 	RString sFile = m_sPath;
-	if( !sFile.empty() )
+	Rage::ci_ascii_string course{ sCourse };
+	if (!sFile.empty())
 	{
-		sFile.Replace("\\","/");
+		sFile.Replace("\\", "/");
 		vector<RString> bits;
-		split( sFile, "/", bits );
-		const RString &sLastBit = bits[bits.size()-1];
-		if( sCourse.EqualsNoCase(sLastBit) )
+		split(sFile, "/", bits);
+		const RString &sLastBit = bits[bits.size() - 1];
+		if (course == sLastBit)
+		{
 			return true;
+		}
 	}
 
-	if( sCourse.EqualsNoCase(this->GetTranslitFullTitle()) )
-		return true;
-
-	return false;
+	return course == this->GetTranslitFullTitle();
 }
 
 // lua start

@@ -64,15 +64,16 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 		const MsdFile::value_t &sParams = msd.GetValue(i);
 
 		// handle the data
-		if( sValueName.EqualsNoCase("COURSE") )
+		Rage::ci_ascii_string tagName{ sValueName };
+		if( tagName == "COURSE" )
 			out.m_sMainTitle = sParams[1];
-		else if( sValueName.EqualsNoCase("COURSETRANSLIT") )
+		else if(tagName == "COURSETRANSLIT" )
 			out.m_sMainTitleTranslit = sParams[1];
-		else if( sValueName.EqualsNoCase("SCRIPTER") )
+		else if(tagName == "SCRIPTER" )
 			out.m_sScripter = sParams[1];
-		else if( sValueName.EqualsNoCase("DESCRIPTION") )
+		else if(tagName == "DESCRIPTION" )
 			out.m_sDescription = sParams[1];
-		else if( sValueName.EqualsNoCase("REPEAT") )
+		else if(tagName == "REPEAT" )
 		{
 			RString str = sParams[1];
 			str.MakeLower();
@@ -80,23 +81,23 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				out.m_bRepeat = true;
 		}
 
-		else if( sValueName.EqualsNoCase("BANNER") )
+		else if(tagName == "BANNER" )
 		{
 			out.m_sBannerPath = sParams[1];
 		}
-		else if( sValueName.EqualsNoCase("BACKGROUND") )
+		else if(tagName == "BACKGROUND" )
 		{
 			out.m_sBackgroundPath = sParams[1];
 		}
-		else if( sValueName.EqualsNoCase("LIVES") )
+		else if(tagName == "LIVES" )
 		{
 			out.m_iLives = max( StringToInt(sParams[1]), 0 );
 		}
-		else if( sValueName.EqualsNoCase("GAINSECONDS") )
+		else if(tagName == "GAINSECONDS" )
 		{
 			fGainSeconds = StringToFloat( sParams[1] );
 		}
-		else if( sValueName.EqualsNoCase("METER") )
+		else if(tagName == "METER" )
 		{
 			if( sParams.params.size() == 2 )
 			{
@@ -114,7 +115,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			}
 		}
 
-		else if( sValueName.EqualsNoCase("MODS") )
+		else if(tagName == "MODS" )
 		{
 			Attack attack;
 			float end = -9999;
@@ -160,7 +161,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			}
 
 		}
-		else if( sValueName.EqualsNoCase("SONG") )
+		else if( tagName == "SONG" )
 		{
 			CourseEntry new_entry;
 
@@ -325,13 +326,11 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 
 			out.m_vEntries.push_back( new_entry );
 		}
-		else if( !sValueName.EqualsNoCase("DISPLAYCOURSE") || !sValueName.EqualsNoCase("COMBO") ||
-			 !sValueName.EqualsNoCase("COMBOMODE") )
+		else if( tagName == "DISPLAYCOURSE" || tagName == "COMBO" || tagName == "COMBOMODE" )
 		{
 			// Ignore
 		}
-
-		else if( bFromCache && !sValueName.EqualsNoCase("RADAR") )
+		else if( bFromCache && tagName == "RADAR" )
 		{
 			StepsType st = (StepsType) StringToInt(sParams[1]);
 			CourseDifficulty cd = (CourseDifficulty) StringToInt( sParams[2] );
@@ -340,7 +339,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			rv.FromString( sParams[3] );
 			out.m_RadarCache[Course::CacheEntry(st, cd)] = rv;
 		}
-		else if( sValueName.EqualsNoCase("STYLE") )
+		else if(tagName == "STYLE" )
 		{
 			RString sStyles = sParams[1];
 			vector<RString> asStyles;
@@ -349,7 +348,6 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			{
 				out.m_setStyles.insert( s );
 			}
-
 		}
 		else
 		{
