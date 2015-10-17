@@ -170,7 +170,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			// to a lack of songs. -aj
 			int iNumSongs = SONGMAN->GetNumSongs();
 			// most played
-			if( sParams[1].Left(strlen("BEST")) == "BEST" )
+			if (Rage::starts_with(sParams[1], "BEST"))
 			{
 				int iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
 				if( iChooseIndex > iNumSongs )
@@ -187,7 +187,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				new_entry.songSort = SongSort_MostPlays;
 			}
 			// least played
-			else if( sParams[1].Left(strlen("WORST")) == "WORST" )
+			else if (Rage::starts_with(sParams[1], "WORST"))
 			{
 				int iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
 				if( iChooseIndex > iNumSongs )
@@ -204,14 +204,14 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				new_entry.songSort = SongSort_FewestPlays;
 			}
 			// best grades
-			else if( sParams[1].Left(strlen("GRADEBEST")) == "GRADEBEST" )
+			else if (Rage::starts_with(sParams[1], "GRADEBEST"))
 			{
 				new_entry.iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("GRADEBEST")) ) - 1;
 				new_entry.iChooseIndex = Rage::clamp( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_TopGrades;
 			}
 			// worst grades
-			else if( sParams[1].Left(strlen("GRADEWORST")) == "GRADEWORST" )
+			else if (Rage::starts_with(sParams[1], "GRADEWORST"))
 			{
 				new_entry.iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("GRADEWORST")) ) - 1;
 				new_entry.iChooseIndex = Rage::clamp( new_entry.iChooseIndex, 0, 500 );
@@ -305,17 +305,27 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 					RString &sMod = mods[j];
 					TrimLeft( sMod );
 					TrimRight( sMod );
-					if( !sMod.CompareNoCase("showcourse") )
+					if (!sMod.CompareNoCase("showcourse"))
+					{
 						new_entry.bSecret = false;
-					else if( !sMod.CompareNoCase("noshowcourse") )
+					}
+					else if (!sMod.CompareNoCase("noshowcourse"))
+					{
 						new_entry.bSecret = true;
-					else if( !sMod.CompareNoCase("nodifficult") )
+					}
+					else if (!sMod.CompareNoCase("nodifficult"))
+					{
 						new_entry.bNoDifficult = true;
-					else if( sMod.length() > 5 && !sMod.Left(5).CompareNoCase("award") )
-						new_entry.iGainLives = StringToInt( sMod.substr(5) );
+					}
+					else if (sMod.length() > 5 && Rage::ci_ascii_string{ "award" } == Rage::head(sMod, 5))
+					{
+						new_entry.iGainLives = StringToInt(sMod.substr(5));
+					}
 					else
+					{
 						continue;
-					mods.erase( mods.begin() + j );
+					}
+					mods.erase(mods.begin() + j);
 				}
 				new_entry.sModifiers = join( ",", mods );
 			}

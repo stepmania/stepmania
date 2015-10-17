@@ -559,7 +559,7 @@ bool Steps::MakeValidEditDescription( RString &sPreferredDescription )
 {
 	if( int(sPreferredDescription.size()) > MAX_STEPS_DESCRIPTION_LENGTH )
 	{
-		sPreferredDescription = sPreferredDescription.Left( MAX_STEPS_DESCRIPTION_LENGTH );
+		sPreferredDescription = Rage::head(sPreferredDescription, MAX_STEPS_DESCRIPTION_LENGTH);
 		return true;
 	}
 	return false;

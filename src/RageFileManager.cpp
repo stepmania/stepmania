@@ -9,6 +9,7 @@
 #include "RageUtil_FileDB.h"
 #include "RageLog.h"
 #include "RageThreads.h"
+#include "RageString.hpp"
 #include "arch/ArchHooks/ArchHooks.h"
 #include "LuaManager.h"
 
@@ -368,9 +369,11 @@ RString LoadedDriver::GetPath( const RString &sPath ) const
 			return RString();
 	}
 
-	if( sPath.Left(m_sMountPoint.size()).CompareNoCase(m_sMountPoint) )
-		return RString(); /* no match */
-
+	Rage::ci_ascii_string localPath{ Rage::head(sPath, m_sMountPoint.size()).c_str() };
+	if (localPath != m_sMountPoint)
+	{
+		return ""; /* no match */
+	}
 	/* Add one, so we don't cut off the leading slash. */
 	RString sRet = sPath.Right( sPath.size() - m_sMountPoint.size() + 1 );
 	return sRet;
@@ -532,14 +535,15 @@ static void AdjustMountpoint( RString &sMountPoint )
 {
 	FixSlashesInPlace( sMountPoint );
 
-	ASSERT_M( sMountPoint.Left(1) == "/", "Mountpoints must be absolute: " + sMountPoint );
+	ASSERT_M( Rage::starts_with( sMountPoint, "/" ), "Mountpoints must be absolute: " + sMountPoint );
 
 	if( sMountPoint.size() && sMountPoint.Right(1) != "/" )
 		sMountPoint += '/';
 
-	if( sMountPoint.Left(1) != "/" )
+	if (!Rage::starts_with(sMountPoint, "/"))
+	{
 		sMountPoint = "/" + sMountPoint;
-
+	}
 }
 
 static void AddFilesystemDriver( LoadedDriver *pLoadedDriver, bool bAddToEnd )

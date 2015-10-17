@@ -35,7 +35,7 @@ void ScreenSelect::Init()
 	// Load choices
 	// Allow lua as an alternative to metrics.
 	RString choice_names= CHOICE_NAMES;
-	if(choice_names.Left(4) == "lua,")
+	if (Rage::starts_with(choice_names, "lua,"))
 	{
 		RString command= choice_names.Right(choice_names.size()-4);
 		Lua* L= LUA->Get();

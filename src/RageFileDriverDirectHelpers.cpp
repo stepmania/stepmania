@@ -2,6 +2,7 @@
 #include "RageFileDriverDirectHelpers.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageString.hpp"
 
 #include <cerrno>
 #include <sys/types.h>
@@ -83,9 +84,10 @@ bool CreateDirectories( RString Path )
 	RString curpath;
 
 	// If Path is absolute, add the initial slash ("ignore empty" will remove it).
-	if( Path.Left(1) == "/" )
+	if (Rage::starts_with(Path, "/"))
+	{
 		curpath = "/";
-
+	}
 	// Ignore empty, so eg. "/foo/bar//baz" doesn't try to create "/foo/bar" twice.
 	split( Path, "/", parts, true );
 

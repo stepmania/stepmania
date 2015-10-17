@@ -9,6 +9,7 @@ http://en.wikipedia.org/wiki/INI_file
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageFile.h"
+#include "RageString.hpp"
 
 using std::string;
 
@@ -96,7 +97,7 @@ bool IniFile::ReadFile( RageFileBasic &f )
 				size_t iEqualIndex = line.find("=");
 				if( iEqualIndex != string::npos )
 				{
-					RString valuename = line.Left((int) iEqualIndex);
+					RString valuename = Rage::head(line, iEqualIndex);
 					RString value = line.Right(line.size()-valuename.size()-1);
 					Trim(valuename);
 					if(!valuename.empty())

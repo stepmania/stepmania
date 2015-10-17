@@ -140,9 +140,9 @@ void Actor::InitState()
 
 static bool GetMessageNameFromCommandName( const RString &sCommandName, RString &sMessageNameOut )
 {
-	if( sCommandName.Right(7) == "Message" )
+	if (Rage::ends_with(sCommandName, "Message"))
 	{
-		sMessageNameOut = sCommandName.Left(sCommandName.size()-7);
+		sMessageNameOut = Rage::head(sCommandName, -7);
 		return true;
 	}
 	else
@@ -277,8 +277,8 @@ void Actor::LoadFromNode( const XNode* pNode )
 			LuaReference *pRef = new LuaReference;
 			pValue->PushValue( L );
 			pRef->SetFromStack( L );
-			RString sCmdName = sKeyName.Left( sKeyName.size()-7 );
-			AddCommand( sCmdName, apActorCommands( pRef ) );
+			std::string cmdName = Rage::head(sKeyName, -7);
+			AddCommand( cmdName, apActorCommands( pRef ) );
 		}
 		else if( sKeyName == "Name" )			SetName( pValue->GetValue<RString>() );
 		else if( sKeyName == "BaseRotationX" )		SetBaseRotationX( pValue->GetValue<float>() );
@@ -754,12 +754,16 @@ void Actor::UpdateTweening( float fDeltaTime )
 		{
 			// Execute the command in this tween (if any). Do this last, and don't
 			// access TI or TS after, since this may modify the tweening queue.
-			if( !sCommand.empty() )
+			if (!sCommand.empty())
 			{
-				if( sCommand.Left(1) == "!" )
-					MESSAGEMAN->Broadcast( sCommand.substr(1) );
+				if (Rage::starts_with(sCommand, "!"))
+				{
+					MESSAGEMAN->Broadcast(sCommand.substr(1));
+				}
 				else
-					this->PlayCommand( sCommand );
+				{
+					this->PlayCommand(sCommand);
+				}
 			}
 		}
 	}

@@ -2,6 +2,7 @@
 #include "NetworkSyncManager.h"
 #include "LuaManager.h"
 #include "LocalizedString.h"
+#include "RageString.hpp"
 #include <errno.h>
 
 NetworkSyncManager *NSMAN;
@@ -928,7 +929,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 						RString::size_type sFieldPos = svResponse[h].find(": ");
 						if( sFieldPos != RString::npos )
 						{
-							RString sFieldName = svResponse[h].Left(sFieldPos),
+							RString sFieldName = Rage::head( svResponse[h], sFieldPos ),
 								sFieldValue = svResponse[h].substr(sFieldPos+2);
 
 							Trim( sFieldName );

@@ -28,7 +28,7 @@ void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, R
 		size_t iBeginIndex = sFullTitle.find( sep );
 		if( iBeginIndex == string::npos )
 			continue;
-		sMainTitleOut = sFullTitle.Left( (int) iBeginIndex );
+		sMainTitleOut = Rage::head(sFullTitle, iBeginIndex);
 		sSubTitleOut = sFullTitle.substr( iBeginIndex+1, sFullTitle.size()-iBeginIndex+1 );
 		return;
 	}

@@ -98,7 +98,7 @@ RString add_extension_to_relative_path_from_found_file(
 {
 	size_t rel_last_slash= after_slash_or_zero(relative_path);
 	size_t found_last_slash= after_slash_or_zero(found_file);
-	return relative_path.Left(rel_last_slash) +
+	return Rage::head( relative_path, rel_last_slash) +
 		found_file.substr(found_last_slash, string::npos);
 }
 
@@ -300,7 +300,7 @@ void actor_template_t::make_space_for_frame(int id)
 
 void actor_template_t::store_cmd(RString const& cmd_name, RString const& full_cmd)
 {
-	if(full_cmd.Left(1) == "%")
+	if (Rage::starts_with(full_cmd, "%"))
 	{
 		RString cmd_text= full_cmd.Right(full_cmd.size()-1);
 		convert_lua_chunk(cmd_text);
@@ -399,7 +399,7 @@ void actor_template_t::store_field(RString const& field_name, RString const& val
 	}
 	if(cmd_convert)
 	{
-		RString real_field_name= field_name.Left(field_name.size()-7) + "Command";
+		RString real_field_name= Rage::head(field_name, -7) + "Command";
 		store_cmd(real_field_name, value);
 	}
 	else
@@ -451,7 +451,7 @@ void actor_template_t::load_frames_from_file(RString const& fname, RString const
 		{
 			// Frame and Delay fields have names of the form "Frame0000" where the
 			// "0000" part is the id of the frame.
-			RString field_type= attr->first.Left(5);
+			std::string field_type{ Rage::head(attr->first, 5) };
 			if(field_type == "Frame")
 			{
 				int id= StringToInt(attr->first.Right(attr->first.size()-5));
@@ -737,7 +737,7 @@ void convert_xml_file(RString const& fname, RString const& dirname)
 	condition_set_t conditions;
 	plate.load_node(xml, dirname, conditions);
 	RageFile* file= new RageFile;
-	RString out_name= fname.Left(fname.size()-4) + ".lua";
+	std::string out_name{ Rage::head(fname, -4) + ".lua" };
 	if(!file->Open(out_name, RageFile::WRITE))
 	{
 		LOG->Trace("Could not open %s: %s", out_name.c_str(), file->GetError().c_str());

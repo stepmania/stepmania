@@ -13,6 +13,7 @@
 #include <cerrno>
 
 #include "RageUtil.h"
+#include "RageString.hpp"
 
 #if defined(MACOSX)
 #include "archutils/Darwin/Crash.h"
@@ -280,13 +281,13 @@ void BacktraceNames::FromAddr( void * const p )
 	 * __start   -> _start
 	 * __ZN7RageLog5TraceEPKcz -> _ZN7RageLog5TraceEPKcz (so demangling will work)
 	 */
-	if( Symbol.Left(1) == "_" )
+	if (Rage::starts_with(Symbol, "_"))
 		Symbol = Symbol.substr(1);
 	/* After stripping off the leading _
 	 * _GLOBAL__I__ZN5ModelC2Ev -> _ZN5ModelC2Ev
 	 * _GLOBAL__D__Z12ForceToAsciiR7CStdStrIcE -> _Z12ForceToAsciiR7CStdStrIcE
 	 */
-	if( Symbol.Left(9) == "_GLOBAL__" )
+	if(Rage::starts_with(Symbol, "_GLOBAL__"))
 		Symbol = Symbol.substr(11);
 
 }
