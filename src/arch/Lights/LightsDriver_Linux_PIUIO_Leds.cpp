@@ -15,6 +15,7 @@
 #include "GameState.h"
 #include "Game.h"
 #include "RageLog.h"
+#include "RageString.hpp"
 
 REGISTER_SOUND_DRIVER_CLASS2(PIUIO_Leds, Linux_PIUIO_Leds);
 
@@ -107,8 +108,8 @@ void LightsDriver_Linux_PIUIO_Leds::Set( const LightsState *ls )
 	}
 
 	const InputScheme *pInput = &GAMESTATE->GetCurrentGame()->m_InputScheme;
-	RString sInputName = pInput->m_szName;
-	if (sInputName.EqualsNoCase("dance"))
+	Rage::ci_ascii_string game { pInput->m_szName };
+	if (game == "dance")
 	{
 		FOREACH_ENUM(GameController, c)
 		{
@@ -128,7 +129,7 @@ void LightsDriver_Linux_PIUIO_Leds::Set( const LightsState *ls )
 			}
 		}
 	}
-	else if (sInputName.EqualsNoCase("pump"))
+	else if (game == "pump")
 	{
 		FOREACH_ENUM(GameController, c)
 		{

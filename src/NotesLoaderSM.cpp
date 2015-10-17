@@ -148,23 +148,36 @@ void SMSetDisplayBPM(SMSongTagInfo& info)
 }
 void SMSetSelectable(SMSongTagInfo& info)
 {
-	if((*info.params)[1].EqualsNoCase("YES"))
-	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
-	else if((*info.params)[1].EqualsNoCase("NO"))
-	{ info.song->m_SelectionDisplay = info.song->SHOW_NEVER; }
+	Rage::ci_ascii_string valueName{ (*info.params)[1] };
+	if (valueName == "YES")
+	{ 
+		info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; 
+	}
+	else if(valueName == "NO")
+	{ 
+		info.song->m_SelectionDisplay = info.song->SHOW_NEVER; 
+	}
 	// ROULETTE from 3.9. It was removed since UnlockManager can serve
 	// the same purpose somehow. This, of course, assumes you're using
 	// unlocks. -aj
-	else if((*info.params)[1].EqualsNoCase("ROULETTE"))
-	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
+	else if(valueName == "ROULETTE")
+	{ 
+		info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; 
+	}
 	/* The following two cases are just fixes to make sure simfiles that
 	 * used 3.9+ features are not excluded here */
-	else if((*info.params)[1].EqualsNoCase("ES") || (*info.params)[1].EqualsNoCase("OMES"))
-	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
+	else if(valueName == "ES" || valueName == "OMES")
+	{ 
+		info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; 
+	}
 	else if(StringToInt((*info.params)[1]) > 0)
-	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
+	{
+		info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS;
+	}
 	else
-	{ LOG->UserLog("Song file", info.path, "has an unknown #SELECTABLE value, \"%s\"; ignored.", (*info.params)[1].c_str()); }
+	{
+		LOG->UserLog("Song file", info.path, "has an unknown #SELECTABLE value, \"%s\"; ignored.", (*info.params)[1].c_str());
+	}
 }
 void SMSetBGChanges(SMSongTagInfo& info)
 {

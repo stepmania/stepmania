@@ -500,11 +500,9 @@ bool DWILoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &params = msd.GetValue(i);
 		RString valueName = params[0];
+		Rage::ci_ascii_string tagName{ valueName };
 
-		if(valueName.EqualsNoCase("SINGLE")  ||
-		   valueName.EqualsNoCase("DOUBLE")  ||
-		   valueName.EqualsNoCase("COUPLE")  ||
-		   valueName.EqualsNoCase("SOLO") )
+		if(tagName == "SINGLE" || tagName == "DOUBLE" || tagName == "COUPLE" || tagName == "SOLO")
 		{
 			if (out.m_StepsType != GetTypeFromMode(valueName))
 				continue;
@@ -552,6 +550,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
 		RString sValueName = sParams[0];
+		Rage::ci_ascii_string tagName{ sValueName };
 
 		if( iNumParams < 1 )
 		{
@@ -560,10 +559,10 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
 		}
 
 		// handle the data
-		if( sValueName.EqualsNoCase("FILE") )
+		if( tagName == "FILE" )
 			out.m_sMusicFile = sParams[1];
 
-		else if( sValueName.EqualsNoCase("TITLE") )
+		else if(tagName == "TITLE" )
 		{
 			NotesLoader::GetMainAndSubTitlesFromFullTitle( sParams[1], out.m_sMainTitle, out.m_sSubTitle );
 
@@ -573,22 +572,22 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
 			ConvertString( out.m_sSubTitle, "utf-8,english" );
 		}
 
-		else if( sValueName.EqualsNoCase("ARTIST") )
+		else if(tagName == "ARTIST" )
 		{
 			out.m_sArtist = sParams[1];
 			ConvertString( out.m_sArtist, "utf-8,english" );
 		}
 
-		else if( sValueName.EqualsNoCase("GENRE") )
+		else if(tagName == "GENRE" )
 		{
 			out.m_sGenre = sParams[1];
 			ConvertString( out.m_sGenre, "utf-8,english" );
 		}
 
-		else if( sValueName.EqualsNoCase("CDTITLE") )
+		else if(tagName == "CDTITLE" )
 			out.m_sCDTitleFile = sParams[1];
 
-		else if( sValueName.EqualsNoCase("BPM") )
+		else if(tagName == "BPM" )
 		{
 			const float fBPM = StringToFloat( sParams[1] );
 
@@ -602,7 +601,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
 				out.m_SongTiming.AddSegment( BPMSegment(0, fBPM) );
 			}
 		}
-		else if( sValueName.EqualsNoCase("DISPLAYBPM") )
+		else if(tagName == "DISPLAYBPM" )
 		{
 			// #DISPLAYBPM:[xxx..xxx]|[xxx]|[*];
 		    int iMin, iMax;
@@ -626,14 +625,14 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
 			}
 		}
 
-		else if( sValueName.EqualsNoCase("GAP") )
+		else if(tagName == "GAP" )
 			// the units of GAP is 1/1000 second
 			out.m_SongTiming.m_fBeat0OffsetInSeconds = -StringToInt(sParams[1]) / 1000.0f;
 
-		else if( sValueName.EqualsNoCase("SAMPLESTART") )
+		else if(tagName == "SAMPLESTART" )
 			out.m_fMusicSampleStartSeconds = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);
 
-		else if( sValueName.EqualsNoCase("SAMPLELENGTH") )
+		else if(tagName == "SAMPLELENGTH" )
 		{
 			float sampleLength = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);
 			if (sampleLength > 0 && sampleLength < 1) {
@@ -644,7 +643,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
 
 		}
 
-		else if( sValueName.EqualsNoCase("FREEZE") )
+		else if(tagName == "FREEZE" )
 		{
 			vector<RString> arrayFreezeExpressions;
 			split( sParams[1], ",", arrayFreezeExpressions );
@@ -666,7 +665,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
 			}
 		}
 
-		else if( sValueName.EqualsNoCase("CHANGEBPM")  || sValueName.EqualsNoCase("BPMCHANGE") )
+		else if(tagName == "CHANGEBPM" || tagName == "BPMCHANGE" )
 		{
 			vector<RString> arrayBPMChangeExpressions;
 			split( sParams[1], ",", arrayBPMChangeExpressions );
@@ -691,10 +690,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
 			}
 		}
 
-		else if( sValueName.EqualsNoCase("SINGLE")  ||
-			 sValueName.EqualsNoCase("DOUBLE")  ||
-			 sValueName.EqualsNoCase("COUPLE")  ||
-			 sValueName.EqualsNoCase("SOLO") )
+		else if(tagName == "SINGLE" || tagName == "DOUBLE" || tagName == "COUPLE" || tagName == "SOLO")
 		{
 			Steps* pNewNotes = out.CreateSteps();
 			LoadFromDWITokens(
@@ -714,8 +710,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
 			else
 				delete pNewNotes;
 		}
-		else if( sValueName.EqualsNoCase("DISPLAYTITLE") ||
-			sValueName.EqualsNoCase("DISPLAYARTIST") )
+		else if(tagName == "DISPLAYTITLE" || tagName == "DISPLAYARTIST" )
 		{
 			/* We don't want to support these tags.  However, we don't want
 			 * to pick up images used here as song images (eg. banners). */

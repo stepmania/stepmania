@@ -390,15 +390,16 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 		// Check for string match first, then do integer match.
 		// "if(StringType(type)==0)" was matching against all string matches.
 		// -Chris
-		if( type.EqualsNoCase("sprite") )
+		Rage::ci_ascii_string matcher{ type };
+		if( matcher == "sprite" )
 		{
 			m_Type = TYPE_SPRITE;
 		}
-		else if( type.EqualsNoCase("particles") )
+		else if( matcher == "particles" )
 		{
 			m_Type = TYPE_PARTICLES;
 		}
-		else if( type.EqualsNoCase("tiles") )
+		else if( matcher == "tiles" )
 		{
 			m_Type = TYPE_TILES;
 		}

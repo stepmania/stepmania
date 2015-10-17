@@ -253,7 +253,8 @@ RString ThemeManager::GetThemeAuthor( const RString &sThemeName )
 
 static bool EqualsNoCase( const RString &s1, const RString &s2 )
 {
-	return s1.EqualsNoCase(s2);
+	Rage::ci_ascii_string a{ s1 };
+	return a == s2;
 }
 void ThemeManager::GetLanguages( vector<RString>& AddTo )
 {

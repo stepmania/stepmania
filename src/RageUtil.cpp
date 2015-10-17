@@ -716,9 +716,10 @@ void GetLanguageInfos( vector<const LanguageInfo*> &vAddTo )
 
 const LanguageInfo *GetLanguageInfo( const RString &sIsoCode )
 {
+	Rage::ci_ascii_string iso{ sIsoCode };
 	for (auto const &lang: g_langs)
 	{
-		if ( sIsoCode.EqualsNoCase(lang.szIsoCode))
+		if (iso == lang.szIsoCode)
 		{
 			return &lang;
 		}
@@ -1364,9 +1365,11 @@ RString URLEncode( const RString &sStr )
 // remove various version control-related files
 static bool CVSOrSVN( const RString& s )
 {
-	return s.Right(3).EqualsNoCase("CVS") ||
-			s.Right(4) == ".svn" ||
-			s.Right(3).EqualsNoCase(".hg");
+	Rage::ci_ascii_string cvs{ "CVS" };
+	Rage::ci_ascii_string svn{ ".svn" };
+	Rage::ci_ascii_string hg{ ".hg" };
+
+	return cvs == Rage::tail(s, 3) || svn == Rage::tail(s, 4) || hg == Rage::tail(s, 3);
 }
 
 void StripCvsAndSvn( vector<RString> &vs )
@@ -1374,9 +1377,9 @@ void StripCvsAndSvn( vector<RString> &vs )
 	RemoveIf( vs, CVSOrSVN );
 }
 
-static bool MacResourceFork( const RString& s )
+static bool MacResourceFork(const RString& s)
 {
-	return s.Left(2).EqualsNoCase("._");
+	return Rage::ci_ascii_string{ "._" } == Rage::head(s, 2);
 }
 
 void StripMacResourceForks( vector<RString> &vs )

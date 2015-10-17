@@ -1001,13 +1001,35 @@ void Actor::ScaleTo( const Rage::RectF &rect, StretchType st )
 
 void Actor::SetEffectClockString( const RString &s )
 {
-	if     (s.EqualsNoCase("timer"))	this->SetEffectClock( CLOCK_TIMER );
-	else if(s.EqualsNoCase("timerglobal"))	this->SetEffectClock( CLOCK_TIMER_GLOBAL );
-	else if(s.EqualsNoCase("beat"))		this->SetEffectClock( CLOCK_BGM_BEAT );
-	else if(s.EqualsNoCase("music"))	this->SetEffectClock( CLOCK_BGM_TIME );
-	else if(s.EqualsNoCase("bgm"))		this->SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
-	else if(s.EqualsNoCase("musicnooffset"))this->SetEffectClock( CLOCK_BGM_TIME_NO_OFFSET );
-	else if(s.EqualsNoCase("beatnooffset"))	this->SetEffectClock( CLOCK_BGM_BEAT_NO_OFFSET );
+	Rage::ci_ascii_string effect{ s };
+	if (s == "timer")
+	{
+		this->SetEffectClock(CLOCK_TIMER);
+	}
+	else if (s == "timerglobal")
+	{
+		this->SetEffectClock(CLOCK_TIMER_GLOBAL);
+	}
+	else if (s == "beat")
+	{
+		this->SetEffectClock(CLOCK_BGM_BEAT);
+	}
+	else if (s == "music")
+	{
+		this->SetEffectClock(CLOCK_BGM_TIME);
+	}
+	else if (s == "bgm")
+	{
+		this->SetEffectClock(CLOCK_BGM_BEAT); // compat, deprecated
+	}
+	else if (s == "musicnooffset")
+	{
+		this->SetEffectClock(CLOCK_BGM_TIME_NO_OFFSET);
+	}
+	else if (s == "beatnooffset")
+	{
+		this->SetEffectClock(CLOCK_BGM_BEAT_NO_OFFSET);
+	}
 	else
 	{
 		CabinetLight cl = StringToCabinetLight( s );

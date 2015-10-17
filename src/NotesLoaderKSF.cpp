@@ -480,16 +480,14 @@ static void LoadTags( const RString &str, Song &out )
 	vector<RString> asBits;
 	split( str, " - ", asBits, false );
 	// Ignore the difficulty, since we get that elsewhere.
-	if( asBits.size() == 3 && (
-		asBits[2].EqualsNoCase("double") ||
-		asBits[2].EqualsNoCase("easy") ||
-		asBits[2].EqualsNoCase("normal") ||
-		asBits[2].EqualsNoCase("hard") ||
-		asBits[2].EqualsNoCase("crazy") ||
-		asBits[2].EqualsNoCase("nightmare"))
-		)
+	if (asBits.size() == 3)
 	{
-		asBits.erase( asBits.begin()+2, asBits.begin()+3 );
+		Rage::ci_ascii_string badDiff{ asBits[2] };
+		if (badDiff == "double" || badDiff == "easy" || badDiff == "normal" ||
+			badDiff == "hard" || badDiff == "crazy" || badDiff == "nightmare")
+		{
+			asBits.erase(asBits.begin() + 2, asBits.begin() + 3);
+		}
 	}
 
 	RString title, artist;
