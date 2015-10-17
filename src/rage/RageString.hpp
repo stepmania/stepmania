@@ -65,8 +65,8 @@ namespace Rage
 		{
 			while (n-- > 0)
 			{
-				auto d1 = asciiToLower(*c1);
-				auto d2 = asciiToLower(*c2);
+				auto d1 = asciiToLower(*c1++);
+				auto d2 = asciiToLower(*c2++);
 				if (d1 < d2)
 				{
 					return -1;

@@ -132,3 +132,36 @@ GTEST_TEST(RageString, ci_mixed_all_over_one_var_std)
 	std::string other{"hOlA"};
 	EXPECT_EQ(target == other, true);
 }
+
+GTEST_TEST(RageString, ci_extensions_same_eq)
+{
+	Rage::ci_ascii_string ini{".ini"};
+	Rage::ci_ascii_string other{".ini"};
+	
+	EXPECT_EQ(ini == other, true);
+}
+
+GTEST_TEST(RageString, ci_extensions_same_ne)
+{
+	Rage::ci_ascii_string ini{".ini"};
+	Rage::ci_ascii_string other{".ini"};
+	
+	EXPECT_EQ(ini != other, false);
+}
+
+GTEST_TEST(RageString, ci_extensions_different_eq)
+{
+	Rage::ci_ascii_string ini{".ini"};
+	Rage::ci_ascii_string png{".png"};
+	
+	EXPECT_EQ(ini == png, false);
+}
+
+GTEST_TEST(RageString, ci_extensions_different_ne)
+{
+	Rage::ci_ascii_string ini{".ini"};
+	Rage::ci_ascii_string png{".png"};
+	
+	EXPECT_EQ(ini != png, true);
+}
+
