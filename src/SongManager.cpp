@@ -1577,7 +1577,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 				 * and if it does, add all the songs in that group to the list. */
 				if( EndsWith(sLine,"/*") )
 				{
-					RString group = sLine.Left( sLine.length() - RString("/*").length() );
+					RString group = Rage::head(sLine, sLine.size() - 2);
 					if( DoesSongGroupExist(group) )
 					{
 						// add all songs in group

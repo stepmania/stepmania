@@ -554,9 +554,10 @@ void CourseID::FromCourse( const Course *p )
 
 	// HACK for backwards compatibility:
 	// Strip off leading "/".  2005/05/21 file layer changes added a leading slash.
-	if( sPath.Left(1) == "/" )
-		sPath.erase( sPath.begin() );
-
+	if (Rage::starts_with(sPath, "/"))
+	{
+		sPath.erase(sPath.begin());
+	}
 	m_Cache.Unset();
 }
 
@@ -565,9 +566,10 @@ Course *CourseID::ToCourse() const
 	// HACK for backwards compatibility:
 	// Re-add the leading "/".  2005/05/21 file layer changes added a leading slash.
 	RString sPath2 = sPath;
-	if( sPath2.Left(1) != "/" )
+	if (!Rage::starts_with(sPath2, "/"))
+	{
 		sPath2 = "/" + sPath2;
-
+	}
 	Course *pCourse = nullptr;
 	if( m_Cache.Get(&pCourse) )
 		return pCourse;

@@ -683,8 +683,11 @@ bool MemoryCardManager::PathIsMemCard( RString sDir ) const
 {
 	FOREACH_PlayerNumber( p )
 	{
-		if( !sDir.Left(MEM_CARD_MOUNT_POINT[p].size()).CompareNoCase( MEM_CARD_MOUNT_POINT[p] ) )
+		Rage::ci_ascii_string memPoint{ MEM_CARD_MOUNT_POINT[p] };
+		if (memPoint == Rage::head(sDir, memPoint.size()))
+		{
 			return true;
+		}
 	}
 	return false;
 }

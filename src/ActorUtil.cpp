@@ -210,10 +210,14 @@ Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 		{
 			RString sPath;
 			// Handle absolute paths correctly
-			if (sFile.Left(1) == "/")
+			if (Rage::starts_with(sFile, "/"))
+			{
 				sPath = sFile;
+			}
 			else
+			{
 				sPath = Dirname(GetSourcePath(&node)) + sFile;
+			}
 			if (ResolvePath(sPath, GetWhere(&node)))
 			{
 				Actor *pNewActor = MakeActor(sPath, pParentActor);
@@ -419,7 +423,7 @@ bool ActorUtil::GetAttrPath( const XNode *pNode, const RString &sName, RString &
 	if( !pNode->GetAttrValue(sName, sOut) )
 		return false;
 
-	bool bIsRelativePath = sOut.Left(1) != "/";
+	bool bIsRelativePath = !Rage::starts_with(sOut, "/");
 	if( bIsRelativePath )
 	{
 		RString sDir;

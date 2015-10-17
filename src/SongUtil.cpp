@@ -7,6 +7,7 @@
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "PrefsManager.h"
+#include "RageString.hpp"
 #include "SongManager.h"
 #include "XmlFile.h"
 #include "UnlockManager.h"
@@ -587,14 +588,19 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			}
 			s = MakeSortString(s);	// resulting string will be uppercase
 
-			if( s.empty() )
-				return RString();
-			else if( s[0] >= '0' && s[0] <= '9' )
+			if (s.empty())
+			{
+				return "";
+			}
+			if (s[0] >= '0' && s[0] <= '9')
+			{
 				return "0-9";
-			else if( s[0] < 'A' || s[0] > 'Z')
+			}
+			if (s[0] < 'A' || s[0] > 'Z')
+			{
 				return SORT_OTHER.GetValue();
-			else
-				return s.Left(1);
+			}
+			return Rage::head(s, 1);
 		}
 	case SORT_GENRE:
 		if( !pSong->m_sGenre.empty() )
@@ -775,10 +781,12 @@ RString SongUtil::MakeUniqueEditDescription( const Song *pSong, StepsType st, co
 	{
 		// make name "My Edit" -> "My Edit2"
 		RString sNum = ssprintf("%d", i+1);
-		sTemp = sPreferredDescription.Left( MAX_STEPS_DESCRIPTION_LENGTH - sNum.size() ) + sNum;
+		sTemp = Rage::head(sPreferredDescription, MAX_STEPS_DESCRIPTION_LENGTH - sNum.size()) + sNum;
 
-		if( IsEditDescriptionUnique(pSong, st, sTemp, nullptr) )
+		if (IsEditDescriptionUnique(pSong, st, sTemp, nullptr))
+		{
 			return sTemp;
+		}
 	}
 
 	// Edit limit guards should prevent this
@@ -1122,9 +1130,10 @@ void SongID::FromSong( const Song *p )
 
 	// HACK for backwards compatibility:
 	// Strip off leading "/".  2005/05/21 file layer changes added a leading slash.
-	if( sDir.Left(1) == "/" )
-		sDir.erase( sDir.begin() );
-
+	if (Rage::starts_with(sDir, "/"))
+	{
+		sDir.erase(sDir.begin());
+	}
 	m_Cache.Unset();
 }
 
@@ -1136,9 +1145,10 @@ Song *SongID::ToSong() const
 		// HACK for backwards compatibility: Re-add the leading "/".
 		// 2005/05/21 file layer changes added a leading slash.
 		RString sDir2 = sDir;
-		if( sDir2.Left(1) != "/" )
+		if (!Rage::starts_with(sDir2, "/"))
+		{
 			sDir2 = "/" + sDir2;
-
+		}
 		if( !sDir2.empty() )
 			pRet = SONGMAN->GetSongFromDir( sDir2 );
 		m_Cache.Set( pRet );

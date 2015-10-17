@@ -18,6 +18,7 @@
 #include "RageFileManager.h"
 #include "RageSurface.h"
 #include "RageTextureManager.h"
+#include "RageString.hpp"
 #include "NoteDataUtil.h"
 #include "SongUtil.h"
 #include "SongManager.h"
@@ -577,7 +578,7 @@ void FixupPath( RString &path, const RString &sSongPath )
 void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 {
 	// We need to do this before calling any of HasMusic, HasHasCDTitle, etc.
-	ASSERT_M(m_sSongDir.Left(3) != "../", m_sSongDir); // meaningless
+	ASSERT_M( !Rage::starts_with(m_sSongDir, "../"), m_sSongDir); // meaningless
 	FixupPath(m_sSongDir, "");
 	FixupPath(m_sMusicFile, m_sSongDir);
 	FOREACH_ENUM(InstrumentTrack, i)
@@ -705,8 +706,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 				LOG->Trace("Song '%s' points to a music file that doesn't exist, found music file '%s'", m_sSongDir.c_str(), music_list[0].c_str());
 				m_bHasMusic= true;
 				m_sMusicFile= music_list[0];
-				if(music_list.size() > 1 &&
-					!m_sMusicFile.Left(5).CompareNoCase("intro"))
+				if(music_list.size() > 1 && Rage::ci_ascii_string{"intro"} == Rage::head(m_sMusicFile, 5) )
 				{
 					m_sMusicFile= music_list[1];
 				}
@@ -1634,7 +1634,7 @@ RString Song::GetSongAssetPath( RString sPath, const RString &sSongPath )
 		return sRelPath;
 
 	// The song contains a path; treat it as relative to the top SM directory.
-	if( sPath.Left(3) == "../" )
+	if (Rage::starts_with(sPath, "../"))
 	{
 		// The path begins with "../".  Resolve it wrt. the song directory.
 		sPath = sRelPath;
@@ -1644,9 +1644,10 @@ RString Song::GetSongAssetPath( RString sPath, const RString &sSongPath )
 
 	/* If the path still begins with "../", then there were an unreasonable number
 	 * of them at the beginning of the path. Ignore the path entirely. */
-	if( sPath.Left(3) == "../" )
-		return RString();
-
+	if (Rage::starts_with(sPath, "../"))
+	{
+		return "";
+	}
 	return sPath;
 }
 
