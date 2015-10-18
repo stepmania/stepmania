@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include "RageFile.h"
 #include "RageTimer.h"
+#include "RageString.hpp"
 
 #include <cerrno>
 #if defined(HAVE_FCNTL_H)
@@ -245,7 +246,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 						sHostPort.erase( pos );
 
 					/* sHostPort is eg. 2-2.1. */
-					sHostPort.Replace( "-", "." );
+					Rage::replace(sHostPort, '-', '.' );
 					asBits.clear();
 					split( sHostPort, ".", asBits );
 					if( asBits.size() > 1 )

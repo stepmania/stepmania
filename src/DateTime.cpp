@@ -222,16 +222,16 @@ RString LastWeekToString( int iLastWeekIndex )
 RString LastDayToLocalizedString( int iLastDayIndex )
 {
 	RString s = LastDayToString( iLastDayIndex );
-	s.Replace( "Day", "" );
-	s.Replace( "Ago", " Ago" );
+	Rage::replace(s, "Day", "" );
+	Rage::replace(s, "Ago", " Ago" );
 	return s;
 }
 
 RString LastWeekToLocalizedString( int iLastWeekIndex )
 {
 	RString s = LastWeekToString( iLastWeekIndex );
-	s.Replace( "Week", "" );
-	s.Replace( "Ago", " Ago" );
+	Rage::replace(s, "Week", "" );
+	Rage::replace(s, "Ago", " Ago" );
 	return s;
 }
 

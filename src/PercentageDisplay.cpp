@@ -185,7 +185,7 @@ void PercentageDisplay::Refresh()
 			}
 
 			// HACK: Use the last frame in the numbers texture as '-'
-			sNumToDisplay.Replace('-','x');
+			Rage::replace(sNumToDisplay, '-', 'x');
 		}
 	}
 

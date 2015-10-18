@@ -2208,7 +2208,7 @@ float Profile::GetCaloriesBurnedForDay( DateTime day ) const
 static void SaveRecentScore( XNode* xml )
 {
 	RString sDate = DateTime::GetNowDate().GetString();
-	sDate.Replace(":","-");
+	Rage::replace(sDate, ':', '-');
 
 	RString sFileNameNoExtension = Profile::MakeUniqueFileNameNoExtension(UPLOAD_SUBDIR, sDate );
 	RString fn = UPLOAD_SUBDIR + sFileNameNoExtension + ".xml";

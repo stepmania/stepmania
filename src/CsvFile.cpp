@@ -120,7 +120,7 @@ bool CsvFile::WriteFile( RageFileBasic &f ) const
 		for (auto value = line->begin(); value != line->end(); ++value)
 		{
 			RString sVal = *value;
-			sVal.Replace( "\"", "\"\"" );	// escape quotes to double-quotes
+			Rage::replace(sVal, "\"", "\"\"" );	// escape quotes to double-quotes
 			sLine += "\"" + sVal + "\"";
 			if( value != line->end()-1 )
 				sLine += ",";

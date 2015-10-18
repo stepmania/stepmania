@@ -953,13 +953,13 @@ public:
 		 * it's confusing for :: to work in some strings and not others.
 		 * Eventually, all strings should be Lua expressions, but until then,
 		 * continue to support this. */
-		s.Replace("::","\n");
+		Rage::replace(s, "::","\n");
 		FontCharAliases::ReplaceMarkers( s );
 
 		if( lua_gettop(L) > 1 )
 		{
 			sAlt = SArg(2);
-			sAlt.Replace("::","\n");
+			Rage::replace(sAlt, "::","\n");
 			FontCharAliases::ReplaceMarkers( sAlt );
 		}
 

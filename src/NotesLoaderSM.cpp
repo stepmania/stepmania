@@ -968,12 +968,12 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 	{
 	case 11:
 		change.m_def.m_sColor2 = aBGChangeValues[10];
-		change.m_def.m_sColor2.Replace( '^', ',' );
+		Rage::replace(change.m_def.m_sColor2, '^', ',' );
 		change.m_def.m_sColor2 = Rage::Color::NormalizeColorString( change.m_def.m_sColor2 );
 		// fall through
 	case 10:
 		change.m_def.m_sColor1 = aBGChangeValues[9];
-		change.m_def.m_sColor1.Replace( '^', ',' );
+		Rage::replace(change.m_def.m_sColor1, '^', ',' );
 		change.m_def.m_sColor1 = Rage::Color::NormalizeColorString( change.m_def.m_sColor1 );
 		// fall through
 	case 9:
@@ -1244,7 +1244,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 
 			RString sSongFullTitle = sParams[1];
 			this->SetSongTitle(sParams[1]);
-			sSongFullTitle.Replace( '\\', '/' );
+			Rage::replace(sSongFullTitle, '\\', '/' );
 
 			pSong = SONGMAN->FindSong( sSongFullTitle );
 			if( pSong == nullptr )

@@ -961,7 +961,7 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 
 				if( i==1 && bFirstParamIsString ) // string literal, legacy only
 				{
-					sArg.Replace( "'", "\\'" );	// escape quote
+					Rage::replace(sArg, "'", "\\'" );	// escape quote
 					s << "'" << sArg << "'";
 				}
 				else if( sArg[0] == '#' )	// HTML color

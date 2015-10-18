@@ -1383,7 +1383,7 @@ Song* SongManager::GetSongFromDir(RString dir) const
 		dir += "/"; 
 	}
 
-	dir.Replace('\\', '/');
+	Rage::replace(dir, '\\', '/');
 	dir.MakeLower();
 	auto entry = m_SongsByDir.find(dir);
 	if(entry != m_SongsByDir.end())
@@ -1439,7 +1439,7 @@ Course* SongManager::GetCourseFromName( RString sName ) const
 
 Song *SongManager::FindSong( RString sPath ) const
 {
-	sPath.Replace( '\\', '/' );
+	Rage::replace(sPath, '\\', '/' );
 	vector<RString> bits;
 	split( sPath, "/", bits );
 
@@ -1468,7 +1468,7 @@ Song *SongManager::FindSong( RString sGroup, RString sSong ) const
 
 Course *SongManager::FindCourse( RString sPath ) const
 {
-	sPath.Replace( '\\', '/' );
+	Rage::replace(sPath, '\\', '/' );
 	vector<RString> bits;
 	split( sPath, "/", bits );
 

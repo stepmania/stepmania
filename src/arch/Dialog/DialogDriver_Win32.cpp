@@ -53,7 +53,7 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 
 			// Set static text.
 			RString sMessage = g_sMessage;
-			sMessage.Replace( "\n", "\r\n" );
+			Rage::replace(sMessage, "\n", "\r\n" );
 			SetWindowText( GetDlgItem(hWnd, IDC_MESSAGE), sMessage );
 
 			// Focus is on any of the controls in the dialog by default.
@@ -149,7 +149,7 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 		
 			// Set static text
 			RString sMessage = g_sErrorString;
-			sMessage.Replace( "\n", "\r\n" );
+			Rage::replace(sMessage, "\n", "\r\n" );
 			SetWindowText( GetDlgItem(hWnd, IDC_EDIT_ERROR), sMessage );
 		}
 		break;
