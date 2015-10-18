@@ -278,12 +278,13 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 		LOG->Warn( "FilenameDB::GetFileSet: m_Mutex was locked" );
 
 	/* Normalize the path. */
-	sDir.Replace("\\", "/"); /* foo\bar -> foo/bar */
-	sDir.Replace("//", "/"); /* foo//bar -> foo/bar */
+	Rage::replace(sDir, "\\", "/"); /* foo\bar -> foo/bar */
+	Rage::replace(sDir, "//", "/"); /* foo//bar -> foo/bar */
 
-	if( sDir == "" )
+	if (sDir == "")
+	{
 		sDir = "/";
-
+	}
 	RString sLower = sDir;
 	sLower.MakeLower();
 

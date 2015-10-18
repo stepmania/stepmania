@@ -43,7 +43,7 @@ void FontPage::Load( const FontPageSettings &cfg )
 	// "arial 20 16x16 [main].png" => "arial 20 16x16 [main-stroke].png"
 	if( ID2.filename.find("]") != string::npos )
 	{
-		ID2.filename.Replace( "]", "-stroke]" );
+		Rage::replace(ID2.filename, "]", "-stroke]" );
 		if( IsAFile(ID2.filename) )
 		{
 			m_FontPageTextures.m_pTextureStroke = TEXTUREMAN->LoadTexture( ID2 );

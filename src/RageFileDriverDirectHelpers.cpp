@@ -152,7 +152,7 @@ void DirectFilenameDB::SetRoot(RString root_)
 	root = root_;
 
 	// "\abcd\" -> "/abcd/":
-	root.Replace("\\", "/");
+	Rage::replace(root, '\\', '/');
 
 	// "/abcd/" -> "/abcd":
 	if (Rage::ends_with(root, "/"))

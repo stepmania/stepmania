@@ -124,7 +124,7 @@ bool Steps::GetNoteDataFromSimfile()
 			*/
 			SMLoader backup_loader;
 			RString transformedStepFile = stepFile;
-			transformedStepFile.Replace(".ssc", ".sm");
+			Rage::replace(transformedStepFile, ".ssc", ".sm");
 
 			return backup_loader.LoadNoteDataFromSimfile(transformedStepFile, *this);
 		}

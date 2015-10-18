@@ -28,6 +28,16 @@ namespace Rage
 	 * See http://stackoverflow.com/a/8024386 */
 	std::string hexify(wchar_t const src, unsigned int dstlen);
 
+	/** @brief Offer a clean way of replacing all occurances of a character with a different character.
+	 *
+	 * See http://stackoverflow.com/a/2896627 */
+	void replace(std::string &target, char from, char to);
+
+	/** @brief Offer a clean way of replacing all occurances of a string with a different string.
+	 *
+	 * See http://stackoverflow.com/a/29752943 */
+	void replace(std::string &target, std::string const &from, std::string const &to);
+
 	/** @brief A mapping to allow for quick lowercase conversion. */
 	extern unsigned char lowerCase[256];
 

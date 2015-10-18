@@ -239,10 +239,10 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 				DEFAULT_FAIL( pad );
 		}
 
-		sStepData.Replace("\n", "");
-		sStepData.Replace("\r", "");
-		sStepData.Replace("\t", "");
-		sStepData.Replace(" ", "");
+		Rage::replace(sStepData, "\n", "");
+		Rage::replace(sStepData, "\r", "");
+		Rage::replace(sStepData, "\t", "");
+		Rage::replace(sStepData, " ", "");
 
 		double fCurrentBeat = 0;
 		double fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;

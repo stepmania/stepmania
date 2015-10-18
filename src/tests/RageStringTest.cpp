@@ -177,3 +177,18 @@ GTEST_TEST(RageString, ends_with_sanity)
 	EXPECT_EQ(Rage::ends_with(stepmania, "mania"), true);
 }
 
+GTEST_TEST(RageString, replace_char)
+{
+	std::string tongueTwister{ "She sells seashells by the seashore." };
+	std::string answer{ "Sxe sells seasxells by txe seasxore." };
+	Rage::replace(tongueTwister, 'h', 'x');
+	EXPECT_EQ(tongueTwister == answer, true);
+}
+
+GTEST_TEST(RageString, replace_std_string)
+{
+	std::string tongueTwister{ "She sells seashells by the seashore." };
+	std::string answer{ "She sells sayshells by the sayshore." };
+	Rage::replace(tongueTwister, "sea", "say");
+	EXPECT_EQ(tongueTwister == answer, true);
+}

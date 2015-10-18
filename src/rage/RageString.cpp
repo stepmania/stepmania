@@ -1,6 +1,7 @@
 #include "RageString.hpp"
 #include <cstdlib>
 #include <sstream>
+#include <algorithm>
 
 std::string Rage::head(std::string const &source, int32_t const length)
 {
@@ -61,6 +62,32 @@ std::string Rage::hexify(wchar_t const src, unsigned int dstlen)
 		setup = '0' + setup;
 	}
 	return setup;
+}
+
+void Rage::replace(std::string &target, char from, char to)
+{
+	std::replace(target.begin(), target.end(), from, to);
+}
+
+void Rage::replace(std::string &target, std::string const &from, std::string const &to)
+{
+	std::string newString;
+	newString.reserve(target.length());  // avoids a few memory allocations
+
+	std::string::size_type lastPos = 0;
+	std::string::size_type findPos;
+
+	while (std::string::npos != (findPos = target.find(from, lastPos)))
+	{
+		newString.append(target, lastPos, findPos - lastPos);
+		newString += to;
+		lastPos = findPos + from.length();
+	}
+
+	// Care for the rest after last occurrence
+	newString += target.substr(lastPos);
+
+	target.swap(newString);
 }
 
 namespace Rage

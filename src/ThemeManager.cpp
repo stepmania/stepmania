@@ -1192,24 +1192,24 @@ void ThemeManager::GetOptionNames( vector<RString>& AddTo )
 
 static RString PseudoLocalize( RString s )
 {
-	s.Replace( "a", "\xc3\xa0\xc3\xa1" ); // àá
-	s.Replace( "A", "\xc3\x80\xc3\x80" ); // ÀÀ
-	s.Replace( "e", "\xc3\xa9\xc3\xa9" ); // éé
-	s.Replace( "E", "\xc3\x89\xc3\x89" ); // ÉÉ
-	s.Replace( "i", "\xc3\xad\xc3\xad" ); // íí
-	s.Replace( "I", "\xc3\x8d\xc3\x8d" ); // ÍÍ
-	s.Replace( "o", "\xc3\xb3\xc3\xb3" ); // óó
-	s.Replace( "O", "\xc3\x93\xc3\x93" ); // ÓÓ
-	s.Replace( "u", "\xc3\xbc\xc3\xbc" ); // üü
-	s.Replace( "U", "\xc3\x9c\xc3\x9c" ); // ÜÜ
-	s.Replace( "n", "\xc3\xb1" ); // ñ
-	s.Replace( "N", "\xc3\x91" ); // Ñ
-	s.Replace( "c", "\xc3\xa7" ); // ç
-	s.Replace( "C", "\xc3\x87" ); // Ç
+	Rage::replace(s, "a", "\xc3\xa0\xc3\xa1" ); // àá
+	Rage::replace(s, "A", "\xc3\x80\xc3\x80" ); // ÀÀ
+	Rage::replace(s, "e", "\xc3\xa9\xc3\xa9" ); // éé
+	Rage::replace(s, "E", "\xc3\x89\xc3\x89" ); // ÉÉ
+	Rage::replace(s, "i", "\xc3\xad\xc3\xad" ); // íí
+	Rage::replace(s, "I", "\xc3\x8d\xc3\x8d" ); // ÍÍ
+	Rage::replace(s, "o", "\xc3\xb3\xc3\xb3" ); // óó
+	Rage::replace(s, "O", "\xc3\x93\xc3\x93" ); // ÓÓ
+	Rage::replace(s, "u", "\xc3\xbc\xc3\xbc" ); // üü
+	Rage::replace(s, "U", "\xc3\x9c\xc3\x9c" ); // ÜÜ
+	Rage::replace(s, "n", "\xc3\xb1" ); // ñ
+	Rage::replace(s, "N", "\xc3\x91" ); // Ñ
+	Rage::replace(s, "c", "\xc3\xa7" ); // ç
+	Rage::replace(s, "C", "\xc3\x87" ); // Ç
 	// transformations that help expose punctuation assumptions
-	//s.Replace( ":", " :" );	// this messes up "::" help text tip separator markers
-	s.Replace( "?", " ?" );
-	s.Replace( "!", " !" );
+	//Rage::replace(s, ":", " :" );	// this messes up "::" help text tip separator markers
+	Rage::replace(s, "?", " ?" );
+	Rage::replace(s, "!", " !" );
 
 	return s;
 }
@@ -1227,8 +1227,8 @@ RString ThemeManager::GetString( const RString &sMetricsGroup, const RString &sV
 	DEBUG_ASSERT( sValueName.find('=') == sValueName.npos );
 
 	// TODO: Move this escaping into IniFile?
-	sValueName.Replace( "\r\n", "\\n" );
-	sValueName.Replace( "\n", "\\n" );
+	Rage::replace(sValueName, "\r\n", "\\n" );
+	Rage::replace(sValueName, "\n", "\\n" );
 
 	ASSERT( g_pLoadedThemeData != nullptr );
 	RString s = GetMetricRaw( g_pLoadedThemeData->iniStrings, sMetricsGroup, sValueName );
@@ -1237,7 +1237,7 @@ RString ThemeManager::GetString( const RString &sMetricsGroup, const RString &sV
 	// Don't EvalulateString.  Strings are raw and shouldn't allow Lua.
 	//EvaluateString( s );
 
-	s.Replace( "\\n", "\n" );
+	Rage::replace(s, "\\n", "\n" );
 
 	if( m_bPseudoLocalize )
 	{

@@ -64,7 +64,7 @@ void ModIcon::Set( const RString &_sText )
 		}
 	}
 
-	sText.Replace( " ", "\n" );
+	Rage::replace(sText, " ", "\n" );
 
 	bool bVacant = (sText=="");
 	m_sprFilled->SetVisible( !bVacant );

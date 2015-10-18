@@ -139,7 +139,7 @@ RString SongCacheIndex::MangleName( const RString &Name )
 {
 	/* We store paths in an INI.  We can't store '='. */
 	RString ret = Name;
-	ret.Replace( "=", "");
+	Rage::replace(ret, "=", "");
 	return ret;
 }
 

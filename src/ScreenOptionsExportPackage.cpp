@@ -190,8 +190,10 @@ static RString ReplaceInvalidFileNameChars( RString sOldFileName )
 		'+', '=', '[', ']', '{', '}', '|', ':', '\"', '\\',
 		'<', '>', ',', '?', '/'
 	};
-	for( unsigned i=0; i<sizeof(charsToReplace); i++ )
-		sNewFileName.Replace( charsToReplace[i], '_' );
+	for (unsigned i = 0; i < sizeof(charsToReplace); i++)
+	{
+		Rage::replace(sNewFileName, charsToReplace[i], '_');
+	}
 	return sNewFileName;
 }
 

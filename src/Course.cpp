@@ -993,7 +993,7 @@ bool Course::Matches( RString sGroup, RString sCourse ) const
 	Rage::ci_ascii_string course{ sCourse };
 	if (!sFile.empty())
 	{
-		sFile.Replace("\\", "/");
+		Rage::replace(sFile, '\\', '/');
 		vector<RString> bits;
 		split(sFile, "/", bits);
 		const RString &sLastBit = bits[bits.size() - 1];

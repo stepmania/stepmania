@@ -226,7 +226,7 @@ static RString GetDirOfExecutable( RString argv0 )
 	sPath = argv0;
 #endif
 
-	sPath.Replace( "\\", "/" );
+	Rage::replace(sPath, '\\', '/' );
 
 	bool bIsAbsolutePath = false;
 	if( sPath.size() == 0 || sPath[0] == '/' )
@@ -271,7 +271,7 @@ static RString GetDirOfExecutable( RString argv0 )
 		}
 #else
 		sPath = GetCwd() + "/" + sPath;
-		sPath.Replace( "\\", "/" );
+		Rage::replace(sPath, '\\', '/' );
 #endif
 	}
 	return sPath;
