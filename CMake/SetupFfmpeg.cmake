@@ -23,8 +23,7 @@ list(APPEND FFMPEG_CONFIGURE
   "--enable-static"
 )
 
-if(MACOSX)
-  # TODO: Remove these two items when Mac OS X StepMania builds in 64-bit.
+if("${CMAKE_OSX_ARCHITECTURES}" STREQUAL "i386")
   list(APPEND FFMPEG_CONFIGURE
     "--arch=i386"
     "--cc=clang -m32"
