@@ -34,6 +34,9 @@
 /**
  * @addtogroup lavu_audio
  * @{
+ *
+ * @defgroup lavu_audiofifo Audio FIFO Buffer
+ * @{
  */
 
 /**
@@ -91,6 +94,22 @@ int av_audio_fifo_realloc(AVAudioFifo *af, int nb_samples);
 int av_audio_fifo_write(AVAudioFifo *af, void **data, int nb_samples);
 
 /**
+ * Peek data from an AVAudioFifo.
+ *
+ * @see enum AVSampleFormat
+ * The documentation for AVSampleFormat describes the data layout.
+ *
+ * @param af          AVAudioFifo to read from
+ * @param data        audio data plane pointers
+ * @param nb_samples  number of samples to peek
+ * @return            number of samples actually peek, or negative AVERROR code
+ *                    on failure. The number of samples actually peek will not
+ *                    be greater than nb_samples, and will only be less than
+ *                    nb_samples if av_audio_fifo_size is less than nb_samples.
+ */
+int av_audio_fifo_peek(AVAudioFifo *af, void **data, int nb_samples);
+
+/**
  * Read data from an AVAudioFifo.
  *
  * @see enum AVSampleFormat
@@ -143,6 +162,7 @@ int av_audio_fifo_size(AVAudioFifo *af);
 int av_audio_fifo_space(AVAudioFifo *af);
 
 /**
+ * @}
  * @}
  */
 

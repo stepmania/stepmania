@@ -23,7 +23,7 @@
 /**
  * @file
  * libswscale API use example.
- * @example doc/examples/scaling_video.c
+ * @example scaling_video.c
  */
 
 #include <libavutil/imgutils.h>
@@ -132,8 +132,7 @@ int main(int argc, char **argv)
            av_get_pix_fmt_name(dst_pix_fmt), dst_w, dst_h, dst_filename);
 
 end:
-    if (dst_file)
-        fclose(dst_file);
+    fclose(dst_file);
     av_freep(&src_data[0]);
     av_freep(&dst_data[0]);
     sws_freeContext(sws_ctx);
