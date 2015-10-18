@@ -46,6 +46,11 @@ if (NOT WITH_EXTERNAL_WARNINGS)
   )
 endif()
 
+# Mac OS X does not always generate ffversion.h. Fix it.
+if (MACOSX)
+  configure_file("${SM_EXTERN_DIR}/version.ffmpeg.in.h" "${SM_FFMPEG_SRC_DIR}/libavutil/ffversion.h")
+endif()
+
 if (IS_DIRECTORY "${SM_FFMPEG_SRC_DIR}")
   externalproject_add("ffmpeg"
     SOURCE_DIR "${SM_FFMPEG_SRC_DIR}"
