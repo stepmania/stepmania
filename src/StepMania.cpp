@@ -699,7 +699,7 @@ bool CheckVideoDefaultSettings()
 		// Update last seen video card
 		PREFSMAN->m_sLastSeenVideoDriver.Set( GetVideoDriverName() );
 	}
-	else if( PREFSMAN->m_sVideoRenderers.Get().CompareNoCase(defaults.sVideoRenderers) )
+	else if (Rage::ci_ascii_string{ defaults.sVideoRenderers } != PREFSMAN->m_sVideoRenderers.Get())
 	{
 		LOG->Warn("Video renderer list has been changed from '%s' to '%s'",
 				defaults.sVideoRenderers.c_str(), PREFSMAN->m_sVideoRenderers.Get().c_str() );
@@ -762,27 +762,27 @@ RageDisplay *CreateDisplay()
 	for( unsigned i=0; i<asRenderers.size(); i++ )
 	{
 		RString sRenderer = asRenderers[i];
-
-		if( sRenderer.CompareNoCase("opengl")==0 )
+		Rage::ci_ascii_string ciRenderer{ sRenderer };
+		if( ciRenderer == "opengl" )
 		{
 #if defined(SUPPORT_OPENGL)
 			pRet = new RageDisplay_Legacy;
 #endif
 		}
-		else if( sRenderer.CompareNoCase("gles2")==0 )
+		else if( ciRenderer == "gles2" )
 		{
 #if defined(SUPPORT_GLES2)
 			pRet = new RageDisplay_GLES2;
 #endif
 		}
-		else if( sRenderer.CompareNoCase("d3d")==0 )
+		else if( ciRenderer == "d3d" )
 		{
 // TODO: ANGLE/RageDisplay_Modern
 #if defined(SUPPORT_D3D)
 			pRet = new RageDisplay_D3D;
 #endif
 		}
-		else if( sRenderer.CompareNoCase("null")==0 )
+		else if( ciRenderer == "null" )
 		{
 			return new RageDisplay_Null;
 		}

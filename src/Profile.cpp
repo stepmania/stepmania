@@ -224,9 +224,10 @@ Character *Profile::GetCharacter() const
 {
 	vector<Character*> vpCharacters;
 	CHARMAN->GetCharacters( vpCharacters );
+	Rage::ci_ascii_string charId{ m_sCharacterID };
 	for (auto *c: vpCharacters)
 	{
-		if( c->m_sCharacterID.CompareNoCase(m_sCharacterID)==0 )
+		if (charId == c->m_sCharacterID)
 		{
 			return c;
 		}

@@ -939,10 +939,12 @@ void SongManager::InitAutogenCourses()
 
 		vector<Song *> aSongs;
 		unsigned i = 0;
+		Rage::ci_ascii_string unknownArtist{ "Unknown artist" };
 		do {
 			RString sArtist = i >= apSongs.size()? RString(""): apSongs[i]->GetDisplayArtist();
 			RString sTranslitArtist = i >= apSongs.size()? RString(""): apSongs[i]->GetTranslitArtist();
-			if( i < apSongs.size() && !sCurArtist.CompareNoCase(sArtist) )
+			Rage::ci_ascii_string ciArtist{ sArtist };
+			if( i < apSongs.size() && ciArtist == sCurArtist )
 			{
 				aSongs.push_back( apSongs[i] );
 				++iCurArtistCount;
@@ -952,8 +954,7 @@ void SongManager::InitAutogenCourses()
 			/* Different artist, or we're at the end. If we have enough entries for
 			 * the last artist, add it. Skip blanks and "Unknown artist". */
 			if( iCurArtistCount >= 3 && sCurArtistTranslit != "" &&
-				sCurArtistTranslit.CompareNoCase("Unknown artist") &&
-				sCurArtist.CompareNoCase("Unknown artist") )
+				unknownArtist != sCurArtist && unknownArtist != sCurArtistTranslit )
 			{
 				pCourse = new Course;
 				CourseUtil::AutogenOniFromArtist( sCurArtist, sCurArtistTranslit, aSongs, Difficulty_Hard, *pCourse );
@@ -1395,13 +1396,17 @@ Song* SongManager::GetSongFromDir(RString dir) const
 
 Course* SongManager::GetCourseFromPath( RString sPath ) const
 {
-	if( sPath == "" )
-		return nullptr;
-
-	for (auto *c: m_pCourses)
+	if (sPath == "")
 	{
-		if( sPath.CompareNoCase(c->m_sPath) == 0 )
+		return nullptr;
+	}
+	Rage::ci_ascii_string ciPath{ sPath };
+	for (auto *c : m_pCourses)
+	{
+		if (ciPath == c->m_sPath)
+		{
 			return c;
+		}
 	}
 
 	return nullptr;
@@ -1409,12 +1414,14 @@ Course* SongManager::GetCourseFromPath( RString sPath ) const
 
 Course* SongManager::GetCourseFromName( RString sName ) const
 {
-	if( sName == "" )
+	if (sName == "")
+	{
 		return nullptr;
-
+	}
+	Rage::ci_ascii_string ciName{ sName };
 	for (auto *course: m_pCourses)
 	{
-		if( sName.CompareNoCase(course->GetDisplayFullTitle()) == 0 )
+		if (ciName == course->GetDisplayFullTitle())
 		{
 			return course;
 		}
@@ -1752,10 +1759,10 @@ void SongManager::UpdateRankingCourses()
 	{
 		bool bLotsOfStages = c->GetEstimatedNumStages() > 7;
 		c->m_SortOrder_Ranking = bLotsOfStages? 3 : 2;
-
+		Rage::ci_ascii_string ciPath{ c->m_sPath };
 		for( unsigned j = 0; j < RankingCourses.size(); j++ )
 		{
-			if( !RankingCourses[j].CompareNoCase(c->m_sPath) )
+			if (ciPath == RankingCourses[j])
 			{
 				c->m_SortOrder_Ranking = 1;
 			}

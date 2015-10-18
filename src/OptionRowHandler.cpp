@@ -355,9 +355,10 @@ public:
 	virtual ReloadChanged Reload()
 	{
 		// HACK: always reload "speed", to update the BPM text in the name of the speed line
-		if( !m_Def.m_sName.CompareNoCase("speed") )
+		if (Rage::ci_ascii_string{ "speed" } == m_Def.m_sName)
+		{
 			return RELOAD_CHANGED_ALL;
-
+		}
 		return OptionRowHandler::Reload();
 	}
 };
@@ -1507,19 +1508,20 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 		RString sParam = command.GetArg(1).s;
 		ROW_INVALID_IF(command.m_vsArgs.size() != 2 || !sParam.size(),
 			"list row command must be 'list,name' or 'list,type'.", nullptr);
+		Rage::ci_ascii_string ciParam{ sParam };
 
-		if(	 sParam.CompareNoCase("NoteSkins")==0 )		MAKE( OptionRowHandlerListNoteSkins )
-		else if( sParam.CompareNoCase("Steps")==0 )		MAKE( OptionRowHandlerListSteps )
-		else if( sParam.CompareNoCase("StepsLocked")==0 )
+		if(	ciParam == "NoteSkins" )		MAKE( OptionRowHandlerListNoteSkins )
+		else if( ciParam == "Steps" )		MAKE( OptionRowHandlerListSteps )
+		else if( ciParam == "StepsLocked" )
 		{
 			MAKE( OptionRowHandlerListSteps );
 			pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 		}
-		else if( sParam.CompareNoCase("Characters")==0 )	MAKE( OptionRowHandlerListCharacters )
-		else if( sParam.CompareNoCase("Styles")==0 )		MAKE( OptionRowHandlerListStyles )
-		else if( sParam.CompareNoCase("Groups")==0 )		MAKE( OptionRowHandlerListGroups )
-		else if( sParam.CompareNoCase("Difficulties")==0 )	MAKE( OptionRowHandlerListDifficulties )
-		else if( sParam.CompareNoCase("SongsInCurrentSongGroup")==0 )	MAKE( OptionRowHandlerListSongsInCurrentSongGroup )
+		else if( ciParam == "Characters" )	MAKE( OptionRowHandlerListCharacters )
+		else if( ciParam == "Styles" )		MAKE( OptionRowHandlerListStyles )
+		else if( ciParam == "Groups" )		MAKE( OptionRowHandlerListGroups )
+		else if( ciParam == "Difficulties" )	MAKE( OptionRowHandlerListDifficulties )
+		else if( ciParam == "SongsInCurrentSongGroup" )	MAKE( OptionRowHandlerListSongsInCurrentSongGroup )
 		else MAKE( OptionRowHandlerList )
 	}
 	else if( name == "lua" )		MAKE( OptionRowHandlerLua )

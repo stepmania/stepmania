@@ -31,13 +31,13 @@ CharacterManager::CharacterManager()
 	StripMacResourceForks( as );
 
 	bool FoundDefault = false;
+	Rage::ci_ascii_string defChar{ "default" };
 	for( unsigned i=0; i<as.size(); i++ )
 	{
 		RString sCharName, sDummy;
 		splitpath(as[i], sDummy, sCharName, sDummy);
-		sCharName.MakeLower();
 
-		if( sCharName.CompareNoCase("default")==0 )
+		if( defChar == sCharName )
 			FoundDefault = true;
 
 		Character* pChar = new Character;

@@ -899,13 +899,15 @@ int ConfOption::GetEffects() const
 ConfOption *ConfOption::Find( RString name )
 {
 	InitializeConfOptions();
+	Rage::ci_ascii_string ciName{ name };
 	for( unsigned i = 0; i < g_ConfOptions.size(); ++i )
 	{
 		ConfOption *opt = &g_ConfOptions[i];
 		RString match(opt->name);
-		if( match.CompareNoCase(name) )
-			continue;
-		return opt;
+		if (ciName == match)
+		{
+			return opt;
+		}
 	}
 
 	return nullptr;

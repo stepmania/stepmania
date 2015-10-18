@@ -79,13 +79,17 @@ RageFileDriver *RageFileManager::GetFileDriver( RString sMountpoint )
 
 	g_Mutex->Lock();
 	RageFileDriver *pRet = nullptr;
+	Rage::ci_ascii_string ciMount{ sMountpoint };
 	for( unsigned i = 0; i < g_pDrivers.size(); ++i )
 	{
-		if( g_pDrivers[i]->m_sType == "mountpoints" )
+		if (g_pDrivers[i]->m_sType == "mountpoints")
+		{
 			continue;
-		if( g_pDrivers[i]->m_sMountPoint.CompareNoCase( sMountpoint ) )
+		}
+		if (ciMount != g_pDrivers[i]->m_sMountPoint)
+		{
 			continue;
-
+		}
 		pRet = g_pDrivers[i]->m_pDriver;
 		++g_pDrivers[i]->m_iRefs;
 		break;
@@ -392,8 +396,14 @@ static void NormalizePath( RString &sPath )
 	}
 }
 
-bool ilt( const RString &a, const RString &b ) { return a.CompareNoCase(b) < 0; }
-bool ieq( const RString &a, const RString &b ) { return a.CompareNoCase(b) == 0; }
+bool ilt( const RString &a, const RString &b )
+{
+	return Rage::ci_ascii_string{ a } < Rage::ci_ascii_string{ b };
+}
+bool ieq( const RString &a, const RString &b ) 
+{
+	return Rage::ci_ascii_string{ a } == Rage::ci_ascii_string{ b };
+}
 void RageFileManager::GetDirListing( const RString &sPath_, vector<RString> &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 	RString sPath = sPath_;
@@ -632,11 +642,11 @@ void RageFileManager::Unmount( const RString &sType, const RString &sRoot_, cons
 	g_Mutex->Lock();
 	for( unsigned i = 0; i < g_pDrivers.size(); ++i )
 	{
-		if( !sType.empty() && g_pDrivers[i]->m_sType.CompareNoCase( sType ) )
+		if (!sType.empty() && Rage::ci_ascii_string{ sType } != g_pDrivers[i]->m_sType)
 			continue;
-		if( !sRoot.empty() && g_pDrivers[i]->m_sRoot.CompareNoCase( sRoot ) )
+		if (!sRoot.empty() && Rage::ci_ascii_string{ sRoot } != g_pDrivers[i]->m_sRoot)
 			continue;
-		if( !sMountPoint.empty() && g_pDrivers[i]->m_sMountPoint.CompareNoCase( sMountPoint ) )
+		if (!sMountPoint.empty() && Rage::ci_ascii_string{ sMountPoint } != g_pDrivers[i]->m_sMountPoint)
 			continue;
 
 		++g_pDrivers[i]->m_iRefs;
@@ -687,11 +697,14 @@ void RageFileManager::Remount( RString sMountpoint, RString sPath )
 bool RageFileManager::IsMounted( RString MountPoint )
 {
 	LockMut( *g_Mutex );
-
-	for( unsigned i = 0; i < g_pDrivers.size(); ++i )
-		if( !g_pDrivers[i]->m_sMountPoint.CompareNoCase( MountPoint ) )
+	Rage::ci_ascii_string ciMount{ MountPoint };
+	for (unsigned i = 0; i < g_pDrivers.size(); ++i)
+	{
+		if (ciMount == g_pDrivers[i]->m_sMountPoint)
+		{
 			return true;
-
+		}
+	}
 	return false;
 }
 

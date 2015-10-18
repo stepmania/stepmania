@@ -22,9 +22,10 @@ IPreference::~IPreference()
 
 IPreference *IPreference::GetPreferenceByName( const RString &sName )
 {
+	Rage::ci_ascii_string ciName{ sName };
 	for (auto *p: *m_Subscribers.m_pSubscribers)
 	{
-		if( !p->GetName().CompareNoCase( sName ) )
+		if (ciName == p->GetName())
 		{
 			return p;
 		}

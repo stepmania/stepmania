@@ -28,10 +28,7 @@ public:
 	RString GetStageIconPath() const;
 	bool Has2DElems();
 
-	bool IsDefaultCharacter() const
-	{
-		return m_sCharacterID.CompareNoCase("default") == 0;
-	}
+	bool IsDefaultCharacter() const;
 
 	void DemandGraphics();
 	void UndemandGraphics();

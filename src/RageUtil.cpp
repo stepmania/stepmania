@@ -1122,6 +1122,7 @@ void GetCommandLineArguments( int &argc, char **&argv )
 bool GetCommandlineArgument( const RString &option, RString *argument, int iIndex )
 {
 	const RString optstr = "--" + option;
+	Rage::ci_ascii_string ciOption{ optstr };
 
 	for( int arg = 1; arg < g_argc; ++arg )
 	{
@@ -1129,9 +1130,10 @@ bool GetCommandlineArgument( const RString &option, RString *argument, int iInde
 
 		const size_t i = CurArgument.find( "=" );
 		RString CurOption = CurArgument.substr(0,i);
-		if( CurOption.CompareNoCase(optstr) )
+		if (ciOption != CurOption)
+		{
 			continue; // no match
-
+		}
 		// Found it.
 		if( iIndex )
 		{
@@ -1220,12 +1222,12 @@ bool DirectoryIsEmpty( const RString &sDir )
 
 bool CompareRStringsAsc( const RString &sStr1, const RString &sStr2 )
 {
-	return sStr1.CompareNoCase( sStr2 ) < 0;
+	return Rage::ci_ascii_string{ sStr1 } < Rage::ci_ascii_string{ sStr2 };
 }
 
 bool CompareRStringsDesc( const RString &sStr1, const RString &sStr2 )
 {
-	return sStr1.CompareNoCase( sStr2 ) > 0;
+	return Rage::ci_ascii_string{ sStr1 } > Rage::ci_ascii_string{ sStr2 };
 }
 
 void SortRStringArray( vector<RString> &arrayRStrings, const bool bSortAscending )
@@ -2386,7 +2388,7 @@ namespace StringConversion
 
 bool FileCopy( const RString &sSrcFile, const RString &sDstFile )
 {
-	if( !sSrcFile.CompareNoCase(sDstFile) )
+	if (Rage::ci_ascii_string{ sSrcFile } == sDstFile)
 	{
 		LOG->Warn( "Tried to copy \"%s\" over itself", sSrcFile.c_str() );
 		return false;

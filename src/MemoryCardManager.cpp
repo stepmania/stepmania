@@ -378,7 +378,7 @@ void MemoryCardManager::UpdateAssignments()
 		{
 			// search for card dir match
 			if( !m_sMemoryCardOsMountPoint[p].Get().empty() &&
-				d->sOsMountDir.CompareNoCase(m_sMemoryCardOsMountPoint[p].Get()) )
+				Rage::ci_ascii_string{ m_sMemoryCardOsMountPoint[p].Get() } != d->sOsMountDir )
 				continue; // not a match
 
 			// search for USB bus match

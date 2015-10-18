@@ -620,7 +620,8 @@ bool GameCommand::IsPlayable( RString *why ) const
 		}
 	}
 
-	if( !m_sScreen.CompareNoCase("ScreenEditCoursesMenu") )
+	Rage::ci_ascii_string ciScreen{ m_sScreen };
+	if (ciScreen == "ScreenEditCoursesMenu")
 	{
 		vector<Course*> vCourses;
 		SONGMAN->GetAllCourses( vCourses, false );
@@ -633,9 +634,9 @@ bool GameCommand::IsPlayable( RString *why ) const
 		}
 	}
 
-	if( (!m_sScreen.CompareNoCase("ScreenJukeboxMenu") ||
-		!m_sScreen.CompareNoCase("ScreenEditMenu") ||
-		!m_sScreen.CompareNoCase("ScreenEditCoursesMenu")) )
+	if( ciScreen == "ScreenJukeboxMenu" ||
+		ciScreen == "ScreenEditMenu" ||
+		ciScreen == "ScreenEditCoursesMenu" )
 	{
 		if( SONGMAN->GetNumSongs() == 0 )
 		{

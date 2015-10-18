@@ -721,9 +721,10 @@ const Style *Course::GetCourseStyle( const Game *pGame, int iNumPlayers ) const
 
 	for (auto const *pStyle: vpStyles)
 	{
+		Rage::ci_ascii_string styleName{ pStyle->m_szName };
 		for (auto const &style: m_setStyles)
 		{
-			if( !style.CompareNoCase(pStyle->m_szName) )
+			if (styleName == style)
 			{
 				return pStyle;
 			}
@@ -920,11 +921,14 @@ bool Course::IsRanking() const
 	vector<RString> rankingsongs;
 
 	split(THEME->GetMetric("ScreenRanking", "CoursesToShow"), ",", rankingsongs);
-
-	for(unsigned i=0; i < rankingsongs.size(); i++)
-		if (rankingsongs[i].CompareNoCase(m_sPath))
+	Rage::ci_ascii_string path{ m_sPath };
+	for (unsigned i = 0; i < rankingsongs.size(); i++)
+	{
+		if (path == rankingsongs[i])
+		{
 			return true;
-
+		}
+	}
 	return false;
 }
 
@@ -986,9 +990,10 @@ void Course::CalculateRadarValues()
 
 bool Course::Matches( RString sGroup, RString sCourse ) const
 {
-	if( sGroup.size() && sGroup.CompareNoCase(this->m_sGroupName) != 0)
+	if (sGroup.size() && Rage::ci_ascii_string{ sGroup } != this->m_sGroupName)
+	{
 		return false;
-
+	}
 	RString sFile = m_sPath;
 	Rage::ci_ascii_string course{ sCourse };
 	if (!sFile.empty())

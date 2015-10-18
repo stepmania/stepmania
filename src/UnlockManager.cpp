@@ -237,9 +237,14 @@ const UnlockEntry *UnlockManager::FindCourse( const Course *pCourse ) const
 
 const UnlockEntry *UnlockManager::FindModifier( const RString &sOneMod ) const
 {
-	for (auto &e: m_UnlockEntries)
-		if( e.GetModifier().CompareNoCase(sOneMod) == 0 )
+	Rage::ci_ascii_string mod{ sOneMod };
+	for (auto &e : m_UnlockEntries)
+	{
+		if (mod == e.GetModifier())
+		{
 			return &e;
+		}
+	}
 	return nullptr;
 }
 

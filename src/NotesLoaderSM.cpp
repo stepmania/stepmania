@@ -338,15 +338,14 @@ void SMLoader::LoadFromTokens(
 
 	// Handle hacks that originated back when StepMania didn't have
 	// Difficulty_Challenge. (At least v1.64, possibly v3.0 final...)
-	if( out.GetDifficulty() == Difficulty_Hard )
+	if (out.GetDifficulty() == Difficulty_Hard)
 	{
-		// HACK: SMANIAC used to be Difficulty_Hard with a special description.
-		if( sDescription.CompareNoCase("smaniac") == 0 )
-			out.SetDifficulty( Difficulty_Challenge );
-
-		// HACK: CHALLENGE used to be Difficulty_Hard with a special description.
-		if( sDescription.CompareNoCase("challenge") == 0 )
-			out.SetDifficulty( Difficulty_Challenge );
+		Rage::ci_ascii_string descDiff{ sDescription };
+		// HACK: Both SMANIAC and CHALLENGE were Dificulty_Hard with a special description.
+		if (descDiff == "smaniac" || descDiff == "challenge")
+		{
+			out.SetDifficulty(Difficulty_Challenge);
+		}
 	}
 
 	if( sMeter.empty() )
@@ -413,14 +412,14 @@ void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
 			continue;
 
 		Trim( sBits[0] );
-
-		if( !sBits[0].CompareNoCase("TIME") )
+		Rage::ci_ascii_string tagName{ sBits[0] };
+		if( tagName == "TIME" )
 			attack.fStartSecond = strtof( sBits[1], nullptr );
-		else if( !sBits[0].CompareNoCase("LEN") )
+		else if( tagName == "LEN" )
 			attack.fSecsRemaining = strtof( sBits[1], nullptr );
-		else if( !sBits[0].CompareNoCase("END") )
+		else if( tagName == "END" )
 			end = strtof( sBits[1], nullptr );
-		else if( !sBits[0].CompareNoCase("MODS") )
+		else if( tagName == "MODS" )
 		{
 			Trim(sBits[1]);
 			attack.sModifiers = sBits[1];
@@ -1086,23 +1085,27 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 			Trim(stepsType);
 			Trim(description);
 			Trim(difficulty);
+			Rage::ci_ascii_string pureDiff{ difficulty };
+			
 			// Remember our old versions.
-			if (difficulty.CompareNoCase("smaniac") == 0)
+			if (pureDiff == "smaniac")
 			{
 				difficulty = "Challenge";
 			}
 
 			/* Handle hacks that originated back when StepMania didn't have
 			 * Difficulty_Challenge. TODO: Remove the need for said hacks. */
-			if( difficulty.CompareNoCase("hard") == 0 )
+			if (pureDiff == "hard")
 			{
+				Rage::ci_ascii_string descDiff{ description };
 				/* HACK: Both SMANIAC and CHALLENGE used to be Difficulty_Hard.
 				 * They were differentiated via aspecial description.
 				 * Account for the rogue charts that do this. */
-				// HACK: SMANIAC used to be Difficulty_Hard with a special description.
-				if (description.CompareNoCase("smaniac") == 0 ||
-					description.CompareNoCase("challenge") == 0)
+				 // HACK: SMANIAC used to be Difficulty_Hard with a special description.
+				if (descDiff == "smaniac" || descDiff == "challenge")
+				{
 					difficulty = "Challenge";
+				}
 			}
 
 			if(!(out.m_StepsType == GAMEMAN->StringToStepsType( stepsType ) &&
@@ -1336,10 +1339,10 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 		/* BGChanges have been sorted. On the odd chance that a BGChange exists
 		 * with a very high beat, search the whole list. */
 		bool bHasNoSongBgTag = false;
-
+		Rage::ci_ascii_string noSongBg{ NO_SONG_BG_FILE };
 		for( unsigned i = 0; !bHasNoSongBgTag && i < bg.size(); ++i )
 		{
-			if( !bg[i].m_def.m_sFile1.CompareNoCase(NO_SONG_BG_FILE) )
+			if (noSongBg == bg[i].m_def.m_sFile1)
 			{
 				bg.erase( bg.begin()+i );
 				bHasNoSongBgTag = true;
@@ -1361,7 +1364,7 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 				break;
 
 			// If the last BGA is already the song BGA, don't add a duplicate.
-			if( !bg.empty() && !bg.back().m_def.m_sFile1.CompareNoCase(song.m_sBackgroundFile) )
+			if (!bg.empty() && Rage::ci_ascii_string{ bg.back().m_def.m_sFile1 } == song.m_sBackgroundFile)
 				break;
 
 			if( !IsAFile( song.GetBackgroundPath() ) )

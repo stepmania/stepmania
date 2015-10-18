@@ -400,7 +400,9 @@ static bool CompareSongPointersByTitle( const Song *pSong1, const Song *pSong2 )
 
 	/* The titles are the same.  Ensure we get a consistent ordering
 	 * by comparing the unique SongFilePaths. */
-	return pSong1->GetSongFilePath().CompareNoCase(pSong2->GetSongFilePath()) < 0;
+	Rage::ci_ascii_string a{ pSong1->GetSongFilePath() };
+	Rage::ci_ascii_string b{ pSong2->GetSongFilePath() };
+	return a < b;
 }
 
 void SongUtil::SortSongPointerArrayByTitle( vector<Song*> &vpSongsInOut )

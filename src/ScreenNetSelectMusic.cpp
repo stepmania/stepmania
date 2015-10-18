@@ -161,36 +161,41 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		// First check to see if this song is already selected. This is so that if
 		// you have multiple copies of the "same" song you can chose which copy to play.
 		Song* CurSong = m_MusicWheel.GetSelectedSong();
-
-		if(CurSong != nullptr )
-
-			if( ( !CurSong->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
-					( !CurSong->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&
-					( !CurSong->GetTranslitSubTitle().CompareNoCase( NSMAN->m_sSubTitle ) ) )
+		Rage::ci_ascii_string ciArtist{ NSMAN->m_sArtist };
+		Rage::ci_ascii_string ciMain{ NSMAN->m_sMainTitle };
+		Rage::ci_ascii_string ciSub{ NSMAN->m_sSubTitle };
+		if (CurSong != nullptr)
 		{
-			switch ( NSMAN->m_iSelectMode )
+			if (ciArtist == CurSong->GetTranslitArtist() &&
+				ciMain == CurSong->GetTranslitMainTitle() &&
+				ciSub == CurSong->GetTranslitSubTitle())
 			{
-			case 0:
-			case 1:
-				NSMAN->m_iSelectMode = 0;
-				NSMAN->SelectUserSong();
-				break;
-			case 2:	// Proper starting of song
-			case 3:	// Blind starting of song
-				StartSelectedSong();
-				goto done;
+				switch (NSMAN->m_iSelectMode)
+				{
+				case 0:
+				case 1:
+					NSMAN->m_iSelectMode = 0;
+					NSMAN->SelectUserSong();
+					break;
+				case 2:	// Proper starting of song
+				case 3:	// Blind starting of song
+					StartSelectedSong();
+					goto done;
+				}
 			}
 		}
 
 		vector <Song *> AllSongs = SONGMAN->GetAllSongs();
 		unsigned i;
-		for( i=0; i < AllSongs.size(); i++ )
+		for (i = 0; i < AllSongs.size(); i++)
 		{
 			m_cSong = AllSongs[i];
-			if( ( !m_cSong->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
-					( !m_cSong->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&
-					( !m_cSong->GetTranslitSubTitle().CompareNoCase( NSMAN->m_sSubTitle ) ) )
-					break;
+			if (ciArtist == m_cSong->GetTranslitArtist() &&
+				ciMain == m_cSong->GetTranslitMainTitle() &&
+				ciSub == m_cSong->GetTranslitSubTitle())
+			{
+				break;
+			}
 		}
 
 		bool haveSong = i != AllSongs.size();
@@ -547,7 +552,7 @@ void ScreenNetSelectMusic::MusicChanged()
 	if( GAMESTATE->m_pCurSong->HasMusic() )
 	{
 		// don't play the same sound over and over
-		if(SOUND->GetMusicPath().CompareNoCase(GAMESTATE->m_pCurSong->GetMusicPath()))
+		if (Rage::ci_ascii_string{ SOUND->GetMusicPath() } != GAMESTATE->m_pCurSong->GetMusicPath())
 		{
 			SOUND->StopMusic();
 			SOUND->PlayMusic(
