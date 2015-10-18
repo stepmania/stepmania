@@ -674,7 +674,7 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 
 RString FontPageSettings::MapRange( RString sMapping, int iMapOffset, int iGlyphNo, int iCount )
 {
-	if( !sMapping.CompareNoCase("Unicode") )
+	if (Rage::ci_ascii_string{"Unicode"} == sMapping)
 	{
 		// Special case.
 		if( iCount == -1 )
@@ -751,7 +751,7 @@ static vector<RString> LoadStack;
  */
 void Font::Load( const RString &sIniPath, RString sChars )
 {
-	if(GetExtension(sIniPath).CompareNoCase("ini"))
+	if (Rage::ci_ascii_string{"ini"} != GetExtension(sIniPath))
 	{
 		LuaHelpers::ReportScriptErrorFmt(
 			"%s is not an ini file.  Fonts can only be loaded from ini files.",

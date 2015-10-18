@@ -28,15 +28,16 @@ DialogDriver *MakeDialogDriver()
 	for( unsigned i = 0; pRet == nullptr && i < asDriversToTry.size(); ++i )
 	{
 		sDriver = asDriversToTry[i];
+		Rage::ci_ascii_string ciDriver{ sDriver };
 
 #ifdef USE_DIALOG_DRIVER_COCOA
-		if( !asDriversToTry[i].CompareNoCase("Cocoa") )	pRet = new DialogDriver_MacOSX;
+		if( ciDriver == "Cocoa" )	pRet = new DialogDriver_MacOSX;
 #endif
 #ifdef USE_DIALOG_DRIVER_WIN32
-		if( !asDriversToTry[i].CompareNoCase("Win32") )	pRet = new DialogDriver_Win32;
+		if( ciDriver == "Win32" )	pRet = new DialogDriver_Win32;
 #endif
 #ifdef USE_DIALOG_DRIVER_nullptr
-		if( !asDriversToTry[i].CompareNoCase("Null") )	pRet = new DialogDriver_Null;
+		if( ciDriver == "Null" )	pRet = new DialogDriver_Null;
 #endif
 
 		if( pRet == nullptr )
@@ -87,9 +88,14 @@ static bool MessageIsIgnored( RString sID )
 #if !defined(SMPACKAGE)
 	vector<RString> asList;
 	split( g_sIgnoredDialogs, ",", asList );
-	for( unsigned i = 0; i < asList.size(); ++i )
-		if( !sID.CompareNoCase(asList[i]) )
+	Rage::ci_ascii_string ciId{ sID };
+	for (unsigned i = 0; i < asList.size(); ++i)
+	{
+		if (ciId == asList[i])
+		{
 			return true;
+		}
+	}
 #endif
 	return false;
 }

@@ -237,7 +237,7 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 		if( m_sText.length() > 8 && i < m_sText.length() - 9 )
 		{
 			RString FirstThree = m_sText.substr( i, 3 );
-			if( FirstThree.CompareNoCase("|c0") == 0 && iCharsLeft > 8 )
+			if (Rage::ci_ascii_string{"|c0"} == FirstThree && iCharsLeft > 8)
 			{
 				ColorChange cChange;
 				unsigned int r, g, b;

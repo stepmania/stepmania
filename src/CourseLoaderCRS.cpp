@@ -39,9 +39,14 @@ const char *g_CRSDifficultyNames[] =
  */
 static CourseDifficulty CRSStringToDifficulty( const RString& s )
 {
-	FOREACH_ENUM( Difficulty,i)
-		if( !s.CompareNoCase(g_CRSDifficultyNames[i]) )
+	Rage::ci_ascii_string diff{ s };
+	FOREACH_ENUM(Difficulty, i)
+	{
+		if (diff == g_CRSDifficultyNames[i])
+		{
 			return i;
+		}
+	}
 	return Difficulty_Invalid;
 }
 
@@ -127,13 +132,14 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 					continue;
 
 				Trim( sBits[0] );
-				if( !sBits[0].CompareNoCase("TIME") )
+				Rage::ci_ascii_string tagName{ sBits[0] };
+				if( tagName == "TIME" )
 					attack.fStartSecond = max( StringToFloat(sBits[1]), 0.0f );
-				else if( !sBits[0].CompareNoCase("LEN") )
+				else if( tagName == "LEN" )
 					attack.fSecsRemaining = StringToFloat( sBits[1] );
-				else if( !sBits[0].CompareNoCase("END") )
+				else if( tagName == "END" )
 					end = StringToFloat( sBits[1] );
-				else if( !sBits[0].CompareNoCase("MODS") )
+				else if( tagName == "MODS" )
 				{
 					attack.sModifiers = sBits[1];
 
@@ -305,15 +311,16 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 					RString &sMod = mods[j];
 					TrimLeft( sMod );
 					TrimRight( sMod );
-					if (!sMod.CompareNoCase("showcourse"))
+					Rage::ci_ascii_string ciMod{ sMod };
+					if ( ciMod == "showcourse" )
 					{
 						new_entry.bSecret = false;
 					}
-					else if (!sMod.CompareNoCase("noshowcourse"))
+					else if ( ciMod == "noshowcourse" )
 					{
 						new_entry.bSecret = true;
 					}
-					else if (!sMod.CompareNoCase("nodifficult"))
+					else if ( ciMod == "nodifficult" )
 					{
 						new_entry.bNoDifficult = true;
 					}

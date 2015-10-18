@@ -1812,7 +1812,7 @@ void Song::DeleteSteps( const Steps* pSteps, bool bReAutoGen )
 
 bool Song::Matches(RString sGroup, RString sSong) const
 {
-	if( sGroup.size() && sGroup.CompareNoCase(this->m_sGroupName) != 0)
+	if (sGroup.size() && Rage::ci_ascii_string{ sGroup } != this->m_sGroupName)
 		return false;
 
 	RString sDir = this->GetSongDir();
@@ -1823,11 +1823,11 @@ bool Song::Matches(RString sGroup, RString sSong) const
 	const RString &sLastBit = bits[bits.size()-1];
 
 	// match on song dir or title (ala DWI)
-	if( !sSong.CompareNoCase(sLastBit) )
+	Rage::ci_ascii_string songTitle{ sSong };
+	if (songTitle == sLastBit || songTitle == this->GetTranslitFullTitle())
+	{
 		return true;
-	if( !sSong.CompareNoCase(this->GetTranslitFullTitle()) )
-		return true;
-
+	}
 	return false;
 }
 

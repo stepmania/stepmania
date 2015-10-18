@@ -2,6 +2,7 @@
 #include "RageFileDriver.h"
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"
+#include "RageString.hpp"
 
 using std::vector;
 
@@ -86,9 +87,14 @@ FileDriverEntry::~FileDriverEntry()
 
 RageFileDriver *MakeFileDriver( const RString &sType, const RString &sRoot )
 {
-	for( const FileDriverEntry *p = g_pFileDriverList; p; p = p->m_pLink )
-		if( !p->m_sType.CompareNoCase(sType) )
-			return p->Create( sRoot );
+	Rage::ci_ascii_string ciType{ sType };
+	for (const FileDriverEntry *p = g_pFileDriverList; p; p = p->m_pLink)
+	{
+		if (ciType == p->m_sType)
+		{
+			return p->Create(sRoot);
+		}
+	}
 	return nullptr;
 }
 

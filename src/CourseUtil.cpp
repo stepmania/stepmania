@@ -22,9 +22,9 @@ using std::vector;
 // Sorting stuff
 static bool CompareCoursePointersByName( const Course* pCourse1, const Course* pCourse2 )
 {
-	RString sName1 = pCourse1->GetDisplayFullTitle();
-	RString sName2 = pCourse2->GetDisplayFullTitle();
-	return sName1.CompareNoCase( sName2 ) < 0;
+	Rage::ci_ascii_string a { pCourse1->GetDisplayFullTitle() };
+	Rage::ci_ascii_string b { pCourse2->GetDisplayFullTitle() };
+	return a < b;
 }
 
 static bool CompareCoursePointersByAutogen( const Course* pCourse1, const Course* pCourse2 )

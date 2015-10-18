@@ -209,10 +209,13 @@ bool ThemeManager::DoesThemeExist( const RString &sThemeName )
 {
 	vector<RString> asThemeNames;
 	GetThemeNames( asThemeNames );
-	for( unsigned i=0; i<asThemeNames.size(); i++ )
+	Rage::ci_ascii_string ciTheme{ sThemeName };
+	for (unsigned i = 0; i < asThemeNames.size(); i++)
 	{
-		if( !sThemeName.CompareNoCase(asThemeNames[i]) )
+		if (ciTheme == asThemeNames[i])
+		{
 			return true;
+		}
 	}
 	return false;
 }
@@ -273,10 +276,14 @@ bool ThemeManager::DoesLanguageExist( const RString &sLanguage )
 {
 	vector<RString> asLanguages;
 	GetLanguages( asLanguages );
-
-	for( unsigned i=0; i<asLanguages.size(); i++ )
-		if( sLanguage.CompareNoCase(asLanguages[i])==0 )
+	Rage::ci_ascii_string ciLang{ sLanguage };
+	for (unsigned i = 0; i < asLanguages.size(); i++)
+	{
+		if (ciLang == asLanguages[i])
+		{
 			return true;
+		}
+	}
 	return false;
 }
 
@@ -318,10 +325,11 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 			}
 		}
 		iniStrings.ReadFile( GetLanguageIniPath(sThemeName,SpecialFiles::BASE_LANGUAGE) );
-		if( sLanguage.CompareNoCase(SpecialFiles::BASE_LANGUAGE) )
-			iniStrings.ReadFile( GetLanguageIniPath(sThemeName,sLanguage) );
-
-		bool bIsBaseTheme = !sThemeName.CompareNoCase(SpecialFiles::BASE_THEME_NAME);
+		if (Rage::ci_ascii_string{ sLanguage } != SpecialFiles::BASE_LANGUAGE)
+		{
+			iniStrings.ReadFile(GetLanguageIniPath(sThemeName, sLanguage));
+		}
+		bool bIsBaseTheme = Rage::ci_ascii_string{ sThemeName } == SpecialFiles::BASE_THEME_NAME;
 		iniMetrics.GetValue( "Global", "IsBaseTheme", bIsBaseTheme );
 		if( bIsBaseTheme )
 			bLoadedBase = true;
@@ -331,10 +339,12 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 		 * That way, default theme fallbacks can be disabled with
 		 * "FallbackTheme=". */
 		RString sFallback;
-		if( !iniMetrics.GetValue("Global","FallbackTheme",sFallback) )
+		if (!iniMetrics.GetValue("Global", "FallbackTheme", sFallback))
 		{
-			if( sThemeName.CompareNoCase( SpecialFiles::BASE_THEME_NAME ) && !bLoadedBase )
+			if (Rage::ci_ascii_string{ sThemeName } != SpecialFiles::BASE_THEME_NAME && !bLoadedBase)
+			{
 				sFallback = SpecialFiles::BASE_THEME_NAME;
+			}
 		}
 
 		/* We actually want to load themes bottom-to-top, loading fallback themes
@@ -710,7 +720,7 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 
 
 	RString sPath = asElementPaths[0];
-	bool bIsARedirect = GetExtension(sPath).CompareNoCase("redir")==0;
+	bool bIsARedirect = Rage::ci_ascii_string{ "redir" } == GetExtension(sPath);
 
 	if( !bIsARedirect )
 	{
@@ -1125,10 +1135,15 @@ RString ThemeManager::GetNextTheme()
 	vector<RString> as;
 	GetThemeNames( as );
 	unsigned i;
-	for( i=0; i<as.size(); i++ )
-		if( as[i].CompareNoCase(m_sCurThemeName)==0 )
+	Rage::ci_ascii_string ciTheme{ m_sCurThemeName };
+	for (i = 0; i < as.size(); i++)
+	{
+		if (ciTheme == as[i])
+		{
 			break;
-	int iNewIndex = (i+1)%as.size();
+		}
+	}
+	int iNewIndex = (i + 1) % as.size();
 	return as[iNewIndex];
 }
 
@@ -1137,10 +1152,15 @@ RString ThemeManager::GetNextSelectableTheme()
 	vector<RString> as;
 	GetSelectableThemeNames( as );
 	unsigned i;
-	for( i=0; i<as.size(); i++ )
-		if( as[i].CompareNoCase(m_sCurThemeName)==0 )
+	Rage::ci_ascii_string ciTheme{ m_sCurThemeName };
+	for (i = 0; i < as.size(); i++)
+	{
+		if (ciTheme == as[i])
+		{
 			break;
-	int iNewIndex = (i+1)%as.size();
+		}
+	}
+	int iNewIndex = (i + 1) % as.size();
 	return as[iNewIndex];
 }
 
@@ -1149,13 +1169,14 @@ void ThemeManager::GetLanguagesForTheme( const RString &sThemeName, vector<RStri
 	RString sLanguageDir = GetThemeDirFromName(sThemeName) + SpecialFiles::LANGUAGES_SUBDIR;
 	vector<RString> as;
 	GetDirListing( sLanguageDir + "*.ini", as );
-
+	Rage::ci_ascii_string metrics{ SpecialFiles::METRICS_FILE };
 	for (auto const &s: as)
 	{
 		// ignore metrics.ini
-		if( s.CompareNoCase(SpecialFiles::METRICS_FILE)==0 )
+		if (metrics == s)
+		{
 			continue;
-
+		}
 		// Ignore filenames with a space.  These are optional language inis that probably came from a mounted package.
 		if( s.find(" ") != RString::npos )
 			continue;

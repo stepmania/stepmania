@@ -76,6 +76,11 @@ bool Character::Load( RString sCharDir )
 	return true;
 }
 
+bool Character::IsDefaultCharacter() const
+{
+	return Rage::ci_ascii_string{ "default" } == m_sCharacterID;
+}
+
 RString GetRandomFileInDir( RString sDir )
 {
 	vector<RString> asFiles;

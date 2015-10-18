@@ -187,7 +187,9 @@ void StepsUtil::SortStepsByTypeAndDifficulty( vector<Steps*> &arraySongPointers 
 
 bool StepsUtil::CompareStepsPointersByDescription(const Steps *pStep1, const Steps *pStep2)
 {
-	return pStep1->GetDescription().CompareNoCase( pStep2->GetDescription() ) < 0;
+	Rage::ci_ascii_string a{ pStep1->GetDescription() };
+	Rage::ci_ascii_string b{ pStep2->GetDescription() };
+	return a < b;
 }
 
 void StepsUtil::SortStepsByDescription( vector<Steps*> &arraySongPointers )

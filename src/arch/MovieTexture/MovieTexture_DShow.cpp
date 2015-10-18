@@ -20,6 +20,7 @@
 #include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageString.hpp"
 #include "RageException.h"
 #include "RageSurface.h"
 #include "arch/Dialog/Dialog.h"
@@ -58,7 +59,7 @@ static RString FourCCToString( int fcc )
 
 static void CheckCodecVersion( RString codec, RString desc )
 {
-	if( !codec.CompareNoCase("DIVX") )
+	if( Rage::ci_ascii_string{"DIVX"} == codec )
 	{
 		/* "DivX 5.0.5 Codec" */
 		Regex GetDivXVersion;

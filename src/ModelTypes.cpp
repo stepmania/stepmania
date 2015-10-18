@@ -48,7 +48,7 @@ void AnimatedTexture::Load( const RString &sTexOrIniPath )
 	else
 		m_BlendMode = BLEND_NORMAL;
 
-	if( GetExtension(sTexOrIniPath).CompareNoCase("ini")==0 )
+	if(Rage::ci_ascii_string{"ini"} == GetExtension(sTexOrIniPath) )
 	{
 		IniFile ini;
 		if( !ini.ReadFile( sTexOrIniPath ) )

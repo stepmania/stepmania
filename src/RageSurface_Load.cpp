@@ -16,13 +16,14 @@ static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error
 {
 	RageSurface *ret = nullptr;
 	RageSurfaceUtils::OpenResult result;
-	if( !format.CompareNoCase("png") )
+	Rage::ci_ascii_string ciFormat{ format };
+	if( ciFormat == "png" )
 		result = RageSurface_Load_PNG( sPath, ret, bHeaderOnly, error );
-	else if( !format.CompareNoCase("gif") )
+	else if( ciFormat == "gif" )
 		result = RageSurface_Load_GIF( sPath, ret, bHeaderOnly, error );
-	else if( !format.CompareNoCase("jpg") || !format.CompareNoCase("jpeg") )
+	else if( ciFormat == "jpg" || ciFormat == "jpeg" )
 		result = RageSurface_Load_JPEG( sPath, ret, bHeaderOnly, error );
-	else if( !format.CompareNoCase("bmp") )
+	else if( ciFormat == "bmp" )
 		result = RageSurface_Load_BMP( sPath, ret, bHeaderOnly, error );
 	else
 	{
