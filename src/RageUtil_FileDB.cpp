@@ -3,6 +3,7 @@
 #include "RageUtil_FileDB.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageString.hpp"
 
 using std::vector;
 using std::string;
@@ -104,9 +105,10 @@ int FileSet::GetFileHash( const RString &sPath ) const
 static void SplitPath( RString sPath, RString &sDir, RString &sName )
 {
 	CollapsePath( sPath );
-	if( sPath.Right(1) == "/" )
-		sPath.erase( sPath.size()-1 );
-
+	if (Rage::ends_with(sPath, "/"))
+	{
+		sPath.erase(sPath.size() - 1);
+	}
 	size_t iSep = sPath.find_last_of( '/' );
 	if( iSep == RString::npos )
 	{

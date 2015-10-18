@@ -605,7 +605,7 @@ void NetworkSyncManager::ProcessInput()
 			{
 				m_sChatText += m_packet.ReadNT() + " \n ";
 				//10000 chars backlog should be more than enough
-				m_sChatText = m_sChatText.Right(10000);
+				m_sChatText = Rage::tail(m_sChatText, 10000);
 				SCREENMAN->SendMessageToTopScreen( SM_AddToChat );
 			}
 			break;

@@ -302,7 +302,7 @@ void actor_template_t::store_cmd(RString const& cmd_name, RString const& full_cm
 {
 	if (Rage::starts_with(full_cmd, "%"))
 	{
-		RString cmd_text= full_cmd.Right(full_cmd.size()-1);
+		RString cmd_text = Rage::tail(full_cmd, -1);
 		convert_lua_chunk(cmd_text);
 		fields[cmd_name]= cmd_text;
 		return;
@@ -393,7 +393,8 @@ void actor_template_t::store_cmd(RString const& cmd_name, RString const& full_cm
 void actor_template_t::store_field(RString const& field_name, RString const& value, bool cmd_convert, RString const& pref, RString const& suf)
 {
 	// OITG apparently allowed "Oncommand" as valid.
-	if(field_name.Right(7).MakeLower() != "command")
+	Rage::ci_ascii_string command{ "command" };
+	if (command != Rage::tail( field_name, 7))
 	{
 		cmd_convert= false;
 	}
@@ -454,13 +455,13 @@ void actor_template_t::load_frames_from_file(RString const& fname, RString const
 			std::string field_type{ Rage::head(attr->first, 5) };
 			if(field_type == "Frame")
 			{
-				int id= StringToInt(attr->first.Right(attr->first.size()-5));
+				int id= StringToInt( Rage::tail(attr->first, -5) );
 				make_space_for_frame(id);
 				attr->second->GetValue(frames[id].frame);
 			}
 			else if(field_type == "Delay")
 			{
-				int id= StringToInt(attr->first.Right(attr->first.size()-5));
+				int id= StringToInt( Rage::tail(attr->first, -5) );
 				make_space_for_frame(id);
 				attr->second->GetValue(frames[id].delay);
 			}

@@ -111,9 +111,12 @@ const RString SBT_CrossFade             = "CrossFade";
 static void StripCvsAndSvn( vector<RString> &vsPathsToStrip, vector<RString> &vsNamesToStrip )
 {
 	ASSERT( vsPathsToStrip.size() == vsNamesToStrip.size() );
+	Rage::ci_ascii_string cvs{ "CVS" };
+	Rage::ci_ascii_string svn{ ".svn" };
 	for( unsigned i=0; i<vsNamesToStrip.size(); i++ )
 	{
-		if( vsNamesToStrip[i].Right(3).CompareNoCase("CVS") == 0 || vsNamesToStrip[i] == ".svn" )
+		std::string ext{ Rage::tail(vsNamesToStrip[i], 3) };
+		if (cvs == ext || svn == vsNamesToStrip[i])
 		{
 			vsPathsToStrip.erase( vsPathsToStrip.begin()+i );
 			vsNamesToStrip.erase( vsNamesToStrip.begin()+i );
@@ -377,8 +380,8 @@ void BackgroundUtil::GetGlobalRandomMovies(
 
 	for (auto const &s: vsPathsOut)
 	{
-		RString sName = s.Right( s.size() - RANDOMMOVIES_DIR.size() - 1 );
-		vsNamesOut.push_back( sName );
+		std::string name{ Rage::tail(s, s.size() - RANDOMMOVIES_DIR.size() - 1) };
+		vsNamesOut.push_back( name );
 	}
 	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }

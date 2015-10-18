@@ -16,8 +16,10 @@ Character::Character(): m_sCharDir(""), m_sCharacterID(""),
 bool Character::Load( RString sCharDir )
 {
 	// Save character directory
-	if( sCharDir.Right(1) != "/" )
+	if (!Rage::ends_with(sCharDir, "/"))
+	{
 		sCharDir += "/";
+	}
 	m_sCharDir = sCharDir;
 
 	// save ID

@@ -1073,7 +1073,7 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 {
 	LOG->Trace( "Profile::LoadAllFromDir( %s )", sDir.c_str() );
 
-	ASSERT( sDir.Right(1) == "/" );
+	ASSERT(Rage::ends_with(sDir, "/"));
 
 	InitAll();
 
@@ -1992,9 +1992,9 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 
 				for (auto *c: vpAllCourses)
 				{
-					RString sOther = c->m_sPath.Right(sFullFileName.size());
+					Rage::ci_ascii_string other{ Rage::tail(c->m_sPath, sFullFileName.size()).c_str() };
 
-					if( sFullFileName.CompareNoCase(sOther) == 0 )
+					if( other == sFullFileName )
 					{
 						pC = c;
 						courseID.FromCourse( pC );

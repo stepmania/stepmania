@@ -370,7 +370,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		{
 			/* If the last character is a *, they probably said "123*" when
 			 * they meant "*123". */
-			if( s.Right(1) == "*" )
+			if( Rage::ends_with(s, "*") )
 			{
 				// XXX: We know what they want, is there any reason not to handle it?
 				// Yes. We should be strict in handling the format. -Chris

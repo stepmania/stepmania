@@ -475,7 +475,7 @@ void PrefsManager::ReadGamePrefsFromIni( const RString &sIni )
 		if( !BeginsWith(section_name, GAME_SECTION_PREFIX) )
 			continue;
 
-		RString sGame = section_name.Right( section_name.length() - GAME_SECTION_PREFIX.length() );
+		RString sGame = Rage::tail(section_name, section_name.length() - GAME_SECTION_PREFIX.length() );
 		GamePrefs &gp = m_mapGameNameToGamePrefs[ sGame ];
 
 		// todo: read more prefs here? -aj

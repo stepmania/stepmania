@@ -138,7 +138,7 @@ static void FileNameToMetricsGroupAndElement( const RString &sFileName, RString 
 	else
 	{
 		sMetricsGroupOut = Rage::head(sFileName, iIndexOfFirstSpace);
-		sElementOut = sFileName.Right( sFileName.size() - iIndexOfFirstSpace - 1 );
+		sElementOut = Rage::tail(sFileName, sFileName.size() - iIndexOfFirstSpace - 1);
 	}
 }
 

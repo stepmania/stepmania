@@ -3,6 +3,7 @@
 #include "RageSound.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageString.hpp"
 
 using std::vector;
 
@@ -47,8 +48,10 @@ bool RandomSample::LoadSoundDir( RString sDir, int iMaxToLoad )
 		sDir += "/";
 #else
 	// make sure there's a slash at the end of this path
-	if( sDir.Right(1) != "/" )
+	if (!Rage::ends_with(sDir, "/"))
+	{
 		sDir += "/";
+	}
 #endif
 
 	vector<RString> arraySoundFiles;
