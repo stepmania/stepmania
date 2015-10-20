@@ -8,6 +8,7 @@
 #include "RageUtil.h"
 #include "RageSoundMixBuffer.h"
 #include "RageSoundUtil.h"
+#include "RageString.hpp"
 
 using std::vector;
 
@@ -64,8 +65,8 @@ void RageSoundReader_Chain::AddSound( int iIndex, float fOffsetSecs, float fPan 
 
 int RageSoundReader_Chain::LoadSound( RString sPath )
 {
-	sPath.MakeLower();
-
+	sPath = Rage::make_lower(sPath);
+	
 	auto it = m_apNamedSounds.find( sPath );
 	if( it != m_apNamedSounds.end() )
 	{

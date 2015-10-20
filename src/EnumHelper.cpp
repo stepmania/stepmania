@@ -31,7 +31,7 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 		// Get the string and lowercase it
 		lua_pushvalue( L, iPos );
 		LuaHelpers::Pop( L, sLower );
-		sLower.MakeLower();
+		sLower = Rage::make_lower(sLower);
 
 		// Try again to read the value
 		table.PushSelf( L );

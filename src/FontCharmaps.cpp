@@ -1,5 +1,6 @@
 #include "global.h"
 #include "FontCharmaps.h"
+#include "RageString.hpp"
 
 #include <map>
 
@@ -222,7 +223,7 @@ const wchar_t *FontCharmaps::get_char_map(RString name)
 {
 	Init();
 
-	name.MakeLower();
+	name = Rage::make_lower(name);
 
 	auto i = charmaps.find(name);
 	if(i == charmaps.end())

@@ -10,6 +10,7 @@ http://en.wikipedia.org/wiki/INI_file
 #include "RageLog.h"
 #include "RageFile.h"
 #include "RageString.hpp"
+#include "RageUnicode.hpp"
 
 using std::string;
 
@@ -54,7 +55,7 @@ bool IniFile::ReadFile( RageFileBasic &f )
 				return true; // eof
 			}
 
-			utf8_remove_bom( s );
+			Rage::utf8_remove_bom( s );
 
 			line += s;
 

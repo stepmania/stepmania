@@ -50,8 +50,7 @@ RString GradeToOldString( Grade g )
 
 Grade StringToGrade( const RString &sGrade )
 {
-	RString s = sGrade;
-	s.MakeUpper();
+	RString s = Rage::make_upper(sGrade);
 
 	// new style
 	int iTier;

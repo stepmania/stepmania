@@ -95,8 +95,7 @@ void NoteField::Unload()
 
 void NoteField::CacheNoteSkin( const RString &sNoteSkin_ )
 {
-	RString sNoteSkinLower = sNoteSkin_;
-	sNoteSkinLower.MakeLower();
+	RString sNoteSkinLower = Rage::make_lower(sNoteSkin_);
 
 	if( m_NoteDisplays.find(sNoteSkinLower) != m_NoteDisplays.end() )
 		return;
@@ -116,8 +115,7 @@ void NoteField::CacheNoteSkin( const RString &sNoteSkin_ )
 
 void NoteField::UncacheNoteSkin( const RString &sNoteSkin_ )
 {
-	RString sNoteSkinLower = sNoteSkin_;
-	sNoteSkinLower.MakeLower();
+	RString sNoteSkinLower = Rage::make_lower(sNoteSkin_);
 
 	LOG->Trace("NoteField::CacheNoteSkin: release %s", sNoteSkinLower.c_str() );
 	ASSERT_M( m_NoteDisplays.find(sNoteSkinLower) != m_NoteDisplays.end(), sNoteSkinLower );
@@ -142,7 +140,7 @@ void NoteField::CacheAllUsedNoteSkins()
 	for (auto &s: asSkinsLower)
 	{
 		NOTESKIN->ValidateNoteSkinName(s);
-		s.MakeLower();
+		s = Rage::make_lower(s);
 	}
 
 	for( unsigned i=0; i < asSkinsLower.size(); ++i )
@@ -164,7 +162,7 @@ void NoteField::CacheAllUsedNoteSkins()
 
 	RString sCurrentNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin;
 	NOTESKIN->ValidateNoteSkinName(sCurrentNoteSkinLower);
-	sCurrentNoteSkinLower.MakeLower();
+	sCurrentNoteSkinLower = Rage::make_lower(sCurrentNoteSkinLower);
 
 	auto it = m_NoteDisplays.find( sCurrentNoteSkinLower );
 	ASSERT_M( it != m_NoteDisplays.end(), sCurrentNoteSkinLower );
@@ -175,7 +173,7 @@ void NoteField::CacheAllUsedNoteSkins()
 	{
 		RString sNoteSkinLower = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin;
 		NOTESKIN->ValidateNoteSkinName(sNoteSkinLower);
-		sNoteSkinLower.MakeLower();
+		sNoteSkinLower = Rage::make_lower(sNoteSkinLower);
 		it = m_NoteDisplays.find( sNoteSkinLower );
 		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLower );
 		m_pDisplays[pn] = it->second;
@@ -244,7 +242,7 @@ void NoteField::Load(
 		m_NoteDisplays.insert(std::pair<RString, NoteDisplayCols *> (sNoteSkinLower, badIdea));
 	}
 
-	sNoteSkinLower.MakeLower();
+	sNoteSkinLower = Rage::make_lower(sNoteSkinLower);
 	auto it = m_NoteDisplays.find( sNoteSkinLower );
 	ASSERT_M( it != m_NoteDisplays.end(), ssprintf("iterator != m_NoteDisplays.end() [sNoteSkinLower = %s]",sNoteSkinLower.c_str()) );
 	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
@@ -264,7 +262,7 @@ void NoteField::Load(
 			m_NoteDisplays.insert(std::pair<RString, NoteDisplayCols *> (sNoteSkinLower, badIdea));
 		}
 
-		sNoteSkinLower.MakeLower();
+		sNoteSkinLower = Rage::make_lower(sNoteSkinLower);
 		it = m_NoteDisplays.find( sNoteSkinLower );
 		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLower );
 		m_pDisplays[pn] = it->second;

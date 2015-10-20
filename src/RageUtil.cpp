@@ -2,6 +2,7 @@
 #include "RageUtil.h"
 #include "RageMath.hpp"
 #include "RageString.hpp"
+#include "RageUnicode.hpp"
 
 #include <array>
 
@@ -29,8 +30,6 @@ using std::stringstream;
 using std::isfinite;
 
 bool HexToBinary(const RString&, RString&);
-void utf8_sanitize(RString &);
-void UnicodeUpperLower(wchar_t *, size_t, const unsigned char *);
 
 RandomGen g_RandomNumberGenerator;
 
@@ -1064,8 +1063,7 @@ bool FindFirstFilenameContaining(const vector<RString>& filenames,
 {
 	for(size_t i= 0; i < filenames.size(); ++i)
 	{
-		RString lower= GetFileNameWithoutExtension(filenames[i]);
-		lower.MakeLower();
+		RString lower= Rage::make_lower(GetFileNameWithoutExtension(filenames[i]));
 		for(size_t s= 0; s < starts_with.size(); ++s)
 		{
 			if(!lower.compare(0, starts_with[s].size(), starts_with[s]))
@@ -1589,223 +1587,12 @@ bool Regex::Replace( const RString &sReplacement, const RString &sSubject, RStri
 	return true;
 }
 
-/* Given a UTF-8 byte, return the length of the codepoint (if a start code)
- * or 0 if it's a continuation byte. */
-int utf8_get_char_len( char p )
-{
-	if( !(p & 0x80) ) return 1; /* 0xxxxxxx - 1 */
-	if( !(p & 0x40) ) return 1; /* 10xxxxxx - continuation */
-	if( !(p & 0x20) ) return 2; /* 110xxxxx */
-	if( !(p & 0x10) ) return 3; /* 1110xxxx */
-	if( !(p & 0x08) ) return 4; /* 11110xxx */
-	if( !(p & 0x04) ) return 5; /* 111110xx */
-	if( !(p & 0x02) ) return 6; /* 1111110x */
-	return 1; /* 1111111x */
-}
-
-static inline bool is_utf8_continuation_byte( char c )
-{
-	return (c & 0xC0) == 0x80;
-}
-
-/* Decode one codepoint at start; advance start and place the result in ch.
- * If the encoded string is invalid, false is returned. */
-bool utf8_to_wchar_ec( const RString &s, unsigned &start, wchar_t &ch )
-{
-	if( start >= s.size() )
-		return false;
-
-	if( is_utf8_continuation_byte( s[start] ) || /* misplaced continuation byte */
-		(s[start] & 0xFE) == 0xFE ) /* 0xFE, 0xFF */
-	{
-		start += 1;
-		return false;
-	}
-
-	int len = utf8_get_char_len( s[start] );
-
-	const int first_byte_mask[] = { -1, 0x7F, 0x1F, 0x0F, 0x07, 0x03, 0x01 };
-
-	ch = wchar_t(s[start] & first_byte_mask[len]);
-
-	for( int i = 1; i < len; ++i )
-	{
-		if( start+i >= s.size() )
-		{
-			/* We expected a continuation byte, but didn't get one. Return error, and point
-			 * start at the unexpected byte; it's probably a new sequence. */
-			start += i;
-			return false;
-		}
-
-		char byte = s[start+i];
-		if( !is_utf8_continuation_byte(byte) )
-		{
-			/* We expected a continuation byte, but didn't get one. Return error, and point
-			 * start at the unexpected byte; it's probably a new sequence. */
-			start += i;
-			return false;
-		}
-		ch = (ch << 6) | (byte & 0x3F);
-	}
-
-	bool bValid = true;
-	{
-		unsigned c1 = (unsigned) s[start] & 0xFF;
-		unsigned c2 = (unsigned) s[start+1] & 0xFF;
-		int c = (c1 << 8) + c2;
-		if( (c & 0xFE00) == 0xC000 ||
-		    (c & 0xFFE0) == 0xE080 ||
-		    (c & 0xFFF0) == 0xF080 ||
-		    (c & 0xFFF8) == 0xF880 ||
-		    (c & 0xFFFC) == 0xFC80 )
-	    {
-		    bValid = false;
-	    }
-	}
-
-	if( ch == 0xFFFE || ch == 0xFFFF )
-		bValid = false;
-
-	start += len;
-	return bValid;
-}
-
-/* Like utf8_to_wchar_ec, but only does enough error checking to prevent crashing. */
-bool utf8_to_wchar( const char *s, size_t iLength, unsigned &start, wchar_t &ch )
-{
-	if( start >= iLength )
-		return false;
-
-	int len = utf8_get_char_len( s[start] );
-
-	if( start+len > iLength )
-	{
-		// We don't have room for enough continuation bytes. Return error.
-		start += len;
-		ch = L'?';
-		return false;
-	}
-
-	switch( len )
-	{
-	case 1:
-		ch = (s[start+0] & 0x7F);
-		break;
-	case 2:
-		ch = ( (s[start+0] & 0x1F) << 6 ) |
-		       (s[start+1] & 0x3F);
-		break;
-	case 3:
-		ch = ( (s[start+0] & 0x0F) << 12 ) |
-		     ( (s[start+1] & 0x3F) << 6 ) |
-		       (s[start+2] & 0x3F);
-		break;
-	case 4:
-		ch = ( (s[start+0] & 0x07) << 18 ) |
-		     ( (s[start+1] & 0x3F) << 12 ) |
-		     ( (s[start+2] & 0x3F) << 6 ) |
-		     (s[start+3] & 0x3F);
-		break;
-	case 5:
-		ch = ( (s[start+0] & 0x03) << 24 ) |
-		     ( (s[start+1] & 0x3F) << 18 ) |
-		     ( (s[start+2] & 0x3F) << 12 ) |
-		     ( (s[start+3] & 0x3F) << 6 ) |
-		     (s[start+4] & 0x3F);
-		break;
-
-	case 6:
-		ch = ( (s[start+0] & 0x01) << 30 ) |
-		     ( (s[start+1] & 0x3F) << 24 ) |
-		     ( (s[start+2] & 0x3F) << 18 ) |
-		     ( (s[start+3] & 0x3F) << 12) |
-		     ( (s[start+4] & 0x3F) << 6 ) |
-		     (s[start+5] & 0x3F);
-		break;
-
-	}
-
-	start += len;
-	return true;
-}
-
-
-// UTF-8 encode ch and append to out.
-void wchar_to_utf8( wchar_t ch, RString &out )
-{
-	if( ch < 0x80 ) { out.append( 1, (char) ch ); return; }
-
-	int cbytes = 0;
-	if( ch < 0x800 ) cbytes = 1;
-	else if( ch < 0x10000 )    cbytes = 2;
-	else if( ch < 0x200000 )   cbytes = 3;
-	else if( ch < 0x4000000 )  cbytes = 4;
-	else cbytes = 5;
-
-	{
-		int shift = cbytes*6;
-		const int init_masks[] = { 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
-		out.append( 1, (char) (init_masks[cbytes-1] | (ch>>shift)) );
-	}
-
-	for( int i = 0; i < cbytes; ++i )
-	{
-		int shift = (cbytes-i-1)*6;
-		out.append( 1, (char) (0x80 | ((ch>>shift)&0x3F)) );
-	}
-}
-
-wchar_t utf8_get_char( const RString &s )
-{
-	unsigned start = 0;
-	wchar_t ret;
-	if( !utf8_to_wchar_ec( s, start, ret ) )
-		return INVALID_CHAR;
-	return ret;
-}
-
-// Replace invalid sequences in s.
-void utf8_sanitize( RString &s )
-{
-	RString ret;
-	for( unsigned start = 0; start < s.size(); )
-	{
-		wchar_t ch;
-		if( !utf8_to_wchar_ec( s, start, ch ) )
-			ch = INVALID_CHAR;
-
-		wchar_to_utf8( ch, ret );
-	}
-
-	s = ret;
-}
-
-bool utf8_is_valid( const RString &s )
-{
-	for( unsigned start = 0; start < s.size(); )
-	{
-		wchar_t ch;
-		if( !utf8_to_wchar_ec( s, start, ch ) )
-			return false;
-	}
-	return true;
-}
-
-/* Windows tends to drop garbage BOM characters at the start of UTF-8 text files.
- * Remove them. */
-void utf8_remove_bom( RString &sLine )
-{
-	if( !sLine.compare(0, 3, "\xef\xbb\xbf") )
-		sLine.erase(0, 3);
-}
-
 static int UnicodeDoUpper( char *p, size_t iLen, const unsigned char pMapping[256] )
 {
 	// Note: this has problems with certain accented characters. -aj
 	wchar_t wc = L'\0';
 	unsigned iStart = 0;
-	if( !utf8_to_wchar(p, iLen, iStart, wc) )
+	if( !Rage::utf8_to_wchar(p, iLen, iStart, wc) )
 		return 1;
 
 	wchar_t iUpper = wc;
@@ -1814,7 +1601,7 @@ static int UnicodeDoUpper( char *p, size_t iLen, const unsigned char pMapping[25
 	if( iUpper != wc )
 	{
 		RString sOut;
-		wchar_to_utf8( iUpper, sOut );
+		Rage::wchar_to_utf8( iUpper, sOut );
 		if( sOut.size() == iStart )
 			memcpy( p, sOut.data(), sOut.size() );
 		else
@@ -1822,70 +1609,6 @@ static int UnicodeDoUpper( char *p, size_t iLen, const unsigned char pMapping[25
 	}
 
 	return iStart;
-}
-
-/* Fast in-place MakeUpper and MakeLower. This only replaces characters with characters of the same UTF-8
- * length, so we never have to move the whole string. This is optimized for strings that have no
- * non-ASCII characters. */
-void MakeUpper( char *p, size_t iLen )
-{
-	char *pStart = p;
-	char *pEnd = p + iLen;
-	while( p < pEnd )
-	{
-		// Fast path:
-		if( likely( !(*p & 0x80) ) )
-		{
-			if( unlikely(*p >= 'a' && *p <= 'z') )
-				*p += 'A' - 'a';
-			++p;
-			continue;
-		}
-
-		int iRemaining = iLen - (p-pStart);
-		p += UnicodeDoUpper( p, iRemaining, g_UpperCase );
-	}
-}
-
-void MakeLower( char *p, size_t iLen )
-{
-	char *pStart = p;
-	char *pEnd = p + iLen;
-	while( p < pEnd )
-	{
-		// Fast path:
-		if( likely( !(*p & 0x80) ) )
-		{
-			if( unlikely(*p >= 'A' && *p <= 'Z') )
-				*p -= 'A' - 'a';
-			++p;
-			continue;
-		}
-
-		int iRemaining = iLen - (p-pStart);
-		p += UnicodeDoUpper( p, iRemaining, g_LowerCase );
-	}
-}
-
-void UnicodeUpperLower( wchar_t *p, size_t iLen, const unsigned char pMapping[256] )
-{
-	wchar_t *pEnd = p + iLen;
-	while( p != pEnd )
-	{
-		if( *p < 256 )
-			*p = pMapping[*p];
-		++p;
-	}
-}
-
-void MakeUpper( wchar_t *p, size_t iLen )
-{
-	UnicodeUpperLower( p, iLen, g_UpperCase );
-}
-
-void MakeLower( wchar_t *p, size_t iLen )
-{
-	UnicodeUpperLower( p, iLen, g_LowerCase );
 }
 
 int StringToInt( const RString &sString )
@@ -1926,8 +1649,6 @@ RString FloatToString( const float &num )
 	return ss.str();
 }
 
-const wchar_t INVALID_CHAR = 0xFFFD; /* U+FFFD REPLACEMENT CHARACTER */
-
 wstring RStringToWstring( const RString &s )
 {
 	wstring ret;
@@ -1944,8 +1665,10 @@ wstring RStringToWstring( const RString &s )
 		}
 
 		wchar_t ch = L'\0';
-		if( !utf8_to_wchar( s.data(), s.size(), start, ch ) )
-			ch = INVALID_CHAR;
+		if( !Rage::utf8_to_wchar( s.data(), s.size(), start, ch ) )
+		{
+			ch = Rage::invalid_char;
+		}
 		ret += ch;
 	}
 
@@ -1957,7 +1680,7 @@ RString WStringToRString( const wstring &sStr )
 	RString sRet;
 
 	for( unsigned i = 0; i < sStr.size(); ++i )
-		wchar_to_utf8( sStr[i], sRet );
+		Rage::wchar_to_utf8( sStr[i], sRet );
 
 	return sRet;
 }
@@ -1965,7 +1688,7 @@ RString WStringToRString( const wstring &sStr )
 RString WcharToUTF8( wchar_t c )
 {
 	RString ret;
-	wchar_to_utf8( c, ret );
+	Rage::wchar_to_utf8( c, ret );
 	return ret;
 }
 
@@ -2003,8 +1726,7 @@ void ReplaceEntityText( RString &sText, const std::map<RString,RString> &m )
 			continue;
 		}
 
-		RString sElement = sText.substr( iStart+1, iEnd-iStart-1 );
-		sElement.MakeLower();
+		RString sElement = Rage::make_lower(sText.substr( iStart+1, iEnd-iStart-1 ));
 
 		auto it = m.find( sElement );
 		if( it == m.end() )
@@ -2113,8 +1835,9 @@ void Replace_Unicode_Markers( RString &sText )
 		else
 			sscanf( sText.c_str()+iPos, "&#%i;", &iNum );
 		if( iNum > 0xFFFF )
-			iNum = INVALID_CHAR;
-
+		{
+			iNum = Rage::invalid_char;
+		}
 		sText.replace( iPos, p-iPos, WcharToUTF8(wchar_t(iNum)) );
 	}
 }
@@ -2456,9 +2179,15 @@ LuaFunction( SecondsToMSS, SecondsToMSS( FArg(1) ) )
 LuaFunction( SecondsToMMSS, SecondsToMMSS( FArg(1) ) )
 LuaFunction( FormatNumberAndSuffix, FormatNumberAndSuffix( IArg(1) ) )
 LuaFunction( Basename, Basename( SArg(1) ) )
-static RString MakeLower( RString s ) { s.MakeLower(); return s; }
+static RString MakeLower( RString s )
+{
+	return Rage::make_lower(s);
+}
 LuaFunction( Lowercase, MakeLower( SArg(1) ) )
-static RString MakeUpper( RString s ) { s.MakeUpper(); return s; }
+static RString MakeUpper( RString s )
+{
+	return Rage::make_upper(s);
+}
 LuaFunction( Uppercase, MakeUpper( SArg(1) ) )
 LuaFunction( mbstrlen, (int)RStringToWstring(SArg(1)).length() )
 LuaFunction( URLEncode, URLEncode( SArg(1) ) );

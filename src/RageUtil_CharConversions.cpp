@@ -2,6 +2,7 @@
 #include "RageUtil_CharConversions.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageUnicode.hpp"
 
 using std::vector;
 using std::wstring;
@@ -138,7 +139,7 @@ bool ConvertString( RString &str, const RString &encodings )
 		if( lst[i] == "utf-8" )
 		{
 			/* Is the string already valid utf-8? */
-			if( utf8_is_valid(str) )
+			if( Rage::utf8_is_valid(str) )
 				return true;
 			continue;
 		}

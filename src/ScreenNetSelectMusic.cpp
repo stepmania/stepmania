@@ -19,6 +19,7 @@
 #include "MusicWheel.h"
 #include "InputMapper.h"
 #include "RageLog.h"
+#include "RageUnicode.hpp"
 #include "Song.h"
 #include "InputEventPlus.h"
 #include "SongUtil.h"
@@ -108,8 +109,7 @@ bool ScreenNetSelectMusic::Input( const InputEventPlus &input )
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL)) ||
 		(!NSMAN->useSMserver); // If we are disconnected, assume no chatting
 
-	wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI,false);
-	MakeUpper( &c, 1 );
+	wchar_t c = Rage::make_upper(INPUTMAN->DeviceInputToChar(input.DeviceI,false));
 
 	// Ctrl+[A-Z] to go to that letter of the alphabet
 	bool handled = false;

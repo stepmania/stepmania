@@ -90,8 +90,7 @@ void NoteSkinManager::RefreshNoteSkinData( const Game* pGame )
 	g_mapNameToData.clear();
 	for( unsigned j=0; j<asNoteSkinNames.size(); j++ )
 	{
-		RString sName = asNoteSkinNames[j];
-		sName.MakeLower();
+		RString sName = Rage::make_lower(asNoteSkinNames[j]);
 		LoadNoteSkinData( sName, g_mapNameToData[sName] );
 	}
 }
@@ -285,8 +284,7 @@ RString NoteSkinManager::GetMetric( const RString &sButtonName, const RString &s
 		LuaHelpers::ReportScriptError("NOTESKIN:GetMetric: No noteskin currently set.", "NOTESKIN_ERROR");
 		return "";
 	}
-	RString sNoteSkinName = m_sCurrentNoteSkin;
-	sNoteSkinName.MakeLower();
+	RString sNoteSkinName = Rage::make_lower(m_sCurrentNoteSkin);
 	auto it = g_mapNameToData.find(sNoteSkinName);
 	ASSERT_M( it != g_mapNameToData.end(), sNoteSkinName );	// this NoteSkin doesn't exist!
 	const NoteSkinData& data = it->second;
@@ -337,8 +335,7 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 		LuaHelpers::ReportScriptError("NOTESKIN:GetPath: No noteskin currently set.", "NOTESKIN_ERROR");
 		return "";
 	}
-	RString sNoteSkinName = m_sCurrentNoteSkin;
-	sNoteSkinName.MakeLower();
+	RString sNoteSkinName = Rage::make_lower(m_sCurrentNoteSkin);
 	auto iter = g_mapNameToData.find( sNoteSkinName );
 	ASSERT( iter != g_mapNameToData.end() );
 	const NoteSkinData &data = iter->second;

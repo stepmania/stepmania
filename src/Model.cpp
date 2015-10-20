@@ -64,10 +64,11 @@ void Model::Load( const RString &sFile )
 {
 	if( sFile == "" ) return;
 
-	RString sExt = GetExtension(sFile);
-	sExt.MakeLower();
+	RString sExt = Rage::make_lower(GetExtension(sFile));
 	if( sExt=="txt" )
+	{
 		LoadMilkshapeAscii( sFile );
+	}
 	RecalcAnimationLengthSeconds();
 }
 

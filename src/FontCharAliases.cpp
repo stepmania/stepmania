@@ -3,6 +3,7 @@
 #include "Font.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageUnicode.hpp"
 
 #include <map>
 
@@ -74,7 +75,7 @@ static void InitCharAliases()
 		return;
 
 	CharAliases["default"]		= FONT_DEFAULT_GLYPH;	// ?
-	CharAliases["invalid"]		= INVALID_CHAR;			// 0xFFFD
+	CharAliases["invalid"]		= Rage::invalid_char;			// 0xFFFD
 
 	// The comments here are UTF-8; they won't show up in VC6
 	// (use a better editor then -aj)
@@ -362,9 +363,8 @@ static void InitCharAliases()
 
 	for(aliasmap::const_iterator i = CharAliases.begin(); i != CharAliases.end(); ++i)
 	{
-		RString from = i->first;
+		RString from = Rage::make_lower(i->first);
 		RString to = WcharToUTF8(i->second);
-		from.MakeLower();
 		CharAliasRepl[from] = to;
 	}
 }

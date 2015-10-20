@@ -192,3 +192,51 @@ GTEST_TEST(RageString, replace_std_string)
 	Rage::replace(tongueTwister, "sea", "say");
 	EXPECT_EQ(tongueTwister == answer, true);
 }
+
+void test_casing(std::string const &base, std::string target, std::string (*rageFunc)(std::string const &));
+void test_casing(std::string const &base, std::string target, std::string (*rageFunc)(std::string const &))
+{
+	EXPECT_EQ(base == rageFunc(target), true);
+}
+
+GTEST_TEST(RageString, make_upper_already_upper)
+{
+	::test_casing("STEPMANIA", "STEPMANIA", &Rage::make_upper);
+}
+
+GTEST_TEST(RageString, make_upper_mixed_ascii)
+{
+	::test_casing("STEPMANIA", "StepMania", &Rage::make_upper);
+}
+
+GTEST_TEST(RageString, make_upper_all_lower)
+{
+	::test_casing("STEPMANIA", "stepmania", &Rage::make_upper);
+}
+
+GTEST_TEST(RageString, make_upper_senorita)
+{
+	// Convert Señorita to SEÑORITA.
+	::test_casing("SE\xc3\x91ORITA", "Se\xc3\xb1orita", &Rage::make_upper);
+}
+
+GTEST_TEST(RageString, make_lower_already_lower)
+{
+	::test_casing("stepmania", "stepmania", &Rage::make_lower);
+}
+
+GTEST_TEST(RageString, make_lower_mixed_ascii)
+{
+	::test_casing("stepmania", "sTEPmANIA", &Rage::make_lower);
+}
+
+GTEST_TEST(RageString, make_lower_all_upper)
+{
+	::test_casing("stepmania", "STEPMANIA", &Rage::make_lower);
+}
+
+GTEST_TEST(RageString, make_lower_vertex_squared)
+{
+	// Convert VERTEX² to vertex².
+	::test_casing("vertex\xc2\xb2", "VERTEX\xc2\xb2", &Rage::make_lower);
+}

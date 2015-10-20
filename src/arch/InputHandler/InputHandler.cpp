@@ -3,6 +3,7 @@
 #include "RageUtil.h"
 #include "InputHandler.h"
 #include "RageLog.h"
+#include "RageUnicode.hpp"
 #include "LocalizedString.h"
 #include "arch/arch_default.h"
 #include "InputHandler_MonkeyKeyboard.h"
@@ -75,7 +76,7 @@ wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentK
 
 		if( bHoldingShift && !bHoldingCtrl )
 		{
-			MakeUpper( &c, 1 );
+			c = Rage::make_upper(c);
 
 			switch( c )
 			{

@@ -145,8 +145,7 @@ RageSoundReader *RageSoundManager::GetLoadedSound( const RString &sPath_ )
 {
 	LockMut(g_SoundManMutex); /* lock for access to m_mapPreloadedSounds */
 
-	RString sPath(sPath_);
-	sPath.MakeLower();
+	RString sPath = Rage::make_lower(sPath_);
 	auto it = m_mapPreloadedSounds.find(sPath);
 	if( it == m_mapPreloadedSounds.end() )
 		return nullptr;
@@ -163,8 +162,7 @@ void RageSoundManager::AddLoadedSound( const RString &sPath_, RageSoundReader_Pr
 
 	/* Don't AddLoadedSound a sound that's already registered.  It should have been
 	 * used in GetLoadedSound. */
-	RString sPath(sPath_);
-	sPath.MakeLower();
+	RString sPath = Rage::make_lower(sPath_);
 	auto it = m_mapPreloadedSounds.find(sPath);
 	ASSERT_M( it == m_mapPreloadedSounds.end(), sPath.c_str());
 

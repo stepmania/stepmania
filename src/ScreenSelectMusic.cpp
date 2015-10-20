@@ -32,6 +32,7 @@
 #include "RageInput.h"
 #include "OptionsList.h"
 #include "RageFileManager.h"
+#include "RageUnicode.hpp"
 
 using std::vector;
 
@@ -458,8 +459,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) ||
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT));
 
-		wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI,false);
-		MakeUpper( &c, 1 );
+		wchar_t c = Rage::make_upper(INPUTMAN->DeviceInputToChar(input.DeviceI,false));
 
 		if(holding_shift && bHoldingCtrl && c == 'R' && m_MusicWheel.IsSettled())
 		{

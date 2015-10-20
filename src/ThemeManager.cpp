@@ -561,15 +561,13 @@ struct CompareLanguageTag
 	RString m_sLanguageString;
 	CompareLanguageTag( const RString &sLang )
 	{
-		m_sLanguageString = RString("(lang ") + sLang + ")";
+		m_sLanguageString = RString("(lang ") + Rage::make_lower(sLang) + ")";
 		LOG->Trace( "try \"%s\"", sLang.c_str() );
-		m_sLanguageString.MakeLower();
 	}
 
 	bool operator()( const RString &sFile ) const
 	{
-		RString sLower( sFile );
-		sLower.MakeLower();
+		RString sLower = Rage::make_lower( sFile );
 		size_t iPos = sLower.find( m_sLanguageString );
 		return iPos != RString::npos;
 	}

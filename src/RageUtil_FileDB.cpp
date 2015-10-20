@@ -13,12 +13,9 @@ void FileSet::GetFilesMatching( const RString &sBeginning_, const RString &sCont
 {
 	/* "files" is a case-insensitive mapping, by filename.  Use lower_bound to figure
 	 * out where to start. */
-	RString sBeginning = sBeginning_;
-	sBeginning.MakeLower();
-	RString sContaining = sContaining_;
-	sContaining.MakeLower();
-	RString sEnding = sEnding_;
-	sEnding.MakeLower();
+	RString sBeginning = Rage::make_lower(sBeginning_);
+	RString sContaining = Rage::make_lower(sContaining_);
+	RString sEnding = Rage::make_lower(sEnding_);
 
 	std::set<File>::const_iterator i = files.lower_bound( File(sBeginning) );
 	for( ; i != files.end(); ++i )
@@ -96,6 +93,12 @@ int FileSet::GetFileHash( const RString &sPath ) const
 	if( i == files.end() )
 		return -1;
 	return i->hash + i->size;
+}
+
+void File::SetName(RString const &fn)
+{
+	name = fn;
+	lname = Rage::make_lower(name);
 }
 
 /*
@@ -285,8 +288,7 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 	{
 		sDir = "/";
 	}
-	RString sLower = sDir;
-	sLower.MakeLower();
+	RString sLower = Rage::make_lower(sDir);
 
 	m_Mutex.Lock();
 
@@ -466,8 +468,7 @@ void FilenameDB::DelFileSet( std::map<RString, FileSet *>::iterator dir )
 void FilenameDB::DelFile( const RString &sPath )
 {
 	LockMut(m_Mutex);
-	RString lower = sPath;
-	lower.MakeLower();
+	RString lower = Rage::make_lower(sPath);
 
 	auto fsi = dirs.find( lower );
 	DelFileSet( fsi );
@@ -522,8 +523,13 @@ void FilenameDB::FlushDirCache( const RString & /* sDir */ )
 			{
 				RString sParent = Dirname( sDir );
 				if( sParent == "./" )
+				{
 					sParent = "";
-				sParent.MakeLower();
+				}
+				else
+				{
+					sParent = Rage::make_lower(sParent);
+				}
 				it = dirs.find( sParent );
 				if( it != dirs.end() )
 				{

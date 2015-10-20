@@ -6,6 +6,7 @@
 #include "GameManager.h"
 #include "SongManager.h"
 #include "RageFile.h"
+#include "RageUnicode.hpp"
 #include "SongUtil.h"
 #include "StepsUtil.h"
 #include "Song.h"
@@ -73,7 +74,7 @@ static RString FindLargestInitialSubstring( const RString &string1, const RStrin
 
 static void SearchForDifficulty( RString sTag, Steps *pOut )
 {
-	sTag.MakeLower();
+	sTag = Rage::make_lower(sTag);
 
 	// Only match "Light" in parentheses.
 	if( sTag.find( "(light" ) != sTag.npos )
@@ -415,12 +416,13 @@ struct bmsCommandTree
 		statement = statement.substr(hash);
 
 		size_t space = statement.find(' ');
-		RString name = statement.substr(0, space);
+		RString name = Rage::make_lower(statement.substr(0, space));
 		RString value = "";
 
 		if (space != statement.npos)
+		{
 			value = statement.substr(space + 1);
-		name.MakeLower();
+		}
 
 		if (name == "#if")
 		{
@@ -569,7 +571,7 @@ bool BMSChart::Load( const RString &chartPath )
 				RString value = data.substr(2 * i, 2);
 				if (value != "00")
 				{
-					value.MakeLower();
+					value = Rage::make_lower(value);
 					BMSObject o = { channel, measure, (float)i / count, flag, value };
 					objects.push_back(o);
 				}
@@ -633,9 +635,10 @@ int BMSSong::AllocateKeysound( RString filename, RString path )
 
 	// FIXME: garbled file names seem to crash the app.
 	// this might not be the best place to put this code.
-	if( !utf8_is_valid(filename) )
+	if( !Rage::utf8_is_valid(filename) )
+	{
 		return -1;
-
+	}
 	/* Due to bugs in some programs, many BMS files have a "WAV" extension
 	 * on files in the BMS for files that actually have some other extension.
 	 * Do a search. Don't do a wildcard search; if sData is "song.wav",
@@ -697,9 +700,10 @@ bool BMSSong::GetBackground( RString filename, RString path, RString &bgfile )
 
 	// FIXME: garbled file names seem to crash the app.
 	// this might not be the best place to put this code.
-	if( !utf8_is_valid(filename) )
+	if( !Rage::utf8_is_valid(filename) )
+	{
 		return false;
-
+	}
 	RString normalizedFilename = filename;
 	RString dir = out->GetSongDir();
 
@@ -880,8 +884,7 @@ void BMSChartReader::ReadHeaders()
 		}
 		else if( it->first == "#lnobj" )
 		{
-			lnobj = it->second;
-			lnobj.MakeLower();
+			lnobj = Rage::make_lower(it->second);
 		}
 		else if( it->first == "#playlevel" )
 		{
@@ -1580,8 +1583,7 @@ void BMSSongLoader::AddToSong()
 
 			if( title != "" && title.size() != commonSubstring.size() )
 			{
-				RString tag = title.substr( commonSubstring.size(), title.size() - commonSubstring.size() );
-				tag.MakeLower();
+				RString tag = Rage::make_lower(title.substr( commonSubstring.size(), title.size() - commonSubstring.size() ));
 
 				// XXX: We should do this with filenames too, I have plenty of examples.
 				// however, filenames will be trickier, as stuff at the beginning AND

@@ -145,7 +145,7 @@ void string_arg_conv(vector<RString>& args)
 }
 void lower_string_conv(vector<RString>& args)
 {
-	args[0].MakeLower();
+	args[0] = Rage::make_lower(args[0]);
 }
 void hidden_conv(vector<RString>& args)
 {
@@ -184,8 +184,7 @@ void blend_conv(vector<RString>& args)
 	COMMON_ARG_VERIFY(2);
 	for(int i= 0; i < NUM_BlendMode; ++i)
 	{
-		RString blend_str= BlendModeToString(static_cast<BlendMode>(i));
-		blend_str.MakeLower();
+		RString blend_str = Rage::make_lower(BlendModeToString(static_cast<BlendMode>(i)));
 		if(args[1] == blend_str)
 		{
 			args[1]= "\"BlendMode_" + BlendModeToString(static_cast<BlendMode>(i)) + "\"";
@@ -198,8 +197,7 @@ void cull_conv(vector<RString>& args)
 	COMMON_ARG_VERIFY(2);
 	for(int i= 0; i < NUM_CullMode; ++i)
 	{
-		RString cull_str= CullModeToString(static_cast<CullMode>(i));
-		cull_str.MakeLower();
+		RString cull_str = Rage::make_lower(CullModeToString(static_cast<CullMode>(i)));
 		if(args[1] == cull_str)
 		{
 			args[1]= "\"CullMode_" + CullModeToString(static_cast<CullMode>(i)) + "\"";
