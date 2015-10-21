@@ -140,7 +140,7 @@ if(MSVC)
 endif()
 
 set_target_properties("${SM_EXE_NAME}" PROPERTIES
-  COMPILE_FLAGS ${SM_COMPILE_FLAGS}
+  COMPILE_FLAGS "${SM_COMPILE_FLAGS}"
 )
 
 set_target_properties("${SM_EXE_NAME}" PROPERTIES
