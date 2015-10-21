@@ -48,8 +48,8 @@ protected:
 	RString GetPathFromDirAndFile( const RString &sDir, const RString &sFileName );
 	void GetAllNoteSkinNamesForGame( const Game *pGame, vector<RString> &AddTo );
 
-	void LoadNoteSkinData( const RString &sNoteSkinName, NoteSkinData& data_out );
-	void LoadNoteSkinDataRecursive( const RString &sNoteSkinName, NoteSkinData& data_out );
+	bool LoadNoteSkinData( const RString &sNoteSkinName, NoteSkinData& data_out );
+	bool LoadNoteSkinDataRecursive( const RString &sNoteSkinName, NoteSkinData& data_out );
 	RString m_sCurrentNoteSkin;
 	const Game* m_pCurGame;
 
