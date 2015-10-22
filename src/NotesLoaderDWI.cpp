@@ -149,8 +149,7 @@ const int BEATS_PER_MEASURE = 4;
  * normalized when written to SMs, etc.) */
 Difficulty DwiCompatibleStringToDifficulty( const RString& sDC )
 {
-	RString s2 = sDC;
-	s2.MakeLower();
+	RString s2 = Rage::make_lower(sDC);
 	if( s2 == "beginner" )			return Difficulty_Beginner;
 	else if( s2 == "easy" )		return Difficulty_Easy;
 	else if( s2 == "basic" )		return Difficulty_Easy;
@@ -727,11 +726,10 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
 				if( endpos == RString::npos )
 					break;
 
-				RString sub = param.substr( startpos+1, endpos-startpos-1 );
+				RString sub = Rage::make_lower(param.substr( startpos+1, endpos-startpos-1 ));
 
 				pos = endpos + 1;
 
-				sub.MakeLower();
 				BlacklistedImages.insert( sub );
 			}
 		}

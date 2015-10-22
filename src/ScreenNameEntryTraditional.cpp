@@ -12,6 +12,7 @@
 #include "InputEventPlus.h"
 #include "RageInput.h"
 #include "RageLog.h"
+#include "RageUnicode.hpp"
 #include "CommonMetrics.h"
 
 using std::vector;
@@ -250,7 +251,7 @@ public:
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		RString sKey = SArg(2);
-		bool bRet = p->EnterKey( pn, utf8_get_char(sKey) );
+		bool bRet = p->EnterKey( pn, Rage::utf8_get_char(sKey) );
 		LuaHelpers::Push( L, bRet );
 		return 1;
 	}

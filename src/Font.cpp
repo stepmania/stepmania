@@ -5,6 +5,7 @@
 #include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageUnicode.hpp"
 #include "FontManager.h"
 #include "ThemeManager.h"
 #include "FontCharmaps.h"
@@ -490,10 +491,8 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 	{
 		FOREACH_CONST_Attr( pNode, pAttr )
 		{
-			RString sName = pAttr->first;
+			RString sName = Rage::make_upper(pAttr->first);
 			const XNodeValue *pValue = pAttr->second;
-
-			sName.MakeUpper();
 
 			// If val is an integer, it's a width, eg. "10=27".
 			if( IsAnInt(sName) )
@@ -519,9 +518,9 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 				if( sCodepoint.substr(0, 2) == "U+" && IsHexVal(sCodepoint.substr(2)) )
 					sscanf( sCodepoint.substr(2).c_str(), "%x", reinterpret_cast<unsigned int*>(&c) );
 				else if( sCodepoint.size() > 0 &&
-						utf8_get_char_len(sCodepoint[0]) == int(sCodepoint.size()) )
+                        Rage::utf8_get_char_len(sCodepoint[0]) == int(sCodepoint.size()) )
 				{
-					c = utf8_get_char( sCodepoint.c_str() );
+                    c = Rage::utf8_get_char( sCodepoint.c_str() );
 					if(c == wchar_t(-1))
 						LOG->Warn("Font definition '%s' has an invalid value '%s'.",
 							ini.GetPath().c_str(), sName.c_str() );

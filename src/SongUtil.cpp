@@ -366,7 +366,7 @@ static bool CompareSongPointersBySortValueDescending( const Song *pSong1, const 
 
 RString SongUtil::MakeSortString( RString s )
 {
-	s.MakeUpper();
+	s = Rage::make_upper(s);
 
 	// Make sure that non-alphanumeric strings are placed at the very end.
 	if( s.size() > 0 )

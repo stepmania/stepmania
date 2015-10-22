@@ -38,11 +38,11 @@ namespace Rage
 	 * See http://stackoverflow.com/a/29752943 */
 	void replace(std::string &target, std::string const &from, std::string const &to);
 
-	/** @brief A mapping to allow for quick lowercase conversion. */
-	extern unsigned char lowerCase[256];
+	/** @brief Convert the string into its uppercase variant. */
+	std::string make_upper(std::string const &source);
 
-	/** @brief A mapping to allow for quick uppercase conversion. */
-	extern unsigned char uppercase[256];
+	/** @brief Convert the string into its lowercase variant. */
+	std::string make_lower(std::string const &source);
 
 	/** @brief A trait to allow for case insensitive strings...assuming ASCII. */
 	struct ci_ascii_char_traits: public std::char_traits<char>

@@ -51,8 +51,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue( i );
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
+		RString sValueName = Rage::make_upper(sParams[0]);
 
 		/* handle the data...well, not this data: not related to steps.
 		 * Skips INTRO, MUSICINTRO, TITLEFILE, DISCFILE, SONGFILE. */
@@ -151,10 +150,11 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		// new cases from Aldo_MX's fork:
 		else if( sValueName=="PLAYER" )
 		{
-			RString sPlayer = sParams[1];
-			sPlayer.MakeLower();
+			RString sPlayer = Rage::make_lower(sParams[1]);
 			if( sPlayer.find( "double" ) != string::npos )
+			{
 				bDoublesChart = true;
+			}
 		}
 		// This should always be last.
 		else if( sValueName=="STEP" )
@@ -190,7 +190,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 	{
 		RString sDir, sFName, sExt;
 		splitpath( sPath, sDir, sFName, sExt );
-		sFName.MakeLower();
+		sFName = Rage::make_lower(sFName);
 
 		out.SetDescription(sFName);
 		// Check another before anything else... is this okay? -DaisuMaster
@@ -556,8 +556,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 	for( unsigned i=0; i < msd.GetNumValues(); i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
+		RString sValueName = Rage::make_upper(sParams[0]);
 
 		// handle the data
 		if( sValueName=="TITLE" )

@@ -95,8 +95,7 @@ RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, b
 		FileTypes.insert(*curr);
 	}
 
-	RString format = GetExtension(sPath);
-	format.MakeLower();
+	RString format = Rage::make_lower(GetExtension(sPath));
 
 	bool bKeepTrying = true;
 

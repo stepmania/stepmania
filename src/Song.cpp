@@ -674,7 +674,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 				filename != song_dir_listing.end(); ++filename)
 		{
 			bool matched_something= false;
-			RString file_ext= GetExtension(*filename).MakeLower();
+			RString file_ext = Rage::make_lower(GetExtension(*filename));
 			if(!file_ext.empty())
 			{
 				for(size_t tf= 0; tf < lists_to_fill.size(); ++ tf)
@@ -909,7 +909,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			// ignore DWI "-char" graphics
 			RString lower = image_list[i];
 			Rage::ci_ascii_string lowerImage{ image_list[i] };
-			lower.MakeLower();
+			lower = Rage::make_lower(lower);
 			if(BlacklistedImages.find(lower) != BlacklistedImages.end())
 				continue;	// skip
 

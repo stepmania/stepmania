@@ -604,8 +604,7 @@ void ActorUtil::AddTypeExtensionsToList(FileType ft, vector<RString>& add_to)
 
 FileType ActorUtil::GetFileType( const RString &sPath )
 {
-	RString sExt = GetExtension( sPath );
-	sExt.MakeLower();
+	RString sExt = Rage::make_lower(GetExtension( sPath ));
 
 	etft_cont_t::iterator conversion_entry= ExtensionToFileType.find(sExt);
 	if(conversion_entry != ExtensionToFileType.end())

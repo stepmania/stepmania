@@ -71,8 +71,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 {
 	/* Generic BGAs are new.  Animation directories with no INI are old and obsolete.
 	 * Don't combine them. */
-	RString lcPath = sPath;
-	lcPath.MakeLower();
+	RString lcPath = Rage::make_lower(sPath);
 
 	if( lcPath.find("usesongbg") != RString::npos )
 	{
@@ -345,8 +344,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 	}
 
 
-	RString sHint = sPath;
-	sHint.MakeLower();
+	RString sHint = Rage::make_lower(sPath);
 
 	if( sHint.find("cyclecolor") != RString::npos )
 		for( unsigned i=0; i<m_SubActors.size(); i++ )
@@ -381,7 +379,7 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 	{
 		RString type = "sprite";
 		pNode->GetAttrValue( "Type", type );
-		type.MakeLower();
+		type = Rage::make_lower(type);
 
 		/* The preferred way of stretching a sprite to fit the screen is "Type=sprite"
 		 * and "stretch=1".  "type=1" is for backwards-compatibility. */

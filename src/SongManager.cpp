@@ -1385,7 +1385,7 @@ Song* SongManager::GetSongFromDir(RString dir) const
 	}
 
 	Rage::replace(dir, '\\', '/');
-	dir.MakeLower();
+	dir = Rage::make_lower(dir);
 	auto entry = m_SongsByDir.find(dir);
 	if(entry != m_SongsByDir.end())
 	{
@@ -1906,9 +1906,8 @@ void SongManager::AddSongToList(Song* new_song)
 {
 	new_song->SetEnabled(true);
 	m_pSongs.push_back(new_song);
-	RString dir= new_song->GetSongDir();
-	dir.MakeLower();
-	m_SongsByDir.insert(std::make_pair(std::string(dir), new_song));
+	std::string dir= Rage::make_lower(new_song->GetSongDir());
+	m_SongsByDir.insert(std::make_pair(dir, new_song));
 }
 
 void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )

@@ -142,7 +142,7 @@ static void Lua##X(lua_State* L) \
 		lua_pushnumber( L, i ); /* 0-based */ \
 		lua_rawset( L, -3 ); \
 		/* Compatibility with old, case-insensitive values */ \
-		s.MakeLower(); \
+		s = Rage::make_lower(s); \
 		lua_pushstring( L, s ); \
 		lua_pushnumber( L, i ); /* 0-based */ \
 		lua_rawset( L, -3 ); \

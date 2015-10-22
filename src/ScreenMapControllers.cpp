@@ -819,9 +819,8 @@ void ScreenMapControllers::ActionRow::Load(RString const& scr_name,
 	RString const& name, ScreenMapControllers::action_fun_t action,
 	ActorFrame* line, ActorScroller* scroller)
 {
-	m_action= action;
-	RString lower_name= name;
-	lower_name.MakeLower();
+	m_action = action;
+	RString lower_name = Rage::make_lower(name);
 	// Make the specific actor optional, use a fallback if it doesn't exist.
 	RString path= THEME->GetPathG(scr_name, lower_name, true);
 	if(path.empty())

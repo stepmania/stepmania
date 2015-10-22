@@ -1,6 +1,7 @@
 #include "global.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageUnicode.hpp"
 #include "LyricsLoader.h"
 #include "ThemeManager.h"
 #include "RageFile.h"
@@ -46,7 +47,7 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 			break;
 		}
 
-		utf8_remove_bom( line );
+		Rage::utf8_remove_bom( line );
 
 		if(!line.compare(0, 2, "//"))
 			continue;

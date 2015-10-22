@@ -11,6 +11,7 @@
 #include "MenuTimer.h"
 #include "NetworkSyncManager.h"
 #include "RageUtil.h"
+#include "RageUnicode.hpp"
 #include "GameState.h"
 #include "InputEventPlus.h"
 #include "RageInput.h"
@@ -253,9 +254,9 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 			}
 		}
 
-		int iCharLength = min( utf8_get_char_len(m_sText[i]), iCharsLeft + 1 );
+        int iCharLength = min( Rage::utf8_get_char_len(m_sText[i]), iCharsLeft + 1 );
 		RString curCharStr = m_sText.substr( i, iCharLength );
-		wchar_t curChar = utf8_get_char( curCharStr );
+		wchar_t curChar = Rage::utf8_get_char( curCharStr );
 		i += iCharLength - 1;
 		int iCharWidth = m_pFont->GetLineWidthInSourcePixels( wstring() + curChar );
 

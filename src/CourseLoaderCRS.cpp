@@ -80,8 +80,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			out.m_sDescription = sParams[1];
 		else if(tagName == "REPEAT" )
 		{
-			RString str = sParams[1];
-			str.MakeLower();
+			RString str = Rage::make_lower(sParams[1]);
 			if( str.find("yes") != string::npos )
 				out.m_bRepeat = true;
 		}

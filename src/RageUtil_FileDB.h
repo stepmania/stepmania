@@ -6,6 +6,7 @@
 #include "RageTimer.h"
 #include "RageThreads.h"
 #include "RageFileManager.h"
+#include "RageString.hpp"
 
 struct FileSet;
 struct File
@@ -13,13 +14,7 @@ struct File
 	RString name;
 	RString lname;
 
-	void SetName( const RString &fn )
-	{
-		name = fn;
-		lname = name;
-		lname.MakeLower();
-	}
-
+	void SetName( RString const &fn );
 	bool dir;
 	int size;
 	/* Modification time of the file.  The contents of this is undefined, except that
@@ -45,8 +40,7 @@ struct File
 	bool equal(const File &rhs) const { return lname == rhs.lname; }
 	bool equal(const RString &rhs) const
 	{
-		RString l = rhs;
-		l.MakeLower();
+		RString l = Rage::make_lower(rhs);
 		return lname == l;
 	}
 };

@@ -936,7 +936,9 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 		{
 			RString sCmdName = cmd.GetName();
 			if( bLegacy )
-				sCmdName.MakeLower();
+			{
+				sCmdName = Rage::make_lower(sCmdName);
+			}
 			s << "\tself:" << sCmdName << "(";
 
 			bool bFirstParamIsString = bLegacy && (

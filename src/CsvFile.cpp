@@ -4,6 +4,7 @@
 #include "RageFile.h"
 #include "RageLog.h"
 #include "RageString.hpp"
+#include "RageUnicode.hpp"
 
 CsvFile::CsvFile()
 {
@@ -43,7 +44,7 @@ bool CsvFile::ReadFile( RageFileBasic &f )
 			return true; /* eof */
 		}
 
-		utf8_remove_bom( line );
+		Rage::utf8_remove_bom( line );
 
 		std::vector<RString> vs;
 
