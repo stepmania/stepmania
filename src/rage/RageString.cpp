@@ -1,5 +1,6 @@
 #include "RageString.hpp"
 #include <cstdlib>
+#include <cstring>
 #include <sstream>
 #include <algorithm>
 #include <vector>
@@ -121,7 +122,7 @@ int unicode_do_casing( char *p, size_t iLen, const unsigned char pMapping[256] )
 		Rage::wchar_to_utf8( iUpper, sOut );
 		if( sOut.size() == iStart )
 		{
-			memcpy( p, sOut.data(), sOut.size() );
+			std::memcpy( p, sOut.data(), sOut.size() );
 		}
 		else
 		{
