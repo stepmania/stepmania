@@ -1970,6 +1970,12 @@ save yourself some time, copy this for undocumented things:
 	<Function name='undistort' return='void' arguments=''>
 		Turns off distortion.
 	</Function>
+	<Function name='get_mult_attrs_with_diffuse' return='bool' arguments=''>
+		Returns whether the diffuse colors in the attributes are multiplied by the general diffuse colors of the BitmapText.
+	</Function>
+	<Function name='set_mult_attrs_with_diffuse' return='' arguments='bool mult'>
+		If mult_attrs_with_diffuse is set to true, then the diffuse colors in the attributes are multiplied by the general diffuse colors of the BitmapText.
+	</Function>
 	<Function name='jitter' return='void' arguments='bool bJitter'>
 		If <code>bJitter</code> is <code>true</code>, move each character of the string around by a small random amount.
 	</Function>

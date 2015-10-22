@@ -91,21 +91,28 @@ void NoteSkinManager::RefreshNoteSkinData( const Game* pGame )
 	for( unsigned j=0; j<asNoteSkinNames.size(); j++ )
 	{
 		RString sName = Rage::make_lower(asNoteSkinNames[j]);
-		LoadNoteSkinData( sName, g_mapNameToData[sName] );
+		// Don't feel like changing the structure of this code to load the skin
+		// into a temp variable and move it, so if the load fails, then just
+		// delete it from the map. -Kyz
+		if(!LoadNoteSkinData(sName, g_mapNameToData[sName]))
+		{
+			auto entry = g_mapNameToData.find(sName);
+			g_mapNameToData.erase(entry);
+		}
 	}
 }
 
-void NoteSkinManager::LoadNoteSkinData( const RString &sNoteSkinName, NoteSkinData& data_out )
+bool NoteSkinManager::LoadNoteSkinData( const RString &sNoteSkinName, NoteSkinData& data_out )
 {
 	data_out.sName = sNoteSkinName;
 	data_out.metrics.Clear();
 	data_out.vsDirSearchOrder.clear();
 
 	// Read the current NoteSkin and all of its fallbacks
-	LoadNoteSkinDataRecursive( sNoteSkinName, data_out );
+	return LoadNoteSkinDataRecursive( sNoteSkinName, data_out );
 }
 
-void NoteSkinManager::LoadNoteSkinDataRecursive( const RString &sNoteSkinName_, NoteSkinData& data_out )
+bool NoteSkinManager::LoadNoteSkinDataRecursive( const RString &sNoteSkinName_, NoteSkinData& data_out )
 {
 	RString sNoteSkinName(sNoteSkinName_);
 
@@ -118,7 +125,7 @@ void NoteSkinManager::LoadNoteSkinDataRecursive( const RString &sNoteSkinName_, 
 		if(iDepth >= 20)
 		{
 			LuaHelpers::ReportScriptError("Circular NoteSkin fallback references detected.", "NOTESKIN_ERROR");
-			return;
+			return false;
 		}
 
 		RString sDir = SpecialFiles::NOTESKINS_DIR + m_pCurGame->m_szName + "/" + sNoteSkinName + "/";
@@ -130,7 +137,7 @@ void NoteSkinManager::LoadNoteSkinDataRecursive( const RString &sNoteSkinName_, 
 				LuaHelpers::ReportScriptError("NoteSkin \"" + data_out.sName +
 					"\" references skin \"" + sNoteSkinName + "\" that is not present",
 					"NOTESKIN_ERROR");
-				return;
+				return false;
 			}
 		}
 
@@ -190,6 +197,7 @@ void NoteSkinManager::LoadNoteSkinDataRecursive( const RString &sNoteSkinName_, 
 		LUA->Release( L );
 	}
 	data_out.m_Loader = refScript;
+	return true;
 }
 
 

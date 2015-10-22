@@ -4,6 +4,25 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/10/18
+----------
+* [BitmapText] Added set_mult_attrs_with_diffuse lua function. [kyzentun]
+
+2015/10/17
+----------
+* [Course] Fixed loading of courses that use WORST entries. [wolfman2000]
+* [SextetStream] SextetStream stuff is now in all platforms. [wolfman2000]
+
+2015/10/15
+----------
+* [BMS] Changed bms loading so that iidx bms files aren't loaded as kb7.
+  [zardoru]
+
+2015/10/12
+----------
+* [ActorMultiVertex] Fixed bug that *sometimes* caused diffuse to be applied
+  to verts wrong. [kyzentun]
+
 2015/10/11
 ----------
 * [Song] Changed song loading to allow a song to have a blank MusicFile field

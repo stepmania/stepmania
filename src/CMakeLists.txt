@@ -148,7 +148,7 @@ if(MSVC)
 endif()
 
 set_target_properties("${SM_EXE_NAME}" PROPERTIES
-  COMPILE_FLAGS ${SM_COMPILE_FLAGS}
+  COMPILE_FLAGS "${SM_COMPILE_FLAGS}"
 )
 
 set_target_properties("${SM_EXE_NAME}" PROPERTIES
@@ -304,9 +304,11 @@ else() # Linux
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
       message("Host processor is 64bit")
       sm_add_compile_definition("${SM_EXE_NAME}" CPU_X86_64)
-    else()
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86")
       message("Host processor is 32bit")
       sm_add_compile_definition("${SM_EXE_NAME}" CPU_X86)
+    else()
+      message("Unrecognized host processor type")
     endif()
   endif()
   if (${HAS_FFMPEG})

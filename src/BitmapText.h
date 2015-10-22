@@ -73,6 +73,8 @@ public:
 	void SetJitter( bool b )	{ m_bJitter = b; }
 	void SetDistortion( float f );
 	void UnSetDistortion();
+	void set_mult_attrs_with_diffuse(bool m);
+	bool get_mult_attrs_with_diffuse();
 
 	void SetHorizAlign( float f );
 
@@ -127,6 +129,7 @@ protected:
 	bool		m_bRainbowScroll;
 	bool		m_bJitter;
 	bool		m_bUsingDistortion;
+	bool m_mult_attrs_with_diffuse;
 	float		m_fDistortion;
 	int			m_iVertSpacing;
 
