@@ -123,9 +123,6 @@ typedef long ssize_t;
 /* Defined to 1 if the underlying system uses big endian. */
 #cmakedefine ENDIAN_BIG 1
 
-/* Defined to 1 if version information will be printed out. */
-#cmakedefine HAVE_VERSION_INFO 1
-
 /* Defined to 1 if compiling with WAV support. */
 #cmakedefine HAS_WAV 1
 

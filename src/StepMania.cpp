@@ -69,10 +69,7 @@
 #include "SpecialFiles.h"
 #include "Profile.h"
 #include "ActorUtil.h"
-
-#ifdef HAVE_VERSION_INFO
 #include "ver.h"
-#endif
 
 #if defined(WIN32)
 #include <windows.h>
@@ -923,9 +920,7 @@ static void WriteLogHeader()
 {
 	LOG->Info("%s%s", PRODUCT_FAMILY, product_version);
 
-#if defined(HAVE_VERSION_INFO)
 	LOG->Info( "Compiled %s @ %s (build %s)", version_date, version_time, ::sm_version_git_hash);
-#endif
 
 	time_t cur_time;
 	time(&cur_time);
