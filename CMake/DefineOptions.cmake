@@ -49,7 +49,7 @@ if(WIN32)
   option(WITH_MINIMAID "Build with Minimaid Lights Support." ON)
 elseif(LINUX)
     # Builder beware: later versions of ffmpeg may break!
-    option(WITH_SYSTEM_FFMPEG "Build with the system's FFMPEG." OFF)
+    option(WITH_SYSTEM_FFMPEG "Build with the system's FFMPEG, disabled build with bundled's FFMPEG" OFF)
     option(WITH_CRYSTALHD_DISABLED "Build FFMPEG without Crystal HD support." OFF)
     option(WITH_TTY "Build with Linux TTY Input Support." OFF)
     option(WITH_PROFILING "Build with Profiling Support." OFF)
