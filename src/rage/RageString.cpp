@@ -3,7 +3,6 @@
 #include <cstring>
 #include <sstream>
 #include <algorithm>
-#include <vector>
 #include "RageUnicode.hpp"
 
 void make_upper( char *p, size_t len );
@@ -94,6 +93,34 @@ void Rage::replace(std::string &target, std::string const &from, std::string con
 	newString += target.substr(lastPos);
 
 	target.swap(newString);
+}
+
+std::string Rage::join(std::string const &delimiter, std::vector<std::string> const &source)
+{
+	if (source.empty())
+	{
+		return "";
+	}
+	return Rage::join(delimiter, source.begin(), source.end());
+}
+
+std::string Rage::join(std::string const &delimiter, std::vector<std::string>::const_iterator start, std::vector<std::string>::const_iterator finish )
+{
+	if (start == finish)
+	{
+		return "";
+	}
+	std::stringstream builder;
+	
+	auto append = [&builder, &delimiter](std::string const &target) {
+		builder << target;
+		builder << delimiter;
+	};
+	auto inclusive = finish - 1;
+	std::for_each(start, inclusive, append);
+	
+	builder << *inclusive;
+	return builder.str();
 }
 
 /* Branch optimizations: */

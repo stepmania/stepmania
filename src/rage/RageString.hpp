@@ -2,6 +2,7 @@
 #define RAGE_STRING_HPP_
 
 #include <string>
+#include <vector>
 
 namespace Rage
 {
@@ -43,6 +44,12 @@ namespace Rage
 
 	/** @brief Convert the string into its lowercase variant. */
 	std::string make_lower(std::string const &source);
+
+	/** @brief Join all of the strings together into one string. */
+	std::string join(std::string const &delimiter, std::vector<std::string> const &source);
+
+	/** @brief Join all of the strings together into one string. */
+	std::string join(std::string const &delimiter, std::vector<std::string>::const_iterator start, std::vector<std::string>::const_iterator finish );
 
 	/** @brief A trait to allow for case insensitive strings...assuming ASCII. */
 	struct ci_ascii_char_traits: public std::char_traits<char>

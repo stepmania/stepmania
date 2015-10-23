@@ -240,3 +240,50 @@ GTEST_TEST(RageString, make_lower_vertex_squared)
 	// Convert VERTEX² to vertex².
 	::test_casing("vertex\xc2\xb2", "VERTEX\xc2\xb2", &Rage::make_lower);
 }
+
+GTEST_TEST(RageString, join_nothing)
+{
+	std::vector<std::string> nothing;
+	EXPECT_EQ(Rage::join(",", nothing) == "", true);
+}
+
+GTEST_TEST(RageString, join_single)
+{
+	std::vector<std::string> single { "hello" };
+	EXPECT_EQ(Rage::join("-", single) == "hello", true);
+}
+
+GTEST_TEST(RageString, join_multiple)
+{
+	std::vector<std::string> filetypes { "ssc", "sm", "dwi", "bms", "ksf" };
+	std::string target = Rage::join("^^", filetypes);
+	EXPECT_EQ(target == "ssc^^sm^^dwi^^bms^^ksf", true);
+}
+
+GTEST_TEST(RageString, join_multiple_first_three)
+{
+	std::vector<std::string> filetypes { "ssc", "sm", "dwi", "bms", "ksf" };
+	std::string target = Rage::join("^^", filetypes.begin(), filetypes.begin() + 3);
+	EXPECT_EQ(target == "ssc^^sm^^dwi", true);
+}
+
+GTEST_TEST(RageString, join_multiple_middle_three)
+{
+	std::vector<std::string> filetypes { "ssc", "sm", "dwi", "bms", "ksf" };
+	std::string target = Rage::join("^^", filetypes.begin() + 1, filetypes.begin() + 4);
+	EXPECT_EQ(target == "sm^^dwi^^bms", true);
+}
+
+GTEST_TEST(RageString, join_multiple_last_three_begin)
+{
+	std::vector<std::string> filetypes { "ssc", "sm", "dwi", "bms", "ksf" };
+	std::string target = Rage::join("^^", filetypes.begin() + 2, filetypes.begin() + 5);
+	EXPECT_EQ(target == "dwi^^bms^^ksf", true);
+}
+
+GTEST_TEST(RageString, join_multiple_last_three_end)
+{
+	std::vector<std::string> filetypes { "ssc", "sm", "dwi", "bms", "ksf" };
+	std::string target = Rage::join("^^", filetypes.begin() + 2, filetypes.end());
+	EXPECT_EQ(target == "dwi^^bms^^ksf", true);
+}
