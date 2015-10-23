@@ -173,10 +173,6 @@ if (SM_BUILT_INCOMPLETE_TYPE)
   set(INCOMPLETE_TYPES_BROKEN 1)
 endif()
 
-if (WITH_VERSION_INFO)
-  set(HAVE_VERSION_INFO 1)
-endif()
-
 # Dependencies go here.
 include(ExternalProject)
 

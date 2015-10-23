@@ -8,9 +8,9 @@ NetworkSyncManager *NSMAN;
 
 // Aldo: version_num used by GetCurrentSMVersion()
 // XXX: That's probably not what you want... --root
-#if defined(HAVE_VERSION_INFO)
+
 #include "ver.h"
-#endif
+
 
 #if defined(WITHOUT_NETWORKING)
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld ) { useSMserver=false; isSMOnline = false; }
@@ -845,7 +845,7 @@ void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers 
 // Aldo: Please move this method to a new class, I didn't want to create new files because I don't know how to properly update the files for each platform.
 // I preferred to misplace code rather than cause unneeded headaches to non-windows users, although it would be nice to have in the wiki which files to
 // update when adding new files and how (Xcode/stepmania_xcode4.3.xcodeproj has a really crazy structure :/).
-#if !defined(HAVE_VERSION_INFO) || defined(CMAKE_POWERED)
+#if defined(CMAKE_POWERED)
 unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld ) { return 0; }
 #else
 unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )

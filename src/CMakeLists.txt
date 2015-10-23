@@ -94,10 +94,6 @@ set_target_properties("${SM_EXE_NAME}" PROPERTIES
   RELWITHDEBINFO_OUTPUT_NAME "${SM_NAME_RELWITHDEBINFO}"
 )
 
-if (WITH_VERSION_INFO)
-  sm_add_compile_definition("${SM_EXE_NAME}" HAVE_VERSION_INFO)
-endif()
-
 if (WITH_PORTABLE_TOMCRYPT)
   sm_add_compile_definition("${SM_EXE_NAME}" LTC_NO_ASM)
 elseif (WITH_NO_ROLC_TOMCRYPT OR APPLE)
