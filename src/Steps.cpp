@@ -242,8 +242,9 @@ float Steps::PredictMeter() const
 	};
 	const RadarValues &rv = GetRadarValues( PLAYER_1 );
 	for( int r = 0; r < NUM_RadarCategory; ++r )
+    {
 		pMeter += rv[r] * RadarCoeffs[r];
-
+    }
 	const float DifficultyCoeffs[NUM_Difficulty] =
 	{
 		-0.877f, -0.877f, 0, 0.722f, 0.722f, 0
@@ -325,8 +326,10 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 
 		NoteDataUtil::SplitCompositeNoteData( tempNoteData, vParts );
 		for( size_t pn = 0; pn < min(vParts.size(), size_t(NUM_PLAYERS)); ++pn )
+        {
 			NoteDataUtil::CalculateRadarValues( vParts[pn], fMusicLengthSeconds, m_CachedRadarValues[pn] );
-	}
+        }
+    }
 	else if (GAMEMAN->GetStepsTypeInfo(this->m_StepsType).m_StepsTypeCategory == StepsTypeCategory_Couple)
 	{
 		NoteData p1 = tempNoteData;

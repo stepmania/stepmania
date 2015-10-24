@@ -54,16 +54,20 @@ static void ReferenceAllDrivers( vector<LoadedDriver *> &apDriverList )
 {
 	g_Mutex->Lock();
 	apDriverList = g_pDrivers;
-	for( unsigned i = 0; i < apDriverList.size(); ++i )
-		++apDriverList[i]->m_iRefs;
+	for (auto *driver: apDriverList)
+	{
+		++driver->m_iRefs;
+	}
 	g_Mutex->Unlock();
 }
 
 static void UnreferenceAllDrivers( vector<LoadedDriver *> &apDriverList )
 {
 	g_Mutex->Lock();
-	for( unsigned i = 0; i < apDriverList.size(); ++i )
-		--apDriverList[i]->m_iRefs;
+	for (auto *driver: apDriverList)
+	{
+		--driver->m_iRefs;
+	}
 	g_Mutex->Broadcast();
 	g_Mutex->Unlock();
 
@@ -80,18 +84,18 @@ RageFileDriver *RageFileManager::GetFileDriver( RString sMountpoint )
 	g_Mutex->Lock();
 	RageFileDriver *pRet = nullptr;
 	Rage::ci_ascii_string ciMount{ sMountpoint };
-	for( unsigned i = 0; i < g_pDrivers.size(); ++i )
+	for (auto *driver: g_pDrivers)
 	{
-		if (g_pDrivers[i]->m_sType == "mountpoints")
+		if (driver->m_sType == "mountpoints")
 		{
 			continue;
 		}
-		if (ciMount != g_pDrivers[i]->m_sMountPoint)
+		if (ciMount != driver->m_sMountPoint)
 		{
 			continue;
 		}
-		pRet = g_pDrivers[i]->m_pDriver;
-		++g_pDrivers[i]->m_iRefs;
+		pRet = driver->m_pDriver;
+		++driver->m_iRefs;
 		break;
 	}
 	g_Mutex->Unlock();
@@ -174,9 +178,13 @@ public:
 		 * them, too.  That way, nothing can sneak in and get incorrect
 		 * results between the flush and the re-population. */
 		FDB->FlushDirCache();
-		for( unsigned i = 0; i < apDrivers.size(); ++i )
-			if( apDrivers[i]->m_sMountPoint != "/" )
-				FDB->AddFile( apDrivers[i]->m_sMountPoint, 0, 0 );
+		for (auto *driver: apDrivers)
+		{
+			if( driver->m_sMountPoint != "/" )
+			{
+				FDB->AddFile( driver->m_sMountPoint, 0, 0 );
+			}
+		}
 	}
 };
 static RageFileDriverMountpoints *g_Mountpoints = nullptr;
@@ -420,9 +428,8 @@ void RageFileManager::GetDirListing( const RString &sPath_, vector<RString> &Add
 
 	int iDriversThatReturnedFiles = 0;
 	int iOldSize = AddTo.size();
-	for( unsigned i = 0; i < apDriverList.size(); ++i )
+	for (auto *pLoadedDriver: apDriverList)
 	{
-		LoadedDriver *pLoadedDriver = apDriverList[i];
 		const RString p = pLoadedDriver->GetPath( sPath );
 		if( p.size() == 0 )
 			continue;
@@ -458,10 +465,9 @@ void RageFileManager::GetDirListing( const RString &sPath_, vector<RString> &Add
 
 void RageFileManager::GetDirListingWithMultipleExtensions( const RString &sPath, vector<RString> const& ExtensionList, vector<RString> &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
-	for(vector<RString>::const_iterator curr_ext= ExtensionList.begin();
-		curr_ext != ExtensionList.end(); ++curr_ext)
+	for (auto &item: ExtensionList)
 	{
-		GetDirListing(sPath + "*." + (*curr_ext), AddTo, bOnlyDirs, bReturnPathToo);
+		GetDirListing(sPath + "*." + item, AddTo, bOnlyDirs, bReturnPathToo);
 	}
 }
 
@@ -479,14 +485,14 @@ bool RageFileManager::Move( const RString &sOldPath_, const RString &sNewPath_ )
 
 	/* Multiple drivers may have the same file. */
 	bool Deleted = false;
-	for( unsigned i = 0; i < aDriverList.size(); ++i )
+	for (auto *driver: aDriverList)
 	{
-		const RString sOldDriverPath = aDriverList[i]->GetPath( sOldPath );
-		const RString sNewDriverPath = aDriverList[i]->GetPath( sNewPath );
+		const RString sOldDriverPath = driver->GetPath( sOldPath );
+		const RString sNewDriverPath = driver->GetPath( sNewPath );
 		if( sOldDriverPath.size() == 0 || sNewDriverPath.size() == 0 )
 			continue;
 
-		bool ret = aDriverList[i]->m_pDriver->Move( sOldDriverPath, sNewDriverPath );
+		bool ret = driver->m_pDriver->Move( sOldDriverPath, sNewDriverPath );
 		if( ret )
 			Deleted = true;
 	}
@@ -507,13 +513,13 @@ bool RageFileManager::Remove( const RString &sPath_ )
 
 	/* Multiple drivers may have the same file. */
 	bool bDeleted = false;
-	for( unsigned i = 0; i < apDriverList.size(); ++i )
+	for (auto *driver: apDriverList)
 	{
-		const RString p = apDriverList[i]->GetPath( sPath );
+		const RString p = driver->GetPath( sPath );
 		if( p.size() == 0 )
 			continue;
 
-		bool ret = apDriverList[i]->m_pDriver->Remove( p );
+		bool ret = driver->m_pDriver->Remove( p );
 		if( ret )
 			bDeleted = true;
 	}
@@ -712,12 +718,12 @@ void RageFileManager::GetLoadedDrivers( vector<DriverLocation> &asMounts )
 {
 	LockMut( *g_Mutex );
 
-	for( unsigned i = 0; i < g_pDrivers.size(); ++i )
+	for (auto *driver: g_pDrivers)
 	{
 		DriverLocation l;
-		l.MountPoint = g_pDrivers[i]->m_sMountPoint;
-		l.Type = g_pDrivers[i]->m_sType;
-		l.Root = g_pDrivers[i]->m_sRoot;
+		l.MountPoint = driver->m_sMountPoint;
+		l.Type = driver->m_sType;
+		l.Root = driver->m_sRoot;
 		asMounts.push_back( l );
 	}
 }
@@ -730,19 +736,21 @@ void RageFileManager::FlushDirCache( const RString &sPath_ )
 
 	if( sPath == "" )
 	{
-		for( unsigned i = 0; i < g_pDrivers.size(); ++i )
-			g_pDrivers[i]->m_pDriver->FlushDirCache( "" );
+		for (auto *driver: g_pDrivers)
+		{
+			driver->m_pDriver->FlushDirCache( "" );
+		}
 		return;
 	}
 
 	/* Flush a specific path. */
 	NormalizePath( sPath );
-	for( unsigned i = 0; i < g_pDrivers.size(); ++i )
+	for (auto *driver: g_pDrivers)
 	{
-		const RString &path = g_pDrivers[i]->GetPath( sPath );
+		const RString &path = driver->GetPath( sPath );
 		if( path.size() == 0 )
 			continue;
-		g_pDrivers[i]->m_pDriver->FlushDirCache( path );
+		driver->m_pDriver->FlushDirCache( path );
 	}
 }
 
@@ -756,12 +764,12 @@ RageFileManager::FileType RageFileManager::GetFileType( const RString &sPath_ )
 	ReferenceAllDrivers( apDriverList );
 
 	RageFileManager::FileType ret = TYPE_NONE;
-	for( unsigned i = 0; i < apDriverList.size(); ++i )
+	for (auto *driver: apDriverList)
 	{
-		const RString p = apDriverList[i]->GetPath( sPath );
+		const RString p = driver->GetPath( sPath );
 		if( p.size() == 0 )
 			continue;
-		ret = apDriverList[i]->m_pDriver->GetFileType( p );
+		ret = driver->m_pDriver->GetFileType( p );
 		if( ret != TYPE_NONE )
 			break;
 	}
@@ -782,12 +790,12 @@ int RageFileManager::GetFileSizeInBytes( const RString &sPath_ )
 	ReferenceAllDrivers( apDriverList );
 
 	int iRet = -1;
-	for( unsigned i = 0; i < apDriverList.size(); ++i )
+	for (auto *driver: apDriverList)
 	{
-		const RString p = apDriverList[i]->GetPath( sPath );
+		const RString p = driver->GetPath( sPath );
 		if( p.size() == 0 )
 			continue;
-		iRet = apDriverList[i]->m_pDriver->GetFileSizeInBytes( p );
+		iRet = driver->m_pDriver->GetFileSizeInBytes( p );
 		if( iRet != -1 )
 			break;
 	}
@@ -806,12 +814,12 @@ int RageFileManager::GetFileHash( const RString &sPath_ )
 	ReferenceAllDrivers( apDriverList );
 
 	int iRet = -1;
-	for( unsigned i = 0; i < apDriverList.size(); ++i )
+	for (auto *driver: apDriverList)
 	{
-		const RString p = apDriverList[i]->GetPath( sPath );
+		const RString p = driver->GetPath( sPath );
 		if( p.size() == 0 )
 			continue;
-		iRet = apDriverList[i]->m_pDriver->GetFileHash( p );
+		iRet = driver->m_pDriver->GetFileHash( p );
 		if( iRet != -1 )
 			break;
 	}
@@ -830,9 +838,8 @@ RString RageFileManager::ResolvePath(const RString &path)
 	vector<LoadedDriver *> apDriverList;
 	ReferenceAllDrivers( apDriverList );
 
-	for( unsigned i = 0; i < apDriverList.size(); ++i )
+	for (auto *pDriver: apDriverList)
 	{
-		LoadedDriver *pDriver = apDriverList[i];
 		const RString driverPath = pDriver->GetPath( tmpPath );
 
 		if ( driverPath.empty() || pDriver->m_sRoot.empty() )
@@ -924,14 +931,13 @@ RageFileBasic *RageFileManager::OpenForReading( const RString &sPath, int mode, 
 	vector<LoadedDriver *> apDriverList;
 	ReferenceAllDrivers( apDriverList );
 
-	for( unsigned i = 0; i < apDriverList.size(); ++i )
+	for (auto *ld: apDriverList)
 	{
-		LoadedDriver &ld = *apDriverList[i];
-		const RString path = ld.GetPath( sPath );
+		const RString path = ld->GetPath( sPath );
 		if( path.size() == 0 )
 			continue;
 		int error;
-		RageFileBasic *ret = ld.m_pDriver->Open( path, mode, error );
+		RageFileBasic *ret = ld->m_pDriver->Open( path, mode, error );
 		if( ret )
 		{
 			UnreferenceAllDrivers( apDriverList );
@@ -997,9 +1003,9 @@ RageFileBasic *RageFileManager::OpenForWriting( const RString &sPath, int mode, 
 		iMaximumDriver = Values[0].first;
 
 	iError = 0;
-	for( unsigned i = 0; i < Values.size(); ++i )
+	for (auto &value: Values)
 	{
-		const int iDriver = Values[i].first;
+		const int iDriver = value.first;
 		if( iDriver > iMaximumDriver )
 			continue;
 		LoadedDriver &ld = *apDriverList[iDriver];
@@ -1147,9 +1153,9 @@ unsigned int GetHashForDirectory( const RString &sDir )
 
 	vector<RString> arrayFiles;
 	GetDirListing( sDir+"*", arrayFiles, false );
-	for( unsigned i=0; i<arrayFiles.size(); i++ )
+	for (auto &file: arrayFiles)
 	{
-		const RString sFilePath = sDir + arrayFiles[i];
+		const RString sFilePath = sDir + file;
 		hash += GetHashForFile( sFilePath );
 	}
 

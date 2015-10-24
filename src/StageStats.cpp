@@ -335,7 +335,8 @@ bool StageStats::PlayerHasHighScore( PlayerNumber pn ) const
 
 	int iScore = m_player[pn].m_iScore;
 	float fPercentDP = m_player[pn].GetPercentDancePoints();
-	for( int h=0; h<(int)hsl.vHighScores.size() && h<PREFSMAN->m_iMaxHighScoresPerListForMachine; ++h )
+
+	for( int h = 0; h < static_cast<int>(hsl.vHighScores.size()) && h < PREFSMAN->m_iMaxHighScoresPerListForMachine; ++h )
 	{
 		const HighScore &hs = hsl.vHighScores[h];
 		if( hs.GetName() == RANKING_TO_FILL_IN_MARKER[pn]  &&

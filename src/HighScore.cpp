@@ -330,10 +330,12 @@ void HighScoreList::AddHighScore( HighScore hs, int &iIndexOut, bool bIsMachine 
 {
 	using std::min;
 	int i;
-	for( i=0; i<(int)vHighScores.size(); i++ )
+	for( i=0; i< static_cast<int>(vHighScores.size()); i++ )
 	{
 		if( hs >= vHighScores[i] )
+		{
 			break;
+		}
 	}
 	const int iMaxScores = bIsMachine ?
 		PREFSMAN->m_iMaxHighScoresPerListForMachine :
@@ -382,9 +384,8 @@ XNode* HighScoreList::CreateNode() const
 	if( HighGrade != Grade_NoData )
 		pNode->AppendChild( "HighGrade", GradeToString(HighGrade) );
 
-	for( unsigned i=0; i<vHighScores.size(); i++ )
+	for (auto const &hs: vHighScores)
 	{
-		const HighScore &hs = vHighScores[i];
 		pNode->AppendChild( hs.CreateNode() );
 	}
 
@@ -559,7 +560,7 @@ public:
 	static int GetHighScores( T* p, lua_State *L )
 	{
 		lua_newtable(L);
-		for( int i = 0; i < (int) p->vHighScores.size(); ++i )
+		for( int i = 0; i < static_cast<int>(p->vHighScores.size()); ++i )
 		{
 			p->vHighScores[i].PushSelf(L);
 			lua_rawseti( L, -2, i+1 );
@@ -571,11 +572,11 @@ public:
 	static int GetHighestScoreOfName( T* p, lua_State *L )
 	{
 		RString name= SArg(1);
-		for(size_t i= 0; i < p->vHighScores.size(); ++i)
+		for (auto &score: p->vHighScores)
 		{
-			if(name == p->vHighScores[i].GetName())
+			if(name == score.GetName())
 			{
-				p->vHighScores[i].PushSelf(L);
+				score.PushSelf(L);
 				return 1;
 			}
 		}

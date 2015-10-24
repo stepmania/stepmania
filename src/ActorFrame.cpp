@@ -9,6 +9,7 @@
 #include "ActorUtil.h"
 #include "RageDisplay.h"
 #include "ScreenDimensions.h"
+#include <numeric>
 
 using std::vector;
 
@@ -73,10 +74,10 @@ ActorFrame::ActorFrame( const ActorFrame &cpy ):
 	 * the current order of m_SubActors. */
 	if( m_bDeleteChildren )
 	{
-		for( unsigned i = 0; i < cpy.m_SubActors.size(); ++i )
+		for (auto *copyActor: cpy.m_SubActors)
 		{
-			Actor *pActor = cpy.m_SubActors[i]->Copy();
-			this->AddChild( pActor );
+			Actor *actor = copyActor->Copy();
+			this->AddChild(actor);
 		}
 	}
 }
@@ -269,20 +270,20 @@ void ActorFrame::DrawPrimitives()
 	{
 		vector<Actor*> subs = m_SubActors;
 		ActorUtil::SortByZPosition( subs );
-		for( unsigned i=0; i<subs.size(); i++ )
+		for (auto *sub: subs)
 		{
-			subs[i]->SetInternalDiffuse( diffuse );
-			subs[i]->SetInternalGlow( glow );
-			subs[i]->Draw();
+			sub->SetInternalDiffuse( diffuse );
+			sub->SetInternalGlow( glow );
+			sub->Draw();
 		}
 	}
 	else
 	{
-		for( unsigned i=0; i<m_SubActors.size(); i++ )
+		for (auto *sub: m_SubActors)
 		{
-			m_SubActors[i]->SetInternalDiffuse( diffuse );
-			m_SubActors[i]->SetInternalGlow( glow );
-			m_SubActors[i]->Draw();
+			sub->SetInternalDiffuse(diffuse);
+			sub->SetInternalGlow(glow);
+			sub->Draw();
 		}
 	}
 }
@@ -456,21 +457,27 @@ void ActorFrame::PlayCommandOnLeaves( const RString &sCommandName, const LuaRefe
 
 void ActorFrame::RunCommandsRecursively( const LuaReference& cmds, const LuaReference *pParamTable )
 {
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->RunCommandsRecursively( cmds, pParamTable );
+	for (auto *actor: m_SubActors)
+	{
+		actor->RunCommandsRecursively( cmds, pParamTable );
+	}
 	Actor::RunCommandsRecursively( cmds, pParamTable );
 }
 
 void ActorFrame::RunCommandsOnChildren( const LuaReference& cmds, const LuaReference *pParamTable )
 {
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->RunCommands( cmds, pParamTable );
+	for (auto *actor: m_SubActors)
+	{
+		actor->RunCommands( cmds, pParamTable );
+	}
 }
 
 void ActorFrame::RunCommandsOnLeaves( const LuaReference& cmds, const LuaReference *pParamTable )
 {
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->RunCommandsOnLeaves( cmds, pParamTable );
+	for (auto *actor: m_SubActors)
+	{
+		actor->RunCommandsOnLeaves( cmds, pParamTable );
+	}
 }
 
 void ActorFrame::UpdateInternal( float fDeltaTime )
@@ -482,10 +489,9 @@ void ActorFrame::UpdateInternal( float fDeltaTime )
 	Actor::UpdateInternal( fDeltaTime );
 
 	// update all sub-Actors
-	for( vector<Actor*>::iterator it=m_SubActors.begin(); it!=m_SubActors.end(); it++ )
+	for (auto *actor: m_SubActors)
 	{
-		Actor *pActor = *it;
-		pActor->Update(fDeltaTime);
+		actor->Update(fDeltaTime);
 	}
 
 	if( unlikely(!m_UpdateFunction.IsNil()) )
@@ -511,8 +517,10 @@ void ActorFrame::UpdateInternal( float fDeltaTime )
 		Actor::cmd();					\
 										\
 		/* set all sub-Actors */		\
-		for( unsigned i=0; i<m_SubActors.size(); i++ ) \
-			m_SubActors[i]->cmd();		\
+		for (auto *macroActor: m_SubActors) \
+		{ \
+			macroActor->cmd();		\
+		} \
 	}
 
 #define PropagateActorFrameCommand1Param( cmd, type ) \
@@ -521,8 +529,10 @@ void ActorFrame::UpdateInternal( float fDeltaTime )
 		Actor::cmd( f );				\
 										\
 		/* set all sub-Actors */		\
-		for( unsigned i=0; i<m_SubActors.size(); i++ ) \
-			m_SubActors[i]->cmd( f );	\
+		for (auto *macroActor: m_SubActors) \
+		{ \
+			macroActor->cmd(f); \
+		} \
 	}
 
 PropagateActorFrameCommand(FinishTweening);
@@ -534,17 +544,11 @@ PropagateActorFrameCommand1Param(recursive_set_mask_color, Rage::Color);
 
 float ActorFrame::GetTweenTimeLeft() const
 {
-	using std::max;
-	float m = Actor::GetTweenTimeLeft();
-
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-	{
-		const Actor* pActor = m_SubActors[i];
-		m = max(m, m_fHibernateSecondsLeft + pActor->GetTweenTimeLeft());
-	}
-
-	return m;
-
+	auto getMax = [this](float const curr, Actor const *actor) {
+		return std::max(curr, this->m_fHibernateSecondsLeft + actor->GetTweenTimeLeft());
+	};
+	
+	return std::accumulate(m_SubActors.begin(), m_SubActors.end(), Actor::GetTweenTimeLeft(), getMax);
 }
 
 static bool CompareActorsByDrawOrder(const Actor *p1, const Actor *p2)
@@ -560,8 +564,10 @@ void ActorFrame::SortByDrawOrder()
 
 void ActorFrame::DeleteAllChildren()
 {
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		delete m_SubActors[i];
+	for (auto *actor: m_SubActors)
+	{
+		delete actor;
+	}
 	m_SubActors.clear();
 }
 
@@ -586,10 +592,9 @@ void ActorFrame::HandleMessage( const Message &msg )
 	if( msg.IsBroadcast() )
 		return;
 
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
+	for (auto *actor: m_SubActors)
 	{
-		Actor* pActor = m_SubActors[i];
-		pActor->HandleMessage( msg );
+		actor->HandleMessage( msg );
 	}
 }
 

@@ -21,17 +21,17 @@ void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, con
 	vector<RString> arrayMultiplierExpressions;
 	split( sParam, ",", arrayMultiplierExpressions );
 
-	for( unsigned f=0; f<arrayMultiplierExpressions.size(); f++ )
+	for (auto &expression: arrayMultiplierExpressions)
 	{
 		vector<RString> arrayMultiplierValues;
-		split( arrayMultiplierExpressions[f], "=", arrayMultiplierValues );
+		split( expression, "=", arrayMultiplierValues );
 		unsigned size = arrayMultiplierValues.size();
 		if( size < 2 )
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
 				     "has an invalid #MULTIPLIER value \"%s\" (must have at least one '='), ignored.",
-				     arrayMultiplierExpressions[f].c_str() );
+				     expression.c_str() );
 			continue;
 		}
 		const float fComboBeat = RowToBeat( arrayMultiplierValues[0], iRowsPerBeat );
@@ -357,11 +357,13 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 			vector<RString> aFGChangeExpressions;
 			split( sParams[1], ",", aFGChangeExpressions );
 
-			for( unsigned b=0; b<aFGChangeExpressions.size(); b++ )
+			for (auto &expression: aFGChangeExpressions)
 			{
 				BackgroundChange change;
-				if( LoadFromBGChangesString( change, aFGChangeExpressions[b] ) )
+				if( LoadFromBGChangesString( change, expression ) )
+				{
 					out.AddForegroundChange( change );
+				}
 			}
 		}
 

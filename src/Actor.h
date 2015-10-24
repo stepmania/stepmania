@@ -463,8 +463,21 @@ public:
 
 	void SetGlobalDiffuseColor( Rage::Color c );
 
-	virtual void SetDiffuse( Rage::Color c )		{ for(int i=0; i<NUM_DIFFUSE_COLORS; i++) DestTweenState().diffuse[i] = c; };
-	virtual void SetDiffuseAlpha( float f )		{ for(int i = 0; i < NUM_DIFFUSE_COLORS; ++i) { Rage::Color c = GetDiffuses( i ); c.a = f; SetDiffuses( i, c ); } }
+	virtual void SetDiffuse( Rage::Color c )
+	{
+		for(int i=0; i<NUM_DIFFUSE_COLORS; i++)
+		{
+			DestTweenState().diffuse[i] = c;
+		}
+	}
+	virtual void SetDiffuseAlpha( float f )
+	{
+		for(int i = 0; i < NUM_DIFFUSE_COLORS; ++i)
+		{
+			Rage::Color c = GetDiffuses( i );
+			c.a = f; SetDiffuses( i, c );
+		}
+	}
 	float GetCurrentDiffuseAlpha() const		{ return m_current.diffuse[0].a; }
 	void SetDiffuseColor( Rage::Color c );
 	void SetDiffuses( int i, Rage::Color c )		{ DestTweenState().diffuse[i] = c; };

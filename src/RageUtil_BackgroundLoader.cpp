@@ -36,10 +36,10 @@ static void DeleteEmptyDirectories( RString sDir )
 {
 	vector<RString> asNewDirs;
 	GetDirListing( sDir + "/*", asNewDirs, false, true );
-	for( unsigned i = 0; i < asNewDirs.size(); ++i )
+	for (auto &item: asNewDirs)
 	{
-		ASSERT_M( IsADirectory(asNewDirs[i]), asNewDirs[i] );
-		DeleteEmptyDirectories( asNewDirs[i] );
+		ASSERT_M( IsADirectory(item), item );
+		DeleteEmptyDirectories( item );
 	}
 
 	FILEMAN->Remove( sDir );

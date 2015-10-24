@@ -12,9 +12,13 @@ using std::vector;
 
 void ForceToAscii( RString &str )
 {
-	for( unsigned i=0; i<str.size(); ++i )
-		if( str[i] < 0x20 || str[i] > 0x7E )
-			str[i] = '?';
+	for (auto &ch: str)
+	{
+		if (ch < 0x20 || ch > 0x7E)
+		{
+			ch = '?';
+		}
+	}
 }
 
 bool RageMovieTexture::GetFourCC( RString fn, RString &handler, RString &type )

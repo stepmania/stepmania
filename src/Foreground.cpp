@@ -15,8 +15,10 @@ Foreground::~Foreground()
 
 void Foreground::Unload()
 {
-	for( unsigned i=0; i < m_BGAnimations.size(); ++i )
-		delete m_BGAnimations[i].m_bga;
+	for (auto &bga: m_BGAnimations)
+	{
+		delete bga.m_bga;
+	}
 	m_BGAnimations.clear();
 	m_SubActors.clear();
 	m_fLastMusicSeconds = -9999;
@@ -77,10 +79,8 @@ void Foreground::Update( float fDeltaTime )
 	// Calls to Update() should *not* be scaled by music rate. Undo it.
 	const float fRate = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 
-	for( unsigned i=0; i < m_BGAnimations.size(); ++i )
+	for (auto &bga: m_BGAnimations)
 	{
-		LoadedBGA &bga = m_BGAnimations[i];
-
 		if( GAMESTATE->m_Position.m_fSongBeat < bga.m_fStartBeat )
 		{
 			// The animation hasn't started yet.

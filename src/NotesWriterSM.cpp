@@ -109,9 +109,9 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	const vector<TimingSegment *> &delays = timing.GetTimingSegments(SEGMENT_DELAY);
 
 	std::map<float, float> allPauses;
-	for( unsigned i=0; i<stops.size(); i++ )
+	for (auto *item: stops)
 	{
-		const StopSegment *fs = ToStop( stops[i] );
+		const StopSegment *fs = ToStop( item );
 
 		allPauses.insert(std::pair<float, float>(fs->GetBeat(), fs->GetPause()));
 
@@ -188,14 +188,16 @@ static void WriteGlobalTags( RageFile &f, Song &out )
  * @return the joined lines. */
 static RString JoinLineList( vector<RString> &lines )
 {
-	for( unsigned i = 0; i < lines.size(); ++i )
-		TrimRight( lines[i] );
-
+	for (auto &line: lines)
+	{
+		TrimRight( line );
+	}
 	/* Skip leading blanks. */
 	unsigned j = 0;
 	while( j < lines.size() && lines.size() == 0 )
+	{
 		++j;
-
+	}
 	return join( "\r\n", lines.begin()+j, lines.end() );
 }
 

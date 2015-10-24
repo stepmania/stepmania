@@ -121,15 +121,15 @@ bool InputQueueCode::EnteredCode( GameController controller ) const
 
 			// Check that m_aButtonsToHold were being held when the buttons were pressed.
 			bool bAllHeldButtonsOK = true;
-			for( unsigned i=0; i<Press.m_aButtonsToHold.size(); i++ )
+			for (auto &button: Press.m_aButtonsToHold)
 			{
-				GameInput gi( controller, Press.m_aButtonsToHold[i] );
+				GameInput gi( controller, button );
 				if( !INPUTMAPPER->IsBeingPressed(gi, MultiPlayer_Invalid, &pIEP->InputList) )
 					bAllHeldButtonsOK = false;
 			}
-			for( unsigned i=0; i<Press.m_aButtonsToNotHold.size(); i++ )
+			for (auto &button: Press.m_aButtonsToNotHold)
 			{
-				GameInput gi( controller, Press.m_aButtonsToNotHold[i] );
+				GameInput gi( controller, button );
 				if( INPUTMAPPER->IsBeingPressed(gi, MultiPlayer_Invalid, &pIEP->InputList) )
 					bAllHeldButtonsOK = false;
 			}
@@ -185,10 +185,9 @@ bool InputQueueCode::Load( RString sButtonsNames )
 		}
 
 		m_aPresses.push_back( ButtonPress() );
-		for( unsigned i=0; i<asButtonNames.size(); i++ )	// for each button in this code
+		// TODO: Verify if a reference can be used.
+		for (auto sButtonName: asButtonNames)
 		{
-			RString sButtonName = asButtonNames[i];
-
 			bool bHold = false;
 			bool bNotHold = false;
 			for (;;)

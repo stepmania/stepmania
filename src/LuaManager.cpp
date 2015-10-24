@@ -463,10 +463,9 @@ void LuaManager::RegisterTypes()
 
 	if( g_vRegisterActorTypes )
 	{
-		for( unsigned i=0; i<g_vRegisterActorTypes->size(); i++ )
+		for (auto *actorType: *g_vRegisterActorTypes)
 		{
-			RegisterWithLuaFn fn = (*g_vRegisterActorTypes)[i];
-			fn( L );
+			actorType(L);
 		}
 	}
 
@@ -814,11 +813,11 @@ XNode *LuaHelpers::GetLuaInformation()
 	}
 
 	/* Namespaces */
-	for( auto iter = mNamespaces.begin(); iter != mNamespaces.end(); ++iter )
+	for (auto &iter: mNamespaces)
 	{
 		XNode *pNamespaceNode = pNamespacesNode->AppendChild( "Namespace" );
-		const vector<RString> &vNamespace = iter->second;
-		pNamespaceNode->AppendAttr( "name", iter->first );
+		const vector<RString> &vNamespace = iter.second;
+		pNamespaceNode->AppendAttr( "name", iter.first );
 
 		for (auto const &func: vNamespace)
 		{
@@ -828,12 +827,12 @@ XNode *LuaHelpers::GetLuaInformation()
 	}
 
 	/* Enums */
-	for( auto iter = mEnums.begin(); iter != mEnums.end(); ++iter )
+	for (auto &iter: mEnums)
 	{
 		XNode *pEnumNode = pEnumsNode->AppendChild( "Enum" );
 
-		const vector<RString> &vEnum = iter->second;
-		pEnumNode->AppendAttr( "name", iter->first );
+		const vector<RString> &vEnum = iter.second;
+		pEnumNode->AppendAttr( "name", iter.first );
 
 		for( unsigned i = 0; i < vEnum.size(); ++i )
 		{
@@ -958,7 +957,9 @@ bool LuaHelpers::RunScriptOnStack( Lua *L, RString &Error, int Args, int ReturnV
 		}
 		lua_remove( L, ErrFunc );
 		for( int i = 0; i < ReturnValues; ++i )
+		{
 			lua_pushnil( L );
+		}
 		return false;
 	}
 
@@ -978,7 +979,9 @@ bool LuaHelpers::RunScript( Lua *L, const RString &Script, const RString &Name, 
 		}
 		lua_pop( L, Args );
 		for( int i = 0; i < ReturnValues; ++i )
+		{
 			lua_pushnil( L );
+		}
 		return false;
 	}
 
@@ -1131,7 +1134,9 @@ namespace
 	{
 		int iArgs = lua_tointeger( L, lua_upvalueindex(1) );
 		for( int i = 0; i < iArgs; ++i )
+		{
 			lua_pushvalue( L, lua_upvalueindex(i+2) );
+		}
 		return iArgs;
 	}
 }

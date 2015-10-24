@@ -251,8 +251,12 @@ void Song::GetDisplayBpms( DisplayBpms &AddTo ) const
 const BackgroundChange &Song::GetBackgroundAtBeat( BackgroundLayer iLayer, float fBeat ) const
 {
 	for( unsigned i=0; i<GetBackgroundChanges(iLayer).size()-1; i++ )
+	{
 		if( GetBackgroundChanges(iLayer)[i+1].m_fStartBeat > fBeat )
+		{
 			return GetBackgroundChanges(iLayer)[i];
+		}
+	}
 	return GetBackgroundChanges(iLayer)[0];
 }
 
@@ -428,13 +432,12 @@ bool Song::ReloadFromSongDir( RString sDir )
 	 * (instead of the copy used above), and constructing a map to let us
 	 * easily find the new steps. */
 	std::unordered_map<StepsID, Steps*> mNewSteps;
-	for( vector<Steps*>::const_iterator it = m_vpSteps.begin(); it != m_vpSteps.end(); ++it )
+	for (auto *item: m_vpSteps)
 	{
-		(*it)->m_pSong = this;
-
+		item->m_pSong = this;
 		StepsID id;
-		id.FromSteps( *it );
-		mNewSteps[id] = *it;
+		id.FromSteps(item);
+		mNewSteps[id] = item;
 	}
 
 	// Now we wipe out the new pointers, which were shallow copied and not deep copied...
@@ -469,11 +472,12 @@ bool Song::ReloadFromSongDir( RString sDir )
 		}
 	}
 	// The leftovers in the map are steps that didn't exist before we reverted
-	for( auto it = mNewSteps.begin(); it != mNewSteps.end(); ++it )
+	for (auto &item: mNewSteps)
 	{
-		Steps *NewSteps = new Steps(this);
-		*NewSteps = *(it->second);
-		AddSteps( NewSteps );
+		// TODO: Confirm if initializing a new Steps is necessary.
+		Steps *replacementSteps = new Steps(this);
+		replacementSteps = item.second;
+		AddSteps(replacementSteps);
 	}
 
 	AddAutoGenNotes();
@@ -487,9 +491,9 @@ bool Song::ReloadFromSongDir( RString sDir )
 	to_reload.push_back(m_sBackgroundFile);
 	to_reload.push_back(m_sCDTitleFile);
 	to_reload.push_back(m_sPreviewVidFile);
-	for(vector<RString>::iterator file= to_reload.begin(); file != to_reload.end(); ++file)
+	for (auto &file: to_reload)
 	{
-		RageTextureID id(*file);
+		RageTextureID id(file);
 		if(TEXTUREMAN->IsTextureRegistered(id))
 		{
 			RageTexture* tex= TEXTUREMAN->LoadTexture(id);
@@ -509,16 +513,16 @@ void Song::LoadEditsFromSongDir(RString dir)
 	vector<RString> vs;
 	GetDirListing(dir + "*.edit", vs, false, false);
 	// XXX: I'm sure there's a StepMania way of doing this, but familiar with this codebase I am not.
-	for(unsigned int i = 0; i < vs.size(); ++i)
+	for (auto &file: vs)
 	{
 		// Try SSCLoader
 		SSCLoader ldSSC;
-		if(ldSSC.LoadEditFromFile(dir + vs[i], ProfileSlot_Invalid, true, this) != true)
+		if(ldSSC.LoadEditFromFile(dir + file, ProfileSlot_Invalid, true, this) != true)
 		{
 			// No dice? Try SMLoader then. If SMLoader fails too, well whatever.
 			// We don't have to do anything to fail gracefully.
 			SMLoader ldSM;
-			ldSM.LoadEditFromFile(dir + vs[i], ProfileSlot_Invalid, true, this);
+			ldSM.LoadEditFromFile(dir + file, ProfileSlot_Invalid, true, this);
 		}
 	}
 	// Note: If vs.empty() then this loop is skipped entirely (vs.size() == 0)
@@ -670,21 +674,19 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 		fill_exts.push_back(&ActorUtil::GetTypeExtensionList(FT_Movie));
 		lists_to_fill.push_back(&lyric_list);
 		fill_exts.push_back(&lyric_extensions);
-		for(vector<RString>::iterator filename= song_dir_listing.begin();
-				filename != song_dir_listing.end(); ++filename)
+		for (auto &filename: song_dir_listing)
 		{
 			bool matched_something= false;
-			RString file_ext = Rage::make_lower(GetExtension(*filename));
+			RString file_ext = Rage::make_lower(GetExtension(filename));
 			if(!file_ext.empty())
 			{
-				for(size_t tf= 0; tf < lists_to_fill.size(); ++ tf)
+				for(size_t tf = 0; tf < lists_to_fill.size(); ++tf)
 				{
-					for(vector<RString>::const_iterator ext= fill_exts[tf]->begin();
-							ext != fill_exts[tf]->end(); ++ext)
+					for (auto const &ext: *fill_exts[tf])
 					{
-						if(file_ext == *ext)
+						if(file_ext == ext)
 						{
-							lists_to_fill[tf]->push_back(*filename);
+							lists_to_fill[tf]->push_back(filename);
 							matched_something= true;
 							break;
 						}
@@ -901,15 +903,14 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 
 		/* Now, For the images we still haven't found,
 		 * look at the image dimensions of the remaining unclassified images. */
-		for(unsigned int i= 0; i < image_list.size(); ++i) // foreach image
+		for (auto image: image_list)
 		{
 			if(m_bHasBanner && m_bHasBackground && has_cdtitle)
 				break; // done
 
 			// ignore DWI "-char" graphics
-			RString lower = image_list[i];
-			Rage::ci_ascii_string lowerImage{ image_list[i] };
-			lower = Rage::make_lower(lower);
+			Rage::ci_ascii_string lowerImage{ image };
+			auto lower = Rage::make_lower(image);
 			if(BlacklistedImages.find(lower) != BlacklistedImages.end())
 				continue;	// skip
 
@@ -933,7 +934,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			if(has_cdimage && lowerImage == m_sCDFile)
 				continue;	// skip
 
-			RString sPath = m_sSongDir + image_list[i];
+			RString sPath = m_sSongDir + lower;
 
 			// We only care about the dimensions.
 			RString error;
@@ -950,7 +951,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 
 			if(!m_bHasBackground && width >= 320 && height >= 240)
 			{
-				m_sBackgroundFile = image_list[i];
+				m_sBackgroundFile = lower;
 				m_bHasBackground= true;
 				continue;
 			}
@@ -958,7 +959,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			if(!m_bHasBanner && 100 <= width && width <= 320 &&
 				50 <= height && height <= 240)
 			{
-				m_sBannerFile = image_list[i];
+				m_sBannerFile = lower;
 				m_bHasBanner= true;
 				continue;
 			}
@@ -967,7 +968,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			 * (over 2:1; usually over 3:1), and large (not a cdtitle). */
 			if(!m_bHasBanner && width > 200 && float(width) / height > 2.0f)
 			{
-				m_sBannerFile = image_list[i];
+				m_sBannerFile = lower;
 				m_bHasBanner= true;
 				continue;
 			}
@@ -989,7 +990,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			 */
 			if(!has_cdtitle && width <= 100 && height <= 48)
 			{
-				m_sCDTitleFile = image_list[i];
+				m_sCDTitleFile = lower;
 				has_cdtitle= true;
 				continue;
 			}
@@ -997,7 +998,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			// Jacket files typically have the same width and height.
 			if(!has_jacket && width == height)
 			{
-				m_sJacketFile = image_list[i];
+				m_sJacketFile = lower;
 				has_jacket= true;
 				continue;
 			}
@@ -1005,9 +1006,9 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			// Disc images are typically rectangular; make sure we have a banner already.
 			if(!has_disc && (width > height) && m_bHasBanner)
 			{
-				if(image_list[i] != m_sBannerFile)
+				if(lower != m_sBannerFile)
 				{
-					m_sDiscFile = image_list[i];
+					m_sDiscFile = lower;
 					has_disc= true;
 				}
 				continue;
@@ -1016,7 +1017,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			// CD images are the same as Jackets, typically the same width and height
 			if(!has_cdimage && width == height)
 			{
-				m_sCDFile = image_list[i];
+				m_sCDFile = lower;
 				has_cdimage= true;
 				continue;
 			}
@@ -1079,8 +1080,10 @@ void Song::ReCalculateRadarValuesAndLastSecond(bool fromCache, bool duringCache)
 	if( fromCache && this->GetFirstSecond() >= 0 && this->GetLastSecond() > 0 )
 	{
 		// this is loaded from cache, then we just have to calculate the radar values.
-		for( unsigned i=0; i<m_vpSteps.size(); i++ )
-			m_vpSteps[i]->CalculateRadarValues( m_fMusicLengthSeconds );
+		for (auto *step: m_vpSteps)
+		{
+			step->CalculateRadarValues( m_fMusicLengthSeconds );
+		}
 		return;
 	}
 
@@ -1088,10 +1091,8 @@ void Song::ReCalculateRadarValuesAndLastSecond(bool fromCache, bool duringCache)
 	// Make sure we're at least as long as the specified amount below.
 	float localLast = this->specifiedLastSecond;
 
-	for( unsigned i=0; i<m_vpSteps.size(); i++ )
+	for (auto *pSteps: m_vpSteps)
 	{
-		Steps* pSteps = m_vpSteps[i];
-
 		pSteps->CalculateRadarValues( m_fMusicLengthSeconds );
 
 		// Must initialize before the gotos.
@@ -1185,9 +1186,9 @@ void Song::Save(bool autosave)
 	GetDirListing( m_sSongDir + "*.pms", arrayOldFileNames );
 	GetDirListing( m_sSongDir + "*.ksf", arrayOldFileNames );
 
-	for( unsigned i=0; i<arrayOldFileNames.size(); i++ )
+	for (auto &oldName: arrayOldFileNames)
 	{
-		const RString sOldPath = m_sSongDir + arrayOldFileNames[i];
+		const RString sOldPath = m_sSongDir + oldName;
 		const RString sNewPath = sOldPath + ".old";
 
 		if( !FileCopy( sOldPath, sNewPath ) )
@@ -1342,12 +1343,12 @@ void Song::RemoveAutosave()
 		// Change all the steps to point to the actual file, not the autosave
 		// file.  -Kyz
 		RString extension= GetExtension(m_sSongFileName);
-		for(size_t i= 0; i < m_vpSteps.size(); ++i)
+		for (auto &step: m_vpSteps)
 		{
-			if(!m_vpSteps[i]->IsAutogen())
+			if(!step->IsAutogen())
 			{
-				m_vpSteps[i]->SetFilename(
-					SetExtension(m_vpSteps[i]->GetFilename(), extension));
+				step->SetFilename(
+					SetExtension(step->GetFilename(), extension));
 			}
 		}
 		FILEMAN->Remove(autosave_path);
@@ -1359,12 +1360,12 @@ void Song::AddAutoGenNotes()
 {
 	bool HasNotes[NUM_StepsType];
 	memset( HasNotes, 0, sizeof(HasNotes) );
-	for( unsigned i=0; i < m_vpSteps.size(); i++ ) // foreach Steps
+	for (auto const *step: m_vpSteps)
 	{
-		if( m_vpSteps[i]->IsAutogen() )
+		if( step->IsAutogen() )
 			continue;
 
-		StepsType st = m_vpSteps[i]->m_StepsType;
+		StepsType st = step->m_StepsType;
 		HasNotes[st] = true;
 	}
 
@@ -1410,9 +1411,8 @@ void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 {
 	// int iNumTracksOfTo = GAMEMAN->StepsTypeToNumTracks(ntTo);
 
-	for( unsigned int j=0; j<m_vpSteps.size(); j++ )
+	for (auto const *pOriginalNotes: m_vpSteps)
 	{
-		const Steps* pOriginalNotes = m_vpSteps[j];
 		if( pOriginalNotes->m_StepsType == ntFrom )
 		{
 			Steps* pNewNotes = new Steps(this);
@@ -1485,17 +1485,11 @@ bool Song::IsTutorial() const
 
 bool Song::HasEdits( StepsType st ) const
 {
-	for( unsigned i=0; i<m_vpSteps.size(); i++ )
-	{
-		Steps* pSteps = m_vpSteps[i];
-		if( pSteps->m_StepsType == st &&
-			pSteps->GetDifficulty() == Difficulty_Edit )
-		{
-			return true;
-		}
-	}
-
-	return false;
+	auto hasEdit = [&st](Steps const *step) {
+		return step->m_StepsType == st &&
+			step->GetDifficulty() == Difficulty_Edit;
+	};
+	return std::any_of(m_vpSteps.cbegin(), m_vpSteps.cend(), hasEdit);
 }
 
 bool Song::NormallyDisplayed() const
@@ -1503,7 +1497,10 @@ bool Song::NormallyDisplayed() const
 	return UNLOCKMAN == nullptr || !UNLOCKMAN->SongIsLocked(this);
 }
 
-bool Song::ShowInDemonstrationAndRanking() const { return !IsTutorial() && NormallyDisplayed(); }
+bool Song::ShowInDemonstrationAndRanking() const
+{
+	return !IsTutorial() && NormallyDisplayed();
+}
 
 
 // Hack: see Song::TidyUpData comments.
@@ -1855,30 +1852,29 @@ void Song::FreeAllLoadedFromProfile( ProfileSlot slot, const std::set<Steps*> *s
 		apToRemove.push_back( pSteps );
 	}
 
-	for( unsigned i = 0; i < apToRemove.size(); ++i )
-		this->DeleteSteps( apToRemove[i] );
+	for (auto *step: apToRemove)
+	{
+		this->DeleteSteps( step );
+	}
 }
 
 void Song::GetStepsLoadedFromProfile( ProfileSlot slot, vector<Steps*> &vpStepsOut ) const
 {
-	for( unsigned s=0; s<m_vpSteps.size(); s++ )
+	for (auto *pSteps: m_vpSteps)
 	{
-		Steps* pSteps = m_vpSteps[s];
 		if( pSteps->GetLoadedFromProfileSlot() == slot )
+		{
 			vpStepsOut.push_back( pSteps );
+		}
 	}
 }
 
 int Song::GetNumStepsLoadedFromProfile( ProfileSlot slot ) const
 {
-	int iCount = 0;
-	for( unsigned s=0; s<m_vpSteps.size(); s++ )
-	{
-		Steps* pSteps = m_vpSteps[s];
-		if( pSteps->GetLoadedFromProfileSlot() == slot )
-			iCount++;
-	}
-	return iCount;
+	auto isLoaded = [&slot](Steps const *step) {
+		return step->GetLoadedFromProfileSlot() == slot;
+	};
+	return std::count_if(m_vpSteps.cbegin(), m_vpSteps.cend(), isLoaded);
 }
 
 bool Song::IsEditAlreadyLoaded( Steps* pSteps ) const
@@ -1888,18 +1884,13 @@ bool Song::IsEditAlreadyLoaded( Steps* pSteps ) const
 					  DifficultyToString(pSteps->GetDifficulty()).c_str(),
 					  this->m_sMainTitle.c_str()));
 
-	for( unsigned i=0; i<m_vpSteps.size(); i++ )
-	{
-		Steps* pOther = m_vpSteps[i];
-		if( pOther->GetDifficulty() == Difficulty_Edit &&
-			pOther->m_StepsType == pSteps->m_StepsType &&
-			pOther->GetHash() == pSteps->GetHash() )
-		{
-			return true;
-		}
-	}
-
-	return false;
+	auto isLoaded = [pSteps](Steps const *step) {
+		return
+			step->GetDifficulty() == Difficulty_Edit &&
+			step->m_StepsType == pSteps->m_StepsType &&
+			step->GetHash() == pSteps->GetHash();
+	};
+	return std::any_of(m_vpSteps.cbegin(), m_vpSteps.cend(), isLoaded);
 }
 
 bool Song::IsStepsUsingDifferentTiming(Steps *pSteps) const

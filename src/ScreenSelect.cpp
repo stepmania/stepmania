@@ -26,12 +26,15 @@ void ScreenSelect::Init()
 
 	// Load messages to update on
 	split( UPDATE_ON_MESSAGE, ",", m_asSubscribedMessages );
-	for( unsigned i = 0; i < m_asSubscribedMessages.size(); ++i )
-		MESSAGEMAN->Subscribe( this, m_asSubscribedMessages[i] );
+	for (auto &message: m_asSubscribedMessages)
+	{
+		MESSAGEMAN->Subscribe(this, message);
+	}
 	// Subscribe to PlayerJoined, if not already.
 	if( !MESSAGEMAN->IsSubscribedToMessage(this, Message_PlayerJoined) )
+	{
 		this->SubscribeToMessage( Message_PlayerJoined );
-
+	}
 	// Load choices
 	// Allow lua as an alternative to metrics.
 	RString choice_names= CHOICE_NAMES;
@@ -112,8 +115,10 @@ void ScreenSelect::BeginScreen()
 ScreenSelect::~ScreenSelect()
 {
 	LOG->Trace( "ScreenSelect::~ScreenSelect()" );
-	for( unsigned i = 0; i < m_asSubscribedMessages.size(); ++i )
-		MESSAGEMAN->Unsubscribe( this, m_asSubscribedMessages[i] );
+	for (auto &message: m_asSubscribedMessages)
+	{
+		MESSAGEMAN->Unsubscribe( this, message );
+	}
 }
 
 void ScreenSelect::Update( float fDelta )

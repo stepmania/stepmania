@@ -106,7 +106,9 @@ void NoteField::CacheNoteSkin( const RString &sNoteSkin_ )
 	NoteDisplayCols *nd = new NoteDisplayCols( GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer );
 
 	for( int c=0; c<GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer; c++ )
+	{
 		nd->display[c].Load( c, m_pPlayerState, m_fYReverseOffsetPixels );
+	}
 	nd->m_ReceptorArrowRow.Load( m_pPlayerState, m_fYReverseOffsetPixels );
 	nd->m_GhostArrowRow.Load( m_pPlayerState, m_fYReverseOffsetPixels );
 
@@ -143,8 +145,10 @@ void NoteField::CacheAllUsedNoteSkins()
 		s = Rage::make_lower(s);
 	}
 
-	for( unsigned i=0; i < asSkinsLower.size(); ++i )
-		CacheNoteSkin( asSkinsLower[i] );
+	for (auto &skin: asSkinsLower)
+	{
+		CacheNoteSkin(skin);
+	}
 
 	/* If we're changing note skins in the editor, we can have old note skins lying
 	 * around.  Remove them so they don't accumulate. */
@@ -304,9 +308,9 @@ void NoteField::Update( float fDeltaTime )
 	ActorFrame::Update( fDeltaTime );
 	ArrowEffects::SetCurrentOptions(&m_pPlayerState->m_PlayerOptions.GetCurrent());
 
-	for(size_t c= 0; c < m_ColumnRenderers.size(); ++c)
+	for (auto &column: m_ColumnRenderers)
 	{
-		m_ColumnRenderers[c].Update(fDeltaTime);
+		column.Update(fDeltaTime);
 	}
 
 	// update m_fBoardOffsetPixels, m_fCurrentBeatLastUpdate, m_fYPosCurrentBeatLastUpdate

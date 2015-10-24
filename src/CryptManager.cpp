@@ -279,9 +279,8 @@ bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile )
 
 	vector<RString> asKeys;
 	GetDirListing( ALTERNATE_PUBLIC_KEY_DIR, asKeys, false, true );
-	for( unsigned i = 0; i < asKeys.size(); ++i )
+	for (auto const &sKey: asKeys)
 	{
-		const RString &sKey = asKeys[i];
 		LOG->Trace( "Trying alternate key \"%s\" ...", sKey.c_str() );
 
 		if( VerifyFileWithFile(sPath, sSignatureFile, sKey) )

@@ -204,14 +204,14 @@ void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
 {
 	LOG->Trace( "ScreenOptions::InitMenu()" );
 
-	for( unsigned i=0; i<m_pRows.size(); i++ )
+	for (auto *row: m_pRows)
 	{
-		m_frameContainer.RemoveChild( m_pRows[i] );
-		SAFE_DELETE( m_pRows[i] );
+		m_frameContainer.RemoveChild( row );
+		SAFE_DELETE( row );
 	}
 	m_pRows.clear();
 
-	for( unsigned r=0; r<vHands.size(); r++ )		// foreach row
+	for (auto *hand: vHands)
 	{
 		m_pRows.push_back( new OptionRow(&m_OptionRowTypeNormal) );
 		OptionRow &row = *m_pRows.back();
@@ -220,7 +220,7 @@ void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
 
 		bool bFirstRowGoesDown = m_OptionsNavigation==NAV_TOGGLE_THREE_KEY;
 
-		row.LoadNormal( vHands[r], bFirstRowGoesDown );
+		row.LoadNormal( hand, bFirstRowGoesDown );
 	}
 
 	if( SHOW_EXIT_ROW )
@@ -247,7 +247,7 @@ void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
 	}
 
 	// poke once at all the explanation metrics so that we catch missing ones early
-	for( int r=0; r<(int)m_pRows.size(); r++ )		// foreach row
+	for( int r=0; r< static_cast<int>(m_pRows.size()); r++ ) // foreach row
 	{
 		GetExplanationText( r );
 	}
@@ -362,8 +362,10 @@ void ScreenOptions::TweenOffScreen()
 ScreenOptions::~ScreenOptions()
 {
 	LOG->Trace( "ScreenOptions::~ScreenOptions()" );
-	for( unsigned i=0; i<m_pRows.size(); i++ )
-		SAFE_DELETE( m_pRows[i] );
+	for (auto *row: m_pRows)
+	{
+		SAFE_DELETE( row );
+	}
 }
 
 RString ScreenOptions::GetExplanationText( int iRow ) const

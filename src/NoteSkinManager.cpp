@@ -88,9 +88,9 @@ void NoteSkinManager::RefreshNoteSkinData( const Game* pGame )
 	StripMacResourceForks( asNoteSkinNames );
 
 	g_mapNameToData.clear();
-	for( unsigned j=0; j<asNoteSkinNames.size(); j++ )
+	for (auto &fullName: asNoteSkinNames)
 	{
-		RString sName = Rage::make_lower(asNoteSkinNames[j]);
+		RString sName = Rage::make_lower(fullName);
 		// Don't feel like changing the structure of this code to load the skin
 		// into a temp variable and move it, so if the load fails, then just
 		// delete it from the map. -Kyz
@@ -213,14 +213,11 @@ void NoteSkinManager::GetNoteSkinNames( const Game* pGame, vector<RString> &AddT
 
 bool NoteSkinManager::NoteSkinNameInList(const RString name, vector<RString> name_list)
 {
-	for(size_t i= 0; i < name_list.size(); ++i)
-	{
-		if(0 == strcasecmp(name, name_list[i]))
-		{
-			return true;
-		}
-	}
-	return false;
+	Rage::ci_ascii_string lowerName{ name };
+	auto isInList = [&lowerName](auto const &entry) {
+		return lowerName == entry;
+	};
+	return std::any_of(name_list.begin(), name_list.end(), isInList);
 }
 
 bool NoteSkinManager::DoesNoteSkinExist( const RString &sSkinName )

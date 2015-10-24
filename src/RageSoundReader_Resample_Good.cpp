@@ -614,8 +614,10 @@ void RageSoundReader_Resample_Good::GetFactors( int &iDownFactor, int &iUpFactor
 /* Call this if the sample factor changes. */
 void RageSoundReader_Resample_Good::ReopenResampler()
 {
-	for( size_t iChannel = 0; iChannel < m_apResamplers.size(); ++iChannel )
-		delete m_apResamplers[iChannel];
+	for (auto *channel: m_apResamplers)
+	{
+		delete channel;
+	}
 	m_apResamplers.clear();
 
 	int iDownFactor, iUpFactor;
@@ -635,14 +637,18 @@ void RageSoundReader_Resample_Good::ReopenResampler()
 	if( m_fRate != -1 )
 		iDownFactor = std::lrint( m_fRate * iDownFactor );
 
-	for( size_t iChannel = 0; iChannel < m_apResamplers.size(); ++iChannel )
-		m_apResamplers[iChannel]->SetDownFactor( iDownFactor );
+	for (auto *channel: m_apResamplers)
+	{
+		channel->SetDownFactor(iDownFactor);
+	}
 }
 
 RageSoundReader_Resample_Good::~RageSoundReader_Resample_Good()
 {
-	for( size_t iChannel = 0; iChannel < m_apResamplers.size(); ++iChannel )
-		delete m_apResamplers[iChannel];
+	for (auto *channel: m_apResamplers)
+	{
+		delete channel;
+	}
 }
 
 /* iFrame is in the destination rate.  Seek the source in its own sample rate. */
@@ -719,8 +725,10 @@ void RageSoundReader_Resample_Good::SetRate( float fRatio )
 	/* Set m_fRate to the actual rate, after quantization by iUpFactor. */
 	m_fRate = float(iDownFactor) / iUpFactor;
 
-	for( size_t iChannel = 0; iChannel < m_apResamplers.size(); ++iChannel )
-		m_apResamplers[iChannel]->SetDownFactor( iDownFactor );
+	for (auto *channel: m_apResamplers)
+	{
+		channel->SetDownFactor(iDownFactor);
+	}
 }
 
 float RageSoundReader_Resample_Good::GetRate() const
@@ -734,8 +742,10 @@ float RageSoundReader_Resample_Good::GetRate() const
 RageSoundReader_Resample_Good::RageSoundReader_Resample_Good( const RageSoundReader_Resample_Good &cpy ):
 	RageSoundReader_Filter(cpy)
 {
-	for( size_t i = 0; i < cpy.m_apResamplers.size(); ++i )
-		this->m_apResamplers.push_back( new RageSoundResampler_Polyphase(*cpy.m_apResamplers[i]) );
+	for (auto *channel: cpy.m_apResamplers)
+	{
+		this->m_apResamplers.push_back(new RageSoundResampler_Polyphase(*channel));
+	}
 	this->m_iSampleRate = cpy.m_iSampleRate;
 	this->m_fRate = cpy.m_fRate;
 }

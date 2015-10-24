@@ -280,11 +280,13 @@ void ScreenUnlockStatus::Init()
 	// an integer, you can achieve -1, which exits the loop.
 
 	for(int i = item.size() - 1; (int)i >= 0; i--)
+	{
 		this->AddChild(item[i]);
-
+	}
 	for(int i = ItemIcons.size() - 1; (int)i >= 0; i--)
+	{
 		this->AddChild(ItemIcons[i]);
-
+	}
 	PointsUntilNextUnlock.SetName( "PointsDisplay" );
 
 	RString PointDisplay = TYPE_TO_DISPLAY;

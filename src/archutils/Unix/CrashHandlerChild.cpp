@@ -244,8 +244,10 @@ static void child_process()
 	fprintf( CrashDump, "Crashed thread: %s\n\n", CrashedThread.c_str() );
 
 	fprintf(CrashDump, "Checkpoints:\n");
-	for( unsigned i=0; i<Checkpoints.size(); ++i )
-		fputs( Checkpoints[i], CrashDump );
+	for (auto &checkpoint: Checkpoints)
+	{
+		fputs( checkpoint, CrashDump );
+	}
 	fprintf( CrashDump, "\n" );
 
 	for( int i = 0; i < CrashData::MAX_BACKTRACE_THREADS; ++i )

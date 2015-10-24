@@ -55,7 +55,9 @@ void ScreenPlayerOptions::BeginScreen()
 	FOREACH_HumanPlayer( p )
 	{
 		for( unsigned r=0; r<m_pRows.size(); r++ )
+		{
 			UpdateDisqualified( r, p );
+		}
 	}
 }
 

@@ -703,9 +703,10 @@ int FindLongestOverlappingHoldNoteForAnyTrack( const NoteData &in, int iRow )
 // For every row in "in" with a tap or hold on any track, enable the specified tracks in "out".
 void LightTransformHelper( const NoteData &in, NoteData &out, const vector<int> &aiTracks )
 {
-	for( unsigned i = 0; i < aiTracks.size(); ++i )
-		ASSERT_M( aiTracks[i] < out.GetNumTracks(), ssprintf("%i, %i", aiTracks[i], out.GetNumTracks()) );
-
+	for (auto &track: aiTracks)
+	{
+		ASSERT_M( track < out.GetNumTracks(), ssprintf("%i, %i", track, out.GetNumTracks()) );
+	}
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS( in, r )
 	{
 		/* If any row starts a hold note, find the end of the hold note, and keep searching
@@ -724,9 +725,8 @@ void LightTransformHelper( const NoteData &in, NoteData &out, const vector<int> 
 		if( iHoldEnd != -1 )
 		{
 			// If we found a hold note, add it to all tracks.
-			for( unsigned i = 0; i < aiTracks.size(); ++i )
+			for (auto t: aiTracks)
 			{
-				int t = aiTracks[i];
 				out.AddHoldNote( t, iHoldStart, iHoldEnd, TAP_ORIGINAL_HOLD_HEAD );
 			}
 			continue;
@@ -736,9 +736,8 @@ void LightTransformHelper( const NoteData &in, NoteData &out, const vector<int> 
 			continue;
 
 		// Enable every track in the output.
-		for( unsigned i = 0; i < aiTracks.size(); ++i )
+		for (auto t: aiTracks)
 		{
-			int t = aiTracks[i];
 			out.SetTapNote( t, r, TAP_ORIGINAL_TAP );
 		}
 	}
@@ -2650,15 +2649,19 @@ const ValidRow g_ValidRows[] =
 void NoteDataUtil::RemoveStretch( NoteData &inout, StepsType st, int iStartIndex, int iEndIndex )
 {
 	vector<const ValidRow*> vpValidRowsToCheck;
-	for( unsigned i=0; i<ARRAYLEN(g_ValidRows); i++ )
+	for (auto &row: g_ValidRows)
 	{
-		if( g_ValidRows[i].st == st )
-			vpValidRowsToCheck.push_back( &g_ValidRows[i] );
+		if (row.st == st)
+		{
+			vpValidRowsToCheck.push_back(&row);
+		}
 	}
 
 	// bail early if there's nothing to validate against
 	if( vpValidRowsToCheck.empty() )
+	{
 		return;
+	}
 
 	// each row must pass at least one valid mask
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, r, iStartIndex, iEndIndex )
@@ -2667,19 +2670,15 @@ void NoteDataUtil::RemoveStretch( NoteData &inout, StepsType st, int iStartIndex
 		if( inout.GetNumTapNonEmptyTracks(r) < 2 )
 			continue;
 
-		bool bPassedOneMask = false;
-		for( unsigned i=0; i<vpValidRowsToCheck.size(); i++ )
-		{
-			const ValidRow &vr = *vpValidRowsToCheck[i];
-			if( NoteDataUtil::RowPassesValidMask(inout,r,vr.bValidMask) )
-			{
-				bPassedOneMask = true;
-				break;
-			}
-		}
+		auto passesMask = [&inout, &r](ValidRow const *row) {
+			return NoteDataUtil::RowPassesValidMask(inout, r, row->bValidMask);
+		};
 
+		bool bPassedOneMask = std::any_of(vpValidRowsToCheck.begin(), vpValidRowsToCheck.end(), passesMask);
 		if( !bPassedOneMask )
+		{
 			RemoveAllButOneTap( inout, r );
+		}
 	}
 	inout.RevalidateATIs(vector<int>(), false);
 }
@@ -2698,13 +2697,17 @@ bool NoteDataUtil::RowPassesValidMask( NoteData &inout, int row, const bool bVal
 void NoteDataUtil::ConvertAdditionsToRegular( NoteData &inout )
 {
 	for( int t=0; t<inout.GetNumTracks(); t++ )
+	{
 		FOREACH_NONEMPTY_ROW_IN_TRACK( inout, t, r )
+		{
 			if( inout.GetTapNote(t,r).source == TapNoteSource_Addition )
 			{
 				TapNote tn = inout.GetTapNote(t,r);
 				tn.source = TapNoteSource_Original;
 				inout.SetTapNote( t, r, tn );
 			}
+		}
+	}
 	inout.RevalidateATIs(vector<int>(), false);
 }
 

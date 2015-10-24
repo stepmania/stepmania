@@ -148,8 +148,10 @@ static RageMutex g_apWorkersMutex("WorkersMutex");
 void RageFileDriverTimeout::SetTimeout( float fSeconds )
 {
 	g_apWorkersMutex.Lock();
-	for( unsigned i = 0; i < g_apWorkers.size(); ++i )
-		g_apWorkers[i]->SetTimeout( fSeconds );
+	for (auto *worker: g_apWorkers)
+	{
+		worker->SetTimeout( fSeconds );
+	}
 	g_apWorkersMutex.Unlock();
 }
 
@@ -203,8 +205,10 @@ void ThreadedFileWorker::HandleRequest( int iRequest )
 		m_apDeletedFiles.clear();
 		m_DeletedFilesLock.Unlock();
 
-		for( unsigned i = 0; i < apDeletedFiles.size(); ++i )
-			delete apDeletedFiles[i];
+		for (auto *file: apDeletedFiles)
+		{
+			delete file;
+		}
 	}
 
 	/* We have a request. */

@@ -25,9 +25,12 @@ DialogDriver *MakeDialogDriver()
 	RString sDriver;
 	DialogDriver *pRet = nullptr;
 
-	for( unsigned i = 0; pRet == nullptr && i < asDriversToTry.size(); ++i )
+	for (auto &sDriver: asDriversToTry)
 	{
-		sDriver = asDriversToTry[i];
+		if (pRet != nullptr)
+		{
+			break;
+		}
 		Rage::ci_ascii_string ciDriver{ sDriver };
 
 #ifdef USE_DIALOG_DRIVER_COCOA
@@ -49,7 +52,7 @@ DialogDriver *MakeDialogDriver()
 		if( sError != "" )
 		{
 			if( LOG )
-				LOG->Info( "Couldn't load driver %s: %s", asDriversToTry[i].c_str(), sError.c_str() );
+				LOG->Info( "Couldn't load driver %s: %s", sDriver.c_str(), sError.c_str() );
 			SAFE_DELETE( pRet );
 		}
 	}

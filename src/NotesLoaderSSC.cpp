@@ -230,10 +230,10 @@ void SetFGChanges(SongTagInfo& info)
 	vector<RString> aFGChangeExpressions;
 	split((*info.params)[1], ",", aFGChangeExpressions);
 
-	for(size_t b = 0; b < aFGChangeExpressions.size(); ++b)
+	for (auto const &expression: aFGChangeExpressions)
 	{
 		BackgroundChange change;
-		if(info.loader->LoadFromBGChangesString(change, aFGChangeExpressions[b]))
+		if(info.loader->LoadFromBGChangesString(change, expression))
 		{ info.song->AddForegroundChange(change); }
 	}
 }
@@ -659,16 +659,16 @@ void SSCLoader::ProcessBPMs( TimingData &out, const RString sParam )
 	vector<RString> arrayBPMExpressions;
 	split( sParam, ",", arrayBPMExpressions );
 
-	for( unsigned b=0; b<arrayBPMExpressions.size(); b++ )
+	for (auto const &expression: arrayBPMExpressions)
 	{
 		vector<RString> arrayBPMValues;
-		split( arrayBPMExpressions[b], "=", arrayBPMValues );
+		split( expression, "=", arrayBPMValues );
 		if( arrayBPMValues.size() != 2 )
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
 				     "has an invalid #BPMS value \"%s\" (must have exactly one '='), ignored.",
-				     arrayBPMExpressions[b].c_str() );
+				     expression.c_str() );
 			continue;
 		}
 
@@ -693,16 +693,16 @@ void SSCLoader::ProcessStops( TimingData &out, const RString sParam )
 	vector<RString> arrayStopExpressions;
 	split( sParam, ",", arrayStopExpressions );
 
-	for( unsigned b=0; b<arrayStopExpressions.size(); b++ )
+	for (auto const &expression: arrayStopExpressions)
 	{
 		vector<RString> arrayStopValues;
-		split( arrayStopExpressions[b], "=", arrayStopValues );
+		split( expression, "=", arrayStopValues );
 		if( arrayStopValues.size() != 2 )
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
 				     "has an invalid #STOPS value \"%s\" (must have exactly one '='), ignored.",
-				     arrayStopExpressions[b].c_str() );
+				     expression.c_str() );
 			continue;
 		}
 
@@ -725,16 +725,16 @@ void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float
 	vector<RString> arrayWarpExpressions;
 	split( sParam, ",", arrayWarpExpressions );
 
-	for( unsigned b=0; b<arrayWarpExpressions.size(); b++ )
+	for (auto const &expression: arrayWarpExpressions)
 	{
 		vector<RString> arrayWarpValues;
-		split( arrayWarpExpressions[b], "=", arrayWarpValues );
+		split( expression, "=", arrayWarpValues );
 		if( arrayWarpValues.size() != 2 )
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
 				     "has an invalid #WARPS value \"%s\" (must have exactly one '='), ignored.",
-				     arrayWarpExpressions[b].c_str() );
+				     expression.c_str() );
 			continue;
 		}
 
@@ -762,16 +762,16 @@ void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
 	vector<RString> arrayLabelExpressions;
 	split( sParam, ",", arrayLabelExpressions );
 
-	for( unsigned b=0; b<arrayLabelExpressions.size(); b++ )
+	for (auto const &expression: arrayLabelExpressions)
 	{
 		vector<RString> arrayLabelValues;
-		split( arrayLabelExpressions[b], "=", arrayLabelValues );
+		split( expression, "=", arrayLabelValues );
 		if( arrayLabelValues.size() != 2 )
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
 				     "has an invalid #LABELS value \"%s\" (must have exactly one '='), ignored.",
-				     arrayLabelExpressions[b].c_str() );
+				     expression.c_str() );
 			continue;
 		}
 
@@ -796,17 +796,17 @@ void SSCLoader::ProcessCombos( TimingData &out, const RString line, const int ro
 	vector<RString> arrayComboExpressions;
 	split( line, ",", arrayComboExpressions );
 
-	for( unsigned f=0; f<arrayComboExpressions.size(); f++ )
+	for (auto const &expression: arrayComboExpressions)
 	{
 		vector<RString> arrayComboValues;
-		split( arrayComboExpressions[f], "=", arrayComboValues );
+		split( expression, "=", arrayComboValues );
 		unsigned size = arrayComboValues.size();
 		if( size < 2 )
 		{
 			LOG->UserLog("Song file",
 				     this->GetSongTitle(),
 				     "has an invalid #COMBOS value \"%s\" (must have at least one '='), ignored.",
-				     arrayComboExpressions[f].c_str() );
+				     expression.c_str() );
 			continue;
 		}
 		const float fComboBeat = StringToFloat( arrayComboValues[0] );

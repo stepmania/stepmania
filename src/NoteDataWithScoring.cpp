@@ -9,6 +9,7 @@
 #include "ThemeMetric.h"
 #include "RageLog.h"
 #include "TimingData.h"
+#include <numeric>
 
 using std::vector;
 
@@ -253,12 +254,11 @@ static void DoRowEndRadarActualCalc(garv_state& state, RadarValues& out)
 		{
 			if(state.worst_tns_on_row >= state.hands_tns)
 			{
-				size_t holds_down= 0;
-				for(size_t n= 0; n < state.hold_ends.size(); ++n)
-				{
-					holds_down+= (state.curr_row <= state.hold_ends[n].last_held_row);
-				}
-				state.hands_hit+= (holds_down == state.hold_ends.size());
+				auto countHolds = [&state](size_t const curr, hold_status const status) {
+					return curr + (state.curr_row <= status.last_held_row);
+				};
+				size_t holds_down = std::accumulate(state.hold_ends.begin(), state.hold_ends.end(), 0, countHolds);
+				state.hands_hit += (holds_down == state.hold_ends.size());
 			}
 		}
 	}

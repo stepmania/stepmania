@@ -406,13 +406,15 @@ void OptionRow::InitText( RowType type )
 		FAIL_M(ssprintf("Invalid option row layout: %i", m_pHand->m_Def.m_layoutType));
 	}
 
-	for( unsigned c=0; c<m_textItems.size(); c++ )
-		m_Frame.AddChild( m_textItems[c] );
+	for (auto *item: m_textItems)
+	{
+		m_Frame.AddChild( item );
+	}
 	FOREACH_PlayerNumber( p )
 	{
-		for( unsigned c=0; c<m_Underline[p].size(); c++ )
+		for (auto *item: m_Underline[p])
 		{
-			m_Frame.AddChild( m_Underline[p][c] );
+			m_Frame.AddChild( item );
 		}
 	}
 	// This is set in OptionRow::AfterImportOptions, so if we're reused with a
@@ -437,9 +439,12 @@ void OptionRow::AfterImportOptions( PlayerNumber pn )
 
 	// Hide underlines for disabled players.
 	if( !GAMESTATE->IsHumanPlayer(pn) )
-		for( unsigned c=0; c<m_Underline[pn].size(); c++ )
-			m_Underline[pn][c]->SetVisible( false );
-
+	{
+		for (auto *item: m_Underline[pn])
+		{
+			item->SetVisible( false );
+		}
+	}
 	// Make all selections the same if bOneChoiceForAllPlayers.
 	// Hack: we only import active players, so if only player 2 is imported,
 	// we need to copy p2 to p1, not p1 to p2.
@@ -626,14 +631,14 @@ void OptionRow::UpdateEnabledDisabled()
 	switch( m_pHand->m_Def.m_layoutType )
 	{
 	case LAYOUT_SHOW_ALL_IN_ROW:
-		for( unsigned j=0; j<m_textItems.size(); j++ )
+		for (auto *item: m_textItems)
 		{
-			if( m_textItems[j]->DestTweenState().diffuse[0] == color )
+			if( item->DestTweenState().diffuse[0] == color )
 				continue;
 
-			m_textItems[j]->StopTweening();
-			m_textItems[j]->BeginTweening( m_pParentType->TWEEN_SECONDS );
-			m_textItems[j]->SetDiffuse( color );
+			item->StopTweening();
+			item->BeginTweening( m_pParentType->TWEEN_SECONDS );
+			item->SetDiffuse( color );
 		}
 
 		break;

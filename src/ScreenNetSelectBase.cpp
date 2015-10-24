@@ -149,8 +149,10 @@ void ScreenNetSelectBase::TweenOffScreen()
 	OFF_COMMAND( m_textChatInput );
 	OFF_COMMAND( m_textChatOutput );
 
-	for( unsigned i=0; i<m_textUsers.size(); i++ )
-		OFF_COMMAND( m_textUsers[i] );
+	for (auto &user: m_textUsers)
+	{
+		OFF_COMMAND(user);
+	}
 }
 
 void ScreenNetSelectBase::UpdateTextInput()
@@ -163,9 +165,10 @@ void ScreenNetSelectBase::UpdateUsers()
 	float tX = USERS_X - USER_SPACING_X;
 	float tY = USERS_Y;
 
-	for( unsigned i=0; i< m_textUsers.size(); i++)
-		this->RemoveChild( &m_textUsers[i] );
-
+	for (auto &user: m_textUsers)
+	{
+		this->RemoveChild( &user );
+	}
 	m_textUsers.clear();
 
 	m_textUsers.resize( NSMAN->m_ActivePlayer.size() );
@@ -348,8 +351,10 @@ void ColorBitmapText::DrawPrimitives( )
 			DISPLAY->TranslateWorld( m_fShadowLengthX, m_fShadowLengthY, 0 );	// shift by 5 units
 			Rage::Color c = m_ShadowColor;
 			c.a *= m_pTempState->diffuse[0].a;
-			for( unsigned i=0; i<m_aVertices.size(); i++ )
-				m_aVertices[i].c = c;
+			for (auto &vertex: m_aVertices)
+			{
+				vertex.c = c;
+			}
 			DrawChars( true );
 
 			DISPLAY->PopMatrix();
@@ -371,7 +376,9 @@ void ColorBitmapText::DrawPrimitives( )
 				}
 			}
 			for( unsigned j=0; j<4; j++ )
+			{
 				m_aVertices[i+j].c = c;
+			}
 		}
 
 		DrawChars( false );
@@ -382,8 +389,10 @@ void ColorBitmapText::DrawPrimitives( )
 	{
 		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
 
-		for( unsigned i=0; i<m_aVertices.size(); i++ )
-			m_aVertices[i].c = m_pTempState->glow;
+		for (auto &vertex: m_aVertices)
+		{
+			vertex.c = m_pTempState->glow;
+		}
 		DrawChars( false );
 	}
 }

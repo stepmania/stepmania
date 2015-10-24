@@ -394,8 +394,10 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 		pActor = new Actor;
 	m_BGAnimations[bd] = pActor;
 
-	for( unsigned i=0; i<vsResolvedRef.size(); i++ )
-		delete vsResolvedRef[i];
+	for (auto *refer: vsResolvedRef)
+	{
+		delete refer;
+	}
 
 	return true;
 }
@@ -479,13 +481,13 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 	{
 		// change BG every BPM change that is at the beginning of a measure
 		const vector<TimingSegment *> &bpms = timing.GetTimingSegments(SEGMENT_BPM);
-		for( unsigned i=0; i<bpms.size(); i++ )
+		for (auto *bpm: bpms)
 		{
 			bool bAtBeginningOfMeasure = false;
-			for (unsigned j=0; j<tSigs.size(); j++)
+			for (auto *timeSig: tSigs)
 			{
-				TimeSignatureSegment *ts = static_cast<TimeSignatureSegment *>(tSigs[j]);
-				if ((bpms[i]->GetRow() - ts->GetRow()) % ts->GetNoteRowsPerMeasure() == 0)
+				TimeSignatureSegment *ts = static_cast<TimeSignatureSegment *>(timeSig);
+				if ((bpm->GetRow() - ts->GetRow()) % ts->GetNoteRowsPerMeasure() == 0)
 				{
 					bAtBeginningOfMeasure = true;
 					break;
@@ -496,7 +498,7 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 			continue; // skip
 
 			// start so that we don't create a BGChange right on top of fEndBeat
-			bool bInRange = bpms[i]->GetRow() >= iStartRow && bpms[i]->GetRow() < iEndRow;
+			bool bInRange = bpm->GetRow() >= iStartRow && bpm->GetRow() < iEndRow;
 			if( !bInRange )
 			continue; // skip
 
@@ -506,7 +508,7 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 				BackgroundChange c = change;
 				c.m_def.m_sFile1 = bd.m_sFile1;
 				c.m_def.m_sFile2 = bd.m_sFile2;
-				c.m_fStartBeat = bpms[i]->GetBeat();
+				c.m_fStartBeat = bpm->GetBeat();
 				m_Layer[0].m_aBGChanges.push_back( c );
 			}
 		}
@@ -692,9 +694,10 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	}
 
 	// At this point, we shouldn't have any BGChanges to "".  "" is an invalid name.
-	for( unsigned i=0; i<mainlayer.m_aBGChanges.size(); i++ )
-		ASSERT( !mainlayer.m_aBGChanges[i].m_def.m_sFile1.empty() );
-
+	for (auto &bgChange: mainlayer.m_aBGChanges)
+	{
+		ASSERT( !bgChange.m_def.m_sFile1.empty() );
+	}
 	// Re-sort.
 	BackgroundUtil::SortBackgroundChangesArray( mainlayer.m_aBGChanges );
 
@@ -718,7 +721,9 @@ int BackgroundImpl::Layer::FindBGSegmentForBeat( float fBeat ) const
 	for( i=m_aBGChanges.size()-1; i>=0; i-- )
 	{
 		if( fBeat >= m_aBGChanges[i].m_fStartBeat )
+		{
 			return i;
+		}
 	}
 
 	return i;

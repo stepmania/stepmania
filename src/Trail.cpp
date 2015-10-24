@@ -265,9 +265,9 @@ public:
 	static int GetTrailEntries( T* p, lua_State *L )
 	{
 		vector<TrailEntry*> v;
-		for( unsigned i = 0; i < p->m_vEntries.size(); ++i )
+		for (auto &entry: p->m_vEntries)
 		{
-			v.push_back(&p->m_vEntries[i]);
+			v.push_back(&entry);
 		}
 		LuaHelpers::CreateTableFromArray<TrailEntry*>( v, L );
 		return 1;

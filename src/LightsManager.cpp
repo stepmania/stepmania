@@ -85,11 +85,11 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 			{
 				vector<GameInput> gi;
 				style->StyleInputToGameInput( iCol, pn, gi );
-				for(size_t i= 0; i < gi.size(); ++i)
+				for (auto &input: gi)
 				{
-					if(gi[i].IsValid())
+					if(input.IsValid())
 					{
-						vGIs.insert(gi[i]);
+						vGIs.insert(input);
 					}
 				}
 			}

@@ -415,9 +415,8 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 	}
 
 	const vector<Steps*>& vpSteps = out.GetAllSteps();
-	for( unsigned i=0; i<vpSteps.size(); i++ )
+	for (auto const *pSteps: vpSteps)
 	{
-		const Steps* pSteps = vpSteps[i];
 		if( pSteps->IsAutogen() )
 			continue;	// don't save autogen notes
 

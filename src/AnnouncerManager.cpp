@@ -50,10 +50,13 @@ bool AnnouncerManager::DoesAnnouncerExist( RString sAnnouncerName )
 
 	vector<RString> asAnnouncerNames;
 	GetAnnouncerNames( asAnnouncerNames );
-	for( unsigned i=0; i<asAnnouncerNames.size(); i++ )
-		if( 0==strcasecmp(sAnnouncerName, asAnnouncerNames[i]) )
-			return true;
-	return false;
+	Rage::ci_ascii_string name{ sAnnouncerName };
+	
+	auto doesExist = [&name](std::string const &announcer) {
+		return name == announcer;
+	};
+	
+	return std::any_of(asAnnouncerNames.begin(), asAnnouncerNames.end(), doesExist);
 }
 
 RString AnnouncerManager::GetAnnouncerDirFromName( RString sAnnouncerName )

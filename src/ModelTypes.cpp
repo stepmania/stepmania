@@ -194,8 +194,10 @@ float AnimatedTexture::GetSecondsIntoAnimation() const
 
 void AnimatedTexture::Unload()
 {
-	for(unsigned i = 0; i < vFrames.size(); ++i)
-		TEXTUREMAN->UnloadTexture(vFrames[i].pTexture);
+	for (auto &frame: vFrames)
+	{
+		TEXTUREMAN->UnloadTexture(frame.pTexture);
+	}
 	vFrames.clear();
 	m_iCurState = 0;
 	m_fSecsIntoFrame = 0;
@@ -340,13 +342,16 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 
 		// Ignore "Frames:" in file.  Calculate it ourself
 		Animation.nTotalFrames = 0;
-		for( int i = 0; i < (int)Animation.Bones.size(); i++ )
+		for (auto &bone: Animation.Bones)
 		{
-			msBone& Bone = Animation.Bones[i];
-			for( unsigned j = 0; j < Bone.PositionKeys.size(); ++j )
-				Animation.nTotalFrames = max( Animation.nTotalFrames, (int)Bone.PositionKeys[j].fTime );
-			for( unsigned j = 0; j < Bone.RotationKeys.size(); ++j )
-				Animation.nTotalFrames = max( Animation.nTotalFrames, (int)Bone.RotationKeys[j].fTime );
+			for (auto &key: bone.PositionKeys)
+			{
+				Animation.nTotalFrames = max(Animation.nTotalFrames, static_cast<int>(key.fTime));
+			}
+			for (auto &key: bone.RotationKeys)
+			{
+				Animation.nTotalFrames = max(Animation.nTotalFrames, static_cast<int>(key.fTime));
+			}
 		}
 	}
 

@@ -41,10 +41,10 @@ public:
 	static void ClearCacheAll()
 	{
 		CachedObjectHelpers::Lock();
-		for( auto p = m_spObjectPointers.begin(); p != m_spObjectPointers.end(); ++p )
+		for (auto *p: m_spObjectPointers)
 		{
-			(*p)->m_pCache = nullptr;
-			(*p)->m_bCacheIsSet = false;
+			p->m_pCache = nullptr;
+			p->m_bCacheIsSet = false;
 		}
 		CachedObjectHelpers::Unlock();
 	}
@@ -53,12 +53,12 @@ public:
 	static void ClearCacheSpecific( const T *pObject )
 	{
 		CachedObjectHelpers::Lock();
-		for( auto p = m_spObjectPointers.begin(); p != m_spObjectPointers.end(); ++p )
+		for (auto *p: m_spObjectPointers)
 		{
-			if( (*p)->m_pCache == pObject )
+			if( p->m_pCache == pObject )
 			{
-				(*p)->m_pCache = nullptr;
-				(*p)->m_bCacheIsSet = false;
+				p->m_pCache = nullptr;
+				p->m_bCacheIsSet = false;
 			}
 		}
 		CachedObjectHelpers::Unlock();
@@ -68,10 +68,12 @@ public:
 	static void ClearCacheNegative()
 	{
 		CachedObjectHelpers::Lock();
-		for( auto p = m_spObjectPointers.begin(); p != m_spObjectPointers.end(); ++p )
+		for (auto *p: m_spObjectPointers)
 		{
-			if( (*p)->m_pCache == nullptr )
-				(*p)->m_bCacheIsSet = false;
+			if( p->m_pCache == nullptr )
+			{
+				p->m_bCacheIsSet = false;
+			}
 		}
 		CachedObjectHelpers::Unlock();
 	}

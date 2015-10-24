@@ -278,9 +278,8 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn, bool bLoadEdits
 	/* Load edits from all fallback directories, newest first. */
 	if( bLoadEdits )
 	{
-		for( unsigned i = 0; i < asDirsToTry.size(); ++i )
+		for (auto &sSubdir: asDirsToTry)
 		{
-			const RString &sSubdir = asDirsToTry[i];
 			RString sDir = MEM_CARD_MOUNT_POINT[pn] + sSubdir + "/";
 
 			if( m_bProfileStepEdits )
@@ -310,9 +309,8 @@ bool ProfileManager::FastLoadProfileNameFromMemoryCard( RString sRootDir, RStrin
 	vector<RString> asDirsToTry;
 	GetMemoryCardProfileDirectoriesToTry( asDirsToTry );
 
-	for( unsigned i = 0; i < asDirsToTry.size(); ++i )
+	for (auto const &sSubdir: asDirsToTry)
 	{
-		const RString &sSubdir = asDirsToTry[i];
 		RString sDir = sRootDir + sSubdir + "/";
 
 		Profile profile;

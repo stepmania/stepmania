@@ -82,9 +82,8 @@ void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 	s_viLastAnswers.resize( m_vMenuRows.size() );
 	// Convert from m_vMenuRows to vector<OptionRowDefinition>
 	vector<OptionRowHandler*> vHands;
-	for( unsigned r=0; r<m_vMenuRows.size(); r++ )
+	for (auto const &mr: m_vMenuRows)
 	{
-		const MenuRowDef &mr = m_vMenuRows[r];
 		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeSimple( mr );
 		vHands.push_back( pHand );
 	}
@@ -100,8 +99,9 @@ void ScreenMiniMenu::AfterChangeValueOrRow( PlayerNumber pn )
 	FOREACH_PlayerNumber( p )
 		vpns.push_back( p );
 	for( unsigned i=0; i<m_pRows.size(); i++ )
+	{
 		ExportOptions( i, vpns );
-
+	}
 	// Changing one option can affect whether other options are available.
 	for( unsigned i=0; i<m_pRows.size(); i++ )
 	{

@@ -48,10 +48,11 @@ void GhostArrowRow::SetColumnRenderers(vector<NoteColumnRenderer>& renderers)
 
 GhostArrowRow::~GhostArrowRow()
 {
-	for( unsigned i = 0; i < m_Ghost.size(); ++i )
-		delete m_Ghost[i];
+	for (auto *ghost: m_Ghost)
+	{
+		delete ghost;
+	}
 }
-
 
 void GhostArrowRow::Update( float fDeltaTime )
 {

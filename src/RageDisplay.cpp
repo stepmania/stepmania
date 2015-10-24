@@ -966,9 +966,10 @@ void RageCompiledGeometry::Set( const vector<msMesh> &vMeshes, bool bNeedsNormal
 		totalVerts += Vertices.size();
 		totalTriangles += Triangles.size();
 
-		for( unsigned j = 0; j < Vertices.size(); ++j )
+        // TODO: Use std::any_of.
+        for (auto const &vertex: Vertices)
 		{
-			if( Vertices[j].TextureMatrixScale.x != 1.0f || Vertices[j].TextureMatrixScale.y != 1.0f )
+			if( vertex.TextureMatrixScale.x != 1.0f || vertex.TextureMatrixScale.y != 1.0f )
 			{
 				meshInfo.m_bNeedsTextureMatrixScale = true;
 				m_bAnyNeedsTextureMatrixScale = true;

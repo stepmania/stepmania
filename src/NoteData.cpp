@@ -1295,13 +1295,13 @@ void NoteData::RemoveATIFromList(all_tracks_const_iterator* iter) const
 
 void NoteData::RevalidateATIs(vector<int> const& added_or_removed_tracks, bool added)
 {
-	for(auto cur= m_atis.begin(); cur != m_atis.end(); ++cur)
+	for (auto *iter: m_atis)
 	{
-		(*cur)->Revalidate(this, added_or_removed_tracks, added);
+		iter->Revalidate(this, added_or_removed_tracks, added);
 	}
-	for(auto cur= m_const_atis.begin(); cur != m_const_atis.end(); ++cur)
+	for (auto *iter: m_const_atis)
 	{
-		(*cur)->Revalidate(this, added_or_removed_tracks, added);
+		iter->Revalidate(this, added_or_removed_tracks, added);
 	}
 }
 
@@ -1445,14 +1445,13 @@ template<typename ND, typename iter, typename TN>
 		if(added)
 		{
 			int avg_row= 0;
-			for(size_t p= 0; p < m_PrevCurrentRows.size(); ++p)
+			for (auto &row: m_PrevCurrentRows)
 			{
-				avg_row+= m_PrevCurrentRows[p];
+				avg_row += row;
 			}
-			avg_row/= m_PrevCurrentRows.size();
-			for(size_t a= 0; a < added_or_removed_tracks.size(); ++a)
+			avg_row /= m_PrevCurrentRows.size();
+			for (auto &track_id: added_or_removed_tracks)
 			{
-				int track_id= added_or_removed_tracks[a];
 				m_PrevCurrentRows.insert(m_PrevCurrentRows.begin()+track_id, avg_row);
 			}
 			m_vBeginIters.resize(m_pNoteData->GetNumTracks());
@@ -1461,9 +1460,8 @@ template<typename ND, typename iter, typename TN>
 		}
 		else
 		{
-			for(size_t a= 0; a < added_or_removed_tracks.size(); ++a)
+			for (auto &track_id: added_or_removed_tracks)
 			{
-				int track_id= added_or_removed_tracks[a];
 				m_PrevCurrentRows.erase(m_PrevCurrentRows.begin()+track_id);
 			}
 			m_vBeginIters.resize(m_pNoteData->GetNumTracks());

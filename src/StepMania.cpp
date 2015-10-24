@@ -757,9 +757,8 @@ RageDisplay *CreateDisplay()
 		RageException::Throw( "%s", ERROR_NO_VIDEO_RENDERERS.GetValue().c_str() );
 
 	RageDisplay *pRet = nullptr;
-	for( unsigned i=0; i<asRenderers.size(); i++ )
+	for (auto const &sRenderer: asRenderers)
 	{
-		RString sRenderer = asRenderers[i];
 		Rage::ci_ascii_string ciRenderer{ sRenderer };
 		if( ciRenderer == "opengl" )
 		{
@@ -912,13 +911,14 @@ static void MountTreeOfZips( const RString &dir )
 		GetDirListing( path + "/*.zip", zips, false, true );
 		GetDirListing( path + "/*.smzip", zips, false, true );
 
-		for( unsigned i = 0; i < zips.size(); ++i )
+		for (auto &zip: zips)
 		{
-			if( !IsAFile(zips[i]) )
+			if( !IsAFile(zip) )
+			{
 				continue;
-
-			LOG->Trace( "VFS: found %s", zips[i].c_str() );
-			FILEMAN->Mount( "zip", zips[i], "/" );
+			}
+			LOG->Trace( "VFS: found %s", zip.c_str() );
+			FILEMAN->Mount( "zip", zip, "/" );
 		}
 
 		GetDirListing( path + "/*", dirs, true, true );
@@ -1021,22 +1021,28 @@ int sm_main(int argc, char* argv[])
 	{
 		vector<RString> dirs;
 		split( PREFSMAN->m_sAdditionalFolders, ",", dirs, true );
-		for( unsigned i=0; i < dirs.size(); i++)
-			FILEMAN->Mount( "dir", dirs[i], "/" );
+		for (auto const &dir: dirs)
+		{
+			FILEMAN->Mount( "dir", dir, "/" );
+		}
 	}
 	if( PREFSMAN->m_sAdditionalSongFolders.Get() != "" )
 	{
 		vector<RString> dirs;
 		split( PREFSMAN->m_sAdditionalSongFolders, ",", dirs, true );
-		for( unsigned i=0; i < dirs.size(); i++)
-			FILEMAN->Mount( "dir", dirs[i], "/AdditionalSongs" );
+		for (auto const &dir: dirs)
+		{
+			FILEMAN->Mount( "dir", dir, "/AdditionalSongs" );
+		}
 	}
 	if( PREFSMAN->m_sAdditionalCourseFolders.Get() != "" )
 	{
 		vector<RString> dirs;
 		split( PREFSMAN->m_sAdditionalCourseFolders, ",", dirs, true );
-		for( unsigned i=0; i < dirs.size(); i++)
-			FILEMAN->Mount( "dir", dirs[i], "/AdditionalCourses" );
+		for (auto const &dir: dirs)
+		{
+			FILEMAN->Mount( "dir", dir, "/AdditionalCourses" );
+		}
 	}
 
 	MountTreeOfZips( SpecialFiles::PACKAGES_DIR );

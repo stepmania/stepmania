@@ -357,12 +357,12 @@ bool Course::GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) c
 
 		stable_sort( entries.begin(), entries.end() );
 		for( unsigned i = 0; i < trail.m_vEntries.size(); ++i )
+		{
 			trail.m_vEntries[i] = entries[i].entry;
+		}
 	}
 
-	if( trail.m_vEntries.empty() )
-		return false;
-	return true;
+	return !trail.m_vEntries.empty();
 }
 
 // TODO: Move Course initialization after PROFILEMAN is created
@@ -892,9 +892,9 @@ void Course::UpdateCourseStats( StepsType st )
 	m_SortOrder_TotalDifficulty = 0;
 
 	// courses with random/players best-worst songs should go at the end
-	for(unsigned i = 0; i < m_vEntries.size(); i++)
+	for (auto &entry: m_vEntries)
 	{
-		Song *pSong = m_vEntries[i].songID.ToSong();
+		Song *pSong = entry.songID.ToSong();
 		if( pSong != nullptr )
 			continue;
 
@@ -948,12 +948,13 @@ const CourseEntry *Course::FindFixedSong( const Song *pSong ) const
 
 void Course::GetAllCachedTrails( vector<Trail *> &out )
 {
-	TrailCache_t::iterator it;
-	for( it = m_TrailCache.begin(); it != m_TrailCache.end(); ++it )
+	for (auto &cache: m_TrailCache)
 	{
-		CacheData &cd = it->second;
+		CacheData &cd = cache.second;
 		if( !cd.null )
+		{
 			out.push_back( &cd.trail );
+		}
 	}
 }
 
@@ -1067,9 +1068,9 @@ public:
 	static int GetCourseEntries( T* p, lua_State *L )
 	{
 		vector<CourseEntry*> v;
-		for( unsigned i = 0; i < p->m_vEntries.size(); ++i )
+		for (auto &entry: p->m_vEntries)
 		{
-			v.push_back(&p->m_vEntries[i]);
+			v.push_back(&entry);
 		}
 		LuaHelpers::CreateTableFromArray<CourseEntry*>( v, L );
 		return 1;

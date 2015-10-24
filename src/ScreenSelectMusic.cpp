@@ -1290,11 +1290,15 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			bool bIsRepeat = false;
 			int i = 0;
 			if( GAMESTATE->IsEventMode() )
-				i = std::max( 0, int(STATSMAN->m_vPlayedStageStats.size())-5 );
+			{
+				i = std::max( 0, static_cast<int>(STATSMAN->m_vPlayedStageStats.size())-5 );
+			}
+			// TODO: Look into std::any_of.
 			for( ; i < (int)STATSMAN->m_vPlayedStageStats.size(); ++i )
+			{
 				if( STATSMAN->m_vPlayedStageStats[i].m_vpPlayedSongs.back() == m_MusicWheel.GetSelectedSong() )
 					bIsRepeat = true;
-
+			}
 			// Don't complain about repeats if the user didn't get to pick.
 			if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 				bIsRepeat = false;

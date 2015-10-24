@@ -89,10 +89,10 @@ RageLog::~RageLog()
 	const RString AdditionalLog = GetAdditionalLog();
 	vector<RString> AdditionalLogLines;
 	split( AdditionalLog, "\n", AdditionalLogLines );
-	for( unsigned i = 0; i < AdditionalLogLines.size(); ++i )
+	for (auto &line: AdditionalLogLines)
 	{
-		Trim( AdditionalLogLines[i] );
-		this->Info( "%s", AdditionalLogLines[i].c_str() );
+		Trim( line );
+		this->Info( line );
 	}
 
 	Flush();

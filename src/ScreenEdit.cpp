@@ -2809,17 +2809,15 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 			vector<Course*> courses;
 			SONGMAN->GetAllCourses( courses, false );
-			for( unsigned i = 0; i < courses.size(); ++i )
-			{
-				const Course *crs = courses[i];
 
-				bool bUsesThisSong = false;
-				for( unsigned e = 0; e < crs->m_vEntries.size(); ++e )
-				{
-					if( crs->m_vEntries[e].songID.ToSong() != m_pSong )
-						continue;
-					bUsesThisSong = true;
-				}
+			auto isUsed = [this](CourseEntry const &entry) {
+				return entry.songID.ToSong() == m_pSong;
+			};
+
+			for (auto const *crs: courses)
+			{
+				// TODO: Use std::any_of here.
+				bool bUsesThisSong = std::any_of(crs->m_vEntries.begin(), crs->m_vEntries.end(), isUsed);
 
 				if( bUsesThisSong )
 				{

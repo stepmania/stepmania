@@ -128,10 +128,9 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
 	}
 	std::set<RString> FileTypes;
 	vector<RString> const& sound_exts= ActorUtil::GetTypeExtensionList(FT_Sound);
-	for(vector<RString>::const_iterator curr= sound_exts.begin();
-			curr != sound_exts.end(); ++curr)
+	for (auto &curr: sound_exts)
 	{
-		FileTypes.insert(*curr);
+		FileTypes.insert(curr);
 	}
 
 	RString format = Rage::make_lower(GetExtension( filename ));
@@ -149,12 +148,16 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
 		FileTypes.erase( format );
 	}
 
-	for( auto it = FileTypes.begin(); bKeepTrying && it != FileTypes.end(); ++it )
+	for (auto &it: FileTypes)
 	{
-		RageSoundReader_FileReader *NewSample = TryOpenFile( pFile->Copy(), error, *it, bKeepTrying );
+		if (!bKeepTrying)
+		{
+			break;
+		}
+		RageSoundReader_FileReader *NewSample = TryOpenFile( pFile->Copy(), error, it, bKeepTrying );
 		if( NewSample )
 		{
-			LOG->UserLog( "Sound file", pFile->GetDisplayPath(), "is really %s.", it->c_str() );
+			LOG->UserLog( "Sound file", pFile->GetDisplayPath(), "is really %s.", it.c_str() );
 			return NewSample;
 		}
 	}

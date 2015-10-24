@@ -52,9 +52,9 @@ protected:
 		lua_setfield( L, iMetatable, "__tostring" );
 
 		// fill method table with methods from class T
-		for( unsigned i=0; i < m_aMethods.size(); i++ )
+		for (auto const m: m_aMethods)
 		{
-			const RegType *l = &m_aMethods[i];
+			const RegType *l = &m;
 			lua_pushlightuserdata( L, (void*) l->mfunc );
 			lua_pushcclosure( L, thunk, 1 );
 			lua_setfield( L, iMethods, l->szName );

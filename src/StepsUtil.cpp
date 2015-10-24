@@ -114,13 +114,11 @@ void StepsUtil::SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers,
 	vector<Steps*> vpAllSteps;
 	std::unordered_map<Steps*,Song*> mapStepsToSong;
 	{
-		for( unsigned i=0; i<vpSongs.size(); i++ )
+		for (auto *pSong: vpSongs)
 		{
-			Song* pSong = vpSongs[i];
 			vector<Steps*> vpSteps = pSong->GetAllSteps();
-			for( unsigned j=0; j<vpSteps.size(); j++ )
+			for (auto *pSteps: vpSteps)
 			{
-				Steps* pSteps = vpSteps[j];
 				if( pSteps->IsAutogen() )
 					continue;	// skip
 				vpAllSteps.push_back( pSteps );
@@ -130,11 +128,10 @@ void StepsUtil::SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers,
 	}
 
 	ASSERT( pProfile != nullptr );
-	for(unsigned i = 0; i < vStepsPointers.size(); ++i)
+	for (auto *pSteps: vStepsPointers)
 	{
-		Steps* pSteps = vStepsPointers[i];
 		Song* pSong = mapStepsToSong[pSteps];
-		steps_sort_val[vStepsPointers[i]] = ssprintf("%9i", pProfile->GetStepsNumTimesPlayed(pSong,pSteps));
+		steps_sort_val[pSteps] = ssprintf("%9i", pProfile->GetStepsNumTimesPlayed(pSong,pSteps));
 	}
 	stable_sort( vStepsPointers.begin(), vStepsPointers.end(), bDecending ? CompareStepsPointersBySortValueDescending : CompareStepsPointersBySortValueAscending );
 	steps_sort_val.clear();

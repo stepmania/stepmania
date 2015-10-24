@@ -36,10 +36,8 @@ void ActiveAttackList::Refresh()
 	const AttackArray& attacks = m_pPlayerState->m_ActiveAttacks;
 
 	vector<RString> vsThemedMods;
-	for( unsigned i=0; i<attacks.size(); i++ )
+	for (auto const &attack: attacks)
 	{
-		const Attack& attack = attacks[i];
-
 		if( !attack.bOn )
 			continue; // hasn't started yet
 		if( !attack.bShowInAttackList )

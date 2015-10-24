@@ -184,9 +184,14 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 		sel = 0;
 		for(unsigned i = 0; i < choices.size(); ++i)
+		{
 			if( !strcasecmp(choices[i], sCurGameName) )
+			{
 				sel = i;
-	} else {
+			}
+		}
+	}
+	else {
 		vector<const Game*> aGames;
 		GAMEMAN->GetEnabledGames( aGames );
 		PREFSMAN->SetCurrentGame(aGames[sel]->m_szName);
@@ -279,8 +284,12 @@ static void RequestedTheme( int &sel, bool ToSel, const ConfOption *pConfOption 
 	{
 		sel = 0;
 		for( unsigned i=1; i<vsThemeNames.size(); i++ )
+		{
 			if( !strcasecmp(vsThemeNames[i], PREFSMAN->m_sTheme.Get()) )
+			{
 				sel = i;
+			}
+		}
 	}
 	else
 	{
@@ -305,8 +314,12 @@ static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 	{
 		sel = 0;
 		for( unsigned i=1; i<choices.size(); i++ )
+		{
 			if( !strcasecmp(choices[i], ANNOUNCER->GetCurAnnouncerName()) )
+			{
 				sel = i;
+			}
+		}
 	}
 	else
 	{
@@ -332,8 +345,12 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 		po.FromString( PREFSMAN->m_sDefaultModifiers );
 		sel = 0;
 		for( unsigned i=0; i < choices.size(); i++ )
+		{
 			if( !strcasecmp(choices[i], po.m_sNoteSkin) )
+			{
 				sel = i;
+			}
+		}
 	}
 	else
 	{
@@ -899,13 +916,12 @@ ConfOption *ConfOption::Find( RString name )
 {
 	InitializeConfOptions();
 	Rage::ci_ascii_string ciName{ name };
-	for( unsigned i = 0; i < g_ConfOptions.size(); ++i )
+	for (auto &opt: g_ConfOptions)
 	{
-		ConfOption *opt = &g_ConfOptions[i];
-		RString match(opt->name);
+		RString match(opt.name);
 		if (ciName == match)
 		{
-			return opt;
+			return &opt;
 		}
 	}
 

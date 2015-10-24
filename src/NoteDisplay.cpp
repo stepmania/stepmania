@@ -466,12 +466,11 @@ bool NoteDisplay::DrawHoldsInRange(const NoteFieldRenderArgs& field_args,
 	const vector<NoteData::TrackMap::const_iterator>& tap_set)
 {
 	bool any_upcoming = false;
-	for(vector<NoteData::TrackMap::const_iterator>::const_iterator tapit=
-		tap_set.begin(); tapit != tap_set.end(); ++tapit)
+	for (auto const &tapit: tap_set)
 	{
-		const TapNote& tn= (*tapit)->second;
+		const TapNote& tn= tapit->second;
 		const HoldNoteResult& result= tn.HoldResult;
-		int start_row= (*tapit)->first;
+		int start_row= tapit->first;
 		int end_row = start_row + tn.iDuration;
 
 		// TRICKY: If boomerang is on, then all notes in the range
@@ -535,11 +534,10 @@ bool NoteDisplay::DrawTapsInRange(const NoteFieldRenderArgs& field_args,
 {
 	bool any_upcoming= false;
 	// draw notes from furthest to closest
-	for(vector<NoteData::TrackMap::const_iterator>::const_iterator tapit=
-		tap_set.begin(); tapit != tap_set.end(); ++tapit)
+	for (auto const &tapit: tap_set)
 	{
-		int tap_row= (*tapit)->first;
-		const TapNote& tn= (*tapit)->second;
+		int tap_row = tapit->first;
+		const TapNote& tn = tapit->second;
 
 		// TRICKY: If boomerang is on, then all notes in the range
 		// [first_row,last_row] aren't necessarily visible.
@@ -635,10 +633,9 @@ void NoteDisplay::Update( float fDeltaTime )
 {
 	/* This function is static: it's called once per game loop, not once per
 	 * NoteDisplay.  Update each cached item exactly once. */
-	std::map<NoteSkinAndPath, NoteResource *>::iterator it;
-	for( it = g_NoteResource.begin(); it != g_NoteResource.end(); ++it )
+	for (auto &it: g_NoteResource)
 	{
-		NoteResource *pRes = it->second;
+		NoteResource *pRes = it.second;
 		pRes->m_pActor->Update( fDeltaTime );
 	}
 }
