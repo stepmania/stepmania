@@ -923,7 +923,14 @@ void BMSChartReader::CalculateStepsType()
 {
 	nonEmptyTracksCount = nonEmptyTracks.size();
 	out->m_StepsType = DetermineStepsType();
-	out->m_StepsTypeStr = GAMEMAN->GetStepsTypeInfo(out->m_StepsType).szName;
+	if(out->m_StepsType == StepsType_Invalid)
+	{
+		out->m_StepsTypeStr = "BMS_loaded_invalid_stepstype";
+	}
+	else
+	{
+		out->m_StepsTypeStr = GAMEMAN->GetStepsTypeInfo(out->m_StepsType).szName;
+	}
 }
 
 enum BmsRawChannel
