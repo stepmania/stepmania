@@ -262,12 +262,6 @@ if(WIN32)
     get_filename_component(LIB_AVUTIL ${LIB_AVUTIL} NAME)
   endif()
 elseif(MACOSX)
-
-  if (WITH_FFMPEG)
-    include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
-    set(HAS_FFMPEG TRUE)
-  endif()
-
   set(SYSTEM_PCRE_FOUND FALSE)
   set(WITH_CRASH_HANDLER TRUE)
   # Apple Archs needs to be 32-bit for now.
@@ -275,6 +269,11 @@ elseif(MACOSX)
   set(CMAKE_OSX_ARCHITECTURES "i386")
   set(CMAKE_OSX_DEPLOYMENT_TARGET "10.6")
   set(CMAKE_OSX_DEPLOYMENT_TARGET_FULL "10.6.8")
+
+  if (WITH_FFMPEG)
+    include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
+    set(HAS_FFMPEG TRUE)
+  endif()
 
   find_library(MAC_FRAME_ACCELERATE Accelerate ${CMAKE_SYSTEM_FRAMEWORK_PATH})
   find_library(MAC_FRAME_APPKIT AppKit ${CMAKE_SYSTEM_FRAMEWORK_PATH})

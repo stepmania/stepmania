@@ -1,4 +1,4 @@
-set(SM_FFMPEG_VERSION "2.1.3")
+set(SM_FFMPEG_VERSION "2.8")
 set(SM_FFMPEG_SRC_LIST "${SM_EXTERN_DIR}" "/ffmpeg-linux-" "${SM_FFMPEG_VERSION}")
 sm_join("${SM_FFMPEG_SRC_LIST}" "" SM_FFMPEG_SRC_DIR)
 set(SM_FFMPEG_CONFIGURE_EXE "${SM_FFMPEG_SRC_DIR}/configure")
@@ -18,12 +18,12 @@ list(APPEND FFMPEG_CONFIGURE
   "--disable-swresample"
   "--disable-postproc"
   "--disable-avfilter"
+  "--disable-libopus"
   "--disable-shared"
   "--enable-static"
 )
 
-if(MACOSX)
-  # TODO: Remove these two items when Mac OS X StepMania builds in 64-bit.
+if("${CMAKE_OSX_ARCHITECTURES}" STREQUAL "i386")
   list(APPEND FFMPEG_CONFIGURE
     "--arch=i386"
     "--cc=clang -m32"
@@ -44,6 +44,11 @@ if (NOT WITH_EXTERNAL_WARNINGS)
   list(APPEND FFMPEG_CONFIGURE
     "--extra-cflags=-w"
   )
+endif()
+
+# Mac OS X does not always generate ffversion.h. Fix it.
+if (MACOSX)
+  configure_file("${SM_EXTERN_DIR}/version.ffmpeg.in.h" "${SM_FFMPEG_SRC_DIR}/libavutil/ffversion.h")
 endif()
 
 if (IS_DIRECTORY "${SM_FFMPEG_SRC_DIR}")
