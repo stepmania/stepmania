@@ -9,7 +9,7 @@ notifications:
 matrix:
     include:
         -
-            env: CXX_COMPILER=clang++-3.6 CC_COMPILER=clang-3.6 BUILD_TYPE=Release WITH_FFMPEG=OFF
+            env: CXX_COMPILER=clang++-3.6 CC_COMPILER=clang-3.6 BUILD_TYPE=Release WITH_FFMPEG=OFF WITH_FFMPEG_JOBS=1
             compiler: clang
             addons: &clang36
                 apt:
@@ -33,12 +33,12 @@ matrix:
                         - libglew-dev
 
         -
-            env: CXX_COMPILER=clang++-3.6 CC_COMPILER=clang-3.6 BUILD_TYPE=Release WITH_FFMPEG=ON
+            env: CXX_COMPILER=clang++-3.6 CC_COMPILER=clang-3.6 BUILD_TYPE=Release WITH_FFMPEG=ON WITH_FFMPEG_JOBS=1
             compiler: clang
             addons: *clang36
 
         -
-            env: CXX_COMPILER=g++-5 CC_COMPILER=gcc-5 BUILD_TYPE=Release WITH_FFMPEG=OFF
+            env: CXX_COMPILER=g++-5 CC_COMPILER=gcc-5 BUILD_TYPE=Release WITH_FFMPEG=OFF WITH_FFMPEG_JOBS=1
             compiler: gcc
             addons: &gcc5
                 apt:
@@ -101,7 +101,7 @@ install:
     - mkdir ${DEPS_DIR}
     - cd ${DEPS_DIR}
     # Use the binary for cmake instead of building it now.
-    - export CMAKE_URL=http://www.cmake.org/files/v3.3/cmake-3.3.1-Linux-x86_64.tar.gz
+    - export CMAKE_URL=http://www.cmake.org/files/v3.3/cmake-3.3.2-Linux-x86_64.tar.gz
     - mkdir cmake
     - wget --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
     - export PATH=${PWD}/cmake/bin:${PATH}
@@ -125,7 +125,7 @@ before_script:
     - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export LDFLAGS="-L ${DEPS_DIR}/llvm/build/lib -l c++ -l c++abi"; fi
     - if [[ "${CXX_COMPILER}" == "clang++-3.6" ]]; then export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${DEPS_DIR}/llvm/build/lib"; fi
     - cd Build
-    - cmake .. -DCMAKE_CXX_COMPILER=${CXX_COMPILER} -DCMAKE_C_COMPILER=${CC_COMPILER} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DWITH_FFMPEG=${WITH_FFMPEG}
+    - cmake .. -DCMAKE_CXX_COMPILER=${CXX_COMPILER} -DCMAKE_C_COMPILER=${CC_COMPILER} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DWITH_FFMPEG=${WITH_FFMPEG} -DWITH_FFMPEG_JOBS=${WITH_FFMPEG_JOBS}
 
 script:
     - make -j2

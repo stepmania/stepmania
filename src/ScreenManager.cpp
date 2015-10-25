@@ -781,8 +781,8 @@ void ScreenManager::AddNewScreenToTop( const RString &sScreenName, ScreenMessage
 
 	// Find the prepped screen.
 	LoadedScreen ls;
-	bool b = GetPreppedScreen( sScreenName, ls );
-	ASSERT( b );
+	bool screen_load_success = GetPreppedScreen( sScreenName, ls );
+	ASSERT_M(screen_load_success, ssprintf("ScreenManager::AddNewScreenToTop: Failed to load screen %s", sScreenName.c_str()));
 
 	ls.m_SendOnPop = SendOnPop;
 

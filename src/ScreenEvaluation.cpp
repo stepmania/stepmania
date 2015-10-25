@@ -221,7 +221,11 @@ void ScreenEvaluation::Init()
 		}
 	}
 
-	ASSERT_M( !STATSMAN->m_vPlayedStageStats.empty(), "PlayerStageStats is empty!" );
+	if(STATSMAN->m_vPlayedStageStats.empty())
+	{
+		LuaHelpers::ReportScriptError("PlayerStageStats is empty!  Do not use SM_GoToNextScreen on ScreenGameplay, use SM_DoNextScreen instead so that ScreenGameplay can clean up properly.");
+		STATSMAN->m_vPlayedStageStats.push_back(STATSMAN->m_CurStageStats);
+	}
 	m_pStageStats = &STATSMAN->m_vPlayedStageStats.back();
 
 	ZERO( m_bSavedScreenshot );

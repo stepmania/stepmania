@@ -3,9 +3,6 @@
 # This option allows for networking support with StepMania.
 option(WITH_NETWORKING "Build with networking support." ON)
 
-# This option allows for additional version information to be built-in.
-option(WITH_VERSION_INFO "Build with version information." ON)
-
 # This option quiets warnings that are a part of external projects.
 option(WITH_EXTERNAL_WARNINGS "Build with warnings for all components, not just StepMania." OFF)
 
@@ -42,14 +39,19 @@ option(WITH_MP3 "Build with MP3 Support." ON)
 option(WITH_OGG "Build with OGG/Vorbis Support." ON)
 
 if(NOT MSVC)
+  # Turn this option off to disable using FFMEPG.
   option(WITH_FFMPEG "Build with FFMPEG." ON)
+  # Change this number to utilize a different number of jobs for building FFMPEG.
+  option(WITH_FFMPEG_JOBS "Build FFMPEG with this many jobs." 2)
 endif()
 
 if(WIN32)
   option(WITH_MINIMAID "Build with Minimaid Lights Support." ON)
+  # Developer only option: connect to IRC to report the result. Only use with build servers.
+  option(WITH_IRC_POST_HOOK "Report via IRC of the success afterwards." OFF)
 elseif(LINUX)
     # Builder beware: later versions of ffmpeg may break!
-    option(WITH_SYSTEM_FFMPEG "Build with the system's FFMPEG." OFF)
+    option(WITH_SYSTEM_FFMPEG "Build with the system's FFMPEG, disabled build with bundled's FFMPEG" OFF)
     option(WITH_CRYSTALHD_DISABLED "Build FFMPEG without Crystal HD support." OFF)
     option(WITH_TTY "Build with Linux TTY Input Support." OFF)
     option(WITH_PROFILING "Build with Profiling Support." OFF)

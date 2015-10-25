@@ -1478,8 +1478,10 @@ void Actor::HandleMessage( const Message &msg )
 void Actor::PlayCommandNoRecurse( const Message &msg )
 {
 	const apActorCommands *pCmd = GetCommand( msg.GetName() );
-	if( pCmd != nullptr )
+	if(pCmd != nullptr && (*pCmd)->IsSet() && !(*pCmd)->IsNil())
+	{
 		RunCommands( *pCmd, &msg.GetParamTable() );
+	}
 }
 
 void Actor::PushContext( lua_State *L )
