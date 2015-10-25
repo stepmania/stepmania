@@ -18,9 +18,7 @@ init:
 
     echo %APPVEYOR_PROJECT_NAME%
 
-    echo %APPVEYOR_PROJECT_ID%
-
-    echo %APPVEYOR_PROJECT_SLUG%
+    echo %APPVEYOR_API_URL%
 
     set GITHUB_API_URL=https://api.github.com/repos/%APPVEYOR_REPO_NAME%/statuses/%APPVEYOR_REPO_COMMIT%
 
@@ -47,11 +45,11 @@ on_success:
 
     curl -u wolfman2000:%access_token% -H "User-Agent: Appveyor-wolfman2000-stepmania-app" -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" -X POST -d %GITHUB_API_SUCCESS% %GITHUB_API_URL%
 
-    C:\Repos\wolfmania\Program\irc-reporter.exe "%APPVEYOR_REPO_NAME%" "%APPVEYOR_BUILD_VERSION%"  "%APPVEYOR_REPO_COMMIT%" "%APPVEYOR_REPO_COMMIT_AUTHOR%" "https://ci.appveyor.com/project/%APPVEYOR_REPO_NAME%/build/%APPVEYOR_BUILD_VERSION%" "success"
+    C:\Repos\wolfmania\Program\irc-reporter.exe "%APPVEYOR_REPO_NAME%" "%APPVEYOR_BUILD_VERSION%"  "%APPVEYOR_REPO_COMMIT%" "%APPVEYOR_REPO_COMMIT_AUTHOR%" "https://ci.appveyor.com/project/%APPVEYOR_REPO_NAME%/%APPVEYOR_PROJECT_SLUG%/build/%APPVEYOR_BUILD_VERSION%" "success"
 on_failure:
 - cmd: >-
     set GITHUB_API_FAILURE="{"""state""": """failure""", """target_url""": """%APPVEYOR_BUILD_URL%""", """description""": """Build failure on appveyor.""", """context""": """continuous-integration/appveyor"""}"
 
     curl -u wolfman2000:%access_token% -H "User-Agent: Appveyor-wolfman2000-stepmania-app" -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" -X POST -d %GITHUB_API_FAILURE%  %GITHUB_API_URL%
 
-    C:\Repos\wolfmania\Program\irc-reporter.exe "%APPVEYOR_REPO_NAME%" "%APPVEYOR_BUILD_VERSION%" "%APPVEYOR_REPO_COMMIT%" "%APPVEYOR_REPO_COMMIT_AUTHOR%" "https://ci.appveyor.com/project/%APPVEYOR_REPO_NAME%/build/%APPVEYOR_BUILD_VERSION%" "failure"
+    C:\Repos\wolfmania\Program\irc-reporter.exe "%APPVEYOR_REPO_NAME%" "%APPVEYOR_BUILD_VERSION%" "%APPVEYOR_REPO_COMMIT%" "%APPVEYOR_REPO_COMMIT_AUTHOR%" "https://ci.appveyor.com/project/%APPVEYOR_REPO_NAME%/%APPVEYOR_PROJECT_SLUG%/build/%APPVEYOR_BUILD_VERSION%" "failure"
