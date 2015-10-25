@@ -20,7 +20,7 @@ init:
 
     set GITHUB_API_PENDING="{"""state""": """pending""", """target_url""": """https://ci.appveyor.com/project/%APPVEYOR_REPO_NAME%/build/%APPVEYOR_BUILD_VERSION%""", """description""": """Starting the appveyor build.""", """context""": """continuous-integration/appveyor"""}"
 
-    set APPVEYOR_BUILD_URL=https://ci.appveyor.com/project/%APPVEYOR_GITHUB_OWNER_NAME%/%APPVEYOR_PROJECT_SLUG%/build/%APPVEYOR_BUILD_VERSION%"
+    set APPVEYOR_BUILD_URL=https://ci.appveyor.com/project/%APPVEYOR_GITHUB_OWNER_NAME%/%APPVEYOR_PROJECT_SLUG%/build/%APPVEYOR_BUILD_VERSION%
 
     curl -u wolfman2000:%access_token% -H "User-Agent: Appveyor-wolfman2000-stepmania-app" -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" -X POST -d %GITHUB_API_PENDING% %GITHUB_API_URL%
 
