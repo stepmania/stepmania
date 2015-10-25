@@ -39,7 +39,10 @@ option(WITH_MP3 "Build with MP3 Support." ON)
 option(WITH_OGG "Build with OGG/Vorbis Support." ON)
 
 if(NOT MSVC)
+  # Turn this option off to disable using FFMEPG.
   option(WITH_FFMPEG "Build with FFMPEG." ON)
+  # Change this number to utilize a different number of jobs for building FFMPEG.
+  option(WITH_FFMPEG_JOBS "Build FFMPEG with this many jobs." 2)
 endif()
 
 if(WIN32)
