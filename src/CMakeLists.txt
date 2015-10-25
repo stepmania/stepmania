@@ -3,6 +3,9 @@ file(MAKE_DIRECTORY "${SM_SRC_DIR}/generated")
 if(MSVC)
   # Add the mapconv program of the past to allow for debugging information.
   include("CMakeProject-mapconv.cmake")
+  if (WITH_IRC_POST_HOOK)
+    include("CMakeProject-irc.cmake")
+  endif()
 endif()
 
 # Keep the module path local for easier grabbing.
