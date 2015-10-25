@@ -154,7 +154,6 @@ list(APPEND SM_WINDOWS_PROGRAM_DLLS
   "${SM_PROGRAM_DIR}/avutil-52.dll"
   "${SM_PROGRAM_DIR}/parallel_lights_io.dll"
   "${SM_PROGRAM_DIR}/swscale-2.dll"
-  "${SM_PROGRAM_DIR}/zlib1.dll"
 )
 
 if(WIN32)
@@ -615,7 +614,6 @@ if(NOT APPLE)
     install(FILES "${SM_PROGRAM_DIR}/avutil-52.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/parallel_lights_io.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/swscale-2.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/zlib1.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/StepMania.vdi" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
 
     # foreach(SM_WINDOW_DLL "${SM_WINDOWS_PROGRAM_DLLS}")
