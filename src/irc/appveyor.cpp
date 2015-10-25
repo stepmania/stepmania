@@ -94,7 +94,6 @@ int main(int argc, char* argv[])
 			break;
 		}
 		buffer[numBytes] = '\0'; // Ensure a null terminated string.
-		std::cout << buffer << std::endl;
 		if (startsWithPing(buffer))
 		{
 			// We MUST reply to a PING with PONG. Otherwise, we get booted off.
