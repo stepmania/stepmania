@@ -233,6 +233,8 @@ else()
 endif()
 
 if(WIN32)
+  # No matter what, stick to unicode development.
+  add_definitions(-DUNICODE -D_UNICODE)
   set(SYSTEM_PCRE_FOUND FALSE)
   find_package(DirectX REQUIRED)
 
