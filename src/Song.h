@@ -193,6 +193,7 @@ public:
 	RString GetDisplayMainTitle() const;
 	RString GetDisplaySubTitle() const;
 	RString GetDisplayArtist() const;
+	RString GetMainTitle() const;
 
 	/**
 	 * @brief Retrieve the transliterated title, or the main title if there is no translit.

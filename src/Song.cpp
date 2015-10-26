@@ -1726,6 +1726,11 @@ RString Song::GetDisplayArtist() const
 	return m_sArtist;
 }
 
+RString Song::GetMainTitle() const
+{
+	return m_sMainTitle;
+}
+
 RString Song::GetDisplayFullTitle() const
 {
 	RString Title = GetDisplayMainTitle();
@@ -1954,6 +1959,10 @@ public:
 	static int GetDisplayMainTitle( T* p, lua_State *L )
 	{
 		lua_pushstring(L, p->GetDisplayMainTitle() ); return 1;
+	}
+	static int GetMainTitle(T* p, lua_State* L)
+	{
+		lua_pushstring(L, p->GetMainTitle()); return 1;
 	}
 	static int GetTranslitMainTitle( T* p, lua_State *L )
 	{
@@ -2303,6 +2312,7 @@ public:
 		ADD_METHOD( GetDisplayFullTitle );
 		ADD_METHOD( GetTranslitFullTitle );
 		ADD_METHOD( GetDisplayMainTitle );
+		ADD_METHOD(GetMainTitle);
 		ADD_METHOD( GetTranslitMainTitle );
 		ADD_METHOD( GetDisplaySubTitle );
 		ADD_METHOD( GetTranslitSubTitle );

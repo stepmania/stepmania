@@ -1568,6 +1568,7 @@
 			<Function name='GetLastBeat'/>
 			<Function name='GetLastSecond'/>
 			<Function name='GetLyricsPath'/>
+			<Function name='GetMainTitle'/>
 			<Function name='GetMusicPath'/>
 			<Function name='GetOneSteps'/>
 			<Function name='GetOrigin'/>
