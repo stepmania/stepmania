@@ -43,6 +43,9 @@ if(NOT MSVC)
   option(WITH_FFMPEG "Build with FFMPEG." ON)
   # Change this number to utilize a different number of jobs for building FFMPEG.
   option(WITH_FFMPEG_JOBS "Build FFMPEG with this many jobs." 2)
+else()
+  # Turn this option on to enable using the Texture Font Generator.
+  option(WITH_TEXTURE_GENERATOR "Build with the Texture Font Generator. Ensure the MFC library is installed." OFF)
 endif()
 
 if(WIN32)
