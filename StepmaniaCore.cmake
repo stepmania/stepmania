@@ -45,6 +45,9 @@ include("${SM_CMAKE_DIR}/SMDefs.cmake")
 # Put the predefined targets in separate groups.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+# Set up the linker flags for MSVC builds.
+configure_msvc_runtime()
+
 # Checks the standard include directories for c-style headers.
 # We may use C++ in this project, but the check works better with plain C headers.
 include(CheckIncludeFiles)
