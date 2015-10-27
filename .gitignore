@@ -82,6 +82,8 @@ PBProject/Hardware.plist
 *.exp
 *.ilk
 *.map
+*.aps
+*.res
 
 # Windows General Files
 Thumbs.db
