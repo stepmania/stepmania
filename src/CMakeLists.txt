@@ -610,6 +610,7 @@ if(NOT APPLE)
     sm_join("${SM_FULL_INSTALLATION_PATH_LIST}" "/" SM_FULL_INSTALLATION_PATH)
     # Hardcoding the values for now since the foreach loop is not working as intended.
     install(TARGETS "${SM_EXE_NAME}" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
+    install(FILES "${SM_PROGRAM_DIR}/Texture Font Generator.exe" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/avcodec-55.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/avformat-55.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/avutil-52.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
