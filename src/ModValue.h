@@ -19,7 +19,7 @@ struct ModifiableValue;
 
 // invalid_modfunction_time exists so that the loading code can tell when a
 // start or end time was provided.
-static const double invalid_modfunction_time= -1000.0;
+static constexpr double invalid_modfunction_time= -1000.0;
 
 struct ModManager
 {

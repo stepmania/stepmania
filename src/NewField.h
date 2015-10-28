@@ -234,9 +234,8 @@ enum FieldVanishType
 const RString& FieldVanishTypeToString(FieldVanishType fmt);
 LuaDeclareType(FieldVanishType);
 
-class NewField : public ActorFrame
+struct NewField : ActorFrame
 {
-public:
 	NewField();
 	~NewField();
 	virtual void UpdateInternal(float delta);
