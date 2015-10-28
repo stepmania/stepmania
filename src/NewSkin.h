@@ -168,7 +168,7 @@ struct QuantizedTap
 	Actor* get_common(size_t state, double rotation)
 	{
 		m_actor->SetState(state);
-		m_actor->SetBaseRotationZ(rotation);
+		m_actor->SetBaseRotationZ(static_cast<float>(rotation));
 		// Return the frame and not the actor because the notefield is going to
 		// apply mod transforms to it.  Returning the actor would make the mod
 		// transform stomp on the rotation the noteskin supplies.

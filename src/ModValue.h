@@ -201,7 +201,7 @@ struct ModInput
 		{
 			return input;
 		}
-		return m_spline.evaluate(input, m_loop_spline);
+		return static_cast<double>(m_spline.evaluate(static_cast<float>(input), m_loop_spline));
 	}
 	double apply_nothing(double input)
 	{
@@ -478,9 +478,9 @@ struct ModifiableVector3
 	{}
 	void evaluate(mod_val_inputs const& input, Rage::Vector3& out)
 	{
-		out.x= x_mod.evaluate(input);
-		out.y= y_mod.evaluate(input);
-		out.z= z_mod.evaluate(input);
+		out.x = static_cast<float>(x_mod.evaluate(input));
+		out.y = static_cast<float>(y_mod.evaluate(input));
+		out.z = static_cast<float>(z_mod.evaluate(input));
 	}
 	void set_timing(TimingData const* timing)
 	{
@@ -515,9 +515,9 @@ struct ModifiableTransform
 		pos_mod.evaluate(input, out.pos);
 		if(do_rot)
 		{
-			out.rot.y= rot_mod.y_mod.evaluate(input);
+			out.rot.y = static_cast<float>(rot_mod.y_mod.evaluate(input));
 		}
-		out.zoom.x= zoom_mod.x_mod.evaluate(input);
+		out.zoom.x = static_cast<float>(zoom_mod.x_mod.evaluate(input));
 	}
 	ModifiableVector3 pos_mod;
 	ModifiableVector3 rot_mod;

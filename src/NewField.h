@@ -92,7 +92,7 @@ struct NewFieldColumn : ActorFrame
 	{
 		double mult= m_quantization_multiplier.evaluate(input);
 		double offset= m_quantization_offset.evaluate(input);
-		return fmodf((input.eval_beat * mult) + offset, 1.0);
+		return std::fmod((input.eval_beat * mult) + offset, 1.0);
 	}
 	void calc_transform(mod_val_inputs& input, Rage::transform& trans);
 	void hold_render_transform(mod_val_inputs& input, Rage::transform& trans, bool do_rot);
@@ -234,8 +234,9 @@ enum FieldVanishType
 const RString& FieldVanishTypeToString(FieldVanishType fmt);
 LuaDeclareType(FieldVanishType);
 
-struct NewField : ActorFrame
+class NewField : public ActorFrame
 {
+public:
 	NewField();
 	~NewField();
 	virtual void UpdateInternal(float delta);
