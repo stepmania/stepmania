@@ -1,4 +1,4 @@
-version: 5.0.9.{build}.{branch}
+version: 5.0.10.{build}.{branch}
 environment:
   access_token:
     secure: vsDaeFdGCIGlIxWSEdsDomYtr5mKS5IPGHc4NwuDZ5D6mCna0STrDvMZ6IP6mOBK
