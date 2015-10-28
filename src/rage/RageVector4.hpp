@@ -17,7 +17,9 @@ public:
 	Vector4& operator *= (float rhs);
 	Vector4& operator /= (float rhs);
 
-	/** @brief Transform the coordinates into a new vector. */
+	/** @brief Transform the coordinates into a new vector.
+	 *
+	 * For documentation support, look into D3DXVec4TransformCoord. */
 	Vector4 TransformCoords(Matrix const &mat) const;
 	
 	float x, y, z, w;

@@ -52,131 +52,11 @@ void RageVec3AddToBounds( const Rage::Vector3 &p, Rage::Vector3 &mins, Rage::Vec
 #define m32 m[3][2]
 #define m33 m[3][3]
 
-void RageMatrixMultiply( Rage::Matrix* pOut, const Rage::Matrix* pA, const Rage::Matrix* pB )
-{
-//#if defined(_WINDOWS)
-//	// <30 cycles for theirs versus >100 for ours.
-//	D3DXMatrixMultiply( (D3DMATRIX*)pOut, (D3DMATRIX*)pA, (D3DMATRIX*)pB );
-//#else
-	const Rage::Matrix &a = *pA;
-	const Rage::Matrix &b = *pB;
-
-	*pOut = Rage::Matrix(
-		b.m00*a.m00+b.m01*a.m10+b.m02*a.m20+b.m03*a.m30,
-		b.m00*a.m01+b.m01*a.m11+b.m02*a.m21+b.m03*a.m31,
-		b.m00*a.m02+b.m01*a.m12+b.m02*a.m22+b.m03*a.m32,
-		b.m00*a.m03+b.m01*a.m13+b.m02*a.m23+b.m03*a.m33,
-		b.m10*a.m00+b.m11*a.m10+b.m12*a.m20+b.m13*a.m30,
-		b.m10*a.m01+b.m11*a.m11+b.m12*a.m21+b.m13*a.m31,
-		b.m10*a.m02+b.m11*a.m12+b.m12*a.m22+b.m13*a.m32,
-		b.m10*a.m03+b.m11*a.m13+b.m12*a.m23+b.m13*a.m33,
-		b.m20*a.m00+b.m21*a.m10+b.m22*a.m20+b.m23*a.m30,
-		b.m20*a.m01+b.m21*a.m11+b.m22*a.m21+b.m23*a.m31,
-		b.m20*a.m02+b.m21*a.m12+b.m22*a.m22+b.m23*a.m32,
-		b.m20*a.m03+b.m21*a.m13+b.m22*a.m23+b.m23*a.m33,
-		b.m30*a.m00+b.m31*a.m10+b.m32*a.m20+b.m33*a.m30,
-		b.m30*a.m01+b.m31*a.m11+b.m32*a.m21+b.m33*a.m31,
-		b.m30*a.m02+b.m31*a.m12+b.m32*a.m22+b.m33*a.m32,
-		b.m30*a.m03+b.m31*a.m13+b.m32*a.m23+b.m33*a.m33
-	);
-	// phew!
-//#endif
-}
-
 /*
  * Return:
  *
  * Rage::MatrixMultiply( pOut, &translate, &scale );
  */
-
-void RageMatrixRotationX( Rage::Matrix* pOut, float theta )
-{
-	theta *= Rage::PI / 180;
-
-	*pOut = Rage::Matrix::GetIdentity();
-	pOut->m[1][1] = Rage::FastCos(theta);
-	pOut->m[2][2] = pOut->m[1][1];
-
-	pOut->m[2][1] = Rage::FastSin(theta);
-	pOut->m[1][2] = -pOut->m[2][1];
-}
-
-void RageMatrixRotationY( Rage::Matrix* pOut, float theta )
-{
-	theta *= Rage::PI / 180;
-
-	*pOut = Rage::Matrix::GetIdentity();
-	pOut->m[0][0] = Rage::FastCos(theta);
-	pOut->m[2][2] = pOut->m[0][0];
-
-	pOut->m[0][2] = Rage::FastSin(theta);
-	pOut->m[2][0] = -pOut->m[0][2];
-}
-
-void RageMatrixRotationZ( Rage::Matrix* pOut, float theta )
-{
-	theta *= Rage::PI / 180;
-
-	*pOut = Rage::Matrix::GetIdentity();
-	pOut->m[0][0] = Rage::FastCos(theta);
-	pOut->m[1][1] = pOut->m[0][0];
-
-	pOut->m[0][1] = Rage::FastSin(theta);
-	pOut->m[1][0] = -pOut->m[0][1];
-}
-
-/* Return Rage::MatrixRotationX(rX) * Rage::MatrixRotationY(rY) * Rage::MatrixRotationZ(rZ)
- * quickly (without actually doing two complete matrix multiplies), by removing the
- * parts of the matrix multiplies that we know will be 0. */
-void RageMatrixRotationXYZ( Rage::Matrix* pOut, float rX, float rY, float rZ )
-{
-	rX *= Rage::PI / 180;
-	rY *= Rage::PI / 180;
-	rZ *= Rage::PI / 180;
-
-	const float cX = Rage::FastCos(rX);
-	const float sX = Rage::FastSin(rX);
-	const float cY = Rage::FastCos(rY);
-	const float sY = Rage::FastSin(rY);
-	const float cZ = Rage::FastCos(rZ);
-	const float sZ = Rage::FastSin(rZ);
-
-	/*
-	 * X*Y:
-	 * Rage::Matrix(
-	 *	cY,  sY*sX, sY*cX, 0,
-	 *	0,   cX,    -sX,   0,
-	 *	-sY, cY*sX, cY*cX, 0,
-	 *	0, 0, 0, 1
-	 * );
-	 *
-	 * X*Y*Z:
-	 *
-	 * Rage::Matrix(
-	 *	cZ*cY, cZ*sY*sX+sZ*cX, cZ*sY*cX+sZ*(-sX), 0,
-	 *	(-sZ)*cY, (-sZ)*sY*sX+cZ*cX, (-sZ)*sY*cX+cZ*(-sX), 0,
-	 *	-sY, cY*sX, cY*cX, 0,
-	 *	0, 0, 0, 1
-	 * );
-	 */
-
-	pOut->m00 = cZ*cY;
-	pOut->m01 = cZ*sY*sX+sZ*cX;
-	pOut->m02 = cZ*sY*cX+sZ*(-sX);
-	pOut->m03 = 0;
-	pOut->m10 = (-sZ)*cY;
-	pOut->m11 = (-sZ)*sY*sX+cZ*cX;
-	pOut->m12 = (-sZ)*sY*cX+cZ*(-sX);
-	pOut->m13 = 0;
-	pOut->m20 = -sY;
-	pOut->m21 = cY*sX;
-	pOut->m22 = cY*cX;
-	pOut->m23 = 0;
-	pOut->m30 = 0;
-	pOut->m31 = 0;
-	pOut->m32 = 0;
-	pOut->m33 = 1;
-}
 
 void RageAARotate(Rage::Vector3* inret, Rage::Vector3 const* axis, float angle)
 {
@@ -403,9 +283,7 @@ Rage::Matrix RageLookAt(
 
 	auto mat2 = Rage::Matrix::GetTranslation(-eyex, -eyey, -eyez);
 
-	Rage::Matrix ret;
-	RageMatrixMultiply(&ret, &mat, &mat2);
-
+	Rage::Matrix ret = mat2 * mat;
 	return ret;
 }
 

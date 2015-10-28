@@ -617,8 +617,7 @@ void Actor::BeginDraw() // set the world matrix
 
 		if( fRotateX != 0 || fRotateY != 0 || fRotateZ != 0 )
 		{
-			Rage::Matrix m;
-			RageMatrixRotationXYZ( &m, fRotateX, fRotateY, fRotateZ );
+			Rage::Matrix m = Rage::Matrix::GetRotationXYZ(fRotateX, fRotateY, fRotateZ);
 			DISPLAY->PreMultMatrix( m );
 		}
 	}

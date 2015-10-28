@@ -304,14 +304,16 @@ public:
 	// (transformation is about the current world origin)
 	void MultMatrix( const Rage::Matrix& m )
 	{
-		RageMatrixMultiply( &stack.back(), &m, &stack.back() );
+		Rage::Matrix tmp = stack.back() * m;
+		stack.back() = tmp;
 	}
 
 	// Left-Multiplies the given matrix to the current matrix
 	// (transformation is about the local origin of the object)
 	void MultMatrixLocal( const Rage::Matrix& m )
 	{
-		RageMatrixMultiply( &stack.back(), &stack.back(), &m );
+		Rage::Matrix tmp = m * stack.back();
+		stack.back() = tmp;
 	}
 
 	// Right multiply the current matrix with the computed rotation
@@ -319,20 +321,17 @@ public:
 	// (rotation is about the current world origin)
 	void RotateX( float degrees )
 	{
-		Rage::Matrix m;
-		RageMatrixRotationX( &m, degrees );
+		Rage::Matrix m = Rage::Matrix::GetRotationX(degrees);
 		MultMatrix( m );
 	}
 	void RotateY( float degrees )
 	{
-		Rage::Matrix m;
-		RageMatrixRotationY( &m, degrees );
+		Rage::Matrix m = Rage::Matrix::GetRotationY(degrees);
 		MultMatrix( m );
 	}
 	void RotateZ( float degrees )
 	{
-		Rage::Matrix m;
-		RageMatrixRotationZ( &m, degrees );
+		Rage::Matrix m = Rage::Matrix::GetRotationZ(degrees);
 		MultMatrix( m );
 	}
 
@@ -341,20 +340,17 @@ public:
 	// local origin of the object)
 	void RotateXLocal( float degrees )
 	{
-		Rage::Matrix m;
-		RageMatrixRotationX( &m, degrees );
+        Rage::Matrix m = Rage::Matrix::GetRotationX(degrees);
 		MultMatrixLocal( m );
 	}
 	void RotateYLocal( float degrees )
  	{
-		Rage::Matrix m;
-		RageMatrixRotationY( &m, degrees );
+		Rage::Matrix m = Rage::Matrix::GetRotationY(degrees);
 		MultMatrixLocal( m );
 	}
 	void RotateZLocal( float degrees )
 	{
-		Rage::Matrix m;
-		RageMatrixRotationZ( &m, degrees );
+		Rage::Matrix m = Rage::Matrix::GetRotationZ(degrees);
 		MultMatrixLocal( m );
 	}
 
@@ -721,8 +717,7 @@ Rage::Matrix RageDisplay::GetCenteringMatrix( float fTranslateX, float fTranslat
 
 	auto m1 = Rage::Matrix::GetTranslation(fPercentShiftX, fPercentShiftY, 0);
 	auto m2 = Rage::Matrix::GetScaling(fPercentScaleX, fPercentScaleY, 1);
-	Rage::Matrix mOut;
-	RageMatrixMultiply( &mOut, &m1, &m2 );
+	Rage::Matrix mOut = m2 * m1;
 	return mOut;
 }
 

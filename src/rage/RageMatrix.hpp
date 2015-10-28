@@ -20,7 +20,7 @@ namespace Rage
 		Matrix();
 		Matrix(Matrix const &rhs);
 		Matrix(float v00, float v01, float v02, float v03, float v10, float v11, float v12, float v13, float v20, float v21, float v22, float v23, float v30, float v31, float v32, float v33);
-		
+
 		// Allow easier access since overloading [][] is not trivial.
 		float& operator() (int row, int col);
 		float operator() (int row, int col) const;
@@ -36,15 +36,24 @@ namespace Rage
 			return m[0];
 		}
 		
+		/** @brief Get the transpose of the current matrix.
+		 *
+		 * For documentation support, look into D3DXMatrixTranspose. */
 		Matrix GetTranspose() const;
 
-		/** @brief Get the identity matrix. */
+		/** @brief Get the identity matrix.
+		 *
+		 * For documentation support, look into D3DXMatrixIdentity. */
 		static Matrix GetIdentity();
 
-		/** @brief Get the translation matrix. */
+		/** @brief Get the translation matrix.
+		 *
+		 * For documentation support, look into D3DXMatrixTranslation. */
 		static Matrix GetTranslation(float x, float y, float z);
 
-		/** @brief Get the scaling matrix. */
+		/** @brief Get the scaling matrix.
+		 *
+		 * For documentation support, look into D3DXMatrixScaling. */
 		static Matrix GetScaling(float x, float y, float z);
 
 		/** @brief Get the skewed X matrix. */
@@ -53,16 +62,40 @@ namespace Rage
 		/** @brief Get the skewed Y matrix. */
 		static Matrix GetSkewY(float y);
 
+		/** @brief Get the rotation matrix based on the X axis.
+		 *
+		 * For documentation support, look into D3DXMatrixRotationX. */
+		static Matrix GetRotationX(float degrees);
+
+		/** @brief Get the rotation matrix based on the Y axis.
+		 *
+		 * For documentation support, look into D3DXMatrixRotationY. */
+		static Matrix GetRotationY(float degrees);
+
+		/** @brief Get the rotation matrix based on the Z axis.
+		 *
+		 * For documentation support, look into D3DXMatrixRotationZ.
+		 */
+		static Matrix GetRotationZ(float degrees);
+
+		/** @brief Get the rotation matrix based on all three axes.
+		 *
+		 * For documentation support, look into D3DXMatrixRotationXYZ.
+		 *
+		 * This calculation is done without needing multiplication of the matrices by removing the parts that are known to be 0.
+		 **/
+		static Matrix GetRotationXYZ(float degreesX, float degreesY, float degreesZ);
+
 		// It is preferable to use the std::array syntax, but switch for temporary backwards compatibility.
 		//std::array<std::array<float, 4>, 4> m;
 		float m[4][4];
 	};
-	
+
 	inline bool operator==(Matrix const &lhs, Matrix const &rhs)
 	{
 		for (auto i = 0; i < 4; ++i)
 		{
-			for (auto j = 0; j < 4; ++i)
+			for (auto j = 0; j < 4; ++j)
 			{
 				if (lhs(i, j) != rhs(i, j))
 				{
@@ -73,11 +106,19 @@ namespace Rage
 		
 		return true;
 	}
-	
+
 	inline bool operator!=(Matrix const &lhs, Matrix const &rhs)
 	{
 		return !operator==(lhs, rhs);
 	}
+
+	/** @brief Allow multiplying two matrices together.
+	 *
+	 * For documentation support, look into D3DXMatrixMultiply and D3DXMatrixMultiplyTranspose. This handles the multiplication in column order.
+	 *
+	 * This only allows the binary operator due to issues with getting the unary operator to work as well in a clean manner.
+	 */
+	Matrix operator *(Matrix const &lhs, Matrix const &rhs);
 }
 
 #endif

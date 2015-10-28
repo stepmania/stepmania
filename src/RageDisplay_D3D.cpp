@@ -707,13 +707,13 @@ VideoModeParams RageDisplay_D3D::GetActualVideoModeParams() const
 
 void RageDisplay_D3D::SendCurrentMatrices()
 {
-	Rage::Matrix m;
-	RageMatrixMultiply( &m, GetCentering(), GetProjectionTop() );
+	auto *centering = GetCentering();
+	auto *projectionTop = GetProjectionTop();
+	Rage::Matrix m = *projectionTop * *centering;
 
 	// Convert to OpenGL-style "pixel-centered" coords
 	Rage::Matrix m2 = GetCenteringMatrix( -0.5f, -0.5f, 0, 0 );
-	Rage::Matrix projection;
-	RageMatrixMultiply( &projection, &m2, &m );
+	Rage::Matrix projection = m * m2;
 	g_pd3dDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)&projection );
 
 	g_pd3dDevice->SetTransform( D3DTS_VIEW, (D3DMATRIX*)GetViewTop() );
@@ -1460,10 +1460,10 @@ Rage::Matrix RageDisplay_D3D::GetOrthoMatrix( float l, float r, float b, float t
 
 	// Convert from OpenGL's [-1,+1] Z values to D3D's [0,+1].
 	auto tmp = Rage::Matrix::GetScaling(1, 1, 0.5f);
-	RageMatrixMultiply( &m, &tmp, &m );
+	m = m * tmp;
 
 	tmp = Rage::Matrix::GetTranslation(0, 0, 0.5f);
-	RageMatrixMultiply( &m, &tmp, &m );
+	m = m * tmp;
 
 	return m;
 }
