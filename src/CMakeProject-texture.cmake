@@ -36,7 +36,9 @@ set_property(TARGET "TextureFontGenerator" PROPERTY FOLDER "Internal Libraries")
 
 disable_project_warnings("TextureFontGenerator")
 
-sm_add_compile_definition("TextureFontGenerator" _AFXDLL)
+if (NOT WITH_STATIC_LINKING)
+  sm_add_compile_definition("TextureFontGenerator" _AFXDLL)
+endif()
 
 list(APPEND TEXTURE_LINK_LIB
   "zlib"
