@@ -522,6 +522,12 @@ void CubicSpline::resize(size_t s)
 	m_points.resize(s);
 }
 
+void CubicSpline::remove_point(size_t i)
+{
+	ASSERT_M(i < m_points.size(), "CubicSpline: point index must be less than the number of points.");
+	m_points.erase(m_points.begin() + i);
+}
+
 size_t CubicSpline::size() const
 {
 	return m_points.size();

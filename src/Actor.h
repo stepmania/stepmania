@@ -231,6 +231,7 @@ public:
 		std::array<Rage::Color, NUM_DIFFUSE_COLORS> diffuse;
 		/** @brief The glow color for this TweenState. */
 		Rage::Color	glow;
+		Rage::Color mask_color;
 		/** @brief A magical value that nobody really knows the use for. ;) */
 		float		aux;
 	};
@@ -287,7 +288,7 @@ public:
 	// These next functions should all be overridden by a derived class that has its own tweening states to handle.
 	virtual void SetCurrentTweenStart() {}
 	virtual void EraseHeadTween() {}
-	virtual void UpdatePercentThroughTween( float PercentThroughTween ) {}
+	virtual void UpdatePercentThroughTween( float PercentThroughTween ) { UNUSED(PercentThroughTween); }
 
 	/**
 	 * @brief Retrieve the Actor's name.
@@ -333,6 +334,15 @@ public:
 	float GetDestX() const				{ return DestTweenState().pos.x; };
 	float GetDestY() const				{ return DestTweenState().pos.y; };
 	float GetDestZ() const				{ return DestTweenState().pos.z; };
+	void set_transform(Rage::transform const& trans)
+	{
+		TweenState& dest= DestTweenState();
+		dest.pos= trans.pos;
+		dest.rotation.x= Rage::RadiansToDegrees(trans.rot.x);
+		dest.rotation.y= Rage::RadiansToDegrees(trans.rot.y);
+		dest.rotation.z= Rage::RadiansToDegrees(trans.rot.z);
+		dest.scale= trans.zoom;
+	}
 	void  SetX( float x )				{ DestTweenState().pos.x = x; };
 	void  SetY( float y )				{ DestTweenState().pos.y = y; };
 	void  SetZ( float z )				{ DestTweenState().pos.z = z; };
@@ -470,7 +480,12 @@ public:
 	Rage::Color GetDiffuses( int i ) const		{ return DestTweenState().diffuse[i]; };
 	float GetDiffuseAlpha() const			{ return DestTweenState().diffuse[0].a; };
 	void SetGlow( Rage::Color c )			{ DestTweenState().glow = c; };
+	void SetGlowAlpha(float c)			{ DestTweenState().glow.a = c; };
 	Rage::Color GetGlow() const			{ return DestTweenState().glow; };
+
+	void SetMaskColor(Rage::Color c) { DestTweenState().mask_color= c; }
+	Rage::Color GetMaskColor() const { return DestTweenState().mask_color; }
+	virtual void recursive_set_mask_color(Rage::Color c) { SetMaskColor(c); }
 
 	void SetAux( float f )				{ DestTweenState().aux = f; }
 	float GetAux() const				{ return m_current.aux; }

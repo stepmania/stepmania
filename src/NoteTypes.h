@@ -62,6 +62,7 @@ struct HoldNoteResult
 	/** @brief Last index where fLife was greater than 0. If the tap was missed, this
 	 * will be the first index of the hold. */
 	int		iLastHeldRow;
+	float last_held_second;
 
 	/** @brief If checkpoint holds are enabled, the number of checkpoints hit. */
 	int		iCheckpointsHit;
@@ -140,6 +141,12 @@ struct TapNote
 	PlayerNumber	pn;
 	/** @brief Can this note be hammered on or pulled off? This is set before gameplay begins. */
 	bool		bHopoPossible;
+
+	// Empty until filled in by NoteData.  These exist so that the notefield
+	// doesn't have to call GetElapsedTimeFromBeat 2-6 times for every note
+	// during rendering. -Kyz
+	float occurs_at_second;
+	float end_second; // occurs_at_second plus duration.
 
 	// used only if Type == attack:
 	RString		sAttackModifiers;

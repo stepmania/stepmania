@@ -120,6 +120,14 @@ Message::Message( const RString &s, const LuaReference &params )
 //	m_pParams = new LuaTable( params );
 }
 
+Message::Message(Message&& other)
+{
+	m_sName.swap(other.m_sName);
+	m_pParams= other.m_pParams;
+	other.m_pParams= nullptr;
+	m_bBroadcast= other.m_bBroadcast;
+}
+
 Message::~Message()
 {
 	delete m_pParams;
@@ -207,7 +215,7 @@ void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, MessageID m )
 void MessageManager::Broadcast( Message &msg ) const
 {
 	// GAMESTATE is created before MESSAGEMAN, and has several BroadcastOnChangePtr members, so they all broadcast when they're initialized.
-	if(m_Logging)
+	if(this != nullptr && m_Logging)
 	{
 		LOG->Trace("MESSAGEMAN:Broadcast: %s", msg.GetName().c_str());
 	}

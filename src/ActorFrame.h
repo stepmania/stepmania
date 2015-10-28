@@ -28,6 +28,7 @@ public:
 	Actor* GetChild( const RString &sName );
 	std::vector<Actor*> GetChildren() { return m_SubActors; }
 	int GetNumChildren() const { return m_SubActors.size(); }
+	bool GetChildrenEmpty() const { return m_SubActors.empty(); }
 
 	/** @brief Remove all of the children from the frame. */
 	void RemoveAllChildren();
@@ -85,6 +86,8 @@ public:
 	void SetDiffuseLightColor( Rage::Color c ) { m_diffuseColor = c; }
 	void SetSpecularLightColor( Rage::Color c ) { m_specularColor = c; }
 	void SetLightDirection( Rage::Vector3 vec ) { m_lightDirection = vec; }
+
+	virtual void recursive_set_mask_color(Rage::Color c);
 
 	virtual void SetPropagateCommands( bool b );
 

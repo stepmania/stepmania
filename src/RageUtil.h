@@ -339,6 +339,7 @@ RString Commify( int iNum );
 RString Commify(const RString& num, const RString& sep= ",", const RString& dot= ".");
 RString FormatNumberAndSuffix( int i );
 
+RString unique_name(RString const& type);
 
 struct tm GetLocalTime();
 

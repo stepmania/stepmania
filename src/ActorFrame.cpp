@@ -525,10 +525,11 @@ void ActorFrame::UpdateInternal( float fDeltaTime )
 			m_SubActors[i]->cmd( f );	\
 	}
 
-PropagateActorFrameCommand( FinishTweening )
-PropagateActorFrameCommand1Param( SetZTestMode,		ZTestMode )
-PropagateActorFrameCommand1Param( SetZWrite,		bool )
-PropagateActorFrameCommand1Param( HurryTweening,	float )
+PropagateActorFrameCommand(FinishTweening);
+PropagateActorFrameCommand1Param(SetZTestMode, ZTestMode);
+PropagateActorFrameCommand1Param(SetZWrite, bool);
+PropagateActorFrameCommand1Param(HurryTweening, float);
+PropagateActorFrameCommand1Param(recursive_set_mask_color, Rage::Color);
 
 
 float ActorFrame::GetTweenTimeLeft() const

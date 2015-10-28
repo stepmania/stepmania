@@ -45,6 +45,9 @@ public:
 
 	virtual void Load( RageTextureID ID );
 	void SetTexture( RageTexture *pTexture );
+	void SetMask(RageTexture* mask);
+	void SetMask(RageTextureID mask_id);
+	RageTexture* GetMask() { return m_mask; }
 
 	void UnloadTexture();
 	RageTexture* GetTexture() { return m_pTexture; };
@@ -105,6 +108,7 @@ private:
 	void DrawTexture( const TweenState *state );
 
 	RageTexture* m_pTexture;
+	RageTexture* m_mask;
 
 	std::vector<State> m_States;
 	int		m_iCurState;

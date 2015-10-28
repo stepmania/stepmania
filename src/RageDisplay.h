@@ -233,6 +233,7 @@ public:
 	virtual int GetMaxTextureSize() const = 0;
 	virtual void SetTextureFiltering( TextureUnit, bool ) = 0;
 	virtual void SetEffectMode( EffectMode ) { }
+	virtual void set_color_key_shader(Rage::Color const& color, unsigned int tex_handle) { UNUSED(color); UNUSED(tex_handle); }
 	virtual bool IsEffectModeSupported( EffectMode effect ) { return effect == EffectMode_Normal; }
 
 	bool SupportsRenderToTexture() const { return false; }

@@ -17,6 +17,7 @@
 #include "LifeMeter.h"
 #include "CombinedLifeMeter.h"
 #include "PlayerAI.h"
+#include "NewField.h"
 #include "NoteField.h"
 #include "NoteDataUtil.h"
 #include "ScreenMessage.h"
@@ -239,6 +240,7 @@ float Player::GetWindowSeconds( TimingWindow tw )
 
 Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 {
+	m_disable_player_matrix_because_newfield_does_skewing= false;
 	m_drawing_notefield_board= false;
 	m_bLoaded = false;
 
@@ -272,10 +274,13 @@ Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 	PlayerAI::InitFromDisk();
 
 	m_pNoteField = nullptr;
+	m_new_field= nullptr;
 	if( bVisibleParts )
 	{
 		m_pNoteField = new NoteField;
 		m_pNoteField->SetName( "NoteField" );
+		m_new_field= new NewField;
+		m_new_field->SetName("NewField");
 	}
 	m_pJudgedRows = new JudgedRows;
 
@@ -286,6 +291,7 @@ Player::~Player()
 {
 	SAFE_DELETE( m_pAttackDisplay );
 	SAFE_DELETE( m_pNoteField );
+	SAFE_DELETE(m_new_field);
 	for( unsigned i = 0; i < m_vpHoldJudgment.size(); ++i )
 		SAFE_DELETE( m_vpHoldJudgment[i] );
 	SAFE_DELETE( m_pJudgedRows );
@@ -557,12 +563,45 @@ void Player::Init(
 		ActorUtil::LoadAllCommands( *m_pNoteField, sType );
 		this->AddChild( m_pNoteField );
 	}
+	if(m_new_field)
+	{
+		m_new_field->set_player_number(GetPlayerState()->m_PlayerNumber);
+		this->AddChild(m_new_field);
+	}
+	set_newfield_preferred(false);
 
 	m_vbFretIsDown.resize( GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer );
 	std::fill(m_vbFretIsDown.begin(), m_vbFretIsDown.end(), false);
 
 	m_fActiveRandomAttackStart = -1.0f;
 }
+
+void Player::set_newfield_preferred(bool use_new)
+{
+	double old_hiber= 0.0;
+	double new_hiber= 0.0;
+	if(use_new)
+	{
+		old_hiber= std::numeric_limits<float>::max();
+		new_hiber= 0.0;
+		m_disable_player_matrix_because_newfield_does_skewing= true;
+	}
+	else
+	{
+		old_hiber= 0.0;
+		new_hiber= std::numeric_limits<float>::max();
+		m_disable_player_matrix_because_newfield_does_skewing= false;
+	}
+	if(m_pNoteField != nullptr)
+	{
+		m_pNoteField->SetHibernate(old_hiber);
+	}
+	if(m_new_field != nullptr)
+	{
+		m_new_field->SetHibernate(new_hiber);
+	}
+}
+
 /**
  * @brief Determine if a TapNote needs a tap note style judgment.
  * @param tn the TapNote in question.
@@ -658,6 +697,30 @@ void Player::Load()
 	m_iFirstUncrossedRow     = iNoteRow - 1;
 	m_pJudgedRows->Reset( iNoteRow );
 
+	if(m_new_field != nullptr)
+	{
+		// If we're not in the step editor, the player's preferred noteskin for
+		// the current steps type needs to be fetched from their profile.  The
+		// noteskin name stored in the options is not guaranteed to work for the
+		// current stepstype, it might be from the previous song and for a
+		// different stepstype. -Kyz
+		if(!GAMESTATE->m_bInStepEditor)
+		{
+			Profile const* prof= PROFILEMAN->GetProfile(m_pPlayerState->m_PlayerNumber);
+			if(prof != nullptr)
+			{
+				StepsType stype= GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType;
+				RString skin;
+				prof->get_preferred_noteskin(stype, skin);
+				m_new_field->set_skin(skin);
+			}
+		}
+		else
+		{
+			m_new_field->set_skin(m_pPlayerState->m_PlayerOptions.GetPreferred().m_newskin);
+		}
+	}
+
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
@@ -739,6 +802,7 @@ void Player::Load()
 	{
 		m_pNoteField->SetY( fNoteFieldMiddle );
 		m_pNoteField->Load( &m_NoteData, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels );
+		m_new_field->set_note_data(&m_NoteData, m_Timing, GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber));
 	}
 
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->GetUsesCenteredArrows();
@@ -971,8 +1035,23 @@ void Player::Update( float fDeltaTime )
 
 		// TODO: Make this work for non-human-controlled players
 		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && m_pPlayerState->m_PlayerController==PC_HUMAN )
+		{
 			if( m_pNoteField )
+			{
 				m_pNoteField->SetPressed( col );
+			}
+			if(m_new_field != nullptr)
+			{
+				m_new_field->set_pressed(col, true);
+			}
+		}
+		else
+		{
+			if(m_new_field != nullptr)
+			{
+				m_new_field->set_pressed(col, false);
+			}
+		}
 	}
 
 	// handle Autoplay for rolls
@@ -1283,6 +1362,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 
 			//LOG->Trace(ssprintf("trying for min between iSongRow (%i) and iEndRow (%i) (duration %i)",iSongRow,iEndRow,tn.iDuration));
 			trtn.pTN->HoldResult.iLastHeldRow = min( iSongRow, iEndRow );
+			tn.HoldResult.last_held_second= min(m_pPlayerState->m_Position.m_fMusicSeconds, tn.end_second);
 		}
 	}
 
@@ -1452,6 +1532,13 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 						m_pNoteField->DidHoldNote( iTrack, HNS_Held, bBright );	// bright ghost flash
 					}
 				}
+				if(m_new_field)
+				{
+					for(auto&& trtn : vTN)
+					{
+						m_new_field->did_hold_note(trtn.iTrack, HNS_Held, bBright);
+					}
+				}
 			}
 
 			else
@@ -1542,6 +1629,12 @@ void Player::DrawPrimitives()
 		pn != GAMESTATE->GetMasterPlayerNumber() )
 		return;
 
+	if(m_new_field != nullptr)
+	{
+		SongPosition const& disp_pos= m_pPlayerState->GetDisplayedPosition();
+		m_new_field->update_displayed_time(disp_pos.m_fSongBeatVisible, disp_pos.m_fMusicSecondsVisible);
+	}
+
 	bool draw_notefield= m_pNoteField && !IsOniDead();
 
 	const PlayerOptions& curr_options= m_pPlayerState->m_PlayerOptions.GetCurrent();
@@ -1560,6 +1653,7 @@ void Player::DrawPrimitives()
 		{
 			PlayerNoteFieldPositioner poser(this, GetX(), tilt, skew, mini, center_y, reverse);
 			m_pNoteField->DrawBoardPrimitive();
+			m_new_field->draw_board();
 		}
 		return;
 	}
@@ -1584,6 +1678,7 @@ void Player::DrawPrimitives()
 	{
 		PlayerNoteFieldPositioner poser(this, GetX(), tilt, skew, mini, center_y, reverse);
 		m_pNoteField->Draw();
+		m_new_field->Draw();
 	}
 
 	// m_pNoteField->m_sprBoard->GetVisible()
@@ -1600,6 +1695,10 @@ void Player::DrawPrimitives()
 
 void Player::PushPlayerMatrix(float x, float skew, float center_y)
 {
+	if(m_disable_player_matrix_because_newfield_does_skewing)
+	{
+		return;
+	}
 	DISPLAY->CameraPushMatrix();
 	DISPLAY->PushMatrix();
 	DISPLAY->LoadMenuPerspective(45, SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -1608,6 +1707,10 @@ void Player::PushPlayerMatrix(float x, float skew, float center_y)
 
 void Player::PopPlayerMatrix()
 {
+	if(m_disable_player_matrix_because_newfield_does_skewing)
+	{
+		return;
+	}
 	DISPLAY->CameraPopMatrix();
 	DISPLAY->PopMatrix();
 }
@@ -2156,6 +2259,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				 * iLastHeldRow is clamped to iEndRow if the hold note is held all the way. */
 				//LOG->Trace("setting iLastHeldRow to min of iSongRow (%i) and iEndRow (%i)",iSongRow,iEndRow);
 				tn.HoldResult.iLastHeldRow = std::min( iSongRow, iEndRow );
+				tn.HoldResult.last_held_second= std::min(m_pPlayerState->m_Position.m_fMusicSeconds, tn.end_second);
 			}
 
 			// If the song beat is in the range of this hold:
@@ -2172,7 +2276,13 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 
 						bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD;
 						if( m_pNoteField )
+						{
 							m_pNoteField->DidHoldNote( col, HNS_Held, bBright );
+						}
+						if(m_new_field != nullptr)
+						{
+							m_new_field->did_hold_note(col, HNS_Held, bBright);
+						}
 					}
 				}
 				break;
@@ -2635,6 +2745,8 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				const bool bBright = ( m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > (unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD ) || bBlind;
 				if( m_pNoteField )
 					m_pNoteField->DidTapNote( col, bBlind? TNS_W1:score, bBright );
+				if( m_new_field )
+					m_new_field->did_tap_note( col, bBlind? TNS_W1:score, bBright );
 				if( score >= m_pPlayerState->m_PlayerOptions.GetCurrent().m_MinTNSToHideNotes || bBlind )
 					HideNote( col, iRowOfOverlappingNoteOrRow );
 			}
@@ -2917,7 +3029,13 @@ void Player::UpdateJudgedRows()
 				break;
 			}
 			if( m_pNoteField )
+			{
 				m_pNoteField->DidTapNote( iter.Track(), tn.result.tns, false );
+			}
+			if(m_new_field != nullptr)
+			{
+				m_new_field->did_tap_note(iter.Track(), tn.result.tns, false);
+			}
 
 			if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 				setSounds.insert( &m_vKeysounds[tn.iKeysoundIndex] );
@@ -2983,7 +3101,13 @@ void Player::FlashGhostRow( int iRow )
 		if( tn.type == TapNoteType_Empty || tn.type == TapNoteType_Mine || tn.type == TapNoteType_Fake )
 			continue;
 		if( m_pNoteField )
+		{
 			m_pNoteField->DidTapNote( iTrack, lastTNS, bBright );
+		}
+		if(m_new_field != nullptr)
+		{
+			m_new_field->did_tap_note(iTrack, lastTNS, bBright);
+		}
 		if( lastTNS >= m_pPlayerState->m_PlayerOptions.GetCurrent().m_MinTNSToHideNotes || bBlind )
 			HideNote( iTrack, iRow );
 	}
@@ -3311,6 +3435,10 @@ void Player::HandleHoldCheckpoint(int iRow,
 				{
 					m_pNoteField->DidHoldNote( i, HNS_Held, bBright );
 				}
+				if(m_new_field != nullptr)
+				{
+					m_new_field->did_hold_note(i, HNS_Held, bBright);
+				}
 			}
 		}
 	}
@@ -3625,12 +3753,18 @@ public:
 		p->GetPlayerTimingData().PushSelf(L);
 		return 1;
 	}
+	static int set_newfield_preferred(T* p, lua_State* L)
+	{
+		p->set_newfield_preferred(BArg(1));
+		COMMON_RETURN_SELF;
+	}
 
 	LunaPlayer()
 	{
 		ADD_METHOD( SetActorWithJudgmentPosition );
 		ADD_METHOD( SetActorWithComboPosition );
 		ADD_METHOD( GetPlayerTimingData );
+		ADD_METHOD(set_newfield_preferred);
 	}
 };
 

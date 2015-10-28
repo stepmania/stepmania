@@ -92,6 +92,7 @@ struct Message
 	explicit Message( const RString &s );
 	explicit Message(const MessageID id);
 	Message( const RString &s, const LuaReference &params );
+	Message(Message&& other);
 	~Message();
 
 	void SetName( const RString &sName ) { m_sName = sName; }

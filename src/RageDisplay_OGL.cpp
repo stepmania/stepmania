@@ -404,6 +404,7 @@ static GLhandleARB g_hScreenShader = 0;
 static GLhandleARB g_hYUYV422Shader = 0;
 static GLhandleARB g_gShellShader = 0;
 static GLhandleARB g_gCelShader = 0;
+static GLhandleARB g_color_key_shader= 0;
 
 void InitShaders()
 {
@@ -428,6 +429,8 @@ void InitShaders()
 	g_hOverlayShader		= LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Overlay.frag", asDefines );
 	g_hScreenShader		= LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Screen.frag", asDefines );
 	g_hYUYV422Shader		= LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/YUYV422.frag", asDefines );
+
+	g_color_key_shader= LoadShader(GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Color key.frag", asDefines);
 
 	// Bind attributes.
 	if (g_bTextureMatrixShader)
@@ -1729,6 +1732,20 @@ void RageDisplay_Legacy::SetEffectMode( EffectMode effect )
 		glUniform1iARB( iTextureWidthUniform, iWidth );
 	}
 
+	DebugAssertNoGLError();
+}
+
+void RageDisplay_Legacy::set_color_key_shader(Rage::Color const& color, unsigned int tex_handle)
+{
+	DebugFlushGLErrors();
+	SetTexture(TextureUnit_2, tex_handle);
+	glUseProgramObjectARB(g_color_key_shader);
+	GLint dest_color= glGetUniformLocationARB(g_color_key_shader, "playercolor");
+	GLint iTexture1 = glGetUniformLocationARB(g_color_key_shader, "Texture1");
+	GLint mask_tex= glGetUniformLocationARB(g_color_key_shader, "color_mask");
+	glUniform1iARB(iTexture1, 0);
+	glUniform1iARB(mask_tex, 1);
+	glUniform3fARB(dest_color, color.r, color.g, color.b);
 	DebugAssertNoGLError();
 }
 

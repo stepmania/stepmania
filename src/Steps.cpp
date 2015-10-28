@@ -713,6 +713,39 @@ public:
 		LuaHelpers::Push( L, p->GetDisplayBPM() );
 		return 1;
 	}
+	static int count_notes_in_columns(T* p, lua_State* L)
+	{
+		NoteData note_data;
+		p->GetNoteData(note_data);
+		vector<std::map<TapNoteType, int> > note_counts;
+		vector<std::map<TapNoteSubType, float> > hold_durations;
+		note_data.count_notes_in_columns(p->GetTimingData(), note_counts, hold_durations);
+		// Each element of note_counts is the data for one column.
+		// Each element in a column is the count for a given TapNoteType.
+		// hold_durations has a similar structure for the total duration of each
+		// hold subtype.
+		lua_createtable(L, note_counts.size(), 0);
+		for(size_t column= 0; column < note_counts.size(); ++column)
+		{
+			auto& column_entry= note_counts[column];
+			auto& durr_entry= hold_durations[column];
+			lua_createtable(L, 0, column_entry.size() + durr_entry.size());
+			for(auto&& tap_entry : column_entry)
+			{
+				Enum::Push(L, tap_entry.first);
+				lua_pushnumber(L, tap_entry.second);
+				lua_settable(L, -3);
+			}
+			for(auto&& hold_entry : durr_entry)
+			{
+				Enum::Push(L, hold_entry.first);
+				lua_pushnumber(L, hold_entry.second);
+				lua_settable(L, -3);
+			}
+			lua_rawseti(L, -2, column+1);
+		}
+		return 1;
+	}
 
 	LunaSteps()
 	{
@@ -739,6 +772,7 @@ public:
 		ADD_METHOD( IsDisplayBpmRandom );
 		ADD_METHOD( PredictMeter );
 		ADD_METHOD( GetDisplayBPMType );
+		ADD_METHOD(count_notes_in_columns);
 	}
 };
 

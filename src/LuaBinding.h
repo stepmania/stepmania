@@ -211,6 +211,30 @@ static int set_##float_name(T* p, lua_State* L) \
 	COMMON_RETURN_SELF; \
 }
 
+#define GET_SET_ENUM_METHOD(method_name, enum_name, val_name) \
+static int get_##method_name(T* p, lua_State* L) \
+{ \
+	Enum::Push(L, p->val_name); \
+	return 1; \
+} \
+static int set_##method_name(T* p, lua_State* L) \
+{ \
+	p->val_name= Enum::Check<enum_name>(L, 1); \
+	COMMON_RETURN_SELF; \
+}
+
+#define GETTER_SETTER_ENUM_METHOD(enum_name, val_name) \
+static int get_##val_name(T* p, lua_State* L) \
+{ \
+	Enum::Push(L, p->get_##val_name()); \
+	return 1; \
+} \
+static int set_##val_name(T* p, lua_State* L) \
+{ \
+	p->set_##val_name(Enum::Check<enum_name>(L, 1)); \
+	COMMON_RETURN_SELF; \
+}
+
 #define ADD_METHOD( method_name ) \
 	AddMethod( #method_name, method_name )
 #define ADD_GET_SET_METHODS(method_name) \
