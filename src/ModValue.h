@@ -189,16 +189,7 @@ struct ModInput
 	void load_spline(lua_State* L, int index);
 	void load_from_lua(lua_State* L, int index, ModFunction* parent);
 	phase const* find_phase(double input);
-	double apply_rep(double input)
-	{
-		double const dist= m_rep_end - m_rep_begin;
-		double const mod_res= fmod(input, dist);
-		if(mod_res < 0.0)
-		{
-			return mod_res + dist + m_rep_begin;
-		}
-		return mod_res + m_rep_begin;
-	}
+	double apply_rep(double input);
 	double apply_phase(double input)
 	{
 		phase const* curr= find_phase(input);

@@ -29,6 +29,8 @@ float Rage::FastSin(float x)
 	float index = Rage::scale(x, 0.f, Rage::PI * 2, 0.f, table.size() * 2.f);
 	
 	// lerp using the samples from the table.
+	// Warning to the future: Changing sampleIndex to store size_t will break
+	// this function.  Not sure why. -Kyz
 	std::array<int, 2> sampleIndex;
 	sampleIndex[0] = static_cast<int>(std::floor(index));
 	sampleIndex[1] = sampleIndex[0] + 1;
@@ -48,7 +50,7 @@ float Rage::FastSin(float x)
 		float &val = values[i];
 		
 		// If Rage::PI <= sample < 2 * PI
-		if (sample >= table.size())
+		if (static_cast<size_t>(sample) >= table.size())
 		{
 			sample -= table.size();
 			// TODO: Use a library like the GSL to ensure the sample is within our range.

@@ -543,6 +543,17 @@ ModInput::phase const* ModInput::find_phase(double input)
 	return &m_phases[lower];
 }
 
+double ModInput::apply_rep(double input)
+{
+	double const dist= m_rep_end - m_rep_begin;
+	double const mod_res= fmod(input, dist);
+	if(mod_res < 0.0)
+	{
+		return mod_res + dist + m_rep_begin;
+	}
+	return mod_res + m_rep_begin;
+}
+
 void ModInput::send_repick()
 {
 	if(get_meta_type() == MIMT_Scalar && m_parent != nullptr)
@@ -848,10 +859,10 @@ if(m_picked_inputs[2] == 0.0) \
 	return m_picked_inputs[3]; \
 }
 #define WAVE_ANGLE_CALC \
-double angle= fmod(m_picked_inputs[0] + m_picked_inputs[1], M_PI * 2.0); \
+double angle= fmod(m_picked_inputs[0] + m_picked_inputs[1], Rage::D_PI * 2.0); \
 if(angle < 0.0) \
 { \
-	angle+= M_PI * 2.0; \
+	angle+= Rage::D_PI * 2.0; \
 }
 #define WAVE_RET return (wave_res * m_picked_inputs[2]) + m_picked_inputs[3];
 
@@ -875,7 +886,7 @@ double ModFunction::square_eval()
 {
 	ZERO_AMP_WAVE_RETURN;
 	WAVE_ANGLE_CALC;
-	double const wave_res= (angle >= M_PI ? -1.0 : 1.0);
+	double const wave_res= (angle >= Rage::D_PI ? -1.0 : 1.0);
 	WAVE_RET;
 }
 
@@ -883,7 +894,7 @@ double ModFunction::triangle_eval()
 {
 	ZERO_AMP_WAVE_RETURN;
 	WAVE_ANGLE_CALC;
-	double wave_res= angle * M_1_PI;
+	double wave_res= angle * Rage::D_PI_REC;
 	if(wave_res < .5)
 	{
 		wave_res= wave_res * 2.0;
