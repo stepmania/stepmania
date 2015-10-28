@@ -4,6 +4,45 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/10/27
+----------
+* [Compiling] Link with /MT on windows instead of /MD. [wolfman2000]
+* [Fonts] Put Texture Font Generator back in package. [wolfman2000]
+  Build Texture Font Generator when WITH_FULL_RELEASE or
+  WITH_TEXTURE_GENERATOR is enabled. [wolfman2000]
+
+2015/10/26
+----------
+* [Song] Added GetMainTitle lua function for bypassing ShowNativeLanguage
+  preference. [kyzentun]
+
+2015/10/25
+----------
+* [Compiling] Number of jobs used when building ffmpeg can be customized by
+  WITH_FFMPEG_JOBS. [wolfman2000]
+  Appveyor support added for automated windows building. [wolfman2000]
+
+2015/10/23
+----------
+* [BMS] Fixed crash when an unknown type chart was in a bms. [kyzentun]
+
+2015/10/21
+----------
+* [Actor] Changed PlayCommandNoRecurse so that setting a theme metric to a
+  function that doesn't exist doesn't emit an error. [kyzentun]
+* [Compiling] Allow WITH_MP3=Off and WITH_WAV=Off to compile. [wolfman2000]
+* [EditMode] Fixed crash on missing ScreenMiniMenuTimingDataChangeInformation
+  metrics. [kyzentun]
+* [ScreenEvaluation] Changed assert that occurs when leaving ScreenGameplay
+  with SM_GoToNextScreen to give more info. [kyzentun]
+
+2015/10/20
+----------
+* [Compiling] Fixed cmake error when compiling with -DWITH_SSE2=off. [wallacoloo]
+  Don't define CPU_X86 on non-x86. [wallacoloo]
+* [Noteskins] If the fallback for a noteskin is not found, that noteskin is
+  not loaded, to prevent picking it and crashing. [kyzentun]
+
 2015/10/18
 ----------
 * [BitmapText] Added set_mult_attrs_with_diffuse lua function. [kyzentun]

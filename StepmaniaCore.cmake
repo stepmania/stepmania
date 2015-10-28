@@ -45,6 +45,9 @@ include("${SM_CMAKE_DIR}/SMDefs.cmake")
 # Put the predefined targets in separate groups.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+# Set up the linker flags for MSVC builds.
+configure_msvc_runtime()
+
 # Determine which projects can be compiled in.
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
   message(STATUS "Using GNU compiler.")

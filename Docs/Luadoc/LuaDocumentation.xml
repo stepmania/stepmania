@@ -4612,6 +4612,10 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetLyricsPath' return='string' arguments=''>
 		Gets the path to the lyrics.
 	</Function>
+	<Function name='GetMainTitle' return='string' arguments=''>
+		GetDisplayMainTitle checks the ShowNativeLanguage pref and returns the transliterated title is that pref is false.<br />
+		GetMainTitle (this function) does not check that pref.  Instead, it directly returns the title, exactly as it is in the #TITLE field in the simfile.
+	</Function>
 	<Function name='GetMusicPath' return='string' arguments=''>
 		Gets the path to the music file.
 	</Function>

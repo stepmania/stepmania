@@ -5,6 +5,14 @@ StepMania is an advanced cross-platform rhythm game for home and arcade use.
 
 Advanced cross-platform rhythm game for home and arcade use.
 
+##Installing from Setup/Installer##
+
+For those that do not wish to compile the game on their own and use a binary right away, be aware of the following issues:
+
+* Windows users are expected to have installed the [Microsoft Visual C++ x86 Redistributable for Visual Studio 2015](http://www.microsoft.com/en-us/download/details.aspx?id=48145) prior to running the game. For those on a 64-bit operating system, grab the x64 redistributable as well. Windows 7 is the minimum supported version.
+* Mac OS X users need to have Mac OS X 10.6.8 or higher to run StepMania.
+* Linux users should receive all they need from the package manager of their choice.
+
 ##Installing from Source##
 
 StepMania can be compiled using [CMake](http://www.cmake.org/). More information about using CMake can be found in both the `Build` directory and CMake's documentation.
