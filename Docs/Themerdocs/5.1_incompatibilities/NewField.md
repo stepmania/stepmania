@@ -68,6 +68,8 @@ columns table.
 
 # Making a noteskin for the NewField
 Read the comments in NewSkins/default.
+_fallback/Scripts/02 NewSkin.lua has a couple minor functions for generating
+state maps.
 
 
 # Multiplayer mode

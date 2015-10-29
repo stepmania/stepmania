@@ -225,6 +225,9 @@ return function(button_list, stepstype)
 						-- was in the old noteskin format.
 						textures= {hold_tex},
 						flip= hold_flips[button],
+						-- If disable_filtering is set to true, then texture filtering
+						-- will be turned off when rendering the hold.
+						disable_filtering= false,
 						-- The length_data table tells the system how long each part is.
 						-- These are the default values, if length_data does not exist,
 						-- or one of the values is not a number, the default value will

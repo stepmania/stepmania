@@ -568,6 +568,8 @@ void NewFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetZTestMode(ZTEST_WRITE_ON_PASS);
 	DISPLAY->SetZWrite(true);
+	DISPLAY->SetTextureFiltering(TextureUnit_1, data.texture_filtering);
+	DISPLAY->SetTextureFiltering(TextureUnit_2, data.texture_filtering);
 	if(data.mask != nullptr)
 	{
 		Rage::Color player_color= get_player_color(note.note_iter->second.pn);

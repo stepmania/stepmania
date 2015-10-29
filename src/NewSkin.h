@@ -221,11 +221,13 @@ struct QuantizedHoldRenderData
 	Rage::RectF const* rect;
 	TexCoordFlipMode flip;
 	hold_part_lengths part_lengths;
+	bool texture_filtering;
 	void clear()
 	{
 		parts.clear();
 		mask= nullptr;
 		rect= nullptr;
+		texture_filtering= true;
 	}
 };
 
@@ -236,6 +238,7 @@ struct QuantizedHold
 	std::vector<RageTexture*> m_parts;
 	TexCoordFlipMode m_flip;
 	bool m_vivid;
+	bool m_texture_filtering;
 	hold_part_lengths m_part_lengths;
 	~QuantizedHold();
 	void get_common(size_t state, QuantizedHoldRenderData& ret)
@@ -250,6 +253,7 @@ struct QuantizedHold
 		}
 		ret.flip= m_flip;
 		ret.part_lengths= m_part_lengths;
+		ret.texture_filtering= m_texture_filtering;
 	}
 	void get_quantized(double quantization, double beat, QuantizedHoldRenderData& ret)
 	{

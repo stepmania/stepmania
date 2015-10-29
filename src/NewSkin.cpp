@@ -377,6 +377,7 @@ bool QuantizedHold::load_from_lua(lua_State* L, int index, NewSkinLoader const* 
 	}
 	lua_getfield(L, index, "vivid");
 	m_vivid= lua_toboolean(L, -1);
+	m_texture_filtering= !get_optional_bool(L, index, "disable_filtering");
 #undef RETURN_NOT_SANE
 	lua_settop(L, original_top);
 	m_state_map.swap(temp_map);
