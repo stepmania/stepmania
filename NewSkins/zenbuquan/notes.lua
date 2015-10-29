@@ -22,7 +22,8 @@ return function(button_list)
 	-- 12ths came out the wrong color.  I'm guessing 720720 parts_per_beat
 	-- goes over a precision limit or similar.
 --	local tap_states= gen_state_map(4, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16})
-	local tap_states= NewSkin.generic_state_map(4, {1, 2, 3, 4, 6, 8, 12, 16, 24, 32})
+	local tap_states= NewSkin.generic_state_map(5, {1, 2, 3, 4, 6, 8, 12, 16, 24, 32})
+	local mine_states= NewSkin.generic_state_map(4, {1, 2, 3, 4, 6, 8, 12, 16, 24, 32})
 	local columns= {}
 	local holds= {
 		TapNoteSubType_Hold= {
@@ -48,7 +49,7 @@ return function(button_list)
 					state_map= tap_states,
 					actor= Def.Sprite{Texture= "tap_note", InitCommand= zoom_tap}},
 				NewSkinTapPart_Mine= {
-					state_map= tap_states,
+					state_map= mine_states,
 					actor= Def.Sprite{Texture= "mine_note", InitCommand= zoom_tap}},
 				NewSkinTapPart_Lift= {
 					state_map= tap_states,

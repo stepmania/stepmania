@@ -47,6 +47,7 @@ NewFieldColumn::NewFieldColumn()
 	 m_curr_beat(0.0f), m_curr_second(0.0), m_prev_curr_second(-1000.0),
 	 m_pixels_visible_before_beat(128.0f),
 	 m_pixels_visible_after_beat(1024.0f),
+	 m_upcoming_time(2.0),
 	 m_playerize_mode(NPM_Off),
 	 m_newskin(nullptr), m_player_colors(nullptr), m_note_data(nullptr),
 	 m_timing_data(nullptr)
@@ -747,6 +748,7 @@ void NewFieldColumn::update_upcoming(double beat, double second)
 	double const sec_dist= second - m_curr_second;
 	if(sec_dist > 0 && sec_dist < m_status.upcoming_second_dist)
 	{
+		m_status.found_upcoming= true;
 		m_status.upcoming_beat_dist= beat_dist;
 		m_status.upcoming_second_dist= sec_dist;
 	}
@@ -845,9 +847,10 @@ void NewFieldColumn::build_render_lists()
 	m_status.upcoming_second_dist= 1000.0;
 	m_status.prev_active_hold= m_status.active_hold;
 	m_status.active_hold= nullptr;
+	m_status.found_upcoming= false;
 
 	double time_diff= m_curr_second - m_prev_curr_second;
-	NoteData::TrackMap::const_iterator column_end= m_note_data->end(m_column);
+	auto column_end= m_note_data->end(m_column);
 	if(first_note_visible_prev_frame == column_end || time_diff < 0)
 	{
 		NoteData::TrackMap::const_iterator discard;
@@ -855,10 +858,10 @@ void NewFieldColumn::build_render_lists()
 		m_note_data->GetTapNoteRangeInclusive(m_column, BeatToNoteRow(first_beat), BeatToNoteRow(first_beat + 2), first_note_visible_prev_frame, discard);
 	}
 
-	double const max_try_second= m_curr_second + 5.0;
-	NoteData::TrackMap::const_iterator first_visible_this_frame= column_end;
+	double const max_try_second= m_curr_second + m_upcoming_time;
+	auto first_visible_this_frame= column_end;
 	bool found_end_of_visible_notes= false;
-	for(NoteData::TrackMap::const_iterator curr_note= first_note_visible_prev_frame;
+	for(auto curr_note= first_note_visible_prev_frame;
 			curr_note != column_end && !found_end_of_visible_notes; ++curr_note)
 	{
 		int tap_row= curr_note->first;
@@ -913,6 +916,27 @@ void NewFieldColumn::build_render_lists()
 				tn.occurs_at_second > max_try_second)
 			{
 				found_end_of_visible_notes= true;
+			}
+		}
+	}
+	if(!m_status.found_upcoming)
+	{
+		for(auto curr_note= first_note_visible_prev_frame;
+				curr_note != column_end && !m_status.found_upcoming; ++curr_note)
+		{
+			int tap_row= curr_note->first;
+			double tap_beat= NoteRowToBeat(tap_row);
+			const TapNote& tn= curr_note->second;
+			if(tn.type != TapNoteType_Empty)
+			{
+				if(tn.occurs_at_second > max_try_second)
+				{
+					m_status.found_upcoming= true;
+				}
+				else
+				{
+					update_upcoming(tap_beat, tn.occurs_at_second);
+				}
 			}
 		}
 	}
@@ -1665,6 +1689,7 @@ struct LunaNewFieldColumn : Luna<NewFieldColumn>
 		p->set_pixels_visible_after(FArg(1));
 		COMMON_RETURN_SELF;
 	}
+	GETTER_SETTER_FLOAT_METHOD(upcoming_time);
 	static int receptor_y_offset(T* p, lua_State* L)
 	{
 		lua_pushnumber(L, p->head_y_offset());
@@ -1763,6 +1788,7 @@ struct LunaNewFieldColumn : Luna<NewFieldColumn>
 		ADD_GET_SET_METHODS(curr_second);
 		ADD_METHOD(set_pixels_visible_before);
 		ADD_METHOD(set_pixels_visible_after);
+		ADD_GET_SET_METHODS(upcoming_time);
 		ADD_METHOD(receptor_y_offset);
 		ADD_METHOD(get_reverse_shift);
 		ADD_METHOD(get_reverse_scale);

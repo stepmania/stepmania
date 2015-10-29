@@ -5,7 +5,9 @@ Metrics are harder to make flexible than lua code, and cannot be changed
 after the actor is loaded.  
 The new version gives lua access to all its members, and more control over
 how the parts are rendered.  Instead of a color to multiply the diffuse by
-for the leading section, the Attribute feature of BitmapText is used.
+for the leading section, the Attribute feature of BitmapText is used.  
+Because the attribute system bypasses diffuse, themers are advised to use
+set_mult_attrs_with_diffuse if they use RollingNumbers with a diffuse color.
 
 ## Formatting
 The format string used for RollingNumbers should not have padding built into

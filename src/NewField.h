@@ -69,6 +69,14 @@ struct NewFieldColumn : ActorFrame
 	{
 		m_pixels_visible_after_beat= pix;
 	}
+	double get_upcoming_time()
+	{
+		return m_upcoming_time;
+	}
+	void set_upcoming_time(double up)
+	{
+		m_upcoming_time= up;
+	}
 	int y_offset_visible(double off)
 	{
 		if(off < first_y_offset_visible) { return -1; }
@@ -152,6 +160,7 @@ struct NewFieldColumn : ActorFrame
 		double upcoming_second_dist;
 		TapNote const* active_hold;
 		TapNote const* prev_active_hold;
+		bool found_upcoming;
 	};
 	column_status m_status;
 
@@ -190,6 +199,7 @@ private:
 	double m_prev_curr_second;
 	double m_pixels_visible_before_beat;
 	double m_pixels_visible_after_beat;
+	double m_upcoming_time;
 	size_t m_column;
 	NotePlayerizeMode m_playerize_mode;
 	NewSkinColumn* m_newskin;
