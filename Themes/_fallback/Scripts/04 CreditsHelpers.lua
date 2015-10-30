@@ -61,7 +61,7 @@ local stepmania_credits= {
 		"Alejandro G. de la Muñoza (Spanish)",
 		"Raymund Zacharias (German)",
 		{type= "subsection", name= "5.0.10 update"},
-		"Milène Gauthier-Sabourin (Arvaneth) (français)",
+		"Milène Gauthier-Sabourin (Arvaneth) (French)",
 	},
 	{
 		name= "Other Contributors",
