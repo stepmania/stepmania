@@ -18,7 +18,7 @@ class CombinedLifeMeter;
 class ScoreKeeper;
 class Inventory;
 class RageTimer;
-class NewField;
+struct NewField;
 class NoteField;
 class PlayerStageStats;
 class JudgedRows;
