@@ -52,7 +52,7 @@ elseif(APPLE)
     XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++"
   )
 else()
-  sm_add_compile_flag("rage-test" "-std=gnu++11")
+  sm_add_compile_flag("rage-test" "-std=gnu++14")
   if (CMAKE_CXX_COMPILER MATCHES "clang")
     sm_add_compile_flag("rage-test" "-stdlib=libc++")
     set_target_properties("rage-test" PROPERTIES LINK_FLAGS "-stdlib=libc++")

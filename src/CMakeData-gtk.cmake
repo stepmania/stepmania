@@ -8,7 +8,7 @@ add_library("GtkModule"
   "arch/LoadingWindow/LoadingWindow_GtkModule.h"
 )
 
-sm_add_compile_flag("GtkModule" "-std=gnu++11")
+sm_add_compile_flag("GtkModule" "-std=gnu++14")
 if (CMAKE_CXX_COMPILER MATCHES "clang")
   sm_add_compile_flag("GtkModule" "-stdlib=libc++")
   set_target_properties("GtkModule" PROPERTIES LINK_FLAGS "-stdlib=libc++")

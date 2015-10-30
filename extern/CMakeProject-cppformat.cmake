@@ -29,7 +29,7 @@ elseif(APPLE)
     XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++"
   )
 else() # Unix
-  sm_add_compile_flag("cppformat" "-std=gnu++11")
+  sm_add_compile_flag("cppformat" "-std=gnu++14")
   if (CMAKE_CXX_COMPILER MATCHES "clang")
     sm_add_compile_flag("cppformat" "-stdlib=libc++")
   endif()

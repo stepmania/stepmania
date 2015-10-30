@@ -329,7 +329,7 @@ else() # Linux
     sm_add_compile_definition("${SM_EXE_NAME}" LINUX)
   endif()
 
-  sm_add_compile_flag("${SM_EXE_NAME}" "-std=gnu++11")
+  sm_add_compile_flag("${SM_EXE_NAME}" "-std=gnu++14")
   if (CMAKE_CXX_COMPILER MATCHES "clang")
     sm_add_compile_flag("${SM_EXE_NAME}" "-stdlib=libc++")
     set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS "-stdlib=libc++")
