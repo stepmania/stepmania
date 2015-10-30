@@ -2,6 +2,7 @@
 #define RAGE_DRIVER_H
 
 #include "RageUtil.h"
+#include "RageString.hpp"
 
 class RageDriver
 {
@@ -14,14 +15,14 @@ typedef RageDriver *(*CreateRageDriverFn)();
 /* This is created and accessed during C++ static initialization; it must be a POD. */
 struct DriverList
 {
-	void Add( const istring &sName, CreateRageDriverFn pfn );
+    void Add( const Rage::ci_ascii_string &sName, CreateRageDriverFn pfn );
 	RageDriver *Create( const RString &sDriverName );
-	std::map<istring, CreateRageDriverFn> *m_pRegistrees;
+	std::map<Rage::ci_ascii_string, CreateRageDriverFn> *m_pRegistrees;
 };
 
 struct RegisterRageDriver
 {
-	RegisterRageDriver( DriverList *pDriverList, const istring &sName, CreateRageDriverFn pfn );
+	RegisterRageDriver( DriverList *pDriverList, const Rage::ci_ascii_string &sName, CreateRageDriverFn pfn );
 };
 
 #endif

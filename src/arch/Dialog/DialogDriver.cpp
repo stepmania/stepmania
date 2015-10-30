@@ -4,12 +4,13 @@
 
 using std::vector;
 
-std::map<istring, CreateDialogDriverFn> *RegisterDialogDriver::g_pRegistrees;
-RegisterDialogDriver::RegisterDialogDriver( const istring &sName, CreateDialogDriverFn pfn )
+std::map<Rage::ci_ascii_string, CreateDialogDriverFn> *RegisterDialogDriver::g_pRegistrees;
+RegisterDialogDriver::RegisterDialogDriver( const Rage::ci_ascii_string &sName, CreateDialogDriverFn pfn )
 {
 	if( g_pRegistrees == nullptr )
-		g_pRegistrees = new std::map<istring, CreateDialogDriverFn>;
-
+	{
+		g_pRegistrees = new std::map<Rage::ci_ascii_string, CreateDialogDriverFn>;
+	}
 	ASSERT( g_pRegistrees->find(sName) == g_pRegistrees->end() );
 	(*g_pRegistrees)[sName] = pfn;
 }
@@ -26,7 +27,7 @@ DialogDriver *DialogDriver::Create()
 
 	for (auto const &Driver: asDriversToTry)
 	{
-		auto iter = RegisterDialogDriver::g_pRegistrees->find( istring(Driver) );
+		auto iter = RegisterDialogDriver::g_pRegistrees->find( Rage::ci_ascii_string{Driver} );
 
 		if( iter == RegisterDialogDriver::g_pRegistrees->end() )
 			continue;

@@ -1,10 +1,10 @@
 #include "global.h"
 #include "RageDriver.h"
 
-void DriverList::Add( const istring &sName, CreateRageDriverFn pfn )
+void DriverList::Add( const Rage::ci_ascii_string &sName, CreateRageDriverFn pfn )
 {
 	if( m_pRegistrees == nullptr )
-		m_pRegistrees = new std::map<istring, CreateRageDriverFn>;
+		m_pRegistrees = new std::map<Rage::ci_ascii_string, CreateRageDriverFn>;
 
 	ASSERT( m_pRegistrees->find(sName) == m_pRegistrees->end() );
 	(*m_pRegistrees)[sName] = pfn;
@@ -15,15 +15,15 @@ RageDriver *DriverList::Create( const RString &sDriverName )
 	if( m_pRegistrees == nullptr )
 		return nullptr;
 
-	auto iter = m_pRegistrees->find( istring(sDriverName) );
+	auto iter = m_pRegistrees->find( Rage::ci_ascii_string{sDriverName} );
 	if( iter == m_pRegistrees->end() )
 		return nullptr;
 	return (iter->second)();
 }
 
-RegisterRageDriver::RegisterRageDriver( DriverList *pDriverList, const istring &sName, CreateRageDriverFn pfn )
+RegisterRageDriver::RegisterRageDriver( DriverList *pDriverList, const Rage::ci_ascii_string &sName, CreateRageDriverFn pfn )
 {
-	pDriverList->Add( sName, pfn );
+	pDriverList->Add( Rage::ci_ascii_string{sName}, pfn );
 }
 
 /*
