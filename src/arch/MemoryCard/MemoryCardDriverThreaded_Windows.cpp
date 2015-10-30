@@ -2,6 +2,7 @@
 #include "MemoryCardDriverThreaded_Windows.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageString.hpp"
 #include "archutils/Win32/ErrorStrings.h"
 #include "PlayerNumber.h"
 #include "MemoryCardManager.h"
@@ -87,7 +88,7 @@ static bool IsFloppyDrive( const RString &sDrive )
 	const char *p = szBuf;
 	while( *p )
 	{
-		if( BeginsWith(p, "\\Device\\Floppy") )
+		if( Rage::starts_with(p, "\\Device\\Floppy") )
 			return true;
 
 		p += strlen(p)+1;

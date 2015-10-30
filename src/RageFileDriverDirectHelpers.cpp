@@ -312,8 +312,10 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 	vector<RString> vsFilesToRemove;
 	for( auto iter = fs.files.lower_bound(IGNORE_MARKER_BEGINNING); iter != fs.files.end(); ++iter )
 	{
-		if( !BeginsWith( iter->lname, IGNORE_MARKER_BEGINNING ) )
+		if( !Rage::starts_with( iter->lname, IGNORE_MARKER_BEGINNING ) )
+		{
 			break;
+		}
 		RString sFileLNameToIgnore = Rage::tail( iter->lname, -IGNORE_MARKER_BEGINNING.size() );
 		vsFilesToRemove.push_back( iter->name );
 		vsFilesToRemove.push_back( sFileLNameToIgnore );

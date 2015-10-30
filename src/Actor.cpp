@@ -272,7 +272,7 @@ void Actor::LoadFromNode( const XNode* pNode )
 		// Load Name, if any.
 		const RString &sKeyName = pAttr->first;
 		const XNodeValue *pValue = pAttr->second;
-		if( EndsWith(sKeyName,"Command") )
+		if( Rage::ends_with(sKeyName,"Command") )
 		{
 			LuaReference *pRef = new LuaReference;
 			pValue->PushValue( L );

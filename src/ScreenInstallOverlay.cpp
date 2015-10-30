@@ -293,8 +293,8 @@ static vector<DownloadTask*> g_pDownloadTasks;
 static bool IsStepManiaProtocol(const RString &arg)
 {
 	// for now, only load from the StepMania domain until the security implications of this feature are better understood.
-	//return BeginsWith(arg,"stepmania://beta.stepmania.com/");
-	return BeginsWith(arg,"stepmania://");
+	//return Rage::starts_with(arg,"stepmania://beta.stepmania.com/");
+	return Rage::starts_with(arg,"stepmania://");
 }
 
 static bool IsPackageFile(const RString &arg)
