@@ -23,6 +23,8 @@
 #define FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, row, start, last ) \
 	for( int row = start-1; (nd).GetNextTapNoteRowForAllTracks(row) && row < (last); )
 
+class TimingData;
+
 /** @brief Holds data about the notes that the player is supposed to hit. */
 class NoteData
 {
@@ -159,6 +161,11 @@ private:
 
 public:
 	void Init();
+
+	void SetOccuranceTimeForAllTaps(TimingData* timing_data);
+	void count_notes_in_columns(TimingData* timing_data,
+		std::vector<std::map<TapNoteType, int> > note_counts,
+		std::vector<std::map<TapNoteSubType, float> > hold_durations);
 
 	int GetNumTracks() const { return m_TapNotes.size(); }
 	void SetNumTracks( int iNewNumTracks );

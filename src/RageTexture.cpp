@@ -28,14 +28,19 @@ void RageTexture::CreateFrameRects()
 	// Fill in the m_FrameRects with the bounds of each frame in the animation.
 	m_TextureCoordRects.clear();
 
+	const float frame_w= static_cast<float>(m_iImageWidth) /
+		static_cast<float>(m_iFramesWide);
+	const float frame_h= static_cast<float>(m_iImageHeight) /
+		static_cast<float>(m_iFramesHigh);
+	const float tex_w= static_cast<float>(m_iTextureWidth);
+	const float tex_h= static_cast<float>(m_iTextureHeight);
+
 	for( int j=0; j<m_iFramesHigh; j++ )		// traverse along Y
 	{
 		for( int i=0; i<m_iFramesWide; i++ )	// traverse along X (important that this is the inner loop)
 		{
-			Rage::RectF frect( (i+0)/(float)m_iFramesWide*m_iImageWidth /(float)m_iTextureWidth,	// these will all be between 0.0 and 1.0
-						 (j+0)/(float)m_iFramesHigh*m_iImageHeight/(float)m_iTextureHeight,
-						 (i+1)/(float)m_iFramesWide*m_iImageWidth /(float)m_iTextureWidth,
-						 (j+1)/(float)m_iFramesHigh*m_iImageHeight/(float)m_iTextureHeight );
+			Rage::RectF frect(((i+0) * frame_w) / tex_w, ((j+0) * frame_h) / tex_h,
+				((i+1) * frame_w) / tex_w, ((j+1) * frame_h) / tex_h);
 			m_TextureCoordRects.push_back( frect );	// the index of this array element will be (i + j*m_iFramesWide)
 
 			//LOG->Trace( "Adding frect%d %f %f %f %f", (i + j*m_iFramesWide), frect.left, frect.top, frect.right, frect.bottom );

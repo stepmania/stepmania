@@ -24,6 +24,7 @@ const float min_state_delay= 0.0001f;
 Sprite::Sprite()
 {
 	m_pTexture = nullptr;
+	m_mask= nullptr;
 	m_iCurState = 0;
 	m_fSecsIntoState = 0.0f;
 	m_animation_length_seconds= 0.0f;
@@ -84,6 +85,14 @@ Sprite::Sprite( const Sprite &cpy ):
 		m_pTexture = TEXTUREMAN->CopyTexture( cpy.m_pTexture );
 	else
 		m_pTexture = nullptr;
+	if(cpy.m_mask != nullptr)
+	{
+		m_mask= TEXTUREMAN->CopyTexture(cpy.m_mask);
+	}
+	else
+	{
+		m_mask= nullptr;
+	}
 }
 
 void Sprite::InitState()
@@ -255,6 +264,17 @@ void Sprite::LoadFromNode( const XNode* pNode )
 		}
 	}
 
+	RString mask_path;
+	pNode->GetAttrValue("Mask", mask_path);
+	if(!mask_path.empty() && !TEXTUREMAN->IsTextureRegistered(RageTextureID(mask_path)))
+	{
+		ActorUtil::GetAttrPath(pNode, "Mask", mask_path);
+	}
+	if(!mask_path.empty())
+	{
+		SetMask(RageTextureID(mask_path));
+	}
+
 	Actor::LoadFromNode( pNode );
 	RecalcAnimationLengthSeconds();
 }
@@ -324,6 +344,24 @@ void Sprite::SetTexture( RageTexture *pTexture )
 	// Load default states if we haven't before.
 	if( m_States.empty() )
 		LoadStatesFromTexture();
+}
+
+void Sprite::SetMask(RageTexture* mask)
+{
+	if(m_mask != nullptr && mask != m_mask)
+	{
+		TEXTUREMAN->UnloadTexture(m_mask);
+	}
+	m_mask= mask;
+}
+
+void Sprite::SetMask(RageTextureID mask_id)
+{
+	if(m_mask != nullptr)
+	{
+		TEXTUREMAN->UnloadTexture(m_mask);
+	}
+	m_mask= TEXTUREMAN->LoadTexture(mask_id);
 }
 
 void Sprite::LoadFromTexture( RageTextureID ID )
@@ -425,7 +463,14 @@ void Sprite::Update( float fDelta )
 
 	// If the texture is a movie, decode frames.
 	if(!bSkipThisMovieUpdate && m_DecodeMovie)
-		m_pTexture->DecodeSeconds( std::max(0.f, fTimePassed) );
+	{
+		float decode_time= std::max(0.f, fTimePassed);
+		m_pTexture->DecodeSeconds(decode_time);
+		if(m_mask != nullptr)
+		{
+			m_mask->DecodeSeconds(decode_time);
+		}
+	}
 
 	// update scrolling
 	if( m_fTexCoordVelocityX != 0 || m_fTexCoordVelocityY != 0 )
@@ -535,6 +580,11 @@ void Sprite::DrawTexture( const TweenState *state )
 	// parameters have no effect.
 	Actor::SetTextureRenderStates(); // set Actor-specified render states
 	DISPLAY->SetEffectMode( m_EffectMode );
+
+	if(m_mask != nullptr && m_pTempState->mask_color.a > 0.0f)
+	{
+		DISPLAY->set_color_key_shader(m_pTempState->mask_color, m_mask->GetTexHandle());
+	}
 
 	if( m_pTexture )
 	{
@@ -1230,6 +1280,25 @@ public:
 			lua_pushnil( L );
 		return 1;
 	}
+	static int get_mask(T* p, lua_State* L)
+	{
+		RageTexture* tex= p->GetMask();
+		if(tex != nullptr)
+		{
+			tex->PushSelf(L);
+		}
+		else
+		{
+			lua_pushnil(L);
+		}
+		return 1;
+	}
+	static int set_mask(T* p, lua_State* L)
+	{
+		RageTexture* tex = TEXTUREMAN->CopyTexture(Luna<RageTexture>::check(L, 1));
+		p->SetMask(tex);
+		COMMON_RETURN_SELF;
+	}
 	static int SetEffectMode( T* p, lua_State *L )
 	{
 		EffectMode em = Enum::Check<EffectMode>(L, 1);
@@ -1272,6 +1341,7 @@ public:
 		ADD_METHOD( SetSecondsIntoAnimation );
 		ADD_METHOD( SetTexture );
 		ADD_METHOD( GetTexture );
+		ADD_GET_SET_METHODS(mask);
 		ADD_METHOD( SetEffectMode );
 		ADD_METHOD( GetNumStates );
 		ADD_METHOD( SetAllStateDelays );

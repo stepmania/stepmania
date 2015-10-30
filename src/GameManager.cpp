@@ -3497,6 +3497,13 @@ const Style* GameManager::GameAndStringToStyle( const Game *game, RString sStyle
 	return nullptr;
 }
 
+bool GameManager::stepstype_is_multiplayer(StepsType st)
+{
+	StepsTypeCategory category= GetStepsTypeInfo(st).m_StepsTypeCategory;
+	return category == StepsTypeCategory_Couple ||
+		category == StepsTypeCategory_Routine;
+}
+
 // lua start
 #include "LuaBinding.h"
 
@@ -3577,6 +3584,12 @@ public:
 		GameLoop::ChangeGame(game_name, theme);
 		return 0;
 	}
+	static int stepstype_is_multiplayer(T* p, lua_State* L)
+	{
+		StepsType st= Enum::Check<StepsType>(L, 1);
+		lua_pushboolean(L, p->stepstype_is_multiplayer(st));
+		return 1;
+	}
 
 	LunaGameManager()
 	{
@@ -3586,6 +3599,7 @@ public:
 		ADD_METHOD( GetStylesForGame );
 		ADD_METHOD( GetEnabledGames );
 		ADD_METHOD( SetGame );
+		ADD_METHOD(stepstype_is_multiplayer);
 	};
 };
 

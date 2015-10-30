@@ -421,6 +421,24 @@ RString FormatNumberAndSuffix( int i )
 	return NUM_PREFIX.GetValue() + ssprintf("%i", i) + sSuffix;
 }
 
+RString unique_name(RString const& type)
+{
+	static char const* name_chars= "abcdefghijklmnopqrstuvwxyz";
+	static int name_count= 0;
+	int curr_name= name_count;
+	RString ret= type + "_"; // Minimize the chance of a name collision.
+	ret= ret + name_chars[curr_name%26];
+	while(curr_name / 26 > 0)
+	{
+		curr_name= curr_name / 26;
+		ret= ret + name_chars[curr_name%26];
+	}
+	++name_count;
+	return ret;
+}
+
+
+
 struct tm GetLocalTime()
 {
 	const time_t t = time(nullptr);

@@ -7,6 +7,8 @@ namespace Rage
 {
 	/** @brief Have PI be defined cleanly. */
 	float constexpr PI = 3.141592653589793f;
+	double constexpr D_PI = 3.1415926535897932384626433832795;
+	double constexpr D_PI_REC = 1.0 / D_PI;
 
 	/** @brief Convert from radians to degrees. */
 	template<typename T>

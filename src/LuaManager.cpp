@@ -42,15 +42,83 @@ static Impl *pImpl = nullptr;
 /** @brief Utilities for working with Lua. */
 namespace LuaHelpers
 {
-	template<> void Push<bool>( lua_State *L, const bool &Object );
-	template<> void Push<float>( lua_State *L, const float &Object );
-	template<> void Push<int>( lua_State *L, const int &Object );
-	template<> void Push<RString>( lua_State *L, const RString &Object );
+	template<> void Push<bool>(lua_State* L, bool const& object)
+	{
+		lua_pushboolean(L, object);
+	}
+	template<> void Push<float>(lua_State* L, float const& object)
+	{
+		lua_pushnumber(L, object);
+	}
+	template<> void Push<double>(lua_State* L, double const& object)
+	{
+		lua_pushnumber(L, object);
+	}
+	template<> void Push<int>(lua_State* L, int const& object)
+	{
+		lua_pushinteger(L, object);
+	}
+	template<> void Push<unsigned int>(lua_State* L, unsigned int const& object)
+	{
+		lua_pushnumber(L, static_cast<double>(object));
+	}
+	template<> void Push<unsigned long>(lua_State* L, unsigned long const& object)
+	{
+		lua_pushnumber(L, static_cast<double>(object));
+	}
+	template<> void Push<RString>(lua_State* L, RString const& object)
+	{
+		lua_pushlstring(L, object.data(), object.size());
+	}
+	template<> void Push<std::string>(lua_State* L, std::string const& object)
+	{
+		lua_pushlstring(L, object.data(), object.size());
+	}
 
-	template<> bool FromStack<bool>( Lua *L, bool &Object, int iOffset );
-	template<> bool FromStack<float>( Lua *L, float &Object, int iOffset );
-	template<> bool FromStack<int>( Lua *L, int &Object, int iOffset );
-	template<> bool FromStack<RString>( Lua *L, RString &Object, int iOffset );
+	template<> bool FromStack<bool>(Lua* L, bool& object, int offset)
+	{
+		object = lua_toboolean(L, offset);
+		return true;
+	}
+	template<> bool FromStack<float>(Lua* L, float& object, int offset)
+	{
+		object = static_cast<float>(lua_tonumber(L, offset));
+		return true;
+	}
+	template<> bool FromStack<double>(Lua* L, double& object, int offset)
+	{
+		object = static_cast<double>(lua_tonumber(L, offset));
+		return true;
+	}
+	template<> bool FromStack<int>(Lua* L, int& object, int offset)
+	{
+		object = lua_tointeger(L, offset);
+		return true;
+	}
+	template<> bool FromStack<unsigned int>(Lua* L, unsigned int& object, int offset)
+	{
+		object = lua_tointeger(L, offset);
+		return true;
+	}
+	template<> bool FromStack<unsigned long>(Lua* L, unsigned long& object, int offset)
+	{
+		object = lua_tointeger(L, offset);
+		return true;
+	}
+	template<> bool FromStack<RString>(Lua* L, RString& object, int offset)
+	{
+		size_t iLen;
+		char const* pStr = lua_tolstring(L, offset, &iLen);
+		if(pStr != nullptr)
+		{
+			object.assign(pStr, iLen);
+		}
+		else
+		{
+			object.clear();
+		}
+		return pStr != nullptr;
+	}
 
 	bool InReportScriptError= false;
 }
@@ -79,31 +147,6 @@ void LuaManager::UnsetGlobal( const RString &sName )
 	Release( L );
 }
 
-/** @brief Utilities for working with Lua. */
-namespace LuaHelpers
-{
-	template<> void Push<bool>( lua_State *L, const bool &Object ) { lua_pushboolean( L, Object ); }
-	template<> void Push<float>( lua_State *L, const float &Object ) { lua_pushnumber( L, Object ); }
-	template<> void Push<int>( lua_State *L, const int &Object ) { lua_pushinteger( L, Object ); }
-	template<> void Push<unsigned int>( lua_State *L, const unsigned int &Object ) { lua_pushnumber( L, double(Object) ); }
-	template<> void Push<RString>( lua_State *L, const RString &Object ) { lua_pushlstring( L, Object.data(), Object.size() ); }
-
-	template<> bool FromStack<bool>( Lua *L, bool &Object, int iOffset ) { Object = !!lua_toboolean( L, iOffset ); return true; }
-	template<> bool FromStack<float>( Lua *L, float &Object, int iOffset ) { Object = (float)lua_tonumber( L, iOffset ); return true; }
-	template<> bool FromStack<int>( Lua *L, int &Object, int iOffset ) { Object = lua_tointeger( L, iOffset ); return true; }
-	template<> bool FromStack<RString>( Lua *L, RString &Object, int iOffset )
-	{
-		size_t iLen;
-		const char *pStr = lua_tolstring( L, iOffset, &iLen );
-		if( pStr != nullptr )
-			Object.assign( pStr, iLen );
-		else
-			Object.clear();
-
-		return pStr != nullptr;
-	}
-}
-
 void LuaHelpers::CreateTableFromArrayB( Lua *L, const vector<bool> &aIn )
 {
 	lua_newtable( L );
@@ -124,6 +167,55 @@ void LuaHelpers::ReadArrayFromTableB( Lua *L, vector<bool> &aOut )
 		bool bOn = !!lua_toboolean( L, -1 );
 		aOut[i] = bOn;
 		lua_pop( L, 1 );
+	}
+}
+
+void LuaHelpers::rec_print_table(lua_State* L, std::string const& name, std::string const& indent)
+{
+	switch(lua_type(L, -1))
+	{
+		case LUA_TNIL:
+			LOG->Trace("%s%s: nil", indent.c_str(), name.c_str());
+			break;
+		case LUA_TNUMBER:
+			LOG->Trace("%s%s number: %f", indent.c_str(), name.c_str(), lua_tonumber(L, -1));
+			break;
+		case LUA_TBOOLEAN:
+			LOG->Trace("%s%s bool: %d", indent.c_str(), name.c_str(), lua_toboolean(L, -1));
+			break;
+		case LUA_TSTRING:
+			LOG->Trace("%s%s string: %s", indent.c_str(), name.c_str(), lua_tostring(L, -1));
+			break;
+		case LUA_TTABLE:
+			{
+				size_t tablen= lua_objlen(L, -1);
+				LOG->Trace("%s%s table: %zu", indent.c_str(), name.c_str(), tablen);
+				std::string subindent= indent + "  ";
+				lua_pushnil(L);
+				while(lua_next(L, -2) != 0)
+				{
+					lua_pushvalue(L, -2);
+					std::string sub_name= lua_tostring(L, -1);
+					lua_pop(L, 1);
+					rec_print_table(L, sub_name, subindent);
+					lua_pop(L, 1);
+				}
+			}
+			break;
+		case LUA_TFUNCTION:
+			LOG->Trace("%s%s function:", indent.c_str(), name.c_str());
+			break;
+		case LUA_TUSERDATA:
+			LOG->Trace("%s%s userdata:", indent.c_str(), name.c_str());
+			break;
+		case LUA_TTHREAD:
+			LOG->Trace("%s%s thread:", indent.c_str(), name.c_str());
+			break;
+		case LUA_TLIGHTUSERDATA:
+			LOG->Trace("%s%s lightuserdata:", indent.c_str(), name.c_str());
+			break;
+		default:
+			break;
 	}
 }
 

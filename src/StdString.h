@@ -252,7 +252,7 @@ inline int ssicmp(const CT* pA1, const CT* pA2)
 
 inline void sslwr(char *pT, size_t nLen)
 {
-	MakeLower( pT, nLen );
+	//MakeLower( pT, nLen );
 }
 inline void ssupr(char *pT, size_t nLen)
 {

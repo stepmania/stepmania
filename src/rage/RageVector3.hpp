@@ -17,9 +17,6 @@ public:
 	Vector3& operator *= (float rhs);
 	Vector3& operator /= (float rhs);
 
-	/** @brief Get the cross product. */
-	Vector3& operator *= (Vector3 const & rhs);
-	
 	/** @brief Get a normalized version of the vector. */
 	Vector3 GetNormalized() const;
 
@@ -69,11 +66,26 @@ inline Vector3 operator/(Vector3 lhs, float rhs)
 	return lhs;
 }
 
-inline Vector3 operator*(Vector3 lhs, Vector3 const &rhs)
+// Little known fact: There are two ways to multiply two vectors:
+// Cross product, and dot product.  Because they are both vector
+// multiplication, neither of them should use the * operator.
+// And combining with an assignment operator is more wrong because it
+// forces more operations because the person doing the multiplication
+// always wants to put the result in a different vector. -Kyz
+inline Vector3 CrossProduct(Vector3 const& lhs, Vector3 const & rhs)
 {
-	lhs *= rhs;
-	return lhs;
+	return Rage::Vector3(
+		(lhs.y * rhs.z) - (lhs.z * rhs.y),
+		(lhs.z * rhs.x) - (lhs.x * rhs.z),
+		(lhs.x * rhs.y) - (lhs.y * rhs.x));
 }
+
+struct transform // robot in disguise
+{
+	Vector3 pos;
+	Vector3 rot;
+	Vector3 zoom;
+};
 
 }
 

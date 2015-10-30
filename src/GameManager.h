@@ -50,6 +50,12 @@ public:
 	const Style* GameAndStringToStyle( const Game* pGame, RString sStyle );
 	RString StyleToLocalizedString( const Style* s );
 
+	// stepstype_is_multiplayer doesn't really belong in GAMEMAN, but we don't
+	// have a stepstype manager.  Also, I want to start calling routine mode
+	// multiplayer, something to make it more explicitly about having multiple
+	// players on a single notefield. -Kyz
+	bool stepstype_is_multiplayer(StepsType st);
+
 
 	// Lua
 	void PushSelf( lua_State *L );

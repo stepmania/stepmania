@@ -112,6 +112,8 @@ namespace LuaHelpers
 	// Read the table at the top of the stack back into a vector.
 	void ReadArrayFromTableB( Lua *L, std::vector<bool> &aOut );
 
+	void rec_print_table(lua_State* L, std::string const& name, std::string const& indent);
+
 	void ParseCommandList( lua_State *L, const RString &sCommands, const RString &sName, bool bLegacy );
 
 	XNode *GetLuaInformation();
@@ -274,6 +276,26 @@ inline int SafeFArg(lua_State* L, int index, RString const& err, int def)
 	}
 	LuaHelpers::ReportScriptError(err);
 	return def;
+}
+
+inline double get_optional_double(lua_State* L, int index, char const* field, double def)
+{
+	double ret= def;
+	lua_getfield(L, index, field);
+	if(lua_isnumber(L, -1))
+	{
+		ret= lua_tonumber(L, -1);
+	}
+	lua_pop(L, 1);
+	return ret;
+}
+
+inline bool get_optional_bool(lua_State* L, int index, char const* field)
+{
+	lua_getfield(L, index, field);
+	bool ret = lua_toboolean(L, -1) == 1;
+	lua_pop(L, 1);
+	return ret;
 }
 
 #define LuaFunction( func, expr ) \

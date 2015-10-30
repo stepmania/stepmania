@@ -291,6 +291,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 	int sanity_index= 0;
 	for (auto const &sGroupDirName: arrayGroupDirs)
 	{
+		++sanity_index;
 		if(ld)
 		{
 			ld->SetProgress(sanity_index);
@@ -482,7 +483,7 @@ void SongManager::UnlistSong(Song *song)
 	vector<Song*>* songVectors[3] = { &m_pSongs, &m_pPopularSongs, &m_pShuffledSongs };
 	for (int songVecIdx=0; songVecIdx<3; ++songVecIdx) {
 		vector<Song*>& v = *songVectors[songVecIdx];
-		for (auto i = 0; i < v.size(); ++i) {
+		for (size_t i = 0; i < v.size(); ++i) {
 			if (v[i] == song) {
 				v.erase(v.begin()+i);
 				--i;

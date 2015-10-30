@@ -144,6 +144,9 @@ typedef StdString::CStdString RString;
 /* Define a few functions if necessary */
 #include <cmath>
 
+// For dealing with all those unused variable warnings. -Kyz
+#define UNUSED(v) (void)(v);
+
 /* Don't include our own headers here, since they tend to change often. */
 
 #endif

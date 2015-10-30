@@ -5,11 +5,13 @@
 #include "XmlFile.h"
 #include "IniFile.h"
 #include "GameManager.h"
+#include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 #include "Song.h"
 #include "SongManager.h"
 #include "Steps.h"
 #include "Course.h"
+#include "NewSkinManager.h"
 #include "ThemeManager.h"
 #include "CryptManager.h"
 #include "ProfileManager.h"
@@ -561,6 +563,64 @@ void Profile::SetDefaultModifiers( const Game* pGameType, const RString &sModifi
 		m_sDefaultModifiers.erase( pGameType->m_szName );
 	else
 		m_sDefaultModifiers[pGameType->m_szName] = sModifiers;
+}
+
+void Profile::get_preferred_noteskin(StepsType stype, RString& skin) const
+{
+	auto entry= m_preferred_noteskins.find(stype);
+	if(entry == m_preferred_noteskins.end())
+	{
+		// Try to find the skin that they use the most and use it.
+		// Go through m_preferred_noteskins, find the ones that support stype,
+		// and sort them by how many times they occur in m_preferred_noteskins.
+		// Use the one that is already used the most.
+		std::map<RString, int> skin_counts;
+		for(auto&& pref_skin : m_preferred_noteskins)
+		{
+			auto entry= skin_counts.find(pref_skin.second);
+			if(entry != skin_counts.end())
+			{
+				++(entry->second);
+			}
+			else
+			{
+				if(NEWSKIN->skin_supports_stepstype(pref_skin.second, stype))
+				{
+					skin_counts[pref_skin.second]= 1;
+				}
+			}
+		}
+		if(skin_counts.empty())
+		{
+			skin= NEWSKIN->get_first_skin_name_for_stepstype(stype);
+		}
+		else
+		{
+			int highest_count= 0;
+			for(auto&& count : skin_counts)
+			{
+				if(count.second > highest_count)
+				{
+					highest_count= count.second;
+					skin= count.first;
+				}
+			}
+		}
+	}
+	else
+	{
+		skin= entry->second;
+	}
+}
+
+bool Profile::set_preferred_noteskin(StepsType stype, RString const& skin)
+{
+	if(NEWSKIN->named_skin_exists(skin))
+	{
+		m_preferred_noteskins[stype]= skin;
+		return true;
+	}
+	return false;
 }
 
 bool Profile::IsCodeUnlocked( RString sUnlockEntryID ) const
@@ -1438,6 +1498,17 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	}
 
 	{
+		vector<RString> noteskin_entries;
+		for(auto&& entry : m_preferred_noteskins)
+		{
+			RString stype_str= StepsTypeToString(entry.first);
+			noteskin_entries.push_back(stype_str + "," + entry.second);
+		}
+		RString as_one_string= join(";", noteskin_entries);
+		pGeneralDataNode->AppendChild("PreferredNoteskins", as_one_string);
+	}
+
+	{
 		XNode* pUnlocks = pGeneralDataNode->AppendChild("Unlocks");
 		for (auto const &it: m_UnlockedEntryIDs)
 		{
@@ -1627,6 +1698,32 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 			{
 				game_type->GetTextValue( m_sDefaultModifiers[game_type->GetName()] );
 			}
+		}
+	}
+
+	{
+		RString pref_noteskins;
+		pNode->GetChildValue("PreferredNoteskins", pref_noteskins);
+		vector<RString> split_by_stype;
+		split(pref_noteskins, ";", split_by_stype);
+		for(auto&& entry : split_by_stype)
+		{
+			vector<RString> parts;
+			split(entry, ",", parts);
+			if(parts.size() != 2)
+			{
+				continue;
+			}
+			// I hate that StepsTypeToString and StringToStepsType don't used the
+			// same formatting. -Kyz
+			parts[0].MakeLower();
+			parts[0].Replace('_', '-');
+			StepsType stype= GAMEMAN->StringToStepsType(parts[0]);
+			if(stype == StepsType_Invalid)
+			{
+				continue;
+			}
+			set_preferred_noteskin(stype, parts[1]);
 		}
 	}
 
@@ -2505,6 +2602,25 @@ public:
 		return 1;
 	}
 
+	static int get_preferred_noteskin(T* p, lua_State* L)
+	{
+		StepsType stype= Enum::Check<StepsType>(L, 1);
+		RString skin;
+		p->get_preferred_noteskin(stype, skin);
+		lua_pushstring(L, skin.c_str());
+		return 1;
+	}
+	static int set_preferred_noteskin(T* p, lua_State* L)
+	{
+		StepsType stype= Enum::Check<StepsType>(L, 1);
+		RString skin= SArg(2);
+		if(!p->set_preferred_noteskin(stype, skin))
+		{
+			LuaHelpers::ReportScriptError("The noteskin '" + skin + "' does not exist.");
+		}
+		COMMON_RETURN_SELF;
+	}
+
 	static int GetCharacter( T* p, lua_State *L )			{ p->GetCharacter()->PushSelf(L); return 1; }
 	static int SetCharacter( T* p, lua_State *L )			{ p->SetCharacter(SArg(1)); COMMON_RETURN_SELF; }
 	static int GetWeightPounds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iWeightPounds ); return 1; }
@@ -2624,6 +2740,11 @@ public:
 			lua_pushnil( L );
 		return 1;
 	}
+	static int get_last_stepstype(T* p, lua_State* L)
+	{
+		Enum::Push(L, p->m_LastStepsType);
+		return 1;
+	}
 	DEFINE_METHOD( GetGUID,		m_sGuid );
 
 	LunaProfile()
@@ -2639,6 +2760,7 @@ public:
 		ADD_METHOD( GetHighScoreListIfExists );
 		ADD_METHOD( GetHighScoreList );
 		ADD_METHOD( GetCategoryHighScoreList );
+		ADD_GET_SET_METHODS(preferred_noteskin);
 		ADD_METHOD( GetCharacter );
 		ADD_METHOD( SetCharacter );
 		ADD_METHOD( GetWeightPounds );
@@ -2694,6 +2816,7 @@ public:
 		ADD_METHOD( GetUserTable );
 		ADD_METHOD( GetLastPlayedSong );
 		ADD_METHOD( GetLastPlayedCourse );
+		ADD_METHOD(get_last_stepstype);
 		ADD_METHOD( GetGUID );
 	}
 };

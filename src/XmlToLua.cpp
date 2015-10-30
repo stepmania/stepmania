@@ -19,28 +19,11 @@ using std::string;
 
 #define TWEEN_QUEUE_MAX 50
 
-RString unique_name();
 void convert_xmls_in_dir(RString const& dirname);
 void convert_xml_file(RString const& fname, RString const& dirname);
 RString maybe_conv_pos(RString pos, RString (*conv_func)(float p));
 RString add_extension_to_relative_path_from_found_file(
 	RString const& relative_path, RString const& found_file);
-
-RString unique_name(RString const& type)
-{
-	static char const* name_chars= "abcdefghijklmnopqrstuvwxyz";
-	static int name_count= 0;
-	int curr_name= name_count;
-	RString ret= "xtl_" + type + "_"; // Minimize the chance of a name collision.
-	ret= ret + name_chars[curr_name%26];
-	while(curr_name / 26 > 0)
-	{
-		curr_name= curr_name / 26;
-		ret= ret + name_chars[curr_name%26];
-	}
-	++name_count;
-	return ret;
-}
 
 void convert_xmls_in_dir(RString const& dirname)
 {

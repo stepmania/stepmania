@@ -9,6 +9,8 @@
 #include "RageMath.hpp"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageTimer.h"
+#include "TimingData.h"
 #include "XmlFile.h"
 #include "GameState.h" // blame radar calculations.
 #include "RageUtil_AutoPtr.h"
@@ -21,6 +23,65 @@ REGISTER_CLASS_TRAITS( NoteData, new NoteData(*pCopy) )
 void NoteData::Init()
 {
 	m_TapNotes = vector<TrackMap>();	// ensure that the memory is freed
+}
+
+void NoteData::SetOccuranceTimeForAllTaps(TimingData* timing_data)
+{
+	ASSERT_M(timing_data != nullptr, "SetOccuranceTimeForAllTaps cannot run without timing data.");
+	timing_data->PrepareLookup();
+	int curr_row= -1;
+	NoteData::all_tracks_iterator curr_note=
+		GetTapNoteRangeAllTracks(0, MAX_NOTE_ROW);
+	double curr_row_second= -1.0;
+	while(!curr_note.IsAtEnd())
+	{
+		if(curr_note.Row() != curr_row)
+		{
+			curr_row= curr_note.Row();
+			curr_row_second= timing_data->GetElapsedTimeFromBeat(NoteRowToBeat(curr_row));
+		}
+		if(curr_note->type != TapNoteType_Empty)
+		{
+			curr_note->occurs_at_second= curr_row_second;
+			if(curr_note->type == TapNoteType_HoldHead)
+			{
+				curr_note->end_second= timing_data->GetElapsedTimeFromBeat(NoteRowToBeat(curr_row + curr_note->iDuration));
+			}
+		}
+		++curr_note;
+	}
+	timing_data->ReleaseLookup();
+}
+
+void NoteData::count_notes_in_columns(TimingData* timing_data,
+	vector<std::map<TapNoteType, int> > note_counts,
+	vector<std::map<TapNoteSubType, float> > hold_durations)
+{
+	note_counts.resize(GetNumTracks());
+	hold_durations.resize(GetNumTracks());
+	for(size_t track= 0; track < note_counts.size(); ++track)
+	{
+		auto& counts= note_counts[track];
+		auto& durrs= hold_durations[track];
+		for(auto note= begin(track); note != end(track); ++note)
+		{
+			TapNoteType type= note->second.type;
+			if(!timing_data->IsJudgableAtRow(note->first))
+			{
+				type= TapNoteType_Fake;
+			}
+			++counts[type];
+			if(type == TapNoteType_HoldHead)
+			{
+				durrs[note->second.subType]+= note->second.iDuration;
+			}
+		}
+		// Convert durations from rows to beats.
+		for(auto&& durp : durrs)
+		{
+			durp.second= NoteRowToBeat(durp.second);
+		}
+	}
 }
 
 void NoteData::SetNumTracks( int iNewNumTracks )

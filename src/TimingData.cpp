@@ -15,7 +15,8 @@ static const int INVALID_INDEX = -1;
 
 TimingSegment* GetSegmentAtRow( int iNoteRow, TimingSegmentType tst );
 
-TimingData::TimingData(float fOffset) : m_fBeat0OffsetInSeconds(fOffset)
+TimingData::TimingData(float fOffset)
+	:m_lookup_requester_count(0), m_fBeat0OffsetInSeconds(fOffset)
 {
 }
 
@@ -58,8 +59,13 @@ TimingData::~TimingData()
 
 void TimingData::PrepareLookup()
 {
-	// If multiple players have the same timing data, then adding to the
-	// lookups would probably cause FindEntryInLookup to return the wrong
+	++m_lookup_requester_count;
+	if(m_lookup_requester_count > 1)
+	{
+		return;
+	}
+	// If by some mistake the old lookup table is still hanging around, adding
+	// more entries would probably cause FindEntryInLookup to return the wrong
 	// thing.  So release the lookups. -Kyz
 	ReleaseLookup();
 	const unsigned int segments_per_lookup= 16;
@@ -88,10 +94,27 @@ void TimingData::PrepareLookup()
 		GetElapsedTimeInternal(time_start, std::numeric_limits<float>::max(), curr_segment);
 		m_time_start_lookup.push_back(lookup_item_t(NoteRowToBeat(time_start.last_row), time_start));
 	}
+
+	const vector<TimingSegment*>& scrolls= segs[SEGMENT_SCROLL];
+	m_displayed_beat_lookup.reserve(scrolls.size());
+	float displayed_beat= 0.0f;
+	float last_real_beat= 0.0f;
+	float last_ratio= 1.0f;
+	for(auto&& scr : scrolls)
+	{
+		ScrollSegment* scroll= ToScroll(scr);
+		float scroll_beat= scroll->GetBeat();
+		float scroll_ratio= scroll->GetRatio();
+		displayed_beat+= (scroll_beat - last_real_beat) * last_ratio;
+		m_displayed_beat_lookup.push_back({scroll_beat, displayed_beat, scroll_ratio});
+		last_real_beat= scroll_beat;
+		last_ratio= scroll_ratio;
+	}
+
 	// If there are less than two entries, then FindEntryInLookup in lookup
 	// will always decide there's no appropriate entry.  So clear the table.
 	// -Kyz
-	if(m_beat_start_lookup.size() < 2)
+	if(m_beat_start_lookup.size() < 2 && m_displayed_beat_lookup.size() < 2)
 	{
 		ReleaseLookup();
 	}
@@ -100,17 +123,23 @@ void TimingData::PrepareLookup()
 
 void TimingData::ReleaseLookup()
 {
+	--m_lookup_requester_count;
+	if(m_lookup_requester_count > 0)
+	{
+		return;
+	}
 	// According to The C++ Programming Language 3rd Ed., decreasing the size
 	// of a vector doesn't actually free the memory it has allocated.  So this
 	// small trick is required to actually free the memory. -Kyz
 #define CLEAR_LOOKUP(lookup) \
 	{ \
 		lookup.clear(); \
-		beat_start_lookup_t tmp= lookup; \
+		auto tmp= lookup; \
 		lookup.swap(tmp); \
 	}
 	CLEAR_LOOKUP(m_beat_start_lookup);
 	CLEAR_LOOKUP(m_time_start_lookup);
+	CLEAR_LOOKUP(m_displayed_beat_lookup);
 #undef CLEAR_LOOKUP
 }
 
@@ -184,6 +213,11 @@ TimingData::beat_start_lookup_t::const_iterator FindEntryInLookup(
 		else if(lookup[next].first < entry)
 		{
 			lower= next;
+		}
+		else if(lookup[next+1].first >= entry)
+		{
+			lower= next;
+			break;
 		}
 		else
 		{
@@ -967,8 +1001,47 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 	return start.last_time;
 }
 
+static float beat_relative_to_displayed_beat_entry(float beat, TimingData::displayed_beat_entry const& entry)
+{
+	return entry.displayed_beat + (entry.velocity * (beat - entry.beat));
+}
+
 float TimingData::GetDisplayedBeat( float fBeat ) const
 {
+	if(!m_displayed_beat_lookup.empty())
+	{
+		size_t lower= 0;
+		size_t max_entry= m_displayed_beat_lookup.size()-1;
+		size_t upper= max_entry;
+		if(fBeat >= m_displayed_beat_lookup[upper].beat)
+		{
+			return beat_relative_to_displayed_beat_entry(fBeat, m_displayed_beat_lookup[upper]);
+		}
+		if(fBeat <= m_displayed_beat_lookup[lower].beat)
+		{
+			return beat_relative_to_displayed_beat_entry(fBeat, m_displayed_beat_lookup[lower]);
+		}
+		while(lower <= upper)
+		{
+			size_t mid= (lower + upper) / 2;
+			displayed_beat_entry const* mid_entry= &(m_displayed_beat_lookup[mid]);
+			if(mid_entry->beat <= fBeat)
+			{
+				if(mid == max_entry || fBeat < m_displayed_beat_lookup[mid+1].beat)
+				{
+					return beat_relative_to_displayed_beat_entry(fBeat, *mid_entry);
+				}
+				else
+				{
+					lower= mid + 1;
+				}
+			}
+			else
+			{
+				upper= mid - 1;
+			}
+		}
+	}
 	float fOutBeat = 0;
 	unsigned i;
 	const vector<TimingSegment *> &scrolls = m_avpTimingSegments[SEGMENT_SCROLL];

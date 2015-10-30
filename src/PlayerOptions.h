@@ -69,6 +69,7 @@ public:
 		m_MinTNSToHideNotes(PREFSMAN->m_MinTNSToHideNotes)
 	{
 		m_sNoteSkin = "";
+		m_newskin= "default";
 		ZERO( m_fAccels );	ONE( m_SpeedfAccels );
 		ZERO( m_fEffects );	ONE( m_SpeedfEffects );
 		ZERO( m_fAppearances );	ONE( m_SpeedfAppearances );
@@ -230,6 +231,7 @@ public:
 	 *
 	 * If an empty string, it means to not change from the default. */
 	RString		m_sNoteSkin;
+	RString m_newskin;
 
 	void NextAccel();
 	void NextEffect();

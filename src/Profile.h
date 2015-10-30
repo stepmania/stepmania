@@ -158,6 +158,12 @@ public:
 	float GetSongsAndCoursesPercentCompleteAllDifficulties( StepsType st ) const;
 	bool GetDefaultModifiers( const Game* pGameType, RString &sModifiersOut ) const;
 	void SetDefaultModifiers( const Game* pGameType, const RString &sModifiers );
+	void get_preferred_noteskin(StepsType stype, RString& skin) const;
+	bool set_preferred_noteskin(StepsType stype, RString const& skin);
+	typedef std::map<StepsType, RString> pref_noteskin_container;
+	pref_noteskin_container const& get_all_preferred_noteskins()
+	{ return m_preferred_noteskins; }
+
 	bool IsCodeUnlocked( RString sUnlockEntryID ) const;
 	Song *GetMostPopularSong() const;
 	Course *GetMostPopularCourse() const;
@@ -200,6 +206,7 @@ public:
 	// Probably not a problem if the per-game sections are written to prefs in
 	// random order. -Kyz
 	std::unordered_map<std::string,RString> m_sDefaultModifiers;
+	pref_noteskin_container m_preferred_noteskins;
 	SortOrder m_SortOrder;
 	Difficulty m_LastDifficulty;
 	CourseDifficulty m_LastCourseDifficulty;

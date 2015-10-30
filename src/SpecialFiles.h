@@ -39,6 +39,7 @@ namespace SpecialFiles
 	extern const RString COURSES_DIR;
 	/** @brief The default noteskins directory. */
 	extern const RString NOTESKINS_DIR;
+	extern const RString NEWSKINS_DIR;
 }
 
 #endif

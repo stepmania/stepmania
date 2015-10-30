@@ -42,17 +42,6 @@ Rage::Vector3 & Rage::Vector3::operator/=(float rhs)
 	return *this;
 }
 
-Rage::Vector3 & Rage::Vector3::operator*=(Rage::Vector3 const &rhs)
-{
-	float lhsX = x;
-	float lhsY = y;
-	float lhsZ = z;
-	x = (lhsY * rhs.z) - (lhsZ * rhs.y);
-	y = (lhsX * rhs.z) - (lhsZ * rhs.x);
-	z = (lhsX * rhs.y) - (lhsY * rhs.x);
-	return *this;
-}
-
 Rage::Vector3 Rage::Vector3::GetNormalized() const
 {
 	float scale = 1.0f / std::sqrt( x * x + y * y + z * z );

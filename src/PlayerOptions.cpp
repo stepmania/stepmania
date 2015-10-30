@@ -77,6 +77,7 @@ void PlayerOptions::Init()
 	ZERO( m_bTransforms );
 	m_bMuteOnError = false;
 	m_sNoteSkin = "";
+	m_newskin= "default";
 }
 
 void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
@@ -121,6 +122,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	DO_COPY( m_FailType );
 	DO_COPY( m_MinTNSToHideNotes );
 	DO_COPY( m_sNoteSkin );
+	DO_COPY(m_newskin);
 #undef APPROACH
 #undef DO_COPY
 }
@@ -774,6 +776,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fPerspectiveTilt);
 	COMPARE(m_fSkew);
 	COMPARE(m_sNoteSkin);
+	COMPARE(m_newskin);
 	for( int i = 0; i < PlayerOptions::NUM_ACCELS; ++i )
 		COMPARE(m_fAccels[i]);
 	for( int i = 0; i < PlayerOptions::NUM_EFFECTS; ++i )
@@ -820,6 +823,7 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	{
 		CPY(m_sNoteSkin);
 	}
+	CPY(m_newskin);
 	for( int i = 0; i < PlayerOptions::NUM_ACCELS; ++i )
 	{
 		CPY_SPEED(fAccels[i]);
@@ -1179,6 +1183,19 @@ public:
 		return 2;
 	}
 
+	static int NewSkin(T* p, lua_State* L)
+	{
+		int original_top= lua_gettop(L);
+		RString old= p->m_newskin;
+		if(lua_isstring(L, 1))
+		{
+			p->m_newskin= SArg(1);
+		}
+		lua_pushstring(L, old);
+		OPTIONAL_RETURN_SELF(original_top);
+		return 1;
+	}
+
 	static void SetSpeedModApproaches(T* p, float speed)
 	{
 		p->m_SpeedfScrollBPM= speed;
@@ -1525,6 +1542,7 @@ public:
 		ADD_METHOD(MuteOnError);
 
 		ADD_METHOD(NoteSkin);
+		ADD_METHOD(NewSkin);
 		ADD_METHOD(FailSetting);
 		ADD_METHOD(MinTNSToHideNotes);
 
