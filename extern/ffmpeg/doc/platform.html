@@ -1,6 +1,6 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+<!DOCTYPE html>
 <html>
-<!-- Created on January 27, 2012 by texi2html 1.82 -->
+<!-- Created on January 21, 2014 by texi2html 1.82 -->
 <!--
 texi2html was written by: 
             Lionel Cons <Lionel.Cons@cern.ch> (original author)
@@ -12,81 +12,22 @@ Send bugs and suggestions to <texi2html-bug@nongnu.org>
 
 -->
 <head>
-<title>FFmpeg documentation : : </title>
+<title>FFmpeg documentation : Platform Specific Information: </title>
 
-<meta name="description" content=": ">
-<meta name="keywords" content="FFmpeg documentation : : ">
-<meta name="resource-type" content="document">
-<meta name="distribution" content="global">
+<meta name="description" content="Platform Specific Information: ">
+<meta name="keywords" content="FFmpeg documentation : Platform Specific Information: ">
 <meta name="Generator" content="texi2html 1.82">
-
-<style type="text/css">
-<!--
-a.summary-letter { text-decoration: none }
-a { color: #2D6198; }
-a:visited { color: #884488; }
-h1 a, h2 a, h3 a { text-decoration: inherit; color: inherit; }
-p { margin-left: 1em; margin-right: 1em; }
-table { margin-left: 2em; }
-pre { margin-left: 2em; }
-#footer { text-align: center; }
-#body { margin-left: 1em; margin-right: 1em; }
-body { background-color: #313131; margin: 0; }
-
-#container {
-    background-color: white;
-    color: #202020;
-    margin-left: 1em;
-    margin-right: 1em;
-}
-
-h1 {
-    background-color: #7BB37B;
-    border: 1px solid #6A996A;
-    color: #151515;
-    font-size: 1.2em;
-    padding-bottom: 0.2em;
-    padding-left: 0.4em;
-    padding-top: 0.2em;
-}
-
-h2 {
-    color: #313131;
-    font-size: 1.2em;
-}
-
-h3 {
-    color: #313131;
-    font-size: 0.8em;
-    margin-bottom: -8px;
-}
-
-.note {
-    margin: 1em;
-    border: 1px solid #bbc9d8;
-    background-color: #dde1e1;
-}
-
-.important {
-    margin: 1em;
-    border: 1px solid #d26767;
-    background-color: #f8e1e1;
-}
-
--->
-</style>
-
-<link rel="icon" href="favicon.png" type="image/png" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" type="text/css" href="default.css" />
 
+<link rel="icon" href="favicon.png" type="image/png" />
 </head>
-
-<body >
+<body>
 <div id="container">
-
 <div id="body">
+
 <a name="SEC_Top"></a>
-<h1 class="settitle">Platform Specific information</h1>
+<h1 class="settitle">Platform Specific Information</h1>
 
 <a name="SEC_Contents"></a>
 <h1>Table of Contents</h1>
@@ -103,17 +44,16 @@ h3 {
   <li><a name="toc-OS_002f2" href="#OS_002f2">3. OS/2</a></li>
   <li><a name="toc-Windows" href="#Windows">4. Windows</a>
   <ul class="toc">
-    <li><a name="toc-Native-Windows-compilation" href="#Native-Windows-compilation">4.1 Native Windows compilation</a></li>
-    <li><a name="toc-Microsoft-Visual-C_002b_002b-compatibility" href="#Microsoft-Visual-C_002b_002b-compatibility">4.2 Microsoft Visual C++ compatibility</a>
+    <li><a name="toc-Native-Windows-compilation-using-MinGW-or-MinGW_002dw64" href="#Native-Windows-compilation-using-MinGW-or-MinGW_002dw64">4.1 Native Windows compilation using MinGW or MinGW-w64</a></li>
+    <li><a name="toc-Microsoft-Visual-C_002b_002b-or-Intel-C_002b_002b-Compiler-for-Windows" href="#Microsoft-Visual-C_002b_002b-or-Intel-C_002b_002b-Compiler-for-Windows">4.2 Microsoft Visual C++ or Intel C++ Compiler for Windows</a>
     <ul class="toc">
-      <li><a name="toc-Using-static-libraries" href="#Using-static-libraries">4.2.1 Using static libraries</a></li>
-      <li><a name="toc-Using-shared-libraries" href="#Using-shared-libraries">4.2.2 Using shared libraries</a></li>
+      <li><a name="toc-Linking-to-FFmpeg-with-Microsoft-Visual-C_002b_002b" href="#Linking-to-FFmpeg-with-Microsoft-Visual-C_002b_002b">4.2.1 Linking to FFmpeg with Microsoft Visual C++</a></li>
     </ul></li>
     <li><a name="toc-Cross-compilation-for-Windows-with-Linux-1" href="#Cross-compilation-for-Windows-with-Linux-1">4.3 Cross compilation for Windows with Linux</a></li>
     <li><a name="toc-Compilation-under-Cygwin" href="#Compilation-under-Cygwin">4.4 Compilation under Cygwin</a></li>
     <li><a name="toc-Crosscompilation-for-Windows-under-Cygwin" href="#Crosscompilation-for-Windows-under-Cygwin">4.5 Crosscompilation for Windows under Cygwin</a></li>
-  </ul>
-</li>
+  </ul></li>
+  <li><a name="toc-Plan-9" href="#Plan-9">5. Plan 9</a></li>
 </ul>
 </div>
 
@@ -136,12 +76,12 @@ to configure.
 <h2 class="section"><a href="platform.html#toc-BSD">1.1 BSD</a></h2>
 
 <p>BSD make will not build FFmpeg, you need to install and use GNU Make
-(&lsquo;<tt>gmake</tt>&rsquo;).
+(<code>gmake</code>).
 </p>
 <a name="g_t_0028Open_0029Solaris"></a>
 <h2 class="section"><a href="platform.html#toc-_0028Open_0029Solaris">1.2 (Open)Solaris</a></h2>
 
-<p>GNU Make is required to build FFmpeg, so you have to invoke (&lsquo;<tt>gmake</tt>&rsquo;),
+<p>GNU Make is required to build FFmpeg, so you have to invoke (<code>gmake</code>),
 standard Solaris Make will not work. When building with a non-c99 front-end
 (gcc, generic suncc) add either <code>--extra-libs=/usr/lib/values-xpg6.o</code>
 or <code>--extra-libs=/usr/lib/64/values-xpg6.o</code> to the configure options
@@ -190,31 +130,16 @@ or <a href="http://www.macports.org">MacPorts</a> can easily provide it.
 <h1 class="chapter"><a href="platform.html#toc-Windows">4. Windows</a></h1>
 
 <p>To get help and instructions for building FFmpeg under Windows, check out
-the FFmpeg Windows Help Forum at
-<a href="http://ffmpeg.arrozcru.org/">http://ffmpeg.arrozcru.org/</a>.
+the FFmpeg Windows Help Forum at <a href="http://ffmpeg.zeranoe.com/forum/">http://ffmpeg.zeranoe.com/forum/</a>.
 </p>
-<a name="Native-Windows-compilation"></a>
-<h2 class="section"><a href="platform.html#toc-Native-Windows-compilation">4.1 Native Windows compilation</a></h2>
+<a name="Native-Windows-compilation-using-MinGW-or-MinGW_002dw64"></a>
+<h2 class="section"><a href="platform.html#toc-Native-Windows-compilation-using-MinGW-or-MinGW_002dw64">4.1 Native Windows compilation using MinGW or MinGW-w64</a></h2>
 
-<p>FFmpeg can be built to run natively on Windows using the MinGW tools. Install
-the latest versions of MSYS and MinGW from <a href="http://www.mingw.org/">http://www.mingw.org/</a>.
-You can find detailed installation instructions in the download
-section and the FAQ.
-</p>
-<p>FFmpeg does not build out-of-the-box with the packages the automated MinGW
-installer provides. It also requires coreutils to be installed and many other
-packages updated to the latest version. The minimum version for some packages
-are listed below:
-</p>
-<ul>
-<li> bash 3.1
-</li><li> msys-make 3.81-2 (note: not mingw32-make)
-</li><li> w32api 3.13
-</li><li> mingw-runtime 3.15
-</li></ul>
-
-<p>FFmpeg automatically passes <code>-fno-common</code> to the compiler to work around
-a GCC bug (see <a href="http://gcc.gnu.org/bugzilla/show_bug.cgi?id=37216">http://gcc.gnu.org/bugzilla/show_bug.cgi?id=37216</a>).
+<p>FFmpeg can be built to run natively on Windows using the MinGW or MinGW-w64
+toolchains. Install the latest versions of MSYS and MinGW or MinGW-w64 from
+<a href="http://www.mingw.org/">http://www.mingw.org/</a> or <a href="http://mingw-w64.sourceforge.net/">http://mingw-w64.sourceforge.net/</a>.
+You can find detailed installation instructions in the download section and
+the FAQ.
 </p>
 <p>Notes:
 </p>
@@ -222,14 +147,11 @@ a GCC bug (see <a href="http://gcc.gnu.org/bugzilla/show_bug.cgi?id=37216">http:
 <li> Building natively using MSYS can be sped up by disabling implicit rules
 in the Makefile by calling <code>make -r</code> instead of plain <code>make</code>. This
 speed up is close to non-existent for normal one-off builds and is only
-noticeable when running make for a second time (for example in
+noticeable when running make for a second time (for example during
 <code>make install</code>).
 
 </li><li> In order to compile FFplay, you must have the MinGW development library
-of <a href="http://www.libsdl.org/">SDL</a>.
-Edit the &lsquo;<tt>bin/sdl-config</tt>&rsquo; script so that it points to the correct prefix
-where SDL was installed. Verify that &lsquo;<tt>sdl-config</tt>&rsquo; can be launched from
-the MSYS command line.
+of <a href="http://www.libsdl.org/">SDL</a> and <code>pkg-config</code> installed.
 
 </li><li> By using <code>./configure --enable-shared</code> when configuring FFmpeg,
 you can build the FFmpeg libraries (e.g. libavutil, libavcodec,
@@ -237,146 +159,105 @@ libavformat) as DLLs.
 
 </li></ul>
 
-<a name="Microsoft-Visual-C_002b_002b-compatibility"></a>
-<h2 class="section"><a href="platform.html#toc-Microsoft-Visual-C_002b_002b-compatibility">4.2 Microsoft Visual C++ compatibility</a></h2>
+<a name="Microsoft-Visual-C_002b_002b-or-Intel-C_002b_002b-Compiler-for-Windows"></a>
+<h2 class="section"><a href="platform.html#toc-Microsoft-Visual-C_002b_002b-or-Intel-C_002b_002b-Compiler-for-Windows">4.2 Microsoft Visual C++ or Intel C++ Compiler for Windows</a></h2>
 
-<p>As stated in the FAQ, FFmpeg will not compile under MSVC++. However, if you
-want to use the libav* libraries in your own applications, you can still
-compile those applications using MSVC++. But the libav* libraries you link
-to <em>must</em> be built with MinGW. However, you will not be able to debug
-inside the libav* libraries, since MSVC++ does not recognize the debug
-symbols generated by GCC.
-We strongly recommend you to move over from MSVC++ to MinGW tools.
+<p>FFmpeg can be built with MSVC or ICL using a C99-to-C89 conversion utility and
+wrapper. For ICL, only the wrapper is used, since ICL supports C99.
 </p>
-<p>This description of how to use the FFmpeg libraries with MSVC++ is based on
-Microsoft Visual C++ 2005 Express Edition. If you have a different version,
-you might have to modify the procedures slightly.
+<p>You will need the following prerequisites:
 </p>
-<a name="Using-static-libraries"></a>
-<h3 class="subsection"><a href="platform.html#toc-Using-static-libraries">4.2.1 Using static libraries</a></h3>
+<ul>
+<li> <a href="http://download.videolan.org/pub/contrib/c99-to-c89/">C99-to-C89 Converter &amp; Wrapper</a>
+</li><li> <a href="http://code.google.com/p/msinttypes/">msinttypes</a>
+</li><li> <a href="http://www.mingw.org/">MSYS</a>
+</li><li> <a href="http://yasm.tortall.net/">YASM</a>
+</li><li> <a href="http://gnuwin32.sourceforge.net/packages/bc.htm">bc for Windows</a> if
+you want to run <a href="fate.html">FATE</a>.
+</li></ul>
 
-<p>Assuming you have just built and installed FFmpeg in &lsquo;<tt>/usr/local</tt>&rsquo;.
+<p>To set up a proper environment in MSYS, you need to run <code>msys.bat</code> from
+the Visual Studio or Intel Compiler command prompt.
 </p>
-<ol>
-<li> Create a new console application (&quot;File / New / Project&quot;) and then
-select &quot;Win32 Console Application&quot;. On the appropriate page of the
-Application Wizard, uncheck the &quot;Precompiled headers&quot; option.
-
-</li><li> Write the source code for your application, or, for testing, just
-copy the code from an existing sample application into the source file
-that MSVC++ has already created for you. For example, you can copy
-&lsquo;<tt>libavformat/output-example.c</tt>&rsquo; from the FFmpeg distribution.
-
-</li><li> Open the &quot;Project / Properties&quot; dialog box. In the &quot;Configuration&quot;
-combo box, select &quot;All Configurations&quot; so that the changes you make will
-affect both debug and release builds. In the tree view on the left hand
-side, select &quot;C/C++ / General&quot;, then edit the &quot;Additional Include
-Directories&quot; setting to contain the path where the FFmpeg includes were
-installed (i.e. &lsquo;<tt>c:\msys\1.0\local\include</tt>&rsquo;).
-Do not add MinGW&rsquo;s include directory here, or the include files will
-conflict with MSVC&rsquo;s.
-
-</li><li> Still in the &quot;Project / Properties&quot; dialog box, select
-&quot;Linker / General&quot; from the tree view and edit the
-&quot;Additional Library Directories&quot; setting to contain the &lsquo;<tt>lib</tt>&rsquo;
-directory where FFmpeg was installed (i.e. &lsquo;<tt>c:\msys\1.0\local\lib</tt>&rsquo;),
-the directory where MinGW libs are installed (i.e. &lsquo;<tt>c:\mingw\lib</tt>&rsquo;),
-and the directory where MinGW&rsquo;s GCC libs are installed
-(i.e. &lsquo;<tt>C:\mingw\lib\gcc\mingw32\4.2.1-sjlj</tt>&rsquo;). Then select
-&quot;Linker / Input&quot; from the tree view, and add the files &lsquo;<tt>libavformat.a</tt>&rsquo;,
-&lsquo;<tt>libavcodec.a</tt>&rsquo;, &lsquo;<tt>libavutil.a</tt>&rsquo;, &lsquo;<tt>libmingwex.a</tt>&rsquo;,
-&lsquo;<tt>libgcc.a</tt>&rsquo;, and any other libraries you used (i.e. &lsquo;<tt>libz.a</tt>&rsquo;)
-to the end of &quot;Additional Dependencies&quot;.
-
-</li><li> Now, select &quot;C/C++ / Code Generation&quot; from the tree view. Select
-&quot;Debug&quot; in the &quot;Configuration&quot; combo box. Make sure that &quot;Runtime
-Library&quot; is set to &quot;Multi-threaded Debug DLL&quot;. Then, select &quot;Release&quot; in
-the &quot;Configuration&quot; combo box and make sure that &quot;Runtime Library&quot; is
-set to &quot;Multi-threaded DLL&quot;.
-
-</li><li> Click &quot;OK&quot; to close the &quot;Project / Properties&quot; dialog box.
-
-</li><li> MSVC++ lacks some C99 header files that are fundamental for FFmpeg.
-Get msinttypes from <a href="http://code.google.com/p/msinttypes/downloads/list">http://code.google.com/p/msinttypes/downloads/list</a>
-and install it in MSVC++&rsquo;s include directory
-(i.e. &lsquo;<tt>C:\Program Files\Microsoft Visual Studio 8\VC\include</tt>&rsquo;).
-
-</li><li> MSVC++ also does not understand the <code>inline</code> keyword used by
-FFmpeg, so you must add this line before <code>#include</code>ing libav*:
-<table><tr><td>&nbsp;</td><td><pre class="example">#define inline _inline
-</pre></td></tr></table>
-
-</li><li> Build your application, everything should work.
-
-</li></ol>
-
-<a name="Using-shared-libraries"></a>
-<h3 class="subsection"><a href="platform.html#toc-Using-shared-libraries">4.2.2 Using shared libraries</a></h3>
-
-<p>This is how to create DLL and LIB files that are compatible with MSVC++:
+<p>Place <code>makedef</code>, <code>c99wrap.exe</code>, <code>c99conv.exe</code>, and <code>yasm.exe</code>
+somewhere in your <code>PATH</code>.
 </p>
-<ol>
-<li> Add a call to &lsquo;<tt>vcvars32.bat</tt>&rsquo; (which sets up the environment
-variables for the Visual C++ tools) as the first line of &lsquo;<tt>msys.bat</tt>&rsquo;.
-The standard location for &lsquo;<tt>vcvars32.bat</tt>&rsquo; is
-&lsquo;<tt>C:\Program Files\Microsoft Visual Studio 8\VC\bin\vcvars32.bat</tt>&rsquo;,
-and the standard location for &lsquo;<tt>msys.bat</tt>&rsquo; is &lsquo;<tt>C:\msys\1.0\msys.bat</tt>&rsquo;.
-If this corresponds to your setup, add the following line as the first line
-of &lsquo;<tt>msys.bat</tt>&rsquo;:
-
-<table><tr><td>&nbsp;</td><td><pre class="example">call &quot;C:\Program Files\Microsoft Visual Studio 8\VC\bin\vcvars32.bat&quot;
-</pre></td></tr></table>
-
-<p>Alternatively, you may start the &lsquo;<tt>Visual Studio 2005 Command Prompt</tt>&rsquo;,
-and run &lsquo;<tt>c:\msys\1.0\msys.bat</tt>&rsquo; from there.
+<p>Next, make sure <code>inttypes.h</code> and any other headers and libs you want to use
+are located in a spot that the compiler can see. Do so by modifying the <code>LIB</code>
+and <code>INCLUDE</code> environment variables to include the <strong>Windows</strong> paths to
+these directories. Alternatively, you can try and use the
+<code>--extra-cflags</code>/<code>--extra-ldflags</code> configure options.
 </p>
-</li><li> Within the MSYS shell, run <code>lib.exe</code>. If you get a help message
-from &lsquo;<tt>Microsoft (R) Library Manager</tt>&rsquo;, this means your environment
-variables are set up correctly, the &lsquo;<tt>Microsoft (R) Library Manager</tt>&rsquo;
-is on the path and will be used by FFmpeg to create
-MSVC++-compatible import libraries.
+<p>Finally, run:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="example">For MSVC:
+./configure --toolchain=msvc
 
-</li><li> Build FFmpeg with
+For ICL:
+./configure --toolchain=icl
 
-<table><tr><td>&nbsp;</td><td><pre class="example">./configure --enable-shared
 make
 make install
 </pre></td></tr></table>
 
-<p>Your install path (&lsquo;<tt>/usr/local/</tt>&rsquo; by default) should now have the
-necessary DLL and LIB files under the &lsquo;<tt>bin</tt>&rsquo; directory.
+<p>If you wish to compile shared libraries, add <code>--enable-shared</code> to your
+configure options. Note that due to the way MSVC and ICL handle DLL imports and
+exports, you cannot compile static and shared libraries at the same time, and
+enabling shared libraries will automatically disable the static ones.
 </p>
+<p>Notes:
+</p>
+<ul>
+<li> It is possible that coreutils&rsquo; <code>link.exe</code> conflicts with MSVC&rsquo;s linker.
+You can find out by running <code>which link</code> to see which <code>link.exe</code> you
+are using. If it is located at <code>/bin/link.exe</code>, then you have the wrong one
+in your <code>PATH</code>. Either move or remove that copy, or make sure MSVC&rsquo;s
+<code>link.exe</code> takes precedence in your <code>PATH</code> over coreutils&rsquo;.
+
+</li><li> If you wish to build with zlib support, you will have to grab a compatible
+zlib binary from somewhere, with an MSVC import lib, or if you wish to link
+statically, you can follow the instructions below to build a compatible
+<code>zlib.lib</code> with MSVC. Regardless of which method you use, you must still
+follow step 3, or compilation will fail.
+<ol>
+<li> Grab the <a href="http://zlib.net/">zlib sources</a>.
+</li><li> Edit <code>win32/Makefile.msc</code> so that it uses -MT instead of -MD, since
+this is how FFmpeg is built as well.
+</li><li> Edit <code>zconf.h</code> and remove its inclusion of <code>unistd.h</code>. This gets
+erroneously included when building FFmpeg.
+</li><li> Run <code>nmake -f win32/Makefile.msc</code>.
+</li><li> Move <code>zlib.lib</code>, <code>zconf.h</code>, and <code>zlib.h</code> to somewhere MSVC
+can see.
 </li></ol>
 
-<p>Alternatively, build the libraries with a cross compiler, according to
-the instructions below in <a href="#Cross-compilation-for-Windows-with-Linux">Cross compilation for Windows with Linux</a>.
+</li><li> FFmpeg has been tested with the following on i686 and x86_64:
+<ul>
+<li> Visual Studio 2010 Pro and Express
+</li><li> Visual Studio 2012 Pro and Express
+</li><li> Intel Composer XE 2013
+</li></ul>
+<p>Anything else is not officially supported.
 </p>
-<p>To use those files with MSVC++, do the same as you would do with
-the static libraries, as described above. But in Step 4,
-you should only need to add the directory where the LIB files are installed
-(i.e. &lsquo;<tt>c:\msys\usr\local\bin</tt>&rsquo;). This is not a typo, the LIB files are
-installed in the &lsquo;<tt>bin</tt>&rsquo; directory. And instead of adding the static
-libraries (&lsquo;<tt>libxxx.a</tt>&rsquo; files) you should add the MSVC import libraries
-(&lsquo;<tt>avcodec.lib</tt>&rsquo;, &lsquo;<tt>avformat.lib</tt>&rsquo;, and
-&lsquo;<tt>avutil.lib</tt>&rsquo;). Note that you should not use the GCC import
-libraries (&lsquo;<tt>libxxx.dll.a</tt>&rsquo; files), as these will give you undefined
-reference errors. There should be no need for &lsquo;<tt>libmingwex.a</tt>&rsquo;,
-&lsquo;<tt>libgcc.a</tt>&rsquo;, and &lsquo;<tt>wsock32.lib</tt>&rsquo;, nor any other external library
-statically linked into the DLLs.
+</li></ul>
+
+<a name="Linking-to-FFmpeg-with-Microsoft-Visual-C_002b_002b"></a>
+<h3 class="subsection"><a href="platform.html#toc-Linking-to-FFmpeg-with-Microsoft-Visual-C_002b_002b">4.2.1 Linking to FFmpeg with Microsoft Visual C++</a></h3>
+
+<p>If you plan to link with MSVC-built static libraries, you will need
+to make sure you have <code>Runtime Library</code> set to
+<code>Multi-threaded (/MT)</code> in your project&rsquo;s settings.
 </p>
-<p>FFmpeg headers do not declare global data for Windows DLLs through the usual
-dllexport/dllimport interface. Such data will be exported properly while
-building, but to use them in your MSVC++ code you will have to edit the
-appropriate headers and mark the data as dllimport. For example, in
-libavutil/pixdesc.h you should have:
-</p><table><tr><td>&nbsp;</td><td><pre class="example">extern __declspec(dllimport) const AVPixFmtDescriptor av_pix_fmt_descriptors[];
+<p>You will need to define <code>inline</code> to something MSVC understands:
+</p><table><tr><td>&nbsp;</td><td><pre class="example">#define inline __inline
 </pre></td></tr></table>
 
-<p>Note that using import libraries created by dlltool requires
-the linker optimization option to be set to
-&quot;References: Keep Unreferenced Data (<code>/OPT:NOREF</code>)&quot;, otherwise
-the resulting binaries will fail during runtime. This isn&rsquo;t
-required when using import libraries generated by lib.exe.
+<p>Also note, that as stated in <strong>Microsoft Visual C++</strong>, you will need
+an MSVC-compatible <a href="http://code.google.com/p/msinttypes/">inttypes.h</a>.
+</p>
+<p>If you plan on using import libraries created by dlltool, you must
+set <code>References</code> to <code>No (/OPT:NOREF)</code> under the linker optimization
+settings, otherwise the resulting binaries will fail during runtime.
+This is not required when using import libraries generated by <code>lib.exe</code>.
 This issue is reported upstream at
 <a href="http://sourceware.org/bugzilla/show_bug.cgi?id=12633">http://sourceware.org/bugzilla/show_bug.cgi?id=12633</a>.
 </p>
@@ -384,26 +265,23 @@ This issue is reported upstream at
 (which is enabled by default in Release mode), follow these steps:
 </p>
 <ol>
-<li> Open &lsquo;<tt>Visual Studio 2005 Command Prompt</tt>&rsquo;.
+<li> Open the <em>Visual Studio Command Prompt</em>.
 
 <p>Alternatively, in a normal command line prompt, call &lsquo;<tt>vcvars32.bat</tt>&rsquo;
 which sets up the environment variables for the Visual C++ tools
-(the standard location for this file is
-&lsquo;<tt>C:\Program Files\Microsoft Visual Studio 8\VC\bin\vcvars32.bat</tt>&rsquo;).
+(the standard location for this file is something like
+&lsquo;<tt>C:\Program Files (x86_\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat</tt>&rsquo;).
 </p>
 </li><li> Enter the &lsquo;<tt>bin</tt>&rsquo; directory where the created LIB and DLL files
 are stored.
 
-</li><li> Generate new import libraries with &lsquo;<tt>lib.exe</tt>&rsquo;:
+</li><li> Generate new import libraries with <code>lib.exe</code>:
 
-<table><tr><td>&nbsp;</td><td><pre class="example">lib /machine:i386 /def:..\lib\avcodec-53.def  /out:avcodec.lib
-lib /machine:i386 /def:..\lib\avdevice-53.def /out:avdevice.lib
-lib /machine:i386 /def:..\lib\avfilter-2.def  /out:avfilter.lib
-lib /machine:i386 /def:..\lib\avformat-53.def /out:avformat.lib
-lib /machine:i386 /def:..\lib\avutil-51.def   /out:avutil.lib
-lib /machine:i386 /def:..\lib\swscale-2.def   /out:swscale.lib
+<table><tr><td>&nbsp;</td><td><pre class="example">lib /machine:i386 /def:..\lib\foo-version.def  /out:foo.lib
 </pre></td></tr></table>
 
+<p>Replace <code>foo-version</code> and <code>foo</code> with the respective library names.
+</p>
 </li></ol>
 
 <p><a name="Cross-compilation-for-Windows-with-Linux"></a>
@@ -432,21 +310,8 @@ following &quot;Devel&quot; ones:
 </p><table><tr><td>&nbsp;</td><td><pre class="example">binutils, gcc4-core, make, git, mingw-runtime, texi2html
 </pre></td></tr></table>
 
-<p>And the following &quot;Utils&quot; one:
-</p><table><tr><td>&nbsp;</td><td><pre class="example">diffutils
-</pre></td></tr></table>
-
-<p>Then run
-</p>
-<table><tr><td>&nbsp;</td><td><pre class="example">./configure
-</pre></td></tr></table>
-
-<p>to make a static build.
-</p>
-<p>The current <code>gcc4-core</code> package is buggy and needs this flag to build
-shared libraries:
-</p>
-<table><tr><td>&nbsp;</td><td><pre class="example">./configure --enable-shared --disable-static --extra-cflags=-fno-reorder-functions
+<p>In order to run FATE you will also need the following &quot;Utils&quot; packages:
+</p><table><tr><td>&nbsp;</td><td><pre class="example">bc, diffutils
 </pre></td></tr></table>
 
 <p>If you want to build FFmpeg with additional libraries, download Cygwin
@@ -457,16 +322,12 @@ shared libraries:
 <p>These library packages are only available from
 <a href="http://sourceware.org/cygwinports/">Cygwin Ports</a>:
 </p>
-<table><tr><td>&nbsp;</td><td><pre class="example">yasm, libSDL-devel, libdirac-devel, libfaac-devel, libaacplus-devel, libgsm-devel,
-libmp3lame-devel, libschroedinger1.0-devel, speex-devel, libtheora-devel,
-libxvidcore-devel
+<table><tr><td>&nbsp;</td><td><pre class="example">yasm, libSDL-devel, libfaac-devel, libaacplus-devel, libgsm-devel, libmp3lame-devel,
+libschroedinger1.0-devel, speex-devel, libtheora-devel, libxvidcore-devel
 </pre></td></tr></table>
 
-<p>The recommendation for libnut and x264 is to build them from source by
-yourself, as they evolve too quickly for Cygwin Ports to be up to date.
-</p>
-<p>Cygwin 1.7.x has IPv6 support. You can add IPv6 to Cygwin 1.5.x by means
-of the <code>libgetaddrinfo-devel</code> package, available at Cygwin Ports.
+<p>The recommendation for x264 is to build it from source, as it evolves too
+quickly for Cygwin Ports to be up to date.
 </p>
 <a name="Crosscompilation-for-Windows-under-Cygwin"></a>
 <h2 class="section"><a href="platform.html#toc-Crosscompilation-for-Windows-under-Cygwin">4.5 Crosscompilation for Windows under Cygwin</a></h2>
@@ -488,14 +349,67 @@ of the <code>libgetaddrinfo-devel</code> package, available at Cygwin Ports.
 </p><table><tr><td>&nbsp;</td><td><pre class="example">./configure --target-os=mingw32 --enable-shared --disable-static --extra-cflags=-mno-cygwin --extra-libs=-mno-cygwin
 </pre></td></tr></table>
 
-<div id="footer">
-<p>
- <font size="-1">
-  This document was generated by <em>Kyle</em> on <em>January 27, 2012</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.
- </font>
- <br>
-</div></div>
+<a name="Plan-9"></a>
+<h1 class="chapter"><a href="platform.html#toc-Plan-9">5. Plan 9</a></h1>
+
+<p>The native <a href="http://plan9.bell-labs.com/plan9/">Plan 9</a> compiler
+does not implement all the C99 features needed by FFmpeg so the gcc
+port must be used.  Furthermore, a few items missing from the C
+library and shell environment need to be fixed.
 </p>
-</body>
-</html>
-</div>
+<ul>
+<li> GNU awk, grep, make, and sed
+
+<p>Working packages of these tools can be found at
+<a href="http://code.google.com/p/ports2plan9/downloads/list">ports2plan9</a>.
+They can be installed with <a href="http://9front.org/">9front&rsquo;s</a> <code>pkg</code>
+utility by setting <code>pkgpath</code> to
+<code>http://ports2plan9.googlecode.com/files/</code>.
+</p>
+</li><li> Missing/broken <code>head</code> and <code>printf</code> commands
+
+<p>Replacements adequate for building FFmpeg can be found in the
+<code>compat/plan9</code> directory.  Place these somewhere they will be
+found by the shell.  These are not full implementations of the
+commands and are <em>not</em> suitable for general use.
+</p>
+</li><li> Missing C99 <code>stdint.h</code> and <code>inttypes.h</code>
+
+<p>Replacement headers are available from
+<a href="http://code.google.com/p/plan9front/issues/detail?id=152">http://code.google.com/p/plan9front/issues/detail?id=152</a>.
+</p>
+</li><li> Missing or non-standard library functions
+
+<p>Some functions in the C library are missing or incomplete.  The
+<code><a href="http://ports2plan9.googlecode.com/files/gcc-apelibs-1207.tbz">gcc-apelibs-1207</a></code> package from
+<a href="http://code.google.com/p/ports2plan9/downloads/list">ports2plan9</a>
+includes an updated C library, but installing the full package gives
+unusable executables.  Instead, keep the files from <code>gccbin.tgz</code>
+under <code>/386/lib/gnu</code>.  From the <code>libc.a</code> archive in the
+<code>gcc-apelibs-1207</code> package, extract the following object files and
+turn them into a library:
+</p>
+<ul>
+<li> <code>strerror.o</code>
+</li><li> <code>strtoll.o</code>
+</li><li> <code>snprintf.o</code>
+</li><li> <code>vsnprintf.o</code>
+</li><li> <code>vfprintf.o</code>
+</li><li> <code>_IO_getc.o</code>
+</li><li> <code>_IO_putc.o</code>
+</li></ul>
+
+<p>Use the <code>--extra-libs</code> option of <code>configure</code> to inform the
+build system of this library.
+</p>
+</li><li> FPU exceptions enabled by default
+
+<p>Unlike most other systems, Plan 9 enables FPU exceptions by default.
+These must be disabled before calling any FFmpeg functions.  While the
+included tools will do this automatically, other users of the
+libraries must do it themselves.
+</p>
+</li></ul>
+
+<footer class="footer pagination-right">
+<span class="label label-info">This document was generated by <em>Kyle Schwarz</em> on <em>January 21, 2014</em> using <a href="http://www.nongnu.org/texi2html/"><em>texi2html 1.82</em></a>.</span></footer></div></div></body>

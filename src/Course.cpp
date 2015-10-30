@@ -926,7 +926,7 @@ bool Course::IsRanking() const
 	split(THEME->GetMetric("ScreenRanking", "CoursesToShow"), ",", rankingsongs);
 
 	for(unsigned i=0; i < rankingsongs.size(); i++)
-		if (rankingsongs[i].CompareNoCase(m_sPath))
+		if (rankingsongs[i].EqualsNoCase(m_sPath))
 			return true;
 
 	return false;

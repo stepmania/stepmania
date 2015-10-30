@@ -172,6 +172,42 @@ public:
 };
 static RageFileDriverMountpoints *g_Mountpoints = NULL;
 
+static RString ExtractDirectory( RString sPath )
+{
+	// return the directory containing sPath
+	size_t n = sPath.find_last_of("/");
+	if( n != sPath.npos )
+		sPath.erase(n);
+	else
+		sPath.erase();
+	return sPath;
+}
+
+static RString ReadlinkRecursive( RString sPath )
+{
+#if defined(UNIX) || defined(MACOSX)
+	// unices support symbolic links; dereference them
+	RString dereferenced = sPath;
+	do
+	{
+		sPath = dereferenced;
+		char derefPath[512];
+		ssize_t linkSize = readlink(sPath, derefPath, sizeof(derefPath));
+		if ( linkSize != -1 && linkSize != sizeof(derefPath) )
+		{
+			dereferenced = RString( derefPath, linkSize );
+			if (derefPath[0] != '/')
+			{
+				// relative link
+				dereferenced = RString( ExtractDirectory(sPath) + "/" + dereferenced);
+			}
+		}
+	} while (sPath != dereferenced);
+#endif
+
+	return sPath;
+}
+
 static RString GetDirOfExecutable( RString argv0 )
 {
 	// argv[0] can be wrong in most OS's; try to avoid using it.
@@ -196,11 +232,7 @@ static RString GetDirOfExecutable( RString argv0 )
 #endif
 
 	// strip off executable name
-	size_t n = sPath.find_last_of("/");
-	if( n != sPath.npos )
-		sPath.erase(n);
-	else
-		sPath.erase();
+	sPath = ExtractDirectory(sPath);
 
 	if( !bIsAbsolutePath )
 	{
@@ -219,17 +251,18 @@ static RString GetDirOfExecutable( RString argv0 )
 			{
 				if( access(*i + "/" + argv0, X_OK|R_OK) )
 					continue;
-				sPath = *i;
+				sPath = ExtractDirectory(ReadlinkRecursive(*i + "/" + argv0));
 				break;
 			}
 			if( sPath.empty() )
 				sPath = GetCwd(); // What?
 			else if( sPath[0] != '/' ) // For example, if . is in $PATH.
 				sPath = GetCwd() + "/" + sPath;
+
 		}
 		else
 		{
-			sPath = GetCwd() + "/" + sPath;
+			sPath = ExtractDirectory(ReadlinkRecursive(GetCwd() + "/" + argv0));
 		}
 #else
 		sPath = GetCwd() + "/" + sPath;
@@ -247,16 +280,20 @@ static void ChangeToDirOfExecutable( const RString &argv0 )
 	/* Set the CWD.  Any effects of this is platform-specific; most files are read and
 	 * written through RageFile.  See also RageFileManager::RageFileManager. */
 #if defined(_WINDOWS)
-	chdir( RageFileManagerUtil::sDirOfExecutable + "/.." );
+	if( _chdir( RageFileManagerUtil::sDirOfExecutable + "/.." ) )
 #elif defined(UNIX)
-	chdir( RageFileManagerUtil::sDirOfExecutable + "/" );
+	if( chdir( RageFileManagerUtil::sDirOfExecutable + "/" ) )
 #elif defined(MACOSX)
 	/* If the basename is not MacOS, then we've likely been launched via the command line
 	 * through a symlink. Assume this is the case and change to the dir of the symlink. */
 	if( Basename(RageFileManagerUtil::sDirOfExecutable) == "MacOS" )
 		CollapsePath( RageFileManagerUtil::sDirOfExecutable += "/../../../" );
-	chdir( RageFileManagerUtil::sDirOfExecutable );
+	if( chdir( RageFileManagerUtil::sDirOfExecutable ) )
 #endif
+	{
+		LOG->Warn("Can't set current working directory to %s", RageFileManagerUtil::sDirOfExecutable.c_str());
+		return;
+	}
 }
 
 RageFileManager::RageFileManager( const RString &argv0 )
@@ -339,8 +376,14 @@ static void NormalizePath( RString &sPath )
 {
 	FixSlashesInPlace( sPath );
 	CollapsePath( sPath, true );
-	if( sPath.size() == 0 || sPath[0] != '/' )
-		sPath.insert( sPath.begin(), '/' );
+	if (sPath.size() == 0)
+	{
+		sPath = '/';
+	}
+	else if (sPath[0] != '/')
+	{
+		sPath = '/' + sPath;
+	}
 }
 
 bool ilt( const RString &a, const RString &b ) { return a.CompareNoCase(b) < 0; }
@@ -377,11 +420,12 @@ void RageFileManager::GetDirListing( const RString &sPath_, vector<RString> &Add
 		/* If returning the path, prepend the mountpoint name to the files this driver returned. */
 		if( bReturnPathToo && pLoadedDriver->m_sMountPoint.size() > 0 )
 		{
+			RString const &mountPoint = pLoadedDriver->m_sMountPoint;
+			/* Skip the trailing slash on the mountpoint; there's already a slash there. */
+			RString const &trimPoint = mountPoint.substr(0, mountPoint.size() - 1);
 			for( unsigned j = OldStart; j < AddTo.size(); ++j )
 			{
-				/* Skip the trailing slash on the mountpoint; there's already a slash there. */
-				RString &lPath = AddTo[j];
-				lPath.insert( 0, pLoadedDriver->m_sMountPoint, pLoadedDriver->m_sMountPoint.size()-1 );
+				AddTo[j] = trimPoint + AddTo[j];
 			}
 		}
 	}

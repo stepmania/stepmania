@@ -101,11 +101,6 @@ local function func()
 		sButton = "UpLeft"
 	end
 	local path = NOTESKIN:GetPath(sButton,ElementToLoad)
-	if ( string.find(sElement,"Hold") or string.find(sElement,"Roll") )
-	and not ( string.find(sElement,"Head") or string.find(sElement,"Tail") )
-	then
-		path = NOTESKIN:GetPath(sButton,ElementToLoad)
-	end
 	
 	local t = LoadActor(path)
 	

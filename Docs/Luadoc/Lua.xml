@@ -628,11 +628,13 @@
 			<Function name='PixelFont'/>
 			<Function name='Stroke'/>
 			<Function name='distort'/>
+			<Function name='get_mult_attrs_with_diffuse'/>
 			<Function name='jitter'/>
 			<Function name='max_dimension_use_zoom'/>
 			<Function name='maxheight'/>
 			<Function name='maxwidth'/>
 			<Function name='rainbowscroll'/>
+			<Function name='set_mult_attrs_with_diffuse'/>
 			<Function name='settext'/>
 			<Function name='settextf'/>
 			<Function name='strokecolor'/>
@@ -1566,6 +1568,7 @@
 			<Function name='GetLastBeat'/>
 			<Function name='GetLastSecond'/>
 			<Function name='GetLyricsPath'/>
+			<Function name='GetMainTitle'/>
 			<Function name='GetMusicPath'/>
 			<Function name='GetOneSteps'/>
 			<Function name='GetOrigin'/>
@@ -1699,10 +1702,12 @@
 			<Function name='addimagecoords'/>
 			<Function name='cropto'/>
 			<Function name='customtexturerect'/>
+			<Function name='get_use_effect_clock_for_texcoords'/>
 			<Function name='loop'/>
 			<Function name='position'/>
 			<Function name='rate'/>
 			<Function name='scaletoclipped'/>
+			<Function name='set_use_effect_clock_for_texcoords'/>
 			<Function name='setstate'/>
 			<Function name='stretchtexcoords'/>
 			<Function name='texcoordvelocity'/>

@@ -193,6 +193,7 @@ public:
 	RString GetDisplayMainTitle() const;
 	RString GetDisplaySubTitle() const;
 	RString GetDisplayArtist() const;
+	RString GetMainTitle() const;
 
 	/**
 	 * @brief Retrieve the transliterated title, or the main title if there is no translit.
@@ -436,6 +437,7 @@ public:
 	bool IsEditAlreadyLoaded( Steps* pSteps ) const;
 
 	bool IsStepsUsingDifferentTiming(Steps *pSteps ) const;
+	bool AnyChartUsesSplitTiming() const;
 
 	/**
 	 * @brief An array of keysound file names (e.g. "beep.wav").

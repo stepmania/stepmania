@@ -563,7 +563,7 @@ RString Basename( const RString &dir );
 RString Dirname( const RString &dir );
 RString Capitalize( const RString &s );
 
-#ifndef WIN32
+#if defined(HAVE_UNISTD_H)
 #include <unistd.h> /* correct place with correct definitions */
 #endif
 

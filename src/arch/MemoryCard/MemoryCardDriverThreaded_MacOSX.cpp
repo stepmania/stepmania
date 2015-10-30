@@ -9,11 +9,15 @@
 #include <IOKit/storage/IOMedia.h>
 #include <IOKit/usb/USBSpec.h>
 #include <IOKit/usb/IOUSBLib.h>
+#if defined(HAVE_SYS_PARAM_H)
 #include <sys/param.h>
+#endif
 #include <sys/ucred.h>
 #include <sys/mount.h>
 #include <paths.h>
+#if defined(HAVE_UNISTD_H)
 #include <unistd.h>
+#endif
 
 class MemoryCardDriverThreaded_MacOSX::Helper
 {

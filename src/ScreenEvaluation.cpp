@@ -219,7 +219,11 @@ void ScreenEvaluation::Init()
 		}
 	}
 
-	ASSERT_M( !STATSMAN->m_vPlayedStageStats.empty(), "PlayerStageStats is empty!" );
+	if(STATSMAN->m_vPlayedStageStats.empty())
+	{
+		LuaHelpers::ReportScriptError("PlayerStageStats is empty!  Do not use SM_GoToNextScreen on ScreenGameplay, use SM_DoNextScreen instead so that ScreenGameplay can clean up properly.");
+		STATSMAN->m_vPlayedStageStats.push_back(STATSMAN->m_CurStageStats);
+	}
 	m_pStageStats = &STATSMAN->m_vPlayedStageStats.back();
 
 	ZERO( m_bSavedScreenshot );
@@ -265,13 +269,13 @@ void ScreenEvaluation::Init()
 
 				m_SmallBanner[i].LoadFromSong( pSong );
 				m_SmallBanner[i].ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
-				m_SmallBanner[i].SetName( ssprintf("SmallBanner%d",i+1) );
+				m_SmallBanner[i].SetName( ssprintf("SmallBanner%zu",i+1) );
 				ActorUtil::LoadAllCommands( m_SmallBanner[i], m_sName );
 				SET_XY( m_SmallBanner[i] );
 				this->AddChild( &m_SmallBanner[i] );
 
 				m_sprSmallBannerFrame[i].Load( THEME->GetPathG(m_sName,"BannerFrame") );
-				m_sprSmallBannerFrame[i]->SetName( ssprintf("SmallBanner%d",i+1) );
+				m_sprSmallBannerFrame[i]->SetName( ssprintf("SmallBanner%zu",i+1) );
 				ActorUtil::LoadAllCommands( *m_sprSmallBannerFrame[i], m_sName );
 				SET_XY( m_sprSmallBannerFrame[i] );
 				this->AddChild( m_sprSmallBannerFrame[i] );

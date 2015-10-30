@@ -103,7 +103,6 @@ void GetBounds( const Surface *pSurf, RECT *out )
 #pragma include_alias( "zlib/zlib.h", "../zlib/zlib.h" )
 #include "png.h"
 #if defined(_MSC_VER)
-#  pragma comment(lib, "libpng.lib")
 #pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
 #endif
 

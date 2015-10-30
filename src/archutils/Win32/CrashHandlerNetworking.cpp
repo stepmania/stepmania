@@ -650,13 +650,17 @@ void NetworkPostData::HttpThread()
 	while( m_pStream->GetState() == NetworkStream::STATE_CONNECTED )
 	{
 		sBuf.clear();
-		void *p = sBuf.GetBuffer( 1024 );
-		int iGot = m_pStream->Read( p, 1024 );
-		if( iGot >= 0 )
-			sBuf.ReleaseBuffer( iGot );
-		if( iGot <= 0 )
+		char * buffer = new char[1024];
+		std::fill(buffer, buffer + 1024, '\0');
+		int iGot = m_pStream->Read( static_cast<void *>(buffer), 1024 );
+		RString tmp = buffer;
+		delete[] buffer;
+		if (iGot < 0)
+		{
 			break;
-		sResult += sBuf;
+		}
+
+		sResult += tmp;
 	}
 
 	SetProgress( 1.0f );

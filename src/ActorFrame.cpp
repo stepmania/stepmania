@@ -648,7 +648,7 @@ public:
 		return 1;
 	}
 	static int GetNumChildren( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumChildren() ); return 1; }
-	static int SetDrawByZPosition( T* p, lua_State *L )	{ p->SetDrawByZPosition( BArg(1) ); return 1; }
+	static int SetDrawByZPosition( T* p, lua_State *L )	{ p->SetDrawByZPosition( BArg(1) ); COMMON_RETURN_SELF; }
 	static int SetDrawFunction( T* p, lua_State *L )
 	{
 		if(lua_isnil(L,1))

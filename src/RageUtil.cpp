@@ -178,10 +178,25 @@ float fmodfp(float x, float y)
 	return x;
 }
 
-int power_of_two( int iInput )
+int power_of_two( int input )
 {
-	return static_cast<int>(powf(2.0f, ceilf(
-		log(static_cast<float>(iInput)) / log(2.0f))));
+	int exp = 31, i = input;
+	if (i >> 16)
+		i >>= 16;
+	else exp -= 16;
+	if (i >> 8)
+		i >>= 8;
+	else exp -= 8;
+	if (i >> 4)
+		i >>= 4;
+	else exp -= 4;
+	if (i >> 2)
+		i >>= 2;
+	else exp -= 2;
+	if (i >> 1 == 0)
+		exp -= 1;
+	int value = 1 << exp;
+	return (input == value) ? value : (value << 1);
 }
 
 bool IsAnInt( const RString &s )
@@ -453,31 +468,37 @@ RString vssprintf( const char *szFormat, va_list argList )
 		int iNeeded = vsnprintf( &ignore, 0, szFormat, tmp );
 		va_end(tmp);
 
-		char *buf = sStr.GetBuffer( iNeeded+1 );
+		char *buf = new char[iNeeded + 1];
+		std::fill(buf, buf + iNeeded + 1, '\0');
 		vsnprintf( buf, iNeeded+1, szFormat, argList );
-		sStr.ReleaseBuffer( iNeeded );
-		return sStr;
+		RString ret(buf);
+		delete [] buf;
+		return ret;
 	}
 
 	int iChars = FMT_BLOCK_SIZE;
 	int iTry = 1;
-	while( 1 )
+	for (;;)
 	{
 		// Grow more than linearly (e.g. 512, 1536, 3072, etc)
-		char *buf = sStr.GetBuffer(iChars);
-		int iUsed = vsnprintf(buf, iChars-1, szFormat, argList);
-
-		if( iUsed == -1 )
+		char *buf = new char[iChars];
+		std::fill(buf, buf + iChars, '\0');
+		int used = vsnprintf( buf, iChars - 1, szFormat, argList );
+		if ( used == -1 )
 		{
-			iChars += ((iTry+1) * FMT_BLOCK_SIZE);
-			sStr.ReleaseBuffer();
-			++iTry;
-			continue;
+			iChars += ( ++iTry * FMT_BLOCK_SIZE );
 		}
-
-		/* OK */
-		sStr.ReleaseBuffer(iUsed);
-		break;
+		else
+		{
+			/* OK */
+			sStr.assign(buf, used);
+		}
+		
+		delete [] buf;
+		if (used != -1)
+		{
+			break;
+		}
 	}
 #endif
 	return sStr;
@@ -2134,12 +2155,11 @@ RString Capitalize( const RString &s )
 	if( s.empty() )
 		return RString();
 
-	RString s2 = s;
-	char *pBuf = s2.GetBuffer();
-	UnicodeDoUpper( pBuf, s2.size(), g_UpperCase );
-	s2.ReleaseBuffer();
+	char *buf = const_cast<char *>(s.c_str());
+	
+	UnicodeDoUpper( buf, s.size(), g_UpperCase );
 
-	return s2;
+	return buf;
 }
 
 unsigned char g_UpperCase[256] =

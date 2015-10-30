@@ -4,6 +4,220 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/10/27
+----------
+* [Compiling] Link with /MT on windows instead of /MD. [wolfman2000]
+* [Fonts] Put Texture Font Generator back in package. [wolfman2000]
+  Build Texture Font Generator when WITH_FULL_RELEASE or
+  WITH_TEXTURE_GENERATOR is enabled. [wolfman2000]
+
+2015/10/26
+----------
+* [Song] Added GetMainTitle lua function for bypassing ShowNativeLanguage
+  preference. [kyzentun]
+
+2015/10/25
+----------
+* [Compiling] Number of jobs used when building ffmpeg can be customized by
+  WITH_FFMPEG_JOBS. [wolfman2000]
+  Appveyor support added for automated windows building. [wolfman2000]
+
+2015/10/23
+----------
+* [BMS] Fixed crash when an unknown type chart was in a bms. [kyzentun]
+
+2015/10/21
+----------
+* [Actor] Changed PlayCommandNoRecurse so that setting a theme metric to a
+  function that doesn't exist doesn't emit an error. [kyzentun]
+* [Compiling] Allow WITH_MP3=Off and WITH_WAV=Off to compile. [wolfman2000]
+* [EditMode] Fixed crash on missing ScreenMiniMenuTimingDataChangeInformation
+  metrics. [kyzentun]
+* [ScreenEvaluation] Changed assert that occurs when leaving ScreenGameplay
+  with SM_GoToNextScreen to give more info. [kyzentun]
+
+2015/10/20
+----------
+* [Compiling] Fixed cmake error when compiling with -DWITH_SSE2=off. [wallacoloo]
+  Don't define CPU_X86 on non-x86. [wallacoloo]
+* [Noteskins] If the fallback for a noteskin is not found, that noteskin is
+  not loaded, to prevent picking it and crashing. [kyzentun]
+
+2015/10/18
+----------
+* [BitmapText] Added set_mult_attrs_with_diffuse lua function. [kyzentun]
+
+2015/10/17
+----------
+* [Course] Fixed loading of courses that use WORST entries. [wolfman2000]
+* [SextetStream] SextetStream stuff is now in all platforms. [wolfman2000]
+
+2015/10/15
+----------
+* [BMS] Changed bms loading so that iidx bms files aren't loaded as kb7.
+  [zardoru]
+
+2015/10/12
+----------
+* [ActorMultiVertex] Fixed bug that *sometimes* caused diffuse to be applied
+  to verts wrong. [kyzentun]
+
+2015/10/11
+----------
+* [Song] Changed song loading to allow a song to have a blank MusicFile field
+  if the song has any keysounds.  A blank MusicFile entry can result from
+  having '#' in the music file name, or be intended for bms files.  Do not use
+  '#' in any fields, the .sm and .ssc file formats do not support it.  The
+  engine has to detect that the field was loaded blank and look through the
+  song folder to figure out what was supposed to be there. [kyzentun]
+
+2015/10/09
+----------
+* [Edit Mode] Changed Current Second field to not have the global offset
+  added in.  People were using one global offset for syncing to workaround
+  the problem and sync by comparing the Current Second in Edit Mode to the
+  current second in a music editor.  The workaround of using a different
+  global offset for syncing should no longer be necessary. [kyzentun]
+* [Input] Fixed input lockup caused by scrolling the mouse wheel.  Why wasn't
+  this reported sooner? [kyzentun]
+
+2015/10/07
+----------
+* [ActorFrame] ActorFrame:SetDrawByZPosition now returns self.  Missed a spot
+  when implementing function chaining. [kyzentun]
+* [Gameplay] MaxRegenComboAfterMiss preference brought in.  When a step is
+  missed in gameplay, the combo has to get back up to RegenComboAfterMiss
+  before the player starts regaining life.  If MaxRegenComboAfterMiss is
+  greater than RegenComboAfterMiss, then each successive miss increases
+  RegenComboAfterMiss until it reaches RegenComboAfterMiss.
+  MaxRegenComboAfterMiss defaults to 5, the same as RegenComboAfterMiss, so
+  there should be no behavior change unless the preference is manually
+  changed. [dbk2]
+* [Gameplay] When disqualification was turned on via Preferences, the old
+  logic exhibited two problems:
+  1. charts with attacks were always disqualified from ranking
+  2. charts without attacks could be disqualified from ranking if the attack
+    modifier was set to "Off"
+  So, this commit fixes those problems.  If a chart has attacks, and the
+  attack modifier is used to turn them "Off", then disqualification is
+  enforced.
+  Additionally, disqualification is enforced if the attack modifier is set to
+  "Random Attacks."  This part might not be necessary, but I acted on the
+  assumption that random attacks could theoretically make a chart easier.
+  [dbk2]
+
+2015/10/04
+----------
+* [FFmpeg] Upgrade FFmpeg to 2.1.3 for Windows. [wolfman2000]
+* [FFmpeg] Fixed cmake WITH_SYSTEM_FFMPEG option. [lthls]
+
+2015/10/03
+----------
+* [FFmpeg] Upgrade FFmpeg to 2.1.3 for Mac OS X. [wolfman2000]
+* [Gameplay] Fixed timing to apply the current music rate to the global
+  offset so that playing at different music rates doesn't make a chart off
+  sync. [Matt McCutchen]
+
+2015/10/02
+----------
+* [Edit Mode] .sm files will no longer be saved when split timing is used
+  because per-chart timing cannot be done in the .sm format. [kyzentun]
+* [Scoring] Fixed bug that caused missed holds to be recorded as held in the
+  value returned by PlayerStageStats:GetRadarActual(). [kyzentun]
+
+2015/09/21
+----------
+* [Sprite] Added set_use_effect_clock_for_texcoords for toggling whether the
+  tex coord velocity uses the effect clock instead of the time.
+
+2015/09/10
+----------
+* [MusicWheel] Fixed SetItemPosition so that it actually passes the item
+  index and the number of items to the transform function. [kyzentun]
+
+2015/09/09
+----------
+* [Notefield] Fixed bug where the hold body doesn't scroll if it goes off the
+  top of the screen. [waiei]
+
+2015/09/08
+----------
+* [Compiling] Compiling stepmania on Windows with the locale set to Japanese should work now. [wolfman2000]
+
+2015/09/06
+----------
+* [Preferences] Fixed crash on Advanced Input Options on OS X caused by the
+  Axis Fix preference not existing on OS X.  The preference does nothing on
+  OS X, but the game no longer crashes on that screen. [kyzentun]
+
+2015/09/03
+----------
+* [Fonts] Respliced large kanji sprite sheets from 32x106 and 32x61 to 63x54
+  and 48x41 to bring them under 4096 pixels tall, which was causing a forced
+  resize and slowing down loading time. [kyzentun]
+* [Gameplay] Fixed song position updating logic so that the
+  ScreenGameplay:PauseGame lua function actually pauses the game.  Start,
+  Select, and Back are all used for different ways of giving up, so the
+  feature remains unused in the default theme. [kyzentun]
+
+2015/09/02
+----------
+* [Gameplay] Fixed Player logic that spammed TNS_AvoidMine repeatedly. [kyzentun]
+
+2015/08/29
+----------
+* [Edit Mode] Fixed crash on entering edit mode caused by entering edit mode
+  as Player 2.  Edit Mode only works as Player 1. [kyzentun]
+
+2015/08/23
+----------
+* [BMS] Added myo2 channel layout and kb7 charts.  Added preview point and
+  fixed offset support and linear solo bms layout. [zardoru]
+* [Linux] Symbolic links will be followed to find the actual executable dir. [Wallacoloo]
+
+2015/08/20
+----------
+* [Minimaid] Minimaid support built in by default instead of off by default. [wolfman2000]
+* [Options] Put AllowExtraStage on Advanced Options screen in default. [kyzentun]
+
+2015/08/19
+----------
+* [Gameplay] RandomBGEndsAtLastBeat metric defaults to true to be similar to
+  old behavior. [wolfy852]
+
+2015/08/08
+----------
+* [General] When the HighResolutionTextures preference is set to Auto,
+  StepMania checks whether the display height is greater than the theme
+  height instead of whether it's greater than 480. [shakesoda]
+
+2015/08/04
+----------
+* [PIUIO] Only send LightState changes to PIUIO when there is a change. [dbk2]
+
+2015/08/02
+----------
+* [NoteField] Fixed bottomcap when NoteDisplay is zoomed out. [hanubeki]
+
+2015/07/22
+----------
+* [Compiling] Fixed building on 32bit linux. [kyzentun]
+
+2015/07/19
+----------
+* [Pump] Added TimingWindowSecondsCheckpoint for the timing window that
+  checkpoint holds allow you to release for. [wolfman2000]
+
+2015/07/18
+----------
+* [General] Fixed bug that skipped notes on beat 0 in score. [kyzentun]
+
+2015/07/16
+----------
+* [ActorUtil] ActorUtil.ResolvePath and ResolveRelativePath now take a
+  boolean flag to tell if the thing is optional. [kyzentun]
+* [CryptMan] Fixed bug that clipped hash strings with zeros. [kyzentun]
+
 2015/07/15
 ----------
 * [Sprite] Sprite now executes the AnimationFinished command when it reaches

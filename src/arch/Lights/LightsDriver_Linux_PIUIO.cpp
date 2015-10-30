@@ -1,9 +1,15 @@
 #include "global.h"
 #include <stdio.h>
+#if defined(HAVE_UNISTD_H)
 #include <unistd.h>
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
+
+#if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
+#endif
+
 #include <errno.h>
 #include "LightsDriver_Linux_PIUIO.h"
 #include "GameState.h"
@@ -18,7 +24,7 @@ LightsDriver_Linux_PIUIO::LightsDriver_Linux_PIUIO()
 	fd = open("/dev/piuio0", O_WRONLY);
 	if( fd < 0 )
 	{
-		LOG->Warn( "Error opening serial port for lights. Error:: %d %s", errno, strerror(errno) );
+		LOG->Warn( "Error opening serial port for lights. Error: %d %s", errno, strerror(errno) );
 		return;
 	}
 	LOG->Info("Opened PIUIO device for lights");
@@ -69,7 +75,11 @@ void LightsDriver_Linux_PIUIO::Set( const LightsState *ls )
 		return;
 	memcpy(oldbuf, buf, 8);
 
-	write(fd, buf, 8);
+	if (write(fd, buf, 8) != 8)
+	{
+		LOG->Warn( "Error setting lights state. Error: %d %s", errno, strerror(errno) );
+		return;
+	}
 }
 
 /*

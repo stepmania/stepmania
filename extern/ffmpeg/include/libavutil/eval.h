@@ -45,7 +45,7 @@ typedef struct AVExpr AVExpr;
  * @param funcs2 NULL terminated array of function pointers for functions which take 2 arguments
  * @param opaque a pointer which will be passed to all functions from funcs1 and funcs2
  * @param log_ctx parent logging context
- * @return 0 in case of success, a negative value corresponding to an
+ * @return >= 0 in case of success, a negative value corresponding to an
  * AVERROR code otherwise
  */
 int av_expr_parse_and_eval(double *res, const char *s,
@@ -68,7 +68,7 @@ int av_expr_parse_and_eval(double *res, const char *s,
  * @param func2_names NULL terminated array of zero terminated strings of funcs2 identifiers
  * @param funcs2 NULL terminated array of function pointers for functions which take 2 arguments
  * @param log_ctx parent logging context
- * @return 0 in case of success, a negative value corresponding to an
+ * @return >= 0 in case of success, a negative value corresponding to an
  * AVERROR code otherwise
  */
 int av_expr_parse(AVExpr **expr, const char *s,
@@ -90,39 +90,6 @@ double av_expr_eval(AVExpr *e, const double *const_values, void *opaque);
  * Free a parsed expression previously created with av_expr_parse().
  */
 void av_expr_free(AVExpr *e);
-
-#if FF_API_OLD_EVAL_NAMES
-/**
- * @deprecated Deprecated in favor of av_expr_parse_and_eval().
- */
-attribute_deprecated
-int av_parse_and_eval_expr(double *res, const char *s,
-                           const char * const *const_names, const double *const_values,
-                           const char * const *func1_names, double (* const *funcs1)(void *, double),
-                           const char * const *func2_names, double (* const *funcs2)(void *, double, double),
-                           void *opaque, int log_offset, void *log_ctx);
-
-/**
- * @deprecated Deprecated in favor of av_expr_parse().
- */
-attribute_deprecated
-int av_parse_expr(AVExpr **expr, const char *s,
-                  const char * const *const_names,
-                  const char * const *func1_names, double (* const *funcs1)(void *, double),
-                  const char * const *func2_names, double (* const *funcs2)(void *, double, double),
-                  int log_offset, void *log_ctx);
-/**
- * @deprecated Deprecated in favor of av_expr_eval().
- */
-attribute_deprecated
-double av_eval_expr(AVExpr *e, const double *const_values, void *opaque);
-
-/**
- * @deprecated Deprecated in favor of av_expr_free().
- */
-attribute_deprecated
-void av_free_expr(AVExpr *e);
-#endif /* FF_API_OLD_EVAL_NAMES */
 
 /**
  * Parse the string in numstr and return its value as a double. If

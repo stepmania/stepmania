@@ -6,14 +6,19 @@
 #include "RageUtil_FileDB.h"
 #include "RageLog.h"
 
+#if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
+#endif
 #include <cerrno>
 #include <sys/types.h>
 #include <sys/stat.h>
 
 #if !defined(WIN32)
+
+#if defined(HAVE_DIRENT_H)
 #include <dirent.h>
-#include <fcntl.h>
+#endif
+
 #else
 #include "archutils/Win32/ErrorStrings.h"
 #include <windows.h>

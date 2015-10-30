@@ -11,7 +11,7 @@
 #include "RageLog.h"
 #include "SpecialFiles.h"
 
-#if !defined(WITHOUT_NETWORKING) && defined(HAVE_VERSION_INFO)
+#if !defined(WITHOUT_NETWORKING)
 #include "ver.h"
 #endif
 
@@ -202,6 +202,7 @@ PrefsManager::PrefsManager() :
 
 
 	m_iRegenComboAfterMiss		( "RegenComboAfterMiss",	5 ),
+	m_iMaxRegenComboAfterMiss	( "MaxRegenComboAfterMiss",	5 ), // this was 10 by default in SM3.95 -dguzek
 	m_bMercifulDrain		( "MercifulDrain",		false ),	// negative life deltas are scaled by the players life percentage
 	m_HarshHotLifePenalty		( "HarshHotLifePenalty",	true ),
 	m_bMinimum1FullSongInCourses	( "Minimum1FullSongInCourses",	false ),	// FEoS for 1st song, FailImmediate thereafter
@@ -314,19 +315,15 @@ PrefsManager::PrefsManager() :
 #if !defined(WITHOUT_NETWORKING)
 	,
 	m_bEnableScoreboard		( "EnableScoreboard",	true )
-
-	#if defined(HAVE_VERSION_INFO)
-		,
-		m_bUpdateCheckEnable			( "UpdateCheckEnable",				true )
-		// TODO - Aldo_MX: Use PREFSMAN->m_iUpdateCheckIntervalSeconds & PREFSMAN->m_iUpdateCheckLastCheckedSecond
-		//,
-		//m_iUpdateCheckIntervalSeconds	( "UpdateCheckIntervalSeconds",		86400 ),	// 24 hours
-		//m_iUpdateCheckLastCheckedSecond	( "UpdateCheckLastCheckSecond",		0 )
-
-		// TODO - Aldo_MX: Write helpers in LuaManager.cpp to treat unsigned int/long like LUA Numbers
-		//,
-		//m_uUpdateCheckLastCheckedBuild	( "UpdateCheckLastCheckedBuild",	version_num )
-	#endif
+	,
+	m_bUpdateCheckEnable			( "UpdateCheckEnable",				true )
+	// TODO - Aldo_MX: Use PREFSMAN->m_iUpdateCheckIntervalSeconds & PREFSMAN->m_iUpdateCheckLastCheckedSecond
+	//,
+	//m_iUpdateCheckIntervalSeconds	( "UpdateCheckIntervalSeconds",		86400 ),	// 24 hours
+	//m_iUpdateCheckLastCheckedSecond	( "UpdateCheckLastCheckSecond",		0 )
+	// TODO - Aldo_MX: Write helpers in LuaManager.cpp to treat unsigned int/long like LUA Numbers
+	//,
+	//m_uUpdateCheckLastCheckedBuild	( "UpdateCheckLastCheckedBuild",	version_num )
 #endif
 
 {

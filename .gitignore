@@ -27,6 +27,9 @@ Xcode/Info.StepMania.plist
 Xcode/plistHelper.hpp
 src/version_updater/VersionUpdater
 src/generated
+extern/mad-0.15.1b/config.h
+extern/libjpeg/jconfig.h
+extern/newogg/include/ogg/config_types.h
 
 # Text Editor Based Items
 ___*
@@ -79,6 +82,8 @@ PBProject/Hardware.plist
 *.exp
 *.ilk
 *.map
+*.aps
+*.res
 
 # Windows General Files
 Thumbs.db
@@ -183,4 +188,3 @@ BuildLog.htm
 *.swp
 *.pc
 *.d
-

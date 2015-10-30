@@ -398,7 +398,7 @@ void ScreenGameplay::Init()
 		MEMCARDMAN->PauseMountingThread();
 
 	m_pSoundMusic = NULL;
-	m_bPaused = false;
+	set_paused_internal(false);
 
 	m_pCombinedLifeMeter = NULL;
 
@@ -1499,6 +1499,11 @@ void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMu
 	}
 }
 
+void ScreenGameplay::set_paused_internal(bool p)
+{
+	m_bPaused= p;
+	GAMESTATE->SetPaused(p);
+}
 
 void ScreenGameplay::PauseGame( bool bPause, GameController gc )
 {
@@ -1514,7 +1519,7 @@ void ScreenGameplay::PauseGame( bool bPause, GameController gc )
 
 	ResetGiveUpTimers(false);
 
-	m_bPaused = bPause;
+	set_paused_internal(bPause);
 	m_PauseController = gc;
 
 	m_pSoundMusic->Pause( bPause );

@@ -266,6 +266,13 @@ list(APPEND SMDATA_ARCH_LIGHTS_HPP
   "arch/Lights/LightsDriver_SystemMessage.h"
 )
 
+list(APPEND SMDATA_ARCH_LIGHTS_SRC
+  "arch/Lights/LightsDriver_SextetStream.cpp"
+)
+list(APPEND SMDATA_ARCH_LIGHTS_HPP
+  "arch/Lights/LightsDriver_SextetStream.h"
+)
+
 # TODO: Confirm if Apple can use the export.
 if(NOT APPLE)
   list(APPEND SMDATA_ARCH_LIGHTS_SRC
@@ -274,6 +281,7 @@ if(NOT APPLE)
   list(APPEND SMDATA_ARCH_LIGHTS_HPP
     "arch/Lights/LightsDriver_Export.h"
   )
+  
   if(WIN32)
     list(APPEND SMDATA_ARCH_LIGHTS_SRC
       "arch/Lights/LightsDriver_Win32Parallel.cpp"
@@ -341,6 +349,14 @@ if(WIN32)
     "arch/InputHandler/InputHandler_Win32_Para.h"
     "arch/InputHandler/InputHandler_Win32_Pump.h"
   )
+  if (NOT MSVC)
+    list(APPEND SMDATA_ARCH_INPUT_SRC
+      "arch/InputHandler/InputHandler_SextetStream.cpp"
+    )
+    list(APPEND SMDATA_ARCH_INPUT_HPP
+      "arch/InputHandler/InputHandler_SextetStream.h"
+    )
+  endif()
 elseif(APPLE)
   list(APPEND SMDATA_ARCH_INPUT_SRC
     "arch/InputHandler/InputHandler_MacOSX_HID.cpp"
@@ -355,12 +371,14 @@ else() # Unix/Linux
       "arch/InputHandler/InputHandler_Linux_Joystick.cpp"
       "arch/InputHandler/InputHandler_Linux_Event.cpp"
       "arch/InputHandler/InputHandler_Linux_PIUIO.cpp"
+      "arch/InputHandler/InputHandler_SextetStream.cpp"
     )
     list(APPEND SMDATA_ARCH_INPUT_SRC
       "arch/InputHandler/LinuxInputManager.h"
       "arch/InputHandler/InputHandler_Linux_Joystick.h"
       "arch/InputHandler/InputHandler_Linux_Event.h"
       "arch/InputHandler/InputHandler_Linux_PIUIO.h"
+      "arch/InputHandler/InputHandler_SextetStream.h"
     )
     if(WITH_TTY)
       list(APPEND SMDATA_ARCH_INPUT_SRC
