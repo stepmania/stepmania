@@ -100,7 +100,7 @@ bool IniFile::ReadFile( RageFileBasic &f )
 				{
 					RString valuename = Rage::head(line, iEqualIndex);
 					RString value = Rage::tail(line, line.size() - valuename.size() - 1);
-					Trim(valuename);
+					valuename = Rage::trim(valuename);
 					if(!valuename.empty())
 					{
 						SetKeyValue(keychild, valuename, value);

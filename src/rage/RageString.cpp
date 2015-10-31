@@ -123,6 +123,61 @@ std::string Rage::join(std::string const &delimiter, std::vector<std::string>::c
 	return builder.str();
 }
 
+std::string Rage::trim_left(std::string const &source)
+{
+	return Rage::trim_left(source, "\r\n\t ");
+}
+
+std::string Rage::trim_left(std::string const &source, std::string const &delimiters)
+{
+	auto n = 0;
+	auto end = source.size();
+	auto const *d_str = delimiters.c_str();
+	while (n < end && std::strchr(d_str, source[n]))
+	{
+		++n;
+	}
+	return source.substr(n);
+}
+
+std::string Rage::trim_right(std::string const &source)
+{
+	return Rage::trim_right(source, "\r\n\t ");
+}
+
+std::string Rage::trim_right(std::string const &source, std::string const &delimiters)
+{
+	int n = source.size();
+	auto const *d_str = delimiters.c_str();
+	while( n > 0 && std::strchr(d_str, source[n - 1]) )
+	{
+		n--;
+	}
+	
+	return source.substr(0, n);
+}
+
+std::string Rage::trim(std::string const &source)
+{
+	return Rage::trim(source, "\r\n\t ");
+}
+
+std::string Rage::trim(std::string const &source, std::string const &delimiters)
+{
+	std::string::size_type start = 0;
+	std::string::size_type lastPos = source.size();
+	auto const *d_str = delimiters.c_str();
+	while ( start < lastPos && std::strchr(d_str, source[start]))
+	{
+		++start;
+	}
+	while (start < lastPos && std::strchr(d_str, source[lastPos - 1]))
+	{
+		--lastPos;
+	}
+	return source.substr(start, lastPos - start);
+}
+
 /* Branch optimizations: */
 #if defined(__GNUC__) || defined(__clang__)
 #define likely(x) (__builtin_expect(!!(x), 1))

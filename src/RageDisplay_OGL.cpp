@@ -277,8 +277,7 @@ RString GetInfoLog( GLhandleARB h )
 	glGetInfoLogARB( h, iLength, &iLength, pInfoLog );
 	RString sRet = pInfoLog;
 	delete [] pInfoLog;
-	TrimRight( sRet );
-	return sRet;
+	return Rage::trim_right(sRet);
 }
 
 GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asDefines )

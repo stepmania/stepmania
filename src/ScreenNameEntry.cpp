@@ -404,7 +404,7 @@ bool ScreenNameEntry::MenuStart( const InputEventPlus &input )
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);
 	pProfile->m_sLastUsedHighScoreName = m_sSelectedName[pn];
 
-	Trim( m_sSelectedName[pn], " " );
+	m_sSelectedName[pn] = Rage::trim( m_sSelectedName[pn], " " );
 
 	GAMESTATE->StoreRankingName( pn, m_sSelectedName[pn] );
 

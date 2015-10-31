@@ -4,6 +4,7 @@
 #include "RageTimer.h"
 #include "RageFile.h"
 #include "RageThreads.h"
+#include "RageString.hpp"
 
 #include <ctime>
 #if defined(_WINDOWS)
@@ -91,8 +92,7 @@ RageLog::~RageLog()
 	split( AdditionalLog, "\n", AdditionalLogLines );
 	for (auto &line: AdditionalLogLines)
 	{
-		Trim( line );
-		this->Info( line );
+		this->Info( Rage::trim(line) );
 	}
 
 	Flush();

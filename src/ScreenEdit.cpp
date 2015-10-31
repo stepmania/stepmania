@@ -3999,8 +3999,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if (SM == SM_BackFromAddingModToExistingAttack && !ScreenTextEntry::s_bCancelledLast)
 	{
-		RString mod = ScreenTextEntry::s_sLastAnswer;
-		Trim(mod);
+		RString mod = Rage::trim(ScreenTextEntry::s_sLastAnswer);
 		if (mod.length() > 0)
 		{
 			AttackArray &attacks =
@@ -4018,8 +4017,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		Attack &attack = attacks[attackInProcess];
 		vector<RString> mods;
 		split(attack.sModifiers, ",", mods);
-		RString mod = ScreenTextEntry::s_sLastAnswer;
-		Trim(mod);
+		RString mod = Rage::trim(ScreenTextEntry::s_sLastAnswer);
 		if (mod.length() > 0)
 		{
 			mods[modInProcess - 2] = mod;
@@ -4078,8 +4076,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if (SM == SM_BackFromAddingAttackToChart && !ScreenTextEntry::s_bCancelledLast)
 	{
-		RString mod = ScreenTextEntry::s_sLastAnswer;
-		Trim(mod);
+		RString mod = Rage::trim(ScreenTextEntry::s_sLastAnswer);
 		if (mod.length() > 0)
 		{
 			AttackArray &attacks =

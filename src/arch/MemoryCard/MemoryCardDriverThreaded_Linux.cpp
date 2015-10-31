@@ -266,18 +266,15 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 
 			if( ReadFile( sPath + "device/../serial", sBuf ) )
 			{
-				usbd.sSerial = sBuf;
-				TrimRight( usbd.sSerial );
+				usbd.sSerial = Rage::trim_right(sBuf);
 			}
 			if( ReadFile( sPath + "device/../product", sBuf ) )
 			{
-				usbd.sProduct = sBuf;
-				TrimRight( usbd.sProduct );
+				usbd.sProduct = Rage::trim_right(sBuf);
 			}
 			if( ReadFile( sPath + "device/../manufacturer", sBuf ) )
 			{
-				usbd.sVendor = sBuf;
-				TrimRight( usbd.sVendor );
+				usbd.sVendor = Rage::trim_right(sBuf);
 			}
 
 			vDevicesOut.push_back( usbd );
@@ -329,9 +326,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 				continue;
 			}
 
-			RString sMountPoint = szMountPoint;
-			TrimLeft( sMountPoint );
-			TrimRight( sMountPoint );
+			RString sMountPoint = Rage::trim(szMountPoint);
 
 			// search for the mountpoint corresponding to the device
 			for( unsigned i=0; i<vDevicesOut.size(); i++ )

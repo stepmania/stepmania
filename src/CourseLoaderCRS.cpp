@@ -128,10 +128,11 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				vector<RString> sBits;
 				split( sParams[j], "=", sBits, false );
 				if( sBits.size() < 2 )
+				{
 					continue;
+				}
 
-				Trim( sBits[0] );
-				Rage::ci_ascii_string tagName{ sBits[0] };
+				Rage::ci_ascii_string tagName{ Rage::trim(sBits[0]).c_str() };
 				if( tagName == "TIME" )
 					attack.fStartSecond = max( StringToFloat(sBits[1]), 0.0f );
 				else if( tagName == "LEN" )
@@ -307,9 +308,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				split( sParams[3], ",", mods, true );
 				for( int j = (int) mods.size()-1; j >= 0 ; --j )
 				{
-					RString &sMod = mods[j];
-					TrimLeft( sMod );
-					TrimRight( sMod );
+					RString sMod = Rage::trim(mods[j]);
 					Rage::ci_ascii_string ciMod{ sMod };
 					if ( ciMod == "showcourse" )
 					{

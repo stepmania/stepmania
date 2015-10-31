@@ -23,9 +23,9 @@ using std::vector;
  * @return the joined lines. */
 static RString JoinLineList( vector<RString> &lines )
 {
-	for( unsigned i = 0; i < lines.size(); ++i )
+	for (auto &line: lines)
 	{
-		TrimRight( lines[i] );
+		line = Rage::trim_right(line);
 	}
 	// Skip leading blanks.
 	unsigned j = 0;
@@ -431,7 +431,7 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 
 		lines.push_back( song.m_vsKeysoundFile.empty() ? "#NOTES:" : "#NOTES2:" );
 
-		TrimLeft(sNoteData);
+		sNoteData = Rage::trim_left(sNoteData);
 		split( sNoteData, "\n", lines, true );
 		lines.push_back( ";" );
 	}

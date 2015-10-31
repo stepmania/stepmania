@@ -154,8 +154,7 @@ void SongOptions::FromString( const RString &sMultipleMods )
 
 bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 {
-	RString sBit = Rage::make_lower(sOneMod);
-	Trim( sBit );
+	RString sBit = Rage::trim(Rage::make_lower(sOneMod));
 
 	Regex mult("^([0-9]+(\\.[0-9]+)?)xmusic$");
 	vector<RString> matches;

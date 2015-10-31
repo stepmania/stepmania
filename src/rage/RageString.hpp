@@ -51,6 +51,24 @@ namespace Rage
 	/** @brief Join all of the strings together into one string. */
 	std::string join(std::string const &delimiter, std::vector<std::string>::const_iterator start, std::vector<std::string>::const_iterator finish );
 
+	/** @brief Trim the front of the string of all whitespace characters. */
+	std::string trim_left(std::string const &source);
+
+	/** @brief Trim the front of the string of all characters of the caller's choosing. */
+	std::string trim_left(std::string const &source, std::string const &delimiters);
+
+	/** @brief Trim the back of the string of all whitespace characters. */
+	std::string trim_right(std::string const &source);
+
+	/** @brief Trim the back of the string of all characters of the caller's choosing. */
+	std::string trim_right(std::string const &source, std::string const &delimiters);
+
+	/** @brief Trim the front and back of the string of all whitespace characters. */
+	std::string trim(std::string const &source);
+
+	/** @brief Trim the front and back of the string of all characters of the caller's choosing. */
+	std::string trim(std::string const &source, std::string const &delimiters);
+
 	/** @brief A trait to allow for case insensitive strings...assuming ASCII. */
 	struct ci_ascii_char_traits: public std::char_traits<char>
 	{

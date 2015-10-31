@@ -766,8 +766,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 		if( iter == m_BGAnimations.end() )
 		{
 			XNode *pNode = change.m_def.CreateNode();
-			RString xml = XmlFileUtil::GetXML( pNode );
-			Trim( xml );
+			RString xml = Rage::trim(XmlFileUtil::GetXML( pNode ));
 			LuaHelpers::ReportScriptErrorFmt( "Tried to switch to a background that was never loaded:\n%s", xml.c_str() );
 			SAFE_DELETE( pNode );
 			return;

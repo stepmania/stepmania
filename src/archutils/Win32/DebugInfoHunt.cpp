@@ -2,6 +2,7 @@
 #include "DebugInfoHunt.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageString.hpp"
 #include "VideoDriverInfo.h"
 #include "RegistryAccess.h"
 #include <windows.h>
@@ -106,7 +107,7 @@ static void GetDriveDebugInfo9x()
 			RString DeviceDesc;
 
 			RegistryAccess::GetRegValue( IDs[id], "DeviceDesc", DeviceDesc );
-			TrimRight( DeviceDesc );
+			DeviceDesc = Rage::trim_right( DeviceDesc );
 
 			int DMACurrentlyUsed = -1;
 			RegistryAccess::GetRegValue( IDs[id], "DMACurrentlyUsed", DMACurrentlyUsed );
@@ -162,7 +163,7 @@ static void GetDriveDebugInfoNT()
 				{
 					RString Identifier;
 					RegistryAccess::GetRegValue( LUIDs[luid], "Identifier", Identifier );
-					TrimRight( Identifier );
+					Identifier = Rage::trim_right( Identifier );
 					LOG->Info( "Drive: \"%s\" Driver: %s DMA: %s",
 						Identifier.c_str(), Driver.c_str(), DMAEnabled == 1? "yes":DMAEnabled == -1? "N/A":"NO" );
 				}

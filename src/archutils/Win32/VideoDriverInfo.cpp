@@ -2,6 +2,7 @@
 #include "VideoDriverInfo.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageString.hpp"
 #include "RegistryAccess.h"
 #include <windows.h>
 
@@ -42,8 +43,7 @@ RString GetPrimaryVideoName()
 	}
 
 	FreeLibrary( hInstUser32 );
-	TrimRight( sPrimaryDeviceName );
-	return sPrimaryDeviceName;
+	return Rage::trim_right( sPrimaryDeviceName );
 }
 
 RString GetPrimaryVideoDriverName()
@@ -110,7 +110,7 @@ bool GetVideoDriverInfo( int iCardno, VideoDriverInfo &info )
 			lst.erase( lst.begin()+iCardno );
 			continue;
 		}
-		TrimRight( info.sDescription );
+		info.sDescription = Rage::trim_right( info.sDescription );
 
 		RegistryAccess::GetRegValue( sKey, "DriverDate", info.sDate );
 		RegistryAccess::GetRegValue( sKey, "MatchingDeviceId", info.sDeviceID );

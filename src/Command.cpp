@@ -2,6 +2,7 @@
 #include "Command.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageString.hpp"
 #include "arch/Dialog/Dialog.h"
 
 using std::vector;
@@ -10,10 +11,10 @@ using std::string;
 RString Command::GetName() const
 {
 	if( m_vsArgs.empty() )
+	{
 		return RString();
-	RString s = m_vsArgs[0];
-	Trim( s );
-	return s;
+	}
+	return Rage::trim(m_vsArgs[0]);
 }
 
 Command::Arg Command::GetArg( unsigned index ) const

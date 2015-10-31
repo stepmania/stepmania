@@ -287,3 +287,45 @@ GTEST_TEST(RageString, join_multiple_last_three_end)
 	std::string target = Rage::join("^^", filetypes.begin() + 2, filetypes.end());
 	EXPECT_EQ(target == "dwi^^bms^^ksf", true);
 }
+
+GTEST_TEST(RageString, trim_left_whitespace)
+{
+	std::string initial{" \r\n\t\r\n  hello"};
+	std::string target = Rage::trim_left(initial);
+	EXPECT_EQ(target == "hello", true);
+}
+
+GTEST_TEST(RageString, trim_left_custom_chars)
+{
+	std::string initial{"qxqxqxStepMania"};
+	std::string target = Rage::trim_left(initial, "qx");
+	EXPECT_EQ(target == "StepMania", true);
+}
+
+GTEST_TEST(RageString, trim_right_whitespace)
+{
+	std::string initial{"hello \t\n\r\t\n\r   "};
+	std::string target = Rage::trim_right(initial);
+	EXPECT_EQ(target == "hello", true);
+}
+
+GTEST_TEST(RageString, trim_right_custom_chars)
+{
+	std::string initial{"StepManiaqxqxqxq"};
+	std::string target = Rage::trim_right(initial, "qx");
+	EXPECT_EQ(target == "StepMania", true);
+}
+
+GTEST_TEST(RageString, trim_whitespace)
+{
+	std::string initial{" \t\nhello\r\n  \t"};
+	std::string target = Rage::trim(initial);
+	EXPECT_EQ(target == "hello", true);
+}
+
+GTEST_TEST(RageString, trim_custom_chars)
+{
+	std::string initial{"xqxStepManiaqxq"};
+	std::string target = Rage::trim(initial, "xq");
+	EXPECT_EQ(target == "StepMania", true);
+}

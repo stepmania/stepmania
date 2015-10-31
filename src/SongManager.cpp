@@ -1601,9 +1601,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 					section = PreferredSortSection();
 				}
 
-				section.sName = Rage::tail(sLine, -3);
-				TrimLeft( section.sName );
-				TrimRight( section.sName );
+				section.sName = Rage::trim(Rage::tail(sLine, -3));
 			}
 			else
 			{

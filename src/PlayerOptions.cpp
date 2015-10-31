@@ -347,9 +347,7 @@ void PlayerOptions::FromString( const RString &sMultipleMods )
 bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 {
 	ASSERT_M( NOTESKIN != nullptr, "The Noteskin Manager must be loaded in order to process mods." );
-
-	RString sBit = Rage::make_lower(sOneMod);
-	Trim( sBit );
+	RString sBit = Rage::trim(Rage::make_lower(sOneMod));
 
 	/* "drunk"
 	 * "no drunk"
@@ -387,7 +385,9 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		{
 			sscanf( s, "*%f", &speed );
 			if( !std::isfinite(speed) )
+			{
 				speed = 1.0f;
+			}
 		}
 	}
 
