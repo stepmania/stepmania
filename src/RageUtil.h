@@ -530,48 +530,6 @@ RString Capitalize( const RString &s );
 extern unsigned char g_UpperCase[256];
 extern unsigned char g_LowerCase[256];
 
-/* ASCII-only case insensitivity. */
-struct char_traits_char_nocase: public std::char_traits<char>
-{
-	static inline bool eq( char c1, char c2 )
-	{ return g_UpperCase[(unsigned char)c1] == g_UpperCase[(unsigned char)c2]; }
-
-	static inline bool ne( char c1, char c2 )
-	{ return g_UpperCase[(unsigned char)c1] != g_UpperCase[(unsigned char)c2]; }
-
-	static inline bool lt( char c1, char c2 )
-	{ return g_UpperCase[(unsigned char)c1] < g_UpperCase[(unsigned char)c2]; }
-
-	static int compare( const char* s1, const char* s2, size_t n )
-	{
-		int ret = 0;
-		while( n-- )
-		{
-			ret = fasttoupper(*s1++) - fasttoupper(*s2++);
-			if( ret != 0 )
-				break;
-		}
-		return ret;
-	}
-
-	static inline char fasttoupper(char a)
-	{
-		return g_UpperCase[(unsigned char)a];
-	}
-
-	static const char *find( const char* s, int n, char a )
-	{
-		a = fasttoupper(a);
-		while( n-- > 0 && fasttoupper(*s) != a )
-			++s;
-
-		if(fasttoupper(*s) == a)
-			return s;
-		return nullptr;
-	}
-};
-typedef std::basic_string<char,char_traits_char_nocase> istring;
-
 /* Compatibility/convenience shortcuts. These are actually defined in RageFileManager.h, but
  * declared here since they're used in many places. */
 void GetDirListing( const RString &sPath, std::vector<RString> &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );

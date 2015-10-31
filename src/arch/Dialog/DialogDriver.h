@@ -3,6 +3,7 @@
 
 #include "Dialog.h"
 #include "RageUtil.h"
+#include "RageString.hpp"
 
 class DialogDriver
 {
@@ -25,8 +26,8 @@ class DialogDriver_Null : public DialogDriver { };
 typedef DialogDriver *(*CreateDialogDriverFn)();
 struct RegisterDialogDriver
 {
-	static std::map<istring, CreateDialogDriverFn> *g_pRegistrees;
-	RegisterDialogDriver( const istring &sName, CreateDialogDriverFn pfn );
+	static std::map<Rage::ci_ascii_string, CreateDialogDriverFn> *g_pRegistrees;
+	RegisterDialogDriver( const Rage::ci_ascii_string &sName, CreateDialogDriverFn pfn );
 };
 #define REGISTER_DIALOG_DRIVER_CLASS( name ) \
 	static RegisterDialogDriver register_##name( #name, CreateClass<DialogDriver_##name, DialogDriver> )
