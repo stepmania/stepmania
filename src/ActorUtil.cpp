@@ -491,7 +491,7 @@ void ActorUtil::LoadAllCommandsFromName( Actor& actor, const RString &sMetricsGr
 	for (auto const &sv: vsValueNames)
 	{
 		static const RString sEnding = "Command";
-		if( EndsWith(sv,sEnding) )
+		if( Rage::ends_with(sv,sEnding) )
 		{
 			RString sCommandName( sv.begin()+sName.size(), sv.end()-sEnding.size() );
 			LoadCommandFromName( actor, sMetricsGroup, sCommandName, sName );

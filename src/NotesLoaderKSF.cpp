@@ -5,6 +5,7 @@
 #include "MsdFile.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageString.hpp"
 #include "NoteData.h"
 #include "NoteTypes.h"
 #include "Song.h"
@@ -55,8 +56,8 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 
 		/* handle the data...well, not this data: not related to steps.
 		 * Skips INTRO, MUSICINTRO, TITLEFILE, DISCFILE, SONGFILE. */
-		if (sValueName=="TITLE" || EndsWith(sValueName, "INTRO")
-		    || EndsWith(sValueName, "FILE") )
+		if (sValueName=="TITLE" || Rage::ends_with(sValueName, "INTRO")
+			|| Rage::ends_with(sValueName, "FILE") )
 		{
 
 		}
@@ -326,7 +327,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 			break;
 		}
 
-		else if( BeginsWith(sRowString, "|") )
+		else if( Rage::starts_with(sRowString, "|") )
 		{
 			/*
 			if (bKIUCompliant)
@@ -346,47 +347,47 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 
 			RString temp = sRowString.substr(2,sRowString.size()-3);
 			float numTemp = StringToFloat(temp);
-			if (BeginsWith(sRowString, "|T"))
+			if (Rage::starts_with(sRowString, "|T"))
 			{
 				// duh
 				iTickCount = static_cast<int>(numTemp);
 				// I have been owned by the man -DaisuMaster
 				stepsTiming.SetTickcountAtBeat( fCurBeat, Rage::clamp(iTickCount, 0, ROWS_PER_BEAT) );
 			}
-			else if (BeginsWith(sRowString, "|B"))
+			else if (Rage::starts_with(sRowString, "|B"))
 			{
 				// BPM
 				stepsTiming.SetBPMAtBeat( fCurBeat, numTemp );
 			}
-			else if (BeginsWith(sRowString, "|E"))
+			else if (Rage::starts_with(sRowString, "|E"))
 			{
 				// DelayBeat
 				float fCurDelay = 60 / stepsTiming.GetBPMAtBeat(fCurBeat) * numTemp / iTickCount;
 				fCurDelay += stepsTiming.GetDelayAtRow(BeatToNoteRow(fCurBeat) );
 				stepsTiming.SetDelayAtBeat( fCurBeat, fCurDelay );
 			}
-			else if (BeginsWith(sRowString, "|D"))
+			else if (Rage::starts_with(sRowString, "|D"))
 			{
 				// Delays
 				float fCurDelay = stepsTiming.GetStopAtRow(BeatToNoteRow(fCurBeat) );
 				fCurDelay += numTemp / 1000;
 				stepsTiming.SetDelayAtBeat( fCurBeat, fCurDelay );
 			}
-			else if (BeginsWith(sRowString, "|M") || BeginsWith(sRowString, "|C"))
+			else if (Rage::starts_with(sRowString, "|M") || Rage::starts_with(sRowString, "|C"))
 			{
 				// multipliers/combo
 				ComboSegment seg( BeatToNoteRow(fCurBeat), int(numTemp) );
 				stepsTiming.AddSegment( seg );
 			}
-			else if (BeginsWith(sRowString, "|S"))
+			else if (Rage::starts_with(sRowString, "|S"))
 			{
 				// speed segments
 			}
-			else if (BeginsWith(sRowString, "|F"))
+			else if (Rage::starts_with(sRowString, "|F"))
 			{
 				// fakes
 			}
-			else if (BeginsWith(sRowString, "|X"))
+			else if (Rage::starts_with(sRowString, "|X"))
 			{
 				// scroll segments
 				ScrollSegment seg = ScrollSegment( BeatToNoteRow(fCurBeat), numTemp );
@@ -689,7 +690,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			}
 
 			// This is where the DMRequired test will take place.
-			if ( BeginsWith( NoteRowString, "|" ) )
+			if ( Rage::starts_with( NoteRowString, "|" ) )
 			{
 				// have a static timing for everything
 				bDMRequired = true;

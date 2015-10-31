@@ -1311,20 +1311,6 @@ void StripCrnl( RString &s )
 		s.erase( s.size()-1 );
 }
 
-bool BeginsWith( const RString &sTestThis, const RString &sBeginning )
-{
-	ASSERT( !sBeginning.empty() );
-	return sTestThis.compare( 0, sBeginning.length(), sBeginning ) == 0;
-}
-
-bool EndsWith( const RString &sTestThis, const RString &sEnding )
-{
-	ASSERT( !sEnding.empty() );
-	if( sTestThis.size() < sEnding.size() )
-		return false;
-	return sTestThis.compare( sTestThis.length()-sEnding.length(), sEnding.length(), sEnding ) == 0;
-}
-
 RString URLEncode( const RString &sStr )
 {
 	RString sOutput;

@@ -1092,7 +1092,7 @@ void ThemeManager::PushMetric( Lua *L, const RString &sMetricsGroup, const RStri
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sMetricsGroup, sValueName );
 
 	RString sName = ssprintf( "%s::%s", sMetricsGroup.c_str(), sValueName.c_str() );
-	if( EndsWith(sValueName, "Command") )
+    if( Rage::ends_with(sValueName, "Command") )
 	{
 		LuaHelpers::ParseCommandList( L, sValue, sName, false );
 	}

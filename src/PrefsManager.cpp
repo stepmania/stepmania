@@ -468,9 +468,10 @@ void PrefsManager::ReadGamePrefsFromIni( const RString &sIni )
 	FOREACH_CONST_Child( &ini, section )
 	{
 		RString section_name= section->GetName();
-		if( !BeginsWith(section_name, GAME_SECTION_PREFIX) )
+		if( !Rage::starts_with(section_name, GAME_SECTION_PREFIX) )
+		{
 			continue;
-
+		}
 		RString sGame = Rage::tail(section_name, section_name.length() - GAME_SECTION_PREFIX.length() );
 		GamePrefs &gp = m_mapGameNameToGamePrefs[ sGame ];
 

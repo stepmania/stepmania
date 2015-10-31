@@ -8,6 +8,7 @@
 #include "RageFileDriverMemory.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageString.hpp"
 #include "arch/Dialog/Dialog.h"
 #include "LuaManager.h"
 
@@ -582,7 +583,7 @@ namespace
 		RString sExpression;
 		pValue->GetValue( sExpression );
 
-		if( EndsWith(sName, "Command") )
+		if( Rage::ends_with(sName, "Command") )
 		{
 			// Use legacy parsing
 			LuaHelpers::ParseCommandList( L, sExpression, sFile, true );

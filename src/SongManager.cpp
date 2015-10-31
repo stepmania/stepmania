@@ -1183,13 +1183,13 @@ void SongManager::DeleteSteps( Steps *pSteps )
 bool SongManager::WasLoadedFromAdditionalSongs( const Song *pSong ) const
 {
 	RString sDir = pSong->GetSongDir();
-	return BeginsWith( sDir, ADDITIONAL_SONGS_DIR );
+	return Rage::starts_with( sDir, ADDITIONAL_SONGS_DIR );
 }
 
 bool SongManager::WasLoadedFromAdditionalCourses( const Course *pCourse ) const
 {
 	RString sDir = pCourse->m_sPath;
-	return BeginsWith( sDir, ADDITIONAL_COURSES_DIR );
+	return Rage::starts_with( sDir, ADDITIONAL_COURSES_DIR );
 }
 
 void SongManager::GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen ) const
@@ -1569,7 +1569,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 		{
 			RString sLine = s;
 
-			bool bSectionDivider = BeginsWith(sLine, "---");
+			bool bSectionDivider = Rage::starts_with(sLine, "---");
 			if( bSectionDivider )
 			{
 				if( !section.vpSongs.empty() )
@@ -1586,7 +1586,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 			{
 				/* if the line ends in slash-star, check if the section exists,
 				 * and if it does, add all the songs in that group to the list. */
-				if( EndsWith(sLine,"/*") )
+				if( Rage::ends_with(sLine,"/*") )
 				{
 					RString group = Rage::head(sLine, sLine.size() - 2);
 					if( DoesSongGroupExist(group) )
@@ -1674,7 +1674,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 		for (auto &s: asLines)
 		{
 			RString sLine = s;
-			bool bSectionDivider = BeginsWith( sLine, "---" );
+			bool bSectionDivider = Rage::starts_with( sLine, "---" );
 			if( bSectionDivider )
 			{
 				if( !vpCourses.empty() )
