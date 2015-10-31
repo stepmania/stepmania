@@ -545,8 +545,7 @@ void ScreenEdit::LoadKeymapSectionIntoMappingsMember(XNode const* section, MapEd
 		{
 			RString joined_names;
 			attr->second->GetValue(joined_names);
-			vector<RString> key_names;
-			split(joined_names, DEVICE_INPUT_SEPARATOR, key_names, false);
+			auto key_names = Rage::split(joined_names, DEVICE_INPUT_SEPARATOR, Rage::EmptyEntries::include);
 			for(size_t k= 0; k < key_names.size() && k < NUM_EDIT_TO_DEVICE_SLOTS; ++k)
 			{
 				DeviceInput devi;
@@ -4023,7 +4022,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		(GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks);
 		Attack &attack = attacks[attackInProcess];
 		auto mods = Rage::split(attack.sModifiers, ",");
-		RString mod = Rage::trim(ScreenTextEntry::s_sLastAnswer);
+		auto mod = Rage::trim(ScreenTextEntry::s_sLastAnswer);
 		if (mod.length() > 0)
 		{
 			mods[modInProcess - 2] = mod;
@@ -4048,8 +4047,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		AttackArray &attacks =
 		(GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks);
 		Attack &attack = attacks[attackInProcess];
-		vector<RString> mods;
-		split(attack.sModifiers, ",", mods);
+        auto mods = Rage::split(attack.sModifiers, ",");
 		modInProcess = option;
 		if (option == 0) // adjusting the starting time
 		{
@@ -4143,8 +4141,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 															 0,
 															 nullptr));
 				g_IndividualAttack.rows[1].SetOneUnthemedChoice(FloatToString(attack.fSecsRemaining));
-				vector<RString> mods;
-				split(attack.sModifiers, ",", mods);
+				auto mods = Rage::split(attack.sModifiers, ",");
 				for (unsigned i = 0; i < mods.size(); ++i)
 				{
 					unsigned col = i + 2;
@@ -5016,8 +5013,7 @@ static LocalizedString CONFIRM_CLEAR("ScreenEdit", "Are you sure you want to cle
 
 static bool ConvertMappingInputToMapping(RString const& mapstr, int* mapping, RString& error)
 {
-	vector<RString> mapping_input;
-	split(mapstr, ",", mapping_input);
+    auto mapping_input = Rage::split(mapstr, ",");
 	size_t tracks_for_type= GAMEMAN->GetStepsTypeInfo(GAMESTATE->m_pCurSteps[0]->m_StepsType).iNumTracks;
 	if(mapping_input.size() > tracks_for_type)
 	{

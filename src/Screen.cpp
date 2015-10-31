@@ -63,22 +63,19 @@ void Screen::Init()
 
 	PlayCommandNoRecurse( Message("Init") );
 
-	vector<RString> asList;
-	split( PREPARE_SCREENS, ",", asList );
+	auto asList = Rage::split(PREPARE_SCREENS, ",");
 	for (auto &item: asList)
 	{
 		LOG->Trace( "Screen \"%s\" preparing \"%s\"", m_sName.c_str(), item.c_str() );
 		SCREENMAN->PrepareScreen( item );
 	}
 
-	asList.clear();
-	split( GROUPED_SCREENS, ",", asList );
+	asList = Rage::split(GROUPED_SCREENS, ",");
 	for (auto &item: asList)
 	{
 		SCREENMAN->GroupScreen( item );
 	}
-	asList.clear();
-	split( PERSIST_SCREENS, ",", asList );
+	asList = Rage::split(PERSIST_SCREENS, ",");
 	for (auto &item: asList)
 	{
 		SCREENMAN->PersistantScreen( item );

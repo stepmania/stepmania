@@ -192,7 +192,7 @@ bool FilenameDB::ResolvePath( RString &sPath )
 	static const RString slash("/");
 	for(;;)
 	{
-		split( sPath, slash, iBegin, iSize, true );
+        Rage::split_in_place( sPath, slash, iBegin, iSize, Rage::EmptyEntries::skip );
 		if( iBegin == (int) sPath.size() )
 			break;
 

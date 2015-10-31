@@ -3108,7 +3108,7 @@ public:
 			}
 		}
 		luaL_error( L, "Style %s is incompatible with PlayMode %s",
-			style->m_szName, PlayModeToString( pm ).c_str() );
+			style->m_szName.c_str(), PlayModeToString( pm ).c_str() );
 		return false;
 	}
 
@@ -3149,12 +3149,12 @@ public:
 		if( p->GetNumSidesJoined() == 2 &&
 			( st == StyleType_OnePlayerOneSide || st == StyleType_OnePlayerTwoSides ) )
 		{
-			luaL_error( L, "Too many sides joined for style %s", pStyle->m_szName );
+			luaL_error( L, "Too many sides joined for style %s", pStyle->m_szName.c_str() );
 		}
 		else if( p->GetNumSidesJoined() == 1 &&
 			( st == StyleType_TwoPlayersTwoSides || st == StyleType_TwoPlayersSharedSides ) )
 		{
-			luaL_error( L, "Too few sides joined for style %s", pStyle->m_szName );
+			luaL_error( L, "Too few sides joined for style %s", pStyle->m_szName.c_str() );
 		}
 
 		if( !AreStyleAndPlayModeCompatible( p, L, pStyle, p->m_PlayMode ) )

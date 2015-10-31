@@ -11,8 +11,7 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
 {
 	LOG->Trace( "Initializing lights drivers: %s", sDrivers.c_str() );
 
-	vector<RString> asDriversToTry;
-	split( sDrivers, ",", asDriversToTry, true );
+	auto asDriversToTry = Rage::split(sDrivers, ",", Rage::EmptyEntries::skip);
 
 	for (auto const &Driver: asDriversToTry)
 	{

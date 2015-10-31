@@ -45,8 +45,7 @@ void ModIcon::Load( RString sMetricsGroup )
 
 	// stop words
 	STOP_WORDS.Load( sMetricsGroup, "StopWords" );
-	m_vStopWords.empty();
-	split(STOP_WORDS.GetValue(), ",", m_vStopWords);
+	m_vStopWords = Rage::split(STOP_WORDS.GetValue(), ",");
 
 	Set("");
 }

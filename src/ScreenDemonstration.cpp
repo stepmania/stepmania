@@ -31,8 +31,7 @@ void ScreenDemonstration::Init()
 
 	// Choose a Style
 	{
-		vector<RString> v;
-		split( ALLOW_STYLE_TYPES, ",", v );
+		auto v = Rage::split(ALLOW_STYLE_TYPES, ",");
 		vector<StyleType> vStyleTypeAllow;
 		for (auto &s: v)
 		{

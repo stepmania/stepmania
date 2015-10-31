@@ -18,13 +18,11 @@ using std::vector;
 
 void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, const RString sParam )
 {
-	vector<RString> arrayMultiplierExpressions;
-	split( sParam, ",", arrayMultiplierExpressions );
+	auto arrayMultiplierExpressions = Rage::split(sParam, ",");
 
 	for (auto &expression: arrayMultiplierExpressions)
 	{
-		vector<RString> arrayMultiplierValues;
-		split( expression, "=", arrayMultiplierValues );
+		auto arrayMultiplierValues = Rage::split(expression, "=");
 		unsigned size = arrayMultiplierValues.size();
 		if( size < 2 )
 		{
@@ -46,13 +44,11 @@ void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, con
 
 void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 {
-	vector<RString> vs1;
-	split( sParam, ",", vs1 );
+	auto vs1 = Rage::split(sParam, ",");
 
 	for (auto const &s1: vs1)
 	{
-		vector<RString> vs2;
-		split( s1, "=", vs2 );
+		auto vs2 = Rage::split(s1, "=");
 
 		if( vs2.size() < 2 )
 		{
@@ -88,15 +84,12 @@ void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 
 void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int rowsPerBeat )
 {
-	vector<RString> vs1;
-	split( line, ",", vs1 );
+	auto vs1 = Rage::split(line, ",");
 
 	for (auto s1 = vs1.begin(); s1 != vs1.end(); ++s1)
 	{
-		vector<RString> vs2;
-		vs2.clear(); // trying something.
 		RString loopTmp = Rage::trim(*s1);
-		split( loopTmp, "=", vs2 );
+		auto vs2 = Rage::split(loopTmp, "=");
 
 		if( vs2.size() == 2 ) // First one always seems to have 2.
 		{
@@ -291,11 +284,9 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 			 * becomes so, make adjustments to this code. */
 			if( iRowsPerBeat < 0 )
 			{
-				vector<RString> arrayBeatChangeExpressions;
-				split( sParams[1], ",", arrayBeatChangeExpressions );
+				auto arrayBeatChangeExpressions = Rage::split(sParams[1], ",");
 
-				vector<RString> arrayBeatChangeValues;
-				split( arrayBeatChangeExpressions[0], "=", arrayBeatChangeValues );
+				auto arrayBeatChangeValues = Rage::split(arrayBeatChangeExpressions[0], "=");
 				iRowsPerBeat = StringToInt(arrayBeatChangeValues[1]);
 			}
 			else
@@ -353,8 +344,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 		else if( sValueName=="FGCHANGES" )
 		{
-			vector<RString> aFGChangeExpressions;
-			split( sParams[1], ",", aFGChangeExpressions );
+			auto aFGChangeExpressions = Rage::split(sParams[1], ",");
 
 			for (auto &expression: aFGChangeExpressions)
 			{
@@ -422,7 +412,9 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 		else if( sValueName=="KEYSOUNDS" )
 		{
-			split( sParams[1], ",", out.m_vsKeysoundFile );
+			// Do not assume this is empty.
+			auto toDump = Rage::split(sParams[1], ",");
+			out.m_vsKeysoundFile.insert(out.m_vsKeysoundFile.end(), std::make_move_iterator(toDump.begin()), std::make_move_iterator(toDump.end()));
 		}
 
 		// Attacks loaded from file

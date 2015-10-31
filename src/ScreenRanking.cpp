@@ -101,8 +101,7 @@ void ScreenRanking::Init()
 		this->AddChild( &m_textCourseTitle );
 		LOAD_ALL_COMMANDS( m_textCourseTitle );
 
-		vector<RString> asCoursePaths;
-		split( COURSES_TO_SHOW.GetValue(), ",", asCoursePaths, true );
+		auto asCoursePaths = Rage::split(COURSES_TO_SHOW.GetValue(), ",", Rage::EmptyEntries::skip);
 		for( unsigned i=0; i<STEPS_TYPES_TO_SHOW.GetValue().size(); i++ )
 		{
 			for( unsigned c=0; c<asCoursePaths.size(); c++ )

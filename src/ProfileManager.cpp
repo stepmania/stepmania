@@ -225,7 +225,8 @@ void ProfileManager::GetMemoryCardProfileDirectoriesToTry( vector<RString> &asDi
 	asDirsToTry.push_back( PREFSMAN->m_sMemoryCardProfileSubdir.ToString() );
 
 	/* If that failed, try loading from all fallback directories. */
-	split( g_sMemoryCardProfileImportSubdirs.Get(), ";", asDirsToTry, true );
+	auto toDump = Rage::split(g_sMemoryCardProfileImportSubdirs.Get(), ";", Rage::EmptyEntries::skip);
+	asDirsToTry.insert(asDirsToTry.end(), std::make_move_iterator(toDump.begin()), std::make_move_iterator(toDump.end()));
 }
 
 bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn, bool bLoadEdits )

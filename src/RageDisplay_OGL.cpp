@@ -487,8 +487,7 @@ RString RageDisplay_Legacy::Init( const VideoModeParams &p, bool bAllowUnacceler
 	LOG->Info( "OGL Extensions:" );
 	{
 		const char *szExtensionString = (const char *) glGetString(GL_EXTENSIONS);
-		vector<RString> asExtensions;
-		split( szExtensionString, " ", asExtensions );
+		auto asExtensions = Rage::split(szExtensionString, " ");
 		sort( asExtensions.begin(), asExtensions.end() );
 		size_t iNextToPrint = 0;
 		while( iNextToPrint < asExtensions.size() )
@@ -503,11 +502,11 @@ RString RageDisplay_Legacy::Init( const VideoModeParams &p, bool bAllowUnacceler
 				{
 					sThisType = Rage::join( "_", asBits.begin(), asBits.begin()+2 );
 				}
-                if (i > iNextToPrint && sThisType != sType)
+				if (i > iNextToPrint && sThisType != sType)
 				{
 					break;
 				}
-                sType = sThisType;
+				sType = sThisType;
 				iLastToPrint = i;
 			}
 
@@ -525,7 +524,9 @@ RString RageDisplay_Legacy::Init( const VideoModeParams &p, bool bAllowUnacceler
 				auto sShortExt = Rage::join( "_", asBits.begin()+2, asBits.end() );
 				sList += sShortExt;
 				if (iNextToPrint < iLastToPrint)
+				{
 					sList += ", ";
+				}
 				if (iNextToPrint == iLastToPrint || sList.size() + asExtensions[iNextToPrint+1].size() > 120)
 				{
 					LOG->Info( "%s", sList.c_str() );

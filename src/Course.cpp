@@ -742,7 +742,7 @@ const Style *Course::GetCourseStyle( const Game *pGame, int iNumPlayers ) const
 
 	for (auto const *pStyle: vpStyles)
 	{
-		Rage::ci_ascii_string styleName{ pStyle->m_szName };
+		Rage::ci_ascii_string styleName{ pStyle->m_szName.c_str() };
 		for (auto const &style: m_setStyles)
 		{
 			if (styleName == style)
@@ -939,18 +939,14 @@ void Course::UpdateCourseStats( StepsType st )
 
 bool Course::IsRanking() const
 {
-	vector<RString> rankingsongs;
-
-	split(THEME->GetMetric("ScreenRanking", "CoursesToShow"), ",", rankingsongs);
+	auto rankingSongs = Rage::split(THEME->GetMetric("ScreenRanking", "CoursesToShow"), ",");
 	Rage::ci_ascii_string path{ m_sPath.c_str() };
-	for (unsigned i = 0; i < rankingsongs.size(); i++)
-	{
-		if (path == rankingsongs[i])
-		{
-			return true;
-		}
-	}
-	return false;
+
+	auto doesRank = [&path](std::string const &song) {
+		return path == song;
+	};
+
+	return std::any_of(rankingSongs.cbegin(), rankingSongs.cend(), doesRank);
 }
 
 const CourseEntry *Course::FindFixedSong( const Song *pSong ) const
@@ -1021,8 +1017,7 @@ bool Course::Matches( RString sGroup, RString sCourse ) const
 	if (!sFile.empty())
 	{
 		Rage::replace(sFile, '\\', '/');
-		vector<RString> bits;
-		split(sFile, "/", bits);
+		auto bits = Rage::split(sFile, "/");
 		const RString &sLastBit = bits[bits.size() - 1];
 		if (course == sLastBit)
 		{

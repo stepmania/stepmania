@@ -173,12 +173,12 @@ static LocalizedString INPUT_HANDLERS_EMPTY( "Arch", "Input Handlers cannot be e
 void InputHandler::Create( const RString &drivers_, vector<InputHandler *> &Add )
 {
 	const RString drivers = drivers_.empty()? RString(DEFAULT_INPUT_DRIVER_LIST):drivers_;
-	vector<RString> DriversToTry;
-	split( drivers, ",", DriversToTry, true );
+	auto DriversToTry = Rage::split( drivers, ",", Rage::EmptyEntries::skip );
 
 	if( DriversToTry.empty() )
+	{
 		RageException::Throw( "%s", INPUT_HANDLERS_EMPTY.GetValue().c_str() );
-
+	}
 	for (auto const &s: DriversToTry)
 	{
 		RageDriver *pDriver = InputHandler::m_pDriverList.Create( s );

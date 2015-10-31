@@ -80,7 +80,6 @@ bool WinMoveFile( RString sOldPath, RString sNewPath )
 bool CreateDirectories( RString Path )
 {
 	// XXX: handle "//foo/bar" paths in Windows
-	vector<RString> parts;
 	RString curpath;
 
 	// If Path is absolute, add the initial slash ("ignore empty" will remove it).
@@ -89,12 +88,14 @@ bool CreateDirectories( RString Path )
 		curpath = "/";
 	}
 	// Ignore empty, so eg. "/foo/bar//baz" doesn't try to create "/foo/bar" twice.
-	split( Path, "/", parts, true );
+	auto parts = Rage::split(Path, "/", Rage::EmptyEntries::skip);
 
 	for(unsigned i = 0; i < parts.size(); ++i)
 	{
 		if( i )
+		{
 			curpath += "/";
+		}
 		curpath += parts[i];
 
 #if defined(WIN32)

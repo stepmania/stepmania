@@ -11,10 +11,8 @@
 
 using std::vector;
 
-#define CHOICE_NAMES		THEME->GetMetric (m_sName,"ChoiceNames")
 #define CHOICE( s )		THEME->GetMetric (m_sName,fmt::sprintf("Choice%s",s.c_str()))
 #define IDLE_TIMEOUT_SCREEN	THEME->GetMetric (m_sName,"IdleTimeoutScreen")
-#define UPDATE_ON_MESSAGE	THEME->GetMetric (m_sName,"UpdateOnMessage")
 
 void ScreenSelect::Init()
 {
@@ -25,7 +23,8 @@ void ScreenSelect::Init()
 	ScreenWithMenuElements::Init();
 
 	// Load messages to update on
-	split( UPDATE_ON_MESSAGE, ",", m_asSubscribedMessages );
+	auto toDump = Rage::split(THEME->GetMetric(m_sName, "UpdateOnMessage"), ",");
+	m_asSubscribedMessages.insert(m_asSubscribedMessages.end(), std::make_move_iterator(toDump.begin()), std::make_move_iterator(toDump.end()));
 	for (auto &message: m_asSubscribedMessages)
 	{
 		MESSAGEMAN->Subscribe(this, message);
@@ -37,7 +36,7 @@ void ScreenSelect::Init()
 	}
 	// Load choices
 	// Allow lua as an alternative to metrics.
-	RString choice_names= CHOICE_NAMES;
+	RString choice_names = THEME->GetMetric(m_sName,"ChoiceNames");
 	if (Rage::starts_with(choice_names, "lua,"))
 	{
 		RString command = Rage::tail(choice_names, -4);
@@ -81,8 +80,7 @@ void ScreenSelect::Init()
 		// Each element in the list is a choice name. This level of indirection
 		// makes it easier to add or remove items without having to change a
 		// bunch of indices.
-		vector<RString> asChoiceNames;
-		split( CHOICE_NAMES, ",", asChoiceNames, true );
+		auto asChoiceNames = Rage::split(THEME->GetMetric (m_sName,"ChoiceNames"), ",", Rage::EmptyEntries::skip );
 
 		for( unsigned c=0; c<asChoiceNames.size(); c++ )
 		{

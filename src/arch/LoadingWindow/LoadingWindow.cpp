@@ -9,16 +9,15 @@ using std::vector;
 LoadingWindow *LoadingWindow::Create()
 {
 	if( !PREFSMAN->m_bShowLoadingWindow )
+	{
 		return new LoadingWindow_Null;
+	}
 #if defined(UNIX) && !defined(HAVE_GTK)
 	return new LoadingWindow_Null;
 #endif
 	// Don't load nullptr by default.
 	const RString drivers = "win32,macosx,gtk";
-	vector<RString> DriversToTry;
-	split( drivers, ",", DriversToTry, true );
-
-	ASSERT( DriversToTry.size() != 0 );
+	auto DriversToTry = Rage::split(drivers, ",", Rage::EmptyEntries::skip);
 
 	RString Driver;
 	LoadingWindow *ret = nullptr;

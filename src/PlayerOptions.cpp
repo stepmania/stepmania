@@ -334,8 +334,7 @@ void PlayerOptions::GetMods( vector<std::string> &AddTo, bool bForceNoteSkin ) c
 void PlayerOptions::FromString( std::string const &sMultipleMods )
 {
 	RString sTemp = sMultipleMods;
-	vector<RString> vs;
-	split( sTemp, ",", vs, true );
+	auto vs = Rage::split(sTemp, ",", Rage::EmptyEntries::skip);
 	RString sThrowAway;
 	for (auto &s: vs)
 	{
@@ -358,8 +357,7 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 
 	float level = 1;
 	float speed = 1;
-	vector<RString> asParts;
-	split( sBit, " ", asParts, true );
+	auto asParts = Rage::split(sBit, " ", Rage::EmptyEntries::skip);
 
 	for (auto const &s: asParts)
 	{
@@ -385,7 +383,7 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 		}
 		else if( s[0]=='*' )
 		{
-			sscanf( s, "*%f", &speed );
+			std::sscanf( s.c_str(), "*%f", &speed );
 			if( !std::isfinite(speed) )
 			{
 				speed = 1.0f;

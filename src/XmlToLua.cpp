@@ -298,7 +298,7 @@ void actor_template_t::store_cmd(RString const& cmd_name, RString const& full_cm
 		vector<std::string> args = Rage::split(*cmd, ",", Rage::EmptyEntries::skip);
 		if(!args.empty())
 		{
-			for(auto arg= args.begin(); arg != args.end(); ++arg)
+			for(auto arg = args.begin(); arg != args.end(); ++arg)
 			{
 				size_t first_nonspace= 0;
 				size_t last_nonspace= arg->size();
@@ -335,7 +335,7 @@ void actor_template_t::store_cmd(RString const& cmd_name, RString const& full_cm
 		size_t states_in_curr= 0;
 		RString this_name= cmd_name;
 		vector<std::string> curr_cmd;
-		for(auto cmd= cmds.begin(); cmd != cmds.end(); ++cmd)
+		for(auto cmd = cmds.begin(); cmd != cmds.end(); ++cmd)
 		{
 			curr_cmd.push_back(*cmd);
 			auto args = Rage::split(*cmd, ",", Rage::EmptyEntries::skip);

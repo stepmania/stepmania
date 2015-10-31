@@ -17,10 +17,7 @@ static Preference<std::string> g_sIgnoredDialogs( "IgnoredDialogs", "" );
 DialogDriver *MakeDialogDriver()
 {
 	RString sDrivers = "win32,cocoa,null";
-	vector<RString> asDriversToTry;
-	split( sDrivers, ",", asDriversToTry, true );
-
-	ASSERT( asDriversToTry.size() != 0 );
+	auto asDriversToTry = Rage::split(sDrivers, ",", Rage::EmptyEntries::skip);
 
 	RString sDriver;
 	DialogDriver *pRet = nullptr;
@@ -89,18 +86,16 @@ void Dialog::Shutdown()
 static bool MessageIsIgnored( RString sID )
 {
 #if !defined(SMPACKAGE)
-	vector<RString> asList;
-	split( g_sIgnoredDialogs.Get(), ",", asList );
+	auto asList = Rage::split(g_sIgnoredDialogs, ",");
 	Rage::ci_ascii_string ciId{ sID.c_str() };
-	for (unsigned i = 0; i < asList.size(); ++i)
-	{
-		if (ciId == asList[i])
-		{
-			return true;
-		}
-	}
-#endif
+
+	auto shouldIgnore = [&ciId](std::string const &item) {
+		return ciId == item;
+	};
+	return std::any_of(asList.cbegin(), asList.cend(), shouldIgnore);
+#else
 	return false;
+#endif
 }
 
 void Dialog::IgnoreMessage( RString sID )
@@ -110,7 +105,9 @@ void Dialog::IgnoreMessage( RString sID )
 	if( PREFSMAN == nullptr )
 	{
 		if( sID != "" && LOG )
+		{
 			LOG->Warn( "Dialog: message \"%s\" set ID too early for ignorable messages", sID.c_str() );
+		}
 		return;
 	}
 
@@ -134,11 +131,13 @@ void Dialog::Error( RString sMessage, RString sID )
 	Dialog::Init();
 
 	if( LOG )
+	{
 		LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), sID.c_str() );
-
+	}
 	if( sID != "" && MessageIsIgnored(sID) )
+	{
 		return;
-
+	}
 	RageThread::SetIsShowingDialog( true );
 
 	g_pImpl->Error( sMessage, sID );
@@ -156,19 +155,24 @@ void Dialog::OK( RString sMessage, RString sID )
 	Dialog::Init();
 
 	if( LOG )
+	{
 		LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), sID.c_str() );
-
+	}
 	if( sID != "" && MessageIsIgnored(sID) )
+	{
 		return;
-
+	}
 	RageThread::SetIsShowingDialog( true );
 
 	// only show Dialog if windowed
 	if( DialogsEnabled() )
+	{
 		g_pImpl->OK( sMessage, sID );	// call derived version
+	}
 	else
+	{
 		g_NullDriver.OK( sMessage, sID );
-
+	}
 	RageThread::SetIsShowingDialog( false );
 }
 
@@ -177,20 +181,25 @@ Dialog::Result Dialog::OKCancel( RString sMessage, RString sID )
 	Dialog::Init();
 
 	if( LOG )
+	{
 		LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), sID.c_str() );
-
+	}
 	if( sID != "" && MessageIsIgnored(sID) )
+	{
 		return g_NullDriver.OKCancel( sMessage, sID );
-
+	}
 	RageThread::SetIsShowingDialog( true );
 
 	// only show Dialog if windowed
 	Dialog::Result ret;
 	if( DialogsEnabled() )
+	{
 		ret = g_pImpl->OKCancel( sMessage, sID ); // call derived version
+	}
 	else
+	{
 		ret = g_NullDriver.OKCancel( sMessage, sID );
-
+	}
 	RageThread::SetIsShowingDialog( false );
 
 	return ret;
@@ -201,20 +210,25 @@ Dialog::Result Dialog::AbortRetryIgnore( RString sMessage, RString sID )
 	Dialog::Init();
 
 	if( LOG )
+	{
 		LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), sID.c_str() );
-
+	}
 	if( sID != "" && MessageIsIgnored(sID) )
+	{
 		return g_NullDriver.AbortRetryIgnore( sMessage, sID );
-
+	}
 	RageThread::SetIsShowingDialog( true );
 
 	// only show Dialog if windowed
 	Dialog::Result ret;
 	if( DialogsEnabled() )
+	{
 		ret = g_pImpl->AbortRetryIgnore( sMessage, sID );	// call derived version
+	}
 	else
+	{
 		ret = g_NullDriver.AbortRetryIgnore( sMessage, sID );
-
+	}
 	RageThread::SetIsShowingDialog( false );
 
 	return ret;
@@ -225,20 +239,25 @@ Dialog::Result Dialog::AbortRetry( RString sMessage, RString sID )
 	Dialog::Init();
 
 	if( LOG )
+	{
 		LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), sID.c_str() );
-
+	}
 	if( sID != "" && MessageIsIgnored(sID) )
+	{
 		return g_NullDriver.AbortRetry( sMessage, sID );
-
+	}
 	RageThread::SetIsShowingDialog( true );
 
 	// only show Dialog if windowed
 	Dialog::Result ret;
 	if( DialogsEnabled() )
+	{
 		ret = g_pImpl->AbortRetry( sMessage, sID );	// call derived version
+	}
 	else
+	{
 		ret = g_NullDriver.AbortRetry( sMessage, sID );
-
+	}
 	RageThread::SetIsShowingDialog( false );
 
 	return ret;
@@ -249,20 +268,25 @@ Dialog::Result Dialog::YesNo( RString sMessage, RString sID )
 	Dialog::Init();
 
 	if( LOG )
+	{
 		LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), sID.c_str() );
-
+	}
 	if( sID != "" && MessageIsIgnored(sID) )
+	{
 		return g_NullDriver.YesNo( sMessage, sID );
-
+	}
 	RageThread::SetIsShowingDialog( true );
 
 	// only show Dialog if windowed
 	Dialog::Result ret;
 	if( DialogsEnabled() )
+	{
 		ret = g_pImpl->YesNo( sMessage, sID );	// call derived version
+	}
 	else
+	{
 		ret = g_NullDriver.YesNo( sMessage, sID );
-
+	}
 	RageThread::SetIsShowingDialog( false );
 
 	return ret;

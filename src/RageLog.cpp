@@ -88,8 +88,7 @@ RageLog::~RageLog()
 {
 	/* Add the mapped log data to info.txt. */
 	const RString AdditionalLog = GetAdditionalLog();
-	vector<RString> AdditionalLogLines;
-	split( AdditionalLog, "\n", AdditionalLogLines );
+	auto AdditionalLogLines = Rage::split(AdditionalLog, "\n");
 	for (auto &line: AdditionalLogLines)
 	{
 		this->Info( Rage::trim(line) );
@@ -191,8 +190,7 @@ void RageLog::Write( WriteDest where, std::string const &line )
 	LockMut( *g_Mutex );
 
 	const char *const sWarningSeparator = "/////////////////////////////////////////";
-	vector<RString> lines;
-	split( line, "\n", lines, false );
+	auto lines = Rage::split(line, "\n", Rage::EmptyEntries::include);
 	bool containsLoud = flags(where & WriteDest::Loud);
 	bool containsInfo = flags(where & WriteDest::Info);
 	if( containsLoud )
@@ -214,14 +212,21 @@ void RageLog::Write( WriteDest where, std::string const &line )
 			str = sWarning + str;
 		}
 		if( m_bShowLogOutput || containsInfo )
-			puts(str); //fputws( (const wchar_t *)str.c_str(), stdout );
+		{
+			puts(str.c_str());
+		}
 		if( containsInfo )
+		{
 			AddToInfo( str );
+		}
 		if( m_bLogToDisk && containsInfo && g_fileInfo->IsOpen() )
+		{
 			g_fileInfo->PutLine( str );
+		}
 		if( m_bUserLogToDisk && (flags(where & WriteDest::UserLog)) && g_fileUserLog->IsOpen() )
+		{
 			g_fileUserLog->PutLine( str );
-
+		}
 		/* Add a timestamp to log.txt and RecentLogs, but not the rest of info.txt
 		 * and stdout. */
 		str = sTimestamp + str;
@@ -233,9 +238,10 @@ void RageLog::Write( WriteDest where, std::string const &line )
 		AddToRecentLogs( str );
 
 		if( m_bLogToDisk && g_fileLog->IsOpen() )
+		{
 			g_fileLog->PutLine( str );
+		}
 	}
-
 	if( containsLoud )
 	{
 		if( m_bLogToDisk && g_fileLog->IsOpen() )

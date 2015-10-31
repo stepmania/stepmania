@@ -75,8 +75,7 @@ void ScreenMapControllers::Init()
 	else
 	{
 		/* Map the specified buttons. */
-		vector<RString> asBits;
-		split( sButtons, ",", asBits );
+		auto asBits = Rage::split(sButtons, ",");
 		for (auto &bit: asBits)
 		{
 			KeyToMap k;

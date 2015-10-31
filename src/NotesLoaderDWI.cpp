@@ -644,13 +644,10 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
 
 		else if(tagName == "FREEZE" )
 		{
-			vector<RString> arrayFreezeExpressions;
-			split( sParams[1], ",", arrayFreezeExpressions );
-
+			auto arrayFreezeExpressions = Rage::split( sParams[1], "," );
 			for (auto &freeze: arrayFreezeExpressions)
 			{
-				vector<RString> arrayFreezeValues;
-				split( freeze, "=", arrayFreezeValues );
+				auto arrayFreezeValues = Rage::split(freeze, "=");
 				if( arrayFreezeValues.size() != 2 )
 				{
 					LOG->UserLog( "Song file", sPath, "has an invalid FREEZE: '%s'.", freeze.c_str() );
@@ -666,13 +663,11 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
 
 		else if(tagName == "CHANGEBPM" || tagName == "BPMCHANGE" )
 		{
-			vector<RString> arrayBPMChangeExpressions;
-			split( sParams[1], ",", arrayBPMChangeExpressions );
+			auto arrayBPMChangeExpressions = Rage::split(sParams[1], ",");
 
 			for (auto &change: arrayBPMChangeExpressions)
 			{
-				vector<RString> arrayBPMChangeValues;
-				split( change, "=", arrayBPMChangeValues );
+				auto arrayBPMChangeValues = Rage::split(change, "=");
 				if( arrayBPMChangeValues.size() != 2 )
 				{
 					LOG->UserLog( "Song file", sPath, "has an invalid CHANGEBPM: '%s'.", change.c_str() );

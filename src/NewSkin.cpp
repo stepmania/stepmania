@@ -774,8 +774,7 @@ bool NewSkinLoader::load_from_file(std::string const& path)
 		LUA->Release(L);
 		return false;
 	}
-	vector<RString> path_parts;
-	split(path, "/", path_parts);
+	auto path_parts = Rage::split(path, "/");
 	size_t name_index= 0;
 	if(path_parts.size() > 1)
 	{

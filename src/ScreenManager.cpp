@@ -316,8 +316,7 @@ void ScreenManager::ReloadOverlayScreens()
 
 	// reload overlay screens
 	RString sOverlays = THEME->GetMetric( "Common","OverlayScreens" );
-	vector<RString> asOverlays;
-	split( sOverlays, ",", asOverlays );
+	auto asOverlays = Rage::split(sOverlays, ",");
 	for (auto &overlay: asOverlays)
 	{
 		Screen *pScreen = MakeNewScreen( overlay );

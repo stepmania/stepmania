@@ -169,14 +169,10 @@ bool InputQueueCode::Load( RString sButtonsNames )
 {
 	m_aPresses.clear();
 
-	vector<RString> asPresses;
-	split( sButtonsNames, ",", asPresses, false );
+	auto asPresses = Rage::split( sButtonsNames, ",", Rage::EmptyEntries::include );
 	for (auto &sPress: asPresses)
 	{
-		vector<RString> asButtonNames;
-
-		split( sPress, "-", asButtonNames, false );
-
+		auto asButtonNames = Rage::split(sPress, "-", Rage::EmptyEntries::include);
 		if( asButtonNames.size() < 1 )
 		{
 			if( sButtonsNames != "" )

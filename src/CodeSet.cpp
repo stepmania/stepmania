@@ -6,20 +6,18 @@
 
 using std::vector;
 
-#define CODE_NAMES		THEME->GetMetric (sType,"CodeNames")
 #define CODE( s )		THEME->GetMetric (sType,fmt::sprintf("Code%s",s.c_str()))
 void InputQueueCodeSet::Load( const RString &sType )
 {
-	//
-	// Load codes
-	//
-	split( CODE_NAMES, ",", m_asCodeNames, true );
+	// Load the codes here. There is no guarantee that m_asCodeNames is not empty,
+	// so make a temporary to move it.
+	auto toDump = Rage::split(THEME->GetMetric(sType, "CodeNames"), ",", Rage::EmptyEntries::skip);
+	m_asCodeNames.insert(m_asCodeNames.end(), std::make_move_iterator(toDump.begin()), std::make_move_iterator(toDump.end()));
 
 	for (auto &name: m_asCodeNames)
 	{
-		vector<RString> asBits;
-		split( name, "=", asBits, true );
-		RString sCodeName = asBits[0];
+		auto asBits = Rage::split(name, "=", Rage::EmptyEntries::skip);
+		auto sCodeName = asBits[0];
 		if( asBits.size() > 1 )
 		{
 			name = asBits[1];

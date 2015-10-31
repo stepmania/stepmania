@@ -48,8 +48,7 @@ PlayAfterLaunchInfo DoInstalls( CommandLineActions::CommandLineArgs args );
 
 static void Parse(const RString &sDir, PlayAfterLaunchInfo &out)
 {
-	vector<RString> vsDirParts;
-	split(sDir, "/", vsDirParts, true);
+	auto vsDirParts = Rage::split(sDir, ",", Rage::EmptyEntries::skip);
 	// sanity check
 	if (vsDirParts.size() < 1)
 	{

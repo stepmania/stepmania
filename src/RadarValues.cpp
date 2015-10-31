@@ -91,8 +91,7 @@ RString RadarValues::ToString( int iMaxValues ) const
 
 void RadarValues::FromString( RString sRadarValues )
 {
-	vector<RString> saValues;
-	split( sRadarValues, ",", saValues, true );
+	auto saValues = Rage::split(sRadarValues, ",", Rage::EmptyEntries::skip);
 
 	if( saValues.size() != NUM_RadarCategory )
 	{

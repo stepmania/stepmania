@@ -262,20 +262,24 @@ static RString GetDirOfExecutable( RString argv0 )
 			if( !path )
 				path = _PATH_DEFPATH;
 
-			vector<RString> vPath;
-			split( path, ":", vPath );
+			auto vPath = Rage::split(path, ":");
 			for (auto &i: vPath)
 			{
-				if( access(i + "/" + argv0, X_OK|R_OK) )
+				if( access((i + "/" + argv0).c_str(), X_OK|R_OK) )
+				{
 					continue;
+				}
 				sPath = ExtractDirectory(ReadlinkRecursive(i + "/" + argv0));
 				break;
 			}
 			if( sPath.empty() )
+			{
 				sPath = GetCwd(); // What?
+			}
 			else if( sPath[0] != '/' ) // For example, if . is in $PATH.
+			{
 				sPath = GetCwd() + "/" + sPath;
-
+			}
 		}
 		else
 		{

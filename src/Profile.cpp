@@ -1701,21 +1701,19 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	{
 		RString pref_noteskins;
 		pNode->GetChildValue("PreferredNoteskins", pref_noteskins);
-		vector<RString> split_by_stype;
-		split(pref_noteskins, ";", split_by_stype);
+		auto split_by_stype = Rage::split(pref_noteskins, ";");
 		for(auto&& entry : split_by_stype)
 		{
-			vector<RString> parts;
-			split(entry, ",", parts);
+			auto parts = Rage::split(entry, ",");
 			if(parts.size() != 2)
 			{
 				continue;
 			}
+			std::string lowerParts = Rage::make_lower(parts[0]);
+			Rage::replace(lowerParts, '_', '-');
 			// I hate that StepsTypeToString and StringToStepsType don't used the
 			// same formatting. -Kyz
-			parts[0].MakeLower();
-			parts[0].Replace('_', '-');
-			StepsType stype= GAMEMAN->StringToStepsType(parts[0]);
+			StepsType stype= GAMEMAN->StringToStepsType(lowerParts);
 			if(stype == StepsType_Invalid)
 			{
 				continue;

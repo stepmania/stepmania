@@ -185,8 +185,7 @@ void SMSetBGChanges(SMSongTagInfo& info)
 }
 void SMSetFGChanges(SMSongTagInfo& info)
 {
-	vector<RString> aFGChangeExpressions;
-	split((*info.params)[1], ",", aFGChangeExpressions);
+	auto aFGChangeExpressions = Rage::split((*info.params)[1], ",");
 
 	for (auto &expression: aFGChangeExpressions)
 	{
@@ -197,7 +196,10 @@ void SMSetFGChanges(SMSongTagInfo& info)
 }
 void SMSetKeysounds(SMSongTagInfo& info)
 {
-	split((*info.params)[1], ",", info.song->m_vsKeysoundFile);
+	// Do not assume it's empty.
+	auto toDump = Rage::split((*info.params)[1], ",");
+	auto &soundFiles = info.song->m_vsKeysoundFile;
+	soundFiles.insert(soundFiles.end(), std::make_move_iterator(toDump.begin()), std::make_move_iterator(toDump.end()));
 }
 void SMSetAttacks(SMSongTagInfo& info)
 {
@@ -373,8 +375,7 @@ void SMLoader::ProcessBGChanges( Song &out, const RString &sValueName, const RSt
 	}
 	else
 	{
-		vector<RString> aBGChangeExpressions;
-		split( sParam, ",", aBGChangeExpressions );
+		auto aBGChangeExpressions = Rage::split(sParam, ",");
 
 		for (auto &expression: aBGChangeExpressions)
 		{
@@ -406,8 +407,7 @@ void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
 
 	for( unsigned j=1; j < params.params.size(); ++j )
 	{
-		vector<RString> sBits;
-		split( params[j], "=", sBits, false );
+		auto sBits = Rage::split(params[j], "=", Rage::EmptyEntries::include);
 
 		// Need an identifer and a value for this to work
 		if( sBits.size() < 2 )
@@ -416,11 +416,17 @@ void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
 		}
 		Rage::ci_ascii_string tagName{ Rage::trim(sBits[0]).c_str() };
 		if( tagName == "TIME" )
-			attack.fStartSecond = strtof( sBits[1], nullptr );
+		{
+			attack.fStartSecond = strtof( sBits[1].c_str(), nullptr );
+		}
 		else if( tagName == "LEN" )
-			attack.fSecsRemaining = strtof( sBits[1], nullptr );
+		{
+			attack.fSecsRemaining = strtof( sBits[1].c_str(), nullptr );
+		}
 		else if( tagName == "END" )
-			end = strtof( sBits[1], nullptr );
+		{
+			end = strtof( sBits[1].c_str(), nullptr );
+		}
 		else if( tagName == "MODS" )
 		{
 			attack.sModifiers = Rage::trim(sBits[1]);
@@ -440,30 +446,28 @@ void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
 
 void SMLoader::ProcessInstrumentTracks( Song &out, const RString &sParam )
 {
-	vector<RString> vs1;
-	split( sParam, ",", vs1 );
+	auto vs1 = Rage::split(sParam, ",");
 	for (auto const &s: vs1)
 	{
-		vector<RString> vs2;
-		split( s, "=", vs2 );
+		auto vs2 = Rage::split(s, "=");
 		if( vs2.size() >= 2 )
 		{
 			InstrumentTrack it = StringToInstrumentTrack( vs2[0] );
 			if( it != InstrumentTrack_Invalid )
+			{
 				out.m_sInstrumentTrackFile[it] = vs2[1];
+			}
 		}
 	}
 }
 
 void SMLoader::ParseBPMs( vector< std::pair<float, float> > &out, const RString line, const int rowsPerBeat )
 {
-	vector<RString> arrayBPMChangeExpressions;
-	split( line, ",", arrayBPMChangeExpressions );
+	auto arrayBPMChangeExpressions = Rage::split(line, ",");
 
 	for (auto const &expression: arrayBPMChangeExpressions)
 	{
-		vector<RString> arrayBPMChangeValues;
-		split( expression, "=", arrayBPMChangeValues );
+		auto arrayBPMChangeValues = Rage::split(expression, "=");
 		if( arrayBPMChangeValues.size() != 2 )
 		{
 			LOG->UserLog("Song file",
@@ -487,13 +491,11 @@ void SMLoader::ParseBPMs( vector< std::pair<float, float> > &out, const RString 
 
 void SMLoader::ParseStops( vector< std::pair<float, float> > &out, const RString line, const int rowsPerBeat )
 {
-	vector<RString> arrayFreezeExpressions;
-	split( line, ",", arrayFreezeExpressions );
+	auto arrayFreezeExpressions = Rage::split(line, ",");
 
 	for (auto const &expression: arrayFreezeExpressions)
 	{
-		vector<RString> arrayFreezeValues;
-		split( expression, "=", arrayFreezeValues );
+		auto arrayFreezeValues = Rage::split(expression, "=");
 		if( arrayFreezeValues.size() != 2 )
 		{
 			LOG->UserLog("Song file",
@@ -753,13 +755,11 @@ void SMLoader::ProcessBPMsAndStops(TimingData &out,
 
 void SMLoader::ProcessDelays( TimingData &out, const RString line, const int rowsPerBeat )
 {
-	vector<RString> arrayDelayExpressions;
-	split( line, ",", arrayDelayExpressions );
+	auto arrayDelayExpressions = Rage::split(line, ",");
 
 	for (auto const &expression: arrayDelayExpressions)
 	{
-		vector<RString> arrayDelayValues;
-		split( expression, "=", arrayDelayValues );
+		auto arrayDelayValues = Rage::split(expression, "=");
 		if( arrayDelayValues.size() != 2 )
 		{
 			LOG->UserLog("Song file",
@@ -785,13 +785,11 @@ void SMLoader::ProcessDelays( TimingData &out, const RString line, const int row
 
 void SMLoader::ProcessTimeSignatures( TimingData &out, const RString line, const int rowsPerBeat )
 {
-	vector<RString> vs1;
-	split( line, ",", vs1 );
+	auto vs1 = Rage::split(line, ",");
 
 	for (auto const &s1: vs1)
 	{
-		vector<RString> vs2;
-		split( s1, "=", vs2 );
+		auto vs2 = Rage::split(s1, "=");
 
 		if( vs2.size() < 3 )
 		{
@@ -839,13 +837,11 @@ void SMLoader::ProcessTimeSignatures( TimingData &out, const RString line, const
 
 void SMLoader::ProcessTickcounts( TimingData &out, const RString line, const int rowsPerBeat )
 {
-	vector<RString> arrayTickcountExpressions;
-	split( line, ",", arrayTickcountExpressions );
+	auto arrayTickcountExpressions = Rage::split(line, ",");
 
 	for (auto const &expression: arrayTickcountExpressions)
 	{
-		vector<RString> arrayTickcountValues;
-		split( expression, "=", arrayTickcountValues );
+		auto arrayTickcountValues = Rage::split(expression, "=");
 		if( arrayTickcountValues.size() != 2 )
 		{
 			LOG->UserLog("Song file",
@@ -856,7 +852,7 @@ void SMLoader::ProcessTickcounts( TimingData &out, const RString line, const int
 		}
 
 		const float fTickcountBeat = RowToBeat( arrayTickcountValues[0], rowsPerBeat );
-		int iTicks = Rage::clamp(atoi( arrayTickcountValues[1] ), 0, ROWS_PER_BEAT);
+		int iTicks = Rage::clamp(std::stoi( arrayTickcountValues[1] ), 0, ROWS_PER_BEAT);
 
 		out.AddSegment( TickcountSegment(BeatToNoteRow(fTickcountBeat), iTicks) );
 	}
@@ -864,17 +860,19 @@ void SMLoader::ProcessTickcounts( TimingData &out, const RString line, const int
 
 void SMLoader::ProcessSpeeds( TimingData &out, const RString line, const int rowsPerBeat )
 {
-	vector<RString> vs1;
-	split( line, ",", vs1 );
+	auto vs1 = Rage::split(line, ",");
 
-	for (auto s1 = vs1.begin(); s1 != vs1.end(); ++s1)
+	for (auto s1: vs1)
 	{
-		vector<RString> vs2;
-		split( *s1, "=", vs2 );
+		auto vs2 = Rage::split(s1, "=");
 
-		if( vs2[0] == 0 && vs2.size() == 2 ) // First one always seems to have 2.
+		if (vs2.size() == 2)
 		{
-			vs2.push_back("0");
+			// Make sure we don't cast all the dang time. Also, first one almost always has 2.
+			if (StringToFloat(vs2[0]) == 0.f)
+			{
+				vs2.push_back("0");
+			}
 		}
 
 		if( vs2.size() == 3 ) // use beats by default.
@@ -924,13 +922,11 @@ void SMLoader::ProcessSpeeds( TimingData &out, const RString line, const int row
 
 void SMLoader::ProcessFakes( TimingData &out, const RString line, const int rowsPerBeat )
 {
-	vector<RString> arrayFakeExpressions;
-	split( line, ",", arrayFakeExpressions );
+	auto arrayFakeExpressions = Rage::split(line, ",");
 
 	for (auto const &expression: arrayFakeExpressions)
 	{
-		vector<RString> arrayFakeValues;
-		split( expression, "=", arrayFakeValues );
+		auto arrayFakeValues = Rage::split(expression, "=");
 		if( arrayFakeValues.size() != 2 )
 		{
 			LOG->UserLog("Song file",
@@ -944,7 +940,9 @@ void SMLoader::ProcessFakes( TimingData &out, const RString line, const int rows
 		const float fSkippedBeats = StringToFloat( arrayFakeValues[1] );
 
 		if(fSkippedBeats > 0)
+		{
 			out.AddSegment( FakeSegment(BeatToNoteRow(fBeat), fSkippedBeats) );
+		}
 		else
 		{
 			LOG->UserLog("Song file",
@@ -958,8 +956,7 @@ void SMLoader::ProcessFakes( TimingData &out, const RString line, const int rows
 bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression )
 {
 	using std::min;
-	vector<RString> aBGChangeValues;
-	split( sBGChangeExpression, "=", aBGChangeValues, false );
+	auto aBGChangeValues = Rage::split(sBGChangeExpression, "=", Rage::EmptyEntries::include);
 
 	aBGChangeValues.resize( min((int)aBGChangeValues.size(),11) );
 

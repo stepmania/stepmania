@@ -54,8 +54,7 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 {
 	vGameInputsOut.clear();
 
-	vector<RString> asGameButtons;
-	split( GAME_BUTTONS_TO_SHOW.GetValue(), ",", asGameButtons );
+	auto asGameButtons = Rage::split(GAME_BUTTONS_TO_SHOW, ",");
 	FOREACH_ENUM( GameController,  gc )
 	{
 		for (auto const &button: asGameButtons)

@@ -296,10 +296,10 @@ void NotesWriterSM::GetEditFileContents( const Song *pSong, const Steps *pSteps,
 	RString sDir = pSong->GetSongDir();
 
 	// "Songs/foo/bar"; strip off "Songs/".
-	auto asParts = Rage::split(sDir, "/");
-	if( asParts.size() )
+	auto parts = Rage::split(sDir, "/");
+	if( parts.size() )
 	{
-		sDir = Rage::join( "/", asParts.begin()+1, asParts.end() );
+		sDir = Rage::join( "/", parts.begin()+1, parts.end() );
 	}
 	sOut += fmt::sprintf( "#SONG:%s;\r\n", sDir.c_str() );
 	sOut += GetSMNotesTag( *pSong, *pSteps );
