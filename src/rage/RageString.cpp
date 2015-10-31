@@ -123,6 +123,168 @@ std::string Rage::join(std::string const &delimiter, std::vector<std::string>::c
 	return builder.str();
 }
 
+template <class S>
+static int DelimitorLength( S const &delimitor )
+{
+	return delimitor.size();
+}
+
+static int DelimitorLength( char delimitor )
+{
+	return 1;
+}
+
+static int DelimitorLength( wchar_t delimitor )
+{
+	return 1;
+}
+
+template <class S, class C>
+std::vector<S> do_split( S const &source, C const delimitor, Rage::EmptyEntries const shouldIgnore )
+{
+	std::vector<S> result;
+	/* Short-circuit if the source is empty; we want to return an empty vector if
+	 * the string is empty, even if bIgnoreEmpty is true. */
+	if( source.empty() )
+	{
+		return result;
+	}
+	size_t startpos = 0;
+
+	do {
+		size_t pos { source.find( delimitor, startpos ) };
+		if( pos == source.npos )
+		{
+			pos = source.size();
+		}
+		if( pos-startpos > 0 || shouldIgnore == Rage::EmptyEntries::include )
+		{
+			/* Optimization: if we're copying the whole string, avoid substr; this
+			 * allows this copy to be refcounted, which is much faster. */
+			if( startpos == 0 && pos - startpos == source.size() )
+			{
+				result.push_back(source);
+			}
+			else
+			{
+				S const target {source.substr(startpos, pos-startpos) };
+				result.push_back(target);
+			}
+		}
+
+		startpos = pos + DelimitorLength(delimitor);
+	} while ( startpos <= source.size() );
+
+	return result;
+}
+
+std::vector<std::string> Rage::split(std::string const &source, std::string const &delimiter)
+{
+	return Rage::split(source, delimiter, Rage::EmptyEntries::skip);
+}
+std::vector<std::string> Rage::split(std::string const &source, std::string const &delimiter, Rage::EmptyEntries shouldIgnoreEmptyEntries)
+{
+	if (delimiter.size() == 1)
+	{
+		// TODO: Look into an optimized character string tokenizer. Perhaps std::getline?
+		return do_split(source, delimiter[0], shouldIgnoreEmptyEntries);
+	}
+	return do_split(source, delimiter, shouldIgnoreEmptyEntries);
+}
+
+std::vector<std::wstring> Rage::split(std::wstring const &source, std::wstring const &delimiter)
+{
+	return Rage::split(source, delimiter, Rage::EmptyEntries::include);
+}
+std::vector<std::wstring> Rage::split(std::wstring const &source, std::wstring const &delimiter, Rage::EmptyEntries shouldIgnoreEmptyEntries)
+{
+	if (delimiter.size() == 1)
+	{
+		return do_split(source, delimiter[0], shouldIgnoreEmptyEntries);
+	}
+	return do_split(source, delimiter, shouldIgnoreEmptyEntries);
+}
+
+template <class S>
+void do_split( S const &source, S const &delimitor, int &start, int &size, int len, Rage::EmptyEntries const shouldIgnore )
+{
+	using std::min;
+	if( size != -1 )
+	{
+		// Start points to the beginning of the last delimiter. Move it up.
+		start += size + delimitor.size();
+		start = min( start, len );
+	}
+
+	size = 0;
+
+	if( shouldIgnore == Rage::EmptyEntries::skip )
+	{
+		while( start + delimitor.size() < source.size() &&
+			  !source.compare( start, delimitor.size(), delimitor ) )
+		{
+			++start;
+		}
+	}
+
+	/* Where's the string function to find within a substring?
+	 * C++ strings apparently are missing that ... */
+	size_t pos;
+	if( delimitor.size() == 1 )
+	{
+		pos = source.find( delimitor[0], start );
+	}
+	else
+	{
+		pos = source.find( delimitor, start );
+	}
+	if( pos == source.npos || static_cast<int>(pos) > len )
+	{
+		pos = len;
+	}
+	size = pos - start;
+}
+
+void Rage::split_in_place( std::string const &source, std::string const &delimitor, int &start, int &size )
+{
+	do_split(source, delimitor, start, size, source.size(), Rage::EmptyEntries::skip);
+}
+
+void Rage::split_in_place( std::string const &source, std::string const &delimitor, int &start, int &size, Rage::EmptyEntries shouldIgnore )
+{
+	do_split(source, delimitor, start, size, source.size(), shouldIgnore);
+}
+
+void Rage::split_in_place( std::wstring const &source, std::wstring const &delimitor, int &start, int &size )
+{
+	do_split(source, delimitor, start, size, source.size(), Rage::EmptyEntries::skip);
+}
+
+void Rage::split_in_place( std::wstring const &source, std::wstring const &delimitor, int &start, int &size, Rage::EmptyEntries shouldIgnore )
+{
+	do_split(source, delimitor, start, size, source.size(), shouldIgnore);
+}
+
+void Rage::split_in_place( std::string const &source, std::string const &delimitor, int &start, int &size, int len )
+{
+	do_split(source, delimitor, start, size, len, Rage::EmptyEntries::skip);
+}
+
+void Rage::split_in_place( std::string const &source, std::string const &delimitor, int &start, int &size, int len, Rage::EmptyEntries shouldIgnore )
+{
+	do_split(source, delimitor, start, size, len, shouldIgnore);
+}
+
+void Rage::split_in_place( std::wstring const &source, std::wstring const &delimitor, int &start, int &size, int len )
+{
+	do_split(source, delimitor, start, size, len, Rage::EmptyEntries::skip);
+}
+
+void Rage::split_in_place( std::wstring const &source, std::wstring const &delimitor, int &start, int &size, int len, Rage::EmptyEntries shouldIgnore )
+{
+	do_split(source, delimitor, start, size, len, shouldIgnore);
+}
+
 std::string Rage::trim_left(std::string const &source)
 {
 	return Rage::trim_left(source, "\r\n\t ");

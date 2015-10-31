@@ -288,6 +288,112 @@ GTEST_TEST(RageString, join_multiple_last_three_end)
 	EXPECT_EQ(target == "dwi^^bms^^ksf", true);
 }
 
+GTEST_TEST(RageString, split_empty)
+{
+	std::vector<std::string> nothing;
+	std::string empty{""};
+	EXPECT_EQ(nothing.size() == Rage::split(empty, " ").size(), true);
+}
+
+// TODO: Find a way to utilize Google Mock for the remaining split tests.
+GTEST_TEST(RageString, split_american_phone)
+{
+	std::string phone{"1-800-555-3253"}; // AKA, should be FAKE
+	std::vector<std::string> portions{"1", "800", "555", "3253"};
+	auto target = Rage::split(phone, "-");
+	EXPECT_EQ(portions.size() == target.size(), true);
+	for (int i = 0; i < portions.size(); ++i)
+	{
+		EXPECT_EQ(portions[i] == target[i], true);
+	}
+}
+
+GTEST_TEST(RageString, split_filetypes_include)
+{
+	std::string types{"ssc;sm;;dwi"};
+	std::vector<std::string> portions{"ssc", "sm", "", "dwi"};
+	auto target = Rage::split(types, ";", Rage::EmptyEntries::include);
+	EXPECT_EQ(portions.size() == target.size(), true);
+	for (int i = 0; i < portions.size(); ++i)
+	{
+		EXPECT_EQ(portions[i] == target[i], true);
+	}
+}
+
+GTEST_TEST(RageString, split_filetypes_skip)
+{
+	std::string types{"ssc;sm;;dwi"};
+	std::vector<std::string> portions{"ssc", "sm", "dwi"};
+	auto target = Rage::split(types, ";", Rage::EmptyEntries::skip);
+	EXPECT_EQ(portions.size() == target.size(), true);
+	for (int i = 0; i < portions.size(); ++i)
+	{
+		EXPECT_EQ(portions[i] == target[i], true);
+	}
+}
+
+GTEST_TEST(RageString, split_in_place_provided)
+{
+	std::string str { "a,b,c" };
+	int start = 0;
+	int size = -1;
+	for(;;)
+	{
+		Rage::split_in_place(str, ",", start, size);
+		if (start == str.size())
+		{
+			break;
+		}
+		str[start] = 'Q';
+	}
+	EXPECT_EQ(str == "Q,Q,Q", true);
+}
+
+GTEST_TEST(RageString, split_in_place_simple)
+{
+	std::string types{"ssc;sm;;dwi"};
+	int start = 0;
+	int size = -1;
+	Rage::split_in_place(types, ";", start, size);
+	EXPECT_EQ(size == 3, true);
+}
+
+GTEST_TEST(RageString, split_in_place_advanced_skip)
+{
+	std::string types{"ssc;sm;;dwi"};
+	int start = 5;
+	int size = -1;
+	Rage::split_in_place(types, ";", start, size);
+	EXPECT_EQ(size == 1, true);
+}
+
+GTEST_TEST(RageString, split_in_place_advanced_skip_2)
+{
+	std::string types{"ssc;sm;;dwi"};
+	int start = 6;
+	int size = -1;
+	Rage::split_in_place(types, ";", start, size);
+	EXPECT_EQ(size == 3, true);
+}
+
+GTEST_TEST(RageString, split_in_place_advanced_include)
+{
+	std::string types{"ssc;sm;;dwi"};
+	int start = 5;
+	int size = -1;
+	Rage::split_in_place(types, ";", start, size, Rage::EmptyEntries::include);
+	EXPECT_EQ(size == 1, true);
+}
+
+GTEST_TEST(RageString, split_in_place_advanced_include_2)
+{
+	std::string types{"ssc;sm;;dwi"};
+	int start = 6;
+	int size = -1;
+	Rage::split_in_place(types, ";", start, size, Rage::EmptyEntries::include);
+	EXPECT_EQ(size == 0, true);
+}
+
 GTEST_TEST(RageString, trim_left_whitespace)
 {
 	std::string initial{" \r\n\t\r\n  hello"};
