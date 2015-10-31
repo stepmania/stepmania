@@ -10,6 +10,7 @@
 #include "SpecialFiles.h"
 #include "LocalizedString.h"
 #include "arch/Dialog/Dialog.h"
+#include <numeric>
 
 using std::vector;
 
@@ -929,21 +930,21 @@ bool InputMapper::IsBeingPressed( GameButton MenuI, PlayerNumber pn ) const
 {
 	vector<GameInput> GameI;
 	MenuToGame( MenuI, pn, GameI );
-	for( size_t i=0; i<GameI.size(); i++ )
-		if( IsBeingPressed(GameI[i]) )
-			return true;
-
-	return false;
+	
+	auto isPressed = [this](GameInput const &input) {
+		return IsBeingPressed(input);
+	};
+	
+	return std::any_of(GameI.begin(), GameI.end(), isPressed);
 }
 
 bool InputMapper::IsBeingPressed(const vector<GameInput>& GameI, MultiPlayer mp, const DeviceInputList *pButtonState ) const
 {
-	bool pressed= false;
-	for(size_t i= 0; i < GameI.size(); ++i)
-	{
-		pressed |= IsBeingPressed(GameI[i], mp, pButtonState);
-	}
-	return pressed;
+	auto isPressed = [this, mp, pButtonState](GameInput const &input) {
+		return IsBeingPressed(input, mp, pButtonState);
+	};
+	
+	return std::any_of(GameI.begin(), GameI.end(), isPressed);
 }
 
 void InputMapper::RepeatStopKey( const GameInput &GameI )
@@ -961,8 +962,10 @@ void InputMapper::RepeatStopKey( GameButton MenuI, PlayerNumber pn )
 {
 	vector<GameInput> GameI;
 	MenuToGame( MenuI, pn, GameI );
-	for( size_t i=0; i<GameI.size(); i++ )
-		RepeatStopKey( GameI[i] );
+	for (auto &input: GameI)
+	{
+		RepeatStopKey( input );
+	}
 }
 
 float InputMapper::GetSecsHeld( const GameInput &GameI, MultiPlayer mp ) const
@@ -986,15 +989,16 @@ float InputMapper::GetSecsHeld( const GameInput &GameI, MultiPlayer mp ) const
 
 float InputMapper::GetSecsHeld( GameButton MenuI, PlayerNumber pn ) const
 {
-	using std::max;
 	float fMaxSecsHeld = 0;
 
 	vector<GameInput> GameI;
 	MenuToGame( MenuI, pn, GameI );
-	for( size_t i=0; i<GameI.size(); i++ )
-		fMaxSecsHeld = max( fMaxSecsHeld, GetSecsHeld(GameI[i]) );
 
-	return fMaxSecsHeld;
+	auto highestHeld = [this](float const curr, GameInput const &input) {
+		return std::max(curr, GetSecsHeld(input));
+	};
+
+	return std::accumulate(GameI.begin(), GameI.end(), 0.f, highestHeld);
 }
 
 void InputMapper::ResetKeyRepeat( const GameInput &GameI )
@@ -1011,8 +1015,10 @@ void InputMapper::ResetKeyRepeat( GameButton MenuI, PlayerNumber pn )
 {
 	vector<GameInput> GameI;
 	MenuToGame( MenuI, pn, GameI );
-	for( size_t i=0; i<GameI.size(); i++ )
-		ResetKeyRepeat( GameI[i] );
+	for (auto &input: GameI)
+	{
+		ResetKeyRepeat( input );
+	}
 }
 
 float InputMapper::GetLevel( const GameInput &GameI ) const
@@ -1031,15 +1037,14 @@ float InputMapper::GetLevel( const GameInput &GameI ) const
 
 float InputMapper::GetLevel( GameButton MenuI, PlayerNumber pn ) const
 {
-	using std::max;
 	vector<GameInput> GameI;
 	MenuToGame( MenuI, pn, GameI );
 
-	float fLevel = 0;
-	for( size_t i=0; i<GameI.size(); i++ )
-		fLevel = max( fLevel, GetLevel(GameI[i]) );
+	auto highestLevel = [this](float const curr, GameInput const &input) {
+		return std::max(curr, GetLevel(input));
+	};
 
-	return fLevel;
+	return std::accumulate(GameI.begin(), GameI.end(), 0.f, highestLevel);
 }
 
 InputDevice InputMapper::MultiPlayerToInputDevice( MultiPlayer mp )

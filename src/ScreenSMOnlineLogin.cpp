@@ -159,8 +159,9 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 		vector<PlayerNumber> v;
 		v.push_back( GAMESTATE->GetMasterPlayerNumber() );
 		for( unsigned r=0; r<m_pRows.size(); r++ )
+		{
 			ExportOptions( r, v );
-
+		}
 		PREFSMAN->SavePrefsToDisk();
 		FOREACH_EnabledPlayer(pn)
 		{

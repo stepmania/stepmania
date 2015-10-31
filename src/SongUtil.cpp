@@ -117,10 +117,8 @@ void SongUtil::GetSteps(
 		return;
 
 	const vector<Steps*> &vpSteps = st == StepsType_Invalid ? pSong->GetAllSteps() : pSong->GetStepsByStepsType(st);
-	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
+	for (auto *pSteps: vpSteps)
 	{
-		Steps* pSteps = vpSteps[i];
-
 		if( dc != Difficulty_Invalid && dc != pSteps->GetDifficulty() )
 			continue;
 		if( iMeterLow != -1 && iMeterLow > pSteps->GetMeter() )
@@ -170,10 +168,8 @@ Steps* SongUtil::GetOneSteps(
 Steps* SongUtil::GetStepsByDifficulty( const Song *pSong, StepsType st, Difficulty dc, bool bIncludeAutoGen )
 {
 	const vector<Steps*>& vpSteps = (st == StepsType_Invalid)? pSong->GetAllSteps() : pSong->GetStepsByStepsType(st);
-	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
+	for (auto *pSteps: vpSteps)
 	{
-		Steps* pSteps = vpSteps[i];
-
 		if( dc != Difficulty_Invalid && dc != pSteps->GetDifficulty() )
 			continue;
 		if( !bIncludeAutoGen && pSteps->IsAutogen() )
@@ -188,10 +184,8 @@ Steps* SongUtil::GetStepsByDifficulty( const Song *pSong, StepsType st, Difficul
 Steps* SongUtil::GetStepsByMeter( const Song *pSong, StepsType st, int iMeterLow, int iMeterHigh )
 {
 	const vector<Steps*>& vpSteps = (st == StepsType_Invalid)? pSong->GetAllSteps() : pSong->GetStepsByStepsType(st);
-	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
+	for (auto *pSteps: vpSteps)
 	{
-		Steps* pSteps = vpSteps[i];
-
 		if( iMeterLow > pSteps->GetMeter() )
 			continue;
 		if( iMeterHigh < pSteps->GetMeter() )
@@ -231,10 +225,8 @@ Steps* SongUtil::GetClosestNotes( const Song *pSong, StepsType st, Difficulty dc
 	const vector<Steps*>& vpSteps = (st == StepsType_Invalid)? pSong->GetAllSteps() : pSong->GetStepsByStepsType(st);
 	Steps *pClosest = nullptr;
 	int iClosestDistance = 999;
-	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
+	for (auto *pSteps: vpSteps)
 	{
-		Steps* pSteps = vpSteps[i];
-
 		if( pSteps->GetDifficulty() == Difficulty_Edit && dc != Difficulty_Edit )
 			continue;
 		if( bIgnoreLocked && UNLOCKMAN->StepsIsLocked(pSong,pSteps) )
@@ -475,10 +467,8 @@ void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool b
 	vector<val> vals;
 	vals.reserve( vpSongsInOut.size() );
 
-	for( unsigned i = 0; i < vpSongsInOut.size(); ++i )
+	for (auto *pSong: vpSongsInOut)
 	{
-		Song *pSong = vpSongsInOut[i];
-
 		int iCounts[NUM_Grade];
 		const Profile *pProfile = PROFILEMAN->GetMachineProfile();
 		ASSERT( pProfile != nullptr );
@@ -494,14 +484,18 @@ void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool b
 	sort( vals.begin(), vals.end(), bDescending ? CompDescending : CompAscending );
 
 	for( unsigned i = 0; i < vpSongsInOut.size(); ++i )
+	{
 		vpSongsInOut[i] = vals[i].first;
+	}
 }
 
 
 void SongUtil::SortSongPointerArrayByArtist( vector<Song*> &vpSongsInOut )
 {
-	for( unsigned i = 0; i < vpSongsInOut.size(); ++i )
-		g_mapSongSortVal[vpSongsInOut[i]] = MakeSortString( vpSongsInOut[i]->GetTranslitArtist() );
+	for (auto *song: vpSongsInOut)
+	{
+		g_mapSongSortVal[song] = MakeSortString( song->GetTranslitArtist() );
+	}
 	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersBySortValueAscending );
 }
 
@@ -509,8 +503,10 @@ void SongUtil::SortSongPointerArrayByArtist( vector<Song*> &vpSongsInOut )
  * interesting for display. */
 void SongUtil::SortSongPointerArrayByDisplayArtist( vector<Song*> &vpSongsInOut )
 {
-	for( unsigned i = 0; i < vpSongsInOut.size(); ++i )
-		g_mapSongSortVal[vpSongsInOut[i]] = MakeSortString( vpSongsInOut[i]->GetDisplayArtist() );
+	for (auto *song: vpSongsInOut)
+	{
+		g_mapSongSortVal[song] = MakeSortString( song->GetDisplayArtist() );
+	}
 	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersBySortValueAscending );
 }
 
@@ -559,8 +555,10 @@ void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, Prof
 void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, const Profile* pProfile, bool bDescending )
 {
 	ASSERT( pProfile != nullptr );
-	for(unsigned i = 0; i < vpSongsInOut.size(); ++i)
-		g_mapSongSortVal[vpSongsInOut[i]] = ssprintf("%9i", pProfile->GetSongNumTimesPlayed(vpSongsInOut[i]));
+	for (auto *song: vpSongsInOut)
+	{
+		g_mapSongSortVal[song] = ssprintf("%9i", pProfile->GetSongNumTimesPlayed(song));
+	}
 	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), bDescending ? CompareSongPointersBySortValueDescending : CompareSongPointersBySortValueAscending );
 	g_mapSongSortVal.clear();
 }
@@ -686,16 +684,16 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 void SongUtil::SortSongPointerArrayBySectionName( vector<Song*> &vpSongsInOut, SortOrder so )
 {
 	RString sOther = SORT_OTHER.GetValue();
-	for(unsigned i = 0; i < vpSongsInOut.size(); ++i)
+	for (auto *song: vpSongsInOut)
 	{
-		RString val = GetSectionNameFromSongAndSort( vpSongsInOut[i], so );
+		RString val = GetSectionNameFromSongAndSort( song, so );
 
 		// Make sure 0-9 comes first and OTHER comes last.
 		if( val == "0-9" )			val = "0";
 		else if( val == sOther )	val = "2";
 		else						val = "1" + MakeSortString(val);
 
-		g_mapSongSortVal[vpSongsInOut[i]] = val;
+		g_mapSongSortVal[song] = val;
 	}
 
 	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersBySortValueAscending );
@@ -705,11 +703,11 @@ void SongUtil::SortSongPointerArrayBySectionName( vector<Song*> &vpSongsInOut, S
 void SongUtil::SortSongPointerArrayByStepsTypeAndMeter( vector<Song*> &vpSongsInOut, StepsType st, Difficulty dc )
 {
 	g_mapSongSortVal.clear();
-	for(unsigned i = 0; i < vpSongsInOut.size(); ++i)
+	for (auto *song: vpSongsInOut)
 	{
 		// Ignore locked steps.
-		const Steps* pSteps = GetClosestNotes( vpSongsInOut[i], st, dc, true );
-		RString &s = g_mapSongSortVal[vpSongsInOut[i]];
+		const Steps* pSteps = GetClosestNotes( song, st, dc, true );
+		RString &s = g_mapSongSortVal[song];
 		s = ssprintf("%03d", pSteps ? pSteps->GetMeter() : 0);
 
 		/* pSteps may not be exactly the difficulty we want; for example, we

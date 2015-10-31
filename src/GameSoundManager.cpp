@@ -328,16 +328,20 @@ static void StartQueuedSounds()
 	g_MusicsToPlay.clear();
 	g_Mutex->Unlock();
 
-	for( unsigned i = 0; i < aSoundsToPlayOnce.size(); ++i )
-		if( aSoundsToPlayOnce[i] != "" )
-			DoPlayOnce( aSoundsToPlayOnce[i] );
-
-	for( unsigned i = 0; i < aSoundsToPlayOnceFromDir.size(); ++i )
-		DoPlayOnceFromDir( aSoundsToPlayOnceFromDir[i] );
-
-	for( unsigned i = 0; i < aSoundsToPlayOnceFromAnnouncer.size(); ++i )
+	for (auto &sound: aSoundsToPlayOnce)
 	{
-		RString sPath = aSoundsToPlayOnceFromAnnouncer[i];
+		if (sound != "")
+		{
+			DoPlayOnce(sound);
+		}
+	}
+	for (auto &sound: aSoundsToPlayOnceFromDir)
+	{
+		DoPlayOnceFromDir(sound);
+	}
+	// Explicitly copy: the path gets overridden.
+	for (auto sPath : aSoundsToPlayOnceFromAnnouncer)
+	{
 		if( sPath != "" )
 		{
 			sPath = ANNOUNCER->GetPathTo( sPath );

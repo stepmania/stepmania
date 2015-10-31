@@ -44,6 +44,7 @@
 #include "LocalizedString.h"
 #include "AdjustSync.h"
 #include <limits>
+#include <numeric>
 
 using std::vector;
 
@@ -291,9 +292,11 @@ Player::~Player()
 {
 	SAFE_DELETE( m_pAttackDisplay );
 	SAFE_DELETE( m_pNoteField );
-	SAFE_DELETE(m_new_field);
-	for( unsigned i = 0; i < m_vpHoldJudgment.size(); ++i )
-		SAFE_DELETE( m_vpHoldJudgment[i] );
+	SAFE_DELETE( m_new_field );
+	for (auto &hold: m_vpHoldJudgment)
+	{
+		SAFE_DELETE(hold);
+	}
 	SAFE_DELETE( m_pJudgedRows );
 	SAFE_DELETE( m_pIterNeedsTapJudging );
 	SAFE_DELETE( m_pIterNeedsHoldJudging );
@@ -542,8 +545,9 @@ void Player::Init(
 	// Load HoldJudgments
 	m_vpHoldJudgment.resize( GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer );
 	for( int i = 0; i < GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer; ++i )
+	{
 		m_vpHoldJudgment[i] = nullptr;
-
+	}
 	if( HasVisibleParts() )
 	{
 		for( int i = 0; i < GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer; ++i )
@@ -1598,9 +1602,8 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 void Player::ApplyWaitingTransforms()
 {
 	using std::min;
-	for( unsigned j=0; j<m_pPlayerState->m_ModsToApply.size(); j++ )
+	for (auto const &mod: m_pPlayerState->m_ModsToApply)
 	{
-		const Attack &mod = m_pPlayerState->m_ModsToApply[j];
 		PlayerOptions po;
 		// if re-adding noteskin changes, blank out po.m_sNoteSkin. -aj
 		po.FromString( mod.sModifiers );
@@ -2300,17 +2303,18 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		Profile *pProfile = PROFILEMAN->GetProfile( pn );
 
 		int iNumTracksHeld = 0;
+		auto highestHeld = [](float const curr, GameInput const &input) {
+			return std::max(curr, INPUTMAPPER->GetSecsHeld(input));
+		};
 		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 		{
 			vector<GameInput> GameI;
 			GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( t, pn, GameI );
-			float secs_held= 0.0f;
-			for(size_t i= 0; i < GameI.size(); ++i)
-			{
-				secs_held= std::max(secs_held, INPUTMAPPER->GetSecsHeld( GameI[i] ));
-			}
+			float secs_held = std::accumulate(GameI.begin(), GameI.end(), 0.f, highestHeld);
 			if( secs_held > 0  && secs_held < m_fTimingWindowJump )
+			{
 				iNumTracksHeld++;
+			}
 		}
 
 		float fCals = 0;
@@ -3137,9 +3141,9 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 					GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( iTrack, pn, GameI );
 					if( PREFSMAN->m_fPadStickSeconds > 0.f )
 					{
-						for(size_t i= 0; i < GameI.size(); ++i)
+						for (auto const &input: GameI)
 						{
-							float fSecsHeld = INPUTMAPPER->GetSecsHeld(GameI[i], m_pPlayerState->m_mp);
+							float fSecsHeld = INPUTMAPPER->GetSecsHeld(input, m_pPlayerState->m_mp);
 							if(fSecsHeld >= PREFSMAN->m_fPadStickSeconds)
 							{
 								Step(iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false);
@@ -3165,9 +3169,9 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->StyleInputToGameInput( iTrack, pn, GameI );
 				if( PREFSMAN->m_fPadStickSeconds > 0.0f )
 				{
-					for(size_t i= 0; i < GameI.size(); ++i)
+					for (auto const &input: GameI)
 					{
-						float fSecsHeld = INPUTMAPPER->GetSecsHeld(GameI[i], m_pPlayerState->m_mp);
+						float fSecsHeld = INPUTMAPPER->GetSecsHeld(input, m_pPlayerState->m_mp);
 						if(fSecsHeld >= PREFSMAN->m_fPadStickSeconds)
 						{
 							Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );

@@ -162,18 +162,18 @@ void ActorMultiVertex::SetNumVertices( size_t n )
 {
 	if( n == 0 )
 	{
-		for( size_t i = 0; i < AMV_Tweens.size(); ++i )
+		for (auto &tween: AMV_Tweens)
 		{
-			AMV_Tweens[i].vertices.clear();
+			tween.vertices.clear();
 		}
 		AMV_current.vertices.clear();
 		AMV_start.vertices.clear();
 	}
 	else
 	{
-		for( size_t i = 0; i < AMV_Tweens.size(); ++i )
+		for (auto &tween: AMV_Tweens)
 		{
-			AMV_Tweens[i].vertices.resize( n );
+			tween.vertices.resize(n);
 		}
 		AMV_current.vertices.resize( n );
 		AMV_start.vertices.resize( n );
@@ -182,9 +182,9 @@ void ActorMultiVertex::SetNumVertices( size_t n )
 
 void ActorMultiVertex::AddVertex()
 {
-	for( size_t i = 0; i < AMV_Tweens.size(); ++i )
+	for (auto &tween: AMV_Tweens)
 	{
-		AMV_Tweens[i].vertices.push_back( Rage::SpriteVertex() );
+		tween.vertices.push_back(Rage::SpriteVertex());
 	}
 	AMV_current.vertices.push_back( Rage::SpriteVertex() );
 	AMV_start.vertices.push_back( Rage::SpriteVertex() );
@@ -194,9 +194,9 @@ void ActorMultiVertex::AddVertices( int Add )
 {
 	int size = AMV_DestTweenState().vertices.size();
 	size += Add;
-	for( size_t i = 0; i < AMV_Tweens.size(); ++i )
+	for (auto &tween: AMV_Tweens)
 	{
-		AMV_Tweens[i].vertices.resize( size );
+		tween.vertices.resize(size);
 	}
 	AMV_current.vertices.resize( size );
 	AMV_start.vertices.resize( size );
@@ -237,7 +237,7 @@ void ActorMultiVertex::DrawPrimitives()
 	if( m_pTempState->diffuse[0] != Rage::Color(1, 1, 1, 1) && m_pTempState->diffuse[0].a > 0 )
 	{
 
-		for( size_t i=0; i < TS.vertices.size(); i++ )
+		for (auto &vertex: TS.vertices)
 		{
 			// RageVColor uses a uint8_t for each channel.  0-255.
 			// RageColor uses a float. 0-1.
@@ -250,10 +250,10 @@ void ActorMultiVertex::DrawPrimitives()
 #define MULT_COLOR_ELEMENTS(color_a, color_b) \
 	color_a= static_cast<uint8_t>(static_cast<float>(color_a) * color_b);
 			// RageVColor * RageColor
-			MULT_COLOR_ELEMENTS(TS.vertices[i].c.b, m_pTempState->diffuse[0].b);
-			MULT_COLOR_ELEMENTS(TS.vertices[i].c.r, m_pTempState->diffuse[0].r);
-			MULT_COLOR_ELEMENTS(TS.vertices[i].c.g, m_pTempState->diffuse[0].g);
-			MULT_COLOR_ELEMENTS(TS.vertices[i].c.a, m_pTempState->diffuse[0].a);
+			MULT_COLOR_ELEMENTS(vertex.c.b, m_pTempState->diffuse[0].b);
+			MULT_COLOR_ELEMENTS(vertex.c.r, m_pTempState->diffuse[0].r);
+			MULT_COLOR_ELEMENTS(vertex.c.g, m_pTempState->diffuse[0].g);
+			MULT_COLOR_ELEMENTS(vertex.c.a, m_pTempState->diffuse[0].a);
 #undef MULT_COLOR_ELEMENTS
 		}
 
@@ -269,10 +269,9 @@ void ActorMultiVertex::DrawPrimitives()
 	// Draw the glow pass
 	if( m_pTempState->glow.a > 0 )
 	{
-
-		for( size_t i=0; i < TS.vertices.size(); i++ )
+		for (auto &vertex: TS.vertices)
 		{
-			TS.vertices[i].c = m_pTempState->glow;
+			vertex.c = m_pTempState->glow;
 		}
 		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
 		DrawInternal( AMV_TempState );

@@ -149,10 +149,12 @@ void OptionListRow::SetUnderlines( const vector<bool> &aSelections, const Option
 			else if( pTarget->m_Def.m_selectType == SELECT_MULTIPLE )
 			{
 				const vector<bool> &bTargetSelections = m_pOptions->m_bSelections.find(sDest)->second;
-				for( unsigned j=0; j<bTargetSelections.size(); j++ )
+				auto isSelected = [](bool const target) {
+					return target;
+				};
+				if (std::any_of(bTargetSelections.begin(), bTargetSelections.end(), isSelected))
 				{
-					if( bTargetSelections[j] )
-						bSelected = true;
+					bSelected = true;
 				}
 			}
 		}

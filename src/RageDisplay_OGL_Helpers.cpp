@@ -51,8 +51,10 @@ static void GetGLExtensions( std::set<string> &ext )
 	vector<RString> asList;
 	split( szBuf, " ", asList );
 
-	for( unsigned i = 0; i < asList.size(); ++i )
-		ext.insert( asList[i] );
+	for (auto &item: asList)
+	{
+		ext.insert( item );
+	}
 }
 */
 

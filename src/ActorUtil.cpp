@@ -576,10 +576,9 @@ void ActorUtil::InitFileTypeLists()
 
 	// When adding new extensions, do not add them below this line.  This line
 	// marks the point where the function switches to building the reverse map.
-	for(etft_cont_t::iterator curr_ext= ExtensionToFileType.begin();
-		curr_ext != ExtensionToFileType.end(); ++curr_ext)
+	for (auto &item: ExtensionToFileType)
 	{
-		FileTypeToExtensionList[curr_ext->second].push_back(curr_ext->first);
+		FileTypeToExtensionList[item.second].push_back(item.first);
 	}
 }
 
@@ -594,10 +593,9 @@ void ActorUtil::AddTypeExtensionsToList(FileType ft, vector<RString>& add_to)
 	if(ext_list != FileTypeToExtensionList.end())
 	{
 		add_to.reserve(add_to.size() + ext_list->second.size());
-		for(vector<RString>::iterator curr= ext_list->second.begin();
-				curr != ext_list->second.end(); ++curr)
+		for (auto &item: ext_list->second)
 		{
-			add_to.push_back(*curr);
+			add_to.push_back(item);
 		}
 	}
 }

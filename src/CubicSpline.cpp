@@ -41,19 +41,18 @@ const size_t solution_cache_limit= 16;
 bool SplineSolutionCache::find_in_cache(list<Entry>& cache, vector<float>& outd, vector<float>& outm)
 {
 	size_t out_size= outd.size();
-	for(list<Entry>::iterator entry= cache.begin();
-			entry != cache.end(); ++entry)
+	for (auto const &entry: cache)
 	{
-		if(out_size == entry->diagonals.size())
+		if(out_size == entry.diagonals.size())
 		{
 			for(size_t i= 0; i < out_size; ++i)
 			{
-				outd[i]= entry->diagonals[i];
+				outd[i]= entry.diagonals[i];
 			}
-			outm.resize(entry->multiples.size());
-			for(size_t i= 0; i < entry->multiples.size(); ++i)
+			outm.resize(entry.multiples.size());
+			for(size_t i= 0; i < entry.multiples.size(); ++i)
 			{
-				outm[i]= entry->multiples[i];
+				outm[i]= entry.multiples[i];
 			}
 			return true;
 		}
@@ -366,10 +365,15 @@ bool CubicSpline::check_minimum_size()
 	}
 	float a= m_points[0].a;
 	bool all_points_identical= true;
-	for(size_t i= 0; i < m_points.size(); ++i)
+	for (auto &point: m_points)
 	{
-		m_points[i].b= m_points[i].c= m_points[i].d= 0.0f;
-		if(m_points[i].a != a) { all_points_identical= false; }
+		point.b = 0.f;
+		point.c = 0.f;
+		point.d = 0.f;
+		if (point.a != a)
+		{
+			all_points_identical= false;
+		}
 	}
 	return all_points_identical;
 }
@@ -632,10 +636,9 @@ void CubicSplineN::solve()
 {
 	if(!m_dirty) { return; }
 #define SOLVE_LOOP(solvent) \
-	for(spline_cont_t::iterator spline= m_splines.begin(); \
-		spline != m_splines.end(); ++spline) \
+    for (auto &spline: m_splines) \
 	{ \
-		spline->solvent(); \
+		spline.solvent(); \
 	}
 	if(m_polygonal)
 	{
@@ -659,10 +662,9 @@ void CubicSplineN::solve()
 #define CSN_EVAL_SOMETHING(something) \
 void CubicSplineN::something(float t, vector<float>& v) const \
 { \
-	for(spline_cont_t::const_iterator spline= m_splines.begin(); \
-			spline != m_splines.end(); ++spline) \
+	for (auto const &spline: m_splines) \
 	{ \
-		v.push_back(spline->something(t, m_loop)); \
+		v.push_back(spline.something(t, m_loop)); \
 	} \
 }
 
@@ -739,10 +741,9 @@ float CubicSplineN::get_spatial_extent(size_t i)
 
 void CubicSplineN::resize(size_t s)
 {
-	for(spline_cont_t::iterator spline= m_splines.begin();
-			spline != m_splines.end(); ++spline)
+	for (auto &spline: m_splines)
 	{
-		spline->resize(s);
+		spline.resize(s);
 	}
 	m_dirty= true;
 }

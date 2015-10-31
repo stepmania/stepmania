@@ -54,15 +54,15 @@ static void Deserialize(TimingData &td, const Json::Value &root)
 	JsonUtil::DeserializeVectorPointers( vBPMs, Deserialize, root["BpmSegments"] );
 	JsonUtil::DeserializeVectorPointers( vStops, Deserialize, root["StopSegments"] );
 
-	for( unsigned i = 0; i < vBPMs.size(); ++i )
+	for (auto *bpm: vBPMs)
 	{
-		td.AddSegment( *vBPMs[i] );
-		delete vBPMs[i];
+		td.AddSegment( *bpm );
+		delete bpm;
 	}
-	for( unsigned i = 0; i < vStops.size(); ++i )
+	for (auto *stop: vStops)
 	{
-		td.AddSegment( *vStops[i] );
-		delete vStops[i];
+		td.AddSegment( *stop );
+		delete stop;
 	}
 }
 
@@ -113,10 +113,9 @@ static void Deserialize( StepsType st, NoteData &nd, const Json::Value &root )
 {
 	int iTracks = nd.GetNumTracks();
 	nd.SetNumTracks( iTracks );
-	for( unsigned i=0; i<root.size(); i++ )
+	for (auto root2: root)
 	{
-		Json::Value root2 = root[i];
-		float fBeat = (float)root2[(unsigned)0].asDouble();
+		float fBeat = static_cast<float>(root2[0u].asDouble());
 		int iRow = BeatToNoteRow(fBeat);
 		int iTrack = root2[1].asInt();
 		const Json::Value &root3 = root2[2];

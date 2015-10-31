@@ -2023,16 +2023,17 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 			// high score markers.
 			vector<SongAndSteps> vSongAndSteps;
 
-			for( unsigned i=0; i<STATSMAN->m_vPlayedStageStats.size(); i++ )
+			unsigned int i = 0;
+			for (auto &stats: STATSMAN->m_vPlayedStageStats)
 			{
-				CHECKPOINT_M( ssprintf("%u/%i", i, (int)STATSMAN->m_vPlayedStageStats.size() ) );
+				CHECKPOINT_M( ssprintf("%u/%i", i++, static_cast<int>(STATSMAN->m_vPlayedStageStats.size()) ) );
 				SongAndSteps sas;
-				ASSERT( !STATSMAN->m_vPlayedStageStats[i].m_vpPlayedSongs.empty() );
-				sas.pSong = STATSMAN->m_vPlayedStageStats[i].m_vpPlayedSongs[0];
+				ASSERT( !stats.m_vpPlayedSongs.empty() );
+				sas.pSong = stats.m_vpPlayedSongs[0];
 				ASSERT( sas.pSong != nullptr );
-				if( STATSMAN->m_vPlayedStageStats[i].m_player[pn].m_vpPossibleSteps.empty() )
+				if( stats.m_player[pn].m_vpPossibleSteps.empty() )
 					continue;
-				sas.pSteps = STATSMAN->m_vPlayedStageStats[i].m_player[pn].m_vpPossibleSteps[0];
+				sas.pSteps = stats.m_player[pn].m_vpPossibleSteps[0];
 				ASSERT( sas.pSteps != nullptr );
 				vSongAndSteps.push_back( sas );
 			}
@@ -2044,10 +2045,10 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 			vSongAndSteps.erase(toDelete, vSongAndSteps.end());
 
 			CHECKPOINT_M( "About to find records from the gathered.");
-			for( unsigned i=0; i<vSongAndSteps.size(); i++ )
+			for (auto &combo: vSongAndSteps)
 			{
-				Song* pSong = vSongAndSteps[i].pSong;
-				Steps* pSteps = vSongAndSteps[i].pSteps;
+				Song* pSong = combo.pSong;
+				Steps* pSteps = combo.pSteps;
 
 				// Find Machine Records
 				{
@@ -2277,12 +2278,12 @@ void GameState::StoreRankingName( PlayerNumber pn, RString sName )
 	vector<RankingFeat> aFeats;
 	GetRankingFeats( pn, aFeats );
 
-	for( unsigned i=0; i<aFeats.size(); i++ )
+	for (auto &feat: aFeats)
 	{
-		*aFeats[i].pStringToFill = sName;
+		*feat.pStringToFill = sName;
 
 		// save name pointers as we fill them
-		m_vpsNamesThatWereFilled.push_back( aFeats[i].pStringToFill );
+		m_vpsNamesThatWereFilled.push_back( feat.pStringToFill );
 	}
 
 
@@ -2920,9 +2921,8 @@ public:
 				vpStepsToShow.push_back( pSteps );
 		}
 
-		for( unsigned i=0; i<vpStepsToShow.size(); i++ )
+		for (auto const *pSteps: vpStepsToShow)
 		{
-			const Steps* pSteps = vpStepsToShow[i];
 			RString sDifficulty = CustomDifficultyToLocalizedString( GetCustomDifficulty( pSteps->m_StepsType, pSteps->GetDifficulty(), CourseType_Invalid ) );
 
 			lua_pushstring( L, sDifficulty );

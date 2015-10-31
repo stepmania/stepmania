@@ -62,9 +62,10 @@ void ScreenNetEvaluation::RedoUserTexts()
 	if ( m_iActivePlayers == (int)m_textUsers.size() )
 		return;
 
-	for( unsigned int i=0; i < m_textUsers.size(); ++i )
-		this->RemoveChild( &m_textUsers[i] );
-
+	for (auto &user: m_textUsers)
+	{
+		this->RemoveChild( &user );
+	}
 	float cx = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dX",m_iShowSide));
 	float cy = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dY",m_iShowSide));
 

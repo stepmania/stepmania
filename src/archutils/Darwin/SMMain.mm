@@ -60,7 +60,9 @@
 	m_iArgc = argc;
 	m_pArgv = new char*[argc];
 	for( int i = 0; i < argc; ++i )
+	{
 		m_pArgv[i] = argv[i];
+	}
 	m_bApplicationLaunched = NO;
 	return self;
 }
@@ -124,7 +126,9 @@
 {
 	char **temp = new char*[[files count] + m_iArgc];
 	for( int i = 0; i < m_iArgc; ++i )
+	{
 		temp[i] = m_pArgv[i];
+	}
 	for( unsigned i = 0; i < [files count]; ++i, ++m_iArgc )
 	{
 		const char *p = [[files objectAtIndex:i] fileSystemRepresentation];

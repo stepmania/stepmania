@@ -274,10 +274,10 @@ void ScreenSelectMaster::Init()
 		vector<RString> parts;
 		split( order, ",", parts, true );
 
-		for( unsigned part = 0; part < parts.size(); ++part )
+		for (auto &item: parts)
 		{
 			int from, to;
-			if( sscanf( parts[part], "%d:%d", &from, &to ) != 2 )
+			if( sscanf( item, "%d:%d", &from, &to ) != 2 )
 			{
 				LuaHelpers::ReportScriptErrorFmt( "%s::OptionOrder%s parse error", m_sName.c_str(), MenuDirToString(dir).c_str() );
 				continue;
@@ -497,11 +497,11 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 
 bool ScreenSelectMaster::AnyOptionsArePlayable() const
 {
-	for( unsigned i = 0; i < m_aGameCommands.size(); ++i )
-		if( m_aGameCommands[i].IsPlayable() )
-			return true;
-
-	return false;
+	auto isPlayable = [](GameCommand const &cmd) {
+		return cmd.IsPlayable();
+	};
+	
+	return std::any_of(m_aGameCommands.begin(), m_aGameCommands.end(), isPlayable);
 }
 
 bool ScreenSelectMaster::Move( PlayerNumber pn, MenuDir dir )
@@ -671,9 +671,12 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 	}
 	const RString sIconAndExplanationCommand = ssprintf( "SwitchToPage%d", newPage+1 );
 	if( SHOW_ICON )
+	{
 		for( unsigned c = 0; c < m_aGameCommands.size(); ++c )
+		{
 			m_vsprIcon[c]->PlayCommand( sIconAndExplanationCommand );
-
+		}
+	}
 	FOREACH_ENUM( Page, page )
 	{
 		m_sprExplanation[page]->PlayCommand( sIconAndExplanationCommand );

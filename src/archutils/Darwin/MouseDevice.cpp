@@ -91,11 +91,13 @@ void MouseDevice::Open()
 {
 	const Mouse& m = m_Mouse;
 #define ADD(x) if( m.x ) AddElementToQueue( m.x )
-	ADD( x_axis );	ADD( y_axis );	ADD( z_axis );
+	ADD( x_axis );
+	ADD( y_axis );
+	ADD( z_axis );
 #undef ADD
-	for( auto i = m_Mapping.cbegin(); i != m_Mapping.cend(); ++i )
+	for (auto &item: m_Mapping)
 	{
-		AddElementToQueue( i->first );
+		AddElementToQueue( item.first );
 	}
 }
 

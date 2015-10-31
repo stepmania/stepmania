@@ -276,9 +276,9 @@ void ScreenNameEntry::Init()
 			vector<GameInput> gi;
 			GAMESTATE->GetCurrentStyle(p)->StyleInputToGameInput( iCol, p, gi );
 			bool gi_is_start= false;
-			for(size_t i= 0; i < gi.size(); ++i)
+			for (auto &input: gi)
 			{
-				gi_is_start|= (INPUTMAPPER->GameButtonToMenuButton(gi[i].button)
+				gi_is_start|= (INPUTMAPPER->GameButtonToMenuButton(input.button)
 					== GAME_BUTTON_START);
 			}
 			if(gi_is_start)

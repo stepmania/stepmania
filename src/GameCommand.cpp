@@ -834,22 +834,22 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			GAMESTATE->m_pCurCharacters[pn] = m_pCharacter;
 		}
 	}
-	for( auto i = m_SetEnv.begin(); i != m_SetEnv.end(); i++ )
+    for (auto const &item: m_SetEnv)
 	{
 		Lua *L = LUA->Get();
 		GAMESTATE->m_Environment->PushSelf(L);
-		lua_pushstring( L, i->first );
-		lua_pushstring( L, i->second );
+		lua_pushstring( L, item.first );
+		lua_pushstring( L, item.second );
 		lua_settable( L, -3 );
 		lua_pop( L, 1 );
 		LUA->Release(L);
 	}
-	for(auto setting = m_SetPref.begin(); setting != m_SetPref.end(); ++setting)
+    for (auto const &setting: m_SetPref)
 	{
-		IPreference* pref= IPreference::GetPreferenceByName(setting->first);
+		IPreference* pref= IPreference::GetPreferenceByName(setting.first);
 		if(pref != nullptr)
 		{
-			pref->FromString(setting->second);
+			pref->FromString(setting.second);
 		}
 	}
 	if( !m_sSongGroup.empty() )

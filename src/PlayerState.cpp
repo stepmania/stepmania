@@ -62,10 +62,8 @@ void PlayerState::Update( float fDelta )
 	bool bRebuildPlayerOptions = false;
 
 	// See if any delayed attacks are starting or ending.
-	for( unsigned s=0; s<m_ActiveAttacks.size(); s++ )
+	for (auto &attack: m_ActiveAttacks)
 	{
-		Attack &attack = m_ActiveAttacks[s];
-
 		// You must add sattack by calling GameState::LaunchAttack,
 		// or else the sentinel value won't be
 		// converted into the current music time.
@@ -76,17 +74,20 @@ void PlayerState::Update( float fDelta )
 			( attack.fStartSecond < m_Position.m_fMusicSeconds &&
 			m_Position.m_fMusicSeconds < attack.fStartSecond+attack.fSecsRemaining );
 
-		if( m_ActiveAttacks[s].bOn == bCurrentlyEnabled )
+		if( attack.bOn == bCurrentlyEnabled )
 			continue; // OK
 
-		if( m_ActiveAttacks[s].bOn && !bCurrentlyEnabled )
+		if( attack.bOn && !bCurrentlyEnabled )
+		{
 			m_bAttackEndedThisUpdate = true;
-		else if( !m_ActiveAttacks[s].bOn && bCurrentlyEnabled )
+		}
+		else if( !attack.bOn && bCurrentlyEnabled )
+		{
 			m_bAttackBeganThisUpdate = true;
-
+		}
 		bRebuildPlayerOptions = true;
 
-		m_ActiveAttacks[s].bOn = bCurrentlyEnabled;
+		attack.bOn = bCurrentlyEnabled;
 	}
 
 	if( bRebuildPlayerOptions )
@@ -169,12 +170,14 @@ void PlayerState::RebuildPlayerOptionsFromActiveAttacks()
 	// rebuild player options
 	PlayerOptions po = m_PlayerOptions.GetStage();
 	SongOptions so = GAMESTATE->m_SongOptions.GetStage();
-	for( unsigned s=0; s<m_ActiveAttacks.size(); s++ )
+	for (auto &attack: m_ActiveAttacks)
 	{
-		if( !m_ActiveAttacks[s].bOn )
+		if( !attack.bOn )
+		{
 			continue; /* hasn't started yet */
-		po.FromString( m_ActiveAttacks[s].sModifiers );
-		so.FromString( m_ActiveAttacks[s].sModifiers );
+		}
+		po.FromString( attack.sModifiers );
+		so.FromString( attack.sModifiers );
 	}
 	m_PlayerOptions.Assign( ModsLevel_Song, po );
 	if( m_PlayerNumber == GAMESTATE->GetMasterPlayerNumber() )

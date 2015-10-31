@@ -125,9 +125,8 @@ int RageSoundReader_Merge::SetPosition( int iFrame )
 	m_iNextSourceFrame = iFrame;
 
 	int iRet = 0;
-	for( int i = 0; i < (int) m_aSounds.size(); ++i )
+	for (auto *pSound: m_aSounds)
 	{
-		RageSoundReader *pSound = m_aSounds[i];
 		int iThisRet = pSound->SetPosition( iFrame );
 		if( iThisRet == -1 )
 			return -1;
@@ -141,9 +140,10 @@ int RageSoundReader_Merge::SetPosition( int iFrame )
 bool RageSoundReader_Merge::SetProperty( const RString &sProperty, float fValue )
 {
 	bool bRet = false;
-	for( unsigned i = 0; i < m_aSounds.size(); ++i )
+	// TODO: See if std::any_of works with the side effect.
+	for (auto *sound: m_aSounds)
 	{
-		if( m_aSounds[i]->SetProperty(sProperty, fValue) )
+		if( sound->SetProperty(sProperty, fValue) )
 			bRet = true;
 	}
 

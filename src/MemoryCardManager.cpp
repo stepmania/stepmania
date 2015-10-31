@@ -199,9 +199,10 @@ void ThreadedMemoryCardWorker::RequestTimedOut()
 	/* We timed out, so the current operation will abort. The unmount request
 	 * may be skipped, if it's attempted during the timeout, so unmount all
 	 * mounted devices. */
-	for( unsigned i = 0; i < m_aMountedDevices.size(); ++i )
-		m_pDriver->Unmount( &m_aMountedDevices[i] );
-
+	for (auto &device: m_aMountedDevices)
+	{
+		m_pDriver->Unmount( &device );
+	}
 	m_aMountedDevices.clear();
 }
 

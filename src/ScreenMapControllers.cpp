@@ -34,9 +34,9 @@ ScreenMapControllers::ScreenMapControllers()
 
 ScreenMapControllers::~ScreenMapControllers()
 {
-	for(size_t i= 0; i < m_Line.size(); ++i)
+	for (auto *line: m_Line)
 	{
-		SAFE_DELETE(m_Line[i]);
+		SAFE_DELETE(line);
 	}
 }
 
@@ -77,10 +77,10 @@ void ScreenMapControllers::Init()
 		/* Map the specified buttons. */
 		vector<RString> asBits;
 		split( sButtons, ",", asBits );
-		for( unsigned i=0; i<asBits.size(); ++i )
+		for (auto &bit: asBits)
 		{
 			KeyToMap k;
-			k.m_GameButton = StringToGameButton( INPUTMAPPER->GetInputScheme(), asBits[i] );
+			k.m_GameButton = StringToGameButton( INPUTMAPPER->GetInputScheme(), bit);
 			m_KeysToMap.push_back( k );
 		}
 	}
@@ -127,16 +127,15 @@ void ScreenMapControllers::Init()
 	}
 
 	// normal rows
-	for( unsigned b=0; b<m_KeysToMap.size(); b++ )
+	for (auto &key: m_KeysToMap)
 	{
 		m_Line.push_back(new ActorFrame);
-		KeyToMap *pKey = &m_KeysToMap[b];
 
 		{
 			BitmapText *pName = new BitmapText;
 			pName->SetName( "Primary" );
 			pName->LoadFromFont( THEME->GetPathF(m_sName,"title") );
-			RString sText = GameButtonToLocalizedString( INPUTMAPPER->GetInputScheme(), pKey->m_GameButton );
+			RString sText = GameButtonToLocalizedString( INPUTMAPPER->GetInputScheme(), key.m_GameButton );
 			pName->SetText( sText );
 			ActorUtil::LoadAllCommands( *pName, m_sName );
 			m_Line.back()->AddChild( pName );
@@ -145,9 +144,9 @@ void ScreenMapControllers::Init()
 			BitmapText *pSecondary = new BitmapText;
 			pSecondary->SetName( "Secondary" );
 			pSecondary->LoadFromFont( THEME->GetPathF(m_sName,"title") );
-			GameButton mb = INPUTMAPPER->GetInputScheme()->GameButtonToMenuButton( pKey->m_GameButton );
+			GameButton mb = INPUTMAPPER->GetInputScheme()->GameButtonToMenuButton( key.m_GameButton );
 			RString sText;
-			if( mb != GameButton_Invalid && mb != pKey->m_GameButton )
+			if( mb != GameButton_Invalid && mb != key.m_GameButton )
 				sText = GameButtonToLocalizedString( INPUTMAPPER->GetInputScheme(), mb );
 			ActorUtil::LoadAllCommands( *pSecondary, m_sName );
 			pSecondary->SetText( sText );
@@ -158,12 +157,12 @@ void ScreenMapControllers::Init()
 		{
 			for( int s=0; s<NUM_SHOWN_GAME_TO_DEVICE_SLOTS; s++ )
 			{
-				pKey->m_textMappedTo[c][s] = new BitmapText;
-				pKey->m_textMappedTo[c][s]->SetName( "MappedTo" );
-				pKey->m_textMappedTo[c][s]->LoadFromFont( THEME->GetPathF(m_sName,"entry") );
-				pKey->m_textMappedTo[c][s]->RunCommands( MAPPED_TO_COMMAND(c,s) );
-				ActorUtil::LoadAllCommands( *pKey->m_textMappedTo[c][s], m_sName );
-				m_Line.back()->AddChild( pKey->m_textMappedTo[c][s] );
+				key.m_textMappedTo[c][s] = new BitmapText;
+				key.m_textMappedTo[c][s]->SetName( "MappedTo" );
+				key.m_textMappedTo[c][s]->LoadFromFont( THEME->GetPathF(m_sName,"entry") );
+				key.m_textMappedTo[c][s]->RunCommands( MAPPED_TO_COMMAND(c,s) );
+				ActorUtil::LoadAllCommands( key.m_textMappedTo[c][s], m_sName );
+				m_Line.back()->AddChild( key.m_textMappedTo[c][s] );
 			}
 		}
 		m_Line.back()->DeleteChildrenWhenDone();
@@ -607,13 +606,12 @@ void ScreenMapControllers::Refresh()
 {
 	FOREACH_ENUM( GameController,  p )
 	{
-		for( unsigned b=0; b<m_KeysToMap.size(); b++ )
+		for (auto const &key: m_KeysToMap)
 		{
-			const KeyToMap *pKey = &m_KeysToMap[b];
 			for( int s=0; s<NUM_SHOWN_GAME_TO_DEVICE_SLOTS; s++ )
 			{
-				BitmapText *pText = pKey->m_textMappedTo[p][s];
-				GameInput cur_gi( p, pKey->m_GameButton );
+				BitmapText *pText = key.m_textMappedTo[p][s];
+				GameInput cur_gi( p, key.m_GameButton );
 				DeviceInput di;
 				RString sText = "-----------";
 				if( INPUTMAPPER->GameToDevice( cur_gi, s, di ) )

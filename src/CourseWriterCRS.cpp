@@ -76,10 +76,10 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 		f.PutLine( "// cache tags:" );
 
 		Course::RadarCache_t::const_iterator it;
-		for( it = course.m_RadarCache.begin(); it != course.m_RadarCache.end(); ++it )
+		for (auto &cache: course.m_RadarCache)
 		{
 			// #RADAR:type:difficulty:value,value,value...;
-			const Course::CacheEntry &entry = it->first;
+			const Course::CacheEntry &entry = cache.first;
 			StepsType st = entry.first;
 			CourseDifficulty cd = entry.second;
 
@@ -94,10 +94,8 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 		f.PutLine( "// end cache tags" );
 	}
 
-	for( unsigned i=0; i<course.m_vEntries.size(); i++ )
+	for (auto const &entry: course.m_vEntries)
 	{
-		const CourseEntry& entry = course.m_vEntries[i];
-
 		for( unsigned j = 0; j < entry.attacks.size(); ++j )
 		{
 			if( j == 0 )

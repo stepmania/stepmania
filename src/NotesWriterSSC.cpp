@@ -24,8 +24,9 @@ using std::vector;
 static RString JoinLineList( vector<RString> &lines )
 {
 	for( unsigned i = 0; i < lines.size(); ++i )
+	{
 		TrimRight( lines[i] );
-
+	}
 	// Skip leading blanks.
 	unsigned j = 0;
 	while( j < lines.size() && lines.size() == 0 )

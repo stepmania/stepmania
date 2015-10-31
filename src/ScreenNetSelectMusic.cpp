@@ -364,11 +364,13 @@ bool ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 		bool dcs[NUM_Difficulty];
 
 		for( i=0; i<NUM_Difficulty; ++i )
+		{
 			dcs[i] = false;
-
-		for( i=0; i<(int)MultiSteps.size(); ++i )
-			dcs[MultiSteps[i]->GetDifficulty()] = true;
-
+		}
+		for (auto *step: MultiSteps)
+		{
+			dcs[step->GetDifficulty()] = true;
+		}
 		for( i=0; i<NUM_Difficulty; ++i )
 		{
 			if( (dcs[i]) && (i > m_DC[pn]) )
@@ -524,11 +526,13 @@ void ScreenNetSelectMusic::MusicChanged()
 			bool dcs[NUM_Difficulty];
 
 			for( i=0; i<NUM_Difficulty; ++i )
+			{
 				dcs[i] = false;
-
-			for( i=0; i<(int)MultiSteps.size(); ++i )
-				dcs[MultiSteps[i]->GetDifficulty()] = true;
-
+			}
+			for (auto *step: MultiSteps)
+			{
+				dcs[step->GetDifficulty()] = true;
+			}
 			for( i=0; i<NUM_Difficulty; ++i )
 				if( dcs[i] )
 				{

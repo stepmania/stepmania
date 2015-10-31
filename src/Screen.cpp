@@ -65,21 +65,24 @@ void Screen::Init()
 
 	vector<RString> asList;
 	split( PREPARE_SCREENS, ",", asList );
-	for( unsigned i = 0; i < asList.size(); ++i )
+	for (auto &item: asList)
 	{
-		LOG->Trace( "Screen \"%s\" preparing \"%s\"", m_sName.c_str(), asList[i].c_str() );
-		SCREENMAN->PrepareScreen( asList[i] );
+		LOG->Trace( "Screen \"%s\" preparing \"%s\"", m_sName.c_str(), item.c_str() );
+		SCREENMAN->PrepareScreen( item );
 	}
 
 	asList.clear();
 	split( GROUPED_SCREENS, ",", asList );
-	for( unsigned i = 0; i < asList.size(); ++i )
-		SCREENMAN->GroupScreen( asList[i] );
-
+	for (auto &item: asList)
+	{
+		SCREENMAN->GroupScreen( item );
+	}
 	asList.clear();
 	split( PERSIST_SCREENS, ",", asList );
-	for( unsigned i = 0; i < asList.size(); ++i )
-		SCREENMAN->PersistantScreen( asList[i] );
+	for (auto &item: asList)
+	{
+		SCREENMAN->PersistantScreen( item );
+	}
 }
 
 void Screen::BeginScreen()
@@ -124,7 +127,7 @@ void Screen::Update( float fDeltaTime )
 	stable_sort(m_QueuedMessages.begin(), m_QueuedMessages.end(), SortMessagesByDelayRemaining);
 
 	// Update the times of queued ScreenMessages.
-	for( unsigned i=0; i<m_QueuedMessages.size(); i++ )
+	for (auto &message: m_QueuedMessages)
 	{
 		/* Hack:
 		 * If we simply subtract time and then send messages, we have a problem.
@@ -136,14 +139,14 @@ void Screen::Update( float fDeltaTime )
 		 * which causes everything to stop in place; this results in actors
 		 * occasionally not quite finishing their tweens.
 		 * Let's delay all messages that have a non-zero time an extra frame. */
-		if( m_QueuedMessages[i].fDelayRemaining > 0.0001f )
+		if( message.fDelayRemaining > 0.0001f )
 		{
-			m_QueuedMessages[i].fDelayRemaining -= fDeltaTime;
-			m_QueuedMessages[i].fDelayRemaining = max( m_QueuedMessages[i].fDelayRemaining, 0.0001f );
+			message.fDelayRemaining -= fDeltaTime;
+			message.fDelayRemaining = max( message.fDelayRemaining, 0.0001f );
 		}
 		else
 		{
-			m_QueuedMessages[i].fDelayRemaining -= fDeltaTime;
+			message.fDelayRemaining -= fDeltaTime;
 		}
 	}
 
@@ -301,8 +304,12 @@ void Screen::ClearMessageQueue()
 void Screen::ClearMessageQueue( const ScreenMessage SM )
 {
 	for( int i=m_QueuedMessages.size()-1; i>=0; i-- )
+	{
 		if( m_QueuedMessages[i].SM == SM )
+		{
 			m_QueuedMessages.erase( m_QueuedMessages.begin()+i );
+		}
+	}
 }
 
 bool Screen::PassInputToLua(const InputEventPlus& input)
@@ -351,9 +358,13 @@ bool Screen::PassInputToLua(const InputEventPlus& input)
 	lua_setfield(L, -2, "PlayerNumber");
 	Enum::Push(L, input.mp);
 	lua_setfield(L, -2, "MultiPlayer");
-	for(auto callback= m_InputCallbacks.begin(); callback != m_InputCallbacks.end() && !handled; ++callback)
+	for (auto &callback: m_InputCallbacks)
 	{
-		callback->second.PushSelf(L);
+		if (handled)
+		{
+			break;
+		}
+		callback.second.PushSelf(L);
 		lua_pushvalue(L, -2);
 		RString error= "Error running input callback: ";
 		LuaHelpers::RunScriptOnStack(L, error, 1, 1, true);
@@ -365,10 +376,9 @@ bool Screen::PassInputToLua(const InputEventPlus& input)
 	m_CallingInputCallbacks= false;
 	if(!m_DelayedCallbackRemovals.empty())
 	{
-		for(vector<callback_key_t>::iterator key= m_DelayedCallbackRemovals.begin();
-				key != m_DelayedCallbackRemovals.end(); ++key)
+		for (auto &key: m_DelayedCallbackRemovals)
 		{
-			InternalRemoveCallback(*key);
+			InternalRemoveCallback(key);
 		}
 	}
 	return handled;

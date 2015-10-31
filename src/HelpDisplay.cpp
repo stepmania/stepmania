@@ -77,8 +77,10 @@ public:
 		vector<RString> arrayTips;
 		LuaHelpers::ReadArrayFromTable( arrayTips, L );
 		lua_pop( L, 1 );
-		for( unsigned i = 0; i < arrayTips.size(); ++i )
-			FontCharAliases::ReplaceMarkers( arrayTips[i] );
+		for (auto &tip: arrayTips)
+		{
+			FontCharAliases::ReplaceMarkers( tip );
+		}
 		if( lua_gettop(L) > 1 && !lua_isnil( L, 2 ) )
 		{
 			vector<RString> arrayTipsAlt;
@@ -86,9 +88,10 @@ public:
 			lua_pushvalue( L, 2 );
 			LuaHelpers::ReadArrayFromTable( arrayTipsAlt, L );
 			lua_pop( L, 1 );
-			for( unsigned i = 0; i < arrayTipsAlt.size(); ++i )
-				FontCharAliases::ReplaceMarkers( arrayTipsAlt[i] );
-
+			for (auto &tip: arrayTipsAlt)
+			{
+				FontCharAliases::ReplaceMarkers( tip );
+			}
 			p->SetTips( arrayTips, arrayTipsAlt );
 		}
 		else

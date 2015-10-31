@@ -32,9 +32,8 @@ bool ScreenOptionsMemoryCard::UpdateCurrentUsbStorageDevices()
 	const vector<UsbStorageDevice> &aNewDevices = MEMCARDMAN->GetStorageDevices();
 
 	m_CurrentUsbStorageDevices.clear();
-	for( size_t i = 0; i < aNewDevices.size(); ++i )
+	for (auto const &dev: aNewDevices)
 	{
-		const UsbStorageDevice &dev = aNewDevices[i];
 		if( dev.m_State == UsbStorageDevice::STATE_CHECKING )
 			continue;
 		m_CurrentUsbStorageDevices.push_back( dev );

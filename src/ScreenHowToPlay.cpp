@@ -59,8 +59,12 @@ static RString GetAnimPath( Animation a )
 static bool HaveAllCharAnimations()
 {
 	for( int i = ANIM_UP; i < NUM_ANIMATIONS; ++i )
+	{
 		if( !DoesFileExist( GetAnimPath( (Animation) i ) ) )
+		{
 			return false;
+		}
+	}
 	return true;
 }
 
@@ -222,9 +226,12 @@ void ScreenHowToPlay::Step()
 	{
 		const int iNumTracks = m_NoteData.GetNumTracks();
 		for( int k=0; k<iNumTracks; k++ )
+		{
 			if( m_NoteData.GetTapNote(k, iNoteRow).type == TapNoteType_Tap )
+			{
 				iStep |= 1 << k;
-
+			}
+		}
 		switch( iStep )
 		{
 		case ST_LEFT:	m_pmCharacter->PlayAnimation( "Step-LEFT", 1.8f ); break;

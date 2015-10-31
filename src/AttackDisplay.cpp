@@ -79,10 +79,8 @@ void AttackDisplay::Update( float fDelta )
 		return;
 	// don't handle this again
 
-	for( unsigned s=0; s<m_pPlayerState->m_ActiveAttacks.size(); s++ )
+	for (auto const &attack: m_pPlayerState->m_ActiveAttacks)
 	{
-		const Attack& attack = m_pPlayerState->m_ActiveAttacks[s];
-
 		if( attack.fStartSecond >= 0 )
 			continue; /* hasn't started yet */
 

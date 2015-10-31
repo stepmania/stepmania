@@ -488,10 +488,8 @@ void UnlockManager::Load()
 	split( UNLOCK_NAMES, ",", asUnlockNames );
 
 	Lua *L = LUA->Get();
-	for( unsigned i = 0; i < asUnlockNames.size(); ++i )
+	for (auto const &sUnlockName: asUnlockNames)
 	{
-		const RString &sUnlockName = asUnlockNames[i];
-
 		LuaReference cmds = UNLOCK( sUnlockName );
 
 		UnlockEntry current;
@@ -686,10 +684,14 @@ float UnlockManager::PointsUntilNextUnlock( UnlockRequirement t ) const
 
 	float const maxFloat = std::numeric_limits<float>::max();
 	float fSmallestPoints = maxFloat;   // or an arbitrarily large value
-	for( unsigned a=0; a<m_UnlockEntries.size(); a++ )
-		if( m_UnlockEntries[a].m_fRequirement[t] > fScores[t] )
-			fSmallestPoints = std::min( fSmallestPoints, m_UnlockEntries[a].m_fRequirement[t] );
-
+	// TODO: Utilize std::accumulate and std::none_of.
+	for (auto &entry: m_UnlockEntries)
+	{
+		if( entry.m_fRequirement[t] > fScores[t] )
+		{
+			fSmallestPoints = std::min( fSmallestPoints, entry.m_fRequirement[t] );
+		}
+	}
 	if( fSmallestPoints == maxFloat )
 		return 0;  // no match found
 	return fSmallestPoints - fScores[t];
@@ -721,9 +723,8 @@ void UnlockManager::LockEntryIndex( int entryIndex )
 
 void UnlockManager::PreferUnlockEntryID( RString sUnlockEntryID )
 {
-	for( unsigned i = 0; i < m_UnlockEntries.size(); ++i )
+	for (auto &pEntry: m_UnlockEntries)
 	{
-		UnlockEntry &pEntry = m_UnlockEntries[i];
 		if( pEntry.m_sEntryID != sUnlockEntryID )
 			continue;
 
@@ -764,9 +765,13 @@ bool UnlockManager::AnyUnlocksToCelebrate() const
 
 void UnlockManager::GetUnlocksByType( UnlockRewardType t, vector<UnlockEntry *> &apEntries )
 {
-	for( unsigned i = 0; i < m_UnlockEntries.size(); ++i )
-		if( m_UnlockEntries[i].IsValid() && m_UnlockEntries[i].m_Type == t )
-			apEntries.push_back( &m_UnlockEntries[i] );
+	for (auto &entry: m_UnlockEntries)
+	{
+		if( entry.IsValid() && entry.m_Type == t )
+		{
+			apEntries.push_back( &entry );
+		}
+	}
 }
 
 void UnlockManager::GetSongsUnlockedByEntryID( vector<Song *> &apSongsOut, RString sUnlockEntryID )
@@ -774,9 +779,13 @@ void UnlockManager::GetSongsUnlockedByEntryID( vector<Song *> &apSongsOut, RStri
 	vector<UnlockEntry *> apEntries;
 	GetUnlocksByType( UnlockRewardType_Song, apEntries );
 
-	for( unsigned i = 0; i < apEntries.size(); ++i )
-		if( apEntries[i]->m_sEntryID == sUnlockEntryID )
-			apSongsOut.push_back( apEntries[i]->m_Song.ToSong() );
+	for (auto &entry: apEntries)
+	{
+		if( entry->m_sEntryID == sUnlockEntryID )
+		{
+			apSongsOut.push_back( entry->m_Song.ToSong() );
+		}
+	}
 }
 
 void UnlockManager::GetStepsUnlockedByEntryID( vector<Song *> &apSongsOut, vector<Difficulty> &apDifficultyOut, RString sUnlockEntryID )
@@ -784,12 +793,12 @@ void UnlockManager::GetStepsUnlockedByEntryID( vector<Song *> &apSongsOut, vecto
 	vector<UnlockEntry *> apEntries;
 	GetUnlocksByType( UnlockRewardType_Steps, apEntries );
 
-	for( unsigned i = 0; i < apEntries.size(); ++i )
+	for (auto *entry: apEntries)
 	{
-		if( apEntries[i]->m_sEntryID == sUnlockEntryID )
+		if( entry->m_sEntryID == sUnlockEntryID )
 		{
-			apSongsOut.push_back( apEntries[i]->m_Song.ToSong() );
-			apDifficultyOut.push_back( apEntries[i]->m_dc );
+			apSongsOut.push_back( entry->m_Song.ToSong() );
+			apDifficultyOut.push_back( entry->m_dc );
 		}
 	}
 }

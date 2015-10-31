@@ -243,13 +243,16 @@ void ScreenSelectCharacter::AfterValueChange( PlayerNumber pn )
 			m_sprCard[pnAffected].Load( pChar->GetCardPath() );
 
 			if(GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE || GAMESTATE->m_PlayMode == PLAY_MODE_RAVE)
+			{
 				for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
+				{
 					for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
 					{
 						m_AttackIcons[pnAffected][i][j].Load( "ScreenSelectCharacter" );
 						m_AttackIcons[pnAffected][i][j].Set( pChar->m_sAttacks[i][j] );
 					}
-
+				}
+			}
 			int c = m_iSelectedCharacter[pnAffected] - MAX_CHAR_ICONS_TO_SHOW/2;
 			wrap( c, apCharacters.size() );
 
@@ -392,7 +395,9 @@ void ScreenSelectCharacter::TweenOffScreen()
 					m_AttackIcons[p][i][j].RunCommands( ATTACK_ICONS_OFF_COMMAND(p) );
 		}
 		for( unsigned i=0; i<MAX_CHAR_ICONS_TO_SHOW; i++ )
+		{
 			m_sprIcons[p][i].RunCommands( ICONS_OFF_COMMAND(p) );
+		}
 	}
 	m_sprExplanation.RunCommands( EXPLANATION_OFF_COMMAND );
 }

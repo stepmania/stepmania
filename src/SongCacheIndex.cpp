@@ -76,11 +76,13 @@ static void EmptyDir( RString dir )
 
 	vector<RString> asCacheFileNames;
 	GetDirListing( dir, asCacheFileNames );
-	for( unsigned i=0; i<asCacheFileNames.size(); i++ )
+    for (auto const &name: asCacheFileNames)
 	{
-		if( !IsADirectory(dir + asCacheFileNames[i]) )
-			FILEMAN->Remove( dir + asCacheFileNames[i] );
-	}
+		if( !IsADirectory(dir + name) )
+        {
+			FILEMAN->Remove( dir + name );
+        }
+    }
 }
 
 void SongCacheIndex::ReadCacheIndex()

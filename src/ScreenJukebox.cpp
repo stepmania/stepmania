@@ -113,9 +113,8 @@ void ScreenJukebox::SetSong()
 			SONGMAN->GetAllCourses( apCourses, false );
 			vector<const CourseEntry *> apOptions;
 			vector<Course*> apPossibleCourses;
-			for( unsigned j = 0; j < apCourses.size(); ++j )
+			for (auto *lCourse: apCourses)
 			{
-				Course *lCourse = apCourses[j];
 				const CourseEntry *pEntry = lCourse->FindFixedSong( pSong );
 				if( pEntry == nullptr || pEntry->attacks.size() == 0 )
 					continue;

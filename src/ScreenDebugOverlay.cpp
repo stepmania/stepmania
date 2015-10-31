@@ -165,11 +165,11 @@ static RString GetDebugButtonName( const IDebugLine *pLine )
 template<typename U, typename V>
 static bool GetKeyFromMap( const std::map<U, V> &m, const V &val, U &key )
 {
-	for( auto iter = m.begin(); iter != m.end(); ++iter )
+	for (auto &item: m)
 	{
-		if( iter->second == val )
+		if( item.second == val )
 		{
-			key = iter->first;
+			key = item.first;
 			return true;
 		}
 	}

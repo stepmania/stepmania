@@ -137,10 +137,8 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 		m_fLifeRecord[fOtherFirstSecond+pos] = life;
 	}
 
-	for( unsigned i=0; i<other.m_ComboList.size(); ++i )
+	for (auto const &combo: other.m_ComboList)
 	{
-		const Combo_t &combo = other.m_ComboList[i];
-
 		Combo_t newcombo(combo);
 		newcombo.m_fStartSecond += fOtherFirstSecond;
 		m_ComboList.push_back( newcombo );
@@ -787,7 +785,7 @@ public:
 	static int GetPlayedSteps( T* p, lua_State *L )
 	{
 		lua_newtable(L);
-		for( int i = 0; i < (int) std::min(p->m_iStepsPlayed, (int) p->m_vpPossibleSteps.size()); ++i )
+		for( int i = 0; i < std::min(p->m_iStepsPlayed, static_cast<int>(p->m_vpPossibleSteps.size())); ++i )
 		{
 			p->m_vpPossibleSteps[i]->PushSelf(L);
 			lua_rawseti( L, -2, i+1 );

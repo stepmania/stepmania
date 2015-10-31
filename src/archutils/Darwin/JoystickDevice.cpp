@@ -133,9 +133,9 @@ void JoystickDevice::Open()
 		ADD( x_rot );	ADD( y_rot );	ADD( z_rot );
 		ADD( hat );
 #undef ADD
-		for( auto j = js.mapping.cbegin(); j != js.mapping.cend(); ++j )
+		for (auto const &item: js.mapping)
 		{
-			AddElementToQueue( j->first );
+			AddElementToQueue( item.first );
 		}
 	}
 }

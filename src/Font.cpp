@@ -11,6 +11,7 @@
 #include "FontCharmaps.h"
 #include "FontCharAliases.h"
 #include "arch/Dialog/Dialog.h"
+#include <numeric>
 
 using std::string;
 using std::wstring;
@@ -205,10 +206,10 @@ void FontPage::SetExtraPixels( int iDrawExtraPixelsLeft, int iDrawExtraPixelsRig
 		++iDrawExtraPixelsLeft;
 
 	// Adjust for iDrawExtraPixelsLeft and iDrawExtraPixelsRight.
-	for( unsigned i = 0; i < m_aGlyphs.size(); ++i )
+	for (auto &glyph: m_aGlyphs)
 	{
 		int iFrameWidth = m_FontPageTextures.m_pTextureMain->GetSourceFrameWidth();
-		float fCharWidth = m_aGlyphs[i].m_fWidth;
+		float fCharWidth = glyph.m_fWidth;
 
 		/* Extra pixels to draw to the left and right.  We don't have to
 		 * worry about alignment here; fCharWidth is always even (by
@@ -217,10 +218,10 @@ void FontPage::SetExtraPixels( int iDrawExtraPixelsLeft, int iDrawExtraPixelsRig
 		float fExtraRight = min( float(iDrawExtraPixelsRight), (iFrameWidth-fCharWidth)/2.0f );
 
 		// Move left and expand right.
-		m_aGlyphs[i].m_TexRect.left -= fExtraLeft * m_FontPageTextures.m_pTextureMain->GetSourceToTexCoordsRatioX();
-		m_aGlyphs[i].m_TexRect.right += fExtraRight * m_FontPageTextures.m_pTextureMain->GetSourceToTexCoordsRatioX();
-		m_aGlyphs[i].m_fHshift -= fExtraLeft;
-		m_aGlyphs[i].m_fWidth += fExtraLeft + fExtraRight;
+		glyph.m_TexRect.left -= fExtraLeft * m_FontPageTextures.m_pTextureMain->GetSourceToTexCoordsRatioX();
+		glyph.m_TexRect.right += fExtraRight * m_FontPageTextures.m_pTextureMain->GetSourceToTexCoordsRatioX();
+		glyph.m_fHshift -= fExtraLeft;
+		glyph.m_fWidth += fExtraLeft + fExtraRight;
 	}
 }
 
@@ -240,24 +241,23 @@ FontPage::~FontPage()
 
 int Font::GetLineWidthInSourcePixels( const wstring &szLine ) const
 {
-	int iLineWidth = 0;
+	auto incrementWidth = [this](int const curr, wchar_t const letter) {
+		return curr + GetGlyph(letter).m_iHadvance;
+	};
 
-	for( unsigned i=0; i<szLine.size(); i++ )
-		iLineWidth += GetGlyph(szLine[i]).m_iHadvance;
-
-	return iLineWidth;
+	return std::accumulate(szLine.begin(), szLine.end(), 0, incrementWidth);
 }
 
 int Font::GetLineHeightInSourcePixels( const wstring &szLine ) const
 {
 	using std::max;
-	int iLineHeight = 0;
 
 	// The height of a line is the height of its tallest used font page.
-	for( unsigned i=0; i<szLine.size(); i++ )
-		iLineHeight = max( iLineHeight, GetGlyph(szLine[i]).m_pPage->m_iHeight );
+	auto getMaxHeight = [this](int const curr, wchar_t const letter) {
+		return std::max( curr, GetGlyph(letter).m_pPage->m_iHeight);
+	};
 
-	return iLineHeight;
+	return std::accumulate(szLine.begin(), szLine.end(), 0, getMaxHeight);
 }
 
 // width is a pointer so that we can return the used width through it.
@@ -290,8 +290,10 @@ Font::~Font()
 void Font::Unload()
 {
 	//LOG->Trace("Font:Unload '%s'",path.c_str());
-	for( unsigned i = 0; i < m_apPages.size(); ++i )
-		delete m_apPages[i];
+	for (auto *page: m_apPages)
+	{
+		delete page;
+	}
 	m_apPages.clear();
 
 	m_iCharToGlyph.clear();
@@ -380,12 +382,14 @@ bool Font::FontCompleteForString( const wstring &str ) const
 	if( mapDefault == m_iCharToGlyph.end() )
 		RageException::Throw( "The default glyph is missing from the font \"%s\".", path.c_str() );
 
-	for( unsigned i = 0; i < str.size(); ++i )
+	for (auto &item: str)
 	{
 		// If the glyph for this character is the default glyph, we're incomplete.
-		const glyph &g = GetGlyph( str[i] );
+		glyph const &g = GetGlyph(item);
 		if( &g == mapDefault->second )
+		{
 			return false;
+		}
 	}
 	return true;
 }
@@ -760,9 +764,9 @@ void Font::Load( const RString &sIniPath, RString sChars )
 	//LOG->Trace( "Font: Loading new font '%s'",sIniPath.c_str());
 
 	// Check for recursion (recursive imports).
-	for( unsigned i = 0; i < LoadStack.size(); ++i )
+	for (auto &stack: LoadStack)
 	{
-		if( LoadStack[i] == sIniPath )
+		if( stack == sIniPath )
 		{
 			RString str = join("\n", LoadStack);
 			str += "\nCurrent font: " + sIniPath;
@@ -820,12 +824,12 @@ void Font::Load( const RString &sIniPath, RString sChars )
 			Dialog::OK( s );
 		}
 
-		for(unsigned i = 0; i < ImportList.size(); ++i)
+		for (auto &import: ImportList)
 		{
-			RString sPath = THEME->GetPathF( "", ImportList[i], true );
+			RString sPath = THEME->GetPathF( "", import, true );
 			if( sPath == "" )
 			{
-				RString s = ssprintf( "Font \"%s\" imports a font \"%s\" that doesn't exist", sIniPath.c_str(), ImportList[i].c_str() );
+				RString s = ssprintf( "Font \"%s\" imports a font \"%s\" that doesn't exist", sIniPath.c_str(), import.c_str() );
 				Dialog::OK( s );
 				continue;
 			}
@@ -900,11 +904,13 @@ void Font::Load( const RString &sIniPath, RString sChars )
 	{
 		// Cache ASCII glyphs.
 		m_iCharToGlyphCache.fill( nullptr );
-		for( auto it = m_iCharToGlyph.begin(); it != m_iCharToGlyph.end(); ++it )
-			if( it->first < m_iCharToGlyphCache.size() )
+		for (auto &item: m_iCharToGlyph)
+		{
+			if (item.first < m_iCharToGlyphCache.size())
 			{
-				m_iCharToGlyphCache[it->first] = it->second;
+				m_iCharToGlyphCache[item.first] = item.second;
 			}
+		}
 	}
 }
 

@@ -34,11 +34,14 @@ public:
 		// parameters have no effect.
 		Actor::SetTextureRenderStates();
 
-		for( unsigned i = 0; i < m_Quads.size(); ++i )
-			m_Quads[i].c = this->m_pTempState->diffuse[0];
-		for( unsigned i = 0; i < m_pCircles.size(); ++i )
-			m_pCircles[i].c = this->m_pTempState->diffuse[0];
-
+		for (auto &quad: m_Quads)
+		{
+			quad.c = this->m_pTempState->diffuse[0];
+		}
+		for (auto &circle: m_pCircles)
+		{
+			circle.c = this->m_pTempState->diffuse[0];
+		}
 		DISPLAY->DrawQuads( &m_Quads[0], m_Quads.size() );
 
 		int iFans = m_pCircles.size() / iCircleVertices;

@@ -119,11 +119,13 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 					}
 					//Abide by protocol and read room status
 					for( int i=0; i<numRooms; ++i )
+					{
 						m_Rooms[i].SetState( NSMAN->m_SMOnlinePacket.Read1() );
-
+					}
 					for( int i=0; i<numRooms; ++i )
+					{
 						m_Rooms[i].SetFlags( NSMAN->m_SMOnlinePacket.Read1() );
-
+					}
 					if( m_iRoomPlace<0 )
 						m_iRoomPlace=0;
 					if( m_iRoomPlace >= (int) m_Rooms.size() )
@@ -141,8 +143,9 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 			info.maxPlayers = NSMAN->m_SMOnlinePacket.Read1();
 			info.players.resize( info.numPlayers );
 			for( int i = 0; i < info.numPlayers; ++i )
+			{
 				info.players[i] = NSMAN->m_SMOnlinePacket.ReadNT();
-
+			}
 			m_roomInfo.SetRoomInfo( info );
 			break;
 		}
@@ -260,12 +263,16 @@ void ScreenNetRoom::UpdateRoomsList()
 	{
 		if( difference > 0 )
 			for( int x = 0; x < difference; ++x )
+			{
 				m_RoomWheel.RemoveItem( m_RoomWheel.GetNumItems() - 1 );
+			}
 		else
 		{
 			difference = abs( difference );
 			for( int x = 0; x < difference; ++x )
+			{
 				m_RoomWheel.AddItem( new RoomWheelItemData(WheelItemDataType_Generic, "", "", Rage::Color(1,1,1,1)) );
+			}
 		}
 	}
 	else

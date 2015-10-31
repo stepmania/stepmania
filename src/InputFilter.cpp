@@ -302,9 +302,9 @@ void InputFilter::MakeButtonStateList( vector<DeviceInput> &aInputOut ) const
 {
 	aInputOut.clear();
 	aInputOut.reserve( g_ButtonStates.size() );
-	for( ButtonStateMap::const_iterator it = g_ButtonStates.begin(); it != g_ButtonStates.end(); ++it )
+	for (auto const &item: g_ButtonStates)
 	{
-		const ButtonState &bs = it->second;
+		const ButtonState &bs = item.second;
 		aInputOut.push_back( bs.m_DeviceInput );
 		aInputOut.back().ts = bs.m_LastInputTime;
 		aInputOut.back().bDown = bs.m_bLastReportedHeld;

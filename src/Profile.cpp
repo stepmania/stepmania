@@ -353,19 +353,16 @@ float Profile::GetSongsPossible( StepsType st, Difficulty dc ) const
 	int iTotalSteps = 0;
 
 	// add steps high scores
-	const vector<Song*> &vSongs = SONGMAN->GetAllSongs();
-	for( unsigned i=0; i<vSongs.size(); i++ )
+	auto const &vSongs = SONGMAN->GetAllSongs();
+	// TODO: Attempt to accumulate this.
+	for (auto *pSong: vSongs)
 	{
-		Song* pSong = vSongs[i];
-
 		if( !pSong->NormallyDisplayed() )
 			continue;	// skip
 
 		vector<Steps*> vSteps = pSong->GetAllSteps();
-		for( unsigned j=0; j<vSteps.size(); j++ )
+		for (auto *pSteps: vSteps)
 		{
-			Steps* pSteps = vSteps[j];
-
 			if( pSteps->m_StepsType != st )
 				continue;	// skip
 
@@ -376,7 +373,7 @@ float Profile::GetSongsPossible( StepsType st, Difficulty dc ) const
 		}
 	}
 
-	return (float) iTotalSteps;
+	return static_cast<float>(iTotalSteps);
 }
 
 float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
@@ -2593,9 +2590,9 @@ public:
 		p->GetAllUsedHighScoreNames(names);
 		lua_createtable(L, names.size(), 0);
 		int next_name_index= 1;
-		for(auto name= names.begin(); name != names.end(); ++name)
+		for (auto &name: names)
 		{
-			lua_pushstring(L, name->c_str());
+			lua_pushstring(L, name.c_str());
 			lua_rawseti(L, -2, next_name_index);
 			++next_name_index;
 		}

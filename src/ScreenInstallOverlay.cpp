@@ -201,9 +201,8 @@ public:
 					Json::Value require = root["Require"];
 					if( require.isArray() )
 					{
-						for( unsigned i=0; i<require.size(); i++)
+						for (auto iter: require)
 						{
-							Json::Value iter = require[i];
 							if( iter["Dir"].isString() )
 							{
 								RString sDir = iter["Dir"].asString();
@@ -306,19 +305,20 @@ static bool IsPackageFile(const RString &arg)
 PlayAfterLaunchInfo DoInstalls( CommandLineActions::CommandLineArgs args )
 {
 	PlayAfterLaunchInfo ret;
-	for( int i = 0; i<(int)args.argv.size(); i++ )
+	for (auto &s: args.argv)
 	{
-		RString s = args.argv[i];
 		if( IsStepManiaProtocol(s) )
-    {
+		{
 #if !defined(WITHOUT_NETWORKING)
 			g_pDownloadTasks.push_back( new DownloadTask(s) );
 #else
-      // TODO: Figure out a meaningful log message.
+			// TODO: Figure out a meaningful log message.
 #endif
-    }
+		}
 		else if( IsPackageFile(s) )
+		{
 			InstallSmzipOsArg(s, ret);
+		}
 	}
 	return ret;
 }

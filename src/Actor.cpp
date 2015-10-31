@@ -16,6 +16,7 @@
 #include "ActorUtil.h"
 #include "Preference.h"
 #include <typeinfo>
+#include <numeric>
 
 using std::vector;
 
@@ -104,8 +105,7 @@ void Actor::InitState()
 	m_fHorizAlign = 0.5f;
 	m_fVertAlign = 0.5f;
 #if defined(SSC_FUTURES)
-	for( unsigned i = 0; i < m_Effects.size(); ++i )
-		m_Effects[i] = no_effect;
+	std::fill_n(m_Effects.begin(), m_Effects.size(), no_effect);
 #else
 	m_Effect =  no_effect;
 #endif
@@ -174,9 +174,9 @@ Actor::~Actor()
 {
 	StopTweening();
 	UnsubscribeAll();
-	for(size_t i= 0; i < m_WrapperStates.size(); ++i)
+	for (auto *wrapper: m_WrapperStates)
 	{
-		SAFE_DELETE(m_WrapperStates[i]);
+		SAFE_DELETE(wrapper);
 	}
 	m_WrapperStates.clear();
 }
@@ -210,8 +210,10 @@ Actor::Actor( const Actor &cpy ):
 	CPY( m_size );
 	CPY( m_current );
 	CPY( m_start );
-	for( unsigned i = 0; i < cpy.m_Tweens.size(); ++i )
-		m_Tweens.push_back( new TweenStateAndInfo(*cpy.m_Tweens[i]) );
+	for (auto *tween: cpy.m_Tweens)
+	{
+		m_Tweens.push_back(new TweenStateAndInfo(*tween));
+	}
 
 	CPY( m_bFirstUpdate );
 
@@ -219,8 +221,10 @@ Actor::Actor( const Actor &cpy ):
 	CPY( m_fVertAlign );
 #if defined(SSC_FUTURES)
 	// I'm a bit worried about this -aj
-	for( unsigned i = 0; i < cpy.m_Effects.size(); ++i )
-		m_Effects.push_back( (*cpy.m_Effects[i]) );
+	for (auto &effect: cpy.m_Effect)
+	{
+		m_Effects.push_back( effect );
+	}
 #else
 	CPY( m_Effect );
 #endif
@@ -395,9 +399,8 @@ void Actor::Draw()
 		}
 		this->PostDraw();
 	}
-	for(size_t i= 0; i < wrapper_states_used; ++i)
+	for (auto *state: m_WrapperStates)
 	{
-		Actor* state= m_WrapperStates[i];
 		if(abort_with_end_draw)
 		{
 			state->EndDraw();
@@ -792,9 +795,9 @@ void Actor::Update( float fDeltaTime )
 		fDeltaTime = -m_fHibernateSecondsLeft;
 		m_fHibernateSecondsLeft = 0;
 	}
-	for(size_t i= 0; i < m_WrapperStates.size(); ++i)
+	for (auto *state: m_WrapperStates)
 	{
-		m_WrapperStates[i]->Update(fDeltaTime);
+		state->Update(fDeltaTime);
 	}
 
 	this->UpdateInternal( fDeltaTime );
@@ -953,8 +956,10 @@ void Actor::BeginTweening( float time, TweenType tt )
 
 void Actor::StopTweening()
 {
-	for( unsigned i = 0; i < m_Tweens.size(); ++i )
-		delete m_Tweens[i];
+	for (auto *tween: m_Tweens)
+	{
+		delete tween;
+	}
 	m_Tweens.clear();
 }
 
@@ -967,10 +972,10 @@ void Actor::FinishTweening()
 
 void Actor::HurryTweening( float factor )
 {
-	for( unsigned i = 0; i < m_Tweens.size(); ++i )
+	for (auto *tween: m_Tweens)
 	{
-		m_Tweens[i]->info.m_fTimeLeftInTween *= factor;
-		m_Tweens[i]->info.m_fTweenTime *= factor;
+		tween->info.m_fTimeLeftInTween *= factor;
+		tween->info.m_fTweenTime *= factor;
 	}
 }
 
@@ -1303,14 +1308,11 @@ void Actor::RunCommands( const LuaReference& cmds, const LuaReference *pParamTab
 
 float Actor::GetTweenTimeLeft() const
 {
-	float tot = 0;
-
-	tot += m_fHibernateSecondsLeft;
-
-	for( unsigned i=0; i<m_Tweens.size(); ++i )
-		tot += m_Tweens[i]->info.m_fTimeLeftInTween;
-
-	return tot;
+	auto addTime = [](float const total, TweenStateAndInfo *tween ) {
+		return total + tween->info.m_fTimeLeftInTween;
+	};
+	
+	return std::accumulate(m_Tweens.begin(), m_Tweens.end(), m_fHibernateSecondsLeft, addTime);
 }
 
 /* This is a hack to change all tween states while leaving existing tweens alone.
@@ -1324,11 +1326,11 @@ void Actor::SetGlobalDiffuseColor( Rage::Color c )
 {
 	for( int i=0; i<NUM_DIFFUSE_COLORS; i++ ) // color, not alpha
 	{
-		for( unsigned ts = 0; ts < m_Tweens.size(); ++ts )
+		for (auto *tween: m_Tweens)
 		{
-			m_Tweens[ts]->state.diffuse[i].r = c.r;
-			m_Tweens[ts]->state.diffuse[i].g = c.g;
-			m_Tweens[ts]->state.diffuse[i].b = c.b;
+			tween->state.diffuse[i].r = c.r;
+			tween->state.diffuse[i].g = c.g;
+			tween->state.diffuse[i].b = c.b;
 		}
 		m_current.diffuse[i].r = c.r;
 		m_current.diffuse[i].g = c.g;
@@ -1361,7 +1363,9 @@ void Actor::TweenState::Init()
 	crop = Rage::RectF( 0,0,0,0 );
 	fade = Rage::RectF( 0,0,0,0 );
 	for( int i=0; i<NUM_DIFFUSE_COLORS; i++ )
+	{
 		diffuse[i] = Rage::Color( 1, 1, 1, 1 );
+	}
 	glow = Rage::Color( 1, 1, 1, 0 );
 	aux = 0;
 }
@@ -1378,7 +1382,9 @@ bool Actor::TweenState::operator==( const TweenState &other ) const
 	COMPARE( crop );
 	COMPARE( fade );
 	for( unsigned i=0; i < diffuse.size(); ++i )
+	{
 		COMPARE( diffuse[i] );
+	}
 	COMPARE( glow );
 	COMPARE(mask_color);
 	COMPARE( aux );
@@ -1406,8 +1412,9 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 	average_out.fade.bottom	= Rage::lerp( fPercentBetween, ts1.fade.bottom, ts2.fade.bottom );
 
 	for( int i=0; i<NUM_DIFFUSE_COLORS; ++i )
+	{
 		average_out.diffuse[i] = Rage::lerp( fPercentBetween, ts1.diffuse[i], ts2.diffuse[i] );
-
+	}
 	average_out.glow	= Rage::lerp( fPercentBetween, ts1.glow,        ts2.glow );
 	average_out.mask_color= Rage::lerp(fPercentBetween, ts1.mask_color, ts2.mask_color);
 	average_out.aux		= Rage::lerp( fPercentBetween, ts1.aux,         ts2.aux );

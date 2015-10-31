@@ -29,8 +29,10 @@ ScoreDisplayBattle::ScoreDisplayBattle()
 
 	vector<RString> asIconPaths;
 	GetDirListing( THEME->GetCurThemeDir()+"Graphic/ScoreDisplayBattle icon*", asIconPaths );
-	for( unsigned j=0; j<asIconPaths.size(); j++ )
-		m_TexturePreload.Load( asIconPaths[j] );
+	for (auto &path: asIconPaths)
+	{
+		m_TexturePreload.Load( path );
+	}
 }
 
 void ScoreDisplayBattle::Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats )

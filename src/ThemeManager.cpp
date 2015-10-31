@@ -263,9 +263,10 @@ void ThemeManager::GetLanguages( vector<RString>& AddTo )
 {
 	AddTo.clear();
 
-	for( unsigned i = 0; i < g_vThemes.size(); ++i )
-		GetLanguagesForTheme( g_vThemes[i].sThemeName, AddTo );
-
+	for (auto &theme: g_vThemes)
+	{
+		GetLanguagesForTheme( theme.sThemeName, AddTo );
+	}
 	// remove dupes
 	sort( AddTo.begin(), AddTo.end() );
 	vector<RString>::iterator it = unique( AddTo.begin(), AddTo.end(), EqualsNoCase );
@@ -509,10 +510,9 @@ void ThemeManager::RunLuaScripts( const RString &sMask, bool bUseThemeDir )
 		{
 			// Find all Lua files in this directory, add them to asElementPaths
 			GetDirListing( sScriptDir + "Scripts/" + sScriptDirName + "/" + sMask, asElementChildPaths, false, true );
-			for( unsigned i = 0; i < asElementChildPaths.size(); ++i )
+			for (auto const &sPath: asElementChildPaths)
 			{
 				// push these Lua files into the main element paths
-				const RString &sPath = asElementChildPaths[i];
 				asElementPaths.push_back(sPath);
 			}
 		}
@@ -521,9 +521,8 @@ void ThemeManager::RunLuaScripts( const RString &sMask, bool bUseThemeDir )
 		GetDirListing( sScriptDir + "Scripts/" + sMask, asElementPaths, false, true );
 
 		// load Lua files
-		for( unsigned i = 0; i < asElementPaths.size(); ++i )
+		for (auto const &sPath: asElementPaths)
 		{
-			const RString &sPath = asElementPaths[i];
 			LOG->Trace( "Loading \"%s\" ...", sPath.c_str() );
 			LuaHelpers::RunScriptFile( sPath );
 		}
@@ -628,14 +627,14 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 		GetDirListing( sThemeDir + sCategory + "/" + MetricsGroupAndElementToFileName(sMetricsGroup,sElement) + "*",
 						asPaths, false, true );
 
-		for( unsigned p = 0; p < asPaths.size(); ++p )
+		for (auto const &path: asPaths)
 		{
 			// BGAnimations, Fonts, Graphics, Sounds, Other
-			const RString ext = GetExtension(asPaths[p]);
+			const RString ext = GetExtension(path);
 			bool matches= category == EC_OTHER || ext == "redir";
 			if(!matches)
 			{
-				FileType ft= ActorUtil::GetFileType(asPaths[p]);
+				FileType ft= ActorUtil::GetFileType(path);
 				switch(ft)
 				{
 					case FT_Bitmap:
@@ -652,13 +651,13 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 						break;
 					case FT_Directory:
 						{
-							RString sXMLPath = asPaths[p] + "/default.xml";
+							RString sXMLPath = path + "/default.xml";
 							if(DoesFileExist(sXMLPath))
 							{
 								asElementPaths.push_back(sXMLPath);
 								break;
 							}
-							RString sLuaPath = asPaths[p] + "/default.lua";
+							RString sLuaPath = path + "/default.lua";
 							if(DoesFileExist(sLuaPath))
 							{
 								asElementPaths.push_back(sLuaPath);
@@ -677,7 +676,7 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 			}
 			if(matches)
 			{
-				asElementPaths.push_back(asPaths[p]);
+				asElementPaths.push_back(path);
 			}
 		}
 	}
@@ -695,6 +694,7 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 			"ThemeManager:  There is more than one theme element that matches "
 			"'%s/%s/%s'.  Please remove all but one of these matches: ",
 			sThemeName.c_str(), sCategory.c_str(), MetricsGroupAndElementToFileName(sMetricsGroup,sElement).c_str() );
+		// TODO: Replace with Rage::join.
 		message+= asElementPaths[1];
 		for(size_t i= 1; i < asElementPaths.size(); ++i)
 		{
@@ -1409,9 +1409,9 @@ public:
 			// Placed in a table indexed by number, so the order is always the same.
 			lua_createtable(L, metric_node->m_attrs.size(), 0);
 			int next_index= 1;
-			for(XAttrs::const_iterator n= metric_node->m_attrs.begin(); n != metric_node->m_attrs.end(); ++n)
+			for (auto &item: metric_node->m_attrs)
 			{
-				LuaHelpers::Push(L, n->first);
+				LuaHelpers::Push(L, item.first);
 				lua_rawseti(L, -2, next_index);
 				++next_index;
 			}

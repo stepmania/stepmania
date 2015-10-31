@@ -3264,13 +3264,14 @@ void GameManager::GetStylesForGame( const Game *pGame, vector<const Style*>& aSt
 
 const Game *GameManager::GetGameForStyle( const Style *pStyle )
 {
-	for( size_t g=0; g<ARRAYLEN(g_Games); ++g )
+	for (auto const *pGame: g_Games)
 	{
-		const Game *pGame = g_Games[g];
 		for( int s=0; pGame->m_apStyles[s]; ++s )
 		{
 			if( pGame->m_apStyles[s] == pStyle )
+			{
 				return pGame;
+			}
 		}
 	}
 	FAIL_M(pStyle->m_szName);
@@ -3278,18 +3279,19 @@ const Game *GameManager::GetGameForStyle( const Style *pStyle )
 
 const Style* GameManager::GetEditorStyleForStepsType( StepsType st )
 {
-	for( size_t g=0; g<ARRAYLEN(g_Games); ++g )
+	for (auto const *pGame: g_Games)
 	{
-		const Game *pGame = g_Games[g];
 		for( int s=0; pGame->m_apStyles[s]; ++s )
 		{
 			const Style *style = pGame->m_apStyles[s];
 			if( style->m_StepsType == st && style->m_bUsedForEdit )
+			{
 				return style;
+			}
 		}
 	}
 
-	ASSERT_M(0, ssprintf("The current game cannot use this Style with the editor!"));
+	ASSERT_M(0, "The current game cannot use this Style with the editor!");
 	return nullptr;
 }
 
@@ -3301,13 +3303,16 @@ void GameManager::GetStepsTypesForGame( const Game *pGame, vector<StepsType>& aS
 		StepsType st = pGame->m_apStyles[i]->m_StepsType;
 		ASSERT(st < NUM_StepsType);
 
+		auto doesStyleMatch = [&st](StepsType const &type) {
+			return st == type;
+		};
+
 		// Some Styles use the same StepsType (e.g. single and versus) so check
 		// that we aren't doubling up.
-		bool found = false;
-		for( unsigned j=0; j < aStepsTypeAddTo.size(); j++ )
-			if( st == aStepsTypeAddTo[j] ) { found = true; break; }
-		if(found) continue;
-
+		if (std::any_of(aStepsTypeAddTo.begin(), aStepsTypeAddTo.end(), doesStyleMatch))
+		{
+			continue;
+		}
 		aStepsTypeAddTo.push_back( st );
 	}
 }
@@ -3389,11 +3394,12 @@ const Style *GameManager::GetFirstCompatibleStyle( const Game *pGame, int iNumPl
 
 void GameManager::GetEnabledGames( vector<const Game*>& aGamesOut )
 {
-	for( size_t g=0; g<ARRAYLEN(g_Games); ++g )
+	for (auto const *pGame: g_Games)
 	{
-		const Game *pGame = g_Games[g];
 		if( IsGameEnabled( pGame ) )
+		{
 			aGamesOut.push_back( pGame );
+		}
 	}
 }
 

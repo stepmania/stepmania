@@ -158,8 +158,10 @@ void TitleSubst::Load(const RString &filename, const RString &section)
 
 TitleSubst::~TitleSubst()
 {
-	for(unsigned i = 0; i < ttab.size(); ++i)
-		delete ttab[i];
+	for (auto *tab: ttab)
+	{
+		delete tab;
+	}
 }
 
 /*

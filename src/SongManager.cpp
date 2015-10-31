@@ -96,10 +96,9 @@ void SongManager::InitAll( LoadingWindow *ld )
 {
 	vector<RString> never_cache;
 	split(PREFSMAN->m_NeverCacheList, ",", never_cache);
-	for(vector<RString>::iterator group= never_cache.begin();
-			group != never_cache.end(); ++group)
+	for (auto &group: never_cache)
 	{
-		m_GroupsToNeverCache.insert(*group);
+		m_GroupsToNeverCache.insert(group);
 	}
 	InitSongsFromDisk( ld );
 	InitCoursesFromDisk( ld );
@@ -196,9 +195,12 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 {
 	unsigned j;
 	for(j = 0; j < m_sSongGroupNames.size(); ++j)
+	{
 		if( sGroupDirName == m_sSongGroupNames[j] )
+		{
 			break;
-
+		}
+	}
 	if( j != m_sSongGroupNames.size() )
 		return; // the group is already added
 
@@ -332,10 +334,8 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 
 		SongPointerVector& index_entry = m_mapSongGroupIndex[sGroupDirName];
 
-		for( unsigned j=0; j< arraySongDirs.size(); ++j )	// for each song dir
+		for (auto const &sSongDirName: arraySongDirs)
 		{
-			RString sSongDirName = arraySongDirs[j];
-
 			// this is a song directory. Load a new song.
 			if( ld )
 			{
@@ -389,10 +389,10 @@ void SongManager::LoadGroupSymLinks(RString sDir, RString sGroupFolder)
 	GetDirListing( sDir+sGroupFolder+"/*.include", arraySymLinks, false );
 	SortRStringArray( arraySymLinks );
 	SongPointerVector& index_entry = m_mapSongGroupIndex[sGroupFolder];
-	for( unsigned s=0; s< arraySymLinks.size(); s++ )	// for each symlink in this dir, add it in as a song.
+	for (auto &symlink: arraySymLinks)
 	{
 		MsdFile msdF;
-		msdF.ReadFile( sDir+sGroupFolder+"/"+arraySymLinks[s].c_str(), false );  // don't unescape
+		msdF.ReadFile( sDir+sGroupFolder+"/"+symlink.c_str(), false );  // don't unescape
 		RString	sSymDestination = msdF.GetParam(0,1); // Should only be 1 value & param...period.
 
 		Song* pNewSong = new Song;
@@ -427,23 +427,25 @@ void SongManager::PreloadSongImages()
 	RageTexturePreloader preload;
 
 	const vector<Song*> &songs = GetAllSongs();
-	for( unsigned i = 0; i < songs.size(); ++i )
+	for (auto const *song: songs)
 	{
-		if( !songs[i]->HasBanner() )
+		if( !song->HasBanner() )
+		{
 			continue;
-
-		const RageTextureID ID = Sprite::SongBannerTexture( songs[i]->GetBannerPath() );
+		}
+		const RageTextureID ID = Sprite::SongBannerTexture( song->GetBannerPath() );
 		preload.Load( ID );
 	}
 
 	vector<Course*> courses;
 	GetAllCourses( courses, false );
-	for( unsigned i = 0; i < courses.size(); ++i )
+	for (auto const *course: courses)
 	{
-		if( !courses[i]->HasBanner() )
+		if( !course->HasBanner() )
+		{
 			continue;
-
-		const RageTextureID ID = Sprite::SongBannerTexture( courses[i]->GetBannerPath() );
+		}
+		const RageTextureID ID = Sprite::SongBannerTexture( course->GetBannerPath() );
 		preload.Load( ID );
 	}
 
@@ -456,8 +458,10 @@ void SongManager::FreeSongs()
 	m_sSongGroupBannerPaths.clear();
 	//m_sSongGroupBackgroundPaths.clear();
 
-	for( unsigned i=0; i<m_pSongs.size(); i++ )
-		SAFE_DELETE( m_pSongs[i] );
+	for (auto *song: m_pSongs)
+	{
+		SAFE_DELETE( song );
+	}
 	m_pSongs.clear();
 	m_SongsByDir.clear();
 
@@ -539,7 +543,7 @@ Rage::Color SongManager::GetSongGroupColor( const RString &sSongGroup ) const
 		}
 	}
 
-	ASSERT_M( 0, ssprintf("requested color for song group '%s' that doesn't exist",sSongGroup.c_str()) );
+	FAIL_M( ssprintf("requested color for song group '%s' that doesn't exist",sSongGroup.c_str()) );
 	return Rage::Color(1,1,1,1);
 }
 
@@ -589,9 +593,8 @@ Rage::Color SongManager::GetSongColor( const Song* pSong ) const
 		 * a style set up, which is too restrictive. How to handle this? */
 		//const StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 		const vector<Steps*>& vpSteps = pSong->GetAllSteps();
-		for( unsigned i=0; i<vpSteps.size(); i++ )
+		for (auto const *pSteps: vpSteps)
 		{
-			const Steps* pSteps = vpSteps[i];
 			switch( pSteps->GetDifficulty() )
 			{
 				case Difficulty_Challenge:
@@ -1017,8 +1020,10 @@ void SongManager::InitRandomAttacks()
 
 void SongManager::FreeCourses()
 {
-	for( unsigned i=0; i<m_pCourses.size(); i++ )
-		delete m_pCourses[i];
+	for (auto *course: m_pCourses)
+	{
+		delete course;
+	}
 	m_pCourses.clear();
 
 	FOREACH_CourseType( ct )
@@ -1033,7 +1038,7 @@ void SongManager::FreeCourses()
 void SongManager::DeleteAutogenCourses()
 {
 	vector<Course*> vNewCourses;
-	for( vector<Course*>::iterator it = m_pCourses.begin(); it != m_pCourses.end(); ++it )
+	for( auto it = m_pCourses.begin(); it != m_pCourses.end(); ++it )
 	{
 		if( (*it)->m_bIsAutogen )
 		{
@@ -1120,17 +1125,19 @@ void SongManager::Invalidate( const Song *pStaleSong )
 
 void SongManager::RegenerateNonFixedCourses()
 {
-	for( unsigned i=0; i < m_pCourses.size(); i++ )
-		m_pCourses[i]->RegenerateNonFixedTrails();
+	for (auto *course: m_pCourses)
+	{
+		course->RegenerateNonFixedTrails();
+	}
 }
 
 void SongManager::SetPreferences()
 {
-	for( unsigned int i=0; i<m_pSongs.size(); i++ )
+	for (auto *song: m_pSongs)
 	{
 		// PREFSMAN->m_bAutogenSteps may have changed.
-		m_pSongs[i]->RemoveAutoGenNotes();
-		m_pSongs[i]->AddAutoGenNotes();
+		song->RemoveAutoGenNotes();
+		song->AddAutoGenNotes();
 	}
 }
 
@@ -1194,25 +1201,41 @@ bool SongManager::WasLoadedFromAdditionalCourses( const Course *pCourse ) const
 
 void SongManager::GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen ) const
 {
-	for( unsigned i=0; i<m_pCourses.size(); i++ )
-		if( bIncludeAutogen || !m_pCourses[i]->m_bIsAutogen )
-			AddTo.push_back( m_pCourses[i] );
+	for (auto *course: m_pCourses)
+	{
+		if( bIncludeAutogen || !course->m_bIsAutogen )
+		{
+			AddTo.push_back( course );
+		}
+	}
 }
 
 void SongManager::GetCourses( CourseType ct, vector<Course*> &AddTo, bool bIncludeAutogen ) const
 {
-	for( unsigned i=0; i<m_pCourses.size(); i++ )
-		if( m_pCourses[i]->GetCourseType() == ct )
-			if( bIncludeAutogen || !m_pCourses[i]->m_bIsAutogen )
-				AddTo.push_back( m_pCourses[i] );
+	for (auto *course: m_pCourses)
+	{
+		if( course->GetCourseType() == ct )
+		{
+			if( bIncludeAutogen || !course->m_bIsAutogen )
+			{
+				AddTo.push_back( course );
+			}
+		}
+	}
 }
 
 void SongManager::GetCoursesInGroup( vector<Course*> &AddTo, const RString &sCourseGroup, bool bIncludeAutogen ) const
 {
-	for( unsigned i=0; i<m_pCourses.size(); i++ )
-		if( m_pCourses[i]->m_sGroupName == sCourseGroup )
-			if( bIncludeAutogen || !m_pCourses[i]->m_bIsAutogen )
-				AddTo.push_back( m_pCourses[i] );
+	for (auto *course: m_pCourses)
+	{
+		if( course->m_sGroupName == sCourseGroup )
+		{
+			if( bIncludeAutogen || !course->m_bIsAutogen )
+			{
+				AddTo.push_back( course );
+			}
+		}
+	}
 }
 
 bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut, StepsType stype )
@@ -1761,9 +1784,9 @@ void SongManager::UpdateRankingCourses()
 		bool bLotsOfStages = c->GetEstimatedNumStages() > 7;
 		c->m_SortOrder_Ranking = bLotsOfStages? 3 : 2;
 		Rage::ci_ascii_string ciPath{ c->m_sPath };
-		for( unsigned j = 0; j < RankingCourses.size(); j++ )
+		for (auto &course: RankingCourses)
 		{
-			if (ciPath == RankingCourses[j])
+			if (ciPath == course)
 			{
 				c->m_SortOrder_Ranking = 1;
 			}
@@ -1824,16 +1847,16 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 	GetDirListing( sDir+"*", vsGroups, true, false );
 
 	// XXX: Same as above, edits may be skipped in error in some cases
-	for( unsigned i=0; i<vsGroups.size(); i++ )
+	for (auto &group: vsGroups)
 	{
-		RString sGroupDir = vsGroups[i]+"/";
+		RString sGroupDir = group+"/";
 		vector<RString> vsSongs;
 		GetDirListing(sDir+sGroupDir+"*", vsSongs, true, false );
 
-		for( unsigned j=0; j<vsSongs.size(); j++ )
+		for (auto &song: vsSongs)
 		{
 			vector<RString> vsEdits;
-			RString sSongDir = sGroupDir+vsSongs[j]+"/";
+			RString sSongDir = sGroupDir+song+"/";
 			// XXX There doesn't appear to be a songdir const?
 			Song *given = GetSongFromDir( "/Songs/"+sSongDir );
 			// NOTE: We don't have to check the return value of GetSongFromDir here,
@@ -1886,18 +1909,19 @@ void SongManager::LoadCourseEditsFromProfileDir( const RString &sProfileDir, Pro
 
 int SongManager::GetNumEditsLoadedFromProfile( ProfileSlot slot ) const
 {
+	// TODO: Either use std::accumulate or std::count_if.
 	int iCount = 0;
-	for( unsigned s=0; s<m_pSongs.size(); s++ )
+	for (auto const *pSong: m_pSongs)
 	{
-		const Song *pSong = m_pSongs[s];
 		vector<Steps*> apSteps;
 		SongUtil::GetSteps( pSong, apSteps );
 
-		for( unsigned i = 0; i < apSteps.size(); ++i )
+		for (auto const *pSteps: apSteps)
 		{
-			const Steps *pSteps = apSteps[i];
 			if( pSteps->WasLoadedFromProfile() && pSteps->GetLoadedFromProfileSlot() == slot )
+			{
 				++iCount;
+			}
 		}
 	}
 	return iCount;

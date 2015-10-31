@@ -28,8 +28,10 @@ bool RandomSample::Load( RString sFilePath, int iMaxToLoad )
 
 void RandomSample::UnloadAll()
 {
-	for( unsigned i=0; i<m_pSamples.size(); i++ )
-		delete m_pSamples[i];
+	for (auto *item: m_pSamples)
+	{
+		delete item;
+	}
 	m_pSamples.clear();
 }
 
@@ -63,9 +65,10 @@ bool RandomSample::LoadSoundDir( RString sDir, int iMaxToLoad )
 	random_shuffle( arraySoundFiles.begin(), arraySoundFiles.end() );
 	arraySoundFiles.resize( std::min( static_cast<unsigned>(arraySoundFiles.size()), static_cast<unsigned>(iMaxToLoad) ) );
 
-	for( unsigned i=0; i<arraySoundFiles.size(); i++ )
-		LoadSound( sDir + arraySoundFiles[i] );
-
+	for (auto &sound: arraySoundFiles)
+	{
+		LoadSound( sDir + sound );
+	}
 	return true;
 }
 

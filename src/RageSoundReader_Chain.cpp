@@ -73,8 +73,12 @@ int RageSoundReader_Chain::LoadSound( RString sPath )
 		const RageSoundReader *pReader = it->second;
 
 		for( int i = 0; i < (int) m_apLoadedSounds.size(); ++i )
+		{
 			if( m_apLoadedSounds[i] == pReader )
+			{
 				return i;
+			}
+		}
 		FAIL_M( sPath );
 	}
 
@@ -255,10 +259,13 @@ void RageSoundReader_Chain::ReleaseSound( Sound *s )
 bool RageSoundReader_Chain::SetProperty( const RString &sProperty, float fValue )
 {
 	bool bRet = false;
-	for( unsigned i = 0; i < m_apActiveSounds.size(); ++i )
+	// TODO: See if std::any_of works with the side effect call.
+	for (auto *sound: m_apActiveSounds)
 	{
-		if( m_apActiveSounds[i]->pSound->SetProperty(sProperty, fValue) )
+		if( sound->pSound->SetProperty(sProperty, fValue) )
+		{
 			bRet = true;
+		}
 	}
 	return bRet;
 }
@@ -394,13 +401,15 @@ int RageSoundReader_Chain::GetLength() const
 {
 	using std::max;
 	int iLength = 0;
-	for( unsigned i = 0; i < m_aSounds.size(); ++i )
+	// TODO: Look into std::accumulate for this.
+	for (auto const &sound: m_aSounds)
 	{
-		const Sound &sound = m_aSounds[i];
 		const RageSoundReader *pSound = m_apLoadedSounds[sound.iIndex];
 		int iThisLength = pSound->GetLength();
 		if( iThisLength )
+		{
 			iLength = max( iLength, iThisLength + sound.iOffsetMS );
+		}
 	}
 	return iLength;
 }
@@ -409,9 +418,9 @@ int RageSoundReader_Chain::GetLength_Fast() const
 {
 	using std::max;
 	int iLength = 0;
-	for( unsigned i = 0; i < m_aSounds.size(); ++i )
+	// TODO: Look into std::accumulate for this.
+	for (auto const &sound: m_aSounds)
 	{
-		const Sound &sound = m_aSounds[i];
 		const RageSoundReader *pSound = m_apLoadedSounds[sound.iIndex];
 		int iThisLength = pSound->GetLength_Fast();
 		if( iThisLength )

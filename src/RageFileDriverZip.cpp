@@ -280,8 +280,10 @@ bool RageFileDriverZip::ReadLocalFileHeader( FileInfo &info )
 
 RageFileDriverZip::~RageFileDriverZip()
 {
-	for( unsigned i = 0; i < m_pFiles.size(); ++i )
-		delete m_pFiles[i];
+	for (auto *file: m_pFiles)
+	{
+		delete file;
+	}
 
 	if( m_bFileOwned )
 		delete m_pZip;

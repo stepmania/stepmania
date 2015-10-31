@@ -168,7 +168,9 @@ void ScoreScroller::LoadSongs( int iNumRecentScores )
 	GetAllSongsToShow( vpSongs, iNumRecentScores );
 	m_vScoreRowItemData.resize( vpSongs.size() );
 	for( unsigned i=0; i<m_vScoreRowItemData.size(); ++i )
+	{
 		m_vScoreRowItemData[i].m_pSong = vpSongs[i];
+	}
 }
 
 void ScoreScroller::LoadCourses( CourseType ct, int iNumRecentScores )
@@ -177,7 +179,9 @@ void ScoreScroller::LoadCourses( CourseType ct, int iNumRecentScores )
 	GetAllCoursesToShow( vpCourses, ct, iNumRecentScores );
 	m_vScoreRowItemData.resize( vpCourses.size() );
 	for( unsigned i=0; i<m_vScoreRowItemData.size(); ++i )
+	{
 		m_vScoreRowItemData[i].m_pCourse = vpCourses[i];
+	}
 }
 
 void ScoreScroller::Load( RString sMetricsGroup )

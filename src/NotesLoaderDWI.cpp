@@ -647,13 +647,13 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
 			vector<RString> arrayFreezeExpressions;
 			split( sParams[1], ",", arrayFreezeExpressions );
 
-			for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
+			for (auto &freeze: arrayFreezeExpressions)
 			{
 				vector<RString> arrayFreezeValues;
-				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
+				split( freeze, "=", arrayFreezeValues );
 				if( arrayFreezeValues.size() != 2 )
 				{
-					LOG->UserLog( "Song file", sPath, "has an invalid FREEZE: '%s'.", arrayFreezeExpressions[f].c_str() );
+					LOG->UserLog( "Song file", sPath, "has an invalid FREEZE: '%s'.", freeze.c_str() );
 					continue;
 				}
 				int iFreezeRow = BeatToNoteRow( StringToFloat(arrayFreezeValues[0]) / 4.0f );
@@ -669,13 +669,13 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
 			vector<RString> arrayBPMChangeExpressions;
 			split( sParams[1], ",", arrayBPMChangeExpressions );
 
-			for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
+			for (auto &change: arrayBPMChangeExpressions)
 			{
 				vector<RString> arrayBPMChangeValues;
-				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
+				split( change, "=", arrayBPMChangeValues );
 				if( arrayBPMChangeValues.size() != 2 )
 				{
-					LOG->UserLog( "Song file", sPath, "has an invalid CHANGEBPM: '%s'.", arrayBPMChangeExpressions[b].c_str() );
+					LOG->UserLog( "Song file", sPath, "has an invalid CHANGEBPM: '%s'.", change.c_str() );
 					continue;
 				}
 

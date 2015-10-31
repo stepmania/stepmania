@@ -161,9 +161,8 @@ void ModIconRow::SetFromGameState()
 	vsText.resize( m_vpModIcon.size() );
 
 	// for each option, look for the best column to place it in
-	for( unsigned i=0; i<vsOptions.size(); i++ )
+	for (auto sOption: vsOptions)
 	{
-		RString sOption = vsOptions[i];
 		int iPerferredCol = OptionToPreferredColumn( sOption );
 		Rage::clamp( iPerferredCol, 0, (int)m_vpModIcon.size()-1 );
 

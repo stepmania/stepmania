@@ -70,14 +70,19 @@ SaveSignals::~SaveSignals()
 {
 	/* Restore the old signal handlers. */
 	for( unsigned i = 0; i < old_handlers.size(); ++i )
+	{
 		sigaction( signals[i], &old_handlers[i], nullptr );
+	}
 }
 
 static void SigHandler( int signal, siginfo_t *si, void *ucp )
 {
 	bool bMaskSignal = false;
+	// TODO: Utilize std::accumulate.
 	for( unsigned i = 0; i < handlers.size(); ++i )
+	{
 		bMaskSignal |= handlers[i]( signal, si, (const ucontext_t *)ucp );
+	}
 	if( !bMaskSignal )
 	{
 		struct sigaction sa;

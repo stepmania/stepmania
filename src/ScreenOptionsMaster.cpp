@@ -54,9 +54,8 @@ void ScreenOptionsMaster::Init()
 	ScreenOptions::Init();
 
 	vector<OptionRowHandler*> OptionRowHandlers;
-	for( unsigned i = 0; i < asLineNames.size(); ++i )
+	for (auto sLineName: asLineNames)
 	{
-		RString sLineName = asLineNames[i];
 		RString sRowCommands = LINE(sLineName);
 
 		Commands cmds;
@@ -113,8 +112,9 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		FOREACH_OptionsPlayer( p )
 			vpns.push_back( p );
 		for( unsigned r=0; r<m_pRows.size(); r++ ) // foreach row
+		{
 			ExportOptions( r, vpns );
-
+		}
 		if( m_iChangeMask & OPT_APPLY_ASPECT_RATIO )
 		{
 			THEME->UpdateLuaGlobals();		// This needs to be done before resetting the projection matrix below

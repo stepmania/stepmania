@@ -203,13 +203,17 @@ public:
 	}
 	void Read()
 	{
-		for( unsigned i=0; i<m_metric.size(); i++ )
-			m_metric[i].Read();
+		for (auto &metric: m_metric)
+		{
+			metric.Read();
+		}
 	}
 	void Clear()
 	{
-		for( unsigned i=0; i<m_metric.size(); i++ )
-			m_metric[i].Clear();
+		for (auto &metric: m_metric)
+		{
+			metric.Clear();
+		}
 	}
 	const T& GetValue( size_t i ) const
 	{
@@ -243,15 +247,23 @@ public:
 	}
 	void Read()
 	{
-		for( unsigned i=0; i<m_metric.size(); i++ )
-			for( unsigned j=0; j<m_metric[i].size(); j++ )
-				m_metric[i][j].Read();
+		for (auto &metricArray: m_metric)
+		{
+			for (auto &metric: metricArray)
+			{
+				metric.Read();
+			}
+		}
 	}
 	void Clear()
 	{
-		for( unsigned i=0; i<m_metric.size(); i++ )
-			for( unsigned j=0; j<m_metric[i].size(); j++ )
-				m_metric[i][j].Clear();
+		for (auto &metricArray: m_metric)
+		{
+			for (auto &metric: metricArray)
+			{
+				metric.Clear();
+			}
+		}
 	}
 	const T& GetValue( size_t i, size_t j ) const
 	{

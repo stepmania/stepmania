@@ -32,8 +32,10 @@ void TimingData::Copy( const TimingData& cpy )
 	{
 		const vector<TimingSegment*> &vpSegs = cpy.m_avpTimingSegments[tst];
 
-		for( unsigned i = 0; i < vpSegs.size(); ++i )
-			AddSegment( vpSegs[i] );
+		for (auto *seg: vpSegs)
+		{
+			AddSegment( seg );
+		}
 	}
 }
 
@@ -43,9 +45,9 @@ void TimingData::Clear()
 	FOREACH_TimingSegmentType( tst )
 	{
 		vector<TimingSegment*> &vSegs = m_avpTimingSegments[tst];
-		for( unsigned i = 0; i < vSegs.size(); ++i )
+		for (auto *seg: vSegs)
 		{
-			SAFE_DELETE( vSegs[i] );
+			SAFE_DELETE( seg );
 		}
 
 		vSegs.clear();
@@ -160,6 +162,7 @@ void TimingData::DumpOneTable(const beat_start_lookup_t& lookup, const RString& 
 	const vector<TimingSegment*>& stops= segs[SEGMENT_STOP];
 	const vector<TimingSegment*>& delays= segs[SEGMENT_DELAY];
 	LOG->Trace("%s lookup table:", name.c_str());
+	
 	for(size_t lit= 0; lit < lookup.size(); ++lit)
 	{
 		const lookup_item_t& item= lookup[lit];
@@ -254,6 +257,7 @@ void TimingData::CopyRange(int start_row, int end_row,
 		if(seg_type == copy_type || copy_type == TimingSegmentType_Invalid)
 		{
 			const vector<TimingSegment*>& segs= GetTimingSegments(seg_type);
+			// TODO: Determine if range for will allow the copy to work.
 			for(size_t i= 0; i < segs.size(); ++i)
 			{
 				if(segs[i]->GetRow() >= start_row && segs[i]->GetRow() <= end_row)

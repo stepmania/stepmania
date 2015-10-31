@@ -29,16 +29,15 @@ void convert_xmls_in_dir(RString const& dirname)
 {
 	vector<RString> listing;
 	FILEMAN->GetDirListing(dirname, listing, false, true);
-	for(vector<RString>::iterator curr_file= listing.begin();
-		curr_file != listing.end(); ++curr_file)
+	for (auto &file: listing)
 	{
-		switch(ActorUtil::GetFileType(*curr_file))
+		switch(ActorUtil::GetFileType(file))
 		{
 			case FT_Xml:
-				convert_xml_file(*curr_file, dirname);
+				convert_xml_file(file, dirname);
 				break;
 			case FT_Directory:
-				convert_xmls_in_dir((*curr_file) + "/");
+				convert_xmls_in_dir(file + "/");
 				break;
 			default: // Ignore anything not xml or directory.
 				break;
@@ -146,6 +145,7 @@ void hidden_conv(vector<RString>& args)
 void diffuse_conv(vector<RString>& args)
 {
 	COMMON_ARG_VERIFY(2);
+	// TODO: Utilize Rage::join.
 	RString retarg;
 	for(size_t i= 1; i < args.size(); ++i)
 	{
@@ -230,9 +230,9 @@ void init_parser_helpers()
 
 void convert_lua_chunk(RString& chunk_text)
 {
-	for(auto chunk = chunks_to_replace.begin(); chunk != chunks_to_replace.end(); ++chunk)
+	for (auto &chunk: chunks_to_replace)
 	{
-		Rage::replace(chunk_text, chunk->first, chunk->second);
+		Rage::replace(chunk_text, chunk.first, chunk.second);
 	}
 }
 

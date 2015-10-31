@@ -15,18 +15,20 @@ void InputQueueCodeSet::Load( const RString &sType )
 	//
 	split( CODE_NAMES, ",", m_asCodeNames, true );
 
-	for( unsigned c=0; c<m_asCodeNames.size(); c++ )
+	for (auto &name: m_asCodeNames)
 	{
 		vector<RString> asBits;
-		split( m_asCodeNames[c], "=", asBits, true );
+		split( name, "=", asBits, true );
 		RString sCodeName = asBits[0];
 		if( asBits.size() > 1 )
-			m_asCodeNames[c] = asBits[1];
-
+		{
+			name = asBits[1];
+		}
 		InputQueueCode code;
 		if( !code.Load(CODE(sCodeName)) )
+		{
 			continue;
-
+		}
 		m_aCodes.push_back( code );
 	}
 }
@@ -35,10 +37,10 @@ RString InputQueueCodeSet::Input( const InputEventPlus &input ) const
 {
 	for( unsigned i = 0; i < m_aCodes.size(); ++i )
 	{
-		if( !m_aCodes[i].EnteredCode(input.GameI.controller) )
-			continue;
-
-		return m_asCodeNames[i];
+		if( m_aCodes[i].EnteredCode(input.GameI.controller) )
+		{
+			return m_asCodeNames[i];
+		}
 	}
 	return "";
 }

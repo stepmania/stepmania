@@ -109,8 +109,9 @@ void ScreenPrompt::BeginScreen()
 	}
 
 	for( int i=g_PromptType+1; i<NUM_PromptAnswer; i++ )
+	{
 		m_textAnswer[i].SetText( "" );
-
+	}
 	PositionCursor();
 }
 
@@ -261,8 +262,9 @@ void ScreenPrompt::TweenOffScreen()
 	m_textQuestion.PlayCommand( "Off" );
 	m_sprCursor->PlayCommand( "Off" );
 	for( int i=0; i<=g_PromptType; i++ )
+	{
 		m_textAnswer[i].PlayCommand( "Off" );
-
+	}
 	ScreenWithMenuElements::TweenOffScreen();
 }
 

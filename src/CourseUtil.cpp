@@ -97,15 +97,19 @@ void CourseUtil::SortCoursePointerArrayByDifficulty( vector<Course*> &vpCoursesI
 
 void CourseUtil::SortCoursePointerArrayByRanking( vector<Course*> &vpCoursesInOut )
 {
-	for( unsigned i=0; i<vpCoursesInOut.size(); i++ )
-		vpCoursesInOut[i]->UpdateCourseStats( GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType );
+	for (auto *course: vpCoursesInOut)
+	{
+		course->UpdateCourseStats( GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType );
+	}
 	sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByRanking );
 }
 
 void CourseUtil::SortCoursePointerArrayByTotalDifficulty( vector<Course*> &vpCoursesInOut )
 {
-	for( unsigned i=0; i<vpCoursesInOut.size(); i++ )
-		vpCoursesInOut[i]->UpdateCourseStats( GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType );
+	for (auto *course: vpCoursesInOut)
+	{
+		course->UpdateCourseStats( GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType );
+	}
 	sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByTotalDifficulty );
 }
 
@@ -121,16 +125,16 @@ RString GetSectionNameFromCourseAndSort( const Course *pCourse, SortOrder so )
 void SortCoursePointerArrayBySectionName( vector<Course*> &vpCoursesInOut, SortOrder so )
 {
 	RString sOther = SORT_OTHER.GetValue();
-	for(unsigned i = 0; i < vpCoursesInOut.size(); ++i)
+	for (auto *course: vpCoursesInOut)
 	{
-		RString val = GetSectionNameFromCourseAndSort( vpCoursesInOut[i], so );
+		RString val = GetSectionNameFromCourseAndSort( course, so );
 
 		/* Make sure 0-9 comes first and OTHER comes last. */
 		if( val == "0-9" )			val = "0";
 		else if( val == sOther )    val = "2";
 		else						val = "1" + MakeSortString(val);
 
-		//g_mapSongSortVal[vpSongsInOut[i]] = val;
+		//g_mapSongSortVal[course] = val;
 	}
 }
 #endif
@@ -177,10 +181,10 @@ void CourseUtil::SortCoursePointerArrayByAvgDifficulty( vector<Course*> &vpCours
 {
 	RageTimer foo;
 	course_sort_val.clear();
-	for( unsigned i = 0; i < vpCoursesInOut.size(); ++i )
+	for (auto *course: vpCoursesInOut)
 	{
-		int iMeter = vpCoursesInOut[i]->GetMeter( GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType, Difficulty_Medium );
-		course_sort_val[vpCoursesInOut[i]] = ssprintf( "%06i", iMeter );
+		int iMeter = course->GetMeter( GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType, Difficulty_Medium );
+		course_sort_val[course] = ssprintf( "%06i", iMeter );
 	}
 	sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByTitle );
 	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersBySortValueAscending );
@@ -199,8 +203,8 @@ void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInO
 void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInOut, const Profile* pProfile, bool bDescending )
 {
 	ASSERT( pProfile != nullptr );
-	for(unsigned i = 0; i < vpCoursesInOut.size(); ++i)
-		course_sort_val[vpCoursesInOut[i]] = ssprintf( "%09i", pProfile->GetCourseNumTimesPlayed(vpCoursesInOut[i]) );
+	for (auto *course: vpCoursesInOut)
+		course_sort_val[course] = ssprintf( "%09i", pProfile->GetCourseNumTimesPlayed(course) );
 	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), bDescending ? CompareCoursePointersBySortValueDescending : CompareCoursePointersBySortValueAscending );
 	course_sort_val.clear();
 }
@@ -321,9 +325,9 @@ void CourseUtil::AutogenOniFromArtist( const RString &sArtistName, RString sArti
 	CourseEntry e;
 	e.stepsCriteria.m_difficulty = dc;
 
-	for( unsigned i = 0; i < aSongs.size(); ++i )
+	for (auto *song: aSongs)
 	{
-		e.songID.FromSong( aSongs[i] );
+		e.songID.FromSong( song );
 		out.m_vEntries.push_back( e );
 	}
 }

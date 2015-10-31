@@ -361,10 +361,10 @@ static void InitCharAliases()
 		CharAliases[aliases[n].str] = iCodepoint;
 	}
 
-	for(aliasmap::const_iterator i = CharAliases.begin(); i != CharAliases.end(); ++i)
+	for (auto const &item: CharAliases)
 	{
-		RString from = Rage::make_lower(i->first);
-		RString to = WcharToUTF8(i->second);
+		RString from = Rage::make_lower(item.first);
+		RString to = WcharToUTF8(item.second);
 		CharAliasRepl[from] = to;
 	}
 }

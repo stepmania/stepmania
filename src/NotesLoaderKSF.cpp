@@ -289,9 +289,8 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 	float fCurBeat = 0.0f;
 	float prevBeat = 0.0f; // Used for hold tails.
 
-	for( unsigned r=0; r<vNoteRows.size(); r++ )
+	for (auto &sRowString: vNoteRows)
 	{
-		RString& sRowString = vNoteRows[r];
 		StripCrnl( sRowString );
 
 		if( sRowString == "" )
@@ -674,9 +673,8 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		float fCurBeat = 0.0f;
 		bool bDMRequired = false;
 
-		for( unsigned i=0; i < vNoteRows.size(); ++i )
+		for (auto &NoteRowString: vNoteRows)
 		{
-			RString& NoteRowString = vNoteRows[i];
 			StripCrnl( NoteRowString );
 
 			if( NoteRowString == "" )

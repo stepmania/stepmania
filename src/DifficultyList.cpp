@@ -83,12 +83,12 @@ void StepsDisplayList::LoadFromNode( const XNode* pNode )
 		}
 	}
 
-	for( unsigned m = 0; m < m_Lines.size(); ++m )
+	for (auto &line: m_Lines)
 	{
 		// todo: Use Row1, Row2 for names? also m_sName+"Row" -aj
-		m_Lines[m].m_Meter.SetName( "Row" );
-		m_Lines[m].m_Meter.Load( "StepsDisplayListRow", nullptr );
-		this->AddChild( &m_Lines[m].m_Meter );
+		line.m_Meter.SetName( "Row" );
+		line.m_Meter.Load( "StepsDisplayListRow", nullptr );
+		this->AddChild( &line.m_Meter );
 	}
 
 	UpdatePositions();
