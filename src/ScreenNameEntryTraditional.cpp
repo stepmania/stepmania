@@ -170,7 +170,7 @@ bool ScreenNameEntryTraditional::Finish( PlayerNumber pn )
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);
 	pProfile->m_sLastUsedHighScoreName = sSelection;
 
-	Trim( sSelection, " " );
+	sSelection = Rage::trim( sSelection, " " );
 
 	GAMESTATE->StoreRankingName( pn, sSelection );
 

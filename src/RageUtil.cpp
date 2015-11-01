@@ -1275,36 +1275,6 @@ void FilterHighErrorPoints( vector< std::pair<float, float> > &vCoordinates,
 	vCoordinates.resize( iOut );
 }
 
-void TrimLeft( RString &sStr, const char *s )
-{
-	int n = 0;
-	while( n < int(sStr.size()) && strchr(s, sStr[n]) )
-		n++;
-
-	sStr.erase( sStr.begin(), sStr.begin()+n );
-}
-
-void TrimRight( RString &sStr, const char *s )
-{
-	int n = sStr.size();
-	while( n > 0 && strchr(s, sStr[n-1]) )
-		n--;
-
-	/* Delete from n to the end. If n == sStr.size(), nothing is deleted;
-	 * if n == 0, the whole string is erased. */
-	sStr.erase( sStr.begin()+n, sStr.end() );
-}
-
-void Trim( RString &sStr, const char *s )
-{
-	RString::size_type b = 0, e = sStr.size();
-	while( b < e && strchr(s, sStr[b]) )
-		++b;
-	while( b < e && strchr(s, sStr[e-1]) )
-		--e;
-	sStr.assign( sStr.substr(b, e-b) );
-}
-
 void StripCrnl( RString &s )
 {
 	while( s.size() && (s[s.size()-1] == '\r' || s[s.size()-1] == '\n') )

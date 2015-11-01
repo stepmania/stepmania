@@ -407,7 +407,7 @@ struct bmsCommandTree
 		if (statement.length() == 0) // Skip.
 			return;
 
-		// LTrim the statement to allow indentation
+		// left trim the statement to allow indentation
 		size_t hash = statement.find('#');
 
 		if (hash == RString::npos)

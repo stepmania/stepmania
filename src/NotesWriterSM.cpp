@@ -190,7 +190,7 @@ static RString JoinLineList( vector<RString> &lines )
 {
 	for (auto &line: lines)
 	{
-		TrimRight( line );
+		line = Rage::trim_right(line);
 	}
 	/* Skip leading blanks. */
 	unsigned j = 0;

@@ -95,8 +95,7 @@ void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int ro
 	{
 		vector<RString> vs2;
 		vs2.clear(); // trying something.
-		RString loopTmp = *s1;
-		Trim( loopTmp );
+		RString loopTmp = Rage::trim(*s1);
 		split( loopTmp, "=", vs2 );
 
 		if( vs2.size() == 2 ) // First one always seems to have 2.
@@ -117,8 +116,8 @@ void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int ro
 		const float fBeat = RowToBeat( vs2[0], rowsPerBeat );
 
 		RString backup = vs2[2];
-		Trim(vs2[2], "s");
-		Trim(vs2[2], "S");
+		vs2[2] = Rage::trim(vs2[2], "s");
+		vs2[2] = Rage::trim(vs2[2], "S");
 
 		const float fRatio = StringToFloat( vs2[1] );
 		const float fDelay = StringToFloat( vs2[2] );
@@ -400,8 +399,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 		else if( sValueName=="SPEED" )
 		{
 			TimingData &timing = ( pNewNotes ? pNewNotes->m_Timing : out.m_SongTiming);
-			RString tmp = sParams[1];
-			Trim( tmp );
+			RString tmp = Rage::trim(sParams[1]);
 			ProcessSpeeds( timing, tmp, iRowsPerBeat );
 		}
 

@@ -160,8 +160,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		// This should always be last.
 		else if( sValueName=="STEP" )
 		{
-			RString theSteps = sParams[1];
-			TrimLeft( theSteps );
+			RString theSteps = Rage::trim_left(sParams[1]);
 			split( theSteps, "\n", vNoteRows, true );
 		}
 	}
@@ -610,8 +609,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		{
 			/* STEP will always be the last header in a KSF file by design. Due to
 			 * the Direct Move syntax, it is best to get the rows of notes here. */
-			RString theSteps = sParams[1];
-			TrimLeft( theSteps );
+			RString theSteps = Rage::trim_left(sParams[1]);
 			split( theSteps, "\n", vNoteRows, true );
 		}
 		else if( sValueName=="DIFFICULTY" || sValueName=="PLAYER" )

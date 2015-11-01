@@ -478,9 +478,6 @@ inline T Increment( T a ) { ++a; return a; }
 template<class T>
 inline T Decrement( T a ) { --a; return a; }
 
-void TrimLeft( RString &sStr, const char *szTrim = "\r\n\t " );
-void TrimRight( RString &sStr, const char *szTrim = "\r\n\t " );
-void Trim( RString &sStr, const char *szTrim = "\r\n\t " );
 void StripCrnl( RString &sStr );
 RString URLEncode( const RString &sStr );
 

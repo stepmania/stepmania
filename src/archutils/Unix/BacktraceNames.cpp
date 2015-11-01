@@ -313,15 +313,19 @@ void BacktraceNames::FromString( RString s )
     RString MangledAndOffset, sAddress;
     unsigned pos = 0;
     while( pos < s.size() && s[pos] != '(' && s[pos] != '[' )
+	{
         File += s[pos++];
-    Trim( File );
+	}
+	File = Rage::trim( File );
 
     if( pos < s.size() && s[pos] == '(' )
     {
         pos++;
         while( pos < s.size() && s[pos] != ')' )
+		{
             MangledAndOffset += s[pos++];
-    }
+		}
+	}
 
     if( MangledAndOffset != "" )
     {

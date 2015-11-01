@@ -18,7 +18,7 @@ RString werr_ssprintf( int err, const char *fmt, ... )
 	RString text = buf;
 	Rage::replace(text, "\n", "" );
 	Rage::replace(text, "\r", " " ); // foo\r\nbar -> foo bar
-	TrimRight( text ); // "foo\r\n" -> "foo"
+	text = Rage::trim_right( text ); // "foo\r\n" -> "foo"
 
 	va_list	va;
 	va_start(va, fmt);

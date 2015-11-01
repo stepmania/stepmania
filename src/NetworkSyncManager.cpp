@@ -914,7 +914,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 
 				RString sHTTPHeader( cHeader );
 				SAFE_DELETE( cHeader );
-				Trim( sHTTPHeader );
+				sHTTPHeader = Rage::trim( sHTTPHeader );
 				//LOG->Trace( sHTTPHeader.c_str() );
 
 				vector<RString> svResponse;
@@ -929,11 +929,8 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 						RString::size_type sFieldPos = svResponse[h].find(": ");
 						if( sFieldPos != RString::npos )
 						{
-							RString sFieldName = Rage::head( svResponse[h], sFieldPos ),
-								sFieldValue = svResponse[h].substr(sFieldPos+2);
-
-							Trim( sFieldName );
-							Trim( sFieldValue );
+							auto sFieldName = Rage::trim(Rage::head( svResponse[h], sFieldPos ));
+							auto sFieldValue = Rage::trim(svResponse[h].substr(sFieldPos+2));
 
 							if( 0 == strcasecmp(sFieldName,"X-SM-Build") )
 							{

@@ -576,7 +576,7 @@ void FixupPath( RString &path, const RString &sSongPath )
 	/* Many imported files contain erroneous whitespace before or after
 	 * filenames. Paths usually don't actually start or end with spaces,
 	 * so let's just remove it. */
-	Trim( path );
+	path = Rage::trim( path );
 }
 
 // Songs in BlacklistImages will never be autodetected as song images.
@@ -613,16 +613,14 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			// Dancing Monkeys had a bug/feature where the artist was replaced. Restore it.
 			vector<RString> titleParts;
 			split(this->m_sMainTitle, "-", titleParts);
-			this->m_sArtist = titleParts.front();
-			Trim(this->m_sArtist);
+			this->m_sArtist = Rage::trim(titleParts.front());
 			titleParts.erase(titleParts.begin());
-			this->m_sMainTitle = join("-", titleParts);
-			Trim(this->m_sMainTitle);
+			this->m_sMainTitle = Rage::trim(join("-", titleParts));
 		}
 
-		Trim(m_sMainTitle);
-		Trim(m_sSubTitle);
-		Trim(m_sArtist);
+		m_sMainTitle = Rage::trim(m_sMainTitle);
+		m_sSubTitle = Rage::trim(m_sSubTitle);
+		m_sArtist = Rage::trim(m_sArtist);
 
 		// Fall back on the song directory name.
 		if(m_sMainTitle == "")

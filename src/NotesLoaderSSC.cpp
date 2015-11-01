@@ -776,10 +776,11 @@ void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
 		}
 
 		const float fBeat = StringToFloat( arrayLabelValues[0] );
-		RString sLabel = arrayLabelValues[1];
-		TrimRight(sLabel);
+		RString sLabel = Rage::trim_right(arrayLabelValues[1]);
 		if( fBeat >= 0.0f )
+		{
 			out.AddSegment( LabelSegment(BeatToNoteRow(fBeat), sLabel) );
+		}
 		else
 		{
 			LOG->UserLog("Song file",
@@ -873,8 +874,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 	{
 		const MsdFile::value_t &params = msd.GetValue(i);
 		RString valueName = Rage::make_upper(params[0]);
-		RString matcher = params[1]; // mainly for debugging.
-		Trim(matcher);
+		RString matcher = Rage::trim(params[1]); // mainly for debugging.
 
 		load_note_data_handler_map_t::iterator handler=
 			parser_helper.load_note_data_handlers.find(valueName);

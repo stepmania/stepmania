@@ -287,9 +287,8 @@ bool SMLoader::LoadFromDir( const RString &sPath, Song &out, bool load_autosave 
 
 float SMLoader::RowToBeat( RString line, const int rowsPerBeat )
 {
-	RString backup = line;
-	Trim(line, "r");
-	Trim(line, "R");
+	RString backup = Rage::trim(line, "r");
+	backup = Rage::trim(backup, "R");
 	if( backup != line )
 	{
 		return StringToFloat( line ) / rowsPerBeat;
@@ -313,10 +312,10 @@ void SMLoader::LoadFromTokens(
 	// we're loading from disk, so this is by definition already saved:
 	out.SetSavedToDisk( true );
 
-	Trim( sStepsType );
-	Trim( sDescription );
-	Trim( sDifficulty );
-	Trim( sNoteData );
+	sStepsType = Rage::trim(sStepsType);
+	sDescription = Rage::trim( sDescription );
+	sDifficulty = Rage::trim( sDifficulty );
+	sNoteData = Rage::trim( sNoteData );
 
 	// LOG->Trace( "Steps::LoadFromTokens(), %s", sStepsType.c_str() );
 
@@ -392,10 +391,11 @@ void SMLoader::ProcessAttackString( vector<RString> & attacks, MsdFile::value_t 
 {
 	for( unsigned s=1; s < params.params.size(); ++s )
 	{
-		RString tmp = params[s];
-		Trim(tmp);
+		RString tmp = Rage::trim(params[s]);
 		if (tmp.size() > 0)
+		{
 			attacks.push_back( tmp );
+		}
 	}
 }
 
@@ -411,10 +411,10 @@ void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
 
 		// Need an identifer and a value for this to work
 		if( sBits.size() < 2 )
+		{
 			continue;
-
-		Trim( sBits[0] );
-		Rage::ci_ascii_string tagName{ sBits[0] };
+		}
+		Rage::ci_ascii_string tagName{ Rage::trim(sBits[0]).c_str() };
 		if( tagName == "TIME" )
 			attack.fStartSecond = strtof( sBits[1], nullptr );
 		else if( tagName == "LEN" )
@@ -423,8 +423,7 @@ void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
 			end = strtof( sBits[1], nullptr );
 		else if( tagName == "MODS" )
 		{
-			Trim(sBits[1]);
-			attack.sModifiers = sBits[1];
+			attack.sModifiers = Rage::trim(sBits[1]);
 
 			if( end != -9999 )
 			{
@@ -432,8 +431,7 @@ void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
 				end = -9999;
 			}
 
-			if( attack.fSecsRemaining < 0.0f )
-				attack.fSecsRemaining = 0.0f;
+			attack.fSecsRemaining = std::max(0.f, attack.fSecsRemaining);
 
 			attacks.push_back( attack );
 		}
@@ -1081,9 +1079,9 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 			{
 				difficulty = "edit";
 			}
-			Trim(stepsType);
-			Trim(description);
-			Trim(difficulty);
+			stepsType = Rage::trim(stepsType);
+			description = Rage::trim(description);
+			difficulty = Rage::trim(difficulty);
 			Rage::ci_ascii_string pureDiff{ difficulty };
 			
 			// Remember our old versions.
@@ -1115,8 +1113,7 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 				continue;
 			}
 
-			RString noteData = sParams[6];
-			Trim( noteData );
+			RString noteData = Rage::trim(sParams[6]);
 			out.SetSMNoteData( noteData );
 			out.TidyUpData();
 			return true;

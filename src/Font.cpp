@@ -607,8 +607,7 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 				 *
 				 * This lets us assign characters very compactly and readably. */
 
-				RString row_str = sName.substr(5);
-				TrimLeft(row_str);
+				RString row_str = Rage::trim_left(sName.substr(5));
 
 				if(!IsAnInt(row_str))
 				{
