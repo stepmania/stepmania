@@ -554,6 +554,15 @@ namespace StringConversion
 
 	template<> inline bool FromString<RString>( const RString &sValue, RString &out ) { out = sValue; return true; }
 	template<> inline RString ToString<RString>( const RString &value ) { return value; }
+	template<> inline bool FromString<std::string> ( RString const &sValue, std::string &outParam)
+	{
+		outParam = sValue;
+		return true;
+	}
+	template<> inline RString ToString<std::string>( std::string const &value )
+	{
+		return value;
+	}
 }
 
 class RageFileBasic;

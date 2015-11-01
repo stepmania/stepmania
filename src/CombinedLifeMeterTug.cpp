@@ -9,7 +9,7 @@
 
 ThemeMetric<float> METER_WIDTH		("CombinedLifeMeterTug","MeterWidth");
 
-static void TugMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
+static void TugMeterPercentChangeInit( size_t /*ScoreEvent*/ i, std::string &sNameOut, float &defaultValueOut )
 {
 	sNameOut = "TugMeterPercentChange" + ScoreEventToString( (ScoreEvent)i );
 	switch( i )

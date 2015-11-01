@@ -1822,7 +1822,7 @@ StageResult GameState::GetStageResult( PlayerNumber pn ) const
 void GameState::GetDefaultPlayerOptions( PlayerOptions &po )
 {
 	po.Init();
-	po.FromString( PREFSMAN->m_sDefaultModifiers );
+	po.FromString( PREFSMAN->m_sDefaultModifiers.Get() );
 	po.FromString( CommonMetrics::DEFAULT_MODIFIERS );
 	if( po.m_sNoteSkin.empty() )
 		po.m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
@@ -1831,7 +1831,7 @@ void GameState::GetDefaultPlayerOptions( PlayerOptions &po )
 void GameState::GetDefaultSongOptions( SongOptions &so )
 {
 	so.Init();
-	so.FromString( PREFSMAN->m_sDefaultModifiers );
+	so.FromString( PREFSMAN->m_sDefaultModifiers.Get() );
 	so.FromString( CommonMetrics::DEFAULT_MODIFIERS );
 }
 

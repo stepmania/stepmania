@@ -16,7 +16,7 @@ using std::vector;
 
 #define AUTOMAPPINGS_DIR "/Data/AutoMappings/"
 
-static Preference<RString> g_sLastSeenInputDevices( "LastSeenInputDevices", "" );
+static Preference<std::string> g_sLastSeenInputDevices( "LastSeenInputDevices", "" );
 static Preference<bool> g_bAutoMapOnJoyChange( "AutoMapOnJoyChange", true );
 
 namespace
@@ -764,7 +764,7 @@ bool InputMapper::CheckForChangedInputDevicesAndRemap( RString &sMessageOut )
 	vector<RString> vsLastSeenJoysticks;
 	// Don't use "," since some vendors have a name like "company Ltd., etc".
 	// For now, use a pipe character. -aj, fix from Mordae.
-	split( g_sLastSeenInputDevices, "|", vsLastSeenJoysticks );
+	split( g_sLastSeenInputDevices.Get(), "|", vsLastSeenJoysticks );
 
 	vector<RString> vsCurrent;
 	vector<RString> vsCurrentJoysticks;

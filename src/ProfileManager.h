@@ -107,7 +107,7 @@ public:
 
 	static Preference<bool> m_bProfileStepEdits;
 	static Preference<bool> m_bProfileCourseEdits;
-	static Preference1D<RString> m_sDefaultLocalProfileID;
+	static Preference1D<std::string> m_sDefaultLocalProfileID;
 
 private:
 	ProfileLoadResult LoadProfile( PlayerNumber pn, RString sProfileDir, bool bIsMemCard );

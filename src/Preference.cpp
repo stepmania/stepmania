@@ -8,7 +8,7 @@
 
 static SubscriptionManager<IPreference> m_Subscribers;
 
-IPreference::IPreference( const RString& sName ):
+IPreference::IPreference( std::string const & sName ):
 	m_sName( sName ),
 	m_bIsStatic( false )
 {
@@ -20,9 +20,9 @@ IPreference::~IPreference()
 	m_Subscribers.Unsubscribe( this );
 }
 
-IPreference *IPreference::GetPreferenceByName( const RString &sName )
+IPreference *IPreference::GetPreferenceByName( std::string const &sName )
 {
-	Rage::ci_ascii_string ciName{ sName };
+	Rage::ci_ascii_string ciName{ sName.c_str() };
 	for (auto *p: *m_Subscribers.m_pSubscribers)
 	{
 		if (ciName == p->GetName())

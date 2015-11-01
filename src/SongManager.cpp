@@ -58,7 +58,7 @@ static const ThemeMetric<Rage::Color>	UNLOCK_COLOR			( "SongManager", "UnlockCol
 static const ThemeMetric<bool>		MOVE_UNLOCKS_TO_BOTTOM_OF_PREFERRED_SORT	( "SongManager", "MoveUnlocksToBottomOfPreferredSort" );
 static const ThemeMetric<int>		EXTRA_STAGE2_DIFFICULTY_MAX	( "SongManager", "ExtraStage2DifficultyMax" );
 
-static Preference<RString> g_sDisabledSongs( "DisabledSongs", "" );
+static Preference<std::string> g_sDisabledSongs( "DisabledSongs", "" );
 static Preference<bool> g_bHideIncompleteCourses( "HideIncompleteCourses", false );
 
 RString SONG_GROUP_COLOR_NAME( size_t i )   { return ssprintf( "SongGroupColor%i", (int) i+1 ); }
@@ -95,7 +95,7 @@ SongManager::~SongManager()
 void SongManager::InitAll( LoadingWindow *ld )
 {
 	vector<RString> never_cache;
-	split(PREFSMAN->m_NeverCacheList, ",", never_cache);
+	split(PREFSMAN->m_NeverCacheList.Get(), ",", never_cache);
 	for (auto &group: never_cache)
 	{
 		m_GroupsToNeverCache.insert(group);
@@ -1161,7 +1161,7 @@ void SongManager::SaveEnabledSongsToPref()
 void SongManager::LoadEnabledSongsFromPref()
 {
 	vector<RString> asDisabledSongs;
-	split( g_sDisabledSongs, ";", asDisabledSongs, true );
+	split( g_sDisabledSongs.Get(), ";", asDisabledSongs, true );
 
 	for (auto &s: asDisabledSongs)
 	{

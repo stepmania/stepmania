@@ -31,7 +31,7 @@
  */
 
 static RageMutex g_SoundManMutex("SoundMan");
-static Preference<RString> g_sSoundDrivers( "SoundDrivers", "" ); // "" == DEFAULT_SOUND_DRIVER_LIST
+static Preference<std::string> g_sSoundDrivers( "SoundDrivers", "" ); // "" == DEFAULT_SOUND_DRIVER_LIST
 
 RageSoundManager *SOUNDMAN = nullptr;
 
@@ -41,7 +41,7 @@ RageSoundManager::RageSoundManager(): m_pDriver(nullptr), m_fMixVolume(1.0f),
 static LocalizedString COULDNT_FIND_SOUND_DRIVER( "RageSoundManager", "Couldn't find a sound driver that works" );
 void RageSoundManager::Init()
 {
-	m_pDriver = RageSoundDriver::Create( g_sSoundDrivers );
+	m_pDriver = RageSoundDriver::Create( g_sSoundDrivers.Get() );
 	if( m_pDriver == nullptr )
 		RageException::Throw( "%s", COULDNT_FIND_SOUND_DRIVER.GetValue().c_str() );
 }

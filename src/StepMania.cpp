@@ -357,9 +357,9 @@ ThemeMetric<RString>	INITIAL_SCREEN	("Common","InitialScreen");
 RString StepMania::GetInitialScreen()
 {
 	if(PREFSMAN->m_sTestInitialScreen.Get() != "" &&
-		SCREENMAN->IsScreenNameValid(PREFSMAN->m_sTestInitialScreen))
+		SCREENMAN->IsScreenNameValid(PREFSMAN->m_sTestInitialScreen.Get()))
 	{
-		return PREFSMAN->m_sTestInitialScreen;
+		return PREFSMAN->m_sTestInitialScreen.Get();
 	}
 	RString screen_name= INITIAL_SCREEN.GetValue();
 	if(!SCREENMAN->IsScreenNameValid(screen_name))
@@ -751,7 +751,7 @@ RageDisplay *CreateDisplay()
 		ssprintf(ERROR_VIDEO_DRIVER.GetValue(), GetVideoDriverName().c_str())+"\n\n";
 
 	vector<RString> asRenderers;
-	split( PREFSMAN->m_sVideoRenderers, ",", asRenderers, true );
+	split( PREFSMAN->m_sVideoRenderers.Get(), ",", asRenderers, true );
 
 	if( asRenderers.empty() )
 		RageException::Throw( "%s", ERROR_NO_VIDEO_RENDERERS.GetValue().c_str() );
@@ -839,10 +839,10 @@ void StepMania::InitializeCurrentGame( const Game* g )
 
 	GAMESTATE->SetCurGame( g );
 
-	RString sAnnouncer = PREFSMAN->m_sAnnouncer;
-	RString sTheme = PREFSMAN->m_sTheme;
+	RString sAnnouncer = PREFSMAN->m_sAnnouncer.Get();
+	RString sTheme = PREFSMAN->m_sTheme.Get();
 	RString sGametype = GAMESTATE->GetCurrentGame()->m_szName;
-	RString sLanguage = PREFSMAN->m_sLanguage;
+	RString sLanguage = PREFSMAN->m_sLanguage.Get();
 
 	if( sAnnouncer.empty() )
 		sAnnouncer = GAMESTATE->GetCurrentGame()->m_szName;
@@ -1020,7 +1020,7 @@ int sm_main(int argc, char* argv[])
 	if( PREFSMAN->m_sAdditionalFolders.Get() != "" )
 	{
 		vector<RString> dirs;
-		split( PREFSMAN->m_sAdditionalFolders, ",", dirs, true );
+		split( PREFSMAN->m_sAdditionalFolders.Get(), ",", dirs, true );
 		for (auto const &dir: dirs)
 		{
 			FILEMAN->Mount( "dir", dir, "/" );
@@ -1029,7 +1029,7 @@ int sm_main(int argc, char* argv[])
 	if( PREFSMAN->m_sAdditionalSongFolders.Get() != "" )
 	{
 		vector<RString> dirs;
-		split( PREFSMAN->m_sAdditionalSongFolders, ",", dirs, true );
+		split( PREFSMAN->m_sAdditionalSongFolders.Get(), ",", dirs, true );
 		for (auto const &dir: dirs)
 		{
 			FILEMAN->Mount( "dir", dir, "/AdditionalSongs" );
@@ -1038,7 +1038,7 @@ int sm_main(int argc, char* argv[])
 	if( PREFSMAN->m_sAdditionalCourseFolders.Get() != "" )
 	{
 		vector<RString> dirs;
-		split( PREFSMAN->m_sAdditionalCourseFolders, ",", dirs, true );
+		split( PREFSMAN->m_sAdditionalCourseFolders.Get(), ",", dirs, true );
 		for (auto const &dir: dirs)
 		{
 			FILEMAN->Mount( "dir", dir, "/AdditionalCourses" );

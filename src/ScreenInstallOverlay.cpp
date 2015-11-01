@@ -141,7 +141,7 @@ struct FileCopyResult
 };
 
 #if !defined(WITHOUT_NETWORKING)
-Preference<RString> g_sCookie( "Cookie", "" );
+Preference<std::string> g_sCookie( "Cookie", "" );
 
 class DownloadTask
 {

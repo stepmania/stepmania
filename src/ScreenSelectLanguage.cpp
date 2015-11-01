@@ -50,7 +50,7 @@ bool ScreenSelectLanguage::MenuStart( const InputEventPlus &input )
 	RString sLangCode = m_aGameCommands[iIndex].m_sName;
 	PREFSMAN->m_sLanguage.Set( sLangCode );
 	PREFSMAN->SavePrefsToDisk();
-	THEME->SwitchThemeAndLanguage( THEME->GetCurThemeName(), PREFSMAN->m_sLanguage, PREFSMAN->m_bPseudoLocalize );
+	THEME->SwitchThemeAndLanguage( THEME->GetCurThemeName(), PREFSMAN->m_sLanguage.Get(), PREFSMAN->m_bPseudoLocalize );
 
 	m_soundStart.Play(true);
 	this->PostScreenMessage( SM_BeginFadingOut, 0 );

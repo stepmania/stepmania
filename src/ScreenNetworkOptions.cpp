@@ -40,7 +40,7 @@ enum DisplayScoreboard
 
 AutoScreenMessage( SM_DoneConnecting );
 
-Preference<RString> g_sLastServer( "LastConnectedServer",	"" );
+Preference<std::string> g_sLastServer( "LastConnectedServer",	"" );
 
 REGISTER_SCREEN_CLASS( ScreenNetworkOptions );
 
@@ -118,7 +118,7 @@ bool ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 	case PO_CONNECTION:
 		if ( !NSMAN->useSMserver )
 		{
-			ScreenTextEntry::TextEntry( SM_DoneConnecting, ENTER_NETWORK_ADDRESS.GetValue()+"\n\n"+CONNECT_TO_YOURSELF.GetValue(), g_sLastServer, 128 );
+			ScreenTextEntry::TextEntry( SM_DoneConnecting, ENTER_NETWORK_ADDRESS.GetValue()+"\n\n"+CONNECT_TO_YOURSELF.GetValue(), g_sLastServer.Get(), 128 );
 		}
 		else
 		{

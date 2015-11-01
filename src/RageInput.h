@@ -32,7 +32,7 @@ public:
 	void PushSelf( lua_State *L );
 };
 
-extern Preference<RString> g_sInputDrivers;
+extern Preference<std::string> g_sInputDrivers;
 
 extern RageInput*			INPUTMAN;	// global and accessible from anywhere in our program
 

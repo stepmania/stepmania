@@ -37,7 +37,7 @@ static const float g_fTimeMeterSecondsChangeInit[] =
 };
 COMPILE_ASSERT( ARRAYLEN(g_fTimeMeterSecondsChangeInit) == NUM_ScoreEvent );
 
-static void TimeMeterSecondsChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
+static void TimeMeterSecondsChangeInit( size_t /*ScoreEvent*/ i, std::string &sNameOut, float &defaultValueOut )
 {
 	sNameOut = "TimeMeterSecondsChange" + ScoreEventToString( (ScoreEvent)i );
 	defaultValueOut = g_fTimeMeterSecondsChangeInit[i];

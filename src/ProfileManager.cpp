@@ -32,7 +32,7 @@ ProfileManager*	PROFILEMAN = nullptr;	// global and accessible from anywhere in 
 #define ID_DIGITS_STR "8"
 #define MAX_ID 99999999
 
-static void DefaultLocalProfileIDInit( size_t /*PlayerNumber*/ i, RString &sNameOut, RString &defaultValueOut )
+static void DefaultLocalProfileIDInit( size_t /*PlayerNumber*/ i, std::string &sNameOut, std::string &defaultValueOut )
 {
 	sNameOut = ssprintf( "DefaultLocalProfileIDP%d", int(i+1) );
 	defaultValueOut = "";
@@ -40,7 +40,7 @@ static void DefaultLocalProfileIDInit( size_t /*PlayerNumber*/ i, RString &sName
 
 Preference<bool> ProfileManager::m_bProfileStepEdits( "ProfileStepEdits", true );
 Preference<bool> ProfileManager::m_bProfileCourseEdits( "ProfileCourseEdits", true );
-Preference1D<RString> ProfileManager::m_sDefaultLocalProfileID( DefaultLocalProfileIDInit, NUM_PLAYERS );
+Preference1D<std::string> ProfileManager::m_sDefaultLocalProfileID( DefaultLocalProfileIDInit, NUM_PLAYERS );
 
 const RString NEW_MEM_CARD_NAME	=	"";
 const RString USER_PROFILES_DIR	=	"/Save/LocalProfiles/";
@@ -50,7 +50,7 @@ const RString LAST_GOOD_SUBDIR	=	"LastGood/";
 
 // Directories to search for a profile if m_sMemoryCardProfileSubdir doesn't
 // exist, separated by ";":
-static Preference<RString> g_sMemoryCardProfileImportSubdirs( "MemoryCardProfileImportSubdirs", "" );
+static Preference<std::string> g_sMemoryCardProfileImportSubdirs( "MemoryCardProfileImportSubdirs", "" );
 
 static RString LocalProfileIDToDir( const RString &sProfileID ) { return USER_PROFILES_DIR + sProfileID + "/"; }
 static RString LocalProfileDirToID( const RString &sDir ) { return Basename( sDir ); }
@@ -197,7 +197,7 @@ ProfileLoadResult ProfileManager::LoadProfile( PlayerNumber pn, RString sProfile
 
 bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 {
-	RString sProfileID = m_sDefaultLocalProfileID[pn];
+	RString sProfileID = m_sDefaultLocalProfileID[pn].Get();
 	if( sProfileID.empty() )
 	{
 		m_sProfileDir[pn] = "";
@@ -225,7 +225,7 @@ void ProfileManager::GetMemoryCardProfileDirectoriesToTry( vector<RString> &asDi
 	asDirsToTry.push_back( PREFSMAN->m_sMemoryCardProfileSubdir.ToString() );
 
 	/* If that failed, try loading from all fallback directories. */
-	split( g_sMemoryCardProfileImportSubdirs, ";", asDirsToTry, true );
+	split( g_sMemoryCardProfileImportSubdirs.Get(), ";", asDirsToTry, true );
 }
 
 bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn, bool bLoadEdits )
