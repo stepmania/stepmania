@@ -530,7 +530,7 @@ void NewFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 {
 	// pos_z_vec will be used later to orient the hold.  Read below. -Kyz
 	static const Rage::Vector3 pos_z_vec(0.0f, 0.0f, 1.0f);
-	static const Rage::Vector3 pos_y_vec(0.0f, 1.0f, 0.0f);
+	static const Rage::Vector3 neg_y_vec(0.0f, -1.0f, 0.0f);
 	static strip_buffer verts_to_draw;
 	verts_to_draw.init();
 	static const double y_step= 4.0;
@@ -623,13 +623,13 @@ void NewFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 		}
 		else
 		{
-			if(std::abs(render_forward.y) > 0.9f) // 0.9 arbitrariliy picked.
+			if(std::abs(render_forward.z) > 0.9f) // 0.9 arbitrariliy picked.
 			{
-				render_left= Rage::CrossProduct(pos_z_vec, render_forward);
+				render_left= Rage::CrossProduct(neg_y_vec, render_forward);
 			}
 			else
 			{
-				render_left= Rage::CrossProduct(pos_y_vec, render_forward);
+				render_left= Rage::CrossProduct(pos_z_vec, render_forward);
 			}
 		}
 		if(m_twirl_holds && curr_step.trans.rot.y != 0.0)

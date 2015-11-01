@@ -2083,15 +2083,15 @@ void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfac
 	GLushort buf[4][256];
 	memset( buf, 0, sizeof(buf) );
 
-	uint8_t zero = 0;
-	uint8_t twoFiftyFive = 255;
-	uint8_t twoFiftyFiveSquared = 65535;
+	GLushort zero = 0;
+	GLushort twoFiftyFive = 255;
+	GLushort twoFiftyFiveSquared = 65535;
 	for( int i = 0; i < palette->ncolors; ++i )
 	{
-		buf[0][i] = Rage::scale( palette->colors[i].r, zero, twoFiftyFive, zero, twoFiftyFiveSquared );
-		buf[1][i] = Rage::scale( palette->colors[i].g, zero, twoFiftyFive, zero, twoFiftyFiveSquared );
-		buf[2][i] = Rage::scale( palette->colors[i].b, zero, twoFiftyFive, zero, twoFiftyFiveSquared );
-		buf[3][i] = Rage::scale( palette->colors[i].a, zero, twoFiftyFive, zero, twoFiftyFiveSquared );
+		buf[0][i] = Rage::scale( static_cast<GLushort>(palette->colors[i].r), zero, twoFiftyFive, zero, twoFiftyFiveSquared );
+		buf[1][i] = Rage::scale( static_cast<GLushort>(palette->colors[i].g), zero, twoFiftyFive, zero, twoFiftyFiveSquared );
+		buf[2][i] = Rage::scale( static_cast<GLushort>(palette->colors[i].b), zero, twoFiftyFive, zero, twoFiftyFiveSquared );
+		buf[3][i] = Rage::scale( static_cast<GLushort>(palette->colors[i].a), zero, twoFiftyFive, zero, twoFiftyFiveSquared );
 	}
 
 	DebugFlushGLErrors();

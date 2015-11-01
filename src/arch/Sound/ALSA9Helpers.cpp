@@ -130,7 +130,9 @@ void Alsa9Buf::InitializeErrorHandler()
 static RString DeviceName()
 {
 	if( !PREFSMAN->m_iSoundDevice.Get().empty() )
-		return PREFSMAN->m_iSoundDevice;
+	{
+		return PREFSMAN->m_iSoundDevice.Get();
+	}
 	return "default";
 }
 
