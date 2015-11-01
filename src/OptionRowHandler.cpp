@@ -166,8 +166,9 @@ public:
 			ROW_INVALID_IF(lCmds.v[0].m_vsArgs.size() != 1, "Row command has invalid args to number of entries.", false);
 			const int NumCols = StringToInt( lCmds.v[0].m_vsArgs[0] );
 			ROW_INVALID_IF(NumCols < 1, "Not enough entries in list.", false);
-			for (auto const &cmd: lCmds.v)
+			for(size_t i= 1; i < lCmds.v.size(); ++i)
 			{
+				auto const& cmd= lCmds.v[i];
 				RString sName = cmd.GetName();
 
 				if(	 sName == "together" )		m_Def.m_bOneChoiceForAllPlayers = true;
