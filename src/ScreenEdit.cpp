@@ -1367,7 +1367,7 @@ static float g_fLastInsertAttackDurationSeconds = -1;
 static float g_fLastInsertAttackPositionSeconds = -1;
 static BackgroundLayer g_CurrentBGChangeLayer = BACKGROUND_LAYER_Invalid;
 
-static void SetDefaultEditorNoteSkin( size_t num, RString &sNameOut, RString &defaultValueOut )
+static void SetDefaultEditorNoteSkin( size_t num, std::string &sNameOut, std::string &defaultValueOut )
 {
 	sNameOut = ssprintf( "EditorNoteSkinP%d", int(num + 1) );
 
@@ -1375,7 +1375,7 @@ static void SetDefaultEditorNoteSkin( size_t num, RString &sNameOut, RString &de
 	defaultValueOut = "default";
 }
 
-static Preference1D<RString> EDITOR_NOTE_SKINS( SetDefaultEditorNoteSkin, NUM_PLAYERS );
+static Preference1D<std::string> EDITOR_NOTE_SKINS( SetDefaultEditorNoteSkin, NUM_PLAYERS );
 
 static ThemeMetric<RString> EDIT_MODIFIERS		("ScreenEdit","EditModifiers");
 
@@ -1459,10 +1459,12 @@ void ScreenEdit::Init()
 		GAMESTATE->m_bDidModeChangeNoteSkin = true;
 		FOREACH_PlayerNumber( pn )
 		{
-			const RString &sNoteSkin = EDITOR_NOTE_SKINS[pn].Get();
+			std::string const &sNoteSkin = EDITOR_NOTE_SKINS[pn].Get();
 			if( NOTESKIN->DoesNoteSkinExist( sNoteSkin ) )
+			{
 				PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions,
 				                 ModsLevel_Preferred, m_sNoteSkin, sNoteSkin );
+			}
 		}
 	}
 	m_PlayerStateEdit.SetPlayerNumber(PLAYER_1);
@@ -1472,9 +1474,10 @@ void ScreenEdit::Init()
 	// productive editing.
 	// todo: We should allow certain noteskins (note-colored/rhythm) to be
 	// displayed. (Perhaps this should be a noteskin metric.) -aj
-	if( NOTESKIN->DoesNoteSkinExist( EDITOR_NOTE_SKINS[PLAYER_1].Get() ) )
+	std::string const &skin = EDITOR_NOTE_SKINS[PLAYER_1].Get();
+	if( NOTESKIN->DoesNoteSkinExist( skin ) )
 	{
-		PO_GROUP_ASSIGN( m_PlayerStateEdit.m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, EDITOR_NOTE_SKINS[PLAYER_1].Get() );
+		PO_GROUP_ASSIGN( m_PlayerStateEdit.m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, skin );
 	}
 	else
 	{

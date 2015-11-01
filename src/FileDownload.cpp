@@ -83,7 +83,7 @@ void FileTransfer::StartUpload( const RString &sURL, const RString &sSrcFile, co
 	StartTransfer( upload, sURL, sSrcFile, sDestFile );
 }
 
-extern Preference<RString> g_sCookie;
+extern Preference<std::string> g_sCookie;
 
 void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const RString &sSrcFile, const RString &sDestFile )
 {

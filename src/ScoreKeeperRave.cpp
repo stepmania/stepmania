@@ -13,7 +13,7 @@
 
 ThemeMetric<float> ATTACK_DURATION_SECONDS	("ScoreKeeperRave","AttackDurationSeconds");
 
-static void SuperMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
+static void SuperMeterPercentChangeInit( size_t /*ScoreEvent*/ i, std::string &sNameOut, float &defaultValueOut )
 {
 	ScoreEvent ci = (ScoreEvent)i;
 	sNameOut = "SuperMeterPercentChange" + ScoreEventToString( ci );

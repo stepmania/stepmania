@@ -326,7 +326,7 @@ static RString CopyEditsMachineToMemoryCard()
 
 	vector<RString> vs;
 	vs.push_back( ssprintf( COPIED_TO_CARD.GetValue(), pn+1 ) );
-	RString s = CopyEdits( sFromDir, sToDir, PREFSMAN->m_sMemoryCardProfileSubdir );
+	RString s = CopyEdits( sFromDir, sToDir, PREFSMAN->m_sMemoryCardProfileSubdir.Get() );
 	vs.push_back( s );
 
 	MEMCARDMAN->UnmountCard(pn);

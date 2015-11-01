@@ -44,12 +44,12 @@ public:
 
 	const std::vector<UsbStorageDevice> &GetStorageDevices() { return m_vStorageDevices; }
 
-	static Preference1D<RString>	m_sMemoryCardOsMountPoint;
+	static Preference1D<std::string>	m_sMemoryCardOsMountPoint;
 	static Preference1D<int>	m_iMemoryCardUsbBus;
 	static Preference1D<int>	m_iMemoryCardUsbPort;
 	static Preference1D<int>	m_iMemoryCardUsbLevel;
 
-	static Preference<RString>	m_sEditorMemoryCardOsMountPoint;
+	static Preference<std::string>	m_sEditorMemoryCardOsMountPoint;
 
 	// Lua
 	void PushSelf( lua_State *L );

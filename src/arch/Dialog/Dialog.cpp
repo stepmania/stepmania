@@ -11,7 +11,7 @@
 using std::vector;
 
 #if !defined(SMPACKAGE)
-static Preference<RString> g_sIgnoredDialogs( "IgnoredDialogs", "" );
+static Preference<std::string> g_sIgnoredDialogs( "IgnoredDialogs", "" );
 #endif
 
 DialogDriver *MakeDialogDriver()
@@ -90,7 +90,7 @@ static bool MessageIsIgnored( RString sID )
 {
 #if !defined(SMPACKAGE)
 	vector<RString> asList;
-	split( g_sIgnoredDialogs, ",", asList );
+	split( g_sIgnoredDialogs.Get(), ",", asList );
 	Rage::ci_ascii_string ciId{ sID };
 	for (unsigned i = 0; i < asList.size(); ++i)
 	{
@@ -121,7 +121,7 @@ void Dialog::IgnoreMessage( RString sID )
 		return;
 
 	vector<RString> asList;
-	split( g_sIgnoredDialogs, ",", asList );
+	split( g_sIgnoredDialogs.Get(), ",", asList );
 	asList.push_back( sID );
 	g_sIgnoredDialogs.Set( join(",",asList) );
 	PREFSMAN->SavePrefsToDisk();

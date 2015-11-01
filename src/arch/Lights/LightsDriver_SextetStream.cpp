@@ -234,7 +234,7 @@ REGISTER_SOUND_DRIVER_CLASS(SextetStreamToFile);
 #else
 	#define DEFAULT_OUTPUT_FILENAME "Data/StepMania-Lights-SextetStream.out"
 #endif
-static Preference<RString> g_sSextetStreamOutputFilename("SextetStreamOutputFilename", DEFAULT_OUTPUT_FILENAME);
+static Preference<std::string> g_sSextetStreamOutputFilename("SextetStreamOutputFilename", DEFAULT_OUTPUT_FILENAME);
 
 inline RageFile * openOutputStream(const RString& filename)
 {
@@ -262,7 +262,7 @@ LightsDriver_SextetStreamToFile::LightsDriver_SextetStreamToFile(const RString& 
 
 LightsDriver_SextetStreamToFile::LightsDriver_SextetStreamToFile()
 {
-	_impl = new Impl(openOutputStream(g_sSextetStreamOutputFilename));
+	_impl = new Impl(openOutputStream(g_sSextetStreamOutputFilename.Get()));
 }
 
 /*

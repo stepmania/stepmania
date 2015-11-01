@@ -77,7 +77,7 @@ static void DumpAVIDebugInfo( const RString& fn )
 	LOG->Trace( "Movie %s has handler '%s', type '%s'", fn.c_str(), handler.c_str(), type.c_str() );
 }
 
-static Preference<RString> g_sMovieDrivers( "MovieDrivers", "" ); // "" == default
+static Preference<std::string> g_sMovieDrivers( "MovieDrivers", "" ); // "" == default
 /* Try drivers in order of preference until we find one that works. */
 static LocalizedString MOVIE_DRIVERS_EMPTY		( "Arch", "Movie Drivers cannot be empty." );
 static LocalizedString COULDNT_CREATE_MOVIE_DRIVER	( "Arch", "Couldn't create a movie driver." );
@@ -85,7 +85,7 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 {
 	DumpAVIDebugInfo( ID.filename );
 
-	RString sDrivers = g_sMovieDrivers;
+	RString sDrivers = g_sMovieDrivers.Get();
 	if( sDrivers.empty() )
 		sDrivers = DEFAULT_MOVIE_DRIVER_LIST;
 

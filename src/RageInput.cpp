@@ -10,7 +10,7 @@ using std::vector;
 
 RageInput* INPUTMAN = nullptr; // global and accessible from anywhere in our program
 
-Preference<RString> g_sInputDrivers( "InputDrivers", "" ); // "" == DEFAULT_INPUT_DRIVER_LIST
+Preference<std::string> g_sInputDrivers( "InputDrivers", "" ); // "" == DEFAULT_INPUT_DRIVER_LIST
 
 namespace
 {
@@ -65,7 +65,7 @@ void RageInput::LoadDrivers()
 	// Init optional devices.
 	vector<InputHandler *> apDevices;
 
-	InputHandler::Create( g_sInputDrivers, apDevices );
+	InputHandler::Create( g_sInputDrivers.Get(), apDevices );
 	for (auto *device: apDevices)
 	{
 		AddHandler(device);

@@ -78,8 +78,8 @@ public:
 	};
 	void Init();
 	void Approach( const PlayerOptions& other, float fDeltaSeconds );
-	RString GetString( bool bForceNoteSkin = false ) const;
-	RString GetSavedPrefsString() const;	// only the basic options that players would want for every song
+	std::string GetString( bool bForceNoteSkin = false ) const;
+	std::string GetSavedPrefsString() const;	// only the basic options that players would want for every song
 	enum ResetPrefsType
 	{
 		saved_prefs,
@@ -90,8 +90,8 @@ public:
 	void ResetSavedPrefsInvalidForCourse() { ResetPrefs(saved_prefs_invalid_for_course); }
 	void GetMods( std::vector<RString> &AddTo, bool bForceNoteSkin = false ) const;
 	void GetLocalizedMods( std::vector<RString> &AddTo ) const;
-	void FromString( const RString &sMultipleMods );
-	bool FromOneModString( const RString &sOneMod, RString &sErrorDetailOut );	// On error, return false and optionally set sErrorDetailOut
+	void FromString( const std::string &sMultipleMods );
+	bool FromOneModString( const std::string &sOneMod, std::string &sErrorDetailOut );	// On error, return false and optionally set sErrorDetailOut
 	void ChooseRandomModifiers();
 	bool ContainsTransformOrTurn() const;
 
@@ -230,8 +230,8 @@ public:
 	 * @brief The Noteskin to use.
 	 *
 	 * If an empty string, it means to not change from the default. */
-	RString		m_sNoteSkin;
-	RString m_newskin;
+	std::string m_sNoteSkin;
+	std::string m_newskin;
 
 	void NextAccel();
 	void NextEffect();

@@ -977,7 +977,7 @@ static bool ConnectToServer( const RString &t )
 	return true;
 }
 
-extern Preference<RString> g_sLastServer;
+extern Preference<std::string> g_sLastServer;
 
 LuaFunction( ConnectToServer, 		ConnectToServer( ( RString(SArg(1)).length()==0 ) ? RString(g_sLastServer) : RString(SArg(1) ) ) )
 

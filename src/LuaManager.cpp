@@ -112,12 +112,22 @@ namespace LuaHelpers
 		if(pStr != nullptr)
 		{
 			object.assign(pStr, iLen);
+			return true;
 		}
-		else
+		object.clear();
+		return false;
+	}
+	template<> bool FromStack<std::string>(Lua* L, std::string &object, int offset)
+	{
+		size_t len;
+		char const *cstr = lua_tolstring(L, offset, &len);
+		if (cstr != nullptr)
 		{
-			object.clear();
+			object.assign(cstr);
+			return true;
 		}
-		return pStr != nullptr;
+		object.clear();
+		return false;
 	}
 
 	bool InReportScriptError= false;

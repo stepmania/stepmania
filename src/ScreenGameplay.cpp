@@ -1424,7 +1424,7 @@ void ScreenGameplay::LoadLights()
 	}
 
 	// No explicit lights.  Create autogen lights.
-	RString sDifficulty = PREFSMAN->m_sLightsStepsDifficulty;
+	RString sDifficulty = PREFSMAN->m_sLightsStepsDifficulty.Get();
 	vector<RString> asDifficulties;
 	split( sDifficulty, ",", asDifficulties );
 

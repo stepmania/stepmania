@@ -137,7 +137,7 @@ static void AddPart( vector<RString> &AddTo, float level, RString name )
 	AddTo.push_back( LevelStr + name );
 }
 
-RString PlayerOptions::GetString( bool bForceNoteSkin ) const
+std::string PlayerOptions::GetString( bool bForceNoteSkin ) const
 {
 	vector<RString> v;
 	GetMods( v, bForceNoteSkin );
@@ -329,7 +329,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 
 /* Options are added to the current settings; call Init() beforehand if
  * you don't want this. */
-void PlayerOptions::FromString( const RString &sMultipleMods )
+void PlayerOptions::FromString( std::string const &sMultipleMods )
 {
 	RString sTemp = sMultipleMods;
 	vector<RString> vs;
@@ -344,7 +344,7 @@ void PlayerOptions::FromString( const RString &sMultipleMods )
 	}
 }
 
-bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
+bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &sErrorOut )
 {
 	ASSERT_M( NOTESKIN != nullptr, "The Noteskin Manager must be loaded in order to process mods." );
 	RString sBit = Rage::trim(Rage::make_lower(sOneMod));
@@ -979,7 +979,7 @@ bool PlayerOptions::ContainsTransformOrTurn() const
 	return false;
 }
 
-RString PlayerOptions::GetSavedPrefsString() const
+std::string PlayerOptions::GetSavedPrefsString() const
 {
 	PlayerOptions po_prefs;
 #define SAVE(x) po_prefs.x = this->x;
@@ -1160,7 +1160,7 @@ public:
 		}
 		else
 		{
-			lua_pushstring( L, p->m_sNoteSkin );
+			lua_pushstring( L, p->m_sNoteSkin.c_str() );
 		}
 		if(original_top >= 1 && lua_isstring(L, 1))
 		{

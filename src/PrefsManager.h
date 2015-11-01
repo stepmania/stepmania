@@ -135,15 +135,15 @@ public:
 	void Init();
 
 	void SetCurrentGame( const RString &sGame );
-	RString	GetCurrentGame() { return m_sCurrentGame; }
+	RString	GetCurrentGame() { return m_sCurrentGame.Get(); }
 protected:
-	Preference<RString>	m_sCurrentGame;
+	Preference<std::string>	m_sCurrentGame;
 
 public:
 	// Game-specific prefs.  Copy these off and save them every time the game changes
-	Preference<RString>	m_sAnnouncer;
-	Preference<RString>	m_sTheme;
-	Preference<RString>	m_sDefaultModifiers;
+	Preference<std::string>	m_sAnnouncer;
+	Preference<std::string>	m_sTheme;
+	Preference<std::string>	m_sDefaultModifiers;
 protected:
 	void StoreGamePrefs();
 	void RestoreGamePrefs();
@@ -189,7 +189,7 @@ public:
 	//Preference<BackgroundCacheMode>		m_BackgroundCache;
 	Preference<bool>	m_bFastLoad;
 	Preference<bool>	m_bFastLoadAdditionalSongs;
-	Preference<RString> m_NeverCacheList;
+	Preference<std::string> m_NeverCacheList;
 
 	Preference<bool>	m_bOnlyDedicatedMenuButtons;
 	Preference<bool>	m_bMenuTimer;
@@ -241,8 +241,8 @@ public:
 	Preference<int>	m_iProgressiveNonstopLifebar;
 	Preference<bool>	m_bShowBeginnerHelper;
 	Preference<bool>	m_bDisableScreenSaver;
-	Preference<RString>	m_sLanguage;
-	Preference<RString>	m_sMemoryCardProfileSubdir; // the directory on a memory card to look in for a profile
+	Preference<std::string>	m_sLanguage;
+	Preference<std::string>	m_sMemoryCardProfileSubdir; // the directory on a memory card to look in for a profile
 	Preference<int>	m_iProductID; // Saved in HighScore to track what software version a score came from.
 	Preference<int>	m_iCenterImageTranslateX;
 	Preference<int>	m_iCenterImageTranslateY;
@@ -283,28 +283,28 @@ public:
 	Preference<bool>	m_bSubSortByNumSteps;
 	Preference<GetRankingName>	m_GetRankingName;
 
-	Preference<RString>	m_sAdditionalSongFolders;
-	Preference<RString>	m_sAdditionalCourseFolders;
-	Preference<RString>	m_sAdditionalFolders;
+	Preference<std::string>	m_sAdditionalSongFolders;
+	Preference<std::string>	m_sAdditionalCourseFolders;
+	Preference<std::string>	m_sAdditionalFolders;
 
 	// failsafe
-	Preference<RString>	m_sDefaultTheme;
+	Preference<std::string>	m_sDefaultTheme;
 
-	Preference<RString>	m_sLastSeenVideoDriver;
-	Preference<RString>	m_sVideoRenderers; // StepMania.cpp sets these on first run based on the card
+	Preference<std::string>	m_sLastSeenVideoDriver;
+	Preference<std::string>	m_sVideoRenderers; // StepMania.cpp sets these on first run based on the card
 	Preference<bool>	m_bSmoothLines;
 	Preference<int>	m_iSoundWriteAhead;
-	Preference<RString>	m_iSoundDevice;
+	Preference<std::string>	m_iSoundDevice;
 	Preference<int>	m_iSoundPreferredSampleRate;
-	Preference<RString>	m_sLightsStepsDifficulty;
+	Preference<std::string>	m_sLightsStepsDifficulty;
 	Preference<bool>	m_bAllowUnacceleratedRenderer;
 	Preference<bool>	m_bThreadedInput;
 	Preference<bool>	m_bThreadedMovieDecode;
-	Preference<RString>	m_sTestInitialScreen;
+	Preference<std::string>	m_sTestInitialScreen;
 	Preference<bool>	m_bDebugLights;
 	Preference<bool>	m_bMonkeyInput;
-	Preference<RString>	m_sMachineName;
-	Preference<RString>	m_sCoursesToShowRanking;
+	Preference<std::string>	m_sMachineName;
+	Preference<std::string>	m_sCoursesToShowRanking;
 	Preference<bool> m_MuteActions;
 	Preference<bool> m_bAllowSongDeletion; // Allow the user to remove songs from their collection through UI / keyboard shortcut
 
