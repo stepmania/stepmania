@@ -593,7 +593,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 			InputMappings km;
 			km.ReadMappings( m_pInputScheme, sFilePath, true );
 
-			AutoMappings mapping( m_pInputScheme->m_szName, km.m_sDeviceRegex, km.m_sDescription );
+			AutoMappings mapping( m_pInputScheme->inputName, km.m_sDeviceRegex, km.m_sDescription );
 
 			FOREACH_ENUM( GameController, c )
 			{
@@ -615,7 +615,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 		}
 
 		// hard-coded automaps
-		Rage::ci_ascii_string schemeName{ m_pInputScheme->m_szName };
+		Rage::ci_ascii_string schemeName{ m_pInputScheme->inputName.c_str() };
 		for (auto const &mapping : g_AutoMappings)
 		{
 			if (schemeName == mapping.m_sGame)
@@ -1063,10 +1063,13 @@ MultiPlayer InputMapper::InputDeviceToMultiPlayer( InputDevice id )
 
 GameButton InputScheme::ButtonNameToIndex( const RString &sButtonName ) const
 {
-	for( GameButton gb=(GameButton) 0; gb<m_iButtonsPerController; gb=(GameButton)(gb+1) ) 
-		if( strcasecmp(GetGameButtonName(gb), sButtonName) == 0 )
+	for( GameButton gb=(GameButton) 0; gb<m_iButtonsPerController; gb=(GameButton)(gb+1) )
+	{
+		if( strcasecmp(GetGameButtonName(gb).c_str(), sButtonName) == 0 )
+		{
 			return gb;
-
+		}
+	}
 	return GameButton_Invalid;
 }
 
@@ -1142,11 +1145,13 @@ const InputScheme::GameButtonInfo *InputScheme::GetGameButtonInfo( GameButton gb
 		return &m_GameButtonInfo[gb-GAME_BUTTON_NEXT];
 }
 
-const char *InputScheme::GetGameButtonName( GameButton gb ) const
+std::string InputScheme::GetGameButtonName( GameButton gb ) const
 {
 	if( gb == GameButton_Invalid )
+	{
 		return "";
-	return GetGameButtonInfo(gb)->m_szName;
+	}
+	return GetGameButtonInfo(gb)->buttonName;
 }
 
 void InputMappings::Clear()
@@ -1197,7 +1202,7 @@ void InputMappings::ReadMappings( const InputScheme *pInputScheme, RString sFile
 			Dialog::OK( "Missing AutoMapping::Description in '%s'", sFilePath.c_str() );
 	}
 
-	const XNode *Key = ini.GetChild( pInputScheme->m_szName );
+	const XNode *Key = ini.GetChild( pInputScheme->inputName );
 
 	if( Key  )
 	{
@@ -1232,12 +1237,14 @@ void InputMappings::WriteMappings( const InputScheme *pInputScheme, RString sFil
 	ini.ReadFile( sFilePath );
 
 	// erase the key so that we overwrite everything for this game
-	ini.DeleteKey( pInputScheme->m_szName );
+	ini.DeleteKey( pInputScheme->inputName );
 
-	XNode *pKey = ini.GetChild( pInputScheme->m_szName );
+	XNode *pKey = ini.GetChild( pInputScheme->inputName );
 	if( pKey != nullptr )
+	{
 		ini.RemoveChild( pKey );
-	pKey = ini.AppendChild( pInputScheme->m_szName );
+	}
+	pKey = ini.AppendChild( pInputScheme->inputName );
 
 	// iterate over our input map and write all mappings to the ini file
 	FOREACH_ENUM( GameController,  i )

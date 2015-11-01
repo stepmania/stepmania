@@ -69,6 +69,11 @@ And here's one for a kanji page:
 
  */
 
+struct charAlias {
+	std::string str;
+	wchar_t chr;
+};
+
 static void InitCharAliases()
 {
 	if(!CharAliases.empty())
@@ -79,16 +84,10 @@ static void InitCharAliases()
 
 	// The comments here are UTF-8; they won't show up in VC6
 	// (use a better editor then -aj)
+	int constexpr INTERNAL = 0xe000;
 
-#define INTERNAL 0xE000
-
-	// todo: convert this into a vector?
-	// that way we can dynamically add to the list easier. -aj
-	// Hiragana:
-	struct alias {
-		const char *str;
-		wchar_t chr;
-	} aliases[] = {
+	std::vector<charAlias> aliases {
+		// Hiragana:
 		{ "ha", 	0x3042 }, /* あ */
 		{ "hi",		0x3044 }, /* い */
 		{ "hu",		0x3046 }, /* う */
@@ -174,7 +173,7 @@ static void InitCharAliases()
 		{ "hyus",	0x3085 }, /* ゅ */
 		{ "hyos",	0x3087 }, /* ょ */
 		{ "hwas",	0x308e }, /* ゎ */
-
+		
 		// Katakana:
 		{ "hq",		0x3063 }, /* っ */
 		{ "ka",		0x30a2 }, /* ア */
@@ -264,12 +263,12 @@ static void InitCharAliases()
 		{ "kyos",	0x30e7 }, /* ョ */
 		{ "kwas",	0x30ee }, /* ヮ */
 		{ "kq",		0x30c3 }, /* ッ */
-
+		
 		{ "kdot",	0x30FB }, /* ・ */
 		{ "kdash",	0x30FC }, /* ー */
-
+		
 		{ "nbsp",	0x00a0 }, /* Non-breaking space */
-
+		
 		// Symbols:
 		{ "delta",	0x0394 }, /* Δ */
 		{ "sigma",	0x03a3 }, /* Σ */
@@ -294,7 +293,7 @@ static void InitCharAliases()
 		{ "flat",	0x266D }, /* ♭ */
 		{ "natural",	0x266E }, /* ♮ */
 		{ "sharp",	0x266F }, /* ♯ */
-
+		
 		/* These are internal-use glyphs; they don't have real Unicode codepoints. */
 		{ "up",		INTERNAL },
 		{ "down",	INTERNAL },
@@ -346,19 +345,18 @@ static void InitCharAliases()
 		{ "auxrb",	INTERNAL },
 		{ "auxlt",	INTERNAL },
 		{ "auxrt",	INTERNAL },
-		{ "auxback",	INTERNAL },
-
-		{ nullptr, 	0 }
+		{ "auxback",	INTERNAL }
 	};
 
 	int iNextInternalUseCodepoint = 0xE000;
-	for( unsigned n = 0; aliases[n].str; ++n )
+	for (auto const &alias: aliases)
 	{
-		int iCodepoint = aliases[n].chr;
-		if( iCodepoint == INTERNAL )
-			iCodepoint = iNextInternalUseCodepoint++;
-
-		CharAliases[aliases[n].str] = iCodepoint;
+		int codePoint = alias.chr;
+		if (codePoint == INTERNAL)
+		{
+			codePoint = iNextInternalUseCodepoint++;
+		}
+		CharAliases[alias.str] = codePoint;
 	}
 
 	for (auto const &item: CharAliases)

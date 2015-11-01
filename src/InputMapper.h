@@ -98,11 +98,14 @@ struct AutoMappings
 class InputScheme
 {
 public:
-	const char	*m_szName;
+	std::string inputName;
 	int		m_iButtonsPerController;
 	struct GameButtonInfo
 	{
-		const char	*m_szName;	// The name used by the button graphics system.  e.g. "left", "right", "middle C", "snare"
+		/** @brief The name used by the button graphics system.
+		 *
+		 * Examples include "left", "right", "middle C", and "snare". */
+		std::string buttonName;
 		GameButton	m_SecondaryMenuButton;
 	};
 	// Data for each Game-specific GameButton. This starts at GAME_BUTTON_NEXT.
@@ -114,7 +117,7 @@ public:
 	void MenuButtonToGameInputs( GameButton MenuI, PlayerNumber pn, std::vector<GameInput> &GameIout ) const;
 	void MenuButtonToGameButtons( GameButton MenuI, std::vector<GameButton> &aGameButtons ) const;
 	const GameButtonInfo *GetGameButtonInfo( GameButton gb ) const;
-	const char *GetGameButtonName( GameButton gb ) const;
+	std::string GetGameButtonName( GameButton gb ) const;
 };
 /** @brief A special foreach loop to handle the various GameButtons. */
 #define FOREACH_GameButtonInScheme( s, var )	for( GameButton var=(GameButton)0; var<s->m_iButtonsPerController; enum_add<GameButton>( var, +1 ) )

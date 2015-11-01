@@ -168,7 +168,7 @@ static void GameChoices( vector<RString> &out )
 	GAMEMAN->GetEnabledGames( aGames );
 	for (auto const *g: aGames)
 	{
-		RString sGameName = g->m_szName;
+		RString sGameName = g->gameName;
 		out.push_back( sGameName );
 	}
 }
@@ -194,7 +194,7 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 	else {
 		vector<const Game*> aGames;
 		GAMEMAN->GetEnabledGames( aGames );
-		PREFSMAN->SetCurrentGame(aGames[sel]->m_szName);
+		PREFSMAN->SetCurrentGame(aGames[sel]->gameName);
 	}
 }
 
@@ -209,7 +209,7 @@ static void LanguageChoices( vector<RString> &out )
 		const LanguageInfo *pLI = GetLanguageInfo( s );
 		if( pLI )
 		{
-			out.push_back( THEME->GetString("NativeLanguageNames", pLI->szEnglishName) );
+			out.push_back( THEME->GetString("NativeLanguageNames", pLI->englishName) );
 		}
 		else
 		{

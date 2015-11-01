@@ -10,7 +10,7 @@ void StyleID::FromStyle( const Style *p )
 {
 	if( p )
 	{
-		sGame = GAMEMAN->GetGameForStyle(p)->m_szName;
+		sGame = GAMEMAN->GetGameForStyle(p)->gameName;
 		sStyle = p->m_szName;
 	}
 	else

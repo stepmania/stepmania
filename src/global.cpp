@@ -33,7 +33,7 @@ void NORETURN sm_crash( std::string const &reason )
 #endif
 
 #if defined(CRASH_HANDLER)
-	CrashHandler::ForceCrash( reason.c_str() );
+	CrashHandler::ForceCrash( reason );
 #else
 	*(char*)0=0;
 

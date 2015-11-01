@@ -951,10 +951,10 @@ bool GameState::CanSafelyEnterGameplay(RString& reason)
 			}
 			if(steps->m_StepsType != style->m_StepsType)
 			{
-				reason= ssprintf("Player %d StepsType %s for steps does not equal "
-					"StepsType %s for style.", pn+1,
-					GAMEMAN->GetStepsTypeInfo(steps->m_StepsType).szName,
-					GAMEMAN->GetStepsTypeInfo(style->m_StepsType).szName);
+				reason = fmt::format("Player {0} StepsType {1} for steps does not equal "
+					"StepsType {2} for style.", pn+1,
+					GAMEMAN->GetStepsTypeInfo(steps->m_StepsType).stepTypeName,
+					GAMEMAN->GetStepsTypeInfo(style->m_StepsType).stepTypeName);
 				return false;
 			}
 			if(steps->m_pSong != m_pCurSong)
@@ -982,10 +982,10 @@ bool GameState::CanSafelyEnterGameplay(RString& reason)
 			}
 			if(steps->m_StepsType != style->m_StepsType)
 			{
-				reason= ssprintf("Player %d StepsType %s for steps does not equal "
-					"StepsType %s for style.", pn+1,
-					GAMEMAN->GetStepsTypeInfo(steps->m_StepsType).szName,
-					GAMEMAN->GetStepsTypeInfo(style->m_StepsType).szName);
+				reason= fmt::format("Player {0} StepsType {1} for steps does not equal "
+					"StepsType {2} for style.", pn+1,
+					GAMEMAN->GetStepsTypeInfo(steps->m_StepsType).stepTypeName,
+					GAMEMAN->GetStepsTypeInfo(style->m_StepsType).stepTypeName);
 				return false;
 			}
 		}
@@ -1177,7 +1177,7 @@ void GameState::Update( float fDelta )
 void GameState::SetCurGame( const Game *pGame )
 {
 	m_pCurGame.Set( pGame );
-	RString sGame = pGame ? RString(pGame->m_szName) : RString();
+	std::string sGame = pGame ? pGame->gameName : "";
 	PREFSMAN->SetCurrentGame( sGame );
 }
 

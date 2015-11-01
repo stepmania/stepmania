@@ -46,7 +46,7 @@ static void Nsis()
 		splitpath(s, sThrowAway, sLangCode, sThrowAway);
 		const LanguageInfo *pLI = GetLanguageInfo(sLangCode);
 
-		RString sLangNameUpper = Rage::make_upper(pLI->szEnglishName);
+		RString sLangNameUpper = Rage::make_upper(pLI->englishName);
 
 		IniFile ini;
 		if(!ini.ReadFile(INSTALLER_LANGUAGES_DIR + s))

@@ -695,7 +695,7 @@ const LanguageInfo *GetLanguageInfo( const RString &sIsoCode )
 	Rage::ci_ascii_string iso{ sIsoCode };
 	for (auto const &lang: g_langs)
 	{
-		if (iso == lang.szIsoCode)
+		if (iso == lang.isoCode)
 		{
 			return &lang;
 		}
