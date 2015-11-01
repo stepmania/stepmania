@@ -61,8 +61,8 @@ static const ThemeMetric<int>		EXTRA_STAGE2_DIFFICULTY_MAX	( "SongManager", "Ext
 static Preference<std::string> g_sDisabledSongs( "DisabledSongs", "" );
 static Preference<bool> g_bHideIncompleteCourses( "HideIncompleteCourses", false );
 
-RString SONG_GROUP_COLOR_NAME( size_t i )   { return fmt::sprintf( "SongGroupColor%i", (int) i+1 ); }
-RString COURSE_GROUP_COLOR_NAME( size_t i ) { return fmt::sprintf( "CourseGroupColor%i", (int) i+1 ); }
+std::string SONG_GROUP_COLOR_NAME( size_t i )   { return fmt::sprintf( "SongGroupColor%i", (int) i+1 ); }
+std::string COURSE_GROUP_COLOR_NAME( size_t i ) { return fmt::sprintf( "CourseGroupColor%i", (int) i+1 ); }
 
 SongManager::SongManager()
 {

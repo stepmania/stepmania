@@ -34,8 +34,8 @@ static ThemeMetric<float> BAR_8TH_ALPHA( "NoteField", "Bar8thAlpha" );
 static ThemeMetric<float> BAR_16TH_ALPHA( "NoteField", "Bar16thAlpha" );
 static ThemeMetric<float> FADE_FAIL_TIME( "NoteField", "FadeFailTime" );
 
-static RString RoutineNoteSkinName( size_t i ) { return fmt::sprintf("RoutineNoteSkinP%i",int(i+1)); }
-static ThemeMetric1D<RString> ROUTINE_NOTESKIN( "NoteField", RoutineNoteSkinName, NUM_PLAYERS );
+static std::string RoutineNoteSkinName( size_t i ) { return fmt::sprintf("RoutineNoteSkinP%i",int(i+1)); }
+static ThemeMetric1D<std::string> ROUTINE_NOTESKIN( "NoteField", RoutineNoteSkinName, NUM_PLAYERS );
 
 NoteField::NoteField()
 {

@@ -94,7 +94,7 @@ Difficulty OldStyleStringToDifficulty( const RString& sDC )
 
 LuaFunction( OldStyleStringToDifficulty, OldStyleStringToDifficulty(SArg(1)) );
 
-static ThemeMetric<RString> NAMES("CustomDifficulty","Names");
+static ThemeMetric<std::string> NAMES("CustomDifficulty","Names");
 
 RString GetCustomDifficulty( StepsType st, Difficulty dc, CourseType ct )
 {
@@ -119,7 +119,7 @@ RString GetCustomDifficulty( StepsType st, Difficulty dc, CourseType ct )
 	}
 	// OPTIMIZATION OPPORTUNITY: cache these metrics and cache the splitting
 	vector<RString> vsNames;
-	split( NAMES, ",", vsNames );
+	split( NAMES.GetValue(), ",", vsNames );
 	for (auto &sName: vsNames)
 	{
 		ThemeMetric<StepsType> STEPS_TYPE("CustomDifficulty",sName+"StepsType");
@@ -131,7 +131,7 @@ RString GetCustomDifficulty( StepsType st, Difficulty dc, CourseType ct )
 				ThemeMetric<CourseType> COURSE_TYPE("CustomDifficulty",sName+"CourseType");
 				if( COURSE_TYPE == CourseType_Invalid  ||  ct == COURSE_TYPE )	// match
 				{
-					ThemeMetric<RString> STRING("CustomDifficulty",sName+"String");
+					ThemeMetric<std::string> STRING("CustomDifficulty",sName+"String");
 					return STRING.GetValue();
 				}
 			}

@@ -9,13 +9,13 @@
 
 using std::vector;
 
-ThemeMetric<RString>		CommonMetrics::OPERATOR_MENU_SCREEN		("Common","OperatorMenuScreen");
-ThemeMetric<RString>		CommonMetrics::FIRST_ATTRACT_SCREEN		("Common","FirstAttractScreen");
-ThemeMetric<RString>		CommonMetrics::DEFAULT_MODIFIERS		("Common","DefaultModifiers" );
+ThemeMetric<std::string>		CommonMetrics::OPERATOR_MENU_SCREEN		("Common","OperatorMenuScreen");
+ThemeMetric<std::string>		CommonMetrics::FIRST_ATTRACT_SCREEN		("Common","FirstAttractScreen");
+ThemeMetric<std::string>		CommonMetrics::DEFAULT_MODIFIERS		("Common","DefaultModifiers" );
 LocalizedString				CommonMetrics::WINDOW_TITLE				("Common","WindowTitle");
 ThemeMetric<int>			CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS("Common","MaxCourseEntriesBeforeShowVarious");
 ThemeMetric<float>			CommonMetrics::TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
-ThemeMetric<RString>		CommonMetrics::DEFAULT_NOTESKIN_NAME	("Common","DefaultNoteSkinName");
+ThemeMetric<std::string>		CommonMetrics::DEFAULT_NOTESKIN_NAME	("Common","DefaultNoteSkinName");
 ThemeMetricDifficultiesToShow	CommonMetrics::DIFFICULTIES_TO_SHOW		("Common","DifficultiesToShow");
 ThemeMetricCourseDifficultiesToShow	CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW	("Common","CourseDifficultiesToShow");
 ThemeMetricStepsTypesToShow	CommonMetrics::STEPS_TYPES_TO_SHOW		("Common","StepsTypesToHide");
@@ -23,7 +23,7 @@ ThemeMetric<bool>			CommonMetrics::AUTO_SET_STYLE			("Common","AutoSetStyle");
 ThemeMetric<int>			CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES	("Common","PercentScoreDecimalPlaces");
 
 ThemeMetricDifficultiesToShow::ThemeMetricDifficultiesToShow( const RString& sGroup, const RString& sName ) :
-	ThemeMetric<RString>(sGroup,sName)
+	ThemeMetric<std::string>(sGroup,sName)
 {
 	// re-read because ThemeMetric::ThemeMetric calls ThemeMetric::Read, not the derived one
 	if( IsLoaded() )
@@ -33,12 +33,12 @@ void ThemeMetricDifficultiesToShow::Read()
 {
 	ASSERT(Rage::ends_with(GetName(), "ToShow"));
 
-	ThemeMetric<RString>::Read();
+	ThemeMetric<std::string>::Read();
 
 	m_v.clear();
 
 	vector<RString> v;
-	split( ThemeMetric<RString>::GetValue(), ",", v );
+	split( ThemeMetric<std::string>::GetValue(), ",", v );
 	if(v.empty())
 	{
 		LuaHelpers::ReportScriptError("DifficultiesToShow must have at least one entry.");
@@ -62,7 +62,7 @@ const vector<Difficulty>& ThemeMetricDifficultiesToShow::GetValue() const { retu
 
 
 ThemeMetricCourseDifficultiesToShow::ThemeMetricCourseDifficultiesToShow( const RString& sGroup, const RString& sName ) :
-	ThemeMetric<RString>(sGroup,sName)
+	ThemeMetric<std::string>(sGroup,sName)
 {
 	// re-read because ThemeMetric::ThemeMetric calls ThemeMetric::Read, not the derived one
 	if( IsLoaded() )
@@ -72,12 +72,12 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 {
 	ASSERT(Rage::ends_with(GetName(), "ToShow"));
 
-	ThemeMetric<RString>::Read();
+	ThemeMetric<std::string>::Read();
 
 	m_v.clear();
 
 	vector<RString> v;
-	split( ThemeMetric<RString>::GetValue(), ",", v );
+	split( ThemeMetric<std::string>::GetValue(), ",", v );
 	if(v.empty())
 	{
 		LuaHelpers::ReportScriptError("CourseDifficultiesToShow must have at least one entry.");
@@ -121,7 +121,7 @@ static void RemoveStepsTypes( vector<StepsType>& inout, RString sStepsTypesToRem
 	}
 }
 ThemeMetricStepsTypesToShow::ThemeMetricStepsTypesToShow( const RString& sGroup, const RString& sName ) :
-	ThemeMetric<RString>(sGroup,sName)
+	ThemeMetric<std::string>(sGroup,sName)
 {
 	// re-read because ThemeMetric::ThemeMetric calls ThemeMetric::Read, not the derived one
 	if( IsLoaded() )
@@ -131,12 +131,12 @@ void ThemeMetricStepsTypesToShow::Read()
 {
 	ASSERT(Rage::ends_with(GetName(), "ToHide"));
 
-	ThemeMetric<RString>::Read();
+	ThemeMetric<std::string>::Read();
 
 	m_v.clear();
 	GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, m_v );
 
-	RemoveStepsTypes( m_v, ThemeMetric<RString>::GetValue() );
+	RemoveStepsTypes( m_v, ThemeMetric<std::string>::GetValue() );
 }
 const vector<StepsType>& ThemeMetricStepsTypesToShow::GetValue() const { return m_v; }
 

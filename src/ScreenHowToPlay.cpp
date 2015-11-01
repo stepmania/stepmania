@@ -26,7 +26,7 @@ static const ThemeMetric<int>		NUM_MISSES	("ScreenHowToPlay","NumMisses");
 static const ThemeMetric<bool>	USE_CHARACTER	("ScreenHowToPlay","UseCharacter");
 static const ThemeMetric<bool>	USE_PAD		("ScreenHowToPlay","UsePad");
 static const ThemeMetric<bool>	USE_PLAYER	("ScreenHowToPlay","UsePlayer");
-static const ThemeMetric<RString>	CHARACTER_NAME("ScreenHowToPlay","CharacterName");
+static const ThemeMetric<std::string>	CHARACTER_NAME("ScreenHowToPlay","CharacterName");
 
 enum Animation
 {

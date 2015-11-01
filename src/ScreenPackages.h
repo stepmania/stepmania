@@ -33,7 +33,7 @@ protected:
 	ThemeMetric<float> WEBBG_WIDTH; // "WebBGWidth"
 	ThemeMetric<int> NUM_PACKAGES_SHOW; // "NumPackagesShow"
 	ThemeMetric<int> NUM_LINKS_SHOW; // "NumLinksShow"
-	ThemeMetric<RString> DEFAULT_URL; // "DefaultUrl"
+	ThemeMetric<std::string> DEFAULT_URL; // "DefaultUrl"
 
 private:
 	void UpdatePackagesList();

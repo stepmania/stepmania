@@ -22,7 +22,7 @@ Preference<float>	g_fLightsFalloffSeconds( "LightsFalloffSeconds", 0.1f );
 Preference<float>	g_fLightsAheadSeconds( "LightsAheadSeconds", 0.05f );
 static Preference<bool>	g_bBlinkGameplayButtonLightsOnNote( "BlinkGameplayButtonLightsOnNote", false );
 
-static ThemeMetric<RString> GAME_BUTTONS_TO_SHOW( "LightsManager", "GameButtonsToShow" );
+static ThemeMetric<std::string> GAME_BUTTONS_TO_SHOW( "LightsManager", "GameButtonsToShow" );
 
 static const char *CabinetLightNames[] = {
 	"MarqueeUpLeft",

@@ -37,20 +37,20 @@ protected:
 	/** @brief the metric's group.
 	 *
 	 * In metrics.ini, it is usually done as such: [GroupName] */
-	RString		m_sGroup;
+	std::string m_sGroup;
 	/** @brief the metric's name. */
-	RString		m_sName;
+	std::string m_sName;
 	/** @brief the metric's value. */
-	LuaReference	m_Value;
-	mutable T	m_currentValue;
-	bool		m_bCallEachTime;
+	LuaReference m_Value;
+	mutable T m_currentValue;
+	bool m_bCallEachTime;
 
 public:
 	/* Initializing with no group and name is allowed; if you do this, you must
 	 * call Load() to set them.  This is done to allow initializing cached metrics
 	 * in one place for classes that don't receive their m_sName in the constructor
 	 * (everything except screens). */
-	ThemeMetric( const RString& sGroup = "", const RString& sName = "" ):
+	ThemeMetric( std::string const & sGroup = "", std::string const & sName = "" ):
 		m_sGroup( sGroup ),
 		m_sName( sName ),
 		m_Value(), m_currentValue(T()), m_bCallEachTime(false)
@@ -76,14 +76,14 @@ public:
 	 * @brief Load the chosen metric from the .ini file.
 	 * @param sGroup the group the metric is in.
 	 * @param sName the name of the metric. */
-	void Load( const RString &sGroup, const RString& sName )
+	void Load( std::string const &sGroup, std::string const & sName )
 	{
 		m_sGroup = sGroup;
 		m_sName = sName;
 		Read();
 	}
 
-	void ChangeGroup( const RString &sGroup )
+	void ChangeGroup( std::string const &sGroup )
 	{
 		m_sGroup = sGroup;
 		Read();
@@ -125,16 +125,16 @@ public:
 	/**
 	 * @brief Retrieve the metric's name.
 	 * @return the metric's name. */
-	const RString &GetName() const { return m_sName; }
+	std::string const &GetName() const { return m_sName; }
 	/**
 	 * @brief Retrieve the metric's group.
 	 * @return the metric's group. */
-	const RString &GetGroup() const { return m_sGroup; }
+	std::string const &GetGroup() const { return m_sGroup; }
 
 	/**
 	 * @brief Retrieve the metric's value.
 	 * @return the metric's value. */
-	const T& GetValue() const
+	T const & GetValue() const
 	{
 		ASSERT( m_sName != "" );
 		ASSERT_M( m_Value.IsSet(), m_sGroup + " " + m_sName );
@@ -145,7 +145,7 @@ public:
 
 			// call function with 0 arguments and 1 result
 			m_Value.PushSelf( L );
-			RString error= m_sGroup + ": " + m_sName + ": ";
+			std::string error = m_sGroup + ": " + m_sName + ": ";
 			LuaHelpers::RunScriptOnStack(L, error, 0, 1, true);
 			if(!lua_isnil(L, -1))
 			{
@@ -178,7 +178,7 @@ public:
 	bool operator == ( const T& input ) const { return GetValue() == input; }
 };
 
-typedef RString (*MetricName1D)(size_t N);
+typedef std::string (*MetricName1D)(size_t N);
 
 template <class T>
 class ThemeMetric1D : public IThemeMetric
@@ -187,7 +187,7 @@ class ThemeMetric1D : public IThemeMetric
 	std::vector<ThemeMetricT> m_metric;
 
 public:
-	ThemeMetric1D( const RString& sGroup, MetricName1D pfn, size_t N )
+	ThemeMetric1D( std::string const & sGroup, MetricName1D pfn, size_t N )
 	{
 		Load( sGroup, pfn, N );
 	}
@@ -195,11 +195,13 @@ public:
 	{
 		Load( RString(), nullptr, 0 );
 	}
-	void Load( const RString& sGroup, MetricName1D pfn, size_t N )
+	void Load( std::string const & sGroup, MetricName1D pfn, size_t N )
 	{
 		m_metric.resize( N );
 		for( unsigned i=0; i<N; i++ )
+		{
 			m_metric[i].Load( sGroup, pfn(i) );
+		}
 	}
 	void Read()
 	{
@@ -221,7 +223,7 @@ public:
 	}
 };
 
-typedef RString (*MetricName2D)(size_t N, size_t M);
+typedef std::string (*MetricName2D)(size_t N, size_t M);
 
 template <class T>
 class ThemeMetric2D : public IThemeMetric
@@ -231,18 +233,20 @@ class ThemeMetric2D : public IThemeMetric
 	std::vector<ThemeMetricTVector> m_metric;
 
 public:
-	ThemeMetric2D( const RString& sGroup = "", MetricName2D pfn = nullptr, size_t N = 0, size_t M = 0 )
+	ThemeMetric2D( std::string const & sGroup = "", MetricName2D pfn = nullptr, size_t N = 0, size_t M = 0 )
 	{
 		Load( sGroup, pfn, N, M );
 	}
-	void Load( const RString& sGroup, MetricName2D pfn, size_t N, size_t M )
+	void Load( std::string const & sGroup, MetricName2D pfn, size_t N, size_t M )
 	{
 		m_metric.resize( N );
 		for( unsigned i=0; i<N; i++ )
 		{
 			m_metric[i].resize( M );
 			for( unsigned j=0; j<M; j++ )
+			{
 				m_metric[i][j].Load( sGroup, pfn(i,j) );
+			}
 		}
 	}
 	void Read()
@@ -271,7 +275,7 @@ public:
 	}
 };
 
-typedef RString (*MetricNameMap)(RString s);
+typedef std::string (*MetricNameMap)(RString s);
 
 template <class T>
 class ThemeMetricMap : public IThemeMetric
@@ -280,11 +284,11 @@ class ThemeMetricMap : public IThemeMetric
 	std::unordered_map<std::string,ThemeMetricT> m_metric;
 
 public:
-	ThemeMetricMap( const RString& sGroup = "", MetricNameMap pfn = nullptr, const std::vector<RString> vsValueNames = std::vector<RString>() )
+	ThemeMetricMap( std::string const & sGroup = "", MetricNameMap pfn = nullptr, const std::vector<RString> vsValueNames = std::vector<RString>() )
 	{
 		Load( sGroup, pfn, vsValueNames );
 	}
-	void Load( const RString& sGroup, MetricNameMap pfn, const std::vector<RString> vsValueNames )
+	void Load( std::string const & sGroup, MetricNameMap pfn, const std::vector<RString> vsValueNames )
 	{
 		m_metric.clear();
 		for (auto const &s: vsValueNames)

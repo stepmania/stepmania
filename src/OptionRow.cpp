@@ -28,8 +28,8 @@ RString OptionRow::GetThemedItemText( int iChoice ) const
 	return s;
 }
 
-RString ITEMS_LONG_ROW_X_NAME( size_t p )	{ return fmt::sprintf("ItemsLongRowP%dX",int(p+1)); }
-RString MOD_ICON_X_NAME( size_t p )		{ return fmt::sprintf("ModIconP%dX",int(p+1)); }
+std::string ITEMS_LONG_ROW_X_NAME( size_t p )	{ return fmt::sprintf("ItemsLongRowP%dX",int(p+1)); }
+std::string MOD_ICON_X_NAME( size_t p )		{ return fmt::sprintf("ModIconP%dX",int(p+1)); }
 
 OptionRow::OptionRow( const OptionRowType *pSource )
 {
@@ -123,7 +123,7 @@ void OptionRowType::Load( const RString &sMetricsGroup, Actor *pParent )
 
 	if( SHOW_MOD_ICONS )
 	{
-		m_ModIcon.Load( MOD_ICON_METRICS_GROUP );
+		m_ModIcon.Load( MOD_ICON_METRICS_GROUP.GetValue() );
 		m_ModIcon.SetName( "ModIcon" );
 		ActorUtil::LoadAllCommands( m_ModIcon, sMetricsGroup );
 	}

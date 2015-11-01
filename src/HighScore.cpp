@@ -12,7 +12,7 @@
 
 using std::vector;
 
-ThemeMetric<RString> EMPTY_NAME("HighScore","EmptyName");
+ThemeMetric<std::string> EMPTY_NAME("HighScore","EmptyName");
 
 
 struct HighScoreImpl
@@ -313,9 +313,10 @@ void HighScore::LoadFromNode( const XNode* pNode )
 RString HighScore::GetDisplayName() const
 {
 	if( GetName().empty() )
-		return EMPTY_NAME;
-	else
-		return GetName();
+	{
+		return EMPTY_NAME.GetValue();
+	}
+	return GetName();
 }
 
 /* begin HighScoreList */

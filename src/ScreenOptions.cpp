@@ -196,8 +196,8 @@ void ScreenOptions::Init()
 	m_sprMore->PlayCommand( "LoseFocus" );
 	m_frameContainer.AddChild( m_sprMore );
 
-	m_OptionRowTypeNormal.Load( OPTION_ROW_NORMAL_METRICS_GROUP, this );
-	m_OptionRowTypeExit.Load( OPTION_ROW_EXIT_METRICS_GROUP, this );
+	m_OptionRowTypeNormal.Load( OPTION_ROW_NORMAL_METRICS_GROUP.GetValue(), this );
+	m_OptionRowTypeExit.Load( OPTION_ROW_EXIT_METRICS_GROUP.GetValue(), this );
 }
 
 void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )

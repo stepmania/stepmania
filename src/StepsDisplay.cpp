@@ -48,7 +48,7 @@ void StepsDisplay::Load( const RString &sMetricsGroup, const PlayerState *pPlaye
 {
 	m_sMetricsGroup = sMetricsGroup;
 
-	/* We can't use global ThemeMetric<RString>s, because we can have multiple
+	/* We can't use global ThemeMetric<std::string>s, because we can have multiple
 	 * StepsDisplays on screen at once, with different names. */
 	m_iNumTicks.Load(m_sMetricsGroup,"NumTicks");
 	m_iMaxTicks.Load(m_sMetricsGroup,"MaxTicks");
@@ -238,7 +238,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 	{
 		if( params.iMeter == 0 )	// Unset calls with this
 		{
-			m_textMeter.SetText( m_sZeroMeterString );
+			m_textMeter.SetText( m_sZeroMeterString.GetValue() );
 		}
 		else
 		{

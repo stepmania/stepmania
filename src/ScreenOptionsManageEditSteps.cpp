@@ -131,7 +131,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 
 		if( iCurRow == 0 )	// "create new"
 		{
-			SCREENMAN->SetNewScreen( CREATE_NEW_SCREEN );
+			SCREENMAN->SetNewScreen( CREATE_NEW_SCREEN.GetValue() );
 			return;	// don't call base
 		}
 		else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )

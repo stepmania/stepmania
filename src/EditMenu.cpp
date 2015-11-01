@@ -38,8 +38,8 @@ XToString( EditMenuAction );
 XToLocalizedString( EditMenuAction );
 StringToX( EditMenuAction );
 
-static RString ARROWS_X_NAME( size_t i )	{ return fmt::sprintf("Arrows%dX",int(i+1)); }
-static RString ROW_Y_NAME( size_t i )		{ return fmt::sprintf("Row%dY",int(i+1)); }
+static std::string ARROWS_X_NAME( size_t i )	{ return fmt::sprintf("Arrows%dX",int(i+1)); }
+static std::string ROW_Y_NAME( size_t i )		{ return fmt::sprintf("Row%dY",int(i+1)); }
 
 void EditMenu::StripLockedStepsAndDifficulty( vector<StepsAndDifficulty> &v )
 {
@@ -166,7 +166,7 @@ void EditMenu::Load( const RString &sType )
 	this->AddChild( &m_SongBanner );
 
 	m_SongTextBanner.SetName( "SongTextBanner" );
-	m_SongTextBanner.Load( TEXT_BANNER_TYPE );
+	m_SongTextBanner.Load( TEXT_BANNER_TYPE.GetValue() );
 	ActorUtil::SetXY( m_SongTextBanner, sType );
 	ActorUtil::LoadAllCommands( m_SongTextBanner, sType );
 	this->AddChild( &m_SongTextBanner );

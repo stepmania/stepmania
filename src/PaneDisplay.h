@@ -58,8 +58,8 @@ private:
 
 	LocalizedString EMPTY_MACHINE_HIGH_SCORE_NAME;
 	LocalizedString NOT_AVAILABLE;
-	ThemeMetric<RString> COUNT_FORMAT;
-	ThemeMetric<RString> nullptr_COUNT_STRING;
+	ThemeMetric<std::string> COUNT_FORMAT;
+	ThemeMetric<std::string> nullptr_COUNT_STRING;
 };
 
 #endif

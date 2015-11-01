@@ -17,7 +17,7 @@
 #include "Steps.h"
 #include "Course.h"
 
-static RString LIFE_PERCENT_CHANGE_NAME( size_t i )   { return "LifePercentChange" + ScoreEventToString( (ScoreEvent)i ); }
+static std::string LIFE_PERCENT_CHANGE_NAME( size_t i )   { return "LifePercentChange" + ScoreEventToString( (ScoreEvent)i ); }
 
 LifeMeterBar::LifeMeterBar()
 {

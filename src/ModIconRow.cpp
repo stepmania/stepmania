@@ -53,7 +53,7 @@ void ModIconRow::Load( const RString &sMetricsGroup, PlayerNumber pn )
 		p->SetName( "ModIcon" );
 		float fOffset = Rage::scale( i + 0.f, 0.f, NUM_OPTION_ICONS-1.f, -(NUM_OPTION_ICONS-1)/2.0f, (NUM_OPTION_ICONS-1)/2.0f );
 		p->SetXY( fOffset*SPACING_X, fOffset*SPACING_Y );
-		p->Load( OPTION_ICON_METRICS_GROUP );
+		p->Load( OPTION_ICON_METRICS_GROUP.GetValue() );
 		ActorUtil::LoadAllCommands( p, sMetricsGroup );
 		m_vpModIcon.push_back( p );
 		this->AddChild( p );

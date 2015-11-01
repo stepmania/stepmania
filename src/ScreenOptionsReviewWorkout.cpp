@@ -99,10 +99,10 @@ void ScreenOptionsCourseOverview::HandleScreenMessage( const ScreenMessage SM )
 		{
 		case ReviewWorkoutRow_Play:
 			EditCourseUtil::PrepareForPlay();
-			SCREENMAN->SetNewScreen( PLAY_SCREEN );
+			SCREENMAN->SetNewScreen( PLAY_SCREEN.GetValue() );
 			return;	// handled
 		case ReviewWorkoutRow_Edit:
-			SCREENMAN->SetNewScreen( EDIT_SCREEN );
+			SCREENMAN->SetNewScreen( EDIT_SCREEN.GetValue() );
 			return;	// handled
 		}
 	}

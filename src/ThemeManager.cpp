@@ -69,14 +69,14 @@ LoadedThemeData *g_pLoadedThemeData = nullptr;
 #include "SubscriptionManager.h"
 static SubscriptionManager<IThemeMetric> g_Subscribers;
 
-class LocalizedStringImplThemeMetric : public ILocalizedStringImpl, public ThemeMetric<RString>
+class LocalizedStringImplThemeMetric : public ILocalizedStringImpl, public ThemeMetric<std::string>
 {
 public:
 	static ILocalizedStringImpl *Create() { return new LocalizedStringImplThemeMetric; }
 
 	void Load( std::string const & sGroup, std::string const & sName )
 	{
-		ThemeMetric<RString>::Load( sGroup, sName );
+		ThemeMetric<std::string>::Load( sGroup, sName );
 	}
 
 	virtual void Read()
@@ -902,7 +902,7 @@ bool ThemeManager::HasMetric( const RString &sMetricsGroup, const RString &sValu
 	return GetMetricRawRecursive( g_pLoadedThemeData->iniMetrics, sMetricsGroup, sValueName, sThrowAway );
 }
 
-bool ThemeManager::HasString( const RString &sMetricsGroup, const RString &sValueName )
+bool ThemeManager::HasString( std::string const &sMetricsGroup, std::string const &sValueName )
 {
 	RString sThrowAway;
 	if(sMetricsGroup == "" || sValueName == "")
@@ -1234,7 +1234,7 @@ static RString PseudoLocalize( RString s )
 	return s;
 }
 
-RString ThemeManager::GetString( const RString &sMetricsGroup, const RString &sValueName_ )
+RString ThemeManager::GetString( std::string const &sMetricsGroup, std::string const &sValueName_ )
 {
 	RString sValueName = sValueName_;
 	if(sMetricsGroup == "" || sValueName == "")

@@ -23,8 +23,8 @@
 
 using std::vector;
 
-static RString PercentScoreWeightName( size_t i ) { return "PercentScoreWeight" + ScoreEventToString( (ScoreEvent)i ); }
-static RString GradeWeightName( size_t i ) { return "GradeWeight" + ScoreEventToString( (ScoreEvent)i ); }
+static std::string PercentScoreWeightName( size_t i ) { return "PercentScoreWeight" + ScoreEventToString( (ScoreEvent)i ); }
+static std::string GradeWeightName( size_t i ) { return "GradeWeight" + ScoreEventToString( (ScoreEvent)i ); }
 
 static ThemeMetric1D<int> g_iPercentScoreWeight("ScoreKeeperNormal", PercentScoreWeightName, NUM_ScoreEvent );
 static ThemeMetric1D<int> g_iGradeWeight("ScoreKeeperNormal", GradeWeightName, NUM_ScoreEvent );

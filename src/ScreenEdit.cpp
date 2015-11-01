@@ -1377,7 +1377,7 @@ static void SetDefaultEditorNoteSkin( size_t num, std::string &sNameOut, std::st
 
 static Preference1D<std::string> EDITOR_NOTE_SKINS( SetDefaultEditorNoteSkin, NUM_PLAYERS );
 
-static ThemeMetric<RString> EDIT_MODIFIERS		("ScreenEdit","EditModifiers");
+static ThemeMetric<std::string> EDIT_MODIFIERS		("ScreenEdit","EditModifiers");
 
 static ThemeMetric<bool> LOOP_ON_CHART_END		("ScreenEdit","LoopOnChartEnd");
 
@@ -1483,9 +1483,9 @@ void ScreenEdit::Init()
 	{
 		PO_GROUP_ASSIGN( m_PlayerStateEdit.m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetStage().m_sNoteSkin );
 	}
-	m_PlayerStateEdit.m_PlayerOptions.FromString( ModsLevel_Stage, EDIT_MODIFIERS );
+	m_PlayerStateEdit.m_PlayerOptions.FromString( ModsLevel_Stage, EDIT_MODIFIERS.GetValue() );
 
-	this->originalPlayerOptions.FromString(ModsLevel_Stage, EDIT_MODIFIERS);
+	this->originalPlayerOptions.FromString(ModsLevel_Stage, EDIT_MODIFIERS.GetValue());
 
 	m_pSteps->GetNoteData( m_NoteDataEdit );
 	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_Y );
@@ -1820,43 +1820,43 @@ static LocalizedString PREVIEW_START("ScreenEdit", "Preview Start");
 static LocalizedString PREVIEW_LENGTH("ScreenEdit", "Preview Length");
 static LocalizedString RECORD_HOLD_TIME("ScreenEdit", "Record Hold Time");
 
-static ThemeMetric<RString> CURRENT_BEAT_FORMAT("ScreenEdit", "CurrentBeatFormat");
-static ThemeMetric<RString> CURRENT_SECOND_FORMAT("ScreenEdit", "CurrentSecondFormat");
-static ThemeMetric<RString> SNAP_TO_FORMAT("ScreenEdit", "SnapToFormat");
-static ThemeMetric<RString> SELECTION_BEAT_BEGIN_FORMAT("ScreenEdit", "SelectionBeatBeginFormat");
-static ThemeMetric<RString> SELECTION_BEAT_UNFINISHED_FORMAT("ScreenEdit", "SelectionBeatUnfinishedFormat");
-static ThemeMetric<RString> SELECTION_BEAT_END_FORMAT("ScreenEdit", "SelectionBeatEndFormat");
-static ThemeMetric<RString> DIFFICULTY_FORMAT("ScreenEdit", "DifficultyFormat");
-static ThemeMetric<RString> ROUTINE_PLAYER_FORMAT("ScreenEdit", "RoutinePlayerFormat");
-static ThemeMetric<RString> CHART_NAME_FORMAT("ScreenEdit", "ChartNameFormat");
-static ThemeMetric<RString> DESCRIPTION_FORMAT("ScreenEdit", "DescriptionFormat");
-static ThemeMetric<RString> CHART_STYLE_FORMAT("ScreenEdit", "ChartStyleFormat");
-static ThemeMetric<RString> STEP_AUTHOR_FORMAT("ScreenEdit", "StepAuthorFormat");
-static ThemeMetric<RString> MAIN_TITLE_FORMAT("ScreenEdit", "MainTitleFormat");
-static ThemeMetric<RString> SUBTITLE_FORMAT("ScreenEdit", "SubtitleFormat");
-static ThemeMetric<RString> TAP_NOTE_TYPE_FORMAT("ScreenEdit", "TapNoteTypeFormat");
-static ThemeMetric<RString> SEGMENT_TYPE_FORMAT("ScreenEdit", "SegmentTypeFormat");
-static ThemeMetric<RString> NUM_STEPS_FORMAT("ScreenEdit", "NumStepsFormat");
-static ThemeMetric<RString> NUM_JUMPS_FORMAT("ScreenEdit", "NumJumpsFormat");
-static ThemeMetric<RString> NUM_HOLDS_FORMAT("ScreenEdit", "NumHoldsFormat");
-static ThemeMetric<RString> NUM_MINES_FORMAT("ScreenEdit", "NumMinesFormat");
-static ThemeMetric<RString> NUM_HANDS_FORMAT("ScreenEdit", "NumHandsFormat");
-static ThemeMetric<RString> NUM_ROLLS_FORMAT("ScreenEdit", "NumRollsFormat");
-static ThemeMetric<RString> NUM_LIFTS_FORMAT("ScreenEdit", "NumLiftsFormat");
-static ThemeMetric<RString> NUM_FAKES_FORMAT("ScreenEdit", "NumFakesFormat");
-static ThemeMetric<RString> NUM_STEPS_FORMAT_TWO_PLAYER("ScreenEdit", "NumStepsFormatTwoPlayer");
-static ThemeMetric<RString> NUM_JUMPS_FORMAT_TWO_PLAYER("ScreenEdit", "NumJumpsFormatTwoPlayer");
-static ThemeMetric<RString> NUM_HOLDS_FORMAT_TWO_PLAYER("ScreenEdit", "NumHoldsFormatTwoPlayer");
-static ThemeMetric<RString> NUM_MINES_FORMAT_TWO_PLAYER("ScreenEdit", "NumMinesFormatTwoPlayer");
-static ThemeMetric<RString> NUM_HANDS_FORMAT_TWO_PLAYER("ScreenEdit", "NumHandsFormatTwoPlayer");
-static ThemeMetric<RString> NUM_ROLLS_FORMAT_TWO_PLAYER("ScreenEdit", "NumRollsFormatTwoPlayer");
-static ThemeMetric<RString> NUM_LIFTS_FORMAT_TWO_PLAYER("ScreenEdit", "NumLiftsFormatTwoPlayer");
-static ThemeMetric<RString> NUM_FAKES_FORMAT_TWO_PLAYER("ScreenEdit", "NumFakesFormatTwoPlayer");
-static ThemeMetric<RString> TIMING_MODE_FORMAT("ScreenEdit", "TimingModeFormat");
-static ThemeMetric<RString> BEAT_0_OFFSET_FORMAT("ScreenEdit", "Beat0OffsetFormat");
-static ThemeMetric<RString> PREVIEW_START_FORMAT("ScreenEdit", "PreviewStartFormat");
-static ThemeMetric<RString> PREVIEW_LENGTH_FORMAT("ScreenEdit", "PreviewLengthFormat");
-static ThemeMetric<RString> RECORD_HOLD_TIME_FORMAT("ScreenEdit", "RecordHoldTimeFormat");
+static ThemeMetric<std::string> CURRENT_BEAT_FORMAT("ScreenEdit", "CurrentBeatFormat");
+static ThemeMetric<std::string> CURRENT_SECOND_FORMAT("ScreenEdit", "CurrentSecondFormat");
+static ThemeMetric<std::string> SNAP_TO_FORMAT("ScreenEdit", "SnapToFormat");
+static ThemeMetric<std::string> SELECTION_BEAT_BEGIN_FORMAT("ScreenEdit", "SelectionBeatBeginFormat");
+static ThemeMetric<std::string> SELECTION_BEAT_UNFINISHED_FORMAT("ScreenEdit", "SelectionBeatUnfinishedFormat");
+static ThemeMetric<std::string> SELECTION_BEAT_END_FORMAT("ScreenEdit", "SelectionBeatEndFormat");
+static ThemeMetric<std::string> DIFFICULTY_FORMAT("ScreenEdit", "DifficultyFormat");
+static ThemeMetric<std::string> ROUTINE_PLAYER_FORMAT("ScreenEdit", "RoutinePlayerFormat");
+static ThemeMetric<std::string> CHART_NAME_FORMAT("ScreenEdit", "ChartNameFormat");
+static ThemeMetric<std::string> DESCRIPTION_FORMAT("ScreenEdit", "DescriptionFormat");
+static ThemeMetric<std::string> CHART_STYLE_FORMAT("ScreenEdit", "ChartStyleFormat");
+static ThemeMetric<std::string> STEP_AUTHOR_FORMAT("ScreenEdit", "StepAuthorFormat");
+static ThemeMetric<std::string> MAIN_TITLE_FORMAT("ScreenEdit", "MainTitleFormat");
+static ThemeMetric<std::string> SUBTITLE_FORMAT("ScreenEdit", "SubtitleFormat");
+static ThemeMetric<std::string> TAP_NOTE_TYPE_FORMAT("ScreenEdit", "TapNoteTypeFormat");
+static ThemeMetric<std::string> SEGMENT_TYPE_FORMAT("ScreenEdit", "SegmentTypeFormat");
+static ThemeMetric<std::string> NUM_STEPS_FORMAT("ScreenEdit", "NumStepsFormat");
+static ThemeMetric<std::string> NUM_JUMPS_FORMAT("ScreenEdit", "NumJumpsFormat");
+static ThemeMetric<std::string> NUM_HOLDS_FORMAT("ScreenEdit", "NumHoldsFormat");
+static ThemeMetric<std::string> NUM_MINES_FORMAT("ScreenEdit", "NumMinesFormat");
+static ThemeMetric<std::string> NUM_HANDS_FORMAT("ScreenEdit", "NumHandsFormat");
+static ThemeMetric<std::string> NUM_ROLLS_FORMAT("ScreenEdit", "NumRollsFormat");
+static ThemeMetric<std::string> NUM_LIFTS_FORMAT("ScreenEdit", "NumLiftsFormat");
+static ThemeMetric<std::string> NUM_FAKES_FORMAT("ScreenEdit", "NumFakesFormat");
+static ThemeMetric<std::string> NUM_STEPS_FORMAT_TWO_PLAYER("ScreenEdit", "NumStepsFormatTwoPlayer");
+static ThemeMetric<std::string> NUM_JUMPS_FORMAT_TWO_PLAYER("ScreenEdit", "NumJumpsFormatTwoPlayer");
+static ThemeMetric<std::string> NUM_HOLDS_FORMAT_TWO_PLAYER("ScreenEdit", "NumHoldsFormatTwoPlayer");
+static ThemeMetric<std::string> NUM_MINES_FORMAT_TWO_PLAYER("ScreenEdit", "NumMinesFormatTwoPlayer");
+static ThemeMetric<std::string> NUM_HANDS_FORMAT_TWO_PLAYER("ScreenEdit", "NumHandsFormatTwoPlayer");
+static ThemeMetric<std::string> NUM_ROLLS_FORMAT_TWO_PLAYER("ScreenEdit", "NumRollsFormatTwoPlayer");
+static ThemeMetric<std::string> NUM_LIFTS_FORMAT_TWO_PLAYER("ScreenEdit", "NumLiftsFormatTwoPlayer");
+static ThemeMetric<std::string> NUM_FAKES_FORMAT_TWO_PLAYER("ScreenEdit", "NumFakesFormatTwoPlayer");
+static ThemeMetric<std::string> TIMING_MODE_FORMAT("ScreenEdit", "TimingModeFormat");
+static ThemeMetric<std::string> BEAT_0_OFFSET_FORMAT("ScreenEdit", "Beat0OffsetFormat");
+static ThemeMetric<std::string> PREVIEW_START_FORMAT("ScreenEdit", "PreviewStartFormat");
+static ThemeMetric<std::string> PREVIEW_LENGTH_FORMAT("ScreenEdit", "PreviewLengthFormat");
+static ThemeMetric<std::string> RECORD_HOLD_TIME_FORMAT("ScreenEdit", "RecordHoldTimeFormat");
 void ScreenEdit::UpdateTextInfo()
 {
 	if( m_pSteps == nullptr )
@@ -1903,14 +1903,18 @@ void ScreenEdit::UpdateTextInfo()
 	{
 		sText += fmt::sprintf( DIFFICULTY_FORMAT.GetValue(), DIFFICULTY.GetValue().c_str(), DifficultyToString( m_pSteps->GetDifficulty() ).c_str() );
 		if ( m_InputPlayerNumber != PLAYER_INVALID )
+		{
 			sText += fmt::sprintf( ROUTINE_PLAYER_FORMAT.GetValue(), ROUTINE_PLAYER.GetValue().c_str(), m_InputPlayerNumber + 1 );
+		}
 		//sText += fmt::sprintf( DESCRIPTION_FORMAT.GetValue(), DESCRIPTION.GetValue().c_str(), m_pSteps->GetDescription().c_str() );
 		sText += fmt::sprintf( CHART_NAME_FORMAT.GetValue(), CHART_NAME.GetValue().c_str(), m_pSteps->GetChartName().c_str() );
 		sText += fmt::sprintf( STEP_AUTHOR_FORMAT.GetValue(), STEP_AUTHOR.GetValue().c_str(), m_pSteps->GetCredit().c_str() );
 		//sText += fmt::sprintf( CHART_STYLE_FORMAT.GetValue(), CHART_STYLE.GetValue().c_str(), m_pSteps->GetChartStyle().c_str() );
 		sText += fmt::sprintf( MAIN_TITLE_FORMAT.GetValue(), MAIN_TITLE.GetValue().c_str(), m_pSong->m_sMainTitle.c_str() );
 		if( m_pSong->m_sSubTitle.size() )
+		{
 			sText += fmt::sprintf( SUBTITLE_FORMAT.GetValue(), SUBTITLE.GetValue().c_str(), m_pSong->m_sSubTitle.c_str() );
+		}
 		sText += fmt::sprintf( SEGMENT_TYPE_FORMAT.GetValue(), SEGMENT_TYPE.GetValue().c_str(), TimingSegmentTypeToString(currentCycleSegment).c_str() );
         const RString tapnoteType = TapNoteTypeToString( m_selectedTap.type );
 		sText += fmt::sprintf( TAP_NOTE_TYPE_FORMAT.GetValue(), TAP_NOTE_TYPE.GetValue().c_str(), tapnoteType.c_str() );
@@ -1978,13 +1982,13 @@ void ScreenEdit::UpdateTextInfo()
 		break;
 	case EditMode_Full:
 		sText += fmt::sprintf( TIMING_MODE_FORMAT.GetValue(),
-				  TIMING_MODE.GetValue().c_str(),
-				  ( GAMESTATE->m_bIsUsingStepTiming ?
-				   STEP_TIMING.GetValue().c_str() :
-				   SONG_TIMING.GetValue().c_str() ) );
+			  TIMING_MODE.GetValue().c_str(),
+			  ( GAMESTATE->m_bIsUsingStepTiming ?
+			   STEP_TIMING.GetValue().c_str() :
+			   SONG_TIMING.GetValue().c_str() ) );
 		sText += fmt::sprintf( BEAT_0_OFFSET_FORMAT.GetValue(),
-				  BEAT_0_OFFSET.GetValue().c_str(),
-				  GetAppropriateTiming().m_fBeat0OffsetInSeconds );
+			  BEAT_0_OFFSET.GetValue().c_str(),
+			  GetAppropriateTiming().m_fBeat0OffsetInSeconds );
 		sText += fmt::sprintf( PREVIEW_START_FORMAT.GetValue(), PREVIEW_START.GetValue().c_str(), m_pSong->m_fMusicSampleStartSeconds );
 		sText += fmt::sprintf( PREVIEW_LENGTH_FORMAT.GetValue(), PREVIEW_LENGTH.GetValue().c_str(), m_pSong->m_fMusicSampleLengthSeconds );
 		if(record_hold_seconds < record_hold_default - .001f ||

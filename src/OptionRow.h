@@ -14,8 +14,8 @@ class OptionRowHandler;
 class GameCommand;
 struct OptionRowDefinition;
 
-RString ITEMS_LONG_ROW_X_NAME( size_t p );
-RString MOD_ICON_X_NAME( size_t p );
+std::string ITEMS_LONG_ROW_X_NAME( size_t p );
+std::string MOD_ICON_X_NAME( size_t p );
 
 class OptionRowType
 {
@@ -45,7 +45,7 @@ private:
 	ThemeMetric<bool>		SHOW_BPM_IN_SPEED_TITLE;
 	ThemeMetric<bool>		SHOW_MOD_ICONS;
 	ThemeMetric<bool>		SHOW_UNDERLINES;
-	ThemeMetric<RString>	MOD_ICON_METRICS_GROUP;
+	ThemeMetric<std::string>	MOD_ICON_METRICS_GROUP;
 
 	friend class OptionRow;
 };

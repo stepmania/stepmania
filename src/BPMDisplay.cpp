@@ -127,7 +127,7 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 		if( MinBPM == MaxBPM )
 		{
 			if( MinBPM == -1 )
-				SetText( RANDOM_TEXT ); // random (was "...") -aj
+				SetText( RANDOM_TEXT.GetValue() ); // random (was "...") -aj
 			else
 				SetText( fmt::sprintf("%i", MinBPM) );
 		}
@@ -177,7 +177,7 @@ void BPMDisplay::CycleRandomly()
 void BPMDisplay::NoBPM()
 {
 	m_BPMS.clear();
-	SetText( NO_BPM_TEXT );
+	SetText( NO_BPM_TEXT.GetValue() );
 	RunCommands( SET_NO_BPM_COMMAND );
 }
 
@@ -248,7 +248,7 @@ void BPMDisplay::SetVarious()
 {
 	m_BPMS.clear();
 	m_BPMS.push_back( -1 );
-	SetText( VARIOUS_TEXT );
+	SetText( VARIOUS_TEXT.GetValue() );
 }
 
 void BPMDisplay::SetFromGameState()

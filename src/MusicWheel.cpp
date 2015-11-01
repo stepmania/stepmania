@@ -31,10 +31,10 @@ static Preference<bool> g_bPrecacheAllSorts( "PreCacheAllWheelSorts", false);
 #define WHEEL_TEXT(s)		THEME->GetString( "MusicWheel", fmt::sprintf("%sText",s.c_str()) );
 #define CUSTOM_ITEM_WHEEL_TEXT(s)		THEME->GetString( "MusicWheel", fmt::sprintf("CustomItem%sText",s.c_str()) );
 
-static RString SECTION_COLORS_NAME( size_t i )	{ return fmt::sprintf("SectionColor%d",int(i+1)); }
-static RString CHOICE_NAME( RString s )		{ return fmt::sprintf("Choice%s",s.c_str()); }
-static RString CUSTOM_WHEEL_ITEM_NAME( RString s )		{ return fmt::sprintf("CustomWheelItem%s",s.c_str()); }
-static RString CUSTOM_WHEEL_ITEM_COLOR( RString s )		{ return fmt::sprintf("%sColor",s.c_str()); }
+static std::string SECTION_COLORS_NAME( size_t i )	{ return fmt::sprintf("SectionColor%d",int(i+1)); }
+static std::string CHOICE_NAME( RString s )		{ return fmt::sprintf("Choice%s",s.c_str()); }
+static std::string CUSTOM_WHEEL_ITEM_NAME( RString s )		{ return fmt::sprintf("CustomWheelItem%s",s.c_str()); }
+static std::string CUSTOM_WHEEL_ITEM_COLOR( RString s )		{ return fmt::sprintf("%sColor",s.c_str()); }
 
 static LocalizedString EMPTY_STRING	( "MusicWheel", "Empty" );
 
@@ -91,13 +91,13 @@ void MusicWheel::Load( RString sType )
 	HIDE_ACTIVE_SECTION_TITLE		.Load(sType,"HideActiveSectionTitle");
 	REMIND_WHEEL_POSITIONS		.Load(sType,"RemindWheelPositions");
 	vector<RString> vsModeChoiceNames;
-	split( MODE_MENU_CHOICE_NAMES, ",", vsModeChoiceNames );
+	split( MODE_MENU_CHOICE_NAMES.GetValue(), ",", vsModeChoiceNames );
 	CHOICE				.Load(sType,CHOICE_NAME,vsModeChoiceNames);
 	SECTION_COLORS			.Load(sType,SECTION_COLORS_NAME,NUM_SECTION_COLORS);
 
 	CUSTOM_WHEEL_ITEM_NAMES		.Load(sType,"CustomWheelItemNames");
 	vector<RString> vsCustomItemNames;
-	split( CUSTOM_WHEEL_ITEM_NAMES, ",", vsCustomItemNames );
+	split( CUSTOM_WHEEL_ITEM_NAMES.GetValue(), ",", vsCustomItemNames );
 	CUSTOM_CHOICES.Load(sType,CUSTOM_WHEEL_ITEM_NAME,vsCustomItemNames);
 	CUSTOM_CHOICE_COLORS.Load(sType,CUSTOM_WHEEL_ITEM_COLOR,vsCustomItemNames);
 
@@ -517,7 +517,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 		{
 			arrayWheelItemDatas.clear();	// clear out the previous wheel items
 			vector<RString> vsNames;
-			split( MODE_MENU_CHOICE_NAMES, ",", vsNames );
+			split( MODE_MENU_CHOICE_NAMES.GetValue(), ",", vsNames );
 			for( unsigned i=0; i<vsNames.size(); ++i )
 			{
 				MusicWheelItemData wid( WheelItemDataType_Sort, nullptr, "", nullptr, SORT_MENU_COLOR, 0 );
@@ -723,7 +723,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 
 				// add custom wheel items
 				vector<RString> vsNames;
-				split( CUSTOM_WHEEL_ITEM_NAMES, ",", vsNames );
+				split( CUSTOM_WHEEL_ITEM_NAMES.GetValue(), ",", vsNames );
 				for( unsigned i=0; i<vsNames.size(); ++i )
 				{
 					MusicWheelItemData wid( WheelItemDataType_Custom, nullptr, "", nullptr, CUSTOM_CHOICE_COLORS.GetValue(vsNames[i]), 0 );

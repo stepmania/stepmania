@@ -355,7 +355,7 @@ void StepMania::ResetGame()
 	PREFSMAN->SavePrefsToDisk();
 }
 
-ThemeMetric<RString>	INITIAL_SCREEN	("Common","InitialScreen");
+ThemeMetric<std::string>	INITIAL_SCREEN	("Common","InitialScreen");
 RString StepMania::GetInitialScreen()
 {
 	if(PREFSMAN->m_sTestInitialScreen.Get() != "" &&
@@ -370,7 +370,7 @@ RString StepMania::GetInitialScreen()
 	}
 	return screen_name;
 }
-ThemeMetric<RString>	SELECT_MUSIC_SCREEN	("Common","SelectMusicScreen");
+ThemeMetric<std::string>	SELECT_MUSIC_SCREEN	("Common","SelectMusicScreen");
 RString StepMania::GetSelectMusicScreen()
 {
 	return SELECT_MUSIC_SCREEN.GetValue();
@@ -1372,7 +1372,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 				SCREENMAN->SystemMessage( SERVICE_SWITCH_PRESSED.GetValue() );
 				SCREENMAN->PopAllScreens();
 				GAMESTATE->Reset();
-				SCREENMAN->SetNewScreen( CommonMetrics::OPERATOR_MENU_SCREEN );
+				SCREENMAN->SetNewScreen( CommonMetrics::OPERATOR_MENU_SCREEN.GetValue() );
 			}
 			return true;
 

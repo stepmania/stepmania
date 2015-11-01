@@ -19,8 +19,8 @@ struct lua_State;
 #include "RageTexturePreloader.h"
 #include "RageUtil.h"
 
-RString SONG_GROUP_COLOR_NAME( size_t i );
-RString COURSE_GROUP_COLOR_NAME( size_t i );
+std::string SONG_GROUP_COLOR_NAME( size_t i );
+std::string COURSE_GROUP_COLOR_NAME( size_t i );
 bool CompareNotesPointersForExtra(const Steps *n1, const Steps *n2);
 
 /** @brief The max number of edit steps a profile can have. */
