@@ -284,7 +284,10 @@ RageTextureID BannerCache::LoadCachedBanner( RString sBannerPath )
 	if( g_BannerPathToImage.find(sBannerPath) == g_BannerPathToImage.end() )
 	{
 		/* Oops, the image is missing.  Warn and continue. */
-		LOG->Warn( "Banner cache for '%s' wasn't loaded", sBannerPath.c_str() );
+		if(PREFSMAN->m_BannerCache != BNCACHE_OFF)
+		{
+			LOG->Warn( "Banner cache for '%s' wasn't loaded", sBannerPath.c_str() );
+		}
 		return ID;
 	}
 
