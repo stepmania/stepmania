@@ -55,6 +55,8 @@ For the first setup, you will want to run this command:
 
 Replace {YourGeneratorHere} with one of the generator choices from `cmake --help`. As an example, Mac OS X users that want to have Xcode used would run `cmake -G Xcode .. && cmake ..` on their Terminal program.
 
+If you are building on Windows and expecting your final executable to be able to run on Windows XP, append an additional parameter `-T "v140_xp"` (or `-T "v120_xp"`, depending on which version of Visual Studio you have installed) to your command line.
+
 If any cmake project file changes, you can just run `cmake .. && cmake ..` to get up to date.
 If this by itself doesn't work, you may have to clean the cmake cache.
 Use `rm -rf CMakeCache.txt CMakeScripts/ CMakeFiles/ cmake_install.txt` to do that, and then run the generator command again as specified above.

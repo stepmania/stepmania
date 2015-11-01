@@ -105,6 +105,9 @@ typedef long ssize_t;
 /* Defined to 1 if building on a windows system, and thus uses the windows loading window. */
 #cmakedefine NEED_WINDOWS_LOADING_WINDOW 1
 
+/* Defined to 1 if logging timing segment additions and removals. */
+#cmakedefine WITH_LOGGING_TIMING_DATA 1
+
 /* Defined to 1 if the PBS_MARQUEE symbol was found. */
 #cmakedefine HAVE_PBS_MARQUEE 1
 

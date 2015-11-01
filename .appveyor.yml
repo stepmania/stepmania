@@ -49,7 +49,7 @@ before_build:
 - cmd: >-
     cd Build
 
-    cmake -G "Visual Studio 14 2015" -DWITH_IRC_POST_HOOK=ON ..
+    cmake -G "Visual Studio 14 2015" -T "v140_xp" -DWITH_IRC_POST_HOOK=ON ..
 build:
   project: C:\Repos\wolfmania\Build\StepMania.sln
   verbosity: normal
