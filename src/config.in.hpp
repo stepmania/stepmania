@@ -3,6 +3,9 @@
 
 /* Auto-generated config.h file powered by cmake. */
 
+/* Include necessary items from the rage project. */
+#include "RageConfig.hpp"
+
 /* Defined to 1 if <alloca.h> is found. */
 #cmakedefine HAVE_ALLOCA_H 1
 

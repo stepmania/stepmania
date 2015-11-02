@@ -14,6 +14,7 @@ list(APPEND RAGE_SRC
 
 list(APPEND RAGE_HPP
   "${SM_SRC_DIR}/rage/RageColor.hpp"
+  "${SM_SRC_DIR}/rage/RageConfig.hpp"
   "${SM_SRC_DIR}/rage/RageMath.hpp"
   "${SM_SRC_DIR}/rage/RageMatrix.hpp"
   "${SM_SRC_DIR}/rage/RageModelVertex.hpp"
