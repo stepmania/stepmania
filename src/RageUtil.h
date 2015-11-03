@@ -389,8 +389,8 @@ std::wstring RStringToWstring( const RString &sString );
 
 struct LanguageInfo
 {
-	const char *szIsoCode;
-	const char *szEnglishName;
+	std::string isoCode;
+	std::string englishName;
 };
 void GetLanguageInfos( std::vector<const LanguageInfo*> &vAddTo );
 const LanguageInfo *GetLanguageInfo( const RString &sIsoCode );

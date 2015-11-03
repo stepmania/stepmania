@@ -48,7 +48,7 @@ void LightsDriver_Linux_PIUIO::Set( const LightsState *ls )
 	if (ls->m_bCabinetLights[LIGHT_MARQUEE_LR_RIGHT]) buf[3] |= 0x01;
 	if (ls->m_bCabinetLights[LIGHT_BASS_LEFT] || ls->m_bCabinetLights[LIGHT_BASS_RIGHT]) buf[1] |= 0x04;
 
-	Rage::ci_ascii_string game { GAMESTATE->GetCurrentGame()->m_InputScheme.m_szName };
+	Rage::ci_ascii_string game { GAMESTATE->GetCurrentGame()->m_InputScheme.inputName.c_str() };
 	if (game == "dance") {
 		if (ls->m_bGameButtonLights[GameController_1][DANCE_BUTTON_UP]) buf[2] |= 0x04;
 		if (ls->m_bGameButtonLights[GameController_1][DANCE_BUTTON_DOWN]) buf[2] |= 0x08;
@@ -86,7 +86,7 @@ void LightsDriver_Linux_PIUIO::Set( const LightsState *ls )
 /*
  * (c) 2012-2013 StepMania team
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -96,7 +96,7 @@ void LightsDriver_Linux_PIUIO::Set( const LightsState *ls )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

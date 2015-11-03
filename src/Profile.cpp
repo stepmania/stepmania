@@ -547,7 +547,7 @@ int Profile::GetSongNumTimesPlayed( const SongID& songID ) const
  */
 bool Profile::GetDefaultModifiers( const Game* pGameType, RString &sModifiersOut ) const
 {
-	auto it = m_sDefaultModifiers.find( pGameType->m_szName );
+	auto it = m_sDefaultModifiers.find( pGameType->gameName );
 	if( it == m_sDefaultModifiers.end() )
 		return false;
 	sModifiersOut = it->second;
@@ -557,9 +557,9 @@ bool Profile::GetDefaultModifiers( const Game* pGameType, RString &sModifiersOut
 void Profile::SetDefaultModifiers( const Game* pGameType, const RString &sModifiers )
 {
 	if( sModifiers == "" )
-		m_sDefaultModifiers.erase( pGameType->m_szName );
+		m_sDefaultModifiers.erase( pGameType->gameName );
 	else
-		m_sDefaultModifiers[pGameType->m_szName] = sModifiers;
+		m_sDefaultModifiers[pGameType->gameName] = sModifiers;
 }
 
 void Profile::get_preferred_noteskin(StepsType stype, RString& skin) const
@@ -1457,7 +1457,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "LastDifficulty",		DifficultyToString(m_LastDifficulty) );
 	pGeneralDataNode->AppendChild( "LastCourseDifficulty",		DifficultyToString(m_LastCourseDifficulty) );
 	if( m_LastStepsType != StepsType_Invalid )
-		pGeneralDataNode->AppendChild( "LastStepsType",			GAMEMAN->GetStepsTypeInfo(m_LastStepsType).szName );
+		pGeneralDataNode->AppendChild( "LastStepsType",			GAMEMAN->GetStepsTypeInfo(m_LastStepsType).stepTypeName );
 	pGeneralDataNode->AppendChild( m_lastSong.CreateNode() );
 	pGeneralDataNode->AppendChild( m_lastCourse.CreateNode() );
 	pGeneralDataNode->AppendChild( "CurrentCombo", m_iCurrentCombo );
@@ -2136,7 +2136,7 @@ XNode* Profile::SaveCategoryScoresCreateNode() const
 			continue;
 
 		XNode* pStepsTypeNode = pNode->AppendChild( "StepsType" );
-		pStepsTypeNode->AppendAttr( "Type", GAMEMAN->GetStepsTypeInfo(st).szName );
+		pStepsTypeNode->AppendAttr( "Type", GAMEMAN->GetStepsTypeInfo(st).stepTypeName );
 
 		FOREACH_ENUM( RankingCategory,rc )
 		{

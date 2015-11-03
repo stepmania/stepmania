@@ -108,7 +108,7 @@ void LightsDriver_Linux_PIUIO_Leds::Set( const LightsState *ls )
 	}
 
 	const InputScheme *pInput = &GAMESTATE->GetCurrentGame()->m_InputScheme;
-	Rage::ci_ascii_string game { pInput->m_szName };
+	Rage::ci_ascii_string game { pInput->inputName.c_str() };
 	if (game == "dance")
 	{
 		FOREACH_ENUM(GameController, c)

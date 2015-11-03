@@ -274,7 +274,7 @@ void Steps::TidyUpData()
 	}
 	else if(m_StepsTypeStr == "")
 	{
-		m_StepsTypeStr= GAMEMAN->GetStepsTypeInfo(m_StepsType).szName;
+		m_StepsTypeStr= GAMEMAN->GetStepsTypeInfo(m_StepsType).stepTypeName;
 	}
 
 	if( GetDifficulty() == Difficulty_Invalid )
@@ -505,14 +505,14 @@ void Steps::AutogenFrom( const Steps *parent_, StepsType ntTo )
 {
 	parent = parent_;
 	m_StepsType = ntTo;
-	m_StepsTypeStr= GAMEMAN->GetStepsTypeInfo(ntTo).szName;
+	m_StepsTypeStr= GAMEMAN->GetStepsTypeInfo(ntTo).stepTypeName;
 	m_Timing = parent->m_Timing;
 }
 
 void Steps::CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds )	// pSource does not have to be of the same StepsType
 {
 	m_StepsType = ntTo;
-	m_StepsTypeStr= GAMEMAN->GetStepsTypeInfo(ntTo).szName;
+	m_StepsTypeStr= GAMEMAN->GetStepsTypeInfo(ntTo).stepTypeName;
 	NoteData noteData;
 	pSource->GetNoteData( noteData );
 	noteData.SetNumTracks( GAMEMAN->GetStepsTypeInfo(ntTo).iNumTracks );
@@ -531,7 +531,7 @@ void Steps::CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds 
 void Steps::CreateBlank( StepsType ntTo )
 {
 	m_StepsType = ntTo;
-	m_StepsTypeStr= GAMEMAN->GetStepsTypeInfo(ntTo).szName;
+	m_StepsTypeStr= GAMEMAN->GetStepsTypeInfo(ntTo).stepTypeName;
 	NoteData noteData;
 	noteData.SetNumTracks( GAMEMAN->GetStepsTypeInfo(ntTo).iNumTracks );
 	this->SetNoteData( noteData );

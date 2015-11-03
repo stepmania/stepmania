@@ -343,7 +343,7 @@ void StepMania::ResetGame()
 
 	if( !THEME->DoesThemeExist( THEME->GetCurThemeName() ) )
 	{
-		RString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
+		RString sGameName = GAMESTATE->GetCurrentGame()->gameName;
 		if( !THEME->DoesThemeExist(sGameName) )
 			sGameName = PREFSMAN->m_sDefaultTheme; // was previously "default" -aj
 		THEME->SwitchThemeAndLanguage( sGameName, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize );
@@ -821,7 +821,7 @@ static void SwitchToLastPlayedGame()
 	{
 		pGame = GAMEMAN->GetDefaultGame();
 		LOG->Warn( "Default NoteSkin for \"%s\" missing, reverting to \"%s\"",
-			pGame->m_szName, GAMEMAN->GetDefaultGame()->m_szName );
+			pGame->gameName, GAMEMAN->GetDefaultGame()->gameName );
 	}
 
 	ASSERT( GAMEMAN->IsGameEnabled(pGame) );
@@ -841,11 +841,11 @@ void StepMania::InitializeCurrentGame( const Game* g )
 
 	RString sAnnouncer = PREFSMAN->m_sAnnouncer.Get();
 	RString sTheme = PREFSMAN->m_sTheme.Get();
-	RString sGametype = GAMESTATE->GetCurrentGame()->m_szName;
+	RString sGametype = GAMESTATE->GetCurrentGame()->gameName;
 	RString sLanguage = PREFSMAN->m_sLanguage.Get();
 
 	if( sAnnouncer.empty() )
-		sAnnouncer = GAMESTATE->GetCurrentGame()->m_szName;
+		sAnnouncer = GAMESTATE->GetCurrentGame()->gameName;
 	RString argCurGame;
 	if( GetCommandlineArgument( "game", &argCurGame) && argCurGame != sGametype )
 	{

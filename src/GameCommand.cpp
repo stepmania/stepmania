@@ -547,7 +547,7 @@ static bool AreStyleAndPlayModeCompatible( const Style *style, PlayMode pm )
 			// This is correct for dance (ie, no rave for solo and doubles),
 			// and should be okay for pump.. not sure about other game types.
 			// Techno Motion scales down versus arrows, though, so allow this.
-			if( style->m_iColsPerPlayer >= 6 && RString(GAMESTATE->m_pCurGame->m_szName) != "techno" )
+			if( style->m_iColsPerPlayer >= 6 && GAMESTATE->m_pCurGame->gameName != "techno" )
 				return false;
 
 			// Don't allow battle modes if the style takes both sides.

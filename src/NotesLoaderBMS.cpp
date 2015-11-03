@@ -934,7 +934,7 @@ void BMSChartReader::CalculateStepsType()
 	}
 	else
 	{
-		out->m_StepsTypeStr = GAMEMAN->GetStepsTypeInfo(out->m_StepsType).szName;
+		out->m_StepsTypeStr = GAMEMAN->GetStepsTypeInfo(out->m_StepsType).stepTypeName;
 	}
 }
 

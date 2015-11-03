@@ -80,7 +80,7 @@ void NoteSkinManager::RefreshNoteSkinData( const Game* pGame )
 	// clear path cache
 	g_PathCache.clear();
 
-	RString sBaseSkinFolder = SpecialFiles::NOTESKINS_DIR + pGame->m_szName + "/";
+	RString sBaseSkinFolder = SpecialFiles::NOTESKINS_DIR + pGame->gameName + "/";
 	vector<RString> asNoteSkinNames;
 	GetDirListing( sBaseSkinFolder + "*", asNoteSkinNames, true );
 
@@ -128,7 +128,7 @@ bool NoteSkinManager::LoadNoteSkinDataRecursive( const RString &sNoteSkinName_, 
 			return false;
 		}
 
-		RString sDir = SpecialFiles::NOTESKINS_DIR + m_pCurGame->m_szName + "/" + sNoteSkinName + "/";
+		RString sDir = SpecialFiles::NOTESKINS_DIR + m_pCurGame->gameName + "/" + sNoteSkinName + "/";
 		if( !FILEMAN->IsADirectory(sDir) )
 		{
 			sDir = GLOBAL_BASE_DIR + sNoteSkinName + "/";
@@ -275,7 +275,7 @@ void NoteSkinManager::GetAllNoteSkinNamesForGame( const Game *pGame, vector<RStr
 	}
 	else
 	{
-		RString sBaseSkinFolder = SpecialFiles::NOTESKINS_DIR + pGame->m_szName + "/";
+		RString sBaseSkinFolder = SpecialFiles::NOTESKINS_DIR + pGame->gameName + "/";
 		GetDirListing( sBaseSkinFolder + "*", AddTo, true );
 		StripCvsAndSvn( AddTo );
 		StripMacResourceForks( AddTo );

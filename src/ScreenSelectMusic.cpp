@@ -255,8 +255,8 @@ void ScreenSelectMusic::BeginScreen()
 		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), vst[0] );
 		if(pStyle == nullptr)
 		{
-			FAIL_M( ssprintf("No compatible styles for %s with %d player%s.",
-					GAMESTATE->m_pCurGame->m_szName,
+			FAIL_M( fmt::format("No compatible styles for {0} with {1} player{2}.",
+					GAMESTATE->m_pCurGame->gameName,
 					GAMESTATE->GetNumSidesJoined(),
 					GAMESTATE->GetNumSidesJoined()==1?"":"s") );
 		}

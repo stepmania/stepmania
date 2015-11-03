@@ -380,20 +380,26 @@ void Checkpoints::SetCheckpoint( const char *file, int line, std::string const &
 	using std::max;
 	ThreadSlot *slot = GetCurThreadSlot();
 	if( slot == nullptr )
+	{
 		slot = GetUnknownThreadSlot();
+	}
 	/* We can't ASSERT here, since that uses checkpoints. */
 	if( slot == nullptr )
+	{
 		sm_crash( "GetUnknownThreadSlot() returned nullptr" );
-
+	}
 	/* Ignore everything up to and including the first "src/". */
 	const char *temp = strstr( file, "src/" );
 	if( temp )
+	{
 		file = temp + 4;
+	}
 	slot->m_Checkpoints[slot->m_iCurCheckpoint].Set( file, line, message.c_str() );
 
 	if( g_LogCheckpoints )
+	{
 		LOG->Trace( "%s", slot->m_Checkpoints[slot->m_iCurCheckpoint].m_szFormattedBuf );
-
+	}
 	++slot->m_iCurCheckpoint;
 	slot->m_iNumCheckpoints = max( slot->m_iNumCheckpoints, slot->m_iCurCheckpoint );
 	slot->m_iCurCheckpoint %= CHECKPOINT_COUNT;

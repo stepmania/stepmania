@@ -42,7 +42,7 @@ protected:
 
 	struct RegType
 	{
-		const char *szName;
+		std::string regName;
 		binding_t *mfunc;
 	};
 
@@ -54,10 +54,9 @@ protected:
 		// fill method table with methods from class T
 		for (auto const m: m_aMethods)
 		{
-			const RegType *l = &m;
-			lua_pushlightuserdata( L, (void*) l->mfunc );
+			lua_pushlightuserdata( L, (void*) m.mfunc );
 			lua_pushcclosure( L, thunk, 1 );
-			lua_setfield( L, iMethods, l->szName );
+			lua_setfield( L, iMethods, m.regName.c_str() );
 		}
 	}
 
@@ -73,11 +72,14 @@ public:
 		if( !LuaBinding::CheckLuaObjectType(L, narg, m_sClassName) )
 		{
 			if( bIsSelf )
+			{
 				luaL_typerror( L, narg, m_sClassName.c_str());
+			}
 			else
+			{
 				LuaHelpers::TypeError( L, narg, m_sClassName );
+			}
 		}
-
 		return get( L, narg );
 	}
 
@@ -91,9 +93,9 @@ public:
 	static void PushObject( Lua *L, const RString &sDerivedClassName, T* p );
 
 protected:
-	void AddMethod( const char *szName, int (*pFunc)(T *p, lua_State *L) )
+	void AddMethod( std::string const &regName, int (*pFunc)(T *p, lua_State *L) )
 	{
-		RegType r = { szName, pFunc };
+		RegType r = { regName, pFunc };
 		m_aMethods.push_back(r);
 	}
 

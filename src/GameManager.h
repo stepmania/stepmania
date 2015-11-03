@@ -13,7 +13,7 @@ struct lua_State;
 /** @brief The collective information about a Steps' Type. */
 struct StepsTypeInfo
 {
-	const char *szName;
+	std::string stepTypeName;
 	/** @brief The number of tracks, or columns, of this type. */
 	int iNumTracks;
 	/** @brief A flag to determine if we allow this type to be autogen'ed to other types. */

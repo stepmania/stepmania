@@ -24,7 +24,7 @@ void ScreenSelectLanguage::Init()
 		gc.m_sName = *s;
 		gc.m_bInvalid = false;
 		if( pLI )
-			gc.m_sText = THEME->GetString("NativeLanguageNames", pLI->szEnglishName);
+			gc.m_sText = THEME->GetString("NativeLanguageNames", pLI->englishName);
 		else
 			gc.m_sText = *s;
 

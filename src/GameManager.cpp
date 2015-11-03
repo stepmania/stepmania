@@ -41,9 +41,11 @@ enum
 
 RString StepsTypeInfo::GetLocalizedString() const
 {
-	if( THEME->HasString( "StepsType", szName ) )
-		return THEME->GetString( "StepsType", szName );
-	return szName;
+	if( THEME->HasString( "StepsType", stepTypeName ) )
+	{
+		return THEME->GetString( "StepsType", stepTypeName );
+	}
+	return stepTypeName;
 }
 
 static const StepsTypeInfo g_StepsTypeInfos[] = {
@@ -3340,7 +3342,7 @@ const Style* GameManager::GetHowToPlayStyleForGame( const Game *pGame )
 			return style;
 	}
 
-	FAIL_M(ssprintf("Game has no Style that can be used with HowToPlay: %s", pGame->m_szName));
+    FAIL_M(fmt::format("Game has no Style that can be used with HowToPlay: {0}", pGame->gameName));
 }
 
 void GameManager::GetCompatibleStyles( const Game *pGame, int iNumPlayers, vector<const Style*> &vpStylesOut )
@@ -3428,7 +3430,7 @@ int GameManager::GetIndexFromGame( const Game* pGame )
 		if( g_Games[g] == pGame )
 			return g;
 	}
-	FAIL_M(ssprintf("Game not found: %s", pGame->m_szName));
+	FAIL_M(fmt::format("Game not found: {0}", pGame->gameName));
 }
 
 const Game* GameManager::GetGameFromIndex( int index )
@@ -3456,7 +3458,7 @@ StepsType GameManager::StringToStepsType( RString sStepsType )
 	
 	for( int i=0; i<NUM_StepsType; i++ )
 	{
-		if( g_StepsTypeInfos[i].szName == sStepsType )
+		if( g_StepsTypeInfos[i].stepTypeName == sStepsType )
 		{
 			return StepsType(i);
 		}
@@ -3479,7 +3481,7 @@ const Game* GameManager::StringToGame( RString sGame )
 	Rage::ci_ascii_string gameName{ sGame };
 	for (size_t i = 0; i < ARRAYLEN(g_Games); ++i)
 	{
-		if (gameName == g_Games[i]->m_szName)
+		if (gameName == g_Games[i]->gameName)
 		{
 			return g_Games[i];
 		}
@@ -3564,7 +3566,7 @@ public:
 		lua_createtable(L, aGames.size(), 0);
 		for(size_t i= 0; i < aGames.size(); ++i)
 		{
-			lua_pushstring(L, aGames[i]->m_szName);
+			lua_pushstring(L, aGames[i]->gameName.c_str());
 			lua_rawseti(L, -2, i+1);
 		}
 		return 1;
