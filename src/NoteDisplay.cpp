@@ -17,8 +17,8 @@
 #include "LuaBinding.h"
 #include "RageMath.h"
 
-static double constexpr PI_180= Rage::PI / 180.0;
-static double constexpr PI_180R= 180.0 / Rage::PI;
+static double CONSTEXPR_VARIABLE PI_180= Rage::PI / 180.0;
+static double CONSTEXPR_VARIABLE PI_180R= 180.0 / Rage::PI;
 
 const RString& NoteNotePartToString( NotePart i );
 /** @brief A foreach loop going through the different NoteParts. */

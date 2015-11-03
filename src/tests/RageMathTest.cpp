@@ -53,7 +53,7 @@ GTEST_TEST(lerp, vectors_too)
 	Rage::Vector2 a { 0, 0 };
 	Rage::Vector2 b { 10, 20 };
 	
-	Rage::Vector2 actual = lerp(0.6, a, b);
+	Rage::Vector2 actual = lerp(0.6f, a, b);
 	EXPECT_EQ( (Rage::Vector2{6, 12}), actual);
 	
 }
