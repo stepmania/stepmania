@@ -10,7 +10,7 @@
 char const *owner = "wolfman2000";
 char const *nick = "appveyor-sm5";
 char const *server = "irc.freenode.net";
-char const *channel = "#stepmania-devs";
+char const *channel = "#stepmania";
 
 bool startsWithPing(char const *buffer)
 {
