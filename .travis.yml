@@ -68,9 +68,9 @@ install:
     - mkdir ${DEPS_DIR}
     - cd ${DEPS_DIR}
     # Use the binary for cmake instead of building it now.
-    - export CMAKE_URL=http://www.cmake.org/files/v3.3/cmake-3.3.2-Linux-x86_64.tar.gz
+    - export CMAKE_URL=https://cmake.org/files/v3.3/cmake-3.3.2-Linux-x86_64.tar.gz
     - mkdir cmake
-    - wget --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
+    - wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
     - export PATH=${PWD}/cmake/bin:${PATH}
 
 before_script:
