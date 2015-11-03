@@ -921,7 +921,7 @@ bool Course::IsRanking() const
 	vector<RString> rankingsongs;
 
 	split(THEME->GetMetric("ScreenRanking", "CoursesToShow"), ",", rankingsongs);
-	Rage::ci_ascii_string path{ m_sPath };
+	Rage::ci_ascii_string path{ m_sPath.c_str() };
 	for (unsigned i = 0; i < rankingsongs.size(); i++)
 	{
 		if (path == rankingsongs[i])
@@ -991,12 +991,12 @@ void Course::CalculateRadarValues()
 
 bool Course::Matches( RString sGroup, RString sCourse ) const
 {
-	if (sGroup.size() && Rage::ci_ascii_string{ sGroup } != this->m_sGroupName)
+	if (sGroup.size() && Rage::ci_ascii_string{ sGroup.c_str() } != this->m_sGroupName)
 	{
 		return false;
 	}
 	RString sFile = m_sPath;
-	Rage::ci_ascii_string course{ sCourse };
+	Rage::ci_ascii_string course{ sCourse.c_str() };
 	if (!sFile.empty())
 	{
 		Rage::replace(sFile, '\\', '/');
@@ -1059,12 +1059,33 @@ class LunaCourse: public Luna<Course>
 {
 public:
 	DEFINE_METHOD( GetPlayMode, GetPlayMode() )
-	static int GetDisplayFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayFullTitle() ); return 1; }
-	static int GetTranslitFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitFullTitle() ); return 1; }
-	static int HasMods( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasMods() ); return 1; }
-	static int HasTimedMods( T* p, lua_State *L )		{ lua_pushboolean( L, p->HasTimedMods() ); return 1; }
+	static int GetDisplayFullTitle( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetDisplayFullTitle().c_str() );
+		return 1;
+	}
+	static int GetTranslitFullTitle( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetTranslitFullTitle().c_str() );
+		return 1;
+	}
+	static int HasMods( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->HasMods() );
+		return 1;
+	}
+	static int HasTimedMods( T* p, lua_State *L )
+	{
+		lua_pushboolean( L, p->HasTimedMods() );
+		return 1;
+	}
 	DEFINE_METHOD( GetCourseType, GetCourseType() )
-	static int GetCourseEntry( T* p, lua_State *L )		{ CourseEntry &ce = p->m_vEntries[IArg(1)]; ce.PushSelf(L); return 1; }
+	static int GetCourseEntry( T* p, lua_State *L )
+	{
+		CourseEntry &ce = p->m_vEntries[IArg(1)];
+		ce.PushSelf(L);
+		return 1;
+	}
 	static int GetCourseEntries( T* p, lua_State *L )
 	{
 		vector<CourseEntry*> v;
@@ -1082,14 +1103,55 @@ public:
 		LuaHelpers::CreateTableFromArray<Trail*>( v, L );
 		return 1;
 	}
-	static int GetBannerPath( T* p, lua_State *L )		{ RString s = p->GetBannerPath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
-	static int GetBackgroundPath( T* p, lua_State *L )		{ RString s = p->GetBackgroundPath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
-	static int GetCourseDir( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sPath ); return 1; }
-	static int GetGroupName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGroupName ); return 1; }
-	static int IsAutogen( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bIsAutogen ); return 1; }
-	static int GetEstimatedNumStages( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetEstimatedNumStages() ); return 1; }
-	static int GetScripter( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sScripter ); return 1; }
-	static int GetDescription( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sDescription ); return 1; }
+	static int GetBannerPath( T* p, lua_State *L )
+	{
+		RString s = p->GetBannerPath();
+		if( s.empty() )
+		{
+			return 0;
+		}
+		LuaHelpers::Push(L, s);
+		return 1;
+	}
+	static int GetBackgroundPath( T* p, lua_State *L )
+	{
+		RString s = p->GetBackgroundPath();
+		if( s.empty() )
+		{
+			return 0;
+		}
+		LuaHelpers::Push(L, s); return 1;
+	}
+	static int GetCourseDir( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->m_sPath.c_str() );
+		return 1;
+	}
+	static int GetGroupName( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->m_sGroupName.c_str() );
+		return 1;
+	}
+	static int IsAutogen( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->m_bIsAutogen );
+		return 1;
+	}
+	static int GetEstimatedNumStages( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetEstimatedNumStages() );
+		return 1;
+	}
+	static int GetScripter( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->m_sScripter.c_str() );
+		return 1;
+	}
+	static int GetDescription( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->m_sDescription.c_str() );
+		return 1;
+	}
 	static int GetTotalSeconds( T* p, lua_State *L )
 	{
 		StepsType st = Enum::Check<StepsType>(L, 1);
@@ -1104,8 +1166,16 @@ public:
 	DEFINE_METHOD( IsNonstop,		IsNonstop() )
 	DEFINE_METHOD( IsOni,			IsOni() )
 	DEFINE_METHOD( GetGoalSeconds,	m_fGoalSeconds )
-	static int HasBanner( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBanner() ); return 1; }
-	static int HasBackground( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasBackground() ); return 1; }
+	static int HasBanner( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->HasBanner() );
+		return 1;
+	}
+	static int HasBackground( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->HasBackground() );
+		return 1;
+	}
 	DEFINE_METHOD( IsAnEdit,		IsAnEdit() )
 	static int IsPlayableIn( T* p, lua_State *L )
 	{

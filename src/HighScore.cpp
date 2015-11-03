@@ -503,11 +503,31 @@ void Screenshot::LoadFromNode( const XNode* pNode )
 class LunaHighScore: public Luna<HighScore>
 {
 public:
-	static int GetName( T* p, lua_State *L )			{ lua_pushstring(L, p->GetName() ); return 1; }
-	static int GetScore( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetScore() ); return 1; }
-	static int GetPercentDP( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetPercentDP() ); return 1; }
-	static int GetDate( T* p, lua_State *L )			{ lua_pushstring(L, p->GetDateTime().GetString() ); return 1; }
-	static int GetSurvivalSeconds( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetSurvivalSeconds() ); return 1; }
+	static int GetName( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetName().c_str() );
+		return 1;
+	}
+	static int GetScore( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetScore() );
+		return 1;
+	}
+	static int GetPercentDP( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetPercentDP() );
+		return 1;
+	}
+	static int GetDate( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetDateTime().GetString().c_str() );
+		return 1;
+	}
+	static int GetSurvivalSeconds( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetSurvivalSeconds() );
+		return 1;
+	}
 	static int IsFillInMarker( T* p, lua_State *L )
 	{
 		bool bIsFillInMarker = false;
@@ -518,10 +538,26 @@ public:
 		lua_pushboolean( L, bIsFillInMarker );
 		return 1;
 	}
-	static int GetMaxCombo( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetMaxCombo() ); return 1; }
-	static int GetModifiers( T* p, lua_State *L )			{ lua_pushstring(L, p->GetModifiers() ); return 1; }
-	static int GetTapNoteScore( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetTapNoteScore( Enum::Check<TapNoteScore>(L, 1) ) ); return 1; }
-	static int GetHoldNoteScore( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetHoldNoteScore( Enum::Check<HoldNoteScore>(L, 1) ) ); return 1; }
+	static int GetMaxCombo( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetMaxCombo() );
+		return 1;
+	}
+	static int GetModifiers( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetModifiers().c_str() );
+		return 1;
+	}
+	static int GetTapNoteScore( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetTapNoteScore( Enum::Check<TapNoteScore>(L, 1) ) );
+		return 1;
+	}
+	static int GetHoldNoteScore( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetHoldNoteScore( Enum::Check<HoldNoteScore>(L, 1) ) );
+		return 1;
+	}
 	static int GetRadarValues( T* p, lua_State *L )
 	{
 		RadarValues &rv = const_cast<RadarValues &>(p->GetRadarValues());

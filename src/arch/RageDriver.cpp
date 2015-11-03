@@ -15,7 +15,7 @@ RageDriver *DriverList::Create( const RString &sDriverName )
 	if( m_pRegistrees == nullptr )
 		return nullptr;
 
-	auto iter = m_pRegistrees->find( Rage::ci_ascii_string{sDriverName} );
+	auto iter = m_pRegistrees->find( Rage::ci_ascii_string{sDriverName.c_str()} );
 	if( iter == m_pRegistrees->end() )
 		return nullptr;
 	return (iter->second)();
@@ -23,7 +23,7 @@ RageDriver *DriverList::Create( const RString &sDriverName )
 
 RegisterRageDriver::RegisterRageDriver( DriverList *pDriverList, const Rage::ci_ascii_string &sName, CreateRageDriverFn pfn )
 {
-	pDriverList->Add( Rage::ci_ascii_string{sName}, pfn );
+	pDriverList->Add( sName, pfn );
 }
 
 /*

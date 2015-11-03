@@ -456,35 +456,35 @@ public:
 	{
 		RString md5out;
 		md5out = p->GetMD5ForString(SArg(1));
-		lua_pushlstring(L, md5out, md5out.size());
+		lua_pushlstring(L, md5out.c_str(), md5out.size());
 		return 1;
 	}
 	static int MD5File( T* p, lua_State *L )
 	{
 		RString md5fout;
 		md5fout = p->GetMD5ForFile(SArg(1));
-		lua_pushlstring(L, md5fout, md5fout.size());
+		lua_pushlstring(L, md5fout.c_str(), md5fout.size());
 		return 1;
 	}
 	static int SHA1String( T* p, lua_State *L )
 	{
 		RString sha1out;
 		sha1out = p->GetSHA1ForString(SArg(1));
-		lua_pushlstring(L, sha1out, sha1out.size());
+		lua_pushlstring(L, sha1out.c_str(), sha1out.size());
 		return 1;
 	}
 	static int SHA1File( T* p, lua_State *L )
 	{
 		RString sha1fout;
 		sha1fout = p->GetSHA1ForFile(SArg(1));
-		lua_pushlstring(L, sha1fout, sha1fout.size());
+		lua_pushlstring(L, sha1fout.c_str(), sha1fout.size());
 		return 1;
 	}
 	static int GenerateRandomUUID( T* p, lua_State *L )
 	{
 		RString uuidOut;
 		uuidOut = p->GenerateRandomUUID();
-		lua_pushlstring(L, uuidOut, uuidOut.size());
+		lua_pushlstring(L, uuidOut.c_str(), uuidOut.size());
 		return 1;
 	}
 

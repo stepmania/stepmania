@@ -1156,7 +1156,7 @@ public:
 		int original_top= lua_gettop(L);
 		if( p->m_sNoteSkin.empty()  )
 		{
-			lua_pushstring( L, CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue() );
+			lua_pushstring( L, CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue().c_str() );
 		}
 		else
 		{
@@ -1191,7 +1191,7 @@ public:
 		{
 			p->m_newskin= SArg(1);
 		}
-		lua_pushstring(L, old);
+		lua_pushstring(L, old.c_str());
 		OPTIONAL_RETURN_SELF(original_top);
 		return 1;
 	}

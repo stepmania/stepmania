@@ -1011,12 +1011,12 @@ RString MakeDestZipFileName( RString fn )
 }
 bool CreateZip::AddFile(RString fn)
 {
-	lasterrorZ = hz->Add(MakeDestZipFileName(fn),fn,ZIP_FILENAME);
+	lasterrorZ = hz->Add(MakeDestZipFileName(fn).c_str(),fn.c_str(),ZIP_FILENAME);
 	return lasterrorZ == ZR_OK;
 }
 bool CreateZip::AddDir(RString fn)
 {
-	lasterrorZ = hz->Add(MakeDestZipFileName(fn),nullptr,ZIP_FOLDER);
+	lasterrorZ = hz->Add(MakeDestZipFileName(fn).c_str(),nullptr,ZIP_FOLDER);
 	return lasterrorZ == ZR_OK;
 }
 bool CreateZip::Finish()

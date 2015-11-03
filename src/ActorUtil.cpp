@@ -136,7 +136,7 @@ namespace
 		RString sFile;
 		if (pActor->GetAttrValue("File", sFile) && sFile != "")
 		{
-			Rage::ci_ascii_string hackFile{ sFile };
+			Rage::ci_ascii_string hackFile{ sFile.c_str() };
 			// Backward compatibility hacks for "special" filenames
 			if (hackFile == "songbackground")
 			{

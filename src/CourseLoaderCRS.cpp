@@ -39,7 +39,7 @@ const char *g_CRSDifficultyNames[] =
  */
 static CourseDifficulty CRSStringToDifficulty( const RString& s )
 {
-	Rage::ci_ascii_string diff{ s };
+	Rage::ci_ascii_string diff{ s.c_str() };
 	FOREACH_ENUM(Difficulty, i)
 	{
 		if (diff == g_CRSDifficultyNames[i])
@@ -69,7 +69,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 		const MsdFile::value_t &sParams = msd.GetValue(i);
 
 		// handle the data
-		Rage::ci_ascii_string tagName{ sValueName };
+		Rage::ci_ascii_string tagName{ sValueName.c_str() };
 		if( tagName == "COURSE" )
 			out.m_sMainTitle = sParams[1];
 		else if(tagName == "COURSETRANSLIT" )
@@ -309,7 +309,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				for( int j = (int) mods.size()-1; j >= 0 ; --j )
 				{
 					RString sMod = Rage::trim(mods[j]);
-					Rage::ci_ascii_string ciMod{ sMod };
+					Rage::ci_ascii_string ciMod{ sMod.c_str() };
 					if ( ciMod == "showcourse" )
 					{
 						new_entry.bSecret = false;

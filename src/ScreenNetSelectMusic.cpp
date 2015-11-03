@@ -161,9 +161,9 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		// First check to see if this song is already selected. This is so that if
 		// you have multiple copies of the "same" song you can chose which copy to play.
 		Song* CurSong = m_MusicWheel.GetSelectedSong();
-		Rage::ci_ascii_string ciArtist{ NSMAN->m_sArtist };
-		Rage::ci_ascii_string ciMain{ NSMAN->m_sMainTitle };
-		Rage::ci_ascii_string ciSub{ NSMAN->m_sSubTitle };
+		Rage::ci_ascii_string ciArtist{ NSMAN->m_sArtist.c_str() };
+		Rage::ci_ascii_string ciMain{ NSMAN->m_sMainTitle.c_str() };
+		Rage::ci_ascii_string ciSub{ NSMAN->m_sSubTitle.c_str() };
 		if (CurSong != nullptr)
 		{
 			if (ciArtist == CurSong->GetTranslitArtist() &&
@@ -556,7 +556,7 @@ void ScreenNetSelectMusic::MusicChanged()
 	if( GAMESTATE->m_pCurSong->HasMusic() )
 	{
 		// don't play the same sound over and over
-		if (Rage::ci_ascii_string{ SOUND->GetMusicPath() } != GAMESTATE->m_pCurSong->GetMusicPath())
+		if (Rage::ci_ascii_string{ SOUND->GetMusicPath().c_str() } != GAMESTATE->m_pCurSong->GetMusicPath())
 		{
 			SOUND->StopMusic();
 			SOUND->PlayMusic(

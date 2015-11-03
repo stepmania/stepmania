@@ -22,8 +22,8 @@ using std::vector;
 // Sorting stuff
 static bool CompareCoursePointersByName( const Course* pCourse1, const Course* pCourse2 )
 {
-	Rage::ci_ascii_string a { pCourse1->GetDisplayFullTitle() };
-	Rage::ci_ascii_string b { pCourse2->GetDisplayFullTitle() };
+	Rage::ci_ascii_string a { pCourse1->GetDisplayFullTitle().c_str() };
+	Rage::ci_ascii_string b { pCourse2->GetDisplayFullTitle().c_str() };
 	return a < b;
 }
 

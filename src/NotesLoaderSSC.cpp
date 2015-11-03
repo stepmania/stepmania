@@ -192,7 +192,7 @@ void SetDisplayBPM(SongTagInfo& info)
 }
 void SetSelectable(SongTagInfo& info)
 {
-	Rage::ci_ascii_string valueName{ (*info.params)[1] };
+	Rage::ci_ascii_string valueName{ (*info.params)[1].c_str() };
 	if (valueName == "YES")
 	{ 
 		info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS;

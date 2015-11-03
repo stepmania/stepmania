@@ -50,7 +50,7 @@ bool AnnouncerManager::DoesAnnouncerExist( RString sAnnouncerName )
 
 	vector<RString> asAnnouncerNames;
 	GetAnnouncerNames( asAnnouncerNames );
-	Rage::ci_ascii_string name{ sAnnouncerName };
+	Rage::ci_ascii_string name{ sAnnouncerName.c_str() };
 	
 	auto doesExist = [&name](std::string const &announcer) {
 		return name == announcer;
@@ -124,7 +124,7 @@ RString AnnouncerManager::GetPathTo( RString sAnnouncerName, RString sFolderName
 
 	/* Search for the announcer folder in the list of aliases. */
 	int i;
-	Rage::ci_ascii_string folder{ sFolderName };
+	Rage::ci_ascii_string folder{ sFolderName.c_str() };
 	for(i = 0; aliases[i][0] != nullptr; ++i)
 	{
 		if (folder != aliases[i][0])
@@ -170,7 +170,7 @@ void AnnouncerManager::NextAnnouncer()
 	else
 	{
 		unsigned i;
-		Rage::ci_ascii_string announcer{ m_sCurAnnouncerName };
+		Rage::ci_ascii_string announcer{ m_sCurAnnouncerName.c_str() };
 		for (i = 0; i < as.size(); i++)
 		{
 			if (announcer == as[i])
@@ -211,7 +211,7 @@ public:
 		}
 		else
 		{
-			lua_pushstring(L, s );
+			lua_pushstring(L, s.c_str() );
 		}
 		return 1;
 	}

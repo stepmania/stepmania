@@ -219,17 +219,61 @@ void Character::UndemandGraphics()
 class LunaCharacter: public Luna<Character>
 {
 public:
-	static int GetCardPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetCardPath() ); return 1; }
-	static int GetIconPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetIconPath() ); return 1; }
-	static int GetSongSelectIconPath( T* p, lua_State *L )	{ lua_pushstring(L, p->GetSongSelectIconPath() ); return 1; }
-	static int GetStageIconPath( T* p, lua_State *L )		{ lua_pushstring(L, p->GetStageIconPath() ); return 1; }
-	static int GetModelPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetModelPath() ); return 1; }
-	static int GetRestAnimationPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetRestAnimationPath() ); return 1; }
-	static int GetWarmUpAnimationPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetWarmUpAnimationPath() ); return 1; }
-	static int GetDanceAnimationPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetDanceAnimationPath() ); return 1; }
-	static int GetCharacterDir( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sCharDir ); return 1; }
-	static int GetCharacterID( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sCharacterID ); return 1; }
-	static int GetDisplayName( T* p, lua_State *L )			{ lua_pushstring(L, p->GetDisplayName() ); return 1; }
+	static int GetCardPath( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetCardPath().c_str() );
+		return 1;
+	}
+	static int GetIconPath( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetIconPath().c_str() );
+		return 1;
+	}
+	static int GetSongSelectIconPath( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetSongSelectIconPath().c_str() );
+		return 1;
+	}
+	static int GetStageIconPath( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetStageIconPath().c_str() );
+		return 1;
+	}
+	static int GetModelPath( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetModelPath().c_str() );
+		return 1;
+	}
+	static int GetRestAnimationPath( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetRestAnimationPath().c_str() );
+		return 1;
+	}
+	static int GetWarmUpAnimationPath( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetWarmUpAnimationPath().c_str() );
+		return 1;
+	}
+	static int GetDanceAnimationPath( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetDanceAnimationPath().c_str() );
+		return 1;
+	}
+	static int GetCharacterDir( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->m_sCharDir.c_str() );
+		return 1;
+	}
+	static int GetCharacterID( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->m_sCharacterID.c_str() );
+		return 1;
+	}
+	static int GetDisplayName( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetDisplayName().c_str() );
+		return 1;
+	}
 
 	LunaCharacter()
 	{

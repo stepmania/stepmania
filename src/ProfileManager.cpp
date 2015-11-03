@@ -646,7 +646,7 @@ void ProfileManager::SaveMachineProfile() const
 	// If the machine name has changed, make sure we use the new name.
 	// It's important that this name be applied before the Player profiles
 	// are saved, so that the Player's profiles show the right machine name.
-	const_cast<ProfileManager *> (this)->m_pMachineProfile->m_sDisplayName = PREFSMAN->m_sMachineName;
+	const_cast<ProfileManager *> (this)->m_pMachineProfile->m_sDisplayName = PREFSMAN->m_sMachineName.Get();
 
 	m_pMachineProfile->SaveAllToDir( MACHINE_PROFILE_DIR, false ); /* don't sign machine profiles */
 }
@@ -1054,21 +1054,38 @@ public:
 		{
 			luaL_error(L, "Profile index %d out of range.", index);
 		}
-		lua_pushstring(L, p->GetLocalProfileIDFromIndex(index) );
+		lua_pushstring(L, p->GetLocalProfileIDFromIndex(index).c_str() );
 		return 1;
 	}
-	static int GetLocalProfileIndexFromID( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetLocalProfileIndexFromID(SArg(1)) ); return 1; }
-	static int GetNumLocalProfiles( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetNumLocalProfiles() ); return 1; }
-	static int GetProfileDir( T* p, lua_State *L ) { lua_pushstring(L, p->GetProfileDir(Enum::Check<ProfileSlot>(L, 1)) ); return 1; }
+	static int GetLocalProfileIndexFromID( T* p, lua_State *L )
+    {
+        lua_pushnumber(L, p->GetLocalProfileIndexFromID(SArg(1)) );
+        return 1;
+    }
+	static int GetNumLocalProfiles( T* p, lua_State *L )
+    {
+        lua_pushnumber(L, p->GetNumLocalProfiles() );
+        return 1;
+    }
+	static int GetProfileDir( T* p, lua_State *L )
+    {
+        lua_pushstring(L, p->GetProfileDir(Enum::Check<ProfileSlot>(L, 1)).c_str() );
+        return 1;
+    }
 	static int IsSongNew( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsSongNew(Luna<Song>::check(L,1)) ); return 1; }
 	static int ProfileWasLoadedFromMemoryCard( T* p, lua_State *L )	{ lua_pushboolean(L, p->ProfileWasLoadedFromMemoryCard(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
 	static int LastLoadWasTamperedOrCorrupt( T* p, lua_State *L ) { lua_pushboolean(L, p->LastLoadWasTamperedOrCorrupt(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
-	static int GetPlayerName( T* p, lua_State *L )				{ PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1); lua_pushstring(L, p->GetPlayerName(pn)); return 1; }
+	static int GetPlayerName( T* p, lua_State *L )
+    {
+        PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
+        lua_pushstring(L, p->GetPlayerName(pn).c_str());
+        return 1;
+    }
 
 	static int LocalProfileIDToDir( T* , lua_State *L )
 	{
 		RString dir = USER_PROFILES_DIR + SArg(1) + "/";
-		lua_pushstring( L, dir );
+		lua_pushstring( L, dir.c_str() );
 		return 1;
 	}
 	static int SaveProfile( T* p, lua_State *L ) { lua_pushboolean( L, p->SaveProfile(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }

@@ -322,7 +322,7 @@ static RString CopyEditsMachineToMemoryCard()
 		MEMCARDMAN->MountCard(pn);
 
 	RString sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
-	RString sToDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
+	RString sToDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir.Get() + "/";
 
 	vector<RString> vs;
 	vs.push_back( ssprintf( COPIED_TO_CARD.GetValue(), pn+1 ) );
@@ -349,7 +349,7 @@ static RString SyncEditsMachineToMemoryCard()
 	int iNumFailed = 0;
 
 	RString sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
-	RString sToDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
+	RString sToDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir.Get() + "/";
 	SyncEdits( sFromDir, sToDir, iNumAdded, iNumDeleted, iNumOverwritten, iNumFailed );
 
 	MEMCARDMAN->UnmountCard(pn);

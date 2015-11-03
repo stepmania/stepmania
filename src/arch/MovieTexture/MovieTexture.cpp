@@ -25,7 +25,7 @@ bool RageMovieTexture::GetFourCC( RString fn, RString &handler, RString &type )
 {
 	RString ignore, ext;
 	splitpath( fn, ignore, ignore, ext);
-	Rage::ci_ascii_string ciExt{ ext };
+	Rage::ci_ascii_string ciExt{ ext.c_str() };
 	if (ciExt == ".mpg" || ciExt == ".mpeg" || ciExt == ".mpv" || ciExt == ".mpe")
 	{
 		handler = type = "MPEG";

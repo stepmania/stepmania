@@ -98,7 +98,7 @@ const RString &X##ToLocalizedString( X x ) \
 X StringTo##X(const RString&); \
 X StringTo##X( const RString& s ) \
 {	\
-	Rage::ci_ascii_string target{s}; \
+	Rage::ci_ascii_string target{(s).c_str()}; \
 	for( unsigned i = 0; i < ARRAYLEN(X##Names); ++i ) \
 	{ \
 		if ( target == (X##Names[i]) ) \
@@ -127,7 +127,7 @@ static void Lua##X(lua_State* L) \
 	FOREACH_ENUM( X, i ) \
 	{ \
 		RString s = X##ToString( i ); \
-		lua_pushstring( L, (#X "_")+s ); \
+		lua_pushstring( L, ((#X "_")+s).c_str() ); \
 		lua_rawseti( L, -2, i+1 ); /* 1-based */ \
 	} \
 	EnumTraits<X>::EnumToString.SetFromStack( L ); \
@@ -138,12 +138,12 @@ static void Lua##X(lua_State* L) \
 	FOREACH_ENUM( X, i ) \
 	{ \
 		RString s = X##ToString( i ); \
-		lua_pushstring( L, (#X "_")+s ); \
+		lua_pushstring( L, ((#X "_")+s).c_str() ); \
 		lua_pushnumber( L, i ); /* 0-based */ \
 		lua_rawset( L, -3 ); \
 		/* Compatibility with old, case-insensitive values */ \
 		s = Rage::make_lower(s); \
-		lua_pushstring( L, s ); \
+		lua_pushstring( L, (s).c_str() ); \
 		lua_pushnumber( L, i ); /* 0-based */ \
 		lua_rawset( L, -3 ); \
 		/* Compatibility with old, raw values */ \

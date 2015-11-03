@@ -237,7 +237,7 @@ const UnlockEntry *UnlockManager::FindCourse( const Course *pCourse ) const
 
 const UnlockEntry *UnlockManager::FindModifier( const RString &sOneMod ) const
 {
-	Rage::ci_ascii_string mod{ sOneMod };
+	Rage::ci_ascii_string mod{ sOneMod.c_str() };
 	for (auto &e : m_UnlockEntries)
 	{
 		if (mod == e.GetModifier())
@@ -811,11 +811,32 @@ void UnlockManager::GetStepsUnlockedByEntryID( vector<Song *> &apSongsOut, vecto
 class LunaUnlockEntry: public Luna<UnlockEntry>
 {
 public:
-	static int IsLocked( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsLocked() ); return 1; }
-	static int GetDescription( T* p, lua_State *L )		{ lua_pushstring(L, p->GetDescription() ); return 1; }
-	static int GetUnlockRewardType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_Type ); return 1; }
-	static int GetRequirement( T* p, lua_State *L )		{ UnlockRequirement i = Enum::Check<UnlockRequirement>( L, 1 ); lua_pushnumber(L, p->m_fRequirement[i] ); return 1; }
-	static int GetRequirePassHardSteps( T* p, lua_State *L ){ lua_pushboolean(L, p->m_bRequirePassHardSteps); return 1; }
+	static int IsLocked( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->IsLocked() );
+		return 1;
+	}
+	static int GetDescription( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetDescription().c_str() );
+		return 1;
+	}
+	static int GetUnlockRewardType( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->m_Type );
+		return 1;
+	}
+	static int GetRequirement( T* p, lua_State *L )
+	{
+		UnlockRequirement i = Enum::Check<UnlockRequirement>( L, 1 );
+		lua_pushnumber(L, p->m_fRequirement[i] );
+		return 1;
+	}
+	static int GetRequirePassHardSteps( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->m_bRequirePassHardSteps);
+		return 1;
+	}
 	static int GetRequirePassChallengeSteps( T* p, lua_State *L )
 	{
 		lua_pushboolean(L, p->m_bRequirePassChallengeSteps);
@@ -824,7 +845,11 @@ public:
 	static int GetSong( T* p, lua_State *L )
 	{
 		Song *pSong = p->m_Song.ToSong();
-		if( pSong ) { pSong->PushSelf(L); return 1; }
+		if( pSong )
+		{
+			pSong->PushSelf(L);
+			return 1;
+		}
 		return 0;
 	}
 	// Get all of the steps locked based on difficulty (similar to In The Groove 2).
@@ -874,7 +899,7 @@ public:
 	}
 	static int GetCode( T* p, lua_State *L )
 	{
-		lua_pushstring( L, p->m_sEntryID );
+		lua_pushstring( L, p->m_sEntryID.c_str() );
 		return 1;
 	}
 
@@ -943,7 +968,20 @@ public:
 		lua_pushnumber( L, p->PointsUntilNextUnlock(ut) );
 		return 1;
 	}
-	static int FindEntryID( T* p, lua_State *L )			{ RString sName = SArg(1); RString s = p->FindEntryID(sName); if( s.empty() ) lua_pushnil(L); else lua_pushstring(L, s); return 1; }
+	static int FindEntryID( T* p, lua_State *L )
+	{
+		RString sName = SArg(1);
+		RString s = p->FindEntryID(sName);
+		if( s.empty() )
+		{
+			lua_pushnil(L);
+		}
+		else
+		{
+			lua_pushstring(L, s.c_str());
+		}
+		return 1;
+	}
 	static int UnlockEntryID( T* p, lua_State *L )			{ RString sUnlockEntryID = SArg(1); p->UnlockEntryID(sUnlockEntryID); COMMON_RETURN_SELF; }
 	static int UnlockEntryIndex( T* p, lua_State *L )		{ int iUnlockEntryID = IArg(1); p->UnlockEntryIndex(iUnlockEntryID); COMMON_RETURN_SELF; }
 	static int LockEntryID( T * p, lua_State * L)

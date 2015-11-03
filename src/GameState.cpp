@@ -2841,7 +2841,7 @@ public:
 	{
 		SongOptions so;
 		p->GetDefaultSongOptions( so );
-		lua_pushstring(L, so.GetString());
+		lua_pushstring(L, so.GetString().c_str());
 		return 1;
 	}
 	static int ApplyPreferredSongOptionsToOtherLevels(T* p, lua_State* L)
@@ -2925,8 +2925,8 @@ public:
 		{
 			RString sDifficulty = CustomDifficultyToLocalizedString( GetCustomDifficulty( pSteps->m_StepsType, pSteps->GetDifficulty(), CourseType_Invalid ) );
 
-			lua_pushstring( L, sDifficulty );
-			lua_pushstring( L, pSteps->GetDescription() );
+			lua_pushstring( L, sDifficulty.c_str() );
+			lua_pushstring( L, pSteps->GetDescription().c_str() );
 		}
 
 		return vpStepsToShow.size()*2;
@@ -3006,8 +3006,16 @@ public:
 			p->m_pCurCharacters[Enum::Check<PlayerNumber>(L, 1)] = c;
 		COMMON_RETURN_SELF;
 	}
-	static int GetExpandedSectionName( T* p, lua_State *L )				{ lua_pushstring(L, p->sExpandedSectionName); return 1; }
-	static int AddStageToPlayer( T* p, lua_State *L )				{ p->AddStageToPlayer(Enum::Check<PlayerNumber>(L, 1)); COMMON_RETURN_SELF; }
+	static int GetExpandedSectionName( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->sExpandedSectionName.c_str());
+		return 1;
+	}
+	static int AddStageToPlayer( T* p, lua_State *L )
+	{
+		p->AddStageToPlayer(Enum::Check<PlayerNumber>(L, 1));
+		COMMON_RETURN_SELF;
+	}
 	static int InsertCoin( T* p, lua_State *L )
 	{
 		int numCoins = IArg(1);

@@ -915,7 +915,7 @@ int ConfOption::GetEffects() const
 ConfOption *ConfOption::Find( RString name )
 {
 	InitializeConfOptions();
-	Rage::ci_ascii_string ciName{ name };
+	Rage::ci_ascii_string ciName{ name.c_str() };
 	for (auto &opt: g_ConfOptions)
 	{
 		RString match(opt.name);

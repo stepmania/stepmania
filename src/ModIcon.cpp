@@ -54,7 +54,7 @@ void ModIcon::Load( RString sMetricsGroup )
 void ModIcon::Set( const RString &_sText )
 {
 	RString sText = _sText;
-	Rage::ci_ascii_string stopText{ sText };
+	Rage::ci_ascii_string stopText{ sText.c_str() };
 
 	for (auto const &word : m_vStopWords)
 	{

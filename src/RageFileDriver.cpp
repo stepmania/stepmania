@@ -87,7 +87,7 @@ FileDriverEntry::~FileDriverEntry()
 
 RageFileDriver *MakeFileDriver( const RString &sType, const RString &sRoot )
 {
-	Rage::ci_ascii_string ciType{ sType };
+	Rage::ci_ascii_string ciType{ sType.c_str() };
 	for (const FileDriverEntry *p = g_pFileDriverList; p; p = p->m_pLink)
 	{
 		if (ciType == p->m_sType)

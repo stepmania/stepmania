@@ -3478,7 +3478,7 @@ RString GameManager::StyleToLocalizedString( const Style* style )
 
 const Game* GameManager::StringToGame( RString sGame )
 {
-	Rage::ci_ascii_string gameName{ sGame };
+	Rage::ci_ascii_string gameName{ sGame.c_str() };
 	for (size_t i = 0; i < ARRAYLEN(g_Games); ++i)
 	{
 		if (gameName == g_Games[i]->gameName)
@@ -3492,7 +3492,7 @@ const Game* GameManager::StringToGame( RString sGame )
 
 const Style* GameManager::GameAndStringToStyle( const Game *game, RString sStyle )
 {
-	Rage::ci_ascii_string styleName{ sStyle };
+	Rage::ci_ascii_string styleName{ sStyle.c_str() };
 	for (int s = 0; game->m_apStyles[s]; ++s)
 	{
 		const Style* style = game->m_apStyles[s];
