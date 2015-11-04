@@ -26,7 +26,7 @@ LoadingWindow *LoadingWindow::Create()
 	for( unsigned i = 0; ret == nullptr && i < DriversToTry.size(); ++i )
 	{
 		Driver = DriversToTry[i];
-		Rage::ci_ascii_string ciDriver{ Driver };
+		Rage::ci_ascii_string ciDriver{ Driver.c_str() };
 #ifdef USE_LOADING_WINDOW_MACOSX
 		if( ciDriver == "MacOSX" )	ret = new LoadingWindow_MacOSX;
 #endif

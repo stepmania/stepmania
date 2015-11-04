@@ -129,7 +129,7 @@ void LoadingWindow_MacOSX::SetText( RString str )
 {
 	if( !g_Helper )
 		return;
-	NSString *s = [[NSString alloc] initWithUTF8String:str];
+	NSString *s = [[NSString alloc] initWithUTF8String:str.c_str()];
 	[g_Helper->m_Text performSelectorOnMainThread:@selector(setString:) withObject:(s ? s : @"") waitUntilDone:NO];
 	[s release];
 }

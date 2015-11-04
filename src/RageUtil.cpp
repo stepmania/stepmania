@@ -692,7 +692,7 @@ void GetLanguageInfos( vector<const LanguageInfo*> &vAddTo )
 
 const LanguageInfo *GetLanguageInfo( const RString &sIsoCode )
 {
-	Rage::ci_ascii_string iso{ sIsoCode };
+	Rage::ci_ascii_string iso{ sIsoCode.c_str() };
 	for (auto const &lang: g_langs)
 	{
 		if (iso == lang.isoCode)
@@ -1097,7 +1097,7 @@ void GetCommandLineArguments( int &argc, char **&argv )
 bool GetCommandlineArgument( const RString &option, RString *argument, int iIndex )
 {
 	const RString optstr = "--" + option;
-	Rage::ci_ascii_string ciOption{ optstr };
+	Rage::ci_ascii_string ciOption{ optstr.c_str() };
 
 	for( int arg = 1; arg < g_argc; ++arg )
 	{
@@ -1197,12 +1197,12 @@ bool DirectoryIsEmpty( const RString &sDir )
 
 bool CompareRStringsAsc( const RString &sStr1, const RString &sStr2 )
 {
-	return Rage::ci_ascii_string{ sStr1 } < Rage::ci_ascii_string{ sStr2 };
+	return Rage::ci_ascii_string{ sStr1.c_str() } < Rage::ci_ascii_string{ sStr2.c_str() };
 }
 
 bool CompareRStringsDesc( const RString &sStr1, const RString &sStr2 )
 {
-	return Rage::ci_ascii_string{ sStr1 } > Rage::ci_ascii_string{ sStr2 };
+	return Rage::ci_ascii_string{ sStr1.c_str() } > Rage::ci_ascii_string{ sStr2.c_str() };
 }
 
 void SortRStringArray( vector<RString> &arrayRStrings, const bool bSortAscending )
@@ -2044,7 +2044,7 @@ namespace StringConversion
 
 bool FileCopy( const RString &sSrcFile, const RString &sDstFile )
 {
-	if (Rage::ci_ascii_string{ sSrcFile } == sDstFile)
+	if (Rage::ci_ascii_string{ sSrcFile.c_str() } == sDstFile)
 	{
 		LOG->Warn( "Tried to copy \"%s\" over itself", sSrcFile.c_str() );
 		return false;

@@ -146,12 +146,15 @@ bool NoteSkinManager::LoadNoteSkinDataRecursive( const RString &sNoteSkinName_, 
 		// read global fallback the current NoteSkin (if any)
 		IniFile ini;
 		ini.ReadFile( sDir+"metrics.ini" );
-		Rage::ci_ascii_string ciName{ sNoteSkinName };
+		Rage::ci_ascii_string ciName{ sNoteSkinName.c_str() };
 		if (ciName == GAME_BASE_NOTESKIN_NAME)
+		{
 			bLoadedBase = true;
+		}
 		if (ciName == GAME_COMMON_NOTESKIN_NAME)
+		{
 			bLoadedCommon = true;
-
+		}
 		RString sFallback;
 		if( !ini.GetValue("Global","FallbackNoteSkin", sFallback) )
 		{
@@ -213,7 +216,7 @@ void NoteSkinManager::GetNoteSkinNames( const Game* pGame, vector<RString> &AddT
 
 bool NoteSkinManager::NoteSkinNameInList(const RString name, vector<RString> name_list)
 {
-	Rage::ci_ascii_string lowerName{ name };
+	Rage::ci_ascii_string lowerName{ name.c_str() };
 	auto isInList = [&lowerName](auto const &entry) {
 		return lowerName == entry;
 	};

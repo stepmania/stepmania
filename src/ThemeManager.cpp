@@ -209,7 +209,7 @@ bool ThemeManager::DoesThemeExist( const RString &sThemeName )
 {
 	vector<RString> asThemeNames;
 	GetThemeNames( asThemeNames );
-	Rage::ci_ascii_string ciTheme{ sThemeName };
+	Rage::ci_ascii_string ciTheme{ sThemeName.c_str() };
 	for (unsigned i = 0; i < asThemeNames.size(); i++)
 	{
 		if (ciTheme == asThemeNames[i])
@@ -256,7 +256,7 @@ RString ThemeManager::GetThemeAuthor( const RString &sThemeName )
 
 static bool EqualsNoCase( const RString &s1, const RString &s2 )
 {
-	Rage::ci_ascii_string a{ s1 };
+	Rage::ci_ascii_string a{ s1.c_str() };
 	return a == s2;
 }
 void ThemeManager::GetLanguages( vector<RString>& AddTo )
@@ -277,7 +277,7 @@ bool ThemeManager::DoesLanguageExist( const RString &sLanguage )
 {
 	vector<RString> asLanguages;
 	GetLanguages( asLanguages );
-	Rage::ci_ascii_string ciLang{ sLanguage };
+	Rage::ci_ascii_string ciLang{ sLanguage.c_str() };
 	for (unsigned i = 0; i < asLanguages.size(); i++)
 	{
 		if (ciLang == asLanguages[i])
@@ -326,11 +326,11 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 			}
 		}
 		iniStrings.ReadFile( GetLanguageIniPath(sThemeName,SpecialFiles::BASE_LANGUAGE) );
-		if (Rage::ci_ascii_string{ sLanguage } != SpecialFiles::BASE_LANGUAGE)
+		if (Rage::ci_ascii_string{ sLanguage.c_str() } != SpecialFiles::BASE_LANGUAGE)
 		{
 			iniStrings.ReadFile(GetLanguageIniPath(sThemeName, sLanguage));
 		}
-		bool bIsBaseTheme = Rage::ci_ascii_string{ sThemeName } == SpecialFiles::BASE_THEME_NAME;
+		bool bIsBaseTheme = Rage::ci_ascii_string{ sThemeName.c_str() } == SpecialFiles::BASE_THEME_NAME;
 		iniMetrics.GetValue( "Global", "IsBaseTheme", bIsBaseTheme );
 		if( bIsBaseTheme )
 			bLoadedBase = true;
@@ -342,7 +342,7 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 		RString sFallback;
 		if (!iniMetrics.GetValue("Global", "FallbackTheme", sFallback))
 		{
-			if (Rage::ci_ascii_string{ sThemeName } != SpecialFiles::BASE_THEME_NAME && !bLoadedBase)
+			if (Rage::ci_ascii_string{ sThemeName.c_str() } != SpecialFiles::BASE_THEME_NAME && !bLoadedBase)
 			{
 				sFallback = SpecialFiles::BASE_THEME_NAME;
 			}
@@ -401,7 +401,7 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	// select. This requires a preference, which allows it to be adapted for
 	// other purposes (e.g. PARASTAR).
 	if( !IsThemeSelectable(sThemeName) )
-		sThemeName = PREFSMAN->m_sDefaultTheme;
+		sThemeName = PREFSMAN->m_sDefaultTheme.Get();
 #endif
 
 	ASSERT( IsThemeSelectable(sThemeName) );
@@ -1133,7 +1133,7 @@ RString ThemeManager::GetNextTheme()
 	vector<RString> as;
 	GetThemeNames( as );
 	unsigned i;
-	Rage::ci_ascii_string ciTheme{ m_sCurThemeName };
+	Rage::ci_ascii_string ciTheme{ m_sCurThemeName.c_str() };
 	for (i = 0; i < as.size(); i++)
 	{
 		if (ciTheme == as[i])
@@ -1150,7 +1150,7 @@ RString ThemeManager::GetNextSelectableTheme()
 	vector<RString> as;
 	GetSelectableThemeNames( as );
 	unsigned i;
-	Rage::ci_ascii_string ciTheme{ m_sCurThemeName };
+	Rage::ci_ascii_string ciTheme{ m_sCurThemeName.c_str() };
 	for (i = 0; i < as.size(); i++)
 	{
 		if (ciTheme == as[i])
@@ -1167,7 +1167,7 @@ void ThemeManager::GetLanguagesForTheme( const RString &sThemeName, vector<RStri
 	RString sLanguageDir = GetThemeDirFromName(sThemeName) + SpecialFiles::LANGUAGES_SUBDIR;
 	vector<RString> as;
 	GetDirListing( sLanguageDir + "*.ini", as );
-	Rage::ci_ascii_string metrics{ SpecialFiles::METRICS_FILE };
+	Rage::ci_ascii_string metrics{ SpecialFiles::METRICS_FILE.c_str() };
 	for (auto const &s: as)
 	{
 		// ignore metrics.ini
@@ -1349,16 +1349,16 @@ public:
 		{
 			luaL_error(L, "Cannot fetch string with empty group name or empty value name.");
 		}
-		lua_pushstring(L, p->GetString(group, name));
+		lua_pushstring(L, p->GetString(group, name).c_str());
 		return 1;
 	}
 	static int GetPathInfoB( T* p, lua_State *L )
 	{
 		ThemeManager::PathInfo pi;
 		p->GetPathInfo( pi, EC_BGANIMATIONS, SArg(1), SArg(2) );
-		lua_pushstring(L, pi.sResolvedPath);
-		lua_pushstring(L, pi.sMatchingMetricsGroup);
-		lua_pushstring(L, pi.sMatchingElement);
+		lua_pushstring(L, pi.sResolvedPath.c_str());
+		lua_pushstring(L, pi.sMatchingMetricsGroup.c_str());
+		lua_pushstring(L, pi.sMatchingElement.c_str());
 		return 3;
 	}
 	// GENERAL_GET_PATH uses lua_toboolean instead of BArg because that makes
@@ -1367,7 +1367,7 @@ public:
 	static int get_path_name(T* p, lua_State* L) \
 	{ \
 		lua_pushstring(L, p->get_path_name( \
-				SArg(1), SArg(2), lua_toboolean(L, 3) != 0 )); \
+				SArg(1), SArg(2), lua_toboolean(L, 3) != 0 ).c_str()); \
 		return 1; \
 	}
 	GENERAL_GET_PATH(GetPathF);
@@ -1393,8 +1393,16 @@ public:
 
 	DEFINE_METHOD( GetCurrentThemeDirectory, GetCurThemeDir() );
 	DEFINE_METHOD( GetCurLanguage, GetCurLanguage() );
-	static int GetThemeDisplayName( T* p, lua_State *L )			{  lua_pushstring(L, p->GetThemeDisplayName(p->GetCurThemeName())); return 1; }
-	static int GetThemeAuthor( T* p, lua_State *L )			{  lua_pushstring(L, p->GetThemeAuthor(p->GetCurThemeName())); return 1; }
+	static int GetThemeDisplayName( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetThemeDisplayName(p->GetCurThemeName()).c_str());
+		return 1;
+	}
+	static int GetThemeAuthor( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetThemeAuthor(p->GetCurThemeName()).c_str());
+		return 1;
+	}
 	DEFINE_METHOD( DoesThemeExist, DoesThemeExist(SArg(1)) );
 	DEFINE_METHOD( IsThemeSelectable, IsThemeSelectable(SArg(1)) );
 	DEFINE_METHOD( DoesLanguageExist, DoesLanguageExist(SArg(1)) );

@@ -148,7 +148,7 @@ void SMSetDisplayBPM(SMSongTagInfo& info)
 }
 void SMSetSelectable(SMSongTagInfo& info)
 {
-	Rage::ci_ascii_string valueName{ (*info.params)[1] };
+	Rage::ci_ascii_string valueName{ (*info.params)[1].c_str() };
 	if (valueName == "YES")
 	{ 
 		info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; 
@@ -339,7 +339,7 @@ void SMLoader::LoadFromTokens(
 	// Difficulty_Challenge. (At least v1.64, possibly v3.0 final...)
 	if (out.GetDifficulty() == Difficulty_Hard)
 	{
-		Rage::ci_ascii_string descDiff{ sDescription };
+		Rage::ci_ascii_string descDiff{ sDescription.c_str() };
 		// HACK: Both SMANIAC and CHALLENGE were Dificulty_Hard with a special description.
 		if (descDiff == "smaniac" || descDiff == "challenge")
 		{
@@ -1082,7 +1082,7 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 			stepsType = Rage::trim(stepsType);
 			description = Rage::trim(description);
 			difficulty = Rage::trim(difficulty);
-			Rage::ci_ascii_string pureDiff{ difficulty };
+			Rage::ci_ascii_string pureDiff{ difficulty.c_str() };
 			
 			// Remember our old versions.
 			if (pureDiff == "smaniac")
@@ -1094,7 +1094,7 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 			 * Difficulty_Challenge. TODO: Remove the need for said hacks. */
 			if (pureDiff == "hard")
 			{
-				Rage::ci_ascii_string descDiff{ description };
+				Rage::ci_ascii_string descDiff{ description.c_str() };
 				/* HACK: Both SMANIAC and CHALLENGE used to be Difficulty_Hard.
 				 * They were differentiated via aspecial description.
 				 * Account for the rogue charts that do this. */
@@ -1333,7 +1333,7 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 		/* BGChanges have been sorted. On the odd chance that a BGChange exists
 		 * with a very high beat, search the whole list. */
 		bool bHasNoSongBgTag = false;
-		Rage::ci_ascii_string noSongBg{ NO_SONG_BG_FILE };
+		Rage::ci_ascii_string noSongBg{ NO_SONG_BG_FILE.c_str() };
 		for( unsigned i = 0; !bHasNoSongBgTag && i < bg.size(); ++i )
 		{
 			if (noSongBg == bg[i].m_def.m_sFile1)
@@ -1358,7 +1358,7 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 				break;
 
 			// If the last BGA is already the song BGA, don't add a duplicate.
-			if (!bg.empty() && Rage::ci_ascii_string{ bg.back().m_def.m_sFile1 } == song.m_sBackgroundFile)
+			if (!bg.empty() && Rage::ci_ascii_string{ bg.back().m_def.m_sFile1.c_str() } == song.m_sBackgroundFile)
 				break;
 
 			if( !IsAFile( song.GetBackgroundPath() ) )

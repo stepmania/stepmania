@@ -16,7 +16,7 @@ static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error
 {
 	RageSurface *ret = nullptr;
 	RageSurfaceUtils::OpenResult result;
-	Rage::ci_ascii_string ciFormat{ format };
+	Rage::ci_ascii_string ciFormat{ format.c_str() };
 	if( ciFormat == "png" )
 		result = RageSurface_Load_PNG( sPath, ret, bHeaderOnly, error );
 	else if( ciFormat == "gif" )

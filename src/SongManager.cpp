@@ -947,7 +947,7 @@ void SongManager::InitAutogenCourses()
 		do {
 			RString sArtist = i >= apSongs.size()? RString(""): apSongs[i]->GetDisplayArtist();
 			RString sTranslitArtist = i >= apSongs.size()? RString(""): apSongs[i]->GetTranslitArtist();
-			Rage::ci_ascii_string ciArtist{ sArtist };
+			Rage::ci_ascii_string ciArtist{ sArtist.c_str() };
 			if( i < apSongs.size() && ciArtist == sCurArtist )
 			{
 				aSongs.push_back( apSongs[i] );
@@ -1006,7 +1006,7 @@ void SongManager::InitRandomAttacks()
 					continue;
 				}
 
-				if (Rage::ci_ascii_string{ sType } != "ATTACK")
+				if (Rage::ci_ascii_string{ sType.c_str() } != "ATTACK")
 				{
 					LuaHelpers::ReportScriptErrorFmt( "Got \"%s:%s\" tag with wrong declaration", sType.c_str(), sAttack.c_str() );
 					continue;
@@ -1424,7 +1424,7 @@ Course* SongManager::GetCourseFromPath( RString sPath ) const
 	{
 		return nullptr;
 	}
-	Rage::ci_ascii_string ciPath{ sPath };
+	Rage::ci_ascii_string ciPath{ sPath.c_str() };
 	for (auto *c : m_pCourses)
 	{
 		if (ciPath == c->m_sPath)
@@ -1442,7 +1442,7 @@ Course* SongManager::GetCourseFromName( RString sName ) const
 	{
 		return nullptr;
 	}
-	Rage::ci_ascii_string ciName{ sName };
+	Rage::ci_ascii_string ciName{ sName.c_str() };
 	for (auto *course: m_pCourses)
 	{
 		if (ciName == course->GetDisplayFullTitle())
@@ -1781,7 +1781,7 @@ void SongManager::UpdateRankingCourses()
 	{
 		bool bLotsOfStages = c->GetEstimatedNumStages() > 7;
 		c->m_SortOrder_Ranking = bLotsOfStages? 3 : 2;
-		Rage::ci_ascii_string ciPath{ c->m_sPath };
+		Rage::ci_ascii_string ciPath{ c->m_sPath.c_str() };
 		for (auto &course: RankingCourses)
 		{
 			if (ciPath == course)
@@ -2177,7 +2177,7 @@ public:
 	static int SongToPreferredSortSectionName( T* p, lua_State *L )
 	{
 		const Song* pSong = Luna<Song>::check(L,1);
-		lua_pushstring(L, p->SongToPreferredSortSectionName(pSong));
+		lua_pushstring(L, p->SongToPreferredSortSectionName(pSong).c_str());
 		return 1;
 	}
 	static int WasLoadedFromAdditionalSongs( T* p, lua_State *L )

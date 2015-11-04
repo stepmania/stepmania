@@ -670,13 +670,13 @@ public:
 	{
 		RString out;
 		p->GetSMNoteData( out );
-		lua_pushstring( L, out );
+		lua_pushstring( L, out.c_str() );
 		return 1;
 	}
 	*/
 	static int GetChartName(T *p, lua_State *L)
 	{
-		lua_pushstring(L, p->GetChartName());
+		lua_pushstring(L, p->GetChartName().c_str());
 		return 1;
 	}
 	static int GetDisplayBpms( T* p, lua_State *L )

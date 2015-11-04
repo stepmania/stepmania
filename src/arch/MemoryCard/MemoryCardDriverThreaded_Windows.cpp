@@ -124,7 +124,7 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 		// driver letter is specified as a m_sMemoryCardOsMountPoint.
 
 		bool bIsSpecifiedMountPoint = false;
-		Rage::ci_ascii_string drive{ sDrive };
+		Rage::ci_ascii_string drive{ sDrive.c_str() };
 		FOREACH_ENUM(PlayerNumber, p)
 		{
 			bIsSpecifiedMountPoint |= ( drive == MEMCARDMAN->m_sMemoryCardOsMountPoint[p].Get() );

@@ -27,7 +27,7 @@ DialogDriver *DialogDriver::Create()
 
 	for (auto const &Driver: asDriversToTry)
 	{
-		auto iter = RegisterDialogDriver::g_pRegistrees->find( Rage::ci_ascii_string{Driver} );
+		auto iter = RegisterDialogDriver::g_pRegistrees->find( Rage::ci_ascii_string{Driver.c_str()} );
 
 		if( iter == RegisterDialogDriver::g_pRegistrees->end() )
 			continue;

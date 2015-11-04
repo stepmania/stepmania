@@ -1506,7 +1506,7 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 		RString sParam = command.GetArg(1).s;
 		ROW_INVALID_IF(command.m_vsArgs.size() != 2 || !sParam.size(),
 			"list row command must be 'list,name' or 'list,type'.", nullptr);
-		Rage::ci_ascii_string ciParam{ sParam };
+		Rage::ci_ascii_string ciParam{ sParam.c_str() };
 
 		if(	ciParam == "NoteSkins" )		MAKE( OptionRowHandlerListNoteSkins )
 		else if( ciParam == "Steps" )		MAKE( OptionRowHandlerListSteps )

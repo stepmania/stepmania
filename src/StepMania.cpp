@@ -345,7 +345,9 @@ void StepMania::ResetGame()
 	{
 		RString sGameName = GAMESTATE->GetCurrentGame()->gameName;
 		if( !THEME->DoesThemeExist(sGameName) )
-			sGameName = PREFSMAN->m_sDefaultTheme; // was previously "default" -aj
+		{
+			sGameName = PREFSMAN->m_sDefaultTheme.Get(); // was previously "default" -aj
+		}
 		THEME->SwitchThemeAndLanguage( sGameName, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize );
 		TEXTUREMAN->DoDelayedDelete();
 	}
@@ -697,7 +699,7 @@ bool CheckVideoDefaultSettings()
 		// Update last seen video card
 		PREFSMAN->m_sLastSeenVideoDriver.Set( GetVideoDriverName() );
 	}
-	else if (Rage::ci_ascii_string{ defaults.sVideoRenderers } != PREFSMAN->m_sVideoRenderers.Get())
+	else if (Rage::ci_ascii_string{ defaults.sVideoRenderers.c_str() } != PREFSMAN->m_sVideoRenderers.Get())
 	{
 		LOG->Warn("Video renderer list has been changed from '%s' to '%s'",
 				defaults.sVideoRenderers.c_str(), PREFSMAN->m_sVideoRenderers.Get().c_str() );
@@ -759,7 +761,7 @@ RageDisplay *CreateDisplay()
 	RageDisplay *pRet = nullptr;
 	for (auto const &sRenderer: asRenderers)
 	{
-		Rage::ci_ascii_string ciRenderer{ sRenderer };
+		Rage::ci_ascii_string ciRenderer{ sRenderer.c_str() };
 		if( ciRenderer == "opengl" )
 		{
 #if defined(SUPPORT_OPENGL)
@@ -1653,7 +1655,7 @@ int LuaFunc_SaveScreenshot(lua_State *L)
 	}
 	RString path= dir + filename;
 	lua_pushboolean(L, !filename.empty());
-	lua_pushstring(L, path);
+	lua_pushstring(L, path.c_str());
 	return 2;
 }
 void LuaFunc_Register_SaveScreenshot(lua_State *L);

@@ -83,7 +83,7 @@ RageFileDriver *RageFileManager::GetFileDriver( RString sMountpoint )
 
 	g_Mutex->Lock();
 	RageFileDriver *pRet = nullptr;
-	Rage::ci_ascii_string ciMount{ sMountpoint };
+	Rage::ci_ascii_string ciMount{ sMountpoint.c_str() };
 	for (auto *driver: g_pDrivers)
 	{
 		if (driver->m_sType == "mountpoints")
@@ -406,11 +406,11 @@ static void NormalizePath( RString &sPath )
 
 bool ilt( const RString &a, const RString &b )
 {
-	return Rage::ci_ascii_string{ a } < Rage::ci_ascii_string{ b };
+	return Rage::ci_ascii_string{ a.c_str() } < Rage::ci_ascii_string{ b.c_str() };
 }
 bool ieq( const RString &a, const RString &b ) 
 {
-	return Rage::ci_ascii_string{ a } == Rage::ci_ascii_string{ b };
+	return Rage::ci_ascii_string{ a.c_str() } == Rage::ci_ascii_string{ b.c_str() };
 }
 void RageFileManager::GetDirListing( const RString &sPath_, vector<RString> &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
@@ -648,11 +648,11 @@ void RageFileManager::Unmount( const RString &sType, const RString &sRoot_, cons
 	g_Mutex->Lock();
 	for( unsigned i = 0; i < g_pDrivers.size(); ++i )
 	{
-		if (!sType.empty() && Rage::ci_ascii_string{ sType } != g_pDrivers[i]->m_sType)
+		if (!sType.empty() && Rage::ci_ascii_string{ sType.c_str() } != g_pDrivers[i]->m_sType)
 			continue;
-		if (!sRoot.empty() && Rage::ci_ascii_string{ sRoot } != g_pDrivers[i]->m_sRoot)
+		if (!sRoot.empty() && Rage::ci_ascii_string{ sRoot.c_str() } != g_pDrivers[i]->m_sRoot)
 			continue;
-		if (!sMountPoint.empty() && Rage::ci_ascii_string{ sMountPoint } != g_pDrivers[i]->m_sMountPoint)
+		if (!sMountPoint.empty() && Rage::ci_ascii_string{ sMountPoint.c_str() } != g_pDrivers[i]->m_sMountPoint)
 			continue;
 
 		++g_pDrivers[i]->m_iRefs;
@@ -703,7 +703,7 @@ void RageFileManager::Remount( RString sMountpoint, RString sPath )
 bool RageFileManager::IsMounted( RString MountPoint )
 {
 	LockMut( *g_Mutex );
-	Rage::ci_ascii_string ciMount{ MountPoint };
+	Rage::ci_ascii_string ciMount{ MountPoint.c_str() };
 	for (unsigned i = 0; i < g_pDrivers.size(); ++i)
 	{
 		if (ciMount == g_pDrivers[i]->m_sMountPoint)

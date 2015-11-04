@@ -499,7 +499,7 @@ bool DWILoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &params = msd.GetValue(i);
 		RString valueName = params[0];
-		Rage::ci_ascii_string tagName{ valueName };
+		Rage::ci_ascii_string tagName{ valueName.c_str() };
 
 		if(tagName == "SINGLE" || tagName == "DOUBLE" || tagName == "COUPLE" || tagName == "SOLO")
 		{
@@ -549,7 +549,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
 		RString sValueName = sParams[0];
-		Rage::ci_ascii_string tagName{ sValueName };
+		Rage::ci_ascii_string tagName{ sValueName.c_str() };
 
 		if( iNumParams < 1 )
 		{

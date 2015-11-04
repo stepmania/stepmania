@@ -684,7 +684,7 @@ bool MemoryCardManager::PathIsMemCard( RString sDir ) const
 {
 	FOREACH_PlayerNumber( p )
 	{
-		Rage::ci_ascii_string memPoint{ MEM_CARD_MOUNT_POINT[p] };
+		Rage::ci_ascii_string memPoint{ MEM_CARD_MOUNT_POINT[p].c_str() };
 		if (memPoint == Rage::head(sDir, memPoint.size()))
 		{
 			return true;
@@ -741,7 +741,7 @@ public:
 	static int GetName( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-		lua_pushstring(L, p->GetName(pn) );
+		lua_pushstring(L, p->GetName(pn).c_str() );
 		return 1;
 	}
 

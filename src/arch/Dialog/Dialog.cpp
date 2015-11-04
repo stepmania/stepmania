@@ -31,7 +31,7 @@ DialogDriver *MakeDialogDriver()
 		{
 			break;
 		}
-		Rage::ci_ascii_string ciDriver{ sDriver };
+		Rage::ci_ascii_string ciDriver{ sDriver.c_str() };
 
 #ifdef USE_DIALOG_DRIVER_COCOA
 		if( ciDriver == "Cocoa" )	pRet = new DialogDriver_MacOSX;
@@ -91,7 +91,7 @@ static bool MessageIsIgnored( RString sID )
 #if !defined(SMPACKAGE)
 	vector<RString> asList;
 	split( g_sIgnoredDialogs.Get(), ",", asList );
-	Rage::ci_ascii_string ciId{ sID };
+	Rage::ci_ascii_string ciId{ sID.c_str() };
 	for (unsigned i = 0; i < asList.size(); ++i)
 	{
 		if (ciId == asList[i])

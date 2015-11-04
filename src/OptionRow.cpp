@@ -1007,14 +1007,34 @@ class LunaOptionRow: public Luna<OptionRow>
 {
 public:
 	DEFINE_METHOD( FirstItemGoesDown, GetFirstItemGoesDown() )
-	static int GetChoiceInRowWithFocus( T* p, lua_State *L ) { lua_pushnumber( L, p->GetChoiceInRowWithFocus(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
+	static int GetChoiceInRowWithFocus( T* p, lua_State *L )
+	{
+		lua_pushnumber( L, p->GetChoiceInRowWithFocus(Enum::Check<PlayerNumber>(L, 1)) );
+		return 1;
+	}
 	DEFINE_METHOD( GetLayoutType, GetHandler()->m_Def.m_layoutType )
-	static int GetName( T* p, lua_State *L ) { lua_pushstring( L, p->GetHandler()->m_Def.m_sName ); return 1; }
-	static int GetNumChoices( T* p, lua_State *L ) { lua_pushnumber( L, p->GetHandler()->m_Def.m_vsChoices.size() ); return 1; }
+	static int GetName( T* p, lua_State *L )
+	{
+		lua_pushstring( L, p->GetHandler()->m_Def.m_sName.c_str() );
+		return 1;
+	}
+	static int GetNumChoices( T* p, lua_State *L )
+	{
+		lua_pushnumber( L, p->GetHandler()->m_Def.m_vsChoices.size() );
+		return 1;
+ }
 	DEFINE_METHOD( GetSelectType, GetHandler()->m_Def.m_selectType )
 	DEFINE_METHOD( GetRowTitle, GetRowTitle() )
-	static int HasFocus( T* p, lua_State *L ) { lua_pushboolean( L, p->GetRowHasFocus(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
-	static int OneChoiceForAllPlayers( T* p, lua_State *L ) { lua_pushboolean( L, p->GetHandler()->m_Def.m_bOneChoiceForAllPlayers ); return 1; }
+	static int HasFocus( T* p, lua_State *L )
+	{
+		lua_pushboolean( L, p->GetRowHasFocus(Enum::Check<PlayerNumber>(L, 1)) );
+		return 1;
+	}
+	static int OneChoiceForAllPlayers( T* p, lua_State *L )
+	{
+		lua_pushboolean( L, p->GetHandler()->m_Def.m_bOneChoiceForAllPlayers );
+		return 1;
+	}
 
 	LunaOptionRow()
 	{

@@ -481,7 +481,7 @@ static void LoadTags( const RString &str, Song &out )
 	// Ignore the difficulty, since we get that elsewhere.
 	if (asBits.size() == 3)
 	{
-		Rage::ci_ascii_string badDiff{ asBits[2] };
+		Rage::ci_ascii_string badDiff{ asBits[2].c_str() };
 		if (badDiff == "double" || badDiff == "easy" || badDiff == "normal" ||
 			badDiff == "hard" || badDiff == "crazy" || badDiff == "nightmare")
 		{

@@ -137,7 +137,7 @@ void LuaManager::SetGlobal( const RString &sName, int val )
 {
 	Lua *L = Get();
 	LuaHelpers::Push( L, val );
-	lua_setglobal( L, sName );
+	lua_setglobal( L, sName.c_str() );
 	Release( L );
 }
 
@@ -145,7 +145,7 @@ void LuaManager::SetGlobal( const RString &sName, const RString &val )
 {
 	Lua *L = Get();
 	LuaHelpers::Push( L, val );
-	lua_setglobal( L, sName );
+	lua_setglobal( L, sName.c_str() );
 	Release( L );
 }
 
@@ -153,7 +153,7 @@ void LuaManager::UnsetGlobal( const RString &sName )
 {
 	Lua *L = Get();
 	lua_pushnil( L );
-	lua_setglobal( L, sName );
+	lua_setglobal( L, sName.c_str() );
 	Release( L );
 }
 
@@ -240,7 +240,7 @@ namespace
 
 		FOREACH_CONST_Attr( pNode, pAttr )
 		{
-			lua_pushstring( L, pAttr->first );			// push key
+			lua_pushstring( L, pAttr->first.c_str() );			// push key
 			pNode->PushAttrValue( L, pAttr->first );	// push value
 
 			//add key-value pair to our table
@@ -250,7 +250,7 @@ namespace
 		FOREACH_CONST_Child( pNode, c )
 		{
 			const XNode *pChild = c;
-			lua_pushstring( L, pChild->m_sName ); // push key
+			lua_pushstring( L, pChild->m_sName.c_str() ); // push key
 
 			// push value (more correctly, build this child's table and leave it there)
 			CreateTableFromXNodeRecursive( L, pChild );
@@ -903,7 +903,7 @@ bool LuaHelpers::RunScriptFile( const RString &sFile )
 bool LuaHelpers::LoadScript( Lua *L, const RString &sScript, const RString &sName, RString &sError )
 {
 	// load string
-	int ret = luaL_loadbuffer( L, sScript.data(), sScript.size(), sName );
+	int ret = luaL_loadbuffer( L, sScript.data(), sScript.size(), sName.c_str() );
 	if( ret )
 	{
 		LuaHelpers::Pop( L, sError );

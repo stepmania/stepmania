@@ -66,7 +66,7 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 		StripCrnl(sValueData);
 
 		// handle the data
-		Rage::ci_ascii_string color{ sValueName };
+		Rage::ci_ascii_string color{ sValueName.c_str() };
 		if (color == "COLOUR" || color == "COLOR")
 		{
 			// set color var here for this segment

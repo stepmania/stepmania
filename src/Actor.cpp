@@ -1011,7 +1011,7 @@ void Actor::ScaleTo( const Rage::RectF &rect, StretchType st )
 
 void Actor::SetEffectClockString( const RString &s )
 {
-	Rage::ci_ascii_string effect{ s };
+	Rage::ci_ascii_string effect{ s.c_str() };
 	if (s == "timer")
 	{
 		this->SetEffectClock(CLOCK_TIMER);
@@ -1961,7 +1961,11 @@ public:
 	}
 	DEFINE_METHOD(get_mask_color, GetMaskColor());
 
-	static int GetName( T* p, lua_State *L )		{ lua_pushstring( L, p->GetName() ); return 1; }
+	static int GetName( T* p, lua_State *L )
+	{
+		lua_pushstring( L, p->GetName().c_str() );
+		return 1;
+	}
 	static int GetParent( T* p, lua_State *L )
 	{
 		Actor *pParent = p->GetParent();

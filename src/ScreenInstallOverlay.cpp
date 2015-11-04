@@ -55,7 +55,7 @@ static void Parse(const RString &sDir, PlayAfterLaunchInfo &out)
 	{
 		return;
 	}
-	Rage::ci_ascii_string initialPart{ vsDirParts[0] };
+	Rage::ci_ascii_string initialPart{ vsDirParts[0].c_str() };
 	if (vsDirParts.size() == 3 && initialPart == "Songs")
 	{
 		out.sSongDir = "/" + sDir;
@@ -298,7 +298,7 @@ static bool IsStepManiaProtocol(const RString &arg)
 
 static bool IsPackageFile(const RString &arg)
 {
-	Rage::ci_ascii_string ext{ GetExtension(arg) };
+	Rage::ci_ascii_string ext{ GetExtension(arg).c_str() };
 	return ext == "smzip" || ext == "zip";
 }
 

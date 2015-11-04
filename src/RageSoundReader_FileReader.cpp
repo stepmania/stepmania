@@ -23,7 +23,7 @@ using std::vector;
 RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBasic *pFile, RString &error, RString format, bool &bKeepTrying )
 {
 	RageSoundReader_FileReader *Sample = nullptr;
-	Rage::ci_ascii_string ciFormat{ format };
+	Rage::ci_ascii_string ciFormat{ format.c_str() };
 #if defined(HAS_WAV)
 	if( ciFormat == "wav" )
 		Sample = new RageSoundReader_WAV;

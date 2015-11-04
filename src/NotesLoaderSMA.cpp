@@ -315,7 +315,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 
 		else if( sValueName=="SELECTABLE" )
 		{
-			Rage::ci_ascii_string selectableValue{ sParams[1] };
+			Rage::ci_ascii_string selectableValue{ sParams[1].c_str() };
 			if (selectableValue == "YES")
 			{
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;

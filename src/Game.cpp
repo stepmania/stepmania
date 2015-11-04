@@ -65,9 +65,14 @@ class LunaGame: public Luna<Game>
 public:
 	static int GetName( T* p, lua_State *L )
 	{
-		lua_pushstring( L, p->gameName.c_str() ); return 1;
+		lua_pushstring( L, p->gameName.c_str() );
+		return 1;
 	}
-	static int CountNotesSeparately( T* p, lua_State *L )	{ lua_pushboolean( L, p->m_bCountNotesSeparately ); return 1; }
+	static int CountNotesSeparately( T* p, lua_State *L )
+	{
+		lua_pushboolean( L, p->m_bCountNotesSeparately );
+		return 1;
+	}
 	DEFINE_METHOD( GetMapJudgmentTo, GetMapJudgmentTo(Enum::Check<TapNoteScore>(L, 1)) )
 	DEFINE_METHOD(GetSeparateStyles, m_PlayersHaveSeparateStyles);
 
