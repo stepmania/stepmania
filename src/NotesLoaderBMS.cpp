@@ -647,7 +647,7 @@ int BMSSong::AllocateKeysound( RString filename, RString path )
 	RString dir = out->GetSongDir();
 
 	if (dir.empty())
-		dir = Dirname(path);
+		dir = Rage::dir_name(path);
 
 	if( !IsAFile(dir + normalizedFilename) )
 	{
@@ -708,7 +708,7 @@ bool BMSSong::GetBackground( RString filename, RString path, RString &bgfile )
 	RString dir = out->GetSongDir();
 
 	if (dir.empty())
-		dir = Dirname(path);
+		dir = Rage::dir_name(path);
 
 	if( !backgroundsPrecached )
 	{

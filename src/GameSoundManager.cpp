@@ -590,7 +590,7 @@ void GameSoundManager::Update( float fDeltaTime )
 		/* If fSoundTimePassed < 0, the sound has probably looped. */
 		if( sLastFile == ThisFile && fSoundTimePassed >= 0 && fabsf(fDiff) > 0.003f )
 			LOG->Trace("Song position skip in %s: expected %.3f, got %.3f (cur %f, prev %f) (%.3f difference)",
-				Basename(ThisFile).c_str(), fExpectedTimePassed, fSoundTimePassed, fSeconds, GAMESTATE->m_Position.m_fMusicSeconds, fDiff );
+				Rage::base_name(ThisFile).c_str(), fExpectedTimePassed, fSoundTimePassed, fSeconds, GAMESTATE->m_Position.m_fMusicSeconds, fDiff );
 		sLastFile = ThisFile;
 	}
 

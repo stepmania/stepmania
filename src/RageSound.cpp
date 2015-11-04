@@ -226,7 +226,7 @@ bool RageSound::Load( RString sSoundFilePath, bool bPrecache, const RageSoundLoa
 
 	m_sFilePath = sSoundFilePath;
 
-	m_Mutex.SetName( ssprintf("RageSound (%s)", Basename(sSoundFilePath).c_str() ) );
+	m_Mutex.SetName( ssprintf("RageSound (%s)", Rage::base_name(sSoundFilePath).c_str() ) );
 
 	return true;
 }

@@ -759,7 +759,7 @@ bool NewSkinLoader::load_from_file(std::string const& path)
 		LuaHelpers::ReportScriptError("Noteskin '" + path + "' does not exist.");
 		return false;
 	}
-	string temp_load_path= Dirname(path);
+	string temp_load_path= Rage::dir_name(path);
 	RString skin_text;
 	if(!GetFileContents(path, skin_text))
 	{

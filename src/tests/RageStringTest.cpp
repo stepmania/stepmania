@@ -329,3 +329,52 @@ GTEST_TEST(RageString, trim_custom_chars)
 	std::string target = Rage::trim(initial, "xq");
 	EXPECT_EQ(target == "StepMania", true);
 }
+
+GTEST_TEST(RageString, base_name_ends_in_file)
+{
+	std::string path{"Songs/StepMania 5/Mecha-Tribe Assault/Mecha-Tribe Assault.ssc"};
+	std::string base = Rage::base_name(path);
+	EXPECT_EQ(base == "Mecha-Tribe Assault.ssc", true);
+}
+
+GTEST_TEST(RageString, base_name_ends_in_dir)
+{
+	std::string path{"Songs/StepMania 5/Mecha-Tribe Assault"};
+	std::string base = Rage::base_name(path);
+	EXPECT_EQ(base == "Mecha-Tribe Assault", true);
+}
+
+GTEST_TEST(RageString, dir_name_ends_in_file)
+{
+	std::string path{"Songs/StepMania 5/Mecha-Tribe Assault/Mecha-Tribe Assault.ssc"};
+	std::string base = Rage::dir_name(path);
+	EXPECT_EQ(base == "Songs/StepMania 5/Mecha-Tribe Assault/", true);
+}
+
+GTEST_TEST(RageString, dir_name_ends_in_dir)
+{
+	std::string path{"Songs/StepMania 5/Mecha-Tribe Assault/"};
+	std::string base = Rage::dir_name(path);
+	EXPECT_EQ(base == "Songs/StepMania 5/", true);
+}
+
+GTEST_TEST(RageString, dir_name_single_dir_prefix)
+{
+	std::string path{"e/"};
+	std::string base = Rage::dir_name(path);
+	EXPECT_EQ(base == "./", true);
+}
+
+GTEST_TEST(RageString, dir_name_single_dir_suffix)
+{
+	std::string path{"/home"};
+	std::string base = Rage::dir_name(path);
+	EXPECT_EQ(base == "/", true);
+}
+
+GTEST_TEST(RageString, dir_name_root)
+{
+	std::string path{"/"};
+	std::string base = Rage::dir_name(path);
+	EXPECT_EQ(base == "/", true);
+}

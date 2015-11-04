@@ -516,8 +516,6 @@ void ReplaceEntityText( RString &sText, const std::map<char,RString> &m );
 void Replace_Unicode_Markers( RString &Text );
 RString WcharDisplayText( wchar_t c );
 
-RString Basename( const RString &dir );
-RString Dirname( const RString &dir );
 RString Capitalize( const RString &s );
 
 #if defined(HAVE_UNISTD_H)

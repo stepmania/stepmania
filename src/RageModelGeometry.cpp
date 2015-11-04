@@ -98,7 +98,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 {
 	RString sPath = _sPath;
 	FixSlashesInPlace(sPath);
-	const RString sDir = Dirname( sPath );
+	const RString sDir = Rage::dir_name( sPath );
 
 	RageFile f;
 	if( !f.Open( sPath ) )

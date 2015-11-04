@@ -1337,7 +1337,7 @@ RString DerefRedir( const RString &_path )
 		if( sNewFileName == "" )
 			return RString();
 
-		RString sPath2 = Dirname(sPath) + sNewFileName;
+		RString sPath2 = Rage::dir_name(sPath) + sNewFileName;
 
 		CollapsePath( sPath2 );
 
@@ -1793,55 +1793,6 @@ RString WcharDisplayText( wchar_t c )
 
 	return hex;
 }
-
-/* Return the last named component of dir:
- * a/b/c -> c
- * a/b/c/ -> c
- */
-RString Basename( const RString &sDir )
-{
-	size_t iEnd = sDir.find_last_not_of( "/\\" );
-	if( iEnd == sDir.npos )
-		return RString();
-
-	size_t iStart = sDir.find_last_of( "/\\", iEnd );
-	if( iStart == sDir.npos )
-		iStart = 0;
-	else
-		++iStart;
-
-	return sDir.substr( iStart, iEnd-iStart+1 );
-}
-
-/* Return all but the last named component of dir:
- *
- * a/b/c -> a/b/
- * a/b/c/ -> a/b/
- * c/ -> ./
- * /foo -> /
- * / -> /
- */
-RString Dirname( const RString &dir )
-{
-	// Special case: "/" -> "/".
-	if( dir.size() == 1 && dir[0] == '/' )
-		return "/";
-
-	int pos = dir.size()-1;
-	// Skip trailing slashes.
-	while( pos >= 0 && dir[pos] == '/' )
-		--pos;
-
-	// Skip the last component.
-	while( pos >= 0 && dir[pos] != '/' )
-		--pos;
-
-	if( pos < 0 )
-		return "./";
-
-	return dir.substr(0, pos+1);
-}
-
 RString Capitalize( const RString &s )
 {
 	if( s.empty() )
@@ -2111,7 +2062,7 @@ LuaFunction( SecondsToMMSSMsMsMs, SecondsToMMSSMsMsMs( FArg(1) ) )
 LuaFunction( SecondsToMSS, SecondsToMSS( FArg(1) ) )
 LuaFunction( SecondsToMMSS, SecondsToMMSS( FArg(1) ) )
 LuaFunction( FormatNumberAndSuffix, FormatNumberAndSuffix( IArg(1) ) )
-LuaFunction( Basename, Basename( SArg(1) ) )
+LuaFunction( Basename, Rage::base_name( SArg(1) ) )
 static RString MakeLower( RString s )
 {
 	return Rage::make_lower(s);

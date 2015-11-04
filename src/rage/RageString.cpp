@@ -178,6 +178,50 @@ std::string Rage::trim(std::string const &source, std::string const &delimiters)
 	return source.substr(start, lastPos - start);
 }
 
+std::string Rage::base_name(std::string const &dir)
+{
+	size_t iEnd = dir.find_last_not_of( "/\\" );
+	if( iEnd == dir.npos )
+	{
+		return "";
+	}
+	size_t iStart = dir.find_last_of( "/\\", iEnd );
+	if( iStart == dir.npos )
+	{
+		iStart = 0;
+	}
+	else
+	{
+		++iStart;
+	}
+	return dir.substr( iStart, iEnd-iStart+1 );
+}
+
+std::string Rage::dir_name(std::string const &dir)
+{
+	// Special case: "/" -> "/".
+	if( dir.size() == 1 && dir[0] == '/' )
+	{
+		return "/";
+	}
+	int pos = dir.size()-1;
+	// Skip trailing slashes.
+	while( pos >= 0 && dir[pos] == '/' )
+	{
+		--pos;
+	}
+	// Skip the last component.
+	while( pos >= 0 && dir[pos] != '/' )
+	{
+		--pos;
+	}
+	if( pos < 0 )
+	{
+		return "./";
+	}
+	return dir.substr(0, pos+1);
+}
+
 /* Branch optimizations: */
 #if defined(__GNUC__) || defined(__clang__)
 #define likely(x) (__builtin_expect(!!(x), 1))

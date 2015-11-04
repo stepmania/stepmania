@@ -283,7 +283,7 @@ public:
 	}
 	static RString MakeTempFileName( RString s )
 	{
-		return SpecialFiles::CACHE_DIR + "Downloads/" + Basename(s);
+		return SpecialFiles::CACHE_DIR + "Downloads/" + Rage::base_name(s);
 	}
 };
 static vector<DownloadTask*> g_pDownloadTasks;

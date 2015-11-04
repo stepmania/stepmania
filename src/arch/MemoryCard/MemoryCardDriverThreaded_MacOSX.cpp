@@ -2,7 +2,7 @@
 #include "MemoryCardDriverThreaded_MacOSX.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-
+#include "RageString.hpp"
 #include <Carbon/Carbon.h>
 #include <IOKit/IOKitLib.h>
 #include <IOKit/storage/IOMedia.h>
@@ -71,7 +71,7 @@ void MemoryCardDriverThreaded_MacOSX::Unmount( UsbStorageDevice *pDevice )
 #else
 	ParamBlockRec pb;
 	Str255 name; // A pascal string.
-	const RString& base = Basename( pDevice->sOsMountDir );
+	const RString& base = Rage::base_name( pDevice->sOsMountDir );
 
 	memset( &pb, 0, sizeof(pb) );
 	name[0] = min( base.length(), size_t(255) );
@@ -152,7 +152,7 @@ void MemoryCardDriverThreaded_MacOSX::GetUSBStorageDevices( vector<UsbStorageDev
 			continue;
 
 		const RString& sDevicePath = fs[i].f_mntfromname;
-		const RString& sDisk = Basename( sDevicePath ); // disk#[[s#] ...]
+		const RString& sDisk = Rage::base_name( sDevicePath ); // disk#[[s#] ...]
 
 		// Now that we have the disk name, look up the IOServices associated with it.
 		CFMutableDictionaryRef dict;

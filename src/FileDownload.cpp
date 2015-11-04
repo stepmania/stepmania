@@ -109,8 +109,8 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 
 	if (!Rage::ends_with( sAddress, "/"))
 	{
-		m_sEndName = Basename( sAddress );
-		m_sBaseAddress += Dirname( sAddress );
+		m_sEndName = Rage::base_name( sAddress );
+		m_sBaseAddress += Rage::dir_name( sAddress );
 	}
 	else
 	{
@@ -183,7 +183,7 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 			"\r\n" +
 			"Chris\r\n" +
 			"--" + sBoundary + "\r\n" +
-			"Content-Disposition: form-data; name=\"userfile\"; filename=\"" + Basename(sSrcFile) + "\"\r\n" +
+			"Content-Disposition: form-data; name=\"userfile\"; filename=\"" + Rage::base_name(sSrcFile) + "\"\r\n" +
 			"Content-Type: application/zip\r\n" +
 			"\r\n" +
 			sRequestPayload + "\r\n" +

@@ -53,7 +53,7 @@ const RString LAST_GOOD_SUBDIR	=	"LastGood/";
 static Preference<std::string> g_sMemoryCardProfileImportSubdirs( "MemoryCardProfileImportSubdirs", "" );
 
 static RString LocalProfileIDToDir( const RString &sProfileID ) { return USER_PROFILES_DIR + sProfileID + "/"; }
-static RString LocalProfileDirToID( const RString &sDir ) { return Basename( sDir ); }
+static RString LocalProfileDirToID( const RString &sDir ) { return Rage::base_name( sDir ); }
 
 struct DirAndProfile
 {

@@ -52,7 +52,7 @@ static RString MakeTempFilename( const RString &sPath )
 	 * want a wildcard search for the filename to match (foo.txt.new matches foo.txt*),
 	 * and we don't want to have the same extension (so "new.foo.sm" doesn't show up
 	 * in *.sm). */
-	return Dirname(sPath) + "new." + Basename(sPath) + ".new";
+	return Rage::dir_name(sPath) + "new." + Rage::base_name(sPath) + ".new";
 }
 
 static RageFileObjDirect *MakeFileObjDirect( RString sPath, int iMode, int &iError )
@@ -109,7 +109,7 @@ RageFileBasic *RageFileDriverDirect::Open( const RString &sPath_, int iMode, int
 
 	if( iMode & RageFile::WRITE )
 	{
-		const RString dir = Dirname(sPath);
+		const RString dir = Rage::dir_name(sPath);
 		if( this->GetFileType(dir) != RageFileManager::TYPE_DIR )
 			CreateDirectories( m_sRoot + dir );
 	}
@@ -128,7 +128,7 @@ bool RageFileDriverDirect::Move( const RString &sOldPath_, const RString &sNewPa
 		return false;
 
 	{
-		const RString sDir = Dirname(sNewPath);
+		const RString sDir = Rage::dir_name(sNewPath);
 		CreateDirectories( m_sRoot + sDir );
 	}
 	int size = FDB->GetFileSize( sOldPath );
@@ -287,7 +287,7 @@ bool RageFileObjDirect::FinalFlush()
 	}
 
 	RString sError;
-	if( !FlushDir(Dirname(m_sPath), sError) )
+	if( !FlushDir(Rage::dir_name(m_sPath), sError) )
 	{
 		WARN( ssprintf("Error synchronizing fsync(%s dir): %s", this->m_sPath.c_str(), sError.c_str()) );
 		SetError( sError );
@@ -354,7 +354,7 @@ RageFileObjDirect::~RageFileObjDirect()
 		if( m_iMode & RageFile::SLOW_FLUSH )
 		{
 			RString sError;
-			if( !FlushDir(Dirname(m_sPath), sError) )
+			if( !FlushDir(Rage::dir_name(m_sPath), sError) )
 			{
 				WARN( ssprintf("Error synchronizing fsync(%s dir): %s", this->m_sPath.c_str(), sError.c_str()) );
 				SetError( sError );

@@ -569,7 +569,7 @@ void actor_template_t::load_node(XNode const& node, RString const& dirname, cond
 							break;
 						case FT_Sprite:
 							set_type("Sprite");
-							load_frames_from_file(dirname + this_relative, Dirname(relative_path));
+							load_frames_from_file(dirname + this_relative, Rage::dir_name(relative_path));
 							handled_level= 2;
 							break;
 						case FT_Model:
@@ -587,7 +587,7 @@ void actor_template_t::load_node(XNode const& node, RString const& dirname, cond
 						if(extension == "model")
 						{
 							set_type("Model");
-							load_model_from_file(dirname + this_relative, Dirname(relative_path));
+							load_model_from_file(dirname + this_relative, Rage::dir_name(relative_path));
 							handled_level= 2;
 						}
 					}

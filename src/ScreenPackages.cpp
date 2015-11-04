@@ -506,8 +506,8 @@ void ScreenPackages::EnterURL( const RString & sURL )
 
 	if (!Rage::ends_with(sAddress, "/"))
 	{
-		m_sEndName = Basename( sAddress );
-		m_sBaseAddress += Dirname( sAddress );
+		m_sEndName = Rage::base_name( sAddress );
+		m_sBaseAddress += Rage::dir_name( sAddress );
 	}
 	else
 	{

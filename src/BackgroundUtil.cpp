@@ -194,7 +194,7 @@ void BackgroundUtil::GetSongBGAnimations( const Song *pSong, const RString &sMat
 	vsNamesOut.clear();
 	for (auto const &s: vsPathsOut)
 	{
-		vsNamesOut.push_back( Basename(s) );
+		vsNamesOut.push_back( Rage::base_name(s) );
 	}
 
 	StripCvsAndSvn( vsPathsOut, vsNamesOut );
@@ -216,7 +216,7 @@ void BackgroundUtil::GetSongMovies( const Song *pSong, const RString &sMatch, ve
 	vsNamesOut.clear();
 	for (auto const &s: vsPathsOut)
 	{
-		vsNamesOut.push_back( Basename(s) );
+		vsNamesOut.push_back( Rage::base_name(s) );
 	}
 
 	StripCvsAndSvn( vsPathsOut, vsNamesOut );
@@ -238,7 +238,7 @@ void BackgroundUtil::GetSongBitmaps( const Song *pSong, const RString &sMatch, v
 	vsNamesOut.clear();
 	for (auto const &s: vsPathsOut)
 	{
-		vsNamesOut.push_back( Basename(s) );
+		vsNamesOut.push_back( Rage::base_name(s) );
 	}
 
 	StripCvsAndSvn( vsPathsOut, vsNamesOut );
@@ -287,7 +287,7 @@ void BackgroundUtil::GetGlobalBGAnimations( const Song *pSong, const RString &sM
 	vsNamesOut.clear();
 	for (auto const &s: vsPathsOut)
 	{
-		vsNamesOut.push_back( Basename(s) );
+		vsNamesOut.push_back( Rage::base_name(s) );
 	}
 
 	StripCvsAndSvn( vsPathsOut, vsNamesOut );
@@ -342,7 +342,7 @@ namespace {
 				vector<RString> vsMatches;
 				for (auto const &s: vsPathsOut)
 				{
-					RString sBasename = Basename( s );
+					RString sBasename = Rage::base_name( s );
 					bool bFound = ssFileNameWhitelist.find(sBasename) != ssFileNameWhitelist.end();
 					if( bFound )
 					{

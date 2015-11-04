@@ -135,7 +135,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 	RString sPath = _sPath;
 
 	FixSlashesInPlace(sPath);
-	const RString sDir = Dirname( sPath );
+	const RString sDir = Rage::dir_name( sPath );
 
 	RageFile f;
 	if( !f.Open( sPath ) )
