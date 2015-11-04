@@ -81,7 +81,7 @@ void AnimatedTexture::Load( const RString &sTexOrIniPath )
 				pAnimatedTexture->GetAttrValue( sTranslateYKey, vOffset.y );
 
 				RageTextureID ID;
-				ID.filename = Dirname(sTexOrIniPath) + sFileName;
+				ID.filename = Rage::dir_name(sTexOrIniPath) + sFileName;
 				ID.bStretch = true;
 				ID.bHotPinkColorKey = true;
 				ID.bMipMaps = true;	// use mipmaps in Models
@@ -223,7 +223,7 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 {
 	using std::max;
 	FixSlashesInPlace(sPath);
-	const RString sDir = Dirname( sPath );
+	const RString sDir = Rage::dir_name( sPath );
 
 	RageFile f;
 	if ( !f.Open(sPath) )

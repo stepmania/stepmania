@@ -626,7 +626,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 		if(m_sMainTitle == "")
 		{
 			NotesLoader::GetMainAndSubTitlesFromFullTitle(
-				Basename(this->GetSongDir()), m_sMainTitle, m_sSubTitle);
+				Rage::base_name(this->GetSongDir()), m_sMainTitle, m_sSubTitle);
 		}
 
 		if(m_sArtist == "")

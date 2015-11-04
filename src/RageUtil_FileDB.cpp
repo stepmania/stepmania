@@ -351,7 +351,7 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 	FileSet **pParentDirp = nullptr;
 	if( sDir != "/" )
 	{
-		RString sParent = Dirname( sDir );
+		RString sParent = Rage::dir_name( sDir );
 		if( sParent == "./" )
 			sParent = "";
 
@@ -359,7 +359,7 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 		FileSet *pParent = GetFileSet( sParent );
 		if( pParent != nullptr )
 		{
-			std::set<File>::iterator it = pParent->files.find( File(Basename(sDir)) );
+			std::set<File>::iterator it = pParent->files.find( File(Rage::base_name(sDir)) );
 			if( it != pParent->files.end() )
 				pParentDirp = const_cast<FileSet **>(&it->dirp);
 		}
@@ -521,7 +521,7 @@ void FilenameDB::FlushDirCache( const RString & /* sDir */ )
 
 			if( sDir != "/" )
 			{
-				RString sParent = Dirname( sDir );
+				RString sParent = Rage::dir_name( sDir );
 				if( sParent == "./" )
 				{
 					sParent = "";
@@ -534,7 +534,7 @@ void FilenameDB::FlushDirCache( const RString & /* sDir */ )
 				if( it != dirs.end() )
 				{
 					FileSet *pParent = it->second;
-					std::set<File>::iterator fileit = pParent->files.find( File(Basename(sDir)) );
+					std::set<File>::iterator fileit = pParent->files.find( File(Rage::base_name(sDir)) );
 					if( fileit != pParent->files.end() )
 						fileit->dirp = nullptr;
 				}
@@ -630,7 +630,7 @@ void FilenameDB::GetFileSetCopy( const RString &sDir, FileSet &out )
 void FilenameDB::CacheFile( const RString &sPath )
 {
 	LOG->Warn( "Slow cache due to: %s", sPath.c_str() );
-	FlushDirCache( Dirname(sPath) );
+	FlushDirCache( Rage::dir_name(sPath) );
 }
 
 /*

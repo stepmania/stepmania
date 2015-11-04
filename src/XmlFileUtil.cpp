@@ -608,7 +608,7 @@ namespace
 
 void XmlFileUtil::AnnotateXNodeTree( XNode *pNode, const RString &sFile )
 {
-	RString sDir = Dirname( sFile );
+	RString sDir = Rage::dir_name( sFile );
 
 	vector<XNode *> queue;
 	queue.push_back( pNode );

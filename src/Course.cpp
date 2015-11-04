@@ -865,7 +865,7 @@ RString Course::GetBannerPath() const
 		return RString();
 	if( m_sBannerPath[0] == '/' )
 		return m_sBannerPath;
-	return Dirname(m_sPath) + m_sBannerPath;
+	return Rage::dir_name(m_sPath) + m_sBannerPath;
 }
 
 RString Course::GetBackgroundPath() const
@@ -874,7 +874,7 @@ RString Course::GetBackgroundPath() const
 		return RString();
 	if( m_sBackgroundPath[0] == '/' )
 		return m_sBackgroundPath;
-	return Dirname(m_sPath) + m_sBackgroundPath;
+	return Rage::dir_name(m_sPath) + m_sBackgroundPath;
 }
 
 bool Course::HasBanner() const

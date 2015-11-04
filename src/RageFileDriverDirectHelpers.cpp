@@ -164,7 +164,7 @@ void DirectFilenameDB::SetRoot(RString root_)
 void DirectFilenameDB::CacheFile( const RString &sPath )
 {
 	CHECKPOINT_M( root+sPath );
-	RString sDir = Dirname( sPath );
+	RString sDir = Rage::dir_name( sPath );
 	FileSet *pFileSet = GetFileSet( sDir, false );
 	if( pFileSet == nullptr )
 	{
@@ -192,7 +192,7 @@ void DirectFilenameDB::CacheFile( const RString &sPath )
 	pFileSet->files.insert( f );
 	FindClose( hFind );
 #else
-	File f( Basename(sPath) );
+	File f( Rage::base_name(sPath) );
 
 	struct stat st;
 	if( DoStat(root+sPath, &st) == -1 )

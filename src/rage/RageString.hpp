@@ -69,6 +69,12 @@ namespace Rage
 	/** @brief Trim the front and back of the string of all characters of the caller's choosing. */
 	std::string trim(std::string const &source, std::string const &delimiters);
 
+	/** @brief Retrieve the last named component of a directory/file. */
+	std::string base_name(std::string const &dir);
+
+	/** @brief Retrieve all except the last named component of a directory/file. */
+	std::string dir_name(std::string const &dir);
+
 	/** @brief A trait to allow for case insensitive strings...assuming ASCII. */
 	struct ci_ascii_char_traits: public std::char_traits<char>
 	{

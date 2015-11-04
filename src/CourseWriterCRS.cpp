@@ -127,7 +127,7 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 		else if( entry.songID.ToSong() )
 		{
 			Song *pSong = entry.songID.ToSong();
-			const RString &sSong = Basename( pSong->GetSongDir() );
+			const RString &sSong = Rage::base_name( pSong->GetSongDir() );
 
 			f.Write( "#SONG:" );
 			if( !entry.songCriteria.m_sGroupName.empty() )

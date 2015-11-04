@@ -216,7 +216,7 @@ Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 			}
 			else
 			{
-				sPath = Dirname(GetSourcePath(&node)) + sFile;
+				sPath = Rage::dir_name(GetSourcePath(&node)) + sFile;
 			}
 			if (ResolvePath(sPath, GetWhere(&node)))
 			{

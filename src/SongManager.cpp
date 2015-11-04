@@ -298,7 +298,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 		{
 			ld->SetProgress(sanity_index);
 			ld->SetText(SANITY_CHECKING_GROUPS.GetValue() + ssprintf("\n%s",
-					Basename(sGroupDirName).c_str()));
+					Rage::base_name(sGroupDirName).c_str()));
 		}
 		// TODO: If this check fails, log a warning instead of crashing.
 		SanityCheckGroupDir(sDir+sGroupDirName);
@@ -342,8 +342,8 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 				ld->SetProgress(songIndex);
 				ld->SetText( LOADING_SONGS.GetValue() +
 					ssprintf("\n%s\n%s",
-						Basename(sGroupDirName).c_str(),
-						Basename(sSongDirName).c_str()
+						Rage::base_name(sGroupDirName).c_str(),
+						Rage::base_name(sSongDirName).c_str()
 					)
 				);
 			}
@@ -875,8 +875,8 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 			{
 				ld->SetProgress(courseIndex);
 				ld->SetText( LOADING_COURSES.GetValue()+ssprintf("\n%s\n%s",
-					Basename(sCourseGroup).c_str(),
-					Basename(sCoursePath).c_str()));
+					Rage::base_name(sCourseGroup).c_str(),
+					Rage::base_name(sCoursePath).c_str()));
 			}
 
 			Course* pCourse = new Course;

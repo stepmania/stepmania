@@ -148,7 +148,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 
 		for (auto const &sPath: asImagePaths)
 		{
-			if (Rage::starts_with(Basename(sPath), "_"))
+			if (Rage::starts_with(Rage::base_name(sPath), "_"))
 			{
 				continue; // don't directly load files starting with an underscore
 			}

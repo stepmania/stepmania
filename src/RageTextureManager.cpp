@@ -384,7 +384,7 @@ void RageTextureManager::DiagnosticOutput() const
 		if( sDiags != "" )
 			sStr += " " + sDiags;
 
-		LOG->Trace( " %-40s %s", sStr.c_str(), Basename(ID.filename).c_str() );
+		LOG->Trace( " %-40s %s", sStr.c_str(), Rage::base_name(ID.filename).c_str() );
 		iTotal += pTex->GetTextureHeight() * pTex->GetTextureWidth();
 	}
 	LOG->Trace( "total %3i texels", iTotal );

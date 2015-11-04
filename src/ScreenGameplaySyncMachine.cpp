@@ -35,7 +35,7 @@ void ScreenGameplaySyncMachine::Init()
 	{
 		loaderSM.LoadFromSimfile(sFile, m_Song);
 	}
-	m_Song.SetSongDir( Dirname(sFile) );
+	m_Song.SetSongDir( Rage::dir_name(sFile) );
 	m_Song.TidyUpData();
 
 	GAMESTATE->m_pCurSong.Set( &m_Song );

@@ -3,6 +3,7 @@
 #include "ProductInfo.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageString.hpp"
 #include "RageDisplay.h"
 #include "DisplayResolutions.h"
 #include "arch/ArchHooks/ArchHooks.h"
@@ -46,9 +47,7 @@ static RString GetNewWindow()
 	RString sName;
 	GetProcessFileName( iProcessID, sName );
 
-	sName = Basename(sName);
-
-	return sName;
+	return Rage::base_name(sName);
 }
 
 static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
