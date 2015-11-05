@@ -334,7 +334,9 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 
 		SongPointerVector& index_entry = m_mapSongGroupIndex[sGroupDirName];
 
-		for (auto const &sSongDirName: arraySongDirs)
+		// TODO: Confirm if reference vs copy is better. There are some
+		// inconsistencies with using a reference here on occasion.
+		for (auto const sSongDirName: arraySongDirs)
 		{
 			// this is a song directory. Load a new song.
 			if( ld )
