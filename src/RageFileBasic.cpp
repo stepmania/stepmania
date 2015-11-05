@@ -255,7 +255,7 @@ int RageFileObj::Write( const void *pBuffer, size_t iBytes )
 
 		/* We're writing a lot of data, and it won't fit in the buffer.  We already
 		 * flushed above, so m_iWriteBufferUsed; fall through and write the block normally. */
-		ASSERT_M( m_iWriteBufferUsed == 0, ssprintf("%i", m_iWriteBufferUsed) );
+		ASSERT_M( m_iWriteBufferUsed == 0, fmt::sprintf("%i", m_iWriteBufferUsed) );
 	}
 
 	int iRet = WriteInternal( pBuffer, iBytes );
@@ -437,7 +437,7 @@ int RageFileObj::FillReadBuf()
 	 * the two is old data that we've read.  (Don't mangle that data; we can use it
 	 * for seeking backwards.) */
 	const int iBufAvail = BSIZE - (m_pReadBuf-m_pReadBuffer) - m_iReadBufAvail;
-	ASSERT_M( iBufAvail >= 0, ssprintf("%p, %p, %i", static_cast<void *>(m_pReadBuf), static_cast<void *>(m_pReadBuffer), static_cast<int>(BSIZE) ) );
+	ASSERT_M( iBufAvail >= 0, fmt::sprintf("%p, %p, %i", static_cast<void *>(m_pReadBuf), static_cast<void *>(m_pReadBuffer), static_cast<int>(BSIZE) ) );
 	const int iSize = this->ReadInternal( m_pReadBuf+m_iReadBufAvail, iBufAvail );
 
 	if( iSize > 0 )

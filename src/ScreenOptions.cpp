@@ -136,8 +136,8 @@ void ScreenOptions::Init()
 	// init line highlights
 	FOREACH_PlayerNumber( p )
 	{
-		m_sprLineHighlight[p].Load( THEME->GetPathG(m_sName, ssprintf("LineHighlight P%d",p+1)) );
-		m_sprLineHighlight[p]->SetName( ssprintf("LineHighlightP%d",p+1) );
+		m_sprLineHighlight[p].Load( THEME->GetPathG(m_sName, fmt::sprintf("LineHighlight P%d",p+1)) );
+		m_sprLineHighlight[p]->SetName( fmt::sprintf("LineHighlightP%d",p+1) );
 		m_sprLineHighlight[p]->SetX( LINE_HIGHLIGHT_X );
 		LOAD_ALL_COMMANDS( m_sprLineHighlight[p] );
 		m_frameContainer.AddChild( m_sprLineHighlight[p] );
@@ -173,7 +173,7 @@ void ScreenOptions::Init()
 		m_frameContainer.AddChild( &m_textExplanationTogether );
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid InputMode: %i", m_InputMode));
+		FAIL_M(fmt::sprintf("Invalid InputMode: %i", m_InputMode));
 	}
 
 	if( SHOW_SCROLL_BAR )
@@ -387,7 +387,7 @@ RString ScreenOptions::GetExplanationText( int iRow ) const
 
 void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut ) const
 {
-	ASSERT_M( iRow < (int)m_pRows.size(), ssprintf("%i < %i", iRow, (int)m_pRows.size() ) );
+	ASSERT_M( iRow < (int)m_pRows.size(), fmt::sprintf("%i < %i", iRow, (int)m_pRows.size() ) );
 	const OptionRow &row = *m_pRows[iRow];
 	row.GetWidthXY( pn, iChoiceOnRow, iWidthOut, iXOut, iYOut );
 }
@@ -433,7 +433,7 @@ void ScreenOptions::PositionCursor( PlayerNumber pn )
 	if( iRow == -1 )
 		return;
 
-	ASSERT_M( iRow >= 0 && iRow < (int)m_pRows.size(), ssprintf("%i < %i", iRow, (int)m_pRows.size() ) );
+	ASSERT_M( iRow >= 0 && iRow < (int)m_pRows.size(), fmt::sprintf("%i < %i", iRow, (int)m_pRows.size() ) );
 	const OptionRow &row = *m_pRows[iRow];
 
 	const int iChoiceWithFocus = row.GetChoiceInRowWithFocus(pn);
@@ -455,7 +455,7 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 {
 	// Set the position of the cursor showing the current option the user is changing.
 	const int iRow = m_iCurrentRow[pn];
-	ASSERT_M( iRow >= 0  &&  iRow < (int)m_pRows.size(), ssprintf("%i < %i", iRow, (int)m_pRows.size() ) );
+	ASSERT_M( iRow >= 0  &&  iRow < (int)m_pRows.size(), fmt::sprintf("%i < %i", iRow, (int)m_pRows.size() ) );
 
 	const OptionRow &row = *m_pRows[iRow];
 	const int iChoiceWithFocus = row.GetChoiceInRowWithFocus(pn);
@@ -759,7 +759,7 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 		if( m_bWasOnExit[p] != bExitSelected )
 		{
 			m_bWasOnExit[p] = bExitSelected;
-			COMMAND( m_sprMore, ssprintf("Exit%sP%i", bExitSelected? "Selected":"Unselected", p+1) );
+			COMMAND( m_sprMore, fmt::sprintf("Exit%sP%i", bExitSelected? "Selected":"Unselected", p+1) );
 			m_sprMore->PlayCommand( bExitSelected ? "GainFocus":"LoseFocus" );
 		}
 	}

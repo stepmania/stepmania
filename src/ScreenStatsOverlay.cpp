@@ -136,7 +136,7 @@ void ScreenStatsOverlay::UpdateSkips()
 			Rage::Color(1.0f,0.4f,0.4f,1)		/* light red */
 		};
 
-		AddTimestampLine( ssprintf("%s: %.0fms (%.0f)", sTime.c_str(), 1000*UpdateTime, UpdateTime/ExpectedUpdate), colors[skip] );
+		AddTimestampLine( fmt::sprintf("%s: %.0fms (%.0f)", sTime.c_str(), 1000*UpdateTime, UpdateTime/ExpectedUpdate), colors[skip] );
 
 		if( PREFSMAN->m_bLogSkips )
 			LOG->Trace( "Frame skip: %.0fms (%.0f)", 1000*UpdateTime, UpdateTime/ExpectedUpdate );

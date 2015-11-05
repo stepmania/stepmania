@@ -74,7 +74,7 @@ void HoldJudgment::SetHoldJudgment( HoldNoteScore hns )
 		break;
 	case HNS_None:
 	default:
-		FAIL_M(ssprintf("Cannot set hold judgment to %i", hns));
+		FAIL_M(fmt::sprintf("Cannot set hold judgment to %i", hns));
 	}
 }
 

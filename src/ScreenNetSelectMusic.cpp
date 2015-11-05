@@ -52,7 +52,7 @@ void ScreenNetSelectMusic::Init()
 	{
 		m_DC[p] = GAMESTATE->m_PreferredDifficulty[p];
 
-		m_StepsDisplays[p].SetName( ssprintf("StepsDisplayP%d",p+1) );
+		m_StepsDisplays[p].SetName( fmt::sprintf("StepsDisplayP%d",p+1) );
 		m_StepsDisplays[p].Load( "StepsDisplayNet", nullptr );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_StepsDisplays[p] );
 		this->AddChild( &m_StepsDisplays[p] );
@@ -69,7 +69,7 @@ void ScreenNetSelectMusic::Init()
 	// todo: handle me theme-side -aj
 	FOREACH_EnabledPlayer( p )
 	{
-		m_ModIconRow[p].SetName( ssprintf("ModIconsP%d",p+1) );
+		m_ModIconRow[p].SetName( fmt::sprintf("ModIconsP%d",p+1) );
 		m_ModIconRow[p].Load( "ModIconRowSelectMusic", p );
 		m_ModIconRow[p].SetFromGameState();
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_ModIconRow[p] );

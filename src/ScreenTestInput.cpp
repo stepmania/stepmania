@@ -50,15 +50,15 @@ class InputList: public BitmapText
 			RString sTemp;
 			sTemp += INPUTMAN->GetDeviceSpecificInputString(di);
 			if( di.level == 1.0f )
-				sTemp += ssprintf(" - 1 " );
+				sTemp += fmt::sprintf(" - 1 " );
 			else
-				sTemp += ssprintf(" - %.3f ", di.level );
+				sTemp += fmt::sprintf(" - %.3f ", di.level );
 
 			GameInput gi;
 			if( INPUTMAPPER->DeviceToGame(di,gi) )
 			{
 				RString sName = GameButtonToLocalizedString( INPUTMAPPER->GetInputScheme(), gi.button );
-				sTemp += ssprintf(" - %s %d %s", CONTROLLER.GetValue().c_str(), gi.controller+1, sName.c_str() );
+				sTemp += fmt::sprintf(" - %s %d %s", CONTROLLER.GetValue().c_str(), gi.controller+1, sName.c_str() );
 
 				if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
 				{
@@ -66,7 +66,7 @@ class InputList: public BitmapText
 					if( mb != GameButton_Invalid && mb != gi.button )
 					{
 						RString sGameButtonString = GameButtonToLocalizedString( INPUTMAPPER->GetInputScheme(), mb );
-						sTemp += ssprintf( " - (%s %s)", sGameButtonString.c_str(), SECONDARY.GetValue().c_str() );
+						sTemp += fmt::sprintf( " - (%s %s)", sGameButtonString.c_str(), SECONDARY.GetValue().c_str() );
 					}
 				}
 			}

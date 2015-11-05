@@ -7,27 +7,6 @@
 
 using std::wstring;
 
-RString werr_ssprintf( int err, const char *fmt, ... )
-{
-	char buf[1024] = "";
-	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,
-		0, err, 0, buf, sizeof(buf), nullptr);
-
-	// Why is FormatMessage returning text ending with \r\n? (who? -aj)
-	// Perhaps it's because you're on Windows, where newlines are \r\n. -aj
-	RString text = buf;
-	Rage::replace(text, "\n", "" );
-	Rage::replace(text, "\r", " " ); // foo\r\nbar -> foo bar
-	text = Rage::trim_right( text ); // "foo\r\n" -> "foo"
-
-	va_list	va;
-	va_start(va, fmt);
-	RString s = vssprintf( fmt, va );
-	va_end(va);
-
-	return s += ssprintf( " (%s)", text.c_str() );
-}
-
 RString ConvertWstringToCodepage( wstring s, int iCodePage )
 {
 	if( s.empty() )
@@ -35,7 +14,7 @@ RString ConvertWstringToCodepage( wstring s, int iCodePage )
 
 	int iBytes = WideCharToMultiByte( iCodePage, 0, s.data(), s.size(), 
 					nullptr, 0, nullptr, FALSE );
-	ASSERT_M( iBytes > 0, werr_ssprintf( GetLastError(), "WideCharToMultiByte" ).c_str() );
+	ASSERT_M( iBytes > 0, werr_format( GetLastError(), "WideCharToMultiByte" ).c_str() );
 
 	char * buf = new char[iBytes + 1];
 	std::fill(buf, buf + iBytes + 1, '\0');
@@ -56,7 +35,7 @@ wstring ConvertCodepageToWString( RString s, int iCodePage )
 		return wstring();
 
 	int iBytes = MultiByteToWideChar( iCodePage, 0, s.data(), s.size(), nullptr, 0 );
-	ASSERT_M( iBytes > 0, werr_ssprintf( GetLastError(), "MultiByteToWideChar" ).c_str() );
+	ASSERT_M( iBytes > 0, werr_format( GetLastError(), "MultiByteToWideChar" ).c_str() );
 
 	wchar_t *pTemp = new wchar_t[iBytes];
 	MultiByteToWideChar( iCodePage, 0, s.data(), s.size(), pTemp, iBytes );

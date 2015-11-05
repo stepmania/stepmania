@@ -18,7 +18,7 @@ static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CF
 
 	if( text == nullptr )
 	{
-		RString error = ssprintf( "CFString for dialog string \"%s\" could not be created.", sMessage.c_str() );
+		RString error = fmt::sprintf( "CFString for dialog string \"%s\" could not be created.", sMessage.c_str() );
 		WARN( error );
 		DEBUG_ASSERT_M( false, error );
 		return kCFUserNotificationDefaultResponse; // Is this better than displaying an "unknown error" message?
@@ -73,7 +73,7 @@ Dialog::Result DialogDriver_MacOSX::OKCancel( RString sMessage, RString sID )
 	case kCFUserNotificationAlternateResponse:
 		return Dialog::ok;
 	default:
-		FAIL_M( ssprintf("Invalid response: %d.", int(result)) );
+		FAIL_M( fmt::sprintf("Invalid response: %d.", int(result)) );
 	}
 }
 
@@ -99,7 +99,7 @@ Dialog::Result DialogDriver_MacOSX::AbortRetryIgnore( RString sMessage, RString 
 	case kCFUserNotificationCancelResponse:
 		return Dialog::abort;
 	default:
-		FAIL_M( ssprintf("Invalid response: %d.", int(result)) );
+		FAIL_M( fmt::sprintf("Invalid response: %d.", int(result)) );
 	}
 }
 
@@ -120,7 +120,7 @@ Dialog::Result DialogDriver_MacOSX::AbortRetry( RString sMessage, RString sID )
 	case kCFUserNotificationAlternateResponse:
 		return Dialog::retry;
 	default:
-		FAIL_M( ssprintf("Invalid response: %d.", int(result)) );
+		FAIL_M( fmt::sprintf("Invalid response: %d.", int(result)) );
 	}
 }
 
@@ -141,7 +141,7 @@ Dialog::Result DialogDriver_MacOSX::YesNo( RString sMessage, RString sID )
 	case kCFUserNotificationAlternateResponse:
 		return Dialog::yes;
 	default:
-		FAIL_M( ssprintf("Invalid response: %d.", int(result)) );
+		FAIL_M( fmt::sprintf("Invalid response: %d.", int(result)) );
 	}
 }
 

@@ -242,7 +242,7 @@ Dialog::Result DialogDriver_Win32::AbortRetryIgnore( RString sMessage, RString I
 	case IDRETRY:	return Dialog::retry;
 	case IDIGNORE:	return Dialog::ignore;
 	default:
-		FAIL_M(ssprintf("Unexpected response to Abort/Retry/Ignore dialog: %i", iRet));
+		FAIL_M(fmt::sprintf("Unexpected response to Abort/Retry/Ignore dialog: %i", iRet));
 	}
 } 
 
@@ -259,7 +259,7 @@ Dialog::Result DialogDriver_Win32::AbortRetry( RString sMessage, RString sID )
 	case IDRETRY:	return Dialog::retry;
 	case IDCANCEL:	return Dialog::abort;
 	default:
-		FAIL_M(ssprintf("Unexpected response to Retry/Cancel dialog: %i", iRet));
+		FAIL_M(fmt::sprintf("Unexpected response to Retry/Cancel dialog: %i", iRet));
 	}
 } 
 
@@ -276,7 +276,7 @@ Dialog::Result DialogDriver_Win32::YesNo( RString sMessage, RString sID )
 	case IDYES:	return Dialog::yes;
 	case IDNO:	return Dialog::no;
 	default:
-		FAIL_M(ssprintf("Unexpected response to Yes/No dialog: %i", iRet));
+		FAIL_M(fmt::sprintf("Unexpected response to Yes/No dialog: %i", iRet));
 	}
 }
 

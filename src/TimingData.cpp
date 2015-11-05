@@ -149,9 +149,9 @@ RString SegInfoStr(const vector<TimingSegment*>& segs, unsigned int index, const
 {
 	if(index < segs.size())
 	{
-		return ssprintf("%s: %d at %d", name.c_str(), index, segs[index]->GetRow());
+		return fmt::sprintf("%s: %d at %d", name.c_str(), index, segs[index]->GetRow());
 	}
-	return ssprintf("%s: %d at end", name.c_str(), index);
+	return fmt::sprintf("%s: %d at end", name.c_str(), index);
 }
 
 void TimingData::DumpOneTable(const beat_start_lookup_t& lookup, const RString& name)
@@ -168,7 +168,7 @@ void TimingData::DumpOneTable(const beat_start_lookup_t& lookup, const RString& 
 		const lookup_item_t& item= lookup[lit];
 		const GetBeatStarts& starts= item.second;
 		LOG->Trace("%zu: %f", lit, item.first);
-		RString str= ssprintf("  %s, %s, %s, %s,\n"
+		RString str= fmt::sprintf("  %s, %s, %s, %s,\n"
 			"  last_row: %d, last_time: %.3f,\n"
 			"  warp_destination: %.3f, is_warping: %d",
 			SegInfoStr(bpms, starts.bpm, "bpm").c_str(),

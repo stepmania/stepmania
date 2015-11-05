@@ -125,7 +125,7 @@ struct WinWdmFilter
 
 static RString GUIDToString( const GUID *pGuid )
 {
-	return ssprintf("%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+	return fmt::sprintf("%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
 		pGuid->Data1, pGuid->Data2, pGuid->Data3,
 		pGuid->Data4[0], pGuid->Data4[1], pGuid->Data4[2], pGuid->Data4[3],
 		pGuid->Data4[4], pGuid->Data4[5], pGuid->Data4[6], pGuid->Data4[7] );
@@ -148,7 +148,7 @@ static bool WdmSyncIoctl(
 	overlapped.hEvent = CreateEvent( nullptr, FALSE, FALSE, nullptr );
 	if( !overlapped.hEvent )
 	{
-		sError = werr_ssprintf( GetLastError(), "CreateEvent" );
+		sError = werr_format( GetLastError(), "CreateEvent" );
 		return false;
 	}
 	overlapped.hEvent = (HANDLE)((DWORD_PTR)overlapped.hEvent | 0x1);
@@ -163,7 +163,7 @@ static bool WdmSyncIoctl(
 			if( iError != WAIT_OBJECT_0 )
 			{
 				ASSERT( iError == WAIT_FAILED );
-				sError = werr_ssprintf( GetLastError(), "WaitForSingleObject" );
+				sError = werr_format( GetLastError(), "WaitForSingleObject" );
 				CloseHandle( overlapped.hEvent );
 				return false;
 			}
@@ -175,7 +175,7 @@ static bool WdmSyncIoctl(
 		}
 		else
 		{
-			sError = werr_ssprintf( iError, "DeviceIoControl" );
+			sError = werr_format( iError, "DeviceIoControl" );
 			CloseHandle( overlapped.hEvent );
 			return false;
 		}
@@ -465,7 +465,7 @@ bool WinWdmPin::Instantiate( const WAVEFORMATEX *pFormat, RString &sError )
 	if( iRet == ERROR_SUCCESS )
 		return true;
 
-	sError = werr_ssprintf( iRet, "FunctionKsCreatePin" );
+	sError = werr_format( iRet, "FunctionKsCreatePin" );
 	m_pParentFilter->Release();
 	m_hHandle = nullptr;
 	return false;
@@ -593,7 +593,7 @@ bool WinWdmFilter::Use( RString &sError )
 
 		if( m_hHandle == nullptr )
 		{
-			sError = werr_ssprintf( GetLastError(), "CreateFile(%s)", m_sFilterName.c_str() );
+			sError = werr_format( GetLastError(), "CreateFile(%s)", m_sFilterName.c_str() );
 			return false;
 		}
 	}
@@ -822,7 +822,7 @@ static bool BuildFilterList( vector<WinWdmFilter*> &aFilters, RString &sError )
 	HDEVINFO hHandle = SetupDiGetClassDevs( pCategoryGuid, nullptr, nullptr, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE );
 	if( hHandle == INVALID_HANDLE_VALUE )
 	{
-		sError = werr_ssprintf( GetLastError(), "SetupDiGetClassDevs" );
+		sError = werr_format( GetLastError(), "SetupDiGetClassDevs" );
 		return false;
 	}
 
@@ -878,7 +878,7 @@ static bool PaWinWdm_Initialize( RString &sError )
 		DllKsUser = LoadLibrary( "ksuser.dll" );
 		if( DllKsUser == nullptr )
 		{
-			sError = werr_ssprintf( GetLastError(), "LoadLibrary(ksuser.dll)" );
+			sError = werr_format( GetLastError(), "LoadLibrary(ksuser.dll)" );
 			return false;
 		}
 	}
@@ -1033,7 +1033,7 @@ bool WinWdmStream::SubmitPacket( int iPacket, RString &sError )
 	if( iError == ERROR_IO_PENDING )
 		return true;
 
-	sError = werr_ssprintf(iError, "DeviceIoControl");
+	sError = werr_format(iError, "DeviceIoControl");
 	return false;
 }
 
@@ -1078,7 +1078,7 @@ namespace
 		case 4: pChannelMap = i4ChannelMap; break; // KSAUDIO_SPEAKER_QUAD
 		case 6: pChannelMap = i5_1ChannelMap; break; // KSAUDIO_SPEAKER_5POINT1_SURROUND
 		case 8: pChannelMap = i7_1ChannelMap; break; // KSAUDIO_SPEAKER_7POINT1_SURROUND
-		default: FAIL_M( ssprintf("%i", iOutChannels) );
+		default: FAIL_M( fmt::sprintf("%i", iOutChannels) );
 		}
 		MapChannels( pIn, pOut, iInChannels, iOutChannels, iFrames, pChannelMap );
 	}
@@ -1176,7 +1176,7 @@ void RageSoundDriver_WDMKS::MixerThread()
 	/* I don't trust this driver with THREAD_PRIORITY_TIME_CRITICAL just yet. */
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST) )
 //	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL) )
-		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set sound thread priority") );
+		LOG->Warn( werr_format(GetLastError(), "Failed to set sound thread priority") );
 
 	/* Enable priority boosting. */
 	SetThreadPriorityBoost( GetCurrentThread(), FALSE );
@@ -1207,7 +1207,7 @@ void RageSoundDriver_WDMKS::MixerThread()
 
 		if( iWait == WAIT_FAILED )
 		{
-			LOG->Warn( werr_ssprintf(GetLastError(), "WaitForMultipleObjects") );
+			LOG->Warn( werr_format(GetLastError(), "WaitForMultipleObjects") );
 			break;
 		}
 		if( iWait == WAIT_TIMEOUT )
@@ -1249,7 +1249,7 @@ int RageSoundDriver_WDMKS::MixerThread_start( void *p )
 void RageSoundDriver_WDMKS::SetupDecodingThread()
 {
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
-		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set sound thread priority") );
+		LOG->Warn( werr_format(GetLastError(), "Failed to set sound thread priority") );
 }
 
 int64_t RageSoundDriver_WDMKS::GetPosition() const

@@ -41,9 +41,9 @@ static bool ExecuteCommand( const RString &sCommand )
 	LOG->Trace( "done executing '%s'", sCommand.c_str() );
 	if( ret != 0 )
 	{
-		RString sError = ssprintf("failed to execute '%s' with error %d", sCommand.c_str(), ret);
+		auto sError = fmt::sprintf("failed to execute '%s' with error %d", sCommand.c_str(), ret);
 		if( ret == -1 )
-			sError += ssprintf(": %s", sCommand.c_str());
+			sError += fmt::sprintf(": %s", sCommand.c_str());
 		LOG->Warn( "%s", sError.c_str() );
 	}
 	return ret == 0;
@@ -113,7 +113,7 @@ bool MemoryCardDriverThreaded_Linux::USBStorageDevicesChanged()
 		if( stat( sDevicePath + asDevices[i], &buf ) == -1 )
 			continue; // XXX warn
 
-		sThisDevices += ssprintf( "%i,", (int) buf.st_ino );
+		sThisDevices += fmt::sprintf( "%i,", (int) buf.st_ino );
 	}
 
 	bool bChanged = sThisDevices != m_sLastDevices;

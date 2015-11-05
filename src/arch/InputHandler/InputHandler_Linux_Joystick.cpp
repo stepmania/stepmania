@@ -86,7 +86,7 @@ bool InputHandler_Linux_Joystick::TryDevice(RString dev)
 			char szName[1024];
 			ZERO( szName );
 			if( ioctl(fds[m_iLastFd], JSIOCGNAME(sizeof(szName)), szName) < 0 )
-				m_sDescription[m_iLastFd] = ssprintf( "Unknown joystick at %s", dev.c_str() );
+				m_sDescription[m_iLastFd] = fmt::sprintf( "Unknown joystick at %s", dev.c_str() );
 			else
 				m_sDescription[m_iLastFd] = szName;
 

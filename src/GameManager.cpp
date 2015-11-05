@@ -3448,7 +3448,7 @@ bool GameManager::IsGameEnabled( const Game *pGame )
 const StepsTypeInfo &GameManager::GetStepsTypeInfo( StepsType st )
 {
 	ASSERT( ARRAYLEN(g_StepsTypeInfos) == NUM_StepsType );
-	ASSERT_M( st < NUM_StepsType, ssprintf("StepsType %d < NUM_StepsType (%d)", st, NUM_StepsType) );
+	ASSERT_M( st < NUM_StepsType, fmt::sprintf("StepsType %d < NUM_StepsType (%d)", st, NUM_StepsType) );
 	return g_StepsTypeInfos[st];
 }
 

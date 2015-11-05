@@ -1,7 +1,18 @@
 #ifndef DIRECTX_HELPERS_H
 #define DIRECTX_HELPERS_H
 
-RString hr_ssprintf( int hr, const char *fmt, ... );
+#include <string>
+#include "format.h"
+
+// Meant to be private.
+std::string hr_final(std::string const &msg, int hr);
+
+template<typename... Args>
+std::string hr_format(int hr, std::string const &msg, Args const & ...args)
+{
+	std::string item = fmt::format(msg, args...);
+	return hr_final(item, hr);
+}
 
 #endif
 

@@ -163,7 +163,7 @@ ThreadedFileWorker::ThreadedFileWorker( RString sPath ):
 	/* Grab a reference to the child driver.  We'll operate on it directly. */
 	m_pChildDriver = FILEMAN->GetFileDriver( sPath );
 	if( m_pChildDriver == nullptr )
-		WARN( ssprintf("ThreadedFileWorker: Mountpoint \"%s\" not found", sPath.c_str()) );
+		WARN( fmt::sprintf("ThreadedFileWorker: Mountpoint \"%s\" not found", sPath.c_str()) );
 
 	m_pResultFile = nullptr;
 	m_pRequestFile = nullptr;
@@ -287,7 +287,7 @@ void ThreadedFileWorker::HandleRequest( int iRequest )
 		break;
 
 	default:
-		FAIL_M( ssprintf("%i", iRequest) );
+		FAIL_M( fmt::sprintf("%i", iRequest) );
 	}
 }
 
@@ -916,7 +916,7 @@ bool RageFileDriverTimeout::Move( const RString &sOldPath, const RString &sNewPa
 	int iRet = m_pWorker->Move( sOldPath, sNewPath );
 	if( iRet == -1 )
 	{
-		WARN( ssprintf("RageFileDriverTimeout::Move(%s,%s) failed", sOldPath.c_str(), sNewPath.c_str()) );
+		WARN( fmt::sprintf("RageFileDriverTimeout::Move(%s,%s) failed", sOldPath.c_str(), sNewPath.c_str()) );
 		return false;
 	}
 
@@ -928,7 +928,7 @@ bool RageFileDriverTimeout::Remove( const RString &sPath )
 	int iRet = m_pWorker->Remove( sPath );
 	if( iRet == -1 )
 	{
-		WARN( ssprintf("RageFileDriverTimeout::Remove(%s) failed", sPath.c_str()) );
+		WARN( fmt::sprintf("RageFileDriverTimeout::Remove(%s) failed", sPath.c_str()) );
 		return false;
 	}
 

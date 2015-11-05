@@ -28,7 +28,7 @@ REGISTER_ACTOR_CLASS( BitmapText );
  * fading are annoying to optimize, but rarely used. Iterating over every
  * character in Draw() is dumb. */
 #define NUM_RAINBOW_COLORS	THEME->GetMetricI("BitmapText","NumRainbowColors")
-#define RAINBOW_COLOR(n)	THEME->GetMetricC("BitmapText",ssprintf("RainbowColor%i", n+1))
+#define RAINBOW_COLOR(n)	THEME->GetMetricC("BitmapText",fmt::sprintf("RainbowColor%i", n+1))
 
 static vector<Rage::Color> RAINBOW_COLORS;
 
@@ -210,7 +210,7 @@ void BitmapText::LoadFromNode( const XNode* node )
 
 bool BitmapText::LoadFromFont( const RString& sFontFilePath )
 {
-	CHECKPOINT_M( ssprintf("BitmapText::LoadFromFont(%s)", sFontFilePath.c_str()) );
+	CHECKPOINT_M( fmt::sprintf("BitmapText::LoadFromFont(%s)", sFontFilePath.c_str()) );
 
 	if( m_pFont )
 	{
@@ -229,7 +229,7 @@ bool BitmapText::LoadFromFont( const RString& sFontFilePath )
 
 bool BitmapText::LoadFromTextureAndChars( const RString& sTexturePath, const RString& sChars )
 {
-	CHECKPOINT_M( ssprintf("BitmapText::LoadFromTextureAndChars(\"%s\",\"%s\")", sTexturePath.c_str(), sChars.c_str()) );
+	CHECKPOINT_M( fmt::sprintf("BitmapText::LoadFromTextureAndChars(\"%s\",\"%s\")", sTexturePath.c_str(), sChars.c_str()) );
 
 	if( m_pFont )
 	{

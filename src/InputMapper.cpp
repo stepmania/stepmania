@@ -1277,11 +1277,11 @@ void InputMappings::SetInputMap( const DeviceInput &DeviceI, const GameInput &Ga
 	ClearFromInputMap( GameI, iSlotIndex );
 
 	ASSERT_M( GameI.controller < NUM_GameController,
-		  ssprintf("controller: %u >= %u", GameI.controller, NUM_GameController) );
+		  fmt::sprintf("controller: %u >= %u", GameI.controller, NUM_GameController) );
 	ASSERT_M( GameI.button < NUM_GameButton,
-		  ssprintf("button: %u >= %u", GameI.button, NUM_GameButton) );
+		  fmt::sprintf("button: %u >= %u", GameI.button, NUM_GameButton) );
 	ASSERT_M( iSlotIndex < NUM_GAME_TO_DEVICE_SLOTS,
-		  ssprintf("slot: %u >= %u", iSlotIndex, NUM_GAME_TO_DEVICE_SLOTS) );
+		  fmt::sprintf("slot: %u >= %u", iSlotIndex, NUM_GAME_TO_DEVICE_SLOTS) );
 	m_GItoDI[GameI.controller][GameI.button][iSlotIndex] = DeviceI;
 }
 

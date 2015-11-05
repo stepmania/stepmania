@@ -83,7 +83,7 @@ RString OptimizeDWIString( RString holds, RString taps )
 	{
 		const char to = OptimizeDWIPair( holds[0], holds[1] );
 		holds.erase(0, 2);
-		comb_holds += ssprintf( "%c!%c", to, to );
+		comb_holds += fmt::sprintf( "%c!%c", to, to );
 	}
 
 	ASSERT( taps.size() <= 1 );
@@ -93,7 +93,7 @@ RString OptimizeDWIString( RString holds, RString taps )
 	while( holds.size() == 1 && taps.size() == 1 )
 	{
 		const char to = OptimizeDWIPair( taps[0], holds[0] );
-		comb_holds += ssprintf( "%c!%c", to, holds[0] );
+		comb_holds += fmt::sprintf( "%c!%c", to, holds[0] );
 		taps.erase(0, 1);
 		holds.erase(0, 1);
 	}
@@ -104,13 +104,13 @@ RString OptimizeDWIString( RString holds, RString taps )
 	ret += taps;
 	ret += comb_taps;
 	if( holds.size() == 1 )
-		ret += ssprintf( "%c!%c", holds[0], holds[0] );
+		ret += fmt::sprintf( "%c!%c", holds[0], holds[0] );
 	ret += comb_holds;
 
 	if( ret.size() == 1 || (ret.size() == 3 && ret[1] == '!') )
 		return ret;
 	else
-		return ssprintf( "<%s>", ret.c_str() );
+		return fmt::sprintf( "<%s>", ret.c_str() );
 }
 
 /**
@@ -227,7 +227,7 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 			fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
 			break;
 		default:
-			ASSERT_M(0, ssprintf("nt = %d",nt) );
+			ASSERT_M(0, fmt::sprintf("nt = %d",nt) );
 			break;
 		}
 
@@ -274,7 +274,7 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 				notedata.SetTapNote(start+5, row, TAP_EMPTY);
 				break;
 			default:
-				FAIL_M(ssprintf("StepsType not supported by DWI: %i", out.m_StepsType));
+				FAIL_M(fmt::sprintf("StepsType not supported by DWI: %i", out.m_StepsType));
 			}
 			f.Write( str );
 		}
@@ -301,7 +301,7 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 			f.Write( "'" );
 			break;
 		default:
-			FAIL_M(ssprintf("Invalid note type: %i", nt));
+			FAIL_M(fmt::sprintf("Invalid note type: %i", nt));
 		}
 		f.PutLine( "" );
 	}
@@ -337,10 +337,10 @@ static bool WriteDWINotesTag( RageFile &f, const Steps &out )
 	case Difficulty_Hard:		f.Write( "MANIAC:" );	break;
 	case Difficulty_Challenge:	f.Write( "SMANIAC:" );	break;
 	default:
-		FAIL_M(ssprintf("Invalid difficulty: %i", d));
+		FAIL_M(fmt::sprintf("Invalid difficulty: %i", d));
 	}
 
-	f.PutLine( ssprintf("%d:", out.GetMeter()) );
+	f.PutLine( fmt::sprintf("%d:", out.GetMeter()) );
 	return true;
 }
 
@@ -354,19 +354,19 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 	}
 
 	/* Write transliterations, if we have them, since DWI doesn't support UTF-8. */
-	f.PutLine( ssprintf("#TITLE:%s;", DwiEscape(out.GetTranslitFullTitle()).c_str()) );
-	f.PutLine( ssprintf("#ARTIST:%s;", DwiEscape(out.GetTranslitArtist()).c_str()) );
+	f.PutLine( fmt::sprintf("#TITLE:%s;", DwiEscape(out.GetTranslitFullTitle()).c_str()) );
+	f.PutLine( fmt::sprintf("#ARTIST:%s;", DwiEscape(out.GetTranslitArtist()).c_str()) );
 
 	const vector<TimingSegment *> &bpms = out.m_SongTiming.GetTimingSegments(SEGMENT_BPM);
 	ASSERT_M(bpms[0]->GetRow() == 0,
-			 ssprintf("The first BPM Segment must be defined at row 0, not %d!", bpms[0]->GetRow()) );
-	f.PutLine( ssprintf("#FILE:%s;", DwiEscape(out.m_sMusicFile).c_str()) );
-	f.PutLine( ssprintf("#BPM:%.3f;", static_cast<BPMSegment *>(bpms[0])->GetBPM()) );
-	f.PutLine( ssprintf("#GAP:%ld;", -std::lrint( out.m_SongTiming.m_fBeat0OffsetInSeconds*1000 )) );
-	f.PutLine( ssprintf("#SAMPLESTART:%.3f;", out.m_fMusicSampleStartSeconds) );
-	f.PutLine( ssprintf("#SAMPLELENGTH:%.3f;", out.m_fMusicSampleLengthSeconds) );
+			 fmt::sprintf("The first BPM Segment must be defined at row 0, not %d!", bpms[0]->GetRow()) );
+	f.PutLine( fmt::sprintf("#FILE:%s;", DwiEscape(out.m_sMusicFile).c_str()) );
+	f.PutLine( fmt::sprintf("#BPM:%.3f;", static_cast<BPMSegment *>(bpms[0])->GetBPM()) );
+	f.PutLine( fmt::sprintf("#GAP:%ld;", -std::lrint( out.m_SongTiming.m_fBeat0OffsetInSeconds*1000 )) );
+	f.PutLine( fmt::sprintf("#SAMPLESTART:%.3f;", out.m_fMusicSampleStartSeconds) );
+	f.PutLine( fmt::sprintf("#SAMPLELENGTH:%.3f;", out.m_fMusicSampleLengthSeconds) );
 	if( out.m_sCDTitleFile.size() )
-		f.PutLine( ssprintf("#CDTITLE:%s;", DwiEscape(out.m_sCDTitleFile).c_str()) );
+		f.PutLine( fmt::sprintf("#CDTITLE:%s;", DwiEscape(out.m_sCDTitleFile).c_str()) );
 	switch( out.m_DisplayBPMType )
 	{
 		case DISPLAY_BPM_ACTUAL:
@@ -374,9 +374,9 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 			break;
 		case DISPLAY_BPM_SPECIFIED:
 			if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
-				f.PutLine( ssprintf("#DISPLAYBPM:%i;\n", (int) out.m_fSpecifiedBPMMin) );
+				f.PutLine( fmt::sprintf("#DISPLAYBPM:%i;\n", (int) out.m_fSpecifiedBPMMin) );
 			else
-				f.PutLine( ssprintf("#DISPLAYBPM:%i..%i;\n", (int) out.m_fSpecifiedBPMMin, (int) out.m_fSpecifiedBPMMax) );
+				f.PutLine( fmt::sprintf("#DISPLAYBPM:%i..%i;\n", (int) out.m_fSpecifiedBPMMin, (int) out.m_fSpecifiedBPMMax) );
 			break;
 		case DISPLAY_BPM_RANDOM:
 			f.PutLine( "#DISPLAYBPM:*" );
@@ -394,7 +394,7 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 		for( unsigned i=0; i<stops.size(); i++ )
 		{
 			const StopSegment *fs = static_cast<StopSegment *>(stops[i]);
-			f.Write( ssprintf("%.3f=%.3f", fs->GetRow() * 4.0f / ROWS_PER_BEAT, std::round(fs->GetPause()*1000)) );
+			f.Write( fmt::sprintf("%.3f=%.3f", fs->GetRow() * 4.0f / ROWS_PER_BEAT, std::round(fs->GetPause()*1000)) );
 			if( i != stops.size()-1 )
 				f.Write( "," );
 		}
@@ -407,7 +407,7 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 		for( unsigned i=1; i<bpms.size(); i++ )
 		{
 			const BPMSegment *bs = static_cast<BPMSegment *>(bpms[i]);
-			f.Write( ssprintf("%.3f=%.3f", bs->GetRow() * 4.0f / ROWS_PER_BEAT, bs->GetBPM() ) );
+			f.Write( fmt::sprintf("%.3f=%.3f", bs->GetRow() * 4.0f / ROWS_PER_BEAT, bs->GetBPM() ) );
 			if( i != bpms.size()-1 )
 				f.Write( "," );
 		}

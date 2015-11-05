@@ -52,7 +52,7 @@ void Style::GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& ori
 void Style::StyleInputToGameInput( int iCol, PlayerNumber pn, vector<GameInput>& ret ) const
 {
 	ASSERT_M( pn < NUM_PLAYERS  &&  iCol < MAX_COLS_PER_PLAYER,
-		ssprintf("P%i C%i", pn, iCol) );
+		fmt::sprintf("P%i C%i", pn, iCol) );
 	bool bUsingOneSide = m_StyleType != StyleType_OnePlayerTwoSides && m_StyleType != StyleType_TwoPlayersSharedSides;
 
 	FOREACH_ENUM( GameController, gc)
@@ -79,7 +79,7 @@ void Style::StyleInputToGameInput( int iCol, PlayerNumber pn, vector<GameInput>&
 	}
 	if(unlikely(ret.empty()))
 	{
-		FAIL_M( ssprintf("Invalid column number %i for player %i in the style %s", iCol, pn, m_szName) );
+		FAIL_M( fmt::sprintf("Invalid column number %i for player %i in the style %s", iCol, pn, m_szName) );
 	}
 };
 

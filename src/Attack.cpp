@@ -11,7 +11,7 @@ using std::vector;
 void Attack::GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBeat ) const
 {
 	ASSERT( pSong != nullptr );
-	ASSERT_M( fStartSecond >= 0, ssprintf("StartSecond: %f",fStartSecond) );
+	ASSERT_M( fStartSecond >= 0, fmt::sprintf("StartSecond: %f",fStartSecond) );
 
 	const TimingData &timing = pSong->m_SongTiming;
 	fStartBeat = timing.GetBeatFromElapsedTime( fStartSecond );
@@ -45,7 +45,7 @@ void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlay
 	fEndBeat = std::trunc(fEndBeat)+1;
 
 	// loading the course should have caught this.
-	ASSERT_M( fEndBeat >= fStartBeat, ssprintf("EndBeat %f >= StartBeat %f", fEndBeat, fStartBeat) );
+	ASSERT_M( fEndBeat >= fStartBeat, fmt::sprintf("EndBeat %f >= StartBeat %f", fEndBeat, fStartBeat) );
 }
 
 bool Attack::operator== ( const Attack &rhs ) const
@@ -80,7 +80,7 @@ Attack Attack::FromGlobalCourseModifier( const RString &sModifiers )
 
 RString Attack::GetTextDescription() const
 {
-	RString s = sModifiers + " " + ssprintf("(%.2f seconds)", fSecsRemaining);
+	RString s = sModifiers + " " + fmt::sprintf("(%.2f seconds)", fSecsRemaining);
 	return s;
 }
 
@@ -104,7 +104,7 @@ vector<RString> AttackArray::ToVectorString() const
 	vector<RString> ret;
 	for (auto const &a: *this)
 	{
-		ret.push_back(ssprintf("TIME=%f:LEN=%f:MODS=%s",
+		ret.push_back(fmt::sprintf("TIME=%f:LEN=%f:MODS=%s",
 				       a.fStartSecond,
 				       a.fSecsRemaining,
 				       a.sModifiers.c_str()));

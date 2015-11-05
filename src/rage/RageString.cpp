@@ -253,7 +253,7 @@ int unicode_do_casing( char *p, size_t iLen, const unsigned char pMapping[256] )
 		else
 		{
 			// TODO: Find another
-			// WARN( ssprintf("UnicodeDoUpper: invalid character at \"%s\"", RString(p,iLen).c_str()) );
+			// WARN( fmt::sprintf("UnicodeDoUpper: invalid character at \"%s\"", RString(p,iLen).c_str()) );
 		}
 	}
 	

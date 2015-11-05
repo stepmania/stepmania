@@ -11,7 +11,7 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 		if( bAllowInvalid )
 			return iInvalid;
 
-		LuaHelpers::Push( L, ssprintf("Expected %s; got nil", szType) );
+		LuaHelpers::Push( L, fmt::sprintf("Expected %s; got nil", szType) );
 		lua_error( L );
 	}
 
@@ -51,7 +51,7 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 			 * the string. */
 			lua_pushvalue( L, iPos );
 			LuaHelpers::Pop( L, sGot );
-			sGot = ssprintf( "\"%s\"", sGot.c_str() );
+			sGot = fmt::sprintf( "\"%s\"", sGot.c_str() );
 		}
 		else
 		{
@@ -59,7 +59,7 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 			luaL_pushtype( L, iPos );
 			LuaHelpers::Pop( L, sGot );
 		}
-		LuaHelpers::Push( L, ssprintf("Expected %s; got %s", szType, sGot.c_str() ) );
+		LuaHelpers::Push( L, fmt::sprintf("Expected %s; got %s", szType, sGot.c_str() ) );
 		// There are a couple places where CheckEnum is used outside of a
 		// function called from lua.  If we use lua_error from one of them,
 		// StepMania crashes out completely.  bAllowAnything allows those places
@@ -100,11 +100,11 @@ const RString &EnumToString( int iVal, int iMax, const char **szNameArray, std::
 	// the caller check that they're supplying a valid enum value instead of
 	// returning an inconspicuous garbage value (empty string). -Chris
 	if (iVal < 0)
-		FAIL_M(ssprintf("Value %i cannot be negative for enums! Enum hint: %s", iVal, szNameArray[0]));
+		FAIL_M(fmt::sprintf("Value %i cannot be negative for enums! Enum hint: %s", iVal, szNameArray[0]));
 	if (iVal == iMax)
-		FAIL_M(ssprintf("Value %i cannot be a string with value %i! Enum hint: %s", iVal, iMax, szNameArray[0]));
+		FAIL_M(fmt::sprintf("Value %i cannot be a string with value %i! Enum hint: %s", iVal, iMax, szNameArray[0]));
 	if (iVal > iMax+1)
-		FAIL_M(ssprintf("Value %i is past the invalid value %i! Enum hint: %s", iVal, iMax, szNameArray[0]));
+		FAIL_M(fmt::sprintf("Value %i is past the invalid value %i! Enum hint: %s", iVal, iMax, szNameArray[0]));
 	return *pNameCache[iVal];
 }
 

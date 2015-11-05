@@ -142,7 +142,7 @@ private:
 // Load and unload textures from disk.
 RageTexture* RageTextureManager::LoadTextureInternal( RageTextureID ID )
 {
-	CHECKPOINT_M( ssprintf( "RageTextureManager::LoadTexture(%s).", ID.filename.c_str() ) );
+	CHECKPOINT_M( fmt::sprintf( "RageTextureManager::LoadTexture(%s).", ID.filename.c_str() ) );
 
 	AdjustTextureID(ID);
 
@@ -208,7 +208,7 @@ void RageTextureManager::UnloadTexture( RageTexture *t )
 		return;
 
 	t->m_iRefCount--;
-	ASSERT_M( t->m_iRefCount >= 0, ssprintf("%i, %s", t->m_iRefCount, t->GetID().filename.c_str()) );
+	ASSERT_M( t->m_iRefCount >= 0, fmt::sprintf("%i, %s", t->m_iRefCount, t->GetID().filename.c_str()) );
 
 	if( t->m_iRefCount )
 		return; /* Can't unload textures that are still referenced. */
@@ -308,7 +308,7 @@ void RageTextureManager::GarbageCollect( GCType type )
 				bDeleteThis = true;
 				break;
 			default:
-				FAIL_M(ssprintf("Invalid texture policy: %i", policy));
+				FAIL_M(fmt::sprintf("Invalid texture policy: %i", policy));
 			}
 		}
 
@@ -378,7 +378,7 @@ void RageTextureManager::DiagnosticOutput() const
 		const RageTexture *pTex = i.second;
 
 		RString sDiags = DISPLAY->GetTextureDiagnostics( pTex->GetTexHandle() );
-		RString sStr = ssprintf( "%3ix%3i (%2i)", pTex->GetTextureHeight(), pTex->GetTextureWidth(),
+		RString sStr = fmt::sprintf( "%3ix%3i (%2i)", pTex->GetTextureHeight(), pTex->GetTextureWidth(),
 			pTex->m_iRefCount );
 
 		if( sDiags != "" )

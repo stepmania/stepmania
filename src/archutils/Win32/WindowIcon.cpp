@@ -82,7 +82,7 @@ HICON IconFromSurface( const RageSurface *pSrcImg )
 
 	if( icon == nullptr )
 	{
-		LOG->Trace( "%s", werr_ssprintf( GetLastError(), "CreateIconFromResourceEx" ).c_str() );
+		LOG->Trace( "%s", werr_format( GetLastError(), "CreateIconFromResourceEx" ).c_str() );
 		return nullptr;
 	}
 

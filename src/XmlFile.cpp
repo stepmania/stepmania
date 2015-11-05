@@ -60,9 +60,9 @@ void XNodeStringValue::PushValue( lua_State *L ) const
 }
 
 void XNodeStringValue::SetValue( const RString &v )		{ m_sValue = v; }
-void XNodeStringValue::SetValue( int v )			{ m_sValue = ssprintf("%d",v); }
-void XNodeStringValue::SetValue( float v )			{ m_sValue = ssprintf("%f",v); }
-void XNodeStringValue::SetValue( unsigned v )			{ m_sValue = ssprintf("%u",v); }
+void XNodeStringValue::SetValue( int v )			{ m_sValue = fmt::sprintf("%d",v); }
+void XNodeStringValue::SetValue( float v )			{ m_sValue = fmt::sprintf("%f",v); }
+void XNodeStringValue::SetValue( unsigned v )			{ m_sValue = fmt::sprintf("%u",v); }
 void XNodeStringValue::SetValueFromStack( lua_State *L )
 {
 	LuaHelpers::Pop( L, m_sValue );

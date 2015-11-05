@@ -132,7 +132,7 @@ static RString GetActualGraphicOptionsString()
 {
 	const VideoModeParams &params = DISPLAY->GetActualVideoModeParams();
 	RString sFormat = "%s %s %dx%d %d "+COLOR.GetValue()+" %d "+TEXTURE.GetValue()+" %dHz %s %s";
-	RString sLog = ssprintf( sFormat,
+	RString sLog = fmt::sprintf( sFormat,
 		DISPLAY->GetApiDescription().c_str(),
 		(params.windowed? WINDOWED : FULLSCREEN).GetValue().c_str(),
 		(int)params.width,
@@ -750,7 +750,7 @@ RageDisplay *CreateDisplay()
 	RString error = ERROR_INITIALIZING_CARD.GetValue()+"\n\n"+
 		ERROR_DONT_FILE_BUG.GetValue()+"\n\n"
 		VIDEO_TROUBLESHOOTING_URL "\n\n"+
-		ssprintf(ERROR_VIDEO_DRIVER.GetValue(), GetVideoDriverName().c_str())+"\n\n";
+		fmt::sprintf(ERROR_VIDEO_DRIVER.GetValue(), GetVideoDriverName().c_str())+"\n\n";
 
 	vector<RString> asRenderers;
 	split( PREFSMAN->m_sVideoRenderers.Get(), ",", asRenderers, true );
@@ -796,7 +796,7 @@ RageDisplay *CreateDisplay()
 		RString sError = pRet->Init( params, PREFSMAN->m_bAllowUnacceleratedRenderer );
 		if( !sError.empty() )
 		{
-			error += ssprintf(ERROR_INITIALIZING.GetValue(), sRenderer.c_str())+"\n" + sError;
+			error += fmt::sprintf(ERROR_INITIALIZING.GetValue(), sRenderer.c_str())+"\n" + sError;
 			SAFE_DELETE( pRet );
 			error += "\n\n\n";
 			continue;
@@ -952,7 +952,7 @@ static void WriteLogHeader()
 
 			// surround all params with some marker, as they might have whitespace.
 			// using [[ and ]], as they are not likely to be in the params.
-			args += ssprintf( "[[%s]]", g_argv[i] );
+			args += fmt::sprintf( "[[%s]]", g_argv[i] );
 		}
 		LOG->Info( "Command line args (count=%d): %s", (g_argc - 1), args.c_str());
 	}

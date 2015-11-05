@@ -11,7 +11,7 @@
 
 RString GetAttackPieceName( const RString &sAttack )
 {
-	RString ret = ssprintf( "attack %s", sAttack.c_str() );
+	RString ret = fmt::sprintf( "attack %s", sAttack.c_str() );
 
 	/* 1.5x -> 1_5x.  If we pass a period to THEME->GetPathTo, it'll think
 	 * we're looking for a specific file and not search. */
@@ -36,7 +36,7 @@ void AttackDisplay::Init( const PlayerState* pPlayerState )
 
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-	m_sprAttack.SetName( ssprintf("TextP%d",pn+1) );
+	m_sprAttack.SetName( fmt::sprintf("TextP%d",pn+1) );
 
 	if( GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
 		GAMESTATE->m_PlayMode != PLAY_MODE_RAVE )
@@ -107,7 +107,7 @@ void AttackDisplay::SetAttack( const RString &sText )
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-	const RString sName = ssprintf( "%sP%i", sText.c_str(), pn+1 );
+	const RString sName = fmt::sprintf( "%sP%i", sText.c_str(), pn+1 );
 	m_sprAttack.RunCommands( THEME->GetMetricA("AttackDisplay", sName + "OnCommand") );
 }
 

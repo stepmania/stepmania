@@ -46,16 +46,16 @@ struct TimingTagWriter {
 
 	void Write( const int row, std::string const &value )
 	{
-		m_pvsLines->push_back( m_sNext + ssprintf( "%.6f=%s", NoteRowToBeat(row), value.c_str() ) );
+		m_pvsLines->push_back( m_sNext + fmt::sprintf( "%.6f=%s", NoteRowToBeat(row), value.c_str() ) );
 		m_sNext = ",";
 	}
 
-	void Write( const int row, const float value )        { Write( row, ssprintf( "%.6f",  value ) ); }
-	void Write( const int row, const int value )          { Write( row, ssprintf( "%d",    value ) ); }
-	void Write( const int row, const int a, const int b ) { Write( row, ssprintf( "%d=%d", a, b ) );  }
-	void Write( const int row, const float a, const float b ) { Write( row, ssprintf( "%.6f=%.6f", a, b) ); }
+	void Write( const int row, const float value )        { Write( row, fmt::sprintf( "%.6f",  value ) ); }
+	void Write( const int row, const int value )          { Write( row, fmt::sprintf( "%d",    value ) ); }
+	void Write( const int row, const int a, const int b ) { Write( row, fmt::sprintf( "%d=%d", a, b ) );  }
+	void Write( const int row, const float a, const float b ) { Write( row, fmt::sprintf( "%.6f=%.6f", a, b) ); }
 	void Write( const int row, const float a, const float b, const unsigned short c )
-		{ Write( row, ssprintf( "%.6f=%.6f=%hd", a, b, c) ); }
+		{ Write( row, fmt::sprintf( "%.6f=%.6f=%hd", a, b, c) ); }
 
 	void Init( const RString sTag ) { m_sNext = "#" + sTag + ":"; }
 	void Finish( ) { m_pvsLines->push_back( ( m_sNext != "," ? m_sNext : "" ) + ";" ); }
@@ -182,27 +182,27 @@ static void GetTimingTags( vector<RString> &lines, const TimingData &timing, boo
 
 static void WriteTimingTags( RageFile &f, const TimingData &timing, bool bIsSong = false )
 {
-	f.PutLine(ssprintf("#BPMS:%s;",
+	f.PutLine(fmt::sprintf("#BPMS:%s;",
 			   join(",\r\n", timing.ToVectorString(SEGMENT_BPM, 3)).c_str()));
-	f.PutLine(ssprintf("#STOPS:%s;",
+	f.PutLine(fmt::sprintf("#STOPS:%s;",
 			   join(",\r\n", timing.ToVectorString(SEGMENT_STOP, 3)).c_str()));
-	f.PutLine(ssprintf("#DELAYS:%s;",
+	f.PutLine(fmt::sprintf("#DELAYS:%s;",
 			   join(",\r\n", timing.ToVectorString(SEGMENT_DELAY, 3)).c_str()));
-	f.PutLine(ssprintf("#WARPS:%s;",
+	f.PutLine(fmt::sprintf("#WARPS:%s;",
 			   join(",\r\n", timing.ToVectorString(SEGMENT_WARP, 3)).c_str()));
-	f.PutLine(ssprintf("#TIMESIGNATURES:%s;",
+	f.PutLine(fmt::sprintf("#TIMESIGNATURES:%s;",
 			   join(",\r\n", timing.ToVectorString(SEGMENT_TIME_SIG, 3)).c_str()));
-	f.PutLine(ssprintf("#TICKCOUNTS:%s;",
+	f.PutLine(fmt::sprintf("#TICKCOUNTS:%s;",
 			   join(",\r\n", timing.ToVectorString(SEGMENT_TICKCOUNT, 3)).c_str()));
-	f.PutLine(ssprintf("#COMBOS:%s;",
+	f.PutLine(fmt::sprintf("#COMBOS:%s;",
 			   join(",\r\n", timing.ToVectorString(SEGMENT_COMBO, 3)).c_str()));
-	f.PutLine(ssprintf("#SPEEDS:%s;",
+	f.PutLine(fmt::sprintf("#SPEEDS:%s;",
 			   join(",\r\n", timing.ToVectorString(SEGMENT_SPEED, 3)).c_str()));
-	f.PutLine(ssprintf("#SCROLLS:%s;",
+	f.PutLine(fmt::sprintf("#SCROLLS:%s;",
 			   join(",\r\n", timing.ToVectorString(SEGMENT_SCROLL, 3)).c_str()));
-	f.PutLine(ssprintf("#FAKES:%s;",
+	f.PutLine(fmt::sprintf("#FAKES:%s;",
 			   join(",\r\n", timing.ToVectorString(SEGMENT_FAKE, 3)).c_str()));
-	f.PutLine(ssprintf("#LABELS:%s;",
+	f.PutLine(fmt::sprintf("#LABELS:%s;",
 			   join(",\r\n", timing.ToVectorString(SEGMENT_LABEL, 3)).c_str()));
 
 }
@@ -213,28 +213,28 @@ static void WriteTimingTags( RageFile &f, const TimingData &timing, bool bIsSong
  * @param out the Song in question. */
 static void WriteGlobalTags( RageFile &f, const Song &out )
 {
-	f.PutLine( ssprintf( "#VERSION:%.2f;", STEPFILE_VERSION_NUMBER ) );
-	f.PutLine( ssprintf( "#TITLE:%s;", SmEscape(out.m_sMainTitle).c_str() ) );
-	f.PutLine( ssprintf( "#SUBTITLE:%s;", SmEscape(out.m_sSubTitle).c_str() ) );
-	f.PutLine( ssprintf( "#ARTIST:%s;", SmEscape(out.m_sArtist).c_str() ) );
-	f.PutLine( ssprintf( "#TITLETRANSLIT:%s;", SmEscape(out.m_sMainTitleTranslit).c_str() ) );
-	f.PutLine( ssprintf( "#SUBTITLETRANSLIT:%s;", SmEscape(out.m_sSubTitleTranslit).c_str() ) );
-	f.PutLine( ssprintf( "#ARTISTTRANSLIT:%s;", SmEscape(out.m_sArtistTranslit).c_str() ) );
-	f.PutLine( ssprintf( "#GENRE:%s;", SmEscape(out.m_sGenre).c_str() ) );
-	f.PutLine( ssprintf( "#ORIGIN:%s;", SmEscape(out.m_sOrigin).c_str() ) );
-	f.PutLine( ssprintf( "#CREDIT:%s;", SmEscape(out.m_sCredit).c_str() ) );
-	f.PutLine( ssprintf( "#BANNER:%s;", SmEscape(out.m_sBannerFile).c_str() ) );
-	f.PutLine( ssprintf( "#BACKGROUND:%s;", SmEscape(out.m_sBackgroundFile).c_str() ) );
-	f.PutLine( ssprintf( "#PREVIEWVID:%s;", SmEscape(out.m_sPreviewVidFile).c_str() ) );
-	f.PutLine( ssprintf( "#JACKET:%s;", SmEscape(out.m_sJacketFile).c_str() ) );
-	f.PutLine( ssprintf( "#CDIMAGE:%s;", SmEscape(out.m_sCDFile).c_str() ) );
-	f.PutLine( ssprintf( "#DISCIMAGE:%s;", SmEscape(out.m_sDiscFile).c_str() ) );
-	f.PutLine( ssprintf( "#LYRICSPATH:%s;", SmEscape(out.m_sLyricsFile).c_str() ) );
-	f.PutLine( ssprintf( "#CDTITLE:%s;", SmEscape(out.m_sCDTitleFile).c_str() ) );
-	f.PutLine( ssprintf( "#MUSIC:%s;", SmEscape(out.m_sMusicFile).c_str() ) );
+	f.PutLine( fmt::sprintf( "#VERSION:%.2f;", STEPFILE_VERSION_NUMBER ) );
+	f.PutLine( fmt::sprintf( "#TITLE:%s;", SmEscape(out.m_sMainTitle).c_str() ) );
+	f.PutLine( fmt::sprintf( "#SUBTITLE:%s;", SmEscape(out.m_sSubTitle).c_str() ) );
+	f.PutLine( fmt::sprintf( "#ARTIST:%s;", SmEscape(out.m_sArtist).c_str() ) );
+	f.PutLine( fmt::sprintf( "#TITLETRANSLIT:%s;", SmEscape(out.m_sMainTitleTranslit).c_str() ) );
+	f.PutLine( fmt::sprintf( "#SUBTITLETRANSLIT:%s;", SmEscape(out.m_sSubTitleTranslit).c_str() ) );
+	f.PutLine( fmt::sprintf( "#ARTISTTRANSLIT:%s;", SmEscape(out.m_sArtistTranslit).c_str() ) );
+	f.PutLine( fmt::sprintf( "#GENRE:%s;", SmEscape(out.m_sGenre).c_str() ) );
+	f.PutLine( fmt::sprintf( "#ORIGIN:%s;", SmEscape(out.m_sOrigin).c_str() ) );
+	f.PutLine( fmt::sprintf( "#CREDIT:%s;", SmEscape(out.m_sCredit).c_str() ) );
+	f.PutLine( fmt::sprintf( "#BANNER:%s;", SmEscape(out.m_sBannerFile).c_str() ) );
+	f.PutLine( fmt::sprintf( "#BACKGROUND:%s;", SmEscape(out.m_sBackgroundFile).c_str() ) );
+	f.PutLine( fmt::sprintf( "#PREVIEWVID:%s;", SmEscape(out.m_sPreviewVidFile).c_str() ) );
+	f.PutLine( fmt::sprintf( "#JACKET:%s;", SmEscape(out.m_sJacketFile).c_str() ) );
+	f.PutLine( fmt::sprintf( "#CDIMAGE:%s;", SmEscape(out.m_sCDFile).c_str() ) );
+	f.PutLine( fmt::sprintf( "#DISCIMAGE:%s;", SmEscape(out.m_sDiscFile).c_str() ) );
+	f.PutLine( fmt::sprintf( "#LYRICSPATH:%s;", SmEscape(out.m_sLyricsFile).c_str() ) );
+	f.PutLine( fmt::sprintf( "#CDTITLE:%s;", SmEscape(out.m_sCDTitleFile).c_str() ) );
+	f.PutLine( fmt::sprintf( "#MUSIC:%s;", SmEscape(out.m_sMusicFile).c_str() ) );
 	if(!out.m_PreviewFile.empty())
 	{
-		f.PutLine(ssprintf("#PREVIEW:%s;", SmEscape(out.m_PreviewFile).c_str()));
+		f.PutLine(fmt::sprintf("#PREVIEW:%s;", SmEscape(out.m_PreviewFile).c_str()));
 	}
 
 	{
@@ -245,9 +245,9 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			f.PutLine( "#INSTRUMENTTRACK:" + s + ";\n" );
 		}
 	}
-	f.PutLine( ssprintf( "#OFFSET:%.6f;", out.m_SongTiming.m_fBeat0OffsetInSeconds ) );
-	f.PutLine( ssprintf( "#SAMPLESTART:%.6f;", out.m_fMusicSampleStartSeconds ) );
-	f.PutLine( ssprintf( "#SAMPLELENGTH:%.6f;", out.m_fMusicSampleLengthSeconds ) );
+	f.PutLine( fmt::sprintf( "#OFFSET:%.6f;", out.m_SongTiming.m_fBeat0OffsetInSeconds ) );
+	f.PutLine( fmt::sprintf( "#SAMPLESTART:%.6f;", out.m_fMusicSampleStartSeconds ) );
+	f.PutLine( fmt::sprintf( "#SAMPLELENGTH:%.6f;", out.m_fMusicSampleLengthSeconds ) );
 
 	f.Write( "#SELECTABLE:" );
 	switch(out.m_SelectionDisplay)
@@ -266,12 +266,12 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			break;
 		case DISPLAY_BPM_SPECIFIED:
 			if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
-				f.PutLine( ssprintf( "#DISPLAYBPM:%.6f;", out.m_fSpecifiedBPMMin ) );
+				f.PutLine( fmt::sprintf( "#DISPLAYBPM:%.6f;", out.m_fSpecifiedBPMMin ) );
 			else
-				f.PutLine( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
+				f.PutLine( fmt::sprintf( "#DISPLAYBPM:%.6f:%.6f;", out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
 			break;
 		case DISPLAY_BPM_RANDOM:
-			f.PutLine( ssprintf( "#DISPLAYBPM:*;" ) );
+			f.PutLine( fmt::sprintf( "#DISPLAYBPM:*;" ) );
 			break;
 		default:
 			break;
@@ -280,7 +280,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	WriteTimingTags( f, out.m_SongTiming, true );
 
 	if( out.GetSpecifiedLastSecond() > 0 )
-		f.PutLine( ssprintf("#LASTSECONDHINT:%.6f;", out.GetSpecifiedLastSecond()) );
+		f.PutLine( fmt::sprintf("#LASTSECONDHINT:%.6f;", out.GetSpecifiedLastSecond()) );
 
 	FOREACH_BackgroundLayer( b )
 	{
@@ -289,7 +289,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 		else if( out.GetBackgroundChanges(b).empty() )
 			continue;	// skip
 		else
-			f.Write( ssprintf("#BGCHANGES%d:", b+1) );
+			f.Write( fmt::sprintf("#BGCHANGES%d:", b+1) );
 
 		for (auto &bgc: out.GetBackgroundChanges(b))
 		{
@@ -331,12 +331,12 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	f.PutLine( ";" );
 
 	// attacks section
-	//f.PutLine( ssprintf("#ATTACKS:%s;", out.GetAttackString().c_str()) );
+	//f.PutLine( fmt::sprintf("#ATTACKS:%s;", out.GetAttackString().c_str()) );
 	f.PutLine( "#ATTACKS:" );
 	for(unsigned j = 0; j < out.m_Attacks.size(); j++)
 	{
 		const Attack &a = out.m_Attacks[j];
-		f.Write( ssprintf( "  TIME=%.2f:LEN=%.2f:MODS=%s",
+		f.Write( fmt::sprintf( "  TIME=%.2f:LEN=%.2f:MODS=%s",
 			a.fStartSecond, a.fSecsRemaining, a.sModifiers.c_str() ) );
 
 		if( j+1 < out.m_Attacks.size() )
@@ -358,20 +358,20 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 
 	lines.push_back( "" );
 	// Escape to prevent some clown from making a comment of "\r\n;"
-	lines.push_back( ssprintf("//---------------%s - %s----------------",
+	lines.push_back( fmt::sprintf("//---------------%s - %s----------------",
 		in.m_StepsTypeStr.c_str(), SmEscape(in.GetDescription()).c_str()) );
 	lines.push_back( "#NOTEDATA:;" ); // our new separator.
-	lines.push_back( ssprintf( "#CHARTNAME:%s;", SmEscape(in.GetChartName()).c_str()));
-	lines.push_back( ssprintf( "#STEPSTYPE:%s;", in.m_StepsTypeStr.c_str() ) );
-	lines.push_back( ssprintf( "#DESCRIPTION:%s;", SmEscape(in.GetDescription()).c_str() ) );
-	lines.push_back( ssprintf( "#CHARTSTYLE:%s;", SmEscape(in.GetChartStyle()).c_str() ) );
-	lines.push_back( ssprintf( "#DIFFICULTY:%s;", DifficultyToString(in.GetDifficulty()).c_str() ) );
-	lines.push_back( ssprintf( "#METER:%d;", in.GetMeter() ) );
+	lines.push_back( fmt::sprintf( "#CHARTNAME:%s;", SmEscape(in.GetChartName()).c_str()));
+	lines.push_back( fmt::sprintf( "#STEPSTYPE:%s;", in.m_StepsTypeStr.c_str() ) );
+	lines.push_back( fmt::sprintf( "#DESCRIPTION:%s;", SmEscape(in.GetDescription()).c_str() ) );
+	lines.push_back( fmt::sprintf( "#CHARTSTYLE:%s;", SmEscape(in.GetChartStyle()).c_str() ) );
+	lines.push_back( fmt::sprintf( "#DIFFICULTY:%s;", DifficultyToString(in.GetDifficulty()).c_str() ) );
+	lines.push_back( fmt::sprintf( "#METER:%d;", in.GetMeter() ) );
 
 	const RString& music= in.GetMusicFile();
 	if(!music.empty())
 	{
-		lines.push_back(ssprintf("#MUSIC:%s;", music.c_str()));
+		lines.push_back(fmt::sprintf("#MUSIC:%s;", music.c_str()));
 	}
 
 	vector<RString> asRadarValues;
@@ -380,24 +380,24 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 		const RadarValues &rv = in.GetRadarValues( pn );
 		FOREACH_ENUM( RadarCategory, rc )
 		{
-			asRadarValues.push_back( ssprintf("%.6f", rv[rc]) );
+			asRadarValues.push_back( fmt::sprintf("%.6f", rv[rc]) );
 		}
 	}
-	lines.push_back( ssprintf( "#RADARVALUES:%s;", join(",",asRadarValues).c_str() ) );
+	lines.push_back( fmt::sprintf( "#RADARVALUES:%s;", join(",",asRadarValues).c_str() ) );
 
-	lines.push_back( ssprintf( "#CREDIT:%s;", SmEscape(in.GetCredit()).c_str() ) );
+	lines.push_back( fmt::sprintf( "#CREDIT:%s;", SmEscape(in.GetCredit()).c_str() ) );
 
 	// If the Steps TimingData is not empty, then they have their own
 	// timing.  Write out the corresponding tags.
 	if( !in.m_Timing.empty() )
 	{
-		lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
+		lines.push_back( fmt::sprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
 		GetTimingTags( lines, in.m_Timing );
 	}
 
 	// todo: get this to output similar to course mods -aj
 	if (song.GetAttackString() != in.GetAttackString())
-		lines.push_back( ssprintf("#ATTACKS:%s;", in.GetAttackString().c_str()));
+		lines.push_back( fmt::sprintf("#ATTACKS:%s;", in.GetAttackString().c_str()));
 
 	switch( in.GetDisplayBPM() )
 	{
@@ -409,20 +409,20 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 			float small = in.GetMinBPM();
 			float big = in.GetMaxBPM();
 			if (small == big)
-				lines.push_back( ssprintf( "#DISPLAYBPM:%.6f;", small ) );
+				lines.push_back( fmt::sprintf( "#DISPLAYBPM:%.6f;", small ) );
 			else
-				lines.push_back( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", small, big ) );
+				lines.push_back( fmt::sprintf( "#DISPLAYBPM:%.6f:%.6f;", small, big ) );
 			break;
 		}
 		case DISPLAY_BPM_RANDOM:
-			lines.push_back( ssprintf( "#DISPLAYBPM:*;" ) );
+			lines.push_back( fmt::sprintf( "#DISPLAYBPM:*;" ) );
 			break;
 		default:
 			break;
 	}
 	if (bSavingCache)
 	{
-		lines.push_back(ssprintf("#STEPFILENAME:%s;", in.GetFilename().c_str()));
+		lines.push_back(fmt::sprintf("#STEPFILENAME:%s;", in.GetFilename().c_str()));
 	}
 	else
 	{
@@ -459,14 +459,14 @@ bool NotesWriterSSC::Write( RString sPath, const Song &out, const vector<Steps*>
 
 	if( bSavingCache )
 	{
-		f.PutLine( ssprintf( "// cache tags:" ) );
-		f.PutLine( ssprintf( "#FIRSTSECOND:%.6f;", out.GetFirstSecond() ) );
-		f.PutLine( ssprintf( "#LASTSECOND:%.6f;", out.GetLastSecond() ) );
-		f.PutLine( ssprintf( "#SONGFILENAME:%s;", out.m_sSongFileName.c_str() ) );
-		f.PutLine( ssprintf( "#HASMUSIC:%i;", out.m_bHasMusic ) );
-		f.PutLine( ssprintf( "#HASBANNER:%i;", out.m_bHasBanner ) );
-		f.PutLine( ssprintf( "#MUSICLENGTH:%.6f;", out.m_fMusicLengthSeconds ) );
-		f.PutLine( ssprintf( "// end cache tags" ) );
+		f.PutLine( fmt::sprintf( "// cache tags:" ) );
+		f.PutLine( fmt::sprintf( "#FIRSTSECOND:%.6f;", out.GetFirstSecond() ) );
+		f.PutLine( fmt::sprintf( "#LASTSECOND:%.6f;", out.GetLastSecond() ) );
+		f.PutLine( fmt::sprintf( "#SONGFILENAME:%s;", out.m_sSongFileName.c_str() ) );
+		f.PutLine( fmt::sprintf( "#HASMUSIC:%i;", out.m_bHasMusic ) );
+		f.PutLine( fmt::sprintf( "#HASBANNER:%i;", out.m_bHasBanner ) );
+		f.PutLine( fmt::sprintf( "#MUSICLENGTH:%.6f;", out.m_fMusicLengthSeconds ) );
+		f.PutLine( fmt::sprintf( "// end cache tags" ) );
 	}
 
 	// Save specified Steps to this file
@@ -491,7 +491,7 @@ void NotesWriterSSC::GetEditFileContents( const Song *pSong, const Steps *pSteps
 	split( sDir, "/", asParts );
 	if( asParts.size() )
 		sDir = join( "/", asParts.begin()+1, asParts.end() );
-	sOut += ssprintf( "#SONG:%s;\r\n", sDir.c_str() );
+	sOut += fmt::sprintf( "#SONG:%s;\r\n", sDir.c_str() );
 	sOut += GetSSCNoteData( *pSong, *pSteps, false );
 }
 
@@ -526,14 +526,14 @@ bool NotesWriterSSC::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, R
 		pSteps->GetFilename() != sPath;
 	if( bFileNameChanging  &&  DoesFileExist(sPath) )
 	{
-		sErrorOut = ssprintf( DESTINATION_ALREADY_EXISTS.GetValue(), sPath.c_str() );
+		sErrorOut = fmt::sprintf( DESTINATION_ALREADY_EXISTS.GetValue(), sPath.c_str() );
 		return false;
 	}
 
 	RageFile f;
 	if( !f.Open(sPath, RageFile::WRITE | RageFile::SLOW_FLUSH) )
 	{
-		sErrorOut = ssprintf( ERROR_WRITING_FILE.GetValue(), sPath.c_str() );
+		sErrorOut = fmt::sprintf( ERROR_WRITING_FILE.GetValue(), sPath.c_str() );
 		return false;
 	}
 
@@ -541,7 +541,7 @@ bool NotesWriterSSC::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, R
 	GetEditFileContents( pSong, pSteps, sTag );
 	if( f.PutLine(sTag) == -1 || f.Flush() == -1 )
 	{
-		sErrorOut = ssprintf( ERROR_WRITING_FILE.GetValue(), sPath.c_str() );
+		sErrorOut = fmt::sprintf( ERROR_WRITING_FILE.GetValue(), sPath.c_str() );
 		return false;
 	}
 

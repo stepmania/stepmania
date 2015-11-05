@@ -27,31 +27,31 @@ ThemeMetric<bool> USE_CREDIT	( "NotesWriterSM", "DescriptionUsesCreditField" );
 static void WriteGlobalTags( RageFile &f, Song &out )
 {
 	TimingData &timing = out.m_SongTiming;
-	f.PutLine( ssprintf( "#TITLE:%s;", SmEscape(out.m_sMainTitle).c_str() ) );
-	f.PutLine( ssprintf( "#SUBTITLE:%s;", SmEscape(out.m_sSubTitle).c_str() ) );
-	f.PutLine( ssprintf( "#ARTIST:%s;", SmEscape(out.m_sArtist).c_str() ) );
-	f.PutLine( ssprintf( "#TITLETRANSLIT:%s;", SmEscape(out.m_sMainTitleTranslit).c_str() ) );
-	f.PutLine( ssprintf( "#SUBTITLETRANSLIT:%s;", SmEscape(out.m_sSubTitleTranslit).c_str() ) );
-	f.PutLine( ssprintf( "#ARTISTTRANSLIT:%s;", SmEscape(out.m_sArtistTranslit).c_str() ) );
-	f.PutLine( ssprintf( "#GENRE:%s;", SmEscape(out.m_sGenre).c_str() ) );
-	f.PutLine( ssprintf( "#CREDIT:%s;", SmEscape(out.m_sCredit).c_str() ) );
-	f.PutLine( ssprintf( "#BANNER:%s;", SmEscape(out.m_sBannerFile).c_str() ) );
-	f.PutLine( ssprintf( "#BACKGROUND:%s;", SmEscape(out.m_sBackgroundFile).c_str() ) );
-	f.PutLine( ssprintf( "#LYRICSPATH:%s;", SmEscape(out.m_sLyricsFile).c_str() ) );
-	f.PutLine( ssprintf( "#CDTITLE:%s;", SmEscape(out.m_sCDTitleFile).c_str() ) );
-	f.PutLine( ssprintf( "#MUSIC:%s;", SmEscape(out.m_sMusicFile).c_str() ) );
-	f.PutLine( ssprintf( "#OFFSET:%.6f;", out.m_SongTiming.m_fBeat0OffsetInSeconds ) );
-	f.PutLine( ssprintf( "#SAMPLESTART:%.6f;", out.m_fMusicSampleStartSeconds ) );
-	f.PutLine( ssprintf( "#SAMPLELENGTH:%.6f;", out.m_fMusicSampleLengthSeconds ) );
+	f.PutLine( fmt::sprintf( "#TITLE:%s;", SmEscape(out.m_sMainTitle).c_str() ) );
+	f.PutLine( fmt::sprintf( "#SUBTITLE:%s;", SmEscape(out.m_sSubTitle).c_str() ) );
+	f.PutLine( fmt::sprintf( "#ARTIST:%s;", SmEscape(out.m_sArtist).c_str() ) );
+	f.PutLine( fmt::sprintf( "#TITLETRANSLIT:%s;", SmEscape(out.m_sMainTitleTranslit).c_str() ) );
+	f.PutLine( fmt::sprintf( "#SUBTITLETRANSLIT:%s;", SmEscape(out.m_sSubTitleTranslit).c_str() ) );
+	f.PutLine( fmt::sprintf( "#ARTISTTRANSLIT:%s;", SmEscape(out.m_sArtistTranslit).c_str() ) );
+	f.PutLine( fmt::sprintf( "#GENRE:%s;", SmEscape(out.m_sGenre).c_str() ) );
+	f.PutLine( fmt::sprintf( "#CREDIT:%s;", SmEscape(out.m_sCredit).c_str() ) );
+	f.PutLine( fmt::sprintf( "#BANNER:%s;", SmEscape(out.m_sBannerFile).c_str() ) );
+	f.PutLine( fmt::sprintf( "#BACKGROUND:%s;", SmEscape(out.m_sBackgroundFile).c_str() ) );
+	f.PutLine( fmt::sprintf( "#LYRICSPATH:%s;", SmEscape(out.m_sLyricsFile).c_str() ) );
+	f.PutLine( fmt::sprintf( "#CDTITLE:%s;", SmEscape(out.m_sCDTitleFile).c_str() ) );
+	f.PutLine( fmt::sprintf( "#MUSIC:%s;", SmEscape(out.m_sMusicFile).c_str() ) );
+	f.PutLine( fmt::sprintf( "#OFFSET:%.6f;", out.m_SongTiming.m_fBeat0OffsetInSeconds ) );
+	f.PutLine( fmt::sprintf( "#SAMPLESTART:%.6f;", out.m_fMusicSampleStartSeconds ) );
+	f.PutLine( fmt::sprintf( "#SAMPLELENGTH:%.6f;", out.m_fMusicSampleLengthSeconds ) );
 	float specBeat = out.GetSpecifiedLastBeat();
 	if( specBeat > 0 )
-		f.PutLine( ssprintf("#LASTBEATHINT:%.6f;", specBeat) );
+		f.PutLine( fmt::sprintf("#LASTBEATHINT:%.6f;", specBeat) );
 
 	f.Write( "#SELECTABLE:" );
 	switch(out.m_SelectionDisplay)
 	{
 		default:
-			FAIL_M(ssprintf("Invalid selection display: %i", out.m_SelectionDisplay));
+			FAIL_M(fmt::sprintf("Invalid selection display: %i", out.m_SelectionDisplay));
 		case Song::SHOW_ALWAYS:	f.Write( "YES" );		break;
 		//case Song::SHOW_NONSTOP:	f.Write( "NONSTOP" );	break;
 		case Song::SHOW_NEVER:		f.Write( "NO" );		break;
@@ -65,13 +65,13 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 			break;
 		case DISPLAY_BPM_SPECIFIED:
 			if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
-				f.PutLine( ssprintf( "#DISPLAYBPM:%.6f;", out.m_fSpecifiedBPMMin ) );
+				f.PutLine( fmt::sprintf( "#DISPLAYBPM:%.6f;", out.m_fSpecifiedBPMMin ) );
 			else
-				f.PutLine( ssprintf( "#DISPLAYBPM:%.6f:%.6f;",
+				f.PutLine( fmt::sprintf( "#DISPLAYBPM:%.6f:%.6f;",
 									out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
 			break;
 		case DISPLAY_BPM_RANDOM:
-			f.PutLine( ssprintf( "#DISPLAYBPM:*;" ) );
+			f.PutLine( fmt::sprintf( "#DISPLAYBPM:*;" ) );
 			break;
 		default:
 			break;
@@ -84,7 +84,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	{
 		const BPMSegment *bs = ToBPM(bpms[i]);
 
-		f.PutLine( ssprintf( "%.6f=%.6f", bs->GetBeat(), bs->GetBPM() ) );
+		f.PutLine( fmt::sprintf( "%.6f=%.6f", bs->GetBeat(), bs->GetBPM() ) );
 		if( i != bpms.size()-1 )
 			f.Write( "," );
 	}
@@ -131,7 +131,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	vector<RString> stopLines;
 	for (auto const &ap: allPauses)
 	{
-		stopLines.push_back(ssprintf("%.6f=%.6f", ap.first, ap.second));
+		stopLines.push_back(fmt::sprintf("%.6f=%.6f", ap.first, ap.second));
 	}
 	f.PutLine(join(",\n", stopLines));
 
@@ -144,7 +144,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 		else if( out.GetBackgroundChanges(b).empty() )
 			continue;	// skip
 		else
-			f.Write( ssprintf("#BGCHANGES%d:", b+1) );
+			f.Write( fmt::sprintf("#BGCHANGES%d:", b+1) );
 
 		for (auto &bgc: out.GetBackgroundChanges(b))
 		{
@@ -179,7 +179,7 @@ static void WriteGlobalTags( RageFile &f, Song &out )
 	}
 	f.PutLine( ";" );
 
-	f.PutLine( ssprintf("#ATTACKS:%s;", out.GetAttackString().c_str()) );
+	f.PutLine( fmt::sprintf("#ATTACKS:%s;", out.GetAttackString().c_str()) );
 }
 
 /**
@@ -212,14 +212,14 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 
 	lines.push_back( "" );
 	// Escape to prevent some clown from making a comment of "\r\n;"
-	lines.push_back( ssprintf("//---------------%s - %s----------------",
+	lines.push_back( fmt::sprintf("//---------------%s - %s----------------",
 		in.m_StepsTypeStr.c_str(), SmEscape(in.GetDescription()).c_str()) );
 	lines.push_back( song.m_vsKeysoundFile.empty() ? "#NOTES:" : "#NOTES2:" );
-	lines.push_back( ssprintf( "     %s:", in.m_StepsTypeStr.c_str() ) );
+	lines.push_back( fmt::sprintf( "     %s:", in.m_StepsTypeStr.c_str() ) );
 	RString desc = (USE_CREDIT ? in.GetCredit() : in.GetChartName());
-	lines.push_back( ssprintf( "     %s:", SmEscape(desc).c_str() ) );
-	lines.push_back( ssprintf( "     %s:", DifficultyToString(in.GetDifficulty()).c_str() ) );
-	lines.push_back( ssprintf( "     %d:", in.GetMeter() ) );
+	lines.push_back( fmt::sprintf( "     %s:", SmEscape(desc).c_str() ) );
+	lines.push_back( fmt::sprintf( "     %s:", DifficultyToString(in.GetDifficulty()).c_str() ) );
+	lines.push_back( fmt::sprintf( "     %d:", in.GetMeter() ) );
 
 	vector<RString> asRadarValues;
 	// OpenITG simfiles use 11 radar categories.
@@ -231,10 +231,10 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 		for( RadarCategory rc = (RadarCategory)0; rc < categories;
 		    enum_add<RadarCategory>( rc, 1 ) )
 		{
-			asRadarValues.push_back( ssprintf("%.6f", rv[rc]) );
+			asRadarValues.push_back( fmt::sprintf("%.6f", rv[rc]) );
 		}
 	}
-	lines.push_back( ssprintf( "     %s:", join(",",asRadarValues).c_str() ) );
+	lines.push_back( fmt::sprintf( "     %s:", join(",",asRadarValues).c_str() ) );
 
 	RString sNoteData;
 	in.GetSMNoteData( sNoteData );
@@ -281,7 +281,7 @@ void NotesWriterSM::GetEditFileContents( const Song *pSong, const Steps *pSteps,
 	split( sDir, "/", asParts );
 	if( asParts.size() )
 		sDir = join( "/", asParts.begin()+1, asParts.end() );
-	sOut += ssprintf( "#SONG:%s;\r\n", sDir.c_str() );
+	sOut += fmt::sprintf( "#SONG:%s;\r\n", sDir.c_str() );
 	sOut += GetSMNotesTag( *pSong, *pSteps );
 }
 
@@ -316,14 +316,14 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RS
 		pSteps->GetFilename() != sPath;
 	if( bFileNameChanging  &&  DoesFileExist(sPath) )
 	{
-		sErrorOut = ssprintf( DESTINATION_ALREADY_EXISTS.GetValue(), sPath.c_str() );
+		sErrorOut = fmt::sprintf( DESTINATION_ALREADY_EXISTS.GetValue(), sPath.c_str() );
 		return false;
 	}
 
 	RageFile f;
 	if( !f.Open(sPath, RageFile::WRITE | RageFile::SLOW_FLUSH) )
 	{
-		sErrorOut = ssprintf( ERROR_WRITING_FILE.GetValue(), sPath.c_str() );
+		sErrorOut = fmt::sprintf( ERROR_WRITING_FILE.GetValue(), sPath.c_str() );
 		return false;
 	}
 
@@ -331,7 +331,7 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RS
 	GetEditFileContents( pSong, pSteps, sTag );
 	if( f.PutLine(sTag) == -1 || f.Flush() == -1 )
 	{
-		sErrorOut = ssprintf( ERROR_WRITING_FILE.GetValue(), sPath.c_str() );
+		sErrorOut = fmt::sprintf( ERROR_WRITING_FILE.GetValue(), sPath.c_str() );
 		return false;
 	}
 

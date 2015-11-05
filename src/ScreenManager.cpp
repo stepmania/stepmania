@@ -232,7 +232,7 @@ RegisterScreenClass::RegisterScreenClass( const RString& sClassName, CreateScree
 	}
 
 	auto iter = g_pmapRegistrees->find(sClassName);
-	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Screen class '%s' already registered.", sClassName.c_str()) );
+	ASSERT_M( iter == g_pmapRegistrees->end(), fmt::sprintf("Screen class '%s' already registered.", sClassName.c_str()) );
 
 	(*g_pmapRegistrees)[sClassName] = pfn;
 }
@@ -793,7 +793,7 @@ void ScreenManager::AddNewScreenToTop( const RString &sScreenName, ScreenMessage
 	// Find the prepped screen.
 	LoadedScreen ls;
 	bool screen_load_success = GetPreppedScreen( sScreenName, ls );
-	ASSERT_M(screen_load_success, ssprintf("ScreenManager::AddNewScreenToTop: Failed to load screen %s", sScreenName.c_str()));
+	ASSERT_M(screen_load_success, fmt::sprintf("ScreenManager::AddNewScreenToTop: Failed to load screen %s", sScreenName.c_str()));
 
 	ls.m_SendOnPop = SendOnPop;
 

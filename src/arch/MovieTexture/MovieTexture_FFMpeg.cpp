@@ -32,7 +32,7 @@ static void FixLilEndian()
 				case 24: m = Swap24(m); break;
 				case 32: m = Swap32(m); break;
 				default:
-					 FAIL_M(ssprintf("Unsupported BPP value: %i", pf.bpp));
+					 FAIL_M(fmt::sprintf("Unsupported BPP value: %i", pf.bpp));
 			}
 			pf.masks[mask] = m;
 		}
@@ -362,7 +362,7 @@ static std::string averr_format( int err, std::string const &msg, Args const & .
 	size_t errbuf_size = 512;
 	char* errbuf = new char[errbuf_size];
 	avcodec::av_strerror(err, errbuf, errbuf_size);
-	RString Error = ssprintf("%i: %s", err, errbuf);
+	RString Error = fmt::sprintf("%i: %s", err, errbuf);
 	delete errbuf;
 
 	return s + " (" + Error + ")";
@@ -413,7 +413,7 @@ RString MovieDecoder_FFMpeg::Open( RString sFile )
 	if( !f->Open(sFile, RageFile::READ) )
 	{
 		RString errorMessage = f->GetError();
-		RString error = ssprintf("MovieDecoder_FFMpeg: Error opening \"%s\": %s", sFile.c_str(), errorMessage.c_str() );
+		RString error = fmt::sprintf("MovieDecoder_FFMpeg: Error opening \"%s\": %s", sFile.c_str(), errorMessage.c_str() );
 		delete f;
 		return error;
 	}
@@ -437,11 +437,11 @@ RString MovieDecoder_FFMpeg::Open( RString sFile )
 	m_pStream = m_fctx->streams[stream_idx];
 
 	if( m_pStream->codec->codec_id == avcodec::CODEC_ID_NONE )
-		return ssprintf( "Unsupported codec %08x", m_pStream->codec->codec_tag );
+		return fmt::sprintf( "Unsupported codec %08x", m_pStream->codec->codec_tag );
 
 	RString sError = OpenCodec();
 	if( !sError.empty() )
-		return ssprintf( "AVCodec (%s): %s", sFile.c_str(), sError.c_str() );
+		return fmt::sprintf( "AVCodec (%s): %s", sFile.c_str(), sError.c_str() );
 
 	LOG->Trace( "Bitrate: %i", m_pStream->codec->bit_rate );
 	LOG->Trace( "Codec pixel format: %s", avcodec::av_get_pix_fmt_name(m_pStream->codec->pix_fmt) );
@@ -459,7 +459,7 @@ RString MovieDecoder_FFMpeg::OpenCodec()
 
 	avcodec::AVCodec *pCodec = avcodec::avcodec_find_decoder( m_pStream->codec->codec_id );
 	if( pCodec == nullptr )
-		return ssprintf( "Couldn't find decoder %i", m_pStream->codec->codec_id );
+		return fmt::sprintf( "Couldn't find decoder %i", m_pStream->codec->codec_id );
 
 	m_pStream->codec->workaround_bugs   = 1;
 	m_pStream->codec->idct_algo         = FF_IDCT_AUTO;

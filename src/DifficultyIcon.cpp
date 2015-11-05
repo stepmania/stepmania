@@ -28,7 +28,7 @@ bool DifficultyIcon::Load( RString sPath )
 		bWarn = false;
 	if( bWarn )
 	{
-		RString sError = ssprintf(
+		RString sError = fmt::sprintf(
 			"The difficulty icon graphic '%s' must have %d or %d frames.  It has %d states.",
 			sPath.c_str(),
 			NUM_Difficulty,

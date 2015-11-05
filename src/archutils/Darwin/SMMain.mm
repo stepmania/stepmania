@@ -148,7 +148,7 @@
 
 static void HandleNSException( NSException *exception )
 {
-	FAIL_M( ssprintf("%s raised: %s", [[exception name] UTF8String], [[exception reason] UTF8String]) );
+	FAIL_M( fmt::sprintf("%s raised: %s", [[exception name] UTF8String], [[exception reason] UTF8String]) );
 }
 
 static NSMenuItem *MenuItem( NSString *title, SEL action, NSString *code )

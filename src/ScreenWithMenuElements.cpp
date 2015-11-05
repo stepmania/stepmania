@@ -48,7 +48,7 @@ void ScreenWithMenuElements::Init()
 			ASSERT( m_MemoryCardDisplay[p] == nullptr );
 			m_MemoryCardDisplay[p] = new MemoryCardDisplay;
 			m_MemoryCardDisplay[p]->Load( p );
-			m_MemoryCardDisplay[p]->SetName( ssprintf("MemoryCardDisplayP%d",p+1) );
+			m_MemoryCardDisplay[p]->SetName( fmt::sprintf("MemoryCardDisplayP%d",p+1) );
 			LOAD_ALL_COMMANDS_AND_SET_XY( m_MemoryCardDisplay[p] );
 			this->AddChild( m_MemoryCardDisplay[p] );
 		}

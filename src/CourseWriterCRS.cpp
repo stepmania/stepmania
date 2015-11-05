@@ -45,30 +45,30 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 {
 	ASSERT( !course.m_bIsAutogen );
 
-	f.PutLine( ssprintf("#COURSE:%s;", course.m_sMainTitle.c_str()) );
+	f.PutLine( fmt::sprintf("#COURSE:%s;", course.m_sMainTitle.c_str()) );
 	if( course.m_sMainTitleTranslit != "" )
-		f.PutLine( ssprintf("#COURSETRANSLIT:%s;", course.m_sMainTitleTranslit.c_str()) );
+		f.PutLine( fmt::sprintf("#COURSETRANSLIT:%s;", course.m_sMainTitleTranslit.c_str()) );
 	if( course.m_sScripter != "" )
-		f.PutLine( ssprintf("#SCRIPTER:%s;", course.m_sScripter.c_str()) );
+		f.PutLine( fmt::sprintf("#SCRIPTER:%s;", course.m_sScripter.c_str()) );
 	if( course.m_bRepeat )
 		f.PutLine( "#REPEAT:YES;" );
 	if( course.m_iLives != -1 )
-		f.PutLine( ssprintf("#LIVES:%i;", course.m_iLives) );
+		f.PutLine( fmt::sprintf("#LIVES:%i;", course.m_iLives) );
 	if( !course.m_sBannerPath.empty() )
-		f.PutLine( ssprintf("#BANNER:%s;", course.m_sBannerPath.c_str()) );
+		f.PutLine( fmt::sprintf("#BANNER:%s;", course.m_sBannerPath.c_str()) );
 
 	if( !course.m_setStyles.empty() )
 	{
 		vector<RString> asStyles;
 		asStyles.insert( asStyles.begin(), course.m_setStyles.begin(), course.m_setStyles.end() );
-		f.PutLine( ssprintf("#STYLE:%s;", join( ",", asStyles ).c_str()) );
+		f.PutLine( fmt::sprintf("#STYLE:%s;", join( ",", asStyles ).c_str()) );
 	}
 
 	FOREACH_ENUM( CourseDifficulty,cd )
 	{
 		if( course.m_iCustomMeter[cd] == -1 )
 			continue;
-		f.PutLine( ssprintf("#METER:%s:%i;", DifficultyToCRSString(cd).c_str(), course.m_iCustomMeter[cd]) );
+		f.PutLine( fmt::sprintf("#METER:%s:%i;", DifficultyToCRSString(cd).c_str(), course.m_iCustomMeter[cd]) );
 	}
 
 	if( bSavingCache )
@@ -86,9 +86,9 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 			const RadarValues &rv = cache.second;
 			for (int r = 0; r < NUM_RadarCategory; r++)
 			{
-				asRadarValues.push_back(ssprintf("%.3f", rv[r]));
+				asRadarValues.push_back(fmt::sprintf("%.3f", rv[r]));
 			}
-			RString sLine = ssprintf("#RADAR:%i:%i:", st, cd);
+			RString sLine = fmt::sprintf("#RADAR:%i:%i:", st, cd);
 			sLine += join( ",", asRadarValues ) + ";";
 			f.PutLine( sLine );
 		}
@@ -103,7 +103,7 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 				f.PutLine( "#MODS:" );
 
 			const Attack &a = entry.attacks[j];
-			f.Write( ssprintf( "  TIME=%.2f:LEN=%.2f:MODS=%s",
+			f.Write( fmt::sprintf( "  TIME=%.2f:LEN=%.2f:MODS=%s",
 				a.fStartSecond, a.fSecsRemaining, a.sModifiers.c_str() ) );
 
 			if( j+1 < entry.attacks.size() )
@@ -114,15 +114,15 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 		}
 
 		if( entry.fGainSeconds > 0 )
-			f.PutLine( ssprintf("#GAINSECONDS:%f;", entry.fGainSeconds) );
+			f.PutLine( fmt::sprintf("#GAINSECONDS:%f;", entry.fGainSeconds) );
 
 		if( entry.songSort == SongSort_MostPlays  &&  entry.iChooseIndex != -1 )
 		{
-			f.Write( ssprintf( "#SONG:BEST%d", entry.iChooseIndex+1 ) );
+			f.Write( fmt::sprintf( "#SONG:BEST%d", entry.iChooseIndex+1 ) );
 		}
 		else if( entry.songSort == SongSort_FewestPlays  &&  entry.iChooseIndex != -1 )
 		{
-			f.Write( ssprintf( "#SONG:WORST%d", entry.iChooseIndex+1 ) );
+			f.Write( fmt::sprintf( "#SONG:WORST%d", entry.iChooseIndex+1 ) );
 		}
 		else if( entry.songID.ToSong() )
 		{
@@ -136,7 +136,7 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 		}
 		else if( !entry.songCriteria.m_sGroupName.empty() )
 		{
-			f.Write( ssprintf( "#SONG:%s/*", entry.songCriteria.m_sGroupName.c_str() ) );
+			f.Write( fmt::sprintf( "#SONG:%s/*", entry.songCriteria.m_sGroupName.c_str() ) );
 		}
 		else
 		{
@@ -147,7 +147,7 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 		if( entry.stepsCriteria.m_difficulty != Difficulty_Invalid )
 			f.Write( DifficultyToString(entry.stepsCriteria.m_difficulty) );
 		else if( entry.stepsCriteria.m_iLowMeter != -1  &&  entry.stepsCriteria.m_iHighMeter != -1 )
-			f.Write( ssprintf( "%d..%d", entry.stepsCriteria.m_iLowMeter, entry.stepsCriteria.m_iHighMeter ) );
+			f.Write( fmt::sprintf( "%d..%d", entry.stepsCriteria.m_iLowMeter, entry.stepsCriteria.m_iHighMeter ) );
 		f.Write( ":" );
 
 		RString sModifiers = entry.sModifiers;
@@ -170,7 +170,7 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 		{
 			if( !sModifiers.empty() )
 				sModifiers += ',';
-			sModifiers += ssprintf( "award%d", entry.iGainLives );
+			sModifiers += fmt::sprintf( "award%d", entry.iGainLives );
 		}
 
 		f.Write( sModifiers );

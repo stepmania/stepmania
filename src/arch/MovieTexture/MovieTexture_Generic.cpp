@@ -50,11 +50,11 @@ RString MovieTexture_Generic::Init()
 	/* Decode one frame, to guarantee that the texture is drawn when this function returns. */
 	int ret = m_pDecoder->DecodeFrame( -1 );
 	if( ret == -1 )
-		return ssprintf( "%s: error getting first frame", GetID().filename.c_str() );
+		return fmt::sprintf( "%s: error getting first frame", GetID().filename.c_str() );
 	if( ret == 0 )
 	{
 		/* There's nothing there. */
-		return ssprintf( "%s: EOF getting first frame", GetID().filename.c_str() );
+		return fmt::sprintf( "%s: EOF getting first frame", GetID().filename.c_str() );
 	}
 
 	m_ImageWaiting = FRAME_DECODED;
@@ -237,7 +237,7 @@ void MovieTexture_Generic::CreateTexture()
 		switch( depth )
 		{
 		default:
-			FAIL_M(ssprintf("Unsupported movie color depth: %i", depth));
+			FAIL_M(fmt::sprintf("Unsupported movie color depth: %i", depth));
 		case 16:
 			if( DISPLAY->SupportsTextureFormat(RagePixelFormat_RGB5) )
 				pixfmt = RagePixelFormat_RGB5;

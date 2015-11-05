@@ -690,7 +690,7 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 	{
 		g_ThemePathCache[category].clear();
 
-		RString message = ssprintf(
+		RString message = fmt::sprintf(
 			"ThemeManager:  There is more than one theme element that matches "
 			"'%s/%s/%s'.  Please remove all but one of these matches: ",
 			sThemeName.c_str(), sCategory.c_str(), MetricsGroupAndElementToFileName(sMetricsGroup,sElement).c_str() );
@@ -743,7 +743,7 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 	if( GetPathInfo(out,category,sNewClassName,sNewFile,true) )
 		return true;
 
-	RString sMessage = ssprintf(
+	RString sMessage = fmt::sprintf(
 			"ThemeManager:  The redirect '%s' points to the file '%s', which does not exist. "
 			"Verify that this redirect is correct.",
 			sPath.c_str(), sNewFileName.c_str());
@@ -993,7 +993,7 @@ RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sMetricsG
 		else
 			FAIL_M("");
 
-		RString sMessage = ssprintf( "%s \"%s::%s\" is missing.",
+		RString sMessage = fmt::sprintf( "%s \"%s::%s\" is missing.",
 			sType.c_str(),
 			sMetricsGroup.c_str(),
 			sValueName.c_str() );
@@ -1091,7 +1091,7 @@ void ThemeManager::PushMetric( Lua *L, const RString &sMetricsGroup, const RStri
 	}
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sMetricsGroup, sValueName );
 
-	RString sName = ssprintf( "%s::%s", sMetricsGroup.c_str(), sValueName.c_str() );
+	RString sName = fmt::sprintf( "%s::%s", sMetricsGroup.c_str(), sValueName.c_str() );
     if( Rage::ends_with(sValueName, "Command") )
 	{
 		LuaHelpers::ParseCommandList( L, sValue, sName, false );

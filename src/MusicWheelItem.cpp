@@ -107,7 +107,7 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 	FOREACH_PlayerNumber( p )
 	{
 		m_pGradeDisplay[p].Load( THEME->GetPathG(sType,"grades") );
-		m_pGradeDisplay[p]->SetName( ssprintf("GradeP%d",int(p+1)) );
+		m_pGradeDisplay[p]->SetName( fmt::sprintf("GradeP%d",int(p+1)) );
 		this->AddChild( m_pGradeDisplay[p] );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_pGradeDisplay[p] );
 	}
@@ -228,7 +228,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 			else
 				type = MusicWheelItemType_SectionCollapsed;
 
-			m_pTextSectionCount->SetText( ssprintf("%d",pWID->m_iSectionCount) );
+			m_pTextSectionCount->SetText( fmt::sprintf("%d",pWID->m_iSectionCount) );
 			m_pTextSectionCount->SetVisible( true );
 		}
 		break;

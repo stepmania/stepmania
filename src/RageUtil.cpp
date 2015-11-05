@@ -167,7 +167,7 @@ LUA_REGISTER_NAMESPACE( MersenneTwister );
 
 void fapproach( float& val, float other_val, float to_move )
 {
-	ASSERT_M( to_move >= 0, ssprintf("to_move: %f < 0", to_move) );
+	ASSERT_M( to_move >= 0, fmt::sprintf("to_move: %f < 0", to_move) );
 	if( val == other_val )
 		return;
 	float fDelta = other_val - val;
@@ -240,7 +240,7 @@ RString BinaryToHex( const void *pData_, int iNumBytes )
 	for( int i=0; i<iNumBytes; i++ )
 	{
 		unsigned val = pData[i];
-		s += ssprintf( "%02x", val );
+		s += fmt::sprintf( "%02x", val );
 	}
 	return s;
 }
@@ -295,7 +295,7 @@ RString SecondsToHHMMSS( float fSecs )
 {
 	const int iMinsDisplay = (int)fSecs/60;
 	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
-	RString sReturn = ssprintf( "%02d:%02d:%02d", iMinsDisplay/60, iMinsDisplay%60, iSecsDisplay );
+	RString sReturn = fmt::sprintf( "%02d:%02d:%02d", iMinsDisplay/60, iMinsDisplay%60, iSecsDisplay );
 	return sReturn;
 }
 
@@ -305,7 +305,7 @@ RString SecondsToMMSSMsMs( float fSecs )
 	const int iMinsDisplay = (int)fSecs/60;
 	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
 	const int iLeftoverDisplay = (int) ( (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100 );
-	RString sReturn = ssprintf( "%02d:%02d.%02d", iMinsDisplay, iSecsDisplay, min(99,iLeftoverDisplay) );
+	RString sReturn = fmt::sprintf( "%02d:%02d.%02d", iMinsDisplay, iSecsDisplay, min(99,iLeftoverDisplay) );
 	return sReturn;
 }
 
@@ -315,7 +315,7 @@ RString SecondsToMSSMsMs( float fSecs )
 	const int iMinsDisplay = (int)fSecs/60;
 	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
 	const int iLeftoverDisplay = (int) ( (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100 );
-	RString sReturn = ssprintf( "%01d:%02d.%02d", iMinsDisplay, iSecsDisplay, min(99,iLeftoverDisplay) );
+	RString sReturn = fmt::sprintf( "%01d:%02d.%02d", iMinsDisplay, iSecsDisplay, min(99,iLeftoverDisplay) );
 	return sReturn;
 }
 
@@ -325,7 +325,7 @@ RString SecondsToMMSSMsMsMs( float fSecs )
 	const int iMinsDisplay = (int)fSecs/60;
 	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
 	const int iLeftoverDisplay = (int) ( (fSecs - iMinsDisplay*60 - iSecsDisplay) * 1000 );
-	RString sReturn = ssprintf( "%02d:%02d.%03d", iMinsDisplay, iSecsDisplay, min(999,iLeftoverDisplay) );
+	RString sReturn = fmt::sprintf( "%02d:%02d.%03d", iMinsDisplay, iSecsDisplay, min(999,iLeftoverDisplay) );
 	return sReturn;
 }
 
@@ -333,7 +333,7 @@ RString SecondsToMSS( float fSecs )
 {
 	const int iMinsDisplay = (int)fSecs/60;
 	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
-	RString sReturn = ssprintf( "%01d:%02d", iMinsDisplay, iSecsDisplay);
+	RString sReturn = fmt::sprintf( "%01d:%02d", iMinsDisplay, iSecsDisplay);
 	return sReturn;
 }
 
@@ -341,18 +341,18 @@ RString SecondsToMMSS( float fSecs )
 {
 	const int iMinsDisplay = (int)fSecs/60;
 	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
-	RString sReturn = ssprintf( "%02d:%02d", iMinsDisplay, iSecsDisplay);
+	RString sReturn = fmt::sprintf( "%02d:%02d", iMinsDisplay, iSecsDisplay);
 	return sReturn;
 }
 
 RString PrettyPercent( float fNumerator, float fDenominator)
 {
-	return ssprintf("%0.2f%%",fNumerator/fDenominator*100);
+	return fmt::sprintf("%0.2f%%",fNumerator/fDenominator*100);
 }
 
 RString Commify( int iNum )
 {
-	RString sNum = ssprintf("%d",iNum);
+	RString sNum = fmt::sprintf("%d",iNum);
 	return Commify( sNum );
 }
 
@@ -418,7 +418,7 @@ RString FormatNumberAndSuffix( int i )
 	if( ((i%100) / 10) == 1 )
 		sSuffix = NUM_TH;
 
-	return NUM_PREFIX.GetValue() + ssprintf("%i", i) + sSuffix;
+	return NUM_PREFIX.GetValue() + fmt::sprintf("%i", i) + sSuffix;
 }
 
 RString unique_name(RString const& type)
@@ -437,101 +437,12 @@ RString unique_name(RString const& type)
 	return ret;
 }
 
-
-
 struct tm GetLocalTime()
 {
 	const time_t t = time(nullptr);
 	struct tm tm;
 	localtime_r( &t, &tm );
 	return tm;
-}
-
-RString ssprintf( const char *fmt, ...)
-{
-	va_list	va;
-	va_start(va, fmt);
-	return vssprintf(fmt, va);
-}
-
-#define FMT_BLOCK_SIZE		2048 // # of bytes to increment per try
-
-RString vssprintf( const char *szFormat, va_list argList )
-{
-	RString sStr;
-
-#if defined(WIN32)
-	char *pBuf = nullptr;
-	int iChars = 1;
-	int iUsed = 0;
-	int iTry = 0;
-
-	do
-	{
-		// Grow more than linearly (e.g. 512, 1536, 3072, etc)
-		iChars += iTry * FMT_BLOCK_SIZE;
-		pBuf = (char*) _alloca( sizeof(char)*iChars );
-		iUsed = vsnprintf( pBuf, iChars-1, szFormat, argList );
-		++iTry;
-	} while( iUsed < 0 );
-
-	// assign whatever we managed to format
-	sStr.assign( pBuf, iUsed );
-#else
-	static bool bExactSizeSupported;
-	static bool bInitialized = false;
-	if( !bInitialized )
-	{
-		/* Some systems return the actual size required when snprintf
-		 * doesn't have enough space.  This lets us avoid wasting time
-		 * iterating, and wasting memory. */
-		char ignore;
-		bExactSizeSupported = ( snprintf( &ignore, 0, "Hello World" ) == 11 );
-		bInitialized = true;
-	}
-
-	if( bExactSizeSupported )
-	{
-		va_list tmp;
-		va_copy( tmp, argList );
-		char ignore;
-		int iNeeded = vsnprintf( &ignore, 0, szFormat, tmp );
-		va_end(tmp);
-
-		char *buf = new char[iNeeded + 1];
-		std::fill(buf, buf + iNeeded + 1, '\0');
-		vsnprintf( buf, iNeeded+1, szFormat, argList );
-		RString ret(buf);
-		delete [] buf;
-		return ret;
-	}
-
-	int iChars = FMT_BLOCK_SIZE;
-	int iTry = 1;
-	for (;;)
-	{
-		// Grow more than linearly (e.g. 512, 1536, 3072, etc)
-		char *buf = new char[iChars];
-		std::fill(buf, buf + iChars, '\0');
-		int used = vsnprintf( buf, iChars - 1, szFormat, argList );
-		if ( used == -1 )
-		{
-			iChars += ( ++iTry * FMT_BLOCK_SIZE );
-		}
-		else
-		{
-			/* OK */
-			sStr.assign(buf, used);
-		}
-		
-		delete [] buf;
-		if (used != -1)
-		{
-			break;
-		}
-	}
-#endif
-	return sStr;
 }
 
 /* ISO-639-1 codes: http://www.loc.gov/standards/iso639-2/php/code_list.php
@@ -1290,7 +1201,7 @@ RString URLEncode( const RString &sStr )
 		if( t >= '!' && t <= 'z' )
 			sOutput += t;
 		else
-			sOutput += "%" + ssprintf( "%02X", t );
+			sOutput += "%" + fmt::sprintf( "%02X", t );
 	}
 	return sOutput;
 }
@@ -1512,7 +1423,7 @@ bool Regex::Replace( const RString &sReplacement, const RString &sSubject, RStri
 	// TODO: optimize me by iterating only once over the string
 	for( unsigned i=0; i<asMatches.size(); i++ )
 	{
-		RString sFrom = ssprintf( "\\${%d}", i );
+		RString sFrom = fmt::sprintf( "\\${%d}", i );
 		RString sTo = asMatches[i];
 		Rage::replace(sOut, sFrom, sTo);
 	}
@@ -1538,7 +1449,7 @@ static int UnicodeDoUpper( char *p, size_t iLen, const unsigned char pMapping[25
 		if( sOut.size() == iStart )
 			memcpy( p, sOut.data(), sOut.size() );
 		else
-			WARN( ssprintf("UnicodeDoUpper: invalid character at \"%s\"", RString(p,iLen).c_str()) );
+			WARN( fmt::sprintf("UnicodeDoUpper: invalid character at \"%s\"", RString(p,iLen).c_str()) );
 	}
 
 	return iStart;
@@ -1974,22 +1885,22 @@ namespace StringConversion
 
 	template<> RString ToString<int>( const int &value )
 	{
-		return ssprintf( "%i", value );
+		return fmt::sprintf( "%i", value );
 	}
 
 	template<> RString ToString<unsigned>( const unsigned &value )
 	{
-		return ssprintf( "%u", value );
+		return fmt::sprintf( "%u", value );
 	}
 
 	template<> RString ToString<float>( const float &value )
 	{
-		return ssprintf( "%f", value );
+		return fmt::sprintf( "%f", value );
 	}
 
 	template<> RString ToString<bool>( const bool &value )
 	{
-		return ssprintf( "%i", value );
+		return fmt::sprintf( "%i", value );
 	}
 }
 
@@ -2027,7 +1938,7 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 		RString data;
 		if( in.Read(data, 1024*32) == -1 )
 		{
-			sError = ssprintf( "read error: %s", in.GetError().c_str() );
+			sError = fmt::sprintf( "read error: %s", in.GetError().c_str() );
 			if( bReadError != nullptr )
 				*bReadError = true;
 			return false;
@@ -2037,7 +1948,7 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 		int i = out.Write(data);
 		if( i == -1 )
 		{
-			sError = ssprintf( "write error: %s", out.GetError().c_str() );
+			sError = fmt::sprintf( "write error: %s", out.GetError().c_str() );
 			if( bReadError != nullptr )
 				*bReadError = false;
 			return false;
@@ -2046,7 +1957,7 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 
 	if( out.Flush() == -1 )
 	{
-		sError = ssprintf( "write error: %s", out.GetError().c_str() );
+		sError = fmt::sprintf( "write error: %s", out.GetError().c_str() );
 		if( bReadError != nullptr )
 			*bReadError = false;
 		return false;

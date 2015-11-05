@@ -46,7 +46,7 @@ RString FileTransfer::Update( float fDeltaTime )
 	if (m_fLastUpdate >= 1.0)
 	{
 		if (m_bIsDownloading && m_bGotHeader)
-			m_sStatus = ssprintf("DL @ %d KB/s", int((m_iDownloaded-m_bytesLastUpdate)/1024));
+			m_sStatus = fmt::sprintf("DL @ %d KB/s", int((m_iDownloaded-m_bytesLastUpdate)/1024));
 
 		m_bytesLastUpdate = m_iDownloaded;
 		UpdateProgress();
@@ -104,7 +104,7 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 
 	m_sBaseAddress = "http://" + Server;
 	if( Port != 80 )
-		m_sBaseAddress += ssprintf( ":%d", Port );
+		m_sBaseAddress += fmt::sprintf( ":%d", Port );
 	m_sBaseAddress += "/";
 
 	if (!Rage::ends_with( sAddress, "/"))
@@ -194,11 +194,11 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 	{
 		sHeader += "Content-Type: application/octet-stream\r\n";
 		sHeader += "Content-Length: multipart/form-data; boundary=" + sBoundary + "\r\n";
-		//sHeader += "Content-Length: " + ssprintf("%d",sRequestPayload.size()) + "\r\n";
+		//sHeader += "Content-Length: " + fmt::sprintf("%d",sRequestPayload.size()) + "\r\n";
 	}
 	*/
 
-	vsHeaders.push_back( "Content-Length: " + ssprintf("%zd",sRequestPayload.size()) );
+	vsHeaders.push_back( "Content-Length: " + fmt::sprintf("%zd",sRequestPayload.size()) );
 
 	RString sHeader;
 	for (auto const &h: vsHeaders)
@@ -311,12 +311,12 @@ void FileTransfer::HTTPUpdate()
 		m_wSocket.close();
 		m_bIsDownloading = false;
 		m_bGotHeader=false;
-		m_sStatus = ssprintf( "Done;%dB", int(m_iDownloaded) );
+		m_sStatus = fmt::sprintf( "Done;%dB", int(m_iDownloaded) );
 		m_bFinished = true;
 
 		if( m_iResponseCode < 200 || m_iResponseCode >= 400 )
 		{
-			m_sStatus = ssprintf( "%ld", m_iResponseCode ) + m_sResponseName;
+			m_sStatus = fmt::sprintf( "%ld", m_iResponseCode ) + m_sResponseName;
 		}
 		else
 		{

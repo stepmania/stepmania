@@ -381,7 +381,7 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 			sPaths += dir;
 		}
 
-		RString message = ssprintf(
+		RString message = fmt::sprintf(
 			"The NoteSkin element \"%s %s\" could not be found in any of the following directories:\n%s",
 			sButtonName.c_str(), sElement.c_str(),
 			sPaths.c_str() );
@@ -427,7 +427,7 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 
 		if( sRealPath == "" )
 		{
-			RString message = ssprintf(
+			RString message = fmt::sprintf(
 					"NoteSkinManager:  The redirect \"%s\" points to the file \"%s\", which does not exist. "
 					"Verify that this redirect is correct.",
 					sPath.c_str(), sNewFileName.c_str());

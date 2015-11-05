@@ -687,7 +687,7 @@ RString FontPageSettings::MapRange( RString sMapping, int iMapOffset, int iGlyph
 		 * only 4 megs.) Let's use that as a cap. (We don't want to go crazy
 		 * if someone says "range Unicode #0-FFFFFFFF".) */
 		if( iCount > 16384 )
-			return ssprintf( "Can't map %i glyphs to one font page", iCount );
+			return fmt::sprintf( "Can't map %i glyphs to one font page", iCount );
 
 		while( iCount )
 		{
@@ -777,7 +777,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 	LoadStack.push_back( sIniPath );
 
 	// The font is not already loaded. Figure out what we have.
-	CHECKPOINT_M( ssprintf("Font::Load(\"%s\",\"%s\").", sIniPath.c_str(), m_sChars.c_str()) );
+	CHECKPOINT_M( fmt::sprintf("Font::Load(\"%s\",\"%s\").", sIniPath.c_str(), m_sChars.c_str()) );
 
 	path = sIniPath;
 	m_sChars = sChars;
@@ -819,7 +819,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 
 		if( bIsTopLevelFont  &&  imports.empty()  &&  asTexturePaths.empty() )
 		{
-			RString s = ssprintf( "Font \"%s\" is a top-level font with no textures or imports.", sIniPath.c_str() );
+			RString s = fmt::sprintf( "Font \"%s\" is a top-level font with no textures or imports.", sIniPath.c_str() );
 			Dialog::OK( s );
 		}
 
@@ -828,7 +828,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 			RString sPath = THEME->GetPathF( "", import, true );
 			if( sPath == "" )
 			{
-				RString s = ssprintf( "Font \"%s\" imports a font \"%s\" that doesn't exist", sIniPath.c_str(), import.c_str() );
+				RString s = fmt::sprintf( "Font \"%s\" imports a font \"%s\" that doesn't exist", sIniPath.c_str(), import.c_str() );
 				Dialog::OK( s );
 				continue;
 			}

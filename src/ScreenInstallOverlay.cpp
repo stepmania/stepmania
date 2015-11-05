@@ -229,7 +229,7 @@ public:
 					if( FileCopy( TEMP_MOUNT_POINT + sFilename + sExt, SpecialFiles::PACKAGES_DIR + sFilename + sExt ) )
 						vSucceeded.push_back( FileCopyResult(*s,bFileExists ? "overwrote existing file" : "") );
 					else
-						vFailed.push_back( FileCopyResult(*s,ssprintf("error copying file to '%s'",sOsDir.c_str())) );
+						vFailed.push_back( FileCopyResult(*s,fmt::sprintf("error copying file to '%s'",sOsDir.c_str())) );
 
 				}
 				*/

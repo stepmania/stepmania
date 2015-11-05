@@ -201,7 +201,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	}
 
 #define CHECK_INVALID_VALUE(member, value, invalid_value, value_name) \
-	CHECK_INVALID_COND(member, value, (value == invalid_value), ssprintf("Invalid "#value_name" \"%s\".", sValue.c_str()));
+	CHECK_INVALID_COND(member, value, (value == invalid_value), fmt::sprintf("Invalid "#value_name" \"%s\".", sValue.c_str()));
 
 	if( sName == "style" )
 	{
@@ -288,7 +288,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	{
 		CHECK_INVALID_COND(m_pSong, SONGMAN->FindSong(sValue),
 			(SONGMAN->FindSong(sValue) == nullptr),
-			(ssprintf("Song \"%s\" not found", sValue.c_str())));
+			(fmt::sprintf("Song \"%s\" not found", sValue.c_str())));
 	}
 
 	else if( sName == "steps" )
@@ -317,7 +317,7 @@ void GameCommand::LoadOne( const Command& cmd )
 					st = SongUtil::GetStepsByDescription( pSong, pStyle->m_StepsType, sSteps );
 				}
 				CHECK_INVALID_COND(m_pSteps, st, (st == nullptr),
-					(ssprintf("Steps \"%s\" not found", sSteps.c_str())));
+					(fmt::sprintf("Steps \"%s\" not found", sSteps.c_str())));
 			}
 		}
 	}
@@ -326,7 +326,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	{
 		CHECK_INVALID_COND(m_pCourse, SONGMAN->FindCourse("", sValue),
 			(SONGMAN->FindCourse("", sValue) == nullptr),
-			(ssprintf( "Course \"%s\" not found", sValue.c_str())));
+			(fmt::sprintf( "Course \"%s\" not found", sValue.c_str())));
 	}
 
 	else if( sName == "trail" )
@@ -347,7 +347,7 @@ void GameCommand::LoadOne( const Command& cmd )
 				const CourseDifficulty cd = StringToDifficulty( sTrail );
 				if(cd == Difficulty_Invalid)
 				{
-					MAKE_INVALID(ssprintf("Invalid difficulty '%s'", sTrail.c_str()));
+					MAKE_INVALID(fmt::sprintf("Invalid difficulty '%s'", sTrail.c_str()));
 				}
 				else
 				{
@@ -487,7 +487,7 @@ void GameCommand::LoadOne( const Command& cmd )
 
 	else
 	{
-		MAKE_INVALID(ssprintf( "Command '%s' is not valid.", cmd.GetOriginalCommandString().c_str()));
+		MAKE_INVALID(fmt::sprintf( "Command '%s' is not valid.", cmd.GetOriginalCommandString().c_str()));
 	}
 #undef CHECK_INVALID_VALUE
 #undef CHECK_INVALID_COND
@@ -589,7 +589,7 @@ bool GameCommand::IsPlayable( RString *why ) const
 		if( iNumCreditsAvailable < iNumCreditsRequired )
 		{
 			if( why )
-				*why = ssprintf( "need %i credits, have %i", iNumCreditsRequired, iNumCreditsAvailable );
+				*why = fmt::sprintf( "need %i credits, have %i", iNumCreditsRequired, iNumCreditsAvailable );
 			return false;
 		}
 
@@ -613,7 +613,7 @@ bool GameCommand::IsPlayable( RString *why ) const
 		if( !AreStyleAndPlayModeCompatible( style, pm ) )
 		{
 			if( why )
-				*why = ssprintf("mode %s is incompatible with style %s",
+				*why = fmt::sprintf("mode %s is incompatible with style %s",
 					PlayModeToString(pm).c_str(), style->m_szName );
 
 			return false;
@@ -752,7 +752,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			}
 			break;
 		default:
-			LuaHelpers::ReportScriptError(ssprintf("Invalid StyleType: %d", m_pStyle->m_StyleType));
+			LuaHelpers::ReportScriptError(fmt::sprintf("Invalid StyleType: %d", m_pStyle->m_StyleType));
 		}
 	}
 	if( m_dc != Difficulty_Invalid )

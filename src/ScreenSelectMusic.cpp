@@ -213,12 +213,12 @@ void ScreenSelectMusic::Init()
 
 	FOREACH_ENUM( PlayerNumber, p )
 	{
-		m_sprHighScoreFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("ScoreFrame P%d",p+1)) );
-		m_sprHighScoreFrame[p]->SetName( ssprintf("ScoreFrameP%d",p+1) );
+		m_sprHighScoreFrame[p].Load( THEME->GetPathG(m_sName,fmt::sprintf("ScoreFrame P%d",p+1)) );
+		m_sprHighScoreFrame[p]->SetName( fmt::sprintf("ScoreFrameP%d",p+1) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprHighScoreFrame[p] );
 		this->AddChild( m_sprHighScoreFrame[p] );
 
-		m_textHighScore[p].SetName( ssprintf("ScoreP%d",p+1) );
+		m_textHighScore[p].SetName( fmt::sprintf("ScoreP%d",p+1) );
 		m_textHighScore[p].LoadFromFont( THEME->GetPathF(m_sName,"score") );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_textHighScore[p] );
 		this->AddChild( &m_textHighScore[p] );
@@ -507,7 +507,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 			if ( songToDelete && PREFSMAN->m_bAllowSongDeletion.Get() )
 			{
 				m_pSongAwaitingDeletionConfirmation = songToDelete;
-				ScreenPrompt::Prompt(SM_ConfirmDeleteSong, ssprintf(PERMANENTLY_DELETE.GetValue(), songToDelete->m_sMainTitle.c_str(), songToDelete->GetSongDir().c_str()), PROMPT_YES_NO);
+				ScreenPrompt::Prompt(SM_ConfirmDeleteSong, fmt::sprintf(PERMANENTLY_DELETE.GetValue(), songToDelete->m_sMainTitle.c_str(), songToDelete->GetSongDir().c_str()), PROMPT_YES_NO);
 				return true;
 			}
 		}
@@ -1612,7 +1612,7 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 				iScore = pProfile->GetStepsHighScoreList(pSong,pSteps).GetTopScore().GetScore();
 			}
 
-			m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
+			m_textHighScore[pn].SetText( fmt::sprintf("%*i", NUM_SCORE_DIGITS, iScore) );
 		}
 		else if( GAMESTATE->m_pCurCourse )
 		{
@@ -1631,7 +1631,7 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 				iScore = pProfile->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().GetScore();
 			}
 
-			m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
+			m_textHighScore[pn].SetText( fmt::sprintf("%*i", NUM_SCORE_DIGITS, iScore) );
 		}
 		else
 		{
@@ -1842,7 +1842,7 @@ void ScreenSelectMusic::AfterMusicChange()
 				}
 				break;
 			default:
-				FAIL_M(ssprintf("Invalid WheelItemDataType: %i", wtype));
+				FAIL_M(fmt::sprintf("Invalid WheelItemDataType: %i", wtype));
 		}
 		// override this if the sample music mode wants to.
 		/*
@@ -1879,7 +1879,7 @@ void ScreenSelectMusic::AfterMusicChange()
 				m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 				break;
 			default:
-				FAIL_M(ssprintf("Invalid preview mode: %i", pmode));
+				FAIL_M(fmt::sprintf("Invalid preview mode: %i", pmode));
 		}
 
 		SongUtil::GetPlayableSteps( pSong, m_vpSteps );
@@ -1919,7 +1919,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		break;
 	}
 	default:
-		FAIL_M(ssprintf("Invalid WheelItemDataType: %i", wtype));
+		FAIL_M(fmt::sprintf("Invalid WheelItemDataType: %i", wtype));
 	}
 
 	m_sprCDTitleFront.UnloadTexture();

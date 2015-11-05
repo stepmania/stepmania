@@ -143,9 +143,9 @@ void RageWorkerThread::WorkerMain()
 			/* Handle the request. */
 			if( iRequest != REQ_SHUTDOWN )
 			{
-				CHECKPOINT_M( ssprintf("HandleRequest(%i)", iRequest) );
+				CHECKPOINT_M( fmt::sprintf("HandleRequest(%i)", iRequest) );
 				HandleRequest( iRequest );
-				CHECKPOINT_M( ssprintf("HandleRequest(%i) done", iRequest) );
+				CHECKPOINT_M( fmt::sprintf("HandleRequest(%i) done", iRequest) );
 			}
 
 			/* Lock the mutex, to keep DoRequest where it is (if it's still running). */
@@ -169,7 +169,7 @@ void RageWorkerThread::WorkerMain()
 			}
 			else
 			{
-				CHECKPOINT_M( ssprintf("HandleRequest(%i) OK", iRequest) );
+				CHECKPOINT_M( fmt::sprintf("HandleRequest(%i) OK", iRequest) );
 
 				m_bRequestFinished = true;
 

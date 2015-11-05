@@ -194,7 +194,7 @@ void ScreenNetSelectBase::UpdateUsers()
 
 		m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_ActivePlayer[i]] );
 		m_textUsers[i].RunCommands( THEME->GetMetricA( m_sName,
-			ssprintf("Users%dCommand", NSMAN->m_PlayerStatus[NSMAN->m_ActivePlayer[i]] ) ) );
+			fmt::sprintf("Users%dCommand", NSMAN->m_PlayerStatus[NSMAN->m_ActivePlayer[i]] ) ) );
 
 		this->AddChild( &m_textUsers[i] );
 	}

@@ -26,7 +26,7 @@ bool XmlFileUtil::LoadFromFileShowErrors( XNode &xml, RageFileBasic &f )
 	if( sError.empty() )
 		return true;
 
-	RString sWarning = ssprintf( "XML: LoadFromFile failed: %s", sError.c_str() );
+	RString sWarning = fmt::sprintf( "XML: LoadFromFile failed: %s", sError.c_str() );
 	LuaHelpers::ReportScriptError(sWarning, "XML_PARSE_ERROR");
 	return false;
 }
@@ -43,7 +43,7 @@ bool XmlFileUtil::LoadFromFileShowErrors( XNode &xml, const RString &sFile )
 	bool bSuccess = LoadFromFileShowErrors( xml, f );
 	if( !bSuccess )
 	{
-		RString sWarning = ssprintf( "XML: LoadFromFile failed for file: %s", sFile.c_str() );
+		RString sWarning = fmt::sprintf( "XML: LoadFromFile failed for file: %s", sFile.c_str() );
 		LuaHelpers::ReportScriptError(sWarning, "XML_PARSE_ERROR");
 	}
 	return bSuccess;
@@ -139,7 +139,7 @@ RString::size_type LoadAttributes( XNode *pNode, const RString &xml, RString &sE
 		{
 			// error
 			if( sErrorOut.empty() )
-				sErrorOut = ssprintf( "<%s> attribute has error ", pNode->GetName().c_str() );
+				sErrorOut = fmt::sprintf( "<%s> attribute has error ", pNode->GetName().c_str() );
 			return string::npos;
 		}
 
@@ -183,7 +183,7 @@ RString::size_type LoadAttributes( XNode *pNode, const RString &xml, RString &sE
 			{
 				// error
 				if( sErrorOut.empty() )
-					sErrorOut = ssprintf( "<%s> attribute text: couldn't find matching quote", sName.c_str() );
+					sErrorOut = fmt::sprintf( "<%s> attribute text: couldn't find matching quote", sName.c_str() );
 				return string::npos;
 			}
 
@@ -301,7 +301,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 		if( iEnd == string::npos )
 		{
 			if( sErrorOut.empty() )
-				sErrorOut = ssprintf( "%s must be closed with </%s>", pNode->GetName().c_str(), pNode->GetName().c_str() );
+				sErrorOut = fmt::sprintf( "%s must be closed with </%s>", pNode->GetName().c_str(), pNode->GetName().c_str() );
 			// error cos not exist CloseTag </TAG>
 			return string::npos;
 		}
@@ -352,7 +352,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 			if( iEnd == string::npos )
 			{
 				if( sErrorOut.empty() )
-					sErrorOut = ssprintf( "it must be closed with </%s>", pNode->GetName().c_str() );
+					sErrorOut = fmt::sprintf( "it must be closed with </%s>", pNode->GetName().c_str() );
 				// error
 				return string::npos;
 			}
@@ -370,7 +370,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 			{
 				// not welformed open/close
 				if( sErrorOut.empty() )
-					sErrorOut = ssprintf( "'<%s> ... </%s>' is not well-formed.", pNode->GetName().c_str(), closename.c_str() );
+					sErrorOut = fmt::sprintf( "'<%s> ... </%s>' is not well-formed.", pNode->GetName().c_str(), closename.c_str() );
 				return string::npos;
 			}
 		}
@@ -384,7 +384,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 				{
 					// error cos not exist CloseTag </TAG>
 					if( sErrorOut.empty() )
-						sErrorOut = ssprintf( "it must be closed with </%s>", pNode->GetName().c_str() );
+						sErrorOut = fmt::sprintf( "it must be closed with </%s>", pNode->GetName().c_str() );
 					return string::npos;
 				}
 
@@ -678,7 +678,7 @@ namespace
 		{
 			if( !lua_istable(L, -1) )
 				continue;
-			NodeNamesToAdd.push_back( ssprintf("%i", i) );
+			NodeNamesToAdd.push_back( fmt::sprintf("%i", i) );
 			NodesToAdd.push_back( LuaReference() );
 			NodesToAdd.back().SetFromStack( L );
 		}

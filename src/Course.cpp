@@ -63,18 +63,18 @@ RString CourseEntry::GetTextDescription() const
 	if( stepsCriteria.m_difficulty != Difficulty_Invalid  &&  stepsCriteria.m_difficulty != Difficulty_Medium )
 		vsEntryDescription.push_back( CourseDifficultyToLocalizedString(stepsCriteria.m_difficulty) );
 	if( stepsCriteria.m_iLowMeter != -1 )
-		vsEntryDescription.push_back( ssprintf("Low meter: %d", stepsCriteria.m_iLowMeter) );
+		vsEntryDescription.push_back( fmt::sprintf("Low meter: %d", stepsCriteria.m_iLowMeter) );
 	if( stepsCriteria.m_iHighMeter != -1 )
-		vsEntryDescription.push_back( ssprintf("High meter: %d", stepsCriteria.m_iHighMeter) );
+		vsEntryDescription.push_back( fmt::sprintf("High meter: %d", stepsCriteria.m_iHighMeter) );
 	if( songSort != SongSort_Randomize )
 		vsEntryDescription.push_back( "Sort: %d" + SongSortToLocalizedString(songSort) );
 	if( songSort != SongSort_Randomize && iChooseIndex != 0 )
 		vsEntryDescription.push_back( "Choose " + FormatNumberAndSuffix(iChooseIndex) + " match" );
 	int iNumModChanges = GetNumModChanges();
 	if( iNumModChanges != 0 )
-		vsEntryDescription.push_back( ssprintf("%d mod changes", iNumModChanges) );
+		vsEntryDescription.push_back( fmt::sprintf("%d mod changes", iNumModChanges) );
 	if( fGainSeconds != 0 )
-		vsEntryDescription.push_back( ssprintf("Low meter: %.0f", fGainSeconds) );
+		vsEntryDescription.push_back( fmt::sprintf("Low meter: %.0f", fGainSeconds) );
 
 	RString s = join( ",", vsEntryDescription );
 	return s;
@@ -128,7 +128,7 @@ void Course::SetCourseType( CourseType ct )
 	switch( ct )
 	{
 	default:
-		FAIL_M(ssprintf("Invalid course type: %i", ct));
+		FAIL_M(fmt::sprintf("Invalid course type: %i", ct));
 	case COURSE_TYPE_NONSTOP:
 		break;
 	case COURSE_TYPE_ONI:
@@ -154,7 +154,7 @@ PlayMode Course::GetPlayMode() const
 	case COURSE_TYPE_SURVIVAL:	return PLAY_MODE_ONI;
 	case COURSE_TYPE_NONSTOP:	return PLAY_MODE_NONSTOP;
 	default:
-		FAIL_M(ssprintf("Invalid course type: %i", ct));
+		FAIL_M(fmt::sprintf("Invalid course type: %i", ct));
 	}
 }
 
@@ -344,7 +344,7 @@ bool Course::GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) c
 			ASSERT( bOK );
 		}
 		ASSERT_M( trail.m_vEntries.size() == SortTrail.m_vEntries.size(),
-			ssprintf("%i %i", int(trail.m_vEntries.size()), int(SortTrail.m_vEntries.size())) );
+			fmt::sprintf("%i %i", int(trail.m_vEntries.size()), int(SortTrail.m_vEntries.size())) );
 
 		vector<SortTrailEntry> entries;
 		for( unsigned i = 0; i < trail.m_vEntries.size(); ++i )
@@ -820,7 +820,7 @@ Rage::Color Course::GetColor() const
 		else if( m_SortOrder_Ranking == 1 )	return SORT_LEVEL5_COLOR;
 		else					return SORT_LEVEL4_COLOR;
 	default:
-		FAIL_M( ssprintf("Invalid course sort %d.", int(PREFSMAN->m_CourseSortOrder)) );
+		FAIL_M( fmt::sprintf("Invalid course sort %d.", int(PREFSMAN->m_CourseSortOrder)) );
 		return Rage::Color(1,1,1,1);  // white; should never reach here
 	}
 }

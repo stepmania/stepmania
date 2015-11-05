@@ -41,7 +41,7 @@ RString RageDisplay_Legacy_Helpers::GLToString( GLenum e )
 	if( g_Strings.find(e) != g_Strings.end() )
 		return g_Strings[e];
 
-	return ssprintf( "%i", int(e) );
+	return fmt::sprintf( "%i", int(e) );
 }
 /*
 static void GetGLExtensions( std::set<string> &ext )

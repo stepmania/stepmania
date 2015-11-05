@@ -114,7 +114,7 @@ void ScreenSyncOverlay::UpdateText()
 		case PC_AUTOPLAY:	vs.push_back(AUTO_PLAY);	break;
 		case PC_CPU:		vs.push_back(AUTO_PLAY_CPU);	break;
 		default:
-			FAIL_M(ssprintf("Invalid PlayerController: %i", pc));
+			FAIL_M(fmt::sprintf("Invalid PlayerController: %i", pc));
 		}
 	}
 
@@ -126,7 +126,7 @@ void ScreenSyncOverlay::UpdateText()
 	case AutosyncType_Machine:	vs.push_back(AUTO_SYNC_MACHINE);	break;
 	case AutosyncType_Tempo:	vs.push_back(AUTO_SYNC_TEMPO);		break;
 	default:
-		FAIL_M(ssprintf("Invalid autosync type: %i", type));
+		FAIL_M(fmt::sprintf("Invalid autosync type: %i", type));
 	}
 
 	if( GAMESTATE->m_pCurSong != nullptr  &&  !GAMESTATE->IsCourseMode() )	// sync controls available
@@ -316,7 +316,7 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 		}
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid sync action choice: %i", a));
+		FAIL_M(fmt::sprintf("Invalid sync action choice: %i", a));
 	}
 
 	ShowHelp();

@@ -275,7 +275,7 @@ void ArchHooks_Unix::DumpDebugInfo()
 
 void ArchHooks_Unix::SetTime( tm newtime )
 {
-	RString sCommand = ssprintf( "date %02d%02d%02d%02d%04d.%02d",
+	auto sCommand = fmt::sprintf( "date %02d%02d%02d%02d%04d.%02d",
 		newtime.tm_mon+1,
 		newtime.tm_mday,
 		newtime.tm_hour,
@@ -284,7 +284,7 @@ void ArchHooks_Unix::SetTime( tm newtime )
 		newtime.tm_sec );
 
 	LOG->Trace( "executing '%s'", sCommand.c_str() );
-	int ret = system( sCommand );
+	int ret = system( sCommand.c_str() );
 	if( ret == -1 || ret == 127 || !WIFEXITED(ret) || WEXITSTATUS(ret) )
 		LOG->Trace( "'%s' failed", sCommand.c_str() );
 
@@ -400,7 +400,7 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 	 * Lowercase the PRODUCT_ID; dotfiles and directories are almost always lowercase.
 	 */
 	const char *szHome = getenv( "HOME" );
-	RString sUserDataPath = ssprintf( "%s/.%s", szHome? szHome:".", "stepmania-5.0" ); //call an ambulance!
+	auto sUserDataPath = fmt::sprintf( "%s/.%s", szHome? szHome:".", "stepmania-5.0" ); //call an ambulance!
 	FILEMAN->Mount( "dir", sUserDataPath + "/Announcers", "/Announcers" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/BGAnimations", "/BGAnimations" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/BackgroundEffects", "/BackgroundEffects" );

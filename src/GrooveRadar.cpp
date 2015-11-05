@@ -37,7 +37,7 @@ GrooveRadar::GrooveRadar()
 		// todo: remove dependency on radar base being a sprite. -aj
 		m_GrooveRadarValueMap[p].SetRadius( m_sprRadarBase->GetZoomedWidth() );
 		m_Frame.AddChild( &m_GrooveRadarValueMap[p] );
-		m_GrooveRadarValueMap[p].SetName( ssprintf("RadarValueMapP%d",p+1) );
+		m_GrooveRadarValueMap[p].SetName( fmt::sprintf("RadarValueMapP%d",p+1) );
 		ActorUtil::LoadAllCommands( m_GrooveRadarValueMap[p], "GrooveRadar" );
 	}
 
@@ -45,7 +45,7 @@ GrooveRadar::GrooveRadar()
 
 	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
 	{
-		m_sprRadarLabels[c].SetName( ssprintf("Label%i",c+1) );
+		m_sprRadarLabels[c].SetName( fmt::sprintf("Label%i",c+1) );
 		m_sprRadarLabels[c].Load( THEME->GetPathG("GrooveRadar","labels 1x5") );
 		m_sprRadarLabels[c].StopAnimating();
 		m_sprRadarLabels[c].SetState( c );

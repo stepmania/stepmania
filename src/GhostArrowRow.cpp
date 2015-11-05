@@ -101,7 +101,7 @@ void GhostArrowRow::DrawPrimitives()
 
 void GhostArrowRow::DidTapNote( int iCol, TapNoteScore tns, bool bBright )
 {
-	ASSERT_M( iCol >= 0  &&  iCol < (int) m_Ghost.size(), ssprintf("assert(iCol %i >= 0  && iCol %i < (int)m_Ghost.size() %i) failed",iCol,iCol,(int)m_Ghost.size()) );
+	ASSERT_M( iCol >= 0  &&  iCol < (int) m_Ghost.size(), fmt::sprintf("assert(iCol %i >= 0  && iCol %i < (int)m_Ghost.size() %i) failed",iCol,iCol,(int)m_Ghost.size()) );
 
 	Message msg("ColumnJudgment");
 	msg.SetParam( "TapNoteScore", tns );

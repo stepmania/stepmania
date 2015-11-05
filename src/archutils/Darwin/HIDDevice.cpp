@@ -67,7 +67,7 @@ bool HIDDevice::Open( io_object_t device )
 		m_sDescription = str? str:"";
 	}
 	if( m_sDescription == "" )
-		m_sDescription = ssprintf( "%04x:%04x", vid, pid );
+		m_sDescription = fmt::sprintf( "%04x:%04x", vid, pid );
 	LOG->Trace( "\t\tDevice description: %s", m_sDescription.c_str() );
 
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementKey) );

@@ -80,7 +80,7 @@ namespace VDDebugInfo
 			RString sError;
 			if( !GunzipString(pctx->sRawBlock, sBufOut, sError) )
 			{
-				pctx->sError = werr_ssprintf( GetLastError(), "VDI error: %s", sError.c_str() );
+				pctx->sError = werr_format( GetLastError(), "VDI error: %s", sError.c_str() );
 				return false;
 			}
 
@@ -131,7 +131,7 @@ namespace VDDebugInfo
 		HANDLE h = CreateFile( pctx->sFilename, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr );
 		if( h == INVALID_HANDLE_VALUE )
 		{
-			pctx->sError = werr_ssprintf( GetLastError(), "CreateFile failed" );
+			pctx->sError = werr_format( GetLastError(), "CreateFile failed" );
 			return false;
 		}
 
@@ -414,11 +414,11 @@ namespace
 	RString ReportCallStack( const void * const *Backtrace )
 	{
 		if( !g_debugInfo.Loaded() )
-			return ssprintf( "debug resource file '%s': %s.\n", g_debugInfo.sFilename, g_debugInfo.sError.c_str() );
+			return fmt::sprintf( "debug resource file '%s': %s.\n", g_debugInfo.sFilename, g_debugInfo.sError.c_str() );
 		/*
 		if( g_debugInfo.nBuildNumber != int(version_num) )
 		{
-			return ssprintf( "Incorrect %s file (build %d, expected %d) for this version of " PRODUCT_FAMILY " -- call stack unavailable.\n",
+			return fmt::sprintf( "Incorrect %s file (build %d, expected %d) for this version of " PRODUCT_FAMILY " -- call stack unavailable.\n",
 				g_debugInfo.sFilename, g_debugInfo.nBuildNumber, int(version_num) );
 		}
 		*/
@@ -427,7 +427,7 @@ namespace
 		{
 			char buf[10240];
 			SymbolLookup::SymLookup( &g_debugInfo, Backtrace[i], buf );
-			sRet += ssprintf( "%s\n", buf );
+			sRet += fmt::sprintf( "%s\n", buf );
 		}
 
 		return sRet;
@@ -446,20 +446,20 @@ struct CompleteCrashData
 
 static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
 {
-	sOut += ssprintf(
+	sOut += fmt::sprintf(
 			"%s crash report (build %s, %s @ %s)\n"
 			"--------------------------------------\n\n",
 			(string(PRODUCT_FAMILY) + product_version).c_str(), ::sm_version_git_hash, version_date, version_time );
 
-	sOut += ssprintf( "Crash reason: %s\n", Data.m_CrashInfo.m_CrashReason );
-	sOut += ssprintf( "\n" );
+	sOut += fmt::sprintf( "Crash reason: %s\n", Data.m_CrashInfo.m_CrashReason );
+	sOut += fmt::sprintf( "\n" );
 
 	// Dump thread stacks
 	static char buf[1024*32];
-	sOut += ssprintf( "%s\n", join("\n", Data.m_asCheckpoints).c_str() );
+	sOut += fmt::sprintf( "%s\n", join("\n", Data.m_asCheckpoints).c_str() );
 
 	sOut += ReportCallStack( Data.m_CrashInfo.m_BacktracePointers );
-	sOut += ssprintf( "\n" );
+	sOut += fmt::sprintf( "\n" );
 
 	if( Data.m_CrashInfo.m_AlternateThreadBacktrace[0] )
 	{
@@ -468,24 +468,24 @@ static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
 			if( !Data.m_CrashInfo.m_AlternateThreadBacktrace[i][0] )
 				continue;
 
-			sOut += ssprintf( "Thread %s:\n", Data.m_CrashInfo.m_AlternateThreadName[i] );
-			sOut += ssprintf( "\n" );
+			sOut += fmt::sprintf( "Thread %s:\n", Data.m_CrashInfo.m_AlternateThreadName[i] );
+			sOut += fmt::sprintf( "\n" );
 			sOut += ReportCallStack( Data.m_CrashInfo.m_AlternateThreadBacktrace[i] );
-			sOut += ssprintf( "" );
+			sOut += fmt::sprintf( "" );
 		}
 	}
 
-	sOut += ssprintf( "Static log:\n" );
-	sOut += ssprintf( "%s", Data.m_sInfo.c_str() );
-	sOut += ssprintf( "%s", Data.m_sAdditionalLog.c_str() );
-	sOut += ssprintf( "\n" );
+	sOut += fmt::sprintf( "Static log:\n" );
+	sOut += fmt::sprintf( "%s", Data.m_sInfo.c_str() );
+	sOut += fmt::sprintf( "%s", Data.m_sAdditionalLog.c_str() );
+	sOut += fmt::sprintf( "\n" );
 
-	sOut += ssprintf( "Partial log:\n" );
+	sOut += fmt::sprintf( "Partial log:\n" );
 	for( size_t  i = 0; i < Data.m_asRecent.size(); ++i )
-		sOut += ssprintf( "%s\n", Data.m_asRecent[i].c_str() );
-	sOut += ssprintf( "\n" );
+		sOut += fmt::sprintf( "%s\n", Data.m_asRecent[i].c_str() );
+	sOut += fmt::sprintf( "\n" );
 
-	sOut += ssprintf( "-- End of report\n" );
+	sOut += fmt::sprintf( "-- End of report\n" );
 }
 
 static void DoSave( const RString &sReport )
@@ -816,7 +816,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 					XmlFileUtil::Load( &xml, sResult, sError );
 					if( !sError.empty() )
 					{
-						sError = ssprintf( "Error parsing response: %s", sError.c_str() );
+						sError = fmt::sprintf( "Error parsing response: %s", sError.c_str() );
 						xml.Clear();
 					}
 				}
@@ -848,7 +848,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				{
 					char sBuf[1024];
 					GetWindowText( hDlg, sBuf, 1024 );
-					SetWindowText( hDlg, ssprintf("%s (#%i)", sBuf, iID) );
+					SetWindowText( hDlg, fmt::sprintf("%s (#%i)", sBuf, iID).c_str() );
 				}
 
 				ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), false );

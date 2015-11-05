@@ -38,8 +38,8 @@ XToString( EditMenuAction );
 XToLocalizedString( EditMenuAction );
 StringToX( EditMenuAction );
 
-static RString ARROWS_X_NAME( size_t i )	{ return ssprintf("Arrows%dX",int(i+1)); }
-static RString ROW_Y_NAME( size_t i )		{ return ssprintf("Row%dY",int(i+1)); }
+static RString ARROWS_X_NAME( size_t i )	{ return fmt::sprintf("Arrows%dX",int(i+1)); }
+static RString ROW_Y_NAME( size_t i )		{ return fmt::sprintf("Row%dY",int(i+1)); }
 
 void EditMenu::StripLockedStepsAndDifficulty( vector<StepsAndDifficulty> &v )
 {
@@ -75,7 +75,7 @@ void EditMenu::GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpS
 	case EditMode_Full:
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid edit mode: %i", mode));
+		FAIL_M(fmt::sprintf("Invalid edit mode: %i", mode));
 	}
 	SongUtil::SortSongPointerArrayByTitle( vpSongsOut );
 }
@@ -132,14 +132,14 @@ void EditMenu::Load( const RString &sType )
 
 	FOREACH_EditMenuRow( r )
 	{
-		m_textLabel[r].SetName(ssprintf("Label%i",r+1));
+		m_textLabel[r].SetName(fmt::sprintf("Label%i",r+1));
 		m_textLabel[r].LoadFromFont( THEME->GetPathF(sType,"title") );
 		m_textLabel[r].SetText( EditMenuRowToLocalizedString(r) );
 		ActorUtil::LoadAllCommandsAndSetXY( m_textLabel[r], sType );
 		//m_textLabel[r].SetHorizAlign( align_left );
 		this->AddChild( &m_textLabel[r] );
 
-		m_textValue[r].SetName(ssprintf("Value%i",r+1));
+		m_textValue[r].SetName(fmt::sprintf("Value%i",r+1));
 		m_textValue[r].LoadFromFont( THEME->GetPathF(sType,"value") );
 		m_textValue[r].SetText( "blah" );
 		ActorUtil::LoadAllCommandsAndSetXY( m_textValue[r], sType );
@@ -276,7 +276,7 @@ int EditMenu::GetRowSize( EditMenuRow er ) const
 	case ROW_SOURCE_STEPS_TYPE:	return m_StepsTypes.size();
 	case ROW_SOURCE_STEPS:	return m_vpSourceSteps.size();
 	case ROW_ACTION:		return m_Actions.size();
-	default: FAIL_M( ssprintf("Non-existant EditMenuRow %i", er) );
+	default: FAIL_M( fmt::sprintf("Non-existant EditMenuRow %i", er) );
 	}
 }
 
@@ -517,7 +517,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 							// have only "New Edit"
 							break;
 						default:
-							FAIL_M(ssprintf("Invalid edit mode: %i", mode));
+							FAIL_M(fmt::sprintf("Invalid edit mode: %i", mode));
 					}
 
 					switch( mode )
@@ -530,7 +530,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 							m_vpSteps.push_back( StepsAndDifficulty(nullptr,dc) );	// "New Edit"
 							break;
 						default:
-							FAIL_M(ssprintf("Invalid edit mode: %i", mode));
+							FAIL_M(fmt::sprintf("Invalid edit mode: %i", mode));
 					}
 				}
 				else
@@ -555,7 +555,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 							m_vpSteps.push_back( StepsAndDifficulty(pSteps,dc) );
 							break;
 						default:
-							FAIL_M(ssprintf("Invalid edit mode: %i", mode));
+							FAIL_M(fmt::sprintf("Invalid edit mode: %i", mode));
 					}
 				}
 			}
@@ -685,7 +685,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 						m_Actions.push_back( EditMenuAction_Delete );
 						break;
 					default:
-						FAIL_M(ssprintf("Invalid edit mode: %i", mode));
+						FAIL_M(fmt::sprintf("Invalid edit mode: %i", mode));
 				}
 			}
 			else
@@ -706,7 +706,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		}
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid EditMenuRow: %i", row));
+		FAIL_M(fmt::sprintf("Invalid EditMenuRow: %i", row));
 	}
 }
 

@@ -115,7 +115,7 @@ bool CreateDirectories( RString Path )
 		 * going. */
 		if( errno == ENOENT )
 		{
-			WARN( ssprintf("Couldn't create %s: %s", curpath.c_str(), strerror(errno)) );
+			WARN( fmt::sprintf("Couldn't create %s: %s", curpath.c_str(), strerror(errno)) );
 			errno = EEXIST;
 		}
 #endif
@@ -126,14 +126,14 @@ bool CreateDirectories( RString Path )
 			struct stat st;
 			if( DoStat(curpath, &st) != -1 && !(st.st_mode & S_IFDIR) )
 			{
-				WARN( ssprintf("Couldn't create %s: path exists and is not a directory", curpath.c_str()) );
+				WARN( fmt::sprintf("Couldn't create %s: path exists and is not a directory", curpath.c_str()) );
 				return false;
 			}
 
 			continue;		// we expect to see this error
 		}
 
-		WARN( ssprintf("Couldn't create %s: %s", curpath.c_str(), strerror(errno)) );
+		WARN( fmt::sprintf("Couldn't create %s: %s", curpath.c_str(), strerror(errno)) );
 		return false;
 	}
 
@@ -200,7 +200,7 @@ void DirectFilenameDB::CacheFile( const RString &sPath )
 		int iError = errno;
 		// If it's a broken symlink, ignore it.  Otherwise, warn.
 		// Huh?
-		WARN( ssprintf("File '%s' is gone! (%s)",
+		WARN( fmt::sprintf("File '%s' is gone! (%s)",
 				sPath.c_str(), strerror(iError)) );
 	}
 	else
@@ -281,7 +281,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 				continue;
 
 			/* Huh? */
-			WARN( ssprintf("Got file '%s' in '%s' from list, but can't stat? (%s)",
+			WARN( fmt::sprintf("Got file '%s' in '%s' from list, but can't stat? (%s)",
 					pEnt->d_name, sPath.c_str(), strerror(iError)) );
 			continue;
 		}

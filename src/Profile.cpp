@@ -124,7 +124,7 @@ RString Profile::MakeGuid()
 	unsigned char buf[GUID_SIZE_BYTES];
 	CryptManager::GetRandomBytes( buf, GUID_SIZE_BYTES );
 	for( unsigned i=0; i<GUID_SIZE_BYTES; i++ )
-		s += ssprintf( "%02x", buf[i] );
+		s += fmt::sprintf( "%02x", buf[i] );
 	return s;
 }
 
@@ -378,7 +378,7 @@ float Profile::GetSongsPossible( StepsType st, Difficulty dc ) const
 
 float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 {
-	CHECKPOINT_M( ssprintf("Profile::GetSongsActual(%d,%d)",st,dc) );
+	CHECKPOINT_M( fmt::sprintf("Profile::GetSongsActual(%d,%d)",st,dc) );
 
 	float fTotalPercents = 0;
 
@@ -388,7 +388,7 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 		const SongID &id = i.first;
 		Song* pSong = id.ToSong();
 
-		CHECKPOINT_M( ssprintf("Profile::GetSongsActual: %p", static_cast<void *>(pSong)) );
+		CHECKPOINT_M( fmt::sprintf("Profile::GetSongsActual: %p", static_cast<void *>(pSong)) );
 
 		// If the Song isn't loaded on the current machine, then we can't
 		// get radar values to compute dance points.
@@ -398,14 +398,14 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 		if( !pSong->NormallyDisplayed() )
 			continue;	// skip
 
-		CHECKPOINT_M( ssprintf("Profile::GetSongsActual: song %s", pSong->GetSongDir().c_str()) );
+		CHECKPOINT_M( fmt::sprintf("Profile::GetSongsActual: song %s", pSong->GetSongDir().c_str()) );
 		const HighScoresForASong &hsfas = i.second;
 
 		for (auto const &j: hsfas.m_StepsHighScores)
 		{
 			const StepsID &sid = j.first;
 			Steps* pSteps = sid.ToSteps( pSong, true );
-			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: song %p, steps %p", static_cast<void *>(pSong), static_cast<void *>(pSteps)) );
+			CHECKPOINT_M( fmt::sprintf("Profile::GetSongsActual: song %p, steps %p", static_cast<void *>(pSong), static_cast<void *>(pSteps)) );
 
 			// If the Steps isn't loaded on the current machine, then we can't
 			// get radar values to compute dance points.
@@ -415,13 +415,13 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 			if( pSteps->m_StepsType != st )
 				continue;
 
-			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: n %s = %p", sid.ToString().c_str(), static_cast<void *>(pSteps)) );
+			CHECKPOINT_M( fmt::sprintf("Profile::GetSongsActual: n %s = %p", sid.ToString().c_str(), static_cast<void *>(pSteps)) );
 			if( pSteps->GetDifficulty() != dc )
 			{
 				continue;	// skip
 			}
 			
-			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: difficulty %s is correct", DifficultyToString(dc).c_str()));
+			CHECKPOINT_M( fmt::sprintf("Profile::GetSongsActual: difficulty %s is correct", DifficultyToString(dc).c_str()));
 
 			const HighScoresForASteps& h = j.second;
 			const HighScoreList& hsl = h.hsl;
@@ -1561,7 +1561,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 		{
 			if( !m_iNumSongsPlayedByMeter[i] )
 				continue;
-			pNumSongsPlayedByMeter->AppendChild( ssprintf("Meter%d",i), m_iNumSongsPlayedByMeter[i] );
+			pNumSongsPlayedByMeter->AppendChild( fmt::sprintf("Meter%d",i), m_iNumSongsPlayedByMeter[i] );
 		}
 	}
 
@@ -1788,7 +1788,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 		const XNode* pNumSongsPlayedByMeter = pNode->GetChild("NumSongsPlayedByMeter");
 		if( pNumSongsPlayedByMeter )
 			for( int i=0; i<MAX_METER+1; i++ )
-				pNumSongsPlayedByMeter->GetChildValue( ssprintf("Meter%d",i), m_iNumSongsPlayedByMeter[i] );
+				pNumSongsPlayedByMeter->GetChildValue( fmt::sprintf("Meter%d",i), m_iNumSongsPlayedByMeter[i] );
 	}
 
 	pNode->GetChildValue("NumTotalSongsPlayed", m_iNumTotalSongsPlayed );
@@ -2480,7 +2480,7 @@ RString Profile::MakeUniqueFileNameNoExtension( RString sDir, RString sFileNameB
 
 RString Profile::MakeFileNameNoExtension( RString sFileNameBeginning, int iIndex )
 {
-	return sFileNameBeginning + ssprintf( "%05d", iIndex );
+	return sFileNameBeginning + fmt::sprintf( "%05d", iIndex );
 }
 
 // lua start

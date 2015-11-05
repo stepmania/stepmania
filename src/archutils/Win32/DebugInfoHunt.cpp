@@ -69,17 +69,15 @@ static void GetDisplayDriverDebugInfo()
 	}
 }
 
-static RString wo_ssprintf( MMRESULT err, const char *fmt, ...)
+template<typename... Args>
+static std::string waveout_format(MMRESULT err, std::string const &msg, Args const & ...args)
 {
 	char buf[MAXERRORLENGTH];
 	waveOutGetErrorText(err, buf, MAXERRORLENGTH);
 
-	va_list	va;
-	va_start(va, fmt);
-	RString s = vssprintf( fmt, va );
-	va_end(va);
+	auto s = fmt::format(msg, args...);
 
-	return s += ssprintf( "(%s)", buf );
+	return s + fmt::sprintf("(%s)", buf);
 }
 
 static void GetDriveDebugInfo9x()
@@ -202,7 +200,7 @@ static void GetWindowsVersionDebugInfo()
 		return;
 	}
 
-	RString Ver = ssprintf("Windows %i.%i (", ovi.dwMajorVersion, ovi.dwMinorVersion);
+	RString Ver = fmt::sprintf("Windows %i.%i (", ovi.dwMajorVersion, ovi.dwMinorVersion);
 	if(ovi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
 	{
 		if(ovi.dwMinorVersion == 0)
@@ -268,7 +266,7 @@ static void GetWindowsVersionDebugInfo()
 			Ver += "unknown NT-based";
 	} else Ver += "???";
 
-	Ver += ssprintf(") build %i [%s]", ovi.dwBuildNumber & 0xffff, ovi.szCSDVersion);
+	Ver += fmt::sprintf(") build %i [%s]", ovi.dwBuildNumber & 0xffff, ovi.szCSDVersion);
 	LOG->Info("%s", Ver.c_str());
 }
 
@@ -283,7 +281,7 @@ static void GetSoundDriverDebugInfo()
 		MMRESULT ret = waveOutGetDevCaps(i, &caps, sizeof(caps));
 		if(ret != MMSYSERR_NOERROR)
 		{
-			LOG->Info(wo_ssprintf(ret, "waveOutGetDevCaps(%i) failed", i));
+			LOG->Info(waveout_format(ret, "waveOutGetDevCaps(%i) failed", i));
 			continue;
 		}
 		LOG->Info("Sound device %i: %s, %i.%i, MID %i, PID %i %s", i, caps.szPname,

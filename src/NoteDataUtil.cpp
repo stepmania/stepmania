@@ -369,7 +369,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 		{
 			if( m )
 				sRet.append( 1, ',' );
-			sRet += ssprintf("  // measure %d\n", m);
+			sRet += fmt::sprintf("  // measure %d\n", m);
 
 			NoteType nt = GetSmallestNoteTypeForMeasure( *nd, m );
 			int iRowSpacing;
@@ -400,7 +400,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 						case TapNoteSubType_Roll:	c = '4'; break;
 						//case TapNoteSubType_Mine:	c = 'N'; break;
 						default:
-							FAIL_M(ssprintf("Invalid tap note subtype: %i", tn.subType));
+							FAIL_M(fmt::sprintf("Invalid tap note subtype: %i", tn.subType));
 						}
 						break;
 					case TapNoteType_HoldTail:		c = '3'; break;
@@ -411,18 +411,18 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 					case TapNoteType_Fake:			c = 'F'; break;
 					default:
 						c = '\0';
-						FAIL_M(ssprintf("Invalid tap note type: %i", tn.type));
+						FAIL_M(fmt::sprintf("Invalid tap note type: %i", tn.type));
 					}
 					sRet.append( 1, c );
 
 					if( tn.type == TapNoteType_Attack )
 					{
-						sRet.append( ssprintf("{%s:%.2f}", tn.sAttackModifiers.c_str(),
+						sRet.append( fmt::sprintf("{%s:%.2f}", tn.sAttackModifiers.c_str(),
 								      tn.fAttackDurationSeconds) );
 					}
 					// hey maybe if we have TapNoteType_Item we can do things here.
 					if( tn.iKeysoundIndex >= 0 )
-						sRet.append( ssprintf("[%d]",tn.iKeysoundIndex) );
+						sRet.append( fmt::sprintf("[%d]",tn.iKeysoundIndex) );
 				}
 
 				sRet.append( 1, '\n' );
@@ -466,7 +466,7 @@ void NoteDataUtil::SplitCompositeNoteData( const NoteData &in, vector<NoteData> 
 			}
 			unsigned index = int( tn.pn );
 
-			ASSERT_M( index < NUM_PlayerNumber, ssprintf("We have a note not assigned to a player. The note in question is on beat %f, column %i.", NoteRowToBeat(row), t + 1) );
+			ASSERT_M( index < NUM_PlayerNumber, fmt::sprintf("We have a note not assigned to a player. The note in question is on beat %f, column %i.", NoteRowToBeat(row), t + 1) );
 			tn.pn = PLAYER_INVALID;
 			out[index].SetTapNote( t, row, tn );
 		}
@@ -705,7 +705,7 @@ void LightTransformHelper( const NoteData &in, NoteData &out, const vector<int> 
 {
 	for (auto &track: aiTracks)
 	{
-		ASSERT_M( track < out.GetNumTracks(), ssprintf("%i, %i", track, out.GetNumTracks()) );
+		ASSERT_M( track < out.GetNumTracks(), fmt::sprintf("%i, %i", track, out.GetNumTracks()) );
 	}
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS( in, r )
 	{
@@ -1871,7 +1871,7 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 			DEFAULT_FAIL( tn1.type );
 			}
 
-			DEBUG_ASSERT_M( !inout.IsHoldNoteAtRow(t1,r), ssprintf("There is a tap.type = %d inside of a hold at row %d", tn1.type, r) );
+			DEBUG_ASSERT_M( !inout.IsHoldNoteAtRow(t1,r), fmt::sprintf("There is a tap.type = %d inside of a hold at row %d", tn1.type, r) );
 
 			// Probe for a spot to swap with.
 			std::set<int> vTriedTracks;

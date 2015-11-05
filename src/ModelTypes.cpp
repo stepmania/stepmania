@@ -65,16 +65,16 @@ void AnimatedTexture::Load( const RString &sTexOrIniPath )
 
 		for( int i=0; i<1000; i++ )
 		{
-			RString sFileKey = ssprintf( "Frame%04d", i );
-			RString sDelayKey = ssprintf( "Delay%04d", i );
+			RString sFileKey = fmt::sprintf( "Frame%04d", i );
+			RString sDelayKey = fmt::sprintf( "Delay%04d", i );
 
 			RString sFileName;
 			float fDelay = 0;
 			if( pAnimatedTexture->GetAttrValue( sFileKey, sFileName ) &&
 				pAnimatedTexture->GetAttrValue( sDelayKey, fDelay ) )
 			{
-				RString sTranslateXKey = ssprintf( "TranslateX%04d", i );
-				RString sTranslateYKey = ssprintf( "TranslateY%04d", i );
+				RString sTranslateXKey = fmt::sprintf( "TranslateX%04d", i );
+				RString sTranslateYKey = fmt::sprintf( "TranslateY%04d", i );
 
 				Rage::Vector2 vOffset(0,0);
 				pAnimatedTexture->GetAttrValue( sTranslateXKey, vOffset.x );

@@ -107,7 +107,7 @@ bool ScreenTextEntry::FloatValidate( const RString &sAnswer, RString &sErrorOut 
 	float f;
 	if( StringToFloat(sAnswer, f) )
 		return true;
-	sErrorOut = ssprintf( INVALID_FLOAT.GetValue().c_str(), sAnswer.c_str() );
+	sErrorOut = fmt::sprintf( INVALID_FLOAT.GetValue().c_str(), sAnswer.c_str() );
 	return false;
 }
 
@@ -117,7 +117,7 @@ bool ScreenTextEntry::IntValidate( const RString &sAnswer, RString &sErrorOut )
 	int f;
 	if(sAnswer >> f)
 		return true;
-	sErrorOut = ssprintf( INVALID_INT.GetValue(), sAnswer.c_str() );
+	sErrorOut = fmt::sprintf( INVALID_INT.GetValue(), sAnswer.c_str() );
 	return false;
 }
 

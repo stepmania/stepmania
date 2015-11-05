@@ -152,7 +152,7 @@ void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
 		}
 		// Because pSteps or pTrail can be nullptr, what we're creating in Lua is not an array.
 		// It must be iterated using pairs(), not ipairs().
-		lua_setfield( L, -2, ssprintf("%d",i+1).c_str() );
+		lua_setfield( L, -2, fmt::sprintf("%d",i+1).c_str() );
 	}
 	lua_pop( L, 1 );
 	LUA->Release( L );
@@ -208,8 +208,8 @@ void ScoreScroller::Load( RString sMetricsGroup )
 
 /////////////////////////////////////////////
 
-RString COLUMN_DIFFICULTY_NAME( size_t i ) { return ssprintf("ColumnDifficulty%d",int(i+1)); }
-RString COLUMN_STEPS_TYPE_NAME( size_t i ) { return ssprintf("ColumnStepsType%d",int(i+1)); }
+RString COLUMN_DIFFICULTY_NAME( size_t i ) { return fmt::sprintf("ColumnDifficulty%d",int(i+1)); }
+RString COLUMN_STEPS_TYPE_NAME( size_t i ) { return fmt::sprintf("ColumnStepsType%d",int(i+1)); }
 
 void ScreenHighScores::Init()
 {
@@ -240,7 +240,7 @@ void ScreenHighScores::Init()
 			switch( type )
 			{
 			default:
-				FAIL_M(ssprintf("Invalid HighScoresType: %i", type));
+				FAIL_M(fmt::sprintf("Invalid HighScoresType: %i", type));
 			case HighScoresType_NonstopCourses:	ct = COURSE_TYPE_NONSTOP;	break;
 			case HighScoresType_OniCourses:		ct = COURSE_TYPE_ONI;		break;
 			case HighScoresType_SurvivalCourses:	ct = COURSE_TYPE_SURVIVAL;	break;

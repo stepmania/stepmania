@@ -68,7 +68,7 @@ public:
 	RString GetName() const
 	{
 		if( m_bIsDummy )
-			return ssprintf("Dummy%d",m_iDummyIndex);
+			return fmt::sprintf("Dummy%d",m_iDummyIndex);
 		if( IsMultiPlayer() )
 			return MultiPlayerToString( m_mp );
 		else

@@ -196,7 +196,7 @@ void Sprite::LoadFromNode( const XNode* pNode )
 			int iFrameIndex = 0;
 			for( int i=0; true; i++ )
 			{
-				const XNode *pFrame = pFrames->GetChild( ssprintf("%i", i+1) ); // +1 for Lua's arrays
+				const XNode *pFrame = pFrames->GetChild( fmt::sprintf("%i", i+1) ); // +1 for Lua's arrays
 				if( pFrame == nullptr )
 					break;
 
@@ -237,8 +237,8 @@ void Sprite::LoadFromNode( const XNode* pNode )
 		else for( int i=0; true; i++ )
 		{
 			// deprecated
-			RString sFrameKey = ssprintf( "Frame%04d", i );
-			RString sDelayKey = ssprintf( "Delay%04d", i );
+			RString sFrameKey = fmt::sprintf( "Frame%04d", i );
+			RString sDelayKey = fmt::sprintf( "Delay%04d", i );
 			State newState;
 
 			int iFrameIndex;
@@ -824,7 +824,7 @@ void Sprite::SetState( size_t iNewState )
 		{
 			RString sError;
 			if( m_pTexture )
-				sError = ssprintf("A Sprite '%s' (\"%s\") tried to set state to frame %lu, but it has only %u frames.",
+				sError = fmt::sprintf("A Sprite '%s' (\"%s\") tried to set state to frame %lu, but it has only %u frames.",
 					/*
 					 * Using the state directly tends to give you an error message like "tried to set frame 6 of 6"
 					 * which is very confusing if you don't know that one is 0-indexed and the other is 1-indexed.
@@ -832,7 +832,7 @@ void Sprite::SetState( size_t iNewState )
 					 */
 					m_pTexture->GetID().filename.c_str(), this->m_sName.c_str(), iNewState+1, unsigned(m_States.size()));
 			else
-				sError = ssprintf("A Sprite (\"%s\") tried to set state index %lu, but no texture is loaded.",
+				sError = fmt::sprintf("A Sprite (\"%s\") tried to set state index %lu, but no texture is loaded.",
 					this->m_sName.c_str(), iNewState );
 			LuaHelpers::ReportScriptError(sError, "SPRITE_INVALID_FRAME");
 		}
@@ -923,7 +923,7 @@ const Rage::RectF *Sprite::GetCurrentTextureCoordRect() const
 
 const Rage::RectF *Sprite::GetTextureCoordRectForState( int iState ) const
 {
-	ASSERT_M( iState < (int) m_States.size(), ssprintf("%d, %d", int(iState), int(m_States.size())) );
+	ASSERT_M( iState < (int) m_States.size(), fmt::sprintf("%d, %d", int(iState), int(m_States.size())) );
 
 	return &m_States[iState].rect;
 }

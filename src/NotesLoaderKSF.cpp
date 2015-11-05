@@ -275,7 +275,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 	case StepsType_pump_double: notedata.SetNumTracks( 10 ); break;
 	case StepsType_pump_routine: notedata.SetNumTracks( 10 ); break; // future files may have this?
 	case StepsType_pump_halfdouble: notedata.SetNumTracks( 6 ); break;
-	default: FAIL_M( ssprintf("%i", out.m_StepsType) );
+	default: FAIL_M( fmt::sprintf("%i", out.m_StepsType) );
 	}
 
 	int t = 0;

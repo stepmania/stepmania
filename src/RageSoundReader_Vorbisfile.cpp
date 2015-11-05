@@ -56,10 +56,10 @@ static std::string ov_format( int err, std::string const &msg, Args const & ...a
 	case OV_EBADPACKET:	errstr = "OV_EBADPACKET"; break;
 	case OV_EBADLINK:	errstr = "Link corrupted"; break;
 	case OV_ENOSEEK:	errstr = "Stream is not seekable"; break;
-	default:		errstr = ssprintf( "unknown error %i", err ); break;
+	default:		errstr = fmt::sprintf( "unknown error %i", err ); break;
 	}
 
-	return s + ssprintf( " (%s)", errstr.c_str() );
+	return s + fmt::sprintf( " (%s)", errstr.c_str() );
 }
 
 RageSoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open( RageFileBasic *pFile )
@@ -164,7 +164,7 @@ int RageSoundReader_Vorbisfile::Read( float *buf, int iFrames )
 				int iSilentFrames = curofs - read_offset;
 				iSilentFrames = std::min( iSilentFrames, (int) iFrames );
 				int silence = iSilentFrames * bytes_per_frame;
-				CHECKPOINT_M( ssprintf("p %i,%i: %i frames of silence needed", curofs, read_offset, silence) );
+				CHECKPOINT_M( fmt::sprintf("p %i,%i: %i frames of silence needed", curofs, read_offset, silence) );
 
 				memset( buf, 0, silence );
 				iFramesRead = iSilentFrames;
@@ -195,7 +195,7 @@ int RageSoundReader_Vorbisfile::Read( float *buf, int iFrames )
 				continue;
 			if( ret == OV_EBADLINK )
 			{
-				SetError( ssprintf("Read: OV_EBADLINK") );
+				SetError( fmt::sprintf("Read: OV_EBADLINK") );
 				return ERROR;
 			}
 
@@ -290,7 +290,7 @@ RageSoundReader_Vorbisfile *RageSoundReader_Vorbisfile::Copy() const
 	/* If we were able to open the sound in the first place, we expect to
 	 * be able to reopen it. */
 	if( ret->Open(pFile) != OPEN_OK )
-		FAIL_M( ssprintf("Copying sound failed: %s", ret->GetError().c_str()) );
+		FAIL_M( fmt::sprintf("Copying sound failed: %s", ret->GetError().c_str()) );
 
 	return ret;
 }

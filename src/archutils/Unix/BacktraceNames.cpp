@@ -86,7 +86,7 @@ RString BacktraceNames::Format() const
 		ShortenedPath = RString("(") + ShortenedPath + ")";
 	}
 
-	RString ret = ssprintf( "%0*lx: ", int(sizeof(void*)*2), (long) Address );
+	RString ret = fmt::sprintf( "%0*lx: ", int(sizeof(void*)*2), (long) Address );
 	if( Symbol != "" )
 		ret += Symbol + " ";
 	ret += ShortenedPath;

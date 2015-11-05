@@ -16,7 +16,7 @@ AutoScreenMessage(SM_DoSaveAndExit);
 #define BUTTONS_TO_MAP			THEME->GetMetric ( m_sName, "ButtonsToMap" )
 static LocalizedString INVALID_BUTTON   ( "ScreenMapControllers", "InvalidButton" );
 static LocalizedString SAVE_PROMPT("ScreenMapControllers", "SavePrompt");
-#define MAPPED_TO_COMMAND(gc,slot)	THEME->GetMetricA( m_sName, ssprintf("MappedToP%iS%iCommand", gc+1, slot+1) )
+#define MAPPED_TO_COMMAND(gc,slot)	THEME->GetMetricA( m_sName, fmt::sprintf("MappedToP%iS%iCommand", gc+1, slot+1) )
 
 static const float g_fSecondsToWaitForInput = 0.05f;
 
@@ -94,7 +94,7 @@ void ScreenMapControllers::Init()
 			text.LoadFromFont( THEME->GetPathF(m_sName,"title") );
 			PlayerNumber pn = (PlayerNumber)c;
 			text.SetName( "Label"+PlayerNumberToString(pn) );
-			RString sText = ssprintf(PLAYER_SLOTS.GetValue(), PlayerNumberToLocalizedString(pn).c_str());
+			RString sText = fmt::sprintf(PLAYER_SLOTS.GetValue(), PlayerNumberToLocalizedString(pn).c_str());
 			text.SetText( sText );
 			ActorUtil::LoadAllCommands( text, m_sName );
 			m_Line.back()->AddChild( &m_textLabel[c] );
@@ -118,7 +118,7 @@ void ScreenMapControllers::Init()
 				text.SetName("ListHeader");
 				text.SetText(SLOT_NAMES[s]);
 				text.RunCommands(THEME->GetMetricA(
-						m_sName, ssprintf("ListHeaderP%iS%iCommand", c+1, s+1)));
+						m_sName, fmt::sprintf("ListHeaderP%iS%iCommand", c+1, s+1)));
 				ActorUtil::LoadAllCommands(text, m_sName);
 				m_Line.back()->AddChild(&text);
 			}

@@ -16,29 +16,29 @@
 
 using std::vector;
 
-#define TITLE_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",ssprintf("TitleP%dOnCommand",p+1))
-#define TITLE_OFF_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",ssprintf("TitleP%dOffCommand",p+1))
-#define CARD_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",ssprintf("CardP%dOnCommand",p+1))
-#define CARD_OFF_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",ssprintf("CardP%dOffCommand",p+1))
-#define CARD_ARROWS_ON_COMMAND( p )			THEME->GetMetricA("ScreenSelectCharacter",ssprintf("CardArrowsP%dOnCommand",p+1))
-#define CARD_ARROWS_OFF_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",ssprintf("CardArrowsP%dOffCommand",p+1))
+#define TITLE_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("TitleP%dOnCommand",p+1))
+#define TITLE_OFF_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("TitleP%dOffCommand",p+1))
+#define CARD_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("CardP%dOnCommand",p+1))
+#define CARD_OFF_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("CardP%dOffCommand",p+1))
+#define CARD_ARROWS_ON_COMMAND( p )			THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("CardArrowsP%dOnCommand",p+1))
+#define CARD_ARROWS_OFF_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("CardArrowsP%dOffCommand",p+1))
 #define EXPLANATION_ON_COMMAND				THEME->GetMetricA("ScreenSelectCharacter","ExplanationOnCommand")
 #define EXPLANATION_OFF_COMMAND				THEME->GetMetricA("ScreenSelectCharacter","ExplanationOffCommand")
-#define ATTACK_FRAME_ON_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",ssprintf("AttackFrameP%dOnCommand",p+1))
-#define ATTACK_FRAME_OFF_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",ssprintf("AttackFrameP%dOffCommand",p+1))
+#define ATTACK_FRAME_ON_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("AttackFrameP%dOnCommand",p+1))
+#define ATTACK_FRAME_OFF_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("AttackFrameP%dOffCommand",p+1))
 #define ATTACK_ICON_WIDTH					THEME->GetMetricF("ScreenSelectCharacter","AttackIconWidth")
 #define ATTACK_ICON_HEIGHT					THEME->GetMetricF("ScreenSelectCharacter","AttackIconHeight")
-#define ATTACK_ICONS_START_X( p )			THEME->GetMetricF("ScreenSelectCharacter",ssprintf("AttackIconsP%dStartX",p+1))
-#define ATTACK_ICONS_START_Y( p )			THEME->GetMetricF("ScreenSelectCharacter",ssprintf("AttackIconsP%dStartY",p+1))
+#define ATTACK_ICONS_START_X( p )			THEME->GetMetricF("ScreenSelectCharacter",fmt::sprintf("AttackIconsP%dStartX",p+1))
+#define ATTACK_ICONS_START_Y( p )			THEME->GetMetricF("ScreenSelectCharacter",fmt::sprintf("AttackIconsP%dStartY",p+1))
 #define ATTACK_ICONS_SPACING_X				THEME->GetMetricF("ScreenSelectCharacter","AttackIconsSpacingX")
 #define ATTACK_ICONS_SPACING_Y				THEME->GetMetricF("ScreenSelectCharacter","AttackIconsSpacingY")
-#define ATTACK_ICONS_ON_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",ssprintf("AttackIconsP%dOnCommand",p+1))
-#define ATTACK_ICONS_OFF_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",ssprintf("AttackIconsP%dOffCommand",p+1))
+#define ATTACK_ICONS_ON_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("AttackIconsP%dOnCommand",p+1))
+#define ATTACK_ICONS_OFF_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("AttackIconsP%dOffCommand",p+1))
 #define TIMER_SECONDS						THEME->GetMetricI("ScreenSelectCharacter","TimerSeconds")
 #define ICON_WIDTH							THEME->GetMetricF("ScreenSelectCharacter","IconWidth")
 #define ICON_HEIGHT							THEME->GetMetricF("ScreenSelectCharacter","IconHeight")
-#define ICONS_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",ssprintf("IconsP%dOnCommand",p+1))
-#define ICONS_OFF_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",ssprintf("IconsP%dOffCommand",p+1))
+#define ICONS_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("IconsP%dOnCommand",p+1))
+#define ICONS_OFF_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("IconsP%dOffCommand",p+1))
 
 #define LEVEL_CURSOR_X( p, l )	( ICONS_START_X(p)+ICONS_SPACING_X*((NUM_ATTACKS_PER_LEVEL-1)/2.f) )
 #define LEVEL_CURSOR_Y( p, l )	( ICONS_START_Y(p)+ICONS_SPACING_Y*l )
@@ -198,7 +198,7 @@ PlayerNumber ScreenSelectCharacter::GetAffectedPlayerNumber( PlayerNumber pn )
 	case FINISHED_CHOOSING:
 		return pn;
 	default:
-		FAIL_M(ssprintf("Invalid character selection state: %i", m_SelectionRow[pn]));
+		FAIL_M(fmt::sprintf("Invalid character selection state: %i", m_SelectionRow[pn]));
 	}
 }
 
@@ -273,7 +273,7 @@ void ScreenSelectCharacter::AfterValueChange( PlayerNumber pn )
 		;	// do nothing
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid character selection state: %i", m_SelectionRow[pn]));
+		FAIL_M(fmt::sprintf("Invalid character selection state: %i", m_SelectionRow[pn]));
 	}
 }
 

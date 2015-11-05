@@ -213,12 +213,12 @@ static void child_process()
 	{
 	case CrashData::SIGNAL:
 	{
-		reason = ssprintf( "%s - %s", SignalName(crash.signal), SignalCodeName(crash.signal, crash.si.si_code) );
+		reason = fmt::sprintf( "%s - %s", SignalName(crash.signal), SignalCodeName(crash.signal, crash.si.si_code) );
 
 		/* Linux puts the PID that sent the signal in si_addr for SI_USER. */
 		if( crash.si.si_code == SI_USER )
 		{
-			reason += ssprintf( " from pid %li", (long) crash.si.si_addr );
+			reason += fmt::sprintf( " from pid %li", (long) crash.si.si_addr );
 		}
 		else
 		{
@@ -228,7 +228,7 @@ static void child_process()
 			case SIGFPE:
 			case SIGSEGV:
 			case SIGBUS:
-				reason += ssprintf( " at 0x%0*lx", int(sizeof(void*)*2), (unsigned long) crash.si.si_addr );
+				reason += fmt::sprintf( " at 0x%0*lx", int(sizeof(void*)*2), (unsigned long) crash.si.si_addr );
 			}
 			break;
 		}

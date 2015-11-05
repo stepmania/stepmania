@@ -65,18 +65,18 @@ static size_t get_table_len(lua_State* L, int index, size_t max_entries,
 {
 	if(!lua_istable(L, index))
 	{
-		insanity_diagnosis= ssprintf("%s is not a table.", table_name.c_str());
+		insanity_diagnosis= fmt::sprintf("%s is not a table.", table_name.c_str());
 		return 0;
 	}
 	size_t ret= lua_objlen(L, index);
 	if(ret == 0)
 	{
-		insanity_diagnosis= ssprintf("The %s table is empty.",table_name.c_str());
+		insanity_diagnosis= fmt::sprintf("The %s table is empty.",table_name.c_str());
 		return 0;
 	}
 	if(ret > max_entries)
 	{
-		insanity_diagnosis= ssprintf("The %s table has over %zu entries.",
+		insanity_diagnosis= fmt::sprintf("The %s table has over %zu entries.",
 			table_name.c_str(), max_entries);
 	}
 	return ret;
@@ -100,7 +100,7 @@ static bool load_simple_table(lua_State* L, int index, size_t max_entries,
 		lua_pop(L, 1);
 		if(value >= max_value)
 		{
-			insanity_diagnosis= ssprintf("Entry %zu in the %s table is not valid.",
+			insanity_diagnosis= fmt::sprintf("Entry %zu in the %s table is not valid.",
 				i+1, table_name.c_str());
 			return false;
 		}
@@ -124,7 +124,7 @@ static bool load_string_table(lua_State* L, int index, size_t max_entries,
 		lua_rawgeti(L, index, i+1);
 		if(!lua_isstring(L, -1))
 		{
-			insanity_diagnosis= ssprintf("Entry %zu in the %s table is not valid.",
+			insanity_diagnosis= fmt::sprintf("Entry %zu in the %s table is not valid.",
 				i+1, table_name.c_str());
 			return false;
 		}
@@ -225,25 +225,25 @@ bool QuantizedStateMap::load_from_lua(lua_State* L, int index, string& insanity_
 		lua_rawgeti(L, quanta_index, i+1);
 		if(!lua_istable(L, -1))
 		{
-			RETURN_NOT_SANE(ssprintf("Invalid quantum %zu.", i+1));
+			RETURN_NOT_SANE(fmt::sprintf("Invalid quantum %zu.", i+1));
 		}
 		lua_getfield(L, -1, "per_beat");
 		if(!lua_isnumber(L, -1))
 		{
-			RETURN_NOT_SANE(ssprintf("Invalid per_beat value in quantum %zu.", i+1));
+			RETURN_NOT_SANE(fmt::sprintf("Invalid per_beat value in quantum %zu.", i+1));
 		}
 		temp_quanta[i].per_beat= lua_tointeger(L, -1);
 		lua_pop(L, 1);
 		lua_getfield(L, -1, "states");
 		if(!lua_istable(L, -1))
 		{
-			RETURN_NOT_SANE(ssprintf("Invalid states in quantum %zu.", i+1));
+			RETURN_NOT_SANE(fmt::sprintf("Invalid states in quantum %zu.", i+1));
 		}
 		if(!load_simple_table(L, lua_gettop(L), max_states,
 				temp_quanta[i].states, static_cast<size_t>(1), max_states, "states",
 				insanity_diagnosis))
 		{
-			RETURN_NOT_SANE(ssprintf("Invalid states in quantum %zu: %s", i+1, insanity_diagnosis.c_str()));
+			RETURN_NOT_SANE(fmt::sprintf("Invalid states in quantum %zu: %s", i+1, insanity_diagnosis.c_str()));
 		}
 		lua_pop(L, 1);
 	}
@@ -336,7 +336,7 @@ bool QuantizedHold::load_from_lua(lua_State* L, int index, NewSkinLoader const* 
 		lua_rawgeti(L, texind, part+1);
 		if(!lua_isstring(L, -1))
 		{
-			RETURN_NOT_SANE(ssprintf("Texture entry for layer %zu is not a string.",
+			RETURN_NOT_SANE(fmt::sprintf("Texture entry for layer %zu is not a string.",
 					part+1));
 		}
 		string path= lua_tostring(L, -1);
@@ -486,7 +486,7 @@ bool NewSkinColumn::load_holds_from_lua(lua_State* L, int index,
 		lua_gettable(L, holds_index);
 		if(!lua_istable(L, -1))
 		{
-			RETURN_NOT_SANE(ssprintf("Hold subtype %s not returned.", TapNoteSubTypeToString(static_cast<TapNoteSubType>(part)).c_str()));
+			RETURN_NOT_SANE(fmt::sprintf("Hold subtype %s not returned.", TapNoteSubTypeToString(static_cast<TapNoteSubType>(part)).c_str()));
 		}
 		int actives_index= lua_gettop(L);
 		static const size_t num_active_states= 2;
@@ -496,11 +496,11 @@ bool NewSkinColumn::load_holds_from_lua(lua_State* L, int index,
 			lua_rawgeti(L, actives_index, a+1);
 			if(!lua_istable(L, -1))
 			{
-				RETURN_NOT_SANE(ssprintf("Hold info not given for active state %zu of subtype %s.", a, TapNoteSubTypeToString(static_cast<TapNoteSubType>(part)).c_str()));
+				RETURN_NOT_SANE(fmt::sprintf("Hold info not given for active state %zu of subtype %s.", a, TapNoteSubTypeToString(static_cast<TapNoteSubType>(part)).c_str()));
 			}
 			if(!holder[part][a].load_from_lua(L, lua_gettop(L), load_skin, sub_sanity))
 			{
-				RETURN_NOT_SANE(ssprintf("Error loading active state %zu of subtype %s: %s", a, TapNoteSubTypeToString(static_cast<TapNoteSubType>(part)).c_str(), sub_sanity.c_str()));
+				RETURN_NOT_SANE(fmt::sprintf("Error loading active state %zu of subtype %s: %s", a, TapNoteSubTypeToString(static_cast<TapNoteSubType>(part)).c_str(), sub_sanity.c_str()));
 			}
 		}
 	}
@@ -532,7 +532,7 @@ bool NewSkinColumn::load_texs_from_lua(lua_State* L, int index,
 		lua_gettable(L, texs_index);
 		if(!lua_isstring(L, -1))
 		{
-			RETURN_NOT_SANE(ssprintf("Texture entry for layer %zu is not a string.",
+			RETURN_NOT_SANE(fmt::sprintf("Texture entry for layer %zu is not a string.",
 					part+1));
 		}
 		string path= lua_tostring(L, -1);
@@ -563,13 +563,13 @@ bool load_tap_set_from_lua(lua_State* L, int taps_index, vector<QuantizedTap>& t
 		lua_gettable(L, taps_index);
 		if(!lua_istable(L, -1))
 		{
-			RETURN_NOT_SANE(ssprintf("Part %s not returned.",
+			RETURN_NOT_SANE(fmt::sprintf("Part %s not returned.",
 					NewSkinTapPartToString(static_cast<NewSkinTapPart>(part)).c_str()));
 		}
 		if(!tap_set[part].load_from_lua(L, lua_gettop(L),
 				sub_sanity))
 		{
-			RETURN_NOT_SANE(ssprintf("Error loading part %s: %s",
+			RETURN_NOT_SANE(fmt::sprintf("Error loading part %s: %s",
 					NewSkinTapPartToString(static_cast<NewSkinTapPart>(part)).c_str(),
 					sub_sanity.c_str()));
 		}
@@ -671,7 +671,7 @@ bool NewSkinLayer::load_from_lua(lua_State* L, int index, size_t columns,
 	size_t num_columns= get_table_len(L, index, NewSkinData::max_columns, "layer actors", insanity_diagnosis);
 	if(num_columns != columns)
 	{
-		RETURN_NOT_SANE(ssprintf("Invalid number of columns: %s", insanity_diagnosis.c_str()));
+		RETURN_NOT_SANE(fmt::sprintf("Invalid number of columns: %s", insanity_diagnosis.c_str()));
 	}
 	m_actors.resize(num_columns);
 	for(size_t c= 0; c < num_columns; ++c)
@@ -718,7 +718,7 @@ bool NewSkinData::load_taps_from_lua(lua_State* L, int index, size_t columns, Ne
 	size_t num_columns= get_table_len(L, -1, max_columns, "columns", insanity_diagnosis);
 	if(num_columns != columns)
 	{
-		RETURN_NOT_SANE(ssprintf("Invalid number of columns: %s", insanity_diagnosis.c_str()));
+		RETURN_NOT_SANE(fmt::sprintf("Invalid number of columns: %s", insanity_diagnosis.c_str()));
 	}
 	vector<NewSkinColumn> temp_columns(num_columns);
 	int columns_index= lua_gettop(L);
@@ -728,11 +728,11 @@ bool NewSkinData::load_taps_from_lua(lua_State* L, int index, size_t columns, Ne
 		lua_rawgeti(L, columns_index, c+1);
 		if(!lua_istable(L, -1))
 		{
-			RETURN_NOT_SANE(ssprintf("Nothing given for column %zu.", c+1));
+			RETURN_NOT_SANE(fmt::sprintf("Nothing given for column %zu.", c+1));
 		}
 		if(!temp_columns[c].load_from_lua(L, lua_gettop(L), load_skin, sub_sanity))
 		{
-			RETURN_NOT_SANE(ssprintf("Error loading column %zu: %s", c+1, sub_sanity.c_str()));
+			RETURN_NOT_SANE(fmt::sprintf("Error loading column %zu: %s", c+1, sub_sanity.c_str()));
 		}
 	}
 	lua_settop(L, columns_index-1);

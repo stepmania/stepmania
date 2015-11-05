@@ -57,7 +57,7 @@ RString BackgroundChange::GetTextDescription() const
 	vector<RString> vsParts;
 	if( !m_def.m_sFile1.empty() )	vsParts.push_back( m_def.m_sFile1 );
 	if( !m_def.m_sFile2.empty() )	vsParts.push_back( m_def.m_sFile2 );
-	if( m_fRate!=1.0f )				vsParts.push_back( ssprintf("%.2f%%",m_fRate*100) );
+	if( m_fRate!=1.0f )				vsParts.push_back( fmt::sprintf("%.2f%%",m_fRate*100) );
 	if( !m_sTransition.empty() )	vsParts.push_back( m_sTransition );
 	if( !m_def.m_sEffect.empty() )	vsParts.push_back( m_def.m_sEffect );
 	if( !m_def.m_sColor1.empty() )	vsParts.push_back( m_def.m_sColor1 );
@@ -75,7 +75,7 @@ RString BackgroundChange::ToString() const
 	/* TODO:  Technically we need to double-escape the filename
 	 * (because it might contain '=') and then unescape the value
 	 * returned by the MsdFile. */
-	return ssprintf("%.3f=%s=%.3f=%d=%d=%d=%s=%s=%s=%s=%s",
+	return fmt::sprintf("%.3f=%s=%.3f=%d=%d=%d=%s=%s=%s=%s=%s",
 			this->m_fStartBeat,
 			SmEscape(this->m_def.m_sFile1).c_str(),
 			this->m_fRate,
@@ -267,7 +267,7 @@ static void GetFilterToFileNames( const RString sBaseDir, const Song *pSong, std
 	XNode *pSection = ini.GetChild( sSection );
 	if( pSection == nullptr )
 	{
-		ASSERT_M( 0, ssprintf("File '%s' refers to a section '%s' that is missing.", sPath.c_str(), sSection.c_str()) );
+		ASSERT_M( 0, fmt::sprintf("File '%s' refers to a section '%s' that is missing.", sPath.c_str(), sSection.c_str()) );
 		return;
 	}
 

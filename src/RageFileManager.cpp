@@ -580,7 +580,7 @@ bool RageFileManager::Mount( const RString &sType, const RString &sRoot_, const 
 
 	ASSERT( !sRoot.empty() );
 
-	const RString &sPaths = ssprintf( "\"%s\", \"%s\", \"%s\"", sType.c_str(), sRoot.c_str(), sMountPoint.c_str() );
+	const RString &sPaths = fmt::sprintf( "\"%s\", \"%s\", \"%s\"", sType.c_str(), sRoot.c_str(), sMountPoint.c_str() );
 	CHECKPOINT_M( sPaths );
 #if defined(DEBUG)
 	puts( sPaths );
@@ -589,11 +589,11 @@ bool RageFileManager::Mount( const RString &sType, const RString &sRoot_, const 
 	// Unmount anything that was previously mounted here.
 	Unmount( sType, sRoot, sMountPoint );
 
-	CHECKPOINT_M( ssprintf("About to make a driver with \"%s\", \"%s\"", sType.c_str(), sRoot.c_str()));
+	CHECKPOINT_M( fmt::sprintf("About to make a driver with \"%s\", \"%s\"", sType.c_str(), sRoot.c_str()));
 	RageFileDriver *pDriver = MakeFileDriver( sType, sRoot );
 	if( pDriver == nullptr )
 	{
-		CHECKPOINT_M( ssprintf("Can't mount unknown VFS type \"%s\", root \"%s\"", sType.c_str(), sRoot.c_str() ) );
+		CHECKPOINT_M( fmt::sprintf("Can't mount unknown VFS type \"%s\", root \"%s\"", sType.c_str(), sRoot.c_str() ) );
 
 		if( LOG )
 			LOG->Warn("Can't mount unknown VFS type \"%s\", root \"%s\"", sType.c_str(), sRoot.c_str() );
@@ -917,7 +917,7 @@ void RageFileManager::CacheFile( const RageFileBasic *fb, const RString &sPath_ 
 {
 	auto it = g_mFileDriverMap.find( fb );
 
-	ASSERT_M( it != g_mFileDriverMap.end(), ssprintf("No recorded driver for file: %s", sPath_.c_str()) );
+	ASSERT_M( it != g_mFileDriverMap.end(), fmt::sprintf("No recorded driver for file: %s", sPath_.c_str()) );
 
 	RString sPath = sPath_;
 	NormalizePath( sPath );

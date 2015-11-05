@@ -45,7 +45,7 @@ struct TapScoreDistribution
 				return (TapNoteScore)i;
 		}
 		// the fCumulativePercents must sum to 1.0, so we should never get here!
-		ASSERT_M( 0, ssprintf("%f,%f",fRand,fCumulativePercent) );
+		ASSERT_M( 0, fmt::sprintf("%f,%f",fRand,fCumulativePercent) );
 		return TNS_W1;
 	}
 };
@@ -69,7 +69,7 @@ void PlayerAI::InitFromDisk()
 	{
 		for( int i=0; i<NUM_SKILL_LEVELS; i++ )
 		{
-			RString sKey = ssprintf("Skill%d", i);
+			RString sKey = fmt::sprintf("Skill%d", i);
 			XNode* pNode = ini.GetChild(sKey);
 			TapScoreDistribution& dist = g_Distributions[i];
 			if( pNode == nullptr )
@@ -132,8 +132,8 @@ TapNoteScore PlayerAI::GetTapNoteScore( const PlayerState* pPlayerState )
 			pPlayerState->m_iLastPositiveSumOfAttackLevels : 
 			0;
 
-		ASSERT_M( iCpuSkill>=0 && iCpuSkill<NUM_SKILL_LEVELS, ssprintf("%i", iCpuSkill) );
-		ASSERT_M( pPlayerState->m_PlayerController == PC_CPU, ssprintf("%i", pPlayerState->m_PlayerController) );
+		ASSERT_M( iCpuSkill>=0 && iCpuSkill<NUM_SKILL_LEVELS, fmt::sprintf("%i", iCpuSkill) );
+		ASSERT_M( pPlayerState->m_PlayerController == PC_CPU, fmt::sprintf("%i", pPlayerState->m_PlayerController) );
 
 		iCpuSkill -= iSumOfAttackLevels*3;
 		iCpuSkill = Rage::clamp( iCpuSkill, 0, NUM_SKILL_LEVELS-1 );

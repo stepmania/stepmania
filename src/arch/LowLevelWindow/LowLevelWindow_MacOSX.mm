@@ -396,7 +396,7 @@ RString LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool& new
 		int result = ChangeDisplayMode( p );
 	
 		if( result )
-			return ssprintf( "Failed to switch to full screen:%d x %d @ %d. Error %d.",
+			return fmt::sprintf( "Failed to switch to full screen:%d x %d @ %d. Error %d.",
 					 p.width, p.height, p.rate, result );
 	}
 

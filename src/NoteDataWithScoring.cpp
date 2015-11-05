@@ -101,13 +101,13 @@ const TapNote &NoteDataWithScoring::LastTapNoteWithResult( const NoteData &in, u
 	// Allow this to be configurable between LastTapNoteScoreTrack and
 	// MinTapNoteScore; this change inspired by PumpMania (Zmey, et al) -aj
 	/*
-	LOG->Trace( ssprintf("hi i'm NoteDataWithScoring::LastTapNoteWithResult(NoteData in, iRow=%i, PlayerNumber pn)", iRow) );
+	LOG->Trace( fmt::sprintf("hi i'm NoteDataWithScoring::LastTapNoteWithResult(NoteData in, iRow=%i, PlayerNumber pn)", iRow) );
 	int iTrack = 0;
 	switch(LAST_OR_MINIMUM_TNS)
 	{
 		case TapNoteScoreJudgeType_MinimumScore:
 			iTrack = MinTapNoteScoreTrack( in, iRow, pn );
-			LOG->Trace( ssprintf("TapNoteScoreJudgeType_MinimumScore omg iTrack is %i and iRow is %i",iTrack,iRow) );
+			LOG->Trace( fmt::sprintf("TapNoteScoreJudgeType_MinimumScore omg iTrack is %i and iRow is %i",iTrack,iRow) );
 			break;
 		case TapNoteScoreJudgeType_LastScore:
 		default:
@@ -119,7 +119,7 @@ const TapNote &NoteDataWithScoring::LastTapNoteWithResult( const NoteData &in, u
 	if( iTrack == -1 )
 		return TAP_EMPTY;
 
-	//LOG->Trace( ssprintf("returning in.GetTapNote(iTrack=%i, iRow=%i)", iTrack, iRow) );
+	//LOG->Trace( fmt::sprintf("returning in.GetTapNote(iTrack=%i, iRow=%i)", iTrack, iRow) );
 	return in.GetTapNote( iTrack, iRow );
 }
 
@@ -143,7 +143,7 @@ TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned 
 		score = min( score, tn.result.tns );
 	}
 
-	//LOG->Trace( ssprintf("OMG score is?? %s",TapNoteScoreToString(score).c_str()) );
+	//LOG->Trace( fmt::sprintf("OMG score is?? %s",TapNoteScoreToString(score).c_str()) );
 	return score;
 }
 

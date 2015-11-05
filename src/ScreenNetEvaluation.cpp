@@ -43,8 +43,8 @@ void ScreenNetEvaluation::Init()
 	m_rectUsersBG.SetName( "UsersBG" );
 
 	m_rectUsersBG.SetXY(
-		THEME->GetMetricF("ScreenNetEvaluation",ssprintf("UsersBG%dX",m_iShowSide)),
-		THEME->GetMetricF("ScreenNetEvaluation",ssprintf("UsersBG%dY",m_iShowSide)) );
+		THEME->GetMetricF("ScreenNetEvaluation",fmt::sprintf("UsersBG%dX",m_iShowSide)),
+		THEME->GetMetricF("ScreenNetEvaluation",fmt::sprintf("UsersBG%dY",m_iShowSide)) );
 	LOAD_ALL_COMMANDS_AND_ON_COMMAND( m_rectUsersBG );
 
 	this->AddChild( &m_rectUsersBG );
@@ -66,8 +66,8 @@ void ScreenNetEvaluation::RedoUserTexts()
 	{
 		this->RemoveChild( &user );
 	}
-	float cx = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dX",m_iShowSide));
-	float cy = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dY",m_iShowSide));
+	float cx = THEME->GetMetricF("ScreenNetEvaluation",fmt::sprintf("User%dX",m_iShowSide));
+	float cy = THEME->GetMetricF("ScreenNetEvaluation",fmt::sprintf("User%dY",m_iShowSide));
 
 	m_iCurrentPlayer = 0;
 	m_textUsers.clear();
@@ -76,7 +76,7 @@ void ScreenNetEvaluation::RedoUserTexts()
 	for( int i=0; i<m_iActivePlayers; ++i )
 	{
 		m_textUsers[i].LoadFromFont( THEME->GetPathF(m_sName,"names") );
-		m_textUsers[i].SetName( ssprintf("User") );
+		m_textUsers[i].SetName( fmt::sprintf("User") );
 		m_textUsers[i].SetShadowLength( 1 );
 		m_textUsers[i].SetXY( cx, cy );
 

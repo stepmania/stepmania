@@ -86,9 +86,9 @@ void RageFile::Close()
 	m_File = nullptr;
 }
 
-#define ASSERT_OPEN ASSERT_M( IsOpen(), ssprintf("\"%s\" is not open.", m_Path.c_str()) );
-#define ASSERT_READ ASSERT_OPEN; ASSERT_M( !!(m_Mode&READ), ssprintf("\"%s\" is not open for reading", m_Path.c_str()) );
-#define ASSERT_WRITE ASSERT_OPEN; ASSERT_M( !!(m_Mode&WRITE), ssprintf("\"%s\" is not open for writing", m_Path.c_str()) );
+#define ASSERT_OPEN ASSERT_M( IsOpen(), fmt::sprintf("\"%s\" is not open.", m_Path.c_str()) );
+#define ASSERT_READ ASSERT_OPEN; ASSERT_M( !!(m_Mode&READ), fmt::sprintf("\"%s\" is not open for reading", m_Path.c_str()) );
+#define ASSERT_WRITE ASSERT_OPEN; ASSERT_M( !!(m_Mode&WRITE), fmt::sprintf("\"%s\" is not open for writing", m_Path.c_str()) );
 int RageFile::GetLine( RString &out )
 {
 	ASSERT_READ;

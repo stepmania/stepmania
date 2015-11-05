@@ -267,7 +267,7 @@ static void DisplayResolutionChoices( vector<RString> &out )
 
 	for (auto const &iter: d)
 	{
-		RString s = ssprintf("%dx%d", iter.iWidth, iter.iHeight);
+		RString s = fmt::sprintf("%dx%d", iter.iWidth, iter.iHeight);
 		out.push_back( s );
 	}
 }
@@ -768,7 +768,7 @@ static void InitializeConfOptions()
 		ConfOption c("EditRecordModeLeadIn", EditRecordModeLeadIn);
 		for(int i= 0; i < 32; ++i)
 		{
-			c.AddOption(ssprintf("%+i s", i));
+			c.AddOption(fmt::sprintf("%+i s", i));
 		}
 		ADD(c);
 	}
@@ -894,7 +894,7 @@ static void InitializeConfOptions()
 	{
 		ConfOption c( "GlobalOffsetSeconds",		GlobalOffsetSeconds );
 		for( int i = -100; i <= +100; i += 5 )
-			c.AddOption( ssprintf("%+i ms", i) );
+			c.AddOption( fmt::sprintf("%+i ms", i) );
 		ADD( c );
 	}
 	ADD( ConfOption( "EnableAttackSounds",		MovePref<bool>,		"No","Yes" ) );

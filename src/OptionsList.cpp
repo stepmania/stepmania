@@ -13,7 +13,7 @@
 
 using std::vector;
 
-#define LINE(sLineName)				THEME->GetMetric (m_sName,ssprintf("Line%s",sLineName.c_str()))
+#define LINE(sLineName)				THEME->GetMetric (m_sName,fmt::sprintf("Line%s",sLineName.c_str()))
 #define MAX_ITEMS_BEFORE_SPLIT			THEME->GetMetricI(m_sName,"MaxItemsBeforeSplit")
 #define ITEMS_SPLIT_WIDTH			THEME->GetMetricF(m_sName,"ItemsSplitWidth")
 #define DIRECT_LINES				THEME->GetMetric (m_sName,"DirectLines")

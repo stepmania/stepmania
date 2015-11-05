@@ -473,12 +473,12 @@ void Actor::PreDraw() // calculate actor properties
 			fPercentThroughEffect = 0;
 		}
 		ASSERT_M( fPercentThroughEffect >= 0 && fPercentThroughEffect <= 1,
-			ssprintf("PercentThroughEffect: %f", fPercentThroughEffect) );
+			fmt::sprintf("PercentThroughEffect: %f", fPercentThroughEffect) );
 
 		bool bBlinkOn = fPercentThroughEffect > 0.5f;
 		float fPercentBetweenColors = Rage::FastSin( (fPercentThroughEffect + 0.25f) * 2 * Rage::PI ) / 2 + 0.5f;
 		ASSERT_M( fPercentBetweenColors >= 0 && fPercentBetweenColors <= 1,
-			ssprintf("PercentBetweenColors: %f, PercentThroughEffect: %f", fPercentBetweenColors, fPercentThroughEffect) );
+			fmt::sprintf("PercentBetweenColors: %f, PercentThroughEffect: %f", fPercentBetweenColors, fPercentThroughEffect) );
 		float fOriginalAlpha = tempState.diffuse[0].a;
 
 		// todo: account for SSC_FUTURES -aj
@@ -566,7 +566,7 @@ void Actor::PreDraw() // calculate actor properties
 			}
 			break;
 		default:
-			FAIL_M(ssprintf("Invalid effect: %i", m_Effect));
+			FAIL_M(fmt::sprintf("Invalid effect: %i", m_Effect));
 		}
 	}
 
@@ -781,7 +781,7 @@ bool Actor::IsFirstUpdate() const
 void Actor::Update( float fDeltaTime )
 {
 //	LOG->Trace( "Actor::Update( %f )", fDeltaTime );
-	ASSERT_M( fDeltaTime >= 0, ssprintf("DeltaTime: %f",fDeltaTime) );
+	ASSERT_M( fDeltaTime >= 0, fmt::sprintf("DeltaTime: %f",fDeltaTime) );
 
 	if( m_fHibernateSecondsLeft > 0 )
 	{
@@ -886,7 +886,7 @@ RString Actor::GetLineage() const
 
 	if( m_pParent )
 		sPath = m_pParent->GetLineage() + '/';
-	sPath += ssprintf( "<type %s> %s", typeid(*this).name(), m_sName.c_str() );
+	sPath += fmt::sprintf( "<type %s> %s", typeid(*this).name(), m_sName.c_str() );
 	return sPath;
 }
 
@@ -1095,14 +1095,14 @@ bool Actor::SetEffectTiming(float ramp_toh, float at_half, float ramp_tof, float
 	// No negative timings
 	if(ramp_toh < 0 || at_half < 0 || ramp_tof < 0 || at_full < 0 || at_zero < 0)
 	{
-		err= ssprintf("Effect timings (%f,%f,%f,%f,%f) must not be negative;",
+		err= fmt::sprintf("Effect timings (%f,%f,%f,%f,%f) must not be negative;",
 			ramp_toh, at_half, ramp_tof, at_zero, at_full);
 		return false;
 	}
 	// and at least one positive timing.
 	if(ramp_toh <= 0 && at_half <= 0 && ramp_tof <= 0 && at_full <= 0 && at_zero <= 0)
 	{
-		err= ssprintf("Effect timings (0,0,0,0,0) must not all be zero;");
+		err= fmt::sprintf("Effect timings (0,0,0,0,0) must not all be zero;");
 		return false;
 	}
 	m_effect_ramp_to_half= ramp_toh;

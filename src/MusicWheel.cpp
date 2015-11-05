@@ -28,13 +28,13 @@ static Preference<bool> g_bMoveRandomToEnd( "MoveRandomToEnd", false );
 static Preference<bool> g_bPrecacheAllSorts( "PreCacheAllWheelSorts", false);
 
 #define NUM_WHEEL_ITEMS		((int)ceil(NUM_WHEEL_ITEMS_TO_DRAW+2))
-#define WHEEL_TEXT(s)		THEME->GetString( "MusicWheel", ssprintf("%sText",s.c_str()) );
-#define CUSTOM_ITEM_WHEEL_TEXT(s)		THEME->GetString( "MusicWheel", ssprintf("CustomItem%sText",s.c_str()) );
+#define WHEEL_TEXT(s)		THEME->GetString( "MusicWheel", fmt::sprintf("%sText",s.c_str()) );
+#define CUSTOM_ITEM_WHEEL_TEXT(s)		THEME->GetString( "MusicWheel", fmt::sprintf("CustomItem%sText",s.c_str()) );
 
-static RString SECTION_COLORS_NAME( size_t i )	{ return ssprintf("SectionColor%d",int(i+1)); }
-static RString CHOICE_NAME( RString s )		{ return ssprintf("Choice%s",s.c_str()); }
-static RString CUSTOM_WHEEL_ITEM_NAME( RString s )		{ return ssprintf("CustomWheelItem%s",s.c_str()); }
-static RString CUSTOM_WHEEL_ITEM_COLOR( RString s )		{ return ssprintf("%sColor",s.c_str()); }
+static RString SECTION_COLORS_NAME( size_t i )	{ return fmt::sprintf("SectionColor%d",int(i+1)); }
+static RString CHOICE_NAME( RString s )		{ return fmt::sprintf("Choice%s",s.c_str()); }
+static RString CUSTOM_WHEEL_ITEM_NAME( RString s )		{ return fmt::sprintf("CustomWheelItem%s",s.c_str()); }
+static RString CUSTOM_WHEEL_ITEM_COLOR( RString s )		{ return fmt::sprintf("%sColor",s.c_str()); }
 
 static LocalizedString EMPTY_STRING	( "MusicWheel", "Empty" );
 
@@ -139,7 +139,7 @@ void MusicWheel::BeginScreen()
 
 		if(g_bPrecacheAllSorts) {
 			readyWheelItemsData(so);
-			times += ssprintf( "%i:%.3f ", so, timer.GetDeltaTime() );
+			times += fmt::sprintf( "%i:%.3f ", so, timer.GetDeltaTime() );
 		}
 	}
 	if(g_bPrecacheAllSorts) {
@@ -784,7 +784,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 				}
 				break;
 			default:
-				FAIL_M(ssprintf("Wrong sort order: %i", so));
+				FAIL_M(fmt::sprintf("Wrong sort order: %i", so));
 			}
 
 			vector<Course*> apCourses;
@@ -1174,7 +1174,7 @@ void MusicWheel::UpdateSwitch()
 		}
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid wheel state: %i", m_WheelState));
+		FAIL_M(fmt::sprintf("Invalid wheel state: %i", m_WheelState));
 	}
 }
 

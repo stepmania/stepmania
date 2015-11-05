@@ -39,7 +39,7 @@ void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
 		g_pmapRegistrees = new std::unordered_map<string,CreateActorFn>;
 	}
 	auto iter = g_pmapRegistrees->find(sClassName);
-	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Actor class '%s' already registered.", sClassName.c_str()) );
+	ASSERT_M( iter == g_pmapRegistrees->end(), fmt::sprintf("Actor class '%s' already registered.", sClassName.c_str()) );
 
 	(*g_pmapRegistrees)[sClassName] = pfn;
 }
@@ -65,7 +65,7 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName, bool optional
 			{
 				return false;
 			}
-			RString sError = ssprintf( "%s: references a file \"%s\" which doesn't exist", sName.c_str(), sPath.c_str() );
+			RString sError = fmt::sprintf( "%s: references a file \"%s\" which doesn't exist", sName.c_str(), sPath.c_str() );
 			switch(LuaHelpers::ReportScriptError(sError, "BROKEN_FILE_REFERENCE", true))
 			{
 			case Dialog::abort:
@@ -85,7 +85,7 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName, bool optional
 
 		if( asPaths.size() > 1 )
 		{
-			RString sError = ssprintf( "%s: references a file \"%s\" which has multiple matches", sName.c_str(), sPath.c_str() );
+			RString sError = fmt::sprintf( "%s: references a file \"%s\" which has multiple matches", sName.c_str(), sPath.c_str() );
 			sError += "\n" + join( "\n", asPaths );
 			switch(LuaHelpers::ReportScriptError(sError, "BROKEN_FILE_REFERENCE", true))
 			{
@@ -231,7 +231,7 @@ Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 		}
 
 		// sClass is invalid
-		RString sError = ssprintf( "%s: invalid Class \"%s\"",
+		RString sError = fmt::sprintf( "%s: invalid Class \"%s\"",
 			ActorUtil::GetWhere(&node).c_str(), sClass.c_str() );
 		LuaHelpers::ReportScriptError(sError);
 		return new Actor;	// Return a dummy object so that we don't crash in AutoActor later.
@@ -261,7 +261,7 @@ namespace
 		if( !LuaHelpers::LoadScript(L, sScript, "@" + sFile, sError) )
 		{
 			LUA->Release( L );
-			sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
+			sError = fmt::sprintf( "Lua runtime error: %s", sError.c_str() );
 			LuaHelpers::ReportScriptError(sError);
 			return nullptr;
 		}
@@ -299,7 +299,7 @@ bool ActorUtil::LoadTableFromStackShowErrors( Lua *L )
 		lua_Debug debug;
 		lua_getinfo( L, ">nS", &debug );
 
-		Error = ssprintf( "%s: must return a table", debug.short_src );
+		Error = fmt::sprintf( "%s: must return a table", debug.short_src );
 
 		LuaHelpers::ReportScriptError(Error, "LUA_ERROR");
 		return false;
@@ -415,7 +415,7 @@ RString ActorUtil::GetWhere( const XNode *pNode )
 
 	int iLine;
 	if( pNode->GetAttrValue("_Line", iLine) )
-		sPath += ssprintf( ":%i", iLine );
+		sPath += fmt::sprintf( ":%i", iLine );
 	return sPath;
 }
 

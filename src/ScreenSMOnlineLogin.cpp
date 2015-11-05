@@ -215,7 +215,7 @@ void ScreenSMOnlineLogin::SendLogin( RString sPassword )
 	if ( NSMAN->GetSMOnlineSalt() != 0 )
 	{
 		authMethod = 1;
-		HashedName = NSMAN->MD5Hex( HashedName + ssprintf("%d", NSMAN->GetSMOnlineSalt()) );
+		HashedName = NSMAN->MD5Hex( HashedName + fmt::sprintf("%d", NSMAN->GetSMOnlineSalt()) );
 	}
 
 	NSMAN->m_SMOnlinePacket.ClearPacket();

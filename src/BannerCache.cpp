@@ -120,7 +120,7 @@ void BannerCache::LoadBanner( RString sBannerPath )
 		if( g_BannerPathToImage.find(sBannerPath) != g_BannerPathToImage.end() )
 			return; /* already loaded */
 
-		CHECKPOINT_M( ssprintf( "BannerCache::LoadBanner: %s", sCachePath.c_str() ) );
+		CHECKPOINT_M( fmt::sprintf( "BannerCache::LoadBanner: %s", sCachePath.c_str() ) );
 		RageSurface *pImage = RageSurfaceUtils::LoadSurface( sCachePath );
 		if( pImage == nullptr )
 		{

@@ -130,7 +130,7 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 		case PLAYER_1:	fLifePercentage = GAMESTATE->m_fTugLifePercentP1;		break;
 		case PLAYER_2:	fLifePercentage = 1 - GAMESTATE->m_fTugLifePercentP1;	break;
 		default:
-			FAIL_M(ssprintf("Invalid player number: %i", m_pPlayerState->m_PlayerNumber));
+			FAIL_M(fmt::sprintf("Invalid player number: %i", m_pPlayerState->m_PlayerNumber));
 		}
 		fLifePercentage = Rage::clamp( fLifePercentage, 0.f, 1.f );
 		if( fUnscaledPercentChange > 0 )
@@ -168,7 +168,7 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 		case PLAYER_2:	bWinning = GAMESTATE->m_fTugLifePercentP1 < 0.5f;	break;
 		default:
 			bWinning = false;
-			FAIL_M(ssprintf("Invalid player number: %i", m_pPlayerState->m_PlayerNumber));
+			FAIL_M(fmt::sprintf("Invalid player number: %i", m_pPlayerState->m_PlayerNumber));
 		}
 		if( !bWinning )
 			m_pPlayerState->EndActiveAttacks();
@@ -206,7 +206,7 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 	// apply new attack
 	pPlayerStateToAttack->LaunchAttack( a );
 
-//	SCREENMAN->SystemMessage( ssprintf( "attacking %d with %s", pnToAttack, sAttackToGive.c_str() ) );
+//	SCREENMAN->SystemMessage( fmt::sprintf( "attacking %d with %s", pnToAttack, sAttackToGive.c_str() ) );
 }
 
 /*

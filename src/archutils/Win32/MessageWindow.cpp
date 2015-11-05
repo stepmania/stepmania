@@ -22,7 +22,7 @@ MessageWindow::MessageWindow( const RString &sClassName )
 	}; 
 
 	if( !RegisterClassA(&WindowClass) && GetLastError() != ERROR_CLASS_ALREADY_EXISTS )
-		RageException::Throw( "%s", werr_ssprintf( GetLastError(), "RegisterClass" ).c_str() );
+		RageException::Throw( "%s", werr_format( GetLastError(), "RegisterClass" ).c_str() );
 
 	// XXX: on 2k/XP, use HWND_MESSAGE as parent
 	m_hWnd = CreateWindow( sClassName, sClassName, WS_DISABLED, 0, 0, 0, 0, nullptr, nullptr, inst, nullptr );

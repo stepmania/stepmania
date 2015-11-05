@@ -3,6 +3,7 @@
 
 #include "RageSoundDriver.h"
 #include "RageThreads.h"
+#include "format.h"
 #include <windows.h>
 #include <mmsystem.h>
 
@@ -17,8 +18,15 @@ public:
 	float GetPlayLatency() const;
 	int GetSampleRate() const { return m_iSampleRate; }
 
+	template<typename... Args>
+	static std::string wo_format(MMRESULT err, std::string const &msg, Args const & ...args)
+	{
+		std::string item = fmt::format(msg, args...);
+		return wo_final(item, err);
+	}
 private:
 	static int MixerThread_start( void *p );
+	static std::string wo_final(std::string const &msg, MMRESULT err);
 	void MixerThread();
 	RageThread MixingThread;
 	bool GetData();

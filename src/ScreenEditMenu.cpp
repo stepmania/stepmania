@@ -295,7 +295,7 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 			switch( mode )
 			{
 			default:
-				FAIL_M(ssprintf("Invalid EditMode: %i", mode));
+				FAIL_M(fmt::sprintf("Invalid EditMode: %i", mode));
 			case EditMode_Full:
 				break;
 			case EditMode_Home:
@@ -331,7 +331,7 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 		}
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid edit menu action: %i", action));
+		FAIL_M(fmt::sprintf("Invalid edit menu action: %i", action));
 	}
 
 	// Go to the next screen.
@@ -367,7 +367,7 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 	case EditMenuAction_LoadAutosave:
 		return true;
 	default:
-		FAIL_M(ssprintf("Invalid edit menu action: %i", action));
+		FAIL_M(fmt::sprintf("Invalid edit menu action: %i", action));
 	}
 }
 
@@ -386,7 +386,7 @@ void ScreenEditMenu::RefreshExplanationText()
 
 void ScreenEditMenu::RefreshNumStepsLoadedFromProfile()
 {
-	RString s = ssprintf( "edits used: %d", SONGMAN->GetNumStepsLoadedFromProfile() );
+	RString s = fmt::sprintf( "edits used: %d", SONGMAN->GetNumStepsLoadedFromProfile() );
 	m_textNumStepsLoadedFromProfile.SetText( s );
 }
 

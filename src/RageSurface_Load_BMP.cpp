@@ -64,19 +64,19 @@ static RageSurfaceUtils::OpenResult LoadBMP( RageFile &f, RageSurface *&img, RSt
 		read_u32_le( f, sError ); /* "important" colors */
 	}
 	else
-		FATAL_ERROR( ssprintf( "expected header size of 40, got %u", iHeaderSize ) );
+		FATAL_ERROR( fmt::sprintf( "expected header size of 40, got %u", iHeaderSize ) );
 
 	if( iBPP <= 8 && iColors == 0 )
 		iColors = 1 << iBPP;
 	if( iPlanes != 1 )
-		FATAL_ERROR( ssprintf( "expected one plane, got %u", iPlanes ) );
+		FATAL_ERROR( fmt::sprintf( "expected one plane, got %u", iPlanes ) );
 	if( iBPP != 1 && iBPP != 4 && iBPP != 8 && iBPP != 16 && iBPP != 24 && iBPP != 32 )
-		FATAL_ERROR( ssprintf( "unsupported bpp %u", iBPP ) );
+		FATAL_ERROR( fmt::sprintf( "unsupported bpp %u", iBPP ) );
 	if( iCompression != COMP_BI_RGB && iCompression != COMP_BI_BITFIELDS )
-		FATAL_ERROR( ssprintf( "unsupported compression %u", iCompression ) );
+		FATAL_ERROR( fmt::sprintf( "unsupported compression %u", iCompression ) );
 
 	if( iCompression == COMP_BI_BITFIELDS && iBPP <= 8 )
-		FATAL_ERROR( ssprintf( "BI_BITFIELDS unexpected with bpp %u", iBPP ) );
+		FATAL_ERROR( fmt::sprintf( "BI_BITFIELDS unexpected with bpp %u", iBPP ) );
 
 	int iFileBPP = iBPP;
 	iBPP = std::max( iBPP, 8u );
@@ -120,7 +120,7 @@ static RageSurfaceUtils::OpenResult LoadBMP( RageFile &f, RageSurface *&img, RSt
 		ZERO( Palette );
 
 		if( iColors > 256 )
-			FATAL_ERROR( ssprintf( "unexpected colors %i", iColors ) );
+			FATAL_ERROR( fmt::sprintf( "unexpected colors %i", iColors ) );
 
 		for( unsigned i = 0; i < iColors; ++i )
 		{

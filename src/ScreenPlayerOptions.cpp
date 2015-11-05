@@ -24,7 +24,7 @@ void ScreenPlayerOptions::Init()
 	FOREACH_PlayerNumber( p )
 	{
 		m_sprDisqualify[p].Load( THEME->GetPathG(m_sName,"disqualify") );
-		m_sprDisqualify[p]->SetName( ssprintf("DisqualifyP%i",p+1) );
+		m_sprDisqualify[p]->SetName( fmt::sprintf("DisqualifyP%i",p+1) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprDisqualify[p] );
 		m_sprDisqualify[p]->SetVisible( false );	// unhide later if handicapping options are discovered
 		m_sprDisqualify[p]->SetDrawOrder( 2 );
@@ -85,7 +85,7 @@ bool ScreenPlayerOptions::Input( const InputEventPlus &input )
 		// apply the game default mods, but not the Profile saved mods
 		GAMESTATE->m_pPlayerState[pn]->ResetToDefaultPlayerOptions( ModsLevel_Preferred );
 
-		MESSAGEMAN->Broadcast( ssprintf("CancelAllP%i", pn+1) );
+		MESSAGEMAN->Broadcast( fmt::sprintf("CancelAllP%i", pn+1) );
 
 		for( unsigned r=0; r<m_pRows.size(); r++ )
 		{
