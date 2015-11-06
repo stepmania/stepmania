@@ -524,10 +524,16 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "space" )				{ m_fSkew = level;	m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 	else if( sBit == "hallway" )				{ m_fSkew = 0;		m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 	else if( sBit == "distant" )				{ m_fSkew = 0;		m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-	else if( NOTESKIN && NOTESKIN->DoesNoteSkinExist(sBit) )	m_sNoteSkin = sBit;
+	else if( NOTESKIN && NOTESKIN->DoesNoteSkinExist(sBit) )
+	{
+		m_sNoteSkin = sBit;
+	}
 	else if( sBit == "skew" ) SET_FLOAT( fSkew )
 	else if( sBit == "tilt" ) SET_FLOAT( fPerspectiveTilt )
-	else if( sBit == "noteskin" && !on ) /* "no noteskin" */	m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
+	else if( sBit == "noteskin" && !on ) /* "no noteskin" */
+	{
+		m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
+	}
 	else if( sBit == "randomspeed" ) 			SET_FLOAT( fRandomSpeed )
 	else if( sBit == "failarcade" || 
 		 sBit == "failimmediate" )			m_FailType = FailType_Immediate;
@@ -769,7 +775,14 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fPlayerAutoPlay);
 	COMPARE(m_fPerspectiveTilt);
 	COMPARE(m_fSkew);
-	COMPARE(m_sNoteSkin);
+	// The noteskin name needs to be compared case-insensitively because the
+	// manager forces lowercase, but some obscure part of PlayerOptions
+	// uppercases the first letter.  The previous code that used != probably
+	// relied on RString::operator!= misbehaving. -Kyz
+	if(strcasecmp(m_sNoteSkin, other.m_sNoteSkin) != 0)
+	{
+		return false;
+	}
 	for( int i = 0; i < PlayerOptions::NUM_ACCELS; ++i )
 		COMPARE(m_fAccels[i]);
 	for( int i = 0; i < PlayerOptions::NUM_EFFECTS; ++i )
