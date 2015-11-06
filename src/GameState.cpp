@@ -62,7 +62,7 @@ class GameStateMessageHandler: public MessageSubscriber
 			{
 				if( sJoined != "" )
 					sJoined += ", ";
-				sJoined += ssprintf( "P%i", pn+1 );
+				sJoined += fmt::sprintf( "P%i", pn+1 );
 			}
 
 			if( sJoined == "" )
@@ -938,7 +938,7 @@ bool GameState::CanSafelyEnterGameplay(RString& reason)
 		Style const* style= GetCurrentStyle(pn);
 		if(style == nullptr)
 		{
-			reason= ssprintf("Style for player %d is nullptr.", pn+1);
+			reason= fmt::sprintf("Style for player %d is nullptr.", pn+1);
 			return false;
 		}
 		if(!IsCourseMode())
@@ -946,7 +946,7 @@ bool GameState::CanSafelyEnterGameplay(RString& reason)
 			Steps const* steps= m_pCurSteps[pn];
 			if(steps == nullptr)
 			{
-				reason= ssprintf("Steps for player %d is nullptr.", pn+1);
+				reason= fmt::sprintf("Steps for player %d is nullptr.", pn+1);
 				return false;
 			}
 			if(steps->m_StepsType != style->m_StepsType)
@@ -959,7 +959,7 @@ bool GameState::CanSafelyEnterGameplay(RString& reason)
 			}
 			if(steps->m_pSong != m_pCurSong)
 			{
-				reason= ssprintf("Steps for player %d are not for the current song.",
+				reason= fmt::sprintf("Steps for player %d are not for the current song.",
 					pn+1);
 				return false;
 			}
@@ -967,7 +967,7 @@ bool GameState::CanSafelyEnterGameplay(RString& reason)
 			steps->GetNoteData(ndtemp);
 			if(ndtemp.GetNumTracks() != style->m_iColsPerPlayer)
 			{
-				reason= ssprintf("Steps for player %d have %d columns, style has %d "
+				reason= fmt::sprintf("Steps for player %d have %d columns, style has %d "
 					"columns.", pn+1, ndtemp.GetNumTracks(), style->m_iColsPerPlayer);
 				return false;
 			}
@@ -977,7 +977,7 @@ bool GameState::CanSafelyEnterGameplay(RString& reason)
 			Trail const* steps= m_pCurTrail[pn];
 			if(steps == nullptr)
 			{
-				reason= ssprintf("Steps for player %d is nullptr.", pn+1);
+				reason= fmt::sprintf("Steps for player %d is nullptr.", pn+1);
 				return false;
 			}
 			if(steps->m_StepsType != style->m_StepsType)
@@ -1645,7 +1645,7 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 				case StyleType_OnePlayerTwoSides:
 					return pn == this->GetMasterPlayerNumber();
 				default:
-					FAIL_M(ssprintf("Invalid style type: %i", type));
+					FAIL_M(fmt::sprintf("Invalid style type: %i", type));
 			}
 		}
 	}
@@ -1664,7 +1664,7 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 	case StyleType_OnePlayerTwoSides:
 		return pn == this->GetMasterPlayerNumber();
 	default:
-		FAIL_M(ssprintf("Invalid style type: %i", type));
+		FAIL_M(fmt::sprintf("Invalid style type: %i", type));
 	}
 }
 
@@ -1990,7 +1990,7 @@ bool GameState::ShowW1() const
 	case ALLOW_W1_COURSES_ONLY:	return IsCourseMode();
 	case ALLOW_W1_EVERYWHERE:	return true;
 	default:
-		FAIL_M(ssprintf("Invalid AllowW1 preference: %i", pref));
+		FAIL_M(fmt::sprintf("Invalid AllowW1 preference: %i", pref));
 	}
 }
 
@@ -2009,7 +2009,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 	PlayMode mode = m_PlayMode.Get();
 	char const *modeStr = PlayModeToString(mode).c_str();
 	
-	CHECKPOINT_M( ssprintf("Getting the feats for %s", modeStr));
+	CHECKPOINT_M( fmt::sprintf("Getting the feats for %s", modeStr));
 	switch( mode )
 	{
 	case PLAY_MODE_REGULAR:
@@ -2026,7 +2026,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 			unsigned int i = 0;
 			for (auto &stats: STATSMAN->m_vPlayedStageStats)
 			{
-				CHECKPOINT_M( ssprintf("%u/%i", i++, static_cast<int>(STATSMAN->m_vPlayedStageStats.size()) ) );
+				CHECKPOINT_M( fmt::sprintf("%u/%i", i++, static_cast<int>(STATSMAN->m_vPlayedStageStats.size()) ) );
 				SongAndSteps sas;
 				ASSERT( !stats.m_vpPlayedSongs.empty() );
 				sas.pSong = stats.m_vpPlayedSongs[0];
@@ -2037,7 +2037,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 				ASSERT( sas.pSteps != nullptr );
 				vSongAndSteps.push_back( sas );
 			}
-			CHECKPOINT_M( ssprintf("All songs/steps from %s gathered", modeStr));
+			CHECKPOINT_M( fmt::sprintf("All songs/steps from %s gathered", modeStr));
 
 			sort( vSongAndSteps.begin(), vSongAndSteps.end() );
 
@@ -2064,7 +2064,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 						feat.Type = RankingFeat::SONG;
 						feat.pSong = pSong;
 						feat.pSteps = pSteps;
-						feat.Feat = ssprintf("MR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
+						feat.Feat = fmt::sprintf("MR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
 						feat.pStringToFill = hs.GetNameMutable();
 						feat.grade = hs.GetGrade();
 						feat.fPercentDP = hs.GetPercentDP();
@@ -2092,7 +2092,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 						feat.pSong = pSong;
 						feat.pSteps = pSteps;
 						feat.Type = RankingFeat::SONG;
-						feat.Feat = ssprintf("PR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
+						feat.Feat = fmt::sprintf("PR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
 						feat.pStringToFill = hs.GetNameMutable();
 						feat.grade = hs.GetGrade();
 						feat.fPercentDP = hs.GetPercentDP();
@@ -2129,7 +2129,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 
 					RankingFeat feat;
 					feat.Type = RankingFeat::CATEGORY;
-					feat.Feat = ssprintf("MR #%d in Type %c (%d)", j+1, 'A'+rc, stats.GetAverageMeter(pn) );
+					feat.Feat = fmt::sprintf("MR #%d in Type %c (%d)", j+1, 'A'+rc, stats.GetAverageMeter(pn) );
 					feat.pStringToFill = hs.GetNameMutable();
 					feat.grade = Grade_NoData;
 					feat.iScore = hs.GetScore();
@@ -2155,7 +2155,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 
 						RankingFeat feat;
 						feat.Type = RankingFeat::CATEGORY;
-						feat.Feat = ssprintf("PR #%d in Type %c (%d)", j+1, 'A'+rc, stats.GetAverageMeter(pn) );
+						feat.Feat = fmt::sprintf("PR #%d in Type %c (%d)", j+1, 'A'+rc, stats.GetAverageMeter(pn) );
 						feat.pStringToFill = hs.GetNameMutable();
 						feat.grade = Grade_NoData;
 						feat.iScore = hs.GetScore();
@@ -2189,7 +2189,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 					RankingFeat feat;
 					feat.Type = RankingFeat::COURSE;
 					feat.pCourse = pCourse;
-					feat.Feat = ssprintf("MR #%d in %s", i+1, pCourse->GetDisplayFullTitle().c_str() );
+					feat.Feat = fmt::sprintf("MR #%d in %s", i+1, pCourse->GetDisplayFullTitle().c_str() );
 					if( cd != Difficulty_Medium )
 						feat.Feat += " " + CourseDifficultyToLocalizedString(cd);
 					feat.pStringToFill = hs.GetNameMutable();
@@ -2215,7 +2215,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 					RankingFeat feat;
 					feat.Type = RankingFeat::COURSE;
 					feat.pCourse = pCourse;
-					feat.Feat = ssprintf("PR #%d in %s", i+1, pCourse->GetDisplayFullTitle().c_str() );
+					feat.Feat = fmt::sprintf("PR #%d in %s", i+1, pCourse->GetDisplayFullTitle().c_str() );
 					feat.pStringToFill = hs.GetNameMutable();
 					feat.grade = Grade_NoData;
 					feat.iScore = hs.GetScore();
@@ -2228,7 +2228,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 		}
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid play mode: %i", int(m_PlayMode)));
+		FAIL_M(fmt::sprintf("Invalid play mode: %i", int(m_PlayMode)));
 	}
 }
 
@@ -2552,7 +2552,7 @@ float GameState::GetGoalPercentComplete( PlayerNumber pn )
 	case GoalType_None:
 		return 0;	// never complete
 	default:
-		FAIL_M(ssprintf("Invalid GoalType: %i", pProfile->m_GoalType));
+		FAIL_M(fmt::sprintf("Invalid GoalType: %i", pProfile->m_GoalType));
 	}
 	if( fGoal == 0 )
 		return 0;

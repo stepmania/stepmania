@@ -79,7 +79,7 @@ bool RageSoundDriver_ALSA9_Software::GetData()
 int64_t RageSoundDriver_ALSA9_Software::GetPosition() const
 {
 	return m_pPCM->GetPosition();
-}       
+}
 
 void RageSoundDriver_ALSA9_Software::SetupDecodingThread()
 {
@@ -97,7 +97,7 @@ RString RageSoundDriver_ALSA9_Software::Init()
 {
 	RString sError = LoadALSA();
 	if( sError != "" )
-		return ssprintf( "Driver unusable: %s", sError.c_str() );
+		return fmt::sprintf( "Driver unusable: %s", sError.c_str() );
 
 	g_iMaxWriteahead = safe_writeahead;
 	RString sys;
@@ -119,9 +119,9 @@ RString RageSoundDriver_ALSA9_Software::Init()
 		return sError;
 
 	m_iSampleRate = m_pPCM->GetSampleRate();
-	
+
 	StartDecodeThread();
-	
+
 	m_MixingThread.SetName( "RageSoundDriver_ALSA9_Software" );
 	m_MixingThread.Create( MixerThread_start, this );
 
@@ -138,7 +138,7 @@ RageSoundDriver_ALSA9_Software::~RageSoundDriver_ALSA9_Software()
 		m_MixingThread.Wait();
 		LOG->Trace("Mixer thread shut down.");
 	}
- 
+
 	delete m_pPCM;
 
 	UnloadALSA();
@@ -152,7 +152,7 @@ float RageSoundDriver_ALSA9_Software::GetPlayLatency() const
 /*
  * (c) 2002-2004 Glenn Maynard, Aaron VonderHaar
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -162,7 +162,7 @@ float RageSoundDriver_ALSA9_Software::GetPlayLatency() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

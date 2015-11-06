@@ -19,7 +19,7 @@
 using std::vector;
 
 #define LINE_NAMES			THEME->GetMetric (m_sName,"LineNames")
-#define LINE(sLineName)		THEME->GetMetric (m_sName,ssprintf("Line%s",sLineName.c_str()))
+#define LINE(sLineName)		THEME->GetMetric (m_sName,fmt::sprintf("Line%s",sLineName.c_str()))
 #define FORCE_ALL_PLAYERS	THEME->GetMetricB(m_sName,"ForceAllPlayers")
 #define INPUT_MODE			THEME->GetMetric (m_sName,"InputMode")
 #define NAVIGATION_MODE		THEME->GetMetric (m_sName,"NavigationMode")
@@ -86,7 +86,7 @@ void ScreenOptionsMaster::ImportOptions( int r, const vector<PlayerNumber> &vpns
 
 void ScreenOptionsMaster::ExportOptions( int r, const vector<PlayerNumber> &vpns )
 {
-	CHECKPOINT_M( ssprintf("%i/%i", r, int(m_pRows.size())) );
+	CHECKPOINT_M( fmt::sprintf("%i/%i", r, int(m_pRows.size())) );
 
 	OptionRow &row = *m_pRows[r];
 	bool bRowHasFocus[NUM_PLAYERS];

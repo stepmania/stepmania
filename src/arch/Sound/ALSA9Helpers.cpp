@@ -25,7 +25,7 @@ bool Alsa9Buf::SetHWParams()
 		err = dsnd_pcm_hw_free( pcm );
 		ALSA_ASSERT("dsnd_pcm_hw_free");
 	}
-//	ASSERT_M( dsnd_pcm_state(pcm) == SND_PCM_STATE_OPEN, ssprintf("(%s)", dsnd_pcm_state_name(dsnd_pcm_state(pcm))) );
+//	ASSERT_M( dsnd_pcm_state(pcm) == SND_PCM_STATE_OPEN, fmt::sprintf("(%s)", dsnd_pcm_state_name(dsnd_pcm_state(pcm))) );
 
 	/* allocate the hardware parameters structure */
 	snd_pcm_hw_params_t *hwparams;
@@ -106,15 +106,76 @@ bool Alsa9Buf::SetSWParams()
 	return true;
 }
 
+// Yanked from RageUtil since this is the only spot that uses it.
+std::string alsa_printf( const char *szFormat, va_list argList )
+{
+	int constexpr blockSize = 2048;
+	static bool bExactSizeSupported;
+	static bool bInitialized = false;
+	if( !bInitialized )
+	{
+		/* Some systems return the actual size required when snprintf
+		 * doesn't have enough space.  This lets us avoid wasting time
+		 * iterating, and wasting memory. */
+		char ignore;
+		bExactSizeSupported = ( snprintf( &ignore, 0, "Hello World" ) == 11 );
+		bInitialized = true;
+	}
+
+	if( bExactSizeSupported )
+	{
+		va_list tmp;
+		va_copy( tmp, argList );
+		char ignore;
+		int iNeeded = vsnprintf( &ignore, 0, szFormat, tmp );
+		va_end(tmp);
+
+		char *buf = new char[iNeeded + 1];
+		std::fill(buf, buf + iNeeded + 1, '\0');
+		vsnprintf( buf, iNeeded+1, szFormat, argList );
+		std::string ret(buf);
+		delete [] buf;
+		return ret;
+	}
+
+	std::string sStr;
+
+	int iChars = blockSize;
+	int iTry = 1;
+	for (;;)
+	{
+		// Grow more than linearly (e.g. 512, 1536, 3072, etc)
+		char *buf = new char[iChars];
+		std::fill(buf, buf + iChars, '\0');
+		int used = vsnprintf( buf, iChars - 1, szFormat, argList );
+		if ( used == -1 )
+		{
+			iChars += ( ++iTry * blockSize );
+		}
+		else
+		{
+			/* OK */
+			sStr.assign(buf, used);
+		}
+
+		delete [] buf;
+		if (used != -1)
+		{
+			break;
+		}
+	}
+	return sStr;
+}
+
 void Alsa9Buf::ErrorHandler(const char *file, int line, const char *function, int err, const char *fmt, ...)
 {
 	va_list va;
 	va_start( va, fmt );
-	RString str = vssprintf(fmt, va);
+	RString str = alsa_printf(fmt, va);
 	va_end( va );
 
 	if( err )
-		str += ssprintf( " (%s)", dsnd_strerror(err) );
+		str += fmt::sprintf( " (%s)", dsnd_strerror(err) );
 
 	/* Annoying: these happen both normally (eg. "out of memory" when allocating too many PCM
 	 * slots) and abnormally, and there's no way to tell which is which.  I don't want to
@@ -155,10 +216,10 @@ void Alsa9Buf::GetSoundCardDebugInfo()
 	int card = -1;
 	while( dsnd_card_next( &card ) >= 0 && card >= 0 )
 	{
-		const RString id = ssprintf( "hw:%d", card );
+		auto const id = fmt::sprintf( "hw:%d", card );
 		snd_ctl_t *handle;
 		int err;
-		err = dsnd_ctl_open( &handle, id, 0 );
+		err = dsnd_ctl_open( &handle, id.c_str(), 0 );
 		if ( err < 0 )
 		{
 			LOG->Info( "Couldn't open card #%i (\"%s\") to probe: %s", card, id.c_str(), dsnd_strerror(err) );
@@ -239,7 +300,7 @@ RString Alsa9Buf::Init( int channels_,
 	int err;
 	err = dsnd_pcm_open( &pcm, DeviceName(), SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
 	if( err < 0 )
-		return ssprintf( "dsnd_pcm_open(%s): %s", DeviceName().c_str(), dsnd_strerror(err) );
+		return fmt::sprintf( "dsnd_pcm_open(%s): %s", DeviceName().c_str(), dsnd_strerror(err) );
 
 	if( !SetHWParams() )
 	{

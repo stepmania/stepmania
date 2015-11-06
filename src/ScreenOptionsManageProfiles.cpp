@@ -114,7 +114,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 
 	if( SHOW_CREATE_NEW )
 	{
-		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands(ssprintf("gamecommand;screen,%s;name,dummy",m_sName.c_str())) );
+		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands(fmt::sprintf("gamecommand;screen,%s;name,dummy",m_sName.c_str())) );
 		OptionRowDefinition &def = pHand->m_Def;
 		def.m_layoutType = LAYOUT_SHOW_ALL_IN_ROW;
 		def.m_bAllowThemeTitle = true;
@@ -134,7 +134,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 		Profile *pProfile = PROFILEMAN->GetLocalProfile( s );
 		ASSERT( pProfile != nullptr );
 
-		RString sCommand = ssprintf( "gamecommand;screen,ScreenOptionsCustomizeProfile;profileid,%s;name,dummy", s.c_str() );
+		RString sCommand = fmt::sprintf( "gamecommand;screen,ScreenOptionsCustomizeProfile;profileid,%s;name,dummy", s.c_str() );
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands(sCommand) );
 		OptionRowDefinition &def = pHand->m_Def;
 		def.m_layoutType = LAYOUT_SHOW_ALL_IN_ROW;
@@ -288,7 +288,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 			switch( ScreenMiniMenu::s_iLastRowCode )
 			{
 			default:
-				FAIL_M(ssprintf("Last row code not a valid ProfileAction: %i", ScreenMiniMenu::s_iLastRowCode));
+				FAIL_M(fmt::sprintf("Last row code not a valid ProfileAction: %i", ScreenMiniMenu::s_iLastRowCode));
 			case ProfileAction_SetDefaultP1:
 			case ProfileAction_SetDefaultP2:
 				{
@@ -322,14 +322,14 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 			case ProfileAction_Delete:
 				{
 					RString sTitle = pProfile->m_sDisplayName;
-					RString sMessage = ssprintf( CONFIRM_DELETE_PROFILE.GetValue(), sTitle.c_str() );
+					RString sMessage = fmt::sprintf( CONFIRM_DELETE_PROFILE.GetValue(), sTitle.c_str() );
 					ScreenPrompt::Prompt( SM_BackFromDeleteConfirm, sMessage, PROMPT_YES_NO );
 				}
 				break;
 			case ProfileAction_Clear:
 				{
 					RString sTitle = pProfile->m_sDisplayName;
-					RString sMessage = ssprintf( CONFIRM_CLEAR_PROFILE.GetValue(), sTitle.c_str() );
+					RString sMessage = fmt::sprintf( CONFIRM_CLEAR_PROFILE.GetValue(), sTitle.c_str() );
 					ScreenPrompt::Prompt( SM_BackFromClearConfirm, sMessage, PROMPT_YES_NO );
 				}
 				break;
@@ -410,7 +410,7 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus & )
 		RString sPotentialName;
 		for( int i=1; i<1000; i++ )
 		{
-			sPotentialName = ssprintf( "%s%04d", NEW_PROFILE_DEFAULT_NAME.GetValue().c_str(), i );
+			sPotentialName = fmt::sprintf( "%s%04d", NEW_PROFILE_DEFAULT_NAME.GetValue().c_str(), i );
 			bool bNameIsUsed = find( vsUsedNames.begin(), vsUsedNames.end(), sPotentialName ) != vsUsedNames.end();
 			if( !bNameIsUsed )
 				break;

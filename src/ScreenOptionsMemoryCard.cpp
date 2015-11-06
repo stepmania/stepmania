@@ -59,7 +59,7 @@ void ScreenOptionsMemoryCard::CreateMenu()
 		if( iter.iVolumeSizeMB == 0 )
 			vs.push_back( SIZE_UNKNOWN );
 		else
-			vs.push_back( ssprintf(RString(VOLUME_SIZE).c_str(),iter.iVolumeSizeMB) );
+			vs.push_back( fmt::sprintf(RString(VOLUME_SIZE).c_str(),iter.iVolumeSizeMB) );
 
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 
@@ -212,7 +212,7 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus & )
 		}
 		else
 		{
-			RString s = ssprintf(ERROR_MOUNTING_CARD.GetValue(), MEMCARDMAN->GetCardError(PLAYER_1).c_str() );
+			RString s = fmt::sprintf(ERROR_MOUNTING_CARD.GetValue(), MEMCARDMAN->GetCardError(PLAYER_1).c_str() );
 			ScreenPrompt::Prompt( SM_None, s );
 		}
 	}

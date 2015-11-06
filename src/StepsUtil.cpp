@@ -131,7 +131,7 @@ void StepsUtil::SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers,
 	for (auto *pSteps: vStepsPointers)
 	{
 		Song* pSong = mapStepsToSong[pSteps];
-		steps_sort_val[pSteps] = ssprintf("%9i", pProfile->GetStepsNumTimesPlayed(pSong,pSteps));
+		steps_sort_val[pSteps] = fmt::sprintf("%9i", pProfile->GetStepsNumTimesPlayed(pSong,pSteps));
 	}
 	stable_sort( vStepsPointers.begin(), vStepsPointers.end(), bDecending ? CompareStepsPointersBySortValueDescending : CompareStepsPointersBySortValueAscending );
 	steps_sort_val.clear();
@@ -264,7 +264,7 @@ Steps *StepsID::ToSteps( const Song *p, bool bAllowNull ) const
 	}
 
 	if( !bAllowNull && pRet == nullptr )
-		FAIL_M( ssprintf("%i, %i, \"%s\"", st, dc, sDescription.c_str()) );
+		FAIL_M( fmt::sprintf("%i, %i, \"%s\"", st, dc, sDescription.c_str()) );
 
 	m_Cache.Set( pRet );
 
@@ -319,7 +319,7 @@ RString StepsID::ToString() const
 	if( dc == Difficulty_Edit )
 	{
 		s += " " + sDescription;
-		s += ssprintf(" %u", uHash );
+		s += fmt::sprintf(" %u", uHash );
 	}
 	return s;
 }

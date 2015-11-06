@@ -35,7 +35,7 @@ RageFileObjInflate::RageFileObjInflate( RageFileBasic *pFile, int iUncompressedS
 	if( err == Z_MEM_ERROR )
 		RageException::Throw( "inflateInit2( %i ): out of memory.", -MAX_WBITS );
 	if( err != Z_OK )
-		WARN( ssprintf("Huh? inflateInit2() err = %i", err) );
+		WARN( fmt::sprintf("Huh? inflateInit2() err = %i", err) );
 
 	decomp_buf_ptr = decomp_buf;
 	m_iFilePos = 0;
@@ -71,7 +71,7 @@ RageFileObjInflate::~RageFileObjInflate()
 
 	int err = inflateEnd( m_pInflate );
 	if( err != Z_OK )
-		WARN( ssprintf("Huh? inflateEnd() err = %i", err) );
+		WARN( fmt::sprintf("Huh? inflateEnd() err = %i", err) );
 
 	delete m_pInflate;
 }
@@ -82,7 +82,7 @@ int RageFileObjInflate::ReadInternal( void *buf, size_t bytes )
 	/* Don't read more than m_iUncompressedSize of data.  If we don't do this, it's
 	 * possible for a .gz to contain a header claiming 500k of data, but to actually
 	 * contain much more deflated data. */
-	ASSERT_M( m_iFilePos <= m_iUncompressedSize, ssprintf("%i, %i",m_iFilePos, m_iUncompressedSize) );
+	ASSERT_M( m_iFilePos <= m_iUncompressedSize, fmt::sprintf("%i, %i",m_iFilePos, m_iUncompressedSize) );
 	bytes = min( bytes, size_t(m_iUncompressedSize-m_iFilePos) );
 
 	bool done=false;
@@ -127,7 +127,7 @@ int RageFileObjInflate::ReadInternal( void *buf, size_t bytes )
 		case Z_OK:
 			break;
 		default:
-			WARN( ssprintf("Huh? inflate err %i", err) );
+			WARN( fmt::sprintf("Huh? inflate err %i", err) );
 		}
 
 		const int used = (char *)m_pInflate->next_in - decomp_buf_ptr;
@@ -205,7 +205,7 @@ RageFileObjDeflate::RageFileObjDeflate( RageFileBasic *pFile )
 	if( err == Z_MEM_ERROR )
 		RageException::Throw( "inflateInit2( %i ): out of memory.", -MAX_WBITS );
 	if( err != Z_OK )
-		WARN( ssprintf("Huh? inflateInit2() err = %i", err) );
+		WARN( fmt::sprintf("Huh? inflateInit2() err = %i", err) );
 
 }
 
@@ -218,7 +218,7 @@ RageFileObjDeflate::~RageFileObjDeflate()
 
 	int err = deflateEnd( m_pDeflate );
 	if( err != Z_OK )
-		WARN( ssprintf("Huh? deflateEnd() err = %i", err) );
+		WARN( fmt::sprintf("Huh? deflateEnd() err = %i", err) );
 
 	delete m_pDeflate;
 }
@@ -240,7 +240,7 @@ int RageFileObjDeflate::WriteInternal( const void *pBuffer, size_t iBytes )
 		int err = deflate( m_pDeflate, Z_NO_FLUSH );
 
 		if( err != Z_OK )
-			FAIL_M( ssprintf("deflate: err %i", err) );
+			FAIL_M( fmt::sprintf("deflate: err %i", err) );
 
 		if( m_pDeflate->avail_out < sizeof(buf) )
 		{
@@ -280,7 +280,7 @@ int RageFileObjDeflate::FlushInternal()
 
 		int err = deflate( m_pDeflate, Z_FINISH );
 		if( err != Z_OK && err != Z_STREAM_END )
-			FAIL_M( ssprintf("deflate: err %i", err) );
+			FAIL_M( fmt::sprintf("deflate: err %i", err) );
 
 		if( m_pDeflate->avail_out < sizeof(buf) )
 		{
@@ -345,7 +345,7 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 #define UNSUPPORTED_MASK ~((1<<5)-1)
 	if( iCompressionMethod != 8 )
 	{
-		sError = ssprintf( "Unsupported compression: %i", iCompressionMethod );
+		sError = fmt::sprintf( "Unsupported compression: %i", iCompressionMethod );
 		return nullptr;
 	}
 
@@ -353,7 +353,7 @@ RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t
 	 * actually output them. */
 	if( iFlags & UNSUPPORTED_MASK )
 	{
-		sError = ssprintf( "Unsupported flags: %x", iFlags );
+		sError = fmt::sprintf( "Unsupported flags: %x", iFlags );
 		return nullptr;
 	}
 

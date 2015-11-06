@@ -186,7 +186,7 @@ void RageSoundDriver::DecodeThread()
 		/* Fill each playing sound, round-robin. */
 		{
 			int iSampleRate = GetSampleRate();
-			ASSERT_M( iSampleRate > 0, ssprintf("%i", iSampleRate) );
+			ASSERT_M( iSampleRate > 0, fmt::sprintf("%i", iSampleRate) );
 			int iUsecs = 1000000*chunksize() / iSampleRate;
 			usleep( iUsecs );
 		}

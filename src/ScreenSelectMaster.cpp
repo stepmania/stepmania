@@ -26,8 +26,8 @@ XToString( MenuDir );
 
 AutoScreenMessage( SM_PlayPostSwitchPage );
 
-static RString CURSOR_OFFSET_X_FROM_ICON_NAME( size_t p ) { return ssprintf("CursorP%dOffsetXFromIcon",int(p+1)); }
-static RString CURSOR_OFFSET_Y_FROM_ICON_NAME( size_t p ) { return ssprintf("CursorP%dOffsetYFromIcon",int(p+1)); }
+static RString CURSOR_OFFSET_X_FROM_ICON_NAME( size_t p ) { return fmt::sprintf("CursorP%dOffsetXFromIcon",int(p+1)); }
+static RString CURSOR_OFFSET_Y_FROM_ICON_NAME( size_t p ) { return fmt::sprintf("CursorP%dOffsetYFromIcon",int(p+1)); }
 // e.g. "OptionOrderLeft=0:1,1:2,2:3,3:4"
 static RString OPTION_ORDER_NAME( size_t dir ) { return "OptionOrder"+MenuDirToString((MenuDir)dir); }
 
@@ -84,7 +84,7 @@ void ScreenSelectMaster::Init()
 	vector<PlayerNumber> vpns;
 	GetActiveElementPlayerNumbers( vpns );
 
-#define PLAYER_APPEND_NO_SPACE(p)	(SHARED_SELECTION ? RString() : ssprintf("P%d",(p)+1))
+#define PLAYER_APPEND_NO_SPACE(p)	(SHARED_SELECTION ? RString() : fmt::sprintf("P%d",(p)+1))
 	this->SubscribeToMessage( SM_MenuTimer );
 
 	// init cursor
@@ -252,13 +252,13 @@ void ScreenSelectMaster::Init()
 
 	FOREACH_ENUM( Page, page )
 	{
-		m_sprMore[page].Load( THEME->GetPathG(m_sName, ssprintf("more page%d",page+1)) );
-		m_sprMore[page]->SetName( ssprintf("MorePage%d",page+1) );
+		m_sprMore[page].Load( THEME->GetPathG(m_sName, fmt::sprintf("more page%d",page+1)) );
+		m_sprMore[page]->SetName( fmt::sprintf("MorePage%d",page+1) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprMore[page] );
 		this->AddChild( m_sprMore[page] );
 
-		m_sprExplanation[page].Load( THEME->GetPathG(m_sName, ssprintf("explanation page%d",page+1)) );
-		m_sprExplanation[page]->SetName( ssprintf("ExplanationPage%d",page+1) );
+		m_sprExplanation[page].Load( THEME->GetPathG(m_sName, fmt::sprintf("explanation page%d",page+1)) );
+		m_sprExplanation[page]->SetName( fmt::sprintf("ExplanationPage%d",page+1) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprExplanation[page] );
 		this->AddChild( m_sprExplanation[page] );
 	}
@@ -669,7 +669,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 	{
 		m_iChoice[p] = iNewChoice;
 	}
-	const RString sIconAndExplanationCommand = ssprintf( "SwitchToPage%d", newPage+1 );
+	const RString sIconAndExplanationCommand = fmt::sprintf( "SwitchToPage%d", newPage+1 );
 	if( SHOW_ICON )
 	{
 		for( unsigned c = 0; c < m_aGameCommands.size(); ++c )
@@ -964,7 +964,7 @@ bool ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 	if( !AnyOptionsArePlayable() )
 		return false;
 
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(), mc->m_sName.c_str())) );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(fmt::sprintf("%s comment %s",m_sName.c_str(), mc->m_sName.c_str())) );
 
 	// Play a copy of the sound, so it'll finish playing even if we leave the screen immediately.
 	if( mc->m_sSoundPath.empty() && !m_bDoubleChoiceNoSound )

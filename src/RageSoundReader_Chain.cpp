@@ -325,7 +325,7 @@ int RageSoundReader_Chain::Read( float *pBuffer, int iFrames )
 	if( m_iNextSound < m_aSounds.size() )
 	{
 		int iOffsetFrame = m_aSounds[m_iNextSound].GetOffsetFrame( m_iActualSampleRate );
-		ASSERT_M( iOffsetFrame >= m_iCurrentFrame, ssprintf("%i %i", iOffsetFrame, m_iCurrentFrame) );
+		ASSERT_M( iOffsetFrame >= m_iCurrentFrame, fmt::sprintf("%i %i", iOffsetFrame, m_iCurrentFrame) );
 		int iFramesToRead = iOffsetFrame - m_iCurrentFrame;
 		iFrames = min( iFramesToRead, iFrames );
 	}

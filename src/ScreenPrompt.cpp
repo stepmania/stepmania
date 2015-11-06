@@ -93,7 +93,7 @@ void ScreenPrompt::BeginScreen()
 
 	for( int i=0; i<=g_PromptType; i++ )
 	{
-		RString sElem = ssprintf("Answer%dOf%d", i+1, g_PromptType+1);
+		RString sElem = fmt::sprintf("Answer%dOf%d", i+1, g_PromptType+1);
 		m_textAnswer[i].SetName( sElem );
 		LOAD_ALL_COMMANDS(m_textAnswer[i]);
 		// Side note:  Because LOAD_ALL_COMMANDS occurs here, InitCommand will
@@ -149,7 +149,7 @@ bool ScreenPrompt::CanGoRight()
 	case PROMPT_YES_NO_CANCEL:
 		return m_Answer < ANSWER_CANCEL;
 	default:
-		FAIL_M(ssprintf("Invalid PromptType: %i", g_PromptType));
+		FAIL_M(fmt::sprintf("Invalid PromptType: %i", g_PromptType));
 	}
 }
 

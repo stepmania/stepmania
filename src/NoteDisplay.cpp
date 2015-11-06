@@ -186,7 +186,7 @@ static std::map<NoteSkinAndPath, NoteResource *> g_NoteResource;
 
 static NoteResource *MakeNoteResource( const RString &sButton, const RString &sElement, PlayerNumber pn, GameController gc, bool bSpriteOnly )
 {
-	RString sElementAndType = ssprintf( "%s, %s", sButton.c_str(), sElement.c_str() );
+	RString sElementAndType = fmt::sprintf( "%s, %s", sButton.c_str(), sElement.c_str() );
 	NoteSkinAndPath nsap( NOTESKIN->GetCurrentNoteSkin(), sElementAndType, pn, gc );
 
 	auto it = g_NoteResource.find( nsap );
@@ -213,7 +213,7 @@ static void DeleteNoteResource( NoteResource *pRes )
 {
 	ASSERT( pRes != nullptr );
 
-	ASSERT_M( pRes->m_iRefCount > 0, ssprintf("RefCount %i > 0", pRes->m_iRefCount) );
+	ASSERT_M( pRes->m_iRefCount > 0, fmt::sprintf("RefCount %i > 0", pRes->m_iRefCount) );
 	--pRes->m_iRefCount;
 	if( pRes->m_iRefCount )
 		return;
@@ -508,7 +508,7 @@ bool NoteDisplay::DrawHoldsInRange(const NoteFieldRenderArgs& field_args,
 			field_args.ghost_row->SetHoldShowing(column_args.column, tn);
 		}
 
-		ASSERT_M(NoteRowToBeat(start_row) > -2000, ssprintf("%i %i %i", start_row, end_row, column_args.column));
+		ASSERT_M(NoteRowToBeat(start_row) > -2000, fmt::sprintf("%i %i %i", start_row, end_row, column_args.column));
 
 		bool in_selection_range = false;
 		if(*field_args.selection_begin_marker != -1 && *field_args.selection_end_marker != -1)
@@ -554,7 +554,7 @@ bool NoteDisplay::DrawTapsInRange(const NoteFieldRenderArgs& field_args,
 		// Well, anyone who has to investigate hitting it can use a debugger to
 		// discover the values, hopefully. -Kyz
 		ASSERT_M(NoteRowToBeat(tap_row) > -2000,
-			ssprintf("Invalid tap_row: %i, %f %f",
+			fmt::sprintf("Invalid tap_row: %i, %f %f",
 				tap_row,
 				m_pPlayerState->GetDisplayedPosition().m_fSongBeat,
 				m_pPlayerState->GetDisplayedPosition().m_fMusicSeconds));
@@ -1336,7 +1336,7 @@ void NoteDisplay::DrawActor(const TapNote& tn, Actor* pActor, NotePart part,
 				color = fmodf( ceilf( fBeat * cache->m_iNoteColorCount[part] ), (float)cache->m_iNoteColorCount[part] );
 				break;
 			default:
-				FAIL_M(ssprintf("Invalid NoteColorType: %i", cache->m_NoteColorType[part]));
+				FAIL_M(fmt::sprintf("Invalid NoteColorType: %i", cache->m_NoteColorType[part]));
 		}
 		DISPLAY->TextureTranslate( (bIsAddition ? cache->m_fAdditionTextureCoordOffset[part] : Rage::Vector2(0,0)) + cache->m_fNoteColorTextureCoordSpacing[part]*color );
 	}

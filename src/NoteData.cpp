@@ -375,7 +375,7 @@ void NoteData::AddHoldNote( int iTrack, int iStartRow, int iEndRow, TapNote tn )
 	using std::min;
 	using std::max;
 	ASSERT( iStartRow>=0 && iEndRow>=0 );
-	ASSERT_M( iEndRow >= iStartRow, ssprintf("EndRow %d < StartRow %d",iEndRow,iStartRow) );
+	ASSERT_M( iEndRow >= iStartRow, fmt::sprintf("EndRow %d < StartRow %d",iEndRow,iStartRow) );
 
 	/* Include adjacent (non-overlapping) hold notes, since we need to merge with them. */
 	NoteData::TrackMap::iterator lBegin, lEnd;
@@ -989,7 +989,7 @@ void NoteData::LoadTransformed( const NoteData& in, int iNewNumTracks, const int
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		const int iOriginalTrack = iOriginalTrackToTakeFrom[t];
-		ASSERT_M( iOriginalTrack < in.GetNumTracks(), ssprintf("from OriginalTrack %i >= %i (#tracks) (taking from %i)",
+		ASSERT_M( iOriginalTrack < in.GetNumTracks(), fmt::sprintf("from OriginalTrack %i >= %i (#tracks) (taking from %i)",
 			iOriginalTrack, in.GetNumTracks(), iOriginalTrackToTakeFrom[t]));
 
 		if( iOriginalTrack == -1 )
@@ -1083,7 +1083,7 @@ bool NoteData::GetPrevTapNoteRowForTrack( int track, int &rowInOut ) const
 
 void NoteData::GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &lBegin, TrackMap::iterator &lEnd )
 {
-	ASSERT_M( iTrack < GetNumTracks(), ssprintf("%i,%i", iTrack, GetNumTracks())  );
+	ASSERT_M( iTrack < GetNumTracks(), fmt::sprintf("%i,%i", iTrack, GetNumTracks())  );
 	TrackMap &mapTrack = m_TapNotes[iTrack];
 
 	if( iStartRow > iEndRow )

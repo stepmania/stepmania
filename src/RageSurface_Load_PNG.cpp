@@ -45,7 +45,7 @@ struct error_info
 
 void PNG_Error( png_struct *png, const char *error )
 {
-	CHECKPOINT_M(ssprintf("PNG error during processing: %s", error));
+	CHECKPOINT_M(fmt::sprintf("PNG error during processing: %s", error));
 	error_info *info = (error_info *) png_get_error_ptr(png);
 	strncpy( info->err, error, 1024 );
 	info->err[1023] = 0;
@@ -56,7 +56,7 @@ void PNG_Error( png_struct *png, const char *error )
 void PNG_Warning( png_struct *png, const char *warning )
 {
 	// FIXME: Mismatched libpng headers vs. library causes a segfault here on MinGW
-	CHECKPOINT_M(ssprintf("PNG warning during processing: %s", warning));
+	CHECKPOINT_M(fmt::sprintf("PNG warning during processing: %s", warning));
 	error_info *info = (error_info *) png_get_io_ptr(png);
 	LOG->Trace( "loading \"%s\": warning: %s", info->fn, warning );
 }
@@ -155,7 +155,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		type = RGBA;
 		break;
 	default:
-		FAIL_M(ssprintf( "%i", color_type) );
+		FAIL_M(fmt::sprintf( "%i", color_type) );
 	}
 
 	CHECKPOINT_M("PNG color analysis about to begin.");
@@ -223,13 +223,13 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 				Swap32BE( type == RGBA? 0x000000FF:0x00000000 ) );
 		break;
 	default:
-		FAIL_M(ssprintf( "%i", type) );
+		FAIL_M(fmt::sprintf( "%i", type) );
 	}
 	ASSERT( img != nullptr );
 
 	/* alloca to prevent memleaks if libpng longjmps us */
 	png_byte **row_pointers = (png_byte **) alloca( sizeof(png_byte*) * height );
-	CHECKPOINT_M( ssprintf("%p", static_cast<void *>(row_pointers) ) );
+	CHECKPOINT_M( fmt::sprintf("%p", static_cast<void *>(row_pointers) ) );
 
 	for( unsigned y = 0; y < height; ++y )
 	{

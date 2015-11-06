@@ -326,7 +326,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 
 		ASSERT( !sResolved.empty() );
 
-		vsResolvedRef[i] = new LuaThreadVariable( ssprintf("File%d",i+1), sResolved );
+		vsResolvedRef[i] = new LuaThreadVariable( fmt::sprintf("File%d",i+1), sResolved );
 	}
 
 	RString sEffect = bd.m_sEffect;
@@ -532,7 +532,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 		switch( g_RandomBackgroundMode )
 		{
 		default:
-			ASSERT_M( 0, ssprintf("Invalid RandomBackgroundMode: %i", int(g_RandomBackgroundMode)) );
+			ASSERT_M( 0, fmt::sprintf("Invalid RandomBackgroundMode: %i", int(g_RandomBackgroundMode)) );
 			break;
 		case BGMODE_OFF:
 			break;

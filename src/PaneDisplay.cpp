@@ -14,8 +14,8 @@
 #include "XmlFile.h"
 #include "PlayerStageStats.h"
 
-#define SHIFT_X(pc)	THEME->GetMetricF(sMetricsGroup, ssprintf("ShiftP%iX", pc+1))
-#define SHIFT_Y(pc)	THEME->GetMetricF(sMetricsGroup, ssprintf("ShiftP%iY", pc+1))
+#define SHIFT_X(pc)	THEME->GetMetricF(sMetricsGroup, fmt::sprintf("ShiftP%iX", pc+1))
+#define SHIFT_Y(pc)	THEME->GetMetricF(sMetricsGroup, fmt::sprintf("ShiftP%iY", pc+1))
 
 static const char *PaneCategoryNames[] = {
 	"NumSteps",
@@ -295,7 +295,7 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 				case PaneCategory_Hands:
 				case PaneCategory_Lifts:
 				case PaneCategory_Fakes:
-					sTextOut = ssprintf( COUNT_FORMAT.GetValue(), fLevelOut );
+					sTextOut = fmt::sprintf( COUNT_FORMAT.GetValue(), fLevelOut );
 					break;
 				default: break;
 			}

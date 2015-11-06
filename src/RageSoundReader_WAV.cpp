@@ -112,13 +112,13 @@ struct WavReaderPCM: public WavReader
 		if( QuantizeUp(m_WavData.m_iBitsPerSample, 8) < 8 ||
 		    QuantizeUp(m_WavData.m_iBitsPerSample, 8) > 32 )
 		{
-			m_sError = ssprintf("Unsupported sample size %i", m_WavData.m_iBitsPerSample);
+			m_sError = fmt::sprintf("Unsupported sample size %i", m_WavData.m_iBitsPerSample);
 			return false;
 		}
 
 		if( m_WavData.m_iFormatTag == 3 && m_WavData.m_iBitsPerSample != 32 )
 		{
-			m_sError = ssprintf( "Unsupported float sample size %i", m_WavData.m_iBitsPerSample );
+			m_sError = fmt::sprintf( "Unsupported float sample size %i", m_WavData.m_iBitsPerSample );
 			return false;
 		}
 
@@ -214,7 +214,7 @@ public:
 	{
 		if( m_WavData.m_iBitsPerSample != 4 )
 		{
-			m_sError = ssprintf( "Unsupported ADPCM sample size %i", m_WavData.m_iBitsPerSample );
+			m_sError = fmt::sprintf( "Unsupported ADPCM sample size %i", m_WavData.m_iBitsPerSample );
 			return false;
 		}
 
@@ -249,7 +249,7 @@ public:
 	/* Return false on error, true on success (even if we hit EOF). */
 	bool DecodeADPCMBlock()
 	{
-		ASSERT_M( m_iBufferUsed == m_iBufferAvail, ssprintf("%i", m_iBufferUsed) );
+		ASSERT_M( m_iBufferUsed == m_iBufferAvail, fmt::sprintf("%i", m_iBufferUsed) );
 
 		m_iBufferUsed = m_iBufferAvail = 0;
 		m_sError = "";
@@ -522,10 +522,10 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RageFileBasic 
 			m_WavData.m_iExtraFmtBytes = FileReading::read_16_le( *m_pFile, sError );
 
 			if( m_WavData.m_iChannels < 1 || m_WavData.m_iChannels > 2 )
-				FATAL_ERROR( ssprintf( "Unsupported channel count: %i", m_WavData.m_iChannels) );
+				FATAL_ERROR( fmt::sprintf( "Unsupported channel count: %i", m_WavData.m_iChannels) );
 
 			if( m_WavData.m_iSampleRate < 4000 || m_WavData.m_iSampleRate > 100000 ) /* unlikely */
-				FATAL_ERROR( ssprintf( "Invalid sample rate: %i", m_WavData.m_iSampleRate) );
+				FATAL_ERROR( fmt::sprintf( "Invalid sample rate: %i", m_WavData.m_iSampleRate) );
 
 			m_WavData.m_iExtraFmtPos = m_pFile->Tell();
 
@@ -571,7 +571,7 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RageFileBasic 
 		/* Return unknown, so other decoders will be tried.  MAD can read MP3s embedded in WAVs. */
 		return OPEN_UNKNOWN_FILE_FORMAT;
 	default:
-		FATAL_ERROR( ssprintf( "Unsupported data format %i", m_WavData.m_iFormatTag) );
+		FATAL_ERROR( fmt::sprintf( "Unsupported data format %i", m_WavData.m_iFormatTag) );
 	}
 
 	if( !m_pImpl->Init() )

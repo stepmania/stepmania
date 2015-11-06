@@ -9,7 +9,7 @@
 #include "ThemeMetric.h"
 #include "ActorUtil.h"
 
-RString WARNING_COMMAND_NAME( size_t i ) { return ssprintf("Warning%dCommand",int(i)); }
+RString WARNING_COMMAND_NAME( size_t i ) { return fmt::sprintf("Warning%dCommand",int(i)); }
 
 static const float TIMER_PAUSE_SECONDS = 99.99f;
 
@@ -37,7 +37,7 @@ void MenuTimer::Load( RString sMetricsGroup )
 	for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
 	{
 		m_text[i].LoadFromFont( THEME->GetPathF(sMetricsGroup,"numbers") );
-		m_text[i].SetName( ssprintf("Text%d",i+1) );
+		m_text[i].SetName( fmt::sprintf("Text%d",i+1) );
 		ActorUtil::LoadAllCommandsAndOnCommand( m_text[i], sMetricsGroup );
 		this->AddChild( &m_text[i] );
 	}
@@ -185,7 +185,7 @@ void MenuTimer::SetText( float fSeconds )
 		LuaHelpers::Push( L, fSeconds );
 
 		// call function with 1 argument and 1 result
-		RString Error = ssprintf("Error running Text%d", (i+1));
+		RString Error = fmt::sprintf("Error running Text%d", (i+1));
 		Error += "FormatFunction: ";
 		LuaHelpers::RunScriptOnStack(L, Error, 1, 1, true);
 

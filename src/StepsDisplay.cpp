@@ -242,7 +242,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 		}
 		else
 		{
-			const RString sMeter = ssprintf( m_sMeterFormatString.GetValue().c_str(), params.iMeter );
+			const RString sMeter = fmt::sprintf( m_sMeterFormatString.GetValue().c_str(), params.iMeter );
 			m_textMeter.SetText( sMeter );
 			m_textMeter.HandleMessage( msg );
 		}

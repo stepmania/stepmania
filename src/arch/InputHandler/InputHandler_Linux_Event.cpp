@@ -44,7 +44,7 @@ static RString BustypeToString( int iBus )
 	case BUS_RS232: return "serial port";
 	case BUS_USB: return "USB";
 	case BUS_XTKBD: return "XT keyboard";
-	default: return ssprintf("unknown bus %x", iBus);
+	default: return fmt::sprintf("unknown bus %x", iBus);
 	}
 }
 
@@ -78,13 +78,13 @@ static vector<EventDevice *> g_apEventDevices;
  * there; return false if we don't know. */
 static bool EventDeviceExists( int iNum )
 {
-	RString sDir = ssprintf( "/sys/class" );
+	auto sDir = fmt::sprintf( "/sys/class" );
 	struct stat st;
-	if( stat(sDir, &st) == -1 )
+	if( stat(sDir.c_str(), &st) == -1 )
 		return true;
 
-	RString sFile = ssprintf( "/sys/class/input/event%i", iNum );
-	return stat(sFile, &st) == 0;
+	auto sFile = fmt::sprintf( "/sys/class/input/event%i", iNum );
+	return stat(sFile.c_str(), &st) == 0;
 }
 
 static bool BitIsSet( const uint8_t *pArray, uint32_t iBit )
@@ -421,7 +421,7 @@ void InputHandler_Linux_Event::InputThread()
 			}
 
 			case EV_ABS: {
-				ASSERT_M( event.code < ABS_MAX, ssprintf("%i", event.code) );
+				ASSERT_M( event.code < ABS_MAX, fmt::sprintf("%i", event.code) );
 				DeviceButton neg = g_apEventDevices[i]->aiAbsMappingLow[event.code];
 				DeviceButton pos = g_apEventDevices[i]->aiAbsMappingHigh[event.code];
 

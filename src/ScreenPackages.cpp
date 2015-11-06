@@ -151,7 +151,7 @@ void ScreenPackages::Update( float fDeltaTime )
 	if ( m_fLastUpdate >= 1.0 )
 	{
 		if ( m_bIsDownloading && m_bGotHeader )
-			m_sStatus = ssprintf( DOWNLOAD_PROGRESS.GetValue(), int((m_iDownloaded-m_bytesLastUpdate)/1024) );
+			m_sStatus = fmt::sprintf( DOWNLOAD_PROGRESS.GetValue(), int((m_iDownloaded-m_bytesLastUpdate)/1024) );
 
 		m_bytesLastUpdate = m_iDownloaded;
 		UpdateProgress();
@@ -501,7 +501,7 @@ void ScreenPackages::EnterURL( const RString & sURL )
 
 	m_sBaseAddress = "http://" + Server;
 	if( Port != 80 )
-		m_sBaseAddress += ssprintf( ":%d", Port );
+		m_sBaseAddress += fmt::sprintf( ":%d", Port );
 	m_sBaseAddress += "/";
 
 	if (!Rage::ends_with(sAddress, "/"))
@@ -665,11 +665,11 @@ void ScreenPackages::HTTPUpdate()
 		m_wSocket.close();
 		m_bIsDownloading = false;
 		m_bGotHeader=false;
-		m_sStatus = ssprintf( "Done ;%dB", int(m_iDownloaded) );
+		m_sStatus = fmt::sprintf( "Done ;%dB", int(m_iDownloaded) );
 
 		if( m_iResponseCode < 200 || m_iResponseCode >= 400 )
 		{
-			m_sStatus = ssprintf( "%ld", m_iResponseCode ) + m_sResponseName;
+			m_sStatus = fmt::sprintf( "%ld", m_iResponseCode ) + m_sResponseName;
 		}
 		else
 		{

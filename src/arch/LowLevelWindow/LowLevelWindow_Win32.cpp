@@ -82,7 +82,7 @@ int ChooseWindowPixelFormat( const VideoModeParams &p, PIXELFORMATDESCRIPTOR *pi
 
 void DumpPixelFormat( const PIXELFORMATDESCRIPTOR &pfd )
 {
-	RString str = ssprintf( "Mode: " );
+	RString str = fmt::sprintf( "Mode: " );
 	bool bInvalidFormat = false;
 
 	if( pfd.dwFlags & PFD_GENERIC_FORMAT )
@@ -100,11 +100,11 @@ void DumpPixelFormat( const PIXELFORMATDESCRIPTOR &pfd )
 	if( !(pfd.dwFlags & PFD_DRAW_TO_WINDOW) ) { str += "!window "; bInvalidFormat = true; }
 	if( !(pfd.dwFlags & PFD_DOUBLEBUFFER) ) { str += "!dbuff "; bInvalidFormat = true; }
 
-	str += ssprintf( "%i (%i%i%i) ", pfd.cColorBits, pfd.cRedBits, pfd.cGreenBits, pfd.cBlueBits );
-	if( pfd.cAlphaBits ) str += ssprintf( "%i alpha ", pfd.cAlphaBits );
-	if( pfd.cDepthBits ) str += ssprintf( "%i depth ", pfd.cDepthBits );
-	if( pfd.cStencilBits ) str += ssprintf( "%i stencil ", pfd.cStencilBits );
-	if( pfd.cAccumBits ) str += ssprintf( "%i accum ", pfd.cAccumBits );
+	str += fmt::sprintf( "%i (%i%i%i) ", pfd.cColorBits, pfd.cRedBits, pfd.cGreenBits, pfd.cBlueBits );
+	if( pfd.cAlphaBits ) str += fmt::sprintf( "%i alpha ", pfd.cAlphaBits );
+	if( pfd.cDepthBits ) str += fmt::sprintf( "%i depth ", pfd.cDepthBits );
+	if( pfd.cStencilBits ) str += fmt::sprintf( "%i stencil ", pfd.cStencilBits );
+	if( pfd.cAccumBits ) str += fmt::sprintf( "%i accum ", pfd.cAccumBits );
 
 	if( bInvalidFormat )
 		LOG->Warn( "Invalid format: %s", str.c_str() );
@@ -119,7 +119,7 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 {
 	//LOG->Warn( "LowLevelWindow_Win32::TryVideoMode" );
 	
-	ASSERT_M( p.bpp == 16 || p.bpp == 32, ssprintf("%i", p.bpp) );
+	ASSERT_M( p.bpp == 16 || p.bpp == 32, fmt::sprintf("%i", p.bpp) );
 
 	bNewDeviceOut = false;
 
@@ -206,7 +206,7 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 			/* Destroy the window. */
 			DestroyGraphicsWindowAndOpenGLContext();
 
-			return werr_ssprintf( GetLastError(), "Pixel format failed" );
+			return werr_format( GetLastError(), "Pixel format failed" );
 		}
 
 		DescribePixelFormat( GraphicsWindow::GetHDC(), iPixelFormat, sizeof(g_CurrentPixelFormat), &g_CurrentPixelFormat );
@@ -220,19 +220,19 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		if ( g_HGLRC == nullptr )
 		{
 			DestroyGraphicsWindowAndOpenGLContext();
-			return hr_ssprintf( GetLastError(), "wglCreateContext" );
+			return hr_format( GetLastError(), "wglCreateContext" );
 		}
 
 		g_HGLRC_Background = wglCreateContext( GraphicsWindow::GetHDC() );
 		if( g_HGLRC_Background == nullptr )
 		{
 			DestroyGraphicsWindowAndOpenGLContext();
-			return hr_ssprintf( GetLastError(), "wglCreateContext" );
+			return hr_format( GetLastError(), "wglCreateContext" );
 		}
 
 		if( !wglShareLists(g_HGLRC, g_HGLRC_Background) )
 		{
-			LOG->Warn( werr_ssprintf(GetLastError(), "wglShareLists failed") );
+			LOG->Warn( werr_format(GetLastError(), "wglShareLists failed") );
 			wglDeleteContext( g_HGLRC_Background );
 			g_HGLRC_Background = nullptr;
 		}
@@ -240,7 +240,7 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		if( !wglMakeCurrent( GraphicsWindow::GetHDC(), g_HGLRC ) )
 		{
 			DestroyGraphicsWindowAndOpenGLContext();
-			return hr_ssprintf( GetLastError(), "wglCreateContext" );
+			return hr_format( GetLastError(), "wglCreateContext" );
 		}
 	}
 	return RString();	// we set the video mode successfully
@@ -255,8 +255,8 @@ void LowLevelWindow_Win32::BeginConcurrentRendering()
 {
 	if( !wglMakeCurrent( GraphicsWindow::GetHDC(), g_HGLRC_Background ) )
 	{
-		LOG->Warn( hr_ssprintf(GetLastError(), "wglMakeCurrent") );
-		FAIL_M( hr_ssprintf(GetLastError(), "wglMakeCurrent") );
+		LOG->Warn( hr_format(GetLastError(), "wglMakeCurrent") );
+		FAIL_M( hr_format(GetLastError(), "wglMakeCurrent") );
 	}
 }
 

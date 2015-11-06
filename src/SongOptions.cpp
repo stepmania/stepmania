@@ -67,7 +67,7 @@ static void AddPart( vector<RString> &AddTo, float level, RString name )
 	if( level == 0 )
 		return;
 
-	const RString LevelStr = (level == 1)? RString(""): ssprintf( "%ld%% ", std::lrint(level*100) );
+	const RString LevelStr = (level == 1)? RString(""): fmt::sprintf( "%ld%% ", std::lrint(level*100) );
 
 	AddTo.push_back( LevelStr + name );
 }
@@ -76,7 +76,7 @@ void SongOptions::GetMods( vector<RString> &AddTo ) const
 {
 	if( m_fMusicRate != 1 )
 	{
-		RString s = ssprintf( "%2.2f", m_fMusicRate );
+		RString s = fmt::sprintf( "%2.2f", m_fMusicRate );
 		if( s[s.size()-1] == '0' )
 			s.erase( s.size()-1 );
 		AddTo.push_back( s + "xMusic" );
@@ -91,7 +91,7 @@ void SongOptions::GetMods( vector<RString> &AddTo ) const
 	case AutosyncType_Machine:	AddTo.push_back("AutosyncMachine");	break;
 	case AutosyncType_Tempo:	AddTo.push_back("AutosyncTempo");	break;
 	default:
-		FAIL_M(ssprintf("Invalid autosync type: %i", m_AutosyncType));
+		FAIL_M(fmt::sprintf("Invalid autosync type: %i", m_AutosyncType));
 	}
 
 	switch( m_SoundEffectType )
@@ -100,7 +100,7 @@ void SongOptions::GetMods( vector<RString> &AddTo ) const
 	case SoundEffectType_Speed:	AddTo.push_back("EffectSpeed");		break;
 	case SoundEffectType_Pitch:	AddTo.push_back("EffectPitch");		break;
 	default:
-		FAIL_M(ssprintf("Invalid sound effect type: %i", m_SoundEffectType));
+		FAIL_M(fmt::sprintf("Invalid sound effect type: %i", m_SoundEffectType));
 	}
 
 	if( m_bAssistClap )

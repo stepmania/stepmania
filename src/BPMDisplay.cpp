@@ -81,9 +81,9 @@ void BPMDisplay::Update( float fDeltaTime )
 		{
 			m_fBPMFrom = -1;
 			if( (bool)SHOW_QMARKS )
-				SetText( (RandomFloat(0,1)>0.90f) ? (RString)QUESTIONMARKS_TEXT : ssprintf((RString)BPM_FORMAT_STRING,RandomFloat(0,999)) );
+				SetText( (RandomFloat(0,1)>0.90f) ? (RString)QUESTIONMARKS_TEXT : fmt::sprintf((RString)BPM_FORMAT_STRING,RandomFloat(0,999)) );
 			else
-				SetText( ssprintf((RString)BPM_FORMAT_STRING, RandomFloat(0,999)) );
+				SetText( fmt::sprintf((RString)BPM_FORMAT_STRING, RandomFloat(0,999)) );
 		}
 		else if(m_fBPMFrom == -1)
 		{
@@ -94,7 +94,7 @@ void BPMDisplay::Update( float fDeltaTime )
 	if( m_fBPMTo != -1)
 	{
 		const float fActualBPM = GetActiveBPM();
-		SetText( ssprintf((RString)BPM_FORMAT_STRING, fActualBPM) );
+		SetText( fmt::sprintf((RString)BPM_FORMAT_STRING, fActualBPM) );
 	}
 }
 
@@ -129,11 +129,11 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 			if( MinBPM == -1 )
 				SetText( RANDOM_TEXT ); // random (was "...") -aj
 			else
-				SetText( ssprintf("%i", MinBPM) );
+				SetText( fmt::sprintf("%i", MinBPM) );
 		}
 		else
 		{
-			SetText( ssprintf("%i%s%i", MinBPM, SEPARATOR.GetValue().c_str(), MaxBPM) );
+			SetText( fmt::sprintf("%i%s%i", MinBPM, SEPARATOR.GetValue().c_str(), MaxBPM) );
 		}
 	}
 	else
@@ -199,7 +199,7 @@ void BPMDisplay::SetBpmFromSong( const Song* pSong )
 		CycleRandomly();
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid display BPM type: %i", pSong->m_DisplayBPMType));
+		FAIL_M(fmt::sprintf("Invalid display BPM type: %i", pSong->m_DisplayBPMType));
 	}
 }
 
@@ -222,7 +222,7 @@ void BPMDisplay::SetBpmFromCourse( const Course* pCourse )
 	StepsType st = GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType;
 	Trail *pTrail = pCourse->GetTrail( st );
 	// GetTranslitFullTitle because "Crashinfo.txt is garbled because of the ANSI output as usual." -f
-	ASSERT_M( pTrail != nullptr, ssprintf("Course '%s' has no trail for StepsType '%s'", pCourse->GetTranslitFullTitle().c_str(), StringConversion::ToString(st).c_str() ) );
+	ASSERT_M( pTrail != nullptr, fmt::sprintf("Course '%s' has no trail for StepsType '%s'", pCourse->GetTranslitFullTitle().c_str(), StringConversion::ToString(st).c_str() ) );
 
 	m_fCycleTime = (float)COURSE_CYCLE_SPEED;
 

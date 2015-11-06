@@ -22,7 +22,7 @@ LoadingWindow_Gtk::LoadingWindow_Gtk()
 
 static RString ModuleError( const RString s )
 {
-	return ssprintf( "Couldn't load symbol Module_%s", s.c_str() );
+	return fmt::sprintf( "Couldn't load symbol Module_%s", s.c_str() );
 }
 
 RString LoadingWindow_Gtk::Init()
@@ -31,7 +31,7 @@ RString LoadingWindow_Gtk::Init()
 
 	Handle = dlopen( RageFileManagerUtil::sDirOfExecutable + "/" + "GtkModule.so", RTLD_NOW );
 	if( Handle == nullptr )
-		return ssprintf( "dlopen(): %s", dlerror() );
+		return fmt::sprintf( "dlopen(): %s", dlerror() );
 
 	Module_Init = (INIT) dlsym(Handle, "Init");
 	if( !Module_Init )
@@ -114,7 +114,7 @@ void LoadingWindow_Gtk::SetIndeterminate( bool indeterminate )
 /*
  * (c) 2003-2004 Glenn Maynard, Sean Burke
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -124,7 +124,7 @@ void LoadingWindow_Gtk::SetIndeterminate( bool indeterminate )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

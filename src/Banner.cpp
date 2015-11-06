@@ -232,7 +232,7 @@ void Banner::LoadFromSortOrder( SortOrder so )
 	else
 	{
 		if( so != SORT_GROUP && so != SORT_RECENT )
-			Load( THEME->GetPathG("Banner",ssprintf("%s",SortOrderToString(so).c_str())) );
+			Load( THEME->GetPathG("Banner",fmt::sprintf("%s",SortOrderToString(so).c_str())) );
 	}
 	m_bScrolling = (bool)SCROLL_SORT_ORDER;
 }

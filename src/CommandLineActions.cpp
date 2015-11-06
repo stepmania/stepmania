@@ -58,7 +58,7 @@ static void Nsis()
 				RString sName = attr->first;
 				RString sValue = attr->second->GetValue<RString>();
 				Rage::replace(sValue, "\\n", "$\\n");
-				RString sLine = ssprintf("LangString %s ${LANG_%s} \"%s\"", sName.c_str(), sLangNameUpper.c_str(), sValue.c_str());
+				RString sLine = fmt::sprintf("LangString %s ${LANG_%s} \"%s\"", sName.c_str(), sLangNameUpper.c_str(), sValue.c_str());
 				out.PutLine(sLine);
 			}
 		}
@@ -88,8 +88,8 @@ static void LuaInformation()
 static void Version()
 {
 	#if defined(WIN32)
-		RString sProductID = ssprintf("%s", (string(PRODUCT_FAMILY) + product_version).c_str() );
-		RString sVersion = ssprintf("build %s\nCompile Date: %s @ %s", ::sm_version_git_hash, version_date, version_time);
+		RString sProductID = fmt::sprintf("%s", (string(PRODUCT_FAMILY) + product_version).c_str() );
+		RString sVersion = fmt::sprintf("build %s\nCompile Date: %s @ %s", ::sm_version_git_hash, version_date, version_time);
 
 		AllocConsole();
 		freopen("CONOUT$","wb", stdout);

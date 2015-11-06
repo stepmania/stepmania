@@ -61,8 +61,8 @@ static const ThemeMetric<int>		EXTRA_STAGE2_DIFFICULTY_MAX	( "SongManager", "Ext
 static Preference<std::string> g_sDisabledSongs( "DisabledSongs", "" );
 static Preference<bool> g_bHideIncompleteCourses( "HideIncompleteCourses", false );
 
-RString SONG_GROUP_COLOR_NAME( size_t i )   { return ssprintf( "SongGroupColor%i", (int) i+1 ); }
-RString COURSE_GROUP_COLOR_NAME( size_t i ) { return ssprintf( "CourseGroupColor%i", (int) i+1 ); }
+RString SONG_GROUP_COLOR_NAME( size_t i )   { return fmt::sprintf( "SongGroupColor%i", (int) i+1 ); }
+RString COURSE_GROUP_COLOR_NAME( size_t i ) { return fmt::sprintf( "CourseGroupColor%i", (int) i+1 ); }
 
 SongManager::SongManager()
 {
@@ -297,7 +297,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 		if(ld)
 		{
 			ld->SetProgress(sanity_index);
-			ld->SetText(SANITY_CHECKING_GROUPS.GetValue() + ssprintf("\n%s",
+			ld->SetText(SANITY_CHECKING_GROUPS.GetValue() + fmt::sprintf("\n%s",
 					Rage::base_name(sGroupDirName).c_str()));
 		}
 		// TODO: If this check fails, log a warning instead of crashing.
@@ -343,7 +343,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 			{
 				ld->SetProgress(songIndex);
 				ld->SetText( LOADING_SONGS.GetValue() +
-					ssprintf("\n%s\n%s",
+					fmt::sprintf("\n%s\n%s",
 						Rage::base_name(sGroupDirName).c_str(),
 						Rage::base_name(sSongDirName).c_str()
 					)
@@ -545,7 +545,7 @@ Rage::Color SongManager::GetSongGroupColor( const RString &sSongGroup ) const
 		}
 	}
 
-	FAIL_M( ssprintf("requested color for song group '%s' that doesn't exist",sSongGroup.c_str()) );
+	FAIL_M( fmt::sprintf("requested color for song group '%s' that doesn't exist",sSongGroup.c_str()) );
 	return Rage::Color(1,1,1,1);
 }
 
@@ -621,7 +621,7 @@ RString SongManager::GetCourseGroupBannerPath( const RString &sCourseGroup ) con
 	auto iter = m_mapCourseGroupToInfo.find(sCourseGroup);
 	if( iter == m_mapCourseGroupToInfo.end() )
 	{
-		ASSERT_M( 0, ssprintf("requested banner for course group '%s' that doesn't exist",sCourseGroup.c_str()) );
+		ASSERT_M( 0, fmt::sprintf("requested banner for course group '%s' that doesn't exist",sCourseGroup.c_str()) );
 		return RString();
 	}
 	else
@@ -655,7 +655,7 @@ Rage::Color SongManager::GetCourseGroupColor( const RString &sCourseGroup ) cons
 		iIndex++;
 	}
 
-	ASSERT_M( 0, ssprintf("requested color for course group '%s' that doesn't exist",sCourseGroup.c_str()) );
+	ASSERT_M( 0, fmt::sprintf("requested color for course group '%s' that doesn't exist",sCourseGroup.c_str()) );
 	return Rage::Color(1,1,1,1);
 }
 
@@ -675,14 +675,14 @@ Rage::Color SongManager::GetCourseColor( const Course* pCourse ) const
 				if( s == pCourse )
 				{
 					int i = v - m_vPreferredCourseSort.begin();
-					CHECKPOINT_M( ssprintf( "%i, NUM_COURSE_GROUP_COLORS = %i", i, NUM_COURSE_GROUP_COLORS.GetValue()) );
+					CHECKPOINT_M( fmt::sprintf( "%i, NUM_COURSE_GROUP_COLORS = %i", i, NUM_COURSE_GROUP_COLORS.GetValue()) );
 					return COURSE_GROUP_COLOR.GetValue( i % NUM_COURSE_GROUP_COLORS );
 				}
 			}
 		}
 
 		int i = m_vPreferredCourseSort.size();
-		CHECKPOINT_M( ssprintf( "%i, NUM_COURSE_GROUP_COLORS = %i", i, NUM_COURSE_GROUP_COLORS.GetValue()) );
+		CHECKPOINT_M( fmt::sprintf( "%i, NUM_COURSE_GROUP_COLORS = %i", i, NUM_COURSE_GROUP_COLORS.GetValue()) );
 		return COURSE_GROUP_COLOR.GetValue( i % NUM_COURSE_GROUP_COLORS );
 	}
 	else
@@ -876,7 +876,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 			if( ld )
 			{
 				ld->SetProgress(courseIndex);
-				ld->SetText( LOADING_COURSES.GetValue()+ssprintf("\n%s\n%s",
+				ld->SetText( LOADING_COURSES.GetValue()+fmt::sprintf("\n%s\n%s",
 					Rage::base_name(sCourseGroup).c_str(),
 					Rage::base_name(sCoursePath).c_str()));
 			}
@@ -1299,7 +1299,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 		sGroup = GAMESTATE->m_pCurSong->m_sGroupName;
 	}
 
-	ASSERT_M( sGroup != "", ssprintf("%p '%s' '%s'",
+	ASSERT_M( sGroup != "", fmt::sprintf("%p '%s' '%s'",
 		static_cast<void *>(GAMESTATE->m_pCurSong.Get()),
 		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->GetSongDir().c_str():"",
 		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->m_sGroupName.c_str():"") );

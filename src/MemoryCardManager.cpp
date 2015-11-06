@@ -18,25 +18,25 @@ MemoryCardManager*	MEMCARDMAN = nullptr;	// global and accessible from anywhere 
 
 static void MemoryCardOsMountPointInit( size_t /*PlayerNumber*/ i, std::string &sNameOut, std::string &defaultValueOut )
 {
-	sNameOut = ssprintf( "MemoryCardOsMountPointP%d", int(i+1) );
+	sNameOut = fmt::sprintf( "MemoryCardOsMountPointP%d", int(i+1) );
 	defaultValueOut = "";
 }
 
 static void MemoryCardUsbBusInit( size_t /*PlayerNumber*/ i, std::string &sNameOut, int &defaultValueOut )
 {
-	sNameOut = ssprintf( "MemoryCardUsbBusP%d", int(i+1) );
+	sNameOut = fmt::sprintf( "MemoryCardUsbBusP%d", int(i+1) );
 	defaultValueOut = -1;
 }
 
 static void MemoryCardUsbPortInit( size_t /*PlayerNumber*/ i, std::string &sNameOut, int &defaultValueOut )
 {
-	sNameOut = ssprintf( "MemoryCardUsbPortP%d",int(i+1) );
+	sNameOut = fmt::sprintf( "MemoryCardUsbPortP%d",int(i+1) );
 	defaultValueOut = -1;
 }
 
 static void MemoryCardUsbLevelInit( size_t /*PlayerNumber*/ i, std::string &sNameOut, int &defaultValueOut )
 {
-	sNameOut = ssprintf( "MemoryCardUsbLevelP%d", int(i+1) );
+	sNameOut = fmt::sprintf( "MemoryCardUsbLevelP%d", int(i+1) );
 	defaultValueOut = -1;
 }
 

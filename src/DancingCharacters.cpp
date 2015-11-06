@@ -15,8 +15,8 @@
 
 int Neg1OrPos1();
 
-#define DC_X( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterXP%d",choice+1))
-#define DC_Y( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterYP%d",choice+1))
+#define DC_X( choice )	THEME->GetMetricF("DancingCharacters",fmt::sprintf("2DCharacterXP%d",choice+1))
+#define DC_Y( choice )	THEME->GetMetricF("DancingCharacters",fmt::sprintf("2DCharacterYP%d",choice+1))
 
 /*
  * TODO:

@@ -41,7 +41,7 @@ int ThreadImpl_Pthreads::Wait()
 {
 	int *val;
 	int ret = pthread_join( thread, (void **) &val );
-	ASSERT_M( ret == 0, ssprintf("pthread_join: %s", strerror(ret)) );
+	ASSERT_M( ret == 0, fmt::sprintf("pthread_join: %s", strerror(ret)) );
 
 	int iRet = *val;
 	delete val;
@@ -83,7 +83,7 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 	thread->m_StartFinishedSem = new SemaImpl_Pthreads( 0 );
 
 	int ret = pthread_create( &thread->thread, nullptr, StartThread, thread );
-	ASSERT_M( ret == 0, ssprintf( "MakeThread: pthread_create: %s", strerror(errno)) );
+	ASSERT_M( ret == 0, fmt::sprintf( "MakeThread: pthread_create: %s", strerror(errno)) );
 
 	// Don't return until StartThread sets m_piThreadID.
 	thread->m_StartFinishedSem->Wait();
@@ -101,7 +101,7 @@ MutexImpl_Pthreads::MutexImpl_Pthreads( RageMutex *pParent ):
 MutexImpl_Pthreads::~MutexImpl_Pthreads()
 {
 	int ret = pthread_mutex_destroy( &mutex ) == -1;
-	ASSERT_M( ret == 0, ssprintf("Error deleting mutex: %s", strerror(errno)) );
+	ASSERT_M( ret == 0, fmt::sprintf("Error deleting mutex: %s", strerror(errno)) );
 }
 
 #if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) || defined(HAVE_PTHREAD_COND_TIMEDWAIT)
@@ -154,7 +154,7 @@ bool MutexImpl_Pthreads::Lock()
 				break;
 
 			default:
-				FAIL_M( ssprintf("pthread_mutex_timedlock: %s", strerror(errno)) );
+				FAIL_M( fmt::sprintf("pthread_mutex_timedlock: %s", strerror(errno)) );
 			}
 		}
 
@@ -169,7 +169,7 @@ bool MutexImpl_Pthreads::Lock()
 	}
 	while( ret == -1 && ret == EINTR );
 
-	ASSERT_M( ret == 0, ssprintf("pthread_mutex_lock: %s", strerror(errno)) );
+	ASSERT_M( ret == 0, fmt::sprintf("pthread_mutex_lock: %s", strerror(errno)) );
 
 	return true;
 }
@@ -179,7 +179,7 @@ bool MutexImpl_Pthreads::TryLock()
 	int ret = pthread_mutex_trylock( &mutex );
 	if( ret == EBUSY )
 		return false;
-	ASSERT_M( ret == 0, ssprintf("pthread_mutex_trylock failed: %s", strerror(errno)) );
+	ASSERT_M( ret == 0, fmt::sprintf("pthread_mutex_trylock failed: %s", strerror(errno)) );
 	return true;
 }
 
@@ -409,7 +409,7 @@ bool SemaImpl_Pthreads::Wait()
 	}
 	while( ret == -1 && errno == EINTR );
 
-	ASSERT_M( ret == 0, ssprintf("Wait: sem_wait: %s", strerror(errno)) );
+	ASSERT_M( ret == 0, fmt::sprintf("Wait: sem_wait: %s", strerror(errno)) );
 
 	return true;
 }
@@ -420,7 +420,7 @@ bool SemaImpl_Pthreads::TryWait()
 	if( ret == -1 && errno == EAGAIN )
 		return false;
 	
-	ASSERT_M( ret == 0, ssprintf("TryWait: sem_trywait failed: %s", strerror(errno)) );
+	ASSERT_M( ret == 0, fmt::sprintf("TryWait: sem_trywait failed: %s", strerror(errno)) );
 
 	return true;
 }
@@ -429,9 +429,9 @@ bool SemaImpl_Pthreads::TryWait()
 SemaImpl_Pthreads::SemaImpl_Pthreads( int iInitialValue )
 {
 	int ret = pthread_cond_init( &m_Cond, nullptr );
-	ASSERT_M( ret == 0, ssprintf( "SemaImpl_Pthreads: pthread_cond_init: %s", strerror(errno)) );
+	ASSERT_M( ret == 0, fmt::sprintf( "SemaImpl_Pthreads: pthread_cond_init: %s", strerror(errno)) );
 	ret = pthread_mutex_init( &m_Mutex, nullptr );
-	ASSERT_M( ret == 0, ssprintf( "SemaImpl_Pthreads: pthread_mutex_init: %s", strerror(errno)) );
+	ASSERT_M( ret == 0, fmt::sprintf( "SemaImpl_Pthreads: pthread_mutex_init: %s", strerror(errno)) );
 		
 	m_iValue = iInitialValue;
 }
@@ -486,7 +486,7 @@ bool SemaImpl_Pthreads::Wait()
 				break;
 
 			default:
-				FAIL_M( ssprintf("pthread_mutex_timedlock: %s", strerror(errno)) );
+				FAIL_M( fmt::sprintf("pthread_mutex_timedlock: %s", strerror(errno)) );
 			}
 		}
 

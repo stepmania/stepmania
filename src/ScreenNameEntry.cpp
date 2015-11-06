@@ -40,7 +40,7 @@
 #define NUM_CHARS_TO_DRAW_TOTAL		THEME->GetMetricI(m_sName,"NumCharsToDrawTotal")
 #define FAKE_BEATS_PER_SEC		THEME->GetMetricF(m_sName,"FakeBeatsPerSec")
 #define MAX_RANKING_NAME_LENGTH		THEME->GetMetricI(m_sName,"MaxRankingNameLength")
-#define PLAYER_X( p, styleType )	THEME->GetMetricF(m_sName,ssprintf("PlayerP%d%sX",p+1,StyleTypeToString(styleType).c_str()))
+#define PLAYER_X( p, styleType )	THEME->GetMetricF(m_sName,fmt::sprintf("PlayerP%d%sX",p+1,StyleTypeToString(styleType).c_str()))
 
 // cache for frequently used metrics
 static float	g_fCharsZoomSmall;
@@ -236,7 +236,7 @@ void ScreenNameEntry::Init()
 			 m_sSelectedName[p] = pProfile->m_sLastUsedHighScoreName;
 
 		// resize string to MAX_RANKING_NAME_LENGTH
-		m_sSelectedName[p] = ssprintf( "%*.*s", MAX_RANKING_NAME_LENGTH, MAX_RANKING_NAME_LENGTH, m_sSelectedName[p].c_str() );
+		m_sSelectedName[p] = fmt::sprintf( "%*.*s", MAX_RANKING_NAME_LENGTH, MAX_RANKING_NAME_LENGTH, m_sSelectedName[p].c_str() );
 		ASSERT( (int) m_sSelectedName[p].length() == MAX_RANKING_NAME_LENGTH );
 
 		// don't load player if they aren't going to enter their name

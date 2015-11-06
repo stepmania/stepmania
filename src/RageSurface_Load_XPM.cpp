@@ -85,7 +85,7 @@ RageSurface *RageSurface_Load_XPM( char * const *xpm, RString &error )
 		const RString row = xpm[line++];
 		if( (int) row.size() != width*color_length )
 		{
-			error = ssprintf( "row %i is not expected length (%i != %i)", y, int(row.size()), width*color_length );
+			error = fmt::sprintf( "row %i is not expected length (%i != %i)", y, int(row.size()), width*color_length );
 			delete img;
 		    return nullptr;
 		}
@@ -99,7 +99,7 @@ RageSurface *RageSurface_Load_XPM( char * const *xpm, RString &error )
 			auto it = name_to_color.find( color_name );
 			if( it == name_to_color.end() )
 			{
-				error = ssprintf( "%ix%i is unknown color \"%s\"", x, y, color_name.c_str() );
+				error = fmt::sprintf( "%ix%i is unknown color \"%s\"", x, y, color_name.c_str() );
 				delete img;
 				return nullptr;
 			}

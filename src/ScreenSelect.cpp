@@ -12,7 +12,7 @@
 using std::vector;
 
 #define CHOICE_NAMES		THEME->GetMetric (m_sName,"ChoiceNames")
-#define CHOICE( s )		THEME->GetMetric (m_sName,ssprintf("Choice%s",s.c_str()))
+#define CHOICE( s )		THEME->GetMetric (m_sName,fmt::sprintf("Choice%s",s.c_str()))
 #define IDLE_TIMEOUT_SCREEN	THEME->GetMetric (m_sName,"IdleTimeoutScreen")
 #define UPDATE_ON_MESSAGE	THEME->GetMetric (m_sName,"UpdateOnMessage")
 
@@ -63,7 +63,7 @@ void ScreenSelect::Init()
 						RString com= SArg(-1);
 						GameCommand mc;
 						mc.ApplyCommitsScreens(false);
-						mc.m_sName = ssprintf("%zu", i);
+						mc.m_sName = fmt::sprintf("%zu", i);
 						Commands cmd= ParseCommands(com);
 						mc.Load(i, cmd);
 						m_aGameCommands.push_back(mc);

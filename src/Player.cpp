@@ -100,7 +100,7 @@ public:
 };
 
 
-RString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides )	{ return "AttackDisplayXOffset" + (both_sides ? RString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
+RString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides )	{ return "AttackDisplayXOffset" + (both_sides ? RString("BothSides") : fmt::sprintf("OneSideP%d",int(p+1)) ); }
 
 /**
  * @brief Distance to search for a note in Step(), in seconds.
@@ -144,7 +144,7 @@ void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, std::string &sNameOut, 
 			defaultValueOut = 0.1664f;
 			break;
 		default:
-			FAIL_M(ssprintf("Invalid timing window: %i", static_cast<int>(i)));
+			FAIL_M(fmt::sprintf("Invalid timing window: %i", static_cast<int>(i)));
 	}
 }
 
@@ -787,7 +787,7 @@ void Player::Load()
 					NoteDataUtil::Turn( m_NoteData, st, NoteDataUtil::right);
 					break;
 				default:
-					FAIL_M(ssprintf("Count %i not in range 0-3", count));
+					FAIL_M(fmt::sprintf("Count %i not in range 0-3", count));
 				}
 				count++;
 				count %= 4;
@@ -1026,7 +1026,7 @@ void Player::Update( float fDeltaTime )
 
 	// update pressed flag
 	const int iNumCols = GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer;
-	ASSERT_M( iNumCols <= MAX_COLS_PER_PLAYER, ssprintf("%i > %i", iNumCols, MAX_COLS_PER_PLAYER) );
+	ASSERT_M( iNumCols <= MAX_COLS_PER_PLAYER, fmt::sprintf("%i > %i", iNumCols, MAX_COLS_PER_PLAYER) );
 	for( int col=0; col < iNumCols; ++col )
 	{
 		ASSERT( m_pPlayerState != nullptr );
@@ -1135,7 +1135,7 @@ void Player::Update( float fDeltaTime )
 			{
 				if( !vHoldNotesToGradeTogether.empty() )
 				{
-					//LOG->Trace( ssprintf("UpdateHoldNotes; %i != %i || !judge holds on same row together",iRow,iRowOfLastHoldNote) );
+					//LOG->Trace( fmt::sprintf("UpdateHoldNotes; %i != %i || !judge holds on same row together",iRow,iRowOfLastHoldNote) );
 					UpdateHoldNotes( iSongRow, fDeltaTime, vHoldNotesToGradeTogether );
 					vHoldNotesToGradeTogether.clear();
 				}
@@ -1204,7 +1204,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	//LOG->Trace("--------------------------------");
 	/*
 	LOG->Trace("[Player::UpdateHoldNotes] begins");
-	LOG->Trace( ssprintf("song row %i, deltaTime = %f",iSongRow,fDeltaTime) );
+	LOG->Trace( fmt::sprintf("song row %i, deltaTime = %f",iSongRow,fDeltaTime) );
 	*/
 
 	int iStartRow = vTN[0].iRow;
@@ -1234,9 +1234,9 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	}
 
 	ASSERT( iFirstTrackWithMaxEndRow != -1 );
-	//LOG->Trace( ssprintf("start row: %i; max/end row: = %i",iStartRow,iMaxEndRow) );
-	//LOG->Trace( ssprintf("first track with max end row = %i",iFirstTrackWithMaxEndRow) );
-	//LOG->Trace( ssprintf("max end row - start row (in beats) = %f",NoteRowToBeat(iMaxEndRow)-NoteRowToBeat(iStartRow)) );
+	//LOG->Trace( fmt::sprintf("start row: %i; max/end row: = %i",iStartRow,iMaxEndRow) );
+	//LOG->Trace( fmt::sprintf("first track with max end row = %i",iFirstTrackWithMaxEndRow) );
+	//LOG->Trace( fmt::sprintf("max end row - start row (in beats) = %f",NoteRowToBeat(iMaxEndRow)-NoteRowToBeat(iStartRow)) );
 
 	for (auto &trtn: vTN)
 	{
@@ -1247,14 +1247,14 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		tn.HoldResult.bActive = false;
 
 		int iRow = trtn.iRow;
-		//LOG->Trace( ssprintf("this row: %i",iRow) );
+		//LOG->Trace( fmt::sprintf("this row: %i",iRow) );
 
 		// If the song beat is in the range of this hold:
 		if( iRow <= iSongRow  &&  iRow <= iMaxEndRow )
 		{
-			//LOG->Trace( ssprintf("overlap time before: %f",tn.HoldResult.fOverlappedTime) );
+			//LOG->Trace( fmt::sprintf("overlap time before: %f",tn.HoldResult.fOverlappedTime) );
 			tn.HoldResult.fOverlappedTime += fDeltaTime;
-			//LOG->Trace( ssprintf("overlap time after: %f",tn.HoldResult.fOverlappedTime) );
+			//LOG->Trace( fmt::sprintf("overlap time after: %f",tn.HoldResult.fOverlappedTime) );
 		}
 		else
 		{
@@ -1274,8 +1274,8 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 
 	//LOG->Trace("hold note doesn't already have result, let's check.");
 
-	//LOG->Trace( ssprintf("[C++] hold note score: %s",HoldNoteScoreToString(hns).c_str()) );
-	//LOG->Trace(ssprintf("[Player::UpdateHoldNotes] fLife = %f",fLife));
+	//LOG->Trace( fmt::sprintf("[C++] hold note score: %s",HoldNoteScoreToString(hns).c_str()) );
+	//LOG->Trace(fmt::sprintf("[Player::UpdateHoldNotes] fLife = %f",fLife));
 
 	bool bSteppedOnHead = true;
 	bool bHeadJudged = true;
@@ -1283,7 +1283,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	{
 		TapNote &tn = *trtn.pTN;
 		TapNoteScore tns = tn.result.tns;
-		//LOG->Trace( ssprintf("[C++] tap note score: %s",StringConversion::ToString(tns).c_str()) );
+		//LOG->Trace( fmt::sprintf("[C++] tap note score: %s",StringConversion::ToString(tns).c_str()) );
 
 		// TODO: When using JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER, require that the whole row of
 		// taps was hit before activating this group of holds.
@@ -1364,7 +1364,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			TapNote &tn = *trtn.pTN;
 			int iEndRow = iStartRow + tn.iDuration;
 
-			//LOG->Trace(ssprintf("trying for min between iSongRow (%i) and iEndRow (%i) (duration %i)",iSongRow,iEndRow,tn.iDuration));
+			//LOG->Trace(fmt::sprintf("trying for min between iSongRow (%i) and iEndRow (%i) (duration %i)",iSongRow,iEndRow,tn.iDuration));
 			trtn.pTN->HoldResult.iLastHeldRow = min( iSongRow, iEndRow );
 			tn.HoldResult.last_held_second= min(m_pPlayerState->m_Position.m_fMusicSeconds, tn.end_second);
 		}
@@ -1433,7 +1433,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			break;
 		*/
 		default:
-			FAIL_M(ssprintf("Invalid tap note subtype: %i", subType));
+			FAIL_M(fmt::sprintf("Invalid tap note subtype: %i", subType));
 		}
 	}
 
@@ -1969,7 +1969,7 @@ void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 	if( IsOniDead() )
 		return;
 
-	DEBUG_ASSERT_M( col >= 0  &&  col <= m_NoteData.GetNumTracks(), ssprintf("%i, %i", col, m_NoteData.GetNumTracks()) );
+	DEBUG_ASSERT_M( col >= 0  &&  col <= m_NoteData.GetNumTracks(), fmt::sprintf("%i, %i", col, m_NoteData.GetNumTracks()) );
 
 	m_vbFretIsDown[ col ] = !bRelease;
 
@@ -2577,7 +2577,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			break;
 		*/
 		default:
-			FAIL_M(ssprintf("Invalid player controller type: %i", m_pPlayerState->m_PlayerController));
+			FAIL_M(fmt::sprintf("Invalid player controller type: %i", m_pPlayerState->m_PlayerController));
 		}
 
 		switch( pbt )
@@ -2879,7 +2879,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		msg.SetParam( "Column", col );
 		MESSAGEMAN->Broadcast( msg );
 		// Backwards compatibility
-		Message msg2( ssprintf("StepP%d", m_pPlayerState->m_PlayerNumber + 1) );
+		Message msg2( fmt::sprintf("StepP%d", m_pPlayerState->m_PlayerNumber + 1) );
 		MESSAGEMAN->Broadcast( msg2 );
 	}
 }

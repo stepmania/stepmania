@@ -90,10 +90,10 @@ void ScreenTestSound::UpdateText(int n)
 	for(unsigned p = 0; p < snds.size(); ++p)
 	{
 		if(p) pos += ", ";
-		pos += ssprintf("%.3f", snds[p]->GetPositionSeconds());
+		pos += fmt::sprintf("%.3f", snds[p]->GetPositionSeconds());
 	}
 
-	s[n].txt.SetText(ssprintf(
+	s[n].txt.SetText(fmt::sprintf(
 		"%i: %s\n"
 		"%s\n"
 		"%s\n"

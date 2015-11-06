@@ -26,7 +26,7 @@
 using std::vector;
 
 #define ENTRY(s)		THEME->GetMetric ("ScreenOptionsMaster",s)
-#define ENTRY_MODE(s,i)		THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
+#define ENTRY_MODE(s,i)		THEME->GetMetric ("ScreenOptionsMaster",fmt::sprintf("%s,%i",(s).c_str(),(i+1)))
 #define ENTRY_DEFAULT(s)	THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
 #define NOTE_SKIN_SORT_ORDER	THEME->GetMetric ("ScreenOptionsMaster","NoteSkinSortOrder")
 #define STEPS_ROW_LAYOUT_TYPE	THEME->GetMetric("ScreenOptionsMaster","StepsRowLayoutType")
@@ -96,7 +96,7 @@ void OptionRowHandler::GetIconTextAndGameCommand( int iFirstSelection, RString &
 void OptionRowHandlerUtil::SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut )
 {
 	ASSERT_M( iSelection >= 0  &&  iSelection < (int) vbSelectedOut.size(),
-			  ssprintf("%d/%u",iSelection, unsigned(vbSelectedOut.size())) );
+			  fmt::sprintf("%d/%u",iSelection, unsigned(vbSelectedOut.size())) );
 	for( int i=0; i<int(vbSelectedOut.size()); i++ )
 		vbSelectedOut[i] = i==iSelection;
 }
@@ -303,7 +303,7 @@ public:
 				int iFallbackOption = m_Def.m_iDefault;
 				if( iFallbackOption == -1 )
 				{
-					RString s = ssprintf("No options in row \"list,%s\" were selected, and no fallback row found; selected entry 0", m_Def.m_sName.c_str());
+					RString s = fmt::sprintf("No options in row \"list,%s\" were selected, and no fallback row found; selected entry 0", m_Def.m_sName.c_str());
 					LOG->Warn( "%s", s.c_str() );
 					CHECKPOINT_M( s );
 					iFallbackOption = 0;
@@ -456,7 +456,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 			for (auto pTrail: vTrails)
 			{
 				RString s = CourseDifficultyToLocalizedString( pTrail->m_CourseDifficulty );
-				s += ssprintf( " %d", pTrail->GetMeter() );
+				s += fmt::sprintf( " %d", pTrail->GetMeter() );
 				m_Def.m_vsChoices.push_back( s );
 				GameCommand mc;
 				mc.m_pTrail = pTrail;
@@ -500,7 +500,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 							s = CustomDifficultyToLocalizedString( GetCustomDifficulty( pSteps->m_StepsType, pSteps->GetDifficulty(), CourseType_Invalid ) );
 					}
 				}
-				s += ssprintf( " %d", pSteps->GetMeter() );
+				s += fmt::sprintf( " %d", pSteps->GetMeter() );
 				m_Def.m_vsChoices.push_back( s );
 				GameCommand mc;
 				mc.m_pSteps = pSteps;

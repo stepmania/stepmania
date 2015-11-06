@@ -77,12 +77,12 @@ void ActorScroller::SetTransformFromExpression( const RString &sTransformFunctio
 
 void ActorScroller::SetTransformFromWidth( float fItemWidth )
 {
-	SetTransformFromExpression( ssprintf("function(self,offset,itemIndex,numItems) self:x(%f*offset) end",fItemWidth) );
+	SetTransformFromExpression( fmt::sprintf("function(self,offset,itemIndex,numItems) self:x(%f*offset) end",fItemWidth) );
 }
 
 void ActorScroller::SetTransformFromHeight( float fItemHeight )
 {
-	SetTransformFromExpression( ssprintf("function(self,offset,itemIndex,numItems) self:y(%f*offset) end",fItemHeight) );
+	SetTransformFromExpression( fmt::sprintf("function(self,offset,itemIndex,numItems) self:y(%f*offset) end",fItemHeight) );
 }
 
 void ActorScroller::EnableMask( float fWidth, float fHeight )

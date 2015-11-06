@@ -36,7 +36,7 @@ Font* FontManager::LoadFont( const RString &sFontOrTextureFilePath, RString sCha
 	 * the same bitmap if there are equivalent but different paths
 	 * (e.g. "graphics\blah.png" and "..\stepmania\graphics\blah.png" ). */
 
-	CHECKPOINT_M( ssprintf("FontManager::LoadFont(%s).", sFontOrTextureFilePath.c_str()) );
+	CHECKPOINT_M( fmt::sprintf("FontManager::LoadFont(%s).", sFontOrTextureFilePath.c_str()) );
 	const FontName NewName( sFontOrTextureFilePath, sChars );
 	auto p = g_mapPathToFont.find( NewName );
 	if( p != g_mapPathToFont.end() )
@@ -60,7 +60,7 @@ Font *FontManager::CopyFont( Font *pFont )
 
 void FontManager::UnloadFont( Font *fp )
 {
-	CHECKPOINT_M( ssprintf("FontManager::UnloadFont(%s).", fp->path.c_str()) );
+	CHECKPOINT_M( fmt::sprintf("FontManager::UnloadFont(%s).", fp->path.c_str()) );
 
 	for( auto i = g_mapPathToFont.begin(); i != g_mapPathToFont.end(); ++i)
 	{
@@ -79,7 +79,7 @@ void FontManager::UnloadFont( Font *fp )
 		return;
 	}
 
-	FAIL_M( ssprintf("Unloaded an unknown font allegedly at %s", fp->path.c_str()) );
+	FAIL_M( fmt::sprintf("Unloaded an unknown font allegedly at %s", fp->path.c_str()) );
 }
 
 /*

@@ -157,16 +157,16 @@ RString DeviceButtonToString( DeviceButton key )
 
 	// All printable ASCII except for uppercase alpha characters line up.
 	if( key >= 33 && key < 127 && !(key >= 'A' && key <= 'Z' ) )
-		return ssprintf( "%c", key );
+		return fmt::sprintf( "%c", static_cast<char>(key) );
 
 	if( key >= KEY_OTHER_0 && key < KEY_LAST_OTHER )
-		return ssprintf( "unk %i", key-KEY_OTHER_0 );
+		return fmt::sprintf( "unk %i", key-KEY_OTHER_0 );
 
 	if( key >= JOY_BUTTON_1 && key <= JOY_BUTTON_32 )
-		return ssprintf( "B%i", key-JOY_BUTTON_1+1 );
+		return fmt::sprintf( "B%i", key-JOY_BUTTON_1+1 );
 
 	if( key >= MIDI_FIRST && key <= MIDI_LAST )
-		return ssprintf( "Midi %d", key-MIDI_FIRST );
+		return fmt::sprintf( "Midi %d", key-MIDI_FIRST );
 
 	return "unknown";
 }

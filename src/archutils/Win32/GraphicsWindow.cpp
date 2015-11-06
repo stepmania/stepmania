@@ -52,7 +52,7 @@ static RString GetNewWindow()
 
 static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
-	CHECKPOINT_M( ssprintf("Msg %u, wParam %08x, lParam %08x", msg, wParam, lParam) );
+	CHECKPOINT_M( fmt::sprintf("Msg %u, wParam %08x, lParam %08x", msg, wParam, lParam) );
 
 	// Suppress autorun.
 	if( msg == g_iQueryCancelAutoPlayMessage )
@@ -177,7 +177,7 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 		}
 	}
 
-	CHECKPOINT_M(ssprintf("Msg %u, wParam %08x, lParam %08x", msg, wParam, lParam));
+	CHECKPOINT_M(fmt::sprintf("Msg %u, wParam %08x, lParam %08x", msg, wParam, lParam));
 
 	if( m_bWideWindowClass )
 		return DefWindowProcW( hWnd, msg, wParam, lParam );
@@ -193,7 +193,7 @@ static void AdjustVideoModeParams( VideoModeParams &p )
 	if( !EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &dm) )
 	{
 		p.rate = 60;
-		LOG->Warn( "%s", werr_ssprintf(GetLastError(), "EnumDisplaySettings failed").c_str() );
+		LOG->Warn( "%s", werr_format(GetLastError(), "EnumDisplaySettings failed").c_str() );
 		return;
 	}
 
@@ -286,7 +286,7 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 		HWND hWnd = CreateWindow( g_sClassName, "app", iWindowStyle,
 						0, 0, 0, 0, nullptr, nullptr, inst, nullptr );
 		if( hWnd == nullptr )
-			RageException::Throw( "%s", werr_ssprintf( GetLastError(), "CreateWindow" ).c_str() );
+			RageException::Throw( "%s", werr_format( GetLastError(), "CreateWindow" ).c_str() );
 
 		/* If an old window exists, transfer focus to the new window before
 		 * deleting it, or some other window may temporarily get focus, which
@@ -356,7 +356,7 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 	/* Move and resize the window. SWP_FRAMECHANGED causes the above
 	 * SetWindowLong to take effect. */
 	if( !SetWindowPos( g_hWndMain, HWND_NOTOPMOST, x, y, iWidth, iHeight, SWP_FRAMECHANGED|SWP_SHOWWINDOW ) )
-		LOG->Warn( "%s", werr_ssprintf( GetLastError(), "SetWindowPos" ).c_str() );
+		LOG->Warn( "%s", werr_format( GetLastError(), "SetWindowPos" ).c_str() );
 
 	SetForegroundWindow( g_hWndMain );
 
@@ -454,7 +454,7 @@ void GraphicsWindow::Initialize( bool bD3D )
 
 		m_bWideWindowClass = false;
 		if( !RegisterClassA( &WindowClassA ) )
-			RageException::Throw( "%s", werr_ssprintf( GetLastError(), "RegisterClass" ).c_str() );
+			RageException::Throw( "%s", werr_format( GetLastError(), "RegisterClass" ).c_str() );
 	} while(0);
 
 	g_iQueryCancelAutoPlayMessage = RegisterWindowMessage( "QueryCancelAutoPlay" );

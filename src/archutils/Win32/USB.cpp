@@ -173,7 +173,7 @@ int WindowsFileIO::finish_read( void *p )
 
 	if( iRet == 0 )
 	{
-		LOG->Warn( werr_ssprintf(GetLastError(), "Error reading USB device") );
+		LOG->Warn( werr_format(GetLastError(), "Error reading USB device") );
 		return -1;
 	}
 
@@ -204,7 +204,7 @@ int WindowsFileIO::read_several(const vector<WindowsFileIO *> &sources, void *p,
 
 	if( ret == -1 )
 	{
-		LOG->Trace( werr_ssprintf(GetLastError(), "WaitForMultipleObjectsEx failed") );
+		LOG->Trace( werr_format(GetLastError(), "WaitForMultipleObjectsEx failed") );
 		return -1;
 	}
 

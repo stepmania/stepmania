@@ -54,7 +54,7 @@ void StepsDisplayList::LoadFromNode( const XNode* pNode )
 
 	FOREACH_ENUM( PlayerNumber, pn )
 	{
-		const XNode *pChild = pNode->GetChild( ssprintf("CursorP%i",pn+1) );
+		const XNode *pChild = pNode->GetChild( fmt::sprintf("CursorP%i",pn+1) );
 		if( pChild == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt("%s: StepsDisplayList: missing the node \"CursorP%d\"", ActorUtil::GetWhere(pNode).c_str(), pn+1);
@@ -70,7 +70,7 @@ void StepsDisplayList::LoadFromNode( const XNode* pNode )
 		 * resulting in the cursor remaining invisible or partially invisible.  So, do them
 		 * in separate tweening stacks.  This means the Cursor command can't change diffuse
 		 * colors; I think we do need a diffuse color stack ... */
-		pChild = pNode->GetChild( ssprintf("CursorP%iFrame",pn+1) );
+		pChild = pNode->GetChild( fmt::sprintf("CursorP%iFrame",pn+1) );
 		if( pChild == nullptr )
 		{
 			LuaHelpers::ReportScriptErrorFmt("%s: StepsDisplayList: missing the node \"CursorP%dFrame\"", ActorUtil::GetWhere(pNode).c_str(), pn+1);
@@ -294,7 +294,7 @@ void StepsDisplayList::SetFromGameState()
 		m_Rows.resize( vpSteps.size() );
 		for (auto *s: vpSteps)
 		{
-			//LOG->Trace(ssprintf("setting steps for row %i",i));
+			//LOG->Trace(fmt::sprintf("setting steps for row %i",i));
 			m_Rows[i].m_Steps = s;
 			m_Lines[i].m_Meter.SetFromSteps( s );
 			++i;

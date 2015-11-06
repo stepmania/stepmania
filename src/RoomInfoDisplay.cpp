@@ -157,7 +157,7 @@ void RoomInfoDisplay::SetRoomInfo( const RoomInfo& info)
 	m_songTitle.SetText( SONG_TITLE.GetValue() + info.songTitle );
 	m_songSub.SetText( SONG_SUB_TITLE.GetValue() + info.songSubTitle );
 	m_songArtist.SetText( SONG_ARTIST.GetValue() + info.songArtist );
-	m_players.SetText(ssprintf("%s (%d/%d):", PLAYERS.GetValue().c_str(), info.numPlayers, info.maxPlayers));
+	m_players.SetText(fmt::sprintf("%s (%d/%d):", PLAYERS.GetValue().c_str(), info.numPlayers, info.maxPlayers));
 
 	if (m_playerList.size() > info.players.size())
 	{

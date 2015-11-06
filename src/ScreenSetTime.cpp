@@ -90,14 +90,14 @@ void ScreenSetTime::Update( float fDelta )
 	int iPrettyHour = now.tm_hour%12;
 	if( iPrettyHour == 0 )
 		iPrettyHour = 12;
-	RString sPrettyHour = ssprintf( "%d %s", iPrettyHour, now.tm_hour>=12 ? "pm" : "am" );
+	RString sPrettyHour = fmt::sprintf( "%d %s", iPrettyHour, now.tm_hour>=12 ? "pm" : "am" );
 
 	m_textValue[hour]	.SetText( sPrettyHour );
-	m_textValue[minute]	.SetText( ssprintf("%02d",now.tm_min) );
-	m_textValue[second]	.SetText( ssprintf("%02d",now.tm_sec) );
-	m_textValue[year]	.SetText( ssprintf("%02d",now.tm_year+1900) );
+	m_textValue[minute]	.SetText( fmt::sprintf("%02d",now.tm_min) );
+	m_textValue[second]	.SetText( fmt::sprintf("%02d",now.tm_sec) );
+	m_textValue[year]	.SetText( fmt::sprintf("%02d",now.tm_year+1900) );
 	m_textValue[month]	.SetText( MonthToString((Month)now.tm_mon) );
-	m_textValue[day]	.SetText( ssprintf("%02d",now.tm_mday) );
+	m_textValue[day]	.SetText( fmt::sprintf("%02d",now.tm_mday) );
 }
 
 bool ScreenSetTime::Input( const InputEventPlus &input )
@@ -129,7 +129,7 @@ void ScreenSetTime::ChangeValue( int iDirection )
 	case month:		adjusted.tm_mon += iDirection;	break;
 	case day:		adjusted.tm_mday += iDirection;	break;
 	default:
-		FAIL_M(ssprintf("Invalid SetTimeSelection: %i", m_Selection));
+		FAIL_M(fmt::sprintf("Invalid SetTimeSelection: %i", m_Selection));
 	}
 
 	/* Normalize: */

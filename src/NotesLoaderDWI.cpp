@@ -89,7 +89,7 @@ static void DWIcharToNote( char c, GameController i, int &note1Out, int &note2Ou
 			note2Out += 6;
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid GameController: %i", i));
+		FAIL_M(fmt::sprintf("Invalid GameController: %i", i));
 	}
 }
 

@@ -156,9 +156,9 @@ static RString GetDebugButtonName( const IDebugLine *pLine )
 	case IDebugLine::all_screens:
 		return s;
 	case IDebugLine::gameplay_only:
-		return ssprintf( IN_GAMEPLAY.GetValue(), s.c_str() );
+		return fmt::sprintf( IN_GAMEPLAY.GetValue(), s.c_str() );
 	default:
-		FAIL_M(ssprintf("Invalid debug line type: %i", type));
+		FAIL_M(fmt::sprintf("Invalid debug line type: %i", type));
 	}
 }
 
@@ -491,7 +491,7 @@ bool ScreenDebugOverlay::Input( const InputEventPlus &input )
 				continue;
 			break;
 		default:
-			FAIL_M(ssprintf("Invalid debug line type: %i", type));
+			FAIL_M(fmt::sprintf("Invalid debug line type: %i", type));
 		}
 
 		if( input.DeviceI == (*p)->m_Button )
@@ -606,7 +606,7 @@ class DebugLineAutoplay : public IDebugLine
 		case PC_AUTOPLAY:	return ON.GetValue();	break;
 		case PC_CPU:		return CPU.GetValue();	break;
 		default:
-			FAIL_M(ssprintf("Invalid PlayerController: %i", pc));
+			FAIL_M(fmt::sprintf("Invalid PlayerController: %i", pc));
 		}
 	}
 	virtual Type GetType() const { return IDebugLine::gameplay_only; }
@@ -686,7 +686,7 @@ class DebugLineAutosync : public IDebugLine
 		case AutosyncType_Machine:	return MACHINE.GetValue(); 		break;
 		case AutosyncType_Tempo:	return SYNC_TEMPO.GetValue();		break;
 		default:
-			FAIL_M(ssprintf("Invalid autosync type: %i", type));
+			FAIL_M(fmt::sprintf("Invalid autosync type: %i", type));
 		}
 	}
 	virtual Type GetType() const { return IDebugLine::gameplay_only; }
@@ -1240,7 +1240,7 @@ class DebugLinePullBackCamera : public IDebugLine
 class DebugLineVolumeUp : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return VOLUME_UP.GetValue(); }
-	virtual RString GetDisplayValue() { return ssprintf("%.0f%%", GetPref()->Get()*100); }
+	virtual RString GetDisplayValue() { return fmt::sprintf("%.0f%%", GetPref()->Get()*100); }
 	virtual bool IsEnabled() { return true; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
@@ -1262,7 +1262,7 @@ class DebugLineVolumeDown : public IDebugLine
 	{
 		ChangeVolume( -0.1f );
 		IDebugLine::DoAndLog( sMessageOut );
-		sMessageOut += " - " + ssprintf("%.0f%%",GetPref()->Get()*100);
+		sMessageOut += " - " + fmt::sprintf("%.0f%%",GetPref()->Get()*100);
 	}
 	Preference<float> *GetPref()
 	{
@@ -1273,7 +1273,7 @@ class DebugLineVolumeDown : public IDebugLine
 class DebugLineVisualDelayUp : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return VISUAL_DELAY_UP.GetValue(); }
-	virtual RString GetDisplayValue() { return ssprintf("%.03f",GetPref()->Get()); }
+	virtual RString GetDisplayValue() { return fmt::sprintf("%.03f",GetPref()->Get()); }
 	virtual bool IsEnabled() { return true; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
@@ -1295,7 +1295,7 @@ class DebugLineVisualDelayDown : public IDebugLine
 	{
 		ChangeVisualDelay( -0.001f );
 		IDebugLine::DoAndLog( sMessageOut );
-		sMessageOut += " - " + ssprintf("%.03f",GetPref()->Get());
+		sMessageOut += " - " + fmt::sprintf("%.03f",GetPref()->Get());
 	}
 	Preference<float> *GetPref()
 	{

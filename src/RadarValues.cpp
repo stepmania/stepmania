@@ -81,7 +81,7 @@ RString RadarValues::ToString( int iMaxValues ) const
 	vector<RString> asRadarValues;
 	for( int r=0; r < iMaxValues; r++ )
 	{
-		asRadarValues.push_back(ssprintf("%.3f", (*this)[r]));
+		asRadarValues.push_back(fmt::sprintf("%.3f", (*this)[r]));
 	}
 
 	return join( ",",asRadarValues );

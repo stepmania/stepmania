@@ -14,7 +14,7 @@
 
 // "PLAYER_X" offsets are relative to the pad.
 // ex: Setting this to 10, and the HELPER to 300, will put the dancer at 310.
-#define PLAYER_X( px )		THEME->GetMetricF("BeginnerHelper",ssprintf("Player%dX",px+1))
+#define PLAYER_X( px )		THEME->GetMetricF("BeginnerHelper",fmt::sprintf("Player%dX",px+1))
 
 // "HELPER" offsets effect the pad/dancer as a whole.
 // Their relative Y cooridinates are hard-coded for each other.
@@ -151,7 +151,7 @@ bool BeginnerHelper::Init( int iDancePadType )
 		const Character *Character = GAMESTATE->m_pCurCharacters[pl];
 		ASSERT( Character != nullptr );
 
-		m_pDancer[pl]->SetName( ssprintf("PlayerP%d",pl+1) );
+		m_pDancer[pl]->SetName( fmt::sprintf("PlayerP%d",pl+1) );
 
 		// Load textures
 		m_pDancer[pl]->LoadMilkshapeAscii( Character->GetModelPath() );

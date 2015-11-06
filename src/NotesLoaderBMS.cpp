@@ -1268,7 +1268,7 @@ bool BMSChartReader::ReadNoteData()
 		transform[15] = BMS_RAW_P2_TURN;
 		break;
 	default:
-		ASSERT_M(0, ssprintf("Invalid StepsType when parsing BMS file %s!", in->path.c_str()));
+		ASSERT_M(0, fmt::sprintf("Invalid StepsType when parsing BMS file %s!", in->path.c_str()));
 	}
 
 	int reverseTransform[30];
@@ -1351,7 +1351,7 @@ bool BMSChartReader::ReadNoteData()
 				bgaFound = true;
 			}
 			 */
-			RString search = ssprintf( "#bga%s", obj.value.c_str() );
+			RString search = fmt::sprintf( "#bga%s", obj.value.c_str() );
 			BMSHeaders::iterator it = in->headers.find( search );
 			if( it != in->headers.end() )
 			{
@@ -1359,7 +1359,7 @@ bool BMSChartReader::ReadNoteData()
 			}
 			else
 			{
-				search = ssprintf( "#bmp%s", obj.value.c_str() );
+				search = fmt::sprintf( "#bmp%s", obj.value.c_str() );
 				it = in->headers.find( search );
 
 				if (it != in->headers.end()) // To elaborate, this means this is an unknown key.
@@ -1378,7 +1378,7 @@ bool BMSChartReader::ReadNoteData()
 		}
 		else if( channel == 8 ) // bpm change (extended)
 		{
-			RString search = ssprintf( "#bpm%s", obj.value.c_str() );
+			RString search = fmt::sprintf( "#bpm%s", obj.value.c_str() );
 			BMSHeaders::iterator it = in->headers.find( search );
 			if( it != in->headers.end() )
 			{
@@ -1391,7 +1391,7 @@ bool BMSChartReader::ReadNoteData()
 		}
 		else if( channel == 9 ) // stops
 		{
-			RString search = ssprintf( "#stop%s", obj.value.c_str() );
+			RString search = fmt::sprintf( "#stop%s", obj.value.c_str() );
 			BMSHeaders::iterator it = in->headers.find( search );
 			if( it != in->headers.end() )
 			{

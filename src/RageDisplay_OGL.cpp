@@ -237,7 +237,7 @@ static void FixLittleEndian()
 			case 24: m = Swap24(m); break;
 			case 32: m = Swap32(m); break;
 			default:
-				 FAIL_M(ssprintf("Unsupported BPP value: %i", pf.bpp));
+				 FAIL_M(fmt::sprintf("Unsupported BPP value: %i", pf.bpp));
 			}
 			pf.masks[mask] = m;
 		}
@@ -311,7 +311,7 @@ GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asD
 	vector<GLint> aiLength;
 	for (auto &s: asDefines)
 	{
-		s = ssprintf( "#define %s\n", s.c_str() );
+		s = fmt::sprintf( "#define %s\n", s.c_str() );
 		apData.push_back( s.data() );
 		aiLength.push_back( s.size() );
 	}
@@ -515,7 +515,7 @@ RString RageDisplay_Legacy::Init( const VideoModeParams &p, bool bAllowUnacceler
 				continue;
 			}
 
-			RString sList = ssprintf( "  %s: ", sType.c_str() );
+			RString sList = fmt::sprintf( "  %s: ", sType.c_str() );
 			while( iNextToPrint <= iLastToPrint )
 			{
 				vector<RString> asBits;
@@ -592,7 +592,7 @@ static void CheckPalettedTextures()
 { \
 	GLenum glError = glGetError(); \
 	if (glError != GL_NO_ERROR) { \
-		sError = ssprintf(f " failed (%s)", GLToString(glError).c_str() ); \
+		sError = fmt::sprintf(f " failed (%s)", GLToString(glError).c_str() ); \
 		break; \
 	} \
 }
@@ -608,7 +608,7 @@ static void CheckPalettedTextures()
 		GL_CHECK_ERROR( "glGetTexLevelParameteriv(GL_TEXTURE_INTERNAL_FORMAT)" );
 		if (iFormat != glTexFormat)
 		{
-			sError = ssprintf( "Expected format %s, got %s instead",
+			sError = fmt::sprintf( "Expected format %s, got %s instead",
 					GLToString(glTexFormat).c_str(), GLToString(iFormat).c_str() );
 			break;
 		}
@@ -623,7 +623,7 @@ static void CheckPalettedTextures()
 		GL_CHECK_ERROR( "glGetTexLevelParameteriv(GL_TEXTURE_INDEX_SIZE_EXT)" );
 		if (iBits > iSize || iSize > 8)
 		{
-			sError = ssprintf( "Expected %i-bit palette, got a %i-bit one instead", iBits, int(iSize) );
+			sError = fmt::sprintf( "Expected %i-bit palette, got a %i-bit one instead", iBits, int(iSize) );
 			break;
 		}
 
@@ -632,7 +632,7 @@ static void CheckPalettedTextures()
 		GL_CHECK_ERROR( "glGetColorTableParameterivEXT(GL_COLOR_TABLE_WIDTH)" );
 		if (iRealWidth != 1 << iBits)
 		{
-			sError = ssprintf( "GL_COLOR_TABLE_WIDTH returned %i instead of %i", int(iRealWidth), 1 << iBits );
+			sError = fmt::sprintf( "GL_COLOR_TABLE_WIDTH returned %i instead of %i", int(iRealWidth), 1 << iBits );
 			break;
 		}
 
@@ -641,7 +641,7 @@ static void CheckPalettedTextures()
 		GL_CHECK_ERROR( "glGetColorTableParameterivEXT(GL_COLOR_TABLE_FORMAT)" );
 		if (iRealFormat != GL_RGBA8)
 		{
-			sError = ssprintf( "GL_COLOR_TABLE_FORMAT returned %s instead of GL_RGBA8", GLToString(iRealFormat).c_str() );
+			sError = fmt::sprintf( "GL_COLOR_TABLE_FORMAT returned %s instead of GL_RGBA8", GLToString(iRealFormat).c_str() );
 			break;
 		}
 	} while(0);
@@ -1021,7 +1021,7 @@ public:
 			{
 				RString s;
 				for( int j=0; j<4; j++ )
-					s += ssprintf( "%f ", mat.m[i][j] );
+					s += fmt::sprintf( "%f ", mat.m[i][j] );
 				LOG->Trace( s );
 			}
 			*/
@@ -1356,7 +1356,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 			{
 				RString s;
 				for( int j=0; j<4; j++ )
-					s += ssprintf( "%f ", mat.m[i][j] );
+					s += fmt::sprintf( "%f ", mat.m[i][j] );
 				LOG->Trace( s );
 			}
 			*/
@@ -1878,7 +1878,7 @@ void RageDisplay_Legacy::SetZTestMode( ZTestMode mode )
 	case ZTEST_WRITE_ON_PASS:	glDepthFunc( GL_LEQUAL );	break;
 	case ZTEST_WRITE_ON_FAIL:	glDepthFunc( GL_GREATER );	break;
 	default:
-		FAIL_M(ssprintf("Invalid ZTestMode: %i", mode));
+		FAIL_M(fmt::sprintf("Invalid ZTestMode: %i", mode));
 	}
 }
 
@@ -1979,7 +1979,7 @@ void RageDisplay_Legacy::SetCullMode( CullMode mode )
 		glDisable( GL_CULL_FACE );
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid CullMode: %i", mode));
+		FAIL_M(fmt::sprintf("Invalid CullMode: %i", mode));
 	}
 }
 
@@ -2461,7 +2461,7 @@ void RenderTarget_FramebufferObject::Create( const RenderTargetParam &param, int
 	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT: FAIL_M( "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT" ); break;
 	case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT: FAIL_M( "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT" ); break;
 	default:
-		FAIL_M(ssprintf("Unexpected GL framebuffer status: %i", status));
+		FAIL_M(fmt::sprintf("Unexpected GL framebuffer status: %i", status));
 	}
 
 	glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 );
@@ -2586,7 +2586,7 @@ void RageDisplay_Legacy::SetPolygonMode(PolygonMode pm)
 	case POLYGON_FILL:	m = GL_FILL; break;
 	case POLYGON_LINE:	m = GL_LINE; break;
 	default:
-		FAIL_M(ssprintf("Invalid PolygonMode: %i", pm));
+		FAIL_M(fmt::sprintf("Invalid PolygonMode: %i", pm));
 	}
 	glPolygonMode(GL_FRONT_AND_BACK, m);
 }
@@ -2621,7 +2621,7 @@ RString RageDisplay_Legacy::GetTextureDiagnostics(unsigned iTexture) const
 		GL_CHECK_ERROR( "glGetTexLevelParameteriv(GL_TEXTURE_INTERNAL_FORMAT)" );
 		if (iFormat != glTexFormat)
 		{
-			sError = ssprintf( "Expected format %s, got %s instead",
+			sError = fmt::sprintf( "Expected format %s, got %s instead",
 					GLToString(glTexFormat).c_str(), GLToString(iFormat).c_str() );
 			break;
 		}

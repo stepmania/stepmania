@@ -64,7 +64,7 @@ void RollingNumbers::SetTargetNumber(float target_number)
 
 void RollingNumbers::UpdateText()
 {
-	RString s = ssprintf(m_text_format, m_current_number);
+	RString s = fmt::sprintf(m_text_format, m_current_number);
 	if(m_commify)
 	{
 		s = Commify(s);

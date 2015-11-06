@@ -270,7 +270,7 @@ RString Song::GetCacheFilePath() const
 const RString &Song::GetSongFilePath() const
 {
 	ASSERT_M( !m_sSongFileName.empty(),
-		 ssprintf("The song %s has no filename associated with it!",
+		 fmt::sprintf("The song %s has no filename associated with it!",
 			  this->m_sMainTitle.c_str()));
 	return m_sSongFileName;
 }
@@ -1284,10 +1284,10 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache, bool autosave )
 		struct tm now;
 		localtime_r( &cur_time, &now );
 
-		sBackupFile += ssprintf( "-%04i-%02i-%02i--%02i-%02i-%02i",
+		sBackupFile += fmt::sprintf( "-%04i-%02i-%02i--%02i-%02i-%02i",
 			1900+now.tm_year, now.tm_mon+1, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec );
 		sBackupFile = SetExtension( sBackupFile, sExt );
-		sBackupFile += ssprintf( ".old" );
+		sBackupFile += fmt::sprintf( ".old" );
 
 		if( FileCopy(path, sBackupFile) )
 			LOG->Trace( "Backed up %s to %s", path.c_str(), sBackupFile.c_str() );
@@ -1766,7 +1766,7 @@ void Song::AddSteps( Steps* pSteps )
 	if(pSteps->m_StepsType != StepsType_Invalid)
 	{
 		m_vpSteps.push_back( pSteps );
-		ASSERT_M( pSteps->m_StepsType < NUM_StepsType, ssprintf("%i", pSteps->m_StepsType) );
+		ASSERT_M( pSteps->m_StepsType < NUM_StepsType, fmt::sprintf("%i", pSteps->m_StepsType) );
 		m_vpStepsByType[pSteps->m_StepsType].push_back( pSteps );
 	}
 	else
@@ -1878,7 +1878,7 @@ int Song::GetNumStepsLoadedFromProfile( ProfileSlot slot ) const
 bool Song::IsEditAlreadyLoaded( Steps* pSteps ) const
 {
 	ASSERT_M( pSteps->GetDifficulty() == Difficulty_Edit,
-			 ssprintf("The %s chart for %s is no edit, thus it can't be checked for loading.",
+			 fmt::sprintf("The %s chart for %s is no edit, thus it can't be checked for loading.",
 					  DifficultyToString(pSteps->GetDifficulty()).c_str(),
 					  this->m_sMainTitle.c_str()));
 

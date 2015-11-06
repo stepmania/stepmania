@@ -320,11 +320,11 @@ void ScreenJukebox::InitSongQueues()
 		}
 	}
 
-	ASSERT_M( m_apSongsQueue.size() == 1, ssprintf("%i", (int) m_apSongsQueue.size()) );
+	ASSERT_M( m_apSongsQueue.size() == 1, fmt::sprintf("%i", (int) m_apSongsQueue.size()) );
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
-		ASSERT_M( pi->m_vpStepsQueue.size() == 1, ssprintf("%i", (int) pi->m_vpStepsQueue.size()) );
-		ASSERT_M( pi->m_asModifiersQueue.size() == 1, ssprintf("%i", (int) pi->m_asModifiersQueue.size()) );
+		ASSERT_M( pi->m_vpStepsQueue.size() == 1, fmt::sprintf("%i", (int) pi->m_vpStepsQueue.size()) );
+		ASSERT_M( pi->m_asModifiersQueue.size() == 1, fmt::sprintf("%i", (int) pi->m_asModifiersQueue.size()) );
 	}
 }
 

@@ -548,10 +548,10 @@ RageMutex::RageMutex( const RString &name ):
 		{
 			if( i )
 				s += ", ";
-			s += ssprintf( "\"%s\"", (*g_MutexList)[i]->GetName().c_str() );
+			s += fmt::sprintf( "\"%s\"", (*g_MutexList)[i]->GetName().c_str() );
 		}
 		LOG->Trace( "%s", s.c_str() );
-		FAIL_M( ssprintf("MAX_MUTEXES exceeded creating \"%s\"", name.c_str() ) );
+		FAIL_M( fmt::sprintf("MAX_MUTEXES exceeded creating \"%s\"", name.c_str() ) );
 	}
 
 	m_UniqueID = *g_FreeMutexIDs->begin();
@@ -601,10 +601,10 @@ void RageMutex::Lock()
 		RString ThisSlotName = "(???" ")"; // stupid trigraph warnings
 		RString OtherSlotName = "(???" ")"; // stupid trigraph warnings
 		if( ThisSlot )
-			ThisSlotName = ssprintf( "%s (%i)", ThisSlot->GetThreadName().c_str(), (int) ThisSlot->m_iID );
+			ThisSlotName = fmt::sprintf( "%s (%i)", ThisSlot->GetThreadName().c_str(), (int) ThisSlot->m_iID );
 		if( OtherSlot )
-			OtherSlotName = ssprintf( "%s (%i)", OtherSlot->GetThreadName().c_str(), (int) OtherSlot->m_iID );
-		const RString sReason = ssprintf( "Thread deadlock on mutex %s between %s and %s",
+			OtherSlotName = fmt::sprintf( "%s (%i)", OtherSlot->GetThreadName().c_str(), (int) OtherSlot->m_iID );
+		const RString sReason = fmt::sprintf( "Thread deadlock on mutex %s between %s and %s",
 			GetName().c_str(), ThisSlotName.c_str(), OtherSlotName.c_str() );
 
 #if defined(CRASH_HANDLER)
@@ -764,7 +764,7 @@ void RageSemaphore::Wait( bool bFailOnTimeout )
 	/* We waited too long.  We're probably deadlocked, though unlike mutexes, we can't
 	 * tell which thread we're stuck on. */
 	const ThreadSlot *ThisSlot = GetThreadSlotFromID( GetThisThreadId() );
-	const RString sReason = ssprintf( "Semaphore timeout on mutex %s on thread %s",
+	const RString sReason = fmt::sprintf( "Semaphore timeout on mutex %s on thread %s",
 		GetName().c_str(), ThisSlot? ThisSlot->GetThreadName().c_str(): "(???" ")" ); // stupid trigraph warnings
 #if defined(CRASH_HANDLER)
 	CrashHandler::ForceDeadlock( sReason, GetInvalidThreadId() );

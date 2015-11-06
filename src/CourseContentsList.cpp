@@ -112,18 +112,18 @@ void CourseContentsList::SetItemFromGameState( Actor *pActor, int iCourseEntryIn
 			}
 			if( !bLowIsSet  &&  bHighIsSet )
 			{
-				s = ssprintf( ">=%d", iHigh );
+				s = fmt::sprintf( ">=%d", iHigh );
 			}
 			else if( bLowIsSet  &&  !bHighIsSet )
 			{
-				s = ssprintf( "<=%d", iLow );
+				s = fmt::sprintf( "<=%d", iLow );
 			}
 			else if( bLowIsSet  &&  bHighIsSet )
 			{
 				if( iLow == iHigh )
-					s = ssprintf( "%d", iLow );
+					s = fmt::sprintf( "%d", iLow );
 				else
-					s = ssprintf( "%d-%d", iLow, iHigh );
+					s = fmt::sprintf( "%d-%d", iLow, iHigh );
 			}
 
 			dc = te->dc;
@@ -132,7 +132,7 @@ void CourseContentsList::SetItemFromGameState( Actor *pActor, int iCourseEntryIn
 		}
 		else
 		{
-			s = ssprintf("%d", te->pSteps->GetMeter());
+			s = fmt::sprintf("%d", te->pSteps->GetMeter());
 			dc = te->pSteps->GetDifficulty();
 		}
 

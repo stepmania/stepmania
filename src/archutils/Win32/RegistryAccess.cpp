@@ -61,15 +61,18 @@ static HKEY OpenRegKey( const RString &sKey, RegKeyMode mode, bool bWarnOnError 
 {
 	RString sSubkey;
 	HKEY hType;
-	if( !GetRegKeyType(sKey, sSubkey, hType) )
+	if (!GetRegKeyType(sKey, sSubkey, hType))
+	{
 		return nullptr;
-
+	}
 	HKEY hRetKey;
 	LONG retval = RegOpenKeyEx( hType, sSubkey, 0, (mode==READ) ? KEY_READ:KEY_WRITE, &hRetKey );
 	if ( retval != ERROR_SUCCESS )
 	{
-		if( bWarnOnError )
-			LOG->Warn( werr_ssprintf(retval, "RegOpenKeyEx(%x,%s) error", hType, sSubkey.c_str()) );
+		if (bWarnOnError)
+		{
+			LOG->Warn(werr_format(retval, "RegOpenKeyEx(%p,%s) error", static_cast<void *>(hType), sSubkey.c_str()));
+		}
 		return nullptr;
 	}
 
@@ -151,7 +154,7 @@ bool RegistryAccess::GetRegSubKeys( const RString &sKey, vector<RString> &lst, c
 
 		if( iRet != ERROR_SUCCESS )
 		{
-			LOG->Warn( werr_ssprintf(iRet, "GetRegSubKeys(%p,%i) error", static_cast<void *>(hKey), index) );
+			LOG->Warn( werr_format(iRet, "GetRegSubKeys(%p,%i) error", static_cast<void *>(hKey), index) );
 			bError = true;
 			break;
 		}

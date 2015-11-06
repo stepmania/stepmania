@@ -145,7 +145,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int
 				m_pPrimaryScoreDisplay = new ScoreDisplayOni;
 			break;
 		default:
-			FAIL_M(ssprintf("Invalid PlayMode: %i", mode));
+			FAIL_M(fmt::sprintf("Invalid PlayMode: %i", mode));
 		}
 	}
 
@@ -575,7 +575,7 @@ void ScreenGameplay::Init()
 	float left_edge[NUM_PLAYERS]= {0.0f, SCREEN_WIDTH / 2.0f};
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
-		RString sName = ssprintf("Player%s", pi->GetName().c_str());
+		RString sName = fmt::sprintf("Player%s", pi->GetName().c_str());
 		pi->m_pPlayer->SetName( sName );
 
 		Style const* style= GAMESTATE->GetCurrentStyle(pi->m_pn);
@@ -633,7 +633,7 @@ void ScreenGameplay::Init()
 		if( pi->m_pPlayer->HasVisibleParts() )
 		{
 			pi->m_sprOniGameOver.Load( THEME->GetPathG(m_sName,"oni gameover") );
-			pi->m_sprOniGameOver->SetName( ssprintf("OniGameOver%s",pi->GetName().c_str()) );
+			pi->m_sprOniGameOver->SetName( fmt::sprintf("OniGameOver%s",pi->GetName().c_str()) );
 			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_sprOniGameOver );
 			this->AddChild( pi->m_sprOniGameOver );
 		}
@@ -678,7 +678,7 @@ void ScreenGameplay::Init()
 
 				pi->m_pLifeMeter = LifeMeter::MakeLifeMeter( pi->GetPlayerState()->m_PlayerOptions.GetStage().m_LifeType );
 				pi->m_pLifeMeter->Load( pi->GetPlayerState(), pi->GetPlayerStageStats() );
-				pi->m_pLifeMeter->SetName( ssprintf("Life%s",pi->GetName().c_str()) );
+				pi->m_pLifeMeter->SetName( fmt::sprintf("Life%s",pi->GetName().c_str()) );
 				LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_pLifeMeter );
 				this->AddChild( pi->m_pLifeMeter );
 
@@ -713,7 +713,7 @@ void ScreenGameplay::Init()
 			{
 				m_Scoreboard[col].LoadFromFont( THEME->GetPathF(m_sName,"scoreboard") );
 				m_Scoreboard[col].SetShadowLength( 0 );
-				m_Scoreboard[col].SetName( ssprintf("ScoreboardC%iP%i",col+1,pn+1) );
+				m_Scoreboard[col].SetName( fmt::sprintf("ScoreboardC%iP%i",col+1,pn+1) );
 				LOAD_ALL_COMMANDS_AND_SET_XY( m_Scoreboard[col] );
 				m_Scoreboard[col].SetText( NSMAN->m_Scoreboard[col] );
 				m_Scoreboard[col].SetVertAlign( align_top );
@@ -728,7 +728,7 @@ void ScreenGameplay::Init()
 		// primary score display
 		if( pi->m_pPrimaryScoreDisplay )
 		{
-			pi->m_pPrimaryScoreDisplay->SetName( ssprintf("Score%s",pi->GetName().c_str()) );
+			pi->m_pPrimaryScoreDisplay->SetName( fmt::sprintf("Score%s",pi->GetName().c_str()) );
 			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_pPrimaryScoreDisplay );
 			if( GAMESTATE->m_PlayMode != PLAY_MODE_RAVE || SHOW_SCORE_IN_RAVE ) /* XXX: ugly */
 				this->AddChild( pi->m_pPrimaryScoreDisplay );
@@ -737,7 +737,7 @@ void ScreenGameplay::Init()
 		// secondary score display
 		if( pi->m_pSecondaryScoreDisplay )
 		{
-			pi->m_pSecondaryScoreDisplay->SetName( ssprintf("SecondaryScore%s",pi->GetName().c_str()) );
+			pi->m_pSecondaryScoreDisplay->SetName( fmt::sprintf("SecondaryScore%s",pi->GetName().c_str()) );
 			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_pSecondaryScoreDisplay );
 			this->AddChild( pi->m_pSecondaryScoreDisplay );
 		}
@@ -752,7 +752,7 @@ void ScreenGameplay::Init()
 			SONG_NUMBER_FORMAT.Load( m_sName, "SongNumberFormat" );
 			pi->m_ptextCourseSongNumber = new BitmapText;
 			pi->m_ptextCourseSongNumber->LoadFromFont( THEME->GetPathF(m_sName,"SongNum") );
-			pi->m_ptextCourseSongNumber->SetName( ssprintf("SongNumber%s",pi->GetName().c_str()) );
+			pi->m_ptextCourseSongNumber->SetName( fmt::sprintf("SongNumber%s",pi->GetName().c_str()) );
 			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_ptextCourseSongNumber );
 			pi->m_ptextCourseSongNumber->SetText( "" );
 			//pi->m_ptextCourseSongNumber->SetDiffuse( Rage::Color(0,0.5f,1,1) );	// light blue
@@ -762,7 +762,7 @@ void ScreenGameplay::Init()
 		ASSERT( pi->m_ptextStepsDescription == nullptr );
 		pi->m_ptextStepsDescription = new BitmapText;
 		pi->m_ptextStepsDescription->LoadFromFont( THEME->GetPathF(m_sName,"StepsDescription") );
-		pi->m_ptextStepsDescription->SetName( ssprintf("StepsDescription%s",pi->GetName().c_str()) );
+		pi->m_ptextStepsDescription->SetName( fmt::sprintf("StepsDescription%s",pi->GetName().c_str()) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_ptextStepsDescription );
 		this->AddChild( pi->m_ptextStepsDescription );
 
@@ -770,7 +770,7 @@ void ScreenGameplay::Init()
 		ASSERT( pi->m_ptextPlayerOptions == nullptr );
 		pi->m_ptextPlayerOptions = new BitmapText;
 		pi->m_ptextPlayerOptions->LoadFromFont( THEME->GetPathF(m_sName,"player options") );
-		pi->m_ptextPlayerOptions->SetName( ssprintf("PlayerOptions%s",pi->GetName().c_str()) );
+		pi->m_ptextPlayerOptions->SetName( fmt::sprintf("PlayerOptions%s",pi->GetName().c_str()) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_ptextPlayerOptions );
 		this->AddChild( pi->m_ptextPlayerOptions );
 
@@ -778,7 +778,7 @@ void ScreenGameplay::Init()
 		ASSERT( pi->m_pStepsDisplay == nullptr );
 		pi->m_pStepsDisplay = new StepsDisplay;
 		pi->m_pStepsDisplay->Load("StepsDisplayGameplay", pi->GetPlayerState() );
-		pi->m_pStepsDisplay->SetName( ssprintf("StepsDisplay%s",pi->GetName().c_str()) );
+		pi->m_pStepsDisplay->SetName( fmt::sprintf("StepsDisplay%s",pi->GetName().c_str()) );
 		PlayerNumber pn = pi->GetStepsAndTrailIndex();
 		if( pn != PlayerNumber_Invalid )
 			pi->m_pStepsDisplay->PlayCommand( "Set" + pi->GetName() );
@@ -810,7 +810,7 @@ void ScreenGameplay::Init()
 		pi->m_pActiveAttackList = new ActiveAttackList;
 		pi->m_pActiveAttackList->LoadFromFont( THEME->GetPathF(m_sName,"ActiveAttackList") );
 		pi->m_pActiveAttackList->Init( pi->GetPlayerState() );
-		pi->m_pActiveAttackList->SetName( ssprintf("ActiveAttackList%s",pi->GetName().c_str()) );
+		pi->m_pActiveAttackList->SetName( fmt::sprintf("ActiveAttackList%s",pi->GetName().c_str()) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_pActiveAttackList );
 		this->AddChild( pi->m_pActiveAttackList );
 	}
@@ -1182,7 +1182,7 @@ void ScreenGameplay::LoadNextSong()
 	{
 		pi->GetPlayerStageStats()->m_iSongsPlayed++;
 		if( pi->m_ptextCourseSongNumber )
-			pi->m_ptextCourseSongNumber->SetText( ssprintf(SONG_NUMBER_FORMAT.GetValue(), pi->GetPlayerStageStats()->m_iSongsPassed+1) );
+			pi->m_ptextCourseSongNumber->SetText( fmt::sprintf(SONG_NUMBER_FORMAT.GetValue(), pi->GetPlayerStageStats()->m_iSongsPassed+1) );
 	}
 
 	if( GAMESTATE->m_bMultiplayer )
@@ -2011,7 +2011,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 					PlayAnnouncer( "gameplay comment oni", SECONDS_BETWEEN_COMMENTS );
 					break;
 				default:
-					FAIL_M(ssprintf("Invalid PlayMode: %i", mode));
+					FAIL_M(fmt::sprintf("Invalid PlayMode: %i", mode));
 			}
 		}
 		default: break;
@@ -2717,7 +2717,7 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 
 void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 {
-	CHECKPOINT_M( ssprintf("HandleScreenMessage(%s)", ScreenMessageHelpers::ScreenMessageToString(SM).c_str()) );
+	CHECKPOINT_M( fmt::sprintf("HandleScreenMessage(%s)", ScreenMessageHelpers::ScreenMessageToString(SM).c_str()) );
 	if( SM == SM_DoneFadingIn )
 	{
 		SOUND->PlayOnceFromAnnouncer( "gameplay ready" );
@@ -2968,7 +2968,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		int iCombo;
 		RString sCropped = ScreenMessageHelpers::ScreenMessageToString(SM).substr(3);
 		sscanf(sCropped.c_str(),"%d%*s",&iCombo);
-		PlayAnnouncer( ssprintf("gameplay %d combo",iCombo), 2 );
+		PlayAnnouncer( fmt::sprintf("gameplay %d combo",iCombo), 2 );
 	}
 	else if( SM == SM_ComboStopped )
 	{
@@ -2981,7 +2981,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM >= SM_BattleTrickLevel1 && SM <= SM_BattleTrickLevel3 )
 	{
 		int iTrickLevel = SM-SM_BattleTrickLevel1+1;
-		PlayAnnouncer( ssprintf("gameplay battle trick level%d",iTrickLevel), 3 );
+		PlayAnnouncer( fmt::sprintf("gameplay battle trick level%d",iTrickLevel), 3 );
 		if( SM == SM_BattleTrickLevel1 ) m_soundBattleTrickLevel1.Play(false);
 		else if( SM == SM_BattleTrickLevel2 ) m_soundBattleTrickLevel2.Play(false);
 		else if( SM == SM_BattleTrickLevel3 ) m_soundBattleTrickLevel3.Play(false);
@@ -2989,7 +2989,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM >= SM_BattleDamageLevel1 && SM <= SM_BattleDamageLevel3 )
 	{
 		int iDamageLevel = SM-SM_BattleDamageLevel1+1;
-		PlayAnnouncer( ssprintf("gameplay battle damage level%d",iDamageLevel), 3 );
+		PlayAnnouncer( fmt::sprintf("gameplay battle damage level%d",iDamageLevel), 3 );
 	}
 	else if( SM == SM_DoPrevScreen )
 	{
@@ -3208,7 +3208,7 @@ void ScreenGameplay::SaveReplay()
 				break;
 			}
 
-			RString sFileName = ssprintf( "replay%05d.xml", iIndex );
+			RString sFileName = fmt::sprintf( "replay%05d.xml", iIndex );
 
 			XmlFileUtil::SaveToFile( p, "Save/Replays/"+sFileName );
 			SAFE_DELETE( p );

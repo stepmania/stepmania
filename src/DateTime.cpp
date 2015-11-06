@@ -90,7 +90,7 @@ void DateTime::StripTime()
 // Common SQL/XML format: "YYYY-MM-DD HH:MM:SS"
 RString DateTime::GetString() const
 {
-	RString s = ssprintf( "%d-%02d-%02d",
+	RString s = fmt::sprintf( "%d-%02d-%02d",
 		tm_year+1900,
 		tm_mon+1,
 		tm_mday );
@@ -99,7 +99,7 @@ RString DateTime::GetString() const
 		tm_min != 0 ||
 		tm_sec != 0 )
 	{
-		s += ssprintf( " %02d:%02d:%02d",
+		s += fmt::sprintf( " %02d:%02d:%02d",
 			tm_hour,
 			tm_min,
 			tm_sec );
@@ -142,7 +142,7 @@ bool DateTime::FromString( const RString sDateTime )
 
 RString DayInYearToString( int iDayInYear )
 {
-	return ssprintf("DayInYear%03d",iDayInYear);
+	return fmt::sprintf("DayInYear%03d",iDayInYear);
 }
 
 int StringToDayInYear( RString sDayInYear )
@@ -187,7 +187,7 @@ RString DayOfWeekToString( int iDayOfWeekIndex )
 
 RString HourInDayToString( int iHourInDayIndex )
 {
-	return ssprintf("Hour%02d", iHourInDayIndex);
+	return fmt::sprintf("Hour%02d", iHourInDayIndex);
 }
 
 static const char *MonthNames[] =
@@ -215,7 +215,7 @@ RString LastWeekToString( int iLastWeekIndex )
 	{
 	case 0:		return "ThisWeek";	break;
 	case 1:		return "LastWeek";	break;
-	default:	return ssprintf("Week%02dAgo",iLastWeekIndex);	break;
+	default:	return fmt::sprintf("Week%02dAgo",iLastWeekIndex);	break;
 	}
 }
 
@@ -242,7 +242,7 @@ RString HourInDayToLocalizedString( int iHourIndex )
 	wrap( iBeginHour, 24 );
 	iBeginHour++;
 
-	return ssprintf("%02d:00+", iBeginHour );
+	return fmt::sprintf("%02d:00+", iBeginHour );
 }
 
 

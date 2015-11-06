@@ -94,7 +94,7 @@ void LifeMeterBar::Load( const PlayerState *pPlayerState, PlayerStageStats *pPla
 		case DrainType_SuddenDeath:
 			m_fLifePercentage = 1.0f;	break;
 		default:
-			FAIL_M(ssprintf("Invalid DrainType: %i", dtype));
+			FAIL_M(fmt::sprintf("Invalid DrainType: %i", dtype));
 	}
 
 	// Change life difficulty to really easy if merciful beginner on
@@ -162,7 +162,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		case HNS_LetGo:	fDeltaLife = m_fLifePercentChange.GetValue(SE_LetGo);	break;
 		case HNS_Missed:	fDeltaLife = m_fLifePercentChange.GetValue(SE_Missed);	break;
 		default:
-			FAIL_M(ssprintf("Invalid HoldNoteScore: %i", score));
+			FAIL_M(fmt::sprintf("Invalid HoldNoteScore: %i", score));
 		}
 		if(PREFSMAN->m_HarshHotLifePenalty && IsHot()  &&  score == HNS_LetGo)
 			fDeltaLife = -0.10f;		// make it take a while to get back to "hot"
@@ -174,7 +174,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		case HNS_LetGo:	fDeltaLife = m_fLifePercentChange.GetValue(SE_LetGo);	break;
 		case HNS_Missed:		fDeltaLife = +0.000f;	break;
 		default:
-			FAIL_M(ssprintf("Invalid HoldNoteScore: %i", score));
+			FAIL_M(fmt::sprintf("Invalid HoldNoteScore: %i", score));
 		}
 		break;
 	case DrainType_SuddenDeath:
@@ -184,11 +184,11 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		case HNS_LetGo:	fDeltaLife = -1.0f;	break;
 		case HNS_Missed:	fDeltaLife = +0;	break;
 		default:
-			FAIL_M(ssprintf("Invalid HoldNoteScore: %i", score));
+			FAIL_M(fmt::sprintf("Invalid HoldNoteScore: %i", score));
 		}
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid DrainType: %i", dtype));
+		FAIL_M(fmt::sprintf("Invalid DrainType: %i", dtype));
 	}
 
 	ChangeLife( fDeltaLife );

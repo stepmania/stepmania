@@ -24,7 +24,7 @@ BackgroundLoader::BackgroundLoader():
 	if( !g_bEnableBackgroundLoading )
 		return;
 
-	m_sCachePathPrefix = ssprintf( "@mem/%p", static_cast<void *>(this) );
+	m_sCachePathPrefix = fmt::sprintf( "@mem/%p", static_cast<void *>(this) );
 
 	m_bShutdownThread = false;
 	m_sThreadIsActive = m_sThreadShouldAbort = false;
@@ -216,7 +216,7 @@ void BackgroundLoader::FinishedWithCachedFile( RString sFile )
 	ASSERT_M( it != m_FinishedRequests.end(), sFile );
 
 	--it->second;
-	ASSERT_M( it->second >= 0, ssprintf("%i", it->second) );
+	ASSERT_M( it->second >= 0, fmt::sprintf("%i", it->second) );
 	if( !it->second )
 	{
 		m_FinishedRequests.erase( it );

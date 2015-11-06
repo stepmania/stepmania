@@ -205,7 +205,7 @@ static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &
 	RageFile f;
 	if( !f.Open(fn, RageFile::WRITE) )
 	{
-		sErrorOut = ssprintf( "Couldn't open %s for writing: %s", fn.c_str(), f.GetError().c_str() );
+		sErrorOut = fmt::sprintf( "Couldn't open %s for writing: %s", fn.c_str(), f.GetError().c_str() );
 		return false;
 	}
 
@@ -223,7 +223,7 @@ static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &
 	{
 		if( !zip.AddFile( s ) )
 		{
-			sErrorOut = ssprintf( "Couldn't add file: %s", s.c_str() );
+			sErrorOut = fmt::sprintf( "Couldn't add file: %s", s.c_str() );
 			return false;
 		}
 	}
@@ -231,7 +231,7 @@ static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &
 	LOG->Trace("Writing zip...");
 	if( zip.Finish() == -1 )
 	{
-		sErrorOut = ssprintf( "Couldn't write to file %s", fn.c_str(), f.GetError().c_str() );
+		sErrorOut = fmt::sprintf( "Couldn't write to file %s", fn.c_str(), f.GetError().c_str() );
 		return false;
 	}
 
@@ -268,9 +268,9 @@ void ScreenOptionsExportPackageSubPage::ProcessMenuStart( const InputEventPlus &
 
 	RString sError;
 	if( ExportPackage(sPackageName, sDirToExport, sError) )
-		ScreenPrompt::Prompt( SM_None, ssprintf("Exported '%s' to the desktop", sDirToExport.c_str()) );
+		ScreenPrompt::Prompt( SM_None, fmt::sprintf("Exported '%s' to the desktop", sDirToExport.c_str()) );
 	else
-		ScreenPrompt::Prompt( SM_None, ssprintf("Failed to export package: %s",sError.c_str()) );
+		ScreenPrompt::Prompt( SM_None, fmt::sprintf("Failed to export package: %s",sError.c_str()) );
 }
 
 void ScreenOptionsExportPackageSubPage::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )

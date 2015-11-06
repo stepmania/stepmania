@@ -121,7 +121,7 @@ void ComboGraph::Set( const StageStats &s, const PlayerStageStats &pss )
 		const float fCenterXPos = Rage::scale( fCenterPercent, 0.0f, 1.0f, -BODY_WIDTH/2.0f, BODY_WIDTH/2.0f );
 		pText->SetX( fCenterXPos );
 
-		pText->SetText( ssprintf("%i",combo.GetStageCnt()) );
+		pText->SetText( fmt::sprintf("%i",combo.GetStageCnt()) );
 
 		this->AddChild( pText );
 	}

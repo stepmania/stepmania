@@ -26,7 +26,7 @@ void RageException::SetCleanupHandler( void (*pHandler)(const RString &sError) )
  * the same way to code in practice. */
 void RageException::FinishThrow( std::string const &error )
 {
-	RString msg = ssprintf(
+	RString msg = fmt::sprintf(
 		"\n"
 		"//////////////////////////////////////////////////////\n"
 		"Exception: %s\n"
@@ -49,7 +49,7 @@ void RageException::FinishThrow( std::string const &error )
 #endif
 
 	ASSERT_M( g_HandlerThreadID == RageThread::GetInvalidThreadID() || g_HandlerThreadID == RageThread::GetCurrentThreadID(),
-		  ssprintf("RageException::Throw() on another thread: %s", error.c_str()) );
+		  fmt::sprintf("RageException::Throw() on another thread: %s", error.c_str()) );
 	if( g_CleanupHandler != nullptr )
 		g_CleanupHandler( error );
 

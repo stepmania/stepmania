@@ -366,7 +366,7 @@ RString SetD3DParams( bool &bNewDeviceOut )
 		if( FAILED(hr) )
 		{
 			// Likely D3D_ERR_INVALIDCALL.  The driver probably doesn't support this video mode.
-			return ssprintf( "CreateDevice failed: '%s'", GetErrorString(hr).c_str() );
+			return fmt::sprintf( "CreateDevice failed: '%s'", GetErrorString(hr).c_str() );
 		}
 	}
 	else
@@ -377,7 +377,7 @@ RString SetD3DParams( bool &bNewDeviceOut )
 		if( FAILED(hr) )
 		{
 			// Likely D3D_ERR_INVALIDCALL.  The driver probably doesn't support this video mode.
-			return ssprintf("g_pd3dDevice->Reset failed: '%s'", GetErrorString(hr).c_str() );
+			return fmt::sprintf("g_pd3dDevice->Reset failed: '%s'", GetErrorString(hr).c_str() );
 		}
 	}
 
@@ -524,7 +524,7 @@ RString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDevi
 	LOG->Warn( "RageDisplay_D3D::TryVideoMode( %d, %d, %d, %d, %d, %d )", p.windowed, p.width, p.height, p.bpp, p.rate, p.vsync );
 
 	if( FindBackBufferType( p.windowed, p.bpp ) == D3DFMT_UNKNOWN )	// no possible back buffer formats
-		return ssprintf( "FindBackBufferType(%i,%i) failed", p.windowed, p.bpp );	// failed to set mode
+		return fmt::sprintf( "FindBackBufferType(%i,%i) failed", p.windowed, p.bpp );	// failed to set mode
 
 	/* Set up and display the window before setting up D3D. If we don't do this,
 	 * then setting up a fullscreen window (when we're not coming from windowed)
@@ -1197,7 +1197,7 @@ void RageDisplay_D3D::SetBlendMode( BlendMode mode )
 		g_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid BlendMode: %i", mode));
+		FAIL_M(fmt::sprintf("Invalid BlendMode: %i", mode));
 	}
 }
 
@@ -1241,7 +1241,7 @@ void RageDisplay_D3D::SetZTestMode( ZTestMode mode )
 	case ZTEST_WRITE_ON_FAIL:	dw = D3DCMP_GREATER;	break;
 	default:
 		dw = D3DCMP_NEVER;
-		FAIL_M(ssprintf("Invalid ZTestMode: %i", mode));
+		FAIL_M(fmt::sprintf("Invalid ZTestMode: %i", mode));
 	}
 	g_pd3dDevice->SetRenderState( D3DRS_ZFUNC, dw );
 }
@@ -1352,7 +1352,7 @@ void RageDisplay_D3D::SetCullMode( CullMode mode )
 		g_pd3dDevice->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE );
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid CullMode: %i", mode));
+		FAIL_M(fmt::sprintf("Invalid CullMode: %i", mode));
 	}
 }
 

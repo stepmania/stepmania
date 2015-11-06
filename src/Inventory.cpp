@@ -17,9 +17,9 @@ void ReloadItems();
 
 #define NUM_ITEM_TYPES			THEME->GetMetricF("Inventory","NumItemTypes")
 #define ITEM_DURATION_SECONDS	THEME->GetMetricF("Inventory","ItemDurationSeconds")
-#define ITEM_COMBO( i )			THEME->GetMetricI("Inventory",ssprintf("Item%dCombo",i+1))
-#define ITEM_EFFECT( i )		THEME->GetMetric ("Inventory",ssprintf("Item%dEffect",i+1))
-#define ITEM_LEVEL( i )			THEME->GetMetricI("Inventory",ssprintf("Item%dLevel",i+1))
+#define ITEM_COMBO( i )			THEME->GetMetricI("Inventory",fmt::sprintf("Item%dCombo",i+1))
+#define ITEM_EFFECT( i )		THEME->GetMetric ("Inventory",fmt::sprintf("Item%dEffect",i+1))
+#define ITEM_LEVEL( i )			THEME->GetMetricI("Inventory",fmt::sprintf("Item%dLevel",i+1))
 ThemeMetric<float> ITEM_USE_RATE_SECONDS("Inventory","ItemUseRateSeconds");
 
 #define ITEM_USE_PROBABILITY (1.f/ITEM_USE_RATE_SECONDS)
@@ -54,7 +54,7 @@ Inventory::Inventory()
 	case PLAY_MODE_BATTLE:
 		break;
 	default:
-		FAIL_M(ssprintf("Inventory not valid for PlayMode %i", mode));
+		FAIL_M(fmt::sprintf("Inventory not valid for PlayMode %i", mode));
 	}
 }
 
@@ -83,7 +83,7 @@ void Inventory::Load( PlayerState* pPlayerState )
 			for( unsigned i=0; i<g_Items.size(); i++ )
 			{
 				RageSound* pSound = new RageSound;
-				pSound->Load( THEME->GetPathS("Inventory",ssprintf("use item %u",i+1)) );
+				pSound->Load( THEME->GetPathS("Inventory",fmt::sprintf("use item %u",i+1)) );
 				m_vpSoundUseItem.push_back( pSound );
 			}
 			m_soundItemEnding.Load( THEME->GetPathS("Inventory","item ending") );
@@ -216,7 +216,7 @@ void Inventory::UseItem( int iSlot )
 	GAMESTATE->m_fOpponentHealthPercent = Rage::clamp( GAMESTATE->m_fOpponentHealthPercent, 0.f, 1.f );
 
 	// play announcer sound
-	SCREENMAN->SendMessageToTopScreen( ssprintf("SM_BattleDamageLevel%d",a.level+1) );
+	SCREENMAN->SendMessageToTopScreen( fmt::sprintf("SM_BattleDamageLevel%d",a.level+1) );
 }
 
 /*

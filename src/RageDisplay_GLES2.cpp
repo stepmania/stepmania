@@ -195,7 +195,7 @@ namespace
 				case 24: m = Swap24(m); break;
 				case 32: m = Swap32(m); break;
 				default:
-					 FAIL_M(ssprintf("Unsupported BPP value: %i", pf.bpp));
+					 FAIL_M(fmt::sprintf("Unsupported BPP value: %i", pf.bpp));
 				}
 				pf.masks[mask] = m;
 			}
@@ -287,7 +287,7 @@ RageDisplay_GLES2::Init( const VideoModeParams &p, bool bAllowUnacceleratedRende
 				continue;
 			}
 
-			string sList = ssprintf( "  %s: ", type.c_str() );
+			string sList = fmt::sprintf( "  %s: ", type.c_str() );
 			while( next <= last )
 			{
 				vector<string> segments;
@@ -334,7 +334,7 @@ RageDisplay_GLES2::Init( const VideoModeParams &p, bool bAllowUnacceleratedRende
 				continue;
 			}
 
-			RString sList = ssprintf( "  %s: ", sType.c_str() );
+			auto sList = fmt::sprintf( "  %s: ", sType.c_str() );
 			while( iNextToPrint <= iLastToPrint )
 			{
 				vector<RString> asBits;
@@ -724,17 +724,13 @@ RageDisplay_GLES2::SetZTestMode( ZTestMode mode )
 	case ZTEST_WRITE_ON_PASS: glDepthFunc( GL_LEQUAL ); break;
 	case ZTEST_WRITE_ON_FAIL: glDepthFunc( GL_GREATER ); break;
 	default:
-		FAIL_M(ssprintf("Invalid ZTestMode: %i", mode));
+		FAIL_M(fmt::sprintf("Invalid ZTestMode: %i", mode));
 	}
 	State::bZTestEnabled = true;
 }
 
 
-
-
-
 /*
-
 
 void RageDisplay_Legacy::SetBlendMode( BlendMode mode )
 {
@@ -839,7 +835,7 @@ RageDisplay_GLES2::SetCullMode( CullMode mode )
 		glDisable( GL_CULL_FACE );
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid CullMode: %i", mode));
+		FAIL_M(fmt::sprintf("Invalid CullMode: %i", mode));
 	}
 }
 
@@ -880,7 +876,7 @@ RageDisplay_GLES2::SetPolygonMode(PolygonMode pm)
 	case POLYGON_FILL:	m = GL_FILL; break;
 	case POLYGON_LINE:	m = GL_LINE; break;
 	default:
-		FAIL_M(ssprintf("Invalid PolygonMode: %i", pm));
+		FAIL_M(fmt::sprintf("Invalid PolygonMode: %i", pm));
 	}
 	glPolygonMode(GL_FRONT_AND_BACK, m);
 }

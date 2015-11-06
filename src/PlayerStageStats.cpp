@@ -15,7 +15,7 @@
 
 using std::deque;
 
-#define GRADE_PERCENT_TIER(i)	THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
+#define GRADE_PERCENT_TIER(i)	THEME->GetMetricF("PlayerStageStats",fmt::sprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
 // deprecated, but no solution to replace them exists yet:
 #define GRADE_TIER02_IS_ALL_W2S	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllW2s")
 #define GRADE_TIER01_IS_ALL_W2S THEME->GetMetricB("PlayerStageStats","GradeTier01IsAllW2s")
@@ -253,7 +253,7 @@ float PlayerStageStats::MakePercentScore( int iActual, int iPossible )
 		return 1;	// correct for rounding error
 
 	// This can happen in battle, with transform attacks.
-	//ASSERT_M( iActual <= iPossible, ssprintf("%i/%i", iActual, iPossible) );
+	//ASSERT_M( iActual <= iPossible, fmt::sprintf("%i/%i", iActual, iPossible) );
 
 	float fPercent =  iActual / (float)iPossible;
 
@@ -278,7 +278,7 @@ RString PlayerStageStats::FormatPercentScore( float fPercentDancePoints )
 {
 	int iPercentTotalDigits = 3 + CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES;	// "100" + "." + "00"
 
-	RString s = ssprintf( "%*.*f%%", iPercentTotalDigits,
+	RString s = fmt::sprintf( "%*.*f%%", iPercentTotalDigits,
 			     (int)CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES,
 			     fPercentDancePoints*100 );
 	return s;

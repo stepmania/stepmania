@@ -364,7 +364,7 @@ int RageSurfaceUtils::FindSurfaceTraits( const RageSurface *img )
 	case NEEDS_BOOL_ALPHA:	ret |= TRAIT_BOOL_TRANSPARENCY;	break;
 	case NEEDS_FULL_ALPHA:	break;
 	default:
-		FAIL_M(ssprintf("Invalid alpha type: %i", alpha_type));
+		FAIL_M(fmt::sprintf("Invalid alpha type: %i", alpha_type));
 	}
 
 	return ret;
@@ -782,7 +782,7 @@ RageSurface *RageSurfaceUtils::LoadSurface( RString file )
 	{
 		if( f.Read( &palette.ncolors, sizeof(palette.ncolors) ) != sizeof(palette.ncolors) )
 			return nullptr;
-		ASSERT_M( palette.ncolors <= 256, ssprintf("%i", palette.ncolors) );
+		ASSERT_M( palette.ncolors <= 256, fmt::sprintf("%i", palette.ncolors) );
 		if( f.Read( palette.colors, palette.ncolors * sizeof(RageSurfaceColor) ) != int(palette.ncolors * sizeof(RageSurfaceColor)) )
 			return nullptr;
 	}

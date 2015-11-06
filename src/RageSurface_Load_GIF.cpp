@@ -132,7 +132,7 @@ RageSurfaceUtils::OpenResult RageSurface_Load_GIF( const RString &sPath, RageSur
 			/* GIF terminator */
 			if( imageCount < imageNumber )
 			{
-				error = ssprintf( "only %d image%s found in file",
+				error = fmt::sprintf( "only %d image%s found in file",
 					imageCount, imageCount > 1 ? "s" : "");
 				return RageSurfaceUtils::OPEN_FATAL_ERROR;
 			}

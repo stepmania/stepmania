@@ -34,7 +34,7 @@ ProfileManager*	PROFILEMAN = nullptr;	// global and accessible from anywhere in 
 
 static void DefaultLocalProfileIDInit( size_t /*PlayerNumber*/ i, std::string &sNameOut, std::string &defaultValueOut )
 {
-	sNameOut = ssprintf( "DefaultLocalProfileIDP%d", int(i+1) );
+	sNameOut = fmt::sprintf( "DefaultLocalProfileIDP%d", int(i+1) );
 	defaultValueOut = "";
 }
 
@@ -70,7 +70,7 @@ static vector<DirAndProfile> g_vLocalProfile;
 
 static ThemeMetric<bool>	FIXED_PROFILES		( "ProfileManager", "FixedProfiles" );
 static ThemeMetric<int>		NUM_FIXED_PROFILES	( "ProfileManager", "NumFixedProfiles" );
-#define FIXED_PROFILE_CHARACTER_ID( i ) THEME->GetMetric( "ProfileManager", ssprintf("FixedProfileCharacterID%d",int(i+1)) )
+#define FIXED_PROFILE_CHARACTER_ID( i ) THEME->GetMetric( "ProfileManager", fmt::sprintf("FixedProfileCharacterID%d",int(i+1)) )
 
 
 ProfileManager::ProfileManager()
@@ -524,11 +524,11 @@ bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 	}
 	ASSERT_M(profile_number >= 0 && profile_number <= MAX_ID,
 		"Too many profiles, cannot assign ID to new profile.");
-	RString profile_id = ssprintf( "%0" ID_DIGITS_STR "d", profile_number );
+	RString profile_id = fmt::sprintf( "%0" ID_DIGITS_STR "d", profile_number );
 
 	// make sure this id doesn't already exist
 	ASSERT_M(GetLocalProfile(profile_id) == nullptr,
-		ssprintf("creating profile with ID \"%s\" that already exists",
+		fmt::sprintf("creating profile with ID \"%s\" that already exists",
 		profile_id.c_str()));
 
 	// Create the new profile.
@@ -580,7 +580,7 @@ void ProfileManager::AddLocalProfileByID( Profile *pProfile, RString sProfileID 
 {
 	// make sure this id doesn't already exist
 	ASSERT_M( GetLocalProfile(sProfileID) == nullptr,
-		ssprintf("creating \"%s\" \"%s\" that already exists",
+		fmt::sprintf("creating \"%s\" \"%s\" that already exists",
 		pProfile->m_sDisplayName.c_str(), sProfileID.c_str()) );
 
 	DirAndProfile derp;

@@ -140,9 +140,6 @@ ThreadImpl *MakeThisThread()
 
 	if( !ret )
 	{
-//		LOG->Warn( werr_ssprintf( GetLastError(), "DuplicateHandle(%p, %p) failed",
-//			CurProc, GetCurrentThread() ) );
-
 		thread->ThreadHandle = nullptr;
 	}
 
@@ -162,13 +159,13 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 
 	thread->ThreadHandle = CreateThread( nullptr, 0, &StartThread, thread, CREATE_SUSPENDED, &thread->ThreadId );
 	*piThreadID = (uint64_t) thread->ThreadId;
-	ASSERT_M( thread->ThreadHandle != nullptr, ssprintf("%s", werr_ssprintf(GetLastError(), "CreateThread").c_str() ) );
+	ASSERT_M( thread->ThreadHandle != nullptr, fmt::sprintf("%s", werr_format(GetLastError(), "CreateThread").c_str() ) );
 
 	int slot = GetOpenSlot( thread->ThreadId );
 	g_ThreadHandles[slot] = thread->ThreadHandle;
 
 	int iRet = ResumeThread( thread->ThreadHandle );
-	ASSERT_M( iRet == 1, ssprintf("%s", werr_ssprintf(GetLastError(), "ResumeThread").c_str() ) );
+	ASSERT_M( iRet == 1, fmt::sprintf("%s", werr_format(GetLastError(), "ResumeThread").c_str() ) );
 
 	return thread;
 }
@@ -178,7 +175,7 @@ MutexImpl_Win32::MutexImpl_Win32( RageMutex *pParent ):
 	MutexImpl( pParent )
 {
 	mutex = CreateMutex( nullptr, false, nullptr );
-	ASSERT_M( mutex != nullptr, werr_ssprintf(GetLastError(), "CreateMutex") );
+	ASSERT_M( mutex != nullptr, werr_format(GetLastError(), "CreateMutex") );
 }
 
 MutexImpl_Win32::~MutexImpl_Win32()
@@ -204,7 +201,7 @@ static bool SimpleWaitForSingleObject( HANDLE h, DWORD ms )
 		FAIL_M( "WAIT_ABANDONED" );
 
 	case WAIT_FAILED:
-		FAIL_M( werr_ssprintf(GetLastError(), "WaitForSingleObject") );
+		FAIL_M( werr_format(GetLastError(), "WaitForSingleObject") );
 
 	default:
 		FAIL_M( "unknown" );
@@ -244,7 +241,7 @@ void MutexImpl_Win32::Unlock()
 	/* We can't ASSERT here, since this is called from checkpoints,
 	 * which is called from ASSERT. */
 	if( !ret )
-		sm_crash( werr_ssprintf( GetLastError(), "ReleaseMutex failed" ) );
+		sm_crash( werr_format( GetLastError(), "ReleaseMutex failed" ) );
 }
 
 uint64_t GetThisThreadId()
@@ -273,7 +270,7 @@ EventImpl_Win32::EventImpl_Win32( MutexImpl_Win32 *pParent )
 
 EventImpl_Win32::~EventImpl_Win32()
 {
-	ASSERT_M( m_iNumWaiting == 0, ssprintf("event destroyed while still in use (%i)", m_iNumWaiting) );
+	ASSERT_M( m_iNumWaiting == 0, fmt::sprintf("event destroyed while still in use (%i)", m_iNumWaiting) );
 
 	// We don't own m_pParent; don't free it.
 	CloseHandle( m_WakeupSema );
@@ -311,13 +308,13 @@ static bool PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectT
 				break;
 			}
 
-			FAIL_M( werr_ssprintf(GetLastError(), "SignalObjectAndWait") );
+			FAIL_M( werr_format(GetLastError(), "SignalObjectAndWait") );
 
 		case WAIT_TIMEOUT:
 			return false;
 
 		default:
-			FAIL_M( ssprintf("Unexpected code from SignalObjectAndWait: %d",ret ));
+			FAIL_M( fmt::sprintf("Unexpected code from SignalObjectAndWait: %d",ret ));
 		}
 	}
 
@@ -325,7 +322,7 @@ static bool PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectT
 	{
 		const bool bRet = !!ReleaseMutex( hObjectToSignal );
 		if( !bRet )
-			sm_crash( werr_ssprintf( GetLastError(), "ReleaseMutex failed" ) );
+			sm_crash( werr_format( GetLastError(), "ReleaseMutex failed" ) );
 	}
 	else
 		SetEvent( hObjectToSignal );

@@ -28,8 +28,8 @@ RString OptionRow::GetThemedItemText( int iChoice ) const
 	return s;
 }
 
-RString ITEMS_LONG_ROW_X_NAME( size_t p )	{ return ssprintf("ItemsLongRowP%dX",int(p+1)); }
-RString MOD_ICON_X_NAME( size_t p )		{ return ssprintf("ModIconP%dX",int(p+1)); }
+RString ITEMS_LONG_ROW_X_NAME( size_t p )	{ return fmt::sprintf("ItemsLongRowP%dX",int(p+1)); }
+RString MOD_ICON_X_NAME( size_t p )		{ return fmt::sprintf("ModIconP%dX",int(p+1)); }
 
 OptionRow::OptionRow( const OptionRowType *pSource )
 {
@@ -244,11 +244,11 @@ RString OptionRow::GetRowTitle() const
 			}
 
 			if( bpms.IsSecret() )
-				sTitle += ssprintf( " (??" "?)" ); // split so gcc doesn't think this is a trigraph
+				sTitle += fmt::sprintf( " (??" "?)" ); // split so gcc doesn't think this is a trigraph
 			else if( bpms.BpmIsConstant() )
-				sTitle += ssprintf( " (%.0f)", bpms.GetMin() );
+				sTitle += fmt::sprintf( " (%.0f)", bpms.GetMin() );
 			else
-				sTitle += ssprintf( " (%.0f-%.0f)", bpms.GetMin(), bpms.GetMax() );
+				sTitle += fmt::sprintf( " (%.0f-%.0f)", bpms.GetMin(), bpms.GetMax() );
 		}
 	}
 
@@ -403,7 +403,7 @@ void OptionRow::InitText( RowType type )
 		break;
 
 	default:
-		FAIL_M(ssprintf("Invalid option row layout: %i", m_pHand->m_Def.m_layoutType));
+		FAIL_M(fmt::sprintf("Invalid option row layout: %i", m_pHand->m_Def.m_layoutType));
 	}
 
 	for (auto *item: m_textItems)
@@ -670,7 +670,7 @@ void OptionRow::UpdateEnabledDisabled()
 		}
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid option row layout: %i", m_pHand->m_Def.m_layoutType));
+		FAIL_M(fmt::sprintf("Invalid option row layout: %i", m_pHand->m_Def.m_layoutType));
 	}
 }
 
@@ -701,10 +701,10 @@ const BitmapText &OptionRow::GetTextItemForRow( PlayerNumber pn, int iChoiceOnRo
 		index = iChoiceOnRow;
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid option row layout: %i", m_pHand->m_Def.m_layoutType));
+		FAIL_M(fmt::sprintf("Invalid option row layout: %i", m_pHand->m_Def.m_layoutType));
 	}
 
-	ASSERT_M( index < (int)m_textItems.size(), ssprintf("%i < %i", index, (int)m_textItems.size() ) );
+	ASSERT_M( index < (int)m_textItems.size(), fmt::sprintf("%i < %i", index, (int)m_textItems.size() ) );
 	return *m_textItems[index];
 }
 

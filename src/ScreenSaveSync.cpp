@@ -27,7 +27,7 @@ static RString GetPromptText()
 		AdjustSync::GetSyncChangeTextSong( vs );
 		if( !vs.empty() )
 		{
-			s += ssprintf(
+			s += fmt::sprintf(
 				CHANGED_TIMING_OF.GetValue()+"\n"
 				"%s:\n"
 				"\n",

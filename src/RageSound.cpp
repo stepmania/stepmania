@@ -226,7 +226,7 @@ bool RageSound::Load( RString sSoundFilePath, bool bPrecache, const RageSoundLoa
 
 	m_sFilePath = sSoundFilePath;
 
-	m_Mutex.SetName( ssprintf("RageSound (%s)", Rage::base_name(sSoundFilePath).c_str() ) );
+	m_Mutex.SetName( fmt::sprintf("RageSound (%s)", Rage::base_name(sSoundFilePath).c_str() ) );
 
 	return true;
 }
@@ -267,7 +267,7 @@ int RageSound::GetDataToPlay( float *pBuffer, int iFrames, int64_t &iStreamFrame
 	/* We only update m_iStreamFrame; only take a shared lock, so we don't block the main thread. */
 //	LockMut(m_Mutex);
 
-	ASSERT_M( m_bPlaying, ssprintf("%p", static_cast<void *>(this)) );
+	ASSERT_M( m_bPlaying, fmt::sprintf("%p", static_cast<void *>(this)) );
 	ASSERT( m_pSource != nullptr );
 
 	iFramesStored = 0;

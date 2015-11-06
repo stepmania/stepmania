@@ -90,7 +90,7 @@ void RageBitmapTexture::Create()
 	/* Tolerate corrupt/unknown images. */
 	if( pImg == nullptr )
 	{
-		RString warning = ssprintf("RageBitmapTexture: Couldn't load %s: %s",
+		RString warning = fmt::sprintf("RageBitmapTexture: Couldn't load %s: %s",
 			actualID.filename.c_str(), error.c_str());
 		LOG->Warn("%s", warning.c_str());
 		Dialog::OK(warning, "missing_texture");
@@ -173,8 +173,8 @@ void RageBitmapTexture::Create()
 		m_iTextureHeight = max( 8, m_iTextureHeight );
 	}
 
-	ASSERT_M( m_iTextureWidth <= actualID.iMaxSize, ssprintf("w %i, %i", m_iTextureWidth, actualID.iMaxSize) );
-	ASSERT_M( m_iTextureHeight <= actualID.iMaxSize, ssprintf("h %i, %i", m_iTextureHeight, actualID.iMaxSize) );
+	ASSERT_M( m_iTextureWidth <= actualID.iMaxSize, fmt::sprintf("w %i, %i", m_iTextureWidth, actualID.iMaxSize) );
+	ASSERT_M( m_iTextureHeight <= actualID.iMaxSize, fmt::sprintf("h %i, %i", m_iTextureHeight, actualID.iMaxSize) );
 
 	if( actualID.bStretch )
 	{
@@ -231,7 +231,7 @@ void RageBitmapTexture::Create()
 		case 32:
 			pixfmt = RagePixelFormat_RGBA8;
 			break;
-		default: FAIL_M( ssprintf("%i", actualID.iColorDepth) );
+		default: FAIL_M( fmt::sprintf("%i", actualID.iColorDepth) );
 		}
 	}
 
@@ -312,7 +312,7 @@ void RageBitmapTexture::Create()
 			float fBetterSourceHeight = this->GetFramesHigh() * fBetterFrameHeight;
 			if( fFrameWidth!=fBetterFrameWidth || fFrameHeight!=fBetterFrameHeight )
 			{
-				RString sWarning = ssprintf(
+				RString sWarning = fmt::sprintf(
 					"The graphic '%s' has frame dimensions that aren't a multiple of %d.\n"
 					"The entire image is %dx%d and frame size is %.1fx%.1f.\n"
 					"Image quality will be much improved if you resize the graphic to %.0fx%.0f, which is a frame size of %.0fx%.0f.",

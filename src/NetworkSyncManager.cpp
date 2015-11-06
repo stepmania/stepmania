@@ -447,7 +447,7 @@ void NetworkSyncManager::DisplayStartupStatus()
 		//Networking wasn't attepmpted
 		return;
 	case 1:
-		sMessage = ssprintf( CONNECTION_SUCCESSFUL.GetValue(), m_ServerName.c_str() );
+		sMessage = fmt::sprintf( CONNECTION_SUCCESSFUL.GetValue(), m_ServerName.c_str() );
 		break;
 	case 2:
 		sMessage = CONNECTION_FAILED.GetValue();
@@ -472,7 +472,7 @@ void NetworkSyncManager::Update(float fDeltaTime)
 			int port = BroadIn.Read2();
 			BroadIn.Read2();	//Num players connected.
 			uint32_t addy = EzSockets::LongFromAddrIn(BroadcastReception->fromAddr);
-			ThisServer.Address = ssprintf( "%u.%u.%u.%u:%d",
+			ThisServer.Address = fmt::sprintf( "%u.%u.%u.%u:%d",
 				(addy<<0)>>24, (addy<<8)>>24, (addy<<16)>>24, (addy<<24)>>24, port );
 
 			//It's fairly safe to assume that users will not be on networks with more than
@@ -578,7 +578,7 @@ void NetworkSyncManager::ProcessInput()
 				case NSSB_COMBO:
 					ColumnData = "Combo\n";
 					for (int i=0; i<NumberPlayers; ++i)
-						ColumnData += ssprintf("%d\n",m_packet.Read2());
+						ColumnData += fmt::sprintf("%d\n",m_packet.Read2());
 					break;
 				case NSSB_GRADE:
 					ColumnData = "Grade\n";
@@ -879,7 +879,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 
 	if( socket->connect(sHost, uPort) )
 	{
-		RString sHTTPRequest = ssprintf(
+		RString sHTTPRequest = fmt::sprintf(
 			"GET %s HTTP/1.1"			"\r\n"
 			"Host: %s"					"\r\n"
 			"User-Agent: %s"			"\r\n"

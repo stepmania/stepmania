@@ -287,7 +287,7 @@ static int GetLuaStack( lua_State *L )
 		{
 			for( int i = 1; i <= ar.nups && (name = lua_getupvalue(L, -1, i)) != nullptr; ++i )
 			{
-				vArgs.push_back( ssprintf("%s = %s", name, lua_tostring(L, -1)) );
+				vArgs.push_back( fmt::sprintf("%s = %s", name, lua_tostring(L, -1)) );
 				lua_pop( L, 1 ); // pop value
 			}
 		}
@@ -295,7 +295,7 @@ static int GetLuaStack( lua_State *L )
 		{
 			for( int i = 1; (name = lua_getlocal(L, &ar, i)) != nullptr; ++i )
 			{
-				vArgs.push_back( ssprintf("%s = %s", name, lua_tostring(L, -1)) );
+				vArgs.push_back( fmt::sprintf("%s = %s", name, lua_tostring(L, -1)) );
 				lua_pop( L, 1 ); // pop value
 			}
 		}
@@ -308,17 +308,17 @@ static int GetLuaStack( lua_State *L )
 		}
 		lua_pop( L, 1 ); // pop function
 
-		sErr += ssprintf( "\n%s:", file );
+		sErr += fmt::sprintf( "\n%s:", file );
 		if( ar.currentline != -1 )
-			sErr += ssprintf( "%i:", ar.currentline );
+			sErr += fmt::sprintf( "%i:", ar.currentline );
 
 		if( ar.name && ar.name[0] )
-			sErr += ssprintf( " %s", ar.name );
+			sErr += fmt::sprintf( " %s", ar.name );
 		else if( !strcmp(ar.what, "main") || !strcmp(ar.what, "tail") || !strcmp(ar.what, "C") )
-			sErr += ssprintf( " %s", ar.what );
+			sErr += fmt::sprintf( " %s", ar.what );
 		else
-			sErr += ssprintf( " unknown" );
-		sErr += ssprintf( "(%s)", join(",", vArgs).c_str() );
+			sErr += fmt::sprintf( " unknown" );
+		sErr += fmt::sprintf( "(%s)", join(",", vArgs).c_str() );
 	}
 
 	LuaHelpers::Push( L, sErr );
@@ -526,7 +526,7 @@ LuaThreadVariable::LuaThreadVariable( lua_State *L )
 RString LuaThreadVariable::GetCurrentThreadIDString()
 {
 	uint64_t iID = RageThread::GetCurrentThreadID();
-	return ssprintf( "%08x%08x", uint32_t(iID >> 32), uint32_t(iID) );
+	return fmt::sprintf( "%08x%08x", uint32_t(iID >> 32), uint32_t(iID) );
 }
 
 bool LuaThreadVariable::PushThreadTable( lua_State *L, bool bCreate )
@@ -847,7 +847,7 @@ XNode *LuaHelpers::GetLuaInformation()
 		for( unsigned i = 0; i < vEnum.size(); ++i )
 		{
 			XNode *pEnumValueNode = pEnumNode->AppendChild( "EnumValue" );
-			pEnumValueNode->AppendAttr( "name", ssprintf("'%s'", vEnum[i].c_str()) );
+			pEnumValueNode->AppendAttr( "name", fmt::sprintf("'%s'", vEnum[i].c_str()) );
 			pEnumValueNode->AppendAttr( "value", i );
 		}
 	}
@@ -872,7 +872,7 @@ XNode *LuaHelpers::GetLuaInformation()
 	{
 		XNode *pConstantNode = pConstantsNode->AppendChild( "Constant" );
 		pConstantNode->AppendAttr( "name", s.first );
-		pConstantNode->AppendAttr( "value", ssprintf("'%s'", s.second.c_str()) );
+		pConstantNode->AppendAttr( "value", fmt::sprintf("'%s'", s.second.c_str()) );
 	}
 
 	return pLuaNode;
@@ -890,7 +890,7 @@ bool LuaHelpers::RunScriptFile( const RString &sFile )
 	if( !LuaHelpers::RunScript( L, sScript, "@" + sFile, sError, 0 ) )
 	{
 		LUA->Release( L );
-		sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
+		sError = fmt::sprintf( "Lua runtime error: %s", sError.c_str() );
 		LuaHelpers::ReportScriptError(sError);
 		return false;
 	}
@@ -1003,7 +1003,7 @@ bool LuaHelpers::RunScript( Lua *L, const RString &Script, const RString &Name, 
 
 bool LuaHelpers::RunExpression( Lua *L, const RString &sExpression, const RString &sName )
 {
-	RString sError= ssprintf("Lua runtime error parsing \"%s\": ", sName.size()? sName.c_str():sExpression.c_str());
+	RString sError= fmt::sprintf("Lua runtime error parsing \"%s\": ", sName.size()? sName.c_str():sExpression.c_str());
 	if(!LuaHelpers::RunScript(L, "return " + sExpression, sName.empty()? RString("in"):sName, sError, 0, 1, true))
 	{
 		return false;

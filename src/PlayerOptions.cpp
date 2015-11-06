@@ -132,7 +132,7 @@ static void AddPart( vector<RString> &AddTo, float level, RString name )
 	if( level == 0 )
 		return;
 
-	const RString LevelStr = (level == 1)? RString(""): ssprintf( "%ld%% ", std::lrint(level*100) );
+	const RString LevelStr = (level == 1)? RString(""): fmt::sprintf( "%ld%% ", std::lrint(level*100) );
 
 	AddTo.push_back( LevelStr + name );
 }
@@ -163,26 +163,26 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 			}
 			break;
 		case LifeType_Battery:
-			AddTo.push_back(ssprintf("%dLives", m_BatteryLives));
+			AddTo.push_back(fmt::sprintf("%dLives", m_BatteryLives));
 			break;
 		case LifeType_Time:
 			AddTo.push_back("LifeTime");
 			break;
 		default:
-			FAIL_M(ssprintf("Invalid LifeType: %i", m_LifeType));
+			FAIL_M(fmt::sprintf("Invalid LifeType: %i", m_LifeType));
 	}
 
 	if( !m_fTimeSpacing )
 	{
 		if( m_fMaxScrollBPM )
 		{
-			RString s = ssprintf( "m%.0f", m_fMaxScrollBPM );
+			RString s = fmt::sprintf( "m%.0f", m_fMaxScrollBPM );
 			AddTo.push_back( s );
 		}
 		else if( m_bSetScrollSpeed || m_fScrollSpeed != 1 )
 		{
 			/* -> 1.00 */
-			RString s = ssprintf( "%2.2f", m_fScrollSpeed );
+			RString s = fmt::sprintf( "%2.2f", m_fScrollSpeed );
 			if( s[s.size()-1] == '0' )
 			{
 				/* -> 1.0 */
@@ -198,7 +198,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	}
 	else
 	{
-		RString s = ssprintf( "C%.0f", m_fScrollBPM );
+		RString s = fmt::sprintf( "C%.0f", m_fScrollBPM );
 		AddTo.push_back( s );
 	}
 
@@ -290,7 +290,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	case FailType_EndOfSong:			AddTo.push_back("FailAtEnd");	break;
 	case FailType_Off:				AddTo.push_back("FailOff");	break;
 	default:
-		FAIL_M(ssprintf("Invalid FailType: %i", m_FailType));
+		FAIL_M(fmt::sprintf("Invalid FailType: %i", m_FailType));
 	}
 
 	if( m_fSkew==0 && m_fPerspectiveTilt==0 )
@@ -373,7 +373,7 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 			{
 				// XXX: We know what they want, is there any reason not to handle it?
 				// Yes. We should be strict in handling the format. -Chris
-				sErrorOut = ssprintf("Invalid player options \"%s\"; did you mean '*%d'?", s.c_str(), StringToInt(s) );
+				sErrorOut = fmt::sprintf("Invalid player options \"%s\"; did you mean '*%d'?", s.c_str(), StringToInt(s) );
 				return false;
 			}
 			else

@@ -267,7 +267,7 @@ void WheelBase::UpdateSwitch()
 	case STATE_LOCKED:
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid wheel state: %i", m_WheelState));
+		FAIL_M(fmt::sprintf("Invalid wheel state: %i", m_WheelState));
 	}
 }
 

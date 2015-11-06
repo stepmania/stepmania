@@ -184,7 +184,7 @@ void CourseUtil::SortCoursePointerArrayByAvgDifficulty( vector<Course*> &vpCours
 	for (auto *course: vpCoursesInOut)
 	{
 		int iMeter = course->GetMeter( GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType, Difficulty_Medium );
-		course_sort_val[course] = ssprintf( "%06i", iMeter );
+		course_sort_val[course] = fmt::sprintf( "%06i", iMeter );
 	}
 	sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByTitle );
 	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersBySortValueAscending );
@@ -204,7 +204,7 @@ void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInO
 {
 	ASSERT( pProfile != nullptr );
 	for (auto *course: vpCoursesInOut)
-		course_sort_val[course] = ssprintf( "%09i", pProfile->GetCourseNumTimesPlayed(course) );
+		course_sort_val[course] = fmt::sprintf( "%09i", pProfile->GetCourseNumTimesPlayed(course) );
 	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), bDescending ? CompareCoursePointersBySortValueDescending : CompareCoursePointersBySortValueAscending );
 	course_sort_val.clear();
 }
@@ -357,7 +357,7 @@ void CourseUtil::WarnOnInvalidMods( RString sMods )
 		 */
 		if( !bValid )
 		{
-			RString sFullError = ssprintf("Error processing '%s' in '%s'", s.c_str(), sMods.c_str() );
+			RString sFullError = fmt::sprintf("Error processing '%s' in '%s'", s.c_str(), sMods.c_str() );
 			if( !sErrorDetail.empty() )
 				sFullError += ": " + sErrorDetail;
 			LOG->UserLog( "", "", "%s", sFullError.c_str() );
@@ -435,7 +435,7 @@ bool EditCourseUtil::ValidateEditCourseName( const RString &sAnswer, RString &sE
 	static const RString sInvalidChars = "\\/:*?\"<>|";
 	if( strpbrk(sAnswer, sInvalidChars) != nullptr )
 	{
-		sErrorOut = ssprintf( EDIT_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
+		sErrorOut = fmt::sprintf( EDIT_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;
 	}
 
@@ -502,7 +502,7 @@ void EditCourseUtil::LoadDefaults( Course &out )
 	// XXX: Make this localizable
 	for( int i=0; i<10000; i++ )
 	{
-		out.m_sMainTitle = ssprintf("Workout %d", i+1);
+		out.m_sMainTitle = fmt::sprintf("Workout %d", i+1);
 		bool bNameInUse = false;
 
 		vector<Course*> vpCourses;

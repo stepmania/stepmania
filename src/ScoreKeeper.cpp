@@ -39,7 +39,7 @@ ScoreKeeper* ScoreKeeper::MakeScoreKeeper( RString sClassName, PlayerState *pPla
 		return new ScoreKeeperRave( pPlayerState, pPlayerStageStats );
 	else if( sClassName == "ScoreKeeperShared" )
 		return new ScoreKeeperShared( pPlayerState, pPlayerStageStats );
-	FAIL_M( ssprintf("Invalid ScoreKeeper named %s!", sClassName.c_str() ));
+	FAIL_M( fmt::sprintf("Invalid ScoreKeeper named %s!", sClassName.c_str() ));
 }
 
 

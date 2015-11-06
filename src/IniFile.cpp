@@ -21,7 +21,7 @@ IniFile::IniFile(): XNode("IniFile")
 bool IniFile::ReadFile( const RString &sPath )
 {
 	m_sPath = sPath;
-	CHECKPOINT_M( ssprintf("Reading '%s'",m_sPath.c_str()) );
+	CHECKPOINT_M( fmt::sprintf("Reading '%s'",m_sPath.c_str()) );
 
 	RageFile f;
 	if( !f.Open( m_sPath ) )
@@ -131,7 +131,7 @@ bool IniFile::WriteFile( RageFileBasic &f ) const
 {
 	FOREACH_CONST_Child( this, pKey )
 	{
-		if( f.PutLine( ssprintf("[%s]", pKey->GetName().c_str()) ) == -1 )
+		if( f.PutLine( fmt::sprintf("[%s]", pKey->GetName().c_str()) ) == -1 )
 		{
 			m_sError = f.GetError();
 			return false;
@@ -147,7 +147,7 @@ bool IniFile::WriteFile( RageFileBasic &f ) const
 			DEBUG_ASSERT( sName.find('\n') == sName.npos );
 			DEBUG_ASSERT( sName.find('=') == sName.npos );
 
-			if( f.PutLine( ssprintf("%s=%s", sName.c_str(), sValue.c_str()) ) == -1 )
+			if( f.PutLine( fmt::sprintf("%s=%s", sName.c_str(), sValue.c_str()) ) == -1 )
 			{
 				m_sError = f.GetError();
 				return false;

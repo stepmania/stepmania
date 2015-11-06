@@ -23,7 +23,7 @@ using std::vector;
 UnlockManager*	UNLOCKMAN = nullptr;	// global and accessible from anywhere in our program
 
 #define UNLOCK_NAMES		THEME->GetMetric ("UnlockManager","UnlockNames")
-#define UNLOCK(x)		THEME->GetMetricR("UnlockManager", ssprintf("Unlock%sCommand",x.c_str()));
+#define UNLOCK(x)		THEME->GetMetricR("UnlockManager", fmt::sprintf("Unlock%sCommand",x.c_str()));
 
 static ThemeMetric<bool> AUTO_LOCK_CHALLENGE_STEPS( "UnlockManager", "AutoLockChallengeSteps" );
 static ThemeMetric<bool> AUTO_LOCK_EDIT_STEPS( "UnlockManager", "AutoLockEditSteps" );
@@ -358,7 +358,7 @@ bool UnlockEntry::IsValid() const
 		return true;
 
 	default:
-		WARN( ssprintf("%i", m_Type) );
+		WARN( fmt::sprintf("%i", m_Type) );
 		return false;
 	}
 }
@@ -421,7 +421,7 @@ RString UnlockEntry::GetDescription() const
 	switch( m_Type )
 	{
 	default:
-		FAIL_M(ssprintf("Invalid UnlockRewardType: %i", m_Type));
+		FAIL_M(fmt::sprintf("Invalid UnlockRewardType: %i", m_Type));
 	case UnlockRewardType_Song:
 		return pSong ? pSong->GetDisplayFullTitle() : "";
 	case UnlockRewardType_Steps:
@@ -448,7 +448,7 @@ RString	UnlockEntry::GetBannerFile() const
 	switch( m_Type )
 	{
 	default:
-		FAIL_M(ssprintf("Invalid UnlockRewardType: %i", m_Type));
+		FAIL_M(fmt::sprintf("Invalid UnlockRewardType: %i", m_Type));
 	case UnlockRewardType_Song:
 	case UnlockRewardType_Steps:
 	case UnlockRewardType_Steps_Type:
@@ -466,7 +466,7 @@ RString	UnlockEntry::GetBackgroundFile() const
 	switch( m_Type )
 	{
 	default:
-		FAIL_M(ssprintf("Invalid UnlockRewardType: %i", m_Type));
+		FAIL_M(fmt::sprintf("Invalid UnlockRewardType: %i", m_Type));
 	case UnlockRewardType_Song:
 	case UnlockRewardType_Steps:
 	case UnlockRewardType_Steps_Type:
@@ -575,7 +575,7 @@ void UnlockManager::Load()
 			for (auto j = i + 1; j < m_UnlockEntries.size(); ++j)
 			{
 				auto &ue2 = m_UnlockEntries[j];
-				ASSERT_M( ue.m_sEntryID != ue2.m_sEntryID, ssprintf("duplicate unlock entry id %s",ue.m_sEntryID.c_str()) );
+				ASSERT_M( ue.m_sEntryID != ue2.m_sEntryID, fmt::sprintf("duplicate unlock entry id %s",ue.m_sEntryID.c_str()) );
 			}
 		}
 	}
@@ -638,23 +638,23 @@ void UnlockManager::Load()
 			// nothing to cache
 			break;
 		default:
-			FAIL_M(ssprintf("Invalid UnlockRewardType: %i", e.m_Type));
+			FAIL_M(fmt::sprintf("Invalid UnlockRewardType: %i", e.m_Type));
 		}
 	}
 
 	// Log unlocks
 	for (auto &e: m_UnlockEntries)
 	{
-		RString str = ssprintf( "Unlock: %s; ", join("\n",e.m_cmd.m_vsArgs).c_str() );
+		RString str = fmt::sprintf( "Unlock: %s; ", join("\n",e.m_cmd.m_vsArgs).c_str() );
 		FOREACH_ENUM( UnlockRequirement, j )
 			if( e.m_fRequirement[j] )
-				str += ssprintf( "%s = %f; ", UnlockRequirementToString(j).c_str(), e.m_fRequirement[j] );
+				str += fmt::sprintf( "%s = %f; ", UnlockRequirementToString(j).c_str(), e.m_fRequirement[j] );
 		if( e.m_bRequirePassHardSteps )
 			str += "RequirePassHardSteps; ";
 		if (e.m_bRequirePassChallengeSteps)
 			str += "RequirePassChallengeSteps; ";
 
-		str += ssprintf( "entryID = %s ", e.m_sEntryID.c_str() );
+		str += fmt::sprintf( "entryID = %s ", e.m_sEntryID.c_str() );
 		str += e.IsLocked()? "locked":"unlocked";
 		if( e.m_Song.IsValid() )
 			str += ( " (found song)" );

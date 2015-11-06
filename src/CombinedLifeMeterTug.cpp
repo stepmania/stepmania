@@ -15,7 +15,7 @@ static void TugMeterPercentChangeInit( size_t /*ScoreEvent*/ i, std::string &sNa
 	switch( i )
 	{
 	default:
-		FAIL_M(ssprintf("Invalid ScoreEvent: %i", static_cast<int>(i)));
+		FAIL_M(fmt::sprintf("Invalid ScoreEvent: %i", static_cast<int>(i)));
 	case SE_W1:			defaultValueOut = +0.010f;	break;
 	case SE_W2:			defaultValueOut = +0.008f;	break;
 	case SE_W3:			defaultValueOut = +0.004f;	break;
@@ -37,8 +37,8 @@ CombinedLifeMeterTug::CombinedLifeMeterTug()
 {
 	FOREACH_PlayerNumber( p )
 	{
-		RString sStreamPath = THEME->GetPathG("CombinedLifeMeterTug",ssprintf("stream p%d",p+1));
-		RString sTipPath = THEME->GetPathG("CombinedLifeMeterTug",ssprintf("tip p%d",p+1));
+		RString sStreamPath = THEME->GetPathG("CombinedLifeMeterTug",fmt::sprintf("stream p%d",p+1));
+		RString sTipPath = THEME->GetPathG("CombinedLifeMeterTug",fmt::sprintf("tip p%d",p+1));
 		m_Stream[p].Load( sStreamPath, METER_WIDTH, sTipPath );
 		this->AddChild( &m_Stream[p] );
 	}
@@ -85,7 +85,7 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, TapNoteScore score )
 	case TNS_CheckpointHit:	fPercentToMove = g_fTugMeterPercentChange[SE_CheckpointHit];	break;
 	case TNS_CheckpointMiss:fPercentToMove = g_fTugMeterPercentChange[SE_CheckpointMiss]; break;
 	default:
-		FAIL_M(ssprintf("Invalid TapNotScore: %i", score));
+		FAIL_M(fmt::sprintf("Invalid TapNotScore: %i", score));
 	}
 
 	ChangeLife( pn, fPercentToMove );
@@ -105,7 +105,7 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, HoldNoteScore score, Tap
 	case HNS_LetGo:			fPercentToMove = g_fTugMeterPercentChange[SE_LetGo];	break;
 	case HNS_Missed:			fPercentToMove = g_fTugMeterPercentChange[SE_Missed];	break;
 	default:
-		FAIL_M(ssprintf("Invalid HoldNoteScore: %i", score));
+		FAIL_M(fmt::sprintf("Invalid HoldNoteScore: %i", score));
 	}
 
 	ChangeLife( pn, fPercentToMove );
@@ -121,7 +121,7 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, float fPercentToMove )
 		case PLAYER_1:	fLifePercentage = GAMESTATE->m_fTugLifePercentP1;		break;
 		case PLAYER_2:	fLifePercentage = 1 - GAMESTATE->m_fTugLifePercentP1;	break;
 		default:
-			FAIL_M(ssprintf("Invalid player number: %i", pn));
+			FAIL_M(fmt::sprintf("Invalid player number: %i", pn));
 		}
 
 		/* Clamp the life meter only for calculating the multiplier. */
@@ -134,7 +134,7 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, float fPercentToMove )
 	case PLAYER_1:	GAMESTATE->m_fTugLifePercentP1 += fPercentToMove;	break;
 	case PLAYER_2:	GAMESTATE->m_fTugLifePercentP1 -= fPercentToMove;	break;
 	default:
-		FAIL_M(ssprintf("Invalid player number: %i", pn));
+		FAIL_M(fmt::sprintf("Invalid player number: %i", pn));
 	}
 }
 

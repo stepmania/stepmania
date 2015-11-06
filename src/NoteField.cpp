@@ -34,7 +34,7 @@ static ThemeMetric<float> BAR_8TH_ALPHA( "NoteField", "Bar8thAlpha" );
 static ThemeMetric<float> BAR_16TH_ALPHA( "NoteField", "Bar16thAlpha" );
 static ThemeMetric<float> FADE_FAIL_TIME( "NoteField", "FadeFailTime" );
 
-static RString RoutineNoteSkinName( size_t i ) { return ssprintf("RoutineNoteSkinP%i",int(i+1)); }
+static RString RoutineNoteSkinName( size_t i ) { return fmt::sprintf("RoutineNoteSkinP%i",int(i+1)); }
 static ThemeMetric1D<RString> ROUTINE_NOTESKIN( "NoteField", RoutineNoteSkinName, NUM_PLAYERS );
 
 NoteField::NoteField()
@@ -225,7 +225,7 @@ void NoteField::Load(
 	//int i1 = m_pNoteData->GetNumTracks();
 	//int i2 = GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer;
 	ASSERT_M(m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer,
-		 ssprintf("NumTracks %d = ColsPerPlayer %d",m_pNoteData->GetNumTracks(),
+		 fmt::sprintf("NumTracks %d = ColsPerPlayer %d",m_pNoteData->GetNumTracks(),
 			  GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer));
 
 	// The NoteSkin may have changed at the beginning of a new course song.
@@ -248,7 +248,7 @@ void NoteField::Load(
 
 	sNoteSkinLower = Rage::make_lower(sNoteSkinLower);
 	auto it = m_NoteDisplays.find( sNoteSkinLower );
-	ASSERT_M( it != m_NoteDisplays.end(), ssprintf("iterator != m_NoteDisplays.end() [sNoteSkinLower = %s]",sNoteSkinLower.c_str()) );
+	ASSERT_M( it != m_NoteDisplays.end(), fmt::sprintf("iterator != m_NoteDisplays.end() [sNoteSkinLower = %s]",sNoteSkinLower.c_str()) );
 	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
 	FOREACH_EnabledPlayer( pn )
 	{
@@ -424,7 +424,7 @@ void NoteField::DrawBeatBar( const float fBeat, BeatBarType type, int iMeasureIn
 		m_textMeasureNumber.SetDiffuse( Rage::Color(1,1,1,1) );
 		m_textMeasureNumber.SetGlow( Rage::Color(1,1,1,0) );
 		m_textMeasureNumber.SetHorizAlign( align_right );
-		m_textMeasureNumber.SetText( ssprintf("%d", iMeasureNoDisplay) );
+		m_textMeasureNumber.SetText( fmt::sprintf("%d", iMeasureNoDisplay) );
 		m_textMeasureNumber.SetXY( -fWidth/2, fYPos );
 		m_textMeasureNumber.Draw();
 	}
@@ -852,13 +852,13 @@ void NoteField::DrawPrimitives()
 		draw_all_segments(FloatToString(seg->GetPause()), Stop, STOP);
 		draw_all_segments(FloatToString(seg->GetPause()), Delay, DELAY);
 		draw_all_segments(FloatToString(seg->GetLength()), Warp, WARP);
-		draw_all_segments(ssprintf("%d\n--\n%d", seg->GetNum(), seg->GetDen()),
+		draw_all_segments(fmt::sprintf("%d\n--\n%d", seg->GetNum(), seg->GetDen()),
 			TimeSignature, TIME_SIG);
-		draw_all_segments(ssprintf("%d", seg->GetTicks()), Tickcount, TICKCOUNT);
+		draw_all_segments(fmt::sprintf("%d", seg->GetTicks()), Tickcount, TICKCOUNT);
 		draw_all_segments(
-			ssprintf("%d/%d", seg->GetCombo(), seg->GetMissCombo()), Combo, COMBO);
+			fmt::sprintf("%d/%d", seg->GetCombo(), seg->GetMissCombo()), Combo, COMBO);
 		draw_all_segments(seg->GetLabel(), Label, LABEL);
-		draw_all_segments(ssprintf("%s\n%s\n%s",
+		draw_all_segments(fmt::sprintf("%s\n%s\n%s",
 				FloatToString(seg->GetRatio()).c_str(),
 				(seg->GetUnit() == 1 ? "S" : "B"),
 				FloatToString(seg->GetDelay()).c_str()), Speed, SPEED);
@@ -870,7 +870,7 @@ void NoteField::DrawPrimitives()
 		if( pCourse )
 		{
 			ASSERT_M( GAMESTATE->m_iEditCourseEntryIndex >= 0  &&  GAMESTATE->m_iEditCourseEntryIndex < (int)pCourse->m_vEntries.size(),
-				ssprintf("%i",GAMESTATE->m_iEditCourseEntryIndex.Get()) );
+				fmt::sprintf("%i",GAMESTATE->m_iEditCourseEntryIndex.Get()) );
 			const CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
 			for (auto const &a: ce.attacks)
 			{
@@ -961,7 +961,7 @@ void NoteField::DrawPrimitives()
 									const BackgroundChange& change = *iter[*bl];
 									RString s = change.GetTextDescription();
 									if( *bl!=0 )
-										s = ssprintf("%d: ",*bl) + s;
+										s = fmt::sprintf("%d: ",*bl) + s;
 									vsBGChanges.push_back( s );
 								}
 								DrawBGChangeText(fLowestBeat, join("\n",vsBGChanges), text_glow);
@@ -974,7 +974,7 @@ void NoteField::DrawPrimitives()
 					}
 					break;
 				default:
-					FAIL_M(ssprintf("Invalid edit mode: %i", mode));
+					FAIL_M(fmt::sprintf("Invalid edit mode: %i", mode));
 			}
 		}
 
@@ -1007,7 +1007,7 @@ void NoteField::DrawPrimitives()
 
 	const Style* pStyle = GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber);
 	ASSERT_M(m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer,
-		ssprintf("NumTracks %d != ColsPerPlayer %d",m_pNoteData->GetNumTracks(),
+		fmt::sprintf("NumTracks %d != ColsPerPlayer %d",m_pNoteData->GetNumTracks(),
 			GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer));
 
 	if(*m_FieldRenderArgs.selection_begin_marker != -1 &&

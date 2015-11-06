@@ -281,7 +281,7 @@ RString NetworkStream_Win32::WinSockErrorToString( int iError )
 	case WSA_NOT_ENOUGH_MEMORY: return "Insufficient memory available.";
 	case WSA_OPERATION_ABORTED: return "Overlapped operation aborted.";
 	case WSASYSCALLFAILURE: return "System call failure.";
-	default: return ssprintf( "unknown Winsock error %i", iError );
+	default: return fmt::sprintf( "unknown Winsock error %i", iError );
 	}
 }
 
@@ -348,7 +348,7 @@ void NetworkStream_Win32::Open( const RString &sHost, int iPort, ConnectionType 
 	}
 
 	// Always shut down a stream completely before reusing it.
-	ASSERT_M( m_State == STATE_IDLE, ssprintf("%s:%i: %i", sHost.c_str(), iPort, m_State) );
+	ASSERT_M( m_State == STATE_IDLE, fmt::sprintf("%s:%i: %i", sHost.c_str(), iPort, m_State) );
 
 	m_sHost = sHost;
 	m_iPort = iPort;
@@ -383,7 +383,7 @@ void NetworkStream_Win32::Open( const RString &sHost, int iPort, ConnectionType 
 		int iError = mw.GetResult();
 		if( iError )
 		{
-			SetError( ssprintf("DNS error: %s", WinSockErrorToString(iError).c_str() ) );
+			SetError( fmt::sprintf("DNS error: %s", WinSockErrorToString(iError).c_str() ) );
 			m_Mutex.Unlock();
 			return;
 		}
@@ -401,7 +401,7 @@ void NetworkStream_Win32::Open( const RString &sHost, int iPort, ConnectionType 
 		if( m_Socket == INVALID_SOCKET )
 		{
 			int iError = WSAGetLastError();
-			SetError( ssprintf("Error creating socket: %s", WinSockErrorToString(iError).c_str() ) );
+			SetError( fmt::sprintf("Error creating socket: %s", WinSockErrorToString(iError).c_str() ) );
 			return;
 		}
 
@@ -425,7 +425,7 @@ void NetworkStream_Win32::Open( const RString &sHost, int iPort, ConnectionType 
 				iError = WaitForCompletionOrCancellation( FD_CONNECT_BIT );
 			if( iError )
 			{
-				SetError( ssprintf("Couldn't connect: %s", WinSockErrorToString(iError).c_str() ) );
+				SetError( fmt::sprintf("Couldn't connect: %s", WinSockErrorToString(iError).c_str() ) );
 				return;
 			}
 		}
@@ -531,7 +531,7 @@ int NetworkStream_Win32::Read( void *pBuffer, size_t iSize )
 
 		/* If we're cancelled or hit an error while reading, do return the data
 		 * we managed to get. Be sure not to overwrite CANCELLED with ERROR. */
-		SetError( ssprintf("Error reading: %s", WinSockErrorToString(iError).c_str() ) );
+		SetError( fmt::sprintf("Error reading: %s", WinSockErrorToString(iError).c_str() ) );
 		break;
 	}
 
@@ -563,7 +563,7 @@ void NetworkStream_Win32::Write( const void *pBuffer, size_t iSize )
 				continue;
 		}
 
-		SetError( ssprintf("Error writing: %s", WinSockErrorToString(iError).c_str() ) );
+		SetError( fmt::sprintf("Error writing: %s", WinSockErrorToString(iError).c_str() ) );
 		return;
 	}
 }
@@ -586,7 +586,7 @@ void NetworkPostData::CreateMimeData( const std::map<RString,RString> &mapNameTo
 	// Find a non-conflicting mime boundary.
 	while(1)
 	{
-		sMimeBoundaryOut = ssprintf( "--%08i", rand() );
+		sMimeBoundaryOut = fmt::sprintf( "--%08i", rand() );
 		for (auto const &d: mapNameToData)
 		{
 			if( d.second.find(sMimeBoundaryOut) != RString::npos )
@@ -600,7 +600,7 @@ void NetworkPostData::CreateMimeData( const std::map<RString,RString> &mapNameTo
 	for (auto const &d: mapNameToData)
 	{
 		sOut += "--" + sMimeBoundaryOut + "\r\n";
-		sOut += ssprintf( "Content-Disposition: form-data; name=\"%s\"\r\n", d.first.c_str() );
+		sOut += fmt::sprintf( "Content-Disposition: form-data; name=\"%s\"\r\n", d.first.c_str() );
 		sOut += "\r\n";
 		sOut += d.second;
 		sOut += "\r\n";
@@ -616,7 +616,7 @@ void NetworkPostData::HttpThread()
 	CreateMimeData( m_Data, sData, sMimeBoundary );
 
 	// Stick to HTTP/1.0, since the protocol is simpler.
-	RString sBuf = ssprintf(
+	RString sBuf = fmt::sprintf(
 		"%s %s HTTP/1.0\r\n"
 		"Accept: */*\r\n"
 		"User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322)\r\n"
@@ -630,7 +630,7 @@ void NetworkPostData::HttpThread()
 	{
 		// sBuf += "Content-Type: application/x-www-form-urlencoded\r\n"
 		sBuf += "Content-Type: multipart/form-data; boundary=" + sMimeBoundary + "\r\n";
-		sBuf += ssprintf( "Content-Length: %i\r\n", sData.size() );
+		sBuf += fmt::sprintf( "Content-Length: %i\r\n", sData.size() );
 	}
 	sBuf += "\r\n";
 

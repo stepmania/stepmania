@@ -17,7 +17,7 @@ static const UInt32 kBytesPerFrame = kBytesPerPacket;
 static const UInt32 kFormatFlags = kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsFloat;
 
 #define WERROR(str, num, extra...) str ": '%s' (%lu).", ## extra, FourCCToString(num).c_str(), (num)
-#define ERROR(str, num, extra...) (ssprintf(WERROR(str, (num), ## extra)))
+#define ERROR(str, num, extra...) (fmt::sprintf(WERROR(str, (num), ## extra)))
 
 static inline RString FourCCToString( uint32_t num )
 {

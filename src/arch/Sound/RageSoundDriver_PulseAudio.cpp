@@ -31,7 +31,7 @@ RageSoundDriver_PulseAudio::~RageSoundDriver_PulseAudio()
 	pa_context_unref(m_PulseCtx);
 	pa_threaded_mainloop_stop(m_PulseMainLoop);
 	pa_threaded_mainloop_free(m_PulseMainLoop);
-	
+
 	if(m_Error != nullptr)
 	{
 		free(m_Error);
@@ -55,14 +55,14 @@ RString RageSoundDriver_PulseAudio::Init()
 	pa_proplist_sets(plist, PA_PROP_APPLICATION_NAME, PACKAGE_NAME);
 	pa_proplist_sets(plist, PA_PROP_APPLICATION_VERSION, PACKAGE_VERSION);
 	pa_proplist_sets(plist, PA_PROP_MEDIA_ROLE, "game");
-	
+
 	LOG->Trace("Pulse: pa_context_new_with_proplist()...");
-	
+
 	m_PulseCtx = pa_context_new_with_proplist(
 			pa_threaded_mainloop_get_api(m_PulseMainLoop),
 			"StepMania", plist);
 	pa_proplist_free(plist);
-	
+
 	if(m_PulseCtx == nullptr)
 	{
 		return "pa_context_new_with_proplist() failed!";
@@ -79,13 +79,13 @@ RString RageSoundDriver_PulseAudio::Init()
 #endif
 
 	pa_context_set_state_callback(m_PulseCtx, StaticCtxStateCb, this);
-	
+
 	LOG->Trace("Pulse: pa_context_connect()...");
 	error = pa_context_connect(m_PulseCtx, nullptr, (pa_context_flags_t)0, nullptr);
-	
+
 	if(error < 0)
 	{
-		return ssprintf("pa_contect_connect(): %s",
+		return fmt::sprintf("pa_contect_connect(): %s",
 			pa_strerror(pa_context_errno(m_PulseCtx)));
 	}
 
@@ -93,7 +93,7 @@ RString RageSoundDriver_PulseAudio::Init()
 	error = pa_threaded_mainloop_start(m_PulseMainLoop);
 	if(error < 0)
 	{
-		return ssprintf("pa_threaded_mainloop_start() returned %i", error);
+		return fmt::sprintf("pa_threaded_mainloop_start() returned %i", error);
 	}
 
 	/* Create the decode thread, this will be needed for Mix(), that we
