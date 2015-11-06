@@ -6,7 +6,14 @@
 
 namespace Rage
 {
-    /** @brief Get the first x characters of a string. Allow negative warping.
+	/** @brief A flag indicating whether to skip entries during splitting a string. */
+	enum class EmptyEntries: bool
+	{
+		include,
+		skip
+	};
+
+	/** @brief Get the first x characters of a string. Allow negative warping.
      *
      * This comes from http://stackoverflow.com/a/7597469/445373
      */
@@ -50,6 +57,50 @@ namespace Rage
 
 	/** @brief Join all of the strings together into one string. */
 	std::string join(std::string const &delimiter, std::vector<std::string>::const_iterator start, std::vector<std::string>::const_iterator finish );
+
+	/** @brief Split a string into a vector based on the delimiter. */
+	std::vector<std::string> split(std::string const &source, std::string const &delimiter);
+	/** @brief Split a string into a vector based on the delimiter. */
+	std::vector<std::string> split(std::string const &source, std::string const &delimiter, EmptyEntries shouldSkipEmptyEntries);
+	/** @brief Split a string into a vector based on the delimiter. */
+	std::vector<std::wstring> split(std::wstring const &source, std::wstring const &delimiter);
+	/** @brief Split a string into a vector based on the delimiter. */
+	std::vector<std::wstring> split(std::wstring const &source, std::wstring const &delimiter, EmptyEntries shouldSkipEmptyEntries);
+
+	/** @brief Split "in-place" using indexes.
+	 * @param source The string to "split".
+	 * @param delimiter The phrase to "split" the string by.
+	 * @param start An in-out parameter indicating the starting position of the string to "split" from.
+	 * @param size An in-out parameter to indicate how far to read in. */
+	void split_in_place( std::string const &source, std::string const &delimitor, int &start, int &size );
+	/** @brief Split "in-place" using indexes.
+	 * @param source The string to "split".
+	 * @param delimiter The phrase to "split" the string by.
+	 * @param start An in-out parameter indicating the starting position of the string to "split" from.
+	 * @param size An in-out parameter to indicate how far to read in.
+	 * @param shouldSkipEmptyEntries a flag to indicate if empty elements from the split should be skipped or not. */
+	void split_in_place( std::string const &source, std::string const &delimitor, int &start, int &size, EmptyEntries shouldSkipEmptyEntries );
+	/** @brief Split "in-place" using indexes.
+	 * @param source The string to "split".
+	 * @param delimiter The phrase to "split" the string by.
+	 * @param start An in-out parameter indicating the starting position of the string to "split" from.
+	 * @param size An in-out parameter to indicate how far to read in. */
+	void split_in_place( std::wstring const &source, std::wstring const &delimitor, int &start, int &size );
+	/** @brief Split "in-place" using indexes.
+	 * @param source The string to "split".
+	 * @param delimiter The phrase to "split" the string by.
+	 * @param start An in-out parameter indicating the starting position of the string to "split" from.
+	 * @param size An in-out parameter to indicate how far to read in.
+	 * @param shouldSkipEmptyEntries a flag to indicate if empty elements from the split should be skipped or not. */
+	void split_in_place( std::wstring const &source, std::wstring const &delimitor, int &start, int &size, EmptyEntries shouldSkipEmptyEntries );
+	/** @brief Split "in-place" using indexes. */
+	void split_in_place( std::string const &source, std::string const &delimitor, int &start, int &size, int len );
+	/** @brief Split "in-place" using indexes. */
+	void split_in_place( std::string const &source, std::string const &delimitor, int &start, int &size, int len, EmptyEntries shouldSkipEmptyEntries );
+	/** @brief Split "in-place" using indexes. */
+	void split_in_place( std::wstring const &source, std::wstring const &delimitor, int &start, int &size, int len );
+	/** @brief Split "in-place" using indexes. */
+	void split_in_place( std::wstring const &source, std::wstring const &delimitor, int &start, int &size, int len, EmptyEntries shouldSkipEmptyEntries );
 
 	/** @brief Trim the front of the string of all whitespace characters. */
 	std::string trim_left(std::string const &source);
