@@ -26,7 +26,7 @@ public:
 	 * If an empty string, don't bother using this for searching. */
 	RString m_sGroupName;
 	bool m_bUseSongGenreAllowedList;
-	std::vector<RString> m_vsSongGenreAllowedList;
+	std::vector<std::string> m_vsSongGenreAllowedList;
 	enum Selectable { Selectable_Yes, Selectable_No, Selectable_DontCare } m_Selectable;
 	bool m_bUseSongAllowedList;
 	std::vector<Song*> m_vpSongAllowedList;

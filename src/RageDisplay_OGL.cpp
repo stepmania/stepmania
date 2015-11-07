@@ -497,14 +497,17 @@ RString RageDisplay_Legacy::Init( const VideoModeParams &p, bool bAllowUnacceler
 			RString sType;
 			for( size_t i = iNextToPrint; i<asExtensions.size(); ++i )
 			{
-				vector<RString> asBits;
-				split( asExtensions[i], "_", asBits );
+				auto asBits = Rage::split(asExtensions[i], "_");
 				RString sThisType;
 				if (asBits.size() > 2)
-					sThisType = join( "_", asBits.begin(), asBits.begin()+2 );
-				if (i > iNextToPrint && sThisType != sType)
+				{
+					sThisType = Rage::join( "_", asBits.begin(), asBits.begin()+2 );
+				}
+                if (i > iNextToPrint && sThisType != sType)
+				{
 					break;
-				sType = sThisType;
+				}
+                sType = sThisType;
 				iLastToPrint = i;
 			}
 
@@ -518,9 +521,8 @@ RString RageDisplay_Legacy::Init( const VideoModeParams &p, bool bAllowUnacceler
 			RString sList = fmt::sprintf( "  %s: ", sType.c_str() );
 			while( iNextToPrint <= iLastToPrint )
 			{
-				vector<RString> asBits;
-				split( asExtensions[iNextToPrint], "_", asBits );
-				RString sShortExt = join( "_", asBits.begin()+2, asBits.end() );
+				auto asBits = Rage::split(asExtensions[iNextToPrint], "_");
+				auto sShortExt = Rage::join( "_", asBits.begin()+2, asBits.end() );
 				sList += sShortExt;
 				if (iNextToPrint < iLastToPrint)
 					sList += ", ";

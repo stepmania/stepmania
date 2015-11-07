@@ -201,7 +201,7 @@ public:
 	RadarCache_t m_RadarCache;
 
 	// Preferred styles:
-	std::set<RString> m_setStyles;
+	std::set<std::string> m_setStyles;
 
 	CachedObject<Course> m_CachedObject;
 };

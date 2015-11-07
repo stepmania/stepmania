@@ -791,7 +791,7 @@ void ScreenMapControllers::ExitAction()
 
 bool ScreenMapControllers::SanityCheckWrapper()
 {
-	vector<RString> reasons_not_sane;
+	vector<std::string> reasons_not_sane;
 	INPUTMAPPER->SanityCheckMappings(reasons_not_sane);
 	if(reasons_not_sane.empty())
 	{
@@ -803,7 +803,7 @@ bool ScreenMapControllers::SanityCheckWrapper()
 		{
 			reason= THEME->GetString("ScreenMapControllers", reason);
 		}
-		RString joined_reasons= join("\n", reasons_not_sane);
+		RString joined_reasons= Rage::join("\n", reasons_not_sane);
 		joined_reasons= THEME->GetString("ScreenMapControllers", "VitalButtons") + "\n" + joined_reasons;
 		Message msg("SetText");
 		msg.SetParam("Text", joined_reasons);

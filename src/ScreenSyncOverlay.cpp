@@ -103,7 +103,7 @@ static LocalizedString STANDARD_DEVIATION( "ScreenSyncOverlay", "Standard deviat
 void ScreenSyncOverlay::UpdateText()
 {
 	// Update Status
-	vector<RString> vs;
+	vector<std::string> vs;
 
 	if( g_bShowAutoplay )
 	{
@@ -135,7 +135,7 @@ void ScreenSyncOverlay::UpdateText()
 		AdjustSync::GetSyncChangeTextSong( vs );
 	}
 
-	m_textStatus.SetText( join("\n",vs) );
+	m_textStatus.SetText( Rage::join("\n",vs) );
 
 
 	// Update SyncInfo

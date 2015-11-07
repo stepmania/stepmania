@@ -62,23 +62,26 @@ void SongOptions::Approach( const SongOptions& other, float fDeltaSeconds )
 #undef DO_COPY
 }
 
-static void AddPart( vector<RString> &AddTo, float level, RString name )
+static void AddPart( vector<std::string> &AddTo, float level, RString name )
 {
 	if( level == 0 )
+	{
 		return;
-
+	}
 	const RString LevelStr = (level == 1)? RString(""): fmt::sprintf( "%ld%% ", std::lrint(level*100) );
 
 	AddTo.push_back( LevelStr + name );
 }
 
-void SongOptions::GetMods( vector<RString> &AddTo ) const
+void SongOptions::GetMods( vector<std::string> &AddTo ) const
 {
 	if( m_fMusicRate != 1 )
 	{
 		RString s = fmt::sprintf( "%2.2f", m_fMusicRate );
 		if( s[s.size()-1] == '0' )
+		{
 			s.erase( s.size()-1 );
+		}
 		AddTo.push_back( s + "xMusic" );
 	}
 
@@ -104,17 +107,23 @@ void SongOptions::GetMods( vector<RString> &AddTo ) const
 	}
 
 	if( m_bAssistClap )
-		AddTo.push_back( "Clap" );
+	{	AddTo.push_back( "Clap" );
+	}
 	if( m_bAssistMetronome )
+	{
 		AddTo.push_back( "Metronome" );
-
+	}
 	if( m_bStaticBackground )
+	{
 		AddTo.push_back( "StaticBG" );
+	}
 	if( m_bRandomBGOnly )
+	{
 		AddTo.push_back( "RandomBG" );
+	}
 }
 
-void SongOptions::GetLocalizedMods( vector<RString> &v ) const
+void SongOptions::GetLocalizedMods( vector<std::string> &v ) const
 {
 	GetMods( v );
 	for (auto &s: v)
@@ -123,18 +132,18 @@ void SongOptions::GetLocalizedMods( vector<RString> &v ) const
 	}
 }
 
-RString SongOptions::GetString() const
+std::string SongOptions::GetString() const
 {
-	vector<RString> v;
+	vector<std::string> v;
 	GetMods( v );
-	return join( ", ", v );
+	return Rage::join( ", ", v );
 }
 
-RString SongOptions::GetLocalizedString() const
+std::string SongOptions::GetLocalizedString() const
 {
-	vector<RString> v;
+	vector<std::string> v;
 	GetLocalizedMods( v );
-	return join( ", ", v );
+	return Rage::join( ", ", v );
 }
 
 

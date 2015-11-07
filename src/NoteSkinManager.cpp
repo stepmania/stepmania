@@ -529,7 +529,7 @@ RString NoteSkinManager::GetPathFromDirAndFile( const RString &sDir, const RStri
 
 	if( matches.empty() )
 	{
-		return RString();
+		return "";
 	}
 	if( matches.size() > 1 )
 	{

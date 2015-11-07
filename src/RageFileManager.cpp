@@ -421,8 +421,9 @@ void RageFileManager::GetDirListing( std::string const &sPath_, vector<std::stri
 	// So if a "/.." is still present, they're trying to go below the root,
 	// which isn't valid.
 	if( sPath.find("/..") != std::string::npos )
+	{
 		return;
-
+	}
 	vector<LoadedDriver *> apDriverList;
 	ReferenceAllDrivers( apDriverList );
 
@@ -432,14 +433,16 @@ void RageFileManager::GetDirListing( std::string const &sPath_, vector<std::stri
 	{
 		const RString p = pLoadedDriver->GetPath( sPath );
 		if( p.size() == 0 )
+		{
 			continue;
-
+		}
 		const unsigned OldStart = AddTo.size();
 
 		pLoadedDriver->m_pDriver->GetDirListing( p, AddTo, bOnlyDirs, bReturnPathToo );
 		if( AddTo.size() != OldStart )
+		{
 			++iDriversThatReturnedFiles;
-
+		}
 		/* If returning the path, prepend the mountpoint name to the files this driver returned. */
 		if( bReturnPathToo && pLoadedDriver->m_sMountPoint.size() > 0 )
 		{

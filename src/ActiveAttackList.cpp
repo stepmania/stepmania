@@ -35,20 +35,23 @@ void ActiveAttackList::Refresh()
 {
 	const AttackArray& attacks = m_pPlayerState->m_ActiveAttacks;
 
-	vector<RString> vsThemedMods;
+	vector<std::string> vsThemedMods;
 	for (auto const &attack: attacks)
 	{
 		if( !attack.bOn )
+		{
 			continue; // hasn't started yet
+		}
 		if( !attack.bShowInAttackList )
+		{
 			continue;
-
+		}
 		PlayerOptions po;
 		po.FromString( attack.sModifiers );
 		po.GetLocalizedMods( vsThemedMods );
 	}
 
-	RString s = join( "\n", vsThemedMods );
+	RString s = Rage::join( "\n", vsThemedMods );
 
 	this->SetText( s );	// BitmapText will not rebuild vertices if these strings are the same.
 }

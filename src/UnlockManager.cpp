@@ -645,21 +645,32 @@ void UnlockManager::Load()
 	// Log unlocks
 	for (auto &e: m_UnlockEntries)
 	{
-		RString str = fmt::sprintf( "Unlock: %s; ", join("\n",e.m_cmd.m_vsArgs).c_str() );
+		RString str = fmt::sprintf( "Unlock: %s; ", Rage::join("\n",e.m_cmd.m_vsArgs).c_str() );
 		FOREACH_ENUM( UnlockRequirement, j )
+		{
 			if( e.m_fRequirement[j] )
+			{
 				str += fmt::sprintf( "%s = %f; ", UnlockRequirementToString(j).c_str(), e.m_fRequirement[j] );
+			}
+		}
 		if( e.m_bRequirePassHardSteps )
+		{
 			str += "RequirePassHardSteps; ";
+		}
 		if (e.m_bRequirePassChallengeSteps)
+		{
 			str += "RequirePassChallengeSteps; ";
-
+		}
 		str += fmt::sprintf( "entryID = %s ", e.m_sEntryID.c_str() );
 		str += e.IsLocked()? "locked":"unlocked";
 		if( e.m_Song.IsValid() )
+		{
 			str += ( " (found song)" );
+		}
 		if( e.m_Course.IsValid() )
+		{
 			str += ( " (found course)" );
+		}
 		LOG->Trace( "%s", str.c_str() );
 	}
 

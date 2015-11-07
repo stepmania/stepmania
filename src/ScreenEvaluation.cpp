@@ -312,12 +312,14 @@ void ScreenEvaluation::Init()
 				m_textPlayerOptions[p].SetName( fmt::sprintf("PlayerOptionsP%d",p+1) );
 				ActorUtil::LoadAllCommands( m_textPlayerOptions[p], m_sName );
 				SET_XY( m_textPlayerOptions[p] );
-				vector<RString> v;
 				PlayerOptions po = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetPreferred();
 				if( PLAYER_OPTIONS_HIDE_FAIL_TYPE )
+				{
 					po.m_FailType = (FailType)0;	// blank out the fail type so that it won't show in the mods list
+				}
+				vector<std::string> v;
 				po.GetLocalizedMods( v );
-				RString sPO = join( PLAYER_OPTIONS_SEPARATOR, v );
+				auto sPO = Rage::join( PLAYER_OPTIONS_SEPARATOR, v );
 				m_textPlayerOptions[p].SetText( sPO );
 				this->AddChild( &m_textPlayerOptions[p] );
 			}

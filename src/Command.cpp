@@ -8,7 +8,7 @@
 using std::vector;
 using std::string;
 
-RString Command::GetName() const
+std::string Command::GetName() const
 {
 	if( m_vsArgs.empty() )
 	{
@@ -25,43 +25,52 @@ Command::Arg Command::GetArg( unsigned index ) const
 	return a;
 }
 
-void Command::Load( const RString &sCommand )
+void Command::Load( std::string const sCommand )
 {
-	m_vsArgs.clear();
-	split( sCommand, ",", m_vsArgs, false );	// don't ignore empty
+	m_vsArgs = Rage::split(sCommand, ",", Rage::EmptyEntries::include);
 }
 
-RString Command::GetOriginalCommandString() const
+std::string Command::GetOriginalCommandString() const
 {
-	return join( ",", m_vsArgs );
+	return Rage::join(",", m_vsArgs);
 }
 
-static void SplitWithQuotes( const RString sSource, const char Delimitor, vector<RString> &asOut, const bool bIgnoreEmpty )
+// TODO: Place this within the Rage library.
+// TODO: Return the asOut instead of just using an out parameter.
+static void SplitWithQuotes( std::string const sSource, const char Delimitor, vector<std::string> &asOut, const bool bIgnoreEmpty )
 {
 	/* Short-circuit if the source is empty; we want to return an empty vector if
 	 * the string is empty, even if bIgnoreEmpty is true. */
 	if( sSource.empty() )
+	{
 		return;
-
+	}
 	size_t startpos = 0;
 	do {
 		size_t pos = startpos;
 		while( pos < sSource.size() )
 		{
 			if( sSource[pos] == Delimitor )
+			{
 				break;
-
+			}
 			if( sSource[pos] == '"' || sSource[pos] == '\'' )
 			{
 				/* We've found a quote.  Search for the close. */
 				pos = sSource.find( sSource[pos], pos+1 );
 				if( pos == string::npos )
+				{
 					pos = sSource.size();
+				}
 				else
+				{
 					++pos;
+				}
 			}
 			else
+			{
 				++pos;
+			}
 		}
 
 		if( pos-startpos > 0 || !bIgnoreEmpty )
@@ -69,10 +78,12 @@ static void SplitWithQuotes( const RString sSource, const char Delimitor, vector
 			/* Optimization: if we're copying the whole string, avoid substr; this
 			 * allows this copy to be refcounted, which is much faster. */
 			if( startpos == 0 && pos-startpos == sSource.size() )
+			{
 				asOut.push_back( sSource );
+			}
 			else
 			{
-				const RString AddCString = sSource.substr( startpos, pos-startpos );
+				std::string const AddCString = sSource.substr( startpos, pos-startpos );
 				asOut.push_back( AddCString );
 			}
 		}
@@ -81,27 +92,38 @@ static void SplitWithQuotes( const RString sSource, const char Delimitor, vector
 	} while( startpos <= sSource.size() );
 }
 
-RString Commands::GetOriginalCommandString() const
+std::string Commands::GetOriginalCommandString() const
 {
-	RString s;
+	// TODO: Look into std::transform and Rage::join to see if that would be faster.
+	std::stringstream target;
+	bool hasPastFirst = false;
 	for (auto const &c: v)
 	{
-		if(s != "")
+		// We don't want to add the semicolon first.
+		if (hasPastFirst)
 		{
-			s += ";";
+			target << ";";
 		}
-		s += c.GetOriginalCommandString();
+		else
+		{
+			hasPastFirst = true;
+		}
+		target << c.GetOriginalCommandString();
 	}
-	return s;
+	return target.str();
 }
 
-void ParseCommands( const RString &sCommands, Commands &vCommandsOut, bool bLegacy )
+void ParseCommands( std::string const &sCommands, Commands &vCommandsOut, bool bLegacy )
 {
-	vector<RString> vsCommands;
+	vector<std::string> vsCommands;
 	if( bLegacy )
-		split( sCommands, ";", vsCommands, true );
+	{
+		vsCommands = Rage::split(sCommands, ";", Rage::EmptyEntries::skip);
+	}
 	else
+	{
 		SplitWithQuotes( sCommands, ';', vsCommands, true );	// do ignore empty
+	}
 	vCommandsOut.v.resize( vsCommands.size() );
 
 	for( unsigned i=0; i<vsCommands.size(); i++ )
@@ -111,7 +133,7 @@ void ParseCommands( const RString &sCommands, Commands &vCommandsOut, bool bLega
 	}
 }
 
-Commands ParseCommands( const RString &sCommands )
+Commands ParseCommands( std::string const &sCommands )
 {
 	Commands vCommands;
 	ParseCommands( sCommands, vCommands, false );

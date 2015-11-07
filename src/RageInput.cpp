@@ -178,16 +178,18 @@ RString RageInput::GetDisplayDevicesString() const
 	vector<InputDeviceInfo> vDevices;
 	GetDevicesAndDescriptions( vDevices );
 
-	vector<RString> vs;
+	vector<std::string> vs;
 	for (auto &device: vDevices)
 	{
-		const RString &sDescription = device.sDesc;
+		auto const &sDescription = device.sDesc;
 		InputDevice id = device.id;
 		if( sDescription == "MonkeyKeyboard" )
+		{
 			continue;	// hide this
+		}
 		vs.push_back( fmt::sprintf("%s (%s)", sDescription.c_str(), InputDeviceToString(id).c_str()) );
 	}
-	return join("\n",vs);
+	return Rage::join("\n",vs);
 }
 
 // lua start

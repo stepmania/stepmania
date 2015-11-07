@@ -954,17 +954,19 @@ void NoteField::DrawPrimitives()
 
 							if( IS_ON_SCREEN(fLowestBeat) )
 							{
-								vector<RString> vsBGChanges;
+								vector<std::string> vsBGChanges;
 								for (auto bl = viLowestIndex.begin(); bl != viLowestIndex.end(); ++bl)
 								{
 									ASSERT( iter[*bl] != GAMESTATE->m_pCurSong->GetBackgroundChanges(*bl).end() );
 									const BackgroundChange& change = *iter[*bl];
 									RString s = change.GetTextDescription();
 									if( *bl!=0 )
+									{
 										s = fmt::sprintf("%d: ",*bl) + s;
+									}
 									vsBGChanges.push_back( s );
 								}
-								DrawBGChangeText(fLowestBeat, join("\n",vsBGChanges), text_glow);
+								DrawBGChangeText(fLowestBeat, Rage::join("\n",vsBGChanges), text_glow);
 							}
 							for (auto const &bl: viLowestIndex)
 							{

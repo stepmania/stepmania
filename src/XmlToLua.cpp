@@ -84,7 +84,7 @@ RString add_extension_to_relative_path_from_found_file(
 		found_file.substr(found_last_slash, string::npos);
 }
 
-bool verify_arg_count(RString cmd, vector<RString>& args, size_t req)
+bool verify_arg_count(RString cmd, vector<std::string>& args, size_t req)
 {
 	if(args.size() < req)
 	{
@@ -94,15 +94,15 @@ bool verify_arg_count(RString cmd, vector<RString>& args, size_t req)
 	return true;
 }
 
-typedef void (*arg_converter_t)(vector<RString>& args);
+typedef void (*arg_converter_t)(vector<std::string>& args);
 
-std::map<RString, arg_converter_t> arg_converters;
-std::map<RString, size_t> tween_counters;
-std::set<RString> fields_that_are_strings;
-std::map<RString, RString> chunks_to_replace;
+std::map<std::string, arg_converter_t> arg_converters;
+std::map<std::string, size_t> tween_counters;
+std::set<std::string> fields_that_are_strings;
+std::map<std::string, std::string> chunks_to_replace;
 
 #define COMMON_ARG_VERIFY(count) if(!verify_arg_count(args[0], args, count)) return;
-void x_conv(vector<RString>& args)
+void x_conv(vector<std::string>& args)
 {
 	COMMON_ARG_VERIFY(2);
 	float pos;
@@ -111,7 +111,7 @@ void x_conv(vector<RString>& args)
 		args[1]= convert_xpos(pos);
 	}
 }
-void y_conv(vector<RString>& args)
+void y_conv(vector<std::string>& args)
 {
 	COMMON_ARG_VERIFY(2);
 	float pos;
@@ -120,16 +120,16 @@ void y_conv(vector<RString>& args)
 		args[1]= convert_ypos(pos);
 	}
 }
-void string_arg_conv(vector<RString>& args)
+void string_arg_conv(vector<std::string>& args)
 {
 	COMMON_ARG_VERIFY(2);
 	args[1]= "\"" + args[1] + "\"";
 }
-void lower_string_conv(vector<RString>& args)
+void lower_string_conv(vector<std::string>& args)
 {
 	args[0] = Rage::make_lower(args[0]);
 }
-void hidden_conv(vector<RString>& args)
+void hidden_conv(vector<std::string>& args)
 {
 	COMMON_ARG_VERIFY(2);
 	args[0]= "visible";
@@ -142,7 +142,7 @@ void hidden_conv(vector<RString>& args)
 		args[1]= "false";
 	}
 }
-void diffuse_conv(vector<RString>& args)
+void diffuse_conv(vector<std::string>& args)
 {
 	COMMON_ARG_VERIFY(2);
 	// TODO: Utilize Rage::join.
@@ -162,7 +162,7 @@ void diffuse_conv(vector<RString>& args)
 // Prototype for a function that is created by a macro in another translation unit and has no visible prototype, don't do this unless you have a good reason.
 std::string const BlendModeToString(BlendMode);
 std::string const CullModeToString(CullMode);
-void blend_conv(vector<RString>& args)
+void blend_conv(vector<std::string>& args)
 {
 	COMMON_ARG_VERIFY(2);
 	for(int i= 0; i < NUM_BlendMode; ++i)
@@ -175,7 +175,7 @@ void blend_conv(vector<RString>& args)
 		}
 	}
 }
-void cull_conv(vector<RString>& args)
+void cull_conv(vector<std::string>& args)
 {
 	COMMON_ARG_VERIFY(2);
 	for(int i= 0; i < NUM_CullMode; ++i)
@@ -288,19 +288,17 @@ void actor_template_t::store_cmd(RString const& cmd_name, RString const& full_cm
 		fields[cmd_name]= cmd_text;
 		return;
 	}
-	vector<RString> cmds;
-	split(full_cmd, ";", cmds, true);
+	auto cmds = Rage::split(full_cmd, ";", Rage::EmptyEntries::skip);
 	size_t queue_size= 0;
 	// If someone has a simfile that uses a playcommand that pushes tween
 	// states onto the queue, queue size counting will have to be made much
 	// more complex to prevent that from causing an overflow.
-	for(vector<RString>::iterator cmd= cmds.begin(); cmd != cmds.end(); ++cmd)
+	for(auto cmd= cmds.begin(); cmd != cmds.end(); ++cmd)
 	{
-		vector<RString> args;
-		split(*cmd, ",", args, true);
+		vector<std::string> args = Rage::split(*cmd, ",", Rage::EmptyEntries::skip);
 		if(!args.empty())
 		{
-			for(vector<RString>::iterator arg= args.begin(); arg != args.end(); ++arg)
+			for(auto arg= args.begin(); arg != args.end(); ++arg)
 			{
 				size_t first_nonspace= 0;
 				size_t last_nonspace= arg->size();
@@ -325,7 +323,7 @@ void actor_template_t::store_cmd(RString const& cmd_name, RString const& full_cm
 				queue_size+= counter->second;
 			}
 		}
-		*cmd= join(",", args);
+		*cmd= Rage::join(",", args);
 	}
 	// This code is probably actually useless, OITG has the same tween queue size
 	// and the real reason I saw overflows in converted files was a bug in
@@ -336,12 +334,11 @@ void actor_template_t::store_cmd(RString const& cmd_name, RString const& full_cm
 		size_t states_per= (queue_size / num_to_make) + 1;
 		size_t states_in_curr= 0;
 		RString this_name= cmd_name;
-		vector<RString> curr_cmd;
-		for(vector<RString>::iterator cmd= cmds.begin(); cmd != cmds.end(); ++cmd)
+		vector<std::string> curr_cmd;
+		for(auto cmd= cmds.begin(); cmd != cmds.end(); ++cmd)
 		{
 			curr_cmd.push_back(*cmd);
-			vector<RString> args;
-			split(*cmd, ",", args, true);
+			auto args = Rage::split(*cmd, ",", Rage::EmptyEntries::skip);
 			if(!args.empty())
 			{
 				auto counter= tween_counters.find(args[0]);
@@ -352,7 +349,7 @@ void actor_template_t::store_cmd(RString const& cmd_name, RString const& full_cm
 					{
 						RString next_name= unique_name("cmd");
 						curr_cmd.push_back("queuecommand,\"" + next_name + "\"");
-						fields[this_name]= "cmd(" + join(";", curr_cmd) + ")";
+						fields[this_name]= "cmd(" + Rage::join(";", curr_cmd) + ")";
 						curr_cmd.clear();
 						this_name= next_name;
 						states_in_curr= 0;
@@ -362,12 +359,12 @@ void actor_template_t::store_cmd(RString const& cmd_name, RString const& full_cm
 		}
 		if(!curr_cmd.empty())
 		{
-			fields[this_name]= "cmd(" + join(";", curr_cmd) + ")";
+			fields[this_name]= "cmd(" + Rage::join(";", curr_cmd) + ")";
 		}
 	}
 	else
 	{
-		fields[cmd_name]= "cmd(" + join(";", cmds) + ")";
+		fields[cmd_name]= "cmd(" + Rage::join(";", cmds) + ")";
 	}
 }
 
@@ -676,10 +673,9 @@ void actor_template_t::output_to_file(RageFile* file, RString const& indent)
 		}
 		file->Write(indent + "},\n");
 	}
-	for(field_cont_t::iterator field= fields.begin();
-		field != fields.end(); ++field)
+	for(auto field= fields.begin(); field != fields.end(); ++field)
 	{
-		std::set<RString>::iterator is_string= fields_that_are_strings.find(field->first);
+		auto is_string = fields_that_are_strings.find(field->first);
 		if(is_string != fields_that_are_strings.end())
 		{
 			file->Write(subindent + field->first + "= \"" + field->second + "\",\n");

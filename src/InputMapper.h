@@ -9,7 +9,7 @@ struct Game;
 const int NUM_GAME_TO_DEVICE_SLOTS	= 5;	// five device inputs may map to one game input
 const int NUM_SHOWN_GAME_TO_DEVICE_SLOTS = 3;
 const int NUM_USER_GAME_TO_DEVICE_SLOTS = 2;
-extern const RString DEVICE_INPUT_SEPARATOR;
+extern std::string const DEVICE_INPUT_SEPARATOR;
 
 struct AutoMappingEntry
 {
@@ -155,8 +155,8 @@ public:
 	void ReadMappingsFromDisk();
 	void SaveMappingsToDisk();
 	void ResetMappingsToDefault();
-	void CheckButtonAndAddToReason(GameButton menu, std::vector<RString>& full_reason, RString const& sub_reason);
-	void SanityCheckMappings(std::vector<RString>& reason);
+	void CheckButtonAndAddToReason(GameButton menu, std::vector<std::string>& full_reason, RString const& sub_reason);
+	void SanityCheckMappings(std::vector<std::string>& reason);
 
 	void ClearAllMappings();
 

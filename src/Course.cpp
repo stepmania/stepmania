@@ -50,33 +50,54 @@ const int MAX_BOTTOM_RANGE = 10;
 
 RString CourseEntry::GetTextDescription() const
 {
-	vector<RString> vsEntryDescription;
+	vector<std::string> vsEntryDescription;
 	Song *pSong = songID.ToSong();
 	if( pSong )
+	{
 		vsEntryDescription.push_back( pSong->GetTranslitFullTitle() );
+	}
 	else
+	{
 		vsEntryDescription.push_back( "Random" );
+	}
 	if( !songCriteria.m_sGroupName.empty() )
+	{
 		vsEntryDescription.push_back( songCriteria.m_sGroupName );
+	}
 	if( songCriteria.m_bUseSongGenreAllowedList )
-		vsEntryDescription.push_back( join(",",songCriteria.m_vsSongGenreAllowedList) );
+	{
+		vsEntryDescription.push_back( Rage::join(",",songCriteria.m_vsSongGenreAllowedList) );
+	}
 	if( stepsCriteria.m_difficulty != Difficulty_Invalid  &&  stepsCriteria.m_difficulty != Difficulty_Medium )
+	{
 		vsEntryDescription.push_back( CourseDifficultyToLocalizedString(stepsCriteria.m_difficulty) );
+	}
 	if( stepsCriteria.m_iLowMeter != -1 )
+	{
 		vsEntryDescription.push_back( fmt::sprintf("Low meter: %d", stepsCriteria.m_iLowMeter) );
+	}
 	if( stepsCriteria.m_iHighMeter != -1 )
+	{
 		vsEntryDescription.push_back( fmt::sprintf("High meter: %d", stepsCriteria.m_iHighMeter) );
+	}
 	if( songSort != SongSort_Randomize )
+	{
 		vsEntryDescription.push_back( "Sort: %d" + SongSortToLocalizedString(songSort) );
+	}
 	if( songSort != SongSort_Randomize && iChooseIndex != 0 )
+	{
 		vsEntryDescription.push_back( "Choose " + FormatNumberAndSuffix(iChooseIndex) + " match" );
+	}
 	int iNumModChanges = GetNumModChanges();
 	if( iNumModChanges != 0 )
+	{
 		vsEntryDescription.push_back( fmt::sprintf("%d mod changes", iNumModChanges) );
+	}
 	if( fGainSeconds != 0 )
+	{
 		vsEntryDescription.push_back( fmt::sprintf("Low meter: %.0f", fGainSeconds) );
-
-	RString s = join( ",", vsEntryDescription );
+	}
+	RString s = Rage::join( ",", vsEntryDescription );
 	return s;
 }
 

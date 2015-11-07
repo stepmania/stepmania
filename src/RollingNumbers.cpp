@@ -77,13 +77,13 @@ void RollingNumbers::UpdateText()
 	}
 	if(s.size() < chars_wide && !m_leading_glyph.empty())
 	{
-		std::vector<RString> to_join;
+		std::vector<std::string> to_join;
 		for(size_t i= 0; i < chars_wide - s.size(); ++i)
 		{
 			to_join.push_back(m_leading_glyph);
 		}
 		to_join.push_back(s);
-		s= join("", to_join);
+		s = Rage::join("", to_join);
 	}
 	SetText(s);
 	ClearAttributes();

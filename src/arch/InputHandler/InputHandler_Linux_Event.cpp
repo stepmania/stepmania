@@ -166,7 +166,7 @@ bool EventDevice::Open( RString sFile, InputDevice dev )
 		LOG->Warn( "ioctl(EV_MAX): %s", strerror(errno) );
 
 	{
-		vector<RString> setEventTypes;
+		vector<std::string> setEventTypes;
 
 		if( BitIsSet(iEventTypes, EV_SYN) )		setEventTypes.push_back( "syn" );
 		if( BitIsSet(iEventTypes, EV_KEY) )		setEventTypes.push_back( "key" );
@@ -181,7 +181,7 @@ bool EventDevice::Open( RString sFile, InputDevice dev )
 		if( BitIsSet(iEventTypes, EV_PWR) )		setEventTypes.push_back( "pwr" );
 		if( BitIsSet(iEventTypes, EV_FF_STATUS) )	setEventTypes.push_back( "ff_status" );
 
-		LOG->Info( "    Event types: %s", join(", ", setEventTypes).c_str() );
+		LOG->Info( "    Event types: %s", Rage::join(", ", setEventTypes).c_str() );
 	}
 
 	int iTotalKeys = 0;

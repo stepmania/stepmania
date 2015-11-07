@@ -1328,14 +1328,13 @@ void TimingData::NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, i
 	FAIL_M("Failed to get measure and beat for note row");
 }
 
-vector<RString> TimingData::ToVectorString(TimingSegmentType tst, int dec) const
+vector<std::string> TimingData::ToVectorString(TimingSegmentType tst, int dec) const
 {
 	const vector<TimingSegment *> segs = GetTimingSegments(tst);
-	vector<RString> ret;
-
-	for (unsigned i = 0; i < segs.size(); i++)
+	vector<std::string> ret;
+	for (auto const *seg: segs)
 	{
-		ret.push_back(segs[i]->ToString(dec));
+		ret.push_back(seg->ToString(dec));
 	}
 	return ret;
 }

@@ -1,6 +1,7 @@
 #include "global.h"
 #include "ArchHooks.h"
 #include "RageUtil.h"
+#include "RageString.hpp"
 #include "archutils/Win32/SpecialDirs.h"
 #include "ProductInfo.h"
 #include "RageFileManager.h"
@@ -45,12 +46,10 @@ static RString GetMountDir( const RString &sDirOfExecutable )
 {
 	/* All Windows data goes in the directory one level above the executable. */
 	CHECKPOINT_M( fmt::sprintf( "DOE \"%s\"", sDirOfExecutable.c_str()) );
-	vector<RString> asParts;
-	split( sDirOfExecutable, "/", asParts );
+	auto asParts = Rage::split(sDirOfExecutable, "/");
 	CHECKPOINT_M( fmt::sprintf( "... %i asParts", asParts.size()) );
 	ASSERT_M( asParts.size() > 1, fmt::sprintf("Strange sDirOfExecutable: %s", sDirOfExecutable.c_str()) );
-	RString sDir = join( "/", asParts.begin(), asParts.end()-1 );
-	return sDir;
+	return Rage::join( "/", asParts.begin(), asParts.end()-1 );
 }
 
 void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )

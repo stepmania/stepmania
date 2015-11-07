@@ -611,11 +611,10 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 		if (this->m_sArtist == "The Dancing Monkeys Project" && this->m_sMainTitle.find_first_of('-') != string::npos)
 		{
 			// Dancing Monkeys had a bug/feature where the artist was replaced. Restore it.
-			vector<RString> titleParts;
-			split(this->m_sMainTitle, "-", titleParts);
+			auto titleParts = Rage::split(this->m_sMainTitle, "-");
 			this->m_sArtist = Rage::trim(titleParts.front());
 			titleParts.erase(titleParts.begin());
-			this->m_sMainTitle = Rage::trim(join("-", titleParts));
+			this->m_sMainTitle = Rage::trim(Rage::join("-", titleParts));
 		}
 
 		m_sMainTitle = Rage::trim(m_sMainTitle);
@@ -1594,9 +1593,9 @@ vector<RString> Song::GetFGChanges1ToVectorString() const
 	return this->GetChangesToVectorString(this->GetForegroundChanges());
 }
 
-vector<RString> Song::GetInstrumentTracksToVectorString() const
+vector<std::string> Song::GetInstrumentTracksToVectorString() const
 {
-	vector<RString> ret;
+	vector<std::string> ret;
 	FOREACH_ENUM(InstrumentTrack, it)
 	{
 		if (this->HasInstrumentTrack(it))

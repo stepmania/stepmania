@@ -115,15 +115,16 @@ void Dialog::IgnoreMessage( RString sID )
 	}
 
 	if( sID == "" )
+	{
 		return;
-
+	}
 	if( MessageIsIgnored(sID) )
+	{
 		return;
-
-	vector<RString> asList;
-	split( g_sIgnoredDialogs.Get(), ",", asList );
+	}
+	auto asList = Rage::split(g_sIgnoredDialogs.Get(), ",");
 	asList.push_back( sID );
-	g_sIgnoredDialogs.Set( join(",",asList) );
+	g_sIgnoredDialogs.Set( Rage::join(",",asList) );
 	PREFSMAN->SavePrefsToDisk();
 #endif
 }

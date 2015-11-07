@@ -3,6 +3,7 @@
 
 #define ATTACK_STARTS_NOW (-10000.f)
 
+#include <string>
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 class Song;
@@ -79,7 +80,7 @@ struct AttackArray : public std::vector<Attack>
 	/**
 	 * @brief Return a string representation used for simfiles.
 	 * @return the string representation. */
-	std::vector<RString> ToVectorString() const;
+	std::vector<std::string> ToVectorString() const;
 
 	/**
 	 * @brief Adjust the starting time of all attacks.

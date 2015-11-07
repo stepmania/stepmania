@@ -162,16 +162,20 @@ static HighScore FillInHighScore( const PlayerStageStats &pss, const PlayerState
 	hs.SetStageAward( pss.m_StageAward );
 	hs.SetPeakComboAward( pss.m_PeakComboAward );
 
-	vector<RString> asModifiers;
+	vector<std::string> asModifiers;
 	{
-		RString sPlayerOptions = ps.m_PlayerOptions.GetStage().GetString();
+		auto sPlayerOptions = ps.m_PlayerOptions.GetStage().GetString();
 		if( !sPlayerOptions.empty() )
+		{
 			asModifiers.push_back( sPlayerOptions );
-		RString sSongOptions = GAMESTATE->m_SongOptions.GetStage().GetString();
+		}
+		auto sSongOptions = GAMESTATE->m_SongOptions.GetStage().GetString();
 		if( !sSongOptions.empty() )
+		{
 			asModifiers.push_back( sSongOptions );
+		}
 	}
-	hs.SetModifiers( join(", ", asModifiers) );
+	hs.SetModifiers( Rage::join(", ", asModifiers) );
 
 	hs.SetDateTime( DateTime::GetNowDateTime() );
 	hs.SetPlayerGuid( sPlayerGuid );

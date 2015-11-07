@@ -4018,8 +4018,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		AttackArray &attacks =
 		(GAMESTATE->m_bIsUsingStepTiming ? m_pSteps->m_Attacks : m_pSong->m_Attacks);
 		Attack &attack = attacks[attackInProcess];
-		vector<RString> mods;
-		split(attack.sModifiers, ",", mods);
+		auto mods = Rage::split(attack.sModifiers, ",");
 		RString mod = Rage::trim(ScreenTextEntry::s_sLastAnswer);
 		if (mod.length() > 0)
 		{
@@ -4031,7 +4030,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		}
 		if (mods.size() > 0)
 		{
-			attack.sModifiers = join(",", mods);
+			attack.sModifiers = Rage::join(",", mods);
 		}
 		else
 		{
@@ -6385,12 +6384,12 @@ static bool IsMapped( EditButton eb, const MapEditToDI &editmap )
 	return false;
 }
 
-static void ProcessKeyName( RString &s )
+static void ProcessKeyName( std::string &s )
 {
 	Rage::replace(s, "Key_", "" );
 }
 
-static void ProcessKeyNames( vector<RString> &vs, bool doSort )
+static void ProcessKeyNames( vector<std::string> &vs, bool doSort )
 {
 	for (auto &s: vs)
 	{
@@ -6398,15 +6397,17 @@ static void ProcessKeyNames( vector<RString> &vs, bool doSort )
 	}
 
 	if (doSort)
+	{
 		sort( vs.begin(), vs.end() );
-	vector<RString>::iterator toDelete = unique( vs.begin(), vs.end() );
+	}
+	auto toDelete = unique( vs.begin(), vs.end() );
 	vs.erase(toDelete, vs.end());
 }
 
 static RString GetDeviceButtonsLocalized( const vector<EditButton> &veb, const MapEditToDI &editmap )
 {
-	vector<RString> vsPress;
-	vector<RString> vsHold;
+	vector<std::string> vsPress;
+	vector<std::string> vsHold;
 	for (auto &eb: veb)
 	{
 		if( !IsMapped( eb, editmap ) )
@@ -6417,18 +6418,24 @@ static RString GetDeviceButtonsLocalized( const vector<EditButton> &veb, const M
 			DeviceInput diPress = editmap.button[eb][s];
 			DeviceInput diHold = editmap.hold[eb][s];
 			if( diPress.IsValid() )
+			{
 				vsPress.push_back( Capitalize(INPUTMAN->GetLocalizedInputString(diPress)) );
+			}
 			if( diHold.IsValid() )
+			{
 				vsHold.push_back( Capitalize(INPUTMAN->GetLocalizedInputString(diHold)) );
+			}
 		}
 	}
 
 	ProcessKeyNames( vsPress, false );
 	ProcessKeyNames( vsHold, true );
 
-	RString s = join("/",vsPress);
+	RString s = Rage::join("/",vsPress);
 	if( !vsHold.empty() )
-		s = join("/",vsHold) + " + " + s;
+	{
+		s = Rage::join("/",vsHold) + " + " + s;
+	}
 	return s;
 }
 
