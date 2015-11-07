@@ -208,7 +208,7 @@ public:
 				}
 				else
 				{
-					LuaHelpers::ReportScriptErrorFmt("Unknown row flag \"%s\".", sName.c_str());
+					LuaHelpers::ReportScriptErrorFmt("Unknown row flag \"%s\" on row %s.", sName.c_str(), m_Def.m_sName.c_str());
 				}
 			}
 			for( int col = 0; col < NumCols; ++col )
