@@ -39,7 +39,7 @@ enum NoteColorType
 	NUM_NoteColorType,
 	NoteColorType_Invalid
 };
-const RString& NoteColorTypeToString( NoteColorType nct );
+std::string const NoteColorTypeToString( NoteColorType nct );
 NoteColorType StringToNoteColorType( const RString& s );
 
 struct NoteResource;
@@ -74,7 +74,7 @@ enum HoldType
 };
 /** @brief Loop through each HoldType. */
 #define FOREACH_HoldType( i ) FOREACH_ENUM( HoldType, i )
-const RString &HoldTypeToString( HoldType ht );
+std::string const HoldTypeToString( HoldType ht );
 
 enum ActiveType
 {
@@ -85,7 +85,7 @@ enum ActiveType
 };
 /** @brief Loop through each ActiveType. */
 #define FOREACH_ActiveType( i ) FOREACH_ENUM( ActiveType, i )
-const RString &ActiveTypeToString( ActiveType at );
+std::string const ActiveTypeToString( ActiveType at );
 
 enum NoteColumnSplineMode
 {
@@ -96,7 +96,7 @@ enum NoteColumnSplineMode
 	NoteColumnSplineMode_Invalid
 };
 
-const RString& NoteColumnSplineModeToString(NoteColumnSplineMode ncsm);
+std::string const NoteColumnSplineModeToString(NoteColumnSplineMode ncsm);
 LuaDeclareType(NoteColumnSplineMode);
 
 // A little pod struct to carry the data the NoteField needs to pass to the

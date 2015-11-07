@@ -28,12 +28,12 @@ enum EditMenuRow
  * @brief Turn the EditMenuRow into a string.
  * @param r the row.
  * @return the string. */
-const RString& EditMenuRowToString( EditMenuRow r );
+std::string const EditMenuRowToString( EditMenuRow r );
 /**
  * @brief Turn the EditMenuRow into a localized string.
  * @param r the row.
  * @return the localized string. */
-const RString& EditMenuRowToLocalizedString( EditMenuRow r );
+std::string const EditMenuRowToLocalizedString( EditMenuRow r );
 
 /** @brief The different actions one can take on a step. */
 enum EditMenuAction
@@ -52,12 +52,12 @@ enum EditMenuAction
  * @brief Turn the EditMenuAction into a string.
  * @param ema the action.
  * @return the string. */
-const RString& EditMenuActionToString( EditMenuAction ema );
+std::string const EditMenuActionToString( EditMenuAction ema );
 /**
  * @brief Turn the EditMenuAction into a localized string.
  * @param ema the action.
  * @return the localized string. */
-const RString& EditMenuActionToLocalizedString( EditMenuAction ema );
+std::string const EditMenuActionToLocalizedString( EditMenuAction ema );
 
 /** @brief How many arrows are used for the EditMenu? */
 const int NUM_ARROWS = 2;

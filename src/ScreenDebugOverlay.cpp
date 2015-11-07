@@ -264,7 +264,7 @@ void ScreenDebugOverlay::Init()
 	m_textHeader.SetName( "HeaderText" );
 	m_textHeader.LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "header") );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textHeader );
-	m_textHeader.SetText( DEBUG_MENU );
+	m_textHeader.SetText( DEBUG_MENU.GetValue() );
 	this->AddChild( &m_textHeader );
 
 	for (auto s = m_asPages.begin(); s != m_asPages.end(); ++s)

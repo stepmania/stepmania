@@ -26,7 +26,7 @@ enum WheelState {
 	NUM_WheelState,
 	WheelState_Invalid,
 };
-const RString& WheelStateToString( WheelState ws );
+std::string const WheelStateToString( WheelState ws );
 WheelState StringToWheelState( const RString& sDC );
 LuaDeclareType( WheelState );
 

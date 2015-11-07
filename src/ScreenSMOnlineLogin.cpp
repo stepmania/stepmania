@@ -112,7 +112,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 	}
 	else if( SM == SM_NoProfilesDefined )
 	{
-		SCREENMAN->SystemMessage(DEFINE_A_PROFILE);
+		SCREENMAN->SystemMessage(DEFINE_A_PROFILE.GetValue());
 		SCREENMAN->SetNewScreen("ScreenOptionsManageProfiles");
 	}
 	else if( SM == SM_SMOnlinePack )
@@ -171,7 +171,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 		if(GAMESTATE->IsPlayerEnabled((PlayerNumber) 0) && GAMESTATE->IsPlayerEnabled((PlayerNumber) 1) &&
 			(GAMESTATE->GetPlayerDisplayName((PlayerNumber) 0) == GAMESTATE->GetPlayerDisplayName((PlayerNumber) 1)))
 		{
-			SCREENMAN->SystemMessage( UNIQUE_PROFILE );
+			SCREENMAN->SystemMessage( UNIQUE_PROFILE.GetValue() );
 			SCREENMAN->SetNewScreen("ScreenSMOnlineLogin");
 		}
 		else

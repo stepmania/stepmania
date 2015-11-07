@@ -37,7 +37,7 @@ enum NewSkinTapPart
 	NUM_NewSkinTapPart,
 	NewSkinTapPart_Invalid
 };
-const RString& NewSkinTapPartToString(NewSkinTapPart nsp);
+std::string const NewSkinTapPartToString(NewSkinTapPart nsp);
 LuaDeclareType(NewSkinTapPart);
 
 enum NewSkinTapOptionalPart
@@ -54,7 +54,7 @@ enum NewSkinTapOptionalPart
 	NUM_NewSkinTapOptionalPart,
 	NewSkinTapOptionalPart_Invalid
 };
-const RString& NewSkinTapOptionalPartToString(NewSkinTapOptionalPart nsp);
+std::string const NewSkinTapOptionalPartToString(NewSkinTapOptionalPart nsp);
 LuaDeclareType(NewSkinTapOptionalPart);
 
 enum NewSkinHoldPart
@@ -65,7 +65,7 @@ enum NewSkinHoldPart
 	NUM_NewSkinHoldPart,
 	NewSkinHoldPart_Invalid
 };
-const RString& NewSkinHoldPartToString(NewSkinHoldPart nsp);
+std::string const NewSkinHoldPartToString(NewSkinHoldPart nsp);
 LuaDeclareType(NewSkinHoldPart);
 
 // There are three modes for playerizing notes for routine mode.
@@ -80,7 +80,7 @@ enum NotePlayerizeMode
 	NUM_NotePlayerizeMode,
 	NotePlayerizeMode_Invalid
 };
-const RString& NotePlayerizeModeToString(NotePlayerizeMode npm);
+std::string const NotePlayerizeModeToString(NotePlayerizeMode npm);
 LuaDeclareType(NotePlayerizeMode);
 
 struct NewSkinLoader;
@@ -201,7 +201,7 @@ enum TexCoordFlipMode
 	NUM_TexCoordFlipMode,
 	TexCoordFlipMode_Invalid
 };
-const RString& TexCoordFlipModeToString(TexCoordFlipMode tcfm);
+std::string const TexCoordFlipModeToString(TexCoordFlipMode tcfm);
 LuaDeclareType(TexCoordFlipMode);
 
 struct hold_part_lengths

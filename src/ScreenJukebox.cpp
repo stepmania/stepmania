@@ -235,7 +235,7 @@ void ScreenJukebox::Init()
 
 	if( GAMESTATE->m_pCurSong == nullptr )	// we didn't find a song.
 	{
-		SCREENMAN->SystemMessage( NO_MATCHING_STEPS );
+		SCREENMAN->SystemMessage( NO_MATCHING_STEPS.GetValue() );
 		this->PostScreenMessage( SM_GoToPrevScreen, 0 );	// Abort demonstration.
 		return;
 	}

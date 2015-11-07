@@ -97,8 +97,8 @@ enum TapNoteType
 	NUM_TapNoteType,
 	TapNoteType_Invalid
 };
-const RString& TapNoteTypeToString( TapNoteType tnt );
-const RString& TapNoteTypeToLocalizedString( TapNoteType tnt );
+std::string const TapNoteTypeToString( TapNoteType tnt );
+std::string const TapNoteTypeToLocalizedString( TapNoteType tnt );
 LuaDeclareType( TapNoteType );
 
 /** @brief The list of a TapNote's sub types. */
@@ -110,8 +110,8 @@ enum TapNoteSubType
 	NUM_TapNoteSubType,
 	TapNoteSubType_Invalid
 };
-const RString& TapNoteSubTypeToString( TapNoteSubType tnst );
-const RString& TapNoteSubTypeToLocalizedString( TapNoteSubType tnst );
+std::string const TapNoteSubTypeToString( TapNoteSubType tnst );
+std::string const TapNoteSubTypeToLocalizedString( TapNoteSubType tnst );
 LuaDeclareType( TapNoteSubType );
 
 /** @brief The different places a TapNote could come from. */
@@ -122,8 +122,8 @@ enum TapNoteSource
 	NUM_TapNoteSource,
 	TapNoteSource_Invalid
 };
-const RString& TapNoteSourceToString( TapNoteSource tns );
-const RString& TapNoteSourceToLocalizedString( TapNoteSource tns );
+std::string const TapNoteSourceToString( TapNoteSource tns );
+std::string const TapNoteSourceToLocalizedString( TapNoteSource tns );
 LuaDeclareType( TapNoteSource );
 
 /** @brief The various properties of a tap note. */
@@ -274,8 +274,8 @@ enum NoteType
 	NUM_NoteType,
 	NoteType_Invalid
 };
-const RString& NoteTypeToString( NoteType nt );
-const RString& NoteTypeToLocalizedString( NoteType nt );
+std::string const NoteTypeToString( NoteType nt );
+std::string const NoteTypeToLocalizedString( NoteType nt );
 LuaDeclareType( NoteType );
 float NoteTypeToBeat( NoteType nt );
 int NoteTypeToRow( NoteType nt );

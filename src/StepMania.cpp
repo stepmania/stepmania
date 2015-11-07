@@ -111,7 +111,7 @@ void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 		PREFSMAN->m_bSmoothLines,
 		PREFSMAN->m_bTrilinearFiltering,
 		PREFSMAN->m_bAnisotropicFiltering,
-		CommonMetrics::WINDOW_TITLE,
+		CommonMetrics::WINDOW_TITLE.GetValue(),
 		THEME->GetPathG("Common","window icon"),
 		PREFSMAN->m_bPAL,
 		PREFSMAN->m_fDisplayAspectRatio
@@ -1369,7 +1369,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 			 * (to prevent quitting without storing changes). */
 			if( SCREENMAN->AllowOperatorMenuButton() )
 			{
-				SCREENMAN->SystemMessage( SERVICE_SWITCH_PRESSED );
+				SCREENMAN->SystemMessage( SERVICE_SWITCH_PRESSED.GetValue() );
 				SCREENMAN->PopAllScreens();
 				GAMESTATE->Reset();
 				SCREENMAN->SetNewScreen( CommonMetrics::OPERATOR_MENU_SCREEN );
@@ -1403,13 +1403,13 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 			THEME->ReloadMetrics();
 			NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_pCurGame );
 			CodeDetector::RefreshCacheItems();
-			SCREENMAN->SystemMessage( RELOADED_METRICS );
+			SCREENMAN->SystemMessage( RELOADED_METRICS.GetValue() );
 		}
 		else if( bIsCtrlHeld && !bIsShiftHeld )
 		{
 			// Ctrl+F2: reload scripts only
 			THEME->UpdateLuaGlobals();
-			SCREENMAN->SystemMessage( RELOADED_SCRIPTS );
+			SCREENMAN->SystemMessage( RELOADED_SCRIPTS.GetValue() );
 		}
 		else if( bIsCtrlHeld && bIsShiftHeld )
 		{
@@ -1417,7 +1417,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 			// are likely going to do this after changing metrics.)
 			THEME->ReloadMetrics();
 			SCREENMAN->ReloadOverlayScreens();
-			SCREENMAN->SystemMessage( RELOADED_OVERLAY_SCREENS );
+			SCREENMAN->SystemMessage( RELOADED_OVERLAY_SCREENS.GetValue() );
 		}
 		else
 		{
@@ -1426,7 +1426,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 			TEXTUREMAN->ReloadAll();
 			NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_pCurGame );
 			CodeDetector::RefreshCacheItems();
-			SCREENMAN->SystemMessage( RELOADED_METRICS_AND_TEXTURES );
+			SCREENMAN->SystemMessage( RELOADED_METRICS_AND_TEXTURES.GetValue() );
 		}
 
 		return true;

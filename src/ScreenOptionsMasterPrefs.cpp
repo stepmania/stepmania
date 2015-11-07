@@ -311,7 +311,7 @@ static LocalizedString OFF ("ScreenOptionsMasterPrefs","Off");
 static void AnnouncerChoices( vector<RString> &out )
 {
 	ANNOUNCER->GetAnnouncerNames( out );
-	out.insert( out.begin(), OFF );
+	out.insert( out.begin(), OFF.GetValue() );
 }
 
 static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )

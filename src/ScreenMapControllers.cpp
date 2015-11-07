@@ -106,7 +106,7 @@ void ScreenMapControllers::Init()
 		m_Line.push_back(new ActorFrame);
 		m_ListHeaderCenter.LoadFromFont(THEME->GetPathF(m_sName, "title"));
 		m_ListHeaderCenter.SetName("ListHeaderCenter");
-		m_ListHeaderCenter.SetText(KEYNAME);
+		m_ListHeaderCenter.SetText(KEYNAME.GetValue());
 		ActorUtil::LoadAllCommands(m_ListHeaderCenter, m_sName);
 		m_Line.back()->AddChild(&m_ListHeaderCenter);
 		FOREACH_ENUM(GameController,  c)
@@ -116,7 +116,7 @@ void ScreenMapControllers::Init()
 				BitmapText& text= m_ListHeaderLabels[c][s];
 				text.LoadFromFont(THEME->GetPathF(m_sName, "title"));
 				text.SetName("ListHeader");
-				text.SetText(SLOT_NAMES[s]);
+				text.SetText(SLOT_NAMES[s].GetValue());
 				text.RunCommands(THEME->GetMetricA(
 						m_sName, fmt::sprintf("ListHeaderP%iS%iCommand", c+1, s+1)));
 				ActorUtil::LoadAllCommands(text, m_sName);
@@ -421,7 +421,7 @@ bool ScreenMapControllers::Input( const InputEventPlus &input )
 		// Don't allow function keys to be mapped.
 		if( input.DeviceI.device == DEVICE_KEYBOARD && (input.DeviceI.button >= KEY_F1 && input.DeviceI.button <= KEY_F12) )
 		{
-			SCREENMAN->SystemMessage( INVALID_BUTTON );
+			SCREENMAN->SystemMessage( INVALID_BUTTON.GetValue() );
 			SCREENMAN->PlayInvalidSound();
 		}
 		else
@@ -778,7 +778,7 @@ void ScreenMapControllers::ExitAction()
 		// can't navigate the prompt screen to pick a choice. -Kyz
 		if(SanityCheckWrapper())
 		{
-			ScreenPrompt::Prompt(SM_DoSaveAndExit, SAVE_PROMPT,
+			ScreenPrompt::Prompt(SM_DoSaveAndExit, SAVE_PROMPT.GetValue(),
 				PROMPT_YES_NO_CANCEL, ANSWER_YES);
 		}
 	}

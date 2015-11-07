@@ -124,7 +124,7 @@ enum ModInputType
 	NUM_ModInputType,
 	ModInputType_Invalid
 };
-const RString& ModInputTypeToString(ModInputType fmt);
+std::string const ModInputTypeToString(ModInputType fmt);
 LuaDeclareType(ModInputType);
 
 enum ModInputMetaType
@@ -330,7 +330,7 @@ enum ModFunctionType
 	NUM_ModFunctionType,
 	ModFunctionType_Invalid
 };
-const RString& ModFunctionTypeToString(ModFunctionType fmt);
+std::string const ModFunctionTypeToString(ModFunctionType fmt);
 LuaDeclareType(ModFunctionType);
 
 struct ModFunction

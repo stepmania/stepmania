@@ -80,7 +80,7 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 }
 
 // szNameArray is of size iMax; pNameCache is of size iMax+2.
-const RString &EnumToString( int iVal, int iMax, const char **szNameArray, std::unique_ptr<RString> *pNameCache )
+std::string const EnumToString( int iVal, int iMax, const char **szNameArray, std::unique_ptr<RString> *pNameCache )
 {
 	if( unlikely(pNameCache[0].get() == nullptr) )
 	{

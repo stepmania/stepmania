@@ -94,7 +94,7 @@ void RoomWheelItem::Load( RString sType )
 void RoomWheel::BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemDatas )
 {
 	if( arrayWheelItemDatas.empty() )
-		arrayWheelItemDatas.push_back( new RoomWheelItemData(WheelItemDataType_Generic, EMPTY_STRING, "", Rage::Color(1,0,0,1)) );
+		arrayWheelItemDatas.push_back( new RoomWheelItemData(WheelItemDataType_Generic, EMPTY_STRING.GetValue(), "", Rage::Color(1,0,0,1)) );
 }
 
 void RoomWheel::AddPermanentItem( RoomWheelItemData *itemdata  )
@@ -153,12 +153,14 @@ bool RoomWheel::Select()
 	SCREENMAN->PostMessageToTopScreen( SM_RoomInfoRetract, 0 );
 
 	if( m_iSelection > 0 )
+	{
 		return WheelBase::Select();
+	}
 	if( m_iSelection == 0 )
 	{
 		// Since this is not actually an option outside of this wheel, nullptr is a good idea.
 		m_LastSelection = nullptr;
-		ScreenTextEntry::TextEntry( SM_BackFromRoomName, ENTER_ROOM_NAME, "", 255 );
+		ScreenTextEntry::TextEntry( SM_BackFromRoomName, ENTER_ROOM_NAME.GetValue(), "", 255 );
 	}
 	return false;
 }

@@ -202,7 +202,7 @@ void ScreenOptionsEditCourse::BeginScreen()
 	for( int i=0; i<NUM_SONG_ROWS; i++ )
 	{
 		{
-			MenuRowDef mrd = MenuRowDef( -1, "---", true, EditMode_Practice, true, false, 0, EMPTY.GetValue() );
+			MenuRowDef mrd = MenuRowDef( -1, "---", true, EditMode_Practice, true, false, 0, EMPTY.GetValue().c_str() );
 			for (auto *s: m_vpSongs)
 			{
 				mrd.choices.push_back( s->GetDisplayFullTitle() );

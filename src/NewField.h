@@ -241,7 +241,7 @@ enum FieldVanishType
 	NUM_FieldVanishType,
 	FieldVanishType_Invalid
 };
-const RString& FieldVanishTypeToString(FieldVanishType fmt);
+std::string const FieldVanishTypeToString(FieldVanishType fmt);
 LuaDeclareType(FieldVanishType);
 
 struct NewField : ActorFrame

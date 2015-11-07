@@ -155,7 +155,7 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 		if ( !ScreenTextEntry::s_bCancelledLast )
 		{
 			m_newRoomName = ScreenTextEntry::s_sLastAnswer;
-			ScreenTextEntry::TextEntry( SM_BackFromRoomDesc, ENTER_ROOM_DESCRIPTION, "", 255 );
+			ScreenTextEntry::TextEntry( SM_BackFromRoomDesc, ENTER_ROOM_DESCRIPTION.GetValue(), "", 255 );
 		}
 	}
 	else if( SM == SM_BackFromRoomDesc )
@@ -163,7 +163,7 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 		if ( !ScreenTextEntry::s_bCancelledLast )
 		{
 			m_newRoomDesc = ScreenTextEntry::s_sLastAnswer;
-			ScreenTextEntry::TextEntry( SM_BackFromRoomPass, ENTER_ROOM_PASSWORD, "", 255 );
+			ScreenTextEntry::TextEntry( SM_BackFromRoomPass, ENTER_ROOM_PASSWORD.GetValue(), "", 255 );
 		}
 	}
 	else if( SM == SM_BackFromRoomPass )
@@ -203,7 +203,7 @@ bool ScreenNetRoom::MenuStart( const InputEventPlus &input )
 		if ( rwd->m_iFlags % 2 )
 		{
 			m_sLastPickedRoom = rwd->m_sText;
-			ScreenTextEntry::TextEntry( SM_BackFromReqPass, ENTER_ROOM_REQPASSWORD, "", 255 );
+			ScreenTextEntry::TextEntry( SM_BackFromReqPass, ENTER_ROOM_REQPASSWORD.GetValue(), "", 255 );
 		}
 		else
 		{

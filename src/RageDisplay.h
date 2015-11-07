@@ -69,7 +69,7 @@ enum RagePixelFormat
 	NUM_RagePixelFormat,
 	RagePixelFormat_Invalid
 };
-const RString& RagePixelFormatToString( RagePixelFormat i );
+std::string const RagePixelFormatToString( RagePixelFormat i );
 
 /** @brief The parameters used for the present Video Mode. */
 class VideoModeParams

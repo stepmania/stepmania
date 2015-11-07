@@ -23,7 +23,7 @@ enum SelectionState
 	SelectionState_Finalized,
 	NUM_SelectionState,
 };
-const RString& SelectionStateToString( SelectionState ss );
+std::string const SelectionStateToString( SelectionState ss );
 
 class ScreenSelectMusic : public ScreenWithMenuElements
 {

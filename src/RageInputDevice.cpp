@@ -145,7 +145,7 @@ static void InitNames()
 
 /* Return a reversible representation of a DeviceButton. This is not affected
  * by InputDrivers, localization or the keyboard language. */
-RString DeviceButtonToString( DeviceButton key )
+std::string const DeviceButtonToString( DeviceButton key )
 {
 	InitNames();
 
@@ -153,21 +153,26 @@ RString DeviceButtonToString( DeviceButton key )
 	// the ascii range. -Kyz
 	auto it = g_mapNamesToString.find( key );
 	if( it != g_mapNamesToString.end() )
+	{
 		return it->second;
-
+	}
 	// All printable ASCII except for uppercase alpha characters line up.
 	if( key >= 33 && key < 127 && !(key >= 'A' && key <= 'Z' ) )
+	{
 		return fmt::sprintf( "%c", static_cast<char>(key) );
-
+	}
 	if( key >= KEY_OTHER_0 && key < KEY_LAST_OTHER )
+	{
 		return fmt::sprintf( "unk %i", key-KEY_OTHER_0 );
-
+	}
 	if( key >= JOY_BUTTON_1 && key <= JOY_BUTTON_32 )
+	{
 		return fmt::sprintf( "B%i", key-JOY_BUTTON_1+1 );
-
+	}
 	if( key >= MIDI_FIRST && key <= MIDI_LAST )
+	{
 		return fmt::sprintf( "Midi %d", key-MIDI_FIRST );
-
+	}
 	return "unknown";
 }
 

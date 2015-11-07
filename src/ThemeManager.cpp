@@ -74,7 +74,7 @@ class LocalizedStringImplThemeMetric : public ILocalizedStringImpl, public Theme
 public:
 	static ILocalizedStringImpl *Create() { return new LocalizedStringImplThemeMetric; }
 
-	void Load( const RString& sGroup, const RString& sName )
+	void Load( std::string const & sGroup, std::string const & sName )
 	{
 		ThemeMetric<RString>::Load( sGroup, sName );
 	}
@@ -88,7 +88,7 @@ public:
 		}
 	}
 
-	const RString &GetLocalized() const
+	std::string const GetLocalized() const
 	{
 		if( IsLoaded() )
 		{

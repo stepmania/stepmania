@@ -32,8 +32,8 @@ enum SongSort
 };
 /** @brief Loop through the various Song Sorts. */
 #define FOREACH_SongSort( i ) FOREACH_ENUM( SongSort, i )
-const RString& SongSortToString( SongSort ss );
-const RString& SongSortToLocalizedString( SongSort ss );
+std::string const SongSortToString( SongSort ss );
+std::string const SongSortToLocalizedString( SongSort ss );
 
 class CourseEntry
 {

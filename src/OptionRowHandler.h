@@ -17,7 +17,7 @@ enum SelectType
 	NUM_SelectType,
 	SelectType_Invalid
 };
-const RString& SelectTypeToString( SelectType pm );
+std::string const SelectTypeToString( SelectType pm );
 SelectType StringToSelectType( const RString& s );
 LuaDeclareType( SelectType );
 /** @brief How many items are shown on the row? */
@@ -28,7 +28,7 @@ enum LayoutType
 	NUM_LayoutType,
 	LayoutType_Invalid
 };
-const RString& LayoutTypeToString( LayoutType pm );
+std::string const LayoutTypeToString( LayoutType pm );
 LayoutType StringToLayoutType( const RString& s );
 LuaDeclareType( LayoutType );
 

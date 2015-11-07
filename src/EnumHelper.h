@@ -67,12 +67,12 @@ namespace Enum
 	void SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &EnumIndexTable, const char *szName );
 };
 
-const RString &EnumToString( int iVal, int iMax, const char **szNameArray, std::unique_ptr<RString> *pNameCache ); // XToString helper
+std::string const EnumToString( int iVal, int iMax, const char **szNameArray, std::unique_ptr<RString> *pNameCache ); // XToString helper
 
 #define XToString(X) \
-const RString& X##ToString(X x); \
+std::string const X##ToString(X x); \
 COMPILE_ASSERT( NUM_##X == ARRAYLEN(X##Names) ); \
-const RString& X##ToString( X x ) \
+std::string const X##ToString( X x ) \
 {	\
 	static std::unique_ptr<RString> as_##X##Name[NUM_##X+2]; \
 	return EnumToString( x, NUM_##X, X##Names, as_##X##Name ); \
@@ -80,8 +80,8 @@ const RString& X##ToString( X x ) \
 namespace StringConversion { template<> RString ToString<X>( const X &value ) { return X##ToString(value); } }
 
 #define XToLocalizedString(X)      \
-const RString &X##ToLocalizedString(X x); \
-const RString &X##ToLocalizedString( X x ) \
+std::string const X##ToLocalizedString(X x); \
+std::string const X##ToLocalizedString( X x ) \
 {       \
 	static std::unique_ptr<LocalizedString> g_##X##Name[NUM_##X]; \
 	if( g_##X##Name[0].get() == nullptr ) { \

@@ -14,8 +14,8 @@ enum AutosyncType
 	NUM_AutosyncType,
 	AutosyncType_Invalid
 };
-const RString& AutosyncTypeToString( AutosyncType cat );
-const RString& AutosyncTypeToLocalizedString( AutosyncType cat );
+std::string const AutosyncTypeToString( AutosyncType cat );
+std::string const AutosyncTypeToLocalizedString( AutosyncType cat );
 LuaDeclareType( AutosyncType );
 
 enum SoundEffectType
@@ -26,8 +26,8 @@ enum SoundEffectType
 	NUM_SoundEffectType,
 	SoundEffectType_Invalid
 };
-const RString& SoundEffectTypeToString( SoundEffectType cat );
-const RString& SoundEffectTypeToLocalizedString( SoundEffectType cat );
+std::string const SoundEffectTypeToString( SoundEffectType cat );
+std::string const SoundEffectTypeToLocalizedString( SoundEffectType cat );
 LuaDeclareType( SoundEffectType );
 
 class SongOptions

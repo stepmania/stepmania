@@ -85,7 +85,7 @@ enum MessageID
 	NUM_MessageID,	// leave this at the end
 	MessageID_Invalid
 };
-const RString& MessageIDToString( MessageID m );
+std::string const MessageIDToString( MessageID m );
 
 struct Message
 {

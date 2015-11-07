@@ -56,9 +56,9 @@ void ScreenNetworkOptions::Init()
 		pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 		pHand->m_Def.m_bAllowThemeItems = false;
 		if ( NSMAN->useSMserver )
-			pHand->m_Def.m_vsChoices.push_back(CLIENT_DISCONNECT);
+			pHand->m_Def.m_vsChoices.push_back(CLIENT_DISCONNECT.GetValue());
 		else
-			pHand->m_Def.m_vsChoices.push_back(CLIENT_CONNECT);
+			pHand->m_Def.m_vsChoices.push_back(CLIENT_CONNECT.GetValue());
 	}
 	{
 		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
@@ -67,8 +67,8 @@ void ScreenNetworkOptions::Init()
 		pHand->m_Def.m_vsChoices.clear();
 		pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 		pHand->m_Def.m_bAllowThemeItems = false;
-		pHand->m_Def.m_vsChoices.push_back(SCORE_OFF);
-		pHand->m_Def.m_vsChoices.push_back(SCORE_ON);
+		pHand->m_Def.m_vsChoices.push_back(SCORE_OFF.GetValue());
+		pHand->m_Def.m_vsChoices.push_back(SCORE_ON.GetValue());
 	}
 	/*
 	{
@@ -123,7 +123,7 @@ bool ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 		else
 		{
 			NSMAN->CloseConnection();
-			SCREENMAN->SystemMessage( DISCONNECTED );
+			SCREENMAN->SystemMessage( DISCONNECTED.GetValue() );
 			UpdateConnectStatus( );
 		}
 		return true;

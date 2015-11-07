@@ -53,13 +53,13 @@ enum RadarCategory
  * @param cat the radar category.
  * @return the string version of the radar category.
  */
-const RString& RadarCategoryToString( RadarCategory cat );
+std::string const RadarCategoryToString( RadarCategory cat );
 /**
  * @brief Turn the radar category into a proper localized string.
  * @param cat the radar category.
  * @return the localized string version of the radar category.
  */
-const RString& RadarCategoryToLocalizedString( RadarCategory cat );
+std::string const RadarCategoryToLocalizedString( RadarCategory cat );
 LuaDeclareType( RadarCategory );
 
 /** @brief The different game categories available to play. */
@@ -135,13 +135,13 @@ enum PlayMode
  * @param pm the play mode.
  * @return the string version of the play mode.
  */
-const RString& PlayModeToString( PlayMode pm );
+std::string const PlayModeToString( PlayMode pm );
 /**
  * @brief Turn the play mode into a proper localized string.
  * @param pm the play mode.
  * @return the localized string version of the play mode.
  */
-const RString& PlayModeToLocalizedString( PlayMode pm );
+std::string const PlayModeToLocalizedString( PlayMode pm );
 /**
  * @brief Turn the string into the proper play mode.
  * @param s the string.
@@ -195,13 +195,13 @@ const SortOrder MAX_SELECTABLE_SORT = (SortOrder)(SORT_ROULETTE-1);
  * @param so the sort order.
  * @return the string version of the sort order.
  */
-const RString& SortOrderToString( SortOrder so );
+std::string const SortOrderToString( SortOrder so );
 /**
  * @brief Turn the sort order into a proper localized string.
  * @param so the sort order.
  * @return the localized string version of the sort order.
  */
-const RString& SortOrderToLocalizedString( SortOrder so );
+std::string const SortOrderToLocalizedString( SortOrder so );
 /**
  * @brief Turn the string into the proper sort order.
  * @param str the string.
@@ -237,13 +237,13 @@ enum TapNoteScore {
  * @param tns the tap note score.
  * @return the string version of the tap note score.
  */
-const RString& TapNoteScoreToString( TapNoteScore tns );
+std::string const TapNoteScoreToString( TapNoteScore tns );
 /**
  * @brief Turn the tap note score into a proper localized string.
  * @param tns the tap note score.
  * @return the localized string version of the tap note score.
  */
-const RString& TapNoteScoreToLocalizedString( TapNoteScore tns );
+std::string const TapNoteScoreToLocalizedString( TapNoteScore tns );
 /**
  * @brief Turn the string into the proper tap note score.
  * @param str the string.
@@ -267,13 +267,13 @@ enum HoldNoteScore
  * @param hns the hold note score.
  * @return the string version of the hold note score.
  */
-const RString& HoldNoteScoreToString( HoldNoteScore hns );
+std::string const HoldNoteScoreToString( HoldNoteScore hns );
 /**
  * @brief Turn the hold note score into a proper localized string.
  * @param hns the hold note score.
  * @return the localized string version of the hold note score.
  */
-const RString& HoldNoteScoreToLocalizedString( HoldNoteScore hns );
+std::string const HoldNoteScoreToLocalizedString( HoldNoteScore hns );
 /**
  * @brief Turn the string into the proper hold note score.
  * @param str the string.
@@ -297,7 +297,7 @@ enum TimingWindow
 	TW_Checkpoint,
 	NUM_TimingWindow
 };
-const RString& TimingWindowToString( TimingWindow tw );
+std::string const TimingWindowToString( TimingWindow tw );
 
 /** @brief The list of score events that can take place while playing. */
 enum ScoreEvent
@@ -316,7 +316,7 @@ enum ScoreEvent
 	SE_Missed,
 	NUM_ScoreEvent
 };
-const RString& ScoreEventToString( ScoreEvent se );
+std::string const ScoreEventToString( ScoreEvent se );
 
 /** @brief The list of game button types available for all game modes. */
 enum GameButtonType
@@ -335,7 +335,7 @@ enum TapNoteScoreJudgeType
 	NUM_TapNoteScoreJudgeType,
 	TapNoteScoreJudgeType_Invalid,
 };
-const RString& TapNoteScoreJudgeTypeToString( TapNoteScoreJudgeType jt );
+std::string const TapNoteScoreJudgeTypeToString( TapNoteScoreJudgeType jt );
 LuaDeclareType( TapNoteScoreJudgeType );
 
 
@@ -348,7 +348,7 @@ enum ProfileSlot
 	NUM_ProfileSlot,
 	ProfileSlot_Invalid
 };
-const RString& ProfileSlotToString( ProfileSlot ps );
+std::string const ProfileSlotToString( ProfileSlot ps );
 LuaDeclareType( ProfileSlot );
 
 /** @brief The states of the memory card during play. */
@@ -364,7 +364,7 @@ enum MemoryCardState
 	MemoryCardState_Invalid,
 };
 
-const RString& MemoryCardStateToString( MemoryCardState mcs );
+std::string const MemoryCardStateToString( MemoryCardState mcs );
 LuaDeclareType( MemoryCardState );
 
 /** @brief The different ranking categories based on difficulty meter average. */
@@ -377,7 +377,7 @@ enum RankingCategory
 	NUM_RankingCategory, /**< The number of ranking categories. */
 	RankingCategory_Invalid
 };
-const RString& RankingCategoryToString( RankingCategory rc );
+std::string const RankingCategoryToString( RankingCategory rc );
 RankingCategory StringToRankingCategory( const RString& rc );
 LuaDeclareType( RankingCategory );
 
@@ -400,7 +400,7 @@ enum PlayerController
 	NUM_PlayerController,
 	PlayerController_Invalid
 };
-const RString& PlayerControllerToString( PlayerController pc );
+std::string const PlayerControllerToString( PlayerController pc );
 LuaDeclareType( PlayerController );
 
 /** @brief The different health bar states. */
@@ -450,7 +450,7 @@ enum CoinMode
 	NUM_CoinMode,
 	CoinMode_Invalid
 };
-const RString& CoinModeToString( CoinMode cm );
+std::string const CoinModeToString( CoinMode cm );
 LuaDeclareType( CoinMode );
 
 
@@ -463,8 +463,8 @@ enum Premium
 	NUM_Premium,
 	Premium_Invalid
 };
-const RString& PremiumToString( Premium p );
-const RString& PremiumToLocalizedString( Premium p );
+std::string const PremiumToString( Premium p );
+std::string const PremiumToLocalizedString( Premium p );
 LuaDeclareType( Premium );
 
 
@@ -484,8 +484,8 @@ enum StageAward
 	NUM_StageAward,
 	StageAward_Invalid,
 };
-const RString& StageAwardToString( StageAward pma );
-const RString& StageAwardToLocalizedString( StageAward pma );
+std::string const StageAwardToString( StageAward pma );
+std::string const StageAwardToLocalizedString( StageAward pma );
 StageAward StringToStageAward( const RString& pma );
 LuaDeclareType( StageAward );
 
@@ -505,8 +505,8 @@ enum PeakComboAward
 	NUM_PeakComboAward,
 	PeakComboAward_Invalid,
 };
-const RString& PeakComboAwardToString( PeakComboAward pma );
-const RString& PeakComboAwardToLocalizedString( PeakComboAward pma );
+std::string const PeakComboAwardToString( PeakComboAward pma );
+std::string const PeakComboAwardToLocalizedString( PeakComboAward pma );
 PeakComboAward StringToPeakComboAward( const RString& pma );
 LuaDeclareType( PeakComboAward );
 
@@ -561,7 +561,7 @@ enum StyleType
 	NUM_StyleType,
 	StyleType_Invalid
 };
-const RString& StyleTypeToString( StyleType s );
+std::string const StyleTypeToString( StyleType s );
 StyleType StringToStyleType( const RString& s );
 LuaDeclareType( StyleType );
 
@@ -574,7 +574,7 @@ enum GoalType
 	NUM_GoalType,
 	GoalType_Invalid,
 };
-const RString& GoalTypeToString( GoalType gt );
+std::string const GoalTypeToString( GoalType gt );
 GoalType StringToGoalType( const RString& s );
 LuaDeclareType( GoalType );
 
@@ -588,7 +588,7 @@ enum EditMode
 	NUM_EditMode,
 	EditMode_Invalid,
 };
-const RString& EditModeToString( EditMode em );
+std::string const EditModeToString( EditMode em );
 EditMode StringToEditMode( const RString& s );
 LuaDeclareType( EditMode );
 
@@ -614,7 +614,7 @@ enum SampleMusicPreviewMode
 	NUM_SampleMusicPreviewMode,
 	SampleMusicPreviewMode_Invalid,
 };
-const RString& SampleMusicPreviewModeToString( SampleMusicPreviewMode );
+std::string const SampleMusicPreviewModeToString( SampleMusicPreviewMode );
 SampleMusicPreviewMode StringToSampleMusicPreviewMode( const RString& s );
 LuaDeclareType( SampleMusicPreviewMode );
 
@@ -644,9 +644,9 @@ enum Stage
 	NUM_Stage, /**< The number of stage types. */
 	Stage_Invalid,
 };
-const RString& StageToString( Stage s );
+std::string const StageToString( Stage s );
 LuaDeclareType( Stage );
-const RString& StageToLocalizedString( Stage i );
+std::string const StageToLocalizedString( Stage i );
 
 /** @brief The different possibilities of earning an extra stage. */
 enum EarnedExtraStage
@@ -657,7 +657,7 @@ enum EarnedExtraStage
 	NUM_EarnedExtraStage,
 	EarnedExtraStage_Invalid
 };
-const RString& EarnedExtraStageToString( EarnedExtraStage s );
+std::string const EarnedExtraStageToString( EarnedExtraStage s );
 LuaDeclareType( EarnedExtraStage );
 
 /** @brief The different results of loading a profile. */
@@ -678,7 +678,7 @@ enum MultiPlayerStatus
 	NUM_MultiPlayerStatus,
 	MultiPlayerStatus_Invalid
 };
-const RString& MultiPlayerStatusToString( MultiPlayerStatus i );
+std::string const MultiPlayerStatusToString( MultiPlayerStatus i );
 
 /** @brief The different course types. */
 enum CourseType
@@ -692,8 +692,8 @@ enum CourseType
 };
 /** @brief A special iterator for handling the CourseTypes. */
 #define FOREACH_CourseType( i ) FOREACH_ENUM( CourseType, i )
-const RString& CourseTypeToString( CourseType i );
-const RString& CourseTypeToLocalizedString( CourseType i );
+std::string const CourseTypeToString( CourseType i );
+std::string const CourseTypeToLocalizedString( CourseType i );
 LuaDeclareType( CourseType );
 
 /** @brief How can the Player fail a song? */
@@ -707,8 +707,8 @@ enum FailType
 	FailType_Invalid
 };
 
-const RString& FailTypeToString( FailType cat );
-const RString& FailTypeToLocalizedString( FailType cat );
+std::string const FailTypeToString( FailType cat );
+std::string const FailTypeToLocalizedString( FailType cat );
 LuaDeclareType( FailType );
 
 

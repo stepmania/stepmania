@@ -697,7 +697,7 @@ class OptionRowHandlerListCharacters: public OptionRowHandlerList
 		m_Default.m_pCharacter = CHARMAN->GetDefaultCharacter();
 
 		{
-			m_Def.m_vsChoices.push_back( OFF );
+			m_Def.m_vsChoices.push_back( OFF.GetValue() );
 			GameCommand mc;
 			mc.m_pCharacter = nullptr;
 			m_aListEntries.push_back( mc );

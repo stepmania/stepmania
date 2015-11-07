@@ -24,8 +24,8 @@ enum LifeType
 	NUM_LifeType,
 	LifeType_Invalid
 };
-const RString& LifeTypeToString( LifeType cat );
-const RString& LifeTypeToLocalizedString( LifeType cat );
+std::string const LifeTypeToString( LifeType cat );
+std::string const LifeTypeToLocalizedString( LifeType cat );
 LuaDeclareType( LifeType );
 
 enum DrainType
@@ -36,8 +36,8 @@ enum DrainType
 	NUM_DrainType,
 	DrainType_Invalid
 };
-const RString& DrainTypeToString( DrainType cat );
-const RString& DrainTypeToLocalizedString( DrainType cat );
+std::string const DrainTypeToString( DrainType cat );
+std::string const DrainTypeToLocalizedString( DrainType cat );
 LuaDeclareType( DrainType );
 
 /** @brief Per-player options that are not saved between sessions. */
