@@ -16,8 +16,8 @@ enum PlayerNumber
 };
 const PlayerNumber NUM_PLAYERS = NUM_PlayerNumber;
 const PlayerNumber PLAYER_INVALID = PlayerNumber_Invalid;
-const RString& PlayerNumberToString( PlayerNumber pn );
-const RString& PlayerNumberToLocalizedString( PlayerNumber pn );
+std::string const PlayerNumberToString( PlayerNumber pn );
+std::string const PlayerNumberToLocalizedString( PlayerNumber pn );
 LuaDeclareType( PlayerNumber );
 /** @brief A foreach loop to handle the different players. */
 #define FOREACH_PlayerNumber( pn ) FOREACH_ENUM( PlayerNumber, pn )
@@ -62,8 +62,8 @@ enum MultiPlayer
 	NUM_MultiPlayer,	// leave this at the end
 	MultiPlayer_Invalid
 };
-const RString& MultiPlayerToString( MultiPlayer mp );
-const RString& MultiPlayerToLocalizedString( MultiPlayer mp );
+std::string const MultiPlayerToString( MultiPlayer mp );
+std::string const MultiPlayerToLocalizedString( MultiPlayer mp );
 LuaDeclareType( MultiPlayer );
 /** @brief A foreach loop to handle the different Players in MultiPlayer. */
 #define FOREACH_MultiPlayer( pn ) FOREACH_ENUM( MultiPlayer, pn )

@@ -51,7 +51,7 @@ enum InstrumentTrack
 	NUM_InstrumentTrack,
 	InstrumentTrack_Invalid
 };
-const RString& InstrumentTrackToString( InstrumentTrack it );
+std::string const InstrumentTrackToString( InstrumentTrack it );
 InstrumentTrack StringToInstrumentTrack( const RString& s );
 
 /** @brief The collection of lyrics for the Song. */

@@ -902,7 +902,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 				SCREENMAN->SetNewScreen( "ScreenExit" );
 		}
 		else
-			ScreenPrompt::Prompt( SM_None, COULD_NOT_LAUNCH_BROWSER );
+			ScreenPrompt::Prompt( SM_None, COULD_NOT_LAUNCH_BROWSER.GetValue() );
 	}
 
 	/* If we're going to stop music, do so before preparing new screens, so we

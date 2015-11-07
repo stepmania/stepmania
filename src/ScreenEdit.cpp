@@ -2405,7 +2405,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			bool bAreaSelected = m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1;
 			if (!bAreaSelected)
 			{
-				SCREENMAN->SystemMessage( ALTER_MENU_NO_SELECTION );
+				SCREENMAN->SystemMessage( ALTER_MENU_NO_SELECTION.GetValue() );
 				SCREENMAN->PlayInvalidSound();
 			}
 			else
@@ -2799,7 +2799,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		}
 		else
 		{
-			SCREENMAN->SystemMessage( BG_CHANGE_STEP_TIMING );
+			SCREENMAN->SystemMessage( BG_CHANGE_STEP_TIMING.GetValue() );
 			SCREENMAN->PlayInvalidSound();
 		}
 		return true;
@@ -2954,7 +2954,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			if( sName.empty() )
 			{
 				SCREENMAN->PlayInvalidSound();
-				SCREENMAN->SystemMessage( NO_BACKGROUNDS_AVAILABLE );
+				SCREENMAN->SystemMessage( NO_BACKGROUNDS_AVAILABLE.GetValue() );
 			}
 			else
 			{
@@ -3873,7 +3873,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			{
 				// create a new sound (filename), point it.
 				// if it's empty, make it an auto keysound.
-				ScreenTextEntry::TextEntry(SM_BackFromNewKeysound, NEW_KEYSOUND_FILE, "", 64);
+				ScreenTextEntry::TextEntry(SM_BackFromNewKeysound, NEW_KEYSOUND_FILE.GetValue(), "", 64);
 				return;
 			}
 			const TapNote &oldNote = m_NoteDataEdit.GetTapNote(track, row);
@@ -4051,28 +4051,28 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		if (option == 0) // adjusting the starting time
 		{
 			ScreenTextEntry::TextEntry(SM_BackFromEditingAttackStart,
-									   EDIT_ATTACK_START,
+									   EDIT_ATTACK_START.GetValue(),
 									   FloatToString(attack.fStartSecond),
 									   10);
 		}
 		else if (option == 1) // adjusting the length of the attack
 		{
 			ScreenTextEntry::TextEntry(SM_BackFromEditingAttackLength,
-									   EDIT_ATTACK_LENGTH,
+									   EDIT_ATTACK_LENGTH.GetValue(),
 									   FloatToString(attack.fSecsRemaining),
 									   10);
 		}
 		else if (option >= 2 + mods.size()) // adding a new mod
 		{
 			ScreenTextEntry::TextEntry(SM_BackFromAddingModToExistingAttack,
-									   ADD_NEW_MOD,
+									   ADD_NEW_MOD.GetValue(),
 									   "",
 									   64);
 		}
 		else // modifying existing mod.
 		{
 			ScreenTextEntry::TextEntry(SM_BackFromEditingModToExistingAttack,
-									   EDIT_EXISTING_MOD,
+									   EDIT_EXISTING_MOD.GetValue(),
 									   mods[option - 2],
 									   64);
 		}
@@ -4105,7 +4105,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		{
 			// TODO: Add attack code.
 			ScreenTextEntry::TextEntry(SM_BackFromAddingAttackToChart,
-									   ADD_NEW_ATTACK,
+									   ADD_NEW_ATTACK.GetValue(),
 									   "",
 									   64);
 		}
@@ -4338,26 +4338,23 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		SetDirty( false );
 		SONGMAN->Invalidate( GAMESTATE->m_pCurSong );
 
-		LocalizedString const* message= &SAVE_SUCCESSFUL;
-		if(SM == SM_SaveSuccessNoSM)
-		{
-			message= &SAVE_SUCCESS_NO_SM_SPLIT_TIMING;
-		}
+		LocalizedString const message = (SM == SM_SaveSuccessNoSM) ?
+			SAVE_SUCCESSFUL : SAVE_SUCCESS_NO_SM_SPLIT_TIMING;
 
 		if( m_CurrentAction == save_on_exit )
 		{
-			ScreenPrompt::Prompt( SM_DoExit, *message );
+			ScreenPrompt::Prompt( SM_DoExit, message.GetValue() );
 		}
 		else
 		{
-			SCREENMAN->SystemMessage( *message );
+			SCREENMAN->SystemMessage( message.GetValue() );
 		}
 	}
 	else if( SM == SM_AutoSaveSuccessful )
 	{
 		LOG->Trace("AutoSave successful.");
 		m_next_autosave_time= RageTimer::GetTimeSinceStartFast() + time_between_autosave;
-		SCREENMAN->SystemMessage(AUTOSAVE_SUCCESSFUL);
+		SCREENMAN->SystemMessage(AUTOSAVE_SUCCESSFUL.GetValue());
 	}
 	else if( SM == SM_SaveFailed ) // save failed; stay in the editor
 	{
@@ -4994,7 +4991,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			case EditMode_Full:
 			case EditMode_Home:
 				if( IsDirty() )
-					ScreenPrompt::Prompt( SM_DoSaveAndExit, SAVE_CHANGES_BEFORE_EXITING, PROMPT_YES_NO_CANCEL, ANSWER_CANCEL );
+					ScreenPrompt::Prompt( SM_DoSaveAndExit, SAVE_CHANGES_BEFORE_EXITING.GetValue(), PROMPT_YES_NO_CANCEL, ANSWER_CANCEL );
 				else
 					SCREENMAN->SendMessageToTopScreen( SM_DoExit );
 				break;
@@ -5233,7 +5230,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const vector<int> &ans
 				case swap_up_down: NoteDataUtil::SwapUpDown(m_Clipboard, GAMESTATE->m_pCurSteps[0]->m_StepsType); break;
 				case arbitrary_remap:
 					ScreenTextEntry::TextEntry(
-						SM_BackFromArbitraryRemap, ENTER_ARBITRARY_MAPPING,
+						SM_BackFromArbitraryRemap, ENTER_ARBITRARY_MAPPING.GetValue(),
 						"1, 2, 3, 4", MAX_NOTE_TRACKS * 4,
 						// 2 chars for digit, one for comma, one for space.
 						ArbitraryRemapValidate
@@ -5606,7 +5603,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 		case chartname:
 		{
 			ScreenTextEntry::TextEntry(SM_None,
-									   ENTER_NEW_CHART_NAME,
+									   ENTER_NEW_CHART_NAME.GetValue(),
 									   m_pSteps->GetChartName(),
 									   MAX_STEPS_DESCRIPTION_LENGTH,
 									   SongUtil::ValidateCurrentStepsChartName,
@@ -5617,7 +5614,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 		case description:
 		{
 			ScreenTextEntry::TextEntry(SM_None,
-									   ENTER_NEW_DESCRIPTION,
+									   ENTER_NEW_DESCRIPTION.GetValue(),
 									   m_pSteps->GetDescription(),
 									   MAX_STEPS_DESCRIPTION_LENGTH,
 									   SongUtil::ValidateCurrentStepsDescription,
@@ -5628,7 +5625,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 		case chartstyle:
 		{
 			ScreenTextEntry::TextEntry(SM_None,
-									   ENTER_NEW_CHART_STYLE,
+									   ENTER_NEW_CHART_STYLE.GetValue(),
 									   m_pSteps->GetChartStyle(),
 									   255,
 									   nullptr,
@@ -5639,7 +5636,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 		case step_credit:
 		{
 			ScreenTextEntry::TextEntry(SM_None,
-									   ENTER_NEW_STEP_AUTHOR,
+									   ENTER_NEW_STEP_AUTHOR.GetValue(),
 									   m_pSteps->GetCredit(),
 									   255,
 									   SongUtil::ValidateCurrentStepsCredit,
@@ -5650,7 +5647,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 		case meter:
 		{
 			ScreenTextEntry::TextEntry(SM_BackFromDifficultyMeterChange,
-									   ENTER_NEW_METER,
+									   ENTER_NEW_METER.GetValue(),
 									   fmt::sprintf("%d", m_pSteps->GetMeter()),
 									   4,
 									   ScreenTextEntry::IntValidate,
@@ -5660,7 +5657,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 		}
 		case step_min_bpm:
 		{
-			ScreenTextEntry::TextEntry(SM_None, ENTER_MIN_BPM,
+			ScreenTextEntry::TextEntry(SM_None, ENTER_MIN_BPM.GetValue(),
 									   FloatToString(pSteps->GetMinBPM()), 20,
 									   ScreenTextEntry::FloatValidate,
 									   ChangeStepsMinBPM, nullptr);
@@ -5668,7 +5665,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 		}
 		case step_max_bpm:
 		{
-			ScreenTextEntry::TextEntry(SM_None, ENTER_MAX_BPM,
+			ScreenTextEntry::TextEntry(SM_None, ENTER_MAX_BPM.GetValue(),
 									   FloatToString(pSteps->GetMaxBPM()), 20,
 									   ScreenTextEntry::FloatValidate,
 									   ChangeStepsMaxBPM, nullptr);
@@ -5677,7 +5674,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 		case step_music:
 		{
 			ScreenTextEntry::TextEntry(SM_BackFromStepMusicChange,
-									   ENTER_NEW_STEP_MUSIC,
+									   ENTER_NEW_STEP_MUSIC.GetValue(),
 									   m_pSteps->GetMusicFile(),
 									   255,
 									   SongUtil::ValidateCurrentStepsMusic,
@@ -5711,54 +5708,54 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 	switch( c )
 	{
 	case main_title:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_MAIN_TITLE, pSong->m_sMainTitle, 100, nullptr, ChangeMainTitle, nullptr );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_MAIN_TITLE.GetValue(), pSong->m_sMainTitle, 100, nullptr, ChangeMainTitle, nullptr );
 		break;
 	case sub_title:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_SUB_TITLE, pSong->m_sSubTitle, 100, nullptr, ChangeSubTitle, nullptr );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_SUB_TITLE.GetValue(), pSong->m_sSubTitle, 100, nullptr, ChangeSubTitle, nullptr );
 		break;
 	case artist:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_ARTIST, pSong->m_sArtist, 100, nullptr, ChangeArtist, nullptr );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_ARTIST.GetValue(), pSong->m_sArtist, 100, nullptr, ChangeArtist, nullptr );
 		break;
 	case genre:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_GENRE, pSong->m_sGenre, 100, nullptr, ChangeGenre, nullptr );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_GENRE.GetValue(), pSong->m_sGenre, 100, nullptr, ChangeGenre, nullptr );
 		break;
 	case credit:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_CREDIT, pSong->m_sCredit, 100, nullptr, ChangeCredit, nullptr );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_CREDIT.GetValue(), pSong->m_sCredit, 100, nullptr, ChangeCredit, nullptr );
 		break;
 	case preview:
-		ScreenTextEntry::TextEntry(SM_None, ENTER_PREVIEW, pSong->m_PreviewFile, 100, SongUtil::ValidateCurrentSongPreview, ChangePreview, nullptr);
+		ScreenTextEntry::TextEntry(SM_None, ENTER_PREVIEW.GetValue(), pSong->m_PreviewFile, 100, SongUtil::ValidateCurrentSongPreview, ChangePreview, nullptr);
 		break;
 	case main_title_transliteration:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_MAIN_TITLE_TRANSLIT, pSong->m_sMainTitleTranslit, 100, nullptr, ChangeMainTitleTranslit, nullptr );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_MAIN_TITLE_TRANSLIT.GetValue(), pSong->m_sMainTitleTranslit, 100, nullptr, ChangeMainTitleTranslit, nullptr );
 		break;
 	case sub_title_transliteration:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_SUB_TITLE_TRANSLIT, pSong->m_sSubTitleTranslit, 100, nullptr, ChangeSubTitleTranslit, nullptr );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_SUB_TITLE_TRANSLIT.GetValue(), pSong->m_sSubTitleTranslit, 100, nullptr, ChangeSubTitleTranslit, nullptr );
 		break;
 	case artist_transliteration:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_ARTIST_TRANSLIT, pSong->m_sArtistTranslit, 100, nullptr, ChangeArtistTranslit, nullptr );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_ARTIST_TRANSLIT.GetValue(), pSong->m_sArtistTranslit, 100, nullptr, ChangeArtistTranslit, nullptr );
 		break;
 	case last_second_hint:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_LAST_SECOND_HINT,
+		ScreenTextEntry::TextEntry( SM_None, ENTER_LAST_SECOND_HINT.GetValue(),
 					   FloatToString(pSong->GetSpecifiedLastSecond()), 20,
 					   ScreenTextEntry::FloatValidate, ChangeLastSecondHint, nullptr );
 		break;
 	case preview_start:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_PREVIEW_START,
+		ScreenTextEntry::TextEntry( SM_None, ENTER_PREVIEW_START.GetValue(),
 					   FloatToString(pSong->m_fMusicSampleStartSeconds), 20,
 					   ScreenTextEntry::FloatValidate, ChangePreviewStart, nullptr );
 		break;
 	case preview_length:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_PREVIEW_LENGTH,
+		ScreenTextEntry::TextEntry( SM_None, ENTER_PREVIEW_LENGTH.GetValue(),
 					   FloatToString(pSong->m_fMusicSampleLengthSeconds), 20,
 					   ScreenTextEntry::FloatValidate, ChangePreviewLength, nullptr );
 		break;
 	case min_bpm:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_MIN_BPM,
+		ScreenTextEntry::TextEntry( SM_None, ENTER_MIN_BPM.GetValue(),
 					   FloatToString(pSong->m_fSpecifiedBPMMin), 20,
 					   ScreenTextEntry::FloatValidate, ChangeMinBPM, nullptr );
 		break;
 	case max_bpm:
-		ScreenTextEntry::TextEntry( SM_None, ENTER_MAX_BPM,
+		ScreenTextEntry::TextEntry( SM_None, ENTER_MAX_BPM.GetValue(),
 					   FloatToString(pSong->m_fSpecifiedBPMMax), 20,
 					   ScreenTextEntry::FloatValidate, ChangeMaxBPM, nullptr );
 		break;
@@ -5790,7 +5787,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 	case beat_0_offset:
 		ScreenTextEntry::TextEntry(
 			SM_BackFromBeat0Change,
-			ENTER_BEAT_0_OFFSET,
+			ENTER_BEAT_0_OFFSET.GetValue(),
 			FloatToString(GetAppropriateTiming().m_fBeat0OffsetInSeconds),
 			20
 			);
@@ -5798,7 +5795,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 	case bpm:
 		ScreenTextEntry::TextEntry(
 			SM_BackFromBPMChange,
-			ENTER_BPM_VALUE,
+			ENTER_BPM_VALUE.GetValue(),
 			FloatToString( GetAppropriateTiming().GetBPMAtBeat( GetBeat() ) ),
 			10
 			);
@@ -5806,7 +5803,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 	case stop:
 		ScreenTextEntry::TextEntry(
 			SM_BackFromStopChange,
-			ENTER_STOP_VALUE,
+			ENTER_STOP_VALUE.GetValue(),
 			FloatToString( GetAppropriateTiming().GetStopAtBeat( GetBeat() ) ),
 			10
 			);
@@ -5814,7 +5811,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 	case delay:
 		ScreenTextEntry::TextEntry(
 			SM_BackFromDelayChange,
-			ENTER_DELAY_VALUE,
+			ENTER_DELAY_VALUE.GetValue(),
 			FloatToString( GetAppropriateTiming().GetDelayAtBeat( GetBeat() ) ),
 			10
 		);
@@ -5822,7 +5819,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 	case tickcount:
 		ScreenTextEntry::TextEntry(
 			SM_BackFromTickcountChange,
-			ENTER_TICKCOUNT_VALUE,
+			ENTER_TICKCOUNT_VALUE.GetValue(),
 			fmt::sprintf( "%d", GetAppropriateTiming().GetTickcountAtBeat( GetBeat() ) ),
 			2
 			);
@@ -5831,7 +5828,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 	{
 		const ComboSegment *cs = GetAppropriateTiming().GetComboSegmentAtBeat(GetBeat());
 		ScreenTextEntry::TextEntry(SM_BackFromComboChange,
-								   ENTER_COMBO_VALUE,
+								   ENTER_COMBO_VALUE.GetValue(),
 								   fmt::sprintf( "%d/%d",
 											cs->GetCombo(),
 											cs->GetMissCombo()),
@@ -5841,7 +5838,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 	case label:
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromLabelChange,
-		   ENTER_LABEL_VALUE,
+		   ENTER_LABEL_VALUE.GetValue(),
 		   fmt::sprintf( "%s", GetAppropriateTiming().GetLabelAtBeat( GetBeat() ).c_str() ),
 		   64
 		   );
@@ -5849,7 +5846,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 	case warp:
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromWarpChange,
-		   ENTER_WARP_VALUE,
+		   ENTER_WARP_VALUE.GetValue(),
 		   FloatToString( GetAppropriateTiming().GetWarpAtBeat( GetBeat() ) ),
 		   10
 		   );
@@ -5857,7 +5854,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 	case speed_percent:
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromSpeedPercentChange,
-		   ENTER_SPEED_PERCENT_VALUE,
+		   ENTER_SPEED_PERCENT_VALUE.GetValue(),
 		   FloatToString( GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() )->GetRatio() ),
 		   10
 		   );
@@ -5865,7 +5862,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 	case scroll:
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromScrollChange,
-		   ENTER_SCROLL_VALUE,
+		   ENTER_SCROLL_VALUE.GetValue(),
 		   FloatToString( GetAppropriateTiming().GetScrollSegmentAtBeat( GetBeat() )->GetRatio() ),
 		   10
 		   );
@@ -5873,7 +5870,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 	case speed_wait:
 		ScreenTextEntry::TextEntry(
 		   SM_BackFromSpeedWaitChange,
-		   ENTER_SPEED_WAIT_VALUE,
+		   ENTER_SPEED_WAIT_VALUE.GetValue(),
 		   FloatToString( GetAppropriateTiming().GetSpeedSegmentAtBeat( GetBeat() )->GetDelay() ),
 		   10
 		   );
@@ -5882,7 +5879,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		{
 			ScreenTextEntry::TextEntry(
 						SM_BackFromSpeedModeChange,
-						   ENTER_SPEED_MODE_VALUE,
+						   ENTER_SPEED_MODE_VALUE.GetValue(),
 						   "",
 						   3
 			);
@@ -5893,7 +5890,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		{
 			ScreenTextEntry::TextEntry(
 				SM_BackFromFakeChange,
-				ENTER_FAKE_VALUE,
+				ENTER_FAKE_VALUE.GetValue(),
 			        FloatToString(GetAppropriateTiming().GetFakeAtBeat( GetBeat() ) ),
 				10
 			);
@@ -5935,7 +5932,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		break;
 	}
 	case erase_step_timing:
-		ScreenPrompt::Prompt( SM_DoEraseStepTiming, CONFIRM_TIMING_ERASE , PROMPT_YES_NO, ANSWER_NO );
+		ScreenPrompt::Prompt( SM_DoEraseStepTiming, CONFIRM_TIMING_ERASE.GetValue(), PROMPT_YES_NO, ANSWER_NO );
 	break;
 
 	}
@@ -6213,11 +6210,11 @@ void ScreenEdit::Undo()
 	if( m_bHasUndo )
 	{
 		std::swap( m_Undo, m_NoteDataEdit );
-		SCREENMAN->SystemMessage( UNDO );
+		SCREENMAN->SystemMessage( UNDO.GetValue() );
 	}
 	else
 	{
-		SCREENMAN->SystemMessage( CANT_UNDO );
+		SCREENMAN->SystemMessage( CANT_UNDO.GetValue() );
 		SCREENMAN->PlayInvalidSound();
 	}
 }
@@ -6489,8 +6486,8 @@ void ScreenEdit::DoKeyboardTrackMenu()
 	{
 		choices.push_back(ks);
 	}
-	choices.push_back(NEWKEYSND);
-	choices.push_back(NO_KEYSND);
+	choices.push_back(NEWKEYSND.GetValue());
+	choices.push_back(NO_KEYSND.GetValue());
 	int numKeysounds = kses.size();
 	int foundKeysounds = 0;
 	for (int i = 0; i < m_NoteDataEdit.GetNumTracks(); ++i)

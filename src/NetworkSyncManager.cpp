@@ -72,7 +72,7 @@ NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 	LANserver = nullptr;	//So we know if it has been created yet
 	BroadcastReception = nullptr;
 
-	ld->SetText( INITIALIZING_CLIENT_NETWORK );
+	ld->SetText( INITIALIZING_CLIENT_NETWORK.GetValue() );
 	NetPlayerClient = new EzSockets;
 	NetPlayerClient->blocking = false;
 	m_ServerVersion = 0;
@@ -504,7 +504,7 @@ void NetworkSyncManager::ProcessInput()
 	if ((NetPlayerClient->state!=NetPlayerClient->skCONNECTED) ||
 			NetPlayerClient->IsError())
 	{
-		SCREENMAN->SystemMessageNoAnimate( CONNECTION_DROPPED );
+		SCREENMAN->SystemMessageNoAnimate( CONNECTION_DROPPED.GetValue() );
 		useSMserver=false;
 		isSMOnline = false;
 		FOREACH_PlayerNumber(pn)

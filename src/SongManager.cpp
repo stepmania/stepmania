@@ -120,18 +120,18 @@ void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 	FILEMAN->FlushDirCache( EDIT_SUBDIR );
 
 	if( ld )
-		ld->SetText( RELOADING );
+		ld->SetText( RELOADING.GetValue() );
 
 	// save scores before unloading songs, or the scores will be lost
 	PROFILEMAN->SaveMachineProfile();
 
 	if( ld )
-		ld->SetText( UNLOADING_COURSES );
+		ld->SetText( UNLOADING_COURSES.GetValue() );
 
 	FreeCourses();
 
 	if( ld )
-		ld->SetText( UNLOADING_SONGS );
+		ld->SetText( UNLOADING_SONGS.GetValue() );
 
 	FreeSongs();
 

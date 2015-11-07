@@ -19,8 +19,8 @@ enum DrawMode
 	DrawMode_Invalid
 };
 
-const RString& DrawModeToString( DrawMode cat );
-const RString& DrawModeToLocalizedString( DrawMode cat );
+std::string const DrawModeToString( DrawMode cat );
+std::string const DrawModeToLocalizedString( DrawMode cat );
 LuaDeclareType( DrawMode );
 
 class RageTexture;

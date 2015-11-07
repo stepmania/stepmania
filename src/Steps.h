@@ -31,7 +31,7 @@ enum DisplayBPM
 	NUM_DisplayBPM,
 	DisplayBPM_Invalid
 };
-const RString& DisplayBPMToString( DisplayBPM dbpm );
+std::string const DisplayBPMToString( DisplayBPM dbpm );
 LuaDeclareType( DisplayBPM );
 
 /**

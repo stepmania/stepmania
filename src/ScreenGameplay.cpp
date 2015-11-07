@@ -2402,7 +2402,7 @@ void ScreenGameplay::AbortGiveUpText(bool show_abort_text)
 	m_textDebug.StopTweening();
 	if(show_abort_text)
 	{
-		m_textDebug.SetText(GIVE_UP_ABORTED_TEXT);
+		m_textDebug.SetText(GIVE_UP_ABORTED_TEXT.GetValue());
 	}
 	// otherwise tween out the text that's there
 
@@ -2487,7 +2487,7 @@ bool ScreenGameplay::Input( const InputEventPlus &input )
 			}
 			else if(input.type == IET_FIRST_PRESS && m_SkipSongTimer.IsZero())
 			{
-				m_textDebug.SetText(SKIP_SONG_TEXT);
+				m_textDebug.SetText(SKIP_SONG_TEXT.GetValue());
 				m_textDebug.PlayCommand("StartOn");
 				m_SkipSongTimer.Touch();
 			}
@@ -2503,7 +2503,7 @@ bool ScreenGameplay::Input( const InputEventPlus &input )
 			}
 			else if( input.type==IET_FIRST_PRESS && m_GiveUpTimer.IsZero() )
 			{
-				m_textDebug.SetText( GIVE_UP_START_TEXT );
+				m_textDebug.SetText( GIVE_UP_START_TEXT.GetValue() );
 				m_textDebug.PlayCommand( "StartOn" );
 				m_GiveUpTimer.Touch(); // start the timer
 			}
@@ -2530,7 +2530,7 @@ bool ScreenGameplay::Input( const InputEventPlus &input )
 			}
 			else if( PREFSMAN->m_bDelayedBack && input.type==IET_FIRST_PRESS )
 			{
-				m_textDebug.SetText( GIVE_UP_BACK_TEXT );
+				m_textDebug.SetText( GIVE_UP_BACK_TEXT.GetValue() );
 				m_textDebug.PlayCommand( "BackOn" );
 			}
 			else if( PREFSMAN->m_bDelayedBack && input.type==IET_RELEASE )

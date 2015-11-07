@@ -29,7 +29,7 @@ XToString( Difficulty );
 StringToX( Difficulty );
 LuaXType( Difficulty );
 
-const RString &CourseDifficultyToLocalizedString( CourseDifficulty x )
+std::string const CourseDifficultyToLocalizedString( CourseDifficulty x )
 {
 	static std::unique_ptr<LocalizedString> g_CourseDifficultyName[NUM_Difficulty];
 	if( g_CourseDifficultyName[0].get() == nullptr )

@@ -34,7 +34,7 @@ enum EditState
 	NUM_EditState,
 	EditState_Invalid
 };
-const RString& EditStateToString( EditState es );
+std::string const EditStateToString( EditState es );
 LuaDeclareType( EditState );
 
 enum EditButton

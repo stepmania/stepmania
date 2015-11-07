@@ -53,7 +53,7 @@ namespace std
 		}
 	};
 }
-const RString& FileTypeToString( FileType ft );
+std::string const FileTypeToString( FileType ft );
 
 /** @brief Utility functions for creating and manipulating Actors. */
 namespace ActorUtil

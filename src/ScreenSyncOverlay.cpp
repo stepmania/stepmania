@@ -111,8 +111,8 @@ void ScreenSyncOverlay::UpdateText()
 		switch( pc )
 		{
 		case PC_HUMAN:						break;
-		case PC_AUTOPLAY:	vs.push_back(AUTO_PLAY);	break;
-		case PC_CPU:		vs.push_back(AUTO_PLAY_CPU);	break;
+		case PC_AUTOPLAY:	vs.push_back(AUTO_PLAY.GetValue());	break;
+		case PC_CPU:		vs.push_back(AUTO_PLAY_CPU.GetValue());	break;
 		default:
 			FAIL_M(fmt::sprintf("Invalid PlayerController: %i", pc));
 		}
@@ -122,9 +122,9 @@ void ScreenSyncOverlay::UpdateText()
 	switch( type )
 	{
 	case AutosyncType_Off:							break;
-	case AutosyncType_Song:	vs.push_back(AUTO_SYNC_SONG);		break;
-	case AutosyncType_Machine:	vs.push_back(AUTO_SYNC_MACHINE);	break;
-	case AutosyncType_Tempo:	vs.push_back(AUTO_SYNC_TEMPO);		break;
+	case AutosyncType_Song:	vs.push_back(AUTO_SYNC_SONG.GetValue());		break;
+	case AutosyncType_Machine:	vs.push_back(AUTO_SYNC_MACHINE.GetValue());	break;
+	case AutosyncType_Tempo:	vs.push_back(AUTO_SYNC_TEMPO.GetValue());		break;
 	default:
 		FAIL_M(fmt::sprintf("Invalid autosync type: %i", type));
 	}
@@ -196,7 +196,7 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 
 	if( GAMESTATE->IsCourseMode() && a != ChangeGlobalOffset )
 	{
-		SCREENMAN->SystemMessage( CANT_SYNC_WHILE_PLAYING_A_COURSE );
+		SCREENMAN->SystemMessage( CANT_SYNC_WHILE_PLAYING_A_COURSE.GetValue() );
 		return true;
 	}
 
@@ -218,7 +218,7 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 	case RevertSyncChanges:
 		if( input.type != IET_FIRST_PRESS )
 			return false;
-		SCREENMAN->SystemMessage( SYNC_CHANGES_REVERTED );
+		SCREENMAN->SystemMessage( SYNC_CHANGES_REVERTED.GetValue() );
 		AdjustSync::RevertSyncChanges();
 		break;
 	case ChangeSongBPM:

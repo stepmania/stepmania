@@ -22,8 +22,8 @@ enum InputEventType
 	InputEventType_Invalid
 };
 
-const RString& InputEventTypeToString(InputEventType cat);
-const RString& InputEventTypeToLocalizedString(InputEventType cat);
+std::string const InputEventTypeToString(InputEventType cat);
+std::string const InputEventTypeToLocalizedString(InputEventType cat);
 LuaDeclareType(InputEventType);
 
 struct InputEvent

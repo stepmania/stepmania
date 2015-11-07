@@ -211,7 +211,7 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 	EditMenuAction action	= m_Selector.GetSelectedAction();
 	if(st == StepsType_Invalid)
 	{
-		ScreenPrompt::Prompt(SM_None, INVALID_SELECTION);
+		ScreenPrompt::Prompt(SM_None, INVALID_SELECTION.GetValue());
 		return true;
 	}
 
@@ -223,7 +223,7 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 	// handle error cases
 	if( !pSong->HasMusic() )
 	{
-		ScreenPrompt::Prompt( SM_None, MISSING_MUSIC_FILE );
+		ScreenPrompt::Prompt( SM_None, MISSING_MUSIC_FILE.GetValue() );
 		return true;
 	}
 
@@ -236,7 +236,7 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 			RageFile file;
 			if( !file.Open( sTempFile, RageFile::WRITE ) )
 			{
-				ScreenPrompt::Prompt( SM_None, SONG_DIR_READ_ONLY );
+				ScreenPrompt::Prompt( SM_None, SONG_DIR_READ_ONLY.GetValue() );
 				return true;
 			}
 
@@ -348,7 +348,7 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 			{
 				ScreenTextEntry::TextEntry(
 					SM_BackFromEditDescription,
-					ENTER_EDIT_DESCRIPTION,
+					ENTER_EDIT_DESCRIPTION.GetValue(),
 					GAMESTATE->m_pCurSteps[0]->GetDescription(),
 					MAX_STEPS_DESCRIPTION_LENGTH,
 					SongUtil::ValidateCurrentStepsDescription,

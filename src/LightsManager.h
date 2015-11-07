@@ -23,7 +23,7 @@ enum CabinetLight
 };
 /** @brief Loop through each CabinetLight on the machine. */
 #define FOREACH_CabinetLight( i ) FOREACH_ENUM( CabinetLight, i )
-const RString& CabinetLightToString( CabinetLight cl );
+std::string const CabinetLightToString( CabinetLight cl );
 CabinetLight StringToCabinetLight( const RString& s);
 
 enum LightsMode
@@ -41,7 +41,7 @@ enum LightsMode
 	NUM_LightsMode,
 	LightsMode_Invalid
 };
-const RString& LightsModeToString( LightsMode lm );
+std::string const LightsModeToString( LightsMode lm );
 LuaDeclareType( LightsMode );
 
 struct LightsState

@@ -34,7 +34,7 @@ enum ScreenType
 	NUM_ScreenType, /**< The number of screen types. */
 	ScreenType_Invalid
 };
-const RString& ScreenTypeToString( ScreenType st );
+std::string const ScreenTypeToString( ScreenType st );
 LuaDeclareType( ScreenType );
 
 /** @brief Class that holds a screen-full of Actors. */

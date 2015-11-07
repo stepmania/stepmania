@@ -42,8 +42,8 @@ enum UnlockRewardType {
 	NUM_UnlockRewardType,
 	UnlockRewardType_Invalid
 };
-const RString& UnlockRewardTypeToString( UnlockRewardType i );
-const RString& UnlockRewardTypeToLocalizedString( UnlockRewardType i );
+std::string const UnlockRewardTypeToString( UnlockRewardType i );
+std::string const UnlockRewardTypeToLocalizedString( UnlockRewardType i );
 LuaDeclareType( UnlockRewardType );
 
 enum UnlockEntryStatus {

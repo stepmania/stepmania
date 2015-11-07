@@ -674,8 +674,8 @@ void CrashDialog::SetDialogInitial()
 {
 	HWND hDlg = GetHwnd();
 
-	SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), A_CRASH_HAS_OCCURRED.GetValue() );
-	SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CLOSE.GetValue() );
+	SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), A_CRASH_HAS_OCCURRED.GetValue().c_str() );
+	SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CLOSE.GetValue().c_str() );
 	ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), false );
 	ShowWindow( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), true );
 }
@@ -769,8 +769,8 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 
 			ShowWindow( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), false );
 			ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), true );
-			SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), REPORTING_THE_PROBLEM.GetValue() );
-			SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CANCEL.GetValue() );
+			SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), REPORTING_THE_PROBLEM.GetValue().c_str() );
+			SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CANCEL.GetValue().c_str() );
 			SendDlgItemMessage( hDlg, IDC_PROGRESS, PBM_SETRANGE, 0, MAKELPARAM(0,100) );
 			SendDlgItemMessage( hDlg, IDC_PROGRESS, PBM_SETPOS, 0, 0 );
 
@@ -827,21 +827,21 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 					/* On error, don't show the "report" button again. If the submission was actually
 					* successful, then it'd be too easy to accidentally spam the server by holding
 					* down the button. */
-					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue() );
+					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue().c_str() );
 				}
 				else if( xml.GetChildValue("UpdateAvailable", m_sUpdateURL) )
 				{
-					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_AVAILABLE.GetValue() );
-					SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), VIEW_UPDATE.GetValue() );
+					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_AVAILABLE.GetValue().c_str() );
+					SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), VIEW_UPDATE.GetValue().c_str() );
 					ShowWindow( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), true );
 				}
 				else if( xml.GetChildValue("ReportId", iID) )
 				{
-					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_NOT_AVAILABLE.GetValue() );
+					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_NOT_AVAILABLE.GetValue().c_str() );
 				}
 				else
 				{
-					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue() );
+					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue().c_str() );
 				}
 
 				if( xml.GetChildValue("ReportId", iID) )
@@ -852,7 +852,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				}
 
 				ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), false );
-				SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CLOSE.GetValue() );
+				SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CLOSE.GetValue().c_str() );
 			}
 		}
 	}

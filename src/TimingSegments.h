@@ -32,7 +32,7 @@ enum SegmentEffectType
 
 #define FOREACH_TimingSegmentType(tst) FOREACH_ENUM(TimingSegmentType, tst)
 
-const RString& TimingSegmentTypeToString( TimingSegmentType tst );
+std::string const TimingSegmentTypeToString( TimingSegmentType tst );
 
 const int ROW_INVALID = -1;
 

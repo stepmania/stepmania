@@ -313,7 +313,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 				{
 					ScreenTextEntry::TextEntry(
 						SM_BackFromRename,
-						ENTER_PROFILE_NAME,
+						ENTER_PROFILE_NAME.GetValue(),
 						pProfile->m_sDisplayName,
 						PROFILE_MAX_DISPLAY_NAME_LENGTH,
 						ValidateLocalProfileName );
@@ -417,7 +417,7 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus & )
 		}
 		ScreenTextEntry::TextEntry(
 			SM_BackFromEnterNameForNew,
-			ENTER_PROFILE_NAME,
+			ENTER_PROFILE_NAME.GetValue(),
 			sPotentialName,
 			PROFILE_MAX_DISPLAY_NAME_LENGTH,
 			ValidateLocalProfileName );

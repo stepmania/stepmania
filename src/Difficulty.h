@@ -18,7 +18,7 @@ enum Difficulty
 	NUM_Difficulty,
 	Difficulty_Invalid
 };
-const RString& DifficultyToString( Difficulty dc );
+std::string const DifficultyToString( Difficulty dc );
 Difficulty StringToDifficulty( const RString& sDC );
 LuaDeclareType( Difficulty );
 
@@ -31,7 +31,7 @@ const int NUM_CourseDifficulty = NUM_Difficulty;
 for( Difficulty cd=GetNextShownCourseDifficulty((CourseDifficulty)-1); \
 	cd!=Difficulty_Invalid; cd=GetNextShownCourseDifficulty(cd) )
 
-const RString& CourseDifficultyToLocalizedString( Difficulty dc );
+std::string const CourseDifficultyToLocalizedString( Difficulty dc );
 
 Difficulty GetNextShownCourseDifficulty( Difficulty pn );
 

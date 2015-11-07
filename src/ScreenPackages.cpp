@@ -73,7 +73,7 @@ void ScreenPackages::Init()
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textWeb );
 	this->AddChild( &m_textWeb);
 	m_Links.push_back( " " ); // what is this here for? -aj
-	m_LinkTitles.push_back( VISIT_URL );
+	m_LinkTitles.push_back( VISIT_URL.GetValue() );
 
 	m_textURL.LoadFromFont( THEME->GetPathF( m_sName,"default") );
 	m_textURL.SetShadowLength( 0 );
@@ -167,7 +167,7 @@ bool ScreenPackages::MenuStart( const InputEventPlus &input )
 	if ( m_iDLorLST == 1 )
 	{
 		if ( m_iLinksPos == 0 )
-			ScreenTextEntry::TextEntry( SM_BackFromURL, ENTER_URL, "http://", 255 );
+			ScreenTextEntry::TextEntry( SM_BackFromURL, ENTER_URL.GetValue(), "http://", 255 );
 		else
 			EnterURL( m_Links[m_iLinksPos] );
 	}
@@ -282,7 +282,7 @@ bool ScreenPackages::MenuBack( const InputEventPlus &input )
 {
 	if ( m_bIsDownloading )
 	{
-		SCREENMAN->SystemMessage( DOWNLOAD_CANCELLED );
+		SCREENMAN->SystemMessage( DOWNLOAD_CANCELLED.GetValue() );
 		CancelDownload( );
 		return true;
 	}

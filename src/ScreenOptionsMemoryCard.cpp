@@ -53,11 +53,11 @@ void ScreenOptionsMemoryCard::CreateMenu()
 	{
 		vector<RString> vs;
 		if( iter.sVolumeLabel.empty() )
-			vs.push_back( NO_LABEL );
+			vs.push_back( NO_LABEL.GetValue() );
 		else
 			vs.push_back( iter.sVolumeLabel );
 		if( iter.iVolumeSizeMB == 0 )
-			vs.push_back( SIZE_UNKNOWN );
+			vs.push_back( SIZE_UNKNOWN.GetValue() );
 		else
 			vs.push_back( fmt::sprintf(RString(VOLUME_SIZE).c_str(),iter.iVolumeSizeMB) );
 

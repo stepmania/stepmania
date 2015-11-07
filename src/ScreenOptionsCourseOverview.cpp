@@ -142,7 +142,7 @@ void ScreenOptionsCourseOverview::HandleScreenMessage( const ScreenMessage SM )
 			if( EditCourseUtil::RenameAndSave( GAMESTATE->m_pCurCourse, ScreenTextEntry::s_sLastAnswer ) )
 			{
 				m_soundSave.Play(true);
-				SCREENMAN->SystemMessage( COURSE_SAVED );
+				SCREENMAN->SystemMessage( COURSE_SAVED.GetValue() );
 			}
 		}
 	}
@@ -154,7 +154,7 @@ void ScreenOptionsCourseOverview::HandleScreenMessage( const ScreenMessage SM )
 
 			if( !EditCourseUtil::RenameAndSave(GAMESTATE->m_pCurCourse, ScreenTextEntry::s_sLastAnswer) )
 			{
-				ScreenPrompt::Prompt( SM_None, ERROR_RENAMING );
+				ScreenPrompt::Prompt( SM_None, ERROR_RENAMING.GetValue() );
 				return;
 			}
 
@@ -214,7 +214,7 @@ void ScreenOptionsCourseOverview::ProcessMenuStart( const InputEventPlus &input 
 	case CourseOverviewRow_Rename:
 		ScreenTextEntry::TextEntry(
 				SM_BackFromRename,
-				ENTER_COURSE_NAME,
+				ENTER_COURSE_NAME.GetValue(),
 				GAMESTATE->m_pCurCourse->GetDisplayFullTitle(),
 				EditCourseUtil::MAX_NAME_LENGTH,
 				EditCourseUtil::ValidateEditCourseName );
@@ -229,7 +229,7 @@ void ScreenOptionsCourseOverview::ProcessMenuStart( const InputEventPlus &input 
 			{
 				ScreenTextEntry::TextEntry(
 					SM_BackFromEnterName,
-					ENTER_COURSE_NAME,
+					ENTER_COURSE_NAME.GetValue(),
 					GAMESTATE->m_pCurCourse->GetDisplayFullTitle(),
 					EditCourseUtil::MAX_NAME_LENGTH,
 					EditCourseUtil::ValidateEditCourseName );
@@ -239,12 +239,12 @@ void ScreenOptionsCourseOverview::ProcessMenuStart( const InputEventPlus &input 
 				if( EditCourseUtil::Save( GAMESTATE->m_pCurCourse ) )
 				{
 					m_soundSave.Play(true);
-					SCREENMAN->SystemMessage( COURSE_SAVED );
+					SCREENMAN->SystemMessage( COURSE_SAVED.GetValue() );
 				}
 				else
 				{
 					SCREENMAN->PlayInvalidSound();
-					SCREENMAN->SystemMessage( ERROR_SAVING_COURSE );
+					SCREENMAN->SystemMessage( ERROR_SAVING_COURSE.GetValue() );
 				}
 			}
 		}

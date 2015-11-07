@@ -53,7 +53,7 @@ enum InputDevice
 };
 /** @brief A special foreach loop for each input device. */
 #define FOREACH_InputDevice( i ) FOREACH_ENUM( InputDevice, i )
-const RString& InputDeviceToString( InputDevice i );
+std::string const InputDeviceToString( InputDevice i );
 InputDevice StringToInputDevice( const RString& s );
 inline bool IsJoystick( InputDevice id ) { return DEVICE_JOY1 <= id && id < DEVICE_JOY1+NUM_JOYSTICKS; }
 inline bool IsPump( InputDevice id ) { return DEVICE_PUMP1 <= id && id < DEVICE_PUMP1+NUM_PUMPS; }
@@ -87,7 +87,7 @@ enum InputDeviceState
 	NUM_InputDeviceState,
 	InputDeviceState_Invalid
 };
-const RString& InputDeviceStateToString( InputDeviceState ids );
+std::string const InputDeviceStateToString( InputDeviceState ids );
 
 /* Only raw, unshifted keys go in this table; this doesn't include
  * internationalized keyboards, only keys that we might actually want to test
@@ -372,7 +372,7 @@ namespace std
 	};
 }
 
-RString DeviceButtonToString( DeviceButton i );
+std::string const DeviceButtonToString( DeviceButton i );
 DeviceButton StringToDeviceButton( const RString& s );
 
 struct DeviceInput

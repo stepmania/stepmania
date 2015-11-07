@@ -31,7 +31,7 @@ enum MusicWheelItemType
 	NUM_MusicWheelItemType,
 	MusicWheelItemType_Invalid,
 };
-const RString& MusicWheelItemTypeToString( MusicWheelItemType i );
+std::string const MusicWheelItemTypeToString( MusicWheelItemType i );
 /** @brief An item on the MusicWheel. */
 class MusicWheelItem : public WheelItemBase
 {

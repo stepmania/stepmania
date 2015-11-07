@@ -13,7 +13,7 @@ enum GameController
 	NUM_GameController,	/**< The number of controllers allowed. */
 	GameController_Invalid,
 };
-const RString& GameControllerToString( GameController mp );
+std::string const GameControllerToString( GameController mp );
 LuaDeclareType( GameController );
 
 /** @brief the list of buttons StepMania recognizes. */

@@ -203,7 +203,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 				{
 					ScreenTextEntry::TextEntry(
 						SM_BackFromRename,
-						ENTER_NAME_FOR_STEPS,
+						ENTER_NAME_FOR_STEPS.GetValue(),
 						GAMESTATE->m_pCurSteps[PLAYER_1]->GetDescription(),
 						MAX_STEPS_DESCRIPTION_LENGTH,
 						SongUtil::ValidateCurrentEditStepsDescription );
