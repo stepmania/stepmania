@@ -160,8 +160,8 @@ void diffuse_conv(vector<RString>& args)
 }
 
 // Prototype for a function that is created by a macro in another translation unit and has no visible prototype, don't do this unless you have a good reason.
-const RString& BlendModeToString(BlendMode);
-const RString& CullModeToString(CullMode);
+std::string const BlendModeToString(BlendMode);
+std::string const CullModeToString(CullMode);
 void blend_conv(vector<RString>& args)
 {
 	COMMON_ARG_VERIFY(2);
