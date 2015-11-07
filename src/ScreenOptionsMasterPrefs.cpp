@@ -180,12 +180,12 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 	if( ToSel )
 	{
-		const RString sCurGameName = PREFSMAN->GetCurrentGame();
+		Rage::ci_ascii_string const currGame {PREFSMAN->GetCurrentGame().c_str()};
 
 		sel = 0;
 		for(unsigned i = 0; i < choices.size(); ++i)
 		{
-			if( !strcasecmp(choices[i], sCurGameName) )
+			if (currGame == choices[i])
 			{
 				sel = i;
 			}
@@ -226,16 +226,24 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 	if( ToSel )
 	{
+		Rage::ci_ascii_string const currLang {THEME->GetCurLanguage().c_str()};
+		Rage::ci_ascii_string const baseLang {SpecialFiles::BASE_LANGUAGE.c_str()};
 		sel = -1;
 		for( unsigned i=0; sel == -1 && i < vs.size(); ++i )
-			if( !strcasecmp(vs[i], THEME->GetCurLanguage()) )
+		{
+			if (currLang == vs[i])
+			{
 				sel = i;
-
+			}
+		}
 		// If the current language doesn't exist, we'll show BASE_LANGUAGE, so select that.
 		for( unsigned i=0; sel == -1 && i < vs.size(); ++i )
-			if( !strcasecmp(vs[i], SpecialFiles::BASE_LANGUAGE) )
+		{
+			if (baseLang == vs[i])
+			{
 				sel = i;
-
+			}
+		}
 		if( sel == -1 )
 		{
 			LOG->Warn( "Couldn't find language \"%s\" or fallback \"%s\"; using \"%s\"",
@@ -283,9 +291,10 @@ static void RequestedTheme( int &sel, bool ToSel, const ConfOption *pConfOption 
 	if( ToSel )
 	{
 		sel = 0;
+		Rage::ci_ascii_string themeName{PREFSMAN->m_sTheme.Get().c_str()};
 		for( unsigned i=1; i<vsThemeNames.size(); i++ )
 		{
-			if( !strcasecmp(vsThemeNames[i], PREFSMAN->m_sTheme.Get().c_str()) )
+			if (themeName == vsThemeNames[i])
 			{
 				sel = i;
 			}
@@ -313,9 +322,10 @@ static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 	if( ToSel )
 	{
 		sel = 0;
+		Rage::ci_ascii_string announcerName{ANNOUNCER->GetCurAnnouncerName().c_str()};
 		for( unsigned i=1; i<choices.size(); i++ )
 		{
-			if( !strcasecmp(choices[i], ANNOUNCER->GetCurAnnouncerName()) )
+			if (announcerName == choices[i])
 			{
 				sel = i;
 			}
@@ -344,9 +354,10 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 		PlayerOptions po;
 		po.FromString( PREFSMAN->m_sDefaultModifiers.Get() );
 		sel = 0;
+		Rage::ci_ascii_string playerNoteSkin{ po.m_sNoteSkin.c_str()};
 		for( unsigned i=0; i < choices.size(); i++ )
 		{
-			if( !strcasecmp(choices[i], po.m_sNoteSkin.c_str()) )
+			if (playerNoteSkin == choices[i])
 			{
 				sel = i;
 			}

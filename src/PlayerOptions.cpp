@@ -2,6 +2,7 @@
 #include "PlayerOptions.h"
 #include "RageMath.hpp"
 #include "RageUtil.h"
+#include "RageString.hpp"
 #include "GameState.h"
 #include "NoteSkinManager.h"
 #include "Song.h"
@@ -785,11 +786,11 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	// manager forces lowercase, but some obscure part of PlayerOptions
 	// uppercases the first letter.  The previous code that used != probably
 	// relied on RString::operator!= misbehaving. -Kyz
-	if(strcasecmp(m_sNoteSkin, other.m_sNoteSkin) != 0)
+	if (Rage::ci_ascii_string{m_sNoteSkin.c_str()} != other.m_sNoteSkin)
 	{
 		return false;
 	}
-	if(strcasecmp(m_newskin, other.m_newskin) != 0)
+	if (Rage::ci_ascii_string {m_newskin.c_str()} != other.m_newskin)
 	{
 		return false;
 	}

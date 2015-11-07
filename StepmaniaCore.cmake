@@ -100,15 +100,12 @@ include(CheckCXXSymbolExists)
 # Mostly Windows functions.
 check_function_exists(_mkdir HAVE__MKDIR)
 check_cxx_symbol_exists(_snprintf cstdio HAVE__SNPRINTF)
-check_cxx_symbol_exists(stricmp cstring HAVE_STRICMP)
-check_cxx_symbol_exists(_stricmp cstring HAVE__STRICMP)
 
 # Mostly non-Windows functions.
 check_function_exists(fcntl HAVE_FCNTL)
 check_function_exists(fork HAVE_FORK)
 check_function_exists(mkdir HAVE_MKDIR)
 check_cxx_symbol_exists(snprintf cstdio HAVE_SNPRINTF)
-check_cxx_symbol_exists(strcasecmp cstring HAVE_STRCASECMP)
 check_function_exists(waitpid HAVE_WAITPID)
 
 
