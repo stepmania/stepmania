@@ -923,6 +923,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 				// Check for 200 OK
 				if( svResponse[0].find("200") != RString::npos )
 				{
+					Rage::ci_ascii_string smBuild{ "X-SM-Build" };
 					// Iterate through every field until an X-SM-Build field is found
 					for( unsigned h=1; h<svResponse.size(); h++ )
 					{
@@ -931,8 +932,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 						{
 							auto sFieldName = Rage::trim(Rage::head( svResponse[h], sFieldPos ));
 							auto sFieldValue = Rage::trim(svResponse[h].substr(sFieldPos+2));
-
-							if( 0 == strcasecmp(sFieldName,"X-SM-Build") )
+							if (smBuild == sFieldName)
 							{
 								bSuccess = true;
 								uCurrentSMBuild = strtoul( sFieldValue, nullptr, 10 );

@@ -51,15 +51,6 @@
 /* Defined to 1 if the underlying system provides the snprintf function. */
 #cmakedefine HAVE_SNPRINTF 1
 
-/* Defined to 1 if the underlying system provides the stricmp function. */
-#cmakedefine HAVE_STRICMP 1
-
-/* Defined to 1 if the underlying system provides the _stricmp function. */
-#cmakedefine HAVE__STRICMP 1
-
-/* Defined to 1 if the underlying system provides the strcasecmp function. */
-#cmakedefine HAVE_STRCASECMP 1
-
 /* Defined to 1 if the underlying system provides the strtof function. */
 #cmakedefine HAVE_STRTOF 1
 
@@ -132,16 +123,6 @@ typedef long ssize_t;
 #define snprintf _snprintf
 #else
 #error "No size limited sprintf function available. Aborting."
-#endif
-
-/* Ensure we have a function that acts like a case insensitive string comparison. */
-#if defined(HAVE_STRCASECMP)
-#elif defined(HAVE__STRICMP)
-#define strcasecmp _stricmp
-#elif defined(HAVE_STRICMP)
-#define strcasecmp stricmp
-#else
-#error "No case insensitive string comparison function available. Aborting."
 #endif
 
 /* Ensure we have a function that can create a directory on the file system. */

@@ -38,9 +38,14 @@ void AnnouncerManager::GetAnnouncerNames( vector<RString>& AddTo )
 	StripMacResourceForks( AddTo );
 
 	// strip out the empty announcer folder
+	Rage::ci_ascii_string noAnnouncer{ EMPTY_ANNOUNCER_NAME.c_str() };
 	for( int i=AddTo.size()-1; i>=0; i-- )
-		if( !strcasecmp( AddTo[i], EMPTY_ANNOUNCER_NAME ) )
+	{
+		if (noAnnouncer == AddTo[i])
+		{
 			AddTo.erase(AddTo.begin()+i, AddTo.begin()+i+1 );
+		}
+	}
 }
 
 bool AnnouncerManager::DoesAnnouncerExist( RString sAnnouncerName )

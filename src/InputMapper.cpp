@@ -1063,9 +1063,10 @@ MultiPlayer InputMapper::InputDeviceToMultiPlayer( InputDevice id )
 
 GameButton InputScheme::ButtonNameToIndex( const RString &sButtonName ) const
 {
+	Rage::ci_ascii_string lowerButton{ sButtonName };
 	for( GameButton gb=(GameButton) 0; gb<m_iButtonsPerController; gb=(GameButton)(gb+1) )
 	{
-		if( strcasecmp(GetGameButtonName(gb).c_str(), sButtonName) == 0 )
+		if (lowerButton == GetGameButtonName(gb))
 		{
 			return gb;
 		}
