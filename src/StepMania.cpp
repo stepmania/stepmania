@@ -898,7 +898,7 @@ void StepMania::InitializeCurrentGame( const Game* g )
 
 static void MountTreeOfZips( const RString &dir )
 {
-	vector<RString> dirs;
+	vector<std::string> dirs;
 	dirs.push_back( dir );
 
 	while( dirs.size() )
@@ -909,7 +909,7 @@ static void MountTreeOfZips( const RString &dir )
 		if( !IsADirectory(path) )
 			continue;
 
-		vector<RString> zips;
+		vector<std::string> zips;
 		GetDirListing( path + "/*.zip", zips, false, true );
 		GetDirListing( path + "/*.smzip", zips, false, true );
 

@@ -27,7 +27,7 @@ RString add_extension_to_relative_path_from_found_file(
 
 void convert_xmls_in_dir(RString const& dirname)
 {
-	vector<RString> listing;
+	vector<std::string> listing;
 	FILEMAN->GetDirListing(dirname, listing, false, true);
 	for (auto &file: listing)
 	{
@@ -531,11 +531,11 @@ void actor_template_t::load_node(XNode const& node, RString const& dirname, cond
 			}
 			else
 			{
-				vector<RString> files_in_dir;
+				vector<std::string> files_in_dir;
 				FILEMAN->GetDirListing(sfname + "*", files_in_dir, false, true);
 				int handled_level= 0;
 				RString found_file= "";
-				for(vector<RString>::iterator file= files_in_dir.begin();
+				for(auto file= files_in_dir.begin();
 						file != files_in_dir.end() && handled_level < 2; ++file)
 				{
 					RString extension= GetExtension(*file);

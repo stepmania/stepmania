@@ -23,9 +23,9 @@ public:
 	void MountInitialFilesystems();
 	void MountUserFilesystems();
 
-	void GetDirListing( const RString &sPath, std::vector<RString> &AddTo, bool bOnlyDirs, bool bReturnPathToo );
-	void GetDirListingWithMultipleExtensions(const RString &sPath,
-		std::vector<RString> const& ExtensionList, std::vector<RString> &AddTo,
+	void GetDirListing( std::string const &sPath, std::vector<std::string> &AddTo, bool bOnlyDirs, bool bReturnPathToo );
+	void GetDirListingWithMultipleExtensions(std::string const &sPath,
+		std::vector<std::string> const& ExtensionList, std::vector<std::string> &AddTo,
 		bool bOnlyDirs= false, bool bReturnPathToo= false);
 	bool Move( const RString &sOldPath, const RString &sNewPath );
 	bool Remove( const RString &sPath );

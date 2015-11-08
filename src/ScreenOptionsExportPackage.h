@@ -41,7 +41,7 @@ protected:
 
 	virtual void ProcessMenuStart( const InputEventPlus &input );
 
-	std::vector<RString> m_vsPossibleDirsToExport;
+	std::vector<std::string> m_vsPossibleDirsToExport;
 };
 
 #endif

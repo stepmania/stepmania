@@ -117,7 +117,7 @@ void ScreenOptionsExportPackageSubPage::BeginScreen()
 	else if( *s_packageType == "NoteSkins" )
 	{
 		// add noteskins
-		vector<RString> vs;
+		vector<std::string> vs;
 		GetDirListing( SpecialFiles::NOTESKINS_DIR + "*", vs, true, true );
 		for (auto &s: vs)
 		{
@@ -128,7 +128,7 @@ void ScreenOptionsExportPackageSubPage::BeginScreen()
 	{
 		// Add courses. Only support courses that are in a group folder.
 		// Support for courses not in a group folder should be phased out.
-		vector<RString> vs;
+		vector<std::string> vs;
 		GetDirListing( SpecialFiles::COURSES_DIR + "*", vs, true, true );
 		StripCvsAndSvn( vs );
 		StripMacResourceForks( vs );
@@ -151,7 +151,7 @@ void ScreenOptionsExportPackageSubPage::BeginScreen()
 	else if( *s_packageType == "SubGroup" )
 	{
 		//ExportPackages::m_sFolder
-		vector<RString> vs;
+		vector<std::string> vs;
 		GetDirListing( SpecialFiles::SONGS_DIR + "/" + ExportPackages::m_sFolder + "/*", vs, true, true );
 		for (auto &s: vs)
 		{

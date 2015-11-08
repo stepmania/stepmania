@@ -1308,8 +1308,8 @@ static bool EnabledIfSet2GlobalMovieSongGroupAndGenre() { return ScreenMiniMenu:
 
 static RString GetOneBakedRandomFile( Song *pSong, bool bTryGenre = true )
 {
-	vector<RString> vsPaths;
-	vector<RString> vsNames;
+	vector<std::string> vsPaths;
+	vector<std::string> vsNames;
 	BackgroundUtil::GetGlobalRandomMovies(
 		pSong,
 		"",
@@ -2709,7 +2709,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 			{
 				// Fill in option names
-				vector<RString> vThrowAway;
+				vector<std::string> vThrowAway;
 
 				MenuDef &menu = g_BackgroundChange;
 

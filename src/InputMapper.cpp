@@ -586,7 +586,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 	vector<AutoMappings> vAutoMappings;
 	{
 		// file automaps - Add these first so that they can match before the hard-coded mappings
-		vector<RString> vs;
+		vector<std::string> vs;
 		GetDirListing( AUTOMAPPINGS_DIR "*.ini", vs, false, true );
 		for (auto &sFilePath: vs)
 		{

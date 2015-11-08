@@ -30,7 +30,7 @@ AnnouncerManager::~AnnouncerManager()
 	LUA->UnsetGlobal( "ANNOUNCER" );
 }
 
-void AnnouncerManager::GetAnnouncerNames( vector<RString>& AddTo )
+void AnnouncerManager::GetAnnouncerNames( vector<std::string>& AddTo )
 {
 	GetDirListing( ANNOUNCERS_DIR+"*", AddTo, true );
 
@@ -51,9 +51,10 @@ void AnnouncerManager::GetAnnouncerNames( vector<RString>& AddTo )
 bool AnnouncerManager::DoesAnnouncerExist( RString sAnnouncerName )
 {
 	if( sAnnouncerName == "" )
+	{
 		return true;
-
-	vector<RString> asAnnouncerNames;
+	}
+	vector<std::string> asAnnouncerNames;
 	GetAnnouncerNames( asAnnouncerNames );
 	Rage::ci_ascii_string name{ sAnnouncerName.c_str() };
 	
@@ -165,13 +166,16 @@ bool AnnouncerManager::HasSoundsFor( RString sFolderName )
 
 void AnnouncerManager::NextAnnouncer()
 {
-	vector<RString> as;
+	vector<std::string> as;
 	GetAnnouncerNames( as );
 	if( as.size()==0 )
+	{
 		return;
-
+	}
 	if( m_sCurAnnouncerName == "" )
+	{
 		SwitchAnnouncer( as[0] );
+	}
 	else
 	{
 		unsigned i;
@@ -202,7 +206,7 @@ public:
 	static int DoesAnnouncerExist( T* p, lua_State *L ) { lua_pushboolean(L, p->DoesAnnouncerExist( SArg(1) )); return 1; }
 	static int GetAnnouncerNames( T* p, lua_State *L )
 	{
-		vector<RString> vAnnouncers;
+		vector<std::string> vAnnouncers;
 		p->GetAnnouncerNames( vAnnouncers );
 		LuaHelpers::CreateTableFromArray(vAnnouncers, L);
 		return 1;

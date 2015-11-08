@@ -286,22 +286,24 @@ static void DoPlayOnce( RString sPath )
 static void DoPlayOnceFromDir( RString sPath )
 {
 	if( sPath == "" )
+	{
 		return;
-
+	}
 	// make sure there's a slash at the end of this path
 	if (!Rage::ends_with(sPath, "/"))
 	{
 		sPath += "/";
 	}
-	vector<RString> arraySoundFiles;
+	vector<std::string> arraySoundFiles;
 	GetDirListing( sPath + "*.mp3", arraySoundFiles );
 	GetDirListing( sPath + "*.wav", arraySoundFiles );
 	GetDirListing( sPath + "*.ogg", arraySoundFiles );
 	GetDirListing( sPath + "*.oga", arraySoundFiles );
 
 	if( arraySoundFiles.empty() )
+	{
 		return;
-
+	}
 	int index = RandomInt( arraySoundFiles.size( ));
 	DoPlayOnce(  sPath + arraySoundFiles[index]  );
 }

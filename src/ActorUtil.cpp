@@ -56,7 +56,7 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName, bool optional
 	RageFileManager::FileType ft = FILEMAN->GetFileType( sPath );
 	if( ft != RageFileManager::TYPE_FILE && ft != RageFileManager::TYPE_DIR )
 	{
-		vector<RString> asPaths;
+		vector<std::string> asPaths;
 		GetDirListing( sPath + "*", asPaths, false, true );	// return path too
 
 		if( asPaths.empty() )
@@ -86,7 +86,7 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName, bool optional
 		if( asPaths.size() > 1 )
 		{
 			RString sError = fmt::sprintf( "%s: references a file \"%s\" which has multiple matches", sName.c_str(), sPath.c_str() );
-			sError += "\n" + join( "\n", asPaths );
+			sError += "\n" + Rage::join( "\n", asPaths );
 			switch(LuaHelpers::ReportScriptError(sError, "BROKEN_FILE_REFERENCE", true))
 			{
 			case Dialog::abort:
@@ -526,7 +526,7 @@ LuaXType( FileType );
 
 // convenience so the for-loop lines can be shorter.
 typedef std::unordered_map<string, FileType> etft_cont_t;
-typedef std::unordered_map<FileType, vector<RString> > fttel_cont_t;
+typedef std::unordered_map<FileType, vector<std::string> > fttel_cont_t;
 etft_cont_t ExtensionToFileType;
 fttel_cont_t FileTypeToExtensionList;
 
@@ -582,12 +582,12 @@ void ActorUtil::InitFileTypeLists()
 	}
 }
 
-vector<RString> const& ActorUtil::GetTypeExtensionList(FileType ft)
+vector<std::string> const& ActorUtil::GetTypeExtensionList(FileType ft)
 {
 	return FileTypeToExtensionList[ft];
 }
 
-void ActorUtil::AddTypeExtensionsToList(FileType ft, vector<RString>& add_to)
+void ActorUtil::AddTypeExtensionsToList(FileType ft, vector<std::string>& add_to)
 {
 	fttel_cont_t::iterator ext_list= FileTypeToExtensionList.find(ft);
 	if(ext_list != FileTypeToExtensionList.end())

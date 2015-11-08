@@ -12,9 +12,9 @@
 
 using std::vector;
 
-void NotesLoaderJson::GetApplicableFiles( const RString &sPath, vector<RString> &out )
+void NotesLoaderJson::GetApplicableFiles( std::string const &sPath, vector<std::string> &out )
 {
-	GetDirListing( sPath + RString("*.json"), out );
+	GetDirListing( sPath + "*.json", out );
 }
 
 static void Deserialize( TimingSegment *seg, const Json::Value &root )

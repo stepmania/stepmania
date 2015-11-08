@@ -72,11 +72,12 @@ const RString TEMP_OS_MOUNT_POINT = "/@temp-os/";
 static void InstallSmzip( const RString &sZipFile, PlayAfterLaunchInfo &out )
 {
 	if( !FILEMAN->Mount( "zip", sZipFile, TEMP_ZIP_MOUNT_POINT ) )
+	{
 		FAIL_M("Failed to mount " + sZipFile );
-
+	}
 	vector<RString> vsFiles;
 	{
-		vector<RString> vsRawFiles;
+		vector<std::string> vsRawFiles;
 		GetDirListingRecursive( TEMP_ZIP_MOUNT_POINT, "*", vsRawFiles);
 
 		vector<RString> vsPrettyFiles;

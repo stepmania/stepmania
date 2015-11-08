@@ -280,7 +280,7 @@ RString SMLoader::GetSongTitle() const
 
 bool SMLoader::LoadFromDir( const RString &sPath, Song &out, bool load_autosave )
 {
-	vector<RString> aFileNames;
+	vector<std::string> aFileNames;
 	GetApplicableFiles( sPath, aFileNames, load_autosave );
 	return LoadFromSimfile( sPath + aFileNames[0], out );
 }
@@ -1303,7 +1303,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 	return false;
 }
 
-void SMLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out, bool load_autosave )
+void SMLoader::GetApplicableFiles( std::string const &sPath, vector<std::string> &out, bool load_autosave )
 {
 	if(load_autosave)
 	{

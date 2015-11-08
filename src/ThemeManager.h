@@ -32,14 +32,14 @@ public:
 	ThemeManager();
 	~ThemeManager();
 
-	void GetThemeNames( std::vector<RString>& AddTo );
-	void GetSelectableThemeNames( std::vector<RString>& AddTo );
+	void GetThemeNames( std::vector<std::string>& AddTo );
+	void GetSelectableThemeNames( std::vector<std::string>& AddTo );
 	int GetNumSelectableThemes();
 	bool DoesThemeExist( const RString &sThemeName );
 	bool IsThemeSelectable( const RString &sThemeName );
 	RString GetThemeDisplayName( const RString &sThemeName );
 	RString GetThemeAuthor( const RString &sThemeName );
-	void GetLanguages( std::vector<RString>& AddTo );
+	void GetLanguages( std::vector<std::string>& AddTo );
 	bool DoesLanguageExist( const RString &sLanguage );
 	void SwitchThemeAndLanguage( const RString &sThemeName, const RString &sLanguage, bool bPseudoLocalize, bool bForceThemeReload = false );
 	void UpdateLuaGlobals();
@@ -90,7 +90,7 @@ public:
 	bool	HasString( const RString &sMetricsGroup, const RString &sValueName );
 	RString	GetString( const RString &sMetricsGroup, const RString &sValueName );
 	void	GetString( const RString &sMetricsGroup, const RString &sValueName, RString &valueOut )		{ valueOut = GetString( sMetricsGroup, sValueName ); }
-	void FilterFileLanguages( std::vector<RString> &asElementPaths );
+	void FilterFileLanguages( std::vector<std::string> &asElementPaths );
 
 	void GetMetricsThatBeginWith( const RString &sMetricsGroup, const RString &sValueName, std::set<RString> &vsValueNamesOut );
 
@@ -118,9 +118,9 @@ protected:
 	static RString GetThemeDirFromName( const RString &sThemeName );
 	RString GetElementDir( const RString &sThemeName );
 	static RString GetMetricsIniPath( const RString &sThemeName );
-	static void GetLanguagesForTheme( const RString &sThemeName, std::vector<RString>& asLanguagesOut );
+	static void GetLanguagesForTheme( std::string const &sThemeName, std::vector<std::string>& asLanguagesOut );
 	static RString GetLanguageIniPath( const RString &sThemeName, const RString &sLanguage );
-	void GetOptionalLanguageIniPaths( std::vector<RString> &vsPathsOut, const RString &sThemeName, const RString &sLanguage );
+	void GetOptionalLanguageIniPaths( std::vector<std::string> &vsPathsOut, std::string const &sThemeName, std::string const &sLanguage );
 	RString GetDefaultLanguage();
 
 	RString m_sCurThemeName;

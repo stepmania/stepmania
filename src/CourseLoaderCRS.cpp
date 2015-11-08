@@ -374,14 +374,16 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 	{
 		const RString sFName = SetExtension( out.m_sPath, "" );
 
-		vector<RString> arrayPossibleBanners;
+		vector<std::string> arrayPossibleBanners;
 		GetDirListing( sFName + "*.png", arrayPossibleBanners, false, false );
 		GetDirListing( sFName + "*.jpg", arrayPossibleBanners, false, false );
 		GetDirListing( sFName + "*.jpeg", arrayPossibleBanners, false, false );
 		GetDirListing( sFName + "*.bmp", arrayPossibleBanners, false, false );
 		GetDirListing( sFName + "*.gif", arrayPossibleBanners, false, false );
 		if( !arrayPossibleBanners.empty() )
+		{
 			out.m_sBannerPath = arrayPossibleBanners[0];
+		}
 	}
 
 	static TitleSubst tsub("Courses");

@@ -477,9 +477,9 @@ static float ParseBrokenDWITimestamp( const RString &arg1, const RString &arg2, 
 }
 
 
-void DWILoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
+void DWILoader::GetApplicableFiles( std::string const &sPath, vector<std::string> &out )
 {
-	GetDirListing( sPath + RString("*.dwi"), out );
+	GetDirListing( sPath + "*.dwi", out );
 }
 
 bool DWILoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
@@ -520,7 +520,7 @@ bool DWILoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 
 bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString> &BlacklistedImages )
 {
-	vector<RString> aFileNames;
+	vector<std::string> aFileNames;
 	GetApplicableFiles( sPath_, aFileNames );
 
 	if( aFileNames.size() > 1 )

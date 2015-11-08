@@ -132,7 +132,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 		// This is an 3.0 and before-style BGAnimation (not using .ini)
 
 		// loading a directory of layers
-		vector<RString> asImagePaths;
+		vector<std::string> asImagePaths;
 		ASSERT( sAniDir != "" );
 
 		GetDirListing( sAniDir+"*.png", asImagePaths, false, true );

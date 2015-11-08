@@ -3189,7 +3189,7 @@ void ScreenGameplay::SaveReplay()
 			p->AppendChild( pi->m_pPlayer->GetNoteData().CreateNode() );
 
 			// Find a file name for the replay
-			vector<RString> files;
+			vector<std::string> files;
 			GetDirListing( "Save/Replays/replay*", files, false, false );
 			sort( files.begin(), files.end() );
 

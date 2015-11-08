@@ -127,7 +127,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
 		}
 	}
 	std::set<RString> FileTypes;
-	vector<RString> const& sound_exts= ActorUtil::GetTypeExtensionList(FT_Sound);
+	auto const& sound_exts= ActorUtil::GetTypeExtensionList(FT_Sound);
 	for (auto &curr: sound_exts)
 	{
 		FileTypes.insert(curr);

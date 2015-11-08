@@ -174,9 +174,9 @@ static LocalizedString FOLDER_CONTAINS_MUSIC_FILES( "SongManager", "The folder \
 void SongManager::SanityCheckGroupDir( RString sDir ) const
 {
 	// Check to see if they put a song directly inside the group folder.
-	vector<RString> arrayFiles;
+	vector<std::string> arrayFiles;
 	GetDirListing( sDir + "/*", arrayFiles );
-	const vector<RString>& audio_exts= ActorUtil::GetTypeExtensionList(FT_Sound);
+	auto const & audio_exts= ActorUtil::GetTypeExtensionList(FT_Sound);
 	for (auto const &fname: arrayFiles)
 	{
 		const RString ext= GetExtension(fname);
@@ -205,7 +205,7 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 		return; // the group is already added
 
 	// Look for a group banner in this group folder
-	vector<RString> arrayGroupBanners;
+	vector<std::string> arrayGroupBanners;
 	GetDirListing( sDir+sGroupDirName+"/*.png", arrayGroupBanners );
 	GetDirListing( sDir+sGroupDirName+"/*.jpg", arrayGroupBanners );
 	GetDirListing( sDir+sGroupDirName+"/*.jpeg", arrayGroupBanners );
@@ -274,13 +274,13 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 		sDir += "/";
 	}
 	// Find all group directories in "Songs" folder
-	vector<RString> arrayGroupDirs;
+	vector<std::string> arrayGroupDirs;
 	GetDirListing( sDir+"*", arrayGroupDirs, true );
 	SortRStringArray( arrayGroupDirs );
 	StripCvsAndSvn( arrayGroupDirs );
 	StripMacResourceForks( arrayGroupDirs );
 
-	vector< vector<RString> > arrayGroupSongDirs;
+	vector<vector<std::string>> arrayGroupSongDirs;
 	int groupIndex, songCount, songIndex;
 
 	groupIndex = 0;
@@ -304,7 +304,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 		SanityCheckGroupDir(sDir+sGroupDirName);
 
 		// Find all Song folders in this group directory
-		vector<RString> arraySongDirs;
+		vector<std::string> arraySongDirs;
 		GetDirListing( sDir+sGroupDirName + "/*", arraySongDirs, true, true );
 		StripCvsAndSvn( arraySongDirs );
 		StripMacResourceForks( arraySongDirs );
@@ -326,7 +326,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 	songIndex = 0;
 	for (auto const &sGroupDirName: arrayGroupDirs)
 	{
-		vector<RString> &arraySongDirs = arrayGroupSongDirs[groupIndex++];
+		auto &arraySongDirs = arrayGroupSongDirs[groupIndex++];
 
 		LOG->Trace("Attempting to load %i songs from \"%s\"", int(arraySongDirs.size()),
 				   (sDir+sGroupDirName).c_str() );
@@ -387,7 +387,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 void SongManager::LoadGroupSymLinks(RString sDir, RString sGroupFolder)
 {
 	// Find all symlink files in this folder
-	vector<RString> arraySymLinks;
+	vector<std::string> arraySymLinks;
 	GetDirListing( sDir+sGroupFolder+"/*.include", arraySymLinks, false );
 	SortRStringArray( arraySymLinks );
 	SongPointerVector& index_entry = m_mapSongGroupIndex[sGroupFolder];
@@ -844,7 +844,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 	vsCourseDirs.push_back( SpecialFiles::COURSES_DIR );
 	vsCourseDirs.push_back( ADDITIONAL_COURSES_DIR );
 
-	vector<RString> vsCourseGroupNames;
+	vector<std::string> vsCourseGroupNames;
 	for (auto const &sDir: vsCourseDirs)
 	{
 		// Find all group directories in Courses dir
@@ -861,7 +861,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 	for (auto const &sCourseGroup: vsCourseGroupNames)
 	{
 		// Find all CRS files in this group directory
-		vector<RString> vsCoursePaths;
+		vector<std::string> vsCoursePaths;
 		GetDirListing( sCourseGroup + "/*.crs", vsCoursePaths, false, true );
 		SortRStringArray( vsCoursePaths );
 
@@ -1816,8 +1816,8 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 	int iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
 
 	// Pass 1: Flat folder (old style)
-	vector<RString> vsFiles;
-	int size = min( (int) vsFiles.size(), MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded );
+	vector<std::string> vsFiles;
+	int size = min( static_cast<int>(vsFiles.size()), MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded );
 	GetDirListing( sDir+"*.edit", vsFiles, false, true );
 
 	// XXX: If some edits are invalid and they're close to the edit limit, this may erroneously skip some edits, and won't warn.
@@ -1843,19 +1843,19 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 	iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
 
 	// Pass 2: Group and song folders with #SONG inferred from folder (optional new style)
-	vector<RString> vsGroups;
+	vector<std::string> vsGroups;
 	GetDirListing( sDir+"*", vsGroups, true, false );
 
 	// XXX: Same as above, edits may be skipped in error in some cases
 	for (auto &group: vsGroups)
 	{
 		RString sGroupDir = group+"/";
-		vector<RString> vsSongs;
+		vector<std::string> vsSongs;
 		GetDirListing(sDir+sGroupDir+"*", vsSongs, true, false );
 
 		for (auto &song: vsSongs)
 		{
-			vector<RString> vsEdits;
+			vector<std::string> vsEdits;
 			RString sSongDir = sGroupDir+song+"/";
 			// XXX There doesn't appear to be a songdir const?
 			Song *given = GetSongFromDir( "/Songs/"+sSongDir );
@@ -1893,7 +1893,7 @@ void SongManager::LoadCourseEditsFromProfileDir( const RString &sProfileDir, Pro
 	// Load all edit courses
 	RString sDir = sProfileDir + EDIT_COURSES_SUBDIR;
 
-	vector<RString> vsFiles;
+	vector<std::string> vsFiles;
 	GetDirListing( sDir+"*.crs", vsFiles, false, true );
 
 	int iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );

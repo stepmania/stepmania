@@ -9,13 +9,13 @@ using std::vector;
 using std::string;
 
 /* Search for "beginning*containing*ending". */
-void FileSet::GetFilesMatching( const RString &sBeginning_, const RString &sContaining_, const RString &sEnding_, vector<RString> &asOut, bool bOnlyDirs ) const
+void FileSet::GetFilesMatching( std::string const &sBeginning_, std::string const &sContaining_, std::string const &sEnding_, vector<std::string> &asOut, bool bOnlyDirs ) const
 {
 	/* "files" is a case-insensitive mapping, by filename.  Use lower_bound to figure
 	 * out where to start. */
-	RString sBeginning = Rage::make_lower(sBeginning_);
-	RString sContaining = Rage::make_lower(sContaining_);
-	RString sEnding = Rage::make_lower(sEnding_);
+	auto sBeginning = Rage::make_lower(sBeginning_);
+	auto sContaining = Rage::make_lower(sContaining_);
+	auto sEnding = Rage::make_lower(sEnding_);
 
 	std::set<File>::const_iterator i = files.lower_bound( File(sBeginning) );
 	for( ; i != files.end(); ++i )
@@ -58,15 +58,17 @@ void FileSet::GetFilesMatching( const RString &sBeginning_, const RString &sCont
 	}
 }
 
-void FileSet::GetFilesEqualTo( const RString &sStr, vector<RString> &asOut, bool bOnlyDirs ) const
+void FileSet::GetFilesEqualTo( std::string const &sStr, vector<std::string> &asOut, bool bOnlyDirs ) const
 {
 	std::set<File>::const_iterator i = files.find( File(sStr) );
 	if( i == files.end() )
+	{
 		return;
-
+	}
 	if( bOnlyDirs && !i->dir )
+	{
 		return;
-
+	}
 	asOut.push_back( i->name );
 }
 
@@ -220,7 +222,7 @@ bool FilenameDB::ResolvePath( RString &sPath )
 	return true;
 }
 
-void FilenameDB::GetFilesMatching( const RString &sDir, const RString &sBeginning, const RString &sContaining, const RString &sEnding, vector<RString> &asOut, bool bOnlyDirs )
+void FilenameDB::GetFilesMatching( std::string const &sDir, std::string const &sBeginning, std::string const &sContaining, std::string const &sEnding, vector<std::string> &asOut, bool bOnlyDirs )
 {
 	ASSERT( !m_Mutex.IsLockedByThisThread() );
 
@@ -229,7 +231,7 @@ void FilenameDB::GetFilesMatching( const RString &sDir, const RString &sBeginnin
 	m_Mutex.Unlock(); /* locked by GetFileSet */
 }
 
-void FilenameDB::GetFilesEqualTo( const RString &sDir, const RString &sFile, vector<RString> &asOut, bool bOnlyDirs )
+void FilenameDB::GetFilesEqualTo( std::string const &sDir, std::string const &sFile, vector<std::string> &asOut, bool bOnlyDirs )
 {
 	ASSERT( !m_Mutex.IsLockedByThisThread() );
 
@@ -239,7 +241,7 @@ void FilenameDB::GetFilesEqualTo( const RString &sDir, const RString &sFile, vec
 }
 
 
-void FilenameDB::GetFilesSimpleMatch( const RString &sDir, const RString &sMask, vector<RString> &asOut, bool bOnlyDirs )
+void FilenameDB::GetFilesSimpleMatch( std::string const &sDir, std::string const &sMask, vector<std::string> &asOut, bool bOnlyDirs )
 {
 	/* Does this contain a wildcard? */
 	size_t first_pos = sMask.find_first_of( '*' );
@@ -254,7 +256,7 @@ void FilenameDB::GetFilesSimpleMatch( const RString &sDir, const RString &sMask,
 	{
 		/* Only one *: "A*B". */
 		/* XXX: "_blank.png*.png" shouldn't match the file "_blank.png". */
-		GetFilesMatching( sDir, sMask.substr(0, first_pos), RString(), sMask.substr(first_pos+1), asOut, bOnlyDirs );
+		GetFilesMatching( sDir, sMask.substr(0, first_pos), "", sMask.substr(first_pos+1), asOut, bOnlyDirs );
 		return;
 	}
 
@@ -579,7 +581,7 @@ void *FilenameDB::GetFilePriv( const RString &path )
 
 
 
-void FilenameDB::GetDirListing( const RString &sPath_, vector<RString> &asAddTo, bool bOnlyDirs, bool bReturnPathToo )
+void FilenameDB::GetDirListing( std::string const &sPath_, vector<std::string> &asAddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 	RString sPath = sPath_;
 //	LOG->Trace( "GetDirListing( %s )", sPath.c_str() );

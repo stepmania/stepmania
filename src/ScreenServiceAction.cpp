@@ -42,7 +42,7 @@ static RString ClearMachineEdits()
 	int iNumAttempted = 0;
 	int iNumSuccessful = 0;
 
-	vector<RString> vsEditFiles;
+	vector<std::string> vsEditFiles;
 	GetDirListing( PROFILEMAN->GetProfileDir(ProfileSlot_Machine)+EDIT_STEPS_SUBDIR+"*.edit", vsEditFiles, false, true );
 	GetDirListing( PROFILEMAN->GetProfileDir(ProfileSlot_Machine)+EDIT_COURSES_SUBDIR+"*.crs", vsEditFiles, false, true );
 	for (auto &i: vsEditFiles)
@@ -93,7 +93,7 @@ static RString ClearMemoryCardEdits()
 		MEMCARDMAN->MountCard(pn);
 
 	RString sDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
-	vector<RString> vsEditFiles;
+	vector<std::string> vsEditFiles;
 	GetDirListing( sDir+EDIT_STEPS_SUBDIR+"*.edit", vsEditFiles, false, true );
 	GetDirListing( sDir+EDIT_COURSES_SUBDIR+"*.crs", vsEditFiles, false, true );
 	for (auto &i: vsEditFiles)
@@ -188,13 +188,13 @@ static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfile
 		RString sFromDir = sFromProfileDir + EDIT_STEPS_SUBDIR;
 		RString sToDir = sToProfileDir + EDIT_STEPS_SUBDIR;
 
-		vector<RString> vsFiles;
+		vector<std::string> vsFiles;
 		GetDirListing( sFromDir+"*.edit", vsFiles, false, false );
 		for (auto &i: vsFiles)
 		{
 			if( DoesFileExist(sToDir+i) )
 				iNumOverwritten++;
-			bool bSuccess = FileCopy( sFromDir+*i, sToDir+i );
+			bool bSuccess = FileCopy( sFromDir+i, sToDir+i );
 			if( bSuccess )
 				iNumSucceeded++;
 			else
@@ -216,7 +216,7 @@ static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfile
 		RString sFromDir = sFromProfileDir + EDIT_COURSES_SUBDIR;
 		RString sToDir = sToProfileDir + EDIT_COURSES_SUBDIR;
 
-		vector<RString> vsFiles;
+		vector<std::string> vsFiles;
 		GetDirListing( sFromDir+"*.crs", vsFiles, false, false );
 		for (auto &i: vsFiles)
 		{
@@ -261,13 +261,13 @@ static RString CopyEdits( const RString &sFromProfileDir, const RString &sToProf
 
 static void SyncFiles( const RString &sFromDir, const RString &sToDir, const RString &sMask, int &iNumAdded, int &iNumDeleted, int &iNumOverwritten, int &iNumFailed )
 {
-	vector<RString> vsFilesSource;
+	vector<std::string> vsFilesSource;
 	GetDirListing( sFromDir+sMask, vsFilesSource, false, false );
 
-	vector<RString> vsFilesDest;
+	vector<std::string> vsFilesDest;
 	GetDirListing( sToDir+sMask, vsFilesDest, false, false );
 
-	vector<RString> vsToDelete;
+	vector<std::string> vsToDelete;
 	GetAsNotInBs( vsFilesDest, vsFilesSource, vsToDelete );
 
 	for (auto &toDelete: vsToDelete)

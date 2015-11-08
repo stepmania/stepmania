@@ -369,7 +369,7 @@ public:
 	}
 };
 
-static void SortNoteSkins( vector<RString> &asSkinNames )
+static void SortNoteSkins( vector<std::string> &asSkinNames )
 {
 	std::set<RString> setSkinNames;
 	setSkinNames.insert( asSkinNames.begin(), asSkinNames.end() );
@@ -399,14 +399,16 @@ class OptionRowHandlerListNoteSkins : public OptionRowHandlerList
 		m_Def.m_bOneChoiceForAllPlayers = false;
 		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
 
-		vector<RString> arraySkinNames;
+		vector<std::string> arraySkinNames;
 		NOTESKIN->GetNoteSkinNames( arraySkinNames );
 		SortNoteSkins( arraySkinNames );
 
 		for( unsigned skin=0; skin<arraySkinNames.size(); skin++ )
 		{
 			if( arraySkinNames[skin] == CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue() )
+			{
 				m_Def.m_iDefault = skin;
+			}
 			GameCommand mc;
 			mc.m_sPreferredModifiers = arraySkinNames[skin];
 			//ms.m_sName = arraySkinNames[skin];

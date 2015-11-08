@@ -162,7 +162,7 @@ static void MoveNop( int &iSel, bool bToSel, const ConfOption *pConfOption )
 
 // TODO: Write GenerateValueList() function that can use ints and floats. -aj
 
-static void GameChoices( vector<RString> &out )
+static void GameChoices( vector<std::string> &out )
 {
 	vector<const Game*> aGames;
 	GAMEMAN->GetEnabledGames( aGames );
@@ -175,7 +175,7 @@ static void GameChoices( vector<RString> &out )
 
 static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<RString> choices;
+	vector<std::string> choices;
 	pConfOption->MakeOptionsList( choices );
 
 	if( ToSel )
@@ -198,9 +198,9 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 	}
 }
 
-static void LanguageChoices( vector<RString> &out )
+static void LanguageChoices( vector<std::string> &out )
 {
-	vector<RString> vs;
+	vector<std::string> vs;
 	THEME->GetLanguages( vs );
 	SortRStringArray( vs, true );
 
@@ -220,7 +220,7 @@ static void LanguageChoices( vector<RString> &out )
 
 static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<RString> vs;
+	vector<std::string> vs;
 	THEME->GetLanguages( vs );
 	SortRStringArray( vs, true );
 
@@ -259,7 +259,7 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 	}
 }
 
-static void ThemeChoices( vector<RString> &out )
+static void ThemeChoices( vector<std::string> &out )
 {
 	THEME->GetSelectableThemeNames( out );
 	for (auto &s: out)
@@ -268,7 +268,7 @@ static void ThemeChoices( vector<RString> &out )
 	}
 }
 
-static void DisplayResolutionChoices( vector<RString> &out )
+static void DisplayResolutionChoices( vector<std::string> &out )
 {
 	DisplayResolutions d;
 	DISPLAY->GetDisplayResolutions( d );
@@ -282,10 +282,10 @@ static void DisplayResolutionChoices( vector<RString> &out )
 
 static void RequestedTheme( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<RString> choices;
+	vector<std::string> choices;
 	pConfOption->MakeOptionsList( choices );
 
-	vector<RString> vsThemeNames;
+	vector<std::string> vsThemeNames;
 	THEME->GetSelectableThemeNames( vsThemeNames );
 
 	if( ToSel )
@@ -308,7 +308,7 @@ static void RequestedTheme( int &sel, bool ToSel, const ConfOption *pConfOption 
 }
 
 static LocalizedString OFF ("ScreenOptionsMasterPrefs","Off");
-static void AnnouncerChoices( vector<RString> &out )
+static void AnnouncerChoices( vector<std::string> &out )
 {
 	ANNOUNCER->GetAnnouncerNames( out );
 	out.insert( out.begin(), OFF.GetValue() );
@@ -316,7 +316,7 @@ static void AnnouncerChoices( vector<RString> &out )
 
 static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<RString> choices;
+	vector<std::string> choices;
 	pConfOption->MakeOptionsList( choices );
 
 	if( ToSel )
@@ -339,14 +339,14 @@ static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 	}
 }
 
-static void DefaultNoteSkinChoices( vector<RString> &out )
+static void DefaultNoteSkinChoices( vector<std::string> &out )
 {
 	NOTESKIN->GetNoteSkinNames( out );
 }
 
 static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<RString> choices;
+	vector<std::string> choices;
 	pConfOption->MakeOptionsList( choices );
 
 	if( ToSel )
@@ -373,7 +373,7 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 	}
 }
 
-static void DefaultFailChoices(vector<RString>& out)
+static void DefaultFailChoices(vector<std::string>& out)
 {
 	out.push_back("Immediate");
 	out.push_back("ImmediateContinue");
@@ -948,7 +948,7 @@ void ConfOption::UpdateAvailableOptions()
 	}
 }
 
-void ConfOption::MakeOptionsList( vector<RString> &out ) const
+void ConfOption::MakeOptionsList( vector<std::string> &out ) const
 {
 	out = names;
 }

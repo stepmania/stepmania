@@ -523,7 +523,7 @@ void ScreenPackages::EnterURL( const RString & sURL )
 	// if we are not talking about a file, let's not worry
 	if( m_sEndName != "" && m_bIsPackage )
 	{
-		vector<RString> AddTo;
+		vector<std::string> AddTo;
 		GetDirListing( "Packages/"+m_sEndName, AddTo, false, false );
 		if ( AddTo.size() > 0 )
 		{

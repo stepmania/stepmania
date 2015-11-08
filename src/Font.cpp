@@ -427,7 +427,7 @@ void Font::SetDefaultGlyph( FontPage *pPage )
 void Font::GetFontPaths( const RString &sFontIniPath, vector<RString> &asTexturePathsOut )
 {
 	RString sPrefix = SetExtension( sFontIniPath, "" );
-	vector<RString> asFiles;
+	vector<std::string> asFiles;
 	GetDirListing( sPrefix + "*", asFiles, false, true );
 
 	Rage::ci_ascii_string ini{ ".ini" };

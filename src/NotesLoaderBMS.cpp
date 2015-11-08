@@ -125,12 +125,12 @@ static void SlideDuplicateDifficulties( Song &p )
 	}
 }
 
-void BMSLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
+void BMSLoader::GetApplicableFiles( std::string const &sPath, vector<std::string> &out )
 {
-	GetDirListing( sPath + RString("*.bms"), out );
-	GetDirListing( sPath + RString("*.bme"), out );
-	GetDirListing( sPath + RString("*.bml"), out );
-	GetDirListing( sPath + RString("*.pms"), out );
+	GetDirListing( sPath + "*.bms", out );
+	GetDirListing( sPath + "*.bme", out );
+	GetDirListing( sPath + "*.bml", out );
+	GetDirListing( sPath + "*.pms", out );
 }
 
 /*===========================================================================*/
@@ -651,7 +651,7 @@ int BMSSong::AllocateKeysound( RString filename, RString path )
 
 	if( !IsAFile(dir + normalizedFilename) )
 	{
-		vector<RString> const& exts= ActorUtil::GetTypeExtensionList(FT_Sound);
+		auto const & exts= ActorUtil::GetTypeExtensionList(FT_Sound);
 		for (auto &ext: exts)
 		{
 			RString fn = SetExtension( normalizedFilename, ext );
@@ -717,7 +717,7 @@ bool BMSSong::GetBackground( RString filename, RString path, RString &bgfile )
 
 	if( !IsAFile(dir + normalizedFilename) )
 	{
-		vector<RString> exts;
+		vector<std::string> exts;
 		ActorUtil::AddTypeExtensionsToList(FT_Movie, exts);
 		ActorUtil::AddTypeExtensionsToList(FT_Bitmap, exts);
 		for (auto &ext: exts)
@@ -746,14 +746,17 @@ bool BMSSong::GetBackground( RString filename, RString path, RString &bgfile )
 
 void BMSSong::PrecacheBackgrounds(const RString &dir)
 {
-	if( backgroundsPrecached ) return;
+	if( backgroundsPrecached )
+	{
+		return;
+	}
 	backgroundsPrecached = true;
-	vector<RString> arrayPossibleFiles;
+	vector<std::string> arrayPossibleFiles;
 
-	vector<RString> exts;
+	vector<std::string> exts;
 	ActorUtil::AddTypeExtensionsToList(FT_Movie, exts);
 	ActorUtil::AddTypeExtensionsToList(FT_Bitmap, exts);
-	FILEMAN->GetDirListingWithMultipleExtensions(dir + RString("*."), exts, arrayPossibleFiles);
+	FILEMAN->GetDirListingWithMultipleExtensions(dir + "*.", exts, arrayPossibleFiles);
 
 	for (auto &file: arrayPossibleFiles)
 	{
@@ -1740,7 +1743,7 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 
 	ASSERT( out.m_vsKeysoundFile.empty() );
 
-	vector<RString> arrayBMSFileNames;
+	vector<std::string> arrayBMSFileNames;
 	GetApplicableFiles( sDir, arrayBMSFileNames );
 
 	/* We should have at least one; if we had none, we shouldn't have been

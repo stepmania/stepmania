@@ -32,7 +32,7 @@ void ScreenGameplayLesson::Init()
 	// Load pages
 	Song *pSong = GAMESTATE->m_pCurSong;
 	RString sDir = pSong->GetSongDir();
-	vector<RString> vs;
+	vector<std::string> vs;
 	GetDirListing( sDir+"Page*", vs, true, true );
 	m_vPages.resize( vs.size() );
 	for (auto s = vs.begin(); s != vs.end(); ++s)

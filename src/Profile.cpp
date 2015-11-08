@@ -2457,7 +2457,7 @@ RString Profile::MakeUniqueFileNameNoExtension( RString sDir, RString sFileNameB
 {
 	FILEMAN->FlushDirCache( sDir );
 	// Find a file name for the screenshot
-	vector<RString> files;
+	vector<std::string> files;
 	GetDirListing( sDir + sFileNameBeginning+"*", files, false, false );
 	sort( files.begin(), files.end() );
 

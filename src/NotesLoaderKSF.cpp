@@ -537,14 +537,16 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 
 	// changed up there in case of something is found inside the SONGFILE tag in the head ksf -DaisuMaster
 	// search for music with song in the file name
-	vector<RString> arrayPossibleMusic;
+	vector<std::string> arrayPossibleMusic;
 	GetDirListing( out.GetSongDir() + RString("song.mp3"), arrayPossibleMusic );
 	GetDirListing( out.GetSongDir() + RString("song.oga"), arrayPossibleMusic );
 	GetDirListing( out.GetSongDir() + RString("song.ogg"), arrayPossibleMusic );
 	GetDirListing( out.GetSongDir() + RString("song.wav"), arrayPossibleMusic );
 
 	if( !arrayPossibleMusic.empty() )		// we found a match
+	{
 		out.m_sMusicFile = arrayPossibleMusic[0];
+	}
 	// ^this was below, at the end
 
 	float SMGap1 = 0, SMGap2 = 0, BPM1 = -1, BPMPos2 = -1, BPM2 = -1, BPMPos3 = -1, BPM3 = -1;
@@ -714,9 +716,9 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 	return true;
 }
 
-void KSFLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
+void KSFLoader::GetApplicableFiles( std::string const &sPath, vector<std::string> &out )
 {
-	GetDirListing( sPath + RString("*.ksf"), out );
+	GetDirListing( sPath + "*.ksf", out );
 }
 
 bool KSFLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
@@ -739,8 +741,8 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 {
 	LOG->Trace( "KSFLoader::LoadFromDir(%s)", sDir.c_str() );
 
-	vector<RString> arrayKSFFileNames;
-	GetDirListing( sDir + RString("*.ksf"), arrayKSFFileNames );
+	vector<std::string> arrayKSFFileNames;
+	GetDirListing( sDir + "*.ksf", arrayKSFFileNames );
 
 	// We shouldn't have been called to begin with if there were no KSFs.
 	ASSERT( arrayKSFFileNames.size() != 0 );
