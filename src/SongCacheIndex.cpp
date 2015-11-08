@@ -74,7 +74,7 @@ static void EmptyDir( RString dir )
 {
 	ASSERT(dir[dir.size()-1] == '/');
 
-	vector<RString> asCacheFileNames;
+	vector<std::string> asCacheFileNames;
 	GetDirListing( dir, asCacheFileNames );
     for (auto const &name: asCacheFileNames)
 	{

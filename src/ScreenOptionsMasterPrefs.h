@@ -31,7 +31,7 @@ struct ConfOption
 
 	/* Return the list of available selections; Get() and Put() use indexes into
 	 * this array. UpdateAvailableOptions() should be called before using this. */
-	void MakeOptionsList( std::vector<RString> &out ) const;
+	void MakeOptionsList( std::vector<std::string> &out ) const;
 
 	inline int Get() const { int sel; MoveData( sel, true, this ); return sel; }
 	inline void Put( int sel ) const { MoveData( sel, false, this ); }
@@ -53,7 +53,7 @@ struct ConfOption
 #undef PUSH
 
 	ConfOption( const char *n, MoveData_t m,
-			void (*lst)( std::vector<RString> &out ) )
+			   void (*lst)( std::vector<std::string> &out ) )
 	{
 		name = n;
 		MoveData = m;
@@ -64,8 +64,8 @@ struct ConfOption
 
 
 // private:
-	std::vector<RString> names;
-	void (*MakeOptionsListCB)( std::vector<RString> &out );
+	std::vector<std::string> names;
+	void (*MakeOptionsListCB)( std::vector<std::string> &out );
 };
 
 #endif

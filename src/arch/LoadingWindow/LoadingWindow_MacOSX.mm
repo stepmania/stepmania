@@ -138,7 +138,7 @@ void LoadingWindow_MacOSX::SetSplash( const RageSurface *pSplash )
 {
 	RageFile f;
 	RString data;
-	vector<RString> vs;
+	vector<std::string> vs;
 
 	// Try to load a custom splash from the current theme, first.
 	GetDirListing( THEME->GetPathG( "Common", "splash"), vs, false, true );
@@ -151,11 +151,14 @@ void LoadingWindow_MacOSX::SetSplash( const RageSurface *pSplash )
 	}
 
 	if( vs.empty() || !f.Open(vs[0]) )
+	{
 		return;
+	}
 	f.Read( data );
 	if( data.empty() )
+	{
 		return;
-
+	}
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSImage *image = nil;
 	NSData *d = [[NSData alloc] initWithBytes:data.data() length:data.length()];

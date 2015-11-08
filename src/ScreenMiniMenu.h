@@ -16,7 +16,7 @@ struct MenuRowDef
 	MenuRowUpdateEnabled	pfnEnabled;	// if ! nullptr, used instead of bEnabled
 	EditMode	emShowIn;
 	int			iDefaultChoice;
-	std::vector<RString>		choices;
+	std::vector<std::string> choices;
 	bool		bThemeTitle;
 	bool		bThemeItems;
 

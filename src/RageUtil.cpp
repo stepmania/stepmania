@@ -945,9 +945,9 @@ void MakeValidFilename( RString &sName )
 	sName = WStringToRString( wsName );
 }
 
-bool FindFirstFilenameContaining(const vector<RString>& filenames,
-	RString& out, const vector<RString>& starts_with,
-	const vector<RString>& contains, const vector<RString>& ends_with)
+bool FindFirstFilenameContaining(vector<std::string> const & filenames,
+	std::string & out, vector<std::string> const & starts_with,
+	vector<std::string> const & contains, vector<std::string> const & ends_with)
 {
 	for(size_t i= 0; i < filenames.size(); ++i)
 	{
@@ -1097,11 +1097,14 @@ unsigned int GetHashForString( const RString &s )
 bool DirectoryIsEmpty( const RString &sDir )
 {
 	if( sDir.empty() )
+	{
 		return true;
+	}
 	if( !DoesFileExist(sDir) )
+	{
 		return true;
-
-	vector<RString> asFileNames;
+	}
+	vector<std::string> asFileNames;
 	GetDirListing( sDir, asFileNames );
 	return asFileNames.empty();
 }
@@ -1116,7 +1119,7 @@ bool CompareRStringsDesc( const RString &sStr1, const RString &sStr2 )
 	return Rage::ci_ascii_string{ sStr1.c_str() } > Rage::ci_ascii_string{ sStr2.c_str() };
 }
 
-void SortRStringArray( vector<RString> &arrayRStrings, const bool bSortAscending )
+void SortRStringArray( vector<std::string> &arrayRStrings, const bool bSortAscending )
 {
 	sort( arrayRStrings.begin(), arrayRStrings.end(),
 			bSortAscending?CompareRStringsAsc:CompareRStringsDesc );
@@ -1216,7 +1219,7 @@ static bool CVSOrSVN( const RString& s )
 	return cvs == Rage::tail(s, 3) || svn == Rage::tail(s, 4) || hg == Rage::tail(s, 3);
 }
 
-void StripCvsAndSvn( vector<RString> &vs )
+void StripCvsAndSvn( vector<std::string> &vs )
 {
 	RemoveIf( vs, CVSOrSVN );
 }
@@ -1226,7 +1229,7 @@ static bool MacResourceFork(const RString& s)
 	return Rage::ci_ascii_string{ "._" } == Rage::head(s, 2);
 }
 
-void StripMacResourceForks( vector<RString> &vs )
+void StripMacResourceForks( vector<std::string> &vs )
 {
 	RemoveIf( vs, MacResourceFork );
 }
@@ -1254,14 +1257,17 @@ RString DerefRedir( const RString &_path )
 
 		sPath2 += "*";
 
-		vector<RString> matches;
+		vector<std::string> matches;
 		GetDirListing( sPath2, matches, false, true );
 
 		if( matches.empty() )
+		{
 			RageException::Throw( "The redirect \"%s\" references a file \"%s\" which doesn't exist.", sPath.c_str(), sPath2.c_str() );
+		}
 		else if( matches.size() > 1 )
+		{
 			RageException::Throw( "The redirect \"%s\" references a file \"%s\" with multiple matches.", sPath.c_str(), sPath2.c_str() );
-
+		}
 		sPath = matches[0];
 	}
 
@@ -1537,7 +1543,7 @@ RString WcharToUTF8( wchar_t c )
 }
 
 // &a; -> a
-void ReplaceEntityText( RString &sText, const std::map<RString,RString> &m )
+void ReplaceEntityText( std::string &sText, std::map<std::string,std::string> const &m )
 {
 	RString sRet;
 
@@ -1589,7 +1595,7 @@ void ReplaceEntityText( RString &sText, const std::map<RString,RString> &m )
 }
 
 // abcd -> &a; &b; &c; &d;
-void ReplaceEntityText( RString &sText, const std::map<char,RString> &m )
+void ReplaceEntityText( std::string &sText, std::map<char,std::string> const &m )
 {
 	RString sFind;
 
@@ -1635,7 +1641,7 @@ void ReplaceEntityText( RString &sText, const std::map<char,RString> &m )
 }
 
 // Replace &#nnnn; (decimal) and &xnnnn; (hex) with corresponding UTF-8 characters.
-void Replace_Unicode_Markers( RString &sText )
+void Replace_Unicode_Markers( std::string &sText )
 {
 	unsigned iStart = 0;
 	while( iStart < sText.size() )

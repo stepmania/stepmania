@@ -18,9 +18,9 @@ public:
 	~NoteSkinManager();
 
 	void RefreshNoteSkinData( const Game* game );
-	void GetNoteSkinNames( const Game* game, std::vector<RString> &AddTo );
-	void GetNoteSkinNames( std::vector<RString> &AddTo );	// looks up current const Game* in GAMESTATE
-	bool NoteSkinNameInList(const RString name, std::vector<RString> name_list);
+	void GetNoteSkinNames( const Game* game, std::vector<std::string> &AddTo );
+	void GetNoteSkinNames( std::vector<std::string> &AddTo );	// looks up current const Game* in GAMESTATE
+	bool NoteSkinNameInList(std::string const name, std::vector<std::string> name_list);
 	bool DoesNoteSkinExist( const RString &sNoteSkin );	// looks up current const Game* in GAMESTATE
 	bool DoNoteSkinsExistForGame( const Game *pGame );
 	RString GetDefaultNoteSkinName();	// looks up current const Game* in GAMESTATE
@@ -46,7 +46,7 @@ public:
 
 protected:
 	RString GetPathFromDirAndFile( const RString &sDir, const RString &sFileName );
-	void GetAllNoteSkinNamesForGame( const Game *pGame, std::vector<RString> &AddTo );
+	void GetAllNoteSkinNamesForGame( const Game *pGame, std::vector<std::string> &AddTo );
 
 	bool LoadNoteSkinData( const RString &sNoteSkinName, NoteSkinData& data_out );
 	bool LoadNoteSkinDataRecursive( const RString &sNoteSkinName, NoteSkinData& data_out );

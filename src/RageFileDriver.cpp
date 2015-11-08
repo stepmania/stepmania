@@ -45,7 +45,7 @@ int RageFileDriver::GetPathValue( const RString &sPath )
 	return 0;
 }
 
-void RageFileDriver::GetDirListing( const RString &sPath, vector<RString> &asAddTo, bool bOnlyDirs, bool bReturnPathToo )
+void RageFileDriver::GetDirListing( std::string const &sPath, vector<std::string> &asAddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 	FDB->GetDirListing( sPath, asAddTo, bOnlyDirs, bReturnPathToo );
 }

@@ -29,7 +29,7 @@ NewSkinManager::~NewSkinManager()
 
 void NewSkinManager::load_skins()
 {
-	vector<RString> dirs;
+	vector<std::string> dirs;
 	FILEMAN->GetDirListing(SpecialFiles::NEWSKINS_DIR, dirs, true, true);
 	m_skins.clear();
 	m_supported_types.clear();

@@ -56,7 +56,7 @@ bool RandomSample::LoadSoundDir( RString sDir, int iMaxToLoad )
 	}
 #endif
 
-	vector<RString> arraySoundFiles;
+	vector<std::string> arraySoundFiles;
 	GetDirListing( sDir + "*.mp3", arraySoundFiles );
 	GetDirListing( sDir + "*.oga", arraySoundFiles );
 	GetDirListing( sDir + "*.ogg", arraySoundFiles );

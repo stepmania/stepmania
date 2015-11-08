@@ -27,7 +27,7 @@ CharacterManager::CharacterManager()
 	}
 	m_pCharacters.clear();
 
-	vector<RString> as;
+	vector<std::string> as;
 	GetDirListing( CHARACTERS_DIR "*", as, true, true );
 	StripCvsAndSvn( as );
 	StripMacResourceForks( as );

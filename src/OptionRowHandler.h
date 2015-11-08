@@ -43,7 +43,7 @@ struct OptionRowDefinition
 	bool m_bOneChoiceForAllPlayers;
 	SelectType m_selectType;
 	LayoutType m_layoutType;
-	std::vector<RString> m_vsChoices;
+	std::vector<std::string> m_vsChoices;
 	std::set<PlayerNumber> m_vEnabledForPlayers;	// only players in this set may change focus to this row
 	int m_iDefault;
 	bool	m_bExportOnChange;

@@ -108,7 +108,7 @@ const RString SBE_StretchNoLoop         = "StretchNoLoop";
 const RString SBE_StretchRewind         = "StretchRewind";
 const RString SBT_CrossFade             = "CrossFade";
 
-static void StripCvsAndSvn( vector<RString> &vsPathsToStrip, vector<RString> &vsNamesToStrip )
+static void StripCvsAndSvn( vector<std::string> &vsPathsToStrip, vector<std::string> &vsNamesToStrip )
 {
 	ASSERT( vsPathsToStrip.size() == vsNamesToStrip.size() );
 	Rage::ci_ascii_string cvs{ "CVS" };
@@ -141,12 +141,13 @@ void BackgroundUtil::AddBackgroundChange( vector<BackgroundChange> &vBackgroundC
 	vBackgroundChanges.insert( it, seg );
 }
 
-void BackgroundUtil::GetBackgroundEffects( const RString &_sName, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut )
+void BackgroundUtil::GetBackgroundEffects( std::string const &_sName, vector<std::string> &vsPathsOut, vector<std::string> &vsNamesOut )
 {
 	RString sName = _sName;
 	if( sName == "" )
+	{
 		sName = "*";
-
+	}
 	vsPathsOut.clear();
 	GetDirListing( BACKGROUND_EFFECTS_DIR+sName+".lua", vsPathsOut, false, true );
 
@@ -159,15 +160,18 @@ void BackgroundUtil::GetBackgroundEffects( const RString &_sName, vector<RString
 	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }
 
-void BackgroundUtil::GetBackgroundTransitions( const RString &_sName, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut )
+void BackgroundUtil::GetBackgroundTransitions( std::string const &_sName, vector<std::string> &vsPathsOut, vector<std::string> &vsNamesOut )
 {
 	RString sName = _sName;
 	if( sName == "" )
+	{
 		sName = "*";
-
+	}
 	vsPathsOut.clear();
 	if( true )
+	{
 		GetDirListing( BACKGROUND_TRANSITIONS_DIR+sName+".xml", vsPathsOut, false, true );
+	}
 	GetDirListing( BACKGROUND_TRANSITIONS_DIR+sName+".lua", vsPathsOut, false, true );
 
 	vsNamesOut.clear();
@@ -179,7 +183,7 @@ void BackgroundUtil::GetBackgroundTransitions( const RString &_sName, vector<RSt
 	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }
 
-void BackgroundUtil::GetSongBGAnimations( const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut )
+void BackgroundUtil::GetSongBGAnimations( const Song *pSong, std::string const &sMatch, vector<std::string> &vsPathsOut, vector<std::string> &vsNamesOut )
 {
 	vsPathsOut.clear();
 	if( sMatch.empty() )
@@ -200,7 +204,7 @@ void BackgroundUtil::GetSongBGAnimations( const Song *pSong, const RString &sMat
 	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }
 
-void BackgroundUtil::GetSongMovies( const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut )
+void BackgroundUtil::GetSongMovies( const Song *pSong, std::string const &sMatch, vector<std::string> &vsPathsOut, vector<std::string> &vsNamesOut )
 {
 	vsPathsOut.clear();
 	if( sMatch.empty() )
@@ -222,7 +226,7 @@ void BackgroundUtil::GetSongMovies( const Song *pSong, const RString &sMatch, ve
 	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }
 
-void BackgroundUtil::GetSongBitmaps( const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut )
+void BackgroundUtil::GetSongBitmaps( const Song *pSong, std::string const &sMatch, vector<std::string> &vsPathsOut, vector<std::string> &vsNamesOut )
 {
 	vsPathsOut.clear();
 	if( sMatch.empty() )
@@ -277,7 +281,7 @@ static void GetFilterToFileNames( const RString sBaseDir, const Song *pSong, std
 	}
 }
 
-void BackgroundUtil::GetGlobalBGAnimations( const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut )
+void BackgroundUtil::GetGlobalBGAnimations( const Song *pSong, std::string const &sMatch, vector<std::string> &vsPathsOut, vector<std::string> &vsNamesOut )
 {
 	vsPathsOut.clear();
 	GetDirListing( BG_ANIMS_DIR+sMatch+"*", vsPathsOut, true, true );
@@ -300,7 +304,7 @@ namespace {
 	void GetGlobalRandomMoviePaths(
 		const Song *pSong,
 		const RString &sMatch,
-		vector<RString> &vsPathsOut,
+		vector<std::string> &vsPathsOut,
 		bool bTryInsideOfSongGroupAndGenreFirst,
 		bool bTryInsideOfSongGroupFirst )
 	{
@@ -339,10 +343,10 @@ namespace {
 
 			if( !ssFileNameWhitelist.empty() )
 			{
-				vector<RString> vsMatches;
+				vector<std::string> vsMatches;
 				for (auto const &s: vsPathsOut)
 				{
-					RString sBasename = Rage::base_name( s );
+					auto sBasename = Rage::base_name( s );
 					bool bFound = ssFileNameWhitelist.find(sBasename) != ssFileNameWhitelist.end();
 					if( bFound )
 					{
@@ -367,9 +371,9 @@ namespace {
 
 void BackgroundUtil::GetGlobalRandomMovies(
 	const Song *pSong,
-	const RString &sMatch,
-	vector<RString> &vsPathsOut,
-	vector<RString> &vsNamesOut,
+	std::string const &sMatch,
+	vector<std::string> &vsPathsOut,
+	vector<std::string> &vsNamesOut,
 	bool bTryInsideOfSongGroupAndGenreFirst,
 	bool bTryInsideOfSongGroupFirst )
 {

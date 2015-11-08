@@ -12,7 +12,7 @@ public:
 	/**
 	 * @brief Retrieve the announcer names.
 	 * @param AddTo the list of announcer names. */
-	void GetAnnouncerNames( std::vector<RString>& AddTo );
+	void GetAnnouncerNames( std::vector<std::string>& AddTo );
 	/**
 	 * @brief Determine if the specified announcer exists.
 	 * @param sAnnouncerName the announcer we're checking for.

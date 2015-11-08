@@ -412,7 +412,7 @@ bool ieq( const RString &a, const RString &b )
 {
 	return Rage::ci_ascii_string{ a.c_str() } == Rage::ci_ascii_string{ b.c_str() };
 }
-void RageFileManager::GetDirListing( const RString &sPath_, vector<RString> &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+void RageFileManager::GetDirListing( std::string const &sPath_, vector<std::string> &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 	RString sPath = sPath_;
 	NormalizePath( sPath );
@@ -446,7 +446,7 @@ void RageFileManager::GetDirListing( const RString &sPath_, vector<RString> &Add
 			auto const &mountPoint = pLoadedDriver->m_sMountPoint;
 			/* Skip the trailing slash on the mountpoint; there's already a slash there. */
 			auto const &trimPoint = mountPoint.substr(0, mountPoint.size() - 1);
-			std::for_each(AddTo.begin() + OldStart, AddTo.end(), [&trimPoint](RString &path) {
+			std::for_each(AddTo.begin() + OldStart, AddTo.end(), [&trimPoint](std::string &path) {
 				path = trimPoint + path;
 			});
 		}
@@ -458,12 +458,12 @@ void RageFileManager::GetDirListing( const RString &sPath_, vector<RString> &Add
 	{
 		/* More than one driver returned files.  Remove duplicates (case-insensitively). */
 		sort( AddTo.begin()+iOldSize, AddTo.end(), ilt );
-		vector<RString>::iterator it = unique( AddTo.begin()+iOldSize, AddTo.end(), ieq );
+		auto it = unique( AddTo.begin()+iOldSize, AddTo.end(), ieq );
 		AddTo.erase( it, AddTo.end() );
 	}
 }
 
-void RageFileManager::GetDirListingWithMultipleExtensions( const RString &sPath, vector<RString> const& ExtensionList, vector<RString> &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+void RageFileManager::GetDirListingWithMultipleExtensions( std::string const &sPath, vector<std::string> const& ExtensionList, vector<std::string> &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 	for (auto &item: ExtensionList)
 	{
@@ -1059,17 +1059,17 @@ int GetFileSizeInBytes( const RString &sPath )
 	return FILEMAN->GetFileSizeInBytes( sPath );
 }
 
-void GetDirListing( const RString &sPath, vector<RString> &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+void GetDirListing( std::string const &sPath, vector<std::string> &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 	FILEMAN->GetDirListing( sPath, AddTo, bOnlyDirs, bReturnPathToo );
 }
 
-void GetDirListingRecursive( const RString &sDir, const RString &sMatch, vector<RString> &AddTo )
+void GetDirListingRecursive( std::string const &sDir, std::string const &sMatch, vector<std::string> &AddTo )
 {
 	ASSERT(Rage::ends_with(sDir, "/"));
-	vector<RString> vsFiles;
+	vector<std::string> vsFiles;
 	GetDirListing( sDir+sMatch, vsFiles, false, true );
-	vector<RString> vsDirs;
+	vector<std::string> vsDirs;
 	GetDirListing( sDir+"*", vsDirs, true, true );
 	for( int i=0; i<(int)vsDirs.size(); i++ )
 	{
@@ -1081,16 +1081,18 @@ void GetDirListingRecursive( const RString &sDir, const RString &sMatch, vector<
 	for( int i=vsFiles.size()-1; i>=0; i-- )
 	{
 		if( !IsADirectory(vsFiles[i]) )
+		{
 			AddTo.push_back( vsFiles[i] );
+		}
 	}
 }
 
-void GetDirListingRecursive( RageFileDriver *prfd, const RString &sDir, const RString &sMatch, vector<RString> &AddTo )
+void GetDirListingRecursive( RageFileDriver *prfd, std::string const &sDir, std::string const &sMatch, vector<std::string> &AddTo )
 {
 	ASSERT(Rage::ends_with(sDir, "/"));
-	vector<RString> vsFiles;
+	vector<std::string> vsFiles;
 	prfd->GetDirListing( sDir+sMatch, vsFiles, false, true );
-	vector<RString> vsDirs;
+	vector<std::string> vsDirs;
 	prfd->GetDirListing( sDir+"*", vsDirs, true, true );
 	for( int i=0; i<(int)vsDirs.size(); i++ )
 	{
@@ -1110,14 +1112,18 @@ bool DeleteRecursive( RageFileDriver *prfd, const RString &sDir )
 {
 	ASSERT(Rage::ends_with(sDir, "/"));
 
-	vector<RString> vsFiles;
+	vector<std::string> vsFiles;
 	prfd->GetDirListing( sDir+"*", vsFiles, false, true );
 	for (auto const &s: vsFiles)
 	{
 		if( IsADirectory(s) )
+		{
 			DeleteRecursive( s+"/" );
+		}
 		else
+		{
 			FILEMAN->Remove( s );
+		}
 	}
 
 	return FILEMAN->Remove( sDir );
@@ -1127,14 +1133,18 @@ bool DeleteRecursive( const RString &sDir )
 {
 	ASSERT(Rage::ends_with(sDir, "/"));
 
-	vector<RString> vsFiles;
+	vector<std::string> vsFiles;
 	GetDirListing( sDir+"*", vsFiles, false, true );
 	for (auto const &s: vsFiles)
 	{
 		if( IsADirectory(s) )
+		{
 			DeleteRecursive( s+"/" );
+		}
 		else
+		{
 			FILEMAN->Remove( s );
+		}
 	}
 
 	return FILEMAN->Remove( sDir );
@@ -1151,7 +1161,7 @@ unsigned int GetHashForDirectory( const RString &sDir )
 
 	hash += GetHashForString( sDir );
 
-	vector<RString> arrayFiles;
+	vector<std::string> arrayFiles;
 	GetDirListing( sDir+"*", arrayFiles, false );
 	for (auto &file: arrayFiles)
 	{
@@ -1174,7 +1184,7 @@ public:
 	static int GetHashForFile( T* p, lua_State *L ){ lua_pushnumber( L, p->GetFileHash(SArg(1)) ); return 1; }
 	static int GetDirListing( T* p, lua_State *L )
 	{
-		vector<RString> vDirs;
+		vector<std::string> vDirs;
 		bool bOnlyDirs = false;
 		bool bReturnPathToo = false;
 

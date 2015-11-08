@@ -38,7 +38,7 @@ void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, R
 
 bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, std::set<RString> &BlacklistedImages, bool load_autosave )
 {
-	vector<RString> list;
+	vector<std::string> list;
 
 	BlacklistedImages.clear();
 	SSCLoader loaderSSC;
@@ -46,31 +46,43 @@ bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, std::set<RString
 	if( !list.empty() )
 	{
 		if( !loaderSSC.LoadFromDir( sPath, out, load_autosave ) )
-		{ return false; }
+		{
+			return false;
+		}
 		return true;
 	}
 	SMALoader loaderSMA;
 	loaderSMA.GetApplicableFiles( sPath, list );
 	if (!list.empty() )
+	{
 		return loaderSMA.LoadFromDir( sPath, out );
+	}
 	SMLoader loaderSM;
 	loaderSM.GetApplicableFiles( sPath, list );
 	if (!list.empty() )
+	{
 		return loaderSM.LoadFromDir( sPath, out );
+	}
 	DWILoader::GetApplicableFiles( sPath, list );
 	if( !list.empty() )
+	{
 		return DWILoader::LoadFromDir( sPath, out, BlacklistedImages );
+	}
 	BMSLoader::GetApplicableFiles( sPath, list );
 	if( !list.empty() )
 		return BMSLoader::LoadFromDir( sPath, out );
 	/*
 	PMSLoader::GetApplicableFiles( sPath, list );
 	if( !list.empty() )
+	{
 		return PMSLoader::LoadFromDir( sPath, out );
+	}
 	*/
 	KSFLoader::GetApplicableFiles( sPath, list );
 	if( !list.empty() )
+	{
 		return KSFLoader::LoadFromDir( sPath, out );
+	}
 	return false;
 }
 

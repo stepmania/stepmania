@@ -27,11 +27,11 @@ ScoreDisplayBattle::ScoreDisplayBattle()
 		this->AddChild( &m_ItemIcon[i] );
 	}
 
-	vector<RString> asIconPaths;
+	vector<std::string> asIconPaths;
 	GetDirListing( THEME->GetCurThemeDir()+"Graphic/ScoreDisplayBattle icon*", asIconPaths );
 	for (auto &path: asIconPaths)
 	{
-		m_TexturePreload.Load( path );
+		m_TexturePreload.Load( RageTextureID{path} );
 	}
 }
 

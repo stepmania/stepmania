@@ -34,7 +34,7 @@ BackgroundLoader::BackgroundLoader():
 
 static void DeleteEmptyDirectories( RString sDir )
 {
-	vector<RString> asNewDirs;
+	vector<std::string> asNewDirs;
 	GetDirListing( sDir + "/*", asNewDirs, false, true );
 	for (auto &item: asNewDirs)
 	{

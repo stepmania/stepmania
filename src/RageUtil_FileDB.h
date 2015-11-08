@@ -69,10 +69,9 @@ struct FileSet
 
 	FileSet() { m_bFilled = true; }
 
-	void GetFilesMatching(
-		const RString &sBeginning, const RString &sContaining, const RString &sEnding,
-		std::vector<RString> &asOut, bool bOnlyDirs ) const;
-	void GetFilesEqualTo( const RString &pat, std::vector<RString> &out, bool bOnlyDirs ) const;
+	void GetFilesMatching( std::string const &sBeginning, std::string const &sContaining, std::string const &sEnding,
+		std::vector<std::string> &asOut, bool bOnlyDirs ) const;
+	void GetFilesEqualTo( std::string const &pat, std::vector<std::string> &out, bool bOnlyDirs ) const;
 
 	RageFileManager::FileType GetFileType( const RString &sPath ) const;
 	int GetFileSize( const RString &sPath ) const;
@@ -92,7 +91,7 @@ public:
 
 	/* This handles at most two * wildcards.  If we need anything more complicated,
 	 * we'll need to use fnmatch or regex. */
-	void GetFilesSimpleMatch( const RString &sDir, const RString &sFile, std::vector<RString> &asOut, bool bOnlyDirs );
+	void GetFilesSimpleMatch( std::string const &sDir, std::string const &sFile, std::vector<std::string> &asOut, bool bOnlyDirs );
 
 	/* Search for "path" case-insensitively and replace it with the correct
 	 * case.  If only a portion of the path exists, resolve as much as possible.
@@ -102,7 +101,7 @@ public:
 	RageFileManager::FileType GetFileType( const RString &sPath );
 	int GetFileSize( const RString &sPath );
 	int GetFileHash( const RString &sFilePath );
-	void GetDirListing( const RString &sPath, std::vector<RString> &asAddTo, bool bOnlyDirs, bool bReturnPathToo );
+	void GetDirListing( std::string const &sPath, std::vector<std::string> &asAddTo, bool bOnlyDirs, bool bReturnPathToo );
 
 	void FlushDirCache( const RString &sDir = RString() );
 
@@ -121,10 +120,10 @@ protected:
 
 	int ExpireSeconds;
 
-	void GetFilesEqualTo( const RString &sDir, const RString &sName, std::vector<RString> &asOut, bool bOnlyDirs );
-	void GetFilesMatching( const RString &sDir,
-		const RString &sBeginning, const RString &sContaining, const RString &sEnding,
-		std::vector<RString> &asOut, bool bOnlyDirs );
+	void GetFilesEqualTo( std::string const &sDir, std::string const &sName, std::vector<std::string> &asOut, bool bOnlyDirs );
+	void GetFilesMatching( std::string const &sDir,
+		std::string const &sBeginning, std::string const &sContaining, std::string const &sEnding,
+		std::vector<std::string> &asOut, bool bOnlyDirs );
 	void DelFileSet( std::map<RString, FileSet *>::iterator dir );
 
 	/* The given path wasn't cached.  Cache it. */

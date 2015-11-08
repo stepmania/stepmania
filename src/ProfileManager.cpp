@@ -419,7 +419,7 @@ void ProfileManager::RefreshLocalProfilesFromDisk()
 {
 	UnloadAllLocalProfiles();
 
-	vector<RString> profile_ids;
+	vector<std::string> profile_ids;
 	GetDirListing(USER_PROFILES_DIR + "*", profile_ids, true, true);
 	// Profiles have 3 types:
 	// 1.  Guest profiles:
@@ -976,7 +976,7 @@ void ProfileManager::GetLocalProfileIDs( vector<RString> &vsProfileIDsOut ) cons
 	}
 }
 
-void ProfileManager::GetLocalProfileDisplayNames( vector<RString> &vsProfileDisplayNamesOut ) const
+void ProfileManager::GetLocalProfileDisplayNames( vector<std::string> &vsProfileDisplayNamesOut ) const
 {
 	vsProfileDisplayNamesOut.clear();
 	for (auto const &i: g_vLocalProfile)
@@ -1105,9 +1105,9 @@ public:
 	}
 	static int GetLocalProfileDisplayNames( T* p, lua_State *L )
 	{
-		vector<RString> vsProfileNames;
+		vector<std::string> vsProfileNames;
 		p->GetLocalProfileDisplayNames(vsProfileNames);
-		LuaHelpers::CreateTableFromArray<RString>( vsProfileNames, L );
+		LuaHelpers::CreateTableFromArray( vsProfileNames, L );
 		return 1;
 	}
 

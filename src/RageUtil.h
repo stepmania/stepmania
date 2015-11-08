@@ -356,9 +356,9 @@ RString GetFileNameWithoutExtension( const RString &sPath );
 void MakeValidFilename( RString &sName );
 
 bool FindFirstFilenameContaining(
-	const std::vector<RString>& filenames, RString& out,
-	const std::vector<RString>& starts_with,
-	const std::vector<RString>& contains, const std::vector<RString>& ends_with);
+	std::vector<std::string> const & filenames, std::string& out,
+	std::vector<std::string> const & starts_with,
+	std::vector<std::string> const & contains, std::vector<std::string> const & ends_with);
 
 /**
  * @brief Have a standard way of converting Strings to integers.
@@ -433,7 +433,7 @@ bool DirectoryIsEmpty( const RString &sPath );
 
 bool CompareRStringsAsc( const RString &sStr1, const RString &sStr2 );
 bool CompareRStringsDesc( const RString &sStr1, const RString &sStr2 );
-void SortRStringArray( std::vector<RString> &asAddTo, const bool bSortAscending = true );
+void SortRStringArray( std::vector<std::string> &asAddTo, const bool bSortAscending = true );
 
 /* Find the mean and standard deviation of all numbers in [start,end). */
 float calc_mean( const float *pStart, const float *pEnd );
@@ -478,8 +478,8 @@ inline T Decrement( T a ) { --a; return a; }
 void StripCrnl( RString &sStr );
 RString URLEncode( const RString &sStr );
 
-void StripCvsAndSvn( std::vector<RString> &vs ); // Removes various versioning system metafolders.
-void StripMacResourceForks( std::vector<RString> &vs ); // Removes files starting with "._"
+void StripCvsAndSvn( std::vector<std::string> &vs ); // Removes various versioning system metafolders.
+void StripMacResourceForks( std::vector<std::string> &vs ); // Removes files starting with "._"
 
 RString DerefRedir( const RString &sPath );
 bool GetFileContents( const RString &sPath, RString &sOut, bool bOneLine = false );
@@ -508,9 +508,9 @@ private:
 };
 
 
-void ReplaceEntityText( RString &sText, const std::map<RString,RString> &m );
-void ReplaceEntityText( RString &sText, const std::map<char,RString> &m );
-void Replace_Unicode_Markers( RString &Text );
+void ReplaceEntityText( std::string &sText, std::map<std::string,std::string> const &m );
+void ReplaceEntityText( std::string &sText, std::map<char,std::string> const &m );
+void Replace_Unicode_Markers( std::string &Text );
 RString WcharDisplayText( wchar_t c );
 
 RString Capitalize( const RString &s );
@@ -524,9 +524,9 @@ extern unsigned char g_LowerCase[256];
 
 /* Compatibility/convenience shortcuts. These are actually defined in RageFileManager.h, but
  * declared here since they're used in many places. */
-void GetDirListing( const RString &sPath, std::vector<RString> &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
-void GetDirListingRecursive( const RString &sDir, const RString &sMatch, std::vector<RString> &AddTo );	/* returns path too */
-void GetDirListingRecursive( RageFileDriver *prfd, const RString &sDir, const RString &sMatch, std::vector<RString> &AddTo );	/* returns path too */
+void GetDirListing( std::string const &sPath, std::vector<std::string> &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
+void GetDirListingRecursive( std::string const &sDir, std::string const &sMatch, std::vector<std::string> &AddTo );	/* returns path too */
+void GetDirListingRecursive( RageFileDriver *prfd, std::string const &sDir, std::string const &sMatch, std::vector<std::string> &AddTo );	/* returns path too */
 bool DeleteRecursive( const RString &sDir );	/* delete the dir and all files/subdirs inside it */
 bool DeleteRecursive( RageFileDriver *prfd, const RString &sDir );	/* delete the dir and all files/subdirs inside it */
 bool DoesFileExist( const RString &sPath );

@@ -76,14 +76,14 @@ namespace BackgroundUtil
 	void AddBackgroundChange( std::vector<BackgroundChange> &vBackgroundChanges, BackgroundChange seg );
 	void SortBackgroundChangesArray( std::vector<BackgroundChange> &vBackgroundChanges );
 
-	void GetBackgroundEffects(	const RString &sName, std::vector<RString> &vsPathsOut, std::vector<RString> &vsNamesOut );
-	void GetBackgroundTransitions(	const RString &sName, std::vector<RString> &vsPathsOut, std::vector<RString> &vsNamesOut );
+	void GetBackgroundEffects( std::string const &sName, std::vector<std::string> &vsPathsOut, std::vector<std::string> &vsNamesOut );
+	void GetBackgroundTransitions( std::string const &sName, std::vector<std::string> &vsPathsOut, std::vector<std::string> &vsNamesOut );
 
-	void GetSongBGAnimations(	const Song *pSong, const RString &sMatch, std::vector<RString> &vsPathsOut, std::vector<RString> &vsNamesOut );
-	void GetSongMovies(		const Song *pSong, const RString &sMatch, std::vector<RString> &vsPathsOut, std::vector<RString> &vsNamesOut );
-	void GetSongBitmaps(		const Song *pSong, const RString &sMatch, std::vector<RString> &vsPathsOut, std::vector<RString> &vsNamesOut );
-	void GetGlobalBGAnimations(	const Song *pSong, const RString &sMatch, std::vector<RString> &vsPathsOut, std::vector<RString> &vsNamesOut );
-	void GetGlobalRandomMovies(	const Song *pSong, const RString &sMatch, std::vector<RString> &vsPathsOut, std::vector<RString> &vsNamesOut, bool bTryInsideOfSongGroupAndGenreFirst = true, bool bTryInsideOfSongGroupFirst = true );
+	void GetSongBGAnimations(	const Song *pSong, std::string const &sMatch, std::vector<std::string> &vsPathsOut, std::vector<std::string> &vsNamesOut );
+	void GetSongMovies(		const Song *pSong, std::string const &sMatch, std::vector<std::string> &vsPathsOut, std::vector<std::string> &vsNamesOut );
+	void GetSongBitmaps(		const Song *pSong, std::string const &sMatch, std::vector<std::string> &vsPathsOut, std::vector<std::string> &vsNamesOut );
+	void GetGlobalBGAnimations(	const Song *pSong, std::string const &sMatch, std::vector<std::string> &vsPathsOut, std::vector<std::string> &vsNamesOut );
+	void GetGlobalRandomMovies(	const Song *pSong, std::string const &sMatch, std::vector<std::string> &vsPathsOut, std::vector<std::string> &vsNamesOut, bool bTryInsideOfSongGroupAndGenreFirst = true, bool bTryInsideOfSongGroupFirst = true );
 
 	void BakeAllBackgroundChanges( Song *pSong );
 };

@@ -349,7 +349,7 @@ bool Song::LoadFromSongDir( RString sDir, bool load_autosave )
 		{
 			LOG->UserLog( "Song", sDir, "has no SSC, SM, SMA, DWI, BMS, or KSF files." );
 
-			vector<RString> vs;
+			vector<std::string> vs;
 			GetDirListing( sDir + "*.mp3", vs, false, false );
 			GetDirListing( sDir + "*.oga", vs, false, false );
 			GetDirListing( sDir + "*.ogg", vs, false, false );
@@ -510,7 +510,7 @@ void Song::LoadEditsFromSongDir(RString dir)
 {
 	// Load any .edit files in the song folder.
 	// Doing this BEFORE setting up AutoGen just in case.
-	vector<RString> vs;
+	vector<std::string> vs;
 	GetDirListing(dir + "*.edit", vs, false, false);
 	// XXX: I'm sure there's a StepMania way of doing this, but familiar with this codebase I am not.
 	for (auto &file: vs)
@@ -651,17 +651,17 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 		// particular extension or type of extension.  So fetch a list of all
 		// files in the dir once, then split that list into the different things
 		// we need. -Kyz
-		vector<RString> song_dir_listing;
+		vector<std::string> song_dir_listing;
 		FILEMAN->GetDirListing(m_sSongDir + "*", song_dir_listing, false, false);
-		vector<RString> music_list;
-		vector<RString> image_list;
-		vector<RString> movie_list;
-		vector<RString> lyric_list;
-		vector<RString> lyric_extensions(1, "lrc");
+		vector<std::string> music_list;
+		vector<std::string> image_list;
+		vector<std::string> movie_list;
+		vector<std::string> lyric_list;
+		vector<std::string> lyric_extensions(1, "lrc");
 		// Using a pair didn't work, so these two vectors have to be kept in
 		// sync instead. -Kyz
-		vector<vector<RString>*> lists_to_fill;
-		vector<const vector<RString>*> fill_exts;
+		vector<vector<std::string>*> lists_to_fill;
+		vector<const vector<std::string>*> fill_exts;
 		lists_to_fill.reserve(4);
 		fill_exts.reserve(4);
 		lists_to_fill.push_back(&music_list);
@@ -675,7 +675,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 		for (auto &filename: song_dir_listing)
 		{
 			bool matched_something= false;
-			RString file_ext = Rage::make_lower(GetExtension(filename));
+			auto file_ext = Rage::make_lower(GetExtension(filename));
 			if(!file_ext.empty())
 			{
 				for(size_t tf = 0; tf < lists_to_fill.size(); ++tf)
@@ -816,7 +816,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 		// which is the CDTitle.
 
 		// For blank args to FindFirstFilenameContaining. -Kyz
-		vector<RString> empty_list;
+		vector<std::string> empty_list;
 
 		bool has_jacket= HasJacket();
 		bool has_cdimage= HasCDImage();
@@ -831,10 +831,10 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			//m_sBannerFile = "";
 
 			// find an image with "banner" in the file name
-			vector<RString> contains(1, "banner");
+			vector<std::string> contains(1, "banner");
 			/* Some people do things differently for the sake of being different.
 			 * Don't match eg. abnormal, numbness. */
-			vector<RString> ends_with(1, " bn");
+			vector<std::string> ends_with(1, " bn");
 			m_bHasBanner= FindFirstFilenameContaining(image_list,
 				m_sBannerFile, empty_list, contains, ends_with);
 		}
@@ -844,8 +844,8 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			//m_sBackgroundFile = "";
 
 			// find an image with "bg" or "background" in the file name
-			vector<RString> contains(1, "background");
-			vector<RString> ends_with(1, "bg");
+			vector<std::string> contains(1, "background");
+			vector<std::string> ends_with(1, "bg");
 			m_bHasBackground= FindFirstFilenameContaining(image_list,
 				m_sBackgroundFile, empty_list, contains, ends_with);
 		}
@@ -853,11 +853,8 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 		if(!has_jacket)
 		{
 			// find an image with "jacket" or "albumart" in the filename.
-			vector<RString> starts_with(1, "jk_");
-			vector<RString> contains;
-			contains.reserve(2);
-			contains.push_back("jacket");
-			contains.push_back("albumart");
+			vector<std::string> starts_with(1, "jk_");
+			vector<std::string> contains {"jacket", "albumart"};
 			has_jacket= FindFirstFilenameContaining(image_list,
 				m_sJacketFile, starts_with, contains, empty_list);
 		}
@@ -866,7 +863,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 		{
 			// CD image, a la ddr 1st-3rd (not to be confused with CDTitles)
 			// find an image with "-cd" at the end of the filename.
-			vector<RString> ends_with(1, "-cd");
+			vector<std::string> ends_with(1, "-cd");
 			has_cdimage= FindFirstFilenameContaining(image_list,
 				m_sCDFile, empty_list, empty_list, ends_with);
 		}
@@ -874,10 +871,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 		if(!has_disc)
 		{
 			// a rectangular graphic, not to be confused with CDImage above.
-			vector<RString> ends_with;
-			ends_with.reserve(2);
-			ends_with.push_back(" disc");
-			ends_with.push_back(" title");
+			vector<std::string> ends_with {" disc", " title"};
 			has_disc= FindFirstFilenameContaining(image_list,
 				m_sDiscFile, empty_list, empty_list, ends_with);
 		}
@@ -885,7 +879,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 		if(!has_cdtitle)
 		{
 			// find an image with "cdtitle" in the file name
-			vector<RString> contains(1, "cdtitle");
+			vector<std::string> contains(1, "cdtitle");
 			has_cdtitle= FindFirstFilenameContaining(image_list,
 				m_sCDTitleFile, empty_list, contains, empty_list);
 		}
@@ -1179,7 +1173,7 @@ void Song::Save(bool autosave)
 
 	/* We've safely written our files and created backups. Rename non-SM and
 	 * non-DWI files to avoid confusion. */
-	vector<RString> arrayOldFileNames;
+	vector<std::string> arrayOldFileNames;
 	GetDirListing( m_sSongDir + "*.bms", arrayOldFileNames );
 	GetDirListing( m_sSongDir + "*.pms", arrayOldFileNames );
 	GetDirListing( m_sSongDir + "*.ksf", arrayOldFileNames );

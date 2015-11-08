@@ -168,7 +168,7 @@ ThemeManager::ThemeManager()
 	m_sCurThemeName = "";
 	m_bPseudoLocalize = false;
 
-	vector<RString> arrayThemeNames;
+	vector<std::string> arrayThemeNames;
 	GetThemeNames( arrayThemeNames );
 }
 
@@ -181,33 +181,35 @@ ThemeManager::~ThemeManager()
 	LUA->UnsetGlobal( "THEME" );
 }
 
-void ThemeManager::GetThemeNames( vector<RString>& AddTo )
+void ThemeManager::GetThemeNames( vector<std::string>& AddTo )
 {
 	GetDirListing( SpecialFiles::THEMES_DIR + "*", AddTo, true );
 	StripCvsAndSvn( AddTo );
 	StripMacResourceForks( AddTo );
 }
 
-void ThemeManager::GetSelectableThemeNames( vector<RString>& AddTo )
+void ThemeManager::GetSelectableThemeNames( vector<std::string>& AddTo )
 {
 	GetThemeNames( AddTo );
 	for( int i=AddTo.size()-1; i>=0; i-- )
 	{
 		if( !IsThemeSelectable(AddTo[i]) )
+		{
 			AddTo.erase( AddTo.begin()+i );
+		}
 	}
 }
 
 int ThemeManager::GetNumSelectableThemes()
 {
-	vector<RString> vs;
+	vector<std::string> vs;
 	GetSelectableThemeNames( vs );
 	return vs.size();
 }
 
 bool ThemeManager::DoesThemeExist( const RString &sThemeName )
 {
-	vector<RString> asThemeNames;
+	vector<std::string> asThemeNames;
 	GetThemeNames( asThemeNames );
 	Rage::ci_ascii_string ciTheme{ sThemeName.c_str() };
 	for (unsigned i = 0; i < asThemeNames.size(); i++)
@@ -259,7 +261,7 @@ static bool EqualsNoCase( const RString &s1, const RString &s2 )
 	Rage::ci_ascii_string a{ s1.c_str() };
 	return a == s2;
 }
-void ThemeManager::GetLanguages( vector<RString>& AddTo )
+void ThemeManager::GetLanguages( vector<std::string>& AddTo )
 {
 	AddTo.clear();
 
@@ -269,13 +271,13 @@ void ThemeManager::GetLanguages( vector<RString>& AddTo )
 	}
 	// remove dupes
 	sort( AddTo.begin(), AddTo.end() );
-	vector<RString>::iterator it = unique( AddTo.begin(), AddTo.end(), EqualsNoCase );
+	auto it = unique( AddTo.begin(), AddTo.end(), EqualsNoCase );
 	AddTo.erase(it, AddTo.end());
 }
 
 bool ThemeManager::DoesLanguageExist( const RString &sLanguage )
 {
-	vector<RString> asLanguages;
+	vector<std::string> asLanguages;
 	GetLanguages( asLanguages );
 	Rage::ci_ascii_string ciLang{ sLanguage.c_str() };
 	for (unsigned i = 0; i < asLanguages.size(); i++)
@@ -318,7 +320,7 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 		iniMetrics.ReadFile( GetMetricsIniPath(sThemeName) );
 		// Load optional language inis (probably mounted by a package) first so that they can be overridden by the current theme.
 		{
-			vector<RString> vs;
+			vector<std::string> vs;
 			GetOptionalLanguageIniPaths(vs,sThemeName,sLanguage);
 			for (auto const &s: vs)
 			{
@@ -498,10 +500,10 @@ void ThemeManager::RunLuaScripts( const RString &sMask, bool bUseThemeDir )
 		m_sCurThemeName = iter->sThemeName;
 		const RString &sScriptDir = bUseThemeDir ? GetThemeDirFromName( m_sCurThemeName ) : "/";
 
-		vector<RString> asElementPaths;
+		vector<std::string> asElementPaths;
 		// get files from directories
-		vector<RString> asElementChildPaths;
-		vector<RString> arrayScriptDirs;
+		vector<std::string> asElementChildPaths;
+		vector<std::string> arrayScriptDirs;
 		GetDirListing( sScriptDir + "Scripts/*", arrayScriptDirs, true );
 		SortRStringArray( arrayScriptDirs );
 		StripCvsAndSvn( arrayScriptDirs );
@@ -581,12 +583,11 @@ struct CompareLanguageTag
  * files with the current language tag to the top, so choosing "ignore" from
  * the multiple-match dialog will cause it to default to the first entry, so
  * it'll still use a preferred language match if there were any. */
-void ThemeManager::FilterFileLanguages( vector<RString> &asPaths )
+void ThemeManager::FilterFileLanguages( vector<std::string> &asPaths )
 {
 	if( asPaths.size() <= 1 )
 		return;
-	vector<RString>::iterator it =
-		partition( asPaths.begin(), asPaths.end(), CompareLanguageTag(m_sCurLanguage) );
+	auto it = partition( asPaths.begin(), asPaths.end(), CompareLanguageTag(m_sCurLanguage) );
 
 	int iDist = distance( asPaths.begin(), it );
 	if( iDist == 0 )
@@ -612,7 +613,7 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 	const RString sThemeDir = GetThemeDirFromName( sThemeName );
 	const RString &sCategory = ElementCategoryToString(category);
 
-	vector<RString> asElementPaths;
+	vector<std::string> asElementPaths;
 
 	// If sFileName already has an extension, we're looking for a specific file
 	bool bLookingForSpecificFile = sElement.find_last_of('.') != sElement.npos;
@@ -623,7 +624,7 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 	}
 	else	// look for all files starting with sFileName that have types we can use
 	{
-		vector<RString> asPaths;
+		vector<std::string> asPaths;
 		GetDirListing( sThemeDir + sCategory + "/" + MetricsGroupAndElementToFileName(sMetricsGroup,sElement) + "*",
 						asPaths, false, true );
 
@@ -1130,7 +1131,7 @@ void ThemeManager::EvaluateString( RString &sText )
 
 RString ThemeManager::GetNextTheme()
 {
-	vector<RString> as;
+	vector<std::string> as;
 	GetThemeNames( as );
 	unsigned i;
 	Rage::ci_ascii_string ciTheme{ m_sCurThemeName.c_str() };
@@ -1147,7 +1148,7 @@ RString ThemeManager::GetNextTheme()
 
 RString ThemeManager::GetNextSelectableTheme()
 {
-	vector<RString> as;
+	vector<std::string> as;
 	GetSelectableThemeNames( as );
 	unsigned i;
 	Rage::ci_ascii_string ciTheme{ m_sCurThemeName.c_str() };
@@ -1162,10 +1163,10 @@ RString ThemeManager::GetNextSelectableTheme()
 	return as[iNewIndex];
 }
 
-void ThemeManager::GetLanguagesForTheme( const RString &sThemeName, vector<RString>& asLanguagesOut )
+void ThemeManager::GetLanguagesForTheme( std::string const &sThemeName, vector<std::string>& asLanguagesOut )
 {
-	RString sLanguageDir = GetThemeDirFromName(sThemeName) + SpecialFiles::LANGUAGES_SUBDIR;
-	vector<RString> as;
+	auto sLanguageDir = GetThemeDirFromName(sThemeName) + SpecialFiles::LANGUAGES_SUBDIR;
+	vector<std::string> as;
 	GetDirListing( sLanguageDir + "*.ini", as );
 	Rage::ci_ascii_string metrics{ SpecialFiles::METRICS_FILE.c_str() };
 	for (auto const &s: as)
@@ -1191,7 +1192,7 @@ RString ThemeManager::GetLanguageIniPath( const RString &sThemeName, const RStri
 	return GetThemeDirFromName(sThemeName) + SpecialFiles::LANGUAGES_SUBDIR + sLanguage + ".ini";
 }
 
-void ThemeManager::GetOptionalLanguageIniPaths( vector<RString> &vsPathsOut, const RString &sThemeName, const RString &sLanguage )
+void ThemeManager::GetOptionalLanguageIniPaths( vector<std::string> &vsPathsOut, std::string const &sThemeName, std::string const &sLanguage )
 {
 	// optional ini names look like: "en PackageName.ini"
 	GetDirListing( GetThemeDirFromName(sThemeName) + SpecialFiles::LANGUAGES_SUBDIR + sLanguage + " *.ini", vsPathsOut, false, true );
@@ -1383,9 +1384,9 @@ public:
 	{
 		// pushes a table of theme folders from GetSelectableThemeNames()
 		//lua_pushnumber(L, p->GetNumSelectableThemes() );
-		vector<RString> sThemes;
+		vector<std::string> sThemes;
 		p->GetSelectableThemeNames(sThemes);
-		LuaHelpers::CreateTableFromArray<RString>( sThemes, L );
+		LuaHelpers::CreateTableFromArray<std::string>( sThemes, L );
 		return 1;
 	}
 

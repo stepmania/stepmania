@@ -181,12 +181,12 @@ void BackgroundImpl::Init()
 	// load transitions
 	{
 		ASSERT( m_mapNameToTransition.empty() );
-		vector<RString> vsPaths, vsNames;
+		vector<std::string> vsPaths, vsNames;
 		BackgroundUtil::GetBackgroundTransitions( "", vsPaths, vsNames );
 		for( unsigned i=0; i<vsPaths.size(); i++ )
 		{
-			const RString &sPath = vsPaths[i];
-			const RString &sName = vsNames[i];
+			auto const &sPath = vsPaths[i];
+			auto const &sName = vsNames[i];
 
 			XNode xml;
 			XmlFileUtil::LoadFromFileShowErrors(xml, sPath);
@@ -298,7 +298,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 			* RandomMovies dir
 			* BGAnimations dir.
 		*/
-		vector<RString> vsPaths, vsThrowAway;
+		vector<std::string> vsPaths, vsThrowAway;
 
 		// Look for BGAnims in the song dir
 		if( sToResolve == SONG_BACKGROUND_FILE )
@@ -368,7 +368,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 	RString sEffectFile;
 	for( int i=0; i<2; i++ )
 	{
-		vector<RString> vsPaths, vsThrowAway;
+		vector<std::string> vsPaths, vsThrowAway;
 		BackgroundUtil::GetBackgroundEffects( sEffect, vsPaths, vsThrowAway );
 		if( vsPaths.empty() )
 		{
@@ -528,11 +528,11 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 
 	// Choose a bunch of backgrounds that we'll use for the random file marker
 	{
-		vector<RString> vsThrowAway, vsNames;
+		vector<std::string> vsThrowAway, vsNames;
 		switch( g_RandomBackgroundMode )
 		{
 		default:
-			ASSERT_M( 0, fmt::sprintf("Invalid RandomBackgroundMode: %i", int(g_RandomBackgroundMode)) );
+			FAIL_M( fmt::sprintf("Invalid RandomBackgroundMode: %i", int(g_RandomBackgroundMode)) );
 			break;
 		case BGMODE_OFF:
 			break;

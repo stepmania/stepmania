@@ -30,29 +30,37 @@ bool Character::Load( RString sCharDir )
 	}
 
 	{
-		vector<RString> as;
+		vector<std::string> as;
 		GetDirListing( m_sCharDir+"card.png", as, false, true );
 		GetDirListing( m_sCharDir+"card.jpg", as, false, true );
 		GetDirListing( m_sCharDir+"card.jpeg", as, false, true );
 		GetDirListing( m_sCharDir+"card.gif", as, false, true );
 		GetDirListing( m_sCharDir+"card.bmp", as, false, true );
 		if( as.empty() )
+		{
 			m_sCardPath = "";
+		}
 		else
+		{
 			m_sCardPath = as[0];
+		}
 	}
 
 	{
-		vector<RString> as;
+		vector<std::string> as;
 		GetDirListing( m_sCharDir+"icon.png", as, false, true );
 		GetDirListing( m_sCharDir+"icon.jpg", as, false, true );
 		GetDirListing( m_sCharDir+"icon.jpeg", as, false, true );
 		GetDirListing( m_sCharDir+"icon.gif", as, false, true );
 		GetDirListing( m_sCharDir+"icon.bmp", as, false, true );
 		if( as.empty() )
+		{
 			m_sIconPath = "";
+		}
 		else
+		{
 			m_sIconPath = as[0];
+		}
 	}
 
 	// Save attacks
@@ -83,21 +91,23 @@ bool Character::IsDefaultCharacter() const
 
 RString GetRandomFileInDir( RString sDir )
 {
-	vector<RString> asFiles;
+	vector<std::string> asFiles;
 	GetDirListing( sDir, asFiles, false, true );
 	if( asFiles.empty() )
-		return RString();
-	else
-		return asFiles[RandomInt(asFiles.size())];
+	{
+		return "";
+	}
+	return asFiles[RandomInt(asFiles.size())];
 }
 
 RString Character::GetModelPath() const
 {
 	RString s = m_sCharDir + "model.txt";
 	if( DoesFileExist(s) )
+	{
 		return s;
-	else
-		return RString();
+	}
+	return "";
 }
 
 RString Character::GetRestAnimationPath() const	{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Rest/")); }
@@ -105,21 +115,22 @@ RString Character::GetWarmUpAnimationPath() const { return DerefRedir(GetRandomF
 RString Character::GetDanceAnimationPath() const { return DerefRedir(GetRandomFileInDir(m_sCharDir + "Dance/")); }
 RString Character::GetTakingABreakPath() const
 {
-	vector<RString> as;
+	vector<std::string> as;
 	GetDirListing( m_sCharDir+"break.png", as, false, true );
 	GetDirListing( m_sCharDir+"break.jpg", as, false, true );
 	GetDirListing( m_sCharDir+"break.jpeg", as, false, true );
 	GetDirListing( m_sCharDir+"break.gif", as, false, true );
 	GetDirListing( m_sCharDir+"break.bmp", as, false, true );
 	if( as.empty() )
-		return RString();
-	else
-		return as[0];
+	{
+		return "";
+	}
+	return as[0];
 }
 
 RString Character::GetSongSelectIconPath() const
 {
-	vector<RString> as;
+	vector<std::string> as;
 	// first try and find an icon specific to the select music screen
 	// so you can have different icons for music select / char select
 	GetDirListing( m_sCharDir+"selectmusicicon.png", as, false, true );
@@ -147,7 +158,7 @@ RString Character::GetSongSelectIconPath() const
 
 RString Character::GetStageIconPath() const
 {
-	vector<RString> as;
+	vector<std::string> as;
 	// first try and find an icon specific to the select music screen
 	// so you can have different icons for music select / char select
 	GetDirListing( m_sCharDir+"stageicon.png", as, false, true );
@@ -165,12 +176,12 @@ RString Character::GetStageIconPath() const
 		GetDirListing( m_sCharDir+"card.gif", as, false, true );
 		GetDirListing( m_sCharDir+"card.bmp", as, false, true );
 		if( as.empty() )
-			return RString();
-		else
-			return as[0];
-	}
-	else
+		{
+			return "";
+		}
 		return as[0];
+	}
+	return as[0];
 }
 
 bool Character::Has2DElems()
