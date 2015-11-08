@@ -20,7 +20,7 @@ void ScreenOptionsToggleSongs::BeginScreen()
 
 	vector<OptionRowHandler*> vHands;
 
-	vector<RString> asAllGroups;
+	vector<std::string> asAllGroups;
 	SONGMAN->GetSongGroupNames(asAllGroups);
 	for (auto &sGroup: asAllGroups)
 	{

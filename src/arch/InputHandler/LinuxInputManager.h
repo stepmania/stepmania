@@ -20,11 +20,11 @@ public:
 private:
 	bool m_bEventEnabled;
 	InputHandler_Linux_Event* m_EventDriver;
-	std::vector<RString> m_vsPendingEventDevices;
+	std::vector<std::string> m_vsPendingEventDevices;
 
 	bool m_bJoystickEnabled;
 	InputHandler_Linux_Joystick* m_JoystickDriver;
-	std::vector<RString> m_vsPendingJoystickDevices;
+	std::vector<std::string> m_vsPendingJoystickDevices;
 };
 
 extern LinuxInputManager* LINUXINPUT; // global and accessible from anywhere in our program

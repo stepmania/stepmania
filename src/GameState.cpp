@@ -1884,7 +1884,7 @@ bool GameState::CurrentOptionsDisqualifyPlayer( PlayerNumber pn )
  *
  */
 
-void GameState::GetAllUsedNoteSkins( vector<RString> &out ) const
+void GameState::GetAllUsedNoteSkins( vector<std::string> &out ) const
 {
 	FOREACH_EnabledPlayer( pn )
 	{

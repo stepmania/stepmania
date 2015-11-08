@@ -376,7 +376,7 @@ void FontCharAliases::ReplaceMarkers( std::string &sText )
 }
 
 // Replace all &markers; and &#NNNN;s with UTF-8.
-bool FontCharAliases::GetChar( RString &codepoint, wchar_t &ch )
+bool FontCharAliases::GetChar( std::string &codepoint, wchar_t &ch )
 {
 	InitCharAliases();
 	aliasmap::const_iterator i = CharAliases.find(codepoint);

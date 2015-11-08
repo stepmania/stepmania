@@ -96,7 +96,7 @@ public:
 	RString		m_sSongGroup;
 	SortOrder	m_SortOrder;
 	RString		m_sSoundPath;	// "" for no sound
-	std::vector<RString>	m_vsScreensToPrepare;
+	std::vector<std::string>	m_vsScreensToPrepare;
 	/**
 	 * @brief What is the player's weight in pounds?
 	 *

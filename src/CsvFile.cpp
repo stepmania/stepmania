@@ -46,7 +46,7 @@ bool CsvFile::ReadFile( RageFileBasic &f )
 
 		Rage::utf8_remove_bom( line );
 
-		std::vector<RString> vs;
+		std::vector<std::string> vs;
 
 		while( !line.empty() )
 		{

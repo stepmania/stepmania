@@ -165,7 +165,7 @@ bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 	RString sBit = Rage::trim(Rage::make_lower(sOneMod));
 
 	Regex mult("^([0-9]+(\\.[0-9]+)?)xmusic$");
-	vector<RString> matches;
+	vector<std::string> matches;
 	if( mult.Compare(sBit, matches) )
 	{
 		m_fMusicRate = StringToFloat( matches[0] );

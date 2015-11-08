@@ -3868,7 +3868,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		const int tracks = m_NoteDataEdit.GetNumTracks();
 		const int row = this->GetRow();
 		unsigned int sound = ScreenMiniMenu::s_viLastAnswers[track];
-		vector<RString> &kses = m_pSong->m_vsKeysoundFile;
+		vector<std::string> &kses = m_pSong->m_vsKeysoundFile;
 
 		if (track < tracks)
 		{
@@ -3934,7 +3934,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		const int row = this->GetRow();
 		const TapNote &oldNote = m_NoteDataEdit.GetTapNote(track, row);
 		TapNote newNote = oldNote; // need to lose the const. not feeling like casting.
-		vector<RString> &kses = m_pSong->m_vsKeysoundFile;
+		vector<std::string> &kses = m_pSong->m_vsKeysoundFile;
 		unsigned pos = find(kses.begin(), kses.end(), answer) - kses.begin();
 		if (pos == kses.size())
 		{
@@ -6486,9 +6486,9 @@ static LocalizedString NEWKEYSND("ScreenEdit", "New Sound");
 void ScreenEdit::DoKeyboardTrackMenu()
 {
 	g_KeysoundTrack.rows.clear();
-	vector<RString> &kses = m_pSong->m_vsKeysoundFile;
+	vector<std::string> &kses = m_pSong->m_vsKeysoundFile;
 
-	vector<RString> choices;
+	vector<std::string> choices;
 	for (auto const &ks: kses)
 	{
 		choices.push_back(ks);

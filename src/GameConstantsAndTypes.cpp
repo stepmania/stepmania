@@ -15,16 +15,16 @@
 
 using std::vector;
 
-static vector<RString> GenerateRankingToFillInMarker()
+static vector<std::string> GenerateRankingToFillInMarker()
 {
-	vector<RString> vRankings;
+	vector<std::string> vRankings;
 	FOREACH_ENUM( PlayerNumber, pn )
 	{
 		vRankings.push_back( fmt::sprintf("#P%d#", pn+1) );
 	}
 	return vRankings;
 }
-extern const vector<RString> RANKING_TO_FILL_IN_MARKER( GenerateRankingToFillInMarker() );
+extern const vector<std::string> RANKING_TO_FILL_IN_MARKER( GenerateRankingToFillInMarker() );
 
 extern const RString GROUP_ALL = "---Group All---";
 

@@ -917,7 +917,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 				sHTTPHeader = Rage::trim( sHTTPHeader );
 				//LOG->Trace( sHTTPHeader.c_str() );
 
-				vector<RString> svResponse;
+				vector<std::string> svResponse;
 				split( sHTTPHeader, "\r\n", svResponse );
 
 				// Check for 200 OK

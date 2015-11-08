@@ -480,7 +480,7 @@ bool Song::ReloadFromSongDir( RString sDir )
 
 	AddAutoGenNotes();
 	// Reload any images associated with the song. -Kyz
-	vector<RString> to_reload;
+	vector<std::string> to_reload;
 	to_reload.reserve(7);
 	to_reload.push_back(m_sBannerFile);
 	to_reload.push_back(m_sJacketFile);
@@ -1566,9 +1566,9 @@ vector<BackgroundChange> &Song::GetForegroundChanges()
 	return *m_ForegroundChanges.Get();
 }
 
-vector<RString> Song::GetChangesToVectorString(const vector<BackgroundChange> & changes) const
+vector<std::string> Song::GetChangesToVectorString(const vector<BackgroundChange> & changes) const
 {
-	vector<RString> ret;
+	vector<std::string> ret;
 	for (auto &bgc: changes)
 	{
 		ret.push_back(bgc.ToString());
@@ -1576,17 +1576,17 @@ vector<RString> Song::GetChangesToVectorString(const vector<BackgroundChange> & 
 	return ret;
 }
 
-vector<RString> Song::GetBGChanges1ToVectorString() const
+vector<std::string> Song::GetBGChanges1ToVectorString() const
 {
 	return this->GetChangesToVectorString(this->GetBackgroundChanges(BACKGROUND_LAYER_1));
 }
 
-vector<RString> Song::GetBGChanges2ToVectorString() const
+vector<std::string> Song::GetBGChanges2ToVectorString() const
 {
 	return this->GetChangesToVectorString(this->GetBackgroundChanges(BACKGROUND_LAYER_2));
 }
 
-vector<RString> Song::GetFGChanges1ToVectorString() const
+vector<std::string> Song::GetFGChanges1ToVectorString() const
 {
 	return this->GetChangesToVectorString(this->GetForegroundChanges());
 }

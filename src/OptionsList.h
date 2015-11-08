@@ -88,7 +88,7 @@ private:
 	bool			m_bStartIsDown;
 	bool			m_bAcceptStartRelease;
 
-	std::vector<RString> m_asLoadedRows;
+	std::vector<std::string> m_asLoadedRows;
 	std::map<RString, OptionRowHandler *> m_Rows;
 	std::map<RString, std::vector<bool> > m_bSelections;
 	std::set<RString> m_setDirectRows;
@@ -99,7 +99,7 @@ private:
 	OptionListRow m_Row[2];
 	int m_iCurrentRow;
 
-	std::vector<RString> m_asMenuStack;
+	std::vector<std::string> m_asMenuStack;
 	int m_iMenuStackSelection;
 };
 

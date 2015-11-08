@@ -3200,7 +3200,7 @@ void ScreenGameplay::SaveReplay()
 			for( int i = files.size()-1; i >= 0; --i )
 			{
 				static Regex re( "^replay([0-9]{5})\\....$" );
-				vector<RString> matches;
+				vector<std::string> matches;
 				if( !re.Compare( files[i], matches ) )
 					continue;
 

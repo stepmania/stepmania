@@ -72,14 +72,14 @@ public:
 
 	RString GetSongGroupBannerPath( RString sSongGroup ) const;
 	//RString GetSongGroupBackgroundPath( RString sSongGroup ) const;
-	void GetSongGroupNames( std::vector<RString> &AddTo ) const;
+	void GetSongGroupNames( std::vector<std::string> &AddTo ) const;
 	bool DoesSongGroupExist( RString sSongGroup ) const;
 	Rage::Color GetSongGroupColor( const RString &sSongGroupName ) const;
 	Rage::Color GetSongColor( const Song* pSong ) const;
 
 	RString GetCourseGroupBannerPath( const RString &sCourseGroup ) const;
 	//RString GetCourseGroupBackgroundPath( const RString &sCourseGroup ) const;
-	void GetCourseGroupNames( std::vector<RString> &AddTo ) const;
+	void GetCourseGroupNames( std::vector<std::string> &AddTo ) const;
 	bool DoesCourseGroupExist( const RString &sCourseGroup ) const;
 	Rage::Color GetCourseGroupColor( const RString &sCourseGroupName ) const;
 	Rage::Color GetCourseColor( const Course* pCourse ) const;
@@ -197,9 +197,9 @@ protected:
 		std::vector<Song*> vpSongs;
 	};
 	std::vector<PreferredSortSection> m_vPreferredSongSort;
-	std::vector<RString>		m_sSongGroupNames;
-	std::vector<RString>		m_sSongGroupBannerPaths; // each song group may have a banner associated with it
-	//std::vector<RString>		m_sSongGroupBackgroundPaths; // each song group may have a background associated with it (very rarely)
+	std::vector<std::string>		m_sSongGroupNames;
+	std::vector<std::string>		m_sSongGroupBannerPaths; // each song group may have a banner associated with it
+	//std::vector<std::string>		m_sSongGroupBackgroundPaths; // each song group may have a background associated with it (very rarely)
 
 	typedef std::vector<Song*> SongPointerVector;
 	std::unordered_map<std::string,SongPointerVector> m_mapSongGroupIndex;

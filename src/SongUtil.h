@@ -169,7 +169,7 @@ namespace SongUtil
 	bool ValidateCurrentSongPreview(const RString& answer, RString& error);
 	bool ValidateCurrentStepsMusic(const RString &answer, RString &error);
 
-	void GetAllSongGenres( std::vector<RString> &vsOut );
+	void GetAllSongGenres( std::vector<std::string> &vsOut );
 	/**
 	 * @brief Filter the selection of songs to only match certain criteria.
 	 * @param sc the intended song criteria.

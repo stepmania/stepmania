@@ -695,7 +695,7 @@ bool ScreenPackages::ParseHTTPAddress( const RString &URL, RString &sProto, RStr
 		"([^/:]+)"     // [1]: a.b.com
 		"(:([0-9]+))?" // [2], [3]: :1234 (optional, default 80)
 		"(/(.*))?$");    // [4], [5]: /foo.html (optional)
-	vector<RString> asMatches;
+	vector<std::string> asMatches;
 	if( !re.Compare( URL, asMatches ) )
 		return false;
 	ASSERT( asMatches.size() == 6 );

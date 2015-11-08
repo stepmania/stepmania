@@ -2464,7 +2464,7 @@ RString Profile::MakeUniqueFileNameNoExtension( RString sDir, RString sFileNameB
 	for( int i = files.size()-1; i >= 0; --i )
 	{
 		static Regex re( "^" + sFileNameBeginning + "([0-9]{5})\\....$" );
-		vector<RString> matches;
+		vector<std::string> matches;
 		if( !re.Compare( files[i], matches ) )
 			continue;
 

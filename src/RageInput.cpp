@@ -203,7 +203,7 @@ public:
 	{
 		vector<InputDeviceInfo> vDevices;
 		p->GetDevicesAndDescriptions( vDevices );
-		vector<RString> vsDescriptions;
+		vector<std::string> vsDescriptions;
 		for (auto const &idi: vDevices)
 		{
 			vsDescriptions.push_back( idi.sDesc );

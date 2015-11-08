@@ -180,7 +180,7 @@ public:
 	void UnsubscribeAll();
 
 private:
-	std::vector<RString> m_vsSubscribedTo;
+	std::vector<std::string> m_vsSubscribedTo;
 };
 
 /** @brief Deliver messages to any part of the program as needed. */

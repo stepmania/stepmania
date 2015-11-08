@@ -141,7 +141,7 @@ void ScreenOptionsExportPackageSubPage::BeginScreen()
 	else if( *s_packageType == "Songs" )
 	{
 		// Add song groups
-		vector<RString> asAllGroups;
+		vector<std::string> asAllGroups;
 		SONGMAN->GetSongGroupNames(asAllGroups);
 		for (auto &s: asAllGroups)
 		{
@@ -215,7 +215,7 @@ static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &
 	zip.Start();
 	zip.SetGlobalComment( sComment );
 
-	vector<RString> vs;
+	vector<std::string> vs;
 	GetDirListingRecursive( sDirToExport, "*", vs );
 	SMPackageUtil::StripIgnoredSmzipFiles( vs );
 	LOG->Trace("Adding files...");

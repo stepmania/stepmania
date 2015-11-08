@@ -141,7 +141,7 @@ class OptionRowHandler
 {
 public:
 	OptionRowDefinition m_Def;
-	std::vector<RString> m_vsReloadRowMessages;	// refresh this row on on these messages
+	std::vector<std::string> m_vsReloadRowMessages;	// refresh this row on on these messages
 
 	OptionRowHandler(): m_Def(), m_vsReloadRowMessages() { }
 	virtual ~OptionRowHandler() { }

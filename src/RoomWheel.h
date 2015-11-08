@@ -42,7 +42,7 @@ struct RoomInfo
 	RString songArtist;
 	int numPlayers;
 	int maxPlayers;
-	std::vector<RString> players;
+	std::vector<std::string> players;
 };
 
 class RoomWheel : public WheelBase

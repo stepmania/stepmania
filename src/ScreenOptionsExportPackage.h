@@ -26,7 +26,7 @@ protected:
 
 	virtual void ProcessMenuStart( const InputEventPlus &input );
 
-	std::vector<RString> m_vsPackageTypes;
+	std::vector<std::string> m_vsPackageTypes;
 };
 
 class ScreenOptionsExportPackageSubPage : public ScreenOptions

@@ -371,7 +371,7 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 		 * in "foo::bar=1+1=2", "baz" is always "1+1=2". Neither foo nor bar may
 		 * be empty, but baz may be. */
 		Regex re( "^([^=]+)::([^=]+)=(.*)$" );
-		vector<RString> sBits;
+		vector<std::string> sBits;
 		if( !re.Compare( sMetric, sBits ) )
 			RageException::Throw( "Invalid argument \"--metric=%s\".", sMetric.c_str() );
 
@@ -1198,7 +1198,7 @@ void ThemeManager::GetOptionalLanguageIniPaths( vector<std::string> &vsPathsOut,
 	GetDirListing( GetThemeDirFromName(sThemeName) + SpecialFiles::LANGUAGES_SUBDIR + sLanguage + " *.ini", vsPathsOut, false, true );
 }
 
-void ThemeManager::GetOptionNames( vector<RString>& AddTo )
+void ThemeManager::GetOptionNames( vector<std::string>& AddTo )
 {
 	const XNode *cur = g_pLoadedThemeData->iniStrings.GetChild( "OptionNames" );
 	if( cur )

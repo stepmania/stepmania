@@ -1213,7 +1213,7 @@ public:
 	/*
 	static int GetDirListingRecursive( T* p, lua_State *L )
 	{
-		vector<RString> vDirs;
+		vector<std::string> vDirs;
 		// (directory, match, addto)
 		GetDirListingRecursive( SArg(1), SArg(2), vDirs );
 		LuaHelpers::CreateTableFromArray(vDirs, L);

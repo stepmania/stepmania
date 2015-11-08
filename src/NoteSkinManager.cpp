@@ -39,7 +39,7 @@ struct NoteSkinData
 	IniFile metrics;
 
 	// When looking for an element, search these dirs from head to tail.
-	vector<RString> vsDirSearchOrder;
+	vector<std::string> vsDirSearchOrder;
 
 	LuaReference m_Loader;
 };
@@ -174,7 +174,7 @@ bool NoteSkinManager::LoadNoteSkinDataRecursive( const RString &sNoteSkinName_, 
 	}
 
 	LuaReference refScript;
-	for( vector<RString>::reverse_iterator dir = data_out.vsDirSearchOrder.rbegin(); dir != data_out.vsDirSearchOrder.rend(); ++dir )
+	for( vector<std::string>::reverse_iterator dir = data_out.vsDirSearchOrder.rbegin(); dir != data_out.vsDirSearchOrder.rend(); ++dir )
 	{
 		RString sFile = *dir + "NoteSkin.lua";
 		RString sScript;
@@ -257,7 +257,7 @@ RString NoteSkinManager::GetDefaultNoteSkinName()
 	return name;
 }
 
-void NoteSkinManager::ValidateNoteSkinName(RString& name)
+void NoteSkinManager::ValidateNoteSkinName(std::string& name)
 {
 	if(name.empty() || !DoesNoteSkinExist(name))
 	{
@@ -596,7 +596,7 @@ public:
 	static int GetNoteSkinNamesForGame( T* p, lua_State *L )
 	{
 		Game *pGame = Luna<Game>::check( L, 1 );
-		vector<RString> vGameNoteskins;
+		vector<std::string> vGameNoteskins;
 		p->GetNoteSkinNames( pGame, vGameNoteskins );
 		LuaHelpers::CreateTableFromArray(vGameNoteskins, L);
 		return 1;

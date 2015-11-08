@@ -280,7 +280,7 @@ RString GetInfoLog( GLhandleARB h )
 	return Rage::trim_right(sRet);
 }
 
-GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asDefines )
+GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<std::string> asDefines )
 {
 	/* XXX: This would not be necessary if it wasn't for the special case for Cel. */
 	if (ShaderType == GL_FRAGMENT_SHADER_ARB && !glewIsSupported("GL_VERSION_2_0"))
@@ -341,7 +341,7 @@ GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asD
 	return hShader;
 }
 
-GLhandleARB LoadShader( GLenum ShaderType, RString sFile, vector<RString> asDefines )
+GLhandleARB LoadShader( GLenum ShaderType, RString sFile, vector<std::string> asDefines )
 {
 	/* Vertex shaders are supported by more hardware than fragment shaders.
 	 * If this causes any trouble I will have to up the requirement for both
@@ -410,7 +410,7 @@ void InitShaders()
 	// xxx: replace this with a ShaderManager or something that reads in
 	// the shaders and determines shader type by file extension. -aj
 	// argh shaders in stepmania are painful -colby
-	vector<RString> asDefines;
+	vector<std::string> asDefines;
 
 	// used for scrolling textures (I think)
 	g_bTextureMatrixShader = LoadShader(	GL_VERTEX_SHADER_ARB, "Data/Shaders/GLSL/Texture matrix scaling.vert", asDefines );

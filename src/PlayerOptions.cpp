@@ -397,7 +397,7 @@ bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &s
 	const bool on = (level > 0.5f);
 
 	static Regex mult("^([0-9]+(\\.[0-9]+)?)x$");
-	vector<RString> matches;
+	vector<std::string> matches;
 	if( mult.Compare(sBit, matches) )
 	{
 		StringConversion::FromString( matches[0], level );

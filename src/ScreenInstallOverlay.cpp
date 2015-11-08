@@ -74,12 +74,12 @@ static void InstallSmzip( const RString &sZipFile, PlayAfterLaunchInfo &out )
 	{
 		FAIL_M("Failed to mount " + sZipFile );
 	}
-	vector<RString> vsFiles;
+	vector<std::string> vsFiles;
 	{
 		vector<std::string> vsRawFiles;
 		GetDirListingRecursive( TEMP_ZIP_MOUNT_POINT, "*", vsRawFiles);
 
-		vector<RString> vsPrettyFiles;
+		vector<std::string> vsPrettyFiles;
 		Rage::ci_ascii_string ctl{ "ctl" };
 		for (auto const &s: vsRawFiles)
 		{
@@ -146,7 +146,7 @@ Preference<std::string> g_sCookie( "Cookie", "" );
 class DownloadTask
 {
 	FileTransfer *m_pTransfer;
-	vector<RString> m_vsQueuedPackageUrls;
+	vector<std::string> m_vsQueuedPackageUrls;
 	RString m_sCurrentPackageTempFile;
 	enum
 	{

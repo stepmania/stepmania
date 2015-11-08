@@ -38,8 +38,8 @@ public:
 	void AddLocalProfileByID( Profile *pProfile, RString sProfileID ); // transfers ownership of pProfile
 	bool RenameLocalProfile( RString sProfileID, RString sNewName );
 	bool DeleteLocalProfile( RString sProfileID );
-	void GetLocalProfileIDs( std::vector<RString> &vsProfileIDsOut ) const;
-  void GetLocalProfileDisplayNames( std::vector<std::string> &vsProfileDisplayNamesOut ) const;
+	void GetLocalProfileIDs( std::vector<std::string> &vsProfileIDsOut ) const;
+	void GetLocalProfileDisplayNames( std::vector<std::string> &vsProfileDisplayNamesOut ) const;
 	int GetLocalProfileIndexFromID( RString sProfileID ) const;
 	int GetNumLocalProfiles() const;
 
@@ -100,7 +100,7 @@ public:
 	void AddCategoryScore( StepsType st, RankingCategory rc, PlayerNumber pn, const HighScore &hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementCategoryPlayCount( StepsType st, RankingCategory rc, PlayerNumber pn );
 
-	static void GetMemoryCardProfileDirectoriesToTry( std::vector<RString> &asDirsToTry );
+	static void GetMemoryCardProfileDirectoriesToTry( std::vector<std::string> &asDirsToTry );
 
 	// Lua
 	void PushSelf( lua_State *L );

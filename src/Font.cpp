@@ -424,7 +424,7 @@ void Font::SetDefaultGlyph( FontPage *pPage )
 
 
 // Given the INI for a font, find all of the texture pages for the font.
-void Font::GetFontPaths( const RString &sFontIniPath, vector<RString> &asTexturePathsOut )
+void Font::GetFontPaths( const RString &sFontIniPath, vector<std::string> &asTexturePathsOut )
 {
 	RString sPrefix = SetExtension( sFontIniPath, "" );
 	vector<std::string> asFiles;
@@ -558,7 +558,7 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 				 * Map hiragana to 0-84:
 				 * range Unicode #3041-3094=0
 				 */
-				vector<RString> asMatches;
+				vector<std::string> asMatches;
 				static Regex parse("^RANGE ([A-Z0-9\\-]+)( ?#([0-9A-F]+)-([0-9A-F]+))?$");
 				bool match = parse.Compare( sName, asMatches );
 				ASSERT( asMatches.size() == 4 ); // 4 parens
@@ -783,7 +783,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 	m_sChars = sChars;
 
 	// Get the filenames associated with this font.
-	vector<RString> asTexturePaths;
+	vector<std::string> asTexturePaths;
 	GetFontPaths( sIniPath, asTexturePaths );
 
 	bool bCapitalsOnly = false;
@@ -802,7 +802,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 	}
 
 	{
-		vector<RString> ImportList;
+		vector<std::string> ImportList;
 
 		bool bIsTopLevelFont = LoadStack.size() == 1;
 

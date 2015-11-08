@@ -332,16 +332,16 @@ private:
 	 * This must be sorted before gameplay. */
 	AutoPtrCopyOnWrite<VBackgroundChange>	m_ForegroundChanges;
 
-	std::vector<RString> GetChangesToVectorString(const std::vector<BackgroundChange> & changes) const;
+	std::vector<std::string> GetChangesToVectorString(const std::vector<BackgroundChange> & changes) const;
 public:
 	const std::vector<BackgroundChange>	&GetBackgroundChanges( BackgroundLayer bl ) const;
 	std::vector<BackgroundChange>	&GetBackgroundChanges( BackgroundLayer bl );
 	const std::vector<BackgroundChange>	&GetForegroundChanges() const;
 	std::vector<BackgroundChange>	&GetForegroundChanges();
 
-	std::vector<RString> GetBGChanges1ToVectorString() const;
-	std::vector<RString> GetBGChanges2ToVectorString() const;
-	std::vector<RString> GetFGChanges1ToVectorString() const;
+	std::vector<std::string> GetBGChanges1ToVectorString() const;
+	std::vector<std::string> GetBGChanges2ToVectorString() const;
+	std::vector<std::string> GetFGChanges1ToVectorString() const;
 
 	std::vector<std::string> GetInstrumentTracksToVectorString() const;
 
@@ -445,7 +445,7 @@ public:
 	 * If you  change the index in here, you must change all NoteData too.
 	 * Any note that doesn't have a value in the range of this array
 	 * means "this note doesn't have a keysound". */
-	std::vector<RString> m_vsKeysoundFile;
+	std::vector<std::string> m_vsKeysoundFile;
 
 	CachedObject<Song> m_CachedObject;
 

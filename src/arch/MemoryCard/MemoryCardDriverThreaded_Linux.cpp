@@ -82,7 +82,7 @@ static bool ReadFile( const RString &sPath, RString &sBuf )
 	return true;
 }
 
-static void GetFileList( const RString &sPath, vector<RString> &out )
+static void GetFileList( const RString &sPath, vector<std::string> &out )
 {
 	out.clear();
 
@@ -104,13 +104,13 @@ bool MemoryCardDriverThreaded_Linux::USBStorageDevicesChanged()
 	 * will change. */
 	RString sDevicePath = "/sys/block/";
 
-	vector<RString> asDevices;
+	vector<std::string> asDevices;
 	GetFileList( sDevicePath, asDevices );
 
 	for( unsigned i = 0; i < asDevices.size(); ++i )
 	{
 		struct stat buf;
-		if( stat( sDevicePath + asDevices[i], &buf ) == -1 )
+		if( stat( (sDevicePath + asDevices[i]).c_str(), &buf ) == -1 )
 			continue; // XXX warn
 
 		sThisDevices += fmt::sprintf( "%i,", (int) buf.st_ino );
@@ -130,7 +130,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 	vDevicesOut.clear();
 
 	{
-		vector<RString> asDevices;
+		vector<std::string> asDevices;
 		RString sBlockDevicePath = "/sys/block/";
 		GetFileList( sBlockDevicePath, asDevices );
 

@@ -459,7 +459,7 @@ inline T Increment( T a ) { ++a; return a; }
 template<class T>
 inline T Decrement( T a ) { --a; return a; }
 
-void StripCrnl( RString &sStr );
+void StripCrnl( std::string &sStr );
 RString URLEncode( const RString &sStr );
 
 void StripCvsAndSvn( std::vector<std::string> &vs ); // Removes various versioning system metafolders.
@@ -467,7 +467,7 @@ void StripMacResourceForks( std::vector<std::string> &vs ); // Removes files sta
 
 RString DerefRedir( const RString &sPath );
 bool GetFileContents( const RString &sPath, RString &sOut, bool bOneLine = false );
-bool GetFileContents( const RString &sFile, std::vector<RString> &asOut );
+bool GetFileContents( const RString &sFile, std::vector<std::string> &asOut );
 
 class Regex
 {
@@ -479,7 +479,7 @@ public:
 	bool IsSet() const { return !m_sPattern.empty(); }
 	void Set( const RString &str );
 	bool Compare( const RString &sStr );
-	bool Compare( const RString &sStr, std::vector<RString> &asMatches );
+	bool Compare( const RString &sStr, std::vector<std::string> &asMatches );
 	bool Replace( const RString &sReplacement, const RString &sSubject, RString &sOut );
 
 private:
@@ -545,7 +545,7 @@ namespace StringConversion
 }
 
 class RageFileBasic;
-bool FileCopy( const RString &sSrcFile, const RString &sDstFile );
+bool FileCopy( std::string const &sSrcFile, std::string const &sDstFile );
 bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bReadError = nullptr );
 
 template<class T>

@@ -143,7 +143,7 @@ public:
 	std::vector<int> m_PlayerStatus;
 	int m_ActivePlayers;
 	std::vector<int> m_ActivePlayer;
-	std::vector<RString> m_PlayerNames;
+	std::vector<std::string> m_PlayerNames;
 
 	// Used for ScreenNetEvaluation
 	std::vector<EndOfGame_PlayerData> m_EvalPlayerData;

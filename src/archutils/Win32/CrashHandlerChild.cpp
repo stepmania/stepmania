@@ -441,8 +441,8 @@ struct CompleteCrashData
 	RString m_sInfo;
 	RString m_sAdditionalLog;
 	RString m_sCrashedThread;
-	vector<RString> m_asRecent;
-	vector<RString> m_asCheckpoints;
+	std::vector<std::string> m_asRecent;
+	std::vector<std::string> m_asCheckpoints;
 };
 
 static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )

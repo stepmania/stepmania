@@ -747,7 +747,7 @@ int LuaFunc_convert_xml_bgs(lua_State* L);
 int LuaFunc_convert_xml_bgs(lua_State* L)
 {
 	RString dir= SArg(1);
-	vector<RString> xml_list;
+	vector<std::string> xml_list;
 	convert_xmls_in_dir(dir + "/");
 	return 0;
 }
