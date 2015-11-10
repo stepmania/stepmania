@@ -51,20 +51,27 @@ void ScreenOptionsMemoryCard::CreateMenu()
 
 	for (auto &iter: m_CurrentUsbStorageDevices)
 	{
-		vector<RString> vs;
+		vector<std::string> vs;
 		if( iter.sVolumeLabel.empty() )
+		{
 			vs.push_back( NO_LABEL.GetValue() );
+		}
 		else
+		{
 			vs.push_back( iter.sVolumeLabel );
+		}
 		if( iter.iVolumeSizeMB == 0 )
+		{
 			vs.push_back( SIZE_UNKNOWN.GetValue() );
+		}
 		else
+		{
 			vs.push_back( fmt::sprintf(RString(VOLUME_SIZE).c_str(),iter.iVolumeSizeMB) );
-
+		}
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 
 		OptionRowDefinition &def = vHands.back()->m_Def;
-		RString sDescription = join(", ", vs);
+		RString sDescription = Rage::join(", ", vs);
 		def.m_sName = sDescription;
 		def.m_vsChoices.push_back( "" );
 		def.m_sExplanationName = "Memory Card";

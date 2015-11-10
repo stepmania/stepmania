@@ -16,14 +16,16 @@ static RString GetPromptText()
 	RString s;
 
 	{
-		vector<RString> vs;
+		vector<std::string> vs;
 		AdjustSync::GetSyncChangeTextGlobal( vs );
 		if( !vs.empty() )
-			s += join( "\n", vs ) + "\n\n";
+		{
+			s += Rage::join( "\n", vs ) + "\n\n";
+		}
 	}
 
 	{
-		vector<RString> vs;
+		vector<std::string> vs;
 		AdjustSync::GetSyncChangeTextSong( vs );
 		if( !vs.empty() )
 		{
@@ -33,7 +35,7 @@ static RString GetPromptText()
 				"\n",
 				GAMESTATE->m_pCurSong->GetDisplayFullTitle().c_str() );
 
-			s += join( "\n", vs ) + "\n\n";
+			s += Rage::join( "\n", vs ) + "\n\n";
 		}
 	}
 

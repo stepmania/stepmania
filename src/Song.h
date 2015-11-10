@@ -256,7 +256,7 @@ public:
 	RString m_sPreviewVidFile;
 
 	AttackArray m_Attacks;
-	std::vector<RString>	m_sAttackString;
+	std::vector<std::string> m_sAttackString;
 
 	static RString GetSongAssetPath( RString sPath, const RString &sSongPath );
 	RString GetMusicPath() const;
@@ -343,7 +343,7 @@ public:
 	std::vector<RString> GetBGChanges2ToVectorString() const;
 	std::vector<RString> GetFGChanges1ToVectorString() const;
 
-	std::vector<RString> GetInstrumentTracksToVectorString() const;
+	std::vector<std::string> GetInstrumentTracksToVectorString() const;
 
 	/**
 	 * @brief The list of LyricSegments.
@@ -449,9 +449,9 @@ public:
 
 	CachedObject<Song> m_CachedObject;
 
-	RString GetAttackString() const
+	std::string GetAttackString() const
 	{
-		return join(":", this->m_sAttackString);
+		return Rage::join(":", this->m_sAttackString);
 	}
 
 	// Lua

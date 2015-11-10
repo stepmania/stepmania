@@ -23,6 +23,7 @@
 #include "archutils/Win32/SpecialDirs.h"
 #include "ProductInfo.h"
 #include "RageUtil.h"
+#include "RageString.hpp"
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
 #include "LocalizedString.h"
@@ -456,7 +457,11 @@ static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
 
 	// Dump thread stacks
 	static char buf[1024*32];
-	sOut += fmt::sprintf( "%s\n", join("\n", Data.m_asCheckpoints).c_str() );
+	// Every operation is the same in the end: entry, then new line.
+	for (auto checkpoint : Data.m_asCheckpoints)
+	{
+		sOut += fmt::format("{0}\n", checkpoint.c_str());
+	}
 
 	sOut += ReportCallStack( Data.m_CrashInfo.m_BacktracePointers );
 	sOut += fmt::sprintf( "\n" );

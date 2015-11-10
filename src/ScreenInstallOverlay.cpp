@@ -377,12 +377,12 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
 	}
 
 	{
-		vector<RString> vsMessages;
+		vector<std::string> vsMessages;
 		for (auto *pDT: g_pDownloadTasks)
 		{
 			vsMessages.push_back( pDT->GetStatus() );
 		}
-		m_textStatus.SetText( join("\n", vsMessages) );
+		m_textStatus.SetText( Rage::join("\n", vsMessages) );
 	}
 #endif
 	if( playAfterLaunchInfo.bAnySongChanged )

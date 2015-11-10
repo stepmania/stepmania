@@ -731,7 +731,7 @@ RString FontPageSettings::MapRange( RString sMapping, int iMapOffset, int iGlyph
 	return RString();
 }
 
-static vector<RString> LoadStack;
+static vector<std::string> LoadStack;
 
 /* A font set is a set of files, eg:
  *
@@ -767,7 +767,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 	{
 		if( stack == sIniPath )
 		{
-			RString str = join("\n", LoadStack);
+			RString str = Rage::join("\n", LoadStack);
 			str += "\nCurrent font: " + sIniPath;
 			LuaHelpers::ReportScriptErrorFmt(
 				"Font import recursion detected\n%s", str.c_str());

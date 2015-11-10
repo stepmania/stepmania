@@ -158,7 +158,7 @@ struct SMLoader
 	 * @brief Put the attacks in the attacks string.
 	 * @param attacks the attack string.
 	 * @param params the params from the simfile. */
-	virtual void ProcessAttackString(std::vector<RString> &attacks, MsdFile::value_t params);
+	virtual void ProcessAttackString(std::vector<std::string> &attacks, MsdFile::value_t params);
 
 	/**
 	 * @brief Put the attacks in the attacks array.

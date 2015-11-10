@@ -128,11 +128,12 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 #undef DO_COPY
 }
 
-static void AddPart( vector<RString> &AddTo, float level, RString name )
+static void AddPart( vector<std::string> &AddTo, float level, RString name )
 {
 	if( level == 0 )
+	{
 		return;
-
+	}
 	const RString LevelStr = (level == 1)? RString(""): fmt::sprintf( "%ld%% ", std::lrint(level*100) );
 
 	AddTo.push_back( LevelStr + name );
@@ -140,12 +141,12 @@ static void AddPart( vector<RString> &AddTo, float level, RString name )
 
 std::string PlayerOptions::GetString( bool bForceNoteSkin ) const
 {
-	vector<RString> v;
+	vector<std::string> v;
 	GetMods( v, bForceNoteSkin );
-	return join( ", ", v );
+	return Rage::join( ", ", v );
 }
 
-void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
+void PlayerOptions::GetMods( vector<std::string> &AddTo, bool bForceNoteSkin ) const
 {
 	//RString sReturn;
 
@@ -951,24 +952,25 @@ bool PlayerOptions::IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail ) 
 	return std::any_of(pTrail->m_vEntries.begin(), pTrail->m_vEntries.end(), isEasier);
 }
 
-void PlayerOptions::GetLocalizedMods( vector<RString> &AddTo ) const
+void PlayerOptions::GetLocalizedMods( vector<std::string> &AddTo ) const
 {
-	vector<RString> vMods;
+	vector<std::string> vMods;
 	GetMods( vMods );
 	for (auto const &sOneMod: vMods)
 	{
 		ASSERT( !sOneMod.empty() );
 
-		vector<RString> asTokens;
-		split( sOneMod, " ", asTokens );
+		auto asTokens = Rage::split(sOneMod, " ");
 
 		if( asTokens.empty() )
+		{
 			continue;
-
+		}
 		// Strip the approach speed token, if any
 		if( asTokens[0][0] == '*' )
+		{
 			asTokens.erase( asTokens.begin() );
-
+		}
 		// capitalize NoteSkin names
 		asTokens.back() = Capitalize( asTokens.back() );
 
@@ -976,7 +978,7 @@ void PlayerOptions::GetLocalizedMods( vector<RString> &AddTo ) const
 		 * characters might use modifiers that don't exist in the theme. */
 		asTokens.back() = CommonMetrics::LocalizeOptionItem( asTokens.back(), true );
 
-		RString sLocalizedMod = join( " ", asTokens );
+		RString sLocalizedMod = Rage::join( " ", asTokens );
 		AddTo.push_back( sLocalizedMod );
 	}
 }

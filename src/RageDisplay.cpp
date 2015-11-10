@@ -72,24 +72,30 @@ static LocalizedString SETVIDEOMODE_FAILED ( "RageDisplay", "SetVideoMode failed
 RString RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures )
 {
 	RString err;
-	vector<RString> vs;
+	vector<std::string> vs;
 
 	if( (err = this->TryVideoMode(p,bNeedReloadTextures)) == "" )
-		return RString();
+	{
+		return "";
+	}
 	LOG->Trace( "TryVideoMode failed: %s", err.c_str() );
 	vs.push_back( err );
 
 	// fall back to settings that will most likely work
 	p.bpp = 16;
 	if( (err = this->TryVideoMode(p,bNeedReloadTextures)) == "" )
-		return RString();
+	{
+		return "";
+	}
 	vs.push_back( err );
 
 	// "Intel(R) 82810E Graphics Controller" won't accept a 16 bpp surface if
 	// the desktop is 32 bpp, so try 32 bpp as well.
 	p.bpp = 32;
 	if( (err = this->TryVideoMode(p,bNeedReloadTextures)) == "" )
-		return RString();
+	{
+		return "";
+	}
 	vs.push_back( err );
 
 	// Fall back on a known resolution good rather than 640 x 480.
@@ -98,17 +104,19 @@ RString RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures 
 	if( dr.empty() )
 	{
 		vs.push_back( "No display resolutions" );
-		return SETVIDEOMODE_FAILED.GetValue() + " " + join(";",vs);
+		return SETVIDEOMODE_FAILED.GetValue() + " " + Rage::join(";",vs);
 	}
 
 	const DisplayResolution &d = *dr.begin();
 	p.width = d.iWidth;
 	p.height = d.iHeight;
 	if( (err = this->TryVideoMode(p,bNeedReloadTextures)) == "" )
-		return RString();
+	{
+		return "";
+	}
 	vs.push_back( err );
 
-	return SETVIDEOMODE_FAILED.GetValue() + " " + join(";",vs);
+	return SETVIDEOMODE_FAILED.GetValue() + " " + Rage::join(";",vs);
 }
 
 void RageDisplay::ProcessStatsOnFlip()

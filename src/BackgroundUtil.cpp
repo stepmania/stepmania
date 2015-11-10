@@ -54,20 +54,40 @@ XNode *BackgroundDef::CreateNode() const
 
 RString BackgroundChange::GetTextDescription() const
 {
-	vector<RString> vsParts;
-	if( !m_def.m_sFile1.empty() )	vsParts.push_back( m_def.m_sFile1 );
-	if( !m_def.m_sFile2.empty() )	vsParts.push_back( m_def.m_sFile2 );
-	if( m_fRate!=1.0f )				vsParts.push_back( fmt::sprintf("%.2f%%",m_fRate*100) );
-	if( !m_sTransition.empty() )	vsParts.push_back( m_sTransition );
-	if( !m_def.m_sEffect.empty() )	vsParts.push_back( m_def.m_sEffect );
-	if( !m_def.m_sColor1.empty() )	vsParts.push_back( m_def.m_sColor1 );
-	if( !m_def.m_sColor2.empty() )	vsParts.push_back( m_def.m_sColor2 );
-
+	vector<std::string> vsParts;
+	if( !m_def.m_sFile1.empty() )
+	{
+		vsParts.push_back( m_def.m_sFile1 );
+	}
+	if( !m_def.m_sFile2.empty() )
+	{
+		vsParts.push_back( m_def.m_sFile2 );
+	}
+	if( m_fRate!=1.0f )
+	{
+		vsParts.push_back( fmt::sprintf("%.2f%%",m_fRate*100) );
+	}
+	if( !m_sTransition.empty() )
+	{
+		vsParts.push_back( m_sTransition );
+	}
+	if( !m_def.m_sEffect.empty() )
+	{
+		vsParts.push_back( m_def.m_sEffect );
+	}
+	if( !m_def.m_sColor1.empty() )
+	{
+		vsParts.push_back( m_def.m_sColor1 );
+	}
+	if( !m_def.m_sColor2.empty() )
+	{
+		vsParts.push_back( m_def.m_sColor2 );
+	}
 	if( vsParts.empty() )
+	{
 		vsParts.push_back( "(empty)" );
-
-	RString s = join( "\n", vsParts );
-	return s;
+	}
+	return Rage::join("\n", vsParts);
 }
 
 RString BackgroundChange::ToString() const

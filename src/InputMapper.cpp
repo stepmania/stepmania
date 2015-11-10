@@ -666,7 +666,7 @@ const InputScheme *InputMapper::GetInputScheme() const
 	return m_pInputScheme;
 }
 
-const RString DEVICE_INPUT_SEPARATOR = ":";	// this isn't used in any key names
+std::string const DEVICE_INPUT_SEPARATOR = ":";	// this isn't used in any key names
 
 void InputMapper::ReadMappingsFromDisk()
 {
@@ -688,7 +688,7 @@ void InputMapper::ResetMappingsToDefault()
 	AddDefaultMappingsForCurrentGameIfUnmapped();
 }
 
-void InputMapper::CheckButtonAndAddToReason(GameButton menu, vector<RString>& full_reason, RString const& sub_reason)
+void InputMapper::CheckButtonAndAddToReason(GameButton menu, vector<std::string>& full_reason, RString const& sub_reason)
 {
 	vector<GameInput> inputs;
 	bool exists= false;
@@ -736,7 +736,7 @@ void InputMapper::CheckButtonAndAddToReason(GameButton menu, vector<RString>& fu
 	}
 }
 
-void InputMapper::SanityCheckMappings(vector<RString>& reason)
+void InputMapper::SanityCheckMappings(vector<std::string>& reason)
 {
 	// This is just to check whether the current mapping has the minimum
 	// necessary to navigate the menus so the user can reach the config screen.
@@ -761,13 +761,12 @@ bool InputMapper::CheckForChangedInputDevicesAndRemap( RString &sMessageOut )
 	INPUTMAN->GetDevicesAndDescriptions( vDevices );
 
 	// Strip non-joysticks.
-	vector<RString> vsLastSeenJoysticks;
 	// Don't use "," since some vendors have a name like "company Ltd., etc".
 	// For now, use a pipe character. -aj, fix from Mordae.
-	split( g_sLastSeenInputDevices.Get(), "|", vsLastSeenJoysticks );
+	auto vsLastSeenJoysticks = Rage::split(g_sLastSeenInputDevices.Get(), "|");
 
-	vector<RString> vsCurrent;
-	vector<RString> vsCurrentJoysticks;
+	vector<std::string> vsCurrent;
+	vector<std::string> vsCurrentJoysticks;
 	for( int i=vDevices.size()-1; i>=0; i-- )
 	{
 		vsCurrent.push_back( vDevices[i].sDesc );
@@ -777,25 +776,31 @@ bool InputMapper::CheckForChangedInputDevicesAndRemap( RString &sMessageOut )
 		}
 		else
 		{
-			vector<RString>::iterator iter = find( vsLastSeenJoysticks.begin(), vsLastSeenJoysticks.end(), vDevices[i].sDesc );
+			auto iter = find( vsLastSeenJoysticks.begin(), vsLastSeenJoysticks.end(), vDevices[i].sDesc );
 			if( iter != vsLastSeenJoysticks.end() )
+			{
 				vsLastSeenJoysticks.erase( iter );
+			}
 		}
 	}
 
 	bool bJoysticksChanged = vsCurrentJoysticks != vsLastSeenJoysticks;
 	if( !bJoysticksChanged )
+	{
 		return false;
-
-	vector<RString> vsConnects, vsDisconnects;
+	}
+	vector<std::string> vsConnects, vsDisconnects;
 	GetConnectsDisconnects( vsLastSeenJoysticks, vsCurrentJoysticks, vsDisconnects, vsConnects );
 
 	sMessageOut = RString();
 	if( !vsConnects.empty() )
-		sMessageOut += CONNECTED.GetValue()+": " + join( "\n", vsConnects ) + "\n";
+	{
+		sMessageOut += CONNECTED.GetValue()+": " + Rage::join( "\n", vsConnects ) + "\n";
+	}
 	if( !vsDisconnects.empty() )
-		sMessageOut += DISCONNECTED.GetValue()+": " + join( "\n", vsDisconnects ) + "\n";
-
+	{
+		sMessageOut += DISCONNECTED.GetValue()+": " + Rage::join( "\n", vsDisconnects ) + "\n";
+	}
 	if( g_bAutoMapOnJoyChange )
 	{
 		sMessageOut += AUTOMAPPING_ALL_JOYSTICKS.GetValue();
@@ -807,7 +812,7 @@ bool InputMapper::CheckForChangedInputDevicesAndRemap( RString &sMessageOut )
 	LOG->Info( "%s", sMessageOut.c_str() );
 
 	// see above comment about not using ",". -aj
-	g_sLastSeenInputDevices.Set( join("|",vsCurrent) );
+	g_sLastSeenInputDevices.Set( Rage::join("|",vsCurrent) );
 	PREFSMAN->SavePrefsToDisk();
 
 	return true;
@@ -1255,14 +1260,16 @@ void InputMappings::WriteMappings( const InputScheme *pInputScheme, RString sFil
 			GameInput GameI( i, j );
 			RString sNameString = GameI.ToString( pInputScheme );
 
-			vector<RString> asValues;
+			vector<std::string> asValues;
 			for( int slot = 0; slot < NUM_USER_GAME_TO_DEVICE_SLOTS; ++slot )	// don't save data from the last (keyboard automap) slot
+			{
 				asValues.push_back( m_GItoDI[i][j][slot].ToString() );
-
+			}
 			while( asValues.size() && asValues.back() == "" )
+			{
 				asValues.erase( asValues.begin()+asValues.size()-1 );
-
-			RString sValueString = join( DEVICE_INPUT_SEPARATOR, asValues );
+			}
+			auto sValueString = Rage::join( DEVICE_INPUT_SEPARATOR, asValues );
 
 			pKey->AppendAttr( sNameString, sValueString );
 		}

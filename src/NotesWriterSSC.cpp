@@ -21,7 +21,7 @@ using std::vector;
  * @brief Turn a vector of lines into a single line joined by newline characters.
  * @param lines the list of lines to join.
  * @return the joined lines. */
-static RString JoinLineList( vector<RString> &lines )
+static RString JoinLineList( vector<std::string> &lines )
 {
 	for (auto &line: lines)
 	{
@@ -30,19 +30,20 @@ static RString JoinLineList( vector<RString> &lines )
 	// Skip leading blanks.
 	unsigned j = 0;
 	while( j < lines.size() && lines.size() == 0 )
+	{
 		++j;
-
-	return join( "\r\n", lines.begin()+j, lines.end() );
+	}
+	return Rage::join( "\r\n", lines.begin()+j, lines.end() );
 }
 
 
 // A utility class to write timing tags more easily!
 struct TimingTagWriter {
 
-	vector<RString> *m_pvsLines;
+	vector<std::string> *m_pvsLines;
 	RString m_sNext;
 
-	TimingTagWriter( vector<RString> *pvsLines ): m_pvsLines (pvsLines) { }
+	TimingTagWriter( vector<std::string> *pvsLines ): m_pvsLines (pvsLines) { }
 
 	void Write( const int row, std::string const &value )
 	{
@@ -62,7 +63,7 @@ struct TimingTagWriter {
 
 };
 
-static void GetTimingTags( vector<RString> &lines, const TimingData &timing, bool bIsSong = false )
+static void GetTimingTags( vector<std::string> &lines, const TimingData &timing, bool bIsSong = false )
 {
 	TimingTagWriter w ( &lines );
 
@@ -175,7 +176,9 @@ static void GetTimingTags( vector<RString> &lines, const TimingData &timing, boo
 	{
 		LabelSegment *ls = static_cast<LabelSegment *>(labels[i]);
 		if (!ls->GetLabel().empty())
+		{
 			w.Write( ls->GetRow(), ls->GetLabel().c_str() );
+		}
 	}
 	w.Finish();
 }
@@ -183,27 +186,27 @@ static void GetTimingTags( vector<RString> &lines, const TimingData &timing, boo
 static void WriteTimingTags( RageFile &f, const TimingData &timing, bool bIsSong = false )
 {
 	f.PutLine(fmt::sprintf("#BPMS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_BPM, 3)).c_str()));
+						   Rage::join(",\r\n", timing.ToVectorString(SEGMENT_BPM, 3)).c_str()));
 	f.PutLine(fmt::sprintf("#STOPS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_STOP, 3)).c_str()));
+						   Rage::join(",\r\n", timing.ToVectorString(SEGMENT_STOP, 3)).c_str()));
 	f.PutLine(fmt::sprintf("#DELAYS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_DELAY, 3)).c_str()));
+						   Rage::join(",\r\n", timing.ToVectorString(SEGMENT_DELAY, 3)).c_str()));
 	f.PutLine(fmt::sprintf("#WARPS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_WARP, 3)).c_str()));
+						   Rage::join(",\r\n", timing.ToVectorString(SEGMENT_WARP, 3)).c_str()));
 	f.PutLine(fmt::sprintf("#TIMESIGNATURES:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_TIME_SIG, 3)).c_str()));
+						   Rage::join(",\r\n", timing.ToVectorString(SEGMENT_TIME_SIG, 3)).c_str()));
 	f.PutLine(fmt::sprintf("#TICKCOUNTS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_TICKCOUNT, 3)).c_str()));
+						   Rage::join(",\r\n", timing.ToVectorString(SEGMENT_TICKCOUNT, 3)).c_str()));
 	f.PutLine(fmt::sprintf("#COMBOS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_COMBO, 3)).c_str()));
+						   Rage::join(",\r\n", timing.ToVectorString(SEGMENT_COMBO, 3)).c_str()));
 	f.PutLine(fmt::sprintf("#SPEEDS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_SPEED, 3)).c_str()));
+						   Rage::join(",\r\n", timing.ToVectorString(SEGMENT_SPEED, 3)).c_str()));
 	f.PutLine(fmt::sprintf("#SCROLLS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_SCROLL, 3)).c_str()));
+						   Rage::join(",\r\n", timing.ToVectorString(SEGMENT_SCROLL, 3)).c_str()));
 	f.PutLine(fmt::sprintf("#FAKES:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_FAKE, 3)).c_str()));
+						   Rage::join(",\r\n", timing.ToVectorString(SEGMENT_FAKE, 3)).c_str()));
 	f.PutLine(fmt::sprintf("#LABELS:%s;",
-			   join(",\r\n", timing.ToVectorString(SEGMENT_LABEL, 3)).c_str()));
+						   Rage::join(",\r\n", timing.ToVectorString(SEGMENT_LABEL, 3)).c_str()));
 
 }
 
@@ -238,10 +241,10 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	}
 
 	{
-		vector<RString> vs = out.GetInstrumentTracksToVectorString();
+		auto vs = out.GetInstrumentTracksToVectorString();
 		if( !vs.empty() )
 		{
-			RString s = join( ",", vs );
+			RString s = Rage::join( ",", vs );
 			f.PutLine( "#INSTRUMENTTRACK:" + s + ";\n" );
 		}
 	}
@@ -266,10 +269,13 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			break;
 		case DISPLAY_BPM_SPECIFIED:
 			if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
+			{
 				f.PutLine( fmt::sprintf( "#DISPLAYBPM:%.6f;", out.m_fSpecifiedBPMMin ) );
+			}
 			else
+			{
 				f.PutLine( fmt::sprintf( "#DISPLAYBPM:%.6f:%.6f;", out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
-			break;
+			}break;
 		case DISPLAY_BPM_RANDOM:
 			f.PutLine( fmt::sprintf( "#DISPLAYBPM:*;" ) );
 			break;
@@ -280,17 +286,23 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	WriteTimingTags( f, out.m_SongTiming, true );
 
 	if( out.GetSpecifiedLastSecond() > 0 )
+	{
 		f.PutLine( fmt::sprintf("#LASTSECONDHINT:%.6f;", out.GetSpecifiedLastSecond()) );
-
+	}
 	FOREACH_BackgroundLayer( b )
 	{
 		if( b==0 )
+		{
 			f.Write( "#BGCHANGES:" );
+		}
 		else if( out.GetBackgroundChanges(b).empty() )
+		{
 			continue;	// skip
+		}
 		else
+		{
 			f.Write( fmt::sprintf("#BGCHANGES%d:", b+1) );
-
+		}
 		for (auto &bgc: out.GetBackgroundChanges(b))
 		{
 			f.PutLine( bgc.ToString() +"," );
@@ -301,7 +313,9 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 		 * See SSCLoader::TidyUpData. This tag will be removed on load. Add it
 		 * at a very high beat, so it won't cause problems if loaded in older versions. */
 		if( b==0 && !out.GetBackgroundChanges(b).empty() )
+		{
 			f.PutLine( "99999=-nosongbg-=1.000=0=0=0 // don't automatically add -songbackground-" );
+		}
 		f.PutLine( ";" );
 	}
 
@@ -323,10 +337,14 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 		// in this case, add a backslash at the front
 		// (#KEYSOUNDS:\#bgm.wav,01.wav,02.wav,..) and handle that on load.
 		if( i == 0 && out.m_vsKeysoundFile[i].size() > 0 && out.m_vsKeysoundFile[i][0] == '#' )
+		{
 			f.Write("\\");
+		}
 		f.Write( out.m_vsKeysoundFile[i] );
 		if( i != out.m_vsKeysoundFile.size()-1 )
+		{
 			f.Write( "," );
+		}
 	}
 	f.PutLine( ";" );
 
@@ -340,7 +358,9 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			a.fStartSecond, a.fSecsRemaining, a.sModifiers.c_str() ) );
 
 		if( j+1 < out.m_Attacks.size() )
+		{
 			f.Write( ":" );
+		}
 	}
 	f.Write( ";" );
 	f.PutLine("");
@@ -354,7 +374,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
  * @return the NoteData in RString form. */
 static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCache )
 {
-	vector<RString> lines;
+	vector<std::string> lines;
 
 	lines.push_back( "" );
 	// Escape to prevent some clown from making a comment of "\r\n;"
@@ -374,7 +394,7 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 		lines.push_back(fmt::sprintf("#MUSIC:%s;", music.c_str()));
 	}
 
-	vector<RString> asRadarValues;
+	vector<std::string> asRadarValues;
 	FOREACH_PlayerNumber( pn )
 	{
 		const RadarValues &rv = in.GetRadarValues( pn );
@@ -383,7 +403,7 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 			asRadarValues.push_back( fmt::sprintf("%.6f", rv[rc]) );
 		}
 	}
-	lines.push_back( fmt::sprintf( "#RADARVALUES:%s;", join(",",asRadarValues).c_str() ) );
+	lines.push_back( fmt::sprintf( "#RADARVALUES:%s;", Rage::join(",",asRadarValues).c_str() ) );
 
 	lines.push_back( fmt::sprintf( "#CREDIT:%s;", SmEscape(in.GetCredit()).c_str() ) );
 
@@ -432,7 +452,8 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 		lines.push_back( song.m_vsKeysoundFile.empty() ? "#NOTES:" : "#NOTES2:" );
 
 		sNoteData = Rage::trim_left(sNoteData);
-		split( sNoteData, "\n", lines, true );
+		auto splitData = Rage::split(sNoteData, "\n", Rage::EmptyEntries::skip);
+		lines.insert(lines.end(), std::make_move_iterator(splitData.begin()), std::make_move_iterator(splitData.end()));
 		lines.push_back( ";" );
 	}
 	return JoinLineList( lines );
@@ -487,10 +508,11 @@ void NotesWriterSSC::GetEditFileContents( const Song *pSong, const Steps *pSteps
 	RString sDir = pSong->GetSongDir();
 
 	// "Songs/foo/bar"; strip off "Songs/".
-	vector<RString> asParts;
-	split( sDir, "/", asParts );
+	auto asParts = Rage::split(sDir, "/");
 	if( asParts.size() )
-		sDir = join( "/", asParts.begin()+1, asParts.end() );
+	{
+		sDir = Rage::join( "/", asParts.begin()+1, asParts.end() );
+	}
 	sOut += fmt::sprintf( "#SONG:%s;\r\n", sDir.c_str() );
 	sOut += GetSSCNoteData( *pSong, *pSteps, false );
 }

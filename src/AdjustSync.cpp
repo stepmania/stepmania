@@ -87,8 +87,10 @@ bool AdjustSync::IsSyncDataChanged()
 {
 	// Can't sync in course modes
 	if( GAMESTATE->IsCourseMode() )
+	{
 		return false;
-	vector<RString> vs;
+	}
+	vector<std::string> vs;
 	AdjustSync::GetSyncChangeTextGlobal( vs );
 	AdjustSync::GetSyncChangeTextSong( vs );
 	return !vs.empty();
@@ -309,7 +311,7 @@ static LocalizedString ERROR			("AdjustSync", "Average Error %.5fs");
 static LocalizedString ETC              ("AdjustSync", "Etc.");
 static LocalizedString TAPS_IGNORED	("AdjustSync", "%d taps ignored.");
 
-void AdjustSync::GetSyncChangeTextGlobal( vector<RString> &vsAddTo )
+void AdjustSync::GetSyncChangeTextGlobal( vector<std::string> &vsAddTo )
 {
 	{
 		float fOld = Quantize( AdjustSync::s_fGlobalOffsetSecondsOriginal, 0.001f );
@@ -327,7 +329,7 @@ void AdjustSync::GetSyncChangeTextGlobal( vector<RString> &vsAddTo )
 }
 
 // XXX: needs cleanup still -- vyhd
-void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
+void AdjustSync::GetSyncChangeTextSong( vector<std::string> &vsAddTo )
 {
 	if( GAMESTATE->m_pCurSong.Get() )
 	{
@@ -365,8 +367,9 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 			float fOld = Quantize( ToBPM(bpmOrig[i])->GetBPM(), 0.001f );
 
 			if( fabsf(fNew - fOld) < 1e-4 )
+			{
 				continue;
-
+			}
 			if ( i >= 4 )
 			{
 				vsAddTo.push_back(ETC.GetValue());
@@ -390,8 +393,9 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 			float fDelta = fNew - fOld;
 
 			if( fabsf(fDelta) < 1e-4 )
+			{
 				continue;
-
+			}
 			if ( i >= 4 )
 			{
 				vsAddTo.push_back(ETC.GetValue());
@@ -409,15 +413,17 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 		for(size_t i= 0; i < delyTest.size() && i < delyOrig.size(); i++)
 		{
 			if( delyTest[i] == delyOrig[i] )
+			{
 				continue;
-
+			}
 			float fOld = Quantize( ToDelay(delyOrig[i])->GetPause(), 0.001f );
 			float fNew = Quantize( ToDelay(delyTest[i])->GetPause(), 0.001f );
 			float fDelta = fNew - fOld;
 
 			if( fabsf(fDelta) < 1e-4 )
+			{
 				continue;
-
+			}
 			if ( i >= 4 )
 			{
 				vsAddTo.push_back(ETC.GetValue());

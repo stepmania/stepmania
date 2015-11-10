@@ -474,7 +474,7 @@ public:
 	float	m_fBeat0OffsetInSeconds;
 
 	// XXX: this breaks encapsulation. get rid of it ASAP
-	std::vector<RString> ToVectorString(TimingSegmentType tst, int dec = 6) const;
+	std::vector<std::string> ToVectorString(TimingSegmentType tst, int dec = 6) const;
 protected:
 	// don't call this directly; use the derived-type overloads.
 	void AddSegment( const TimingSegment *seg );

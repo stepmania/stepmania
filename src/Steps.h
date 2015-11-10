@@ -109,7 +109,7 @@ public:
 	/** @brief The list of attacks. */
 	AttackArray m_Attacks;
 	/** @brief The stringified list of attacks. */
-	std::vector<RString> m_sAttackString;
+	std::vector<std::string> m_sAttackString;
 
 	RString GetChartName() const			{ return parent ? Real()->GetChartName() : this->chartName; }
 	void SetChartName(const RString name)	{ this->chartName = name; }
@@ -196,9 +196,9 @@ public:
 	float GetMaxBPM() const					{ return this->specifiedBPMMax; }
 	void GetDisplayBpms( DisplayBpms &addTo) const;
 
-	RString GetAttackString() const
+	std::string GetAttackString() const
 	{
-		return join(":", this->m_sAttackString);
+		return Rage::join(":", this->m_sAttackString);
 	}
 
 private:

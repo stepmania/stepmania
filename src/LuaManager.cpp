@@ -277,11 +277,13 @@ static int GetLuaStack( lua_State *L )
 	for( int iLevel = 0; lua_getstack(L, iLevel, &ar); ++iLevel )
 	{
 		if( !lua_getinfo(L, "nSluf", &ar) )
+		{
 			break;
+		}
 		// The function is now on the top of the stack.
 		const char *file = ar.source[0] == '@' ? ar.source + 1 : ar.short_src;
 		const char *name;
-		vector<RString> vArgs;
+		vector<std::string> vArgs;
 
 		if( !strcmp(ar.what, "C") )
 		{
@@ -310,15 +312,22 @@ static int GetLuaStack( lua_State *L )
 
 		sErr += fmt::sprintf( "\n%s:", file );
 		if( ar.currentline != -1 )
+		{
 			sErr += fmt::sprintf( "%i:", ar.currentline );
-
+		}
 		if( ar.name && ar.name[0] )
+		{
 			sErr += fmt::sprintf( " %s", ar.name );
+		}
 		else if( !strcmp(ar.what, "main") || !strcmp(ar.what, "tail") || !strcmp(ar.what, "C") )
+		{
 			sErr += fmt::sprintf( " %s", ar.what );
+		}
 		else
+		{
 			sErr += fmt::sprintf( " unknown" );
-		sErr += fmt::sprintf( "(%s)", join(",", vArgs).c_str() );
+		}
+		sErr += fmt::sprintf( "(%s)", Rage::join(",", vArgs).c_str() );
 	}
 
 	LuaHelpers::Push( L, sErr );

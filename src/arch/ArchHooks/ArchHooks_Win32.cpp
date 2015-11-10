@@ -111,10 +111,12 @@ bool ArchHooks_Win32::CheckForMultipleInstances(int argc, char* argv[])
 			SetForegroundWindow( hWnd );
 
 		// Send the command line to the existing window.
-		vector<RString> vsArgs;
-		for( int i=0; i<argc; i++ )
-			vsArgs.push_back( argv[i] );
-		RString sAllArgs = join("|", vsArgs);
+		vector<std::string> vsArgs;
+		for (int i = 0; i < argc; i++)
+		{
+			vsArgs.push_back(argv[i]);
+		}
+		auto sAllArgs = Rage::join("|", vsArgs);
 		COPYDATASTRUCT cds;
 		cds.dwData = 0;
 		cds.cbData = sAllArgs.size();

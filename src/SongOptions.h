@@ -3,6 +3,7 @@
 #ifndef SONG_OPTIONS_H
 #define SONG_OPTIONS_H
 
+#include <string>
 #include "EnumHelper.h"
 
 enum AutosyncType
@@ -58,10 +59,10 @@ public:
 		m_bSaveScore(true), m_bSaveReplay(false) {};
 	void Init();
 	void Approach( const SongOptions& other, float fDeltaSeconds );
-	void GetMods( std::vector<RString> &AddTo ) const;
-	void GetLocalizedMods( std::vector<RString> &AddTo ) const;
-	RString GetString() const;
-	RString GetLocalizedString() const;
+	void GetMods( std::vector<std::string> &AddTo ) const;
+	void GetLocalizedMods( std::vector<std::string> &AddTo ) const;
+	std::string GetString() const;
+	std::string GetLocalizedString() const;
 	void FromString( const RString &sOptions );
 	bool FromOneModString( const RString &sOneMod, RString &sErrorDetailOut );	// On error, return false and optionally set sErrorDetailOut
 

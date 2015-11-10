@@ -5,7 +5,7 @@
 
 #include "ScreenPrompt.h"
 
-RString ClearMachineStats();
+std::string ClearMachineStats();
 
 class ScreenServiceAction : public ScreenPrompt
 {

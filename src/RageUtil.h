@@ -405,10 +405,6 @@ void split( const std::wstring &sSource, const std::wstring &sDelimitor, int &iB
 void split( const RString &sSource, const RString &sDelimitor, int &iBegin, int &iSize, int iLen, const bool bIgnoreEmpty ); /* no default to avoid ambiguity */
 void split( const std::wstring &sSource, const std::wstring &sDelimitor, int &iBegin, int &iSize, int iLen, const bool bIgnoreEmpty );
 
-// Joins a std::vector<RString> to create a RString according the Deliminator.
-RString join( const RString &sDelimitor, const std::vector<RString>& sSource );
-RString join( const RString &sDelimitor, std::vector<RString>::const_iterator begin, std::vector<RString>::const_iterator end );
-
 // These methods escapes a string for saving in a .sm or .crs file
 RString SmEscape( const RString &sUnescaped );
 RString SmEscape( const char *cUnescaped, int len );

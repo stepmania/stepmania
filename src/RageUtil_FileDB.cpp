@@ -76,8 +76,9 @@ RageFileManager::FileType FileSet::GetFileType( const RString &sPath ) const
 {
 	std::set<File>::const_iterator i = files.find( File(sPath) );
 	if( i == files.end() )
+	{
 		return RageFileManager::TYPE_NONE;
-
+	}
 	return i->dir? RageFileManager::TYPE_DIR:RageFileManager::TYPE_FILE;
 }
 
@@ -85,7 +86,9 @@ int FileSet::GetFileSize( const RString &sPath ) const
 {
 	std::set<File>::const_iterator i = files.find( File(sPath) );
 	if( i == files.end() )
+	{
 		return -1;
+	}
 	return i->size;
 }
 
@@ -93,7 +96,9 @@ int FileSet::GetFileHash( const RString &sPath ) const
 {
 	std::set<File>::const_iterator i = files.find( File(sPath) );
 	if( i == files.end() )
+	{
 		return -1;
+	}
 	return i->hash + i->size;
 }
 
@@ -397,27 +402,31 @@ void FilenameDB::AddFile( const RString &sPath_, int iSize, int iHash, void *pPr
 	if( sPath[0] != '/' )
 		sPath = "/" + sPath;
 
-	vector<RString> asParts;
-	split( sPath, "/", asParts, false );
+	auto asParts = Rage::split(sPath, "/", Rage::EmptyEntries::include);
 
-	vector<RString>::const_iterator begin = asParts.begin();
-	vector<RString>::const_iterator end = asParts.end();
+	auto begin = asParts.begin();
+	auto end = asParts.end();
 
 	bool IsDir = true;
 	if( sPath[sPath.size()-1] != '/' )
+	{
 		IsDir = false;
+	}
 	else
+	{
 		--end;
-
+	}
 	/* Skip the leading slash. */
 	++begin;
 
 	do
 	{
 		/* Combine all but the last part. */
-		RString dir = "/" + join( "/", begin, end-1 );
+		RString dir = "/" + Rage::join( "/", begin, end-1 );
 		if( dir != "/" )
+		{
 			dir += "/";
+		}
 		const RString &fn = *(end-1);
 		FileSet *fs = GetFileSet( dir );
 		ASSERT( m_Mutex.IsLockedByThisThread() );
@@ -604,8 +613,9 @@ void FilenameDB::GetDirListing( std::string const &sPath_, vector<std::string> &
 
 	/* If the last element was empty, use "*". */
 	if( fn.size() == 0 )
+	{
 		fn = "*";
-
+	}
 	unsigned iStart = asAddTo.size();
 	GetFilesSimpleMatch( sPath, fn, asAddTo, bOnlyDirs );
 

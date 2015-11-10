@@ -178,11 +178,12 @@ void ScreenSelectMaster::Init()
 		// init icon
 		if( SHOW_ICON )
 		{
-			vector<RString> vs;
-			vs.push_back( "Icon" );
+			vector<std::string> vs { "Icon" };
 			if( PER_CHOICE_ICON_ELEMENT )
+			{
 				vs.push_back( "Choice" + mc.m_sName );
-			RString sElement = join( " ", vs );
+			}
+			auto sElement = Rage::join( " ", vs );
 			m_vsprIcon[c].Load( THEME->GetPathG(m_sName,sElement) );
 			RString sName = "Icon" "Choice" + mc.m_sName;
 			m_vsprIcon[c]->SetName( sName );
@@ -215,17 +216,22 @@ void ScreenSelectMaster::Init()
 		{
 			for (auto const &p: vpns)
 			{
-				vector<RString> vs;
-				vs.push_back( "Scroll" );
+				vector<std::string> vs {"Scroll"};
 				if( PER_CHOICE_SCROLL_ELEMENT )
+				{
 					vs.push_back( "Choice" + mc.m_sName );
+				}
 				if( !SHARED_SELECTION )
+				{
 					vs.push_back( PLAYER_APPEND_NO_SPACE(p) );
-				RString sElement = join( " ", vs );
+				}
+				RString sElement = Rage::join( " ", vs );
 				m_vsprScroll[p][c].Load( THEME->GetPathG(m_sName,sElement) );
 				RString sName = "Scroll" "Choice" + mc.m_sName;
 				if( !SHARED_SELECTION )
+				{
 					sName += PLAYER_APPEND_NO_SPACE(p);
+				}
 				m_vsprScroll[p][c]->SetName( sName );
 				m_Scroller[p].AddChild( m_vsprScroll[p][c] );
 			}

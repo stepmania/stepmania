@@ -75,16 +75,18 @@ RString RadarValues::ToString( int iMaxValues ) const
 {
 	using std::min;
 	if( iMaxValues == -1 )
+	{
 		iMaxValues = NUM_RadarCategory;
-	iMaxValues = min( iMaxValues, (int)NUM_RadarCategory );
+	}
+	iMaxValues = min( iMaxValues, static_cast<int>(NUM_RadarCategory) );
 
-	vector<RString> asRadarValues;
+	vector<std::string> asRadarValues;
 	for( int r=0; r < iMaxValues; r++ )
 	{
 		asRadarValues.push_back(fmt::sprintf("%.3f", (*this)[r]));
 	}
 
-	return join( ",",asRadarValues );
+	return Rage::join(",", asRadarValues);
 }
 
 void RadarValues::FromString( RString sRadarValues )

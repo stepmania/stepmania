@@ -20,7 +20,7 @@
 using std::vector;
 
 static LocalizedString BOOKKEEPING_DATA_CLEARED( "ScreenServiceAction", "Bookkeeping data cleared." );
-static RString ClearBookkeepingData()
+static std::string ClearBookkeepingData()
 {
 	BOOKKEEPER->ClearAll();
 	BOOKKEEPER->WriteToDisk();
@@ -28,7 +28,7 @@ static RString ClearBookkeepingData()
 }
 
 static LocalizedString MACHINE_STATS_CLEARED( "ScreenServiceAction", "Machine stats cleared." );
-RString ClearMachineStats()
+std::string ClearMachineStats()
 {
 	Profile* pProfile = PROFILEMAN->GetMachineProfile();
 	pProfile->ClearStats();
@@ -37,7 +37,7 @@ RString ClearMachineStats()
 }
 
 static LocalizedString MACHINE_EDITS_CLEARED( "ScreenServiceAction", "%d edits cleared, %d errors." );
-static RString ClearMachineEdits()
+static std::string ClearMachineEdits()
 {
 	int iNumAttempted = 0;
 	int iNumSuccessful = 0;
@@ -80,7 +80,7 @@ static PlayerNumber GetFirstReadyMemoryCard()
 
 static LocalizedString MEMORY_CARD_EDITS_NOT_CLEARED	( "ScreenServiceAction", "Edits not cleared - No memory cards ready." );
 static LocalizedString EDITS_CLEARED			( "ScreenServiceAction", "%d edits cleared, %d errors." );
-static RString ClearMemoryCardEdits()
+static std::string ClearMemoryCardEdits()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
@@ -113,7 +113,7 @@ static RString ClearMemoryCardEdits()
 static LocalizedString STATS_NOT_SAVED			( "ScreenServiceAction", "Stats not saved - No memory cards ready." );
 static LocalizedString MACHINE_STATS_SAVED		( "ScreenServiceAction", "Machine stats saved to P%d card." );
 static LocalizedString ERROR_SAVING_MACHINE_STATS	( "ScreenServiceAction", "Error saving machine stats to P%d card." );
-static RString TransferStatsMachineToMemoryCard()
+static std::string TransferStatsMachineToMemoryCard()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
@@ -139,7 +139,7 @@ static LocalizedString STATS_NOT_LOADED		( "ScreenServiceAction", "Stats not loa
 static LocalizedString MACHINE_STATS_LOADED	( "ScreenServiceAction", "Machine stats loaded from P%d card." );
 static LocalizedString THERE_IS_NO_PROFILE	( "ScreenServiceAction", "There is no machine profile on P%d card." );
 static LocalizedString PROFILE_CORRUPT		( "ScreenServiceAction", "The profile on P%d card contains corrupt or tampered data." );
-static RString TransferStatsMemoryCardToMachine()
+static std::string TransferStatsMemoryCardToMachine()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
@@ -249,14 +249,18 @@ static RString CopyEdits( const RString &sFromProfileDir, const RString &sToProf
 
 	CopyEdits( sFromProfileDir, sToProfileDir, iNumSucceeded, iNumOverwritten, iNumIgnored, iNumErrored );
 
-	vector<RString> vs;
+	vector<std::string> vs;
 	vs.push_back( sDisplayDir );
 	vs.push_back( fmt::sprintf( COPIED.GetValue(), iNumSucceeded ) + ", " + fmt::sprintf( OVERWRITTEN.GetValue(), iNumOverwritten ) );
 	if( iNumIgnored )
+	{
 		vs.push_back( fmt::sprintf( IGNORED.GetValue(), iNumIgnored ) );
+	}
 	if( iNumErrored )
+	{
 		vs.push_back( fmt::sprintf( FAILED.GetValue(), iNumErrored ) );
-	return join( "\n", vs );
+	}
+	return Rage::join( "\n", vs );
 }
 
 static void SyncFiles( const RString &sFromDir, const RString &sToDir, const RString &sMask, int &iNumAdded, int &iNumDeleted, int &iNumOverwritten, int &iNumFailed )
@@ -312,29 +316,31 @@ static void SyncEdits( const RString &sFromDir, const RString &sToDir, int &iNum
 	SyncFiles( sFromDir + EDIT_COURSES_SUBDIR, sToDir + EDIT_COURSES_SUBDIR, "*.crs", iNumAdded, iNumDeleted, iNumOverwritten, iNumFailed );
 }
 
-static RString CopyEditsMachineToMemoryCard()
+static std::string CopyEditsMachineToMemoryCard()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
+	{
 		return EDITS_NOT_COPIED.GetValue();
-
+	}
 	if( !MEMCARDMAN->IsMounted(pn) )
+	{
 		MEMCARDMAN->MountCard(pn);
+	}
+	auto sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
+	auto sToDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir.Get() + "/";
 
-	RString sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
-	RString sToDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir.Get() + "/";
-
-	vector<RString> vs;
+	vector<std::string> vs;
 	vs.push_back( fmt::sprintf( COPIED_TO_CARD.GetValue(), pn+1 ) );
-	RString s = CopyEdits( sFromDir, sToDir, PREFSMAN->m_sMemoryCardProfileSubdir.Get() );
+	auto s = CopyEdits( sFromDir, sToDir, PREFSMAN->m_sMemoryCardProfileSubdir.Get() );
 	vs.push_back( s );
 
 	MEMCARDMAN->UnmountCard(pn);
 
-	return join("\n\n",vs);
+	return Rage::join("\n\n",vs);
 }
 
-static RString SyncEditsMachineToMemoryCard()
+static std::string SyncEditsMachineToMemoryCard()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
@@ -364,27 +370,29 @@ static RString SyncEditsMachineToMemoryCard()
 }
 
 static LocalizedString COPIED_FROM_CARD( "ScreenServiceAction", "Copied from P%d card:" );
-static RString CopyEditsMemoryCardToMachine()
+static std::string CopyEditsMemoryCardToMachine()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
+	{
 		return EDITS_NOT_COPIED.GetValue();
-
+	}
 	if( !MEMCARDMAN->IsMounted(pn) )
+	{
 		MEMCARDMAN->MountCard(pn);
-
+	}
 	vector<RString> vsSubDirs;
 	ProfileManager::GetMemoryCardProfileDirectoriesToTry( vsSubDirs );
 
-	vector<RString> vs;
+	vector<std::string> vs;
 	vs.push_back( fmt::sprintf( COPIED_FROM_CARD.GetValue(), pn+1 ) );
 
 	for (auto &sSubDir: vsSubDirs)
 	{
-		RString sFromDir = MEM_CARD_MOUNT_POINT[pn] + sSubDir + "/";
-		RString sToDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
+		auto sFromDir = MEM_CARD_MOUNT_POINT[pn] + sSubDir + "/";
+		auto sToDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
 
-		RString s = CopyEdits( sFromDir, sToDir, sSubDir );
+		auto s = CopyEdits( sFromDir, sToDir, sSubDir );
 		vs.push_back( s );
 	}
 
@@ -394,11 +402,11 @@ static RString CopyEditsMemoryCardToMachine()
 	PROFILEMAN->SaveMachineProfile();
 	PROFILEMAN->LoadMachineProfile();
 
-	return join("\n\n",vs);
+	return Rage::join("\n\n",vs);
 }
 
 static LocalizedString PREFERENCES_RESET( "ScreenServiceAction", "Preferences reset." );
-static RString ResetPreferences()
+static std::string ResetPreferences()
 {
 	StepMania::ResetPreferences();
 	return PREFERENCES_RESET.GetValue();
@@ -413,29 +421,60 @@ void ScreenServiceAction::BeginScreen()
 	vector<RString> vsActions;
 	split( sActions, ",", vsActions );
 
-	vector<RString> vsResults;
+	vector<std::string> vsResults;
 	for (auto &s: vsActions)
 	{
-		RString (*pfn)() = nullptr;
+		std::string (*pfn)() = nullptr;
 
-		if(	 s == "ClearBookkeepingData" )			pfn = ClearBookkeepingData;
-		else if( s == "ClearMachineStats" )			pfn = ClearMachineStats;
-		else if( s == "ClearMachineEdits" )			pfn = ClearMachineEdits;
-		else if( s == "ClearMemoryCardEdits" )			pfn = ClearMemoryCardEdits;
-		else if( s == "TransferStatsMachineToMemoryCard" )	pfn = TransferStatsMachineToMemoryCard;
-		else if( s == "TransferStatsMemoryCardToMachine" )	pfn = TransferStatsMemoryCardToMachine;
-		else if( s == "CopyEditsMachineToMemoryCard" )		pfn = CopyEditsMachineToMemoryCard;
-		else if( s == "CopyEditsMemoryCardToMachine" )		pfn = CopyEditsMemoryCardToMachine;
-		else if( s == "SyncEditsMachineToMemoryCard" )		pfn = SyncEditsMachineToMemoryCard;
-		else if( s == "ResetPreferences" )			pfn = ResetPreferences;
+		if(	 s == "ClearBookkeepingData" )
+		{
+			pfn = ClearBookkeepingData;
+		}
+		else if( s == "ClearMachineStats" )
+		{
+			pfn = ClearMachineStats;
+		}
+		else if( s == "ClearMachineEdits" )
+		{
+			pfn = ClearMachineEdits;
+		}
+		else if( s == "ClearMemoryCardEdits" )
+		{
+			pfn = ClearMemoryCardEdits;
+		}
+		else if( s == "TransferStatsMachineToMemoryCard" )
+		{
+			pfn = TransferStatsMachineToMemoryCard;
+		}
+		else if( s == "TransferStatsMemoryCardToMachine" )
+		{
+			pfn = TransferStatsMemoryCardToMachine;
+		}
+		else if( s == "CopyEditsMachineToMemoryCard" )
+		{
+			pfn = CopyEditsMachineToMemoryCard;
+		}
+		else if( s == "CopyEditsMemoryCardToMachine" )
+		{
+			pfn = CopyEditsMemoryCardToMachine;
+		}
+		else if( s == "SyncEditsMachineToMemoryCard" )
+		{
+			pfn = SyncEditsMachineToMemoryCard;
+		}
+		else if( s == "ResetPreferences" )
+		{
+			pfn = ResetPreferences;
+		}
+		else
+		{
+			FAIL_M(fmt::format("Invalid action '{0}' requested for service!", s));
+		}
 
-		ASSERT_M( pfn != nullptr, s );
-
-		RString sResult = pfn();
-		vsResults.push_back( sResult );
+		vsResults.push_back( pfn() );
 	}
 
-	ScreenPrompt::SetPromptSettings( join( "\n", vsResults ), PROMPT_OK );
+	ScreenPrompt::SetPromptSettings( Rage::join( "\n", vsResults ), PROMPT_OK );
 
 	ScreenPrompt::BeginScreen();
 }

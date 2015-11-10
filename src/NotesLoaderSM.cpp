@@ -387,11 +387,11 @@ void SMLoader::ProcessBGChanges( Song &out, const RString &sValueName, const RSt
 	}
 }
 
-void SMLoader::ProcessAttackString( vector<RString> & attacks, MsdFile::value_t params )
+void SMLoader::ProcessAttackString( vector<std::string> & attacks, MsdFile::value_t params )
 {
 	for( unsigned s=1; s < params.params.size(); ++s )
 	{
-		RString tmp = Rage::trim(params[s]);
+		auto tmp = Rage::trim(params[s]);
 		if (tmp.size() > 0)
 		{
 			attacks.push_back( tmp );

@@ -30,7 +30,7 @@ static void GetPrefsDefaultModifiers( PlayerOptions &po, SongOptions &so )
 
 static void SetPrefsDefaultModifiers( const PlayerOptions &po, const SongOptions &so )
 {
-	vector<RString> as;
+	vector<std::string> as;
 #define remove_empty_back() if(as.back() == "") { as.pop_back(); }
 	as.push_back(po.GetString());
 	remove_empty_back();
@@ -38,7 +38,7 @@ static void SetPrefsDefaultModifiers( const PlayerOptions &po, const SongOptions
 	remove_empty_back();
 #undef remove_empty_back
 
-	PREFSMAN->m_sDefaultModifiers.Set( join(", ",as) );
+	PREFSMAN->m_sDefaultModifiers.Set( Rage::join(", ",as) );
 }
 
 

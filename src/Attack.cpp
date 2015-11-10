@@ -99,9 +99,9 @@ bool AttackArray::ContainsTransformOrTurn() const
 	return std::any_of(this->begin(), this->end(), containsTransformTurn);
 }
 
-vector<RString> AttackArray::ToVectorString() const
+vector<std::string> AttackArray::ToVectorString() const
 {
-	vector<RString> ret;
+	vector<std::string> ret;
 	for (auto const &a: *this)
 	{
 		ret.push_back(fmt::sprintf("TIME=%f:LEN=%f:MODS=%s",

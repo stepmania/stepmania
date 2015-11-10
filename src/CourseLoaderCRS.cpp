@@ -304,8 +304,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			{
 				// If "showcourse" or "noshowcourse" is in the list, force
 				// new_entry.secret on or off.
-				vector<RString> mods;
-				split( sParams[3], ",", mods, true );
+				auto mods = Rage::split(sParams[3], ",", Rage::EmptyEntries::skip);
 				for( int j = (int) mods.size()-1; j >= 0 ; --j )
 				{
 					RString sMod = Rage::trim(mods[j]);
@@ -332,7 +331,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 					}
 					mods.erase(mods.begin() + j);
 				}
-				new_entry.sModifiers = join( ",", mods );
+				new_entry.sModifiers = Rage::join( ",", mods );
 			}
 
 			new_entry.attacks = attacks;

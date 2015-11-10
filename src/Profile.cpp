@@ -1495,13 +1495,13 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	}
 
 	{
-		vector<RString> noteskin_entries;
+		vector<std::string> noteskin_entries;
 		for(auto&& entry : m_preferred_noteskins)
 		{
-			RString stype_str= StepsTypeToString(entry.first);
+			auto stype_str= StepsTypeToString(entry.first);
 			noteskin_entries.push_back(stype_str + "," + entry.second);
 		}
-		RString as_one_string= join(";", noteskin_entries);
+		auto as_one_string = Rage::join(";", noteskin_entries);
 		pGeneralDataNode->AppendChild("PreferredNoteskins", as_one_string);
 	}
 

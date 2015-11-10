@@ -1145,7 +1145,7 @@ void SongManager::SetPreferences()
 
 void SongManager::SaveEnabledSongsToPref()
 {
-	vector<RString> vsDisabledSongs;
+	vector<std::string> vsDisabledSongs;
 
 	// Intentionally drop disabled song entries for songs that aren't currently loaded.
 
@@ -1155,9 +1155,11 @@ void SongManager::SaveEnabledSongsToPref()
 		SongID sid;
 		sid.FromSong( pSong );
 		if( !pSong->GetEnabled() )
+		{
 			vsDisabledSongs.push_back( sid.ToString() );
+		}
 	}
-	g_sDisabledSongs.Set( join(";", vsDisabledSongs) );
+	g_sDisabledSongs.Set( Rage::join(";", vsDisabledSongs) );
 }
 
 void SongManager::LoadEnabledSongsFromPref()

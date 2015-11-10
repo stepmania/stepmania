@@ -168,7 +168,7 @@ int main(int argc, char **argv) {
 
 		while(readline()) {
 			long grp, start, rva;
-			char symname[2048];
+			char symname[4096];
 			int i;
 
 			if (4!=sscanf(line, "%lx:%lx %s %lx", &grp, &start, symname, &rva))
