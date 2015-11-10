@@ -384,7 +384,7 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 		g_bSampleMusicWaiting = false;
 
 		GameSoundManager::PlayMusicParams PlayParams;
-		PlayParams.sFile = m_sSampleMusicToPlay;
+		PlayParams.sFile = HandleLuaMusicFile(m_sSampleMusicToPlay);
 		PlayParams.pTiming = m_pSampleMusicTimingData;
 		PlayParams.bForceLoop = SAMPLE_MUSIC_LOOPS;
 		PlayParams.fStartSecond = m_fSampleStartSeconds;
@@ -1874,6 +1874,11 @@ void ScreenSelectMusic::AfterMusicChange()
 			case SampleMusicPreviewMode_LastSong: // fall through
 				// play the sample music
 				m_sSampleMusicToPlay = pSong->GetPreviewMusicPath();
+				if(ActorUtil::GetFileType(m_sSampleMusicToPlay) != FT_Sound)
+				{
+					LuaHelpers::ReportScriptErrorFmt("Music file %s for song is not a sound file, ignoring.", m_sSampleMusicToPlay.c_str());
+					m_sSampleMusicToPlay= "";
+				}
 				m_pSampleMusicTimingData = &pSong->m_SongTiming;
 				m_fSampleStartSeconds = pSong->GetPreviewStartSeconds();
 				m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;

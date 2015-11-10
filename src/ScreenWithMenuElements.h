@@ -38,6 +38,7 @@ public:
 	bool m_bShouldAllowLateJoin; // So that it can be exposed to Lua.
 
 protected:
+	RString HandleLuaMusicFile(RString const& path);
 	virtual void StartPlayingMusic();
 	void SetHelpText( RString s );
 

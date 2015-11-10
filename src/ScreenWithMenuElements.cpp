@@ -184,6 +184,56 @@ void ScreenWithMenuElements::SetHelpText( RString s )
 	this->HandleMessage( msg );
 }
 
+RString ScreenWithMenuElements::HandleLuaMusicFile(RString const& path)
+{
+	FileType ft= ActorUtil::GetFileType(path);
+	RString ret= path;
+	if(ft == FT_Lua)
+	{
+		RString script;
+		RString error= "Lua runtime error: ";
+		if(GetFileContents(path, script))
+		{
+			Lua* L= LUA->Get();
+			if(!LuaHelpers::RunScript(L, script, "@"+path, error, 0, 1, true))
+			{
+				ret= "";
+			}
+			else
+			{
+				// there are two possible ways to load a music file via Lua.
+				// 1) return the path to the sound
+				// (themer has to use THEME:GetPathS())
+				RString music_path_from_lua;
+				LuaHelpers::Pop(L, music_path_from_lua);
+				if(!music_path_from_lua.empty())
+				{
+					ret= music_path_from_lua;
+				}
+				else
+				{
+					// 2) perhaps it's a table with some params? unsure if I want to support
+					// this just yet. -aj
+					LOG->Trace("Lua music script did not return a path to a sound.");
+					ret= "";
+				}
+			}
+			LUA->Release(L);
+		}
+		else
+		{
+			LOG->Trace("run script failed hardcore, lol");
+			ret= "";
+		}
+	}
+	else if(ft != FT_Sound)
+	{
+		LuaHelpers::ReportScriptErrorFmt("Music file %s is not a sound file.", path.c_str());
+		ret= "";
+	}
+	return ret;
+}
+
 void ScreenWithMenuElements::StartPlayingMusic()
 {
 	/* Some screens should leave the music alone (eg. ScreenPlayerOptions music
@@ -191,67 +241,15 @@ void ScreenWithMenuElements::StartPlayingMusic()
 	if( PLAY_MUSIC )
 	{
 		GameSoundManager::PlayMusicParams pmp;
-		FileType ft = ActorUtil::GetFileType( m_sPathToMusic );
-		/* If m_sPathToMusic points to a Lua file, parse it and make sure it
-		 * returns a string pointing to a sound. Otherwise, if it points to
-		 * a normal music file, use the normal playback code. -aj
-		 * TODO: Make Lua music files accept playback params.
-		 */
-		if( ft == FT_Lua )
+		pmp.sFile= HandleLuaMusicFile(m_sPathToMusic);
+		if(!pmp.sFile.empty())
 		{
-			RString Script;
-			RString Error= "Lua runtime error: ";
-			if( GetFileContents(m_sPathToMusic, Script) )
-			{
-				Lua *L = LUA->Get();
-
-				if( !LuaHelpers::RunScript(L, Script, "@"+m_sPathToMusic, Error, 0, 1, true) )
-				{
-					LUA->Release( L );
-					return;
-				}
-				else
-				{
-					// there are two possible ways to load a music file via Lua.
-					// 1) return the path to the sound
-					// (themer has to use THEME:GetPathS())
-					RString sMusicPathFromLua;
-					LuaHelpers::Pop(L, sMusicPathFromLua);
-
-					if( !sMusicPathFromLua.empty() )
-					{
-						pmp.sFile = sMusicPathFromLua;
-						pmp.bAlignBeat = MUSIC_ALIGN_BEAT;
-
-						// TODO: load other params into pmp here -aj
-						if( DELAY_MUSIC_SECONDS > 0.0f )
-							pmp.fStartSecond = -DELAY_MUSIC_SECONDS;
-
-						SOUND->PlayMusic( pmp );
-					}
-					else
-					{
-						// 2) perhaps it's a table with some params? unsure if I want to support
-						// this just yet. -aj
-						LOG->Trace("Lua music script did not return a path to a sound.");
-					}
-					LUA->Release( L );
-				}
-			}
-			else
-			{
-				LOG->Trace("run script failed hardcore, lol");
-			}
-		}
-		else
-		{
-			pmp.sFile = m_sPathToMusic;
 			pmp.bAlignBeat = MUSIC_ALIGN_BEAT;
-
-			if( DELAY_MUSIC_SECONDS > 0.0f )
+			if(DELAY_MUSIC_SECONDS > 0.0f)
+			{
 				pmp.fStartSecond = -DELAY_MUSIC_SECONDS;
-
-			SOUND->PlayMusic( pmp );
+			}
+			SOUND->PlayMusic(pmp);
 		}
 	}
 }
