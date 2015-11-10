@@ -939,9 +939,14 @@ void BrightnessOverlay::SetActualBrightness()
 
 	float fBaseBGBrightness = g_fBGBrightness;
 
+	// Revision:  Themes that implement a training mode should handle the
+	// brightness for it.  The engine should not force the brightness for
+	// anything. -Kyz
+	/*
 	// HACK: Always show training in full brightness
 	if( GAMESTATE->m_pCurSong && GAMESTATE->m_pCurSong->IsTutorial() )
 		fBaseBGBrightness = 1.0f;
+	*/
 
 	fLeftBrightness *= fBaseBGBrightness;
 	fRightBrightness *= fBaseBGBrightness;

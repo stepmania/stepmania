@@ -4,6 +4,11 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/11/09
+----------
+* [Gameplay] BG Brightness is no longer forced to 100% on songs that only
+  have a beginner chart. [kyzentun]
+
 2015/11/08
 ----------
 * [ScreenSelectMusic] Using lua music files for the section music and similar
