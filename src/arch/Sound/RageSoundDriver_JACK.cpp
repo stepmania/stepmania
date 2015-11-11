@@ -2,6 +2,7 @@
 #include "RageSoundDriver_JACK.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageString.hpp"
 #include "PrefsManager.h"
 #include "ProductInfo.h"
 
@@ -111,8 +112,7 @@ out_close:
 
 RString RageSoundDriver_JACK::ConnectPorts()
 {
-	vector<RString> portNames;
-	split(PREFSMAN->m_iSoundDevice.Get(), ",", portNames, true);
+	auto portNames = Rage::split(PREFSMAN->m_iSoundDevice.Get(), ",", Rage::EmptyEntries::skip);
 
 	const char *port_out_l = nullptr, *port_out_r = nullptr;
 	const char **ports = nullptr;
@@ -147,7 +147,7 @@ RString RageSoundDriver_JACK::ConnectPorts()
 		// "aliases" in the docs.)
 		for (auto &portName: portNames)
 		{
-			jack_port_t *out = jack_port_by_name( client, portName );
+			jack_port_t *out = jack_port_by_name( client, portName.c_str() );
 			// Make sure the port is a sink.
 			if( ! ( jack_port_flags( out ) & JackPortIsInput ) )
 				continue;

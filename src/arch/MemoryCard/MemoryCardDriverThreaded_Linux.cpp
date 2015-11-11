@@ -234,8 +234,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 				 * the number of hops.
 				 */
 				szLink[iRet] = 0;
-				vector<RString> asBits;
-				split( szLink, "/", asBits );
+				auto asBits = Rage::split(szLink, "/");
 
 				RString sHostPort = asBits[asBits.size()-1];
 				if( !sHostPort.empty() )
@@ -247,12 +246,12 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 
 					/* sHostPort is eg. 2-2.1. */
 					Rage::replace(sHostPort, '-', '.' );
-					asBits.clear();
-					split( sHostPort, ".", asBits );
+					// Repurpose the vector.
+					asBits = Rage::split(sHostPort, ".");
 					if( asBits.size() > 1 )
 					{
-						usbd.iBus = atoi( asBits[0] );
-						usbd.iPort = atoi( asBits[asBits.size()-1] );
+						usbd.iBus = std::stoi( asBits[0] );
+						usbd.iPort = std::stoi( asBits[asBits.size()-1] );
 						usbd.iLevel = asBits.size() - 1;
 					}
 				}

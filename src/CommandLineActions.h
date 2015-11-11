@@ -16,7 +16,7 @@ namespace CommandLineActions
 	{
 	public:
 		/** @brief the arguments in question. */
-		std::vector<RString> argv;
+		std::vector<std::string> argv;
 	};
 	/**
 	 * @brief A list of command line arguemnts to process while the game is running.

@@ -306,8 +306,7 @@ RageDisplay_GLES2::Init( const VideoModeParams &p, bool bAllowUnacceleratedRende
 		}
 #else
 		const char *szExtensionString = (const char *) glGetString(GL_EXTENSIONS);
-		vector<RString> asExtensions;
-		split( szExtensionString, " ", asExtensions );
+		auto asExtensions = Rage::split(szExtensionString, " ");
 		sort( asExtensions.begin(), asExtensions.end() );
 		size_t iNextToPrint = 0;
 		while( iNextToPrint < asExtensions.size() )

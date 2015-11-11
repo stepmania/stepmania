@@ -5,6 +5,7 @@
 #include "RageThreads.h"
 #include "RageTimer.h"
 #include "RageUtil.h"
+#include "RageString.hpp"
 
 #if defined(WINDOWS)
 #include <windows.h>
@@ -673,7 +674,7 @@ void NetworkPostData::HttpThread()
 	std::map<RString,RString> mapHeaders;
 	while( 1 )
 	{
-		split( sResult, "\n", iStart, iSize, false );
+		Rage::split_in_place( sResult, "\n", iStart, iSize, Rage::EmptyEntries::include );
 		if( iStart == (int) sResult.size() )
 			break;
 
