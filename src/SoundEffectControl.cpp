@@ -82,7 +82,7 @@ void SoundEffectControl::Update( float fDeltaTime )
 		fCurrent = Rage::scale( m_fSample, 0.0f, +1.0f, fPropertyCenter, fPropertyMax );
 
 	if( m_pSoundReader )
-		m_pSoundReader->SetProperty( SOUND_PROPERTY, fCurrent );
+		m_pSoundReader->SetProperty( SOUND_PROPERTY.GetValue(), fCurrent );
 }
 
 /* Return false if any holds have been LetGo.  Otherwise, return true if at least

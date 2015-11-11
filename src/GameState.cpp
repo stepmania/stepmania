@@ -86,16 +86,16 @@ static GameStateImpl *g_pImpl = nullptr;
 ThemeMetric<bool> ALLOW_LATE_JOIN("GameState","AllowLateJoin");
 ThemeMetric<bool> USE_NAME_BLACKLIST("GameState","UseNameBlacklist");
 
-ThemeMetric<RString> DEFAULT_SORT	("GameState","DefaultSort");
+ThemeMetric<std::string> DEFAULT_SORT	("GameState","DefaultSort");
 SortOrder GetDefaultSort()
 {
-	return StringToSortOrder( DEFAULT_SORT );
+	return StringToSortOrder( DEFAULT_SORT.GetValue() );
 }
-ThemeMetric<RString> DEFAULT_SONG	("GameState","DefaultSong");
+ThemeMetric<std::string> DEFAULT_SONG	("GameState","DefaultSong");
 Song* GameState::GetDefaultSong() const
 {
 	SongID sid;
-	sid.FromString( DEFAULT_SONG );
+	sid.FromString( DEFAULT_SONG.GetValue() );
 	return sid.ToSong();
 }
 
@@ -1823,7 +1823,7 @@ void GameState::GetDefaultPlayerOptions( PlayerOptions &po )
 {
 	po.Init();
 	po.FromString( PREFSMAN->m_sDefaultModifiers.Get() );
-	po.FromString( CommonMetrics::DEFAULT_MODIFIERS );
+	po.FromString( CommonMetrics::DEFAULT_MODIFIERS.GetValue() );
 	if( po.m_sNoteSkin.empty() )
 		po.m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
 }
@@ -1832,7 +1832,7 @@ void GameState::GetDefaultSongOptions( SongOptions &so )
 {
 	so.Init();
 	so.FromString( PREFSMAN->m_sDefaultModifiers.Get() );
-	so.FromString( CommonMetrics::DEFAULT_MODIFIERS );
+	so.FromString( CommonMetrics::DEFAULT_MODIFIERS.GetValue() );
 }
 
 void GameState::ResetToDefaultSongOptions( ModsLevel l )

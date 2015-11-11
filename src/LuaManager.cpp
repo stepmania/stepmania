@@ -951,7 +951,7 @@ Dialog::Result LuaHelpers::ReportScriptError(RString const& Error, RString Error
 	return Dialog::ok;
 }
 
-bool LuaHelpers::RunScriptOnStack( Lua *L, RString &Error, int Args, int ReturnValues, bool ReportError )
+bool LuaHelpers::RunScriptOnStack( Lua *L, std::string &Error, int Args, int ReturnValues, bool ReportError )
 {
 	lua_pushcfunction( L, GetLuaStack );
 

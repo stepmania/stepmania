@@ -176,7 +176,7 @@ void ScreenSelectMusic::Init()
 	//BACKGROUNDCACHE->Demand();
 
 	m_MusicWheel.SetName( "MusicWheel" );
-	m_MusicWheel.Load( MUSIC_WHEEL_TYPE );
+	m_MusicWheel.Load( MUSIC_WHEEL_TYPE.GetValue() );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_MusicWheel );
 	this->AddChild( &m_MusicWheel );
 
@@ -581,7 +581,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 	{
 		if( input.type == IET_RELEASE  &&  input.MenuI == GAME_BUTTON_SELECT )
 		{
-			SCREENMAN->AddNewScreenToTop( SELECT_MENU_NAME, SM_BackFromPlayerOptions );
+			SCREENMAN->AddNewScreenToTop( SELECT_MENU_NAME.GetValue(), SM_BackFromPlayerOptions );
 		}
 	}
 
@@ -1221,7 +1221,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_GainFocus )
 	{
-		CodeDetector::RefreshCacheItems( CODES );
+		CodeDetector::RefreshCacheItems( CODES.GetValue() );
 	}
 	else if( SM == SM_LoseFocus )
 	{
@@ -1636,7 +1636,7 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 		else
 		{
 			// The numbers shouldn't stay if the current selection is nullptr.
-			m_textHighScore[pn].SetText( nullptr_SCORE_STRING );
+			m_textHighScore[pn].SetText( nullptr_SCORE_STRING.GetValue() );
 		}
 	}
 }

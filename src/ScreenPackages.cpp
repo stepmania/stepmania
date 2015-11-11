@@ -107,8 +107,9 @@ void ScreenPackages::Init()
 
 	// if the default url isn't empty, load it.
 	if( !DEFAULT_URL.GetValue().empty() )
-		EnterURL( DEFAULT_URL );
-
+	{
+		EnterURL( DEFAULT_URL.GetValue() );
+	}
 	UpdateProgress();
 
 	// Workaround: For some reason, the first download sometimes

@@ -274,7 +274,7 @@ void OptionsList::Open()
 
 	/* Push the initial menu. */
 	ASSERT( m_asMenuStack.size() == 0 );
-	Push( TOP_MENU );
+	Push( TOP_MENU.GetValue() );
 
 	this->FinishTweening();
 	m_Row[!m_iCurrentRow].SetFromHandler( nullptr );

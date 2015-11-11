@@ -67,7 +67,7 @@ protected:
 	ThemeMetric<bool>	PER_CHOICE_ICON_ELEMENT;
 	ThemeMetric<float>	PRE_SWITCH_PAGE_SECONDS;
 	ThemeMetric<float>	POST_SWITCH_PAGE_SECONDS;
-	ThemeMetric1D<RString>	OPTION_ORDER;
+	ThemeMetric1D<std::string>	OPTION_ORDER;
 	ThemeMetric<bool>	WRAP_CURSOR;
 	ThemeMetric<bool>	WRAP_SCROLLER;
 	ThemeMetric<bool>	LOOP_SCROLLER;
@@ -78,7 +78,7 @@ protected:
 	ThemeMetric<LuaReference> SCROLLER_TRANSFORM;
 	//ThemeMetric<LuaReference> SCROLLER_TWEEN;
 	ThemeMetric<int>	SCROLLER_SUBDIVISIONS;
-	ThemeMetric<RString>	DEFAULT_CHOICE;
+	ThemeMetric<std::string>	DEFAULT_CHOICE;
 
 	std::map<int,int> m_mapCurrentChoiceToNextChoice[NUM_MenuDir];
 

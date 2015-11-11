@@ -32,7 +32,7 @@ protected:
 	ThemeMetric<float>	SPACING_X;
 	ThemeMetric<float>	SPACING_Y;
 	ThemeMetric<int>	NUM_OPTION_ICONS;
-	ThemeMetric<RString>	OPTION_ICON_METRICS_GROUP;
+	ThemeMetric<std::string>	OPTION_ICON_METRICS_GROUP;
 
 	std::vector<ModIcon*> m_vpModIcon;
 };

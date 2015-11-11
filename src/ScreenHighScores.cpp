@@ -9,8 +9,8 @@
 
 using std::vector;
 
-RString COLUMN_DIFFICULTY_NAME( size_t i );
-RString COLUMN_STEPS_TYPE_NAME( size_t i );
+std::string COLUMN_DIFFICULTY_NAME( size_t i );
+std::string COLUMN_STEPS_TYPE_NAME( size_t i );
 
 static const char *HighScoresTypeNames[] = {
 	"AllSteps",
@@ -208,8 +208,8 @@ void ScoreScroller::Load( RString sMetricsGroup )
 
 /////////////////////////////////////////////
 
-RString COLUMN_DIFFICULTY_NAME( size_t i ) { return fmt::sprintf("ColumnDifficulty%d",int(i+1)); }
-RString COLUMN_STEPS_TYPE_NAME( size_t i ) { return fmt::sprintf("ColumnStepsType%d",int(i+1)); }
+std::string COLUMN_DIFFICULTY_NAME( size_t i ) { return fmt::sprintf("ColumnDifficulty%d",int(i+1)); }
+std::string COLUMN_STEPS_TYPE_NAME( size_t i ) { return fmt::sprintf("ColumnStepsType%d",int(i+1)); }
 
 void ScreenHighScores::Init()
 {

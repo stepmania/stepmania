@@ -48,7 +48,7 @@
 
 using std::vector;
 
-RString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides );
+std::string ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides );
 void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, RString &sNameOut, float &defaultValueOut );
 
 /**
@@ -100,7 +100,7 @@ public:
 };
 
 
-RString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides )	{ return "AttackDisplayXOffset" + (both_sides ? RString("BothSides") : fmt::sprintf("OneSideP%d",int(p+1)) ); }
+std::string ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides )	{ return "AttackDisplayXOffset" + (both_sides ? std::string{"BothSides"} : fmt::sprintf("OneSideP%d",int(p+1)) ); }
 
 /**
  * @brief Distance to search for a note in Step(), in seconds.

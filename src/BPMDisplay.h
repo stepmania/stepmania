@@ -90,17 +90,17 @@ protected:
 	ThemeMetric<float> RANDOM_CYCLE_SPEED;
 	ThemeMetric<float> COURSE_CYCLE_SPEED;
 	/** @brief The text used to separate the low and high BPMs. */
-	ThemeMetric<RString> SEPARATOR;
+	ThemeMetric<std::string> SEPARATOR;
 	/** @brief The text used when there is no BPM. */
-	ThemeMetric<RString> NO_BPM_TEXT;
+	ThemeMetric<std::string> NO_BPM_TEXT;
 	/** @brief The text used when there are various BPMs for the song. */
-	ThemeMetric<RString> VARIOUS_TEXT;
+	ThemeMetric<std::string> VARIOUS_TEXT;
 	/** @brief The text used when it is a random BPM. */
-	ThemeMetric<RString> RANDOM_TEXT;
+	ThemeMetric<std::string> RANDOM_TEXT;
 	/** @brief The text used as one possible option for random BPM. */
-	ThemeMetric<RString> QUESTIONMARKS_TEXT;
+	ThemeMetric<std::string> QUESTIONMARKS_TEXT;
 	/** @brief The format string used for the numbers. */
-	ThemeMetric<RString> BPM_FORMAT_STRING;
+	ThemeMetric<std::string> BPM_FORMAT_STRING;
 
 	/** @brief The lowest valued BPM. */
 	float m_fBPMFrom;

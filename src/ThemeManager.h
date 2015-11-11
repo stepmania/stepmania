@@ -87,9 +87,12 @@ public:
 	void	GetMetric( const RString &sMetricsGroup, const RString &sValueName, LuaReference &valueOut );
 
 	// Languages
-	bool	HasString( const RString &sMetricsGroup, const RString &sValueName );
-	RString	GetString( const RString &sMetricsGroup, const RString &sValueName );
-	void	GetString( const RString &sMetricsGroup, const RString &sValueName, RString &valueOut )		{ valueOut = GetString( sMetricsGroup, sValueName ); }
+	bool	HasString( std::string const &sMetricsGroup, std::string const &sValueName );
+	RString	GetString( std::string const &sMetricsGroup, std::string const &sValueName );
+	void	GetString( std::string const &sMetricsGroup, std::string const &sValueName, std::string &valueOut )
+	{
+		valueOut = GetString( sMetricsGroup, sValueName );
+	}
 	void FilterFileLanguages( std::vector<std::string> &asElementPaths );
 
 	void GetMetricsThatBeginWith( const RString &sMetricsGroup, const RString &sValueName, std::set<RString> &vsValueNamesOut );

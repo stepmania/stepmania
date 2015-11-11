@@ -32,7 +32,7 @@ REGISTER_SCREEN_CLASS( ScreenRanking );
 #define TIME_X(row)	(TIME_START_X+ROW_SPACING_X*row)
 #define TIME_Y(row)	(TIME_START_Y+ROW_SPACING_Y*row)
 
-static RString STEPS_TYPE_COLOR_NAME( size_t i ) { return fmt::sprintf("StepsTypeColor%d",int(i+1)); }
+static std::string STEPS_TYPE_COLOR_NAME( size_t i ) { return fmt::sprintf("StepsTypeColor%d",int(i+1)); }
 
 void ScreenRanking::Init()
 {
@@ -102,7 +102,7 @@ void ScreenRanking::Init()
 		LOAD_ALL_COMMANDS( m_textCourseTitle );
 
 		vector<RString> asCoursePaths;
-		split( COURSES_TO_SHOW, ",", asCoursePaths, true );
+		split( COURSES_TO_SHOW.GetValue(), ",", asCoursePaths, true );
 		for( unsigned i=0; i<STEPS_TYPES_TO_SHOW.GetValue().size(); i++ )
 		{
 			for( unsigned c=0; c<asCoursePaths.size(); c++ )

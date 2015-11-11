@@ -509,9 +509,9 @@ void ScreenEvaluation::Init()
 				m_textJudgmentLineNumber[l][p].LoadFromFont( THEME->GetPathF(m_sName, "JudgmentLineNumber") );
 				m_textJudgmentLineNumber[l][p].SetName( JudgmentLineToString(l)+fmt::sprintf("NumberP%d",p+1) );
 				if( JudgmentLineToString(l) == "MaxCombo" )
-					m_textJudgmentLineNumber[l][p].Load( ROLLING_NUMBERS_MAX_COMBO_CLASS );
+					m_textJudgmentLineNumber[l][p].Load( ROLLING_NUMBERS_MAX_COMBO_CLASS.GetValue() );
 				else
-					m_textJudgmentLineNumber[l][p].Load( ROLLING_NUMBERS_CLASS );
+					m_textJudgmentLineNumber[l][p].Load( ROLLING_NUMBERS_CLASS.GetValue() );
 				ActorUtil::LoadAllCommands( m_textJudgmentLineNumber[l][p], m_sName );
 				SET_XY( m_textJudgmentLineNumber[l][p] );
 				this->AddChild( &m_textJudgmentLineNumber[l][p] );

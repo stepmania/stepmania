@@ -59,7 +59,7 @@ void ScreenNetSelectMusic::Init()
 	}
 
 	m_MusicWheel.SetName( "MusicWheel" );
-	m_MusicWheel.Load( MUSIC_WHEEL_TYPE );
+	m_MusicWheel.Load( MUSIC_WHEEL_TYPE.GetValue() );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_MusicWheel );
 	m_MusicWheel.BeginScreen();
 	ON_COMMAND( m_MusicWheel );
@@ -334,7 +334,7 @@ bool ScreenNetSelectMusic::MenuUp( const InputEventPlus &input )
 {
 	NSMAN->ReportNSSOnOff(3);
 	GAMESTATE->m_EditMode = EditMode_Full;
-	SCREENMAN->AddNewScreenToTop( PLAYER_OPTIONS_SCREEN, SM_BackFromPlayerOptions );
+	SCREENMAN->AddNewScreenToTop( PLAYER_OPTIONS_SCREEN.GetValue(), SM_BackFromPlayerOptions );
 	return true;
 }
 

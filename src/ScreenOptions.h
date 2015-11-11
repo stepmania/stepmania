@@ -162,8 +162,8 @@ protected:	// derived classes need access to these
 	ThemeMetric<bool>		ALLOW_REPEATING_CHANGE_VALUE_INPUT;
 	ThemeMetric<float>		CURSOR_TWEEN_SECONDS;
 	ThemeMetric<bool>		WRAP_VALUE_IN_ROW;
-	ThemeMetric<RString>	OPTION_ROW_NORMAL_METRICS_GROUP;
-	ThemeMetric<RString>	OPTION_ROW_EXIT_METRICS_GROUP;
+	ThemeMetric<std::string>	OPTION_ROW_NORMAL_METRICS_GROUP;
+	ThemeMetric<std::string>	OPTION_ROW_EXIT_METRICS_GROUP;
 };
 
 #endif

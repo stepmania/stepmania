@@ -28,7 +28,7 @@ private:
 	RageSound m_soundDifficultyChanged;
 	std::vector<Course*> m_vpCourses;
 	ThemeMetric<EditMode> EDIT_MODE;
-	ThemeMetric<RString> CREATE_NEW_SCREEN;
+	ThemeMetric<std::string> CREATE_NEW_SCREEN;
 };
 
 #endif

@@ -180,7 +180,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 			EditCourseUtil::s_bNewCourseNeedsName = true;
 			EditCourseUtil::UpdateAndSetTrail();
 
-			SCREENMAN->SetNewScreen( CREATE_NEW_SCREEN );
+			SCREENMAN->SetNewScreen( CREATE_NEW_SCREEN.GetValue() );
 			return; // don't call base
 		}
 		else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )

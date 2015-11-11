@@ -61,7 +61,7 @@ public:
 	bool Start();	// return true if the last menu was popped in response to this press
 
 private:
-	ThemeMetric<RString> TOP_MENU;
+	ThemeMetric<std::string> TOP_MENU;
 
 	void SelectItem( const RString &sRowName, int iMenuItem );
 	void MoveItem( const RString &sRowName, int iMove );

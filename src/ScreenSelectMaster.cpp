@@ -26,10 +26,10 @@ XToString( MenuDir );
 
 AutoScreenMessage( SM_PlayPostSwitchPage );
 
-static RString CURSOR_OFFSET_X_FROM_ICON_NAME( size_t p ) { return fmt::sprintf("CursorP%dOffsetXFromIcon",int(p+1)); }
-static RString CURSOR_OFFSET_Y_FROM_ICON_NAME( size_t p ) { return fmt::sprintf("CursorP%dOffsetYFromIcon",int(p+1)); }
+static std::string CURSOR_OFFSET_X_FROM_ICON_NAME( size_t p ) { return fmt::sprintf("CursorP%dOffsetXFromIcon",int(p+1)); }
+static std::string CURSOR_OFFSET_Y_FROM_ICON_NAME( size_t p ) { return fmt::sprintf("CursorP%dOffsetYFromIcon",int(p+1)); }
 // e.g. "OptionOrderLeft=0:1,1:2,2:3,3:4"
-static RString OPTION_ORDER_NAME( size_t dir ) { return "OptionOrder"+MenuDirToString((MenuDir)dir); }
+static std::string OPTION_ORDER_NAME( size_t dir ) { return "OptionOrder"+MenuDirToString((MenuDir)dir); }
 
 REGISTER_SCREEN_CLASS( ScreenSelectMaster );
 

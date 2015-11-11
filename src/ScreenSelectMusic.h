@@ -82,15 +82,15 @@ protected:
 	ThemeMetric<bool>		DO_ROULETTE_ON_MENU_TIMER;
 	ThemeMetric<float>		ROULETTE_TIMER_SECONDS;
 	ThemeMetric<bool>		ALIGN_MUSIC_BEATS;
-	ThemeMetric<RString>	CODES;
-	ThemeMetric<RString>	MUSIC_WHEEL_TYPE;
+	ThemeMetric<std::string>	CODES;
+	ThemeMetric<std::string>	MUSIC_WHEEL_TYPE;
 	ThemeMetric<bool>		OPTIONS_MENU_AVAILABLE;
 	ThemeMetric<bool>		SELECT_MENU_AVAILABLE;
 	ThemeMetric<bool>		MODE_MENU_AVAILABLE;
 	ThemeMetric<bool>		USE_OPTIONS_LIST;
 	ThemeMetric<float>		OPTIONS_LIST_TIMEOUT;
 	ThemeMetric<bool>		USE_PLAYER_SELECT_MENU;
-	ThemeMetric<RString>	SELECT_MENU_NAME;
+	ThemeMetric<std::string>	SELECT_MENU_NAME;
 	ThemeMetric<bool>		SELECT_MENU_CHANGES_DIFFICULTY;
 	ThemeMetric<bool>		TWO_PART_SELECTION;
 	ThemeMetric<bool>		TWO_PART_CONFIRMS_ONLY;
@@ -98,7 +98,7 @@ protected:
 	ThemeMetric<bool>		WRAP_CHANGE_STEPS;
 	ThemeMetric<bool>		CHANGE_STEPS_WITH_GAME_BUTTONS;
 	ThemeMetric<bool>		CHANGE_GROUPS_WITH_GAME_BUTTONS;
-	ThemeMetric<RString>	nullptr_SCORE_STRING;
+	ThemeMetric<std::string>	nullptr_SCORE_STRING;
 	ThemeMetric<bool>		PLAY_SOUND_ON_ENTERING_OPTIONS_MENU;
 
 	bool CanChangeSong() const { return m_SelectionState == SelectionState_SelectingSong; }

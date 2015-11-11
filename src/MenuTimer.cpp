@@ -9,7 +9,7 @@
 #include "ThemeMetric.h"
 #include "ActorUtil.h"
 
-RString WARNING_COMMAND_NAME( size_t i ) { return fmt::sprintf("Warning%dCommand",int(i)); }
+std::string WARNING_COMMAND_NAME( size_t i ) { return fmt::sprintf("Warning%dCommand",int(i)); }
 
 static const float TIMER_PAUSE_SECONDS = 99.99f;
 
@@ -58,7 +58,7 @@ void MenuTimer::Load( RString sMetricsGroup )
 	if(WARNING_COMMAND)
 		WARNING_COMMAND->Clear();
 
-	WARNING_COMMAND = new ThemeMetric1D<apActorCommands>(sMetricsGroup, WARNING_COMMAND_NAME, WARNING_START+1);
+	WARNING_COMMAND = new ThemeMetric1D<apActorCommands>(sMetricsGroup, WARNING_COMMAND_NAME, WARNING_START.GetValue()+1);
 
 	m_fStallSecondsLeft = MAX_STALL_SECONDS;
 }

@@ -49,7 +49,7 @@ const RString RIVAL_SUBDIR         = "Rivals/";
 
 ThemeMetric<bool> SHOW_COIN_DATA( "Profile", "ShowCoinData" );
 static Preference<bool> g_bProfileDataCompress( "ProfileDataCompress", false );
-static ThemeMetric<RString> UNLOCK_AUTH_STRING( "Profile", "UnlockAuthString" );
+static ThemeMetric<std::string> UNLOCK_AUTH_STRING( "Profile", "UnlockAuthString" );
 #define GUID_SIZE_BYTES 8
 
 #define MAX_EDITABLE_INI_SIZE_BYTES			2*1024		// 2KB
