@@ -32,9 +32,9 @@ static Preference<bool> g_bPrecacheAllSorts( "PreCacheAllWheelSorts", false);
 #define CUSTOM_ITEM_WHEEL_TEXT(s)		THEME->GetString( "MusicWheel", fmt::sprintf("CustomItem%sText",s.c_str()) );
 
 static std::string SECTION_COLORS_NAME( size_t i )	{ return fmt::sprintf("SectionColor%d",int(i+1)); }
-static std::string CHOICE_NAME( RString s )		{ return fmt::sprintf("Choice%s",s.c_str()); }
-static std::string CUSTOM_WHEEL_ITEM_NAME( RString s )		{ return fmt::sprintf("CustomWheelItem%s",s.c_str()); }
-static std::string CUSTOM_WHEEL_ITEM_COLOR( RString s )		{ return fmt::sprintf("%sColor",s.c_str()); }
+static std::string CHOICE_NAME( std::string s )		{ return fmt::sprintf("Choice%s",s.c_str()); }
+static std::string CUSTOM_WHEEL_ITEM_NAME( std::string s )		{ return fmt::sprintf("CustomWheelItem%s",s.c_str()); }
+static std::string CUSTOM_WHEEL_ITEM_COLOR( std::string s )		{ return fmt::sprintf("%sColor",s.c_str()); }
 
 static LocalizedString EMPTY_STRING	( "MusicWheel", "Empty" );
 
@@ -90,14 +90,12 @@ void MusicWheel::Load( RString sType )
 	HIDE_INACTIVE_SECTIONS		.Load(sType,"OnlyShowActiveSection");
 	HIDE_ACTIVE_SECTION_TITLE		.Load(sType,"HideActiveSectionTitle");
 	REMIND_WHEEL_POSITIONS		.Load(sType,"RemindWheelPositions");
-	vector<RString> vsModeChoiceNames;
-	split( MODE_MENU_CHOICE_NAMES.GetValue(), ",", vsModeChoiceNames );
+  auto vsModeChoiceNames = Rage::split(MODE_MENU_CHOICE_NAMES.GetValue(), ",");
 	CHOICE				.Load(sType,CHOICE_NAME,vsModeChoiceNames);
 	SECTION_COLORS			.Load(sType,SECTION_COLORS_NAME,NUM_SECTION_COLORS);
 
 	CUSTOM_WHEEL_ITEM_NAMES		.Load(sType,"CustomWheelItemNames");
-	vector<RString> vsCustomItemNames;
-	split( CUSTOM_WHEEL_ITEM_NAMES.GetValue(), ",", vsCustomItemNames );
+  auto vsCustomItemNames = Rage::split(CUSTOM_WHEEL_ITEM_NAMES.GetValue(), ",");
 	CUSTOM_CHOICES.Load(sType,CUSTOM_WHEEL_ITEM_NAME,vsCustomItemNames);
 	CUSTOM_CHOICE_COLORS.Load(sType,CUSTOM_WHEEL_ITEM_COLOR,vsCustomItemNames);
 
@@ -516,8 +514,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 		case SORT_MODE_MENU:
 		{
 			arrayWheelItemDatas.clear();	// clear out the previous wheel items
-			vector<RString> vsNames;
-			split( MODE_MENU_CHOICE_NAMES.GetValue(), ",", vsNames );
+			auto vsNames = Rage::split(MODE_MENU_CHOICE_NAMES.GetValue(), ",");
 			for( unsigned i=0; i<vsNames.size(); ++i )
 			{
 				MusicWheelItemData wid( WheelItemDataType_Sort, nullptr, "", nullptr, SORT_MENU_COLOR, 0 );
@@ -722,8 +719,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 					arrayWheelItemDatas.push_back( new MusicWheelItemData(WheelItemDataType_Portal, nullptr, "", nullptr, PORTAL_COLOR, 0) );
 
 				// add custom wheel items
-				vector<RString> vsNames;
-				split( CUSTOM_WHEEL_ITEM_NAMES.GetValue(), ",", vsNames );
+				auto vsNames = Rage::split(CUSTOM_WHEEL_ITEM_NAMES.GetValue(), ",");
 				for( unsigned i=0; i<vsNames.size(); ++i )
 				{
 					MusicWheelItemData wid( WheelItemDataType_Custom, nullptr, "", nullptr, CUSTOM_CHOICE_COLORS.GetValue(vsNames[i]), 0 );
@@ -733,8 +729,9 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 					wid.m_sLabel = CUSTOM_ITEM_WHEEL_TEXT( vsNames[i] );
 
 					if( !wid.m_pAction->IsPlayable() )
+					{
 						continue;
-
+					}
 					arrayWheelItemDatas.push_back( new MusicWheelItemData(wid) );
 				}
 			}

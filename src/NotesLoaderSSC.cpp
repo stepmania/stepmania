@@ -227,8 +227,7 @@ void SetBGChanges(SongTagInfo& info)
 }
 void SetFGChanges(SongTagInfo& info)
 {
-	vector<RString> aFGChangeExpressions;
-	split((*info.params)[1], ",", aFGChangeExpressions);
+	auto aFGChangeExpressions = Rage::split((*info.params)[1], ",");
 
 	for (auto const &expression: aFGChangeExpressions)
 	{
@@ -241,8 +240,12 @@ void SetKeysounds(SongTagInfo& info)
 {
 	RString keysounds = (*info.params)[1];
 	if(keysounds.length() >= 2 && keysounds.substr(0, 2) == "\\#")
-	{ keysounds = keysounds.substr(1); }
-	split(keysounds, ",", info.song->m_vsKeysoundFile);
+	{
+		keysounds = keysounds.substr(1);
+	}
+	auto toDump = Rage::split(keysounds, ",");
+	auto &soundFiles = info.song->m_vsKeysoundFile;
+	soundFiles.insert(soundFiles.end(), std::make_move_iterator(toDump.begin()), std::make_move_iterator(toDump.end()));
 }
 void SetAttacks(SongTagInfo& info)
 {
@@ -370,8 +373,7 @@ void SetRadarValues(StepsTagInfo& info)
 {
 	if(info.from_cache || info.for_load_edit)
 	{
-		vector<RString> values;
-		split((*info.params)[1], ",", values, true);
+		auto values = Rage::split((*info.params)[1], ",", Rage::EmptyEntries::skip);
 		// Instead of trying to use the version to figure out how many
 		// categories to expect, look at the number of values and split them
 		// evenly. -Kyz
@@ -656,13 +658,11 @@ ssc_parser_helper_t parser_helper;
 
 void SSCLoader::ProcessBPMs( TimingData &out, const RString sParam )
 {
-	vector<RString> arrayBPMExpressions;
-	split( sParam, ",", arrayBPMExpressions );
+	auto arrayBPMExpressions = Rage::split( sParam, "," );
 
 	for (auto const &expression: arrayBPMExpressions)
 	{
-		vector<RString> arrayBPMValues;
-		split( expression, "=", arrayBPMValues );
+		auto arrayBPMValues = Rage::split(expression, "=");
 		if( arrayBPMValues.size() != 2 )
 		{
 			LOG->UserLog("Song file",
@@ -690,13 +690,11 @@ void SSCLoader::ProcessBPMs( TimingData &out, const RString sParam )
 
 void SSCLoader::ProcessStops( TimingData &out, const RString sParam )
 {
-	vector<RString> arrayStopExpressions;
-	split( sParam, ",", arrayStopExpressions );
+	auto arrayStopExpressions = Rage::split( sParam, "," );
 
 	for (auto const &expression: arrayStopExpressions)
 	{
-		vector<RString> arrayStopValues;
-		split( expression, "=", arrayStopValues );
+		auto arrayStopValues = Rage::split(expression, "=");
 		if( arrayStopValues.size() != 2 )
 		{
 			LOG->UserLog("Song file",
@@ -722,13 +720,11 @@ void SSCLoader::ProcessStops( TimingData &out, const RString sParam )
 
 void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float fVersion )
 {
-	vector<RString> arrayWarpExpressions;
-	split( sParam, ",", arrayWarpExpressions );
+	auto arrayWarpExpressions = Rage::split( sParam, "," );
 
 	for (auto const &expression: arrayWarpExpressions)
 	{
-		vector<RString> arrayWarpValues;
-		split( expression, "=", arrayWarpValues );
+		auto arrayWarpValues = Rage::split(expression, "=");
 		if( arrayWarpValues.size() != 2 )
 		{
 			LOG->UserLog("Song file",
@@ -759,13 +755,11 @@ void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float
 
 void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
 {
-	vector<RString> arrayLabelExpressions;
-	split( sParam, ",", arrayLabelExpressions );
+	auto arrayLabelExpressions = Rage::split( sParam, "," );
 
 	for (auto const &expression: arrayLabelExpressions)
 	{
-		vector<RString> arrayLabelValues;
-		split( expression, "=", arrayLabelValues );
+		auto arrayLabelValues = Rage::split(expression, "=");
 		if( arrayLabelValues.size() != 2 )
 		{
 			LOG->UserLog("Song file",
@@ -794,13 +788,11 @@ void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
 
 void SSCLoader::ProcessCombos( TimingData &out, const RString line, const int rowsPerBeat )
 {
-	vector<RString> arrayComboExpressions;
-	split( line, ",", arrayComboExpressions );
+	auto arrayComboExpressions = Rage::split( line, "," );
 
 	for (auto const &expression: arrayComboExpressions)
 	{
-		vector<RString> arrayComboValues;
-		split( expression, "=", arrayComboValues );
+		auto arrayComboValues = Rage::split(expression, "=");
 		unsigned size = arrayComboValues.size();
 		if( size < 2 )
 		{
@@ -819,13 +811,11 @@ void SSCLoader::ProcessCombos( TimingData &out, const RString line, const int ro
 
 void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 {
-	vector<RString> vs1;
-	split( sParam, ",", vs1 );
+	auto vs1 = Rage::split(sParam, ",");
 
 	for (auto const &s1: vs1)
 	{
-		vector<RString> vs2;
-		split( s1, "=", vs2 );
+		auto vs2 = Rage::split(s1, "=");
 
 		if( vs2.size() < 2 )
 		{

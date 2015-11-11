@@ -86,9 +86,7 @@ RString Attack::GetTextDescription() const
 
 int Attack::GetNumAttacks() const
 {
-	vector<RString> tmp;
-	split(this->sModifiers, ",", tmp);
-	return tmp.size();
+	return Rage::split(this->sModifiers, ",").size();
 }
 
 bool AttackArray::ContainsTransformOrTurn() const

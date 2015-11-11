@@ -118,8 +118,7 @@ RString GetCustomDifficulty( StepsType st, Difficulty dc, CourseType ct )
 		return "Edit";
 	}
 	// OPTIMIZATION OPPORTUNITY: cache these metrics and cache the splitting
-	vector<RString> vsNames;
-	split( NAMES.GetValue(), ",", vsNames );
+	auto vsNames = Rage::split(NAMES.GetValue(), ",");
 	for (auto &sName: vsNames)
 	{
 		ThemeMetric<StepsType> STEPS_TYPE("CustomDifficulty",sName+"StepsType");

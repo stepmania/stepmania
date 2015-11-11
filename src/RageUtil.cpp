@@ -277,12 +277,12 @@ bool HexToBinary( const RString &s, RString &sOut )
 
 float HHMMSSToSeconds( const RString &sHHMMSS )
 {
-	vector<RString> arrayBits;
-	split( sHHMMSS, ":", arrayBits, false );
+	auto arrayBits = Rage::split(sHHMMSS, ":", Rage::EmptyEntries::include);
 
 	while( arrayBits.size() < 3 )
+	{
 		arrayBits.insert(arrayBits.begin(), "0" );	// pad missing bits
-
+	}
 	float fSeconds = 0;
 	fSeconds += StringToInt( arrayBits[0] ) * 60 * 60;
 	fSeconds += StringToInt( arrayBits[1] ) * 60;
@@ -675,127 +675,6 @@ static int DelimitorLength( const S &Delimitor )
 static int DelimitorLength( char Delimitor )
 {
 	return 1;
-}
-
-static int DelimitorLength( wchar_t Delimitor )
-{
-	return 1;
-}
-
-template <class S, class C>
-void do_split( const S &Source, const C Delimitor, vector<S> &AddIt, const bool bIgnoreEmpty )
-{
-	/* Short-circuit if the source is empty; we want to return an empty vector if
-	 * the string is empty, even if bIgnoreEmpty is true. */
-	if( Source.empty() )
-		return;
-
-	size_t startpos = 0;
-
-	do {
-		size_t pos;
-		pos = Source.find( Delimitor, startpos );
-		if( pos == Source.npos )
-			pos = Source.size();
-
-		if( pos-startpos > 0 || !bIgnoreEmpty )
-		{
-			/* Optimization: if we're copying the whole string, avoid substr; this
-			 * allows this copy to be refcounted, which is much faster. */
-			if( startpos == 0 && pos-startpos == Source.size() )
-				AddIt.push_back(Source);
-			else
-			{
-				const S AddRString = Source.substr(startpos, pos-startpos);
-				AddIt.push_back(AddRString);
-			}
-		}
-
-		startpos = pos+DelimitorLength(Delimitor);
-	} while ( startpos <= Source.size() );
-}
-
-void split( const RString &sSource, const RString &sDelimitor, vector<RString> &asAddIt, const bool bIgnoreEmpty )
-{
-	if( sDelimitor.size() == 1 )
-		do_split( sSource, sDelimitor[0], asAddIt, bIgnoreEmpty );
-	else
-		do_split( sSource, sDelimitor, asAddIt, bIgnoreEmpty );
-}
-
-void split( const wstring &sSource, const wstring &sDelimitor, vector<wstring> &asAddIt, const bool bIgnoreEmpty )
-{
-	if( sDelimitor.size() == 1 )
-		do_split( sSource, sDelimitor[0], asAddIt, bIgnoreEmpty );
-	else
-		do_split( sSource, sDelimitor, asAddIt, bIgnoreEmpty );
-}
-
-/* Use:
-
-RString str="a,b,c";
-int start = 0, size = -1;
-while( 1 )
-{
-	do_split( str, ",", start, size );
-	if( start == str.size() )
-		break;
-	str[start] = 'Q';
-}
-
-*/
-
-template <class S>
-void do_split( const S &Source, const S &Delimitor, int &begin, int &size, int len, const bool bIgnoreEmpty )
-{
-	using std::min;
-	if( size != -1 )
-	{
-		// Start points to the beginning of the last delimiter. Move it up.
-		begin += size+Delimitor.size();
-		begin = min( begin, len );
-	}
-
-	size = 0;
-
-	if( bIgnoreEmpty )
-	{
-		// Skip delims.
-		while( begin + Delimitor.size() < Source.size() &&
-			!Source.compare( begin, Delimitor.size(), Delimitor ) )
-			++begin;
-	}
-
-	/* Where's the string function to find within a substring?
-	 * C++ strings apparently are missing that ... */
-	size_t pos;
-	if( Delimitor.size() == 1 )
-		pos = Source.find( Delimitor[0], begin );
-	else
-		pos = Source.find( Delimitor, begin );
-	if( pos == Source.npos || (int) pos > len )
-		pos = len;
-	size = pos - begin;
-}
-
-void split( const RString &Source, const RString &Delimitor, int &begin, int &size, int len, const bool bIgnoreEmpty )
-{
-	do_split( Source, Delimitor, begin, size, len, bIgnoreEmpty );
-}
-
-void split( const wstring &Source, const wstring &Delimitor, int &begin, int &size, int len, const bool bIgnoreEmpty )
-{
-	do_split( Source, Delimitor, begin, size, len, bIgnoreEmpty );
-}
-
-void split( const RString &Source, const RString &Delimitor, int &begin, int &size, const bool bIgnoreEmpty )
-{
-	do_split( Source, Delimitor, begin, size, Source.size(), bIgnoreEmpty );
-}
-
-void split( const wstring &Source, const wstring &Delimitor, int &begin, int &size, const bool bIgnoreEmpty )
-{
-	do_split( Source, Delimitor, begin, size, Source.size(), bIgnoreEmpty );
 }
 
 /*

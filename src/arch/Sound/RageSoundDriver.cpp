@@ -10,8 +10,7 @@ DriverList RageSoundDriver::m_pDriverList;
 
 RageSoundDriver *RageSoundDriver::Create( const RString& sDrivers )
 {
-	vector<RString> DriversToTry;
-	split( sDrivers.empty()? DEFAULT_SOUND_DRIVER_LIST:sDrivers, ",", DriversToTry, true );
+	auto DriversToTry = Rage::split(sDrivers.empty() ? DEFAULT_SOUND_DRIVER_LIST : sDrivers, ",", Rage::EmptyEntries::skip);
 
 	for (auto const &Driver: DriversToTry)
 	{

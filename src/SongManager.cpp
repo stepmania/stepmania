@@ -94,8 +94,7 @@ SongManager::~SongManager()
 
 void SongManager::InitAll( LoadingWindow *ld )
 {
-	vector<RString> never_cache;
-	split(PREFSMAN->m_NeverCacheList.Get(), ",", never_cache);
+	auto never_cache = Rage::split(PREFSMAN->m_NeverCacheList.Get(), ",");
 	for (auto &group: never_cache)
 	{
 		m_GroupsToNeverCache.insert(group);
@@ -1164,8 +1163,7 @@ void SongManager::SaveEnabledSongsToPref()
 
 void SongManager::LoadEnabledSongsFromPref()
 {
-	vector<RString> asDisabledSongs;
-	split( g_sDisabledSongs.Get(), ";", asDisabledSongs, true );
+	auto asDisabledSongs = Rage::split(g_sDisabledSongs.Get(), ";", Rage::EmptyEntries::skip);
 
 	for (auto &s: asDisabledSongs)
 	{
@@ -1173,7 +1171,9 @@ void SongManager::LoadEnabledSongsFromPref()
 		sid.FromString( s );
 		Song *pSong = sid.ToSong();
 		if( pSong )
+		{
 			pSong->SetEnabled( false );
+		}
 	}
 }
 
@@ -1475,14 +1475,16 @@ Course* SongManager::GetCourseFromName( RString sName ) const
 Song *SongManager::FindSong( RString sPath ) const
 {
 	Rage::replace(sPath, '\\', '/' );
-	vector<RString> bits;
-	split( sPath, "/", bits );
+	auto bits = Rage::split( sPath, "/" );
 
 	if( bits.size() == 1 )
+	{
 		return FindSong( "", bits[0] );
-	else if( bits.size() == 2 )
+	}
+	if( bits.size() == 2 )
+	{
 		return FindSong( bits[0], bits[1] );
-
+	}
 	return nullptr;
 }
 
@@ -1504,14 +1506,16 @@ Song *SongManager::FindSong( RString sGroup, RString sSong ) const
 Course *SongManager::FindCourse( RString sPath ) const
 {
 	Rage::replace(sPath, '\\', '/' );
-	vector<RString> bits;
-	split( sPath, "/", bits );
+	auto bits = Rage::split( sPath, "/" );
 
 	if( bits.size() == 1 )
+	{
 		return FindCourse( "", bits[0] );
-	else if( bits.size() == 2 )
+	}
+	if( bits.size() == 2 )
+	{
 		return FindCourse( bits[0], bits[1] );
-
+	}
 	return nullptr;
 }
 
@@ -1778,15 +1782,14 @@ void SongManager::UpdateRankingCourses()
 {
 	/* Updating the ranking courses data is fairly expensive since it involves
 	 * comparing strings. Do so sparingly. */
-	vector<RString> RankingCourses;
-	split( THEME->GetMetric("ScreenRanking","CoursesToShow"),",", RankingCourses);
+	auto rankingCourses = Rage::split(THEME->GetMetric("ScreenRanking", "CoursesToShow"), ",");
 
 	for (auto *c: m_pCourses)
 	{
 		bool bLotsOfStages = c->GetEstimatedNumStages() > 7;
 		c->m_SortOrder_Ranking = bLotsOfStages? 3 : 2;
 		Rage::ci_ascii_string ciPath{ c->m_sPath.c_str() };
-		for (auto &course: RankingCourses)
+		for (auto &course: rankingCourses)
 		{
 			if (ciPath == course)
 			{

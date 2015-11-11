@@ -41,7 +41,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 	int iTickCount = -1;
 	// used to adapt weird tickcounts
 	//float fScrollRatio = 1.0f; -- uncomment when ready to use.
-	vector<RString> vNoteRows;
+	vector<std::string> vNoteRows;
 
 	// According to Aldo_MX, there is a default BPM and it's 60. -aj
 	bool bDoublesChart = false;
@@ -161,7 +161,8 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		else if( sValueName=="STEP" )
 		{
 			RString theSteps = Rage::trim_left(sParams[1]);
-			split( theSteps, "\n", vNoteRows, true );
+			auto toDump = Rage::split(theSteps, "\n", Rage::EmptyEntries::skip);
+			vNoteRows.insert(vNoteRows.end(), std::make_move_iterator(toDump.begin()), std::make_move_iterator(toDump.end()));
 		}
 	}
 
@@ -290,13 +291,14 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 
 	for (auto &sRowString: vNoteRows)
 	{
-		StripCrnl( sRowString );
+		sRowString = Rage::trim_right(sRowString, "\r\n");
 
 		if( sRowString == "" )
+		{
 			continue;	// skip
-
+		}
 		// All 2s indicates the end of the song.
-		else if( sRowString == "2222222222222" )
+		if( sRowString == "2222222222222" )
 		{
 			// Finish any holds that didn't get...well, finished.
 			for( t=0; t < notedata.GetNumTracks(); t++ )
@@ -304,12 +306,16 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 				if( iHoldStartRow[t] != -1 )	// this ends the hold
 				{
 					if( iHoldStartRow[t] == BeatToNoteRow(prevBeat) )
+					{
 						notedata.SetTapNote( t, iHoldStartRow[t], TAP_ORIGINAL_TAP );
+					}
 					else
+					{
 						notedata.AddHoldNote(t,
 								     iHoldStartRow[t],
 								     BeatToNoteRow(prevBeat),
 								     TAP_ORIGINAL_HOLD_HEAD );
+					}
 				}
 			}
 			/* have this row be the last moment in the song, unless
@@ -476,8 +482,7 @@ static void LoadTags( const RString &str, Song &out )
 {
 	/* str is either a #TITLE or a directory component.  Fill in missing information.
 	 * str is either "title", "artist - title", or "artist - title - difficulty". */
-	vector<RString> asBits;
-	split( str, " - ", asBits, false );
+	auto asBits = Rage::split(str, " - ", Rage::EmptyEntries::include);
 	// Ignore the difficulty, since we get that elsewhere.
 	if (asBits.size() == 3)
 	{
@@ -552,7 +557,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 	float SMGap1 = 0, SMGap2 = 0, BPM1 = -1, BPMPos2 = -1, BPM2 = -1, BPMPos3 = -1, BPM3 = -1;
 	int iTickCount = -1;
 	bKIUCompliant = false;
-	vector<RString> vNoteRows;
+	vector<std::string> vNoteRows;
 
 	for( unsigned i=0; i < msd.GetNumValues(); i++ )
 	{
@@ -612,7 +617,8 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			/* STEP will always be the last header in a KSF file by design. Due to
 			 * the Direct Move syntax, it is best to get the rows of notes here. */
 			RString theSteps = Rage::trim_left(sParams[1]);
-			split( theSteps, "\n", vNoteRows, true );
+			auto toDump = Rage::split(theSteps, "\n", Rage::EmptyEntries::skip);
+			vNoteRows.insert(vNoteRows.end(), std::make_move_iterator(toDump.begin()), std::make_move_iterator(toDump.end()));
 		}
 		else if( sValueName=="DIFFICULTY" || sValueName=="PLAYER" )
 		{
@@ -675,7 +681,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 
 		for (auto &NoteRowString: vNoteRows)
 		{
-			StripCrnl( NoteRowString );
+			NoteRowString = Rage::trim_right(NoteRowString, "\r\n");
 
 			if( NoteRowString == "" )
 				continue; // ignore empty rows.
@@ -683,7 +689,9 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			if( NoteRowString == "2222222222222" ) // Row of 2s = end. Confirm KIUCompliency here.
 			{
 				if (!bDMRequired)
+				{
 					bKIUCompliant = true;
+				}
 				break;
 			}
 
@@ -706,8 +714,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 
 	// Try to fill in missing bits of information from the pathname.
 	{
-		vector<RString> asBits;
-		split( sPath, "/", asBits, true);
+		auto asBits = Rage::split(sPath, "/", Rage::EmptyEntries::skip);
 
 		ASSERT( asBits.size() > 1 );
 		LoadTags( asBits[asBits.size()-2], out );

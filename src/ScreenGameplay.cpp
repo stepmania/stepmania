@@ -1426,9 +1426,8 @@ void ScreenGameplay::LoadLights()
 	}
 
 	// No explicit lights.  Create autogen lights.
-	RString sDifficulty = PREFSMAN->m_sLightsStepsDifficulty.Get();
-	vector<RString> asDifficulties;
-	split( sDifficulty, ",", asDifficulties );
+	auto sDifficulty = PREFSMAN->m_sLightsStepsDifficulty.Get();
+	auto asDifficulties = Rage::split(sDifficulty, ",");
 
 	// Always use the steps from the primary steps type so that lights are consistent over single and double styles.
 	StepsType st = GAMEMAN->GetHowToPlayStyleForGame( GAMESTATE->m_pCurGame )->m_StepsType;

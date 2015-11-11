@@ -71,7 +71,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 		/* XXX Ignoring empty seems wrong for measures. It means that ",,," is treated as
 		 * "," where I would expect most people would want 2 empty measures. ",\n,\n,"
 		 * would do as I would expect. */
-		split( sSMNoteData, ",", start, size, end, true ); // Ignore empty is important.
+		Rage::split_in_place( sSMNoteData, ",", start, size, end, Rage::EmptyEntries::skip ); // Ignore empty is important.
 		if( start == end )
 			break;
 
@@ -83,7 +83,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 		while( true )
 		{
 			// Ignore empty is clearly important here.
-			split( sSMNoteData, "\n", measureLineStart, measureLineSize, measureEnd, true );
+			Rage::split_in_place( sSMNoteData, "\n", measureLineStart, measureLineSize, measureEnd, Rage::EmptyEntries::skip );
 			if( measureLineStart == measureEnd )
 				break;
 			//RString &line = sSMNoteData.substr( measureLineStart, measureLineSize );
@@ -304,8 +304,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, const RString &sSMNo
 	vector<NoteData> vParts;
 	FOREACH_PlayerNumber( pn )
 	{
-		// Split in place.
-		split( sSMNoteData, "&", start, size, false );
+		Rage::split_in_place( sSMNoteData, "&", start, size, Rage::EmptyEntries::include );
 		if( unsigned(start) == sSMNoteData.size() )
 			break;
 		vParts.push_back( NoteData() );

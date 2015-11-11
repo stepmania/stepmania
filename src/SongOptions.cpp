@@ -152,8 +152,7 @@ std::string SongOptions::GetLocalizedString() const
 void SongOptions::FromString( const RString &sMultipleMods )
 {
 	RString sTemp = sMultipleMods;
-	vector<RString> vs;
-	split( sTemp, ",", vs, true );
+	auto vs = Rage::split(sTemp, ",", Rage::EmptyEntries::skip);
 	RString sThrowAway;
 	for (auto &s: vs)
 	{
@@ -175,8 +174,7 @@ bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 
 	matches.clear();
 
-	vector<RString> asParts;
-	split( sBit, " ", asParts, true );
+	auto asParts = Rage::split( sBit, " ", Rage::EmptyEntries::skip );
 	bool on = true;
 	if( asParts.size() > 1 )
 	{
@@ -185,22 +183,62 @@ bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 			on = false;
 	}
 
-	if( sBit == "clap" )				m_bAssistClap = on;
-	else if( sBit == "metronome" )				m_bAssistMetronome = on;
-	else if( sBit == "autosync" || sBit == "autosyncsong" )	m_AutosyncType = on ? AutosyncType_Song : AutosyncType_Off;
-	else if( sBit == "autosyncmachine" )			m_AutosyncType = on ? AutosyncType_Machine : AutosyncType_Off;
-	else if( sBit == "autosynctempo" )			m_AutosyncType = on ? AutosyncType_Tempo : AutosyncType_Off;
-	else if( sBit == "effect" && !on )			m_SoundEffectType = SoundEffectType_Off;
-	else if( sBit == "effectspeed" )			m_SoundEffectType = on ? SoundEffectType_Speed : SoundEffectType_Off;
-	else if( sBit == "effectpitch" )			m_SoundEffectType = on ? SoundEffectType_Pitch : SoundEffectType_Off;
-	else if( sBit == "staticbg" )				m_bStaticBackground = on;
-	else if( sBit == "randombg" )				m_bRandomBGOnly = on;
-	else if( sBit == "savescore" )				m_bSaveScore = on;
-	else if( sBit == "savereplay" )			m_bSaveReplay = on;
-	else if( sBit == "haste" )				m_fHaste = on? 1.0f:0.0f;
+	if( sBit == "clap" )
+	{
+		m_bAssistClap = on;
+	}
+	else if( sBit == "metronome" )
+	{
+		m_bAssistMetronome = on;
+	}
+	else if( sBit == "autosync" || sBit == "autosyncsong" )
+	{
+		m_AutosyncType = on ? AutosyncType_Song : AutosyncType_Off;
+	}
+	else if( sBit == "autosyncmachine" )
+	{
+		m_AutosyncType = on ? AutosyncType_Machine : AutosyncType_Off;
+	}
+	else if( sBit == "autosynctempo" )
+	{
+		m_AutosyncType = on ? AutosyncType_Tempo : AutosyncType_Off;
+	}
+	else if( sBit == "effect" && !on )
+	{
+		m_SoundEffectType = SoundEffectType_Off;
+	}
+	else if( sBit == "effectspeed" )
+	{
+		m_SoundEffectType = on ? SoundEffectType_Speed : SoundEffectType_Off;
+	}
+	else if( sBit == "effectpitch" )
+	{
+		m_SoundEffectType = on ? SoundEffectType_Pitch : SoundEffectType_Off;
+	}
+	else if( sBit == "staticbg" )
+	{
+		m_bStaticBackground = on;
+	}
+	else if( sBit == "randombg" )
+	{
+		m_bRandomBGOnly = on;
+	}
+	else if( sBit == "savescore" )
+	{
+		m_bSaveScore = on;
+	}
+	else if( sBit == "savereplay" )
+	{
+		m_bSaveReplay = on;
+	}
+	else if( sBit == "haste" )
+	{
+		m_fHaste = on? 1.0f:0.0f;
+	}
 	else
+	{
 		return false;
-
+	}
 	return true;
 }
 

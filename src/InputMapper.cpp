@@ -994,8 +994,6 @@ float InputMapper::GetSecsHeld( const GameInput &GameI, MultiPlayer mp ) const
 
 float InputMapper::GetSecsHeld( GameButton MenuI, PlayerNumber pn ) const
 {
-	float fMaxSecsHeld = 0;
-
 	vector<GameInput> GameI;
 	MenuToGame( MenuI, pn, GameI );
 
@@ -1012,7 +1010,9 @@ void InputMapper::ResetKeyRepeat( const GameInput &GameI )
 	{
 		DeviceInput DeviceI;
 		if( GameToDevice( GameI, i, DeviceI ) )
+		{
 			INPUTFILTER->ResetKeyRepeat( DeviceI );
+		}
 	}
 }
 
@@ -1028,6 +1028,7 @@ void InputMapper::ResetKeyRepeat( GameButton MenuI, PlayerNumber pn )
 
 float InputMapper::GetLevel( const GameInput &GameI ) const
 {
+	// TODO: Use std::accumulate here.
 	using std::max;
 	float fLevel = 0;
 	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
@@ -1035,7 +1036,9 @@ float InputMapper::GetLevel( const GameInput &GameI ) const
 		DeviceInput DeviceI;
 
 		if( GameToDevice( GameI, i, DeviceI ) )
+		{
 			fLevel = max( fLevel, INPUTFILTER->GetLevel(DeviceI) );
+		}
 	}
 	return fLevel;
 }
@@ -1055,20 +1058,24 @@ float InputMapper::GetLevel( GameButton MenuI, PlayerNumber pn ) const
 InputDevice InputMapper::MultiPlayerToInputDevice( MultiPlayer mp )
 {
 	if( mp == MultiPlayer_Invalid )
+	{
 		return InputDevice_Invalid;
+	}
 	return enum_add2( DEVICE_JOY1, mp );
 }
 
 MultiPlayer InputMapper::InputDeviceToMultiPlayer( InputDevice id )
 {
 	if( id == InputDevice_Invalid )
+	{
 		return MultiPlayer_Invalid;
+	}
 	return enum_add2( MultiPlayer_P1, id - DEVICE_JOY1 );
 }
 
 GameButton InputScheme::ButtonNameToIndex( const RString &sButtonName ) const
 {
-	Rage::ci_ascii_string lowerButton{ sButtonName };
+	Rage::ci_ascii_string lowerButton{ sButtonName.c_str() };
 	for( GameButton gb=(GameButton) 0; gb<m_iButtonsPerController; gb=(GameButton)(gb+1) )
 	{
 		if (lowerButton == GetGameButtonName(gb))
@@ -1104,16 +1111,20 @@ void InputScheme::MenuButtonToGameButtons( GameButton MenuI, vector<GameButton> 
 	ASSERT( MenuI != GameButton_Invalid );
 
 	if( MenuI == GameButton_Invalid )
+	{
 		return;
-
+	}
 	FOREACH_ENUM( GameButton, gb)
 	{
 		if( PREFSMAN->m_bOnlyDedicatedMenuButtons && gb >= GAME_BUTTON_NEXT )
+		{
 			break;
-
+		}
 		const GameButtonInfo *pGameButtonInfo = GetGameButtonInfo( gb );
 		if( pGameButtonInfo->m_SecondaryMenuButton != MenuI )
+		{
 			continue;
+		}
 		aGameButtons.push_back( gb );
 	}
 }
@@ -1121,9 +1132,13 @@ void InputScheme::MenuButtonToGameButtons( GameButton MenuI, vector<GameButton> 
 GameButton InputScheme::GameButtonToMenuButton( GameButton gb ) const
 {
 	if( gb == GameButton_Invalid )
+	{
 		return GameButton_Invalid;
+	}
 	if( gb >= GAME_BUTTON_NEXT && PREFSMAN->m_bOnlyDedicatedMenuButtons )
+	{
 		return GameButton_Invalid;
+	}
 	return GetGameButtonInfo(gb)->m_SecondaryMenuButton;
 }
 
@@ -1146,9 +1161,10 @@ const InputScheme::GameButtonInfo *InputScheme::GetGameButtonInfo( GameButton gb
 {
 	COMPILE_ASSERT( GAME_BUTTON_NEXT == ARRAYLEN(g_CommonGameButtonInfo) );
 	if( gb < GAME_BUTTON_NEXT )
+	{
 		return &g_CommonGameButtonInfo[gb];
-	else
-		return &m_GameButtonInfo[gb-GAME_BUTTON_NEXT];
+	}
+	return &m_GameButtonInfo[gb-GAME_BUTTON_NEXT];
 }
 
 std::string InputScheme::GetGameButtonName( GameButton gb ) const
@@ -1196,21 +1212,25 @@ void InputMappings::ReadMappings( const InputScheme *pInputScheme, RString sFile
 
 	IniFile ini;
 	if( !ini.ReadFile( sFilePath ) )
+	{
 		LOG->Trace( "Couldn't open mapping file \"%s\": %s.",
 					SpecialFiles::KEYMAPS_PATH.c_str(), ini.GetError().c_str() );
-
+	}
 	if( bIsAutoMapping )
 	{
 		if( !ini.GetValue( "AutoMapping", "DeviceRegex", m_sDeviceRegex ) )
+		{
 			Dialog::OK( "Missing AutoMapping::DeviceRegex in '%s'", sFilePath.c_str() );
-
-				if( !ini.GetValue( "AutoMapping", "Description", m_sDescription ) )
+		}
+		if( !ini.GetValue( "AutoMapping", "Description", m_sDescription ) )
+		{
 			Dialog::OK( "Missing AutoMapping::Description in '%s'", sFilePath.c_str() );
+		}
 	}
 
 	const XNode *Key = ini.GetChild( pInputScheme->inputName );
 
-	if( Key  )
+	if( Key )
 	{
 		FOREACH_CONST_Attr( Key, i )
 		{
@@ -1221,17 +1241,19 @@ void InputMappings::ReadMappings( const InputScheme *pInputScheme, RString sFile
 			GameInput GameI;
 			GameI.FromString( pInputScheme, name );
 			if( !GameI.IsValid() )
+			{
 				continue;
-
-			vector<RString> sDeviceInputStrings;
-			split( value, DEVICE_INPUT_SEPARATOR, sDeviceInputStrings, false );
+			}
+			auto sDeviceInputStrings = Rage::split(value, DEVICE_INPUT_SEPARATOR, Rage::EmptyEntries::include);
 
 			for( unsigned j=0; j<sDeviceInputStrings.size() && j<unsigned(NUM_GAME_TO_DEVICE_SLOTS); j++ )
 			{
 				DeviceInput DeviceI;
 				DeviceI.FromString( sDeviceInputStrings[j] );
 				if( DeviceI.IsValid() )
+				{
 					SetInputMap( DeviceI, GameI, j );
+				}
 			}
 		}
 	}
@@ -1304,7 +1326,9 @@ void InputMappings::ClearFromInputMap( const DeviceInput &DeviceI )
 			for( int s=0; s<NUM_GAME_TO_DEVICE_SLOTS; s++ )
 			{
 				if( m_GItoDI[p][b][s] == DeviceI )
+				{
 					m_GItoDI[p][b][s].MakeInvalid();
+				}
 			}
 		}
 	}
@@ -1313,11 +1337,14 @@ void InputMappings::ClearFromInputMap( const DeviceInput &DeviceI )
 bool InputMappings::ClearFromInputMap( const GameInput &GameI, int iSlotIndex )
 {
 	if( !GameI.IsValid() )
+	{
 		return false;
-
+	}
 	DeviceInput &di = m_GItoDI[GameI.controller][GameI.button][iSlotIndex];
 	if( !di.IsValid() )
+	{
 		return false;
+	}
 	di.MakeInvalid();
 
 	return true;

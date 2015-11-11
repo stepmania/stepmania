@@ -336,8 +336,7 @@ void CourseUtil::WarnOnInvalidMods( RString sMods )
 {
 	PlayerOptions po;
 	SongOptions so;
-	vector<RString> vs;
-	split( sMods, ",", vs, true );
+	auto vs = Rage::split( sMods, ",", Rage::EmptyEntries::skip );
 	for (auto &s: vs)
 	{
 		bool bValid = false;

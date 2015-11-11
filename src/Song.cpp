@@ -298,8 +298,7 @@ bool Song::LoadFromSongDir( RString sDir, bool load_autosave )
 	m_sSongDir = sDir;
 
 	// save group name
-	vector<RString> sDirectoryParts;
-	split( m_sSongDir, "/", sDirectoryParts, false );
+	auto sDirectoryParts = Rage::split(m_sSongDir, "/", Rage::EmptyEntries::include);
 	ASSERT( sDirectoryParts.size() >= 4 ); /* e.g. "/Songs/Slow/Taps/" */
 	m_sGroupName = sDirectoryParts[sDirectoryParts.size()-3];	// second from last item
 	ASSERT( m_sGroupName != "" );
@@ -361,8 +360,7 @@ bool Song::LoadFromSongDir( RString sDir, bool load_autosave )
 				return false;
 			}
 			// Make sure we have a future filename figured out.
-			vector<RString> folders;
-			split(sDir, "/", folders);
+			auto folders = Rage::split(sDir, "/");
 			RString songName = folders[2] + ".ssc";
 			this->m_sSongFileName = sDir + songName;
 			// Continue on with a blank Song so that people can make adjustments using the editor.
@@ -1810,8 +1808,7 @@ bool Song::Matches(RString sGroup, RString sSong) const
 
 	RString sDir = this->GetSongDir();
 	Rage::replace(sDir, "\\", "/");
-	vector<RString> bits;
-	split( sDir, "/", bits );
+    auto bits = Rage::split( sDir, "/" );
 	ASSERT(bits.size() >= 2); // should always have at least two parts
 	const RString &sLastBit = bits[bits.size()-1];
 

@@ -22,7 +22,7 @@ protected:
 
 	ThemeMetric<int> CROP_TEXT_TO_WIDTH;
 	ThemeMetric<std::string> STOP_WORDS;
-	std::vector<RString> m_vStopWords;
+	std::vector<std::string> m_vStopWords;
 };
 
 #endif

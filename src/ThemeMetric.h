@@ -275,7 +275,7 @@ public:
 	}
 };
 
-typedef std::string (*MetricNameMap)(RString s);
+typedef std::string (*MetricNameMap)(std::string s);
 
 template <class T>
 class ThemeMetricMap : public IThemeMetric
@@ -284,11 +284,11 @@ class ThemeMetricMap : public IThemeMetric
 	std::unordered_map<std::string,ThemeMetricT> m_metric;
 
 public:
-	ThemeMetricMap( std::string const & sGroup = "", MetricNameMap pfn = nullptr, const std::vector<RString> vsValueNames = std::vector<RString>() )
+	ThemeMetricMap( std::string const & sGroup = "", MetricNameMap pfn = nullptr, const std::vector<std::string> vsValueNames = std::vector<std::string>() )
 	{
 		Load( sGroup, pfn, vsValueNames );
 	}
-	void Load( std::string const & sGroup, MetricNameMap pfn, const std::vector<RString> vsValueNames )
+	void Load( std::string const & sGroup, MetricNameMap pfn, const std::vector<std::string> vsValueNames )
 	{
 		m_metric.clear();
 		for (auto const &s: vsValueNames)

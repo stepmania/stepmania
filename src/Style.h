@@ -33,26 +33,26 @@ public:
 	 * @brief The name of the style.
 	 *
 	 * Used by GameManager::GameAndStringToStyle to determine whether this is the style that matches the string. */
-	const char *		m_szName;
+	std::string m_szName;
 
 	/**
 	 * @brief Steps format used for each player.
 	 *
 	 * For example, "dance versus" reads the Steps with the tag "dance-single". */
-	StepsType		m_StepsType;
+	StepsType m_StepsType;
 
 	/** @brief Style format used for each player. */
-	StyleType		m_StyleType;
+	StyleType m_StyleType;
 
 	/**
 	 * @brief The number of total tracks/columns this style expects.
 	 *
 	 * As an example, 4 is expected for ITG style versus, but 8 for ITG style double. */
-	int			m_iColsPerPlayer;
+	int m_iColsPerPlayer;
 	/** @brief Some general column infromation */
 	struct ColumnInfo
 	{
-		int   track;		/**< Take note data from this track. */
+		int track;		/**< Take note data from this track. */
 		float fXOffset;		/**< This is the x position of the column relative to the player's center. */
 		const char *pzName;	/**< The name of the column, or nullptr to use the button name mapped to it. */
 	};

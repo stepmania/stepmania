@@ -87,14 +87,15 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 
 	RString sDrivers = g_sMovieDrivers.Get();
 	if( sDrivers.empty() )
+	{
 		sDrivers = DEFAULT_MOVIE_DRIVER_LIST;
-
-	vector<RString> DriversToTry;
-	split( sDrivers, ",", DriversToTry, true );
+	}
+	auto DriversToTry = Rage::split( sDrivers, ",", Rage::EmptyEntries::skip );
 
 	if( DriversToTry.empty() )
+	{
 		RageException::Throw( "%s", MOVIE_DRIVERS_EMPTY.GetValue().c_str() );
-
+	}
 	RageMovieTexture *ret = nullptr;
 
 	for (auto const &Driver: DriversToTry)
@@ -126,8 +127,9 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 		break;
 	}
 	if ( !ret )
+	{
 		RageException::Throw( "%s", COULDNT_CREATE_MOVIE_DRIVER.GetValue().c_str() );
-
+	}
 	return ret;
 }
 

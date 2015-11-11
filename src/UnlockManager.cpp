@@ -484,8 +484,7 @@ void UnlockManager::Load()
 {
 	LOG->Trace( "UnlockManager::Load()" );
 
-	vector<RString> asUnlockNames;
-	split( UNLOCK_NAMES, ",", asUnlockNames );
+	auto asUnlockNames = Rage::split(UNLOCK_NAMES, ",");
 
 	Lua *L = LUA->Get();
 	for (auto const &sUnlockName: asUnlockNames)

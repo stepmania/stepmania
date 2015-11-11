@@ -37,8 +37,7 @@ void ThemeMetricDifficultiesToShow::Read()
 
 	m_v.clear();
 
-	vector<RString> v;
-	split( ThemeMetric<std::string>::GetValue(), ",", v );
+	auto v = Rage::split( ThemeMetric<std::string>::GetValue(), "," );
 	if(v.empty())
 	{
 		LuaHelpers::ReportScriptError("DifficultiesToShow must have at least one entry.");
@@ -76,8 +75,7 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 
 	m_v.clear();
 
-	vector<RString> v;
-	split( ThemeMetric<std::string>::GetValue(), ",", v );
+	auto v = Rage::split( ThemeMetric<std::string>::GetValue(), "," );
 	if(v.empty())
 	{
 		LuaHelpers::ReportScriptError("CourseDifficultiesToShow must have at least one entry.");
@@ -101,8 +99,7 @@ const vector<CourseDifficulty>& ThemeMetricCourseDifficultiesToShow::GetValue() 
 
 static void RemoveStepsTypes( vector<StepsType>& inout, RString sStepsTypesToRemove )
 {
-	vector<RString> v;
-	split( sStepsTypesToRemove, ",", v );
+	auto v = Rage::split(sStepsTypesToRemove, ",");
 	if( v.size() == 0 ) return; // Nothing to do!
 
 	// subtract StepsTypes

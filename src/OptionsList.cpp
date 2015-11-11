@@ -202,14 +202,12 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 	ActorUtil::LoadAllCommands( *m_Cursor, sType );
 	this->AddChild( m_Cursor );
 
-	vector<RString> asDirectLines;
-	split( DIRECT_LINES, ",", asDirectLines, true );
+	auto asDirectLines = Rage::split(DIRECT_LINES, ",", Rage::EmptyEntries::skip);
 	for (auto const &s: asDirectLines)
 	{
 		m_setDirectRows.insert( s );
 	}
-	vector<RString> setToLoad;
-	split( TOP_MENUS, ",", setToLoad );
+	auto setToLoad = Rage::split(TOP_MENUS, ",");
 	m_setTopMenus.insert( setToLoad.begin(), setToLoad.end() );
 
 	while( !setToLoad.empty() )
@@ -218,8 +216,9 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 		setToLoad.erase( setToLoad.begin() );
 
 		if( m_Rows.find(sLineName) != m_Rows.end() )
+		{
 			continue;
-
+		}
 		RString sRowCommands = LINE(sLineName);
 		Commands cmds;
 		ParseCommands( sRowCommands, cmds, false );

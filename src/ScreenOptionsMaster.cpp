@@ -28,8 +28,7 @@ REGISTER_SCREEN_CLASS( ScreenOptionsMaster );
 
 void ScreenOptionsMaster::Init()
 {
-	vector<RString> asLineNames;
-	split( LINE_NAMES, ",", asLineNames );
+	auto asLineNames = Rage::split(LINE_NAMES, ",");
 	if( asLineNames.empty() )
 	{
 		LuaHelpers::ReportScriptErrorFmt("\"%s:LineNames\" is empty.", m_sName.c_str());

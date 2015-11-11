@@ -752,12 +752,12 @@ RageDisplay *CreateDisplay()
 		VIDEO_TROUBLESHOOTING_URL "\n\n"+
 		fmt::sprintf(ERROR_VIDEO_DRIVER.GetValue(), GetVideoDriverName().c_str())+"\n\n";
 
-	vector<RString> asRenderers;
-	split( PREFSMAN->m_sVideoRenderers.Get(), ",", asRenderers, true );
+	auto asRenderers = Rage::split( PREFSMAN->m_sVideoRenderers.Get(), ",", Rage::EmptyEntries::skip);
 
 	if( asRenderers.empty() )
+	{
 		RageException::Throw( "%s", ERROR_NO_VIDEO_RENDERERS.GetValue().c_str() );
-
+	}
 	RageDisplay *pRet = nullptr;
 	for (auto const &sRenderer: asRenderers)
 	{
@@ -1019,28 +1019,28 @@ int sm_main(int argc, char* argv[])
 	WriteLogHeader();
 
 	// Set up alternative filesystem trees.
-	if( PREFSMAN->m_sAdditionalFolders.Get() != "" )
+	auto const &addFolders = PREFSMAN->m_sAdditionalFolders.Get();
+	if( addFolders != "" )
 	{
-		vector<RString> dirs;
-		split( PREFSMAN->m_sAdditionalFolders.Get(), ",", dirs, true );
+		auto dirs = Rage::split(addFolders, ",", Rage::EmptyEntries::skip);
 		for (auto const &dir: dirs)
 		{
 			FILEMAN->Mount( "dir", dir, "/" );
 		}
 	}
-	if( PREFSMAN->m_sAdditionalSongFolders.Get() != "" )
+	auto const &songFolders = PREFSMAN->m_sAdditionalSongFolders.Get();
+	if( songFolders != "" )
 	{
-		vector<RString> dirs;
-		split( PREFSMAN->m_sAdditionalSongFolders.Get(), ",", dirs, true );
+		auto dirs = Rage::split(songFolders, ",", Rage::EmptyEntries::skip);
 		for (auto const &dir: dirs)
 		{
 			FILEMAN->Mount( "dir", dir, "/AdditionalSongs" );
 		}
 	}
-	if( PREFSMAN->m_sAdditionalCourseFolders.Get() != "" )
+	auto const &courseFolders = PREFSMAN->m_sAdditionalCourseFolders.Get();
+	if( courseFolders != "" )
 	{
-		vector<RString> dirs;
-		split( PREFSMAN->m_sAdditionalCourseFolders.Get(), ",", dirs, true );
+		auto dirs = Rage::split(courseFolders, ",", Rage::EmptyEntries::skip);
 		for (auto const &dir: dirs)
 		{
 			FILEMAN->Mount( "dir", dir, "/AdditionalCourses" );

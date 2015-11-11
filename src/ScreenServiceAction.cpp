@@ -418,8 +418,7 @@ REGISTER_SCREEN_CLASS( ScreenServiceAction );
 void ScreenServiceAction::BeginScreen()
 {
 	RString sActions = THEME->GetMetric(m_sName,"Actions");
-	vector<RString> vsActions;
-	split( sActions, ",", vsActions );
+	auto vsActions = Rage::split(sActions, ",");
 
 	vector<std::string> vsResults;
 	for (auto &s: vsActions)

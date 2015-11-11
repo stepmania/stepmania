@@ -393,18 +393,6 @@ void GetLanguageInfos( std::vector<const LanguageInfo*> &vAddTo );
 const LanguageInfo *GetLanguageInfo( const RString &sIsoCode );
 RString GetLanguageNameFromISO639Code( RString sName );
 
-// Splits a RString into an std::vector<RString> according the Delimitor.
-void split( const RString &sSource, const RString &sDelimitor, std::vector<RString>& asAddIt, const bool bIgnoreEmpty = true );
-void split( const std::wstring &sSource, const std::wstring &sDelimitor, std::vector<std::wstring> &asAddIt, const bool bIgnoreEmpty = true );
-
-/* In-place split. */
-void split( const RString &sSource, const RString &sDelimitor, int &iBegin, int &iSize, const bool bIgnoreEmpty = true );
-void split( const std::wstring &sSource, const std::wstring &sDelimitor, int &iBegin, int &iSize, const bool bIgnoreEmpty = true );
-
-/* In-place split of partial string. */
-void split( const RString &sSource, const RString &sDelimitor, int &iBegin, int &iSize, int iLen, const bool bIgnoreEmpty ); /* no default to avoid ambiguity */
-void split( const std::wstring &sSource, const std::wstring &sDelimitor, int &iBegin, int &iSize, int iLen, const bool bIgnoreEmpty );
-
 // These methods escapes a string for saving in a .sm or .crs file
 RString SmEscape( const RString &sUnescaped );
 RString SmEscape( const char *cUnescaped, int len );

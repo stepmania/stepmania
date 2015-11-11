@@ -13,6 +13,7 @@
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "RageLog.h"
+#include "RageString.hpp"
 #include "ProductInfo.h"
 #include "LocalizedString.h"
 
@@ -58,7 +59,7 @@ static HBITMAP LoadWin32Surface( const RageSurface *pSplash, HWND hWnd )
 		for( int x = 0; x < s->w; ++x )
 		{
 			unsigned const char *data = line + (x*s->format->BytesPerPixel);
-			
+
 			SetPixelV( BitmapDC, x, y, RGB( data[3], data[2], data[1] ) );
 		}
 	}
@@ -97,10 +98,10 @@ BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, 
 		}
 		if( g_hBitmap == nullptr )
 			g_hBitmap = LoadWin32Surface( "Data/splash.bmp", hWnd );
-		SendMessage( 
-			GetDlgItem(hWnd,IDC_SPLASH), 
-			STM_SETIMAGE, 
-			(WPARAM) IMAGE_BITMAP, 
+		SendMessage(
+			GetDlgItem(hWnd,IDC_SPLASH),
+			STM_SETIMAGE,
+			(WPARAM) IMAGE_BITMAP,
 			(LPARAM) (HANDLE) g_hBitmap );
 		SetWindowTextA( hWnd, PRODUCT_ID );
 		break;
@@ -180,8 +181,7 @@ void LoadingWindow_Win32::Paint()
 
 void LoadingWindow_Win32::SetText( RString sText )
 {
-	vector<RString> asMessageLines;
-	split( sText, "\n", asMessageLines, false );
+	auto asMessageLines = Rage::split(sText, "\n", Rage::EmptyEntries::include);
 	while( asMessageLines.size() < 3 )
 		asMessageLines.push_back( "" );
 
@@ -230,7 +230,7 @@ void LoadingWindow_Win32::SetIndeterminate(bool indeterminate)
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -240,7 +240,7 @@ void LoadingWindow_Win32::SetIndeterminate(bool indeterminate)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

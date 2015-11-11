@@ -2,6 +2,7 @@
 #include "RageUtil_CharConversions.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageString.hpp"
 #include "RageUnicode.hpp"
 
 using std::vector;
@@ -131,8 +132,7 @@ bool ConvertString( RString &str, const RString &encodings )
 	if( str.empty() )
 		return true;
 
-	vector<RString> lst;
-	split( encodings, ",", lst );
+	auto lst = Rage::split( encodings, "," );
 
 	for(unsigned i = 0; i < lst.size(); ++i)
 	{

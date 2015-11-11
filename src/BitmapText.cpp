@@ -482,7 +482,7 @@ void BitmapText::SetTextInternal()
 
 	if( m_iWrapWidthPixels == -1 )
 	{
-		split( RStringToWstring(m_sText), L"\n", m_wTextLines, false );
+		m_wTextLines = Rage::split( RStringToWstring(m_sText), L"\n", Rage::EmptyEntries::include );
 	}
 	else
 	{
@@ -493,18 +493,16 @@ void BitmapText::SetTextInternal()
 		/* "...I can add Japanese wrapping, at least. We could handle hyphens
 		 * and soft hyphens and pretty easily, too." -glenn */
 		// TODO: Move this wrapping logic into Font.
-		vector<RString> asLines;
-		split( m_sText, "\n", asLines, false );
+		auto lines = Rage::split(m_sText, "\n", Rage::EmptyEntries::include);
 		
-		for (auto &singleLine: asLines)
+		for (auto &singleLine: lines)
 		{
-			vector<RString> asWords;
-			split( singleLine, " ", asWords );
+			auto words = Rage::split(singleLine, " ");
 
 			RString sCurLine;
 			int iCurLineWidth = 0;
 
-			for (auto const &sWord: asWords)
+			for (auto const &sWord: words)
 			{
 				int iWidthWord = m_pFont->GetLineWidthInSourcePixels( RStringToWstring(sWord) );
 

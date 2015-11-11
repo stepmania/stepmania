@@ -24,8 +24,7 @@ bool Character::Load( RString sCharDir )
 
 	// save ID
 	{
-		vector<RString> as;
-		split( sCharDir, "/", as );
+		auto as = Rage::split(sCharDir, "/");
 		m_sCharacterID = as.back();
 	}
 

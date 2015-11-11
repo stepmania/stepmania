@@ -374,8 +374,7 @@ static void SortNoteSkins( vector<std::string> &asSkinNames )
 	std::set<RString> setSkinNames;
 	setSkinNames.insert( asSkinNames.begin(), asSkinNames.end() );
 
-	vector<RString> asSorted;
-	split( NOTE_SKIN_SORT_ORDER, ",", asSorted );
+	auto asSorted = Rage::split( NOTE_SKIN_SORT_ORDER, "," );
 
 	std::set<RString> setUnusedSkinNames( setSkinNames );
 	asSkinNames.clear();
@@ -383,7 +382,9 @@ static void SortNoteSkins( vector<std::string> &asSkinNames )
 	for (auto &sSkin: asSorted)
 	{
 		if( setSkinNames.find(sSkin) == setSkinNames.end() )
+		{
 			continue;
+		}
 		asSkinNames.push_back( sSkin );
 		setUnusedSkinNames.erase( sSkin );
 	}

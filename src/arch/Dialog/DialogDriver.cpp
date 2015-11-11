@@ -20,8 +20,7 @@ REGISTER_DIALOG_DRIVER_CLASS( Null );
 DialogDriver *DialogDriver::Create()
 {
 	RString sDrivers = "win32,macosx,null";
-	vector<RString> asDriversToTry;
-	split( sDrivers, ",", asDriversToTry, true );
+	auto asDriversToTry = Rage::split( sDrivers, ",", Rage::EmptyEntries::skip );
 
 	ASSERT( asDriversToTry.size() != 0 );
 
@@ -30,16 +29,19 @@ DialogDriver *DialogDriver::Create()
 		auto iter = RegisterDialogDriver::g_pRegistrees->find( Rage::ci_ascii_string{Driver.c_str()} );
 
 		if( iter == RegisterDialogDriver::g_pRegistrees->end() )
+		{
 			continue;
-
+		}
 		DialogDriver *pRet = (iter->second)();
 		DEBUG_ASSERT( pRet );
 		const RString sError = pRet->Init();
 
 		if( sError.empty() )
-			return pRet;
+		{	return pRet;
+		}
 		if( LOG )
-			LOG->Info( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
+		{	LOG->Info( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
+		}
 		SAFE_DELETE( pRet );
 	}
 	return nullptr;

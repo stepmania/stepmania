@@ -808,14 +808,16 @@ void Font::Load( const RString &sIniPath, RString sChars )
 
 		// If this is a top-level font (not a subfont), load the default font first.
 		if( bIsTopLevelFont )
+		{
 			ImportList.push_back("Common default");
-
+		}
 		/* Check to see if we need to import any other fonts.  Do this
 		 * before loading this font, so any characters in this font
 		 * override imported characters. */
 		RString imports;
 		ini.GetValue( "main", "import", imports );
-		split(imports, ",", ImportList, true);
+		auto toDump = Rage::split(imports, ",", Rage::EmptyEntries::skip);
+		ImportList.insert(ImportList.end(), std::make_move_iterator(toDump.begin()), std::make_move_iterator(toDump.end()));
 
 		if( bIsTopLevelFont  &&  imports.empty()  &&  asTexturePaths.empty() )
 		{

@@ -13,9 +13,13 @@ public:
 
 	virtual HelpDisplay *Copy() const;
 
-	void SetTips( const std::vector<RString> &arrayTips ) { SetTips( arrayTips, arrayTips ); }
-	void SetTips( const std::vector<RString> &arrayTips, const std::vector<RString> &arrayTipsAlt );
-	void GetTips( std::vector<RString> &arrayTipsOut, std::vector<RString> &arrayTipsAltOut ) const { arrayTipsOut = m_arrayTips; arrayTipsAltOut = m_arrayTipsAlt; }
+	void SetTips( std::vector<std::string> const &arrayTips ) { SetTips( arrayTips, arrayTips ); }
+	void SetTips( std::vector<std::string> const &arrayTips, std::vector<std::string> const &arrayTipsAlt );
+	void GetTips( std::vector<std::string> &arrayTipsOut, std::vector<std::string> &arrayTipsAltOut ) const
+	{
+		arrayTipsOut = m_arrayTips;
+		arrayTipsAltOut = m_arrayTipsAlt;
+	}
 	void SetSecsBetweenSwitches( float fSeconds ) { m_fSecsBetweenSwitches = m_fSecsUntilSwitch = fSeconds; }
 
 	virtual void Update( float fDeltaTime );
@@ -24,7 +28,7 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 protected:
-	std::vector<RString> m_arrayTips, m_arrayTipsAlt;
+	std::vector<std::string> m_arrayTips, m_arrayTipsAlt;
 	int m_iCurTipIndex;
 
 	float m_fSecsBetweenSwitches;

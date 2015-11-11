@@ -277,13 +277,12 @@ void ScreenSelectMaster::Init()
 	FOREACH_MenuDir( dir )
 	{
 		const RString order = OPTION_ORDER.GetValue( dir );
-		vector<RString> parts;
-		split( order, ",", parts, true );
+		auto parts = Rage::split(order, ",", Rage::EmptyEntries::skip);
 
 		for (auto &item: parts)
 		{
 			int from, to;
-			if( sscanf( item, "%d:%d", &from, &to ) != 2 )
+			if( std::sscanf( item.c_str(), "%d:%d", &from, &to ) != 2 )
 			{
 				LuaHelpers::ReportScriptErrorFmt( "%s::OptionOrder%s parse error", m_sName.c_str(), MenuDirToString(dir).c_str() );
 				continue;

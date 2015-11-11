@@ -308,7 +308,7 @@ namespace SymbolLookup
 			| UNDNAME_NO_CV_THISTYPE
 			| UNDNAME_NO_ALLOCATION_MODEL
 			| UNDNAME_NO_ACCESS_SPECIFIERS // no public:
-			| UNDNAME_NO_MS_KEYWORDS // no __cdecl 
+			| UNDNAME_NO_MS_KEYWORDS // no __cdecl
 			| UNDNAME_NO_MEMBER_TYPE // no virtual, static
 			) )
 		{
@@ -387,7 +387,7 @@ namespace SymbolLookup
 		}
 
 		wsprintf( buf, "%08lx: %s!%08lx",
-			(unsigned long) ptr, sName.c_str(), 
+			(unsigned long) ptr, sName.c_str(),
 			(unsigned long) meminfo.AllocationBase );
 	}
 }
@@ -585,7 +585,8 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 	{
 		return false;
 	}
-	split(tmp, "$$", Data.m_asCheckpoints);
+	auto toDump = Rage::split(tmp, "$$");
+	Data.m_asCheckpoints.insert(Data.m_asCheckpoints.end(), std::make_move_iterator(toDump.begin()), std::make_move_iterator(toDump.end()));
 
 	// 6. Read the crashed thread's name.
 	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
@@ -707,7 +708,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 			{
 			case IDC_STATIC_HEADER_TEXT:
 			case IDC_STATIC_ICON:
-				hbr = (HBRUSH)::GetStockObject(WHITE_BRUSH); 
+				hbr = (HBRUSH)::GetStockObject(WHITE_BRUSH);
 				SetBkMode( hdc, OPAQUE );
 				SetBkColor( hdc, RGB(255,255,255) );
 				break;
@@ -907,7 +908,7 @@ void CrashHandler::CrashHandlerHandleArgs( int argc, char* argv[] )
 /*
  * (c) 2003-2006 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -917,7 +918,7 @@ void CrashHandler::CrashHandlerHandleArgs( int argc, char* argv[] )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

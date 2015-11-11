@@ -154,8 +154,7 @@ void ModIconRow::SetFromGameState()
 	PlayerNumber pn = m_pn;
 
 	RString sOptions = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetStage().GetString();
-	vector<RString> vsOptions;
-	split( sOptions, ", ", vsOptions, true );
+	auto vsOptions = Rage::split(sOptions, ", ", Rage::EmptyEntries::skip);
 
 	vector<RString> vsText;	// fill these with what will be displayed on the tabs
 	vsText.resize( m_vpModIcon.size() );
@@ -164,7 +163,7 @@ void ModIconRow::SetFromGameState()
 	for (auto sOption: vsOptions)
 	{
 		int iPerferredCol = OptionToPreferredColumn( sOption );
-		Rage::clamp( iPerferredCol, 0, (int)m_vpModIcon.size()-1 );
+		Rage::clamp( iPerferredCol, 0, static_cast<int>(m_vpModIcon.size()) - 1 );
 
 		if( iPerferredCol == -1 )
 			continue;	// skip

@@ -12,6 +12,7 @@
 #include "BacktraceNames.h"
 
 #include "RageUtil.h"
+#include "RageString.hpp"
 #include "CrashHandler.h"
 #include "CrashHandlerInternal.h"
 #include "RageLog.h" /* for RageLog::GetAdditionalLog, etc. only */
@@ -136,8 +137,7 @@ static void child_process()
 	if( !child_read(3, temp, size) )
 		return;
 
-	vector<RString> Checkpoints;
-	split(temp, "$$", Checkpoints);
+	auto checkpoints = Rage::split(temp, "$$");
 	delete [] temp;
 
 	/* 6. Read the crashed thread's name. */
@@ -244,9 +244,9 @@ static void child_process()
 	fprintf( CrashDump, "Crashed thread: %s\n\n", CrashedThread.c_str() );
 
 	fprintf(CrashDump, "Checkpoints:\n");
-	for (auto &checkpoint: Checkpoints)
+	for (auto &checkpoint: checkpoints)
 	{
-		fputs( checkpoint, CrashDump );
+		fputs( checkpoint.c_str(), CrashDump );
 	}
 	fprintf( CrashDump, "\n" );
 

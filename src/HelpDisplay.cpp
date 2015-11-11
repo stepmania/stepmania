@@ -23,7 +23,7 @@ void HelpDisplay::Load( const RString &sType )
 	m_fSecsBetweenSwitches = THEME->GetMetricF(sType,"TipSwitchTime");
 }
 
-void HelpDisplay::SetTips( const vector<RString> &arrayTips, const vector<RString> &arrayTipsAlt )
+void HelpDisplay::SetTips( vector<std::string> const &arrayTips, vector<std::string> const &arrayTipsAlt )
 {
 	ASSERT( arrayTips.size() == arrayTipsAlt.size() );
 
@@ -74,7 +74,7 @@ public:
 	{
 		luaL_checktype( L, 1, LUA_TTABLE );
 		lua_pushvalue( L, 1 );
-		vector<RString> arrayTips;
+		vector<std::string> arrayTips;
 		LuaHelpers::ReadArrayFromTable( arrayTips, L );
 		lua_pop( L, 1 );
 		for (auto &tip: arrayTips)
@@ -83,7 +83,7 @@ public:
 		}
 		if( lua_gettop(L) > 1 && !lua_isnil( L, 2 ) )
 		{
-			vector<RString> arrayTipsAlt;
+			vector<std::string> arrayTipsAlt;
 			luaL_checktype( L, 2, LUA_TTABLE );
 			lua_pushvalue( L, 2 );
 			LuaHelpers::ReadArrayFromTable( arrayTipsAlt, L );
@@ -101,15 +101,14 @@ public:
 	}
 	static int SetTipsColonSeparated( T* p, lua_State *L )
 	{
-		vector<RString> vs;
-		split( SArg(1), "::", vs );
+		auto vs = Rage::split(luaL_checkstring(L,1), "::");
 		p->SetTips( vs );
 		COMMON_RETURN_SELF;
 	}
 
 	static int gettips( T* p, lua_State *L )
 	{
-		vector<RString> arrayTips, arrayTipsAlt;
+		vector<std::string> arrayTips, arrayTipsAlt;
 		p->GetTips( arrayTips, arrayTipsAlt );
 
 		LuaHelpers::CreateTableFromArray( arrayTips, L );

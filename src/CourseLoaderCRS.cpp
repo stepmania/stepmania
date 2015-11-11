@@ -125,8 +125,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			float end = -9999;
 			for( unsigned j = 1; j < sParams.params.size(); ++j )
 			{
-				vector<RString> sBits;
-				split( sParams[j], "=", sBits, false );
+				auto sBits = Rage::split(sParams[j], "=", Rage::EmptyEntries::include);
 				if( sBits.size() < 2 )
 				{
 					continue;
@@ -134,11 +133,17 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 
 				Rage::ci_ascii_string tagName{ Rage::trim(sBits[0]).c_str() };
 				if( tagName == "TIME" )
+				{
 					attack.fStartSecond = max( StringToFloat(sBits[1]), 0.0f );
+				}
 				else if( tagName == "LEN" )
+				{
 					attack.fSecsRemaining = StringToFloat( sBits[1] );
+				}
 				else if( tagName == "END" )
+				{
 					end = StringToFloat( sBits[1] );
+				}
 				else if( tagName == "MODS" )
 				{
 					attack.sModifiers = sBits[1];
@@ -233,8 +238,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				//new_entry.bSecret = true;
 				RString sSong = sParams[1];
 				Rage::replace(sSong, '\\', '/' );
-				vector<RString> bits;
-				split( sSong, "/", bits );
+				auto bits = Rage::split(sSong, "/");
 				if( bits.size() == 2 )
 				{
 					new_entry.songCriteria.m_sGroupName = bits[0];
@@ -257,8 +261,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			{
 				RString sSong = sParams[1];
 				Rage::replace(sSong, '\\', '/' );
-				vector<RString> bits;
-				split( sSong, "/", bits );
+				auto bits = Rage::split(sSong, "/");
 
 				Song *pSong = nullptr;
 				if( bits.size() == 2 )
@@ -356,8 +359,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 		else if(tagName == "STYLE" )
 		{
 			RString sStyles = sParams[1];
-			vector<RString> asStyles;
-			split( sStyles, ",", asStyles );
+			auto asStyles = Rage::split(sStyles, ",");
 			for (auto &s: asStyles)
 			{
 				out.m_setStyles.insert( s );
@@ -419,8 +421,7 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 
 	// save group name
 	{
-		vector<RString> parts;
-		split( sPath, "/", parts, false );
+		auto parts = Rage::split(sPath, "/", Rage::EmptyEntries::include);
 		if( parts.size() >= 4 ) // e.g. "/Courses/blah/fun.crs"
 			out.m_sGroupName = parts[parts.size()-2];
 	}

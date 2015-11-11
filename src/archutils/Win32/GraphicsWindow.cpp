@@ -171,7 +171,7 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 			PCOPYDATASTRUCT pMyCDS = (PCOPYDATASTRUCT) lParam;
 			RString sCommandLine( (char*)pMyCDS->lpData, pMyCDS->cbData );
 			CommandLineActions::CommandLineArgs args;
-			split( sCommandLine, "|", args.argv, false );
+			args.argv = Rage::split(sCommandLine, "|", Rage::EmptyEntries::include);
 			CommandLineActions::ToProcess.push_back( args );
 			break;
 		}
