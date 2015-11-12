@@ -54,8 +54,8 @@ private:
 
 	std::vector<std::string> m_Packages;
 
-	std::vector<RString> m_Links;
-	std::vector<RString> m_LinkTitles;
+	std::vector<std::string> m_Links;
+	std::vector<std::string> m_LinkTitles;
 	BitmapText	m_textURL;
 
 	int m_iPackagesPos;

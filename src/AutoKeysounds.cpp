@@ -120,7 +120,7 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 	pPlayer2 = nullptr;
 	pShared = nullptr;
 
-	vector<RString> vsMusicFile;
+	vector<std::string> vsMusicFile;
 	const RString sMusicPath = GAMESTATE->m_pCurSteps[GAMESTATE->GetMasterPlayerNumber()]->GetMusicPath();
 
 	if( !sMusicPath.empty() )

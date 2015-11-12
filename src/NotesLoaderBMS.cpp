@@ -234,7 +234,7 @@ struct bmsCommandTree
 		};
 
 		BMSHeaders Commands;
-		vector<RString> ChannelCommands;
+		vector<std::string> ChannelCommands;
 		vector<bmsNodeS*> branches;
 		bmsNodeS* parent;
 
@@ -342,20 +342,20 @@ struct bmsCommandTree
 		-az
 	*/
 
-	void appendNodeElements(bmsNodeS* node, BMSHeaders &headersOut, vector<RString> &linesOut)
+	void appendNodeElements(bmsNodeS* node, BMSHeaders &headersOut, vector<std::string> &linesOut)
 	{
 		for (BMSHeaders::iterator i = node->Commands.begin(); i != node->Commands.end(); ++i)
 		{
 			headersOut[i->first] = i->second;
 		}
 
-		for (vector<RString>::iterator i = node->ChannelCommands.begin(); i != node->ChannelCommands.end(); ++i)
+		for (vector<std::string>::iterator i = node->ChannelCommands.begin(); i != node->ChannelCommands.end(); ++i)
 		{
 			linesOut.push_back(*i);
 		}
 	}
 
-	bool triggerBranches(bmsNodeS* node, BMSHeaders &headersOut, vector<RString> &linesOut)
+	bool triggerBranches(bmsNodeS* node, BMSHeaders &headersOut, vector<std::string> &linesOut)
 	{
 		auto doesEvaluate = [this, &headersOut, &linesOut](bmsNodeS *b) {
 			return evaluateNode(b, headersOut, linesOut);
@@ -363,7 +363,7 @@ struct bmsCommandTree
 		return std::any_of(node->branches.begin(), node->branches.end(), doesEvaluate);
 	}
 
-	bool evaluateNode(bmsNodeS* node, BMSHeaders &headersOut, vector<RString> &linesOut)
+	bool evaluateNode(bmsNodeS* node, BMSHeaders &headersOut, vector<std::string> &linesOut)
 	{
 		switch (node->conditionType)
 		{
@@ -395,7 +395,7 @@ struct bmsCommandTree
 		return false;
 	}
 
-	void evaluateBMSTree(BMSHeaders &headersOut, vector<RString> &linesOut)
+	void evaluateBMSTree(BMSHeaders &headersOut, vector<std::string> &linesOut)
 	{
 		evaluateNode(&root, headersOut, linesOut);
 	}
@@ -542,10 +542,10 @@ bool BMSChart::Load( const RString &chartPath )
 		Tree.doStatement(line, referencedTracks);
 	}
 
-	vector<RString> lines;
+	vector<std::string> lines;
 	Tree.evaluateBMSTree(headers, lines);
 
-	for (vector<RString>::iterator i = lines.begin(); i != lines.end(); ++i)
+	for (vector<std::string>::iterator i = lines.begin(); i != lines.end(); ++i)
 	{
 		RString line = *i;
 		RString data = line.substr(7);

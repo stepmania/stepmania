@@ -945,7 +945,7 @@ bool SongUtil::ValidateCurrentStepsMusic(const RString &answer, RString &error)
 	return valid;
 }
 
-void SongUtil::GetAllSongGenres( vector<RString> &vsOut )
+void SongUtil::GetAllSongGenres( vector<std::string> &vsOut )
 {
 	std::set<RString> genres;
 	for (auto *song: SONGMAN->GetAllSongs())

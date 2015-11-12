@@ -160,7 +160,7 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 	case download: sAction = "GET"; break;
 	}
 
-	vector<RString> vsHeaders;
+	vector<std::string> vsHeaders;
 	vsHeaders.push_back( sAction+" "+sAddress+" HTTP/1.0" );
 	vsHeaders.push_back( "Host: " + Server );
 	vsHeaders.push_back( "Cookie: " + g_sCookie.Get() );
@@ -340,7 +340,7 @@ bool FileTransfer::ParseHTTPAddress( const RString &URL, RString &sProto, RStrin
 		"([^/:]+)"     // [1]: a.b.com
 		"(:([0-9]+))?" // [2], [3]: :1234 (optional, default 80)
 		"(/(.*))?$");    // [4], [5]: /foo.html (optional)
-	vector<RString> asMatches;
+	vector<std::string> asMatches;
 	if( !re.Compare( URL, asMatches ) )
 		return false;
 	ASSERT( asMatches.size() == 6 );

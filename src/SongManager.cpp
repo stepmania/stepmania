@@ -233,7 +233,7 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 	 * from there into here. -aj */
 	// Group background
 
-	//vector<RString> arrayGroupBackgrounds;
+	//vector<std::string> arrayGroupBackgrounds;
 	//GetDirListing( sDir+sGroupDirName+"/*-bg.png", arrayGroupBanners );
 	//GetDirListing( sDir+sGroupDirName+"/*-bg.jpg", arrayGroupBanners );
 	//GetDirListing( sDir+sGroupDirName+"/*-bg.jpeg", arrayGroupBanners );
@@ -524,7 +524,7 @@ RString SongManager::GetSongGroupBackgroundPath( RString sSongGroup ) const
 	return RString();
 }
 */
-void SongManager::GetSongGroupNames( vector<RString> &AddTo ) const
+void SongManager::GetSongGroupNames( vector<std::string> &AddTo ) const
 {
 	AddTo.insert(AddTo.end(), m_sSongGroupNames.begin(), m_sSongGroupNames.end() );
 }
@@ -629,7 +629,7 @@ RString SongManager::GetCourseGroupBannerPath( const RString &sCourseGroup ) con
 	}
 }
 
-void SongManager::GetCourseGroupNames( vector<RString> &AddTo ) const
+void SongManager::GetCourseGroupNames( vector<std::string> &AddTo ) const
 {
 	for (auto const &iter: m_mapCourseGroupToInfo)
 	{
@@ -839,7 +839,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 {
 	LOG->Trace( "Loading courses." );
 
-	vector<RString> vsCourseDirs;
+	vector<std::string> vsCourseDirs;
 	vsCourseDirs.push_back( SpecialFiles::COURSES_DIR );
 	vsCourseDirs.push_back( ADDITIONAL_COURSES_DIR );
 
@@ -904,7 +904,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 void SongManager::InitAutogenCourses()
 {
 	// Create group courses for Endless and Nonstop
-	vector<RString> saGroupNames;
+	vector<std::string> saGroupNames;
 	this->GetSongGroupNames( saGroupNames );
 	Course* pCourse;
 	for (auto const &sGroupName: saGroupNames)
@@ -1588,7 +1588,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 	{
 		m_vPreferredSongSort.clear();
 
-		vector<RString> asLines;
+		vector<std::string> asLines;
 		RString sFile = THEME->GetPathO( "SongManager", sPreferredSongs );
 		GetFileContents( sFile, asLines );
 		if( asLines.empty() )
@@ -1693,7 +1693,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 	{
 		m_vPreferredCourseSort.clear();
 
-		vector<RString> asLines;
+		vector<std::string> asLines;
 		RString sFile = THEME->GetPathO( "SongManager", sPreferredCourses );
 		if( !GetFileContents(sFile, asLines) )
 			return;
@@ -2132,9 +2132,9 @@ public:
 
 	static int GetSongGroupNames( T* p, lua_State *L )
 	{
-		vector<RString> v;
+		vector<std::string> v;
 		p->GetSongGroupNames( v );
-		LuaHelpers::CreateTableFromArray<RString>( v, L );
+		LuaHelpers::CreateTableFromArray<std::string>( v, L );
 		return 1;
 	}
 
@@ -2157,9 +2157,9 @@ public:
 
 	static int GetCourseGroupNames( T* p, lua_State *L )
 	{
-		vector<RString> v;
+		vector<std::string> v;
 		p->GetCourseGroupNames( v );
-		LuaHelpers::CreateTableFromArray<RString>( v, L );
+		LuaHelpers::CreateTableFromArray<std::string>( v, L );
 		return 1;
 	}
 

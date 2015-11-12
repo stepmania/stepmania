@@ -48,7 +48,7 @@ static void GetGLExtensions( std::set<string> &ext )
 {
 	const char *szBuf = (const char *) glGetString( GL_EXTENSIONS );
 
-	vector<RString> asList;
+	vector<std::string> asList;
 	split( szBuf, " ", asList );
 
 	for (auto &item: asList)

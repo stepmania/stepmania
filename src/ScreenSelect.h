@@ -29,7 +29,7 @@ protected:
 	 * Derived classes should look here for the choices. */
 	std::vector<GameCommand>	m_aGameCommands;
 
-	std::vector<RString>		m_asSubscribedMessages;
+	std::vector<std::string>		m_asSubscribedMessages;
 
 	/** @brief Count up to the time between idle comment announcer sounds. */
 	RageTimer		m_timerIdleComment;

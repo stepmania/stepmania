@@ -661,7 +661,7 @@ namespace
 	struct LClass
 	{
 		RString m_sBaseName;
-		vector<RString> m_vMethods;
+		vector<std::string> m_vMethods;
 	};
 }
 
@@ -676,13 +676,13 @@ XNode *LuaHelpers::GetLuaInformation()
 	XNode *pEnumsNode = pLuaNode->AppendChild( "Enums" );
 	XNode *pConstantsNode = pLuaNode->AppendChild( "Constants" );
 
-	vector<RString> vFunctions;
+	vector<std::string> vFunctions;
 	std::map<RString, LClass> mClasses;
-	std::map<RString, vector<RString> > mNamespaces;
+	std::map<RString, vector<std::string> > mNamespaces;
 	std::map<RString, RString> mSingletons;
 	std::map<RString, float> mConstants;
 	std::map<RString, RString> mStringConstants;
-	std::map<RString, vector<RString> > mEnums;
+	std::map<RString, vector<std::string> > mEnums;
 
 	Lua *L = LUA->Get();
 	FOREACH_LUATABLE( L, LUA_GLOBALSINDEX )
@@ -785,7 +785,7 @@ XNode *LuaHelpers::GetLuaInformation()
 		LuaHelpers::Pop( L, sNamespace );
 		if( find(BuiltInPackages.begin(), endIter, sNamespace) != endIter )
 			continue;
-		vector<RString> &vNamespaceFunctions = mNamespaces[sNamespace];
+		vector<std::string> &vNamespaceFunctions = mNamespaces[sNamespace];
 		FOREACH_LUATABLE( L, -1 )
 		{
 			RString sFunction;
@@ -835,7 +835,7 @@ XNode *LuaHelpers::GetLuaInformation()
 	for (auto &iter: mNamespaces)
 	{
 		XNode *pNamespaceNode = pNamespacesNode->AppendChild( "Namespace" );
-		const vector<RString> &vNamespace = iter.second;
+		const vector<std::string> &vNamespace = iter.second;
 		pNamespaceNode->AppendAttr( "name", iter.first );
 
 		for (auto const &func: vNamespace)
@@ -850,7 +850,7 @@ XNode *LuaHelpers::GetLuaInformation()
 	{
 		XNode *pEnumNode = pEnumsNode->AppendChild( "Enum" );
 
-		const vector<RString> &vEnum = iter.second;
+		const vector<std::string> &vEnum = iter.second;
 		pEnumNode->AppendAttr( "name", iter.first );
 
 		for( unsigned i = 0; i < vEnum.size(); ++i )

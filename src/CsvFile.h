@@ -15,7 +15,7 @@ public:
 	bool WriteFile( const RString &sPath ) const;
 	bool WriteFile( RageFileBasic &sFile ) const;
 
-	typedef std::vector<RString> StringVector;
+	typedef std::vector<std::string> StringVector;
 	std::vector<StringVector> m_vvs;
 
 private:

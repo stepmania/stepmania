@@ -272,11 +272,11 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 	ASSERT( m_BGAnimations.find(bd) == m_BGAnimations.end() );
 
 	// Resolve the background names
-	vector<RString> vsToResolve;
+	vector<std::string> vsToResolve;
 	vsToResolve.push_back( bd.m_sFile1 );
 	vsToResolve.push_back( bd.m_sFile2 );
 
-	vector<RString> vsResolved;
+	vector<std::string> vsResolved;
 	vsResolved.resize( vsToResolve.size() );
 	vector<LuaThreadVariable *> vsResolvedRef;
 	vsResolvedRef.resize( vsToResolve.size() );
@@ -309,7 +309,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 		if( vsPaths.empty() )	BackgroundUtil::GetGlobalBGAnimations(	pSong, sToResolve, vsPaths, vsThrowAway );
 		if( vsPaths.empty() )	BackgroundUtil::GetGlobalRandomMovies(	pSong, sToResolve, vsPaths, vsThrowAway );
 
-		RString &sResolved = vsResolved[i];
+		auto &sResolved = vsResolved[i];
 
 		if( !vsPaths.empty() )
 		{

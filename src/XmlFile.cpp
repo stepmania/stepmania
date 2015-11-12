@@ -13,13 +13,13 @@
 #include "DateTime.h"
 #include "LuaManager.h"
 
-const RString XNode::TEXT_ATTRIBUTE = "__TEXT__";
+std::string const XNode::TEXT_ATTRIBUTE = "__TEXT__";
 
 XNode::XNode()
 {
 }
 
-XNode::XNode( const RString &sName )
+XNode::XNode( std::string const &sName )
 {
 	m_sName = sName;
 }
@@ -49,17 +49,17 @@ void XNode::Free()
 	m_attrs.clear();
 }
 
-void XNodeStringValue::GetValue( RString &out ) const		{ out = m_sValue; }
+void XNodeStringValue::GetValue( std::string &out ) const		{ out = m_sValue; }
 void XNodeStringValue::GetValue( int &out ) const		{ out = StringToInt(m_sValue); }
 void XNodeStringValue::GetValue( float &out ) const		{ out = StringToFloat(m_sValue); }
 void XNodeStringValue::GetValue( bool &out ) const		{ out = StringToInt(m_sValue) != 0; }
-void XNodeStringValue::GetValue( unsigned &out ) const		{ out = strtoul(m_sValue,nullptr,0); }
+void XNodeStringValue::GetValue( unsigned &out ) const		{ out = strtoul(m_sValue.c_str(),nullptr,0); }
 void XNodeStringValue::PushValue( lua_State *L ) const
 {
 	LuaHelpers::Push( L, m_sValue );
 }
 
-void XNodeStringValue::SetValue( const RString &v )		{ m_sValue = v; }
+void XNodeStringValue::SetValue( std::string const &v )		{ m_sValue = v; }
 void XNodeStringValue::SetValue( int v )			{ m_sValue = fmt::sprintf("%d",v); }
 void XNodeStringValue::SetValue( float v )			{ m_sValue = fmt::sprintf("%f",v); }
 void XNodeStringValue::SetValue( unsigned v )			{ m_sValue = fmt::sprintf("%u",v); }
@@ -68,7 +68,7 @@ void XNodeStringValue::SetValueFromStack( lua_State *L )
 	LuaHelpers::Pop( L, m_sValue );
 }
 
-const XNodeValue *XNode::GetAttr( const RString &attrname ) const
+const XNodeValue *XNode::GetAttr( std::string const &attrname ) const
 {
 	XAttrs::const_iterator it = m_attrs.find( attrname );
 	if( it != m_attrs.end() )
@@ -76,7 +76,7 @@ const XNodeValue *XNode::GetAttr( const RString &attrname ) const
 	return nullptr;
 }
 
-bool XNode::PushAttrValue( lua_State *L, const RString &sName ) const
+bool XNode::PushAttrValue( lua_State *L, std::string const &sName ) const
 {
 	const XNodeValue *pAttr = GetAttr(sName);
 	if( pAttr == nullptr )
@@ -88,7 +88,7 @@ bool XNode::PushAttrValue( lua_State *L, const RString &sName ) const
 	return true;
 }
 
-XNodeValue *XNode::GetAttr( const RString &attrname )
+XNodeValue *XNode::GetAttr( std::string const &attrname )
 {
 	XAttrs::iterator it = m_attrs.find( attrname );
 	if( it != m_attrs.end() )
@@ -96,7 +96,7 @@ XNodeValue *XNode::GetAttr( const RString &attrname )
 	return nullptr;
 }
 
-XNode *XNode::GetChild( const RString &sName )
+XNode *XNode::GetChild( std::string const &sName )
 {
 	auto by_name= m_children_by_name.find(sName);
 	if(by_name != m_children_by_name.end() &&
@@ -107,7 +107,7 @@ XNode *XNode::GetChild( const RString &sName )
 	return nullptr;
 }
 
-bool XNode::PushChildValue( lua_State *L, const RString &sName ) const
+bool XNode::PushChildValue( lua_State *L, std::string const &sName ) const
 {
 	const XNode *pChild = GetChild(sName);
 	if( pChild == nullptr )
@@ -119,7 +119,7 @@ bool XNode::PushChildValue( lua_State *L, const RString &sName ) const
 	return true;
 }
 
-const XNode *XNode::GetChild( const RString &sName ) const
+const XNode *XNode::GetChild( std::string const &sName ) const
 {
 	auto by_name= m_children_by_name.find(sName);
 	if(by_name != m_children_by_name.end() &&
@@ -176,7 +176,7 @@ void XNode::RenameChildInByName(XNode* node)
 
 
 // detach attribute
-bool XNode::RemoveAttr( const RString &sName )
+bool XNode::RemoveAttr( std::string const &sName )
 {
 	XAttrs::iterator it = m_attrs.find( sName );
 	if( it == m_attrs.end() )
@@ -189,7 +189,7 @@ bool XNode::RemoveAttr( const RString &sName )
 
 /* If bOverwrite is true and a node already exists with that name, the old value will be deleted.
  * If bOverwrite is false and a node already exists with that name, the new value will be deleted. */
-XNodeValue *XNode::AppendAttrFrom( const RString &sName, XNodeValue *pValue, bool bOverwrite )
+XNodeValue *XNode::AppendAttrFrom( std::string const &sName, XNodeValue *pValue, bool bOverwrite )
 {
 	DEBUG_ASSERT( sName.size() );
 	std::pair<XAttrs::iterator,bool> ret = m_attrs.insert( std::make_pair(sName, (XNodeValue *) nullptr) );
@@ -211,7 +211,7 @@ XNodeValue *XNode::AppendAttrFrom( const RString &sName, XNodeValue *pValue, boo
 	return ret.first->second;
 };
 
-XNodeValue *XNode::AppendAttr( const RString &sName )
+XNodeValue *XNode::AppendAttr( std::string const &sName )
 {
 	DEBUG_ASSERT( sName.size() );
 	std::pair<XAttrs::iterator,bool> ret = m_attrs.insert( std::make_pair(sName, (XNodeValue *) nullptr) );

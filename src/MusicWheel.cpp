@@ -90,12 +90,12 @@ void MusicWheel::Load( RString sType )
 	HIDE_INACTIVE_SECTIONS		.Load(sType,"OnlyShowActiveSection");
 	HIDE_ACTIVE_SECTION_TITLE		.Load(sType,"HideActiveSectionTitle");
 	REMIND_WHEEL_POSITIONS		.Load(sType,"RemindWheelPositions");
-  auto vsModeChoiceNames = Rage::split(MODE_MENU_CHOICE_NAMES.GetValue(), ",");
+	auto vsModeChoiceNames = Rage::split(MODE_MENU_CHOICE_NAMES.GetValue(), ",");
 	CHOICE				.Load(sType,CHOICE_NAME,vsModeChoiceNames);
 	SECTION_COLORS			.Load(sType,SECTION_COLORS_NAME,NUM_SECTION_COLORS);
 
 	CUSTOM_WHEEL_ITEM_NAMES		.Load(sType,"CustomWheelItemNames");
-  auto vsCustomItemNames = Rage::split(CUSTOM_WHEEL_ITEM_NAMES.GetValue(), ",");
+	auto vsCustomItemNames = Rage::split(CUSTOM_WHEEL_ITEM_NAMES.GetValue(), ",");
 	CUSTOM_CHOICES.Load(sType,CUSTOM_WHEEL_ITEM_NAME,vsCustomItemNames);
 	CUSTOM_CHOICE_COLORS.Load(sType,CUSTOM_WHEEL_ITEM_COLOR,vsCustomItemNames);
 

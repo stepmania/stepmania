@@ -20,7 +20,7 @@ private:
 	virtual void ExportOptions( int row, const std::vector<PlayerNumber> &vpns );
 	virtual void ProcessMenuStart( const InputEventPlus &input );
 
-	std::vector<RString> m_asGroups;
+	std::vector<std::string> m_asGroups;
 };
 
 class ScreenOptionsToggleSongsSubPage: public ScreenOptions

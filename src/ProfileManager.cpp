@@ -219,7 +219,7 @@ bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 	return true;
 }
 
-void ProfileManager::GetMemoryCardProfileDirectoriesToTry( vector<RString> &asDirsToTry )
+void ProfileManager::GetMemoryCardProfileDirectoriesToTry( vector<std::string> &asDirsToTry )
 {
 	/* Try to load the preferred profile. */
 	asDirsToTry.push_back( PREFSMAN->m_sMemoryCardProfileSubdir.ToString() );
@@ -237,7 +237,7 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn, bool bLoadEdits
 	if( MEMCARDMAN->GetCardState(pn) != MemoryCardState_Ready )
 		return false;
 
-	vector<RString> asDirsToTry;
+	vector<std::string> asDirsToTry;
 	GetMemoryCardProfileDirectoriesToTry( asDirsToTry );
 	m_bNewProfile[pn] = true;
 
@@ -307,7 +307,7 @@ bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn, bool bLoadEdits
 
 bool ProfileManager::FastLoadProfileNameFromMemoryCard( RString sRootDir, RString &sName ) const
 {
-	vector<RString> asDirsToTry;
+	vector<std::string> asDirsToTry;
 	GetMemoryCardProfileDirectoriesToTry( asDirsToTry );
 
 	for (auto const &sSubdir: asDirsToTry)
@@ -500,7 +500,7 @@ bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 	// handled. -Kyz
 	int max_profile_number= -1;
 	int first_free_number= 0;
-	vector<RString> profile_ids;
+	vector<std::string> profile_ids;
 	GetLocalProfileIDs(profile_ids);
 	for (auto const &id: profile_ids)
 	{
@@ -967,7 +967,7 @@ bool ProfileManager::IsPersistentProfile( ProfileSlot slot ) const
 	}
 }
 
-void ProfileManager::GetLocalProfileIDs( vector<RString> &vsProfileIDsOut ) const
+void ProfileManager::GetLocalProfileIDs( vector<std::string> &vsProfileIDsOut ) const
 {
 	vsProfileIDsOut.clear();
 	for (auto &i: g_vLocalProfile)
@@ -1099,9 +1099,9 @@ public:
 	}
 	static int GetLocalProfileIDs( T* p, lua_State *L )
 	{
-		vector<RString> vsProfileIDs;
+		vector<std::string> vsProfileIDs;
 		p->GetLocalProfileIDs(vsProfileIDs);
-		LuaHelpers::CreateTableFromArray<RString>( vsProfileIDs, L );
+		LuaHelpers::CreateTableFromArray<std::string>( vsProfileIDs, L );
 		return 1;
 	}
 	static int GetLocalProfileDisplayNames( T* p, lua_State *L )

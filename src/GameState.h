@@ -264,7 +264,7 @@ public:
 	BroadcastOnChange<bool> m_bGameplayLeadIn;
 
 	// if re-adding noteskin changes in courses, add functions and such here -aj
-	void GetAllUsedNoteSkins( std::vector<RString> &out ) const;
+	void GetAllUsedNoteSkins( std::vector<std::string> &out ) const;
 
 	static const float MUSIC_SECONDS_INVALID;
 
@@ -287,7 +287,7 @@ public:
 	float m_DanceDuration;
 
 	// Random Attacks & Attack Mines
-	std::vector<RString>		m_RandomAttacks;
+	std::vector<std::string>		m_RandomAttacks;
 
 	// used in PLAY_MODE_BATTLE
 	float	m_fOpponentHealthPercent;
@@ -354,7 +354,7 @@ public:
 	void GetRankingFeats( PlayerNumber pn, std::vector<RankingFeat> &vFeatsOut ) const;
 	bool AnyPlayerHasRankingFeats() const;
 	void StoreRankingName( PlayerNumber pn, RString name );	// Called by name entry screens
-	std::vector<RString*> m_vpsNamesThatWereFilled;	// filled on StoreRankingName,
+	std::vector<std::string *> m_vpsNamesThatWereFilled;	// filled on StoreRankingName,
 
 	// Award stuff
 	// lowest priority in front, highest priority at the back.

@@ -381,7 +381,7 @@ std::string const RankingCategoryToString( RankingCategory rc );
 RankingCategory StringToRankingCategory( const RString& rc );
 LuaDeclareType( RankingCategory );
 
-extern const std::vector<RString> RANKING_TO_FILL_IN_MARKER;
+extern const std::vector<std::string> RANKING_TO_FILL_IN_MARKER;
 inline bool IsRankingToFillIn( const RString& sName ) { return !sName.empty() && sName[0]=='#'; }
 
 RankingCategory AverageMeterToRankingCategory( int iAverageMeter );

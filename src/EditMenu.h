@@ -192,7 +192,7 @@ private:
 
 	void StripLockedStepsAndDifficulty( std::vector<StepsAndDifficulty> &v );
 	void GetSongsToShowForGroup( const RString &sGroup, std::vector<Song*> &vpSongsOut );
-	void GetGroupsToShow( std::vector<RString> &vsGroupsOut );
+	void GetGroupsToShow( std::vector<std::string> &vsGroupsOut );
 
 	void UpdateArrows();
 	AutoActor	m_sprArrows[NUM_ARROWS];
@@ -220,7 +220,7 @@ private:
 	};
 
 	/** @brief The list of groups. */
-	std::vector<RString>			m_sGroups;
+	std::vector<std::string>			m_sGroups;
 	/** @brief The list of Songs in a group. */
 	std::vector<Song*>			m_pSongs;
 	std::vector<StepsType>		m_StepsTypes;

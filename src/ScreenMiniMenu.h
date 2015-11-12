@@ -52,7 +52,7 @@ struct MenuRowDef
 	}
 
 	MenuRowDef(int r, RString n, bool e, EditMode s,
-			   bool bTT, bool bTI, int d, std::vector<RString> options):
+			   bool bTT, bool bTI, int d, std::vector<std::string> options):
 			iRowCode(r), sName(n), bEnabled(e), pfnEnabled(nullptr),
 			emShowIn(s), iDefaultChoice(d), choices(),
 			bThemeTitle(bTT), bThemeItems(bTI)

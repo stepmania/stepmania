@@ -12,7 +12,7 @@ public:
 	struct value_t
 	{
 		/** @brief The list of parameters. */
-		std::vector<RString> params;
+		std::vector<std::string> params;
 		/** @brief Set up the parameters with default values. */
 		value_t(): params() {}
 

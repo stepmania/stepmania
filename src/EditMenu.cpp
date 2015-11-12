@@ -80,7 +80,7 @@ void EditMenu::GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpS
 	SongUtil::SortSongPointerArrayByTitle( vpSongsOut );
 }
 
-void EditMenu::GetGroupsToShow( vector<RString> &vsGroupsOut )
+void EditMenu::GetGroupsToShow( vector<std::string> &vsGroupsOut )
 {
 	vsGroupsOut.clear();
 	if( !SHOW_GROUPS.GetValue() )

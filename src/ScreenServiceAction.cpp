@@ -193,13 +193,18 @@ static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfile
 		for (auto &i: vsFiles)
 		{
 			if( DoesFileExist(sToDir+i) )
+			{
 				iNumOverwritten++;
+			}
 			bool bSuccess = FileCopy( sFromDir+i, sToDir+i );
 			if( bSuccess )
+			{
 				iNumSucceeded++;
+			}
 			else
+			{
 				iNumErrored++;
-
+			}
 			// Test whether the song we need for this edit is present and ignore this edit if not present.
 			SSCLoader loaderSSC;
 			if( !loaderSSC.LoadEditFromFile( sFromDir+i, ProfileSlot_Machine, false ) )
@@ -381,7 +386,7 @@ static std::string CopyEditsMemoryCardToMachine()
 	{
 		MEMCARDMAN->MountCard(pn);
 	}
-	vector<RString> vsSubDirs;
+	vector<std::string> vsSubDirs;
 	ProfileManager::GetMemoryCardProfileDirectoriesToTry( vsSubDirs );
 
 	vector<std::string> vs;

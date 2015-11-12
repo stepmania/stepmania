@@ -80,9 +80,9 @@ static MusicPlaying *g_Playing;
 
 static RageThread MusicThread;
 
-vector<RString> g_SoundsToPlayOnce;
-vector<RString> g_SoundsToPlayOnceFromDir;
-vector<RString> g_SoundsToPlayOnceFromAnnouncer;
+vector<std::string> g_SoundsToPlayOnce;
+vector<std::string> g_SoundsToPlayOnceFromDir;
+vector<std::string> g_SoundsToPlayOnceFromAnnouncer;
 
 struct MusicToPlay
 {
@@ -320,11 +320,11 @@ static bool SoundWaiting()
 static void StartQueuedSounds()
 {
 	g_Mutex->Lock();
-	vector<RString> aSoundsToPlayOnce = g_SoundsToPlayOnce;
+	vector<std::string> aSoundsToPlayOnce = g_SoundsToPlayOnce;
 	g_SoundsToPlayOnce.clear();
-	vector<RString> aSoundsToPlayOnceFromDir = g_SoundsToPlayOnceFromDir;
+	vector<std::string> aSoundsToPlayOnceFromDir = g_SoundsToPlayOnceFromDir;
 	g_SoundsToPlayOnceFromDir.clear();
-	vector<RString> aSoundsToPlayOnceFromAnnouncer = g_SoundsToPlayOnceFromAnnouncer;
+	vector<std::string> aSoundsToPlayOnceFromAnnouncer = g_SoundsToPlayOnceFromAnnouncer;
 	g_SoundsToPlayOnceFromAnnouncer.clear();
 	vector<MusicToPlay> aMusicsToPlay = g_MusicsToPlay;
 	g_MusicsToPlay.clear();

@@ -95,20 +95,25 @@ static void tcsskip( const RString &s, RString::size_type &i )
 }
 
 // put string of (psz~end) on ps string
-static void SetString( const RString &s, int iStart, int iEnd, RString* ps, bool trim = false )
+static void SetString( std::string const &s, int iStart, int iEnd, std::string* ps, bool trim = false )
 {
 	if( trim )
 	{
 		while( iStart < iEnd && s[iStart] > 0 && isspace(s[iStart]) )
+		{
 			iStart++;
+		}
 		while( iEnd-1 >= iStart && s[iEnd-1] > 0 && isspace(s[iEnd-1]) )
+		{
 			iEnd--;
+		}
 	}
 
 	int len = iEnd - iStart;
 	if( len <= 0 )
+	{
 		return;
-
+	}
 	ps->assign( s, iStart, len );
 }
 
@@ -187,7 +192,7 @@ RString::size_type LoadAttributes( XNode *pNode, const RString &xml, RString &sE
 				return string::npos;
 			}
 
-			RString sValue;
+			std::string sValue;
 			SetString( xml, iOffset, iEnd, &sValue, true );
 			ReplaceEntityText( sValue, g_mapEntitiesToChars );
 			pAttr->SetValue( sValue );
@@ -306,7 +311,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 			return string::npos;
 		}
 
-		RString sValue;
+		std::string sValue;
 		SetString( xml, iOffset, iEnd, &sValue, true );
 
 		iOffset = iEnd;
@@ -388,7 +393,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 					return string::npos;
 				}
 
-				RString sValue;
+				std::string sValue;
 				SetString( xml, iOffset, iEnd, &sValue, true );
 
 				iOffset = iEnd;
@@ -407,9 +412,12 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 	// tab
 	WRITE( "\r\n" );
 	if( bWriteTabs )
+	{
 		for( int i = 0 ; i < iTabBase ; i++)
+		{
 			WRITE( "\t" );
-
+		}
+	}
 	// <TAG
 	WRITE( "<" );
 	WRITE( pNode->GetName() );
@@ -418,8 +426,10 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 	FOREACH_CONST_Attr( pNode, p )
 	{
 		if( p->first == XNode::TEXT_ATTRIBUTE )
+		{
 			continue;
-		RString attr( p->second->GetValue<RString>() );
+		}
+		std::string attr( p->second->GetValue<std::string>() );
 		ReplaceEntityText( attr, g_mapCharsToEntities );
 		WRITE( " " );
 		WRITE( p->first );
@@ -439,12 +449,16 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 		WRITE( ">" );
 
 		if( !pNode->ChildrenEmpty() )
+		{
 			iTabBase++;
-
+		}
 		FOREACH_CONST_Child( pNode, p )
+		{
 			if( !GetXMLInternal( p, f, bWriteTabs, iTabBase ) )
+			{
 				return false;
-
+			}
+		}
 		// Text Value
 		const XNodeValue *pText = pNode->GetAttr( XNode::TEXT_ATTRIBUTE );
 		if( pText != nullptr )
@@ -453,10 +467,14 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 			{
 				WRITE( "\r\n" );
 				if( bWriteTabs )
+				{
 					for( int i = 0 ; i < iTabBase ; i++)
+					{
 						WRITE( "\t" );
+					}
+				}
 			}
-			RString s;
+			std::string s;
 			pText->GetValue( s );
 			ReplaceEntityText( s, g_mapCharsToEntities );
 			WRITE( s );
@@ -467,15 +485,21 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 		{
 			WRITE( "\r\n" );
 			if( bWriteTabs )
+			{
 				for( int i = 0 ; i < iTabBase-1 ; i++)
+				{
 					WRITE( "\t" );
+				}
+			}
 		}
 		WRITE( "</" );
 		WRITE( pNode->GetName() );
 		WRITE( ">" );
 
 		if( !pNode->ChildrenEmpty() )
+		{
 			iTabBase--;
+		}
 	}
 	return true;
 #undef WRITE
@@ -541,14 +565,14 @@ public:
 	template<typename T>
 	T GetValue() const { T val; GetValue(val); return val; }
 
-	void GetValue( RString &out ) const;
+	void GetValue( std::string &out ) const;
 	void GetValue( int &out ) const;
 	void GetValue( float &out ) const;
 	void GetValue( bool &out ) const;
 	void GetValue( unsigned &out ) const;
 	void PushValue( lua_State *L ) const;
 
-	void SetValue( const RString &v );
+	void SetValue( std::string const &v );
 	void SetValue( int v );
 	void SetValue( float v );
 	void SetValue( unsigned v );
@@ -560,7 +584,7 @@ void XNodeLuaValue::PushValue( lua_State *L ) const
 	m_Value.PushSelf( L );
 }
 
-void XNodeLuaValue::GetValue( RString &out ) const { Lua *L = LUA->Get(); PushValue( L ); LuaHelpers::Pop( L, out ); LUA->Release( L ); }
+void XNodeLuaValue::GetValue( std::string &out ) const { Lua *L = LUA->Get(); PushValue( L ); LuaHelpers::Pop( L, out ); LUA->Release( L ); }
 void XNodeLuaValue::GetValue( int &out ) const { Lua *L = LUA->Get(); PushValue( L ); LuaHelpers::Pop( L, out ); LUA->Release( L ); }
 void XNodeLuaValue::GetValue( float &out ) const { Lua *L = LUA->Get(); PushValue( L ); LuaHelpers::Pop( L, out ); LUA->Release( L ); }
 void XNodeLuaValue::GetValue( bool &out ) const { Lua *L = LUA->Get(); PushValue( L ); LuaHelpers::Pop( L, out ); LUA->Release( L ); }
@@ -571,7 +595,7 @@ void XNodeLuaValue::SetValueFromStack( lua_State *L )
 	m_Value.SetFromStack( L );
 }
 
-void XNodeLuaValue::SetValue( const RString &v ) { Lua *L = LUA->Get(); LuaHelpers::Push( L, v ); SetValueFromStack( L ); LUA->Release( L ); }
+void XNodeLuaValue::SetValue( std::string const &v ) { Lua *L = LUA->Get(); LuaHelpers::Push( L, v ); SetValueFromStack( L ); LUA->Release( L ); }
 void XNodeLuaValue::SetValue( int v ) { Lua *L = LUA->Get(); LuaHelpers::Push( L, v ); SetValueFromStack( L ); LUA->Release( L ); }
 void XNodeLuaValue::SetValue( float v ) { Lua *L = LUA->Get(); LuaHelpers::Push( L, v ); SetValueFromStack( L ); LUA->Release( L ); }
 void XNodeLuaValue::SetValue( unsigned v ) { Lua *L = LUA->Get(); LuaHelpers::Push( L, (float) v ); SetValueFromStack( L ); LUA->Release( L ); }
@@ -669,7 +693,7 @@ namespace
 		}
 
 		// Iterate over the table, pulling out attributes and tables to process.
-		vector<RString> NodeNamesToAdd;
+		vector<std::string> NodeNamesToAdd;
 		vector<LuaReference> NodesToAdd;
 
 		/* Add array elements first, in array order, so iterating over the XNode

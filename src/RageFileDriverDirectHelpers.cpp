@@ -310,7 +310,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 	 */
 	static const RString IGNORE_MARKER_BEGINNING = "ignore-";
 
-	vector<RString> vsFilesToRemove;
+	vector<std::string> vsFilesToRemove;
 	for( auto iter = fs.files.lower_bound(IGNORE_MARKER_BEGINNING); iter != fs.files.end(); ++iter )
 	{
 		if( !Rage::starts_with( iter->lname, IGNORE_MARKER_BEGINNING ) )

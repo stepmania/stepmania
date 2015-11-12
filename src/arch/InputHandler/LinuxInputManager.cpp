@@ -58,15 +58,20 @@ LinuxInputManager::LinuxInputManager()
 	{
 		if( strncmp( "input", d->d_name, 5) != 0) continue;
 
-		RString dName = RString("/sys/class/input/") + d->d_name;
+		std::string dName{"/sys/class/input/"};
+		dName += d->d_name;
 
 		bool bEventPresent = getDevice(dName, "event") != "";
 		if( m_bEventEnabled && bEventPresent )
-			{ m_vsPendingEventDevices.push_back(dName); continue; }
+		{ 
+			m_vsPendingEventDevices.push_back(dName); continue;
+		}
 
 		bool bJoystickPresent = getDevice(dName, "js") != "";
 		if( m_bJoystickEnabled && bJoystickPresent )
-			{ m_vsPendingJoystickDevices.push_back(dName); continue; }
+		{
+			m_vsPendingJoystickDevices.push_back(dName); continue;
+		}
 
 		if( !bEventPresent && !bJoystickPresent )
 			LOG->Info("LinuxInputManager: %s seems to have no eventNN or jsNN.", dName.c_str() );

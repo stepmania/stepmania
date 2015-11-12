@@ -686,7 +686,7 @@ void splitpath( const RString &sPath, RString &sDir, RString &sFilename, RString
 {
 	sDir = sFilename = sExt = "";
 
-	vector<RString> asMatches;
+	vector<std::string> asMatches;
 
 	/*
 	 * One level of escapes for the regex, one for C. Ew.
@@ -1015,10 +1015,12 @@ void FilterHighErrorPoints( vector< std::pair<float, float> > &vCoordinates,
 	vCoordinates.resize( iOut );
 }
 
-void StripCrnl( RString &s )
+void StripCrnl( std::string &s )
 {
 	while( s.size() && (s[s.size()-1] == '\r' || s[s.size()-1] == '\n') )
+	{
 		s.erase( s.size()-1 );
+	}
 }
 
 RString URLEncode( const RString &sStr )
@@ -1134,7 +1136,7 @@ bool GetFileContents( const RString &sPath, RString &sOut, bool bOneLine )
 	return true;
 }
 
-bool GetFileContents( const RString &sFile, vector<RString> &asOut )
+bool GetFileContents( const RString &sFile, vector<std::string> &asOut )
 {
 	RageFile file;
 	if( !file.Open(sFile) )
@@ -1217,7 +1219,7 @@ bool Regex::Compare( const RString &sStr )
 	return iRet >= 0;
 }
 
-bool Regex::Compare( const RString &sStr, vector<RString> &asMatches )
+bool Regex::Compare( const RString &sStr, vector<std::string> &asMatches )
 {
 	asMatches.clear();
 
@@ -1246,7 +1248,7 @@ bool Regex::Compare( const RString &sStr, vector<RString> &asMatches )
 // http://us3.php.net/manual/en/function.preg-replace.php
 bool Regex::Replace( const RString &sReplacement, const RString &sSubject, RString &sOut )
 {
-	vector<RString> asMatches;
+	vector<std::string> asMatches;
 	if( !Compare(sSubject, asMatches) )
 		return false;
 
@@ -1736,7 +1738,7 @@ namespace StringConversion
 	}
 }
 
-bool FileCopy( const RString &sSrcFile, const RString &sDstFile )
+bool FileCopy( std::string const &sSrcFile, std::string const &sDstFile )
 {
 	if (Rage::ci_ascii_string{ sSrcFile.c_str() } == sDstFile)
 	{

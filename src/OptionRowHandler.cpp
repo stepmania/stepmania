@@ -137,7 +137,7 @@ public:
 	vector<GameCommand> m_aListEntries;
 	GameCommand m_Default;
 	bool m_bUseModNameForIcon;
-	vector<RString> m_vsBroadcastOnExport;
+	vector<std::string> m_vsBroadcastOnExport;
 
 	OptionRowHandlerList() { Init(); }
 	virtual void Init()
@@ -754,7 +754,7 @@ class OptionRowHandlerListGroups: public OptionRowHandlerList
 		m_Def.m_sName = "Group";
 		m_Default.m_sSongGroup = GROUP_ALL;
 
-		vector<RString> vSongGroups;
+		vector<std::string> vSongGroups;
 		SONGMAN->GetSongGroupNames( vSongGroups );
 		ASSERT( vSongGroups.size() != 0 );
 

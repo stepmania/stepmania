@@ -24,7 +24,7 @@ private:
 	void UpdateText();
 
 	RString GetCurrentPageName() const { return m_asPages[m_iCurrentPage]; }
-	std::vector<RString> m_asPages;
+	std::vector<std::string> m_asPages;
 	int m_iCurrentPage;
 	bool m_bForcedHidden;
 

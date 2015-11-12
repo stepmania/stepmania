@@ -25,7 +25,7 @@ static void GetResolutionFromFileName( RString sPath, int &iWidth, int &iHeight 
 	 * Be careful that this doesn't get mixed up with frame dimensions. */
 	static Regex re( "\\([^\\)]*res ([0-9]+)x([0-9]+).*\\)" );
 
-	vector<RString> asMatches;
+	vector<std::string> asMatches;
 	if( !re.Compare(sPath, asMatches) )
 		return;
 

@@ -70,7 +70,7 @@ bool GetVideoDriverInfo( int iCardno, VideoDriverInfo &info )
 	const bool bIsWin9x = version.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS;
 
 	static bool bInitialized=false;
-	static vector<RString> lst;
+	static std::vector<std::string> lst;
 	if( !bInitialized )
 	{
 		bInitialized = true;
