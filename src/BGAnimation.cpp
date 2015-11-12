@@ -25,9 +25,9 @@ static bool CompareLayerNames( const RString& s1, const RString& s2 )
 	int i1, i2;
 	int ret;
 
-	ret = sscanf( s1, "Layer%d", &i1 );
+	ret = sscanf( s1.c_str(), "Layer%d", &i1 );
 	ASSERT( ret == 1 );
-	ret = sscanf( s2, "Layer%d", &i2 );
+	ret = sscanf( s2.c_str(), "Layer%d", &i2 );
 	ASSERT( ret == 1 );
 	return i1 < i2;
 }

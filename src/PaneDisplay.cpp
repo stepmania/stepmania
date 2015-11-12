@@ -140,17 +140,17 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 	if(GAMESTATE->IsCourseMode() && !pTrail)
 	{
 		if( (g_Contents[c].req&NEED_PROFILE) )
-			sTextOut = NOT_AVAILABLE;
+			sTextOut = NOT_AVAILABLE.GetValue();
 
 		{
 			switch( c )
 			{
 				case PaneCategory_MachineHighName:
-					sTextOut = EMPTY_MACHINE_HIGH_SCORE_NAME;
+					sTextOut = EMPTY_MACHINE_HIGH_SCORE_NAME.GetValue();
 					break;
 				case PaneCategory_MachineHighScore:
 				case PaneCategory_ProfileHighScore:
-					sTextOut = NOT_AVAILABLE;
+					sTextOut = NOT_AVAILABLE.GetValue();
 					break;
 				default: break;
 			}
@@ -161,17 +161,17 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 	else if(!GAMESTATE->IsCourseMode() && !pSong)
 	{
 		if( (g_Contents[c].req&NEED_PROFILE) )
-			sTextOut = NOT_AVAILABLE;
+			sTextOut = NOT_AVAILABLE.GetValue();
 
 		{
 			switch( c )
 			{
 				case PaneCategory_MachineHighName:
-					sTextOut = EMPTY_MACHINE_HIGH_SCORE_NAME;
+					sTextOut = EMPTY_MACHINE_HIGH_SCORE_NAME.GetValue();
 					break;
 				case PaneCategory_MachineHighScore:
 				case PaneCategory_ProfileHighScore:
-					sTextOut = NOT_AVAILABLE;
+					sTextOut = NOT_AVAILABLE.GetValue();
 					break;
 				default: break;
 			}
@@ -184,7 +184,7 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 		return;
 	if( (g_Contents[c].req&NEED_PROFILE) && !pProfile )
 	{
-		sTextOut = NOT_AVAILABLE;
+		sTextOut = NOT_AVAILABLE.GetValue();
 		return;
 	}
 
@@ -270,7 +270,7 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 				case PaneCategory_MachineHighName:
 					if( pHSL->vHighScores.empty() )
 					{
-						sTextOut = EMPTY_MACHINE_HIGH_SCORE_NAME;
+						sTextOut = EMPTY_MACHINE_HIGH_SCORE_NAME.GetValue();
 					}
 					else
 					{
@@ -283,7 +283,7 @@ void PaneDisplay::GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float
 				case PaneCategory_ProfileHighScore:
 					// Don't show or save machine high scores for edits loaded from a player profile.
 					if( bIsPlayerEdit )
-						sTextOut = NOT_AVAILABLE;
+						sTextOut = NOT_AVAILABLE.GetValue();
 					else
 						sTextOut = PlayerStageStats::FormatPercentScore( fLevelOut );
 					break;

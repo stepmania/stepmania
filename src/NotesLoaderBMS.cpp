@@ -1337,7 +1337,7 @@ bool BMSChartReader::ReadNoteData()
 		if( channel == 3 ) // bpm change
 		{
 			int bpm;
-			if( sscanf(obj.value, "%x", &bpm) == 1 )
+			if( sscanf(obj.value.c_str(), "%x", &bpm) == 1 )
 			{
 				if (bpm > 0)
 				{

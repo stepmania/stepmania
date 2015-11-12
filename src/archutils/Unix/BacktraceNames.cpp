@@ -45,7 +45,7 @@ void BacktraceNames::Demangle()
 		return;
 
 	int status = 0;
-	char *name = abi::__cxa_demangle( Symbol, nullptr, nullptr, &status );
+	char *name = abi::__cxa_demangle( Symbol.c_str(), nullptr, nullptr, &status );
 	if( name )
 	{
 		Symbol = name;

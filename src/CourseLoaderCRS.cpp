@@ -290,7 +290,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
         new_entry.stepsCriteria.m_difficulty = StringToDifficulty( sParams[2] );
 			if( new_entry.stepsCriteria.m_difficulty == Difficulty_Invalid )
 			{
-				int retval = sscanf( sParams[2], "%d..%d", &new_entry.stepsCriteria.m_iLowMeter, &new_entry.stepsCriteria.m_iHighMeter );
+				int retval = sscanf( sParams[2].c_str(), "%d..%d", &new_entry.stepsCriteria.m_iLowMeter, &new_entry.stepsCriteria.m_iHighMeter );
 				if( retval == 1 )
 					new_entry.stepsCriteria.m_iHighMeter = new_entry.stepsCriteria.m_iLowMeter;
 				else if( retval != 2 )

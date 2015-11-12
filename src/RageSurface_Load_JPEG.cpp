@@ -206,7 +206,7 @@ RageSurfaceUtils::OpenResult RageSurface_Load_JPEG( const RString &sPath, RageSu
 	}
 
 	char errorbuf[1024];
-	ret = RageSurface_Load_JPEG( &f, sPath, errorbuf );
+	ret = RageSurface_Load_JPEG( &f, sPath.c_str(), errorbuf );
 	if( ret == nullptr )
 	{
 		error = errorbuf;

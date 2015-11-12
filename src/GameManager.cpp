@@ -3519,7 +3519,7 @@ bool GameManager::stepstype_is_multiplayer(StepsType st)
 class LunaGameManager: public Luna<GameManager>
 {
 public:
-	static int StepsTypeToLocalizedString( T* p, lua_State *L )	{ lua_pushstring(L, p->GetStepsTypeInfo(Enum::Check<StepsType>(L, 1)).GetLocalizedString() ); return 1; }
+	static int StepsTypeToLocalizedString( T* p, lua_State *L )	{ lua_pushstring(L, p->GetStepsTypeInfo(Enum::Check<StepsType>(L, 1)).GetLocalizedString().c_str() ); return 1; }
 	static int GetFirstStepsTypeForGame( T* p, lua_State *L )
 	{
 		Game *pGame = Luna<Game>::check( L, 1 );

@@ -46,7 +46,7 @@ bool GameInput::FromString( const InputScheme* pInputs, const RString &s )
 	char szController[32] = "";
 	char szButton[32] = "";
 
-	if( 2 != sscanf( s, "%31[^_]_%31[^_]", szController, szButton ) )
+	if( 2 != sscanf( s.c_str(), "%31[^_]_%31[^_]", szController, szButton ) )
 	{
 		controller = GameController_Invalid;
 		return false;

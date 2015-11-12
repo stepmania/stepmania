@@ -427,12 +427,12 @@ bool EditCourseUtil::ValidateEditCourseName( const RString &sAnswer, RString &sE
 {
 	if( sAnswer.empty() )
 	{
-		sErrorOut = YOU_MUST_SUPPLY_NAME;
+		sErrorOut = YOU_MUST_SUPPLY_NAME.GetValue();
 		return false;
 	}
 
 	static const RString sInvalidChars = "\\/:*?\"<>|";
-	if( strpbrk(sAnswer, sInvalidChars) != nullptr )
+	if( strpbrk(sAnswer.c_str(), sInvalidChars.c_str()) != nullptr )
 	{
 		sErrorOut = fmt::sprintf( EDIT_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;
@@ -449,7 +449,7 @@ bool EditCourseUtil::ValidateEditCourseName( const RString &sAnswer, RString &sE
 		}
 		if( p->GetDisplayFullTitle() == sAnswer )
 		{
-			sErrorOut = EDIT_NAME_CONFLICTS;
+			sErrorOut = EDIT_NAME_CONFLICTS.GetValue();
 			return false;
 		}
 	}

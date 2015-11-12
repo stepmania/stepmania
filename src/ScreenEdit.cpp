@@ -5017,7 +5017,7 @@ static bool ConvertMappingInputToMapping(RString const& mapstr, int* mapping, RS
 	size_t tracks_for_type= GAMEMAN->GetStepsTypeInfo(GAMESTATE->m_pCurSteps[0]->m_StepsType).iNumTracks;
 	if(mapping_input.size() > tracks_for_type)
 	{
-		error= TOO_MANY_TRACKS;
+		error= TOO_MANY_TRACKS.GetValue();
 		return false;
 	}
 	// mapping_input.size() < tracks_for_type is not checked because

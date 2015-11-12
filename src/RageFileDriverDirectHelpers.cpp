@@ -106,7 +106,7 @@ bool CreateDirectories( RString Path )
 		}
 #endif
 
-		if( DoMkdir(curpath, 0777) == 0 )
+		if( DoMkdir(curpath.c_str(), 0777) == 0 )
 			continue;
 
 #if defined(WIN32)
@@ -125,7 +125,7 @@ bool CreateDirectories( RString Path )
 		{
 			/* Make sure it's a directory. */
 			struct stat st;
-			if( DoStat(curpath, &st) != -1 && !(st.st_mode & S_IFDIR) )
+			if( DoStat(curpath.c_str(), &st) != -1 && !(st.st_mode & S_IFDIR) )
 			{
 				WARN( fmt::sprintf("Couldn't create %s: path exists and is not a directory", curpath.c_str()) );
 				return false;
@@ -196,7 +196,7 @@ void DirectFilenameDB::CacheFile( const RString &sPath )
 	File f( Rage::base_name(sPath) );
 
 	struct stat st;
-	if( DoStat(root+sPath, &st) == -1 )
+	if( DoStat((root+sPath).c_str(), &st) == -1 )
 	{
 		int iError = errno;
 		// If it's a broken symlink, ignore it.  Otherwise, warn.
@@ -260,7 +260,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 	 * for each file.  This isn't a major issue, since most large directory
 	 * scans are I/O-bound. */
 
-	DIR *pDir = opendir(root+sPath);
+	DIR *pDir = opendir((root+sPath).c_str());
 	if( pDir == nullptr )
 		return;
 
@@ -274,11 +274,11 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 		File f( pEnt->d_name );
 
 		struct stat st;
-		if( DoStat(root+sPath + "/" + pEnt->d_name, &st) == -1 )
+		if( DoStat((root+sPath + "/" + pEnt->d_name).c_str(), &st) == -1 )
 		{
 			int iError = errno;
 			/* If it's a broken symlink, ignore it.  Otherwise, warn. */
-			if( lstat(root+sPath + "/" + pEnt->d_name, &st) == 0 )
+			if( lstat((root+sPath + "/" + pEnt->d_name).c_str(), &st) == 0 )
 				continue;
 
 			/* Huh? */

@@ -314,7 +314,7 @@ void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber
 		case EditCourseRow_Minutes:
 			GAMESTATE->m_pCurCourse->m_fGoalSeconds = 0;
 			int mins;
-			if( sscanf( sValue, "%d", &mins ) == 1 )
+			if( sscanf( sValue.c_str(), "%d", &mins ) == 1 )
 				GAMESTATE->m_pCurCourse->m_fGoalSeconds = mins * 60;
 			break;
 		}

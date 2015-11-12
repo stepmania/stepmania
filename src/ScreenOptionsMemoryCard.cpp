@@ -66,7 +66,7 @@ void ScreenOptionsMemoryCard::CreateMenu()
 		}
 		else
 		{
-			vs.push_back( fmt::sprintf(RString(VOLUME_SIZE).c_str(),iter.iVolumeSizeMB) );
+			vs.push_back( fmt::sprintf(VOLUME_SIZE.GetValue().c_str(),iter.iVolumeSizeMB) );
 		}
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 

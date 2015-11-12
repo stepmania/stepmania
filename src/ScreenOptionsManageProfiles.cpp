@@ -76,7 +76,7 @@ static bool ValidateLocalProfileName( const RString &sAnswer, RString &sErrorOut
 {
 	if( sAnswer == "" )
 	{
-		sErrorOut = PROFILE_NAME_BLANK;
+		sErrorOut = PROFILE_NAME_BLANK.GetValue();
 		return false;
 	}
 
@@ -89,7 +89,7 @@ static bool ValidateLocalProfileName( const RString &sAnswer, RString &sErrorOut
 	bool bAlreadyAProfileWithThisName = find( vsProfileNames.begin(), vsProfileNames.end(), sAnswer ) != vsProfileNames.end();
 	if( bAlreadyAProfileWithThisName )
 	{
-		sErrorOut = PROFILE_NAME_CONFLICTS;
+		sErrorOut = PROFILE_NAME_CONFLICTS.GetValue();
 		return false;
 	}
 
