@@ -115,23 +115,23 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 	{
 		iLineNum++;
 
-		if( !strncmp(sLine, "//", 2) )
+		if( !strncmp(sLine.c_str(), "//", 2) )
 			continue;
 
 		int nFrame;
-		if( sscanf(sLine, "Frames: %d", &nFrame) == 1 )
+		if( sscanf(sLine.c_str(), "Frames: %d", &nFrame) == 1 )
 		{
 			// ignore
 			// m_pRageModelGeometry->nTotalFrames = nFrame;
 		}
-		if( sscanf(sLine, "Frame: %d", &nFrame) == 1 )
+		if( sscanf(sLine.c_str(), "Frame: %d", &nFrame) == 1 )
 		{
 			// ignore
 			// m_pRageModelGeometry->nFrame = nFrame;
 		}
 
 		int nNumMeshes = 0;
-		if( sscanf(sLine, "Meshes: %d", &nNumMeshes) == 1 )
+		if( sscanf(sLine.c_str(), "Meshes: %d", &nNumMeshes) == 1 )
 		{
 			ASSERT( m_Meshes.empty() );
 			m_Meshes.resize( nNumMeshes );
@@ -146,7 +146,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 					THROW;
 
 				// mesh: name, flags, material index
-				if( sscanf (sLine, "\"%31[^\"]\" %d %d",szName, &nFlags, &nIndex) != 3 )
+				if( sscanf (sLine.c_str(), "\"%31[^\"]\" %d %d",szName, &nFlags, &nIndex) != 3 )
 					THROW;
 
 				mesh.sName = szName;
@@ -162,7 +162,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 					THROW;
 
 				int nNumVertices = 0;
-				if( sscanf (sLine, "%d", &nNumVertices) != 1 )
+				if( sscanf (sLine.c_str(), "%d", &nNumVertices) != 1 )
 					THROW;
 
 				Vertices.resize( nNumVertices );
@@ -174,7 +174,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 					if( f.GetLine( sLine ) <= 0 )
 						THROW;
 
-					if( sscanf(sLine, "%d %f %f %f %f %f %d",
+					if( sscanf(sLine.c_str(), "%d %f %f %f %f %f %d",
 								&nFlags,
 								&v.p.x, &v.p.y, &v.p.z,
 								&v.t.x, &v.t.y,
@@ -206,7 +206,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 					THROW;
 
 				int nNumNormals = 0;
-				if( sscanf(sLine, "%d", &nNumNormals) != 1 )
+				if( sscanf(sLine.c_str(), "%d", &nNumNormals) != 1 )
 					THROW;
 
 				vector<Rage::Vector3> Normals;
@@ -217,7 +217,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 						THROW;
 
 					Rage::Vector3 Normal;
-					if( sscanf(sLine, "%f %f %f", &Normal.x, &Normal.y, &Normal.z) != 3 )
+					if( sscanf(sLine.c_str(), "%f %f %f", &Normal.x, &Normal.y, &Normal.z) != 3 )
 						THROW;
 
 					Normal = Normal.GetNormalized();
@@ -231,7 +231,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 					THROW;
 
 				int nNumTriangles = 0;
-				if( sscanf (sLine, "%d", &nNumTriangles) != 1 )
+				if( sscanf (sLine.c_str(), "%d", &nNumTriangles) != 1 )
 					THROW;
 
 				Triangles.resize( nNumTriangles );
@@ -243,7 +243,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 
 					uint16_t nIndices[3];
 					uint16_t nNormalIndices[3];
-					if( sscanf (sLine, "%d %hd %hd %hd %hd %hd %hd %d",
+					if( sscanf (sLine.c_str(), "%d %hd %hd %hd %hd %hd %hd %d",
 								&nFlags,
 								&nIndices[0], &nIndices[1], &nIndices[2],
 								&nNormalIndices[0], &nNormalIndices[1], &nNormalIndices[2],

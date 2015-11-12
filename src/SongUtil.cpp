@@ -389,7 +389,8 @@ static bool CompareSongPointersByTitle( const Song *pSong1, const Song *pSong2 )
 	s1 = SongUtil::MakeSortString(s1);
 	s2 = SongUtil::MakeSortString(s2);
 
-	int ret = strcmp( s1, s2 );
+	// TODO: Use a std::string comparison.
+	int ret = strcmp( s1.c_str(), s2.c_str() );
 	if(ret < 0) return true;
 	if(ret > 0) return false;
 
@@ -811,12 +812,12 @@ bool SongUtil::ValidateCurrentEditStepsDescription( const RString &sAnswer, RStr
 
 	if( sAnswer.empty() )
 	{
-		sErrorOut = YOU_MUST_SUPPLY_NAME;
+		sErrorOut = YOU_MUST_SUPPLY_NAME.GetValue();
 		return false;
 	}
 
 	static const RString sInvalidChars = "\\/:*?\"<>|";
-	if( strpbrk(sAnswer, sInvalidChars) != nullptr )
+	if( strpbrk(sAnswer.c_str(), sInvalidChars.c_str()) != nullptr )
 	{
 		sErrorOut = fmt::sprintf( EDIT_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;
@@ -832,7 +833,7 @@ bool SongUtil::ValidateCurrentEditStepsDescription( const RString &sAnswer, RStr
 
 		if( s->GetDescription() == sAnswer )
 		{
-			sErrorOut = EDIT_NAME_CONFLICTS;
+			sErrorOut = EDIT_NAME_CONFLICTS.GetValue();
 			return false;
 		}
 	}
@@ -866,7 +867,7 @@ bool SongUtil::ValidateCurrentStepsChartName(const RString &answer, RString &err
 	if (answer.empty()) return true;
 
 	static const RString sInvalidChars = "\\/:*?\"<>|";
-	if( strpbrk(answer, sInvalidChars) != nullptr )
+	if( strpbrk(answer.c_str(), sInvalidChars.c_str()) != nullptr )
 	{
 		error = fmt::sprintf( CHART_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;
@@ -882,7 +883,9 @@ bool SongUtil::ValidateCurrentStepsChartName(const RString &answer, RString &err
 	bool result = SongUtil::IsChartNameUnique(GAMESTATE->m_pCurSong, pSteps->m_StepsType,
 											  answer, pSteps);
 	if (!result)
-		error = CHART_NAME_CONFLICTS;
+	{
+		error = CHART_NAME_CONFLICTS.GetValue();
+	}
 	return result;
 }
 
@@ -900,7 +903,7 @@ bool SongUtil::ValidateCurrentStepsCredit( const RString &sAnswer, RString &sErr
 
 	// Borrow from EditDescription testing. Perhaps this should be abstracted? -Wolfman2000
 	static const RString sInvalidChars = "\\/:*?\"<>|";
-	if( strpbrk(sAnswer, sInvalidChars) != nullptr )
+	if( strpbrk(sAnswer.c_str(), sInvalidChars.c_str()) != nullptr )
 	{
 		sErrorOut = fmt::sprintf( AUTHOR_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
 		return false;

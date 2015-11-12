@@ -131,7 +131,8 @@ struct NoteSkinAndPath
 	GameController gc;
 	bool operator<( const NoteSkinAndPath &other ) const
 	{
-		int cmp = strcmp(sNoteSkin, other.sNoteSkin);
+		// TODO: Use the std::string compare.
+		int cmp = strcmp(sNoteSkin.c_str(), other.sNoteSkin.c_str());
 
 		if( cmp < 0 )
 		{

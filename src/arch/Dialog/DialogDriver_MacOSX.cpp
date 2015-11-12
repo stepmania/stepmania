@@ -14,7 +14,7 @@ static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CF
 				CFStringRef alt = nullptr, CFStringRef other = nullptr)
 {
 	CFOptionFlags result;
-	CFStringRef text = CFStringCreateWithCString( nullptr, sMessage, kCFStringEncodingUTF8 );
+	CFStringRef text = CFStringCreateWithCString( nullptr, sMessage.c_str(), kCFStringEncodingUTF8 );
 
 	if( text == nullptr )
 	{

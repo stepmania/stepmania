@@ -365,9 +365,10 @@ void SMLoader::LoadFromTokens(
 void SMLoader::ProcessBGChanges( Song &out, const RString &sValueName, const RString &sPath, const RString &sParam )
 {
 	BackgroundLayer iLayer = BACKGROUND_LAYER_1;
-	if( sscanf(sValueName, "BGCHANGES%d", &*ConvertValue<int>(&iLayer)) == 1 )
+	if( sscanf(sValueName.c_str(), "BGCHANGES%d", &*ConvertValue<int>(&iLayer)) == 1 )
+	{
 		enum_add(iLayer, -1);	// #BGCHANGES2 = BACKGROUND_LAYER_2
-
+	}
 	bool bValid = iLayer>=0 && iLayer<NUM_BackgroundLayer;
 	if( !bValid )
 	{

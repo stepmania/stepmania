@@ -148,16 +148,17 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 	{
 		iLineNum++;
 
-		if( !strncmp (sLine, "//", 2) )
+		if( !strncmp (sLine.c_str(), "//", 2) )
+		{
 			continue;
-
+		}
 		int nFrame;
-		if( sscanf(sLine, "Frames: %d", &nFrame) == 1 )
+		if( sscanf(sLine.c_str(), "Frames: %d", &nFrame) == 1 )
 		{
 			// ignore
 			// m_pModel->nTotalFrames = nFrame;
 		}
-		if( sscanf(sLine, "Frame: %d", &nFrame) == 1 )
+		if( sscanf(sLine.c_str(), "Frame: %d", &nFrame) == 1 )
 		{
 			// ignore
 			// m_pModel->nFrame = nFrame;
@@ -165,7 +166,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 
 		// materials
 		int nNumMaterials = 0;
-		if( sscanf(sLine, "Materials: %d", &nNumMaterials) == 1 )
+		if( sscanf(sLine.c_str(), "Materials: %d", &nNumMaterials) == 1 )
 		{
 			m_Materials.resize( nNumMaterials );
 
@@ -177,64 +178,94 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 
 				// name
 				if( f.GetLine( sLine ) <= 0 )
+				{
 					THROW;
-				if( sscanf(sLine, "\"%255[^\"]\"", szName) != 1 )
+				}
+				if( sscanf(sLine.c_str(), "\"%255[^\"]\"", szName) != 1 )
+				{
 					THROW;
+				}
 				Material.sName = szName;
 
 				// ambient
 				if( f.GetLine( sLine ) <= 0 )
+				{
 					THROW;
+				}
 				Rage::Vector4 Ambient;
-				if( sscanf(sLine, "%f %f %f %f", &Ambient.x, &Ambient.y, &Ambient.z, &Ambient.w) != 4 )
+				if( sscanf(sLine.c_str(), "%f %f %f %f", &Ambient.x, &Ambient.y, &Ambient.z, &Ambient.w) != 4 )
+				{
 					THROW;
+				}
 				memcpy( &Material.Ambient, &Ambient, sizeof(Material.Ambient) );
 
 				// diffuse
 				if( f.GetLine( sLine ) <= 0 )
+				{
 					THROW;
+				}
 				Rage::Vector4 Diffuse;
-				if( sscanf(sLine, "%f %f %f %f", &Diffuse.x, &Diffuse.y, &Diffuse.z, &Diffuse.w) != 4 )
+				if( sscanf(sLine.c_str(), "%f %f %f %f", &Diffuse.x, &Diffuse.y, &Diffuse.z, &Diffuse.w) != 4 )
+				{
 					THROW;
+				}
 				memcpy( &Material.Diffuse, &Diffuse, sizeof(Material.Diffuse) );
 
 				// specular
 				if( f.GetLine( sLine ) <= 0 )
+				{
 					THROW;
+				}
 				Rage::Vector4 Specular;
-				if( sscanf(sLine, "%f %f %f %f", &Specular.x, &Specular.y, &Specular.z, &Specular.w) != 4 )
+				if( sscanf(sLine.c_str(), "%f %f %f %f", &Specular.x, &Specular.y, &Specular.z, &Specular.w) != 4 )
+				{
 					THROW;
+				}
 				memcpy( &Material.Specular, &Specular, sizeof(Material.Specular) );
 
 				// emissive
 				if( f.GetLine( sLine ) <= 0 )
+				{
 					THROW;
+				}
 				Rage::Vector4 Emissive;
-				if( sscanf (sLine, "%f %f %f %f", &Emissive.x, &Emissive.y, &Emissive.z, &Emissive.w) != 4 )
+				if( sscanf (sLine.c_str(), "%f %f %f %f", &Emissive.x, &Emissive.y, &Emissive.z, &Emissive.w) != 4 )
+				{
 					THROW;
+				}
 				memcpy( &Material.Emissive, &Emissive, sizeof(Material.Emissive) );
 
 				// shininess
 				if( f.GetLine( sLine ) <= 0 )
+				{
 					THROW;
+				}
 				float fShininess;
 				if( !StringConversion::FromString(sLine, fShininess) )
+				{
 					THROW;
+				}
 				Material.fShininess = fShininess;
 
 				// transparency
 				if( f.GetLine( sLine ) <= 0 )
+				{
 					THROW;
+				}
 				float fTransparency;
 				if( !StringConversion::FromString(sLine, fTransparency) )
+				{
 					THROW;
+				}
 				Material.fTransparency = fTransparency;
 
 				// diffuse texture
 				if( f.GetLine( sLine ) <= 0 )
+				{
 					THROW;
+				}
 				strcpy( szName, "" );
-				sscanf( sLine, "\"%255[^\"]\"", szName );
+				sscanf( sLine.c_str(), "\"%255[^\"]\"", szName );
 				RString sDiffuseTexture = szName;
 
 				if( sDiffuseTexture == "" )
@@ -256,7 +287,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
 				strcpy( szName, "" );
-				sscanf( sLine, "\"%255[^\"]\"", szName );
+				sscanf( sLine.c_str(), "\"%255[^\"]\"", szName );
 				RString sAlphaTexture = szName;
 
 				if( sAlphaTexture == "" )

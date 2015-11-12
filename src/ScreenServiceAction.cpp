@@ -92,7 +92,7 @@ static std::string ClearMemoryCardEdits()
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
 
-	RString sDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
+	RString sDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir.Get() + "/";
 	vector<std::string> vsEditFiles;
 	GetDirListing( sDir+EDIT_STEPS_SUBDIR+"*.edit", vsEditFiles, false, true );
 	GetDirListing( sDir+EDIT_COURSES_SUBDIR+"*.crs", vsEditFiles, false, true );

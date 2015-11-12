@@ -258,12 +258,16 @@ bool HexToBinary( const RString &s, unsigned char *stringOut )
 	for( int i=0; true; i++ )
 	{
 		if( (int)s.size() <= i*2 )
+		{
 			break;
+		}
 		RString sByte = s.substr( i*2, 2 );
 
 		uint8_t val = 0;
-		if( sscanf( sByte, "%hhx", &val ) != 1 )
+		if( sscanf( sByte.c_str(), "%hhx", &val ) != 1 )
+		{
 			return false;
+		}
 		stringOut[i] = val;
 	}
 	return true;
@@ -408,16 +412,17 @@ RString FormatNumberAndSuffix( int i )
 	RString sSuffix;
 	switch( i%10 )
 	{
-	case 1:		sSuffix = NUM_ST; break;
-	case 2:		sSuffix = NUM_ND; break;
-	case 3:		sSuffix = NUM_RD; break;
-	default:	sSuffix = NUM_TH; break;
+	case 1:		sSuffix = NUM_ST.GetValue(); break;
+	case 2:		sSuffix = NUM_ND.GetValue(); break;
+	case 3:		sSuffix = NUM_RD.GetValue(); break;
+	default:	sSuffix = NUM_TH.GetValue(); break;
 	}
 
 	// "11th", "113th", etc.
 	if( ((i%100) / 10) == 1 )
-		sSuffix = NUM_TH;
-
+	{
+		sSuffix = NUM_TH.GetValue();
+	}
 	return NUM_PREFIX.GetValue() + fmt::sprintf("%i", i) + sSuffix;
 }
 
@@ -1305,10 +1310,12 @@ RString IntToString( const int &iNum )
 
 float StringToFloat( const RString &sString )
 {
-	float ret = strtof( sString, nullptr );
+	float ret = strtof( sString.c_str(), nullptr );
 
 	if( !isfinite(ret) )
+	{
 		ret = 0.0f;
+	}
 	return ret;
 }
 
@@ -1316,7 +1323,7 @@ bool StringToFloat( const RString &sString, float &fOut )
 {
 	char *endPtr;
 
-	fOut = strtof( sString, &endPtr );
+	fOut = strtof( sString.c_str(), &endPtr );
 	return sString.size() && *endPtr == '\0' && isfinite( fOut );
 }
 
@@ -1701,7 +1708,7 @@ namespace StringConversion
 	template<> bool FromString<float>( const RString &sValue, float &out )
 	{
 		const char *endptr = sValue.data() + sValue.size();
-		out = strtof( sValue, (char **) &endptr );
+		out = strtof( sValue.c_str(), (char **) &endptr );
 		if( endptr != sValue.data() && isfinite( out ) )
 			return true;
 		out = 0;

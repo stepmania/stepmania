@@ -195,10 +195,10 @@ static void child_process()
 #endif
 	sCrashInfoPath += "/crashinfo.txt";
 
-	FILE *CrashDump = fopen( sCrashInfoPath, "w+" );
+	FILE *CrashDump = fopen( sCrashInfoPath.c_str(), "w+" );
 	if(CrashDump == nullptr)
 	{
-		fprintf( stderr, "Couldn't open " + sCrashInfoPath + ": %s\n", strerror(errno) );
+		fprintf( stderr, ("Couldn't open " + sCrashInfoPath + ": %s\n").c_str(), strerror(errno) );
 		exit(1);
 	}
 

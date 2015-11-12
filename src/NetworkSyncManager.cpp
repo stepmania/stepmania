@@ -979,7 +979,7 @@ static bool ConnectToServer( const RString &t )
 
 extern Preference<std::string> g_sLastServer;
 
-LuaFunction( ConnectToServer, 		ConnectToServer( ( RString(SArg(1)).length()==0 ) ? RString(g_sLastServer) : RString(SArg(1) ) ) )
+LuaFunction( ConnectToServer, 		ConnectToServer( ( RString(SArg(1)).length()==0 ) ? RString(g_sLastServer.Get()) : RString(SArg(1) ) ) )
 
 #endif
 

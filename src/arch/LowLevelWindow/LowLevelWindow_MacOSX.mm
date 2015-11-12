@@ -327,7 +327,7 @@ void *LowLevelWindow_MacOSX::GetProcAddress( RString s )
 	const uint32_t options = NSLOOKUPSYMBOLINIMAGE_OPTION_RETURN_ON_ERROR;
 	
 	for( uint32_t i = 0; i < count && !symbol; ++i )
-		symbol = NSLookupSymbolInImage( _dyld_get_image_header(i), symbolName, options );
+		symbol = NSLookupSymbolInImage( _dyld_get_image_header(i), symbolName.c_str(), options );
 	return symbol ? NSAddressOfSymbol( symbol ) : nullptr;
 }
 

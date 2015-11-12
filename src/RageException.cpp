@@ -39,7 +39,7 @@ void RageException::FinishThrow( std::string const &error )
 	}
 	else
 	{
-		puts( msg );
+		puts( msg.c_str() );
 		fflush( stdout );
 	}
 

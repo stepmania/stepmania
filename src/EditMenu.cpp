@@ -647,7 +647,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				RString s;
 				if( GetSelectedSourceDifficulty() == Difficulty_Invalid )
 				{
-					s = BLANK;
+					s = BLANK.GetValue();
 				}
 				else
 				{

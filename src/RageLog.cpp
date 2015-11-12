@@ -309,7 +309,7 @@ void RageLog::AddToRecentLogs( const RString &str )
 	if( len > sizeof(backlog[backlog_start])-1 )
 		len = sizeof(backlog[backlog_start])-1;
 
-	strncpy( backlog[backlog_start], str, len );
+	strncpy( backlog[backlog_start], str.c_str(), len );
 	backlog[backlog_start] [ len ] = 0;
 
 	backlog_start++;

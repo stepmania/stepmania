@@ -209,7 +209,7 @@ static RString ReadlinkRecursive( RString sPath )
 	{
 		sPath = dereferenced;
 		char derefPath[512];
-		ssize_t linkSize = readlink(sPath, derefPath, sizeof(derefPath));
+		ssize_t linkSize = readlink(sPath.c_str(), derefPath, sizeof(derefPath));
 		if ( linkSize != -1 && linkSize != sizeof(derefPath) )
 		{
 			dereferenced = RString( derefPath, linkSize );
@@ -309,7 +309,7 @@ static void ChangeToDirOfExecutable( const RString &argv0 )
 	 * through a symlink. Assume this is the case and change to the dir of the symlink. */
 	if( Rage::base_name(RageFileManagerUtil::sDirOfExecutable) == "MacOS" )
 		CollapsePath( RageFileManagerUtil::sDirOfExecutable += "/../../../" );
-	if( chdir( RageFileManagerUtil::sDirOfExecutable ) )
+	if( chdir( RageFileManagerUtil::sDirOfExecutable.c_str() ) )
 #endif
 	{
 		LOG->Warn("Can't set current working directory to %s", RageFileManagerUtil::sDirOfExecutable.c_str());
@@ -590,7 +590,7 @@ bool RageFileManager::Mount( const RString &sType, const RString &sRoot_, const 
 	const RString &sPaths = fmt::sprintf( "\"%s\", \"%s\", \"%s\"", sType.c_str(), sRoot.c_str(), sMountPoint.c_str() );
 	CHECKPOINT_M( sPaths );
 #if defined(DEBUG)
-	puts( sPaths );
+	puts( sPaths.c_str() );
 #endif
 
 	// Unmount anything that was previously mounted here.
@@ -894,7 +894,7 @@ static bool PathUsesSlowFlush( const RString &sPath )
 	};
 
 	auto doesPathMatch = [&sPath](RString const &curPath) {
-		return !strncmp(sPath, curPath, strlen(curPath));
+		return !strncmp(sPath.c_str(), curPath.c_str(), strlen(curPath.c_str()));
 	};
 
 	return std::any_of(FlushPaths.begin(), FlushPaths.end(), doesPathMatch);
