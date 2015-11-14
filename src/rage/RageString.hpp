@@ -197,6 +197,38 @@ namespace Rage
 	};
 
 	using ci_ascii_string = std::basic_string<char, ci_ascii_char_traits>;
+
+	struct ci_ascii_string_less: std::binary_function<ci_ascii_string, ci_ascii_string, bool>
+	{
+		inline bool operator() (ci_ascii_string const &lhs, ci_ascii_string const &rhs) const
+		{
+			return lhs < rhs;
+		}
+	};
+
+	struct ci_ascii_string_equal: std::binary_function<ci_ascii_string, ci_ascii_string, bool>
+	{
+		inline bool operator() (ci_ascii_string const &lhs, ci_ascii_string const &rhs) const
+		{
+			return lhs == rhs;
+		}
+	};
+
+	struct std_string_ci_less: std::binary_function<std::string, std::string, bool>
+	{
+		inline bool operator() (std::string const &lhs, std::string const &rhs) const
+		{
+			return Rage::ci_ascii_string{lhs.c_str()} < Rage::ci_ascii_string{rhs.c_str()};
+		}
+	};
+
+	struct std_string_ci_equal: std::binary_function<std::string, std::string, bool>
+	{
+		inline bool operator() (std::string const &lhs, std::string const &rhs) const
+		{
+			return Rage::ci_ascii_string{lhs.c_str()} == Rage::ci_ascii_string{rhs.c_str()};
+		}
+	};
 }
 
 inline bool operator==(Rage::ci_ascii_string const &lhs, std::string const &rhs)
