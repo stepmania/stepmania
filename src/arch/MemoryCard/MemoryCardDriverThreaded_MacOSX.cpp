@@ -71,7 +71,7 @@ void MemoryCardDriverThreaded_MacOSX::Unmount( UsbStorageDevice *pDevice )
 #else
 	ParamBlockRec pb;
 	Str255 name; // A pascal string.
-	const RString& base = Rage::base_name( pDevice->sOsMountDir );
+	const std::string& base = Rage::base_name( pDevice->sOsMountDir );
 
 	memset( &pb, 0, sizeof(pb) );
 	name[0] = min( base.length(), size_t(255) );
@@ -110,20 +110,20 @@ static int GetIntProperty( io_registry_entry_t entry, CFStringRef key )
 	return num;
 }
 
-static RString GetStringProperty( io_registry_entry_t entry, CFStringRef key )
+static std::string GetStringProperty( io_registry_entry_t entry, CFStringRef key )
 {
 	CFTypeRef t = IORegistryEntryCreateCFProperty( entry, key, nullptr, 0 );
 
 	if( !t )
-		return RString();
+		return std::string();
 	if( CFGetTypeID( t ) != CFStringGetTypeID() )
 	{
 		CFRelease( t );
-		return RString();
+		return std::string();
 	}
 
 	CFStringRef s = CFStringRef( t );
-	RString ret;
+	std::string ret;
 	const size_t len = CFStringGetMaximumSizeForEncoding( CFStringGetLength(s), kCFStringEncodingUTF8 );
 	char *buf = new char[len + 1];
 
@@ -151,8 +151,8 @@ void MemoryCardDriverThreaded_MacOSX::GetUSBStorageDevices( vector<UsbStorageDev
 		if( strncmp(fs[i].f_mntfromname, _PATH_DEV, strlen(_PATH_DEV)) )
 			continue;
 
-		const RString& sDevicePath = fs[i].f_mntfromname;
-		const RString& sDisk = Rage::base_name( sDevicePath ); // disk#[[s#] ...]
+		const std::string& sDevicePath = fs[i].f_mntfromname;
+		const std::string& sDisk = Rage::base_name( sDevicePath ); // disk#[[s#] ...]
 
 		// Now that we have the disk name, look up the IOServices associated with it.
 		CFMutableDictionaryRef dict;

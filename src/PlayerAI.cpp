@@ -69,7 +69,7 @@ void PlayerAI::InitFromDisk()
 	{
 		for( int i=0; i<NUM_SKILL_LEVELS; i++ )
 		{
-			RString sKey = fmt::sprintf("Skill%d", i);
+			std::string sKey = fmt::sprintf("Skill%d", i);
 			XNode* pNode = ini.GetChild(sKey);
 			TapScoreDistribution& dist = g_Distributions[i];
 			if( pNode == nullptr )

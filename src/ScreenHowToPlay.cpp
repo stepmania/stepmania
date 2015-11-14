@@ -40,7 +40,7 @@ enum Animation
 	NUM_ANIMATIONS
 };
 
-static const RString anims[NUM_ANIMATIONS] =
+static const std::string anims[NUM_ANIMATIONS] =
 {
 	"DancePad.txt",
 	"DancePads.txt",
@@ -51,9 +51,9 @@ static const RString anims[NUM_ANIMATIONS] =
 	"BeginnerHelper_step-jumplr.bones.txt"
 };
 
-static RString GetAnimPath( Animation a )
+static std::string GetAnimPath( Animation a )
 {
-	return RString("Characters/") + anims[a];
+	return std::string("Characters/") + anims[a];
 }
 
 static bool HaveAllCharAnimations()
@@ -105,7 +105,7 @@ void ScreenHowToPlay::Init()
 		else
 			displayChar = CHARMAN->GetRandomCharacter();
 
-		RString sModelPath = displayChar->GetModelPath();
+		std::string sModelPath = displayChar->GetModelPath();
 		if( sModelPath != "" )
 		{
 			m_pmCharacter = new Model;
@@ -116,7 +116,7 @@ void ScreenHowToPlay::Init()
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-UP", GetAnimPath( ANIM_UP ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-RIGHT", GetAnimPath( ANIM_RIGHT ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-JUMPLR", GetAnimPath( ANIM_JUMPLR ) );
-			RString sRestFile = displayChar->GetRestAnimationPath();
+			std::string sRestFile = displayChar->GetRestAnimationPath();
 			ASSERT( !sRestFile.empty() );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "rest",displayChar->GetRestAnimationPath() );
 			m_pmCharacter->SetDefaultAnimation( "rest" );
@@ -143,7 +143,7 @@ void ScreenHowToPlay::Init()
 		m_pLifeMeterBar->FillForHowToPlay( NUM_W2S, NUM_MISSES );
 
 		// Allow themers to use either a .ssc or .sm file for this. -aj
-		RString sStepsPath = THEME->GetPathO(m_sName, "steps");
+		std::string sStepsPath = THEME->GetPathO(m_sName, "steps");
 		SSCLoader loaderSSC;
 		SMLoader loaderSM;
 		if (Rage::ends_with(sStepsPath, ".ssc"))

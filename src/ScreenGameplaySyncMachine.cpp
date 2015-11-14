@@ -23,7 +23,7 @@ void ScreenGameplaySyncMachine::Init()
 	GAMESTATE->SetCurrentStyle( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame), PLAYER_INVALID );
 	AdjustSync::ResetOriginalSyncData();
 
-	RString sFile = THEME->GetPathO("ScreenGameplaySyncMachine","music");
+	std::string sFile = THEME->GetPathO("ScreenGameplaySyncMachine","music");
 	// Allow themers to use either a .ssc or .sm file for this. -aj
 	SSCLoader loaderSSC;
 	SMLoader loaderSM;

@@ -250,7 +250,7 @@ void RageThread::Create( int (*fn)(void *), void *data )
 	m_pSlot->m_pImpl = MakeThread( fn, data, &m_pSlot->m_iID );
 }
 
-RageThreadRegister::RageThreadRegister( const RString &sName )
+RageThreadRegister::RageThreadRegister( const std::string &sName )
 {
 	InitThreads();
 	LockMut( GetThreadSlotsLock() );
@@ -528,7 +528,7 @@ void RageMutex::MarkLockedMutex()
 static std::set<int> *g_FreeMutexIDs = nullptr;
 #endif
 
-RageMutex::RageMutex( const RString &name ):
+RageMutex::RageMutex( const std::string &name ):
 	m_pMutex( MakeMutex (this ) ), m_sName(name),
 	m_LockedBy(GetInvalidThreadId()), m_LockCnt(0)
 {
@@ -543,7 +543,7 @@ RageMutex::RageMutex( const RString &name ):
 	if( g_FreeMutexIDs->empty() )
 	{
 		ASSERT_M( g_MutexList, "!g_FreeMutexIDs but !g_MutexList?" ); // doesn't make sense to be out of mutexes yet never created any
-		RString s;
+		std::string s;
 		for( unsigned i = 0; i < g_MutexList->size(); ++i )
 		{
 			if( i )
@@ -598,13 +598,13 @@ void RageMutex::Lock()
 		const ThreadSlot *ThisSlot = GetThreadSlotFromID( GetThisThreadId() );
 		const ThreadSlot *OtherSlot = GetThreadSlotFromID( m_LockedBy );
 
-		RString ThisSlotName = "(???" ")"; // stupid trigraph warnings
-		RString OtherSlotName = "(???" ")"; // stupid trigraph warnings
+		std::string ThisSlotName = "(???" ")"; // stupid trigraph warnings
+		std::string OtherSlotName = "(???" ")"; // stupid trigraph warnings
 		if( ThisSlot )
 			ThisSlotName = fmt::sprintf( "%s (%i)", ThisSlot->GetThreadName().c_str(), (int) ThisSlot->m_iID );
 		if( OtherSlot )
 			OtherSlotName = fmt::sprintf( "%s (%i)", OtherSlot->GetThreadName().c_str(), (int) OtherSlot->m_iID );
-		const RString sReason = fmt::sprintf( "Thread deadlock on mutex %s between %s and %s",
+		const std::string sReason = fmt::sprintf( "Thread deadlock on mutex %s between %s and %s",
 			GetName().c_str(), ThisSlotName.c_str(), OtherSlotName.c_str() );
 
 #if defined(CRASH_HANDLER)
@@ -693,7 +693,7 @@ void LockMutex::Unlock()
 	}
 }
 
-RageEvent::RageEvent( RString name ):
+RageEvent::RageEvent( std::string name ):
 	RageMutex( name ), m_pEvent(MakeEvent(m_pMutex)) {}
 
 RageEvent::~RageEvent()
@@ -735,7 +735,7 @@ bool RageEvent::WaitTimeoutSupported() const
 	return m_pEvent->WaitTimeoutSupported();
 }
 
-RageSemaphore::RageSemaphore( RString sName, int iInitialValue ):
+RageSemaphore::RageSemaphore( std::string sName, int iInitialValue ):
 	m_pSema(MakeSemaphore( iInitialValue )), m_sName(sName) {}
 
 RageSemaphore::~RageSemaphore()
@@ -764,7 +764,7 @@ void RageSemaphore::Wait( bool bFailOnTimeout )
 	/* We waited too long.  We're probably deadlocked, though unlike mutexes, we can't
 	 * tell which thread we're stuck on. */
 	const ThreadSlot *ThisSlot = GetThreadSlotFromID( GetThisThreadId() );
-	const RString sReason = fmt::sprintf( "Semaphore timeout on mutex %s on thread %s",
+	const std::string sReason = fmt::sprintf( "Semaphore timeout on mutex %s on thread %s",
 		GetName().c_str(), ThisSlot? ThisSlot->GetThreadName().c_str(): "(???" ")" ); // stupid trigraph warnings
 #if defined(CRASH_HANDLER)
 	CrashHandler::ForceDeadlock( sReason, GetInvalidThreadId() );

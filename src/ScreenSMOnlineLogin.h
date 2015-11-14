@@ -9,12 +9,12 @@ public:
 	virtual void Init();
 	virtual void HandleScreenMessage(const ScreenMessage SM);
 	virtual bool MenuStart( const InputEventPlus &input );
-	void SendLogin( RString sPassword );
+	void SendLogin( std::string sPassword );
 
 private:
 	void ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
 	void ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
-	RString GetSelectedProfileID();
+	std::string GetSelectedProfileID();
 	int	m_iPlayer;
 };
 

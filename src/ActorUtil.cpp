@@ -27,12 +27,12 @@ using std::vector;
 // Actor registration
 static std::unordered_map<string,CreateActorFn> *g_pmapRegistrees = nullptr;
 
-static bool IsRegistered( const RString& sClassName )
+static bool IsRegistered( const std::string& sClassName )
 {
 	return g_pmapRegistrees->find( sClassName ) != g_pmapRegistrees->end();
 }
 
-void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
+void ActorUtil::Register( const std::string& sClassName, CreateActorFn pfn )
 {
 	if( g_pmapRegistrees == nullptr )
 	{
@@ -47,7 +47,7 @@ void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
 /* Resolves actor paths a la LoadActor("..."), with autowildcarding and .redir
  * files.  Returns a path *within* the Rage filesystem, unlike the FILEMAN
  * function of the same name. */
-bool ActorUtil::ResolvePath( RString &sPath, const RString &sName, bool optional )
+bool ActorUtil::ResolvePath( std::string &sPath, const std::string &sName, bool optional )
 {
 	CollapsePath( sPath );
 
@@ -65,7 +65,7 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName, bool optional
 			{
 				return false;
 			}
-			RString sError = fmt::sprintf( "%s: references a file \"%s\" which doesn't exist", sName.c_str(), sPath.c_str() );
+			std::string sError = fmt::sprintf( "%s: references a file \"%s\" which doesn't exist", sName.c_str(), sPath.c_str() );
 			switch(LuaHelpers::ReportScriptError(sError, "BROKEN_FILE_REFERENCE", true))
 			{
 			case Dialog::abort:
@@ -85,7 +85,7 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName, bool optional
 
 		if( asPaths.size() > 1 )
 		{
-			RString sError = fmt::sprintf( "%s: references a file \"%s\" which has multiple matches", sName.c_str(), sPath.c_str() );
+			std::string sError = fmt::sprintf( "%s: references a file \"%s\" which has multiple matches", sName.c_str(), sPath.c_str() );
 			sError += "\n" + Rage::join( "\n", asPaths );
 			switch(LuaHelpers::ReportScriptError(sError, "BROKEN_FILE_REFERENCE", true))
 			{
@@ -108,7 +108,7 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName, bool optional
 
 	if( ft == RageFileManager::TYPE_DIR )
 	{
-		RString sLuaPath = sPath + "/default.lua";
+		std::string sLuaPath = sPath + "/default.lua";
 		if( DoesFileExist(sLuaPath) )
 		{
 			sPath = sLuaPath;
@@ -122,7 +122,7 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName, bool optional
 
 namespace
 {
-	RString GetLegacyActorClass(XNode *pActor)
+	std::string GetLegacyActorClass(XNode *pActor)
 	{
 		DEBUG_ASSERT(PREFSMAN->m_bQuirksMode);
 		ASSERT(pActor);
@@ -133,7 +133,7 @@ namespace
 		if (pActor->GetAttr("Text") != nullptr)
 			return "BitmapText";
 
-		RString sFile;
+		std::string sFile;
 		if (pActor->GetAttrValue("File", sFile) && sFile != "")
 		{
 			Rage::ci_ascii_string hackFile{ sFile.c_str() };
@@ -193,7 +193,7 @@ Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 			return nullptr;
 	}
 
-	RString sClass;
+	std::string sClass;
 	bool bHasClass = node.GetAttrValue( "Class", sClass );
 	if( !bHasClass )
 		bHasClass = node.GetAttrValue( "Type", sClass );
@@ -205,10 +205,10 @@ Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 	auto iter = g_pmapRegistrees->find(sClass);
 	if( iter == g_pmapRegistrees->end() )
 	{
-		RString sFile;
+		std::string sFile;
 		if (bLegacy && node.GetAttrValue("File", sFile) && sFile != "")
 		{
-			RString sPath;
+			std::string sPath;
 			// Handle absolute paths correctly
 			if (Rage::starts_with(sFile, "/"))
 			{
@@ -231,7 +231,7 @@ Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 		}
 
 		// sClass is invalid
-		RString sError = fmt::sprintf( "%s: invalid Class \"%s\"",
+		std::string sError = fmt::sprintf( "%s: invalid Class \"%s\"",
 			ActorUtil::GetWhere(&node).c_str(), sClass.c_str() );
 		LuaHelpers::ReportScriptError(sError);
 		return new Actor;	// Return a dummy object so that we don't crash in AutoActor later.
@@ -249,15 +249,15 @@ Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 
 namespace
 {
-	XNode *LoadXNodeFromLuaShowErrors( const RString &sFile )
+	XNode *LoadXNodeFromLuaShowErrors( const std::string &sFile )
 	{
-		RString sScript;
+		std::string sScript;
 		if( !GetFileContents(sFile, sScript) )
 			return nullptr;
 
 		Lua *L = LUA->Get();
 
-		RString sError;
+		std::string sError;
 		if( !LuaHelpers::LoadScript(L, sScript, "@" + sFile, sError) )
 		{
 			LUA->Release( L );
@@ -284,7 +284,7 @@ bool ActorUtil::LoadTableFromStackShowErrors( Lua *L )
 	lua_pushvalue( L, -1 );
 	func.SetFromStack( L );
 
-	RString Error= "Lua runtime error: ";
+	std::string Error= "Lua runtime error: ";
 	if( !LuaHelpers::RunScriptOnStack(L, Error, 0, 1, true) )
 	{
 		lua_pop( L, 1 );
@@ -309,9 +309,9 @@ bool ActorUtil::LoadTableFromStackShowErrors( Lua *L )
 
 // NOTE: This function can return nullptr if the actor should not be displayed.
 // Callers should be aware of this and handle it appropriately.
-Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
+Actor* ActorUtil::MakeActor( const std::string &sPath_, Actor *pParentActor )
 {
-	RString sPath( sPath_ );
+	std::string sPath( sPath_ );
 
 	FileType ft = GetFileType( sPath );
 	switch( ft )
@@ -347,7 +347,7 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 			{
 				sPath += '/';
 			}
-			RString sXml = sPath + "default.xml";
+			std::string sXml = sPath + "default.xml";
 			if (DoesFileExist(sXml))
 				return MakeActor(sXml, pParentActor);
 
@@ -399,9 +399,9 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 	}
 }
 
-RString ActorUtil::GetSourcePath( const XNode *pNode )
+std::string ActorUtil::GetSourcePath( const XNode *pNode )
 {
-	RString sRet;
+	std::string sRet;
 	pNode->GetAttrValue( "_Source", sRet );
 	if( sRet.substr(0, 1) == "@" )
 		sRet.erase( 0, 1 );
@@ -409,9 +409,9 @@ RString ActorUtil::GetSourcePath( const XNode *pNode )
 	return sRet;
 }
 
-RString ActorUtil::GetWhere( const XNode *pNode )
+std::string ActorUtil::GetWhere( const XNode *pNode )
 {
-	RString sPath = GetSourcePath( pNode );
+	std::string sPath = GetSourcePath( pNode );
 
 	int iLine;
 	if( pNode->GetAttrValue("_Line", iLine) )
@@ -419,7 +419,7 @@ RString ActorUtil::GetWhere( const XNode *pNode )
 	return sPath;
 }
 
-bool ActorUtil::GetAttrPath( const XNode *pNode, const RString &sName, RString &sOut, bool optional )
+bool ActorUtil::GetAttrPath( const XNode *pNode, const std::string &sName, std::string &sOut, bool optional )
 {
 	if( !pNode->GetAttrValue(sName, sOut) )
 		return false;
@@ -427,7 +427,7 @@ bool ActorUtil::GetAttrPath( const XNode *pNode, const RString &sName, RString &
 	bool bIsRelativePath = !Rage::starts_with(sOut, "/");
 	if( bIsRelativePath )
 	{
-		RString sDir;
+		std::string sDir;
 		if( !pNode->GetAttrValue("_Dir", sDir) )
 		{
 			if(!optional)
@@ -442,7 +442,7 @@ bool ActorUtil::GetAttrPath( const XNode *pNode, const RString &sName, RString &
 	return ActorUtil::ResolvePath( sOut, ActorUtil::GetWhere(pNode), optional );
 }
 
-apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands, const RString &sName )
+apActorCommands ActorUtil::ParseActorCommands( const std::string &sCommands, const std::string &sName )
 {
 	Lua *L = LUA->Get();
 	LuaHelpers::ParseCommandList( L, sCommands, sName, false );
@@ -453,7 +453,7 @@ apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands, const R
 	return apActorCommands( pRet );
 }
 
-void ActorUtil::SetXY( Actor& actor, const RString &sMetricsGroup )
+void ActorUtil::SetXY( Actor& actor, const std::string &sMetricsGroup )
 {
 	ASSERT( !actor.GetName().empty() );
 
@@ -468,32 +468,32 @@ void ActorUtil::SetXY( Actor& actor, const RString &sMetricsGroup )
 		actor.SetXY( fX, fY );
 }
 
-void ActorUtil::LoadCommand( Actor& actor, const RString &sMetricsGroup, const RString &sCommandName )
+void ActorUtil::LoadCommand( Actor& actor, const std::string &sMetricsGroup, const std::string &sCommandName )
 {
 	ActorUtil::LoadCommandFromName( actor, sMetricsGroup, sCommandName, actor.GetName() );
 }
 
-void ActorUtil::LoadCommandFromName( Actor& actor, const RString &sMetricsGroup, const RString &sCommandName, const RString &sName )
+void ActorUtil::LoadCommandFromName( Actor& actor, const std::string &sMetricsGroup, const std::string &sCommandName, const std::string &sName )
 {
 	actor.AddCommand( sCommandName, THEME->GetMetricA(sMetricsGroup,sName+sCommandName+"Command") );
 }
 
-void ActorUtil::LoadAllCommands( Actor& actor, const RString &sMetricsGroup )
+void ActorUtil::LoadAllCommands( Actor& actor, const std::string &sMetricsGroup )
 {
 	LoadAllCommandsFromName( actor, sMetricsGroup, actor.GetName() );
 }
 
-void ActorUtil::LoadAllCommandsFromName( Actor& actor, const RString &sMetricsGroup, const RString &sName )
+void ActorUtil::LoadAllCommandsFromName( Actor& actor, const std::string &sMetricsGroup, const std::string &sName )
 {
-	std::set<RString> vsValueNames;
+	std::set<std::string> vsValueNames;
 	THEME->GetMetricsThatBeginWith( sMetricsGroup, sName, vsValueNames );
 
 	for (auto const &sv: vsValueNames)
 	{
-		static const RString sEnding = "Command";
+		static const std::string sEnding = "Command";
 		if( Rage::ends_with(sv,sEnding) )
 		{
-			RString sCommandName( sv.begin()+sName.size(), sv.end()-sEnding.size() );
+			std::string sCommandName( sv.begin()+sName.size(), sv.end()-sEnding.size() );
 			LoadCommandFromName( actor, sMetricsGroup, sCommandName, sName );
 		}
 	}
@@ -600,9 +600,9 @@ void ActorUtil::AddTypeExtensionsToList(FileType ft, vector<std::string>& add_to
 	}
 }
 
-FileType ActorUtil::GetFileType( const RString &sPath )
+FileType ActorUtil::GetFileType( const std::string &sPath )
 {
-	RString sExt = Rage::make_lower(GetExtension( sPath ));
+	std::string sExt = Rage::make_lower(GetExtension( sPath ));
 
 	etft_cont_t::iterator conversion_entry= ExtensionToFileType.find(sExt);
 	if(conversion_entry != ExtensionToFileType.end())
@@ -630,11 +630,11 @@ namespace
 	int GetFileType( lua_State *L )		{ Enum::Push( L, ActorUtil::GetFileType(SArg(1)) ); return 1; }
 	int ResolvePath( lua_State *L )
 	{
-		RString sPath( SArg(1) );
+		std::string sPath( SArg(1) );
 		int iLevel = IArg(2);
 		bool optional= lua_toboolean(L, 3);
 		luaL_where( L, iLevel );
-		RString sWhere = lua_tostring( L, -1 );
+		std::string sWhere = lua_tostring( L, -1 );
 		if( sWhere.size() > 2 && sWhere.substr(sWhere.size()-2, 2) == ": " )
 			sWhere = sWhere.substr( 0, sWhere.size()-2 ); // remove trailing ": "
 

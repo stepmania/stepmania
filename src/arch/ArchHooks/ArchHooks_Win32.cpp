@@ -187,7 +187,7 @@ void ArchHooks_Win32::SetupConcurrentRenderingThread()
 	SetThreadPriority( GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL );
 }
 
-bool ArchHooks_Win32::GoToURL( RString sUrl )
+bool ArchHooks_Win32::GoToURL( std::string sUrl )
 {
 	return ::GotoURL( sUrl );
 }
@@ -202,11 +202,11 @@ float ArchHooks_Win32::GetDisplayAspectRatio()
 	return dm.dmPelsWidth / (float)dm.dmPelsHeight;
 }
 
-RString ArchHooks_Win32::GetClipboard()
+std::string ArchHooks_Win32::GetClipboard()
 {
 	HGLOBAL hgl;
 	LPTSTR lpstr;
-	RString ret;
+	std::string ret;
 
 	// First make sure that the clipboard actually contains a string
 	// (or something stringifiable)
@@ -230,9 +230,9 @@ RString ArchHooks_Win32::GetClipboard()
 	// (Hopefully.)
 
 #ifdef UNICODE
-	ret = WStringToRString( wstring()+*lpstr );
+	ret = WStringTostd::string( wstring()+*lpstr );
 #else
-	ret = RString( lpstr );
+	ret = std::string( lpstr );
 #endif
 	
 	// And now we clean up.

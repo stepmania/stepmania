@@ -23,7 +23,7 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 
 	// If not found, check case-insensitively for legacy compatibility
 	if( lua_isnil(L, -1) && lua_isstring(L, iPos) ) {
-		RString sLower;
+		std::string sLower;
 
 		// Get rid of nil value on stack
 		lua_pop( L, 1 );
@@ -44,7 +44,7 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 	// and not silently result in nil, or an out-of-bounds value.
 	if( unlikely(lua_isnil(L, -1)) )
 	{
-		RString sGot;
+		std::string sGot;
 		if( lua_isstring(L, iPos) )
 		{
 			/* We were given a string, but it wasn't a valid value for this enum.  Show
@@ -66,7 +66,7 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 		// to avoid crashing over theme mistakes.
 		if(bAllowAnything)
 		{
-			RString errmsg;
+			std::string errmsg;
 			LuaHelpers::Pop(L, errmsg);
 			LuaHelpers::ReportScriptError(errmsg);
 			lua_pop(L, 2);
@@ -80,17 +80,17 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 }
 
 // szNameArray is of size iMax; pNameCache is of size iMax+2.
-std::string const EnumToString( int iVal, int iMax, const char **szNameArray, std::unique_ptr<RString> *pNameCache )
+std::string const EnumToString( int iVal, int iMax, const char **szNameArray, std::unique_ptr<std::string> *pNameCache )
 {
 	if( unlikely(pNameCache[0].get() == nullptr) )
 	{
 		for( int i = 0; i < iMax; ++i )
 		{
-			std::unique_ptr<RString> ap( new RString( szNameArray[i] ) );
+			std::unique_ptr<std::string> ap( new std::string( szNameArray[i] ) );
 			pNameCache[i] = std::move(ap);
 		}
 
-		std::unique_ptr<RString> ap( new RString );
+		std::unique_ptr<std::string> ap( new std::string );
 		pNameCache[iMax+1] = std::move(ap);
 	}
 

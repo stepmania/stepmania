@@ -193,7 +193,7 @@ public:
 	}
 	ThemeMetric1D()
 	{
-		Load( RString(), nullptr, 0 );
+		Load( std::string(), nullptr, 0 );
 	}
 	void Load( std::string const & sGroup, MetricName1D pfn, size_t N )
 	{
@@ -310,7 +310,7 @@ public:
 			m.second.Clear();
 		}
 	}
-	const T& GetValue( RString s ) const
+	const T& GetValue( std::string s ) const
 	{
 		auto iter = m_metric.find(s);
 		ASSERT( iter != m_metric.end() );

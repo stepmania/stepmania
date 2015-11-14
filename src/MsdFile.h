@@ -21,7 +21,7 @@ public:
 		 * @param i the index.
 		 * @return the proper parameter.
 		 */
-		RString operator[]( unsigned i ) const { if( i >= params.size() ) return RString(); return params[i]; }
+		std::string operator[]( unsigned i ) const { if( i >= params.size() ) return std::string(); return params[i]; }
 	};
 
 	MsdFile(): values(), error("") {}
@@ -35,19 +35,19 @@ public:
 	 * @param bUnescape a flag to see if we need to unescape values.
 	 * @return its success or failure.
 	 */
-	bool ReadFile( RString sFilePath, bool bUnescape );
+	bool ReadFile( std::string sFilePath, bool bUnescape );
 	/**
 	 * @brief Attempt to read an MSD file.
 	 * @param sString the path to the file.
 	 * @param bUnescape a flag to see if we need to unescape values.
 	 * @return its success or failure.
 	 */
-	void ReadFromString( const RString &sString, bool bUnescape );
+	void ReadFromString( const std::string &sString, bool bUnescape );
 
 	/**
 	 * @brief Should an error take place, have an easy place to get it.
 	 * @return the current error. */
-	RString GetError() const { return error; }
+	std::string GetError() const { return error; }
 
 	/**
 	 * @brief Retrieve the number of values for each tag.
@@ -71,7 +71,7 @@ public:
 	 * @param par the current parameter index.
 	 * @return the parameter in question.
 	 */
-	RString GetParam( unsigned val, unsigned par ) const;
+	std::string GetParam( unsigned val, unsigned par ) const;
 
 
 private:
@@ -96,7 +96,7 @@ private:
 	/** @brief The list of values. */
 	std::vector<value_t> values;
 	/** @brief The error string. */
-	RString error;
+	std::string error;
 };
 
 #endif

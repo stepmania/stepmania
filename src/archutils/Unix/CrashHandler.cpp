@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstdarg>
+#include <cstring>
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #endif
@@ -35,7 +36,7 @@ static void safe_print( int fd, ... )
 		const char *p = va_arg( ap, const char * );
 		if( p == nullptr )
 			break;
-		size_t len = strlen( p );
+		size_t len = std::strlen( p );
 		while( len )
 		{
 			ssize_t result = write( fd, p, strlen(p) );
@@ -53,7 +54,7 @@ static void GetExecutableName( char *buf, int bufsize )
 {
 	/* Reading /proc/self/exe always gives the running binary, even if it no
 	 * longer exists. */
-	strncpy( buf, "/proc/self/exe", bufsize );
+	std::strncpy( buf, "/proc/self/exe", bufsize );
 	buf[bufsize-1] = 0;
 }
 #else
@@ -80,7 +81,7 @@ static void NORETURN spawn_child_process( int from_parent )
 	char path[1024];
 	char magic[32];
 	GetExecutableName( path, sizeof(path) );
-	strncpy( magic, CHILD_MAGIC_PARAMETER, sizeof(magic) );
+	std::strncpy( magic, CHILD_MAGIC_PARAMETER, sizeof(magic) );
 
 	/* Use execve; it's the lowest-level of the exec calls.  The others may allocate. */
 	char *argv[3] = { path, magic, nullptr };
@@ -111,7 +112,7 @@ static bool parent_write( int to_child, const void *p, size_t size )
 	int ret = retried_write( to_child, p, size );
 	if( ret == -1 )
 	{
-		safe_print( fileno(stderr), "Unexpected write() result (", strerror(errno), ")\n", nullptr );
+		safe_print( fileno(stderr), "Unexpected write() result (", std::strerror(errno), ")\n", nullptr );
 		return false;
 	}
 
@@ -132,7 +133,7 @@ static void parent_process( int to_child, const CrashData *crash )
 
 	/* 2. Write info. */
 	const char *p = RageLog::GetInfo();
-	int size = strlen( p )+1;
+	int size = std::strlen( p )+1;
 	if( !parent_write(to_child, &size, sizeof(size)) )
 		return;
 	if( !parent_write(to_child, p, size) )
@@ -214,11 +215,11 @@ static void RunCrashHandler( const CrashData *crash )
 
 	/* Block SIGPIPE, so we get EPIPE. */
 	struct sigaction sa;
-	memset( &sa, 0, sizeof(sa) );
+	std::memset( &sa, 0, sizeof(sa) );
 	sa.sa_handler = SIG_IGN;
 	if( sigaction( SIGPIPE, &sa, nullptr ) != 0 )
 	{
-		safe_print( fileno(stderr), "sigaction() failed: %s", strerror(errno), nullptr );
+		safe_print( fileno(stderr), "sigaction() failed: %s", std::strerror(errno), nullptr );
 		/* non-fatal */
 	}
 
@@ -262,14 +263,14 @@ static void RunCrashHandler( const CrashData *crash )
 	int fds[2];
 	if( pipe(fds) != 0 )
 	{
-		safe_print( fileno(stderr), "Crash handler pipe() failed: ", strerror(errno), "\n", nullptr );
+		safe_print( fileno(stderr), "Crash handler pipe() failed: ", std::strerror(errno), "\n", nullptr );
 		exit( 1 );
 	}
 
 	pid_t childpid = fork();
 	if( childpid == -1 )
 	{
-		safe_print( fileno(stderr), "Crash handler fork() failed: ", strerror(errno), "\n", nullptr );
+		safe_print( fileno(stderr), "Crash handler fork() failed: ", std::strerror(errno), "\n", nullptr );
 		_exit( 1 );
 	}
 
@@ -317,7 +318,7 @@ static void BacktraceAllThreads( CrashData& crash )
 		BacktraceContext ctx;
 		if( GetThreadBacktraceContext( iID, &ctx ) )
 			GetBacktrace( crash.BacktracePointers[iCnt], BACKTRACE_MAX_SIZE, &ctx );
-		strncpy( crash.m_ThreadName[iCnt], RageThread::GetThreadNameByID(iID), sizeof(crash.m_ThreadName[0])-1 );
+		std::strncpy( crash.m_ThreadName[iCnt], RageThread::GetThreadNameByID(iID), sizeof(crash.m_ThreadName[0])-1 );
 
 		++iCnt;
 
@@ -329,10 +330,10 @@ static void BacktraceAllThreads( CrashData& crash )
 void CrashHandler::ForceCrash( std::string const &reason )
 {
 	CrashData crash;
-	memset( &crash, 0, sizeof(crash) );
+	std::memset( &crash, 0, sizeof(crash) );
 
 	crash.type = CrashData::FORCE_CRASH;
-	strncpy( crash.reason, reason.c_str(), sizeof(crash.reason) );
+	std::strncpy( crash.reason, reason.c_str(), sizeof(crash.reason) );
 	crash.reason[ sizeof(crash.reason)-1 ] = 0;
 
 	GetBacktrace( crash.BacktracePointers[0], BACKTRACE_MAX_SIZE, nullptr );
@@ -340,10 +341,10 @@ void CrashHandler::ForceCrash( std::string const &reason )
 	RunCrashHandler( &crash );
 }
 
-void CrashHandler::ForceDeadlock( RString reason, uint64_t iID )
+void CrashHandler::ForceDeadlock( std::string reason, uint64_t iID )
 {
 	CrashData crash;
-	memset( &crash, 0, sizeof(crash) );
+	std::memset( &crash, 0, sizeof(crash) );
 
 	crash.type = CrashData::FORCE_CRASH;
 
@@ -361,12 +362,12 @@ void CrashHandler::ForceDeadlock( RString reason, uint64_t iID )
 			reason += "; GetThreadBacktraceContext failed";
 		else
 			GetBacktrace( crash.BacktracePointers[1], BACKTRACE_MAX_SIZE, &ctx );
-		strncpy( crash.m_ThreadName[1], RageThread::GetThreadNameByID(iID), sizeof(crash.m_ThreadName[0])-1 );
+		std::strncpy( crash.m_ThreadName[1], RageThread::GetThreadNameByID(iID), sizeof(crash.m_ThreadName[0])-1 );
 	}
 
-	strncpy( crash.m_ThreadName[0], RageThread::GetCurrentThreadName(), sizeof(crash.m_ThreadName[0])-1 );
+	std::strncpy( crash.m_ThreadName[0], RageThread::GetCurrentThreadName(), sizeof(crash.m_ThreadName[0])-1 );
 
-	strncpy( crash.reason, reason, std::min(sizeof(crash.reason) - 1, reason.length()) );
+	std::strncpy( crash.reason, reason.c_str(), std::min(sizeof(crash.reason) - 1, reason.length()) );
 	crash.reason[ sizeof(crash.reason)-1 ] = 0;
 
 	RunCrashHandler( &crash );
@@ -391,7 +392,7 @@ void CrashHandler::CrashSignalHandler( int signal, siginfo_t *si, const ucontext
 	asm volatile("nop");
 
 	CrashData crash;
-	memset( &crash, 0, sizeof(crash) );
+	std::memset( &crash, 0, sizeof(crash) );
 
 	crash.type = CrashData::SIGNAL;
 	crash.signal = signal;
@@ -405,7 +406,7 @@ void CrashHandler::CrashSignalHandler( int signal, siginfo_t *si, const ucontext
 		BacktraceAllThreads( crash );
 #endif
 
-	strncpy( crash.m_ThreadName[0], RageThread::GetCurrentThreadName(), sizeof(crash.m_ThreadName[0])-1 );
+	std::strncpy( crash.m_ThreadName[0], RageThread::GetCurrentThreadName(), sizeof(crash.m_ThreadName[0])-1 );
 
 	bInCrashSignalHandler = false;
 

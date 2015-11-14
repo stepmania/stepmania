@@ -16,7 +16,7 @@
 
 using std::vector;
 
-Difficulty DwiCompatibleStringToDifficulty( const RString& sDC );
+Difficulty DwiCompatibleStringToDifficulty( const std::string& sDC );
 
 static std::map<int,int> g_mapDanceNoteToNoteDataColumn;
 
@@ -46,7 +46,7 @@ enum DanceNotes
  * @param note2Out The second result based on the character.
  * @param sPath the path to the file.
  */
-static void DWIcharToNote( char c, GameController i, int &note1Out, int &note2Out, const RString &sPath )
+static void DWIcharToNote( char c, GameController i, int &note1Out, int &note2Out, const std::string &sPath )
 {
 	switch( c )
 	{
@@ -101,7 +101,7 @@ static void DWIcharToNote( char c, GameController i, int &note1Out, int &note2Ou
  * @param col2Out The second result based on the character.
  * @param sPath the path to the file.
  */
-static void DWIcharToNoteCol( char c, GameController i, int &col1Out, int &col2Out, const RString &sPath )
+static void DWIcharToNoteCol( char c, GameController i, int &col1Out, int &col2Out, const std::string &sPath )
 {
 	int note1, note2;
 	DWIcharToNote( c, i, note1, note2, sPath );
@@ -129,7 +129,7 @@ static void DWIcharToNoteCol( char c, GameController i, int &col1Out, int &col2O
  * @param pos the position of the step data.
  * @return true if it's a 192nd note, false otherwise.
  */
-static bool Is192( const RString &sStepData, size_t pos )
+static bool Is192( const std::string &sStepData, size_t pos )
 {
 	while( pos < sStepData.size() )
 	{
@@ -147,9 +147,9 @@ const int BEATS_PER_MEASURE = 4;
 
 /* We prefer the normal names; recognize a number of others, too. (They'll get
  * normalized when written to SMs, etc.) */
-Difficulty DwiCompatibleStringToDifficulty( const RString& sDC )
+Difficulty DwiCompatibleStringToDifficulty( const std::string& sDC )
 {
-	RString s2 = Rage::make_lower(sDC);
+	std::string s2 = Rage::make_lower(sDC);
 	if( s2 == "beginner" )			return Difficulty_Beginner;
 	else if( s2 == "easy" )		return Difficulty_Easy;
 	else if( s2 == "basic" )		return Difficulty_Easy;
@@ -171,7 +171,7 @@ Difficulty DwiCompatibleStringToDifficulty( const RString& sDC )
 	else							return Difficulty_Invalid;
 }
 
-static StepsType GetTypeFromMode(const RString &mode)
+static StepsType GetTypeFromMode(const std::string &mode)
 {
 	if( mode == "SINGLE" )
 		return StepsType_dance_single;
@@ -185,8 +185,8 @@ static StepsType GetTypeFromMode(const RString &mode)
 	return StepsType_Invalid; // just in case.
 }
 
-static NoteData ParseNoteData(RString &step1, RString &step2,
-			      Steps &out, const RString &path)
+static NoteData ParseNoteData(std::string &step1, std::string &step2,
+			      Steps &out, const std::string &path)
 {
 	g_mapDanceNoteToNoteDataColumn.clear();
 	switch( out.m_StepsType )
@@ -224,7 +224,7 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
 
 	for( int pad=0; pad<2; pad++ )		// foreach pad
 	{
-		RString sStepData;
+		std::string sStepData;
 		switch( pad )
 		{
 			case 0:
@@ -415,13 +415,13 @@ static NoteData ParseNoteData(RString &step1, RString &step2,
  * @return the success or failure of the operation.
  */
 static bool LoadFromDWITokens(
-	RString sMode,
-	RString sDescription,
-	RString sNumFeet,
-	RString sStepData1,
-	RString sStepData2,
+	std::string sMode,
+	std::string sDescription,
+	std::string sNumFeet,
+	std::string sStepData1,
+	std::string sStepData2,
 	Steps &out,
-	const RString &sPath )
+	const std::string &sPath )
 {
 	CHECKPOINT_M( "DWILoader::LoadFromDWITokens()" );
 
@@ -453,7 +453,7 @@ static bool LoadFromDWITokens(
  * @param arg3 Seconds if not empty.
  * @return the proper timestamp.
  */
-static float ParseBrokenDWITimestamp( const RString &arg1, const RString &arg2, const RString &arg3 )
+static float ParseBrokenDWITimestamp( const std::string &arg1, const std::string &arg2, const std::string &arg3 )
 {
 	if( arg1.empty() )
 		return 0;
@@ -482,7 +482,7 @@ void DWILoader::GetApplicableFiles( std::string const &sPath, vector<std::string
 	GetDirListing( sPath + "*.dwi", out );
 }
 
-bool DWILoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
+bool DWILoader::LoadNoteDataFromSimfile( const std::string &path, Steps &out )
 {
 	MsdFile msd;
 	if( !msd.ReadFile( path, false ) )  // don't unescape
@@ -498,7 +498,7 @@ bool DWILoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &params = msd.GetValue(i);
-		RString valueName = params[0];
+		std::string valueName = params[0];
 		Rage::ci_ascii_string tagName{ valueName.c_str() };
 
 		if(tagName == "SINGLE" || tagName == "DOUBLE" || tagName == "COUPLE" || tagName == "SOLO")
@@ -509,8 +509,8 @@ bool DWILoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 				continue;
 			if (out.GetMeter() != StringToInt(params[2]))
 				continue;
-			RString step1 = params[3];
-			RString step2 = (iNumParams==5) ? params[4] : RString("");
+			std::string step1 = params[3];
+			std::string step2 = (iNumParams==5) ? params[4] : std::string("");
 			out.SetNoteData(ParseNoteData(step1, step2, out, path));
 			return true;
 		}
@@ -518,7 +518,7 @@ bool DWILoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 	return false;
 }
 
-bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString> &BlacklistedImages )
+bool DWILoader::LoadFromDir( const std::string &sPath_, Song &out, std::set<std::string> &BlacklistedImages )
 {
 	vector<std::string> aFileNames;
 	GetApplicableFiles( sPath_, aFileNames );
@@ -531,7 +531,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
 
 	/* We should have exactly one; if we had none, we shouldn't have been called to begin with. */
 	ASSERT( aFileNames.size() == 1 );
-	const RString sPath = sPath_ + aFileNames[0];
+	const std::string sPath = sPath_ + aFileNames[0];
 
 	LOG->Trace( "Song::LoadFromDWIFile(%s)", sPath.c_str() );
 
@@ -548,7 +548,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
+		std::string sValueName = sParams[0];
 		Rage::ci_ascii_string tagName{ sValueName.c_str() };
 
 		if( iNumParams < 1 )
@@ -692,7 +692,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
 				sParams[1],
 				sParams[2],
 				sParams[3],
-				(iNumParams==5) ? sParams[4] : RString(""),
+				(iNumParams==5) ? sParams[4] : std::string(""),
 				*pNewNotes,
 				sPath
 				);
@@ -708,20 +708,20 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
 		{
 			/* We don't want to support these tags.  However, we don't want
 			 * to pick up images used here as song images (eg. banners). */
-			RString param = sParams[1];
+			std::string param = sParams[1];
 			/* "{foo} ... {foo2}" */
 			size_t pos = 0;
-			while( pos < RString::npos )
+			while( pos < std::string::npos )
 			{
 
 				size_t startpos = param.find('{', pos);
-				if( startpos == RString::npos )
+				if( startpos == std::string::npos )
 					break;
 				size_t endpos = param.find('}', startpos);
-				if( endpos == RString::npos )
+				if( endpos == std::string::npos )
 					break;
 
-				RString sub = Rage::make_lower(param.substr( startpos+1, endpos-startpos-1 ));
+				std::string sub = Rage::make_lower(param.substr( startpos+1, endpos-startpos-1 ));
 
 				pos = endpos + 1;
 

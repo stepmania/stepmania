@@ -27,7 +27,7 @@ MenuTimer::~MenuTimer()
 	delete WARNING_COMMAND;
 }
 
-void MenuTimer::Load( RString sMetricsGroup )
+void MenuTimer::Load( std::string sMetricsGroup )
 {
 	m_sprFrame.Load( THEME->GetPathG(sMetricsGroup, "Frame") );
 	m_sprFrame->SetName( "Frame" );
@@ -185,11 +185,11 @@ void MenuTimer::SetText( float fSeconds )
 		LuaHelpers::Push( L, fSeconds );
 
 		// call function with 1 argument and 1 result
-		RString Error = fmt::sprintf("Error running Text%d", (i+1));
+		std::string Error = fmt::sprintf("Error running Text%d", (i+1));
 		Error += "FormatFunction: ";
 		LuaHelpers::RunScriptOnStack(L, Error, 1, 1, true);
 
-		RString sText;
+		std::string sText;
 		LuaHelpers::Pop( L, sText );
 
 		m_text[i].SetText( sText );

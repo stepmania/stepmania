@@ -57,7 +57,7 @@ class GameStateMessageHandler: public MessageSubscriber
 	{
 		if( msg.GetName() == "RefreshCreditText" )
 		{
-			RString sJoined;
+			std::string sJoined;
 			FOREACH_HumanPlayer( pn )
 			{
 				if( sJoined != "" )
@@ -224,12 +224,12 @@ void GameState::SetProcessedTimingData(TimingData * t)
 	this->processedTiming = t;
 }
 
-void GameState::ApplyGameCommand( const RString &sCommand, PlayerNumber pn )
+void GameState::ApplyGameCommand( const std::string &sCommand, PlayerNumber pn )
 {
 	GameCommand m;
 	m.Load( 0, ParseCommands(sCommand) );
 
-	RString sWhy;
+	std::string sWhy;
 	if( !m.IsPlayable(&sWhy) )
 	{
 		LuaHelpers::ReportScriptErrorFmt("Can't apply GameCommand \"%s\": %s", sCommand.c_str(), sWhy.c_str());
@@ -245,7 +245,7 @@ void GameState::ApplyGameCommand( const RString &sCommand, PlayerNumber pn )
 void GameState::ApplyCmdline()
 {
 	// We need to join players before we can set the style.
-	RString sPlayer;
+	std::string sPlayer;
 	for( int i = 0; GetCommandlineArgument( "player", &sPlayer, i ); ++i )
 	{
 		int pn = StringToInt( sPlayer )-1;
@@ -255,7 +255,7 @@ void GameState::ApplyCmdline()
 		JoinPlayer( (PlayerNumber) pn );
 	}
 
-	RString sMode;
+	std::string sMode;
 	for( int i = 0; GetCommandlineArgument( "mode", &sMode, i ); ++i )
 	{
 		ApplyGameCommand( sMode );
@@ -863,7 +863,7 @@ void GameState::LoadCurrentSettingsFromProfile( PlayerNumber pn )
 	const Profile *pProfile = PROFILEMAN->GetProfile(pn);
 
 	// apply saved default modifiers if any
-	RString sModifiers;
+	std::string sModifiers;
 	if( pProfile->GetDefaultModifiers( m_pCurGame, sModifiers ) )
 	{
 		/* We don't save negative preferences (eg. "no reverse"). If the theme
@@ -913,7 +913,7 @@ void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
 		pProfile->m_lastCourse.FromCourse( m_pPreferredCourse );
 }
 
-bool GameState::CanSafelyEnterGameplay(RString& reason)
+bool GameState::CanSafelyEnterGameplay(std::string& reason)
 {
 	if(!IsCourseMode())
 	{
@@ -1116,7 +1116,7 @@ void GameState::ForceOtherPlayersToCompatibleSteps(PlayerNumber main)
 		StyleType styletype_to_match= GAMEMAN->GetFirstCompatibleStyle(
 			GAMESTATE->GetCurrentGame(), num_players, steps_to_match->m_StepsType)
 			->m_StyleType;
-		RString music_to_match= steps_to_match->GetMusicFile();
+		std::string music_to_match= steps_to_match->GetMusicFile();
 		FOREACH_EnabledPlayer(pn)
 		{
 			Steps* pn_steps= m_pCurSteps[pn].Get();
@@ -1433,7 +1433,7 @@ int GameState::GetLoadingCourseSongIndex() const
 static LocalizedString PLAYER1	("GameState","Player 1");
 static LocalizedString PLAYER2	("GameState","Player 2");
 static LocalizedString CPU		("GameState","CPU");
-RString GameState::GetPlayerDisplayName( PlayerNumber pn ) const
+std::string GameState::GetPlayerDisplayName( PlayerNumber pn ) const
 {
 	ASSERT( IsPlayerEnabled(pn) );
 	const LocalizedString *pDefaultNames[] = { &PLAYER1, &PLAYER2 };
@@ -1842,13 +1842,13 @@ void GameState::ResetToDefaultSongOptions( ModsLevel l )
 	m_SongOptions.Assign( l, so );
 }
 
-void GameState::ApplyPreferredModifiers( PlayerNumber pn, RString sModifiers )
+void GameState::ApplyPreferredModifiers( PlayerNumber pn, std::string sModifiers )
 {
 	m_pPlayerState[pn]->m_PlayerOptions.FromString( ModsLevel_Preferred, sModifiers );
 	m_SongOptions.FromString( ModsLevel_Preferred, sModifiers );
 }
 
-void GameState::ApplyStageModifiers( PlayerNumber pn, RString sModifiers )
+void GameState::ApplyStageModifiers( PlayerNumber pn, std::string sModifiers )
 {
 	m_pPlayerState[pn]->m_PlayerOptions.FromString( ModsLevel_Stage, sModifiers );
 	m_SongOptions.FromString( ModsLevel_Stage, sModifiers );
@@ -2244,7 +2244,7 @@ bool GameState::AnyPlayerHasRankingFeats() const
 	return false;
 }
 
-void GameState::StoreRankingName( PlayerNumber pn, RString sName )
+void GameState::StoreRankingName( PlayerNumber pn, std::string sName )
 {
 	// The theme can upper it if desired. -Kyz
 	// sName = Rage::make_upper(sName);
@@ -2254,7 +2254,7 @@ void GameState::StoreRankingName( PlayerNumber pn, RString sName )
 		RageFile file;
 		if( file.Open(NAME_BLACKLIST_FILE) )
 		{
-			RString sLine;
+			std::string sLine;
 
 			while( !file.AtEOF() )
 			{
@@ -2363,7 +2363,7 @@ bool GameState::IsTimeToPlayAttractSounds() const
 	return false;
 }
 
-void GameState::VisitAttractScreen( const RString sScreenName )
+void GameState::VisitAttractScreen( const std::string sScreenName )
 {
 	if( sScreenName == CommonMetrics::FIRST_ATTRACT_SCREEN.GetValue() )
 		m_iNumTimesThroughAttract++;
@@ -2560,7 +2560,7 @@ float GameState::GetGoalPercentComplete( PlayerNumber pn )
 		return fActual / fGoal;
 }
 
-bool GameState::PlayerIsUsingModifier( PlayerNumber pn, const RString &sModifier )
+bool GameState::PlayerIsUsingModifier( PlayerNumber pn, const std::string &sModifier )
 {
 	PlayerOptions po = m_pPlayerState[pn]->m_PlayerOptions.GetCurrent();
 	SongOptions so = m_SongOptions.GetCurrent();
@@ -2685,7 +2685,7 @@ public:
 	}
 	static int CanSafelyEnterGameplay(T* p, lua_State* L)
 	{
-		RString reason;
+		std::string reason;
 		bool can= p->CanSafelyEnterGameplay(reason);
 		lua_pushboolean(L, can);
 		LuaHelpers::Push(L, reason);
@@ -2827,7 +2827,7 @@ public:
 	static int GetSongOptions( T* p, lua_State *L )
 	{
 		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
-		RString s = p->m_SongOptions.Get(m).GetString();
+		std::string s = p->m_SongOptions.Get(m).GetString();
 		LuaHelpers::Push( L, s );
 		return 1;
 	}
@@ -2923,7 +2923,7 @@ public:
 
 		for (auto const *pSteps: vpStepsToShow)
 		{
-			RString sDifficulty = CustomDifficultyToLocalizedString( GetCustomDifficulty( pSteps->m_StepsType, pSteps->GetDifficulty(), CourseType_Invalid ) );
+			std::string sDifficulty = CustomDifficultyToLocalizedString( GetCustomDifficulty( pSteps->m_StepsType, pSteps->GetDifficulty(), CourseType_Invalid ) );
 
 			lua_pushstring( L, sDifficulty.c_str() );
 			lua_pushstring( L, pSteps->GetDescription().c_str() );
@@ -3133,7 +3133,7 @@ public:
 		const Style* pStyle = nullptr;
 		if( lua_isstring(L,1) )
 		{
-			RString style = SArg(1);
+			std::string style = SArg(1);
 			pStyle = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_pCurGame, style );
 			if( !pStyle )
 			{
@@ -3207,7 +3207,7 @@ public:
 		StepsType stype= Enum::Check<StepsType>(L, 3);
 		Enum::Check<Difficulty>(L, 4);
 		Steps* new_steps= song->CreateSteps();
-		RString edit_name;
+		std::string edit_name;
 		// Form 2.
 		if(steps == nullptr)
 		{

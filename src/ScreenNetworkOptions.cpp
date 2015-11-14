@@ -100,7 +100,7 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 	{
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
-			RString sNewName = ScreenTextEntry::s_sLastAnswer;
+			std::string sNewName = ScreenTextEntry::s_sLastAnswer;
 			NSMAN->PostStartUp(sNewName);
 			NSMAN->DisplayStartupStatus();
 			UpdateConnectStatus( );

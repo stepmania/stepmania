@@ -1438,7 +1438,7 @@ void NewField::clear_steps()
 	m_columns.clear();
 }
 
-void NewField::set_skin(RString const& skin_name)
+void NewField::set_skin(std::string const& skin_name)
 {
 	NewSkinLoader const* loader= NEWSKIN->get_loader_for_skin(skin_name);
 	if(loader != nullptr)

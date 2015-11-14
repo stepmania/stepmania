@@ -77,9 +77,9 @@ RageSoundDriver_DSound_Software::RageSoundDriver_DSound_Software()
 	m_pPCM = nullptr;
 }
 
-RString RageSoundDriver_DSound_Software::Init()
+std::string RageSoundDriver_DSound_Software::Init()
 {
-	RString sError = ds.Init();
+	std::string sError = ds.Init();
 	if( sError != "" )
 		return sError;
 
@@ -108,7 +108,7 @@ RString RageSoundDriver_DSound_Software::Init()
 	m_MixingThread.SetName("Mixer thread");
 	m_MixingThread.Create( MixerThread_start, this );
 
-	return RString();
+	return std::string();
 }
 
 RageSoundDriver_DSound_Software::~RageSoundDriver_DSound_Software()

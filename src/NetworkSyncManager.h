@@ -61,7 +61,7 @@ struct EndOfGame_PlayerData
 	int grade;
 	Difficulty difficulty;
 	int tapScores[NETNUMTAPSCORES];	//This will be a const soon enough
-	RString playerOptions;
+	std::string playerOptions;
 };
 
 enum NSScoreBoardColumn
@@ -77,8 +77,8 @@ enum NSScoreBoardColumn
 
 struct NetServerInfo
 {
-	RString Name;
-	RString Address;
+	std::string Name;
+	std::string Address;
 };
 
 class EzSockets;
@@ -96,12 +96,12 @@ public:
 	uint8_t Read1();
 	uint16_t Read2();
 	uint32_t Read4();
-	RString ReadNT();
+	std::string ReadNT();
 
 	void Write1( uint8_t Data );
 	void Write2( uint16_t Data );
 	void Write4( uint32_t Data );
-	void WriteNT( const RString& Data );
+	void WriteNT( const std::string& Data );
 
 	void ClearPacket();
 };
@@ -118,15 +118,15 @@ public:
 	void ReportStyle(); // Report style, players, and names
 	void ReportNSSOnOff( int i );	// Report song selection screen on/off
 	void StartRequest( short position );	// Request a start; Block until granted.
-	RString GetServerName();
+	std::string GetServerName();
 
 	// SMOnline stuff
 	// FIXME: This should NOT be public. PERIOD.
 	void SendSMOnline( );
 
-	bool Connect( const RString& addy, unsigned short port );
+	bool Connect( const std::string& addy, unsigned short port );
 
-	void PostStartUp( const RString& ServerIP );
+	void PostStartUp( const std::string& ServerIP );
 
 	void CloseConnection();
 
@@ -150,23 +150,23 @@ public:
 
 	// Used together:
 	bool ChangedScoreboard(int Column);	// Returns true if scoreboard changed since function was last called.
-	RString m_Scoreboard[NUM_NSScoreBoardColumn];
+	std::string m_Scoreboard[NUM_NSScoreBoardColumn];
 
 	// Used for chatting
-	void SendChat(const RString& message);
-	RString m_WaitingChat;
+	void SendChat(const std::string& message);
+	std::string m_WaitingChat;
 
 	// Used for options
 	void ReportPlayerOptions();
 
 	// Used for song checking/changing
-	RString m_sMainTitle;
-	RString m_sArtist;
-	RString m_sSubTitle;
+	std::string m_sMainTitle;
+	std::string m_sArtist;
+	std::string m_sSubTitle;
 	int m_iSelectMode;
 	void SelectUserSong();
 
-	RString m_sChatText;
+	std::string m_sChatText;
 
 	// FIXME: This should NOT be public. PERIOD. It probably shouldn't be a member at all.
 	PacketFunctions	m_SMOnlinePacket;
@@ -175,7 +175,7 @@ public:
 
 	int GetSMOnlineSalt();
 
-	RString MD5Hex( const RString &sInput );
+	std::string MD5Hex( const std::string &sInput );
 
 	void GetListOfLANServers( std::vector<NetServerInfo>& AllServers );
 
@@ -200,7 +200,7 @@ private:
 
 	bool m_scoreboardchange[NUM_NSScoreBoardColumn];
 
-	RString m_ServerName;
+	std::string m_ServerName;
 
 	EzSockets *NetPlayerClient;
 	EzSockets *BroadcastReception;

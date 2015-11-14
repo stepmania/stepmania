@@ -38,9 +38,9 @@ public:
 	bool m_bShouldAllowLateJoin; // So that it can be exposed to Lua.
 
 protected:
-	RString HandleLuaMusicFile(RString const& path);
+	std::string HandleLuaMusicFile(std::string const& path);
 	virtual void StartPlayingMusic();
-	void SetHelpText( RString s );
+	void SetHelpText( std::string s );
 
 	AutoActor			m_sprUnderlay;
 	MemoryCardDisplay	*m_MemoryCardDisplay[NUM_PLAYERS];
@@ -61,7 +61,7 @@ protected:
 	ThemeMetric<bool>		RESET_GAMESTATE;
 
 private:
-	RString m_sPathToMusic;
+	std::string m_sPathToMusic;
 };
 
 class ScreenWithMenuElementsSimple: public ScreenWithMenuElements

@@ -543,7 +543,7 @@ void ScreenEdit::LoadKeymapSectionIntoMappingsMember(XNode const* section, MapEd
 		auto name_entry = name_to_edit_button.find(attr->first);
 		if(name_entry != name_to_edit_button.end())
 		{
-			RString joined_names;
+			std::string joined_names;
 			attr->second->GetValue(joined_names);
 			auto key_names = Rage::split(joined_names, DEVICE_INPUT_SEPARATOR, Rage::EmptyEntries::include);
 			for(size_t k= 0; k < key_names.size() && k < NUM_EDIT_TO_DEVICE_SLOTS; ++k)
@@ -1305,7 +1305,7 @@ static bool EnabledIfSet2GlobalMovie()			{ return ScreenMiniMenu::s_viLastAnswer
 static bool EnabledIfSet2GlobalMovieSongGroup()		{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file2_type] == global_movie_song_group		&& !g_BackgroundChange.rows[ScreenEdit::file2_global_movie_song_group].choices.empty(); }
 static bool EnabledIfSet2GlobalMovieSongGroupAndGenre() { return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file2_type] == global_movie_song_group_and_genre	&& !g_BackgroundChange.rows[ScreenEdit::file2_global_movie_song_group_and_genre].choices.empty(); }
 
-static RString GetOneBakedRandomFile( Song *pSong, bool bTryGenre = true )
+static std::string GetOneBakedRandomFile( Song *pSong, bool bTryGenre = true )
 {
 	vector<std::string> vsPaths;
 	vector<std::string> vsNames;
@@ -1316,7 +1316,7 @@ static RString GetOneBakedRandomFile( Song *pSong, bool bTryGenre = true )
 		vsNames,
 		bTryGenre );
 
-	return vsNames.empty() ? RString() : vsNames[RandomInt(vsNames.size())];
+	return vsNames.empty() ? std::string() : vsNames[RandomInt(vsNames.size())];
 }
 
 static MenuDef g_InsertTapAttack(
@@ -1870,9 +1870,9 @@ void ScreenEdit::UpdateTextInfo()
 
 	m_bTextInfoNeedsUpdate = false;
 
-	RString sNoteType = fmt::sprintf( NOTES.GetValue(), NoteTypeToLocalizedString(m_SnapDisplay.GetNoteType()).c_str() );
+	std::string sNoteType = fmt::sprintf( NOTES.GetValue(), NoteTypeToLocalizedString(m_SnapDisplay.GetNoteType()).c_str() );
 
-	RString sText;
+	std::string sText;
 	sText += fmt::sprintf( CURRENT_BEAT_FORMAT.GetValue(), CURRENT_BEAT.GetValue().c_str(), GetBeat() );
 	float second= GetAppropriateTiming().GetElapsedTimeFromBeatNoOffset(GetBeat());
 	sText += fmt::sprintf( CURRENT_SECOND_FORMAT.GetValue(), CURRENT_SECOND.GetValue().c_str(), second );
@@ -1915,7 +1915,7 @@ void ScreenEdit::UpdateTextInfo()
 			sText += fmt::sprintf( SUBTITLE_FORMAT.GetValue(), SUBTITLE.GetValue().c_str(), m_pSong->m_sSubTitle.c_str() );
 		}
 		sText += fmt::sprintf( SEGMENT_TYPE_FORMAT.GetValue(), SEGMENT_TYPE.GetValue().c_str(), TimingSegmentTypeToString(currentCycleSegment).c_str() );
-        const RString tapnoteType = TapNoteTypeToString( m_selectedTap.type );
+        const std::string tapnoteType = TapNoteTypeToString( m_selectedTap.type );
 		sText += fmt::sprintf( TAP_NOTE_TYPE_FORMAT.GetValue(), TAP_NOTE_TYPE.GetValue().c_str(), tapnoteType.c_str() );
 
 		AttackArray &attacks =
@@ -2485,7 +2485,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			m_pSteps = pSteps;
 			pSteps->GetNoteData( m_NoteDataEdit );
 
-			RString s = fmt::sprintf(
+			std::string s = fmt::sprintf(
 				SWITCHED_TO.GetValue() + " %s %s '%s' (%d of %d)",
 				GAMEMAN->GetStepsTypeInfo( st ).stepTypeName.c_str(),
 				DifficultyToString( pSteps->GetDifficulty() ).c_str(),
@@ -2853,7 +2853,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 			if( iAttack >= 0 )
 			{
-				const RString sDuration = FloatToString(ce.attacks[iAttack].fSecsRemaining );
+				const std::string sDuration = FloatToString(ce.attacks[iAttack].fSecsRemaining );
 
 				g_InsertCourseAttack.rows[remove].bEnabled = true;
 				if( g_InsertCourseAttack.rows[duration].choices.size() == 9 )
@@ -2953,7 +2953,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE:
 		{
 			bool bTryGenre = EditB == EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE;
-			RString sName = GetOneBakedRandomFile(m_pSong, bTryGenre);
+			std::string sName = GetOneBakedRandomFile(m_pSong, bTryGenre);
 			if( sName.empty() )
 			{
 				SCREENMAN->PlayInvalidSound();
@@ -3757,7 +3757,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if ( SM == SM_BackFromLabelChange && !ScreenTextEntry::s_bCancelledLast )
 	{
-		RString sLabel = ScreenTextEntry::s_sLastAnswer;
+		std::string sLabel = ScreenTextEntry::s_sLastAnswer;
 
 		if ( !GetAppropriateTiming().DoesLabelExist(sLabel) )
 		{
@@ -3845,7 +3845,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		GAMESTATE->m_pCurCourse.Set( nullptr );
 		if( num != 0 )
 		{
-			const RString name = g_CourseMode.rows[0].choices[num];
+			const std::string name = g_CourseMode.rows[0].choices[num];
 			Course *pCourse = SONGMAN->FindCourse( name );
 
 			int iCourseEntryIndex = -1;
@@ -3929,7 +3929,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if (SM == SM_BackFromNewKeysound && !ScreenTextEntry::s_bCancelledLast)
 	{
-		RString answer = ScreenTextEntry::s_sLastAnswer;
+		std::string answer = ScreenTextEntry::s_sLastAnswer;
 		const int track = ScreenMiniMenu::s_iLastRowCode; // still keeps the same value.
 		const int row = this->GetRow();
 		const TapNote &oldNote = m_NoteDataEdit.GetTapNote(track, row);
@@ -3969,7 +3969,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_BackFromInsertTapAttackPlayerOptions )
 	{
 		PlayerOptions poChosen = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetPreferred();
-		RString sMods = poChosen.GetString();
+		std::string sMods = poChosen.GetString();
 		const int row = BeatToNoteRow( GAMESTATE->m_Position.m_fSongBeat );
 
 		TapNote tn(
@@ -4005,7 +4005,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if (SM == SM_BackFromAddingModToExistingAttack && !ScreenTextEntry::s_bCancelledLast)
 	{
-		RString mod = Rage::trim(ScreenTextEntry::s_sLastAnswer);
+		std::string mod = Rage::trim(ScreenTextEntry::s_sLastAnswer);
 		if (mod.length() > 0)
 		{
 			AttackArray &attacks =
@@ -4080,7 +4080,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if (SM == SM_BackFromAddingAttackToChart && !ScreenTextEntry::s_bCancelledLast)
 	{
-		RString mod = Rage::trim(ScreenTextEntry::s_sLastAnswer);
+		std::string mod = Rage::trim(ScreenTextEntry::s_sLastAnswer);
 		if (mod.length() > 0)
 		{
 			AttackArray &attacks =
@@ -4229,7 +4229,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		ModsGroup<PlayerOptions> &toRestore = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
 		PlayerOptions poChosen = toRestore.GetPreferred();
-		RString mods = poChosen.GetString();
+		std::string mods = poChosen.GetString();
 
 		if (g_fLastInsertAttackPositionSeconds >= 0)
 		{
@@ -4251,7 +4251,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_BackFromInsertCourseAttackPlayerOptions )
 	{
 		PlayerOptions poChosen = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetPreferred();
-		RString sMods = poChosen.GetString();
+		std::string sMods = poChosen.GetString();
 
 		Course *pCourse = GAMESTATE->m_pCurCourse;
 		CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
@@ -4464,7 +4464,7 @@ void ScreenEdit::PerformSave(bool autosave)
 			{
 				ASSERT( m_pSteps->IsAnEdit() );
 
-				RString sError;
+				std::string sError;
 				m_pSteps->CalculateRadarValues( m_pSong->m_fMusicLengthSeconds );
 				if( !NotesWriterSM::WriteEditFileToMachine(m_pSong, m_pSteps, sError) )
 				{
@@ -4484,7 +4484,7 @@ void ScreenEdit::PerformSave(bool autosave)
 				HandleScreenMessage(save_message);
 
 				/* FIXME
-					 RString s;
+					 std::string s;
 					 switch( c )
 					 {
 					 case save:			s = "ScreenMemcardSaveEditsAfterSave";	break;
@@ -4529,7 +4529,7 @@ void ScreenEdit::OnSnapModeChange()
 // Begin helper functions for InputEdit
 
 
-static void ChangeDescription( const RString &sNew )
+static void ChangeDescription( const std::string &sNew )
 {
 	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 
@@ -4540,73 +4540,73 @@ static void ChangeDescription( const RString &sNew )
 	pSteps->SetDescription(sNew);
 }
 
-static void ChangeChartName( const RString &sNew )
+static void ChangeChartName( const std::string &sNew )
 {
 	Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	pSteps->SetChartName(sNew);
 }
 
-static void ChangeChartStyle( const RString &sNew )
+static void ChangeChartStyle( const std::string &sNew )
 {
 	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	pSteps->SetChartStyle(sNew);
 }
 
-static void ChangeStepCredit( const RString &sNew )
+static void ChangeStepCredit( const std::string &sNew )
 {
 	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	pSteps->SetCredit(sNew);
 }
 
-static void ChangeStepMeter( const RString &sNew )
+static void ChangeStepMeter( const std::string &sNew )
 {
 	using std::max;
 	int diff = StringToInt(sNew);
 	GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(max(diff, 1));
 }
 
-static void ChangeStepMusic(const RString& sNew)
+static void ChangeStepMusic(const std::string& sNew)
 {
 	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	pSteps->SetMusicFile(sNew);
 }
 
-static void ChangeMainTitle( const RString &sNew )
+static void ChangeMainTitle( const std::string &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sMainTitle = sNew;
 }
 
-static void ChangeSubTitle( const RString &sNew )
+static void ChangeSubTitle( const std::string &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sSubTitle = sNew;
 }
 
-static void ChangeArtist( const RString &sNew )
+static void ChangeArtist( const std::string &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sArtist = sNew;
 }
 
-static void ChangeGenre( const RString &sNew )
+static void ChangeGenre( const std::string &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sGenre = sNew;
 }
 
-static void ChangeCredit( const RString &sNew )
+static void ChangeCredit( const std::string &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sCredit = sNew;
 }
 
-static void ChangePreview(const RString& sNew)
+static void ChangePreview(const std::string& sNew)
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	if(!sNew.empty())
 	{
-		RString error;
+		std::string error;
 		RageSoundReader* sample= RageSoundReader_FileReader::OpenFile(pSong->GetPreviewMusicPath(), error);
 		if(sample == nullptr)
 		{
@@ -4625,57 +4625,57 @@ static void ChangePreview(const RString& sNew)
 	}
 }
 
-static void ChangeMainTitleTranslit( const RString &sNew )
+static void ChangeMainTitleTranslit( const std::string &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sMainTitleTranslit = sNew;
 }
 
-static void ChangeSubTitleTranslit( const RString &sNew )
+static void ChangeSubTitleTranslit( const std::string &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sSubTitleTranslit = sNew;
 }
 
-static void ChangeArtistTranslit( const RString &sNew )
+static void ChangeArtistTranslit( const std::string &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sArtistTranslit = sNew;
 }
 
-static void ChangeLastSecondHint( const RString &sNew )
+static void ChangeLastSecondHint( const std::string &sNew )
 {
 	Song &s = *GAMESTATE->m_pCurSong;
 	s.SetSpecifiedLastSecond(StringToFloat(sNew));
 }
 
-static void ChangePreviewStart( const RString &sNew )
+static void ChangePreviewStart( const std::string &sNew )
 {
 	GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds = StringToFloat( sNew );
 }
 
-static void ChangePreviewLength( const RString &sNew )
+static void ChangePreviewLength( const std::string &sNew )
 {
 	GAMESTATE->m_pCurSong->m_fMusicSampleLengthSeconds = StringToFloat( sNew );
 }
 
-static void ChangeMinBPM( const RString &sNew )
+static void ChangeMinBPM( const std::string &sNew )
 {
 	GAMESTATE->m_pCurSong->m_fSpecifiedBPMMin = StringToFloat( sNew );
 }
 
-static void ChangeStepsMinBPM(const RString &sNew)
+static void ChangeStepsMinBPM(const std::string &sNew)
 {
 	Steps *step = GAMESTATE->m_pCurSteps[PLAYER_1];
 	step->SetMinBPM(StringToFloat(sNew));
 }
 
-static void ChangeMaxBPM( const RString &sNew )
+static void ChangeMaxBPM( const std::string &sNew )
 {
 	GAMESTATE->m_pCurSong->m_fSpecifiedBPMMax = StringToFloat( sNew );
 }
 
-static void ChangeStepsMaxBPM(const RString &sNew)
+static void ChangeStepsMaxBPM(const std::string &sNew)
 {
 	Steps *step = GAMESTATE->m_pCurSteps[PLAYER_1];
 	step->SetMaxBPM(StringToFloat(sNew));
@@ -4761,7 +4761,7 @@ void ScreenEdit::DisplayTimingMenu()
 	g_TimingDataInformation.rows[speed_percent].SetOneUnthemedChoice( bHasSpeedOnThisRow ? FloatToString(pTime.GetSpeedPercentAtRow( row ) ) : "---" );
 	g_TimingDataInformation.rows[speed_wait].SetOneUnthemedChoice( bHasSpeedOnThisRow ? FloatToString(pTime.GetSpeedWaitAtRow( row ) ) : "---" );
 
-	RString starting = ( pTime.GetSpeedModeAtRow( row ) == 1 ? "Seconds" : "Beats" );
+	std::string starting = ( pTime.GetSpeedModeAtRow( row ) == 1 ? "Seconds" : "Beats" );
 	g_TimingDataInformation.rows[speed_mode].SetOneUnthemedChoice( starting.c_str() );
 
 	g_TimingDataInformation.rows[scroll].SetOneUnthemedChoice( FloatToString(pTime.GetScrollAtRow( row ) ) );
@@ -5011,7 +5011,7 @@ static LocalizedString NOT_A_TRACK("ScreenEdit", "'%s' is not a track id.");
 static LocalizedString OUT_OF_RANGE_ID("ScreenEdit", "Entry %d, '%d', is out of range 1 to %d.");
 static LocalizedString CONFIRM_CLEAR("ScreenEdit", "Are you sure you want to clear %d notes?");
 
-static bool ConvertMappingInputToMapping(RString const& mapstr, int* mapping, RString& error)
+static bool ConvertMappingInputToMapping(std::string const& mapstr, int* mapping, std::string& error)
 {
     auto mapping_input = Rage::split(mapstr, ",");
 	size_t tracks_for_type= GAMEMAN->GetStepsTypeInfo(GAMESTATE->m_pCurSteps[0]->m_StepsType).iNumTracks;
@@ -5051,18 +5051,18 @@ static bool ConvertMappingInputToMapping(RString const& mapstr, int* mapping, RS
 	return true;
 }
 
-static bool ArbitraryRemapValidate(const RString& answer, RString& error_out)
+static bool ArbitraryRemapValidate(const std::string& answer, std::string& error_out)
 {
 	int mapping[MAX_NOTE_TRACKS];
 	return ConvertMappingInputToMapping(answer, mapping, error_out);
 }
 
-void ScreenEdit::HandleArbitraryRemapping(RString const& mapstr)
+void ScreenEdit::HandleArbitraryRemapping(std::string const& mapstr)
 {
 	const NoteData OldClipboard( m_Clipboard );
 	HandleAlterMenuChoice( cut, false );
 	int mapping[MAX_NOTE_TRACKS];
-	RString error;
+	std::string error;
 	// error is actually reported by the validate function, and unused here.
 	if(ConvertMappingInputToMapping(mapstr, mapping, error))
 	{
@@ -6020,10 +6020,10 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 
 	newChange.m_fStartBeat    = GAMESTATE->m_Position.m_fSongBeat;
 	newChange.m_fRate         = StringToFloat( g_BackgroundChange.rows[rate].choices[iAnswers[rate]] )/100.f;
-	newChange.m_sTransition   = iAnswers[transition] ? g_BackgroundChange.rows[transition].choices[iAnswers[transition]] : RString();
-	newChange.m_def.m_sEffect = iAnswers[effect]     ? g_BackgroundChange.rows[effect].choices[iAnswers[effect]]         : RString();
-	newChange.m_def.m_sColor1 = iAnswers[color1]     ? g_BackgroundChange.rows[color1].choices[iAnswers[color1]]         : RString();
-	newChange.m_def.m_sColor2 = iAnswers[color2]     ? g_BackgroundChange.rows[color2].choices[iAnswers[color2]]         : RString();
+	newChange.m_sTransition   = iAnswers[transition] ? g_BackgroundChange.rows[transition].choices[iAnswers[transition]] : std::string();
+	newChange.m_def.m_sEffect = iAnswers[effect]     ? g_BackgroundChange.rows[effect].choices[iAnswers[effect]]         : std::string();
+	newChange.m_def.m_sColor1 = iAnswers[color1]     ? g_BackgroundChange.rows[color1].choices[iAnswers[color1]]         : std::string();
+	newChange.m_def.m_sColor2 = iAnswers[color2]     ? g_BackgroundChange.rows[color2].choices[iAnswers[color2]]         : std::string();
 	switch( iAnswers[file1_type] )
 	{
 	DEFAULT_FAIL( iAnswers[file1_type] );
@@ -6256,7 +6256,7 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 		{
 			Undo();
 			m_bHasUndo = false;
-			RString sError = CREATES_NOTES_PAST_END.GetValue() + "\n\n" + CHANGE_REVERTED.GetValue();
+			std::string sError = CREATES_NOTES_PAST_END.GetValue() + "\n\n" + CHANGE_REVERTED.GetValue();
 			ScreenPrompt::Prompt( SM_None, sError );
 			return;
 		}
@@ -6404,7 +6404,7 @@ static void ProcessKeyNames( vector<std::string> &vs, bool doSort )
 	vs.erase(toDelete, vs.end());
 }
 
-static RString GetDeviceButtonsLocalized( const vector<EditButton> &veb, const MapEditToDI &editmap )
+static std::string GetDeviceButtonsLocalized( const vector<EditButton> &veb, const MapEditToDI &editmap )
 {
 	vector<std::string> vsPress;
 	vector<std::string> vsHold;
@@ -6431,7 +6431,7 @@ static RString GetDeviceButtonsLocalized( const vector<EditButton> &veb, const M
 	ProcessKeyNames( vsPress, false );
 	ProcessKeyNames( vsHold, true );
 
-	RString s = Rage::join("/",vsPress);
+	std::string s = Rage::join("/",vsPress);
 	if( !vsHold.empty() )
 	{
 		s = Rage::join("/",vsHold) + " + " + s;
@@ -6453,7 +6453,7 @@ void ScreenEdit::DoStepAttackMenu()
 	for (auto &i: points)
 	{
 		const Attack &attack = attacks[i];
-		RString desc = fmt::sprintf("%g -> %g (%d mod[s])",
+		std::string desc = fmt::sprintf("%g -> %g (%d mod[s])",
 			startTime, startTime + attack.fSecsRemaining,
 			attack.GetNumAttacks());
 
@@ -6528,8 +6528,8 @@ void ScreenEdit::DoHelp()
 		if( !IsMapped(hl.veb[0],m_EditMappingsDeviceInput) )
 			continue;
 
-		RString sButtons = GetDeviceButtonsLocalized( hl.veb, m_EditMappingsDeviceInput );
-		RString sDescription = THEME->GetString( "EditHelpDescription", hl.szEnglishDescription );
+		std::string sButtons = GetDeviceButtonsLocalized( hl.veb, m_EditMappingsDeviceInput );
+		std::string sDescription = THEME->GetString( "EditHelpDescription", hl.szEnglishDescription );
 
 		// TODO: Better way of hiding routine only key on non-routine.
 		if( hl.veb[0] == EDIT_BUTTON_SWITCH_PLAYERS && m_InputPlayerNumber == PLAYER_INVALID )

@@ -8,7 +8,7 @@
 #include "Preference.h"
 
 
-extern const RString MEM_CARD_MOUNT_POINT[NUM_PLAYERS];
+extern const std::string MEM_CARD_MOUNT_POINT[NUM_PLAYERS];
 
 class MemoryCardManager
 {
@@ -19,7 +19,7 @@ public:
 	void Update();
 
 	MemoryCardState GetCardState( PlayerNumber pn ) const { return m_State[pn]; }
-	RString GetCardError( PlayerNumber pn ) const { return m_sError[pn]; }
+	std::string GetCardError( PlayerNumber pn ) const { return m_sError[pn]; }
 
 	void WaitForCheckingToComplete();
 	bool CardInserted( PlayerNumber pn );
@@ -37,10 +37,10 @@ public:
 
 	bool GetCardLocked( PlayerNumber pn ) const { return m_bCardLocked[pn]; }
 
-	bool PathIsMemCard( RString sDir ) const;
+	bool PathIsMemCard( std::string sDir ) const;
 
 	bool IsNameAvailable( PlayerNumber pn ) const;
-	RString GetName( PlayerNumber pn ) const;
+	std::string GetName( PlayerNumber pn ) const;
 
 	const std::vector<UsbStorageDevice> &GetStorageDevices() { return m_vStorageDevices; }
 
@@ -67,7 +67,7 @@ protected:
 	UsbStorageDevice m_FinalDevice[NUM_PLAYERS];	// device in the memory card slot when we finalized, blank if none
 
 	MemoryCardState m_State[NUM_PLAYERS];
-	RString m_sError[NUM_PLAYERS]; // if MemoryCardState_Error
+	std::string m_sError[NUM_PLAYERS]; // if MemoryCardState_Error
 
 	RageSound m_soundReady;
 	RageSound m_soundError;

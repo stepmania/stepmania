@@ -47,7 +47,7 @@ void ScoreDisplayBattle::Update( float fDelta )
 	for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
 	{
 		const Attack& attack = m_pPlayerState->m_Inventory[s];
-		RString sNewModifier = attack.sModifiers;
+		std::string sNewModifier = attack.sModifiers;
 
 		if( sNewModifier != m_iLastSeenInventory[s] )
 		{

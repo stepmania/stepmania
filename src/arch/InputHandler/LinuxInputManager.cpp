@@ -14,9 +14,9 @@
 
 #include <errno.h>
 
-RString getDevice(RString inputDir, RString type)
+std::string getDevice(std::string inputDir, std::string type)
 {
-	RString result = "";
+	std::string result = "";
 	DIR* dir = opendir( inputDir.c_str() );
 	if(dir == nullptr)
 		{ LOG->Warn("LinuxInputManager: Couldn't open %s: %s.", inputDir.c_str(), strerror(errno) ); return ""; }
@@ -25,7 +25,7 @@ RString getDevice(RString inputDir, RString type)
 	while( ( d = readdir(dir) ) != nullptr)
 		if( strncmp( type.c_str(), d->d_name, type.size() ) == 0)
 		{
-			result = RString("/dev/input/") + d->d_name;
+			result = std::string("/dev/input/") + d->d_name;
 			break;
 		}
 
@@ -84,7 +84,7 @@ void LinuxInputManager::InitDriver(InputHandler_Linux_Event* driver)
 
 	for (auto &dev: m_vsPendingEventDevices)
 	{
-		RString devFile = getDevice(dev, "event");
+		std::string devFile = getDevice(dev, "event");
 		ASSERT( devFile != "" );
 
 		if( ! driver->TryDevice(devFile) && m_bJoystickEnabled && getDevice(dev, "js") != "" )
@@ -101,7 +101,7 @@ void LinuxInputManager::InitDriver(InputHandler_Linux_Joystick* driver)
 
 	for (auto &dev: m_vsPendingJoystickDevices)
 	{
-		RString devFile = getDevice(dev, "js");
+		std::string devFile = getDevice(dev, "js");
 		ASSERT( devFile != "" );
 
 		driver->TryDevice(devFile);

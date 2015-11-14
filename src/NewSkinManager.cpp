@@ -148,7 +148,7 @@ std::string NewSkinManager::get_path(
 		return "";
 	}
 	// Check to see if the filename is already a valid path.
-	RString resolved= file;
+	std::string resolved= file;
 	if(ActorUtil::ResolvePath(resolved, skin->get_name(), true))
 	{
 		return resolved;

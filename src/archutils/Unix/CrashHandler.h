@@ -10,7 +10,7 @@ namespace CrashHandler
 	void InitializeCrashHandler();
 	void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc );
 	void ForceCrash( std::string const &reason );
-	void ForceDeadlock( RString reason, uint64_t CrashHandle );
+	void ForceDeadlock( std::string reason, uint64_t CrashHandle );
 }
 
 #endif

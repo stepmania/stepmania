@@ -69,9 +69,9 @@ XToString( RagePixelFormat );
  * to reload textures.  On failure, an error message is returned.
  * XXX: the renderer itself should probably be the one to try fallback modes */
 static LocalizedString SETVIDEOMODE_FAILED ( "RageDisplay", "SetVideoMode failed:" );
-RString RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures )
+std::string RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures )
 {
-	RString err;
+	std::string err;
 	vector<std::string> vs;
 
 	if( (err = this->TryVideoMode(p,bNeedReloadTextures)) == "" )
@@ -135,7 +135,7 @@ void RageDisplay::ProcessStatsOnFlip()
 		g_iFramesRenderedSinceLastCheck = g_iVertsRenderedSinceLastCheck = 0;
 		if( LOG_FPS )
 		{
-			RString sStats = GetStats();
+			std::string sStats = GetStats();
 			Rage::replace(sStats, "\n", ", " );
 			LOG->Trace( "%s", sStats.c_str() );
 		}
@@ -151,9 +151,9 @@ void RageDisplay::ResetStats()
 	g_LastCheckTimer.GetDeltaTime();
 }
 
-RString RageDisplay::GetStats() const
+std::string RageDisplay::GetStats() const
 {
-	RString s;
+	std::string s;
 	// If FPS == 0, we don't have stats yet.
 	if( !GetFPS() )
 		s = "-- FPS\n-- av FPS\n-- VPF";
@@ -741,7 +741,7 @@ void RageDisplay::UpdateCentering()
 		(float) p.m_iTranslateX, (float) p.m_iTranslateY, (float) p.m_iAddWidth, (float) p.m_iAddHeight );
 }
 
-bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
+bool RageDisplay::SaveScreenshot( std::string sPath, GraphicsFileFormat format )
 {
 	RageTimer timer;
 	RageSurface *surface = this->CreateScreenshot();
@@ -772,7 +772,7 @@ bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 
 	bool bSuccess = false;
 	timer.Touch();
-	RString strError = "";
+	std::string strError = "";
 	switch( format )
 	{
 	case SAVE_LOSSLESS:

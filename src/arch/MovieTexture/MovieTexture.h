@@ -5,7 +5,7 @@
 #include "arch/RageDriver.h"
 #include <map>
 
-void ForceToAscii( RString &str );
+void ForceToAscii( std::string &str );
 
 class RageMovieTexture : public RageTexture
 {
@@ -24,14 +24,14 @@ public:
 
 	bool IsAMovie() const { return true; }
 
-	static bool GetFourCC( RString fn, RString &handler, RString &type );
+	static bool GetFourCC( std::string fn, std::string &handler, std::string &type );
 };
 
 class RageMovieTextureDriver: public RageDriver
 {
 public:
 	virtual ~RageMovieTextureDriver() { }
-	virtual RageMovieTexture *Create( RageTextureID ID, RString &sError ) = 0;
+	virtual RageMovieTexture *Create( RageTextureID ID, std::string &sError ) = 0;
 	static DriverList m_pDriverList;
 };
 

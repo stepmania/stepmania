@@ -16,7 +16,7 @@ typedef RageDriver *(*CreateRageDriverFn)();
 struct DriverList
 {
     void Add( const Rage::ci_ascii_string &sName, CreateRageDriverFn pfn );
-	RageDriver *Create( const RString &sDriverName );
+	RageDriver *Create( const std::string &sDriverName );
 	std::map<Rage::ci_ascii_string, CreateRageDriverFn> *m_pRegistrees;
 };
 

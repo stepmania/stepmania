@@ -37,8 +37,8 @@ CombinedLifeMeterTug::CombinedLifeMeterTug()
 {
 	FOREACH_PlayerNumber( p )
 	{
-		RString sStreamPath = THEME->GetPathG("CombinedLifeMeterTug",fmt::sprintf("stream p%d",p+1));
-		RString sTipPath = THEME->GetPathG("CombinedLifeMeterTug",fmt::sprintf("tip p%d",p+1));
+		std::string sStreamPath = THEME->GetPathG("CombinedLifeMeterTug",fmt::sprintf("stream p%d",p+1));
+		std::string sTipPath = THEME->GetPathG("CombinedLifeMeterTug",fmt::sprintf("tip p%d",p+1));
 		m_Stream[p].Load( sStreamPath, METER_WIDTH, sTipPath );
 		this->AddChild( &m_Stream[p] );
 	}

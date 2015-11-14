@@ -41,7 +41,7 @@ static std::string ov_format( int err, std::string const &msg, Args const & ...a
 {
 	std::string s = fmt::sprintf(msg, args...);
 
-	RString errstr;
+	std::string errstr;
 	switch( err )
 	{
 	/* XXX: In the case of OV_EREAD, can we snoop at errno? */

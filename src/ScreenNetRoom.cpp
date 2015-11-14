@@ -91,7 +91,7 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 			{
 				case 0: //Room title Change
 				{
-					RString title, subtitle;
+					std::string title, subtitle;
 					title = NSMAN->m_SMOnlinePacket.ReadNT();
 					subtitle = NSMAN->m_SMOnlinePacket.ReadNT();
 
@@ -102,7 +102,7 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 
 					if ( NSMAN->m_SMOnlinePacket.Read1() != 0 )
 					{
-						RString SMOnlineSelectScreen = THEME->GetMetric( m_sName, "MusicSelectScreen" );
+						std::string SMOnlineSelectScreen = THEME->GetMetric( m_sName, "MusicSelectScreen" );
 						SCREENMAN->SetNewScreen( SMOnlineSelectScreen );
 					}
 				}
@@ -309,7 +309,7 @@ void ScreenNetRoom::UpdateRoomsList()
 	m_RoomWheel.RebuildWheelItems();
 }
 
-void ScreenNetRoom::CreateNewRoom( const RString& rName,  const RString& rDesc, const RString& rPass )
+void ScreenNetRoom::CreateNewRoom( const std::string& rName,  const std::string& rDesc, const std::string& rPass )
 {
 	NSMAN->m_SMOnlinePacket.ClearPacket();
 	NSMAN->m_SMOnlinePacket.Write1( (uint8_t)2 ); // Create room command

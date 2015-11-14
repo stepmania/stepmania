@@ -16,17 +16,17 @@ public:
 	static void RegisterTypes( lua_State *L );
 
 	bool IsDerivedClass() const { return GetClassName() != GetBaseClassName(); }
-	virtual const RString &GetClassName() const = 0;
-	virtual const RString &GetBaseClassName() const = 0;
+	virtual const std::string &GetClassName() const = 0;
+	virtual const std::string &GetBaseClassName() const = 0;
 
-	static void ApplyDerivedType( Lua *L, const RString &sClassname, void *pSelf );
+	static void ApplyDerivedType( Lua *L, const std::string &sClassname, void *pSelf );
 	static bool CheckLuaObjectType( lua_State *L, int narg, std::string const &szType );
 
 protected:
 	virtual void Register( Lua *L, int iMethods, int iMetatable ) = 0;
 
-	static void CreateMethodsTable( lua_State *L, const RString &szName );
-	static void *GetPointerFromStack( Lua *L, const RString &sType, int iArg );
+	static void CreateMethodsTable( lua_State *L, const std::string &szName );
+	static void *GetPointerFromStack( Lua *L, const std::string &sType, int iArg );
 
 	static bool Equal( lua_State *L );
 	static int PushEqual( lua_State *L );
@@ -61,10 +61,10 @@ protected:
 	}
 
 public:
-	virtual const RString &GetClassName() const { return m_sClassName; }
-	virtual const RString &GetBaseClassName() const { return m_sBaseClassName; }
-	static RString m_sClassName;
-	static RString m_sBaseClassName;
+	virtual const std::string &GetClassName() const { return m_sClassName; }
+	virtual const std::string &GetBaseClassName() const { return m_sBaseClassName; }
+	static std::string m_sClassName;
+	static std::string m_sBaseClassName;
 
 	// Get userdata from the Lua stack and return a pointer to T object.
 	static T *check( lua_State *L, int narg, bool bIsSelf = false )
@@ -90,7 +90,7 @@ public:
 
 	/* Push a table or userdata for the given object.  This is called on the
 	 * base class, so we pick up the instance of the base class, if any. */
-	static void PushObject( Lua *L, const RString &sDerivedClassName, T* p );
+	static void PushObject( Lua *L, const std::string &sDerivedClassName, T* p );
 
 protected:
 	void AddMethod( std::string const &regName, int (*pFunc)(T *p, lua_State *L) )
@@ -141,20 +141,20 @@ public:
  * Lua table).  Derived classes simply call the base class's Push function,
  * specifying a different class name, so they don't need to know about it. */
 #define LUA_REGISTER_INSTANCED_BASE_CLASS( T ) \
-	template<> void Luna<T>::PushObject( Lua *L, const RString &sDerivedClassName, T* p ) { p->m_pLuaInstance->PushSelf( L ); LuaBinding::ApplyDerivedType( L, sDerivedClassName, p ); } \
+	template<> void Luna<T>::PushObject( Lua *L, const std::string &sDerivedClassName, T* p ) { p->m_pLuaInstance->PushSelf( L ); LuaBinding::ApplyDerivedType( L, sDerivedClassName, p ); } \
 	LUA_REGISTER_CLASS_BASIC( T, T )
 
 #define LUA_REGISTER_CLASS( T ) \
-	template<> void Luna<T>::PushObject( Lua *L, const RString &sDerivedClassName, T* p ) { void **pData = (void **) lua_newuserdata( L, sizeof(void *) ); *pData = p; LuaBinding::ApplyDerivedType( L, sDerivedClassName, p ); } \
+	template<> void Luna<T>::PushObject( Lua *L, const std::string &sDerivedClassName, T* p ) { void **pData = (void **) lua_newuserdata( L, sizeof(void *) ); *pData = p; LuaBinding::ApplyDerivedType( L, sDerivedClassName, p ); } \
 	LUA_REGISTER_CLASS_BASIC( T, T )
 
 #define LUA_REGISTER_DERIVED_CLASS( T, B ) \
-	template<> void Luna<T>::PushObject( Lua *L, const RString &sDerivedClassName, T* p ) { Luna<B>::PushObject( L, sDerivedClassName, p ); } \
+	template<> void Luna<T>::PushObject( Lua *L, const std::string &sDerivedClassName, T* p ) { Luna<B>::PushObject( L, sDerivedClassName, p ); } \
 	LUA_REGISTER_CLASS_BASIC( T, B )
 
 #define LUA_REGISTER_CLASS_BASIC( T, B ) \
-	template<> RString Luna<T>::m_sClassName = #T; \
-	template<> RString Luna<T>::m_sBaseClassName = #B; \
+	template<> std::string Luna<T>::m_sClassName = #T; \
+	template<> std::string Luna<T>::m_sBaseClassName = #B; \
 	void T::PushSelf( lua_State *L ) { Luna<B>::PushObject( L, Luna<T>::m_sClassName, this ); } \
 	static Luna##T registera##T; \
 	/* Call PushSelf, so we always call the derived Luna<T>::Push. */ \

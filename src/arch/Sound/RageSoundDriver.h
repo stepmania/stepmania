@@ -16,7 +16,7 @@ class RageSoundDriver: public RageDriver
 {
 public:
 	/* Pass an empty string to get the default sound driver list. */
-	static RageSoundDriver *Create( const RString &sDrivers );
+	static RageSoundDriver *Create( const std::string &sDrivers );
 	static DriverList m_pDriverList;
 
 	friend class RageSoundManager;
@@ -25,7 +25,7 @@ public:
 	virtual ~RageSoundDriver();
 
 	/* Initialize.  On failure, an error message is returned. */
-	virtual RString Init() { return RString(); }
+	virtual std::string Init() { return std::string(); }
 
 	/* A RageSound calls this to request to be played.
 	 * XXX: define what we should do when it can't be played (eg. out of

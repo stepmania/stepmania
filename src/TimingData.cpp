@@ -145,7 +145,7 @@ void TimingData::ReleaseLookup()
 #undef CLEAR_LOOKUP
 }
 
-RString SegInfoStr(const vector<TimingSegment*>& segs, unsigned int index, const RString& name)
+std::string SegInfoStr(const vector<TimingSegment*>& segs, unsigned int index, const std::string& name)
 {
 	if(index < segs.size())
 	{
@@ -154,7 +154,7 @@ RString SegInfoStr(const vector<TimingSegment*>& segs, unsigned int index, const
 	return fmt::sprintf("%s: %d at end", name.c_str(), index);
 }
 
-void TimingData::DumpOneTable(const beat_start_lookup_t& lookup, const RString& name)
+void TimingData::DumpOneTable(const beat_start_lookup_t& lookup, const std::string& name)
 {
 	const vector<TimingSegment*>* segs= m_avpTimingSegments;
 	const vector<TimingSegment*>& bpms= segs[SEGMENT_BPM];
@@ -168,7 +168,7 @@ void TimingData::DumpOneTable(const beat_start_lookup_t& lookup, const RString& 
 		const lookup_item_t& item= lookup[lit];
 		const GetBeatStarts& starts= item.second;
 		LOG->Trace("%zu: %f", lit, item.first);
-		RString str= fmt::sprintf("  %s, %s, %s, %s,\n"
+		std::string str= fmt::sprintf("  %s, %s, %s, %s,\n"
 			"  last_row: %d, last_time: %.3f,\n"
 			"  warp_destination: %.3f, is_warping: %d",
 			SegInfoStr(bpms, starts.bpm, "bpm").c_str(),
@@ -733,7 +733,7 @@ void TimingData::AddSegment( const TimingSegment *seg )
 	}
 }
 
-bool TimingData::DoesLabelExist( const RString& sLabel ) const
+bool TimingData::DoesLabelExist( const std::string& sLabel ) const
 {
 	const vector<TimingSegment *> &labels = GetTimingSegments(SEGMENT_LABEL);
 	for (unsigned i = 0; i < labels.size(); i++)

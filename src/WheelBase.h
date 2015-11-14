@@ -27,7 +27,7 @@ enum WheelState {
 	WheelState_Invalid,
 };
 std::string const WheelStateToString( WheelState ws );
-WheelState StringToWheelState( const RString& sDC );
+WheelState StringToWheelState( const std::string& sDC );
 LuaDeclareType( WheelState );
 
 /** @brief A wheel with data elements. */
@@ -35,7 +35,7 @@ class WheelBase : public ActorFrame
 {
 public:
 	virtual ~WheelBase();
-	virtual void Load( RString sType );
+	virtual void Load( std::string sType );
 	void BeginScreen();
 
 	virtual void Update( float fDeltaTime );
@@ -43,7 +43,7 @@ public:
 	virtual void Move(int n);
 	void ChangeMusicUnlessLocked( int n ); /* +1 or -1 */
 	virtual void ChangeMusic(int dist); /* +1 or -1 */
-	virtual void SetOpenSection( RString group ) { }
+	virtual void SetOpenSection( std::string group ) { }
 
 	// Return true if we're moving fast automatically.
 	int IsMoving() const;
@@ -65,7 +65,7 @@ public:
 	WheelItemBaseData* GetItem(unsigned int index);
 	WheelItemBaseData* LastSelected();
 	WheelItemBase *GetWheelItem( int i ) { if( i < 0 || i >= (int) m_WheelBaseItems.size() ) return nullptr; return m_WheelBaseItems[i]; }
-	RString GetExpandedSectionName() { return m_sExpandedSectionName; }
+	std::string GetExpandedSectionName() { return m_sExpandedSectionName; }
 	int GetCurrentIndex() { return m_iSelection; }
 
 	WheelItemDataType GetSelectedType() { return m_CurWheelItemData[m_iSelection]->m_Type; }
@@ -93,7 +93,7 @@ protected:
 
 	bool		m_bEmpty;
 	int		m_iSelection;		// index into m_CurWheelItemBaseData
-	RString		m_sExpandedSectionName;
+	std::string		m_sExpandedSectionName;
 
 	int			m_iSwitchesLeftInSpinDown;
 	float		m_fLockedWheelVelocity;

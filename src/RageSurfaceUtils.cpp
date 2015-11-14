@@ -736,7 +736,7 @@ struct SurfaceHeader
 };
 
 // Save and load RageSurfaces to disk, in a very fast, nonportable way.
-bool RageSurfaceUtils::SaveSurface( const RageSurface *img, RString file )
+bool RageSurfaceUtils::SaveSurface( const RageSurface *img, std::string file )
 {
 	RageFile f;
 	if( !f.Open( file, RageFile::WRITE ) )
@@ -767,7 +767,7 @@ bool RageSurfaceUtils::SaveSurface( const RageSurface *img, RString file )
 	return true;
 }
 
-RageSurface *RageSurfaceUtils::LoadSurface( RString file )
+RageSurface *RageSurfaceUtils::LoadSurface( std::string file )
 {
 	RageFile f;
 	if( !f.Open( file ) )

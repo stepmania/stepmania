@@ -269,7 +269,7 @@ public:
 	static int GetPlayerOptionsString( T* p, lua_State *L )
 	{
 		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
-		RString s = p->m_PlayerOptions.Get(m).GetString();
+		std::string s = p->m_PlayerOptions.Get(m).GetString();
 		LuaHelpers::Push( L, s );
 		return 1;
 	}

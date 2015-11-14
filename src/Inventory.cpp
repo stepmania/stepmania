@@ -28,7 +28,7 @@ struct Item
 {
 	AttackLevel level;
 	unsigned int iCombo;
-	RString sModifier;
+	std::string sModifier;
 };
 static vector<Item>	g_Items;
 

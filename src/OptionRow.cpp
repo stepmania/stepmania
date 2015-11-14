@@ -12,12 +12,12 @@
 
 using std::vector;
 
-const RString NEXT_ROW_NAME = "NextRow";
-const RString EXIT_NAME = "Exit";
+const std::string NEXT_ROW_NAME = "NextRow";
+const std::string EXIT_NAME = "Exit";
 
-RString OptionRow::GetThemedItemText( int iChoice ) const
+std::string OptionRow::GetThemedItemText( int iChoice ) const
 {
-	RString s = m_pHand->GetThemedItemText( iChoice );
+	std::string s = m_pHand->GetThemedItemText( iChoice );
 
 	// HACK: Always theme the NEXT_ROW and EXIT items.
 	if( m_bFirstItemGoesDown  &&  iChoice == 0 )
@@ -78,7 +78,7 @@ void OptionRow::Clear()
 	ZERO( m_iChoiceInRowWithFocus );
 }
 
-void OptionRowType::Load( const RString &sMetricsGroup, Actor *pParent )
+void OptionRowType::Load( const std::string &sMetricsGroup, Actor *pParent )
 {
 	m_sMetricsGroup = sMetricsGroup;
 
@@ -207,9 +207,9 @@ void OptionRow::ChoicesChanged( RowType type, bool reset_focus )
 	m_textTitle->SetText( GetRowTitle() );
 }
 
-RString OptionRow::GetRowTitle() const
+std::string OptionRow::GetRowTitle() const
 {
-	RString sTitle = m_pHand->OptionTitle();
+	std::string sTitle = m_pHand->OptionTitle();
 
 	// HACK: tack the BPM onto the name of the speed line
 	Rage::ci_ascii_string speed{ "speed" };
@@ -306,7 +306,7 @@ void OptionRow::InitText( RowType type )
 		float fWidth = 0;
 		for( unsigned c=0; c<m_pHand->m_Def.m_vsChoices.size(); c++ )
 		{
-			RString sText = GetThemedItemText( c );
+			std::string sText = GetThemedItemText( c );
 			bt.SetText( sText );
 
 			fWidth += bt.GetZoomedWidth();
@@ -377,7 +377,7 @@ void OptionRow::InitText( RowType type )
 				bt->SetBaseZoomX( fBaseZoom );
 				bt->PlayCommand( "On" );
 				// Set text after running OnCommand so e.g. uppercase,true works -aj
-				RString sText = GetThemedItemText( c );
+				std::string sText = GetThemedItemText( c );
 				bt->SetText( sText );
 
 				// set the X position of each item in the line
@@ -549,7 +549,7 @@ void OptionRow::UpdateText( PlayerNumber p )
 			if( iChoiceWithFocus == -1 )
 				break;
 
-			RString sText = GetThemedItemText( iChoiceWithFocus );
+			std::string sText = GetThemedItemText( iChoiceWithFocus );
 
 			// If player_no is 2 and there is no player 1:
 			int index = min( pn, static_cast<unsigned int>(m_textItems.size()-1) );
@@ -594,7 +594,7 @@ void OptionRow::UpdateEnabledDisabled()
 	bool bRowEnabled = !m_pHand->m_Def.m_vEnabledForPlayers.empty();
 
 	// Don't tween selection colors at all.
-	RString sCmdName;
+	std::string sCmdName;
 	if( bThisRowHasFocusByAny )	sCmdName = "GainFocus";
 	else if( bRowEnabled )		sCmdName = "LoseFocus";
 	else				sCmdName = "Disabled";
@@ -674,7 +674,7 @@ void OptionRow::UpdateEnabledDisabled()
 	}
 }
 
-void OptionRow::SetModIcon( PlayerNumber pn, const RString &sText, GameCommand &gc )
+void OptionRow::SetModIcon( PlayerNumber pn, const std::string &sText, GameCommand &gc )
 {
 	// update row frame
 	Message msg( "Refresh" );
@@ -750,7 +750,7 @@ void OptionRow::SetOneSharedSelection( int iChoice )
 	}
 }
 
-void OptionRow::SetOneSharedSelectionIfPresent( const RString &sChoice )
+void OptionRow::SetOneSharedSelectionIfPresent( const std::string &sChoice )
 {
 	for( unsigned i=0; i<m_pHand->m_Def.m_vsChoices.size(); i++ )
 	{
@@ -859,7 +859,7 @@ bool OptionRow::GoToFirstOnStart()
 	return m_pHand->GoToFirstOnStart();
 }
 
-void OptionRow::SetExitText( RString sExitText )
+void OptionRow::SetExitText( std::string sExitText )
 {
 	BitmapText *bt = m_textItems.back();
 	bt->SetText( sExitText );
@@ -921,7 +921,7 @@ void OptionRow::Reload()
 
 void OptionRow::HandleMessage( const Message &msg )
 {
-	auto shouldReload = [&msg](RString const &m) {
+	auto shouldReload = [&msg](std::string const &m) {
 		return m == msg.GetName();
 	};
 	auto &messages = m_pHand->m_vsReloadRowMessages;

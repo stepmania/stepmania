@@ -324,7 +324,7 @@ void ScreenPackages::RefreshPackages()
 
 void ScreenPackages::UpdatePackagesList()
 {
-	RString TempText="";
+	std::string TempText="";
 	int min = m_iPackagesPos-NUM_PACKAGES_SHOW;
 	int max = m_iPackagesPos+NUM_PACKAGES_SHOW;
 	for (int i=min; i<max; i++ )
@@ -339,7 +339,7 @@ void ScreenPackages::UpdatePackagesList()
 
 void ScreenPackages::UpdateLinksList()
 {
-	RString TempText="";
+	std::string TempText="";
 	if( (unsigned) m_iLinksPos >= m_LinkTitles.size() )
 		m_iLinksPos = m_LinkTitles.size() - 1;
 	int min = m_iLinksPos-NUM_LINKS_SHOW;
@@ -397,12 +397,12 @@ void ScreenPackages::HTMLParse()
 			if ( j < l )
 				k = j;
 
-			RString TempLink = StripOutContainers( m_sBUFFER.substr(m+1,k-m-1) );
+			std::string TempLink = StripOutContainers( m_sBUFFER.substr(m+1,k-m-1) );
 			// xxx: handle https? -aj
 			if ( TempLink.substr(0,7).compare("http://") != 0 )
 				TempLink = m_sBaseAddress + TempLink;
 
-			RString TempTitle = m_sBUFFER.substr( k+1, l-k-1 );
+			std::string TempTitle = m_sBUFFER.substr( k+1, l-k-1 );
 
 			m_Links.push_back( TempLink );
 			m_LinkTitles.push_back( TempTitle );
@@ -418,10 +418,10 @@ void ScreenPackages::HTMLParse()
 	UpdateLinksList();
 }
 
-RString ScreenPackages::StripOutContainers( const RString & In )
+std::string ScreenPackages::StripOutContainers( const std::string & In )
 {
 	if( In.size() == 0 )
-		return RString();
+		return std::string();
 
 	unsigned i = 0;
 	char t = In.at(i);
@@ -481,12 +481,12 @@ static LocalizedString INVALID_URL( "ScreenPackages", "Invalid URL." );
 static LocalizedString FILE_ALREADY_EXISTS( "ScreenPackages", "File Already Exists" );
 static LocalizedString FAILED_TO_CONNECT( "ScreenPackages", "Failed to connect." );
 static LocalizedString HEADER_SENT( "ScreenPackages", "Header Sent." );
-void ScreenPackages::EnterURL( const RString & sURL )
+void ScreenPackages::EnterURL( const std::string & sURL )
 {
-	RString Proto;
-	RString Server;
+	std::string Proto;
+	std::string Server;
 	int Port=80;
-	RString sAddress;
+	std::string sAddress;
 
 	if( !ParseHTTPAddress( sURL, Proto, Server, Port, sAddress ) )
 	{
@@ -561,7 +561,7 @@ void ScreenPackages::EnterURL( const RString & sURL )
 
 	//Produce HTTP header
 
-	RString Header="";
+	std::string Header="";
 
 	Header = "GET "+sAddress+" HTTP/1.0\r\n";
 	Header+= "Host: " + Server + "\r\n";
@@ -577,7 +577,7 @@ void ScreenPackages::EnterURL( const RString & sURL )
 	return;
 }
 
-static size_t FindEndOfHeaders( const RString &buf )
+static size_t FindEndOfHeaders( const std::string &buf )
 {
 	size_t iPos1 = buf.find( "\n\n" );
 	size_t iPos2 = buf.find( "\r\n\r\n" );
@@ -686,7 +686,7 @@ void ScreenPackages::HTTPUpdate()
 	}
 }
 
-bool ScreenPackages::ParseHTTPAddress( const RString &URL, RString &sProto, RString &sServer, int &iPort, RString &sAddress )
+bool ScreenPackages::ParseHTTPAddress( const std::string &URL, std::string &sProto, std::string &sServer, int &iPort, std::string &sAddress )
 {
 	// [PROTO://]SERVER[:PORT][/URL]
 

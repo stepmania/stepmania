@@ -97,7 +97,7 @@ public:
 		}
 	}
 
-	void FromString( ModsLevel level, const RString &str )
+	void FromString( ModsLevel level, const std::string &str )
 	{
 		if( level != ModsLevel_Song )
 		{

@@ -93,14 +93,14 @@ RageSoundDriver_ALSA9_Software::RageSoundDriver_ALSA9_Software()
 	m_bShutdown = false;
 }
 
-RString RageSoundDriver_ALSA9_Software::Init()
+std::string RageSoundDriver_ALSA9_Software::Init()
 {
-	RString sError = LoadALSA();
+	std::string sError = LoadALSA();
 	if( sError != "" )
 		return fmt::sprintf( "Driver unusable: %s", sError.c_str() );
 
 	g_iMaxWriteahead = safe_writeahead;
-	RString sys;
+	std::string sys;
 	int vers;
 	GetKernel( sys, vers );
 	LOG->Trace( "OS: %s ver %06i", sys.c_str(), vers );

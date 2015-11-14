@@ -55,7 +55,7 @@ bool GetThreadBacktraceContext( uint64_t iID, BacktraceContext *ctx )
 #endif
 }
 
-RString SetThreadPrecedence( float prec )
+std::string SetThreadPrecedence( float prec )
 {
 	// Real values are between 0 and 63.
 	DEBUG_ASSERT( 0.0f <= prec && prec <= 1.0f );
@@ -65,7 +65,7 @@ RString SetThreadPrecedence( float prec )
 	
 	if( ret != KERN_SUCCESS )
 		return mach_error_string( ret );
-	return RString();
+	return std::string();
 }
 	
 /*

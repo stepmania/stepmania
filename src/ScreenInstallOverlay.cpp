@@ -23,8 +23,8 @@ using std::vector;
 
 struct PlayAfterLaunchInfo
 {
-	RString sSongDir;
-	RString sTheme;
+	std::string sSongDir;
+	std::string sTheme;
 	bool bAnySongChanged;
 	bool bAnyThemeChanged;
 
@@ -43,10 +43,10 @@ struct PlayAfterLaunchInfo
 	}
 };
 
-void InstallSmzipOsArg( const RString &sOsZipFile, PlayAfterLaunchInfo &out );
+void InstallSmzipOsArg( const std::string &sOsZipFile, PlayAfterLaunchInfo &out );
 PlayAfterLaunchInfo DoInstalls( CommandLineActions::CommandLineArgs args );
 
-static void Parse(const RString &sDir, PlayAfterLaunchInfo &out)
+static void Parse(const std::string &sDir, PlayAfterLaunchInfo &out)
 {
 	auto vsDirParts = Rage::split(sDir, ",", Rage::EmptyEntries::skip);
 	// sanity check
@@ -65,10 +65,10 @@ static void Parse(const RString &sDir, PlayAfterLaunchInfo &out)
 	}
 }
 
-static const RString TEMP_ZIP_MOUNT_POINT = "/@temp-zip/";
-const RString TEMP_OS_MOUNT_POINT = "/@temp-os/";
+static const std::string TEMP_ZIP_MOUNT_POINT = "/@temp-zip/";
+const std::string TEMP_OS_MOUNT_POINT = "/@temp-os/";
 
-static void InstallSmzip( const RString &sZipFile, PlayAfterLaunchInfo &out )
+static void InstallSmzip( const std::string &sZipFile, PlayAfterLaunchInfo &out )
 {
 	if( !FILEMAN->Mount( "zip", sZipFile, TEMP_ZIP_MOUNT_POINT ) )
 	{
@@ -95,13 +95,13 @@ static void InstallSmzip( const RString &sZipFile, PlayAfterLaunchInfo &out )
 		sort( vsPrettyFiles.begin(), vsPrettyFiles.end() );
 	}
 
-	RString sResult = "Success installing " + sZipFile;
+	std::string sResult = "Success installing " + sZipFile;
 	for (auto sSrcFile: vsFiles)
 	{
-		RString sDestFile = sSrcFile;
+		std::string sDestFile = sSrcFile;
 		sDestFile = Rage::tail(sDestFile, sDestFile.size() - TEMP_ZIP_MOUNT_POINT.size());
 		
-		RString sDir, sThrowAway;
+		std::string sDir, sThrowAway;
 		splitpath( sDestFile, sDir, sThrowAway, sThrowAway );
 
 		Parse( sDir, out );
@@ -120,11 +120,11 @@ static void InstallSmzip( const RString &sZipFile, PlayAfterLaunchInfo &out )
 	SCREENMAN->SystemMessage( sResult );
 }
 
-void InstallSmzipOsArg( const RString &sOsZipFile, PlayAfterLaunchInfo &out )
+void InstallSmzipOsArg( const std::string &sOsZipFile, PlayAfterLaunchInfo &out )
 {
 	SCREENMAN->SystemMessage("Installing " + sOsZipFile );
 
-	RString sOsDir, sFilename, sExt;
+	std::string sOsDir, sFilename, sExt;
 	splitpath( sOsZipFile, sOsDir, sFilename, sExt );
 
 	if( !FILEMAN->Mount( "dir", sOsDir, TEMP_OS_MOUNT_POINT ) )
@@ -136,8 +136,8 @@ void InstallSmzipOsArg( const RString &sOsZipFile, PlayAfterLaunchInfo &out )
 
 struct FileCopyResult
 {
-	FileCopyResult( RString _sFile, RString _sComment ) : sFile(_sFile), sComment(_sComment) {}
-	RString sFile, sComment;
+	FileCopyResult( std::string _sFile, std::string _sComment ) : sFile(_sFile), sComment(_sComment) {}
+	std::string sFile, sComment;
 };
 
 #if !defined(WITHOUT_NETWORKING)
@@ -147,7 +147,7 @@ class DownloadTask
 {
 	FileTransfer *m_pTransfer;
 	vector<std::string> m_vsQueuedPackageUrls;
-	RString m_sCurrentPackageTempFile;
+	std::string m_sCurrentPackageTempFile;
 	enum
 	{
 		control,
@@ -155,7 +155,7 @@ class DownloadTask
 	} m_DownloadState;
 	PlayAfterLaunchInfo m_playAfterLaunchInfo;
 public:
-	DownloadTask(const RString &sControlFileUri)
+	DownloadTask(const std::string &sControlFileUri)
 	{
 		//SCREENMAN->SystemMessage( "Downloading control file." );
 		m_pTransfer = new FileTransfer();
@@ -166,7 +166,7 @@ public:
 	{
 		SAFE_DELETE(m_pTransfer);
 	}
-	RString GetStatus()
+	std::string GetStatus()
 	{
 		if( m_pTransfer == nullptr )
 			return "";
@@ -183,11 +183,11 @@ public:
 			{
 				SCREENMAN->SystemMessage( "Downloading required .smzip" );
 
-				RString sResponse = m_pTransfer->GetResponse();
+				std::string sResponse = m_pTransfer->GetResponse();
 				SAFE_DELETE( m_pTransfer );
 
 				Json::Value root;
-				RString sError;
+				std::string sError;
 				if( !JsonUtil::LoadFromString(root, sResponse, sError) )
 				{
 					SCREENMAN->SystemMessage( sError );
@@ -205,13 +205,13 @@ public:
 						{
 							if( iter["Dir"].isString() )
 							{
-								RString sDir = iter["Dir"].asString();
+								std::string sDir = iter["Dir"].asString();
 								Parse( sDir, m_playAfterLaunchInfo );
 								if( DoesFileExist( sDir ) )
 									continue;
 							}
 
-							RString sUri;
+							std::string sUri;
 							if( iter["Uri"].isString() )
 							{
 								sUri = iter["Uri"].asString();
@@ -236,7 +236,7 @@ public:
 				m_DownloadState = packages;
 				if( !m_vsQueuedPackageUrls.empty() )
 				{
-					RString sUrl = m_vsQueuedPackageUrls.back();
+					std::string sUrl = m_vsQueuedPackageUrls.back();
 					m_vsQueuedPackageUrls.pop_back();
 					m_sCurrentPackageTempFile = MakeTempFileName(sUrl);
 					ASSERT(m_pTransfer == nullptr);
@@ -255,7 +255,7 @@ public:
 				}
 				if( !m_vsQueuedPackageUrls.empty() )
 				{
-					RString sUrl = m_vsQueuedPackageUrls.back();
+					std::string sUrl = m_vsQueuedPackageUrls.back();
 					m_vsQueuedPackageUrls.pop_back();
 					m_sCurrentPackageTempFile = MakeTempFileName(sUrl);
 					ASSERT(m_pTransfer == nullptr);
@@ -281,7 +281,7 @@ public:
 			return false;
 		}
 	}
-	static RString MakeTempFileName( RString s )
+	static std::string MakeTempFileName( std::string s )
 	{
 		return SpecialFiles::CACHE_DIR + "Downloads/" + Rage::base_name(s);
 	}
@@ -289,14 +289,14 @@ public:
 static vector<DownloadTask*> g_pDownloadTasks;
 #endif
 
-static bool IsStepManiaProtocol(const RString &arg)
+static bool IsStepManiaProtocol(const std::string &arg)
 {
 	// for now, only load from the StepMania domain until the security implications of this feature are better understood.
 	//return Rage::starts_with(arg,"stepmania://beta.stepmania.com/");
 	return Rage::starts_with(arg,"stepmania://");
 }
 
-static bool IsPackageFile(const RString &arg)
+static bool IsPackageFile(const std::string &arg)
 {
 	Rage::ci_ascii_string ext{ GetExtension(arg).c_str() };
 	return ext == "smzip" || ext == "zip";
@@ -391,7 +391,7 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
 	{
 		Song* pSong = nullptr;
 		GAMESTATE->Reset();
-		RString sInitialScreen;
+		std::string sInitialScreen;
 		if( playAfterLaunchInfo.sSongDir.length() > 0 )
 			pSong = SONGMAN->GetSongFromDir( playAfterLaunchInfo.sSongDir );
 		if( pSong )

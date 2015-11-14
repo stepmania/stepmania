@@ -14,7 +14,7 @@ public:
 	/*
 	 * Return the general name of the architecture, eg. "Windows", "OS X", "Unix".
 	 */
-	virtual RString GetArchName() const { return "generic"; }
+	virtual std::string GetArchName() const { return "generic"; }
 
 	/* This is called as soon as the loading window is shown, and we can
 	 * safely log. */
@@ -30,7 +30,7 @@ public:
 	 * Get the 2-letter RFC-639 code of the user's preferred language
 	 * for localized messages, in lowercase.
 	 */
-	static RString GetPreferredLanguage();
+	static std::string GetPreferredLanguage();
 
 	/* If this is a second instance, return true.
 	 * Optionally, give focus to the existing window. */
@@ -91,12 +91,12 @@ public:
 	/*
 	 * Add file search paths, higher priority first.
 	 */
-	static void MountInitialFilesystems( const RString &sDirOfExecutable );
+	static void MountInitialFilesystems( const std::string &sDirOfExecutable );
 
 	/*
 	 * Add file search paths for user-writable directories.
 	 */
-	static void MountUserFilesystems( const RString &sDirOfExecutable );
+	static void MountUserFilesystems( const std::string &sDirOfExecutable );
 
 	/*
 	 * Platform-specific code calls this to indicate focus changes.
@@ -116,12 +116,12 @@ public:
 	/*
 	 * Open a URL in the default web browser
 	 */
-	virtual bool GoToURL( RString sUrl );
+	virtual bool GoToURL( std::string sUrl );
 
 	virtual float GetDisplayAspectRatio() = 0;
 
 	/** @brief Fetch the contents of the system clipboard. */
-	virtual RString GetClipboard();
+	virtual std::string GetClipboard();
 
 	// Lua
 	void PushSelf( lua_State *L );

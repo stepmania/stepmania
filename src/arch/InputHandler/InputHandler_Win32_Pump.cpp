@@ -79,7 +79,7 @@ void InputHandler_Win32_Pump::HandleInput( int iDevice, int iEvent )
 	}
 }
 
-RString InputHandler_Win32_Pump::GetDeviceSpecificInputString( const DeviceInput &di )
+std::string InputHandler_Win32_Pump::GetDeviceSpecificInputString( const DeviceInput &di )
 {
 	switch( di.button )
 	{

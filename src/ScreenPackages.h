@@ -42,7 +42,7 @@ private:
 
 	void HTMLParse();
 
-	RString StripOutContainers( const RString & In );	//Strip off "'s and ''s
+	std::string StripOutContainers( const std::string & In );	//Strip off "'s and ''s
 
 	AutoActor	m_sprExistingBG;
 	AutoActor	m_sprWebBG;
@@ -66,11 +66,11 @@ private:
 
 	// HTTP portion
 	void CancelDownload( );
-	void EnterURL( const RString & sURL );
+	void EnterURL( const std::string & sURL );
 	void HTTPUpdate( );
 
 	//True if proper string, false if improper
-	bool ParseHTTPAddress( const RString & URL, RString & Proto, RString & Server, int & Port, RString & Addy );
+	bool ParseHTTPAddress( const std::string & URL, std::string & Proto, std::string & Server, int & Port, std::string & Addy );
 
 	Sprite	m_sprDL;
 	Sprite	m_sprDLBG;
@@ -80,7 +80,7 @@ private:
 	float	m_fLastUpdate;
 	long	m_bytesLastUpdate;
 
-	RString	m_sStatus;
+	std::string	m_sStatus;
 	BitmapText	m_textStatus;
 
 	EzSockets m_wSocket;
@@ -88,19 +88,19 @@ private:
 	bool	m_bGotHeader;
 
 	RageFile	m_fOutputFile;
-	RString	m_sEndName;
+	std::string	m_sEndName;
 	bool	m_bIsPackage;
 
-	RString m_sBaseAddress;
+	std::string m_sBaseAddress;
 	//HTTP Header information responce
 	long	m_iTotalBytes;
 	long	m_iDownloaded;
 
 	long	m_iResponseCode;
-	RString	m_sResponseName;
+	std::string	m_sResponseName;
 
 	//Raw HTTP Buffer
-	RString m_sBUFFER;
+	std::string m_sBUFFER;
 };
 
 #endif

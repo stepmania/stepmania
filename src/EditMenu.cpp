@@ -51,7 +51,7 @@ void EditMenu::StripLockedStepsAndDifficulty( vector<StepsAndDifficulty> &v )
 	}
 }
 
-void EditMenu::GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpSongsOut )
+void EditMenu::GetSongsToShowForGroup( const std::string &sGroup, vector<Song*> &vpSongsOut )
 {
 	if(sGroup == "")
 	{
@@ -89,7 +89,7 @@ void EditMenu::GetGroupsToShow( vector<std::string> &vsGroupsOut )
 	SONGMAN->GetSongGroupNames( vsGroupsOut );
 	for( int i = vsGroupsOut.size()-1; i>=0; i-- )
 	{
-		const RString &sGroup = vsGroupsOut[i];
+		const std::string &sGroup = vsGroupsOut[i];
 		vector<Song*> vpSongs;
 		GetSongsToShowForGroup( sGroup, vpSongs );
 		// strip groups that have no unlocked songs
@@ -107,7 +107,7 @@ EditMenu::~EditMenu()
 	BANNERCACHE->Undemand();
 }
 
-void EditMenu::Load( const RString &sType )
+void EditMenu::Load( const std::string &sType )
 {
 	LOG->Trace( "EditMenu::Load" );
 
@@ -580,7 +580,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		}
 		else
 		{
-			RString s = CustomDifficultyToLocalizedString( GetCustomDifficulty( GetSelectedStepsType(), GetSelectedDifficulty(), CourseType_Invalid ) );
+			std::string s = CustomDifficultyToLocalizedString( GetCustomDifficulty( GetSelectedStepsType(), GetSelectedDifficulty(), CourseType_Invalid ) );
 
 			m_textValue[ROW_STEPS].SetText( s );
 			if( GetSelectedSteps() )
@@ -644,7 +644,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			m_textLabel[ROW_SOURCE_STEPS].SetVisible( GetSelectedSteps() ? false : true );
 			m_textValue[ROW_SOURCE_STEPS].SetVisible( GetSelectedSteps() ? false : true );
 			{
-				RString s;
+				std::string s;
 				if( GetSelectedSourceDifficulty() == Difficulty_Invalid )
 				{
 					s = BLANK.GetValue();

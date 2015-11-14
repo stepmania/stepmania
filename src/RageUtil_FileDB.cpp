@@ -25,7 +25,7 @@ void FileSet::GetFilesMatching( std::string const &sBeginning_, std::string cons
 		if( bOnlyDirs && !f.dir )
 			continue;
 
-		const RString &sPath = f.lname;
+		const std::string &sPath = f.lname;
 
 		/* Check sBeginning. Once we hit a filename that no longer matches sBeginning,
 		 * we're past all possible matches in the sort, so stop. */
@@ -72,7 +72,7 @@ void FileSet::GetFilesEqualTo( std::string const &sStr, vector<std::string> &asO
 	asOut.push_back( i->name );
 }
 
-RageFileManager::FileType FileSet::GetFileType( const RString &sPath ) const
+RageFileManager::FileType FileSet::GetFileType( const std::string &sPath ) const
 {
 	std::set<File>::const_iterator i = files.find( File(sPath) );
 	if( i == files.end() )
@@ -82,7 +82,7 @@ RageFileManager::FileType FileSet::GetFileType( const RString &sPath ) const
 	return i->dir? RageFileManager::TYPE_DIR:RageFileManager::TYPE_FILE;
 }
 
-int FileSet::GetFileSize( const RString &sPath ) const
+int FileSet::GetFileSize( const std::string &sPath ) const
 {
 	std::set<File>::const_iterator i = files.find( File(sPath) );
 	if( i == files.end() )
@@ -92,7 +92,7 @@ int FileSet::GetFileSize( const RString &sPath ) const
 	return i->size;
 }
 
-int FileSet::GetFileHash( const RString &sPath ) const
+int FileSet::GetFileHash( const std::string &sPath ) const
 {
 	std::set<File>::const_iterator i = files.find( File(sPath) );
 	if( i == files.end() )
@@ -102,7 +102,7 @@ int FileSet::GetFileHash( const RString &sPath ) const
 	return i->hash + i->size;
 }
 
-void File::SetName(RString const &fn)
+void File::SetName(std::string const &fn)
 {
 	name = fn;
 	lname = Rage::make_lower(name);
@@ -112,7 +112,7 @@ void File::SetName(RString const &fn)
  * Given "foo/bar/baz/" or "foo/bar/baz", return "foo/bar/" and "baz".
  * "foo" -> "", "foo"
  */
-static void SplitPath( RString sPath, RString &sDir, RString &sName )
+static void SplitPath( std::string sPath, std::string &sDir, std::string &sName )
 {
 	CollapsePath( sPath );
 	if (Rage::ends_with(sPath, "/"))
@@ -120,7 +120,7 @@ static void SplitPath( RString sPath, RString &sDir, RString &sName )
 		sPath.erase(sPath.size() - 1);
 	}
 	size_t iSep = sPath.find_last_of( '/' );
-	if( iSep == RString::npos )
+	if( iSep == std::string::npos )
 	{
 		sDir = "";
 		sName = sPath;
@@ -133,11 +133,11 @@ static void SplitPath( RString sPath, RString &sDir, RString &sName )
 }
 
 
-RageFileManager::FileType FilenameDB::GetFileType( const RString &sPath )
+RageFileManager::FileType FilenameDB::GetFileType( const std::string &sPath )
 {
 	ASSERT( !m_Mutex.IsLockedByThisThread() );
 
-	RString sDir, sName;
+	std::string sDir, sName;
 	SplitPath( sPath, sDir, sName );
 
 	if( sName == "/" )
@@ -150,11 +150,11 @@ RageFileManager::FileType FilenameDB::GetFileType( const RString &sPath )
 }
 
 
-int FilenameDB::GetFileSize( const RString &sPath )
+int FilenameDB::GetFileSize( const std::string &sPath )
 {
 	ASSERT( !m_Mutex.IsLockedByThisThread() );
 
-	RString sDir, sName;
+	std::string sDir, sName;
 	SplitPath( sPath, sDir, sName );
 
 	const FileSet *fs = GetFileSet( sDir );
@@ -163,11 +163,11 @@ int FilenameDB::GetFileSize( const RString &sPath )
 	return ret;
 }
 
-int FilenameDB::GetFileHash( const RString &sPath )
+int FilenameDB::GetFileHash( const std::string &sPath )
 {
 	ASSERT( !m_Mutex.IsLockedByThisThread() );
 
-	RString sDir, sName;
+	std::string sDir, sName;
 	SplitPath( sPath, sDir, sName );
 
 	const FileSet *fs = GetFileSet( sDir );
@@ -177,7 +177,7 @@ int FilenameDB::GetFileHash( const RString &sPath )
 }
 
 /* path should be fully collapsed, so we can operate in-place: no . or .. */
-bool FilenameDB::ResolvePath( RString &sPath )
+bool FilenameDB::ResolvePath( std::string &sPath )
 {
 	if( sPath == "/" || sPath == "" )
 		return true;
@@ -186,10 +186,10 @@ bool FilenameDB::ResolvePath( RString &sPath )
 	int iBegin = 0, iSize = -1;
 
 	/* Resolve each component. */
-	RString ret = "";
+	std::string ret = "";
 	const FileSet *fs = nullptr;
 
-	static const RString slash("/");
+	static const std::string slash("/");
 	for(;;)
 	{
         Rage::split_in_place( sPath, slash, iBegin, iSize, Rage::EmptyEntries::skip );
@@ -201,7 +201,7 @@ bool FilenameDB::ResolvePath( RString &sPath )
 		else
 			m_Mutex.Lock(); /* for access to fs */
 
-		RString p = sPath.substr( iBegin, iSize );
+		std::string p = sPath.substr( iBegin, iSize );
 		ASSERT_M( p.size() != 1 || p[0] != '.', sPath ); // no .
 		ASSERT_M( p.size() != 2 || p[0] != '.' || p[1] != '.', sPath ); // no ..
 		std::set<File>::const_iterator it = fs->files.find( File(p) );
@@ -279,9 +279,9 @@ void FilenameDB::GetFilesSimpleMatch( std::string const &sDir, std::string const
  * be locked when this is called.  It will be locked on return; the caller must
  * unlock it.
  */
-FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
+FileSet *FilenameDB::GetFileSet( const std::string &sDir_, bool bCreate )
 {
-	RString sDir = sDir_;
+	std::string sDir = sDir_;
 
 	/* Creating can take a long time; don't hold the lock if we might do that. */
 	if( bCreate && m_Mutex.IsLockedByThisThread() && LOG )
@@ -295,7 +295,7 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 	{
 		sDir = "/";
 	}
-	RString sLower = Rage::make_lower(sDir);
+	std::string sLower = Rage::make_lower(sDir);
 
 	m_Mutex.Lock();
 
@@ -358,7 +358,7 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 	FileSet **pParentDirp = nullptr;
 	if( sDir != "/" )
 	{
-		RString sParent = Rage::dir_name( sDir );
+		std::string sParent = Rage::dir_name( sDir );
 		if( sParent == "./" )
 			sParent = "";
 
@@ -392,9 +392,9 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 
 /* Add the file or directory "sPath".  sPath is a directory if it ends with
  * a slash. */
-void FilenameDB::AddFile( const RString &sPath_, int iSize, int iHash, void *pPriv )
+void FilenameDB::AddFile( const std::string &sPath_, int iSize, int iHash, void *pPriv )
 {
-	RString sPath(sPath_);
+	std::string sPath(sPath_);
 
 	if( sPath == "" || sPath == "/" )
 		return;
@@ -422,12 +422,12 @@ void FilenameDB::AddFile( const RString &sPath_, int iSize, int iHash, void *pPr
 	do
 	{
 		/* Combine all but the last part. */
-		RString dir = "/" + Rage::join( "/", begin, end-1 );
+		std::string dir = "/" + Rage::join( "/", begin, end-1 );
 		if( dir != "/" )
 		{
 			dir += "/";
 		}
-		const RString &fn = *(end-1);
+		const std::string &fn = *(end-1);
 		FileSet *fs = GetFileSet( dir );
 		ASSERT( m_Mutex.IsLockedByThisThread() );
 
@@ -450,7 +450,7 @@ void FilenameDB::AddFile( const RString &sPath_, int iSize, int iHash, void *pPr
 /* Remove the given FileSet, and all dirp pointers to it.  This means the cache has
  * expired, not that the directory is necessarily gone; don't actually delete the file
  * from the parent. */
-void FilenameDB::DelFileSet( std::map<RString, FileSet *>::iterator dir )
+void FilenameDB::DelFileSet( std::map<std::string, FileSet *>::iterator dir )
 {
 	/* If this isn't locked, dir may not be valid. */
 	ASSERT( m_Mutex.IsLockedByThisThread() );
@@ -476,16 +476,16 @@ void FilenameDB::DelFileSet( std::map<RString, FileSet *>::iterator dir )
 	dirs.erase( dir );
 }
 
-void FilenameDB::DelFile( const RString &sPath )
+void FilenameDB::DelFile( const std::string &sPath )
 {
 	LockMut(m_Mutex);
-	RString lower = Rage::make_lower(sPath);
+	std::string lower = Rage::make_lower(sPath);
 
 	auto fsi = dirs.find( lower );
 	DelFileSet( fsi );
 
 	/* Delete sPath from its parent. */
-	RString Dir, Name;
+	std::string Dir, Name;
 	SplitPath(sPath, Dir, Name);
 	FileSet *Parent = GetFileSet( Dir, false );
 	if( Parent )
@@ -494,7 +494,7 @@ void FilenameDB::DelFile( const RString &sPath )
 	m_Mutex.Unlock(); /* locked by GetFileSet */
 }
 
-void FilenameDB::FlushDirCache( const RString & /* sDir */ )
+void FilenameDB::FlushDirCache( const std::string & /* sDir */ )
 {
 	FileSet *pFileSet = nullptr;
 	m_Mutex.Lock();
@@ -532,7 +532,7 @@ void FilenameDB::FlushDirCache( const RString & /* sDir */ )
 
 			if( sDir != "/" )
 			{
-				RString sParent = Rage::dir_name( sDir );
+				std::string sParent = Rage::dir_name( sDir );
 				if( sParent == "./" )
 				{
 					sParent = "";
@@ -559,12 +559,12 @@ void FilenameDB::FlushDirCache( const RString & /* sDir */ )
 		m_Mutex.Unlock();
 }
 
-const File *FilenameDB::GetFile( const RString &sPath )
+const File *FilenameDB::GetFile( const std::string &sPath )
 {
 	if( m_Mutex.IsLockedByThisThread() && LOG )
 		LOG->Warn( "FilenameDB::GetFile: m_Mutex was locked" );
 
-	RString Dir, Name;
+	std::string Dir, Name;
 	SplitPath(sPath, Dir, Name);
 	FileSet *fs = GetFileSet( Dir );
 
@@ -575,7 +575,7 @@ const File *FilenameDB::GetFile( const RString &sPath )
 	return &*it;
 }
 
-void *FilenameDB::GetFilePriv( const RString &path )
+void *FilenameDB::GetFilePriv( const std::string &path )
 {
 	ASSERT( !m_Mutex.IsLockedByThisThread() );
 
@@ -592,14 +592,14 @@ void *FilenameDB::GetFilePriv( const RString &path )
 
 void FilenameDB::GetDirListing( std::string const &sPath_, vector<std::string> &asAddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
-	RString sPath = sPath_;
+	std::string sPath = sPath_;
 //	LOG->Trace( "GetDirListing( %s )", sPath.c_str() );
 
 	ASSERT( !sPath.empty() );
 
 	/* Strip off the last path element and use it as a mask. */
 	size_t  pos = sPath.find_last_of( '/' );
-	RString fn;
+	std::string fn;
 	if( pos == sPath.npos )
 	{
 		fn = sPath;
@@ -632,14 +632,14 @@ void FilenameDB::GetDirListing( std::string const &sPath_, vector<std::string> &
 /* Get a complete copy of a FileSet.  This isn't very efficient, since it's a deep
  * copy, but allows retrieving a copy from elsewhere without having to worry about
  * our locking semantics. */
-void FilenameDB::GetFileSetCopy( const RString &sDir, FileSet &out )
+void FilenameDB::GetFileSetCopy( const std::string &sDir, FileSet &out )
 {
 	FileSet *pFileSet = GetFileSet( sDir );
 	out = *pFileSet;
 	m_Mutex.Unlock(); /* locked by GetFileSet */
 }
 
-void FilenameDB::CacheFile( const RString &sPath )
+void FilenameDB::CacheFile( const std::string &sPath )
 {
 	LOG->Warn( "Slow cache due to: %s", sPath.c_str() );
 	FlushDirCache( Rage::dir_name(sPath) );

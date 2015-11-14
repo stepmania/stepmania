@@ -71,7 +71,7 @@ void RadarValues::LoadFromNode( const XNode* pNode )
 
 /* iMaxValues is only used for writing compatibility fields in non-cache
  * SM files; they're never actually read. */
-RString RadarValues::ToString( int iMaxValues ) const
+std::string RadarValues::ToString( int iMaxValues ) const
 {
 	using std::min;
 	if( iMaxValues == -1 )
@@ -89,7 +89,7 @@ RString RadarValues::ToString( int iMaxValues ) const
 	return Rage::join(",", asRadarValues);
 }
 
-void RadarValues::FromString( RString sRadarValues )
+void RadarValues::FromString( std::string sRadarValues )
 {
 	auto saValues = Rage::split(sRadarValues, ",", Rage::EmptyEntries::skip);
 

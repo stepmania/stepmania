@@ -16,7 +16,7 @@
 
 using std::vector;
 
-void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, const RString sParam )
+void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, const std::string sParam )
 {
 	auto arrayMultiplierExpressions = Rage::split(sParam, ",");
 
@@ -42,7 +42,7 @@ void SMALoader::ProcessMultipliers( TimingData &out, const int iRowsPerBeat, con
 	}
 }
 
-void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
+void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const std::string sParam )
 {
 	auto vs1 = Rage::split(sParam, ",");
 
@@ -82,13 +82,13 @@ void SMALoader::ProcessBeatsPerMeasure( TimingData &out, const RString sParam )
 	}
 }
 
-void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int rowsPerBeat )
+void SMALoader::ProcessSpeeds( TimingData &out, const std::string line, const int rowsPerBeat )
 {
 	auto vs1 = Rage::split(line, ",");
 
 	for (auto s1 = vs1.begin(); s1 != vs1.end(); ++s1)
 	{
-		RString loopTmp = Rage::trim(*s1);
+		std::string loopTmp = Rage::trim(*s1);
 		auto vs2 = Rage::split(loopTmp, "=");
 
 		if( vs2.size() == 2 ) // First one always seems to have 2.
@@ -108,7 +108,7 @@ void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int ro
 
 		const float fBeat = RowToBeat( vs2[0], rowsPerBeat );
 
-		RString backup = vs2[2];
+		std::string backup = vs2[2];
 		vs2[2] = Rage::trim(vs2[2], "s");
 		vs2[2] = Rage::trim(vs2[2], "S");
 
@@ -141,7 +141,7 @@ void SMALoader::ProcessSpeeds( TimingData &out, const RString line, const int ro
 	}
 }
 
-bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache )
+bool SMALoader::LoadFromSimfile( const std::string &sPath, Song &out, bool bFromCache )
 {
 	LOG->Trace( "Song::LoadFromSMAFile(%s)", sPath.c_str() );
 
@@ -163,7 +163,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = Rage::make_upper(sParams[0]);
+		std::string sValueName = Rage::make_upper(sParams[0]);
 
 		// handle the data
 		/* Don't use GetMainAndSubTitlesFromFullTitle; that's only for heuristically
@@ -389,7 +389,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 		else if( sValueName=="SPEED" )
 		{
 			TimingData &timing = ( pNewNotes ? pNewNotes->m_Timing : out.m_SongTiming);
-			RString tmp = Rage::trim(sParams[1]);
+			std::string tmp = Rage::trim(sParams[1]);
 			ProcessSpeeds( timing, tmp, iRowsPerBeat );
 		}
 

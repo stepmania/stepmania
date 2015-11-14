@@ -63,8 +63,8 @@ public:
 	void GetLocalizedMods( std::vector<std::string> &AddTo ) const;
 	std::string GetString() const;
 	std::string GetLocalizedString() const;
-	void FromString( const RString &sOptions );
-	bool FromOneModString( const RString &sOneMod, RString &sErrorDetailOut );	// On error, return false and optionally set sErrorDetailOut
+	void FromString( const std::string &sOptions );
+	bool FromOneModString( const std::string &sOneMod, std::string &sErrorDetailOut );	// On error, return false and optionally set sErrorDetailOut
 
 	bool operator==( const SongOptions &other ) const;
 	bool operator!=( const SongOptions &other ) const { return !operator==(other); }

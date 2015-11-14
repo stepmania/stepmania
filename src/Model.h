@@ -20,16 +20,16 @@ public:
 	virtual Model *Copy() const;
 
 	void	Clear();
-	void	Load( const RString &sFile );
+	void	Load( const std::string &sFile );
 
-	void	LoadPieces( const RString &sMeshesPath, const RString &sMaterialsPath, const RString &sBomesPath );
-	void	LoadMilkshapeAscii( const RString &sFile );
-	void 	LoadMaterialsFromMilkshapeAscii( const RString &sPath );
-	bool	LoadMilkshapeAsciiBones( const RString &sAniName, const RString &sPath );
+	void	LoadPieces( const std::string &sMeshesPath, const std::string &sMaterialsPath, const std::string &sBomesPath );
+	void	LoadMilkshapeAscii( const std::string &sFile );
+	void 	LoadMaterialsFromMilkshapeAscii( const std::string &sPath );
+	bool	LoadMilkshapeAsciiBones( const std::string &sAniName, const std::string &sPath );
 
 	void LoadFromNode( const XNode* pNode );
 
-	void	PlayAnimation( const RString &sAniName, float fPlayRate = 1 );
+	void	PlayAnimation( const std::string &sAniName, float fPlayRate = 1 );
 	void	SetRate( float fRate ) { m_fCurAnimationRate = fRate; }
 	void	SetLoop( bool b ) { m_bLoop = b; }
 	void	SetPosition( float fSeconds );
@@ -48,8 +48,8 @@ public:
 	virtual void RecalcAnimationLengthSeconds();
 	virtual void SetSecondsIntoAnimation( float fSeconds );
 
-	RString		GetDefaultAnimation() const { return m_sDefaultAnimation; };
-	void		SetDefaultAnimation( RString sAnimation, float fPlayRate = 1 );
+	std::string		GetDefaultAnimation() const { return m_sDefaultAnimation; };
+	void		SetDefaultAnimation( std::string sAnimation, float fPlayRate = 1 );
 
 	bool	MaterialsNeedNormals() const;
 
@@ -61,7 +61,7 @@ private:
 
 	float m_animation_length_seconds;
 	std::vector<msMaterial>		m_Materials;
-	std::map<RString,msAnimation>	m_mapNameToAnimation;
+	std::map<std::string,msAnimation>	m_mapNameToAnimation;
 	const msAnimation*		m_pCurAnimation;
 
 	static void SetBones( const msAnimation* pAnimation, float fFrame, std::vector<myBone_t> &vpBones );
@@ -81,7 +81,7 @@ private:
 	void AdvanceFrame( float fDeltaTime );
 
 	float			m_fCurFrame;
-	RString			m_sDefaultAnimation;
+	std::string			m_sDefaultAnimation;
 	float			m_fDefaultAnimationRate;
 	float			m_fCurAnimationRate;
 	bool			m_bLoop;

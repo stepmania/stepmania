@@ -25,7 +25,7 @@ public:
 	virtual int GetLength_Fast() const;
 	virtual int GetSampleRate() const { return m_iSampleRate; }
 	virtual unsigned GetNumChannels() const { return m_iChannels; }
-	virtual bool SetProperty( const RString &sProperty, float fValue );
+	virtual bool SetProperty( const std::string &sProperty, float fValue );
 	virtual float GetStreamToSourceRatio() const;
 	virtual RageSoundReader *GetSource() { return nullptr; }
 

@@ -13,10 +13,10 @@
 class ColorBitmapText : public BitmapText
 {
 public:
-	void SetText( const RString &sText, const RString &sAlternateText = "", int iWrapWidthPixels = -1 );
+	void SetText( const std::string &sText, const std::string &sAlternateText = "", int iWrapWidthPixels = -1 );
 	void DrawPrimitives();
 	void SetMaxLines( int iLines, bool bCutBottom = true );	//if bCutBottom = false then, it will crop the top
-	void SimpleAddLine( const RString &sAddition, int iWidthPixels );
+	void SimpleAddLine( const std::string &sAddition, int iWidthPixels );
 	void SetMaxLines( int iNumLines, int iDirection );
 protected:
 	struct ColorChange
@@ -45,8 +45,8 @@ private:
 	ColorBitmapText		m_textChatOutput;
 	AutoActor			m_sprChatInputBox;
 	AutoActor			m_sprChatOutputBox;
-	RString				m_sTextInput;
-	RString				m_actualText;
+	std::string				m_sTextInput;
+	std::string				m_actualText;
 
 	std::vector <BitmapText>	m_textUsers;
 };

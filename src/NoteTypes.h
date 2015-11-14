@@ -149,7 +149,7 @@ struct TapNote
 	float end_second; // occurs_at_second plus duration.
 
 	// used only if Type == attack:
-	RString		sAttackModifiers;
+	std::string		sAttackModifiers;
 	float		fAttackDurationSeconds;
 
 	// Index into Song's vector of keysound files if nonnegative:
@@ -185,7 +185,7 @@ struct TapNote
 		TapNoteType type_,
 		TapNoteSubType subType_,
 		TapNoteSource source_, 
-		RString sAttackModifiers_,
+		std::string sAttackModifiers_,
 		float fAttackDurationSeconds_,
 		int iKeysoundIndex_ ):
 		type(type_), subType(subType_), source(source_), result(),

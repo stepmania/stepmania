@@ -16,7 +16,7 @@
 using std::vector;
 using std::string;
 
-static void GetResolutionFromFileName( RString sPath, int &iWidth, int &iHeight )
+static void GetResolutionFromFileName( std::string sPath, int &iWidth, int &iHeight )
 {
 	/* Match:
 	 *  Foo (res 512x128).png
@@ -76,7 +76,7 @@ void RageBitmapTexture::Create()
 	ASSERT( actualID.filename != "" );
 
 	/* Load the image into a RageSurface. */
-	RString error;
+	std::string error;
 	RageSurface *pImg= nullptr;
 	if(actualID.filename == TEXTUREMAN->GetScreenTextureID().filename)
 	{
@@ -90,7 +90,7 @@ void RageBitmapTexture::Create()
 	/* Tolerate corrupt/unknown images. */
 	if( pImg == nullptr )
 	{
-		RString warning = fmt::sprintf("RageBitmapTexture: Couldn't load %s: %s",
+		std::string warning = fmt::sprintf("RageBitmapTexture: Couldn't load %s: %s",
 			actualID.filename.c_str(), error.c_str());
 		LOG->Warn("%s", warning.c_str());
 		Dialog::OK(warning, "missing_texture");
@@ -112,7 +112,7 @@ void RageBitmapTexture::Create()
 	}
 
 	// look in the file name for a format hints
-	RString sHintString = Rage::make_lower(GetID().filename + actualID.AdditionalTextureHints);
+	std::string sHintString = Rage::make_lower(GetID().filename + actualID.AdditionalTextureHints);
 
 	if( sHintString.find("32bpp") != string::npos )			actualID.iColorDepth = 32;
 	else if( sHintString.find("16bpp") != string::npos )		actualID.iColorDepth = 16;
@@ -312,7 +312,7 @@ void RageBitmapTexture::Create()
 			float fBetterSourceHeight = this->GetFramesHigh() * fBetterFrameHeight;
 			if( fFrameWidth!=fBetterFrameWidth || fFrameHeight!=fBetterFrameHeight )
 			{
-				RString sWarning = fmt::sprintf(
+				std::string sWarning = fmt::sprintf(
 					"The graphic '%s' has frame dimensions that aren't a multiple of %d.\n"
 					"The entire image is %dx%d and frame size is %.1fx%.1f.\n"
 					"Image quality will be much improved if you resize the graphic to %.0fx%.0f, which is a frame size of %.0fx%.0f.",
@@ -345,7 +345,7 @@ void RageBitmapTexture::Create()
 	}
 
 
-	RString sProperties;
+	std::string sProperties;
 	sProperties += RagePixelFormatToString( pixfmt ) + " ";
 	if( actualID.iAlphaBits == 0 ) sProperties += "opaque ";
 	if( actualID.iAlphaBits == 1 ) sProperties += "matte ";

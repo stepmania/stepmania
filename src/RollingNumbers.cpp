@@ -15,7 +15,7 @@ RollingNumbers::RollingNumbers()
 {
 }
 
-void RollingNumbers::Load(const RString& metrics_group)
+void RollingNumbers::Load(const std::string& metrics_group)
 {
 	// Deprecated interface, not going to bother with error handling. -Kyz
 #define HAS_GET(metric, member, get) \
@@ -64,7 +64,7 @@ void RollingNumbers::SetTargetNumber(float target_number)
 
 void RollingNumbers::UpdateText()
 {
-	RString s = fmt::sprintf(m_text_format, m_current_number);
+	std::string s = fmt::sprintf(m_text_format, m_current_number);
 	if(m_commify)
 	{
 		s = Commify(s);

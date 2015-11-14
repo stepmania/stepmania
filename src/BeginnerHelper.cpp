@@ -51,9 +51,9 @@ static const char *anims[NUM_ANIMATIONS] =
 	"BeginnerHelper_step-jumplr.bones.txt"
 };
 
-static RString GetAnimPath( Animation a )
+static std::string GetAnimPath( Animation a )
 {
-	return RString( "Characters/" ) + anims[a];
+	return std::string( "Characters/" ) + anims[a];
 }
 
 BeginnerHelper::BeginnerHelper()

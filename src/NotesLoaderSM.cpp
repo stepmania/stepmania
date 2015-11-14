@@ -29,9 +29,9 @@ struct SMSongTagInfo
 	SMLoader* loader;
 	Song* song;
 	const MsdFile::value_t* params;
-	const RString& path;
+	const std::string& path;
 	vector< std::pair<float, float> > BPMChanges, Stops;
-	SMSongTagInfo(SMLoader* l, Song* s, const RString& p)
+	SMSongTagInfo(SMLoader* l, Song* s, const std::string& p)
 		:loader(l), song(s), path(p)
 	{}
 };
@@ -270,26 +270,26 @@ sm_parser_helper_t sm_parser_helper;
 // End sm_parser_helper related functions. -Kyz
 /****************************************************************/
 
-void SMLoader::SetSongTitle(const RString & title)
+void SMLoader::SetSongTitle(const std::string & title)
 {
 	this->songTitle = title;
 }
 
-RString SMLoader::GetSongTitle() const
+std::string SMLoader::GetSongTitle() const
 {
 	return this->songTitle;
 }
 
-bool SMLoader::LoadFromDir( const RString &sPath, Song &out, bool load_autosave )
+bool SMLoader::LoadFromDir( const std::string &sPath, Song &out, bool load_autosave )
 {
 	vector<std::string> aFileNames;
 	GetApplicableFiles( sPath, aFileNames, load_autosave );
 	return LoadFromSimfile( sPath + aFileNames[0], out );
 }
 
-float SMLoader::RowToBeat( RString line, const int rowsPerBeat )
+float SMLoader::RowToBeat( std::string line, const int rowsPerBeat )
 {
-	RString backup = Rage::trim(line, "r");
+	std::string backup = Rage::trim(line, "r");
 	backup = Rage::trim(backup, "R");
 	if( backup != line )
 	{
@@ -302,12 +302,12 @@ float SMLoader::RowToBeat( RString line, const int rowsPerBeat )
 }
 
 void SMLoader::LoadFromTokens(
-			     RString sStepsType,
-			     RString sDescription,
-			     RString sDifficulty,
-			     RString sMeter,
-			     RString sRadarValues,
-			     RString sNoteData,
+			     std::string sStepsType,
+			     std::string sDescription,
+			     std::string sDifficulty,
+			     std::string sMeter,
+			     std::string sRadarValues,
+			     std::string sNoteData,
 			     Steps &out
 			     )
 {
@@ -362,7 +362,7 @@ void SMLoader::LoadFromTokens(
 	out.TidyUpData();
 }
 
-void SMLoader::ProcessBGChanges( Song &out, const RString &sValueName, const RString &sPath, const RString &sParam )
+void SMLoader::ProcessBGChanges( Song &out, const std::string &sValueName, const std::string &sPath, const std::string &sParam )
 {
 	BackgroundLayer iLayer = BACKGROUND_LAYER_1;
 	if( sscanf(sValueName.c_str(), "BGCHANGES%d", &*ConvertValue<int>(&iLayer)) == 1 )
@@ -445,7 +445,7 @@ void SMLoader::ProcessAttacks( AttackArray &attacks, MsdFile::value_t params )
 	}
 }
 
-void SMLoader::ProcessInstrumentTracks( Song &out, const RString &sParam )
+void SMLoader::ProcessInstrumentTracks( Song &out, const std::string &sParam )
 {
 	auto vs1 = Rage::split(sParam, ",");
 	for (auto const &s: vs1)
@@ -462,7 +462,7 @@ void SMLoader::ProcessInstrumentTracks( Song &out, const RString &sParam )
 	}
 }
 
-void SMLoader::ParseBPMs( vector< std::pair<float, float> > &out, const RString line, const int rowsPerBeat )
+void SMLoader::ParseBPMs( vector< std::pair<float, float> > &out, const std::string line, const int rowsPerBeat )
 {
 	auto arrayBPMChangeExpressions = Rage::split(line, ",");
 
@@ -490,7 +490,7 @@ void SMLoader::ParseBPMs( vector< std::pair<float, float> > &out, const RString 
 	}
 }
 
-void SMLoader::ParseStops( vector< std::pair<float, float> > &out, const RString line, const int rowsPerBeat )
+void SMLoader::ParseStops( vector< std::pair<float, float> > &out, const std::string line, const int rowsPerBeat )
 {
 	auto arrayFreezeExpressions = Rage::split(line, ",");
 
@@ -754,7 +754,7 @@ void SMLoader::ProcessBPMsAndStops(TimingData &out,
 	}
 }
 
-void SMLoader::ProcessDelays( TimingData &out, const RString line, const int rowsPerBeat )
+void SMLoader::ProcessDelays( TimingData &out, const std::string line, const int rowsPerBeat )
 {
 	auto arrayDelayExpressions = Rage::split(line, ",");
 
@@ -784,7 +784,7 @@ void SMLoader::ProcessDelays( TimingData &out, const RString line, const int row
 	}
 }
 
-void SMLoader::ProcessTimeSignatures( TimingData &out, const RString line, const int rowsPerBeat )
+void SMLoader::ProcessTimeSignatures( TimingData &out, const std::string line, const int rowsPerBeat )
 {
 	auto vs1 = Rage::split(line, ",");
 
@@ -836,7 +836,7 @@ void SMLoader::ProcessTimeSignatures( TimingData &out, const RString line, const
 	}
 }
 
-void SMLoader::ProcessTickcounts( TimingData &out, const RString line, const int rowsPerBeat )
+void SMLoader::ProcessTickcounts( TimingData &out, const std::string line, const int rowsPerBeat )
 {
 	auto arrayTickcountExpressions = Rage::split(line, ",");
 
@@ -859,7 +859,7 @@ void SMLoader::ProcessTickcounts( TimingData &out, const RString line, const int
 	}
 }
 
-void SMLoader::ProcessSpeeds( TimingData &out, const RString line, const int rowsPerBeat )
+void SMLoader::ProcessSpeeds( TimingData &out, const std::string line, const int rowsPerBeat )
 {
 	auto vs1 = Rage::split(line, ",");
 
@@ -921,7 +921,7 @@ void SMLoader::ProcessSpeeds( TimingData &out, const RString line, const int row
 	}
 }
 
-void SMLoader::ProcessFakes( TimingData &out, const RString line, const int rowsPerBeat )
+void SMLoader::ProcessFakes( TimingData &out, const std::string line, const int rowsPerBeat )
 {
 	auto arrayFakeExpressions = Rage::split(line, ",");
 
@@ -954,7 +954,7 @@ void SMLoader::ProcessFakes( TimingData &out, const RString line, const int rows
 	}
 }
 
-bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression )
+bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const std::string &sBGChangeExpression )
 {
 	using std::min;
 	auto aBGChangeValues = Rage::split(sBGChangeExpression, "=", Rage::EmptyEntries::include);
@@ -978,7 +978,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		// fall through
 	case 8:
 	{
-		RString tmp = Rage::make_lower(aBGChangeValues[7]);
+		std::string tmp = Rage::make_lower(aBGChangeValues[7]);
 		if( ( tmp.find(".ini") != string::npos || tmp.find(".xml") != string::npos )
 		   && !PREFSMAN->m_bQuirksMode )
 		{
@@ -1021,7 +1021,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 		// fall through
 	case 2:
 	{
-		RString tmp = Rage::make_lower(aBGChangeValues[1]);
+		std::string tmp = Rage::make_lower(aBGChangeValues[1]);
 		if( ( tmp.find(".ini") != string::npos || tmp.find(".xml") != string::npos )
 		   && !PREFSMAN->m_bQuirksMode )
 		{
@@ -1038,7 +1038,7 @@ bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString 
 	return aBGChangeValues.size() >= 2;
 }
 
-bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
+bool SMLoader::LoadNoteDataFromSimfile( const std::string &path, Steps &out )
 {
 	MsdFile msd;
 	if( !msd.ReadFile( path, true ) )  // unescape
@@ -1054,7 +1054,7 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = Rage::make_upper(sParams[0]);
+		std::string sValueName = Rage::make_upper(sParams[0]);
 
 		// The only tag we care about is the #NOTES tag.
 		if( sValueName=="NOTES" || sValueName=="NOTES2" )
@@ -1068,9 +1068,9 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 				continue;
 			}
 
-			RString stepsType = sParams[1];
-			RString description = sParams[2];
-			RString difficulty = sParams[3];
+			std::string stepsType = sParams[1];
+			std::string description = sParams[2];
+			std::string difficulty = sParams[3];
 
 			// HACK?: If this is a .edit fudge the edit difficulty
 			if (edit == Rage::tail(path, 5))
@@ -1111,7 +1111,7 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 				continue;
 			}
 
-			RString noteData = Rage::trim(sParams[6]);
+			std::string noteData = Rage::trim(sParams[6]);
 			out.SetSMNoteData( noteData );
 			out.TidyUpData();
 			return true;
@@ -1120,7 +1120,7 @@ bool SMLoader::LoadNoteDataFromSimfile( const RString &path, Steps &out )
 	return false;
 }
 
-bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache )
+bool SMLoader::LoadFromSimfile( const std::string &sPath, Song &out, bool bFromCache )
 {
 	LOG->Trace( "Song::LoadFromSMFile(%s)", sPath.c_str() );
 
@@ -1140,7 +1140,7 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = Rage::make_upper(sParams[0]);
+		std::string sValueName = Rage::make_upper(sParams[0]);
 		reused_song_info.params= &sParams;
 		song_handler_map_t::iterator handler=
 			sm_parser_helper.song_tag_handlers.find(sValueName);
@@ -1188,7 +1188,7 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 	return true;
 }
 
-bool SMLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =nullptr */ )
+bool SMLoader::LoadEditFromFile( std::string sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =nullptr */ )
 {
 	LOG->Trace( "SMLoader::LoadEditFromFile(%s)", sEditFilePath.c_str() );
 
@@ -1209,14 +1209,14 @@ bool SMLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool b
 	return LoadEditFromMsd( msd, sEditFilePath, slot, bAddStepsToSong, givenSong );
 }
 
-bool SMLoader::LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot, Song *givenSong )
+bool SMLoader::LoadEditFromBuffer( const std::string &sBuffer, const std::string &sEditFilePath, ProfileSlot slot, Song *givenSong )
 {
 	MsdFile msd;
 	msd.ReadFromString( sBuffer, true ); // unescape
 	return LoadEditFromMsd( msd, sEditFilePath, slot, true, givenSong );
 }
 
-bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =nullptr */ )
+bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const std::string &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =nullptr */ )
 {
 	Song* pSong = givenSong;
 
@@ -1224,7 +1224,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = Rage::make_upper(sParams[0]);
+		std::string sValueName = Rage::make_upper(sParams[0]);
 
 		// handle the data
 		if( sValueName=="SONG" )
@@ -1237,7 +1237,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 				continue;
 			}
 
-			RString sSongFullTitle = sParams[1];
+			std::string sSongFullTitle = sParams[1];
 			this->SetSongTitle(sParams[1]);
 			Rage::replace(sSongFullTitle, '\\', '/' );
 
@@ -1305,11 +1305,11 @@ void SMLoader::GetApplicableFiles( std::string const &sPath, vector<std::string>
 {
 	if(load_autosave)
 	{
-		GetDirListing( sPath + RString("*.ats" ), out );
+		GetDirListing( sPath + std::string("*.ats" ), out );
 	}
 	else
 	{
-		GetDirListing( sPath + RString("*" + this->GetFileExtension() ), out );
+		GetDirListing( sPath + std::string("*" + this->GetFileExtension() ), out );
 	}
 }
 

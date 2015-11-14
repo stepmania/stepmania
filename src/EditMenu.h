@@ -73,7 +73,7 @@ public:
 	EditMenu();
 	/** @brief Destroy the EditMenu. */
 	~EditMenu();
-	void Load( const RString &sType );
+	void Load( const std::string &sType );
 
 	/** @brief Determine if we can move up.
 	 * @return true if we can, false otherwise. */
@@ -109,7 +109,7 @@ public:
 
 	/** @brief Retrieve the currently selected group.
 	 * @return the current group. */
-	RString	GetSelectedGroup() const
+	std::string	GetSelectedGroup() const
 	{
 		if( !SHOW_GROUPS.GetValue() ) return GROUP_ALL;
 		int groups = static_cast<int>(m_sGroups.size());
@@ -191,7 +191,7 @@ private:
 	struct StepsAndDifficulty;
 
 	void StripLockedStepsAndDifficulty( std::vector<StepsAndDifficulty> &v );
-	void GetSongsToShowForGroup( const RString &sGroup, std::vector<Song*> &vpSongsOut );
+	void GetSongsToShowForGroup( const std::string &sGroup, std::vector<Song*> &vpSongsOut );
 	void GetGroupsToShow( std::vector<std::string> &vsGroupsOut );
 
 	void UpdateArrows();

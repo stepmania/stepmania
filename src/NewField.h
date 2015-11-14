@@ -263,7 +263,7 @@ struct NewField : ActorFrame
 	void set_player_color(size_t pn, Rage::Color const& color);
 
 	void clear_steps();
-	void set_skin(RString const& skin_name);
+	void set_skin(std::string const& skin_name);
 	void set_steps(Steps* data);
 	void set_note_data(NoteData* note_data, TimingData* timing, Style const* curr_style);
 	// set_player_number exists only so that the notefield board can have

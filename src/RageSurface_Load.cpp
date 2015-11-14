@@ -12,7 +12,7 @@
 
 using std::vector;
 
-static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error, RString format, bool &bKeepTrying )
+static RageSurface *TryOpenFile( std::string sPath, bool bHeaderOnly, std::string &error, std::string format, bool &bKeepTrying )
 {
 	RageSurface *ret = nullptr;
 	RageSurfaceUtils::OpenResult result;
@@ -76,7 +76,7 @@ static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error
 	return nullptr;
 }
 
-RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, bool bHeaderOnly )
+RageSurface *RageSurfaceUtils::LoadFile( const std::string &sPath, std::string &error, bool bHeaderOnly )
 {
 	{
 		RageFile TestOpen;
@@ -87,14 +87,14 @@ RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, b
 		}
 	}
 
-	std::set<RString> FileTypes;
+	std::set<std::string> FileTypes;
 	auto const& exts= ActorUtil::GetTypeExtensionList(FT_Bitmap);
 	for (auto &curr: exts)
 	{
 		FileTypes.insert(curr);
 	}
 
-	RString format = Rage::make_lower(GetExtension(sPath));
+	std::string format = Rage::make_lower(GetExtension(sPath));
 
 	bool bKeepTrying = true;
 

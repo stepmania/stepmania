@@ -65,10 +65,10 @@ void InputHandler_Linux_Joystick::StopThread()
 	LOG->Trace( "Joystick thread shut down." );
 }
 
-bool InputHandler_Linux_Joystick::TryDevice(RString dev)
+bool InputHandler_Linux_Joystick::TryDevice(std::string dev)
 {
 	struct stat st;
-	if( stat( dev, &st ) == -1 )
+	if( stat( dev.c_str(), &st ) == -1 )
 		{ LOG->Warn( "LinuxJoystick: Couldn't stat %s: %s", dev.c_str(), strerror(errno) ); return false; }
 
 	if( !S_ISCHR( st.st_mode ) )
@@ -79,7 +79,7 @@ bool InputHandler_Linux_Joystick::TryDevice(RString dev)
 	if( m_InputThread.IsCreated() ) { StopThread(); hotplug = true; }
 	/* Thread is stopped! DO NOT RETURN */
 	{
-		fds[m_iLastFd] = open( dev, O_RDONLY );
+		fds[m_iLastFd] = open( dev.c_str(), O_RDONLY );
 
 		if(fds[m_iLastFd] != -1)
 		{

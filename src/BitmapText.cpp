@@ -177,15 +177,15 @@ void BitmapText::BMT_TweenState::MakeWeightedAverage(BMT_TweenState& out,
 
 void BitmapText::LoadFromNode( const XNode* node )
 {
-	RString text;
+	std::string text;
 	node->GetAttrValue("Text", text);
-	RString alt_text;
+	std::string alt_text;
 	node->GetAttrValue("AltText", alt_text);
 
 	ThemeManager::EvaluateString(text);
 	ThemeManager::EvaluateString(alt_text);
 
-	RString font;
+	std::string font;
 	// Pass optional= true so that an error will not be reported if the path
 	// doesn't resolve to a file.  This way, a font can be either a path or the
 	// name of a font to look up in Fonts/.  -Kyz
@@ -208,7 +208,7 @@ void BitmapText::LoadFromNode( const XNode* node )
 	Actor::LoadFromNode(node);
 }
 
-bool BitmapText::LoadFromFont( const RString& sFontFilePath )
+bool BitmapText::LoadFromFont( const std::string& sFontFilePath )
 {
 	CHECKPOINT_M( fmt::sprintf("BitmapText::LoadFromFont(%s)", sFontFilePath.c_str()) );
 
@@ -227,7 +227,7 @@ bool BitmapText::LoadFromFont( const RString& sFontFilePath )
 	return true;
 }
 
-bool BitmapText::LoadFromTextureAndChars( const RString& sTexturePath, const RString& sChars )
+bool BitmapText::LoadFromTextureAndChars( const std::string& sTexturePath, const std::string& sChars )
 {
 	CHECKPOINT_M( fmt::sprintf("BitmapText::LoadFromTextureAndChars(\"%s\",\"%s\")", sTexturePath.c_str(), sChars.c_str()) );
 
@@ -452,11 +452,11 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 /* sText is UTF-8. If not all of the characters in sText are available in the
  * font, sAlternateText will be used instead. If there are unavailable characters
  * in sAlternateText, too, just use sText. */
-void BitmapText::SetText( const RString& _sText, const RString& _sAlternateText, int iWrapWidthPixels )
+void BitmapText::SetText( const std::string& _sText, const std::string& _sAlternateText, int iWrapWidthPixels )
 {
 	ASSERT( m_pFont != nullptr );
 
-	RString sNewText = StringWillUseAlternate(_sText,_sAlternateText) ? _sAlternateText : _sText;
+	std::string sNewText = StringWillUseAlternate(_sText,_sAlternateText) ? _sAlternateText : _sText;
 
 	if( m_bUppercase )
 	{
@@ -482,7 +482,7 @@ void BitmapText::SetTextInternal()
 
 	if( m_iWrapWidthPixels == -1 )
 	{
-		m_wTextLines = Rage::split( RStringToWstring(m_sText), L"\n", Rage::EmptyEntries::include );
+		m_wTextLines = Rage::split( StringToWstring(m_sText), L"\n", Rage::EmptyEntries::include );
 	}
 	else
 	{
@@ -499,12 +499,12 @@ void BitmapText::SetTextInternal()
 		{
 			auto words = Rage::split(singleLine, " ");
 
-			RString sCurLine;
+			std::string sCurLine;
 			int iCurLineWidth = 0;
 
 			for (auto const &sWord: words)
 			{
-				int iWidthWord = m_pFont->GetLineWidthInSourcePixels( RStringToWstring(sWord) );
+				int iWidthWord = m_pFont->GetLineWidthInSourcePixels( StringToWstring(sWord) );
 
 				if( sCurLine.empty() )
 				{
@@ -513,7 +513,7 @@ void BitmapText::SetTextInternal()
 					continue;
 				}
 
-				RString sToAdd = " " + sWord;
+				std::string sToAdd = " " + sWord;
 				int iWidthToAdd = m_pFont->GetLineWidthInSourcePixels(L" ") + iWidthWord;
 				if( iCurLineWidth + iWidthToAdd <= m_iWrapWidthPixels )	// will fit on current line
 				{
@@ -522,12 +522,12 @@ void BitmapText::SetTextInternal()
 				}
 				else
 				{
-					m_wTextLines.push_back( RStringToWstring(sCurLine) );
+					m_wTextLines.push_back( StringToWstring(sCurLine) );
 					sCurLine = sWord;
 					iCurLineWidth = iWidthWord;
 				}
 			}
-			m_wTextLines.push_back( RStringToWstring(sCurLine) );
+			m_wTextLines.push_back( StringToWstring(sCurLine) );
 		}
 	}
 
@@ -619,7 +619,7 @@ void BitmapText::UpdateBaseZoom()
 #undef APPLY_DIMENSION_ZOOM
 }
 
-bool BitmapText::StringWillUseAlternate( const RString& sText, const RString& sAlternateText ) const
+bool BitmapText::StringWillUseAlternate( const std::string& sText, const std::string& sAlternateText ) const
 {
 	ASSERT( m_pFont != nullptr );
 
@@ -628,11 +628,11 @@ bool BitmapText::StringWillUseAlternate( const RString& sText, const RString& sA
 		return false;
 
 	// False if the alternate isn't needed.
-	if( m_pFont->FontCompleteForString(RStringToWstring(sText)) )
+	if( m_pFont->FontCompleteForString(StringToWstring(sText)) )
 		return false;
 
 	// False if the alternate is also incomplete.
-	if( !m_pFont->FontCompleteForString(RStringToWstring(sAlternateText)) )
+	if( !m_pFont->FontCompleteForString(StringToWstring(sAlternateText)) )
 		return false;
 
 	return true;
@@ -960,8 +960,8 @@ public:
 	static int vertspacing( T* p, lua_State *L )		{ p->SetVertSpacing( IArg(1) ); COMMON_RETURN_SELF; }
 	static int settext( T* p, lua_State *L )
 	{
-		RString s = SArg(1);
-		RString sAlt;
+		std::string s = SArg(1);
+		std::string sAlt;
 		/* XXX: Lua strings should simply use "\n" natively. However, some
 		 * settext calls may be made from GetMetric() calls to other strings, and
 		 * it's confusing for :: to work in some strings and not others.

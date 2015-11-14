@@ -81,12 +81,12 @@ ScreenTestSound::~ScreenTestSound()
 
 void ScreenTestSound::UpdateText(int n)
 {
-	RString fn = Rage::base_name( s[n].s.GetLoadedFilePath() );
+	std::string fn = Rage::base_name( s[n].s.GetLoadedFilePath() );
 
 	vector<RageSound *> &snds = m_sSoundCopies[n];
 
 	// TODO: Replace with Rage::join.
-	RString pos;
+	std::string pos;
 	for(unsigned p = 0; p < snds.size(); ++p)
 	{
 		if(p) pos += ", ";

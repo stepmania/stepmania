@@ -60,7 +60,7 @@ public:
 
 	bool DescribesCurrentMode( PlayerNumber pn ) const;
 	bool DescribesCurrentModeForAllPlayers() const;
-	bool IsPlayable( RString *why = nullptr ) const;
+	bool IsPlayable( std::string *why = nullptr ) const;
 	bool IsZero() const;
 
 	/* If true, Apply() will apply m_sScreen. If false, it won't, and you need
@@ -71,31 +71,31 @@ public:
 	// so that we know the order of commands when it comes time to Apply.
 	Commands	m_Commands;
 
-	RString		m_sName;	// choice name
-	RString		m_sText;	// display text
+	std::string		m_sName;	// choice name
+	std::string		m_sText;	// display text
 	bool		m_bInvalid;
-	RString		m_sInvalidReason;
+	std::string		m_sInvalidReason;
 	int		m_iIndex;
 	MultiPlayer	m_MultiPlayer;
 	const Style*	m_pStyle;
 	PlayMode	m_pm;
 	Difficulty	m_dc;
 	CourseDifficulty	m_CourseDifficulty;
-	RString		m_sAnnouncer;
-	RString		m_sPreferredModifiers;
-	RString		m_sStageModifiers;
-	RString		m_sScreen;
+	std::string		m_sAnnouncer;
+	std::string		m_sPreferredModifiers;
+	std::string		m_sStageModifiers;
+	std::string		m_sScreen;
 	LuaReference	m_LuaFunction;
 	Song*		m_pSong;
 	Steps*		m_pSteps;
 	Course*		m_pCourse;
 	Trail*		m_pTrail;
 	Character*	m_pCharacter;
-	std::map<RString,RString> m_SetEnv;
-	std::map<RString,RString> m_SetPref;
-	RString		m_sSongGroup;
+	std::map<std::string,std::string> m_SetEnv;
+	std::map<std::string,std::string> m_SetPref;
+	std::string		m_sSongGroup;
 	SortOrder	m_SortOrder;
-	RString		m_sSoundPath;	// "" for no sound
+	std::string		m_sSoundPath;	// "" for no sound
 	std::vector<std::string>	m_vsScreensToPrepare;
 	/**
 	 * @brief What is the player's weight in pounds?
@@ -104,8 +104,8 @@ public:
 	int		m_iWeightPounds;
 	int		m_iGoalCalories;	// -1 == none specified
 	GoalType	m_GoalType;
-	RString		m_sProfileID;
-	RString		m_sUrl;
+	std::string		m_sProfileID;
+	std::string		m_sUrl;
 	// sm-ssc adds:
 	bool		m_bUrlExits;	// for making stepmania not exit on url
 
