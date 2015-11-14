@@ -256,6 +256,9 @@ protected:
 	// set_paused_internal exists because GameState's pause variable needs to
 	// be kept in sync with ScreenGameplay's.
 	void set_paused_internal(bool p);
+
+	void FinishTrickLevel(int level, RageSound &sound);
+	void FinishDamageLevel(int level);
 	protected:
 
 	GameController		m_PauseController;

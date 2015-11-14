@@ -66,10 +66,6 @@ namespace LuaHelpers
 	{
 		lua_pushnumber(L, static_cast<double>(object));
 	}
-	template<> void Push<RString>(lua_State* L, RString const& object)
-	{
-		lua_pushlstring(L, object.data(), object.size());
-	}
 	template<> void Push<std::string>(lua_State* L, std::string const& object)
 	{
 		lua_pushlstring(L, object.data(), object.size());
@@ -105,18 +101,6 @@ namespace LuaHelpers
 		object = lua_tointeger(L, offset);
 		return true;
 	}
-	template<> bool FromStack<RString>(Lua* L, RString& object, int offset)
-	{
-		size_t iLen;
-		char const* pStr = lua_tolstring(L, offset, &iLen);
-		if(pStr != nullptr)
-		{
-			object.assign(pStr, iLen);
-			return true;
-		}
-		object.clear();
-		return false;
-	}
 	template<> bool FromStack<std::string>(Lua* L, std::string &object, int offset)
 	{
 		size_t len;
@@ -128,6 +112,11 @@ namespace LuaHelpers
 		}
 		object.clear();
 		return false;
+	}
+	bool FromStack(Lua* L, char const *object, int offset)
+	{
+		std::string clean{object};
+		return LuaHelpers::FromStack(L, clean, offset);
 	}
 
 	bool InReportScriptError= false;

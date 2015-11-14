@@ -2648,6 +2648,17 @@ void ScreenGameplay::SaveStats()
 	}
 }
 
+void ScreenGameplay::FinishTrickLevel(int level, RageSound &sound)
+{
+	PlayAnnouncer( fmt::sprintf("gameplay battle trick level%d",level), 3 );
+	sound.Play(false);
+}
+
+void ScreenGameplay::FinishDamageLevel(int level)
+{
+	PlayAnnouncer( fmt::sprintf("gameplay battle damage level%d",level), 3 );
+}
+
 void ScreenGameplay::SongFinished()
 {
 	FOREACH_EnabledPlayer(pn)
@@ -2979,18 +2990,30 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	{
 		PlayAnnouncer( "gameplay combo overflow", 2 );
 	}
-	else if( SM >= SM_BattleTrickLevel1 && SM <= SM_BattleTrickLevel3 )
+	else if (SM == SM_BattleTrickLevel1)
 	{
-		int iTrickLevel = SM-SM_BattleTrickLevel1+1;
-		PlayAnnouncer( fmt::sprintf("gameplay battle trick level%d",iTrickLevel), 3 );
-		if( SM == SM_BattleTrickLevel1 ) m_soundBattleTrickLevel1.Play(false);
-		else if( SM == SM_BattleTrickLevel2 ) m_soundBattleTrickLevel2.Play(false);
-		else if( SM == SM_BattleTrickLevel3 ) m_soundBattleTrickLevel3.Play(false);
+		// TODO: Better understand HOW ScreenMessages could be converted implicitly to integers.
+		FinishTrickLevel(1, m_soundBattleTrickLevel1);
 	}
-	else if( SM >= SM_BattleDamageLevel1 && SM <= SM_BattleDamageLevel3 )
+	else if (SM == SM_BattleTrickLevel2)
 	{
-		int iDamageLevel = SM-SM_BattleDamageLevel1+1;
-		PlayAnnouncer( fmt::sprintf("gameplay battle damage level%d",iDamageLevel), 3 );
+		FinishTrickLevel(2, m_soundBattleTrickLevel2);
+	}
+	else if (SM == SM_BattleTrickLevel3)
+	{
+		FinishTrickLevel(3, m_soundBattleTrickLevel3);
+	}
+	else if (SM == SM_BattleDamageLevel1)
+	{
+		FinishDamageLevel(1);
+	}
+	else if (SM == SM_BattleDamageLevel2)
+	{
+		FinishDamageLevel(2);
+	}
+	else if (SM == SM_BattleDamageLevel3)
+	{
+		FinishDamageLevel(3);
 	}
 	else if( SM == SM_DoPrevScreen )
 	{

@@ -137,7 +137,7 @@ template<int> struct CompileAssertDecl { };
 
 #include "StdString.h"
 /** @brief Use RStrings throughout the program. */
-typedef StdString::CStdString RString;
+typedef std::string RString;
 
 #include "RageException.h"
 

@@ -128,6 +128,9 @@ namespace LuaHelpers
 	template<class T>
 	bool FromStack( lua_State *L, T &Object, int iOffset );
 
+	// Not using a template for the c style string: found it tricky to use.
+	bool FromStack( lua_State *L, char const *Object, int iOffset );
+
 	template<class T>
 	bool Pop( lua_State *L, T &val )
 	{

@@ -38,7 +38,7 @@ struct ConfOption
 	int GetEffects() const;
 
 	ConfOption( const char *n, MoveData_t m,
-		const char *c0=nullptr, const char *c1=nullptr, const char *c2=nullptr, const char *c3=nullptr, const char *c4=nullptr, const char *c5=nullptr, const char *c6=nullptr, const char *c7=nullptr, const char *c8=nullptr, const char *c9=nullptr, const char *c10=nullptr, const char *c11=nullptr, const char *c12=nullptr, const char *c13=nullptr, const char *c14=nullptr, const char *c15=nullptr, const char *c16=nullptr, const char *c17=nullptr, const char *c18=nullptr, const char *c19=nullptr )
+		std::string const &c0="", std::string const &c1="", std::string const &c2="", std::string const &c3="", std::string const &c4="", std::string const &c5="", std::string const &c6="", std::string const &c7="", std::string const &c8="", std::string const &c9="", std::string const &c10="", std::string const &c11="", std::string const &c12="", std::string const &c13="", std::string const &c14="", std::string const &c15="", std::string const &c16="", std::string const &c17="", std::string const &c18="", std::string const &c19="" )
 	{
 		name = n;
 		m_sPrefName = name; // copy from name (not n), to allow refcounting
@@ -46,7 +46,7 @@ struct ConfOption
 		MakeOptionsListCB = nullptr;
 		m_iEffects = 0;
 		m_bAllowThemeItems = true;
-#define PUSH( c )	if(c) names.push_back(c);
+#define PUSH( c )	if(!(c.empty())) names.push_back(c);
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);
 	}
 	void AddOption( const RString &sName ) { PUSH(sName); }
