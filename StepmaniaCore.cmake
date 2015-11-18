@@ -48,7 +48,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Set up the linker flags for MSVC builds.
 configure_msvc_runtime()
 
-if(BUILD_UNIT_TESTS)
+if(WITH_UNIT_TESTS)
 	# Determine which projects can be compiled in.
 	if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 		message(STATUS "Using GNU compiler.")
