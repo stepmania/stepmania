@@ -3,7 +3,7 @@
 #ifndef FONTMANAGER_H
 #define FONTMANAGER_H
 
-class Font;
+class SMFont;
 struct Game;
 
 class FontManager
@@ -12,9 +12,9 @@ public:
 	FontManager();
 	~FontManager();
 
-	Font* LoadFont( const RString &sFontOrTextureFilePath, RString sChars = "" );
-	Font *CopyFont( Font *pFont );
-	void UnloadFont( Font *fp );
+	SMFont* LoadFont( const RString &sFontOrTextureFilePath, RString sChars = "" );
+	SMFont *CopyFont( SMFont *pFont );
+	void UnloadFont( SMFont *fp );
 	//void PruneFonts();
 };
 

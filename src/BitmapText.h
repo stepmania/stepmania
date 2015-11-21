@@ -5,7 +5,7 @@
 #include <map>
 
 class RageTexture;
-class Font;
+class SMFont;
 struct FontPageTextures;
 /** @brief An actor that holds a Font and draws text to the screen. */
 class BitmapText : public Actor
@@ -110,7 +110,7 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 protected:
-	Font		*m_pFont;
+	SMFont		*m_pFont;
 	bool		m_bUppercase;
 	RString		m_sText;
 	vector<wstring>		m_wTextLines;

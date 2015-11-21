@@ -398,12 +398,12 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 			break;
 		case DISPLAY_BPM_SPECIFIED:
 		{
-			float small = in.GetMinBPM();
-			float big = in.GetMaxBPM();
-			if (small == big)
-				lines.push_back( ssprintf( "#DISPLAYBPM:%.6f;", small ) );
+			float _small = in.GetMinBPM();
+			float _big = in.GetMaxBPM();
+			if (_small == _big)
+				lines.push_back( ssprintf( "#DISPLAYBPM:%.6f;", _small ) );
 			else
-				lines.push_back( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", small, big ) );
+				lines.push_back( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", _small, _big ) );
 			break;
 		}
 		case DISPLAY_BPM_RANDOM:

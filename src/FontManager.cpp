@@ -9,7 +9,7 @@ FontManager*	FONT	= NULL;	// global and accessible from anywhere in our program
 
 // map from file name to a texture holder
 typedef pair<RString,RString> FontName;
-static map<FontName, Font*> g_mapPathToFont;
+static map<FontName, SMFont*> g_mapPathToFont;
 
 FontManager::FontManager()
 {
@@ -17,11 +17,11 @@ FontManager::FontManager()
 
 FontManager::~FontManager()
 {
-	for( std::map<FontName, Font*>::iterator i = g_mapPathToFont.begin();
+	for( std::map<FontName, SMFont*>::iterator i = g_mapPathToFont.begin();
 		i != g_mapPathToFont.end(); ++i)
 	{
 		const FontName &fn = i->first;
-		Font* pFont = i->second;
+		SMFont* pFont = i->second;
 		if(pFont->m_iRefCount > 0) {
 			LOG->Trace( "FONT LEAK: '%s', RefCount = %d.", fn.first.c_str(), pFont->m_iRefCount );
 		}
@@ -29,9 +29,9 @@ FontManager::~FontManager()
 	}
 }
 
-Font* FontManager::LoadFont( const RString &sFontOrTextureFilePath, RString sChars )
+SMFont* FontManager::LoadFont( const RString &sFontOrTextureFilePath, RString sChars )
 {
-	Font *pFont;
+	SMFont *pFont;
 	/* Convert the path to lowercase so that we don't load duplicates. Really,
 	 * this does not solve the duplicate problem. We could have two copies of
 	 * the same bitmap if there are equivalent but different paths
@@ -39,7 +39,7 @@ Font* FontManager::LoadFont( const RString &sFontOrTextureFilePath, RString sCha
 
 	CHECKPOINT_M( ssprintf("FontManager::LoadFont(%s).", sFontOrTextureFilePath.c_str()) );
 	const FontName NewName( sFontOrTextureFilePath, sChars );
-	map<FontName, Font*>::iterator p = g_mapPathToFont.find( NewName );
+	map<FontName, SMFont*>::iterator p = g_mapPathToFont.find( NewName );
 	if( p != g_mapPathToFont.end() )
 	{
 		pFont=p->second;
@@ -47,23 +47,23 @@ Font* FontManager::LoadFont( const RString &sFontOrTextureFilePath, RString sCha
 		return pFont;
 	}
 
-	Font *f = new Font;
+	SMFont *f = new SMFont;
 	f->Load(sFontOrTextureFilePath, sChars);
 	g_mapPathToFont[NewName] = f;
 	return f;
 }
 
-Font *FontManager::CopyFont( Font *pFont )
+SMFont *FontManager::CopyFont( SMFont *pFont )
 {
 	++pFont->m_iRefCount;
 	return pFont;
 }
 
-void FontManager::UnloadFont( Font *fp )
+void FontManager::UnloadFont( SMFont *fp )
 {
 	CHECKPOINT_M( ssprintf("FontManager::UnloadFont(%s).", fp->path.c_str()) );
 
-	for( std::map<FontName, Font*>::iterator i = g_mapPathToFont.begin();
+	for( std::map<FontName, SMFont*>::iterator i = g_mapPathToFont.begin();
 		i != g_mapPathToFont.end(); ++i)
 	{
 		if(i->second != fp)

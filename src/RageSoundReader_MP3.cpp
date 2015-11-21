@@ -719,7 +719,7 @@ int RageSoundReader_MP3::Read( float *buf, int iFrames )
 		if( ret == 0 )
 			return END_OF_FILE;
 		if( ret == -1 )
-			return ERROR;
+			return _ERROR;
 
 		synth_output();
 	}

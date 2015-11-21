@@ -834,7 +834,7 @@ void PacketFunctions::ClearPacket()
 
 RString NetworkSyncManager::MD5Hex( const RString &sInput ) 
 {
-	return BinaryToHex( CryptManager::GetMD5ForString(sInput) ).MakeUpper();
+	return BinaryToHex( CryptManager::GetMD5ForString(sInput) ).ToUpper();
 }
 
 void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers ) 

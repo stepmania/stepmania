@@ -115,15 +115,15 @@ void NORETURN sm_crash( const char *reason = "Internal error" );
 #define DEFAULT_FAIL(i) 	default: FAIL_M( ssprintf("%s = %i", #i, (i)) )
 
 void ShowWarningOrTrace( const char *file, int line, const char *message, bool bWarning ); // don't pull in LOG here
-#define WARN(MESSAGE) (ShowWarningOrTrace(__FILE__, __LINE__, MESSAGE, true))
+#define _WARN(MESSAGE) (ShowWarningOrTrace(__FILE__, __LINE__, MESSAGE, true))
 #if !defined(CO_EXIST_WITH_MFC)
-#define TRACE(MESSAGE) (ShowWarningOrTrace(__FILE__, __LINE__, MESSAGE, false))
+#define _TRACE(MESSAGE) (ShowWarningOrTrace(__FILE__, __LINE__, MESSAGE, false))
 #endif
 
 #ifdef DEBUG
 // No reason to kill the program. A lot of these don't produce a crash in NDEBUG so why stop?
 // TODO: These should have something you can hook a breakpoint on.
-#define DEBUG_ASSERT_M(COND,MESSAGE) if(unlikely(!(COND))) WARN(MESSAGE)
+#define DEBUG_ASSERT_M(COND,MESSAGE) if(unlikely(!(COND))) _WARN(MESSAGE)
 #define DEBUG_ASSERT(COND) DEBUG_ASSERT_M(COND,"Debug assert failed")
 #else
 /** @brief A dummy define to keep things going smoothly. */
@@ -145,7 +145,7 @@ template<int> struct CompileAssertDecl { };
 
 #include "StdString.h"
 /** @brief Use RStrings throughout the program. */
-typedef StdString::CStdString RString;
+typedef CStdString RString;
 
 #include "RageException.h"
 

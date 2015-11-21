@@ -227,14 +227,14 @@ static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfile
 	}
 }
 
-static LocalizedString EDITS_NOT_COPIED		( "ScreenServiceAction", "Edits not copied - No memory cards ready." );
-static LocalizedString COPIED_TO_CARD		( "ScreenServiceAction", "Copied to P%d card:" );
-static LocalizedString COPIED			( "ScreenServiceAction", "%d copied" );
-static LocalizedString OVERWRITTEN		( "ScreenServiceAction", "%d overwritten" );
-static LocalizedString ADDED			( "ScreenServiceAction", "%d added" );
-static LocalizedString IGNORED			( "ScreenServiceAction", "%d ignored" );
-static LocalizedString FAILED			( "ScreenServiceAction", "%d failed" );
-static LocalizedString DELETED			( "ScreenServiceAction", "%d deleted" );
+static LocalizedString _EDITS_NOT_COPIED		( "ScreenServiceAction", "Edits not copied - No memory cards ready." );
+static LocalizedString _COPIED_TO_CARD		( "ScreenServiceAction", "Copied to P%d card:" );
+static LocalizedString _COPIED			( "ScreenServiceAction", "%d copied" );
+static LocalizedString _OVERWRITTEN		( "ScreenServiceAction", "%d overwritten" );
+static LocalizedString _ADDED			( "ScreenServiceAction", "%d added" );
+static LocalizedString _IGNORED			( "ScreenServiceAction", "%d ignored" );
+static LocalizedString _FAILED			( "ScreenServiceAction", "%d failed" );
+static LocalizedString _DELETED			( "ScreenServiceAction", "%d deleted" );
 
 static RString CopyEdits( const RString &sFromProfileDir, const RString &sToProfileDir, const RString &sDisplayDir )
 {
@@ -247,11 +247,11 @@ static RString CopyEdits( const RString &sFromProfileDir, const RString &sToProf
 
 	vector<RString> vs;
 	vs.push_back( sDisplayDir );
-	vs.push_back( ssprintf( COPIED.GetValue(), iNumSucceeded ) + ", " + ssprintf( OVERWRITTEN.GetValue(), iNumOverwritten ) );
+	vs.push_back( ssprintf( _COPIED.GetValue(), iNumSucceeded ) + ", " + ssprintf( _OVERWRITTEN.GetValue(), iNumOverwritten ) );
 	if( iNumIgnored )
-		vs.push_back( ssprintf( IGNORED.GetValue(), iNumIgnored ) );
+		vs.push_back( ssprintf( _IGNORED.GetValue(), iNumIgnored ) );
 	if( iNumErrored )
-		vs.push_back( ssprintf( FAILED.GetValue(), iNumErrored ) );
+		vs.push_back( ssprintf( _FAILED.GetValue(), iNumErrored ) );
 	return join( "\n", vs );
 }
 
@@ -312,7 +312,7 @@ static RString CopyEditsMachineToMemoryCard()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
-		return EDITS_NOT_COPIED.GetValue();
+		return _EDITS_NOT_COPIED.GetValue();
 
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
@@ -321,7 +321,7 @@ static RString CopyEditsMachineToMemoryCard()
 	RString sToDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
 
 	vector<RString> vs;
-	vs.push_back( ssprintf( COPIED_TO_CARD.GetValue(), pn+1 ) );
+	vs.push_back( ssprintf( _COPIED_TO_CARD.GetValue(), pn+1 ) );
 	RString s = CopyEdits( sFromDir, sToDir, PREFSMAN->m_sMemoryCardProfileSubdir );
 	vs.push_back( s );
 	
@@ -334,7 +334,7 @@ static RString SyncEditsMachineToMemoryCard()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
-		return EDITS_NOT_COPIED.GetValue();
+		return _EDITS_NOT_COPIED.GetValue();
 
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
@@ -350,12 +350,12 @@ static RString SyncEditsMachineToMemoryCard()
 	
 	MEMCARDMAN->UnmountCard(pn);
 
-	RString sRet = ssprintf( COPIED_TO_CARD.GetValue(), pn+1 ) + " ";
-	sRet += ssprintf( ADDED.GetValue(), iNumAdded ) + ", " + ssprintf( OVERWRITTEN.GetValue(), iNumOverwritten );
+	RString sRet = ssprintf( _COPIED_TO_CARD.GetValue(), pn+1 ) + " ";
+	sRet += ssprintf( _ADDED.GetValue(), iNumAdded ) + ", " + ssprintf( _OVERWRITTEN.GetValue(), iNumOverwritten );
 	if( iNumDeleted )
-		sRet += RString(" ") + ssprintf( DELETED.GetValue(), iNumDeleted );
+		sRet += RString(" ") + ssprintf( _DELETED.GetValue(), iNumDeleted );
 	if( iNumFailed )
-		sRet += RString("; ") + ssprintf( FAILED.GetValue(), iNumFailed );
+		sRet += RString("; ") + ssprintf( _FAILED.GetValue(), iNumFailed );
 	return sRet;
 }
 
@@ -364,7 +364,7 @@ static RString CopyEditsMemoryCardToMachine()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
-		return EDITS_NOT_COPIED.GetValue();
+		return _EDITS_NOT_COPIED.GetValue();
 
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);

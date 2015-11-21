@@ -132,14 +132,14 @@ private:
 	void SetTextureCoords( const vector<int> &aiWidths, int iAdvanceExtraPixels );
 };
 
-class Font
+class SMFont
 {
 public:
 	int m_iRefCount;
 	RString path;
 
-	Font();
-	~Font();
+	SMFont();
+	~SMFont();
 
 	const glyph &GetGlyph( wchar_t c ) const;
 
@@ -158,7 +158,7 @@ public:
 	/**
 	 * @brief Steal all of a font's pages.
 	 * @param f the font whose pages we are stealing. */
-	void MergeFont(Font &f);
+	void MergeFont(SMFont &f);
 
 	void Load(const RString &sFontOrTextureFilePath, RString sChars);
 	void Unload();
@@ -208,8 +208,8 @@ private:
 	static void GetFontPaths( const RString &sFontOrTextureFilePath, vector<RString> &sTexturePaths );
 	RString GetPageNameFromFileName( const RString &sFilename );
 	
-	Font(const Font& rhs);
-	Font& operator=(const Font& rhs);
+	SMFont(const SMFont& rhs);
+	SMFont& operator=(const SMFont& rhs);
 };
 
 /**
