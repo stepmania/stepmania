@@ -51,7 +51,6 @@ configure_msvc_runtime()
 if(WITH_UNIT_TESTS)
 	# Determine which projects can be compiled in.
 	if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-		message(STATUS "Using GNU compiler.")
 		if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
 			set(CAN_COMPILE_TESTS OFF)
 		else()

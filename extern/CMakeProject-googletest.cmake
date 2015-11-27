@@ -1,3 +1,8 @@
+if (NOT WITH_UNIT_TESTS)
+  # Explicitly skipping unit test support. No need to report a status on this.
+  return()
+endif()
+
 if (NOT CAN_COMPILE_TESTS)
   message(STATUS "Unit test support disabled. If you wish to compile and run the unit tests, please update your compiler.")
   return()
