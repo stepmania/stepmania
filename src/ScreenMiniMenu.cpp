@@ -33,6 +33,72 @@ namespace
 	ScreenMessage g_SendOnCancel;
 };
 
+#define PUSH(c) do { if( !(c.empty()) ) { choices.push_back(c); } } while(0)
+
+MenuRowDef::MenuRowDef():
+	iRowCode{0}, sName{""}, bEnabled{false},
+	pfnEnabled{nullptr}, emShowIn{}, iDefaultChoice{0},
+	choices{}, bThemeTitle{false}, bThemeItems{false} {}
+
+MenuRowDef::MenuRowDef( int r, std::string n, MenuRowUpdateEnabled pe, EditMode s,
+					   bool bTT, bool bTI, int d):
+	iRowCode{r}, sName{n}, bEnabled{true},
+	pfnEnabled{pe}, emShowIn{s}, iDefaultChoice{d},
+	choices{}, bThemeTitle{bTT}, bThemeItems{bTI} {}
+
+MenuRowDef::MenuRowDef(int r, std::string n, bool e, EditMode s,
+					   bool bTT, bool bTI, int d, std::vector<std::string> options):
+	iRowCode{r}, sName{n}, bEnabled{e},
+	pfnEnabled{nullptr}, emShowIn{s}, iDefaultChoice{d},
+	choices{}, bThemeTitle{bTT}, bThemeItems{bTI}
+{
+	for (auto &str: options)
+	{
+		if (str != "")
+		{
+			choices.push_back(str);
+		}
+	}
+}
+
+MenuRowDef::MenuRowDef( int r, std::string n, bool e, EditMode s, bool bTT, bool bTI, int d,
+	std::string const &c0, std::string const &c1,
+	std::string const &c2, std::string const &c3,
+	std::string const &c4, std::string const &c5,
+	std::string const &c6, std::string const &c7,
+	std::string const &c8, std::string const &c9,
+	std::string const &c10, std::string const &c11,
+	std::string const &c12, std::string const &c13,
+	std::string const &c14, std::string const &c15,
+	std::string const &c16, std::string const &c17,
+	std::string const &c18, std::string const &c19,
+	std::string const &c20, std::string const &c21,
+	std::string const &c22) :
+	iRowCode{r}, sName{n}, bEnabled{e}, pfnEnabled{nullptr},
+	emShowIn{s}, iDefaultChoice{d}, choices{},
+	bThemeTitle{bTT}, bThemeItems{bTI}
+{
+	PUSH(c0); PUSH(c1); PUSH(c2); PUSH(c3); PUSH(c4);
+	PUSH(c5); PUSH(c6); PUSH(c7); PUSH(c8); PUSH(c9);
+	PUSH(c10); PUSH(c11); PUSH(c12); PUSH(c13); PUSH(c14);
+	PUSH(c15); PUSH(c16); PUSH(c17); PUSH(c18); PUSH(c19);
+	PUSH(c20); PUSH(c21); PUSH(c22);
+}
+
+MenuRowDef::MenuRowDef( int r, std::string n, bool e, EditMode s, bool bTT, bool bTI,
+					   int d, int low, int high ):
+iRowCode{r}, sName{n}, bEnabled{e},
+pfnEnabled{nullptr}, emShowIn{s}, iDefaultChoice{d},
+choices{}, bThemeTitle{bTT}, bThemeItems{bTI}
+{
+	for ( int i = low; i <= high; ++i )
+	{
+		choices.push_back(IntToString(i).c_str());
+	}
+}
+
+#undef PUSH
+
 void ScreenMiniMenu::MiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel, float fX, float fY )
 {
 	PrepareToLoadScreen( pDef->sClassName );

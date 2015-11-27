@@ -154,7 +154,7 @@ void ScreenOptionsEditCourse::Init()
 
 const MenuRowDef g_MenuRows[] =
 {
-	MenuRowDef( -1,	"Max Minutes",	true, EditMode_Practice, true, false, 0, nullptr ),
+	MenuRowDef( -1,	"Max Minutes",	true, EditMode_Practice, true, false, 0),
 };
 
 static LocalizedString EMPTY	("ScreenOptionsEditCourse","-Empty-");
