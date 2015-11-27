@@ -35,18 +35,20 @@ static bool CurrentCourseIsSaved()
 {
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 	if( pCourse == nullptr )
+	{
 		return false;
+	}
 	return !pCourse->m_sPath.empty();
 }
 
 static const MenuRowDef g_MenuRows[] =
 {
-	MenuRowDef( -1,	"Play",		true, EditMode_Practice, true, false, 0, nullptr ),
-	MenuRowDef( -1,	"Edit Course",	true, EditMode_Practice, true, false, 0, nullptr ),
-	MenuRowDef( -1,	"Shuffle",	true, EditMode_Practice, true, false, 0, nullptr ),
-	MenuRowDef( -1,	"Rename",	CurrentCourseIsSaved, EditMode_Practice, true, false, 0, nullptr ),
-	MenuRowDef( -1,	"Delete",	CurrentCourseIsSaved, EditMode_Practice, true, false, 0, nullptr ),
-	MenuRowDef( -1,	"Save",		true, EditMode_Practice, true, false, 0, nullptr ),
+	MenuRowDef( -1,	"Play",		true, EditMode_Practice, true, false, 0),
+	MenuRowDef( -1,	"Edit Course",	true, EditMode_Practice, true, false, 0),
+	MenuRowDef( -1,	"Shuffle",	true, EditMode_Practice, true, false, 0),
+	MenuRowDef( -1,	"Rename",	CurrentCourseIsSaved, EditMode_Practice, true, false, 0),
+	MenuRowDef( -1,	"Delete",	CurrentCourseIsSaved, EditMode_Practice, true, false, 0),
+	MenuRowDef( -1,	"Save",		true, EditMode_Practice, true, false, 0),
 };
 
 REGISTER_SCREEN_CLASS( ScreenOptionsCourseOverview );
