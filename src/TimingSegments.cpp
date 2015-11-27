@@ -213,7 +213,7 @@ RString SpeedSegment::ToString(int dec) const
 		+ "f=%.0" + IntToString(dec) + "f=%.0"
 		+ IntToString(dec) + "f=%u";
 	return fmt::sprintf(str.c_str(), GetBeat(), GetRatio(),
-					GetDelay(), GetUnit());
+		GetDelay(), static_cast<unsigned int>(GetUnit()));
 }
 
 vector<float> SpeedSegment::GetValues() const
