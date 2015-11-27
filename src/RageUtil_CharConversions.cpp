@@ -29,7 +29,7 @@ static bool CodePageConvert( std::string &sText, int iCodePage )
 	iSize = MultiByteToWideChar( iCodePage, MB_ERR_INVALID_CHARS, sText.data(), sText.size(), (wchar_t *) sOut.data(), iSize );
 	ASSERT( iSize != 0 );
 
-	sText = WStringTostd::string( sOut );
+	sText = WStringToString( sOut );
 	return true;
 }
 

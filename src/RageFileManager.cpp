@@ -301,9 +301,9 @@ static void ChangeToDirOfExecutable( const std::string &argv0 )
 	/* Set the CWD.  Any effects of this is platform-specific; most files are read and
 	 * written through RageFile.  See also RageFileManager::RageFileManager. */
 #if defined(_WINDOWS)
-	if( _chdir( RageFileManagerUtil::sDirOfExecutable + "/.." ) )
+	if( _chdir( (RageFileManagerUtil::sDirOfExecutable + "/..").c_str() ) )
 #elif defined(UNIX)
-	if( chdir( RageFileManagerUtil::sDirOfExecutable + "/" ) )
+	if( chdir( (RageFileManagerUtil::sDirOfExecutable + "/").c_str() ) )
 #elif defined(MACOSX)
 	/* If the basename is not MacOS, then we've likely been launched via the command line
 	 * through a symlink. Assume this is the case and change to the dir of the symlink. */

@@ -26,7 +26,7 @@ std::string ConvertWstringToCodepage( wstring s, int iCodePage )
 
 std::string ConvertUTF8ToACP( const std::string &s )
 {
-	return ConvertWstringToCodepage( std::stringToWstring(s), CP_ACP );
+	return ConvertWstringToCodepage( StringToWstring(s), CP_ACP );
 }
 
 wstring ConvertCodepageToWString( std::string s, int iCodePage )
@@ -47,7 +47,7 @@ wstring ConvertCodepageToWString( std::string s, int iCodePage )
 
 std::string ConvertACPToUTF8( const std::string &s )
 {
-	return WStringTostd::string( ConvertCodepageToWString(s, CP_ACP) );
+	return WStringToString( ConvertCodepageToWString(s, CP_ACP) );
 }
 
 /*

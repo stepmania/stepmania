@@ -54,7 +54,7 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 			// Set static text.
 			std::string sMessage = g_sMessage;
 			Rage::replace(sMessage, "\n", "\r\n" );
-			SetWindowText( GetDlgItem(hWnd, IDC_MESSAGE), sMessage );
+			SetWindowText( GetDlgItem(hWnd, IDC_MESSAGE), sMessage.c_str() );
 
 			// Focus is on any of the controls in the dialog by default.
 			// I'm not sure why. Set focus to the button manually. -Chris
@@ -120,7 +120,7 @@ Dialog::Result DialogDriver_Win32::OKCancel( std::string sMessage, std::string s
 
 #if !defined(SMPACKAGE)
 	//DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_OK), ::GetHwnd(), OKWndProc );
-	int result = ::MessageBox( nullptr, sMessage, GetWindowTitle(), MB_OKCANCEL );
+	int result = ::MessageBox( nullptr, sMessage.c_str(), GetWindowTitle().c_str(), MB_OKCANCEL );
 #else
 	int result = ::AfxMessageBox( ConvertUTF8ToACP(sMessage).c_str(), MB_OKCANCEL, 0 );
 #endif
@@ -150,7 +150,7 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 			// Set static text
 			std::string sMessage = g_sErrorString;
 			Rage::replace(sMessage, "\n", "\r\n" );
-			SetWindowText( GetDlgItem(hWnd, IDC_EDIT_ERROR), sMessage );
+			SetWindowText( GetDlgItem(hWnd, IDC_EDIT_ERROR), sMessage.c_str() );
 		}
 		break;
 	case WM_COMMAND:

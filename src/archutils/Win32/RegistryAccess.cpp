@@ -66,7 +66,7 @@ static HKEY OpenRegKey( const std::string &sKey, RegKeyMode mode, bool bWarnOnEr
 		return nullptr;
 	}
 	HKEY hRetKey;
-	LONG retval = RegOpenKeyEx( hType, sSubkey, 0, (mode==READ) ? KEY_READ:KEY_WRITE, &hRetKey );
+	LONG retval = RegOpenKeyEx( hType, sSubkey.c_str(), 0, (mode==READ) ? KEY_READ:KEY_WRITE, &hRetKey );
 	if ( retval != ERROR_SUCCESS )
 	{
 		if (bWarnOnError)
@@ -88,7 +88,7 @@ bool RegistryAccess::GetRegValue( const std::string &sKey, const std::string &sN
 	char sBuffer[MAX_PATH];
 	DWORD iSize = sizeof(sBuffer);
 	DWORD iType;
-	LONG iRet = RegQueryValueEx( hKey, sName, nullptr, &iType, (LPBYTE)sBuffer, &iSize );
+	LONG iRet = RegQueryValueEx( hKey, sName.c_str(), nullptr, &iType, (LPBYTE)sBuffer, &iSize );
 	RegCloseKey( hKey );
 	if( iRet != ERROR_SUCCESS )
 		return false;
@@ -114,7 +114,7 @@ bool RegistryAccess::GetRegValue( const std::string &sKey, const std::string &sN
 	DWORD iValue;
 	DWORD iSize = sizeof(iValue);
 	DWORD iType;
-	LONG iRet = RegQueryValueEx( hKey, sName, nullptr, &iType, (LPBYTE) &iValue, &iSize );
+	LONG iRet = RegQueryValueEx( hKey, sName.c_str(), nullptr, &iType, (LPBYTE) &iValue, &iSize );
 	RegCloseKey( hKey );
 	if( iRet != ERROR_SUCCESS ) 
 		return false;
@@ -189,7 +189,7 @@ bool RegistryAccess::SetRegValue( const std::string &sKey, const std::string &sN
 
 	strcpy( sz, sVal.c_str() );
 	
-	LONG lResult = ::RegSetValueEx(hKey, LPCTSTR(sName), 0, REG_SZ, (LPBYTE)sz, strlen(sz) + 1);
+	LONG lResult = ::RegSetValueEx(hKey, LPCTSTR(sName.c_str()), 0, REG_SZ, (LPBYTE)sz, strlen(sz) + 1);
 	if( lResult != ERROR_SUCCESS ) 
 		 bSuccess = false;
 
@@ -205,7 +205,7 @@ bool RegistryAccess::SetRegValue( const std::string &sKey, const std::string &sN
 
 	bool bSuccess = true;
 	
-	if (::RegSetValueEx(hKey, LPCTSTR(sName), 0,
+	if (::RegSetValueEx(hKey, LPCTSTR(sName.c_str()), 0,
 		REG_BINARY, (LPBYTE)&bVal, sizeof(bVal))
 		 != ERROR_SUCCESS) 
 		 bSuccess = false;
@@ -225,7 +225,7 @@ bool RegistryAccess::CreateKey( const std::string &sKey )
 	DWORD dwDisposition = 0;
 	if( ::RegCreateKeyEx(
 		hType, 
-		sSubkey, 
+		sSubkey.c_str(), 
 		0, 
 		nullptr,
 		REG_OPTION_NON_VOLATILE, 

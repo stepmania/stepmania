@@ -403,7 +403,7 @@ std::string SpliceProgramPath( std::string fn )
 	char szModName[MAX_PATH];
 	char *pszFile;
 	GetFullPathName( szBuf, sizeof(szModName), szModName, &pszFile );
-	strcpy( pszFile, fn );
+	strcpy( pszFile, fn.c_str() );
 
 	return szModName;
 }
@@ -497,8 +497,8 @@ static void DoSave( const std::string &sReport )
 {
 	std::string sName = SpliceProgramPath( "../crashinfo.txt" );
 
-	SetFileAttributes( sName, FILE_ATTRIBUTE_NORMAL );
-	FILE *pFile = fopen( sName, "w+" );
+	SetFileAttributes( sName.c_str(), FILE_ATTRIBUTE_NORMAL );
+	FILE *pFile = fopen( sName.c_str(), "w+" );
 	if( pFile == nullptr )
 		return;
 	fprintf( pFile, "%s", sReport.c_str() );
@@ -506,7 +506,7 @@ static void DoSave( const std::string &sReport )
 	fclose( pFile );
 
 	// Discourage changing crashinfo.txt.
-	SetFileAttributes( sName, FILE_ATTRIBUTE_READONLY );
+	SetFileAttributes( sName.c_str(), FILE_ATTRIBUTE_READONLY );
 }
 
 bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
@@ -742,7 +742,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 		case IDC_VIEW_LOG:
 			{
 				std::string sLogPath;
-				FILE *pFile = fopen( SpliceProgramPath("../Portable.ini"), "r" );
+				FILE *pFile = fopen( SpliceProgramPath("../Portable.ini").c_str(), "r" );
 				if(pFile != nullptr)
 				{
 					sLogPath = SpliceProgramPath("../Logs/log.txt");
@@ -751,11 +751,11 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				else
 					sLogPath = SpecialDirs::GetAppDataDir() + PRODUCT_ID +"/Logs/log.txt";
 
-				ShellExecute( nullptr, "open", sLogPath, "", "", SW_SHOWNORMAL );
+				ShellExecute( nullptr, "open", sLogPath.c_str(), "", "", SW_SHOWNORMAL );
 			}
 			break;
 		case IDC_CRASH_SAVE:
-			ShellExecute( nullptr, "open", SpliceProgramPath("../crashinfo.txt"), "", "", SW_SHOWNORMAL );
+			ShellExecute( nullptr, "open", SpliceProgramPath("../crashinfo.txt").c_str(), "", "", SW_SHOWNORMAL );
 			return TRUE;
 		case IDC_BUTTON_RESTART:
 			Win32RestartProgram();

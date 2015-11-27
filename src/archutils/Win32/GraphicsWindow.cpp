@@ -283,7 +283,7 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 		int iWindowStyle = GetWindowStyle( p.windowed );
 
 		AppInstance inst;
-		HWND hWnd = CreateWindow( g_sClassName, "app", iWindowStyle,
+		HWND hWnd = CreateWindow( g_sClassName.c_str(), "app", iWindowStyle,
 						0, 0, 0, 0, nullptr, nullptr, inst, nullptr );
 		if( hWnd == nullptr )
 			RageException::Throw( "%s", werr_format( GetLastError(), "CreateWindow" ).c_str() );
@@ -315,7 +315,7 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 				break;
 		}
 
-		SetWindowTextA( g_hWndMain, ConvertUTF8ToACP(p.sWindowTitle) );
+		SetWindowTextA( g_hWndMain, ConvertUTF8ToACP(p.sWindowTitle).c_str() );
 	} while(0);
 
 	// Update the window icon.
@@ -419,8 +419,8 @@ void GraphicsWindow::Initialize( bool bD3D )
 	AppInstance inst;
 	do
 	{
-		const wstring wsClassName = std::stringToWstring( g_sClassName );
-		WNDCLASSW WindowClassW =
+		const wstring wsClassName = StringToWstring( g_sClassName );
+		WNDCLASSW WindowClassW 
 		{
 			CS_OWNDC | CS_BYTEALIGNCLIENT,
 			GraphicsWindow_WndProc,
@@ -438,7 +438,7 @@ void GraphicsWindow::Initialize( bool bD3D )
 		if( RegisterClassW( &WindowClassW ) )
 			break;
 
-		WNDCLASS WindowClassA =
+		WNDCLASS WindowClassA 
 		{
 			CS_OWNDC | CS_BYTEALIGNCLIENT,
 			GraphicsWindow_WndProc,
@@ -449,7 +449,7 @@ void GraphicsWindow::Initialize( bool bD3D )
 			LoadCursor( nullptr, IDC_ARROW ),	/* default cursor */
 			nullptr,			/* hbrBackground */
 			nullptr,			/* lpszMenuName */
-			g_sClassName	/* lpszClassName */
+			g_sClassName.c_str()	/* lpszClassName */
 		};
 
 		m_bWideWindowClass = false;
@@ -471,7 +471,7 @@ void GraphicsWindow::Shutdown()
 	ChangeDisplaySettings( nullptr, 0 );
 
 	AppInstance inst;
-	UnregisterClass( g_sClassName, inst );
+	UnregisterClass( g_sClassName.c_str(), inst );
 }
 
 HDC GraphicsWindow::GetHDC()

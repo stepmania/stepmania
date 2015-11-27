@@ -588,7 +588,7 @@ bool WinWdmFilter::Use( std::string &sError )
 	if( m_hHandle == nullptr )
 	{
 		/* Open the filter */
-		m_hHandle = CreateFile( m_sFilterName, GENERIC_READ | GENERIC_WRITE, 0,
+		m_hHandle = CreateFile( m_sFilterName.c_str(), GENERIC_READ | GENERIC_WRITE, 0,
 			nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, nullptr );
 
 		if( m_hHandle == nullptr )

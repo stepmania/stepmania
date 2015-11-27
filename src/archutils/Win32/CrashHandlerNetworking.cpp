@@ -364,7 +364,7 @@ void NetworkStream_Win32::Open( const std::string &sHost, int iPort, ConnectionT
 		m_hResolve = WSAAsyncGetHostByName(
 			mw.GetHwnd(),
 			WM_USER,
-			m_sHost,
+			m_sHost.c_str(),
 			(char *) pHost,
 			MAXGETHOSTSTRUCT
 		);

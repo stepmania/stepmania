@@ -40,7 +40,7 @@ static bool WinMoveFileInternal( const std::string &sOldPath, const std::string 
 	 * to be robust on 9x anyway). */
 	if( !Win9x )
 	{
-		if( MoveFileEx( sOldPath, sNewPath, MOVEFILE_REPLACE_EXISTING ) )
+		if( MoveFileEx( sOldPath.c_str(), sNewPath.c_str(), MOVEFILE_REPLACE_EXISTING ) )
 			return true;
 
 		// On Win9x, MoveFileEx is expected to fail (returns ERROR_CALL_NOT_IMPLEMENTED).
@@ -51,16 +51,16 @@ static bool WinMoveFileInternal( const std::string &sOldPath, const std::string 
 			return false;
 	}
 
-	if( MoveFile( sOldPath, sNewPath ) )
+	if( MoveFile( sOldPath.c_str(), sNewPath.c_str() ) )
 		return true;
 
 	if( GetLastError() != ERROR_ALREADY_EXISTS )
 		return false;
 
-	if( !DeleteFile( sNewPath ) )
+	if( !DeleteFile( sNewPath.c_str() ) )
 		return false;
 
-	return !!MoveFile( sOldPath, sNewPath );
+	return !!MoveFile( sOldPath.c_str(), sNewPath.c_str() );
 }
 
 bool WinMoveFile( std::string sOldPath, std::string sNewPath )
@@ -70,7 +70,7 @@ bool WinMoveFile( std::string sOldPath, std::string sNewPath )
 	if( GetLastError() != ERROR_ACCESS_DENIED )
 		return false;
 	/* Try turning off the read-only bit on the file we're overwriting. */
-	SetFileAttributes( DoPathReplace(sNewPath), FILE_ATTRIBUTE_NORMAL );
+	SetFileAttributes( DoPathReplace(sNewPath).c_str(), FILE_ATTRIBUTE_NORMAL );
 
 	return WinMoveFileInternal( DoPathReplace(sOldPath), DoPathReplace(sNewPath) );
 }
@@ -179,7 +179,7 @@ void DirectFilenameDB::CacheFile( const std::string &sPath )
 #if defined(WIN32)
 	// There is almost surely a better way to do this
 	WIN32_FIND_DATA fd;
-	HANDLE hFind = DoFindFirstFile( root+sPath, &fd );
+	HANDLE hFind = DoFindFirstFile( (root+sPath).c_str(), &fd );
 	if( hFind == INVALID_HANDLE_VALUE )
 	{
 		m_Mutex.Unlock(); // Locked by GetFileSet()
@@ -233,7 +233,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const std::string &path )
 	{
 		sPath.erase(sPath.size() - 1);
 	}
-	HANDLE hFind = DoFindFirstFile( root+sPath+"/*", &fd );
+	HANDLE hFind = DoFindFirstFile( (root+sPath+"/*").c_str(), &fd );
 	CHECKPOINT_M( root+sPath+"/*" );
 
 	if( hFind == INVALID_HANDLE_VALUE )

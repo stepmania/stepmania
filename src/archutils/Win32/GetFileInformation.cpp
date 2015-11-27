@@ -49,7 +49,7 @@ bool GetFileVersion( std::string sFile, std::string &sOut )
 
 	// Get the size and date.
 	struct stat st;
-	if( stat( sFile, &st ) != -1 )
+	if( stat( sFile.c_str(), &st ) != -1 )
 	{
 		struct tm t;
 		gmtime_r( &st.st_mtime, &t );
@@ -80,7 +80,7 @@ std::string FindSystemFile( std::string sFile )
 	{
 		std::string sPath = fmt::sprintf( "%s%s%s", szWindowsPath, szPaths[i], sFile.c_str() );
 		struct stat buf;
-		if( !stat(sPath, &buf) )
+		if( !stat(sPath.c_str(), &buf) )
 			return sPath;
 	}
 

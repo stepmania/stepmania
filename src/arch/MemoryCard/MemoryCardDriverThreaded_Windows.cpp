@@ -27,7 +27,7 @@ static bool TestReady( const std::string &sDrive, std::string &sVolumeLabelOut )
 	TCHAR szFileSystemNameBuffer[MAX_PATH];
 
 	if( !GetVolumeInformation( 
-		sDrive,
+		sDrive.c_str(),
 		szVolumeNameBuffer,
 		sizeof(szVolumeNameBuffer),
 		&dwVolumeSerialNumber,
@@ -74,7 +74,7 @@ static bool IsFloppyDrive( const std::string &sDrive )
 {
 	char szBuf[1024];
 
-	int iRet = QueryDosDevice( sDrive, szBuf, 1024 );
+	int iRet = QueryDosDevice( sDrive.c_str(), szBuf, 1024 );
 	if( iRet == 0 )
 	{
 		LOG->Warn( werr_format(GetLastError(), "QueryDosDevice(%s)", sDrive.c_str()) );
@@ -137,7 +137,7 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 		}
 		else
 		{
-			if( GetDriveType(sDrivePath) != DRIVE_REMOVABLE )
+			if( GetDriveType(sDrivePath.c_str()) != DRIVE_REMOVABLE )
 			{
 				LOG->Trace( "not DRIVE_REMOVABLE" );
 				continue;	
@@ -171,7 +171,7 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 		DWORD dwNumberOfFreeClusters;
 		DWORD dwTotalNumberOfClusters;
 		if( GetDiskFreeSpace(
-				usbd.sOsMountDir,
+				usbd.sOsMountDir.c_str(),
 				&dwSectorsPerCluster,
 				&dwBytesPerSector,
 				&dwNumberOfFreeClusters,
@@ -196,7 +196,7 @@ bool MemoryCardDriverThreaded_Windows::Mount( UsbStorageDevice* pDevice )
 void MemoryCardDriverThreaded_Windows::Unmount( UsbStorageDevice* pDevice )
 {
 	/* Try to flush the device before returning.  This requires administrator priviliges. */
-	HANDLE hDevice = CreateFile( pDevice->sDevice, GENERIC_WRITE,
+	HANDLE hDevice = CreateFile( pDevice->sDevice.c_str(), GENERIC_WRITE,
 		FILE_SHARE_READ | FILE_SHARE_WRITE,
 		nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr );
 
