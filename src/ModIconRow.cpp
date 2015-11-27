@@ -15,7 +15,7 @@
 
 using std::vector;
 
-int OptionToPreferredColumn( RString sOptionText );
+int OptionToPreferredColumn( std::string sOptionText );
 
 REGISTER_ACTOR_CLASS( ModIconRow );
 
@@ -35,7 +35,7 @@ ModIconRow::~ModIconRow()
 	this->RemoveAllChildren();
 }
 
-void ModIconRow::Load( const RString &sMetricsGroup, PlayerNumber pn )
+void ModIconRow::Load( const std::string &sMetricsGroup, PlayerNumber pn )
 {
 	ASSERT_M( m_pn == PlayerNumber_Invalid, "Multiple calls to Load" );
 
@@ -126,7 +126,7 @@ static std::array<OptionColumnEntry, 33> const g_OptionColumnEntries =
 	}
 };
 
-int OptionToPreferredColumn( RString sOptionText )
+int OptionToPreferredColumn( std::string sOptionText )
 {
 	// Speedups always go in column 0. digit ... x
 	if( sOptionText.size() > 1 &&
@@ -153,7 +153,7 @@ void ModIconRow::SetFromGameState()
 {
 	PlayerNumber pn = m_pn;
 
-	RString sOptions = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetStage().GetString();
+	std::string sOptions = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetStage().GetString();
 	auto vsOptions = Rage::split(sOptions, ", ", Rage::EmptyEntries::skip);
 
 	vector<std::string> vsText;	// fill these with what will be displayed on the tabs

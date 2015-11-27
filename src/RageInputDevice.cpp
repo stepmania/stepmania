@@ -176,7 +176,7 @@ std::string const DeviceButtonToString( DeviceButton key )
 	return "unknown";
 }
 
-DeviceButton StringToDeviceButton( const RString& s )
+DeviceButton StringToDeviceButton( const std::string& s )
 {
 	InitNames();
 
@@ -249,16 +249,16 @@ StringToX( InputDevice );
 
 /* Return a reversible representation of a DeviceInput. This is not affected by
  * InputDrivers, localization or the keyboard language. */
-RString DeviceInput::ToString() const
+std::string DeviceInput::ToString() const
 {
 	if( device == InputDevice_Invalid )
-		return RString();
+		return std::string();
 
-	RString s = InputDeviceToString(device) + "_" + DeviceButtonToString(button);
+	std::string s = InputDeviceToString(device) + "_" + DeviceButtonToString(button);
 	return s;
 }
 
-bool DeviceInput::FromString( const RString &s )
+bool DeviceInput::FromString( const std::string &s )
 {
 	char szDevice[32] = "";
 	char szButton[32] = "";

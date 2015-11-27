@@ -9,7 +9,7 @@
 #endif
 #include <sys/sysctl.h>
 
-RString CrashHandler::GetLogsDirectory()
+std::string CrashHandler::GetLogsDirectory()
 {
 	FSRef fs;
 	char dir[PATH_MAX];
@@ -19,13 +19,13 @@ RString CrashHandler::GetLogsDirectory()
 	{
 		return "/tmp";
 	}
-	return RString( dir ) + "/Logs/" PRODUCT_ID;
+	return std::string( dir ) + "/Logs/" PRODUCT_ID;
 }
 
 // XXX Can we use LocalizedString here instead?
 #define LSTRING(b,x) CFBundleCopyLocalizedString( (b), CFSTR(x), nullptr, CFSTR("Localizable") )
 
-void CrashHandler::InformUserOfCrash( const RString& sPath )
+void CrashHandler::InformUserOfCrash( const std::string& sPath )
 {
 	CFBundleRef bundle = CFBundleGetMainBundle();
 	CFStringRef sAlternate = LSTRING( bundle, "Quit " PRODUCT_FAMILY );

@@ -13,7 +13,7 @@
 
 extern "C" void __assert_fail( const char *assertion, const char *file, unsigned int line, const char *function ) throw()
 {
-	const RString error = fmt::sprintf( "Assertion failure: %s: %s", function, assertion );
+	const std::string error = fmt::sprintf( "Assertion failure: %s: %s", function, assertion );
 
 #if defined(CRASH_HANDLER)
 	Checkpoints::SetCheckpoint( file, line, error );
@@ -31,7 +31,7 @@ extern "C" void __assert_fail( const char *assertion, const char *file, unsigned
 
 extern "C" void __assert_perror_fail( int errnum, const char *file, unsigned int line, const char *function ) throw()
 {
-	const RString error = fmt::sprintf( "Assertion failure: %s: %s", function, strerror(errnum) );
+	const std::string error = fmt::sprintf( "Assertion failure: %s: %s", function, strerror(errnum) );
 
 #if defined(CRASH_HANDLER)
 	Checkpoints::SetCheckpoint( file, line, error );

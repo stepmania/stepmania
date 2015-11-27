@@ -123,7 +123,7 @@ public:
 
 	int lastCode;	// Used for debugging purposes
 
-	RString address;
+	std::string address;
 
 private:
 

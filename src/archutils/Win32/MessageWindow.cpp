@@ -4,7 +4,7 @@
 #include "AppInstance.h"
 #include "archutils/Win32/ErrorStrings.h"
 
-MessageWindow::MessageWindow( const RString &sClassName )
+MessageWindow::MessageWindow( const std::string &sClassName )
 {
 	AppInstance inst;
 	WNDCLASS WindowClass =

@@ -14,7 +14,7 @@ public:
 	virtual RageSoundReader *Copy() const = 0;
 	virtual int GetSampleRate() const = 0;
 	virtual unsigned GetNumChannels() const = 0;
-	virtual bool SetProperty( const RString & /* sProperty */, float /* fValue */ ) { return false; }
+	virtual bool SetProperty( const std::string & /* sProperty */, float /* fValue */ ) { return false; }
 	virtual RageSoundReader *GetSource() { return nullptr; }
 
 	/* Return values for Read(). */
@@ -39,7 +39,7 @@ public:
 	virtual int GetNextSourceFrame() const = 0;
 	virtual float GetStreamToSourceRatio() const = 0;
 
-	virtual RString GetError() const = 0;
+	virtual std::string GetError() const = 0;
 	int RetriedRead( float *pBuffer, int iFrames, int *iSourceFrame = nullptr, float *fRate = nullptr );
 };
 

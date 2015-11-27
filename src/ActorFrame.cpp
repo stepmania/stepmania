@@ -104,7 +104,7 @@ void ActorFrame::LoadFromNode( const XNode* pNode )
 	pNode->GetAttrValue( "VanishY", m_fVanishY );
 	m_bOverrideLighting = pNode->GetAttrValue( "Lighting", m_bLighting );
 	// new lighting values (only ambient color seems to work?) -aj
-	RString sTemp1,sTemp2,sTemp3;
+	std::string sTemp1,sTemp2,sTemp3;
 	pNode->GetAttrValue( "AmbientColor", sTemp1 );
 	m_ambientColor.FromString(sTemp1);
 	pNode->GetAttrValue( "DiffuseColor", sTemp2 );
@@ -173,7 +173,7 @@ void ActorFrame::TransferChildren( ActorFrame *pTo )
 	RemoveAllChildren();
 }
 
-Actor* ActorFrame::GetChild( const RString &sName )
+Actor* ActorFrame::GetChild( const std::string &sName )
 {
 	for (auto *a: m_SubActors)
 	{
@@ -250,7 +250,7 @@ void ActorFrame::DrawPrimitives()
 			return;
 		}
 		this->PushSelf( L );
-		RString Error= "Error running DrawFunction: ";
+		std::string Error= "Error running DrawFunction: ";
 		LuaHelpers::RunScriptOnStack(L, Error, 1, 0, true); // 1 arg, 0 results
 		LUA->Release(L);
 		return;
@@ -413,7 +413,7 @@ void ActorFrame::PushChildrenTable( lua_State *L )
 	}
 }
 
-void ActorFrame::PushChildTable(lua_State* L, const RString &sName)
+void ActorFrame::PushChildTable(lua_State* L, const std::string &sName)
 {
 	int found= 0;
 	for (auto *a: m_SubActors)
@@ -441,14 +441,14 @@ void ActorFrame::PushChildTable(lua_State* L, const RString &sName)
 	}
 }
 
-void ActorFrame::PlayCommandOnChildren( const RString &sCommandName, const LuaReference *pParamTable )
+void ActorFrame::PlayCommandOnChildren( const std::string &sCommandName, const LuaReference *pParamTable )
 {
 	const apActorCommands *pCmd = GetCommand( sCommandName );
 	if( pCmd != nullptr )
 		RunCommandsOnChildren( *pCmd, pParamTable );
 }
 
-void ActorFrame::PlayCommandOnLeaves( const RString &sCommandName, const LuaReference *pParamTable )
+void ActorFrame::PlayCommandOnLeaves( const std::string &sCommandName, const LuaReference *pParamTable )
 {
 	const apActorCommands *pCmd = GetCommand( sCommandName );
 	if( pCmd != nullptr )
@@ -505,7 +505,7 @@ void ActorFrame::UpdateInternal( float fDeltaTime )
 		}
 		this->PushSelf( L );
 		lua_pushnumber( L, fDeltaTime );
-		RString Error= "Error running UpdateFunction: ";
+		std::string Error= "Error running UpdateFunction: ";
 		LuaHelpers::RunScriptOnStack(L, Error, 2, 0, true); // 1 args, 0 results
 		LUA->Release(L);
 	}

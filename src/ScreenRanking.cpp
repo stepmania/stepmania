@@ -255,7 +255,7 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 				if( l < (int)hsl.vHighScores.size() )
 				{
 					hs = hsl.vHighScores[l];
-					RString *psName = hsl.vHighScores[l].GetNameMutable();
+					std::string *psName = hsl.vHighScores[l].GetNameMutable();
 					bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 				}
 				else
@@ -295,7 +295,7 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 				if( l < (int)hsl.vHighScores.size() )
 				{
 					hs = hsl.vHighScores[l];
-					const RString *psName = hsl.vHighScores[l].GetNameMutable();
+					const std::string *psName = hsl.vHighScores[l].GetNameMutable();
 					bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 				}
 				else

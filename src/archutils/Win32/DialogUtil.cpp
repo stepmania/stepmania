@@ -60,11 +60,11 @@ void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
 
 	const int LARGE_STRING = 256;
 	char szTemp[LARGE_STRING] = "";
-	RString sGroup;
+	std::string sGroup;
 
 	{
 		::GetWindowText( hdlg, szTemp, ARRAYLEN(szTemp) );
-		RString s = szTemp;
+		std::string s = szTemp;
 		sGroup = "Dialog-"+s;
 		s = THEME->GetString( sGroup, s );
 		::SetWindowText( hdlg, ConvertUTF8ToACP(s).c_str() );
@@ -73,7 +73,7 @@ void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
 	for( HWND hwndChild = ::GetTopWindow(hdlg); hwndChild != nullptr; hwndChild = ::GetNextWindow(hwndChild,GW_HWNDNEXT) )
 	{
 		::GetWindowText( hwndChild, szTemp, ARRAYLEN(szTemp) );
-		RString s = szTemp;
+		std::string s = szTemp;
 		if( s.empty() )
 			continue;
 		s = THEME->GetString( sGroup, s );

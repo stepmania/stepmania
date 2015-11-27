@@ -320,26 +320,26 @@ void fapproach( float& val, float other_val, float to_move );
 float fmodfp( float x, float y );
 
 int power_of_two( int input );
-bool IsAnInt( const RString &s );
-bool IsHexVal( const RString &s );
-RString BinaryToHex( const void *pData_, int iNumBytes );
-RString BinaryToHex( const RString &sString );
-bool HexToBinary( const RString &s, unsigned char *stringOut );
-bool HexToBinary( const RString &s, RString *sOut );
-float HHMMSSToSeconds( const RString &sHMS );
-RString SecondsToHHMMSS( float fSecs );
-RString SecondsToMSSMsMs( float fSecs );
-RString SecondsToMMSSMsMs( float fSecs );
-RString SecondsToMMSSMsMsMs( float fSecs );
-RString SecondsToMSS( float fSecs );
-RString SecondsToMMSS( float fSecs );
-RString PrettyPercent( float fNumerator, float fDenominator );
-inline RString PrettyPercent( int fNumerator, int fDenominator ) { return PrettyPercent( float(fNumerator), float(fDenominator) ); }
-RString Commify( int iNum );
-RString Commify(const RString& num, const RString& sep= ",", const RString& dot= ".");
-RString FormatNumberAndSuffix( int i );
+bool IsAnInt( const std::string &s );
+bool IsHexVal( const std::string &s );
+std::string BinaryToHex( const void *pData_, int iNumBytes );
+std::string BinaryToHex( const std::string &sString );
+bool HexToBinary( const std::string &s, unsigned char *stringOut );
+bool HexToBinary( const std::string &s, std::string *sOut );
+float HHMMSSToSeconds( const std::string &sHMS );
+std::string SecondsToHHMMSS( float fSecs );
+std::string SecondsToMSSMsMs( float fSecs );
+std::string SecondsToMMSSMsMs( float fSecs );
+std::string SecondsToMMSSMsMsMs( float fSecs );
+std::string SecondsToMSS( float fSecs );
+std::string SecondsToMMSS( float fSecs );
+std::string PrettyPercent( float fNumerator, float fDenominator );
+inline std::string PrettyPercent( int fNumerator, int fDenominator ) { return PrettyPercent( float(fNumerator), float(fDenominator) ); }
+std::string Commify( int iNum );
+std::string Commify(const std::string& num, const std::string& sep= ",", const std::string& dot= ".");
+std::string FormatNumberAndSuffix( int i );
 
-RString unique_name(RString const& type);
+std::string unique_name(std::string const& type);
 
 struct tm GetLocalTime();
 
@@ -348,12 +348,12 @@ struct tm GetLocalTime();
  * If Path is a directory (eg. c:\games\stepmania"), append a slash so the last
  * element will end up in Dir, not FName: "c:\games\stepmania\".
  * */
-void splitpath( const RString &Path, RString &Dir, RString &Filename, RString &Ext );
+void splitpath( const std::string &Path, std::string &Dir, std::string &Filename, std::string &Ext );
 
-RString SetExtension( const RString &path, const RString &ext );
-RString GetExtension( const RString &sPath );
-RString GetFileNameWithoutExtension( const RString &sPath );
-void MakeValidFilename( RString &sName );
+std::string SetExtension( const std::string &path, const std::string &ext );
+std::string GetExtension( const std::string &sPath );
+std::string GetFileNameWithoutExtension( const std::string &sPath );
+void MakeValidFilename( std::string &sName );
 
 bool FindFirstFilenameContaining(
 	std::vector<std::string> const & filenames, std::string& out,
@@ -364,25 +364,25 @@ bool FindFirstFilenameContaining(
  * @brief Have a standard way of converting Strings to integers.
  * @param sString the string to convert.
  * @return the integer we are after. */
-int StringToInt( const RString &sString );
+int StringToInt( const std::string &sString );
 /**
  * @brief Have a standard way of converting integers to Strings.
  * @param iNum the integer to convert.
  * @return the string we are after. */
-RString IntToString( const int &iNum );
-float StringToFloat( const RString &sString );
-RString FloatToString( const float &num );
-bool StringToFloat( const RString &sString, float &fOut );
+std::string IntToString( const int &iNum );
+float StringToFloat( const std::string &sString );
+std::string FloatToString( const float &num );
+bool StringToFloat( const std::string &sString, float &fOut );
 // Better than IntToString because you can check for success.
 template<class T>
-inline bool operator>>(const RString& lhs, T& rhs)
+inline bool operator>>(const std::string& lhs, T& rhs)
 {
 	return !!(std::istringstream(lhs) >> rhs);
 }
 
-RString WStringToRString( const std::wstring &sString );
-RString WcharToUTF8( wchar_t c );
-std::wstring RStringToWstring( const RString &sString );
+std::string WStringToString( const std::wstring &sString );
+std::string WcharToUTF8( wchar_t c );
+std::wstring StringToWstring( const std::string &sString );
 
 struct LanguageInfo
 {
@@ -390,34 +390,34 @@ struct LanguageInfo
 	std::string englishName;
 };
 void GetLanguageInfos( std::vector<const LanguageInfo*> &vAddTo );
-const LanguageInfo *GetLanguageInfo( const RString &sIsoCode );
-RString GetLanguageNameFromISO639Code( RString sName );
+const LanguageInfo *GetLanguageInfo( const std::string &sIsoCode );
+std::string GetLanguageNameFromISO639Code( std::string sName );
 
 // These methods escapes a string for saving in a .sm or .crs file
-RString SmEscape( const RString &sUnescaped );
-RString SmEscape( const char *cUnescaped, int len );
+std::string SmEscape( const std::string &sUnescaped );
+std::string SmEscape( const char *cUnescaped, int len );
 
 // These methods "escape" a string for .dwi by turning = into -, ] into I, etc.  That is "lossy".
-RString DwiEscape( const RString &sUnescaped );
-RString DwiEscape( const char *cUnescaped, int len );
+std::string DwiEscape( const std::string &sUnescaped );
+std::string DwiEscape( const char *cUnescaped, int len );
 
-RString GetCwd();
+std::string GetCwd();
 
 void SetCommandlineArguments( int argc, char **argv );
 void GetCommandLineArguments( int &argc, char **&argv );
-bool GetCommandlineArgument( const RString &option, RString *argument=nullptr, int iIndex=0 );
+bool GetCommandlineArgument( const std::string &option, std::string *argument=nullptr, int iIndex=0 );
 extern int g_argc;
 extern char **g_argv;
 
 void CRC32( unsigned int &iCRC, const void *pBuffer, size_t iSize );
-unsigned int GetHashForString( const RString &s );
-unsigned int GetHashForFile( const RString &sPath );
-unsigned int GetHashForDirectory( const RString &sDir );	// a hash value that remains the same as long as nothing in the directory has changed
-bool DirectoryIsEmpty( const RString &sPath );
+unsigned int GetHashForString( const std::string &s );
+unsigned int GetHashForFile( const std::string &sPath );
+unsigned int GetHashForDirectory( const std::string &sDir );	// a hash value that remains the same as long as nothing in the directory has changed
+bool DirectoryIsEmpty( const std::string &sPath );
 
-bool CompareRStringsAsc( const RString &sStr1, const RString &sStr2 );
-bool CompareRStringsDesc( const RString &sStr1, const RString &sStr2 );
-void SortRStringArray( std::vector<std::string> &asAddTo, const bool bSortAscending = true );
+bool CompareStringsAsc( const std::string &sStr1, const std::string &sStr2 );
+bool CompareStringsDesc( const std::string &sStr1, const std::string &sStr2 );
+void SortStringArray( std::vector<std::string> &asAddTo, const bool bSortAscending = true );
 
 /* Find the mean and standard deviation of all numbers in [start,end). */
 float calc_mean( const float *pStart, const float *pEnd );
@@ -460,27 +460,27 @@ template<class T>
 inline T Decrement( T a ) { --a; return a; }
 
 void StripCrnl( std::string &sStr );
-RString URLEncode( const RString &sStr );
+std::string URLEncode( const std::string &sStr );
 
 void StripCvsAndSvn( std::vector<std::string> &vs ); // Removes various versioning system metafolders.
 void StripMacResourceForks( std::vector<std::string> &vs ); // Removes files starting with "._"
 
-RString DerefRedir( const RString &sPath );
-bool GetFileContents( const RString &sPath, RString &sOut, bool bOneLine = false );
-bool GetFileContents( const RString &sFile, std::vector<std::string> &asOut );
+std::string DerefRedir( const std::string &sPath );
+bool GetFileContents( const std::string &sPath, std::string &sOut, bool bOneLine = false );
+bool GetFileContents( const std::string &sFile, std::vector<std::string> &asOut );
 
 class Regex
 {
 public:
-	Regex( const RString &sPat = "" );
+	Regex( const std::string &sPat = "" );
 	Regex( const Regex &rhs );
 	Regex &operator=( const Regex &rhs );
 	~Regex();
 	bool IsSet() const { return !m_sPattern.empty(); }
-	void Set( const RString &str );
-	bool Compare( const RString &sStr );
-	bool Compare( const RString &sStr, std::vector<std::string> &asMatches );
-	bool Replace( const RString &sReplacement, const RString &sSubject, RString &sOut );
+	void Set( const std::string &str );
+	bool Compare( const std::string &sStr );
+	bool Compare( const std::string &sStr, std::vector<std::string> &asMatches );
+	bool Replace( const std::string &sReplacement, const std::string &sSubject, std::string &sOut );
 
 private:
 	void Compile();
@@ -488,16 +488,16 @@ private:
 
 	void *m_pReg;
 	unsigned m_iBackrefs;
-	RString m_sPattern;
+	std::string m_sPattern;
 };
 
 
 void ReplaceEntityText( std::string &sText, std::map<std::string,std::string> const &m );
 void ReplaceEntityText( std::string &sText, std::map<char,std::string> const &m );
 void Replace_Unicode_Markers( std::string &Text );
-RString WcharDisplayText( wchar_t c );
+std::string WcharDisplayText( wchar_t c );
 
-RString Capitalize( const RString &s );
+std::string Capitalize( const std::string &s );
 
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h> /* correct place with correct definitions */
@@ -511,31 +511,31 @@ extern unsigned char g_LowerCase[256];
 void GetDirListing( std::string const &sPath, std::vector<std::string> &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
 void GetDirListingRecursive( std::string const &sDir, std::string const &sMatch, std::vector<std::string> &AddTo );	/* returns path too */
 void GetDirListingRecursive( RageFileDriver *prfd, std::string const &sDir, std::string const &sMatch, std::vector<std::string> &AddTo );	/* returns path too */
-bool DeleteRecursive( const RString &sDir );	/* delete the dir and all files/subdirs inside it */
-bool DeleteRecursive( RageFileDriver *prfd, const RString &sDir );	/* delete the dir and all files/subdirs inside it */
-bool DoesFileExist( const RString &sPath );
-bool IsAFile( const RString &sPath );
-bool IsADirectory( const RString &sPath );
-int GetFileSizeInBytes( const RString &sFilePath );
+bool DeleteRecursive( const std::string &sDir );	/* delete the dir and all files/subdirs inside it */
+bool DeleteRecursive( RageFileDriver *prfd, const std::string &sDir );	/* delete the dir and all files/subdirs inside it */
+bool DoesFileExist( const std::string &sPath );
+bool IsAFile( const std::string &sPath );
+bool IsADirectory( const std::string &sPath );
+int GetFileSizeInBytes( const std::string &sFilePath );
 
 // call FixSlashesInPlace on any path that came from the user
-void FixSlashesInPlace( RString &sPath );
-void CollapsePath( RString &sPath, bool bRemoveLeadingDot=false );
+void FixSlashesInPlace( std::string &sPath );
+void CollapsePath( std::string &sPath, bool bRemoveLeadingDot=false );
 
-/** @brief Utilities for converting the RStrings. */
+/** @brief Utilities for converting the std::strings. */
 namespace StringConversion
 {
 	template<typename T>
-	bool FromString( const RString &sValue, T &out );
+	bool FromString( const std::string &sValue, T &out );
 
 	template<typename T>
-	RString ToString( const T &value );
-	template<> inline bool FromString<std::string> ( RString const &sValue, std::string &outParam)
+	std::string ToString( const T &value );
+	template<> inline bool FromString<std::string> ( std::string const &sValue, std::string &outParam)
 	{
 		outParam = sValue;
 		return true;
 	}
-	template<> inline RString ToString<std::string>( std::string const &value )
+	template<> inline std::string ToString<std::string>( std::string const &value )
 	{
 		return value;
 	}
@@ -543,7 +543,7 @@ namespace StringConversion
 
 class RageFileBasic;
 bool FileCopy( std::string const &sSrcFile, std::string const &sDstFile );
-bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bReadError = nullptr );
+bool FileCopy( RageFileBasic &in, RageFileBasic &out, std::string &sError, bool *bReadError = nullptr );
 
 template<class T>
 void GetAsNotInBs( const std::vector<T> &as, const std::vector<T> &bs, std::vector<T> &difference )

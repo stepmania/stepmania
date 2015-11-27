@@ -686,7 +686,7 @@ void ScreenEvaluation::Init()
 	}
 	else if( (bOneHasFullW1Combo || bOneHasFullW2Combo || bOneHasFullW3Combo) )
 	{
-		RString sComboType = bOneHasFullW1Combo ? "W1" : ( bOneHasFullW2Combo ? "W2" : "W3" );
+		std::string sComboType = bOneHasFullW1Combo ? "W1" : ( bOneHasFullW2Combo ? "W2" : "W3" );
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation full combo "+sComboType) );
 	}
 	else
@@ -702,7 +702,7 @@ void ScreenEvaluation::Init()
 			case PLAY_MODE_BATTLE:
 				{
 					bool bWon = GAMESTATE->GetStageResult(GAMESTATE->GetMasterPlayerNumber()) == RESULT_WIN;
-					RString sResult = bWon ? "win" : "lose";
+					std::string sResult = bWon ? "win" : "lose";
 					SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation "+sResult) );
 				}
 				break;
@@ -742,12 +742,12 @@ bool ScreenEvaluation::Input( const InputEventPlus &input )
 					MEMCARDMAN->MountCard( pn );
 
 				Profile* pProfile = PROFILEMAN->GetProfile(pn);
-				RString sDir = PROFILEMAN->GetProfileDir((ProfileSlot)pn) + "Screenshots/";
-				RString sFileName = StepMania::SaveScreenshot( sDir, true, true, "", "" );
+				std::string sDir = PROFILEMAN->GetProfileDir((ProfileSlot)pn) + "Screenshots/";
+				std::string sFileName = StepMania::SaveScreenshot( sDir, true, true, "", "" );
 
 				if( !sFileName.empty() )
 				{
-					RString sPath = sDir+sFileName;
+					std::string sPath = sDir+sFileName;
 
 					const HighScore &hs = m_pStageStats->m_player[pn].m_HighScore;
 					Screenshot screenshot;

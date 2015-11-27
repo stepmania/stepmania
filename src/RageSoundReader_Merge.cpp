@@ -137,7 +137,7 @@ int RageSoundReader_Merge::SetPosition( int iFrame )
 	return iRet;
 }
 
-bool RageSoundReader_Merge::SetProperty( const RString &sProperty, float fValue )
+bool RageSoundReader_Merge::SetProperty( const std::string &sProperty, float fValue )
 {
 	bool bRet = false;
 	// TODO: See if std::any_of works with the side effect.

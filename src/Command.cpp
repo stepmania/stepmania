@@ -12,7 +12,7 @@ std::string Command::GetName() const
 {
 	if( m_vsArgs.empty() )
 	{
-		return RString();
+		return std::string();
 	}
 	return Rage::trim(m_vsArgs[0]);
 }

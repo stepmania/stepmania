@@ -7,10 +7,10 @@
 
 using std::wstring;
 
-RString ConvertWstringToCodepage( wstring s, int iCodePage )
+std::string ConvertWstringToCodepage( wstring s, int iCodePage )
 {
 	if( s.empty() )
-		return RString();
+		return std::string();
 
 	int iBytes = WideCharToMultiByte( iCodePage, 0, s.data(), s.size(), 
 					nullptr, 0, nullptr, FALSE );
@@ -19,17 +19,17 @@ RString ConvertWstringToCodepage( wstring s, int iCodePage )
 	char * buf = new char[iBytes + 1];
 	std::fill(buf, buf + iBytes + 1, '\0');
 	WideCharToMultiByte( CP_ACP, 0, s.data(), s.size(), buf, iBytes, nullptr, FALSE );
-	RString ret( buf );
+	std::string ret( buf );
 	delete[] buf;
 	return ret;
 }
 
-RString ConvertUTF8ToACP( const RString &s )
+std::string ConvertUTF8ToACP( const std::string &s )
 {
-	return ConvertWstringToCodepage( RStringToWstring(s), CP_ACP );
+	return ConvertWstringToCodepage( std::stringToWstring(s), CP_ACP );
 }
 
-wstring ConvertCodepageToWString( RString s, int iCodePage )
+wstring ConvertCodepageToWString( std::string s, int iCodePage )
 {
 	if( s.empty() )
 		return wstring();
@@ -45,9 +45,9 @@ wstring ConvertCodepageToWString( RString s, int iCodePage )
 	return sRet;
 }
 
-RString ConvertACPToUTF8( const RString &s )
+std::string ConvertACPToUTF8( const std::string &s )
 {
-	return WStringToRString( ConvertCodepageToWString(s, CP_ACP) );
+	return WStringTostd::string( ConvertCodepageToWString(s, CP_ACP) );
 }
 
 /*

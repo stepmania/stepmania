@@ -47,7 +47,7 @@ public:
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
-	RString ToString() const;
+	std::string ToString() const;
 	bool IsValid() const;
 	static void Invalidate( Song* pStaleSong );
 };

@@ -8,7 +8,7 @@
 
 struct WavReader;
 
-RString ReadString( RageFileBasic &f, int iSize, RString &sError );
+std::string ReadString( RageFileBasic &f, int iSize, std::string &sError );
 
 class RageSoundReader_WAV: public RageSoundReader_FileReader
 {

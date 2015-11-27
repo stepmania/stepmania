@@ -5,7 +5,7 @@
 //		This header file declares the CStdStr template.  This template derives
 //		the Standard C++ Library basic_string<> template and add to it the
 //		the following conveniences:
-//			- The full MFC RString set of functions (including implicit cast)
+//			- The full MFC std::string set of functions (including implicit cast)
 //			- writing to/reading from COM IStream interfaces
 //			- Functional objects for use in STL algorithms
 //
@@ -27,7 +27,7 @@
 //		this class.  OK, this is a long list but in my own defense, this code
 //		has undergone two major rewrites.  Many of the improvements became
 //		necessary after I rewrote the code as a template.  Others helped me
-//		improve the RString facade.
+//		improve the std::string facade.
 //
 //		Anyway, these people are (in chronological order):
 //
@@ -277,11 +277,11 @@ inline void ssupr(wchar_t *pT, size_t nLen)
 //		template<typename CT> class CStdStr : public std::basic_string<CT>
 //
 // REMARKS:
-//		This template derives from basic_string<CT> and adds some MFC RString-
+//		This template derives from basic_string<CT> and adds some MFC std::string-
 //		like functionality
 //
 //		Basically, this is my attempt to make Standard C++ library strings as
-//		easy to use as the MFC RString class.
+//		easy to use as the MFC std::string class.
 //
 //		Note that although this is a template, it makes the assumption that the
 //		template argument (CT, the character type) is either char or wchar_t.
@@ -505,7 +505,7 @@ public:
 
 
 	// -------------------------------------------------------------------------
-	// RString Facade Functions:
+	// std::string Facade Functions:
 	//
 	// The following methods are intended to allow you to use this class as a
 	// drop-in replacement for CString.

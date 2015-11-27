@@ -13,15 +13,15 @@
 
 class InputEventPlus;
 class Screen;
-typedef Screen* (*CreateScreenFn)(const RString& sClassName);
+typedef Screen* (*CreateScreenFn)(const std::string& sClassName);
 /**
  * @brief Allow registering the screen for easier access.
  *
  * Each Screen class should have a REGISTER_SCREEN_CLASS in its CPP file.
  */
-struct RegisterScreenClass { RegisterScreenClass( const RString &sClassName, CreateScreenFn pfn ); };
+struct RegisterScreenClass { RegisterScreenClass( const std::string &sClassName, CreateScreenFn pfn ); };
 #define REGISTER_SCREEN_CLASS( className ) \
-	static Screen* Create##className( const RString &sName ) { LuaThreadVariable var( "LoadingScreen", sName ); Screen *pRet = new className; pRet->SetName( sName ); Screen::InitScreen( pRet ); return pRet; } \
+	static Screen* Create##className( const std::string &sName ) { LuaThreadVariable var( "LoadingScreen", sName ); Screen *pRet = new className; pRet->SetName( sName ); Screen::InitScreen( pRet ); return pRet; } \
 	static RegisterScreenClass register_##className( #className, Create##className )
 
 /** @brief The different types of screens available. */
@@ -111,8 +111,8 @@ protected:
 	 * @brief The next screen to go to once this screen is done.
 	 *
 	 * If this is blank, the NextScreen metric will be used. */
-	RString m_sNextScreen;
-	RString m_sPrevScreen;
+	std::string m_sNextScreen;
+	std::string m_sPrevScreen;
 	ScreenMessage m_smSendOnPop;
 
 	float m_fLockInputSecs;
@@ -121,9 +121,9 @@ protected:
 	bool m_bRunning;
 
 public:
-	RString GetNextScreenName() const;
-	RString GetPrevScreen() const;
-	void SetNextScreenName(RString const& name);
+	std::string GetNextScreenName() const;
+	std::string GetPrevScreen() const;
+	void SetNextScreenName(std::string const& name);
 
 	bool PassInputToLua(const InputEventPlus& input);
 	void AddInputCallbackFromStack(lua_State* L);

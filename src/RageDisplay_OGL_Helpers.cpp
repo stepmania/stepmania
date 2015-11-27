@@ -11,7 +11,7 @@
 
 namespace
 {
-	std::unordered_map<GLenum, RString> g_Strings;
+	std::unordered_map<GLenum, std::string> g_Strings;
 	void InitStringMap()
 	{
 		static bool bInitialized = false;
@@ -36,7 +36,7 @@ void RageDisplay_Legacy_Helpers::Init()
 	InitStringMap();
 }
 
-RString RageDisplay_Legacy_Helpers::GLToString( GLenum e )
+std::string RageDisplay_Legacy_Helpers::GLToString( GLenum e )
 {
 	if( g_Strings.find(e) != g_Strings.end() )
 		return g_Strings[e];

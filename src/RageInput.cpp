@@ -137,7 +137,7 @@ InputHandler *RageInput::GetHandlerForDevice( const InputDevice id )
 	return it->second;
 }
 
-RString RageInput::GetDeviceSpecificInputString( const DeviceInput &di )
+std::string RageInput::GetDeviceSpecificInputString( const DeviceInput &di )
 {
 	InputHandler *pDriver = GetHandlerForDevice( di.device );
 	if( pDriver != nullptr )
@@ -146,7 +146,7 @@ RString RageInput::GetDeviceSpecificInputString( const DeviceInput &di )
 		return di.ToString();
 }
 
-RString RageInput::GetLocalizedInputString( const DeviceInput &di )
+std::string RageInput::GetLocalizedInputString( const DeviceInput &di )
 {
 	InputHandler *pDriver = GetHandlerForDevice( di.device );
 	if( pDriver != nullptr )
@@ -173,7 +173,7 @@ InputDeviceState RageInput::GetInputDeviceState( InputDevice id )
 		return InputDeviceState_NoInputHandler;
 }
 
-RString RageInput::GetDisplayDevicesString() const
+std::string RageInput::GetDisplayDevicesString() const
 {
 	vector<InputDeviceInfo> vDevices;
 	GetDevicesAndDescriptions( vDevices );

@@ -28,7 +28,7 @@ using std::string;
 using std::vector;
 
 /** @brief The directory where languages should be installed. */
-const RString INSTALLER_LANGUAGES_DIR = "Themes/_Installer/Languages/";
+const std::string INSTALLER_LANGUAGES_DIR = "Themes/_Installer/Languages/";
 
 vector<CommandLineActions::CommandLineArgs> CommandLineActions::ToProcess;
 
@@ -43,11 +43,11 @@ static void Nsis()
 	GetDirListing(INSTALLER_LANGUAGES_DIR + "*.ini", vs, false, false);
 	for (auto const &s: vs)
 	{
-		RString sThrowAway, sLangCode;
+		std::string sThrowAway, sLangCode;
 		splitpath(s, sThrowAway, sLangCode, sThrowAway);
 		const LanguageInfo *pLI = GetLanguageInfo(sLangCode);
 
-		RString sLangNameUpper = Rage::make_upper(pLI->englishName);
+		std::string sLangNameUpper = Rage::make_upper(pLI->englishName);
 
 		IniFile ini;
 		if(!ini.ReadFile(INSTALLER_LANGUAGES_DIR + s))
@@ -56,10 +56,10 @@ static void Nsis()
 		{
 			FOREACH_CONST_Attr(child, attr)
 			{
-				RString sName = attr->first;
-				RString sValue = attr->second->GetValue<RString>();
+				std::string sName = attr->first;
+				std::string sValue = attr->second->GetValue<std::string>();
 				Rage::replace(sValue, "\\n", "$\\n");
-				RString sLine = fmt::sprintf("LangString %s ${LANG_%s} \"%s\"", sName.c_str(), sLangNameUpper.c_str(), sValue.c_str());
+				std::string sLine = fmt::sprintf("LangString %s ${LANG_%s} \"%s\"", sName.c_str(), sLangNameUpper.c_str(), sValue.c_str());
 				out.PutLine(sLine);
 			}
 		}
@@ -89,8 +89,8 @@ static void LuaInformation()
 static void Version()
 {
 	#if defined(WIN32)
-		RString sProductID = fmt::sprintf("%s", (string(PRODUCT_FAMILY) + product_version).c_str() );
-		RString sVersion = fmt::sprintf("build %s\nCompile Date: %s @ %s", ::sm_version_git_hash, version_date, version_time);
+		std::string sProductID = fmt::sprintf("%s", (string(PRODUCT_FAMILY) + product_version).c_str() );
+		std::string sVersion = fmt::sprintf("build %s\nCompile Date: %s @ %s", ::sm_version_git_hash, version_date, version_time);
 
 		AllocConsole();
 		freopen("CONOUT$","wb", stdout);

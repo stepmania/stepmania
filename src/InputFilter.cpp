@@ -31,7 +31,7 @@ struct ButtonState
 	ButtonState();
 	bool m_BeingHeld; // actual current state
 	bool m_bLastReportedHeld; // last state reported by Update()
-	RString m_sComment;
+	std::string m_sComment;
 	float m_fSecsHeld;
 	DeviceInput m_DeviceInput;
 
@@ -220,7 +220,7 @@ void InputFilter::ButtonPressed( const DeviceInput &di )
 	CheckButtonChange( bs, di, now );
 }
 
-void InputFilter::SetButtonComment( const DeviceInput &di, const RString &sComment )
+void InputFilter::SetButtonComment( const DeviceInput &di, const std::string &sComment )
 {
 	LockMut(*queuemutex);
 	ButtonState &bs = GetButtonState( di );
@@ -427,7 +427,7 @@ float InputFilter::GetLevel( const DeviceInput &di, const DeviceInputList *pButt
 	return pDI->level;
 }
 
-RString InputFilter::GetButtonComment( const DeviceInput &di ) const
+std::string InputFilter::GetButtonComment( const DeviceInput &di ) const
 {
 	LockMut(*queuemutex);
 	return GetButtonState( di ).m_sComment;

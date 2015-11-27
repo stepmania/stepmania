@@ -166,7 +166,7 @@ void Sprite::LoadFromNode( const XNode* pNode )
 {
 	/* Texture may refer to the ID of a render target; if it's already
 	 * registered, use it without trying to resolve it. */
-	RString sPath;
+	std::string sPath;
 	pNode->GetAttrValue( "Texture", sPath );
 	if( !sPath.empty() && !TEXTUREMAN->IsTextureRegistered( RageTextureID(sPath) ) )
 		ActorUtil::GetAttrPath( pNode, "Texture", sPath );
@@ -237,8 +237,8 @@ void Sprite::LoadFromNode( const XNode* pNode )
 		else for( int i=0; true; i++ )
 		{
 			// deprecated
-			RString sFrameKey = fmt::sprintf( "Frame%04d", i );
-			RString sDelayKey = fmt::sprintf( "Delay%04d", i );
+			std::string sFrameKey = fmt::sprintf( "Frame%04d", i );
+			std::string sDelayKey = fmt::sprintf( "Delay%04d", i );
 			State newState;
 
 			int iFrameIndex;
@@ -264,7 +264,7 @@ void Sprite::LoadFromNode( const XNode* pNode )
 		}
 	}
 
-	RString mask_path;
+	std::string mask_path;
 	pNode->GetAttrValue("Mask", mask_path);
 	if(!mask_path.empty() && !TEXTUREMAN->IsTextureRegistered(RageTextureID(mask_path)))
 	{
@@ -822,7 +822,7 @@ void Sprite::SetState( size_t iNewState )
 		if( !m_pTexture || (m_pTexture->GetID().filename.find("_blank") == string::npos &&
 			m_pTexture->GetID().filename.find("_missing") == string::npos) )
 		{
-			RString sError;
+			std::string sError;
 			if( m_pTexture )
 				sError = fmt::sprintf("A Sprite '%s' (\"%s\") tried to set state to frame %lu, but it has only %u frames.",
 					/*
@@ -861,10 +861,10 @@ void Sprite::SetSecondsIntoAnimation( float fSeconds )
 	UpdateAnimationState();
 }
 
-RString	Sprite::GetTexturePath() const
+std::string	Sprite::GetTexturePath() const
 {
 	if( m_pTexture==nullptr )
-		return RString();
+		return std::string();
 
 	return m_pTexture->GetID().filename;
 }

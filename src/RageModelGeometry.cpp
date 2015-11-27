@@ -94,17 +94,17 @@ bool RageModelGeometry::HasAnyPerVertexBones() const
 
 #define THROW RageException::Throw( "Parse error in \"%s\" at line %d: \"%s\".", sPath.c_str(), iLineNum, sLine.c_str() )
 
-void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNormals )
+void RageModelGeometry::LoadMilkshapeAscii( const std::string& _sPath, bool bNeedsNormals )
 {
-	RString sPath = _sPath;
+	std::string sPath = _sPath;
 	FixSlashesInPlace(sPath);
-	const RString sDir = Rage::dir_name( sPath );
+	const std::string sDir = Rage::dir_name( sPath );
 
 	RageFile f;
 	if( !f.Open( sPath ) )
 		RageException::Throw( "RageModelGeometry::LoadMilkshapeAscii Could not open \"%s\": %s", sPath.c_str(), f.GetError().c_str() );
 
-	RString sLine;
+	std::string sLine;
 	int iLineNum = 0;
 	char szName[MS_MAX_NAME];
 	int nFlags, nIndex;

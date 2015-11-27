@@ -31,7 +31,7 @@
 #pragma comment(lib, "vfw32.lib")
 #endif
 
-RageMovieTexture *RageMovieTextureDriver_DShow::Create( RageTextureID ID, RString &sError )
+RageMovieTexture *RageMovieTextureDriver_DShow::Create( RageTextureID ID, std::string &sError )
 {
 	MovieTexture_DShow *pRet = new MovieTexture_DShow( ID );
 	sError = pRet->Init();
@@ -42,7 +42,7 @@ RageMovieTexture *RageMovieTextureDriver_DShow::Create( RageTextureID ID, RStrin
 
 REGISTER_MOVIE_TEXTURE_CLASS( DShow );
 
-static RString FourCCToString( int fcc )
+static std::string FourCCToString( int fcc )
 {
 	char c[4];
 	c[0] = char((fcc >> 0) & 0xFF);
@@ -50,14 +50,14 @@ static RString FourCCToString( int fcc )
 	c[2] = char((fcc >> 16) & 0xFF);
 	c[3] = char((fcc >> 24) & 0xFF);
 
-	RString s;
+	std::string s;
 	for( int i = 0; i < 4; ++i )
 		s += Rage::clamp( c[i], '\x20', '\x7e' );
 
 	return s;
 }
 
-static void CheckCodecVersion( RString codec, RString desc )
+static void CheckCodecVersion( std::string codec, std::string desc )
 {
 	if( Rage::ci_ascii_string{"DIVX"} == codec )
 	{
@@ -116,7 +116,7 @@ static void GetVideoCodecDebugInfo()
 		CHECKPOINT;
 		if( ICGetInfo(hic, &info, sizeof(ICINFO)) )
 		{
-			CheckCodecVersion( FourCCToString(info.fccHandler), WStringToRString(info.szDescription) );
+			CheckCodecVersion( FourCCToString(info.fccHandler), WStringTostd::string(info.szDescription) );
 			CHECKPOINT;
 
 			LOG->Info( "    %s: %ls (%ls)",
@@ -155,9 +155,9 @@ MovieTexture_DShow::MovieTexture_DShow( RageTextureID ID ) :
 	buffer = nullptr;
 }
 
-RString MovieTexture_DShow::Init()
+std::string MovieTexture_DShow::Init()
 {
-	RString sError = Create();
+	std::string sError = Create();
 	if( sError != "" )
 		return sError;
 
@@ -166,7 +166,7 @@ RString MovieTexture_DShow::Init()
 	// flip all frame rects because movies are upside down
 	for( unsigned i=0; i<m_TextureCoordRects.size(); i++ )
 		swap(m_TextureCoordRects[i].top, m_TextureCoordRects[i].bottom);
-	return RString();
+	return std::string();
 }
 
 /* Hold buffer_lock.  If it's held, then the decoding thread is waiting
@@ -292,12 +292,12 @@ void MovieTexture_DShow::Update(float fDeltaTime)
 	CheckFrame();
 }
 
-RString PrintCodecError( HRESULT hr, RString s )
+std::string PrintCodecError( HRESULT hr, std::string s )
 {
 	/* Actually, we might need XviD; we might want to look
 	 * at the file and try to figure out if it's something
 	 * common: DIV3, DIV4, DIV5, XVID, or maybe even MPEG2. */
-	RString err = hr_ssprintf(hr, "%s", s.c_str());
+	std::string err = hr_ssprintf(hr, "%s", s.c_str());
 	return
 		ssprintf(
 		"There was an error initializing a movie: %s.\n"
@@ -308,9 +308,9 @@ RString PrintCodecError( HRESULT hr, RString s )
 		err.c_str() );
 }
 
-RString MovieTexture_DShow::GetActiveFilterList()
+std::string MovieTexture_DShow::GetActiveFilterList()
 {
-	RString ret;
+	std::string ret;
 
 	IEnumFilters *pEnum = nullptr;
 	HRESULT hr = m_pGB->EnumFilters(&pEnum);
@@ -325,7 +325,7 @@ RString MovieTexture_DShow::GetActiveFilterList()
 
 		if( ret != "" )
 			ret += ", ";
-		ret += WStringToRString(FilterInfo.achName);
+		ret += WStringTostd::string(FilterInfo.achName);
 
 		if( FilterInfo.pGraph )
 			FilterInfo.pGraph->Release();
@@ -335,7 +335,7 @@ RString MovieTexture_DShow::GetActiveFilterList()
 	return ret;
 }
 
-RString MovieTexture_DShow::Create()
+std::string MovieTexture_DShow::Create()
 {
 	RageTextureID actualID = GetID();
 
@@ -361,7 +361,7 @@ RString MovieTexture_DShow::Create()
 
 	// Add the source filter
 	CComPtr<IBaseFilter> pFSrc;          // Source Filter
-	wstring wFileName = RStringToWstring(actualID.filename);
+	wstring wFileName = std::stringToWstring(actualID.filename);
 
 	// if this fails, it's probably because the user doesn't have DivX installed
 	/* No, it also happens if the movie can't be opened for some reason; for example,
@@ -422,7 +422,7 @@ RString MovieTexture_DShow::Create()
 	// Start the graph running
 	Play();
 
-	return RString();
+	return std::string();
 }
 
 

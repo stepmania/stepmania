@@ -14,7 +14,7 @@ public:
 	RageSoundReader_PitchChange( const RageSoundReader_PitchChange &cpy );
 
 	virtual int Read( float *pBuf, int iFrames );
-	virtual bool SetProperty( const RString &sProperty, float fValue );
+	virtual bool SetProperty( const std::string &sProperty, float fValue );
 
 	void SetSpeedRatio( float fRatio ) { m_fSpeedRatio = fRatio; }
 	void SetPitchRatio( float fRatio ) { m_fPitchRatio = fRatio; }

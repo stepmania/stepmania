@@ -6,7 +6,7 @@
 
 const wchar_t FontCharmaps::M_SKIP = 0xFEFF;
 
-static std::map<RString,const wchar_t*> charmaps;
+static std::map<std::string,const wchar_t*> charmaps;
 
 using namespace FontCharmaps;
 
@@ -219,7 +219,7 @@ static void Init()
 	charmaps["numbers"] = map_numbers;
 }
 
-const wchar_t *FontCharmaps::get_char_map(RString name)
+const wchar_t *FontCharmaps::get_char_map(std::string name)
 {
 	Init();
 

@@ -65,7 +65,7 @@ public:
 	/**
 	 * @brief Retrieve the name of the Player based on the mode.
 	 * @return the name of the Player. */
-	RString GetName() const
+	std::string GetName() const
 	{
 		if( m_bIsDummy )
 			return fmt::sprintf("Dummy%d",m_iDummyIndex);
@@ -221,8 +221,8 @@ protected:
 	void GetMusicEndTiming( float &fSecondsToStartFadingOutMusic, float &fSecondsToStartTransitioningOut );
 	void LoadLights();
 	void PauseGame( bool bPause, GameController gc = GameController_Invalid );
-	void PlayAnnouncer( const RString &type, float fSeconds, float *fDeltaSeconds );
-	void PlayAnnouncer( const RString &type, float fSeconds ) { PlayAnnouncer(type, fSeconds, &m_fTimeSinceLastDancingComment); }
+	void PlayAnnouncer( const std::string &type, float fSeconds, float *fDeltaSeconds );
+	void PlayAnnouncer( const std::string &type, float fSeconds ) { PlayAnnouncer(type, fSeconds, &m_fTimeSinceLastDancingComment); }
 	void UpdateLights();
 	void SendCrossedMessages();
 	void BeginBackingOutFromGameplay();

@@ -22,8 +22,8 @@ public:
 	RageFileObjMem *Copy() const;
 
 	/* Retrieve the contents of this file. */
-	const RString &GetString() const;
-	void PutString( const RString &sBuf );
+	const std::string &GetString() const;
+	void PutString( const std::string &sBuf );
 
 private:
 	RageFileObjMemFile *m_pFile;
@@ -36,10 +36,10 @@ public:
 	RageFileDriverMem();
 	~RageFileDriverMem();
 
-	RageFileBasic *Open( const RString &sPath, int mode, int &err );
-	void FlushDirCache( const RString & /* sPath */ ) { }
+	RageFileBasic *Open( const std::string &sPath, int mode, int &err );
+	void FlushDirCache( const std::string & /* sPath */ ) { }
 
-	bool Remove( const RString &sPath );
+	bool Remove( const std::string &sPath );
 
 private:
 	RageMutex m_Mutex;

@@ -992,7 +992,7 @@ int RageSoundReader_MP3::SetPosition( int iFrame )
 	}
 }
 
-bool RageSoundReader_MP3::SetProperty( const RString &sProperty, float fValue )
+bool RageSoundReader_MP3::SetProperty( const std::string &sProperty, float fValue )
 {
 	if( sProperty == "AccurateSync" )
 	{

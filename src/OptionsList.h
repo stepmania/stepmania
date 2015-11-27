@@ -15,7 +15,7 @@ class OptionsList;
 class OptionListRow: public ActorFrame
 {
 public:
-	void Load( OptionsList *pOptions, const RString &sType );
+	void Load( OptionsList *pOptions, const std::string &sType );
 	void SetFromHandler( const OptionRowHandler *pHandler );
 	void SetTextFromHandler( const OptionRowHandler *pHandler );
 	void SetUnderlines( const std::vector<bool> &aSelections, const OptionRowHandler *pHandler );
@@ -44,7 +44,7 @@ public:
 	OptionsList();
 	~OptionsList();
 
-	void Load( RString sType, PlayerNumber pn );
+	void Load( std::string sType, PlayerNumber pn );
 	void Reset();
 
 	void Link( OptionsList *pLink ) { m_pLinked = pLink; }
@@ -63,23 +63,23 @@ public:
 private:
 	ThemeMetric<std::string> TOP_MENU;
 
-	void SelectItem( const RString &sRowName, int iMenuItem );
-	void MoveItem( const RString &sRowName, int iMove );
+	void SelectItem( const std::string &sRowName, int iMenuItem );
+	void MoveItem( const std::string &sRowName, int iMove );
 	void SwitchMenu( int iDir );
 	void PositionCursor();
-	void SelectionsChanged( const RString &sRowName );
+	void SelectionsChanged( const std::string &sRowName );
 	void UpdateMenuFromSelections();
-	RString GetCurrentRow() const;
+	std::string GetCurrentRow() const;
 	const OptionRowHandler *GetCurrentHandler();
-	int GetOneSelection( RString sRow, bool bAllowFail=false ) const;
+	int GetOneSelection( std::string sRow, bool bAllowFail=false ) const;
 	void SwitchToCurrentRow();
 	void TweenOnCurrentRow( bool bForward );
 	void SetDefaultCurrentRow();
-	void Push( RString sDest );
+	void Push( std::string sDest );
 	void Pop();
-	void ImportRow( RString sRow );
-	void ExportRow( RString sRow );
-	static int FindScreenInHandler( const OptionRowHandler *pHandler, RString sScreen );
+	void ImportRow( std::string sRow );
+	void ExportRow( std::string sRow );
+	static int FindScreenInHandler( const OptionRowHandler *pHandler, std::string sScreen );
 
 	InputQueueCodeSet	m_Codes;
 
@@ -89,10 +89,10 @@ private:
 	bool			m_bAcceptStartRelease;
 
 	std::vector<std::string> m_asLoadedRows;
-	std::map<RString, OptionRowHandler *> m_Rows;
-	std::map<RString, std::vector<bool> > m_bSelections;
-	std::set<RString> m_setDirectRows;
-	std::set<RString> m_setTopMenus; // list of top-level menus, pointing to submenus
+	std::map<std::string, OptionRowHandler *> m_Rows;
+	std::map<std::string, std::vector<bool> > m_bSelections;
+	std::set<std::string> m_setDirectRows;
+	std::set<std::string> m_setTopMenus; // list of top-level menus, pointing to submenus
 
 	PlayerNumber m_pn;
 	AutoActor m_Cursor;

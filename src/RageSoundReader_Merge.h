@@ -17,10 +17,10 @@ public:
 	virtual int Read( float *pBuf, int iFrames );
 	virtual int GetSampleRate() const { return m_iSampleRate; }
 	virtual unsigned GetNumChannels() const { return m_iChannels; }
-	virtual bool SetProperty( const RString &sProperty, float fValue );
+	virtual bool SetProperty( const std::string &sProperty, float fValue );
 	virtual int GetNextSourceFrame() const { return m_iNextSourceFrame; }
 	virtual float GetStreamToSourceRatio() const { return m_fCurrentStreamToSourceRatio; }
-	virtual RString GetError() const { return ""; }
+	virtual std::string GetError() const { return ""; }
 
 	void AddSound( RageSoundReader *pSound );
 

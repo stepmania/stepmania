@@ -31,12 +31,12 @@ struct StepsTagInfo
 	Steps* steps;
 	TimingData* timing;
 	const MsdFile::value_t* params;
-	const RString& path;
+	const std::string& path;
 	bool has_own_timing;
 	bool ssc_format;
 	bool from_cache;
 	bool for_load_edit;
-	StepsTagInfo(SSCLoader* l, Song* s, const RString& p, bool fc)
+	StepsTagInfo(SSCLoader* l, Song* s, const std::string& p, bool fc)
 		:loader(l), song(s), path(p), has_own_timing(false), ssc_format(false),
 		 from_cache(fc), for_load_edit(false)
 	{}
@@ -46,9 +46,9 @@ struct SongTagInfo
 	SSCLoader* loader;
 	Song* song;
 	const MsdFile::value_t* params;
-	const RString& path;
+	const std::string& path;
 	bool from_cache;
-	SongTagInfo(SSCLoader* l, Song* s, const RString& p, bool fc)
+	SongTagInfo(SSCLoader* l, Song* s, const std::string& p, bool fc)
 		:loader(l), song(s), path(p), from_cache(fc)
 	{}
 };
@@ -238,7 +238,7 @@ void SetFGChanges(SongTagInfo& info)
 }
 void SetKeysounds(SongTagInfo& info)
 {
-	RString keysounds = (*info.params)[1];
+	std::string keysounds = (*info.params)[1];
 	if(keysounds.length() >= 2 && keysounds.substr(0, 2) == "\\#")
 	{
 		keysounds = keysounds.substr(1);
@@ -656,7 +656,7 @@ ssc_parser_helper_t parser_helper;
 // End parser_helper related functions. -Kyz
 /****************************************************************/
 
-void SSCLoader::ProcessBPMs( TimingData &out, const RString sParam )
+void SSCLoader::ProcessBPMs( TimingData &out, const std::string sParam )
 {
 	auto arrayBPMExpressions = Rage::split( sParam, "," );
 
@@ -688,7 +688,7 @@ void SSCLoader::ProcessBPMs( TimingData &out, const RString sParam )
 	}
 }
 
-void SSCLoader::ProcessStops( TimingData &out, const RString sParam )
+void SSCLoader::ProcessStops( TimingData &out, const std::string sParam )
 {
 	auto arrayStopExpressions = Rage::split( sParam, "," );
 
@@ -718,7 +718,7 @@ void SSCLoader::ProcessStops( TimingData &out, const RString sParam )
 	}
 }
 
-void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float fVersion )
+void SSCLoader::ProcessWarps( TimingData &out, const std::string sParam, const float fVersion )
 {
 	auto arrayWarpExpressions = Rage::split( sParam, "," );
 
@@ -753,7 +753,7 @@ void SSCLoader::ProcessWarps( TimingData &out, const RString sParam, const float
 	}
 }
 
-void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
+void SSCLoader::ProcessLabels( TimingData &out, const std::string sParam )
 {
 	auto arrayLabelExpressions = Rage::split( sParam, "," );
 
@@ -770,7 +770,7 @@ void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
 		}
 
 		const float fBeat = StringToFloat( arrayLabelValues[0] );
-		RString sLabel = Rage::trim_right(arrayLabelValues[1]);
+		std::string sLabel = Rage::trim_right(arrayLabelValues[1]);
 		if( fBeat >= 0.0f )
 		{
 			out.AddSegment( LabelSegment(BeatToNoteRow(fBeat), sLabel) );
@@ -786,7 +786,7 @@ void SSCLoader::ProcessLabels( TimingData &out, const RString sParam )
 	}
 }
 
-void SSCLoader::ProcessCombos( TimingData &out, const RString line, const int rowsPerBeat )
+void SSCLoader::ProcessCombos( TimingData &out, const std::string line, const int rowsPerBeat )
 {
 	auto arrayComboExpressions = Rage::split( line, "," );
 
@@ -809,7 +809,7 @@ void SSCLoader::ProcessCombos( TimingData &out, const RString line, const int ro
 	}
 }
 
-void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
+void SSCLoader::ProcessScrolls( TimingData &out, const std::string sParam )
 {
 	auto vs1 = Rage::split(sParam, ",");
 
@@ -842,7 +842,7 @@ void SSCLoader::ProcessScrolls( TimingData &out, const RString sParam )
 	}
 }
 
-bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
+bool SSCLoader::LoadNoteDataFromSimfile( const std::string & cachePath, Steps &out )
 {
 	LOG->Trace( "Loading notes from %s", cachePath.c_str() );
 
@@ -863,8 +863,8 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 	for (unsigned i = 0; i < values; i++)
 	{
 		const MsdFile::value_t &params = msd.GetValue(i);
-		RString valueName = Rage::make_upper(params[0]);
-		RString matcher = Rage::trim(params[1]); // mainly for debugging.
+		std::string valueName = Rage::make_upper(params[0]);
+		std::string matcher = Rage::trim(params[1]); // mainly for debugging.
 
 		load_note_data_handler_map_t::iterator handler=
 			parser_helper.load_note_data_handlers.find(valueName);
@@ -951,7 +951,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 	return false;
 }
 
-bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache )
+bool SSCLoader::LoadFromSimfile( const std::string &sPath, Song &out, bool bFromCache )
 {
 	LOG->Trace( "Song::LoadFromSSCFile(%s)", sPath.c_str() );
 
@@ -976,7 +976,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 	for( unsigned i = 0; i < values; i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = Rage::make_upper(sParams[0]);
+		std::string sValueName = Rage::make_upper(sParams[0]);
 
 		switch (state)
 		{
@@ -1051,7 +1051,7 @@ bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 	return true;
 }
 
-bool SSCLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =nullptr */ )
+bool SSCLoader::LoadEditFromFile( std::string sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =nullptr */ )
 {
 	LOG->Trace( "SSCLoader::LoadEditFromFile(%s)", sEditFilePath.c_str() );
 
@@ -1077,7 +1077,7 @@ bool SSCLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool 
 }
 
 bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
-				const RString &sEditFilePath,
+				const std::string &sEditFilePath,
 				ProfileSlot slot,
 				bool bAddStepsToSong,
 				Song *givenSong /* =nullptr */ )
@@ -1094,7 +1094,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = Rage::make_upper(sParams[0]);
+		std::string sValueName = Rage::make_upper(sParams[0]);
 
 		if(pSong != nullptr)
 		{
@@ -1195,7 +1195,7 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 					continue;
 				}
 
-				RString sSongFullTitle = sParams[1];
+				std::string sSongFullTitle = sParams[1];
 				this->SetSongTitle(sParams[1]);
 				Rage::replace(sSongFullTitle, '\\', '/');
 				pSong = SONGMAN->FindSong(sSongFullTitle);

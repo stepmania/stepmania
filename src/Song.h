@@ -16,8 +16,8 @@ class StepsID;
 struct lua_State;
 struct BackgroundChange;
 
-void FixupPath( RString &path, const RString &sSongPath );
-RString GetSongAssetPath( RString sPath, const RString &sSongPath );
+void FixupPath( std::string &path, const std::string &sSongPath );
+std::string GetSongAssetPath( std::string sPath, const std::string &sSongPath );
 
 /** @brief The version of the .ssc file format. */
 const static float STEPFILE_VERSION_NUMBER = 0.83f;
@@ -52,23 +52,23 @@ enum InstrumentTrack
 	InstrumentTrack_Invalid
 };
 std::string const InstrumentTrackToString( InstrumentTrack it );
-InstrumentTrack StringToInstrumentTrack( const RString& s );
+InstrumentTrack StringToInstrumentTrack( const std::string& s );
 
 /** @brief The collection of lyrics for the Song. */
 struct LyricSegment
 {
 	float	m_fStartTime; /** @brief When does the lyric show up? */
-	RString m_sLyric; /** @brief The lyrics themselves. */
+	std::string m_sLyric; /** @brief The lyrics themselves. */
 	Rage::Color m_Color; /** @brief The color of the lyrics. */
 };
 
 /** @brief Holds all music metadata and steps for one song. */
 class Song
 {
-	RString m_sSongDir;
+	std::string m_sSongDir;
 public:
-	void SetSongDir( const RString sDir ) { m_sSongDir = sDir; }
-	RString GetSongDir() { return m_sSongDir; }
+	void SetSongDir( const std::string sDir ) { m_sSongDir = sDir; }
+	std::string GetSongDir() { return m_sSongDir; }
 
 	/** @brief When should this song be displayed in the music wheel? */
 	enum SelectionDisplay
@@ -87,11 +87,11 @@ public:
 	 *
 	 * This assumes that there is no song present right now.
 	 * @param sDir the song directory from which to load. */
-	bool LoadFromSongDir( RString sDir, bool load_autosave= false );
+	bool LoadFromSongDir( std::string sDir, bool load_autosave= false );
 	// This one takes the effort to reuse Steps pointers as best as it can
-	bool ReloadFromSongDir( RString sDir );
+	bool ReloadFromSongDir( std::string sDir );
 	bool ReloadFromSongDir() { return ReloadFromSongDir(GetSongDir()); }
-	void LoadEditsFromSongDir(RString dir);
+	void LoadEditsFromSongDir(std::string dir);
 
 	bool HasAutosaveFile();
 	bool LoadAutosaveFile();
@@ -118,13 +118,13 @@ public:
 	 * @param sPath the path where we're saving the file.
 	 * @param bSavingCache a flag to determine if we're saving cache data.
 	 */
-	bool SaveToSSCFile(RString sPath, bool bSavingCache, bool autosave= false);
+	bool SaveToSSCFile(std::string sPath, bool bSavingCache, bool autosave= false);
 	/** @brief Save to the SSC and SM files no matter what. */
 	void Save(bool autosave= false);
 	/**
 	  * @brief Save the current Song to a JSON file.
 	  * @return its success or failure. */
-	bool SaveToJsonFile( RString sPath );
+	bool SaveToJsonFile( std::string sPath );
 	/**
 	  * @brief Save the current Song to a cache file using the preferred format.
 	  * @return its success or failure. */
@@ -142,8 +142,8 @@ public:
 	bool WasLoadedFromAutosave() const
 	{ return m_loaded_from_autosave; }
 
-	const RString &GetSongFilePath() const;
-	RString GetCacheFilePath() const;
+	const std::string &GetSongFilePath() const;
+	std::string GetCacheFilePath() const;
 
 	void AddAutoGenNotes();
 	/**
@@ -155,17 +155,17 @@ public:
 	void RemoveAutoGenNotes();
 
 	// Directory this song data came from:
-	const RString &GetSongDir() const { return m_sSongDir; }
+	const std::string &GetSongDir() const { return m_sSongDir; }
 
 	/**
 	 * @brief Filename associated with this file.
 	 * This will always have a .SSC extension. If we loaded a .SSC, this will
 	 * point to it, but if we loaded any other type, this will point to
 	 * a generated .SSC filename. */
-	RString m_sSongFileName;
+	std::string m_sSongFileName;
 
 	/** @brief The group this Song is in. */
-	RString m_sGroupName;
+	std::string m_sGroupName;
 
 	/**
 	 * @brief the Profile this came from.
@@ -176,66 +176,66 @@ public:
 	bool	m_bEnabled;
 
 	/** @brief The title of the Song. */
-	RString	m_sMainTitle;
+	std::string	m_sMainTitle;
 	/** @brief The subtitle of the Song, if it exists. */
-	RString m_sSubTitle;
+	std::string m_sSubTitle;
 	/** @brief The artist of the Song, if it exists. */
-	RString m_sArtist;
+	std::string m_sArtist;
 	/** @brief The transliterated title of the Song, if it exists. */
-	RString m_sMainTitleTranslit;
+	std::string m_sMainTitleTranslit;
 	/** @brief The transliterated subtitle of the Song, if it exists. */
-	RString m_sSubTitleTranslit;
+	std::string m_sSubTitleTranslit;
 	/** @brief The transliterated artist of the Song, if it exists. */
-	RString m_sArtistTranslit;
+	std::string m_sArtistTranslit;
 
 	/* If PREFSMAN->m_bShowNative is off, these are the same as GetTranslit*
 	 * below. Otherwise, they return the main titles. */
-	RString GetDisplayMainTitle() const;
-	RString GetDisplaySubTitle() const;
-	RString GetDisplayArtist() const;
-	RString GetMainTitle() const;
+	std::string GetDisplayMainTitle() const;
+	std::string GetDisplaySubTitle() const;
+	std::string GetDisplayArtist() const;
+	std::string GetMainTitle() const;
 
 	/**
 	 * @brief Retrieve the transliterated title, or the main title if there is no translit.
 	 * @return the proper title. */
-	RString GetTranslitMainTitle() const
+	std::string GetTranslitMainTitle() const
 	{
 		return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle;
 	}
 	/**
 	 * @brief Retrieve the transliterated subtitle, or the main subtitle if there is no translit.
 	 * @return the proper subtitle. */
-	RString GetTranslitSubTitle() const
+	std::string GetTranslitSubTitle() const
 	{
 		return m_sSubTitleTranslit.size()? m_sSubTitleTranslit: m_sSubTitle;
 	}
 	/**
 	 * @brief Retrieve the transliterated artist, or the main artist if there is no translit.
 	 * @return the proper artist. */
-	RString GetTranslitArtist() const
+	std::string GetTranslitArtist() const
 	{
 		return m_sArtistTranslit.size()? m_sArtistTranslit:m_sArtist;
 	}
 
 	// "title subtitle"
-	RString GetDisplayFullTitle() const;
-	RString GetTranslitFullTitle() const;
+	std::string GetDisplayFullTitle() const;
+	std::string GetTranslitFullTitle() const;
 
 	/** @brief The version of the song/file. */
 	float	m_fVersion;
 	/** @brief The genre of the song/file. */
-	RString m_sGenre;
+	std::string m_sGenre;
 
 	/**
 	 * @brief The person who worked with the song file who should be credited.
 	 * This is read and saved, but never actually used. */
-	RString	m_sCredit;
+	std::string	m_sCredit;
 
-	RString m_sOrigin; // song origin (for .ssc format)
+	std::string m_sOrigin; // song origin (for .ssc format)
 
-	RString	m_sMusicFile;
-	RString m_PreviewFile;
-	RString	m_sInstrumentTrackFile[NUM_InstrumentTrack];
+	std::string	m_sMusicFile;
+	std::string m_PreviewFile;
+	std::string	m_sInstrumentTrackFile[NUM_InstrumentTrack];
 
 	/** @brief The length of the music file. */
 	float	m_fMusicLengthSeconds;
@@ -245,31 +245,31 @@ public:
 	float	m_fSpecifiedBPMMin;
 	float	m_fSpecifiedBPMMax;	// if a range, then Min != Max
 
-	RString m_sBannerFile;		// typically a 16:5 ratio graphic (e.g. 256x80)
-	RString m_sJacketFile;	// typically square (e.g. 192x192, 256x256)
-	RString m_sCDFile;		// square (e.g. 128x128 [DDR 1st-3rd])
-	RString m_sDiscFile;		// rectangular (e.g. 256x192 [Pump], 200x150 [MGD3])
+	std::string m_sBannerFile;		// typically a 16:5 ratio graphic (e.g. 256x80)
+	std::string m_sJacketFile;	// typically square (e.g. 192x192, 256x256)
+	std::string m_sCDFile;		// square (e.g. 128x128 [DDR 1st-3rd])
+	std::string m_sDiscFile;		// rectangular (e.g. 256x192 [Pump], 200x150 [MGD3])
 	/** @brief The location of the lyrics file, if it exists. */
-	RString m_sLyricsFile;
-	RString m_sBackgroundFile;
-	RString m_sCDTitleFile;
-	RString m_sPreviewVidFile;
+	std::string m_sLyricsFile;
+	std::string m_sBackgroundFile;
+	std::string m_sCDTitleFile;
+	std::string m_sPreviewVidFile;
 
 	AttackArray m_Attacks;
 	std::vector<std::string> m_sAttackString;
 
-	static RString GetSongAssetPath( RString sPath, const RString &sSongPath );
-	RString GetMusicPath() const;
-	RString GetInstrumentTrackPath( InstrumentTrack it ) const;
-	RString GetBannerPath() const;
-	RString GetJacketPath() const;
-	RString GetCDImagePath() const;
-	RString GetDiscPath() const;
-	RString	GetLyricsPath() const;
-	RString GetBackgroundPath() const;
-	RString GetCDTitlePath() const;
-	RString GetPreviewVidPath() const;
-	RString GetPreviewMusicPath() const;
+	static std::string GetSongAssetPath( std::string sPath, const std::string &sSongPath );
+	std::string GetMusicPath() const;
+	std::string GetInstrumentTrackPath( InstrumentTrack it ) const;
+	std::string GetBannerPath() const;
+	std::string GetJacketPath() const;
+	std::string GetCDImagePath() const;
+	std::string GetDiscPath() const;
+	std::string	GetLyricsPath() const;
+	std::string GetBackgroundPath() const;
+	std::string GetCDTitlePath() const;
+	std::string GetPreviewVidPath() const;
+	std::string GetPreviewMusicPath() const;
 	float GetPreviewStartSeconds() const;
 
 	// For loading only:
@@ -295,7 +295,7 @@ public:
 	bool HasAttacks() const;
 	bool HasPreviewVid() const;
 
-	bool Matches(RString sGroup, RString sSong) const;
+	bool Matches(std::string sGroup, std::string sSong) const;
 
 	/** @brief The Song's TimingData. */
 	TimingData m_SongTiming;

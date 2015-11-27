@@ -5,7 +5,7 @@
 #include <sys/utsname.h>
 #endif
 
-void GetKernel( RString &sys, int &iVersion )
+void GetKernel( std::string &sys, int &iVersion )
 {
 	struct utsname uts;
 	uname( &uts );

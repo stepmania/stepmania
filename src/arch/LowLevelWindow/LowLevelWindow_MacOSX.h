@@ -4,6 +4,7 @@
 #include "LowLevelWindow.h"
 #include "RageDisplay.h"
 #include <objc/objc.h>
+#include <string>
 
 typedef const struct __CFDictionary *CFDictionaryRef;
 typedef uint32_t CGDirectDisplayID;
@@ -20,8 +21,8 @@ class LowLevelWindow_MacOSX : public LowLevelWindow
 public:
 	LowLevelWindow_MacOSX();
 	~LowLevelWindow_MacOSX();
-	void *GetProcAddress( RString s );
-	RString TryVideoMode( const VideoModeParams& p, bool& newDeviceOut );	
+	void *GetProcAddress( std::string s );
+	std::string TryVideoMode( const VideoModeParams& p, bool& newDeviceOut );	
 	void GetDisplayResolutions( DisplayResolutions &dr ) const;
 
 	void SwapBuffers();

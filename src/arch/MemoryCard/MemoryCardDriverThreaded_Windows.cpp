@@ -18,7 +18,7 @@ MemoryCardDriverThreaded_Windows::~MemoryCardDriverThreaded_Windows()
 {
 }
 
-static bool TestReady( const RString &sDrive, RString &sVolumeLabelOut )
+static bool TestReady( const std::string &sDrive, std::string &sVolumeLabelOut )
 {
 	TCHAR szVolumeNameBuffer[MAX_PATH];
 	DWORD dwVolumeSerialNumber;
@@ -70,7 +70,7 @@ bool MemoryCardDriverThreaded_Windows::TestWrite( UsbStorageDevice* pDevice )
 	return false;
 }
 
-static bool IsFloppyDrive( const RString &sDrive )
+static bool IsFloppyDrive( const std::string &sDrive )
 {
 	char szBuf[1024];
 
@@ -110,7 +110,7 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 		if( !(m_dwLastLogicalDrives & mask) )
 			continue; // drive letter is invalid
 
-		RString sDrive = fmt::sprintf( "%c:", 'A'+i%26 );
+		std::string sDrive = fmt::sprintf( "%c:", 'A'+i%26 );
 
 		LOG->Trace( sDrive );
 
@@ -129,7 +129,7 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 		{
 			bIsSpecifiedMountPoint |= ( drive == MEMCARDMAN->m_sMemoryCardOsMountPoint[p].Get() );
 		}
-		RString sDrivePath = sDrive + "\\";
+		std::string sDrivePath = sDrive + "\\";
 
 		if( bIsSpecifiedMountPoint )
 		{
@@ -144,7 +144,7 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 			}
 		}
 
-		RString sVolumeLabel;
+		std::string sVolumeLabel;
 		if( !TestReady(sDrivePath, sVolumeLabel) )
 		{
 			LOG->Trace( "not TestReady" );

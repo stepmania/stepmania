@@ -11,15 +11,15 @@ public:
 	RandomSample();
 	virtual ~RandomSample();
 
-	bool Load( RString sFilePath, int iMaxToLoad = 1000 /*load all*/ );
+	bool Load( std::string sFilePath, int iMaxToLoad = 1000 /*load all*/ );
 	void UnloadAll();
 	void PlayRandom();
 	void PlayCopyOfRandom();
 	void Stop();
 
 private:
-	bool LoadSoundDir( RString sDir, int iMaxToLoad  );
-	bool LoadSound( RString sSoundFilePath );
+	bool LoadSoundDir( std::string sDir, int iMaxToLoad  );
+	bool LoadSound( std::string sSoundFilePath );
 	int GetNextToPlay();
 
 	std::vector<RageSound*> m_pSamples;

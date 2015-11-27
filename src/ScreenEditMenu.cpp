@@ -19,7 +19,7 @@
 #include "Steps.h"
 #include "ThemeManager.h"
 
-static const RString TEMP_FILE_NAME = "--temp--";
+static const std::string TEMP_FILE_NAME = "--temp--";
 
 #define EXPLANATION_TEXT( row )	THEME->GetString(m_sName,"Explanation"+EditMenuRowToString(row))
 #define EDIT_MENU_TYPE			THEME->GetMetric(m_sName,"EditMenuType")
@@ -160,13 +160,13 @@ bool ScreenEditMenu::MenuRight( const InputEventPlus & )
 	return true;
 }
 
-static RString GetCopyDescription( const Steps *pSourceSteps )
+static std::string GetCopyDescription( const Steps *pSourceSteps )
 {
-	RString s = pSourceSteps->GetDescription();
+	std::string s = pSourceSteps->GetDescription();
 	return s;
 }
 
-static void SetCurrentStepsDescription( const RString &s )
+static void SetCurrentStepsDescription( const std::string &s )
 {
 	GAMESTATE->m_pCurSteps[0]->SetDescription( s );
 }
@@ -231,8 +231,8 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 	{
 		case EditMode_Full:
 		{
-			RString sDir = pSong->GetSongDir();
-			RString sTempFile = sDir + TEMP_FILE_NAME;
+			std::string sDir = pSong->GetSongDir();
+			std::string sTempFile = sDir + TEMP_FILE_NAME;
 			RageFile file;
 			if( !file.Open( sTempFile, RageFile::WRITE ) )
 			{
@@ -305,7 +305,7 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 				FAIL_M("Cannot create steps in EditMode_Practice");
 			}
 
-			RString sEditName;
+			std::string sEditName;
 			if( pSourceSteps )
 			{
 				pSteps->CopyFrom( pSourceSteps, st, pSong->m_fMusicLengthSeconds );
@@ -386,7 +386,7 @@ void ScreenEditMenu::RefreshExplanationText()
 
 void ScreenEditMenu::RefreshNumStepsLoadedFromProfile()
 {
-	RString s = fmt::sprintf( "edits used: %d", SONGMAN->GetNumStepsLoadedFromProfile() );
+	std::string s = fmt::sprintf( "edits used: %d", SONGMAN->GetNumStepsLoadedFromProfile() );
 	m_textNumStepsLoadedFromProfile.SetText( s );
 }
 

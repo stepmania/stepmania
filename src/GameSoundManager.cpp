@@ -86,7 +86,7 @@ vector<std::string> g_SoundsToPlayOnceFromAnnouncer;
 
 struct MusicToPlay
 {
-	RString m_sFile, m_sTimingFile;
+	std::string m_sFile, m_sTimingFile;
 	bool HasTiming;
 	TimingData m_TimingData;
 	NoteData m_LightsData;
@@ -273,7 +273,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 	g_Playing = NewMusic;
 }
 
-static void DoPlayOnce( RString sPath )
+static void DoPlayOnce( std::string sPath )
 {
 	/* We want this to start quickly, so don't try to prebuffer it. */
 	RageSound *pSound = new RageSound;
@@ -283,7 +283,7 @@ static void DoPlayOnce( RString sPath )
 	pSound->DeleteSelfWhenFinishedPlaying();
 }
 
-static void DoPlayOnceFromDir( RString sPath )
+static void DoPlayOnceFromDir( std::string sPath )
 {
 	if( sPath == "" )
 	{
@@ -586,8 +586,8 @@ void GameSoundManager::Update( float fDeltaTime )
 		const float fSoundTimePassed = fSeconds - GAMESTATE->m_Position.m_fMusicSeconds;
 		const float fDiff = fExpectedTimePassed - fSoundTimePassed;
 
-		static RString sLastFile = "";
-		const RString ThisFile = g_Playing->m_Music->GetLoadedFilePath();
+		static std::string sLastFile = "";
+		const std::string ThisFile = g_Playing->m_Music->GetLoadedFilePath();
 
 		/* If fSoundTimePassed < 0, the sound has probably looped. */
 		if( sLastFile == ThisFile && fSoundTimePassed >= 0 && fabsf(fDiff) > 0.003f )
@@ -672,14 +672,14 @@ void GameSoundManager::Update( float fDeltaTime )
 }
 
 
-RString GameSoundManager::GetMusicPath() const
+std::string GameSoundManager::GetMusicPath() const
 {
 	LockMut( *g_Mutex );
 	return g_Playing->m_Music->GetLoadedFilePath();
 }
 
 void GameSoundManager::PlayMusic(
-	RString sFile,
+	std::string sFile,
 	const TimingData *pTiming,
 	bool bForceLoop,
 	float fStartSecond,
@@ -759,7 +759,7 @@ void GameSoundManager::HandleSongTimer( bool on )
 	g_UpdatingTimer = on;
 }
 
-void GameSoundManager::PlayOnce( RString sPath )
+void GameSoundManager::PlayOnce( std::string sPath )
 {
 	/* Add the sound to the g_SoundsToPlayOnce queue. */
 	g_Mutex->Lock();
@@ -768,7 +768,7 @@ void GameSoundManager::PlayOnce( RString sPath )
 	g_Mutex->Unlock();
 }
 
-void GameSoundManager::PlayOnceFromDir( RString sPath )
+void GameSoundManager::PlayOnceFromDir( std::string sPath )
 {
 	/* Add the path to the g_SoundsToPlayOnceFromDir queue. */
 	g_Mutex->Lock();
@@ -777,7 +777,7 @@ void GameSoundManager::PlayOnceFromDir( RString sPath )
 	g_Mutex->Unlock();
 }
 
-void GameSoundManager::PlayOnceFromAnnouncer( RString sPath )
+void GameSoundManager::PlayOnceFromAnnouncer( std::string sPath )
 {
 	/* Add the path to the g_SoundsToPlayOnceFromAnnouncer queue. */
 	g_Mutex->Lock();
@@ -811,7 +811,7 @@ public:
 	}
 	static int PlayOnce( T* p, lua_State *L )
 	{
-		RString sPath = SArg(1);
+		std::string sPath = SArg(1);
 		if(lua_toboolean(L, 2) && PREFSMAN->m_MuteActions)
 		{
 			COMMON_RETURN_SELF;
@@ -821,7 +821,7 @@ public:
 	}
 	static int PlayAnnouncer( T* p, lua_State *L )
 	{
-		RString sPath = SArg(1);
+		std::string sPath = SArg(1);
 		p->PlayOnceFromAnnouncer( sPath );
 		COMMON_RETURN_SELF;
 	}
@@ -833,7 +833,7 @@ public:
 	}
 	static int PlayMusicPart( T* p, lua_State *L )
 	{
-		RString musicPath = SArg(1);
+		std::string musicPath = SArg(1);
 		float musicStart = FArg(2);
 		float musicLength = FArg(3);
 		float fadeIn = 0;

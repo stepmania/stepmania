@@ -72,26 +72,26 @@ enum ThreadRequest
 class ThreadedFileWorker: public RageWorkerThread
 {
 public:
-	ThreadedFileWorker( RString sPath );
+	ThreadedFileWorker( std::string sPath );
 	~ThreadedFileWorker();
 
 	/* Threaded operations.  If a file operation times out, the caller loses all access
 	 * to the file and should fail all future operations; this is because the thread
 	 * is still trying to finish the operation.  The thread will clean up afterwards. */
-	RageFileBasic *Open( const RString &sPath, int iMode, int &iErr );
+	RageFileBasic *Open( const std::string &sPath, int iMode, int &iErr );
 	void Close( RageFileBasic *pFile );
 	int GetFileSize( RageFileBasic *&pFile );
 	int GetFD( RageFileBasic *&pFile );
-	int Seek( RageFileBasic *&pFile, int iPos, RString &sError );
-	int Read( RageFileBasic *&pFile, void *pBuf, int iSize, RString &sError );
-	int Write( RageFileBasic *&pFile, const void *pBuf, int iSize, RString &sError );
-	int Flush( RageFileBasic *&pFile, RString &sError );
-	RageFileBasic *Copy( RageFileBasic *&pFile, RString &sError );
+	int Seek( RageFileBasic *&pFile, int iPos, std::string &sError );
+	int Read( RageFileBasic *&pFile, void *pBuf, int iSize, std::string &sError );
+	int Write( RageFileBasic *&pFile, const void *pBuf, int iSize, std::string &sError );
+	int Flush( RageFileBasic *&pFile, std::string &sError );
+	RageFileBasic *Copy( RageFileBasic *&pFile, std::string &sError );
 
-	bool FlushDirCache( const RString &sPath );
-	int Move( const RString &sOldPath, const RString &sNewPath );
-	int Remove( const RString &sPath );
-	bool PopulateFileSet( FileSet &fs, const RString &sPath );
+	bool FlushDirCache( const std::string &sPath );
+	int Move( const std::string &sOldPath, const std::string &sNewPath );
+	int Remove( const std::string &sPath );
+	bool PopulateFileSet( FileSet &fs, const std::string &sPath );
 
 protected:
 	void HandleRequest( int iRequest );
@@ -107,10 +107,10 @@ private:
 	RageMutex m_DeletedFilesLock;
 
 	/* REQ_OPEN, REQ_POPULATE_FILE_SET, REQ_FLUSH_DIR_CACHE, REQ_REMOVE, REQ_MOVE: */
-	RString m_sRequestPath; /* in */
+	std::string m_sRequestPath; /* in */
 
 	/* REQ_MOVE: */
-	RString m_sRequestPath2; /* in */
+	std::string m_sRequestPath2; /* in */
 
 	/* REQ_OPEN, REQ_COPY: */
 	RageFileBasic *m_pResultFile; /* out */
@@ -129,7 +129,7 @@ private:
 
 	/* REQ_READ, REQ_WRITE */
 	int m_iRequestSize; /* in */
-	RString m_sResultError; /* out */
+	std::string m_sResultError; /* out */
 
 	/* REQ_SEEK */
 	int m_iRequestPos; /* in */
@@ -156,7 +156,7 @@ void RageFileDriverTimeout::SetTimeout( float fSeconds )
 }
 
 
-ThreadedFileWorker::ThreadedFileWorker( RString sPath ):
+ThreadedFileWorker::ThreadedFileWorker( std::string sPath ):
 	RageWorkerThread( sPath ),
 	m_DeletedFilesLock( sPath + "DeletedFilesLock" )
 {
@@ -300,7 +300,7 @@ void ThreadedFileWorker::RequestTimedOut()
 	SAFE_DELETE_ARRAY( m_pResultBuffer );
 }
 
-RageFileBasic *ThreadedFileWorker::Open( const RString &sPath, int iMode, int &iErr )
+RageFileBasic *ThreadedFileWorker::Open( const std::string &sPath, int iMode, int &iErr )
 {
 	if( m_pChildDriver == nullptr )
 	{
@@ -413,7 +413,7 @@ int ThreadedFileWorker::GetFD( RageFileBasic *&pFile )
 	return m_iResultRequest;
 }
 
-int ThreadedFileWorker::Seek( RageFileBasic *&pFile, int iPos, RString &sError )
+int ThreadedFileWorker::Seek( RageFileBasic *&pFile, int iPos, std::string &sError )
 {
 	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
 
@@ -448,7 +448,7 @@ int ThreadedFileWorker::Seek( RageFileBasic *&pFile, int iPos, RString &sError )
 	return m_iResultRequest;
 }
 
-int ThreadedFileWorker::Read( RageFileBasic *&pFile, void *pBuf, int iSize, RString &sError )
+int ThreadedFileWorker::Read( RageFileBasic *&pFile, void *pBuf, int iSize, std::string &sError )
 {
 	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
 
@@ -490,7 +490,7 @@ int ThreadedFileWorker::Read( RageFileBasic *&pFile, void *pBuf, int iSize, RStr
 	return iGot;
 }
 
-int ThreadedFileWorker::Write( RageFileBasic *&pFile, const void *pBuf, int iSize, RString &sError )
+int ThreadedFileWorker::Write( RageFileBasic *&pFile, const void *pBuf, int iSize, std::string &sError )
 {
 	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
 
@@ -531,7 +531,7 @@ int ThreadedFileWorker::Write( RageFileBasic *&pFile, const void *pBuf, int iSiz
 	return iGot;
 }
 
-int ThreadedFileWorker::Flush( RageFileBasic *&pFile, RString &sError )
+int ThreadedFileWorker::Flush( RageFileBasic *&pFile, std::string &sError )
 {
 	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
 
@@ -566,7 +566,7 @@ int ThreadedFileWorker::Flush( RageFileBasic *&pFile, RString &sError )
 	return m_iResultRequest;
 }
 
-RageFileBasic *ThreadedFileWorker::Copy( RageFileBasic *&pFile, RString &sError )
+RageFileBasic *ThreadedFileWorker::Copy( RageFileBasic *&pFile, std::string &sError )
 {
 	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
 
@@ -600,7 +600,7 @@ RageFileBasic *ThreadedFileWorker::Copy( RageFileBasic *&pFile, RString &sError 
 }
 
 
-bool ThreadedFileWorker::PopulateFileSet( FileSet &fs, const RString &sPath )
+bool ThreadedFileWorker::PopulateFileSet( FileSet &fs, const std::string &sPath )
 {
 	if( m_pChildDriver == nullptr )
 		return false;
@@ -623,7 +623,7 @@ bool ThreadedFileWorker::PopulateFileSet( FileSet &fs, const RString &sPath )
 	return true;
 }
 
-int ThreadedFileWorker::Move( const RString &sOldPath, const RString &sNewPath )
+int ThreadedFileWorker::Move( const std::string &sOldPath, const std::string &sNewPath )
 {
 	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
 
@@ -643,7 +643,7 @@ int ThreadedFileWorker::Move( const RString &sOldPath, const RString &sNewPath )
 	return m_iResultRequest;
 }
 
-int ThreadedFileWorker::Remove( const RString &sPath )
+int ThreadedFileWorker::Remove( const std::string &sPath )
 {
 	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
 
@@ -662,7 +662,7 @@ int ThreadedFileWorker::Remove( const RString &sPath )
 	return m_iResultRequest;
 }
 
-bool ThreadedFileWorker::FlushDirCache( const RString &sPath )
+bool ThreadedFileWorker::FlushDirCache( const std::string &sPath )
 {
 	/* FlushDirCache() is often called globally, on all drivers, which means it's called with
 	 * no timeout.  Temporarily enable a timeout if needed. */
@@ -730,7 +730,7 @@ public:
 
 	int GetFD()
 	{
-		RString sError;
+		std::string sError;
 		int iRet = m_pWorker->GetFD( m_pFile );
 
 		if( m_pFile == nullptr )
@@ -747,7 +747,7 @@ public:
 
 	RageFileBasic *Copy() const
 	{
-		RString sError;
+		std::string sError;
 		RageFileBasic *pCopy = m_pWorker->Copy( m_pFile, sError );
 
 		if( m_pFile == nullptr )
@@ -768,7 +768,7 @@ public:
 protected:
 	int SeekInternal( int iPos )
 	{
-		RString sError;
+		std::string sError;
 		int iRet = m_pWorker->Seek( m_pFile, iPos, sError );
 
 		if( m_pFile == nullptr )
@@ -786,7 +786,7 @@ protected:
 
 	int ReadInternal( void *pBuffer, size_t iBytes )
 	{
-		RString sError;
+		std::string sError;
 		int iRet = m_pWorker->Read( m_pFile, pBuffer, iBytes, sError );
 
 		if( m_pFile == nullptr )
@@ -803,7 +803,7 @@ protected:
 
 	int WriteInternal( const void *pBuffer, size_t iBytes )
 	{
-		RString sError;
+		std::string sError;
 		int iRet = m_pWorker->Write( m_pFile, pBuffer, iBytes, sError );
 
 		if( m_pFile == nullptr )
@@ -820,7 +820,7 @@ protected:
 
 	int FlushInternal()
 	{
-		RString sError;
+		std::string sError;
 		int iRet = m_pWorker->Flush( m_pFile, sError );
 
 		if( m_pFile == nullptr )
@@ -863,7 +863,7 @@ public:
 		m_pWorker = pWorker;
 	}
 
-	void PopulateFileSet( FileSet &fs, const RString &sPath )
+	void PopulateFileSet( FileSet &fs, const std::string &sPath )
 	{
 		ASSERT( m_pWorker != nullptr );
 		m_pWorker->PopulateFileSet( fs, sPath );
@@ -873,7 +873,7 @@ private:
 	ThreadedFileWorker *m_pWorker;
 };
 
-RageFileDriverTimeout::RageFileDriverTimeout( const RString &sPath ):
+RageFileDriverTimeout::RageFileDriverTimeout( const std::string &sPath ):
         RageFileDriver( new TimedFilenameDB() )
 {
 	m_pWorker = new ThreadedFileWorker( sPath );
@@ -881,7 +881,7 @@ RageFileDriverTimeout::RageFileDriverTimeout( const RString &sPath ):
 	((TimedFilenameDB *) FDB)->SetWorker( m_pWorker );
 }
 
-RageFileBasic *RageFileDriverTimeout::Open( const RString &sPath, int iMode, int &iErr )
+RageFileBasic *RageFileDriverTimeout::Open( const std::string &sPath, int iMode, int &iErr )
 {
 	RageFileBasic *pChildFile = m_pWorker->Open( sPath, iMode, iErr );
 	if( pChildFile == nullptr )
@@ -905,13 +905,13 @@ RageFileBasic *RageFileDriverTimeout::Open( const RString &sPath, int iMode, int
 	return new RageFileObjTimeout( m_pWorker, pChildFile, iSize, iMode );
 }
 
-void RageFileDriverTimeout::FlushDirCache( const RString &sPath )
+void RageFileDriverTimeout::FlushDirCache( const std::string &sPath )
 {
 	RageFileDriver::FlushDirCache( sPath );
 	m_pWorker->FlushDirCache( sPath );
 }
 
-bool RageFileDriverTimeout::Move( const RString &sOldPath, const RString &sNewPath )
+bool RageFileDriverTimeout::Move( const std::string &sOldPath, const std::string &sNewPath )
 {
 	int iRet = m_pWorker->Move( sOldPath, sNewPath );
 	if( iRet == -1 )
@@ -923,7 +923,7 @@ bool RageFileDriverTimeout::Move( const RString &sOldPath, const RString &sNewPa
 	return true;
 }
 
-bool RageFileDriverTimeout::Remove( const RString &sPath )
+bool RageFileDriverTimeout::Remove( const std::string &sPath )
 {
 	int iRet = m_pWorker->Remove( sPath );
 	if( iRet == -1 )
@@ -943,7 +943,7 @@ RageFileDriverTimeout::~RageFileDriverTimeout()
 static struct FileDriverEntry_Timeout: public FileDriverEntry
 {
         FileDriverEntry_Timeout(): FileDriverEntry( "TIMEOUT" ) { }
-        RageFileDriver *Create( const RString &sRoot ) const { return new RageFileDriverTimeout( sRoot ); }
+        RageFileDriver *Create( const std::string &sRoot ) const { return new RageFileDriverTimeout( sRoot ); }
 } const g_RegisterDriver;
 
 /*

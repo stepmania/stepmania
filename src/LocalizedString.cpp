@@ -18,7 +18,7 @@ public:
 	std::string const GetLocalized() const { return m_sValue; }
 
 private:
-	RString m_sValue;
+	std::string m_sValue;
 };
 
 static LocalizedString::MakeLocalizer g_pMakeLocalizedStringImpl = LocalizedStringImplDefault::Create;

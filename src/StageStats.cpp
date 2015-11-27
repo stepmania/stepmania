@@ -150,7 +150,7 @@ float StageStats::GetTotalPossibleStepsSeconds() const
 	return fSecs / m_fMusicRate;
 }
 
-static HighScore FillInHighScore( const PlayerStageStats &pss, const PlayerState &ps, RString sRankingToFillInMarker, RString sPlayerGuid )
+static HighScore FillInHighScore( const PlayerStageStats &pss, const PlayerState &ps, std::string sRankingToFillInMarker, std::string sPlayerGuid )
 {
 	HighScore hs;
 	hs.SetName( sRankingToFillInMarker );
@@ -223,12 +223,12 @@ void StageStats::FinalizeScores( bool bSummary )
 	// is a course or not... it's handled below in the switch.
 	FOREACH_HumanPlayer( p )
 	{
-		RString sPlayerGuid = PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : RString("");
+		std::string sPlayerGuid = PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : std::string("");
 		m_player[p].m_HighScore = FillInHighScore( m_player[p], *GAMESTATE->m_pPlayerState[p], RANKING_TO_FILL_IN_MARKER[p], sPlayerGuid );
 	}
 	FOREACH_EnabledMultiPlayer( mp )
 	{
-		RString sPlayerGuid = "00000000-0000-0000-0000-000000000000";	// FIXME
+		std::string sPlayerGuid = "00000000-0000-0000-0000-000000000000";	// FIXME
 		m_multiPlayer[mp].m_HighScore = FillInHighScore( m_multiPlayer[mp], *GAMESTATE->m_pMultiPlayerState[mp], "", sPlayerGuid );
 	}
 

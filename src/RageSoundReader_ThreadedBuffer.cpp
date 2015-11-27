@@ -188,7 +188,7 @@ int RageSoundReader_ThreadedBuffer::GetLength_Fast() const
 	return iRet;
 }
 
-bool RageSoundReader_ThreadedBuffer::SetProperty( const RString &sProperty, float fValue )
+bool RageSoundReader_ThreadedBuffer::SetProperty( const std::string &sProperty, float fValue )
 {
 	return m_pSource->SetProperty( sProperty, fValue );
 }

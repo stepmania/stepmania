@@ -89,14 +89,14 @@ static void MoveMap( int &sel, IPreference &opt, bool ToSel, const T *mapping, u
 {
 	if( ToSel )
 	{
-		RString sOpt = opt.ToString();
+		std::string sOpt = opt.ToString();
 		// This should really be T, but we can't FromString an enum.
 		float val;
 		FromString( sOpt, val );
 		sel = FindClosestEntry( val, mapping, cnt );
 	} else {
 		// sel -> opt
-		RString sOpt = ToString( mapping[sel] );
+		std::string sOpt = ToString( mapping[sel] );
 		opt.FromString( sOpt );
 	}
 }
@@ -168,7 +168,7 @@ static void GameChoices( vector<std::string> &out )
 	GAMEMAN->GetEnabledGames( aGames );
 	for (auto const *g: aGames)
 	{
-		RString sGameName = g->gameName;
+		std::string sGameName = g->gameName;
 		out.push_back( sGameName );
 	}
 }
@@ -202,7 +202,7 @@ static void LanguageChoices( vector<std::string> &out )
 {
 	vector<std::string> vs;
 	THEME->GetLanguages( vs );
-	SortRStringArray( vs, true );
+	SortStringArray( vs, true );
 
 	for (auto const &s: vs)
 	{
@@ -222,7 +222,7 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	vector<std::string> vs;
 	THEME->GetLanguages( vs );
-	SortRStringArray( vs, true );
+	SortStringArray( vs, true );
 
 	if( ToSel )
 	{
@@ -251,7 +251,7 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 			sel = 0;
 		}
 	} else {
-		const RString &sNewLanguage = vs[sel];
+		const std::string &sNewLanguage = vs[sel];
 
 		PREFSMAN->m_sLanguage.Set( sNewLanguage );
 		if( THEME->GetCurLanguage() != sNewLanguage )
@@ -275,7 +275,7 @@ static void DisplayResolutionChoices( vector<std::string> &out )
 
 	for (auto const &iter: d)
 	{
-		RString s = fmt::sprintf("%dx%d", iter.iWidth, iter.iHeight);
+		std::string s = fmt::sprintf("%dx%d", iter.iWidth, iter.iHeight);
 		out.push_back( s );
 	}
 }
@@ -302,7 +302,7 @@ static void RequestedTheme( int &sel, bool ToSel, const ConfOption *pConfOption 
 	}
 	else
 	{
-		const RString sNewTheme = vsThemeNames[sel];
+		const std::string sNewTheme = vsThemeNames[sel];
 		PREFSMAN->m_sTheme.Set( sNewTheme ); // OPT_APPLY_THEME will load the theme
 	}
 }
@@ -333,7 +333,7 @@ static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 	}
 	else
 	{
-		const RString sNewAnnouncer = sel? choices[sel]:RString("");
+		const std::string sNewAnnouncer = sel? choices[sel]:std::string("");
 		ANNOUNCER->SwitchAnnouncer( sNewAnnouncer );
 		PREFSMAN->m_sAnnouncer.Set( sNewAnnouncer );
 	}
@@ -923,13 +923,13 @@ int ConfOption::GetEffects() const
 	return m_iEffects | OPT_SAVE_PREFERENCES;
 }
 
-ConfOption *ConfOption::Find( RString name )
+ConfOption *ConfOption::Find( std::string name )
 {
 	InitializeConfOptions();
 	Rage::ci_ascii_string ciName{ name.c_str() };
 	for (auto &opt: g_ConfOptions)
 	{
-		RString match(opt.name);
+		std::string match(opt.name);
 		if (ciName == match)
 		{
 			return &opt;

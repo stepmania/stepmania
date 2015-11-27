@@ -50,7 +50,7 @@ class InputFilter
 {
 public:
 	void ButtonPressed( const DeviceInput &di );
-	void SetButtonComment( const DeviceInput &di, const RString &sComment = "" );
+	void SetButtonComment( const DeviceInput &di, const std::string &sComment = "" );
 	void ResetDevice( InputDevice dev );
 
 	InputFilter();
@@ -68,7 +68,7 @@ public:
 	bool IsBeingPressed( const DeviceInput &di, const DeviceInputList *pButtonState = nullptr ) const;
 	float GetSecsHeld( const DeviceInput &di, const DeviceInputList *pButtonState = nullptr ) const;
 	float GetLevel( const DeviceInput &di, const DeviceInputList *pButtonState = nullptr ) const;
-	RString GetButtonComment( const DeviceInput &di ) const;
+	std::string GetButtonComment( const DeviceInput &di ) const;
 
 	void GetInputEvents( std::vector<InputEvent> &aEventOut );
 	void GetPressedButtons( std::vector<DeviceInput> &array ) const;

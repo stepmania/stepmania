@@ -36,10 +36,10 @@ void ScreenSelect::Init()
 	}
 	// Load choices
 	// Allow lua as an alternative to metrics.
-	RString choice_names = THEME->GetMetric(m_sName,"ChoiceNames");
+	std::string choice_names = THEME->GetMetric(m_sName,"ChoiceNames");
 	if (Rage::starts_with(choice_names, "lua,"))
 	{
-		RString command = Rage::tail(choice_names, -4);
+		std::string command = Rage::tail(choice_names, -4);
 		Lua* L= LUA->Get();
 		if(LuaHelpers::RunExpression(L, command, m_sName + "::ChoiceNames"))
 		{
@@ -59,7 +59,7 @@ void ScreenSelect::Init()
 					}
 					else
 					{
-						RString com= SArg(-1);
+						std::string com= SArg(-1);
 						GameCommand mc;
 						mc.ApplyCommitsScreens(false);
 						mc.m_sName = fmt::sprintf("%zu", i);
@@ -84,7 +84,7 @@ void ScreenSelect::Init()
 
 		for( unsigned c=0; c<asChoiceNames.size(); c++ )
 		{
-			RString sChoiceName = asChoiceNames[c];
+			std::string sChoiceName = asChoiceNames[c];
 
 			GameCommand mc;
 			mc.ApplyCommitsScreens( false );

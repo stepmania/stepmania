@@ -13,7 +13,7 @@ public:
 	virtual int SetPosition( int iFrame );
 	virtual int Read( float *pBuf, int iFrames );
 	virtual RageSoundReader_SpeedChange *Copy() const { return new RageSoundReader_SpeedChange(*this); }
-	virtual bool SetProperty( const RString &sProperty, float fValue );
+	virtual bool SetProperty( const std::string &sProperty, float fValue );
 	virtual int GetNextSourceFrame() const;
 	virtual float GetStreamToSourceRatio() const;
 

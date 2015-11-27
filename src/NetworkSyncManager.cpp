@@ -20,9 +20,9 @@ using std::vector;
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld ) { useSMserver=false; isSMOnline = false; }
 NetworkSyncManager::~NetworkSyncManager () { }
 void NetworkSyncManager::CloseConnection() { }
-void NetworkSyncManager::PostStartUp( const RString& ServerIP ) { }
-bool NetworkSyncManager::Connect( const RString& addy, unsigned short port ) { return false; }
-RString NetworkSyncManager::GetServerName() { return RString(); }
+void NetworkSyncManager::PostStartUp( const std::string& ServerIP ) { }
+bool NetworkSyncManager::Connect( const std::string& addy, unsigned short port ) { return false; }
+std::string NetworkSyncManager::GetServerName() { return std::string(); }
 void NetworkSyncManager::ReportNSSOnOff( int i ) { }
 void NetworkSyncManager::ReportScore( int playerID, int step, int score, int combo, float offset ) { }
 void NetworkSyncManager::ReportSongOver() { }
@@ -31,9 +31,9 @@ void NetworkSyncManager::StartRequest( short position ) { }
 void NetworkSyncManager::DisplayStartupStatus() { }
 void NetworkSyncManager::Update( float fDeltaTime ) { }
 bool NetworkSyncManager::ChangedScoreboard( int Column ) { return false; }
-void NetworkSyncManager::SendChat( const RString& message ) { }
+void NetworkSyncManager::SendChat( const std::string& message ) { }
 void NetworkSyncManager::SelectUserSong() { }
-RString NetworkSyncManager::MD5Hex( const RString &sInput ) { return RString(); }
+std::string NetworkSyncManager::MD5Hex( const std::string &sInput ) { return std::string(); }
 int NetworkSyncManager::GetSMOnlineSalt() { return 0; }
 void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers ) { }
 unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld ) { return 0; }
@@ -116,13 +116,13 @@ void NetworkSyncManager::CloseConnection()
 	NetPlayerClient->close();
 }
 
-void NetworkSyncManager::PostStartUp( const RString& ServerIP )
+void NetworkSyncManager::PostStartUp( const std::string& ServerIP )
 {
-	RString sAddress;
+	std::string sAddress;
 	unsigned short iPort;
 
 	size_t cLoc = ServerIP.find( ':' );
-	if( ServerIP.find( ':' ) != RString::npos )
+	if( ServerIP.find( ':' ) != std::string::npos )
 	{
 		sAddress = ServerIP.substr( 0, cLoc );
 		char* cEnd;
@@ -166,7 +166,7 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 
 	m_packet.Write1( NETPROTOCOLVERSION );
 
-	m_packet.WriteNT( RString( string(PRODUCT_FAMILY) + product_version ) );
+	m_packet.WriteNT( std::string( string(PRODUCT_FAMILY) + product_version ) );
 
 	/* Block until response is received.
 	 * Move mode to blocking in order to give CPU back to the system,
@@ -208,7 +208,7 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 
 void NetworkSyncManager::StartUp()
 {
-	RString ServerIP;
+	std::string ServerIP;
 
 	if( GetCommandlineArgument( "netip", &ServerIP ) )
 		PostStartUp( ServerIP );
@@ -220,7 +220,7 @@ void NetworkSyncManager::StartUp()
 }
 
 
-bool NetworkSyncManager::Connect( const RString& addy, unsigned short port )
+bool NetworkSyncManager::Connect( const std::string& addy, unsigned short port )
 {
 	LOG->Info( "Beginning to connect" );
 
@@ -239,7 +239,7 @@ void NetworkSyncManager::ReportNSSOnOff(int i)
 	NetPlayerClient->SendPack( (char*)m_packet.Data, m_packet.Position );
 }
 
-RString NetworkSyncManager::GetServerName()
+std::string NetworkSyncManager::GetServerName()
 {
 	return m_ServerName;
 }
@@ -384,7 +384,7 @@ void NetworkSyncManager::StartRequest( short position )
 	if( GAMESTATE->m_pCurCourse != nullptr )
 		m_packet.WriteNT( GAMESTATE->m_pCurCourse->GetDisplayFullTitle() );
 	else
-		m_packet.WriteNT( RString() );
+		m_packet.WriteNT( std::string() );
 
 	//Send Player (and song) Options
 	m_packet.WriteNT( GAMESTATE->m_SongOptions.GetCurrent().GetString() );
@@ -439,7 +439,7 @@ static LocalizedString CONNECTION_SUCCESSFUL( "NetworkSyncManager", "Connection 
 static LocalizedString CONNECTION_FAILED	( "NetworkSyncManager", "Connection failed." );
 void NetworkSyncManager::DisplayStartupStatus()
 {
-	RString sMessage("");
+	std::string sMessage("");
 
 	switch (m_startupStatus)
 	{
@@ -566,7 +566,7 @@ void NetworkSyncManager::ProcessInput()
 			{	//Ease scope
 				int ColumnNumber=m_packet.Read1();
 				int NumberPlayers=m_packet.Read1();
-				RString ColumnData;
+				std::string ColumnData;
 
 				switch (ColumnNumber)
 				{
@@ -597,7 +597,7 @@ void NetworkSyncManager::ProcessInput()
 			break;
 		case NSCSU: //System message from server
 			{
-				RString SysMSG = m_packet.ReadNT();
+				std::string SysMSG = m_packet.ReadNT();
 				SCREENMAN->SystemMessage( SysMSG );
 			}
 			break;
@@ -642,7 +642,7 @@ void NetworkSyncManager::ProcessInput()
 			break;
 		case NSCSMS:
 			{
-				RString StyleName, GameName;
+				std::string StyleName, GameName;
 				GameName = m_packet.ReadNT();
 				StyleName = m_packet.ReadNT();
 
@@ -689,7 +689,7 @@ bool NetworkSyncManager::ChangedScoreboard(int Column)
 	return true;
 }
 
-void NetworkSyncManager::SendChat(const RString& message)
+void NetworkSyncManager::SendChat(const std::string& message)
 {
 	m_packet.ClearPacket();
 	m_packet.Write1( NSCCM );
@@ -787,10 +787,10 @@ uint32_t PacketFunctions::Read4()
 	return ntohl(Temp);
 }
 
-RString PacketFunctions::ReadNT()
+std::string PacketFunctions::ReadNT()
 {
 	//int Orig=Packet.Position;
-	RString TempStr;
+	std::string TempStr;
 	while ((Position<NETMAXBUFFERSIZE)&& (((char*)Data)[Position]!=0))
 		TempStr= TempStr + (char)Data[Position++];
 
@@ -826,7 +826,7 @@ void PacketFunctions::Write4(uint32_t data)
 	Position+=4;
 }
 
-void PacketFunctions::WriteNT(const RString& data)
+void PacketFunctions::WriteNT(const std::string& data)
 {
 	size_t index=0;
 	while( Position<NETMAXBUFFERSIZE && index<data.size() )
@@ -840,7 +840,7 @@ void PacketFunctions::ClearPacket()
 	Position = 0;
 }
 
-RString NetworkSyncManager::MD5Hex( const RString &sInput )
+std::string NetworkSyncManager::MD5Hex( const std::string &sInput )
 {
 	return Rage::make_upper(BinaryToHex( CryptManager::GetMD5ForString(sInput) ));
 }
@@ -859,11 +859,11 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld ) { retur
 unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 {
 	// Aldo: Using my own host by now, upload update_check/check_sm5.php to an official URL and change the following constants accordingly:
-	const RString sHost = "aldo.mx";
+	const std::string sHost = "aldo.mx";
 	const unsigned short uPort = 80;
-	const RString sResource = "/stepmania/check_sm5.php";
-	const RString sUserAgent = PRODUCT_ID;
-	const RString sReferer = "http://aldo.mx/stepmania/";
+	const std::string sResource = "/stepmania/check_sm5.php";
+	const std::string sUserAgent = PRODUCT_ID;
+	const std::string sReferer = "http://aldo.mx/stepmania/";
 
 	if( ld )
 	{
@@ -879,7 +879,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 
 	if( socket->connect(sHost, uPort) )
 	{
-		RString sHTTPRequest = fmt::sprintf(
+		std::string sHTTPRequest = fmt::sprintf(
 			"GET %s HTTP/1.1"			"\r\n"
 			"Host: %s"					"\r\n"
 			"User-Agent: %s"			"\r\n"
@@ -912,7 +912,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 				strncpy( cHeader, cBuffer, iHeaderLength );
 				cHeader[iHeaderLength] = '\0';	// needed to make it a valid C String
 
-				RString sHTTPHeader( cHeader );
+				std::string sHTTPHeader( cHeader );
 				SAFE_DELETE( cHeader );
 				sHTTPHeader = Rage::trim( sHTTPHeader );
 				//LOG->Trace( sHTTPHeader.c_str() );
@@ -921,14 +921,14 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 				split( sHTTPHeader, "\r\n", svResponse );
 
 				// Check for 200 OK
-				if( svResponse[0].find("200") != RString::npos )
+				if( svResponse[0].find("200") != std::string::npos )
 				{
 					Rage::ci_ascii_string smBuild{ "X-SM-Build" };
 					// Iterate through every field until an X-SM-Build field is found
 					for( unsigned h=1; h<svResponse.size(); h++ )
 					{
-						RString::size_type sFieldPos = svResponse[h].find(": ");
-						if( sFieldPos != RString::npos )
+						std::string::size_type sFieldPos = svResponse[h].find(": ");
+						if( sFieldPos != std::string::npos )
 						{
 							auto sFieldName = Rage::trim(Rage::head( svResponse[h], sFieldPos ));
 							auto sFieldValue = Rage::trim(svResponse[h].substr(sFieldPos+2));
@@ -940,7 +940,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 							}
 						}
 					}
-				} // if( svResponse[0].find("200") != RString::npos )
+				} // if( svResponse[0].find("200") != std::string::npos )
 			} // if( cBodyStart != nullptr )
 		} // if( iBytes )
 		SAFE_DELETE( cBuffer );
@@ -970,7 +970,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 }
 #endif
 
-static bool ConnectToServer( const RString &t )
+static bool ConnectToServer( const std::string &t )
 {
 	NSMAN->PostStartUp( t );
 	NSMAN->DisplayStartupStatus();
@@ -979,7 +979,7 @@ static bool ConnectToServer( const RString &t )
 
 extern Preference<std::string> g_sLastServer;
 
-LuaFunction( ConnectToServer, 		ConnectToServer( ( RString(SArg(1)).length()==0 ) ? RString(g_sLastServer.Get()) : RString(SArg(1) ) ) )
+LuaFunction( ConnectToServer, 		ConnectToServer( ( std::string(SArg(1)).length()==0 ) ? std::string(g_sLastServer.Get()) : std::string(SArg(1) ) ) )
 
 #endif
 

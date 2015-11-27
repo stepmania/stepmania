@@ -11,7 +11,7 @@
 #pragma comment(lib, "version.lib")
 #endif
 
-bool GetFileVersion( RString sFile, RString &sOut )
+bool GetFileVersion( std::string sFile, std::string &sOut )
 {
 	do {
 		// Cast away const to work around header bug in VC6.
@@ -20,7 +20,7 @@ bool GetFileVersion( RString sFile, RString &sOut )
 		if( !iSize )
 			break;
 
-		RString VersionBuffer( iSize, ' ' );
+		std::string VersionBuffer( iSize, ' ' );
 		// Also VC6:
 		if( !GetFileVersionInfo( const_cast<char *>(sFile.c_str()), NULL, iSize, const_cast<char *>(VersionBuffer.c_str()) ) )
 			break;
@@ -38,13 +38,13 @@ bool GetFileVersion( RString sFile, RString &sOut )
 		char *str;
 		UINT len;
 
-		RString sRes = fmt::sprintf( "\\StringFileInfo\\%04x%04x\\FileVersion",
+		std::string sRes = fmt::sprintf( "\\StringFileInfo\\%04x%04x\\FileVersion",
 			iTrans[0], iTrans[1] );
 		if( !VerQueryValue( (void *) VersionBuffer.c_str(), (char *) sRes.c_str(),
 				(void **) &str,  &len ) || len < 1)
 			break;
 
-		sOut = RString( str, len-1 );
+		sOut = std::string( str, len-1 );
 	} while(0);
 
 	// Get the size and date.
@@ -61,7 +61,7 @@ bool GetFileVersion( RString sFile, RString &sOut )
 	return true;
 }
 
-RString FindSystemFile( RString sFile )
+std::string FindSystemFile( std::string sFile )
 {
 	char szWindowsPath[MAX_PATH];
 	GetWindowsDirectory( szWindowsPath, MAX_PATH );
@@ -78,18 +78,18 @@ RString FindSystemFile( RString sFile )
 
 	for( int i = 0; szPaths[i]; ++i )
 	{
-		RString sPath = fmt::sprintf( "%s%s%s", szWindowsPath, szPaths[i], sFile.c_str() );
+		std::string sPath = fmt::sprintf( "%s%s%s", szWindowsPath, szPaths[i], sFile.c_str() );
 		struct stat buf;
 		if( !stat(sPath, &buf) )
 			return sPath;
 	}
 
-	return RString();
+	return std::string();
 }
 
 /* Get the full path of the process running in iProcessID. On error, false is
  * returned and an error message is placed in sName. */
-bool GetProcessFileName( uint32_t iProcessID, RString &sName )
+bool GetProcessFileName( uint32_t iProcessID, std::string &sName )
 {
 	/* This method works in everything except for NT4, and only uses
 	 * kernel32.lib functions. */

@@ -51,7 +51,7 @@ bool ArchHooks::AppFocusChanged()
 	return bFocusChanged;
 }
 
-bool ArchHooks::GoToURL( RString sUrl )
+bool ArchHooks::GoToURL( std::string sUrl )
 {
 	return false;
 }
@@ -61,7 +61,7 @@ ArchHooks *ArchHooks::Create()
 	return new ARCH_HOOKS;
 }
 
-RString ArchHooks::GetClipboard()
+std::string ArchHooks::GetClipboard()
 {
 	LOG->Warn("ArchHooks: GetClipboard() NOT IMPLEMENTED");
 	return "";

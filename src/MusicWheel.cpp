@@ -70,7 +70,7 @@ MusicWheelItem *MusicWheel::MakeItem()
 	return new MusicWheelItem;
 }
 
-void MusicWheel::Load( RString sType )
+void MusicWheel::Load( std::string sType )
 {
 	ROULETTE_SWITCH_SECONDS		.Load(sType,"RouletteSwitchSeconds");
 	ROULETTE_SLOW_DOWN_SWITCHES	.Load(sType,"RouletteSlowDownSwitches");
@@ -129,7 +129,7 @@ void MusicWheel::Load( RString sType )
 void MusicWheel::BeginScreen()
 {
 	RageTimer timer;
-	RString times;
+	std::string times;
 	FOREACH_ENUM( SortOrder, so ) {
 		if(m_WheelItemDatasStatus[so]!=INVALID) {
 			m_WheelItemDatasStatus[so]=NEEDREFILTER;
@@ -298,7 +298,7 @@ bool MusicWheel::SelectSongOrCourse()
 	return false;
 }
 
-bool MusicWheel::SelectSection( const RString & SectionName )
+bool MusicWheel::SelectSection( const std::string & SectionName )
 {
 	for( unsigned int i = 0; i < m_CurWheelItemData.size(); ++i )
 	{
@@ -667,14 +667,14 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 			}
 
 			// make WheelItemDatas with sections
-			RString sLastSection = "";
+			std::string sLastSection = "";
 			int iSectionColorIndex = 0;
 			for( unsigned i=0; i< arraySongs.size(); i++ )
 			{
 				Song* pSong = arraySongs[i];
 				if( bUseSections )
 				{
-					RString sThisSection = SongUtil::GetSectionNameFromSongAndSort( pSong, so );
+					std::string sThisSection = SongUtil::GetSectionNameFromSongAndSort( pSong, so );
 
 					if( sThisSection != sLastSection )
 					{
@@ -825,7 +825,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 
 			arrayWheelItemDatas.clear();	// clear out the previous wheel items
 
-			RString sLastSection = "";
+			std::string sLastSection = "";
 			int iSectionColorIndex = 0;
 			for( unsigned i=0; i<apCourses.size(); i++ )	// foreach course
 			{
@@ -835,7 +835,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 				if ( UNLOCKMAN->CourseIsLocked(pCourse) )
 					continue;
 
-				RString sThisSection = "";
+				std::string sThisSection = "";
 				if( so == SORT_ALL_COURSES )
 				{
 					switch( pCourse->GetPlayMode() )
@@ -1371,7 +1371,7 @@ void MusicWheel::StartRandom()
 	RebuildWheelItems();
 }
 
-void MusicWheel::SetOpenSection( RString group )
+void MusicWheel::SetOpenSection( std::string group )
 {
 	//LOG->Trace( "SetOpenSection %s", group.c_str() );
 	m_sExpandedSectionName = group;
@@ -1461,7 +1461,7 @@ void MusicWheel::SetOpenSection( RString group )
 }
 
 // sm-ssc additions: jump to group
-RString MusicWheel::JumpToNextGroup()
+std::string MusicWheel::JumpToNextGroup()
 {
 	// Thanks to Juanelote for this logic:
 	if( HIDE_INACTIVE_SECTIONS )
@@ -1509,7 +1509,7 @@ RString MusicWheel::JumpToNextGroup()
 	return "";
 }
 
-RString MusicWheel::JumpToPrevGroup()
+std::string MusicWheel::JumpToPrevGroup()
 {
 	if( HIDE_INACTIVE_SECTIONS )
 	{
@@ -1619,7 +1619,7 @@ Song *MusicWheel::GetPreferredSelectionForRandomOrPortal()
 		vDifficultiesToRequire.push_back( GAMESTATE->m_PreferredDifficulty[p] );
 	}
 
-	RString sPreferredGroup = m_sExpandedSectionName;
+	std::string sPreferredGroup = m_sExpandedSectionName;
 	vector<MusicWheelItemData *> &wid = getWheelItemsData(GAMESTATE->m_SortOrder);
 
 	StepsType st = GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType;

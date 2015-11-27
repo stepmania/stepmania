@@ -21,7 +21,7 @@ public:
 
 	void Load( RageTextureID ID, bool bIsBanner );
 	virtual void Load( RageTextureID ID ) { Load( ID, true ); }
-	void LoadFromCachedBanner( const RString &sPath );
+	void LoadFromCachedBanner( const std::string &sPath );
 
 	virtual void Update( float fDeltaTime );
 
@@ -31,7 +31,7 @@ public:
 	 */
 	void LoadFromSong( Song* pSong );
 	void LoadMode();
-	void LoadFromSongGroup( RString sSongGroup );
+	void LoadFromSongGroup( std::string sSongGroup );
 	void LoadFromCourse( const Course *pCourse );
 	void LoadCardFromCharacter( const Character *pCharacter );
 	void LoadIconFromCharacter( const Character *pCharacter );

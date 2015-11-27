@@ -39,9 +39,9 @@ public:
 	// There's no harm in registering when already registered.
 	void RegisterTypes();
 
-	void SetGlobal( const RString &sName, int val );
-	void SetGlobal( const RString &sName, const RString &val );
-	void UnsetGlobal( const RString &sName );
+	void SetGlobal( const std::string &sName, int val );
+	void SetGlobal( const std::string &sName, const std::string &val );
+	void UnsetGlobal( const std::string &sName );
 
 private:
 	lua_State *m_pLuaMain;
@@ -59,16 +59,16 @@ namespace LuaHelpers
 	/* Load the given script with the given name. On success, the resulting
 	 * chunk will be on the stack. On error, the error is stored in sError
 	 * and the stack is unchanged. */
-	bool LoadScript( Lua *L, const RString &sScript, const RString &sName, RString &sError );
+	bool LoadScript( Lua *L, const std::string &sScript, const std::string &sName, std::string &sError );
 
 	/* Report the error three ways:  Broadcast message, Warn, and Dialog. */
 	/* If UseAbort is true, reports the error through Dialog::AbortRetryIgnore
 		 and returns the result. */
 	/* If UseAbort is false, reports the error through Dialog::OK and returns
 		 Dialog::ok. */
-	Dialog::Result ReportScriptError(RString const& Error, RString ErrorType= "LUA_ERROR", bool UseAbort= false);
+	Dialog::Result ReportScriptError(std::string const& Error, std::string ErrorType= "LUA_ERROR", bool UseAbort= false);
 	// Just the broadcast message part, for things that need to do the rest differently.
-	void ScriptErrorMessage(RString const& Error);
+	void ScriptErrorMessage(std::string const& Error);
 	
 	/** @brief A convenience method to use when replacing uses of LOG->Warn. */
 	template<typename... Args>
@@ -90,13 +90,13 @@ namespace LuaHelpers
 
 	/* LoadScript the given script, and RunScriptOnStack it.
 	 * iArgs arguments are at the top of the stack. */
-	bool RunScript( Lua *L, const RString &Script, const RString &Name, RString &Error, int Args = 0, int ReturnValues = 0, bool ReportError = false );
+	bool RunScript( Lua *L, const std::string &Script, const std::string &Name, std::string &Error, int Args = 0, int ReturnValues = 0, bool ReportError = false );
 
 	/* Run the given expression, returning a single value, and leave the return
 	 * value on the stack.  On error, push nil. */
-	bool RunExpression( Lua *L, const RString &sExpression, const RString &sName = "" );
+	bool RunExpression( Lua *L, const std::string &sExpression, const std::string &sName = "" );
 
-	bool RunScriptFile( const RString &sFile );
+	bool RunScriptFile( const std::string &sFile );
 
 	/* Create a Lua array (a table with indices starting at 1) of the given vector,
 	 * and push it on the stack. */
@@ -114,7 +114,7 @@ namespace LuaHelpers
 
 	void rec_print_table(lua_State* L, std::string const& name, std::string const& indent);
 
-	void ParseCommandList( lua_State *L, const RString &sCommands, const RString &sName, bool bLegacy );
+	void ParseCommandList( lua_State *L, const std::string &sCommands, const std::string &sName, bool bLegacy );
 
 	XNode *GetLuaInformation();
 
@@ -171,8 +171,8 @@ namespace LuaHelpers
 class LuaThreadVariable
 {
 public:
-	LuaThreadVariable( const RString &sName, const RString &sValue );
-	LuaThreadVariable( const RString &sName, const LuaReference &Value );
+	LuaThreadVariable( const std::string &sName, const std::string &sValue );
+	LuaThreadVariable( const std::string &sName, const LuaReference &Value );
 	LuaThreadVariable( lua_State *L ); // name and value are on stack
 	~LuaThreadVariable();
 	static void GetThreadVariable( lua_State *L );
@@ -183,7 +183,7 @@ private:
 	void SetFromStack( lua_State *L );
 	int AdjustCount( lua_State *L, int iAdd );
 	static bool PushThreadTable( lua_State *L, bool bCreate );
-	static RString GetCurrentThreadIDString();
+	static std::string GetCurrentThreadIDString();
 
 	LuaReference *m_Name;
 	LuaReference *m_pOldValue;
@@ -271,7 +271,7 @@ inline bool TableContainsOnlyStrings(lua_State* L, int index)
 // SafeFArg is for places that need to get a number off the lua stack, but
 // can't risk an error being raised.  IArg and luaL_optnumber would both raise
 // an error on a type mismatch. -Kyz
-inline int SafeFArg(lua_State* L, int index, RString const& err, int def)
+inline int SafeFArg(lua_State* L, int index, std::string const& err, int def)
 {
 	if(lua_isnumber(L, index))
 	{

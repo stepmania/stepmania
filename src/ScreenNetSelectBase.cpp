@@ -108,7 +108,7 @@ bool ScreenNetSelectBase::Input( const InputEventPlus &input )
 
 		if( (c >= L' ') && (!bHoldingCtrl) )
 		{
-			m_sTextInput += WStringToRString(wstring()+c);
+			m_sTextInput += WStringToString(wstring()+c);
 			UpdateTextInput();
 		}
 
@@ -201,12 +201,12 @@ void ScreenNetSelectBase::UpdateUsers()
 }
 
 /** ColorBitmapText ***********************************************************/
-void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternateText, int iWrapWidthPixels )
+void ColorBitmapText::SetText( const std::string& _sText, const std::string& _sAlternateText, int iWrapWidthPixels )
 {
 	using std::min;
 	ASSERT( m_pFont != nullptr );
 
-	RString sNewText = StringWillUseAlternate(_sText,_sAlternateText) ? _sAlternateText : _sText;
+	std::string sNewText = StringWillUseAlternate(_sText,_sAlternateText) ? _sAlternateText : _sText;
 
 	if( iWrapWidthPixels == -1 )	// wrap not specified
 		iWrapWidthPixels = m_iWrapWidthPixels;
@@ -225,10 +225,10 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 
 	m_wTextLines.clear();
 
-	RString sCurrentLine = "";
+	std::string sCurrentLine = "";
 	int		iLineWidth = 0;
 
-	RString sCurrentWord = "";
+	std::string sCurrentWord = "";
 	int		iWordWidth = 0;
 	int		iGlyphsSoFar = 0;
 
@@ -240,7 +240,7 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 
 		if( m_sText.length() > 8 && i < m_sText.length() - 9 )
 		{
-			RString FirstThree = m_sText.substr( i, 3 );
+			std::string FirstThree = m_sText.substr( i, 3 );
 			if (Rage::ci_ascii_string{"|c0"} == FirstThree && iCharsLeft > 8)
 			{
 				ColorChange cChange;
@@ -258,7 +258,7 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 		}
 
         int iCharLength = min( Rage::utf8_get_char_len(m_sText[i]), iCharsLeft + 1 );
-		RString curCharStr = m_sText.substr( i, iCharLength );
+		std::string curCharStr = m_sText.substr( i, iCharLength );
 		wchar_t curChar = Rage::utf8_get_char( curCharStr );
 		i += iCharLength - 1;
 		int iCharWidth = m_pFont->GetLineWidthInSourcePixels( wstring() + curChar );
@@ -330,9 +330,9 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 	UpdateBaseZoom();
 }
 
-void ColorBitmapText::SimpleAddLine( const RString &sAddition, const int iWidthPixels)
+void ColorBitmapText::SimpleAddLine( const std::string &sAddition, const int iWidthPixels)
 {
-	m_wTextLines.push_back( RStringToWstring( sAddition ) );
+	m_wTextLines.push_back( StringToWstring( sAddition ) );
 	m_iLineWidths.push_back( iWidthPixels );
 }
 

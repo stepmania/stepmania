@@ -128,13 +128,13 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 #undef DO_COPY
 }
 
-static void AddPart( vector<std::string> &AddTo, float level, RString name )
+static void AddPart( vector<std::string> &AddTo, float level, std::string name )
 {
 	if( level == 0 )
 	{
 		return;
 	}
-	const RString LevelStr = (level == 1)? RString(""): fmt::sprintf( "%ld%% ", std::lrint(level*100) );
+	const std::string LevelStr = (level == 1)? std::string(""): fmt::sprintf( "%ld%% ", std::lrint(level*100) );
 
 	AddTo.push_back( LevelStr + name );
 }
@@ -148,7 +148,7 @@ std::string PlayerOptions::GetString( bool bForceNoteSkin ) const
 
 void PlayerOptions::GetMods( vector<std::string> &AddTo, bool bForceNoteSkin ) const
 {
-	//RString sReturn;
+	//std::string sReturn;
 
 	switch(m_LifeType)
 	{
@@ -178,13 +178,13 @@ void PlayerOptions::GetMods( vector<std::string> &AddTo, bool bForceNoteSkin ) c
 	{
 		if( m_fMaxScrollBPM )
 		{
-			RString s = fmt::sprintf( "m%.0f", m_fMaxScrollBPM );
+			std::string s = fmt::sprintf( "m%.0f", m_fMaxScrollBPM );
 			AddTo.push_back( s );
 		}
 		else if( m_bSetScrollSpeed || m_fScrollSpeed != 1 )
 		{
 			/* -> 1.00 */
-			RString s = fmt::sprintf( "%2.2f", m_fScrollSpeed );
+			std::string s = fmt::sprintf( "%2.2f", m_fScrollSpeed );
 			if( s[s.size()-1] == '0' )
 			{
 				/* -> 1.0 */
@@ -200,7 +200,7 @@ void PlayerOptions::GetMods( vector<std::string> &AddTo, bool bForceNoteSkin ) c
 	}
 	else
 	{
-		RString s = fmt::sprintf( "C%.0f", m_fScrollBPM );
+		std::string s = fmt::sprintf( "C%.0f", m_fScrollBPM );
 		AddTo.push_back( s );
 	}
 
@@ -323,7 +323,7 @@ void PlayerOptions::GetMods( vector<std::string> &AddTo, bool bForceNoteSkin ) c
 	// Don't display a string if using the default NoteSkin unless we force it.
 	if( bForceNoteSkin || (!m_sNoteSkin.empty() && m_sNoteSkin != CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue()) )
 	{
-		RString s = m_sNoteSkin;
+		std::string s = m_sNoteSkin;
 		Capitalize( s );
 		AddTo.push_back( s );
 	}
@@ -333,9 +333,9 @@ void PlayerOptions::GetMods( vector<std::string> &AddTo, bool bForceNoteSkin ) c
  * you don't want this. */
 void PlayerOptions::FromString( std::string const &sMultipleMods )
 {
-	RString sTemp = sMultipleMods;
+	std::string sTemp = sMultipleMods;
 	auto vs = Rage::split(sTemp, ",", Rage::EmptyEntries::skip);
-	RString sThrowAway;
+	std::string sThrowAway;
 	for (auto &s: vs)
 	{
 		if (!FromOneModString( s, sThrowAway ))
@@ -348,7 +348,7 @@ void PlayerOptions::FromString( std::string const &sMultipleMods )
 bool PlayerOptions::FromOneModString( std::string const &sOneMod, std::string &sErrorOut )
 {
 	ASSERT_M( NOTESKIN != nullptr, "The Noteskin Manager must be loaded in order to process mods." );
-	RString sBit = Rage::trim(Rage::make_lower(sOneMod));
+	std::string sBit = Rage::trim(Rage::make_lower(sOneMod));
 
 	/* "drunk"
 	 * "no drunk"
@@ -784,7 +784,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	// The noteskin name needs to be compared case-insensitively because the
 	// manager forces lowercase, but some obscure part of PlayerOptions
 	// uppercases the first letter.  The previous code that used != probably
-	// relied on RString::operator!= misbehaving. -Kyz
+	// relied on std::string::operator!= misbehaving. -Kyz
 	if (Rage::ci_ascii_string{m_sNoteSkin.c_str()} != other.m_sNoteSkin)
 	{
 		return false;
@@ -976,7 +976,7 @@ void PlayerOptions::GetLocalizedMods( vector<std::string> &AddTo ) const
 		 * characters might use modifiers that don't exist in the theme. */
 		asTokens.back() = CommonMetrics::LocalizeOptionItem( asTokens.back(), true );
 
-		RString sLocalizedMod = Rage::join( " ", asTokens );
+		std::string sLocalizedMod = Rage::join( " ", asTokens );
 		AddTo.push_back( sLocalizedMod );
 	}
 }
@@ -1181,7 +1181,7 @@ public:
 		}
 		if(original_top >= 1 && lua_isstring(L, 1))
 		{
-			RString skin= SArg(1);
+			std::string skin= SArg(1);
 			if(NOTESKIN->DoesNoteSkinExist(skin))
 			{
 				p->m_sNoteSkin = skin;
@@ -1203,7 +1203,7 @@ public:
 	static int NewSkin(T* p, lua_State* L)
 	{
 		int original_top= lua_gettop(L);
-		RString old= p->m_newskin;
+		std::string old= p->m_newskin;
 		if(lua_isstring(L, 1))
 		{
 			p->m_newskin= SArg(1);

@@ -121,7 +121,7 @@ static void Serialize( const Steps &o, Json::Value &root )
 }
 
 
-bool NotesWriterJson::WriteSong( const RString &sFile, const Song &out, bool bWriteSteps )
+bool NotesWriterJson::WriteSong( const std::string &sFile, const Song &out, bool bWriteSteps )
 {
 	Json::Value root;
 	root["SongDir"] = out.GetSongDir();
@@ -197,7 +197,7 @@ bool NotesWriterJson::WriteSong( const RString &sFile, const Song &out, bool bWr
 	return JsonUtil::WriteFile( root, sFile, false );
 }
 
-bool NotesWriterJson::WriteSteps( const RString &sFile, const Steps &out )
+bool NotesWriterJson::WriteSteps( const std::string &sFile, const Steps &out )
 {
 	Json::Value root;
 	Serialize( out, root );

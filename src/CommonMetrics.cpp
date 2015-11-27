@@ -22,7 +22,7 @@ ThemeMetricStepsTypesToShow	CommonMetrics::STEPS_TYPES_TO_SHOW		("Common","Steps
 ThemeMetric<bool>			CommonMetrics::AUTO_SET_STYLE			("Common","AutoSetStyle");
 ThemeMetric<int>			CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES	("Common","PercentScoreDecimalPlaces");
 
-ThemeMetricDifficultiesToShow::ThemeMetricDifficultiesToShow( const RString& sGroup, const RString& sName ) :
+ThemeMetricDifficultiesToShow::ThemeMetricDifficultiesToShow( const std::string& sGroup, const std::string& sName ) :
 	ThemeMetric<std::string>(sGroup,sName)
 {
 	// re-read because ThemeMetric::ThemeMetric calls ThemeMetric::Read, not the derived one
@@ -60,7 +60,7 @@ void ThemeMetricDifficultiesToShow::Read()
 const vector<Difficulty>& ThemeMetricDifficultiesToShow::GetValue() const { return m_v; }
 
 
-ThemeMetricCourseDifficultiesToShow::ThemeMetricCourseDifficultiesToShow( const RString& sGroup, const RString& sName ) :
+ThemeMetricCourseDifficultiesToShow::ThemeMetricCourseDifficultiesToShow( const std::string& sGroup, const std::string& sName ) :
 	ThemeMetric<std::string>(sGroup,sName)
 {
 	// re-read because ThemeMetric::ThemeMetric calls ThemeMetric::Read, not the derived one
@@ -97,7 +97,7 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 }
 const vector<CourseDifficulty>& ThemeMetricCourseDifficultiesToShow::GetValue() const { return m_v; }
 
-static void RemoveStepsTypes( vector<StepsType>& inout, RString sStepsTypesToRemove )
+static void RemoveStepsTypes( vector<StepsType>& inout, std::string sStepsTypesToRemove )
 {
 	auto v = Rage::split(sStepsTypesToRemove, ",");
 	if( v.size() == 0 ) return; // Nothing to do!
@@ -117,7 +117,7 @@ static void RemoveStepsTypes( vector<StepsType>& inout, RString sStepsTypesToRem
 			inout.erase( iter );
 	}
 }
-ThemeMetricStepsTypesToShow::ThemeMetricStepsTypesToShow( const RString& sGroup, const RString& sName ) :
+ThemeMetricStepsTypesToShow::ThemeMetricStepsTypesToShow( const std::string& sGroup, const std::string& sName ) :
 	ThemeMetric<std::string>(sGroup,sName)
 {
 	// re-read because ThemeMetric::ThemeMetric calls ThemeMetric::Read, not the derived one
@@ -138,7 +138,7 @@ void ThemeMetricStepsTypesToShow::Read()
 const vector<StepsType>& ThemeMetricStepsTypesToShow::GetValue() const { return m_v; }
 
 
-RString CommonMetrics::LocalizeOptionItem( const RString &s, bool bOptional )
+std::string CommonMetrics::LocalizeOptionItem( const std::string &s, bool bOptional )
 {
 	if( bOptional && !THEME->HasString("OptionNames",s) )
 		return s;

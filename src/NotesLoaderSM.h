@@ -24,7 +24,7 @@ struct SMLoader
 {
 	SMLoader() : fileExt(".sm"), songTitle() {}
 
-	SMLoader(RString ext) : fileExt(ext), songTitle() {}
+	SMLoader(std::string ext) : fileExt(ext), songTitle() {}
 
 	virtual ~SMLoader() {}
 
@@ -34,7 +34,7 @@ struct SMLoader
 	 * @param out a reference to the Song that will retrieve the song information.
 	 * @return its success or failure.
 	 */
-	virtual bool LoadFromDir( const RString &sPath, Song &out, bool load_autosave= false );
+	virtual bool LoadFromDir( const std::string &sPath, Song &out, bool load_autosave= false );
 	/**
 	 * @brief Perform some cleanup on the loaded song.
 	 * @param song a reference to the song that may need cleaning up.
@@ -46,7 +46,7 @@ struct SMLoader
 	 * @brief Retrieve the relevant notedata from the simfile.
 	 * @param path the path where the simfile lives.
 	 * @param out the Steps we are loading the data into. */
-	virtual bool LoadNoteDataFromSimfile(const RString &path, Steps &out );
+	virtual bool LoadNoteDataFromSimfile(const std::string &path, Steps &out );
 
 	/**
 	 * @brief Attempt to load the specified sm file.
@@ -55,18 +55,18 @@ struct SMLoader
 	 * @param bFromCache a check to see if we are getting certain information from the cache file.
 	 * @return its success or failure.
 	 */
-	virtual bool LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache = false );
+	virtual bool LoadFromSimfile( const std::string &sPath, Song &out, bool bFromCache = false );
 	/**
 	 * @brief Retrieve the list of .sm files.
 	 * @param sPath a const reference to the path on the hard drive to check.
 	 * @param out a vector of files found in the path.
 	 */
 	virtual void GetApplicableFiles( std::string const &sPath, std::vector<std::string> &out, bool load_autosave= false );
-	virtual bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong=nullptr );
-	virtual bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot, Song *givenSong=nullptr );
-	virtual bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong=nullptr );
+	virtual bool LoadEditFromFile( std::string sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong=nullptr );
+	virtual bool LoadEditFromBuffer( const std::string &sBuffer, const std::string &sEditFilePath, ProfileSlot slot, Song *givenSong=nullptr );
+	virtual bool LoadEditFromMsd( const MsdFile &msd, const std::string &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong=nullptr );
 	virtual bool LoadFromBGChangesString(BackgroundChange &change,
-					     const RString &sBGChangeExpression );
+					     const std::string &sBGChangeExpression );
 
 	/**
 	 * @brief Parse BPM Changes data from a string.
@@ -74,7 +74,7 @@ struct SMLoader
 	 * @param line the string in question.
 	 * @param rowsPerBeat the number of rows per beat for this purpose. */
 	void ParseBPMs(std::vector< std::pair<float, float> > &out,
-	               const RString line,
+	               const std::string line,
 	               const int rowsPerBeat = -1);
 	/**
 	 * @brief Process the BPM Segments from the string.
@@ -88,7 +88,7 @@ struct SMLoader
 	 * @param line the string in question.
 	 * @param rowsPerBeat the number of rows per beat for this purpose. */
 	void ParseStops(std::vector< std::pair<float, float> > &out,
-	                const RString line,
+	                const std::string line,
 	                const int rowsPerBeat = -1);
 	/**
 	 * @brief Process the Stop Segments from the data.
@@ -110,7 +110,7 @@ struct SMLoader
 	 * @param line the string in question.
 	 * @param rowsPerBeat the number of rows per beat for this purpose. */
 	void ProcessDelays(TimingData & out,
-			  const RString line,
+			  const std::string line,
 			  const int rowsPerBeat = -1);
 	/**
 	 * @brief Process the Time Signature Segments from the string.
@@ -118,7 +118,7 @@ struct SMLoader
 	 * @param line the string in question.
 	 * @param rowsPerBeat the number of rows per beat for this purpose. */
 	void ProcessTimeSignatures(TimingData & out,
-			   const RString line,
+			   const std::string line,
 			   const int rowsPerBeat = -1);
 	/**
 	 * @brief Process the Tickcount Segments from the string.
@@ -126,7 +126,7 @@ struct SMLoader
 	 * @param line the string in question.
 	 * @param rowsPerBeat the number of rows per beat for this purpose. */
 	void ProcessTickcounts(TimingData & out,
-				   const RString line,
+				   const std::string line,
 				   const int rowsPerBeat = -1);
 
 	/**
@@ -135,11 +135,11 @@ struct SMLoader
 	 * @param line the string in question.
 	 * @param rowsPerBeat the number of rows per beat for this purpose. */
 	virtual void ProcessSpeeds(TimingData & out,
-				   const RString line,
+				   const std::string line,
 				   const int rowsPerBeat = -1);
 
 	virtual void ProcessCombos(TimingData & /* out */,
-				   const RString line,
+				   const std::string line,
 				   const int /* rowsPerBeat */ = -1) {}
 
 	/**
@@ -148,11 +148,11 @@ struct SMLoader
 	 * @param line the string in question.
 	 * @param rowsPerBeat the number of rows per beat for this purpose. */
 	virtual void ProcessFakes(TimingData & out,
-				  const RString line,
+				  const std::string line,
 				  const int rowsPerBeat = -1);
 
-	virtual void ProcessBGChanges( Song &out, const RString &sValueName,
-			      const RString &sPath, const RString &sParam );
+	virtual void ProcessBGChanges( Song &out, const std::string &sValueName,
+			      const std::string &sPath, const std::string &sParam );
 
 	/**
 	 * @brief Put the attacks in the attacks string.
@@ -165,7 +165,7 @@ struct SMLoader
 	 * @param attacks the attacks array.
 	 * @param params the params from the simfile. */
 	void ProcessAttacks( AttackArray &attacks, MsdFile::value_t params );
-	void ProcessInstrumentTracks( Song &out, const RString &sParam );
+	void ProcessInstrumentTracks( Song &out, const std::string &sParam );
 
 	/**
 	 * @brief Convert a row value to the proper beat value.
@@ -174,7 +174,7 @@ struct SMLoader
 	 * @param line The line that contains the value.
 	 * @param rowsPerBeat the number of rows per beat according to the original file.
 	 * @return the converted beat value. */
-	float RowToBeat(RString line, const int rowsPerBeat);
+	float RowToBeat(std::string line, const int rowsPerBeat);
 
 protected:
 	/**
@@ -186,18 +186,18 @@ protected:
 	 * @param radarValues the calculated radar values.
 	 * @param noteData the note data itself.
 	 * @param out the Steps getting the data. */
-	virtual void LoadFromTokens(RString sStepsType,
-				    RString sDescription,
-				    RString sDifficulty,
-				    RString sMeter,
-				    RString sRadarValues,
-				    RString sNoteData,
+	virtual void LoadFromTokens(std::string sStepsType,
+				    std::string sDescription,
+				    std::string sDifficulty,
+				    std::string sMeter,
+				    std::string sRadarValues,
+				    std::string sNoteData,
 				    Steps &out);
 
 	/**
 	 * @brief Retrieve the file extension associated with this loader.
 	 * @return the file extension. */
-	RString GetFileExtension() const { return fileExt; }
+	std::string GetFileExtension() const { return fileExt; }
 
 public:
 	// SetSongTitle and GetSongTitle changed to public to allow the functions
@@ -205,18 +205,18 @@ public:
 	/**
 	 * @brief Set the song title.
 	 * @param t the song title. */
-	virtual void SetSongTitle(const RString & title);
+	virtual void SetSongTitle(const std::string & title);
 
 	/**
 	 * @brief Get the song title.
 	 * @return the song title. */
-	virtual RString GetSongTitle() const;
+	virtual std::string GetSongTitle() const;
 
 private:
 	/** @brief The file extension in use. */
-	const RString fileExt;
+	const std::string fileExt;
 	/** @brief The song title that is being processed. */
-	RString songTitle;
+	std::string songTitle;
 };
 
 #endif

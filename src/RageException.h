@@ -21,7 +21,7 @@ namespace RageException
 		FinishThrow(fmt::sprintf(msg, args...));
 	}
 
-	void SetCleanupHandler( void (*pHandler)(const RString &sError) );
+	void SetCleanupHandler( void (*pHandler)(const std::string &sError) );
 }
 
 #endif

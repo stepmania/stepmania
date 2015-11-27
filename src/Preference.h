@@ -42,7 +42,7 @@ private:
 	bool m_bIsStatic;	// loaded from Static.ini?  If so, don't write to Preferences.ini
 };
 
-void BroadcastPreferenceChanged( const RString& sPreferenceName );
+void BroadcastPreferenceChanged( const std::string& sPreferenceName );
 
 template <class T>
 class Preference : public IPreference

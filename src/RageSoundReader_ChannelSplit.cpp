@@ -89,7 +89,7 @@ int RageSoundReader_Split::GetSampleRate() const { return m_pImpl->m_pSource->Ge
 unsigned RageSoundReader_Split::GetNumChannels() const { return m_iNumOutputChannels; }
 int RageSoundReader_Split::GetNextSourceFrame() const { return m_iPositionFrame; }
 float RageSoundReader_Split::GetStreamToSourceRatio() const { return 1.0f; }
-RString RageSoundReader_Split::GetError() const { return m_pImpl->m_pSource->GetError(); }
+std::string RageSoundReader_Split::GetError() const { return m_pImpl->m_pSource->GetError(); }
 
 RageSoundReader_Split::RageSoundReader_Split( RageSoundSplitterImpl *pImpl )
 {
@@ -130,7 +130,7 @@ int RageSoundReader_Split::SetPosition( int iFrame )
 	return 1;
 }
 
-bool RageSoundReader_Split::SetProperty( const RString &sProperty, float fValue )
+bool RageSoundReader_Split::SetProperty( const std::string &sProperty, float fValue )
 {
 	return m_pImpl->m_pSource->SetProperty( sProperty, fValue );
 }

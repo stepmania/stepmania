@@ -89,7 +89,7 @@ void Screen::BeginScreen()
 
 	/* Screens set these when they determine their next screen dynamically. Reset them
 	 * here, so a reused screen doesn't inherit these from the last time it was used. */
-	m_sNextScreen = RString();
+	m_sNextScreen = std::string();
 
 	m_fLockInputSecs = 0;
 
@@ -238,7 +238,7 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->PopTopScreen( m_smSendOnPop );
 		else
 		{
-			RString ToScreen= (SM == SM_GoToNextScreen? GetNextScreenName():GetPrevScreen());
+			std::string ToScreen= (SM == SM_GoToNextScreen? GetNextScreenName():GetPrevScreen());
 			if(ToScreen == "")
 			{
 				LuaHelpers::ReportScriptError("Error:  Tried to go to empty screen.");
@@ -264,19 +264,19 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-RString Screen::GetNextScreenName() const
+std::string Screen::GetNextScreenName() const
 {
 	if( !m_sNextScreen.empty() )
 		return m_sNextScreen;
 	return NEXT_SCREEN;
 }
 
-void Screen::SetNextScreenName(RString const& name)
+void Screen::SetNextScreenName(std::string const& name)
 {
 	m_sNextScreen= name;
 }
 
-RString Screen::GetPrevScreen() const
+std::string Screen::GetPrevScreen() const
 {
 	if( !m_sPrevScreen.empty() )
 		return m_sPrevScreen;
@@ -363,7 +363,7 @@ bool Screen::PassInputToLua(const InputEventPlus& input)
 		}
 		callback.second.PushSelf(L);
 		lua_pushvalue(L, -2);
-		RString error= "Error running input callback: ";
+		std::string error= "Error running input callback: ";
 		LuaHelpers::RunScriptOnStack(L, error, 1, 1, true);
 		handled= lua_toboolean(L, -1);
 		lua_pop(L, 1);
@@ -441,7 +441,7 @@ public:
 
 	static int PostScreenMessage( T* p, lua_State *L )
 	{
-		RString sMessage = SArg(1);
+		std::string sMessage = SArg(1);
 		ScreenMessage SM = ScreenMessageHelpers::ToScreenMessage( sMessage );
 		p->PostScreenMessage( SM, IArg(2) );
 		COMMON_RETURN_SELF;

@@ -36,7 +36,7 @@ static void DestroyGraphicsWindowAndOpenGLContext()
 	GraphicsWindow::DestroyGraphicsWindow();
 }
 
-void *LowLevelWindow_Win32::GetProcAddress( RString s )
+void *LowLevelWindow_Win32::GetProcAddress( std::string s )
 {
 	void *pRet = (void*) wglGetProcAddress( s );
 	if( pRet != nullptr )
@@ -82,7 +82,7 @@ int ChooseWindowPixelFormat( const VideoModeParams &p, PIXELFORMATDESCRIPTOR *pi
 
 void DumpPixelFormat( const PIXELFORMATDESCRIPTOR &pfd )
 {
-	RString str = fmt::sprintf( "Mode: " );
+	std::string str = fmt::sprintf( "Mode: " );
 	bool bInvalidFormat = false;
 
 	if( pfd.dwFlags & PFD_GENERIC_FORMAT )
@@ -115,7 +115,7 @@ void DumpPixelFormat( const PIXELFORMATDESCRIPTOR &pfd )
 /* This function does not reset the video mode if it fails, because we might be trying
  * yet another video mode, so we'd just thrash the display.  On fatal error,
  * LowLevelWindow_Win32::~LowLevelWindow_Win32 will call GraphicsWindow::Shutdown(). */
-RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
+std::string LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
 	//LOG->Warn( "LowLevelWindow_Win32::TryVideoMode" );
 	
@@ -144,7 +144,7 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 
 	/* Set the display mode: switch to a fullscreen mode or revert to windowed mode. */
 	LOG->Trace("SetScreenMode ...");
-	RString sErr = GraphicsWindow::SetScreenMode( p );
+	std::string sErr = GraphicsWindow::SetScreenMode( p );
 	if( !sErr.empty() )
 		return sErr;
 
@@ -243,7 +243,7 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 			return hr_format( GetLastError(), "wglCreateContext" );
 		}
 	}
-	return RString();	// we set the video mode successfully
+	return std::string();	// we set the video mode successfully
 }
 
 bool LowLevelWindow_Win32::SupportsThreadedRendering()
@@ -266,10 +266,10 @@ void LowLevelWindow_Win32::EndConcurrentRendering()
 }
 
 static LocalizedString OPENGL_NOT_AVAILABLE( "LowLevelWindow_Win32", "OpenGL hardware acceleration is not available." );
-bool LowLevelWindow_Win32::IsSoftwareRenderer( RString &sError )
+bool LowLevelWindow_Win32::IsSoftwareRenderer( std::string &sError )
 {
-	RString sVendor = (const char*)glGetString(GL_VENDOR);
-	RString sRenderer = (const char*)glGetString(GL_RENDERER);
+	std::string sVendor = (const char*)glGetString(GL_VENDOR);
+	std::string sRenderer = (const char*)glGetString(GL_RENDERER);
 
 	LOG->Trace( "LowLevelWindow_Win32::IsSoftwareRenderer '%s', '%s'", sVendor.c_str(), sRenderer.c_str() );
 

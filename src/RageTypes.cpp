@@ -194,7 +194,7 @@ LuaXType( TextGlowMode );
 
 int LuaFunc_color( lua_State *L )
 {
-	RString sColor = SArg(1);
+	std::string sColor = SArg(1);
 	Rage::Color c;
 	c.FromString( sColor );
 	PushTable( c, L );

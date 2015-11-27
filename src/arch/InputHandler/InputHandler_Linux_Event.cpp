@@ -25,7 +25,7 @@ using std::vector;
 
 REGISTER_INPUT_HANDLER_CLASS2( LinuxEvent, Linux_Event );
 
-static RString BustypeToString( int iBus )
+static std::string BustypeToString( int iBus )
 {
 	switch( iBus )
 	{
@@ -52,7 +52,7 @@ struct EventDevice
 {
 	EventDevice();
 	~EventDevice();
-	bool Open( RString sFile, InputDevice dev );
+	bool Open( std::string sFile, InputDevice dev );
 	bool IsOpen() const { return m_iFD != -1; }
 	void Close()
 	{
@@ -62,8 +62,8 @@ struct EventDevice
 	}
 
 	int m_iFD;
-	RString m_sPath;
-	RString m_sName;
+	std::string m_sPath;
+	std::string m_sName;
 	InputDevice m_Dev;
 
 	int aiAbsMin[ABS_MAX];
@@ -97,7 +97,7 @@ EventDevice::EventDevice()
 	m_iFD = -1;
 }
 
-bool EventDevice::Open( RString sFile, InputDevice dev )
+bool EventDevice::Open( std::string sFile, InputDevice dev )
 {
 	m_sPath = sFile;
 	m_Dev = dev;
@@ -316,7 +316,7 @@ void InputHandler_Linux_Event::StopThread()
 	LOG->Trace( "Joystick thread shut down." );
 }
 
-bool InputHandler_Linux_Event::TryDevice(RString devfile)
+bool InputHandler_Linux_Event::TryDevice(std::string devfile)
 {
 	EventDevice* pDev = new EventDevice;
 	if( pDev->Open(devfile, m_NextDevice) )

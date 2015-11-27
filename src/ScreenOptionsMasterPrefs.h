@@ -12,13 +12,13 @@ static const int MAX_OPTIONS=16;
 
 struct ConfOption
 {
-	static ConfOption *Find( RString name );
+	static ConfOption *Find( std::string name );
 
 	// Name of this option.
-	RString name;
+	std::string name;
 
 	// Name of the preference this option affects.
-	RString m_sPrefName;
+	std::string m_sPrefName;
 
 	typedef void (*MoveData_t)( int &sel, bool ToSel, const ConfOption *pConfOption );
 	MoveData_t MoveData;
@@ -49,7 +49,7 @@ struct ConfOption
 #define PUSH( c )	if(!(c.empty())) names.push_back(c);
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);
 	}
-	void AddOption( const RString &sName ) { PUSH(sName); }
+	void AddOption( const std::string &sName ) { PUSH(sName); }
 #undef PUSH
 
 	ConfOption( const char *n, MoveData_t m,

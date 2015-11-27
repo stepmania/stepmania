@@ -5,7 +5,7 @@
 
 /* This is called from the crash handler; don't use RegistryAccess, since it's
  * not crash-conditions safe. */
-static LONG GetRegKey( HKEY key, RString subkey, LPTSTR retdata )
+static LONG GetRegKey( HKEY key, std::string subkey, LPTSTR retdata )
 {
 	HKEY hKey;
     LONG iRet = RegOpenKeyEx( key, subkey, 0, KEY_QUERY_VALUE, &hKey );
@@ -22,7 +22,7 @@ static LONG GetRegKey( HKEY key, RString subkey, LPTSTR retdata )
     return ERROR_SUCCESS;
 }
 
-bool GotoURL( RString sUrl )
+bool GotoURL( std::string sUrl )
 {
 	// First try ShellExecute()
 	int iRet = (int) ShellExecute( nullptr, "open", sUrl, nullptr, nullptr, SW_SHOWDEFAULT );

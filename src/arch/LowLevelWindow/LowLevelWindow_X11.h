@@ -12,10 +12,10 @@ public:
 	LowLevelWindow_X11();
 	~LowLevelWindow_X11();
 
-	void *GetProcAddress(RString s);
-	RString TryVideoMode(const VideoModeParams &p, bool &bNewDeviceOut);
+	void *GetProcAddress(std::string s);
+	std::string TryVideoMode(const VideoModeParams &p, bool &bNewDeviceOut);
 	void LogDebugInformation() const;
-	bool IsSoftwareRenderer( RString &sError );
+	bool IsSoftwareRenderer( std::string &sError );
 	void SwapBuffers();
 
 	const VideoModeParams &GetActualVideoModeParams() const { return CurrentParams; }

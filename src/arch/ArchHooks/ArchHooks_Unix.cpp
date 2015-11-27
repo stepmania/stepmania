@@ -175,9 +175,9 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 }
 #endif
 
-RString ArchHooks::GetPreferredLanguage()
+std::string ArchHooks::GetPreferredLanguage()
 {
-	RString locale;
+	std::string locale;
 
 	if(getenv("LANG"))
 	{
@@ -212,7 +212,7 @@ void ArchHooks_Unix::Init()
 #endif
 }
 
-bool ArchHooks_Unix::GoToURL( RString sUrl )
+bool ArchHooks_Unix::GoToURL( std::string sUrl )
 {
 	int status;
 	pid_t p = fork();
@@ -241,7 +241,7 @@ bool ArchHooks_Unix::GoToURL( RString sUrl )
 #define _CS_GNU_LIBC_VERSION 2
 #endif
 
-static RString LibcVersion()
+static std::string LibcVersion()
 {
 	char buf[1024] = "(error)";
 	int ret = confstr( _CS_GNU_LIBC_VERSION, buf, sizeof(buf) );
@@ -253,7 +253,7 @@ static RString LibcVersion()
 
 void ArchHooks_Unix::DumpDebugInfo()
 {
-	RString sys;
+	std::string sys;
 	int vers;
 	GetKernel( sys, vers );
 	LOG->Info( "OS: %s ver %06i", sys.c_str(), vers );
@@ -293,14 +293,14 @@ void ArchHooks_Unix::SetTime( tm newtime )
 		LOG->Trace( "'hwclock --systohc' failed" );
 }
 
-RString ArchHooks_Unix::GetClipboard()
+std::string ArchHooks_Unix::GetClipboard()
 {
 #ifdef HAVE_X11
 	using namespace X11Helper;
 	// Why isn't this defined by Xlib headers?
 	Atom XA_CLIPBOARD = XInternAtom( Dpy, "CLIPBOARD", 0);
 	Atom pstType;
-	RString ret;
+	std::string ret;
 	unsigned char *paste;
 	unsigned long remainder;
 	int ck;
@@ -355,7 +355,7 @@ RString ArchHooks_Unix::GetClipboard()
 		return "";
 	}
 
-	ret = RString( (char*) paste);
+	ret = std::string( (char*) paste);
 	XFree(paste);
 	return ret;
 #else
@@ -368,7 +368,7 @@ RString ArchHooks_Unix::GetClipboard()
 #include <sys/stat.h>
 
 static LocalizedString COULDNT_FIND_SONGS( "ArchHooks_Unix", "Couldn't find 'Songs'" );
-void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
+void ArchHooks::MountInitialFilesystems( const std::string &sDirOfExecutable )
 {
 #if defined(UNIX)
 	/* Mount the root filesystem, so we can read files in /proc, /etc, and so on.
@@ -380,7 +380,7 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", "/proc", "/proc" );
 #endif
 
-	RString Root;
+	std::string Root;
 	struct stat st;
 	if( !stat(sDirOfExecutable + "/Packages", &st) && st.st_mode&S_IFDIR )
 		Root = sDirOfExecutable;
@@ -394,7 +394,7 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", Root, "/" );
 }
 
-void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
+void ArchHooks::MountUserFilesystems( const std::string &sDirOfExecutable )
 {
 	/* Path to write general mutable user data when not Portable
 	 * Lowercase the PRODUCT_ID; dotfiles and directories are almost always lowercase.

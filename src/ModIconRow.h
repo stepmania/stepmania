@@ -15,7 +15,7 @@ public:
 	ModIconRow();
 	~ModIconRow();
 
-	void Load( const RString &sMetricsGroup, PlayerNumber pn );
+	void Load( const std::string &sMetricsGroup, PlayerNumber pn );
 
 	virtual ModIconRow *Copy() const;
 	void SetFromGameState();
@@ -26,7 +26,7 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 protected:
-	RString m_sMetricsGroup;
+	std::string m_sMetricsGroup;
 	PlayerNumber m_pn;
 
 	ThemeMetric<float>	SPACING_X;

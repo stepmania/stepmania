@@ -68,7 +68,7 @@ void ActorScroller::SetTransformFromReference( const LuaReference &ref )
 	m_exprTransformFunction.ClearCache();
 }
 
-void ActorScroller::SetTransformFromExpression( const RString &sTransformFunction )
+void ActorScroller::SetTransformFromExpression( const std::string &sTransformFunction )
 {
 	LuaReference ref;
 	ref.SetFromExpression( sTransformFunction );

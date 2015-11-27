@@ -17,7 +17,7 @@ extern "C" {
 
 using std::vector;
 
-static RString GetUSBDevicePath( int iNum )
+static std::string GetUSBDevicePath( int iNum )
 {
 	GUID guid;
 	HidD_GetHidGuid( &guid );
@@ -31,7 +31,7 @@ static RString GetUSBDevicePath( int iNum )
 		nullptr, &guid, iNum, &DeviceInterface) )
 	{
 		SetupDiDestroyDeviceInfoList( DeviceInfo );
-		return RString();
+		return std::string();
 	}
 
 	unsigned long iSize;
@@ -40,7 +40,7 @@ static RString GetUSBDevicePath( int iNum )
 	PSP_INTERFACE_DEVICE_DETAIL_DATA DeviceDetail = (PSP_INTERFACE_DEVICE_DETAIL_DATA) malloc( iSize );
 	DeviceDetail->cbSize = sizeof(SP_INTERFACE_DEVICE_DETAIL_DATA);
 
-	RString sRet;
+	std::string sRet;
 	if( SetupDiGetDeviceInterfaceDetail(DeviceInfo, &DeviceInterface,
 		DeviceDetail, iSize, &iSize, nullptr) ) 
 		sRet = DeviceDetail->DevicePath;
@@ -54,7 +54,7 @@ bool USBDevice::Open( int iVID, int iPID, int iBlockSize, int iNum, void (*pfnIn
 {
 	DWORD iIndex = 0;
 
-	RString path;
+	std::string path;
 	while( (path = GetUSBDevicePath(iIndex++)) != "" )
 	{
 		HANDLE h = CreateFile( path, GENERIC_READ,
@@ -127,7 +127,7 @@ WindowsFileIO::~WindowsFileIO()
 	delete[] m_pBuffer;
 }
 
-bool WindowsFileIO::Open( RString path, int iBlockSize )
+bool WindowsFileIO::Open( std::string path, int iBlockSize )
 {
 	LOG->Trace( "WindowsFileIO::open(%s)", path.c_str() );
 	m_iBlockSize = iBlockSize;

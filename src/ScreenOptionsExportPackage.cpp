@@ -108,7 +108,7 @@ void ScreenOptionsExportPackageSubPage::BeginScreen()
 	ScreenWithMenuElements::BeginScreen();
 
 	// Check type and fill m_vsPossibleDirsToExport
-	const RString *s_packageType = &ExportPackages::m_sPackageType;
+	const std::string *s_packageType = &ExportPackages::m_sPackageType;
 	if( *s_packageType == "Themes" )
 	{
 		// add themes
@@ -182,9 +182,9 @@ void ScreenOptionsExportPackageSubPage::BeginScreen()
 	ScreenOptions::BeginScreen();
 }
 
-static RString ReplaceInvalidFileNameChars( RString sOldFileName )
+static std::string ReplaceInvalidFileNameChars( std::string sOldFileName )
 {
-	RString sNewFileName = sOldFileName;
+	std::string sNewFileName = sOldFileName;
 	const char charsToReplace[] = {
 		' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
 		'+', '=', '[', ']', '{', '}', '|', ':', '\"', '\\',
@@ -197,11 +197,11 @@ static RString ReplaceInvalidFileNameChars( RString sOldFileName )
 	return sNewFileName;
 }
 
-static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &sErrorOut )
+static bool ExportPackage( std::string sPackageName, std::string sDirToExport, std::string &sErrorOut )
 {
 	// Mount Desktop/ for each OS.
-	RString sDesktopDir = SpecialDirs::GetDesktopDir();
-	RString fn = sDesktopDir+sPackageName;
+	std::string sDesktopDir = SpecialDirs::GetDesktopDir();
+	std::string fn = sDesktopDir+sPackageName;
 	RageFile f;
 	if( !f.Open(fn, RageFile::WRITE) )
 	{
@@ -263,10 +263,10 @@ void ScreenOptionsExportPackageSubPage::ProcessMenuStart( const InputEventPlus &
 		return;
 	}
 
-	RString sDirToExport = m_vsPossibleDirsToExport[ iCurRow ];
-	RString sPackageName = ReplaceInvalidFileNameChars( sDirToExport + ".smzip" );
+	std::string sDirToExport = m_vsPossibleDirsToExport[ iCurRow ];
+	std::string sPackageName = ReplaceInvalidFileNameChars( sDirToExport + ".smzip" );
 
-	RString sError;
+	std::string sError;
 	if( ExportPackage(sPackageName, sDirToExport, sError) )
 		ScreenPrompt::Prompt( SM_None, fmt::sprintf("Exported '%s' to the desktop", sDirToExport.c_str()) );
 	else

@@ -8,7 +8,7 @@ using std::vector;
 
 DriverList RageSoundDriver::m_pDriverList;
 
-RageSoundDriver *RageSoundDriver::Create( const RString& sDrivers )
+RageSoundDriver *RageSoundDriver::Create( const std::string& sDrivers )
 {
 	auto DriversToTry = Rage::split(sDrivers.empty() ? DEFAULT_SOUND_DRIVER_LIST : sDrivers, ",", Rage::EmptyEntries::skip);
 
@@ -24,7 +24,7 @@ RageSoundDriver *RageSoundDriver::Create( const RString& sDrivers )
 		RageSoundDriver *pRet = dynamic_cast<RageSoundDriver *>( pDriver );
 		ASSERT( pRet != nullptr );
 
-		const RString sError = pRet->Init();
+		const std::string sError = pRet->Init();
 		if( sError.empty() )
 		{
 			LOG->Info( "Sound driver: %s", Driver.c_str() );

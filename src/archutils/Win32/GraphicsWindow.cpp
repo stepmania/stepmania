@@ -18,7 +18,7 @@
 
 using std::wstring;
 
-static const RString g_sClassName = PRODUCT_ID;
+static const std::string g_sClassName = PRODUCT_ID;
 
 static HWND g_hWndMain;
 static HDC g_HDC;
@@ -35,7 +35,7 @@ static bool g_bRecreatingVideoMode = false;
 
 static UINT g_iQueryCancelAutoPlayMessage = 0;
 
-static RString GetNewWindow()
+static std::string GetNewWindow()
 {
 	HWND h = GetForegroundWindow();
 	if( h == nullptr )
@@ -44,7 +44,7 @@ static RString GetNewWindow()
 	DWORD iProcessID;
 	GetWindowThreadProcessId( h, &iProcessID );
 
-	RString sName;
+	std::string sName;
 	GetProcessFileName( iProcessID, sName );
 
 	return Rage::base_name(sName);
@@ -69,10 +69,10 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 			LOG->Trace( "WM_ACTIVATE (%i, %i): %s", bInactive, bMinimized, g_bHasFocus? "has focus":"doesn't have focus" );
 			if( !g_bHasFocus )
 			{
-				RString sName = GetNewWindow();
-				static std::set<RString> sLostFocusTo;
+				std::string sName = GetNewWindow();
+				static std::set<std::string> sLostFocusTo;
 				sLostFocusTo.insert( sName );
-				RString sStr;
+				std::string sStr;
 				for( auto it = sLostFocusTo.cbegin(); it != sLostFocusTo.cend(); ++it )
 					sStr += (sStr.size()?", ":"") + *it;
 
@@ -169,7 +169,7 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 		case WM_COPYDATA:
 		{
 			PCOPYDATASTRUCT pMyCDS = (PCOPYDATASTRUCT) lParam;
-			RString sCommandLine( (char*)pMyCDS->lpData, pMyCDS->cbData );
+			std::string sCommandLine( (char*)pMyCDS->lpData, pMyCDS->cbData );
 			CommandLineActions::CommandLineArgs args;
 			args.argv = Rage::split(sCommandLine, "|", Rage::EmptyEntries::include);
 			CommandLineActions::ToProcess.push_back( args );
@@ -221,14 +221,14 @@ static void AdjustVideoModeParams( VideoModeParams &p )
 
 /* Set the display mode to the given size, bit depth and refresh.
  * The refresh setting may be ignored. */
-RString GraphicsWindow::SetScreenMode( const VideoModeParams &p )
+std::string GraphicsWindow::SetScreenMode( const VideoModeParams &p )
 {
 	if( p.windowed )
 	{
 		// We're going windowed. If we were previously fullscreen, reset.
 		ChangeDisplaySettings( nullptr, 0 );
 
-		return RString();
+		return std::string();
 	}
 
 	DEVMODE DevMode;
@@ -258,7 +258,7 @@ RString GraphicsWindow::SetScreenMode( const VideoModeParams &p )
 		return "Couldn't set screen mode";
 
 	g_FullScreenDevMode = DevMode;
-	return RString();
+	return std::string();
 }
 
 static int GetWindowStyle( bool bWindowed )
@@ -419,7 +419,7 @@ void GraphicsWindow::Initialize( bool bD3D )
 	AppInstance inst;
 	do
 	{
-		const wstring wsClassName = RStringToWstring( g_sClassName );
+		const wstring wsClassName = std::stringToWstring( g_sClassName );
 		WNDCLASSW WindowClassW =
 		{
 			CS_OWNDC | CS_BYTEALIGNCLIENT,

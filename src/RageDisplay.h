@@ -88,8 +88,8 @@ public:
 		bool bSmoothLines_,
 		bool bTrilinearFiltering_,
 		bool bAnisotropicFiltering_,
-		RString sWindowTitle_,
-		RString sIconFile_,
+		std::string sWindowTitle_,
+		std::string sIconFile_,
 		bool PAL_,
 		float fDisplayAspectRatio_
 	):
@@ -111,8 +111,8 @@ public:
 	VideoModeParams(): windowed(false), width(0), height(0),
 		bpp(0), rate(0), vsync(false), interlaced(false),
 		bSmoothLines(false), bTrilinearFiltering(false),
-		bAnisotropicFiltering(false), sWindowTitle(RString()),
-		sIconFile(RString()), PAL(false), fDisplayAspectRatio(0.0f) {}
+		bAnisotropicFiltering(false), sWindowTitle(std::string()),
+		sIconFile(std::string()), PAL(false), fDisplayAspectRatio(0.0f) {}
 
 	bool windowed;
 	int width;
@@ -124,8 +124,8 @@ public:
 	bool bSmoothLines;
 	bool bTrilinearFiltering;
 	bool bAnisotropicFiltering;
-	RString sWindowTitle;
-	RString sIconFile;
+	std::string sWindowTitle;
+	std::string sIconFile;
 	bool PAL;
 	float fDisplayAspectRatio;
 };
@@ -178,15 +178,15 @@ public:
 	RageDisplay();
 	virtual ~RageDisplay();
 
-	virtual RString Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer ) = 0;
+	virtual std::string Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer ) = 0;
 
-	virtual RString GetApiDescription() const = 0;
+	virtual std::string GetApiDescription() const = 0;
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const = 0;
 
 	// Don't override this.  Override TryVideoMode() instead.
 	// This will set the video mode to be as close as possible to params.
 	// Return true if device was re-created and we need to reload textures.
-	RString SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures );
+	std::string SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures );
 
 	// Call this when the resolution has been changed externally:
 	virtual void ResolutionChanged();
@@ -312,9 +312,9 @@ public:
 		SAVE_LOSSY_LOW_QUAL,	// jpg
 		SAVE_LOSSY_HIGH_QUAL	// jpg
 	};
-	bool SaveScreenshot( RString sPath, GraphicsFileFormat format );
+	bool SaveScreenshot( std::string sPath, GraphicsFileFormat format );
 
-	virtual RString GetTextureDiagnostics( unsigned /* id */ ) const { return RString(); }
+	virtual std::string GetTextureDiagnostics( unsigned /* id */ ) const { return std::string(); }
 	virtual RageSurface* CreateScreenshot() = 0;	// allocates a surface.  Caller must delete it.
 	virtual RageSurface *GetTexture( unsigned /* iTexture */ ) { return nullptr; } // allocates a surface.  Caller must delete it.
 
@@ -329,10 +329,10 @@ protected:
 	virtual void DrawSymmetricQuadStripInternal( const Rage::SpriteVertex v[], int iNumVerts ) = 0;
 	virtual void DrawCircleInternal( const Rage::SpriteVertex &v, float radius );
 
-	// return RString() if mode change was successful, an error message otherwise.
+	// return std::string() if mode change was successful, an error message otherwise.
 	// bNewDeviceOut is set true if a new device was created and textures
 	// need to be reloaded.
-	virtual RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut ) = 0;
+	virtual std::string TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut ) = 0;
 
 	void DrawPolyLine( const Rage::SpriteVertex &p1, const Rage::SpriteVertex &p2, float LineWidth );
 
@@ -346,7 +346,7 @@ public:
 	int GetCumFPS() const; // average FPS since last reset
 	virtual void ResetStats();
 	virtual void ProcessStatsOnFlip();
-	virtual RString GetStats() const;
+	virtual std::string GetStats() const;
 	void StatsAddVerts( int iNumVertsRendered );
 
 	// World matrix stack functions.
