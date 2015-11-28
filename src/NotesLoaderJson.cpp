@@ -188,7 +188,7 @@ static void Deserialize(Song &out, const Json::Value &root)
 	out.m_bHasBanner = root["HasBanner"].asBool();
 	out.m_fMusicLengthSeconds = (float)root["MusicLengthSeconds"].asDouble();
 
-	RString sDisplayBPMType = root["DisplayBpmType"].asString();
+	std::string sDisplayBPMType = root["DisplayBpmType"].asString();
 	if( sDisplayBPMType == "*" )
 		out.m_DisplayBPMType = DISPLAY_BPM_RANDOM;
 	else
@@ -230,7 +230,7 @@ static void Deserialize(Song &out, const Json::Value &root)
 	}
 }
 
-bool NotesLoaderJson::LoadFromJsonFile( const RString &sPath, Song &out )
+bool NotesLoaderJson::LoadFromJsonFile( const std::string &sPath, Song &out )
 {
 	Json::Value root;
 	if( !JsonUtil::LoadFromFileShowErrors(root,sPath) )
@@ -241,7 +241,7 @@ bool NotesLoaderJson::LoadFromJsonFile( const RString &sPath, Song &out )
 	return true;
 }
 
-bool NotesLoaderJson::LoadFromDir( const RString &sPath, Song &out )
+bool NotesLoaderJson::LoadFromDir( const std::string &sPath, Song &out )
 {
 	return LoadFromJsonFile(sPath, out);
 }

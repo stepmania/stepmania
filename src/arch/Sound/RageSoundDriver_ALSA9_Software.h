@@ -12,7 +12,7 @@ class RageSoundDriver_ALSA9_Software: public RageSoundDriver
 public:
 	RageSoundDriver_ALSA9_Software();
 	~RageSoundDriver_ALSA9_Software();
-	RString Init();
+	std::string Init();
 
 	/* virtuals: */
 	int64_t GetPosition() const;

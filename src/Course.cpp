@@ -48,7 +48,7 @@ const int MAX_BOTTOM_RANGE = 10;
 
 //#define INCLUDE_BEGINNER_STEPS	THEME->GetMetricB( "Course","IncludeBeginnerSteps" );
 
-RString CourseEntry::GetTextDescription() const
+std::string CourseEntry::GetTextDescription() const
 {
 	vector<std::string> vsEntryDescription;
 	Song *pSong = songID.ToSong();
@@ -97,7 +97,7 @@ RString CourseEntry::GetTextDescription() const
 	{
 		vsEntryDescription.push_back( fmt::sprintf("Low meter: %.0f", fGainSeconds) );
 	}
-	RString s = Rage::join( ",", vsEntryDescription );
+	std::string s = Rage::join( ",", vsEntryDescription );
 	return s;
 }
 
@@ -187,7 +187,7 @@ void Course::RevertFromDisk()
 	CourseLoaderCRS::LoadFromCRSFile( m_sPath, *this );
 }
 
-RString Course::GetCacheFilePath() const
+std::string Course::GetCacheFilePath() const
 {
 	return SongCacheIndex::GetCacheFilePath( "Courses", m_sPath );
 }
@@ -254,34 +254,34 @@ struct SortTrailEntry
 	bool operator< ( const SortTrailEntry &rhs ) const { return SortMeter < rhs.SortMeter; }
 };
 
-RString Course::GetDisplayMainTitle() const
+std::string Course::GetDisplayMainTitle() const
 {
 	if( !PREFSMAN->m_bShowNativeLanguage )
 		return GetTranslitMainTitle();
 	return m_sMainTitle;
 }
 
-RString Course::GetDisplaySubTitle() const
+std::string Course::GetDisplaySubTitle() const
 {
 	if( !PREFSMAN->m_bShowNativeLanguage )
 		return GetTranslitSubTitle();
 	return m_sSubTitle;
 }
 
-RString Course::GetDisplayFullTitle() const
+std::string Course::GetDisplayFullTitle() const
 {
-	RString sTitle = GetDisplayMainTitle();
-	RString sSubTitle = GetDisplaySubTitle();
+	std::string sTitle = GetDisplayMainTitle();
+	std::string sSubTitle = GetDisplaySubTitle();
 
 	if( !sSubTitle.empty() )
 		sTitle += " " + sSubTitle;
 	return sTitle;
 }
 
-RString Course::GetTranslitFullTitle() const
+std::string Course::GetTranslitFullTitle() const
 {
-	RString sTitle = GetTranslitMainTitle();
-	RString sSubTitle = GetTranslitSubTitle();
+	std::string sTitle = GetTranslitMainTitle();
+	std::string sSubTitle = GetTranslitSubTitle();
 
 	if( !sSubTitle.empty() )
 		sTitle += " " + sSubTitle;
@@ -880,19 +880,19 @@ bool Course::CourseHasBestOrWorst() const
 	return std::any_of(m_vEntries.begin(), m_vEntries.end(), isEntryBestOrWorst);
 }
 
-RString Course::GetBannerPath() const
+std::string Course::GetBannerPath() const
 {
 	if( m_sBannerPath.empty() )
-		return RString();
+		return std::string();
 	if( m_sBannerPath[0] == '/' )
 		return m_sBannerPath;
 	return Rage::dir_name(m_sPath) + m_sBannerPath;
 }
 
-RString Course::GetBackgroundPath() const
+std::string Course::GetBackgroundPath() const
 {
 	if( m_sBackgroundPath.empty() )
-		return RString();
+		return std::string();
 	if( m_sBackgroundPath[0] == '/' )
 		return m_sBackgroundPath;
 	return Rage::dir_name(m_sPath) + m_sBackgroundPath;
@@ -1006,19 +1006,19 @@ void Course::CalculateRadarValues()
 	}
 }
 
-bool Course::Matches( RString sGroup, RString sCourse ) const
+bool Course::Matches( std::string sGroup, std::string sCourse ) const
 {
 	if (sGroup.size() && Rage::ci_ascii_string{ sGroup.c_str() } != this->m_sGroupName)
 	{
 		return false;
 	}
-	RString sFile = m_sPath;
+	std::string sFile = m_sPath;
 	Rage::ci_ascii_string course{ sCourse.c_str() };
 	if (!sFile.empty())
 	{
 		Rage::replace(sFile, '\\', '/');
 		auto bits = Rage::split(sFile, "/");
-		const RString &sLastBit = bits[bits.size() - 1];
+		const std::string &sLastBit = bits[bits.size() - 1];
 		if (course == sLastBit)
 		{
 			return true;
@@ -1121,7 +1121,7 @@ public:
 	}
 	static int GetBannerPath( T* p, lua_State *L )
 	{
-		RString s = p->GetBannerPath();
+		std::string s = p->GetBannerPath();
 		if( s.empty() )
 		{
 			return 0;
@@ -1131,7 +1131,7 @@ public:
 	}
 	static int GetBackgroundPath( T* p, lua_State *L )
 	{
-		RString s = p->GetBackgroundPath();
+		std::string s = p->GetBackgroundPath();
 		if( s.empty() )
 		{
 			return 0;

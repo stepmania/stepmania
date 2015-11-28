@@ -16,16 +16,16 @@ public:
 
 	virtual ~LowLevelWindow() { }
 
-	virtual void *GetProcAddress( RString s ) = 0;
+	virtual void *GetProcAddress( std::string s ) = 0;
 
 	// Return "" if mode change was successful, otherwise an error message.
 	// bNewDeviceOut is set true if a new device was created and textures
 	// need to be reloaded.
-	virtual RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut ) = 0;
+	virtual std::string TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut ) = 0;
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const = 0;
 
 	virtual void LogDebugInformation() const { }
-	virtual bool IsSoftwareRenderer( RString & /* sError */ ) { return false; }
+	virtual bool IsSoftwareRenderer( std::string & /* sError */ ) { return false; }
 
 	virtual void SwapBuffers() = 0;
 	virtual void Update() { }

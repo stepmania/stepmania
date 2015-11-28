@@ -558,10 +558,10 @@ void ScreenGameplay::Init()
 			++next_player_slot;
 		}
 		Enum::Push(L, GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StyleType);
-		RString err= "Error running MarginFunction:  ";
+		std::string err= "Error running MarginFunction:  ";
 		if(LuaHelpers::RunScriptOnStack(L, err, 2, 3, true))
 		{
-			RString marge= "Margin value must be a number.";
+			std::string marge= "Margin value must be a number.";
 			margins[PLAYER_1][0]= SafeFArg(L, -3, marge, 40);
 			float center= SafeFArg(L, -2, marge, 80);
 			margins[PLAYER_1][1]= center / 2.0f;
@@ -575,7 +575,7 @@ void ScreenGameplay::Init()
 	float left_edge[NUM_PLAYERS]= {0.0f, SCREEN_WIDTH / 2.0f};
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
-		RString sName = fmt::sprintf("Player%s", pi->GetName().c_str());
+		std::string sName = fmt::sprintf("Player%s", pi->GetName().c_str());
 		pi->m_pPlayer->SetName( sName );
 
 		Style const* style= GAMESTATE->GetCurrentStyle(pi->m_pn);
@@ -869,7 +869,7 @@ void ScreenGameplay::Init()
 
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
-		RString sType = PLAYER_TYPE.GetValue();
+		std::string sType = PLAYER_TYPE.GetValue();
 		if( pi->m_bIsDummy )
 			sType += "Dummy";
 		pi->m_pPlayer->Init(
@@ -1133,7 +1133,7 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 		}
 
 		{
-			RString sType;
+			std::string sType;
 			switch( GAMESTATE->m_SongOptions.GetCurrent().m_SoundEffectType )
 			{
 				case SoundEffectType_Off:	sType = "SoundEffectControl_Off";	break;
@@ -1561,7 +1561,7 @@ void ScreenGameplay::PlayTicks()
 }
 
 /* Play announcer "type" if it's been at least fSeconds since the last announcer. */
-void ScreenGameplay::PlayAnnouncer( const RString &type, float fSeconds, float *fDeltaSeconds )
+void ScreenGameplay::PlayAnnouncer( const std::string &type, float fSeconds, float *fDeltaSeconds )
 {
 	if( GAMESTATE->m_fOpponentHealthPercent == 0 )
 		return; // Shut the announcer up
@@ -2345,7 +2345,7 @@ void ScreenGameplay::SendCrossedMessages()
 						FOREACH_EnabledPlayerNumberInfo(m_vPlayerInfo, pi)
 						{
 							const Style *pStyle = GAMESTATE->GetCurrentStyle(pi->m_pn);
-							RString sButton = pStyle->ColToButtonName( t );
+							std::string sButton = pStyle->ColToButtonName( t );
 							Message msg( i == 0 ? "NoteCrossed" : "NoteWillCross" );
 							msg.SetParam( "ButtonName", sButton );
 							msg.SetParam( "NumMessagesFromCrossed", i );
@@ -2356,7 +2356,7 @@ void ScreenGameplay::SendCrossedMessages()
 					else
 					{
 						const Style *pStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
-						RString sButton = pStyle->ColToButtonName( t );
+						std::string sButton = pStyle->ColToButtonName( t );
 						Message msg( i == 0 ? "NoteCrossed" : "NoteWillCross" );
 						msg.SetParam( "ButtonName", sButton );
 						msg.SetParam( "NumMessagesFromCrossed", i );
@@ -2368,7 +2368,7 @@ void ScreenGameplay::SendCrossedMessages()
 					MESSAGEMAN->Broadcast( (MessageID)(Message_NoteCrossed + i) );
 				if( i == 0  &&  iNumTracksWithTapOrHoldHead >= 2 )
 				{
-					RString sMessageName = "NoteCrossedJump";
+					std::string sMessageName = "NoteCrossedJump";
 					MESSAGEMAN->Broadcast( sMessageName );
 				}
 			}
@@ -2646,6 +2646,17 @@ void ScreenGameplay::SaveStats()
 		pss.m_radarActual += rv;
 		GAMESTATE->SetProcessedTimingData(nullptr);
 	}
+}
+
+void ScreenGameplay::FinishTrickLevel(int level, RageSound &sound)
+{
+	PlayAnnouncer( fmt::sprintf("gameplay battle trick level%d",level), 3 );
+	sound.Play(false);
+}
+
+void ScreenGameplay::FinishDamageLevel(int level)
+{
+	PlayAnnouncer( fmt::sprintf("gameplay battle damage level%d",level), 3 );
 }
 
 void ScreenGameplay::SongFinished()
@@ -2967,7 +2978,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	else if( ScreenMessageHelpers::ScreenMessageToString(SM).find("0Combo") != string::npos )
 	{
 		int iCombo;
-		RString sCropped = ScreenMessageHelpers::ScreenMessageToString(SM).substr(3);
+		std::string sCropped = ScreenMessageHelpers::ScreenMessageToString(SM).substr(3);
 		sscanf(sCropped.c_str(),"%d%*s",&iCombo);
 		PlayAnnouncer( fmt::sprintf("gameplay %d combo",iCombo), 2 );
 	}
@@ -2979,18 +2990,30 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	{
 		PlayAnnouncer( "gameplay combo overflow", 2 );
 	}
-	else if( SM >= SM_BattleTrickLevel1 && SM <= SM_BattleTrickLevel3 )
+	else if (SM == SM_BattleTrickLevel1)
 	{
-		int iTrickLevel = SM-SM_BattleTrickLevel1+1;
-		PlayAnnouncer( fmt::sprintf("gameplay battle trick level%d",iTrickLevel), 3 );
-		if( SM == SM_BattleTrickLevel1 ) m_soundBattleTrickLevel1.Play(false);
-		else if( SM == SM_BattleTrickLevel2 ) m_soundBattleTrickLevel2.Play(false);
-		else if( SM == SM_BattleTrickLevel3 ) m_soundBattleTrickLevel3.Play(false);
+		// TODO: Better understand HOW ScreenMessages could be converted implicitly to integers.
+		FinishTrickLevel(1, m_soundBattleTrickLevel1);
 	}
-	else if( SM >= SM_BattleDamageLevel1 && SM <= SM_BattleDamageLevel3 )
+	else if (SM == SM_BattleTrickLevel2)
 	{
-		int iDamageLevel = SM-SM_BattleDamageLevel1+1;
-		PlayAnnouncer( fmt::sprintf("gameplay battle damage level%d",iDamageLevel), 3 );
+		FinishTrickLevel(2, m_soundBattleTrickLevel2);
+	}
+	else if (SM == SM_BattleTrickLevel3)
+	{
+		FinishTrickLevel(3, m_soundBattleTrickLevel3);
+	}
+	else if (SM == SM_BattleDamageLevel1)
+	{
+		FinishDamageLevel(1);
+	}
+	else if (SM == SM_BattleDamageLevel2)
+	{
+		FinishDamageLevel(2);
+	}
+	else if (SM == SM_BattleDamageLevel3)
+	{
+		FinishDamageLevel(3);
 	}
 	else if( SM == SM_DoPrevScreen )
 	{
@@ -3209,7 +3232,7 @@ void ScreenGameplay::SaveReplay()
 				break;
 			}
 
-			RString sFileName = fmt::sprintf( "replay%05d.xml", iIndex );
+			std::string sFileName = fmt::sprintf( "replay%05d.xml", iIndex );
 
 			XmlFileUtil::SaveToFile( p, "Save/Replays/"+sFileName );
 			SAFE_DELETE( p );

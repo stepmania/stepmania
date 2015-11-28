@@ -22,7 +22,7 @@ protected:
 	virtual void ProcessMenuStart( const InputEventPlus &input );
 
 	int GetLocalProfileIndexWithFocus() const;
-	RString GetLocalProfileIDWithFocus() const;
+	std::string GetLocalProfileIDWithFocus() const;
 
 	std::vector<std::string> m_vsLocalProfileID;
 };

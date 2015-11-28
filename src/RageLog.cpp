@@ -54,7 +54,7 @@ RageLog* LOG;		// global and accessible from anywhere in the program
  *
  * The identifier is never displayed, so we can use a simple local object to
  * map/unmap, using any mechanism to generate unique IDs. */
-static std::map<RString, RString> LogMaps;
+static std::map<std::string, std::string> LogMaps;
 
 #define LOG_PATH	"/Logs/log.txt"
 #define INFO_PATH	"/Logs/info.txt"
@@ -87,7 +87,7 @@ m_bUserLogToDisk(false), m_bFlush(false), m_bShowLogOutput(false)
 RageLog::~RageLog()
 {
 	/* Add the mapped log data to info.txt. */
-	const RString AdditionalLog = GetAdditionalLog();
+	const std::string AdditionalLog = GetAdditionalLog();
 	auto AdditionalLogLines = Rage::split(AdditionalLog, "\n");
 	for (auto &line: AdditionalLogLines)
 	{
@@ -200,8 +200,8 @@ void RageLog::Write( WriteDest where, std::string const &line )
 		puts( sWarningSeparator );
 	}
 
-	RString sTimestamp = SecondsToMMSSMsMsMs( RageTimer::GetTimeSinceStart() ) + ": ";
-	RString sWarning;
+	std::string sTimestamp = SecondsToMMSSMsMsMs( RageTimer::GetTimeSinceStart() ) + ": ";
+	std::string sWarning;
 	if( containsLoud )
 		sWarning = "WARNING: ";
 
@@ -270,7 +270,7 @@ void RageLog::Flush()
 
 static char staticlog[1024*32]="";
 static unsigned staticlog_size = 0;
-void RageLog::AddToInfo( const RString &str )
+void RageLog::AddToInfo( const std::string &str )
 {
 	using std::min;
 	static bool limit_reached = false;
@@ -280,7 +280,7 @@ void RageLog::AddToInfo( const RString &str )
 	unsigned len = str.size() + strlen( NEWLINE );
 	if( staticlog_size + len > sizeof(staticlog) )
 	{
-		const RString txt( NEWLINE "Staticlog limit reached" NEWLINE );
+		const std::string txt( NEWLINE "Staticlog limit reached" NEWLINE );
 		unsigned txtSize = static_cast<unsigned>(sizeof(staticlog) - txt.size());
 		unsigned const pos = min( staticlog_size, txtSize );
 		memcpy( staticlog + pos, txt.data(), txt.size() );
@@ -303,7 +303,7 @@ const char *RageLog::GetInfo()
 static const int BACKLOG_LINES = 10;
 static char backlog[BACKLOG_LINES][1024];
 static int backlog_start=0, backlog_cnt=0;
-void RageLog::AddToRecentLogs( const RString &str )
+void RageLog::AddToRecentLogs( const std::string &str )
 {
 	unsigned len = str.size();
 	if( len > sizeof(backlog[backlog_start])-1 )
@@ -341,7 +341,7 @@ static int g_AdditionalLogSize = 0;
 void RageLog::UpdateMappedLog()
 {
 	using std::min;
-	RString str;
+	std::string str;
 	for (auto const &i: LogMaps)
 	{
 		str += fmt::sprintf( "%s" NEWLINE, i.second.c_str() );
@@ -359,13 +359,13 @@ const char *RageLog::GetAdditionalLog()
 	return g_AdditionalLogStr;
 }
 
-void RageLog::StoreMapLog(RString const &key, std::string const &result)
+void RageLog::StoreMapLog(std::string const &key, std::string const &result)
 {
 	LogMaps[key] = result;
 	UpdateMappedLog();
 }
 
-void RageLog::UnmapLog( const RString &key )
+void RageLog::UnmapLog( const std::string &key )
 {
 	LogMaps.erase( key );
 	UpdateMappedLog();

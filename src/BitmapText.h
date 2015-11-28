@@ -54,9 +54,9 @@ public:
 	virtual void StopTweening();
 	virtual void FinishTweening();
 
-	bool LoadFromFont( const RString& sFontName );
-	bool LoadFromTextureAndChars( const RString& sTexturePath, const RString& sChars );
-	virtual void SetText( const RString& sText, const RString& sAlternateText = "", int iWrapWidthPixels = -1 );
+	bool LoadFromFont( const std::string& sFontName );
+	bool LoadFromTextureAndChars( const std::string& sTexturePath, const std::string& sChars );
+	virtual void SetText( const std::string& sText, const std::string& sAlternateText = "", int iWrapWidthPixels = -1 );
 	void SetVertSpacing( int iSpacing );
 	void SetMaxWidth( float fMaxWidth );
 	void SetMaxHeight( float fMaxHeight );
@@ -88,9 +88,9 @@ public:
 	void GetLines( std::vector<std::wstring> &wTextLines ) const { wTextLines = m_wTextLines; }
 	const std::vector<std::wstring> &GetLines() const { return m_wTextLines; }
 
-	RString GetText() const { return m_sText; }
+	std::string GetText() const { return m_sText; }
 	// Return true if the string 's' will use an alternate string, if available.
-	bool StringWillUseAlternate( const RString& sText, const RString& sAlternateText ) const;
+	bool StringWillUseAlternate( const std::string& sText, const std::string& sAlternateText ) const;
 
 	struct Attribute
 	{
@@ -119,7 +119,7 @@ public:
 protected:
 	Font		*m_pFont;
 	bool		m_bUppercase;
-	RString		m_sText;
+	std::string		m_sText;
 	std::vector<std::wstring>		m_wTextLines;
 	std::vector<int>		m_iLineWidths;	// in source pixels
 	int			m_iWrapWidthPixels;		// -1 = no wrap

@@ -173,11 +173,11 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 
 void GameCommand::LoadOne( const Command& cmd )
 {
-	RString sName = cmd.GetName();
+	std::string sName = cmd.GetName();
 	if( sName.empty() )
 		return;
 
-	RString sValue;
+	std::string sValue;
 	for( unsigned i = 1; i < cmd.m_vsArgs.size(); ++i )
 	{
 		if( i > 1 )
@@ -293,7 +293,7 @@ void GameCommand::LoadOne( const Command& cmd )
 
 	else if( sName == "steps" )
 	{
-		RString sSteps = sValue;
+		std::string sSteps = sValue;
 
 		// This must be processed after "song" and "style" commands.
 		if( !m_bInvalid )
@@ -331,7 +331,7 @@ void GameCommand::LoadOne( const Command& cmd )
 
 	else if( sName == "trail" )
 	{
-		RString sTrail = sValue;
+		std::string sTrail = sValue;
 
 		// This must be processed after "course" and "style" commands.
 		if( !m_bInvalid )
@@ -558,7 +558,7 @@ static bool AreStyleAndPlayModeCompatible( const Style *style, PlayMode pm )
 	}
 }
 
-bool GameCommand::IsPlayable( RString *why ) const
+bool GameCommand::IsPlayable( std::string *why ) const
 {
 	if( m_bInvalid )
 	{
@@ -789,7 +789,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			ASSERT( !lua_isnil(L, -1) );
 
 			lua_pushnumber( L, pn ); // 1st parameter
-			RString error= "Lua GameCommand error: ";
+			std::string error= "Lua GameCommand error: ";
 			LuaHelpers::RunScriptOnStack(L, error, 1, 0, true);
 		}
 		LUA->Release(L);

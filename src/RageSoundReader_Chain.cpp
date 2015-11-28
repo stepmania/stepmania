@@ -63,7 +63,7 @@ void RageSoundReader_Chain::AddSound( int iIndex, float fOffsetSecs, float fPan 
 	m_aSounds.push_back( s );
 }
 
-int RageSoundReader_Chain::LoadSound( RString sPath )
+int RageSoundReader_Chain::LoadSound( std::string sPath )
 {
 	sPath = Rage::make_lower(sPath);
 	
@@ -82,7 +82,7 @@ int RageSoundReader_Chain::LoadSound( RString sPath )
 		FAIL_M( sPath );
 	}
 
-	RString sError;
+	std::string sError;
 	bool bPrebuffer;
 	RageSoundReader *pReader = RageSoundReader_FileReader::OpenFile( sPath, sError, &bPrebuffer );
 	if( pReader == nullptr )
@@ -256,7 +256,7 @@ void RageSoundReader_Chain::ReleaseSound( Sound *s )
 	m_apActiveSounds.erase( it );
 }
 
-bool RageSoundReader_Chain::SetProperty( const RString &sProperty, float fValue )
+bool RageSoundReader_Chain::SetProperty( const std::string &sProperty, float fValue )
 {
 	bool bRet = false;
 	// TODO: See if std::any_of works with the side effect call.

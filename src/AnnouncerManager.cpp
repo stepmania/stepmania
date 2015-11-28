@@ -9,8 +9,8 @@ using std::vector;
 
 AnnouncerManager*	ANNOUNCER = nullptr; // global and accessible from anywhere in our program
 
-const RString EMPTY_ANNOUNCER_NAME = "Empty";
-const RString ANNOUNCERS_DIR  = "Announcers/";
+const std::string EMPTY_ANNOUNCER_NAME = "Empty";
+const std::string ANNOUNCERS_DIR  = "Announcers/";
 
 AnnouncerManager::AnnouncerManager()
 {
@@ -48,7 +48,7 @@ void AnnouncerManager::GetAnnouncerNames( vector<std::string>& AddTo )
 	}
 }
 
-bool AnnouncerManager::DoesAnnouncerExist( RString sAnnouncerName )
+bool AnnouncerManager::DoesAnnouncerExist( std::string sAnnouncerName )
 {
 	if( sAnnouncerName == "" )
 	{
@@ -65,12 +65,12 @@ bool AnnouncerManager::DoesAnnouncerExist( RString sAnnouncerName )
 	return std::any_of(asAnnouncerNames.begin(), asAnnouncerNames.end(), doesExist);
 }
 
-RString AnnouncerManager::GetAnnouncerDirFromName( RString sAnnouncerName )
+std::string AnnouncerManager::GetAnnouncerDirFromName( std::string sAnnouncerName )
 {
 	return ANNOUNCERS_DIR + sAnnouncerName + "/";
 }
 
-void AnnouncerManager::SwitchAnnouncer( RString sNewAnnouncerName )
+void AnnouncerManager::SwitchAnnouncer( std::string sNewAnnouncerName )
 {
 	if( !DoesAnnouncerExist(sNewAnnouncerName) )
 		m_sCurAnnouncerName = "";
@@ -118,12 +118,12 @@ static const char *aliases[][2] = {
  * then all aliases above.  Ignore directories that are empty, since we might
  * have "select difficulty intro" with sounds and an empty "ScreenSelectDifficulty
  * intro". */
-RString AnnouncerManager::GetPathTo( RString sAnnouncerName, RString sFolderName )
+std::string AnnouncerManager::GetPathTo( std::string sAnnouncerName, std::string sFolderName )
 {
 	if(sAnnouncerName == "")
-		return RString(); /* announcer disabled */
+		return std::string(); /* announcer disabled */
 
-	const RString AnnouncerPath = GetAnnouncerDirFromName(sAnnouncerName);
+	const std::string AnnouncerPath = GetAnnouncerDirFromName(sAnnouncerName);
 
 	if( !DirectoryIsEmpty(AnnouncerPath+sFolderName+"/") )
 		return AnnouncerPath+sFolderName+"/";
@@ -151,15 +151,15 @@ RString AnnouncerManager::GetPathTo( RString sAnnouncerName, RString sFolderName
 	temp.Open( AnnouncerPath+sFolderName + "/announcer files go here.txt", RageFile::WRITE );
 #endif
 
-	return RString();
+	return std::string();
 }
 
-RString AnnouncerManager::GetPathTo( RString sFolderName )
+std::string AnnouncerManager::GetPathTo( std::string sFolderName )
 {
 	return GetPathTo(m_sCurAnnouncerName, sFolderName);
 }
 
-bool AnnouncerManager::HasSoundsFor( RString sFolderName )
+bool AnnouncerManager::HasSoundsFor( std::string sFolderName )
 {
 	return !DirectoryIsEmpty( GetPathTo(sFolderName) );
 }
@@ -213,7 +213,7 @@ public:
 	}
 	static int GetCurrentAnnouncer( T* p, lua_State *L )
 	{
-		RString s = p->GetCurAnnouncerName();
+		std::string s = p->GetCurAnnouncerName();
 		if( s.empty() )
 		{
 			lua_pushnil(L);
@@ -226,7 +226,7 @@ public:
 	}
 	static int SetCurrentAnnouncer( T* p, lua_State *L )
 	{
-		RString s = SArg(1);
+		std::string s = SArg(1);
 		// only bother switching if the announcer exists. -aj
 		if(p->DoesAnnouncerExist(s))
 			p->SwitchAnnouncer(s);

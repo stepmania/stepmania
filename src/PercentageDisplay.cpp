@@ -85,7 +85,7 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 	Refresh();
 }
 
-void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats, const RString &sMetricsGroup, bool bAutoRefresh )
+void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats, const std::string &sMetricsGroup, bool bAutoRefresh )
 {
 	m_pPlayerState = pPlayerState;
 	m_pPlayerStageStats = pPlayerStageStats;
@@ -151,7 +151,7 @@ void PercentageDisplay::Refresh()
 	m_Last = iActualDancePoints;
 	m_LastMax = iCurPossibleDancePoints;
 
-	RString sNumToDisplay;
+	std::string sNumToDisplay;
 
 	if( ShowDancePointsNotPercentage() )
 	{
@@ -178,7 +178,7 @@ void PercentageDisplay::Refresh()
 				Lua *L = LUA->Get();
 				m_FormatPercentScore.PushSelf( L );
 				LuaHelpers::Push( L, fPercentDancePoints );
-				RString Error= "Error running FormatPercentScore: ";
+				std::string Error= "Error running FormatPercentScore: ";
 				LuaHelpers::RunScriptOnStack(L, Error, 1, 1, true); // 1 arg, 1 result
 				LuaHelpers::Pop( L, sNumToDisplay );
 				LUA->Release(L);

@@ -36,7 +36,7 @@ unsigned RageSoundReader_Pan::GetNumChannels() const
 	return max( 2u, RageSoundReader_Filter::GetNumChannels() );
 }
 
-bool RageSoundReader_Pan::SetProperty( const RString &sProperty, float fValue )
+bool RageSoundReader_Pan::SetProperty( const std::string &sProperty, float fValue )
 {
 	if( sProperty == "Pan" )
 	{

@@ -31,11 +31,11 @@ using std::vector;
 
 SongCacheIndex *SONGINDEX; // global and accessible from anywhere in our program
 
-RString SongCacheIndex::GetCacheFilePath( const RString &sGroup, const RString &sPath )
+std::string SongCacheIndex::GetCacheFilePath( const std::string &sGroup, const std::string &sPath )
 {
 	/* Don't use GetHashForFile, since we don't want to spend time
 	 * checking the file size and date. */
-	RString s;
+	std::string s;
 
 	if( sPath.size() > 2 && sPath[0] == '/' && sPath[sPath.size()-1] == '/' )
 		s.assign( sPath, 1, sPath.size() - 2 );
@@ -49,7 +49,7 @@ RString SongCacheIndex::GetCacheFilePath( const RString &sGroup, const RString &
 	 * so we should probably replace them with combining diacritics.
 	 * XXX How do we do this and is it even worth it? */
 	const char *invalid = "/\xc0\xc1\xfe\xff\xf8\xf9\xfa\xfb\xfc\xfd\xf5\xf6\xf7";
-	for( size_t pos = s.find_first_of(invalid); pos != RString::npos; pos = s.find_first_of(invalid, pos) )
+	for( size_t pos = s.find_first_of(invalid); pos != std::string::npos; pos = s.find_first_of(invalid, pos) )
 		s[pos] = '_';
 	// CACHE_DIR ends with a /.
 	return fmt::sprintf( "%s%s/%s", SpecialFiles::CACHE_DIR.c_str(), sGroup.c_str(), s.c_str() );
@@ -70,7 +70,7 @@ void SongCacheIndex::ReadFromDisk()
 	ReadCacheIndex();
 }
 
-static void EmptyDir( RString dir )
+static void EmptyDir( std::string dir )
 {
 	ASSERT(dir[dir.size()-1] == '/');
 
@@ -115,7 +115,7 @@ void SongCacheIndex::SaveCacheIndex()
 	CacheIndex.WriteFile(CACHE_INDEX);
 }
 
-void SongCacheIndex::AddCacheIndex(const RString &path, unsigned hash)
+void SongCacheIndex::AddCacheIndex(const std::string &path, unsigned hash)
 {
 	if( hash == 0 )
 		++hash; /* no 0 hash values */
@@ -127,7 +127,7 @@ void SongCacheIndex::AddCacheIndex(const RString &path, unsigned hash)
 	}
 }
 
-unsigned SongCacheIndex::GetCacheHash( const RString &path ) const
+unsigned SongCacheIndex::GetCacheHash( const std::string &path ) const
 {
 	unsigned iDirHash = 0;
 	if( !CacheIndex.GetValue( "Cache", MangleName(path), iDirHash ) )
@@ -137,10 +137,10 @@ unsigned SongCacheIndex::GetCacheHash( const RString &path ) const
 	return iDirHash;
 }
 
-RString SongCacheIndex::MangleName( const RString &Name )
+std::string SongCacheIndex::MangleName( const std::string &Name )
 {
 	/* We store paths in an INI.  We can't store '='. */
-	RString ret = Name;
+	std::string ret = Name;
 	Rage::replace(ret, "=", "");
 	return ret;
 }

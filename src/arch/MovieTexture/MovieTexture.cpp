@@ -10,7 +10,7 @@
 
 using std::vector;
 
-void ForceToAscii( RString &str )
+void ForceToAscii( std::string &str )
 {
 	for (auto &ch: str)
 	{
@@ -21,9 +21,9 @@ void ForceToAscii( RString &str )
 	}
 }
 
-bool RageMovieTexture::GetFourCC( RString fn, RString &handler, RString &type )
+bool RageMovieTexture::GetFourCC( std::string fn, std::string &handler, std::string &type )
 {
-	RString ignore, ext;
+	std::string ignore, ext;
 	splitpath( fn, ignore, ignore, ext);
 	Rage::ci_ascii_string ciExt{ ext.c_str() };
 	if (ciExt == ".mpg" || ciExt == ".mpeg" || ciExt == ".mpv" || ciExt == ".mpe")
@@ -68,9 +68,9 @@ bool RageMovieTexture::GetFourCC( RString fn, RString &handler, RString &type )
 DriverList RageMovieTextureDriver::m_pDriverList;
 
 // Helper for MakeRageMovieTexture()
-static void DumpAVIDebugInfo( const RString& fn )
+static void DumpAVIDebugInfo( const std::string& fn )
 {
-	RString type, handler;
+	std::string type, handler;
 	if( !RageMovieTexture::GetFourCC( fn, handler, type ) )
 		return;
 
@@ -85,7 +85,7 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 {
 	DumpAVIDebugInfo( ID.filename );
 
-	RString sDrivers = g_sMovieDrivers.Get();
+	std::string sDrivers = g_sMovieDrivers.Get();
 	if( sDrivers.empty() )
 	{
 		sDrivers = DEFAULT_MOVIE_DRIVER_LIST;
@@ -112,7 +112,7 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 		RageMovieTextureDriver *pDriver = dynamic_cast<RageMovieTextureDriver *>( pDriverBase );
 		ASSERT( pDriver != nullptr );
 
-		RString sError;
+		std::string sError;
 		ret = pDriver->Create( ID, sError );
 		delete pDriver;
 

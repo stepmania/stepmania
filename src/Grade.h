@@ -46,7 +46,7 @@ enum Grade
  * @param g the grade to convert.
  * @return the string reprsentation.
  */
-static inline RString GradeToString( Grade g )
+static inline std::string GradeToString( Grade g )
 {
 	ASSERT_M( (g >= 0 && g<NUM_Grade) || g == Grade_NoData, fmt::sprintf("grade = %d",g) );
 
@@ -66,14 +66,14 @@ static inline RString GradeToString( Grade g )
  * This is only referenced in ScreenEvaluation at the moment.
  * @param g the current Grade.
  * @return the old styled grade string. */
-RString GradeToOldString( Grade g );
-RString GradeToLocalizedString( Grade g );
+std::string GradeToOldString( Grade g );
+std::string GradeToLocalizedString( Grade g );
 /**
- * @brief Convert the given RString into a proper Grade.
+ * @brief Convert the given std::string into a proper Grade.
  * @param s the string to convert.
  * @return the expected Grade.
  */
-Grade StringToGrade( const RString &s );
+Grade StringToGrade( const std::string &s );
 LuaDeclareType( Grade );
 extern ThemeMetric<int> NUM_GRADE_TIERS_USED;
 #define NUM_POSSIBLE_GRADES	(NUM_GRADE_TIERS_USED+1)

@@ -12,7 +12,7 @@ public:
 
 	virtual RollingNumbers *Copy() const;
 
-	void Load(const RString& metrics_group);
+	void Load(const std::string& metrics_group);
 	virtual void UpdateInternal(float fDeltaTime);
 
 	/** 
@@ -25,10 +25,10 @@ public:
 	// Commands
 	virtual void PushSelf( lua_State *L );
 
-	RString m_text_format;
+	std::string m_text_format;
 	float m_approach_seconds;
 	bool m_commify;
-	RString m_leading_glyph;
+	std::string m_leading_glyph;
 	int m_chars_wide;
 	BitmapText::Attribute m_leading_text_attr;
 	BitmapText::Attribute m_number_text_attr;

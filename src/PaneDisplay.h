@@ -38,7 +38,7 @@ class PaneDisplay: public ActorFrame
 public:
 	virtual PaneDisplay *Copy() const;
 
-	void Load( const RString &sMetricsGroup, PlayerNumber pn );
+	void Load( const std::string &sMetricsGroup, PlayerNumber pn );
 	void SetFromGameState();
 
 	void LoadFromNode( const XNode *pNode );
@@ -47,7 +47,7 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
-	void GetPaneTextAndLevel( PaneCategory c, RString & sTextOut, float & fLevelOut );
+	void GetPaneTextAndLevel( PaneCategory c, std::string & sTextOut, float & fLevelOut );
 	void SetContent( PaneCategory c );
 
 	BitmapText		m_textContents[NUM_PaneCategory];

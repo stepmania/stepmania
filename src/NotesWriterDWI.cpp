@@ -13,7 +13,7 @@
 
 using std::vector;
 
-RString OptimizeDWIString( RString holds, RString taps );
+std::string OptimizeDWIString( std::string holds, std::string taps );
 
 /**
  * @brief Optimize an individual pair of characters whenever possible.
@@ -60,7 +60,7 @@ static char OptimizeDWIPair( char c1, char c2 )
  * @param holds the holds in the file.
  * @param taps the taps in the file.
  * @return the optimized string. */
-RString OptimizeDWIString( RString holds, RString taps )
+std::string OptimizeDWIString( std::string holds, std::string taps )
 {
 	/* First, sort the holds and taps in ASCII order.  This puts 2468 first.
 	 * This way 1379 combinations will always be found first, so we'll always
@@ -69,7 +69,7 @@ RString OptimizeDWIString( RString holds, RString taps )
 	sort( taps.begin(), taps.end() );
 
 	/* Combine characters as much as possible. */
-	RString comb_taps, comb_holds;
+	std::string comb_taps, comb_holds;
 
 	/* 24 -> 1 */
 	while( taps.size() > 1 )
@@ -100,7 +100,7 @@ RString OptimizeDWIString( RString holds, RString taps )
 
 	/* Now we have at most one single tap and one hold remaining, and any
 	 * number of taps and holds in comb_taps and comb_holds. */
-	RString ret;
+	std::string ret;
 	ret += taps;
 	ret += comb_taps;
 	if( holds.size() == 1 )
@@ -117,10 +117,10 @@ RString OptimizeDWIString( RString holds, RString taps )
  * @brief Turn the Notes into a DWI string without angle brackets whenever possible.
  * @param tnCols the columns of TapNotes in question.
  * @return the DWI'ed string. */
-static RString NotesToDWIString( const TapNote tnCols[6] )
+static std::string NotesToDWIString( const TapNote tnCols[6] )
 {
 	const char dirs[] = { '4', 'C', '2', '8', 'D', '6' };
-	RString taps, holds, ret;
+	std::string taps, holds, ret;
 	for( int col = 0; col < 6; ++col )
 	{
 		switch( tnCols[col].type )
@@ -153,7 +153,7 @@ static RString NotesToDWIString( const TapNote tnCols[6] )
  * @param tnCol5 the fifth column.
  * @param tnCol6 the sisth column.
  * @return the DWI'ed string. */
-static RString NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3,
+static std::string NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3,
 				 TapNote tnCol4, TapNote tnCol5, TapNote tnCol6 )
 {
 	TapNote tnCols[6];
@@ -173,7 +173,7 @@ static RString NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3,
  * @param tnCol3 the third column.
  * @param tnCol4 the fourth column.
  * @return the DWI'ed string. */
-static RString NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, TapNote tnCol4 )
+static std::string NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, TapNote tnCol4 )
 {
 	return NotesToDWIString( tnCol1, TAP_EMPTY, tnCol2, tnCol3, TAP_EMPTY, tnCol4 );
 }
@@ -238,7 +238,7 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 		{
 			int row = BeatToNoteRow( (float)b );
 
-			RString str;
+			std::string str;
 			switch( out.m_StepsType )
 			{
 			case StepsType_dance_single:
@@ -344,7 +344,7 @@ static bool WriteDWINotesTag( RageFile &f, const Steps &out )
 	return true;
 }
 
-bool NotesWriterDWI::Write( RString sPath, const Song &out )
+bool NotesWriterDWI::Write( std::string sPath, const Song &out )
 {
 	RageFile f;
 	if( !f.Open( sPath, RageFile::WRITE ) )

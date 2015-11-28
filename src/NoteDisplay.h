@@ -40,7 +40,7 @@ enum NoteColorType
 	NoteColorType_Invalid
 };
 std::string const NoteColorTypeToString( NoteColorType nct );
-NoteColorType StringToNoteColorType( const RString& s );
+NoteColorType StringToNoteColorType( const std::string& s );
 
 struct NoteResource;
 
@@ -48,7 +48,7 @@ struct NoteColorActor
 {
 	NoteColorActor();
 	~NoteColorActor();
-	void Load( const RString &sButton, const RString &sElement, PlayerNumber, GameController );
+	void Load( const std::string &sButton, const std::string &sElement, PlayerNumber, GameController );
 	Actor *Get();
 private:
 	NoteResource *m_p;
@@ -58,7 +58,7 @@ struct NoteColorSprite
 {
 	NoteColorSprite();
 	~NoteColorSprite();
-	void Load( const RString &sButton, const RString &sElement, PlayerNumber, GameController );
+	void Load( const std::string &sButton, const std::string &sElement, PlayerNumber, GameController );
 	Sprite *Get();
 private:
 	NoteResource *m_p;

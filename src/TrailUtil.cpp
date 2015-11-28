@@ -69,7 +69,7 @@ void TrailID::LoadFromNode( const XNode* pNode )
 {
 	ASSERT( pNode->GetName() == "Trail" );
 
-	RString sTemp;
+	std::string sTemp;
 
 	pNode->GetAttrValue( "StepsType", sTemp );
 	st = GAMEMAN->StringToStepsType( sTemp );
@@ -79,9 +79,9 @@ void TrailID::LoadFromNode( const XNode* pNode )
 	m_Cache.Unset();
 }
 
-RString TrailID::ToString() const
+std::string TrailID::ToString() const
 {
-	RString s = GAMEMAN->GetStepsTypeInfo(st).stepTypeName;
+	std::string s = GAMEMAN->GetStepsTypeInfo(st).stepTypeName;
 	s += " " + DifficultyToString( cd );
 	return s;
 }

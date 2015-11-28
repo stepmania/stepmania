@@ -177,21 +177,21 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 	}
 }
 
-void ScreenWithMenuElements::SetHelpText( RString s )
+void ScreenWithMenuElements::SetHelpText( std::string s )
 {
 	Message msg("SetHelpText");
 	msg.SetParam( "Text", s );
 	this->HandleMessage( msg );
 }
 
-RString ScreenWithMenuElements::HandleLuaMusicFile(RString const& path)
+std::string ScreenWithMenuElements::HandleLuaMusicFile(std::string const& path)
 {
 	FileType ft= ActorUtil::GetFileType(path);
-	RString ret= path;
+	std::string ret= path;
 	if(ft == FT_Lua)
 	{
-		RString script;
-		RString error= "Lua runtime error: ";
+		std::string script;
+		std::string error= "Lua runtime error: ";
 		if(GetFileContents(path, script))
 		{
 			Lua* L= LUA->Get();
@@ -204,7 +204,7 @@ RString ScreenWithMenuElements::HandleLuaMusicFile(RString const& path)
 				// there are two possible ways to load a music file via Lua.
 				// 1) return the path to the sound
 				// (themer has to use THEME:GetPathS())
-				RString music_path_from_lua;
+				std::string music_path_from_lua;
 				LuaHelpers::Pop(L, music_path_from_lua);
 				if(!music_path_from_lua.empty())
 				{
@@ -388,7 +388,7 @@ public:
 
 	static int StartTransitioningScreen( T* p, lua_State *L )
 	{
-		RString sMessage = SArg(1);
+		std::string sMessage = SArg(1);
 		ScreenMessage SM = ScreenMessageHelpers::ToScreenMessage( sMessage );
 		p->StartTransitioningScreen( SM );
 		COMMON_RETURN_SELF;

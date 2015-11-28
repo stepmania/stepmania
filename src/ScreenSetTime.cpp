@@ -90,7 +90,7 @@ void ScreenSetTime::Update( float fDelta )
 	int iPrettyHour = now.tm_hour%12;
 	if( iPrettyHour == 0 )
 		iPrettyHour = 12;
-	RString sPrettyHour = fmt::sprintf( "%d %s", iPrettyHour, now.tm_hour>=12 ? "pm" : "am" );
+	std::string sPrettyHour = fmt::sprintf( "%d %s", iPrettyHour, now.tm_hour>=12 ? "pm" : "am" );
 
 	m_textValue[hour]	.SetText( sPrettyHour );
 	m_textValue[minute]	.SetText( fmt::sprintf("%02d",now.tm_min) );

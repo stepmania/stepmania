@@ -9,7 +9,7 @@
 using std::vector;
 
 // this will not work on 95 and NT because of EnumDisplayDevices
-RString GetPrimaryVideoName()
+std::string GetPrimaryVideoName()
 {
 	typedef BOOL (WINAPI* pfnEnumDisplayDevices)(PVOID,DWORD,PDISPLAY_DEVICE,DWORD);
 	pfnEnumDisplayDevices EnumDisplayDevices;
@@ -17,17 +17,17 @@ RString GetPrimaryVideoName()
 
 	hInstUser32 = LoadLibrary( "User32.DLL" );
 	if( !hInstUser32 ) 
-		return RString();  
+		return std::string();  
 
 	// VC6 don't have a stub to static link with, so link dynamically.
 	EnumDisplayDevices = (pfnEnumDisplayDevices)GetProcAddress(hInstUser32,"EnumDisplayDevicesA");
 	if( EnumDisplayDevices == nullptr )
 	{
 		FreeLibrary(hInstUser32);
-		return RString();
+		return std::string();
 	}
 	
-	RString sPrimaryDeviceName;
+	std::string sPrimaryDeviceName;
 	for( int i=0; true; ++i )
 	{
 		DISPLAY_DEVICE dd;
@@ -46,9 +46,9 @@ RString GetPrimaryVideoName()
 	return Rage::trim_right( sPrimaryDeviceName );
 }
 
-RString GetPrimaryVideoDriverName()
+std::string GetPrimaryVideoDriverName()
 {
-	RString sPrimaryDeviceName = GetPrimaryVideoName();
+	std::string sPrimaryDeviceName = GetPrimaryVideoName();
 	if( sPrimaryDeviceName != "" )
 		return sPrimaryDeviceName;
 	
@@ -75,7 +75,7 @@ bool GetVideoDriverInfo( int iCardno, VideoDriverInfo &info )
 	{
 		bInitialized = true;
 
-		const RString sTopKey = bIsWin9x?
+		const std::string sTopKey = bIsWin9x?
 			"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Class\\Display":
 			"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Class\\{4D36E968-E325-11CE-BFC1-08002BE10318}";
 
@@ -102,7 +102,7 @@ bool GetVideoDriverInfo( int iCardno, VideoDriverInfo &info )
 
 	while( iCardno < (int)lst.size() )
 	{
-		const RString sKey = lst[iCardno];
+		const std::string sKey = lst[iCardno];
 
 		if( !RegistryAccess::GetRegValue( sKey, "DriverDesc", info.sDescription ) )
 		{

@@ -6,7 +6,7 @@
 
 using std::vector;
 
-static const RString TEMP_MOUNT_POINT = "/@mctemptimeout/";
+static const std::string TEMP_MOUNT_POINT = "/@mctemptimeout/";
 
 bool UsbStorageDevice::operator==(const UsbStorageDevice& other) const
 {
@@ -22,7 +22,7 @@ bool UsbStorageDevice::operator==(const UsbStorageDevice& other) const
 #undef COMPARE
 }
 
-void UsbStorageDevice::SetOsMountDir( const RString &s )
+void UsbStorageDevice::SetOsMountDir( const std::string &s )
 {
 	sOsMountDir = s;
 }

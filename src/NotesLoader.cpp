@@ -14,9 +14,9 @@
 using std::vector;
 using std::string;
 
-void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, RString &sMainTitleOut, RString &sSubTitleOut )
+void NotesLoader::GetMainAndSubTitlesFromFullTitle( const std::string &sFullTitle, std::string &sMainTitleOut, std::string &sSubTitleOut )
 {
-	std::array<RString, 5> sLeftSeps =
+	std::array<std::string, 5> sLeftSeps =
 	{
 		{
 			"\t", " -", " ~", " (", " ["
@@ -36,7 +36,7 @@ void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, R
 	sSubTitleOut = "";
 };
 
-bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, std::set<RString> &BlacklistedImages, bool load_autosave )
+bool NotesLoader::LoadFromDir( const std::string &sPath, Song &out, std::set<std::string> &BlacklistedImages, bool load_autosave )
 {
 	vector<std::string> list;
 

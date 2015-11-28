@@ -96,7 +96,7 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 		def.m_sExplanationName = "Select Edit Steps";
 		def.m_vsChoices.clear();
 		StepsType st = s->m_StepsType;
-		RString sType = GAMEMAN->GetStepsTypeInfo(st).GetLocalizedString();
+		std::string sType = GAMEMAN->GetStepsTypeInfo(st).GetLocalizedString();
 		def.m_vsChoices.push_back( sType );
 		def.m_bAllowThemeItems = false;	// already themed
 		iIndex++;
@@ -157,10 +157,10 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 			Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 			Song *pSong = pSteps->m_pSong;
 
-			RString sOldDescription = pSteps->GetDescription();
+			std::string sOldDescription = pSteps->GetDescription();
 			pSteps->SetDescription( ScreenTextEntry::s_sLastAnswer );
 
-			RString sError;
+			std::string sError;
 			if( !NotesWriterSM::WriteEditFileToMachine(pSong,pSteps,sError) )
 			{
 				ScreenPrompt::Prompt( SM_None, sError );
@@ -255,7 +255,7 @@ void ScreenOptionsManageEditSteps::ProcessMenuStart( const InputEventPlus & )
 		SONGMAN->GetStepsLoadedFromProfile( v, ProfileSlot_Machine );
 		if( v.size() >= size_t(MAX_EDIT_STEPS_PER_PROFILE) )
 		{
-			RString s = fmt::sprintf( YOU_HAVE_MAX_STEP_EDITS.GetValue()+"\n\n"+YOU_MUST_DELETE.GetValue(), MAX_EDIT_STEPS_PER_PROFILE );
+			std::string s = fmt::sprintf( YOU_HAVE_MAX_STEP_EDITS.GetValue()+"\n\n"+YOU_MUST_DELETE.GetValue(), MAX_EDIT_STEPS_PER_PROFILE );
 			ScreenPrompt::Prompt( SM_None, s );
 			return;
 		}

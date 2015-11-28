@@ -10,9 +10,9 @@ class RageDisplay_D3D: public RageDisplay
 public:
 	RageDisplay_D3D();
 	virtual ~RageDisplay_D3D();
-	virtual RString Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer );
+	virtual std::string Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer );
 
-	virtual RString GetApiDescription() const { return "D3D"; }
+	virtual std::string GetApiDescription() const { return "D3D"; }
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
 	void ResolutionChanged();
 	const RagePixelFormatDesc *GetPixelFormatDesc(RagePixelFormat pf) const;
@@ -80,7 +80,7 @@ protected:
 	void DrawSymmetricQuadStripInternal( const Rage::SpriteVertex v[], int iNumVerts );
 	void DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex );
 
-	RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
+	std::string TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
 	RageSurface* CreateScreenshot();
 	Rage::Matrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
 

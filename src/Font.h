@@ -59,7 +59,7 @@ struct glyph
 /** @brief The settings used for the FontPage. */
 struct FontPageSettings
 {
-	RString m_sTexturePath;
+	std::string m_sTexturePath;
 
 	int m_iDrawExtraPixelsLeft,
 		m_iDrawExtraPixelsRight,
@@ -70,7 +70,7 @@ struct FontPageSettings
 		m_iDefaultWidth,
 		m_iAdvanceExtraPixels;
 	float m_fScaleAllWidthsBy;
-	RString m_sTextureHints;
+	std::string m_sTextureHints;
 
 	std::unordered_map<wchar_t,int> CharToGlyphNo;
 	// If a value is missing, the width of the texture frame is used.
@@ -98,7 +98,7 @@ struct FontPageSettings
 	 * @param iGlyphOffset the number of glyphs to offset.
 	 * @param iCount the range to map. If -1, the range is the entire map.
 	 * @return the empty string on success, or an error message on failure. */
-	RString MapRange( RString sMapping, int iMapOffset, int iGlyphOffset, int iCount );
+	std::string MapRange( std::string sMapping, int iMapOffset, int iGlyphOffset, int iCount );
 };
 
 class FontPage
@@ -122,7 +122,7 @@ public:
 	FontPageTextures m_FontPageTextures;
 
 	// XXX: remove?
-	RString m_sTexturePath;
+	std::string m_sTexturePath;
 
 	/** @brief All glyphs in this list will point to m_pTexture. */
 	std::vector<glyph> m_aGlyphs;
@@ -138,7 +138,7 @@ class Font
 {
 public:
 	int m_iRefCount;
-	RString path;
+	std::string path;
 
 	Font();
 	~Font();
@@ -162,7 +162,7 @@ public:
 	 * @param f the font whose pages we are stealing. */
 	void MergeFont(Font &f);
 
-	void Load(const RString &sFontOrTextureFilePath, RString sChars);
+	void Load(const std::string &sFontOrTextureFilePath, std::string sChars);
 	void Unload();
 	void Reload();
 
@@ -204,11 +204,11 @@ private:
 	Rage::Color m_DefaultStrokeColor;
 
 	/** @brief We keep this around only for reloading. */
-	RString m_sChars;
+	std::string m_sChars;
 
-	void LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RString &sTexturePath, const RString &PageName, RString sChars );
-	static void GetFontPaths( const RString &sFontOrTextureFilePath, std::vector<std::string> &sTexturePaths );
-	RString GetPageNameFromFileName( const RString &sFilename );
+	void LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const std::string &sTexturePath, const std::string &PageName, std::string sChars );
+	static void GetFontPaths( const std::string &sFontOrTextureFilePath, std::vector<std::string> &sTexturePaths );
+	std::string GetPageNameFromFileName( const std::string &sFilename );
 
 	Font(const Font& rhs);
 	Font& operator=(const Font& rhs);

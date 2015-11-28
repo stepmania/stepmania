@@ -51,8 +51,8 @@ namespace RageSurfaceUtils
 	void Blit( const RageSurface *src, RageSurface *dst, int width = -1, int height = -1 );
 	void CorrectBorderPixels( RageSurface *img, int width, int height );
 
-	bool SaveSurface( const RageSurface *img, RString file );
-	RageSurface *LoadSurface( RString file );
+	bool SaveSurface( const RageSurface *img, std::string file );
+	RageSurface *LoadSurface( std::string file );
 
 	/* Quickly palettize to an gray/alpha texture. */
 	RageSurface *PalettizeToGrayscale( const RageSurface *src_surf, int GrayBits, int AlphaBits );

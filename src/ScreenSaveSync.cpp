@@ -11,9 +11,9 @@ using std::vector;
 static LocalizedString CHANGED_TIMING_OF	("ScreenSaveSync","You have changed the timing of");
 static LocalizedString WOULD_YOU_LIKE_TO_SAVE	("ScreenSaveSync","Would you like to save these changes?");
 static LocalizedString CHOOSING_NO_WILL_DISCARD	("ScreenSaveSync","Choosing NO will discard your changes.");
-static RString GetPromptText()
+static std::string GetPromptText()
 {
-	RString s;
+	std::string s;
 
 	{
 		vector<std::string> vs;

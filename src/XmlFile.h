@@ -53,7 +53,7 @@ public:
 	void SetValueFromStack( lua_State *L );
 };
 
-typedef std::map<RString,XNodeValue*> XAttrs;
+typedef std::map<std::string,XNodeValue*> XAttrs;
 class XNode;
 typedef std::vector<XNode*> XNodes;
 /** @brief Loop through each node. */

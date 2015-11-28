@@ -93,9 +93,9 @@ void NoteField::Unload()
 	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
 }
 
-void NoteField::CacheNoteSkin( const RString &sNoteSkin_ )
+void NoteField::CacheNoteSkin( const std::string &sNoteSkin_ )
 {
-	RString sNoteSkinLower = Rage::make_lower(sNoteSkin_);
+	std::string sNoteSkinLower = Rage::make_lower(sNoteSkin_);
 
 	if( m_NoteDisplays.find(sNoteSkinLower) != m_NoteDisplays.end() )
 		return;
@@ -115,9 +115,9 @@ void NoteField::CacheNoteSkin( const RString &sNoteSkin_ )
 	m_NoteDisplays[ sNoteSkinLower ] = nd;
 }
 
-void NoteField::UncacheNoteSkin( const RString &sNoteSkin_ )
+void NoteField::UncacheNoteSkin( const std::string &sNoteSkin_ )
 {
-	RString sNoteSkinLower = Rage::make_lower(sNoteSkin_);
+	std::string sNoteSkinLower = Rage::make_lower(sNoteSkin_);
 
 	LOG->Trace("NoteField::CacheNoteSkin: release %s", sNoteSkinLower.c_str() );
 	ASSERT_M( m_NoteDisplays.find(sNoteSkinLower) != m_NoteDisplays.end(), sNoteSkinLower );
@@ -152,7 +152,7 @@ void NoteField::CacheAllUsedNoteSkins()
 
 	/* If we're changing note skins in the editor, we can have old note skins lying
 	 * around.  Remove them so they don't accumulate. */
-	std::set<RString> setNoteSkinsToUnload;
+	std::set<std::string> setNoteSkinsToUnload;
 	for (auto &d: m_NoteDisplays)
 	{
 		bool unused = find(asSkinsLower.begin(), asSkinsLower.end(), d.first) == asSkinsLower.end();
@@ -164,7 +164,7 @@ void NoteField::CacheAllUsedNoteSkins()
 		UncacheNoteSkin(s);
 	}
 
-	RString sCurrentNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin;
+	std::string sCurrentNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin;
 	NOTESKIN->ValidateNoteSkinName(sCurrentNoteSkinLower);
 	sCurrentNoteSkinLower = Rage::make_lower(sCurrentNoteSkinLower);
 
@@ -175,7 +175,7 @@ void NoteField::CacheAllUsedNoteSkins()
 
 	FOREACH_EnabledPlayer( pn )
 	{
-		RString sNoteSkinLower = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin;
+		std::string sNoteSkinLower = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin;
 		NOTESKIN->ValidateNoteSkinName(sNoteSkinLower);
 		sNoteSkinLower = Rage::make_lower(sNoteSkinLower);
 		it = m_NoteDisplays.find( sNoteSkinLower );
@@ -229,7 +229,7 @@ void NoteField::Load(
 			  GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer));
 
 	// The NoteSkin may have changed at the beginning of a new course song.
-	RString sNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin;
+	std::string sNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin;
 
 	/* XXX: Combination of good idea and bad idea to ensure courses load
 	 * regardless of noteskin content. This may take a while to fix. */
@@ -243,7 +243,7 @@ void NoteField::Load(
 		{
 			sNoteSkinLower = "default";
 		}
-		m_NoteDisplays.insert(std::pair<RString, NoteDisplayCols *> (sNoteSkinLower, badIdea));
+		m_NoteDisplays.insert(std::pair<std::string, NoteDisplayCols *> (sNoteSkinLower, badIdea));
 	}
 
 	sNoteSkinLower = Rage::make_lower(sNoteSkinLower);
@@ -263,7 +263,7 @@ void NoteField::Load(
 			{
 				sNoteSkinLower = "default";
 			}
-			m_NoteDisplays.insert(std::pair<RString, NoteDisplayCols *> (sNoteSkinLower, badIdea));
+			m_NoteDisplays.insert(std::pair<std::string, NoteDisplayCols *> (sNoteSkinLower, badIdea));
 		}
 
 		sNoteSkinLower = Rage::make_lower(sNoteSkinLower);
@@ -547,7 +547,7 @@ void NoteField::set_text_measure_number_for_draw(
 	m_textMeasureNumber.SetXY((x_offset + x_base) * side_sign, y_pos);
 }
 
-void NoteField::draw_timing_segment_text(const RString& text,
+void NoteField::draw_timing_segment_text(const std::string& text,
 	const float beat, const float side_sign, float x_offset,
 	const float horiz_align, const Rage::Color& color, const Rage::Color& glow)
 {
@@ -566,7 +566,7 @@ void NoteField::DrawAttackText(const float beat, const Attack &attack,
 	m_textMeasureNumber.Draw();
 }
 
-void NoteField::DrawBGChangeText(const float beat, const RString new_bg_name,
+void NoteField::DrawBGChangeText(const float beat, const std::string new_bg_name,
 	const Rage::Color& glow)
 {
 	set_text_measure_number_for_draw(beat, 1, 0, align_left, Rage::Color(0,1,0,1),
@@ -959,7 +959,7 @@ void NoteField::DrawPrimitives()
 								{
 									ASSERT( iter[*bl] != GAMESTATE->m_pCurSong->GetBackgroundChanges(*bl).end() );
 									const BackgroundChange& change = *iter[*bl];
-									RString s = change.GetTextDescription();
+									std::string s = change.GetTextDescription();
 									if( *bl!=0 )
 									{
 										s = fmt::sprintf("%d: ",*bl) + s;
@@ -1057,7 +1057,7 @@ void NoteField::FadeToFail()
 		member_name.PushSelf(L);
 
 #define OPEN_RUN_BLOCK(arg_count) \
-	RString error= "Error running callback: "; \
+	std::string error= "Error running callback: "; \
 	if(LuaHelpers::RunScriptOnStack(L, error, arg_count, arg_count, true)) \
 	{
 

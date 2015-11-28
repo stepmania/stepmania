@@ -47,12 +47,12 @@ public:
 	void SaveEnabledSongsToPref();
 	void LoadEnabledSongsFromPref();
 
-	void LoadStepEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot );
-	void LoadCourseEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot );
+	void LoadStepEditsFromProfileDir( const std::string &sProfileDir, ProfileSlot slot );
+	void LoadCourseEditsFromProfileDir( const std::string &sProfileDir, ProfileSlot slot );
 	int GetNumStepsLoadedFromProfile();
 	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_Invalid );
 
-	void LoadGroupSymLinks( RString sDir, RString sGroupFolder );
+	void LoadGroupSymLinks( std::string sDir, std::string sGroupFolder );
 
 	void InitCoursesFromDisk( LoadingWindow *ld );
 	void InitAutogenCourses();
@@ -68,32 +68,32 @@ public:
 	void Reload( bool bAllowFastLoad, LoadingWindow *ld=nullptr );	// songs, courses, groups - everything.
 	void PreloadSongImages();
 
-	bool IsGroupNeverCached(const RString& group) const;
+	bool IsGroupNeverCached(const std::string& group) const;
 
-	RString GetSongGroupBannerPath( RString sSongGroup ) const;
-	//RString GetSongGroupBackgroundPath( RString sSongGroup ) const;
+	std::string GetSongGroupBannerPath( std::string sSongGroup ) const;
+	//std::string GetSongGroupBackgroundPath( std::string sSongGroup ) const;
 	void GetSongGroupNames( std::vector<std::string> &AddTo ) const;
-	bool DoesSongGroupExist( RString sSongGroup ) const;
-	Rage::Color GetSongGroupColor( const RString &sSongGroupName ) const;
+	bool DoesSongGroupExist( std::string sSongGroup ) const;
+	Rage::Color GetSongGroupColor( const std::string &sSongGroupName ) const;
 	Rage::Color GetSongColor( const Song* pSong ) const;
 
-	RString GetCourseGroupBannerPath( const RString &sCourseGroup ) const;
-	//RString GetCourseGroupBackgroundPath( const RString &sCourseGroup ) const;
+	std::string GetCourseGroupBannerPath( const std::string &sCourseGroup ) const;
+	//std::string GetCourseGroupBackgroundPath( const std::string &sCourseGroup ) const;
 	void GetCourseGroupNames( std::vector<std::string> &AddTo ) const;
-	bool DoesCourseGroupExist( const RString &sCourseGroup ) const;
-	Rage::Color GetCourseGroupColor( const RString &sCourseGroupName ) const;
+	bool DoesCourseGroupExist( const std::string &sCourseGroup ) const;
+	Rage::Color GetCourseGroupColor( const std::string &sCourseGroupName ) const;
 	Rage::Color GetCourseColor( const Course* pCourse ) const;
 
 	void ResetGroupColors();
 
-	static RString ShortenGroupName( RString sLongGroupName );
+	static std::string ShortenGroupName( std::string sLongGroupName );
 
 	// Lookup
 	/**
 	 * @brief Retrieve all of the songs that belong to a particular group.
 	 * @param sGroupName the name of the group.
 	 * @return the songs that belong in the group. */
-	const std::vector<Song*> &GetSongs( const RString &sGroupName ) const;
+	const std::vector<Song*> &GetSongs( const std::string &sGroupName ) const;
 	/**
 	 * @brief Retrieve all of the songs in the game.
 	 * @return all of the songs. */
@@ -111,7 +111,7 @@ public:
 	 * valid step for the current gametype.
 	 * @param sGroupName the name of the group.
 	 * @return the songs within the group that have at least one valid Step. */
-	const std::vector<Song *> &GetSongsOfCurrentGame( const RString &sGroupName ) const;
+	const std::vector<Song *> &GetSongsOfCurrentGame( const std::string &sGroupName ) const;
 	/**
 	 * @brief Retrieve all of the songs in the game that have at least one
 	 * valid step for the current gametype.
@@ -119,12 +119,12 @@ public:
 	const std::vector<Song *> &GetAllSongsOfCurrentGame() const;
 
 	void GetPreferredSortSongs( std::vector<Song*> &AddTo ) const;
-	RString SongToPreferredSortSectionName( const Song *pSong ) const;
+	std::string SongToPreferredSortSectionName( const Song *pSong ) const;
 	const std::vector<Course*> &GetPopularCourses( CourseType ct ) const { return m_pPopularCourses[ct]; }
-	Song *FindSong( RString sPath ) const;
-	Song *FindSong( RString sGroup, RString sSong ) const;
-	Course *FindCourse( RString sPath ) const;
-	Course *FindCourse( RString sGroup, RString sName ) const;
+	Song *FindSong( std::string sPath ) const;
+	Song *FindSong( std::string sGroup, std::string sSong ) const;
+	Course *FindCourse( std::string sPath ) const;
+	Course *FindCourse( std::string sGroup, std::string sName ) const;
 	/**
 	 * @brief Retrieve the number of songs in the game.
 	 * @return the number of songs. */
@@ -143,7 +143,7 @@ public:
 	Song* GetRandomSong();
 	Course* GetRandomCourse();
 	// sm-ssc addition:
-	RString GetSongGroupByIndex(unsigned index) { return m_sSongGroupNames[index]; }
+	std::string GetSongGroupByIndex(unsigned index) { return m_sSongGroupNames[index]; }
 	int GetSongRank(Song* pSong);
 
 	void GetStepsLoadedFromProfile( std::vector<Steps*> &AddTo, ProfileSlot slot ) const;
@@ -153,17 +153,17 @@ public:
 
 	void GetAllCourses( std::vector<Course*> &AddTo, bool bIncludeAutogen ) const;
 	void GetCourses( CourseType ct, std::vector<Course*> &AddTo, bool bIncludeAutogen ) const;
-	void GetCoursesInGroup( std::vector<Course*> &AddTo, const RString &sCourseGroup, bool bIncludeAutogen ) const;
+	void GetCoursesInGroup( std::vector<Course*> &AddTo, const std::string &sCourseGroup, bool bIncludeAutogen ) const;
 	void GetPreferredSortCourses( CourseType ct, std::vector<Course*> &AddTo, bool bIncludeAutogen ) const;
 
 	void GetExtraStageInfo( bool bExtra2, const Style *s, Song*& pSongOut, Steps*& pStepsOut );
-	Song* GetSongFromDir( RString sDir ) const;
-	Course* GetCourseFromPath( RString sPath ) const;	// path to .crs file, or path to song group dir
-	Course* GetCourseFromName( RString sName ) const;
+	Song* GetSongFromDir( std::string sDir ) const;
+	Course* GetCourseFromPath( std::string sPath ) const;	// path to .crs file, or path to song group dir
+	Course* GetCourseFromName( std::string sName ) const;
 
 	void UpdatePopular();
 	void UpdateShuffled();	// re-shuffle songs and courses
-	void UpdatePreferredSort(RString sPreferredSongs = "PreferredSongs.txt", RString sPreferredCourses = "PreferredCourses.txt");
+	void UpdatePreferredSort(std::string sPreferredSongs = "PreferredSongs.txt", std::string sPreferredCourses = "PreferredCourses.txt");
 	void SortSongs();		// sort m_pSongs by CompareSongPointersByTitle
 
 	void UpdateRankingCourses();	// courses shown on the ranking screen
@@ -173,18 +173,18 @@ public:
 	void PushSelf( lua_State *L );
 
 protected:
-	void LoadStepManiaSongDir( RString sDir, LoadingWindow *ld );
-	void LoadDWISongDir( RString sDir );
-	bool GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut, StepsType stype );
-	void SanityCheckGroupDir( RString sDir ) const;
-	void AddGroup( RString sDir, RString sGroupDirName );
+	void LoadStepManiaSongDir( std::string sDir, LoadingWindow *ld );
+	void LoadDWISongDir( std::string sDir );
+	bool GetExtraStageInfoFromCourse( bool bExtra2, std::string sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut, StepsType stype );
+	void SanityCheckGroupDir( std::string sDir ) const;
+	void AddGroup( std::string sDir, std::string sGroupDirName );
 	int GetNumEditsLoadedFromProfile( ProfileSlot slot ) const;
 
 	void AddSongToList(Song* new_song);
 	/** @brief All of the songs that can be played. */
 	std::vector<Song*>		m_pSongs;
 	std::unordered_map<std::string, Song*> m_SongsByDir;
-	std::set<RString> m_GroupsToNeverCache;
+	std::set<std::string> m_GroupsToNeverCache;
 	/** @brief Hold pointers to all the songs that have been deleted from disk but must at least be kept temporarily alive for smooth audio transitions. */
 	std::vector<Song*>       m_pDeletedSongs;
 	/** @brief The most popular songs ranked by number of plays. */
@@ -193,7 +193,7 @@ protected:
 	std::vector<Song*>		m_pShuffledSongs;	// used by GetRandomSong
 	struct PreferredSortSection
 	{
-		RString sName;
+		std::string sName;
 		std::vector<Song*> vpSongs;
 	};
 	std::vector<PreferredSortSection> m_vPreferredSongSort;
@@ -209,8 +209,8 @@ protected:
 	std::vector<Course*>		m_pShuffledCourses;	// used by GetRandomCourse
 	struct CourseGroupInfo
 	{
-		RString m_sBannerPath;
-		//RString m_sBackgroundPath;
+		std::string m_sBannerPath;
+		//std::string m_sBackgroundPath;
 	};
 	std::unordered_map<std::string,CourseGroupInfo> m_mapCourseGroupToInfo;
 	typedef std::vector<Course*> CoursePointerVector;

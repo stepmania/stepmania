@@ -19,7 +19,7 @@ REGISTER_DIALOG_DRIVER_CLASS( Null );
 
 DialogDriver *DialogDriver::Create()
 {
-	RString sDrivers = "win32,macosx,null";
+	std::string sDrivers = "win32,macosx,null";
 	auto asDriversToTry = Rage::split( sDrivers, ",", Rage::EmptyEntries::skip );
 
 	ASSERT( asDriversToTry.size() != 0 );
@@ -34,7 +34,7 @@ DialogDriver *DialogDriver::Create()
 		}
 		DialogDriver *pRet = (iter->second)();
 		DEBUG_ASSERT( pRet );
-		const RString sError = pRet->Init();
+		const std::string sError = pRet->Init();
 
 		if( sError.empty() )
 		{	return pRet;

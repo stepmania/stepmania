@@ -52,7 +52,7 @@ void ScreenOptionsEditProfile::BeginScreen()
 			def.m_vsChoices.push_back( c->GetDisplayName() );
 		}
 		if( def.m_vsChoices.empty() )
-			def.m_vsChoices.push_back( RString() );
+			def.m_vsChoices.push_back( std::string() );
 	}
 
 	InitMenu( vHands );
@@ -85,7 +85,7 @@ void ScreenOptionsEditProfile::ExportOptions( int iRow, const vector<PlayerNumbe
 	ASSERT( pProfile != nullptr );
 	OptionRow &row = *m_pRows[iRow];
 	int iIndex = row.GetOneSharedSelection( true );
-	RString sValue;
+	std::string sValue;
 	if( iIndex >= 0 )
 		sValue = row.GetRowDef().m_vsChoices[ iIndex ];
 

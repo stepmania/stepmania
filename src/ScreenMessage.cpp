@@ -20,7 +20,7 @@ AutoScreenMessage(SM_Failure);
 
 static std::unordered_map<std::string, ScreenMessage> *m_pScreenMessages;
 
-ScreenMessage ScreenMessageHelpers::ToScreenMessage( const RString &sName )
+ScreenMessage ScreenMessageHelpers::ToScreenMessage( const std::string &sName )
 {
 	if( m_pScreenMessages == nullptr )
 		m_pScreenMessages = new std::unordered_map<std::string, ScreenMessage>;
@@ -31,7 +31,7 @@ ScreenMessage ScreenMessageHelpers::ToScreenMessage( const RString &sName )
 	return (*m_pScreenMessages)[sName];
 }
 
-RString	ScreenMessageHelpers::ScreenMessageToString( ScreenMessage SM )
+std::string	ScreenMessageHelpers::ScreenMessageToString( ScreenMessage SM )
 {
 	for (auto const &it: *m_pScreenMessages)
 	{
@@ -40,7 +40,7 @@ RString	ScreenMessageHelpers::ScreenMessageToString( ScreenMessage SM )
 			return it.first;
 		}
 	}
-	return RString();
+	return std::string();
 }
 
 /*

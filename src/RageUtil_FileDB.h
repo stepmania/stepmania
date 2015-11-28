@@ -11,10 +11,10 @@
 struct FileSet;
 struct File
 {
-	RString name;
-	RString lname;
+	std::string name;
+	std::string lname;
 
-	void SetName( RString const &fn );
+	void SetName( std::string const &fn );
 	bool dir;
 	int size;
 	/* Modification time of the file.  The contents of this is undefined, except that
@@ -29,7 +29,7 @@ struct File
 	const FileSet *dirp;
 
 	File() { dir=false; dirp=nullptr; size=-1; hash=-1; priv=nullptr;}
-	File( const RString &fn )
+	File( const std::string &fn )
 	{
 		SetName( fn );
 		dir=false; size=-1; hash=-1; priv=nullptr; dirp=nullptr;
@@ -38,9 +38,9 @@ struct File
 	bool operator< (const File &rhs) const { return lname<rhs.lname; }
 
 	bool equal(const File &rhs) const { return lname == rhs.lname; }
-	bool equal(const RString &rhs) const
+	bool equal(const std::string &rhs) const
 	{
-		RString l = Rage::make_lower(rhs);
+		std::string l = Rage::make_lower(rhs);
 		return lname == l;
 	}
 };
@@ -73,9 +73,9 @@ struct FileSet
 		std::vector<std::string> &asOut, bool bOnlyDirs ) const;
 	void GetFilesEqualTo( std::string const &pat, std::vector<std::string> &out, bool bOnlyDirs ) const;
 
-	RageFileManager::FileType GetFileType( const RString &sPath ) const;
-	int GetFileSize( const RString &sPath ) const;
-	int GetFileHash( const RString &sPath ) const;
+	RageFileManager::FileType GetFileType( const std::string &sPath ) const;
+	int GetFileSize( const std::string &sPath ) const;
+	int GetFileHash( const std::string &sPath ) const;
 };
 /** @brief A container for a file listing. */
 class FilenameDB
@@ -85,9 +85,9 @@ public:
 		m_Mutex("FilenameDB"), ExpireSeconds( -1 ) { }
 	virtual ~FilenameDB() { FlushDirCache(); }
 
-	void AddFile( const RString &sPath, int iSize, int iHash, void *pPriv=nullptr );
-	void DelFile( const RString &sPath );
-	void *GetFilePriv( const RString &sPath );
+	void AddFile( const std::string &sPath, int iSize, int iHash, void *pPriv=nullptr );
+	void DelFile( const std::string &sPath );
+	void *GetFilePriv( const std::string &sPath );
 
 	/* This handles at most two * wildcards.  If we need anything more complicated,
 	 * we'll need to use fnmatch or regex. */
@@ -96,27 +96,27 @@ public:
 	/* Search for "path" case-insensitively and replace it with the correct
 	 * case.  If only a portion of the path exists, resolve as much as possible.
 	 * Return true if the entire path was matched. */
-	bool ResolvePath( RString &sPath );
+	bool ResolvePath( std::string &sPath );
 
-	RageFileManager::FileType GetFileType( const RString &sPath );
-	int GetFileSize( const RString &sPath );
-	int GetFileHash( const RString &sFilePath );
+	RageFileManager::FileType GetFileType( const std::string &sPath );
+	int GetFileSize( const std::string &sPath );
+	int GetFileHash( const std::string &sFilePath );
 	void GetDirListing( std::string const &sPath, std::vector<std::string> &asAddTo, bool bOnlyDirs, bool bReturnPathToo );
 
-	void FlushDirCache( const RString &sDir = RString() );
+	void FlushDirCache( const std::string &sDir = std::string() );
 
-	void GetFileSetCopy( const RString &dir, FileSet &out );
+	void GetFileSetCopy( const std::string &dir, FileSet &out );
 	/* Probably slow, so override it. */
-	virtual void CacheFile( const RString &sPath );
+	virtual void CacheFile( const std::string &sPath );
 
 protected:
 	RageEvent m_Mutex;
 
-	const File *GetFile( const RString &sPath );
-	FileSet *GetFileSet( const RString &sDir, bool create=true );
+	const File *GetFile( const std::string &sPath );
+	FileSet *GetFileSet( const std::string &sDir, bool create=true );
 
 	/* Directories we have cached: */
-	std::map<RString, FileSet *> dirs;
+	std::map<std::string, FileSet *> dirs;
 
 	int ExpireSeconds;
 
@@ -124,10 +124,10 @@ protected:
 	void GetFilesMatching( std::string const &sDir,
 		std::string const &sBeginning, std::string const &sContaining, std::string const &sEnding,
 		std::vector<std::string> &asOut, bool bOnlyDirs );
-	void DelFileSet( std::map<RString, FileSet *>::iterator dir );
+	void DelFileSet( std::map<std::string, FileSet *>::iterator dir );
 
 	/* The given path wasn't cached.  Cache it. */
-	virtual void PopulateFileSet( FileSet & /* fs */, const RString & /* sPath */ ) { }
+	virtual void PopulateFileSet( FileSet & /* fs */, const std::string & /* sPath */ ) { }
 };
 
 /* This FilenameDB must be populated in advance. */
@@ -135,7 +135,7 @@ class NullFilenameDB: public FilenameDB
 {
 public:
 	NullFilenameDB() { ExpireSeconds = -1; }
-	void CacheFile( const RString & /* sPath */ ) { }
+	void CacheFile( const std::string & /* sPath */ ) { }
 };
 
 #endif

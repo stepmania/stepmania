@@ -134,8 +134,8 @@ public:
 
 	void Init();
 
-	void SetCurrentGame( const RString &sGame );
-	RString	GetCurrentGame() { return m_sCurrentGame.Get(); }
+	void SetCurrentGame( const std::string &sGame );
+	std::string	GetCurrentGame() { return m_sCurrentGame.Get(); }
 protected:
 	Preference<std::string>	m_sCurrentGame;
 
@@ -152,9 +152,9 @@ protected:
 		// See GamePrefs::GamePrefs in PrefsManager.cpp for some default settings
 		GamePrefs();
 
-		RString	m_sAnnouncer;
-		RString m_sTheme;
-		RString	m_sDefaultModifiers;
+		std::string	m_sAnnouncer;
+		std::string m_sTheme;
+		std::string	m_sDefaultModifiers;
 	};
 	// Probably not a problem if the per-game sections are written to prefs in
 	// random order. -Kyz
@@ -335,9 +335,9 @@ public:
 
 #endif
 
-	void ReadPrefsFromIni( const IniFile &ini, const RString &sSection, bool bIsStatic );
-	void ReadGamePrefsFromIni( const RString &sIni );
-	void ReadDefaultsFromIni( const IniFile &ini, const RString &sSection );
+	void ReadPrefsFromIni( const IniFile &ini, const std::string &sSection, bool bIsStatic );
+	void ReadGamePrefsFromIni( const std::string &sIni );
+	void ReadDefaultsFromIni( const IniFile &ini, const std::string &sSection );
 	void SavePrefsToIni( IniFile &ini );
 
 	void ReadPrefsFromDisk();
@@ -345,14 +345,14 @@ public:
 
 	void ResetToFactoryDefaults();
 
-	RString GetPreferencesSection() const;
+	std::string GetPreferencesSection() const;
 
 	// Lua
 	void PushSelf( lua_State *L );
 
 protected:
-	void ReadPrefsFromFile( const RString &sIni, const RString &sSection, bool bIsStatic );
-	void ReadDefaultsFromFile( const RString &sIni, const RString &sSection );
+	void ReadPrefsFromFile( const std::string &sIni, const std::string &sSection, bool bIsStatic );
+	void ReadDefaultsFromFile( const std::string &sIni, const std::string &sSection );
 };
 
 /* This is global, because it can be accessed by crash handlers and error handlers

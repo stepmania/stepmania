@@ -43,12 +43,12 @@ using std::vector;
 
 SongManager*	SONGMAN = nullptr;	// global and accessible from anywhere in our program
 
-const RString ADDITIONAL_SONGS_DIR	= "/AdditionalSongs/";
-const RString ADDITIONAL_COURSES_DIR	= "/AdditionalCourses/";
-const RString EDIT_SUBDIR		= "Edits/";
+const std::string ADDITIONAL_SONGS_DIR	= "/AdditionalSongs/";
+const std::string ADDITIONAL_COURSES_DIR	= "/AdditionalCourses/";
+const std::string EDIT_SUBDIR		= "Edits/";
 
 /** @brief The file that contains various random attacks. */
-const RString ATTACK_FILE		= "/Data/RandomAttacks.txt";
+const std::string ATTACK_FILE		= "/Data/RandomAttacks.txt";
 
 static const ThemeMetric<Rage::Color>	EXTRA_COLOR			( "SongManager", "ExtraColor" );
 static const ThemeMetric<int>		EXTRA_COLOR_METER		( "SongManager", "ExtraColorMeter" );
@@ -170,7 +170,7 @@ void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 }
 
 static LocalizedString FOLDER_CONTAINS_MUSIC_FILES( "SongManager", "The folder \"%s\" appears to be a song folder.  All song folders must reside in a group folder.  For example, \"Songs/Originals/My Song\"." );
-void SongManager::SanityCheckGroupDir( RString sDir ) const
+void SongManager::SanityCheckGroupDir( std::string sDir ) const
 {
 	// Check to see if they put a song directly inside the group folder.
 	vector<std::string> arrayFiles;
@@ -178,7 +178,7 @@ void SongManager::SanityCheckGroupDir( RString sDir ) const
 	auto const & audio_exts= ActorUtil::GetTypeExtensionList(FT_Sound);
 	for (auto const &fname: arrayFiles)
 	{
-		const RString ext= GetExtension(fname);
+		const std::string ext= GetExtension(fname);
 		for (auto const &aud: audio_exts)
 		{
 			if(ext == aud)
@@ -190,7 +190,7 @@ void SongManager::SanityCheckGroupDir( RString sDir ) const
 	}
 }
 
-void SongManager::AddGroup( RString sDir, RString sGroupDirName )
+void SongManager::AddGroup( std::string sDir, std::string sGroupDirName )
 {
 	unsigned j;
 	for(j = 0; j < m_sSongGroupNames.size(); ++j)
@@ -211,7 +211,7 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 	GetDirListing( sDir+sGroupDirName+"/*.gif", arrayGroupBanners );
 	GetDirListing( sDir+sGroupDirName+"/*.bmp", arrayGroupBanners );
 
-	RString sBannerPath;
+	std::string sBannerPath;
 	if( !arrayGroupBanners.empty() )
 		sBannerPath = sDir+sGroupDirName+"/"+arrayGroupBanners[0] ;
 	else
@@ -240,7 +240,7 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 	//GetDirListing( sDir+sGroupDirName+"/*-bg.gif", arrayGroupBanners );
 	//GetDirListing( sDir+sGroupDirName+"/*-bg.bmp", arrayGroupBanners );
 /*
-	RString sBackgroundPath;
+	std::string sBackgroundPath;
 	if( !arrayGroupBackgrounds.empty() )
 		sBackgroundPath = sDir+sGroupDirName+"/"+arrayGroupBackgrounds[0];
 	else
@@ -265,7 +265,7 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 }
 
 static LocalizedString LOADING_SONGS ( "SongManager", "Loading songs..." );
-void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
+void SongManager::LoadStepManiaSongDir( std::string sDir, LoadingWindow *ld )
 {
 	// Make sure sDir has a trailing slash.
 	if (!Rage::ends_with(sDir, "/"))
@@ -275,7 +275,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 	// Find all group directories in "Songs" folder
 	vector<std::string> arrayGroupDirs;
 	GetDirListing( sDir+"*", arrayGroupDirs, true );
-	SortRStringArray( arrayGroupDirs );
+	SortStringArray( arrayGroupDirs );
 	StripCvsAndSvn( arrayGroupDirs );
 	StripMacResourceForks( arrayGroupDirs );
 
@@ -307,7 +307,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 		GetDirListing( sDir+sGroupDirName + "/*", arraySongDirs, true, true );
 		StripCvsAndSvn( arraySongDirs );
 		StripMacResourceForks( arraySongDirs );
-		SortRStringArray( arraySongDirs );
+		SortStringArray( arraySongDirs );
 
 		arrayGroupSongDirs.push_back(arraySongDirs);
 		songCount += arraySongDirs.size();
@@ -383,18 +383,18 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 }
 
 // Instead of "symlinks", songs should have membership in multiple groups. -Chris
-void SongManager::LoadGroupSymLinks(RString sDir, RString sGroupFolder)
+void SongManager::LoadGroupSymLinks(std::string sDir, std::string sGroupFolder)
 {
 	// Find all symlink files in this folder
 	vector<std::string> arraySymLinks;
 	GetDirListing( sDir+sGroupFolder+"/*.include", arraySymLinks, false );
-	SortRStringArray( arraySymLinks );
+	SortStringArray( arraySymLinks );
 	SongPointerVector& index_entry = m_mapSongGroupIndex[sGroupFolder];
 	for (auto &symlink: arraySymLinks)
 	{
 		MsdFile msdF;
 		msdF.ReadFile( sDir+sGroupFolder+"/"+symlink.c_str(), false );  // don't unescape
-		RString	sSymDestination = msdF.GetParam(0,1); // Should only be 1 value & param...period.
+		std::string	sSymDestination = msdF.GetParam(0,1); // Should only be 1 value & param...period.
 
 		Song* pNewSong = new Song;
 		if( !pNewSong->LoadFromSongDir( sSymDestination ) )
@@ -497,12 +497,12 @@ void SongManager::UnlistSong(Song *song)
 	}
 }
 
-bool SongManager::IsGroupNeverCached(const RString& group) const
+bool SongManager::IsGroupNeverCached(const std::string& group) const
 {
 	return m_GroupsToNeverCache.find(group) != m_GroupsToNeverCache.end();
 }
 
-RString SongManager::GetSongGroupBannerPath( RString sSongGroup ) const
+std::string SongManager::GetSongGroupBannerPath( std::string sSongGroup ) const
 {
 	for( unsigned i = 0; i < m_sSongGroupNames.size(); ++i )
 	{
@@ -510,10 +510,10 @@ RString SongManager::GetSongGroupBannerPath( RString sSongGroup ) const
 			return m_sSongGroupBannerPaths[i];
 	}
 
-	return RString();
+	return std::string();
 }
 /*
-RString SongManager::GetSongGroupBackgroundPath( RString sSongGroup ) const
+std::string SongManager::GetSongGroupBackgroundPath( std::string sSongGroup ) const
 {
 	for( unsigned i = 0; i < m_sSongGroupNames.size(); ++i )
 	{
@@ -521,7 +521,7 @@ RString SongManager::GetSongGroupBackgroundPath( RString sSongGroup ) const
 			return m_sSongGroupBackgroundPaths[i];
 	}
 
-	return RString();
+	return std::string();
 }
 */
 void SongManager::GetSongGroupNames( vector<std::string> &AddTo ) const
@@ -529,12 +529,12 @@ void SongManager::GetSongGroupNames( vector<std::string> &AddTo ) const
 	AddTo.insert(AddTo.end(), m_sSongGroupNames.begin(), m_sSongGroupNames.end() );
 }
 
-bool SongManager::DoesSongGroupExist( RString sSongGroup ) const
+bool SongManager::DoesSongGroupExist( std::string sSongGroup ) const
 {
 	return find( m_sSongGroupNames.begin(), m_sSongGroupNames.end(), sSongGroup ) != m_sSongGroupNames.end();
 }
 
-Rage::Color SongManager::GetSongGroupColor( const RString &sSongGroup ) const
+Rage::Color SongManager::GetSongGroupColor( const std::string &sSongGroup ) const
 {
 	for( unsigned i=0; i<m_sSongGroupNames.size(); i++ )
 	{
@@ -615,13 +615,13 @@ Rage::Color SongManager::GetSongColor( const Song* pSong ) const
 	}
 }
 
-RString SongManager::GetCourseGroupBannerPath( const RString &sCourseGroup ) const
+std::string SongManager::GetCourseGroupBannerPath( const std::string &sCourseGroup ) const
 {
 	auto iter = m_mapCourseGroupToInfo.find(sCourseGroup);
 	if( iter == m_mapCourseGroupToInfo.end() )
 	{
 		ASSERT_M( 0, fmt::sprintf("requested banner for course group '%s' that doesn't exist",sCourseGroup.c_str()) );
-		return RString();
+		return std::string();
 	}
 	else
 	{
@@ -637,12 +637,12 @@ void SongManager::GetCourseGroupNames( vector<std::string> &AddTo ) const
 	}
 }
 
-bool SongManager::DoesCourseGroupExist( const RString &sCourseGroup ) const
+bool SongManager::DoesCourseGroupExist( const std::string &sCourseGroup ) const
 {
 	return m_mapCourseGroupToInfo.find(sCourseGroup) != m_mapCourseGroupToInfo.end();
 }
 
-Rage::Color SongManager::GetCourseGroupColor( const RString &sCourseGroup ) const
+Rage::Color SongManager::GetCourseGroupColor( const std::string &sCourseGroup ) const
 {
 	int iIndex = 0;
 	for (auto const &iter: m_mapCourseGroupToInfo)
@@ -703,7 +703,7 @@ void SongManager::ResetGroupColors()
 	COURSE_GROUP_COLOR		.Load( "SongManager", COURSE_GROUP_COLOR_NAME, NUM_COURSE_GROUP_COLORS );
 }
 
-const vector<Song*> &SongManager::GetSongs( const RString &sGroupName ) const
+const vector<Song*> &SongManager::GetSongs( const std::string &sGroupName ) const
 {
 	static const vector<Song*> vEmpty;
 
@@ -729,7 +729,7 @@ void SongManager::GetPreferredSortSongs( vector<Song*> &AddTo ) const
 	}
 }
 
-RString SongManager::SongToPreferredSortSectionName( const Song *pSong ) const
+std::string SongManager::SongToPreferredSortSectionName( const Song *pSong ) const
 {
 	for (auto const &v: m_vPreferredSongSort)
 	{
@@ -741,7 +741,7 @@ RString SongManager::SongToPreferredSortSectionName( const Song *pSong ) const
 			}
 		}
 	}
-	return RString();
+	return std::string();
 }
 
 void SongManager::GetPreferredSortCourses( CourseType ct, vector<Course*> &AddTo, bool bIncludeAutogen ) const
@@ -824,7 +824,7 @@ int SongManager::GetNumCourseGroups() const
 	return m_mapCourseGroupToInfo.size();
 }
 
-RString SongManager::ShortenGroupName( RString sLongGroupName )
+std::string SongManager::ShortenGroupName( std::string sLongGroupName )
 {
 	static TitleSubst tsub("Groups");
 
@@ -854,7 +854,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 
 	// Search for courses both in COURSES_DIR and in subdirectories
 	vsCourseGroupNames.push_back( SpecialFiles::COURSES_DIR );
-	SortRStringArray( vsCourseGroupNames );
+	SortStringArray( vsCourseGroupNames );
 
 	int courseIndex = 0;
 	for (auto const &sCourseGroup: vsCourseGroupNames)
@@ -862,7 +862,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 		// Find all CRS files in this group directory
 		vector<std::string> vsCoursePaths;
 		GetDirListing( sCourseGroup + "/*.crs", vsCoursePaths, false, true );
-		SortRStringArray( vsCoursePaths );
+		SortStringArray( vsCoursePaths );
 
 		if( ld )
 		{
@@ -938,16 +938,16 @@ void SongManager::InitAutogenCourses()
 		vector<Song*> apSongs = this->GetAllSongs();
 		SongUtil::SortSongPointerArrayByDisplayArtist( apSongs );
 
-		RString sCurArtist = "";
-		RString sCurArtistTranslit = "";
+		std::string sCurArtist = "";
+		std::string sCurArtistTranslit = "";
 		int iCurArtistCount = 0;
 
 		vector<Song *> aSongs;
 		unsigned i = 0;
 		Rage::ci_ascii_string unknownArtist{ "Unknown artist" };
 		do {
-			RString sArtist = i >= apSongs.size()? RString(""): apSongs[i]->GetDisplayArtist();
-			RString sTranslitArtist = i >= apSongs.size()? RString(""): apSongs[i]->GetTranslitArtist();
+			std::string sArtist = i >= apSongs.size()? std::string(""): apSongs[i]->GetDisplayArtist();
+			std::string sTranslitArtist = i >= apSongs.size()? std::string(""): apSongs[i]->GetTranslitArtist();
 			Rage::ci_ascii_string ciArtist{ sArtist.c_str() };
 			if( i < apSongs.size() && ciArtist == sCurArtist )
 			{
@@ -998,8 +998,8 @@ void SongManager::InitRandomAttacks()
 			{
 				int iNumParams = msd.GetNumParams(i);
 				const MsdFile::value_t &sParams = msd.GetValue(i);
-				RString sType = sParams[0];
-				RString sAttack = sParams[1];
+				std::string sType = sParams[0];
+				std::string sAttack = sParams[1];
 
 				if( iNumParams > 2 )
 				{
@@ -1193,13 +1193,13 @@ void SongManager::DeleteSteps( Steps *pSteps )
 
 bool SongManager::WasLoadedFromAdditionalSongs( const Song *pSong ) const
 {
-	RString sDir = pSong->GetSongDir();
+	std::string sDir = pSong->GetSongDir();
 	return Rage::starts_with( sDir, ADDITIONAL_SONGS_DIR );
 }
 
 bool SongManager::WasLoadedFromAdditionalCourses( const Course *pCourse ) const
 {
-	RString sDir = pCourse->m_sPath;
+	std::string sDir = pCourse->m_sPath;
 	return Rage::starts_with( sDir, ADDITIONAL_COURSES_DIR );
 }
 
@@ -1228,7 +1228,7 @@ void SongManager::GetCourses( CourseType ct, vector<Course*> &AddTo, bool bInclu
 	}
 }
 
-void SongManager::GetCoursesInGroup( vector<Course*> &AddTo, const RString &sCourseGroup, bool bIncludeAutogen ) const
+void SongManager::GetCoursesInGroup( vector<Course*> &AddTo, const std::string &sCourseGroup, bool bIncludeAutogen ) const
 {
 	for (auto *course: m_pCourses)
 	{
@@ -1242,10 +1242,10 @@ void SongManager::GetCoursesInGroup( vector<Course*> &AddTo, const RString &sCou
 	}
 }
 
-bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut, StepsType stype )
+bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, std::string sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut, StepsType stype )
 {
-	const RString sCourseSuffix = sPreferredGroup + (bExtra2 ? "/extra2.crs" : "/extra1.crs");
-	RString sCoursePath = SpecialFiles::SONGS_DIR + sCourseSuffix;
+	const std::string sCourseSuffix = sPreferredGroup + (bExtra2 ? "/extra2.crs" : "/extra1.crs");
+	std::string sCoursePath = SpecialFiles::SONGS_DIR + sCourseSuffix;
 
 	// Couldn't find course in DWI path or alternative song folders
 	if( !DoesFileExist(sCoursePath) )
@@ -1289,7 +1289,7 @@ bool CompareNotesPointersForExtra(const Steps *n1, const Steps *n2)
 
 void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSongOut, Steps*& pStepsOut )
 {
-	RString sGroup = GAMESTATE->m_sPreferredSongGroup;
+	std::string sGroup = GAMESTATE->m_sPreferredSongGroup;
 	if( sGroup == GROUP_ALL )
 	{
 		if( GAMESTATE->m_pCurSong == nullptr )
@@ -1405,7 +1405,7 @@ Course* SongManager::GetRandomCourse()
 	return nullptr;
 }
 
-Song* SongManager::GetSongFromDir(RString dir) const
+Song* SongManager::GetSongFromDir(std::string dir) const
 {
 	if (!Rage::ends_with(dir, "/"))
 	{
@@ -1422,7 +1422,7 @@ Song* SongManager::GetSongFromDir(RString dir) const
 	return nullptr;
 }
 
-Course* SongManager::GetCourseFromPath( RString sPath ) const
+Course* SongManager::GetCourseFromPath( std::string sPath ) const
 {
 	if (sPath == "")
 	{
@@ -1440,7 +1440,7 @@ Course* SongManager::GetCourseFromPath( RString sPath ) const
 	return nullptr;
 }
 
-Course* SongManager::GetCourseFromName( RString sName ) const
+Course* SongManager::GetCourseFromName( std::string sName ) const
 {
 	if (sName == "")
 	{
@@ -1472,7 +1472,7 @@ Course* SongManager::GetCourseFromName( RString sName ) const
  * a common error, but that would result in course files floating around that
  * only work for people who put songs in "Songs"; we don't want that. */
 
-Song *SongManager::FindSong( RString sPath ) const
+Song *SongManager::FindSong( std::string sPath ) const
 {
 	Rage::replace(sPath, '\\', '/' );
 	auto bits = Rage::split( sPath, "/" );
@@ -1488,7 +1488,7 @@ Song *SongManager::FindSong( RString sPath ) const
 	return nullptr;
 }
 
-Song *SongManager::FindSong( RString sGroup, RString sSong ) const
+Song *SongManager::FindSong( std::string sGroup, std::string sSong ) const
 {
 	// foreach song
 	const vector<Song *> &vSongs = GetSongs( sGroup.empty()? GROUP_ALL:sGroup );
@@ -1503,7 +1503,7 @@ Song *SongManager::FindSong( RString sGroup, RString sSong ) const
 	return nullptr;
 }
 
-Course *SongManager::FindCourse( RString sPath ) const
+Course *SongManager::FindCourse( std::string sPath ) const
 {
 	Rage::replace(sPath, '\\', '/' );
 	auto bits = Rage::split( sPath, "/" );
@@ -1519,7 +1519,7 @@ Course *SongManager::FindCourse( RString sPath ) const
 	return nullptr;
 }
 
-Course *SongManager::FindCourse( RString sGroup, RString sName ) const
+Course *SongManager::FindCourse( std::string sGroup, std::string sName ) const
 {
 	for (auto *c: m_pCourses)
 	{
@@ -1581,7 +1581,7 @@ void SongManager::UpdateShuffled()
 	random_shuffle( m_pShuffledCourses.begin(), m_pShuffledCourses.end(), g_RandomNumberGenerator );
 }
 
-void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferredCourses)
+void SongManager::UpdatePreferredSort(std::string sPreferredSongs, std::string sPreferredCourses)
 {
 	ASSERT( UNLOCKMAN != nullptr );
 
@@ -1589,7 +1589,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 		m_vPreferredSongSort.clear();
 
 		vector<std::string> asLines;
-		RString sFile = THEME->GetPathO( "SongManager", sPreferredSongs );
+		std::string sFile = THEME->GetPathO( "SongManager", sPreferredSongs );
 		GetFileContents( sFile, asLines );
 		if( asLines.empty() )
 			return;
@@ -1598,7 +1598,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 
 		for (auto &s: asLines)
 		{
-			RString sLine = s;
+			std::string sLine = s;
 
 			bool bSectionDivider = Rage::starts_with(sLine, "---");
 			if( bSectionDivider )
@@ -1617,7 +1617,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 				 * and if it does, add all the songs in that group to the list. */
 				if( Rage::ends_with(sLine,"/*") )
 				{
-					RString group = Rage::head(sLine, sLine.size() - 2);
+					std::string group = Rage::head(sLine, sLine.size() - 2);
 					if( DoesSongGroupExist(group) )
 					{
 						// add all songs in group
@@ -1694,7 +1694,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 		m_vPreferredCourseSort.clear();
 
 		vector<std::string> asLines;
-		RString sFile = THEME->GetPathO( "SongManager", sPreferredCourses );
+		std::string sFile = THEME->GetPathO( "SongManager", sPreferredCourses );
 		if( !GetFileContents(sFile, asLines) )
 			return;
 
@@ -1702,7 +1702,7 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 
 		for (auto &s: asLines)
 		{
-			RString sLine = s;
+			std::string sLine = s;
 			bool bSectionDivider = Rage::starts_with( sLine, "---" );
 			if( bSectionDivider )
 			{
@@ -1811,11 +1811,11 @@ void SongManager::RefreshCourseGroupInfo()
 	// TODO: Search for course group banners
 }
 
-void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot )
+void SongManager::LoadStepEditsFromProfileDir( const std::string &sProfileDir, ProfileSlot slot )
 {
 	using std::min;
 	// Load all edit steps
-	RString sDir = sProfileDir + EDIT_STEPS_SUBDIR;
+	std::string sDir = sProfileDir + EDIT_STEPS_SUBDIR;
 	SSCLoader loaderSSC;
 	SMLoader loaderSM;
 	int iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
@@ -1828,7 +1828,7 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 	// XXX: If some edits are invalid and they're close to the edit limit, this may erroneously skip some edits, and won't warn.
 	for( int i=0; i<size; i++ )
 	{
-		RString fn = vsFiles[i];
+		std::string fn = vsFiles[i];
 		bool bLoadedFromSSC = loaderSSC.LoadEditFromFile( fn, slot, true );
 		// If we don't load the edit from a .ssc-style .edit, then we should
 		// also try the .sm-style edit file. -aj
@@ -1854,14 +1854,14 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 	// XXX: Same as above, edits may be skipped in error in some cases
 	for (auto &group: vsGroups)
 	{
-		RString sGroupDir = group+"/";
+		std::string sGroupDir = group+"/";
 		vector<std::string> vsSongs;
 		GetDirListing(sDir+sGroupDir+"*", vsSongs, true, false );
 
 		for (auto &song: vsSongs)
 		{
 			vector<std::string> vsEdits;
-			RString sSongDir = sGroupDir+song+"/";
+			std::string sSongDir = sGroupDir+song+"/";
 			// XXX There doesn't appear to be a songdir const?
 			Song *given = GetSongFromDir( "/Songs/"+sSongDir );
 			// NOTE: We don't have to check the return value of GetSongFromDir here,
@@ -1873,7 +1873,7 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 
 			for( int k=0; k<size; k++ )
 			{
-				RString fn = vsEdits[k];
+				std::string fn = vsEdits[k];
 				bool bLoadedFromSSC = loaderSSC.LoadEditFromFile( fn, slot, true, given );
 				// And try again with SM
 				if( !bLoadedFromSSC )
@@ -1892,11 +1892,11 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 	}
 }
 
-void SongManager::LoadCourseEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot )
+void SongManager::LoadCourseEditsFromProfileDir( const std::string &sProfileDir, ProfileSlot slot )
 {
 	using std::min;
 	// Load all edit courses
-	RString sDir = sProfileDir + EDIT_COURSES_SUBDIR;
+	std::string sDir = sProfileDir + EDIT_COURSES_SUBDIR;
 
 	vector<std::string> vsFiles;
 	GetDirListing( sDir+"*.crs", vsFiles, false, true );
@@ -1906,7 +1906,7 @@ void SongManager::LoadCourseEditsFromProfileDir( const RString &sProfileDir, Pro
 
 	for( int i=0; i<size; i++ )
 	{
-		RString fn = vsFiles[i];
+		std::string fn = vsFiles[i];
 
 		CourseLoaderCRS::LoadEditFromFile( fn, slot );
 	}

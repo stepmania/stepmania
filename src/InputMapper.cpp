@@ -631,7 +631,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 	for (auto &device: vDevices)
 	{
 		InputDevice id = device.id;
-		const RString &sDescription = device.sDesc;
+		const std::string &sDescription = device.sDesc;
 		for (auto &mapping: vAutoMappings)
 		{
 			Regex regex( mapping.m_sDriverRegex );
@@ -688,7 +688,7 @@ void InputMapper::ResetMappingsToDefault()
 	AddDefaultMappingsForCurrentGameIfUnmapped();
 }
 
-void InputMapper::CheckButtonAndAddToReason(GameButton menu, vector<std::string>& full_reason, RString const& sub_reason)
+void InputMapper::CheckButtonAndAddToReason(GameButton menu, vector<std::string>& full_reason, std::string const& sub_reason)
 {
 	vector<GameInput> inputs;
 	bool exists= false;
@@ -752,7 +752,7 @@ void InputMapper::SanityCheckMappings(vector<std::string>& reason)
 static LocalizedString CONNECTED			( "InputMapper", "Connected" );
 static LocalizedString DISCONNECTED			( "InputMapper", "Disconnected" );
 static LocalizedString AUTOMAPPING_ALL_JOYSTICKS	( "InputMapper", "Auto-mapping all joysticks." );
-bool InputMapper::CheckForChangedInputDevicesAndRemap( RString &sMessageOut )
+bool InputMapper::CheckForChangedInputDevicesAndRemap( std::string &sMessageOut )
 {
 	// Only check for changes in joysticks since that's all we know how to remap.
 
@@ -792,7 +792,7 @@ bool InputMapper::CheckForChangedInputDevicesAndRemap( RString &sMessageOut )
 	vector<std::string> vsConnects, vsDisconnects;
 	GetConnectsDisconnects( vsLastSeenJoysticks, vsCurrentJoysticks, vsDisconnects, vsConnects );
 
-	sMessageOut = RString();
+	sMessageOut = std::string();
 	if( !vsConnects.empty() )
 	{
 		sMessageOut += CONNECTED.GetValue()+": " + Rage::join( "\n", vsConnects ) + "\n";
@@ -1073,7 +1073,7 @@ MultiPlayer InputMapper::InputDeviceToMultiPlayer( InputDevice id )
 	return enum_add2( MultiPlayer_P1, id - DEVICE_JOY1 );
 }
 
-GameButton InputScheme::ButtonNameToIndex( const RString &sButtonName ) const
+GameButton InputScheme::ButtonNameToIndex( const std::string &sButtonName ) const
 {
 	Rage::ci_ascii_string lowerButton{ sButtonName.c_str() };
 	for( GameButton gb=(GameButton) 0; gb<m_iButtonsPerController; gb=(GameButton)(gb+1) )
@@ -1206,7 +1206,7 @@ void InputMappings::Unmap( InputDevice id )
 	}
 }
 
-void InputMappings::ReadMappings( const InputScheme *pInputScheme, RString sFilePath, bool bIsAutoMapping )
+void InputMappings::ReadMappings( const InputScheme *pInputScheme, std::string sFilePath, bool bIsAutoMapping )
 {
 	Clear();
 
@@ -1234,8 +1234,8 @@ void InputMappings::ReadMappings( const InputScheme *pInputScheme, RString sFile
 	{
 		FOREACH_CONST_Attr( Key, i )
 		{
-			const RString &name = i->first;
-			RString value;
+			const std::string &name = i->first;
+			std::string value;
 			i->second->GetValue( value );
 
 			GameInput GameI;
@@ -1259,7 +1259,7 @@ void InputMappings::ReadMappings( const InputScheme *pInputScheme, RString sFile
 	}
 }
 
-void InputMappings::WriteMappings( const InputScheme *pInputScheme, RString sFilePath )
+void InputMappings::WriteMappings( const InputScheme *pInputScheme, std::string sFilePath )
 {
 	IniFile ini;
 	ini.ReadFile( sFilePath );
@@ -1280,7 +1280,7 @@ void InputMappings::WriteMappings( const InputScheme *pInputScheme, RString sFil
 		FOREACH_GameButtonInScheme( pInputScheme, j )
 		{
 			GameInput GameI( i, j );
-			RString sNameString = GameI.ToString( pInputScheme );
+			std::string sNameString = GameI.ToString( pInputScheme );
 
 			vector<std::string> asValues;
 			for( int slot = 0; slot < NUM_USER_GAME_TO_DEVICE_SLOTS; ++slot )	// don't save data from the last (keyboard automap) slot

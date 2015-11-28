@@ -2,7 +2,7 @@
 #include "CrashHandlerInternal.h"
 
 #include <csignal>
-
+#include <cstring>
 const char *itoa( unsigned n )
 {
 	static char ret[32];
@@ -46,8 +46,8 @@ const char *SignalName( int signo )
 #endif
 	}
 	static char buf[128];
-	strcpy( buf, "Unknown signal " );
-	strcat( buf, itoa(signo) );
+	std::strcpy( buf, "Unknown signal " );
+	std::strcat( buf, itoa(signo) );
 	return buf;
 }
 

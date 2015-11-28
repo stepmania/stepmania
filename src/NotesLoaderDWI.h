@@ -24,9 +24,9 @@ namespace DWILoader
 	 * @param BlacklistedImages a set of images that aren't used.
 	 * @return its success or failure.
 	 */
-	bool LoadFromDir( const RString &sPath, Song &out, std::set<RString> &BlacklistedImages );
+	bool LoadFromDir( const std::string &sPath, Song &out, std::set<std::string> &BlacklistedImages );
 
-	bool LoadNoteDataFromSimfile( const RString &path, Steps &out );
+	bool LoadNoteDataFromSimfile( const std::string &path, Steps &out );
 }
 
 #endif

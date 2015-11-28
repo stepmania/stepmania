@@ -20,7 +20,7 @@ struct StepsTypeInfo
 	bool bAllowAutogen;
 	/** @brief The most basic StyleType that this StpesTypeInfo is used with. */
 	StepsTypeCategory m_StepsTypeCategory;
-	RString GetLocalizedString() const;
+	std::string GetLocalizedString() const;
 };
 
 class GameManager
@@ -45,10 +45,10 @@ public:
 	const Game* GetGameFromIndex( int index );
 
 	const StepsTypeInfo &GetStepsTypeInfo( StepsType st );
-	StepsType StringToStepsType( RString sStepsType );
-	const Game* StringToGame( RString sGame );
-	const Style* GameAndStringToStyle( const Game* pGame, RString sStyle );
-	RString StyleToLocalizedString( const Style* s );
+	StepsType StringToStepsType( std::string sStepsType );
+	const Game* StringToGame( std::string sGame );
+	const Style* GameAndStringToStyle( const Game* pGame, std::string sStyle );
+	std::string StyleToLocalizedString( const Style* s );
 
 	// stepstype_is_multiplayer doesn't really belong in GAMEMAN, but we don't
 	// have a stepstype manager.  Also, I want to start calling routine mode

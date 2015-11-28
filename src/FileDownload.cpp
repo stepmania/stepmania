@@ -38,7 +38,7 @@ FileTransfer::~FileTransfer()
 	m_fOutputFile.Close();
 }
 
-RString FileTransfer::Update( float fDeltaTime )
+std::string FileTransfer::Update( float fDeltaTime )
 {
 	HTTPUpdate();
 
@@ -73,24 +73,24 @@ void FileTransfer::Cancel()
 	FILEMAN->Remove("Packages/" + m_sEndName);
 }
 
-void FileTransfer::StartDownload( const RString &sURL, const RString &sDestFile )
+void FileTransfer::StartDownload( const std::string &sURL, const std::string &sDestFile )
 {
 	StartTransfer( download, sURL, "", sDestFile );
 }
 
-void FileTransfer::StartUpload( const RString &sURL, const RString &sSrcFile, const RString &sDestFile )
+void FileTransfer::StartUpload( const std::string &sURL, const std::string &sSrcFile, const std::string &sDestFile )
 {
 	StartTransfer( upload, sURL, sSrcFile, sDestFile );
 }
 
 extern Preference<std::string> g_sCookie;
 
-void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const RString &sSrcFile, const RString &sDestFile )
+void FileTransfer::StartTransfer( TransferType type, const std::string &sURL, const std::string &sSrcFile, const std::string &sDestFile )
 {
-	RString Proto;
-	RString Server;
+	std::string Proto;
+	std::string Server;
 	int Port=80;
-	RString sAddress;
+	std::string sAddress;
 
 	if( !ParseHTTPAddress( sURL, Proto, Server, Port, sAddress ) )
 	{
@@ -153,7 +153,7 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 	}
 
 	// Produce HTTP header
-	RString sAction;
+	std::string sAction;
 	switch( type )
 	{
 	case upload: sAction = "POST"; break;
@@ -167,7 +167,7 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 	vsHeaders.push_back( "Connection: closed" );
 	string sBoundary = "--ZzAaB03x";
 	vsHeaders.push_back( "Content-Type: multipart/form-data; boundary=" + sBoundary );
-	RString sRequestPayload;
+	std::string sRequestPayload;
 	if( type == upload )
 	{
 		RageFile f;
@@ -200,7 +200,7 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 
 	vsHeaders.push_back( "Content-Length: " + fmt::sprintf("%zd",sRequestPayload.size()) );
 
-	RString sHeader;
+	std::string sHeader;
 	for (auto const &h: vsHeaders)
 	{
 		sHeader += h + "\r\n";
@@ -220,7 +220,7 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 	UpdateProgress();
 }
 
-static size_t FindEndOfHeaders( const RString &buf )
+static size_t FindEndOfHeaders( const std::string &buf )
 {
 	size_t iPos1 = buf.find( "\n\n" );
 	size_t iPos2 = buf.find( "\r\n\r\n" );
@@ -322,7 +322,7 @@ void FileTransfer::HTTPUpdate()
 		{
 			if( m_bSavingFile && m_iResponseCode < 300 )
 			{
-				RString sZipFile = m_fOutputFile.GetRealPath();
+				std::string sZipFile = m_fOutputFile.GetRealPath();
 				m_fOutputFile.Close();
 				FILEMAN->FlushDirCache();
 				m_iDownloaded = 0;
@@ -331,7 +331,7 @@ void FileTransfer::HTTPUpdate()
 	}
 }
 
-bool FileTransfer::ParseHTTPAddress( const RString &URL, RString &sProto, RString &sServer, int &iPort, RString &sAddress )
+bool FileTransfer::ParseHTTPAddress( const std::string &URL, std::string &sProto, std::string &sServer, int &iPort, std::string &sAddress )
 {
 	// [PROTO://]SERVER[:PORT][/URL]
 

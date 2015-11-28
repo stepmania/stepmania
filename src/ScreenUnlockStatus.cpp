@@ -109,8 +109,8 @@ void ScreenUnlockStatus::Init()
 					const Song *pSong = entry.m_Song.ToSong();
 					ASSERT( pSong != nullptr );
 
-					RString title = pSong->GetDisplayMainTitle();
-					RString subtitle = pSong->GetDisplaySubTitle();
+					std::string title = pSong->GetDisplayMainTitle();
+					std::string subtitle = pSong->GetDisplaySubTitle();
 					if( subtitle != "" )
 						title = title + "\n" + subtitle;
 					text->SetMaxWidth( MaxWidth );
@@ -158,12 +158,12 @@ void ScreenUnlockStatus::Init()
 				float SecondCycleTime = (6 + TargetRow) * SECS_PER_CYCLE - FirstCycleTime;
 				//LOG->Trace("Target Row: %f", TargetRow);
 				//LOG->Trace("command for icon %d: %s", i, fmt::sprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime * 2, ScrollingTextEndY).c_str() );
-				RString sCommand = fmt::sprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime, ScrollingTextEndY);
+				std::string sCommand = fmt::sprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime, ScrollingTextEndY);
 				text->RunCommands( ActorUtil::ParseActorCommands(sCommand) );
 			}
 			else
 			{
-				RString sCommand = fmt::sprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY);
+				std::string sCommand = fmt::sprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY);
 				text->RunCommands( ActorUtil::ParseActorCommands(sCommand) );
 			}
 
@@ -190,12 +190,12 @@ void ScreenUnlockStatus::Init()
 					float SecondCycleTime = (6 + TargetRow) * SECS_PER_CYCLE - FirstCycleTime;
 					//LOG->Trace("Target Row: %f", TargetRow);
 					//LOG->Trace("command for icon %d: %s", i, fmt::sprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime * 2, ScrollingTextEndY).c_str() );
-					RString sCommand = fmt::sprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime, ScrollingTextEndY);
+					std::string sCommand = fmt::sprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime, ScrollingTextEndY);
 					IconCount->RunCommands( ActorUtil::ParseActorCommands(sCommand) );
 				}
 				else
 				{
-					RString sCommand = fmt::sprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY);
+					std::string sCommand = fmt::sprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY);
 					IconCount->RunCommands( ActorUtil::ParseActorCommands(sCommand) );
 				}
 
@@ -239,8 +239,8 @@ void ScreenUnlockStatus::Init()
 			NewText->LoadFromFont( THEME->GetPathF("ScreenUnlockStatus","text") );
 			NewText->SetHorizAlign( align_left );
 
-			RString title = pSong->GetDisplayMainTitle();
-			RString subtitle = pSong->GetDisplaySubTitle();
+			std::string title = pSong->GetDisplayMainTitle();
+			std::string subtitle = pSong->GetDisplaySubTitle();
 
 			if( subtitle != "" )
 				title = title + "\n" + subtitle;
@@ -253,7 +253,7 @@ void ScreenUnlockStatus::Init()
 
 			NewText->SetXY(ScrollingTextX, ScrollingTextStartY);
 			{
-				RString sCommand = fmt::sprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumUnlocks + 2 * i - 2), SECS_PER_CYCLE * ((ScrollingTextRows - i) * 2 + 1 ), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows ));
+				std::string sCommand = fmt::sprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumUnlocks + 2 * i - 2), SECS_PER_CYCLE * ((ScrollingTextRows - i) * 2 + 1 ), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows ));
 				NewText->RunCommands( ActorUtil::ParseActorCommands(sCommand) );
 			}
 
@@ -264,7 +264,7 @@ void ScreenUnlockStatus::Init()
 			NewIcon->SetHeight(UNLOCK_TEXT_SCROLL_ICON_SIZE);
 			NewIcon->SetWidth(UNLOCK_TEXT_SCROLL_ICON_SIZE);
 			{
-				RString sCommand = fmt::sprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumUnlocks + 2 * i - 2), SECS_PER_CYCLE * ((ScrollingTextRows - i) * 2 + 1 ), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows ));
+				std::string sCommand = fmt::sprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumUnlocks + 2 * i - 2), SECS_PER_CYCLE * ((ScrollingTextRows - i) * 2 + 1 ), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows ));
 				NewIcon->RunCommands( ActorUtil::ParseActorCommands(sCommand) );
 			}
 
@@ -289,20 +289,20 @@ void ScreenUnlockStatus::Init()
 	}
 	PointsUntilNextUnlock.SetName( "PointsDisplay" );
 
-	RString PointDisplay = TYPE_TO_DISPLAY;
+	std::string PointDisplay = TYPE_TO_DISPLAY;
 	if (PointDisplay == "DP" || PointDisplay == "Dance")
 	{
-		RString sDP = fmt::sprintf( "%d", (int)UNLOCKMAN->PointsUntilNextUnlock(UnlockRequirement_DancePoints) );
+		std::string sDP = fmt::sprintf( "%d", (int)UNLOCKMAN->PointsUntilNextUnlock(UnlockRequirement_DancePoints) );
 		PointsUntilNextUnlock.SetText( sDP );
 	}
 	else if (PointDisplay == "AP" || PointDisplay == "Arcade")
 	{
-		RString sAP = fmt::sprintf( "%d", (int)UNLOCKMAN->PointsUntilNextUnlock(UnlockRequirement_ArcadePoints) );
+		std::string sAP = fmt::sprintf( "%d", (int)UNLOCKMAN->PointsUntilNextUnlock(UnlockRequirement_ArcadePoints) );
 		PointsUntilNextUnlock.SetText( sAP );
 	}
 	else if (PointDisplay == "SP" || PointDisplay == "Song")
 	{
-		RString sSP = fmt::sprintf( "%d", (int)UNLOCKMAN->PointsUntilNextUnlock(UnlockRequirement_SongPoints) );
+		std::string sSP = fmt::sprintf( "%d", (int)UNLOCKMAN->PointsUntilNextUnlock(UnlockRequirement_SongPoints) );
 		PointsUntilNextUnlock.SetText( sSP );
 	}
 

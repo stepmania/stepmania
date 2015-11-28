@@ -17,7 +17,7 @@ SoundEffectControl::SoundEffectControl()
 	m_pNoteData = nullptr;
 }
 
-void SoundEffectControl::Load( const RString &sType, PlayerState *pPlayerState, const NoteData *pNoteData )
+void SoundEffectControl::Load( const std::string &sType, PlayerState *pPlayerState, const NoteData *pNoteData )
 {
 	SOUND_PROPERTY.Load( sType, "SoundProperty" );
 	LOCK_TO_HOLD.Load( sType, "LockToHold" );

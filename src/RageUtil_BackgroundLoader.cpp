@@ -32,7 +32,7 @@ BackgroundLoader::BackgroundLoader():
 	m_LoadThread.Create( LoadThread_Start, this );
 }
 
-static void DeleteEmptyDirectories( RString sDir )
+static void DeleteEmptyDirectories( std::string sDir )
 {
 	vector<std::string> asNewDirs;
 	GetDirListing( sDir + "/*", asNewDirs, false, true );
@@ -68,22 +68,22 @@ BackgroundLoader::~BackgroundLoader()
 }
 
 /* Pull a request out of m_CacheRequests. */
-RString BackgroundLoader::GetRequest()
+std::string BackgroundLoader::GetRequest()
 {
 	if( !g_bEnableBackgroundLoading )
-		return RString();
+		return std::string();
 
 	LockMut( m_Mutex );
 	if( !m_CacheRequests.size() )
-		return RString();
+		return std::string();
 
-	RString ret;
+	std::string ret;
 	ret = m_CacheRequests.front();
 	m_CacheRequests.erase( m_CacheRequests.begin(), m_CacheRequests.begin()+1 );
 	return ret;
 }
 
-RString BackgroundLoader::GetCachePath( RString sPath ) const
+std::string BackgroundLoader::GetCachePath( std::string sPath ) const
 {
 	return m_sCachePathPrefix + sPath;
 }
@@ -96,7 +96,7 @@ void BackgroundLoader::LoadThread()
 		 * fail on timeout. */
 		m_StartSem.Wait( false );
 
-		RString sFile = GetRequest();
+		std::string sFile = GetRequest();
 		if( sFile.empty() )
 			continue;
 
@@ -116,7 +116,7 @@ void BackgroundLoader::LoadThread()
 
 		LOG->Trace("XXX: reading %s", sFile.c_str());
 
-		RString sCachePath = GetCachePath( sFile );
+		std::string sCachePath = GetCachePath( sFile );
 
 		/* Open the file and read it. */
 		RageFile src;
@@ -162,7 +162,7 @@ void BackgroundLoader::LoadThread()
 	}
 }
 
-void BackgroundLoader::CacheFile( const RString &sFile )
+void BackgroundLoader::CacheFile( const std::string &sFile )
 {
 	if( !g_bEnableBackgroundLoading )
 		return;
@@ -175,7 +175,7 @@ void BackgroundLoader::CacheFile( const RString &sFile )
 	m_StartSem.Post();
 }
 
-bool BackgroundLoader::IsCacheFileFinished( const RString &sFile, RString &sActualPath )
+bool BackgroundLoader::IsCacheFileFinished( const std::string &sFile, std::string &sActualPath )
 {
 	if( !g_bEnableBackgroundLoading )
 	{
@@ -204,7 +204,7 @@ bool BackgroundLoader::IsCacheFileFinished( const RString &sFile, RString &sActu
 	return true;
 }
 
-void BackgroundLoader::FinishedWithCachedFile( RString sFile )
+void BackgroundLoader::FinishedWithCachedFile( std::string sFile )
 {
 	if( !g_bEnableBackgroundLoading )
 		return;

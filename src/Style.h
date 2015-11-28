@@ -87,7 +87,7 @@ public:
 	 * @return the Column number of the style, or Column_Invalid if it's an invalid column.
 	 * Examples of this include getting the upper left hand corner in a traditional four panel mode. */
 	int GameInputToColumn( const GameInput &GameI ) const;
-	RString ColToButtonName( int iCol ) const;
+	std::string ColToButtonName( int iCol ) const;
 
 	bool GetUsesCenteredArrows() const;
 	void GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& original, NoteData& noteDataOut ) const;

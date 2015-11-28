@@ -13,15 +13,15 @@ namespace NotesLoader
 	 * @param sFullTitle the full title.
 	 * @param sMainTitleOut the eventual main title.
 	 * @param sSubTitleOut the ventual sub title. */
-	void GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle,
-					      RString &sMainTitleOut, RString &sSubTitleOut );
+	void GetMainAndSubTitlesFromFullTitle( const std::string &sFullTitle,
+					      std::string &sMainTitleOut, std::string &sSubTitleOut );
 	/**
 	 * @brief Attempt to load a Song from the given directory.
 	 * @param sPath the path to the file.
 	 * @param out the Song in question.
 	 * @param BlacklistedImages images to exclude (DWI files only for some reason).
 	 * @return its success or failure. */
-	bool LoadFromDir( const RString &sPath, Song &out, std::set<RString> &BlacklistedImages, bool load_autosave= false );
+	bool LoadFromDir( const std::string &sPath, Song &out, std::set<std::string> &BlacklistedImages, bool load_autosave= false );
 }
 
 #endif

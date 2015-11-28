@@ -20,7 +20,7 @@ struct Attack
 	/** @brief How long does this attack last? */
 	float fSecsRemaining;
 	/** @brief The modifiers used for this attack. */
-	RString sModifiers;
+	std::string sModifiers;
 	bool bOn; // set and used by GAMESTATE
 	bool bGlobal; // true for song-wide course mods
 	bool bShowInAttackList;
@@ -30,20 +30,20 @@ struct Attack
 		level = ATTACK_LEVEL_1;
 		fStartSecond = ATTACK_STARTS_NOW;
 		fSecsRemaining = 0;
-		sModifiers = RString();
+		sModifiers = std::string();
 		bOn = false;
 		bGlobal = false;
 		bShowInAttackList = true;
 	}
 	Attack(): level(ATTACK_LEVEL_1), fStartSecond(ATTACK_STARTS_NOW),
-		fSecsRemaining(0), sModifiers(RString()),
+		fSecsRemaining(0), sModifiers(std::string()),
 		bOn(false), bGlobal(false), bShowInAttackList(true)
 		{} // MakeBlank() is effectively called here.
 	Attack(
 		AttackLevel	level_,
 		float fStartSecond_,
 		float fSecsRemaining_,
-		RString sModifiers_,
+		std::string sModifiers_,
 		bool bOn_,
 		bool bGlobal_,
 		bool bShowInAttackList_ = true ):
@@ -64,8 +64,8 @@ struct Attack
 	 * @return true if the two Attacks are equal, or false otherwise. */
 	bool operator== ( const Attack &rhs ) const;
 	bool ContainsTransformOrTurn() const;
-	static Attack FromGlobalCourseModifier( const RString &sModifiers );
-	RString GetTextDescription() const;
+	static Attack FromGlobalCourseModifier( const std::string &sModifiers );
+	std::string GetTextDescription() const;
 
 	int GetNumAttacks() const;
 };

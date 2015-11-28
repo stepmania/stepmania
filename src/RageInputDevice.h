@@ -54,18 +54,18 @@ enum InputDevice
 /** @brief A special foreach loop for each input device. */
 #define FOREACH_InputDevice( i ) FOREACH_ENUM( InputDevice, i )
 std::string const InputDeviceToString( InputDevice i );
-InputDevice StringToInputDevice( const RString& s );
+InputDevice StringToInputDevice( const std::string& s );
 inline bool IsJoystick( InputDevice id ) { return DEVICE_JOY1 <= id && id < DEVICE_JOY1+NUM_JOYSTICKS; }
 inline bool IsPump( InputDevice id ) { return DEVICE_PUMP1 <= id && id < DEVICE_PUMP1+NUM_PUMPS; }
 inline bool IsMouse( InputDevice id ) { return id == DEVICE_MOUSE; }
 
 struct InputDeviceInfo
 {
-	InputDeviceInfo( InputDevice id_, RString sDesc_ ):
+	InputDeviceInfo( InputDevice id_, std::string sDesc_ ):
 		id(id_), sDesc(sDesc_) {}
 
 	InputDevice id;
-	RString sDesc;
+	std::string sDesc;
 };
 
 inline bool operator==(InputDeviceInfo const &lhs, InputDeviceInfo const &rhs)
@@ -373,7 +373,7 @@ namespace std
 }
 
 std::string const DeviceButtonToString( DeviceButton i );
-DeviceButton StringToDeviceButton( const RString& s );
+DeviceButton StringToDeviceButton( const std::string& s );
 
 struct DeviceInput
 {
@@ -403,8 +403,8 @@ public:
 	DeviceInput( InputDevice d, DeviceButton b, const RageTimer &t, int zVal=0 ):
 		device(d), button(b), level(0), z(zVal), bDown(false), ts(t) { }
 
-	RString ToString() const;
-	bool FromString( const RString &s );
+	std::string ToString() const;
+	bool FromString( const std::string &s );
 
 	bool IsValid() const { return device != InputDevice_Invalid; };
 	void MakeInvalid() { device = InputDevice_Invalid; };

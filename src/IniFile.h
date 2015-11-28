@@ -16,19 +16,19 @@ public:
 	/**
 	 * @brief Retrieve the filename of the last file loaded.
 	 * @return the filename. */
-	RString GetPath() const { return m_sPath; }
+	std::string GetPath() const { return m_sPath; }
 	/**
 	 * @brief Retrieve any errors that have occurred.
 	 * @return the latest error. */
-	const RString &GetError() const { return m_sError; }
+	const std::string &GetError() const { return m_sError; }
 
-	bool ReadFile( const RString &sPath );
+	bool ReadFile( const std::string &sPath );
 	bool ReadFile( RageFileBasic &sFile );
-	bool WriteFile( const RString &sPath ) const;
+	bool WriteFile( const std::string &sPath ) const;
 	bool WriteFile( RageFileBasic &sFile ) const;
 
 	template <typename T>
-	bool GetValue( const RString &sKey, const RString &sValueName, T& value ) const
+	bool GetValue( const std::string &sKey, const std::string &sValueName, T& value ) const
 	{
 		const XNode* pNode = GetChild( sKey );
 		if( pNode == nullptr )
@@ -36,7 +36,7 @@ public:
 		return pNode->GetAttrValue<T>( sValueName, value );
 	}
 	template <typename T>
-	void SetValue( const RString &sKey, const RString &sValueName, const T &value )
+	void SetValue( const std::string &sKey, const std::string &sValueName, const T &value )
 	{
 		XNode* pNode = GetChild( sKey );
 		if( pNode == nullptr )
@@ -44,13 +44,13 @@ public:
 		pNode->AppendAttr<T>( sValueName, value );
 	}
 	template <typename T>
-	void SetKeyValue(XNode* keynode, const RString &sValueName, const T &value)
+	void SetKeyValue(XNode* keynode, const std::string &sValueName, const T &value)
 	{
 		keynode->AppendAttr<T>(sValueName, value);
 	}
 
-	bool DeleteKey( const RString &keyname );
-	bool DeleteValue( const RString &keyname, const RString &valuename );
+	bool DeleteKey( const std::string &keyname );
+	bool DeleteValue( const std::string &keyname, const std::string &valuename );
 
 	/**
 	 * @brief Rename a key.
@@ -61,12 +61,12 @@ public:
 	 * @param from the key to rename.
 	 * @param to the new key name.
 	 * @return its success or failure. */
-	bool RenameKey( const RString &from, const RString &to );
+	bool RenameKey( const std::string &from, const std::string &to );
 
 private:
-	RString m_sPath;
+	std::string m_sPath;
 
-	mutable RString m_sError;
+	mutable std::string m_sError;
 };
 
 #endif

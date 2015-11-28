@@ -107,7 +107,7 @@ RageSoundDriver_WaveOut::RageSoundDriver_WaveOut()
 	m_hWaveOut = nullptr;
 }
 
-RString RageSoundDriver_WaveOut::Init()
+std::string RageSoundDriver_WaveOut::Init()
 {
 	m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
 	if (m_iSampleRate == 0)
@@ -151,7 +151,7 @@ RString RageSoundDriver_WaveOut::Init()
 	MixingThread.SetName( "Mixer thread" );
 	MixingThread.Create( MixerThread_start, this );
 
-	return RString();
+	return std::string();
 }
 
 RageSoundDriver_WaveOut::~RageSoundDriver_WaveOut()

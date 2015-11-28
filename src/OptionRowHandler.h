@@ -18,7 +18,7 @@ enum SelectType
 	SelectType_Invalid
 };
 std::string const SelectTypeToString( SelectType pm );
-SelectType StringToSelectType( const RString& s );
+SelectType StringToSelectType( const std::string& s );
 LuaDeclareType( SelectType );
 /** @brief How many items are shown on the row? */
 enum LayoutType
@@ -29,16 +29,16 @@ enum LayoutType
 	LayoutType_Invalid
 };
 std::string const LayoutTypeToString( LayoutType pm );
-LayoutType StringToLayoutType( const RString& s );
+LayoutType StringToLayoutType( const std::string& s );
 LuaDeclareType( LayoutType );
 
 /** @brief Define the purpose of the OptionRow. */
 struct OptionRowDefinition
 {
 	/** @brief the name of the option row. */
-	RString m_sName;
+	std::string m_sName;
 	/** @brief an explanation of the row's purpose. */
-	RString m_sExplanationName;
+	std::string m_sExplanationName;
 	/** @brief Do all players have to share one option from the row? */
 	bool m_bOneChoiceForAllPlayers;
 	SelectType m_selectType;
@@ -155,8 +155,8 @@ public:
 		Init();
 		return this->LoadInternal( cmds );
 	}
-	RString OptionTitle() const;
-	RString GetThemedItemText( int iChoice ) const;
+	std::string OptionTitle() const;
+	std::string GetThemedItemText( int iChoice ) const;
 
 	virtual bool LoadInternal( const Commands & ) { return true; }
 
@@ -176,8 +176,8 @@ public:
 	virtual void ImportOption( OptionRow *, const std::vector<PlayerNumber> &, std::vector<bool> vbSelectedOut[NUM_PLAYERS] ) const { }
 	// Returns an OPT mask.
 	virtual int ExportOption( const std::vector<PlayerNumber> &, const std::vector<bool> vbSelected[NUM_PLAYERS] ) const { return 0; }
-	virtual void GetIconTextAndGameCommand( int iFirstSelection, RString &sIconTextOut, GameCommand &gcOut ) const;
-	virtual RString GetScreen( int /* iChoice */ ) const { return RString(); }
+	virtual void GetIconTextAndGameCommand( int iFirstSelection, std::string &sIconTextOut, GameCommand &gcOut ) const;
+	virtual std::string GetScreen( int /* iChoice */ ) const { return std::string(); }
 	// Exists so that a lua function can act on the selection.  Returns true if the choices should be reloaded.
 	virtual bool NotifyOfSelection(PlayerNumber pn, int choice) { return false; }
 	virtual bool GoToFirstOnStart() { return true; }
@@ -194,7 +194,7 @@ namespace OptionRowHandlerUtil
 	int GetOneSelection( const std::vector<bool> &vbSelected );
 }
 
-inline void VerifySelected(SelectType st, std::vector<bool> &selected, const RString &sName)
+inline void VerifySelected(SelectType st, std::vector<bool> &selected, const std::string &sName)
 {
 	int num_selected = 0;
 	if( st == SELECT_ONE )

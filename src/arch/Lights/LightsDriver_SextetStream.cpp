@@ -236,7 +236,7 @@ REGISTER_SOUND_DRIVER_CLASS(SextetStreamToFile);
 #endif
 static Preference<std::string> g_sSextetStreamOutputFilename("SextetStreamOutputFilename", DEFAULT_OUTPUT_FILENAME);
 
-inline RageFile * openOutputStream(const RString& filename)
+inline RageFile * openOutputStream(const std::string& filename)
 {
 	RageFile * file = new RageFile;
 
@@ -255,7 +255,7 @@ LightsDriver_SextetStreamToFile::LightsDriver_SextetStreamToFile(RageFile * file
 	_impl = new Impl(file);
 }
 
-LightsDriver_SextetStreamToFile::LightsDriver_SextetStreamToFile(const RString& filename)
+LightsDriver_SextetStreamToFile::LightsDriver_SextetStreamToFile(const std::string& filename)
 {
 	_impl = new Impl(openOutputStream(filename));
 }

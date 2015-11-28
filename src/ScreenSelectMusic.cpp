@@ -57,10 +57,10 @@ AutoScreenMessage( SM_SortOrderChanged );
 AutoScreenMessage( SM_BackFromPlayerOptions );
 AutoScreenMessage( SM_ConfirmDeleteSong );
 
-static RString g_sCDTitlePath;
+static std::string g_sCDTitlePath;
 static bool g_bWantFallbackCdTitle;
 static bool g_bCDTitleWaiting = false;
-static RString g_sBannerPath;
+static std::string g_sBannerPath;
 static bool g_bBannerWaiting = false;
 static bool g_bSampleMusicWaiting = false;
 static RageTimer g_StartedLoadingAt(RageZeroTimer);
@@ -314,16 +314,16 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 	if( g_bCDTitleWaiting )
 	{
 		// The CDTitle is normally very small, so we don't bother waiting to display it.
-		RString sPath;
+		std::string sPath;
 		if( !m_BackgroundLoader.IsCacheFileFinished(g_sCDTitlePath, sPath) )
 			return;
 
 		g_bCDTitleWaiting = false;
 
-		RString sCDTitlePath = sPath;
+		std::string sCDTitlePath = sPath;
 
 		if( sCDTitlePath.empty() || !IsAFile(sCDTitlePath) )
-			sCDTitlePath = g_bWantFallbackCdTitle? m_sFallbackCDTitlePath:RString("");
+			sCDTitlePath = g_bWantFallbackCdTitle? m_sFallbackCDTitlePath:std::string("");
 
 		if( !sCDTitlePath.empty() )
 		{
@@ -349,7 +349,7 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 		if( m_Banner.GetTweenTimeLeft() > 0 )
 			return;
 
-		RString sPath;
+		std::string sPath;
 		bool bFreeCache = false;
 		if( TEXTUREMAN->IsTextureRegistered( Sprite::SongBannerTexture(g_sBannerPath) ) )
 		{
@@ -763,7 +763,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 					m_soundLocked.Play(true);
 				else
 				{
-					RString sNewGroup = m_MusicWheel.JumpToPrevGroup();
+					std::string sNewGroup = m_MusicWheel.JumpToPrevGroup();
 					m_MusicWheel.SelectSection(sNewGroup);
 					m_MusicWheel.SetOpenSection(sNewGroup);
 					MESSAGEMAN->Broadcast("PreviousGroup");
@@ -776,7 +776,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 					m_soundLocked.Play(true);
 				else
 				{
-					RString sNewGroup = m_MusicWheel.JumpToNextGroup();
+					std::string sNewGroup = m_MusicWheel.JumpToNextGroup();
 					m_MusicWheel.SelectSection(sNewGroup);
 					m_MusicWheel.SetOpenSection(sNewGroup);
 					MESSAGEMAN->Broadcast("NextGroup");
@@ -846,7 +846,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 					m_soundLocked.Play(true);
 				else
 				{
-					RString sNewGroup = m_MusicWheel.JumpToPrevGroup();
+					std::string sNewGroup = m_MusicWheel.JumpToPrevGroup();
 					m_MusicWheel.SelectSection(sNewGroup);
 					m_MusicWheel.SetOpenSection(sNewGroup);
 					MESSAGEMAN->Broadcast("TwoPartConfirmCanceled");
@@ -860,7 +860,7 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 					m_soundLocked.Play(true);
 				else
 				{
-					RString sNewGroup = m_MusicWheel.JumpToNextGroup();
+					std::string sNewGroup = m_MusicWheel.JumpToNextGroup();
 					m_MusicWheel.SelectSection(sNewGroup);
 					m_MusicWheel.SetOpenSection(sNewGroup);
 					MESSAGEMAN->Broadcast("TwoPartConfirmCanceled");
@@ -968,7 +968,7 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 			m_soundLocked.Play(true);
 		else
 		{
-			RString sNewGroup = m_MusicWheel.JumpToNextGroup();
+			std::string sNewGroup = m_MusicWheel.JumpToNextGroup();
 			m_MusicWheel.SelectSection(sNewGroup);
 			m_MusicWheel.SetOpenSection(sNewGroup);
 			MESSAGEMAN->Broadcast("NextGroup");
@@ -981,7 +981,7 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 			m_soundLocked.Play(true);
 		else
 		{
-			RString sNewGroup = m_MusicWheel.JumpToPrevGroup();
+			std::string sNewGroup = m_MusicWheel.JumpToPrevGroup();
 			m_MusicWheel.SelectSection(sNewGroup);
 			m_MusicWheel.SetOpenSection(sNewGroup);
 			MESSAGEMAN->Broadcast("PreviousGroup");
@@ -994,7 +994,7 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 			m_soundLocked.Play(true);
 		else
 		{
-			RString sCurSection = m_MusicWheel.GetSelectedSection();
+			std::string sCurSection = m_MusicWheel.GetSelectedSection();
 			m_MusicWheel.SelectSection(sCurSection);
 			m_MusicWheel.SetOpenSection("");
 			AfterMusicChange();
@@ -1835,7 +1835,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			case WheelItemDataType_Custom:
 				{
 					bWantBanner = false; // we load it ourself
-					RString sBannerName = GetMusicWheel()->GetCurWheelItemData( GetMusicWheel()->GetCurrentIndex() )->m_pAction->m_sName.c_str();
+					std::string sBannerName = GetMusicWheel()->GetCurWheelItemData( GetMusicWheel()->GetCurrentIndex() )->m_pAction->m_sName.c_str();
 					m_Banner.LoadCustom(sBannerName);
 					if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
 						m_sSampleMusicToPlay = m_sSectionMusicPath;
@@ -2004,7 +2004,7 @@ void ScreenSelectMusic::OnConfirmSongDeletion()
 		return;
 	}
 
-	RString deleteDir = deletedSong->GetSongDir();
+	std::string deleteDir = deletedSong->GetSongDir();
 	// flush the deleted song from any caches
 	SONGMAN->UnlistSong(deletedSong);
 	// refresh the song list

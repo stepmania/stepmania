@@ -25,10 +25,10 @@ StreamDisplay::StreamDisplay()
 	m_bDeleteChildren = true;
 }
 
-void StreamDisplay::Load( const RString & /* unreferenced: _sMetricsGroup  */)
+void StreamDisplay::Load( const std::string & /* unreferenced: _sMetricsGroup  */)
 {
 	// XXX: actually load from the metrics group passed in -aj
-	RString sMetricsGroup = "StreamDisplay";
+	std::string sMetricsGroup = "StreamDisplay";
 
 	m_transformPill.SetFromReference( THEME->GetMetricR(sMetricsGroup,"PillTransformFunction") );
 	VELOCITY_MULTIPLIER.Load(sMetricsGroup, "VelocityMultiplier");

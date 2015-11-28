@@ -180,7 +180,7 @@ RageTexture* load_noteskin_tex(std::string const& path, NewSkinLoader const* loa
 	}
 	else
 	{
-		RString resolved= NEWSKIN->get_path(load_skin, path);
+		std::string resolved= NEWSKIN->get_path(load_skin, path);
 		if(resolved.empty())
 		{
 			as_tex= TEXTUREMAN->LoadTexture(TEXTUREMAN->GetDefaultTextureID());
@@ -760,13 +760,13 @@ bool NewSkinLoader::load_from_file(std::string const& path)
 		return false;
 	}
 	string temp_load_path= Rage::dir_name(path);
-	RString skin_text;
+	std::string skin_text;
 	if(!GetFileContents(path, skin_text))
 	{
 		LuaHelpers::ReportScriptError("Could not load noteskin '" + path + "'.");
 		return false;
 	}
-	RString error= "Error loading noteskin '" + path + "': ";
+	std::string error= "Error loading noteskin '" + path + "': ";
 	Lua* L= LUA->Get();
 	if(!LuaHelpers::RunScript(L, skin_text, "@" + path, error, 0, 1, true))
 	{
@@ -1003,14 +1003,14 @@ bool NewSkinLoader::push_loader_function(lua_State* L, string const& loader)
 			" loader file that does not exist: " + loader);
 		return false;
 	}
-	RString script_text;
+	std::string script_text;
 	if(!GetFileContents(found_path, script_text))
 	{
 		LuaHelpers::ReportScriptError("Noteskin " + m_skin_name + " points to a"
 			" loader file " + found_path + " could not be loaded.");
 		return false;
 	}
-	RString error= "Error loading " + found_path + ": ";
+	std::string error= "Error loading " + found_path + ": ";
 	if(!LuaHelpers::RunScript(L, script_text, "@" + found_path, error, 0, 1, true))
 	{
 		return false;
@@ -1033,7 +1033,7 @@ bool NewSkinLoader::load_layer_set_into_data(lua_State* L,
 		{
 			RETURN_NOT_SANE("Could not load loader " + loader_set[i]);
 		}
-		RString error= "Error running " + m_load_path + loader_set[i] + ": ";
+		std::string error= "Error running " + m_load_path + loader_set[i] + ": ";
 		lua_pushvalue(L, button_list_index);
 		lua_pushvalue(L, stype_index);
 		if(!LuaHelpers::RunScriptOnStack(L, error, 2, 1, true))
@@ -1072,7 +1072,7 @@ bool NewSkinLoader::load_into_data(StepsType stype,
 	{
 		RETURN_NOT_SANE("Could not load tap loader.");
 	}
-	RString error= "Error running " + m_load_path + m_notes_loader + ": ";
+	std::string error= "Error running " + m_load_path + m_notes_loader + ": ";
 	lua_pushvalue(L, button_list_index);
 	lua_pushvalue(L, stype_index);
 	if(!LuaHelpers::RunScriptOnStack(L, error, 2, 1, true))

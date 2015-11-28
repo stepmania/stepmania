@@ -36,7 +36,7 @@ std::string const MusicWheelItemTypeToString( MusicWheelItemType i );
 class MusicWheelItem : public WheelItemBase
 {
 public:
-	MusicWheelItem(RString sType = "MusicWheelItem");
+	MusicWheelItem(std::string sType = "MusicWheelItem");
 	MusicWheelItem( const MusicWheelItem &cpy );
 	virtual ~MusicWheelItem();
 	virtual MusicWheelItem *Copy() const { return new MusicWheelItem(*this); }
@@ -65,7 +65,7 @@ struct MusicWheelItemData : public WheelItemBaseData
 	MusicWheelItemData() : m_pCourse(nullptr), m_pSong(nullptr), m_Flags(),
 		m_iSectionCount(0), m_sLabel(""), m_pAction() { }
 	MusicWheelItemData( WheelItemDataType type, Song* pSong, 
-			   RString sSectionName, Course* pCourse, 
+			   std::string sSectionName, Course* pCourse, 
 			   Rage::Color color, int iSectionCount );
 
 	Course*			m_pCourse;
@@ -76,7 +76,7 @@ struct MusicWheelItemData : public WheelItemBaseData
 	int			m_iSectionCount;
 
 	// for TYPE_SORT
-	RString			m_sLabel;
+	std::string			m_sLabel;
 	HiddenPtr<GameCommand>	m_pAction;
 };
 

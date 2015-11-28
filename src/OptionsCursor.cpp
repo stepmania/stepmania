@@ -35,7 +35,7 @@ OptionsCursor::OptionsCursor( const OptionsCursor &cpy ):
 		this->AddChild( m_sprCanGoRight );
 }
 
-void OptionsCursor::Load( const RString &sMetricsGroup, bool bLoadCanGos )
+void OptionsCursor::Load( const std::string &sMetricsGroup, bool bLoadCanGos )
 {
 #define LOAD_SPR( spr, name ) \
 	spr.Load( THEME->GetPathG(sMetricsGroup,name) ); \

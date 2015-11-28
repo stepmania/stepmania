@@ -93,7 +93,7 @@ void CourseContentsList::SetItemFromGameState( Actor *pActor, int iCourseEntryIn
 		if( te == nullptr )
 			continue;
 
-		RString s;
+		std::string s;
 		Difficulty dc;
 		if( te->bSecret )
 		{

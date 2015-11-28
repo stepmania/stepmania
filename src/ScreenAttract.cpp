@@ -153,7 +153,7 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
-void ScreenAttract::GoToStartScreen( RString sScreenName )
+void ScreenAttract::GoToStartScreen( std::string sScreenName )
 {
 	SCREENMAN->SetNewScreen( START_SCREEN(sScreenName) );
 }

@@ -15,7 +15,7 @@
 
 Bookkeeper*	BOOKKEEPER = nullptr;	// global and accessible from anywhere in our program
 
-static const RString COINS_DAT = "Save/Coins.xml";
+static const std::string COINS_DAT = "Save/Coins.xml";
 
 Bookkeeper::Bookkeeper()
 {

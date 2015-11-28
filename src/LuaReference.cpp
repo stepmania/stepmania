@@ -121,7 +121,7 @@ void LuaReference::Unregister()
 	m_iReference = LUA_NOREF;
 }
 
-bool LuaReference::SetFromExpression( const RString &sExpression )
+bool LuaReference::SetFromExpression( const std::string &sExpression )
 {
 	Lua *L = LUA->Get();
 
@@ -132,7 +132,7 @@ bool LuaReference::SetFromExpression( const RString &sExpression )
 	return bSuccess;
 }
 
-RString LuaReference::Serialize() const
+std::string LuaReference::Serialize() const
 {
 	/* Call Serialize(t), where t is our referenced object. */
 	Lua *L = LUA->Get();
@@ -150,7 +150,7 @@ RString LuaReference::Serialize() const
 	const char *pString = lua_tostring( L, -1 );
 	ASSERT_M( pString != nullptr, "Serialize() didn't return a string" );
 
-	RString sRet = pString;
+	std::string sRet = pString;
 	lua_pop( L, 1 );
 
 	LUA->Release( L );
@@ -185,7 +185,7 @@ LuaTable::LuaTable()
 	LUA->Release( L );
 }
 
-void LuaTable::Set( Lua *L, const RString &sKey )
+void LuaTable::Set( Lua *L, const std::string &sKey )
 {
 	int iTop = lua_gettop( L );
 	this->PushSelf( L );
@@ -194,7 +194,7 @@ void LuaTable::Set( Lua *L, const RString &sKey )
 	lua_settop( L, iTop-1 ); // remove all of the above
 }
 
-void LuaTable::Get( Lua *L, const RString &sKey )
+void LuaTable::Get( Lua *L, const std::string &sKey )
 {
 	this->PushSelf( L );
 	lua_getfield( L, -1, sKey.c_str() );

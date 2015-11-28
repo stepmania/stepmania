@@ -27,10 +27,10 @@ struct UsbStorageDevice
 	int iBus;
 	int iPort;
 	int iLevel;
-	RString sSerial;
-	RString sDevice;
-	RString	sOsMountDir;	// WITHOUT trailing slash
-	RString sSysPath;   // Linux: /sys/block name
+	std::string sSerial;
+	std::string sDevice;
+	std::string	sOsMountDir;	// WITHOUT trailing slash
+	std::string sSysPath;   // Linux: /sys/block name
 	enum State
 	{
 		/* Empty device.  This is used only by MemoryCardManager. */
@@ -53,21 +53,21 @@ struct UsbStorageDevice
 		State_INVALID
 	};
 	State m_State;
-	RString m_sError;
+	std::string m_sError;
 
-	void SetError( const RString &sError ) { m_State = STATE_ERROR; m_sError = sError; }
+	void SetError( const std::string &sError ) { m_State = STATE_ERROR; m_sError = sError; }
 
 	bool bIsNameAvailable;  // Name in the profile on the memory card.
-	RString sName;  // Name in the profile on the memory card.
+	std::string sName;  // Name in the profile on the memory card.
 	int idVendor;
 	int idProduct;
-	RString sVendor;
-	RString sProduct;
-	RString sVolumeLabel;
+	std::string sVendor;
+	std::string sProduct;
+	std::string sVolumeLabel;
 	int iVolumeSizeMB;
 
 	bool IsBlank() const { return m_State == STATE_NONE; }
-	void SetOsMountDir( const RString &s );
+	void SetOsMountDir( const std::string &s );
 
 	bool operator==(const UsbStorageDevice& other) const;
 };

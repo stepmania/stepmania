@@ -20,7 +20,7 @@ BGAnimation::~BGAnimation()
     DeleteAllChildren();
 }
 
-static bool CompareLayerNames( const RString& s1, const RString& s2 )
+static bool CompareLayerNames( const std::string& s1, const std::string& s2 )
 {
 	int i1, i2;
 	int ret;
@@ -32,9 +32,9 @@ static bool CompareLayerNames( const RString& s1, const RString& s2 )
 	return i1 < i2;
 }
 
-void BGAnimation::AddLayersFromAniDir( const RString &_sAniDir, const XNode *pNode )
+void BGAnimation::AddLayersFromAniDir( const std::string &_sAniDir, const XNode *pNode )
 {
-	const RString& sAniDir = _sAniDir;
+	const std::string& sAniDir = _sAniDir;
 
 	{
 		vector<std::string> vsLayerNames;
@@ -52,7 +52,7 @@ void BGAnimation::AddLayersFromAniDir( const RString &_sAniDir, const XNode *pNo
 			const XNode* pKey = pNode->GetChild( sLayer );
 			ASSERT( pKey != nullptr );
 
-			RString sImportDir;
+			std::string sImportDir;
 			if( pKey->GetAttrValue("Import", sImportDir) )
 			{
 				bool bCond;
@@ -69,7 +69,7 @@ void BGAnimation::AddLayersFromAniDir( const RString &_sAniDir, const XNode *pNo
 				}
 				ASSERT_M( IsADirectory(sImportDir), sImportDir + " isn't a directory" );
 
-				RString sPathToIni = sImportDir + "BGAnimation.ini";
+				std::string sPathToIni = sImportDir + "BGAnimation.ini";
 
 				IniFile ini2;
 				ini2.ReadFile( sPathToIni );
@@ -87,21 +87,21 @@ void BGAnimation::AddLayersFromAniDir( const RString &_sAniDir, const XNode *pNo
 	}
 }
 
-void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
+void BGAnimation::LoadFromAniDir( const std::string &_sAniDir )
 {
 	DeleteAllChildren();
 
 	if( _sAniDir.empty() )
 		 return;
 
-	RString sAniDir = _sAniDir;
+	std::string sAniDir = _sAniDir;
 	if (!Rage::ends_with(sAniDir, "/"))
 	{
 		sAniDir += "/";
 	}
 	ASSERT_M( IsADirectory(sAniDir), sAniDir + " isn't a directory" );
 
-	RString sPathToIni = sAniDir + "BGAnimation.ini";
+	std::string sPathToIni = sAniDir + "BGAnimation.ini";
 
 	if( DoesFileExist(sPathToIni) )
 	{
@@ -144,7 +144,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 		GetDirListing( sAniDir+"*.mpg", asImagePaths, false, true );
 		GetDirListing( sAniDir+"*.mpeg", asImagePaths, false, true );
 
-		SortRStringArray( asImagePaths );
+		SortStringArray( asImagePaths );
 
 		for (auto const &sPath: asImagePaths)
 		{
@@ -161,7 +161,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 
 void BGAnimation::LoadFromNode( const XNode* pNode )
 {
-	RString sDir;
+	std::string sDir;
 	if( pNode->GetAttrValue("AniDir", sDir) )
 		LoadFromAniDir( sDir );
 

@@ -48,7 +48,7 @@ void RoomInfoDisplay::RetractInfoBox()
 	m_state = LOCKED;
 }
 
-void RoomInfoDisplay::Load( RString sType )
+void RoomInfoDisplay::Load( std::string sType )
 {
 	DEPLOY_DELAY.Load( sType, "DeployDelay" );
 	RETRACT_DELAY.Load( sType, "RetractDelay" );
@@ -144,7 +144,7 @@ void RoomInfoDisplay::Update( float fDeltaTime )
 	ActorFrame::Update(fDeltaTime);
 }
 
-void RoomInfoDisplay::RequestRoomInfo(const RString& name)
+void RoomInfoDisplay::RequestRoomInfo(const std::string& name)
 {
 	NSMAN->m_SMOnlinePacket.ClearPacket();
 	NSMAN->m_SMOnlinePacket.Write1((uint8_t)3); //Request Room Info

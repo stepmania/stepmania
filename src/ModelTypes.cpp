@@ -38,11 +38,11 @@ void AnimatedTexture::LoadBlank()
 	vFrames.push_back( state );
 }
 
-void AnimatedTexture::Load( const RString &sTexOrIniPath )
+void AnimatedTexture::Load( const std::string &sTexOrIniPath )
 {
 	ASSERT( vFrames.empty() );	// don't load more than once
 
-	m_bSphereMapped = sTexOrIniPath.find("sphere") != RString::npos;
+	m_bSphereMapped = sTexOrIniPath.find("sphere") != std::string::npos;
 	if( sTexOrIniPath.find("add") != std::string::npos )
 		m_BlendMode = BLEND_ADD;
 	else
@@ -65,16 +65,16 @@ void AnimatedTexture::Load( const RString &sTexOrIniPath )
 
 		for( int i=0; i<1000; i++ )
 		{
-			RString sFileKey = fmt::sprintf( "Frame%04d", i );
-			RString sDelayKey = fmt::sprintf( "Delay%04d", i );
+			std::string sFileKey = fmt::sprintf( "Frame%04d", i );
+			std::string sDelayKey = fmt::sprintf( "Delay%04d", i );
 
-			RString sFileName;
+			std::string sFileName;
 			float fDelay = 0;
 			if( pAnimatedTexture->GetAttrValue( sFileKey, sFileName ) &&
 				pAnimatedTexture->GetAttrValue( sDelayKey, fDelay ) )
 			{
-				RString sTranslateXKey = fmt::sprintf( "TranslateX%04d", i );
-				RString sTranslateYKey = fmt::sprintf( "TranslateY%04d", i );
+				std::string sTranslateXKey = fmt::sprintf( "TranslateX%04d", i );
+				std::string sTranslateYKey = fmt::sprintf( "TranslateY%04d", i );
 
 				Rage::Vector2 vOffset(0,0);
 				pAnimatedTexture->GetAttrValue( sTranslateXKey, vOffset.x );
@@ -219,17 +219,17 @@ Rage::Vector2 AnimatedTexture::GetTextureTranslate()
 
 #define THROW RageException::Throw( "Parse error in \"%s\" at line %d: \"%s\".", sPath.c_str(), iLineNum, sLine.c_str() )
 
-bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
+bool msAnimation::LoadMilkshapeAsciiBones( std::string sAniName, std::string sPath )
 {
 	using std::max;
 	FixSlashesInPlace(sPath);
-	const RString sDir = Rage::dir_name( sPath );
+	const std::string sDir = Rage::dir_name( sPath );
 
 	RageFile f;
 	if ( !f.Open(sPath) )
 		RageException::Throw( "Model:: Could not open \"%s\": %s", sPath.c_str(), f.GetError().c_str() );
 
-	RString sLine;
+	std::string sLine;
 	int iLineNum = 0;
 
 	msAnimation &Animation = *this;

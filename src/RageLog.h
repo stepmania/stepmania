@@ -53,7 +53,7 @@ public:
 	}
 
 	template<typename... Args>
-	void UserLog(RString const &sType, RString const &sElement, std::string const &msg, Args const & ...args)
+	void UserLog(std::string const &sType, std::string const &sElement, std::string const &msg, Args const & ...args)
 	{
 		std::string result = fmt::sprintf(msg, args...);
 		if (!sType.empty())
@@ -67,13 +67,13 @@ public:
 	void Flush();
 
 	template<typename... Args>
-	void MapLog(RString const &key, std::string const &msg, Args const & ...args)
+	void MapLog(std::string const &key, std::string const &msg, Args const & ...args)
 	{
 		std::string result = fmt::sprintf(msg, args...);
 		StoreMapLog(key, result);
 	}
 
-	void UnmapLog( const RString &key );
+	void UnmapLog( const std::string &key );
 
 	static const char *GetAdditionalLog();
 	static const char *GetInfo();
@@ -93,10 +93,10 @@ private:
 	bool m_bFlush;
 	bool m_bShowLogOutput;
 	void Write(WriteDest dest, std::string const &line);
-	void StoreMapLog(RString const &key, std::string const &result);
+	void StoreMapLog(std::string const &key, std::string const &result);
 	void UpdateMappedLog();
-	void AddToInfo( const RString &buf );
-	void AddToRecentLogs( const RString &buf );
+	void AddToInfo( const std::string &buf );
+	void AddToRecentLogs( const std::string &buf );
 };
 
 extern RageLog*	LOG;	// global and accessible from anywhere in our program

@@ -20,7 +20,7 @@ ComboGraph::ComboGraph()
 	m_pComboNumber = nullptr;
 }
 
-void ComboGraph::Load( RString sMetricsGroup )
+void ComboGraph::Load( std::string sMetricsGroup )
 {
 	BODY_WIDTH.Load( sMetricsGroup, "BodyWidth" );
 	BODY_HEIGHT.Load( sMetricsGroup, "BodyHeight" );

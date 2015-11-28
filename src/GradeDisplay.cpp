@@ -8,7 +8,7 @@
 
 REGISTER_ACTOR_CLASS( GradeDisplay );
 
-void GradeDisplay::Load( RString sMetricsGroup )
+void GradeDisplay::Load( std::string sMetricsGroup )
 {
 	ASSERT( m_vSpr.empty() );
 	m_vSpr.resize( NUM_POSSIBLE_GRADES );

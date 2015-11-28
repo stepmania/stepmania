@@ -20,7 +20,7 @@ static int CompareLyricSegments(const LyricSegment &seg1, const LyricSegment &se
    return seg1.m_fStartTime < seg2.m_fStartTime;
 }
 
-bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
+bool LyricsLoader::LoadFromLRCFile(const std::string& sPath, Song& out)
 {
 	LOG->Trace( "LyricsLoader::LoadFromLRCFile(%s)", sPath.c_str() );
 
@@ -37,7 +37,7 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 
 	while( 1 )
 	{
-		RString line;
+		std::string line;
 		int ret = input.GetLine( line );
 		if( ret == 0 )
 			break;

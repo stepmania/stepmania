@@ -25,7 +25,7 @@ public:
 	 * @param pActor the Actor to remove. */
 	virtual void RemoveChild( Actor *pActor );
 	void TransferChildren( ActorFrame *pTo );
-	Actor* GetChild( const RString &sName );
+	Actor* GetChild( const std::string &sName );
 	std::vector<Actor*> GetChildren() { return m_SubActors; }
 	int GetNumChildren() const { return m_SubActors.size(); }
 	bool GetChildrenEmpty() const { return m_SubActors.empty(); }
@@ -56,9 +56,9 @@ public:
 	// Commands
 	virtual void PushSelf( lua_State *L );
 	void PushChildrenTable( lua_State *L );
-	void PushChildTable( lua_State *L, const RString &sName );
-	void PlayCommandOnChildren( const RString &sCommandName, const LuaReference *pParamTable = nullptr );
-	void PlayCommandOnLeaves( const RString &sCommandName, const LuaReference *pParamTable = nullptr );
+	void PushChildTable( lua_State *L, const std::string &sName );
+	void PlayCommandOnChildren( const std::string &sCommandName, const LuaReference *pParamTable = nullptr );
+	void PlayCommandOnLeaves( const std::string &sCommandName, const LuaReference *pParamTable = nullptr );
 
 	virtual void RunCommandsRecursively( const LuaReference& cmds, const LuaReference *pParamTable = nullptr );
 	virtual void RunCommandsOnChildren( const LuaReference& cmds, const LuaReference *pParamTable = nullptr ); /* but not on self */

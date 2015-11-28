@@ -92,7 +92,7 @@ static std::string ClearMemoryCardEdits()
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
 
-	RString sDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir.Get() + "/";
+	std::string sDir = MEM_CARD_MOUNT_POINT[pn] + (std::string)PREFSMAN->m_sMemoryCardProfileSubdir.Get() + "/";
 	vector<std::string> vsEditFiles;
 	GetDirListing( sDir+EDIT_STEPS_SUBDIR+"*.edit", vsEditFiles, false, true );
 	GetDirListing( sDir+EDIT_COURSES_SUBDIR+"*.crs", vsEditFiles, false, true );
@@ -122,7 +122,7 @@ static std::string TransferStatsMachineToMemoryCard()
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
 
-	RString sDir = MEM_CARD_MOUNT_POINT[pn];
+	std::string sDir = MEM_CARD_MOUNT_POINT[pn];
 	sDir += "MachineProfile/";
 
 	bool bSaved = PROFILEMAN->GetMachineProfile()->SaveAllToDir( sDir, PREFSMAN->m_bSignProfileData );
@@ -148,13 +148,13 @@ static std::string TransferStatsMemoryCardToMachine()
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
 
-	RString sDir = MEM_CARD_MOUNT_POINT[pn];
+	std::string sDir = MEM_CARD_MOUNT_POINT[pn];
 	sDir += "MachineProfile/";
 
 	Profile backup = *PROFILEMAN->GetMachineProfile();
 
 	ProfileLoadResult lr = PROFILEMAN->GetMachineProfile()->LoadAllFromDir( sDir, PREFSMAN->m_bSignProfileData );
-	RString s;
+	std::string s;
 	switch( lr )
 	{
 	case ProfileLoadResult_Success:
@@ -177,7 +177,7 @@ static std::string TransferStatsMemoryCardToMachine()
 	return s;
 }
 
-static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfileDir, int &iNumSucceeded, int &iNumOverwritten, int &iNumIgnored, int &iNumErrored )
+static void CopyEdits( const std::string &sFromProfileDir, const std::string &sToProfileDir, int &iNumSucceeded, int &iNumOverwritten, int &iNumIgnored, int &iNumErrored )
 {
 	iNumSucceeded = 0;
 	iNumOverwritten = 0;
@@ -185,8 +185,8 @@ static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfile
 	iNumErrored = 0;
 
 	{
-		RString sFromDir = sFromProfileDir + EDIT_STEPS_SUBDIR;
-		RString sToDir = sToProfileDir + EDIT_STEPS_SUBDIR;
+		std::string sFromDir = sFromProfileDir + EDIT_STEPS_SUBDIR;
+		std::string sToDir = sToProfileDir + EDIT_STEPS_SUBDIR;
 
 		vector<std::string> vsFiles;
 		GetDirListing( sFromDir+"*.edit", vsFiles, false, false );
@@ -218,8 +218,8 @@ static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfile
 	// TODO: Seprarate copying stats for steps and courses
 
 	{
-		RString sFromDir = sFromProfileDir + EDIT_COURSES_SUBDIR;
-		RString sToDir = sToProfileDir + EDIT_COURSES_SUBDIR;
+		std::string sFromDir = sFromProfileDir + EDIT_COURSES_SUBDIR;
+		std::string sToDir = sToProfileDir + EDIT_COURSES_SUBDIR;
 
 		vector<std::string> vsFiles;
 		GetDirListing( sFromDir+"*.crs", vsFiles, false, false );
@@ -245,7 +245,7 @@ static LocalizedString IGNORED			( "ScreenServiceAction", "%d ignored" );
 static LocalizedString FAILED			( "ScreenServiceAction", "%d failed" );
 static LocalizedString DELETED			( "ScreenServiceAction", "%d deleted" );
 
-static RString CopyEdits( const RString &sFromProfileDir, const RString &sToProfileDir, const RString &sDisplayDir )
+static std::string CopyEdits( const std::string &sFromProfileDir, const std::string &sToProfileDir, const std::string &sDisplayDir )
 {
 	int iNumSucceeded = 0;
 	int iNumOverwritten = 0;
@@ -268,7 +268,7 @@ static RString CopyEdits( const RString &sFromProfileDir, const RString &sToProf
 	return Rage::join( "\n", vs );
 }
 
-static void SyncFiles( const RString &sFromDir, const RString &sToDir, const RString &sMask, int &iNumAdded, int &iNumDeleted, int &iNumOverwritten, int &iNumFailed )
+static void SyncFiles( const std::string &sFromDir, const std::string &sToDir, const std::string &sMask, int &iNumAdded, int &iNumDeleted, int &iNumOverwritten, int &iNumFailed )
 {
 	vector<std::string> vsFilesSource;
 	GetDirListing( sFromDir+sMask, vsFilesSource, false, false );
@@ -281,7 +281,7 @@ static void SyncFiles( const RString &sFromDir, const RString &sToDir, const RSt
 
 	for (auto &toDelete: vsToDelete)
 	{
-		RString sFile = sToDir + toDelete;
+		std::string sFile = sToDir + toDelete;
 		LOG->Trace( "Delete \"%s\"", sFile.c_str() );
 
 		if( FILEMAN->Remove(sFile) )
@@ -292,8 +292,8 @@ static void SyncFiles( const RString &sFromDir, const RString &sToDir, const RSt
 
 	for (auto &source: vsFilesSource)
 	{
-		RString sFileFrom = sFromDir + source;
-		RString sFileTo = sToDir + source;
+		std::string sFileFrom = sFromDir + source;
+		std::string sFileTo = sToDir + source;
 		LOG->Trace( "Copy \"%s\"", sFileFrom.c_str() );
 		bool bOverwrite = DoesFileExist( sFileTo );
 		bool bSuccess = FileCopy( sFileFrom, sFileTo );
@@ -310,7 +310,7 @@ static void SyncFiles( const RString &sFromDir, const RString &sToDir, const RSt
 	FILEMAN->FlushDirCache( sToDir );
 }
 
-static void SyncEdits( const RString &sFromDir, const RString &sToDir, int &iNumAdded, int &iNumDeleted, int &iNumOverwritten, int &iNumFailed )
+static void SyncEdits( const std::string &sFromDir, const std::string &sToDir, int &iNumAdded, int &iNumDeleted, int &iNumOverwritten, int &iNumFailed )
 {
 	iNumAdded = 0;
 	iNumDeleted = 0;
@@ -333,7 +333,7 @@ static std::string CopyEditsMachineToMemoryCard()
 		MEMCARDMAN->MountCard(pn);
 	}
 	auto sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
-	auto sToDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir.Get() + "/";
+	auto sToDir = MEM_CARD_MOUNT_POINT[pn] + (std::string)PREFSMAN->m_sMemoryCardProfileSubdir.Get() + "/";
 
 	vector<std::string> vs;
 	vs.push_back( fmt::sprintf( COPIED_TO_CARD.GetValue(), pn+1 ) );
@@ -359,18 +359,18 @@ static std::string SyncEditsMachineToMemoryCard()
 	int iNumOverwritten = 0;
 	int iNumFailed = 0;
 
-	RString sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
-	RString sToDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir.Get() + "/";
+	std::string sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
+	std::string sToDir = MEM_CARD_MOUNT_POINT[pn] + (std::string)PREFSMAN->m_sMemoryCardProfileSubdir.Get() + "/";
 	SyncEdits( sFromDir, sToDir, iNumAdded, iNumDeleted, iNumOverwritten, iNumFailed );
 
 	MEMCARDMAN->UnmountCard(pn);
 
-	RString sRet = fmt::sprintf( COPIED_TO_CARD.GetValue(), pn+1 ) + " ";
+	std::string sRet = fmt::sprintf( COPIED_TO_CARD.GetValue(), pn+1 ) + " ";
 	sRet += fmt::sprintf( ADDED.GetValue(), iNumAdded ) + ", " + fmt::sprintf( OVERWRITTEN.GetValue(), iNumOverwritten );
 	if( iNumDeleted )
-		sRet += RString(" ") + fmt::sprintf( DELETED.GetValue(), iNumDeleted );
+		sRet += std::string(" ") + fmt::sprintf( DELETED.GetValue(), iNumDeleted );
 	if( iNumFailed )
-		sRet += RString("; ") + fmt::sprintf( FAILED.GetValue(), iNumFailed );
+		sRet += std::string("; ") + fmt::sprintf( FAILED.GetValue(), iNumFailed );
 	return sRet;
 }
 
@@ -422,7 +422,7 @@ static std::string ResetPreferences()
 REGISTER_SCREEN_CLASS( ScreenServiceAction );
 void ScreenServiceAction::BeginScreen()
 {
-	RString sActions = THEME->GetMetric(m_sName,"Actions");
+	std::string sActions = THEME->GetMetric(m_sName,"Actions");
 	auto vsActions = Rage::split(sActions, ",");
 
 	vector<std::string> vsResults;

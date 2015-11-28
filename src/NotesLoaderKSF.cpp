@@ -25,7 +25,7 @@ static void HandleBunki( TimingData &timing, const float fEarlyBPM,
 	timing.AddSegment( BPMSegment(BeatToNoteRow(beat), fCurBPM) );
 }
 
-static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool bKIUCompliant )
+static bool LoadFromKSFFile( const std::string &sPath, Steps &out, Song &song, bool bKIUCompliant )
 {
 	using std::max;
 	LOG->Trace( "Steps::LoadFromKSFFile( '%s' )", sPath.c_str() );
@@ -52,7 +52,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue( i );
-		RString sValueName = Rage::make_upper(sParams[0]);
+		std::string sValueName = Rage::make_upper(sParams[0]);
 
 		/* handle the data...well, not this data: not related to steps.
 		 * Skips INTRO, MUSICINTRO, TITLEFILE, DISCFILE, SONGFILE. */
@@ -151,7 +151,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		// new cases from Aldo_MX's fork:
 		else if( sValueName=="PLAYER" )
 		{
-			RString sPlayer = Rage::make_lower(sParams[1]);
+			std::string sPlayer = Rage::make_lower(sParams[1]);
 			if( sPlayer.find( "double" ) != string::npos )
 			{
 				bDoublesChart = true;
@@ -160,7 +160,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		// This should always be last.
 		else if( sValueName=="STEP" )
 		{
-			RString theSteps = Rage::trim_left(sParams[1]);
+			std::string theSteps = Rage::trim_left(sParams[1]);
 			auto toDump = Rage::split(theSteps, "\n", Rage::EmptyEntries::skip);
 			vNoteRows.insert(vNoteRows.end(), std::make_move_iterator(toDump.begin()), std::make_move_iterator(toDump.end()));
 		}
@@ -189,7 +189,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 	NoteData notedata;	// read it into here
 
 	{
-		RString sDir, sFName, sExt;
+		std::string sDir, sFName, sExt;
 		splitpath( sPath, sDir, sFName, sExt );
 		sFName = Rage::make_lower(sFName);
 
@@ -349,7 +349,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 			// I'm making some experiments, please spare me...
 			//continue;
 
-			RString temp = sRowString.substr(2,sRowString.size()-3);
+			std::string temp = sRowString.substr(2,sRowString.size()-3);
 			float numTemp = StringToFloat(temp);
 			if (Rage::starts_with(sRowString, "|T"))
 			{
@@ -478,7 +478,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 	return true;
 }
 
-static void LoadTags( const RString &str, Song &out )
+static void LoadTags( const std::string &str, Song &out )
 {
 	/* str is either a #TITLE or a directory component.  Fill in missing information.
 	 * str is either "title", "artist - title", or "artist - title - difficulty". */
@@ -494,7 +494,7 @@ static void LoadTags( const RString &str, Song &out )
 		}
 	}
 
-	RString title, artist;
+	std::string title, artist;
 	if( asBits.size() == 2 )
 	{
 		artist = asBits[0];
@@ -517,7 +517,7 @@ static void LoadTags( const RString &str, Song &out )
 		out.m_sArtist = artist;
 }
 
-static void ProcessTickcounts( const RString & value, int & ticks, TimingData & timing )
+static void ProcessTickcounts( const std::string & value, int & ticks, TimingData & timing )
 {
 	/* TICKCOUNT will be used below if there are DM compliant BPM changes
 	 * and stops. It will be called again in LoadFromKSFFile for the
@@ -531,7 +531,7 @@ static void ProcessTickcounts( const RString & value, int & ticks, TimingData & 
 	timing.AddSegment( TickcountSegment(0, ticks) );
 }
 
-static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant )
+static bool LoadGlobalData( const std::string &sPath, Song &out, bool &bKIUCompliant )
 {
 	MsdFile msd;
 	if( !msd.ReadFile( sPath, false ) )  // don't unescape
@@ -543,10 +543,10 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 	// changed up there in case of something is found inside the SONGFILE tag in the head ksf -DaisuMaster
 	// search for music with song in the file name
 	vector<std::string> arrayPossibleMusic;
-	GetDirListing( out.GetSongDir() + RString("song.mp3"), arrayPossibleMusic );
-	GetDirListing( out.GetSongDir() + RString("song.oga"), arrayPossibleMusic );
-	GetDirListing( out.GetSongDir() + RString("song.ogg"), arrayPossibleMusic );
-	GetDirListing( out.GetSongDir() + RString("song.wav"), arrayPossibleMusic );
+	GetDirListing( out.GetSongDir() + std::string("song.mp3"), arrayPossibleMusic );
+	GetDirListing( out.GetSongDir() + std::string("song.oga"), arrayPossibleMusic );
+	GetDirListing( out.GetSongDir() + std::string("song.ogg"), arrayPossibleMusic );
+	GetDirListing( out.GetSongDir() + std::string("song.wav"), arrayPossibleMusic );
 
 	if( !arrayPossibleMusic.empty() )		// we found a match
 	{
@@ -562,7 +562,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 	for( unsigned i=0; i < msd.GetNumValues(); i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = Rage::make_upper(sParams[0]);
+		std::string sValueName = Rage::make_upper(sParams[0]);
 
 		// handle the data
 		if( sValueName=="TITLE" )
@@ -616,7 +616,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		{
 			/* STEP will always be the last header in a KSF file by design. Due to
 			 * the Direct Move syntax, it is best to get the rows of notes here. */
-			RString theSteps = Rage::trim_left(sParams[1]);
+			std::string theSteps = Rage::trim_left(sParams[1]);
 			auto toDump = Rage::split(theSteps, "\n", Rage::EmptyEntries::skip);
 			vNoteRows.insert(vNoteRows.end(), std::make_move_iterator(toDump.begin()), std::make_move_iterator(toDump.end()));
 		}
@@ -728,7 +728,7 @@ void KSFLoader::GetApplicableFiles( std::string const &sPath, vector<std::string
 	GetDirListing( sPath + "*.ksf", out );
 }
 
-bool KSFLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
+bool KSFLoader::LoadNoteDataFromSimfile( const std::string & cachePath, Steps &out )
 {
 	bool KIUCompliant = false;
 	Song dummy;
@@ -744,7 +744,7 @@ bool KSFLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 	return KIUCompliant;
 }
 
-bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
+bool KSFLoader::LoadFromDir( const std::string &sDir, Song &out )
 {
 	LOG->Trace( "KSFLoader::LoadFromDir(%s)", sDir.c_str() );
 
@@ -772,7 +772,7 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 	// for directmove though, and we're just gathering basic info anyway, and
 	// most of the time all the KSF files have the same info in the #TITLE:; section
 	unsigned files = arrayKSFFileNames.size();
-	RString dir = out.GetSongDir();
+	std::string dir = out.GetSongDir();
 	if( !LoadGlobalData(dir + arrayKSFFileNames[files - 1], out, bKIUCompliant) )
 		return false;
 

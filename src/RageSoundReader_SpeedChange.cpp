@@ -291,7 +291,7 @@ int RageSoundReader_SpeedChange::SetPosition( int iFrame )
 	return RageSoundReader_Filter::SetPosition( iFrame );
 }
 
-bool RageSoundReader_SpeedChange::SetProperty( const RString &sProperty, float fValue )
+bool RageSoundReader_SpeedChange::SetProperty( const std::string &sProperty, float fValue )
 {
 	if( sProperty == "Speed" )
 	{

@@ -62,13 +62,13 @@ void SongOptions::Approach( const SongOptions& other, float fDeltaSeconds )
 #undef DO_COPY
 }
 
-static void AddPart( vector<std::string> &AddTo, float level, RString name )
+static void AddPart( vector<std::string> &AddTo, float level, std::string name )
 {
 	if( level == 0 )
 	{
 		return;
 	}
-	const RString LevelStr = (level == 1)? RString(""): fmt::sprintf( "%ld%% ", std::lrint(level*100) );
+	const std::string LevelStr = (level == 1)? std::string(""): fmt::sprintf( "%ld%% ", std::lrint(level*100) );
 
 	AddTo.push_back( LevelStr + name );
 }
@@ -77,7 +77,7 @@ void SongOptions::GetMods( vector<std::string> &AddTo ) const
 {
 	if( m_fMusicRate != 1 )
 	{
-		RString s = fmt::sprintf( "%2.2f", m_fMusicRate );
+		std::string s = fmt::sprintf( "%2.2f", m_fMusicRate );
 		if( s[s.size()-1] == '0' )
 		{
 			s.erase( s.size()-1 );
@@ -149,20 +149,20 @@ std::string SongOptions::GetLocalizedString() const
 
 /* Options are added to the current settings; call Init() beforehand if
  * you don't want this. */
-void SongOptions::FromString( const RString &sMultipleMods )
+void SongOptions::FromString( const std::string &sMultipleMods )
 {
-	RString sTemp = sMultipleMods;
+	std::string sTemp = sMultipleMods;
 	auto vs = Rage::split(sTemp, ",", Rage::EmptyEntries::skip);
-	RString sThrowAway;
+	std::string sThrowAway;
 	for (auto &s: vs)
 	{
 		FromOneModString( s, sThrowAway );
 	}
 }
 
-bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
+bool SongOptions::FromOneModString( const std::string &sOneMod, std::string &sErrorOut )
 {
-	RString sBit = Rage::trim(Rage::make_lower(sOneMod));
+	std::string sBit = Rage::trim(Rage::make_lower(sOneMod));
 
 	Regex mult("^([0-9]+(\\.[0-9]+)?)xmusic$");
 	vector<std::string> matches;

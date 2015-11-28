@@ -12,7 +12,7 @@ class HoldJudgment : public ActorFrame
 public:
 	HoldJudgment();
 	virtual HoldJudgment *Copy() const;
-	void Load( const RString &sPath );
+	void Load( const std::string &sPath );
 	void LoadFromNode( const XNode* pNode );
 
 	void SetHoldJudgment( HoldNoteScore hns );
