@@ -99,7 +99,7 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 			{
 				asRadarValues.push_back(fmt::sprintf("%.3f", rv[r]));
 			}
-			auto sLine = fmt::sprintf("#RADAR:%i:%i:", st, cd);
+			auto sLine = fmt::sprintf("#RADAR:%i:%i:", static_cast<int>(st), static_cast<int>(cd));
 			sLine += Rage::join( ",", asRadarValues ) + ";";
 			f.PutLine( sLine );
 		}
