@@ -7,7 +7,7 @@
 // Can this be done any better? -aj
 namespace ToggleSongs
 {
-	RString m_sGroup;
+	std::string m_sGroup;
 }
 
 class ScreenOptionsToggleSongs: public ScreenOptions

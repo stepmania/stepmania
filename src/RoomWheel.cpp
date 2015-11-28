@@ -26,7 +26,7 @@ RoomWheel::~RoomWheel()
 	m_CurWheelItemData.clear();
 }
 
-void RoomWheel::Load( RString sType )
+void RoomWheel::Load( std::string sType )
 {
 	WheelBase::Load( sType );
 
@@ -44,7 +44,7 @@ WheelItemBase *RoomWheel::MakeItem()
 	return new RoomWheelItem;
 }
 
-RoomWheelItem::RoomWheelItem( RString sType ):
+RoomWheelItem::RoomWheelItem( std::string sType ):
 	WheelItemBase( sType )
 {
 	Load( sType );
@@ -68,7 +68,7 @@ RoomWheelItem::RoomWheelItem( const RoomWheelItem &cpy ):
 	}
 }
 
-void RoomWheelItem::Load( RString sType )
+void RoomWheelItem::Load( std::string sType )
 {
 	// colorpart gets added first in MusicWheelItem, so follow that here.
 	m_sprColorPart.Load( THEME->GetPathG(sType,"ColorPart") );

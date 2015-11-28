@@ -71,7 +71,7 @@ void ScreenOptionsMemoryCard::CreateMenu()
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 
 		OptionRowDefinition &def = vHands.back()->m_Def;
-		RString sDescription = Rage::join(", ", vs);
+		std::string sDescription = Rage::join(", ", vs);
 		def.m_sName = sDescription;
 		def.m_vsChoices.push_back( "" );
 		def.m_sExplanationName = "Memory Card";
@@ -133,7 +133,7 @@ void ScreenOptionsMemoryCard::HandleMessage( const Message &msg )
 			/* Remember the old mountpoint. */
 			const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
 			int iRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
-			RString sOldMountPoint;
+			std::string sOldMountPoint;
 			if( iRow < int(v.size()) )
 			{
 				const UsbStorageDevice &dev = v[iRow];
@@ -178,7 +178,7 @@ void ScreenOptionsMemoryCard::ExportOptions( int iRow, const vector<PlayerNumber
 	}
 }
 
-void ScreenOptionsMemoryCard::SelectRowWithMemoryCard( const RString &sOsMountPoint )
+void ScreenOptionsMemoryCard::SelectRowWithMemoryCard( const std::string &sOsMountPoint )
 {
 	if( sOsMountPoint.empty() )
 		return;
@@ -219,7 +219,7 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus & )
 		}
 		else
 		{
-			RString s = fmt::sprintf(ERROR_MOUNTING_CARD.GetValue(), MEMCARDMAN->GetCardError(PLAYER_1).c_str() );
+			std::string s = fmt::sprintf(ERROR_MOUNTING_CARD.GetValue(), MEMCARDMAN->GetCardError(PLAYER_1).c_str() );
 			ScreenPrompt::Prompt( SM_None, s );
 		}
 	}

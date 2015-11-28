@@ -16,10 +16,10 @@ static Preference<std::string> g_sIgnoredDialogs( "IgnoredDialogs", "" );
 
 DialogDriver *MakeDialogDriver()
 {
-	RString sDrivers = "win32,cocoa,null";
+	std::string sDrivers = "win32,cocoa,null";
 	auto asDriversToTry = Rage::split(sDrivers, ",", Rage::EmptyEntries::skip);
 
-	RString sDriver;
+	std::string sDriver;
 	DialogDriver *pRet = nullptr;
 
 	for (auto &sDriver: asDriversToTry)
@@ -45,7 +45,7 @@ DialogDriver *MakeDialogDriver()
 			continue;
 		}
 
-		RString sError = pRet->Init();
+		std::string sError = pRet->Init();
 		if( sError != "" )
 		{
 			if( LOG )
@@ -83,7 +83,7 @@ void Dialog::Shutdown()
 	g_pImpl = nullptr;
 }
 
-static bool MessageIsIgnored( RString sID )
+static bool MessageIsIgnored( std::string sID )
 {
 #if !defined(SMPACKAGE)
 	auto asList = Rage::split(g_sIgnoredDialogs, ",");
@@ -98,7 +98,7 @@ static bool MessageIsIgnored( RString sID )
 #endif
 }
 
-void Dialog::IgnoreMessage( RString sID )
+void Dialog::IgnoreMessage( std::string sID )
 {
 	// We can't ignore messages before PREFSMAN is around.
 #if !defined(SMPACKAGE)
@@ -126,7 +126,7 @@ void Dialog::IgnoreMessage( RString sID )
 #endif
 }
 
-void Dialog::Error( RString sMessage, RString sID )
+void Dialog::Error( std::string sMessage, std::string sID )
 {
 	Dialog::Init();
 
@@ -150,7 +150,7 @@ void Dialog::SetWindowed( bool bWindowed )
 	g_bWindowed = bWindowed;
 }
 
-void Dialog::OK( RString sMessage, RString sID )
+void Dialog::OK( std::string sMessage, std::string sID )
 {
 	Dialog::Init();
 
@@ -176,7 +176,7 @@ void Dialog::OK( RString sMessage, RString sID )
 	RageThread::SetIsShowingDialog( false );
 }
 
-Dialog::Result Dialog::OKCancel( RString sMessage, RString sID )
+Dialog::Result Dialog::OKCancel( std::string sMessage, std::string sID )
 {
 	Dialog::Init();
 
@@ -205,7 +205,7 @@ Dialog::Result Dialog::OKCancel( RString sMessage, RString sID )
 	return ret;
 }
 
-Dialog::Result Dialog::AbortRetryIgnore( RString sMessage, RString sID )
+Dialog::Result Dialog::AbortRetryIgnore( std::string sMessage, std::string sID )
 {
 	Dialog::Init();
 
@@ -234,7 +234,7 @@ Dialog::Result Dialog::AbortRetryIgnore( RString sMessage, RString sID )
 	return ret;
 }
 
-Dialog::Result Dialog::AbortRetry( RString sMessage, RString sID )
+Dialog::Result Dialog::AbortRetry( std::string sMessage, std::string sID )
 {
 	Dialog::Init();
 
@@ -263,7 +263,7 @@ Dialog::Result Dialog::AbortRetry( RString sMessage, RString sID )
 	return ret;
 }
 
-Dialog::Result Dialog::YesNo( RString sMessage, RString sID )
+Dialog::Result Dialog::YesNo( std::string sMessage, std::string sID )
 {
 	Dialog::Init();
 

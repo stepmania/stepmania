@@ -7,13 +7,13 @@
 
 using std::vector;
 
-RString GetRandomFileInDir( RString sDir );
+std::string GetRandomFileInDir( std::string sDir );
 
 Character::Character(): m_sCharDir(""), m_sCharacterID(""),
 	m_sDisplayName(""), m_sCardPath(""), m_sIconPath(""),
 	m_bUsableInRave(false), m_iPreloadRefcount(0) {}
 
-bool Character::Load( RString sCharDir )
+bool Character::Load( std::string sCharDir )
 {
 	// Save character directory
 	if (!Rage::ends_with(sCharDir, "/"))
@@ -76,7 +76,7 @@ bool Character::Load( RString sCharDir )
 	ini.GetValue( "Character", "DisplayName", m_sDisplayName );
 
 	// get optional InitCommand
-	RString s;
+	std::string s;
 	ini.GetValue( "Character", "InitCommand", s );
 	m_cmdInit = ActorUtil::ParseActorCommands( s );
 
@@ -88,7 +88,7 @@ bool Character::IsDefaultCharacter() const
 	return Rage::ci_ascii_string{ "default" } == m_sCharacterID;
 }
 
-RString GetRandomFileInDir( RString sDir )
+std::string GetRandomFileInDir( std::string sDir )
 {
 	vector<std::string> asFiles;
 	GetDirListing( sDir, asFiles, false, true );
@@ -99,9 +99,9 @@ RString GetRandomFileInDir( RString sDir )
 	return asFiles[RandomInt(asFiles.size())];
 }
 
-RString Character::GetModelPath() const
+std::string Character::GetModelPath() const
 {
-	RString s = m_sCharDir + "model.txt";
+	std::string s = m_sCharDir + "model.txt";
 	if( DoesFileExist(s) )
 	{
 		return s;
@@ -109,10 +109,10 @@ RString Character::GetModelPath() const
 	return "";
 }
 
-RString Character::GetRestAnimationPath() const	{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Rest/")); }
-RString Character::GetWarmUpAnimationPath() const { return DerefRedir(GetRandomFileInDir(m_sCharDir + "WarmUp/")); }
-RString Character::GetDanceAnimationPath() const { return DerefRedir(GetRandomFileInDir(m_sCharDir + "Dance/")); }
-RString Character::GetTakingABreakPath() const
+std::string Character::GetRestAnimationPath() const	{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Rest/")); }
+std::string Character::GetWarmUpAnimationPath() const { return DerefRedir(GetRandomFileInDir(m_sCharDir + "WarmUp/")); }
+std::string Character::GetDanceAnimationPath() const { return DerefRedir(GetRandomFileInDir(m_sCharDir + "Dance/")); }
+std::string Character::GetTakingABreakPath() const
 {
 	vector<std::string> as;
 	GetDirListing( m_sCharDir+"break.png", as, false, true );
@@ -127,7 +127,7 @@ RString Character::GetTakingABreakPath() const
 	return as[0];
 }
 
-RString Character::GetSongSelectIconPath() const
+std::string Character::GetSongSelectIconPath() const
 {
 	vector<std::string> as;
 	// first try and find an icon specific to the select music screen
@@ -147,7 +147,7 @@ RString Character::GetSongSelectIconPath() const
 		GetDirListing( m_sCharDir+"icon.gif", as, false, true );
 		GetDirListing( m_sCharDir+"icon.bmp", as, false, true );
 		if( as.empty() )
-			return RString();
+			return std::string();
 		else
 			return as[0];
 	}
@@ -155,7 +155,7 @@ RString Character::GetSongSelectIconPath() const
 		return as[0];
 }
 
-RString Character::GetStageIconPath() const
+std::string Character::GetStageIconPath() const
 {
 	vector<std::string> as;
 	// first try and find an icon specific to the select music screen
@@ -209,7 +209,7 @@ void Character::DemandGraphics()
 	++m_iPreloadRefcount;
 	if( m_iPreloadRefcount == 1 )
 	{
-		RString s = GetIconPath();
+		std::string s = GetIconPath();
 		if( !s.empty() )
 			m_Preload.Load( s );
 	}

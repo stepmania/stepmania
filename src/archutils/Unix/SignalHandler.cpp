@@ -13,6 +13,7 @@
 #endif
 #include <sys/mman.h>
 #include <cerrno>
+#include <cstring>
 
 using std::vector;
 
@@ -177,7 +178,7 @@ void SignalHandler::OnClose( handler h )
 			ss.ss_flags = 0;
 			if( sigaltstack( &ss, nullptr ) == -1 )
 			{
-				LOG->Info( "sigaltstack failed: %s", strerror(errno) );
+				LOG->Info( "sigaltstack failed: %s", std::strerror(errno) );
 				p = nullptr; /* no SA_ONSTACK */
 			}
 		}

@@ -36,9 +36,9 @@ struct AutoMappingEntry
 struct AutoMappings
 {
 	AutoMappings(
-		RString s1,
-		RString s2,
-		RString s3,
+		std::string s1,
+		std::string s2,
+		std::string s3,
 		AutoMappingEntry im0 = AutoMappingEntry(),
 		AutoMappingEntry im1 = AutoMappingEntry(),
 		AutoMappingEntry im2 = AutoMappingEntry(),
@@ -88,9 +88,9 @@ struct AutoMappings
 	}
 
 	// Strings used by automatic joystick mappings.
-	RString m_sGame;			// only used
-	RString m_sDriverRegex;		// reported by InputHandler
-	RString m_sControllerName;	// the product name of the controller
+	std::string m_sGame;			// only used
+	std::string m_sDriverRegex;		// reported by InputHandler
+	std::string m_sControllerName;	// the product name of the controller
 
 	std::vector<AutoMappingEntry> m_vMaps;
 };
@@ -112,7 +112,7 @@ public:
 	GameButtonInfo m_GameButtonInfo[NUM_GameButton];
 	const AutoMappings *m_pAutoMappings;
 
-	GameButton ButtonNameToIndex( const RString &sButtonName ) const;
+	GameButton ButtonNameToIndex( const std::string &sButtonName ) const;
 	GameButton GameButtonToMenuButton( GameButton gb ) const;
 	void MenuButtonToGameInputs( GameButton MenuI, PlayerNumber pn, std::vector<GameInput> &GameIout ) const;
 	void MenuButtonToGameButtons( GameButton MenuI, std::vector<GameButton> &aGameButtons ) const;
@@ -126,16 +126,16 @@ class InputMappings
 {
 public:
 	// only filled for automappings
-	RString m_sDeviceRegex;
-	RString m_sDescription;
+	std::string m_sDeviceRegex;
+	std::string m_sDescription;
 
 	// map from a GameInput to multiple DeviceInputs
 	DeviceInput m_GItoDI[NUM_GameController][NUM_GameButton][NUM_GAME_TO_DEVICE_SLOTS];
 
 	void Clear();
 	void Unmap( InputDevice id );
-	void WriteMappings( const InputScheme *pInputScheme, RString sFilePath );
-	void ReadMappings( const InputScheme *pInputScheme, RString sFilePath, bool bIsAutoMapping );
+	void WriteMappings( const InputScheme *pInputScheme, std::string sFilePath );
+	void ReadMappings( const InputScheme *pInputScheme, std::string sFilePath, bool bIsAutoMapping );
 	void SetInputMap( const DeviceInput &DeviceI, const GameInput &GameI, int iSlotIndex );
 
 	void ClearFromInputMap( const DeviceInput &DeviceI );
@@ -155,7 +155,7 @@ public:
 	void ReadMappingsFromDisk();
 	void SaveMappingsToDisk();
 	void ResetMappingsToDefault();
-	void CheckButtonAndAddToReason(GameButton menu, std::vector<std::string>& full_reason, RString const& sub_reason);
+	void CheckButtonAndAddToReason(GameButton menu, std::vector<std::string>& full_reason, std::string const& sub_reason);
 	void SanityCheckMappings(std::vector<std::string>& reason);
 
 	void ClearAllMappings();
@@ -166,7 +166,7 @@ public:
 
 	void AddDefaultMappingsForCurrentGameIfUnmapped();
 	void AutoMapJoysticksForCurrentGame();
-	bool CheckForChangedInputDevicesAndRemap( RString &sMessageOut );
+	bool CheckForChangedInputDevicesAndRemap( std::string &sMessageOut );
 
 	bool IsMapped( const DeviceInput &DeviceI ) const;
 

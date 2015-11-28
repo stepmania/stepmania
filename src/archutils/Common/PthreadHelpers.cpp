@@ -43,7 +43,7 @@ static bool g_bUsingNPTL = false;
 #endif
 
 
-RString ThreadsVersion()
+std::string ThreadsVersion()
 {
 	char buf[1024] = "(error)";
 	int ret = confstr( _CS_GNU_LIBPTHREAD_VERSION, buf, sizeof(buf) );
@@ -256,7 +256,7 @@ bool GetThreadBacktraceContext( uint64_t ThreadID, BacktraceContext *ctx )
 #include <pthread.h>
 #include <signal.h>
 
-RString ThreadsVersion()
+std::string ThreadsVersion()
 {
 	return "(unknown)";
 }

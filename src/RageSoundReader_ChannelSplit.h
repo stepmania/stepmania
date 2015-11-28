@@ -20,10 +20,10 @@ public:
 	virtual int Read( float *pBuf, int iFrames );
 	virtual int GetSampleRate() const;
 	virtual unsigned GetNumChannels() const;
-	virtual bool SetProperty( const RString &sProperty, float fValue );
+	virtual bool SetProperty( const std::string &sProperty, float fValue );
 	virtual int GetNextSourceFrame() const;
 	virtual float GetStreamToSourceRatio() const;
-	virtual RString GetError() const;
+	virtual std::string GetError() const;
 
 	void AddSourceChannelToSound( int iFromChannel, int iToChannel );
 

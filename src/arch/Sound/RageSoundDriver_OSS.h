@@ -17,7 +17,7 @@ class RageSoundDriver_OSS: public RageSoundDriver
 	void MixerThread();
 	RageThread MixingThread;
 
-	static RString CheckOSSVersion( int fd );
+	static std::string CheckOSSVersion( int fd );
 	
 public:
 	bool GetData();
@@ -29,7 +29,7 @@ public:
 	void SetupDecodingThread();
 
 	RageSoundDriver_OSS();
-	RString Init();
+	std::string Init();
 	~RageSoundDriver_OSS();
 };
 

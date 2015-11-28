@@ -128,7 +128,7 @@ void ScreenJukebox::SetSong()
 						aAttacks.push_back( Attack::FromGlobalCourseModifier( pEntry->sModifiers ) );
 					for (auto const &a: aAttacks)
 					{
-						RString s = Rage::make_lower(a.sModifiers);
+						std::string s = Rage::make_lower(a.sModifiers);
 						// todo: allow themers to modify this list? -aj
 						if( s.find("dark") != string::npos ||
 							s.find("stealth") != string::npos )

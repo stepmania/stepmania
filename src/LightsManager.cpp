@@ -16,7 +16,7 @@
 
 using std::vector;
 
-const RString DEFAULT_LIGHTS_DRIVER = "SystemMessage,Export";
+const std::string DEFAULT_LIGHTS_DRIVER = "SystemMessage,Export";
 static Preference<std::string> g_sLightsDriver( "LightsDriver", "" ); // "" == DEFAULT_LIGHTS_DRIVER
 Preference<float>	g_fLightsFalloffSeconds( "LightsFalloffSeconds", 0.1f );
 Preference<float>	g_fLightsAheadSeconds( "LightsAheadSeconds", 0.05f );
@@ -113,7 +113,7 @@ LightsManager::LightsManager()
 	m_CoinCounterTimer.SetZero();
 
 	m_LightsMode = LIGHTSMODE_JOINING;
-	RString sDriver = g_sLightsDriver.Get();
+	std::string sDriver = g_sLightsDriver.Get();
 	if( sDriver.empty() )
 		sDriver = DEFAULT_LIGHTS_DRIVER;
 	LightsDriver::Create( sDriver, m_vpDrivers );

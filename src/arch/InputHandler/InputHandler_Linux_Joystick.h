@@ -11,7 +11,7 @@ public:
 	enum { NUM_JOYSTICKS = 4 };
 	InputHandler_Linux_Joystick();
 	~InputHandler_Linux_Joystick();
-	bool TryDevice(RString dev);
+	bool TryDevice(std::string dev);
 	bool DevicesChanged() { return m_bDevicesChanged; }
 	void GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevicesOut );
 
@@ -23,7 +23,7 @@ private:
 
 	int fds[NUM_JOYSTICKS];
 	int m_iLastFd;
-	RString m_sDescription[NUM_JOYSTICKS];
+	std::string m_sDescription[NUM_JOYSTICKS];
 	RageThread m_InputThread;
 	bool m_bShutdown, m_bDevicesChanged;
 };

@@ -29,7 +29,7 @@ static void GetMemoryDebugInfo()
 
 static void GetDisplayDriverDebugInfo()
 {
-	RString sPrimaryDeviceName = GetPrimaryVideoName();
+	std::string sPrimaryDeviceName = GetPrimaryVideoName();
 
 	if( sPrimaryDeviceName == "" )
 		LOG->Info( "Primary display driver could not be determined." );
@@ -104,7 +104,7 @@ static void GetDriveDebugInfo9x()
 		}
 		for( unsigned id = 0; id < IDs.size(); ++id )
 		{
-			RString DeviceDesc;
+			std::string DeviceDesc;
 
 			RegistryAccess::GetRegValue( IDs[id], "DeviceDesc", DeviceDesc );
 			DeviceDesc = Rage::trim_right( DeviceDesc );
@@ -140,7 +140,7 @@ static void GetDriveDebugInfoNT()
 		int DMAEnabled = -1;
 		RegistryAccess::GetRegValue( Ports[i], "DMAEnabled", DMAEnabled );
 
-		RString Driver;
+		std::string Driver;
 		RegistryAccess::GetRegValue( Ports[i], "Driver", Driver );
 
 		std::vector<std::string> Busses;
@@ -161,7 +161,7 @@ static void GetDriveDebugInfoNT()
 
 				for( unsigned luid = 0; luid < LUIDs.size(); ++luid )
 				{
-					RString Identifier;
+					std::string Identifier;
 					RegistryAccess::GetRegValue( LUIDs[luid], "Identifier", Identifier );
 					Identifier = Rage::trim_right( Identifier );
 					LOG->Info( "Drive: \"%s\" Driver: %s DMA: %s",
@@ -202,7 +202,7 @@ static void GetWindowsVersionDebugInfo()
 		return;
 	}
 
-	RString Ver = fmt::sprintf("Windows %i.%i (", ovi.dwMajorVersion, ovi.dwMinorVersion);
+	std::string Ver = fmt::sprintf("Windows %i.%i (", ovi.dwMajorVersion, ovi.dwMinorVersion);
 	if(ovi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
 	{
 		if(ovi.dwMinorVersion == 0)

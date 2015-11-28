@@ -7,8 +7,8 @@ class Steps;
 namespace KSFLoader
 {
 	void GetApplicableFiles( std::string const &sPath, std::vector<std::string> &out );
-	bool LoadFromDir( const RString &sDir, Song &out );
-	bool LoadNoteDataFromSimfile( const RString & cachePath, Steps &out );
+	bool LoadFromDir( const std::string &sDir, Song &out );
+	bool LoadNoteDataFromSimfile( const std::string & cachePath, Steps &out );
 }
 
 #endif

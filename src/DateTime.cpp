@@ -88,9 +88,9 @@ void DateTime::StripTime()
 }
 
 // Common SQL/XML format: "YYYY-MM-DD HH:MM:SS"
-RString DateTime::GetString() const
+std::string DateTime::GetString() const
 {
-	RString s = fmt::sprintf( "%d-%02d-%02d",
+	std::string s = fmt::sprintf( "%d-%02d-%02d",
 		tm_year+1900,
 		tm_mon+1,
 		tm_mday );
@@ -108,7 +108,7 @@ RString DateTime::GetString() const
 	return s;
 }
 
-bool DateTime::FromString( const RString sDateTime )
+bool DateTime::FromString( const std::string sDateTime )
 {
 	Init();
 
@@ -140,12 +140,12 @@ bool DateTime::FromString( const RString sDateTime )
 
 
 
-RString DayInYearToString( int iDayInYear )
+std::string DayInYearToString( int iDayInYear )
 {
 	return fmt::sprintf("DayInYear%03d",iDayInYear);
 }
 
-int StringToDayInYear( RString sDayInYear )
+int StringToDayInYear( std::string sDayInYear )
 {
 	int iDayInYear;
 	if( sscanf( sDayInYear.c_str(), "DayInYear%d", &iDayInYear ) != 1 )
@@ -155,7 +155,7 @@ int StringToDayInYear( RString sDayInYear )
 	return iDayInYear;
 }
 
-static const RString LAST_DAYS_NAME[NUM_LAST_DAYS] =
+static const std::string LAST_DAYS_NAME[NUM_LAST_DAYS] =
 {
 	"Today",
 	"Yesterday",
@@ -166,7 +166,7 @@ static const RString LAST_DAYS_NAME[NUM_LAST_DAYS] =
 	"Day6Ago",
 };
 
-RString LastDayToString( int iLastDayIndex )
+std::string LastDayToString( int iLastDayIndex )
 {
 	return LAST_DAYS_NAME[iLastDayIndex];
 }
@@ -182,12 +182,12 @@ static const char *DAY_OF_WEEK_TO_NAME[DAYS_IN_WEEK] =
 	"Saturday",
 };
 
-RString DayOfWeekToString( int iDayOfWeekIndex )
+std::string DayOfWeekToString( int iDayOfWeekIndex )
 {
 	return DAY_OF_WEEK_TO_NAME[iDayOfWeekIndex];
 }
 
-RString HourInDayToString( int iHourInDayIndex )
+std::string HourInDayToString( int iHourInDayIndex )
 {
 	return fmt::sprintf("Hour%02d", iHourInDayIndex);
 }
@@ -211,7 +211,7 @@ XToString( Month );
 XToLocalizedString( Month );
 LuaXType( Month );
 
-RString LastWeekToString( int iLastWeekIndex )
+std::string LastWeekToString( int iLastWeekIndex )
 {
 	switch( iLastWeekIndex )
 	{
@@ -221,23 +221,23 @@ RString LastWeekToString( int iLastWeekIndex )
 	}
 }
 
-RString LastDayToLocalizedString( int iLastDayIndex )
+std::string LastDayToLocalizedString( int iLastDayIndex )
 {
-	RString s = LastDayToString( iLastDayIndex );
+	std::string s = LastDayToString( iLastDayIndex );
 	Rage::replace(s, "Day", "" );
 	Rage::replace(s, "Ago", " Ago" );
 	return s;
 }
 
-RString LastWeekToLocalizedString( int iLastWeekIndex )
+std::string LastWeekToLocalizedString( int iLastWeekIndex )
 {
-	RString s = LastWeekToString( iLastWeekIndex );
+	std::string s = LastWeekToString( iLastWeekIndex );
 	Rage::replace(s, "Week", "" );
 	Rage::replace(s, "Ago", " Ago" );
 	return s;
 }
 
-RString HourInDayToLocalizedString( int iHourIndex )
+std::string HourInDayToLocalizedString( int iHourIndex )
 {
 	int iBeginHour = iHourIndex;
 	iBeginHour--;

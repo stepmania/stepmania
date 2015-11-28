@@ -37,7 +37,7 @@ const char *g_CRSDifficultyNames[] =
  * @param s the name of the difficulty.
  * @return the course difficulty.
  */
-static CourseDifficulty CRSStringToDifficulty( const RString& s )
+static CourseDifficulty CRSStringToDifficulty( const std::string& s )
 {
 	Rage::ci_ascii_string diff{ s.c_str() };
 	FOREACH_ENUM(Difficulty, i)
@@ -51,21 +51,21 @@ static CourseDifficulty CRSStringToDifficulty( const RString& s )
 }
 
 
-bool CourseLoaderCRS::LoadFromBuffer( const RString &sPath, const RString &sBuffer, Course &out )
+bool CourseLoaderCRS::LoadFromBuffer( const std::string &sPath, const std::string &sBuffer, Course &out )
 {
 	MsdFile msd;
 	msd.ReadFromString( sBuffer, false );  // don't unescape
 	return LoadFromMsd( sPath, msd, out, true );
 }
 
-bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Course &out, bool bFromCache )
+bool CourseLoaderCRS::LoadFromMsd( const std::string &sPath, const MsdFile &msd, Course &out, bool bFromCache )
 {
 	using std::max;
 	AttackArray attacks;
 	float fGainSeconds = 0;
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
-		RString sValueName = msd.GetParam(i, 0);
+		std::string sValueName = msd.GetParam(i, 0);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
 
 		// handle the data
@@ -80,7 +80,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			out.m_sDescription = sParams[1];
 		else if(tagName == "REPEAT" )
 		{
-			RString str = Rage::make_lower(sParams[1]);
+			std::string str = Rage::make_lower(sParams[1]);
 			if( str.find("yes") != string::npos )
 				out.m_bRepeat = true;
 		}
@@ -236,7 +236,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			else if( Rage::ends_with(sParams[1], "*") )
 			{
 				//new_entry.bSecret = true;
-				RString sSong = sParams[1];
+				std::string sSong = sParams[1];
 				Rage::replace(sSong, '\\', '/' );
 				auto bits = Rage::split(sSong, "/");
 				if( bits.size() == 2 )
@@ -259,7 +259,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			}
 			else
 			{
-				RString sSong = sParams[1];
+				std::string sSong = sParams[1];
 				Rage::replace(sSong, '\\', '/' );
 				auto bits = Rage::split(sSong, "/");
 
@@ -310,7 +310,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				auto mods = Rage::split(sParams[3], ",", Rage::EmptyEntries::skip);
 				for( int j = (int) mods.size()-1; j >= 0 ; --j )
 				{
-					RString sMod = Rage::trim(mods[j]);
+					std::string sMod = Rage::trim(mods[j]);
 					Rage::ci_ascii_string ciMod{ sMod.c_str() };
 					if ( ciMod == "showcourse" )
 					{
@@ -358,7 +358,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 		}
 		else if(tagName == "STYLE" )
 		{
-			RString sStyles = sParams[1];
+			std::string sStyles = sParams[1];
 			auto asStyles = Rage::split(sStyles, ",");
 			for (auto &s: asStyles)
 			{
@@ -373,7 +373,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 
 	if( out.m_sBannerPath.empty() )
 	{
-		const RString sFName = SetExtension( out.m_sPath, "" );
+		const std::string sFName = SetExtension( out.m_sPath, "" );
 
 		vector<std::string> arrayPossibleBanners;
 		GetDirListing( sFName + "*.png", arrayPossibleBanners, false, false );
@@ -411,9 +411,9 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 	return true;
 }
 
-bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
+bool CourseLoaderCRS::LoadFromCRSFile( const std::string &_sPath, Course &out )
 {
-	RString sPath = _sPath;
+	std::string sPath = _sPath;
 
 	out.Init();
 
@@ -442,7 +442,7 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 
 	if( bUseCache )
 	{
-		RString sCacheFile = out.GetCacheFilePath();
+		std::string sCacheFile = out.GetCacheFilePath();
 		LOG->Trace( "CourseLoaderCRS::LoadFromCRSFile(\"%s\") (\"%s\")", sPath.c_str(), sCacheFile.c_str() );
 		sPath = sCacheFile;
 	}
@@ -466,7 +466,7 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 		// If we have any cache data, write the cache file.
 		if( out.m_RadarCache.size() )
 		{
-			RString sCachePath = out.GetCacheFilePath();
+			std::string sCachePath = out.GetCacheFilePath();
 			if( CourseWriterCRS::Write(out, sCachePath, true) )
 				SONGINDEX->AddCacheIndex( out.m_sPath, GetHashForFile(out.m_sPath) );
 		}
@@ -475,7 +475,7 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 	return true;
 }
 
-bool CourseLoaderCRS::LoadEditFromFile( const RString &sEditFilePath, ProfileSlot slot )
+bool CourseLoaderCRS::LoadEditFromFile( const std::string &sEditFilePath, ProfileSlot slot )
 {
 	LOG->Trace( "CourseLoaderCRS::LoadEdit(%s)", sEditFilePath.c_str() );
 
@@ -503,7 +503,7 @@ bool CourseLoaderCRS::LoadEditFromFile( const RString &sEditFilePath, ProfileSlo
 	return true;
 }
 
-bool CourseLoaderCRS::LoadEditFromBuffer( const RString &sBuffer, const RString &sPath, ProfileSlot slot )
+bool CourseLoaderCRS::LoadEditFromBuffer( const std::string &sBuffer, const std::string &sPath, ProfileSlot slot )
 {
 	Course *pCourse = new Course;
 	if( !LoadFromBuffer(sPath, sBuffer, *pCourse) )

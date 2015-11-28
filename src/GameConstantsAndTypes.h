@@ -116,7 +116,7 @@ enum StepsType
 	StepsType_Invalid,
 };
 LuaDeclareType( StepsType );
-RString StepsTypeToString( StepsType st );
+std::string StepsTypeToString( StepsType st );
 
 /** @brief The various play modes available. */
 enum PlayMode
@@ -147,7 +147,7 @@ std::string const PlayModeToLocalizedString( PlayMode pm );
  * @param s the string.
  * @return the play mode based on the string.
  */
-PlayMode StringToPlayMode( const RString& s );
+PlayMode StringToPlayMode( const std::string& s );
 LuaDeclareType( PlayMode );
 
 /**
@@ -207,7 +207,7 @@ std::string const SortOrderToLocalizedString( SortOrder so );
  * @param str the string.
  * @return the sort order based on the string.
  */
-SortOrder StringToSortOrder( const RString& str );
+SortOrder StringToSortOrder( const std::string& str );
 LuaDeclareType( SortOrder );
 /**
  * @brief Determine if the sort order in question is for songs or not.
@@ -249,7 +249,7 @@ std::string const TapNoteScoreToLocalizedString( TapNoteScore tns );
  * @param str the string.
  * @return the tap note score based on the string.
  */
-TapNoteScore StringToTapNoteScore( const RString& str );
+TapNoteScore StringToTapNoteScore( const std::string& str );
 LuaDeclareType( TapNoteScore );
 
 /** @brief The list of hold note scores available during play. */
@@ -279,7 +279,7 @@ std::string const HoldNoteScoreToLocalizedString( HoldNoteScore hns );
  * @param str the string.
  * @return the hold note score based on the string.
  */
-HoldNoteScore StringToHoldNoteScore( const RString& str );
+HoldNoteScore StringToHoldNoteScore( const std::string& str );
 LuaDeclareType( HoldNoteScore );
 
 /** @brief The list of timing windows to deal with when playing. */
@@ -378,16 +378,16 @@ enum RankingCategory
 	RankingCategory_Invalid
 };
 std::string const RankingCategoryToString( RankingCategory rc );
-RankingCategory StringToRankingCategory( const RString& rc );
+RankingCategory StringToRankingCategory( const std::string& rc );
 LuaDeclareType( RankingCategory );
 
 extern const std::vector<std::string> RANKING_TO_FILL_IN_MARKER;
-inline bool IsRankingToFillIn( const RString& sName ) { return !sName.empty() && sName[0]=='#'; }
+inline bool IsRankingToFillIn( const std::string& sName ) { return !sName.empty() && sName[0]=='#'; }
 
 RankingCategory AverageMeterToRankingCategory( int iAverageMeter );
 
 // Group stuff
-extern const RString GROUP_ALL;
+extern const std::string GROUP_ALL;
 
 
 /** @brief The different types of players in the game. */
@@ -486,7 +486,7 @@ enum StageAward
 };
 std::string const StageAwardToString( StageAward pma );
 std::string const StageAwardToLocalizedString( StageAward pma );
-StageAward StringToStageAward( const RString& pma );
+StageAward StringToStageAward( const std::string& pma );
 LuaDeclareType( StageAward );
 
 /** @brief The various peak combo awards should such a combo be attained during play. */
@@ -507,7 +507,7 @@ enum PeakComboAward
 };
 std::string const PeakComboAwardToString( PeakComboAward pma );
 std::string const PeakComboAwardToLocalizedString( PeakComboAward pma );
-PeakComboAward StringToPeakComboAward( const RString& pma );
+PeakComboAward StringToPeakComboAward( const std::string& pma );
 LuaDeclareType( PeakComboAward );
 
 /** @brief The list of BPMs to display */
@@ -562,7 +562,7 @@ enum StyleType
 	StyleType_Invalid
 };
 std::string const StyleTypeToString( StyleType s );
-StyleType StringToStyleType( const RString& s );
+StyleType StringToStyleType( const std::string& s );
 LuaDeclareType( StyleType );
 
 /** @brief The different goal types, mainly meant for fitness modes. */
@@ -575,7 +575,7 @@ enum GoalType
 	GoalType_Invalid,
 };
 std::string const GoalTypeToString( GoalType gt );
-GoalType StringToGoalType( const RString& s );
+GoalType StringToGoalType( const std::string& s );
 LuaDeclareType( GoalType );
 
 /** @brief The different types of Edit modes available. */
@@ -589,7 +589,7 @@ enum EditMode
 	EditMode_Invalid,
 };
 std::string const EditModeToString( EditMode em );
-EditMode StringToEditMode( const RString& s );
+EditMode StringToEditMode( const std::string& s );
 LuaDeclareType( EditMode );
 
 /**
@@ -615,7 +615,7 @@ enum SampleMusicPreviewMode
 	SampleMusicPreviewMode_Invalid,
 };
 std::string const SampleMusicPreviewModeToString( SampleMusicPreviewMode );
-SampleMusicPreviewMode StringToSampleMusicPreviewMode( const RString& s );
+SampleMusicPreviewMode StringToSampleMusicPreviewMode( const std::string& s );
 LuaDeclareType( SampleMusicPreviewMode );
 
 /**

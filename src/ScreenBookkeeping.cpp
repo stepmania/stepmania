@@ -136,7 +136,7 @@ void ScreenBookkeeping::UpdateView()
 
 
 	{
-		RString s;
+		std::string s;
 		s += ALL_TIME.GetValue();
 		s += fmt::sprintf( " %i\n", BOOKKEEPER->GetCoinsTotal() );
 		m_textAllTime.SetText( s );
@@ -165,14 +165,14 @@ void ScreenBookkeeping::UpdateView()
 			int iSongIndex = 0;
 			for( int i=0; i<NUM_BOOKKEEPING_COLS; i++ )
 			{
-				RString s;
+				std::string s;
 				for( int j=0; j<iSongPerCol; j++ )
 				{
 					if( iSongIndex < (int)vpSongs.size() )
 					{
 						Song *pSong = vpSongs[iSongIndex];
 						iCount = pProfile->GetSongNumTimesPlayed( pSong );
-						RString sTitle = fmt::sprintf("%4d",iCount) + " " + pSong->GetDisplayFullTitle();
+						std::string sTitle = fmt::sprintf("%4d",iCount) + " " + pSong->GetDisplayFullTitle();
 						if (sTitle.length() > 22)
 						{
 							sTitle = Rage::head(sTitle, 20) + "...";
@@ -194,7 +194,7 @@ void ScreenBookkeeping::UpdateView()
 			BOOKKEEPER->GetCoinsLastDays( coins );
 			int iTotalLast = 0;
 
-			RString sTitle, sData;
+			std::string sTitle, sData;
 			for( int i=0; i<NUM_LAST_DAYS; i++ )
 			{
 				sTitle += LastDayToLocalizedString(i) + "\n";
@@ -220,10 +220,10 @@ void ScreenBookkeeping::UpdateView()
 			int coins[NUM_LAST_WEEKS];
 			BOOKKEEPER->GetCoinsLastWeeks( coins );
 
-			RString sTitle, sData;
+			std::string sTitle, sData;
 			for( int col=0; col<4; col++ )
 			{
-				RString sTemp;
+				std::string sTemp;
 				for( int row=0; row<52/4; row++ )
 				{
 					int week = row*4+col;
@@ -242,7 +242,7 @@ void ScreenBookkeeping::UpdateView()
 			int coins[DAYS_IN_WEEK];
 			BOOKKEEPER->GetCoinsByDayOfWeek( coins );
 
-			RString sTitle, sData;
+			std::string sTitle, sData;
 			for( int i=0; i<DAYS_IN_WEEK; i++ )
 			{
 				sTitle += DayOfWeekToString(i) + "\n";
@@ -264,14 +264,14 @@ void ScreenBookkeeping::UpdateView()
 			int coins[HOURS_IN_DAY];
 			BOOKKEEPER->GetCoinsByHour( coins );
 
-			RString sTitle1, sData1;
+			std::string sTitle1, sData1;
 			for( int i=0; i<HOURS_IN_DAY/2; i++ )
 			{
 				sTitle1 += HourInDayToLocalizedString(i) + "\n";
 				sData1 += fmt::sprintf("%d",coins[i]) + "\n";
 			}
 
-			RString sTitle2, sData2;
+			std::string sTitle2, sData2;
 			for( int i=(HOURS_IN_DAY/2); i<HOURS_IN_DAY; i++ )
 			{
 				sTitle2 += HourInDayToLocalizedString(i) + "\n";

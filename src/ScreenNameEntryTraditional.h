@@ -25,7 +25,7 @@ public:
 	bool AnyEntering() const;
 	bool Finish( PlayerNumber pn );
 	void UpdateSelectionText( PlayerNumber pn );
-	void SelectChar( PlayerNumber pn, const RString &sKey );
+	void SelectChar( PlayerNumber pn, const std::string &sKey );
 	/** @brief How long can the name be for ranking purposes? */
 	ThemeMetric<int>	MAX_RANKING_NAME_LENGTH;
 

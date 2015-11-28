@@ -9,6 +9,7 @@
 #include "global.h"
 
 #include "ezsockets.h"
+#include <cstring>
 
 #if defined(_MSC_VER) // We need the WinSock32 Library on Windows
 #pragma comment(lib,"wsock32.lib")
@@ -52,7 +53,7 @@ inline timeval timevalFromMs(unsigned int ms)
 EzSockets::EzSockets()
 {
 	MAXCON = 5;
-	memset (&addr,0,sizeof(addr)); //Clear the sockaddr_in structure
+	std::memset (&addr,0,sizeof(addr)); //Clear the sockaddr_in structure
 
 #if defined(_WINDOWS) // Windows REQUIRES WinSock Startup
 	WSAStartup( MAKEWORD(1,1), &wsda );
@@ -189,7 +190,7 @@ bool EzSockets::connect(const std::string& host, unsigned short port)
 	phe = gethostbyname(host.c_str());
 	if (phe == nullptr)
 		return false;
-	memcpy(&addr.sin_addr, phe->h_addr, sizeof(struct in_addr));
+	std::memcpy(&addr.sin_addr, phe->h_addr, sizeof(struct in_addr));
 
 	addr.sin_family = AF_INET;
 	addr.sin_port   = htons(port);
@@ -322,7 +323,7 @@ int EzSockets::PeekData(char *data, unsigned int bytes)
 	int bytesRead = bytes;
 	if (inBuffer.length()<bytes)
 		bytesRead = inBuffer.length();
-	memcpy(data,inBuffer.c_str(), bytesRead);
+	std::memcpy(data,inBuffer.c_str(), bytesRead);
 
 	return bytesRead;
 }
@@ -384,7 +385,7 @@ int EzSockets::PeekPack(char *data, unsigned int max)
 	if (tBuff.length() > max)
 		tBuff.substr(0, max);
 
-	memcpy (data, tBuff.c_str(),tBuff.length());
+	std::memcpy (data, tBuff.c_str(),tBuff.length());
 	return size;
 }
 

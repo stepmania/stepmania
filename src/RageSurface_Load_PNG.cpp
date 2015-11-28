@@ -19,7 +19,7 @@ namespace
 {
 void RageFile_png_read( png_struct *png, png_byte *p, png_size_t size )
 {
-	CHECKPOINT_M("Reading the png file.");
+	//CHECKPOINT_M("Reading the png file.");
 	RageFile *f = (RageFile *) png_get_io_ptr(png);
 
 	int got = f->Read( p, size );
@@ -247,7 +247,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 };
 
-RageSurfaceUtils::OpenResult RageSurface_Load_PNG( const RString &sPath, RageSurface *&ret, bool bHeaderOnly, RString &error )
+RageSurfaceUtils::OpenResult RageSurface_Load_PNG( const std::string &sPath, RageSurface *&ret, bool bHeaderOnly, std::string &error )
 {
 	RageFile f;
 	if( !f.Open( sPath ) )

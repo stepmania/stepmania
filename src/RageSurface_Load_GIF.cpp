@@ -58,7 +58,7 @@ static int GetDataBlock( RageFile &f, unsigned char *buf )
 }
 
 
-RageSurfaceUtils::OpenResult RageSurface_Load_GIF( const RString &sPath, RageSurface *&ret, bool bHeaderOnly, RString &error )
+RageSurfaceUtils::OpenResult RageSurface_Load_GIF( const std::string &sPath, RageSurface *&ret, bool bHeaderOnly, std::string &error )
 {
 	unsigned char buf[256];
 	int imageCount = 0;

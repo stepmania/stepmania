@@ -19,7 +19,7 @@ DifficultyIcon::DifficultyIcon()
 	m_PlayerNumber = PLAYER_1;
 }
 
-bool DifficultyIcon::Load( RString sPath )
+bool DifficultyIcon::Load( std::string sPath )
 {
 	Sprite::Load( sPath );
 	int iStates = GetNumStates();
@@ -28,7 +28,7 @@ bool DifficultyIcon::Load( RString sPath )
 		bWarn = false;
 	if( bWarn )
 	{
-		RString sError = fmt::sprintf(
+		std::string sError = fmt::sprintf(
 			"The difficulty icon graphic '%s' must have %d or %d frames.  It has %d states.",
 			sPath.c_str(),
 			NUM_Difficulty,
@@ -42,7 +42,7 @@ bool DifficultyIcon::Load( RString sPath )
 
 void DifficultyIcon::LoadFromNode( const XNode* pNode )
 {
-	RString sFile;
+	std::string sFile;
 	if( !ActorUtil::GetAttrPath(pNode, "File", sFile) )
 	{
 		LuaHelpers::ReportScriptErrorFmt("%s: DifficultyIcon: missing the \"File\" attribute.", ActorUtil::GetWhere(pNode).c_str());

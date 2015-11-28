@@ -20,16 +20,16 @@ LoadingWindow_Gtk::LoadingWindow_Gtk()
 {
 }
 
-static RString ModuleError( const RString s )
+static std::string ModuleError( const std::string s )
 {
 	return fmt::sprintf( "Couldn't load symbol Module_%s", s.c_str() );
 }
 
-RString LoadingWindow_Gtk::Init()
+std::string LoadingWindow_Gtk::Init()
 {
 	ASSERT( Handle == nullptr );
 
-	Handle = dlopen( RageFileManagerUtil::sDirOfExecutable + "/" + "GtkModule.so", RTLD_NOW );
+	Handle = dlopen( (RageFileManagerUtil::sDirOfExecutable + "/" + "GtkModule.so").c_str(), RTLD_NOW );
 	if( Handle == nullptr )
 		return fmt::sprintf( "dlopen(): %s", dlerror() );
 
@@ -78,9 +78,9 @@ LoadingWindow_Gtk::~LoadingWindow_Gtk()
 	Handle = nullptr;
 }
 
-void LoadingWindow_Gtk::SetText( RString s )
+void LoadingWindow_Gtk::SetText( std::string s )
 {
-	Module_SetText( s );
+	Module_SetText( s.c_str() );
 }
 
 void LoadingWindow_Gtk::SetIcon( const RageSurface *pIcon )

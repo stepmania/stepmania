@@ -53,14 +53,14 @@ Preference1D<int>		MemoryCardManager::m_iMemoryCardUsbLevel( MemoryCardUsbLevelI
 
 Preference<std::string>		MemoryCardManager::m_sEditorMemoryCardOsMountPoint( "EditorMemoryCardOsMountPoint",	"" );
 
-const RString MEM_CARD_MOUNT_POINT[NUM_PLAYERS] =
+const std::string MEM_CARD_MOUNT_POINT[NUM_PLAYERS] =
 {
 	// @ is important; see RageFileManager LoadedDriver::GetPath
 	"/@mc1/",
 	"/@mc2/",
 };
 
-static const RString MEM_CARD_MOUNT_POINT_INTERNAL[NUM_PLAYERS] =
+static const std::string MEM_CARD_MOUNT_POINT_INTERNAL[NUM_PLAYERS] =
 {
 	// @ is important; see RageFileManager LoadedDriver::GetPath
 	"/@mc1int/",
@@ -414,7 +414,7 @@ void MemoryCardManager::CheckStateChanges()
 		const UsbStorageDevice &new_device = m_Device[p];
 
 		MemoryCardState state = MemoryCardState_Invalid;
-		RString sError;
+		std::string sError;
 
 		if( m_bCardLocked[p] )
 		{
@@ -680,7 +680,7 @@ void MemoryCardManager::UnmountCard( PlayerNumber pn )
 	}
 }
 
-bool MemoryCardManager::PathIsMemCard( RString sDir ) const
+bool MemoryCardManager::PathIsMemCard( std::string sDir ) const
 {
 	FOREACH_PlayerNumber( p )
 	{
@@ -698,7 +698,7 @@ bool MemoryCardManager::IsNameAvailable( PlayerNumber pn ) const
 	return m_Device[pn].bIsNameAvailable;
 }
 
-RString MemoryCardManager::GetName( PlayerNumber pn ) const
+std::string MemoryCardManager::GetName( PlayerNumber pn ) const
 {
 	return m_Device[pn].sName;
 }

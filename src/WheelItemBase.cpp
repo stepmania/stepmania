@@ -17,7 +17,7 @@ XToString( WheelItemDataType );
 StringToX( WheelItemDataType );
 LuaXType( WheelItemDataType );
 
-WheelItemBaseData::WheelItemBaseData( WheelItemDataType type, RString sText, Rage::Color color )
+WheelItemBaseData::WheelItemBaseData( WheelItemDataType type, std::string sText, Rage::Color color )
 {
 	m_Type = type;
 	m_sText = sText;
@@ -35,7 +35,7 @@ WheelItemBase::WheelItemBase( const WheelItemBase &cpy ):
 	//	m_pGrayBar = m_sprBar;
 }
 
-WheelItemBase::WheelItemBase(RString sType)
+WheelItemBase::WheelItemBase(std::string sType)
 {
 	SetName( sType );
 	m_pData = nullptr;
@@ -44,7 +44,7 @@ WheelItemBase::WheelItemBase(RString sType)
 	Load(sType);
 }
 
-void WheelItemBase::Load( RString sType )
+void WheelItemBase::Load( std::string sType )
 {
 	m_colorLocked = Rage::Color(0,0,0,0.25f);
 }

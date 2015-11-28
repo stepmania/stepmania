@@ -123,25 +123,25 @@ static LocalizedString PGUP	( "DeviceButton", "PgUp" );
 static LocalizedString PGDN	( "DeviceButton", "PgDn" );
 static LocalizedString BACKSLASH	( "DeviceButton", "Backslash" );
 
-RString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
+std::string InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
 {
 	if( di.device == InputDevice_Invalid )
-		return RString();
+		return std::string();
 
 	if( di.device == DEVICE_KEYBOARD )
 	{
 		wchar_t c = DeviceButtonToChar( di.button, false );
 		if( c && c != L' ' ) // Don't show "Key  " for space.
-			return InputDeviceToString( di.device ) + " " + Capitalize( WStringToRString(wstring()+c) );
+			return InputDeviceToString( di.device ) + " " + Capitalize( WStringToString(wstring()+c) );
 	}
 
-	RString s = DeviceButtonToString( di.button );
+	std::string s = DeviceButtonToString( di.button );
 	if( di.device != DEVICE_KEYBOARD )
 		s = InputDeviceToString( di.device ) + " " + s;
 	return s;
 }
 
-RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
+std::string InputHandler::GetLocalizedInputString( const DeviceInput &di )
 {
 	switch( di.button )
 	{
@@ -161,7 +161,7 @@ RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
 	default:
 		wchar_t c = DeviceButtonToChar( di.button, false );
 		if( c && c != L' ' ) // Don't show "Key  " for space.
-			return Capitalize( WStringToRString(wstring()+c) );
+			return Capitalize( WStringToString(wstring()+c) );
 
 		return DeviceButtonToString( di.button );
 	}
@@ -170,9 +170,9 @@ RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
 DriverList InputHandler::m_pDriverList;
 
 static LocalizedString INPUT_HANDLERS_EMPTY( "Arch", "Input Handlers cannot be empty." );
-void InputHandler::Create( const RString &drivers_, vector<InputHandler *> &Add )
+void InputHandler::Create( const std::string &drivers_, vector<InputHandler *> &Add )
 {
-	const RString drivers = drivers_.empty()? RString(DEFAULT_INPUT_DRIVER_LIST):drivers_;
+	const std::string drivers = drivers_.empty()? std::string(DEFAULT_INPUT_DRIVER_LIST):drivers_;
 	auto DriversToTry = Rage::split( drivers, ",", Rage::EmptyEntries::skip );
 
 	if( DriversToTry.empty() )

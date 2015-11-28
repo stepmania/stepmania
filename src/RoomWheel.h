@@ -10,20 +10,20 @@
 struct RoomWheelItemData : public WheelItemBaseData
 {
 	RoomWheelItemData() : m_iFlags(0) { }
-	RoomWheelItemData( WheelItemDataType type, const RString& sTitle, const RString& sDesc, Rage::Color color ):
+	RoomWheelItemData( WheelItemDataType type, const std::string& sTitle, const std::string& sDesc, Rage::Color color ):
 		WheelItemBaseData( type, sTitle, color ), m_sDesc(sDesc), m_iFlags(0) { };
 
-	RString		m_sDesc;
+	std::string		m_sDesc;
 	unsigned int	m_iFlags;
 };
 
 class RoomWheelItem : public WheelItemBase
 {
 public:
-	RoomWheelItem( RString sType = "RoomWheelItem" );
+	RoomWheelItem( std::string sType = "RoomWheelItem" );
 	RoomWheelItem( const RoomWheelItem &cpy );
 
-	void Load( RString sType );
+	void Load( std::string sType );
 	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID, int iIndex, bool bHasFocus, int iDrawIndex );
 	virtual RoomWheelItem *Copy() const { return new RoomWheelItem(*this); }
 
@@ -37,9 +37,9 @@ private:
 
 struct RoomInfo
 {
-	RString songTitle;
-	RString songSubTitle;
-	RString songArtist;
+	std::string songTitle;
+	std::string songSubTitle;
+	std::string songArtist;
 	int numPlayers;
 	int maxPlayers;
 	std::vector<std::string> players;
@@ -49,7 +49,7 @@ class RoomWheel : public WheelBase
 {
 public:
 	virtual ~RoomWheel();
-	virtual void Load( RString sType );
+	virtual void Load( std::string sType );
 	virtual void BuildWheelItemsData( std::vector<WheelItemBaseData*> &arrayWheelItemDatas );
 	virtual unsigned int GetNumItems() const;
 	virtual bool Select();

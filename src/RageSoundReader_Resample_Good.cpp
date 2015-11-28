@@ -557,7 +557,7 @@ int RageSoundReader_Resample_Good::GetNextSourceFrame() const
 	return (int) iPosition;
 }
 
-bool RageSoundReader_Resample_Good::SetProperty( const RString &sProperty, float fValue )
+bool RageSoundReader_Resample_Good::SetProperty( const std::string &sProperty, float fValue )
 {
 	if( sProperty == "Rate" )
 	{

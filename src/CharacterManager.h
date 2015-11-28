@@ -20,7 +20,7 @@ public:
 	/** @brief Get the character assigned as the default.
 	 * @return The default character. */
 	Character* GetDefaultCharacter();
-	Character* GetCharacterFromID( RString sCharacterID );
+	Character* GetCharacterFromID( std::string sCharacterID );
 
 	void DemandGraphics();
 	void UndemandGraphics();

@@ -65,7 +65,7 @@ MovieTexture_Null::~MovieTexture_Null()
 
 REGISTER_MOVIE_TEXTURE_CLASS( Null );
 
-RageMovieTexture *RageMovieTextureDriver_Null::Create( RageTextureID ID, RString &sError )
+RageMovieTexture *RageMovieTextureDriver_Null::Create( RageTextureID ID, std::string &sError )
 {
 	return new MovieTexture_Null( ID );
 }

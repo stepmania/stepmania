@@ -72,7 +72,7 @@ static MenuDef g_TempMenu(
 
 static LocalizedString PROFILE_NAME_BLANK	( "ScreenEditMenu", "Profile name cannot be blank." );
 static LocalizedString PROFILE_NAME_CONFLICTS	( "ScreenEditMenu", "The name you chose conflicts with another profile. Please use a different name." );
-static bool ValidateLocalProfileName( const RString &sAnswer, RString &sErrorOut )
+static bool ValidateLocalProfileName( const std::string &sAnswer, std::string &sErrorOut )
 {
 	if( sAnswer == "" )
 	{
@@ -134,7 +134,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 		Profile *pProfile = PROFILEMAN->GetLocalProfile( s );
 		ASSERT( pProfile != nullptr );
 
-		RString sCommand = fmt::sprintf( "gamecommand;screen,ScreenOptionsCustomizeProfile;profileid,%s;name,dummy", s.c_str() );
+		std::string sCommand = fmt::sprintf( "gamecommand;screen,ScreenOptionsCustomizeProfile;profileid,%s;name,dummy", s.c_str() );
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands(sCommand) );
 		OptionRowDefinition &def = pHand->m_Def;
 		def.m_layoutType = LAYOUT_SHOW_ALL_IN_ROW;
@@ -160,7 +160,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 	ScreenOptions::InitMenu( OptionRowHandlers );
 
 	// Save sEditLocalProfileID before calling ScreenOptions::BeginScreen, because it will get clobbered.
-	RString sEditLocalProfileID = GAMESTATE->m_sEditLocalProfileID;
+	std::string sEditLocalProfileID = GAMESTATE->m_sEditLocalProfileID;
 
 	ScreenOptions::BeginScreen();
 
@@ -204,13 +204,13 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 		{
 			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
 
-			RString sNewName = ScreenTextEntry::s_sLastAnswer;
+			std::string sNewName = ScreenTextEntry::s_sLastAnswer;
 			ASSERT( GAMESTATE->m_sEditLocalProfileID.Get().empty() );
 
 			int iNumProfiles = PROFILEMAN->GetNumLocalProfiles();
 
 			// create
-			RString sProfileID;
+			std::string sProfileID;
 
 			// is this the correct way to go about checking the return value? -aj
 			bool bCreateProfile = PROFILEMAN->CreateLocalProfile( ScreenTextEntry::s_sLastAnswer, sProfileID );
@@ -224,7 +224,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 				auto &profiles = PROFILEMAN->m_sDefaultLocalProfileID.m_v;
 				for (auto i = profiles.begin(); i != profiles.end(); ++i)
 				{
-					RString sLocalProfileID = (*i)->Get();
+					std::string sLocalProfileID = (*i)->Get();
 					if( sLocalProfileID.empty() )
 					{
 						iFirstUnused = i - PROFILEMAN->m_sDefaultLocalProfileID.m_v.begin();
@@ -246,7 +246,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 		{
 			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
 
-			RString sNewName = ScreenTextEntry::s_sLastAnswer;
+			std::string sNewName = ScreenTextEntry::s_sLastAnswer;
 			PROFILEMAN->RenameLocalProfile( GAMESTATE->m_sEditLocalProfileID, sNewName );
 
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
@@ -321,15 +321,15 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 				break;
 			case ProfileAction_Delete:
 				{
-					RString sTitle = pProfile->m_sDisplayName;
-					RString sMessage = fmt::sprintf( CONFIRM_DELETE_PROFILE.GetValue(), sTitle.c_str() );
+					std::string sTitle = pProfile->m_sDisplayName;
+					std::string sMessage = fmt::sprintf( CONFIRM_DELETE_PROFILE.GetValue(), sTitle.c_str() );
 					ScreenPrompt::Prompt( SM_BackFromDeleteConfirm, sMessage, PROMPT_YES_NO );
 				}
 				break;
 			case ProfileAction_Clear:
 				{
-					RString sTitle = pProfile->m_sDisplayName;
-					RString sMessage = fmt::sprintf( CONFIRM_CLEAR_PROFILE.GetValue(), sTitle.c_str() );
+					std::string sTitle = pProfile->m_sDisplayName;
+					std::string sMessage = fmt::sprintf( CONFIRM_CLEAR_PROFILE.GetValue(), sTitle.c_str() );
 					ScreenPrompt::Prompt( SM_BackFromClearConfirm, sMessage, PROMPT_YES_NO );
 				}
 				break;
@@ -407,7 +407,7 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus & )
 		vector<std::string> vsUsedNames;
 		PROFILEMAN->GetLocalProfileDisplayNames( vsUsedNames );
 
-		RString sPotentialName;
+		std::string sPotentialName;
 		for( int i=1; i<1000; i++ )
 		{
 			sPotentialName = fmt::sprintf( "%s%04d", NEW_PROFILE_DEFAULT_NAME.GetValue().c_str(), i );
@@ -489,11 +489,11 @@ int ScreenOptionsManageProfiles::GetLocalProfileIndexWithFocus() const
 	return iIndex;
 }
 
-RString ScreenOptionsManageProfiles::GetLocalProfileIDWithFocus() const
+std::string ScreenOptionsManageProfiles::GetLocalProfileIDWithFocus() const
 {
 	int iIndex = GetLocalProfileIndexWithFocus();
 	if( iIndex == -1 )
-		return RString();
+		return std::string();
 	return m_vsLocalProfileID[iIndex];
 }
 

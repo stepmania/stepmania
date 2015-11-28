@@ -261,13 +261,13 @@ const BackgroundChange &Song::GetBackgroundAtBeat( BackgroundLayer iLayer, float
 }
 
 
-RString Song::GetCacheFilePath() const
+std::string Song::GetCacheFilePath() const
 {
 	return SongCacheIndex::GetCacheFilePath( "Songs", m_sSongDir );
 }
 
 // Get a path to the SM containing data for this song. It might be a cache file.
-const RString &Song::GetSongFilePath() const
+const std::string &Song::GetSongFilePath() const
 {
 	ASSERT_M( !m_sSongFileName.empty(),
 		 fmt::sprintf("The song %s has no filename associated with it!",
@@ -277,14 +277,14 @@ const RString &Song::GetSongFilePath() const
 
 /* Hack: This should be a parameter to TidyUpData, but I don't want to pull in
  * <set> into Song.h, which is heavily used. */
-static std::set<RString> BlacklistedImages;
+static std::set<std::string> BlacklistedImages;
 
 /* If PREFSMAN->m_bFastLoad is true, always load from cache if possible.
  * Don't read the contents of sDir if we can avoid it. That means we can't call
  * HasMusic(), HasBanner() or GetHashForDirectory().
  * If true, check the directory hash and reload the song from scratch if it's changed.
  */
-bool Song::LoadFromSongDir( RString sDir, bool load_autosave )
+bool Song::LoadFromSongDir( std::string sDir, bool load_autosave )
 {
 //	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir.c_str() );
 	ASSERT_M( sDir != "", "Songs can't be loaded from an empty directory!" );
@@ -306,7 +306,7 @@ bool Song::LoadFromSongDir( RString sDir, bool load_autosave )
 	// First, look in the cache for this song (without loading NoteData)
 	unsigned uCacheHash = SONGINDEX->GetCacheHash(m_sSongDir);
 	bool bUseCache = true;
-	RString sCacheFilePath = GetCacheFilePath();
+	std::string sCacheFilePath = GetCacheFilePath();
 
 	if( !DoesFileExist(sCacheFilePath) )
 	{ bUseCache = false; }
@@ -361,7 +361,7 @@ bool Song::LoadFromSongDir( RString sDir, bool load_autosave )
 			}
 			// Make sure we have a future filename figured out.
 			auto folders = Rage::split(sDir, "/");
-			RString songName = folders[2] + ".ssc";
+			std::string songName = folders[2] + ".ssc";
 			this->m_sSongFileName = sDir + songName;
 			// Continue on with a blank Song so that people can make adjustments using the editor.
 		}
@@ -377,7 +377,7 @@ bool Song::LoadFromSongDir( RString sDir, bool load_autosave )
 		{
 			// save a cache file so we don't have to parse it all over again next time
 			if(!SaveToCacheFile())
-			{ sCacheFilePath = RString(); }
+			{ sCacheFilePath = std::string(); }
 		}
 	}
 
@@ -411,7 +411,7 @@ bool Song::LoadFromSongDir( RString sDir, bool load_autosave )
 /* This function feels EXTREMELY hacky - copying things on top of pointers so
  * they don't break elsewhere.  Maybe it could be rewritten to politely ask the
  * Song/Steps objects to reload themselves. -- djpohly */
-bool Song::ReloadFromSongDir( RString sDir )
+bool Song::ReloadFromSongDir( std::string sDir )
 {
 	// Remove the cache file to force the song to reload from its dir instead
 	// of loading from the cache. -Kyz
@@ -504,7 +504,7 @@ bool Song::ReloadFromSongDir( RString sDir )
 	return true;
 }
 
-void Song::LoadEditsFromSongDir(RString dir)
+void Song::LoadEditsFromSongDir(std::string dir)
 {
 	// Load any .edit files in the song folder.
 	// Doing this BEFORE setting up AutoGen just in case.
@@ -532,7 +532,7 @@ bool Song::HasAutosaveFile()
 	{
 		return false;
 	}
-	RString autosave_path= SetExtension(m_sSongFileName, "ats");
+	std::string autosave_path= SetExtension(m_sSongFileName, "ats");
 	return FILEMAN->DoesFileExist(autosave_path);
 }
 
@@ -545,9 +545,9 @@ bool Song::LoadAutosaveFile()
 	// Save these strings because they need to be restored after the reset.
 	// The filenames need to point to the original instead of the autosave for
 	// things like load from disk to work. -Kyz
-	RString dir= GetSongDir();
-	RString song_timing_file= m_SongTiming.m_sFile;
-	RString song_file= m_sSongFileName;
+	std::string dir= GetSongDir();
+	std::string song_timing_file= m_SongTiming.m_sFile;
+	std::string song_file= m_sSongFileName;
 	// Reset needs to be used to remove all the steps and other things that
 	// will be loaded from the autosave. -Kyz
 	Reset();
@@ -566,7 +566,7 @@ bool Song::LoadAutosaveFile()
 /* Fix up song paths. If there's a leading "./", be sure to keep it: it's
  * a signal that the path is from the root directory, not the song directory.
  * Other than a leading "./", song paths must never contain "." or "..". */
-void FixupPath( RString &path, const RString &sSongPath )
+void FixupPath( std::string &path, const std::string &sSongPath )
 {
 	// Replace backslashes with slashes in all paths.
 	FixSlashesInPlace( path );
@@ -713,7 +713,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 		// This must be done before radar calculation.
 		if(m_bHasMusic)
 		{
-			RString error;
+			std::string error;
 			RageSoundReader *Sample = RageSoundReader_FileReader::OpenFile(GetMusicPath(), error);
 			/* XXX: Checking if the music file exists eliminates a warning
 			 * originating from BMS files (which have no music file, per se)
@@ -758,7 +758,7 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			m_fMusicLengthSeconds = 0;
 		}
 		if(!m_PreviewFile.empty() && m_fMusicSampleLengthSeconds <= 0.00f) { // if there's a preview file and sample length isn't specified, set sample length to length of preview file
-			RString error;
+			std::string error;
 			RageSoundReader *Sample = RageSoundReader_FileReader::OpenFile(GetPreviewMusicPath(), error);
 			if(Sample == nullptr && m_sMusicFile != "")
 			{
@@ -923,10 +923,10 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 			if(has_cdimage && lowerImage == m_sCDFile)
 				continue;	// skip
 
-			RString sPath = m_sSongDir + lower;
+			std::string sPath = m_sSongDir + lower;
 
 			// We only care about the dimensions.
-			RString error;
+			std::string error;
 			RageSurface *img = RageSurfaceUtils::LoadFile(sPath, error, true);
 			if(!img)
 			{
@@ -1177,8 +1177,8 @@ void Song::Save(bool autosave)
 
 	for (auto &oldName: arrayOldFileNames)
 	{
-		const RString sOldPath = m_sSongDir + oldName;
-		const RString sNewPath = sOldPath + ".old";
+		const std::string sOldPath = m_sSongDir + oldName;
+		const std::string sNewPath = sOldPath + ".old";
 
 		if( !FileCopy( sOldPath, sNewPath ) )
 		{
@@ -1192,7 +1192,7 @@ void Song::Save(bool autosave)
 
 bool Song::SaveToSMFile()
 {
-	const RString sPath = SetExtension( GetSongFilePath(), "sm" );
+	const std::string sPath = SetExtension( GetSongFilePath(), "sm" );
 	LOG->Trace( "Song::SaveToSMFile(%s)", sPath.c_str() );
 
 	// If the file exists, make a backup.
@@ -1220,9 +1220,9 @@ bool Song::SaveToSMFile()
 
 }
 
-bool Song::SaveToSSCFile( RString sPath, bool bSavingCache, bool autosave )
+bool Song::SaveToSSCFile( std::string sPath, bool bSavingCache, bool autosave )
 {
-	RString path = sPath;
+	std::string path = sPath;
 	if (!bSavingCache)
 		path = SetExtension(sPath, "ssc");
 	if(autosave)
@@ -1267,8 +1267,8 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache, bool autosave )
 
 	if( g_BackUpAllSongSaves.Get() )
 	{
-		RString sExt = GetExtension( path );
-		RString sBackupFile = SetExtension( path, "" );
+		std::string sExt = GetExtension( path );
+		std::string sBackupFile = SetExtension( path, "" );
 
 		time_t cur_time;
 		time( &cur_time );
@@ -1295,7 +1295,7 @@ bool Song::SaveToSSCFile( RString sPath, bool bSavingCache, bool autosave )
 	return true;
 }
 
-bool Song::SaveToJsonFile( RString sPath )
+bool Song::SaveToJsonFile( std::string sPath )
 {
 	LOG->Trace( "Song::SaveToJsonFile('%s')", sPath.c_str() );
 	return NotesWriterJson::WriteSong(sPath, *this, true);
@@ -1308,13 +1308,13 @@ bool Song::SaveToCacheFile()
 		return true;
 	}
 	SONGINDEX->AddCacheIndex(m_sSongDir, GetHashForDirectory(m_sSongDir));
-	const RString sPath = GetCacheFilePath();
+	const std::string sPath = GetCacheFilePath();
 	return SaveToSSCFile(sPath, true);
 }
 
 bool Song::SaveToDWIFile()
 {
-	const RString sPath = SetExtension( GetSongFilePath(), "dwi" );
+	const std::string sPath = SetExtension( GetSongFilePath(), "dwi" );
 	LOG->Trace( "Song::SaveToDWIFile(%s)", sPath.c_str() );
 
 	// If the file exists, make a backup.
@@ -1326,12 +1326,12 @@ bool Song::SaveToDWIFile()
 
 void Song::RemoveAutosave()
 {
-	RString autosave_path= SetExtension(m_sSongFileName, "ats");
+	std::string autosave_path= SetExtension(m_sSongFileName, "ats");
 	if(FILEMAN->DoesFileExist(autosave_path))
 	{
 		// Change all the steps to point to the actual file, not the autosave
 		// file.  -Kyz
-		RString extension= GetExtension(m_sSongFileName);
+		std::string extension= GetExtension(m_sSongFileName);
 		for (auto &step: m_vpSteps)
 		{
 			if(!step->IsAutogen())
@@ -1606,12 +1606,12 @@ vector<std::string> Song::GetInstrumentTracksToVectorString() const
 	return ret;
 }
 
-RString Song::GetSongAssetPath( RString sPath, const RString &sSongPath )
+std::string Song::GetSongAssetPath( std::string sPath, const std::string &sSongPath )
 {
 	if( sPath == "" )
-		return RString();
+		return std::string();
 
-	RString sRelPath = sSongPath + sPath;
+	std::string sRelPath = sSongPath + sPath;
 	if( DoesFileExist(sRelPath) )
 		return sRelPath;
 
@@ -1640,57 +1640,57 @@ RString Song::GetSongAssetPath( RString sPath, const RString &sSongPath )
 
 /* Note that supplying a path relative to the top-level directory is only for
  * compatibility with DWI. We prefer paths relative to the song directory. */
-RString Song::GetMusicPath() const
+std::string Song::GetMusicPath() const
 {
 	return GetSongAssetPath( m_sMusicFile, m_sSongDir );
 }
 
-RString Song::GetInstrumentTrackPath( InstrumentTrack it ) const
+std::string Song::GetInstrumentTrackPath( InstrumentTrack it ) const
 {
 	return GetSongAssetPath( m_sInstrumentTrackFile[it], m_sSongDir );
 }
 
-RString Song::GetBannerPath() const
+std::string Song::GetBannerPath() const
 {
 	return GetSongAssetPath( m_sBannerFile, m_sSongDir );
 }
 
-RString Song::GetLyricsPath() const
+std::string Song::GetLyricsPath() const
 {
 	return GetSongAssetPath( m_sLyricsFile, m_sSongDir );
 }
 
-RString Song::GetCDTitlePath() const
+std::string Song::GetCDTitlePath() const
 {
 	return GetSongAssetPath( m_sCDTitleFile, m_sSongDir );
 }
 
-RString Song::GetBackgroundPath() const
+std::string Song::GetBackgroundPath() const
 {
 	return GetSongAssetPath( m_sBackgroundFile, m_sSongDir );
 }
 
-RString Song::GetJacketPath() const
+std::string Song::GetJacketPath() const
 {
 	return GetSongAssetPath( m_sJacketFile, m_sSongDir );
 }
 
-RString Song::GetDiscPath() const
+std::string Song::GetDiscPath() const
 {
 	return GetSongAssetPath( m_sDiscFile, m_sSongDir );
 }
 
-RString Song::GetCDImagePath() const
+std::string Song::GetCDImagePath() const
 {
 	return GetSongAssetPath( m_sCDFile, m_sSongDir );
 }
 
-RString Song::GetPreviewVidPath() const
+std::string Song::GetPreviewVidPath() const
 {
 	return GetSongAssetPath( m_sPreviewVidFile, m_sSongDir );
 }
 
-RString Song::GetPreviewMusicPath() const
+std::string Song::GetPreviewMusicPath() const
 {
 	if(m_PreviewFile.empty())
 	{
@@ -1708,42 +1708,42 @@ float Song::GetPreviewStartSeconds() const
 	return 0.0f;
 }
 
-RString Song::GetDisplayMainTitle() const
+std::string Song::GetDisplayMainTitle() const
 {
 	if(!PREFSMAN->m_bShowNativeLanguage) return GetTranslitMainTitle();
 	return m_sMainTitle;
 }
 
-RString Song::GetDisplaySubTitle() const
+std::string Song::GetDisplaySubTitle() const
 {
 	if(!PREFSMAN->m_bShowNativeLanguage) return GetTranslitSubTitle();
 	return m_sSubTitle;
 }
 
-RString Song::GetDisplayArtist() const
+std::string Song::GetDisplayArtist() const
 {
 	if(!PREFSMAN->m_bShowNativeLanguage) return GetTranslitArtist();
 	return m_sArtist;
 }
 
-RString Song::GetMainTitle() const
+std::string Song::GetMainTitle() const
 {
 	return m_sMainTitle;
 }
 
-RString Song::GetDisplayFullTitle() const
+std::string Song::GetDisplayFullTitle() const
 {
-	RString Title = GetDisplayMainTitle();
-	RString SubTitle = GetDisplaySubTitle();
+	std::string Title = GetDisplayMainTitle();
+	std::string SubTitle = GetDisplaySubTitle();
 
 	if(!SubTitle.empty()) Title += " " + SubTitle;
 	return Title;
 }
 
-RString Song::GetTranslitFullTitle() const
+std::string Song::GetTranslitFullTitle() const
 {
-	RString Title = GetTranslitMainTitle();
-	RString SubTitle = GetTranslitSubTitle();
+	std::string Title = GetTranslitMainTitle();
+	std::string SubTitle = GetTranslitSubTitle();
 
 	if(!SubTitle.empty()) Title += " " + SubTitle;
 	return Title;
@@ -1801,16 +1801,16 @@ void Song::DeleteSteps( const Steps* pSteps, bool bReAutoGen )
 		AddAutoGenNotes();
 }
 
-bool Song::Matches(RString sGroup, RString sSong) const
+bool Song::Matches(std::string sGroup, std::string sSong) const
 {
 	if (sGroup.size() && Rage::ci_ascii_string{ sGroup.c_str() } != this->m_sGroupName)
 		return false;
 
-	RString sDir = this->GetSongDir();
+	std::string sDir = this->GetSongDir();
 	Rage::replace(sDir, "\\", "/");
     auto bits = Rage::split( sDir, "/" );
 	ASSERT(bits.size() >= 2); // should always have at least two parts
-	const RString &sLastBit = bits[bits.size()-1];
+	const std::string &sLastBit = bits[bits.size()-1];
 
 	// match on song dir or title (ala DWI)
 	Rage::ci_ascii_string songTitle{ sSong.c_str() };
@@ -2002,7 +2002,7 @@ public:
 	}
 	static int GetMusicPath( T* p, lua_State *L )
 	{
-		RString s = p->GetMusicPath();
+		std::string s = p->GetMusicPath();
 		if( !s.empty() )
 		{
 			lua_pushstring(L, s.c_str());
@@ -2015,7 +2015,7 @@ public:
 	}
 	static int GetBannerPath( T* p, lua_State *L )
 	{
-		RString s = p->GetBannerPath();
+		std::string s = p->GetBannerPath();
 		if( !s.empty() )
 		{
 			lua_pushstring(L, s.c_str());
@@ -2028,7 +2028,7 @@ public:
 	}
 	static int GetBackgroundPath( T* p, lua_State *L )
 	{
-		RString s = p->GetBackgroundPath();
+		std::string s = p->GetBackgroundPath();
 		if( !s.empty() )
 		{
 			lua_pushstring(L, s.c_str());
@@ -2041,7 +2041,7 @@ public:
 	}
 	static int GetPreviewVidPath( T* p, lua_State *L )
 	{
-		RString s = p->GetPreviewVidPath();
+		std::string s = p->GetPreviewVidPath();
 		if( !s.empty() )
 		{
 			lua_pushstring(L, s.c_str());
@@ -2054,13 +2054,13 @@ public:
 	}
 	static int GetPreviewMusicPath(T* p, lua_State* L)
 	{
-		RString s= p->GetPreviewMusicPath();
+		std::string s= p->GetPreviewMusicPath();
 		lua_pushstring(L, s.c_str());
 		return 1;
 	}
 	static int GetJacketPath( T* p, lua_State *L )
 	{
-		RString s = p->GetJacketPath();
+		std::string s = p->GetJacketPath();
 		if( !s.empty() )
 		{
 			lua_pushstring(L, s.c_str());
@@ -2073,7 +2073,7 @@ public:
 	}
 	static int GetCDImagePath( T* p, lua_State *L )
 	{
-		RString s = p->GetCDImagePath();
+		std::string s = p->GetCDImagePath();
 		if( !s.empty() )
 		{
 			lua_pushstring(L, s.c_str());
@@ -2086,7 +2086,7 @@ public:
 	}
 	static int GetDiscPath( T* p, lua_State *L )
 	{
-		RString s = p->GetDiscPath();
+		std::string s = p->GetDiscPath();
 		if( !s.empty() )
 		{
 			lua_pushstring(L, s.c_str());
@@ -2099,7 +2099,7 @@ public:
 	}
 	static int GetCDTitlePath( T* p, lua_State *L )
 	{
-		RString s = p->GetCDTitlePath();
+		std::string s = p->GetCDTitlePath();
 		if( !s.empty() )
 		{
 			lua_pushstring(L, s.c_str());
@@ -2112,7 +2112,7 @@ public:
 	}
 	static int GetLyricsPath( T* p, lua_State *L )
 	{
-		RString s = p->GetLyricsPath();
+		std::string s = p->GetLyricsPath();
 		if( !s.empty() )
 		{
 			lua_pushstring(L, s.c_str());

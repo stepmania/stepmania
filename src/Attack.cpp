@@ -67,7 +67,7 @@ bool Attack::ContainsTransformOrTurn() const
 	return po.ContainsTransformOrTurn();
 }
 
-Attack Attack::FromGlobalCourseModifier( const RString &sModifiers )
+Attack Attack::FromGlobalCourseModifier( const std::string &sModifiers )
 {
 	Attack a;
 	a.fStartSecond = 0;
@@ -78,9 +78,9 @@ Attack Attack::FromGlobalCourseModifier( const RString &sModifiers )
 	return a;
 }
 
-RString Attack::GetTextDescription() const
+std::string Attack::GetTextDescription() const
 {
-	RString s = sModifiers + " " + fmt::sprintf("(%.2f seconds)", fSecsRemaining);
+	std::string s = sModifiers + " " + fmt::sprintf("(%.2f seconds)", fSecsRemaining);
 	return s;
 }
 

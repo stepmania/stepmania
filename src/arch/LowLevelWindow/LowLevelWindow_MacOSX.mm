@@ -317,11 +317,11 @@ LowLevelWindow_MacOSX::~LowLevelWindow_MacOSX()
 	[m_WindowDelegate release];
 }
 
-void *LowLevelWindow_MacOSX::GetProcAddress( RString s )
+void *LowLevelWindow_MacOSX::GetProcAddress( std::string s )
 {
 	// http://developer.apple.com/qa/qa2001/qa1188.html
 	// Both functions mentioned in there are deprecated in 10.4.
-	const RString& symbolName( '_' + s );
+  std::string const & symbolName( '_' + s );
 	const uint32_t count = _dyld_image_count();
 	NSSymbol symbol = nullptr;
 	const uint32_t options = NSLOOKUPSYMBOLINIMAGE_OPTION_RETURN_ON_ERROR;
@@ -331,7 +331,7 @@ void *LowLevelWindow_MacOSX::GetProcAddress( RString s )
 	return symbol ? NSAddressOfSymbol( symbol ) : nullptr;
 }
 
-RString LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool& newDeviceOut )
+std::string LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool& newDeviceOut )
 {
 	// Always set these params.
 	m_CurrentParams.bSmoothLines = p.bSmoothLines;
@@ -348,7 +348,9 @@ RString LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool& new
 #undef X
 	
 	if( !bChangeMode && !bChangeVsync )
-		return RString();
+	{
+		return "";
+	}
 	
 	POOL;
 	newDeviceOut = false;
@@ -389,7 +391,7 @@ RString LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool& new
 		SetActualParamsFromMode( CGDisplayCurrentMode(kCGDirectMainDisplay) );
 		m_CurrentParams.vsync = p.vsync; // hack
 
-		return RString();
+		return "";
 	}
 	if( bChangeMode )
 	{
@@ -433,7 +435,7 @@ RString LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool& new
 		m_CurrentParams.vsync = p.vsync;
 	}
 	
-	return RString();
+	return "";
 }
 
 void LowLevelWindow_MacOSX::ShutDownFullScreen()

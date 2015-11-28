@@ -31,7 +31,7 @@ void ScoreKeeper::GetScoreOfLastTapInRow( const NoteData &nd, int iRow,
 #include "ScoreKeeperRave.h"
 #include "ScoreKeeperShared.h"
 
-ScoreKeeper* ScoreKeeper::MakeScoreKeeper( RString sClassName, PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats )
+ScoreKeeper* ScoreKeeper::MakeScoreKeeper( std::string sClassName, PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats )
 {
 	if( sClassName == "ScoreKeeperNormal" )
 		return new ScoreKeeperNormal( pPlayerState, pPlayerStageStats );

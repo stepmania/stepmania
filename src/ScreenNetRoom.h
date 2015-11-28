@@ -11,17 +11,17 @@
 
 class RoomData {
 public:
-	void SetName( const RString& name ) { m_name = name; }
-	void SetDescription( const RString& desc ) { m_description = desc; }
+	void SetName( const std::string& name ) { m_name = name; }
+	void SetDescription( const std::string& desc ) { m_description = desc; }
 	void SetState(unsigned int state) { m_state = state; }
 	void SetFlags( unsigned int iFlags ) { m_iFlags = iFlags; }
-	inline RString Name() { return m_name; }
-	inline RString Description() { return m_description; }
+	inline std::string Name() { return m_name; }
+	inline std::string Description() { return m_description; }
 	inline unsigned int State() { return m_state; }
 	inline unsigned int GetFlags() { return m_iFlags; }
 private:
-	RString m_name;
-	RString m_description;
+	std::string m_name;
+	std::string m_description;
 	unsigned int m_state;
 	unsigned int m_iFlags;
 };
@@ -43,7 +43,7 @@ private:
 	void UpdateRoomsList();
 	bool MenuLeft( const InputEventPlus &input );
 	bool MenuRight( const InputEventPlus &input );
-	void CreateNewRoom( const RString& rName,  const RString& rDesc, const RString& rPass );
+	void CreateNewRoom( const std::string& rName,  const std::string& rDesc, const std::string& rPass );
 
 	RageSound m_soundChangeSel;
 
@@ -53,7 +53,7 @@ private:
 
 	std::string m_sLastPickedRoom;
 
-	RString m_newRoomName, m_newRoomDesc, m_newRoomPass;
+	std::string m_newRoomName, m_newRoomDesc, m_newRoomPass;
 
 	RoomWheel m_RoomWheel;
 	RoomInfoDisplay m_roomInfo;

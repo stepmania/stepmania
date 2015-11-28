@@ -12,7 +12,7 @@ class InputHandler_Linux_Event: public InputHandler
 public:
 	InputHandler_Linux_Event();
 	~InputHandler_Linux_Event();
-	bool TryDevice(RString devfile);
+	bool TryDevice(std::string devfile);
 	bool DevicesChanged() { return m_bDevicesChanged; }
 	void GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevicesOut );
 

@@ -7,7 +7,7 @@ using std::vector;
 
 DriverList LightsDriver::m_pDriverList;
 
-void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add )
+void LightsDriver::Create( const std::string &sDrivers, vector<LightsDriver *> &Add )
 {
 	LOG->Trace( "Initializing lights drivers: %s", sDrivers.c_str() );
 

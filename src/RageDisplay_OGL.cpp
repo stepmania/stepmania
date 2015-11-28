@@ -266,21 +266,21 @@ RageDisplay_Legacy::RageDisplay_Legacy()
 	g_bTextureMatrixShader = 0;
 }
 
-RString GetInfoLog( GLhandleARB h )
+std::string GetInfoLog( GLhandleARB h )
 {
 	GLint iLength;
 	glGetObjectParameterivARB( h, GL_OBJECT_INFO_LOG_LENGTH_ARB, &iLength );
 	if (!iLength)
-		return RString();
+		return std::string();
 
 	GLcharARB *pInfoLog = new GLcharARB[iLength];
 	glGetInfoLogARB( h, iLength, &iLength, pInfoLog );
-	RString sRet = pInfoLog;
+	std::string sRet = pInfoLog;
 	delete [] pInfoLog;
 	return Rage::trim_right(sRet);
 }
 
-GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<std::string> asDefines )
+GLhandleARB CompileShader( GLenum ShaderType, std::string sFile, vector<std::string> asDefines )
 {
 	/* XXX: This would not be necessary if it wasn't for the special case for Cel. */
 	if (ShaderType == GL_FRAGMENT_SHADER_ARB && !glewIsSupported("GL_VERSION_2_0"))
@@ -289,7 +289,7 @@ GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<std::string>
 		return 0;
 	}
 
-	RString sBuffer;
+	std::string sBuffer;
 	{
 		RageFile file;
 		if (!file.Open(sFile))
@@ -324,7 +324,7 @@ GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<std::string>
 
 	glCompileShaderARB( hShader );
 
-	RString sInfo = GetInfoLog( hShader );
+	std::string sInfo = GetInfoLog( hShader );
 
 	GLint bCompileStatus  = GL_FALSE;
 	glGetObjectParameterivARB( hShader, GL_OBJECT_COMPILE_STATUS_ARB, &bCompileStatus );
@@ -341,7 +341,7 @@ GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<std::string>
 	return hShader;
 }
 
-GLhandleARB LoadShader( GLenum ShaderType, RString sFile, vector<std::string> asDefines )
+GLhandleARB LoadShader( GLenum ShaderType, std::string sFile, vector<std::string> asDefines )
 {
 	/* Vertex shaders are supported by more hardware than fragment shaders.
 	 * If this causes any trouble I will have to up the requirement for both
@@ -465,12 +465,12 @@ void InitShaders()
 
 static LocalizedString OBTAIN_AN_UPDATED_VIDEO_DRIVER ( "RageDisplay_Legacy", "Obtain an updated driver from your video card manufacturer." );
 static LocalizedString GLDIRECT_IS_NOT_COMPATIBLE ( "RageDisplay_Legacy", "GLDirect was detected.  GLDirect is not compatible with this game and should be disabled." );
-RString RageDisplay_Legacy::Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer )
+std::string RageDisplay_Legacy::Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer )
 {
 	g_pWind = LowLevelWindow::Create();
 
 	bool bIgnore = false;
-	RString sError = SetVideoMode( p, bIgnore );
+	std::string sError = SetVideoMode( p, bIgnore );
 	if (sError != "")
 		return sError;
 
@@ -493,11 +493,11 @@ RString RageDisplay_Legacy::Init( const VideoModeParams &p, bool bAllowUnacceler
 		while( iNextToPrint < asExtensions.size() )
 		{
 			size_t iLastToPrint = iNextToPrint;
-			RString sType;
+			std::string sType;
 			for( size_t i = iNextToPrint; i<asExtensions.size(); ++i )
 			{
 				auto asBits = Rage::split(asExtensions[i], "_");
-				RString sThisType;
+				std::string sThisType;
 				if (asBits.size() > 2)
 				{
 					sThisType = Rage::join( "_", asBits.begin(), asBits.begin()+2 );
@@ -517,7 +517,7 @@ RString RageDisplay_Legacy::Init( const VideoModeParams &p, bool bAllowUnacceler
 				continue;
 			}
 
-			RString sList = fmt::sprintf( "  %s: ", sType.c_str() );
+			std::string sList = fmt::sprintf( "  %s: ", sType.c_str() );
 			while( iNextToPrint <= iLastToPrint )
 			{
 				auto asBits = Rage::split(asExtensions[iNextToPrint], "_");
@@ -558,7 +558,7 @@ RString RageDisplay_Legacy::Init( const VideoModeParams &p, bool bAllowUnacceler
 	glGetFloatv( GL_LINE_WIDTH_RANGE, g_line_range );
 	glGetFloatv( GL_POINT_SIZE_RANGE, g_point_range );
 
-	return RString();
+	return std::string();
 }
 
 RageDisplay_Legacy::~RageDisplay_Legacy()
@@ -574,7 +574,7 @@ void RageDisplay_Legacy::GetDisplayResolutions( DisplayResolutions &out ) const
 
 static void CheckPalettedTextures()
 {
-	RString sError;
+	std::string sError;
 	do
 	{
 		if (!GLEW_EXT_paletted_texture)
@@ -731,11 +731,11 @@ void RageDisplay_Legacy::ResolutionChanged()
 // Return true if mode change was successful.
 // bNewDeviceOut is set true if a new device was created and textures
 // need to be reloaded.
-RString RageDisplay_Legacy::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
+std::string RageDisplay_Legacy::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
 	//LOG->Warn( "RageDisplay_Legacy::TryVideoMode( %d, %d, %d, %d, %d, %d )", p.windowed, p.width, p.height, p.bpp, p.rate, p.vsync );
 
-	RString err;
+	std::string err;
 	err = g_pWind->TryVideoMode( p, bNewDeviceOut );
 	if (err != "")
 		return err;	// failed to set video mode
@@ -772,12 +772,12 @@ RString RageDisplay_Legacy::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	if( wglewIsSupported("WGL_EXT_swap_control") )
 		wglSwapIntervalEXT(p.vsync);
 	else
-		return RString("The WGL_EXT_swap_control extension is not supported on your computer.");
+		return std::string("The WGL_EXT_swap_control extension is not supported on your computer.");
 #endif
 
 	ResolutionChanged();
 
-	return RString();	// successfully set mode
+	return std::string();	// successfully set mode
 }
 
 int RageDisplay_Legacy::GetMaxTextureSize() const
@@ -1022,7 +1022,7 @@ public:
 			/*
 			for( int i=0; i<4; i++ )
 			{
-				RString s;
+				std::string s;
 				for( int j=0; j<4; j++ )
 					s += fmt::sprintf( "%f ", mat.m[i][j] );
 				LOG->Trace( s );
@@ -1357,7 +1357,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 			/*
 			for( int i=0; i<4; i++ )
 			{
-				RString s;
+				std::string s;
 				for( int j=0; j<4; j++ )
 					s += fmt::sprintf( "%f ", mat.m[i][j] );
 				LOG->Trace( s );
@@ -2599,7 +2599,7 @@ void RageDisplay_Legacy::SetLineWidth(float fWidth)
 	glLineWidth(fWidth);
 }
 
-RString RageDisplay_Legacy::GetTextureDiagnostics(unsigned iTexture) const
+std::string RageDisplay_Legacy::GetTextureDiagnostics(unsigned iTexture) const
 {
 	/*
 		s << (bGenerateMipMaps? "gluBuild2DMipmaps":"glTexImage2D");
@@ -2629,7 +2629,7 @@ RString RageDisplay_Legacy::GetTextureDiagnostics(unsigned iTexture) const
 			break;
 		}
 */
-	return RString();
+	return std::string();
 }
 
 /*

@@ -135,10 +135,6 @@ template <> struct CompileAssert<true> { };
 template<int> struct CompileAssertDecl { };
 #define COMPILE_ASSERT(COND) typedef CompileAssertDecl< sizeof(CompileAssert<!!(COND)>) > CompileAssertInst
 
-#include "StdString.h"
-/** @brief Use RStrings throughout the program. */
-typedef StdString::CStdString RString;
-
 #include "RageException.h"
 
 /* Define a few functions if necessary */

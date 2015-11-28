@@ -142,7 +142,7 @@ public:
 
 	void PrepareLookup();
 	void ReleaseLookup();
-	void DumpOneTable(const beat_start_lookup_t& lookup, const RString& name);
+	void DumpOneTable(const beat_start_lookup_t& lookup, const std::string& name);
 	void DumpLookupTables();
 
 	int GetSegmentIndexAtRow(TimingSegmentType tst, int row) const;
@@ -289,11 +289,11 @@ public:
 	int GetMissComboAtRow( int iNoteRow ) const { return GetComboSegmentAtRow(iNoteRow)->GetMissCombo(); }
 	int GetMissComboAtBeat( float fBeat ) const { return GetMissComboAtRow( BeatToNoteRow(fBeat) ); }
 
-	const RString& GetLabelAtRow( int iNoteRow ) const { return GetLabelSegmentAtRow(iNoteRow)->GetLabel(); }
-	const RString& GetLabelAtBeat( float fBeat ) const { return GetLabelAtRow( BeatToNoteRow(fBeat) ); }
-	void SetLabelAtRow( int iNoteRow, const RString& sLabel ) { AddSegment( LabelSegment(iNoteRow,sLabel) ); }
-	void SetLabelAtBeat( float fBeat, const RString sLabel ) { SetLabelAtRow( BeatToNoteRow( fBeat ), sLabel ); }
-	bool DoesLabelExist( const RString& sLabel ) const;
+	const std::string& GetLabelAtRow( int iNoteRow ) const { return GetLabelSegmentAtRow(iNoteRow)->GetLabel(); }
+	const std::string& GetLabelAtBeat( float fBeat ) const { return GetLabelAtRow( BeatToNoteRow(fBeat) ); }
+	void SetLabelAtRow( int iNoteRow, const std::string& sLabel ) { AddSegment( LabelSegment(iNoteRow,sLabel) ); }
+	void SetLabelAtBeat( float fBeat, const std::string sLabel ) { SetLabelAtRow( BeatToNoteRow( fBeat ), sLabel ); }
+	bool DoesLabelExist( const std::string& sLabel ) const;
 
 	float GetSpeedPercentAtRow( int iNoteRow ) const { return GetSpeedSegmentAtRow(iNoteRow)->GetRatio(); }
 	float GetSpeedPercentAtBeat( float fBeat ) const { return GetSpeedPercentAtRow( BeatToNoteRow(fBeat) ); }
@@ -468,7 +468,7 @@ public:
 	 *
 	 * This is for informational purposes only.
 	 */
-	RString					m_sFile;
+	std::string					m_sFile;
 
 	/** @brief The initial offset of a song. */
 	float	m_fBeat0OffsetInSeconds;

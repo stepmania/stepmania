@@ -102,10 +102,10 @@ private:
 	typedef void (ScreenMapControllers::* action_fun_t)();
 	struct ActionRow
 	{
-		RString m_name;
+		std::string m_name;
 		AutoActor m_actor;
 		action_fun_t m_action;
-		void Load(RString const& scr_name, RString const& name,
+		void Load(std::string const& scr_name, std::string const& name,
 			ScreenMapControllers::action_fun_t action, ActorFrame* line,
 			ActorScroller* scroller);
 	};

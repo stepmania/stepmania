@@ -11,14 +11,14 @@ class RoomInfoDisplay : public ActorFrame
 public:
 	RoomInfoDisplay();
 	~RoomInfoDisplay();
-	virtual void Load( RString sType );
+	virtual void Load( std::string sType );
 	virtual void Update( float fDeltaTime );
 	void SetRoom( const RoomWheelItemData* roomData );
 	void SetRoomInfo( const RoomInfo& info);
 	void DeployInfoBox();
 	void RetractInfoBox();
 private:
-	void RequestRoomInfo(const RString& name);
+	void RequestRoomInfo(const std::string& name);
 	enum RoomInfoDisplayState
 	{
 		OPEN = 0,

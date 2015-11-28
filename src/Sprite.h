@@ -64,7 +64,7 @@ public:
 	void SetStateProperties(const std::vector<State>& new_states)
 	{ m_States= new_states; RecalcAnimationLengthSeconds(); SetState(0); }
 
-	RString	GetTexturePath() const;
+	std::string	GetTexturePath() const;
 
 	void SetCustomTextureRect( const Rage::RectF &new_texcoord_frect );
 	void SetCustomTextureCoords( float fTexCoords[8] );

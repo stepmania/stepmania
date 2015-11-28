@@ -17,12 +17,12 @@ extern const char *g_CRSDifficultyNames[]; // in CourseLoaderCRS
  * @param iVal the course difficulty.
  * @return the string.
  */
-static RString DifficultyToCRSString( CourseDifficulty iVal )
+static std::string DifficultyToCRSString( CourseDifficulty iVal )
 {
 	return g_CRSDifficultyNames[iVal];
 }
 
-bool CourseWriterCRS::Write( const Course &course, const RString &sPath, bool bSavingCache )
+bool CourseWriterCRS::Write( const Course &course, const std::string &sPath, bool bSavingCache )
 {
 	RageFile f;
 	if( !f.Open( sPath, RageFile::WRITE ) )
@@ -34,7 +34,7 @@ bool CourseWriterCRS::Write( const Course &course, const RString &sPath, bool bS
 	return CourseWriterCRS::Write( course, f, bSavingCache );
 }
 
-void CourseWriterCRS::GetEditFileContents( const Course *pCourse, RString &sOut )
+void CourseWriterCRS::GetEditFileContents( const Course *pCourse, std::string &sOut )
 {
 	RageFileObjMem mem;
 	CourseWriterCRS::Write( *pCourse, mem, true );
@@ -99,7 +99,7 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 			{
 				asRadarValues.push_back(fmt::sprintf("%.3f", rv[r]));
 			}
-			auto sLine = fmt::sprintf("#RADAR:%i:%i:", st, cd);
+			auto sLine = fmt::sprintf("#RADAR:%i:%i:", static_cast<int>(st), static_cast<int>(cd));
 			sLine += Rage::join( ",", asRadarValues ) + ";";
 			f.PutLine( sLine );
 		}
@@ -144,7 +144,7 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 		else if( entry.songID.ToSong() )
 		{
 			Song *pSong = entry.songID.ToSong();
-			const RString &sSong = Rage::base_name( pSong->GetSongDir() );
+			const std::string &sSong = Rage::base_name( pSong->GetSongDir() );
 
 			f.Write( "#SONG:" );
 			if( !entry.songCriteria.m_sGroupName.empty() )
@@ -173,7 +173,7 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 		}
 		f.Write( ":" );
 
-		RString sModifiers = entry.sModifiers;
+		std::string sModifiers = entry.sModifiers;
 
 		if( entry.bSecret )
 		{

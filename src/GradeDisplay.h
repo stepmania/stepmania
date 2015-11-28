@@ -10,7 +10,7 @@ struct lua_State;
 class GradeDisplay : public ActorFrame
 {
 public:
-	virtual void Load( RString sMetricsGroup );
+	virtual void Load( std::string sMetricsGroup );
 	void SetGrade( Grade g );
 
 	virtual GradeDisplay *Copy() const;

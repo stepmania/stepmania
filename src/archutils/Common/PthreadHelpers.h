@@ -6,7 +6,7 @@
 #endif
 #include "global.h"
 
-RString ThreadsVersion();
+std::string ThreadsVersion();
 
 /* Get the current thread's ThreadID. */
 uint64_t GetCurrentThreadId();

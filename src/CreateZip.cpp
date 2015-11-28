@@ -111,7 +111,7 @@ typedef char TCHAR;
 #define ZR_NOCHANGE   0x04000000     // changed its mind on storage, but not allowed
 #define ZR_FLATE      0x05000000     // an internal error in the de/inflation code
 
-	RString FormatZipMessageZ(ZRESULT code)
+	std::string FormatZipMessageZ(ZRESULT code)
 	{
 		const char *msg="unknown zip result code";
 		switch (code)
@@ -1003,18 +1003,18 @@ bool CreateZip::Start( RageFile *f)
 	lasterrorZ = hz->Start(f);
 	return lasterrorZ == ZR_OK;
 }
-RString MakeDestZipFileName( RString fn )
+std::string MakeDestZipFileName( std::string fn )
 {
 	// strip leading slash
 	fn.erase( fn.begin(), fn.begin()+1 );
 	return fn;
 }
-bool CreateZip::AddFile(RString fn)
+bool CreateZip::AddFile(std::string fn)
 {
 	lasterrorZ = hz->Add(MakeDestZipFileName(fn).c_str(),fn.c_str(),ZIP_FILENAME);
 	return lasterrorZ == ZR_OK;
 }
-bool CreateZip::AddDir(RString fn)
+bool CreateZip::AddDir(std::string fn)
 {
 	lasterrorZ = hz->Add(MakeDestZipFileName(fn).c_str(),nullptr,ZIP_FOLDER);
 	return lasterrorZ == ZR_OK;
@@ -1025,7 +1025,7 @@ bool CreateZip::Finish()
 	return lasterrorZ == ZR_OK;
 }
 
-RString CreateZip::GetError()
+std::string CreateZip::GetError()
 {
 	return FormatZipMessageZ( lasterrorZ );
 }

@@ -12,7 +12,7 @@ class ThemeMetricDifficultiesToShow : public ThemeMetric<std::string>
 {
 public:
 	ThemeMetricDifficultiesToShow(): m_v() { }
-	ThemeMetricDifficultiesToShow( const RString& sGroup, const RString& sName );
+	ThemeMetricDifficultiesToShow( const std::string& sGroup, const std::string& sName );
 	void Read();
 	const std::vector<Difficulty> &GetValue() const;
 private:
@@ -22,7 +22,7 @@ class ThemeMetricCourseDifficultiesToShow : public ThemeMetric<std::string>
 {
 public:
 	ThemeMetricCourseDifficultiesToShow(): m_v() { }
-	ThemeMetricCourseDifficultiesToShow( const RString& sGroup, const RString& sName );
+	ThemeMetricCourseDifficultiesToShow( const std::string& sGroup, const std::string& sName );
 	void Read();
 	const std::vector<CourseDifficulty> &GetValue() const;
 private:
@@ -32,7 +32,7 @@ class ThemeMetricStepsTypesToShow : public ThemeMetric<std::string>
 {
 public:
 	ThemeMetricStepsTypesToShow(): m_v() { }
-	ThemeMetricStepsTypesToShow( const RString& sGroup, const RString& sName );
+	ThemeMetricStepsTypesToShow( const std::string& sGroup, const std::string& sName );
 	void Read();
 	const std::vector<StepsType> &GetValue() const;
 private:
@@ -75,7 +75,7 @@ namespace CommonMetrics
 	/** @brief How many decimal places are used? */
 	extern ThemeMetric<int>			PERCENT_SCORE_DECIMAL_PLACES;
 
-	RString LocalizeOptionItem( const RString &s, bool bOptional );
+	std::string LocalizeOptionItem( const std::string &s, bool bOptional );
 };
 
 #endif

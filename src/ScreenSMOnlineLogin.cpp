@@ -100,7 +100,7 @@ static LocalizedString ENTER_YOUR_PASSWORD	( "ScreenSMOnlineLogin", "Enter your 
 
 void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 {
-	RString sLoginQuestion;
+	std::string sLoginQuestion;
 //	if( GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer) )
 
 	if( SM == SM_PasswordDone )
@@ -148,7 +148,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 			}
 			else
 			{
-				RString Response = NSMAN->m_SMOnlinePacket.ReadNT();
+				std::string Response = NSMAN->m_SMOnlinePacket.ReadNT();
 				ScreenTextEntry::Password( SM_PasswordDone, Response + "\n\n" + sLoginQuestion, nullptr );
 			}
 		}
@@ -193,7 +193,7 @@ bool ScreenSMOnlineLogin::MenuStart( const InputEventPlus &input )
 	return ScreenOptions::MenuStart( input );
 }
 
-RString ScreenSMOnlineLogin::GetSelectedProfileID()
+std::string ScreenSMOnlineLogin::GetSelectedProfileID()
 {
 	vector<std::string> vsProfiles;
 	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
@@ -201,15 +201,15 @@ RString ScreenSMOnlineLogin::GetSelectedProfileID()
 	const OptionRow &row = *m_pRows[GetCurrentRow()];
 	const int Selection = row.GetOneSharedSelection();
 	if( !Selection )
-		return RString();
+		return std::string();
 	return vsProfiles[ Selection-1 ];
 }
 
-void ScreenSMOnlineLogin::SendLogin( RString sPassword )
+void ScreenSMOnlineLogin::SendLogin( std::string sPassword )
 {
-	RString PlayerName = GAMESTATE->GetPlayerDisplayName( (PlayerNumber) m_iPlayer );
+	std::string PlayerName = GAMESTATE->GetPlayerDisplayName( (PlayerNumber) m_iPlayer );
 
-	RString HashedName = NSMAN->MD5Hex( sPassword );
+	std::string HashedName = NSMAN->MD5Hex( sPassword );
 
 	int authMethod = 0;
 	if ( NSMAN->GetSMOnlineSalt() != 0 )

@@ -39,32 +39,32 @@ class ScreenTextEntry : public ScreenWithMenuElements
 {
 public:
 	static void SetTextEntrySettings(
-		RString sQuestion,
-		RString sInitialAnswer,
+		std::string sQuestion,
+		std::string sInitialAnswer,
 		int iMaxInputLength,
-		bool(*Validate)(const RString &sAnswer,RString &sErrorOut) = nullptr,
-		void(*OnOK)(const RString &sAnswer) = nullptr,
+		bool(*Validate)(const std::string &sAnswer,std::string &sErrorOut) = nullptr,
+		void(*OnOK)(const std::string &sAnswer) = nullptr,
 		void(*OnCancel)() = nullptr,
 		bool bPassword = false,
-		bool (*ValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend) = nullptr,
-		RString (*FormatAnswerForDisplay)(const RString &sAnswer) = nullptr
+		bool (*ValidateAppend)(const std::string &sAnswerBeforeChar, std::string &sAppend) = nullptr,
+		std::string (*FormatAnswerForDisplay)(const std::string &sAnswer) = nullptr
 		);
 	static void TextEntry(
 		ScreenMessage smSendOnPop,
-		RString sQuestion,
-		RString sInitialAnswer,
+		std::string sQuestion,
+		std::string sInitialAnswer,
 		int iMaxInputLength,
-		bool(*Validate)(const RString &sAnswer,RString &sErrorOut) = nullptr,
-		void(*OnOK)(const RString &sAnswer) = nullptr,
+		bool(*Validate)(const std::string &sAnswer,std::string &sErrorOut) = nullptr,
+		void(*OnOK)(const std::string &sAnswer) = nullptr,
 		void(*OnCancel)() = nullptr,
 		bool bPassword = false,
-		bool (*ValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend) = nullptr,
-		RString (*FormatAnswerForDisplay)(const RString &sAnswer) = nullptr
+		bool (*ValidateAppend)(const std::string &sAnswerBeforeChar, std::string &sAppend) = nullptr,
+		std::string (*FormatAnswerForDisplay)(const std::string &sAnswer) = nullptr
 		);
 	static void Password(
 		ScreenMessage smSendOnPop,
-		const RString &sQuestion,
-		void(*OnOK)(const RString &sPassword) = nullptr,
+		const std::string &sQuestion,
+		void(*OnOK)(const std::string &sPassword) = nullptr,
 		void(*OnCancel)() = nullptr )
 	{
 		TextEntry( smSendOnPop, sQuestion, "", 255, nullptr, OnOK, OnCancel, true );
@@ -76,18 +76,18 @@ public:
 			bPassword(false), Validate(), OnOK(), OnCancel(),
 			ValidateAppend(), FormatAnswerForDisplay() { }
 		ScreenMessage smSendOnPop;
-		RString sQuestion;
-		RString sInitialAnswer;
+		std::string sQuestion;
+		std::string sInitialAnswer;
 		int iMaxInputLength;
 		/** @brief Is there a password involved with this setting?
 		 *
 		 * This parameter doesn't have to be used. */
 		bool bPassword;
-		LuaReference Validate; // (RString sAnswer, RString sErrorOut; optional)
-		LuaReference OnOK; // (RString sAnswer; optional)
+		LuaReference Validate; // (std::string sAnswer, std::string sErrorOut; optional)
+		LuaReference OnOK; // (std::string sAnswer; optional)
 		LuaReference OnCancel; // (optional)
-		LuaReference ValidateAppend; // (RString sAnswerBeforeChar, RString sAppend; optional)
-		LuaReference FormatAnswerForDisplay; // (RString sAnswer; optional)
+		LuaReference ValidateAppend; // (std::string sAnswerBeforeChar, std::string sAppend; optional)
+		LuaReference FormatAnswerForDisplay; // (std::string sAnswer; optional)
 
 		// see BitmapText.cpp Attribute::FromStack()  and
 		// OptionRowHandler.cpp LoadInternal() for ideas on how to implement the
@@ -96,8 +96,8 @@ public:
 	};
 	void LoadFromTextEntrySettings( const TextEntrySettings &settings );
 
-	static bool FloatValidate( const RString &sAnswer, RString &sErrorOut );
-	static bool IntValidate( const RString &sAnswer, RString &sErrorOut );
+	static bool FloatValidate( const std::string &sAnswer, std::string &sErrorOut );
+	static bool IntValidate( const std::string &sAnswer, std::string &sErrorOut );
 
 	virtual void Init();
 	virtual void BeginScreen();
@@ -105,14 +105,14 @@ public:
 	virtual void Update( float fDelta );
 	virtual bool Input( const InputEventPlus &input );
 
-	static RString s_sLastAnswer;
+	static std::string s_sLastAnswer;
 	static bool s_bCancelledLast;
 
 	// Lua
 	virtual void PushSelf( lua_State *L );
 
 protected:
-	void TryAppendToAnswer( RString s );
+	void TryAppendToAnswer( std::string s );
 	void BackspaceInAnswer();
 	virtual void TextEnteredDirectly() { }
 

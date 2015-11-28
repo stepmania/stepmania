@@ -15,11 +15,11 @@ static void PathForFolderType( char dir[PATH_MAX], OSType folderType )
 		FAIL_M( "FSRefMakePath() failed." );
 }
 
-RString SpecialDirs::GetDesktopDir()
+std::string SpecialDirs::GetDesktopDir()
 {
 	char dir[PATH_MAX];
 	PathForFolderType( dir, kDesktopFolderType );
-	return RString( fmt::sprintf("%s/" PRODUCT_ID, dir) );
+	return std::string( fmt::sprintf("%s/" PRODUCT_ID, dir) );
 }
 
 

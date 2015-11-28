@@ -7,8 +7,8 @@ class XNode;
 
 class StyleID
 {
-	RString sGame;
-	RString sStyle;
+	std::string sGame;
+	std::string sStyle;
 
 public:
 	StyleID(): sGame(""), sStyle("") { }

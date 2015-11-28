@@ -45,7 +45,7 @@ WheelBase::~WheelBase()
 	m_LastSelection = nullptr;
 }
 
-void WheelBase::Load( RString sType )
+void WheelBase::Load( std::string sType )
 {
 	LOG->Trace( "WheelBase::Load('%s')", sType.c_str() );
 	ASSERT( this->GetNumChildren() == 0 ); // only load once
@@ -287,7 +287,7 @@ bool WheelBase::Select()	// return true if this selection can end the screen
 		return true;
 	case WheelItemDataType_Section:
 		{
-			RString sThisItemSectionName = m_CurWheelItemData[m_iSelection]->m_sText;
+			std::string sThisItemSectionName = m_CurWheelItemData[m_iSelection]->m_sText;
 			if( m_sExpandedSectionName == sThisItemSectionName ) // already expanded
 			{
 				SetOpenSection( "" ); // collapse it

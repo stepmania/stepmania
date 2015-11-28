@@ -23,7 +23,7 @@ ModelManager::~ModelManager()
 	}
 }
 
-RageModelGeometry* ModelManager::LoadMilkshapeAscii( const RString& sFile, bool bNeedNormals )
+RageModelGeometry* ModelManager::LoadMilkshapeAscii( const std::string& sFile, bool bNeedNormals )
 {
 	auto p = m_mapFileToGeometry.find( sFile );
 	if( p != m_mapFileToGeometry.end() )

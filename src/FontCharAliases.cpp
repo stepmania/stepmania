@@ -361,8 +361,8 @@ static void InitCharAliases()
 
 	for (auto const &item: CharAliases)
 	{
-		RString from = Rage::make_lower(item.first);
-		RString to = WcharToUTF8(item.second);
+		std::string from = Rage::make_lower(item.first);
+		std::string to = WcharToUTF8(item.second);
 		CharAliasRepl[from] = to;
 	}
 }

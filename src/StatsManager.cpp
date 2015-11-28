@@ -267,18 +267,18 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 			}
 		}
 
-		RString sDate = DateTime::GetNowDate().GetString();
+		std::string sDate = DateTime::GetNowDate().GetString();
 		Rage::replace(sDate, ':', '-');
 
-		const RString UPLOAD_DIR = "/Save/Upload/";
-		RString sFileNameNoExtension = Profile::MakeUniqueFileNameNoExtension(UPLOAD_DIR, sDate + " " );
-		RString fn = UPLOAD_DIR + sFileNameNoExtension + ".xml";
+		const std::string UPLOAD_DIR = "/Save/Upload/";
+		std::string sFileNameNoExtension = Profile::MakeUniqueFileNameNoExtension(UPLOAD_DIR, sDate + " " );
+		std::string fn = UPLOAD_DIR + sFileNameNoExtension + ".xml";
 
 		bool bSaved = XmlFileUtil::SaveToFile( xml.get(), fn, "", false );
 
 		if( bSaved )
 		{
-			RString sStatsXmlSigFile = fn + SIGNATURE_APPEND;
+			std::string sStatsXmlSigFile = fn + SIGNATURE_APPEND;
 			CryptManager::SignFileToFile(fn, sStatsXmlSigFile);
 		}
 	}

@@ -36,7 +36,7 @@ CharacterManager::CharacterManager()
 	Rage::ci_ascii_string defChar{ "default" };
 	for (auto &item: as)
 	{
-		RString sCharName, sDummy;
+		std::string sCharName, sDummy;
 		splitpath(item, sDummy, sCharName, sDummy);
 
 		if( defChar == sCharName )
@@ -119,7 +119,7 @@ void CharacterManager::UndemandGraphics()
 	}
 }
 
-Character* CharacterManager::GetCharacterFromID( RString sCharacterID )
+Character* CharacterManager::GetCharacterFromID( std::string sCharacterID )
 {
 	for (auto *character: m_pCharacters)
 	{

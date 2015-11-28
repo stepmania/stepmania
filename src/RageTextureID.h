@@ -9,7 +9,7 @@
  * of these. */
 struct RageTextureID
 {
-	RString filename;
+	std::string filename;
 
 	// Maximum size of the texture, per dimension.
 	int iMaxSize;
@@ -46,7 +46,7 @@ struct RageTextureID
 	bool bHotPinkColorKey; // #FF00FF
 
 	// These hints will be used in addition to any in the filename.
-	RString AdditionalTextureHints;
+	std::string AdditionalTextureHints;
 
 	/* Used by RageTextureManager. Order is important; see RageTextureManager.cpp.
 	 * Note that this property is not considered for ordering/equality. Loading
@@ -56,16 +56,16 @@ struct RageTextureID
 
 	void Init();
 
-	RageTextureID(): filename(RString()), iMaxSize(0), bMipMaps(false),
+	RageTextureID(): filename(std::string()), iMaxSize(0), bMipMaps(false),
 		iAlphaBits(0), iGrayscaleBits(0), iColorDepth(0),
 		bDither(false), bStretch(false), bHotPinkColorKey(false),
-		AdditionalTextureHints(RString()), Policy(TEX_DEFAULT)  { Init(); }
-	RageTextureID( const RString &fn ): filename(RString()), iMaxSize(0),
+		AdditionalTextureHints(std::string()), Policy(TEX_DEFAULT)  { Init(); }
+	RageTextureID( const std::string &fn ): filename(std::string()), iMaxSize(0),
 		bMipMaps(false), iAlphaBits(0), iGrayscaleBits(0),
 		iColorDepth(0), bDither(false), bStretch(false),
-		bHotPinkColorKey(false), AdditionalTextureHints(RString()),
+		bHotPinkColorKey(false), AdditionalTextureHints(std::string()),
 		Policy(TEX_DEFAULT) { Init(); SetFilename(fn); }
-	void SetFilename( const RString &fn );
+	void SetFilename( const std::string &fn );
 };
 
 inline bool operator==(RageTextureID const &lhs, RageTextureID const &rhs)

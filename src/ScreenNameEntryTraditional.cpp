@@ -101,7 +101,7 @@ void ScreenNameEntryTraditional::BeginScreen()
 		const Profile *pProfile = PROFILEMAN->GetProfile(pn);
 		if( pProfile && !pProfile->m_sLastUsedHighScoreName.empty() )
 		{
-			m_sSelection[pn] = RStringToWstring( pProfile->m_sLastUsedHighScoreName );
+			m_sSelection[pn] = StringToWstring( pProfile->m_sLastUsedHighScoreName );
 			if( (int) m_sSelection[pn].size() > MAX_RANKING_NAME_LENGTH )
 				m_sSelection[pn].erase( MAX_RANKING_NAME_LENGTH );
 		}
@@ -164,7 +164,7 @@ bool ScreenNameEntryTraditional::Finish( PlayerNumber pn )
 	m_bFinalized[pn] = true;
 
 	UpdateSelectionText( pn ); /* hide NAME_ cursor */
-	RString sSelection = WStringToRString( m_sSelection[pn] );
+	std::string sSelection = WStringToString( m_sSelection[pn] );
 
 	// save last used ranking name
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);
@@ -194,7 +194,7 @@ void ScreenNameEntryTraditional::UpdateSelectionText( PlayerNumber pn )
 
 	Message msg("EntryChanged");
 	msg.SetParam( "PlayerNumber", pn );
-	msg.SetParam( "Text", WStringToRString(sText) );
+	msg.SetParam( "Text", WStringToString(sText) );
 	this->HandleMessage( msg );
 }
 
@@ -219,7 +219,7 @@ bool ScreenNameEntryTraditional::EnterKey( PlayerNumber pn, wchar_t sLetter )
 	return true;
 }
 
-void ScreenNameEntryTraditional::SelectChar( PlayerNumber pn, const RString &sKey )
+void ScreenNameEntryTraditional::SelectChar( PlayerNumber pn, const std::string &sKey )
 {
 	Message msg("SelectKey");
 	msg.SetParam( "PlayerNumber", pn );
@@ -250,7 +250,7 @@ public:
 	static int EnterKey( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-		RString sKey = SArg(2);
+		std::string sKey = SArg(2);
 		bool bRet = p->EnterKey( pn, Rage::utf8_get_char(sKey) );
 		LuaHelpers::Push( L, bRet );
 		return 1;
@@ -301,7 +301,7 @@ public:
 	static int GetSelection( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-		LuaHelpers::Push( L, WStringToRString(p->m_sSelection[pn]) );
+		LuaHelpers::Push( L, WStringToString(p->m_sSelection[pn]) );
 		return 1;
 	}
 

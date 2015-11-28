@@ -47,7 +47,7 @@ namespace VDDebugInfo
 	{
 		Context() { pRVAHeap=nullptr; }
 		bool Loaded() const { return pRVAHeap != nullptr; }
-		RString sRawBlock;
+		std::string sRawBlock;
 
 		int nBuildNumber;
 
@@ -58,7 +58,7 @@ namespace VDDebugInfo
 		const unsigned long (*pSegments)[2];
 		int nSegments;
 		char sFilename[1024];
-		RString sError;
+		std::string sError;
 	};
 
 	static void GetVDIPath( char *buf, int bufsiz )
@@ -77,8 +77,8 @@ namespace VDDebugInfo
 		if( pctx->sRawBlock[0] == '\x1f' &&
 			pctx->sRawBlock[1] == '\x8b' )
 		{
-			RString sBufOut;
-			RString sError;
+			std::string sBufOut;
+			std::string sError;
 			if( !GunzipString(pctx->sRawBlock, sBufOut, sError) )
 			{
 				pctx->sError = werr_format( GetLastError(), "VDI error: %s", sError.c_str() );
@@ -116,7 +116,7 @@ namespace VDDebugInfo
 	void VDDebugInfoDeinit( Context *pctx )
 	{
 		if( !pctx->sRawBlock.empty() )
-			pctx->sRawBlock = RString();
+			pctx->sRawBlock = std::string();
 	}
 
 	bool VDDebugInfoInitFromFile( Context *pctx )
@@ -124,10 +124,10 @@ namespace VDDebugInfo
 		if( pctx->Loaded() )
 			return true;
 
-		pctx->sRawBlock = RString();
+		pctx->sRawBlock = std::string();
 		pctx->pRVAHeap = nullptr;
 		GetVDIPath( pctx->sFilename, ARRAYLEN(pctx->sFilename) );
-		pctx->sError = RString();
+		pctx->sError = std::string();
 
 		HANDLE h = CreateFile( pctx->sFilename, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr );
 		if( h == INVALID_HANDLE_VALUE )
@@ -324,7 +324,7 @@ namespace SymbolLookup
 		return obuf;
 	}
 
-	RString CrashChildGetModuleBaseName( HMODULE hMod )
+	std::string CrashChildGetModuleBaseName( HMODULE hMod )
 	{
 		write( _fileno(stdout), &hMod,  sizeof(hMod) );
 
@@ -334,7 +334,7 @@ namespace SymbolLookup
 		{
 			return "???";
 		}
-		RString sName;
+		std::string sName;
 		char *buffer = new char[iSize + 1];
 		std::fill(buffer, buffer + iSize + 1, '\0');
 		if (!ReadFromParent(iFD, buffer, iSize))
@@ -371,7 +371,7 @@ namespace SymbolLookup
 			return;
 		}
 
-		RString sName = CrashChildGetModuleBaseName( (HMODULE)meminfo.AllocationBase );
+		std::string sName = CrashChildGetModuleBaseName( (HMODULE)meminfo.AllocationBase );
 
 		DWORD64 disp;
 		SYMBOL_INFO *pSymbol = GetSym( (unsigned int)ptr, disp );
@@ -395,7 +395,7 @@ namespace SymbolLookup
 namespace
 {
 
-RString SpliceProgramPath( RString fn )
+std::string SpliceProgramPath( std::string fn )
 {
 	char szBuf[MAX_PATH];
 	GetModuleFileName( nullptr, szBuf, sizeof(szBuf) );
@@ -403,7 +403,7 @@ RString SpliceProgramPath( RString fn )
 	char szModName[MAX_PATH];
 	char *pszFile;
 	GetFullPathName( szBuf, sizeof(szModName), szModName, &pszFile );
-	strcpy( pszFile, fn );
+	strcpy( pszFile, fn.c_str() );
 
 	return szModName;
 }
@@ -412,7 +412,7 @@ namespace
 {
 	VDDebugInfo::Context g_debugInfo;
 
-	RString ReportCallStack( const void * const *Backtrace )
+	std::string ReportCallStack( const void * const *Backtrace )
 	{
 		if( !g_debugInfo.Loaded() )
 			return fmt::sprintf( "debug resource file '%s': %s.\n", g_debugInfo.sFilename, g_debugInfo.sError.c_str() );
@@ -423,7 +423,7 @@ namespace
 				g_debugInfo.sFilename, g_debugInfo.nBuildNumber, int(version_num) );
 		}
 		*/
-		RString sRet;
+		std::string sRet;
 		for( int i = 0; Backtrace[i]; ++i )
 		{
 			char buf[10240];
@@ -438,14 +438,14 @@ namespace
 struct CompleteCrashData
 {
 	CrashInfo m_CrashInfo;
-	RString m_sInfo;
-	RString m_sAdditionalLog;
-	RString m_sCrashedThread;
+	std::string m_sInfo;
+	std::string m_sAdditionalLog;
+	std::string m_sCrashedThread;
 	std::vector<std::string> m_asRecent;
 	std::vector<std::string> m_asCheckpoints;
 };
 
-static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
+static void MakeCrashReport( const CompleteCrashData &Data, std::string &sOut )
 {
 	sOut += fmt::sprintf(
 			"%s crash report (build %s, %s @ %s)\n"
@@ -493,12 +493,12 @@ static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
 	sOut += fmt::sprintf( "-- End of report\n" );
 }
 
-static void DoSave( const RString &sReport )
+static void DoSave( const std::string &sReport )
 {
-	RString sName = SpliceProgramPath( "../crashinfo.txt" );
+	std::string sName = SpliceProgramPath( "../crashinfo.txt" );
 
-	SetFileAttributes( sName, FILE_ATTRIBUTE_NORMAL );
-	FILE *pFile = fopen( sName, "w+" );
+	SetFileAttributes( sName.c_str(), FILE_ATTRIBUTE_NORMAL );
+	FILE *pFile = fopen( sName.c_str(), "w+" );
 	if( pFile == nullptr )
 		return;
 	fprintf( pFile, "%s", sReport.c_str() );
@@ -506,7 +506,7 @@ static void DoSave( const RString &sReport )
 	fclose( pFile );
 
 	// Discourage changing crashinfo.txt.
-	SetFileAttributes( sName, FILE_ATTRIBUTE_READONLY );
+	SetFileAttributes( sName.c_str(), FILE_ATTRIBUTE_READONLY );
 }
 
 bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
@@ -529,7 +529,7 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 	char *buffer = new char[iSize + 1];
 	std::fill(buffer, buffer + iSize + 1, '\0');
 	bool wasReadSuccessful = ReadFromParent(iFD, buffer, iSize);
-	RString tmp = buffer;
+	std::string tmp = buffer;
 	delete[] buffer;
 	if (!wasReadSuccessful)
 	{
@@ -648,7 +648,7 @@ void LoadLocalizedStrings()
 class CrashDialog: public WindowsDialogBox
 {
 public:
-	CrashDialog( const RString &sCrashReport, const CompleteCrashData &CrashData );
+	CrashDialog( const std::string &sCrashReport, const CompleteCrashData &CrashData );
 	~CrashDialog();
 
 protected:
@@ -658,12 +658,12 @@ private:
 	void SetDialogInitial();
 
 	NetworkPostData *m_pPost;
-	RString m_sUpdateURL;
-	const RString m_sCrashReport;
+	std::string m_sUpdateURL;
+	const std::string m_sCrashReport;
 	CompleteCrashData m_CrashData;
 };
 
-CrashDialog::CrashDialog( const RString &sCrashReport, const CompleteCrashData &CrashData ):
+CrashDialog::CrashDialog( const std::string &sCrashReport, const CompleteCrashData &CrashData ):
 	m_sCrashReport( sCrashReport ),
 	m_CrashData( CrashData )
 {
@@ -741,8 +741,8 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 			return TRUE;
 		case IDC_VIEW_LOG:
 			{
-				RString sLogPath;
-				FILE *pFile = fopen( SpliceProgramPath("../Portable.ini"), "r" );
+				std::string sLogPath;
+				FILE *pFile = fopen( SpliceProgramPath("../Portable.ini").c_str(), "r" );
 				if(pFile != nullptr)
 				{
 					sLogPath = SpliceProgramPath("../Logs/log.txt");
@@ -751,11 +751,11 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				else
 					sLogPath = SpecialDirs::GetAppDataDir() + PRODUCT_ID +"/Logs/log.txt";
 
-				ShellExecute( nullptr, "open", sLogPath, "", "", SW_SHOWNORMAL );
+				ShellExecute( nullptr, "open", sLogPath.c_str(), "", "", SW_SHOWNORMAL );
 			}
 			break;
 		case IDC_CRASH_SAVE:
-			ShellExecute( nullptr, "open", SpliceProgramPath("../crashinfo.txt"), "", "", SW_SHOWNORMAL );
+			ShellExecute( nullptr, "open", SpliceProgramPath("../crashinfo.txt").c_str(), "", "", SW_SHOWNORMAL );
 			return TRUE;
 		case IDC_BUTTON_RESTART:
 			Win32RestartProgram();
@@ -808,8 +808,8 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 
 				/* Grab the result, which is the data output from the HTTP request.
 				 * It's simple XML. */
-				RString sResult = m_pPost->GetResult();
-				RString sError = m_pPost->GetError();
+				std::string sResult = m_pPost->GetResult();
+				std::string sError = m_pPost->GetError();
 				if( sError.empty() && sResult.empty() )
 					sError = "No data received";
 
@@ -818,7 +818,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				XNode xml;
 				if( sError.empty() )
 				{
-					RString sError;
+					std::string sError;
 					XmlFileUtil::Load( &xml, sResult, sError );
 					if( !sError.empty() )
 					{
@@ -872,7 +872,7 @@ void ChildProcess()
 	CompleteCrashData Data;
 	ReadCrashDataFromParent( fileno(stdin), Data );
 
-	RString sCrashReport;
+	std::string sCrashReport;
 	VDDebugInfo::VDDebugInfoInitFromFile( &g_debugInfo );
 	MakeCrashReport( Data, sCrashReport );
 	VDDebugInfo::VDDebugInfoDeinit( &g_debugInfo );

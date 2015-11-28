@@ -122,13 +122,13 @@ protected:
 	GameButton m_GameButtonPreviousGroup;
 	GameButton m_GameButtonNextGroup;
 
-	RString m_sSectionMusicPath;
-	RString m_sSortMusicPath;
-	RString m_sRouletteMusicPath;
-	RString m_sRandomMusicPath;
-	RString m_sCourseMusicPath;
-	RString m_sLoopMusicPath;
-	RString m_sFallbackCDTitlePath;
+	std::string m_sSectionMusicPath;
+	std::string m_sSortMusicPath;
+	std::string m_sRouletteMusicPath;
+	std::string m_sRandomMusicPath;
+	std::string m_sCourseMusicPath;
+	std::string m_sLoopMusicPath;
+	std::string m_sFallbackCDTitlePath;
 
 	FadingBanner	m_Banner;
 	Sprite			m_sprCDTitleFront, m_sprCDTitleBack;
@@ -140,7 +140,7 @@ protected:
 	SelectionState	m_SelectionState;
 	bool			m_bStepsChosen[NUM_PLAYERS];	// only used in SelectionState_SelectingSteps
 	bool			m_bGoToOptions;
-	RString			m_sSampleMusicToPlay;
+	std::string			m_sSampleMusicToPlay;
 	TimingData		*m_pSampleMusicTimingData;
 	float			m_fSampleStartSeconds, m_fSampleLengthSeconds;
 	bool			m_bAllowOptionsMenu, m_bAllowOptionsMenuRepeat;

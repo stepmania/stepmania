@@ -24,7 +24,7 @@ private:
 	void ProcessMenuStart( const InputEventPlus &input );
 
 	void CreateMenu();
-	void SelectRowWithMemoryCard( const RString &sOsMountPoint );
+	void SelectRowWithMemoryCard( const std::string &sOsMountPoint );
 
 	bool UpdateCurrentUsbStorageDevices();
 	std::vector<UsbStorageDevice> m_CurrentUsbStorageDevices;

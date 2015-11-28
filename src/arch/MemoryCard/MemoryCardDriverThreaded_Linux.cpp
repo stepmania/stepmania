@@ -25,7 +25,7 @@ using std::string;
 
 bool MemoryCardDriverThreaded_Linux::TestWrite( UsbStorageDevice* pDevice )
 {
-	if( access(pDevice->sOsMountDir, W_OK) == -1 )
+	if( access(pDevice->sOsMountDir.c_str(), W_OK) == -1 )
 	{
 		pDevice->SetError( "TestFailed" );
 		return false;
@@ -34,10 +34,10 @@ bool MemoryCardDriverThreaded_Linux::TestWrite( UsbStorageDevice* pDevice )
 	return true;
 }
 
-static bool ExecuteCommand( const RString &sCommand )
+static bool ExecuteCommand( const std::string &sCommand )
 {
 	LOG->Trace( "executing '%s'", sCommand.c_str() );
-	int ret = system(sCommand);
+	int ret = system(sCommand.c_str());
 	LOG->Trace( "done executing '%s'", sCommand.c_str() );
 	if( ret != 0 )
 	{
@@ -49,11 +49,11 @@ static bool ExecuteCommand( const RString &sCommand )
 	return ret == 0;
 }
 
-static bool ReadFile( const RString &sPath, RString &sBuf )
+static bool ReadFile( const std::string &sPath, std::string &sBuf )
 {
 	sBuf.clear();
 
-	int fd = open( sPath, O_RDONLY );
+	int fd = open( sPath.c_str(), O_RDONLY );
 	if( fd == -1 )
 	{
 		// "No such file or directory" is understandable
@@ -82,11 +82,11 @@ static bool ReadFile( const RString &sPath, RString &sBuf )
 	return true;
 }
 
-static void GetFileList( const RString &sPath, vector<std::string> &out )
+static void GetFileList( const std::string &sPath, vector<std::string> &out )
 {
 	out.clear();
 
-	DIR *dp = opendir( sPath );
+	DIR *dp = opendir( sPath.c_str() );
 	if( dp == nullptr )
 		return; // false; // XXX warn
 
@@ -98,11 +98,11 @@ static void GetFileList( const RString &sPath, vector<std::string> &out )
 
 bool MemoryCardDriverThreaded_Linux::USBStorageDevicesChanged()
 {
-	RString sThisDevices;
+	std::string sThisDevices;
 
 	/* If a device is removed and reinserted, the inode of the /sys/block entry
 	 * will change. */
-	RString sDevicePath = "/sys/block/";
+	std::string sDevicePath = "/sys/block/";
 
 	vector<std::string> asDevices;
 	GetFileList( sDevicePath, asDevices );
@@ -131,25 +131,25 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 
 	{
 		vector<std::string> asDevices;
-		RString sBlockDevicePath = "/sys/block/";
+		std::string sBlockDevicePath = "/sys/block/";
 		GetFileList( sBlockDevicePath, asDevices );
 
 		for( unsigned i = 0; i < asDevices.size(); ++i )
 		{
-			const RString &sDevice = asDevices[i];
+			const std::string &sDevice = asDevices[i];
 			if( sDevice == "." || sDevice == ".." )
 				continue;
 
 			UsbStorageDevice usbd;
 
-			RString sPath = sBlockDevicePath + sDevice + "/";
+			std::string sPath = sBlockDevicePath + sDevice + "/";
 			usbd.sSysPath = sPath;
 
 			/* Ignore non-removable devices. */
-			RString sBuf;
+			std::string sBuf;
 			if( !ReadFile( sPath + "removable", sBuf ) )
 				continue; // already warned
-			if( atoi(sBuf) != 1 )
+			if( std::stoi(sBuf) != 1 )
 				continue;
 
 			/*
@@ -161,7 +161,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 			 */
 			RageTimer WaitUntil;
 			WaitUntil += 5;
-			RString sQueueFilePath = usbd.sSysPath + "queue";
+			std::string sQueueFilePath = usbd.sSysPath + "queue";
 			while(1)
 			{
 				if( WaitUntil.Ago() >= 0 )
@@ -170,14 +170,14 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 					break;
 				}
 
-				if( access(usbd.sSysPath, F_OK) == -1 )
+				if( access(usbd.sSysPath.c_str(), F_OK) == -1 )
 				{
 					LOG->Warn( "Block directory %s went away while we were waiting for %s",
 							usbd.sSysPath.c_str(), sQueueFilePath.c_str() );
 					break;
 				}
 
-				if( access(sQueueFilePath, F_OK) != -1 )
+				if( access(sQueueFilePath.c_str(), F_OK) != -1 )
 					break;
 
 				usleep(10000);
@@ -187,7 +187,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 			ExecuteCommand( "udevadm settle" );
 
 			/* If the first partition device exists, eg. /sys/block/uba/uba1, use it. */
-			if( access(usbd.sSysPath + sDevice + "1", F_OK) != -1 )
+			if( access((usbd.sSysPath + sDevice + "1").c_str(), F_OK) != -1 )
 			{
 				LOG->Trace("OK");
 				usbd.sDevice = "/dev/" + sDevice + "1";
@@ -207,7 +207,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 			 * "2-1" is "bus-port".
 			 */
 			char szLink[256];
-			int iRet = readlink( sPath + "device", szLink, sizeof(szLink) );
+			int iRet = readlink( (sPath + "device").c_str(), szLink, sizeof(szLink) );
 			if( iRet == -1 )
 			{
 				LOG->Warn( "readlink(\"%s\"): %s", (sPath + "device").c_str(), strerror(errno) );
@@ -236,7 +236,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 				szLink[iRet] = 0;
 				auto asBits = Rage::split(szLink, "/");
 
-				RString sHostPort = asBits[asBits.size()-1];
+				std::string sHostPort = asBits[asBits.size()-1];
 				if( !sHostPort.empty() )
 				{
 					/* Strip off the endpoint information after the colon. */
@@ -258,10 +258,10 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 			}
 
 			if( ReadFile( sPath + "device/../idVendor", sBuf ) )
-				sscanf( sBuf, "%x", &usbd.idVendor );
+				sscanf( sBuf.c_str(), "%x", &usbd.idVendor );
 
 			if( ReadFile( sPath + "device/../idProduct", sBuf ) )
-				sscanf( sBuf, "%x", &usbd.idProduct );
+				sscanf( sBuf.c_str(), "%x", &usbd.idProduct );
 
 			if( ReadFile( sPath + "device/../serial", sBuf ) )
 			{
@@ -287,7 +287,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 		// /dev/sdb1               /mnt/flash2             auto    noauto,owner 0 0
 		// /dev/sdc1               /mnt/flash3             auto    noauto,owner 0 0
 
-		RString fn = "/rootfs/etc/fstab";
+		std::string fn = "/rootfs/etc/fstab";
 		RageFile f;
 		if( !f.Open(fn) )
 		{
@@ -295,7 +295,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 			return;
 		}
 
-		RString sLine;
+		std::string sLine;
 		while( !f.AtEOF() )
 		{
 			switch( f.GetLine(sLine) )
@@ -308,7 +308,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 
 			char szScsiDevice[1024];
 			char szMountPoint[1024];
-			int iRet = sscanf( sLine, "%s %s", szScsiDevice, szMountPoint );
+			int iRet = sscanf( sLine.c_str(), "%s %s", szScsiDevice, szMountPoint );
 			if( iRet != 2 || szScsiDevice[0] == '#')
 				continue;	// don't process this line
 
@@ -325,7 +325,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 				continue;
 			}
 
-			RString sMountPoint = Rage::trim(szMountPoint);
+			std::string sMountPoint = Rage::trim(szMountPoint);
 
 			// search for the mountpoint corresponding to the device
 			for( unsigned i=0; i<vDevicesOut.size(); i++ )
@@ -371,7 +371,7 @@ bool MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice )
 {
 	ASSERT( !pDevice->sDevice.empty() );
 
-        RString sCommand = "mount " + pDevice->sDevice;
+        std::string sCommand = "mount " + pDevice->sDevice;
         bool bMountedSuccessfully = ExecuteCommand( sCommand );
 
 	return bMountedSuccessfully;
@@ -387,7 +387,7 @@ void MemoryCardDriverThreaded_Linux::Unmount( UsbStorageDevice* pDevice )
 	 * by new devices until those are closed.  Without this, if something
 	 * causes the device to not unmount here, we'll never unmount it; that
 	 * causes a device name leak, eventually running us out of mountpoints. */
-	RString sCommand = "sync; umount -l \"" + pDevice->sDevice + "\"";
+	std::string sCommand = "sync; umount -l \"" + pDevice->sDevice + "\"";
 	ExecuteCommand( sCommand );
 }
 

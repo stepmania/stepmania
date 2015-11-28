@@ -49,7 +49,7 @@ public:
 	SongSort songSort;		// sort by this after filtering
 	int iChooseIndex;		//
 
-	RString sModifiers;		// set player and song options using these
+	std::string sModifiers;		// set player and song options using these
 	AttackArray attacks;	// timed sModifiers
 	float fGainSeconds;	// time gained back at the beginning of the song.  LifeMeterTime only.
 	int iGainLives;			// lives gained back at the beginning of the next song
@@ -57,12 +57,12 @@ public:
 	CourseEntry(): bSecret(false), songID(), songCriteria(),
 		stepsCriteria(), bNoDifficult(false),
 		songSort(SongSort_Randomize), iChooseIndex(0),
-		sModifiers(RString("")), attacks(), fGainSeconds(0),
+		sModifiers(std::string("")), attacks(), fGainSeconds(0),
 		iGainLives(-1) {}
 
 	bool IsFixedSong() const { return songID.IsValid(); }
 
-	RString GetTextDescription() const;
+	std::string GetTextDescription() const;
 	int GetNumModChanges() const;
 
 	// Lua
@@ -75,23 +75,23 @@ class Course
 public:
 	Course();
 
-	RString GetBannerPath() const;
-	RString GetBackgroundPath() const;
+	std::string GetBannerPath() const;
+	std::string GetBackgroundPath() const;
 	bool HasBanner() const;
 	bool HasBackground() const;
 
 	/* If PREFSMAN->m_bShowNative is off, these are the same as GetTranslit* below.
 	 * Otherwise, they return the main titles. */
-	RString GetDisplayMainTitle() const;
-	RString GetDisplaySubTitle() const;
+	std::string GetDisplayMainTitle() const;
+	std::string GetDisplaySubTitle() const;
 
 	// Returns the transliterated titles, if any; otherwise returns the main titles.
-	RString GetTranslitMainTitle() const { return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle; }
-	RString GetTranslitSubTitle() const { return m_sSubTitleTranslit.size()? m_sSubTitleTranslit: m_sSubTitle; }
+	std::string GetTranslitMainTitle() const { return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle; }
+	std::string GetTranslitSubTitle() const { return m_sSubTitleTranslit.size()? m_sSubTitleTranslit: m_sSubTitle; }
 
 	// "title subtitle"
-	RString GetDisplayFullTitle() const;
-	RString GetTranslitFullTitle() const;
+	std::string GetDisplayFullTitle() const;
+	std::string GetTranslitFullTitle() const;
 
 	// Dereferences course_entries and returns only the playable Songs and Steps
 	Trail* GetTrail( StepsType st, CourseDifficulty cd=Difficulty_Medium ) const;
@@ -135,14 +135,14 @@ public:
 	void Invalidate( const Song *pStaleSong );
 
 	void GetAllCachedTrails( std::vector<Trail *> &out );
-	RString GetCacheFilePath() const;
+	std::string GetCacheFilePath() const;
 
 	const CourseEntry *FindFixedSong( const Song *pSong ) const;
 
 	ProfileSlot GetLoadedFromProfileSlot() const { return m_LoadedFromProfile; }
 	void SetLoadedFromProfile( ProfileSlot slot ) { m_LoadedFromProfile = slot; }
 
-	bool Matches(RString sGroup, RString sCourse) const;
+	bool Matches(std::string sGroup, std::string sCourse) const;
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -156,17 +156,17 @@ public:
 
 
 	bool	m_bIsAutogen; // was this created by AutoGen?
-	RString	m_sPath;
+	std::string	m_sPath;
 
-	RString	m_sMainTitle, m_sMainTitleTranslit;
-	RString	m_sSubTitle, m_sSubTitleTranslit;
-	RString m_sScripter;
-	RString m_sDescription;
+	std::string	m_sMainTitle, m_sMainTitleTranslit;
+	std::string	m_sSubTitle, m_sSubTitleTranslit;
+	std::string m_sScripter;
+	std::string m_sDescription;
 
-	RString	m_sBannerPath;
-	RString	m_sBackgroundPath;
-	RString	m_sCDTitlePath;
-	RString	m_sGroupName;
+	std::string	m_sBannerPath;
+	std::string	m_sBackgroundPath;
+	std::string	m_sCDTitlePath;
+	std::string	m_sGroupName;
 
 	bool	m_bRepeat; // repeat after last song?  "Endless"
 	float	m_fGoalSeconds; // if not 0, stop play after this number of seconds

@@ -14,7 +14,7 @@ HoldJudgment::HoldJudgment()
 	m_mpToTrack = MultiPlayer_Invalid;
 }
 
-void HoldJudgment::Load( const RString &sPath )
+void HoldJudgment::Load( const std::string &sPath )
 {
 	m_sprJudgment.Load( sPath );
 	m_sprJudgment->StopAnimating();
@@ -26,7 +26,7 @@ void HoldJudgment::Load( const RString &sPath )
 
 void HoldJudgment::LoadFromNode( const XNode* pNode )
 {
-	RString sFile;
+	std::string sFile;
 	if(!ActorUtil::GetAttrPath(pNode, "File", sFile))
 	{
 		LuaHelpers::ReportScriptErrorFmt("%s: HoldJudgment: missing the attribute \"File\"", ActorUtil::GetWhere(pNode).c_str());

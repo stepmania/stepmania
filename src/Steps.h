@@ -83,12 +83,12 @@ public:
 	 * @brief Retrieve the description used for this edit.
 	 * @return the description used for this edit.
 	 */
-	RString GetDescription() const			{ return Real()->m_sDescription; }
+	std::string GetDescription() const			{ return Real()->m_sDescription; }
 	/**
 	 * @brief Retrieve the ChartStyle used for this chart.
 	 * @return the description used for this chart.
 	 */
-	RString GetChartStyle() const			{ return Real()->m_sChartStyle; }
+	std::string GetChartStyle() const			{ return Real()->m_sChartStyle; }
 	/**
 	 * @brief Retrieve the difficulty used for this edit.
 	 * @return the difficulty used for this edit.
@@ -104,25 +104,25 @@ public:
 	 * @brief Retrieve the author credit used for this edit.
 	 * @return the author credit used for this edit.
 	 */
-	RString GetCredit() const			{ return Real()->m_sCredit; }
+	std::string GetCredit() const			{ return Real()->m_sCredit; }
 
 	/** @brief The list of attacks. */
 	AttackArray m_Attacks;
 	/** @brief The stringified list of attacks. */
 	std::vector<std::string> m_sAttackString;
 
-	RString GetChartName() const			{ return parent ? Real()->GetChartName() : this->chartName; }
-	void SetChartName(const RString name)	{ this->chartName = name; }
-	void SetFilename( RString fn )			{ m_sFilename = fn; }
-	RString GetFilename() const			{ return m_sFilename; }
+	std::string GetChartName() const			{ return parent ? Real()->GetChartName() : this->chartName; }
+	void SetChartName(const std::string name)	{ this->chartName = name; }
+	void SetFilename( std::string fn )			{ m_sFilename = fn; }
+	std::string GetFilename() const			{ return m_sFilename; }
 	void SetSavedToDisk( bool b )			{ DeAutogen(); m_bSavedToDisk = b; }
 	bool GetSavedToDisk() const			{ return Real()->m_bSavedToDisk; }
 	void SetDifficulty( Difficulty dc )		{ SetDifficultyAndDescription( dc, GetDescription() ); }
-	void SetDescription( RString sDescription ) 	{ SetDifficultyAndDescription( this->GetDifficulty(), sDescription ); }
-	void SetDifficultyAndDescription( Difficulty dc, RString sDescription );
-	void SetCredit( RString sCredit );
-	void SetChartStyle( RString sChartStyle );
-	static bool MakeValidEditDescription( RString &sPreferredDescription );	// return true if was modified
+	void SetDescription( std::string sDescription ) 	{ SetDifficultyAndDescription( this->GetDifficulty(), sDescription ); }
+	void SetDifficultyAndDescription( Difficulty dc, std::string sDescription );
+	void SetCredit( std::string sCredit );
+	void SetChartStyle( std::string sChartStyle );
+	static bool MakeValidEditDescription( std::string &sPreferredDescription );	// return true if was modified
 
 	void SetLoadedFromProfile( ProfileSlot slot )	{ m_LoadedFromProfile = slot; }
 	void SetMeter( int meter );
@@ -133,8 +133,8 @@ public:
 	void GetNoteData( NoteData& noteDataOut ) const;
 	NoteData GetNoteData() const;
 	void SetNoteData( const NoteData& noteDataNew );
-	void SetSMNoteData( const RString &notes_comp );
-	void GetSMNoteData( RString &notes_comp_out ) const;
+	void SetSMNoteData( const std::string &notes_comp );
+	void GetSMNoteData( std::string &notes_comp_out ) const;
 
 	/**
 	 * @brief Retrieve the NoteData from the original source.
@@ -173,16 +173,16 @@ public:
 	 * @return true if it does, or false otherwise. */
 	bool HasAttacks() const;
 
-	const RString GetMusicPath() const; // Returns the path for loading.
-	const RString& GetMusicFile() const; // Returns the filename for the simfile.
-	void SetMusicFile(const RString& file);
+	const std::string GetMusicPath() const; // Returns the path for loading.
+	const std::string& GetMusicFile() const; // Returns the filename for the simfile.
+	void SetMusicFile(const std::string& file);
 
 	// Lua
 	void PushSelf( lua_State *L );
 
 	StepsType			m_StepsType;
 	/** @brief The string form of the StepsType, for dealing with unrecognized styles. */
-	RString m_StepsTypeStr;
+	std::string m_StepsTypeStr;
 	/** @brief The Song these Steps are associated with */
 	Song				*m_pSong;
 
@@ -217,14 +217,14 @@ private:
 	 * these is transparent. */
 	mutable HiddenPtr<NoteData>	m_pNoteData;
 	mutable bool			m_bNoteDataIsFilled;
-	mutable RString			m_sNoteDataCompressed;
+	mutable std::string			m_sNoteDataCompressed;
 
 	/** @brief The name of the file where these steps are stored. */
-	RString				m_sFilename;
+	std::string				m_sFilename;
 	/** @brief true if these Steps were loaded from or saved to disk. */
 	bool				m_bSavedToDisk;
 	/** @brief allows the steps to specify their own music file. */
-	RString m_MusicFile;
+	std::string m_MusicFile;
 	/** @brief What profile was used? This is ProfileSlot_Invalid if not from a profile. */
 	ProfileSlot			m_LoadedFromProfile;
 
@@ -233,9 +233,9 @@ private:
 	mutable unsigned		m_iHash;
 	/** @brief The name of the edit, or some other useful description.
 	 This used to also contain the step author's name. */
-	RString				m_sDescription;
+	std::string				m_sDescription;
 	/** @brief The style of the chart. (e.g. "Pad", "Keyboard") */
-	RString				m_sChartStyle;
+	std::string				m_sChartStyle;
 	/** @brief The difficulty that these steps are assigned to. */
 	Difficulty			m_Difficulty;
 	/** @brief The numeric difficulty of the Steps, ranging from MIN_METER to MAX_METER. */
@@ -244,9 +244,9 @@ private:
 	RadarValues			m_CachedRadarValues[NUM_PLAYERS];
 	bool                m_bAreCachedRadarValuesJustLoaded;
 	/** @brief The name of the person who created the Steps. */
-	RString				m_sCredit;
+	std::string				m_sCredit;
 	/** @brief The name of the chart. */
-	RString chartName;
+	std::string chartName;
 	/** @brief How is the BPM displayed for this chart? */
 	DisplayBPM displayBPMType;
 	/** @brief What is the minimum specified BPM? */

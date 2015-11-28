@@ -7,7 +7,7 @@
 using std::vector;
 
 #define CODE( s )		THEME->GetMetric (sType,fmt::sprintf("Code%s",s.c_str()))
-void InputQueueCodeSet::Load( const RString &sType )
+void InputQueueCodeSet::Load( const std::string &sType )
 {
 	// Load the codes here. There is no guarantee that m_asCodeNames is not empty,
 	// so make a temporary to move it.
@@ -31,7 +31,7 @@ void InputQueueCodeSet::Load( const RString &sType )
 	}
 }
 
-RString InputQueueCodeSet::Input( const InputEventPlus &input ) const
+std::string InputQueueCodeSet::Input( const InputEventPlus &input ) const
 {
 	for( unsigned i = 0; i < m_aCodes.size(); ++i )
 	{
@@ -45,7 +45,7 @@ RString InputQueueCodeSet::Input( const InputEventPlus &input ) const
 
 bool InputQueueCodeSet::InputMessage( const InputEventPlus &input, Message &msg ) const
 {
-	RString sCodeName = Input( input );
+	std::string sCodeName = Input( input );
 	if( sCodeName.empty() )
 		return false;
 

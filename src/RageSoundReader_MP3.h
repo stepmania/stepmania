@@ -25,7 +25,7 @@ public:
 	unsigned GetNumChannels() const { return Channels; }
 	int GetSampleRate() const { return SampleRate; }
 	int GetNextSourceFrame() const;
-	bool SetProperty( const RString &sProperty, float fValue );
+	bool SetProperty( const std::string &sProperty, float fValue );
 
 	RageSoundReader_MP3();
 	~RageSoundReader_MP3();

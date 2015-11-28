@@ -67,11 +67,11 @@ private:
 	int m_iDataStartOffset;
 };
 
-RageFileObjInflate *GunzipFile( RageFileBasic *pFile, RString &sError, uint32_t *iCRC32 );
+RageFileObjInflate *GunzipFile( RageFileBasic *pFile, std::string &sError, uint32_t *iCRC32 );
 
 /* Quick helpers: */
-void GzipString( const RString &sIn, RString &sOut );
-bool GunzipString( const RString &sIn, RString &sOut, RString &sError ); // returns false on CRC, etc. error
+void GzipString( const std::string &sIn, std::string &sOut );
+bool GunzipString( const std::string &sIn, std::string &sOut, std::string &sError ); // returns false on CRC, etc. error
 
 #endif
 

@@ -74,19 +74,19 @@ void BacktraceNames::Demangle() { }
 #endif
 
 
-RString BacktraceNames::Format() const
+std::string BacktraceNames::Format() const
 {
-	RString ShortenedPath = File;
+	std::string ShortenedPath = File;
 	if( ShortenedPath != "" )
 	{
 		/* Abbreviate the module name. */
 		size_t slash = ShortenedPath.rfind('/');
 		if( slash != ShortenedPath.npos )
 			ShortenedPath = ShortenedPath.substr(slash+1);
-		ShortenedPath = RString("(") + ShortenedPath + ")";
+		ShortenedPath = std::string("(") + ShortenedPath + ")";
 	}
 
-	RString ret = fmt::sprintf( "%0*lx: ", int(sizeof(void*)*2), (long) Address );
+	std::string ret = fmt::sprintf( "%0*lx: ", int(sizeof(void*)*2), (long) Address );
 	if( Symbol != "" )
 		ret += Symbol + " ";
 	ret += ShortenedPath;
@@ -307,10 +307,10 @@ void BacktraceNames::FromAddr( void * const p )
 }
 
 /* "path(mangled name+offset) [address]" */
-void BacktraceNames::FromString( RString s )
+void BacktraceNames::FromString( std::string s )
 {
     /* Hacky parser.  I don't want to use regexes in the crash handler. */
-    RString MangledAndOffset, sAddress;
+    std::string MangledAndOffset, sAddress;
     unsigned pos = 0;
     while( pos < s.size() && s[pos] != '(' && s[pos] != '[' )
 	{
@@ -339,7 +339,7 @@ void BacktraceNames::FromString( RString s )
         else
         {
             Symbol = MangledAndOffset.substr(0, plus);
-            RString str = MangledAndOffset.substr(plus);
+            std::string str = MangledAndOffset.substr(plus);
             if( sscanf(str, "%i", &Offset) != 1 )
                 Offset=0;
         }

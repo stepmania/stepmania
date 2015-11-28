@@ -179,8 +179,8 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 {
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-	RString* asAttacks = GAMESTATE->m_pCurCharacters[pn]->m_sAttacks[al];	// [NUM_ATTACKS_PER_LEVEL]
-	RString sAttackToGive;
+	std::string* asAttacks = GAMESTATE->m_pCurCharacters[pn]->m_sAttacks[al];	// [NUM_ATTACKS_PER_LEVEL]
+	std::string sAttackToGive;
 
 	if (GAMESTATE->m_pCurCharacters[pn] != nullptr)		
 		sAttackToGive = asAttacks[ RandomInt(NUM_ATTACKS_PER_LEVEL) ];
@@ -188,7 +188,7 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 	{
 		// "If you add any noteskins here, you need to make sure they're cached, too." -?
 		// Noteskins probably won't work here anymore. -aj
-		RString DefaultAttacks[8] = { "1.5x", "2.0x", "0.5x", "reverse", "sudden", "boost", "brake", "wave" };
+		std::string DefaultAttacks[8] = { "1.5x", "2.0x", "0.5x", "reverse", "sudden", "boost", "brake", "wave" };
 		sAttackToGive = DefaultAttacks[ RandomInt(8) ];
 	}
 

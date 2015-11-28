@@ -22,11 +22,11 @@ public:
 	void WindowReset();
 	void AddHandler( InputHandler *pHandler );
 	InputHandler *GetHandlerForDevice( const InputDevice id );
-	RString GetDeviceSpecificInputString( const DeviceInput &di );
-	RString GetLocalizedInputString( const DeviceInput &di );
+	std::string GetDeviceSpecificInputString( const DeviceInput &di );
+	std::string GetLocalizedInputString( const DeviceInput &di );
 	wchar_t DeviceInputToChar( DeviceInput di, bool bUseCurrentKeyModifiers );
 	InputDeviceState GetInputDeviceState( InputDevice id );
-	RString GetDisplayDevicesString() const;
+	std::string GetDisplayDevicesString() const;
 
 	// Lua
 	void PushSelf( lua_State *L );

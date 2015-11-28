@@ -39,7 +39,7 @@ RageSoundDriver_PulseAudio::~RageSoundDriver_PulseAudio()
 }
 
 /* Initialization */
-RString RageSoundDriver_PulseAudio::Init()
+std::string RageSoundDriver_PulseAudio::Init()
 {
 	int error = 0;
 
