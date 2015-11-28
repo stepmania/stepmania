@@ -6,7 +6,7 @@
 #include <map>
 #include <vector>
 #include <sstream>
-
+#include <cstring>
 #include "RageMath.hpp"
 
 class RageFileDriver;
@@ -17,7 +17,7 @@ class RageFileDriver;
 #define SAFE_DELETE_ARRAY(p) do { delete[] (p);   (p)=nullptr; } while( false )
 
 /** @brief Zero out the memory. */
-#define ZERO(x)	memset(&(x), 0, sizeof(x))
+#define ZERO(x)	std::memset(&(x), 0, sizeof(x))
 /** @brief Copy from a to b. */
 #define COPY(a,b) do { ASSERT(sizeof(a)==sizeof(b)); memcpy(&(a), &(b), sizeof(a)); } while( false )
 /** @brief Get the length of the array. */

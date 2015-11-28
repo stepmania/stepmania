@@ -278,7 +278,7 @@ static void child_process()
 	if( tty == nullptr )
 		tty = stderr;
 
-	fputs( 	"\n"
+	fputs( 	("\n"
 		 PRODUCT_ID " has crashed.  Debug information has been output to\n"
 		 "\n"
 		 "    " + sCrashInfoPath + "\n"
@@ -286,7 +286,7 @@ static void child_process()
 		 "Please report a bug at:\n"
 		 "\n"
 		 "    " REPORT_BUG_URL "\n"
-		 "\n", tty );
+		 "\n").c_str(), tty );
 #endif
 }
 

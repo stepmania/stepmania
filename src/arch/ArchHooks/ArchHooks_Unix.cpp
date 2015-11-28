@@ -382,11 +382,11 @@ void ArchHooks::MountInitialFilesystems( const std::string &sDirOfExecutable )
 
 	std::string Root;
 	struct stat st;
-	if( !stat(sDirOfExecutable + "/Packages", &st) && st.st_mode&S_IFDIR )
+	if( !stat((sDirOfExecutable + "/Packages").c_str(), &st) && st.st_mode&S_IFDIR )
 		Root = sDirOfExecutable;
-	else if( !stat(sDirOfExecutable + "/Songs", &st) && st.st_mode&S_IFDIR )
+	else if( !stat((sDirOfExecutable + "/Songs").c_str(), &st) && st.st_mode&S_IFDIR )
 		Root = sDirOfExecutable;
-	else if( !stat(RageFileManagerUtil::sInitialWorkingDirectory + "/Songs", &st) && st.st_mode&S_IFDIR )
+	else if( !stat((RageFileManagerUtil::sInitialWorkingDirectory + "/Songs").c_str(), &st) && st.st_mode&S_IFDIR )
 		Root = RageFileManagerUtil::sInitialWorkingDirectory;
 	else
 		RageException::Throw( "%s", COULDNT_FIND_SONGS.GetValue().c_str() );

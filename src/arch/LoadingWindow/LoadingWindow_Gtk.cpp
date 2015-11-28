@@ -29,7 +29,7 @@ std::string LoadingWindow_Gtk::Init()
 {
 	ASSERT( Handle == nullptr );
 
-	Handle = dlopen( RageFileManagerUtil::sDirOfExecutable + "/" + "GtkModule.so", RTLD_NOW );
+	Handle = dlopen( (RageFileManagerUtil::sDirOfExecutable + "/" + "GtkModule.so").c_str(), RTLD_NOW );
 	if( Handle == nullptr )
 		return fmt::sprintf( "dlopen(): %s", dlerror() );
 
@@ -80,7 +80,7 @@ LoadingWindow_Gtk::~LoadingWindow_Gtk()
 
 void LoadingWindow_Gtk::SetText( std::string s )
 {
-	Module_SetText( s );
+	Module_SetText( s.c_str() );
 }
 
 void LoadingWindow_Gtk::SetIcon( const RageSurface *pIcon )

@@ -113,14 +113,14 @@ void BannerCache::LoadBanner( std::string sBannerPath )
 		return;
 
 	/* Load it. */
-	const std::string sCachePath = GetBannerCachePath(sBannerPath);
+	const std::string & sCachePath = GetBannerCachePath(sBannerPath);
 
 	for( int tries = 0; tries < 2; ++tries )
 	{
 		if( g_BannerPathToImage.find(sBannerPath) != g_BannerPathToImage.end() )
 			return; /* already loaded */
 
-		CHECKPOINT_M( fmt::sprintf( "BannerCache::LoadBanner: %s", sCachePath.c_str() ) );
+		CHECKPOINT_M( fmt::format( "BannerCache::LoadBanner: {0}", sCachePath ) );
 		RageSurface *pImage = RageSurfaceUtils::LoadSurface( sCachePath );
 		if( pImage == nullptr )
 		{
@@ -340,7 +340,7 @@ void BannerCache::CacheBanner( std::string sBannerPath )
 	if( !DoesFileExist(sBannerPath) )
 		return;
 
-	const std::string sCachePath = GetBannerCachePath(sBannerPath);
+	auto const & sCachePath = GetBannerCachePath(sBannerPath);
 
 	/* Check the full file hash.  If it's the loaded and identical, don't recache. */
 	if( DoesFileExist(sCachePath) )

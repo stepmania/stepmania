@@ -101,7 +101,7 @@ bool EventDevice::Open( std::string sFile, InputDevice dev )
 {
 	m_sPath = sFile;
 	m_Dev = dev;
-	m_iFD = open( sFile, O_RDWR );
+	m_iFD = open( sFile.c_str(), O_RDWR );
 	if( m_iFD == -1 )
 	{
 		// HACK: Let the caller handle errno.

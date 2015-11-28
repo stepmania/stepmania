@@ -3,6 +3,8 @@
 #ifndef RAGE_UTIL_CIRCULAR_BUFFER
 #define RAGE_UTIL_CIRCULAR_BUFFER
 
+#include <cstring>
+
 /* Lock-free circular buffer.  This should be threadsafe if one thread is reading
  * and another is writing. */
 template<class T>
@@ -59,7 +61,7 @@ public:
 		if( size )
 		{
 			buf = new T[size];
-			memcpy( buf, cpy.buf, size*sizeof(T) );
+			std::memcpy( buf, cpy.buf, size*sizeof(T) );
 		}
 		else
 		{
@@ -237,9 +239,9 @@ public:
 			return false;
 
 		const int from_first = min( buffer_size, sizes[0] );
-		memcpy( p[0], buffer, from_first*sizeof(T) );
+		std::memcpy( p[0], buffer, from_first*sizeof(T) );
 		if( buffer_size > sizes[0] )
-			memcpy( p[1], buffer+from_first, max(buffer_size-sizes[0], 0u)*sizeof(T) );
+			std::memcpy( p[1], buffer+from_first, max(buffer_size-sizes[0], 0u)*sizeof(T) );
 
 		advance_write_pointer( buffer_size );
 
@@ -261,15 +263,15 @@ public:
 			return false;
 
 		const int from_first = min( buffer_size, sizes[0] );
-		memcpy( buffer, p[0], from_first*sizeof(T) );
+		std::memcpy( buffer, p[0], from_first*sizeof(T) );
 		if( buffer_size > sizes[0] )
-			memcpy( buffer+from_first, p[1], max(buffer_size-sizes[0], 0u)*sizeof(T) );
+			std::memcpy( buffer+from_first, p[1], max(buffer_size-sizes[0], 0u)*sizeof(T) );
 
 		/* Set the data that we just read to 0xFF.  This way, if we're passing pointesr
 		 * through, we can tell if we accidentally get a stale pointer. */
-		memset( p[0], 0xFF, from_first*sizeof(T) );
+		std::memset( p[0], 0xFF, from_first*sizeof(T) );
 		if( buffer_size > sizes[0] )
-			memset( p[1], 0xFF, max(buffer_size-sizes[0], 0u)*sizeof(T) );
+			std::memset( p[1], 0xFF, max(buffer_size-sizes[0], 0u)*sizeof(T) );
 
 		advance_read_pointer( buffer_size );
 		return true;

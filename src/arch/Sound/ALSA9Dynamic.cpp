@@ -33,7 +33,7 @@ std::string LoadALSA()
 
 	ASSERT( Handle == nullptr );
 
-	Handle = dlopen( lib, RTLD_NOW );
+	Handle = dlopen( lib.c_str(), RTLD_NOW );
 	if( Handle == nullptr )
 		return fmt::sprintf("dlopen(%s): %s", lib.c_str(), dlerror());
 

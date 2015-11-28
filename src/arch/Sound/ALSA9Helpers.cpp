@@ -298,7 +298,7 @@ std::string Alsa9Buf::Init( int channels_,
 
 	/* Open the device. */
 	int err;
-	err = dsnd_pcm_open( &pcm, DeviceName(), SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
+	err = dsnd_pcm_open( &pcm, DeviceName().c_str(), SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
 	if( err < 0 )
 		return fmt::sprintf( "dsnd_pcm_open(%s): %s", DeviceName().c_str(), dsnd_strerror(err) );
 
@@ -484,7 +484,7 @@ std::string Alsa9Buf::GetHardwareID( std::string name )
 
 	snd_ctl_t *handle;
 	int err;
-	err = dsnd_ctl_open( &handle, name, 0 );
+	err = dsnd_ctl_open( &handle, name.c_str(), 0 );
 	if ( err < 0 )
 	{
 		LOG->Info( "Couldn't open card \"%s\" to get ID: %s", name.c_str(), dsnd_strerror(err) );
