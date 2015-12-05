@@ -1,0 +1,101 @@
+"clearall" 								Init();
+
+Regex("^([0-9]+(\\.[0-9]+)?)x$");		// xmod
+sscanf(sBit, "c%f", &level) == 1;	// cmod (default 200.0f)
+
+"boost"									fAccels[ACCEL_BOOST]
+"brake" || "land"						fAccels[ACCEL_BRAKE]
+"wave"									fAccels[ACCEL_WAVE]
+"expand" || "dwiwave"					fAccels[ACCEL_EXPAND]
+"boomerang"								fAccels[ACCEL_BOOMERANG]
+
+"drunk"									fEffects[EFFECT_DRUNK]
+"dizzy"									fEffects[EFFECT_DIZZY]
+"confusion"								fEffects[EFFECT_CONFUSION]
+"mini"									fEffects[EFFECT_MINI]
+"tiny"									fEffects[EFFECT_TINY]
+"flip"									fEffects[EFFECT_FLIP]
+"invert"								fEffects[EFFECT_INVERT]
+"tornado"								fEffects[EFFECT_TORNADO]
+"tipsy"									fEffects[EFFECT_TIPSY]
+"bumpy"									fEffects[EFFECT_BUMPY]
+"beat"									fEffects[EFFECT_BEAT]
+
+"hidden"								fAppearances[APPEARANCE_HIDDEN]
+"hiddenoffset"							fAppearances[APPEARANCE_HIDDEN_OFFSET]
+"sudden"								fAppearances[APPEARANCE_SUDDEN]
+"suddenoffset"							fAppearances[APPEARANCE_SUDDEN_OFFSET]
+"stealth"								fAppearances[APPEARANCE_STEALTH]
+"blink"									fAppearances[APPEARANCE_BLINK]
+"randomvanish"							fAppearances[APPEARANCE_RANDOMVANISH]
+
+"no turn"								ZERO( m_bTurns;
+"mirror"								m_bTurns[TURN_MIRROR]
+"left"									m_bTurns[TURN_LEFT]
+"right"									m_bTurns[TURN_RIGHT]
+"shuffle"								m_bTurns[TURN_SHUFFLE]
+"supershuffle"							m_bTurns[TURN_SUPER_SHUFFLE]
+
+"little"								m_bTransforms[TRANSFORM_LITTLE]
+"wide"									m_bTransforms[TRANSFORM_WIDE]
+"big"									m_bTransforms[TRANSFORM_BIG]
+"quick"									m_bTransforms[TRANSFORM_QUICK]
+"bmrize"								m_bTransforms[TRANSFORM_BMRIZE]
+"skippy"								m_bTransforms[TRANSFORM_SKIPPY]
+"mines"									m_bTransforms[TRANSFORM_MINES]
+"attackmines"							m_bTransforms[TRANSFORM_ATTACKMINES]
+"echo"									m_bTransforms[TRANSFORM_ECHO]
+"stomp"									m_bTransforms[TRANSFORM_STOMP]
+"planted"								m_bTransforms[TRANSFORM_PLANTED]
+"floored"								m_bTransforms[TRANSFORM_FLOORED]
+"twister"								m_bTransforms[TRANSFORM_TWISTER]
+"holdrolls"								m_bTransforms[TRANSFORM_HOLDROLLS]
+"nojumps"								m_bTransforms[TRANSFORM_NOJUMPS]
+"nohands"								m_bTransforms[TRANSFORM_NOHANDS]
+"noquads"								m_bTransforms[TRANSFORM_NOQUADS]
+
+"reverse"								fScrolls[SCROLL_REVERSE]
+"split"									fScrolls[SCROLL_SPLIT]
+"alternate"								fScrolls[SCROLL_ALTERNATE]
+"cross"									fScrolls[SCROLL_CROSS]
+"centered"								fScrolls[SCROLL_CENTERED]
+
+"noholds"								m_bTransforms[TRANSFORM_NOHOLDS]
+"norolls"								m_bTransforms[TRANSFORM_NOROLLS]
+"nomines"								m_bTransforms[TRANSFORM_NOMINES]
+"nostretch"								m_bTransforms[TRANSFORM_NOSTRETCH]
+
+"dark"									fDark
+"blind"									fBlind
+"cover"									fCover
+
+"randomattacks"							fRandAttack
+"songattacks"							fSongAttack
+
+"playerautoplay"						fPlayerAutoPlay
+"passmark"								fPassmark
+
+"overhead"								{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = 0;		m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+"incoming"								{ m_bSetTiltOrSkew = true; m_fSkew = level;	m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+"space"									{ m_bSetTiltOrSkew = true; m_fSkew = level;	m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+"hallway"								{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+"distant"								{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+
+NOTESKIN->DoesNoteSkinExist(sBit)		m_sNoteSkin = sBit;
+"no noteskin"							CommonMetrics::DEFAULT_NOTESKIN_NAME;
+
+"randomspeed" 							fRandomSpeed
+
+"failarcade" || "failimmediate"			m_FailType = FAIL_IMMEDIATE
+"failendofsong" || "failimmediatecontinue"		m_FailType = FAIL_IMMEDIATE_CONTINUE
+"failatend"								m_FailType = FAIL_AT_END
+"failoff"								m_FailType = FAIL_OFF
+"faildefault"							GAMESTATE->GetDefaultPlayerOptions(po).m_FailType;
+
+"addscore"								m_ScoreDisplay = SCORING_ADD
+"subtractscore"							m_ScoreDisplay = SCORING_SUBTRACT
+"averagescore"							m_ScoreDisplay = SCORING_AVERAGE
+
+"muteonerror"							m_bMuteOnError
+
+"random"								ChooseRandomModifiers();

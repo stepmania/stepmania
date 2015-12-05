@@ -1,0 +1,259 @@
+in this document lie the secrets to awesome advanced shit with stepmania 4...
+
+AJ'S GUIDE TO SHIT
+penned 5/29/07
+
+==working examples==
+This stuff has already been implemented in themes, be they released or not.
+
+===percentages on eval===
+just like 5th mix.
+code from naket coder revolution: bleeding heart liberal.
+copyright 2007 naket coder, anonymous zig, et al.
+
+Target: ScreenEvaluationStage overlay
+
+LoadFont("", "_ssmt") ..{
+	InitCommand=cmd(shadowlength,0;horizalign,left;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
+	OnCommand=cmd(playcommand,"Set");
+	SetCommand=function(self)
+		local steps = GAMESTATE:GetCurrentSteps(PLAYER_1);
+		local rv = steps:GetRadarValues( PLAYER_1 );
+		local totalSteps = rv:GetValue(5);
+		local marvs = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1):GetTapNoteScores('TapNoteScore_W1');
+		local mPercent = (marvs / totalSteps) * 100;
+		self:settext(string.sub(mPercent,0,2) .. '%');
+	end;
+};
+
+math.floor can probably used here instead. substring was used because it's an
+easier beast to deal with.
+
+===actively updating judgment display===
+as seen in iidx
+code from "all-purpose test theme".
+copyright 2007 aj 187
+
+Target: ScreenGameplay overlay
+
+LoadFont("", "_shared2") ..{
+	InitCommand=cmd(shadowlength,0;horizalign,left;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
+	OnCommand=cmd(playcommand,"Set");
+	NoteCrossedMessageCommand=cmd(playcommand,"Set");
+	SetCommand=function(self)
+		local marvs = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1):GetTapNoteScores('TapNoteScore_W1');
+		self:settext('MV: ' .. marvs);
+	end;
+};
+
+this can be edited to show any sort of stats, such as grade.
+Also, this needs to be fixed for getting ALL note types, as CurrentComboChanged
+only works on Misses (if they combo) and anything set in MinScoreTo*Combo and
+above.
+
+edited on 11/7/07 to supposedly work with all.
+
+===weighted particle system===
+as seen in project evolution early alphas
+copyright 2007 naket coder
+
+Target: any background
+
+local orb = LoadActor( "_particle orb" )..{
+	InitCommand=cmd(diffusealpha,0.8;playcommand,"MakeNew");
+	MakeNewCommand=function(self)
+		-- first, set the position.
+		local xPos = math.random(SCREEN_LEFT,SCREEN_WIDTH);
+		self:x( xPos );
+		self:y(SCREEN_TOP-64);
+		
+		-- then, set the zoom.
+		--self:zoom( math.random(0.9,2.5) / 3 );
+		local zoom = clamp( math.random(), 0.25, 1 );
+		self:zoom( zoom );
+		
+		-- using the zoom, get the "weight" of the particle
+		local weight = self:GetZoom();
+		--self:linear( math.random(5,10) );
+		
+		-- then make it move
+		self:linear( weight * 10 );
+		self:addy(SCREEN_HEIGHT+64);
+		self:sleep( math.random(0,0.5) );
+		self:queuecommand("MakeNew");
+	end;
+};
+
+for i=1,20 do table.insert(t, Def.ActorFrame{ orb }); end;
+
+===protiming===
+as seen in previous versions of StepMania
+copyright 2008 aj 187
+
+as you may very well know, protiming isn't in SM4 anymore, apparently.
+That's because they've hidden it.
+
+Target: Graphics/Player judgment
+
+Let's dissect the judgment message. Tell me if anything looks familiar:
+void Player::SetJudgment( TapNoteScore tns, float fTapNoteOffset )
+{
+	Message msg("Judgment");
+	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
+	msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
+	msg.SetParam( "TapNoteScore", tns );
+	msg.SetParam( "Early", fTapNoteOffset < 0.0f );
+	msg.SetParam( "TapNoteOffset", fTapNoteOffset );
+	MESSAGEMAN->Broadcast( msg );
+}
+
+If you said TapNoteOffset, YOU'RE RIGHT. I think.
+
+==things to abuse==
+stepmania 4 has a lot of things to abuse when making shit like the above.
+the most important thing to realize in sm4 is that you can broadcast messages
+and have things happen based on them.
+
+with that said, time to explore...
+===MESSAGEMAN===
+Messageman, or MESSAGEMAN if you like typing in all caps (I do), is the
+MESSAGE MANAGER.
+
+it includes some predefined messages that trigger on certain events.
+
+====CurrentGameChanged====
+This is triggered when the current gametype is changed.
+I have no idea how you'd be able to use it.
+
+====CurrentStyleChanged====
+This is triggered when the current style is changed.
+You can probably do something with this, especially in like
+piu and technomotion or something.
+
+====PlayModeChanged====
+This is triggered when the play mode (regular, nonstop, oni) changes.
+It can be used for setting up environmental variables perhaps.
+
+====CurrentSongChanged====
+This is triggered when the current song changes.
+As you can imagine, this can be used quite often.
+Examples lie in BGAnims/ScreenSelectMusic overlay.
+
+CurrentCourseChanged is basically the same thing, except for courses.
+
+====CurrentStepsPnChanged====
+The n is actually a number. This gets called when the difficulty changes.
+Again, see BGAnims/ScreenSelectMusic overlay.
+
+CurrentTrailPnChanged is basically the same thing, except for courses.
+
+====GameplayLeadInChanged====
+====EditStepsTypeChanged====
+====EditCourseDifficultyChanged====
+====EditSourceStepsChanged====
+====EditSourceStepsTypeChanged====
+No idea what any of the above are for.
+
+====PreferredStepsTypeChanged====
+Triggers when the preferred steps type is changed, although I have no idea
+how to go about doing that.
+
+====PreferredDifficultyPnChanged====
+Triggers when the preferred difficulty for a player is changed, although I
+have no idea how to go about doing that.
+
+PreferredCourseDifficultyPnChanged is the same, but for courses.
+
+====EditCourseEntryIndexChanged====
+====EditLocalProfileIDChanged====
+No idea what any of these are for.
+
+====GoalCompletePn====
+According to Gamestate.h, this is used in workout mode. It should be triggered
+when a player reaches their goal that they've set. In ScoreDisplayAliveTime,
+there's a comment that reads "TODO: Add handling of GoalComplete message," so
+it's unknown how well this will work.
+
+====NoteCrossed====
+Even though it displays as NoteCrossed in MessageManager, in actuality, you
+will need to call it with "NoteCrossed[button name here]," as seen in
+ScreenGameplay. This can take the form of NoteCrossedUp, NoteCrossedCenter, and
+so on for every possible gametype.
+
+====NoteWillCrossIn#Ms====
+For this message, # can either be 400, 800, or 1200. This message gets called
+when any note is will reach the receptor in # milliseconds. This message is
+used in In The Groove for displaying the traffic light.
+
+====CardRemovedPn====
+Triggers when player n's card is removed from the machine.
+
+====BeatCrossed====
+Triggers when a quarter note crosses the receptors. Kind of flawed if you ask
+me, but then again I have no idea why you'd use it.
+
+====Menu[Button][Pn]====
+This is a multi-layered message, as [Button] can be "Up", "Down", "Left", or
+"Right". [Pn] is basically the same syntax as above, i.e. "P1" or "P2".
+Personally, I have never gotten this to work, so your mileage may vary.
+
+====MenuSelectionChanged====
+Triggers when a menu selection is changed. Referenced in ScreenSelectMaster
+and ScreenUnlockBrowse.
+
+====PlayerJoined====
+Triggers when a player joins. Crucial to replicate ScreenSelectStyle while
+using ScreenSelectMaster. See also PlayerUnjoined.
+
+====PlayerUnjoined====
+Triggers when a player unjoins, although I'm not sure how to trigger that.
+
+====AutosyncChanged====
+No idea.
+
+====PreferredSongGroupChanged====
+Triggers when the preferred song group is changed.
+
+PreferredCourseGroupChanged is the same, but for courses.
+
+====SortOrderChanged====
+Triggers when the sort order is changed.
+
+====LessonTry#====
+Where # is 1, 2, or 3. In ScreenGameplayLesson, "m_Try" is appended to it.
+It's not used in anything I know of.
+
+====LessonCleared/LessonFailed====
+Triggered when a Lesson is cleared or failed, respectively.
+
+====StorageDevicesChanged====
+Triggers if the storage devices have changed.
+
+====AutoJoyMappingApplied====
+Triggers if the joysticks have been automatically mapped.
+
+====ScreenChanged====
+Triggers when the Screen is changed.
+
+====SongModified====
+Seems to trigger when the sync is changed or something of that nature.
+
+====ScoreMultiplierChangedPn====
+Guitar Hero. See ScoreKeeperGuitar.
+
+====StarPowerChangedPn====
+Guitar Hero. Currently unimplemented.
+
+====CurrentComboChangedPn====
+Triggers when Player n's combo changes. The perfect message for something that
+changes as gameplay goes on. See the actively updating judgment display example
+for sample usage.
+
+====StarMeterChangedPn====
+Guitar Hero. Currently unimplemented.
+
+====LifeMeterChangedPn====
+Triggers when Player n's life meter changes.
+
+====ScoreChangedPn====
+Triggers when Player n's score changes.
