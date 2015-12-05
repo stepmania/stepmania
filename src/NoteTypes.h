@@ -138,8 +138,6 @@ struct TapNote
 	TapNoteResult	result;
 	/** @brief The Player that is supposed to hit this note. This is mainly for Routine Mode. */
 	PlayerNumber	pn;
-	/** @brief Can this note be hammered on or pulled off? This is set before gameplay begins. */
-	bool		bHopoPossible;
 
 	// used only if Type == attack:
 	RString		sAttackModifiers;
@@ -160,16 +158,14 @@ struct TapNote
 	void PushSelf( lua_State *L );
 
 	TapNote(): type(TapNoteType_Empty), subType(TapNoteSubType_Invalid),
-		source(TapNoteSource_Original),	result(), pn(PLAYER_INVALID), 
-		bHopoPossible(false), sAttackModifiers(""), fAttackDurationSeconds(0), 
-		iKeysoundIndex(-1), iDuration(0), HoldResult() {}
+		source(TapNoteSource_Original),	result(), pn(PLAYER_INVALID),  sAttackModifiers(""), 
+		fAttackDurationSeconds(0), iKeysoundIndex(-1), iDuration(0), HoldResult() {}
 	void Init()
 	{
 		type = TapNoteType_Empty;
 		subType = TapNoteSubType_Invalid; 
 		source = TapNoteSource_Original; 
 		pn = PLAYER_INVALID, 
-		bHopoPossible = false;
 		fAttackDurationSeconds = 0.f; 
 		iKeysoundIndex = -1;
 		iDuration = 0;
@@ -182,8 +178,7 @@ struct TapNote
 		float fAttackDurationSeconds_,
 		int iKeysoundIndex_ ):
 		type(type_), subType(subType_), source(source_), result(),
-		pn(PLAYER_INVALID), bHopoPossible(false),
-		sAttackModifiers(sAttackModifiers_),
+		pn(PLAYER_INVALID), sAttackModifiers(sAttackModifiers_),
 		fAttackDurationSeconds(fAttackDurationSeconds_),
 		iKeysoundIndex(iKeysoundIndex_), iDuration(0), HoldResult()
 	{

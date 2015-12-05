@@ -3006,34 +3006,6 @@ bool NoteDataUtil::GetPrevEditorPosition( const NoteData& in, int &rowInOut )
 	return true;
 }
 
-extern Preference<float> g_fTimingWindowHopo;
-
-
-void NoteDataUtil::SetHopoPossibleFlags( const Song *pSong, NoteData& ndInOut )
-{
-	float fLastRowMusicSeconds = -1;
-	int iLastTapTrackOfLastRow = -1;
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS( ndInOut, r )
-	{
-		float fBeat = NoteRowToBeat( r );
-		float fSeconds = pSong->m_SongTiming.GetElapsedTimeFromBeat( fBeat );
-
-		int iLastTapTrack = ndInOut.GetLastTrackWithTapOrHoldHead( r );
-		if( iLastTapTrack != -1  &&  fSeconds <= fLastRowMusicSeconds + g_fTimingWindowHopo )
-		{
-			int iNumNotesInRow = ndInOut.GetNumTapNotesInRow( r );
-			TapNote &tn = ndInOut.FindTapNote( iLastTapTrack, r )->second;
-		
-			if( iNumNotesInRow == 1  &&  iLastTapTrack != iLastTapTrackOfLastRow )
-			{
-				tn.bHopoPossible = true;
-			}
-		}
-
-		fLastRowMusicSeconds = fSeconds;
-		iLastTapTrackOfLastRow = iLastTapTrack;
-	}
-}
 
 unsigned int NoteDataUtil::GetTotalHoldTicks( NoteData* nd, const TimingData* td )
 {
