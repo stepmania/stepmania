@@ -9,3 +9,6 @@ SDF: .sm derivative used in Pocket DDR.
 misc.txt describes some formats that don't have directories.
 PMS: Like BMS but for pop'n music.
 Dance: pydance format; see dance-spec.txt for more information.
+
+Drafts: Includes course/stepfile formats that were drafted and not (yet) included.
+Spec: Specifications for simfiles and course files.
