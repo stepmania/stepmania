@@ -2568,7 +2568,7 @@ bool ScreenGameplay::Input( const InputEventPlus &input )
 				GameButtonType gbt = GAMESTATE->m_pCurGame->GetPerButtonInfo(input.GameI.button)->m_gbt;
 				switch( gbt )
 				{
-				case GameButtonType_INVALID:
+				case GameButtonType_Menu:
 					return false;
 				case GameButtonType_Step:
 					if( iCol != -1 )

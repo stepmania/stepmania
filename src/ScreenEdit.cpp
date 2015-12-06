@@ -3230,7 +3230,7 @@ bool ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 		}
 	}
 
-	if( gbt == GameButtonType_INVALID  &&  input.type == IET_FIRST_PRESS )
+	if( gbt == GameButtonType_Menu  &&  input.type == IET_FIRST_PRESS )
 	{
 		switch( EditB )
 		{
