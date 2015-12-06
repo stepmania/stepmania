@@ -3222,13 +3222,6 @@ bool ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 					if( iCol != -1 )
 						m_Player->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
 					return true;
-				case GameButtonType_Fret:
-					if( iCol != -1 )
-						m_Player->Fret( iCol, -1, input.DeviceI.ts, false, bRelease );
-					return true;
-				case GameButtonType_Strum:
-					m_Player->Strum( iCol, -1, input.DeviceI.ts, false, bRelease );
-					return true;
 				default:
 					break;
 				}
@@ -3237,7 +3230,7 @@ bool ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 		}
 	}
 
-	if( gbt == GameButtonType_INVALID  &&  input.type == IET_FIRST_PRESS )
+	if( gbt == GameButtonType_Menu  &&  input.type == IET_FIRST_PRESS )
 	{
 		switch( EditB )
 		{

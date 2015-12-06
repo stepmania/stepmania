@@ -2568,18 +2568,11 @@ bool ScreenGameplay::Input( const InputEventPlus &input )
 				GameButtonType gbt = GAMESTATE->m_pCurGame->GetPerButtonInfo(input.GameI.button)->m_gbt;
 				switch( gbt )
 				{
-				case GameButtonType_INVALID:
+				case GameButtonType_Menu:
 					return false;
 				case GameButtonType_Step:
 					if( iCol != -1 )
 						pi.m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
-					return true;
-				case GameButtonType_Fret:
-					if( iCol != -1 )
-						pi.m_pPlayer->Fret( iCol, -1, input.DeviceI.ts, false, bRelease );
-					return true;
-				case GameButtonType_Strum:
-					pi.m_pPlayer->Strum( iCol, -1, input.DeviceI.ts, false, bRelease );
 					return true;
 				}
 			}

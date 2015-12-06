@@ -1188,7 +1188,6 @@ void GameState::ResetMusicStatistics()
 
 	FOREACH_PlayerNumber( p )
 	{
-		m_pPlayerState[p]->ClearHopoState();
 		m_pPlayerState[p]->m_Position.Reset();
 	}
 }
