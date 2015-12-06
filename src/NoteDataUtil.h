@@ -182,9 +182,7 @@ namespace NoteDataUtil
 
 	bool GetNextEditorPosition( const NoteData& in, int &rowInOut );
 	bool GetPrevEditorPosition( const NoteData& in, int &rowInOut );
-
-	void SetHopoPossibleFlags( const Song *pSong, NoteData& ndInOut );
-
+	
 	/** @brief Count the number of hold ticks that will fire, assuming that tickholds are on.
 	  * @param td The TimingData from the relevant Steps. */
 	unsigned int GetTotalHoldTicks( NoteData* nd, const TimingData* td );

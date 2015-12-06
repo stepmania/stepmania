@@ -24,9 +24,6 @@ void PlayerState::Reset()
 
 	m_HealthState = HealthState_Alive;
 
-	m_fLastHopoNoteMusicSeconds = -1;
-	m_iLastHopoNoteCol = -1;
-
 	m_PlayerController = PC_HUMAN;
 
 	m_iCpuSkill = 5;
@@ -47,8 +44,6 @@ void PlayerState::Reset()
 	for( int i=0; i<NUM_INVENTORY_SLOTS; i++ )
 		m_Inventory[i].MakeBlank();
 
-	m_fLastStrumMusicSeconds = -1;
-	ClearHopoState();
 }
 
 void PlayerState::Update( float fDelta )

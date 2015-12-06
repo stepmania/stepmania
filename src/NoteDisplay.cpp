@@ -500,8 +500,6 @@ bool NoteDisplay::DrawHoldsInRange(const NoteFieldRenderArgs& field_args,
 		}
 
 		bool is_addition = (tn.source == TapNoteSource_Addition);
-		bool hopo_possible = (tn.bHopoPossible);
-		bool use_addition_coloring = is_addition || hopo_possible;
 		const bool hold_ghost_showing = tn.HoldResult.bActive  &&  tn.HoldResult.fLife > 0;
 		const bool is_holding = tn.HoldResult.bHeld;
 		if(hold_ghost_showing)
@@ -519,7 +517,7 @@ bool NoteDisplay::DrawHoldsInRange(const NoteFieldRenderArgs& field_args,
 		}
 
 		DrawHold(tn, field_args, column_args, start_row, is_holding, result,
-			use_addition_coloring,
+			is_addition,
 			in_selection_range ? field_args.selection_glow : field_args.fail_fade);
 
 		bool note_upcoming = NoteRowToBeat(start_row) >
@@ -601,12 +599,10 @@ bool NoteDisplay::DrawTapsInRange(const NoteFieldRenderArgs& field_args,
 		}
 
 		bool is_addition = (tn.source == TapNoteSource_Addition);
-		bool hopo_possible = (tn.bHopoPossible);
-		bool use_addition_coloring = is_addition || hopo_possible;
 		DrawTap(tn, field_args, column_args,
 			NoteRowToVisibleBeat(m_pPlayerState, tap_row),
 			hold_begins_on_this_beat, roll_begins_on_this_beat,
-			use_addition_coloring,
+			is_addition,
 			in_selection_range ? field_args.selection_glow : field_args.fail_fade);
 
 		any_upcoming |= NoteRowToBeat(tap_row) >

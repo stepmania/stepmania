@@ -382,9 +382,16 @@ void NoteField::DrawBeatBar( const float fBeat, BeatBarType type, int iMeasureIn
 	}
 	else
 	{
-		float fScrollSpeed = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed;
-		if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing > 0 )
+		PlayerOptions const& curr_ops= m_pPlayerState->m_PlayerOptions.GetCurrent();
+		float fScrollSpeed = curr_ops.m_fScrollSpeed;
+		if(curr_ops.m_fTimeSpacing > 0)
+		{
 			fScrollSpeed = 4;
+		}
+		else if(curr_ops.m_fMaxScrollBPM != 0)
+		{
+			fScrollSpeed= curr_ops.m_fMaxScrollBPM / m_pPlayerState->m_fReadBPM;
+		}
 		switch( type )
 		{
 			DEFAULT_FAIL( type );
