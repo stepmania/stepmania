@@ -4,6 +4,7 @@
 #include "ScreenEdit.h"
 #include "ActorUtil.h"
 #include "AdjustSync.h"
+#include "ArrowEffects.h"
 #include "BackgroundUtil.h"
 #include "CommonMetrics.h"
 #include "Foreach.h"
@@ -1711,6 +1712,7 @@ void ScreenEdit::Update( float fDeltaTime )
 	//
 	if( m_EditState == STATE_RECORDING  ||  m_EditState == STATE_PLAYING )
 	{
+		ArrowEffects::Update();
 		/*
 		 * If any arrow is being held, continue for up to half a second after
 		 * the end marker.  This makes it possible to start a hold note near
