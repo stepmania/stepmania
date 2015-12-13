@@ -1041,8 +1041,10 @@ int sm_main(int argc, char* argv[])
 	// This needs PREFSMAN.
 	Dialog::Init();
 
-	// Create game objects
+	// Set up the messaging system early to have well defined code.
+	MESSAGEMAN	= new MessageManager;
 
+	// Create game objects
 	GAMESTATE	= new GameState;
 
 	// This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow.
@@ -1162,7 +1164,6 @@ int sm_main(int argc, char* argv[])
 	SONGMAN->UpdatePopular();
 	SONGMAN->UpdatePreferredSort();
 	NSMAN 		= new NetworkSyncManager( pLoadingWindow );
-	MESSAGEMAN	= new MessageManager;
 	STATSMAN	= new StatsManager;
 
 	// Initialize which courses are ranking courses here.
