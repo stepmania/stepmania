@@ -1,0 +1,160 @@
+the experimental themes series
+---------------------------------------------------------------------------
+/ Table of Contents
+ 1) The Experimental Themes Series
+  1.1) All Purpose Test Theme | AJ 187
+  1.2) the Proof of Concept Theme | AJ 187
+  1.3) emit | spinal shark
+  1.2) Stupid Gun Game [Proof of Concept 2] | AJ 187
+  1.4) stepman online hax | AJ 187
+  1.5) smTunes | AJ 187
+  1.7) LabsTheme | KKI Labs
+  1.8) Proof of Concept Theme 3 | AJ 187
+---------------------------------------------------------------------------
+1) The Experimental Themes Series
+---------------------------------------------------------------------------
+(Unless otherwise noted, all themes are for StepMania 4.0 CVS)
+
+---------------------------------------------------------------------------
+1.1) All Purpose Test Theme by AJ 187 | earlier than September 25, 2007
+---------------------------------------------------------------------------
+All Purpose Test Theme is possibly the most amazing theme that's never been
+released today! Originally meant to test out designs, it later expanded to
+testing 3D models, being the testbed for and birthplace of many KKI Labs
+inventions, and much more.
+
+All Purpose Test Theme is the volatile sandbox, continually being updated
+with new features and tests.
+
+A list of technologies developed and/or tested in APTT:
+* "a simple little thing called love" (IIDX-style judgment count display)
+* NAKET Coder Evolution's lifebar
+* Toasty meter
+* Reverse Grade
+* CustomSpeedMods
+* EnvUtils2
+* UserPreferences
+* ProTiming
+* DebugConsole
+* Mission Mode
+* FileWriter
+* squares (bganimation)
+* digital waves (bganimation)
+* project zuma (Custom Menu using a scroller and Codes)
+* soma (a scroller displaying SortOrders; could be used for cooler sort changes)
+
+---------------------------------------------------------------------------
+1.2) the Proof of Concept Theme by AJ 187 | December 02, 2007
+---------------------------------------------------------------------------
+The very first theme that could be considered experimental to my knowledge
+is the Proof of Concept Theme, a theme meant to turn StepMania into something
+else entirely.
+
+It used Codes to control Link on the screen using pseudo-tile-based movement,
+allowing for 4-way directional movement and jumping. In the second revision,
+jumping while holding left or right (simulating a running jump) was supported.
+The movement engine from the first version would later be used to power the
+second Proof of Concept Theme, Stupid Gun Game.
+
+---------------------------------------------------------------------------
+1.3) emit by spinal shark | December 07, 2007
+---------------------------------------------------------------------------
+emit was billed as "an experimental entry in the e-Series," proving to be a
+proof of concept for user customization in StepMania, previously achieved by
+k//eternal and AJ 187 as PARTICLE for some IIDX-based theme in the PROJEKT
+series for StepMania 3.9.
+
+Using the code from AJ's Dance With Intensity theme on SM4 related to file
+access along with a carefully crafted ScreenSelectMaster, spinal shark was
+able to create a rudimentary user preferences system that was portable
+between all versions of StepMania 4. (PARTICLE, in contrast, was written in C#
+and was not cross-platform.)
+
+Curiously, the readme states that emit "is not meant to be released
+to anyone except the top echelon of StepMania themers who don't get paid for
+theming."
+
+The list, comprised of "luminaries and upcomers" included:
+* AJ 187
+* GRIM
+* Midiman
+* shakesoda
+* Tweak
+* vdl
+
+In addition, there was a list of people whom emit should not be distributed to:
+* k//eternal [competing PARTICLE product]
+* Themers from Latin/South America (Daisuke Master, et al) [only support 3.95]
+* die Katze 88 [need I say more]
+* Chris Danford, Glenn Maynard [they can figure this out for themselves]
+
+Granted, these decisions were made in the mindframe of 2007, and if asked today,
+I'm sure spinal shark (if he were around) would grant access to the Latin/South
+American StepMania theming community, who have as of late, increased quality
+output in all fields of SM4 customization. Likely, the others would remain.
+
+---------------------------------------------------------------------------
+1.4) stepman online hax by AJ 187 | April 11, 2008
+---------------------------------------------------------------------------
+stepman online hax, also known as "SMO HAX", appears to have been forked
+from All Purpose Test Theme. Its only function was to test if changing the
+timing values via MESSAGEMAN in-song would trigger StepMania Online's
+automatically added TIMING mod to any posted scores. Since it did, the theme's
+lifespan ran out and is now more of a novelty.
+
+---------------------------------------------------------------------------
+1.5) Stupid Gun Game [Proof of Concept 2] by AJ 187 | April 11, 2008
+---------------------------------------------------------------------------
+The first of the Experimental Themes series to get released to the public,
+Stupid Gun Game (either subtitled "the kyle ward episodes" or "SPACE BATTLE
+OPERA in STEPMANIA LAND" depending on which version you had access to) built
+off of the Proof of Concept Theme's movement engine, producing a rudimentary
+gallery shooting game with tile-based movement.
+
+Two versions were produced, one for private consumption ("the kyle ward
+episodes"), with a public release ("SPACE BATTLE OPERA in STEPMANIA LAND")
+shortly after. The two versions differ in name and content, as you shoot
+bullseyes in the public version. In the private version, the subtitle is
+taken literally, as you shoot a picture of Kyle Ward. The two versions'
+readme files differed as well, with The Kyle Ward Episodes having a much
+more casual and hilarious tone.
+
+---------------------------------------------------------------------------
+1.6) smTunes by AJ 187 | April 12, 2008
+---------------------------------------------------------------------------
+Second publicly released theme in the series, smTunes was the first to act
+like a normal StepMania theme, with one catch: ScreenSelectMusic was replaced
+with an iTunes-like interface.
+
+smTunes is meant to be an example of how to use Lua files for MusicWheelItems,
+as well as dealing with SetMessage, which is called quite often on
+ScreenSelectMusic.
+
+---------------------------------------------------------------------------
+1.7) LabsTheme by KKI Labs | June 19, 2008
+---------------------------------------------------------------------------
+LabsTheme was originally made to have a clean slate for testing out/creating
+various things in a highly controlled environment. The same day the environment
+was set up, UserPreferences v1.0 was created. It's also the current home of
+ScreenEnvList, which was originally featured in the dubaiOne debug menu.
+
+As of recent, LabsTheme has been stagnant, with All Purpose Test Theme getting
+the major attention when it comes to new features (DebugConsole and mission mode
+being prime examples).
+
+LabsTheme defined a mission script style in November 2008, which was later
+adapted for the implementation in APTT, with small changes. Currently, the
+mission mode in APTT does not implement all of the tags laid out in
+LabsTheme's definition of a mission file.
+
+---------------------------------------------------------------------------
+1.8) Proof of Concept Theme 3 (SM4SVN) by AJ 187 | July 1, 2008
+---------------------------------------------------------------------------
+Never fully completed, Proof of Concept Theme 3 (abbreviated PoC3) was meant
+to simulate Taiko no Tatusjin/Taiko Drum Master in StepMania's dance mode.
+The main gimmick was to be sideways scrolling, figured out by Midiman and
+AJ 187 a bit earlier during dubaiOne and SM:Strike(?) development.
+
+PoC3 was to include the xon licensing system, jointly created by AJ and
+richard ix (lowercase; pronounced "icks"). Only the C# keygen was ever
+finished; xon.lua in the Scripts directory is more comment than code.

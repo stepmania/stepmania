@@ -1,0 +1,51 @@
+==Command Types==
+===PrepareScreens===
+Prepare seems to be referred to as "preload" in the comments.
+The prevailing thought is that if you put the screen itself into this,
+StepMania will go into an infinite loop and say "go fuck yourself, kid."
+
+===GroupedScreens===
+Putting screens in here groups them with that screen. The example given in
+ScreenManager.cpp is as follows:
+
+<blockquote>
+A group of screens may only want to preload some screens, and not others,
+while still considering those screens part of the same group.  For example,
+an attract loop typically has several very lightweight screens and a few
+expensive screens. Preloading the lightweight screens can improve responsiveness,
+but preloading the expensive screens may use too much memory and take too long
+to load all at once. By calling GroupScreen(), entering these screens will not
+trigger cleanup.
+</blockquote>
+
+===PersistScreens===
+From what I understand, these screens stay in memory for longer than a prepared
+screen.
+
+==Commands in Action==
+
+===Pump Pro===
+ScreenEvaluation has the following:
+PrepareScreens="ScreenProfileLoad,ScreenProfileSave,ScreenSelectMusic,ScreenEnterName,ScreenContinue,ScreenSelectPlayMode,ScreenGameOver"
+GroupedScreens="ScreenEvaluation,ScreenProfileLoad,ScreenProfileSave,ScreenSelectMusic,ScreenEnterName,ScreenContinue,ScreenSelectPlayMode,ScreenGameOver"
+PersistScreens="ScreenEvaluation,ScreenProfileLoad,ScreenProfileSave,ScreenSelectMusic,ScreenEnterName,ScreenContinue,ScreenSelectPlayMode,ScreenGameOver"
+
+__________________|Prepare |Group |Persist
+ScreenProfileLoad | Yes    | Yes  | Yes
+ScreenProfileSave | Yes    | Yes  | Yes
+ScreenSelectMusic | Yes    | Yes  | Yes
+ScreenEnterName   | Yes    | Yes  | Yes
+ScreenContinue    | Yes    | Yes  | Yes
+ScreenSelectPlayM | Yes    | Yes  | Yes
+ScreenContinue    | Yes    | Yes  | Yes
+ScreenEvaluation  | No     | Yes  | Yes
+
+My only theory for why Eval isn't prepared is that it'd cause an infinite
+Screen loop, killing the engine.
+
+===SM4 Default===
+The SM4 default uses this in a few places.
+
+In ScreenOptionsService, we see:
+GroupedScreens="ScreenOptionsService,ScreenAppearanceOptions,ScreenBackgroundOptions,ScreenCenterImage,ScreenCoinOptions,ScreenMapControllers,ScreenInputOptions,ScreenGameplayOptions,ScreenGraphicOptions,ScreenMachineOptions,ScreenSoundOptions,ScreenOptionsManageProfiles,ScreenOtherOptions,ScreenNetworkOptions,ScreenReloadSongs,ScreenTestInput,ScreenCredits2"
+PersistScreens="ScreenOptionsService,ScreenAppearanceOptions,ScreenBackgroundOptions,ScreenCenterImage,ScreenCoinOptions,ScreenMapControllers,ScreenInputOptions,ScreenGameplayOptions,ScreenGraphicOptions,ScreenMachineOptions,ScreenSoundOptions,ScreenOptionsManageProfiles,ScreenOtherOptions,ScreenNetworkOptions,ScreenReloadSongs,ScreenTestInput,ScreenCredits2"

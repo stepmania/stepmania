@@ -1,0 +1,97 @@
+[Base Classes]
+Screen
+ScreenAttract
+ScreenExit
+ScreenMiniMenu
+ScreenOptions
+ScreenPrompt
+ScreenSelect
+ScreenSelectMaster
+ScreenSplash
+ScreenTextEntry
+ScreenWithMenuElements
+--------------------------------------------------------------------------------
+[Edit Songs]
+ScreenEdit
+ScreenEditMenu
+--------------------------------------------------------------------------------
+[Gameplay Screens]
+ScreenDemonstration
+ScreenGameplay
+ScreenGameplayLesson
+ScreenGameplayNormal
+ScreenGameplayShared
+ScreenGameplaySyncMachine
+--------------------------------------------------------------------------------
+[Network Screens]
+ScreenNetEvaluation
+-ScreenNetRoom-
+-ScreenNetSelectBase-
+-ScreenNetSelectMusic-
+-ScreenSMOnlineLogin-
+--------------------------------------------------------------------------------
+[Options]
+ScreenMapControllers
+ScreenNetworkOptions
+ScreenOptionsCourseOverview
+ScreenOptionsEditCourse
+ScreenOptionsEditProfile
+ScreenOptionsExportPackage
+ScreenOptionsManageCourses
+ScreenOptionsManageEditSteps
+ScreenOptionsManageProfiles
+ScreenOptionsMaster
+ScreenOptionsMasterPrefs
+ScreenOptionsMemoryCard
+ScreenOptionsReviewWorkout
+ScreenOptionsToggleSongs
+ScreenPlayerOptions
+ScreenSongOptions
+--------------------------------------------------------------------------------
+[Overlays]
+ScreenDebugOverlay
+ScreenStatsOverlay
+ScreenSyncOverlay
+ScreenSystemLayer
+--------------------------------------------------------------------------------
+[Profile Screens]
+ScreenProfileLoad
+ScreenProfileSave
+ScreenSelectProfile
+--------------------------------------------------------------------------------
+[System Screens]
+ScreenBookkeeping
+ScreenReloadSongs
+ScreenSetTime
+--------------------------------------------------------------------------------
+[Test Screens]
+ScreenSandbox
+ScreenTestFonts
+ScreenTestInput
+ScreenTestLights
+ScreenTestSound
+--------------------------------------------------------------------------------
+[Unlock Screens]
+ScreenUnlockBrowse
+ScreenUnlockCelebrate
+ScreenUnlockStatus
+--------------------------------------------------------------------------------
+ScreenContinue
+ScreenEnding
+ScreenEvaluation
+ScreenEz2SelectPlayer
+ScreenHighScores
+ScreenHowToPlay
+ScreenInstructions
+ScreenJukebox
+ScreenNameEntry
+ScreenNameEntryTraditional
+ScreenPackages
+ScreenRanking
+ScreenSaveSync
+ScreenSelectCharacter
+ScreenSelectLanguage
+ScreenSelectMode
+ScreenSelectMusic
+ScreenServiceAction
+ScreenTitleMenu
