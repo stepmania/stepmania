@@ -2714,11 +2714,11 @@ static const Game g_Game_Popn =
 		{ GameButtonType_Step },
 		{ GameButtonType_Step },
 	},
-	TNS_W2,		// m_mapW1To
-	TNS_W2,		// m_mapW2To
-	TNS_W3,		// m_mapW3To
-	TNS_W3,		// m_mapW4To
-	TNS_Miss,	// m_mapW5To
+	TNS_W1,	// m_mapW1To
+	TNS_W2,	// m_mapW2To
+	TNS_W3,	// m_mapW3To
+	TNS_W4,	// m_mapW4To
+	TNS_W5,	// m_mapW5To
 };
 
 /** Lights *******************************************************************/
