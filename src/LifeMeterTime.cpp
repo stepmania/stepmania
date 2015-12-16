@@ -178,6 +178,20 @@ void LifeMeterTime::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
 	SendLifeChangedMessage( fOldLife, tns, hns );
 }
 
+void LifeMeterTime::ChangeLife(float delta)
+{
+	float old_life= m_fLifeTotalLostSeconds;
+	m_fLifeTotalLostSeconds-= delta;
+	SendLifeChangedMessage(old_life, TapNoteScore_Invalid, HoldNoteScore_Invalid);
+}
+
+void LifeMeterTime::SetLife(float value)
+{
+	float old_life= m_fLifeTotalLostSeconds;
+	m_fLifeTotalLostSeconds= value;
+	SendLifeChangedMessage(old_life, TapNoteScore_Invalid, HoldNoteScore_Invalid);
+}
+
 void LifeMeterTime::HandleTapScoreNone()
 {
 	// do nothing.

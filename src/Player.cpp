@@ -235,6 +235,7 @@ Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 {
 	m_drawing_notefield_board= false;
 	m_bLoaded = false;
+	m_inside_lua_set_life= false;
 
 	m_pPlayerState = NULL;
 	m_pPlayerStageStats = NULL;
@@ -1681,6 +1682,44 @@ void Player::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
 	if( m_pCombinedLifeMeter )
 		m_pCombinedLifeMeter->ChangeLife( pn, hns, tns );
 
+	ChangeLifeRecord();
+}
+
+void Player::ChangeLife(float delta)
+{
+	// If ChangeLifeRecord is not called before the change, then the life graph
+	// will show a gradual change from the time of the previous step (or
+	// change) to the time of this change, instead of the sharp change that
+	// actually occurred. -Kyz
+	ChangeLifeRecord();
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	if(m_pLifeMeter)
+	{
+		m_pLifeMeter->ChangeLife(delta);
+	}
+	if(m_pCombinedLifeMeter)
+	{
+		m_pCombinedLifeMeter->ChangeLife(pn, delta);
+	}
+	ChangeLifeRecord();
+}
+
+void Player::SetLife(float value)
+{
+	// If ChangeLifeRecord is not called before the change, then the life graph
+	// will show a gradual change from the time of the previous step (or
+	// change) to the time of this change, instead of the sharp change that
+	// actually occurred. -Kyz
+	ChangeLifeRecord();
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	if(m_pLifeMeter)
+	{
+		m_pLifeMeter->SetLife(value);
+	}
+	if(m_pCombinedLifeMeter)
+	{
+		m_pCombinedLifeMeter->SetLife(pn, value);
+	}
 	ChangeLifeRecord();
 }
 
@@ -3238,6 +3277,28 @@ RString Player::ApplyRandomAttack()
 class LunaPlayer: public Luna<Player>
 {
 public:
+	static int SetLife(T* p, lua_State* L)
+	{
+		if(p->m_inside_lua_set_life)
+		{
+			luaL_error(L, "Do not call SetLife from inside LifeChangedMessageCommand because SetLife causes a LifeChangedMessageCommand.");
+		}
+		p->m_inside_lua_set_life= true;
+		p->SetLife(FArg(1));
+		p->m_inside_lua_set_life= false;
+		COMMON_RETURN_SELF;
+	}
+	static int ChangeLife(T* p, lua_State* L)
+	{
+		if(p->m_inside_lua_set_life)
+		{
+			luaL_error(L, "Do not call ChangeLife from inside LifeChangedMessageCommand because ChangeLife causes a LifeChangedMessageCommand.");
+		}
+		p->m_inside_lua_set_life= true;
+		p->ChangeLife(FArg(1));
+		p->m_inside_lua_set_life= false;
+		COMMON_RETURN_SELF;
+	}
 	static int SetActorWithJudgmentPosition( T* p, lua_State *L )
 	{ 
 		Actor *pActor = Luna<Actor>::check(L, 1); 
@@ -3258,6 +3319,8 @@ public:
 	
 	LunaPlayer()
 	{
+		ADD_METHOD(SetLife);
+		ADD_METHOD(ChangeLife);
 		ADD_METHOD( SetActorWithJudgmentPosition );
 		ADD_METHOD( SetActorWithComboPosition );
 		ADD_METHOD( GetPlayerTimingData );

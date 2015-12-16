@@ -128,6 +128,9 @@ public:
 	virtual void PushSelf( lua_State *L );
 	
 	PlayerState * GetPlayerState() { return this->m_pPlayerState; }
+	void ChangeLife(float delta);
+	void SetLife(float value);
+	bool m_inside_lua_set_life;
 
 protected:
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );

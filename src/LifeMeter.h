@@ -34,6 +34,8 @@ public:
 	 * @param hns the hold note grade in question.
 	 * @param tns the score received for the initial tap note. */
 	virtual void ChangeLife( HoldNoteScore hns, TapNoteScore tns ) = 0;
+	virtual void ChangeLife(float delta) = 0;
+	virtual void SetLife(float value) = 0;
 	virtual void HandleTapScoreNone() = 0;
 	virtual bool IsInDanger() const = 0;
 	virtual bool IsHot() const = 0;
