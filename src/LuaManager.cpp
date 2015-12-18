@@ -274,20 +274,24 @@ static int GetLuaStack( lua_State *L )
 		const char *name;
 		vector<std::string> vArgs;
 
+		auto logAndPop = [&](char const *luaName) {
+			auto *luaStr = lua_tostring(L, -1);
+			vArgs.push_back( fmt::sprintf("%s = %s", luaName, luaStr != nullptr ? luaStr : "nil") );
+			lua_pop( L, 1 ); // pop value
+		};
+
 		if( !strcmp(ar.what, "C") )
 		{
 			for( int i = 1; i <= ar.nups && (name = lua_getupvalue(L, -1, i)) != nullptr; ++i )
 			{
-				vArgs.push_back( fmt::sprintf("%s = %s", name, lua_tostring(L, -1)) );
-				lua_pop( L, 1 ); // pop value
+				logAndPop(name);
 			}
 		}
 		else
 		{
 			for( int i = 1; (name = lua_getlocal(L, &ar, i)) != nullptr; ++i )
 			{
-				vArgs.push_back( fmt::sprintf("%s = %s", name, lua_tostring(L, -1)) );
-				lua_pop( L, 1 ); // pop value
+				logAndPop(name);
 			}
 		}
 
