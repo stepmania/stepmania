@@ -180,7 +180,6 @@ bool SavePNG( FILE *f, char szErrorbuf[1024], const Surface *pSurf )
 		PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE );
 
 	png_write_info( pPng, pInfo );
-	png_set_filler( pPng, 0, PNG_FILLER_AFTER );
 
 	png_byte *pixels = (png_byte *) pSurf->pRGBA;
 	for( int y = 0; y < pSurf->iHeight; y++ )
