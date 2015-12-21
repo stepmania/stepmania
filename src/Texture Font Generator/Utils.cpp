@@ -162,14 +162,14 @@ bool SavePNG( FILE *f, char szErrorbuf[1024], const Surface *pSurf )
 	png_info *pInfo = png_create_info_struct(pPng);
 	if( pInfo == NULL )
 	{
-		png_destroy_read_struct( &pPng, NULL, NULL );
+		png_destroy_write_struct( &pPng, NULL );
 		sprintf( szErrorbuf, "creating png_create_info_struct failed");
 		return false;
 	}
 
 	if( setjmp(png_jmpbuf(pPng)) )
 	{
-		png_destroy_read_struct( &pPng, &pInfo, NULL );
+		png_destroy_write_struct( &pPng, &pInfo );
 		return false;
 	}
 
