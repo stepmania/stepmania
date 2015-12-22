@@ -301,6 +301,21 @@ inline bool get_optional_bool(lua_State* L, int index, char const* field)
 	return ret;
 }
 
+inline bool value_is_in_table(lua_State* L, int value_index, int table_index)
+{
+	lua_pushnil(L);
+	while(lua_next(L, table_index) != 0)
+	{
+		if(lua_equal(L, value_index, -1))
+		{
+			lua_pop(L, 2);
+			return true;
+		}
+		lua_pop(L, 1);
+	}
+	return false;
+}
+
 #define LuaFunction( func, expr ) \
 int LuaFunc_##func( lua_State *L ); \
 int LuaFunc_##func( lua_State *L ) { \

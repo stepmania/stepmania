@@ -2658,21 +2658,16 @@ public:
 		p->m_pMultiPlayerState[mp]->PushSelf(L);
 		return 1;
 	}
-	static int ApplyGameCommand( T* p, lua_State *L )
+	static int get_noteskin_params(T* p, lua_State* L)
 	{
-		PlayerNumber pn = PLAYER_INVALID;
-		if( lua_gettop(L) >= 2 && !lua_isnil(L,2) ) {
-			// Legacy behavior: if an old-style numerical argument
-			// is given, decrement it before trying to parse
-			if( lua_isnumber(L,2) ) {
-				int arg = (int) lua_tonumber( L, 2 );
-				arg--;
-				LuaHelpers::Push( L, arg );
-				lua_replace( L, -2 );
-			}
-			pn = Enum::Check<PlayerNumber>(L, 2);
-		}
-		p->ApplyGameCommand(SArg(1),pn);
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
+		p->m_noteskin_params[pn].PushSelf(L);
+		return 1;
+	}
+	static int set_noteskin_params(T* p, lua_State* L)
+	{
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
+		p->m_noteskin_params[pn].SetFromStack(L);
 		COMMON_RETURN_SELF;
 	}
 	static int GetCurrentSong( T* p, lua_State *L )			{ if(p->m_pCurSong) p->m_pCurSong->PushSelf(L); else lua_pushnil(L); return 1; }
@@ -3271,7 +3266,7 @@ public:
 		ADD_METHOD( ShowW1 );
 		ADD_METHOD( GetPlayerState );
 		ADD_METHOD( GetMultiPlayerState );
-		ADD_METHOD( ApplyGameCommand );
+		ADD_GET_SET_METHODS(noteskin_params);
 		ADD_METHOD( CanSafelyEnterGameplay );
 		ADD_METHOD( GetCurrentSong );
 		ADD_METHOD( SetCurrentSong );

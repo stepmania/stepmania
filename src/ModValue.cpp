@@ -52,6 +52,15 @@ static const char* ModFunctionTypeNames[] = {
 XToString(ModFunctionType);
 LuaXType(ModFunctionType);
 
+static const char* ModSumTypeNames[] = {
+	"Add",
+	"Subtract",
+	"Multiply",
+	"Divide",
+};
+XToString(ModSumType);
+LuaXType(ModSumType);
+
 void ModManager::update(double curr_beat, double curr_second)
 {
 	double const time_diff= curr_second - m_prev_curr_second;
@@ -985,14 +994,15 @@ bool ModFunction::load_from_lua(lua_State* L, int index)
 	set_type(type);
 	// The lua table looks like this:
 	// {
-	//   name= "string",
-	//   start_beat= 5,
-	//   start_sec= 5,
-	//   end_beat= 5,
-	//   end_sec= 5,
+	//   name= "string", -- optional
+	//   start_beat= 5, -- optional
+	//   start_sec= 5, -- optional
+	//   end_beat= 5, -- optional
+	//   end_sec= 5, -- optional
+	//   sum_type= "ModValSumType_Add", -- optional
 	//   type, input, ...
 	// }
-	// name, and the start and end values are optional.
+	// name, the start and end values, and sum_type are optional.
 	// The ... is for the inputs after the first.
 	// So the first input is at lua table index 2.
 	lua_getfield(L, index, "name");
@@ -1009,6 +1019,16 @@ bool ModFunction::load_from_lua(lua_State* L, int index)
 	m_start_second= get_optional_double(L, index, "start_second", invalid_modfunction_time);
 	m_end_beat= get_optional_double(L, index, "end_beat", invalid_modfunction_time);
 	m_end_second= get_optional_double(L, index, "end_second", invalid_modfunction_time);
+	lua_getfield(L, index, "sum_type");
+	if(lua_isstring(L, -1))
+	{
+		ModSumType sum_type= Enum::Check<ModSumType>(L, -1, true, true);
+		if(sum_type == ModSumType_Invalid)
+		{
+			sum_type= MST_Add;
+		}
+		m_sum_type= sum_type;
+	}
 	if(m_type != MFT_Spline)
 	{
 		size_t elements= lua_objlen(L, index);
@@ -1148,14 +1168,48 @@ double ModifiableValue::evaluate(mod_val_inputs const& input)
 	{
 		for(auto&& mod : m_mods)
 		{
-			sum+= mod->evaluate(input);
+			switch(mod->m_sum_type)
+			{
+				case MST_Add:
+					sum+= mod->evaluate(input);
+					break;
+				case MST_Subtract:
+					sum-= mod->evaluate(input);
+					break;
+				case MST_Multiply:
+					sum*= mod->evaluate(input);
+					break;
+				case MST_Divide:
+					sum/= mod->evaluate(input);
+					break;
+				default:
+					FAIL_M(fmt::sprintf("Invalid ModSumType: %i", static_cast<int>(mod->m_sum_type)));
+					break;
+			}
 		}
 	}
 	if(!m_active_managed_mods.empty())
 	{
 		for(auto&& mod : m_active_managed_mods)
 		{
-			sum+= mod->evaluate_with_time(input);
+			switch(mod->m_sum_type)
+			{
+				case MST_Add:
+					sum+= mod->evaluate_with_time(input);
+					break;
+				case MST_Subtract:
+					sum-= mod->evaluate_with_time(input);
+					break;
+				case MST_Multiply:
+					sum*= mod->evaluate_with_time(input);
+					break;
+				case MST_Divide:
+					sum/= mod->evaluate_with_time(input);
+					break;
+				default:
+					FAIL_M(fmt::sprintf("Invalid ModSumType: %i", static_cast<int>(mod->m_sum_type)));
+					break;
+			}
 		}
 	}
 	return sum;
@@ -1527,9 +1581,11 @@ struct LunaModFunction : Luna<ModFunction>
 		p->push_inputs(L, lua_gettop(L));
 		return 1;
 	}
+	GET_SET_ENUM_METHOD(sum_type, ModSumType, m_sum_type);
 	LunaModFunction()
 	{
 		ADD_METHOD(get_inputs);
+		ADD_GET_SET_METHODS(sum_type);
 	}
 };
 LUA_REGISTER_CLASS(ModFunction);

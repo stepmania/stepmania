@@ -50,7 +50,8 @@ NewFieldColumn::NewFieldColumn()
 	 m_upcoming_time(2.0),
 	 m_playerize_mode(NPM_Off),
 	 m_newskin(nullptr), m_player_colors(nullptr), m_note_data(nullptr),
-	 m_timing_data(nullptr)
+	 m_timing_data(nullptr),
+	 reverse_scale_sign(1.0)
 {
 	m_quantization_multiplier.m_value= 1.0;
 	double default_offset= SCREEN_CENTER_Y - note_size;
@@ -194,7 +195,14 @@ void NewFieldColumn::calc_reverse_shift()
 	reverse_shift= Rage::scale(reverse_percent, 0.0, 1.0, -reverse_offset, reverse_offset);
 	reverse_shift= Rage::scale(center_percent, 0.0, 1.0, reverse_shift, 0.0);
 	reverse_scale= Rage::scale(reverse_percent, 0.0, 1.0, 1.0, -1.0);
+	double old_scale_sign= reverse_scale_sign;
 	reverse_scale_sign= (reverse_scale < 0.0) ? -1.0 : 1.0;
+	if(old_scale_sign != reverse_scale_sign)
+	{
+		Message revmsg("ReverseChanged");
+		revmsg.SetParam("sign", reverse_scale_sign);
+		pass_message_to_heads(revmsg);
+	}
 	static double const min_visible_scale= 0.1;
 	double visible_scale= fabs(reverse_scale);
 	if(visible_scale < min_visible_scale)
@@ -577,6 +585,7 @@ void NewFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 		DISPLAY->set_color_key_shader(player_color, data.mask->GetTexHandle());
 	}
 	bool last_vert_set= false;
+	bool next_last_vert_set= false;
 	// Set a start and end y so that the hold can be clipped to the start and
 	// end of the field.
 	double start_y= max(tex_handler.start_y, first_y_offset_visible);
@@ -586,8 +595,9 @@ void NewFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 	// being skewed.  Toggle the holds_skewed_by_mods flag with lua to see the
 	// difference.
 	int phase= HTP_Top;
+	int next_phase= HTP_Top;
 	hold_vert_step_state next_step; // The OS of the future.
-	next_step.calc(*this, start_y, end_y, beat_lerper, second_lerper, m_curr_beat, m_curr_second, tex_handler, phase);
+	next_step.calc(*this, start_y, end_y, beat_lerper, second_lerper, m_curr_beat, m_curr_second, tex_handler, next_phase);
 	bool need_glow_pass= true;
 	for(double curr_y= start_y; !last_vert_set; curr_y+= y_step)
 	{
@@ -596,7 +606,9 @@ void NewFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 		{
 			need_glow_pass= true;
 		}
-		last_vert_set= next_step.calc(*this, curr_y + y_step, end_y, beat_lerper, second_lerper, m_curr_beat, m_curr_second, tex_handler, phase);
+		phase= next_phase;
+		last_vert_set= next_last_vert_set;
+		next_last_vert_set= next_step.calc(*this, curr_y + y_step, end_y, beat_lerper, second_lerper, m_curr_beat, m_curr_second, tex_handler, phase);
 		Rage::Vector3 render_forward(0.0, 1.0, 0.0);
 		if(!m_holds_skewed_by_mods)
 		{
@@ -943,8 +955,14 @@ void NewFieldColumn::build_render_lists()
 	first_note_visible_prev_frame= first_visible_this_frame;
 	m_prev_curr_second= m_curr_second;
 
-	send_beat_update(m_curr_beat - floor(m_curr_beat));
-	set_note_upcoming(m_status.upcoming_beat_dist, m_status.upcoming_second_dist);
+	{
+		Message msg("BeatUpdate");
+		msg.SetParam("beat", m_curr_beat - floor(m_curr_beat));
+		msg.SetParam("pressed", pressed);
+		msg.SetParam("beat_distance", m_status.upcoming_beat_dist);
+		msg.SetParam("second_distance", m_status.upcoming_second_dist);
+		pass_message_to_heads(msg);
+	}
 	// The hold status should be updated if there is a currently active hold
 	// or if there was one last frame.
 	if(m_status.active_hold != nullptr || m_status.prev_active_hold != nullptr)
@@ -1245,24 +1263,7 @@ void NewFieldColumn::set_hold_status(TapNote const* tap, bool start, bool end)
 
 void NewFieldColumn::set_pressed(bool on)
 {
-	Message msg("Pressed");
-	msg.SetParam("on", on);
-	pass_message_to_heads(msg);
-}
-
-void NewFieldColumn::set_note_upcoming(double beat_distance, double second_distance)
-{
-	Message msg("Upcoming");
-	msg.SetParam("beat_distance", beat_distance);
-	msg.SetParam("second_distance", second_distance);
-	pass_message_to_heads(msg);
-}
-
-void NewFieldColumn::send_beat_update(double beat)
-{
-	Message msg("BeatUpdate");
-	msg.SetParam("beat", beat);
-	pass_message_to_heads(msg);
+	pressed= on;
 }
 
 void NewFieldColumn::DrawPrimitives()
@@ -1318,7 +1319,7 @@ NewField::NewField()
 	 m_own_note_data(false), m_note_data(nullptr), m_timing_data(nullptr),
 	 m_drawing_board(false)
 {
-	set_skin("default");
+	set_skin("default", m_skin_parameters);
 	m_board.Load(THEME->GetPathG("NoteField", "board"));
 	m_board->SetName("Board");
 	m_board->PlayCommand("On");
@@ -1438,7 +1439,7 @@ void NewField::clear_steps()
 	m_columns.clear();
 }
 
-void NewField::set_skin(std::string const& skin_name)
+void NewField::set_skin(std::string const& skin_name, LuaReference& skin_params)
 {
 	NewSkinLoader const* loader= NEWSKIN->get_loader_for_skin(skin_name);
 	if(loader != nullptr)
@@ -1449,6 +1450,7 @@ void NewField::set_skin(std::string const& skin_name)
 	{
 		LuaHelpers::ReportScriptErrorFmt("Could not find loader for newskin '%s'.", skin_name.c_str());
 	}
+	m_skin_parameters= skin_params;
 }
 
 void NewField::set_steps(Steps* data)
@@ -1491,7 +1493,7 @@ void NewField::set_note_data(NoteData* note_data, TimingData* timing, Style cons
 		return;
 	}
 	string insanity;
-	if(!m_skin_walker.load_into_data(button_stype, m_newskin, insanity))
+	if(!m_skin_walker.load_into_data(button_stype, m_skin_parameters, m_newskin, insanity))
 	{
 		LuaHelpers::ReportScriptError("Error loading noteskin: " + insanity);
 		return;

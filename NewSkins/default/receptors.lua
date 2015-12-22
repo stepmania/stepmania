@@ -18,11 +18,6 @@ return function(button_list, stepstype)
 			-- pressed.  The param table only has one element: "on".  If that
 			-- element is true, the column is now pressed.
 			PressedCommand= function(self, param)
-				if param.on then
-					self:zoom(.75)
-				else
-					self:zoom(1)
-				end
 			end,
 			-- The Upcoming command happens every frame, to update the distance to
 			-- the next note in the column.  There are two parameters:
@@ -36,11 +31,6 @@ return function(button_list, stepstype)
 			-- The SM 5.0.x notefield had ShowNoteUpcoming and HideNoteUpcoming
 			-- commands with no distance information.
 			UpcomingCommand= function(self, param)
-				if param.second_distance < 2 then
-					self:diffuse(lerp_color(param.second_distance/2, white, red))
-				else
-					self:diffuse(white)
-				end
 			end,
 			-- The BeatUpdate command happens every frame to update the per-beat
 			-- animation.  The param table has one element, the beat value.  The
@@ -52,6 +42,16 @@ return function(button_list, stepstype)
 			-- SetSecondsIntoAnimation instead.
 			BeatUpdateCommand= function(self, param)
 				self:glow{1, 1, 1, (1 - param.beat*2) / 4}
+				if param.second_distance < 2 then
+					self:diffuse(lerp_color(param.second_distance/2, white, red))
+				else
+					self:diffuse(white)
+				end
+				if param.pressed then
+					self:zoom(.75)
+				else
+					self:zoom(1)
+				end
 			end
 		}
 	end

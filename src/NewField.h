@@ -126,8 +126,6 @@ struct NewFieldColumn : ActorFrame
 	void did_hold_note(HoldNoteScore hns, bool bright);
 	void set_hold_status(TapNote const* tap, bool start, bool end);
 	void set_pressed(bool on);
-	void set_note_upcoming(double beat_distance, double second_distance);
-	void send_beat_update(double beat);
 
 	virtual void UpdateInternal(float delta);
 	virtual bool EarlyAbortDraw() const;
@@ -231,6 +229,7 @@ private:
 	double reverse_scale_sign;
 	double first_y_offset_visible;
 	double last_y_offset_visible;
+	bool pressed;
 };
 
 enum FieldVanishType
@@ -263,7 +262,7 @@ struct NewField : ActorFrame
 	void set_player_color(size_t pn, Rage::Color const& color);
 
 	void clear_steps();
-	void set_skin(std::string const& skin_name);
+	void set_skin(std::string const& skin_name, LuaReference& skin_params);
 	void set_steps(Steps* data);
 	void set_note_data(NoteData* note_data, TimingData* timing, Style const* curr_style);
 	// set_player_number exists only so that the notefield board can have
@@ -301,6 +300,7 @@ private:
 	std::vector<NewFieldColumn> m_columns;
 	NewSkinData m_newskin;
 	NewSkinLoader m_skin_walker;
+	LuaReference m_skin_parameters;
 	std::vector<Rage::Color> m_player_colors;
 
 	bool m_drawing_board;

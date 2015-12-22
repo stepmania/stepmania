@@ -1739,6 +1739,10 @@ void RageDisplay_Legacy::SetEffectMode( EffectMode effect )
 
 void RageDisplay_Legacy::set_color_key_shader(Rage::Color const& color, unsigned int tex_handle)
 {
+	if(g_color_key_shader == 0)
+	{
+		return;
+	}
 	DebugFlushGLErrors();
 	SetTexture(TextureUnit_2, tex_handle);
 	glUseProgramObjectARB(g_color_key_shader);
