@@ -30,11 +30,13 @@ StepMania can be compiled using [CMake](http://www.cmake.org/). More information
 
 ## Licensing Terms
 
-In short- you can do anything you like with the game (including sell products made with it), provided you do not:
+In short- you can do anything you like with the game (including sell products made with it), provided you *do not*:
 
 1. Sell the game *with the included songs*
 2. Claim to have created the engine yourself or remove the credits
 3. Not provide source code for any build which differs from any official release which includes MP3 support.
+
+(It's not required, but we would also appreciate it if you link back to http://www.stepmania.com/)
 
 For specific information/legalese:
 
