@@ -14,7 +14,8 @@ public:
 class LocalizedString
 {
 public:
-	LocalizedString( std::string const &sGroup = "", std::string const &sName = "" );
+	LocalizedString( std::string const & sGroup = "", std::string const & sName = "" );
+	LocalizedString(LocalizedString const& other);
 	~LocalizedString();
 	void Load( std::string const &sGroup, std::string const &sName );
 	operator std::string const () const { return GetValue(); }

@@ -162,14 +162,14 @@ bool SavePNG( FILE *f, char szErrorbuf[1024], const Surface *pSurf )
 	png_info *pInfo = png_create_info_struct(pPng);
 	if( pInfo == NULL )
 	{
-		png_destroy_read_struct( &pPng, NULL, NULL );
+		png_destroy_write_struct( &pPng, NULL );
 		sprintf( szErrorbuf, "creating png_create_info_struct failed");
 		return false;
 	}
 
 	if( setjmp(png_jmpbuf(pPng)) )
 	{
-		png_destroy_read_struct( &pPng, &pInfo, NULL );
+		png_destroy_write_struct( &pPng, &pInfo );
 		return false;
 	}
 
@@ -180,7 +180,6 @@ bool SavePNG( FILE *f, char szErrorbuf[1024], const Surface *pSurf )
 		PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE );
 
 	png_write_info( pPng, pInfo );
-	png_set_filler( pPng, 0, PNG_FILLER_AFTER );
 
 	png_byte *pixels = (png_byte *) pSurf->pRGBA;
 	for( int y = 0; y < pSurf->iHeight; y++ )

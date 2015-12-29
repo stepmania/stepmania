@@ -22,6 +22,7 @@ public:
 	virtual void ChangeLife( TapNoteScore score );
 	virtual void ChangeLife( HoldNoteScore score, TapNoteScore tscore  );
 	virtual void ChangeLife( float fDeltaLifePercent );
+	virtual void SetLife(float value);
 	virtual void HandleTapScoreNone();
 	virtual void AfterLifeChanged();
 	virtual bool IsInDanger() const;

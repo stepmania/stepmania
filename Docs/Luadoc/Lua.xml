@@ -1096,6 +1096,8 @@
 			<Function name='LoadFromStats'/>
 		</Class>
 		<Class base='ActorFrame' name='Player'>
+			<Function name='ChangeLife'/>
+			<Function name='SetLife'/>
 			<Function name='GetPlayerTimingData'/>
 			<Function name='SetActorWithComboPosition'/>
 			<Function name='SetActorWithJudgmentPosition'/>

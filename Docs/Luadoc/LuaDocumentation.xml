@@ -3366,6 +3366,12 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='Player'>
+	<Function name='ChangeLife' return='' arguments='float delta'>
+		Changes the life value by delta.  This will broadcast a LifeChangedMessageCommand, to allow custom life bars to update to the new value.  Do not call ChangeLife from within LifeChangedMessageCommand.
+	</Function>
+	<Function name='SetLife' return='' arguments='float value'>
+		Sets the life to value.  This will broadcast a LifeChangedMessageCommand, to allow custom life bars to update to the new value.  Do not call SetLife from within LifeChangedMessageCommand.
+	</Function>
 	<Function name='GetPlayerTimingData' return='TimingData' arguments=''>
 		Returns the current TimingData for this player.
 	</Function>

@@ -90,7 +90,7 @@ static bool RageSurface_Save_PNG( RageFile &f, char szErrorbuf[1024], RageSurfac
 	png_info *pInfo = png_create_info_struct(pPng);
 	if( pInfo == nullptr )
 	{
-		png_destroy_read_struct( &pPng, nullptr, nullptr );
+		png_destroy_write_struct( &pPng, nullptr );
 		if( bDeleteImg )
 			delete pImg;
 		sprintf( szErrorbuf, "creating png_create_info_struct failed");
@@ -99,7 +99,7 @@ static bool RageSurface_Save_PNG( RageFile &f, char szErrorbuf[1024], RageSurfac
 
 	if( setjmp(png_jmpbuf(pPng)) )
 	{
-		png_destroy_read_struct( &pPng, &pInfo, nullptr );
+		png_destroy_write_struct( &pPng, &pInfo );
 		return false;
 	}
 

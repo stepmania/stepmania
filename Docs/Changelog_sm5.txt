@@ -4,6 +4,18 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2015/12/16
+----------
+* [Player] ChangeLife and SetLife functions added. [kyzentun]
+
+2015/12/13
+----------
+* [popn] Judgment levels in popn game mode now use W1 to W5. [parashep]
+
+2015/12/05
+----------
+* [Player] Guitar mode cruft removed from Player. [tertu]
+
 2015/12/04
 ----------
 * [NoteField] Changed DrawBeatBar to check the M-mod so that smaller beat

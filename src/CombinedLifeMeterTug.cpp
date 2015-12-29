@@ -138,6 +138,21 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, float fPercentToMove )
 	}
 }
 
+void CombinedLifeMeterTug::SetLife(PlayerNumber pn, float value)
+{
+	switch(pn)
+	{
+		case PLAYER_1:
+			GAMESTATE->m_fTugLifePercentP1= value;
+			break;
+		case PLAYER_2:
+			GAMESTATE->m_fTugLifePercentP1= 1-value;
+			break;
+		default:
+      FAIL_M(fmt::sprintf("Invalid player number: %i", pn));
+	}
+}
+
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.

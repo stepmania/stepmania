@@ -23,12 +23,15 @@ public:
 	virtual void ChangeLife( TapNoteScore score );
 	virtual void ChangeLife( HoldNoteScore score, TapNoteScore tscore );
 	virtual void ChangeLife( float fDeltaLifePercent );
+	virtual void SetLife(float value);
 	virtual void HandleTapScoreNone();
 	virtual bool IsInDanger() const;
 	virtual bool IsHot() const;
 	virtual bool IsFailing() const;
 	virtual float GetLife() const;
 	virtual int GetRemainingLives() const;
+
+	virtual void BroadcastLifeChanged(bool lost_life);
 
 	void Refresh();
 	int GetLivesLeft() { return m_iLivesLeft; }

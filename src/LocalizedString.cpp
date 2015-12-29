@@ -43,6 +43,17 @@ LocalizedString::LocalizedString( std::string const &sGroup, std::string const &
 	CreateImpl();
 }
 
+LocalizedString::LocalizedString(LocalizedString const& other)
+{
+	m_Subscribers.Subscribe(this);
+
+	m_sGroup = other.m_sGroup;
+	m_sName = other.m_sName;
+	m_pImpl = NULL;
+
+	CreateImpl();
+}
+
 LocalizedString::~LocalizedString()
 {
 	m_Subscribers.Unsubscribe( this );
