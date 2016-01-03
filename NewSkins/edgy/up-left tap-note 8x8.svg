@@ -1,0 +1,1672 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="512"
+   height="512"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="tap_note 8x8.svg"
+   id="svg2985"
+   inkscape:export-filename="/home/parallels/tap_note 8x8.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <metadata
+     id="metadata3053">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1224"
+     inkscape:window-height="782"
+     id="namedview3051"
+     showgrid="true"
+     inkscape:zoom="1.6234774"
+     inkscape:cx="254.35573"
+     inkscape:cy="421.64979"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2985">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3055" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2987">
+    <g
+       id="colorBlue">
+      <path
+         d="m 2,7 v 51 l 4,4 h 8 l 4,-4 V 34 L 34,18 h 24 l 4,-4 V 6 L 58,2 H 6 L 2,6 v 1 z"
+         style="fill:#6666ff;stroke:#000000;stroke-width:2"
+         id="path2990"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 20,32 30,30 h 4 l 8,-8 V 50 L 32,20 z"
+         style="fill:#6666ff;stroke:#000000;stroke-width:2"
+         id="path2992"
+         inkscape:connector-curvature="0" />
+      <path
+         d="M 17,17 V 34 L 34,17 z"
+         style="stroke-width:2"
+         id="path2994"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       id="colorRed">
+      <path
+         style="fill:#ff3333;stroke:#000000;stroke-width:2"
+         d="m 2,7 v 51 l 4,4 h 8 l 4,-4 V 34 L 34,18 h 24 l 4,-4 V 6 L 58,2 H 6 L 2,6 v 1 z"
+         id="path2997"
+         inkscape:connector-curvature="0" />
+      <path
+         style="fill:#ff3333;stroke:#000000;stroke-width:2"
+         d="m 20,32 30,30 h 4 l 8,-8 V 50 L 32,20 z"
+         id="path2999"
+         inkscape:connector-curvature="0" />
+      <path
+         style="stroke-width:2"
+         d="M 17,17 V 34 L 34,17 z"
+         id="path3001"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       id="colorPurple">
+      <path
+         d="m 2,7 v 51 l 4,4 h 8 l 4,-4 V 34 L 34,18 h 24 l 4,-4 V 6 L 58,2 H 6 L 2,6 v 1 z"
+         style="fill:#b300b3;stroke:#000000;stroke-width:2"
+         id="path3004"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 20,32 30,30 h 4 l 8,-8 V 50 L 32,20 z"
+         style="fill:#b300b3;stroke:#000000;stroke-width:2"
+         id="path3006"
+         inkscape:connector-curvature="0" />
+      <path
+         d="M 17,17 V 34 L 34,17 z"
+         style="stroke-width:2"
+         id="path3008"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       id="colorYellow">
+      <path
+         style="fill:#ffff33;stroke:#000000;stroke-width:2"
+         d="m 2,7 v 51 l 4,4 h 8 l 4,-4 V 34 L 34,18 h 24 l 4,-4 V 6 L 58,2 H 6 L 2,6 v 1 z"
+         id="path3011"
+         inkscape:connector-curvature="0" />
+      <path
+         style="fill:#ffff33;stroke:#000000;stroke-width:2"
+         d="m 20,32 30,30 h 4 l 8,-8 V 50 L 32,20 z"
+         id="path3013"
+         inkscape:connector-curvature="0" />
+      <path
+         style="stroke-width:2"
+         d="M 17,17 V 34 L 34,17 z"
+         id="path3015"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       id="colorPink">
+      <path
+         d="m 2,7 v 51 l 4,4 h 8 l 4,-4 V 34 L 34,18 h 24 l 4,-4 V 6 L 58,2 H 6 L 2,6 v 1 z"
+         style="fill:#ffc0cb;stroke:#000000;stroke-width:2"
+         id="path3018"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 20,32 30,30 h 4 l 8,-8 V 50 L 32,20 z"
+         style="fill:#ffc0cb;stroke:#000000;stroke-width:2"
+         id="path3020"
+         inkscape:connector-curvature="0" />
+      <path
+         d="M 17,17 V 34 L 34,17 z"
+         style="stroke-width:2"
+         id="path3022"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       id="colorOrange">
+      <path
+         style="fill:#ffb733;stroke:#000000;stroke-width:2"
+         d="m 2,7 v 51 l 4,4 h 8 l 4,-4 V 34 L 34,18 h 24 l 4,-4 V 6 L 58,2 H 6 L 2,6 v 1 z"
+         id="path3025"
+         inkscape:connector-curvature="0" />
+      <path
+         style="fill:#ffb733;stroke:#000000;stroke-width:2"
+         d="m 20,32 30,30 h 4 l 8,-8 V 50 L 32,20 z"
+         id="path3027"
+         inkscape:connector-curvature="0" />
+      <path
+         style="stroke-width:2"
+         d="M 17,17 V 34 L 34,17 z"
+         id="path3029"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       id="colorCyan">
+      <path
+         d="m 2,7 v 51 l 4,4 h 8 l 4,-4 V 34 L 34,18 h 24 l 4,-4 V 6 L 58,2 H 6 L 2,6 v 1 z"
+         style="fill:#33ffff;stroke:#000000;stroke-width:2"
+         id="path3032"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 20,32 30,30 h 4 l 8,-8 V 50 L 32,20 z"
+         style="fill:#33ffff;stroke:#000000;stroke-width:2"
+         id="path3034"
+         inkscape:connector-curvature="0" />
+      <path
+         d="M 17,17 V 34 L 34,17 z"
+         style="stroke-width:2"
+         id="path3036"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       id="colorGreen">
+      <path
+         style="fill:#00e600;stroke:#000000;stroke-width:2"
+         d="m 2,7 v 51 l 4,4 h 8 l 4,-4 V 34 L 34,18 h 24 l 4,-4 V 6 L 58,2 H 6 L 2,6 v 1 z"
+         id="path3039"
+         inkscape:connector-curvature="0" />
+      <path
+         style="fill:#00e600;stroke:#000000;stroke-width:2"
+         d="m 20,32 30,30 h 4 l 8,-8 V 50 L 32,20 z"
+         id="path3041"
+         inkscape:connector-curvature="0" />
+      <path
+         style="stroke-width:2"
+         d="M 17,17 V 34 L 34,17 z"
+         id="path3043"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       id="arrow1">
+      <path
+         d="M 2,7 V 18 H 18 V 2 H 6 L 2,6 z"
+         inkscape:connector-curvature="0"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         id="path3023" />
+      <rect
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         width="16"
+         height="14"
+         x="2"
+         y="18"
+         id="rect3025" />
+      <rect
+         y="32"
+         x="2"
+         height="14"
+         width="16"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="rect3027" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         d="m 2,46 v 12 l 4,4 h 8 l 4,-4 V 46 z"
+         inkscape:connector-curvature="0"
+         id="path3030" />
+      <rect
+         y="2"
+         x="18"
+         height="16"
+         width="14"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="rect3032" />
+      <rect
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         width="14"
+         height="16"
+         x="32"
+         y="2"
+         id="rect3034" />
+      <path
+         inkscape:connector-curvature="0"
+         d="m 46,2 h 12 l 4,4 v 8 l -4,4 H 46 z"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3037" />
+      <path
+         d="m 20,32 7.5,7.5 12,-12 L 32,20 z"
+         inkscape:connector-curvature="0"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         id="path3040" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 27.5,39.5 35,47 47,35 39.5,27.5 z"
+         id="path3042" />
+      <path
+         d="m 35,47 7.5,7.5 12,-12 L 47,35 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3044" />
+      <path
+         d="M 42.5,54.5 50,62 h 4 l 8,-8 v -4 l -7.5,-7.5 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3046" />
+      <path
+         d="M 17,17 V 34 L 34,17 z"
+         style="stroke-width:2"
+         inkscape:connector-curvature="0"
+         id="path3048" />
+    </g>
+    <g
+       id="arrow2">
+      <path
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 2,7 V 18 H 18 V 2 H 6 L 2,6 z"
+         id="path3051" />
+      <rect
+         y="18"
+         x="2"
+         height="14"
+         width="16"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         id="rect3053" />
+      <rect
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         width="16"
+         height="14"
+         x="2"
+         y="32"
+         id="rect3055" />
+      <path
+         inkscape:connector-curvature="0"
+         d="m 2,46 v 12 l 4,4 h 8 l 4,-4 V 46 z"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3057" />
+      <rect
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         width="14"
+         height="16"
+         x="18"
+         y="2"
+         id="rect3059" />
+      <rect
+         y="2"
+         x="32"
+         height="16"
+         width="14"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="rect3061" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         d="m 46,2 h 12 l 4,4 v 8 l -4,4 H 46 z"
+         inkscape:connector-curvature="0"
+         id="path3063" />
+      <path
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 20,32 7.5,7.5 12,-12 L 32,20 z"
+         id="path3065" />
+      <path
+         d="M 27.5,39.5 35,47 47,35 39.5,27.5 z"
+         inkscape:connector-curvature="0"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         id="path3067" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 35,47 7.5,7.5 12,-12 L 47,35 z"
+         id="path3069" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 42.5,54.5 50,62 h 4 l 8,-8 v -4 l -7.5,-7.5 z"
+         id="path3071" />
+      <path
+         inkscape:connector-curvature="0"
+         style="stroke-width:2"
+         d="M 17,17 V 34 L 34,17 z"
+         id="path3073" />
+    </g>
+    <g
+       id="arrow3">
+      <path
+         d="M 2,7 V 18 H 18 V 2 H 6 L 2,6 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3076" />
+      <rect
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         width="16"
+         height="14"
+         x="2"
+         y="18"
+         id="rect3078" />
+      <rect
+         y="32"
+         x="2"
+         height="14"
+         width="16"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="rect3080" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         d="m 2,46 v 12 l 4,4 h 8 l 4,-4 V 46 z"
+         inkscape:connector-curvature="0"
+         id="path3082" />
+      <rect
+         y="2"
+         x="18"
+         height="16"
+         width="14"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         id="rect3084" />
+      <rect
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         width="14"
+         height="16"
+         x="32"
+         y="2"
+         id="rect3086" />
+      <path
+         inkscape:connector-curvature="0"
+         d="m 46,2 h 12 l 4,4 v 8 l -4,4 H 46 z"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3088" />
+      <path
+         d="m 20,32 7.5,7.5 12,-12 L 32,20 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3090" />
+      <path
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 27.5,39.5 35,47 47,35 39.5,27.5 z"
+         id="path3092" />
+      <path
+         d="m 35,47 7.5,7.5 12,-12 L 47,35 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3094" />
+      <path
+         d="M 42.5,54.5 50,62 h 4 l 8,-8 v -4 l -7.5,-7.5 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3096" />
+      <path
+         d="M 17,17 V 34 L 34,17 z"
+         style="stroke-width:2"
+         inkscape:connector-curvature="0"
+         id="path3098" />
+    </g>
+    <g
+       id="arrow4">
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 2,7 V 18 H 18 V 2 H 6 L 2,6 z"
+         id="path3101" />
+      <rect
+         y="18"
+         x="2"
+         height="14"
+         width="16"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         id="rect3103" />
+      <rect
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         width="16"
+         height="14"
+         x="2"
+         y="32"
+         id="rect3105" />
+      <path
+         inkscape:connector-curvature="0"
+         d="m 2,46 v 12 l 4,4 h 8 l 4,-4 V 46 z"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3107" />
+      <rect
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         width="14"
+         height="16"
+         x="18"
+         y="2"
+         id="rect3109" />
+      <rect
+         y="2"
+         x="32"
+         height="16"
+         width="14"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         id="rect3111" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         d="m 46,2 h 12 l 4,4 v 8 l -4,4 H 46 z"
+         inkscape:connector-curvature="0"
+         id="path3113" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 20,32 7.5,7.5 12,-12 L 32,20 z"
+         id="path3115" />
+      <path
+         d="M 27.5,39.5 35,47 47,35 39.5,27.5 z"
+         inkscape:connector-curvature="0"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         id="path3117" />
+      <path
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 35,47 7.5,7.5 12,-12 L 47,35 z"
+         id="path3119" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 42.5,54.5 50,62 h 4 l 8,-8 v -4 l -7.5,-7.5 z"
+         id="path3121" />
+      <path
+         inkscape:connector-curvature="0"
+         style="stroke-width:2"
+         d="M 17,17 V 34 L 34,17 z"
+         id="path3123" />
+    </g>
+    <g
+       id="arrow5">
+      <path
+         d="M 2,7 V 18 H 18 V 2 H 6 L 2,6 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3126" />
+      <rect
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         width="16"
+         height="14"
+         x="2"
+         y="18"
+         id="rect3128" />
+      <rect
+         y="32"
+         x="2"
+         height="14"
+         width="16"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         id="rect3130" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         d="m 2,46 v 12 l 4,4 h 8 l 4,-4 V 46 z"
+         inkscape:connector-curvature="0"
+         id="path3132" />
+      <rect
+         y="2"
+         x="18"
+         height="16"
+         width="14"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="rect3134" />
+      <rect
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         width="14"
+         height="16"
+         x="32"
+         y="2"
+         id="rect3136" />
+      <path
+         inkscape:connector-curvature="0"
+         d="m 46,2 h 12 l 4,4 v 8 l -4,4 H 46 z"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3138" />
+      <path
+         d="m 20,32 7.5,7.5 12,-12 L 32,20 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3140" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 27.5,39.5 35,47 47,35 39.5,27.5 z"
+         id="path3142" />
+      <path
+         d="m 35,47 7.5,7.5 12,-12 L 47,35 z"
+         inkscape:connector-curvature="0"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         id="path3144" />
+      <path
+         d="M 42.5,54.5 50,62 h 4 l 8,-8 v -4 l -7.5,-7.5 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3146" />
+      <path
+         d="M 17,17 V 34 L 34,17 z"
+         style="stroke-width:2"
+         inkscape:connector-curvature="0"
+         id="path3148" />
+    </g>
+    <g
+       id="arrow6">
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 2,7 V 18 H 18 V 2 H 6 L 2,6 z"
+         id="path3151" />
+      <rect
+         y="18"
+         x="2"
+         height="14"
+         width="16"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="rect3153" />
+      <rect
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         width="16"
+         height="14"
+         x="2"
+         y="32"
+         id="rect3155" />
+      <path
+         inkscape:connector-curvature="0"
+         d="m 2,46 v 12 l 4,4 h 8 l 4,-4 V 46 z"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         id="path3157" />
+      <rect
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         width="14"
+         height="16"
+         x="18"
+         y="2"
+         id="rect3159" />
+      <rect
+         y="2"
+         x="32"
+         height="16"
+         width="14"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         id="rect3161" />
+      <path
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         d="m 46,2 h 12 l 4,4 v 8 l -4,4 H 46 z"
+         inkscape:connector-curvature="0"
+         id="path3163" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 20,32 7.5,7.5 12,-12 L 32,20 z"
+         id="path3165" />
+      <path
+         d="M 27.5,39.5 35,47 47,35 39.5,27.5 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3167" />
+      <path
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 35,47 7.5,7.5 12,-12 L 47,35 z"
+         id="path3169" />
+      <path
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 42.5,54.5 50,62 h 4 l 8,-8 v -4 l -7.5,-7.5 z"
+         id="path3171" />
+      <path
+         inkscape:connector-curvature="0"
+         style="stroke-width:2"
+         d="M 17,17 V 34 L 34,17 z"
+         id="path3173" />
+    </g>
+    <g
+       id="arrow7">
+      <path
+         d="M 2,7 V 18 H 18 V 2 H 6 L 2,6 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3176" />
+      <rect
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         width="16"
+         height="14"
+         x="2"
+         y="18"
+         id="rect3178" />
+      <rect
+         y="32"
+         x="2"
+         height="14"
+         width="16"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="rect3180" />
+      <path
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         d="m 2,46 v 12 l 4,4 h 8 l 4,-4 V 46 z"
+         inkscape:connector-curvature="0"
+         id="path3182" />
+      <rect
+         y="2"
+         x="18"
+         height="16"
+         width="14"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="rect3184" />
+      <rect
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         width="14"
+         height="16"
+         x="32"
+         y="2"
+         id="rect3186" />
+      <path
+         inkscape:connector-curvature="0"
+         d="m 46,2 h 12 l 4,4 v 8 l -4,4 H 46 z"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         id="path3188" />
+      <path
+         d="m 20,32 7.5,7.5 12,-12 L 32,20 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3190" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 27.5,39.5 35,47 47,35 39.5,27.5 z"
+         id="path3192" />
+      <path
+         d="m 35,47 7.5,7.5 12,-12 L 47,35 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3194" />
+      <path
+         d="M 42.5,54.5 50,62 h 4 l 8,-8 v -4 l -7.5,-7.5 z"
+         inkscape:connector-curvature="0"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         id="path3196" />
+      <path
+         d="M 17,17 V 34 L 34,17 z"
+         style="stroke-width:2"
+         inkscape:connector-curvature="0"
+         id="path3198" />
+    </g>
+    <g
+       id="arrow8">
+      <path
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 2,7 V 18 H 18 V 2 H 6 L 2,6 z"
+         id="path3201" />
+      <rect
+         y="18"
+         x="2"
+         height="14"
+         width="16"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="rect3203" />
+      <rect
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         width="16"
+         height="14"
+         x="2"
+         y="32"
+         id="rect3205" />
+      <path
+         inkscape:connector-curvature="0"
+         d="m 2,46 v 12 l 4,4 h 8 l 4,-4 V 46 z"
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         id="path3207" />
+      <rect
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         width="14"
+         height="16"
+         x="18"
+         y="2"
+         id="rect3209" />
+      <rect
+         y="2"
+         x="32"
+         height="16"
+         width="14"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="rect3211" />
+      <path
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         d="m 46,2 h 12 l 4,4 v 8 l -4,4 H 46 z"
+         inkscape:connector-curvature="0"
+         id="path3213" />
+      <path
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 20,32 7.5,7.5 12,-12 L 32,20 z"
+         id="path3215" />
+      <path
+         d="M 27.5,39.5 35,47 47,35 39.5,27.5 z"
+         inkscape:connector-curvature="0"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3217" />
+      <path
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="m 35,47 7.5,7.5 12,-12 L 47,35 z"
+         id="path3219" />
+      <path
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         inkscape:connector-curvature="0"
+         d="M 42.5,54.5 50,62 h 4 l 8,-8 v -4 l -7.5,-7.5 z"
+         id="path3221" />
+      <path
+         inkscape:connector-curvature="0"
+         style="stroke-width:2"
+         d="M 17,17 V 34 L 34,17 z"
+         id="path3223" />
+    </g>
+  </defs>
+  <g
+     id="g3225">
+    <use
+       x="0"
+       y="0"
+       width="64"
+       height="64"
+       xlink:href="#colorBlue"
+       id="use3062" />
+    <use
+       id="use3229"
+       xlink:href="#colorBlue"
+       height="64"
+       width="64"
+       y="0"
+       x="64" />
+    <use
+       x="128"
+       y="0"
+       width="64"
+       height="64"
+       xlink:href="#colorBlue"
+       id="use3231" />
+    <use
+       id="use3233"
+       xlink:href="#colorBlue"
+       height="64"
+       width="64"
+       y="0"
+       x="192" />
+    <use
+       x="256"
+       y="0"
+       width="64"
+       height="64"
+       xlink:href="#colorBlue"
+       id="use3235" />
+    <use
+       id="use3237"
+       xlink:href="#colorBlue"
+       height="64"
+       width="64"
+       y="0"
+       x="320" />
+    <use
+       x="384"
+       y="0"
+       width="64"
+       height="64"
+       xlink:href="#colorBlue"
+       id="use3239" />
+    <use
+       id="use3241"
+       xlink:href="#colorBlue"
+       height="64"
+       width="64"
+       y="0"
+       x="448" />
+    <use
+       x="0"
+       y="64"
+       width="64"
+       height="64"
+       xlink:href="#colorRed"
+       id="use3243" />
+    <use
+       id="use3245"
+       xlink:href="#colorRed"
+       height="64"
+       width="64"
+       y="64"
+       x="64" />
+    <use
+       x="128"
+       y="64"
+       width="64"
+       height="64"
+       xlink:href="#colorRed"
+       id="use3247" />
+    <use
+       id="use3249"
+       xlink:href="#colorRed"
+       height="64"
+       width="64"
+       y="64"
+       x="192" />
+    <use
+       x="256"
+       y="64"
+       width="64"
+       height="64"
+       xlink:href="#colorRed"
+       id="use3251" />
+    <use
+       id="use3253"
+       xlink:href="#colorRed"
+       height="64"
+       width="64"
+       y="64"
+       x="320" />
+    <use
+       x="384"
+       y="64"
+       width="64"
+       height="64"
+       xlink:href="#colorRed"
+       id="use3255" />
+    <use
+       id="use3257"
+       xlink:href="#colorRed"
+       height="64"
+       width="64"
+       y="64"
+       x="448" />
+    <use
+       x="0"
+       y="128"
+       width="64"
+       height="64"
+       xlink:href="#colorPurple"
+       id="use3259" />
+    <use
+       id="use3261"
+       xlink:href="#colorPurple"
+       height="64"
+       width="64"
+       y="128"
+       x="64" />
+    <use
+       x="128"
+       y="128"
+       width="64"
+       height="64"
+       xlink:href="#colorPurple"
+       id="use3263" />
+    <use
+       id="use3265"
+       xlink:href="#colorPurple"
+       height="64"
+       width="64"
+       y="128"
+       x="192" />
+    <use
+       x="256"
+       y="128"
+       width="64"
+       height="64"
+       xlink:href="#colorPurple"
+       id="use3267" />
+    <use
+       id="use3269"
+       xlink:href="#colorPurple"
+       height="64"
+       width="64"
+       y="128"
+       x="320" />
+    <use
+       x="384"
+       y="128"
+       width="64"
+       height="64"
+       xlink:href="#colorPurple"
+       id="use3271" />
+    <use
+       id="use3273"
+       xlink:href="#colorPurple"
+       height="64"
+       width="64"
+       y="128"
+       x="448" />
+    <use
+       x="0"
+       y="192"
+       width="64"
+       height="64"
+       xlink:href="#colorYellow"
+       id="use3275" />
+    <use
+       id="use3277"
+       xlink:href="#colorYellow"
+       height="64"
+       width="64"
+       y="192"
+       x="64" />
+    <use
+       x="128"
+       y="192"
+       width="64"
+       height="64"
+       xlink:href="#colorYellow"
+       id="use3279" />
+    <use
+       id="use3281"
+       xlink:href="#colorYellow"
+       height="64"
+       width="64"
+       y="192"
+       x="192" />
+    <use
+       x="256"
+       y="192"
+       width="64"
+       height="64"
+       xlink:href="#colorYellow"
+       id="use3283" />
+    <use
+       id="use3285"
+       xlink:href="#colorYellow"
+       height="64"
+       width="64"
+       y="192"
+       x="320" />
+    <use
+       x="384"
+       y="192"
+       width="64"
+       height="64"
+       xlink:href="#colorYellow"
+       id="use3287" />
+    <use
+       id="use3289"
+       xlink:href="#colorYellow"
+       height="64"
+       width="64"
+       y="192"
+       x="448" />
+    <use
+       x="0"
+       y="256"
+       width="64"
+       height="64"
+       xlink:href="#colorPink"
+       id="use3291" />
+    <use
+       id="use3293"
+       xlink:href="#colorPink"
+       height="64"
+       width="64"
+       y="256"
+       x="64" />
+    <use
+       x="128"
+       y="256"
+       width="64"
+       height="64"
+       xlink:href="#colorPink"
+       id="use3295" />
+    <use
+       id="use3297"
+       xlink:href="#colorPink"
+       height="64"
+       width="64"
+       y="256"
+       x="192" />
+    <use
+       x="256"
+       y="256"
+       width="64"
+       height="64"
+       xlink:href="#colorPink"
+       id="use3299" />
+    <use
+       id="use3301"
+       xlink:href="#colorPink"
+       height="64"
+       width="64"
+       y="256"
+       x="320" />
+    <use
+       x="384"
+       y="256"
+       width="64"
+       height="64"
+       xlink:href="#colorPink"
+       id="use3303" />
+    <use
+       id="use3305"
+       xlink:href="#colorPink"
+       height="64"
+       width="64"
+       y="256"
+       x="448" />
+    <use
+       x="0"
+       y="320"
+       width="64"
+       height="64"
+       xlink:href="#colorOrange"
+       id="use3307" />
+    <use
+       id="use3309"
+       xlink:href="#colorOrange"
+       height="64"
+       width="64"
+       y="320"
+       x="64" />
+    <use
+       x="128"
+       y="320"
+       width="64"
+       height="64"
+       xlink:href="#colorOrange"
+       id="use3311" />
+    <use
+       id="use3313"
+       xlink:href="#colorOrange"
+       height="64"
+       width="64"
+       y="320"
+       x="192" />
+    <use
+       x="256"
+       y="320"
+       width="64"
+       height="64"
+       xlink:href="#colorOrange"
+       id="use3315" />
+    <use
+       id="use3317"
+       xlink:href="#colorOrange"
+       height="64"
+       width="64"
+       y="320"
+       x="320" />
+    <use
+       x="384"
+       y="320"
+       width="64"
+       height="64"
+       xlink:href="#colorOrange"
+       id="use3319" />
+    <use
+       id="use3321"
+       xlink:href="#colorOrange"
+       height="64"
+       width="64"
+       y="320"
+       x="448" />
+    <use
+       x="0"
+       y="384"
+       width="64"
+       height="64"
+       xlink:href="#colorCyan"
+       id="use3323" />
+    <use
+       id="use3325"
+       xlink:href="#colorCyan"
+       height="64"
+       width="64"
+       y="384"
+       x="64" />
+    <use
+       x="128"
+       y="384"
+       width="64"
+       height="64"
+       xlink:href="#colorCyan"
+       id="use3327" />
+    <use
+       id="use3329"
+       xlink:href="#colorCyan"
+       height="64"
+       width="64"
+       y="384"
+       x="192" />
+    <use
+       x="256"
+       y="384"
+       width="64"
+       height="64"
+       xlink:href="#colorCyan"
+       id="use3331" />
+    <use
+       id="use3333"
+       xlink:href="#colorCyan"
+       height="64"
+       width="64"
+       y="384"
+       x="320" />
+    <use
+       x="384"
+       y="384"
+       width="64"
+       height="64"
+       xlink:href="#colorCyan"
+       id="use3335" />
+    <use
+       id="use3337"
+       xlink:href="#colorCyan"
+       height="64"
+       width="64"
+       y="384"
+       x="448" />
+    <use
+       x="0"
+       y="448"
+       width="64"
+       height="64"
+       xlink:href="#colorGreen"
+       id="use3339" />
+    <use
+       id="use3341"
+       xlink:href="#colorGreen"
+       height="64"
+       width="64"
+       y="448"
+       x="64" />
+    <use
+       x="128"
+       y="448"
+       width="64"
+       height="64"
+       xlink:href="#colorGreen"
+       id="use3343" />
+    <use
+       id="use3345"
+       xlink:href="#colorGreen"
+       height="64"
+       width="64"
+       y="448"
+       x="192" />
+    <use
+       x="256"
+       y="448"
+       width="64"
+       height="64"
+       xlink:href="#colorGreen"
+       id="use3347" />
+    <use
+       id="use3349"
+       xlink:href="#colorGreen"
+       height="64"
+       width="64"
+       y="448"
+       x="320" />
+    <use
+       x="384"
+       y="448"
+       width="64"
+       height="64"
+       xlink:href="#colorGreen"
+       id="use3351" />
+    <use
+       id="use3353"
+       xlink:href="#colorGreen"
+       height="64"
+       width="64"
+       y="448"
+       x="448" />
+    <use
+       x="0"
+       y="0"
+       width="64"
+       height="64"
+       xlink:href="#arrow1"
+       id="use3064" />
+    <use
+       id="use3355"
+       xlink:href="#arrow1"
+       height="64"
+       width="64"
+       y="64"
+       x="0" />
+    <use
+       x="0"
+       y="128"
+       width="64"
+       height="64"
+       xlink:href="#arrow1"
+       id="use3357" />
+    <use
+       id="use3359"
+       xlink:href="#arrow1"
+       height="64"
+       width="64"
+       y="192"
+       x="0" />
+    <use
+       x="0"
+       y="256"
+       width="64"
+       height="64"
+       xlink:href="#arrow1"
+       id="use3361" />
+    <use
+       id="use3363"
+       xlink:href="#arrow1"
+       height="64"
+       width="64"
+       y="320"
+       x="0" />
+    <use
+       x="0"
+       y="384"
+       width="64"
+       height="64"
+       xlink:href="#arrow1"
+       id="use3365" />
+    <use
+       id="use3367"
+       xlink:href="#arrow1"
+       height="64"
+       width="64"
+       y="448"
+       x="0" />
+    <use
+       x="64"
+       y="0"
+       width="64"
+       height="64"
+       xlink:href="#arrow2"
+       id="use3369" />
+    <use
+       id="use3371"
+       xlink:href="#arrow2"
+       height="64"
+       width="64"
+       y="64"
+       x="64" />
+    <use
+       x="64"
+       y="128"
+       width="64"
+       height="64"
+       xlink:href="#arrow2"
+       id="use3373" />
+    <use
+       id="use3375"
+       xlink:href="#arrow2"
+       height="64"
+       width="64"
+       y="192"
+       x="64" />
+    <use
+       x="64"
+       y="256"
+       width="64"
+       height="64"
+       xlink:href="#arrow2"
+       id="use3377" />
+    <use
+       id="use3379"
+       xlink:href="#arrow2"
+       height="64"
+       width="64"
+       y="320"
+       x="64" />
+    <use
+       x="64"
+       y="384"
+       width="64"
+       height="64"
+       xlink:href="#arrow2"
+       id="use3381" />
+    <use
+       id="use3383"
+       xlink:href="#arrow2"
+       height="64"
+       width="64"
+       y="448"
+       x="64" />
+    <use
+       x="128"
+       y="0"
+       width="64"
+       height="64"
+       xlink:href="#arrow3"
+       id="use3385" />
+    <use
+       id="use3387"
+       xlink:href="#arrow3"
+       height="64"
+       width="64"
+       y="64"
+       x="128" />
+    <use
+       x="128"
+       y="128"
+       width="64"
+       height="64"
+       xlink:href="#arrow3"
+       id="use3389" />
+    <use
+       id="use3391"
+       xlink:href="#arrow3"
+       height="64"
+       width="64"
+       y="192"
+       x="128" />
+    <use
+       x="128"
+       y="256"
+       width="64"
+       height="64"
+       xlink:href="#arrow3"
+       id="use3393" />
+    <use
+       id="use3395"
+       xlink:href="#arrow3"
+       height="64"
+       width="64"
+       y="320"
+       x="128" />
+    <use
+       x="128"
+       y="384"
+       width="64"
+       height="64"
+       xlink:href="#arrow3"
+       id="use3397" />
+    <use
+       id="use3399"
+       xlink:href="#arrow3"
+       height="64"
+       width="64"
+       y="448"
+       x="128" />
+    <use
+       x="192"
+       y="0"
+       width="64"
+       height="64"
+       xlink:href="#arrow4"
+       id="use3401" />
+    <use
+       id="use3403"
+       xlink:href="#arrow4"
+       height="64"
+       width="64"
+       y="64"
+       x="192" />
+    <use
+       x="192"
+       y="128"
+       width="64"
+       height="64"
+       xlink:href="#arrow4"
+       id="use3405" />
+    <use
+       id="use3407"
+       xlink:href="#arrow4"
+       height="64"
+       width="64"
+       y="192"
+       x="192" />
+    <use
+       x="192"
+       y="256"
+       width="64"
+       height="64"
+       xlink:href="#arrow4"
+       id="use3409" />
+    <use
+       id="use3411"
+       xlink:href="#arrow4"
+       height="64"
+       width="64"
+       y="320"
+       x="192" />
+    <use
+       x="192"
+       y="384"
+       width="64"
+       height="64"
+       xlink:href="#arrow4"
+       id="use3413" />
+    <use
+       id="use3415"
+       xlink:href="#arrow4"
+       height="64"
+       width="64"
+       y="448"
+       x="192" />
+    <use
+       x="256"
+       y="0"
+       width="64"
+       height="64"
+       xlink:href="#arrow5"
+       id="use3417" />
+    <use
+       id="use3419"
+       xlink:href="#arrow5"
+       height="64"
+       width="64"
+       y="64"
+       x="256" />
+    <use
+       x="256"
+       y="128"
+       width="64"
+       height="64"
+       xlink:href="#arrow5"
+       id="use3421" />
+    <use
+       id="use3423"
+       xlink:href="#arrow5"
+       height="64"
+       width="64"
+       y="192"
+       x="256" />
+    <use
+       x="256"
+       y="256"
+       width="64"
+       height="64"
+       xlink:href="#arrow5"
+       id="use3425" />
+    <use
+       id="use3427"
+       xlink:href="#arrow5"
+       height="64"
+       width="64"
+       y="320"
+       x="256" />
+    <use
+       x="256"
+       y="384"
+       width="64"
+       height="64"
+       xlink:href="#arrow5"
+       id="use3429" />
+    <use
+       id="use3431"
+       xlink:href="#arrow5"
+       height="64"
+       width="64"
+       y="448"
+       x="256" />
+    <use
+       x="320"
+       y="0"
+       width="64"
+       height="64"
+       xlink:href="#arrow6"
+       id="use3433" />
+    <use
+       id="use3435"
+       xlink:href="#arrow6"
+       height="64"
+       width="64"
+       y="64"
+       x="320" />
+    <use
+       x="320"
+       y="128"
+       width="64"
+       height="64"
+       xlink:href="#arrow6"
+       id="use3437" />
+    <use
+       id="use3439"
+       xlink:href="#arrow6"
+       height="64"
+       width="64"
+       y="192"
+       x="320" />
+    <use
+       x="320"
+       y="256"
+       width="64"
+       height="64"
+       xlink:href="#arrow6"
+       id="use3441" />
+    <use
+       id="use3443"
+       xlink:href="#arrow6"
+       height="64"
+       width="64"
+       y="320"
+       x="320" />
+    <use
+       x="320"
+       y="384"
+       width="64"
+       height="64"
+       xlink:href="#arrow6"
+       id="use3445" />
+    <use
+       id="use3447"
+       xlink:href="#arrow6"
+       height="64"
+       width="64"
+       y="448"
+       x="320" />
+    <use
+       x="384"
+       y="0"
+       width="64"
+       height="64"
+       xlink:href="#arrow7"
+       id="use3449" />
+    <use
+       id="use3451"
+       xlink:href="#arrow7"
+       height="64"
+       width="64"
+       y="64"
+       x="384" />
+    <use
+       x="384"
+       y="128"
+       width="64"
+       height="64"
+       xlink:href="#arrow7"
+       id="use3453" />
+    <use
+       id="use3455"
+       xlink:href="#arrow7"
+       height="64"
+       width="64"
+       y="192"
+       x="384" />
+    <use
+       x="384"
+       y="256"
+       width="64"
+       height="64"
+       xlink:href="#arrow7"
+       id="use3457" />
+    <use
+       id="use3459"
+       xlink:href="#arrow7"
+       height="64"
+       width="64"
+       y="320"
+       x="384" />
+    <use
+       x="384"
+       y="384"
+       width="64"
+       height="64"
+       xlink:href="#arrow7"
+       id="use3461" />
+    <use
+       id="use3463"
+       xlink:href="#arrow7"
+       height="64"
+       width="64"
+       y="448"
+       x="384" />
+    <use
+       x="448"
+       y="0"
+       width="64"
+       height="64"
+       xlink:href="#arrow8"
+       id="use3465" />
+    <use
+       id="use3467"
+       xlink:href="#arrow8"
+       height="64"
+       width="64"
+       y="64"
+       x="448" />
+    <use
+       x="448"
+       y="128"
+       width="64"
+       height="64"
+       xlink:href="#arrow8"
+       id="use3469" />
+    <use
+       id="use3471"
+       xlink:href="#arrow8"
+       height="64"
+       width="64"
+       y="192"
+       x="448" />
+    <use
+       x="448"
+       y="256"
+       width="64"
+       height="64"
+       xlink:href="#arrow8"
+       id="use3473" />
+    <use
+       id="use3475"
+       xlink:href="#arrow8"
+       height="64"
+       width="64"
+       y="320"
+       x="448" />
+    <use
+       x="448"
+       y="384"
+       width="64"
+       height="64"
+       xlink:href="#arrow8"
+       id="use3477" />
+    <use
+       id="use3479"
+       xlink:href="#arrow8"
+       height="64"
+       width="64"
+       y="448"
+       x="448" />
+  </g>
+</svg>
