@@ -82,6 +82,7 @@ std::string const NotePlayerizeModeToString(NotePlayerizeMode npm);
 LuaDeclareType(NotePlayerizeMode);
 
 struct NewSkinLoader;
+struct TimingSource;
 
 struct QuantizedStateMap
 {
@@ -163,6 +164,14 @@ private:
 
 struct QuantizedTap
 {
+	void set_timing_source(TimingSource* source)
+	{
+		m_actor->SetTimingSource(source);
+	}
+	void update()
+	{
+		m_actor->Update(1.0f);
+	}
 	Actor* get_common(size_t state)
 	{
 		m_actor->SetState(state);
@@ -267,6 +276,8 @@ struct QuantizedHold
 
 struct NewSkinColumn
 {
+	void set_timing_source(TimingSource* source);
+	void update_taps();
 	Actor* get_tap_actor(size_t type, double quantization, double beat);
 	Actor* get_optional_actor(size_t type, double quantization, double beat);
 	Actor* get_player_tap(size_t type, size_t pn, double beat);
@@ -419,6 +430,7 @@ struct NewSkinLoader
 		NewSkinData& dest, std::string& insanity_diagnosis);
 	void sanitize_skin_parameters(lua_State* L, LuaReference& params);
 	void push_skin_parameter_info(lua_State* L) const;
+	void push_skin_parameter_defaults(lua_State* L) const;
 private:
 	void recursive_sanitize_skin_parameters(lua_State* L,
 		std::unordered_set<void const*>& visited_tables, int curr_depth,

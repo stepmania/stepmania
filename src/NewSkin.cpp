@@ -386,6 +386,36 @@ bool QuantizedHold::load_from_lua(lua_State* L, int index, NewSkinLoader const* 
 	return true;
 }
 
+void NewSkinColumn::set_timing_source(TimingSource* source)
+{
+	for(auto&& tap : m_taps)
+	{
+		tap.set_timing_source(source);
+	}
+	for(auto&& tap : m_optional_taps)
+	{
+		if(tap != nullptr)
+		{
+			tap->set_timing_source(source);
+		}
+	}
+}
+
+void NewSkinColumn::update_taps()
+{
+	for(auto&& tap : m_taps)
+	{
+		tap.update();
+	}
+	for(auto&& tap : m_optional_taps)
+	{
+		if(tap != nullptr)
+		{
+			tap->update();
+		}
+	}
+}
+
 Actor* NewSkinColumn::get_tap_actor(size_t type,
 	double quantization, double beat)
 {
@@ -1239,7 +1269,7 @@ void NewSkinLoader::recursive_sanitize_skin_parameters(lua_State* L,
 
 void NewSkinLoader::sanitize_skin_parameters(lua_State* L, LuaReference& params)
 {
-	if(m_skin_parameter_info.IsNil())
+	if(m_skin_parameter_info.IsNil() || m_skin_parameters.IsNil())
 	{
 		params.SetFromNil();
 		return;
@@ -1273,8 +1303,26 @@ void NewSkinLoader::sanitize_skin_parameters(lua_State* L, LuaReference& params)
 
 void NewSkinLoader::push_skin_parameter_info(lua_State* L) const
 {
+	if(m_skin_parameter_info.IsNil())
+	{
+		lua_pushnil(L);
+		return;
+	}
 	// Make a copy of the parameter info so the theme can't corrupt it.
 	LuaReference param_info= m_skin_parameter_info;
+	param_info.DeepCopy();
+	param_info.PushSelf(L);
+}
+
+void NewSkinLoader::push_skin_parameter_defaults(lua_State* L) const
+{
+	if(m_skin_parameters.IsNil())
+	{
+		lua_pushnil(L);
+		return;
+	}
+	// Make a copy of the parameter defaults so the theme can't corrupt it.
+	LuaReference param_info= m_skin_parameters;
 	param_info.DeepCopy();
 	param_info.PushSelf(L);
 }

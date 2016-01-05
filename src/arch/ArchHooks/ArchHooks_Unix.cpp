@@ -400,23 +400,18 @@ void ArchHooks::MountUserFilesystems( const std::string &sDirOfExecutable )
 	 * Lowercase the PRODUCT_ID; dotfiles and directories are almost always lowercase.
 	 */
 	const char *szHome = getenv( "HOME" );
-	auto sUserDataPath = fmt::sprintf( "%s/.%s", szHome? szHome:".", "stepmania-5.0" ); //call an ambulance!
-	FILEMAN->Mount( "dir", sUserDataPath + "/Announcers", "/Announcers" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/BGAnimations", "/BGAnimations" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/BackgroundEffects", "/BackgroundEffects" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/BackgroundTransitions", "/BackgroundTransitions" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Cache", "/Cache" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/CDTitles", "/CDTitles" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Characters", "/Characters" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Courses", "/Courses" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Logs", "/Logs" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/NoteSkins", "/NoteSkins" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Save", "/Save" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Screenshots", "/Screenshots" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Songs", "/Songs" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/RandomMovies", "/RandomMovies" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Themes", "/Themes" );
+	auto user_data_path = fmt::sprintf( "%s/.%s", szHome? szHome:".", "stepmania-5.0" ); //call an ambulance!
+	for(auto&& fs_dir : SpecialFiles::USER_CONTENT_DIRS)
+	{
+		FILEMAN->Mount("dir", user_data_path + fs_dir, fs_dir);
+	}
+	for(auto&& fs_dir : SpecialFiles::USER_DATA_DIRS)
+	{
+		FILEMAN->Mount("dir", user_data_path + fs_dir, fs_dir);
+	}
+	// The User Packages dir was the only one where the mount point didn't
+	// match the folder name when I changed this to use a loop. -Kyz
+	FILEMAN->Mount( "dir", user_data_path + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
 }
 
 /*

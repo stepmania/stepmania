@@ -38,6 +38,7 @@ const std::string STATS_XML_GZ         = "Stats.xml.gz";
 const std::string EDITABLE_INI         = "Editable.ini";
 /** @brief A tiny file containing the type and list priority. */
 const std::string TYPE_INI             = "Type.ini";
+const std::string NOTESKIN_PARAM_LUA   = "noteskin_params.lua";
 /** @brief The filename containing the signature for STATS_XML's signature. */
 const std::string DONT_SHARE_SIG       = "DontShare.sig";
 const std::string PUBLIC_KEY_FILE      = "public.key";
@@ -107,6 +108,11 @@ void Profile::InitEditableData()
 	m_BirthYear= 0;
 	m_IgnoreStepCountCalories= false;
 	m_IsMale= true;
+}
+
+void Profile::init_noteskin_params()
+{
+	m_noteskin_params.clear();
 }
 
 void Profile::ClearStats()
@@ -618,6 +624,41 @@ bool Profile::set_preferred_noteskin(StepsType stype, std::string const& skin)
 		return true;
 	}
 	return false;
+}
+
+LuaReference Profile::get_noteskin_params(std::string const& skin, StepsType stype) const
+{
+	auto skin_entry= m_noteskin_params.find(skin);
+	if(skin_entry == m_noteskin_params.end())
+	{
+		LuaReference ret;
+		ret.SetFromNil();
+		return ret;
+	}
+	auto stype_entry= skin_entry->second.find(stype);
+	if(stype_entry == skin_entry->second.end())
+	{
+		stype_entry= skin_entry->second.find(StepsType_Invalid);
+		if(stype_entry == skin_entry->second.end())
+		{
+			stype_entry= skin_entry->second.begin();
+			if(stype_entry == skin_entry->second.end())
+			{
+				LuaReference ret;
+				ret.SetFromNil();
+				return ret;
+			}
+			return stype_entry->second;
+		}
+		return stype_entry->second;
+	}
+	return stype_entry->second;
+}
+
+void Profile::set_noteskin_params(std::string const& skin, StepsType stype, LuaReference& params)
+{
+	auto& skin_entry= m_noteskin_params[skin];
+	skin_entry[stype]= params;
 }
 
 bool Profile::IsCodeUnlocked( std::string sUnlockEntryID ) const
@@ -1138,6 +1179,7 @@ ProfileLoadResult Profile::LoadAllFromDir( std::string sDir, bool bRequireSignat
 	LoadTypeFromDir(sDir);
 	// Not critical if this fails
 	LoadEditableDataFromDir( sDir );
+	load_noteskin_params_from_dir(sDir);
 
 	// Check for the existance of stats.xml
 	std::string fn = sDir + STATS_XML;
@@ -1304,6 +1346,7 @@ bool Profile::SaveAllToDir( std::string sDir, bool bSignData ) const
 	SaveTypeToDir(sDir);
 	// Save editable.ini
 	SaveEditableDataToDir( sDir );
+	save_noteskin_params_to_dir(sDir);
 
 	bool bSaved = SaveStatsXmlToDir( sDir, bSignData );
 
@@ -1432,6 +1475,29 @@ void Profile::SaveEditableDataToDir( std::string sDir ) const
 	ini.SetValue( "Editable", "IsMale", m_IsMale );
 
 	ini.WriteFile( sDir + EDITABLE_INI );
+}
+
+void Profile::save_noteskin_params_to_dir(std::string const& dir) const
+{
+	lua_State* L= LUA->Get();
+	lua_createtable(L, 0, m_noteskin_params.size());
+	int param_table_index= lua_gettop(L);
+	for(auto&& skin_entry : m_noteskin_params)
+	{
+		lua_pushstring(L, skin_entry.first.c_str());
+		lua_createtable(L, 0, skin_entry.second.size());
+		int skin_table_index= lua_gettop(L);
+		for(auto&& stype_entry : skin_entry.second)
+		{
+			Enum::Push(L, stype_entry.first);
+			stype_entry.second.PushSelf(L);
+			lua_settable(L, skin_table_index);
+		}
+		lua_settable(L, param_table_index);
+	}
+	LuaHelpers::save_lua_table_to_file(L, param_table_index, dir + NOTESKIN_PARAM_LUA);
+	lua_settop(L, 0);
+	LUA->Release(L);
 }
 
 XNode* Profile::SaveGeneralDataCreateNode() const
@@ -1641,6 +1707,39 @@ ProfileLoadResult Profile::LoadEditableDataFromDir( std::string sDir )
 		m_iWeightPounds = Rage::clamp( m_iWeightPounds, 20, 1000 );
 
 	return ProfileLoadResult_Success;
+}
+
+void Profile::load_noteskin_params_from_dir(std::string const& dir)
+{
+	lua_State* L= LUA->Get();
+	if(LuaHelpers::run_script_file_in_state(L, dir + NOTESKIN_PARAM_LUA, 1, true))
+	{
+		int param_table_index= lua_gettop(L);
+		if(lua_type(L, param_table_index) == LUA_TTABLE)
+		{
+			lua_pushnil(L);
+			while(lua_next(L, param_table_index) != 0)
+			{
+				int skin_table_index= lua_gettop(L);
+				if(lua_type(L, skin_table_index-1) == LUA_TSTRING &&
+					lua_type(L, skin_table_index) == LUA_TTABLE)
+				{
+					std::string skin_name= lua_tostring(L, skin_table_index-1);
+					lua_pushnil(L);
+					while(lua_next(L, skin_table_index) != 0)
+					{
+						StepsType stype= Enum::Check<StepsType>(L, -2, true, true);
+						LuaReference params;
+						params.SetFromStack(L);
+						set_noteskin_params(skin_name, stype, params);
+					}
+				}
+				lua_pop(L, 1);
+			}
+		}
+	}
+	lua_pop(L, 1);
+	LUA->Release(L);
 }
 
 void Profile::LoadGeneralDataFromNode( const XNode* pNode )
@@ -2605,6 +2704,19 @@ public:
 		return 1;
 	}
 
+	static int get_all_preferred_noteskins(T* p, lua_State* L)
+	{
+		auto& preferred_noteskins= p->get_all_preferred_noteskins();
+		lua_createtable(L, 0, preferred_noteskins.size());
+		int skin_table_index= lua_gettop(L);
+		for(auto&& stype_entry : preferred_noteskins)
+		{
+			Enum::Push(L, stype_entry.first);
+			lua_pushstring(L, stype_entry.second.c_str());
+			lua_settable(L, skin_table_index);
+		}
+		return 1;
+	}
 	static int get_preferred_noteskin(T* p, lua_State* L)
 	{
 		StepsType stype= Enum::Check<StepsType>(L, 1);
@@ -2621,6 +2733,24 @@ public:
 		{
 			LuaHelpers::ReportScriptError("The noteskin '" + skin + "' does not exist.");
 		}
+		COMMON_RETURN_SELF;
+	}
+	static int get_noteskin_params(T* p, lua_State* L)
+	{
+		std::string skin= SArg(1);
+		StepsType stype= Enum::Check<StepsType>(L, 2, true, true);
+		LuaReference params= p->get_noteskin_params(skin, stype);
+		params.PushSelf(L);
+		return 1;
+	}
+	static int set_noteskin_params(T* p, lua_State* L)
+	{
+		std::string skin= SArg(1);
+		StepsType stype= Enum::Check<StepsType>(L, 2, true, true);
+		LuaReference params;
+		lua_pushvalue(L, 3);
+		params.SetFromStack(L);
+		p->set_noteskin_params(skin, stype, params);
 		COMMON_RETURN_SELF;
 	}
 
@@ -2768,6 +2898,7 @@ public:
 		ADD_METHOD( GetHighScoreList );
 		ADD_METHOD( GetCategoryHighScoreList );
 		ADD_GET_SET_METHODS(preferred_noteskin);
+		ADD_GET_SET_METHODS(noteskin_params);
 		ADD_METHOD( GetCharacter );
 		ADD_METHOD( SetCharacter );
 		ADD_METHOD( GetWeightPounds );

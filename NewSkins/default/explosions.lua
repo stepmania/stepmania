@@ -11,21 +11,24 @@ local white= {1, 1, 1, 1}
 
 -- Precompute the particle directions so that they don't cause a (tiny) skip
 -- on every note hit.
-local particle_directions= {}
-local num_particles= 16
-local start_angle= 0
-local end_angle= 180
-local parsize= 32
-local pardist= 512
-local angle_per_particle= (end_angle - start_angle) / (num_particles - 1)
-for i= 0, num_particles-1 do
-	local angle= start_angle + (i * angle_per_particle)
-	local radan= angle / 180 * math.pi
-	particle_directions[i+1]= {
-		angle= angle, x= math.cos(radan)*pardist, y= math.sin(radan)*pardist}
-end
+return function(button_list, stepstype, skin_params)
+	local particle_directions= {}
+	local explosion_params= skin_params.explosions
+	local num_particles= explosion_params.num_particles
+	local start_angle= 0
+	local end_angle= 180
+	local parsize= explosion_params.particle_size
+	local pardist= explosion_params.particle_dist
+	local particle_life= explosion_params.particle_life
+	local have_particles= explosion_params.particles
+	local angle_per_particle= (end_angle - start_angle) / (num_particles - 1)
+	for i= 0, num_particles-1 do
+		local angle= start_angle + (i * angle_per_particle)
+		local radan= angle / 180 * math.pi
+		particle_directions[i+1]= {
+			angle= angle, x= math.cos(radan)*pardist, y= math.sin(radan)*pardist}
+	end
 
-return function(button_list, stepstype)
 	local ret= {}
 	local rots= {Left= 90, Down= 0, Up= 180, Right= 270}
 	for i, button in ipairs(button_list) do
@@ -84,7 +87,7 @@ return function(button_list, stepstype)
 						local direction= particle_directions[p]
 						self:setsize(parsize, parsize):diffuseupperleft{1, 1, 1, 0}
 							:diffuselowerright{0, 0, 0, 0}
-							:blend("BlendMode_WeightedMultiply")
+							:blend(explosion_params.particle_blend)
 							:rotationz(direction.angle+45)
 					end,
 					explodeCommand= function(self, param)
@@ -92,18 +95,17 @@ return function(button_list, stepstype)
 						self:finishtweening()
 							:diffuseupperright(param.color):diffuselowerleft(param.color)
 							:zoom(1):xy(0, 0)
-							:linear(1)
+							:decelerate(particle_life)
 							:zoom(0):xy(direction.x, direction.y)
 					end
 				}
 			end
 			particle_frames[part_id]= Def.ActorFrame(parts)
 		end
-		ret[i]= Def.ActorFrame{
+		local column_frame= Def.ActorFrame{
 			InitCommand= function(self)
 				self:rotationz(rots[button] or 0)
 			end,
-			Def.ActorFrame(particle_frames),
 			Def.Sprite{
 				Texture= "explosion.png", InitCommand= function(self)
 					self:visible(false):SetAllStateDelays(.05)
@@ -183,8 +185,12 @@ return function(button_list, stepstype)
 				hideCommand= function(self)
 					self:visible(false)
 				end,
-			}
+			},
 		}
+		if have_particles then
+			column_frame[#column_frame+1]= Def.ActorFrame(particle_frames)
+		end
+		ret[i]= column_frame
 	end
 	return ret
 end

@@ -78,6 +78,7 @@ void NewFieldColumn::set_column_info(size_t column, NewSkinColumn* newskin,
 {
 	m_column= column;
 	m_newskin= newskin;
+	m_newskin->set_timing_source(&m_timing_source);
 	m_note_data= note_data;
 	m_timing_data= timing_data;
 	m_column_mod.pos_mod.x_mod.m_value= x;
@@ -120,6 +121,10 @@ double NewFieldColumn::get_second_from_beat(double beat)
 
 void NewFieldColumn::set_displayed_time(double beat, double second)
 {
+	m_timing_source.beat_delta= beat - m_curr_beat;
+	m_timing_source.second_delta= second - m_curr_second;
+	m_timing_source.curr_second= second;
+	m_newskin->update_taps();
 	m_curr_beat= beat;
 	m_curr_second= second;
 	m_mod_manager.update(beat, second);

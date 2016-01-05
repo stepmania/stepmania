@@ -20,6 +20,30 @@ const std::string SpecialFiles::SONGS_DIR = "Songs/";
 const std::string SpecialFiles::COURSES_DIR	= "Courses/";
 const std::string SpecialFiles::NOTESKINS_DIR = "NoteSkins/";
 const std::string SpecialFiles::NEWSKINS_DIR = "NewSkins/";
+const std::vector<std::string> SpecialFiles::USER_CONTENT_DIRS= {
+	"/Announcers",
+	"/BGAnimations",
+	"/BackgroundEffects",
+	"/BackgroundTransitions",
+	"/CDTitles",
+	"/Characters",
+	"/Courses",
+	"/NoteSkins",
+	"/NewSkins",
+	"/Packages",
+	"/Songs",
+	"/RandomMovies",
+	"/Themes",
+};
+const std::vector<std::string> SpecialFiles::USER_DATA_DIRS= {
+	// When adding entries to USER_DATA_DIRS, ArchHooks::MountUserFilesystems
+	// in arch/ArchHooks_MacOSX.cpp must be edited manually because these are
+	// all stored in different places on OS X. -Kyz
+	"/Cache",
+	"/Logs",
+	"/Save",
+	"/Screenshots",
+};
 
 
 /*

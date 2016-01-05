@@ -187,6 +187,8 @@ struct NewFieldColumn : ActorFrame
 	ModifiableValue m_explosion_alpha;
 	ModifiableValue m_explosion_glow;
 
+	TimingSource m_timing_source;
+
 private:
 	void did_tap_note_internal(TapNoteScore tns, bool bright);
 	void did_hold_note_internal(HoldNoteScore hns, bool bright);

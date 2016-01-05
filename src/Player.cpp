@@ -717,6 +717,7 @@ void Player::Load()
 			{
 				StepsType stype= GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType;
 				prof->get_preferred_noteskin(stype, skin_name);
+				skin_params= prof->get_noteskin_params(skin_name, stype);
 			}
 			else
 			{

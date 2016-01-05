@@ -76,6 +76,7 @@ public:
 	virtual void FinishTweening();
 	virtual void HurryTweening( float factor );
 
+	virtual void SetState(size_t s);
 	void SetUpdateRate(float rate) { if(rate > 0.0f) { m_fUpdateRate = rate; }}
 	float GetUpdateRate() { return m_fUpdateRate; }
 	void SetFOV( float fFOV ) { m_fFOV = fFOV; }

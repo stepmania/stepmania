@@ -969,21 +969,9 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 		lua_pushboolean(L, p->empty());
 		return 1;
 	}
-#define SET_GET_LUA(name) \
-	static int set_##name(T* p, lua_State* L) \
-	{ \
-		p->set_##name(lua_toboolean(L, 1)); \
-		COMMON_RETURN_SELF; \
-	} \
-	static int get_##name(T* p, lua_State* L) \
-	{ \
-		lua_pushboolean(L, p->get_##name()); \
-		return 1; \
-	}
-	SET_GET_LUA(loop);
-	SET_GET_LUA(polygonal);
-	SET_GET_LUA(dirty);
-#undef SET_GET_LUA
+	GETTER_SETTER_BOOL_METHOD(loop);
+	GETTER_SETTER_BOOL_METHOD(polygonal);
+	GETTER_SETTER_BOOL_METHOD(dirty);
 	static int destroy(T* p, lua_State* L)
 	{
 		if(p->m_owned_by_actor)
@@ -1012,12 +1000,9 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 		ADD_METHOD(set_dimension);
 		ADD_METHOD(get_dimension);
 		ADD_METHOD(empty);
-		ADD_METHOD(set_loop);
-		ADD_METHOD(get_loop);
-		ADD_METHOD(set_polygonal);
-		ADD_METHOD(get_polygonal);
-		ADD_METHOD(set_dirty);
-		ADD_METHOD(get_dirty);
+		ADD_GET_SET_METHODS(loop);
+		ADD_GET_SET_METHODS(polygonal);
+		ADD_GET_SET_METHODS(dirty);
 		ADD_METHOD(destroy);
 	}
 };
