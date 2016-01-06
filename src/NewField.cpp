@@ -72,22 +72,12 @@ void NewFieldColumn::add_heads_from_layers(size_t column,
 	}
 }
 
-void NewFieldColumn::set_column_info(size_t column, NewSkinColumn* newskin,
-	NewSkinData& skin_data, std::vector<Rage::Color>* player_colors,
-	const NoteData* note_data, const TimingData* timing_data, double x)
+void NewFieldColumn::set_note_data(size_t column, const NoteData* note_data,
+	const TimingData* timing_data)
 {
-	m_column= column;
-	m_newskin= newskin;
-	m_newskin->set_timing_source(&m_timing_source);
 	m_note_data= note_data;
 	m_timing_data= timing_data;
-	m_column_mod.pos_mod.x_mod.m_value= x;
-	m_use_game_music_beat= true;
-	m_player_colors= player_colors;
 	first_note_visible_prev_frame= m_note_data->end(column);
-
-	m_mod_manager.column= column;
-
 	for(auto&& moddable : {&m_time_offset, &m_quantization_multiplier,
 				&m_quantization_offset,
 				&m_speed_mod, &m_reverse_offset_pixels, &m_reverse_percent,
@@ -104,6 +94,21 @@ void NewFieldColumn::set_column_info(size_t column, NewSkinColumn* newskin,
 	{
 		moddable->set_timing(timing_data);
 	}
+}
+
+void NewFieldColumn::set_column_info(size_t column, NewSkinColumn* newskin,
+	NewSkinData& skin_data, std::vector<Rage::Color>* player_colors,
+	const NoteData* note_data, const TimingData* timing_data, double x)
+{
+	m_column= column;
+	m_newskin= newskin;
+	m_newskin->set_timing_source(&m_timing_source);
+	set_note_data(column, note_data, timing_data);
+	m_column_mod.pos_mod.x_mod.m_value= x;
+	m_use_game_music_beat= true;
+	m_player_colors= player_colors;
+
+	m_mod_manager.column= column;
 
 	add_heads_from_layers(column, m_heads_below_notes, skin_data.m_layers_below_notes);
 	add_heads_from_layers(column, m_heads_above_notes, skin_data.m_layers_above_notes);
@@ -1322,7 +1327,7 @@ NewField::NewField()
 	 m_vanish_x_mod(&m_mod_manager, 0.0), m_vanish_y_mod(&m_mod_manager, 0.0),
 	 m_vanish_type(FVT_RelativeToParent),
 	 m_own_note_data(false), m_note_data(nullptr), m_timing_data(nullptr),
-	 m_drawing_board(false)
+	 m_steps_type(StepsType_Invalid), m_drawing_board(false)
 {
 	set_skin("default", m_skin_parameters);
 	m_board.Load(THEME->GetPathG("NoteField", "board"));
@@ -1359,11 +1364,12 @@ void NewField::PreDraw()
 	SetFOV(m_fov_mod.evaluate(input));
 	double vanish_x= m_vanish_x_mod.evaluate(input);
 	double vanish_y= m_vanish_y_mod.evaluate(input);
+	Actor* parent= GetParent();
 	switch(m_vanish_type)
 	{
 		case FVT_RelativeToParent:
-			vanish_x+= GetParent()->GetX();
-			vanish_y+= GetParent()->GetY();
+			vanish_x+= parent->GetX();
+			vanish_y+= parent->GetY();
 		case FVT_RelativeToSelf:
 			vanish_x+= GetX();
 			vanish_y+= GetY();
@@ -1456,6 +1462,10 @@ void NewField::set_skin(std::string const& skin_name, LuaReference& skin_params)
 		LuaHelpers::ReportScriptErrorFmt("Could not find loader for newskin '%s'.", skin_name.c_str());
 	}
 	m_skin_parameters= skin_params;
+	if(m_note_data != nullptr)
+	{
+		reload_columns();
+	}
 }
 
 void NewField::set_steps(Steps* data)
@@ -1465,40 +1475,46 @@ void NewField::set_steps(Steps* data)
 		clear_steps();
 		return;
 	}
-	// TODO:  Remove the dependence on the current game.  A notefield should be
-	// able to show steps of any stepstype.
-	// The style is needed because it has the column info for positioning the
-	// columns.
-	const Game* curr_game= GAMESTATE->GetCurrentGame();
-	const Style* curr_style= GAMEMAN->GetFirstCompatibleStyle(curr_game, 1, data->m_StepsType);
-	if(curr_style == nullptr)
-	{
-		curr_style= GAMEMAN->GetFirstCompatibleStyle(curr_game, 2, data->m_StepsType);
-	}
-	if(curr_style == nullptr)
-	{
-		clear_steps();
-		return;
-	}
 	NoteData* note_data= new NoteData;
 	data->GetNoteData(*note_data);
-	set_note_data(note_data, data->GetTimingData(), curr_style);
+	set_note_data(note_data, data->GetTimingData(), data->m_StepsType);
 	m_own_note_data= true;
 }
 
-void NewField::set_note_data(NoteData* note_data, TimingData* timing, Style const* curr_style)
+void NewField::set_note_data(NoteData* note_data, TimingData* timing, StepsType stype)
 {
 	m_note_data= note_data;
 	note_data->SetOccuranceTimeForAllTaps(timing);
 	m_own_note_data= false;
-	StepsType button_stype= curr_style->m_StepsType;
-	if(!m_skin_walker.supports_needed_buttons(button_stype))
+	m_timing_data= timing;
+	m_trans_mod.set_timing(m_timing_data);
+	for(auto&& moddable : {&m_fov_mod, &m_vanish_x_mod, &m_vanish_y_mod})
+	{
+		moddable->set_timing(m_timing_data);
+	}
+	if(stype != m_steps_type)
+	{
+		m_steps_type= stype;
+		reload_columns();
+	}
+	else
+	{
+		for(size_t i= 0; i < m_columns.size(); ++i)
+		{
+			m_columns[i].set_note_data(i, m_note_data, m_timing_data);
+		}
+	}
+}
+
+void NewField::reload_columns()
+{
+	if(!m_skin_walker.supports_needed_buttons(m_steps_type))
 	{
 		LuaHelpers::ReportScriptError("The noteskin does not support the required buttons.");
 		return;
 	}
 	string insanity;
-	if(!m_skin_walker.load_into_data(button_stype, m_skin_parameters, m_newskin, insanity))
+	if(!m_skin_walker.load_into_data(m_steps_type, m_skin_parameters, m_newskin, insanity))
 	{
 		LuaHelpers::ReportScriptError("Error loading noteskin: " + insanity);
 		return;
@@ -1530,14 +1546,8 @@ void NewField::set_note_data(NoteData* note_data, TimingData* timing, Style cons
 	LUA->Release(L);
 
 	double curr_x= (m_field_width * -.5);
-	m_timing_data= timing;
 	m_columns.clear();
 	m_columns.resize(m_note_data->GetNumTracks());
-	m_trans_mod.set_timing(timing);
-	for(auto&& moddable : {&m_fov_mod, &m_vanish_x_mod, &m_vanish_y_mod})
-	{
-		moddable->set_timing(timing);
-	}
 	// The column needs all of this info.  fXOffset might come from somewhere
 	// else when styles are removed.
 	for(size_t i= 0; i < m_columns.size(); ++i)
@@ -1807,6 +1817,18 @@ LUA_REGISTER_DERIVED_CLASS(NewFieldColumn, ActorFrame);
 
 struct LunaNewField : Luna<NewField>
 {
+	static int set_skin(T* p, lua_State* L)
+	{
+		std::string skin_name= SArg(1);
+		LuaReference skin_params;
+		if(lua_type(L, 2) == LUA_TTABLE)
+		{
+			lua_pushvalue(L, 2);
+			skin_params.SetFromStack(L);
+		}
+		p->set_skin(skin_name, skin_params);
+		COMMON_RETURN_SELF;
+	}
 	static int set_steps(T* p, lua_State* L)
 	{
 		Steps* data= Luna<Steps>::check(L, 1);
@@ -1842,6 +1864,7 @@ struct LunaNewField : Luna<NewField>
 	}
 	LunaNewField()
 	{
+		ADD_METHOD(set_skin);
 		ADD_METHOD(set_steps);
 		ADD_METHOD(get_columns);
 		ADD_METHOD(get_width);

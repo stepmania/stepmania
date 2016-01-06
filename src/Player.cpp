@@ -812,7 +812,7 @@ void Player::Load()
 	{
 		m_pNoteField->SetY( fNoteFieldMiddle );
 		m_pNoteField->Load( &m_NoteData, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels );
-		m_new_field->set_note_data(&m_NoteData, m_Timing, GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber));
+		m_new_field->set_note_data(&m_NoteData, m_Timing, GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType);
 	}
 
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->GetUsesCenteredArrows();

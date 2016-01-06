@@ -34,19 +34,23 @@ struct NewFieldColumn : ActorFrame
 	};
 	struct render_note
 	{
-		render_note(NewFieldColumn* column, NoteData::TrackMap::const_iterator column_end, NoteData::TrackMap::const_iterator iter);
+		render_note(NewFieldColumn* column, NoteData::TrackMap::const_iterator
+			column_end, NoteData::TrackMap::const_iterator iter);
 		double y_offset;
 		double tail_y_offset;
 		NoteData::TrackMap::const_iterator note_iter;
 	};
 	void add_heads_from_layers(size_t column, std::vector<column_head>& heads,
 		std::vector<NewSkinLayer>& layers);
+	void set_note_data(size_t column, const NoteData* note_data,
+		const TimingData* timing_data);
 	void set_column_info(size_t column, NewSkinColumn* newskin,
 		NewSkinData& skin_data, std::vector<Rage::Color>* player_colors,
 		const NoteData* note_data, const TimingData* timing_data, double x);
 
 	Rage::Color get_player_color(size_t pn);
-	void get_hold_draw_time(TapNote const& tap, double const hold_beat, double& beat, double& second);
+	void get_hold_draw_time(TapNote const& tap, double const hold_beat,
+		double& beat, double& second);
 	void draw_hold(QuantizedHoldRenderData& data, render_note const& note,
 		double head_beat, double head_second,
 		double tail_beat, double tail_second);
@@ -266,7 +270,7 @@ struct NewField : ActorFrame
 	void clear_steps();
 	void set_skin(std::string const& skin_name, LuaReference& skin_params);
 	void set_steps(Steps* data);
-	void set_note_data(NoteData* note_data, TimingData* timing, Style const* curr_style);
+	void set_note_data(NoteData* note_data, TimingData* timing, StepsType stype);
 	// set_player_number exists only so that the notefield board can have
 	// per-player configuration on gameplay.  Using it for any other purpose
 	// is forbidden.
@@ -292,6 +296,7 @@ struct NewField : ActorFrame
 	FieldVanishType m_vanish_type;
 
 private:
+	void reload_columns();
 	double m_curr_beat;
 	double m_curr_second;
 	double m_field_width;
@@ -299,6 +304,7 @@ private:
 	bool m_own_note_data;
 	NoteData* m_note_data;
 	const TimingData* m_timing_data;
+	StepsType m_steps_type;
 	std::vector<NewFieldColumn> m_columns;
 	NewSkinData m_newskin;
 	NewSkinLoader m_skin_walker;
