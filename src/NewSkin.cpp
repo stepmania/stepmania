@@ -728,6 +728,18 @@ NewSkinData::NewSkinData()
 	
 }
 
+void NewSkinData::swap(NewSkinData& other)
+{
+	m_layers_below_notes.swap(other.m_layers_below_notes);
+	m_layers_above_notes.swap(other.m_layers_above_notes);
+	m_player_colors.swap(other.m_player_colors);
+	m_columns.swap(other.m_columns);
+	m_skin_parameters.swap(other.m_skin_parameters);
+	bool temp_loaded= m_loaded;
+	m_loaded= other.m_loaded;
+	other.m_loaded= temp_loaded;
+}
+
 bool NewSkinData::load_taps_from_lua(lua_State* L, int index, size_t columns,
 	NewSkinLoader const* load_skin, string& insanity_diagnosis)
 {
@@ -775,6 +787,23 @@ bool NewSkinData::load_taps_from_lua(lua_State* L, int index, size_t columns,
 	m_columns.swap(temp_columns);
 	m_loaded= true;
 	return true;
+}
+
+void NewSkinLoader::swap(NewSkinLoader& other)
+{
+	m_skin_name.swap(other.m_skin_name);
+	m_fallback_skin_name.swap(other.m_fallback_skin_name);
+	m_load_path.swap(other.m_load_path);
+	m_notes_loader.swap(other.m_notes_loader);
+	m_below_loaders.swap(other.m_below_loaders);
+	m_above_loaders.swap(other.m_above_loaders);
+	m_player_colors.swap(other.m_player_colors);
+	m_supported_buttons.swap(other.m_supported_buttons);
+	m_skin_parameters.swap(other.m_skin_parameters);
+	m_skin_parameter_info.swap(other.m_skin_parameter_info);
+	bool temp_sup= m_supports_all_buttons;
+	m_supports_all_buttons= other.m_supports_all_buttons;
+	other.m_supports_all_buttons= temp_sup;
 }
 
 bool NewSkinLoader::load_from_file(std::string const& path)

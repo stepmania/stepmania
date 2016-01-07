@@ -375,6 +375,7 @@ struct NewSkinData
 {
 	static const size_t max_columns= 256;
 	NewSkinData();
+	void swap(NewSkinData& other);
 	NewSkinColumn* get_column(size_t column)
 	{
 		if(column >= m_columns.size())
@@ -417,6 +418,7 @@ struct NewSkinLoader
 	{
 		return m_load_path;
 	}
+	void swap(NewSkinLoader& other);
 	bool load_from_file(std::string const& path);
 	bool load_from_lua(lua_State* L, int index, std::string const& name,
 		std::string const& path, std::string& insanity_diagnosis);

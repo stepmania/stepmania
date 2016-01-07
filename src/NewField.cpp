@@ -1453,18 +1453,19 @@ void NewField::clear_steps()
 void NewField::set_skin(std::string const& skin_name, LuaReference& skin_params)
 {
 	NewSkinLoader const* loader= NEWSKIN->get_loader_for_skin(skin_name);
-	if(loader != nullptr)
+	if(loader == nullptr)
 	{
-		m_skin_walker= *loader;
+		LuaHelpers::ReportScriptErrorFmt("Could not find loader for newskin '%s'.", skin_name.c_str());
+		return;
+	}
+	if(m_note_data != nullptr)
+	{
+		reload_columns(loader, skin_params);
 	}
 	else
 	{
-		LuaHelpers::ReportScriptErrorFmt("Could not find loader for newskin '%s'.", skin_name.c_str());
-	}
-	m_skin_parameters= skin_params;
-	if(m_note_data != nullptr)
-	{
-		reload_columns();
+		m_skin_walker= *loader;
+		m_skin_parameters= skin_params;
 	}
 }
 
@@ -1495,7 +1496,7 @@ void NewField::set_note_data(NoteData* note_data, TimingData* timing, StepsType 
 	if(stype != m_steps_type)
 	{
 		m_steps_type= stype;
-		reload_columns();
+		reload_columns(&m_skin_walker, m_skin_parameters);
 	}
 	else
 	{
@@ -1506,19 +1507,27 @@ void NewField::set_note_data(NoteData* note_data, TimingData* timing, StepsType 
 	}
 }
 
-void NewField::reload_columns()
+void NewField::reload_columns(NewSkinLoader const* new_loader, LuaReference& new_params)
 {
-	if(!m_skin_walker.supports_needed_buttons(m_steps_type))
+	NewSkinLoader new_skin_walker= *new_loader;
+	if(!new_skin_walker.supports_needed_buttons(m_steps_type))
 	{
 		LuaHelpers::ReportScriptError("The noteskin does not support the required buttons.");
 		return;
 	}
+	// Load the noteskin into a temporary to protect against errors.
+	NewSkinData new_skin;
 	string insanity;
-	if(!m_skin_walker.load_into_data(m_steps_type, m_skin_parameters, m_newskin, insanity))
+	if(!new_skin_walker.load_into_data(m_steps_type, new_params, new_skin, insanity))
 	{
 		LuaHelpers::ReportScriptError("Error loading noteskin: " + insanity);
 		return;
 	}
+	// Load successful, copy it into members.
+	m_skin_walker.swap(new_skin_walker);
+	m_newskin.swap(new_skin);
+	m_skin_parameters= new_params;
+
 	m_player_colors= m_newskin.m_player_colors;
 	m_field_width= 0.0;
 	Lua* L= LUA->Get();

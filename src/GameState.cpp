@@ -750,7 +750,7 @@ void GameState::BeginStage()
 		{
 			if(m_iPlayerStageTokens[p] < m_iNumStagesOfThisSong)
 			{
-				LuaHelpers::ReportScriptErrorFmt("Player %d only has %d stage tokens, but needs %d.", p, m_iPlayerStageTokens[p], m_iNumStagesOfThisSong);
+				LuaHelpers::ReportScriptErrorFmt("Player %d only has %d stage tokens, but needs %d.", static_cast<int>(p), m_iPlayerStageTokens[p], m_iNumStagesOfThisSong);
 			}
 		}
 		m_iPlayerStageTokens[p] -= m_iNumStagesOfThisSong;

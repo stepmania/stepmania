@@ -296,7 +296,7 @@ struct NewField : ActorFrame
 	FieldVanishType m_vanish_type;
 
 private:
-	void reload_columns();
+	void reload_columns(NewSkinLoader const* new_loader, LuaReference& new_params);
 	double m_curr_beat;
 	double m_curr_second;
 	double m_field_width;
