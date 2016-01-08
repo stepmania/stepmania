@@ -14,11 +14,7 @@ public:
 class LocalizedString
 {
 public:
-<<<<<<< HEAD
 	LocalizedString( std::string const & sGroup = "", std::string const & sName = "" );
-=======
-	LocalizedString( std::string const &sGroup = "", std::string const &sName = "" );
->>>>>>> ec008649bf2e77a3b81b1b919ce6b92696a33e9b
 	LocalizedString(LocalizedString const& other);
 	~LocalizedString();
 	void Load( std::string const &sGroup, std::string const &sName );
