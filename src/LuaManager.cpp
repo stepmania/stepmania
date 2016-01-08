@@ -18,6 +18,7 @@
 #include <csetjmp>
 #include <cassert>
 #include <map>
+#include <unordered_set>
 #include <array>
 
 using std::vector;
@@ -144,6 +145,256 @@ void LuaManager::UnsetGlobal( const std::string &sName )
 	lua_pushnil( L );
 	lua_setglobal( L, sName.c_str() );
 	Release( L );
+}
+
+bool LuaHelpers::string_can_be_lua_identifier(lua_State* L, std::string const& str)
+{
+	int original_top= lua_gettop(L);
+	lua_getfield(L, LUA_GLOBALSINDEX, "string");
+	lua_getfield(L, -1, "match");
+	int ret_start_index= lua_gettop(L);
+	lua_pushstring(L, str.c_str());
+	lua_pushstring(L, "^[a-zA-Z_][a-zA-Z_0-9]*$");
+	lua_call(L, 2, LUA_MULTRET);
+	if(lua_isnil(L, ret_start_index))
+	{
+		lua_settop(L, original_top);
+		return false;
+	}
+	lua_settop(L, original_top);
+	return true;
+}
+
+void LuaHelpers::push_lua_escaped_string(lua_State* L, std::string const& str)
+{
+	lua_getfield(L, LUA_GLOBALSINDEX, "string");
+	int str_tab_ind= lua_gettop(L);
+	lua_getfield(L, -1, "format");
+	lua_pushstring(L, "%q");
+	lua_pushstring(L, str.c_str());
+	lua_call(L, 2, 1);
+	lua_remove(L, str_tab_ind);
+}
+
+static void write_lua_value_to_file(lua_State* L, int value_index,
+	RageFile* file, std::string const& indent, std::unordered_set<void const*>& visited_tables, bool write_equals);
+static void write_lua_table_to_file(lua_State* L, int table_index,
+	RageFile* file, std::string const& indent, std::unordered_set<void const*>& visited_tables);
+
+static void write_lua_value_to_file(lua_State* L, int value_index,
+	RageFile* file, std::string const& indent, std::unordered_set<void const*>& visited_tables, bool write_equals)
+{
+	if(write_equals)
+	{
+		file->Write("= ");
+	}
+	switch(lua_type(L, value_index))
+	{
+		case LUA_TTABLE:
+			write_lua_table_to_file(L, value_index, file, indent, visited_tables);
+			break;
+		case LUA_TSTRING:
+			{
+				lua_getfield(L, LUA_GLOBALSINDEX, "string");
+				lua_getfield(L, -1, "format");
+				lua_pushstring(L, "%q");
+				lua_pushvalue(L, value_index);
+				lua_call(L, 2, 1);
+				file->Write(lua_tostring(L, -1));
+				lua_pop(L, 2);
+			}
+			break;
+		case LUA_TNUMBER:
+			{
+				double as_double= lua_tonumber(L, value_index);
+				int as_int= lua_tointeger(L, value_index);
+				double int_turned_double= static_cast<int>(as_int);
+				std::string val_str;
+				if(fabs(as_double - int_turned_double) < .001)
+				{
+					val_str= fmt::sprintf("%i", as_int);
+				}
+				else
+				{
+					val_str= fmt::sprintf("%.6f", as_double);
+				}
+				file->Write(val_str);
+			}
+			break;
+		case LUA_TBOOLEAN:
+			if(lua_toboolean(L, value_index))
+			{
+				file->Write("true");
+			}
+			else
+			{
+				file->Write("false");
+			}
+			break;
+		default:
+			break;
+	}
+	file->Write(",");
+}
+
+static void write_lua_table_to_file(lua_State* L, int table_index,
+	RageFile* file, std::string const& indent, std::unordered_set<void const*>& visited_tables)
+{
+	visited_tables.insert(lua_topointer(L, table_index));
+	// Fields shall be saved strictly ordered by key type and value.
+  // String fields, double fields, int fields, bool fields.
+	// Other key types shall be considered nonsense and ignored. -Kyz
+	std::vector<std::string> string_fields;
+	std::vector<double> double_fields;
+	std::vector<int> int_fields;
+	std::vector<bool> bool_fields;
+	lua_pushnil(L);
+	while(lua_next(L, table_index) != 0)
+	{
+		// Filter out anything that is not a table, string, number, or boolean
+		// with a switch.  Accepted types use fallthrough, default uses continue.
+		switch(lua_type(L, -1))
+		{
+			case LUA_TTABLE:
+				{
+					void const* sub_table= lua_topointer(L, -1);
+					auto entry= visited_tables.find(sub_table);
+					if(entry != visited_tables.end())
+					{
+						lua_pop(L, 1);
+						continue;
+					}
+				}
+			case LUA_TSTRING:
+			case LUA_TNUMBER:
+			case LUA_TBOOLEAN:
+				break;
+			default:
+				lua_pop(L, 1);
+				continue;
+		}
+		int key_type= lua_type(L, -2);
+		switch(key_type)
+		{
+			case LUA_TSTRING:
+				string_fields.push_back(std::string(lua_tostring(L, -2)));
+				break;
+			case LUA_TBOOLEAN:
+				bool_fields.push_back(lua_toboolean(L, -2));
+				break;
+			case LUA_TNUMBER:
+				{
+					double as_double= lua_tonumber(L, -2);
+					int as_int= lua_tointeger(L, -2);
+					double int_turned_double= static_cast<int>(as_int);
+					if(fabs(as_double - int_turned_double) < .001)
+					{
+						int_fields.push_back(as_int);
+					}
+					else
+					{
+						double_fields.push_back(as_double);
+					}
+				}
+				break;
+			default:
+				break;
+		}
+		lua_pop(L, 1);
+	}
+	std::sort(string_fields.begin(), string_fields.end());
+	std::sort(double_fields.begin(), double_fields.end());
+	std::sort(int_fields.begin(), int_fields.end());
+	std::sort(bool_fields.begin(), bool_fields.end());
+	file->Write("{\n");
+	std::string subindent= indent + "  ";
+	for(auto&& field : string_fields)
+	{
+		file->Write(subindent);
+		if(LuaHelpers::string_can_be_lua_identifier(L, field))
+		{
+			file->Write(field);
+		}
+		else
+		{
+			file->Write("[");
+			LuaHelpers::push_lua_escaped_string(L, field);
+			file->Write(lua_tostring(L, -1));
+			file->Write("]");
+			lua_pop(L, 1);
+		}
+		lua_getfield(L,  table_index, field.c_str());
+		write_lua_value_to_file(L, lua_gettop(L), file, subindent, visited_tables, true);
+		lua_pop(L, 1);
+		file->Write("\n");
+	}
+	for(auto&& field : double_fields)
+	{
+		file->Write(subindent);
+		file->Write(fmt::sprintf("[%.6f]", field));
+		lua_pushnumber(L, field);
+		lua_gettable(L, table_index);
+		write_lua_value_to_file(L, lua_gettop(L), file, subindent, visited_tables, true);
+		lua_pop(L, 1);
+		file->Write("\n");
+	}
+	int next_array_style_index= 1;
+	for(auto&& field : int_fields)
+	{
+		file->Write(subindent);
+		bool needs_equals= true;
+		if(field == next_array_style_index)
+		{
+			needs_equals= false;
+			++next_array_style_index;
+		}
+		else
+		{
+			file->Write(fmt::sprintf("[%i]", field));
+		}
+		lua_pushnumber(L, field);
+		lua_gettable(L, table_index);
+		write_lua_value_to_file(L, lua_gettop(L), file, subindent, visited_tables, needs_equals);
+		lua_pop(L, 1);
+		file->Write("\n");
+	}
+	for(auto&& field : bool_fields)
+	{
+		file->Write(subindent);
+		if(field)
+		{
+			file->Write("[true]");
+		}
+		else
+		{
+			file->Write("[false]");
+		}
+		lua_pushboolean(L, field);
+		lua_gettable(L, table_index);
+		write_lua_value_to_file(L, lua_gettop(L), file, subindent, visited_tables, true);
+		lua_pop(L, 1);
+		file->Write("\n");
+	}
+	file->Write(indent);
+	file->Write("}");
+}
+
+void LuaHelpers::save_lua_table_to_file(lua_State* L, int table_index,
+	std::string const& filename)
+{
+	RageFile* file= new RageFile;
+	if(!file->Open(filename, RageFile::WRITE))
+	{
+		LOG->Trace("Could not open %s to save lua data.", filename.c_str());
+		return;
+	}
+	std::unordered_set<void const*> visited_tables;
+	std::string indent;
+	file->Write("return ");
+	write_lua_table_to_file(L, table_index, file, indent, visited_tables);
+	file->Write("\n");
+	file->Close();
+	delete file;
 }
 
 void LuaHelpers::CreateTableFromArrayB( Lua *L, const vector<bool> &aIn )
@@ -880,7 +1131,29 @@ XNode *LuaHelpers::GetLuaInformation()
 	return pLuaNode;
 }
 
-bool LuaHelpers::RunScriptFile( const std::string &sFile )
+bool LuaHelpers::run_script_file_in_state(lua_State* L,
+	std::string const& filename, int return_values, bool blank_env)
+{
+	std::string script;
+	if(!GetFileContents(filename, script))
+	{
+		for(int i= 0; i < return_values; ++i)
+		{
+			lua_pushnil(L);
+		}
+		return false;
+	}
+	std::string err;
+	if(!LuaHelpers::RunScript(L, script, "@" + filename, err, 0, return_values, false, blank_env))
+	{
+		err= fmt::sprintf("Lua runtime error: %s", err.c_str());
+		LuaHelpers::ReportScriptError(err);
+		return false;
+	}
+	return true;
+}
+
+bool LuaHelpers::RunScriptFile(const std::string &sFile, bool blank_env)
 {
 	std::string sScript;
 	if( !GetFileContents(sFile, sScript) )
@@ -889,7 +1162,7 @@ bool LuaHelpers::RunScriptFile( const std::string &sFile )
 	Lua *L = LUA->Get();
 
 	std::string sError;
-	if( !LuaHelpers::RunScript( L, sScript, "@" + sFile, sError, 0 ) )
+	if(!LuaHelpers::RunScript(L, sScript, "@" + sFile, sError, 0, 0, false, blank_env))
 	{
 		LUA->Release( L );
 		sError = fmt::sprintf( "Lua runtime error: %s", sError.c_str() );
@@ -944,8 +1217,14 @@ Dialog::Result LuaHelpers::ReportScriptError(std::string const& Error, std::stri
 	return Dialog::ok;
 }
 
-bool LuaHelpers::RunScriptOnStack( Lua *L, std::string &Error, int Args, int ReturnValues, bool ReportError )
+bool LuaHelpers::RunScriptOnStack(Lua *L, std::string &Error, int Args,
+	int ReturnValues, bool ReportError, bool blank_env)
 {
+	if(blank_env)
+	{
+		lua_newtable(L);
+		lua_setfenv(L, lua_gettop(L) - Args - 1);
+	}
 	lua_pushcfunction( L, GetLuaStack );
 
 	// move the error function above the function and params
@@ -979,7 +1258,9 @@ bool LuaHelpers::RunScriptOnStack( Lua *L, std::string &Error, int Args, int Ret
 	return true;
 }
 
-bool LuaHelpers::RunScript( Lua *L, const std::string &Script, const std::string &Name, std::string &Error, int Args, int ReturnValues, bool ReportError )
+bool LuaHelpers::RunScript(Lua *L, const std::string &Script,
+	const std::string &Name, std::string &Error, int Args, int ReturnValues,
+	bool ReportError, bool blank_env)
 {
 	std::string lerror;
 	if( !LoadScript(L, Script, Name, lerror) )
@@ -1000,13 +1281,14 @@ bool LuaHelpers::RunScript( Lua *L, const std::string &Script, const std::string
 	// move the function above the params
 	lua_insert( L, lua_gettop(L) - Args );
 
-	return LuaHelpers::RunScriptOnStack( L, Error, Args, ReturnValues, ReportError );
+	return LuaHelpers::RunScriptOnStack(L, Error, Args, ReturnValues,
+		ReportError, blank_env);
 }
 
-bool LuaHelpers::RunExpression( Lua *L, const std::string &sExpression, const std::string &sName )
+bool LuaHelpers::RunExpression( Lua *L, const std::string &sExpression, const std::string &sName, bool blank_env)
 {
 	std::string sError= fmt::sprintf("Lua runtime error parsing \"%s\": ", sName.size()? sName.c_str():sExpression.c_str());
-	if(!LuaHelpers::RunScript(L, "return " + sExpression, sName.empty()? std::string("in"):sName, sError, 0, 1, true))
+	if(!LuaHelpers::RunScript(L, "return " + sExpression, sName.empty()? std::string("in"):sName, sError, 0, 1, true, blank_env))
 	{
 		return false;
 	}
@@ -1281,6 +1563,18 @@ namespace
 		LuaHelpers::ReportScriptError(error, error_type);
 		return 0;
 	}
+	static int save_lua_table(lua_State* L)
+	{
+		std::string filename= SArg(1);
+		LuaHelpers::save_lua_table_to_file(L, 2, filename);
+		return 0;
+	}
+	static int load_config_lua(lua_State* L)
+	{
+		std::string filename= SArg(1);
+		LuaHelpers::run_script_file_in_state(L, filename, 1, true);
+		return 1;
+	}
 
 	const luaL_Reg luaTable[] =
 	{
@@ -1292,6 +1586,8 @@ namespace
 		LIST_METHOD( RunWithThreadVariables ),
 		LIST_METHOD( GetThreadVariable ),
 		LIST_METHOD( ReportScriptError ),
+		LIST_METHOD(save_lua_table),
+		LIST_METHOD(load_config_lua),
 		{ nullptr, nullptr }
 	};
 }

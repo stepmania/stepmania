@@ -104,6 +104,13 @@ enum EffectAction
 LuaDeclareType( EffectAction );
 */
 
+struct TimingSource
+{
+	double beat_delta;
+	double second_delta;
+	double curr_second;
+};
+
 /** @brief Base class for all objects that appear on the screen. */
 class Actor : public MessageSubscriber
 {
@@ -289,6 +296,10 @@ public:
 	virtual void SetCurrentTweenStart() {}
 	virtual void EraseHeadTween() {}
 	virtual void UpdatePercentThroughTween( float PercentThroughTween ) { UNUSED(PercentThroughTween); }
+	virtual void SetTimingSource(TimingSource* source)
+	{
+		m_timing_source= source;
+	}
 
 	/**
 	 * @brief Retrieve the Actor's name.
@@ -660,6 +671,8 @@ protected:
 	// WrapperStates provides a way to wrap the actor inside ActorFrames,
 	// applicable to any actor, not just ones the theme creates.
 	std::vector<Actor*> m_WrapperStates;
+
+	TimingSource* m_timing_source;
 
 	/** @brief Some general information about the Tween. */
 	struct TweenInfo

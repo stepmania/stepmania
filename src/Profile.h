@@ -163,6 +163,11 @@ public:
 	typedef std::map<StepsType, std::string> pref_noteskin_container;
 	pref_noteskin_container const& get_all_preferred_noteskins()
 	{ return m_preferred_noteskins; }
+	LuaReference get_noteskin_params(std::string const& skin, StepsType stype) const;
+	void set_noteskin_params(std::string const& skin, StepsType stype, LuaReference& params);
+	typedef std::unordered_map<std::string, std::unordered_map<StepsType, LuaReference> > noteskin_param_container;
+	noteskin_param_container const& get_all_noteskin_params() const
+	{ return m_noteskin_params; }
 
 	bool IsCodeUnlocked( std::string sUnlockEntryID ) const;
 	Song *GetMostPopularSong() const;
@@ -207,6 +212,7 @@ public:
 	// random order. -Kyz
 	std::unordered_map<std::string,std::string> m_sDefaultModifiers;
 	pref_noteskin_container m_preferred_noteskins;
+	noteskin_param_container m_noteskin_params;
 	SortOrder m_SortOrder;
 	Difficulty m_LastDifficulty;
 	CourseDifficulty m_LastCourseDifficulty;
@@ -387,6 +393,7 @@ public:
 	void InitAll()
 	{
 		InitEditableData();
+		init_noteskin_params();
 		InitGeneralData();
 		InitSongScores();
 		InitCourseScores();
@@ -395,6 +402,7 @@ public:
 		InitCalorieData();
 	}
 	void InitEditableData();
+	void init_noteskin_params();
 	void InitGeneralData();
 	void InitSongScores();
 	void InitCourseScores();
@@ -412,6 +420,7 @@ public:
 	bool SaveAllToDir( std::string sDir, bool bSignData ) const;
 
 	ProfileLoadResult LoadEditableDataFromDir( std::string sDir );
+	void load_noteskin_params_from_dir(std::string const& dir);
 	ProfileLoadResult LoadStatsXmlFromNode( const XNode* pNode, bool bIgnoreEditable = true );
 	void LoadGeneralDataFromNode( const XNode* pNode );
 	void LoadSongScoresFromNode( const XNode* pNode );
@@ -422,6 +431,7 @@ public:
 
 	void SaveTypeToDir(std::string dir) const;
 	void SaveEditableDataToDir( std::string sDir ) const;
+	void save_noteskin_params_to_dir(std::string const& dir) const;
 	bool SaveStatsXmlToDir( std::string sDir, bool bSignData ) const;
 	XNode* SaveStatsXmlCreateNode() const;
 	XNode* SaveGeneralDataCreateNode() const;

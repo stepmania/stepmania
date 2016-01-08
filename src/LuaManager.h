@@ -86,17 +86,30 @@ namespace LuaHelpers
 	 * when reporting.  The error is reported through LOG->Warn and
 	 * SCREENMAN->SystemMessage.
 	 */
-	bool RunScriptOnStack( Lua *L, std::string &Error, int Args = 0, int ReturnValues = 0, bool ReportError = false );
+	bool RunScriptOnStack(Lua *L, std::string &Error, int Args = 0,
+		int ReturnValues = 0, bool ReportError = false, bool blank_env= false);
 
 	/* LoadScript the given script, and RunScriptOnStack it.
 	 * iArgs arguments are at the top of the stack. */
-	bool RunScript( Lua *L, const std::string &Script, const std::string &Name, std::string &Error, int Args = 0, int ReturnValues = 0, bool ReportError = false );
+	bool RunScript(Lua *L, const std::string &Script, const std::string &Name,
+		std::string &Error, int Args = 0, int ReturnValues = 0,
+		bool ReportError = false, bool blank_env= false);
 
 	/* Run the given expression, returning a single value, and leave the return
 	 * value on the stack.  On error, push nil. */
-	bool RunExpression( Lua *L, const std::string &sExpression, const std::string &sName = "" );
+	bool RunExpression(Lua *L, const std::string &sExpression,
+		const std::string &sName = "", bool blank_env= false);
 
-	bool RunScriptFile( const std::string &sFile );
+	bool RunScriptFile(const std::string &sFile, bool blank_env= false);
+
+	bool run_script_file_in_state(lua_State* L, std::string const& filename,
+		int return_values, bool blank_env);
+	bool string_can_be_lua_identifier(lua_State* L, std::string const& str);
+	void push_lua_escaped_string(lua_State* L, std::string const& str);
+	// save_lua_table_to_file will only save bools, strings, and numbers.
+	// Nothing else in the lua table will be saved.
+	void save_lua_table_to_file(lua_State* L, int table_index,
+		std::string const& filename);
 
 	/* Create a Lua array (a table with indices starting at 1) of the given vector,
 	 * and push it on the stack. */
@@ -299,6 +312,21 @@ inline bool get_optional_bool(lua_State* L, int index, char const* field)
 	bool ret = lua_toboolean(L, -1) == 1;
 	lua_pop(L, 1);
 	return ret;
+}
+
+inline bool value_is_in_table(lua_State* L, int value_index, int table_index)
+{
+	lua_pushnil(L);
+	while(lua_next(L, table_index) != 0)
+	{
+		if(lua_equal(L, value_index, -1))
+		{
+			lua_pop(L, 2);
+			return true;
+		}
+		lua_pop(L, 1);
+	}
+	return false;
 }
 
 #define LuaFunction( func, expr ) \

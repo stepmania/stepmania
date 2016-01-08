@@ -282,7 +282,7 @@ EventDevice::~EventDevice()
 
 InputHandler_Linux_Event::InputHandler_Linux_Event()
 {
-	m_NextDevice = DEVICE_JOY1;
+	m_NextDevice = DEVICE_JOY10;
 	m_bDevicesChanged = false;
 
 	if(LINUXINPUT == nullptr) LINUXINPUT = new LinuxInputManager;

@@ -24,6 +24,13 @@ public:
 		SetFromStack(L);
 	}
 
+	void swap(LuaReference& other)
+	{
+		LuaReference temp= *this;
+		*this= other;
+		other= temp;
+	}
+
 	/* Create a reference pointing to the item at the top of the stack, and pop
 	 * the stack. */
 	void SetFromStack( Lua *L );

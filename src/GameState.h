@@ -370,6 +370,7 @@ public:
 	/** @brief Allow access to each player's PlayerState. */
 	PlayerState* m_pPlayerState[NUM_PLAYERS];
 	PlayerState* m_pMultiPlayerState[NUM_MultiPlayer];
+	LuaReference m_noteskin_params[NUM_PLAYERS];
 
 	// Preferences
 	static Preference<bool> m_bAutoJoin;

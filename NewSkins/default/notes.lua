@@ -164,7 +164,9 @@ return function(button_list, stepstype)
 			taps= {
 				NewSkinTapPart_Tap= {
 					state_map= tap_state_map,
-					actor= Def.Sprite{Texture= "tap_note 2x8.png"}},
+					actor= Def.Sprite{Texture= "tap_note 2x8.png",
+						-- Use the InitCommand to rotate the arrow appropriately.
+						InitCommand= function(self) self:rotationz(rots[button]) end}},
 				NewSkinTapPart_Mine= {
 					state_map= mine_state_map,
 					actor= Def.Sprite{Texture= "mine.png"}},
@@ -302,13 +304,6 @@ return function(button_list, stepstype)
 						flip= rev_roll_flips[button],
 					},
 				},
-			},
-			-- rotations controls what parts are rotated and how far.  This is used
-			-- to make taps and lifts rotate and mines not rotate at all.
-			rotations= {
-				NewSkinTapPart_Tap= rots[button],
-				NewSkinTapPart_Mine= 0,
-				NewSkinTapPart_Lift= rots[button],
 			},
 		}
 	end

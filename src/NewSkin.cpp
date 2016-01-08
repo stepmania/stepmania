@@ -386,12 +386,41 @@ bool QuantizedHold::load_from_lua(lua_State* L, int index, NewSkinLoader const* 
 	return true;
 }
 
+void NewSkinColumn::set_timing_source(TimingSource* source)
+{
+	for(auto&& tap : m_taps)
+	{
+		tap.set_timing_source(source);
+	}
+	for(auto&& tap : m_optional_taps)
+	{
+		if(tap != nullptr)
+		{
+			tap->set_timing_source(source);
+		}
+	}
+}
+
+void NewSkinColumn::update_taps()
+{
+	for(auto&& tap : m_taps)
+	{
+		tap.update();
+	}
+	for(auto&& tap : m_optional_taps)
+	{
+		if(tap != nullptr)
+		{
+			tap->update();
+		}
+	}
+}
+
 Actor* NewSkinColumn::get_tap_actor(size_t type,
 	double quantization, double beat)
 {
 	ASSERT_M(type < m_taps.size(), "Invalid NewSkinTapPart type.");
-	return m_taps[type].get_quantized(quantization, beat,
-		m_rotations[type]);
+	return m_taps[type].get_quantized(quantization, beat);
 }
 
 Actor* NewSkinColumn::get_optional_actor(size_t type,
@@ -411,13 +440,13 @@ Actor* NewSkinColumn::get_optional_actor(size_t type,
 		}
 		return nullptr;
 	}
-	return tap->get_quantized(quantization, beat, m_rotations[type]);
+	return tap->get_quantized(quantization, beat);
 }
 
 Actor* NewSkinColumn::get_player_tap(size_t type, size_t pn, double beat)
 {
 	ASSERT_M(type < m_taps.size(), "Invalid NewSkinTapPart type.");
-	return m_taps[type].get_playerized(pn, beat, m_rotations[type]);
+	return m_taps[type].get_playerized(pn, beat);
 }
 
 Actor* NewSkinColumn::get_player_optional_tap(size_t type, size_t pn,
@@ -437,7 +466,7 @@ Actor* NewSkinColumn::get_player_optional_tap(size_t type, size_t pn,
 		}
 		return nullptr;
 	}
-	return tap->get_playerized(pn, beat, m_rotations[type]);
+	return tap->get_playerized(pn, beat);
 }
 
 void NewSkinColumn::get_hold_render_data(TapNoteSubType sub_type,
@@ -590,7 +619,6 @@ bool NewSkinColumn::load_from_lua(lua_State* L, int index, NewSkinLoader const* 
 	vector<vector<QuantizedHold> > temp_reverse_holds;
 	vector<RageTexture*> temp_hold_masks;
 	vector<RageTexture*> temp_hold_reverse_masks;
-	vector<double> temp_rotations;
 	lua_getfield(L, index, "taps");
 	if(!lua_istable(L, -1))
 	{
@@ -643,9 +671,6 @@ bool NewSkinColumn::load_from_lua(lua_State* L, int index, NewSkinLoader const* 
 	{
 		RETURN_NOT_SANE(insanity_diagnosis);
 	}
-	lua_getfield(L, index, "rotations");
-	load_enum_table(L, lua_gettop(L), NSTP_Tap, NUM_NewSkinTapPart,
-		temp_rotations, 0.0, 1000.0, 0.0);
 	m_width= get_optional_double(L, index, "width", default_column_width);
 	m_padding= get_optional_double(L, index, "padding", default_column_padding);
 #undef RETURN_NOT_SANE
@@ -659,7 +684,6 @@ bool NewSkinColumn::load_from_lua(lua_State* L, int index, NewSkinLoader const* 
 	unload_texture_list(m_hold_reverse_player_masks);
 	m_hold_player_masks.swap(temp_hold_masks);
 	m_hold_reverse_player_masks.swap(temp_hold_reverse_masks);
-	m_rotations.swap(temp_rotations);
 	return true;
 }
 
@@ -704,7 +728,20 @@ NewSkinData::NewSkinData()
 	
 }
 
-bool NewSkinData::load_taps_from_lua(lua_State* L, int index, size_t columns, NewSkinLoader const* load_skin, string& insanity_diagnosis)
+void NewSkinData::swap(NewSkinData& other)
+{
+	m_layers_below_notes.swap(other.m_layers_below_notes);
+	m_layers_above_notes.swap(other.m_layers_above_notes);
+	m_player_colors.swap(other.m_player_colors);
+	m_columns.swap(other.m_columns);
+	m_skin_parameters.swap(other.m_skin_parameters);
+	bool temp_loaded= m_loaded;
+	m_loaded= other.m_loaded;
+	other.m_loaded= temp_loaded;
+}
+
+bool NewSkinData::load_taps_from_lua(lua_State* L, int index, size_t columns,
+	NewSkinLoader const* load_skin, string& insanity_diagnosis)
 {
 	//lua_pushvalue(L, index);
 	//LuaHelpers::rec_print_table(L, "newskin_data", "");
@@ -750,6 +787,23 @@ bool NewSkinData::load_taps_from_lua(lua_State* L, int index, size_t columns, Ne
 	m_columns.swap(temp_columns);
 	m_loaded= true;
 	return true;
+}
+
+void NewSkinLoader::swap(NewSkinLoader& other)
+{
+	m_skin_name.swap(other.m_skin_name);
+	m_fallback_skin_name.swap(other.m_fallback_skin_name);
+	m_load_path.swap(other.m_load_path);
+	m_notes_loader.swap(other.m_notes_loader);
+	m_below_loaders.swap(other.m_below_loaders);
+	m_above_loaders.swap(other.m_above_loaders);
+	m_player_colors.swap(other.m_player_colors);
+	m_supported_buttons.swap(other.m_supported_buttons);
+	m_skin_parameters.swap(other.m_skin_parameters);
+	m_skin_parameter_info.swap(other.m_skin_parameter_info);
+	bool temp_sup= m_supports_all_buttons;
+	m_supports_all_buttons= other.m_supports_all_buttons;
+	other.m_supports_all_buttons= temp_sup;
 }
 
 bool NewSkinLoader::load_from_file(std::string const& path)
@@ -877,6 +931,10 @@ bool NewSkinLoader::load_from_lua(lua_State* L, int index, string const& name,
 	lua_pop(L, 1);
 	lua_getfield(L, index, "supports_all_buttons");
 	m_supports_all_buttons= lua_toboolean(L, -1);
+	lua_getfield(L, index, "skin_parameters");
+	m_skin_parameters.SetFromStack(L);
+	lua_getfield(L, index, "skin_parameter_info");
+	m_skin_parameter_info.SetFromStack(L);
 	lua_settop(L, original_top);
 #undef RETURN_NOT_SANE
 	m_skin_name= name;
@@ -930,17 +988,17 @@ static vector<vector<string> > button_lists = {
 // StepsType_ds3ddx_single,
 	{"HandLeft", "FootDownLeft", "FootUpLeft", "HandUp", "HandDown", "FootUpRight", "FootDownRight", "HandRight"},
 // StepsType_beat_single5,
-	{"Scratch up", "Key1", "Key2", "Key3", "Key4", "Key5"},
+	{"scratch", "Key1", "Key2", "Key3", "Key4", "Key5"},
 // StepsType_beat_versus5,
-	{"Scratch up", "Key1", "Key2", "Key3", "Key4", "Key5"},
+	{"scratch", "Key1", "Key2", "Key3", "Key4", "Key5"},
 // StepsType_beat_double5,
-	{"Scratch up", "Key1", "Key2", "Key3", "Key4", "Key5", "Key5", "Key4", "Key3", "Key2", "Key1", "Scratch up"},
+	{"scratch", "Key1", "Key2", "Key3", "Key4", "Key5", "Key5", "Key4", "Key3", "Key2", "Key1", "scratch"},
 // StepsType_beat_single7,
-	{"Scratch up", "Key1", "Key2", "Key3", "Key4", "Key5", "Key6", "Key7"},
+	{"scratch", "Key1", "Key2", "Key3", "Key4", "Key5", "Key6", "Key7"},
 // StepsType_beat_versus7,
-	{"Scratch up", "Key1", "Key2", "Key3", "Key4", "Key5", "Key6", "Key7"},
+	{"scratch", "Key1", "Key2", "Key3", "Key4", "Key5", "Key6", "Key7"},
 // StepsType_beat_double7,
-	{"Scratch up", "Key1", "Key2", "Key3", "Key4", "Key5", "Key6", "Key7", "Key7", "Key6", "Key5", "Key4", "Key3", "Key2", "Key1", "Scratch up"},
+	{"scratch", "Key1", "Key2", "Key3", "Key4", "Key5", "Key6", "Key7", "Key7", "Key6", "Key5", "Key4", "Key3", "Key2", "Key1", "scratch"},
 // StepsType_maniax_single,
 	{"HandLrLeft", "HandUpLeft", "HandUpRight", "HandLrRight"},
 // StepsType_maniax_double,
@@ -1019,8 +1077,8 @@ bool NewSkinLoader::push_loader_function(lua_State* L, string const& loader)
 }
 
 bool NewSkinLoader::load_layer_set_into_data(lua_State* L,
-	int button_list_index, int stype_index, size_t columns,
-	vector<string> const& loader_set,
+	LuaReference& skin_params, int button_list_index, int stype_index,
+	size_t columns, vector<string> const& loader_set,
 	vector<NewSkinLayer>& dest, string& insanity_diagnosis)
 {
 	int original_top= lua_gettop(L);
@@ -1036,7 +1094,8 @@ bool NewSkinLoader::load_layer_set_into_data(lua_State* L,
 		std::string error= "Error running " + m_load_path + loader_set[i] + ": ";
 		lua_pushvalue(L, button_list_index);
 		lua_pushvalue(L, stype_index);
-		if(!LuaHelpers::RunScriptOnStack(L, error, 2, 1, true))
+		skin_params.PushSelf(L);
+		if(!LuaHelpers::RunScriptOnStack(L, error, 3, 1, true))
 		{
 			RETURN_NOT_SANE("Error running loader " + loader_set[i]);
 		}
@@ -1052,11 +1111,12 @@ bool NewSkinLoader::load_layer_set_into_data(lua_State* L,
 }
 
 bool NewSkinLoader::load_into_data(StepsType stype,
-	NewSkinData& dest, string& insanity_diagnosis)
+	LuaReference& skin_params, NewSkinData& dest, string& insanity_diagnosis)
 {
 	vector<string> const& button_list= button_lists[stype];
 	Lua* L= LUA->Get();
 	int original_top= lua_gettop(L);
+	sanitize_skin_parameters(L, skin_params);
 #define RETURN_NOT_SANE(message) lua_settop(L, original_top); LUA->Release(L); insanity_diagnosis= message; return false;
 	LuaThreadVariable skin_var("skin_name", m_skin_name);
 	lua_createtable(L, button_list.size(), 0);
@@ -1075,7 +1135,8 @@ bool NewSkinLoader::load_into_data(StepsType stype,
 	std::string error= "Error running " + m_load_path + m_notes_loader + ": ";
 	lua_pushvalue(L, button_list_index);
 	lua_pushvalue(L, stype_index);
-	if(!LuaHelpers::RunScriptOnStack(L, error, 2, 1, true))
+	skin_params.PushSelf(L);
+	if(!LuaHelpers::RunScriptOnStack(L, error, 3, 1, true))
 	{
 		RETURN_NOT_SANE("Error running loader for notes.");
 	}
@@ -1084,12 +1145,12 @@ bool NewSkinLoader::load_into_data(StepsType stype,
 	{
 		RETURN_NOT_SANE("Invalid data from loader: " + sub_sanity);
 	}
-	if(!load_layer_set_into_data(L, button_list_index, stype_index, button_list.size(), m_below_loaders,
+	if(!load_layer_set_into_data(L, skin_params, button_list_index, stype_index, button_list.size(), m_below_loaders,
 			dest.m_layers_below_notes, sub_sanity))
 	{
 		RETURN_NOT_SANE("Error running layer below loaders: " + sub_sanity);
 	}
-	if(!load_layer_set_into_data(L, button_list_index, stype_index, button_list.size(), m_above_loaders,
+	if(!load_layer_set_into_data(L, skin_params, button_list_index, stype_index, button_list.size(), m_above_loaders,
 			dest.m_layers_above_notes, sub_sanity))
 	{
 		RETURN_NOT_SANE("Error running layer above loaders: " + sub_sanity);
@@ -1099,4 +1160,198 @@ bool NewSkinLoader::load_into_data(StepsType stype,
 	LUA->Release(L);
 	dest.m_player_colors= m_player_colors;
 	return true;
+}
+
+void NewSkinLoader::recursive_sanitize_skin_parameters(lua_State* L,
+	std::unordered_set<void const*>& visited_tables, int curr_depth,
+	int curr_param_set_info, int curr_param_set_defaults,
+	int curr_param_set_dest)
+{
+	// max_depth is a protection against someone creating a pathologically deep
+	// table of parameters that could cause a stack overflow.
+	static const int max_depth= 20;
+	lua_pushnil(L);
+	while(lua_next(L, curr_param_set_defaults) != 0)
+	{
+		// stack: field_key, field_default
+		int field_default= lua_gettop(L);
+		int field_key= field_default - 1;
+#define SAFE_CONTINUE lua_settop(L, field_key); continue;
+		int key_type= lua_type(L, field_key);
+		int field_type= lua_type(L, field_default);
+		lua_pushvalue(L, field_key);
+		lua_gettable(L, curr_param_set_info);
+		int field_info= lua_gettop(L);
+		if(lua_type(L, field_info) != LUA_TTABLE)
+		{
+			// Push a copy of the key onto the stack so that lua_tostring
+			// won't affect the key being used to iterate through the table.
+			lua_pushvalue(L, field_key);
+			LuaHelpers::ReportScriptErrorFmt("Field %s in noteskin parameters has invalid type info.", lua_tostring(L, -1));
+			SAFE_CONTINUE;
+		}
+		// Ignore stuff that doesn't have a string or number index.
+		if(key_type != LUA_TSTRING && key_type != LUA_TNUMBER)
+		{
+			SAFE_CONTINUE;
+		}
+		switch(field_type)
+		{
+			case LUA_TTABLE:
+				{
+					void const* table= lua_topointer(L, field_default);
+					bool visited= (visited_tables.find(table) != visited_tables.end());
+					if(visited)
+					{
+						SAFE_CONTINUE;
+					}
+					if(curr_depth >= max_depth)
+					{
+						LuaHelpers::ReportScriptError("Noteskin parameter table exceeded maximum depth, ignoring deeper parameters.");
+						SAFE_CONTINUE;
+					}
+					lua_pushvalue(L, field_key); // stack: field_key, field_default, field_info, field_key
+					lua_gettable(L, curr_param_set_dest); // stack: field_key, field_default, field_info, next_param_set_dest
+					int next_param_set_dest= lua_gettop(L);
+					if(lua_type(L, next_param_set_dest) != LUA_TTABLE)
+					{
+						lua_pop(L, 1); // stack: field_key, field_default, field_info
+						lua_pushvalue(L, field_key); // stack: field_key, field_default, field_info, field_key
+						lua_newtable(L); // stack: field_key, field_default, field_info, field_key, table
+						lua_settable(L, curr_param_set_dest); // stack: field_key, field_default, field_info
+						lua_pushvalue(L, field_key); // stack: field_key, field_default, field_info, field_key
+						lua_gettable(L, curr_param_set_dest); // stack: field_key, field_default, field_info, next_param_set_dest
+						next_param_set_dest= lua_gettop(L);
+					}
+					visited_tables.insert(table);
+					recursive_sanitize_skin_parameters(L, visited_tables, curr_depth+1,
+						field_info, field_default, next_param_set_dest);
+					// Pop next_param_set_dest.
+					lua_pop(L, 1); // stack: field_key, field_default, field_info
+				}
+				break;
+			case LUA_TSTRING:
+			case LUA_TNUMBER:
+			case LUA_TBOOLEAN:
+				{
+#define SET_FIELD_TO_DEFAULT \
+	lua_pushvalue(L, field_key); \
+	lua_pushvalue(L, field_default); \
+	lua_settable(L, curr_param_set_dest);
+					lua_pushvalue(L, field_key);
+					lua_gettable(L, curr_param_set_dest);
+					int dest_value= lua_gettop(L);
+					if(lua_type(L, dest_value) != field_type)
+					{
+						SET_FIELD_TO_DEFAULT;
+					}
+					else if(field_type != LUA_TBOOLEAN)
+					{
+						lua_getfield(L, field_info, "choices");
+						// The choices table is optional, if it exists, the field must be
+						// one of the choices in it.
+						int choices_table= lua_gettop(L);
+						if(lua_type(L, choices_table) == LUA_TTABLE)
+						{
+							if(!value_is_in_table(L, dest_value, choices_table))
+							{
+								SET_FIELD_TO_DEFAULT;
+							}
+						}
+						else
+						{
+							lua_getfield(L, field_info, "min");
+							int min_value= lua_gettop(L);
+							lua_getfield(L, field_info, "max");
+							int max_value= lua_gettop(L);
+							if(lua_type(L, min_value) == field_type && lua_type(L, max_value) == field_type)
+							{
+								bool in_range= true;
+								if(lua_lessthan(L, dest_value, min_value))
+								{
+									in_range= false;
+								}
+								else if(lua_lessthan(L, max_value, dest_value))
+								{
+									in_range= false;
+								}
+								if(!in_range)
+								{
+									SET_FIELD_TO_DEFAULT;
+								}
+							}
+							// Pop the min and max values.
+							lua_pop(L, 2);
+						}
+						// Pop the choices table.
+						lua_pop(L, 1);
+					}
+					lua_pop(L, 1);
+#undef SET_FIELD_TO_DEFAULT
+				}
+				break;
+		}
+		lua_settop(L, field_key);
+#undef SAFE_CONTINUE
+	}
+}
+
+void NewSkinLoader::sanitize_skin_parameters(lua_State* L, LuaReference& params)
+{
+	if(m_skin_parameter_info.IsNil() || m_skin_parameters.IsNil())
+	{
+		params.SetFromNil();
+		return;
+	}
+	if(params.GetLuaType() != LUA_TTABLE)
+	{
+		m_skin_parameters.PushSelf(L);
+		params.SetFromStack(L);
+		params.DeepCopy();
+		return;
+	}
+	m_skin_parameter_info.PushSelf(L);
+	int curr_param_set_info= lua_gettop(L);
+	if(lua_type(L, curr_param_set_info) != LUA_TTABLE)
+	{
+		LuaHelpers::ReportScriptError("Noteskin parameters info must be a table.");
+		lua_pop(L, 1);
+		m_skin_parameters.PushSelf(L);
+		params.SetFromStack(L);
+		params.DeepCopy();
+		return;
+	}
+	m_skin_parameters.PushSelf(L);
+	int curr_param_set_defaults= lua_gettop(L);
+	params.PushSelf(L);
+	int curr_param_set_dest= lua_gettop(L);
+	std::unordered_set<void const*> visited_tables;
+	recursive_sanitize_skin_parameters(L, visited_tables, 0,
+		curr_param_set_info, curr_param_set_defaults, curr_param_set_dest);
+}
+
+void NewSkinLoader::push_skin_parameter_info(lua_State* L) const
+{
+	if(m_skin_parameter_info.IsNil())
+	{
+		lua_pushnil(L);
+		return;
+	}
+	// Make a copy of the parameter info so the theme can't corrupt it.
+	LuaReference param_info= m_skin_parameter_info;
+	param_info.DeepCopy();
+	param_info.PushSelf(L);
+}
+
+void NewSkinLoader::push_skin_parameter_defaults(lua_State* L) const
+{
+	if(m_skin_parameters.IsNil())
+	{
+		lua_pushnil(L);
+		return;
+	}
+	// Make a copy of the parameter defaults so the theme can't corrupt it.
+	LuaReference param_info= m_skin_parameters;
+	param_info.DeepCopy();
+	param_info.PushSelf(L);
 }

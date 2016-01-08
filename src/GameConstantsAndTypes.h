@@ -118,6 +118,18 @@ enum StepsType
 LuaDeclareType( StepsType );
 std::string StepsTypeToString( StepsType st );
 
+namespace std
+{
+	template<>
+		struct hash<StepsType>
+	{
+		std::size_t operator()(StepsType const& s) const
+		{
+			return std::hash<unsigned int>()(static_cast<unsigned int>(s));
+		}
+	};
+}
+
 /** @brief The various play modes available. */
 enum PlayMode
 {

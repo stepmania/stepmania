@@ -18,8 +18,6 @@
 // Everything in Tap and Hold is considered quantizable.  They get a
 // state map to control what part of their texture is used at a given
 // quantization and beat.
-// Everything in Tap also has its base rotation controlled by the field,
-// so they are automatically rotated to the column.
 // Holds are loaded by the tap loader, so there isn't a separate enum entry
 // for holds.
 // Holds must be stretched over a period, so they are not actors at all.
@@ -84,6 +82,7 @@ std::string const NotePlayerizeModeToString(NotePlayerizeMode npm);
 LuaDeclareType(NotePlayerizeMode);
 
 struct NewSkinLoader;
+struct TimingSource;
 
 struct QuantizedStateMap
 {
@@ -165,24 +164,31 @@ private:
 
 struct QuantizedTap
 {
-	Actor* get_common(size_t state, double rotation)
+	void set_timing_source(TimingSource* source)
+	{
+		m_actor->SetTimingSource(source);
+	}
+	void update()
+	{
+		m_actor->Update(1.0f);
+	}
+	Actor* get_common(size_t state)
 	{
 		m_actor->SetState(state);
-		m_actor->SetBaseRotationZ(static_cast<float>(rotation));
 		// Return the frame and not the actor because the notefield is going to
 		// apply mod transforms to it.  Returning the actor would make the mod
 		// transform stomp on the rotation the noteskin supplies.
 		return &m_frame;
 	}
-	Actor* get_quantized(double quantization, double beat, double rotation)
+	Actor* get_quantized(double quantization, double beat)
 	{
 		const size_t state= m_state_map.calc_state(quantization, beat, m_vivid);
-		return get_common(state, rotation);
+		return get_common(state);
 	}
-	Actor* get_playerized(size_t pn, double beat, double rotation)
+	Actor* get_playerized(size_t pn, double beat)
 	{
 		const size_t state= m_state_map.calc_player_state(pn, beat, m_vivid);
-		return get_common(state, rotation);
+		return get_common(state);
 	}
 	bool load_from_lua(lua_State* L, int index, std::string& insanity_diagnosis);
 	bool m_vivid;
@@ -270,6 +276,8 @@ struct QuantizedHold
 
 struct NewSkinColumn
 {
+	void set_timing_source(TimingSource* source);
+	void update_taps();
 	Actor* get_tap_actor(size_t type, double quantization, double beat);
 	Actor* get_optional_actor(size_t type, double quantization, double beat);
 	Actor* get_player_tap(size_t type, size_t pn, double beat);
@@ -351,10 +359,6 @@ private:
 	// m_hold_player_masks is indexed by note subtype.
 	std::vector<RageTexture*> m_hold_player_masks;
 	std::vector<RageTexture*> m_hold_reverse_player_masks;
-	// m_rotation_factors stores the amount to rotate each NSTP.
-	// So the noteskin can set taps to rotate 90 degrees in this column and
-	// mines to rotate 0, and taps will be rotated and mines won't.
-	std::vector<double> m_rotations;
 	double m_width;
 	double m_padding;
 };
@@ -371,6 +375,7 @@ struct NewSkinData
 {
 	static const size_t max_columns= 256;
 	NewSkinData();
+	void swap(NewSkinData& other);
 	NewSkinColumn* get_column(size_t column)
 	{
 		if(column >= m_columns.size())
@@ -380,7 +385,8 @@ struct NewSkinData
 		return &m_columns[column];
 	}
 	size_t num_columns() { return m_columns.size(); }
-	bool load_taps_from_lua(lua_State* L, int index, size_t columns, NewSkinLoader const* load_skin, std::string& insanity_diagnosis);
+	bool load_taps_from_lua(lua_State* L, int index, size_t columns,
+		NewSkinLoader const* load_skin, std::string& insanity_diagnosis);
 	bool loaded_successfully() const { return m_loaded; }
 
 	// The layers are public so that the NewFieldColumns can go through and
@@ -390,6 +396,7 @@ struct NewSkinData
 	std::vector<Rage::Color> m_player_colors;
 private:
 	std::vector<NewSkinColumn> m_columns;
+	LuaReference m_skin_parameters;
 	bool m_loaded;
 };
 
@@ -411,18 +418,26 @@ struct NewSkinLoader
 	{
 		return m_load_path;
 	}
+	void swap(NewSkinLoader& other);
 	bool load_from_file(std::string const& path);
 	bool load_from_lua(lua_State* L, int index, std::string const& name,
 		std::string const& path, std::string& insanity_diagnosis);
 	bool supports_needed_buttons(StepsType stype) const;
 	bool push_loader_function(lua_State* L, std::string const& loader);
-	bool load_layer_set_into_data(lua_State* L, int button_list_index,
-		int stype_index,
+	bool load_layer_set_into_data(lua_State* L, LuaReference& skin_params,
+		int button_list_index, int stype_index,
 		size_t columns, std::vector<std::string> const& loader_set,
 		std::vector<NewSkinLayer>& dest, std::string& insanity_diagnosis);
-	bool load_into_data(StepsType stype,
+	bool load_into_data(StepsType stype, LuaReference& skin_params,
 		NewSkinData& dest, std::string& insanity_diagnosis);
+	void sanitize_skin_parameters(lua_State* L, LuaReference& params);
+	void push_skin_parameter_info(lua_State* L) const;
+	void push_skin_parameter_defaults(lua_State* L) const;
 private:
+	void recursive_sanitize_skin_parameters(lua_State* L,
+		std::unordered_set<void const*>& visited_tables, int curr_depth,
+		int curr_param_set_info, int curr_param_set_defaults,
+		int curr_param_set_dest);
 	std::string m_skin_name;
 	std::string m_fallback_skin_name;
 	std::string m_load_path;
@@ -431,6 +446,8 @@ private:
 	std::vector<std::string> m_above_loaders;
 	std::vector<Rage::Color> m_player_colors;
 	std::unordered_set<std::string> m_supported_buttons;
+	LuaReference m_skin_parameters;
+	LuaReference m_skin_parameter_info;
 	bool m_supports_all_buttons;
 };
 

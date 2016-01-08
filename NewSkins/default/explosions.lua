@@ -9,11 +9,100 @@ local hold_colors= {
 }
 local white= {1, 1, 1, 1}
 
-return function(button_list, stepstype)
+-- Precompute the particle directions so that they don't cause a (tiny) skip
+-- on every note hit.
+return function(button_list, stepstype, skin_params)
+	local particle_directions= {}
+	local explosion_params= skin_params.explosions
+	local num_particles= explosion_params.num_particles
+	local start_angle= 0
+	local end_angle= 180
+	local parsize= explosion_params.particle_size
+	local pardist= explosion_params.particle_dist
+	local particle_life= explosion_params.particle_life
+	local have_particles= explosion_params.particles
+	local angle_per_particle= (end_angle - start_angle) / (num_particles - 1)
+	for i= 0, num_particles-1 do
+		local angle= start_angle + (i * angle_per_particle)
+		local radan= angle / 180 * math.pi
+		particle_directions[i+1]= {
+			angle= angle, x= math.cos(radan)*pardist, y= math.sin(radan)*pardist}
+	end
+
 	local ret= {}
 	local rots= {Left= 90, Down= 0, Up= 180, Right= 270}
 	for i, button in ipairs(button_list) do
-		ret[i]= Def.ActorFrame{
+		local particles= {}
+		local curr_particle= 1
+		local particle_frames= {
+			-- Handling reverse:
+			-- When the column changes from normal (scrolling up) to reverse
+			-- (scrolling down), or back, the ReverseChanged command is played.
+			-- The only element in the param table is the sign value.
+			-- The sign is 1 when notes are scrolling up, and -1 when notes are
+			-- scrolling down.
+			-- In this noteskin, the particles from the explosion only go out in a
+			-- half circle, so the ReverseChanged command is used to change the y
+			-- zoom of the frame the particles are in to make them go in the
+			-- direction the arrows are coming from.
+			ReverseChangedCommand= function(self, param)
+				self:zoomy(param.sign)
+			end,
+			ColumnJudgmentCommand= function(self, param)
+				local diffuse= {
+					TapNoteScore_W1= {1, 1, 1, 1},
+					TapNoteScore_W2= {1, 1, .3, 1},
+					TapNoteScore_W3= {0, 1, .4, 1},
+					TapNoteScore_W4= {.3, .8, 1, 1},
+					TapNoteScore_W5= {.8, 0, .6, 1},
+					TapNoteScore_Miss= {.8, 0, 0, 1},
+					HoldNoteScore_Held= {1, 1, 1, 1},
+				}
+				local exp_color= diffuse[param.tap_note_score or param.hold_note_score]
+				if exp_color then
+					particles[curr_particle]:playcommand("explode", {color= exp_color})
+					curr_particle= curr_particle + 1
+					if not particles[curr_particle] then curr_particle= 1 end
+				end
+			end
+		}
+		for part_id= 1, 10 do
+			local parts= {
+				InitCommand= function(self)
+					if rots[button] then
+						self:rotationz(-rots[button])
+					end
+					particles[part_id]= self:playcommand("hide")
+				end,
+				explodeCommand= function(self)
+					self:hibernate(0):finishtweening():sleep(1):queuecommand("hide")
+				end,
+				hideCommand= function(self)
+					self:hibernate(math.huge)
+				end
+			}
+			for p= 1, num_particles do
+				parts[p]= Def.Quad{
+					InitCommand= function(self)
+						local direction= particle_directions[p]
+						self:setsize(parsize, parsize):diffuseupperleft{1, 1, 1, 0}
+							:diffuselowerright{0, 0, 0, 0}
+							:blend(explosion_params.particle_blend)
+							:rotationz(direction.angle+45)
+					end,
+					explodeCommand= function(self, param)
+						local direction= particle_directions[p]
+						self:finishtweening()
+							:diffuseupperright(param.color):diffuselowerleft(param.color)
+							:zoom(1):xy(0, 0)
+							:decelerate(particle_life)
+							:zoom(0):xy(direction.x, direction.y)
+					end
+				}
+			end
+			particle_frames[part_id]= Def.ActorFrame(parts)
+		end
+		local column_frame= Def.ActorFrame{
 			InitCommand= function(self)
 				self:rotationz(rots[button] or 0)
 			end,
@@ -96,8 +185,12 @@ return function(button_list, stepstype)
 				hideCommand= function(self)
 					self:visible(false)
 				end,
-			}
+			},
 		}
+		if have_particles then
+			column_frame[#column_frame+1]= Def.ActorFrame(particle_frames)
+		end
+		ret[i]= column_frame
 	end
 	return ret
 end

@@ -333,6 +333,18 @@ enum ModFunctionType
 std::string const ModFunctionTypeToString(ModFunctionType fmt);
 LuaDeclareType(ModFunctionType);
 
+enum ModSumType
+{
+	MST_Add,
+	MST_Subtract,
+	MST_Multiply,
+	MST_Divide,
+	NUM_ModSumType,
+	ModSumType_Invalid
+};
+std::string const ModSumTypeToString(ModSumType mvst);
+LuaDeclareType(ModSumType);
+
 struct ModFunction
 {
 	ModFunction(ModifiableValue* parent)
@@ -340,6 +352,7 @@ struct ModFunction
 		m_start_second(invalid_modfunction_time),
 		m_end_beat(invalid_modfunction_time),
 		m_end_second(invalid_modfunction_time),
+		m_sum_type(MST_Add),
 		m_sub_eval(&ModFunction::noop_eval),
 		m_pfu(&ModFunction::per_frame_update_normal),
 		m_pnu(&ModFunction::per_note_update_normal),
@@ -405,6 +418,7 @@ struct ModFunction
 	double m_start_second;
 	double m_end_beat;
 	double m_end_second;
+	ModSumType m_sum_type;
 
 private:
 	void update_input_set(mod_val_inputs const& input,

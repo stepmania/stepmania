@@ -4,8 +4,9 @@ local function zoom_tap(self)
 end
 local red= {1, 0, 0, 1}
 local white= {1, 1, 1, 1}
-return function(button_list, stepstype)
+return function(button_list, stepstype, skin_parameters)
 	local ret= {}
+	local warning_time= 1
 	for i, button in ipairs(button_list) do
 		ret[i]= Def.ActorFrame{
 			InitCommand= zoom_tap,
@@ -13,23 +14,19 @@ return function(button_list, stepstype)
 				Texture= "receptor ", InitCommand= function(self)
 					self:SetTextureFiltering(false)
 				end,
-				PressedCommand= function(self, param)
-					if param.on then
+				BeatUpdateCommand= function(self, param)
+					self:setstate(math.floor(param.beat * self:GetNumStates()))
+					if warning_time > 0 and param.second_distance < warning_time then
+						self:diffuse(lerp_color(param.second_distance/warning_time, white, red))
+					else
+						self:diffuse(white)
+					end
+					if param.pressed then
 						self:zoom(.75)
 					else
 						self:zoom(1)
 					end
 				end,
-				UpcomingCommand= function(self, param)
-					if param.second_distance < 2 then
-						self:diffuse(lerp_color(param.second_distance/2, white, red))
-					else
-						self:diffuse(white)
-					end
-				end,
-				BeatUpdateCommand= function(self, param)
-					self:setstate(math.floor(param.beat * self:GetNumStates()))
-				end
 			}
 		}
 	end

@@ -50,7 +50,8 @@ NewFieldColumn::NewFieldColumn()
 	 m_upcoming_time(2.0),
 	 m_playerize_mode(NPM_Off),
 	 m_newskin(nullptr), m_player_colors(nullptr), m_note_data(nullptr),
-	 m_timing_data(nullptr)
+	 m_timing_data(nullptr),
+	 reverse_scale_sign(1.0)
 {
 	m_quantization_multiplier.m_value= 1.0;
 	double default_offset= SCREEN_CENTER_Y - note_size;
@@ -71,21 +72,12 @@ void NewFieldColumn::add_heads_from_layers(size_t column,
 	}
 }
 
-void NewFieldColumn::set_column_info(size_t column, NewSkinColumn* newskin,
-	NewSkinData& skin_data, std::vector<Rage::Color>* player_colors,
-	const NoteData* note_data, const TimingData* timing_data, double x)
+void NewFieldColumn::set_note_data(size_t column, const NoteData* note_data,
+	const TimingData* timing_data)
 {
-	m_column= column;
-	m_newskin= newskin;
 	m_note_data= note_data;
 	m_timing_data= timing_data;
-	m_column_mod.pos_mod.x_mod.m_value= x;
-	m_use_game_music_beat= true;
-	m_player_colors= player_colors;
 	first_note_visible_prev_frame= m_note_data->end(column);
-
-	m_mod_manager.column= column;
-
 	for(auto&& moddable : {&m_time_offset, &m_quantization_multiplier,
 				&m_quantization_offset,
 				&m_speed_mod, &m_reverse_offset_pixels, &m_reverse_percent,
@@ -102,6 +94,21 @@ void NewFieldColumn::set_column_info(size_t column, NewSkinColumn* newskin,
 	{
 		moddable->set_timing(timing_data);
 	}
+}
+
+void NewFieldColumn::set_column_info(size_t column, NewSkinColumn* newskin,
+	NewSkinData& skin_data, std::vector<Rage::Color>* player_colors,
+	const NoteData* note_data, const TimingData* timing_data, double x)
+{
+	m_column= column;
+	m_newskin= newskin;
+	m_newskin->set_timing_source(&m_timing_source);
+	set_note_data(column, note_data, timing_data);
+	m_column_mod.pos_mod.x_mod.m_value= x;
+	m_use_game_music_beat= true;
+	m_player_colors= player_colors;
+
+	m_mod_manager.column= column;
 
 	add_heads_from_layers(column, m_heads_below_notes, skin_data.m_layers_below_notes);
 	add_heads_from_layers(column, m_heads_above_notes, skin_data.m_layers_above_notes);
@@ -119,6 +126,10 @@ double NewFieldColumn::get_second_from_beat(double beat)
 
 void NewFieldColumn::set_displayed_time(double beat, double second)
 {
+	m_timing_source.beat_delta= beat - m_curr_beat;
+	m_timing_source.second_delta= second - m_curr_second;
+	m_timing_source.curr_second= second;
+	m_newskin->update_taps();
 	m_curr_beat= beat;
 	m_curr_second= second;
 	m_mod_manager.update(beat, second);
@@ -194,7 +205,14 @@ void NewFieldColumn::calc_reverse_shift()
 	reverse_shift= Rage::scale(reverse_percent, 0.0, 1.0, -reverse_offset, reverse_offset);
 	reverse_shift= Rage::scale(center_percent, 0.0, 1.0, reverse_shift, 0.0);
 	reverse_scale= Rage::scale(reverse_percent, 0.0, 1.0, 1.0, -1.0);
+	double old_scale_sign= reverse_scale_sign;
 	reverse_scale_sign= (reverse_scale < 0.0) ? -1.0 : 1.0;
+	if(old_scale_sign != reverse_scale_sign)
+	{
+		Message revmsg("ReverseChanged");
+		revmsg.SetParam("sign", reverse_scale_sign);
+		pass_message_to_heads(revmsg);
+	}
 	static double const min_visible_scale= 0.1;
 	double visible_scale= fabs(reverse_scale);
 	if(visible_scale < min_visible_scale)
@@ -577,6 +595,7 @@ void NewFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 		DISPLAY->set_color_key_shader(player_color, data.mask->GetTexHandle());
 	}
 	bool last_vert_set= false;
+	bool next_last_vert_set= false;
 	// Set a start and end y so that the hold can be clipped to the start and
 	// end of the field.
 	double start_y= max(tex_handler.start_y, first_y_offset_visible);
@@ -586,8 +605,9 @@ void NewFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 	// being skewed.  Toggle the holds_skewed_by_mods flag with lua to see the
 	// difference.
 	int phase= HTP_Top;
+	int next_phase= HTP_Top;
 	hold_vert_step_state next_step; // The OS of the future.
-	next_step.calc(*this, start_y, end_y, beat_lerper, second_lerper, m_curr_beat, m_curr_second, tex_handler, phase);
+	next_step.calc(*this, start_y, end_y, beat_lerper, second_lerper, m_curr_beat, m_curr_second, tex_handler, next_phase);
 	bool need_glow_pass= true;
 	for(double curr_y= start_y; !last_vert_set; curr_y+= y_step)
 	{
@@ -596,7 +616,9 @@ void NewFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 		{
 			need_glow_pass= true;
 		}
-		last_vert_set= next_step.calc(*this, curr_y + y_step, end_y, beat_lerper, second_lerper, m_curr_beat, m_curr_second, tex_handler, phase);
+		phase= next_phase;
+		last_vert_set= next_last_vert_set;
+		next_last_vert_set= next_step.calc(*this, curr_y + y_step, end_y, beat_lerper, second_lerper, m_curr_beat, m_curr_second, tex_handler, phase);
 		Rage::Vector3 render_forward(0.0, 1.0, 0.0);
 		if(!m_holds_skewed_by_mods)
 		{
@@ -943,8 +965,14 @@ void NewFieldColumn::build_render_lists()
 	first_note_visible_prev_frame= first_visible_this_frame;
 	m_prev_curr_second= m_curr_second;
 
-	send_beat_update(m_curr_beat - floor(m_curr_beat));
-	set_note_upcoming(m_status.upcoming_beat_dist, m_status.upcoming_second_dist);
+	{
+		Message msg("BeatUpdate");
+		msg.SetParam("beat", m_curr_beat - floor(m_curr_beat));
+		msg.SetParam("pressed", pressed);
+		msg.SetParam("beat_distance", m_status.upcoming_beat_dist);
+		msg.SetParam("second_distance", m_status.upcoming_second_dist);
+		pass_message_to_heads(msg);
+	}
 	// The hold status should be updated if there is a currently active hold
 	// or if there was one last frame.
 	if(m_status.active_hold != nullptr || m_status.prev_active_hold != nullptr)
@@ -1245,24 +1273,7 @@ void NewFieldColumn::set_hold_status(TapNote const* tap, bool start, bool end)
 
 void NewFieldColumn::set_pressed(bool on)
 {
-	Message msg("Pressed");
-	msg.SetParam("on", on);
-	pass_message_to_heads(msg);
-}
-
-void NewFieldColumn::set_note_upcoming(double beat_distance, double second_distance)
-{
-	Message msg("Upcoming");
-	msg.SetParam("beat_distance", beat_distance);
-	msg.SetParam("second_distance", second_distance);
-	pass_message_to_heads(msg);
-}
-
-void NewFieldColumn::send_beat_update(double beat)
-{
-	Message msg("BeatUpdate");
-	msg.SetParam("beat", beat);
-	pass_message_to_heads(msg);
+	pressed= on;
 }
 
 void NewFieldColumn::DrawPrimitives()
@@ -1316,9 +1327,9 @@ NewField::NewField()
 	 m_vanish_x_mod(&m_mod_manager, 0.0), m_vanish_y_mod(&m_mod_manager, 0.0),
 	 m_vanish_type(FVT_RelativeToParent),
 	 m_own_note_data(false), m_note_data(nullptr), m_timing_data(nullptr),
-	 m_drawing_board(false)
+	 m_steps_type(StepsType_Invalid), m_drawing_board(false)
 {
-	set_skin("default");
+	set_skin("default", m_skin_parameters);
 	m_board.Load(THEME->GetPathG("NoteField", "board"));
 	m_board->SetName("Board");
 	m_board->PlayCommand("On");
@@ -1353,11 +1364,12 @@ void NewField::PreDraw()
 	SetFOV(m_fov_mod.evaluate(input));
 	double vanish_x= m_vanish_x_mod.evaluate(input);
 	double vanish_y= m_vanish_y_mod.evaluate(input);
+	Actor* parent= GetParent();
 	switch(m_vanish_type)
 	{
 		case FVT_RelativeToParent:
-			vanish_x+= GetParent()->GetX();
-			vanish_y+= GetParent()->GetY();
+			vanish_x+= parent->GetX();
+			vanish_y+= parent->GetY();
 		case FVT_RelativeToSelf:
 			vanish_x+= GetX();
 			vanish_y+= GetY();
@@ -1438,16 +1450,22 @@ void NewField::clear_steps()
 	m_columns.clear();
 }
 
-void NewField::set_skin(std::string const& skin_name)
+void NewField::set_skin(std::string const& skin_name, LuaReference& skin_params)
 {
 	NewSkinLoader const* loader= NEWSKIN->get_loader_for_skin(skin_name);
-	if(loader != nullptr)
+	if(loader == nullptr)
 	{
-		m_skin_walker= *loader;
+		LuaHelpers::ReportScriptErrorFmt("Could not find loader for newskin '%s'.", skin_name.c_str());
+		return;
+	}
+	if(m_note_data != nullptr)
+	{
+		reload_columns(loader, skin_params);
 	}
 	else
 	{
-		LuaHelpers::ReportScriptErrorFmt("Could not find loader for newskin '%s'.", skin_name.c_str());
+		m_skin_walker= *loader;
+		m_skin_parameters= skin_params;
 	}
 }
 
@@ -1458,44 +1476,58 @@ void NewField::set_steps(Steps* data)
 		clear_steps();
 		return;
 	}
-	// TODO:  Remove the dependence on the current game.  A notefield should be
-	// able to show steps of any stepstype.
-	// The style is needed because it has the column info for positioning the
-	// columns.
-	const Game* curr_game= GAMESTATE->GetCurrentGame();
-	const Style* curr_style= GAMEMAN->GetFirstCompatibleStyle(curr_game, 1, data->m_StepsType);
-	if(curr_style == nullptr)
-	{
-		curr_style= GAMEMAN->GetFirstCompatibleStyle(curr_game, 2, data->m_StepsType);
-	}
-	if(curr_style == nullptr)
-	{
-		clear_steps();
-		return;
-	}
 	NoteData* note_data= new NoteData;
 	data->GetNoteData(*note_data);
-	set_note_data(note_data, data->GetTimingData(), curr_style);
+	set_note_data(note_data, data->GetTimingData(), data->m_StepsType);
 	m_own_note_data= true;
 }
 
-void NewField::set_note_data(NoteData* note_data, TimingData* timing, Style const* curr_style)
+void NewField::set_note_data(NoteData* note_data, TimingData* timing, StepsType stype)
 {
 	m_note_data= note_data;
 	note_data->SetOccuranceTimeForAllTaps(timing);
 	m_own_note_data= false;
-	StepsType button_stype= curr_style->m_StepsType;
-	if(!m_skin_walker.supports_needed_buttons(button_stype))
+	m_timing_data= timing;
+	m_trans_mod.set_timing(m_timing_data);
+	for(auto&& moddable : {&m_fov_mod, &m_vanish_x_mod, &m_vanish_y_mod})
+	{
+		moddable->set_timing(m_timing_data);
+	}
+	if(stype != m_steps_type)
+	{
+		m_steps_type= stype;
+		reload_columns(&m_skin_walker, m_skin_parameters);
+	}
+	else
+	{
+		for(size_t i= 0; i < m_columns.size(); ++i)
+		{
+			m_columns[i].set_note_data(i, m_note_data, m_timing_data);
+		}
+	}
+}
+
+void NewField::reload_columns(NewSkinLoader const* new_loader, LuaReference& new_params)
+{
+	NewSkinLoader new_skin_walker= *new_loader;
+	if(!new_skin_walker.supports_needed_buttons(m_steps_type))
 	{
 		LuaHelpers::ReportScriptError("The noteskin does not support the required buttons.");
 		return;
 	}
+	// Load the noteskin into a temporary to protect against errors.
+	NewSkinData new_skin;
 	string insanity;
-	if(!m_skin_walker.load_into_data(button_stype, m_newskin, insanity))
+	if(!new_skin_walker.load_into_data(m_steps_type, new_params, new_skin, insanity))
 	{
 		LuaHelpers::ReportScriptError("Error loading noteskin: " + insanity);
 		return;
 	}
+	// Load successful, copy it into members.
+	m_skin_walker.swap(new_skin_walker);
+	m_newskin.swap(new_skin);
+	m_skin_parameters= new_params;
+
 	m_player_colors= m_newskin.m_player_colors;
 	m_field_width= 0.0;
 	Lua* L= LUA->Get();
@@ -1523,14 +1555,8 @@ void NewField::set_note_data(NoteData* note_data, TimingData* timing, Style cons
 	LUA->Release(L);
 
 	double curr_x= (m_field_width * -.5);
-	m_timing_data= timing;
 	m_columns.clear();
 	m_columns.resize(m_note_data->GetNumTracks());
-	m_trans_mod.set_timing(timing);
-	for(auto&& moddable : {&m_fov_mod, &m_vanish_x_mod, &m_vanish_y_mod})
-	{
-		moddable->set_timing(timing);
-	}
 	// The column needs all of this info.  fXOffset might come from somewhere
 	// else when styles are removed.
 	for(size_t i= 0; i < m_columns.size(); ++i)
@@ -1800,6 +1826,18 @@ LUA_REGISTER_DERIVED_CLASS(NewFieldColumn, ActorFrame);
 
 struct LunaNewField : Luna<NewField>
 {
+	static int set_skin(T* p, lua_State* L)
+	{
+		std::string skin_name= SArg(1);
+		LuaReference skin_params;
+		if(lua_type(L, 2) == LUA_TTABLE)
+		{
+			lua_pushvalue(L, 2);
+			skin_params.SetFromStack(L);
+		}
+		p->set_skin(skin_name, skin_params);
+		COMMON_RETURN_SELF;
+	}
 	static int set_steps(T* p, lua_State* L)
 	{
 		Steps* data= Luna<Steps>::check(L, 1);
@@ -1835,6 +1873,7 @@ struct LunaNewField : Luna<NewField>
 	}
 	LunaNewField()
 	{
+		ADD_METHOD(set_skin);
 		ADD_METHOD(set_steps);
 		ADD_METHOD(get_columns);
 		ADD_METHOD(get_width);

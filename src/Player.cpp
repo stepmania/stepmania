@@ -707,21 +707,29 @@ void Player::Load()
 		// noteskin name stored in the options is not guaranteed to work for the
 		// current stepstype, it might be from the previous song and for a
 		// different stepstype. -Kyz
+		std::string skin_name;
+		// TODO: Store the skin params in the profile, preferably converting the
+		// profile to lua along the way.
+		LuaReference skin_params= GAMESTATE->m_noteskin_params[m_pPlayerState->m_PlayerNumber];
 		if(!GAMESTATE->m_bInStepEditor)
 		{
 			Profile const* prof= PROFILEMAN->GetProfile(m_pPlayerState->m_PlayerNumber);
 			if(prof != nullptr)
 			{
 				StepsType stype= GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType;
-				std::string skin;
-				prof->get_preferred_noteskin(stype, skin);
-				m_new_field->set_skin(skin);
+				prof->get_preferred_noteskin(stype, skin_name);
+				skin_params= prof->get_noteskin_params(skin_name, stype);
+			}
+			else
+			{
+				skin_name= m_pPlayerState->m_PlayerOptions.GetPreferred().m_newskin;
 			}
 		}
 		else
 		{
-			m_new_field->set_skin(m_pPlayerState->m_PlayerOptions.GetPreferred().m_newskin);
+			skin_name= m_pPlayerState->m_PlayerOptions.GetPreferred().m_newskin;
 		}
+		m_new_field->set_skin(skin_name, skin_params);
 	}
 
 	// TODO: Remove use of PlayerNumber.
@@ -805,7 +813,7 @@ void Player::Load()
 	{
 		m_pNoteField->SetY( fNoteFieldMiddle );
 		m_pNoteField->Load( &m_NoteData, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels );
-		m_new_field->set_note_data(&m_NoteData, m_Timing, GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber));
+		m_new_field->set_note_data(&m_NoteData, m_Timing, GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType);
 	}
 
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->GetUsesCenteredArrows();

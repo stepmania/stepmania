@@ -68,27 +68,27 @@ void ArchHooks::MountUserFilesystems( const std::string &sDirOfExecutable )
 	 * happen. Just don't do it, seriously. Keep them in one place.
 	 * - Colby
 	 */
-	std::string sAppDataDir = SpecialDirs::GetAppDataDir() + PRODUCT_ID;
+	// After writing code to deal with OS X's special cases for scattering the
+	// different folders all over, I have to agree with Colby.  For Windows and
+	// Linux users, we can just tell them one folder location that has all the
+	// stuff in it.  But on OS X, the wiki has to list 5 different folders for
+	// people to find stuff in.
+	// -Kyz
+	std::string user_data_path = SpecialDirs::GetAppDataDir() + PRODUCT_ID;
 	//std::string sCommonAppDataDir = SpecialDirs::GetCommonAppDataDir() + PRODUCT_ID;
 	//std::string sLocalAppDataDir = SpecialDirs::GetLocalAppDataDir() + PRODUCT_ID;
 	//std::string sPicturesDir = SpecialDirs::GetPicturesDir() + PRODUCT_ID;
-
-	FILEMAN->Mount( "dir", sAppDataDir + "/Announcers", "/Announcers" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/BGAnimations", "/BGAnimations" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/BackgroundEffects", "/BackgroundEffects" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/BackgroundTransitions", "/BackgroundTransitions" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Cache", "/Cache" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/CDTitles", "/CDTitles" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Characters", "/Characters" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Courses", "/Courses" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Logs", "/Logs" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/NoteSkins", "/NoteSkins" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Save", "/Save" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Screenshots", "/Screenshots" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Songs", "/Songs" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/RandomMovies", "/RandomMovies" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Themes", "/Themes" );
+	for(auto&& fs_dir : SpecialFiles::USER_CONTENT_DIRS)
+	{
+		FILEMAN->Mount("dir", user_data_path + fs_dir, fs_dir);
+	}
+	for(auto&& fs_dir : SpecialFiles::USER_DATA_DIRS)
+	{
+		FILEMAN->Mount("dir", user_data_path + fs_dir, fs_dir);
+	}
+	// The User Packages dir was the only one where the mount point didn't
+	// match the folder name when I changed this to use a loop. -Kyz
+	FILEMAN->Mount( "dir", user_data_path + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
 }
 
 static std::string LangIdToString( LANGID l )

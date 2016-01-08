@@ -30,7 +30,7 @@ NewSkinManager::~NewSkinManager()
 void NewSkinManager::load_skins()
 {
 	vector<std::string> dirs;
-	FILEMAN->GetDirListing(SpecialFiles::NEWSKINS_DIR, dirs, true, true);
+	FILEMAN->GetDirListing(SpecialFiles::NEWSKINS_DIR + "*", dirs, true, true);
 	m_skins.clear();
 	m_supported_types.clear();
 	m_skins.reserve(dirs.size());
@@ -236,6 +236,28 @@ struct LunaNewSkinManager: Luna<NewSkinManager>
 		}
 		return 1;
 	}
+	static int get_skin_parameter_defaults(T* p, lua_State* L)
+	{
+		std::string skin_name= SArg(1);
+		NewSkinLoader const* loader= p->get_loader_for_skin(skin_name);
+		if(loader == nullptr)
+		{
+			luaL_error(L, "No such noteskin.");
+		}
+		loader->push_skin_parameter_defaults(L);
+		return 1;
+	}
+	static int get_skin_parameter_info(T* p, lua_State* L)
+	{
+		std::string skin_name= SArg(1);
+		NewSkinLoader const* loader= p->get_loader_for_skin(skin_name);
+		if(loader == nullptr)
+		{
+			luaL_error(L, "No such noteskin.");
+		}
+		loader->push_skin_parameter_info(L);
+		return 1;
+	}
 	static int reload_skins(T* p, lua_State* L)
 	{
 		UNUSED(L);
@@ -248,6 +270,8 @@ struct LunaNewSkinManager: Luna<NewSkinManager>
 		ADD_METHOD(get_all_skin_names);
 		ADD_METHOD(get_skin_names_for_stepstype);
 		ADD_METHOD(get_path);
+		ADD_METHOD(get_skin_parameter_defaults);
+		ADD_METHOD(get_skin_parameter_info);
 		ADD_METHOD(reload_skins);
 	}
 };

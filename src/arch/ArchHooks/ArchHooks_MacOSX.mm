@@ -336,39 +336,48 @@ void ArchHooks::MountInitialFilesystems( std::string const &sDirOfExecutable )
 
 void ArchHooks::MountUserFilesystems( std::string const &sDirOfExecutable )
 {
+	// dir is reused several times, so don't change the ordering of any of the
+	// directory mountings. -Kyz
 	char dir[PATH_MAX];
-
-	// /Save -> ~/Library/Preferences/PRODUCT_ID
-	PathForFolderType( dir, kPreferencesFolderType );
-	FILEMAN->Mount( "dir", fmt::sprintf("%s/" PRODUCT_ID, dir), "/Save" );
 
 	// Other stuff -> ~/Library/Application Support/PRODUCT_ID/*
 	PathForFolderType( dir, kApplicationSupportFolderType );
-	FILEMAN->Mount( "dir", fmt::sprintf("%s/" PRODUCT_ID "/Announcers", dir), "/Announcers" );
-	FILEMAN->Mount( "dir", fmt::sprintf("%s/" PRODUCT_ID "/BGAnimations", dir), "/BGAnimations" );
-	FILEMAN->Mount( "dir", fmt::sprintf("%s/" PRODUCT_ID "/BackgroundEffects", dir), "/BackgroundEffects" );
-	FILEMAN->Mount( "dir", fmt::sprintf("%s/" PRODUCT_ID "/BackgroundTransitions", dir), "/BackgroundTransitions" );
-	FILEMAN->Mount( "dir", fmt::sprintf("%s/" PRODUCT_ID "/CDTitles", dir), "/CDTitles" );
-	FILEMAN->Mount( "dir", fmt::sprintf("%s/" PRODUCT_ID "/Characters", dir), "/Characters" );
-	FILEMAN->Mount( "dir", fmt::sprintf("%s/" PRODUCT_ID "/Courses", dir), "/Courses" );
-	FILEMAN->Mount( "dir", fmt::sprintf("%s/" PRODUCT_ID "/NoteSkins", dir), "/NoteSkins" );
-	FILEMAN->Mount( "dir", fmt::sprintf("%s/" PRODUCT_ID "/Packages", dir), "/" + SpecialFiles::USER_PACKAGES_DIR );
-	FILEMAN->Mount( "dir", fmt::sprintf("%s/" PRODUCT_ID "/Songs", dir), "/Songs" );
-	FILEMAN->Mount( "dir", fmt::sprintf("%s/" PRODUCT_ID "/RandomMovies", dir), "/RandomMovies" );
-	FILEMAN->Mount( "dir", fmt::sprintf("%s/" PRODUCT_ID "/Themes", dir), "/Themes" );
+	for(auto&& fs_dir : SpecialFiles::USER_CONTENT_DIRS)
+	{
+		FILEMAN->Mount("dir", fmt::sprintf("%s/" PRODUCT_ID "%s", dir, fs_dir.c_str()), fs_dir);
+	}
+	// The User Packages dir was the only one where the mount point didn't
+	// match the folder name when I changed this to use a loop. -Kyz
+	FILEMAN->Mount("dir", fmt::sprintf("%s/Packages", dir), "/" + SpecialFiles::USER_PACKAGES_DIR);
 
-	// /Screenshots -> ~/Pictures/PRODUCT_ID Screenshots
-	PathForFolderType( dir, kPictureDocumentsFolderType );
-	FILEMAN->Mount( "dir", fmt::sprintf("%s/" PRODUCT_ID " Screenshots", dir), "/Screenshots" );
-
-	// /Cache -> ~/Library/Caches/PRODUCT_ID
-	PathForFolderType( dir, kCachedDataFolderType );
-	FILEMAN->Mount( "dir", fmt::sprintf("%s/" PRODUCT_ID, dir), "/Cache" );
-
-	// /Logs -> ~/Library/Logs/PRODUCT_ID
-	PathForFolderType( dir, kDomainLibraryFolderType );
-	FILEMAN->Mount( "dir", fmt::sprintf("%s/Logs/" PRODUCT_ID, dir), "/Logs" );
-
+	std::vector<OSType> data_dir_folder_types= {
+		// Be sure to keep this in sync with SpecialFiles::USER_DATA_DIRS. -Kyz
+		// /Cache -> ~/Library/Caches/PRODUCT_ID
+		kCachedDataFolderType,
+		// /Logs -> ~/Library/Logs/PRODUCT_ID
+		kDomainLibraryFolderType,
+		// /Save -> ~/Library/Preferences/PRODUCT_ID
+		kPreferencesFolderType,
+		// /Screenshots -> ~/Pictures/PRODUCT_ID Screenshots
+		kPictureDocumentsFolderType,
+	};
+	std::vector<std::string> dir_fmt_strs= {
+		// I hate having all these special cases. -Kyz
+		"%s/" PRODUCT_ID,
+		"%s/Logs/" PRODUCT_ID,
+		"%s/" PRODUCT_ID,
+		"%s/" PRODUCT_ID " Screenshots",
+	};
+	ASSERT_M(
+		data_dir_folder_types.size() == SpecialFiles::USER_DATA_DIRS.size() &&
+		data_dir_folder_types.size() == dir_fmt_strs.size(),
+		"ArchHooks::MountUserFilesystems in ArchHooks_MacOSX.mm needs to be "
+		"updated because SpecialFiles::USER_DATA_DIRS was changed.");
+	for(size_t i= 0; i < SpecialFiles::USER_DATA_DIRS.size(); ++i)
+	{
+		PathForFolderType(dir, data_dir_folder_types[i]);
+		FILEMAN->Mount("dir", fmt::sprintf(dir_fmt_strs[i].c_str(), dir), SpecialFiles::USER_DATA_DIRS[i]);
+	}
 	// /Desktop -> /Users/<user>/Desktop/PRODUCT_ID
 	// PathForFolderType( dir, kDesktopFolderType );
 	// FILEMAN->Mount( "dir", fmt::sprintf("%s/" PRODUCT_ID, dir), "/Desktop" );

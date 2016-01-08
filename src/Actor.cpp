@@ -167,6 +167,7 @@ Actor::Actor()
 	InitState();
 	m_pParent = nullptr;
 	m_FakeParent= nullptr;
+	m_timing_source= nullptr;
 	m_bFirstUpdate = true;
 }
 
@@ -192,6 +193,7 @@ Actor::Actor( const Actor &cpy ):
 	CPY( m_sName );
 	CPY( m_pParent );
 	CPY( m_FakeParent );
+	CPY(m_timing_source);
 	CPY( m_pLuaInstance );
 
 	m_WrapperStates.resize(cpy.m_WrapperStates.size());
@@ -781,8 +783,12 @@ bool Actor::IsFirstUpdate() const
 void Actor::Update( float fDeltaTime )
 {
 //	LOG->Trace( "Actor::Update( %f )", fDeltaTime );
-	ASSERT_M( fDeltaTime >= 0, fmt::sprintf("DeltaTime: %f",fDeltaTime) );
+	fDeltaTime= std::max(0.0f, fDeltaTime);
 
+	if(m_timing_source != nullptr)
+	{
+		fDeltaTime= m_timing_source->second_delta;
+	}
 	if( m_fHibernateSecondsLeft > 0 )
 	{
 		m_fHibernateSecondsLeft -= fDeltaTime;
@@ -812,56 +818,78 @@ static void generic_global_timer_update(float new_time, float& effect_delta_time
 void Actor::UpdateInternal(float delta_time)
 {
 	if( m_bFirstUpdate )
-		m_bFirstUpdate = false;
-
-	switch(m_EffectClock)
 	{
-		case CLOCK_TIMER:
-			m_fSecsIntoEffect+= delta_time;
-			m_fEffectDelta= delta_time;
-			// Wrap the counter, so it doesn't increase indefinitely (causing loss
-			// of precision if a screen is left to sit for a day).
-			if(m_fSecsIntoEffect > GetEffectPeriod())
-			{
-				m_fSecsIntoEffect-= GetEffectPeriod();
-			}
-			break;
-		case CLOCK_TIMER_GLOBAL:
-			generic_global_timer_update(static_cast<float>(RageTimer::GetUsecsSinceStart()),
-				m_fEffectDelta, m_fSecsIntoEffect);
-			break;
-		case CLOCK_BGM_BEAT:
-			generic_global_timer_update(g_fCurrentBGMBeat,
-				m_fEffectDelta, m_fSecsIntoEffect);
-			break;
-		case CLOCK_BGM_BEAT_PLAYER1:
-			generic_global_timer_update(g_vfCurrentBGMBeatPlayer[PLAYER_1],
-				m_fEffectDelta, m_fSecsIntoEffect);
-			break;
-		case CLOCK_BGM_BEAT_PLAYER2:
-			generic_global_timer_update(g_vfCurrentBGMBeatPlayer[PLAYER_2],
-				m_fEffectDelta, m_fSecsIntoEffect);
-			break;
-		case CLOCK_BGM_TIME:
-			generic_global_timer_update(g_fCurrentBGMTime,
-				m_fEffectDelta, m_fSecsIntoEffect);
-			break;
-		case CLOCK_BGM_BEAT_NO_OFFSET:
-			generic_global_timer_update(g_fCurrentBGMBeatNoOffset,
-				m_fEffectDelta, m_fSecsIntoEffect);
-			break;
-		case CLOCK_BGM_TIME_NO_OFFSET:
-			generic_global_timer_update(g_fCurrentBGMTimeNoOffset,
-				m_fEffectDelta, m_fSecsIntoEffect);
-			break;
-		default:
-			if(m_EffectClock >= CLOCK_LIGHT_1 && m_EffectClock <= CLOCK_LIGHT_LAST)
-			{
-				generic_global_timer_update(
-					g_fCabinetLights[m_EffectClock - CLOCK_LIGHT_1],
+		m_bFirstUpdate = false;
+	}
+
+	if(m_timing_source == nullptr)
+	{
+		switch(m_EffectClock)
+		{
+			case CLOCK_TIMER:
+				m_fSecsIntoEffect+= delta_time;
+				m_fEffectDelta= delta_time;
+				// Wrap the counter, so it doesn't increase indefinitely (causing loss
+				// of precision if a screen is left to sit for a day).
+				if(m_fSecsIntoEffect > GetEffectPeriod())
+				{
+					m_fSecsIntoEffect-= GetEffectPeriod();
+				}
+				break;
+			case CLOCK_TIMER_GLOBAL:
+				generic_global_timer_update(static_cast<float>(RageTimer::GetUsecsSinceStart()),
 					m_fEffectDelta, m_fSecsIntoEffect);
-			}
-			break;
+				break;
+			case CLOCK_BGM_BEAT:
+				generic_global_timer_update(g_fCurrentBGMBeat,
+					m_fEffectDelta, m_fSecsIntoEffect);
+				break;
+			case CLOCK_BGM_BEAT_PLAYER1:
+				generic_global_timer_update(g_vfCurrentBGMBeatPlayer[PLAYER_1],
+					m_fEffectDelta, m_fSecsIntoEffect);
+				break;
+			case CLOCK_BGM_BEAT_PLAYER2:
+				generic_global_timer_update(g_vfCurrentBGMBeatPlayer[PLAYER_2],
+					m_fEffectDelta, m_fSecsIntoEffect);
+				break;
+			case CLOCK_BGM_TIME:
+				generic_global_timer_update(g_fCurrentBGMTime,
+					m_fEffectDelta, m_fSecsIntoEffect);
+				break;
+			case CLOCK_BGM_BEAT_NO_OFFSET:
+				generic_global_timer_update(g_fCurrentBGMBeatNoOffset,
+					m_fEffectDelta, m_fSecsIntoEffect);
+				break;
+			case CLOCK_BGM_TIME_NO_OFFSET:
+				generic_global_timer_update(g_fCurrentBGMTimeNoOffset,
+					m_fEffectDelta, m_fSecsIntoEffect);
+				break;
+			default:
+				if(m_EffectClock >= CLOCK_LIGHT_1 && m_EffectClock <= CLOCK_LIGHT_LAST)
+				{
+					generic_global_timer_update(
+						g_fCabinetLights[m_EffectClock - CLOCK_LIGHT_1],
+						m_fEffectDelta, m_fSecsIntoEffect);
+				}
+				break;
+		}
+	}
+	else
+	{
+		switch(m_EffectClock)
+		{
+			case CLOCK_BGM_BEAT:
+			case CLOCK_BGM_BEAT_PLAYER1:
+			case CLOCK_BGM_BEAT_PLAYER2:
+			case CLOCK_BGM_BEAT_NO_OFFSET:
+				m_fEffectDelta= m_timing_source->beat_delta;
+				m_fSecsIntoEffect= m_timing_source->curr_second;
+				break;
+			default:
+				m_fEffectDelta= m_timing_source->second_delta;
+				m_fSecsIntoEffect= m_timing_source->curr_second;
+				break;
+		}
 	}
 
 	// update effect
@@ -913,6 +941,8 @@ Actor* Actor::GetWrapperState(size_t i)
 void Actor::BeginTweening( float time, ITween *pTween )
 {
 	ASSERT( time >= 0 );
+
+	time = std::max(time, 0.0f);
 
 	// If the number of tweens to ever gets this large, there's probably an infinitely
 	// recursing ActorCommand.
