@@ -1247,13 +1247,13 @@ void NewSkinLoader::recursive_sanitize_skin_parameters(lua_State* L,
 					}
 					else if(field_type != LUA_TBOOLEAN)
 					{
-						lua_getfield(L, field_info, "values");
-						// The values table is optional, if it exists, the field must be
-						// one of the values in it.
-						int values_table= lua_gettop(L);
-						if(lua_type(L, values_table) == LUA_TTABLE)
+						lua_getfield(L, field_info, "choices");
+						// The choices table is optional, if it exists, the field must be
+						// one of the choices in it.
+						int choices_table= lua_gettop(L);
+						if(lua_type(L, choices_table) == LUA_TTABLE)
 						{
-							if(!value_is_in_table(L, dest_value, values_table))
+							if(!value_is_in_table(L, dest_value, choices_table))
 							{
 								SET_FIELD_TO_DEFAULT;
 							}
@@ -1283,7 +1283,7 @@ void NewSkinLoader::recursive_sanitize_skin_parameters(lua_State* L,
 							// Pop the min and max values.
 							lua_pop(L, 2);
 						}
-						// Pop the values table.
+						// Pop the choices table.
 						lua_pop(L, 1);
 					}
 					lua_pop(L, 1);
