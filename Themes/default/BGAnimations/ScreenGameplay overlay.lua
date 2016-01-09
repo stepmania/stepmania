@@ -37,4 +37,5 @@ if GAMESTATE:GetCurrentCourse() then
 	end;
 end;
 t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
+t[#t+1]= LoadActor(THEME:GetPathG("", "pause_menu"))
 return t
