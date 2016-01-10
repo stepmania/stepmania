@@ -46,6 +46,7 @@ public:
 	bool Open( const RString& path, int mode = READ );
 	void Close();
 	bool IsOpen() const { return m_File != NULL; }
+	int GetMode() const { return m_Mode; }
 
 	bool AtEOF() const;
 	RString GetError() const;
