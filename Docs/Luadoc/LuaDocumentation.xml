@@ -2863,7 +2863,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SaveLocalData' return='void' arguments=''>
 		Saves the bookkeeping and machine profile data.
 	</Function>
-	<Function name='SaveProfiles' return='void' arguments='bool LoadEdits'>
+	<Function name='SaveProfiles' return='void' arguments=''>
 		Save profiles.
 	</Function>
 	<Function name='SetCharacter' return='void' arguments='PlayerNumber pn, string sCharID'>
