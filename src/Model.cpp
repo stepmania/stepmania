@@ -511,6 +511,14 @@ void Model::DrawMesh( int i ) const
 
 		const Rage::Matrix &mat = m_vpBones[pMesh->m_iBoneIndex].m_Final;
 		DISPLAY->PreMultMatrix( mat );
+
+		Rage::Matrix inverse = m_vpBones[pMesh->m_iBoneIndex].m_Absolute.GetTranspose();
+		Rage::Vector3 vTmp = Rage::Vector3( inverse.m[3][0], inverse.m[3][1], inverse.m[3][2] );
+		vTmp = vTmp.TransformNormal( inverse );
+		inverse.m[3][0] = -vTmp.x;
+		inverse.m[3][1] = -vTmp.y;
+		inverse.m[3][2] = -vTmp.z;
+		DISPLAY->PreMultMatrix( inverse );
 	}
 
 	// Draw it
