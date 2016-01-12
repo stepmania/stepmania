@@ -28,7 +28,7 @@ namespace Rage
 	/** @brief Calculate the sin of a number quickly. */
 	float FastSin( float x );
 	
-	/** @brief Claculate the cosine of a number quickly. */
+	/** @brief Calculate the cosine of a number quickly. */
 	float FastCos( float x );
 
 	/** @brief Bring a value within range. */
