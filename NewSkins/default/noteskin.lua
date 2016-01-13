@@ -73,7 +73,7 @@ return {
 				-- The engine will force the value from the theme to be inside this
 				-- range.  If min and max are not provided, the theme can set any
 				-- value.
-				-- Using in and max should be preferred instead of a list of choices
+				-- Using min and max should be preferred instead of a list of choices
 				-- because years of people editing themes to add speed mods have
 				-- proved that a short list of choices doesn't allow everyone to pick
 				-- the value they want.

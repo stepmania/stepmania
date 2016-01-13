@@ -276,6 +276,11 @@ void Screen::SetNextScreenName(std::string const& name)
 	m_sNextScreen= name;
 }
 
+void Screen::SetPrevScreenName(std::string const& name)
+{
+	m_sPrevScreen= name;
+}
+
 std::string Screen::GetPrevScreen() const
 {
 	if( !m_sPrevScreen.empty() )
@@ -432,6 +437,11 @@ public:
 		lua_pushstring(L, p->GetPrevScreen().c_str() );
 		return 1;
 	}
+	static int SetPrevScreenName(T* p, lua_State* L)
+	{
+		p->SetPrevScreenName(SArg(1));
+		COMMON_RETURN_SELF;
+	}
 	static int lockinput( T* p, lua_State *L )
 	{
 		p->SetLockInputSecs(FArg(1));
@@ -472,6 +482,7 @@ public:
 		ADD_METHOD( GetNextScreenName );
 		ADD_METHOD( SetNextScreenName );
 		ADD_METHOD( GetPrevScreenName );
+		ADD_METHOD( SetPrevScreenName );
 		ADD_METHOD( PostScreenMessage );
 		ADD_METHOD( lockinput );
 		ADD_METHOD( GetScreenType );

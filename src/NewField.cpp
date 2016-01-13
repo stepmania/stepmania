@@ -37,7 +37,7 @@ NewFieldColumn::NewFieldColumn()
 	 m_quantization_offset(&m_mod_manager, 0.0),
 	 m_speed_mod(&m_mod_manager, 0.0),
 	 m_reverse_offset_pixels(&m_mod_manager, 0.0),
-	 m_reverse_percent(&m_mod_manager, 0.0),
+	 m_reverse_scale(&m_mod_manager, 1.0),
 	 m_center_percent(&m_mod_manager, 0.0),
 	 m_note_mod(&m_mod_manager), m_column_mod(&m_mod_manager),
 	 m_hold_normal_mod(&m_mod_manager, 0.0),
@@ -80,7 +80,7 @@ void NewFieldColumn::set_note_data(size_t column, const NoteData* note_data,
 	first_note_visible_prev_frame= m_note_data->end(column);
 	for(auto&& moddable : {&m_time_offset, &m_quantization_multiplier,
 				&m_quantization_offset,
-				&m_speed_mod, &m_reverse_offset_pixels, &m_reverse_percent,
+				&m_speed_mod, &m_reverse_offset_pixels, &m_reverse_scale,
 				&m_center_percent, &m_note_alpha, &m_note_glow, &m_receptor_alpha,
 				&m_receptor_glow, &m_explosion_alpha, &m_explosion_glow})
 	{
@@ -200,11 +200,10 @@ void NewFieldColumn::calc_reverse_shift()
 {
 	mod_val_inputs input(m_curr_beat, m_curr_second);
 	double reverse_offset= m_reverse_offset_pixels.evaluate(input);
-	double reverse_percent= m_reverse_percent.evaluate(input);
 	double center_percent= m_center_percent.evaluate(input);
-	reverse_shift= Rage::scale(reverse_percent, 0.0, 1.0, -reverse_offset, reverse_offset);
+	reverse_scale= m_reverse_scale.evaluate(input);
+	reverse_shift= Rage::scale(reverse_scale, 1.0, -1.0, -reverse_offset, reverse_offset);
 	reverse_shift= Rage::scale(center_percent, 0.0, 1.0, reverse_shift, 0.0);
-	reverse_scale= Rage::scale(reverse_percent, 0.0, 1.0, 1.0, -1.0);
 	double old_scale_sign= reverse_scale_sign;
 	reverse_scale_sign= (reverse_scale < 0.0) ? -1.0 : 1.0;
 	if(old_scale_sign != reverse_scale_sign)
@@ -1665,7 +1664,7 @@ struct LunaNewFieldColumn : Luna<NewFieldColumn>
 	GET_MEMBER(quantization_offset);
 	GET_MEMBER(speed_mod);
 	GET_MEMBER(reverse_offset_pixels);
-	GET_MEMBER(reverse_percent);
+	GET_MEMBER(reverse_scale);
 	GET_MEMBER(center_percent);
 	GET_TRANS(note);
 	GET_TRANS(column);
@@ -1724,11 +1723,6 @@ struct LunaNewFieldColumn : Luna<NewFieldColumn>
 	static int get_reverse_shift(T* p, lua_State* L)
 	{
 		lua_pushnumber(L, p->get_reverse_shift());
-		return 1;
-	}
-	static int get_reverse_scale(T* p, lua_State* L)
-	{
-		lua_pushnumber(L, p->get_reverse_scale());
 		return 1;
 	}
 	static int apply_column_mods_to_actor(T* p, lua_State* L)
@@ -1790,7 +1784,7 @@ struct LunaNewFieldColumn : Luna<NewFieldColumn>
 		ADD_METHOD(get_quantization_offset);
 		ADD_METHOD(get_speed_mod);
 		ADD_METHOD(get_reverse_offset_pixels);
-		ADD_METHOD(get_reverse_percent);
+		ADD_METHOD(get_reverse_scale);
 		ADD_METHOD(get_center_percent);
 		ADD_TRANS(note);
 		ADD_TRANS(column);
@@ -1817,7 +1811,7 @@ struct LunaNewFieldColumn : Luna<NewFieldColumn>
 		ADD_GET_SET_METHODS(upcoming_time);
 		ADD_METHOD(receptor_y_offset);
 		ADD_METHOD(get_reverse_shift);
-		ADD_METHOD(get_reverse_scale);
+		//		ADD_METHOD(get_reverse_scale);
 		ADD_METHOD(apply_column_mods_to_actor);
 		ADD_METHOD(apply_note_mods_to_actor);
 	}

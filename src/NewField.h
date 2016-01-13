@@ -96,10 +96,6 @@ struct NewFieldColumn : ActorFrame
 	{
 		return reverse_shift;
 	}
-	double get_reverse_scale()
-	{
-		return reverse_scale;
-	}
 	double quantization_for_time(mod_val_inputs& input)
 	{
 		double mult= m_quantization_multiplier.evaluate(input);
@@ -177,7 +173,7 @@ struct NewFieldColumn : ActorFrame
 	ModifiableValue m_speed_mod;
 
 	ModifiableValue m_reverse_offset_pixels;
-	ModifiableValue m_reverse_percent;
+	ModifiableValue m_reverse_scale;
 	ModifiableValue m_center_percent;
 
 	ModifiableTransform m_note_mod;

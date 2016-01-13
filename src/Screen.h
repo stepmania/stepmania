@@ -124,6 +124,7 @@ public:
 	std::string GetNextScreenName() const;
 	std::string GetPrevScreen() const;
 	void SetNextScreenName(std::string const& name);
+	void SetPrevScreenName(std::string const& name);
 
 	bool PassInputToLua(const InputEventPlus& input);
 	void AddInputCallbackFromStack(lua_State* L);

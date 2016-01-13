@@ -1975,9 +1975,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 					pi->GetPlayerStageStats()->m_bFailed |= bAllHumanHaveBigMissCombo;
 					pi->GetPlayerStageStats()->m_bDisqualified |= bGiveUpTimerFired;    // Don't disqualify if failing for miss combo.  The player should still be eligable for a high score on courses.
 				}
-
 				ResetGiveUpTimers(false);
-
 				if(GIVING_UP_GOES_TO_PREV_SCREEN && !m_skipped_song)
 				{
 					BeginBackingOutFromGameplay();
@@ -3317,6 +3315,11 @@ public:
 	FLOAT_TABLE_INTERFACE(HasteAddAmounts, HasteAddAmounts, AddAmountsValid);
 	FLOAT_NO_SPEED_INTERFACE(HasteTimeBetweenUpdates, HasteTimeBetweenUpdates, (v > 0));
 	FLOAT_NO_SPEED_INTERFACE(HasteLifeSwitchPoint, HasteLifeSwitchPoint, (v >= 0 && v <= 1));
+	static int begin_backing_out(T* p, lua_State* L)
+	{
+		p->BeginBackingOutFromGameplay();
+		COMMON_RETURN_SELF;
+	}
 	static int GetTrueBPS(T* p, lua_State* L)
 	{
 		PlayerNumber pn= Enum::Check<PlayerNumber>(L, 1);
@@ -3343,6 +3346,7 @@ public:
 		ADD_METHOD( HasteAddAmounts );
 		ADD_METHOD( HasteTimeBetweenUpdates );
 		ADD_METHOD( HasteLifeSwitchPoint );
+		ADD_METHOD(begin_backing_out);
 		ADD_METHOD( GetTrueBPS );
 	}
 };
