@@ -1859,7 +1859,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			case SampleMusicPreviewMode_LastSong: // fall through
 				// play the sample music
 				m_sSampleMusicToPlay = pSong->GetPreviewMusicPath();
-				if(ActorUtil::GetFileType(m_sSampleMusicToPlay) != FT_Sound)
+				if(!m_sSampleMusicToPlay.empty() && ActorUtil::GetFileType(m_sSampleMusicToPlay) != FT_Sound)
 				{
 					LuaHelpers::ReportScriptErrorFmt("Music file %s for song is not a sound file, ignoring.", m_sSampleMusicToPlay.c_str());
 					m_sSampleMusicToPlay= "";

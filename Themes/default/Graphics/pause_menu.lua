@@ -1,7 +1,9 @@
 gameplay_pause_count= 0
+course_stopped_by_pause_menu= false
 
 local pause_buttons= {Start= true, Select= true, Back= true}
-local pause_double_tap_time= .5
+local pause_double_tap_time= 1
+local tap_debounce_time= .1
 local pause_press_times= {}
 local screen_gameplay= false
 local menu_items= {[PLAYER_1]= {}, [PLAYER_2]= {}}
@@ -16,6 +18,7 @@ if GAMESTATE:IsCourseMode() then
 		"continue_playing",
 		"skip_song",
 		"forfeit_course",
+		"end_course",
 	}
 end
 local menu_spacing= 32
@@ -95,6 +98,8 @@ local function close_menu(pn)
 		end
 	end
 	if not stay_paused then
+		local fg= screen_gameplay:GetChild("SongForeground")
+		if fg then fg:visible(old_fg_visible) end
 		screen_gameplay:PauseGame(false)
 	end
 end
@@ -114,6 +119,10 @@ local choice_actions= {
 	end,
 	forfeit_course= function(pn)
 		backout(SelectMusicOrCourse())
+	end,
+	end_course= function(pn)
+		course_stopped_by_pause_menu= true
+		screen_gameplay:PostScreenMessage("SM_NotesEnded", 0)
 	end,
 }
 
@@ -166,13 +175,26 @@ local function input(event)
 			end
 		end
 	else
+		button= event.button
 		if event.type ~= "InputEventType_FirstPress" then return end
 		if pause_buttons[button] then
-			if pause_press_times[pn] and
-			GetTimeSinceStart() - pause_press_times[pn] <= pause_double_tap_time then
-				gameplay_pause_count= gameplay_pause_count + 1
-				screen_gameplay:PauseGame(true)
-				show_menu(pn)
+			if GAMESTATE:GetCoinMode() == "CoinMode_Pay" then return end
+			if pause_press_times[pn] then
+				local time_since_press= GetTimeSinceStart() - pause_press_times[pn]
+				if time_since_press > tap_debounce_time then
+					if time_since_press <= pause_double_tap_time then
+						gameplay_pause_count= gameplay_pause_count + 1
+						screen_gameplay:PauseGame(true)
+						local fg= screen_gameplay:GetChild("SongForeground")
+						if fg then
+							old_fg_visible= fg:GetVisible()
+							fg:visible(false)
+						end
+						show_menu(pn)
+					else
+						pause_press_times[pn]= GetTimeSinceStart()
+					end
+				end
 			else
 				pause_press_times[pn]= GetTimeSinceStart()
 			end
