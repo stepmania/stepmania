@@ -18,8 +18,8 @@ return function(button_list, stepstype, skin_parameters)
 			-- The BeatUpdate command happens every frame to update various things
 			-- that can change every frame.
 			-- The param table has four things in it:
-			--   beat: A number in the range [0, 1), it is 0 when the beat occurs,
-			--     and goes towards 1 as the beat progresses.
+			--   anim_percent: A number in the range [0, 1), it is 0 when the
+			--    animation starts, and goes towards 1 as the animation progresses.
 			--   pressed: True if the panel for the column is pressed.
 			--   beat_distance: The number of beats to the next note.
 			--   second_distance: The number of seconds to the next note.
@@ -38,7 +38,7 @@ return function(button_list, stepstype, skin_parameters)
 			-- warning_time is set by a noteskin parameter so the player can
 			-- control the fading.
 			BeatUpdateCommand= function(self, param)
-				self:glow{1, 1, 1, (1 - param.beat*2) / 4}
+				self:glow{1, 1, 1, (1 - param.anim_percent*2) / 4}
 				if warning_time > 0 and param.second_distance < warning_time then
 					self:diffuse(lerp_color(param.second_distance/warning_time, white, red))
 				else
@@ -46,7 +46,7 @@ return function(button_list, stepstype, skin_parameters)
 				end
 				if param.pressed then
 					self:zoom(.75)
-				else
+				elseif param.lifted then
 					self:zoom(1)
 				end
 			end,

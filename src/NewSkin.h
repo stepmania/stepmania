@@ -287,6 +287,8 @@ struct NewSkinColumn
 		double quantization, double beat, QuantizedHoldRenderData& data);
 	double get_width() { return m_width; }
 	double get_padding() { return m_padding; }
+	double get_anim_time() { return m_anim_time; }
+	bool get_anim_uses_beats() { return m_anim_uses_beats; }
 	bool supports_masking()
 	{
 		return !(m_hold_player_masks.empty() || m_hold_reverse_player_masks.empty());
@@ -361,6 +363,8 @@ private:
 	std::vector<RageTexture*> m_hold_reverse_player_masks;
 	double m_width;
 	double m_padding;
+	double m_anim_time;
+	bool m_anim_uses_beats;
 };
 
 struct NewSkinLayer

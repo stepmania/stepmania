@@ -156,6 +156,7 @@ struct NewFieldColumn : ActorFrame
 		{}
 		double upcoming_beat_dist;
 		double upcoming_second_dist;
+		double anim_percent;
 		TapNote const* active_hold;
 		TapNote const* prev_active_hold;
 		bool found_upcoming;
@@ -232,6 +233,7 @@ private:
 	double first_y_offset_visible;
 	double last_y_offset_visible;
 	bool pressed;
+	bool was_pressed;
 };
 
 enum FieldVanishType

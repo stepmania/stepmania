@@ -51,7 +51,8 @@ NewFieldColumn::NewFieldColumn()
 	 m_playerize_mode(NPM_Off),
 	 m_newskin(nullptr), m_player_colors(nullptr), m_note_data(nullptr),
 	 m_timing_data(nullptr),
-	 reverse_scale_sign(1.0)
+	 reverse_scale_sign(1.0),
+	 pressed(false)
 {
 	m_quantization_multiplier.m_value= 1.0;
 	double default_offset= SCREEN_CENTER_Y - note_size;
@@ -869,6 +870,20 @@ void NewFieldColumn::build_render_lists()
 	m_status.prev_active_hold= m_status.active_hold;
 	m_status.active_hold= nullptr;
 	m_status.found_upcoming= false;
+	double skin_anim_time= m_newskin->get_anim_time();
+	if(m_newskin->get_anim_uses_beats())
+	{
+		m_status.anim_percent= m_curr_beat;
+	}
+	else
+	{
+		m_status.anim_percent= m_curr_second;
+	}
+	m_status.anim_percent= fmod(m_status.anim_percent, skin_anim_time) / skin_anim_time;
+	if(m_status.anim_percent < 0.0)
+	{
+		m_status.anim_percent+= 1.0;
+	}
 
 	double time_diff= m_curr_second - m_prev_curr_second;
 	auto column_end= m_note_data->end(m_column);
@@ -966,10 +981,20 @@ void NewFieldColumn::build_render_lists()
 
 	{
 		Message msg("BeatUpdate");
-		msg.SetParam("beat", m_curr_beat - floor(m_curr_beat));
-		msg.SetParam("pressed", pressed);
+		msg.SetParam("anim_percent", m_status.anim_percent);
 		msg.SetParam("beat_distance", m_status.upcoming_beat_dist);
 		msg.SetParam("second_distance", m_status.upcoming_second_dist);
+		if(pressed != was_pressed)
+		{
+			if(pressed)
+			{
+				msg.SetParam("pressed", true);
+			}
+			else
+			{
+				msg.SetParam("lifted", true);
+			}
+		}
 		pass_message_to_heads(msg);
 	}
 	// The hold status should be updated if there is a currently active hold
@@ -1039,7 +1064,6 @@ void NewFieldColumn::draw_heads_internal(vector<column_head>& heads, bool recept
 
 void NewFieldColumn::draw_holds_internal()
 {
-	double const beat= m_curr_beat - floor(m_curr_beat);
 	bool const reverse= reverse_scale_sign < 0.0;
 	for(auto&& holdit : render_holds)
 	{
@@ -1054,7 +1078,7 @@ void NewFieldColumn::draw_holds_internal()
 		bool active= tn.HoldResult.bActive && tn.HoldResult.fLife > 0.0f;
 		QuantizedHoldRenderData data;
 		m_newskin->get_hold_render_data(tn.subType, m_playerize_mode, tn.pn,
-			active, reverse, quantization, beat, data);
+			active, reverse, quantization, m_status.anim_percent, data);
 		double hold_draw_beat;
 		double hold_draw_second;
 		get_hold_draw_time(tn, hold_beat, hold_draw_beat, hold_draw_second);
@@ -1086,7 +1110,7 @@ void set_tap_actor_info(tap_draw_info& draw_info, NewFieldColumn& col,
 	NewSkinColumn* newskin, get_norm_actor_fun get_normal,
 	get_play_actor_fun get_playerized, size_t part,
 	size_t pn, double draw_beat, double draw_second, double yoff,
-	double tap_beat, double tap_second, double anim_beat)
+	double tap_beat, double tap_second, double anim_percent)
 {
 	draw_info.draw_beat= draw_beat;
 	draw_info.y_offset= yoff;
@@ -1096,11 +1120,11 @@ void set_tap_actor_info(tap_draw_info& draw_info, NewFieldColumn& col,
 		{
 			mod_val_inputs mod_input(tap_beat, tap_second, col.get_curr_beat(), col.get_curr_second(), yoff);
 			double const quantization= col.quantization_for_time(mod_input);
-			draw_info.act= (newskin->*get_normal)(part, quantization, anim_beat);
+			draw_info.act= (newskin->*get_normal)(part, quantization, anim_percent);
 		}
 		else
 		{
-			draw_info.act= (newskin->*get_playerized)(part, pn, anim_beat);
+			draw_info.act= (newskin->*get_playerized)(part, pn, anim_percent);
 		}
 		draw_info.draw_second= draw_second;
 	}
@@ -1108,7 +1132,6 @@ void set_tap_actor_info(tap_draw_info& draw_info, NewFieldColumn& col,
 
 void NewFieldColumn::draw_taps_internal()
 {
-	double const beat= m_curr_beat - floor(m_curr_beat);
 	for(auto&& tapit : render_taps)
 	{
 		TapNote const& tn= tapit.note_iter->second;
@@ -1167,7 +1190,7 @@ void NewFieldColumn::draw_taps_internal()
 			set_tap_actor_info(acts[0], *this, m_newskin,
 				&NewSkinColumn::get_tap_actor, &NewSkinColumn::get_player_tap, part,
 				tn.pn, head_beat, tn.occurs_at_second, tapit.y_offset, tap_beat,
-				tap_second, beat);
+				tap_second, m_status.anim_percent);
 		}
 		else
 		{
@@ -1175,11 +1198,11 @@ void NewFieldColumn::draw_taps_internal()
 			set_tap_actor_info(acts[0], *this, m_newskin,
 				&NewSkinColumn::get_optional_actor,
 				&NewSkinColumn::get_player_optional_tap, tail_part, tn.pn, tail_beat,
-				tn.end_second, tapit.tail_y_offset, tap_beat, tap_second, beat);
+				tn.end_second, tapit.tail_y_offset, tap_beat, tap_second, m_status.anim_percent);
 			set_tap_actor_info(acts[1], *this, m_newskin,
 				&NewSkinColumn::get_optional_actor,
 				&NewSkinColumn::get_player_optional_tap, head_part, tn.pn, head_beat,
-				head_second, tapit.y_offset, tap_beat, tap_second, beat);
+				head_second, tapit.y_offset, tap_beat, tap_second, m_status.anim_percent);
 		}
 		for(auto&& act : acts)
 		{
@@ -1272,6 +1295,7 @@ void NewFieldColumn::set_hold_status(TapNote const* tap, bool start, bool end)
 
 void NewFieldColumn::set_pressed(bool on)
 {
+	was_pressed= pressed;
 	pressed= on;
 }
 

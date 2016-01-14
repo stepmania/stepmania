@@ -21,20 +21,23 @@ return function(button_list, stepstype, skin_params)
 	local pardist= explosion_params.particle_dist
 	local particle_life= explosion_params.particle_life
 	local have_particles= explosion_params.particles
-	local angle_per_particle= (end_angle - start_angle) / (num_particles - 1)
-	for i= 0, num_particles-1 do
-		local angle= start_angle + (i * angle_per_particle)
-		local radan= angle / 180 * math.pi
-		particle_directions[i+1]= {
-			angle= angle, x= math.cos(radan)*pardist, y= math.sin(radan)*pardist}
+	if have_particles then
+		local angle_per_particle= (end_angle - start_angle) / (num_particles - 1)
+		for i= 0, num_particles-1 do
+			local angle= start_angle + (i * angle_per_particle)
+			local radan= angle / 180 * math.pi
+			particle_directions[i+1]= {
+				angle= angle, x= math.cos(radan)*pardist, y= math.sin(radan)*pardist}
+		end
 	end
 
 	local ret= {}
 	local rots= {Left= 90, Down= 0, Up= 180, Right= 270}
 	for i, button in ipairs(button_list) do
 		local particles= {}
-		local curr_particle= 1
-		local particle_frames= {
+		local particle_frames= {}
+		if have_particles then
+			local curr_particle= 1
 			-- Handling reverse:
 			-- When the column changes from normal (scrolling up) to reverse
 			-- (scrolling down), or back, the ReverseChanged command is played.
@@ -45,10 +48,10 @@ return function(button_list, stepstype, skin_params)
 			-- half circle, so the ReverseChanged command is used to change the y
 			-- zoom of the frame the particles are in to make them go in the
 			-- direction the arrows are coming from.
-			ReverseChangedCommand= function(self, param)
+			particle_frames.ReverseChangedCommand= function(self, param)
 				self:zoomy(param.sign)
-			end,
-			ColumnJudgmentCommand= function(self, param)
+			end
+			particle_frames.ColumnJudgmentCommand= function(self, param)
 				local diffuse= {
 					TapNoteScore_W1= {1, 1, 1, 1},
 					TapNoteScore_W2= {1, 1, .3, 1},
@@ -65,42 +68,42 @@ return function(button_list, stepstype, skin_params)
 					if not particles[curr_particle] then curr_particle= 1 end
 				end
 			end
-		}
-		for part_id= 1, 10 do
-			local parts= {
-				InitCommand= function(self)
-					if rots[button] then
-						self:rotationz(-rots[button])
-					end
-					particles[part_id]= self:playcommand("hide")
-				end,
-				explodeCommand= function(self)
-					self:hibernate(0):finishtweening():sleep(1):queuecommand("hide")
-				end,
-				hideCommand= function(self)
-					self:hibernate(math.huge)
-				end
-			}
-			for p= 1, num_particles do
-				parts[p]= Def.Quad{
+			for part_id= 1, 10 do
+				local parts= {
 					InitCommand= function(self)
-						local direction= particle_directions[p]
-						self:setsize(parsize, parsize):diffuseupperleft{1, 1, 1, 0}
-							:diffuselowerright{0, 0, 0, 0}
-							:blend(explosion_params.particle_blend)
-							:rotationz(direction.angle+45)
+						if rots[button] then
+							self:rotationz(-rots[button])
+						end
+						particles[part_id]= self:playcommand("hide")
 					end,
-					explodeCommand= function(self, param)
-						local direction= particle_directions[p]
-						self:finishtweening()
-							:diffuseupperright(param.color):diffuselowerleft(param.color)
-							:zoom(1):xy(0, 0)
-							:decelerate(particle_life)
-							:zoom(0):xy(direction.x, direction.y)
+					explodeCommand= function(self)
+						self:hibernate(0):finishtweening():sleep(1):queuecommand("hide")
+					end,
+					hideCommand= function(self)
+						self:hibernate(math.huge)
 					end
 				}
+				for p= 1, num_particles do
+					parts[p]= Def.Quad{
+						InitCommand= function(self)
+							local direction= particle_directions[p]
+							self:setsize(parsize, parsize):diffuseupperleft{1, 1, 1, 0}
+								:diffuselowerright{0, 0, 0, 0}
+								:blend(explosion_params.particle_blend)
+								:rotationz(direction.angle+45)
+						end,
+						explodeCommand= function(self, param)
+							local direction= particle_directions[p]
+							self:finishtweening()
+								:diffuseupperright(param.color):diffuselowerleft(param.color)
+								:zoom(1):xy(0, 0)
+								:decelerate(particle_life)
+								:zoom(0):xy(direction.x, direction.y)
+						end
+					}
+				end
+				particle_frames[part_id]= Def.ActorFrame(parts)
 			end
-			particle_frames[part_id]= Def.ActorFrame(parts)
 		end
 		local column_frame= Def.ActorFrame{
 			InitCommand= function(self)

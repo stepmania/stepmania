@@ -1,3 +1,4 @@
+local skin_name= Var("skin_name")
 -- The noteskin file returns a function that will be called to load the
 -- actors for the noteskin.  The function will be passed a list of buttons.
 -- Each element in button_list is the name of the button that will be used
@@ -150,6 +151,10 @@ return function(button_list, stepstype)
 	for i, button in ipairs(button_list) do
 		local hold_tex= hold_buttons[button] .. "_hold 8x4.png"
 		local roll_tex= roll_buttons[button] .. "_roll 8x4.png"
+		-- There will be a section about mask textures and routine mode at the
+		-- end of the file.  Ignore mask textures and don't include them in your
+		-- noteskin if there's already too much to understand.
+		local hold_mask_tex= "down_mask_hold 8x4.png"
 		columns[i]= {
 			-- The width parameter specifies how wide the column is in pixels.
 			-- Different columns are allowed to be different widths.
@@ -161,10 +166,21 @@ return function(button_list, stepstype)
 			-- column.  A padding value of 2 means 1 pixel on each side.
 			-- The default is 0.
 			padding= 0,
+			-- anim_time is used to specify how long the animation of the taps
+			-- lasts.
+			anim_time= 1,
+			-- anim_uses_beats specifies whether anim_time is a number of beats or
+			-- a number of seconds.
+			anim_uses_beats= true,
+			-- anim_time of 1 and anim_uses_beats set to true means that taps,
+			-- holds, and receptors in this column will take 1 beat to go through
+			-- their animations.
 			taps= {
 				NewSkinTapPart_Tap= {
 					state_map= tap_state_map,
 					actor= Def.Sprite{Texture= "tap_note 2x8.png",
+						-- The Mask field sets the mask texture used for the tap.
+						Mask= NEWSKIN:get_path(skin_name, "tap_mask 2x8.png"),
 						-- Use the InitCommand to rotate the arrow appropriately.
 						InitCommand= function(self) self:rotationz(rots[button]) end}},
 				NewSkinTapPart_Mine= {
@@ -305,6 +321,16 @@ return function(button_list, stepstype)
 					},
 				},
 			},
+			-- hold_masks and hold_reverse_masks are for the mask textures used for
+			-- each hold type.
+			hold_masks= {
+				TapNoteSubType_Hold= hold_mask_tex,
+				TapNoteSubType_Roll= hold_mask_tex,
+			},
+			hold_reverse_masks= {
+				TapNoteSubType_Hold= hold_mask_tex,
+				TapNoteSubType_Roll= hold_mask_tex,
+			},
 		}
 	end
 	return {
@@ -321,3 +347,38 @@ return function(button_list, stepstype)
 		vivid_operation= true, -- output 200%
 	}
 end
+
+-- There are two ways to support multiplayer mode:
+-- 1. Mask mode.  The notefield applies a mask to taps and holds.  The alpha
+--    channel in the mask sets where the color is applied.
+-- 2. Quanta mode.  The notefield uses a different quanta for each player.
+--    So the first quanta in the state map is for player 1, the second for
+--    player 2, and so on.
+-- The theme (or player) chooses which mode is used.  If the noteskin does
+-- not supply masks for the holds, then the field will use Quanta mode when
+-- the theme tries to use Mask mode.
+--
+-- If a noteskin wants to have holds that are playerized in multiplayer mode,
+-- but not quantized in single player mode, then it should use the
+-- GAMEMAN:stepstype_is_multiplayer function to detect the mode and use a
+-- different state map for holds.  For example:
+--
+-- local hold_state_map= {}
+-- if GAMEMAN:stepstype_is_multiplayer(stepstype) then
+-- 	hold_state_map= {parts_per_beat= parts_per_beat, quanta= {
+-- 		{per_beat= 1, states= {1, 2}}}}
+-- else
+-- 	hold_state_map= {parts_per_beat= parts_per_beat, quanta= {
+-- 		{per_beat= 1, states= {1, 2}},
+-- 		{per_beat= 1, states= {5, 6}},
+-- 		{per_beat= 1, states= {9, 10}},
+-- 		{per_beat= 1, states= {13, 14}},
+-- 	}}
+-- end
+--
+-- If a noteskin wants to support masks for taps but not have masks on holds,
+-- then it should use a hold mask that is transparent everywhere.
+--
+-- If the mask texture is not the same size as the texture for the thing
+-- being masked (hold or tap), the mask texture will be stretched and look
+-- wrong.

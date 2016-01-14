@@ -44,6 +44,7 @@ return function(button_list)
 	for i, button in ipairs(button_list) do
 		columns[i]= {
 			width= 64, padding= 0,
+			anim_time= 1, anim_uses_beats= true,
 			taps= {
 				NewSkinTapPart_Tap= {
 					state_map= tap_states,

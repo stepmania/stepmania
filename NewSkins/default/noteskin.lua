@@ -20,6 +20,11 @@ return {
 	-- to fall back on if a hold texture or one of the files listed above is
 	-- not found.
 	fallback= "",
+	-- These are example player colors for multiplayer mask mode.
+	-- Any number of player colors can be specified and the notefield will use
+	-- the ones needed.
+	player_colors= {{.8, 0, 0, 1}, {0, 0, .8, 1}, {.8, .8, 0, 1},
+		{.4, 0, .8, 1}, {.8, 0, .8, 1}, {.8, .4, 0, 1}},
 	-- The skin_parameters table is an optional way to make the noteskin
 	-- customizable.  skin_parameters can be a table that contains any numbers,
 	-- strings, or bools that the noteskin author wants.  The third parameter

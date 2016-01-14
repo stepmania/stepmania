@@ -15,6 +15,8 @@ using std::vector;
 
 static const double default_column_width= 64.0;
 static const double default_column_padding= 0.0;
+static const double default_anim_time= 1.0;
+static const double min_anim_time= 0.01;
 
 static const char* NewSkinTapPartNames[] = {
 	"Tap",
@@ -673,6 +675,12 @@ bool NewSkinColumn::load_from_lua(lua_State* L, int index, NewSkinLoader const* 
 	}
 	m_width= get_optional_double(L, index, "width", default_column_width);
 	m_padding= get_optional_double(L, index, "padding", default_column_padding);
+	m_anim_time= get_optional_double(L, index, "anim_time", default_anim_time);
+	if(m_anim_time <= min_anim_time)
+	{
+		m_anim_time= 1.0;
+	}
+	m_anim_uses_beats= get_optional_bool(L, index, "anim_uses_beats");
 #undef RETURN_NOT_SANE
 	lua_settop(L, original_top);
 	m_taps.swap(temp_taps);
