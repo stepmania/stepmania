@@ -251,12 +251,15 @@ static void ThemeChoices( vector<RString> &out )
 static DisplayResolutions display_resolution_list;
 static void cache_display_resolution_list()
 {
-	display_resolution_list.clear();
-	DISPLAY->GetDisplayResolutions(display_resolution_list);
+	if(display_resolution_list.empty())
+	{
+		DISPLAY->GetDisplayResolutions(display_resolution_list);
+	}
 }
 
 static void DisplayResolutionChoices( vector<RString> &out )
 {
+	cache_display_resolution_list();
 	FOREACHS_CONST( DisplayResolution, display_resolution_list, iter )
 	{
 		RString s = ssprintf("%dx%d", iter->iWidth, iter->iHeight);
@@ -582,6 +585,7 @@ static void DisplayResolutionM( int &sel, bool ToSel, const ConfOption *pConfOpt
 
 	if(res_choices.empty())
 	{
+		cache_display_resolution_list();
 		FOREACHS_CONST(DisplayResolution, display_resolution_list, iter)
 		{
 			res_choices.push_back(res_t(iter->iWidth, iter->iHeight));
@@ -706,7 +710,10 @@ static void InitializeConfOptions()
 	if( !g_ConfOptions.empty() )
 		return;
 
-	cache_display_resolution_list();
+	// Clear the display_resolution_list so that we don't get problems from
+	// caching it.  If the DisplayResolution option row is on the screen, it'll
+	// recache the list. -Kyz
+	display_resolution_list.clear();
 
 	// There are a couple ways of getting the current preference column or turning
 	// a new choice in the interface into a new preference. The easiest is when
