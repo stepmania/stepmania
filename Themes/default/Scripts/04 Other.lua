@@ -43,3 +43,7 @@ function thified_curstage_index(on_eval)
 		return ToEnumShortString(cur_stage)
 	end
 end
+
+function check_stop_course_early()
+	return course_stopped_by_pause_menu
+end

@@ -176,6 +176,7 @@ public:
 
 	void FailFadeRemovePlayer(PlayerInfo* pi);
 	void FailFadeRemovePlayer(PlayerNumber pn);
+	void BeginBackingOutFromGameplay();
 
 	vector<float> m_HasteTurningPoints; // Values at which the meaning of GAMESTATE->m_fHasteRate changes.
 	vector<float> m_HasteAddAmounts; // Amounts that are added to speed depending on what turning point has been passed.
@@ -225,7 +226,6 @@ protected:
 	void PlayAnnouncer( const RString &type, float fSeconds ) { PlayAnnouncer(type, fSeconds, &m_fTimeSinceLastDancingComment); }
 	void UpdateLights();
 	void SendCrossedMessages();
-	void BeginBackingOutFromGameplay();
 
 	void PlayTicks();
 	void UpdateSongPosition( float fDeltaTime );

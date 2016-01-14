@@ -65,4 +65,15 @@ t[#t+1] = Def.ActorFrame {
 	InitCommand=cmd(hide_if,not GAMESTATE:IsPlayerEnabled(PLAYER_2);x,WideScale(math.floor(SCREEN_CENTER_X*1.7)+8,math.floor(SCREEN_CENTER_X*1.5)+8);y,SCREEN_CENTER_Y-20);
 	CreateStats( PLAYER_2 );
 };
+
+if gameplay_pause_count > 0 then
+	t[#t+1]= Def.BitmapText{
+		Font= "Common Normal",
+		Text= THEME:GetString("PauseMenu", "pause_count") .. ": " .. gameplay_pause_count,
+		InitCommand= function(self)
+			self:xy(_screen.cx, 375):diffuse(Color.White):zoom(.75)
+		end
+	}
+end
+
 return t
