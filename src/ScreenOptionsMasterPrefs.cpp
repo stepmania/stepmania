@@ -248,12 +248,16 @@ static void ThemeChoices( vector<RString> &out )
 		*s = THEME->GetThemeDisplayName( *s );
 }
 
+static DisplayResolutions display_resolution_list;
+static void cache_display_resolution_list()
+{
+	display_resolution_list.clear();
+	DISPLAY->GetDisplayResolutions(display_resolution_list);
+}
+
 static void DisplayResolutionChoices( vector<RString> &out )
 {
-	DisplayResolutions d;
-	DISPLAY->GetDisplayResolutions( d );
-
-	FOREACHS_CONST( DisplayResolution, d, iter )
+	FOREACHS_CONST( DisplayResolution, display_resolution_list, iter )
 	{
 		RString s = ssprintf("%dx%d", iter->iWidth, iter->iHeight);
 		out.push_back( s );
@@ -574,18 +578,18 @@ inline res_t operator-(res_t lhs, res_t const &rhs)
 
 static void DisplayResolutionM( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<res_t> v;
+	static vector<res_t> res_choices;
 
-	DisplayResolutions d;
-	DISPLAY->GetDisplayResolutions( d );
-
-	FOREACHS_CONST( DisplayResolution, d, iter )
+	if(res_choices.empty())
 	{
-		v.push_back( res_t(iter->iWidth, iter->iHeight) );
+		FOREACHS_CONST(DisplayResolution, display_resolution_list, iter)
+		{
+			res_choices.push_back(res_t(iter->iWidth, iter->iHeight));
+		}
 	}
 
 	res_t sel_res( PREFSMAN->m_iDisplayWidth, PREFSMAN->m_iDisplayHeight );
-	MoveMap( sel, sel_res, ToSel, &v[0], v.size() );
+	MoveMap( sel, sel_res, ToSel, &res_choices[0], res_choices.size());
 	if( !ToSel )
 	{
 		PREFSMAN->m_iDisplayWidth.Set( sel_res.w );
@@ -701,6 +705,8 @@ static void InitializeConfOptions()
 {
 	if( !g_ConfOptions.empty() )
 		return;
+
+	cache_display_resolution_list();
 
 	// There are a couple ways of getting the current preference column or turning
 	// a new choice in the interface into a new preference. The easiest is when

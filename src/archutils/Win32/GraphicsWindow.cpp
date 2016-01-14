@@ -519,10 +519,20 @@ void GraphicsWindow::GetDisplayResolutions( DisplayResolutions &out )
 	int i=0;
 	while(EnumDisplaySettings(NULL, i++, &dm))
 	{
-		if(ChangeDisplaySettings(&dm, CDS_TEST)==DISP_CHANGE_SUCCESSFUL)
+		// Windows 8 and later don't support less than 32bpp, so don't even test
+		// for them.  GetDisplayResolutions is only for resolutions anyway. -Kyz
+		if(dm.dmBitsPerPel < 32)
 		{
-			DisplayResolution res = { dm.dmPelsWidth, dm.dmPelsHeight };
-			out.insert( res );
+			continue;
+		}
+		DisplayResolution res = { dm.dmPelsWidth, dm.dmPelsHeight };
+		std::set<DisplayResolution>::iterator entry= out.find(res);
+		if(entry == out.end())
+		{
+			if(ChangeDisplaySettings(&dm, CDS_TEST)==DISP_CHANGE_SUCCESSFUL)
+			{
+				out.insert(res);
+			}
 		}
 	}
 }
