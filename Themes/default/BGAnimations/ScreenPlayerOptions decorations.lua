@@ -2,6 +2,8 @@ local num_players = GAMESTATE:GetHumanPlayers();
 
 local t = LoadFallbackB();
 
+t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
+
 for i=1,#num_players do
 	local metrics_name = "PlayerNameplate" .. ToEnumShortString(num_players[i])
 	t[#t+1] = LoadActor( THEME:GetPathG(Var "LoadingScreen", "PlayerNameplate"), num_players[i] ) .. {
