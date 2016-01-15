@@ -108,7 +108,7 @@ end
 
 function set_newfield_reverse(newfield, rev)
 	for col in ivalues(newfield:get_columns()) do
-		col:get_reverse_percent():set_value(rev)
+		col:get_reverse_scale():set_value(rev)
 	end
 end
 
@@ -136,7 +136,7 @@ function set_newfield_mods(screen_gameplay, pn, revoff)
 	local poptions= pstate:GetPlayerOptions("ModsLevel_Preferred")
 	set_newfield_tilt(field, poptions:Tilt())
 	set_newfield_mini(field, poptions:Mini())
-	set_newfield_reverse(field, poptions:Reverse())
+	set_newfield_reverse(field, 1-(2*poptions:Reverse()))
 	local mmod= poptions:MMod()
 	local cmod= poptions:CMod()
 	local xmod= poptions:XMod()
