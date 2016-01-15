@@ -15,7 +15,7 @@ return function(button_list, stepstype, skin_parameters)
 					self:SetTextureFiltering(false)
 				end,
 				BeatUpdateCommand= function(self, param)
-					self:setstate(math.floor(param.anim_percent * self:GetNumStates()))
+					self:setstate(math.floor(param.beat * self:GetNumStates()))
 					if warning_time > 0 and param.second_distance < warning_time then
 						self:diffuse(lerp_color(param.second_distance/warning_time, white, red))
 					else

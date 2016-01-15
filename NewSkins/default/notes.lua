@@ -207,6 +207,9 @@ return function(button_list, stepstype)
 				-- NewSkinTapOptionalPart_CheckpointHead does not exist.
 				NewSkinTapOptionalPart_HoldHead= {
 					state_map= tap_state_map,
+					-- Taps can have an inactive_state_map if they need to look
+					-- different when the hold they're on is not active.
+					inactive_state_map= tap_state_map,
 					actor= Def.Sprite{Texture= "hold_head 2x8.png"}},
 				-- This will be used if NewSkinTapOptionalPart_RollTail or
 				-- NewSkinTapOptionalPart_CheckpointTail does not exist.
@@ -227,6 +230,12 @@ return function(button_list, stepstype)
 					actor= Def.Sprite{Texture= "checkpoint_tail 2x8.png"}},
 			},
 			]]
+			-- Also not used by this noteskin:
+			--   reverse_taps and reverse_optional_taps.
+			-- If reverse_taps exists, the taps in it will be used instead of the
+			-- the taps in taps when the column is in reverse.
+			-- If reverse_optional_taps exists, the taps in it will be used instead
+			-- of the taps on optional_taps when the column is in reverse.
 			holds= {
 				-- The inactive states use the inactive_state_map while the active
 				-- states use the active_state_map.  The state maps use different

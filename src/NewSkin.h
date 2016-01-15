@@ -180,20 +180,25 @@ struct QuantizedTap
 		// transform stomp on the rotation the noteskin supplies.
 		return &m_frame;
 	}
-	Actor* get_quantized(double quantization, double beat)
+	Actor* get_quantized(double quantization, double beat, bool active)
 	{
-		const size_t state= m_state_map.calc_state(quantization, beat, m_vivid);
+		const size_t state= active ?
+			m_state_map.calc_state(quantization, beat, m_vivid) :
+			m_inactive_map.calc_state(quantization, beat, m_vivid);
 		return get_common(state);
 	}
-	Actor* get_playerized(size_t pn, double beat)
+	Actor* get_playerized(size_t pn, double beat, bool active)
 	{
-		const size_t state= m_state_map.calc_player_state(pn, beat, m_vivid);
+		const size_t state= active ?
+			m_state_map.calc_player_state(pn, beat, m_vivid) :
+			m_inactive_map.calc_player_state(pn, beat, m_vivid);
 		return get_common(state);
 	}
 	bool load_from_lua(lua_State* L, int index, std::string& insanity_diagnosis);
 	bool m_vivid;
 private:
 	QuantizedStateMap m_state_map;
+	QuantizedStateMap m_inactive_map;
 	AutoActor m_actor;
 	ActorFrame m_frame;
 };
@@ -278,10 +283,10 @@ struct NewSkinColumn
 {
 	void set_timing_source(TimingSource* source);
 	void update_taps();
-	Actor* get_tap_actor(size_t type, double quantization, double beat);
-	Actor* get_optional_actor(size_t type, double quantization, double beat);
-	Actor* get_player_tap(size_t type, size_t pn, double beat);
-	Actor* get_player_optional_tap(size_t type, size_t pn, double beat);
+	Actor* get_tap_actor(size_t type, double quantization, double beat, bool active, bool reverse);
+	Actor* get_optional_actor(size_t type, double quantization, double beat, bool active, bool reverse);
+	Actor* get_player_tap(size_t type, size_t pn, double beat, bool active, bool reverse);
+	Actor* get_player_optional_tap(size_t type, size_t pn, double beat, bool active, bool reverse);
 	void get_hold_render_data(TapNoteSubType sub_type,
 		NotePlayerizeMode playerize_mode, size_t pn, bool active, bool reverse,
 		double quantization, double beat, QuantizedHoldRenderData& data);
@@ -305,15 +310,21 @@ struct NewSkinColumn
 		std::string& insanity_diagnosis);
 	void vivid_operation(bool vivid)
 	{
-		for(auto&& tap : m_taps)
+		for(auto&& tap_set : {&m_taps, &m_reverse_taps})
 		{
-			tap.m_vivid= vivid;
-		}
-		for(auto&& tap : m_optional_taps)
-		{
-			if(tap != nullptr)
+			for(auto&& tap : *tap_set)
 			{
-				tap->m_vivid= vivid;
+				tap.m_vivid= vivid;
+			}
+		}
+		for(auto&& tap_set : {&m_optional_taps, &m_reverse_optional_taps})
+		{
+			for(auto&& tap : *tap_set)
+			{
+				if(tap != nullptr)
+				{
+					tap->m_vivid= vivid;
+				}
 			}
 		}
 		for(auto&& subtype : m_holds)
@@ -333,11 +344,14 @@ struct NewSkinColumn
 	}
 	void clear_optionals()
 	{
-		for(auto&& tap : m_optional_taps)
+		for(auto&& tap_set : {&m_optional_taps, &m_reverse_optional_taps})
 		{
-			if(tap != nullptr)
+			for(auto&& tap : *tap_set)
 			{
-				SAFE_DELETE(tap);
+				if(tap != nullptr)
+				{
+					SAFE_DELETE(tap);
+				}
 			}
 		}
 	}
@@ -351,9 +365,11 @@ struct NewSkinColumn
 private:
 	// m_taps is indexed by NewSkinTapPart.
 	std::vector<QuantizedTap> m_taps;
+	std::vector<QuantizedTap> m_reverse_taps;
 	// m_optional_taps is indexed by NewSkinTapOptionalPart.
 	// If an entry is null, the skin doesn't use that part.
 	std::vector<QuantizedTap*> m_optional_taps;
+	std::vector<QuantizedTap*> m_reverse_optional_taps;
 	// Dimensions of m_holds:
 	// note subtype, active/inactive.
 	std::vector<std::vector<QuantizedHold> > m_holds;

@@ -206,7 +206,16 @@ void NewFieldColumn::calc_reverse_shift()
 	reverse_shift= Rage::scale(reverse_scale, 1.0, -1.0, -reverse_offset, reverse_offset);
 	reverse_shift= Rage::scale(center_percent, 0.0, 1.0, reverse_shift, 0.0);
 	double old_scale_sign= reverse_scale_sign;
-	reverse_scale_sign= (reverse_scale < 0.0) ? -1.0 : 1.0;
+	if(reverse_scale < 0.0)
+	{
+		m_status.in_reverse= true;
+		reverse_scale_sign= -1.0;
+	}
+	else
+	{
+		m_status.in_reverse= false;
+		reverse_scale_sign= 1.0;
+	}
 	if(old_scale_sign != reverse_scale_sign)
 	{
 		Message revmsg("ReverseChanged");
@@ -980,8 +989,9 @@ void NewFieldColumn::build_render_lists()
 	m_prev_curr_second= m_curr_second;
 
 	{
+		double beat= m_curr_beat - floor(m_curr_beat);
 		Message msg("BeatUpdate");
-		msg.SetParam("anim_percent", m_status.anim_percent);
+		msg.SetParam("beat", beat);
 		msg.SetParam("beat_distance", m_status.upcoming_beat_dist);
 		msg.SetParam("second_distance", m_status.upcoming_second_dist);
 		if(pressed != was_pressed)
@@ -1092,8 +1102,8 @@ void NewFieldColumn::draw_holds_internal()
 	}
 }
 
-typedef Actor* (NewSkinColumn::* get_norm_actor_fun)(size_t, double, double);
-typedef Actor* (NewSkinColumn::* get_play_actor_fun)(size_t, size_t, double);
+typedef Actor* (NewSkinColumn::* get_norm_actor_fun)(size_t, double, double, bool, bool);
+typedef Actor* (NewSkinColumn::* get_play_actor_fun)(size_t, size_t, double, bool, bool);
 
 struct tap_draw_info
 {
@@ -1110,7 +1120,8 @@ void set_tap_actor_info(tap_draw_info& draw_info, NewFieldColumn& col,
 	NewSkinColumn* newskin, get_norm_actor_fun get_normal,
 	get_play_actor_fun get_playerized, size_t part,
 	size_t pn, double draw_beat, double draw_second, double yoff,
-	double tap_beat, double tap_second, double anim_percent)
+	double tap_beat, double tap_second, double anim_percent, bool active,
+	bool reverse)
 {
 	draw_info.draw_beat= draw_beat;
 	draw_info.y_offset= yoff;
@@ -1120,11 +1131,13 @@ void set_tap_actor_info(tap_draw_info& draw_info, NewFieldColumn& col,
 		{
 			mod_val_inputs mod_input(tap_beat, tap_second, col.get_curr_beat(), col.get_curr_second(), yoff);
 			double const quantization= col.quantization_for_time(mod_input);
-			draw_info.act= (newskin->*get_normal)(part, quantization, anim_percent);
+			draw_info.act= (newskin->*get_normal)(part, quantization, anim_percent,
+				active, reverse);
 		}
 		else
 		{
-			draw_info.act= (newskin->*get_playerized)(part, pn, anim_percent);
+			draw_info.act= (newskin->*get_playerized)(part, pn, anim_percent,
+				active, reverse);
 		}
 		draw_info.draw_second= draw_second;
 	}
@@ -1143,6 +1156,7 @@ void NewFieldColumn::draw_taps_internal()
 		double head_beat;
 		double tail_beat;
 		double head_second;
+		bool active= true;
 		switch(tn.type)
 		{
 			case TapNoteType_Mine:
@@ -1156,6 +1170,10 @@ void NewFieldColumn::draw_taps_internal()
 			case TapNoteType_HoldHead:
 				part= NewSkinTapPart_Invalid;
 				get_hold_draw_time(tn, tap_beat, head_beat, head_second);
+				if(tap_second < m_curr_second)
+				{
+					active= tn.HoldResult.bActive && tn.HoldResult.fLife > 0.0f;
+				}
 				tail_beat= tap_beat + NoteRowToBeat(tn.iDuration);
 				switch(tn.subType)
 				{
@@ -1190,7 +1208,7 @@ void NewFieldColumn::draw_taps_internal()
 			set_tap_actor_info(acts[0], *this, m_newskin,
 				&NewSkinColumn::get_tap_actor, &NewSkinColumn::get_player_tap, part,
 				tn.pn, head_beat, tn.occurs_at_second, tapit.y_offset, tap_beat,
-				tap_second, m_status.anim_percent);
+				tap_second, m_status.anim_percent, active, m_status.in_reverse);
 		}
 		else
 		{
@@ -1198,11 +1216,13 @@ void NewFieldColumn::draw_taps_internal()
 			set_tap_actor_info(acts[0], *this, m_newskin,
 				&NewSkinColumn::get_optional_actor,
 				&NewSkinColumn::get_player_optional_tap, tail_part, tn.pn, tail_beat,
-				tn.end_second, tapit.tail_y_offset, tap_beat, tap_second, m_status.anim_percent);
+				tn.end_second, tapit.tail_y_offset, tap_beat, tap_second,
+				m_status.anim_percent, active, m_status.in_reverse);
 			set_tap_actor_info(acts[1], *this, m_newskin,
 				&NewSkinColumn::get_optional_actor,
 				&NewSkinColumn::get_player_optional_tap, head_part, tn.pn, head_beat,
-				head_second, tapit.y_offset, tap_beat, tap_second, m_status.anim_percent);
+				head_second, tapit.y_offset, tap_beat, tap_second,
+				m_status.anim_percent, active, m_status.in_reverse);
 		}
 		for(auto&& act : acts)
 		{

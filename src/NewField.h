@@ -160,6 +160,7 @@ struct NewFieldColumn : ActorFrame
 		TapNote const* active_hold;
 		TapNote const* prev_active_hold;
 		bool found_upcoming;
+		bool in_reverse;
 	};
 	column_status m_status;
 

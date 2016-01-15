@@ -276,6 +276,18 @@ bool QuantizedTap::load_from_lua(lua_State* L, int index, string& insanity_diagn
 	{
 		RETURN_NOT_SANE(insanity_diagnosis);
 	}
+	lua_getfield(L, index, "inactive_state_map");
+	if(lua_istable(L, -1))
+	{
+		if(!m_inactive_map.load_from_lua(L, lua_gettop(L), insanity_diagnosis))
+		{
+			RETURN_NOT_SANE(insanity_diagnosis);
+		}
+	}
+	else
+	{
+		m_inactive_map= temp_map;
+	}
 	lua_getfield(L, index, "actor");
 	if(!lua_istable(L, -1))
 	{
@@ -390,86 +402,109 @@ bool QuantizedHold::load_from_lua(lua_State* L, int index, NewSkinLoader const* 
 
 void NewSkinColumn::set_timing_source(TimingSource* source)
 {
-	for(auto&& tap : m_taps)
+	for(auto&& tap_set : {&m_taps, &m_reverse_taps})
 	{
-		tap.set_timing_source(source);
-	}
-	for(auto&& tap : m_optional_taps)
-	{
-		if(tap != nullptr)
+		for(auto&& tap : *tap_set)
 		{
-			tap->set_timing_source(source);
+			tap.set_timing_source(source);
+		}
+	}
+	for(auto&& tap_set : {&m_optional_taps, &m_reverse_optional_taps})
+	{
+		for(auto&& tap : *tap_set)
+		{
+			if(tap != nullptr)
+			{
+				tap->set_timing_source(source);
+			}
 		}
 	}
 }
 
 void NewSkinColumn::update_taps()
 {
-	for(auto&& tap : m_taps)
+	for(auto&& tap_set : {&m_taps, &m_reverse_taps})
 	{
-		tap.update();
-	}
-	for(auto&& tap : m_optional_taps)
-	{
-		if(tap != nullptr)
+		for(auto&& tap : *tap_set)
 		{
-			tap->update();
+			tap.update();
+		}
+	}
+	for(auto&& tap_set : {&m_optional_taps, &m_reverse_optional_taps})
+	{
+		for(auto&& tap : *tap_set)
+		{
+			if(tap != nullptr)
+			{
+				tap->update();
+			}
 		}
 	}
 }
+
+// I didn't want to use a macro to make get_tap_actor and get_player_tap be
+// the same, but then the reverse logic had to be added, which made them
+// complex.  So GET_TAP_BODY is to make sure they don't drift apart.
+#define GET_TAP_BODY(get_func, quant_param) \
+	ASSERT_M(type < m_taps.size(), "Invalid NewSkinTapPart type."); \
+	if(reverse && !m_reverse_taps.empty()) \
+	{ \
+		m_reverse_taps[type].get_func(quant_param, beat, active); \
+	} \
+	return m_taps[type].get_func(quant_param, beat, active);
 
 Actor* NewSkinColumn::get_tap_actor(size_t type,
-	double quantization, double beat)
+	double quantization, double beat, bool active, bool reverse)
 {
-	ASSERT_M(type < m_taps.size(), "Invalid NewSkinTapPart type.");
-	return m_taps[type].get_quantized(quantization, beat);
+	GET_TAP_BODY(get_quantized, quantization);
 }
+
+Actor* NewSkinColumn::get_player_tap(size_t type, size_t pn, double beat,
+	bool active, bool reverse)
+{
+	GET_TAP_BODY(get_playerized, pn);
+}
+
+#undef GET_TAP_BODY
+
+// Heads fall back to taps.  Since NewSkinTapOptionalPart alternates between
+// Head and Tail, an easy way to check whether a head is being fetched is to
+// use type % 2.
+#define GET_OPTIONAL_TAP_BODY(get_tap_func, get_func, quant_param) \
+	ASSERT_M(type < m_optional_taps.size(), "Invalid NewSkinTapOptionalPart type."); \
+	auto* use_taps= &m_optional_taps; \
+	if(reverse && !m_reverse_optional_taps.empty()) \
+	{ \
+		use_taps= &m_reverse_optional_taps; \
+	} \
+	QuantizedTap* tap= (*use_taps)[type]; \
+	if(tap == nullptr) \
+	{ \
+		tap= (*use_taps)[type % 2]; \
+	} \
+	if(tap == nullptr) \
+	{ \
+		if(type % 2 == 0) \
+		{ \
+			return get_tap_func(NSTP_Tap, quant_param, beat, active, reverse); \
+		} \
+		return nullptr; \
+	} \
+	return tap->get_func(quant_param, beat, active);
 
 Actor* NewSkinColumn::get_optional_actor(size_t type,
-	double quantization, double beat)
+	double quantization, double beat, bool active, bool reverse)
 {
-	ASSERT_M(type < m_optional_taps.size(), "Invalid NewSkinTapOptionalPart type.");
-	QuantizedTap* tap= m_optional_taps[type];
-	if(tap == nullptr)
-	{
-		tap= m_optional_taps[type % 2];
-	}
-	if(tap == nullptr)
-	{
-		if(type % 2 == 0) // heads fallback to taps.
-		{
-			return get_tap_actor(NSTP_Tap, quantization, beat);
-		}
-		return nullptr;
-	}
-	return tap->get_quantized(quantization, beat);
-}
-
-Actor* NewSkinColumn::get_player_tap(size_t type, size_t pn, double beat)
-{
-	ASSERT_M(type < m_taps.size(), "Invalid NewSkinTapPart type.");
-	return m_taps[type].get_playerized(pn, beat);
+	GET_OPTIONAL_TAP_BODY(get_tap_actor, get_quantized, quantization);
 }
 
 Actor* NewSkinColumn::get_player_optional_tap(size_t type, size_t pn,
-	double beat)
+	double beat, bool active, bool reverse)
 {
-	ASSERT_M(type < m_optional_taps.size(), "Invalid NewSkinTapOptionalPart type.");
-	QuantizedTap* tap= m_optional_taps[type];
-	if(tap == nullptr)
-	{
-		tap= m_optional_taps[type % 2];
-	}
-	if(tap == nullptr)
-	{
-		if(type % 2 == 0) // heads fallback to taps.
-		{
-			return get_player_tap(NSTP_Tap, pn, beat);
-		}
-		return nullptr;
-	}
-	return tap->get_playerized(pn, beat);
+	GET_OPTIONAL_TAP_BODY(get_player_tap, get_playerized, pn);
 }
+
+#undef GET_OPTIONAL_TAP_BODY
 
 void NewSkinColumn::get_hold_render_data(TapNoteSubType sub_type,
 	NotePlayerizeMode playerize_mode, size_t pn, bool active, bool reverse,
@@ -617,6 +652,7 @@ bool NewSkinColumn::load_from_lua(lua_State* L, int index, NewSkinLoader const* 
 	vector<QuantizedTap> temp_taps;
 	vector<vector<QuantizedTap> > temp_player_taps;
 	vector<QuantizedTap*> temp_optionals(NUM_NewSkinTapOptionalPart, nullptr);
+	vector<QuantizedTap*> temp_rev_optionals;
 	vector<vector<QuantizedHold> > temp_holds;
 	vector<vector<QuantizedHold> > temp_reverse_holds;
 	vector<RageTexture*> temp_hold_masks;
@@ -633,6 +669,15 @@ bool NewSkinColumn::load_from_lua(lua_State* L, int index, NewSkinLoader const* 
 		RETURN_NOT_SANE(sub_sanity);
 	}
 	lua_settop(L, taps_index-1);
+	lua_getfield(L, index, "reverse_taps");
+	if(lua_istable(L, -1))
+	{
+		if(!load_tap_set_from_lua(L, lua_gettop(L), m_reverse_taps, sub_sanity))
+		{
+			RETURN_NOT_SANE(sub_sanity);
+		}
+	}
+	lua_pop(L, 1);
 	lua_getfield(L, index, "optional_taps");
 	int optional_taps_index= lua_gettop(L);
 	// Leaving out the optional field is not an error.
@@ -655,6 +700,28 @@ bool NewSkinColumn::load_from_lua(lua_State* L, int index, NewSkinLoader const* 
 		}
 	}
 	lua_settop(L, optional_taps_index-1);
+	lua_getfield(L, index, "reverse_optional_taps");
+	int rev_opt_taps_index= lua_gettop(L);
+	if(lua_istable(L, -1))
+	{
+		temp_rev_optionals.resize(NUM_NewSkinTapOptionalPart);
+		for(size_t part= NSTOP_HoldHead; part < NUM_NewSkinTapOptionalPart; ++part)
+		{
+			Enum::Push(L, static_cast<NewSkinTapOptionalPart>(part));
+			lua_gettable(L, optional_taps_index);
+			if(lua_istable(L, -1))
+			{
+				QuantizedTap* temp= new QuantizedTap;
+				if(!temp->load_from_lua(L, lua_gettop(L), sub_sanity))
+				{
+					SAFE_DELETE(temp);
+					temp= nullptr;
+				}
+				temp_rev_optionals[part]= temp;
+			}
+		}
+	}
+	lua_settop(L, rev_opt_taps_index-1);
 	if(!load_holds_from_lua(L, index, temp_holds, "holds", load_skin,
 			insanity_diagnosis))
 	{
@@ -686,6 +753,7 @@ bool NewSkinColumn::load_from_lua(lua_State* L, int index, NewSkinLoader const* 
 	m_taps.swap(temp_taps);
 	clear_optionals();
 	m_optional_taps.swap(temp_optionals);
+	m_reverse_optional_taps.swap(temp_rev_optionals);
 	m_holds.swap(temp_holds);
 	m_reverse_holds.swap(temp_reverse_holds);
 	unload_texture_list(m_hold_player_masks);
