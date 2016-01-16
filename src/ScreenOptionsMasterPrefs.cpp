@@ -14,7 +14,7 @@
 #include "StepMania.h"
 #include "Game.h"
 #include "GameConstantsAndTypes.h"
-#include "DisplayResolutions.h"
+#include "DisplaySpec.h"
 #include "LocalizedString.h"
 #include "SpecialFiles.h"
 #include "RageLog.h"
@@ -268,22 +268,25 @@ static void ThemeChoices( vector<std::string> &out )
 	}
 }
 
-static DisplayResolutions display_resolution_list;
-static void cache_display_resolution_list()
+static DisplaySpecs display_specs;
+static void cache_display_specs()
 {
-	if(display_resolution_list.empty())
+	if(display_specs.empty())
 	{
-		DISPLAY->GetDisplayResolutions(display_resolution_list);
+		DISPLAY->GetDisplaySpecs(display_specs);
 	}
 }
 
 static void DisplayResolutionChoices( vector<std::string> &out )
 {
-	cache_display_resolution_list();
-	for (auto const &iter: display_resolution_list)
+	cache_display_specs();
+	for (auto const &iter: display_specs)
 	{
-		std::string s = fmt::sprintf("%dx%d", iter.iWidth, iter.iHeight);
-		out.push_back( s );
+		if (iter.currentMode() != NULL)
+		{
+			std::string s = fmt::sprintf( "%dx%d", iter.currentMode()->width, iter.currentMode()->height );
+			out.push_back( s );
+		}
 	}
 }
 
@@ -551,6 +554,8 @@ static void MaxHighScoresPerListForPlayer(int& sel, bool to_sel, ConfOption cons
 
 
 #include "LuaManager.h"
+#include "LuaBinding.h"
+
 static int GetTimingDifficulty()
 {
 	int iTimingDifficulty = 0;
@@ -620,10 +625,13 @@ static void DisplayResolutionM( int &sel, bool ToSel, const ConfOption *pConfOpt
 
 	if(res_choices.empty())
 	{
-		cache_display_resolution_list();
-		for (auto const &iter: display_resolution_list)
+		cache_display_specs();
+		for (auto const &iter: display_specs)
 		{
-			res_choices.push_back(res_t(iter.iWidth, iter.iHeight));
+			if (iter.currentMode() != NULL)
+			{
+				res_choices.push_back( res_t( iter.currentMode()->width, iter.currentMode()->height ));
+			}
 		}
 	}
 
@@ -745,10 +753,10 @@ static void InitializeConfOptions()
 	if( !g_ConfOptions.empty() )
 		return;
 
-	// Clear the display_resolution_list so that we don't get problems from
+	// Clear the display_specs so that we don't get problems from
 	// caching it.  If the DisplayResolution option row is on the screen, it'll
 	// recache the list. -Kyz
-	display_resolution_list.clear();
+	display_specs.clear();
 
 	// There are a couple ways of getting the current preference column or turning
 	// a new choice in the interface into a new preference. The easiest is when
@@ -965,6 +973,19 @@ void ConfOption::MakeOptionsList( vector<std::string> &out ) const
 {
 	out = names;
 }
+
+static const char *OptEffectNames[] = {
+	"SavePreferences",
+	"ApplyGraphics",
+	"ApplyTheme",
+	"ChangeGame",
+	"ApplySound",
+	"ApplySong",
+	"ApplyAspectRatio"
+};
+XToString( OptEffect );
+StringToX( OptEffect );
+LuaXType( OptEffect );
 
 /**
  * @file

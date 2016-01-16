@@ -71,6 +71,7 @@
 #include "Screen.h"
 #include "ScreenDimensions.h"
 #include "ActorUtil.h"
+#include "Sprite.h"
 
 using std::vector;
 
@@ -255,6 +256,7 @@ ScreenManager::ScreenManager()
 	m_bZeroNextUpdate = false;
 	m_PopTopScreen = SM_Invalid;
 	m_OnDonePreparingScreen = SM_Invalid;
+
 }
 
 
@@ -373,7 +375,7 @@ bool ScreenManager::IsStackedScreen( const Screen *pScreen ) const
 	auto isStacked = [pScreen](ScreenManagerUtil::LoadedScreen const &stack) {
 		return stack.m_pScreen == pScreen;
 	};
-	
+
 	// True if the screen is in the screen stack, but not the first.
 	return std::any_of(g_ScreenStack.begin() + 1, g_ScreenStack.end(), isStacked);
 }

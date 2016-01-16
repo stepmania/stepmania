@@ -95,6 +95,32 @@ Sprite::Sprite( const Sprite &cpy ):
 	}
 }
 
+Sprite &Sprite::operator=( Sprite other )
+{
+	using std::swap;
+#define SWAP(a) swap(a, other.a)
+	SWAP( m_States );
+	SWAP(m_animation_length_seconds);
+	SWAP( m_iCurState );
+	SWAP( m_fSecsIntoState );
+	SWAP( m_bUsingCustomTexCoords );
+	SWAP( m_bUsingCustomPosCoords );
+	SWAP( m_bSkipNextUpdate );
+	SWAP( m_DecodeMovie );
+	SWAP( m_EffectMode );
+	memcpy( m_CustomTexCoords, other.m_CustomTexCoords, sizeof(m_CustomTexCoords) );
+	memcpy( m_CustomPosCoords, other.m_CustomPosCoords, sizeof(m_CustomPosCoords) );
+	SWAP( m_fRememberedClipWidth );
+	SWAP( m_fRememberedClipHeight );
+	SWAP( m_fTexCoordVelocityX );
+	SWAP( m_fTexCoordVelocityY );
+	SWAP(m_use_effect_clock_for_texcoords);
+	SWAP(m_pTexture);
+	SWAP(m_mask);
+#undef SWAP
+	return *this;
+}
+
 void Sprite::InitState()
 {
 	Actor::InitState();
@@ -986,7 +1012,7 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 		Sprite::ScaleToCover( Rage::RectF(0, 0, fWidth, fHeight) );
 		// find which dimension is larger
 		bool bXDimNeedsToBeCropped = GetZoomedWidth() > fWidth+0.01;
-		
+
 		if( bXDimNeedsToBeCropped ) // crop X
 		{
 			float fPercentageToCutOff = (this->GetZoomedWidth() - fWidth) / this->GetZoomedWidth();
@@ -995,9 +1021,9 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 
 			// generate a rectangle with new texture coordinates
 			Rage::RectF fCustomImageRect(
-				fPercentageToCutOffEachSide, 
-				0, 
-				1 - fPercentageToCutOffEachSide, 
+				fPercentageToCutOffEachSide,
+				0,
+				1 - fPercentageToCutOffEachSide,
 				1 );
 			SetCustomImageRect( fCustomImageRect );
 		}
@@ -1009,9 +1035,9 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 
 			// generate a rectangle with new texture coordinates
 			Rage::RectF fCustomImageRect(
-				0, 
+				0,
 				fPercentageToCutOffEachSide,
-				1, 
+				1,
 				1 - fPercentageToCutOffEachSide );
 			SetCustomImageRect( fCustomImageRect );
 		}
@@ -1047,7 +1073,7 @@ void Sprite::CropTo( float fWidth, float fHeight )
 		Sprite::ScaleToCover( Rage::RectF(0, 0, fWidth, fHeight) );
 		// find which dimension is larger
 		bool bXDimNeedsToBeCropped = GetZoomedWidth() > fWidth+0.01;
-		
+
 		if( bXDimNeedsToBeCropped )	// crop X
 		{
 			float fPercentageToCutOff = (this->GetZoomedWidth() - fWidth) / this->GetZoomedWidth();
@@ -1055,9 +1081,9 @@ void Sprite::CropTo( float fWidth, float fHeight )
 
 			// generate a rectangle with new texture coordinates
 			Rage::RectF fCustomImageRect(
-				fPercentageToCutOffEachSide, 
-				0, 
-				1 - fPercentageToCutOffEachSide, 
+				fPercentageToCutOffEachSide,
+				0,
+				1 - fPercentageToCutOffEachSide,
 				1 );
 			SetCustomImageRect( fCustomImageRect );
 		}
@@ -1068,9 +1094,9 @@ void Sprite::CropTo( float fWidth, float fHeight )
 
 			// generate a rectangle with new texture coordinates
 			Rage::RectF fCustomImageRect(
-				0, 
+				0,
 				fPercentageToCutOffEachSide,
-				1, 
+				1,
 				1 - fPercentageToCutOffEachSide );
 			SetCustomImageRect( fCustomImageRect );
 		}

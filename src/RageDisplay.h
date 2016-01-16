@@ -7,8 +7,8 @@
 #include "ModelTypes.h"
 #include <set>
 
-class DisplayResolution;
-typedef std::set<DisplayResolution> DisplayResolutions;
+class DisplaySpec;
+typedef std::set<DisplaySpec> DisplaySpecs;
 
 const int REFRESH_DEFAULT = 0;
 struct RageSurface;
@@ -79,6 +79,7 @@ public:
 	// are filled (in case new params are added).
 	VideoModeParams(
 		bool windowed_,
+		std::string sDisplayId_,
 		int width_,
 		int height_,
 		int bpp_,
@@ -88,12 +89,14 @@ public:
 		bool bSmoothLines_,
 		bool bTrilinearFiltering_,
 		bool bAnisotropicFiltering_,
+		bool bWindowIsFullscreenBorderless_,
 		std::string sWindowTitle_,
 		std::string sIconFile_,
 		bool PAL_,
 		float fDisplayAspectRatio_
 	):
 		windowed(windowed_),
+		sDisplayId(sDisplayId_),
 		width(width_),
 		height(height_),
 		bpp(bpp_),
@@ -103,18 +106,36 @@ public:
 		bSmoothLines(bSmoothLines_),
 		bTrilinearFiltering(bTrilinearFiltering_),
 		bAnisotropicFiltering(bAnisotropicFiltering_),
+		bWindowIsFullscreenBorderless(bWindowIsFullscreenBorderless_),
 		sWindowTitle(sWindowTitle_),
 		sIconFile(sIconFile_),
 		PAL(PAL_),
 		fDisplayAspectRatio(fDisplayAspectRatio_) {}
 
+	VideoModeParams(const VideoModeParams &other):
+	windowed(other.windowed), sDisplayId(other.sDisplayId),
+	width(other.width), height(other.height),
+	bpp(other.bpp), rate(other.rate),
+	vsync(other.vsync), interlaced(other.interlaced),
+	bSmoothLines(other.bSmoothLines), bTrilinearFiltering(other.bTrilinearFiltering),
+	bAnisotropicFiltering(other.bAnisotropicFiltering), bWindowIsFullscreenBorderless(other.bWindowIsFullscreenBorderless),
+	sWindowTitle(other.sWindowTitle), sIconFile(other.sIconFile),
+	PAL(other.PAL), fDisplayAspectRatio(other.fDisplayAspectRatio)
+	{}
+
 	VideoModeParams(): windowed(false), width(0), height(0),
-		bpp(0), rate(0), vsync(false), interlaced(false),
-		bSmoothLines(false), bTrilinearFiltering(false),
-		bAnisotropicFiltering(false), sWindowTitle(std::string()),
-		sIconFile(std::string()), PAL(false), fDisplayAspectRatio(0.0f) {}
+					   bpp(0), rate(0), vsync(false), interlaced(false),
+					   bSmoothLines(false), bTrilinearFiltering(false),
+					   bAnisotropicFiltering(false), bWindowIsFullscreenBorderless(false),
+					   sWindowTitle(std::string()), sIconFile(std::string()),
+					   PAL(false), fDisplayAspectRatio(0.0f) {}
+
+	// Subclassing VideoModeParams in ActualVideoModeParams. Make destructor virtual just in case
+	// someone tries to delete one of those through a pointer to base...
+	virtual ~VideoModeParams() {}
 
 	bool windowed;
+	std::string sDisplayId;
 	int width;
 	int height;
 	int bpp;
@@ -124,10 +145,39 @@ public:
 	bool bSmoothLines;
 	bool bTrilinearFiltering;
 	bool bAnisotropicFiltering;
+	bool bWindowIsFullscreenBorderless;
 	std::string sWindowTitle;
 	std::string sIconFile;
 	bool PAL;
 	float fDisplayAspectRatio;
+};
+
+/**
+ * @brief The _actual_ VideoModeParams determined by the LowLevelWindow implementation.
+ * Contains all the attributes of VideoModeParams, plus the actual window width/height determined by
+ * LLW
+ */
+class ActualVideoModeParams: public VideoModeParams
+{
+public:
+	ActualVideoModeParams(): VideoModeParams(), windowWidth(0), windowHeight(0), renderOffscreen(false) {}
+	ActualVideoModeParams( const VideoModeParams &params ) : VideoModeParams( params ),
+															 windowWidth( params.width ),
+															 windowHeight( params.height ),
+															 renderOffscreen( false )
+	{ }
+	ActualVideoModeParams( const VideoModeParams &params, int windowWidth, int windowHeight, bool renderOffscreen ) :
+		VideoModeParams( params ), windowWidth( windowWidth ), windowHeight( windowHeight ),
+		renderOffscreen( renderOffscreen )
+	{ }
+	ActualVideoModeParams (const ActualVideoModeParams &other) = default;
+
+	// If bWindowIsFullscreenBorderless is true,
+	// then these properties will differ from width/height (which describe the
+	// render size)
+	int windowWidth;
+	int windowHeight;
+	bool renderOffscreen;
 };
 
 struct RenderTargetParam
@@ -181,7 +231,7 @@ public:
 	virtual std::string Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer ) = 0;
 
 	virtual std::string GetApiDescription() const = 0;
-	virtual void GetDisplayResolutions( DisplayResolutions &out ) const = 0;
+	virtual void GetDisplaySpecs(DisplaySpecs &out) const = 0;
 
 	// Don't override this.  Override TryVideoMode() instead.
 	// This will set the video mode to be as close as possible to params.
@@ -193,7 +243,7 @@ public:
 
 	virtual bool BeginFrame();
 	virtual void EndFrame();
-	virtual VideoModeParams GetActualVideoModeParams() const = 0;
+	virtual ActualVideoModeParams GetActualVideoModeParams() const = 0;
 	bool IsWindowed() const { return this->GetActualVideoModeParams().windowed; }
 
 	virtual void SetBlendMode( BlendMode mode ) = 0;
@@ -236,7 +286,8 @@ public:
 	virtual void set_color_key_shader(Rage::Color const& color, unsigned int tex_handle) { UNUSED(color); UNUSED(tex_handle); }
 	virtual bool IsEffectModeSupported( EffectMode effect ) { return effect == EffectMode_Normal; }
 
-	bool SupportsRenderToTexture() const { return false; }
+	virtual bool SupportsRenderToTexture() const { return false; }
+	virtual bool SupportsFullscreenBorderlessWindow() const { return false; }
 
 	/* Create a render target, returning a texture handle. In addition to normal
 	 * texture functions, this can be passed to SetRenderTarget. Delete with

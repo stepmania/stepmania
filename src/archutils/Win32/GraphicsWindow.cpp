@@ -5,7 +5,7 @@
 #include "RageUtil.h"
 #include "RageString.hpp"
 #include "RageDisplay.h"
-#include "DisplayResolutions.h"
+#include "DisplaySpec.h"
 #include "arch/ArchHooks/ArchHooks.h"
 #include "archutils/Win32/AppInstance.h"
 #include "archutils/Win32/Crash.h"
@@ -39,7 +39,7 @@ static std::string GetNewWindow()
 {
 	HWND h = GetForegroundWindow();
 	if( h == nullptr )
-		return "(nullptr)";
+		return "(NULL)";
 
 	DWORD iProcessID;
 	GetWindowThreadProcessId( h, &iProcessID );
@@ -512,29 +512,53 @@ HWND GraphicsWindow::GetHwnd()
 	return g_hWndMain;
 }
 
-void GraphicsWindow::GetDisplayResolutions( DisplayResolutions &out )
+void GraphicsWindow::GetDisplaySpecs( DisplaySpecs &out )
 {
-	DEVMODE dm;
-	ZERO( dm );
-	dm.dmSize = sizeof(dm);
-	int i=0;
-	while(EnumDisplaySettings(nullptr, i++, &dm))
-	{
+	const size_t DM_DRIVER_EXTRA_BYTES = 4096;
+	const size_t DMSIZE = sizeof( DEVMODE ) + DM_DRIVER_EXTRA_BYTES;
+	auto reset = [=]( std::unique_ptr<DEVMODE> &p ) {
+		::memset( p.get(), 0, DMSIZE );
+		p->dmSize = sizeof( DEVMODE );
+		p->dmDriverExtra = static_cast<WORD> (DM_DRIVER_EXTRA_BYTES);
+	};
+	auto isvalid = []( std::unique_ptr<DEVMODE> &dm ) {
 		// Windows 8 and later don't support less than 32bpp, so don't even test
-		// for them.  GetDisplayResolutions is only for resolutions anyway. -Kyz
-		if(dm.dmBitsPerPel < 32)
+		// for them.  GetDisplaySpecs only tracks resolution/refresh rate anyway. -Kyz, drewbarbs
+		return (dm->dmFields & DM_PELSWIDTH) && (dm->dmFields & DM_PELSHEIGHT) && (dm->dmFields & DM_DISPLAYFREQUENCY)
+			&& (dm->dmBitsPerPel >= 32 || !(dm->dmFields & DM_BITSPERPEL));
+	};
+
+	std::unique_ptr<DEVMODE> dm( static_cast<DEVMODE*> (operator new(DMSIZE)) );
+	reset( dm );
+
+	int i = 0;
+	std::set<DisplayMode> modes;
+	while ( EnumDisplaySettingsEx( nullptr, i++, dm.get(), 0 ) )
+	{
+		if ( isvalid( dm ) && ChangeDisplaySettingsEx( nullptr, dm.get(), nullptr, CDS_TEST, nullptr ) == DISP_CHANGE_SUCCESSFUL )
 		{
-			continue;
+			DisplayMode m = { dm->dmPelsWidth, dm->dmPelsHeight, static_cast<double> (dm->dmDisplayFrequency) };
+			modes.insert(m);
 		}
-		DisplayResolution res = { dm.dmPelsWidth, dm.dmPelsHeight };
-		std::set<DisplayResolution>::iterator entry= out.find(res);
-		if(entry == out.end())
-		{
-			if(ChangeDisplaySettings(&dm, CDS_TEST)==DISP_CHANGE_SUCCESSFUL)
-			{
-				out.insert(res);
-			}
-		}
+		reset( dm );
+	}
+
+	reset( dm );
+	// Get the current display mode
+	if ( EnumDisplaySettingsEx( nullptr, ENUM_CURRENT_SETTINGS, dm.get(), 0 ) && isvalid( dm ) )
+	{
+		DisplayMode m = { dm->dmPelsWidth, dm->dmPelsHeight, static_cast<double> (dm->dmDisplayFrequency) };
+		Rage::RectI bounds = { 0, 0, static_cast<int> (m.width), static_cast<int> (m.height) };
+		out.insert( DisplaySpec( "", "Fullscreen", modes, m, bounds ) );
+	}
+	else if ( !modes.empty() )
+	{
+		LOG->Warn( "Could not retrieve valid current display mode" );
+		out.insert( DisplaySpec( "", "Fullscreen", *modes.begin() ) );
+	}
+	else
+	{
+		LOG->Warn( "Could not retrieve *any* DisplaySpec's!" );
 	}
 }
 

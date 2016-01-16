@@ -266,6 +266,80 @@ Actor::Actor( const Actor &cpy ):
 #undef CPY
 }
 
+Actor &Actor::operator=(Actor other)
+{
+	/* Don't copy an Actor in the middle of rendering. */
+	ASSERT( other.m_pTempState == nullptr );
+	m_pTempState = nullptr;
+
+	using std::swap;
+#define SWAP(x) swap(x, other.x)
+	SWAP( m_sName );
+	SWAP( m_pParent );
+	SWAP( m_FakeParent );
+	SWAP(m_timing_source);
+	SWAP( m_pLuaInstance );
+
+	SWAP( m_WrapperStates );
+
+	SWAP( m_baseRotation );
+	SWAP( m_baseScale );
+	SWAP( m_fBaseAlpha );
+	SWAP( m_internalDiffuse );
+	SWAP( m_internalGlow );
+
+
+	SWAP( m_size );
+	SWAP( m_current );
+	SWAP( m_start );
+	SWAP( m_Tweens );
+
+	SWAP( m_bFirstUpdate );
+
+	SWAP( m_fHorizAlign );
+	SWAP( m_fVertAlign );
+#if defined(SSC_FUTURES)
+	SWAP( M_Effects );
+#else
+	SWAP( m_Effect );
+#endif
+	SWAP( m_fSecsIntoEffect );
+	SWAP( m_fEffectDelta );
+	SWAP(m_effect_ramp_to_half);
+	SWAP(m_effect_hold_at_half);
+	SWAP(m_effect_ramp_to_full);
+	SWAP(m_effect_hold_at_full);
+	SWAP(m_effect_hold_at_zero);
+	SWAP(m_effect_period);
+	SWAP( m_fEffectOffset );
+	SWAP( m_EffectClock );
+
+	SWAP( m_effectColor1 );
+	SWAP( m_effectColor2 );
+	SWAP( m_vEffectMagnitude );
+
+	SWAP( m_bVisible );
+	SWAP( m_fHibernateSecondsLeft );
+	SWAP( m_fShadowLengthX );
+	SWAP( m_fShadowLengthY );
+	SWAP( m_ShadowColor );
+	SWAP( m_bIsAnimating );
+	SWAP( m_iDrawOrder );
+
+	SWAP( m_bTextureWrapping );
+	SWAP( m_bTextureFiltering );
+	SWAP( m_BlendMode );
+	SWAP( m_bClearZBuffer );
+	SWAP( m_ZTestMode );
+	SWAP( m_bZWrite );
+	SWAP( m_fZBias );
+	SWAP( m_CullMode );
+
+	SWAP( m_mapNameToCommands );
+#undef SWAP
+	return *this;
+}
+
 /* XXX: This calls InitCommand, which must happen after all other
  * initialization (eg. ActorFrame loading children).  However, it
  * also loads input variables, which should happen first.  The
@@ -1341,7 +1415,7 @@ float Actor::GetTweenTimeLeft() const
 	auto addTime = [](float const total, TweenStateAndInfo *tween ) {
 		return total + tween->info.m_fTimeLeftInTween;
 	};
-	
+
 	return std::accumulate(m_Tweens.begin(), m_Tweens.end(), m_fHibernateSecondsLeft, addTime);
 }
 
