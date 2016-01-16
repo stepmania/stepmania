@@ -5,6 +5,8 @@
 #include "Preference.h"
 #include "PrefsManager.h" // XXX: only used for m_bShowMouseCursor -aj
 
+#include <X11/extensions/dpms.h>
+
 Display *X11Helper::Dpy = nullptr;
 Window X11Helper::Win = None;
 
@@ -12,6 +14,9 @@ static int ErrorCallback( Display*, XErrorEvent* );
 static int FatalCallback( Display* );
 
 static Preference<std::string>		g_XWMName( "XWMName", PRODUCT_ID );
+
+static bool display_supports_dpms_extension= false;
+static bool dpms_state_at_startup= false;
 
 bool X11Helper::OpenXConnection()
 {
@@ -22,11 +27,43 @@ bool X11Helper::OpenXConnection()
 
 	XSetIOErrorHandler( FatalCallback );
 	XSetErrorHandler( ErrorCallback );
+	int event_base, error_base;
+	display_supports_dpms_extension= DPMSQueryExtension(Dpy, &event_base, &error_base);
+	if(display_supports_dpms_extension)
+	{
+		LOG->Trace("DPMSQueryExtension returned true.  Stepmania will disable power management, and restore the original state on exit.");
+		CARD16 power_level;
+		BOOL state;
+		if(DPMSInfo(Dpy, &power_level, &state))
+		{
+			dpms_state_at_startup= state;
+			DPMSDisable(Dpy);
+		}
+		else
+		{
+			LOG->Trace("DPMSInfo returned false.  Stepmania will not be able to disable power management.");
+		}
+	}
+	else
+	{
+		LOG->Trace("DPMSQueryExtension returned false, which means this display does not support the DPMS extension.  Stepmania will not be able to disable power management.");
+	}
 	return true;
 }
 
 void X11Helper::CloseXConnection()
 {
+	if(display_supports_dpms_extension)
+	{
+		if(dpms_state_at_startup)
+		{
+			DPMSEnable(Dpy);
+		}
+		else
+		{
+			DPMSDisable(Dpy);
+		}
+	}
 	// The window should have been shut down
 	DEBUG_ASSERT( Dpy != nullptr );
 	DEBUG_ASSERT( Win == None );

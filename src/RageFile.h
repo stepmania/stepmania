@@ -46,6 +46,7 @@ public:
 	bool Open( const std::string& path, int mode = READ );
 	void Close();
 	bool IsOpen() const { return m_File != nullptr; }
+	int GetMode() const { return m_Mode; }
 
 	bool AtEOF() const;
 	std::string GetError() const;

@@ -422,31 +422,11 @@ void Screen::InternalRemoveCallback(callback_key_t key)
 class LunaScreen: public Luna<Screen>
 {
 public:
-	static int GetNextScreenName( T* p, lua_State *L )
-	{
-		lua_pushstring(L, p->GetNextScreenName().c_str() );
-		return 1;
-	}
-	static int SetNextScreenName( T* p, lua_State *L )
-	{
-		p->SetNextScreenName(SArg(1));
-		COMMON_RETURN_SELF;
-	}
-	static int GetPrevScreenName( T* p, lua_State *L )
-	{
-		lua_pushstring(L, p->GetPrevScreen().c_str() );
-		return 1;
-	}
-	static int SetPrevScreenName(T* p, lua_State* L)
-	{
-		p->SetPrevScreenName(SArg(1));
-		COMMON_RETURN_SELF;
-	}
-	static int lockinput( T* p, lua_State *L )
-	{
-		p->SetLockInputSecs(FArg(1));
-		COMMON_RETURN_SELF;
-	}
+	static int GetNextScreenName( T* p, lua_State *L ) { lua_pushstring(L, p->GetNextScreenName().c_str() ); return 1; }
+	static int SetNextScreenName( T* p, lua_State *L ) { p->SetNextScreenName(SArg(1)); COMMON_RETURN_SELF; }
+	static int GetPrevScreenName( T* p, lua_State *L ) { lua_pushstring(L, p->GetPrevScreen().c_str() ); return 1; }
+	static int SetPrevScreenName( T* p, lua_State *L ) { p->SetPrevScreenName(SArg(1)); COMMON_RETURN_SELF; }
+	static int lockinput( T* p, lua_State *L ) { p->SetLockInputSecs(FArg(1)); COMMON_RETURN_SELF; }
 	DEFINE_METHOD( GetScreenType,	GetScreenType() )
 
 	static int PostScreenMessage( T* p, lua_State *L )

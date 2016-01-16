@@ -320,6 +320,29 @@ int32_t FileReading::read_32_le( RageFileBasic &f, std::string &sError )
 class LunaRageFile: public Luna<RageFile>
 {
 public:
+	static void safely_opened(T* p, lua_State* L)
+	{
+		if(!p->IsOpen())
+		{
+			luaL_error(L, "File '%s' is not open.", p->GetPath().c_str());
+		}
+	}
+	static void can_safely_read(T* p, lua_State* L)
+	{
+		safely_opened(p, L);
+		if(!(p->GetMode()&RageFile::READ))
+		{
+			luaL_error(L, "File '%s' is not open for reading.", p->GetPath().c_str());
+		}
+	}
+	static void can_safely_write(T* p, lua_State* L)
+	{
+		safely_opened(p, L);
+		if(!(p->GetMode()&RageFile::WRITE))
+		{
+			luaL_error(L, "File '%s' is not open for writing.", p->GetPath().c_str());
+		}
+	}
 	static int destroy( T* p, lua_State *L )
 	{
 		SAFE_DELETE(p);
@@ -340,6 +363,7 @@ public:
 
 	static int Write( T* p, lua_State *L )
 	{
+		can_safely_write(p, L);
 		lua_pushinteger( L, p->Write( SArg(1) ) );
 		return 1;
 	}
@@ -352,6 +376,7 @@ public:
 
 	static int Read( T* p, lua_State *L )
 	{
+		can_safely_read(p, L);
 		std::string string;
 		p->Read(string);
 		lua_pushstring( L, string.c_str() );
@@ -360,6 +385,7 @@ public:
 	
 	static int ReadBytes( T* p, lua_State *L )
 	{
+		can_safely_read(p, L);
 		std::string string;
 		p->Read( string, IArg(1) );
 		lua_pushstring( L, string.c_str() );
@@ -368,18 +394,21 @@ public:
 
 	static int Seek( T* p, lua_State *L )
 	{
+		can_safely_read(p, L);
 		lua_pushinteger( L, p->Seek( IArg(1) ) );
 		return 1;
 	}
 
 	static int Tell( T* p, lua_State *L )
 	{
+		can_safely_read(p, L);
 		lua_pushinteger( L, p->Tell() );
 		return 1;
 	}
 
 	static int GetLine( T* p, lua_State *L )
 	{
+		can_safely_read(p, L);
 		std::string string;
 		p->GetLine(string);
 		lua_pushstring( L, string.c_str() );
@@ -388,6 +417,7 @@ public:
 
 	static int PutLine( T* p, lua_State *L )
 	{
+		can_safely_write(p, L);
 		lua_pushinteger( L, p->PutLine( SArg(1) ) );
 		return 1;
 	}
@@ -408,6 +438,7 @@ public:
 	
 	static int AtEOF( T* p, lua_State *L )
 	{
+		can_safely_read(p, L);
 		lua_pushboolean( L, p->AtEOF() );
 		return 1;
 	}

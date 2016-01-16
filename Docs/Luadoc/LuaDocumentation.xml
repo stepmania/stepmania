@@ -2863,7 +2863,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SaveLocalData' return='void' arguments=''>
 		Saves the bookkeeping and machine profile data.
 	</Function>
-	<Function name='SaveProfiles' return='void' arguments='bool LoadEdits'>
+	<Function name='SaveProfiles' return='void' arguments=''>
 		Save profiles.
 	</Function>
 	<Function name='SetCharacter' return='void' arguments='PlayerNumber pn, string sCharID'>
@@ -4333,6 +4333,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SetNextScreenName' return='void' arguments='string name'>
 		Sets the NextScreen value to name.
 	</Function>
+	<Function name='SetPrevScreenName' return='void' arguments='string name'>
+		Sets the PrevScreen value to name.
+	</Function>
 	<Function name='String' theme='_fallback' return='string' arguments='string sName'>
 		[02 Other.lua] Gets a string from the current Screen in the current language.
 	</Function>
@@ -4348,6 +4351,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='ScreenGameplay'>
+	<Function name='begin_backing_out' return='' arguments=''>
+		This should behave identically to the normal back button behavior.  This function is for the pause menu to use when the player forfeits or restarts, so that a score isn't saved.
+	</Function>
 	<Function name='Center1Player' return='bool' arguments=''>
 		Returns <code>true</code> if a single <Link class='Player' /> has its NoteField centered.
 	</Function>

@@ -1466,6 +1466,7 @@
 			<Function name='PostScreenMessage'/>
 			<Function name='RemoveInputCallback'/>
 			<Function name='SetNextScreenName'/>
+			<Function name='SetPrevScreenName'/>
 			<Function name='String'/>
 			<Function name='lockinput'/>
 		</Class>
@@ -1477,6 +1478,7 @@
 			<Function name='GetStageStats'/>
 		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenGameplay'>
+			<Function name='begin_backing_out'/>
 			<Function name='Center1Player'/>
 			<Function name='GetDummyPlayerInfo'/>
 			<Function name='GetHasteRate'/>

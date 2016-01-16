@@ -29,8 +29,8 @@ This repository now uses submodules to attempt to keep the repository size down.
 
 * Website: http://www.stepmania.com/
 * IRC: irc.freenode.net/#stepmania-devs
-* Theming Wiki: http://goo.gl/SO7W5
-* Lua Documentation for Themes: http://goo.gl/XNiov
+* Lua for SM5: https://dguzek.github.io/Lua-For-SM5/
+* Lua API Documentation can be found in the Docs folder.
 
 ## Licensing Terms
 
