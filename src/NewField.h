@@ -65,6 +65,7 @@ struct NewFieldColumn : ActorFrame
 	double get_second_from_beat(double beat);
 	void set_displayed_beat(double beat);
 	void set_displayed_second(double second);
+	bool timing_is_safe() { return m_timing_data != nullptr; }
 	void set_pixels_visible_before(double pix)
 	{
 		m_pixels_visible_before_beat= pix;
@@ -276,6 +277,13 @@ struct NewField : ActorFrame
 	void set_player_number(PlayerNumber pn);
 
 	void update_displayed_time(double beat, double second);
+	double get_curr_beat() { return m_curr_beat; }
+	double get_curr_second() { return m_curr_second; }
+	double get_beat_from_second(double second);
+	double get_second_from_beat(double beat);
+	void set_displayed_beat(double beat);
+	void set_displayed_second(double second);
+	bool timing_is_safe() { return m_timing_data != nullptr; }
 
 	void did_tap_note(size_t column, TapNoteScore tns, bool bright);
 	void did_hold_note(size_t column, HoldNoteScore hns, bool bright);

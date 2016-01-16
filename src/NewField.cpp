@@ -27,6 +27,8 @@ static const double note_size= 64.0;
 
 REGISTER_ACTOR_CLASS(NewFieldColumn);
 
+#define HOLD_COUNTS_AS_ACTIVE(tn) (tn.HoldResult.bActive && tn.HoldResult.fLife > 0.0f)
+
 NewFieldColumn::NewFieldColumn()
 	:m_show_unjudgable_notes(true),
 	 m_speed_segments_enabled(true), m_scroll_segments_enabled(true),
@@ -1085,7 +1087,7 @@ void NewFieldColumn::draw_holds_internal()
 		double const hold_second= tn.occurs_at_second;
 		mod_val_inputs input(hold_beat, hold_second, m_curr_beat, m_curr_second, calc_y_offset(hold_beat, hold_second));
 		double const quantization= quantization_for_time(input);
-		bool active= tn.HoldResult.bActive && tn.HoldResult.fLife > 0.0f;
+		bool active= HOLD_COUNTS_AS_ACTIVE(tn);
 		QuantizedHoldRenderData data;
 		m_newskin->get_hold_render_data(tn.subType, m_playerize_mode, tn.pn,
 			active, reverse, quantization, m_status.anim_percent, data);
@@ -1170,10 +1172,7 @@ void NewFieldColumn::draw_taps_internal()
 			case TapNoteType_HoldHead:
 				part= NewSkinTapPart_Invalid;
 				get_hold_draw_time(tn, tap_beat, head_beat, head_second);
-				if(tap_second < m_curr_second)
-				{
-					active= tn.HoldResult.bActive && tn.HoldResult.fLife > 0.0f;
-				}
+				active= HOLD_COUNTS_AS_ACTIVE(tn);
 				tail_beat= tap_beat + NoteRowToBeat(tn.iDuration);
 				switch(tn.subType)
 				{
@@ -1638,6 +1637,26 @@ void NewField::update_displayed_time(double beat, double second)
 	}
 }
 
+double NewField::get_beat_from_second(double second)
+{
+	return m_timing_data->GetBeatFromElapsedTime(second);
+}
+
+double NewField::get_second_from_beat(double beat)
+{
+	return m_timing_data->GetElapsedTimeFromBeat(beat);
+}
+
+void NewField::set_displayed_beat(double beat)
+{
+	update_displayed_time(beat, m_timing_data->GetElapsedTimeFromBeat(beat));
+}
+
+void NewField::set_displayed_second(double second)
+{
+	update_displayed_time(m_timing_data->GetBeatFromElapsedTime(second), second);
+}
+
 void NewField::did_tap_note(size_t column, TapNoteScore tns, bool bright)
 {
 	if(column >= m_columns.size()) { return; }
@@ -1701,6 +1720,10 @@ ADD_TRANS_PART(trans, pos); \
 ADD_TRANS_PART(trans, rot); \
 ADD_TRANS_PART(trans, zoom);
 
+#define SAFE_TIMING_CHECK(p, L, func_name) \
+if(!p->timing_is_safe()) \
+{ luaL_error(L, "Timing data is not set, " #func_name " is not safe."); }
+
 struct LunaNewFieldColumn : Luna<NewFieldColumn>
 {
 	GET_MEMBER(time_offset);
@@ -1735,6 +1758,7 @@ struct LunaNewFieldColumn : Luna<NewFieldColumn>
 	}
 	static int set_curr_beat(T* p, lua_State* L)
 	{
+		SAFE_TIMING_CHECK(p, L, set_curr_beat);
 		p->set_displayed_beat(FArg(1));
 		COMMON_RETURN_SELF;
 	}
@@ -1745,6 +1769,7 @@ struct LunaNewFieldColumn : Luna<NewFieldColumn>
 	}
 	static int set_curr_second(T* p, lua_State* L)
 	{
+		SAFE_TIMING_CHECK(p, L, set_curr_second);
 		p->set_displayed_second(FArg(1));
 		COMMON_RETURN_SELF;
 	}
@@ -1793,6 +1818,7 @@ struct LunaNewFieldColumn : Luna<NewFieldColumn>
 			}
 			if(!lua_isnumber(L, sindex))
 			{
+				SAFE_TIMING_CHECK(p, L, apply_note_mods_to_actor);
 				second= p->get_second_from_beat(beat);
 			}
 		}
@@ -1805,6 +1831,7 @@ struct LunaNewFieldColumn : Luna<NewFieldColumn>
 			}
 			if(!lua_isnumber(L, bindex))
 			{
+				SAFE_TIMING_CHECK(p, L, apply_note_mods_to_actor);
 				beat= p->get_beat_from_second(second);
 			}
 		}
@@ -1892,6 +1919,28 @@ struct LunaNewField : Luna<NewField>
 		lua_pushnumber(L, p->get_field_width());
 		return 1;
 	}
+	static int get_curr_beat(T* p, lua_State* L)
+	{
+		lua_pushnumber(L, p->get_curr_beat());
+		return 1;
+	}
+	static int set_curr_beat(T* p, lua_State* L)
+	{
+		SAFE_TIMING_CHECK(p, L, set_curr_beat);
+		p->set_displayed_beat(FArg(1));
+		COMMON_RETURN_SELF;
+	}
+	static int get_curr_second(T* p, lua_State* L)
+	{
+		lua_pushnumber(L, p->get_curr_second());
+		return 1;
+	}
+	static int set_curr_second(T* p, lua_State* L)
+	{
+		SAFE_TIMING_CHECK(p, L, set_curr_second);
+		p->set_displayed_second(FArg(1));
+		COMMON_RETURN_SELF;
+	}
 	GET_TRANS(trans);
 	GET_MEMBER(fov_mod);
 	GET_MEMBER(vanish_x_mod);
@@ -1915,6 +1964,8 @@ struct LunaNewField : Luna<NewField>
 		ADD_METHOD(set_steps);
 		ADD_METHOD(get_columns);
 		ADD_METHOD(get_width);
+		ADD_GET_SET_METHODS(curr_beat);
+		ADD_GET_SET_METHODS(curr_second);
 		ADD_TRANS(trans);
 		ADD_METHOD(get_fov_mod);
 		ADD_METHOD(get_vanish_x_mod);
