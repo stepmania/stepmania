@@ -10,7 +10,7 @@
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "EnumHelper.h"
-#include "DisplayResolutions.h"
+#include "DisplaySpec.h"
 #include "LocalizedString.h"
 
 #include <D3dx9tex.h>
@@ -271,19 +271,39 @@ RageDisplay_D3D::~RageDisplay_D3D()
 	}
 }
 
-void RageDisplay_D3D::GetDisplayResolutions( DisplayResolutions &out ) const
+void RageDisplay_D3D::GetDisplaySpecs( DisplaySpecs &out ) const
 {
 	out.clear();
 	int iCnt = g_pd3d->GetAdapterModeCount( D3DADAPTER_DEFAULT, g_DefaultAdapterFormat );
 
-	for( int i = 0; i < iCnt; ++i )
+	std::set<DisplayMode> modes;
+	D3DDISPLAYMODE mode;
+	for ( int i = 0; i < iCnt; ++i )
 	{
-		D3DDISPLAYMODE mode;
 		g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, g_DefaultAdapterFormat, i, &mode );
-
-		DisplayResolution res = { mode.Width, mode.Height };
-		out.insert( res );
+		modes.insert( { mode.Width, mode.Height, static_cast<double> (mode.RefreshRate) } );
 	}
+
+	// Get the current display mode
+	if ( g_pd3d->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &mode ) == D3D_OK )
+	{
+		D3DADAPTER_IDENTIFIER9 ID;
+		g_pd3d->GetAdapterIdentifier( D3DADAPTER_DEFAULT, 0, &ID );
+		DisplayMode active = { mode.Width, mode.Height, static_cast<double> (mode.RefreshRate) };
+		RectI bounds( 0, 0, active.width, active.height );
+		out.insert( DisplaySpec( "", "Fullscreen", modes, active, bounds ) );
+	}
+	else
+	{
+		LOG->Warn( "Could not find active mode for default D3D adapter" );
+		if ( !modes.empty() )
+		{
+			const DisplayMode &m = *modes.begin();
+			RectI bounds( 0, 0, m.width, m.height );
+			out.insert( DisplaySpec( "", "Fullscreen", modes, m, bounds ) );
+		}
+	}
+
 }
 
 D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
@@ -677,10 +697,9 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 	return result;
 }
 
-VideoModeParams RageDisplay_D3D::GetActualVideoModeParams() const 
+ActualVideoModeParams RageDisplay_D3D::GetActualVideoModeParams() const
 {
-	VideoModeParams p = GraphicsWindow::GetParams(); 
-	return p; 
+	return GraphicsWindow::GetParams();
 }
 
 void RageDisplay_D3D::SendCurrentMatrices()

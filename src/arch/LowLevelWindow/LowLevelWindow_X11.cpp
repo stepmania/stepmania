@@ -5,58 +5,54 @@
 #include "archutils/Unix/X11Helper.h"
 #include "PrefsManager.h" // XXX
 #include "RageDisplay.h" // VideoModeParams
-#include "DisplayResolutions.h"
+#include "DisplaySpec.h"
 #include "LocalizedString.h"
 
 #include "RageDisplay_OGL_Helpers.h"
 using namespace RageDisplay_Legacy_Helpers;
 using namespace X11Helper;
 
-#include <stack>
+#include <set>
 #include <math.h>	// ceil()
 #include <GL/glxew.h>
 #define GLX_GLXEXT_PROTOTYPES
 #include <GL/glx.h>	// All sorts of stuff...
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-#ifdef HAVE_XRANDR
 #include <X11/extensions/Xrandr.h>
-#endif
-#ifdef HAVE_XF86VIDMODE
-#include <X11/extensions/xf86vmode.h>
+#if defined(HAVE_XINERAMA)
+#include <X11/extensions/Xinerama.h>
 #endif
 
 #if defined(HAVE_LIBXTST)
 #include <X11/extensions/XTest.h>
 #endif
 
+// Display ID for treating the entire X screen as the display
+const std::string ID_XSCREEN = "XSCREEN_RANDR";
+
 static GLXContext g_pContext = NULL;
 static GLXContext g_pBackgroundContext = NULL;
 static Window g_AltWindow = None;
-#ifdef HAVE_XRANDR
-RRMode g_originalRandRMode;
-RROutput g_usedCrtc;
-bool g_bUseXRandR = false;
-int g_iRandRVerMinor;
-int g_iRandRVerMajor;
-#endif
-#ifdef HAVE_XF86VIDMODE
-XF86VidModeModeInfo g_originalVidModeMode;
-#endif
+static bool g_bChangedScreenSize = false;
+static SizeID g_iOldSize = None;
+static Rotation g_OldRotation = RR_Rotate_0;
+static XRRScreenConfiguration *g_pScreenConfig = nullptr;
+static RRMode g_originalRandRMode = None;
+static RROutput g_usedCrtc = None;
+static int g_iRandRVerMinor = 0;
+static int g_iRandRVerMajor = 0;
+static bool g_bUseXRandR12 = false;
+static bool g_bUseXinerama = false;
 
-inline float calcRandRRefresh( int iPixelClock, int iHTotal, int iVTotal )
+inline float calcRandRRefresh( unsigned long iPixelClock, int iHTotal, int iVTotal )
 {
 	// Pixel Clock divided by total pixels in mode,
 	// not just those onscreen!
 	return ( iPixelClock ) / ( iHTotal * iVTotal );
 }
 
-inline float calcVidModeRefresh( int iPixelClock, int hTotal, int vTotal )
-{
-	// the pixel clock as returned by XF86VM is in kHz.
-	// We want Hz.
-	return calcRandRRefresh( iPixelClock * 1000.0, hTotal, vTotal );
-}
+bool NetWMSupported(Display *Dpy, Atom feature);
 
 static LocalizedString FAILED_CONNECTION_XSERVER( "LowLevelWindow_X11", "Failed to establish a connection with the X server" );
 LowLevelWindow_X11::LowLevelWindow_X11()
@@ -64,11 +60,16 @@ LowLevelWindow_X11::LowLevelWindow_X11()
 	if( !OpenXConnection() )
 		RageException::Throw( "%s", FAILED_CONNECTION_XSERVER.GetValue().c_str() );
 
-#ifdef HAVE_XRANDR
-	if( XRRQueryVersion( Dpy, &g_iRandRVerMajor, &g_iRandRVerMinor ) && g_iRandRVerMajor >= 1 && g_iRandRVerMinor >= 2) g_bUseXRandR = true;
-#endif
-#ifndef HAVE_XF86VIDMODE
-	ASSERT_M(g_bUseXRandR == true, "XRandR not present or too old.");
+	if( XRRQueryVersion( Dpy, &g_iRandRVerMajor, &g_iRandRVerMinor ) && g_iRandRVerMajor >= 1 && g_iRandRVerMinor >= 2) g_bUseXRandR12 = true;
+#ifdef HAVE_XINERAMA
+	int xinerama_event_base = 0;
+	int xinerama_error_base = 0;
+	Atom fullscreen_monitors = XInternAtom( Dpy, "_NET_WM_FULLSCREEN_MONITORS", False );
+	if (XineramaQueryExtension( Dpy, &xinerama_event_base, &xinerama_error_base ) &&
+		NetWMSupported( Dpy, fullscreen_monitors ))
+	{
+		g_bUseXinerama = true;
+	}
 #endif
 
 	const int iScreen = DefaultScreen( Dpy );
@@ -83,6 +84,7 @@ LowLevelWindow_X11::LowLevelWindow_X11()
 	LOG->Info( "Server GLX vendor: %s [%s]", glXQueryServerString( Dpy, iScreen, GLX_VENDOR ), glXQueryServerString( Dpy, iScreen, GLX_VERSION ) );
 	LOG->Info( "Client GLX vendor: %s [%s]", glXGetClientString( Dpy, GLX_VENDOR ), glXGetClientString( Dpy, GLX_VERSION ) );
 	m_bWasWindowed = true;
+	g_pScreenConfig = XRRGetScreenInfo( Dpy, RootWindow(Dpy, DefaultScreen(Dpy)) );
 }
 
 LowLevelWindow_X11::~LowLevelWindow_X11()
@@ -90,25 +92,7 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 	// Reset the display
 	if( !m_bWasWindowed )
 	{
-#ifdef HAVE_XRANDR
-		if(g_bUseXRandR)
-		{
-			XRRScreenResources *res = XRRGetScreenResources(Dpy, Win);
-			XRRCrtcInfo *conf = XRRGetCrtcInfo(Dpy, res, g_usedCrtc);
-			XRRSetCrtcConfig(Dpy, res, g_usedCrtc, conf->timestamp, conf->x, conf->y, g_originalRandRMode, conf->rotation, conf->outputs, conf->noutput);
-
-			XRRFreeScreenResources(res);
-			XRRFreeCrtcInfo(conf);
-		}
-		else
-#ifndef HAVE_XF86VIDMODE
-			FAIL_M("XRandR not present or too old.");
-#endif
-#endif
-#ifdef HAVE_XF86VIDMODE
-			XF86VidModeSwitchToMode( Dpy, DefaultScreen( Dpy ), &g_originalVidModeMode );
-#endif
-
+		RestoreOutputConfig();
 		XUngrabKeyboard( Dpy, CurrentTime );
 	}
 	if( g_pContext )
@@ -121,12 +105,34 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 		glXDestroyContext( Dpy, g_pBackgroundContext );
 		g_pBackgroundContext = NULL;
 	}
-
 	XDestroyWindow( Dpy, Win );
 	Win = None;
 	XDestroyWindow( Dpy, g_AltWindow );
 	g_AltWindow = None;
 	CloseXConnection();
+}
+
+/*
+ * Restore saved X screen/CRTC configuration
+ */
+void LowLevelWindow_X11::RestoreOutputConfig() {
+	if (g_bChangedScreenSize) {
+		XRRSetScreenConfig(Dpy, g_pScreenConfig, RootWindow(Dpy, DefaultScreen(Dpy)), g_iOldSize, g_OldRotation,
+						   CurrentTime);
+	}
+	if (g_usedCrtc != None) {
+		ASSERT(g_bUseXRandR12);
+		XRRScreenResources *res = XRRGetScreenResources(Dpy, Win);
+		XRRCrtcInfo *conf = XRRGetCrtcInfo(Dpy, res, g_usedCrtc);
+		XRRSetCrtcConfig(Dpy, res, g_usedCrtc, conf->timestamp, conf->x, conf->y, g_originalRandRMode, conf->rotation,
+						 conf->outputs, conf->noutput);
+		XRRFreeScreenResources(res);
+		XRRFreeCrtcInfo(conf);
+	}
+	g_iOldSize = None;
+	g_bChangedScreenSize = false;
+	g_usedCrtc = None;
+	g_OldRotation = RR_Rotate_0;
 }
 
 void *LowLevelWindow_X11::GetProcAddress( RString s )
@@ -139,7 +145,16 @@ void *LowLevelWindow_X11::GetProcAddress( RString s )
 
 RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
+	// We're going to be interested in MapNotify/ConfigureNotify events in this routine,
+	// so ensure our event mask includes these, restore it on exit
 	XWindowAttributes winAttrib;
+	auto restore = [&](XWindowAttributes *attr) { XSelectInput( Dpy, Win, attr->your_event_mask );};
+	auto restoreAttrib = std::unique_ptr<XWindowAttributes, decltype(restore)>(&winAttrib, restore);
+
+	// These might change if we're rendering at different resolution than window
+	int windowWidth = p.width;
+	int windowHeight = p.height;
+	bool renderOffscreen = false;
 
 	if( g_pContext == NULL || p.bpp != CurrentParams.bpp || m_bWasWindowed != p.windowed )
 	{
@@ -195,12 +210,14 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 		glXMakeCurrent( Dpy, Win, g_pContext );
 
-		// Map the window, ensuring we get the MapNotify event
 		XGetWindowAttributes( Dpy, Win, &winAttrib );
-		XSelectInput( Dpy, Win, winAttrib.your_event_mask | StructureNotifyMask );
+		XSelectInput( Dpy, Win, winAttrib.your_event_mask | StructureNotifyMask | PropertyChangeMask );
+
 		XMapWindow( Dpy, Win );
 
-		// We can wait for the MapNotify later. We've got work to do!
+		XEvent ev;
+		do {XWindowEvent( Dpy, Win, StructureNotifyMask, &ev );}
+		while ( ev.type != MapNotify);
 
 		// I can't find official docs saying what happens if you re-init GLEW.
 		// I'll just assume the behavior is undefined.
@@ -215,6 +232,9 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		// We're remodeling the existing window, and not touching the context.
 		bNewDeviceOut = false;
 
+		XGetWindowAttributes( Dpy, Win, &winAttrib );
+		XSelectInput( Dpy, Win, winAttrib.your_event_mask | StructureNotifyMask | PropertyChangeMask );
+
 		if( !p.windowed )
 		{
 			// X11 is an asynchronous beast. If we're resizing an existing
@@ -225,11 +245,8 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 			// of waiting for the WM to resize the window.
 
 			// So, set the event mask so we're notified when the window is resized...
-			XGetWindowAttributes( Dpy, Win, &winAttrib );
-			XSelectInput( Dpy, Win, winAttrib.your_event_mask | StructureNotifyMask );
-
 			// Send the resize command...
-			XResizeWindow( Dpy, Win, p.width, p.height );
+			XResizeWindow( Dpy, Win, static_cast<unsigned int> (p.width), static_cast<unsigned int> (p.height) );
 
 			// We'll wait for the notification once we've done everything else,
 			// to save time.
@@ -240,15 +257,53 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 	if( !p.windowed )
 	{
-		/* === Changing Resolution === */
-#ifdef HAVE_XRANDR
-		// Arcane and undocumented but PROPER XRandR 1.2 method.
-		// What we do is directly reconfigure the CRTC of the primary display,
-		// Which prevents the (RandR) screen itself from resizing, and therefore
-		// leaving user's desktop unmolested.
-		if(g_bUseXRandR)
-		{
-			// XRandR is present and at least 1.2. Continue.
+		RestoreOutputConfig();
+
+		if (p.sDisplayId == ID_XSCREEN || p.sDisplayId.empty()) {
+			// If the user changed the resolution while StepMania was windowed we overwrite the resolution to restore with it at exit.
+			g_iOldSize = XRRConfigCurrentConfiguration( g_pScreenConfig, &g_OldRotation );
+			m_bWasWindowed = false;
+
+			// Find a matching mode.
+			int iSizesXct;
+			XRRScreenSize *pSizesX = XRRSizes( Dpy, DefaultScreen(Dpy), &iSizesXct );
+			ASSERT_M( iSizesXct != 0, "Couldn't get resolution list from X server" );
+
+			int iSizeMatch = -1;
+
+			for (int i = 0; i < iSizesXct; ++i) {
+				if (pSizesX[i].width == p.width && pSizesX[i].height == p.height) {
+					iSizeMatch = i;
+					break;
+				}
+			}
+			if (iSizeMatch != g_iOldSize) {
+				g_bChangedScreenSize = true;
+			}
+
+			// Set this mode.
+			// XXX: This doesn't handle if the config has changed since we queried it (see man Xrandr)
+			Status s = XRRSetScreenConfig( Dpy, g_pScreenConfig, RootWindow(Dpy, DefaultScreen(Dpy)), iSizeMatch, 1, CurrentTime );
+			if (s)
+			{
+				return "Failed to set screen config";
+			}
+
+			XMoveWindow( Dpy, Win, 0, 0 );
+
+			XRaiseWindow( Dpy, Win );
+
+			// We want to prevent the WM from catching anything that comes from the keyboard.
+			// We should do this every time on fullscreen and not only we entering from windowed mode because we could lose focus at resolution change and that will leave the user input locked.
+			while (XGrabKeyboard( Dpy, Win, True, GrabModeAsync, GrabModeAsync, CurrentTime ));
+
+		} else {
+			ASSERT(g_bUseXRandR12);
+			/* === Configuring a specific CRTC === */
+			// Arcane and undocumented but PROPER XRandR 1.2 method.
+			// What we do is directly reconfigure the CRTC of the primary display,
+			// Which prevents the (RandR) screen itself from resizing, and therefore
+			// leaving user's desktop unmolested.
 			LOG->Info("LowLevelWindow_X11: Using XRandR");
 
 			XRRScreenResources *scrRes = XRRGetScreenResources(Dpy, Win);
@@ -257,288 +312,274 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 			ASSERT(scrRes->noutput > 0);
 			ASSERT(scrRes->nmode > 0);
 
-			RROutput primaryOut;
-			if(g_iRandRVerMajor >= 1 && g_iRandRVerMinor >= 3)
-				// RandR 1.3 can tell us what the primary display is.
-				primaryOut = XRRGetOutputPrimary(Dpy, Win);
-			else // Only RandR 1.2. We have to guess.
-				primaryOut = scrRes->outputs[0];
+			// If an output name has been specified, search for it
+			RROutput targetOut = None;
+			if (p.sDisplayId.length() > 0) {
+				for (unsigned int i = 0; i < scrRes->noutput && targetOut == None; ++i) {
+					XRROutputInfo *outInfo = XRRGetOutputInfo(Dpy, scrRes, scrRes->outputs[i]);
+					std::string outName = std::string(outInfo->name, static_cast<unsigned int> (outInfo->nameLen));
+					if (p.sDisplayId == outName) {
+						targetOut = scrRes->outputs[i];
+					}
+					XRRFreeOutputInfo(outInfo);
+				}
+			}
+			if (targetOut == None) {
+				LOG->Info("Did not find display output %s, trying another", p.sDisplayId.c_str());
+				// didn't find named output, pick primary/or at least one that works
+				if (g_iRandRVerMajor >= 1 && g_iRandRVerMinor >= 3) {
+					// RandR 1.3 can tell us what the primary display is.
+					targetOut = XRRGetOutputPrimary(Dpy, Win);
+				} else {
+					// Only RandR 1.2. We'll look for a "Connected" output, or if we can't find that,
+					// (it is possible the connection state could be unknown), we'll at least
+					// look for an output with a CRTC driving it
+					RROutput connected = None, hasCrtc = None;
+					for (unsigned int i = 0; i < scrRes->noutput; ++i) {
+						XRROutputInfo *outInfo = XRRGetOutputInfo(Dpy, scrRes, scrRes->outputs[i]);
+						if (outInfo->connection == RR_Connected) { // Check for CONNECTED state: Connected == 0
+							connected = scrRes->outputs[i];
+						}
+						if (outInfo->crtc != None) {
+							hasCrtc = outInfo->crtc;
+						}
+						XRRFreeOutputInfo(outInfo);
+					}
+					targetOut = connected != None ? connected : hasCrtc;
+					ASSERT(targetOut != None);
+				}
+			}
 
-			XRROutputInfo *outInfo = XRRGetOutputInfo(Dpy, scrRes, primaryOut);
-			ASSERT(outInfo->ncrtc > 0);
-			XRRCrtcInfo *oldConf = XRRGetCrtcInfo( Dpy, scrRes, outInfo->crtcs[0] );
+			// if the target output is not currently being driven by a crtc,
+			// find an unused crtc that can be connected to it
+			XRROutputInfo *tgtOutInfo = XRRGetOutputInfo( Dpy, scrRes, targetOut );
+			if (tgtOutInfo == NULL)
+			{
+				XRRFreeScreenResources(scrRes);
+				return "Failed to find XRROutput";
+			}
+
+			RRCrtc tgtOutCrtc = tgtOutInfo->crtc;
+			if (tgtOutCrtc == None)
+			{
+				for (unsigned int i = 0; i < tgtOutInfo->ncrtc; ++i)
+				{
+					XRRCrtcInfo *crtcInfo = XRRGetCrtcInfo( Dpy, scrRes, tgtOutInfo->crtcs[i] );
+					if (crtcInfo->mode == None)
+					{
+						tgtOutCrtc = tgtOutInfo->crtcs[i];
+					}
+					XRRFreeCrtcInfo( crtcInfo );
+				}
+			}
+			ASSERT(tgtOutCrtc != None);
+
+
+			XRRCrtcInfo *oldConf = XRRGetCrtcInfo( Dpy, scrRes, tgtOutCrtc );
 
 			float fRefreshDiff = 99999;
 			float fRefreshRate = 0;
-			RRMode mode;
+			RRMode mode = None;
 			// A quirk of XRandR is that the width and height are as the display
 			// controller ("CRTC") sees it, which means height and width are
 			// flipped if there's rotation going on.
-			bool bPortrait = oldConf->rotation & ( RR_Rotate_90 | RR_Rotate_270 );
-#define REAL_WIDTH(x)( bPortrait ? x.height : x.width )
-#define REAL_HEIGHT(x) ( bPortrait ? x.width : x.height )
-
+			const bool bPortrait = (oldConf->rotation & (RR_Rotate_90 | RR_Rotate_270)) != 0;
 			// Find a mode that matches our exact wanted resolution,
 			// with as close to our desired refresh rate as possible.
-			for(int i = 0; i < scrRes->nmode; i++)
-				if(REAL_WIDTH(scrRes->modes[i]) == p.width && REAL_HEIGHT(scrRes->modes[i]) == p.height)
-				{
-					XRRModeInfo *thisMI = &scrRes->modes[i];
-					float fTempRefresh = calcRandRRefresh( thisMI->dotClock, thisMI->hTotal, thisMI->vTotal );
-					float fTempDiff = abs( fRefreshRate - fTempRefresh );
-					if(fTempDiff < fRefreshDiff)
-					{
+			for (int i = 0; i < scrRes->nmode; i++) {
+				const XRRModeInfo &thisMI = scrRes->modes[i];
+				const unsigned int modeWidth = bPortrait ? thisMI.height : thisMI.width;
+				const unsigned int modeHeight = bPortrait ? thisMI.width : thisMI.height;
+				if (modeWidth == p.width && modeHeight == p.height) {
+					float fTempRefresh = calcRandRRefresh(thisMI.dotClock, thisMI.hTotal, thisMI.vTotal);
+					float fTempDiff = std::abs(p.rate - fTempRefresh);
+					if ((p.rate != REFRESH_DEFAULT && fTempDiff < fRefreshDiff) ||
+						(p.rate == REFRESH_DEFAULT && fTempRefresh > fRefreshRate)) {
 						int j;
 						// Ensure that the output supports the mode
-						for(j = 0; j < outInfo->nmode; j++)
-							if(outInfo->modes[j] == scrRes->modes[i].id)
-							{
-								mode = outInfo->modes[j];
+						for (j = 0; j < tgtOutInfo->nmode; j++)
+							if (tgtOutInfo->modes[j] == scrRes->modes[i].id) {
+								mode = tgtOutInfo->modes[j];
 								break;
 							}
 
-						if(j < outInfo->nmode)
-						{
+						if (j < tgtOutInfo->nmode) {
 							fRefreshRate = fTempRefresh;
 							fRefreshDiff = fTempDiff;
 						}
 					}
 				}
-
-#undef REAL_WIDTH
-#undef REAL_HEIGHT
+			}
 			rate = roundf(fRefreshRate);
 
-			ASSERT(fRefreshRate > 0);
+			g_usedCrtc = tgtOutCrtc;
+			g_originalRandRMode = oldConf->mode;
 
-			g_usedCrtc = outInfo->crtcs[0];
-			if(m_bWasWindowed)
-				// Save the old mode to restore later.
-				g_originalRandRMode = oldConf->mode;
-
+			const std::string tgtOutName = std::string(tgtOutInfo->name, static_cast<unsigned int> (tgtOutInfo->nameLen));
+			LOG->Info("XRandR output config using CRTC %lu in mode %lu, driving output %s",
+					  g_usedCrtc, mode, tgtOutName.c_str());
 			// and FIRE!
-			XRRSetCrtcConfig(Dpy, scrRes, g_usedCrtc, oldConf->timestamp, oldConf->x, oldConf->y, mode, oldConf->rotation, oldConf->outputs, oldConf->noutput);
+			Status s = XRRSetCrtcConfig(Dpy, scrRes, g_usedCrtc, oldConf->timestamp, oldConf->x, oldConf->y, mode,
+							 oldConf->rotation, oldConf->outputs, oldConf->noutput);
+			if (s) {
+				XRRFreeCrtcInfo(oldConf);
+				XRRFreeOutputInfo(tgtOutInfo);
+				XRRFreeScreenResources(scrRes);
+				return "Failed to set CRTC config";
+			}
 
 			// We don't move to absolute 0,0 because that may be in the area of a different output.
 			// Instead we preserved the corner of our CRTC; go to that.
 			XMoveWindow(Dpy, Win, oldConf->x, oldConf->y);
 
 			// Final cleanup
-			XRRFreeScreenResources(scrRes);
-			XRRFreeOutputInfo(outInfo);
 			XRRFreeCrtcInfo(oldConf);
+			XRRFreeOutputInfo(tgtOutInfo);
+			XRRFreeScreenResources(scrRes);
 		}
-		else
-#ifndef HAVE_XF86VIDMODE
-			FAIL_M("XRandR extension not present or too old.");
-#endif
-#endif // HAVE_XRANDR
-#ifdef HAVE_XF86VIDMODE
-		{
-			// Legacy probably-deprecated XFree86-VidModeExtension method.
-			// Some X servers will resize the root window in response to this.
-			// Some won't. We hope for the latter. Hope is all we got.
-			if( m_bWasWindowed )
-			{
-				// We're supposed to XFree() the private bits of XF86VidModeModeInfo
-				// structs. This isn't actually possible from C++. At all. Period.
-				// Let it leak.
-
-				// XFree86-VideoMode can't make up its mind what struct it wants to
-				// use. This function returns an XF86VidModeModeLine when almost
-				// everything else wants XF86VidModeModeInfo. And there's no
-				// conversion function. Our only option is to do the conversion
-				// ourselves and assume that the private bytes don't differ
-				// between the two.
-
-				XF86VidModeModeLine tempMode;
-				int iPixelClock;
-
-				XF86VidModeGetModeLine( Dpy, DefaultScreen(Dpy), &iPixelClock, &tempMode );
-
-				g_originalVidModeMode.dotclock = iPixelClock;
-				g_originalVidModeMode.hdisplay = tempMode.hdisplay;
-				g_originalVidModeMode.hsyncstart = tempMode.hsyncstart;
-				g_originalVidModeMode.hsyncend = tempMode.hsyncend;
-				g_originalVidModeMode.htotal = tempMode.htotal;
-				g_originalVidModeMode.vdisplay = tempMode.vdisplay;
-				g_originalVidModeMode.vsyncstart = tempMode.vsyncstart;
-				g_originalVidModeMode.vsyncend = tempMode.vsyncend;
-				g_originalVidModeMode.vtotal = tempMode.vtotal;
-				g_originalVidModeMode.flags = tempMode.flags;
-				// Once again, we can't actually address XF86VidModeModeInfo::private.
-				// I hope the server doesn't need its private bits, because it's
-				// not getting 'em.
-				g_originalVidModeMode.privsize = 0;
-			}
-
-			// Find a matching mode.
-			int iNumModes;
-			XF86VidModeModeInfo **aModes_;
-			XF86VidModeGetAllModeLines( Dpy, DefaultScreen(Dpy), &iNumModes, &aModes_ );
-			ASSERT_M( iNumModes > 0, "Couldn't get resolution list from X server" );
-			XF86VidModeModeInfo *aModes = *aModes_;
-
-			int iSizeMatch = -1;
-			float fRefreshCloseness;
-
-			for( int i = 0; i < iNumModes; ++i )
-			{
-				if( aModes[i].hdisplay == p.width && aModes[i].vdisplay == p.height )
-				{
-					// We're not told the refresh rate; we're expected to calculate
-					// it ourselves.
-					float fCheckRefresh = calcVidModeRefresh( aModes[i].dotclock, aModes[i].htotal, aModes[i].vtotal );
-
-					// And of course it's rarely if ever an exact integer. Just get the nearest match.
-					float fTempClose = fabs( p.rate - rate );
-					if( iSizeMatch == -1 || fTempClose < fRefreshCloseness )
-					{
-						rate = fCheckRefresh;
-						fRefreshCloseness = fTempClose;
-						iSizeMatch = i;
-					}
-				}
-			}
-
-			ASSERT( iSizeMatch != -1 );
-
-			// Set this mode.
-			// XXX How do we detect failure?
-			XF86VidModeSwitchToMode( Dpy, DefaultScreen(Dpy), &( aModes[iSizeMatch] ) );
-
-			// Move the viewport to the corner where we are.
-			XF86VidModeSetViewPort( Dpy, DefaultScreen(Dpy), 0, 0);
-
-			// We're supposed to XFree() the private bits of XF86VidModeModeInfo
-			// structs. This isn't actually possible from C++. At all. Period.
-			// Let it leak.
-
-			XFree( aModes_ );
-		}
-#endif // HAVE_XF86VIDMODE
-
 		m_bWasWindowed = false;
 
 		XRaiseWindow( Dpy, Win );
 
 		// We want to prevent the WM from catching anything that comes from the keyboard.
 		// We should do this every time on fullscreen and not only we entering from windowed mode because we could lose focus at resolution change and that will leave the user input locked.
-		XGrabKeyboard( Dpy, Win, True, GrabModeAsync, GrabModeAsync, CurrentTime );
+		while (XGrabKeyboard( Dpy, Win, True, GrabModeAsync, GrabModeAsync, CurrentTime ));
 	}
 	else // if(p.windowed)
 	{
 		if( !m_bWasWindowed )
 		{
 			// Return the display to the mode it was in before we fullscreened.
-#ifdef HAVE_XRANDR
-			if(g_bUseXRandR)
-			{
-				XRRScreenResources *res = XRRGetScreenResources(Dpy, Win);
-				XRRCrtcInfo *conf = XRRGetCrtcInfo(Dpy, res, g_usedCrtc);
-				XRRSetCrtcConfig(Dpy, res, g_usedCrtc, conf->timestamp, conf->x, conf->y, g_originalRandRMode, conf->rotation, conf->outputs, conf->noutput);
-
-				XRRFreeScreenResources(res);
-				XRRFreeCrtcInfo(conf);
-			}
-			else
-#ifndef HAVE_XF86VIDMODE
-				FAIL_M("XRandR not present or too old.");
-#endif
-#endif
-#ifdef HAVE_XF86VIDMODE
-				XF86VidModeSwitchToMode( Dpy, DefaultScreen(Dpy), &g_originalVidModeMode );
-#endif
-			// In windowed mode, we actually want the WM to function normally.
-			// Release any previous grab.
+			RestoreOutputConfig();
 			XUngrabKeyboard( Dpy, CurrentTime );
 			m_bWasWindowed = true;
 		}
-	}
 
-	// Make a window fixed size, don't let resize it or maximize it.
-	// Do this before resizing the window so that pane-style WMs (Ion,
-	// ratpoison) don't resize us back inappropriately.
-	{
-		XSizeHints hints;
+		Atom net_wm_state = XInternAtom( Dpy, "_NET_WM_STATE", False );
+		Atom fullscreen_state = XInternAtom( Dpy, "_NET_WM_STATE_FULLSCREEN", False );
+		Atom maximized_vert = XInternAtom( Dpy, "_NET_WM_STATE_MAXIMIZED_VERT", False );
+		Atom maximized_horz = XInternAtom( Dpy, "_NET_WM_STATE_MAXIMIZED_HORZ", False );
+		// if FSBW, find matching monitor, move window to its origin,
+		// then set fullscreen hint, and set the CurrentParams.outWidth, CurrentParams.outHeight to the values of that display
+		// otherwise set the size hints and disable MAXIMIZED_*
+		if (p.bWindowIsFullscreenBorderless)
+		{
+			auto specs = DisplaySpecs{};
+			GetDisplaySpecs( specs );
+			auto target = std::find_if( specs.begin(), specs.end(), [&]( const DisplaySpec &spec ) {
+				return p.sDisplayId == spec.id() && spec.currentMode() != nullptr;
+			} );
+			// If we didn't find a matching DisplaySpec for the requested ID, pick the first one with a current mode
+			if (target == specs.end())
+			{
+				target = std::find_if( specs.begin(), specs.end(), [&]( const DisplaySpec &spec ) {
+					return spec.currentMode() != nullptr;
+				} );
+			}
+			// If we _still_ haven't found anything (unlikely), then just give up
+			if (target == specs.end())
+			{
+				return "Unable to find destination monitor for fullscreen borderless";
+			}
 
-		hints.flags = PMinSize|PMaxSize|PWinGravity;
-		hints.min_width = hints.max_width = p.width;
-		hints.min_height = hints.max_height = p.height;
-		hints.win_gravity = CenterGravity;
+			windowWidth = target->currentMode()->width;
+			windowHeight = target->currentMode()->height;
 
-		XSetWMNormalHints( Dpy, Win, &hints );
-	}
+			if (windowWidth != p.width || windowHeight != p.height)
+			{
+				renderOffscreen = true;
+			}
 
-	/* Workaround for metacity and compiz: if the window have the same
-	 * resolution or higher than the screen, it gets automaximized even
-	 * when the window is set to not let it happen. This happens when
-	 * changing from fullscreen to window mode and our screen resolution
-	 * is bigger. */
-	{
-		XEvent xev;
-		Atom wm_state = XInternAtom(Dpy, "_NET_WM_STATE", False);
-		Atom maximized_vert = XInternAtom(Dpy, "_NET_WM_STATE_MAXIMIZED_VERT", False);
-		Atom maximized_horz = XInternAtom(Dpy, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
+			// Reset anything that might've been set previously:
+			// (1) Undo Min/Max size bounds
+			// (2) Remove FULLSCREEN/MAXIMIZED_{HORIZ,VERT} hints
+			// Without doing this, WM may not let us move/resize window to new display
+			// Give Window manager the chance to react to changes (otherwise, Mutter had problems
+			// properly reacting to moving a _NET_WM_STATE_FULLSCREEN window to a different output
+			//   and fullscreen resetting FULLSCREEN hint.
+			XSizeHints hints;
+			hints.flags = 0;
+			XSetWMNormalHints( Dpy, Win, &hints );
+#if defined(HAVE_XINERAMA)
+			if (!g_bUseXinerama || !SetWMFullscreenMonitors( *target ))
+#endif
+			{
+				SetWMState( winAttrib.root, Win, 0, maximized_horz );
+				SetWMState( winAttrib.root, Win, 0, maximized_vert );
+				SetWMState( winAttrib.root, Win, 0, fullscreen_state );
 
-		memset(&xev, 0, sizeof(xev));
-		xev.type = ClientMessage;
-		xev.xclient.window = Win;
-		xev.xclient.message_type = wm_state;
-		xev.xclient.format = 32;
-		xev.xclient.data.l[0] = 1;
-		xev.xclient.data.l[1] = maximized_vert;
-		xev.xclient.data.l[2] = 0;
+				XFlush( Dpy );
+				XResizeWindow( Dpy, Win, static_cast<unsigned int> (windowWidth), static_cast<unsigned int> (windowHeight) );
+				XMoveWindow( Dpy, Win, target->currentBounds().left, target->currentBounds().top );
+				XRaiseWindow( Dpy, Win );
 
-		XSendEvent(Dpy, DefaultRootWindow(Dpy), False, SubstructureNotifyMask, &xev);
-		xev.xclient.data.l[1] = maximized_horz;
-		XSendEvent(Dpy, DefaultRootWindow(Dpy), False, SubstructureNotifyMask, &xev);
+				SetWMState( winAttrib.root, Win, 1, fullscreen_state );
+				SetWMState( winAttrib.root, Win, 1, maximized_horz );
+				SetWMState( winAttrib.root, Win, 1, maximized_vert );
+			}
+		} else
+		{
+			windowWidth = p.width;
+			windowHeight = p.height;
 
-		// This one is needed for compiz, if the window reaches out of bounds of the screen it becames destroyed, only the window, the program is left running.
-		// Commented out per the patch at http://ssc.ajworld.net/sm-ssc/bugtracker/view.php?id=398
-		//XMoveWindow( Dpy, Win, 0, 0 );
+			SetWMState( winAttrib.root, Win, 0, fullscreen_state );
+			// Make a window fixed size, don't let resize it or maximize it.
+			// Do this before resizing the window so that pane-style WMs (Ion,
+			// ratpoison) don't resize us back inappropriately.
+			{
+				XSizeHints hints;
+
+				hints.flags = PMinSize|PMaxSize|PWinGravity;
+				hints.min_width = hints.max_width = windowWidth;
+				hints.min_height = hints.max_height = windowHeight;
+				hints.win_gravity = CenterGravity;
+
+				XSetWMNormalHints( Dpy, Win, &hints );
+			}
+			/* Workaround for metacity and compiz: if the window have the same
+			 * resolution or higher than the screen, it gets automaximized even
+			 * when the window is set to not let it happen. This happens when
+			 * changing from fullscreen to window mode and our screen resolution
+			 * is bigger. */
+			{
+				SetWMState( winAttrib.root, Win, 1, maximized_vert );
+				SetWMState( winAttrib.root, Win, 1, maximized_horz );
+
+				// This one is needed for compiz, if the window reaches out of bounds of the screen it becames destroyed, only the window, the program is left running.
+				// Commented out per the patch at http://ssc.ajworld.net/sm-ssc/bugtracker/view.php?id=398
+				//XMoveWindow( Dpy, Win, 0, 0 );
+			}
+		}
+
+
 	}
 
 	CurrentParams = p;
+	CurrentParams.windowWidth = windowWidth;
+	CurrentParams.windowHeight = windowHeight;
+	CurrentParams.renderOffscreen = renderOffscreen;
 	ASSERT( rate > 0 );
-	CurrentParams.rate = roundf(rate);
+	CurrentParams.rate = static_cast<int> (roundf(rate));
 
-	// Wait for window to be ready for drawing, before setting v-sync hint.
-	// Just in case the GLX impl is sensitive to it.
-	if( bNewDeviceOut == true )
+	if (!p.windowed)
 	{
-		XEvent ev;
-		do {
-			XMaskEvent(Dpy, StructureNotifyMask, &ev);
-		} while(ev.type != MapNotify);
-
-		// And set the mask back to what it was.
-		XSelectInput( Dpy, Win, winAttrib.your_event_mask );
-	}
-	else if( !p.windowed )
-	{
-		XEvent ev;
-		do {
-			XMaskEvent(Dpy, StructureNotifyMask, &ev);
-		} while(ev.type != ConfigureNotify);
-
-		// And set the mask back to what it was.
-		XSelectInput( Dpy, Win, winAttrib.your_event_mask );
-	}
-
-	// Set our V-sync hint.
-	if(GLXEW_EXT_swap_control) // I haven't seen this actually implemented yet, but why not.
-		glXSwapIntervalEXT( Dpy, Win, CurrentParams.vsync ? 1 : 0 );
-	// XXX: These two might be server-global. I should look into whether
-	// to try to preserve the original value on exit.
+		// Set our V-sync hint.
+		if (GLXEW_EXT_swap_control) // I haven't seen this actually implemented yet, but why not.
+			glXSwapIntervalEXT( Dpy, Win, CurrentParams.vsync ? 1 : 0 );
+			// XXX: These two might be server-global. I should look into whether
+			// to try to preserve the original value on exit.
 #ifdef GLXEW_MESA_swap_control // Added in 1.7. 1.6 is still common out there apparently.
-	else if(GLXEW_MESA_swap_control) // Haven't seen this NOT implemented yet
-		glXSwapIntervalMESA( CurrentParams.vsync ? 1 : 0 );
+			else if(GLXEW_MESA_swap_control) // Haven't seen this NOT implemented yet
+				glXSwapIntervalMESA( CurrentParams.vsync ? 1 : 0 );
 #endif
-	else if(GLXEW_SGI_swap_control) // But old GLEW.
-		glXSwapIntervalSGI( CurrentParams.vsync ? 1 : 0 );
-	else
-		CurrentParams.vsync = false; // Assuming it's not on
+		else if (GLXEW_SGI_swap_control) // But old GLEW.
+			glXSwapIntervalSGI( CurrentParams.vsync ? 1 : 0 );
+		else
+			CurrentParams.vsync = false; // Assuming it's not on
+	}
+
+
+
 
 	return ""; // Success
 }
@@ -594,96 +635,115 @@ void LowLevelWindow_X11::SwapBuffers()
 	}
 }
 
-void LowLevelWindow_X11::GetDisplayResolutions( DisplayResolutions &out ) const
-{
-#ifdef HAVE_XRANDR
-	if(g_bUseXRandR)
-	{
+void LowLevelWindow_X11::GetDisplaySpecs(DisplaySpecs &out) const {
+	int screenNum = DefaultScreen(Dpy);
+	Screen *screen = ScreenOfDisplay(Dpy, screenNum);
+
+	XWindowAttributes winAttr = XWindowAttributes();
+	if (XGetWindowAttributes(Dpy, Win, &winAttr)) {
+		screen = winAttr.screen;
+		screenNum = XScreenNumberOfScreen(screen);
+	}
+
+	// Create a display spec for the entire X screen itself
+	// First get current config
+	Rotation curRotation;
+	XRRScreenConfiguration *screenConf = XRRGetScreenInfo(Dpy, Win);
+	const short curRate = XRRConfigCurrentRate(screenConf);
+	SizeID curSizeId = XRRConfigCurrentConfiguration(screenConf, &curRotation);
+	// curRotation does not factor into how we report supported XScreen sizes:
+	// XRR reports the supported *screen* sizes with height/width swapped appropriately
+	// for currently configured rotation. Supported sizes for *output* modes (below)
+	// DO NOT account for screen rotation
+
+	std::set<DisplayMode> screenModes;
+	int nsizes = 0;
+	XRRScreenSize *screenSizes = XRRSizes( Dpy, screenNum, &nsizes);
+	DisplayMode screenCurMode = {0};
+	for (unsigned int szIdx = 0, mode_idx = 0; szIdx < nsizes; ++szIdx) {
+		XRRScreenSize &size = screenSizes[szIdx];
+		int nrates = 0;
+		short *rates = XRRRates(Dpy, screenNum, szIdx, &nrates);
+		for (unsigned int rIdx = 0; rIdx < nrates; ++rIdx, ++mode_idx) {
+			DisplayMode m = {static_cast<unsigned int> (size.width), static_cast<unsigned int> (size.height), static_cast<double> (rates[rIdx])};
+			screenModes.insert(m);
+			if (rates[rIdx] == curRate && szIdx == curSizeId) {
+				screenCurMode = m;
+			}
+		}
+	}
+	const RectI screenBounds( 0, 0, screenSizes[curSizeId].width, screenSizes[curSizeId].height);
+	const DisplaySpec screenSpec( ID_XSCREEN, "X Screen", screenModes, screenCurMode, screenBounds, true);
+	out.insert(screenSpec);
+	// XRRScreenSize array from XRRSizes does *not* have to be returned (valgrind said XFree was an invalid
+	// free in a small test program, there is no XRRFreeScreenSize, etc)
+	XRRFreeScreenConfigInfo(screenConf);
+
+	if (g_bUseXRandR12) {
+		// Build per-output DisplaySpecs
+
+		// First, get the list of resolutions that'll be referenced (by RRMode) in each
+		// OutputInfo
 		XRRScreenResources *scrRes = XRRGetScreenResources(Dpy, Win);
-		RROutput primaryOut;
-		if(g_iRandRVerMajor >= 1 && g_iRandRVerMinor >= 3)
-		{
-			// RandR 1.3 can tell us what the primary display is.
-			primaryOut = XRRGetOutputPrimary(Dpy, Win);
-		}
-		else // Only RandR 1.2. We have to guess.
-		{
-			primaryOut = scrRes->outputs[0];
+		std::map<RRMode, DisplayMode> outputModes;
+		for (unsigned int i = 0; i < scrRes->nmode; ++i) {
+			const XRRModeInfo &mode = scrRes->modes[i];
+			DisplayMode m = {mode.width, mode.height,
+							 calcRandRRefresh(mode.dotClock, mode.hTotal, mode.vTotal)};
+			outputModes[mode.id] = m;
 		}
 
-		XRROutputInfo *outInfo = XRRGetOutputInfo(Dpy, scrRes, primaryOut);
-		// XRRGetOutputInfo returns null for Kyzentun:
-		// X11 Protocol error BadRROutput (invalid Output parameter) (147) has occurred, caused by request 141,9, resource ID 0
-		// I don't want to go digging into Xlib or XRandR to find docs on why
-		// that happens.
-		// Use the old method for getting the resolutions when this happens. -Kyz
-		if(outInfo == NULL)
+		// Now, for each output, build a corresponding DisplaySpec
+		for (unsigned int outIdx = 0; outIdx < scrRes->noutput; ++outIdx)
 		{
-			LOG->Warn("Unable to get display resolutions using XRRGetOutputInfo, falling back to XRRSizes.");
-			int iSizesXct;
-			XRRScreenSize *pSizesX = XRRSizes(Dpy, DefaultScreen(Dpy), &iSizesXct);
-			for(int i = 0; i < iSizesXct; ++i)
+			XRROutputInfo *outInfo = XRRGetOutputInfo( Dpy, scrRes, scrRes->outputs[outIdx] );
+			if (outInfo->nmode > 0)
 			{
-				DisplayResolution res = {pSizesX[i].width, pSizesX[i].height, true};
-				out.insert(res);
+				// Get the current configuration of the Output, if it's being driven by
+				// a crtc
+				RRMode curRRMode = None;
+				bool bPortrait = false;
+				int crtcX = 0, crtcY = 0;
+				if (outInfo->crtc != None)
+				{
+					XRRCrtcInfo *conf = XRRGetCrtcInfo( Dpy, scrRes, outInfo->crtc );
+					curRRMode = conf->mode;
+					bPortrait = (conf->rotation & (RR_Rotate_90 | RR_Rotate_270)) != 0;
+					crtcX = conf->x;
+					crtcY = conf->y;
+					XRRFreeCrtcInfo( conf );
+				}
+				// Get all supported modes, noting which one, if any, is currently active
+				std::set<DisplayMode> outputSupported;
+				DisplayMode outputCurMode = {0};
+				RectI outBounds;
+				for (unsigned int modeIdx = 0; modeIdx < outInfo->nmode; ++modeIdx)
+				{
+					DisplayMode mode = outputModes[outInfo->modes[modeIdx]];
+					unsigned int modeWidth = bPortrait ? mode.height : mode.width;
+					unsigned int modeHeight = bPortrait ? mode.width : mode.height;
+					DisplayMode m = {modeWidth, modeHeight, mode.refreshRate};
+					outputSupported.insert( m );
+					if (curRRMode != None && outInfo->modes[modeIdx] == curRRMode)
+					{
+						outputCurMode = m;
+						outBounds = RectI( crtcX, crtcY, crtcX + modeWidth, crtcY + modeHeight);
+					}
+				}
+				const std::string outId( outInfo->name, static_cast<unsigned int> (outInfo->nameLen) );
+				const std::string outName( outId );
+				if (curRRMode != None)
+				{
+					out.insert( DisplaySpec( outId, outName, outputSupported, outputCurMode, outBounds ));
+				} else
+				{
+					out.insert( DisplaySpec( outId, outName, outputSupported ));
+				}
 			}
+			XRRFreeOutputInfo( outInfo );
 		}
-		else
-		{
-			ASSERT(outInfo->ncrtc > 0);
-			XRRCrtcInfo *conf = XRRGetCrtcInfo( Dpy, scrRes, outInfo->crtcs[0] );
-
-			// A quirk of XRandR is that the width and height are as the display
-			// controller ("CRTC") sees it, which means height and width are
-			// flipped if there's rotation going on.
-			bool bPortrait = conf->rotation & ( RR_Rotate_90 | RR_Rotate_270 );
-#define REAL_WIDTH(x) bPortrait ? x.height : x.width
-#define REAL_HEIGHT(x) bPortrait ? x.width : x.height
-
-			for(int i = 0; i < scrRes->nmode; i++)
-			// Ensure that the output supports the mode
-			for(int j = 0; j < outInfo->nmode; j++)
-			if(outInfo->modes[j] == scrRes->modes[i].id)
-			{
-				DisplayResolution res = { REAL_WIDTH(scrRes->modes[i]), REAL_HEIGHT(scrRes->modes[i]), true };
-				out.insert( res );
-				break;
-			}
-#undef REAL_WIDTH
-#undef REAL_HEIGHT
-
-			XRRFreeOutputInfo(outInfo);
-			XRRFreeCrtcInfo(conf);
-		}
-		XRRFreeScreenResources(scrRes);
+		XRRFreeScreenResources( scrRes );
 	}
-	else
-#ifndef HAVE_XF86VIDMODE
-		FAIL_M("XRandR not present or too old.");
-#endif
-#endif
-#ifdef HAVE_XF86VIDMODE
-	{
-		int iNumModes = 0;
-		XF86VidModeModeInfo **aModes_;
-		XF86VidModeGetAllModeLines( Dpy, DefaultScreen( Dpy ), &iNumModes, &aModes_ );
-		ASSERT_M( iNumModes != 0, "Couldn't get resolution list from X server" );
-		XF86VidModeModeInfo *aModes = *aModes_;
-
-		for( int i = 0; i < iNumModes; ++i )
-		{
-			// XXX: bStretched doesn't appear to actually be used anywhere?
-			DisplayResolution res = { aModes[i].hdisplay, aModes[i].vdisplay, true };
-			out.insert( res );
-
-			// We're supposed to XFree() the private bits of XF86VidModeModeInfo
-			// structs. This isn't actually possible from C++. At all. Period.
-			// Let it leak.
-		}
-
-		XFree( aModes_ );
-	}
-#endif
 }
 
 bool LowLevelWindow_X11::SupportsThreadedRendering()
@@ -851,6 +911,34 @@ bool LowLevelWindow_X11::SupportsRenderToTexture() const
 		return false;
 
 	return true;
+}
+
+bool NetWMSupported(Display *Dpy, Atom feature)
+{
+	Atom net_supported = XInternAtom( Dpy, "_NET_SUPPORTED", False );
+	Atom actual_type_return = BadAtom;
+	int actual_format_return = 0;
+	unsigned long nitems_return = 0;
+	unsigned long bytes_after_return = 0;
+	Atom *prop_return;
+	Status status = XGetWindowProperty( Dpy, RootWindow( Dpy, DefaultScreen( Dpy )), net_supported, 0, 8192, False,
+										XA_ATOM, &actual_type_return,
+										&actual_format_return, &nitems_return, &bytes_after_return,
+										reinterpret_cast<unsigned char **> (&prop_return));
+	if (status != Success)
+	{
+		return false;
+	}
+
+	auto supported = std::find( prop_return, prop_return + nitems_return, feature ) != prop_return + nitems_return;
+	XFree( prop_return );
+	return supported;
+}
+
+bool LowLevelWindow_X11::SupportsFullscreenBorderlessWindow() const
+{
+	Atom fullscreen = XInternAtom( Dpy, "_NET_WM_STATE_FULLSCREEN", False );
+	return NetWMSupported( Dpy, fullscreen );
 }
 
 RenderTarget *LowLevelWindow_X11::CreateRenderTarget()

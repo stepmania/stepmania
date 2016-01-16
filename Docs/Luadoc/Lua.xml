@@ -744,6 +744,23 @@
 			<Function name='get_dirty'/>
 			<Function name='destroy'/>
 		</Class>
+		<Class name='DisplayMode'>
+			<Function name='GetWidth'/>
+			<Function name='GetHeight'/>
+			<Function name='GetRefreshRate'/>
+		</Class>
+		<Class name='DisplaySpec'>
+			<Function name='GetId'/>
+			<Function name='GetName'/>
+			<Function name='GetCurrentMode'/>
+			<Function name='GetSupportedModes'/>
+			<Function name='IsVirtual'/>
+		</Class>
+		<Class name='DisplaySpecs'>
+			<Function name='__len'/>
+			<Function name='__index'/>
+			<Function name='__tostring'/>
+		</Class>
 		<Class base='Sprite' name='DifficultyIcon'>
 			<Function name='SetFromDifficulty'/>
 			<Function name='SetFromSteps'/>
@@ -1480,8 +1497,11 @@
 			<Function name='GetCumFPS'/>
 			<Function name='GetDisplayHeight'/>
 			<Function name='GetDisplayWidth'/>
+			<Function name='GetDisplaySpecs'/>
 			<Function name='GetFPS'/>
 			<Function name='GetVPF'/>
+			<Function name='SupportsFullscreenBorderlessWindow'/>
+			<Function name='SupportsRenderToTexture'/>
 		</Class>
 		<Class name='RageFile'>
 			<Function name='AtEOF'/>
@@ -2479,6 +2499,15 @@
 			<EnumValue name='&apos;NoteType_64th&apos;' value='7'/>
 			<EnumValue name='&apos;NoteType_192nd&apos;' value='8'/>
 		</Enum>
+		<Enum name='OptEffect'>
+			<EnumValue name='&apos;OptEffect_SavePreferences&apos;' value='1'/>
+			<EnumValue name='&apos;OptEffect_ApplyGraphics&apos;' value='2'/>
+			<EnumValue name='&apos;OptEffect_ApplyTheme&apos;' value='4'/>
+			<EnumValue name='&apos;OptEffect_ChangeGame&apos;' value='8'/>
+			<EnumValue name='&apos;OptEffect_ApplySound&apos;' value='16'/>
+			<EnumValue name='&apos;OptEffect_ApplySong&apos;' value='32'/>
+			<EnumValue name='&apos;OptEffect_ApplyAspectRatio&apos;' value='64'/>
+		</Enum>
 		<Enum name='PaneCategory'>
 			<EnumValue name='&apos;PaneCategory_NumSteps&apos;' value='0'/>
 			<EnumValue name='&apos;PaneCategory_Jumps&apos;' value='1'/>
@@ -2565,6 +2594,11 @@
 		<Enum name='RankingType'>
 			<EnumValue name='&apos;RankingType_Category&apos;' value='0'/>
 			<EnumValue name='&apos;RankingType_Course&apos;' value='1'/>
+		</Enum>
+		<Enum name='ReloadChanged'>
+			<EnumValue name='&apos;ReloadChanged_None&apos;' value='0'/>
+			<EnumValue name='&apos;ReloadChanged_Enabled&apos;' value='1'/>
+			<EnumValue name='&apos;ReloadChanged_All&apos;' value='2'/>
 		</Enum>
 		<Enum name='SampleMusicPreviewMode'>
 			<EnumValue name='&apos;SampleMusicPreviewMode_Normal&apos;' value='0'/>
@@ -2800,6 +2834,7 @@
 	<Constants>
 		<Constant name='ASPECT_SCALE_FACTOR' value='854'/>
 		<Constant name='NUM_PLAYERS' value='2'/>
+		<Constant name='REFRESH_DEFAULT'/>
 		<Constant name='SAFE_HEIGHT' value='36'/>
 		<Constant name='SAFE_WIDTH' value='64'/>
 		<Constant name='SCREEN_BOTTOM' value='480'/>

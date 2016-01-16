@@ -21,7 +21,7 @@
 
 save yourself some time, copy this for undocumented things:
 <Function name='' return='' arguments=''>
-		
+
 	</Function>
   -->
 
@@ -451,7 +451,7 @@ save yourself some time, copy this for undocumented things:
 		Returns a formatted percent with the specified <code>num</code>erator and <code>den</code>ominator.
 	</Function>
 	<Function name='print' theme='_fallback' return='void' arguments='string s'>
-		[00 init.lua] 
+		[00 init.lua]
 	</Function>
 	<Function name='PrintTable' theme='_fallback' return='void' arguments='table t'>
 		[03 ThemePrefs.lua] Prints a table's contents to the log.
@@ -568,7 +568,7 @@ save yourself some time, copy this for undocumented things:
 		[03 UserPreferences2.lua] Themer-facing function for setting a user preference.
 	</Function>
 	<Function name='ShowHoldJudgments' theme='_fallback' return='bool' arguments=''>
-		[03 Gameplay.lua] 
+		[03 Gameplay.lua]
 	</Function>
 	<Function name='ShowStandardDecoration' theme='_fallback' return='bool' arguments='string sMetricsName'>
 		[02 ActorDef.lua] Returns <code>true</code> if a decoration should be shown on the current screen or not.
@@ -586,13 +586,13 @@ save yourself some time, copy this for undocumented things:
 		[02 Colors.lua]
 	</Function>
 	<Function name='StandardDecorationFromTable' theme='_fallback' return='Actor' arguments='string sMetricsName, table t'>
-		[02 ActorDef.lua] 
+		[02 ActorDef.lua]
 	</Function>
 	<Function name='StandardDecorationFromFile' theme='_fallback' return='Actor' arguments='string sMetricsName, string sFileName'>
-		[02 ActorDef.lua] 
+		[02 ActorDef.lua]
 	</Function>
 	<Function name='StandardDecorationFromFileOptional' theme='_fallback' return='Actor' arguments='string sMetricsName, string sFileName'>
-		[02 ActorDef.lua] 
+		[02 ActorDef.lua]
 	</Function>
 	<Function name='tableshuffle' theme='_fallback' return='table' arguments='table t'>
 		[02 Utilities.lua] Returns a shuffled version of <code>t</code>.
@@ -760,7 +760,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetZoom' return='float' arguments='PlayerState ps'>
 		Returns the zoom of a note for the provided PlayerState.
 	</Function>
-	<Function name='GetFrameWidthScale' return='float' arguments='PlayerState ps, float fYOffset, fOverlappedTime'>
+	<Function name='GetFrameWidthScale' return='float' arguments='PlayerState ps, float fYOffset, float fOverlappedTime'>
 		Returns the FrameWidthScale of a hold part with a Y offset of <code>fYOffset</code> for the provided PlayerState.<br/> <code>fOverlappedTime</code> is optional and will default to 0.
 	</Function>
 </Namespace>
@@ -776,7 +776,7 @@ save yourself some time, copy this for undocumented things:
 		of <code>Enum</code>. Instead of
 		<code><Link function='GetName'>Enum.GetName</Link>(
 		<Link class='ENUM' function='PlayerNumber' /> )</code> or
-		<code><Link function='Reverse'>Enum.Reverse</Link>( 
+		<code><Link function='Reverse'>Enum.Reverse</Link>(
 		<Link class='ENUM' function='PlayerNumber' /> )</code>, one can use
 		<code><Link class='ENUM' function='PlayerNumber' />:<!--
 		--><Link function='GetName'>GetName</Link>()</code> or
@@ -2353,6 +2353,61 @@ save yourself some time, copy this for undocumented things:
 		Blanks the DifficultyIcon.
 	</Function>
 </Class>
+<Class name='DisplayMode'>
+	<Function name='GetWidth' return='int' arguments=''>
+		Return the width of the display in this mode.
+	</Function>
+	<Function name='GetWidth' return='int' arguments=''>
+		Return the height of the display in this mode.
+	</Function>
+	<Function name='GetRefreshRate' return='float' arguments=''>
+		Return the refresh rate of the display in this mode.
+	</Function>
+</Class>
+<Class name='DisplaySpec'>
+	<Description>
+		An object describing a display: its supported and current video modes.
+	</Description>
+	<Function name='GetId' return='string' arguments=''>
+		Return the unique identifier of the display.
+	</Function>
+	<Function name='GetName' return='string' arguments=''>
+		Return the &quot;human-readable&quot; display name.
+	</Function>
+	<Function name='GetSupportedModes' return='{DisplayMode}' arguments=''>
+		Return the <Link class='DisplayMode' />s supported by this device.
+	</Function>
+	<Function name='GetCurrentMode' return='DisplayMode' arguments=''>
+		Return the currently active <Link class='DisplayMode' /> for this display,
+		or <code>nil</code> if there is no such mode.
+	</Function>
+	<Function name='IsVirtual' return='bool' arguments=''>
+		Return <code>true</code> if this <code>DisplaySpec</code> is describing the
+		&quot;logical display&quot; like an X screen or the Win32 &quot;Virtual screen&quot;, or
+		<code>false</code> otherwise (if this describes a physical display).
+	</Function>
+</Class>
+<Class name='DisplaySpecs'>
+	<Description>
+		An array-like <code>userdata</code> object which describes the displays
+		configured on the user's machine.
+
+		This object supports the <code>__len</code> operator (<code>#t</code>), and
+		integer indexing, but does not support
+		iteration via <code>pairs</code> or <code>ipairs</code>.
+
+		Each element of the array is a <Link class='DisplaySpec' />.
+	</Description>
+
+	<Function name='__len' return='int' arguments=''>
+		Return the number of <Link class='DisplaySpec' /> instances in the array.
+	</Function>
+	<Function name='__index' return='DisplaySpec' arguments='int i'>
+		Return the <Link class='DisplaySpec' /> instance at index <code>i</code>
+	</Function>
+	<Function name='__tostring' return='string' arguments=''>
+	</Function>
+</Class>
 <Class name='FadingBanner'>
 	<Function name='GetLatestIndex' return='int' arguments=''>
 		Returns the index of the last banner loaded.
@@ -2518,7 +2573,7 @@ save yourself some time, copy this for undocumented things:
  		<code>musicLength</code> seconds one time. Both <code>fadeIn</code> and
 		<code>fadeOut</code> can be customized as required.  <code>loop</code>
 		tells the sound manager to loop the music part.  <code>applyRate</code>
-		tells the sound manager to apply the current music rate. If <code>alignBeat</code> 
+		tells the sound manager to apply the current music rate. If <code>alignBeat</code>
 		is true or nil, the length is automatically adjusted to cover an integer number of beats.
 	</Function>
 	<Function name='PlayOnce' return='void' arguments='string sPath, bool is_action'>
@@ -2903,7 +2958,7 @@ save yourself some time, copy this for undocumented things:
 		Sets if the Jukebox should use modifiers.
 	</Function>
 	<Function name='SetMultiplayer' return='void' arguments='bool b'>
-		
+
 	</Function>
 	<Function name='SetNumMultiplayerNoteFields' return='void' arguments='int iFields'>
 		Sets the number of multiplayer notefields to <code>iFields</code>
@@ -3183,7 +3238,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='SelectCourse' return='bool' arguments='Course cCourse'>
 		Selects a course. Returns <code>false</code> on failure.
 	</Function>
-</Class> 
+</Class>
 <Class name='NoteSkinManager'>
 	<Function name='GetMetric' return='string' arguments='string sElement, string sValue'>
 		Returns a string from the specified element and value.
@@ -4162,7 +4217,7 @@ save yourself some time, copy this for undocumented things:
 	<Function name='ProfileWasLoadedFromMemoryCard' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if <code>pn</code>'s Profile was loaded from a memory card.
 	</Function>
-	
+
 	<Function name='LastLoadWasFromLastGood' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if the last load of player <code>pn</code>'s profile was a LastGood copy of the profile.
 	</Function>
@@ -4228,6 +4283,18 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetCumFPS' return='int' arguments=''>
 		Return the cumulative FPS.
+	</Function>
+	<Function name='GetDisplaySpecs' return='DisplaySpecs' arguments=''>
+		Return an array-like <code>userdata</code> of type <Link class='DisplaySpecs' />,
+		which describes the displays configured on the user's machine.
+	</Function>
+	<Function name='SupportsRenderToTexture' return='bool' arguments=''>
+		Return <code>true</code> if the current renderer supports render-to-texture,
+		<code>false</code> otherwise.
+	</Function>
+	<Function name='SupportsFullscreenBorderlessWindow' return='bool' arguments=''>
+		Return <code>true</code> if the current renderer/window implementation supports
+		a fullscreen borderless-window mode, <code>false</code> otherwise.
 	</Function>
 </Class>
 <Class name='RageFile'>
@@ -5516,7 +5583,7 @@ save yourself some time, copy this for undocumented things:
 		Returns <code>true</code> if the theme has the specified metric.
 	</Function>
 	<Function name='HasString' return='bool' arguments='string section, string value'>
-		Returns <code>true</code> if the theme has the specified string. 
+		Returns <code>true</code> if the theme has the specified string.
 	</Function>
 	<Function name='IsThemeSelectable' return='bool' arguments='string theme'>
 		Returns <code>true</code> if the specified theme is selectable.
@@ -5525,7 +5592,7 @@ save yourself some time, copy this for undocumented things:
 		Reloads the current theme's metrics.
 	</Function>
 	<Function name='RunLuaScripts' return='void' arguments='string sMask'>
-		
+
 	</Function>
 	<Function name='SetTheme' return='void' arguments='string theme'>
 		Changes the current theme.<br />

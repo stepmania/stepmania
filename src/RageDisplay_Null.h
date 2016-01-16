@@ -10,23 +10,23 @@ public:
 	virtual RString Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer );
 
 	virtual RString GetApiDescription() const { return "Null"; }
-	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
+	virtual void GetDisplaySpecs(DisplaySpecs &out) const;
 	const RagePixelFormatDesc *GetPixelFormatDesc(RagePixelFormat pf) const;
 
 	bool BeginFrame() { return true; }
 	void EndFrame();
-	VideoModeParams GetActualVideoModeParams() const { return m_Params; }
+	ActualVideoModeParams GetActualVideoModeParams() const { return m_Params; }
 	void SetBlendMode( BlendMode ) { }
 	bool SupportsTextureFormat( RagePixelFormat, bool /* realtime */ =false ) { return true; }
 	bool SupportsPerVertexMatrixScale() { return false; }
-	unsigned CreateTexture( 
-		RagePixelFormat, 
+	unsigned CreateTexture(
+		RagePixelFormat,
 		RageSurface* /* img */,
 		bool /* bGenerateMipMaps */ ) { return 1; }
-	void UpdateTexture( 
-		unsigned /* iTexHandle */, 
+	void UpdateTexture(
+		unsigned /* iTexHandle */,
 		RageSurface* /* img */,
-		int /* xoffset */, int /* yoffset */, int /* width */, int /* height */ 
+		int /* xoffset */, int /* yoffset */, int /* width */, int /* height */
 		) { }
 	void DeleteTexture( unsigned /* iTexHandle */ ) { }
 	void ClearAllTextures() { }
@@ -44,7 +44,7 @@ public:
 	void ClearZBuffer() { }
 	void SetCullMode( CullMode ) { }
 	void SetAlphaTest( bool ) { }
-	void SetMaterial( 
+	void SetMaterial(
 		const RageColor & /* unreferenced: emissive */,
 		const RageColor & /* unreferenced: ambient */,
 		const RageColor & /* unreferenced: diffuse */,

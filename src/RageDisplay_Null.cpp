@@ -9,7 +9,7 @@
 #include "RageTypes.h"
 #include "RageUtil.h"
 #include "RageSurface.h"
-#include "DisplayResolutions.h"
+#include "DisplaySpec.h"
 
 static RageDisplay::RagePixelFormatDesc PIXEL_FORMAT_DESC[NUM_RagePixelFormat] = {
 	{
@@ -81,11 +81,12 @@ RString RageDisplay_Null::Init( const VideoModeParams &p, bool /* bAllowUnaccele
 	return RString();
 }
 
-void RageDisplay_Null::GetDisplayResolutions( DisplayResolutions &out ) const
+void RageDisplay_Null::GetDisplaySpecs(DisplaySpecs &out) const
 {
 	out.clear();
-	DisplayResolution res = { 640, 480, true };
-	out.insert( res );
+	DisplayMode nullMode = {640U, 480U, 30.0};
+	DisplaySpec nullSpec("NullDisplay", "NullDisplay", nullMode);
+	out.insert( nullSpec );
 }
 
 RageSurface* RageDisplay_Null::CreateScreenshot()

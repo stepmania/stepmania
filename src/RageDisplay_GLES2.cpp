@@ -11,7 +11,7 @@
 #include "RageSurface.h"
 #include "RageTextureManager.h"
 
-#include "DisplayResolutions.h"
+#include "DisplaySpec.h"
 
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 
@@ -444,10 +444,10 @@ RageDisplay_GLES2::~RageDisplay_GLES2()
 }
 
 void
-RageDisplay_GLES2::GetDisplayResolutions( DisplayResolutions &out ) const
+RageDisplay_GLES2::GetDisplaySpecs(DisplaySpecs &out) const
 {
 	out.clear();
-	g_pWind->GetDisplayResolutions( out );
+	g_pWind->GetDisplaySpecs(out);
 }
 
 RageSurface*
@@ -517,7 +517,7 @@ RageDisplay_GLES2::GetApiDescription() const
 	return "OpenGL ES 2.0";
 }
 
-VideoModeParams
+ActualVideoModeParams
 RageDisplay_GLES2::GetActualVideoModeParams() const
 {
 	return g_pWind->GetActualVideoModeParams();

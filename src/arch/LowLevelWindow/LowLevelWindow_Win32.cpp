@@ -59,9 +59,9 @@ LowLevelWindow_Win32::~LowLevelWindow_Win32()
 	GraphicsWindow::Shutdown();
 }
 
-void LowLevelWindow_Win32::GetDisplayResolutions( DisplayResolutions &out ) const
+void LowLevelWindow_Win32::GetDisplaySpecs( DisplaySpecs &out ) const
 {
-	GraphicsWindow::GetDisplayResolutions( out );
+	GraphicsWindow::GetDisplaySpecs( out );
 }
 
 int ChooseWindowPixelFormat( const VideoModeParams &p, PIXELFORMATDESCRIPTOR *pixfmt )
@@ -292,7 +292,7 @@ void LowLevelWindow_Win32::Update()
 	GraphicsWindow::Update();
 }
 
-const VideoModeParams &LowLevelWindow_Win32::GetActualVideoModeParams() const
+const ActualVideoModeParams LowLevelWindow_Win32::GetActualVideoModeParams() const
 {
 	return GraphicsWindow::GetParams();
 }

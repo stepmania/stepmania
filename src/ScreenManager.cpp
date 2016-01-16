@@ -247,6 +247,7 @@ ScreenManager::ScreenManager()
 	m_bZeroNextUpdate = false;
 	m_PopTopScreen = SM_Invalid;
 	m_OnDonePreparingScreen = SM_Invalid;
+
 }
 
 
