@@ -74,7 +74,7 @@ namespace LuaHelpers
 
 	template<> bool FromStack<bool>(Lua* L, bool& object, int offset)
 	{
-		object = lua_toboolean(L, offset);
+		object = lua_toboolean(L, offset) != 0;
 		return true;
 	}
 	template<> bool FromStack<float>(Lua* L, float& object, int offset)
@@ -280,7 +280,7 @@ static void write_lua_table_to_file(lua_State* L, int table_index,
 				string_fields.push_back(std::string(lua_tostring(L, -2)));
 				break;
 			case LUA_TBOOLEAN:
-				bool_fields.push_back(lua_toboolean(L, -2));
+				bool_fields.push_back(lua_toboolean(L, -2) != 0);
 				break;
 			case LUA_TNUMBER:
 				{

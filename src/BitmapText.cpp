@@ -645,7 +645,7 @@ void BitmapText::CropLineToWidth(size_t l, int width)
 		int used_width= width;
 		std::wstring& line= m_wTextLines[l];
 		int fit= m_pFont->GetGlyphsThatFit(line, &used_width);
-		if(fit < line.size())
+		if(fit < static_cast<int>(line.size()))
 		{
 			line.erase(line.begin()+fit, line.end());
 		}

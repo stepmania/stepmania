@@ -632,7 +632,7 @@ namespace
 	{
 		std::string sPath( SArg(1) );
 		int iLevel = IArg(2);
-		bool optional= lua_toboolean(L, 3);
+		bool optional= lua_toboolean(L, 3) != 0;
 		luaL_where( L, iLevel );
 		std::string sWhere = lua_tostring( L, -1 );
 		if( sWhere.size() > 2 && sWhere.substr(sWhere.size()-2, 2) == ": " )

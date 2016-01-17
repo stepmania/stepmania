@@ -1857,11 +1857,12 @@ void luafunc_approach_internal(lua_State* L, int valind, int goalind, int speedi
 void luafunc_approach_internal(lua_State* L, int valind, int goalind, int speedind, const float mult, int process_index)
 {
 #define TONUMBER_NICE(dest, num_name, index) \
-	if(!lua_isnumber(L, index)) \
-	{ \
-		luaL_error(L, "approach: " #num_name " for approach %d is not a number.", process_index); \
-	} \
-	dest= lua_tonumber(L, index);
+if(!lua_isnumber(L, index)) \
+{ \
+	luaL_error(L, "approach: " #num_name " for approach %d is not a number.", process_index); \
+} \
+dest= static_cast<float>(lua_tonumber(L, index))
+
 	float val= 0;
 	float goal= 0;
 	float speed= 0;
@@ -1906,7 +1907,7 @@ int LuaFunc_multiapproach(lua_State* L)
 	float mult= 1.0f;
 	if(lua_isnumber(L, 4))
 	{
-		mult= lua_tonumber(L, 4);
+		mult= static_cast<float>(lua_tonumber(L, 4));
 	}
 	if(currents_len != goals_len || currents_len != speeds_len)
 	{

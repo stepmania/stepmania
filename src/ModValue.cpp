@@ -404,7 +404,7 @@ void ModInput::load_spline(lua_State* L, int index)
 		for(size_t p= 0; p < num_points; ++p)
 		{
 			lua_rawgeti(L, index, p+1);
-			m_spline.set_point(p, lua_tonumber(L, -1));
+			m_spline.set_point(p, static_cast<float>(lua_tonumber(L, -1)));
 			lua_pop(L, 1);
 		}
 		m_spline.solve(m_loop_spline, m_polygonal_spline);
@@ -676,7 +676,7 @@ void ModInput::set_spline_point(size_t p, double value)
 {
 	if(p < m_spline.size())
 	{
-		m_spline.set_point(p, value);
+		m_spline.set_point(p, static_cast<float>(value));
 		m_spline.solve(m_loop_spline, m_polygonal_spline);
 		send_spline_repick();
 	}
@@ -685,7 +685,7 @@ void ModInput::set_spline_point(size_t p, double value)
 void ModInput::add_spline_point(double value)
 {
 	m_spline.resize(m_spline.size()+1);
-	m_spline.set_point(m_spline.size()-1, value);
+	m_spline.set_point(m_spline.size()-1, static_cast<float>(value));
 	m_spline.solve(m_loop_spline, m_polygonal_spline);
 	send_spline_repick();
 }
@@ -734,7 +734,7 @@ void ModFunction::update_input_set_in_spline(mod_val_inputs const& input,
 		// The first input is the t value.
 		if(pindex > 0)
 		{
-			m_spline.set_point(pindex-1, m_picked_inputs[pindex]);
+			m_spline.set_point(pindex-1, static_cast<float>(m_picked_inputs[pindex]));
 		}
 	}
 }
@@ -879,7 +879,7 @@ double ModFunction::sine_eval()
 {
 	ZERO_AMP_WAVE_RETURN;
 	WAVE_ANGLE_CALC;
-	double const wave_res= Rage::FastSin(angle);
+	double const wave_res= static_cast<double>(Rage::FastSin(angle));
 	WAVE_RET;
 }
 
@@ -925,7 +925,7 @@ double ModFunction::triangle_eval()
 
 double ModFunction::spline_eval()
 {
-	return m_spline.evaluate(m_picked_inputs[0], m_loop_spline);
+	return m_spline.evaluate(static_cast<float>(m_picked_inputs[0]), m_loop_spline);
 }
 
 void ModFunction::set_type(ModFunctionType type)
@@ -1092,7 +1092,7 @@ bool ModFunction::load_from_lua(lua_State* L, int index)
 		// than the number of points.
 		for(size_t p= 1; p < m_picked_inputs.size(); ++p)
 		{
-			m_spline.set_point(p-1, m_picked_inputs[p]);
+			m_spline.set_point(p-1, static_cast<float>(m_picked_inputs[p]));
 		}
 		if(m_per_frame_inputs.empty() && m_per_note_inputs.empty())
 		{
@@ -1130,11 +1130,11 @@ static void calc_timing_pair(TimingData const* timing, double& beat, double& sec
 	bool second_needed= (second == invalid_modfunction_time);
 	if(beat_needed && !second_needed)
 	{
-		beat= timing->GetBeatFromElapsedTime(second);
+		beat= timing->GetBeatFromElapsedTime(static_cast<float>(second));
 	}
 	else if(!beat_needed && second_needed)
 	{
-		second= timing->GetElapsedTimeFromBeat(beat);
+		second= timing->GetElapsedTimeFromBeat(static_cast<float>(beat));
 	}
 }
 

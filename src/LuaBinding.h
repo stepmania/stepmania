@@ -173,7 +173,7 @@ static int get_##method_name(T* p, lua_State* L) \
 } \
 static int set_##method_name(T* p, lua_State* L) \
 { \
-	p->bool_name= lua_toboolean(L, 1); \
+	p->bool_name= lua_toboolean(L, 1) != 0; \
 	COMMON_RETURN_SELF; \
 }
 
@@ -185,7 +185,7 @@ static int get_##bool_name(T* p, lua_State* L) \
 } \
 static int set_##bool_name(T* p, lua_State* L) \
 { \
-	p->set_##bool_name(lua_toboolean(L, 1)); \
+	p->set_##bool_name(lua_toboolean(L, 1) != 0); \
 	COMMON_RETURN_SELF; \
 }
 
