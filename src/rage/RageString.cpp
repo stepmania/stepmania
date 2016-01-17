@@ -10,20 +10,22 @@ void make_lower( char *p, size_t len );
 
 std::string Rage::head(std::string const &source, int32_t const length)
 {
-	if (std::abs(length) >= source.size())
+	auto sourceSize = static_cast<int>(source.size());
+	if (std::abs(length) >= sourceSize)
 	{
 		return source;
 	}
 	if (length < 0)
 	{
-		return source.substr(0, source.size() + length);
+		return source.substr(0, sourceSize + length);
 	}
 	return source.substr(0, length);
 }
 
 std::string Rage::tail(std::string const &source, int32_t const length)
 {
-	if (std::abs(length) >= source.size())
+	auto sourceSize = static_cast<int>(source.size());
+	if (std::abs(length) >= sourceSize)
 	{
 		return source;
 	}
@@ -31,7 +33,7 @@ std::string Rage::tail(std::string const &source, int32_t const length)
 	{
 		return source.substr(-length);
 	}
-	return source.substr(source.size() - length);
+	return source.substr(sourceSize - length);
 }
 
 bool Rage::starts_with(std::string const &source, std::string const &target)
@@ -293,7 +295,7 @@ std::string Rage::trim_left(std::string const &source)
 std::string Rage::trim_left(std::string const &source, std::string const &delimiters)
 {
 	auto n = 0;
-	auto end = source.size();
+	auto end = static_cast<int>(source.size());
 	auto const *d_str = delimiters.c_str();
 	while (n < end && std::strchr(d_str, source[n]))
 	{

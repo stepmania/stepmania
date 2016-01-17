@@ -125,7 +125,7 @@ bool Rage::Color::FromCommaString(std::string const &colorString)
 			b >= 0 && b <= 1 &&
 			a >= 0 && a <= 1;
 	}
-	catch (std::invalid_argument const &e)
+	catch (std::invalid_argument const &)
 	{
 		return false;
 	}
