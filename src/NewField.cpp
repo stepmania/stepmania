@@ -119,12 +119,12 @@ void NewFieldColumn::set_column_info(size_t column, NewSkinColumn* newskin,
 
 double NewFieldColumn::get_beat_from_second(double second)
 {
-	return m_timing_data->GetBeatFromElapsedTime(second);
+	return m_timing_data->GetBeatFromElapsedTime(static_cast<float>(second));
 }
 
 double NewFieldColumn::get_second_from_beat(double beat)
 {
-	return m_timing_data->GetElapsedTimeFromBeat(beat);
+	return m_timing_data->GetElapsedTimeFromBeat(static_cast<float>(beat));
 }
 
 void NewFieldColumn::set_displayed_time(double beat, double second)
@@ -147,7 +147,7 @@ void NewFieldColumn::update_displayed_time(double beat, double second)
 		if(offset != 0.0)
 		{
 			second+= offset;
-			beat= m_timing_data->GetBeatFromElapsedTime(second);
+			beat= m_timing_data->GetBeatFromElapsedTime(static_cast<float>(second));
 		}
 		set_displayed_time(beat, second);
 	}
@@ -155,12 +155,12 @@ void NewFieldColumn::update_displayed_time(double beat, double second)
 
 void NewFieldColumn::set_displayed_beat(double beat)
 {
-	set_displayed_time(beat, m_timing_data->GetElapsedTimeFromBeat(beat));
+	set_displayed_time(beat, m_timing_data->GetElapsedTimeFromBeat(static_cast<float>(beat)));
 }
 
 void NewFieldColumn::set_displayed_second(double second)
 {
-	set_displayed_time(m_timing_data->GetBeatFromElapsedTime(second), second);
+	set_displayed_time(m_timing_data->GetBeatFromElapsedTime(static_cast<float>(second)), second);
 }
 
 double NewFieldColumn::calc_y_offset(double beat, double second)
@@ -175,14 +175,14 @@ double NewFieldColumn::calc_y_offset(double beat, double second)
 		}
 		else
 		{
-			note_beat= m_timing_data->GetDisplayedBeat(note_beat);
+			note_beat= m_timing_data->GetDisplayedBeat(static_cast<float>(note_beat));
 		}
 	}
 	mod_val_inputs input(note_beat, second, curr_beat, m_curr_second);
 	double ret= note_size * m_speed_mod.evaluate(input);
 	if(m_speed_segments_enabled)
 	{
-		ret*= m_timing_data->GetDisplayedSpeedPercent(m_curr_beat, m_curr_second);
+		ret*= m_timing_data->GetDisplayedSpeedPercent(static_cast<float>(m_curr_beat), static_cast<float>(m_curr_second));
 	}
 	return ret;
 }
@@ -253,17 +253,17 @@ void NewFieldColumn::apply_note_mods_to_actor(Actor* act, double beat,
 	mod_val_inputs mod_input(beat, second, m_curr_beat, m_curr_beat, y_offset);
 	if(use_alpha)
 	{
-		act->SetDiffuseAlpha(m_note_alpha.evaluate(mod_input));
+		act->SetDiffuseAlpha(static_cast<float>(m_note_alpha.evaluate(mod_input)));
 	}
 	if(use_glow)
 	{
-		act->SetGlow(Rage::Color(1, 1, 1, m_note_glow.evaluate(mod_input)));
+		act->SetGlow(Rage::Color(1, 1, 1, static_cast<float>(m_note_glow.evaluate(mod_input))));
 	}
 	Rage::transform trans;
 	calc_transform(mod_input, trans);
 	if(m_add_y_offset_to_position)
 	{
-		trans.pos.y+= apply_reverse_shift(y_offset);
+		trans.pos.y+= static_cast<float>(apply_reverse_shift(y_offset));
 	}
 	act->set_transform(trans);
 }
@@ -1803,7 +1803,7 @@ struct LunaNewFieldColumn : Luna<NewFieldColumn>
 	static int apply_note_mods_to_actor(T* p, lua_State* L)
 	{
 		Actor* act= Luna<Actor>::check(L, 1);
-		bool time_is_offset= lua_toboolean(L, 2);
+		bool time_is_offset= lua_toboolean(L, 2) != 0;
 		double beat= p->get_curr_beat();
 		double second= p->get_curr_beat();
 		double y_offset= 0;
@@ -1843,8 +1843,8 @@ struct LunaNewFieldColumn : Luna<NewFieldColumn>
 		{
 			y_offset= p->calc_y_offset(beat, second);
 		}
-		bool use_alpha= lua_toboolean(L, 6);
-		bool use_glow= lua_toboolean(L, 7);
+		bool use_alpha= lua_toboolean(L, 6) != 0;
+		bool use_glow= lua_toboolean(L, 7) != 0;
 		p->apply_note_mods_to_actor(act, beat, second, y_offset, use_alpha, use_glow);
 		COMMON_RETURN_SELF;
 	}

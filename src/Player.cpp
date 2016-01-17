@@ -597,11 +597,11 @@ void Player::set_newfield_preferred(bool use_new)
 	}
 	if(m_pNoteField != nullptr)
 	{
-		m_pNoteField->SetHibernate(old_hiber);
+		m_pNoteField->SetHibernate(static_cast<float>(old_hiber));
 	}
 	if(m_new_field != nullptr)
 	{
-		m_new_field->SetHibernate(new_hiber);
+		m_new_field->SetHibernate(static_cast<float>(new_hiber));
 	}
 }
 

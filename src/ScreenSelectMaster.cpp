@@ -150,8 +150,8 @@ void ScreenSelectMaster::Init()
 						{
 #define SET_POS_PART(i, part) \
 							lua_rawgeti(L, -1, i); \
-							pos.part= lua_tonumber(L, -1); \
-							lua_pop(L, 1);
+							pos.part= static_cast<float>(lua_tonumber(L, -1)); \
+							lua_pop(L, 1)
 							// If part of the position is not provided, we want it to
 							// default to zero, which lua_tonumber does. -Kyz
 							SET_POS_PART(1, x);

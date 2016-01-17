@@ -566,12 +566,13 @@ void UnlockManager::Load()
 
 	// Make sure that we don't have duplicate unlock IDs. This can cause problems
 	// with UnlockCelebrate and with codes.
+	auto entryCount = static_cast<int>(m_UnlockEntries.size());
 	if (m_UnlockEntries.size() > 1)
 	{
-		for (auto i = 0; i < m_UnlockEntries.size(); ++i)
+		for (auto i = 0; i < entryCount; ++i)
 		{
 			auto &ue = m_UnlockEntries[i];
-			for (auto j = i + 1; j < m_UnlockEntries.size(); ++j)
+			for (auto j = i + 1; j < entryCount; ++j)
 			{
 				auto &ue2 = m_UnlockEntries[j];
 				ASSERT_M( ue.m_sEntryID != ue2.m_sEntryID, fmt::sprintf("duplicate unlock entry id %s",ue.m_sEntryID.c_str()) );

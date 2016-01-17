@@ -1004,7 +1004,7 @@ public:
 	static size_t ValidStateIndex(T* p, lua_State *L, int pos)
 	{
 		int index= IArg(pos)-1;
-		if(index < 0 || static_cast<size_t>(index) >= p->GetNumStates())
+		if(index < 0 || index >= p->GetNumStates())
 		{
 			luaL_error(L, "Invalid state index %d.", index+1);
 		}

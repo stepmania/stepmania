@@ -787,7 +787,7 @@ void Actor::Update( float fDeltaTime )
 
 	if(m_timing_source != nullptr)
 	{
-		fDeltaTime= m_timing_source->second_delta;
+		fDeltaTime= static_cast<float>(m_timing_source->second_delta);
 	}
 	if( m_fHibernateSecondsLeft > 0 )
 	{
@@ -882,12 +882,12 @@ void Actor::UpdateInternal(float delta_time)
 			case CLOCK_BGM_BEAT_PLAYER1:
 			case CLOCK_BGM_BEAT_PLAYER2:
 			case CLOCK_BGM_BEAT_NO_OFFSET:
-				m_fEffectDelta= m_timing_source->beat_delta;
-				m_fSecsIntoEffect= m_timing_source->curr_second;
+				m_fEffectDelta= static_cast<float>(m_timing_source->beat_delta);
+				m_fSecsIntoEffect= static_cast<float>(m_timing_source->curr_second);
 				break;
 			default:
-				m_fEffectDelta= m_timing_source->second_delta;
-				m_fSecsIntoEffect= m_timing_source->curr_second;
+				m_fEffectDelta= static_cast<float>(m_timing_source->second_delta);
+				m_fSecsIntoEffect= static_cast<float>(m_timing_source->curr_second);
 				break;
 		}
 	}

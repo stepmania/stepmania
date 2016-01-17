@@ -563,10 +563,10 @@ void ScreenGameplay::Init()
 		{
 			std::string marge= "Margin value must be a number.";
 			margins[PLAYER_1][0]= SafeFArg(L, -3, marge, 40);
-			float center= SafeFArg(L, -2, marge, 80);
+			float center= static_cast<float>(SafeFArg(L, -2, marge, 80));
 			margins[PLAYER_1][1]= center / 2.0f;
 			margins[PLAYER_2][0]= center / 2.0f;
-			margins[PLAYER_2][1]= SafeFArg(L, -1, marge, 40);
+			margins[PLAYER_2][1]= static_cast<float>(SafeFArg(L, -1, marge, 40));
 		}
 		lua_settop(L, 0);
 		LUA->Release(L);

@@ -775,7 +775,10 @@ void NoteField::DrawPrimitives()
 	//LOG->Trace( "start = %f.1, end = %f.1", first_beat_to_draw-fSongBeat, last_beat_to_draw-fSongBeat );
 	//LOG->Trace( "Drawing elements %d through %d", m_FieldRenderArgs.first_row, m_FieldRenderArgs.last_row );
 
-#define IS_ON_SCREEN(fBeat)  (first_beat_to_draw <= (fBeat) && (fBeat) <= last_beat_to_draw && IsOnScreen(fBeat, 0, m_FieldRenderArgs.draw_pixels_after_targets, m_FieldRenderArgs.draw_pixels_before_targets))
+#define IS_ON_SCREEN(fBeat) \
+(first_beat_to_draw <= (fBeat) && \
+(fBeat) <= last_beat_to_draw && \
+IsOnScreen(fBeat, 0, static_cast<int>(m_FieldRenderArgs.draw_pixels_after_targets), static_cast<int>(m_FieldRenderArgs.draw_pixels_before_targets)))
 
 	// Draw Receptors
 	{
@@ -1076,7 +1079,7 @@ static void get_returned_column(Lua* L, PlayerNumber pn, int index, int& col)
 	if(lua_isnumber(L, index))
 	{
 		// 1-indexed columns in lua
-		int tmpcol= lua_tonumber(L, index) - 1;
+		int tmpcol= static_cast<int>(lua_tonumber(L, index) - 1);
 		if(tmpcol < 0 || tmpcol >= GAMESTATE->GetCurrentStyle(pn)->m_iColsPerPlayer)
 		{
 			LuaHelpers::ReportScriptErrorFmt(

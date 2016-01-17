@@ -551,7 +551,7 @@ void ScreenEvaluation::Init()
 				DEFAULT_FAIL( l );
 				}
 
-				m_textJudgmentLineNumber[l][p].SetTargetNumber( iValue );
+				m_textJudgmentLineNumber[l][p].SetTargetNumber( static_cast<float>(iValue) );
 			}
 		}
 	}
@@ -610,7 +610,7 @@ void ScreenEvaluation::Init()
 			m_textScore[p].Load( "RollingNumbersEvaluation" );
 			ActorUtil::LoadAllCommands( m_textScore[p], m_sName );
 			SET_XY( m_textScore[p] );
-			m_textScore[p].SetTargetNumber( m_pStageStats->m_player[p].m_iScore );
+			m_textScore[p].SetTargetNumber( static_cast<float>(m_pStageStats->m_player[p].m_iScore) );
 			this->AddChild( &m_textScore[p] );
 		}
 	}

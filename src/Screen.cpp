@@ -370,7 +370,7 @@ bool Screen::PassInputToLua(const InputEventPlus& input)
 		lua_pushvalue(L, -2);
 		std::string error= "Error running input callback: ";
 		LuaHelpers::RunScriptOnStack(L, error, 1, 1, true);
-		handled= lua_toboolean(L, -1);
+		handled= lua_toboolean(L, -1) != 0;
 		lua_pop(L, 1);
 	}
 	lua_pop(L, 1);
@@ -433,7 +433,7 @@ public:
 	{
 		std::string sMessage = SArg(1);
 		ScreenMessage SM = ScreenMessageHelpers::ToScreenMessage( sMessage );
-		p->PostScreenMessage( SM, IArg(2) );
+		p->PostScreenMessage( SM, static_cast<float>(IArg(2)) );
 		COMMON_RETURN_SELF;
 	}
 
