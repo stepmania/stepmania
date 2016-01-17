@@ -26,7 +26,8 @@
       <path
          d="m 2,10 v 44 l 8,8 h 44 l 8,-8 V 10 L 54,2 H 10 l -8,8 z"
          inkscape:connector-curvature="0"
-         style="fill:#808080;stroke:#000000;stroke-width:2" />
+         style="fill:#808080;stroke:#000000;stroke-width:2"
+         id="path2988" />
     </g>
     <g
        id="colorBlue">
@@ -97,35 +98,43 @@
       <path
          d="M 21,17 H 43 V 2 H 21 z"
          inkscape:connector-curvature="0"
-         style="fill:#ffffff;stroke:#000000;stroke-width:2" />
+         style="fill:#ffffff;stroke:#000000;stroke-width:2"
+         id="path3007" />
       <path
          style="fill-opacity:0;stroke:#000000;stroke-width:2"
          inkscape:connector-curvature="0"
-         d="M 21,2 H 10 l -8,8 v 11 h 15 l 4,-4 V 2 z" />
+         d="M 21,2 H 10 l -8,8 v 11 h 15 l 4,-4 V 2 z"
+         id="path3009" />
       <path
          d="M 2,21 V 43 H 17 V 21 z"
          inkscape:connector-curvature="0"
-         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3011" />
       <path
          d="m 2,43 v 11 l 8,8 H 21 V 47 l -4,-4 z"
          inkscape:connector-curvature="0"
-         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3013" />
       <path
          style="fill-opacity:0;stroke:#000000;stroke-width:2"
          inkscape:connector-curvature="0"
-         d="M 21,62 H 43 V 47 H 21 z" />
+         d="M 21,62 H 43 V 47 H 21 z"
+         id="path3015" />
       <path
          d="m 43,62 h 11 l 8,-8 V 43 H 47 l -4,4 z"
          inkscape:connector-curvature="0"
-         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3017" />
       <path
          style="fill-opacity:0;stroke:#000000;stroke-width:2"
          inkscape:connector-curvature="0"
-         d="M 62,21 H 47 v 22 h 15 z" />
+         d="M 62,21 H 47 v 22 h 15 z"
+         id="path3019" />
       <path
          d="M 62,10 V 21 H 47 L 43,17 V 2 h 11 l 8,8 z"
          inkscape:connector-curvature="0"
-         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+         style="fill-opacity:0;stroke:#000000;stroke-width:2"
+         id="path3021" />
     </g>
     <g
        id="arrow2">
@@ -460,7 +469,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -473,7 +482,8 @@
        y="0"
        width="64"
        height="64"
-       xlink:href="#colorBlue" />
+       xlink:href="#colorBlue"
+       id="use3090" />
     <use
        xlink:href="#colorBlue"
        height="64"
@@ -920,7 +930,8 @@
        height="64"
        width="64"
        y="0"
-       x="0" />
+       x="0"
+       id="use3155" />
     <use
        x="0"
        y="64"
@@ -1329,7 +1340,7 @@
        x="448" />
     <use
        x="448"
-       y="196"
+       y="192"
        width="64"
        height="64"
        xlink:href="#arrow8"
