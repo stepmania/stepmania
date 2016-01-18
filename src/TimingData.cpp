@@ -69,7 +69,7 @@ void TimingData::PrepareLookup()
 	// If by some mistake the old lookup table is still hanging around, adding
 	// more entries would probably cause FindEntryInLookup to return the wrong
 	// thing.  So release the lookups. -Kyz
-	ReleaseLookup();
+	ReleaseLookupInternal();
 	const unsigned int segments_per_lookup= 16;
 	const vector<TimingSegment*>* segs= m_avpTimingSegments;
 	const vector<TimingSegment*>& bpms= segs[SEGMENT_BPM];
@@ -116,9 +116,13 @@ void TimingData::PrepareLookup()
 	// If there are less than two entries, then FindEntryInLookup in lookup
 	// will always decide there's no appropriate entry.  So clear the table.
 	// -Kyz
-	if(m_beat_start_lookup.size() < 2 && m_displayed_beat_lookup.size() < 2)
+	if(m_beat_start_lookup.size() < 2)
 	{
-		ReleaseLookup();
+		ReleaseTimingLookup();
+	}
+	if(m_displayed_beat_lookup.size() < 2)
+	{
+		ReleaseDisplayedBeatLookup();
 	}
 	// DumpLookupTables();
 }
@@ -130,6 +134,9 @@ void TimingData::ReleaseLookup()
 	{
 		return;
 	}
+	ReleaseLookupInternal();
+}
+
 	// According to The C++ Programming Language 3rd Ed., decreasing the size
 	// of a vector doesn't actually free the memory it has allocated.  So this
 	// small trick is required to actually free the memory. -Kyz
@@ -139,10 +146,22 @@ void TimingData::ReleaseLookup()
 		auto tmp= lookup; \
 		lookup.swap(tmp); \
 	}
+void TimingData::ReleaseTimingLookup()
+{
 	CLEAR_LOOKUP(m_beat_start_lookup);
 	CLEAR_LOOKUP(m_time_start_lookup);
+}
+
+void TimingData::ReleaseDisplayedBeatLookup()
+{
 	CLEAR_LOOKUP(m_displayed_beat_lookup);
+}
 #undef CLEAR_LOOKUP
+
+void TimingData::ReleaseLookupInternal()
+{
+	ReleaseTimingLookup();
+	ReleaseDisplayedBeatLookup();
 }
 
 std::string SegInfoStr(const vector<TimingSegment*>& segs, unsigned int index, const std::string& name)
@@ -216,11 +235,6 @@ TimingData::beat_start_lookup_t::const_iterator FindEntryInLookup(
 		else if(lookup[next].first < entry)
 		{
 			lower= next;
-		}
-		else if(lookup[next+1].first >= entry)
-		{
-			lower= next;
-			break;
 		}
 		else
 		{

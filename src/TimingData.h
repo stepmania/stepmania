@@ -142,6 +142,11 @@ public:
 
 	void PrepareLookup();
 	void ReleaseLookup();
+	private:
+	void ReleaseTimingLookup();
+	void ReleaseDisplayedBeatLookup();
+	void ReleaseLookupInternal();
+	public:
 	void DumpOneTable(const beat_start_lookup_t& lookup, const std::string& name);
 	void DumpLookupTables();
 
