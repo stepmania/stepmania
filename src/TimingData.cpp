@@ -50,6 +50,30 @@ void TimingData::Clear()
 	}
 }
 
+bool TimingData::IsSafeFullTiming()
+{
+	static vector<TimingSegmentType> needed_segments;
+	if(needed_segments.empty())
+	{
+		needed_segments.push_back(SEGMENT_BPM);
+		needed_segments.push_back(SEGMENT_TIME_SIG);
+		needed_segments.push_back(SEGMENT_TICKCOUNT);
+		needed_segments.push_back(SEGMENT_COMBO);
+		needed_segments.push_back(SEGMENT_LABEL);
+		needed_segments.push_back(SEGMENT_SPEED);
+		needed_segments.push_back(SEGMENT_SCROLL);
+	}
+	vector<TimingSegment *> *segs = m_avpTimingSegments;
+	for(size_t s= 0; s < needed_segments.size(); ++s)
+	{
+		if(segs[needed_segments[s]].empty())
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 TimingData::~TimingData()
 {
 	Clear();
@@ -297,6 +321,32 @@ void TimingData::ShiftRange(int start_row, int end_row,
 				}
 			}
 #undef ERASE_SEG
+		}
+	}
+}
+
+void TimingData::ClearRange(int start_row, int end_row, TimingSegmentType clear_type)
+{
+	FOREACH_TimingSegmentType(seg_type)
+	{
+		if(seg_type == clear_type || clear_type == TimingSegmentType_Invalid)
+		{
+			vector<TimingSegment*>& segs= GetTimingSegments(seg_type);
+			int first_affected= GetSegmentIndexAtRow(seg_type, start_row);
+			int last_affected= GetSegmentIndexAtRow(seg_type, end_row);
+			if(first_affected == INVALID_INDEX)
+			{
+				continue;
+			}
+			for(int index= last_affected; index >= first_affected; --index)
+			{
+				int seg_row= segs[index]->GetRow();
+				if(segs.size() > 1 && seg_row > 0 && seg_row >= start_row &&
+					seg_row <= end_row)
+				{
+					EraseSegment(segs, index, segs[index]);
+				}
+			}
 		}
 	}
 }
