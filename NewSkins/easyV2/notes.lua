@@ -61,6 +61,13 @@ return function(button_list, stepstype)
 			{per_beat= 16, states= {16}}, -- 64th
 		},
 	}
+	local hold_length= {
+		start_note_offset= -.5,
+		end_note_offset= .5,
+		head_pixs= 32,
+		body_pixs= 1,
+		tail_pixs= 32
+	}
 	-- Mines only have a single frame in the graphics.
 	local mine_state_map= {
 		parts_per_beat= 1, quanta= {{per_beat= 1, states= {1}}}}
@@ -102,25 +109,13 @@ return function(button_list, stepstype)
 						state_map= inactive_state_map,
 						textures= {hold_tex},
 						flip= hold_flips[button],
-						length_data= {
-							start_note_offset= -.5,
-							end_note_offset= .5,
-							head_pixs= 32,
-							body_pixs= 1,
-							tail_pixs= 32,
-						},
+						length_data= hold_length,
 					},
 					{
 						state_map= active_state_map,
 						textures= {hold_tex},
 						flip= hold_flips[button],
-						length_data= {
-							start_note_offset= -.5,
-							end_note_offset= .5,
-							head_pixs= 32,
-							body_pixs= 1,
-							tail_pixs= 32
-						},
+						length_data= hold_length,
 					},
 				},
 				TapNoteSubType_Roll= {
@@ -128,25 +123,13 @@ return function(button_list, stepstype)
 						state_map= inactive_state_map,
 						textures= {roll_tex},
 						flip= roll_flips[button],
-						length_data= {
-							start_note_offset= -.5,
-							end_note_offset= .5,
-							head_pixs= 32,
-							body_pixs= 1,
-							tail_pixs= 32,
-						},
+						length_data= hold_length,
 					},
 					{
 						state_map= active_state_map,
 						textures= {roll_tex},
 						flip= roll_flips[button],
-						length_data= {
-							start_note_offset= -.5,
-							end_note_offset= .5,
-							head_pixs= 32,
-							body_pixs= 1,
-							tail_pixs= 32,
-						},
+						length_data= hold_length,
 					},
 				},
 			},
@@ -156,11 +139,13 @@ return function(button_list, stepstype)
 						state_map= inactive_state_map,
 						textures= {hold_tex},
 						flip= rev_hold_flips[button],
+						length_data= hold_length,
 					},
 					{
 						state_map= active_state_map,
 						textures= {hold_tex},
 						flip= rev_hold_flips[button],
+						length_data= hold_length,
 					},
 				},
 				TapNoteSubType_Roll= {
@@ -168,11 +153,13 @@ return function(button_list, stepstype)
 						state_map= inactive_state_map,
 						textures= {roll_tex},
 						flip= rev_roll_flips[button],
+						length_data= hold_length,
 					},
 					{
 						state_map= active_state_map,
 						textures= {roll_tex},
 						flip= rev_roll_flips[button],
+						length_data= hold_length,
 					},
 				},
 			},
