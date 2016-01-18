@@ -4,6 +4,41 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2016/01/18
+----------
+* [Edit Mode] Added "Clear timing in region" to timing menu. [kyzentun]
+  Fixed crash that occurs when "Paste timing data" is used after copying a
+  region of timing data that only contains stops. [kyzentun]
+
+2016/01/14
+----------
+* [Gameplay] Added pause menu to default theme.  Activated by pressing Start,
+  Select, or Back twice without pressing something else.  Has options for
+  restarting or forfeiting the current song in normal play.  Course mode has
+  options for skipping the current song or ending the course or forfeiting.
+  [kyzentun]
+* [Graphics] When fetching the list of resolutions, only 32bpp modes are
+  tested because less than 32bpp is not supported on Windows 8 and newer, and
+  because the bpp doesn't matter when fetching a list of resolutions.  This
+  speeds up the load time of the Graphics/Sound option screen. [kyzentun]
+
+2016/01/10
+----------
+* [RageFile] Lua functions for RageFile should now emit an error when the
+  file was not opened correctly instead of crashing. [kyzentun]
+
+2016/01/05
+----------
+* [Linux] Disable DPMS on startup and restore setting on exit. [kyzentun]
+
+2015/12/27
+----------
+* [RageFileManager] Ignore OS X special files in GetDirListing. [kyzentun]
+
+2015/12/20
+----------
+* [Fonts] Fixed crash bug in Texture Font Generator. [drewbarbs]
+
 2015/12/16
 ----------
 * [Player] ChangeLife and SetLife functions added. [kyzentun]
