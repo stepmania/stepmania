@@ -7,52 +7,95 @@ StepMania 5.1 and StepMania 5.0 have separate changelogs so that devs working
 on the different branches don't have conflicts on the changelog file.
 ________________________________________________________________________________
 
+2016/01/17
+----------
+* [TimingData] Fixed bug in handling of displayed beat lookup table that
+  broke charts that had scroll segments but not other timing segments.
+  [kyzentun]
+
+2016/01/16
+----------
+* [NewSkin] Pump newskin by wolfman2000.  EasyV2 and ExactV2 by Jousway.
+  EasyV2 and ExactV2 support dance, pump, and solo.
+
+2016/01/14
+----------
+* [NewSkin] Removed routine newskin and put its player masks into the default
+  newskin. [kyzentun]
+
+2016/01/13
+----------
+* [NewSkin] Added anim_time and anim_uses_beats column fields for controlling
+  how fast taps are animated. [kyzentun]
+
+2016/01/12
+----------
+* [NewField] reverse_percent changed to reverse_scale to simplify code for
+  flipping columns upside down. [kyzentun]
+
+2016/01/08
+----------
+* [beat] Keysounds fixed. [ubuntor]
+
+2015/11/01 to 2015/12/31
+----------
+* [NewSkin] Created noteskin parameter system which allows a skin to specify
+  a lua table of parameters it takes.  The theme can then use the information
+  in the noteskin to build a menu which allows the player to custom specific
+  behaviors of the noteskin.  Noteskin parameters are saved to the profile,
+  organized by noteskin name and stepstype. [kyzentun]
+  Added explosion particles to default newskin.  Noteskin params control
+  size, blending, amount, and distance. [kyzentun]
+* [Rage] Restructured major portions into Rage namespace instead of prefixing
+  class names with Rage. [wolfman2000]
+* [StdString.h] StdString removed and replaced with std::string. [wolfman2000]
+
 2015/06/?? to 2015/10/27
 ----------
 Various things done along the path to creating the NewField and related
 systems.
 * [Actor] get_mask_color and set_mask_color functions added for controlling
   colored mask.  Sprite is currently the only actor type that can have a
-	mask texture. [kyzentun]
+  mask texture. [kyzentun]
 * [CubicSpline] Moved polygonal and looping solve logic to CubicSpline. [kyzentun]
 * [GameManager] Added stepstype_is_multiplayer function.  Use this function
   instead of looking at the current style.  I'm hoping to remove styles in a
-	future release. [kyzentun]
+  future release. [kyzentun]
 * [global.h] Added UNUSED macro.  This will be applied to things to get rid
   of unused variable warnings. [kyzentun]
 * [LuaManager] Added convenience macros for setting enum members. [kyzentun]
   Moved FromStack function definitions so that the don't get separated from
-	their declarations and drift out of sync.  (I thought I already did this
-	once?) [kyzentun]
-	Added rec_print_table C++ function for dumping a lua table to the log from
-	the C++ side. [kyzentun]
-	Added get_optional_double and get_optional_bool functions for fetching
-	things from lua tables. [kyzentun]
+  their declarations and drift out of sync.  (I thought I already did this
+  once?) [kyzentun]
+  Added rec_print_table C++ function for dumping a lua table to the log from
+  the C++ side. [kyzentun]
+  Added get_optional_double and get_optional_bool functions for fetching
+  things from lua tables. [kyzentun]
 * [NewField] New noteskin, notefield, and modifier system introduced.  See
   Docs/Themerdocs/5.1_incompatibilities folder for details. [kyzentun]
 * [NoteData] Added SetOccuranceTimeForAllTaps so the time for every note
   isn't calculated every frame.  This probably belongs in NoteDataUtil, but I
-	don't like it when a non-member function changes member values so
-	intimately. [kyzentun]
-	Also added count_notes_in_columns to later use for useless stats. [kyzentun]
+  don't like it when a non-member function changes member values so
+  intimately. [kyzentun]
+  Also added count_notes_in_columns to later use for useless stats. [kyzentun]
 * [NoteTypes] Added values to TapNote for the time in seconds that the note
   occurs at, ends at (holds), and was last held at (holds). [kyzentun]
 * [Player] Changed how the field is rendered to give the field power over the
   skew modifier.  Both notefields currently exist in the Player, but only one
-	is rendered.  The theme needs to use set_newfield_preferred until the old
-	notefield is removed. [kyzentun]
+  is rendered.  The theme needs to use set_newfield_preferred until the old
+  notefield is removed. [kyzentun]
 * [PlayerOptions] Added NewSkin field and lua function because the field
   needs a skin when it's being initialized and there isn't yet an easier way
-	for the theme to set that. [kyzentun]
+  for the theme to set that. [kyzentun]
 * [Profile] Added get_preferred_noteskin, set_preferred_noteskin, and
   get_last_stepstype lua functions. [kyzentun]
   Added system for storing what NewSkin is used for each StepsType.
   Each StepsType has its own entry because NewSkins are not tied to game
-	type, and hopefully StepsTypes won't be in the future.  Since a NewSkin
-	picks what buttons to support, and doesn't have to support all StepsTypes,
-	the profile needs to be able to pick a different NewSkin for each StepsType.
-	When the profile plays a StepsType for the first time, the most used
-	NewSkin is used. [kyzentun]
+  type, and hopefully StepsTypes won't be in the future.  Since a NewSkin
+  picks what buttons to support, and doesn't have to support all StepsTypes,
+  the profile needs to be able to pick a different NewSkin for each StepsType.
+  When the profile plays a StepsType for the first time, the most used
+  NewSkin is used. [kyzentun]
 * [RageDisplay] Added Color key fragment shader for masking system.  Shader
   written by Yaniel. [kyzentun]
 * [RageTexture] Changed frame rect calculation to do more work outside the
@@ -64,17 +107,17 @@ systems.
   during the "Sanity checking songs..." phase. [kyzentun]
 * [Sprite] Added mask texture system.  This was made for playerizing in
   NewField, but can be used on any sprite.  Set the "Mask" field the same way
-	you would set the Texture field, or use set_mask lua function to set the
-	mask texture.  When the mask is used, the mask_color will be applied using
-	the alpha channel of the mask. [kyzentun]
+  you would set the Texture field, or use set_mask lua function to set the
+  mask texture.  When the mask is used, the mask_color will be applied using
+  the alpha channel of the mask. [kyzentun]
 * [StdString.h] Commented out body of sslwr function because apparently
   MakeLower doesn't exist.  wolfman2000 is killing StdString, so it shouldn't
-	matter if this function is broken for a while. [kyzentun]
+  matter if this function is broken for a while. [kyzentun]
 * [Steps] count_notes_in_columns lua function.
 * [TimingData] Added lookup_requester_count so that PrepareLookup calls can
   be nested. [kyzentun]
-	Added lookup table for the displayed beat for the NewField to use for
-	scroll segment support. (or is this speed segment support?) [kyzentun]
+  Added lookup table for the displayed beat for the NewField to use for
+  scroll segment support. (or is this speed segment support?) [kyzentun]
 
 2015/05/10 to 2015/10/27
 ----------
