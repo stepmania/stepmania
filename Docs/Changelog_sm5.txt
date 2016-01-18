@@ -66,6 +66,11 @@ ________________________________________________________________________________
 * [ScreenSelectMusic] Using lua music files for the section music and similar
   things works now. [kyzentun]
 
+2015/11/05
+----------
+* [PlayerOptions] Fixed bug that was clearing the noteskin back to default.
+  [kyzentun]
+
 ================================================================================
 StepMania 5.0.10 | 20151031
 --------------------------------------------------------------------------------
