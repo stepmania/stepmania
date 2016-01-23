@@ -12,7 +12,7 @@ ________________________________________________________________________________
 
 2016/01/14
 ----------
-* [Gameplay] Added pause menu to default theme.  Activated by pressing Start,
+* [Gameplay] Added pause menu to default theme.  Activated by pressing
   Select, or Back twice without pressing something else.  Has options for
   restarting or forfeiting the current song in normal play.  Course mode has
   options for skipping the current song or ending the course or forfeiting.

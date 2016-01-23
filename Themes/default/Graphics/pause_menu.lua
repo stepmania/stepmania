@@ -1,7 +1,7 @@
 gameplay_pause_count= 0
 course_stopped_by_pause_menu= false
 
-local pause_buttons= {Start= true, Select= true, Back= true}
+local pause_buttons= {Start= false, Select= true, Back= true}
 local pause_double_tap_time= 1
 local tap_debounce_time= .1
 local pause_press_times= {}
@@ -161,6 +161,7 @@ local function input(event)
 	local button= event.GameButton
 	if not button then return end
 	if event.type == "InputEventType_Release" then return end
+	if screen_gameplay:GetName() == "ScreenGameplaySyncMachine" then return end
 	local is_paused= screen_gameplay:IsPaused()
 	if is_paused then
 		if menu_is_showing[pn] then
