@@ -198,7 +198,7 @@ elseif(APPLE)
     RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_ROOT_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}"
     MACOSX_BUNDLE_INFO_PLIST "${SM_XCODE_DIR}/Info.StepMania.plist"
-    XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "gnu++14"
+    XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "${SM_CPP_STANDARD}"
     XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++"
     XCODE_ATTRIBUTE_INFOPLIST_FILE "${SM_XCODE_DIR}/Info.StepMania.plist"
     XCODE_ATTRIBUTE_INFOPLIST_PREPROCESS "YES"
@@ -329,7 +329,7 @@ else() # Linux
     sm_add_compile_definition("${SM_EXE_NAME}" LINUX)
   endif()
 
-  sm_add_compile_flag("${SM_EXE_NAME}" "-std=gnu++14")
+  sm_add_compile_flag("${SM_EXE_NAME}" "-std=${SM_CPP_STANDARD}")
   if (CMAKE_CXX_COMPILER MATCHES "clang")
     sm_add_compile_flag("${SM_EXE_NAME}" "-stdlib=libc++")
     set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS "-stdlib=libc++")

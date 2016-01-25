@@ -50,11 +50,11 @@ if (MSVC)
 
 elseif(APPLE)
   set_target_properties("rage" PROPERTIES
-    XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "gnu++14"
+    XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "${SM_CPP_STANDARD}"
     XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++"
   )
 else()
-  sm_add_compile_flag("rage" "-std=gnu++14")
+  sm_add_compile_flag("rage" "-std=${SM_CPP_STANDARD}")
   if (CMAKE_CXX_COMPILER MATCHES "clang")
     sm_add_compile_flag("rage" "-stdlib=libc++")
   endif()
