@@ -217,7 +217,7 @@ void NoteSkinManager::GetNoteSkinNames( const Game* pGame, vector<std::string> &
 bool NoteSkinManager::NoteSkinNameInList(std::string const name, vector<std::string> name_list)
 {
 	Rage::ci_ascii_string lowerName{ name.c_str() };
-	auto isInList = [&lowerName](auto const &entry) {
+	auto isInList = [&lowerName](std::string const &entry) {
 		return lowerName == entry;
 	};
 	return std::any_of(name_list.begin(), name_list.end(), isInList);
