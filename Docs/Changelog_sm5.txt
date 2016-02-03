@@ -4,6 +4,18 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2016/02/03
+----------
+* [ScreenManager] Added PlayInvalidSound, PlayStartSound, PlayCoinSound,
+  PlayCancelSound, and PlayScreenshotSound lua bindings. [kyzentun]
+  Added get_input_redirected and set_input_redirected to allow the theme to
+  disable the normal input functions.  (Example: a custom lua menu on
+  Select Music.  When the menu is up, the theme doesn't want the player's
+  input to move the music wheel.)  This is in SCREENMAN so that it will work
+  on all screens. [kyzentun]
+* [ScreenSelectMusic] Added CanOpenOptionsList lua binding.  OpenOptionsList
+  will do nothing if CanOpenOptionsList returns false. [kyzentun]
+
 2016/01/18
 ----------
 * [Edit Mode] Added "Clear timing in region" to timing menu. [kyzentun]

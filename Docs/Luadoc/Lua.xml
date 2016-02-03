@@ -1488,10 +1488,17 @@
 		<Class name='ScreenManager'>
 			<Function name='AddNewScreenToTop'/>
 			<Function name='GetTopScreen'/>
+			<Function name='get_input_redirected'/>
+			<Function name='PlayInvalidSound'/>
+			<Function name='PlayStartSound'/>
+			<Function name='PlayCoinSound'/>
+			<Function name='PlayCancelSound'/>
+			<Function name='PlayScreenshotSound'/>
 			<Function name='ReloadOverlayScreens'/>
 			<Function name='ScreenClassExists'/>
 			<Function name='ScreenIsPrepped'/>
 			<Function name='SetNewScreen'/>
+			<Function name='set_input_redirected'/>
 			<Function name='SystemMessage'/>
 		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenNameEntryTraditional'>
@@ -1529,6 +1536,7 @@
 			<Function name='GetSelectionIndex'/>
 		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenSelectMusic'>
+			<Function name='CanOpenOptionsList'/>
 			<Function name='GetGoToOptions'/>
 			<Function name='GetMusicWheel'/>
 			<Function name='OpenOptionsList'/>

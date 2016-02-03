@@ -4389,6 +4389,24 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetTopScreen' return='Screen' arguments=''>
 		Gets the screen at the top of the screen stack.
 	</Function>
+	<Function name='get_input_redirected' return='bool' arguments='PlayerNumber pn'>
+		Returns whether the input for the player has been redirected away from the normal screen input function.  Input that has been redirected is only sent to lua input callbacks.
+	</Function>
+	<Function name='PlayInvalidSound' return='' arguments=''>
+		Plays the invalid sound.
+	</Function>
+	<Function name='PlayStartSound' return='' arguments=''>
+		Plays the start sound.
+	</Function>
+	<Function name='PlayCoinSound' return='' arguments=''>
+		Plays the coin sound.
+	</Function>
+	<Function name='PlayCancelSound' return='' arguments=''>
+		Plays the cancel sound.
+	</Function>
+	<Function name='PlayScreenshotSound' return='' arguments=''>
+		Plays the screenshot sound.
+	</Function>
 	<Function name='ReloadOverlayScreens' return='void' arguments=''>
 		Reloads any loaded overlay screens.
 	</Function>
@@ -4400,6 +4418,10 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='SetNewScreen' return='void' arguments='string s'>
 		Sets the next screen to <code>s</code>.
+	</Function>
+	<Function name='set_input_redirected' return='bool' arguments='PlayerNumber pn, bool redir'>
+		Sets whether the input for the player has been redirected away from the normal screen input function.  Input that has been redirected is only sent to lua input callbacks.<br />
+		This can be useful when putting a custom menu on a screen, and you want to disable the built in actors while the menu is open.  Then you handle input through an input callback until the player closes the menu.
 	</Function>
 	<Function name='SystemMessage' return='void' arguments='string s'>
 		Broadcasts a system message.
@@ -4482,6 +4504,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='ScreenSelectMusic'>
+	<Function name='CanOpenOptionsList' return='bool' arguments=''>
+		Returns false if the options list is already open or the UseOptionsList metric is false.
+	</Function>
 	<Function name='GetGoToOptions' return='bool' arguments=''>
 		Returns <code>true</code> if the player is going to the options screen.
 	</Function>

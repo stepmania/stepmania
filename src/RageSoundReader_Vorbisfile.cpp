@@ -46,6 +46,11 @@ static RString ov_ssprintf( int err, const char *fmt, ...)
 	RString errstr;
 	switch( err )
 	{
+		// OV_FALSE, OV_EOF, and OV_HOLE were added to this switch because
+		// OV_EOF cases were being reported as unknown. -Kyz
+	case OV_FALSE: errstr = "OV_FALSE"; break;
+	case OV_EOF: errstr = "OV_EOF"; break;
+	case OV_HOLE: errstr = "OV_HOLE"; break;
 	/* XXX: In the case of OV_EREAD, can we snoop at errno? */
 	case OV_EREAD:		errstr = "Read error"; break;
 	case OV_EFAULT:		errstr = "Internal error"; break;
@@ -123,7 +128,7 @@ int RageSoundReader_Vorbisfile::SetPosition( int iFrame )
 	if(ret < 0)
 	{
 		/* Returns OV_EINVAL on EOF. */
-		if( ret == OV_EINVAL )
+		if( ret == OV_EINVAL || ret == OV_EOF)
 		{
 			eof = true;
 			return 0;
