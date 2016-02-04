@@ -1132,14 +1132,17 @@ Song *SongID::ToSong() const
 	Song *pRet = NULL;
 	if( !m_Cache.Get(&pRet) )
 	{
-		// HACK for backwards compatibility: Re-add the leading "/".
-		// 2005/05/21 file layer changes added a leading slash.
-		RString sDir2 = sDir;
-		if( sDir2.Left(1) != "/" )
-			sDir2 = "/" + sDir2;
-
-		if( !sDir2.empty() )
-			pRet = SONGMAN->GetSongFromDir( sDir2 );
+		if(!sDir.empty())
+		{
+			// HACK for backwards compatibility: Re-add the leading "/".
+			// 2005/05/21 file layer changes added a leading slash.
+			RString sDir2 = sDir;
+			if(sDir2.Left(1) != "/")
+			{
+				sDir2 = "/" + sDir2;
+			}
+			pRet = SONGMAN->GetSongFromDir(sDir2);
+		}
 		m_Cache.Set( pRet );
 	}
 	return pRet;
