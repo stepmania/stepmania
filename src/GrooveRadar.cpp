@@ -170,8 +170,8 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		const float fDistFromCenter = 
 			( m_fValuesOld[c] * (1-m_PercentTowardNew) + m_fValuesNew[c] * m_PercentTowardNew + 0.07f ) * fRadius;
 		const float fRotation = RADAR_VALUE_ROTATION(i);
-		const float fX = RageFastCos(fRotation) * fDistFromCenter;
-		const float fY = -RageFastSin(fRotation) * fDistFromCenter;
+		const float fX = std::cos(fRotation) * fDistFromCenter;
+		const float fY = -std::sin(fRotation) * fDistFromCenter;
 
 		v[1+i].p = RageVector3( fX, fY, 0 );
 		v[1+i].c = v[1].c;
@@ -186,8 +186,8 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		const float fDistFromCenter = 
 			( m_fValuesOld[c] * (1-m_PercentTowardNew) + m_fValuesNew[c] * m_PercentTowardNew + 0.07f ) * fRadius;
 		const float fRotation = RADAR_VALUE_ROTATION(i);
-		const float fX = RageFastCos(fRotation) * fDistFromCenter;
-		const float fY = -RageFastSin(fRotation) * fDistFromCenter;
+		const float fX = std::cos(fRotation) * fDistFromCenter;
+		const float fY = -std::sin(fRotation) * fDistFromCenter;
 
 		v[i].p = RageVector3( fX, fY, 0 );
 		v[i].c = this->m_pTempState->diffuse[0];
