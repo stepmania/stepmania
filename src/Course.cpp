@@ -447,12 +447,19 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 	vector<Song*> vpAllPossibleSongs;
 	vector<SongAndSteps> vSongAndSteps;
+	vector<Song*> vpSongs;
+	typedef vector<Steps*> StepsVector;
+	map<Song*, StepsVector> mapSongToSteps;
+	int songIndex = 0;
+	bool vpSongsSorted = false;
 
 	// Resolve each entry to a Song and Steps.
 	FOREACH_CONST( CourseEntry, entries, e )
 	{
+
 		SongAndSteps resolved;	// fill this in
 		SongCriteria soc = e->songCriteria;
+
 
 		Song *pSong = e->songID.ToSong();
 		if( pSong )
@@ -482,38 +489,32 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			StepsUtil::GetAllMatching( soc, stc, vSongAndSteps );
 		}
 
-		// It looks bad to have the same song 2x in a row in a randomly generated course.
-		// Don't allow the same song to be played 2x in a row, unless there's only
-		// one song in vpPossibleSongs.
-		if( trail.m_vEntries.size() > 0  &&  vSongAndSteps.size() > 1 )
-		{
-			const TrailEntry &teLast = trail.m_vEntries.back();
-			RemoveIf( vSongAndSteps, SongIsEqual(teLast.pSong) );
-		}
-
 		// if there are no songs to choose from, abort this CourseEntry
 		if( vSongAndSteps.empty() )
 			continue;
 
-		vector<Song*> vpSongs;
-		typedef vector<Steps*> StepsVector;
-		map<Song*,StepsVector> mapSongToSteps;
-		FOREACH_CONST( SongAndSteps, vSongAndSteps, sas )
-		{
-			StepsVector &v = mapSongToSteps[sas->pSong];
-
-			v.push_back( sas->pSteps );
-			if( v.size() == 1 )
-				vpSongs.push_back( sas->pSong );
+		if( !vpSongsSorted && !vSongAndSteps.empty() ) {
+			FOREACH_CONST( SongAndSteps, vSongAndSteps, sas )
+			{
+				StepsVector &v = mapSongToSteps[ sas->pSong ];
+				v.push_back( sas->pSteps );
+				if( v.size() == 1 )
+					vpSongs.push_back( sas->pSong );
+			}
+			vpSongsSorted = true;
+			CourseSortSongs( e->songSort, vpSongs, rnd );
+			songIndex = 0;
 		}
-
-		CourseSortSongs( e->songSort, vpSongs, rnd );
 
 		ASSERT( e->iChooseIndex >= 0 );
 		if( e->iChooseIndex < int(vSongAndSteps.size()) )
 		{
-			resolved.pSong = vpSongs[e->iChooseIndex];
+			if( songIndex >= vpSongs.size() ) {
+				songIndex = 0;
+			}
+			resolved.pSong = vpSongs[songIndex];
 			const vector<Steps*> &mappedSongs = mapSongToSteps[resolved.pSong];
+			songIndex++;
 			resolved.pSteps = mappedSongs[ RandomInt(mappedSongs.size()) ];
 		}
 		else
@@ -610,6 +611,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			 * This may or may not be the same as e.difficulty. */
 			te.dc = dc;
 		}
+
 		trail.m_vEntries.push_back( te );
 
 		// LOG->Trace( "Chose: %s, %d", te.pSong->GetSongDir().c_str(), te.pSteps->GetMeter() );
