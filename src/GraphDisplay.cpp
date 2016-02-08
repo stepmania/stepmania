@@ -51,8 +51,8 @@ public:
 		for( int i = 0; i < iSubdivisions+1; ++i )
 		{
 			const float fRotation = float(i) / iSubdivisions * 2*PI;
-			const float fX = std::cos(fRotation) * fRadius;
-			const float fY = -std::sin(fRotation) * fRadius;
+			const float fX = RageFastCos(fRotation) * fRadius;
+			const float fY = -RageFastSin(fRotation) * fRadius;
 			pVerts[1+i] = v;
 			pVerts[1+i].p.x += fX;
 			pVerts[1+i].p.y += fY;
