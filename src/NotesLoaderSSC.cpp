@@ -940,7 +940,7 @@ bool SSCLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 
 bool SSCLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache )
 {
-	LOG->Trace( "Song::LoadFromSSCFile(%s)", sPath.c_str() );
+	//LOG->Trace( "Song::LoadFromSSCFile(%s)", sPath.c_str() );
 
 	MsdFile msd;
 	if( !msd.ReadFile( sPath, true ) )
