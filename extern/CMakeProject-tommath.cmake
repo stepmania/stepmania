@@ -131,7 +131,7 @@ list(APPEND TOMMATH_HPP
 source_group("" FILES ${TOMMATH_SRC})
 source_group("" FILES ${TOMMATH_HPP})
 
-add_library("tommath" ${TOMMATH_SRC} ${TOMMATH_HPP})
+add_library("tommath" STATIC ${TOMMATH_SRC} ${TOMMATH_HPP})
 
 set_property(TARGET "tommath" PROPERTY FOLDER "External Libraries")
 
