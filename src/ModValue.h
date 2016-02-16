@@ -443,6 +443,7 @@ private:
 	CubicSpline m_spline;
 	bool m_loop_spline;
 	bool m_polygonal_spline;
+	bool m_has_point_per_frame_input;
 
 	std::string m_name;
 	ModifiableValue* m_parent;

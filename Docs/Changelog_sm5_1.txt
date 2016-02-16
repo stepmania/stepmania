@@ -7,6 +7,24 @@ StepMania 5.1 and StepMania 5.0 have separate changelogs so that devs working
 on the different branches don't have conflicts on the changelog file.
 ________________________________________________________________________________
 
+2016/02/12
+----------
+* [CustomSpeedMods] Any theme still using the deprecated CustomSpeedMods
+  system needs to be modified to add its load function to profile loading.
+  [kyzentun]
+* [Gameplay] Changed default theme to use newfield. [kyzentun]
+* [item_scroller] Added item_scroller lua class as an alternative to
+  ActorScroller. [kyzentun]
+* [lua_config] Added lua config system for saving theme settings. [kyzentun]
+* [nesty_options] Added nested options menu system for lua based menus.
+  [kyzentun]
+* [NewField] Changed functions in Scripts/02 NewField.lua to be inside the
+  NewField class.  Added more NewField functions, documented in
+	Docs/Themerdocs/NewField.md. [kyzentun]
+* [PlayerOptions] Changed PlayerOptions screen in default theme to use
+  nesty options system to allow newskin parameter support. [kyzentun]
+* [PlayerState] Added get_read_bpm lua function. [kyzentun]
+
 2016/01/17
 ----------
 * [TimingData] Fixed bug in handling of displayed beat lookup table that
@@ -46,6 +64,8 @@ ________________________________________________________________________________
   organized by noteskin name and stepstype. [kyzentun]
   Added explosion particles to default newskin.  Noteskin params control
   size, blending, amount, and distance. [kyzentun]
+  Removed rotations table in favor of newskin actors being rotated by their
+  InitCommand. [kyzentun]
 * [Rage] Restructured major portions into Rage namespace instead of prefixing
   class names with Rage. [wolfman2000]
 * [StdString.h] StdString removed and replaced with std::string. [wolfman2000]

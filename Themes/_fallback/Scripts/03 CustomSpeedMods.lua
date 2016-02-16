@@ -153,7 +153,7 @@ local function ReadSpeedModFile(path)
 end
 
 -- Hook called during profile load
-function LoadProfileCustom(profile, dir)
+function load_custom_speed_mods(profile, dir)
 	-- This will be (intentionally) nil if the file is missing or bad
 	local mods = ReadSpeedModFile(dir .. "SpeedMods.txt")
 
@@ -171,12 +171,10 @@ function LoadProfileCustom(profile, dir)
 		end
 	end
 end
+-- CustomSpeedMods not supported in 5.1 because oldfield.  Add this to your
+-- theme scripts if you want to keep using it:
+-- add_profile_load_callback(load_custom_speed_mods)
 
--- Hook called during profile save
-function SaveProfileCustom(profile, dir)
-	-- Change this if a theme allows you to change and save custom
-	-- per-profile settings.
-end
 
 -- Returns a list of speed mods for the current round.
 local function GetSpeedMods()

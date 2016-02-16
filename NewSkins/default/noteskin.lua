@@ -38,7 +38,7 @@ return {
 	skin_parameters= {
 		explosions= {
 			particles= true,
-			particle_dist= 512,
+			particle_dist= 128,
 			particle_life= 1,
 			particle_size= 32,
 			num_particles= 16,
@@ -97,7 +97,7 @@ return {
 				},
 			},
 			num_particles= {
-				type= "int", min= 0, max= 2000, translation= {
+				type= "int", min= 0, max= 64, translation= {
 					en= {title= "Particle Count", explanation= "A higher number makes the particles lag gameplay more."},
 				},
 			},
@@ -129,7 +129,7 @@ return {
 				en= {title= "Receptors", explanation= "Options for receptor effects."},
 			},
 			warning_time= {
-				type= "int", min= 0, max= 10, translation= {
+				type= "float", min= 0, max= 10, translation= {
 					en= {title= "Warning Time", explanation= "Turns the receptor red seconds before an arrow arrives."},
 				},
 			},

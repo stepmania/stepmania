@@ -74,7 +74,7 @@ return {
       num_particles = {
         type = "int",
         min = 0,
-        max = 2000,
+        max = 64,
         translation = {
           en = {title = "Particle Count", explation = "A higher number makes the particles lag gameplay more." }
         }

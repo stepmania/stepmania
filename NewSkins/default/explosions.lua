@@ -88,7 +88,7 @@ return function(button_list, stepstype, skin_params)
 						InitCommand= function(self)
 							local direction= particle_directions[p]
 							self:setsize(parsize, parsize):diffuseupperleft{1, 1, 1, 0}
-								:diffuselowerright{0, 0, 0, 0}
+								:diffuselowerright{1, 1, 1, 0}
 								:blend(explosion_params.particle_blend)
 								:rotationz(direction.angle+45)
 						end,

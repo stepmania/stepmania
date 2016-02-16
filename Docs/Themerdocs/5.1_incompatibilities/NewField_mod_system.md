@@ -546,11 +546,10 @@ The type of a modifier is in parens after the name.
   ```reverse_offset_pixels``` is evaluated once per frame, with only the
   current time of the column.  The ```Eval*``` inputs for it are identical to
   the ```Music*``` inputs, and the ```Dist*``` inputs are 0.
-* reverse_percent (ModifiableValue)  
-  ```reverse_percent``` is a scale factor applied to the y offset.  At 0
-  ```reverse_percent```, the y offset is left alone.  At 1
-  ```reverse_percent```, the y offset is multiplied by -1.  
-  ```reverse_percent``` is evaluated once per frame, with only the
+* reverse_scale (ModifiableValue)  
+  ```reverse_scale``` controls whether notes scroll up or down.  At 1, notes
+	scroll up.  At -1, notes scroll down.
+  ```reverse_scale``` is evaluated once per frame, with only the
   current time of the column.  The ```Eval*``` inputs for it are identical to
   the ```Music*``` inputs, and the ```Dist*``` inputs are 0.
 * center_percent (ModifiableValue)  

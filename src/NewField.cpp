@@ -57,7 +57,7 @@ NewFieldColumn::NewFieldColumn()
 	 pressed(false)
 {
 	m_quantization_multiplier.m_value= 1.0;
-	double default_offset= SCREEN_CENTER_Y - note_size;
+	double default_offset= 240 - note_size;
 	m_reverse_offset_pixels.m_value= default_offset;
 }
 
@@ -1882,7 +1882,6 @@ struct LunaNewFieldColumn : Luna<NewFieldColumn>
 		ADD_GET_SET_METHODS(upcoming_time);
 		ADD_METHOD(receptor_y_offset);
 		ADD_METHOD(get_reverse_shift);
-		//		ADD_METHOD(get_reverse_scale);
 		ADD_METHOD(apply_column_mods_to_actor);
 		ADD_METHOD(apply_note_mods_to_actor);
 	}
@@ -1905,7 +1904,12 @@ struct LunaNewField : Luna<NewField>
 	}
 	static int set_steps(T* p, lua_State* L)
 	{
-		Steps* data= Luna<Steps>::check(L, 1);
+		// nullptr can be passed to tell the field to clear the steps.
+		Steps* data= nullptr;
+		if(!lua_isnil(L, 1))
+		{
+			data= Luna<Steps>::check(L, 1);
+		}
 		p->set_steps(data);
 		COMMON_RETURN_SELF;
 	}

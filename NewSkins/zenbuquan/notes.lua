@@ -58,11 +58,6 @@ return function(button_list)
 			},
 			holds= holds,
 			reverse_holds= holds,
-			rotations= {
-				NewSkinTapPart_Tap= 0,
-				NewSkinTapPart_Mine= 0,
-				NewSkinTapPart_Lift= 0,
-			},
 		}
 	end
 	return {columns= columns, vivid_operation= true}
