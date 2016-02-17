@@ -23,6 +23,7 @@ return function(button_list, stepstype, skin_parameters)
     ret[i] = Def.ActorFrame {
       InitCommand = function(self)
         self:zoom(columnWidth / 64):rotationz(rotations[button] or 0):effectclock("beat")
+          :draworder(newfield_draw_order.receptor)
       end,
       Def.Sprite {
         Texture = texture,

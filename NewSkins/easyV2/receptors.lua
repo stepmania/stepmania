@@ -14,6 +14,7 @@ return function(button_list, stepstype, skin_parameters)
 		ret[i]= Def.Sprite{
 			Texture= tap_redir[button].." receptor.png", InitCommand= function(self)
 				self:rotationz(rots[button] or 0):effectclock("beat")
+					:draworder(newfield_draw_order.receptor)
 			end,
 			ColumnJudgmentCommand= function(self)
 				self.none = false

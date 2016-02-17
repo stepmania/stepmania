@@ -1,15 +1,12 @@
 return {
 	-- notes is the file to use to load the note columns, the taps and holds.
 	notes= "notes.lua",
-	-- layers_below_notes is a list of files to load things in the columns that
-	-- are displayed underneath the notes.  Typically, this is just the
-	-- receptors.  The layers are rendered in the order they are in the table,
-	-- so the first layer is on the bottom.
+	-- layers is a list of files to load things in the columns that are
+	-- displayed in the columns.  Typically, this is just the receptors and
+	-- explosions.  The layers are rendered by draw order.
+	-- Docs/Themerdocs/5.1_incompatibilities/NewField.md explains draw orders.
 	-- receptors.lua has the explanation of the requirements of a layer file.
-	layers_below_notes= {"receptors.lua"},
-	-- layers_above_notes is the same as layers_below_notes, but its contents
-	-- are rendered after the notes, so they appear on top of the notes.
-	layers_above_notes= {"explosions.lua"},
+	layers= {"receptors.lua", "explosions.lua"},
 	-- Since all layers are considered the same, messages such as
 	-- judgment and step actions are sent to all layers.  This means you can
 	-- make receptors that respond to judgments, or explosions that respond to

@@ -1,6 +1,7 @@
 local column_width= 64
 local function zoom_tap(self)
 	self:zoom(column_width / 11)
+		:draworder(newfield_draw_order.explosion)
 end
 local hold_colors= {
 	TapNoteSubType_Hold= {1, 1, 0, 1},

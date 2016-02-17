@@ -285,6 +285,7 @@ public:
 	virtual void DrawPrimitives() {};
 	/** @brief Pop the transform from the world matrix stack. */
 	virtual void EndDraw();
+	virtual void ChildChangedDrawOrder(Actor*) {};
 
 	// TODO: make Update non virtual and change all classes to override UpdateInternal
 	// instead.
@@ -609,7 +610,7 @@ public:
 	void SetShadowColor( Rage::Color c )		{ m_ShadowColor = c; }
 	// TODO: Implement hibernate as a tween type?
 	void SetHibernate( float fSecs )		{ m_fHibernateSecondsLeft = fSecs; }
-	void SetDrawOrder( int iOrder )			{ m_iDrawOrder = iOrder; }
+	void SetDrawOrder(int order);
 	int GetDrawOrder() const			{ return m_iDrawOrder; }
 
 	virtual void EnableAnimation( bool b ) 		{ m_bIsAnimating = b; }	// Sprite needs to overload this

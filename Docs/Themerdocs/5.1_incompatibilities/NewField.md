@@ -46,12 +46,79 @@ LineNewSkin="lua,newskin_option_row()"
 The default theme no longer uses a metrics based player options screen.
 
 
-## Notefield board
-The notefield board is not stretched by the NewField.  (the old notefield had
-some complex code that would stretch the board to the height of the field if
-it was an image)
-The NewField sends more info to the notefield board to make sizing simpler.
-The info is sent through commands that are executed on the board.  Note that
+## NewField Layers
+The "Graphics/NoteField board" file is not loaded by the NewField.  Instead,
+NewField has a layers system.
+
+The NewField loads "Graphics/NoteField layers", which returns a table of
+actors (not an ActorFrame of actors).  These actors become children of the
+field, and the field tracks their draw order.  Each column loads layers from
+the noteskin, and from "Graphics/NoteColumn layers".  The field also tracks
+the draw order of the layers in the columns.  During rendering, the field
+renders everything by draw order, in all columns.  Everything at draw order 0
+in all columns is drawn before anything at draw order 1 in any column.  This
+allows more generalized control over exactly where things are drawn.
+
+
+### Draw Order
+
+Anything with a draw order less than 0 is considered part of the "board", and
+is drawn before everything except the song background on ScreenGameplay.
+This means they will be under things that the notes go over.
+
+Hold bodies have draw order 200.  Taps have draw order 300.
+NewSkin.receptor_draw_order is 100, and NewSkin.explosion_draw_order is 399,
+so newskins can have a conventional draw order for each.
+
+The judgment and combo and anything else that needs to be at a fixed position
+in the field should be in a layer file, either in NoteField layers, or
+NoteColumn layers.  That way, the thing is guaranteed to be in the correct
+position for the layer and column that it is in, regardless of any mods that
+may move the field or the column around, with no further effort.
+
+To put the judgment underneath all the notes, but not part of the board, put
+it at 51.  Putting the judgment at 351 would put it above all the notes.  251
+would put it above hold bodies, but underneath taps.
+
+
+#### Draw Order and alpha/glow mods
+
+NewFieldColumn has mods for controlling the alpha and glow of receptors and
+explosions.  Any layer in a column with an even draw order is treated as a
+receptor.  Any layer in a column with an odd draw order is treated as an
+explosion.  If the draw order integer is neither even nor odd, it will not
+use either pair of mods.
+
+This allows a judgment hiding mod to also hide tap explosions that reveal the
+judgment, if the noteskin author gives everything that shows judgment an odd
+draw order.
+
+NewField also has receptor and explosion alpha and glow mods.  The same even
+and odd draw order rules also apply to layers in the field.  Additionally,
+any layer with a draw order of -100 or less cannot have its alpha or glow
+changed by mods.
+
+The extra rule allows board elements that are affected by mods, and board
+elements that are not.
+
+#### Draw Order Variable List
+
+02 NewField.lua defines these variables to make life convenient for themers.
+```
+newfield_draw_order= {
+	non_alphable_layer= -100,
+	non_board= 0,
+	receptor= 100,
+	hold= 200,
+	tap= 300,
+	explosion= 399, -- Odd to make it use explosion alpha and glow mods.
+}
+```
+
+## NewField layer messages
+
+The NewField sends various info to the layers to make sizing simpler.
+The info is sent through commands that are executed on the layers.  Note that
 these commands are executed before the screen is finished loading.  You
 cannot use SCREENMAN:GetTopScreen() during them.
 
@@ -86,6 +153,53 @@ So to size a quad to go behind the notefield, you just use param.width as the
 width of the quad, and pick a height.  
 To size a set of quads, each one in a different column, walk through the
 columns table.
+
+## NewFieldColumn layer messages
+
+The various layers in the column, from both the noteskin and the theme, are
+sent various messages to keep their state updated.
+
+### WidthSetCommand
+WidthSet is sent immediately after the OnCommand is executed.  The elements
+in the param table are:
+* ```column``` The NewFieldColumn the layer is in.
+* ```column_id``` The id of the column.
+* ```width``` The width of the column set by the noteskin.
+* ```padding``` The padding set by the noteskin.
+
+### ReverseChangedCommand
+ReverseChanged is sent when the reverse scale goes from negative to positive,
+or from positive to negative.  It is not sent every frame.
+Param table elements:
+* ```sign``` -1 if reverse_scale is less than 0, 1 otherwise.
+
+### BeatUpdateCommand
+BeatUpdate occurs every frame.  Param table elements:
+* ```beat``` The current beat.
+* ```beat_distance``` Distance in beats to the next note in this column.
+* ```second_distance``` Distance in seconds to the next note in this column.
+* ```pressed``` True when the column goes from not pressed to pressed.
+* ```lifted``` True when the column goes from pressed to not pressed.
+
+### ColumnJudgmentCommand
+ColumnJudgment occurs when something is judged in the column.
+Param table elements:
+* ```bright``` True if the player's combo is greater than the
+BrightGhostComboThreshold metric.
+* ```tap_note_score``` If the judgment is for a tap note, this is the
+judgment.  This is nil for holds.
+* ```hold_note_score``` If the judgment is for a hold note, this is the
+judgment.  This is nil for taps.
+
+### HoldCommand
+Hold occurs every frame when there is an active hold passing over the
+receptors.  Param table elements:
+* ```type``` The TapNoteSubType of the hold.
+* ```life``` The current life value for the hold.  0 is a dropped hold, 1 is
+a hold that is currently being held, in between is a hold that is going from
+held to dropped.
+* ```start``` True if this is the first frame the hold is active.
+* ```finished``` True if this is the frame after the hold ended.
 
 
 # Making a noteskin for the NewField

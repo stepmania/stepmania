@@ -112,7 +112,8 @@ return function(button_list, stepstype, skin_params)
 		local column_frame= Def.ActorFrame{
 			InitCommand= function(self)
 				self:rotationz(rots[button] or 0)
-                                self:zoom(0.625)
+				self:zoom(0.625)
+					:draworder(newfield_draw_order.explosion)
 			end,
 			Def.Sprite{
 				Texture= "explosion-" .. targets[button] .. ".png", InitCommand= function(self)

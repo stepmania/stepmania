@@ -399,6 +399,59 @@ Actor* ActorUtil::MakeActor( const std::string &sPath_, Actor *pParentActor )
 	}
 }
 
+void ActorUtil::MakeActorSet(std::string const& path, std::vector<Actor*>& ret)
+{
+	if(!DoesFileExist(path))
+	{
+		return;
+	}
+	if(GetFileType(path) != FT_Lua)
+	{
+		LuaHelpers::ReportScriptErrorFmt("Cannot use ActorUtil::MakeActorSet on non-lua file %s.", path.c_str());
+		return;
+	}
+	std::string script;
+	if(!GetFileContents(path, script))
+	{
+		return;
+	}
+	lua_State* L= LUA->Get();
+	std::string err;
+	if(!LuaHelpers::LoadScript(L, script, "@" + path, err))
+	{
+		LUA->Release(L);
+		err= fmt::sprintf("Lua runtime error: %s", err.c_str());
+		LuaHelpers::ReportScriptError(err);
+		return;
+	}
+	int set_index= 1;
+	if(!lua_istable(L, set_index))
+	{
+		lua_settop(L, 0);
+		LUA->Release(L);
+		return;
+	}
+	size_t set_len= lua_objlen(L, set_index);
+	ret.reserve(ret.size() + set_len);
+	for(size_t c= 0; c < set_len; ++c)
+	{
+		lua_rawgeti(L, set_index, c+1);
+		if(lua_istable(L, -1))
+		{
+			std::unique_ptr<XNode> node(XmlFileUtil::XNodeFromTable(L));
+			if(node.get() != nullptr)
+			{
+				Actor* act= ActorUtil::LoadFromNode(node.get(), nullptr);
+				if(act != nullptr)
+				{
+					ret.push_back(act);
+				}
+			}
+		}
+	}
+	LUA->Release(L);
+}
+
 std::string ActorUtil::GetSourcePath( const XNode *pNode )
 {
 	std::string sRet;

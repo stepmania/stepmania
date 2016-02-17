@@ -99,6 +99,12 @@ public:
 	virtual void RunCommands( const LuaReference& cmds, const LuaReference *pParamTable = nullptr );
 	void RunCommands( const apActorCommands& cmds, const LuaReference *pParamTable = nullptr ) { this->RunCommands( *cmds, pParamTable ); }	// convenience
 
+	virtual void ChildChangedDrawOrder(Actor* child);
+	// propagate_draw_order_change was made specifically for the frame wrappers
+	// that NewFieldColumn puts over its layers so it can apply mods to them.
+	// -Kyz
+	void propagate_draw_order_change(bool p) { m_propagate_draw_order_change= p; }
+
 protected:
 	void LoadChildrenFromNode( const XNode* pNode );
 
@@ -107,6 +113,7 @@ protected:
 	bool m_bPropagateCommands;
 	bool m_bDeleteChildren;
 	bool m_bDrawByZPosition;
+	bool m_propagate_draw_order_change;
 	LuaReference m_UpdateFunction;
 	LuaReference m_DrawFunction;
 

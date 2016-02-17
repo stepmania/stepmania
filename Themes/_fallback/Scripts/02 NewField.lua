@@ -30,6 +30,18 @@
 -- use_newfield_on_gameplay is simpler and will take care of them.  Only call
 -- these functions directly if you need to skip one or more of them.
 
+
+-- These draw order variables are actually hardcoded in NewField.cpp. They
+-- are copied here for convenience.  Do not change them. -Kyz
+newfield_draw_order= {
+	non_alphable_layer= -100,
+	non_board= 0,
+	receptor= 100,
+	hold= 200,
+	tap= 300,
+	explosion= 399, -- Odd to make it use explosion alpha and glow mods.
+}
+
 -- The read_bpm arg to set_speed_mod is optional.  If it is exists,
 -- the speed is treated as an m-mod.  The read bpm for a chart can be fetched
 -- with PlayerState:get_read_bpm() or calculated by the theme.

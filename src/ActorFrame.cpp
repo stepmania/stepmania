@@ -25,6 +25,7 @@ ActorFrame *ActorFrame::Copy() const { return new ActorFrame(*this); }
 
 ActorFrame::ActorFrame()
 {
+	m_propagate_draw_order_change= false;
 	m_bPropagateCommands = false;
 	m_bDeleteChildren = false;
 	m_bDrawByZPosition = false;
@@ -52,6 +53,7 @@ ActorFrame::ActorFrame( const ActorFrame &cpy ):
 	Actor( cpy )
 {
 #define CPY(x) this->x = cpy.x;
+	CPY(m_propagate_draw_order_change);
 	CPY( m_bPropagateCommands );
 	CPY( m_bDeleteChildren );
 	CPY( m_bDrawByZPosition );
@@ -303,6 +305,14 @@ void ActorFrame::EndDraw()
 		DISPLAY->CameraPopMatrix();
 	}
 	Actor::EndDraw();
+}
+
+void ActorFrame::ChildChangedDrawOrder(Actor* child)
+{
+	if(m_propagate_draw_order_change)
+	{
+		SetDrawOrder(child->GetDrawOrder());
+	}
 }
 
 // This exists solely as a helper for children table.

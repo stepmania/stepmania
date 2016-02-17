@@ -411,8 +411,7 @@ struct NewSkinData
 
 	// The layers are public so that the NewFieldColumns can go through and
 	// take ownership of the actors after loading.
-	std::vector<NewSkinLayer> m_layers_below_notes;
-	std::vector<NewSkinLayer> m_layers_above_notes;
+	std::vector<NewSkinLayer> m_layers;
 	std::vector<Rage::Color> m_player_colors;
 private:
 	std::vector<NewSkinColumn> m_columns;
@@ -462,8 +461,7 @@ private:
 	std::string m_fallback_skin_name;
 	std::string m_load_path;
 	std::string m_notes_loader;
-	std::vector<std::string> m_below_loaders;
-	std::vector<std::string> m_above_loaders;
+	std::vector<std::string> m_layer_loaders;
 	std::vector<Rage::Color> m_player_colors;
 	std::unordered_set<std::string> m_supported_buttons;
 	LuaReference m_skin_parameters;

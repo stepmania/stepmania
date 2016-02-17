@@ -806,8 +806,7 @@ NewSkinData::NewSkinData()
 
 void NewSkinData::swap(NewSkinData& other)
 {
-	m_layers_below_notes.swap(other.m_layers_below_notes);
-	m_layers_above_notes.swap(other.m_layers_above_notes);
+	m_layers.swap(other.m_layers);
 	m_player_colors.swap(other.m_player_colors);
 	m_columns.swap(other.m_columns);
 	m_skin_parameters.swap(other.m_skin_parameters);
@@ -871,8 +870,7 @@ void NewSkinLoader::swap(NewSkinLoader& other)
 	m_fallback_skin_name.swap(other.m_fallback_skin_name);
 	m_load_path.swap(other.m_load_path);
 	m_notes_loader.swap(other.m_notes_loader);
-	m_below_loaders.swap(other.m_below_loaders);
-	m_above_loaders.swap(other.m_above_loaders);
+	m_layer_loaders.swap(other.m_layer_loaders);
 	m_player_colors.swap(other.m_player_colors);
 	m_supported_buttons.swap(other.m_supported_buttons);
 	m_skin_parameters.swap(other.m_skin_parameters);
@@ -952,26 +950,15 @@ bool NewSkinLoader::load_from_lua(lua_State* L, int index, string const& name,
 		}
 	}
 	lua_pop(L, 1);
-	vector<string> temp_below_loaders;
-	lua_getfield(L, index, "layers_below_notes");
+	vector<string> temp_layer_loaders;
+	lua_getfield(L, index, "layers");
 	if(lua_istable(L, -1))
 	{
 		string sub_sanity;
-		if(!load_string_table(L, lua_gettop(L), max_layers, temp_below_loaders,
-				"layers_below_notes", sub_sanity))
+		if(!load_string_table(L, lua_gettop(L), max_layers, temp_layer_loaders,
+				"layers", sub_sanity))
 		{
-			RETURN_NOT_SANE("Error in layers_below_notes table: " + sub_sanity);
-		}
-	}
-	vector<string> temp_above_loaders;
-	lua_getfield(L, index, "layers_above_notes");
-	if(lua_istable(L, -1))
-	{
-		string sub_sanity;
-		if(!load_string_table(L, lua_gettop(L), max_layers, temp_above_loaders,
-				"layers_above_notes", sub_sanity))
-		{
-			RETURN_NOT_SANE("Error in layers_above_notes table: " + sub_sanity);
+			RETURN_NOT_SANE("Error in layers table: " + sub_sanity);
 		}
 	}
 	lua_getfield(L, index, "notes");
@@ -1015,8 +1002,7 @@ bool NewSkinLoader::load_from_lua(lua_State* L, int index, string const& name,
 #undef RETURN_NOT_SANE
 	m_skin_name= name;
 	m_load_path= path;
-	m_below_loaders.swap(temp_below_loaders);
-	m_above_loaders.swap(temp_above_loaders);
+	m_layer_loaders.swap(temp_layer_loaders);
 	m_player_colors.swap(temp_player_colors);
 	m_supported_buttons.swap(temp_supported_buttons);
 	return true;
@@ -1221,15 +1207,10 @@ bool NewSkinLoader::load_into_data(StepsType stype,
 	{
 		RETURN_NOT_SANE("Invalid data from loader: " + sub_sanity);
 	}
-	if(!load_layer_set_into_data(L, skin_params, button_list_index, stype_index, button_list.size(), m_below_loaders,
-			dest.m_layers_below_notes, sub_sanity))
+	if(!load_layer_set_into_data(L, skin_params, button_list_index, stype_index, button_list.size(), m_layer_loaders,
+			dest.m_layers, sub_sanity))
 	{
-		RETURN_NOT_SANE("Error running layer below loaders: " + sub_sanity);
-	}
-	if(!load_layer_set_into_data(L, skin_params, button_list_index, stype_index, button_list.size(), m_above_loaders,
-			dest.m_layers_above_notes, sub_sanity))
-	{
-		RETURN_NOT_SANE("Error running layer above loaders: " + sub_sanity);
+		RETURN_NOT_SANE("Error running layer loaders: " + sub_sanity);
 	}
 #undef RETURN_NOT_SANE
 	lua_settop(L, original_top);

@@ -14,24 +14,13 @@
 class NoteData;
 class Steps;
 class TimingData;
+struct NewField;
 
 struct NewFieldColumn : ActorFrame
 {
 	NewFieldColumn();
 	~NewFieldColumn();
 
-	struct column_head
-	{
-		// The actors have to be wrapped inside of frames so that mod transforms
-		// can be applied without stomping the rotation the noteskin supplies.
-		ActorFrame frame;
-		AutoActor actor;
-		void load(Actor* act)
-		{
-			actor.Load(act);
-			frame.AddChild(actor);
-		}
-	};
 	struct render_note
 	{
 		render_note(NewFieldColumn* column, NoteData::TrackMap::const_iterator
@@ -40,11 +29,10 @@ struct NewFieldColumn : ActorFrame
 		double tail_y_offset;
 		NoteData::TrackMap::const_iterator note_iter;
 	};
-	void add_heads_from_layers(size_t column, std::vector<column_head>& heads,
-		std::vector<NewSkinLayer>& layers);
+	void add_children_from_layers(size_t column, std::vector<NewSkinLayer>& layers);
 	void set_note_data(size_t column, const NoteData* note_data,
 		const TimingData* timing_data);
-	void set_column_info(size_t column, NewSkinColumn* newskin,
+	void set_column_info(NewField* field, size_t column, NewSkinColumn* newskin,
 		NewSkinData& skin_data, std::vector<Rage::Color>* player_colors,
 		const NoteData* note_data, const TimingData* timing_data, double x);
 
@@ -111,16 +99,8 @@ struct NewFieldColumn : ActorFrame
 	void apply_note_mods_to_actor(Actor* act, double beat, double second,
 		double y_offset, bool use_alpha, bool use_glow);
 
-	enum render_step
-	{
-		RENDER_BELOW_NOTES,
-		RENDER_HOLDS,
-		RENDER_TAPS,
-		RENDER_CHILDREN,
-		RENDER_ABOVE_NOTES
-	};
 	void build_render_lists();
-	void draw_things_in_step(render_step step);
+	void draw_child(int child);
 
 	void pass_message_to_heads(Message& msg);
 	void did_tap_note(TapNoteScore tns, bool bright);
@@ -134,6 +114,10 @@ struct NewFieldColumn : ActorFrame
 	void update_upcoming(double beat, double second);
 	void update_active_hold(TapNote const& tap);
 	virtual void DrawPrimitives();
+
+	virtual void AddChild(Actor* act);
+	virtual void RemoveChild(Actor* act);
+	virtual void ChildChangedDrawOrder(Actor* child);
 
 	virtual void PushSelf(lua_State *L);
 	virtual NewFieldColumn* Copy() const;
@@ -207,11 +191,9 @@ private:
 	NotePlayerizeMode m_playerize_mode;
 	NewSkinColumn* m_newskin;
 	std::vector<Rage::Color>* m_player_colors;
+	NewField* m_field;
 
 	AutoActor m_beat_bars;
-
-	std::vector<column_head> m_heads_below_notes;
-	std::vector<column_head> m_heads_above_notes;
 
 	const NoteData* m_note_data;
 	const TimingData* m_timing_data;
@@ -220,13 +202,12 @@ private:
 	// rendered in different phases.  All hold bodies must be drawn first, then
 	// all taps, so the taps appear on top of the hold bodies and are not
 	// obscured.
-	void draw_heads_internal(std::vector<column_head>& heads, bool receptors);
 	void draw_holds_internal();
 	void draw_taps_internal();
 	NoteData::TrackMap::const_iterator first_note_visible_prev_frame;
 	std::vector<render_note> render_holds;
 	std::vector<render_note> render_taps;
-	render_step curr_render_step;
+	int curr_render_child;
 	// Calculating the effects of reverse and center for every note is costly.
 	// Only do it once per frame and store the result.
 	double reverse_shift;
@@ -234,6 +215,11 @@ private:
 	double reverse_scale_sign;
 	double first_y_offset_visible;
 	double last_y_offset_visible;
+	Rage::transform head_transform;
+	double receptor_alpha;
+	double receptor_glow;
+	double explosion_alpha;
+	double explosion_glow;
 	bool pressed;
 	bool was_pressed;
 };
@@ -261,6 +247,10 @@ struct NewField : ActorFrame
 
 	virtual void PushSelf(lua_State *L);
 	virtual NewField* Copy() const;
+
+	virtual void AddChild(Actor* act);
+	virtual void RemoveChild(Actor* act);
+	virtual void ChildChangedDrawOrder(Actor* child);
 
 	void push_columns_to_lua(lua_State* L);
 	double get_field_width() { return m_field_width; }
@@ -291,6 +281,10 @@ struct NewField : ActorFrame
 
 	ModManager m_mod_manager;
 	ModifiableTransform m_trans_mod;
+	ModifiableValue m_receptor_alpha;
+	ModifiableValue m_receptor_glow;
+	ModifiableValue m_explosion_alpha;
+	ModifiableValue m_explosion_glow;
 	ModifiableValue m_fov_mod;
 	ModifiableValue m_vanish_x_mod;
 	ModifiableValue m_vanish_y_mod;
@@ -302,7 +296,19 @@ struct NewField : ActorFrame
 	// field is displayed without a player actor.
 	FieldVanishType m_vanish_type;
 
+	struct field_draw_entry
+	{
+		int column;
+		int child;
+		int draw_order;
+	};
+	void add_draw_entry(int column, int child, int draw_order);
+	void remove_draw_entry(int column, int child);
+	void change_draw_entry(int column, int child, int new_draw_order);
+	void clear_column_draw_entries();
+
 private:
+	void draw_entry(field_draw_entry& entry);
 	void reload_columns(NewSkinLoader const* new_loader, LuaReference& new_params);
 	double m_curr_beat;
 	double m_curr_second;
@@ -318,8 +324,18 @@ private:
 	LuaReference m_skin_parameters;
 	std::vector<Rage::Color> m_player_colors;
 
+	vector<field_draw_entry> m_draw_entries;
+	size_t m_first_non_board_draw_entry;
+
+	// Evaluation results of the mods need to be stored because Draw is called
+	// twice: once for the board, once for everything else.  So the mods can't
+	// be evaluated in Draw.  They are evaluated in update_displayed_time. -Kyz
+	double evaluated_receptor_alpha;
+	double evaluated_receptor_glow;
+	double evaluated_explosion_alpha;
+	double evaluated_explosion_glow;
+
 	bool m_drawing_board;
-	AutoActor m_board;
 };
 
 #endif

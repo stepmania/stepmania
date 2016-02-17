@@ -2,9 +2,7 @@ return {
   -- the file to load the columns.
   notes = "notes.lua",
   -- the file to load the receptors
-  layers_below_notes = { "receptors.lua" },
-  -- the file to load the explosions
-  layers_above_notes = { "explosions.lua" },
+  layers = { "receptors.lua", "explosions.lua"},
   -- we do not support all of the buttons.
   supports_all_buttons = false,
   buttons = {"DownLeft", "UpLeft", "Center", "UpRight", "DownRight"},

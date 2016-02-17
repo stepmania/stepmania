@@ -7,6 +7,22 @@ StepMania 5.1 and StepMania 5.0 have separate changelogs so that devs working
 on the different branches don't have conflicts on the changelog file.
 ________________________________________________________________________________
 
+2016/02/16
+----------
+* [ActorUtil] Added ActorUtil::MakeActorSet for turning a table of actors
+  in a lua file into a vector of actors.  This should be used instead the
+  logic in SWME that loads an ActorFrame, then strips out its children for
+  the decorations layer.  The ActorFrame being stripped away in decorations
+  trips up every themer the first time they learn it, so MakeActorSet was
+  created so that problem doesn't exist in the NewField layer system.
+  [kyzentun]
+* [NewField] Removed NoteField board from NewField and replaced it with
+  layers system.  Columns also have layers. [kyzentun]
+* [NewSkin] Removed layers_above_notes and layers_below_notes fields and
+  replaced them with layers field.  Draw order for layers in the column must
+	be set in the noteskin now. [kyzentun]
+  
+
 2016/02/12
 ----------
 * [CustomSpeedMods] Any theme still using the deprecated CustomSpeedMods
@@ -20,7 +36,7 @@ ________________________________________________________________________________
   [kyzentun]
 * [NewField] Changed functions in Scripts/02 NewField.lua to be inside the
   NewField class.  Added more NewField functions, documented in
-	Docs/Themerdocs/NewField.md. [kyzentun]
+  Docs/Themerdocs/5.1_incompatibilities/NewField.md. [kyzentun]
 * [PlayerOptions] Changed PlayerOptions screen in default theme to use
   nesty options system to allow newskin parameter support. [kyzentun]
 * [PlayerState] Added get_read_bpm lua function. [kyzentun]

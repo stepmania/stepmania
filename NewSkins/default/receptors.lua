@@ -14,6 +14,7 @@ return function(button_list, stepstype, skin_parameters)
 		ret[i]= Def.Sprite{
 			Texture= "receptor.png", InitCommand= function(self)
 				self:rotationz(rots[button] or 0):effectclock("beat")
+					:draworder(newfield_draw_order.receptor)
 			end,
 			-- The BeatUpdate command happens every frame to update various things
 			-- that can change every frame.

@@ -746,6 +746,12 @@ it.
   This works almost like setting the vanish point on an ActorFrame.  Instead
   of setting the vanish point directly, this sets the vanish point relative
   to the center of the field.
+* receptor_alpha (ModifiableValue)  
+* receptor_glow (ModifiableValue)  
+* explosion_alpha (ModifiableValue)  
+* explosion_glow (ModifiableValue)  
+  receptor_alpha and receptor_glow affect layers with even draw order.
+  explosion_alpha and explosion_glow affect layers with odd draw order.
 
 ### Functions
 * get_columns()  

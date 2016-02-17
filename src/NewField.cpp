@@ -24,6 +24,13 @@ using std::unordered_set;
 using std::vector;
 
 static const double note_size= 64.0;
+static const int field_layer_column_index= -1;
+static const int holds_child_index= -1;
+static const int taps_child_index= -2;
+static const int non_alphable_layer_draw_order= -100;
+static const int non_board_draw_order= 0;
+static const int holds_draw_order= 200;
+static const int taps_draw_order= 300;
 
 REGISTER_ACTOR_CLASS(NewFieldColumn);
 
@@ -51,7 +58,8 @@ NewFieldColumn::NewFieldColumn()
 	 m_pixels_visible_after_beat(1024.0f),
 	 m_upcoming_time(2.0),
 	 m_playerize_mode(NPM_Off),
-	 m_newskin(nullptr), m_player_colors(nullptr), m_note_data(nullptr),
+	 m_newskin(nullptr), m_player_colors(nullptr), m_field(nullptr),
+	 m_note_data(nullptr),
 	 m_timing_data(nullptr),
 	 reverse_scale_sign(1.0),
 	 pressed(false)
@@ -59,19 +67,75 @@ NewFieldColumn::NewFieldColumn()
 	m_quantization_multiplier.m_value= 1.0;
 	double default_offset= 240 - note_size;
 	m_reverse_offset_pixels.m_value= default_offset;
+	DeleteChildrenWhenDone(true);
 }
 
 NewFieldColumn::~NewFieldColumn()
 {}
 
-void NewFieldColumn::add_heads_from_layers(size_t column,
-	vector<column_head>& heads, vector<NewSkinLayer>& layers)
+void NewFieldColumn::AddChild(Actor* act)
 {
-	size_t start_head_size= heads.size();
-	heads.resize(start_head_size + layers.size());
+	// The actors have to be wrapped inside of frames so that mod transforms
+	// can be applied without stomping the rotation the noteskin supplies.
+	ActorFrame* frame= new ActorFrame;
+	frame->DeleteChildrenWhenDone(true);
+	frame->AddChild(act);
+	frame->SetDrawOrder(act->GetDrawOrder());
+	ActorFrame::AddChild(frame);
+	frame->propagate_draw_order_change(true);
+	act->PlayCommand("On");
+	m_field->add_draw_entry(static_cast<int>(m_column), GetNumChildren()-1, act->GetDrawOrder());
+	if(act->HasCommand("WidthSet"))
+	{
+		Message width_msg("WidthSet");
+		lua_State* L= LUA->Get();
+		PushSelf(L);
+		width_msg.SetParamFromStack(L, "column");
+		LUA->Release(L);
+		width_msg.SetParam("column_id", m_column);
+		width_msg.SetParam("width", m_newskin->get_width());
+		width_msg.SetParam("padding", m_newskin->get_padding());
+		act->HandleMessage(width_msg);
+	}
+}
+
+void NewFieldColumn::RemoveChild(Actor* act)
+{
+	for(size_t i= 0; i < m_SubActors.size(); ++i)
+	{
+		if(act == m_SubActors[i])
+		{
+			m_field->remove_draw_entry(m_column, i);
+			break;
+		}
+	}
+	ActorFrame::RemoveChild(act);
+}
+
+void NewFieldColumn::ChildChangedDrawOrder(Actor* child)
+{
+	size_t index= 0;
+	for(; index < m_SubActors.size(); ++index)
+	{
+		if(m_SubActors[index] == child)
+		{
+			break;
+		}
+	}
+	if(index < m_SubActors.size())
+	{
+		m_field->change_draw_entry(static_cast<int>(m_column),
+			static_cast<int>(index), child->GetDrawOrder());
+	}
+	ActorFrame::ChildChangedDrawOrder(child);
+}
+
+void NewFieldColumn::add_children_from_layers(size_t column,
+	vector<NewSkinLayer>& layers)
+{
 	for(size_t i= 0; i < layers.size(); ++i)
 	{
-		heads[i+start_head_size].load(layers[i].m_actors[column]);
+		AddChild(layers[i].m_actors[column]);
 	}
 }
 
@@ -99,10 +163,12 @@ void NewFieldColumn::set_note_data(size_t column, const NoteData* note_data,
 	}
 }
 
-void NewFieldColumn::set_column_info(size_t column, NewSkinColumn* newskin,
+void NewFieldColumn::set_column_info(NewField* field, size_t column,
+	NewSkinColumn* newskin,
 	NewSkinData& skin_data, std::vector<Rage::Color>* player_colors,
 	const NoteData* note_data, const TimingData* timing_data, double x)
 {
+	m_field= field;
 	m_column= column;
 	m_newskin= newskin;
 	m_newskin->set_timing_source(&m_timing_source);
@@ -113,8 +179,13 @@ void NewFieldColumn::set_column_info(size_t column, NewSkinColumn* newskin,
 
 	m_mod_manager.column= column;
 
-	add_heads_from_layers(column, m_heads_below_notes, skin_data.m_layers_below_notes);
-	add_heads_from_layers(column, m_heads_above_notes, skin_data.m_layers_above_notes);
+	std::vector<Actor*> layers;
+	ActorUtil::MakeActorSet(THEME->GetPathG("NoteColumn", "layers", true), layers);
+	for(auto&& act : layers)
+	{
+		AddChild(act);
+	}
+	add_children_from_layers(column, skin_data.m_layers);
 }
 
 double NewFieldColumn::get_beat_from_second(double second)
@@ -271,14 +342,6 @@ void NewFieldColumn::apply_note_mods_to_actor(Actor* act, double beat,
 void NewFieldColumn::UpdateInternal(float delta)
 {
 	calc_reverse_shift();
-	for(auto&& head : m_heads_below_notes)
-	{
-		head.frame.Update(delta);
-	}
-	for(auto&& head : m_heads_above_notes)
-	{
-		head.frame.Update(delta);
-	}
 	ActorFrame::UpdateInternal(delta);
 }
 
@@ -868,6 +931,16 @@ void NewFieldColumn::build_render_lists()
 	Rage::transform trans;
 	m_column_mod.evaluate(input, trans);
 	set_transform(trans);
+	calc_transform(input, head_transform);
+	if(m_add_y_offset_to_position)
+	{
+		head_transform.pos.y+= apply_reverse_shift(head_y_offset());
+	}
+
+	receptor_alpha= m_receptor_alpha.evaluate(input);
+	receptor_glow= m_receptor_glow.evaluate(input);
+	explosion_alpha= m_explosion_alpha.evaluate(input);
+	explosion_glow= m_explosion_glow.evaluate(input);
 
 	// Clearing and rebuilding the list of taps to render every frame is
 	// unavoidable because the notes move every frame, which changes the y
@@ -1020,58 +1093,21 @@ void NewFieldColumn::build_render_lists()
 	}
 }
 
-void NewFieldColumn::draw_things_in_step(render_step step)
+void NewFieldColumn::draw_child(int child)
 {
 #define RETURN_IF_EMPTY(empty_check) if(empty_check) { return; } break;
-	switch(step)
+	switch(child)
 	{
-		case RENDER_BELOW_NOTES:
-			RETURN_IF_EMPTY(m_heads_below_notes.empty());
-		case RENDER_HOLDS:
+		case holds_child_index:
 			RETURN_IF_EMPTY(render_holds.empty());
-		case RENDER_TAPS:
+		case taps_child_index:
 			RETURN_IF_EMPTY(render_taps.empty());
-		case RENDER_CHILDREN:
-			RETURN_IF_EMPTY(GetChildrenEmpty());
-		case RENDER_ABOVE_NOTES:
-			RETURN_IF_EMPTY(m_heads_above_notes.empty());
 		default:
-			break;
+			RETURN_IF_EMPTY(child < 0 || static_cast<size_t>(child) >= m_SubActors.size());
 	}
 #undef RETURN_IF_EMPTY
-	curr_render_step= step;
+	curr_render_child= child;
 	Draw();
-}
-
-void NewFieldColumn::draw_heads_internal(vector<column_head>& heads, bool receptors)
-{
-	double const y_offset= apply_reverse_shift(head_y_offset());
-	mod_val_inputs input(m_curr_beat, m_curr_second, m_curr_beat, m_curr_second);
-	double alpha= 1.0;
-	double glow= 0.0;
-	if(receptors)
-	{
-		alpha= m_receptor_alpha.evaluate(input);
-		glow= m_receptor_glow.evaluate(input);
-	}
-	else
-	{
-		alpha= m_explosion_alpha.evaluate(input);
-		glow= m_explosion_glow.evaluate(input);
-	}
-	Rage::transform trans;
-	calc_transform(input, trans);
-	if(m_add_y_offset_to_position)
-	{
-		trans.pos.y+= y_offset;
-	}
-	for(auto&& head : heads)
-	{
-		head.frame.set_transform(trans);
-		head.frame.SetDiffuseAlpha(alpha);
-		head.frame.SetGlowAlpha(glow);
-		head.frame.Draw();
-	}
 }
 
 void NewFieldColumn::draw_holds_internal()
@@ -1260,13 +1296,7 @@ static Message create_did_message(bool bright)
 
 void NewFieldColumn::pass_message_to_heads(Message& msg)
 {
-	for(auto&& headset : {&m_heads_below_notes, &m_heads_above_notes})
-	{
-		for(auto&& head : *headset)
-		{
-			head.actor->HandleMessage(msg);
-		}
-	}
+	HandleMessage(msg);
 }
 
 void NewFieldColumn::did_tap_note_internal(TapNoteScore tns, bool bright)
@@ -1320,24 +1350,30 @@ void NewFieldColumn::set_pressed(bool on)
 
 void NewFieldColumn::DrawPrimitives()
 {
-	switch(curr_render_step)
+	switch(curr_render_child)
 	{
-		case RENDER_BELOW_NOTES:
-			draw_heads_internal(m_heads_below_notes, true);
-			break;
-		case RENDER_HOLDS:
+		case holds_child_index:
 			draw_holds_internal();
 			break;
-		case RENDER_TAPS:
+		case taps_child_index:
 			draw_taps_internal();
 			break;
-		case RENDER_CHILDREN:
-			ActorFrame::DrawPrimitives();
-			break;
-		case RENDER_ABOVE_NOTES:
-			draw_heads_internal(m_heads_above_notes, false);
-			break;
 		default:
+			if(curr_render_child >= 0 && static_cast<size_t>(curr_render_child) < m_SubActors.size())
+			{
+				if(m_SubActors[curr_render_child]->GetDrawOrder() % 2 == 0)
+				{
+					m_SubActors[curr_render_child]->SetDiffuseAlpha(receptor_alpha);
+					m_SubActors[curr_render_child]->SetGlowAlpha(receptor_glow);
+				}
+				else
+				{
+					m_SubActors[curr_render_child]->SetDiffuseAlpha(explosion_alpha);
+					m_SubActors[curr_render_child]->SetGlowAlpha(explosion_glow);
+				}
+				m_SubActors[curr_render_child]->set_transform(head_transform);
+				m_SubActors[curr_render_child]->Draw();
+			}
 			break;
 	}
 }
@@ -1365,16 +1401,24 @@ XToString(FieldVanishType);
 LuaXType(FieldVanishType);
 
 NewField::NewField()
-	:m_trans_mod(&m_mod_manager), m_fov_mod(&m_mod_manager, 45.0),
+	:m_trans_mod(&m_mod_manager),
+	 m_receptor_alpha(&m_mod_manager, 1.0), m_receptor_glow(&m_mod_manager, 0.0),
+	 m_explosion_alpha(&m_mod_manager, 1.0), m_explosion_glow(&m_mod_manager, 0.0),
+	 m_fov_mod(&m_mod_manager, 45.0),
 	 m_vanish_x_mod(&m_mod_manager, 0.0), m_vanish_y_mod(&m_mod_manager, 0.0),
 	 m_vanish_type(FVT_RelativeToParent),
 	 m_own_note_data(false), m_note_data(nullptr), m_timing_data(nullptr),
 	 m_steps_type(StepsType_Invalid), m_drawing_board(false)
 {
+	m_first_non_board_draw_entry= 0;
+	DeleteChildrenWhenDone(true);
 	set_skin("default", m_skin_parameters);
-	m_board.Load(THEME->GetPathG("NoteField", "board"));
-	m_board->SetName("Board");
-	m_board->PlayCommand("On");
+	std::vector<Actor*> layers;
+	ActorUtil::MakeActorSet(THEME->GetPathG("NoteField", "layers", true), layers);
+	for(auto&& act : layers)
+	{
+		AddChild(act);
+	}
 }
 
 NewField::~NewField()
@@ -1385,13 +1429,49 @@ NewField::~NewField()
 	}
 }
 
+void NewField::AddChild(Actor* act)
+{
+	ActorFrame::AddChild(act);
+	add_draw_entry(field_layer_column_index, GetNumChildren()-1, act->GetDrawOrder());
+}
+
+void NewField::RemoveChild(Actor* act)
+{
+	for(size_t i= 0; i < m_SubActors.size(); ++i)
+	{
+		if(act == m_SubActors[i])
+		{
+			remove_draw_entry(field_layer_column_index, i);
+			break;
+		}
+	}
+	ActorFrame::RemoveChild(act);
+}
+
+void NewField::ChildChangedDrawOrder(Actor* child)
+{
+	size_t index= 0;
+	for(; index < m_SubActors.size(); ++index)
+	{
+		if(m_SubActors[index] == child)
+		{
+			break;
+		}
+	}
+	if(index < m_SubActors.size())
+	{
+		change_draw_entry(field_layer_column_index, static_cast<int>(index),
+			child->GetDrawOrder());
+	}
+	ActorFrame::ChildChangedDrawOrder(child);
+}
+
 void NewField::UpdateInternal(float delta)
 {
 	for(auto&& col : m_columns)
 	{
 		col.Update(delta);
 	}
-	m_board->Update(delta);
 	ActorFrame::UpdateInternal(delta);
 }
 
@@ -1402,27 +1482,6 @@ bool NewField::EarlyAbortDraw() const
 
 void NewField::PreDraw()
 {
-	mod_val_inputs input(m_curr_beat, m_curr_second);
-	SetFOV(m_fov_mod.evaluate(input));
-	double vanish_x= m_vanish_x_mod.evaluate(input);
-	double vanish_y= m_vanish_y_mod.evaluate(input);
-	Actor* parent= GetParent();
-	switch(m_vanish_type)
-	{
-		case FVT_RelativeToParent:
-			vanish_x+= parent->GetX();
-			vanish_y+= parent->GetY();
-		case FVT_RelativeToSelf:
-			vanish_x+= GetX();
-			vanish_y+= GetY();
-			break;
-		default:
-			break;
-	}
-	SetVanishPoint(vanish_x, vanish_y);
-	Rage::transform trans;
-	m_trans_mod.evaluate(input, trans);
-	set_transform(trans);
 	ActorFrame::PreDraw();
 }
 
@@ -1437,10 +1496,15 @@ void NewField::DrawPrimitives()
 {
 	if(m_drawing_board)
 	{
-		m_board->Draw();
+		m_first_non_board_draw_entry= 0;
+		while(m_first_non_board_draw_entry < m_draw_entries.size() &&
+			m_draw_entries[m_first_non_board_draw_entry].draw_order < non_board_draw_order)
+		{
+			draw_entry(m_draw_entries[m_first_non_board_draw_entry]);
+			++m_first_non_board_draw_entry;
+		}
 		return;
 	}
-	vector<Rage::transform> column_trans(m_columns.size());
 	for(auto&& col : m_columns)
 	{
 		col.build_render_lists();
@@ -1450,16 +1514,11 @@ void NewField::DrawPrimitives()
 	// another column.  For example, things below notes (like receptors) cannot
 	// go over notes in another column.  Holds are separated from taps for the
 	// same reason.
-	for(auto step : {NewFieldColumn::RENDER_BELOW_NOTES,
-				NewFieldColumn::RENDER_HOLDS, NewFieldColumn::RENDER_TAPS,
-				NewFieldColumn::RENDER_CHILDREN, NewFieldColumn::RENDER_ABOVE_NOTES})
+	for(size_t next_entry= m_first_non_board_draw_entry;
+			next_entry < m_draw_entries.size(); ++next_entry)
 	{
-		for(auto&& col : m_columns)
-		{
-			col.draw_things_in_step(step);
-		}
+		draw_entry(m_draw_entries[next_entry]);
 	}
-	ActorFrame::DrawPrimitives();
 }
 
 void NewField::push_columns_to_lua(lua_State* L)
@@ -1549,6 +1608,135 @@ void NewField::set_note_data(NoteData* note_data, TimingData* timing, StepsType 
 	}
 }
 
+void NewField::add_draw_entry(int column, int child, int draw_order)
+{
+	auto insert_pos= m_draw_entries.begin();
+	for(; insert_pos != m_draw_entries.end(); ++insert_pos)
+	{
+		if(insert_pos->draw_order > draw_order)
+		{
+			break;
+		}
+	}
+	m_draw_entries.insert(insert_pos, {column, child, draw_order});
+}
+
+void NewField::remove_draw_entry(int column, int child)
+{
+	for(auto entry= m_draw_entries.begin(); entry != m_draw_entries.end(); ++entry)
+	{
+		if(entry->column == column && entry->child == child)
+		{
+			m_draw_entries.erase(entry);
+			return;
+		}
+	}
+}
+
+void NewField::change_draw_entry(int column, int child, int new_draw_order)
+{
+	size_t found_index= 0;
+	for(; found_index < m_draw_entries.size(); ++found_index)
+	{
+		if(m_draw_entries[found_index].column == column &&
+			m_draw_entries[found_index].child == child)
+		{
+			break;
+		}
+	}
+	if(found_index >= m_draw_entries.size())
+	{
+		return;
+	}
+	m_draw_entries[found_index].draw_order= new_draw_order;
+	if(new_draw_order > m_draw_entries[found_index].draw_order)
+	{
+		size_t next_index= found_index + 1;
+		while(next_index < m_draw_entries.size() &&
+			m_draw_entries[next_index].draw_order < new_draw_order)
+		{
+			std::swap(m_draw_entries[next_index], m_draw_entries[found_index]);
+			++found_index;
+			++next_index;
+		}
+		return;
+	}
+	else
+	{
+		if(found_index == 0)
+		{
+			return;
+		}
+		size_t next_index= found_index - 1;
+		while(m_draw_entries[next_index].draw_order > new_draw_order)
+		{
+			std::swap(m_draw_entries[next_index], m_draw_entries[found_index]);
+			if(next_index == 0)
+			{
+				return;
+			}
+			--found_index;
+			--next_index;
+		}
+		return;
+	}
+}
+
+void NewField::clear_column_draw_entries()
+{
+	if(m_draw_entries.empty())
+	{
+		return;
+	}
+	auto write_pos= m_draw_entries.begin();
+	auto read_pos= m_draw_entries.begin();
+	while(read_pos != m_draw_entries.end())
+	{
+		if(read_pos->column < 0)
+		{
+			if(read_pos != write_pos)
+			{
+				(*write_pos)= (*read_pos);
+			}
+			++write_pos;
+		}
+		++read_pos;
+	}
+	m_draw_entries.erase(write_pos, m_draw_entries.end());
+}
+
+void NewField::draw_entry(field_draw_entry& entry)
+{
+	if(entry.column == field_layer_column_index)
+	{
+		if(entry.child > 0 && static_cast<size_t>(entry.child) < m_SubActors.size())
+		{
+			int draw_order= m_SubActors[entry.child]->GetDrawOrder();
+			if(draw_order > non_alphable_layer_draw_order)
+			{
+				if(draw_order % 2 == 0)
+				{
+					m_SubActors[entry.child]->SetDiffuseAlpha(evaluated_receptor_alpha);
+					m_SubActors[entry.child]->SetGlowAlpha(evaluated_receptor_glow);
+				}
+				else
+				{
+					m_SubActors[entry.child]->SetDiffuseAlpha(evaluated_explosion_alpha);
+					m_SubActors[entry.child]->SetGlowAlpha(evaluated_explosion_glow);
+				}
+			}
+			m_SubActors[entry.child]->Draw();
+		}
+	}
+	else
+	{
+		if(entry.column >= 0 && static_cast<size_t>(entry.column) < m_columns.size())
+		{
+			m_columns[entry.column].draw_child(entry.child);
+		}
+	}
+}
+
 void NewField::reload_columns(NewSkinLoader const* new_loader, LuaReference& new_params)
 {
 	NewSkinLoader new_skin_walker= *new_loader;
@@ -1596,6 +1784,7 @@ void NewField::reload_columns(NewSkinLoader const* new_loader, LuaReference& new
 	// board can fetch the columns. (intentionally duplicated comment)
 	LUA->Release(L);
 
+	clear_column_draw_entries();
 	double curr_x= (m_field_width * -.5);
 	m_columns.clear();
 	m_columns.resize(m_note_data->GetNumTracks());
@@ -1610,20 +1799,22 @@ void NewField::reload_columns(NewSkinLoader const* new_loader, LuaReference& new
 		// allows columns to have different widths.
 		double halfw= (col->get_width() + col->get_padding()) * .5;
 		curr_x+= halfw;
-		m_columns[i].set_column_info(i, col, m_newskin, &m_player_colors,
+		m_columns[i].set_column_info(this, i, col, m_newskin, &m_player_colors,
 			m_note_data, m_timing_data, curr_x);
 		curr_x+= halfw;
+		add_draw_entry(static_cast<int>(i), holds_child_index, holds_draw_order);
+		add_draw_entry(static_cast<int>(i), taps_child_index, taps_draw_order);
 	}
 	// Handle the width message after the columns have been created so that the
 	// board can fetch the columns.
-	m_board->HandleMessage(width_msg);
+	HandleMessage(width_msg);
 }
 
 void NewField::set_player_number(PlayerNumber pn)
 {
 	Message msg("PlayerStateSet");
 	msg.SetParam("PlayerNumber", pn);
-	m_board->HandleMessage(msg);
+	HandleMessage(msg);
 }
 
 void NewField::update_displayed_time(double beat, double second)
@@ -1635,6 +1826,33 @@ void NewField::update_displayed_time(double beat, double second)
 	{
 		col.update_displayed_time(beat, second);
 	}
+	// Evaluate mods only when the time changes to minimize the number of
+	// times mods are evaluated. -Kyz
+	mod_val_inputs input(m_curr_beat, m_curr_second);
+	SetFOV(m_fov_mod.evaluate(input));
+	double vanish_x= m_vanish_x_mod.evaluate(input);
+	double vanish_y= m_vanish_y_mod.evaluate(input);
+	Actor* parent= GetParent();
+	switch(m_vanish_type)
+	{
+		case FVT_RelativeToParent:
+			vanish_x+= parent->GetX();
+			vanish_y+= parent->GetY();
+		case FVT_RelativeToSelf:
+			vanish_x+= GetX();
+			vanish_y+= GetY();
+			break;
+		default:
+			break;
+	}
+	SetVanishPoint(vanish_x, vanish_y);
+	Rage::transform trans;
+	m_trans_mod.evaluate(input, trans);
+	set_transform(trans);
+	evaluated_receptor_alpha= m_receptor_alpha.evaluate(input);
+	evaluated_receptor_glow= m_receptor_glow.evaluate(input);
+	evaluated_explosion_alpha= m_explosion_alpha.evaluate(input);
+	evaluated_explosion_glow= m_explosion_glow.evaluate(input);
 }
 
 double NewField::get_beat_from_second(double second)
@@ -1946,6 +2164,10 @@ struct LunaNewField : Luna<NewField>
 		COMMON_RETURN_SELF;
 	}
 	GET_TRANS(trans);
+	GET_MEMBER(receptor_alpha);
+	GET_MEMBER(receptor_glow);
+	GET_MEMBER(explosion_alpha);
+	GET_MEMBER(explosion_glow);
 	GET_MEMBER(fov_mod);
 	GET_MEMBER(vanish_x_mod);
 	GET_MEMBER(vanish_y_mod);
@@ -1971,6 +2193,10 @@ struct LunaNewField : Luna<NewField>
 		ADD_GET_SET_METHODS(curr_beat);
 		ADD_GET_SET_METHODS(curr_second);
 		ADD_TRANS(trans);
+		ADD_METHOD(get_receptor_alpha);
+		ADD_METHOD(get_receptor_glow);
+		ADD_METHOD(get_explosion_alpha);
+		ADD_METHOD(get_explosion_glow);
 		ADD_METHOD(get_fov_mod);
 		ADD_METHOD(get_vanish_x_mod);
 		ADD_METHOD(get_vanish_y_mod);
