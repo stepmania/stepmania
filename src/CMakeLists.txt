@@ -331,6 +331,7 @@ list(APPEND SMDATA_LINK_LIB
   "glew"
   "jpeg"
 )
+include(../extern/CMakeProject-mmmagic.cmake)
 
 if (HAS_MP3)
   list(FIND SMDATA_LINK_LIB "jsoncpp" JSON_INDEX)

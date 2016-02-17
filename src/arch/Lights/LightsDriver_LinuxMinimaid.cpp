@@ -1,4 +1,4 @@
-// LightsDriver_Win32Minimaid - driver for lights on the Minimaid with libmmmagic
+// LightsDriver_LinuxMinimaid - driver for lights on the Minimaid with libmmmagic
 /* To use, StepMania must be run with root permissions, or udev rule for the
  * device must be made something like this (but it's not quite right):
  * echo SUBSYSTEM==\"usb\", ATTR{idVendor}==\"beef\", ATTR{idProduct}==\"5730\", MODE=\"0666\" > /etc/udev/rules.d/50-minimaid
@@ -6,11 +6,14 @@
 
 #include "global.h"
 #include "LightsDriver_LinuxMinimaid.h"
+#include "../../../extern/libmmmagic/mmmagic.h"
 
 REGISTER_LIGHTS_DRIVER_CLASS( LinuxMinimaid );
 
 LightsDriver_LinuxMinimaid::LightsDriver_LinuxMinimaid()
 {
+	// libmmmagic is actually statically linked in, so there's no wrapper
+	// initializing to do. -Kyz
 	_mmmagic_loaded= true;
 	mm_connect_minimaid();
 	mm_setKB(true);
@@ -18,7 +21,8 @@ LightsDriver_LinuxMinimaid::LightsDriver_LinuxMinimaid()
 
 LightsDriver_LinuxMinimaid::~LightsDriver_LinuxMinimaid()
 {
-	
+	// libmmmagic is actually statically linked in, so there's no wrapper
+	// destruction to do. -Kyz
 }
 
 void LightsDriver_LinuxMinimaid::Set(LightsState const* ls)
