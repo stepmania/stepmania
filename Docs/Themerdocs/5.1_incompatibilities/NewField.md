@@ -67,8 +67,8 @@ is drawn before everything except the song background on ScreenGameplay.
 This means they will be under things that the notes go over.
 
 Hold bodies have draw order 200.  Taps have draw order 300.
-NewSkin.receptor_draw_order is 100, and NewSkin.explosion_draw_order is 399,
-so newskins can have a conventional draw order for each.
+There is a table named newfield_draw_order with entries for receptors and
+explosions so newskins can have a conventional draw order for each.
 
 The judgment and combo and anything else that needs to be at a fixed position
 in the field should be in a layer file, either in NoteField layers, or
@@ -83,35 +83,33 @@ would put it above hold bodies, but underneath taps.
 
 #### Draw Order and alpha/glow mods
 
-NewFieldColumn has mods for controlling the alpha and glow of receptors and
-explosions.  Any layer in a column with an even draw order is treated as a
-receptor.  Any layer in a column with an odd draw order is treated as an
-explosion.  If the draw order integer is neither even nor odd, it will not
-use either pair of mods.
+NewField and NewFieldColumn have mods for controlling the alpha and glow of
+receptors, explosions, and notes.  To decide which mods to apply to a layer,
+draw_order modulus 4 is calculated.  If the result is 0, receptor mods are
+used.  If the result is 1 or -1, explosion mods are used.  If the result is
+2 or -2, note mods are used.  Otherwise, the alpha and glow of the layer are
+unaffected by mods.
+
+(if draw_order is negative, then the result is negative, which is why cases
+exist for negative results.)
 
 This allows a judgment hiding mod to also hide tap explosions that reveal the
-judgment, if the noteskin author gives everything that shows judgment an odd
-draw order.
-
-NewField also has receptor and explosion alpha and glow mods.  The same even
-and odd draw order rules also apply to layers in the field.  Additionally,
-any layer with a draw order of -100 or less cannot have its alpha or glow
-changed by mods.
-
-The extra rule allows board elements that are affected by mods, and board
-elements that are not.
+judgment, if the noteskin author gives everything that shows judgment the
+right draw order.  There can also be layers in the board section that are
+affected by mods (such as column flashes), and layers that aren't (like a
+screen filter).
 
 #### Draw Order Variable List
 
 02 NewField.lua defines these variables to make life convenient for themers.
 ```
 newfield_draw_order= {
-	non_alphable_layer= -100,
+	board= -99, -- -99 % 4 is -3, which makes it unaffected by mods.
 	non_board= 0,
-	receptor= 100,
+	receptor= 100, -- 100 % 4 is 0, which makes it use receptor alpha/glow.
 	hold= 200,
 	tap= 300,
-	explosion= 399, -- Odd to make it use explosion alpha and glow mods.
+	explosion= 401, -- 401 % 4 is 1, which makes it use explosion alpha/glow.
 }
 ```
 

@@ -27,7 +27,7 @@ static const double note_size= 64.0;
 static const int field_layer_column_index= -1;
 static const int holds_child_index= -1;
 static const int taps_child_index= -2;
-static const int non_alphable_layer_draw_order= -100;
+static const int draw_order_types= 4;
 static const int non_board_draw_order= 0;
 static const int holds_draw_order= 200;
 static const int taps_draw_order= 300;
@@ -1361,15 +1361,29 @@ void NewFieldColumn::DrawPrimitives()
 		default:
 			if(curr_render_child >= 0 && static_cast<size_t>(curr_render_child) < m_SubActors.size())
 			{
-				if(m_SubActors[curr_render_child]->GetDrawOrder() % 2 == 0)
+				switch(m_SubActors[curr_render_child]->GetDrawOrder() % draw_order_types)
 				{
-					m_SubActors[curr_render_child]->SetDiffuseAlpha(receptor_alpha);
-					m_SubActors[curr_render_child]->SetGlowAlpha(receptor_glow);
-				}
-				else
-				{
-					m_SubActors[curr_render_child]->SetDiffuseAlpha(explosion_alpha);
-					m_SubActors[curr_render_child]->SetGlowAlpha(explosion_glow);
+					case 0:
+						m_SubActors[curr_render_child]->SetDiffuseAlpha(receptor_alpha);
+						m_SubActors[curr_render_child]->SetGlowAlpha(receptor_glow);
+						break;
+					case 1:
+					case -1:
+						m_SubActors[curr_render_child]->SetDiffuseAlpha(explosion_alpha);
+						m_SubActors[curr_render_child]->SetGlowAlpha(explosion_glow);
+						break;
+					case 2:
+					case -2:
+						{
+							mod_val_inputs input(m_curr_beat, m_curr_second);
+							double alpha= m_note_alpha.evaluate(input);
+							double glow= m_note_glow.evaluate(input);
+							m_SubActors[curr_render_child]->SetDiffuseAlpha(alpha);
+							m_SubActors[curr_render_child]->SetGlowAlpha(glow);
+						}
+						break;
+					default:
+						break;
 				}
 				m_SubActors[curr_render_child]->set_transform(head_transform);
 				m_SubActors[curr_render_child]->Draw();
@@ -1431,7 +1445,14 @@ NewField::~NewField()
 
 void NewField::AddChild(Actor* act)
 {
-	ActorFrame::AddChild(act);
+	// The actors have to be wrapped inside of frames so that mod alpha/glow
+	// can be applied without stomping what the layer actor does.
+	ActorFrame* frame= new ActorFrame;
+	frame->DeleteChildrenWhenDone(true);
+	frame->AddChild(act);
+	frame->SetDrawOrder(act->GetDrawOrder());
+	ActorFrame::AddChild(frame);
+	frame->propagate_draw_order_change(true);
 	add_draw_entry(field_layer_column_index, GetNumChildren()-1, act->GetDrawOrder());
 }
 
@@ -1711,19 +1732,19 @@ void NewField::draw_entry(field_draw_entry& entry)
 	{
 		if(entry.child > 0 && static_cast<size_t>(entry.child) < m_SubActors.size())
 		{
-			int draw_order= m_SubActors[entry.child]->GetDrawOrder();
-			if(draw_order > non_alphable_layer_draw_order)
+			switch(m_SubActors[entry.child]->GetDrawOrder() % draw_order_types)
 			{
-				if(draw_order % 2 == 0)
-				{
+				case 0:
 					m_SubActors[entry.child]->SetDiffuseAlpha(evaluated_receptor_alpha);
 					m_SubActors[entry.child]->SetGlowAlpha(evaluated_receptor_glow);
-				}
-				else
-				{
+					break;
+				case 1:
+				case -1:
 					m_SubActors[entry.child]->SetDiffuseAlpha(evaluated_explosion_alpha);
 					m_SubActors[entry.child]->SetGlowAlpha(evaluated_explosion_glow);
-				}
+					break;
+				default:
+					break;
 			}
 			m_SubActors[entry.child]->Draw();
 		}
