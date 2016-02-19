@@ -417,14 +417,15 @@ void ActorUtil::MakeActorSet(std::string const& path, std::vector<Actor*>& ret)
 	}
 	lua_State* L= LUA->Get();
 	std::string err;
-	if(!LuaHelpers::LoadScript(L, script, "@" + path, err))
+	if(!LuaHelpers::RunScript(L, script, "@" + path, err, 0, 1))
 	{
+		lua_settop(L, 0);
 		LUA->Release(L);
 		err= fmt::sprintf("Lua runtime error: %s", err.c_str());
 		LuaHelpers::ReportScriptError(err);
 		return;
 	}
-	int set_index= 1;
+	int set_index= lua_gettop(L);
 	if(!lua_istable(L, set_index))
 	{
 		lua_settop(L, 0);
@@ -449,6 +450,7 @@ void ActorUtil::MakeActorSet(std::string const& path, std::vector<Actor*>& ret)
 			}
 		}
 	}
+	lua_settop(L, 0);
 	LUA->Release(L);
 }
 

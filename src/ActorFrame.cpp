@@ -159,6 +159,15 @@ void ActorFrame::AddChild( Actor *pActor )
 	pActor->SetParent( this );
 }
 
+void ActorFrame::WrapAroundChild(Actor* act)
+{
+	DeleteChildrenWhenDone(true);
+	AddChild(act);
+	SetDrawOrder(act->GetDrawOrder());
+	SetName(act->GetName());
+	propagate_draw_order_change(true);
+}
+
 void ActorFrame::RemoveChild( Actor *pActor )
 {
 	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );

@@ -78,11 +78,8 @@ void NewFieldColumn::AddChild(Actor* act)
 	// The actors have to be wrapped inside of frames so that mod transforms
 	// can be applied without stomping the rotation the noteskin supplies.
 	ActorFrame* frame= new ActorFrame;
-	frame->DeleteChildrenWhenDone(true);
-	frame->AddChild(act);
-	frame->SetDrawOrder(act->GetDrawOrder());
+	frame->WrapAroundChild(act);
 	ActorFrame::AddChild(frame);
-	frame->propagate_draw_order_change(true);
 	act->PlayCommand("On");
 	m_field->add_draw_entry(static_cast<int>(m_column), GetNumChildren()-1, act->GetDrawOrder());
 	if(act->HasCommand("WidthSet"))
@@ -1448,11 +1445,8 @@ void NewField::AddChild(Actor* act)
 	// The actors have to be wrapped inside of frames so that mod alpha/glow
 	// can be applied without stomping what the layer actor does.
 	ActorFrame* frame= new ActorFrame;
-	frame->DeleteChildrenWhenDone(true);
-	frame->AddChild(act);
-	frame->SetDrawOrder(act->GetDrawOrder());
+	frame->WrapAroundChild(act);
 	ActorFrame::AddChild(frame);
-	frame->propagate_draw_order_change(true);
 	add_draw_entry(field_layer_column_index, GetNumChildren()-1, act->GetDrawOrder());
 }
 
@@ -1713,15 +1707,26 @@ void NewField::clear_column_draw_entries()
 	auto read_pos= m_draw_entries.begin();
 	while(read_pos != m_draw_entries.end())
 	{
-		if(read_pos->column < 0)
+		while(write_pos != m_draw_entries.end() && write_pos->column < 0)
 		{
-			if(read_pos != write_pos)
-			{
-				(*write_pos)= (*read_pos);
-			}
 			++write_pos;
 		}
-		++read_pos;
+		if(write_pos == m_draw_entries.end())
+		{
+			break;
+		}
+		if(read_pos < write_pos)
+		{
+			read_pos= write_pos;
+		}
+		while(read_pos != m_draw_entries.end() && read_pos->column >= 0)
+		{
+			++read_pos;
+		}
+		if(read_pos != m_draw_entries.end())
+		{
+			(*write_pos)= (*read_pos);
+		}
 	}
 	m_draw_entries.erase(write_pos, m_draw_entries.end());
 }
@@ -1730,7 +1735,7 @@ void NewField::draw_entry(field_draw_entry& entry)
 {
 	if(entry.column == field_layer_column_index)
 	{
-		if(entry.child > 0 && static_cast<size_t>(entry.child) < m_SubActors.size())
+		if(entry.child >= 0 && static_cast<size_t>(entry.child) < m_SubActors.size())
 		{
 			switch(m_SubActors[entry.child]->GetDrawOrder() % draw_order_types)
 			{

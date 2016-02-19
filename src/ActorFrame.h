@@ -20,6 +20,7 @@ public:
 	 * @brief Add a new child to the ActorFrame.
 	 * @param pActor the new Actor to add. */
 	virtual void AddChild( Actor *pActor );
+	void WrapAroundChild(Actor* act);
 	/**
 	 * @brief Remove the specified child from the ActorFrame.
 	 * @param pActor the Actor to remove. */
