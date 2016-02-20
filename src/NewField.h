@@ -16,6 +16,35 @@ class Steps;
 class TimingData;
 struct NewField;
 
+enum FieldLayerFadeType
+{
+	FLFT_Receptor,
+	FLFT_Note,
+	FLFT_Explosion,
+	FLFT_None,
+	NUM_FieldLayerFadeType,
+	FieldLayerFadeType_Invalid
+};
+std::string const FieldLayerFadeTypeToString(FieldLayerFadeType fmt);
+LuaDeclareType(FieldLayerFadeType);
+
+enum FieldLayerTransformType
+{
+	FLTT_Head,
+	FLTT_HeadPosOnly,
+	FLTT_None,
+	NUM_FieldLayerTransformType,
+	FieldLayerTransformType_Invalid
+};
+std::string const FieldLayerTransformTypeToString(FieldLayerTransformType fmt);
+LuaDeclareType(FieldLayerTransformType);
+
+struct FieldLayerRenderInfo
+{
+	FieldLayerFadeType fade_type;
+	FieldLayerTransformType transform_type;
+};
+
 struct NewFieldColumn : ActorFrame
 {
 	NewFieldColumn();
@@ -125,6 +154,11 @@ struct NewFieldColumn : ActorFrame
 	NotePlayerizeMode get_playerize_mode() { return m_playerize_mode; }
 	void set_playerize_mode(NotePlayerizeMode mode);
 
+	void set_layer_fade_type(Actor* child, FieldLayerFadeType type);
+	FieldLayerFadeType get_layer_fade_type(Actor* child);
+	void set_layer_transform_type(Actor* child, FieldLayerTransformType type);
+	FieldLayerTransformType get_layer_transform_type(Actor* child);
+
 	bool m_use_game_music_beat;
 	bool m_show_unjudgable_notes;
 	bool m_speed_segments_enabled;
@@ -192,6 +226,7 @@ private:
 	NewSkinColumn* m_newskin;
 	std::vector<Rage::Color>* m_player_colors;
 	NewField* m_field;
+	std::vector<FieldLayerRenderInfo> m_layer_render_info;
 
 	AutoActor m_beat_bars;
 
@@ -261,10 +296,13 @@ struct NewField : ActorFrame
 	void set_skin(std::string const& skin_name, LuaReference& skin_params);
 	void set_steps(Steps* data);
 	void set_note_data(NoteData* note_data, TimingData* timing, StepsType stype);
-	// set_player_number exists only so that the notefield board can have
+	// set_player_number exists only so that the notefield layers can have
 	// per-player configuration on gameplay.  Using it for any other purpose
 	// is forbidden.
 	void set_player_number(PlayerNumber pn);
+
+	void set_layer_fade_type(Actor* child, FieldLayerFadeType type);
+	FieldLayerFadeType get_layer_fade_type(Actor* child);
 
 	void update_displayed_time(double beat, double second);
 	double get_curr_beat() { return m_curr_beat; }
@@ -314,6 +352,10 @@ private:
 	double m_curr_second;
 	double m_field_width;
 
+	// The player number has to be stored so that it can be passed to the
+	// column layers when they're loaded.
+	PlayerNumber m_pn;
+
 	bool m_own_note_data;
 	NoteData* m_note_data;
 	const TimingData* m_timing_data;
@@ -323,6 +365,7 @@ private:
 	NewSkinLoader m_skin_walker;
 	LuaReference m_skin_parameters;
 	std::vector<Rage::Color> m_player_colors;
+	std::vector<FieldLayerRenderInfo> m_layer_render_info;
 
 	vector<field_draw_entry> m_draw_entries;
 	size_t m_first_non_board_draw_entry;

@@ -2615,6 +2615,10 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		if( tn.type == TapNoteType_Mine )
 		{
 			tn.result.tns = TNS_AvoidMine;
+			if(m_new_field != nullptr)
+			{
+				m_new_field->did_tap_note(iter.Track(), tn.result.tns, false);
+			}
 			/* The only real way to tell if a mine has been scored is if it has disappeared
 			 * but this only works for hit mines so update the scores for avoided mines here. */
 			if( m_pPrimaryScoreKeeper )
@@ -2625,6 +2629,14 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		else
 		{
 			tn.result.tns = TNS_Miss;
+			// FIXME:  Move the did_tap_note logic out of the other place it's in
+			// to a function and call that function here.  This does not obey the
+			// blind mod, and might not be the most reliable place to send the
+			// message.  Delaying until I have time to rearchitect Player. -Kyz
+			if(m_new_field != nullptr)
+			{
+				m_new_field->did_tap_note(iter.Track(), tn.result.tns, false);
+			}
 		}
 	}
 }

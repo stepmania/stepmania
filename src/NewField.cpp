@@ -32,6 +32,23 @@ static const int non_board_draw_order= 0;
 static const int holds_draw_order= 200;
 static const int taps_draw_order= 300;
 
+static const char* FieldLayerFadeTypeNames[]= {
+	"Receptor",
+	"Note",
+	"Explosion",
+	"None",
+};
+XToString(FieldLayerFadeType);
+LuaXType(FieldLayerFadeType);
+
+static const char* FieldLayerTransformTypeNames[]= {
+	"Head",
+	"HeadPosOnly",
+	"None",
+};
+XToString(FieldLayerTransformType);
+LuaXType(FieldLayerTransformType);
+
 REGISTER_ACTOR_CLASS(NewFieldColumn);
 
 #define HOLD_COUNTS_AS_ACTIVE(tn) (tn.HoldResult.bActive && tn.HoldResult.fLife > 0.0f)
@@ -80,6 +97,7 @@ void NewFieldColumn::AddChild(Actor* act)
 	ActorFrame* frame= new ActorFrame;
 	frame->WrapAroundChild(act);
 	ActorFrame::AddChild(frame);
+	m_layer_render_info.push_back({FLFT_None, FLTT_Head});
 	act->PlayCommand("On");
 	m_field->add_draw_entry(static_cast<int>(m_column), GetNumChildren()-1, act->GetDrawOrder());
 	if(act->HasCommand("WidthSet"))
@@ -98,27 +116,18 @@ void NewFieldColumn::AddChild(Actor* act)
 
 void NewFieldColumn::RemoveChild(Actor* act)
 {
-	for(size_t i= 0; i < m_SubActors.size(); ++i)
+	size_t index= FindChildID(act);
+	if(index < m_SubActors.size())
 	{
-		if(act == m_SubActors[i])
-		{
-			m_field->remove_draw_entry(m_column, i);
-			break;
-		}
+		m_field->remove_draw_entry(m_column, index);
+		m_layer_render_info.erase(m_layer_render_info.begin() + index);
 	}
 	ActorFrame::RemoveChild(act);
 }
 
 void NewFieldColumn::ChildChangedDrawOrder(Actor* child)
 {
-	size_t index= 0;
-	for(; index < m_SubActors.size(); ++index)
-	{
-		if(m_SubActors[index] == child)
-		{
-			break;
-		}
-	}
+	size_t index= FindChildID(child);
 	if(index < m_SubActors.size())
 	{
 		m_field->change_draw_entry(static_cast<int>(m_column),
@@ -1358,19 +1367,14 @@ void NewFieldColumn::DrawPrimitives()
 		default:
 			if(curr_render_child >= 0 && static_cast<size_t>(curr_render_child) < m_SubActors.size())
 			{
-				switch(m_SubActors[curr_render_child]->GetDrawOrder() % draw_order_types)
+				auto const& render_info= m_layer_render_info[curr_render_child];
+				switch(render_info.fade_type)
 				{
-					case 0:
+					case FLFT_Receptor:
 						m_SubActors[curr_render_child]->SetDiffuseAlpha(receptor_alpha);
 						m_SubActors[curr_render_child]->SetGlowAlpha(receptor_glow);
 						break;
-					case 1:
-					case -1:
-						m_SubActors[curr_render_child]->SetDiffuseAlpha(explosion_alpha);
-						m_SubActors[curr_render_child]->SetGlowAlpha(explosion_glow);
-						break;
-					case 2:
-					case -2:
+					case FLFT_Note:
 						{
 							mod_val_inputs input(m_curr_beat, m_curr_second);
 							double alpha= m_note_alpha.evaluate(input);
@@ -1379,10 +1383,24 @@ void NewFieldColumn::DrawPrimitives()
 							m_SubActors[curr_render_child]->SetGlowAlpha(glow);
 						}
 						break;
+					case FLFT_Explosion:
+						m_SubActors[curr_render_child]->SetDiffuseAlpha(explosion_alpha);
+						m_SubActors[curr_render_child]->SetGlowAlpha(explosion_glow);
+						break;
 					default:
 						break;
 				}
-				m_SubActors[curr_render_child]->set_transform(head_transform);
+				switch(render_info.transform_type)
+				{
+					case FLTT_Head:
+						m_SubActors[curr_render_child]->set_transform(head_transform);
+						break;
+					case FLTT_HeadPosOnly:
+						m_SubActors[curr_render_child]->set_transform_pos(head_transform);
+						break;
+					default:
+						break;
+				}
 				m_SubActors[curr_render_child]->Draw();
 			}
 			break;
@@ -1400,6 +1418,45 @@ void NewFieldColumn::set_playerize_mode(NotePlayerizeMode mode)
 	}
 	m_playerize_mode= mode;
 }
+
+void NewFieldColumn::set_layer_fade_type(Actor* child, FieldLayerFadeType type)
+{
+	size_t index= FindIDBySubChild(child);
+	if(index < m_layer_render_info.size())
+	{
+		m_layer_render_info[index].fade_type= type;
+	}
+}
+
+FieldLayerFadeType NewFieldColumn::get_layer_fade_type(Actor* child)
+{
+	size_t index= FindIDBySubChild(child);
+	if(index < m_layer_render_info.size())
+	{
+		return m_layer_render_info[index].fade_type;
+	}
+	return FieldLayerFadeType_Invalid;
+}
+
+void NewFieldColumn::set_layer_transform_type(Actor* child, FieldLayerTransformType type)
+{
+	size_t index= FindIDBySubChild(child);
+	if(index < m_layer_render_info.size())
+	{
+		m_layer_render_info[index].transform_type= type;
+	}
+}
+
+FieldLayerTransformType NewFieldColumn::get_layer_transform_type(Actor* child)
+{
+	size_t index= FindIDBySubChild(child);
+	if(index < m_layer_render_info.size())
+	{
+		return m_layer_render_info[index].transform_type;
+	}
+	return FieldLayerTransformType_Invalid;
+}
+
 
 REGISTER_ACTOR_CLASS(NewField);
 
@@ -1447,32 +1504,24 @@ void NewField::AddChild(Actor* act)
 	ActorFrame* frame= new ActorFrame;
 	frame->WrapAroundChild(act);
 	ActorFrame::AddChild(frame);
+	m_layer_render_info.push_back({FLFT_None, FLTT_None});
 	add_draw_entry(field_layer_column_index, GetNumChildren()-1, act->GetDrawOrder());
 }
 
 void NewField::RemoveChild(Actor* act)
 {
-	for(size_t i= 0; i < m_SubActors.size(); ++i)
+	size_t index= FindChildID(act);
+	if(index < m_SubActors.size())
 	{
-		if(act == m_SubActors[i])
-		{
-			remove_draw_entry(field_layer_column_index, i);
-			break;
-		}
+		remove_draw_entry(field_layer_column_index, index);
+		m_layer_render_info.erase(m_layer_render_info.begin() + index);
 	}
 	ActorFrame::RemoveChild(act);
 }
 
 void NewField::ChildChangedDrawOrder(Actor* child)
 {
-	size_t index= 0;
-	for(; index < m_SubActors.size(); ++index)
-	{
-		if(m_SubActors[index] == child)
-		{
-			break;
-		}
-	}
+	size_t index= FindChildID(child);
 	if(index < m_SubActors.size())
 	{
 		change_draw_entry(field_layer_column_index, static_cast<int>(index),
@@ -1737,14 +1786,14 @@ void NewField::draw_entry(field_draw_entry& entry)
 	{
 		if(entry.child >= 0 && static_cast<size_t>(entry.child) < m_SubActors.size())
 		{
-			switch(m_SubActors[entry.child]->GetDrawOrder() % draw_order_types)
+			auto const& render_info= m_layer_render_info[entry.child];
+			switch(render_info.fade_type)
 			{
-				case 0:
+				case FLFT_Receptor:
 					m_SubActors[entry.child]->SetDiffuseAlpha(evaluated_receptor_alpha);
 					m_SubActors[entry.child]->SetGlowAlpha(evaluated_receptor_glow);
 					break;
-				case 1:
-				case -1:
+				case FLFT_Explosion:
 					m_SubActors[entry.child]->SetDiffuseAlpha(evaluated_explosion_alpha);
 					m_SubActors[entry.child]->SetGlowAlpha(evaluated_explosion_glow);
 					break;
@@ -1805,7 +1854,7 @@ void NewField::reload_columns(NewSkinLoader const* new_loader, LuaReference& new
 	width_msg.SetParam("width", get_field_width());
 	width_msg.SetParamFromStack(L, "columns");
 	PushSelf(L);
-	width_msg.SetParamFromStack(L, "newfield");
+	width_msg.SetParamFromStack(L, "field");
 	// Handle the width message after the columns have been created so that the
 	// board can fetch the columns. (intentionally duplicated comment)
 	LUA->Release(L);
@@ -1814,8 +1863,9 @@ void NewField::reload_columns(NewSkinLoader const* new_loader, LuaReference& new
 	double curr_x= (m_field_width * -.5);
 	m_columns.clear();
 	m_columns.resize(m_note_data->GetNumTracks());
-	// The column needs all of this info.  fXOffset might come from somewhere
-	// else when styles are removed.
+	// The column needs all of this info.
+	Message pn_msg("PlayerStateSet");
+	pn_msg.SetParam("PlayerNumber", m_pn);
 	for(size_t i= 0; i < m_columns.size(); ++i)
 	{
 		NewSkinColumn* col= m_newskin.get_column(i);
@@ -1830,6 +1880,7 @@ void NewField::reload_columns(NewSkinLoader const* new_loader, LuaReference& new
 		curr_x+= halfw;
 		add_draw_entry(static_cast<int>(i), holds_child_index, holds_draw_order);
 		add_draw_entry(static_cast<int>(i), taps_child_index, taps_draw_order);
+		m_columns[i].HandleMessage(pn_msg);
 	}
 	// Handle the width message after the columns have been created so that the
 	// board can fetch the columns.
@@ -1838,9 +1889,29 @@ void NewField::reload_columns(NewSkinLoader const* new_loader, LuaReference& new
 
 void NewField::set_player_number(PlayerNumber pn)
 {
+	m_pn= pn;
 	Message msg("PlayerStateSet");
 	msg.SetParam("PlayerNumber", pn);
 	HandleMessage(msg);
+}
+
+void NewField::set_layer_fade_type(Actor* child, FieldLayerFadeType type)
+{
+	size_t index= FindIDBySubChild(child);
+	if(index < m_layer_render_info.size())
+	{
+		m_layer_render_info[index].fade_type= type;
+	}
+}
+
+FieldLayerFadeType NewField::get_layer_fade_type(Actor* child)
+{
+	size_t index= FindIDBySubChild(child);
+	if(index < m_layer_render_info.size())
+	{
+		return m_layer_render_info[index].fade_type;
+	}
+	return FieldLayerFadeType_Invalid;
 }
 
 void NewField::update_displayed_time(double beat, double second)
@@ -2092,6 +2163,32 @@ struct LunaNewFieldColumn : Luna<NewFieldColumn>
 		p->apply_note_mods_to_actor(act, beat, second, y_offset, use_alpha, use_glow);
 		COMMON_RETURN_SELF;
 	}
+	static int get_layer_fade_type(T* p, lua_State* L)
+	{
+		Actor* layer= Luna<Actor>::check(L, 1);
+		Enum::Push(L, p->get_layer_fade_type(layer));
+		return 1;
+	}
+	static int set_layer_fade_type(T* p, lua_State* L)
+	{
+		Actor* layer= Luna<Actor>::check(L, 1);
+		FieldLayerFadeType type= Enum::Check<FieldLayerFadeType>(L, 2);
+		p->set_layer_fade_type(layer, type);
+		COMMON_RETURN_SELF;
+	}
+	static int get_layer_transform_type(T* p, lua_State* L)
+	{
+		Actor* layer= Luna<Actor>::check(L, 1);
+		Enum::Push(L, p->get_layer_transform_type(layer));
+		return 1;
+	}
+	static int set_layer_transform_type(T* p, lua_State* L)
+	{
+		Actor* layer= Luna<Actor>::check(L, 1);
+		FieldLayerTransformType type= Enum::Check<FieldLayerTransformType>(L, 2);
+		p->set_layer_transform_type(layer, type);
+		COMMON_RETURN_SELF;
+	}
 	LunaNewFieldColumn()
 	{
 		ADD_METHOD(get_time_offset);
@@ -2128,6 +2225,10 @@ struct LunaNewFieldColumn : Luna<NewFieldColumn>
 		ADD_METHOD(get_reverse_shift);
 		ADD_METHOD(apply_column_mods_to_actor);
 		ADD_METHOD(apply_note_mods_to_actor);
+		ADD_METHOD(get_layer_fade_type);
+		ADD_METHOD(get_layer_transform_type);
+		ADD_METHOD(set_layer_fade_type);
+		ADD_METHOD(set_layer_transform_type);
 	}
 };
 LUA_REGISTER_DERIVED_CLASS(NewFieldColumn, ActorFrame);
@@ -2210,6 +2311,19 @@ struct LunaNewField : Luna<NewField>
 		p->set_player_color(pn, temp);
 		COMMON_RETURN_SELF;
 	}
+	static int get_layer_fade_type(T* p, lua_State* L)
+	{
+		Actor* layer= Luna<Actor>::check(L, 1);
+		Enum::Push(L, p->get_layer_fade_type(layer));
+		return 1;
+	}
+	static int set_layer_fade_type(T* p, lua_State* L)
+	{
+		Actor* layer= Luna<Actor>::check(L, 1);
+		FieldLayerFadeType type= Enum::Check<FieldLayerFadeType>(L, 2);
+		p->set_layer_fade_type(layer, type);
+		COMMON_RETURN_SELF;
+	}
 	LunaNewField()
 	{
 		ADD_METHOD(set_skin);
@@ -2228,6 +2342,8 @@ struct LunaNewField : Luna<NewField>
 		ADD_METHOD(get_vanish_y_mod);
 		ADD_GET_SET_METHODS(vanish_type);
 		ADD_METHOD(set_player_color);
+		ADD_METHOD(get_layer_fade_type);
+		ADD_METHOD(set_layer_fade_type);
 	}
 };
 LUA_REGISTER_DERIVED_CLASS(NewField, ActorFrame);

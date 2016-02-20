@@ -81,6 +81,52 @@ it at 51.  Putting the judgment at 351 would put it above all the notes.  251
 would put it above hold bodies, but underneath taps.
 
 
+### Alpha/glow and transform mods
+
+Each layer has a fade type to control which alpha and glow mods affect it.
+If the fade type is set to FieldLayerFadeType_Receptor, then the layer is
+affected by the receptor alpha/glow mods.  FieldLayerFadeType_Explosion sets
+it to use the explosion alpha/glow mods.  FieldLayerFadeType_Note will make
+it use the note alpha/glow mods (with only the current music beat and second
+for inputs).  FieldLayerFadeType_None is for layers that should not be
+affected by any mod.  The default is FieldLayerFadeType_None.  For field
+layers, FieldLayerFadeType_Note is treated as FieldLayerFadeType_None.
+
+The layer fade type is set with the set_layer_fade_type function, in the
+column or field.  If the layer is in a column, call set_layer_fade_type on
+the column.  If the layer is in the field, call set_layer_fade_type on the
+field.  The simplest place to call it from is the WidthSetCommand, because
+that command is run immediately after the layer is loaded, and has the field
+or column in the param table.
+
+Column layers also have a transform type, to control whether the layer is
+place at the center of the column, or at the receptor position.  Field layers
+do not have a transform type because the base field doesn't have a receptor
+position.  FieldLayerTransformType_Head uses the full receptor transform,
+position, scale, and rotation.  FieldLayerTransformType_HeadPosOnly only uses
+the position, which can be useful for a column flash effect that extends from
+the receptor towards the center.  FieldLayerTransformType_None does not use
+the head transform at all.  FieldLayerTransformType_None is the default.
+
+The layer transform type is set by set_layer_transform_type.  WidthSetCommand
+is also the best place to call it.
+
+#### Example WidthSetCommand
+For a column layer:
+```
+WidthSetCommand= function(self, param)
+  param.column:set_layer_fade_type(self, "FieldLayerFadeType_Explosion")
+    :set_layer_transform_type(self, "FieldLayerTransformType_HeadPosOnly")
+end
+```
+For a field layer:
+```
+WidthSetCommand= function(self, param)
+  param.field:set_layer_fade_type(self, "FieldLayerFadeType_Explosion")
+end
+```
+
+
 #### Draw Order and alpha/glow mods
 
 NewField and NewFieldColumn have mods for controlling the alpha and glow of
@@ -104,12 +150,12 @@ screen filter).
 02 NewField.lua defines these variables to make life convenient for themers.
 ```
 newfield_draw_order= {
-	board= -99, -- -99 % 4 is -3, which makes it unaffected by mods.
+	board= -100,
 	non_board= 0,
-	receptor= 100, -- 100 % 4 is 0, which makes it use receptor alpha/glow.
+	receptor= 100,
 	hold= 200,
 	tap= 300,
-	explosion= 401, -- 401 % 4 is 1, which makes it use explosion alpha/glow.
+	explosion= 400,
 }
 ```
 
@@ -130,14 +176,14 @@ The param table has three entries:
 the right edge of the rightmost column.
 * columns:  A set of tables, one for each column, from left to right.  Each
 table contains the width and padding of a column.
-* newfield:  The NewField the board is attached to.  If you need it for some
+* field:  The NewField the board is attached to.  If you need it for some
 reason, this is how to get it.
 
 #### Example
 Imagine that the engine does this to create the param for WidthSetCommand:
 ```
 local width_info= {
-  newfield= self,
+  field= self,
   width= 256,
 	columns= {
 	  {width= 64, padding= 0},
@@ -156,6 +202,10 @@ columns table.
 
 The various layers in the column, from both the noteskin and the theme, are
 sent various messages to keep their state updated.
+
+### PlayerStateSetCommand
+The param table has one element, param.PlayerNumber.  This is the number of
+the player the field is for.
 
 ### WidthSetCommand
 WidthSet is sent immediately after the OnCommand is executed.  The elements
@@ -257,9 +307,31 @@ NewSkins/routine/notes.lua is an example of noteskin that supports
 multiplayer mode.  It has example masks and colors and explanation comments.
 
 
-# Functions in 02 NewField.lua
+# Non-modifier Functions
 
-## NewField functions
+## NewFieldColumn Functions
+
+* NewFieldColumn:get_layer_fade_type(layer)  
+Returns the FieldLayerFadeType for the layer.
+
+* NewFieldColumn:set_layer_fade_type(layer, type)  
+layer must be the actor the type is being applied to.  type is a
+FieldLayerFadeType enum value.
+
+* NewFieldColumn:get_layer_transform_type(layer)  
+Returns the FieldLayerTransformType for the layer.
+
+* NewFieldColumn:set_layer_transform_type(layer, type)  
+layer must be the actor the type is being applied to.  type is a
+FieldLayerTransformType enum value.
+
+## NewField Functions
+
+* NewField:get_layer_fade_type(layer)  
+Identical to NewFieldColumn:get_layer_fade_type.
+
+* NewField:set_layer_fade_type(layer, type)  
+Identical to NewFieldColumn:set_layer_fade_type.
 
 * NewField:set_speed_mod(constant, speed, read_bpm)  
 set_speed_mod creates a simple speed mod from the parameters and applies it
@@ -298,6 +370,8 @@ Clears the hidden mod from all columns.
 
 * NewField:clear_sudden_mod()  
 Clears the sudden mod from all columns.
+
+## Other functions
 
 * find_pactor_in_gameplay(screen_gameplay, pn)  
 Returns the player actor or nil.

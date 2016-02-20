@@ -20,6 +20,9 @@ return function(button_list, stepstype)
 	for i, button in ipairs(button_list) do
 		ret[i]= Def.ActorFrame{
 			InitCommand= zoom_tap,
+			WidthSetCommand= function(self, param)
+				param.column:set_layer_fade_type(self, "FieldLayerFadeType_Explosion")
+			end,
 			Def.Sprite{
 				Texture= "explosion ", InitCommand= explosion_init,
 				ColumnJudgmentCommand= function(self, param)

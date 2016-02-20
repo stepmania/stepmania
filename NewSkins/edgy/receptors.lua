@@ -25,6 +25,9 @@ return function(button_list, stepstype, skin_parameters)
         self:zoom(columnWidth / 64):rotationz(rotations[button] or 0):effectclock("beat")
           :draworder(newfield_draw_order.receptor)
       end,
+			WidthSetCommand= function(self, param)
+				param.column:set_layer_fade_type(self, "FieldLayerFadeType_Receptor")
+			end,
       Def.Sprite {
         Texture = texture,
         -- Do not give a sneak peak of what to hit for classic style gameplay.

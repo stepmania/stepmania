@@ -16,6 +16,9 @@ return function(button_list, stepstype, skin_parameters)
 				self:rotationz(rots[button] or 0):effectclock("beat")
 					:draworder(newfield_draw_order.receptor)
 			end,
+			WidthSetCommand= function(self, param)
+				param.column:set_layer_fade_type(self, "FieldLayerFadeType_Receptor")
+			end,
 			-- The BeatUpdate command happens every frame to update various things
 			-- that can change every frame.
 			-- The param table has four things in it:

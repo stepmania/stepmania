@@ -115,6 +115,9 @@ return function(button_list, stepstype, skin_params)
 				self:zoom(0.625)
 					:draworder(newfield_draw_order.explosion)
 			end,
+			WidthSetCommand= function(self, param)
+				param.column:set_layer_fade_type(self, "FieldLayerFadeType_Explosion")
+			end,
 			Def.Sprite{
 				Texture= "explosion-" .. targets[button] .. ".png", InitCommand= function(self)
 					self:visible(false):zoom(0.75):SetAllStateDelays(.05)

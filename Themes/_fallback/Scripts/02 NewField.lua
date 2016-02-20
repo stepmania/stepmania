@@ -34,12 +34,12 @@
 -- These draw order variables are actually hardcoded in NewField.cpp. They
 -- are copied here for convenience.  Do not change them. -Kyz
 newfield_draw_order= {
-	board= -99, -- -99 % 4 is -3, which makes it unaffected by mods.
+	board= -100,
 	non_board= 0,
-	receptor= 100, -- 100 % 4 is 0, which makes it use receptor alpha/glow.
+	receptor= 100,
 	hold= 200,
 	tap= 300,
-	explosion= 401, -- 401 % 4 is 1, which makes it use explosion alpha/glow.
+	explosion= 400,
 }
 
 -- The read_bpm arg to set_speed_mod is optional.  If it is exists,

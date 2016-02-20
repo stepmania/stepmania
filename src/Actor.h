@@ -355,6 +355,11 @@ public:
 		dest.rotation.z= Rage::RadiansToDegrees(trans.rot.z);
 		dest.scale= trans.zoom;
 	}
+	void set_transform_pos(Rage::transform const& trans)
+	{
+		TweenState& dest= DestTweenState();
+		dest.pos= trans.pos;
+	}
 	void  SetX( float x )				{ DestTweenState().pos.x = x; };
 	void  SetY( float y )				{ DestTweenState().pos.y = y; };
 	void  SetZ( float z )				{ DestTweenState().pos.z = z; };

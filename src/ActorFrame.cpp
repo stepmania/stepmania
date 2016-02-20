@@ -201,6 +201,36 @@ void ActorFrame::RemoveAllChildren()
 	m_SubActors.clear();
 }
 
+size_t ActorFrame::FindChildID(Actor* act)
+{
+	size_t index= 0;
+	for(; index < m_SubActors.size(); ++index)
+	{
+		if(m_SubActors[index] == act)
+		{
+			return index;
+		}
+	}
+	return index;
+}
+
+size_t ActorFrame::FindIDBySubChild(Actor* act)
+{
+	size_t index= 0;
+	for(; index < m_SubActors.size(); ++index)
+	{
+		ActorFrame* frame= dynamic_cast<ActorFrame*>(m_SubActors[index]);
+		if(frame != nullptr && !frame->m_SubActors.empty())
+		{
+			if(frame->m_SubActors[0] == act)
+			{
+				return index;
+			}
+		}
+	}
+	return index;
+}
+
 void ActorFrame::MoveToTail( Actor* pActor )
 {
 	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
