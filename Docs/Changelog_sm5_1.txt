@@ -7,6 +7,12 @@ StepMania 5.1 and StepMania 5.0 have separate changelogs so that devs working
 on the different branches don't have conflicts on the changelog file.
 ________________________________________________________________________________
 
+2016/02/27
+----------
+* [NewField] Lifts are now rendered with a hold body preceding them.  The
+  hold body uses the same graphics as the normal hold, and has a fade in
+  effect at the beginning.  [kyzentun]
+
 2016/02/20
 ----------
 * [NewField] Layer fade and transform types now controlled by their own

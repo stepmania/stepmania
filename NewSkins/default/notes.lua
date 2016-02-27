@@ -83,16 +83,21 @@ return function(button_list, stepstype)
 	local parts_per_beat= 48
 	local tap_state_map= {
 		parts_per_beat= parts_per_beat, quanta= {
-			{per_beat= 1, states= {1, 2}}, -- 4th
-			{per_beat= 2, states= {3, 4}}, -- 8th
-			{per_beat= 3, states= {5, 6}}, -- 12th
-			{per_beat= 4, states= {7, 8}}, -- 16th
-			{per_beat= 6, states= {9, 10}}, -- 24th
-			{per_beat= 8, states= {11, 12}}, -- 32nd
-			{per_beat= 12, states= {13, 14}}, -- 48th
-			{per_beat= 16, states= {15, 16}}, -- 64th
+			{per_beat= 1, states= {1}}, -- 4th
+			{per_beat= 2, states= {3}}, -- 8th
+			{per_beat= 3, states= {5}}, -- 12th
+			{per_beat= 4, states= {7}}, -- 16th
+			{per_beat= 6, states= {9}}, -- 24th
+			{per_beat= 8, states= {11}}, -- 32nd
+			{per_beat= 12, states= {13}}, -- 48th
+			{per_beat= 16, states= {15}}, -- 64th
 		},
 	}
+	-- Taps use the even states, lifts use the odd states.
+	local lift_state_map= DeepCopy(tap_state_map)
+	for i, quanta in ipairs(lift_state_map.quanta) do
+		quanta.states[1]= quanta.states[1] + 1
+	end
 	-- Mines only have a single frame in the graphics.
 	local mine_state_map= {
 		parts_per_beat= 1, quanta= {{per_beat= 1, states= {1}}}}
@@ -186,9 +191,13 @@ return function(button_list, stepstype)
 				NewSkinTapPart_Mine= {
 					state_map= mine_state_map,
 					actor= Def.Sprite{Texture= "mine.png"}},
-				NewSkinTapPart_Lift= { -- fuck lifts
-					state_map= mine_state_map,
-					actor= Def.Sprite{Texture= "mine.png"}},
+				NewSkinTapPart_Lift= {
+					state_map= lift_state_map,
+					actor= Def.Sprite{Texture= "tap_note 2x8.png",
+						-- The Mask field sets the mask texture used for the tap.
+						Mask= NEWSKIN:get_path(skin_name, "tap_mask 2x8.png"),
+						-- Use the InitCommand to rotate the arrow appropriately.
+						InitCommand= function(self) self:rotationz(rots[button]) end}},
 			},
 			-- Not used by this noteskin:  optional_taps.
 			-- The optional_taps table is here in a comment as an example.  Since

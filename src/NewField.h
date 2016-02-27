@@ -53,9 +53,13 @@ struct NewFieldColumn : ActorFrame
 	struct render_note
 	{
 		render_note(NewFieldColumn* column, NoteData::TrackMap::const_iterator
-			column_end, NoteData::TrackMap::const_iterator iter);
+			column_begin, NoteData::TrackMap::const_iterator column_end,
+			NoteData::TrackMap::const_iterator iter);
 		double y_offset;
 		double tail_y_offset;
+		// tail_beat and tail_second are only used by lifts.
+		double tail_beat;
+		double tail_second;
 		NoteData::TrackMap::const_iterator note_iter;
 	};
 	void add_children_from_layers(size_t column, std::vector<NewSkinLayer>& layers);
@@ -70,7 +74,7 @@ struct NewFieldColumn : ActorFrame
 		double& beat, double& second);
 	void draw_hold(QuantizedHoldRenderData& data, render_note const& note,
 		double head_beat, double head_second,
-		double tail_beat, double tail_second);
+		double tail_beat, double tail_second, bool is_lift);
 	void set_displayed_time(double beat, double second);
 	// update_displayed_time is called by the field when the Player draws in
 	// gameplay.  set_displayed_beat is for lua to call when lua is controlling
@@ -110,6 +114,7 @@ struct NewFieldColumn : ActorFrame
 	{
 		return calc_y_offset(m_curr_beat, m_curr_second);
 	}
+	double calc_lift_pretrail(double beat, double second, double yoffset);
 	double get_reverse_shift()
 	{
 		return reverse_shift;
@@ -192,6 +197,7 @@ struct NewFieldColumn : ActorFrame
 	ModifiableValue m_quantization_offset;
 
 	ModifiableValue m_speed_mod;
+	ModifiableValue m_lift_pretrail_length;
 
 	ModifiableValue m_reverse_offset_pixels;
 	ModifiableValue m_reverse_scale;
@@ -238,9 +244,11 @@ private:
 	// all taps, so the taps appear on top of the hold bodies and are not
 	// obscured.
 	void draw_holds_internal();
+	void draw_lifts_internal();
 	void draw_taps_internal();
 	NoteData::TrackMap::const_iterator first_note_visible_prev_frame;
 	std::vector<render_note> render_holds;
+	std::vector<render_note> render_lifts;
 	std::vector<render_note> render_taps;
 	int curr_render_child;
 	// Calculating the effects of reverse and center for every note is costly.
@@ -344,6 +352,7 @@ struct NewField : ActorFrame
 	void remove_draw_entry(int column, int child);
 	void change_draw_entry(int column, int child, int new_draw_order);
 	void clear_column_draw_entries();
+	void update_z_bias();
 
 private:
 	void draw_entry(field_draw_entry& entry);
@@ -379,6 +388,7 @@ private:
 	double evaluated_explosion_glow;
 
 	bool m_drawing_board;
+	double curr_z_bias;
 };
 
 #endif

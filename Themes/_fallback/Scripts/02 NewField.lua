@@ -194,7 +194,6 @@ function NewField:set_hidden_mod(line, dist, add_glow)
 			name= "hidden", "ModFunctionType_Constant",
 			{"ModInputType_YOffset", 1, 0, phases= {
 				 default= {0, 0, 0, 0},
-				 --{-32, line - half_dist, 0, 0},
 				 {line - half_dist, line, 1/half_dist, 0},
 				 {line, line + half_dist, -1/half_dist, 1},
 			}}
@@ -207,7 +206,6 @@ function NewField:set_hidden_mod(line, dist, add_glow)
 				 {-32, 0, 0, -1},
 				 {0, line - half_dist, 0, -1},
 				 {line - half_dist, line + half_dist, 1/dist, -1},
-				 --{line + half_dist, math.huge, 0, 0},
 			}}
 		}
 	end
@@ -239,7 +237,6 @@ function NewField:set_sudden_mod(line, dist, add_glow)
 			name= "sudden", "ModFunctionType_Constant",
 			{"ModInputType_YOffset", 1, 0, phases= {
 				 default= {0, 0, 0, 0},
-				 --{0, line - half_dist, 0, 0},
 				 {line - half_dist, line + half_dist, -1/dist, 0},
 				 {line + half_dist, math.huge, 0, -1},
 			}}

@@ -24,9 +24,12 @@ using std::unordered_set;
 using std::vector;
 
 static const double note_size= 64.0;
+static const double z_bias_per_thing= .01;
+static const double lift_fade_dist_recip= 1.0 / 64.0;
 static const int field_layer_column_index= -1;
 static const int holds_child_index= -1;
-static const int taps_child_index= -2;
+static const int lifts_child_index= -2;
+static const int taps_child_index= -3;
 static const int draw_order_types= 4;
 static const int non_board_draw_order= 0;
 static const int holds_draw_order= 200;
@@ -62,6 +65,7 @@ NewFieldColumn::NewFieldColumn()
 	 m_quantization_multiplier(&m_mod_manager, 1.0),
 	 m_quantization_offset(&m_mod_manager, 0.0),
 	 m_speed_mod(&m_mod_manager, 0.0),
+	 m_lift_pretrail_length(&m_mod_manager, 0.25),
 	 m_reverse_offset_pixels(&m_mod_manager, 0.0),
 	 m_reverse_scale(&m_mod_manager, 1.0),
 	 m_center_percent(&m_mod_manager, 0.0),
@@ -152,8 +156,8 @@ void NewFieldColumn::set_note_data(size_t column, const NoteData* note_data,
 	m_timing_data= timing_data;
 	first_note_visible_prev_frame= m_note_data->end(column);
 	for(auto&& moddable : {&m_time_offset, &m_quantization_multiplier,
-				&m_quantization_offset,
-				&m_speed_mod, &m_reverse_offset_pixels, &m_reverse_scale,
+				&m_quantization_offset, &m_speed_mod, &m_lift_pretrail_length,
+				&m_reverse_offset_pixels, &m_reverse_scale,
 				&m_center_percent, &m_note_alpha, &m_note_glow, &m_receptor_alpha,
 				&m_receptor_glow, &m_explosion_alpha, &m_explosion_glow})
 	{
@@ -262,6 +266,12 @@ double NewFieldColumn::calc_y_offset(double beat, double second)
 		ret*= m_timing_data->GetDisplayedSpeedPercent(static_cast<float>(m_curr_beat), static_cast<float>(m_curr_second));
 	}
 	return ret;
+}
+
+double NewFieldColumn::calc_lift_pretrail(double beat, double second, double yoffset)
+{
+	mod_val_inputs input(beat, second, m_curr_beat, m_curr_second, yoffset);
+	return m_lift_pretrail_length.evaluate(input);
 }
 
 void NewFieldColumn::calc_transform(mod_val_inputs& input,
@@ -592,7 +602,7 @@ struct hold_vert_step_state
 	double glow;
 	Rage::transform trans;
 	vector<double> tex_coords;
-	bool calc(NewFieldColumn& col, double curr_y, double end_y, hold_time_lerper& beat_lerp, hold_time_lerper& second_lerp, double curr_beat, double curr_second, hold_texture_handler& tex_handler, int& phase)
+	bool calc(NewFieldColumn& col, double curr_y, double end_y, hold_time_lerper& beat_lerp, hold_time_lerper& second_lerp, double curr_beat, double curr_second, hold_texture_handler& tex_handler, int& phase, bool is_lift)
 	{
 		tex_coords.clear();
 		bool last_vert_set= false;
@@ -618,13 +628,22 @@ struct hold_vert_step_state
 		col.hold_render_transform(mod_input, trans, col.m_twirl_holds);
 		alpha= col.m_note_alpha.evaluate(mod_input);
 		glow= col.m_note_glow.evaluate(mod_input);
+		if(is_lift)
+		{
+			double along= (y - tex_handler.start_y) * lift_fade_dist_recip;
+			if(along < 1.0)
+			{
+				alpha*= along;
+				glow*= along;
+			}
+		}
 		return last_vert_set;
 	}
 };
 
 void NewFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 	render_note const& note, double head_beat, double head_second,
-	double tail_beat, double tail_second)
+	double tail_beat, double tail_second, bool is_lift)
 {
 	// pos_z_vec will be used later to orient the hold.  Read below. -Kyz
 	static const Rage::Vector3 pos_z_vec(0.0f, 0.0f, 1.0f);
@@ -687,7 +706,7 @@ void NewFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 	int phase= HTP_Top;
 	int next_phase= HTP_Top;
 	hold_vert_step_state next_step; // The OS of the future.
-	next_step.calc(*this, start_y, end_y, beat_lerper, second_lerper, m_curr_beat, m_curr_second, tex_handler, next_phase);
+	next_step.calc(*this, start_y, end_y, beat_lerper, second_lerper, m_curr_beat, m_curr_second, tex_handler, next_phase, is_lift);
 	bool need_glow_pass= true;
 	for(double curr_y= start_y; !last_vert_set; curr_y+= y_step)
 	{
@@ -698,7 +717,7 @@ void NewFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 		}
 		phase= next_phase;
 		last_vert_set= next_last_vert_set;
-		next_last_vert_set= next_step.calc(*this, curr_y + y_step, end_y, beat_lerper, second_lerper, m_curr_beat, m_curr_second, tex_handler, phase);
+		next_last_vert_set= next_step.calc(*this, curr_y + y_step, end_y, beat_lerper, second_lerper, m_curr_beat, m_curr_second, tex_handler, phase, is_lift);
 		Rage::Vector3 render_forward(0.0, 1.0, 0.0);
 		if(!m_holds_skewed_by_mods)
 		{
@@ -887,7 +906,36 @@ void NewFieldColumn::get_hold_draw_time(TapNote const& tap, double const hold_be
 	second= tap.occurs_at_second;
 }
 
-NewFieldColumn::render_note::render_note(NewFieldColumn* column, NoteData::TrackMap::const_iterator column_end, NoteData::TrackMap::const_iterator iter)
+void init_render_note_for_lift_at_further_time(NewFieldColumn::render_note& that,
+	NewFieldColumn* column, double pretrail_beat, double pretrail_second)
+{
+	double beat_from_second= column->get_beat_from_second(pretrail_second);
+	double second_from_beat= column->get_second_from_beat(pretrail_beat);
+	double second_y_offset= column->calc_y_offset(beat_from_second, pretrail_second);
+	double beat_y_offset= column->calc_y_offset(pretrail_beat, second_from_beat);
+	if(second_y_offset < beat_y_offset)
+	{
+		that.tail_y_offset= second_y_offset;
+		that.tail_beat= beat_from_second;
+		that.tail_second= pretrail_second;
+	}
+	else
+	{
+		that.tail_y_offset= beat_y_offset;
+		that.tail_beat= pretrail_beat;
+		that.tail_second= second_from_beat;
+	}
+}
+
+void init_render_note_for_lift_at_time(NewFieldColumn::render_note& that,
+	NewFieldColumn* column, double pretrail_beat, double pretrail_second)
+{
+}
+
+NewFieldColumn::render_note::render_note(NewFieldColumn* column,
+	NoteData::TrackMap::const_iterator column_begin,
+	NoteData::TrackMap::const_iterator column_end,
+	NoteData::TrackMap::const_iterator iter)
 {
 	note_iter= column_end;
 	double beat= NoteRowToBeat(iter->first);
@@ -911,6 +959,56 @@ NewFieldColumn::render_note::render_note(NewFieldColumn* column, NoteData::Track
 		//  0 | D | D | D
 		//  1 | D | D | I
 		// Thus, this weird condition.
+		if(head_visible + tail_visible != 2 && head_visible + tail_visible != -2)
+		{
+			note_iter= iter;
+		}
+	}
+	else if(iter->second.type == TapNoteType_Lift)
+	{
+		y_offset= column->calc_y_offset(beat, iter->second.occurs_at_second);
+		double pretrail_len= column->calc_lift_pretrail(
+			beat, iter->second.occurs_at_second, y_offset);
+		// To deal with the case where a lift is right after a stop, calculate
+		// whether using pretrail_len as seconds or as beats puts the tail
+		// further away.
+		double pretrail_second= iter->second.occurs_at_second - pretrail_len;
+		double pretrail_beat= beat - pretrail_len;
+		if(note_iter == column_begin)
+		{
+			init_render_note_for_lift_at_further_time(*this, column, pretrail_beat,
+				pretrail_second);
+		}
+		else
+		{
+			auto prev_note= iter;
+			--prev_note;
+			double prev_beat= 0.0;
+			double prev_second= 0.0;
+			if(prev_note->second.type == TapNoteType_HoldHead)
+			{
+				prev_beat= NoteRowToBeat(prev_note->first + prev_note->second.iDuration);
+				prev_second= prev_note->second.end_second;
+			}
+			else
+			{
+				prev_beat= NoteRowToBeat(prev_note->first);
+				prev_second= prev_note->second.occurs_at_second;
+			}
+			if(prev_beat > pretrail_beat || prev_second > pretrail_second)
+			{
+				that.tail_y_offset= column->calc_y_offset(pretrail_beat, pretrail_second);
+				that.tail_beat= pretrail_beat;
+				that.tail_second= pretrail_second;
+			}
+			else
+			{
+				init_render_note_for_lift_at_further_time(*this, column,
+					pretrail_beat, pretrail_second);
+			}
+		}
+		int head_visible= column->y_offset_visible(tail_y_offset);
+		int tail_visible= column->y_offset_visible(y_offset);
 		if(head_visible + tail_visible != 2 && head_visible + tail_visible != -2)
 		{
 			note_iter= iter;
@@ -954,6 +1052,7 @@ void NewFieldColumn::build_render_lists()
 	// cleared, it would still have to be traversed to recalculate the y
 	// offsets every frame.
 	render_holds.clear();
+	render_lifts.clear();
 	render_taps.clear();
 	m_status.upcoming_beat_dist= 1000.0;
 	m_status.upcoming_second_dist= 1000.0;
@@ -977,6 +1076,7 @@ void NewFieldColumn::build_render_lists()
 
 	double time_diff= m_curr_second - m_prev_curr_second;
 	auto column_end= m_note_data->end(m_column);
+	auto column_begin= m_note_data->begin(m_column);
 	if(first_note_visible_prev_frame == column_end || time_diff < 0)
 	{
 		NoteData::TrackMap::const_iterator discard;
@@ -993,7 +1093,7 @@ void NewFieldColumn::build_render_lists()
 		int tap_row= curr_note->first;
 		double tap_beat= NoteRowToBeat(tap_row);
 		const TapNote& tn= curr_note->second;
-		render_note renderable(this, column_end, curr_note);
+		render_note renderable(this, column_begin, column_end, curr_note);
 		if(renderable.note_iter != column_end)
 		{
 			if(first_visible_this_frame == column_end)
@@ -1006,7 +1106,6 @@ void NewFieldColumn::build_render_lists()
 					continue;
 				case TapNoteType_Tap:
 				case TapNoteType_Mine:
-				case TapNoteType_Lift:
 				case TapNoteType_Attack:
 				case TapNoteType_AutoKeysound:
 				case TapNoteType_Fake:
@@ -1027,6 +1126,17 @@ void NewFieldColumn::build_render_lists()
 						// heads and tails in the same phase as taps.
 						render_taps.push_back(renderable);
 						render_holds.push_back(renderable);
+						imitate_did_note(tn);
+						update_upcoming(tap_beat, tn.occurs_at_second);
+						update_active_hold(tn);
+					}
+					break;
+				case TapNoteType_Lift:
+					if((!tn.result.bHidden || !m_use_game_music_beat) &&
+						(m_show_unjudgable_notes || m_timing_data->IsJudgableAtBeat(tap_beat)))
+					{
+						render_taps.push_back(renderable);
+						render_lifts.push_back(renderable);
 						imitate_did_note(tn);
 						update_upcoming(tap_beat, tn.occurs_at_second);
 						update_active_hold(tn);
@@ -1106,6 +1216,8 @@ void NewFieldColumn::draw_child(int child)
 	{
 		case holds_child_index:
 			RETURN_IF_EMPTY(render_holds.empty());
+		case lifts_child_index:
+			RETURN_IF_EMPTY(render_lifts.empty());
 		case taps_child_index:
 			RETURN_IF_EMPTY(render_taps.empty());
 		default:
@@ -1119,8 +1231,11 @@ void NewFieldColumn::draw_child(int child)
 void NewFieldColumn::draw_holds_internal()
 {
 	bool const reverse= reverse_scale_sign < 0.0;
+	// Each hold body needs to be drawn with a different z bias so that they
+	// don't z fight when they overlap.
 	for(auto&& holdit : render_holds)
 	{
+		m_field->update_z_bias();
 		// The hold loop does not need to call update_upcoming or
 		// update_active_hold beccause the tap loop handles them when drawing
 		// heads.
@@ -1141,7 +1256,31 @@ void NewFieldColumn::draw_holds_internal()
 		{
 			draw_hold(data, holdit, hold_draw_beat, hold_draw_second,
 				hold_draw_beat + NoteRowToBeat(tn.iDuration) - passed_amount,
-				tn.end_second);
+				tn.end_second, false);
+		}
+	}
+}
+
+void NewFieldColumn::draw_lifts_internal()
+{
+	bool const reverse= reverse_scale_sign < 0.0;
+	for(auto&& liftit : render_lifts)
+	{
+		m_field->update_z_bias();
+		TapNote const& tn= liftit.note_iter->second;
+		double const lift_beat= NoteRowToBeat(liftit.note_iter->first);
+		double const lift_second= tn.occurs_at_second;
+		mod_val_inputs input(lift_beat, lift_second, m_curr_beat, m_curr_second, calc_y_offset(lift_beat, lift_second));
+		double const quantization= quantization_for_time(input);
+		QuantizedHoldRenderData data;
+		m_newskin->get_hold_render_data(TapNoteSubType_Hold, m_playerize_mode,
+			tn.pn, false, reverse, quantization, m_status.anim_percent, data);
+		if(!data.parts.empty())
+		{
+			// The tail of a lift comes before the note, so pass the tail time in
+			// the head fields for draw_hold.
+			draw_hold(data, liftit, liftit.tail_beat, liftit.tail_second,
+				lift_beat, lift_second, true);
 		}
 	}
 }
@@ -1361,6 +1500,9 @@ void NewFieldColumn::DrawPrimitives()
 		case holds_child_index:
 			draw_holds_internal();
 			break;
+		case lifts_child_index:
+			draw_lifts_internal();
+			break;
 		case taps_child_index:
 			draw_taps_internal();
 			break;
@@ -1569,6 +1711,7 @@ void NewField::DrawPrimitives()
 		}
 		return;
 	}
+	curr_z_bias= 1.0;
 	for(auto&& col : m_columns)
 	{
 		col.build_render_lists();
@@ -1812,6 +1955,12 @@ void NewField::draw_entry(field_draw_entry& entry)
 	}
 }
 
+void NewField::update_z_bias()
+{
+	DISPLAY->SetZBias(curr_z_bias);
+	curr_z_bias+= z_bias_per_thing;
+}
+
 void NewField::reload_columns(NewSkinLoader const* new_loader, LuaReference& new_params)
 {
 	NewSkinLoader new_skin_walker= *new_loader;
@@ -1879,6 +2028,7 @@ void NewField::reload_columns(NewSkinLoader const* new_loader, LuaReference& new
 			m_note_data, m_timing_data, curr_x);
 		curr_x+= halfw;
 		add_draw_entry(static_cast<int>(i), holds_child_index, holds_draw_order);
+		add_draw_entry(static_cast<int>(i), lifts_child_index, holds_draw_order);
 		add_draw_entry(static_cast<int>(i), taps_child_index, taps_draw_order);
 		m_columns[i].HandleMessage(pn_msg);
 	}
@@ -2045,6 +2195,7 @@ struct LunaNewFieldColumn : Luna<NewFieldColumn>
 	GET_MEMBER(quantization_multiplier);
 	GET_MEMBER(quantization_offset);
 	GET_MEMBER(speed_mod);
+	GET_MEMBER(lift_pretrail_length);
 	GET_MEMBER(reverse_offset_pixels);
 	GET_MEMBER(reverse_scale);
 	GET_MEMBER(center_percent);
