@@ -536,13 +536,13 @@ void Actor::PreDraw() // calculate actor properties
 			break;
 		case bounce:
 			{
-				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI ); 
+				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI );
 				tempState.pos += m_vEffectMagnitude * fPercentOffset;
 			}
 			break;
 		case bob:
 			{
-				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI*2 ); 
+				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI*2 );
 				tempState.pos += m_vEffectMagnitude * fPercentOffset;
 			}
 			break;
@@ -550,7 +550,7 @@ void Actor::PreDraw() // calculate actor properties
 			{
 				float fMinZoom = m_vEffectMagnitude[0];
 				float fMaxZoom = m_vEffectMagnitude[1];
-				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI ); 
+				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI );
 				float fZoom = SCALE( fPercentOffset, 0.f, 1.f, fMinZoom, fMaxZoom );
 				tempState.scale *= fZoom;
 

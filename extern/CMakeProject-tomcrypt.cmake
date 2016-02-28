@@ -265,7 +265,7 @@ list(APPEND TOMCRYPT_HPP
 
 source_group("headers" FILES ${TOMCRYPT_HPP})
 
-add_library("tomcrypt" ${TOMCRYPT_SRC} ${TOMCRYPT_HPP})
+add_library("tomcrypt" STATIC ${TOMCRYPT_SRC} ${TOMCRYPT_HPP})
 
 set_property(TARGET "tomcrypt" PROPERTY FOLDER "External Libraries")
 

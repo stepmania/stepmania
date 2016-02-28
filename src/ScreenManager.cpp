@@ -642,7 +642,7 @@ void ScreenManager::PrepareScreen( const RString &sScreenName )
 	}
 	*/
 
-	TEXTUREMAN->DiagnosticOutput();
+	//TEXTUREMAN->DiagnosticOutput();
 }
 
 void ScreenManager::GroupScreen( const RString &sScreenName )

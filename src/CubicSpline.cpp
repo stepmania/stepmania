@@ -413,8 +413,8 @@ void CubicSpline::p_and_tfrac_from_t(float t, bool loop, size_t& p, float& tfrac
 	if(loop)
 	{
 		float max_t= static_cast<float>(m_points.size());
-		while(t >= max_t) { t-= max_t; }
-		while(t < 0.0f) { t+= max_t; }
+		t= std::fmod(t, max_t);
+		if(t < 0.0f) { t+= max_t; }
 		p= static_cast<size_t>(t);
 		tfrac= t - static_cast<float>(p);
 	}

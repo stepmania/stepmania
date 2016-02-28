@@ -595,60 +595,47 @@ void RageMatrixTranspose( RageMatrix* pOut, const RageMatrix* pIn )
 			pOut->m[j][i] = pIn->m[i][j];
 }
 
-float RageFastSin( float x )
+static const unsigned int sine_table_size= 1024;
+static const unsigned int sine_index_mod= sine_table_size * 2;
+static const double sine_table_index_mult= static_cast<double>(sine_index_mod) / (PI*2);
+static float sine_table[sine_table_size];
+struct sine_initter
 {
-	// from 0 to PI
-	// sizeof(table) == 4096 == one page of memory in Windows
-	static float table[1024];
-
-	static bool bInited = false;
-	if( !bInited )
+	sine_initter()
 	{
-		bInited = true;
-		for( unsigned i=0; i<ARRAYLEN(table); i++ )
+		for(unsigned int i= 0; i < sine_table_size; ++i)
 		{
-			float z = SCALE(i,0,ARRAYLEN(table),0.0f,PI);
-			table[i] = sinf(z);
+			float angle= SCALE(i, 0, sine_table_size, 0.0f, PI);
+			sine_table[i]= sinf(angle);
 		}
 	}
+};
+static sine_initter sinner;
 
-	// optimization
-	if( x == 0 )
-		return 0;
-
-	float fIndex = SCALE( x, 0.0f, PI*2, 0, ARRAYLEN(table)*2 );
-
-	// lerp using samples from the table
-	int iSampleIndex[2];
-	iSampleIndex[0] = (int)floorf(fIndex);
-	iSampleIndex[1] = iSampleIndex[0]+1;
-
-	float fRemainder = fIndex - iSampleIndex[0];
-	for( unsigned i=0; i<ARRAYLEN(iSampleIndex); i++ )
-		iSampleIndex[i] %= ARRAYLEN(table) * 2;
-
-	DEBUG_ASSERT( fRemainder>=0 && fRemainder<=1 );
-
-	float fValue[ARRAYLEN(iSampleIndex)];
-	for( unsigned i=0; i<ARRAYLEN(iSampleIndex); i++ )
-	{
-		int &iSample = iSampleIndex[i];
-		float &fVal = fValue[i];
-
-		if( iSample >= int(ARRAYLEN(table)) )	// PI <= iSample < 2*PI
-		{
-			// sin(x) == -sin(PI+x)
-			iSample -= ARRAYLEN(table);
-			DEBUG_ASSERT( iSample>=0 && iSample<int(ARRAYLEN(table)) );
-			fVal = -table[iSample];
-		}
-		else
-		{
-			fVal = table[iSample];
-		}
+float RageFastSin(float angle)
+{
+	if(angle == 0) { return 0; }
+	float index= angle * sine_table_index_mult;
+	int first_index= static_cast<int>(index);
+	int second_index= (first_index + 1) % sine_index_mod;
+	float remainder= index - first_index;
+	first_index%= sine_index_mod;
+	float first= 0.0f;
+	float second= 0.0f;
+#define SET_SAMPLE(sample) \
+	if(sample##_index >= sine_table_size) \
+	{ \
+		sample= -sine_table[sample##_index - sine_table_size]; \
+	} \
+	else \
+	{ \
+		sample= sine_table[sample##_index]; \
 	}
-
-	return SCALE( fRemainder, 0.0f, 1.0f, fValue[0], fValue[1] );
+	SET_SAMPLE(first);
+	SET_SAMPLE(second);
+#undef SET_SAMPLE
+	float result= lerp(remainder, first, second);
+	return result;
 }
 
 float RageFastCos( float x )
