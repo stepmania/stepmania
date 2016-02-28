@@ -927,11 +927,6 @@ void init_render_note_for_lift_at_further_time(NewFieldColumn::render_note& that
 	}
 }
 
-void init_render_note_for_lift_at_time(NewFieldColumn::render_note& that,
-	NewFieldColumn* column, double pretrail_beat, double pretrail_second)
-{
-}
-
 NewFieldColumn::render_note::render_note(NewFieldColumn* column,
 	NoteData::TrackMap::const_iterator column_begin,
 	NoteData::TrackMap::const_iterator column_end,
@@ -997,9 +992,9 @@ NewFieldColumn::render_note::render_note(NewFieldColumn* column,
 			}
 			if(prev_beat > pretrail_beat || prev_second > pretrail_second)
 			{
-				that.tail_y_offset= column->calc_y_offset(pretrail_beat, pretrail_second);
-				that.tail_beat= pretrail_beat;
-				that.tail_second= pretrail_second;
+				tail_y_offset= column->calc_y_offset(pretrail_beat, pretrail_second);
+				tail_beat= pretrail_beat;
+				tail_second= pretrail_second;
 			}
 			else
 			{
