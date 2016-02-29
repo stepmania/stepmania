@@ -118,7 +118,7 @@ namespace StepsUtil
 	 * @param stc the StepsCriteria to look for.
 	 * @param out the SongsAndSteps that match.
 	 */
-	void GetAllMatching( const SongCriteria &soc, const StepsCriteria &stc, vector<SongAndSteps> &out );	// look up in SONGMAN
+	void GetAllMatching( const SongCriteria &soc, const StepsCriteria &stc, vector<SongAndSteps> &out);	// look up in SONGMAN
 	/**
 	 * @brief Retrieve all of the Steps that match the criteria.
 	 * @param pSong the Song we're checking in.
@@ -126,6 +126,13 @@ namespace StepsUtil
 	 * @param out the SongsAndSteps that match.
 	 */
 	void GetAllMatching( Song *pSong, const StepsCriteria &stc, vector<SongAndSteps> &out );
+	/**
+	* @brief Retrieve all of the Steps that match the criteria, for Endless mode only.
+	* @param pSong the Song we're checking in.
+	* @param stc the StepsCriteria to look for.
+	* @param out the SongsAndSteps that match.
+	*/
+	void GetAllMatchingEndless( Song *pSong, const StepsCriteria &stc, vector<SongAndSteps> &out );
 	/**
 	 * @brief Is there a <a class="el" href="class_steps.html">Step</a>
 	 * that matches the criteria?

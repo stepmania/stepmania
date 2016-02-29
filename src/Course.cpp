@@ -685,7 +685,7 @@ void Course::GetTrailUnsortedEndless( const vector<CourseEntry> &entries, Trail 
 
 		if( pSong )
 		{
-			StepsUtil::GetAllMatching( pSong, stc, vSongAndSteps );
+			StepsUtil::GetAllMatchingEndless( pSong, stc, vSongAndSteps );
 		}
 		else if( vSongAndSteps.empty() || !( bSameSongCriteria && bSameStepsCriteria ) )
 		{
@@ -821,7 +821,11 @@ void Course::GetTrailUnsortedEndless( const vector<CourseEntry> &entries, Trail 
 		}
 
 		trail.m_vEntries.push_back( te );
-
+		if( trail.m_vEntries.size() > 0 && te.dc != cd )
+		{
+			trail.m_vEntries.reserve( trail.m_vEntries.size() - 1 );
+			trail.m_vEntries.resize( trail.m_vEntries.size() - 1 );
+		}
 		// LOG->Trace( "Chose: %s, %d", te.pSong->GetSongDir().c_str(), te.pSteps->GetMeter() );
 
 		if( IsAnEdit() && MAX_SONGS_IN_EDIT_COURSE > 0 &&

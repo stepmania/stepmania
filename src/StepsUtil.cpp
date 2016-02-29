@@ -61,6 +61,42 @@ void StepsUtil::GetAllMatching( Song *pSong, const StepsCriteria &stc, vector<So
 			out.push_back( SongAndSteps(pSong, *st) );
 }
 
+void StepsUtil::GetAllMatchingEndless( Song *pSong, const StepsCriteria &stc, vector<SongAndSteps> &out )
+{
+	const vector<Steps*> &vSteps = ( stc.m_st == StepsType_Invalid ? pSong->GetAllSteps() :
+		pSong->GetStepsByStepsType( stc.m_st ) );
+	int previousSize = out.size();
+	int successful = false;
+
+	GetAllMatching( pSong, stc, out );
+	if( out.size() != previousSize )
+	{
+		successful = true;
+	}
+
+	if( !successful )
+	{
+		Difficulty difficulty = ( *( vSteps.begin() ) )->GetDifficulty();
+		Difficulty previousDifficulty = difficulty;
+		int lowestDifficultyIndex = 0;
+		vector<Difficulty> difficulties;
+		FOREACH_CONST( Steps*, vSteps, st )
+		{
+			previousDifficulty = difficulty;
+			difficulty = ( *st )->GetDifficulty();
+			if( ( st - vSteps.begin() ) == 0 )
+			{
+				continue;
+			}
+			if( difficulty < previousDifficulty )
+			{
+				lowestDifficultyIndex = st - vSteps.begin();
+			}
+		}
+		out.push_back( SongAndSteps( pSong, vSteps.at( lowestDifficultyIndex ) ) );
+	}
+}
+
 bool StepsUtil::HasMatching( const SongCriteria &soc, const StepsCriteria &stc )
 {
 	const RString &sGroupName = soc.m_sGroupName.empty()? GROUP_ALL:soc.m_sGroupName;
