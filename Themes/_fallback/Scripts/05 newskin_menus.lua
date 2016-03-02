@@ -115,7 +115,9 @@ local function noteskin_param_float_val(param_name, param_section, type_info)
 	end
 	local translation= get_noteskin_param_translation(param_name, type_info)
 	return {
-		name= translation.title, meta= nesty_option_menus.adjustable_float, args= {
+		name= translation.title, meta= nesty_option_menus.adjustable_float,
+		explanation= translation.explanation,
+		args= {
 			name= translation.title, min_scale= min_scale, scale= 0,
 			max_scale= max_scale, initial_value= function()
 				return param_section[param_name]
@@ -129,37 +131,37 @@ local function noteskin_param_choice_val(param_name, param_section, type_info)
 	local translation= get_noteskin_param_translation(param_name, type_info)
 	for i, choice in ipairs(type_info.choices) do
 		eles[#eles+1]= {
-			name= translation.choices[i], init= function(pn)
-				return param_section[param_name] == choice
-			end,
-			set= function(pn)
+			name= translation.choices[i], explanation= translation.explanation,
+			meta= "execute", execute= function(pn)
 				param_section[param_name]= choice
 			end,
-			unset= noop_nil,
+			underline= function(pn)
+				return param_section[param_name] == choice
+			end,
 		}
 	end
-	return {name= translation.title, args= {eles= eles, disallow_unset= true},
-					meta= nesty_option_menus.mutually_exclusive_special_functions}
+	return {name= translation.title, explanation= translation.explanation,
+					args= eles, meta= nesty_option_menus.menu}
 end
 local function noteskin_param_bool_val(param_name, param_section, type_info)
 	local translation= get_noteskin_param_translation(param_name, type_info)
-	local eles= {}
-	for i, val in ipairs{true, false} do
-		eles[#eles+1]= {
-			name= tostring(val), init= function(pn)
-				return param_section[param_name] == val
-			end,
-			set= function(pn) param_section[param_name]= val end, unset= noop_nil}
-	end
-	return {name= translation.title, args= {eles= eles, disallow_unset= true},
-					meta= nesty_option_menus.mutually_exclusive_special_functions}
+	return {
+		name= translation.title, explanation= translation.explanation,
+		meta= "execute", translatable= false,
+		execute= function(pn)
+			param_section[param_name]= not param_section[param_name]
+		end,
+		underline= function(pn)
+			return param_section[param_name]
+		end,
+	}
 end
 local function gen_noteskin_param_submenu(pn, param_section, type_info, skin_defaults, add_to)
 	for field, info in pairs(type_info) do
 		if field ~= "translation" then
 			local field_type= type(skin_defaults[field])
 			local translation= get_noteskin_param_translation(field, type_info[field])
-			local submenu= {name= translation.title}
+			local submenu= {name= translation.title, explanation= translation.explanation}
 			if param_section[field] == nil then
 				if field_type == "table" then
 					param_section[field]= DeepCopy(skin_defaults[field])
@@ -208,7 +210,7 @@ function gen_noteskin_param_menu(pn)
 	end
 	local ret= {
 		recall_init_on_pop= true,
-		name= "noteskin_params",
+		name= "newskin_params",
 		destructor= function(self, pn)
 			MESSAGEMAN:Broadcast("NewskinParamsChanged", {pn= pn})
 		end,

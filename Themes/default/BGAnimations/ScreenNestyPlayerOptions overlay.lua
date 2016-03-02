@@ -1,3 +1,5 @@
+local menu_height= 300
+local menu_width= 250
 local menu_x= {
 	[PLAYER_1]= _screen.w * .25,
 	[PLAYER_2]= _screen.w * .75,
@@ -6,6 +8,8 @@ local menus= {}
 for i, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
 	menus[pn]= setmetatable({}, nesty_menu_stack_mt)
 end
+local explanations= {}
+local ready_indicators= {}
 
 local notefield_config= {
 	nesty_options.float_config_val(newfield_prefs_config, "hidden_offset", -1, 1, 2),
@@ -68,7 +72,6 @@ local insertion_chart_mods= {
 	nesty_options.bool_player_mod_val("BMRize"),
 	nesty_options.bool_player_mod_val("Skippy"),
 	nesty_options.bool_player_mod_val("Mines"),
-	nesty_options.bool_player_mod_val("AttackMines"),
 	nesty_options.bool_player_mod_val("Echo"),
 	nesty_options.bool_player_mod_val("Stomp"),
 	nesty_options.bool_player_mod_val("Planted"),
@@ -93,14 +96,16 @@ local base_options= {
 	 args= {
 		 name= "speed_type", enum= newfield_speed_types, fake_enum= true,
 		 obj_get= function(pn) return newfield_prefs_config:get_data(pn) end,
-		 get= function(obj) return obj.speed_type end,
-		 set= function(obj, value)
+		 get= function(pn, obj) return obj.speed_type end,
+		 set= function(pn, obj, value)
 			 if obj.speed_type == "multiple" and value ~= "multiple" then
 				 obj.speed_mod= math.round(obj.speed_mod * 100)
 			 elseif obj.speed_type ~= "multiple" and value == "multiple" then
 				 obj.speed_mod= obj.speed_mod / 100
 			 end
 			 obj.speed_type= value
+			 MESSAGEMAN:Broadcast("ConfigValueChanged", {
+				config_name= newfield_prefs_config.name, field_name= "speed_type", value= value, pn= pn})
 		 end,
 	}},
 	nesty_options.float_song_mod_val("MusicRate", -2, -1, -1, .5, 2),
@@ -127,29 +132,111 @@ local function exit_if_both_ready()
 	SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToNextScreen")
 end
 
-local function input(event)
-	if menu_stack_generic_input(menus, event) then
-		player_ready[event.PlayerNumber]= true
-		exit_if_both_ready()
+local prev_explanation= {}
+local function update_explanation(pn)
+	local cursor_item= menus[pn]:get_cursor_item()
+	if cursor_item then
+		local new_expl= cursor_item.name or cursor_item.text
+		local expl_com= "change_explanation"
+		if cursor_item.explanation then
+			new_expl= cursor_item.explanation
+			expl_com= "translated_explanation"
+		end
+		if new_expl ~= prev_explanation[pn] then
+			prev_explanation[pn]= new_expl
+			explanations[pn]:playcommand(expl_com, {text= new_expl})
+		end
 	end
+end
+
+local function input(event)
+	local pn= event.PlayerNumber
+	if not pn then return end
+	if menu_stack_generic_input(menus, event) then
+		player_ready[pn]= true
+		ready_indicators[pn]:playcommand("show_ready")
+		exit_if_both_ready()
+	else
+		if player_ready[pn] and not menus[pn]:can_exit_screen() then
+			player_ready[pn]= false
+			ready_indicators[pn]:playcommand("hide_ready")
+		elseif event.GameButton == "Back" and GAMESTATE:IsHumanPlayer(pn) then
+			SCREENMAN:GetTopScreen():StartTransitioningScreen("SM_GoToPrevScreen")
+		end
+	end
+	update_explanation(pn)
+end
+
+local menu_item_mt= DeepCopy(option_item_underlinable_mt)
+menu_item_mt.__index.text_style_init= function(text_actor)
+	text_actor:shadowlength(1)
 end
 
 local frame= Def.ActorFrame{
 	OnCommand= function(self)
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
 		for pn, menu in pairs(menus) do
-			menu:push_options_set_stack(nesty_option_menus.menu, base_options, "Play Song")
+			menu:push_options_set_stack(nesty_option_menus.menu, base_options, "play_song")
 			menu:update_cursor_pos()
+			update_explanation(pn)
 		end
 	end,
 }
 for pn, menu in pairs(menus) do
+	frame[#frame+1]= LoadActor(
+		THEME:GetPathG("ScreenOptions", "halfpage")) .. {
+		InitCommand= function(self)
+			self:xy(menu_x[pn], 250)
+		end
+	}
 	frame[#frame+1]= menu:create_actors{
-		x= menu_x[pn], y= 56, width= _screen.w * .5, height= _screen.h * .75,
-		num_displays= 1, pn= pn,
-		el_height= 24,
+		x= menu_x[pn], y= 96, width= menu_width, height= menu_height,
+		num_displays= 1, pn= pn, item_mt= menu_item_mt,
+		el_height= 20, zoom= .55,
 	}
 	menu:set_translation_section("newfield_options")
+	frame[#frame+1]= Def.BitmapText{
+		Font= "Common Normal", InitCommand= function(self)
+			explanations[pn]= self
+			self:xy(menu_x[pn] - (menu_width / 2), _screen.cy+174)
+				:diffuse(PlayerColor(pn))
+				:shadowlength(1):wrapwidthpixels(menu_width / .5):zoom(.5)
+				:horizalign(left)
+		end,
+		change_explanationCommand= function(self, param)
+			local text= ""
+			if param.text == "" then
+				text= THEME:GetString("newfield_explanations", "menu_up_element")
+			else
+				text= THEME:GetString("newfield_explanations", param.text)
+			end
+			self:playcommand("translated_explanation", {text= text})
+		end,
+		translated_explanationCommand= function(self, param)
+			self:stoptweening():settext(param.text):cropright(1):linear(.5):cropright(0)
+		end,
+	}
+	frame[#frame+1]= Def.BitmapText{
+		Font= "Common Normal", Text= "READY!", InitCommand= function(self)
+			ready_indicators[pn]= self
+			self:xy(menu_x[pn], 106):zoom(1.5):diffuse(Color.Green):diffusealpha(0)
+		end,
+		show_readyCommand= function(self)
+			self:stoptweening():decelerate(.5):diffusealpha(1)
+		end,
+		hide_readyCommand= function(self)
+			self:stoptweening():accelerate(.5):diffusealpha(0)
+		end,
+	}
+	local metrics_name = "PlayerNameplate" .. ToEnumShortString(pn)
+	frame[#frame+1] = LoadActor(
+		THEME:GetPathG("ScreenPlayerOptions", "PlayerNameplate"), pn) .. {
+		InitCommand=function(self)
+			self:name(metrics_name)
+			ActorUtil.LoadAllCommandsAndSetXY(self,"ScreenPlayerOptions")
+			self:x(menu_x[pn])
+		end
+	}
 end
 
 return frame

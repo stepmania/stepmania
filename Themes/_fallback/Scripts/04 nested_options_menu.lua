@@ -37,20 +37,29 @@ function rec_calc_actor_extent(aframe, depth)
 	local xmax= w * (1 - halign)
 	local ymin= h * -valign
 	local ymax= h * (1 - valign)
+	local function handle_child(xz, yz, child)
+		if child:GetVisible() then
+			local cx= child:GetX() + halignjust
+			local cy= child:GetY() + valignjust
+			--Trace(depth .. "child " .. i .. " at " .. cx .. ", " .. cy)
+			local cxmin, cxmax, cymin, cymax= rec_calc_actor_extent(child,depth.."  ")
+			xmin= math.min((cxmin * xz) + cx, xmin)
+			ymin= math.min((cymin * yz) + cy, ymin)
+			xmax= math.max((cxmax * xz) + cx, xmax)
+			ymax= math.max((cymax * yz) + cy, ymax)
+		end
+	end
 	if aframe.GetChildren then
 		local xz= aframe:GetZoomX()
 		local yz= aframe:GetZoomY()
 		local children= aframe:GetChildren()
 		for i, c in pairs(children) do
-			if c:GetVisible() then
-				local cx= c:GetX() + halignjust
-				local cy= c:GetY() + valignjust
-				--Trace(depth .. "child " .. i .. " at " .. cx .. ", " .. cy)
-				local cxmin, cxmax, cymin, cymax= rec_calc_actor_extent(c,depth.."  ")
-				xmin= math.min((cxmin * xz) + cx, xmin)
-				ymin= math.min((cymin * yz) + cy, ymin)
-				xmax= math.max((cxmax * xz) + cx, xmax)
-				ymax= math.max((cymax * yz) + cy, ymax)
+			if #c > 0 then
+				for subi= 1, #c do
+					handle_child(xz, yz, c[subi])
+				end
+			else
+				handle_child(xz, yz, c)
 			end
 		end
 	else
@@ -91,6 +100,68 @@ local function get_string_if_translatable(translatable, section, str)
 	return THEME:GetString(section, str)
 end
 
+local cursor_param_defaults= {
+	name= "", parts_name= "OptionsCursor",
+}
+nesty_cursor_mt= {
+	__index= {
+		create_actors= function(self, params)
+			add_defaults_to_params(params, cursor_param_defaults)
+			self.name= params.name
+			self.pn= params.pn
+			local frame= Def.ActorFrame{
+				Name= self.name, InitCommand= function(subself)
+					self.container= subself
+					self.left:horizalign(right)
+					self.right:horizalign(left)
+					if self.pn then
+						self:diffuse(PlayerColor(self.pn))
+					end
+				end,
+				LoadActor(THEME:GetPathG(params.parts_name, "Middle")) ..
+				{InitCommand= function(subself) self.middle= subself end},
+				LoadActor(THEME:GetPathG(params.parts_name, "Left")) ..
+				{InitCommand= function(subself) self.left= subself end},
+				LoadActor(THEME:GetPathG(params.parts_name, "Right")) ..
+				{InitCommand= function(subself) self.right= subself end},
+			}
+			return frame;
+		end,
+		refit= function(self, nx, ny, nw, nh)
+			nx= nx or self.container:GetX()
+			ny= ny or self.container:GetY()
+			nw= nw or self.w
+			nh= nh or self.h
+			local new_size= (self.w ~= nw) or (self.h ~= nh)
+			self.x= nx
+			self.y= ny
+			self.w= nw or self.w
+			self.h= nh or self.h
+			self.container:linear(.1):xy(self.x, self.y)
+			if new_size then
+				for i, part in ipairs{self.left, self.middle, self.right} do
+					part:linear(.1):zoomtoheight(self.h)
+				end
+				self.left:x(self.w*-.5)
+				self.middle:zoomtowidth(self.w)
+				self.right:x(self.w*.5)
+			end
+		end,
+		diffuse= function(self, color)
+			for i, part in ipairs{self.left, self.middle, self.right} do
+				part:diffuse(color)
+			end
+		end,
+		hide= function(self)
+			self.hidden= true
+			self.container:hibernate(math.huge)
+		end,
+		unhide= function(self)
+			self.hidden= false
+			self.container:hibernate(0)
+		end,
+}}
+
 option_item_underlinable_mt= {
 	__index= {
 		create_actors= function(self, name)
@@ -99,18 +170,21 @@ option_item_underlinable_mt= {
 			self.width= SCREEN_WIDTH
 			self.prev_index= 1
 			self.translation_section= "OptionNames"
+			self.underline= setmetatable({}, nesty_cursor_mt)
 			return Def.ActorFrame{
-				Name= name,
-				InitCommand= function(subself)
+				Name= name, InitCommand= function(subself)
 					self.container= subself
 					self:lose_focus()
 				end,
-				Def.Quad{
-					Name= "underline", InitCommand= function(q) self.underline= q end},
+				self.underline:create_actors{
+					name= "underline", parts_name= "OptionsUnderline"},
 				Def.BitmapText{
 					Font= "Common Normal", InitCommand= function(subself)
 						self.text= subself
 						subself:zoom(self.zoom)
+						if self.text_style_init then
+							self.text_style_init(subself)
+						end
 					end,
 				},
 			}
@@ -120,7 +194,8 @@ option_item_underlinable_mt= {
 			self.zoom= zoom
 			self.height= height
 			self.text:zoom(zoom)
-			self.underline:SetHeight(height/2):vertalign(top)
+			self.underline:refit(nil, height/2, width, height/4)
+			self.underline.container:finishtweening()
 		end,
 		set_underline_color= function(self, color)
 			self.underline:diffuse(color)
@@ -150,16 +225,16 @@ option_item_underlinable_mt= {
 		end,
 		set_underline= function(self, u)
 			if u then
-				self.underline:stoptweening():accelerate(0.25):zoom(1)
+				self.underline.container:stoptweening():accelerate(0.25):zoom(1)
 			else
-				self.underline:stoptweening():decelerate(0.25):zoom(0)
+				self.underline.container:stoptweening():decelerate(0.25):zoom(0)
 			end
 		end,
 		set_text= function(self, t)
 			self.text:settext(get_string_if_translatable(
 				self.info.translatable, self.translation_section, t))
 			width_limit_text(self.text, self.width, self.zoom)
-			self.underline:SetWidth(self.text:GetZoomedWidth())
+			self.underline:refit(nil, nil, self.text:GetZoomedWidth(), nil)
 		end,
 		get_cursor_fit= function(self)
 			local ret= {0, 0, 0, self.height + 4}
@@ -451,9 +526,17 @@ option_set_general_mt= {
 			self.display:scroll(self.cursor_pos)
 		end,
 		interpret_code= function(self, code)
+			-- Protect against other code changing cursor_pos to an element that
+			-- isn't visible.
+			local function unfocus_cursor(self)
+				local prev_el= self:get_cursor_element()
+				if prev_el then
+					prev_el:lose_focus()
+				end
+			end
 			local funs= {
 				MenuLeft= function(self)
-					self:get_cursor_element():lose_focus()
+					unfocus_cursor(self)
 					if self.cursor_pos > 1 then
 						self.cursor_pos= self.cursor_pos - 1
 					else
@@ -464,7 +547,7 @@ option_set_general_mt= {
 					return true
 				end,
 				MenuRight= function(self)
-					self:get_cursor_element():lose_focus()
+					unfocus_cursor(self)
 					if self.cursor_pos < #self.info_set then
 						self.cursor_pos= self.cursor_pos + 1
 					else
@@ -653,12 +736,20 @@ nesty_option_menus.menu= {
 				end
 			end
 		end,
+		get_item= function(self, pos)
+			pos= self:id_minus_up(pos or self.cursor_pos)
+			if pos == 0 then
+				return self.info_set[1]
+			end
+			return self.shown_data[pos]
+		end,
 		get_item_name= function(self, pos)
 			pos= self:id_minus_up(pos or self.cursor_pos)
-			if self.shown_data[pos] then
-				return self.shown_data[pos].name
+			local shown= self.shown_data[pos]
+			if shown then
+				return shown.name or shown.text
 			end
-			return ""
+			return self.up_text or ""
 		end
 }}
 
@@ -914,59 +1005,6 @@ for k, v in pairs(nesty_option_display_mt.__index) do
 	fake_display[k]= function() end
 end
 
-local cursor_param_defaults= {
-	name= "",
-}
-nesty_cursor_mt= {
-	__index= {
-		create_actors= function(self, params)
-			add_defaults_to_params(params, cursor_param_defaults)
-			self.name= params.name
-			self.pn= params.pn
-			local frame= Def.ActorFrame{
-				InitCommand= function(subself)
-					self.container= subself
-					for i, part in ipairs{self.left, self.middle, self.right} do
-						part:diffuse(PlayerColor(self.pn))
-					end
-				end,
-				LoadActor(THEME:GetPathG("OptionsCursor", "Middle")) ..
-				{InitCommand= function(subself) self.middle= subself end},
-				LoadActor(THEME:GetPathG("OptionsCursor", "Left")) ..
-				{InitCommand= function(subself) self.left= subself end},
-				LoadActor(THEME:GetPathG("OptionsCursor", "Right")) ..
-				{InitCommand= function(subself) self.right= subself end},
-			}
-			return frame;
-		end,
-		refit= function(self, nx, ny, nw, nh)
-			nx= nx or self.container:GetX()
-			ny= ny or self.container:GetY()
-			local new_size= ((nw and (self.w ~= nw)) or (nh and (self.h ~= nh)))
-			self.x= nx
-			self.y= ny
-			self.w= nw or self.w
-			self.h= nh or self.h
-			self.container:linear(.1):xy(self.x, self.y)
-			if new_size then
-				for i, part in ipairs{self.left, self.middle, self.right} do
-					part:linear(.1):zoomtoheight(self.h)
-				end
-				self.left:x(self.w*-.5)
-				self.middle:zoomtowidth(self.w)
-				self.right:x(self.w*.5)
-			end
-		end,
-		hide= function(self)
-			self.hidden= true
-			self.container:hibernate(math.huge)
-		end,
-		unhide= function(self)
-			self.hidden= false
-			self.container:hibernate(0)
-		end,
-}}
-
 local menu_stack_param_defaults= {
 	name= "", x= 0, y= 0, width= _screen.w, height= _screen.h, num_displays= 1,
 	el_height= line_height, zoom= 1, no_heading= false, no_display= false,
@@ -1195,13 +1233,20 @@ nesty_menu_stack_mt= {
 		top_menu= function(self)
 			return self.options_set_stack[#self.options_set_stack]
 		end,
+		get_cursor_item= function(self)
+			local top_set= self.options_set_stack[#self.options_set_stack]
+			if top_set.get_item then
+				return top_set:get_item()
+			end
+			return nil
+		end,
 		get_cursor_item_name= function(self)
 			local top_set= self.options_set_stack[#self.options_set_stack]
 			if top_set.get_item_name then
 				return top_set:get_item_name()
 			end
 			return ""
-		end
+		end,
 }}
 
 function menu_stack_generic_input(per_player_menus, event, close_menu_callback)
