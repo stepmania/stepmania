@@ -1252,28 +1252,45 @@ void NoteDataUtil::RemoveQuads( NoteData &inout, int iStartIndex, int iEndIndex 
 	RemoveSimultaneousNotes( inout, 3, iStartIndex, iEndIndex );
 }
 
-void NoteDataUtil::RemoveSpecificTapNotes( NoteData &inout, TapNoteType tn, int iStartIndex, int iEndIndex )
+void NoteDataUtil::RemoveSpecificTapNotes(NoteData &inout, TapNoteType tn, int iStartIndex, int iEndIndex)
 {
-	for( int t=0; t<inout.GetNumTracks(); t++ )
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( inout, t, r, iStartIndex, iEndIndex ) 
-			if( inout.GetTapNote(t,r).type == tn )
+	for(int t=0; t<inout.GetNumTracks(); t++)
+	{
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE(inout, t, r, iStartIndex, iEndIndex)
+		{
+			if(inout.GetTapNote(t,r).type == tn)
+			{
 				inout.SetTapNote( t, r, TAP_EMPTY );
+			}
+		}
+	}
 	inout.RevalidateATIs(vector<int>(), false);
 }
 
-void NoteDataUtil::RemoveMines( NoteData &inout, int iStartIndex, int iEndIndex )
+void NoteDataUtil::RemoveMines(NoteData &inout, int iStartIndex, int iEndIndex)
 {
-	RemoveSpecificTapNotes( inout, TapNoteType_Mine, iStartIndex, iEndIndex );
+	RemoveSpecificTapNotes(inout, TapNoteType_Mine, iStartIndex, iEndIndex);
 }
 
-void NoteDataUtil::RemoveLifts( NoteData &inout, int iStartIndex, int iEndIndex )
+void NoteDataUtil::RemoveLifts(NoteData &inout, int iStartIndex, int iEndIndex)
 {
-	RemoveSpecificTapNotes( inout, TapNoteType_Lift, iStartIndex, iEndIndex );
+	RemoveSpecificTapNotes(inout, TapNoteType_Lift, iStartIndex, iEndIndex);
 }
 
-void NoteDataUtil::RemoveFakes( NoteData &inout, int iStartIndex, int iEndIndex )
+void NoteDataUtil::RemoveFakes(NoteData &inout, TimingData const& timing_data, int iStartIndex, int iEndIndex)
 {
-	RemoveSpecificTapNotes( inout, TapNoteType_Fake, iStartIndex, iEndIndex );
+	RemoveSpecificTapNotes(inout, TapNoteType_Fake, iStartIndex, iEndIndex);
+	for(int t=0; t<inout.GetNumTracks(); t++)
+	{
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE(inout, t, r, iStartIndex, iEndIndex)
+		{
+			if(!timing_data.IsJudgableAtRow(r))
+			{
+				inout.SetTapNote( t, r, TAP_EMPTY );
+			}
+		}
+	}
+	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::RemoveAllButOneTap( NoteData &inout, int row )
@@ -2692,7 +2709,7 @@ void NoteDataUtil::ConvertAdditionsToRegular( NoteData &inout )
 	inout.RevalidateATIs(vector<int>(), false);
 }
 
-void NoteDataUtil::TransformNoteData( NoteData &nd, const AttackArray &aa, StepsType st, Song* pSong )
+void NoteDataUtil::TransformNoteData(NoteData &nd, TimingData const& timing_data, const AttackArray &aa, StepsType st, Song* pSong)
 {
 	FOREACH_CONST( Attack, aa, a )
 	{
@@ -2703,12 +2720,12 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const AttackArray &aa, Steps
 			float fStartBeat, fEndBeat;
 			a->GetAttackBeats( pSong, fStartBeat, fEndBeat );
 
-			NoteDataUtil::TransformNoteData( nd, po, st, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat) );
+			NoteDataUtil::TransformNoteData(nd, timing_data, po, st, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat) );
 		}
 	}
 }
 
-void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, int iStartIndex, int iEndIndex )
+void NoteDataUtil::TransformNoteData( NoteData &nd, TimingData const& timing_data, const PlayerOptions &po, StepsType st, int iStartIndex, int iEndIndex )
 {
 	// Apply remove transforms before others so that we don't go removing
 	// notes we just inserted.  Apply TRANSFORM_NOROLLS before TRANSFORM_NOHOLDS,
@@ -2719,7 +2736,7 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOMINES] )	NoteDataUtil::RemoveMines( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOJUMPS] )	NoteDataUtil::RemoveJumps( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOLIFTS] )	NoteDataUtil::RemoveLifts( nd, iStartIndex, iEndIndex );
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOFAKES] )	NoteDataUtil::RemoveFakes( nd, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOFAKES] )	NoteDataUtil::RemoveFakes( nd, timing_data, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHANDS] )	NoteDataUtil::RemoveHands( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOQUADS] )	NoteDataUtil::RemoveQuads( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOSTRETCH] )	NoteDataUtil::RemoveStretch( nd, st, iStartIndex, iEndIndex );

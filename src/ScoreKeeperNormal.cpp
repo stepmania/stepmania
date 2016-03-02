@@ -79,7 +79,7 @@ void ScoreKeeperNormal::Load(
 		/* Compute RadarValues before applying any user-selected mods. Apply
 		 * Course mods and count them in the "pre" RadarValues because they're
 		 * forced and not chosen by the user. */
-		NoteDataUtil::TransformNoteData( ndPre, aa, pSteps->m_StepsType, pSong );
+		NoteDataUtil::TransformNoteData(ndPre, *(pSteps->GetTimingData()), aa, pSteps->m_StepsType, pSong );
 
 		/* Apply user transforms to find out how the notes will really look.
 		 *
@@ -89,7 +89,7 @@ void ScoreKeeperNormal::Load(
 		 * the last call to StoreSelectedOptions and the modifiers list, but that'd
 		 * mean moving the queues in ScreenGameplay to GameState ... */
 		NoteData ndPost = ndPre;
-		NoteDataUtil::TransformNoteData( ndPost, m_pPlayerState->m_PlayerOptions.GetStage(), pSteps->m_StepsType );
+		NoteDataUtil::TransformNoteData(ndPost, *(pSteps->GetTimingData()), m_pPlayerState->m_PlayerOptions.GetStage(), pSteps->m_StepsType);
 
 		GAMESTATE->SetProcessedTimingData(pSteps->GetTimingData()); // XXX: Not sure why but NoteDataUtil::CalculateRadarValues segfaults without this
 		iTotalPossibleDancePoints += this->GetPossibleDancePoints( &ndPre, &ndPost, pSteps->GetTimingData(), pSong->m_fMusicLengthSeconds );
