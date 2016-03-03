@@ -26,6 +26,7 @@ static void InitNames()
 
 	g_mapNamesToString[KEY_PERIOD] = "period";
 	g_mapNamesToString[KEY_COMMA] = "comma";
+	g_mapNamesToString[KEY_COLON] = "colon";
 	g_mapNamesToString[KEY_SPACE] = "space";
 	g_mapNamesToString[KEY_DEL] = "delete";
 	g_mapNamesToString[KEY_BACKSLASH] = "backslash";
