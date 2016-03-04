@@ -4420,6 +4420,12 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenEdit::SetDirty(bool dirty)
 {
+	if(EDIT_MODE.GetValue() != EditMode_Full)
+	{
+		m_dirty= false;
+		m_next_autosave_time= -1.0f;
+		return;
+	}
 	if(dirty)
 	{
 		if(!m_dirty)
