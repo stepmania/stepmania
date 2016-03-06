@@ -62,6 +62,8 @@ local stepmania_credits= {
 		"Raymund Zacharias (German)",
 		{type= "subsection", name= "5.0.10 update"},
 		"Milène Gauthier-Sabourin (Arvaneth) (French)",
+		{type= "subsection", name= "5.0.11 update"},
+		"Joel Robert Justiawan (JOELwindows7)",
 	},
 	{
 		name= "Other Contributors",
@@ -119,6 +121,7 @@ local stepmania_credits= {
 		"Ciera Boyd", -- you bet your ass I'm putting my girlfriend in the credits -shakesoda
 		"#KBO",
 		"Celestia Radio", -- LOVE AND TOLERANCE
+		"Perkedel Corporation", -- Joel's company.
 		"You showed us... your ultimate dance",
 	},
 }

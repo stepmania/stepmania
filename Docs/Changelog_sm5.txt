@@ -4,6 +4,32 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2016/03/05
+----------
+* [global] get_sound_driver_list lua function added. [kyzentun]
+
+2016/03/02
+----------
+* [Gameplay] Fixed No Fakes mod to remove fakes inside warps. [kyzentun]
+* [Keymaps] Added special name for colon key so it can be bound. [medmig]
+
+2016/02/20
+----------
+* [Language] Bahasa Indonesian translation added to default theme. [JOELwindows7]
+
+2016/02/15
+----------
+* [Input] Linux event devices now start at JOY10 instead of JOY1.  Without
+  this change, if one dance pad is a joystick device, and the other is an
+  event device, they will both be JOY1, and stepmania will think they are the
+  same dance pad.  If you use Linux, assume that you have to remap your dance
+  pad. [kyzentun]
+
+2016/02/04
+----------
+* [Course] In an Endless course, songs will only be repeated after all songs
+  in the group have been played. [blindbox]
+
 2016/02/03
 ----------
 * [ScreenManager] Added PlayInvalidSound, PlayStartSound, PlayCoinSound,
