@@ -215,6 +215,9 @@ save yourself some time, copy this for undocumented things:
 		Returns the length of the music file found at path.<br />
 		If you are loading the sound into an ActorSound, ActorSound:get to get its RageSound then use RageSound's get_length function instead to avoid loading the file twice.
 	</Function>
+	<Function name='get_sound_driver_list' return='table' arguments=''>
+		Returns a table of the names of the sound drivers available.  If the SoundDriver preference is set to something that is not in this list, StepMania WILL NOT START UP.  Changes to the SoundDriver preference do not take effect until the next time StepMania starts up.
+	</Function>
 	<Function name='GetOSName' return='string' arguments=''>
 		Returns a string representing the name of the operating system being used. (e.g. "Windows", "Linux", "Mac, "Unknown")
 	</Function>

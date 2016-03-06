@@ -222,6 +222,7 @@
 		<Function name='getfenv'/>
 		<Function name='getmetatable'/>
 		<Function name='get_music_file_length'/>
+		<Function name='get_sound_driver_list'/>
 		<Function name='ipairs'/>
 		<Function name='ivalues'/>
 		<Function name='join'/>

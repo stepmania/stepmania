@@ -36,6 +36,11 @@ RageSoundDriver *RageSoundDriver::Create( const RString& sDrivers )
 	return NULL;
 }
 
+RString RageSoundDriver::GetDefaultSoundDriverList()
+{
+	return DEFAULT_SOUND_DRIVER_LIST;
+}
+
 /*
  * (c) 2002-2006 Glenn Maynard, Steve Checkoway
  * All rights reserved.
