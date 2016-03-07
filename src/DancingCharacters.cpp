@@ -140,13 +140,16 @@ DancingCharacters::DancingCharacters(): m_bDrawDangerLight(false),
 				break;
 		}
 
-		m_pCharacter[p]->LoadMilkshapeAscii( pChar->GetModelPath() );
-		m_pCharacter[p]->LoadMilkshapeAsciiBones( "rest", pChar->GetRestAnimationPath() );
-		m_pCharacter[p]->LoadMilkshapeAsciiBones( "warmup", pChar->GetWarmUpAnimationPath() );
-		m_pCharacter[p]->LoadMilkshapeAsciiBones( "dance", pChar->GetDanceAnimationPath() );
-		m_pCharacter[p]->SetCullMode( CULL_NONE );	// many of the models floating around have the vertex order flipped
+		std::string load_fail_reason;
+		if(m_pCharacter[p]->LoadMilkshapeAscii(pChar->GetModelPath(), load_fail_reason))
+		{
+			m_pCharacter[p]->LoadMilkshapeAsciiBones( "rest", pChar->GetRestAnimationPath() );
+			m_pCharacter[p]->LoadMilkshapeAsciiBones( "warmup", pChar->GetWarmUpAnimationPath() );
+			m_pCharacter[p]->LoadMilkshapeAsciiBones( "dance", pChar->GetDanceAnimationPath() );
+			m_pCharacter[p]->SetCullMode( CULL_NONE );	// many of the models floating around have the vertex order flipped
 
-		m_pCharacter[p]->RunCommands( pChar->m_cmdInit );
+			m_pCharacter[p]->RunCommands( pChar->m_cmdInit );
+		}
 	}
 }
 

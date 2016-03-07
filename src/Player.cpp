@@ -281,6 +281,7 @@ Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 		m_pNoteField->SetName( "NoteField" );
 		m_new_field= new NewField;
 		m_new_field->SetName("NewField");
+		m_new_field->m_being_drawn_by_player= true;
 	}
 	m_pJudgedRows = new JudgedRows;
 
@@ -1661,39 +1662,77 @@ void Player::DrawPrimitives()
 		return;
 	}
 
-	// Draw these below everything else.
-	if( COMBO_UNDER_FIELD && curr_options.m_fBlind == 0 )
+	if(m_disable_player_matrix_because_newfield_does_skewing)
 	{
-		if( m_sprCombo )
+		int combo_draw_order= m_sprCombo->GetDrawOrder();
+		int judge_draw_order= m_sprJudgment->GetDrawOrder();
+		if(combo_draw_order < judge_draw_order)
+		{
+			m_new_field->draw_up_to_draw_order(combo_draw_order);
 			m_sprCombo->Draw();
+			m_new_field->draw_up_to_draw_order(judge_draw_order);
+			m_sprJudgment->Draw();
+		}
+		else
+		{
+			m_new_field->draw_up_to_draw_order(judge_draw_order);
+			m_sprJudgment->Draw();
+			m_new_field->draw_up_to_draw_order(combo_draw_order);
+			m_sprCombo->Draw();
+		}
+		m_new_field->draw_up_to_draw_order(max_draw_order);
 	}
-
-	if( m_pAttackDisplay )
-		m_pAttackDisplay->Draw();
-
-	if( TAP_JUDGMENTS_UNDER_FIELD )
-		DrawTapJudgments();
-
-	if( HOLD_JUDGMENTS_UNDER_FIELD )
-		DrawHoldJudgments();
-
-	if(draw_notefield)
+	else
 	{
-		PlayerNoteFieldPositioner poser(this, GetX(), tilt, skew, mini, center_y, reverse);
-		m_pNoteField->Draw();
-		m_new_field->Draw();
+		// Draw these below everything else.
+		if( COMBO_UNDER_FIELD && curr_options.m_fBlind == 0 )
+		{
+			if( m_sprCombo )
+			{
+				m_sprCombo->Draw();
+			}
+		}
+
+		if( m_pAttackDisplay )
+		{
+			m_pAttackDisplay->Draw();
+		}
+
+		if( TAP_JUDGMENTS_UNDER_FIELD )
+		{
+			DrawTapJudgments();
+		}
+
+		if( HOLD_JUDGMENTS_UNDER_FIELD )
+		{
+			DrawHoldJudgments();
+		}
+
+		if(draw_notefield)
+		{
+			PlayerNoteFieldPositioner poser(this, GetX(), tilt, skew, mini, center_y, reverse);
+			m_pNoteField->Draw();
+		}
+
+		// m_pNoteField->m_sprBoard->GetVisible()
+		if( !COMBO_UNDER_FIELD && curr_options.m_fBlind == 0 )
+		{
+			if( m_sprCombo )
+			{
+				m_sprCombo->Draw();
+			}
+		}
+
+		if( !(bool)TAP_JUDGMENTS_UNDER_FIELD )
+		{
+			DrawTapJudgments();
+		}
+
+		if( !(bool)HOLD_JUDGMENTS_UNDER_FIELD )
+		{
+			DrawHoldJudgments();
+		}
 	}
-
-	// m_pNoteField->m_sprBoard->GetVisible()
-	if( !COMBO_UNDER_FIELD && curr_options.m_fBlind == 0 )
-		if( m_sprCombo )
-			m_sprCombo->Draw();
-
-	if( !(bool)TAP_JUDGMENTS_UNDER_FIELD )
-		DrawTapJudgments();
-
-	if( !(bool)HOLD_JUDGMENTS_UNDER_FIELD )
-		DrawHoldJudgments();
 }
 
 void Player::PushPlayerMatrix(float x, float skew, float center_y)
@@ -3230,15 +3269,26 @@ void Player::CacheAllUsedNoteSkins()
 		m_pNoteField->CacheAllUsedNoteSkins();
 }
 
+static Message create_judge_message(PlayerNumber pn, TapNoteScore tns, int track)
+{
+	Message msg("Judgment");
+	msg.SetParam("Player", pn);
+	msg.SetParam("TapNoteScore", tns);
+	msg.SetParam("FirstTrack", track);
+	return msg;
+}
+
+void Player::send_judge_message(Message& msg)
+{
+	MESSAGEMAN->Broadcast( msg );
+}
+
 void Player::SetMineJudgment( TapNoteScore tns , int iTrack )
 {
 	if( m_bSendJudgmentAndComboMessages )
 	{
-		Message msg("Judgment");
-		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
-		msg.SetParam( "TapNoteScore", tns );
-		msg.SetParam( "FirstTrack", iTrack );
-		MESSAGEMAN->Broadcast( msg );
+		Message msg(create_judge_message(m_pPlayerState->m_PlayerNumber, tns, iTrack));
+		send_judge_message(msg);
 		if( m_pPlayerStageStats &&
 			( ( tns == TNS_AvoidMine && AVOID_MINE_INCREMENTS_COMBO ) ||
 				( tns == TNS_HitMine && MINE_HIT_INCREMENTS_MISS_COMBO ))
@@ -3253,11 +3303,7 @@ void Player::SetJudgment( int iRow, int iTrack, const TapNote &tn, TapNoteScore 
 {
 	if( m_bSendJudgmentAndComboMessages )
 	{
-		Message msg("Judgment");
-		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
-		msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
-		msg.SetParam( "FirstTrack", iTrack );
-		msg.SetParam( "TapNoteScore", tns );
+		Message msg(create_judge_message(m_pPlayerState->m_PlayerNumber, tns, iTrack));
 		msg.SetParam( "Early", fTapNoteOffset < 0.0f );
 		msg.SetParam( "TapNoteOffset", tn.result.fTapNoteOffset );
 
@@ -3288,7 +3334,7 @@ void Player::SetJudgment( int iRow, int iTrack, const TapNote &tn, TapNoteScore 
 		msg.SetParamFromStack( L, "Notes" );
 
 		LUA->Release( L );
-		MESSAGEMAN->Broadcast( msg );
+		send_judge_message(msg);
 	}
 }
 
@@ -3300,19 +3346,16 @@ void Player::SetHoldJudgment( TapNote &tn, int iTrack )
 
 	if( m_bSendJudgmentAndComboMessages )
 	{
-		Message msg("Judgment");
-		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
-		msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
-		msg.SetParam( "FirstTrack", iTrack );
+		Message msg(create_judge_message(m_pPlayerState->m_PlayerNumber, tn.result.tns, iTrack));
 		msg.SetParam( "NumTracks", (int)m_vpHoldJudgment.size() );
-		msg.SetParam( "TapNoteScore", tn.result.tns );
 		msg.SetParam( "HoldNoteScore", tn.HoldResult.hns );
 
 		Lua* L = LUA->Get();
 		tn.PushSelf(L);
 		msg.SetParamFromStack( L, "TapNote" );
+		LUA->Release( L );
 
-		MESSAGEMAN->Broadcast( msg );
+		send_judge_message(msg);
 	}
 }
 

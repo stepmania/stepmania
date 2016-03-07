@@ -18,6 +18,7 @@ class LuaClass;
 
 typedef AutoPtrCopyOnWrite<LuaReference> apActorCommands;
 
+const int max_draw_order= 16777216;
 /** @brief The background layer. */
 #define DRAW_ORDER_BEFORE_EVERYTHING		-200
 /** @brief The underlay layer. */
@@ -516,6 +517,7 @@ public:
 	void SetMaskColor(Rage::Color c) { DestTweenState().mask_color= c; }
 	Rage::Color GetMaskColor() const { return DestTweenState().mask_color; }
 	virtual void recursive_set_mask_color(Rage::Color c) { SetMaskColor(c); }
+	virtual void recursive_set_z_bias(float z) { SetZBias(z); }
 
 	void SetAux( float f )				{ DestTweenState().aux = f; }
 	float GetAux() const				{ return m_current.aux; }

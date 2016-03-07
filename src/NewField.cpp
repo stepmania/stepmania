@@ -45,8 +45,8 @@ XToString(FieldLayerFadeType);
 LuaXType(FieldLayerFadeType);
 
 static const char* FieldLayerTransformTypeNames[]= {
-	"Head",
-	"HeadPosOnly",
+	"Full",
+	"PosOnly",
 	"None",
 };
 XToString(FieldLayerTransformType);
@@ -55,6 +55,47 @@ LuaXType(FieldLayerTransformType);
 REGISTER_ACTOR_CLASS(NewFieldColumn);
 
 #define HOLD_COUNTS_AS_ACTIVE(tn) (tn.HoldResult.bActive && tn.HoldResult.fLife > 0.0f)
+
+static void apply_render_info_to_layer(Actor* layer,
+	FieldLayerRenderInfo& info, Rage::transform const& trans,
+	double receptor_alpha, double receptor_glow,
+	double explosion_alpha, double explosion_glow, double beat, double second,
+	ModifiableValue& note_alpha, ModifiableValue& note_glow)
+{
+	switch(info.fade_type)
+	{
+		case FLFT_Receptor:
+			layer->SetDiffuseAlpha(receptor_alpha);
+			layer->SetGlowAlpha(receptor_glow);
+			break;
+		case FLFT_Explosion:
+			layer->SetDiffuseAlpha(explosion_alpha);
+			layer->SetGlowAlpha(explosion_glow);
+			break;
+		case FLFT_Note:
+			{
+				mod_val_inputs input(beat, second);
+				double alpha= note_alpha.evaluate(input);
+				double glow= note_glow.evaluate(input);
+				layer->SetDiffuseAlpha(alpha);
+				layer->SetGlowAlpha(glow);
+			}
+			break;
+		default:
+			break;
+	}
+	switch(info.transform_type)
+	{
+		case FLTT_Full:
+			layer->set_transform(trans);
+			break;
+		case FLTT_PosOnly:
+			layer->set_transform_pos(trans);
+			break;
+		default:
+			break;
+	}
+}
 
 NewFieldColumn::NewFieldColumn()
 	:m_show_unjudgable_notes(true),
@@ -101,7 +142,7 @@ void NewFieldColumn::AddChild(Actor* act)
 	ActorFrame* frame= new ActorFrame;
 	frame->WrapAroundChild(act);
 	ActorFrame::AddChild(frame);
-	m_layer_render_info.push_back({FLFT_None, FLTT_Head});
+	m_layer_render_info.push_back({FLFT_None, FLTT_Full});
 	act->PlayCommand("On");
 	m_field->add_draw_entry(static_cast<int>(m_column), GetNumChildren()-1, act->GetDrawOrder());
 	if(act->HasCommand("WidthSet"))
@@ -111,7 +152,7 @@ void NewFieldColumn::AddChild(Actor* act)
 		PushSelf(L);
 		width_msg.SetParamFromStack(L, "column");
 		LUA->Release(L);
-		width_msg.SetParam("column_id", m_column);
+		width_msg.SetParam("column_id", m_column+1);
 		width_msg.SetParam("width", m_newskin->get_width());
 		width_msg.SetParam("padding", m_newskin->get_padding());
 		act->HandleMessage(width_msg);
@@ -217,6 +258,7 @@ void NewFieldColumn::set_displayed_time(double beat, double second)
 	m_curr_beat= beat;
 	m_curr_second= second;
 	m_mod_manager.update(beat, second);
+	build_render_lists();
 }
 
 void NewFieldColumn::update_displayed_time(double beat, double second)
@@ -1414,6 +1456,8 @@ void NewFieldColumn::draw_taps_internal()
 				{
 					trans.pos.y+= apply_reverse_shift(act.y_offset);
 				}
+				// Need update the z bias when drawing taps to handle 3D notes.
+				act.act->recursive_set_z_bias(m_field->update_z_bias());
 				act.act->set_transform(trans);
 				act.act->SetDiffuseAlpha(alpha);
 				act.act->SetGlow(Rage::Color(1, 1, 1, glow));
@@ -1504,40 +1548,10 @@ void NewFieldColumn::DrawPrimitives()
 		default:
 			if(curr_render_child >= 0 && static_cast<size_t>(curr_render_child) < m_SubActors.size())
 			{
-				auto const& render_info= m_layer_render_info[curr_render_child];
-				switch(render_info.fade_type)
-				{
-					case FLFT_Receptor:
-						m_SubActors[curr_render_child]->SetDiffuseAlpha(receptor_alpha);
-						m_SubActors[curr_render_child]->SetGlowAlpha(receptor_glow);
-						break;
-					case FLFT_Note:
-						{
-							mod_val_inputs input(m_curr_beat, m_curr_second);
-							double alpha= m_note_alpha.evaluate(input);
-							double glow= m_note_glow.evaluate(input);
-							m_SubActors[curr_render_child]->SetDiffuseAlpha(alpha);
-							m_SubActors[curr_render_child]->SetGlowAlpha(glow);
-						}
-						break;
-					case FLFT_Explosion:
-						m_SubActors[curr_render_child]->SetDiffuseAlpha(explosion_alpha);
-						m_SubActors[curr_render_child]->SetGlowAlpha(explosion_glow);
-						break;
-					default:
-						break;
-				}
-				switch(render_info.transform_type)
-				{
-					case FLTT_Head:
-						m_SubActors[curr_render_child]->set_transform(head_transform);
-						break;
-					case FLTT_HeadPosOnly:
-						m_SubActors[curr_render_child]->set_transform_pos(head_transform);
-						break;
-					default:
-						break;
-				}
+				apply_render_info_to_layer(m_SubActors[curr_render_child],
+					m_layer_render_info[curr_render_child], head_transform,
+					receptor_alpha, receptor_glow, explosion_alpha, explosion_glow,
+					m_curr_beat, m_curr_second, m_note_alpha, m_note_glow);
 				m_SubActors[curr_render_child]->Draw();
 			}
 			break;
@@ -1611,11 +1625,10 @@ NewField::NewField()
 	 m_explosion_alpha(&m_mod_manager, 1.0), m_explosion_glow(&m_mod_manager, 0.0),
 	 m_fov_mod(&m_mod_manager, 45.0),
 	 m_vanish_x_mod(&m_mod_manager, 0.0), m_vanish_y_mod(&m_mod_manager, 0.0),
-	 m_vanish_type(FVT_RelativeToParent),
+	 m_vanish_type(FVT_RelativeToParent), m_being_drawn_by_player(false),
 	 m_own_note_data(false), m_note_data(nullptr), m_timing_data(nullptr),
 	 m_steps_type(StepsType_Invalid), m_drawing_board(false)
 {
-	m_first_non_board_draw_entry= 0;
 	DeleteChildrenWhenDone(true);
 	set_skin("default", m_skin_parameters);
 	std::vector<Actor*> layers;
@@ -1689,37 +1702,36 @@ void NewField::PreDraw()
 void NewField::draw_board()
 {
 	m_drawing_board= true;
+	m_first_undrawn_entry= 0;
+	m_curr_draw_limit= non_board_draw_order;
 	Draw();
 	m_drawing_board= false;
 }
 
+void NewField::draw_up_to_draw_order(int order)
+{
+	m_curr_draw_limit= order;
+	Draw();
+}
+
 void NewField::DrawPrimitives()
 {
-	if(m_drawing_board)
+	if(!m_being_drawn_by_player)
 	{
-		m_first_non_board_draw_entry= 0;
-		while(m_first_non_board_draw_entry < m_draw_entries.size() &&
-			m_draw_entries[m_first_non_board_draw_entry].draw_order < non_board_draw_order)
-		{
-			draw_entry(m_draw_entries[m_first_non_board_draw_entry]);
-			++m_first_non_board_draw_entry;
-		}
-		return;
-	}
-	curr_z_bias= 1.0;
-	for(auto&& col : m_columns)
-	{
-		col.build_render_lists();
+		m_first_undrawn_entry= 0;
+		m_curr_draw_limit= max_draw_order;
 	}
 	// Things in columns are drawn in different steps so that the things in a
 	// lower step in one column cannot go over the things in a higher step in
 	// another column.  For example, things below notes (like receptors) cannot
 	// go over notes in another column.  Holds are separated from taps for the
 	// same reason.
-	for(size_t next_entry= m_first_non_board_draw_entry;
-			next_entry < m_draw_entries.size(); ++next_entry)
+	curr_z_bias= 1.0;
+	while(m_first_undrawn_entry < m_draw_entries.size() &&
+		m_draw_entries[m_first_undrawn_entry].draw_order < m_curr_draw_limit)
 	{
-		draw_entry(m_draw_entries[next_entry]);
+		draw_entry(m_draw_entries[m_first_undrawn_entry]);
+		++m_first_undrawn_entry;
 	}
 }
 
@@ -1924,20 +1936,11 @@ void NewField::draw_entry(field_draw_entry& entry)
 	{
 		if(entry.child >= 0 && static_cast<size_t>(entry.child) < m_SubActors.size())
 		{
-			auto const& render_info= m_layer_render_info[entry.child];
-			switch(render_info.fade_type)
-			{
-				case FLFT_Receptor:
-					m_SubActors[entry.child]->SetDiffuseAlpha(evaluated_receptor_alpha);
-					m_SubActors[entry.child]->SetGlowAlpha(evaluated_receptor_glow);
-					break;
-				case FLFT_Explosion:
-					m_SubActors[entry.child]->SetDiffuseAlpha(evaluated_explosion_alpha);
-					m_SubActors[entry.child]->SetGlowAlpha(evaluated_explosion_glow);
-					break;
-				default:
-					break;
-			}
+			apply_render_info_to_layer(m_SubActors[entry.child],
+				m_layer_render_info[entry.child], m_columns[0].get_head_trans(),
+				evaluated_receptor_alpha, evaluated_receptor_glow,
+				evaluated_explosion_alpha, evaluated_explosion_glow,
+				m_curr_beat, m_curr_second, m_receptor_alpha, m_receptor_glow);
 			m_SubActors[entry.child]->Draw();
 		}
 	}
@@ -1950,10 +1953,11 @@ void NewField::draw_entry(field_draw_entry& entry)
 	}
 }
 
-void NewField::update_z_bias()
+double NewField::update_z_bias()
 {
-	DISPLAY->SetZBias(curr_z_bias);
 	curr_z_bias+= z_bias_per_thing;
+	DISPLAY->SetZBias(curr_z_bias);
+	return curr_z_bias;
 }
 
 void NewField::reload_columns(NewSkinLoader const* new_loader, LuaReference& new_params)

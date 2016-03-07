@@ -261,32 +261,106 @@ bool QuantizedStateMap::load_from_lua(lua_State* L, int index, string& insanity_
 	return true;
 }
 
+bool QuantizedTextureMap::load_from_lua(lua_State* L, int index, std::string& insanity_diagnosis)
+{
+	// Pop the table we're loading from off the stack when returning.
+	int original_top= lua_gettop(L) - 1;
+#define RETURN_NOT_SANE(message) lua_settop(L, original_top); insanity_diagnosis= message; return false;
+	lua_getfield(L, index, "quanta");
+	if(!lua_istable(L, -1))
+	{
+		RETURN_NOT_SANE("No quanta found");
+	}
+	size_t num_quanta= get_table_len(L, -1, max_quanta, "quanta", insanity_diagnosis);
+	if(num_quanta == 0)
+	{
+		RETURN_NOT_SANE(insanity_diagnosis);
+	}
+	int quanta_index= lua_gettop(L);
+	vector<TextureQuanta> temp_quanta(num_quanta);
+	for(size_t i= 0; i < temp_quanta.size(); ++i)
+	{
+		lua_rawgeti(L, quanta_index, i+1);
+		if(!lua_istable(L, -1))
+		{
+			RETURN_NOT_SANE(fmt::sprintf("Invalid quantum %zu.", i+1));
+		}
+		int this_quanta= lua_gettop(L);
+		lua_getfield(L, this_quanta, "per_beat");
+		if(!lua_isnumber(L, -1))
+		{
+			RETURN_NOT_SANE(fmt::sprintf("Invalid per_beat value in quantum %zu.", i+1));
+		}
+		temp_quanta[i].per_beat= lua_tointeger(L, -1);
+		temp_quanta[i].trans_x= get_optional_double(L, this_quanta, "trans_x", .0);
+		temp_quanta[i].trans_y= get_optional_double(L, this_quanta, "trans_y", .0);
+		lua_pop(L, 1);
+	}
+	lua_getfield(L, index, "parts_per_beat");
+	if(!lua_isnumber(L, -1))
+	{
+		RETURN_NOT_SANE("Invalid parts_per_beat.");
+	}
+	m_parts_per_beat= lua_tointeger(L, -1);
+#undef RETURN_NOT_SANE
+	m_quanta.swap(temp_quanta);
+	lua_settop(L, original_top);
+	return true;
+}
+
 bool QuantizedTap::load_from_lua(lua_State* L, int index, string& insanity_diagnosis)
 {
 	// Pop the table we're loading from off the stack when returning.
 	int original_top= lua_gettop(L) - 1;
 #define RETURN_NOT_SANE(message) lua_settop(L, original_top); insanity_diagnosis= message; return false;
+	bool found_state_or_texture_map= false;
 	lua_getfield(L, index, "state_map");
-	if(!lua_istable(L, -1))
-	{
-		RETURN_NOT_SANE("No state map found.");
-	}
-	QuantizedStateMap temp_map;
-	if(!temp_map.load_from_lua(L, lua_gettop(L), insanity_diagnosis))
-	{
-		RETURN_NOT_SANE(insanity_diagnosis);
-	}
-	lua_getfield(L, index, "inactive_state_map");
 	if(lua_istable(L, -1))
 	{
-		if(!m_inactive_map.load_from_lua(L, lua_gettop(L), insanity_diagnosis))
+		found_state_or_texture_map= true;
+		m_use_texture_map= false;
+		if(!m_state_map.load_from_lua(L, lua_gettop(L), insanity_diagnosis))
 		{
 			RETURN_NOT_SANE(insanity_diagnosis);
 		}
+		lua_getfield(L, index, "inactive_state_map");
+		if(lua_istable(L, -1))
+		{
+			if(!m_inactive_map.load_from_lua(L, lua_gettop(L), insanity_diagnosis))
+			{
+				RETURN_NOT_SANE(insanity_diagnosis);
+			}
+		}
+		else
+		{
+			m_inactive_map= m_state_map;
+		}
 	}
-	else
+	lua_getfield(L, index, "texture_map");
+	if(lua_istable(L, -1))
 	{
-		m_inactive_map= temp_map;
+		found_state_or_texture_map= true;
+		m_use_texture_map= true;
+		if(!m_texture_map.load_from_lua(L, lua_gettop(L), insanity_diagnosis))
+		{
+			RETURN_NOT_SANE(insanity_diagnosis);
+		}
+		lua_getfield(L, index, "inactive_texture_map");
+		if(lua_istable(L, -1))
+		{
+			if(!m_inactive_texture_map.load_from_lua(L, lua_gettop(L), insanity_diagnosis))
+			{
+				RETURN_NOT_SANE(insanity_diagnosis);
+			}
+		}
+		else
+		{
+			m_inactive_texture_map= m_texture_map;
+		}
+	}
+	if(!found_state_or_texture_map)
+	{
+		RETURN_NOT_SANE("Could not find state or texture map.");
 	}
 	lua_getfield(L, index, "actor");
 	if(!lua_istable(L, -1))
@@ -309,7 +383,6 @@ bool QuantizedTap::load_from_lua(lua_State* L, int index, string& insanity_diagn
 	m_vivid= lua_toboolean(L, -1);
 #undef RETURN_NOT_SANE
 	lua_settop(L, original_top);
-	m_state_map.swap(temp_map);
 	return true;
 }
 
@@ -632,8 +705,7 @@ bool load_tap_set_from_lua(lua_State* L, int taps_index, vector<QuantizedTap>& t
 			RETURN_NOT_SANE(fmt::sprintf("Part %s not returned.",
 					NewSkinTapPartToString(static_cast<NewSkinTapPart>(part)).c_str()));
 		}
-		if(!tap_set[part].load_from_lua(L, lua_gettop(L),
-				sub_sanity))
+		if(!tap_set[part].load_from_lua(L, lua_gettop(L), sub_sanity))
 		{
 			RETURN_NOT_SANE(fmt::sprintf("Error loading part %s: %s",
 					NewSkinTapPartToString(static_cast<NewSkinTapPart>(part)).c_str(),

@@ -30,8 +30,8 @@ LuaDeclareType(FieldLayerFadeType);
 
 enum FieldLayerTransformType
 {
-	FLTT_Head,
-	FLTT_HeadPosOnly,
+	FLTT_Full,
+	FLTT_PosOnly,
 	FLTT_None,
 	NUM_FieldLayerTransformType,
 	FieldLayerTransformType_Invalid
@@ -135,6 +135,7 @@ struct NewFieldColumn : ActorFrame
 
 	void build_render_lists();
 	void draw_child(int child);
+	Rage::transform const& get_head_trans() { return head_transform; }
 
 	void pass_message_to_heads(Message& msg);
 	void did_tap_note(TapNoteScore tns, bool bright);
@@ -286,6 +287,7 @@ struct NewField : ActorFrame
 	virtual bool EarlyAbortDraw() const;
 	virtual void PreDraw();
 	void draw_board();
+	void draw_up_to_draw_order(int order);
 	virtual void DrawPrimitives();
 
 	virtual void PushSelf(lua_State *L);
@@ -341,6 +343,7 @@ struct NewField : ActorFrame
 	// The relative to self and relative to nothing choices exist for when a
 	// field is displayed without a player actor.
 	FieldVanishType m_vanish_type;
+	bool m_being_drawn_by_player;
 
 	struct field_draw_entry
 	{
@@ -352,7 +355,7 @@ struct NewField : ActorFrame
 	void remove_draw_entry(int column, int child);
 	void change_draw_entry(int column, int child, int new_draw_order);
 	void clear_column_draw_entries();
-	void update_z_bias();
+	double update_z_bias();
 
 private:
 	void draw_entry(field_draw_entry& entry);
@@ -377,7 +380,9 @@ private:
 	std::vector<FieldLayerRenderInfo> m_layer_render_info;
 
 	vector<field_draw_entry> m_draw_entries;
-	size_t m_first_non_board_draw_entry;
+	size_t m_first_undrawn_entry;
+	int m_curr_draw_limit;
+	bool m_drawing_board;
 
 	// Evaluation results of the mods need to be stored because Draw is called
 	// twice: once for the board, once for everything else.  So the mods can't
@@ -387,7 +392,6 @@ private:
 	double evaluated_explosion_alpha;
 	double evaluated_explosion_glow;
 
-	bool m_drawing_board;
 	double curr_z_bias;
 };
 

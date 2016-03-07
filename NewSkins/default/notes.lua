@@ -93,6 +93,23 @@ return function(button_list, stepstype)
 			{per_beat= 16, states= {15}}, -- 64th
 		},
 	}
+	-- A noteskin that uses 3D notes (Def.Model) should use a texture map
+	-- instead of a state map to control how the notes are quantized.
+	-- A texture map is very similar to a state map.  Each quanta in a texture
+	-- map has trans_x and trans_y fields for translating the texture instead
+	-- of a list of states.
+	-- local tap_texture_map= {
+	--   parts_per_beat= parts_per_beat, quanta= {
+	--     {per_beat= 1, trans_x= 0, trans_y= 0},
+	--     {per_beat= 2, trans_x= .125, trans_y= 0},
+	--     {per_beat= 3, trans_x= .25, trans_y= 0},
+	--     {per_beat= 4, trans_x= .375, trans_y= 0},
+	--     {per_beat= 6, trans_x= .5, trans_y= 0},
+	--     {per_beat= 8, trans_x= .625, trans_y= 0},
+	--     {per_beat= 12, trans_x= .75, trans_y= 0},
+	--     {per_beat= 16, trans_x= .875, trans_y= 0},
+	--   },
+	-- }
 	-- Taps use the even states, lifts use the odd states.
 	local lift_state_map= DeepCopy(tap_state_map)
 	for i, quanta in ipairs(lift_state_map.quanta) do
@@ -183,6 +200,9 @@ return function(button_list, stepstype)
 			taps= {
 				NewSkinTapPart_Tap= {
 					state_map= tap_state_map,
+					-- If this noteskin used 3D notes, it would set the texture_map
+					-- field instead of the state_map field:
+					-- texture_map= tap_texture_map,
 					actor= Def.Sprite{Texture= "tap_note 2x8.png",
 						-- The Mask field sets the mask texture used for the tap.
 						Mask= NEWSKIN:get_path(skin_name, "tap_mask 2x8.png"),

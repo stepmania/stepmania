@@ -34,12 +34,20 @@
 -- These draw order variables are actually hardcoded in NewField.cpp. They
 -- are copied here for convenience.  Do not change them. -Kyz
 newfield_draw_order= {
+	layer_spacing= 100,
+	mid_layer_spacing= 50,
 	board= -100,
+	mid_board= -50,
 	non_board= 0,
+	under_field= 50,
 	receptor= 100,
+	over_receptors= 150,
 	hold= 200,
+	between_taps_and_holds= 250,
 	tap= 300,
+	under_explosions= 350,
 	explosion= 400,
+	over_field= 450,
 }
 
 -- The read_bpm arg to set_speed_mod is optional.  If it is exists,

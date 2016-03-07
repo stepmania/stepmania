@@ -92,6 +92,7 @@ public:
 	void SetLightDirection( Rage::Vector3 vec ) { m_lightDirection = vec; }
 
 	virtual void recursive_set_mask_color(Rage::Color c);
+	virtual void recursive_set_z_bias(float z);
 
 	virtual void SetPropagateCommands( bool b );
 

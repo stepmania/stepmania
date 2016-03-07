@@ -1,6 +1,6 @@
 local newfield_default_prefs= {
-	speed_mod= 1,
-	speed_type= "multiple",
+	speed_mod= 250,
+	speed_type= "maximum",
 	hidden= false,
 	hidden_offset= 120,
 	sudden= false,

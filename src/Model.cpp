@@ -36,6 +36,7 @@ Model::Model()
 	m_bLoop = true;
 	m_bDrawCelShaded = false;
 	m_pTempGeometry = nullptr;
+	m_loaded_safely= false;
 }
 
 Model::~Model()
@@ -67,25 +68,35 @@ void Model::Load( const std::string &sFile )
 	std::string sExt = Rage::make_lower(GetExtension(sFile));
 	if( sExt=="txt" )
 	{
-		LoadMilkshapeAscii( sFile );
+		std::string load_fail_reason;
+		if(!LoadMilkshapeAscii(sFile, load_fail_reason))
+		{
+			LuaHelpers::ReportScriptErrorFmt("Could not load model file %s: %s",
+				sFile.c_str(), load_fail_reason.c_str());
+			m_loaded_safely= false;
+			return;
+		}
 	}
 	RecalcAnimationLengthSeconds();
 }
 
-#define THROW RageException::Throw( "Parse error in \"%s\" at line %d: \"%s\".", sPath.c_str(), iLineNum, sLine.c_str() )
-
 // TODO: Move MS3D loading into its own class. - Colby
-void Model::LoadMilkshapeAscii( const std::string &sPath )
+bool Model::LoadMilkshapeAscii(const std::string &file, std::string& load_fail_reason)
 {
-	LoadPieces( sPath, sPath, sPath );
+	return LoadPieces(file, file, file, load_fail_reason);
 }
 
-void Model::LoadPieces( const std::string &sMeshesPath, const std::string &sMaterialsPath, const std::string &sBonesPath )
+bool Model::LoadPieces(const std::string &sMeshesPath,
+	const std::string &sMaterialsPath, const std::string &sBonesPath,
+	std::string& load_fail_reason)
 {
 	Clear();
 
 	// TRICKY: Load materials before geometry so we can figure out whether the materials require normals.
-	LoadMaterialsFromMilkshapeAscii( sMaterialsPath );
+	if(!LoadMaterialsFromMilkshapeAscii(sMaterialsPath, load_fail_reason))
+	{
+		return false;
+	}
 
 	ASSERT( m_pGeometry == nullptr );
 	m_pGeometry = MODELMAN->LoadMilkshapeAscii( sMeshesPath, this->MaterialsNeedNormals() );
@@ -95,8 +106,12 @@ void Model::LoadPieces( const std::string &sMeshesPath, const std::string &sMate
 	{
 		if( mesh.nMaterialIndex >= (int) m_Materials.size() )
 		{
-			RageException::Throw( "Model \"%s\" mesh \"%s\" references material index %i, but there are only %i materials.",
-				sMeshesPath.c_str(), mesh.sName.c_str(), mesh.nMaterialIndex, static_cast<int>(m_Materials.size()) );
+			load_fail_reason= fmt::sprintf("Model \"%s\" mesh \"%s\" references"
+				"material index %i, but there are only %i materials.",
+				sMeshesPath.c_str(), mesh.sName.c_str(), mesh.nMaterialIndex,
+				static_cast<int>(m_Materials.size()));
+			m_loaded_safely= false;
+			return false;
 		}
 	}
 
@@ -111,27 +126,41 @@ void Model::LoadPieces( const std::string &sMeshesPath, const std::string &sMate
 		m_pTempGeometry->Set( m_vTempMeshes, this->MaterialsNeedNormals() );
 	}
 	RecalcAnimationLengthSeconds();
+	return true;
 }
 
 void Model::LoadFromNode( const XNode* pNode )
 {
-	std::string s1, s2, s3;
-	ActorUtil::GetAttrPath( pNode, "Meshes", s1 );
-	ActorUtil::GetAttrPath( pNode, "Materials", s2 );
-	ActorUtil::GetAttrPath( pNode, "Bones", s3 );
-	if( !s1.empty() || !s2.empty() || !s3.empty() )
+	std::string mesh_path, material_path, bone_path;
+	ActorUtil::GetAttrPath(pNode, "Meshes", mesh_path);
+	ActorUtil::GetAttrPath(pNode, "Materials", material_path);
+	ActorUtil::GetAttrPath(pNode, "Bones", bone_path);
+	if(mesh_path.empty() || material_path.empty() || bone_path.empty())
 	{
-		ASSERT( !s1.empty() && !s2.empty() && !s3.empty() );
-		LoadPieces( s1, s2, s3 );
+		LuaHelpers::ReportScriptErrorFmt("%s: Def.Model must have Meshes, "
+			"Materials, and Bones paths.", ActorUtil::GetWhere(pNode).c_str());
+		m_loaded_safely= false;
+		return;
 	}
+	std::string load_fail_reason;
+	if(!LoadPieces(mesh_path, material_path, bone_path, load_fail_reason))
+	{
+		LuaHelpers::ReportScriptErrorFmt("%s: Def.Model loading failed: %s",
+			ActorUtil::GetWhere(pNode).c_str(), load_fail_reason.c_str());
+		m_loaded_safely= false;
+		return;
+	}
+	m_loaded_safely= true;
 
 	Actor::LoadFromNode( pNode );
 	RecalcAnimationLengthSeconds();
 }
 
 
-void Model::LoadMaterialsFromMilkshapeAscii( const std::string &_sPath )
+bool Model::LoadMaterialsFromMilkshapeAscii(const std::string &_sPath,
+	std::string& load_fail_reason)
 {
+#define LOAD_FAIL load_fail_reason= fmt::sprintf("Parse error in \"%s\" at line %d: \"%s\".", sPath.c_str(), iLineNum, sLine.c_str()); return false;
 	std::string sPath = _sPath;
 
 	FixSlashesInPlace(sPath);
@@ -139,7 +168,10 @@ void Model::LoadMaterialsFromMilkshapeAscii( const std::string &_sPath )
 
 	RageFile f;
 	if( !f.Open( sPath ) )
-		RageException::Throw( "Model::LoadMilkshapeAscii Could not open \"%s\": %s", sPath.c_str(), f.GetError().c_str() );
+	{
+		load_fail_reason= fmt::sprintf("Model::LoadMilkshapeAscii Could not open \"%s\": %s", sPath.c_str(), f.GetError().c_str());
+		return false;
+	}
 
 	std::string sLine;
 	int iLineNum = 0;
@@ -179,90 +211,90 @@ void Model::LoadMaterialsFromMilkshapeAscii( const std::string &_sPath )
 				// name
 				if( f.GetLine( sLine ) <= 0 )
 				{
-					THROW;
+					LOAD_FAIL;
 				}
 				if( sscanf(sLine.c_str(), "\"%255[^\"]\"", szName) != 1 )
 				{
-					THROW;
+					LOAD_FAIL;
 				}
 				Material.sName = szName;
 
 				// ambient
 				if( f.GetLine( sLine ) <= 0 )
 				{
-					THROW;
+					LOAD_FAIL;
 				}
 				Rage::Vector4 Ambient;
 				if( sscanf(sLine.c_str(), "%f %f %f %f", &Ambient.x, &Ambient.y, &Ambient.z, &Ambient.w) != 4 )
 				{
-					THROW;
+					LOAD_FAIL;
 				}
 				memcpy( &Material.Ambient, &Ambient, sizeof(Material.Ambient) );
 
 				// diffuse
 				if( f.GetLine( sLine ) <= 0 )
 				{
-					THROW;
+					LOAD_FAIL;
 				}
 				Rage::Vector4 Diffuse;
 				if( sscanf(sLine.c_str(), "%f %f %f %f", &Diffuse.x, &Diffuse.y, &Diffuse.z, &Diffuse.w) != 4 )
 				{
-					THROW;
+					LOAD_FAIL;
 				}
 				memcpy( &Material.Diffuse, &Diffuse, sizeof(Material.Diffuse) );
 
 				// specular
 				if( f.GetLine( sLine ) <= 0 )
 				{
-					THROW;
+					LOAD_FAIL;
 				}
 				Rage::Vector4 Specular;
 				if( sscanf(sLine.c_str(), "%f %f %f %f", &Specular.x, &Specular.y, &Specular.z, &Specular.w) != 4 )
 				{
-					THROW;
+					LOAD_FAIL;
 				}
 				memcpy( &Material.Specular, &Specular, sizeof(Material.Specular) );
 
 				// emissive
 				if( f.GetLine( sLine ) <= 0 )
 				{
-					THROW;
+					LOAD_FAIL;
 				}
 				Rage::Vector4 Emissive;
 				if( sscanf (sLine.c_str(), "%f %f %f %f", &Emissive.x, &Emissive.y, &Emissive.z, &Emissive.w) != 4 )
 				{
-					THROW;
+					LOAD_FAIL;
 				}
 				memcpy( &Material.Emissive, &Emissive, sizeof(Material.Emissive) );
 
 				// shininess
 				if( f.GetLine( sLine ) <= 0 )
 				{
-					THROW;
+					LOAD_FAIL;
 				}
 				float fShininess;
 				if( !StringConversion::FromString(sLine, fShininess) )
 				{
-					THROW;
+					LOAD_FAIL;
 				}
 				Material.fShininess = fShininess;
 
 				// transparency
 				if( f.GetLine( sLine ) <= 0 )
 				{
-					THROW;
+					LOAD_FAIL;
 				}
 				float fTransparency;
 				if( !StringConversion::FromString(sLine, fTransparency) )
 				{
-					THROW;
+					LOAD_FAIL;
 				}
 				Material.fTransparency = fTransparency;
 
 				// diffuse texture
 				if( f.GetLine( sLine ) <= 0 )
 				{
-					THROW;
+					LOAD_FAIL;
 				}
 				strcpy( szName, "" );
 				sscanf( sLine.c_str(), "\"%255[^\"]\"", szName );
@@ -278,14 +310,19 @@ void Model::LoadMaterialsFromMilkshapeAscii( const std::string &_sPath )
 					FixSlashesInPlace( sTexturePath );
 					CollapsePath( sTexturePath );
 					if( !IsAFile(sTexturePath) )
-						RageException::Throw( "\"%s\" references a texture \"%s\" that does not exist.", sPath.c_str(), sTexturePath.c_str() );
+					{
+						load_fail_reason= fmt::sprintf("\"%s\" references a texture \"%s\" that does not exist.", sPath.c_str(), sTexturePath.c_str());
+						return false;
+					}
 
 					Material.diffuse.Load( sTexturePath );
 				}
 
 				// alpha texture
 				if( f.GetLine( sLine ) <= 0 )
-					THROW;
+				{
+					LOAD_FAIL;
+				}
 				strcpy( szName, "" );
 				sscanf( sLine.c_str(), "\"%255[^\"]\"", szName );
 				std::string sAlphaTexture = szName;
@@ -300,13 +337,18 @@ void Model::LoadMaterialsFromMilkshapeAscii( const std::string &_sPath )
 					FixSlashesInPlace( sTexturePath );
 					CollapsePath( sTexturePath );
 					if( !IsAFile(sTexturePath) )
-						RageException::Throw( "\"%s\" references a texture \"%s\" that does not exist.", sPath.c_str(), sTexturePath.c_str() );
+					{
+						load_fail_reason= fmt::sprintf("\"%s\" references a texture \"%s\" that does not exist.", sPath.c_str(), sTexturePath.c_str());
+						return false;
+					}
 
 					Material.alpha.Load( sTexturePath );
 				}
 			}
 		}
 	}
+#undef LOAD_FAIL
+	return true;
 }
 
 bool Model::LoadMilkshapeAsciiBones( const std::string &sAniName, const std::string &sPath )
@@ -325,7 +367,7 @@ bool Model::LoadMilkshapeAsciiBones( const std::string &sAniName, const std::str
 
 bool Model::EarlyAbortDraw() const
 {
-	return m_pGeometry == nullptr || m_pGeometry->m_Meshes.empty();
+	return m_pGeometry == nullptr || m_pGeometry->m_Meshes.empty() || !m_loaded_safely;
 }
 
 void Model::DrawCelShaded()

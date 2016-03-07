@@ -70,15 +70,37 @@ Hold bodies have draw order 200.  Taps have draw order 300.
 There is a table named newfield_draw_order with entries for receptors and
 explosions so newskins can have a conventional draw order for each.
 
-The judgment and combo and anything else that needs to be at a fixed position
-in the field should be in a layer file, either in NoteField layers, or
-NoteColumn layers.  That way, the thing is guaranteed to be in the correct
-position for the layer and column that it is in, regardless of any mods that
-may move the field or the column around, with no further effort.
+Anything that needs to be at a fixed position in the field should be in a
+layer file, either in NoteField layers, or NoteColumn layers.  This means
+screen filters, column flashes, lane graphics, anything  that is in the
+field.
+
+That way, the thing is guaranteed to be in the correct position for the layer
+and column that it is in.  If mods move the field or the column around, the
+layers move too.
 
 To put the judgment underneath all the notes, but not part of the board, put
 it at 51.  Putting the judgment at 351 would put it above all the notes.  251
 would put it above hold bodies, but underneath taps.
+
+### Judgment/Combo
+
+The judgment and combo actors will not use the JudgmentUnderField and
+ComboUnderField metrics when the NewField is in use.
+
+Instead, the judgment and combo actors should have a draw order set, as if
+they were layers in the field.  Consider this example:  The combo has a draw
+order of 50, and the judgment has a draw order of 450.  All of the field
+layers with a draw order less than 50 are rendered, then the combo, then
+everything between 50 and 450, then the judgment.  This puts the combo above
+the screen filter, underneath the notes, and the judgment above the notes.
+
+Using the draw order instead of the metrics allows the theme to set a
+different draw order for each player.  One player can have their judgment
+above the notes while the other has their judgment under the notes.
+
+The draw order of the judgment and combo actors is checked every frame, so if
+it changes during gameplay, the change takes effect immediately.
 
 
 ### Alpha/glow and transform mods
@@ -102,8 +124,8 @@ or column in the param table.
 Column layers also have a transform type, to control whether the layer is
 place at the center of the column, or at the receptor position.  Field layers
 do not have a transform type because the base field doesn't have a receptor
-position.  FieldLayerTransformType_Head uses the full receptor transform,
-position, scale, and rotation.  FieldLayerTransformType_HeadPosOnly only uses
+position.  FieldLayerTransformType_Full uses the full receptor transform,
+position, scale, and rotation.  FieldLayerTransformType_PosOnly only uses
 the position, which can be useful for a column flash effect that extends from
 the receptor towards the center.  FieldLayerTransformType_None does not use
 the head transform at all.  FieldLayerTransformType_None is the default.
@@ -127,35 +149,25 @@ end
 ```
 
 
-#### Draw Order and alpha/glow mods
-
-NewField and NewFieldColumn have mods for controlling the alpha and glow of
-receptors, explosions, and notes.  To decide which mods to apply to a layer,
-draw_order modulus 4 is calculated.  If the result is 0, receptor mods are
-used.  If the result is 1 or -1, explosion mods are used.  If the result is
-2 or -2, note mods are used.  Otherwise, the alpha and glow of the layer are
-unaffected by mods.
-
-(if draw_order is negative, then the result is negative, which is why cases
-exist for negative results.)
-
-This allows a judgment hiding mod to also hide tap explosions that reveal the
-judgment, if the noteskin author gives everything that shows judgment the
-right draw order.  There can also be layers in the board section that are
-affected by mods (such as column flashes), and layers that aren't (like a
-screen filter).
-
 #### Draw Order Variable List
 
 02 NewField.lua defines these variables to make life convenient for themers.
 ```
 newfield_draw_order= {
+	layer_spacing= 100,
+	mid_layer_spacing= 50,
 	board= -100,
+	mid_board= -50,
 	non_board= 0,
+	under_field= 50,
 	receptor= 100,
+	over_receptors= 150,
 	hold= 200,
+	between_taps_and_holds= 250,
 	tap= 300,
+	under_explosions= 350,
 	explosion= 400,
+	over_field= 450,
 }
 ```
 

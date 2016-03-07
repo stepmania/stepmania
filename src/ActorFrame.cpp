@@ -589,6 +589,7 @@ PropagateActorFrameCommand1Param(SetZTestMode, ZTestMode);
 PropagateActorFrameCommand1Param(SetZWrite, bool);
 PropagateActorFrameCommand1Param(HurryTweening, float);
 PropagateActorFrameCommand1Param(recursive_set_mask_color, Rage::Color);
+PropagateActorFrameCommand1Param(recursive_set_z_bias, float);
 PropagateActorFrameCommand1Param(SetState, size_t);
 
 
