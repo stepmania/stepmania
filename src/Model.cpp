@@ -793,7 +793,7 @@ void Model::UpdateTempGeometry()
 void Model::Update( float fDelta )
 {
 	Actor::Update( fDelta );
-	AdvanceFrame( fDelta );
+	AdvanceFrame(GetEffectDeltaTime());
 
 	for (auto &mat: m_Materials)
 	{

@@ -1012,7 +1012,7 @@ void Player::Update( float fDeltaTime )
 		}
 
 		float fNoteFieldZoom = 1 - fMiniPercent*0.5f;
-		if( m_pNoteField )
+		if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
 			m_pNoteField->SetZoom( fNoteFieldZoom );
 		if( m_pActorWithJudgmentPosition != nullptr )
 			m_pActorWithJudgmentPosition->SetZoom( m_pActorWithJudgmentPosition->GetZoom() * fJudgmentZoom );
@@ -1041,7 +1041,7 @@ void Player::Update( float fDeltaTime )
 		// TODO: Make this work for non-human-controlled players
 		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && m_pPlayerState->m_PlayerController==PC_HUMAN )
 		{
-			if( m_pNoteField )
+			if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
 			{
 				m_pNoteField->SetPressed( col );
 			}
@@ -1529,7 +1529,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 				fLife = 1; // xxx: should be MAX_HOLD_LIFE instead? -aj
 				hns = HNS_Held;
 				bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD;
-				if( m_pNoteField )
+				if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
 				{
 					for (auto &trtn: vTN)
 					{
@@ -1656,8 +1656,14 @@ void Player::DrawPrimitives()
 		if(draw_notefield)
 		{
 			PlayerNoteFieldPositioner poser(this, GetX(), tilt, skew, mini, center_y, reverse);
-			m_pNoteField->DrawBoardPrimitive();
-			m_new_field->draw_board();
+			if(m_disable_player_matrix_because_newfield_does_skewing)
+			{
+				m_new_field->draw_board();
+			}
+			else
+			{
+				m_pNoteField->DrawBoardPrimitive();
+			}
 		}
 		return;
 	}
@@ -2217,7 +2223,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 						IncrementCombo();
 
 						bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD;
-						if( m_pNoteField )
+						if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
 						{
 							m_pNoteField->DidHoldNote( col, HNS_Held, bBright );
 						}
@@ -2551,7 +2557,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 				// XXX: This is the wrong combo for shared players.
 				// STATSMAN->m_CurStageStats.m_Player[pn] might work, but could be wrong.
 				const bool bBright = ( m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > (unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD ) || bBlind;
-				if( m_pNoteField )
+				if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
 					m_pNoteField->DidTapNote( col, bBlind? TNS_W1:score, bBright );
 				if( m_new_field )
 					m_new_field->did_tap_note( col, bBlind? TNS_W1:score, bBright );
@@ -2602,7 +2608,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 	// XXX:
 	if( !bRelease )
 	{
-		if( m_pNoteField )
+		if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
 		{
 			m_pNoteField->Step( col, score );
 		}
@@ -2777,7 +2783,7 @@ void Player::UpdateJudgedRows()
 				SetMineJudgment( tn.result.tns , iter.Track() );
 				break;
 			}
-			if( m_pNoteField )
+			if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
 			{
 				m_pNoteField->DidTapNote( iter.Track(), tn.result.tns, false );
 			}
@@ -2849,7 +2855,7 @@ void Player::FlashGhostRow( int iRow )
 
 		if( tn.type == TapNoteType_Empty || tn.type == TapNoteType_Mine || tn.type == TapNoteType_Fake )
 			continue;
-		if( m_pNoteField )
+		if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
 		{
 			m_pNoteField->DidTapNote( iTrack, lastTNS, bBright );
 		}
@@ -3180,7 +3186,7 @@ void Player::HandleHoldCheckpoint(int iRow,
 			{
 				bool bBright = m_pPlayerStageStats
 					&& m_pPlayerStageStats->m_iCurCombo>(unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD;
-				if( m_pNoteField )
+				if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
 				{
 					m_pNoteField->DidHoldNote( i, HNS_Held, bBright );
 				}
