@@ -3,6 +3,7 @@
 
 #include "ScreenMessage.h"
 #include "RageSound.h"
+#include "RageTextureRenderTarget.h"
 
 class Actor;
 class Screen;

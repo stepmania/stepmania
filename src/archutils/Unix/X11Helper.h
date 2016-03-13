@@ -4,6 +4,9 @@
 
 #include <X11/Xlib.h>		// Window
 #include <X11/Xutil.h>
+#include <rage/RageRect.hpp>
+#include <DisplaySpec.h>
+
 namespace X11Helper
 {
 	// All functions in here that return a bool return true on success, and
@@ -25,6 +28,12 @@ namespace X11Helper
 	// (Re)create the Window win.
 	bool MakeWindow( Window &win, int screenNum, int depth, Visual *visual,
 			 int width, int height, bool overrideRedirect );
+
+	void SetWMState( const Window &root, const Window &win, const long action, const Atom atom );
+
+#ifdef HAVE_XINERAMA
+	bool SetWMFullscreenMonitors( const DisplaySpec &target );
+#endif
 };
 
 #endif

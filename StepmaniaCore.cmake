@@ -346,11 +346,18 @@ elseif(LINUX)
 
   find_package(Dl)
 
-  find_package(Xrandr)
+  find_package(Xrandr REQUIRED)
   if (${XRANDR_FOUND})
     set(HAS_XRANDR TRUE)
   else()
-    set(HAX_XRANDR FALSE)
+    set(HAS_XRANDR FALSE)
+  endif()
+
+  find_package(Xinerama)
+  if (${XINERAMA_FOUND})
+    set(HAS_XINERAMA TRUE)
+  else()
+    set(HAS_XINERAMA FALSE)
   endif()
 
   find_package(PulseAudio)

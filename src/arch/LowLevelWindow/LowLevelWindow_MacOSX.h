@@ -23,12 +23,12 @@ public:
 	~LowLevelWindow_MacOSX();
 	void *GetProcAddress( std::string s );
 	std::string TryVideoMode( const VideoModeParams& p, bool& newDeviceOut );	
-	void GetDisplayResolutions( DisplayResolutions &dr ) const;
+	void GetDisplaySpecs( DisplaySpecs &specs ) const;
 
 	void SwapBuffers();
 	void Update();
 
-	const VideoModeParams &GetActualVideoModeParams() const { return m_CurrentParams; }
+	const ActualVideoModeParams GetActualVideoModeParams() const { return m_CurrentParams; }
 
 	bool SupportsRenderToTexture() const { return true; }
 	RenderTarget *CreateRenderTarget();

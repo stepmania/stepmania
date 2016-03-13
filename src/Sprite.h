@@ -21,6 +21,7 @@ public:
 
 	Sprite();
 	Sprite( const Sprite &cpy );
+	Sprite &operator=( Sprite other );
 	virtual ~Sprite();
 
 	// See explanation in source.

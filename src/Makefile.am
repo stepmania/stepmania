@@ -145,7 +145,7 @@ CreateZip.cpp CreateZip.h \
 CryptHelpers.cpp CryptHelpers.h \
 DateTime.cpp DateTime.h \
 Difficulty.cpp Difficulty.h \
-DisplayResolutions.h \
+DisplaySpec.h \
 EnumHelper.cpp EnumHelper.h \
 FileDownload.cpp FileDownload.h \
 Font.cpp Font.h \
