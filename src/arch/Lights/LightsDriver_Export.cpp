@@ -1,7 +1,7 @@
 #include "global.h"
 #include "LightsDriver_Export.h"
 
-REGISTER_SOUND_DRIVER_CLASS(Export);
+REGISTER_LIGHTS_DRIVER_CLASS(Export);
 
 RageMutex LightsDriver_Export::m_Lock( "LightsDriver_Export");
 LightsState LightsDriver_Export::m_State;

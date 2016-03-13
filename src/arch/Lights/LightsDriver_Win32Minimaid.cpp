@@ -8,7 +8,7 @@
 #include "LightsDriver_Win32Minimaid.h"
 #include "windows.h"
 
-REGISTER_SOUND_DRIVER_CLASS( Win32Minimaid );
+REGISTER_LIGHTS_DRIVER_CLASS( Win32Minimaid );
 
 HINSTANCE hMMMAGICDLL = NULL;
 

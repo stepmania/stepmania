@@ -13,7 +13,7 @@
 static const int PORT_ADDRESS = 0x378;
 static const bool SCREEN_DEBUG = false;
 
-REGISTER_SOUND_DRIVER_CLASS(LinuxParallel);
+REGISTER_LIGHTS_DRIVER_CLASS(LinuxParallel);
 
 LightsDriver_LinuxParallel::LightsDriver_LinuxParallel()
 {

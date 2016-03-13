@@ -16,7 +16,7 @@
 #include "Game.h"
 #include "RageLog.h"
 
-REGISTER_SOUND_DRIVER_CLASS2(PIUIO, Linux_PIUIO);
+REGISTER_LIGHTS_DRIVER_CLASS2(PIUIO, Linux_PIUIO);
 
 LightsDriver_Linux_PIUIO::LightsDriver_Linux_PIUIO()
 {
