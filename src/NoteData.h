@@ -243,7 +243,7 @@ public:
 
 
 	/* Returns the row of the first TapNote on the track that has a row greater than rowInOut. */
-	bool GetNextTapNoteRowForTrack( int track, int &rowInOut ) const;
+	bool GetNextTapNoteRowForTrack( int track, int &rowInOut, bool ignoreKeySounds=false ) const;
 	bool GetNextTapNoteRowForAllTracks( int &rowInOut ) const;
 	bool GetPrevTapNoteRowForTrack( int track, int &rowInOut ) const;
 	bool GetPrevTapNoteRowForAllTracks( int &rowInOut ) const;
