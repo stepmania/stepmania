@@ -25,6 +25,15 @@ ________________________________________________________________________________
   same dance pad.  If you use Linux, assume that you have to remap your dance
   pad. [kyzentun]
 
+2016/02/13
+----------
+* [Lights] Minimaid driver added for Linux.  This is practically identical to
+  the Windows minimaid driver that pkgingo wrote.
+* [Gameplay] When checking for the first second in a song, AutoKeysound notes
+  are now ignored, being treated as if they were background music. This
+	allows the intro of BMS files to play as soon as ScreenGameplay is loaded,
+	while still having a delay before the real notes come in. [nixtrix]
+
 2016/02/04
 ----------
 * [Course] In an Endless course, songs will only be repeated after all songs

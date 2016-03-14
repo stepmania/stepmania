@@ -63,7 +63,7 @@ local stepmania_credits= {
 		{type= "subsection", name= "5.0.10 update"},
 		"Milène Gauthier-Sabourin (Arvaneth) (French)",
 		{type= "subsection", name= "5.0.11 update"},
-		"Joel Robert Justiawan (JOELwindows7)",
+		"Joel Robert Justiawan (JOELwindows7) (Indonesian)",
 	},
 	{
 		name= "Other Contributors",
