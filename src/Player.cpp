@@ -281,6 +281,7 @@ Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 		m_pNoteField->SetName( "NoteField" );
 		m_new_field= new NewField;
 		m_new_field->SetName("NewField");
+		m_new_field->m_being_drawn_by_player= true;
 	}
 	m_pJudgedRows = new JudgedRows;
 
@@ -1011,7 +1012,7 @@ void Player::Update( float fDeltaTime )
 		}
 
 		float fNoteFieldZoom = 1 - fMiniPercent*0.5f;
-		if( m_pNoteField )
+		if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
 			m_pNoteField->SetZoom( fNoteFieldZoom );
 		if( m_pActorWithJudgmentPosition != nullptr )
 			m_pActorWithJudgmentPosition->SetZoom( m_pActorWithJudgmentPosition->GetZoom() * fJudgmentZoom );
@@ -1040,7 +1041,7 @@ void Player::Update( float fDeltaTime )
 		// TODO: Make this work for non-human-controlled players
 		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && m_pPlayerState->m_PlayerController==PC_HUMAN )
 		{
-			if( m_pNoteField )
+			if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
 			{
 				m_pNoteField->SetPressed( col );
 			}
@@ -1528,7 +1529,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 				fLife = 1; // xxx: should be MAX_HOLD_LIFE instead? -aj
 				hns = HNS_Held;
 				bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD;
-				if( m_pNoteField )
+				if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
 				{
 					for (auto &trtn: vTN)
 					{
@@ -1655,45 +1656,89 @@ void Player::DrawPrimitives()
 		if(draw_notefield)
 		{
 			PlayerNoteFieldPositioner poser(this, GetX(), tilt, skew, mini, center_y, reverse);
-			m_pNoteField->DrawBoardPrimitive();
-			m_new_field->draw_board();
+			if(m_disable_player_matrix_because_newfield_does_skewing)
+			{
+				m_new_field->draw_board();
+			}
+			else
+			{
+				m_pNoteField->DrawBoardPrimitive();
+			}
 		}
 		return;
 	}
 
-	// Draw these below everything else.
-	if( COMBO_UNDER_FIELD && curr_options.m_fBlind == 0 )
+	if(m_disable_player_matrix_because_newfield_does_skewing)
 	{
-		if( m_sprCombo )
+		int combo_draw_order= m_sprCombo->GetDrawOrder();
+		int judge_draw_order= m_sprJudgment->GetDrawOrder();
+		if(combo_draw_order < judge_draw_order)
+		{
+			m_new_field->draw_up_to_draw_order(combo_draw_order);
 			m_sprCombo->Draw();
+			m_new_field->draw_up_to_draw_order(judge_draw_order);
+			m_sprJudgment->Draw();
+		}
+		else
+		{
+			m_new_field->draw_up_to_draw_order(judge_draw_order);
+			m_sprJudgment->Draw();
+			m_new_field->draw_up_to_draw_order(combo_draw_order);
+			m_sprCombo->Draw();
+		}
+		m_new_field->draw_up_to_draw_order(max_draw_order);
 	}
-
-	if( m_pAttackDisplay )
-		m_pAttackDisplay->Draw();
-
-	if( TAP_JUDGMENTS_UNDER_FIELD )
-		DrawTapJudgments();
-
-	if( HOLD_JUDGMENTS_UNDER_FIELD )
-		DrawHoldJudgments();
-
-	if(draw_notefield)
+	else
 	{
-		PlayerNoteFieldPositioner poser(this, GetX(), tilt, skew, mini, center_y, reverse);
-		m_pNoteField->Draw();
-		m_new_field->Draw();
+		// Draw these below everything else.
+		if( COMBO_UNDER_FIELD && curr_options.m_fBlind == 0 )
+		{
+			if( m_sprCombo )
+			{
+				m_sprCombo->Draw();
+			}
+		}
+
+		if( m_pAttackDisplay )
+		{
+			m_pAttackDisplay->Draw();
+		}
+
+		if( TAP_JUDGMENTS_UNDER_FIELD )
+		{
+			DrawTapJudgments();
+		}
+
+		if( HOLD_JUDGMENTS_UNDER_FIELD )
+		{
+			DrawHoldJudgments();
+		}
+
+		if(draw_notefield)
+		{
+			PlayerNoteFieldPositioner poser(this, GetX(), tilt, skew, mini, center_y, reverse);
+			m_pNoteField->Draw();
+		}
+
+		// m_pNoteField->m_sprBoard->GetVisible()
+		if( !COMBO_UNDER_FIELD && curr_options.m_fBlind == 0 )
+		{
+			if( m_sprCombo )
+			{
+				m_sprCombo->Draw();
+			}
+		}
+
+		if( !(bool)TAP_JUDGMENTS_UNDER_FIELD )
+		{
+			DrawTapJudgments();
+		}
+
+		if( !(bool)HOLD_JUDGMENTS_UNDER_FIELD )
+		{
+			DrawHoldJudgments();
+		}
 	}
-
-	// m_pNoteField->m_sprBoard->GetVisible()
-	if( !COMBO_UNDER_FIELD && curr_options.m_fBlind == 0 )
-		if( m_sprCombo )
-			m_sprCombo->Draw();
-
-	if( !(bool)TAP_JUDGMENTS_UNDER_FIELD )
-		DrawTapJudgments();
-
-	if( !(bool)HOLD_JUDGMENTS_UNDER_FIELD )
-		DrawHoldJudgments();
 }
 
 void Player::PushPlayerMatrix(float x, float skew, float center_y)
@@ -2178,7 +2223,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 						IncrementCombo();
 
 						bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD;
-						if( m_pNoteField )
+						if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
 						{
 							m_pNoteField->DidHoldNote( col, HNS_Held, bBright );
 						}
@@ -2512,7 +2557,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 				// XXX: This is the wrong combo for shared players.
 				// STATSMAN->m_CurStageStats.m_Player[pn] might work, but could be wrong.
 				const bool bBright = ( m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > (unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD ) || bBlind;
-				if( m_pNoteField )
+				if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
 					m_pNoteField->DidTapNote( col, bBlind? TNS_W1:score, bBright );
 				if( m_new_field )
 					m_new_field->did_tap_note( col, bBlind? TNS_W1:score, bBright );
@@ -2563,7 +2608,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 	// XXX:
 	if( !bRelease )
 	{
-		if( m_pNoteField )
+		if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
 		{
 			m_pNoteField->Step( col, score );
 		}
@@ -2615,6 +2660,10 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		if( tn.type == TapNoteType_Mine )
 		{
 			tn.result.tns = TNS_AvoidMine;
+			if(m_new_field != nullptr)
+			{
+				m_new_field->did_tap_note(iter.Track(), tn.result.tns, false);
+			}
 			/* The only real way to tell if a mine has been scored is if it has disappeared
 			 * but this only works for hit mines so update the scores for avoided mines here. */
 			if( m_pPrimaryScoreKeeper )
@@ -2625,6 +2674,14 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		else
 		{
 			tn.result.tns = TNS_Miss;
+			// FIXME:  Move the did_tap_note logic out of the other place it's in
+			// to a function and call that function here.  This does not obey the
+			// blind mod, and might not be the most reliable place to send the
+			// message.  Delaying until I have time to rearchitect Player. -Kyz
+			if(m_new_field != nullptr)
+			{
+				m_new_field->did_tap_note(iter.Track(), tn.result.tns, false);
+			}
 		}
 	}
 }
@@ -2726,7 +2783,7 @@ void Player::UpdateJudgedRows()
 				SetMineJudgment( tn.result.tns , iter.Track() );
 				break;
 			}
-			if( m_pNoteField )
+			if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
 			{
 				m_pNoteField->DidTapNote( iter.Track(), tn.result.tns, false );
 			}
@@ -2798,7 +2855,7 @@ void Player::FlashGhostRow( int iRow )
 
 		if( tn.type == TapNoteType_Empty || tn.type == TapNoteType_Mine || tn.type == TapNoteType_Fake )
 			continue;
-		if( m_pNoteField )
+		if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
 		{
 			m_pNoteField->DidTapNote( iTrack, lastTNS, bBright );
 		}
@@ -3129,7 +3186,7 @@ void Player::HandleHoldCheckpoint(int iRow,
 			{
 				bool bBright = m_pPlayerStageStats
 					&& m_pPlayerStageStats->m_iCurCombo>(unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD;
-				if( m_pNoteField )
+				if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
 				{
 					m_pNoteField->DidHoldNote( i, HNS_Held, bBright );
 				}
@@ -3218,15 +3275,26 @@ void Player::CacheAllUsedNoteSkins()
 		m_pNoteField->CacheAllUsedNoteSkins();
 }
 
+static Message create_judge_message(PlayerNumber pn, TapNoteScore tns, int track)
+{
+	Message msg("Judgment");
+	msg.SetParam("Player", pn);
+	msg.SetParam("TapNoteScore", tns);
+	msg.SetParam("FirstTrack", track);
+	return msg;
+}
+
+void Player::send_judge_message(Message& msg)
+{
+	MESSAGEMAN->Broadcast( msg );
+}
+
 void Player::SetMineJudgment( TapNoteScore tns , int iTrack )
 {
 	if( m_bSendJudgmentAndComboMessages )
 	{
-		Message msg("Judgment");
-		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
-		msg.SetParam( "TapNoteScore", tns );
-		msg.SetParam( "FirstTrack", iTrack );
-		MESSAGEMAN->Broadcast( msg );
+		Message msg(create_judge_message(m_pPlayerState->m_PlayerNumber, tns, iTrack));
+		send_judge_message(msg);
 		if( m_pPlayerStageStats &&
 			( ( tns == TNS_AvoidMine && AVOID_MINE_INCREMENTS_COMBO ) ||
 				( tns == TNS_HitMine && MINE_HIT_INCREMENTS_MISS_COMBO ))
@@ -3241,11 +3309,7 @@ void Player::SetJudgment( int iRow, int iTrack, const TapNote &tn, TapNoteScore 
 {
 	if( m_bSendJudgmentAndComboMessages )
 	{
-		Message msg("Judgment");
-		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
-		msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
-		msg.SetParam( "FirstTrack", iTrack );
-		msg.SetParam( "TapNoteScore", tns );
+		Message msg(create_judge_message(m_pPlayerState->m_PlayerNumber, tns, iTrack));
 		msg.SetParam( "Early", fTapNoteOffset < 0.0f );
 		msg.SetParam( "TapNoteOffset", tn.result.fTapNoteOffset );
 
@@ -3276,7 +3340,7 @@ void Player::SetJudgment( int iRow, int iTrack, const TapNote &tn, TapNoteScore 
 		msg.SetParamFromStack( L, "Notes" );
 
 		LUA->Release( L );
-		MESSAGEMAN->Broadcast( msg );
+		send_judge_message(msg);
 	}
 }
 
@@ -3288,19 +3352,16 @@ void Player::SetHoldJudgment( TapNote &tn, int iTrack )
 
 	if( m_bSendJudgmentAndComboMessages )
 	{
-		Message msg("Judgment");
-		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
-		msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
-		msg.SetParam( "FirstTrack", iTrack );
+		Message msg(create_judge_message(m_pPlayerState->m_PlayerNumber, tn.result.tns, iTrack));
 		msg.SetParam( "NumTracks", (int)m_vpHoldJudgment.size() );
-		msg.SetParam( "TapNoteScore", tn.result.tns );
 		msg.SetParam( "HoldNoteScore", tn.HoldResult.hns );
 
 		Lua* L = LUA->Get();
 		tn.PushSelf(L);
 		msg.SetParamFromStack( L, "TapNote" );
+		LUA->Release( L );
 
-		MESSAGEMAN->Broadcast( msg );
+		send_judge_message(msg);
 	}
 }
 

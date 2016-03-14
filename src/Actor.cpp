@@ -787,6 +787,15 @@ void Actor::EndDraw()
 
 }
 
+void Actor::SetDrawOrder(int order)
+{
+	m_iDrawOrder= order;
+	if(GetParent() != nullptr)
+	{
+		GetParent()->ChildChangedDrawOrder(this);
+	}
+}
+
 void Actor::UpdateTweening( float fDeltaTime )
 {
 	using std::min;

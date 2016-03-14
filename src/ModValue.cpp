@@ -830,7 +830,7 @@ void ModFunction::per_note_update_normal(mod_val_inputs const& input)
 void ModFunction::per_frame_update_spline(mod_val_inputs const& input)
 {
 	update_input_set_in_spline(input, m_per_frame_inputs);
-	if(m_per_note_inputs.empty())
+	if(m_per_note_inputs.empty() && m_has_point_per_frame_input)
 	{
 		m_spline.solve(m_loop_spline, m_polygonal_spline);
 	}
@@ -1094,7 +1094,16 @@ bool ModFunction::load_from_lua(lua_State* L, int index)
 		{
 			m_spline.set_point(p-1, static_cast<float>(m_picked_inputs[p]));
 		}
-		if(m_per_frame_inputs.empty() && m_per_note_inputs.empty())
+		m_has_point_per_frame_input= false;
+		for(size_t p= 0; p < m_per_frame_inputs.size(); ++p)
+		{
+			if(m_per_frame_inputs[p] > 0)
+			{
+				m_has_point_per_frame_input= true;
+				break;
+			}
+		}
+		if(!m_has_point_per_frame_input && m_per_note_inputs.empty())
 		{
 			m_spline.solve(m_loop_spline, m_polygonal_spline);
 		}

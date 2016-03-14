@@ -25,6 +25,7 @@ ActorFrame *ActorFrame::Copy() const { return new ActorFrame(*this); }
 
 ActorFrame::ActorFrame()
 {
+	m_propagate_draw_order_change= false;
 	m_bPropagateCommands = false;
 	m_bDeleteChildren = false;
 	m_bDrawByZPosition = false;
@@ -52,6 +53,7 @@ ActorFrame::ActorFrame( const ActorFrame &cpy ):
 	Actor( cpy )
 {
 #define CPY(x) this->x = cpy.x;
+	CPY(m_propagate_draw_order_change);
 	CPY( m_bPropagateCommands );
 	CPY( m_bDeleteChildren );
 	CPY( m_bDrawByZPosition );
@@ -157,6 +159,15 @@ void ActorFrame::AddChild( Actor *pActor )
 	pActor->SetParent( this );
 }
 
+void ActorFrame::WrapAroundChild(Actor* act)
+{
+	DeleteChildrenWhenDone(true);
+	AddChild(act);
+	SetDrawOrder(act->GetDrawOrder());
+	SetName(act->GetName());
+	propagate_draw_order_change(true);
+}
+
 void ActorFrame::RemoveChild( Actor *pActor )
 {
 	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
@@ -188,6 +199,36 @@ Actor* ActorFrame::GetChild( const std::string &sName )
 void ActorFrame::RemoveAllChildren()
 {
 	m_SubActors.clear();
+}
+
+size_t ActorFrame::FindChildID(Actor* act)
+{
+	size_t index= 0;
+	for(; index < m_SubActors.size(); ++index)
+	{
+		if(m_SubActors[index] == act)
+		{
+			return index;
+		}
+	}
+	return index;
+}
+
+size_t ActorFrame::FindIDBySubChild(Actor* act)
+{
+	size_t index= 0;
+	for(; index < m_SubActors.size(); ++index)
+	{
+		ActorFrame* frame= dynamic_cast<ActorFrame*>(m_SubActors[index]);
+		if(frame != nullptr && !frame->m_SubActors.empty())
+		{
+			if(frame->m_SubActors[0] == act)
+			{
+				return index;
+			}
+		}
+	}
+	return index;
 }
 
 void ActorFrame::MoveToTail( Actor* pActor )
@@ -303,6 +344,14 @@ void ActorFrame::EndDraw()
 		DISPLAY->CameraPopMatrix();
 	}
 	Actor::EndDraw();
+}
+
+void ActorFrame::ChildChangedDrawOrder(Actor* child)
+{
+	if(m_propagate_draw_order_change)
+	{
+		SetDrawOrder(child->GetDrawOrder());
+	}
 }
 
 // This exists solely as a helper for children table.
@@ -540,6 +589,7 @@ PropagateActorFrameCommand1Param(SetZTestMode, ZTestMode);
 PropagateActorFrameCommand1Param(SetZWrite, bool);
 PropagateActorFrameCommand1Param(HurryTweening, float);
 PropagateActorFrameCommand1Param(recursive_set_mask_color, Rage::Color);
+PropagateActorFrameCommand1Param(recursive_set_z_bias, float);
 PropagateActorFrameCommand1Param(SetState, size_t);
 
 

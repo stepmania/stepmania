@@ -18,6 +18,7 @@ class LuaClass;
 
 typedef AutoPtrCopyOnWrite<LuaReference> apActorCommands;
 
+const int max_draw_order= 16777216;
 /** @brief The background layer. */
 #define DRAW_ORDER_BEFORE_EVERYTHING		-200
 /** @brief The underlay layer. */
@@ -286,6 +287,7 @@ public:
 	virtual void DrawPrimitives() {};
 	/** @brief Pop the transform from the world matrix stack. */
 	virtual void EndDraw();
+	virtual void ChildChangedDrawOrder(Actor*) {};
 
 	// TODO: make Update non virtual and change all classes to override UpdateInternal
 	// instead.
@@ -354,6 +356,11 @@ public:
 		dest.rotation.y= Rage::RadiansToDegrees(trans.rot.y);
 		dest.rotation.z= Rage::RadiansToDegrees(trans.rot.z);
 		dest.scale= trans.zoom;
+	}
+	void set_transform_pos(Rage::transform const& trans)
+	{
+		TweenState& dest= DestTweenState();
+		dest.pos= trans.pos;
 	}
 	void  SetX( float x )				{ DestTweenState().pos.x = x; };
 	void  SetY( float y )				{ DestTweenState().pos.y = y; };
@@ -511,6 +518,7 @@ public:
 	void SetMaskColor(Rage::Color c) { DestTweenState().mask_color= c; }
 	Rage::Color GetMaskColor() const { return DestTweenState().mask_color; }
 	virtual void recursive_set_mask_color(Rage::Color c) { SetMaskColor(c); }
+	virtual void recursive_set_z_bias(float z) { SetZBias(z); }
 
 	void SetAux( float f )				{ DestTweenState().aux = f; }
 	float GetAux() const				{ return m_current.aux; }
@@ -610,7 +618,7 @@ public:
 	void SetShadowColor( Rage::Color c )		{ m_ShadowColor = c; }
 	// TODO: Implement hibernate as a tween type?
 	void SetHibernate( float fSecs )		{ m_fHibernateSecondsLeft = fSecs; }
-	void SetDrawOrder( int iOrder )			{ m_iDrawOrder = iOrder; }
+	void SetDrawOrder(int order);
 	int GetDrawOrder() const			{ return m_iDrawOrder; }
 
 	virtual void EnableAnimation( bool b ) 		{ m_bIsAnimating = b; }	// Sprite needs to overload this

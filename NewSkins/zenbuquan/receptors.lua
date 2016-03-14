@@ -1,6 +1,7 @@
 local column_width= 64
 local function zoom_tap(self)
 	self:zoom(column_width / 11)
+		:draworder(newfield_draw_order.receptor)
 end
 local red= {1, 0, 0, 1}
 local white= {1, 1, 1, 1}

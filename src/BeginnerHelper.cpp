@@ -128,11 +128,16 @@ bool BeginnerHelper::Init( int iDancePadType )
 	// Load the DancePad
 	if( SHOW_DANCE_PAD )
 	{
+		std::string load_fail_reason;
 		switch( iDancePadType )
 		{
 		case 0: break; // No pad
-		case 1: m_pDancePad->LoadMilkshapeAscii(GetAnimPath(ANIM_DANCE_PAD)); break;
-		case 2: m_pDancePad->LoadMilkshapeAscii(GetAnimPath(ANIM_DANCE_PADS)); break;
+		case 1: m_pDancePad->LoadMilkshapeAscii(GetAnimPath(ANIM_DANCE_PAD), load_fail_reason); break;
+		case 2: m_pDancePad->LoadMilkshapeAscii(GetAnimPath(ANIM_DANCE_PADS), load_fail_reason); break;
+		}
+		if(!load_fail_reason.empty())
+		{
+			LuaHelpers::ReportScriptError(load_fail_reason);
 		}
 
 		m_pDancePad->SetName("DancePad");
@@ -154,7 +159,8 @@ bool BeginnerHelper::Init( int iDancePadType )
 		m_pDancer[pl]->SetName( fmt::sprintf("PlayerP%d",pl+1) );
 
 		// Load textures
-		m_pDancer[pl]->LoadMilkshapeAscii( Character->GetModelPath() );
+		std::string load_fail_reason;
+		m_pDancer[pl]->LoadMilkshapeAscii(Character->GetModelPath(), load_fail_reason);
 
 		// Load needed animations
 		m_pDancer[pl]->LoadMilkshapeAsciiBones( "Step-LEFT",	GetAnimPath(ANIM_LEFT) );

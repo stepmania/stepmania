@@ -101,7 +101,7 @@ Branch = {
 	AfterSelectStyle = function()
 		if IsNetConnected() then
 			ReportStyle()
-			GAMESTATE:ApplyGameCommand("playmode,regular")
+			GAMESTATE:SetCurrentPlayMode("PlayMode_Regular")
 		end
 		if IsNetSMOnline() then
 			return SMOnlineScreen()

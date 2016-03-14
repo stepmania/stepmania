@@ -92,7 +92,7 @@ return function(button_list, stepstype, skin_params)
 						InitCommand= function(self)
 							local direction= particle_directions[p]
 							self:setsize(parsize, parsize):diffuseupperleft{1, 1, 1, 0}
-								:diffuselowerright{0, 0, 0, 0}
+								:diffuselowerright{1, 1, 1, 0}
 								:blend(explosion_params.particle_blend)
 								:rotationz(direction.angle+45)
 						end,
@@ -112,7 +112,11 @@ return function(button_list, stepstype, skin_params)
 		local column_frame= Def.ActorFrame{
 			InitCommand= function(self)
 				self:rotationz(rots[button] or 0)
-                                self:zoom(0.625)
+				self:zoom(0.625)
+					:draworder(newfield_draw_order.explosion)
+			end,
+			WidthSetCommand= function(self, param)
+				param.column:set_layer_fade_type(self, "FieldLayerFadeType_Explosion")
 			end,
 			Def.Sprite{
 				Texture= "explosion-" .. targets[button] .. ".png", InitCommand= function(self)

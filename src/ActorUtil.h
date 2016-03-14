@@ -128,6 +128,7 @@ namespace ActorUtil
 	// Return a Sprite, BitmapText, or Model depending on the file type
 	Actor* LoadFromNode( const XNode* pNode, Actor *pParentActor = nullptr );
 	Actor* MakeActor( const std::string &sPath, Actor *pParentActor = nullptr );
+	void MakeActorSet(std::string const& path, std::vector<Actor*>& ret);
 	std::string GetSourcePath( const XNode *pNode );
 	std::string GetWhere( const XNode *pNode );
 	bool GetAttrPath( const XNode *pNode, const std::string &sName, std::string &sOut, bool optional= false );

@@ -10,26 +10,171 @@ Due to the completely new design, nothing is compatible.
 # Making a theme use NewField
 For transition period builds, both the old NoteField and the NewField exist
 on ScreenGameplay.  The NewField is disabled unless the theme calls special
-functions to enable it, and a NewSkin cannot be chosen without being added to
-the metrics.
+functions to enable it, and a NewSkin cannot be chosen without the right
+option row being added to the metrics.
 
 ## Enabling
-To enable the NewField on ScreenGameplay, the function
-use_newfield_on_gameplay should be called during an OnCommand on
-ScreenGameplay.  For convenience, an actor that does this is packaged in the
-use_newfield_actor function.  The number passed in is the distance from the
-center of the field to the receptors (aka: reverse offset).  
-Example: ```t[#t+1]= use_newfield_actor(144)```  
-The speed, perspective, and mini mods will be read from the old
-PlayerOptions structure and converted to the new mod system.  Any other
-modifiers that affect how notes are displayed are ignored for now.
 
-## Notefield board
-The notefield board is not stretched by the NewField.  (the old notefield had
-some complex code that would stretch the board to the height of the field if
-it was an image)
-The NewField sends more info to the notefield board to make sizing simpler.
-The info is sent through commands that are executed on the board.  Note that
+Add an actor to a layer on ScreenGameplay like this:
+```
+t[#t+1]= use_newfield_actor()
+```
+This will create an actor that will enable the newfield for both players and
+apply their newfield preferences.  The newfield preferences will be discussed
+in their own documentation file.
+
+### Converting Speed, Distant, and Mini
+The convert_oldfield_mods function is provided to convert the speed, distant,
+mini, and scroll mods that are set in PlayerOptions to mods on the newfield.
+Call it in an OnCommand and pass it the screen, the player number, and the
+y offset like this:
+```
+for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
+  convert(oldfield_mods(SCREENMAN:GetTopScreen(), pn, 100)
+end
+```
+That function will take the Tilt, Mini, Alternate, Cross, Reverse, Split,
+and speed mods from the PlayerOptions for the player and convert them to the
+new system.
+
+### Newskin Option Row
+For themes that still use a metrics based options screen, a lua option row
+for setting the newskin is provied.
+```
+LineNewSkin="lua,newskin_option_row()"
+```
+The default theme no longer uses a metrics based player options screen.
+
+
+## NewField Layers
+The "Graphics/NoteField board" file is not loaded by the NewField.  Instead,
+NewField has a layers system.
+
+The NewField loads "Graphics/NoteField layers", which returns a table of
+actors (not an ActorFrame of actors).  These actors become children of the
+field, and the field tracks their draw order.  Each column loads layers from
+the noteskin, and from "Graphics/NoteColumn layers".  The field also tracks
+the draw order of the layers in the columns.  During rendering, the field
+renders everything by draw order, in all columns.  Everything at draw order 0
+in all columns is drawn before anything at draw order 1 in any column.  This
+allows more generalized control over exactly where things are drawn.
+
+
+### Draw Order
+
+Anything with a draw order less than 0 is considered part of the "board", and
+is drawn before everything except the song background on ScreenGameplay.
+This means they will be under things that the notes go over.
+
+Hold bodies have draw order 200.  Taps have draw order 300.
+There is a table named newfield_draw_order with entries for receptors and
+explosions so newskins can have a conventional draw order for each.
+
+Anything that needs to be at a fixed position in the field should be in a
+layer file, either in NoteField layers, or NoteColumn layers.  This means
+screen filters, column flashes, lane graphics, anything  that is in the
+field.
+
+That way, the thing is guaranteed to be in the correct position for the layer
+and column that it is in.  If mods move the field or the column around, the
+layers move too.
+
+To put the judgment underneath all the notes, but not part of the board, put
+it at 51.  Putting the judgment at 351 would put it above all the notes.  251
+would put it above hold bodies, but underneath taps.
+
+### Judgment/Combo
+
+The judgment and combo actors will not use the JudgmentUnderField and
+ComboUnderField metrics when the NewField is in use.
+
+Instead, the judgment and combo actors should have a draw order set, as if
+they were layers in the field.  Consider this example:  The combo has a draw
+order of 50, and the judgment has a draw order of 450.  All of the field
+layers with a draw order less than 50 are rendered, then the combo, then
+everything between 50 and 450, then the judgment.  This puts the combo above
+the screen filter, underneath the notes, and the judgment above the notes.
+
+Using the draw order instead of the metrics allows the theme to set a
+different draw order for each player.  One player can have their judgment
+above the notes while the other has their judgment under the notes.
+
+The draw order of the judgment and combo actors is checked every frame, so if
+it changes during gameplay, the change takes effect immediately.
+
+
+### Alpha/glow and transform mods
+
+Each layer has a fade type to control which alpha and glow mods affect it.
+If the fade type is set to FieldLayerFadeType_Receptor, then the layer is
+affected by the receptor alpha/glow mods.  FieldLayerFadeType_Explosion sets
+it to use the explosion alpha/glow mods.  FieldLayerFadeType_Note will make
+it use the note alpha/glow mods (with only the current music beat and second
+for inputs).  FieldLayerFadeType_None is for layers that should not be
+affected by any mod.  The default is FieldLayerFadeType_None.  For field
+layers, FieldLayerFadeType_Note is treated as FieldLayerFadeType_None.
+
+The layer fade type is set with the set_layer_fade_type function, in the
+column or field.  If the layer is in a column, call set_layer_fade_type on
+the column.  If the layer is in the field, call set_layer_fade_type on the
+field.  The simplest place to call it from is the WidthSetCommand, because
+that command is run immediately after the layer is loaded, and has the field
+or column in the param table.
+
+Column layers also have a transform type, to control whether the layer is
+place at the center of the column, or at the receptor position.  Field layers
+do not have a transform type because the base field doesn't have a receptor
+position.  FieldLayerTransformType_Full uses the full receptor transform,
+position, scale, and rotation.  FieldLayerTransformType_PosOnly only uses
+the position, which can be useful for a column flash effect that extends from
+the receptor towards the center.  FieldLayerTransformType_None does not use
+the head transform at all.  FieldLayerTransformType_None is the default.
+
+The layer transform type is set by set_layer_transform_type.  WidthSetCommand
+is also the best place to call it.
+
+#### Example WidthSetCommand
+For a column layer:
+```
+WidthSetCommand= function(self, param)
+  param.column:set_layer_fade_type(self, "FieldLayerFadeType_Explosion")
+    :set_layer_transform_type(self, "FieldLayerTransformType_HeadPosOnly")
+end
+```
+For a field layer:
+```
+WidthSetCommand= function(self, param)
+  param.field:set_layer_fade_type(self, "FieldLayerFadeType_Explosion")
+end
+```
+
+
+#### Draw Order Variable List
+
+02 NewField.lua defines these variables to make life convenient for themers.
+```
+newfield_draw_order= {
+	layer_spacing= 100,
+	mid_layer_spacing= 50,
+	board= -100,
+	mid_board= -50,
+	non_board= 0,
+	under_field= 50,
+	receptor= 100,
+	over_receptors= 150,
+	hold= 200,
+	between_taps_and_holds= 250,
+	tap= 300,
+	under_explosions= 350,
+	explosion= 400,
+	over_field= 450,
+}
+```
+
+## NewField layer messages
+
+The NewField sends various info to the layers to make sizing simpler.
+The info is sent through commands that are executed on the layers.  Note that
 these commands are executed before the screen is finished loading.  You
 cannot use SCREENMAN:GetTopScreen() during them.
 
@@ -43,14 +188,14 @@ The param table has three entries:
 the right edge of the rightmost column.
 * columns:  A set of tables, one for each column, from left to right.  Each
 table contains the width and padding of a column.
-* newfield:  The NewField the board is attached to.  If you need it for some
+* field:  The NewField the board is attached to.  If you need it for some
 reason, this is how to get it.
 
 #### Example
 Imagine that the engine does this to create the param for WidthSetCommand:
 ```
 local width_info= {
-  newfield= self,
+  field= self,
   width= 256,
 	columns= {
 	  {width= 64, padding= 0},
@@ -65,11 +210,85 @@ width of the quad, and pick a height.
 To size a set of quads, each one in a different column, walk through the
 columns table.
 
+## NewFieldColumn layer messages
+
+The various layers in the column, from both the noteskin and the theme, are
+sent various messages to keep their state updated.
+
+### PlayerStateSetCommand
+The param table has one element, param.PlayerNumber.  This is the number of
+the player the field is for.
+
+### WidthSetCommand
+WidthSet is sent immediately after the OnCommand is executed.  The elements
+in the param table are:
+* ```column``` The NewFieldColumn the layer is in.
+* ```column_id``` The id of the column.
+* ```width``` The width of the column set by the noteskin.
+* ```padding``` The padding set by the noteskin.
+
+### ReverseChangedCommand
+ReverseChanged is sent when the reverse scale goes from negative to positive,
+or from positive to negative.  It is not sent every frame.
+Param table elements:
+* ```sign``` -1 if reverse_scale is less than 0, 1 otherwise.
+
+### BeatUpdateCommand
+BeatUpdate occurs every frame.  Param table elements:
+* ```beat``` The current beat.
+* ```beat_distance``` Distance in beats to the next note in this column.
+* ```second_distance``` Distance in seconds to the next note in this column.
+* ```pressed``` True when the column goes from not pressed to pressed.
+* ```lifted``` True when the column goes from pressed to not pressed.
+
+### ColumnJudgmentCommand
+ColumnJudgment occurs when something is judged in the column.
+Param table elements:
+* ```bright``` True if the player's combo is greater than the
+BrightGhostComboThreshold metric.
+* ```tap_note_score``` If the judgment is for a tap note, this is the
+judgment.  This is nil for holds.
+* ```hold_note_score``` If the judgment is for a hold note, this is the
+judgment.  This is nil for taps.
+
+### HoldCommand
+Hold occurs every frame when there is an active hold passing over the
+receptors.  Param table elements:
+* ```type``` The TapNoteSubType of the hold.
+* ```life``` The current life value for the hold.  0 is a dropped hold, 1 is
+a hold that is currently being held, in between is a hold that is going from
+held to dropped.
+* ```start``` True if this is the first frame the hold is active.
+* ```finished``` True if this is the frame after the hold ended.
+
 
 # Making a noteskin for the NewField
 Read the comments in NewSkins/default.
 _fallback/Scripts/02 NewSkin.lua has a couple minor functions for generating
 state maps.
+
+## 3D noteskins
+
+3D noteskins are not supported on the NewField in this release.
+
+# Newskin Parameters
+
+Newskin parameters is a system for allowing a newskin to be customized by the
+player.  The parameters are defined by the newskin and can do whatever the
+skin author wants.  The player's choices are saved in their profile by skin
+and stepstype (so the same skin can be set different ways for different
+stepstypes).  The theme uses information provided by the newskin to give the
+player a menu for setting the parameters.
+
+The system is explained in more detail in comments in the default noteskin,
+with examples used to control explosion particles and the amount of warning
+time given by the receptors.
+
+Because the newskin parameter table can go to any depth and contain anything,
+and different players can choose different skins, creating a menu for it in
+the confined OptionRow system would probably be very difficult.  OptionRow
+menus for setting newskin parameters are not provided.  The nested option
+menus system does provide menus for setting newskin parameters.
 
 
 # Multiplayer mode
@@ -78,8 +297,8 @@ Playerizing a note means doing something to make it look unique for each
 player.  It is used in multiplayer (routine) mode to show which notes are
 for player 1 and which are for player 2.
 
-Playerizing is still under active development and open for new ideas.  An
-ideal playerizing method should make it possible for notes to be playerized
+Playerizing is on hold until someone has ideas and feedback.
+Ideal playerizing should make it possible for notes to be playerized
 and quantized and animated without forcing the noteskin author to multiply
 the number of quantizations by the number of players by the frames of
 animation.
@@ -98,3 +317,88 @@ support it, NotePlayerizeMode_Quanta will be used instead.
 
 NewSkins/routine/notes.lua is an example of noteskin that supports
 multiplayer mode.  It has example masks and colors and explanation comments.
+
+
+# Non-modifier Functions
+
+## NewFieldColumn Functions
+
+* NewFieldColumn:get_layer_fade_type(layer)  
+Returns the FieldLayerFadeType for the layer.
+
+* NewFieldColumn:set_layer_fade_type(layer, type)  
+layer must be the actor the type is being applied to.  type is a
+FieldLayerFadeType enum value.
+
+* NewFieldColumn:get_layer_transform_type(layer)  
+Returns the FieldLayerTransformType for the layer.
+
+* NewFieldColumn:set_layer_transform_type(layer, type)  
+layer must be the actor the type is being applied to.  type is a
+FieldLayerTransformType enum value.
+
+## NewField Functions
+
+* NewField:get_layer_fade_type(layer)  
+Identical to NewFieldColumn:get_layer_fade_type.
+
+* NewField:set_layer_fade_type(layer, type)  
+Identical to NewFieldColumn:set_layer_fade_type.
+
+* NewField:set_speed_mod(constant, speed, read_bpm)  
+set_speed_mod creates a simple speed mod from the parameters and applies it
+to all columns.  If ```constant``` is true, bpm changes, stops, speed
+segments, and similar stuff will be disabled, as in an old-style CMod, and
+```speed``` is the number of arrow heights a note should move per minute.
+If ```constant``` is false and ```read_bpm``` is a number, ```read_bpm```
+will be used to calculate a speed mod that makes notes at that bpm move at
+```speed``` arrow heights per minute (this is the same as an old-style MMod).
+If ```read_bpm``` is nil, it will be treated as 1, which makes it the same as
+an old-style XMod.  If ```read_bpm``` is not nil and not a number, a theme
+error will occur.
+
+* NewField:set_rev_offset_base(revoff)  
+Sets the base value for reverse_offset_pixels for all columns to revoff.
+
+* NewField:set_reverse_base(rev)  
+Sets the base value for reverse_scale for all columns to rev.
+
+* NewField:clear_column_mod(mod_field_name, mod_name)  
+Clears the mod with mod_name in the field mod_field_name in all columns.
+
+* NewField:set_hidden_mod(line, dist, add_glow)  
+Adds a hidden mod, which makes notes disappear as they cross the line.  line
+is the y offset the mod effect is occurs at.  dist is how many pixels notes
+take to go from fully visible to fully invisible.  If add_glow is true, then
+the glow on notes will ramp up before they fade out.  If add_glow is false,
+then the hidden mod will only make the notes transparent to fade them out.
+
+* NewField:set_sudden_mod(line, dist, add_glow)  
+Similar to set_hidden_mod, this adds a sudden mod, which makes notes after
+line invisible, and notes above it visible.
+
+* NewField:clear_hidden_mod()  
+Clears the hidden mod from all columns.
+
+* NewField:clear_sudden_mod()  
+Clears the sudden mod from all columns.
+
+## Other functions
+
+* find_pactor_in_gameplay(screen_gameplay, pn)  
+Returns the player actor or nil.
+
+* find_newfield_in_gameplay(screen_gameplay, pn)  
+Returns the newfield actor or nil.
+
+* use_newfield_on_gameplay()  
+Finds the player actors for all enabled players and sets them to render the
+newfield instead of the oldfield.  Also applies the newfield prefs to their
+newfields.
+
+* use_newfield_actor()  
+Returns an actor that calls use_newfield_on_gameplay in its OnCommand.
+
+* newskin_option_row()  
+Returns a lua option row for picking a newskin on a metrics based options
+screen.

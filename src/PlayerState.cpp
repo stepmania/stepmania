@@ -275,9 +275,11 @@ public:
 	}
 	DEFINE_METHOD( GetHealthState, m_HealthState );
 	DEFINE_METHOD( GetSuperMeterLevel, m_fSuperMeter );
+	DEFINE_METHOD(get_read_bpm, m_fReadBPM);
 
 	LunaPlayerState()
 	{
+		ADD_METHOD(get_read_bpm);
 		ADD_METHOD( ApplyPreferredOptionsToOtherLevels );
 		ADD_METHOD( GetPlayerNumber );
 		ADD_METHOD( GetMultiPlayerNumber );

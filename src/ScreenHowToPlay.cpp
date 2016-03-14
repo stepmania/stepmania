@@ -88,7 +88,8 @@ void ScreenHowToPlay::Init()
 	{
 		m_pmDancePad = new Model;
 		m_pmDancePad->SetName( "Pad" );
-		m_pmDancePad->LoadMilkshapeAscii( GetAnimPath(ANIM_DANCE_PAD) );
+		std::string load_fail_reason;
+		m_pmDancePad->LoadMilkshapeAscii( GetAnimPath(ANIM_DANCE_PAD), load_fail_reason );
 		// xxx: hardcoded rotation. can be undone, but still. -freem
 		m_pmDancePad->SetRotationX( 35 );
 		ActorUtil::LoadAllCommandsAndSetXY( m_pmDancePad, m_sName );
@@ -110,7 +111,8 @@ void ScreenHowToPlay::Init()
 		{
 			m_pmCharacter = new Model;
 			m_pmCharacter->SetName( "Character" );
-			m_pmCharacter->LoadMilkshapeAscii( displayChar->GetModelPath() );
+			std::string load_fail_reason;
+			m_pmCharacter->LoadMilkshapeAscii( displayChar->GetModelPath(), load_fail_reason );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-LEFT", GetAnimPath( ANIM_LEFT ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-DOWN", GetAnimPath( ANIM_DOWN ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-UP", GetAnimPath( ANIM_UP ) );

@@ -162,6 +162,73 @@ private:
 	std::vector<QuantizedStates> m_quanta;
 };
 
+struct QuantizedTextureMap
+{
+	static const size_t max_quanta= 256;
+
+	struct TextureQuanta
+	{
+		size_t per_beat;
+		float trans_x;
+		float trans_y;
+	};
+
+	QuantizedTextureMap()
+	{
+		clear();
+	}
+
+	TextureQuanta const& calc_quantization(double quantization) const
+	{
+		size_t beat_part= static_cast<size_t>((quantization * m_parts_per_beat) + .5);
+		for(auto&& quantum : m_quanta)
+		{
+			size_t spacing= m_parts_per_beat / quantum.per_beat;
+			if(spacing * quantum.per_beat != m_parts_per_beat)
+			{
+				continue;
+			}
+			if(beat_part % spacing == 0)
+			{
+				return quantum;
+			}
+		}
+		return m_quanta.back();
+	}
+
+	void calc_trans(double quantization, double beat, bool vivid, float& trans_x, float& trans_y, float& seconds_in)
+	{
+		TextureQuanta const& quantum= calc_quantization(quantization);
+		trans_x= quantum.trans_x;
+		trans_y= quantum.trans_y;
+		seconds_in= vivid ? beat+quantization : beat;
+	}
+	void calc_player_trans(size_t pn, double beat, float& trans_x,
+		float& trans_y, float& seconds_in)
+	{
+		TextureQuanta const& quantum= m_quanta[pn%m_quanta.size()];
+		trans_x= quantum.trans_x;
+		trans_y= quantum.trans_y;
+		seconds_in= beat;
+	}
+	bool load_from_lua(lua_State* L, int index, std::string& insanity_diagnosis);
+	void swap(QuantizedTextureMap& other)
+	{
+		std::swap(m_parts_per_beat, other.m_parts_per_beat);
+		m_quanta.swap(other.m_quanta);
+	}
+	void clear()
+	{
+		m_parts_per_beat= 1;
+		m_quanta.resize(1);
+		m_quanta[0]= {1, 0, 0};
+	}
+
+private:
+	size_t m_parts_per_beat;
+	std::vector<TextureQuanta> m_quanta;
+};
+
 struct QuantizedTap
 {
 	void set_timing_source(TimingSource* source)
@@ -182,23 +249,54 @@ struct QuantizedTap
 	}
 	Actor* get_quantized(double quantization, double beat, bool active)
 	{
-		const size_t state= active ?
-			m_state_map.calc_state(quantization, beat, m_vivid) :
-			m_inactive_map.calc_state(quantization, beat, m_vivid);
-		return get_common(state);
+		if(m_use_texture_map)
+		{
+			float trans_x, trans_y, seconds_in;
+			active ? m_texture_map.calc_trans(quantization, beat, m_vivid,
+				trans_x, trans_y, seconds_in) :
+				m_inactive_texture_map.calc_trans(quantization, beat, m_vivid,
+					trans_x, trans_y, seconds_in);
+			m_actor->SetSecondsIntoAnimation(seconds_in);
+			m_actor->SetTextureTranslate(trans_x, trans_y);
+			return &m_frame;
+		}
+		else
+		{
+			const size_t state= active ?
+				m_state_map.calc_state(quantization, beat, m_vivid) :
+				m_inactive_map.calc_state(quantization, beat, m_vivid);
+			return get_common(state);
+		}
 	}
 	Actor* get_playerized(size_t pn, double beat, bool active)
 	{
-		const size_t state= active ?
-			m_state_map.calc_player_state(pn, beat, m_vivid) :
-			m_inactive_map.calc_player_state(pn, beat, m_vivid);
-		return get_common(state);
+		if(m_use_texture_map)
+		{
+			float trans_x, trans_y, seconds_in;
+			active ? m_texture_map.calc_player_trans(pn, beat,
+				trans_x, trans_y, seconds_in) :
+				m_inactive_texture_map.calc_player_trans(pn, beat,
+					trans_x, trans_y, seconds_in);
+			m_actor->SetSecondsIntoAnimation(seconds_in);
+			m_actor->SetTextureTranslate(trans_x, trans_y);
+			return &m_frame;
+		}
+		else
+		{
+			const size_t state= active ?
+				m_state_map.calc_player_state(pn, beat, m_vivid) :
+				m_inactive_map.calc_player_state(pn, beat, m_vivid);
+			return get_common(state);
+		}
 	}
 	bool load_from_lua(lua_State* L, int index, std::string& insanity_diagnosis);
 	bool m_vivid;
 private:
 	QuantizedStateMap m_state_map;
 	QuantizedStateMap m_inactive_map;
+	QuantizedTextureMap m_texture_map;
+	QuantizedTextureMap m_inactive_texture_map;
+	bool m_use_texture_map;
 	AutoActor m_actor;
 	ActorFrame m_frame;
 };
@@ -292,7 +390,8 @@ struct NewSkinColumn
 		double quantization, double beat, QuantizedHoldRenderData& data);
 	double get_width() { return m_width; }
 	double get_padding() { return m_padding; }
-	double get_anim_time() { return m_anim_time; }
+	double get_anim_mult() { return m_anim_mult; }
+	double get_quantum_mult() { return m_quantum_mult; }
 	bool get_anim_uses_beats() { return m_anim_uses_beats; }
 	bool supports_masking()
 	{
@@ -379,7 +478,12 @@ private:
 	std::vector<RageTexture*> m_hold_reverse_player_masks;
 	double m_width;
 	double m_padding;
-	double m_anim_time;
+	// m_anim_mult and m_quantization_mult are used to control how many beats
+	// the animation and quantization are spread over.  The noteskin supplies a
+	// number of beats, which is converted to its reciprocal.  The reciprocal
+	// is used because multiplication is faster than division.
+	double m_anim_mult;
+	double m_quantum_mult;
 	bool m_anim_uses_beats;
 };
 
@@ -411,8 +515,7 @@ struct NewSkinData
 
 	// The layers are public so that the NewFieldColumns can go through and
 	// take ownership of the actors after loading.
-	std::vector<NewSkinLayer> m_layers_below_notes;
-	std::vector<NewSkinLayer> m_layers_above_notes;
+	std::vector<NewSkinLayer> m_layers;
 	std::vector<Rage::Color> m_player_colors;
 private:
 	std::vector<NewSkinColumn> m_columns;
@@ -462,8 +565,7 @@ private:
 	std::string m_fallback_skin_name;
 	std::string m_load_path;
 	std::string m_notes_loader;
-	std::vector<std::string> m_below_loaders;
-	std::vector<std::string> m_above_loaders;
+	std::vector<std::string> m_layer_loaders;
 	std::vector<Rage::Color> m_player_colors;
 	std::unordered_set<std::string> m_supported_buttons;
 	LuaReference m_skin_parameters;

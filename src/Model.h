@@ -22,10 +22,10 @@ public:
 	void	Clear();
 	void	Load( const std::string &sFile );
 
-	void	LoadPieces( const std::string &sMeshesPath, const std::string &sMaterialsPath, const std::string &sBomesPath );
-	void	LoadMilkshapeAscii( const std::string &sFile );
-	void 	LoadMaterialsFromMilkshapeAscii( const std::string &sPath );
-	bool	LoadMilkshapeAsciiBones( const std::string &sAniName, const std::string &sPath );
+	bool LoadPieces(const std::string &sMeshesPath, const std::string &sMaterialsPath, const std::string &sBomesPath, std::string& load_fail_reason);
+	bool LoadMilkshapeAscii(const std::string &sFile, std::string& load_fail_reason);
+	bool LoadMaterialsFromMilkshapeAscii(const std::string &sPath, std::string& load_fail_reason);
+	bool LoadMilkshapeAsciiBones(const std::string &sAniName, const std::string &sPath);
 
 	void LoadFromNode( const XNode* pNode );
 
@@ -86,6 +86,7 @@ private:
 	float			m_fCurAnimationRate;
 	bool			m_bLoop;
 	bool			m_bDrawCelShaded; // for Lua models
+	bool m_loaded_safely;
 
 	Model& operator=(const Model& rhs);
 };

@@ -14,6 +14,10 @@ return function(button_list, stepstype, skin_params)
 		local column_frame= Def.ActorFrame{
 			InitCommand= function(self)
 				self:rotationz(rots[button] or 0)
+					:draworder(newfield_draw_order.explosion)
+			end,
+			WidthSetCommand= function(self, param)
+				param.column:set_layer_fade_type(self, "FieldLayerFadeType_Explosion")
 			end,
 			Def.Sprite{
 				Texture= tap_redir[button].." explosion.png", InitCommand= function(self)

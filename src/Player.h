@@ -148,6 +148,7 @@ protected:
 	void SendComboMessages( unsigned int iOldCombo, unsigned int iOldMissCombo );
 	void PlayKeysound( const TapNote &tn, TapNoteScore score );
 
+	void send_judge_message(Message& msg);
 	void SetMineJudgment( TapNoteScore tns , int iTrack );
 	void SetJudgment( int iRow, int iFirstTrack, const TapNote &tn ) { SetJudgment( iRow, iFirstTrack, tn, tn.result.tns, tn.result.fTapNoteOffset ); }
 	void SetJudgment( int iRow, int iFirstTrack, const TapNote &tn, TapNoteScore tns, float fTapNoteOffset );	// -1 if no track as in TNS_Miss

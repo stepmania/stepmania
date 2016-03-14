@@ -1,6 +1,7 @@
 local column_width= 64
 local function zoom_tap(self)
 	self:zoom(column_width / 11)
+		:draworder(newfield_draw_order.explosion)
 end
 local hold_colors= {
 	TapNoteSubType_Hold= {1, 1, 0, 1},
@@ -19,6 +20,9 @@ return function(button_list, stepstype)
 	for i, button in ipairs(button_list) do
 		ret[i]= Def.ActorFrame{
 			InitCommand= zoom_tap,
+			WidthSetCommand= function(self, param)
+				param.column:set_layer_fade_type(self, "FieldLayerFadeType_Explosion")
+			end,
 			Def.Sprite{
 				Texture= "explosion ", InitCommand= explosion_init,
 				ColumnJudgmentCommand= function(self, param)

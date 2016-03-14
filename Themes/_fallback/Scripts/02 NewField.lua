@@ -30,15 +30,35 @@
 -- use_newfield_on_gameplay is simpler and will take care of them.  Only call
 -- these functions directly if you need to skip one or more of them.
 
--- The read_bpm arg to set_newfield_speed_mod is optional.  If it is exists,
+
+-- These draw order variables are actually hardcoded in NewField.cpp. They
+-- are copied here for convenience.  Do not change them. -Kyz
+newfield_draw_order= {
+	layer_spacing= 100,
+	mid_layer_spacing= 50,
+	board= -100,
+	mid_board= -50,
+	non_board= 0,
+	under_field= 50,
+	receptor= 100,
+	over_receptors= 150,
+	hold= 200,
+	between_taps_and_holds= 250,
+	tap= 300,
+	under_explosions= 350,
+	explosion= 400,
+	over_field= 450,
+}
+
+-- The read_bpm arg to set_speed_mod is optional.  If it is exists,
 -- the speed is treated as an m-mod.  The read bpm for a chart can be fetched
--- from with PlayerState:get_read_bpm() or calculated by the theme.
+-- with PlayerState:get_read_bpm() or calculated by the theme.
 -- Examples:
---   2x: set_newfield_speed_mod(newfield, false, 2)
---   m200: set_newfield_speed_mod(newfield, false, 200, read_bpm)
---   c200: set_newfield_speed_mod(newfield, true, 200)
-function set_newfield_speed_mod(newfield, constant, speed, read_bpm)
-	if not newfield then return end
+--   2x: newfield:set_speed_mod(false, 2)
+--   m200: newfield:set_speed_mod(false, 200, read_bpm)
+--   c200: newfield:set_speed_mod(true, 200)
+function NewField:set_speed_mod(constant, speed, read_bpm)
+	if not self then return end
 	if not speed then return end
 	-- Speed mods are divided by the music rate so that C600 at x2 music rate
 	-- is the same as C600 at normal music rate.  If the speed mod was not
@@ -67,9 +87,9 @@ function set_newfield_speed_mod(newfield, constant, speed, read_bpm)
 	end
 	-- Each column has independent modifier state, so the speed mod needs to be
 	-- set in each column.
-	for col in ivalues(newfield:get_columns()) do
+	for col in ivalues(self:get_columns()) do
 		-- The speed modifier is named so that repeated calls to
-		-- set_newfield_speed_mod do not add stacking speed mods.
+		-- set_speed_mod do not add stacking speed mods.
 		col:get_speed_mod():add_mod{name= "speed", "ModFunctionType_Constant", mod_input}
 		col:set_show_unjudgable_notes(show_unjudgable)
 		col:set_speed_segments_enabled(speed_segments_enabled)
@@ -77,39 +97,170 @@ function set_newfield_speed_mod(newfield, constant, speed, read_bpm)
 	end
 end
 
-function set_newfield_tilt(newfield, tilt)
+-- Actually considering implementing a mode switch for the NewField to make
+-- it call the ArrowEffects functions, so these oldfield conversion functions
+-- are intentionally undocumented.
+function NewField:oldfield_tilt(tilt)
 	-- The tilt mod is -30 degrees rotation at 1.0.
 	local converted_tilt= (tilt * -30) * (math.pi / 180)
-	newfield:get_trans_rot_x():set_value(converted_tilt)
+	local yoff= 0
+	if tilt > 0 then
+		yoff= scale(tilt, 0, 1, 0, -45)
+	else
+		yoff= scale(tilt, 0, -1, 0, -20)
+	end
+	self:get_trans_rot_x():set_value(converted_tilt)
+	self:get_trans_pos_y():add_mod{name= "oldfield_tilt", "ModFunctionType_Constant", yoff}
 end
 
-function set_newfield_mini(newfield, mini)
+function NewField:oldfield_mini(mini)
 	-- mini is zoom 0 at 2.0.
 	local converted_zoom= 1 + (mini * -.5)
 	for dim in ivalues{"x", "y", "z"} do
-		newfield["get_trans_zoom_"..dim](newfield):set_value(converted_zoom)
+		self["get_trans_zoom_"..dim](self):set_value(converted_zoom)
 	end
 	if math.abs(converted_zoom) < .01 then return end
 	local zoom_recip= 1 / converted_zoom
 	-- The rev offset values need to be scaled too so the receptors stay fixed.
-	for col in ivalues(newfield:get_columns()) do
+	for col in ivalues(self:get_columns()) do
 		local revoff= col:get_reverse_offset_pixels()
 		revoff:set_value(revoff:get_value() * zoom_recip)
 		col:set_pixels_visible_after(1024 * zoom_recip)
 	end
 end
 
-function set_newfield_rev_offset(newfield, revoff)
+function NewField:oldfield_scrolls(alternate, cross, reverse, split)
+	local cols= self:get_columns()
+	local before_split= #cols / 2
+	local before_cross= #cols / 4
+	local after_cross= #cols - before_cross + 1
+	for i, col in ipairs(cols) do
+		local rev_scale= reverse
+		if i > before_split then
+			rev_scale= rev_scale + split
+		end
+		if i % 2 == 0 then
+			rev_scale= rev_scale + alternate
+		end
+		if i > before_cross and i < after_cross then
+			rev_scale= rev_scale + cross
+		end
+		if rev_scale > 2 then
+			rev_scale= rev_scale % 2
+		end
+		if rev_scale > 1 then
+			rev_scale= scale(rev_scale, 1, 2, 1, 0)
+		end
+		rev_scale= scale(rev_scale, 0, 1, 1, -1)
+		col:get_reverse_scale():add_mod{name= "old_scrolls", sum_type= "ModSumType_Multiply", "ModFunctionType_Constant", rev_scale}
+	end
+end
+
+function NewField:set_rev_offset_base(revoff)
 	if not revoff then return end
-	for col in ivalues(newfield:get_columns()) do
+	for col in ivalues(self:get_columns()) do
 		col:get_reverse_offset_pixels():set_value(revoff)
 	end
 end
 
-function set_newfield_reverse(newfield, rev)
-	for col in ivalues(newfield:get_columns()) do
+function NewField:set_reverse_base(rev)
+	for col in ivalues(self:get_columns()) do
 		col:get_reverse_scale():set_value(rev)
 	end
+end
+
+function NewField:clear_column_mod(mod_field_name, mod_name)
+	for col in ivalues(self:get_columns()) do
+		col[mod_field_name](col):remove_mod(mod_name)
+	end
+end
+
+local function set_alpha_glow_mods(self, alpha_mod, glow_mod)
+	for col in ivalues(self:get_columns()) do
+		col:get_note_alpha():add_mod(alpha_mod)
+		if glow_mod then
+			col:get_note_glow():add_mod(glow_mod)
+		elseif alpha_mod.name then
+			col:get_note_glow():remove_mod(alpha_mod.name)
+		end
+	end
+end
+
+function NewField:set_hidden_mod(line, dist, add_glow)
+	local half_dist= dist / 2
+	local alpha_mod
+	local glow_mod
+	if add_glow then
+		alpha_mod= {
+			name= "hidden", "ModFunctionType_Constant",
+			{"ModInputType_YOffset", 1, 0, phases= {
+				 default= {0, 0, 0, 0},
+				 {-32, line, 0, -1},
+			}}
+		}
+		glow_mod= {
+			name= "hidden", "ModFunctionType_Constant",
+			{"ModInputType_YOffset", 1, 0, phases= {
+				 default= {0, 0, 0, 0},
+				 {line - half_dist, line, 1/half_dist, 0},
+				 {line, line + half_dist, -1/half_dist, 1},
+			}}
+		}
+	else
+		alpha_mod= {
+			name= "hidden", "ModFunctionType_Constant",
+			{"ModInputType_YOffset", 1, 0, phases= {
+				 default= {0, 0, 0, 0},
+				 {-32, 0, 0, -1},
+				 {0, line - half_dist, 0, -1},
+				 {line - half_dist, line + half_dist, 1/dist, -1},
+			}}
+		}
+	end
+	set_alpha_glow_mods(self, alpha_mod, glow_mod)
+end
+
+function NewField:set_sudden_mod(line, dist, add_glow)
+	local half_dist= dist / 2
+	local alpha_mod
+	local glow_mod
+	if add_glow then
+		alpha_mod= {
+			name= "sudden", "ModFunctionType_Constant",
+			{"ModInputType_YOffset", 1, 0, phases= {
+				 default= {0, 0, 0, 0},
+				 {line, math.huge, 0, -1},
+			}}
+		}
+		glow_mod= {
+			name= "sudden", "ModFunctionType_Constant",
+			{"ModInputType_YOffset", 1, 0, phases= {
+				 default= {0, 0, 0, 0},
+				 {line - half_dist, line, 1/half_dist, 0},
+				 {line, line + half_dist, -1/half_dist, 1},
+			}}
+		}
+	else
+		alpha_mod= {
+			name= "sudden", "ModFunctionType_Constant",
+			{"ModInputType_YOffset", 1, 0, phases= {
+				 default= {0, 0, 0, 0},
+				 {line - half_dist, line + half_dist, -1/dist, 0},
+				 {line + half_dist, math.huge, 0, -1},
+			}}
+		}
+	end
+	set_alpha_glow_mods(self, alpha_mod, glow_mod)
+end
+
+function NewField:clear_hidden_mod()
+	self:clear_column_mod("get_note_alpha", "hidden")
+	self:clear_column_mod("get_note_glow", "hidden")
+end
+
+function NewField:clear_sudden_mod()
+	self:clear_column_mod("get_note_alpha", "sudden")
+	self:clear_column_mod("get_note_glow", "sudden")
 end
 
 function find_pactor_in_gameplay(screen_gameplay, pn)
@@ -128,28 +279,28 @@ function find_newfield_in_gameplay(screen_gameplay, pn)
 	return pactor:GetChild("NewField")
 end
 
-function set_newfield_mods(screen_gameplay, pn, revoff)
+function convert_oldfield_mods(screen_gameplay, pn, revoff)
 	local field= find_newfield_in_gameplay(screen_gameplay, pn)
 	if not field then return end
-	set_newfield_rev_offset(field, revoff)
+	field:set_rev_offset_base(revoff)
 	local pstate= GAMESTATE:GetPlayerState(pn)
 	local poptions= pstate:GetPlayerOptions("ModsLevel_Preferred")
-	set_newfield_tilt(field, poptions:Tilt())
-	set_newfield_mini(field, poptions:Mini())
-	set_newfield_reverse(field, 1-(2*poptions:Reverse()))
+	field:oldfield_tilt(poptions:Tilt())
+	field:oldfield_mini(poptions:Mini())
+	field:oldfield_scrolls(poptions:Alternate(), poptions:Cross(), poptions:Reverse(), poptions:Split())
 	local mmod= poptions:MMod()
 	local cmod= poptions:CMod()
 	local xmod= poptions:XMod()
 	if mmod then
-		set_newfield_speed_mod(field, false, mmod, pstate:get_read_bpm())
+		field:set_speed_mod(false, mmod, pstate:get_read_bpm())
 	elseif cmod then
-		set_newfield_speed_mod(field, true, cmod)
+		field:set_speed_mod(true, cmod)
 	else
-		set_newfield_speed_mod(field, false, xmod)
+		field:set_speed_mod(false, xmod)
 	end
 end
 
-function use_newfield_on_gameplay(revoff)
+function use_newfield_on_gameplay()
 	local screen_gameplay= SCREENMAN:GetTopScreen()
 	if not screen_gameplay.GetLifeMeter then
 		lua.ReportScriptError("use_newfield_on_gameplay can only be called when the current screen is ScreenGameplay.")
@@ -157,13 +308,18 @@ function use_newfield_on_gameplay(revoff)
 	end
 	for pn in ivalues(GAMESTATE:GetEnabledPlayers()) do
 		local pactor= find_pactor_in_gameplay(screen_gameplay, pn)
-		pactor:set_newfield_preferred(true)
-		set_newfield_mods(screen_gameplay, pn, revoff)
+		if pactor then
+			pactor:set_newfield_preferred(true)
+			local field= pactor:GetChild("NewField")
+			if field then
+				apply_newfield_prefs(pn, field, newfield_prefs_config:get_data(pn))
+			end
+		end
 	end
 end
 
-function use_newfield_actor(revoff)
-	return Def.Actor{OnCommand= function(self) use_newfield_on_gameplay(revoff) end}
+function use_newfield_actor()
+	return Def.Actor{OnCommand= function(self) use_newfield_on_gameplay() end}
 end
 
 function newskin_option_row()
