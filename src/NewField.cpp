@@ -1096,7 +1096,6 @@ void NewFieldColumn::build_render_lists()
 	m_status.prev_active_hold= m_status.active_hold;
 	m_status.active_hold= nullptr;
 	m_status.found_upcoming= false;
-	double skin_anim_time= m_newskin->get_anim_time();
 	if(m_newskin->get_anim_uses_beats())
 	{
 		m_status.anim_percent= m_curr_beat;
@@ -1105,7 +1104,7 @@ void NewFieldColumn::build_render_lists()
 	{
 		m_status.anim_percent= m_curr_second;
 	}
-	m_status.anim_percent= fmod(m_status.anim_percent, skin_anim_time) / skin_anim_time;
+	m_status.anim_percent= fmod(m_status.anim_percent * m_newskin->get_anim_mult(), 1.0);
 	if(m_status.anim_percent < 0.0)
 	{
 		m_status.anim_percent+= 1.0;

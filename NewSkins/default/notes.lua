@@ -189,8 +189,13 @@ return function(button_list, stepstype)
 			-- The default is 0.
 			padding= 0,
 			-- anim_time is used to specify how long the animation of the taps
-			-- lasts.
+			-- lasts.  anim_time is optional, if it isn't set, the engine will set
+			-- it to 1.
 			anim_time= 1,
+			-- quantum_time is how many beats the quantizations cover.
+			-- quantum_time is optional, if it isn't set, the engine will default
+			-- it to 1.
+			quantum_time= 1,
 			-- anim_uses_beats specifies whether anim_time is a number of beats or
 			-- a number of seconds.
 			anim_uses_beats= true,

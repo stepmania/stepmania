@@ -121,7 +121,7 @@ struct NewFieldColumn : ActorFrame
 	}
 	double quantization_for_time(mod_val_inputs& input)
 	{
-		double mult= m_quantization_multiplier.evaluate(input);
+		double mult= m_quantization_multiplier.evaluate(input) * m_newskin->get_quantum_mult();
 		double offset= m_quantization_offset.evaluate(input);
 		return std::fmod((input.eval_beat * mult) + offset, 1.0);
 	}

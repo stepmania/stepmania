@@ -390,7 +390,8 @@ struct NewSkinColumn
 		double quantization, double beat, QuantizedHoldRenderData& data);
 	double get_width() { return m_width; }
 	double get_padding() { return m_padding; }
-	double get_anim_time() { return m_anim_time; }
+	double get_anim_mult() { return m_anim_mult; }
+	double get_quantum_mult() { return m_quantum_mult; }
 	bool get_anim_uses_beats() { return m_anim_uses_beats; }
 	bool supports_masking()
 	{
@@ -477,7 +478,12 @@ private:
 	std::vector<RageTexture*> m_hold_reverse_player_masks;
 	double m_width;
 	double m_padding;
-	double m_anim_time;
+	// m_anim_mult and m_quantization_mult are used to control how many beats
+	// the animation and quantization are spread over.  The noteskin supplies a
+	// number of beats, which is converted to its reciprocal.  The reciprocal
+	// is used because multiplication is faster than division.
+	double m_anim_mult;
+	double m_quantum_mult;
 	bool m_anim_uses_beats;
 };
 
