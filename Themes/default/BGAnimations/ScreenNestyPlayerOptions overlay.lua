@@ -108,7 +108,7 @@ local base_options= {
 				config_name= newfield_prefs_config.name, field_name= "speed_type", value= value, pn= pn})
 		 end,
 	}},
-	nesty_options.float_song_mod_val("MusicRate", -2, -1, -1, .5, 2),
+	nesty_options.float_song_mod_val("MusicRate", -2, -1, -1, .5, 2, 1),
 	nesty_options.float_song_mod_toggle_val("Haste", 1, 0),
 	nesty_options.float_config_toggle_val(newfield_prefs_config, "reverse", -1, 1),
 	nesty_options.float_config_val(newfield_prefs_config, "zoom", -2, -1, 1),
@@ -205,9 +205,7 @@ for pn, menu in pairs(menus) do
 		end,
 		change_explanationCommand= function(self, param)
 			local text= ""
-			if param.text == "" then
-				text= THEME:GetString("newfield_explanations", "menu_up_element")
-			else
+			if THEME:HasString("newfield_explanations", param.text) then
 				text= THEME:GetString("newfield_explanations", param.text)
 			end
 			self:playcommand("translated_explanation", {text= text})

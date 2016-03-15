@@ -586,6 +586,13 @@ option_set_general_mt= {
 			if funs[code] then return funs[code](self) end
 			return false
 		end,
+		get_item= function(self)
+			return self.info_set[self.cursor_pos]
+		end,
+		get_item_name= function(self)
+			local item= self.info_set[self.cursor_pos]
+			if item then return item.name or item.text end
+		end,
 }}
 
 nesty_option_menus= {}
@@ -1284,13 +1291,14 @@ local function float_toggle_val_underline_logic(old_val, on_val, off_val)
 end
 
 nesty_options= {
-	float_pref_val= function(valname, min_scale, scale, max_scale, val_min, val_max)
+	float_pref_val= function(valname, min_scale, scale, max_scale, val_min, val_max, val_reset)
 		return {
 			name= valname, translatable= true,
 			meta= nesty_option_menus.adjustable_float,
 			args= {
 				name= valname, min_scale= min_scale, scale= scale,
 				max_scale= max_scale, val_min= val_min, val_max= val_max,
+				reset_value= val_reset,
 				initial_value= function()
 					return PREFSMAN:GetPreference(valname)
 				end,
@@ -1299,13 +1307,14 @@ nesty_options= {
 				end,
 		}}
 	end,
-	float_song_mod_val= function(valname, min_scale, scale, max_scale, val_min, val_max)
+	float_song_mod_val= function(valname, min_scale, scale, max_scale, val_min, val_max, val_reset)
 		return {
 			name= valname, translatable= true,
 			meta= nesty_option_menus.adjustable_float,
 			args= {
 				name= valname, min_scale= min_scale, scale= scale,
 				max_scale= max_scale, val_min= val_min, val_max= val_max,
+				reset_value= val_reset,
 				initial_value= function()
 					local song_ops= GAMESTATE:GetSongOptionsObject("ModsLevel_Preferred")
 					return song_ops[valname](song_ops)
@@ -1357,6 +1366,7 @@ nesty_options= {
 		return {
 			name= field_name, min_scale= mins, scale= scale, max_scale= maxs,
 			val_min= val_min, val_max= val_max,
+			reset_value= get_element_by_path(conf:get_default(), field_name),
 			initial_value= function(pn)
 				return get_element_by_path(conf:get_data(pn), field_name) or 0
 			end,

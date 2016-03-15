@@ -98,7 +98,7 @@ end
 local function float_val_text(pn, val)
 	return ("%.2f"):format(val)
 end
-local function noteskin_param_float_val(param_name, param_section, type_info)
+local function noteskin_param_float_val(param_name, param_section, type_info, default_val)
 	local min_scale= 0
 	local max_scale= 0
 	local val_text= int_val_text
@@ -119,7 +119,8 @@ local function noteskin_param_float_val(param_name, param_section, type_info)
 		explanation= translation.explanation,
 		args= {
 			name= translation.title, min_scale= min_scale, scale= 0,
-			max_scale= max_scale, initial_value= function()
+			max_scale= max_scale, reset_value= default_val,
+			initial_value= function()
 				return param_section[param_name]
 			end,
 			set= function(pn, value) param_section[param_name]= value end,
@@ -184,7 +185,7 @@ local function gen_noteskin_param_submenu(pn, param_section, type_info, skin_def
 				if info.choices then
 					submenu= noteskin_param_choice_val(field, param_section, info)
 				else
-					submenu= noteskin_param_float_val(field, param_section, info)
+					submenu= noteskin_param_float_val(field, param_section, info, skin_defaults[field])
 				end
 			elseif field_type == "boolean" then
 				submenu= noteskin_param_bool_val(field, param_section, info)
