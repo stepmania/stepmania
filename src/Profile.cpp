@@ -1065,6 +1065,55 @@ void Profile::LoadCustomFunction( RString sDir )
 
 	LUA->Release(L);
 }
+
+void Profile::HandleStatsPrefixChange(RString dir, bool require_signature)
+{
+	// Temp variables to preserve stuff across the reload.
+	// Some stuff intentionally left out because the original reason for the
+	// stats prefix was to allow scores from different game types to coexist.
+	ProfileType type= m_Type;
+	int priority= m_ListPriority;
+	RString guid= m_sGuid;
+	map<RString, RString> default_mods= m_sDefaultModifiers;
+	SortOrder sort_order= m_SortOrder;
+	Difficulty last_diff= m_LastDifficulty;
+	CourseDifficulty last_course_diff= m_LastCourseDifficulty;
+	StepsType last_stepstype= m_LastStepsType;
+	SongID last_song= m_lastSong;
+	CourseID last_course= m_lastCourse;
+	int total_sessions= m_iTotalSessions;
+	int total_session_seconds= m_iTotalSessionSeconds;
+	int total_gameplay_seconds= m_iTotalGameplaySeconds;
+	float total_calories_burned= m_fTotalCaloriesBurned;
+	LuaTable user_table= m_UserTable;
+	bool need_to_create_file= false;
+	if(IsAFile(dir + PROFILEMAN->GetStatsPrefix() + STATS_XML))
+	{
+		LoadAllFromDir(dir, require_signature);
+	}
+	else
+	{
+		ClearStats();
+		need_to_create_file= true;
+	}
+	m_Type= type;
+	m_ListPriority= priority;
+	m_sGuid= guid;
+	m_sDefaultModifiers= default_mods;
+	m_SortOrder= sort_order;
+	m_LastDifficulty= last_diff;
+	m_LastCourseDifficulty= last_course_diff;
+	m_LastStepsType= last_stepstype;
+	m_lastSong= last_song;
+	m_iTotalSessions= total_sessions;
+	m_iTotalGameplaySeconds= total_gameplay_seconds;
+	m_fTotalCaloriesBurned= total_calories_burned;
+	m_UserTable= user_table;
+	if(need_to_create_file)
+	{
+		SaveAllToDir(dir, require_signature);
+	}
+}
 	
 ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature )
 {
@@ -1078,88 +1127,96 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 	// Not critical if this fails
 	LoadEditableDataFromDir( sDir );
 
-	// Check for the existance of stats.xml
-	RString fn = sDir + STATS_XML;
-	bool bCompressed = false;
-	if( !IsAFile(fn) )
-	{
-		// Check for the existance of stats.xml.gz
-		fn = sDir + STATS_XML_GZ;
-		bCompressed = true;
-		if( !IsAFile(fn) )
-			return ProfileLoadResult_FailedNoProfile;
-	}
-
-	int iError;
-	auto_ptr<RageFileBasic> pFile( FILEMAN->Open(fn, RageFile::READ, iError) );
-	if( pFile.get() == NULL )
-	{
-		LOG->Trace( "Error opening %s: %s", fn.c_str(), strerror(iError) );
-		return ProfileLoadResult_FailedTampered;
-	}
-
-	if( bCompressed )
-	{
-		RString sError;
-		uint32_t iCRC32;
-		RageFileObjInflate *pInflate = GunzipFile( pFile.release(), sError, &iCRC32 );
-		if( pInflate == NULL )
-		{
-			LOG->Trace( "Error opening %s: %s", fn.c_str(), sError.c_str() );
-			return ProfileLoadResult_FailedTampered;
-		}
-
-		pFile.reset( pInflate );
-	}
-
-	// Don't load unreasonably large stats.xml files.
-	if( !IsMachine() )	// only check stats coming from the player
-	{
-		int iBytes = pFile->GetFileSize();
-		if( iBytes > MAX_PLAYER_STATS_XML_SIZE_BYTES )
-		{
-			LuaHelpers::ReportScriptErrorFmt( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
-			return ProfileLoadResult_FailedTampered;
-		}
-	}
-
-	if( bRequireSignature )
-	{ 
-		RString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
-		RString sDontShareFile = sDir + DONT_SHARE_SIG;
-
-		LOG->Trace( "Verifying don't share signature \"%s\" against \"%s\"", sDontShareFile.c_str(), sStatsXmlSigFile.c_str() );
-		// verify the stats.xml signature with the "don't share" file
-		if( !CryptManager::VerifyFileWithFile(sStatsXmlSigFile, sDontShareFile) )
-		{
-			LuaHelpers::ReportScriptErrorFmt( "The don't share check for '%s' failed.  Data will be ignored.", sStatsXmlSigFile.c_str() );
-			return ProfileLoadResult_FailedTampered;
-		}
-		LOG->Trace( "Done." );
-
-		// verify stats.xml
-		LOG->Trace( "Verifying stats.xml signature" );
-		if( !CryptManager::VerifyFileWithFile(fn, sStatsXmlSigFile) )
-		{
-			LuaHelpers::ReportScriptErrorFmt( "The signature check for '%s' failed.  Data will be ignored.", fn.c_str() );
-			return ProfileLoadResult_FailedTampered;
-		}
-		LOG->Trace( "Done." );
-	}
-
-	LOG->Trace( "Loading %s", fn.c_str() );
-	XNode xml;
-	if( !XmlFileUtil::LoadFromFileShowErrors(xml, *pFile.get()) )
-		return ProfileLoadResult_FailedTampered;
-	LOG->Trace( "Done." );
-
-	ProfileLoadResult ret = LoadStatsXmlFromNode(&xml);
+	ProfileLoadResult ret= LoadStatsFromDir(sDir, bRequireSignature);
 	if (ret != ProfileLoadResult_Success)
 		return ret;
 
 	LoadCustomFunction( sDir );
 
 	return ProfileLoadResult_Success;
+}
+
+ProfileLoadResult Profile::LoadStatsFromDir(RString dir, bool require_signature)
+{
+	dir= dir + PROFILEMAN->GetStatsPrefix();
+	// Check for the existance of stats.xml
+	RString fn = dir + STATS_XML;
+	bool compressed = false;
+	if(!IsAFile(fn))
+	{
+		// Check for the existance of stats.xml.gz
+		fn = dir + STATS_XML_GZ;
+		compressed = true;
+		if(!IsAFile(fn))
+		{
+			return ProfileLoadResult_FailedNoProfile;
+		}
+	}
+
+	int iError;
+	auto_ptr<RageFileBasic> pFile(FILEMAN->Open(fn, RageFile::READ, iError));
+	if(pFile.get() == NULL)
+	{
+		LOG->Trace("Error opening %s: %s", fn.c_str(), strerror(iError));
+		return ProfileLoadResult_FailedTampered;
+	}
+
+	if(compressed)
+	{
+		RString sError;
+		uint32_t iCRC32;
+		RageFileObjInflate *pInflate = GunzipFile(pFile.release(), sError, &iCRC32);
+		if(pInflate == NULL)
+		{
+			LOG->Trace("Error opening %s: %s", fn.c_str(), sError.c_str());
+			return ProfileLoadResult_FailedTampered;
+		}
+
+		pFile.reset(pInflate);
+	}
+
+	// Don't load unreasonably large stats.xml files.
+	if(!IsMachine())	// only check stats coming from the player
+	{
+		int iBytes = pFile->GetFileSize();
+		if(iBytes > MAX_PLAYER_STATS_XML_SIZE_BYTES)
+		{
+			LuaHelpers::ReportScriptErrorFmt("The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str());
+			return ProfileLoadResult_FailedTampered;
+		}
+	}
+
+	if(require_signature)
+	{ 
+		RString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
+		RString sDontShareFile = dir + DONT_SHARE_SIG;
+
+		LOG->Trace("Verifying don't share signature \"%s\" against \"%s\"", sDontShareFile.c_str(), sStatsXmlSigFile.c_str());
+		// verify the stats.xml signature with the "don't share" file
+		if(!CryptManager::VerifyFileWithFile(sStatsXmlSigFile, sDontShareFile))
+		{
+			LuaHelpers::ReportScriptErrorFmt("The don't share check for '%s' failed.  Data will be ignored.", sStatsXmlSigFile.c_str());
+			return ProfileLoadResult_FailedTampered;
+		}
+		LOG->Trace("Done.");
+
+		// verify stats.xml
+		LOG->Trace("Verifying stats.xml signature");
+		if(!CryptManager::VerifyFileWithFile(fn, sStatsXmlSigFile))
+		{
+			LuaHelpers::ReportScriptErrorFmt("The signature check for '%s' failed.  Data will be ignored.", fn.c_str());
+			return ProfileLoadResult_FailedTampered;
+		}
+		LOG->Trace("Done.");
+	}
+
+	LOG->Trace("Loading %s", fn.c_str());
+	XNode xml;
+	if(!XmlFileUtil::LoadFromFileShowErrors(xml, *pFile.get()))
+		return ProfileLoadResult_FailedTampered;
+	LOG->Trace("Done.");
+
+	return LoadStatsXmlFromNode(&xml);
 }
 
 void Profile::LoadTypeFromDir(RString dir)
@@ -1299,6 +1356,7 @@ bool Profile::SaveStatsXmlToDir( RString sDir, bool bSignData ) const
 	LOG->Trace( "SaveStatsXmlToDir: %s", sDir.c_str() );
 	auto_ptr<XNode> xml( SaveStatsXmlCreateNode() );
 
+	sDir= sDir + PROFILEMAN->GetStatsPrefix();
 	// Save stats.xml
 	RString fn = sDir + (g_bProfileDataCompress? STATS_XML_GZ:STATS_XML);
 

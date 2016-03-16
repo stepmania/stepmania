@@ -4014,6 +4014,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetSongNumTimesPlayed' return='int' arguments='Song s, ProfileSlot ps'>
 		Returns the number of times Song s has been played with the specified ProfileSlot.
 	</Function>
+	<Function name='GetStatsPrefix' return='string' arguments=''>
+		Returns the current stats prefix.
+	</Function>
 	<Function name='IsPersistentProfile' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if player <code>pn</code>'s profile is persistent.
 	</Function>
@@ -4043,6 +4046,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='SaveProfile' return='bool' arguments='PlayerNumber pn'>
 		Saves the profile for player <code>pn</code>.
+	</Function>
+	<Function name='SetStatsPrefix' return='' arguments='string'>
+		Sets the current stats prefix.  The stats prefix is prepended to the Stats.xml file when loading or saving a profile.  SetStatsPrefix will reload all profiles from the Stats.xml that has the given prefix.  In general, score entries are the only thing not preserved when changing the stats prefix.  Profile::HandleStatsPrefixChange in Profile.cpp lists the fields that are preserved.
 	</Function>
 </Class>
 <Class name='RadarValues'>

@@ -1353,6 +1353,7 @@
 			<Function name='GetProfile'/>
 			<Function name='GetProfileDir'/>
 			<Function name='GetSongNumTimesPlayed'/>
+			<Function name='GetStatsPrefix'/>
 			<Function name='IsPersistentProfile'/>
 			<Function name='IsSongNew'/>
 			<Function name='LastLoadWasTamperedOrCorrupt'/>
@@ -1362,6 +1363,7 @@
 			<Function name='SaveLocalProfile'/>
 			<Function name='SaveMachineProfile'/>
 			<Function name='SaveProfile'/>
+			<Function name='SetStatsPrefix'/>
 		</Class>
 		<Class name='RadarValues'>
 			<Function name='GetValue'/>
