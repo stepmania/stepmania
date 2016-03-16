@@ -232,7 +232,7 @@ std::string LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &
 
 		if( !wglShareLists(g_HGLRC, g_HGLRC_Background) )
 		{
-			LOG->Warn( werr_format(GetLastError(), "wglShareLists failed") );
+			LOG->Warn("%s", werr_format(GetLastError(), "wglShareLists failed") );
 			wglDeleteContext( g_HGLRC_Background );
 			g_HGLRC_Background = nullptr;
 		}

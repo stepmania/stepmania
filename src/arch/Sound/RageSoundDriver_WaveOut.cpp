@@ -40,7 +40,7 @@ int RageSoundDriver_WaveOut::MixerThread_start( void *p )
 void RageSoundDriver_WaveOut::MixerThread()
 {
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
-		LOG->Warn( werr_format(GetLastError(), "Failed to set sound thread priority") );
+		LOG->Warn("%s", werr_format(GetLastError(), "Failed to set sound thread priority") );
 
 	while( !m_bShutdown )
 	{
@@ -81,7 +81,7 @@ void RageSoundDriver_WaveOut::SetupDecodingThread()
 {
 	if (!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL))
 	{
-		LOG->Warn(werr_format(GetLastError(), "Failed to set sound thread priority"));
+		LOG->Warn("%s", werr_format(GetLastError(), "Failed to set sound thread priority"));
 	}
 }
 

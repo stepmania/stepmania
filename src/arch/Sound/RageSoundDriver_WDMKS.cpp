@@ -1176,7 +1176,7 @@ void RageSoundDriver_WDMKS::MixerThread()
 	/* I don't trust this driver with THREAD_PRIORITY_TIME_CRITICAL just yet. */
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST) )
 //	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL) )
-		LOG->Warn( werr_format(GetLastError(), "Failed to set sound thread priority") );
+		LOG->Warn("%s", werr_format(GetLastError(), "Failed to set sound thread priority") );
 
 	/* Enable priority boosting. */
 	SetThreadPriorityBoost( GetCurrentThread(), FALSE );
@@ -1207,7 +1207,7 @@ void RageSoundDriver_WDMKS::MixerThread()
 
 		if( iWait == WAIT_FAILED )
 		{
-			LOG->Warn( werr_format(GetLastError(), "WaitForMultipleObjects") );
+			LOG->Warn("%s", werr_format(GetLastError(), "WaitForMultipleObjects") );
 			break;
 		}
 		if( iWait == WAIT_TIMEOUT )
@@ -1249,7 +1249,7 @@ int RageSoundDriver_WDMKS::MixerThread_start( void *p )
 void RageSoundDriver_WDMKS::SetupDecodingThread()
 {
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
-		LOG->Warn( werr_format(GetLastError(), "Failed to set sound thread priority") );
+		LOG->Warn("%s", werr_format(GetLastError(), "Failed to set sound thread priority") );
 }
 
 int64_t RageSoundDriver_WDMKS::GetPosition() const
