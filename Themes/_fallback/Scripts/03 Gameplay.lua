@@ -265,11 +265,11 @@ function TwoPartSelection()
 end 
 
 local RoutineSkins = {
-	dance	= { P1 = "midi-routine-p1", P2 = "midi-routine-p2" },
-	pump	= { P1 = "cmd-routine-p1", P2 = "cmd-routine-p2" },
-	kb7		= { P1 = "default", P2 = "retrobar" },
+	dance	= { P1 = "midi-routine-p1", P2 = "midi-routine-p2", P3 = "midi-routine-p3", P4 = "midi-routine-p4" },
+	pump	= { P1 = "cmd-routine-p1", P2 = "cmd-routine-p2", P3 = "cmd-routine-p3", P4 = "cmd-routine-p4" },
+	kb7		= { P1 = "default", P2 = "retrobar", P3 = "retrobar", P4 = "retrobar" },
 	-------------------------------------------------------------
-	default	= { P1 = "default", P2 = "default" }
+	default	= { P1 = "default", P2 = "default", P3 = "default", P4 = "default" }
 }
 
 function RoutineSkinP1()
@@ -284,6 +284,20 @@ function RoutineSkinP2()
 		return RoutineSkins[CurGameName()].P2
 	end
 	return RoutineSkins["default"].P2
+end
+
+function RoutineSkinP3()
+	if RoutineSkins[CurGameName()] then
+		return RoutineSkins[CurGameName()].P3
+	end
+	return RoutineSkins["default"].P3
+end
+
+function RoutineSkinP4()
+	if RoutineSkins[CurGameName()] then
+		return RoutineSkins[CurGameName()].P4
+	end
+	return RoutineSkins["default"].P4
 end
 
 -- todo: use tables for some of these -aj

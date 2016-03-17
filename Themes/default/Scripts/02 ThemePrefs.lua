@@ -100,6 +100,8 @@ function InitUserPrefs()
 	-- screen filter
 	setenv("ScreenFilterP1",0)
 	setenv("ScreenFilterP2",0)
+	setenv("ScreenFilterP3",0)
+	setenv("ScreenFilterP4",0)
 end
 
 function GetProTiming(pn)

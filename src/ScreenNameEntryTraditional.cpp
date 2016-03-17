@@ -20,8 +20,11 @@ void ScreenNameEntryTraditional::Init()
 {
 	if( PREFSMAN->m_sTestInitialScreen.Get() == m_sName )
 	{
-		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
-		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
+		FOREACH_PlayerNumber( p )
+		{
+			GAMESTATE->m_bSideIsJoined[p] = true;
+		}
+
 		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle( GAMEMAN->GetDefaultGame(),"versus"), GAMESTATE->GetMasterPlayerNumber() );

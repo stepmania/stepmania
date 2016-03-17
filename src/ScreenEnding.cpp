@@ -26,40 +26,54 @@ ScreenEnding::ScreenEnding()
 {
 	if( PREFSMAN->m_sTestInitialScreen.Get() != "" )
 	{
-		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_1);
-		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2);
+		FOREACH_PlayerNumber(pn)
+		{
+			PROFILEMAN->LoadFirstAvailableProfile(pn);
+		}
 
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle( GAMEMAN->GetDefaultGame(),"versus"), PLAYER_INVALID );
-		GAMESTATE->JoinPlayer( PLAYER_1 );
-		GAMESTATE->JoinPlayer( PLAYER_2 );
+
+		FOREACH_PlayerNumber(pn)
+		{
+			GAMESTATE->JoinPlayer(pn);
+		}
+
 		GAMESTATE->m_pCurSong.Set( SONGMAN->GetRandomSong() );
 		GAMESTATE->m_pCurCourse.Set( SONGMAN->GetRandomCourse() );
-		GAMESTATE->m_pCurSteps[PLAYER_1].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );
-		GAMESTATE->m_pCurSteps[PLAYER_2].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_vpPossibleSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].m_vpPossibleSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_2] );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iStepsPlayed = 1;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].m_iStepsPlayed = 1;
-		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, 2.0f );
-		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, 2.0f );
+
+		FOREACH_PlayerNumber(pn)
+		{
+			GAMESTATE->m_pCurSteps[pn].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );
+			STATSMAN->m_CurStageStats.m_player[pn].m_vpPossibleSteps.push_back( GAMESTATE->m_pCurSteps[pn] );
+			STATSMAN->m_CurStageStats.m_player[pn].m_iStepsPlayed = 1;
+			PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, 2.0f );
+		}
+
+
 		GAMESTATE->m_iCurrentStageIndex = 0;
-		FOREACH_ENUM( PlayerNumber, p )
+		FOREACH_ENUM( PlayerNumber, p ) {
 			GAMESTATE->m_iPlayerStageTokens[p] = 1;
-		PO_GROUP_CALL( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, ChooseRandomModifiers );
-		PO_GROUP_CALL( GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions, ModsLevel_Stage, ChooseRandomModifiers );
+			PO_GROUP_CALL(GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, ChooseRandomModifiers);
+		}
 
 		for( float f = 0; f < 100.0f; f += 1.0f )
 		{
 			float fP1 = fmodf(f/100*4+.3f,1);
 			STATSMAN->m_CurStageStats.m_player[PLAYER_1].SetLifeRecordAt( fP1, f );
 			STATSMAN->m_CurStageStats.m_player[PLAYER_2].SetLifeRecordAt( 1-fP1, f );
+			STATSMAN->m_CurStageStats.m_player[PLAYER_3].SetLifeRecordAt( 2-fP1, f );
+			STATSMAN->m_CurStageStats.m_player[PLAYER_4].SetLifeRecordAt( 3-fP1, f );
 		}
 	
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iActualDancePoints = RandomInt( 3 );
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iPossibleDancePoints = 2;
 		STATSMAN->m_CurStageStats.m_player[PLAYER_2].m_iActualDancePoints = RandomInt( 2 );
 		STATSMAN->m_CurStageStats.m_player[PLAYER_2].m_iPossibleDancePoints = 1;
+		STATSMAN->m_CurStageStats.m_player[PLAYER_3].m_iActualDancePoints = RandomInt( 2 );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_3].m_iPossibleDancePoints = 1;
+		STATSMAN->m_CurStageStats.m_player[PLAYER_4].m_iActualDancePoints = RandomInt( 2 );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_4].m_iPossibleDancePoints = 1;
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iCurCombo = 0;
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].UpdateComboList( 0, false );
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iCurCombo = 1;
@@ -69,12 +83,12 @@ ScreenEnding::ScreenEnding()
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iCurCombo = 250;
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].UpdateComboList( 100, false );
 
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iTapNoteScores[TNS_W1] = RandomInt( 2 );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iTapNoteScores[TNS_W2] = RandomInt( 2 );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iTapNoteScores[TNS_W3] = RandomInt( 2 );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].m_iTapNoteScores[TNS_W1] = RandomInt( 2 );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].m_iTapNoteScores[TNS_W2] = RandomInt( 2 );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].m_iTapNoteScores[TNS_W3] = RandomInt( 2 );
+		FOREACH_PlayerNumber(pn)
+		{
+			STATSMAN->m_CurStageStats.m_player[pn].m_iTapNoteScores[TNS_W1] = RandomInt( 2 );
+			STATSMAN->m_CurStageStats.m_player[pn].m_iTapNoteScores[TNS_W2] = RandomInt( 2 );
+			STATSMAN->m_CurStageStats.m_player[pn].m_iTapNoteScores[TNS_W3] = RandomInt( 2 );
+		}
 
 		STATSMAN->m_vPlayedStageStats.clear();
 	}

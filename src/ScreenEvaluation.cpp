@@ -95,8 +95,10 @@ void ScreenEvaluation::Init()
 	// (i.e. StageStats not already filled)
 	if( PREFSMAN->m_sTestInitialScreen.Get() == m_sName )
 	{
-		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_1);
-		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2);
+		FOREACH_PlayerNumber(p)
+		{
+			PROFILEMAN->LoadFirstAvailableProfile(p);
+		}
 
 		STATSMAN->m_vPlayedStageStats.clear();
 		STATSMAN->m_vPlayedStageStats.push_back( StageStats() );

@@ -43,6 +43,8 @@ function InitUserPrefs()
 		{ "NotePosition",		true },
 		{ "UserPrefProtimingP1",		false},
 		{ "UserPrefProtimingP2",		false},
+		{ "UserPrefProtimingP3",		false},
+		{ "UserPrefProtimingP4",		false},
 		{ "ShowLotsaOptions",	true},
 		{ "ComboOnRolls",	false},
 		{ "FlashyCombos",	false},
