@@ -386,6 +386,7 @@
 			<Function name='getaux'/>
 			<Function name='geteffectmagnitude'/>
 			<Function name='getrotation'/>
+			<Function name='get_tween_uses_effect_delta'/>
 			<Function name='glow'/>
 			<Function name='glowblink'/>
 			<Function name='glowramp'/>
@@ -418,6 +419,7 @@
 			<Function name='scaletofit'/>
 			<Function name='setsize'/>
 			<Function name='setstate'/>
+			<Function name='set_tween_uses_effect_delta'/>
 			<Function name='shadowcolor'/>
 			<Function name='shadowlength'/>
 			<Function name='shadowlengthx'/>

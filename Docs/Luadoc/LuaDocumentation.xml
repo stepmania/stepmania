@@ -1225,6 +1225,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetZoomedWidth' return='float' arguments=''>
 		Returns the zoomed width of an Actor.
 	</Function>
+	<Function name='get_tween_uses_effect_delta' return='bool' arguments=''>
+		Returns true if this actor is currently set to use the effect delta for tweening.
+	</Function>
 	<Function name='glow' return='void' arguments='color c'>
 		Sets the Actor's glow color.
 	</Function>
@@ -1333,6 +1336,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='SetWidth' return='void' arguments='float width'>
 		Sets the width of the Actor.
+	</Function>
+	<Function name='set_tween_uses_effect_delta' return='' arguments='bool'>
+		Use this to make the actor use the effect clock to tween instead of using the global frame delta.
 	</Function>
 	<Function name='shadowcolor' return='void' arguments='color c'>
 		Sets the shadow's color to <code>c</code>.

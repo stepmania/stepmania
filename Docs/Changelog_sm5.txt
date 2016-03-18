@@ -4,6 +4,24 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2016/03/17
+----------
+* [Actor] Added get and set_tween_uses_effect_delta lua functions to make an
+  Actor use the effect clock for tweening. [kyzentun]
+
+2016/03/15
+----------
+* [ProfileManager] Added GetStatsPrefix and SetStatsPrefix lua functions for
+  separating scores into different stats files. [kyzentun]
+  (this is kind of a stop gap, I'd really like to rewrite scoring to save
+  more data so that a score earned with one set of timing windows and weights
+  can be converted to the equivalent score with different timing windows)
+
+2016/03/14
+----------
+* [Online] Stepmania will force disconnection from the SMO server when
+  entering the jukebox or sync calibration screens to avoid crash. [kyzentun]
+
 2016/03/05
 ----------
 * [global] get_sound_driver_list lua function added. [kyzentun]
@@ -31,8 +49,8 @@ ________________________________________________________________________________
   the Windows minimaid driver that pkgingo wrote.
 * [Gameplay] When checking for the first second in a song, AutoKeysound notes
   are now ignored, being treated as if they were background music. This
-	allows the intro of BMS files to play as soon as ScreenGameplay is loaded,
-	while still having a delay before the real notes come in. [nixtrix]
+  allows the intro of BMS files to play as soon as ScreenGameplay is loaded,
+  while still having a delay before the real notes come in. [nixtrix]
 
 2016/02/04
 ----------
