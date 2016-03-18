@@ -1071,6 +1071,14 @@ void Profile::HandleStatsPrefixChange(RString dir, bool require_signature)
 	// Temp variables to preserve stuff across the reload.
 	// Some stuff intentionally left out because the original reason for the
 	// stats prefix was to allow scores from different game types to coexist.
+	RString display_name= m_sDisplayName;
+	RString character_id= m_sCharacterID;
+	RString last_high_score_name= m_sLastUsedHighScoreName;
+	int weight= m_iWeightPounds;
+	float voomax= m_Voomax;
+	int birth_year= m_BirthYear;
+	bool ignore_step_cal= m_IgnoreStepCountCalories;
+	bool male= m_IsMale;
 	ProfileType type= m_Type;
 	int priority= m_ListPriority;
 	RString guid= m_sGuid;
@@ -1096,6 +1104,14 @@ void Profile::HandleStatsPrefixChange(RString dir, bool require_signature)
 		ClearStats();
 		need_to_create_file= true;
 	}
+	m_sDisplayName= display_name;
+	m_sCharacterID= character_id;
+	m_sLastUsedHighScoreName= last_high_score_name;
+	m_iWeightPounds= weight;
+	m_Voomax= voomax;
+	m_BirthYear= birth_year;
+	m_IgnoreStepCountCalories= ignore_step_cal;
+	m_IsMale= male;
 	m_Type= type;
 	m_ListPriority= priority;
 	m_sGuid= guid;
@@ -1106,6 +1122,7 @@ void Profile::HandleStatsPrefixChange(RString dir, bool require_signature)
 	m_LastStepsType= last_stepstype;
 	m_lastSong= last_song;
 	m_iTotalSessions= total_sessions;
+	m_iTotalSessionSeconds= total_session_seconds;
 	m_iTotalGameplaySeconds= total_gameplay_seconds;
 	m_fTotalCaloriesBurned= total_calories_burned;
 	m_UserTable= user_table;
@@ -2153,7 +2170,7 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pCategoryScores )
 	}
 }
 
-void Profile::SaveStatsWebPageToDir( RString sDir ) const
+void Profile::SaveStatsWebPageToDir( RString ) const
 {
 	ASSERT( PROFILEMAN != NULL );
 }
