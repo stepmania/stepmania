@@ -4,6 +4,13 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2016/03/22
+----------
+* [Prefs] Added DisableUploadDir preference to skip saving a score entry to
+  Save/Upload every time a song is played.  Generating the unique filename
+  can take several seconds when there are years of scores accumulated, and it
+  clutters the disk.  This preference defaults to false. [kyzentun]
+
 2016/03/17
 ----------
 * [Actor] Added get and set_tween_uses_effect_delta lua functions to make an

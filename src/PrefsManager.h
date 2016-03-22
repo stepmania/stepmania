@@ -249,6 +249,7 @@ public:
 	Preference<int>	m_iMaxHighScoresPerListForMachine;
 	Preference<int>	m_iMaxHighScoresPerListForPlayer;
 	Preference<bool>	m_bAllowMultipleHighScoreWithSameName;
+	Preference<bool> m_DisableUploadDir;
 	Preference<bool>	m_bCelShadeModels;
 	Preference<bool>	m_bPreferredSortUsesGroups;
 	Preference<float>	m_fDebounceCoinInputTime; // allow users to apply a distinct debounce to coin input
