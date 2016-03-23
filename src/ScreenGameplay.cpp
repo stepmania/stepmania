@@ -467,11 +467,11 @@ void ScreenGameplay::Init()
 	STATSMAN->m_CurStageStats.m_Stage = GAMESTATE->GetCurrentStage();
 	STATSMAN->m_CurStageStats.m_iStageIndex = GAMESTATE->m_iCurrentStageIndex;
 	STATSMAN->m_CurStageStats.m_playMode = GAMESTATE->m_PlayMode;
-	FOREACH_PlayerNumber(pn)
+	FOREACH_EnabledPlayer(pn)
 	{
 		STATSMAN->m_CurStageStats.m_player[pn].m_pStyle= GAMESTATE->GetCurrentStyle(pn);
 	}
-	FOREACH_MultiPlayer(pn)
+	FOREACH_EnabledPlayer(pn)
 	{
 		STATSMAN->m_CurStageStats.m_multiPlayer[pn].m_pStyle= GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
 	}

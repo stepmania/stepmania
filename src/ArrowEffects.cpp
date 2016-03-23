@@ -552,6 +552,15 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 						fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_XMODE]*fYOffset;
 				}
 				break;
+			case StyleType_FourPlayersFourSides: // fall through
+				{
+					// the code was the same for both of these cases in StepNXA.
+					if (pPlayerState->m_PlayerNumber == PLAYER_2)
+						fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_XMODE] * -(fYOffset);
+					else
+						fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_XMODE] * fYOffset;
+				}
+				break;
 			DEFAULT_FAIL(pStyle->m_StyleType);
 		}
 	}

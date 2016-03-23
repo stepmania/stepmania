@@ -427,7 +427,8 @@ void GameState::JoinPlayer( PlayerNumber pn )
 	const Style* cur_style= GetCurrentStyle(PLAYER_INVALID);
 	if(cur_style != NULL && !(pn == PLAYER_1 &&
 			(cur_style->m_StyleType == StyleType_TwoPlayersTwoSides ||
-				cur_style->m_StyleType == StyleType_TwoPlayersSharedSides)))
+				cur_style->m_StyleType == StyleType_TwoPlayersSharedSides ||
+				cur_style->m_StyleType == StyleType_FourPlayersFourSides)))
 	{
 		const Style *pStyle;
 		// Only use one player for StyleType_OnePlayerTwoSides and StepsTypes
@@ -1421,11 +1422,13 @@ int GameState::GetLoadingCourseSongIndex() const
 
 static LocalizedString PLAYER1	("GameState","Player 1");
 static LocalizedString PLAYER2	("GameState","Player 2");
+static LocalizedString PLAYER3  ("GameState","Player 3");
+static LocalizedString PLAYER4  ("GameState","Player 4");
 static LocalizedString CPU		("GameState","CPU");
 RString GameState::GetPlayerDisplayName( PlayerNumber pn ) const
 {
 	ASSERT( IsPlayerEnabled(pn) );
-	const LocalizedString *pDefaultNames[] = { &PLAYER1, &PLAYER2 };
+	const LocalizedString *pDefaultNames[] = { &PLAYER1, &PLAYER2, &PLAYER3, &PLAYER4 };
 	if( IsHumanPlayer(pn) )
 	{
 		if( !PROFILEMAN->GetPlayerName(pn).empty() )
@@ -1627,6 +1630,7 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 			StyleType type = GetCurrentStyle(pn)->m_StyleType;
 			switch( type )
 			{
+				case StyleType_FourPlayersFourSides:
 				case StyleType_TwoPlayersTwoSides:
 				case StyleType_TwoPlayersSharedSides:
 					return true;
@@ -1646,6 +1650,7 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 	StyleType type = GetCurrentStyle(pn)->m_StyleType;
 	switch( type )
 	{
+	case StyleType_FourPlayersFourSides:
 	case StyleType_TwoPlayersTwoSides:
 	case StyleType_TwoPlayersSharedSides:
 		return true;
