@@ -126,7 +126,7 @@ void ArrowEffects::Update()
 
 			int iStartCol = iColNum - iTornadoWidth;
 			int iEndCol = iColNum + iTornadoWidth;
-			iEndCol = Rage::clamp( iStartCol, 0, pStyle->m_iColsPerPlayer-1 );
+			iStartCol = Rage::clamp( iStartCol, 0, pStyle->m_iColsPerPlayer-1 );
 			iEndCol = Rage::clamp( iEndCol, 0, pStyle->m_iColsPerPlayer-1 );
 			
 			data.m_fMinTornadoX[iColNum] = std::numeric_limits<float>::max();
