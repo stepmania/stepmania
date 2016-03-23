@@ -305,6 +305,30 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 					SCREENMAN->SetNewScreen( this->m_sName ); // reload
 				}
 				break;
+			case ProfileAction_SetDefaultP3:
+				{
+					FOREACH_PlayerNumber(p)
+						if (ProfileManager::m_sDefaultLocalProfileID[p].Get() == GetLocalProfileIDWithFocus())
+							ProfileManager::m_sDefaultLocalProfileID[p].Set("");
+
+					PlayerNumber pn = (PlayerNumber)(ScreenMiniMenu::s_iLastRowCode - ProfileAction_SetDefaultP1);
+					ProfileManager::m_sDefaultLocalProfileID[pn].Set(GetLocalProfileIDWithFocus());
+
+					SCREENMAN->SetNewScreen(this->m_sName); // reload
+				}
+			break;
+			case ProfileAction_SetDefaultP4:
+				{
+					FOREACH_PlayerNumber(p)
+						if (ProfileManager::m_sDefaultLocalProfileID[p].Get() == GetLocalProfileIDWithFocus())
+							ProfileManager::m_sDefaultLocalProfileID[p].Set("");
+
+					PlayerNumber pn = (PlayerNumber)(ScreenMiniMenu::s_iLastRowCode - ProfileAction_SetDefaultP1);
+					ProfileManager::m_sDefaultLocalProfileID[pn].Set(GetLocalProfileIDWithFocus());
+
+					SCREENMAN->SetNewScreen(this->m_sName); // reload
+				}
+				break;
 			case ProfileAction_Edit:
 				{
 					GAMESTATE->m_sEditLocalProfileID.Set( GetLocalProfileIDWithFocus() );

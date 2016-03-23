@@ -209,6 +209,55 @@ static const Style g_Style_Dance_Versus =
 	false, // m_bLockDifficulties
 };
 
+static const Style g_Style_Dance_Quad =
+{	// STYLE_DANCE_VERSUS
+	true,				// m_bUsedForGameplay
+	false,				// m_bUsedForEdit
+	true,				// m_bUsedForDemonstration
+	false,				// m_bUsedForHowToPlay
+	"quad",			// m_szName
+	StepsType_dance_single,	// m_StepsType
+	StyleType_FourPlayersFourSides,		// m_StyleType
+	4,				// m_iColsPerPlayer
+	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+		{	// PLAYER_1
+			{ TRACK_1,	-DANCE_COL_SPACING*1.5f, NULL },
+			{ TRACK_2,	-DANCE_COL_SPACING*0.5f, NULL },
+			{ TRACK_3,	+DANCE_COL_SPACING*0.5f, NULL },
+			{ TRACK_4,	+DANCE_COL_SPACING*1.5f, NULL },
+		},
+		{	// PLAYER_2
+			{ TRACK_1,	-DANCE_COL_SPACING*1.5f, NULL },
+			{ TRACK_2,	-DANCE_COL_SPACING*0.5f, NULL },
+			{ TRACK_3,	+DANCE_COL_SPACING*0.5f, NULL },
+			{ TRACK_4,	+DANCE_COL_SPACING*1.5f, NULL },
+		},
+		{	// PLAYER_3
+			{ TRACK_1,	-DANCE_COL_SPACING*1.5f, NULL },
+			{ TRACK_2,	-DANCE_COL_SPACING*0.5f, NULL },
+			{ TRACK_3,	+DANCE_COL_SPACING*0.5f, NULL },
+			{ TRACK_4,	+DANCE_COL_SPACING*1.5f, NULL },
+		},
+		{	// PLAYER_4
+			{ TRACK_1,	-DANCE_COL_SPACING*1.5f, NULL },
+			{ TRACK_2,	-DANCE_COL_SPACING*0.5f, NULL },
+			{ TRACK_3,	+DANCE_COL_SPACING*0.5f, NULL },
+			{ TRACK_4,	+DANCE_COL_SPACING*1.5f, NULL },
+		},
+	},
+	{
+		{ 0, 3, 2, 1, Style::END_MAPPING },
+		{ 0, 3, 2, 1, Style::END_MAPPING },
+		{ 0, 3, 2, 1, Style::END_MAPPING },
+		{ 0, 3, 2, 1, Style::END_MAPPING }
+	},
+	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+		0, 1, 2, 3
+	},
+	true, // m_bCanUseBeginnerHelper
+	false, // m_bLockDifficulties
+};
+
 static const Style g_Style_Dance_Double =
 {	// STYLE_DANCE_DOUBLE
 	true,				// m_bUsedForGameplay
@@ -487,6 +536,7 @@ static const Style *g_apGame_Dance_Styles[] =
 {
 	&g_Style_Dance_Single,
 	&g_Style_Dance_Versus,
+	//&g_Style_Dance_Quad,
 	&g_Style_Dance_Double,
 	&g_Style_Dance_Couple,
 	&g_Style_Dance_Solo,
@@ -3352,6 +3402,9 @@ void GameManager::GetCompatibleStyles( const Game *pGame, int iNumPlayers, vecto
 		case StyleType_TwoPlayersTwoSides:
 		case StyleType_TwoPlayersSharedSides:
 			iNumPlayersRequired = 2;
+			break;
+		case StyleType_FourPlayersFourSides:
+			iNumPlayersRequired = 4;
 			break;
 		}
 

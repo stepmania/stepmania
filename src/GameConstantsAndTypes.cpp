@@ -310,6 +310,8 @@ LuaXType( TapNoteScoreJudgeType );
 static const char *ProfileSlotNames[] = {
 	"Player1",
 	"Player2",
+	"Player3",
+	"Player4",
 	"Machine",
 };
 XToString( ProfileSlot );
@@ -420,6 +422,7 @@ bool DisplayBpms::IsSecret() const
 static const char *StyleTypeNames[] = {
 	"OnePlayerOneSide",
 	"TwoPlayersTwoSides",
+	"FourPlayersFourSides",
 	"OnePlayerTwoSides",
 	"TwoPlayersSharedSides",
 };

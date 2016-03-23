@@ -341,6 +341,8 @@ enum ProfileSlot
 {
 	ProfileSlot_Player1,
 	ProfileSlot_Player2,
+	ProfileSlot_Player3,
+	ProfileSlot_Player4,
 	ProfileSlot_Machine,
 	NUM_ProfileSlot,
 	ProfileSlot_Invalid
@@ -553,6 +555,7 @@ enum StyleType
 {
 	StyleType_OnePlayerOneSide,		/**< Single style */
 	StyleType_TwoPlayersTwoSides,		/**< Versus style */
+	StyleType_FourPlayersFourSides,		/**< Quad style */
 	StyleType_OnePlayerTwoSides,		/**< Double style */
 	StyleType_TwoPlayersSharedSides,	/**< Routine style */
 	NUM_StyleType,

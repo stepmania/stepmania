@@ -39,8 +39,8 @@ end
 -- Then the engine does the work of figuring out where each notefield should
 -- be centered.
 function GameplayMargins(enabled_players, styletype)
-	local other= {[PLAYER_1]= PLAYER_2, [PLAYER_2]= PLAYER_1}
-	local margins= {[PLAYER_1]= {40, 40}, [PLAYER_2]= {40, 40}}
+	local other= {[PLAYER_1]= PLAYER_2, [PLAYER_2]= PLAYER_1, [PLAYER_3]= PLAYER_4, , [PLAYER_4]= PLAYER_3}
+	local margins= {[PLAYER_1]= {30, 30}, [PLAYER_2]= {30, 30}, [PLAYER_3]= {30, 30}, [PLAYER_4]= {30, 30}}
 	-- Use a fake style width because calculating the real style width throws off
 	-- the code in the engine.
 	local fake_style_width= 272
@@ -93,7 +93,7 @@ end
 -- [en] returns possible modes for ScreenSelectPlayMode
 function GameCompatibleModes()
 	local Modes = {
-		dance = "Single,Double,Solo,Versus,Couple",
+		dance = "Single,Quad,Double,Solo,Versus,Couple",
 		pump = "Single,Double,HalfDouble,Versus,Couple,Routine",
 		beat = "5Keys,7Keys,10Keys,14Keys,Versus5,Versus7",
 		kb7 = "KB7",
