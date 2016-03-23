@@ -983,6 +983,7 @@ void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 			case StyleType_OnePlayerOneSide:
 				continue;
 			case StyleType_TwoPlayersTwoSides:
+			case StyleType_FourPlayersFourSides:
 			case StyleType_OnePlayerTwoSides:
 			case StyleType_TwoPlayersSharedSides:
 				vpPossibleStyles.erase( vpPossibleStyles.begin() + i );

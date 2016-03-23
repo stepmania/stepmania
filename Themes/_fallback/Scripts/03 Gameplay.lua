@@ -39,7 +39,9 @@ end
 -- Then the engine does the work of figuring out where each notefield should
 -- be centered.
 function GameplayMargins(enabled_players, styletype)
-	local other= {[PLAYER_1]= PLAYER_2, [PLAYER_2]= PLAYER_1, [PLAYER_3]= PLAYER_4, , [PLAYER_4]= PLAYER_3}
+	--local other= {[PLAYER_1]= PLAYER_2, [PLAYER_2]= PLAYER_1, [PLAYER_3]= PLAYER_4, , [PLAYER_4]= PLAYER_3}
+	--local margins= {[PLAYER_1]= {30, 30}, [PLAYER_2]= {30, 30}, [PLAYER_3]= {30, 30}, [PLAYER_4]= {30, 30}}
+	local other= {[PLAYER_1]= PLAYER_2, [PLAYER_2]= PLAYER_1}
 	local margins= {[PLAYER_1]= {30, 30}, [PLAYER_2]= {30, 30}, [PLAYER_3]= {30, 30}, [PLAYER_4]= {30, 30}}
 	-- Use a fake style width because calculating the real style width throws off
 	-- the code in the engine.
