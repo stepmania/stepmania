@@ -9,6 +9,8 @@
 static const char *GameControllerNames[] = {
 	"1",
 	"2",
+	"3",
+	"4",
 };
 XToString( GameController );
 StringToX( GameController );
