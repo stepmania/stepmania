@@ -397,6 +397,8 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 				RageException::Throw("%s", message.c_str());
 			case Dialog::ignore:
 				return "";
+			default:
+				break;
 		}
 	}
 
@@ -439,6 +441,8 @@ RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sEl
 					RageException::Throw("%s", message.c_str());
 				case Dialog::ignore:
 					return "";
+				default:
+					break;
 			}
 		}
 		

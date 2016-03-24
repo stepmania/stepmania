@@ -1455,9 +1455,9 @@ bool BMSChartReader::ReadNoteData()
 		}
 	}
 
-	delete transform;
-	delete holdStart;
-	delete lastNote;
+	delete[] transform;
+	delete[] holdStart;
+	delete[] lastNote;
 
 	td.TidyUpData( false );
 	out->SetNoteData(nd);

@@ -688,14 +688,15 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 
 		switch( LuaHelpers::ReportScriptError(message, "", true) )
 		{
-		case Dialog::abort:
-			RageException::Throw( "%s", message.c_str() ); 
-			break;
-		case Dialog::retry:
-			ReloadMetrics();
-			return GetPathInfoToRaw( out, sThemeName_, category, sMetricsGroup_, sElement_ );
-		case Dialog::ignore:
-			break;
+			case Dialog::abort:
+				RageException::Throw( "%s", message.c_str() ); 
+				break;
+			case Dialog::retry:
+				ReloadMetrics();
+				return GetPathInfoToRaw( out, sThemeName_, category, sMetricsGroup_, sElement_ );
+			case Dialog::ignore:
+			default:
+				break;
 		}
 	}
 
@@ -733,15 +734,15 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 
 	switch(LuaHelpers::ReportScriptError(sMessage, "", true))
 	{
-	case Dialog::retry:
-		ReloadMetrics();
-		return GetPathInfoToRaw( out, sThemeName_, category, sMetricsGroup_, sElement_ );
-	case Dialog::ignore:
-		GetPathInfo( out, category, "", "_missing" );
-		return true;
+		case Dialog::retry:
+			ReloadMetrics();
+			return GetPathInfoToRaw( out, sThemeName_, category, sMetricsGroup_, sElement_ );
+		case Dialog::ignore:
+			GetPathInfo( out, category, "", "_missing" );
+			return true;
+		default:
+			RageException::Throw( "%s", sMessage.c_str() );
 	}
-
-	RageException::Throw( "%s", sMessage.c_str() ); 
 }
 
 bool ThemeManager::GetPathInfoToAndFallback( PathInfo &out, ElementCategory category, const RString &sMetricsGroup_, const RString &sElement ) 
