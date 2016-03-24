@@ -16,7 +16,7 @@ list(APPEND JSON_HPP
 
 source_group("" FILES ${JSON_SRC} ${JSON_HPP})
 
-add_library("jsoncpp" ${JSON_SRC} ${JSON_HPP})
+add_library("jsoncpp" STATIC ${JSON_SRC} ${JSON_HPP})
 
 set_property(TARGET "jsoncpp" PROPERTY FOLDER "External Libraries")
 

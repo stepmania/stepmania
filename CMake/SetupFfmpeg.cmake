@@ -22,6 +22,10 @@ list(APPEND FFMPEG_CONFIGURE
   "--enable-static"
 )
 
+if(CMAKE_POSITION_INDEPENDENT_CODE)
+    list(APPEND FFMPEG_CONFIGURE "--enable-pic")
+endif()
+
 if(MACOSX)
   # TODO: Remove these two items when Mac OS X StepMania builds in 64-bit.
   list(APPEND FFMPEG_CONFIGURE

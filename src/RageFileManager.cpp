@@ -463,19 +463,7 @@ void RageFileManager::GetDirListing( std::string const &sPath_, vector<std::stri
 
 	// Remove files that start with ._ from the list because these are special
 	// OS X files that cause interference on other platforms. -Kyz
-	for(size_t i= iOldSize; i < AddTo.size(); ++i)
-	{
-		size_t last_slash= AddTo[i].rfind('/');
-		last_slash= (last_slash == std::string::npos) ? 0 : (last_slash+1);
-		if(last_slash < AddTo[i].size() - 1)
-		{
-			if(AddTo[i][last_slash] == '.' && AddTo[i][last_slash+1] == '_')
-			{
-				AddTo.erase(AddTo.begin() + i);
-				--i;
-			}
-		}
-	}
+	StripMacResourceForks(AddTo);
 
 	if( iDriversThatReturnedFiles > 1 )
 	{

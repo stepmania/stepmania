@@ -17,6 +17,7 @@
 #include "LightsManager.h"
 #include "SongUtil.h"
 #include "LuaManager.h"
+#include "arch/Sound/RageSoundDriver.h"
 
 using std::vector;
 
@@ -881,7 +882,21 @@ public:
 	}
 };
 
-LUA_REGISTER_CLASS( GameSoundManager )
+LUA_REGISTER_CLASS(GameSoundManager);
+
+int LuaFunc_get_sound_driver_list(lua_State* L);
+int LuaFunc_get_sound_driver_list(lua_State* L)
+{
+	auto driver_names = Rage::split(RageSoundDriver::GetDefaultSoundDriverList(), ",", Rage::EmptyEntries::include);
+	lua_createtable(L, driver_names.size(), 0);
+	for(size_t n= 0; n < driver_names.size(); ++n)
+	{
+		lua_pushstring(L, driver_names[n].c_str());
+		lua_rawseti(L, -2, n+1);
+	}
+	return 1;
+}
+LUAFUNC_REGISTER_COMMON(get_sound_driver_list);
 
 
 /*

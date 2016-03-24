@@ -171,6 +171,10 @@ namespace
 				new_screen= after_screen;
 			}
 		}
+		if(!SCREENMAN->IsScreenNameValid(new_screen))
+		{
+			new_screen= "ScreenInitialScreenIsInvalid";
+		}
 		SCREENMAN->SetNewScreen(new_screen);
 
 		g_NewTheme = std::string();

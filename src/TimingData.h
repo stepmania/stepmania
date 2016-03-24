@@ -67,6 +67,7 @@ public:
 
 	void Copy( const TimingData &other );
 	void Clear();
+	bool IsSafeFullTiming();
 
 	TimingData( const TimingData &cpy ) { Copy(cpy); }
 	TimingData& operator=( const TimingData &cpy ) { Copy(cpy); return *this; }
@@ -172,6 +173,7 @@ public:
 
 	void CopyRange(int start_row, int end_row, TimingSegmentType copy_type, int dest_row, TimingData& dest) const;
 	void ShiftRange(int start_row, int end_row, TimingSegmentType shift_type, int shift_amount);
+	void ClearRange(int start_row, int end_row, TimingSegmentType clear_type);
 	/**
 	 * @brief Gets the actual BPM of the song,
 	 * while respecting a limit.

@@ -122,8 +122,10 @@ const RadarValues &Trail::GetRadarValues() const
 				PlayerOptions po;
 				po.FromString( e.Modifiers );
 				if( po.ContainsTransformOrTurn() )
-					NoteDataUtil::TransformNoteData( nd, po, pSteps->m_StepsType );
-				NoteDataUtil::TransformNoteData( nd, e.Attacks, pSteps->m_StepsType, e.pSong );
+				{
+					NoteDataUtil::TransformNoteData(nd, *(pSteps->GetTimingData()), po, pSteps->m_StepsType);
+				}
+				NoteDataUtil::TransformNoteData(nd, *(pSteps->GetTimingData()), e.Attacks, pSteps->m_StepsType, e.pSong);
 				RadarValues transformed_rv;
 				NoteDataUtil::CalculateRadarValues( nd, e.pSong->m_fMusicLengthSeconds, transformed_rv );
 				GAMESTATE->SetProcessedTimingData(nullptr);

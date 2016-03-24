@@ -414,7 +414,9 @@ public:
 	void swap(Profile& other);
 
 	// Loading and saving
+	void HandleStatsPrefixChange( std::string dir, bool require_signature );
 	ProfileLoadResult LoadAllFromDir( std::string sDir, bool bRequireSignature );
+	ProfileLoadResult LoadStatsFromDir( std::string dir, bool require_signature );
 	void LoadTypeFromDir(std::string dir);
 	void LoadCustomFunction( std::string sDir );
 	bool SaveAllToDir( std::string sDir, bool bSignData ) const;

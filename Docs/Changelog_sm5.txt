@@ -4,6 +4,113 @@ The StepMania 5 Changelog covers all post-sm-ssc changes. For a list of changes
 from StepMania 4 alpha 5 to sm-ssc v1.2.5, see Changelog_sm-ssc.txt.
 ________________________________________________________________________________
 
+2016/03/22
+----------
+* [Prefs] Added DisableUploadDir preference to skip saving a score entry to
+  Save/Upload every time a song is played.  Generating the unique filename
+  can take several seconds when there are years of scores accumulated, and it
+  clutters the disk.  This preference defaults to false. [kyzentun]
+
+2016/03/17
+----------
+* [Actor] Added get and set_tween_uses_effect_delta lua functions to make an
+  Actor use the effect clock for tweening. [kyzentun]
+
+2016/03/15
+----------
+* [ProfileManager] Added GetStatsPrefix and SetStatsPrefix lua functions for
+  separating scores into different stats files. [kyzentun]
+  (this is kind of a stop gap, I'd really like to rewrite scoring to save
+  more data so that a score earned with one set of timing windows and weights
+  can be converted to the equivalent score with different timing windows)
+
+2016/03/14
+----------
+* [Online] Stepmania will force disconnection from the SMO server when
+  entering the jukebox or sync calibration screens to avoid crash. [kyzentun]
+
+2016/03/05
+----------
+* [global] get_sound_driver_list lua function added. [kyzentun]
+
+2016/03/02
+----------
+* [Gameplay] Fixed No Fakes mod to remove fakes inside warps. [kyzentun]
+* [Keymaps] Added special name for colon key so it can be bound. [medmig]
+
+2016/02/20
+----------
+* [Language] Bahasa Indonesian translation added to default theme. [JOELwindows7]
+
+2016/02/15
+----------
+* [Input] Linux event devices now start at JOY10 instead of JOY1.  Without
+  this change, if one dance pad is a joystick device, and the other is an
+  event device, they will both be JOY1, and stepmania will think they are the
+  same dance pad.  If you use Linux, assume that you have to remap your dance
+  pad. [kyzentun]
+
+2016/02/13
+----------
+* [Lights] Minimaid driver added for Linux.  This is practically identical to
+  the Windows minimaid driver that pkgingo wrote.
+* [Gameplay] When checking for the first second in a song, AutoKeysound notes
+  are now ignored, being treated as if they were background music. This
+  allows the intro of BMS files to play as soon as ScreenGameplay is loaded,
+  while still having a delay before the real notes come in. [nixtrix]
+
+2016/02/04
+----------
+* [Course] In an Endless course, songs will only be repeated after all songs
+  in the group have been played. [blindbox]
+
+2016/02/03
+----------
+* [ScreenManager] Added PlayInvalidSound, PlayStartSound, PlayCoinSound,
+  PlayCancelSound, and PlayScreenshotSound lua bindings. [kyzentun]
+  Added get_input_redirected and set_input_redirected to allow the theme to
+  disable the normal input functions.  (Example: a custom lua menu on
+  Select Music.  When the menu is up, the theme doesn't want the player's
+  input to move the music wheel.)  This is in SCREENMAN so that it will work
+  on all screens. [kyzentun]
+* [ScreenSelectMusic] Added CanOpenOptionsList lua binding.  OpenOptionsList
+  will do nothing if CanOpenOptionsList returns false. [kyzentun]
+
+2016/01/18
+----------
+* [Edit Mode] Added "Clear timing in region" to timing menu. [kyzentun]
+  Fixed crash that occurs when "Paste timing data" is used after copying a
+  region of timing data that only contains stops. [kyzentun]
+
+2016/01/14
+----------
+* [Gameplay] Added pause menu to default theme.  Activated by pressing
+  Select, or Back twice without pressing something else.  Has options for
+  restarting or forfeiting the current song in normal play.  Course mode has
+  options for skipping the current song or ending the course or forfeiting.
+  [kyzentun]
+* [Graphics] When fetching the list of resolutions, only 32bpp modes are
+  tested because less than 32bpp is not supported on Windows 8 and newer, and
+  because the bpp doesn't matter when fetching a list of resolutions.  This
+  speeds up the load time of the Graphics/Sound option screen. [kyzentun]
+
+2016/01/10
+----------
+* [RageFile] Lua functions for RageFile should now emit an error when the
+  file was not opened correctly instead of crashing. [kyzentun]
+
+2016/01/05
+----------
+* [Linux] Disable DPMS on startup and restore setting on exit. [kyzentun]
+
+2015/12/27
+----------
+* [RageFileManager] Ignore OS X special files in GetDirListing. [kyzentun]
+
+2015/12/20
+----------
+* [Fonts] Fixed crash bug in Texture Font Generator. [drewbarbs]
+
 2015/12/16
 ----------
 * [Player] ChangeLife and SetLife functions added. [kyzentun]
@@ -30,6 +137,11 @@ ________________________________________________________________________________
 ----------
 * [ScreenSelectMusic] Using lua music files for the section music and similar
   things works now. [kyzentun]
+
+2015/11/05
+----------
+* [PlayerOptions] Fixed bug that was clearing the noteskin back to default.
+  [kyzentun]
 
 ================================================================================
 StepMania 5.0.10 | 20151031

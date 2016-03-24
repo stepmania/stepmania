@@ -74,6 +74,7 @@ static ThemeMetric<int>		NUM_FIXED_PROFILES	( "ProfileManager", "NumFixedProfile
 
 
 ProfileManager::ProfileManager()
+	:m_stats_prefix("")
 {
 	m_pMachineProfile = new Profile;
 	FOREACH_PlayerNumber(pn)
@@ -1013,6 +1014,24 @@ int ProfileManager::GetNumLocalProfiles() const
 	return g_vLocalProfile.size();
 }
 
+void ProfileManager::SetStatsPrefix(std::string const& prefix)
+{
+	m_stats_prefix= prefix;
+	for(size_t i= 0; i < g_vLocalProfile.size(); ++i)
+	{
+		g_vLocalProfile[i].profile.HandleStatsPrefixChange(g_vLocalProfile[i].sDir, PREFSMAN->m_bSignProfileData);
+	}
+	FOREACH_PlayerNumber(pn)
+	{
+		if(ProfileWasLoadedFromMemoryCard(pn))
+		{
+			// This probably runs into a problem if the memory card has been removed. -Kyz
+			GetProfile(pn)->HandleStatsPrefixChange(m_sProfileDir[pn], PREFSMAN->m_bSignProfileData);
+		}
+	}
+	m_pMachineProfile->HandleStatsPrefixChange(MACHINE_PROFILE_DIR, false);
+}
+
 // lua start
 #include "LuaBinding.h"
 
@@ -1020,6 +1039,17 @@ int ProfileManager::GetNumLocalProfiles() const
 class LunaProfileManager: public Luna<ProfileManager>
 {
 public:
+	static int GetStatsPrefix(T* p, lua_State* L)
+	{
+		lua_pushstring(L, p->GetStatsPrefix().c_str());
+		return 1;
+	}
+	static int SetStatsPrefix(T* p, lua_State* L)
+	{
+		std::string prefix= SArg(1);
+		p->SetStatsPrefix(prefix);
+		COMMON_RETURN_SELF;
+	}
 	static int IsPersistentProfile( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsPersistentProfile(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
 	static int GetProfile( T* p, lua_State *L )				{ PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1); Profile* pP = p->GetProfile(pn); ASSERT(pP != nullptr); pP->PushSelf(L); return 1; }
 	static int GetMachineProfile( T* p, lua_State *L )		{ p->GetMachineProfile()->PushSelf(L); return 1; }
@@ -1114,6 +1144,8 @@ public:
 
 	LunaProfileManager()
 	{
+		ADD_METHOD(GetStatsPrefix);
+		ADD_METHOD(SetStatsPrefix);
 		ADD_METHOD( IsPersistentProfile );
 		ADD_METHOD( GetProfile );
 		ADD_METHOD( GetMachineProfile );

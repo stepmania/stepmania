@@ -2016,6 +2016,23 @@ void ScreenSelectMusic::OnConfirmSongDeletion()
 	m_pSongAwaitingDeletionConfirmation = nullptr;
 }
 
+bool ScreenSelectMusic::can_open_options_list(PlayerNumber pn)
+{
+	if(!USE_OPTIONS_LIST)
+	{
+		return false;
+	}
+	if(pn >= NUM_PLAYERS)
+	{
+		return false;
+	}
+	if(m_OptionsList[pn].IsOpened())
+	{
+		return false;
+	}
+	return true;
+}
+
 
 // lua start
 #include "LuaBinding.h"
@@ -2029,13 +2046,28 @@ public:
 		p->GetMusicWheel()->PushSelf(L);
 		return 1;
 	}
-	static int OpenOptionsList( T* p, lua_State *L ) { PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);  p->OpenOptionsList(pn); COMMON_RETURN_SELF; }
+	static int OpenOptionsList( T* p, lua_State *L )
+	{
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
+		if(p->can_open_options_list(pn))
+		{
+			p->OpenOptionsList(pn);
+		}
+		COMMON_RETURN_SELF;
+	}
+	static int CanOpenOptionsList( T* p, lua_State *L )
+	{
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
+		lua_pushboolean(L, p->can_open_options_list(pn));
+		return 1;
+	}
 
 	LunaScreenSelectMusic()
 	{
   		ADD_METHOD( GetGoToOptions );
 		ADD_METHOD( GetMusicWheel );
 		ADD_METHOD( OpenOptionsList );
+		ADD_METHOD( CanOpenOptionsList );
 	}
 };
 

@@ -43,7 +43,7 @@ source_group("Source Files" FILES ${MAD_SRC})
 source_group("Header Files" FILES ${MAD_HPP})
 source_group("Data Files" FILES ${MAD_DAT})
 
-add_library("mad" ${MAD_SRC} ${MAD_HPP} ${MAD_DAT})
+add_library("mad" STATIC ${MAD_SRC} ${MAD_HPP} ${MAD_DAT})
 
 set_property(TARGET "mad" PROPERTY FOLDER "External Libraries")
 

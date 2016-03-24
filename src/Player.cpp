@@ -757,12 +757,12 @@ void Player::Load()
 //	if( m_pScore )
 //		m_pScore->Init( pn );
 
+	m_Timing = GAMESTATE->m_pCurSteps[pn]->GetTimingData();
+
 	/* Apply transforms. */
-	NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions.GetStage(), GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType );
+	NoteDataUtil::TransformNoteData(m_NoteData, *m_Timing, m_pPlayerState->m_PlayerOptions.GetStage(), GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType);
 
 	const Song* pSong = GAMESTATE->m_pCurSong;
-
-	m_Timing = GAMESTATE->m_pCurSteps[pn]->GetTimingData();
 
 	// Generate some cache data structure.
 	GenerateCacheDataStructure(m_pPlayerState, m_NoteData);
@@ -778,7 +778,7 @@ void Player::Load()
 			// workaround, but since only DDR has ever really implemented those
 			// modes, it's stayed like this. -aj
 			StepsType st = GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType;
-			NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions.GetStage(), st );
+			NoteDataUtil::TransformNoteData(m_NoteData, *m_Timing, m_pPlayerState->m_PlayerOptions.GetStage(), st);
 
 			if (BATTLE_RAVE_MIRROR)
 			{
@@ -1618,7 +1618,7 @@ void Player::ApplyWaitingTransforms()
 
 		// if re-adding noteskin changes, this is one place to edit -aj
 
-		NoteDataUtil::TransformNoteData( m_NoteData, po, GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat) );
+		NoteDataUtil::TransformNoteData(m_NoteData, *m_Timing, po, GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat));
 	}
 	m_pPlayerState->m_ModsToApply.clear();
 }

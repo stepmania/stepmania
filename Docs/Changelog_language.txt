@@ -16,6 +16,10 @@ Example:
 This means that three strings were added to the "ScreenDebugOverlay" section,
 "Mute actions", "Mute actions on", and "Mute actions off".
 
+2016/01/18
+----------
+* [ScreenEdit] Clear timing in region
+
 2015/10/02
 ----------
 * [ScreenEdit] save_success_no_sm_split_timing
