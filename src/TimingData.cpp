@@ -712,6 +712,8 @@ void TimingData::AddSegment( const TimingSegment *seg )
 			}
 			break;
 		}
+		default:
+			break;
 	}
 
 	// the segment at or before this row is equal to the new one; ignore it

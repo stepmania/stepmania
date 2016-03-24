@@ -1619,35 +1619,37 @@ void RageDisplay_Legacy::SetTextureMode( TextureUnit tu, TextureMode tm )
 
 	switch( tm )
 	{
-	case TextureMode_Modulate:
-		glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
-		break;
-	case TextureMode_Add:
-		glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD );
-		break;
-	case TextureMode_Glow:
-		// the below function is glowmode,brighten:
-		if (!GLEW_ARB_texture_env_combine && !GLEW_EXT_texture_env_combine)
-		{
-			/* This is changing blend state, instead of texture state, which
-			 * isn't great, but it's better than doing nothing. */
-			glBlendFunc( GL_SRC_ALPHA, GL_ONE );
-			return;
-		}
+		case TextureMode_Modulate:
+			glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
+			break;
+		case TextureMode_Add:
+			glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD );
+			break;
+		case TextureMode_Glow:
+			// the below function is glowmode,brighten:
+			if (!GLEW_ARB_texture_env_combine && !GLEW_EXT_texture_env_combine)
+			{
+				/* This is changing blend state, instead of texture state, which
+				 * isn't great, but it's better than doing nothing. */
+				glBlendFunc( GL_SRC_ALPHA, GL_ONE );
+				return;
+			}
 
-		// and this is glowmode,whiten:
-		// Source color is the diffuse color only:
-		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_COMBINE_RGB_EXT), GL_REPLACE);
-		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE0_RGB_EXT), GL_PRIMARY_COLOR_EXT);
+			// and this is glowmode,whiten:
+			// Source color is the diffuse color only:
+			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+			glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_COMBINE_RGB_EXT), GL_REPLACE);
+			glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE0_RGB_EXT), GL_PRIMARY_COLOR_EXT);
 
-		// Source alpha is texture alpha * diffuse alpha:
-		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_COMBINE_ALPHA_EXT), GL_MODULATE);
-		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_OPERAND0_ALPHA_EXT), GL_SRC_ALPHA);
-		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE0_ALPHA_EXT), GL_PRIMARY_COLOR_EXT);
-		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_OPERAND1_ALPHA_EXT), GL_SRC_ALPHA);
-		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE1_ALPHA_EXT), GL_TEXTURE);
-		break;
+			// Source alpha is texture alpha * diffuse alpha:
+			glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_COMBINE_ALPHA_EXT), GL_MODULATE);
+			glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_OPERAND0_ALPHA_EXT), GL_SRC_ALPHA);
+			glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE0_ALPHA_EXT), GL_PRIMARY_COLOR_EXT);
+			glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_OPERAND1_ALPHA_EXT), GL_SRC_ALPHA);
+			glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE1_ALPHA_EXT), GL_TEXTURE);
+			break;
+		default:
+			break;
 	}
 }
 
@@ -1691,15 +1693,35 @@ void RageDisplay_Legacy::SetEffectMode( EffectMode effect )
 	GLhandleARB hShader = 0;
 	switch (effect)
 	{
-	case EffectMode_Normal:		hShader = 0; break;
-	case EffectMode_Unpremultiply:	hShader = g_bUnpremultiplyShader; break;
-	case EffectMode_ColorBurn:	hShader = g_bColorBurnShader; break;
-	case EffectMode_ColorDodge:	hShader = g_bColorDodgeShader; break;
-	case EffectMode_VividLight:	hShader = g_bVividLightShader; break;
-	case EffectMode_HardMix:	hShader = g_hHardMixShader; break;
-	case EffectMode_Overlay:	hShader = g_hOverlayShader; break;
-	case EffectMode_Screen:	hShader = g_hScreenShader; break;
-	case EffectMode_YUYV422:	hShader = g_hYUYV422Shader; break;
+		case EffectMode_Normal:
+			hShader = 0;
+			break;
+		case EffectMode_Unpremultiply:
+			hShader = g_bUnpremultiplyShader;
+			break;
+		case EffectMode_ColorBurn:
+			hShader = g_bColorBurnShader;
+			break;
+		case EffectMode_ColorDodge:
+			hShader = g_bColorDodgeShader;
+			break;
+		case EffectMode_VividLight:
+			hShader = g_bVividLightShader;
+			break;
+		case EffectMode_HardMix:
+			hShader = g_hHardMixShader;
+			break;
+		case EffectMode_Overlay:
+			hShader = g_hOverlayShader;
+			break;
+		case EffectMode_Screen:
+			hShader = g_hScreenShader;
+			break;
+		case EffectMode_YUYV422:
+			hShader = g_hYUYV422Shader;
+			break;
+		default:
+			break;
 	}
 
 	DebugFlushGLErrors();
@@ -1726,18 +1748,27 @@ bool RageDisplay_Legacy::IsEffectModeSupported( EffectMode effect )
 {
 	switch( effect )
 	{
-	case EffectMode_Normal:		return true;
-	case EffectMode_Unpremultiply:	return g_bUnpremultiplyShader != 0;
-	case EffectMode_ColorBurn:	return g_bColorBurnShader != 0;
-	case EffectMode_ColorDodge:	return g_bColorDodgeShader != 0;
-	case EffectMode_VividLight:	return g_bVividLightShader != 0;
-	case EffectMode_HardMix:	return g_hHardMixShader != 0;
-	case EffectMode_Overlay:		return g_hOverlayShader != 0;
-	case EffectMode_Screen:		return g_hScreenShader != 0;
-	case EffectMode_YUYV422:	return g_hYUYV422Shader != 0;
+		case EffectMode_Normal:
+			return true;
+		case EffectMode_Unpremultiply:
+			return g_bUnpremultiplyShader != 0;
+		case EffectMode_ColorBurn:
+			return g_bColorBurnShader != 0;
+		case EffectMode_ColorDodge:
+			return g_bColorDodgeShader != 0;
+		case EffectMode_VividLight:
+			return g_bVividLightShader != 0;
+		case EffectMode_HardMix:
+			return g_hHardMixShader != 0;
+		case EffectMode_Overlay:
+			return g_hOverlayShader != 0;
+		case EffectMode_Screen:
+			return g_hScreenShader != 0;
+		case EffectMode_YUYV422:
+			return g_hYUYV422Shader != 0;
+		default:
+			return false;
 	}
-
-	return false;
 }
 
 void RageDisplay_Legacy::SetBlendMode( BlendMode mode )

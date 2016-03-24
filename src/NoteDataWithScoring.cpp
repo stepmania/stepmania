@@ -373,6 +373,7 @@ void NoteDataWithScoring::GetActualRadarValues(const NoteData &in,
 					state.mines_avoided+= (curr_note->result.tns == TNS_AvoidMine);
 					break;
 				case TapNoteType_Fake:
+				default:
 					break;
 			}
 		}

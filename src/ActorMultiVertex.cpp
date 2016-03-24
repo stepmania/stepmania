@@ -326,6 +326,8 @@ void ActorMultiVertex::DrawInternal( const AMV_TweenState *TS )
 			DISPLAY->DrawSymmetricQuadStrip( &TS->vertices[FirstToDraw], NumToDraw );
 			break;
 		}
+		default:
+			break;
 	}
 
 	DISPLAY->SetEffectMode( EffectMode_Normal );
@@ -386,6 +388,8 @@ void ActorMultiVertex::SetVertsFromSplines()
 			break;
 		case DrawMode_LineStrip:
 			SetVertsFromSplinesInternal(1, 0);
+			break;
+		default:
 			break;
 	}
 }
@@ -552,6 +556,8 @@ void ActorMultiVertex::UpdateAnimationState(bool force_update)
 							break;
 					}
 				}
+				break;
+			default:
 				break;
 		}
 	}
