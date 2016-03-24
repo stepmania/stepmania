@@ -74,7 +74,7 @@ void ScreenSelectMusic::Init()
 	if( PREFSMAN->m_sTestInitialScreen.Get() == m_sName )
 	{
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus"), PLAYER_INVALID );
+		//GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus"), PLAYER_INVALID );
 		GAMESTATE->JoinPlayer( PLAYER_1 );
 		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 	}

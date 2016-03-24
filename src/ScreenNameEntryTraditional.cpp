@@ -27,7 +27,7 @@ void ScreenNameEntryTraditional::Init()
 
 		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle( GAMEMAN->GetDefaultGame(),"versus"), GAMESTATE->GetMasterPlayerNumber() );
+		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle( GAMEMAN->GetDefaultGame(),"d"), GAMESTATE->GetMasterPlayerNumber() );
 		for( int z = 0; z < 3; ++z )
 		{
 			StageStats ss;

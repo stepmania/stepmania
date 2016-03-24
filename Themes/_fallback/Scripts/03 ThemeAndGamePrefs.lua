@@ -32,6 +32,8 @@ function InitUserPrefs()
 		{ "GameplayShowScore",		false},
 --[[		{ "ProTimingP1",	false},
 		{ "ProTimingP2",	false},
+		{ "ProTimingP3",	false},
+		{ "ProTimingP4",	false},
 --]]
 	};
 

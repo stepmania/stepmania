@@ -243,6 +243,8 @@ void init_parser_helpers()
 	chunks_to_replace["effectdelay"]= "effect_hold_at_full";
 	chunks_to_replace["IsPlayerEnabled(0)"]= "IsPlayerEnabled(PLAYER_1)";
 	chunks_to_replace["IsPlayerEnabled(1)"]= "IsPlayerEnabled(PLAYER_2)";
+	chunks_to_replace["IsPlayerEnabled(2)"] = "IsPlayerEnabled(PLAYER_3)";
+	chunks_to_replace["IsPlayerEnabled(3)"] = "IsPlayerEnabled(PLAYER_4)";
 }
 
 void convert_lua_chunk(RString& chunk_text)

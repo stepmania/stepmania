@@ -88,6 +88,8 @@ function InitUserPrefs()
         UserPrefSoundPack   = 'default',
 		UserPrefProtimingP1 = false,
 		UserPrefProtimingP2 = false,
+		UserPrefProtimingP3 = false,
+		UserPrefProtimingP4 = false,
 	}
 	for k, v in pairs(Prefs) do
 		-- kind of xxx
