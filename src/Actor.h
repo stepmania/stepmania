@@ -245,6 +245,7 @@ public:
 		float		aux;
 	};
 
+	void SetBeingDrawnByProxy(); // Draw will set it back to false. -Kyz
 	// PartiallyOpaque broken out of Draw for reuse and clarity.
 	bool PartiallyOpaque();
 	/**
@@ -361,6 +362,12 @@ public:
 	{
 		TweenState& dest= DestTweenState();
 		dest.pos= trans.pos;
+	}
+	void set_transform_with_glow_alpha(Rage::transform const& trans)
+	{
+		set_transform(trans);
+		SetDiffuseAlpha(trans.alpha);
+		SetGlow(Rage::Color(1, 1, 1, trans.glow));
 	}
 	void  SetX( float x )				{ DestTweenState().pos.x = x; };
 	void  SetY( float y )				{ DestTweenState().pos.y = y; };
@@ -721,6 +728,12 @@ protected:
 	TweenState *m_pTempState;
 
 	bool	m_bFirstUpdate;
+	// Some actor types like Player, NoteField and NewField are designed with
+	// multiple Draw calls in mind to handle their different layers.  But when
+	// they're drawn by ActorProxy, Draw is only called once.
+	// m_being_drawn_by_proxy exists so they can check that case and handle it.
+	// -Kyz
+	bool m_being_drawn_by_proxy;
 
 	// Stuff for alignment
 	/** @brief The particular horizontal alignment.

@@ -20,6 +20,7 @@ void ActorProxy::DrawPrimitives()
 	{
 		bool bVisible = m_pActorTarget->GetVisible();
 		m_pActorTarget->SetVisible( true );
+		m_pActorTarget->SetBeingDrawnByProxy();
 		m_pActorTarget->Draw();
 		m_pActorTarget->SetVisible( bVisible );
 	}

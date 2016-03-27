@@ -6,10 +6,13 @@
 #include <vector>
 
 #include "ActorFrame.h"
+#include "ArrowDefects.h"
 #include "AutoActor.h"
+#include "BitmapText.h"
 #include "ModValue.h"
 #include "NewSkin.h"
 #include "NoteData.h"
+#include "Sprite.h"
 
 class NoteData;
 class Steps;
@@ -66,8 +69,13 @@ struct NewFieldColumn : ActorFrame
 	void set_note_data(size_t column, const NoteData* note_data,
 		const TimingData* timing_data);
 	void set_column_info(NewField* field, size_t column, NewSkinColumn* newskin,
+		ArrowDefects* defects,
 		NewSkinData& skin_data, std::vector<Rage::Color>* player_colors,
 		const NoteData* note_data, const TimingData* timing_data, double x);
+	void take_over_mods(NewFieldColumn& old_column);
+	void set_defective_mode();
+	void set_speed_old_way(float time_spacing, float max_scroll_bpm,
+		float scroll_speed, float scroll_bpm, float read_bpm, float music_rate);
 
 	Rage::Color get_player_color(size_t pn);
 	void get_hold_draw_time(TapNote const& tap, double const hold_beat,
@@ -126,7 +134,10 @@ struct NewFieldColumn : ActorFrame
 		return std::fmod((input.eval_beat * mult) + offset, 1.0);
 	}
 	void calc_transform(mod_val_inputs& input, Rage::transform& trans);
-	void hold_render_transform(mod_val_inputs& input, Rage::transform& trans, bool do_rot);
+	void calc_transform_with_glow_alpha(mod_val_inputs& input,
+		Rage::transform& trans);
+	void hold_render_transform(mod_val_inputs& input, Rage::transform& trans,
+		bool do_rot);
 	void calc_reverse_shift();
 	double apply_reverse_shift(double y_offset);
 	void apply_column_mods_to_actor(Actor* act);
@@ -149,6 +160,7 @@ struct NewFieldColumn : ActorFrame
 	void update_upcoming(double beat, double second);
 	void update_active_hold(TapNote const& tap);
 	virtual void DrawPrimitives();
+	void position_actor_at_column_head(Actor* act, FieldLayerRenderInfo& info);
 
 	virtual void AddChild(Actor* act);
 	virtual void RemoveChild(Actor* act);
@@ -193,6 +205,7 @@ struct NewFieldColumn : ActorFrame
 	// If you add another ModifiableValue member, be sure to add it to the
 	// loop in set_column_info.  They need to have the timing data passed to
 	// them so mods can have start and end times.
+	// Also add new ModifiableValue members to the take_over_mods function.
 	ModifiableValue m_time_offset;
 	ModifiableValue m_quantization_multiplier;
 	ModifiableValue m_quantization_offset;
@@ -235,7 +248,8 @@ private:
 	NewField* m_field;
 	std::vector<FieldLayerRenderInfo> m_layer_render_info;
 
-	AutoActor m_beat_bars;
+	ArrowDefects* m_defective_mods;
+	bool m_in_defective_mode;
 
 	const NoteData* m_note_data;
 	const TimingData* m_timing_data;
@@ -286,9 +300,12 @@ struct NewField : ActorFrame
 	virtual void UpdateInternal(float delta);
 	virtual bool EarlyAbortDraw() const;
 	virtual void PreDraw();
+	virtual void PostDraw();
 	void draw_board();
 	void draw_up_to_draw_order(int order);
 	virtual void DrawPrimitives();
+	void position_actor_at_column_head(Actor* act, FieldLayerRenderInfo& info,
+		size_t col);
 
 	virtual void PushSelf(lua_State *L);
 	virtual NewField* Copy() const;
@@ -299,6 +316,7 @@ struct NewField : ActorFrame
 
 	void push_columns_to_lua(lua_State* L);
 	double get_field_width() { return m_field_width; }
+	size_t get_num_columns() { return m_columns.size(); }
 
 	void set_player_color(size_t pn, Rage::Color const& color);
 
@@ -310,6 +328,15 @@ struct NewField : ActorFrame
 	// per-player configuration on gameplay.  Using it for any other purpose
 	// is forbidden.
 	void set_player_number(PlayerNumber pn);
+	// set_player_options is for supporting the old ArrowEffects mods in
+	// defective mode.
+	void set_player_options(PlayerOptions* options);
+	// TODO: Figure out some way to auto-detect when defective mode is needed
+	// so that gimmick files and stuff don't need lua to call it.
+	void set_defective_mode();
+	void set_speed_old_way(float time_spacing, float max_scroll_bpm,
+		float scroll_speed, float scroll_bpm, float read_bpm, float music_rate);
+	void turn_on_edit_text();
 
 	void set_layer_fade_type(Actor* child, FieldLayerFadeType type);
 	FieldLayerFadeType get_layer_fade_type(Actor* child);
@@ -344,6 +371,7 @@ struct NewField : ActorFrame
 	// field is displayed without a player actor.
 	FieldVanishType m_vanish_type;
 	bool m_being_drawn_by_player;
+	bool m_draw_beat_bars;
 
 	struct field_draw_entry
 	{
@@ -359,6 +387,12 @@ struct NewField : ActorFrame
 
 private:
 	void draw_entry(field_draw_entry& entry);
+	void draw_beat_bar(double beat, double second, double y_offset, int state,
+		float alpha);
+	void draw_field_text(double beat, double second, double y_offset,
+		double x_offset, float side_sign, float horiz_align,
+		Rage::Color const& color, Rage::Color const& glow);
+	void draw_beat_bars_internal();
 	void reload_columns(NewSkinLoader const* new_loader, LuaReference& new_params);
 	double m_curr_beat;
 	double m_curr_second;
@@ -367,6 +401,8 @@ private:
 	// The player number has to be stored so that it can be passed to the
 	// column layers when they're loaded.
 	PlayerNumber m_pn;
+	ArrowDefects m_defective_mods;
+	bool m_in_defective_mode;
 
 	bool m_own_note_data;
 	NoteData* m_note_data;
@@ -379,10 +415,12 @@ private:
 	std::vector<Rage::Color> m_player_colors;
 	std::vector<FieldLayerRenderInfo> m_layer_render_info;
 
+	Sprite m_beat_bars;
+	BitmapText m_field_text;
+
 	vector<field_draw_entry> m_draw_entries;
 	size_t m_first_undrawn_entry;
 	int m_curr_draw_limit;
-	bool m_drawing_board;
 
 	// Evaluation results of the mods need to be stored because Draw is called
 	// twice: once for the board, once for everything else.  So the mods can't
@@ -391,6 +429,11 @@ private:
 	double evaluated_receptor_glow;
 	double evaluated_explosion_alpha;
 	double evaluated_explosion_glow;
+	// The old distant and hallway mods would shift the notefield before
+	// rendering, then move it back.  defective_render_y is used to store the
+	// calculated shifted y.
+	double defective_render_y;
+	double original_y;
 
 	double curr_z_bias;
 };

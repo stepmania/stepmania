@@ -1519,7 +1519,6 @@ void ScreenEdit::Init()
 	}
 
 	m_Player->Init( "Player", GAMESTATE->m_pPlayerState[PLAYER_1], nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr );
-	m_Player->CacheAllUsedNoteSkins();
 	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 	m_Player->SetXY( PLAYER_X, PLAYER_Y );
 	this->AddChild( m_Player );
@@ -2010,6 +2009,7 @@ void ScreenEdit::DrawPrimitives()
 
 	if( m_pSoundMusic->IsPlaying() )
 	{
+		m_Player->SetBeingDrawnByProxy();
 		ScreenWithMenuElements::DrawPrimitives();
 		return;
 	}
@@ -3431,6 +3431,9 @@ void ScreenEdit::TransitionEditState( EditState em )
 		SetupCourseAttacks();
 
 		m_Player.Load( m_NoteDataEdit );
+		m_Player->calc_read_bpm();
+		m_Player->SetSpeedFromPlayerOptions();
+		m_Player->SetNoteFieldToEditMode();
 
 		if( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetCurrent().m_fPlayerAutoPlay != 0 )
 			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_AUTOPLAY;
@@ -3949,7 +3952,6 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		// The options may have changed the note skin.
 		m_NoteFieldRecord.CacheAllUsedNoteSkins();
-		m_Player->CacheAllUsedNoteSkins();
 
 		// stop any music that screen may have been playing
 		SOUND->StopMusic();

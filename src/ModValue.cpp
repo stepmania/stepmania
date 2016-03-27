@@ -289,6 +289,15 @@ void ModManager::remove_from_present(std::list<func_and_parent>::iterator fapi)
 	m_present_funcs.erase(fapi);
 }
 
+void ModInput::init_simple(ModFunction* parent, ModInputType input_type,
+	double input_scalar)
+{
+	clear();
+	m_parent= parent;
+	set_type(input_type);
+	m_scalar= input_scalar;
+}
+
 void ModInput::clear()
 {
 	m_type= MIT_Scalar;
@@ -980,6 +989,30 @@ void ModFunction::set_type(ModFunctionType type)
 	}
 }
 
+void ModFunction::init_picked_inputs()
+{
+	m_picked_inputs.resize(m_inputs.size());
+	mod_val_inputs scalar_input(0.0, 0.0);
+	for(size_t p= 0; p < m_inputs.size(); ++p)
+	{
+		ModInputMetaType mt= m_inputs[p].get_meta_type();
+		switch(mt)
+		{
+			case MIMT_Scalar:
+				m_picked_inputs[p]= m_inputs[p].pick(scalar_input);
+				break;
+			case MIMT_PerFrame:
+				m_per_frame_inputs.push_back(p);
+				break;
+			case MIMT_PerNote:
+				m_per_note_inputs.push_back(p);
+				break;
+			default:
+				break;
+		}
+	}
+}
+
 bool ModFunction::load_from_lua(lua_State* L, int index)
 {
 	m_being_loaded= true;
@@ -1061,26 +1094,7 @@ bool ModFunction::load_from_lua(lua_State* L, int index)
 			lua_pop(L, 1);
 		}
 	}
-	m_picked_inputs.resize(m_inputs.size());
-	mod_val_inputs scalar_input(0.0, 0.0);
-	for(size_t p= 0; p < m_inputs.size(); ++p)
-	{
-		ModInputMetaType mt= m_inputs[p].get_meta_type();
-		switch(mt)
-		{
-			case MIMT_Scalar:
-				m_picked_inputs[p]= m_inputs[p].pick(scalar_input);
-				break;
-			case MIMT_PerFrame:
-				m_per_frame_inputs.push_back(p);
-				break;
-			case MIMT_PerNote:
-				m_per_note_inputs.push_back(p);
-				break;
-			default:
-				break;
-		}
-	}
+	init_picked_inputs();
 	if(m_type == MFT_Spline)
 	{
 		// All scalar inputs are sent to the spline on loading.  So the ones that
@@ -1131,6 +1145,18 @@ void ModFunction::push_inputs(lua_State* L, int table_index)
 		lua_rawseti(L, table_index, out_index);
 		++out_index;
 	}
+}
+
+void ModFunction::init_single_input(std::string const& name,
+	ModInputType input_type, double input_scalar)
+{
+	m_being_loaded= true;
+	set_type(MFT_Constant);
+	m_name= name;
+	m_sum_type= MST_Add;
+	m_inputs[0].init_simple(this, input_type, input_scalar);
+	init_picked_inputs();
+	m_being_loaded= false;
 }
 
 static void calc_timing_pair(TimingData const* timing, double& beat, double& second)
@@ -1234,6 +1260,25 @@ ModFunction* ModifiableValue::add_mod_internal(lua_State* L, int index)
 	return new_mod;
 }
 
+ModFunction* ModifiableValue::insert_mod_internal(ModFunction* new_mod)
+{
+	ModFunction* ret= nullptr;
+	auto insert_point= find_mod(new_mod->get_name());
+	if(insert_point == m_mods.end())
+	{
+		m_mods.push_back(new_mod);
+		ret= new_mod;
+	}
+	else
+	{
+		(*(*insert_point)) = (*new_mod);
+		delete new_mod;
+		ret= (*insert_point);
+	}
+	m_manager->add_to_per_frame_update(ret);
+	return ret;
+}
+
 std::list<ModFunction*>::iterator ModifiableValue::find_mod(std::string const& name)
 {
 	for(auto iter= m_mods.begin(); iter != m_mods.end(); ++iter)
@@ -1253,21 +1298,7 @@ ModFunction* ModifiableValue::add_mod(lua_State* L, int index)
 	{
 		return nullptr;
 	}
-	ModFunction* ret= nullptr;
-	auto insert_point= find_mod(new_mod->get_name());
-	if(insert_point == m_mods.end())
-	{
-		m_mods.push_back(new_mod);
-		ret= new_mod;
-	}
-	else
-	{
-		(*(*insert_point)) = (*new_mod);
-		delete new_mod;
-		ret= (*insert_point);
-	}
-	m_manager->add_to_per_frame_update(ret);
-	return ret;
+	return insert_mod_internal(new_mod);
 }
 
 ModFunction* ModifiableValue::get_mod(std::string const& name)
@@ -1369,6 +1400,30 @@ void ModifiableValue::remove_mod_from_active_list(ModFunction* mod)
 	{
 		m_active_managed_mods.erase(iter);
 	}
+}
+
+void ModifiableValue::add_simple_mod(std::string const& name,
+	ModInputType input_type, double input_scalar)
+{
+	ModFunction* new_mod= new ModFunction(this);
+	new_mod->init_single_input(name, input_type, input_scalar);
+	insert_mod_internal(new_mod);
+}
+
+void ModifiableValue::take_over_mods(ModifiableValue& other)
+{
+	m_mods.swap(other.m_mods);
+	for(auto&& mod : m_mods)
+	{
+		mod->change_parent(this);
+	}
+	m_managed_mods.swap(other.m_managed_mods);
+	for(auto&& mod : m_managed_mods)
+	{
+		m_manager->add_mod(mod.second, this);
+	}
+	m_active_managed_mods.swap(other.m_active_managed_mods);
+	other.clear_managed_mods();
 }
 
 

@@ -55,6 +55,8 @@ public:
 	// multiplayer, something to make it more explicitly about having multiple
 	// players on a single notefield. -Kyz
 	bool stepstype_is_multiplayer(StepsType st);
+	// Some mods need to know the number of pads being used.
+	int get_num_pads_for_stepstype(StepsType st);
 
 
 	// Lua

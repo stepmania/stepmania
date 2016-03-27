@@ -85,13 +85,16 @@ public:
 	struct GetBeatArgs
 	{
 		float elapsed_time;
+		// total_stop_time is the total time used by stops and delays.
+		float total_stop_time; // Used by mods.
 		float beat;
 		float bps_out;
 		float warp_dest_out;
 		int warp_begin_out;
 		bool freeze_out;
 		bool delay_out;
-	GetBeatArgs() :elapsed_time(0), beat(0), bps_out(0), warp_dest_out(0),
+	GetBeatArgs() :elapsed_time(0), total_stop_time(0), beat(0), bps_out(0),
+			warp_dest_out(0),
 			warp_begin_out(-1), freeze_out(false), delay_out(false) {}
 	};
 	struct GetBeatStarts

@@ -3512,6 +3512,21 @@ bool GameManager::stepstype_is_multiplayer(StepsType st)
 		category == StepsTypeCategory_Routine;
 }
 
+int GameManager::get_num_pads_for_stepstype(StepsType st)
+{
+	switch(GetStepsTypeInfo(st).m_StepsTypeCategory)
+	{
+		case StepsTypeCategory_Single:
+			return 1;
+		case StepsTypeCategory_Double:
+		case StepsTypeCategory_Couple:
+		case StepsTypeCategory_Routine:
+			return 2;
+		default:
+			return 1;
+	}
+}
+
 // lua start
 #include "LuaBinding.h"
 

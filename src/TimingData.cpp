@@ -868,6 +868,7 @@ void TimingData::GetBeatInternal(GetBeatStarts& start, GetBeatArgs& args,
 						args.bps_out= bps;
 						return;
 					}
+					args.total_stop_time+= time_to_next_event;
 					start.last_time= next_event_time;
 					INC_INDEX(start.delay);
 					if(event_type == FOUND_DELAY)
@@ -888,6 +889,7 @@ void TimingData::GetBeatInternal(GetBeatStarts& start, GetBeatArgs& args,
 						args.bps_out= bps;
 						return;
 					}
+					args.total_stop_time+= time_to_next_event;
 					start.last_time= next_event_time;
 					INC_INDEX(start.stop);
 					break;

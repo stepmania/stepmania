@@ -27,11 +27,14 @@ static const double note_size= 64.0;
 static const double z_bias_per_thing= .01;
 static const double lift_fade_dist_recip= 1.0 / 64.0;
 static const int field_layer_column_index= -1;
+static const int beat_bars_column_index= -2;
 static const int holds_child_index= -1;
 static const int lifts_child_index= -2;
 static const int taps_child_index= -3;
+static const int beat_bars_child_index= -4;
 static const int draw_order_types= 4;
 static const int non_board_draw_order= 0;
+static const int beat_bars_draw_order= 0;
 static const int holds_draw_order= 200;
 static const int taps_draw_order= 300;
 
@@ -121,6 +124,7 @@ NewFieldColumn::NewFieldColumn()
 	 m_upcoming_time(2.0),
 	 m_playerize_mode(NPM_Off),
 	 m_newskin(nullptr), m_player_colors(nullptr), m_field(nullptr),
+	 m_defective_mods(nullptr), m_in_defective_mode(false),
 	 m_note_data(nullptr),
 	 m_timing_data(nullptr),
 	 reverse_scale_sign(1.0),
@@ -215,13 +219,14 @@ void NewFieldColumn::set_note_data(size_t column, const NoteData* note_data,
 }
 
 void NewFieldColumn::set_column_info(NewField* field, size_t column,
-	NewSkinColumn* newskin,
+	NewSkinColumn* newskin, ArrowDefects* defects,
 	NewSkinData& skin_data, std::vector<Rage::Color>* player_colors,
 	const NoteData* note_data, const TimingData* timing_data, double x)
 {
 	m_field= field;
 	m_column= column;
 	m_newskin= newskin;
+	m_defective_mods= defects;
 	m_newskin->set_timing_source(&m_timing_source);
 	set_note_data(column, note_data, timing_data);
 	m_column_mod.pos_mod.x_mod.m_value= x;
@@ -237,6 +242,79 @@ void NewFieldColumn::set_column_info(NewField* field, size_t column,
 		AddChild(act);
 	}
 	add_children_from_layers(column, skin_data.m_layers);
+}
+
+void NewFieldColumn::take_over_mods(NewFieldColumn& other)
+{
+#define CPY(name) name= other.name;
+	CPY(m_use_game_music_beat);
+	CPY(m_show_unjudgable_notes);
+	CPY(m_speed_segments_enabled);
+	CPY(m_scroll_segments_enabled);
+	CPY(m_add_y_offset_to_position);
+	CPY(m_holds_skewed_by_mods);
+	CPY(m_twirl_holds);
+	CPY(m_use_moddable_hold_normal);
+#define CPY_MODS(name) name.take_over_mods(other.name);
+	CPY_MODS(m_time_offset);
+	CPY_MODS(m_quantization_multiplier);
+	CPY_MODS(m_quantization_offset);
+	CPY_MODS(m_speed_mod);
+	CPY_MODS(m_lift_pretrail_length);
+	CPY_MODS(m_reverse_offset_pixels);
+	CPY_MODS(m_reverse_scale);
+	CPY_MODS(m_center_percent);
+	CPY_MODS(m_note_mod);
+	CPY_MODS(m_column_mod);
+	CPY_MODS(m_hold_normal_mod);
+	CPY_MODS(m_note_alpha);
+	CPY_MODS(m_note_glow);
+	CPY_MODS(m_receptor_alpha);
+	CPY_MODS(m_receptor_glow);
+	CPY_MODS(m_explosion_alpha);
+	CPY_MODS(m_explosion_glow);
+#undef CPY_MODS
+#undef CPY
+}
+
+void NewFieldColumn::set_defective_mode()
+{
+	if(!m_defective_mods->safe())
+	{
+		m_in_defective_mode= false;
+		return;
+	}
+	m_in_defective_mode= true;
+	SetXY(0.0, 0.0);
+	SetZ(0.0);
+	SetZoom(1.0);
+	SetRotationX(0.0);
+	SetRotationY(0.0);
+	SetRotationZ(0.0);
+}
+
+void NewFieldColumn::set_speed_old_way(float time_spacing,
+	float max_scroll_bpm, float scroll_speed, float scroll_bpm, float read_bpm,
+	float music_rate)
+{
+	if(time_spacing == 0.f)
+	{
+		if(max_scroll_bpm != 0.f)
+		{
+			m_speed_mod.add_simple_mod("speed", MIT_DistBeat,
+				max_scroll_bpm / read_bpm / music_rate);
+		}
+		else
+		{
+			m_speed_mod.add_simple_mod("speed", MIT_DistBeat,
+				scroll_speed);
+		}
+	}
+	else
+	{
+		m_speed_mod.add_simple_mod("speed", MIT_DistSecond,
+			scroll_bpm / 60.f / music_rate);
+	}
 }
 
 double NewFieldColumn::get_beat_from_second(double second)
@@ -265,10 +343,10 @@ void NewFieldColumn::update_displayed_time(double beat, double second)
 {
 	if(m_use_game_music_beat)
 	{
-		mod_val_inputs input(beat, second);
-		double offset= m_time_offset.evaluate(input);
-		if(offset != 0.0)
+		if(!m_time_offset.empty())
 		{
+			mod_val_inputs input(beat, second);
+			double offset= m_time_offset.evaluate(input);
 			second+= offset;
 			beat= m_timing_data->GetBeatFromElapsedTime(static_cast<float>(second));
 		}
@@ -288,26 +366,34 @@ void NewFieldColumn::set_displayed_second(double second)
 
 double NewFieldColumn::calc_y_offset(double beat, double second)
 {
-	double note_beat= beat;
-	double curr_beat= m_curr_displayed_beat;
-	if(m_scroll_segments_enabled)
+	if(!m_in_defective_mode)
 	{
-		if(beat == m_curr_beat)
+		double note_beat= beat;
+		double curr_beat= m_curr_displayed_beat;
+		if(m_scroll_segments_enabled)
 		{
-			note_beat= m_curr_displayed_beat;
+			if(beat == m_curr_beat)
+			{
+				note_beat= m_curr_displayed_beat;
+			}
+			else
+			{
+				note_beat= m_timing_data->GetDisplayedBeat(static_cast<float>(note_beat));
+			}
 		}
-		else
+		mod_val_inputs input(note_beat, second, curr_beat, m_curr_second);
+		double ret= note_size * m_speed_mod.evaluate(input);
+		if(m_speed_segments_enabled)
 		{
-			note_beat= m_timing_data->GetDisplayedBeat(static_cast<float>(note_beat));
+			ret*= m_timing_data->GetDisplayedSpeedPercent(static_cast<float>(m_curr_beat), static_cast<float>(m_curr_second));
 		}
+		return ret;
 	}
-	mod_val_inputs input(note_beat, second, curr_beat, m_curr_second);
-	double ret= note_size * m_speed_mod.evaluate(input);
-	if(m_speed_segments_enabled)
+	else
 	{
-		ret*= m_timing_data->GetDisplayedSpeedPercent(static_cast<float>(m_curr_beat), static_cast<float>(m_curr_second));
+		return m_defective_mods->get_y_offset(beat, second, m_column);
 	}
-	return ret;
+	return 0.0;
 }
 
 double NewFieldColumn::calc_lift_pretrail(double beat, double second, double yoffset)
@@ -319,21 +405,65 @@ double NewFieldColumn::calc_lift_pretrail(double beat, double second, double yof
 void NewFieldColumn::calc_transform(mod_val_inputs& input,
 	Rage::transform& trans)
 {
-	m_note_mod.evaluate(input, trans);
+	if(!m_in_defective_mode)
+	{
+		m_note_mod.evaluate(input, trans);
+	}
+	else
+	{
+		m_defective_mods->get_transform(input.eval_beat, input.y_offset,
+			apply_reverse_shift(input.y_offset), m_column, trans);
+	}
+}
+
+void NewFieldColumn::calc_transform_with_glow_alpha(mod_val_inputs& input,
+	Rage::transform& trans)
+{
+	if(!m_in_defective_mode)
+	{
+		m_note_mod.evaluate(input, trans);
+		trans.alpha= m_note_alpha.evaluate(input);
+		trans.glow= m_note_glow.evaluate(input);
+	}
+	else
+	{
+		m_defective_mods->get_transform_with_glow_alpha(input.eval_beat,
+			input.y_offset, apply_reverse_shift(input.y_offset), m_column, trans);
+	}
 }
 
 void NewFieldColumn::hold_render_transform(mod_val_inputs& input,
 	Rage::transform& trans, bool do_rot)
 {
-	m_note_mod.hold_render_eval(input, trans, do_rot);
+	if(!m_in_defective_mode)
+	{
+		m_note_mod.hold_render_eval(input, trans, do_rot);
+		trans.alpha= m_note_alpha.evaluate(input);
+		trans.glow= m_note_glow.evaluate(input);
+	}
+	else
+	{
+		m_defective_mods->hold_render_transform(input.y_offset, m_column, trans);
+	}
 }
 
 void NewFieldColumn::calc_reverse_shift()
 {
-	mod_val_inputs input(m_curr_beat, m_curr_second);
-	double reverse_offset= m_reverse_offset_pixels.evaluate(input);
-	double center_percent= m_center_percent.evaluate(input);
-	reverse_scale= m_reverse_scale.evaluate(input);
+	double reverse_offset= 0.0;
+	double center_percent= 0.0;
+	if(!m_in_defective_mode)
+	{
+		mod_val_inputs input(m_curr_beat, m_curr_second);
+		reverse_offset= m_reverse_offset_pixels.evaluate(input);
+		center_percent= m_center_percent.evaluate(input);
+		reverse_scale= m_reverse_scale.evaluate(input);
+	}
+	else
+	{
+		reverse_offset= m_defective_mods->get_reverse_offset();
+		center_percent= m_defective_mods->get_center_percent();
+		reverse_scale= m_defective_mods->get_reverse_scale(m_column);
+	}
 	reverse_shift= Rage::scale(reverse_scale, 1.0, -1.0, -reverse_offset, reverse_offset);
 	reverse_shift= Rage::scale(center_percent, 0.0, 1.0, reverse_shift, 0.0);
 	double old_scale_sign= reverse_scale_sign;
@@ -640,11 +770,12 @@ struct hold_vert_step_state
 	double y;
 	double beat;
 	double second;
-	double alpha;
-	double glow;
 	Rage::transform trans;
 	vector<double> tex_coords;
-	bool calc(NewFieldColumn& col, double curr_y, double end_y, hold_time_lerper& beat_lerp, hold_time_lerper& second_lerp, double curr_beat, double curr_second, hold_texture_handler& tex_handler, int& phase, bool is_lift)
+	bool calc(NewFieldColumn& col, double curr_y, double end_y,
+		hold_time_lerper& beat_lerp, hold_time_lerper& second_lerp,
+		double curr_beat, double curr_second, hold_texture_handler& tex_handler,
+		int& phase, bool is_lift)
 	{
 		tex_coords.clear();
 		bool last_vert_set= false;
@@ -668,15 +799,13 @@ struct hold_vert_step_state
 		second= second_lerp.lerp(y);
 		mod_val_inputs mod_input(beat, second, curr_beat, curr_second, y);
 		col.hold_render_transform(mod_input, trans, col.m_twirl_holds);
-		alpha= col.m_note_alpha.evaluate(mod_input);
-		glow= col.m_note_glow.evaluate(mod_input);
 		if(is_lift)
 		{
 			double along= (y - tex_handler.start_y) * lift_fade_dist_recip;
 			if(along < 1.0)
 			{
-				alpha*= along;
-				glow*= along;
+				trans.alpha*= along;
+				trans.glow*= along;
 			}
 		}
 		return last_vert_set;
@@ -753,7 +882,7 @@ void NewFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 	for(double curr_y= start_y; !last_vert_set; curr_y+= y_step)
 	{
 		hold_vert_step_state curr_step= next_step;
-		if(curr_step.glow > .01)
+		if(curr_step.trans.glow > .01)
 		{
 			need_glow_pass= true;
 		}
@@ -831,8 +960,8 @@ void NewFieldColumn::draw_hold(QuantizedHoldRenderData& data,
 		const Rage::Vector3 right_vert(
 			-render_left.x + curr_step.trans.pos.x, render_y -render_left.y,
 			-render_left.z + curr_step.trans.pos.z);
-		const Rage::Color color(1.0, 1.0, 1.0, curr_step.alpha);
-		const Rage::Color glow_color(1.0, 1.0, 1.0, curr_step.glow);
+		const Rage::Color color(1.0, 1.0, 1.0, curr_step.trans.alpha);
+		const Rage::Color glow_color(1.0, 1.0, 1.0, curr_step.trans.glow);
 #define add_vert_strip_args verts_to_draw, left_vert, right_vert, color, glow_color, tex_left, tex_right
 		for(size_t i= 0; i < curr_step.tex_coords.size(); ++i)
 		{
@@ -1068,20 +1197,33 @@ void NewFieldColumn::build_render_lists()
 	{
 		m_curr_displayed_beat= m_timing_data->GetDisplayedBeat(m_curr_beat);
 	}
-	mod_val_inputs input(m_curr_beat, m_curr_second);
-	Rage::transform trans;
-	m_column_mod.evaluate(input, trans);
-	set_transform(trans);
-	calc_transform(input, head_transform);
-	if(m_add_y_offset_to_position)
+	if(!m_in_defective_mode)
 	{
-		head_transform.pos.y+= apply_reverse_shift(head_y_offset());
+		mod_val_inputs input(m_curr_beat, m_curr_second);
+		Rage::transform trans;
+		m_column_mod.evaluate(input, trans);
+		set_transform(trans);
+		calc_transform(input, head_transform);
+		if(m_add_y_offset_to_position)
+		{
+			head_transform.pos.y+= apply_reverse_shift(head_y_offset());
+		}
+		receptor_alpha= m_receptor_alpha.evaluate(input);
+		receptor_glow= m_receptor_glow.evaluate(input);
+		explosion_alpha= m_explosion_alpha.evaluate(input);
+		explosion_glow= m_explosion_glow.evaluate(input);
+	}
+	else
+	{
+		double head_yoff= head_y_offset();
+		m_defective_mods->get_transform(m_curr_beat, head_yoff,
+			apply_reverse_shift(head_yoff), m_column, head_transform);
+		receptor_alpha= m_defective_mods->get_receptor_alpha();
+		receptor_glow= 0.0;
+		explosion_alpha= 1.0;
+		explosion_glow= 0.0;
 	}
 
-	receptor_alpha= m_receptor_alpha.evaluate(input);
-	receptor_glow= m_receptor_glow.evaluate(input);
-	explosion_alpha= m_explosion_alpha.evaluate(input);
-	explosion_glow= m_explosion_glow.evaluate(input);
 
 	// Clearing and rebuilding the list of taps to render every frame is
 	// unavoidable because the notes move every frame, which changes the y
@@ -1113,7 +1255,10 @@ void NewFieldColumn::build_render_lists()
 	double time_diff= m_curr_second - m_prev_curr_second;
 	auto column_end= m_note_data->end(m_column);
 	auto column_begin= m_note_data->begin(m_column);
-	if(first_note_visible_prev_frame == column_end || time_diff < 0)
+	// TODO: I don't like calling GetBeatFromElapsedTime every frame, but
+	// boomerange has problems if the column simply depends on what was visible
+	// last frame. -Kyz
+	if(true || first_note_visible_prev_frame == column_end || time_diff < 0)
 	{
 		NoteData::TrackMap::const_iterator discard;
 		double first_beat= m_timing_data->GetBeatFromElapsedTime(m_curr_second - 1.0);
@@ -1122,6 +1267,8 @@ void NewFieldColumn::build_render_lists()
 
 	double const max_try_second= m_curr_second + m_upcoming_time;
 	auto first_visible_this_frame= column_end;
+	double const time_to_end_visible_notes= 10.0;
+	double first_non_visible_time= -1000.0;
 	bool found_end_of_visible_notes= false;
 	for(auto curr_note= first_note_visible_prev_frame;
 			curr_note != column_end && !found_end_of_visible_notes; ++curr_note)
@@ -1132,6 +1279,7 @@ void NewFieldColumn::build_render_lists()
 		render_note renderable(this, column_begin, column_end, curr_note);
 		if(renderable.note_iter != column_end)
 		{
+			first_non_visible_time= -1000.0;
 			if(first_visible_this_frame == column_end)
 			{
 				first_visible_this_frame= curr_note;
@@ -1184,11 +1332,24 @@ void NewFieldColumn::build_render_lists()
 		}
 		else
 		{
+			if(first_non_visible_time > 0.0)
+			{
+				if(tn.occurs_at_second - first_non_visible_time > time_to_end_visible_notes)
+				{
+					found_end_of_visible_notes= true;
+				}
+			}
+			else
+			{
+				first_non_visible_time= tn.occurs_at_second;
+			}
+			/*
 			if(first_visible_this_frame != column_end ||
 				tn.occurs_at_second > max_try_second)
 			{
 				found_end_of_visible_notes= true;
 			}
+			*/
 		}
 	}
 	if(!m_status.found_upcoming)
@@ -1446,20 +1607,19 @@ void NewFieldColumn::draw_taps_internal()
 			// noteskin doesn't have them.
 			if(act.act != nullptr)
 			{
-				mod_val_inputs input(act.draw_beat, act.draw_second, m_curr_beat, m_curr_second, act.y_offset);
-				double alpha= m_note_alpha.evaluate(input);
-				double glow= m_note_glow.evaluate(input);
 				Rage::transform trans;
-				calc_transform(input, trans);
-				if(m_add_y_offset_to_position)
+				mod_val_inputs input(act.draw_beat, act.draw_second, m_curr_beat, m_curr_second, act.y_offset);
+				calc_transform_with_glow_alpha(input, trans);
+				if(!m_in_defective_mode)
 				{
-					trans.pos.y+= apply_reverse_shift(act.y_offset);
+					if(m_add_y_offset_to_position)
+					{
+						trans.pos.y+= apply_reverse_shift(act.y_offset);
+					}
 				}
+				act.act->set_transform_with_glow_alpha(trans);
 				// Need update the z bias when drawing taps to handle 3D notes.
 				act.act->recursive_set_z_bias(m_field->update_z_bias());
-				act.act->set_transform(trans);
-				act.act->SetDiffuseAlpha(alpha);
-				act.act->SetGlow(Rage::Color(1, 1, 1, glow));
 				if(m_playerize_mode == NPM_Mask)
 				{
 					act.act->recursive_set_mask_color(get_player_color(tn.pn));
@@ -1533,6 +1693,7 @@ void NewFieldColumn::set_pressed(bool on)
 
 void NewFieldColumn::DrawPrimitives()
 {
+	// TODO: Add logic for drawing everything when being drawn by ActorProxy.
 	switch(curr_render_child)
 	{
 		case holds_child_index:
@@ -1555,6 +1716,14 @@ void NewFieldColumn::DrawPrimitives()
 			}
 			break;
 	}
+}
+
+void NewFieldColumn::position_actor_at_column_head(Actor* act,
+	FieldLayerRenderInfo& info)
+{
+	apply_render_info_to_layer(act, info, head_transform, receptor_alpha,
+		receptor_glow, explosion_alpha, explosion_glow,
+		m_curr_beat, m_curr_second, m_note_alpha, m_note_glow);
 }
 
 void NewFieldColumn::set_playerize_mode(NotePlayerizeMode mode)
@@ -1625,8 +1794,11 @@ NewField::NewField()
 	 m_fov_mod(&m_mod_manager, 45.0),
 	 m_vanish_x_mod(&m_mod_manager, 0.0), m_vanish_y_mod(&m_mod_manager, 0.0),
 	 m_vanish_type(FVT_RelativeToParent), m_being_drawn_by_player(false),
+	 m_draw_beat_bars(false),
+	 m_in_defective_mode(false),
 	 m_own_note_data(false), m_note_data(nullptr), m_timing_data(nullptr),
-	 m_steps_type(StepsType_Invalid), m_drawing_board(false)
+	 m_steps_type(StepsType_Invalid),
+	 defective_render_y(0.0), original_y(0.0)
 {
 	DeleteChildrenWhenDone(true);
 	set_skin("default", m_skin_parameters);
@@ -1636,6 +1808,9 @@ NewField::NewField()
 	{
 		AddChild(act);
 	}
+	m_beat_bars.Load(THEME->GetPathG("NoteField","bars"));
+	m_field_text.LoadFromFont(THEME->GetPathF("NoteField","MeasureNumber"));
+	add_draw_entry(beat_bars_column_index, beat_bars_child_index, beat_bars_draw_order);
 }
 
 NewField::~NewField()
@@ -1695,27 +1870,42 @@ bool NewField::EarlyAbortDraw() const
 
 void NewField::PreDraw()
 {
+	if(m_in_defective_mode)
+	{
+		original_y= GetY();
+		SetY(original_y + defective_render_y);
+	}
 	ActorFrame::PreDraw();
+}
+
+void NewField::PostDraw()
+{
+	ActorFrame::PostDraw();
+	if(m_in_defective_mode)
+	{
+		SetY(original_y);
+	}
 }
 
 void NewField::draw_board()
 {
-	m_drawing_board= true;
 	m_first_undrawn_entry= 0;
 	m_curr_draw_limit= non_board_draw_order;
 	Draw();
-	m_drawing_board= false;
 }
 
 void NewField::draw_up_to_draw_order(int order)
 {
 	m_curr_draw_limit= order;
-	Draw();
+	if(m_first_undrawn_entry < m_draw_entries.size())
+	{
+		Draw();
+	}
 }
 
 void NewField::DrawPrimitives()
 {
-	if(!m_being_drawn_by_player)
+	if(!m_being_drawn_by_player || m_being_drawn_by_proxy)
 	{
 		m_first_undrawn_entry= 0;
 		m_curr_draw_limit= max_draw_order;
@@ -1732,6 +1922,16 @@ void NewField::DrawPrimitives()
 		draw_entry(m_draw_entries[m_first_undrawn_entry]);
 		++m_first_undrawn_entry;
 	}
+}
+
+void NewField::position_actor_at_column_head(Actor* act,
+	FieldLayerRenderInfo& info, size_t col)
+{
+	if(col >= m_columns.size())
+	{
+		return;
+	}
+	m_columns[col].position_actor_at_column_head(act, info);
 }
 
 void NewField::push_columns_to_lua(lua_State* L)
@@ -1802,6 +2002,8 @@ void NewField::set_note_data(NoteData* note_data, TimingData* timing, StepsType 
 	note_data->SetOccuranceTimeForAllTaps(timing);
 	m_own_note_data= false;
 	m_timing_data= timing;
+	m_defective_mods.set_timing(m_timing_data);
+	m_defective_mods.set_num_pads(GAMEMAN->get_num_pads_for_stepstype(stype));
 	m_trans_mod.set_timing(m_timing_data);
 	for(auto&& moddable : {&m_fov_mod, &m_vanish_x_mod, &m_vanish_y_mod})
 	{
@@ -1901,53 +2103,166 @@ void NewField::clear_column_draw_entries()
 	{
 		return;
 	}
-	auto write_pos= m_draw_entries.begin();
-	auto read_pos= m_draw_entries.begin();
-	while(read_pos != m_draw_entries.end())
+	vector<field_draw_entry> keep;
+	for(auto&& entry : m_draw_entries)
 	{
-		while(write_pos != m_draw_entries.end() && write_pos->column < 0)
+		if(entry.column < 0)
 		{
-			++write_pos;
-		}
-		if(write_pos == m_draw_entries.end())
-		{
-			break;
-		}
-		if(read_pos < write_pos)
-		{
-			read_pos= write_pos;
-		}
-		while(read_pos != m_draw_entries.end() && read_pos->column >= 0)
-		{
-			++read_pos;
-		}
-		if(read_pos != m_draw_entries.end())
-		{
-			(*write_pos)= (*read_pos);
+			keep.push_back(entry);
 		}
 	}
-	m_draw_entries.erase(write_pos, m_draw_entries.end());
+	m_draw_entries.swap(keep);
 }
 
 void NewField::draw_entry(field_draw_entry& entry)
 {
-	if(entry.column == field_layer_column_index)
+	switch(entry.column)
 	{
-		if(entry.child >= 0 && static_cast<size_t>(entry.child) < m_SubActors.size())
+		case field_layer_column_index:
+			if(entry.child >= 0 && static_cast<size_t>(entry.child) < m_SubActors.size())
+			{
+				apply_render_info_to_layer(m_SubActors[entry.child],
+					m_layer_render_info[entry.child], m_columns[0].get_head_trans(),
+					evaluated_receptor_alpha, evaluated_receptor_glow,
+					evaluated_explosion_alpha, evaluated_explosion_glow,
+					m_curr_beat, m_curr_second, m_receptor_alpha, m_receptor_glow);
+				m_SubActors[entry.child]->Draw();
+			}
+			break;
+		case beat_bars_column_index:
+			if(m_draw_beat_bars)
+			{
+				draw_beat_bars_internal();
+			}
+			break;
+		default:
+			if(entry.column >= 0 && static_cast<size_t>(entry.column) < m_columns.size())
+			{
+				m_columns[entry.column].draw_child(entry.child);
+			}
+			break;
+	}
+}
+
+void NewField::draw_field_text(double beat, double second, double y_offset,
+	double x_offset, float side_sign, float horiz_align,
+	Rage::Color const& color, Rage::Color const& glow)
+{
+	Rage::transform trans;
+	mod_val_inputs input(beat, second, m_curr_beat, m_curr_second, y_offset);
+	m_columns[0].calc_transform(input, trans);
+	if(!m_in_defective_mode)
+	{
+		if(m_columns[0].m_add_y_offset_to_position)
 		{
-			apply_render_info_to_layer(m_SubActors[entry.child],
-				m_layer_render_info[entry.child], m_columns[0].get_head_trans(),
-				evaluated_receptor_alpha, evaluated_receptor_glow,
-				evaluated_explosion_alpha, evaluated_explosion_glow,
-				m_curr_beat, m_curr_second, m_receptor_alpha, m_receptor_glow);
-			m_SubActors[entry.child]->Draw();
+			trans.pos.y+= m_columns[0].apply_reverse_shift(y_offset);
 		}
 	}
-	else
+	trans.pos.x+= ((m_field_width * .5) + x_offset) * side_sign;
+	m_field_text.set_transform_pos(trans);
+	m_field_text.SetDiffuse(color);
+	m_field_text.SetGlow(glow);
+	m_field_text.SetHorizAlign(horiz_align);
+	m_field_text.Draw();
+}
+
+void NewField::draw_beat_bar(double beat, double second, double y_offset,
+	int state, float alpha)
+{
+	if(m_columns[0].y_offset_visible(y_offset) != 0 || alpha <= 0.f)
 	{
-		if(entry.column >= 0 && static_cast<size_t>(entry.column) < m_columns.size())
+		return;
+	}
+	float const bar_width= m_beat_bars.GetUnzoomedWidth();
+	Rage::transform trans;
+	mod_val_inputs input(beat, second, m_curr_beat, m_curr_second, y_offset);
+	m_columns[0].calc_transform(input, trans);
+	if(!m_in_defective_mode)
+	{
+		if(m_columns[0].m_add_y_offset_to_position)
 		{
-			m_columns[entry.column].draw_child(entry.child);
+			trans.pos.y+= m_columns[0].apply_reverse_shift(y_offset);
+		}
+	}
+	m_beat_bars.set_transform_pos(trans);
+	m_beat_bars.SetDiffuse(Rage::Color(1,1,1,alpha));
+	m_beat_bars.SetState(state);
+	m_beat_bars.SetCustomTextureRect(
+		Rage::RectF(0, Rage::scale(state + 0.f,0.f,4.f,0.f,1.f),
+			m_field_width / bar_width, Rage::scale(state+1.f,0.f,4.f,0.f,1.f)));
+	m_beat_bars.SetZoomX(m_field_width/bar_width);
+	m_beat_bars.Draw();
+}
+
+void NewField::draw_beat_bars_internal()
+{
+	if(m_columns.empty())
+	{
+		return;
+	}
+	float const beat_step_size= 1.f;
+	float const start_beat= floor(m_curr_beat) - 2.f;
+	float const max_beat= start_beat + 128.f;
+	double last_visible_beat= -1000.0;
+	bool found_end= false;
+	std::vector<float> sub_beats= {.25, .5, .75};
+	std::vector<int> sub_states= {2, 3, 2};
+	Rage::Color measure_number_color(1,1,1,1);
+	Rage::Color measure_number_glow(1,1,1,0);
+	for(float step= 0.f; !found_end; ++step)
+	{
+		double const beat= start_beat + (step * beat_step_size);
+		double const second= m_timing_data->GetElapsedTimeFromBeat(beat);
+		double const main_y_offset= m_columns[0].calc_y_offset(beat, second);
+		if(beat > max_beat)
+		{
+			found_end= true;
+		}
+		if(step == 0.f)
+		{
+			last_visible_beat= beat;
+		}
+		int state= 1;
+		int quantized_beat= static_cast<int>(beat);
+		if(quantized_beat % 4 == 0)
+		{
+			state= 0;
+			m_field_text.SetText(fmt::sprintf("%d", quantized_beat / 4));
+			draw_field_text(beat, second, main_y_offset, 0., -1., align_right,
+				measure_number_color, measure_number_glow);
+		}
+		draw_beat_bar(beat, second, main_y_offset, state, 1.f);
+		if(m_columns[0].y_offset_visible(main_y_offset) != 0)
+		{
+			if(beat > last_visible_beat + 4.0)
+			{
+				found_end= true;
+			}
+		}
+		else
+		{
+			last_visible_beat= beat;
+		}
+		float first_and_third_sub_alpha= 1.f;
+		for(size_t sub= 0; sub < sub_beats.size(); ++sub)
+		{
+			double sub_beat= beat + sub_beats[sub];
+			double sub_second= m_timing_data->GetElapsedTimeFromBeat(sub_beat);
+			double sub_y_offset= m_columns[0].calc_y_offset(sub_beat, sub_second);
+			double offset_diff= fabs(sub_y_offset - main_y_offset);
+			float alpha= ((offset_diff / note_size) - .5) * 2.;
+			switch(sub)
+			{
+				case 0:
+					first_and_third_sub_alpha= alpha;
+					break;
+				case 2:
+					alpha= first_and_third_sub_alpha;
+					break;
+				default:
+					break;
+			}
+			draw_beat_bar(sub_beat, sub_second, sub_y_offset, sub_states[sub], alpha);
 		}
 	}
 }
@@ -2008,7 +2323,8 @@ void NewField::reload_columns(NewSkinLoader const* new_loader, LuaReference& new
 
 	clear_column_draw_entries();
 	double curr_x= (m_field_width * -.5);
-	m_columns.clear();
+	std::vector<NewFieldColumn> old_columns;
+	m_columns.swap(old_columns);
 	m_columns.resize(m_note_data->GetNumTracks());
 	// The column needs all of this info.
 	Message pn_msg("PlayerStateSet");
@@ -2022,14 +2338,29 @@ void NewField::reload_columns(NewSkinLoader const* new_loader, LuaReference& new
 		// allows columns to have different widths.
 		double halfw= (col->get_width() + col->get_padding()) * .5;
 		curr_x+= halfw;
-		m_columns[i].set_column_info(this, i, col, m_newskin, &m_player_colors,
-			m_note_data, m_timing_data, curr_x);
+		m_columns[i].set_column_info(this, i, col, &m_defective_mods, m_newskin,
+			&m_player_colors, m_note_data, m_timing_data, curr_x);
+		if(i < old_columns.size())
+		{
+			m_columns[i].take_over_mods(old_columns[i]);
+		}
 		curr_x+= halfw;
 		add_draw_entry(static_cast<int>(i), holds_child_index, holds_draw_order);
 		add_draw_entry(static_cast<int>(i), lifts_child_index, holds_draw_order);
 		add_draw_entry(static_cast<int>(i), taps_child_index, taps_draw_order);
 		m_columns[i].HandleMessage(pn_msg);
+		if(m_in_defective_mode)
+		{
+			m_columns[i].set_defective_mode();
+		}
 	}
+	vector<float> column_x;
+	column_x.reserve(m_columns.size());
+	for(auto&& col : m_columns)
+	{
+		column_x.push_back(col.m_column_mod.pos_mod.x_mod.m_value);
+	}
+	m_defective_mods.set_column_pos(column_x);
 	// Handle the width message after the columns have been created so that the
 	// board can fetch the columns.
 	HandleMessage(width_msg);
@@ -2041,6 +2372,50 @@ void NewField::set_player_number(PlayerNumber pn)
 	Message msg("PlayerStateSet");
 	msg.SetParam("PlayerNumber", pn);
 	HandleMessage(msg);
+}
+
+void NewField::set_player_options(PlayerOptions* options)
+{
+	m_defective_mods.set_player_options(options);
+}
+
+void NewField::set_defective_mode()
+{
+	if(!m_defective_mods.safe())
+	{
+		m_in_defective_mode= false;
+		return;
+	}
+	if(m_in_defective_mode)
+	{
+		return;
+	}
+	m_in_defective_mode= true;
+	SetXY(0.0, m_defective_mods.get_field_y());
+	SetZ(0.0);
+	SetZoom(1.0);
+	SetRotationX(0.0);
+	SetRotationY(0.0);
+	SetRotationZ(0.0);
+	for(auto&& col : m_columns)
+	{
+		col.set_defective_mode();
+	}
+}
+
+void NewField::set_speed_old_way(float time_spacing, float max_scroll_bpm,
+	float scroll_speed, float scroll_bpm, float read_bpm, float music_rate)
+{
+	for(auto&& col : m_columns)
+	{
+		col.set_speed_old_way(time_spacing, max_scroll_bpm, scroll_speed,
+			scroll_bpm, read_bpm, music_rate);
+	}
+}
+
+void NewField::turn_on_edit_text()
+{
+	m_draw_beat_bars= true;
 }
 
 void NewField::set_layer_fade_type(Actor* child, FieldLayerFadeType type)
@@ -2073,31 +2448,58 @@ void NewField::update_displayed_time(double beat, double second)
 	}
 	// Evaluate mods only when the time changes to minimize the number of
 	// times mods are evaluated. -Kyz
-	mod_val_inputs input(m_curr_beat, m_curr_second);
-	SetFOV(m_fov_mod.evaluate(input));
-	double vanish_x= m_vanish_x_mod.evaluate(input);
-	double vanish_y= m_vanish_y_mod.evaluate(input);
-	Actor* parent= GetParent();
-	switch(m_vanish_type)
+	if(!m_in_defective_mode)
 	{
-		case FVT_RelativeToParent:
-			vanish_x+= parent->GetX();
-			vanish_y+= parent->GetY();
-		case FVT_RelativeToSelf:
-			vanish_x+= GetX();
-			vanish_y+= GetY();
-			break;
-		default:
-			break;
+		mod_val_inputs input(m_curr_beat, m_curr_second);
+		SetFOV(m_fov_mod.evaluate(input));
+		double vanish_x= m_vanish_x_mod.evaluate(input);
+		double vanish_y= m_vanish_y_mod.evaluate(input);
+		Actor* parent= GetParent();
+		switch(m_vanish_type)
+		{
+			case FVT_RelativeToParent:
+				vanish_x+= parent->GetX();
+				vanish_y+= parent->GetY();
+			case FVT_RelativeToSelf:
+				vanish_x+= GetX();
+				vanish_y+= GetY();
+				break;
+			default:
+				break;
+		}
+		SetVanishPoint(vanish_x, vanish_y);
+		Rage::transform trans;
+		m_trans_mod.evaluate(input, trans);
+		set_transform(trans);
+		evaluated_receptor_alpha= m_receptor_alpha.evaluate(input);
+		evaluated_receptor_glow= m_receptor_glow.evaluate(input);
+		evaluated_explosion_alpha= m_explosion_alpha.evaluate(input);
+		evaluated_explosion_glow= m_explosion_glow.evaluate(input);
 	}
-	SetVanishPoint(vanish_x, vanish_y);
-	Rage::transform trans;
-	m_trans_mod.evaluate(input, trans);
-	set_transform(trans);
-	evaluated_receptor_alpha= m_receptor_alpha.evaluate(input);
-	evaluated_receptor_glow= m_receptor_glow.evaluate(input);
-	evaluated_explosion_alpha= m_explosion_alpha.evaluate(input);
-	evaluated_explosion_glow= m_explosion_glow.evaluate(input);
+	else
+	{
+		m_defective_mods.update(m_curr_beat, m_curr_second);
+		SetFOV(45.0);
+		double vanish_x= Rage::scale(m_defective_mods.get_skew(), 0.1f, 1.0f, GetParent()->GetX(), SCREEN_CENTER_X);
+		double vanish_y= SCREEN_CENTER_Y;
+		SetVanishPoint(vanish_x, vanish_y);
+		float reverse_mult= m_defective_mods.get_reverse_scale(0) < 0.0f ? -1.0f : 1.0f;
+		float tilt= m_defective_mods.get_tilt();
+		float tilt_degrees= Rage::scale(tilt, -1.0f, 1.0f, 30.0f, -30.0f) * reverse_mult;
+		float zoom= 1.f - (m_defective_mods.get_mini() * .5f);
+		if(tilt > 0.0f)
+		{
+			zoom*= Rage::scale(tilt, 0.0f, 1.0f, 1.0f, .9f);
+			defective_render_y= Rage::scale(tilt, 0.0f, 1.0f, 0.0f, -45.0f) * reverse_mult;
+		}
+		else
+		{
+			zoom*= Rage::scale(tilt, 0.0f, -1.0f, 1.0f, .9f);
+			defective_render_y= Rage::scale(tilt, 0.0f, -1.0f, 0.0f, -20.0f) * reverse_mult;
+		}
+		SetZoom(zoom);
+		SetRotationX(tilt_degrees);
+	}
 }
 
 double NewField::get_beat_from_second(double second)
@@ -2473,6 +2875,11 @@ struct LunaNewField : Luna<NewField>
 		p->set_layer_fade_type(layer, type);
 		COMMON_RETURN_SELF;
 	}
+	static int set_defective_mode(T* p, lua_State* L)
+	{
+		p->set_defective_mode();
+		COMMON_RETURN_SELF;
+	}
 	LunaNewField()
 	{
 		ADD_METHOD(set_skin);
@@ -2493,6 +2900,7 @@ struct LunaNewField : Luna<NewField>
 		ADD_METHOD(set_player_color);
 		ADD_METHOD(get_layer_fade_type);
 		ADD_METHOD(set_layer_fade_type);
+		ADD_METHOD(set_defective_mode);
 	}
 };
 LUA_REGISTER_DERIVED_CLASS(NewField, ActorFrame);
