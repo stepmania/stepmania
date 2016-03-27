@@ -2,7 +2,7 @@ set(GLEW_SRC "glew-1.5.8/src/glew.c")
 
 source_group("" FILES ${GLEW_SRC})
 
-add_library("glew" ${GLEW_SRC})
+add_library("glew" STATIC ${GLEW_SRC})
 
 set_property(TARGET "glew" PROPERTY FOLDER "External Libraries")
 

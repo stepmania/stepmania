@@ -1122,7 +1122,7 @@ bool SMLoader::LoadNoteDataFromSimfile( const std::string &path, Steps &out )
 
 bool SMLoader::LoadFromSimfile( const std::string &sPath, Song &out, bool bFromCache )
 {
-	LOG->Trace( "Song::LoadFromSMFile(%s)", sPath.c_str() );
+	//LOG->Trace( "Song::LoadFromSMFile(%s)", sPath.c_str() );
 
 	MsdFile msd;
 	if( !msd.ReadFile( sPath, true ) )  // unescape

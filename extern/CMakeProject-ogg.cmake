@@ -14,7 +14,7 @@ list(APPEND OGG_HPP
 source_group("Source Files" FILES ${OGG_SRC})
 source_group("Header Files" FILES ${OGG_HPP})
 
-add_library("ogg" ${OGG_SRC} ${OGG_HPP} ${OGG_DAT})
+add_library("ogg" STATIC ${OGG_SRC} ${OGG_HPP} ${OGG_DAT})
 
 set_property(TARGET "ogg" PROPERTY FOLDER "External Libraries")
 

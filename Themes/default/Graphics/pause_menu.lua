@@ -1,7 +1,7 @@
 gameplay_pause_count= 0
 course_stopped_by_pause_menu= false
 
-local pause_buttons= {Start= true, Select= true, Back= true}
+local pause_buttons= {Start= false, Select= true, Back= true}
 local pause_double_tap_time= 1
 local tap_debounce_time= .1
 local pause_press_times= {}
@@ -155,42 +155,63 @@ menu_actions.MenuRight= menu_actions.Right
 menu_actions.MenuUp= menu_actions.Up
 menu_actions.MenuDown= menu_actions.Down
 
+local down_status= {}
+
+local function detect_lr_press()
+	return down_status.MenuLeft and down_status.MenuRight
+end
+
+local function pause_and_show(pn)
+	gameplay_pause_count= gameplay_pause_count + 1
+	screen_gameplay:PauseGame(true)
+	local fg= screen_gameplay:GetChild("SongForeground")
+	if fg then
+		old_fg_visible= fg:GetVisible()
+		fg:visible(false)
+	end
+	local prompt_text= screen_gameplay:GetChild("Debug")
+	if prompt_text then
+		prompt_text:playcommand("TweenOff")
+	end
+	show_menu(pn)
+end
+
 local function input(event)
 	local pn= event.PlayerNumber
 	if not enabled_players[pn] then return end
 	local button= event.GameButton
 	if not button then return end
-	if event.type == "InputEventType_Release" then return end
+	if event.type == "InputEventType_Release" then
+		down_status[event.button]= false
+		return
+	end
+	down_status[event.button]= true
+	if screen_gameplay:GetName() == "ScreenGameplaySyncMachine" then return end
 	local is_paused= screen_gameplay:IsPaused()
 	if is_paused then
 		if menu_is_showing[pn] then
 			if menu_actions[button] then
 				menu_actions[button](pn)
-				return true
+				return
 			end
 		else
-			if pause_buttons[button] then
+			if pause_buttons[button] or detect_lr_press() then
 				show_menu(pn)
-				return true
+				return
 			end
 		end
 	else
 		button= event.button
 		if event.type ~= "InputEventType_FirstPress" then return end
-		if pause_buttons[button] then
+		if detect_lr_press() then
+			pause_and_show(pn)
+		elseif pause_buttons[button] then
 			if GAMESTATE:GetCoinMode() == "CoinMode_Pay" then return end
 			if pause_press_times[pn] then
 				local time_since_press= GetTimeSinceStart() - pause_press_times[pn]
 				if time_since_press > tap_debounce_time then
 					if time_since_press <= pause_double_tap_time then
-						gameplay_pause_count= gameplay_pause_count + 1
-						screen_gameplay:PauseGame(true)
-						local fg= screen_gameplay:GetChild("SongForeground")
-						if fg then
-							old_fg_visible= fg:GetVisible()
-							fg:visible(false)
-						end
-						show_menu(pn)
+						pause_and_show(pn)
 					else
 						pause_press_times[pn]= GetTimeSinceStart()
 					end

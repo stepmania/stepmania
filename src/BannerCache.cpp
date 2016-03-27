@@ -128,7 +128,7 @@ void BannerCache::LoadBanner( std::string sBannerPath )
 			{
 				/* The file doesn't exist.  It's possible that the banner cache file is
 				 * missing, so try to create it.  Don't do this first, for efficiency. */
-				LOG->Trace( "Cached banner load of '%s' ('%s') failed, trying to cache ...", sBannerPath.c_str(), sCachePath.c_str() );
+				//LOG->Trace( "Cached banner load of '%s' ('%s') failed, trying to cache ...", sBannerPath.c_str(), sCachePath.c_str() );
 
 				/* Skip the up-to-date check; it failed to load, so it can't be up
 				 * to date. */
@@ -137,7 +137,7 @@ void BannerCache::LoadBanner( std::string sBannerPath )
 			}
 			else
 			{
-				LOG->Trace( "Cached banner load of '%s' ('%s') failed", sBannerPath.c_str(), sCachePath.c_str() );
+				//LOG->Trace( "Cached banner load of '%s' ('%s') failed", sBannerPath.c_str(), sCachePath.c_str() );
 				return;
 			}
 		}
@@ -274,7 +274,7 @@ RageTextureID BannerCache::LoadCachedBanner( std::string sBannerPath )
 	if( sBannerPath == "" )
 		return ID;
 
-	LOG->Trace( "BannerCache::LoadCachedBanner(%s): %s", sBannerPath.c_str(), ID.filename.c_str() );
+	//LOG->Trace( "BannerCache::LoadCachedBanner(%s): %s", sBannerPath.c_str(), ID.filename.c_str() );
 
 	/* Hack: make sure Banner::Load doesn't change our return value and end up
 	 * reloading. */
@@ -310,8 +310,8 @@ RageTextureID BannerCache::LoadCachedBanner( std::string sBannerPath )
 	if( TEXTUREMAN->IsTextureRegistered(ID) )
 		return ID; /* It's all set. */
 
-	LOG->Trace( "Loading banner texture %s; src %ix%i; image %ix%i",
-		    ID.filename.c_str(), iSourceWidth, iSourceHeight, pImage->w, pImage->h );
+	//LOG->Trace( "Loading banner texture %s; src %ix%i; image %ix%i",
+	//	    ID.filename.c_str(), iSourceWidth, iSourceHeight, pImage->w, pImage->h );
 	RageTexture *pTexture = new BannerTexture( ID, pImage, iSourceWidth, iSourceHeight );
 
 	ID.Policy = RageTextureID::TEX_VOLATILE;

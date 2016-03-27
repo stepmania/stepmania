@@ -624,7 +624,7 @@ void Actor::PreDraw() // calculate actor properties
 			break;
 		case bob:
 			{
-				float fPercentOffset = Rage::FastSin( fPercentThroughEffect *Rage::PI *2 );
+				float fPercentOffset = Rage::FastSin( fPercentThroughEffect * Rage::PI * 2 );
 				tempState.pos += m_vEffectMagnitude * fPercentOffset;
 			}
 			break;
@@ -795,10 +795,26 @@ void Actor::SetDrawOrder(int order)
 		GetParent()->ChildChangedDrawOrder(this);
 	}
 }
+void Actor::CalcPercentThroughTween()
+{
+	TweenState &TS = m_Tweens[0]->state;
+	TweenInfo  &TI = m_Tweens[0]->info;
+	const float percent_through = 1-(TI.m_fTimeLeftInTween / TI.m_fTweenTime);
+	// distort the percentage if appropriate
+	float percent_along = TI.m_pTween->Tween(percent_through);
+	TweenState::MakeWeightedAverage(m_current, m_start, TS, percent_along);
+	UpdatePercentThroughTween(percent_along);
+}
 
 void Actor::UpdateTweening( float fDeltaTime )
 {
 	using std::min;
+	if(fDeltaTime < 0.0 && !m_Tweens.empty())
+	{
+		m_Tweens[0]->info.m_fTimeLeftInTween-= fDeltaTime;
+		CalcPercentThroughTween();
+		return;
+	}
 	while( !m_Tweens.empty() // something to do
 		&& fDeltaTime > 0 )	// something will change
 	{
@@ -831,12 +847,7 @@ void Actor::UpdateTweening( float fDeltaTime )
 		}
 		else	// in the middle of tweening. Recalcute the current position.
 		{
-			const float fPercentThroughTween = 1-(TI.m_fTimeLeftInTween / TI.m_fTweenTime);
-
-			// distort the percentage if appropriate
-			float fPercentAlongPath = TI.m_pTween->Tween( fPercentThroughTween );
-			TweenState::MakeWeightedAverage( m_current, m_start, TS, fPercentAlongPath );
-			UpdatePercentThroughTween(fPercentAlongPath);
+			CalcPercentThroughTween();
 		}
 
 		if( bBeginning )
@@ -988,6 +999,10 @@ void Actor::UpdateInternal(float delta_time)
 		default: break;
 	}
 
+	if(m_tween_uses_effect_delta)
+	{
+		delta_time= m_fEffectDelta;
+	}
 	this->UpdateTweening(delta_time);
 }
 
@@ -1963,6 +1978,7 @@ public:
 	static int effectclock( T* p, lua_State *L )		{ p->SetEffectClockString(SArg(1)); COMMON_RETURN_SELF; }
 	static int effectmagnitude( T* p, lua_State *L )	{ p->SetEffectMagnitude( Rage::Vector3(FArg(1),FArg(2),FArg(3)) ); COMMON_RETURN_SELF; }
 	static int geteffectmagnitude( T* p, lua_State *L )	{ Rage::Vector3 v = p->GetEffectMagnitude(); lua_pushnumber(L, v.x); lua_pushnumber(L, v.y); lua_pushnumber(L, v.z); return 3; }
+	GETTER_SETTER_BOOL_METHOD(tween_uses_effect_delta);
 	static int scaletocover( T* p, lua_State *L )		{ p->ScaleToCover( Rage::RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); COMMON_RETURN_SELF; }
 	static int scaletofit( T* p, lua_State *L )		{ p->ScaleToFitInside( Rage::RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); COMMON_RETURN_SELF; }
 	static int animate( T* p, lua_State *L )		{ p->EnableAnimation(BIArg(1)); COMMON_RETURN_SELF; }
@@ -2260,6 +2276,7 @@ public:
 		ADD_METHOD( effectclock );
 		ADD_METHOD( effectmagnitude );
 		ADD_METHOD( geteffectmagnitude );
+		ADD_GET_SET_METHODS(tween_uses_effect_delta);
 		ADD_METHOD( scaletocover );
 		ADD_METHOD( scaletofit );
 		ADD_METHOD( animate );

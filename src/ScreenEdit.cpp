@@ -1052,7 +1052,15 @@ static MenuDef g_SongInformation(
 		true, EditMode_Full, true, true, 0)
 );
 
-
+// Ugh, I don't like making this global pointer to clipboardFullTiming, but
+// it's the only way to make it visible to EnabledIfClipboardTimingIsSafe for
+// making sure it's safe to paste as the timing data for the Steps/Song. -Kyz
+static TimingData* clipboard_full_timing= nullptr;
+static bool EnabledIfClipboardTimingIsSafe();
+static bool EnabledIfClipboardTimingIsSafe()
+{
+	return clipboard_full_timing != nullptr && clipboard_full_timing->IsSafeFullTiming();
+}
 static MenuDef g_TimingDataInformation(
 	"ScreenMiniMenuTimingDataInformation",
 	MenuRowDef(ScreenEdit::beat_0_offset,
@@ -1103,6 +1111,9 @@ static MenuDef g_TimingDataInformation(
 	MenuRowDef(ScreenEdit::copy_timing_in_region,
 		"Copy timing in region",
 		true, EditMode_Full, true, true, 0),
+	MenuRowDef(ScreenEdit::clear_timing_in_region,
+		"Clear timing in region",
+		true, EditMode_Full, true, true, 0),
 	MenuRowDef(ScreenEdit::paste_timing_from_clip,
 		"Paste timing from clipboard",
 		true, EditMode_Full, true, true, 0),
@@ -1111,7 +1122,7 @@ static MenuDef g_TimingDataInformation(
 		true, EditMode_Full, true, true, 0),
 	MenuRowDef(ScreenEdit::paste_full_timing,
 		"Paste timing data",
-		true, EditMode_Full, true, true, 0),
+		EnabledIfClipboardTimingIsSafe, EditMode_Full, true, true, 0 ),
 	MenuRowDef(ScreenEdit::erase_step_timing,
 		"Erase step timing",
 		true, EditMode_Full, true, true, 0)
@@ -1508,6 +1519,7 @@ void ScreenEdit::Init()
 	m_Clipboard.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 
 	clipboardFullTiming = GAMESTATE->m_pCurSong->m_SongTiming; // always have a backup.
+	clipboard_full_timing= &clipboardFullTiming;
 
 	m_bHasUndo = false;
 	m_Undo.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
@@ -4421,6 +4433,12 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenEdit::SetDirty(bool dirty)
 {
+	if(EDIT_MODE.GetValue() != EditMode_Full)
+	{
+		m_dirty= false;
+		m_next_autosave_time= -1.0f;
+		return;
+	}
 	if(dirty)
 	{
 		if(!m_dirty)
@@ -5891,17 +5909,21 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			break;
 		}
 		case shift_timing_in_region_down:
-			m_timing_is_being_copied= false;
+			m_timing_change_menu_purpose= menu_is_for_shifting;
 			m_timing_rows_being_shitted= GetRowsFromAnswers(c, iAnswers);
 			DisplayTimingChangeMenu();
 			break;
 		case shift_timing_in_region_up:
-			m_timing_is_being_copied= false;
+			m_timing_change_menu_purpose= menu_is_for_shifting;
 			m_timing_rows_being_shitted= -GetRowsFromAnswers(c, iAnswers);
 			DisplayTimingChangeMenu();
 			break;
 		case copy_timing_in_region:
-			m_timing_is_being_copied= true;
+			m_timing_change_menu_purpose= menu_is_for_copying;
+			DisplayTimingChangeMenu();
+			break;
+		case clear_timing_in_region:
+			m_timing_change_menu_purpose= menu_is_for_clearing;
 			DisplayTimingChangeMenu();
 			break;
 		case paste_timing_from_clip:
@@ -5914,7 +5936,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 	}
 	case paste_full_timing:
 	{
-		if (GAMESTATE->m_bIsUsingStepTiming)
+		if(GAMESTATE->m_bIsUsingStepTiming)
 		{
 			GAMESTATE->m_pCurSteps[PLAYER_1]->m_Timing = clipboardFullTiming;
 		}
@@ -5986,14 +6008,19 @@ void ScreenEdit::HandleTimingDataChangeChoice(TimingDataChangeChoice choice,
 	{
 		end= MAX_NOTE_ROW;
 	}
-	if(m_timing_is_being_copied)
+	switch(m_timing_change_menu_purpose)
 	{
-		clipboardFullTiming.Clear();
-		GetAppropriateTiming().CopyRange(begin, end, change_type, 0, clipboardFullTiming);
-	}
-	else
-	{
-		GetAppropriateTimingForUpdate().ShiftRange(begin, end, change_type, m_timing_rows_being_shitted);
+		case menu_is_for_copying:
+			clipboardFullTiming.Clear();
+			GetAppropriateTiming().CopyRange(begin, end, change_type, 0, clipboardFullTiming);
+			break;
+		case menu_is_for_shifting:
+			GetAppropriateTimingForUpdate().ShiftRange(begin, end, change_type, m_timing_rows_being_shitted);
+			break;
+		case menu_is_for_clearing:
+			GetAppropriateTimingForUpdate().ClearRange(begin, end, change_type);
+			break;
+		default: break;
 	}
 }
 

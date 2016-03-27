@@ -222,6 +222,7 @@
 		<Function name='getfenv'/>
 		<Function name='getmetatable'/>
 		<Function name='get_music_file_length'/>
+		<Function name='get_sound_driver_list'/>
 		<Function name='ipairs'/>
 		<Function name='ivalues'/>
 		<Function name='join'/>
@@ -385,6 +386,7 @@
 			<Function name='getaux'/>
 			<Function name='geteffectmagnitude'/>
 			<Function name='getrotation'/>
+			<Function name='get_tween_uses_effect_delta'/>
 			<Function name='glow'/>
 			<Function name='glowblink'/>
 			<Function name='glowramp'/>
@@ -417,6 +419,7 @@
 			<Function name='scaletofit'/>
 			<Function name='setsize'/>
 			<Function name='setstate'/>
+			<Function name='set_tween_uses_effect_delta'/>
 			<Function name='shadowcolor'/>
 			<Function name='shadowlength'/>
 			<Function name='shadowlengthx'/>
@@ -1369,6 +1372,7 @@
 			<Function name='GetProfile'/>
 			<Function name='GetProfileDir'/>
 			<Function name='GetSongNumTimesPlayed'/>
+			<Function name='GetStatsPrefix'/>
 			<Function name='IsPersistentProfile'/>
 			<Function name='IsSongNew'/>
 			<Function name='LastLoadWasTamperedOrCorrupt'/>
@@ -1378,6 +1382,7 @@
 			<Function name='SaveLocalProfile'/>
 			<Function name='SaveMachineProfile'/>
 			<Function name='SaveProfile'/>
+			<Function name='SetStatsPrefix'/>
 		</Class>
 		<Class name='RadarValues'>
 			<Function name='GetValue'/>
@@ -1519,10 +1524,17 @@
 		<Class name='ScreenManager'>
 			<Function name='AddNewScreenToTop'/>
 			<Function name='GetTopScreen'/>
+			<Function name='get_input_redirected'/>
+			<Function name='PlayInvalidSound'/>
+			<Function name='PlayStartSound'/>
+			<Function name='PlayCoinSound'/>
+			<Function name='PlayCancelSound'/>
+			<Function name='PlayScreenshotSound'/>
 			<Function name='ReloadOverlayScreens'/>
 			<Function name='ScreenClassExists'/>
 			<Function name='ScreenIsPrepped'/>
 			<Function name='SetNewScreen'/>
+			<Function name='set_input_redirected'/>
 			<Function name='SystemMessage'/>
 		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenNameEntryTraditional'>
@@ -1560,6 +1572,7 @@
 			<Function name='GetSelectionIndex'/>
 		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenSelectMusic'>
+			<Function name='CanOpenOptionsList'/>
 			<Function name='GetGoToOptions'/>
 			<Function name='GetMusicWheel'/>
 			<Function name='OpenOptionsList'/>

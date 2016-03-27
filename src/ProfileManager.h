@@ -43,6 +43,8 @@ public:
 	int GetLocalProfileIndexFromID( std::string sProfileID ) const;
 	int GetNumLocalProfiles() const;
 
+	std::string GetStatsPrefix() { return m_stats_prefix; }
+	void SetStatsPrefix(std::string const& prefix);
 
 	bool LoadFirstAvailableProfile( PlayerNumber pn, bool bLoadEdits = true );	// memory card or local profile
 	bool LoadLocalProfileFromMachine( PlayerNumber pn );
@@ -118,6 +120,8 @@ private:
 
 	// MemoryCardProfileImportSubdirs name, if the profile was imported.
 	std::string m_sProfileDirImportedFrom[NUM_PLAYERS];
+
+	std::string m_stats_prefix;
 
 	bool m_bWasLoadedFromMemoryCard[NUM_PLAYERS];
 	bool m_bLastLoadWasTamperedOrCorrupt[NUM_PLAYERS];	// true if Stats.xml was present, but failed to load (probably because of a signature failure)

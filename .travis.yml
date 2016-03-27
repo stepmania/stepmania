@@ -18,6 +18,7 @@ matrix:
                         - llvm-toolchain-precise-3.6
                     packages:
                         - nasm
+                        - libudev-dev
                         - clang-3.6
                         - libmad0-dev
                         - libgtk2.0-dev
@@ -46,6 +47,7 @@ matrix:
                         - ubuntu-toolchain-r-test
                     packages:
                         - nasm
+                        - libudev-dev
                         - gcc-5
                         - g++-5
                         - libmad0-dev
@@ -70,6 +72,7 @@ matrix:
                         - ubuntu-toolchain-r-test
                     packages:
                         - nasm
+                        - libudev-dev
                         - gcc-4.9
                         - g++-4.9
                         - libmad0-dev

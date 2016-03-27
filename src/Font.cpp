@@ -622,7 +622,7 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const std:
 				{
 					LuaHelpers::ReportScriptErrorFmt(
 						"The font definition \"%s\" tries to assign line %i, "
-						"but the font is only %i characters high."
+						"but the font is only %i characters high.  "
 						"Line numbers start at 0.",
 						ini.GetPath().c_str(), first_frame, num_frames_high);
 					continue;

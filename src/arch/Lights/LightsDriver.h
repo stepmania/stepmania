@@ -18,9 +18,9 @@ public:
 	virtual void Set( const LightsState *ls ) = 0;
 };
 
-#define REGISTER_SOUND_DRIVER_CLASS2( name, x ) \
+#define REGISTER_LIGHTS_DRIVER_CLASS2( name, x ) \
 	static RegisterRageDriver register_##x( &LightsDriver::m_pDriverList, #name, CreateClass<LightsDriver_##x, RageDriver> )
-#define REGISTER_SOUND_DRIVER_CLASS( name ) REGISTER_SOUND_DRIVER_CLASS2( name, name )
+#define REGISTER_LIGHTS_DRIVER_CLASS( name ) REGISTER_LIGHTS_DRIVER_CLASS2( name, name )
 
 #endif
 

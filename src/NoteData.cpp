@@ -493,7 +493,7 @@ int NoteData::GetFirstRow() const
 	for( int t=0; t < GetNumTracks(); t++ )
 	{
 		int iRow = -1;
-		if( !GetNextTapNoteRowForTrack( t, iRow ) )
+		if( !GetNextTapNoteRowForTrack( t, iRow, true ) )
 			continue;
 
 		if( iEarliestRowFoundSoFar == -1 )
@@ -1044,7 +1044,7 @@ int NoteData::GetNumTracksHeldAtRow( int row )
 	return viTracks.size();
 }
 
-bool NoteData::GetNextTapNoteRowForTrack( int track, int &rowInOut ) const
+bool NoteData::GetNextTapNoteRowForTrack( int track, int &rowInOut, bool ignoreAutoKeysounds ) const
 {
 	const TrackMap &mapTrack = m_TapNotes[track];
 
@@ -1059,6 +1059,14 @@ bool NoteData::GetNextTapNoteRowForTrack( int track, int &rowInOut ) const
 		return false;
 
 	ASSERT( iter->first > rowInOut );
+
+	// If we want to ignore autokeysounds, keep going until we find a real note.
+	if(ignoreAutoKeysounds) {
+		while(iter->second.type == TapNoteType_AutoKeysound) {
+			iter++;
+			if(iter==mapTrack.end()) return false;
+		}
+	}
 	rowInOut = iter->first;
 	return true;
 }

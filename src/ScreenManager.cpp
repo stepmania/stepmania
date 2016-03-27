@@ -72,7 +72,7 @@
 #include "ScreenDimensions.h"
 #include "ActorUtil.h"
 #include "Sprite.h"
-
+#include "InputEventPlus.h"
 using std::vector;
 
 ScreenManager*	SCREENMAN = nullptr;	// global and accessible from anywhere in our program
@@ -380,6 +380,24 @@ bool ScreenManager::IsStackedScreen( const Screen *pScreen ) const
 	return std::any_of(g_ScreenStack.begin() + 1, g_ScreenStack.end(), isStacked);
 }
 
+bool ScreenManager::get_input_redirected(PlayerNumber pn)
+{
+	if(pn >= m_input_redirected.size())
+	{
+		return false;
+	}
+	return m_input_redirected[pn];
+}
+
+void ScreenManager::set_input_redirected(PlayerNumber pn, bool redir)
+{
+	while(pn >= m_input_redirected.size())
+	{
+		m_input_redirected.push_back(false);
+	}
+	m_input_redirected[pn]= redir;
+}
+
 /* Pop the top screen off the stack, sending SM_LoseFocus messages and
  * returning the message the popped screen wants sent to the new top
  * screen. Does not send SM_GainFocus. */
@@ -552,7 +570,10 @@ void ScreenManager::Input( const InputEventPlus &input )
 	if( g_ScreenStack.empty() )
 		return;
 
-	g_ScreenStack.back().m_pScreen->Input( input );
+	if(!get_input_redirected(input.pn))
+	{
+		g_ScreenStack.back().m_pScreen->Input( input );
+	}
 	g_ScreenStack.back().m_pScreen->PassInputToLua( input );
 }
 
@@ -638,7 +659,7 @@ void ScreenManager::PrepareScreen( const std::string &sScreenName )
 	}
 	*/
 
-	TEXTUREMAN->DiagnosticOutput();
+	//TEXTUREMAN->DiagnosticOutput();
 }
 
 void ScreenManager::GroupScreen( const std::string &sScreenName )
@@ -965,6 +986,32 @@ public:
 	//static int GetScreenStackSize( T* p, lua_State *L )	{ lua_pushnumber( L, ScreenManagerUtil::g_ScreenStack.size() ); return 1; }
 	static int ReloadOverlayScreens( T* p, lua_State *L )	{ p->ReloadOverlayScreens(); COMMON_RETURN_SELF; }
 
+	static int get_input_redirected(T* p, lua_State* L)
+	{
+		PlayerNumber pn= Enum::Check<PlayerNumber>(L, 1);
+		lua_pushboolean(L, p->get_input_redirected(pn));
+		return 1;
+	}
+	static int set_input_redirected(T* p, lua_State* L)
+	{
+		PlayerNumber pn= Enum::Check<PlayerNumber>(L, 1);
+		p->set_input_redirected(pn, BArg(2));
+		COMMON_RETURN_SELF;
+	}
+
+#define SCRMAN_PLAY_SOUND(sound_name) \
+	static int Play##sound_name(T* p, lua_State* L) \
+	{ \
+		p->Play##sound_name(); \
+		COMMON_RETURN_SELF; \
+	}
+	SCRMAN_PLAY_SOUND(InvalidSound);
+	SCRMAN_PLAY_SOUND(StartSound);
+	SCRMAN_PLAY_SOUND(CoinSound);
+	SCRMAN_PLAY_SOUND(CancelSound);
+	SCRMAN_PLAY_SOUND(ScreenshotSound);
+#undef SCRMAN_PLAY_SOUND
+
 	LunaScreenManager()
 	{
 		ADD_METHOD( SetNewScreen );
@@ -975,6 +1022,12 @@ public:
 		ADD_METHOD( AddNewScreenToTop );
 		//ADD_METHOD( GetScreenStackSize );
 		ADD_METHOD( ReloadOverlayScreens );
+		ADD_METHOD(PlayInvalidSound);
+		ADD_METHOD(PlayStartSound);
+		ADD_METHOD(PlayCoinSound);
+		ADD_METHOD(PlayCancelSound);
+		ADD_METHOD(PlayScreenshotSound);
+		ADD_GET_SET_METHODS(input_redirected);
 	}
 };
 

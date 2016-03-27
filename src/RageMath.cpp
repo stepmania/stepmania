@@ -435,6 +435,61 @@ void RageMatrixAngles( Rage::Matrix* pOut, const Rage::Vector3 &angles )
 	pOut->m[2][2] = cr*cp;
 }
 
+void RageMatrixTranspose( Rage::Matrix* pOut, const Rage::Matrix* pIn )
+{
+	for( int i=0; i<4; i++)
+		for( int j=0; j<4; j++)
+			pOut->m[j][i] = pIn->m[i][j];
+}
+
+static const unsigned int sine_table_size= 1024;
+static const unsigned int sine_index_mod= sine_table_size * 2;
+static const double sine_table_index_mult= static_cast<double>(sine_index_mod) / (Rage::PI * 2);
+static float sine_table[sine_table_size];
+struct sine_initter
+{
+	sine_initter()
+	{
+		for(unsigned int i= 0; i < sine_table_size; ++i)
+		{
+			float angle= Rage::scale(i + 0.f, 0.f, sine_table_size + 0.f, 0.f, Rage::PI);
+			sine_table[i]= sinf(angle);
+		}
+	}
+};
+static sine_initter sinner;
+
+float RageFastSin(float angle)
+{
+	if(angle == 0) { return 0; }
+	float index= angle * sine_table_index_mult;
+	int first_index= static_cast<int>(index);
+	int second_index= (first_index + 1) % sine_index_mod;
+	float remainder= index - first_index;
+	first_index%= sine_index_mod;
+	float first= 0.0f;
+	float second= 0.0f;
+#define SET_SAMPLE(sample) \
+	if(sample##_index >= sine_table_size) \
+	{ \
+		sample= -sine_table[sample##_index - sine_table_size]; \
+	} \
+	else \
+	{ \
+		sample= sine_table[sample##_index]; \
+	}
+	SET_SAMPLE(first);
+	SET_SAMPLE(second);
+#undef SET_SAMPLE
+	float result= Rage::lerp(remainder, first, second);
+	return result;
+}
+
+float RageFastCos( float x )
+{
+	return RageFastSin( x + 0.5f * Rage::PI );
+}
+
 float RageQuadratic::Evaluate( float fT ) const
 {
 	// optimized (m_fA * fT*fT*fT) + (m_fB * fT*fT) + (m_fC * fT) + m_fD;

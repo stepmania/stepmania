@@ -18,6 +18,8 @@ REGISTER_SCREEN_CLASS( ScreenGameplaySyncMachine );
 void ScreenGameplaySyncMachine::Init()
 {
 	m_bForceNoNetwork = true;
+	// The server crashes if syncing is attempted while connected to SMO. -Kyz
+	NSMAN->CloseConnection();
 
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 	GAMESTATE->SetCurrentStyle( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame), PLAYER_INVALID );

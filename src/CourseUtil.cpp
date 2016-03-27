@@ -566,21 +566,31 @@ void CourseID::FromCourse( const Course *p )
 
 Course *CourseID::ToCourse() const
 {
-	// HACK for backwards compatibility:
-	// Re-add the leading "/".  2005/05/21 file layer changes added a leading slash.
-	std::string sPath2 = sPath;
-	if (!Rage::starts_with(sPath2, "/"))
-	{
-		sPath2 = "/" + sPath2;
-	}
 	Course *pCourse = nullptr;
-	if( m_Cache.Get(&pCourse) )
+	if(m_Cache.Get(&pCourse))
+	{
 		return pCourse;
-	if( pCourse == nullptr && !sPath2.empty() )
-		pCourse = SONGMAN->GetCourseFromPath( sPath2 );
+	}
+	if(!sPath.empty())
+	{
+		// HACK for backwards compatibility:
+		// Re-add the leading "/".  2005/05/21 file layer changes added a leading slash.
+		std::string slash_path = sPath;
+		if(Rage::head(slash_path, 1) != "/")
+		{
+			slash_path = "/" + slash_path;
+		}
+
+		if(pCourse == nullptr)
+		{
+			pCourse = SONGMAN->GetCourseFromPath(slash_path);
+		}
+	}
 
 	if( pCourse == nullptr && !sFullTitle.empty() )
+	{
 		pCourse = SONGMAN->GetCourseFromName( sFullTitle );
+	}
 	m_Cache.Set( pCourse );
 
 	return pCourse;

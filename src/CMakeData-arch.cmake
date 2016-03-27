@@ -319,6 +319,14 @@ if(NOT APPLE)
           "arch/Lights/LightsDriver_LinuxParallel.h"
         )
       endif()
+      if (WITH_MINIMAID)
+        list(APPEND SMDATA_ARCH_LIGHTS_SRC
+          "arch/Lights/LightsDriver_LinuxMinimaid.cpp"
+        )
+        list(APPEND SMDATA_ARCH_LIGHTS_HPP
+          "arch/Lights/LightsDriver_LinuxMinimaid.h"
+        )
+      endif()
     endif()
   endif(WIN32)
 endif(NOT APPLE)

@@ -127,6 +127,13 @@ namespace StepsUtil
 	 */
 	void GetAllMatching( Song *pSong, const StepsCriteria &stc, std::vector<SongAndSteps> &out );
 	/**
+	* @brief Retrieve all of the Steps that match the criteria, for Endless mode only.
+	* @param pSong the Song we're checking in.
+	* @param stc the StepsCriteria to look for.
+	* @param out the SongsAndSteps that match.
+	*/
+  void GetAllMatchingEndless( Song *pSong, const StepsCriteria &stc, std::vector<SongAndSteps> &out );
+	/**
 	 * @brief Is there a <a class="el" href="class_steps.html">Step</a>
 	 * that matches the criteria?
 	 * @param soc the SongCriteria to look for.

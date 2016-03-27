@@ -215,6 +215,9 @@ save yourself some time, copy this for undocumented things:
 		Returns the length of the music file found at path.<br />
 		If you are loading the sound into an ActorSound, ActorSound:get to get its RageSound then use RageSound's get_length function instead to avoid loading the file twice.
 	</Function>
+	<Function name='get_sound_driver_list' return='table' arguments=''>
+		Returns a table of the names of the sound drivers available.  If the SoundDriver preference is set to something that is not in this list, StepMania WILL NOT START UP.  Changes to the SoundDriver preference do not take effect until the next time StepMania starts up.
+	</Function>
 	<Function name='GetOSName' return='string' arguments=''>
 		Returns a string representing the name of the operating system being used. (e.g. "Windows", "Linux", "Mac, "Unknown")
 	</Function>
@@ -1222,6 +1225,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetZoomedWidth' return='float' arguments=''>
 		Returns the zoomed width of an Actor.
 	</Function>
+	<Function name='get_tween_uses_effect_delta' return='bool' arguments=''>
+		Returns true if this actor is currently set to use the effect delta for tweening.
+	</Function>
 	<Function name='glow' return='void' arguments='color c'>
 		Sets the Actor's glow color.
 	</Function>
@@ -1330,6 +1336,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='SetWidth' return='void' arguments='float width'>
 		Sets the width of the Actor.
+	</Function>
+	<Function name='set_tween_uses_effect_delta' return='' arguments='bool'>
+		Use this to make the actor use the effect clock to tween instead of using the global frame delta.
 	</Function>
 	<Function name='shadowcolor' return='void' arguments='color c'>
 		Sets the shadow's color to <code>c</code>.
@@ -4066,6 +4075,9 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetSongNumTimesPlayed' return='int' arguments='Song s, ProfileSlot ps'>
 		Returns the number of times Song s has been played with the specified ProfileSlot.
 	</Function>
+	<Function name='GetStatsPrefix' return='string' arguments=''>
+		Returns the current stats prefix.
+	</Function>
 	<Function name='IsPersistentProfile' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if player <code>pn</code>'s profile is persistent.
 	</Function>
@@ -4095,6 +4107,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='SaveProfile' return='bool' arguments='PlayerNumber pn'>
 		Saves the profile for player <code>pn</code>.
+	</Function>
+	<Function name='SetStatsPrefix' return='' arguments='string'>
+		Sets the current stats prefix.  The stats prefix is prepended to the Stats.xml file when loading or saving a profile.  SetStatsPrefix will reload all profiles from the Stats.xml that has the given prefix.  In general, score entries are the only thing not preserved when changing the stats prefix.  Profile::HandleStatsPrefixChange in Profile.cpp lists the fields that are preserved.
 	</Function>
 </Class>
 <Class name='RadarValues'>
@@ -4482,6 +4497,24 @@ save yourself some time, copy this for undocumented things:
 	<Function name='GetTopScreen' return='Screen' arguments=''>
 		Gets the screen at the top of the screen stack.
 	</Function>
+	<Function name='get_input_redirected' return='bool' arguments='PlayerNumber pn'>
+		Returns whether the input for the player has been redirected away from the normal screen input function.  Input that has been redirected is only sent to lua input callbacks.
+	</Function>
+	<Function name='PlayInvalidSound' return='' arguments=''>
+		Plays the invalid sound.
+	</Function>
+	<Function name='PlayStartSound' return='' arguments=''>
+		Plays the start sound.
+	</Function>
+	<Function name='PlayCoinSound' return='' arguments=''>
+		Plays the coin sound.
+	</Function>
+	<Function name='PlayCancelSound' return='' arguments=''>
+		Plays the cancel sound.
+	</Function>
+	<Function name='PlayScreenshotSound' return='' arguments=''>
+		Plays the screenshot sound.
+	</Function>
 	<Function name='ReloadOverlayScreens' return='void' arguments=''>
 		Reloads any loaded overlay screens.
 	</Function>
@@ -4493,6 +4526,10 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='SetNewScreen' return='void' arguments='string s'>
 		Sets the next screen to <code>s</code>.
+	</Function>
+	<Function name='set_input_redirected' return='bool' arguments='PlayerNumber pn, bool redir'>
+		Sets whether the input for the player has been redirected away from the normal screen input function.  Input that has been redirected is only sent to lua input callbacks.<br />
+		This can be useful when putting a custom menu on a screen, and you want to disable the built in actors while the menu is open.  Then you handle input through an input callback until the player closes the menu.
 	</Function>
 	<Function name='SystemMessage' return='void' arguments='string s'>
 		Broadcasts a system message.
@@ -4575,6 +4612,9 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 </Class>
 <Class name='ScreenSelectMusic'>
+	<Function name='CanOpenOptionsList' return='bool' arguments=''>
+		Returns false if the options list is already open or the UseOptionsList metric is false.
+	</Function>
 	<Function name='GetGoToOptions' return='bool' arguments=''>
 		Returns <code>true</code> if the player is going to the options screen.
 	</Function>

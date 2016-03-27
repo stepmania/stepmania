@@ -17,7 +17,7 @@
 #include "RageLog.h"
 #include "RageString.hpp"
 
-REGISTER_SOUND_DRIVER_CLASS2(PIUIO_Leds, Linux_PIUIO_Leds);
+REGISTER_LIGHTS_DRIVER_CLASS2(PIUIO_Leds, Linux_PIUIO_Leds);
 
 namespace {
 	const char *cabinet_leds[NUM_CabinetLight] = {

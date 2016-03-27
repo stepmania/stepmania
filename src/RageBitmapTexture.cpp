@@ -352,10 +352,10 @@ void RageBitmapTexture::Create()
 	if( actualID.bStretch ) sProperties += "stretch ";
 	if( actualID.bDither ) sProperties += "dither ";
 	sProperties.erase( sProperties.size()-1 );
-	LOG->Trace( "RageBitmapTexture: Loaded '%s' (%ux%u); %s, source %d,%d;  image %d,%d.",
-		actualID.filename.c_str(), GetTextureWidth(), GetTextureHeight(),
-		sProperties.c_str(), m_iSourceWidth, m_iSourceHeight,
-		m_iImageWidth, m_iImageHeight );
+	//LOG->Trace( "RageBitmapTexture: Loaded '%s' (%ux%u); %s, source %d,%d;  image %d,%d.",
+	//	actualID.filename.c_str(), GetTextureWidth(), GetTextureHeight(),
+	//	sProperties.c_str(), m_iSourceWidth, m_iSourceHeight,
+	//	m_iImageWidth, m_iImageHeight );
 }
 
 void RageBitmapTexture::Destroy()
