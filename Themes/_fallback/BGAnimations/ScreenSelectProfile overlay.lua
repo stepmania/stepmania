@@ -16,9 +16,13 @@ function GetLocalProfiles()
 				InitCommand=cmd(shadowlength,1;y,8;zoom,0.5;vertspacing,-8;ztest,true);
 				BeginCommand=function(self)
 					local numSongsPlayed = profile:GetNumTotalSongsPlayed();
-					local s = numSongsPlayed == 1 and "Song" or "Songs";
-					-- todo: localize
-					self:settext( numSongsPlayed.." "..s.." Played" );
+					local s = numSongsPlayed == 1 and Screen.String("Song") or Screen.String("Songs");
+					local PlayedText = Screen.String("Played");
+					if THEME:GetCurLanguage() == "he" or "ar" then
+						self:settext(PlayedText.." "..numSongsPlayed.." "..s);
+					else
+						self:settext(numSongsPlayed.." "..s.." "..PlayedText);
+					end;
 				end;
 			};
 		};
