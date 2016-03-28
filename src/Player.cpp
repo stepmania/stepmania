@@ -570,6 +570,10 @@ void Player::calc_read_bpm()
 
 	ASSERT(fMaxBPM > 0);
 	m_pPlayerState->m_fReadBPM= fMaxBPM;
+	if(m_new_field != nullptr)
+	{
+		m_new_field->set_read_bpm(m_pPlayerState->m_fReadBPM);
+	}
 }
 
 /**
@@ -667,6 +671,9 @@ void Player::Load()
 	m_iFirstUncrossedRow     = iNoteRow - 1;
 	m_pJudgedRows->Reset( iNoteRow );
 
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
 	if(m_new_field != nullptr)
 	{
 		// If we're not in the step editor, the player's preferred noteskin for
@@ -677,10 +684,10 @@ void Player::Load()
 		std::string skin_name;
 		// TODO: Store the skin params in the profile, preferably converting the
 		// profile to lua along the way.
-		LuaReference skin_params= GAMESTATE->m_noteskin_params[m_pPlayerState->m_PlayerNumber];
+		LuaReference skin_params= GAMESTATE->m_noteskin_params[pn];
 		if(!GAMESTATE->m_bInStepEditor)
 		{
-			Profile const* prof= PROFILEMAN->GetProfile(m_pPlayerState->m_PlayerNumber);
+			Profile const* prof= PROFILEMAN->GetProfile(pn);
 			if(prof != nullptr)
 			{
 				StepsType stype= GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType;
@@ -697,10 +704,9 @@ void Player::Load()
 			skin_name= m_pPlayerState->m_PlayerOptions.GetPreferred().m_newskin;
 		}
 		m_new_field->set_skin(skin_name, skin_params);
-	}
 
-	// TODO: Remove use of PlayerNumber.
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+		m_new_field->set_defective_mode(m_pPlayerState->m_player_needs_defective_field);
+	}
 
 	bool bOniDead = m_pPlayerState->m_PlayerOptions.GetStage().m_LifeType == LifeType_Battery  &&
 		(m_pPlayerStageStats == nullptr || m_pPlayerStageStats->m_bFailed);
@@ -3332,10 +3338,6 @@ public:
 		p->GetPlayerTimingData().PushSelf(L);
 		return 1;
 	}
-	static int set_newfield_preferred(T* p, lua_State* L)
-	{
-		COMMON_RETURN_SELF;
-	}
 
 	LunaPlayer()
 	{
@@ -3344,7 +3346,6 @@ public:
 		ADD_METHOD( SetActorWithJudgmentPosition );
 		ADD_METHOD( SetActorWithComboPosition );
 		ADD_METHOD( GetPlayerTimingData );
-		ADD_METHOD(set_newfield_preferred);
 	}
 };
 

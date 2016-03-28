@@ -731,7 +731,7 @@ void NoteField::CalcPixelsBeforeAndAfterTargets()
 	m_FieldRenderArgs.draw_pixels_before_targets = static_cast<float>(m_iDrawDistanceBeforeTargetsPixels);
 
 	float draw_scale= 1;
-	draw_scale*= 1 + 0.5f * fabsf(curr_options.m_fPerspectiveTilt);
+	draw_scale*= 1 + 0.5f * fabsf(curr_options.m_fTilt);
 	draw_scale*= 1 + fabsf(curr_options.m_fEffects[PlayerOptions::EFFECT_MINI]);
 
 	m_FieldRenderArgs.draw_pixels_after_targets *= draw_scale;

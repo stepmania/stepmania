@@ -304,7 +304,6 @@ function find_field_apply_prefs(pn)
 	local screen_gameplay= SCREENMAN:GetTopScreen()
 	local pactor= find_pactor_in_gameplay(screen_gameplay, pn)
 	if pactor then
-		pactor:set_newfield_preferred(true)
 		local field= pactor:GetChild("NewField")
 		if field then
 			apply_newfield_prefs(pn, field, newfield_prefs_config:get_data(pn))
@@ -341,6 +340,12 @@ function use_newfield_actor()
 			find_field_apply_prefs(PLAYER_2)
 		end,
 	}
+end
+
+function reset_needs_defective_field_for_all_players()
+	for i, pn in ipairs{PLAYER_1, PLAYER_2} do
+		GAMESTATE:GetPlayerState(pn):set_needs_defective_field(false)
+	end
 end
 
 function newskin_option_row()

@@ -36,6 +36,7 @@ static const int draw_order_types= 4;
 static const int non_board_draw_order= 0;
 static const int beat_bars_draw_order= 0;
 static const int holds_draw_order= 200;
+static const int lifts_draw_order= 200;
 static const int taps_draw_order= 300;
 
 static const char* FieldLayerFadeTypeNames[]= {
@@ -98,6 +99,11 @@ static void apply_render_info_to_layer(Actor* layer,
 		default:
 			break;
 	}
+}
+
+bool operator<(NewField::field_draw_entry const& rhs, NewField::field_draw_entry const& lhs)
+{
+	return rhs.draw_order < lhs.draw_order;
 }
 
 NewFieldColumn::NewFieldColumn()
@@ -277,20 +283,28 @@ void NewFieldColumn::take_over_mods(NewFieldColumn& other)
 #undef CPY
 }
 
-void NewFieldColumn::set_defective_mode()
+void NewFieldColumn::set_defective_mode(bool mode)
 {
 	if(!m_defective_mods->safe())
 	{
 		m_in_defective_mode= false;
 		return;
 	}
-	m_in_defective_mode= true;
-	SetXY(0.0, 0.0);
-	SetZ(0.0);
-	SetZoom(1.0);
-	SetRotationX(0.0);
-	SetRotationY(0.0);
-	SetRotationZ(0.0);
+	m_in_defective_mode= mode;
+	if(m_in_defective_mode)
+	{
+		SetXY(0.0, 0.0);
+		SetZ(0.0);
+		SetZoom(1.0);
+		SetRotationX(0.0);
+		SetRotationY(0.0);
+		SetRotationZ(0.0);
+	}
+}
+
+bool NewFieldColumn::get_defective_mode()
+{
+	return m_in_defective_mode;
 }
 
 void NewFieldColumn::set_speed_old_way(float time_spacing,
@@ -1224,7 +1238,6 @@ void NewFieldColumn::build_render_lists()
 		explosion_glow= 0.0;
 	}
 
-
 	// Clearing and rebuilding the list of taps to render every frame is
 	// unavoidable because the notes move every frame, which changes the y
 	// offset, which changes what is visible.  So even if the list wasn't
@@ -1693,7 +1706,35 @@ void NewFieldColumn::set_pressed(bool on)
 
 void NewFieldColumn::DrawPrimitives()
 {
-	// TODO: Add logic for drawing everything when being drawn by ActorProxy.
+	if(!m_being_drawn_by_proxy)
+	{
+		draw_child_internal();
+	}
+	else
+	{
+		std::vector<NewField::field_draw_entry> draw_entries;
+		draw_entries.reserve(m_SubActors.size() + 3);
+#define ADD_IF_HAVE_SOME(some) if(!render_##some.empty()) { \
+		draw_entries.push_back({-1, some##_child_index, some##_draw_order}); }
+		ADD_IF_HAVE_SOME(holds);
+		ADD_IF_HAVE_SOME(lifts);
+		ADD_IF_HAVE_SOME(taps);
+#undef ADD_IF_HAVE_SOME
+		for(int sub= 0; sub < static_cast<int>(m_SubActors.size()); ++sub)
+		{
+			draw_entries.push_back({-1, sub, m_SubActors[sub]->GetDrawOrder()});
+		}
+		std::sort(draw_entries.begin(), draw_entries.end());
+		for(auto&& entry : draw_entries)
+		{
+			curr_render_child= entry.child;
+			draw_child_internal();
+		}
+	}
+}
+
+void NewFieldColumn::draw_child_internal()
+{
 	switch(curr_render_child)
 	{
 		case holds_child_index:
@@ -1794,7 +1835,7 @@ NewField::NewField()
 	 m_fov_mod(&m_mod_manager, 45.0),
 	 m_vanish_x_mod(&m_mod_manager, 0.0), m_vanish_y_mod(&m_mod_manager, 0.0),
 	 m_vanish_type(FVT_RelativeToParent), m_being_drawn_by_player(false),
-	 m_draw_beat_bars(false),
+	 m_draw_beat_bars(false), m_pn(NUM_PLAYERS),
 	 m_in_defective_mode(false),
 	 m_own_note_data(false), m_note_data(nullptr), m_timing_data(nullptr),
 	 m_steps_type(StepsType_Invalid),
@@ -1811,13 +1852,33 @@ NewField::NewField()
 	m_beat_bars.Load(THEME->GetPathG("NoteField","bars"));
 	m_field_text.LoadFromFont(THEME->GetPathF("NoteField","MeasureNumber"));
 	add_draw_entry(beat_bars_column_index, beat_bars_child_index, beat_bars_draw_order);
+	MESSAGEMAN->Subscribe(this, "defective_field");
 }
 
 NewField::~NewField()
 {
+	MESSAGEMAN->Unsubscribe(this, "defective_field");
 	if(m_own_note_data && m_note_data != nullptr)
 	{
 		SAFE_DELETE(m_note_data);
+	}
+}
+
+void NewField::HandleMessage(Message const& msg)
+{
+	if(msg.GetName() == "defective_field")
+	{
+		PlayerNumber pn;
+		msg.GetParam("pn", pn);
+		if(m_pn == pn)
+		{
+			bool mode= msg.GetParam("mode", mode);
+			set_defective_mode(mode);
+		}
+	}
+	else
+	{
+		ActorFrame::HandleMessage(msg);
 	}
 }
 
@@ -2209,10 +2270,13 @@ void NewField::draw_beat_bars_internal()
 	std::vector<int> sub_states= {2, 3, 2};
 	Rage::Color measure_number_color(1,1,1,1);
 	Rage::Color measure_number_glow(1,1,1,0);
+	bool needs_second= m_columns[0].m_speed_mod.needs_second() ||
+		m_columns[0].m_note_mod.needs_second();
 	for(float step= 0.f; !found_end; ++step)
 	{
 		double const beat= start_beat + (step * beat_step_size);
-		double const second= m_timing_data->GetElapsedTimeFromBeat(beat);
+		double const second= needs_second ?
+			m_timing_data->GetElapsedTimeFromBeat(beat) : 0.;
 		double const main_y_offset= m_columns[0].calc_y_offset(beat, second);
 		if(beat > max_beat)
 		{
@@ -2247,7 +2311,8 @@ void NewField::draw_beat_bars_internal()
 		for(size_t sub= 0; sub < sub_beats.size(); ++sub)
 		{
 			double sub_beat= beat + sub_beats[sub];
-			double sub_second= m_timing_data->GetElapsedTimeFromBeat(sub_beat);
+			double sub_second= needs_second ?
+				m_timing_data->GetElapsedTimeFromBeat(sub_beat) : 0.;
 			double sub_y_offset= m_columns[0].calc_y_offset(sub_beat, sub_second);
 			double offset_diff= fabs(sub_y_offset - main_y_offset);
 			float alpha= ((offset_diff / note_size) - .5) * 2.;
@@ -2346,12 +2411,12 @@ void NewField::reload_columns(NewSkinLoader const* new_loader, LuaReference& new
 		}
 		curr_x+= halfw;
 		add_draw_entry(static_cast<int>(i), holds_child_index, holds_draw_order);
-		add_draw_entry(static_cast<int>(i), lifts_child_index, holds_draw_order);
+		add_draw_entry(static_cast<int>(i), lifts_child_index, lifts_draw_order);
 		add_draw_entry(static_cast<int>(i), taps_child_index, taps_draw_order);
 		m_columns[i].HandleMessage(pn_msg);
 		if(m_in_defective_mode)
 		{
-			m_columns[i].set_defective_mode();
+			m_columns[i].set_defective_mode(m_in_defective_mode);
 		}
 	}
 	vector<float> column_x;
@@ -2379,28 +2444,39 @@ void NewField::set_player_options(PlayerOptions* options)
 	m_defective_mods.set_player_options(options);
 }
 
-void NewField::set_defective_mode()
+void NewField::set_defective_mode(bool mode)
 {
 	if(!m_defective_mods.safe())
 	{
 		m_in_defective_mode= false;
 		return;
 	}
+	m_in_defective_mode= mode;
 	if(m_in_defective_mode)
 	{
-		return;
+		SetXY(0.0, m_defective_mods.get_field_y());
+		SetZ(0.0);
+		SetZoom(1.0);
+		SetRotationX(0.0);
+		SetRotationY(0.0);
+		SetRotationZ(0.0);
+		for(auto&& col : m_columns)
+		{
+			col.set_defective_mode(true);
+		}
 	}
-	m_in_defective_mode= true;
-	SetXY(0.0, m_defective_mods.get_field_y());
-	SetZ(0.0);
-	SetZoom(1.0);
-	SetRotationX(0.0);
-	SetRotationY(0.0);
-	SetRotationZ(0.0);
-	for(auto&& col : m_columns)
+	else
 	{
-		col.set_defective_mode();
+		for(auto&& col : m_columns)
+		{
+			col.set_defective_mode(false);
+		}
 	}
+}
+
+bool NewField::get_defective_mode()
+{
+	return m_in_defective_mode;
 }
 
 void NewField::set_speed_old_way(float time_spacing, float max_scroll_bpm,
@@ -2875,11 +2951,7 @@ struct LunaNewField : Luna<NewField>
 		p->set_layer_fade_type(layer, type);
 		COMMON_RETURN_SELF;
 	}
-	static int set_defective_mode(T* p, lua_State* L)
-	{
-		p->set_defective_mode();
-		COMMON_RETURN_SELF;
-	}
+	GETTER_SETTER_BOOL_METHOD(defective_mode);
 	LunaNewField()
 	{
 		ADD_METHOD(set_skin);
@@ -2900,7 +2972,7 @@ struct LunaNewField : Luna<NewField>
 		ADD_METHOD(set_player_color);
 		ADD_METHOD(get_layer_fade_type);
 		ADD_METHOD(set_layer_fade_type);
-		ADD_METHOD(set_defective_mode);
+		ADD_GET_SET_METHODS(defective_mode);
 	}
 };
 LUA_REGISTER_DERIVED_CLASS(NewField, ActorFrame);

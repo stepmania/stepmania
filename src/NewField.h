@@ -73,7 +73,8 @@ struct NewFieldColumn : ActorFrame
 		NewSkinData& skin_data, std::vector<Rage::Color>* player_colors,
 		const NoteData* note_data, const TimingData* timing_data, double x);
 	void take_over_mods(NewFieldColumn& old_column);
-	void set_defective_mode();
+	void set_defective_mode(bool mode);
+	bool get_defective_mode();
 	void set_speed_old_way(float time_spacing, float max_scroll_bpm,
 		float scroll_speed, float scroll_bpm, float read_bpm, float music_rate);
 
@@ -233,6 +234,7 @@ struct NewFieldColumn : ActorFrame
 private:
 	void did_tap_note_internal(TapNoteScore tns, bool bright);
 	void did_hold_note_internal(HoldNoteScore hns, bool bright);
+	void draw_child_internal();
 
 	double m_curr_beat;
 	double m_curr_displayed_beat;
@@ -310,6 +312,8 @@ struct NewField : ActorFrame
 	virtual void PushSelf(lua_State *L);
 	virtual NewField* Copy() const;
 
+	virtual void HandleMessage(Message const& msg);
+
 	virtual void AddChild(Actor* act);
 	virtual void RemoveChild(Actor* act);
 	virtual void ChildChangedDrawOrder(Actor* child);
@@ -331,9 +335,9 @@ struct NewField : ActorFrame
 	// set_player_options is for supporting the old ArrowEffects mods in
 	// defective mode.
 	void set_player_options(PlayerOptions* options);
-	// TODO: Figure out some way to auto-detect when defective mode is needed
-	// so that gimmick files and stuff don't need lua to call it.
-	void set_defective_mode();
+	void set_read_bpm(float read_bpm) {m_defective_mods.set_read_bpm(read_bpm);}
+	void set_defective_mode(bool mode);
+	bool get_defective_mode();
 	void set_speed_old_way(float time_spacing, float max_scroll_bpm,
 		float scroll_speed, float scroll_bpm, float read_bpm, float music_rate);
 	void turn_on_edit_text();

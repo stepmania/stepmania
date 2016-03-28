@@ -3318,6 +3318,23 @@ save yourself some time, copy this for undocumented things:
 		Sets whether the current song beat is subtracted from a note's beat when calculating the t value to use on the spline.
 	</Function>
 </Class>
+<Class base='ActorFrame' name='NewField'>
+	<Description>
+		NewField.md has detailed info on the various functions.<br />
+		To provide compatibility for themes and simfiles made for the old PlayerOptions system of modifiers, NewField has a "defective mode" that uses the old modifiers in PlayerOptions to control the notes.<br />
+		To allow those things to work without being modified to call a special function to put the field into defective mode, Stepmania attempts to automatically detect when defective mode is needed.  If anything touches the PlayerOptions for a player, the NewField for that player is automatically put into defective mode until the theme calls set_needs_defective_mode in PlayerState to turn it back.<br />
+		A NewField that is not inside a Player cannot be put into defective mode because it does not know what PlayerOptions to use.
+	</Description>
+	<Function name='get_columns' return='{NewFieldColumn}' arguments=''>
+		Returns a table of the columns in this NewField.
+	</Function>
+	<Function name='get_defective_mode' return='bool' arguments=''>
+		Returns true if this NewField is currently in defective mode.
+	</Function>
+	<Function name='set_defective_mode' return='' arguments='bool mode'>
+		If mode is true, sets this NewField into defective mode.  If mode is false, takes this NewField out of defective mode.
+	</Function>
+</Class>
 <Class base='Actor' name='NoteColumnRenderer'>
 	<Description>
 		All functions in this class have camel case equivalents, use whichever naming style you prefer.<br />
@@ -3808,6 +3825,17 @@ save yourself some time, copy this for undocumented things:
 	</Function>
 	<Function name='GetSuperMeterLevel' return='float' arguments=''>
 		Returns the current Super Meter level for this PlayerState.
+	</Function>
+	<Function name='get_player_options_no_defect' return='PlayerOptions' arguments='ModsLevel ml'>
+		This will return the PlayerOptions object similarly to GetPlayerOptions, but will not trigger the defective mode detection.
+	</Function>
+	<Function name='get_needs_defective_field' return='bool' arguments=''>
+		Returns true if the PlayerState is currently set to use defective mode.
+	</Function>
+	<Function name='set_needs_defective_field' return='' arguments='bool mode'>
+		Sets a flag in the PlayerState to <code>mode</code>.  If the flag is true, then when gameplay starts the Player using this PlayerState will set its NewField into defective mode.  The change is also broadcast so that if this function is called while in gameplay, it affects the NewField immediately.<br />
+		Calling SetPlayerOptions, GetPlayerOptions, or GetCurrentPlayerOptions will also set the flag to true and broadcast the message.<br />
+		See the note in NewField about defective mode.
 	</Function>
 	<Function name='SetPlayerOptions' return='string' arguments='ModsLevel ml, string sPlayerOptions'>
 		Sets the player options to <code>sPlayerOptions</code> for the specified ModsLevel.

@@ -1061,6 +1061,11 @@
 			<Function name='get_subtract_song_beat'/>
 			<Function name='set_subtract_song_beat'/>
 		</Class>
+		<Class base='ActorFrame' name='NewField'>
+			<Function name='get_columns'/>
+			<Function name='get_defective_mode'/>
+			<Function name='set_defective_mode'/>
+		</Class>
 		<Class base='Actor' name='NoteColumnRenderer'>
 			<Function name='get_pos_handler'/>
 			<Function name='get_rot_handler'/>
@@ -1279,6 +1284,9 @@
 			<Function name='GetSongPosition'/>
 			<Function name='GetSuperMeterLevel'/>
 			<Function name='SetPlayerOptions'/>
+			<Function name='get_player_options_no_defect'/>
+			<Function name='get_needs_defective_field'/>
+			<Function name='set_needs_defective_field'/>
 		</Class>
 		<Class name='PrefsManager'>
 			<Function name='GetPreference'/>

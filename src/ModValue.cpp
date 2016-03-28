@@ -1179,6 +1179,24 @@ void ModFunction::calc_unprovided_times(TimingData const* timing)
 	calc_timing_pair(timing, m_end_beat, m_end_second);
 }
 
+#define MF_NEEDS_THING(thing) \
+bool ModFunction::needs_##thing() \
+{ \
+	for(auto&& input : m_inputs) \
+	{ \
+		if(input.needs_##thing()) \
+		{ \
+			return true; \
+		} \
+	} \
+	return false; \
+}
+
+MF_NEEDS_THING(beat);
+MF_NEEDS_THING(second);
+MF_NEEDS_THING(y_offset);
+#undef MF_NEEDS_THING
+
 static ModFunction* create_field_mod(ModifiableValue* parent, lua_State* L, int index)
 {
 	ModFunction* ret= new ModFunction(parent);
@@ -1425,6 +1443,53 @@ void ModifiableValue::take_over_mods(ModifiableValue& other)
 	m_active_managed_mods.swap(other.m_active_managed_mods);
 	other.clear_managed_mods();
 }
+
+#define MV_NEEDS_THING(thing) \
+bool ModifiableValue::needs_##thing() \
+{ \
+	for(auto&& fun : m_mods) \
+	{ \
+		if(fun->needs_##thing()) \
+		{ \
+			return true; \
+		} \
+	} \
+	for(auto&& fun : m_active_managed_mods) \
+	{ \
+		if(fun->needs_##thing()) \
+		{ \
+			return true; \
+		} \
+	} \
+	return false; \
+}
+
+MV_NEEDS_THING(beat);
+MV_NEEDS_THING(second);
+MV_NEEDS_THING(y_offset);
+#undef MV_NEEDS_THING
+
+#define MV3_NEEDS_THING(thing) \
+bool ModifiableVector3::needs_##thing() \
+{ \
+	return x_mod.needs_##thing() || y_mod.needs_##thing() || z_mod.needs_##thing(); \
+}
+
+MV3_NEEDS_THING(beat);
+MV3_NEEDS_THING(second);
+MV3_NEEDS_THING(y_offset);
+#undef MV3_NEEDS_THING
+
+#define MT_NEEDS_THING(thing) \
+bool ModifiableTransform::needs_##thing() \
+{ \
+	return pos_mod.needs_##thing() || rot_mod.needs_##thing() || zoom_mod.needs_##thing(); \
+}
+
+MT_NEEDS_THING(beat);
+MT_NEEDS_THING(second);
+MT_NEEDS_THING(y_offset);
+#undef MT_NEEDS_THING
 
 
 // lua start

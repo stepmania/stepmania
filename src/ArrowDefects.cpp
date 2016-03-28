@@ -64,7 +64,7 @@ ArrowDefects::ArrowDefects()
 
 float ArrowDefects::get_notefield_height()
 {
-	return SCREEN_HEIGHT + fabsf(m_options->m_fPerspectiveTilt)*200;
+	return SCREEN_HEIGHT + fabsf(m_options->m_fTilt)*200;
 }
 
 void ArrowDefects::set_player_options(PlayerOptions const* options)
@@ -666,7 +666,7 @@ float ArrowDefects::get_reverse_scale(size_t col)
 
 float ArrowDefects::get_tilt()
 {
-	return m_options->m_fPerspectiveTilt;
+	return m_options->m_fTilt;
 }
 
 float ArrowDefects::get_mini()

@@ -1844,6 +1844,10 @@ void GameState::ResetToDefaultSongOptions( ModsLevel l )
 void GameState::ApplyPreferredModifiers( PlayerNumber pn, std::string sModifiers )
 {
 	m_pPlayerState[pn]->m_PlayerOptions.FromString( ModsLevel_Preferred, sModifiers );
+	if(m_pPlayerState[pn]->m_PlayerOptions.GetPreferred().m_changed_defective_mod)
+	{
+		m_pPlayerState[pn]->set_defective_mode(true);
+	}
 	m_SongOptions.FromString( ModsLevel_Preferred, sModifiers );
 }
 

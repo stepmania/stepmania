@@ -178,8 +178,6 @@ struct ModInput
 		}
 		return MIMT_Scalar;
 	}
-	// TODO: Make the field use needs_second to decide whether it needs to call
-	// GetElapsedTimeFromBeat at all. -Kyz
 	bool needs_beat()
 	{
 		switch(m_type)
@@ -410,6 +408,9 @@ struct ModFunction
 		double input_scalar);
 
 	void calc_unprovided_times(TimingData const* timing);
+	bool needs_beat();
+	bool needs_second();
+	bool needs_y_offset();
 
 	std::string const& get_name() { return m_name; }
 	// needs_per_frame_update exists so that ModifiableValue can check after
@@ -527,6 +528,10 @@ struct ModifiableValue
 		double input_scalar);
 	void take_over_mods(ModifiableValue& other);
 
+	bool needs_beat();
+	bool needs_second();
+	bool needs_y_offset();
+
 	virtual void PushSelf(lua_State* L);
 
 	double m_value;
@@ -564,6 +569,10 @@ struct ModifiableVector3
 		y_mod.take_over_mods(other.y_mod);
 		z_mod.take_over_mods(other.z_mod);
 	}
+	bool needs_beat();
+	bool needs_second();
+	bool needs_y_offset();
+
 	ModifiableValue x_mod;
 	ModifiableValue y_mod;
 	ModifiableValue z_mod;
@@ -601,6 +610,10 @@ struct ModifiableTransform
 		rot_mod.take_over_mods(other.rot_mod);
 		zoom_mod.take_over_mods(other.zoom_mod);
 	}
+	bool needs_beat();
+	bool needs_second();
+	bool needs_y_offset();
+
 	ModifiableVector3 pos_mod;
 	ModifiableVector3 rot_mod;
 	ModifiableVector3 zoom_mod;
