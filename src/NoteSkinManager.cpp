@@ -116,7 +116,7 @@ bool NoteSkinManager::LoadNoteSkinDataRecursive( const RString &sNoteSkinName_, 
 	int iDepth = 0;
 	bool bLoadedCommon = false;
 	bool bLoadedBase = false;
-	while(1)
+	for(;;)
 	{
 		++iDepth;
 		if(iDepth >= 20)

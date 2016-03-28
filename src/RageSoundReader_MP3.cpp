@@ -389,7 +389,7 @@ int RageSoundReader_MP3::do_mad_frame_decode( bool headers_only )
 {
 	int bytes_read = 0;
 
-	while(1)
+	for(;;)
 	{
 		int ret;
 
@@ -861,7 +861,7 @@ int RageSoundReader_MP3::SetPosition_hard( int iFrame )
 	}
 
 	/* Decode frames until the current frame contains the desired offset. */
-	while(1)
+	for(;;)
 	{
 		/* If desired < next_frame_timer, this frame contains the position.  Since we've
 		 * already decoded the frame, synth it, too. */
@@ -1035,13 +1035,17 @@ int RageSoundReader_MP3::GetLengthInternal( bool fast )
 	}
 
 	MADLIB_rewind();
-	while(1)
+	for(;;)
 	{
 		int ret = do_mad_frame_decode( true );
 		if( ret == -1 )
+		{
 			return -1; /* it set the error */
+		}
 		if( ret == 0 ) /* EOF */
+		{
 			break;
+		}
 	}
 
 	/* mad->Timer is the timestamp of the current frame; find the timestamp of

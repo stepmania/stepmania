@@ -187,7 +187,7 @@ bool InputQueueCode::Load( RString sButtonsNames )
 
 			bool bHold = false;
 			bool bNotHold = false;
-			while(1)
+			for(;;)
 			{
 				if( sButtonName.Left(1) == "+" )
 				{

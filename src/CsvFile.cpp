@@ -31,7 +31,7 @@ bool CsvFile::ReadFile( RageFileBasic &f )
 
 	// hi,"hi2,","""hi3"""
 
-	while( 1 )
+	for(;;)
 	{
 		RString line;
 		switch( f.GetLine(line) )
