@@ -41,6 +41,59 @@ local function gen_speed_menu(pn)
 	end
 end
 
+local function trisign_of_num(num)
+	if num < 0 then return -1 end
+	if num > 0 then return 1 end
+	return 0
+end
+
+-- Skew needs to shift towards the center of the screen.
+local pn_skew_mult= {[PLAYER_1]= 1, [PLAYER_2]= -1}
+
+local function perspective_entry(name, skew_mult, rot_mult)
+	return {
+		name= name, meta= "execute", translatable= true,
+		execute= function(pn)
+			local conf_data= newfield_prefs_config:get_data(pn)
+			local old_rot= get_element_by_path(conf_data, "rotation_x")
+			local old_skew= get_element_by_path(conf_data, "vanish_x")
+			local new_rot= rot_mult * 30
+			local new_skew= skew_mult * 160 * pn_skew_mult[pn]
+			set_element_by_path(conf_data, "rotation_x", new_rot)
+			set_element_by_path(conf_data, "vanish_x", new_skew)
+			-- Adjust the y offset to make the receptors appear at the same final
+			-- position on the screen.
+			if new_rot < 0 then
+				set_element_by_path(conf_data, "yoffset", 180)
+			elseif new_rot > 0 then
+				set_element_by_path(conf_data, "yoffset", 140)
+			else
+				set_element_by_path(conf_data, "yoffset", get_element_by_path(newfield_prefs_config:get_default(), "yoffset"))
+			end
+			MESSAGEMAN:Broadcast("ConfigValueChanged", {
+				config_name= newfield_prefs_config.name, field_name= "rotation_x", value= new_rot, pn= pn})
+		end,
+		underline= function(pn)
+			local conf_data= newfield_prefs_config:get_data(pn)
+			local old_rot= get_element_by_path(conf_data, "rotation_x")
+			local old_skew= get_element_by_path(conf_data, "vanish_x")
+			if trisign_of_num(old_rot) == trisign_of_num(rot_mult) and
+			trisign_of_num(old_skew) == trisign_of_num(skew_mult) * pn_skew_mult[pn] then
+				return true
+			end
+			return false
+		end,
+	}
+end
+
+local perspective_mods= {
+	perspective_entry("overhead", 0, 0),
+	perspective_entry("distant", 0, -1),
+	perspective_entry("hallway", 0, 1),
+	perspective_entry("incoming", 1, -1),
+	perspective_entry("space", 1, 1),
+}
+
 local turn_chart_mods= {
 	nesty_options.bool_player_mod_val("Mirror"),
 	nesty_options.bool_player_mod_val("Backwards"),
@@ -110,6 +163,7 @@ local base_options= {
 	}},
 	nesty_options.float_song_mod_val("MusicRate", -2, -1, -1, .5, 2, 1),
 	nesty_options.float_song_mod_toggle_val("Haste", 1, 0),
+	{name= "perspective", translatable= true, meta= nesty_option_menus.menu, args= perspective_mods},
 	nesty_options.float_config_toggle_val(newfield_prefs_config, "reverse", -1, 1),
 	nesty_options.float_config_val(newfield_prefs_config, "zoom", -2, -1, 1),
 	{name= "chart_mods", translatable= true, meta= nesty_option_menus.menu, args= chart_mods},
