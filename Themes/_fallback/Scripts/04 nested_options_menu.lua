@@ -1351,12 +1351,12 @@ nesty_options= {
 		return {
 			name= valname, meta= "execute", translatable= true,
 			execute= function(pn)
-				local plops= GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred")
+				local plops= GAMESTATE:GetPlayerState(pn):get_player_options_no_defect("ModsLevel_Preferred")
 				local new_val= not plops[valname](plops)
 				plops[valname](plops, new_val)
 			end,
 			underline= function(pn)
-				local plops= GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred")
+				local plops= GAMESTATE:GetPlayerState(pn):get_player_options_no_defect("ModsLevel_Preferred")
 				return plops[valname](plops)
 			end,
 		}

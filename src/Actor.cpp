@@ -169,6 +169,7 @@ Actor::Actor()
 	m_FakeParent= nullptr;
 	m_timing_source= nullptr;
 	m_bFirstUpdate = true;
+	m_being_drawn_by_proxy= false;
 }
 
 Actor::~Actor()
@@ -218,6 +219,7 @@ Actor::Actor( const Actor &cpy ):
 	}
 
 	CPY( m_bFirstUpdate );
+	m_being_drawn_by_proxy= false;
 
 	CPY( m_fHorizAlign );
 	CPY( m_fVertAlign );
@@ -295,6 +297,7 @@ Actor &Actor::operator=(Actor other)
 	SWAP( m_Tweens );
 
 	SWAP( m_bFirstUpdate );
+	m_being_drawn_by_proxy= false;
 
 	SWAP( m_fHorizAlign );
 	SWAP( m_fVertAlign );
@@ -376,6 +379,11 @@ void Actor::LoadFromNode( const XNode* pNode )
 	PlayCommandNoRecurse( Message("Init") );
 }
 
+void Actor::SetBeingDrawnByProxy()
+{
+	m_being_drawn_by_proxy= true;
+}
+
 bool Actor::PartiallyOpaque()
 {
 	return m_pTempState->diffuse[0].a > 0 || m_pTempState->diffuse[1].a > 0 ||
@@ -389,6 +397,7 @@ void Actor::Draw()
 		m_fHibernateSecondsLeft > 0 ||
 		this->EarlyAbortDraw() )
 	{
+		m_being_drawn_by_proxy= false;
 		return; // early abort
 	}
 	if(m_FakeParent)
@@ -396,12 +405,14 @@ void Actor::Draw()
 		if(!m_FakeParent->m_bVisible || m_FakeParent->m_fHibernateSecondsLeft > 0
 			|| m_FakeParent->EarlyAbortDraw())
 		{
+			m_being_drawn_by_proxy= false;
 			return;
 		}
 		m_FakeParent->PreDraw();
 		if(!m_FakeParent->PartiallyOpaque())
 		{
 			m_FakeParent->PostDraw();
+			m_being_drawn_by_proxy= false;
 			return;
 		}
 	}
@@ -493,6 +504,7 @@ void Actor::Draw()
 		m_FakeParent->m_pTempState= nullptr;
 	}
 	m_pTempState = nullptr;
+	m_being_drawn_by_proxy= false;
 }
 
 void Actor::PostDraw() // reset internal diffuse and glow

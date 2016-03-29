@@ -85,6 +85,10 @@ struct transform // robot in disguise
 	Vector3 pos;
 	Vector3 rot;
 	Vector3 zoom;
+	// Because I happen to need alpha and glow at the same time as the other
+	// parts often. -Kyz
+	float alpha;
+	float glow;
 };
 
 }

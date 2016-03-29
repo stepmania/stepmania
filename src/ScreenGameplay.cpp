@@ -24,7 +24,6 @@
 #include "ScoreKeeperRave.h"
 #include "LyricsLoader.h"
 #include "ActorUtil.h"
-#include "ArrowEffects.h"
 #include "RageSoundManager.h"
 #include "RageSoundReader.h"
 #include "RageTextureManager.h"
@@ -2031,9 +2030,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 				if( m_bShowScoreboard && NSMAN->ChangedScoreboard(cn) && GAMESTATE->GetFirstDisabledPlayer() != PLAYER_INVALID )
 					m_Scoreboard[cn].SetText( NSMAN->m_Scoreboard[cn] );
 	}
-	// ArrowEffects::Update call moved because having it happen once per
-	// NoteField (which means twice in two player) seemed wasteful. -Kyz
-	ArrowEffects::Update();
 }
 
 void ScreenGameplay::DrawPrimitives()

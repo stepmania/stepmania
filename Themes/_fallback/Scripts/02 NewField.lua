@@ -300,6 +300,17 @@ function convert_oldfield_mods(screen_gameplay, pn, revoff)
 	end
 end
 
+function find_field_apply_prefs(pn)
+	local screen_gameplay= SCREENMAN:GetTopScreen()
+	local pactor= find_pactor_in_gameplay(screen_gameplay, pn)
+	if pactor then
+		local field= pactor:GetChild("NewField")
+		if field then
+			apply_newfield_prefs(pn, field, newfield_prefs_config:get_data(pn))
+		end
+	end
+end
+
 function use_newfield_on_gameplay()
 	local screen_gameplay= SCREENMAN:GetTopScreen()
 	if not screen_gameplay.GetLifeMeter then
@@ -307,19 +318,34 @@ function use_newfield_on_gameplay()
 		return
 	end
 	for pn in ivalues(GAMESTATE:GetEnabledPlayers()) do
-		local pactor= find_pactor_in_gameplay(screen_gameplay, pn)
-		if pactor then
-			pactor:set_newfield_preferred(true)
-			local field= pactor:GetChild("NewField")
-			if field then
-				apply_newfield_prefs(pn, field, newfield_prefs_config:get_data(pn))
-			end
-		end
+		find_field_apply_prefs(pn)
 	end
 end
 
 function use_newfield_actor()
-	return Def.Actor{OnCommand= function(self) use_newfield_on_gameplay() end}
+	return Def.Actor{
+		OnCommand= function(self) use_newfield_on_gameplay() end,
+		CurrentStepsP1ChangedMessageCommand= function(self, param)
+			if not GAMESTATE:GetCurrentSteps(PLAYER_1) then return end
+			self:queuecommand("delayed_p1_steps_change")
+		end,
+		CurrentStepsP2ChangedMessageCommand= function(self, param)
+			if not GAMESTATE:GetCurrentSteps(PLAYER_2) then return end
+			self:queuecommand("delayed_p2_steps_change")
+		end,
+		delayed_p1_steps_changeCommand= function(self)
+			find_field_apply_prefs(PLAYER_1)
+		end,
+		delayed_p2_steps_changeCommand= function(self)
+			find_field_apply_prefs(PLAYER_2)
+		end,
+	}
+end
+
+function reset_needs_defective_field_for_all_players()
+	for i, pn in ipairs{PLAYER_1, PLAYER_2} do
+		GAMESTATE:GetPlayerState(pn):set_needs_defective_field(false)
+	end
 end
 
 function newskin_option_row()

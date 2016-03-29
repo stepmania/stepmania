@@ -178,6 +178,46 @@ struct ModInput
 		}
 		return MIMT_Scalar;
 	}
+	bool needs_beat()
+	{
+		switch(m_type)
+		{
+			case MIT_EvalBeat:
+			case MIT_MusicBeat:
+			case MIT_DistBeat:
+			case MIT_StartDistBeat:
+			case MIT_EndDistBeat:
+				return true;
+			default:
+				return false;
+		}
+	}
+	bool needs_second()
+	{
+		switch(m_type)
+		{
+			case MIT_EvalSecond:
+			case MIT_MusicSecond:
+			case MIT_DistSecond:
+			case MIT_StartDistSecond:
+			case MIT_EndDistSecond:
+				return true;
+			default:
+				return false;
+		}
+	}
+	bool needs_y_offset()
+	{
+		switch(m_type)
+		{
+			case MIT_YOffset:
+				return true;
+			default:
+				return false;
+		}
+	}
+	void init_simple(ModFunction* parent, ModInputType input_type,
+		double input_scalar);
 	void clear();
 	void push_phase(lua_State* L, size_t phase);
 	void push_def_phase(lua_State* L);
@@ -359,8 +399,18 @@ struct ModFunction
 		m_parent(parent)
 	{}
 	~ModFunction() {}
+	void change_parent(ModifiableValue* new_parent)
+	{
+		m_parent= new_parent;
+	}
+
+	void init_single_input(std::string const& name, ModInputType input_type,
+		double input_scalar);
 
 	void calc_unprovided_times(TimingData const* timing);
+	bool needs_beat();
+	bool needs_second();
+	bool needs_y_offset();
 
 	std::string const& get_name() { return m_name; }
 	// needs_per_frame_update exists so that ModifiableValue can check after
@@ -421,6 +471,7 @@ struct ModFunction
 	ModSumType m_sum_type;
 
 private:
+	void init_picked_inputs();
 	void update_input_set(mod_val_inputs const& input,
 		vector<size_t>& input_set);
 	void update_input_set_in_spline(mod_val_inputs const& input,
@@ -465,6 +516,7 @@ struct ModifiableValue
 	ModFunction* get_mod(std::string const& name);
 	void remove_mod(std::string const& name);
 	void clear_mods();
+	bool empty() { return m_mods.empty() && m_active_managed_mods.empty(); }
 
 	ModFunction* add_managed_mod(lua_State* L, int index);
 	ModFunction* get_managed_mod(std::string const& name);
@@ -472,12 +524,20 @@ struct ModifiableValue
 	void clear_managed_mods();
 	void add_mod_to_active_list(ModFunction* mod);
 	void remove_mod_from_active_list(ModFunction* mod);
+	void add_simple_mod(std::string const& name, ModInputType input_type,
+		double input_scalar);
+	void take_over_mods(ModifiableValue& other);
+
+	bool needs_beat();
+	bool needs_second();
+	bool needs_y_offset();
 
 	virtual void PushSelf(lua_State* L);
 
 	double m_value;
 private:
 	ModFunction* add_mod_internal(lua_State* L, int index);
+	ModFunction* insert_mod_internal(ModFunction* new_mod);
 
 	ModManager* m_manager;
 	TimingData const* m_timing;
@@ -503,6 +563,16 @@ struct ModifiableVector3
 		y_mod.set_timing(timing);
 		z_mod.set_timing(timing);
 	}
+	void take_over_mods(ModifiableVector3& other)
+	{
+		x_mod.take_over_mods(other.x_mod);
+		y_mod.take_over_mods(other.y_mod);
+		z_mod.take_over_mods(other.z_mod);
+	}
+	bool needs_beat();
+	bool needs_second();
+	bool needs_y_offset();
+
 	ModifiableValue x_mod;
 	ModifiableValue y_mod;
 	ModifiableValue z_mod;
@@ -534,6 +604,16 @@ struct ModifiableTransform
 		}
 		out.zoom.x = static_cast<float>(zoom_mod.x_mod.evaluate(input));
 	}
+	void take_over_mods(ModifiableTransform& other)
+	{
+		pos_mod.take_over_mods(other.pos_mod);
+		rot_mod.take_over_mods(other.rot_mod);
+		zoom_mod.take_over_mods(other.zoom_mod);
+	}
+	bool needs_beat();
+	bool needs_second();
+	bool needs_y_offset();
+
 	ModifiableVector3 pos_mod;
 	ModifiableVector3 rot_mod;
 	ModifiableVector3 zoom_mod;

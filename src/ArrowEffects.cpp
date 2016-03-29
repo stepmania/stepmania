@@ -67,7 +67,7 @@ float ArrowGetPercentVisible(float fYPosWithoutReverse);
 
 static float GetNoteFieldHeight()
 {
-	return SCREEN_HEIGHT + fabsf(curr_options->m_fPerspectiveTilt)*200;
+	return SCREEN_HEIGHT + fabsf(curr_options->m_fTilt)*200;
 }
 
 namespace

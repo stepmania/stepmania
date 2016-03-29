@@ -1,3 +1,4 @@
+reset_needs_defective_field_for_all_players()
 local num_players = GAMESTATE:GetHumanPlayers();
 local function PositionItem(i,max)
 	local x_spacing = 128; 

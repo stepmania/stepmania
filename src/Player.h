@@ -19,7 +19,6 @@ class ScoreKeeper;
 class Inventory;
 class RageTimer;
 struct NewField;
-class NoteField;
 class PlayerStageStats;
 class JudgedRows;
 
@@ -47,32 +46,13 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
-	// PushPlayerMatrix and PopPlayerMatrix are separate functions because
-	// they need to be used twice so that the notefield board can rendered
-	// underneath the combo and judgment.  They're not embedded in
-	// PlayerMatrixPusher so that some nutjob can later decide to expose them
-	// to lua. -Kyz
-	void PushPlayerMatrix(float x, float skew, float center_y);
-	void PopPlayerMatrix();
-	bool m_disable_player_matrix_because_newfield_does_skewing;
-
-	void set_newfield_preferred(bool use_new);
-
-	// This exists so that the board can be drawn underneath combo/judge. -Kyz
+	// DrawNoteFieldBoard exists so that the board can be drawn underneath
+	// theme elements like score. -Kyz
 	void DrawNoteFieldBoard();
-
-	// Here's a fun construct for people that haven't seen it before:
-	// This object does some task when it's created, then cleans up when it's
-	// destroyed.  That way, you stick it inside a block, and can't forget the
-	// cleanup. -Kyz
-	struct PlayerNoteFieldPositioner
-	{
-		PlayerNoteFieldPositioner(Player* p, float x, float tilt, float skew, float mini, float center_y, bool reverse);
-		~PlayerNoteFieldPositioner();
-		Player* player;
-		float original_y;
-		float y_offset;
-	};
+	// SetSpeedFromPlayerOptions exists so ScreenEdit can work until it's
+	// rewritten. -Kyz
+	void SetSpeedFromPlayerOptions();
+	void SetNoteFieldToEditMode();
 
 	struct TrackRowTapNote
 	{
@@ -94,6 +74,7 @@ public:
 		ScoreKeeper* pPrimaryScoreKeeper,
 		ScoreKeeper* pSecondaryScoreKeeper );
 	void Load();
+	void calc_read_bpm();
 	void CrossedRows( int iLastRowCrossed, const RageTimer &now );
 	bool IsOniDead() const;
 
@@ -113,7 +94,6 @@ public:
 	void Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease );
 
 	void FadeToFail();
-	void CacheAllUsedNoteSkins();
 	TapNoteScore GetLastTapNoteScore() const { return m_LastTapNoteScore; }
 	void ApplyWaitingTransforms();
 	void SetPaused( bool bPaused ) { m_bPaused = bPaused; }
@@ -121,7 +101,7 @@ public:
 	static float GetMaxStepDistanceSeconds();
 	static float GetWindowSeconds( TimingWindow tw );
 	const NoteData &GetNoteData() const { return m_NoteData; }
-	bool HasVisibleParts() const { return m_pNoteField != nullptr; }
+	bool HasVisibleParts() const { return m_new_field != nullptr; }
 
 	void SetActorWithJudgmentPosition( Actor *pActor ) { m_pActorWithJudgmentPosition = pActor; }
 	void SetActorWithComboPosition( Actor *pActor ) { m_pActorWithComboPosition = pActor; }
@@ -183,13 +163,11 @@ protected:
 	/** @brief The player's present stage stats. */
 	PlayerStageStats	*m_pPlayerStageStats;
 	TimingData      *m_Timing;
-	float			m_fNoteFieldHeight;
 
 	bool			m_bPaused;
 	bool			m_bDelay;
 
 	NoteData		&m_NoteData;
-	NoteField		*m_pNoteField;
 	NewField		*m_new_field;
 
 	std::vector<HoldJudgment*>	m_vpHoldJudgment;
@@ -251,7 +229,7 @@ protected:
 
 	bool m_bSendJudgmentAndComboMessages;
 	bool m_bTickHolds;
-	// This exists so that the board can be drawn underneath combo/judge. -Kyz
+	// This exists so that the board can be drawn underneath theme elements. -Kyz
 	bool m_drawing_notefield_board;
 };
 

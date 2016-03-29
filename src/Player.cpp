@@ -18,13 +18,11 @@
 #include "CombinedLifeMeter.h"
 #include "PlayerAI.h"
 #include "NewField.h"
-#include "NoteField.h"
 #include "NoteDataUtil.h"
 #include "ScreenMessage.h"
 #include "ScreenManager.h"
 #include "StageStats.h"
 #include "ActorUtil.h"
-#include "ArrowEffects.h"
 #include "Game.h"
 #include "NetworkSyncManager.h"	//used for sending timing offset
 #include "DancingCharacters.h"
@@ -239,14 +237,12 @@ float Player::GetWindowSeconds( TimingWindow tw )
 
 Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 {
-	m_disable_player_matrix_because_newfield_does_skewing= false;
 	m_drawing_notefield_board= false;
 	m_bLoaded = false;
 	m_inside_lua_set_life= false;
 
 	m_pPlayerState = nullptr;
 	m_pPlayerStageStats = nullptr;
-	m_fNoteFieldHeight = 0;
 
 	m_pLifeMeter = nullptr;
 	m_pCombinedLifeMeter = nullptr;
@@ -273,12 +269,9 @@ Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 
 	PlayerAI::InitFromDisk();
 
-	m_pNoteField = nullptr;
 	m_new_field= nullptr;
 	if( bVisibleParts )
 	{
-		m_pNoteField = new NoteField;
-		m_pNoteField->SetName( "NoteField" );
 		m_new_field= new NewField;
 		m_new_field->SetName("NewField");
 		m_new_field->m_being_drawn_by_player= true;
@@ -291,7 +284,6 @@ Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 Player::~Player()
 {
 	SAFE_DELETE( m_pAttackDisplay );
-	SAFE_DELETE( m_pNoteField );
 	SAFE_DELETE( m_new_field );
 	for (auto &hold: m_vpHoldJudgment)
 	{
@@ -442,75 +434,7 @@ void Player::Init(
 	}
 
 	// calculate M-mod speed here, so we can adjust properly on a per-song basis.
-	// XXX: can we find a better location for this?
-	// Always calculate the reading bpm, to allow switching to an mmod mid-song.
-	{
-		DisplayBpms bpms;
-
-		if( GAMESTATE->IsCourseMode() )
-		{
-			ASSERT( GAMESTATE->m_pCurTrail[pn] != nullptr );
-			GAMESTATE->m_pCurTrail[pn]->GetDisplayBpms( bpms );
-		}
-		else
-		{
-			ASSERT( GAMESTATE->m_pCurSong != nullptr );
-			GAMESTATE->m_pCurSong->GetDisplayBpms( bpms );
-		}
-
-		float fMaxBPM = 0;
-
-		/* TODO: Find a way to not go above a certain BPM range
-		 * for getting the max BPM. Otherwise, you get songs
-		 * like Tsuhsuixamush, M550, 0.18x speed. Even slow
-		 * speed readers would not generally find this fun.
-		 * -Wolfman2000
-		 */
-
-		// all BPMs are listed and available, so try them first.
-		// get the maximum listed value for the song or course.
-		// if the BPMs are < 0, reset and get the actual values.
-		if( !bpms.IsSecret() )
-		{
-			fMaxBPM = (M_MOD_HIGH_CAP > 0 ?
-				   bpms.GetMaxWithin(M_MOD_HIGH_CAP) :
-				   bpms.GetMax());
-			fMaxBPM = std::max( 0.f, fMaxBPM );
-		}
-
-		// we can't rely on the displayed BPMs, so manually calculate.
-		if( fMaxBPM == 0 )
-		{
-			float fThrowAway = 0;
-
-			if( GAMESTATE->IsCourseMode() )
-			{
-				for (auto &e: GAMESTATE->m_pCurTrail[pn]->m_vEntries)
-				{
-					float fMaxForEntry;
-					if (M_MOD_HIGH_CAP > 0)
-					{
-						e.pSong->m_SongTiming.GetActualBPM( fThrowAway, fMaxForEntry, M_MOD_HIGH_CAP );
-					}
-					else
-					{
-						e.pSong->m_SongTiming.GetActualBPM( fThrowAway, fMaxForEntry );
-					}
-					fMaxBPM = std::max( fMaxForEntry, fMaxBPM );
-				}
-			}
-			else
-			{
-				if (M_MOD_HIGH_CAP > 0)
-					GAMESTATE->m_pCurSong->m_SongTiming.GetActualBPM( fThrowAway, fMaxBPM, M_MOD_HIGH_CAP );
-				else
-					GAMESTATE->m_pCurSong->m_SongTiming.GetActualBPM( fThrowAway, fMaxBPM );
-			}
-		}
-
-		ASSERT( fMaxBPM > 0 );
-		m_pPlayerState->m_fReadBPM= fMaxBPM;
-	}
+	calc_read_bpm();
 
 	float fBalance = GameSoundManager::GetPlayerBalance( pn );
 	m_soundMine.SetProperty( "Pan", fBalance );
@@ -560,19 +484,12 @@ void Player::Init(
 		}
 	}
 
-	m_fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
-	if( m_pNoteField )
-	{
-		m_pNoteField->Init( m_pPlayerState, m_fNoteFieldHeight );
-		ActorUtil::LoadAllCommands( *m_pNoteField, sType );
-		this->AddChild( m_pNoteField );
-	}
 	if(m_new_field)
 	{
 		m_new_field->set_player_number(GetPlayerState()->m_PlayerNumber);
+		m_new_field->set_player_options(&(GetPlayerState()->m_PlayerOptions.GetCurrent()));
 		this->AddChild(m_new_field);
 	}
-	set_newfield_preferred(false);
 
 	m_vbFretIsDown.resize( GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer );
 	std::fill(m_vbFretIsDown.begin(), m_vbFretIsDown.end(), false);
@@ -580,29 +497,82 @@ void Player::Init(
 	m_fActiveRandomAttackStart = -1.0f;
 }
 
-void Player::set_newfield_preferred(bool use_new)
+void Player::calc_read_bpm()
 {
-	double old_hiber= 0.0;
-	double new_hiber= 0.0;
-	if(use_new)
+	// Always calculate the reading bpm, to allow switching to an mmod mid-song.
+	DisplayBpms bpms;
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+	if(GAMESTATE->IsCourseMode())
 	{
-		old_hiber= std::numeric_limits<float>::max();
-		new_hiber= 0.0;
-		m_disable_player_matrix_because_newfield_does_skewing= true;
+		ASSERT(GAMESTATE->m_pCurTrail[pn] != nullptr);
+		GAMESTATE->m_pCurTrail[pn]->GetDisplayBpms(bpms);
 	}
 	else
 	{
-		old_hiber= 0.0;
-		new_hiber= std::numeric_limits<float>::max();
-		m_disable_player_matrix_because_newfield_does_skewing= false;
+		ASSERT(GAMESTATE->m_pCurSong != nullptr);
+		GAMESTATE->m_pCurSong->GetDisplayBpms(bpms);
 	}
-	if(m_pNoteField != nullptr)
+
+	float fMaxBPM = 0;
+
+	/* TODO: Find a way to not go above a certain BPM range
+	 * for getting the max BPM. Otherwise, you get songs
+	 * like Tsuhsuixamush, M550, 0.18x speed. Even slow
+	 * speed readers would not generally find this fun.
+	 * -Wolfman2000
+	 */
+
+	// all BPMs are listed and available, so try them first.
+	// get the maximum listed value for the song or course.
+	// if the BPMs are < 0, reset and get the actual values.
+	if(!bpms.IsSecret())
 	{
-		m_pNoteField->SetHibernate(static_cast<float>(old_hiber));
+		fMaxBPM = (M_MOD_HIGH_CAP > 0 ?
+			bpms.GetMaxWithin(M_MOD_HIGH_CAP) :
+			bpms.GetMax());
+		fMaxBPM = std::max(0.f, fMaxBPM);
 	}
+
+	// we can't rely on the displayed BPMs, so manually calculate.
+	if(fMaxBPM == 0)
+	{
+		float fThrowAway = 0;
+
+		if(GAMESTATE->IsCourseMode())
+		{
+			for(auto &e: GAMESTATE->m_pCurTrail[pn]->m_vEntries)
+			{
+				float fMaxForEntry;
+				if (M_MOD_HIGH_CAP > 0)
+				{
+					e.pSong->m_SongTiming.GetActualBPM(fThrowAway, fMaxForEntry, M_MOD_HIGH_CAP);
+				}
+				else
+				{
+					e.pSong->m_SongTiming.GetActualBPM(fThrowAway, fMaxForEntry);
+				}
+				fMaxBPM = std::max(fMaxForEntry, fMaxBPM);
+			}
+		}
+		else
+		{
+			if(M_MOD_HIGH_CAP > 0)
+			{
+				GAMESTATE->m_pCurSong->m_SongTiming.GetActualBPM(fThrowAway, fMaxBPM, M_MOD_HIGH_CAP);
+			}
+			else
+			{
+				GAMESTATE->m_pCurSong->m_SongTiming.GetActualBPM(fThrowAway, fMaxBPM);
+			}
+		}
+	}
+
+	ASSERT(fMaxBPM > 0);
+	m_pPlayerState->m_fReadBPM= fMaxBPM;
 	if(m_new_field != nullptr)
 	{
-		m_new_field->SetHibernate(static_cast<float>(new_hiber));
+		m_new_field->set_read_bpm(m_pPlayerState->m_fReadBPM);
 	}
 }
 
@@ -701,6 +671,9 @@ void Player::Load()
 	m_iFirstUncrossedRow     = iNoteRow - 1;
 	m_pJudgedRows->Reset( iNoteRow );
 
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
 	if(m_new_field != nullptr)
 	{
 		// If we're not in the step editor, the player's preferred noteskin for
@@ -711,10 +684,10 @@ void Player::Load()
 		std::string skin_name;
 		// TODO: Store the skin params in the profile, preferably converting the
 		// profile to lua along the way.
-		LuaReference skin_params= GAMESTATE->m_noteskin_params[m_pPlayerState->m_PlayerNumber];
+		LuaReference skin_params= GAMESTATE->m_noteskin_params[pn];
 		if(!GAMESTATE->m_bInStepEditor)
 		{
-			Profile const* prof= PROFILEMAN->GetProfile(m_pPlayerState->m_PlayerNumber);
+			Profile const* prof= PROFILEMAN->GetProfile(pn);
 			if(prof != nullptr)
 			{
 				StepsType stype= GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType;
@@ -731,10 +704,9 @@ void Player::Load()
 			skin_name= m_pPlayerState->m_PlayerOptions.GetPreferred().m_newskin;
 		}
 		m_new_field->set_skin(skin_name, skin_params);
-	}
 
-	// TODO: Remove use of PlayerNumber.
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+		m_new_field->set_defective_mode(m_pPlayerState->m_player_needs_defective_field);
+	}
 
 	bool bOniDead = m_pPlayerState->m_PlayerOptions.GetStage().m_LifeType == LifeType_Battery  &&
 		(m_pPlayerStageStats == nullptr || m_pPlayerStageStats->m_bFailed);
@@ -805,15 +777,8 @@ void Player::Load()
 		default: break;
 	}
 
-	int iDrawDistanceAfterTargetsPixels = GAMESTATE->IsEditing() ? -100 : DRAW_DISTANCE_AFTER_TARGET_PIXELS;
-	int iDrawDistanceBeforeTargetsPixels = GAMESTATE->IsEditing() ? 400 : DRAW_DISTANCE_BEFORE_TARGET_PIXELS;
-
-	float fNoteFieldMiddle = (GRAY_ARROWS_Y_STANDARD+GRAY_ARROWS_Y_REVERSE)/2;
-
-	if( m_pNoteField && !bOniDead )
+	if(m_new_field && !bOniDead)
 	{
-		m_pNoteField->SetY( fNoteFieldMiddle );
-		m_pNoteField->Load( &m_NoteData, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels );
 		m_new_field->set_note_data(&m_NoteData, m_Timing, GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType);
 	}
 
@@ -928,8 +893,6 @@ void Player::Update( float fDeltaTime )
 	const float fSongBeat = m_pPlayerState->m_Position.m_fSongBeat;
 	const int iSongRow = BeatToNoteRow( fSongBeat );
 
-	ArrowEffects::SetCurrentOptions(&m_pPlayerState->m_PlayerOptions.GetCurrent());
-
 	// Optimization: Don't spend time processing the things below that won't show
 	// if the Player doesn't show anything on the screen.
 	if( HasVisibleParts() )
@@ -972,27 +935,15 @@ void Player::Update( float fDeltaTime )
 		float fJudgmentZoom = min( std::pow(0.5f, fMiniPercent+fTinyPercent), 1.0f );
 
 		// Update Y positions
+		if(m_new_field != nullptr)
 		{
-			for( int c=0; c<GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_iColsPerPlayer; c++ )
+			FieldLayerRenderInfo render_info= {FLFT_Explosion, FLTT_PosOnly};
+			for(size_t c= 0; c < m_new_field->get_num_columns(); c++)
 			{
-				float fPercentReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(c);
-				float fHoldJudgeYPos = Rage::scale( fPercentReverse, 0.f, 1.f, HOLD_JUDGMENT_Y_STANDARD + 0.f, HOLD_JUDGMENT_Y_REVERSE + 0.f );
-				//float fGrayYPos = Rage::scale( fPercentReverse, 0.f, 1.f, GRAY_ARROWS_Y_STANDARD + 0.f, GRAY_ARROWS_Y_REVERSE + 0.f );
-
-				float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
-				const float fZ = ArrowEffects::GetZPos(c, 0);
-				fX *= ( 1 - fMiniPercent * 0.5f );
-
-				m_vpHoldJudgment[c]->SetX( fX );
-				m_vpHoldJudgment[c]->SetY( fHoldJudgeYPos );
-				m_vpHoldJudgment[c]->SetZ( fZ );
-				m_vpHoldJudgment[c]->SetZoom( fJudgmentZoom );
+				m_new_field->position_actor_at_column_head(m_vpHoldJudgment[c],
+					render_info, c);
 			}
 		}
-
-		// NoteField accounts for reverse on its own now.
-		//if( m_pNoteField )
-		//	m_pNoteField->SetY( fGrayYPos );
 
 		const bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(0) == 1;
 		float fPercentCentered = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fScrolls[PlayerOptions::SCROLL_CENTERED];
@@ -1011,9 +962,6 @@ void Player::Update( float fDeltaTime )
 			Actor::TweenState::MakeWeightedAverage( m_pActorWithComboPosition->DestTweenState(), ts1, ts2, fPercentCentered );
 		}
 
-		float fNoteFieldZoom = 1 - fMiniPercent*0.5f;
-		if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
-			m_pNoteField->SetZoom( fNoteFieldZoom );
 		if( m_pActorWithJudgmentPosition != nullptr )
 			m_pActorWithJudgmentPosition->SetZoom( m_pActorWithJudgmentPosition->GetZoom() * fJudgmentZoom );
 		if( m_pActorWithComboPosition != nullptr )
@@ -1041,10 +989,6 @@ void Player::Update( float fDeltaTime )
 		// TODO: Make this work for non-human-controlled players
 		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && m_pPlayerState->m_PlayerController==PC_HUMAN )
 		{
-			if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
-			{
-				m_pNoteField->SetPressed( col );
-			}
 			if(m_new_field != nullptr)
 			{
 				m_new_field->set_pressed(col, true);
@@ -1529,14 +1473,6 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 				fLife = 1; // xxx: should be MAX_HOLD_LIFE instead? -aj
 				hns = HNS_Held;
 				bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD;
-				if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
-				{
-					for (auto &trtn: vTN)
-					{
-						int iTrack = trtn.iTrack;
-						m_pNoteField->DidHoldNote( iTrack, HNS_Held, bBright );	// bright ghost flash
-					}
-				}
 				if(m_new_field)
 				{
 					for(auto&& trtn : vTN)
@@ -1639,128 +1575,40 @@ void Player::DrawPrimitives()
 		m_new_field->update_displayed_time(disp_pos.m_fSongBeatVisible, disp_pos.m_fMusicSecondsVisible);
 	}
 
-	bool draw_notefield= m_pNoteField && !IsOniDead();
+	bool draw_notefield= m_new_field && !IsOniDead();
 
-	const PlayerOptions& curr_options= m_pPlayerState->m_PlayerOptions.GetCurrent();
-	float tilt= curr_options.m_fPerspectiveTilt;
-	float skew= curr_options.m_fSkew;
-	float mini= curr_options.m_fEffects[PlayerOptions::EFFECT_MINI];
-	float center_y= GetY() + (GRAY_ARROWS_Y_STANDARD + GRAY_ARROWS_Y_REVERSE) / 2;
-	bool reverse= curr_options.GetReversePercentForColumn(0) > .5;
-
-	if(m_drawing_notefield_board)
+	if(m_drawing_notefield_board || m_being_drawn_by_proxy)
 	{
 		// Ask the Notefield to draw its board primitive before everything else
 		// so that things drawn under the field aren't behind the opaque board.
 		// -Kyz
 		if(draw_notefield)
 		{
-			PlayerNoteFieldPositioner poser(this, GetX(), tilt, skew, mini, center_y, reverse);
-			if(m_disable_player_matrix_because_newfield_does_skewing)
-			{
-				m_new_field->draw_board();
-			}
-			else
-			{
-				m_pNoteField->DrawBoardPrimitive();
-			}
+			m_new_field->draw_board();
 		}
-		return;
+		if(!m_being_drawn_by_proxy)
+		{
+			return;
+		}
 	}
 
-	if(m_disable_player_matrix_because_newfield_does_skewing)
+	int combo_draw_order= m_sprCombo->GetDrawOrder();
+	int judge_draw_order= m_sprJudgment->GetDrawOrder();
+	if(combo_draw_order < judge_draw_order)
 	{
-		int combo_draw_order= m_sprCombo->GetDrawOrder();
-		int judge_draw_order= m_sprJudgment->GetDrawOrder();
-		if(combo_draw_order < judge_draw_order)
-		{
-			m_new_field->draw_up_to_draw_order(combo_draw_order);
-			m_sprCombo->Draw();
-			m_new_field->draw_up_to_draw_order(judge_draw_order);
-			m_sprJudgment->Draw();
-		}
-		else
-		{
-			m_new_field->draw_up_to_draw_order(judge_draw_order);
-			m_sprJudgment->Draw();
-			m_new_field->draw_up_to_draw_order(combo_draw_order);
-			m_sprCombo->Draw();
-		}
-		m_new_field->draw_up_to_draw_order(max_draw_order);
+		m_new_field->draw_up_to_draw_order(combo_draw_order);
+		m_sprCombo->Draw();
+		m_new_field->draw_up_to_draw_order(judge_draw_order);
+		m_sprJudgment->Draw();
 	}
 	else
 	{
-		// Draw these below everything else.
-		if( COMBO_UNDER_FIELD && curr_options.m_fBlind == 0 )
-		{
-			if( m_sprCombo )
-			{
-				m_sprCombo->Draw();
-			}
-		}
-
-		if( m_pAttackDisplay )
-		{
-			m_pAttackDisplay->Draw();
-		}
-
-		if( TAP_JUDGMENTS_UNDER_FIELD )
-		{
-			DrawTapJudgments();
-		}
-
-		if( HOLD_JUDGMENTS_UNDER_FIELD )
-		{
-			DrawHoldJudgments();
-		}
-
-		if(draw_notefield)
-		{
-			PlayerNoteFieldPositioner poser(this, GetX(), tilt, skew, mini, center_y, reverse);
-			m_pNoteField->Draw();
-		}
-
-		// m_pNoteField->m_sprBoard->GetVisible()
-		if( !COMBO_UNDER_FIELD && curr_options.m_fBlind == 0 )
-		{
-			if( m_sprCombo )
-			{
-				m_sprCombo->Draw();
-			}
-		}
-
-		if( !(bool)TAP_JUDGMENTS_UNDER_FIELD )
-		{
-			DrawTapJudgments();
-		}
-
-		if( !(bool)HOLD_JUDGMENTS_UNDER_FIELD )
-		{
-			DrawHoldJudgments();
-		}
+		m_new_field->draw_up_to_draw_order(judge_draw_order);
+		m_sprJudgment->Draw();
+		m_new_field->draw_up_to_draw_order(combo_draw_order);
+		m_sprCombo->Draw();
 	}
-}
-
-void Player::PushPlayerMatrix(float x, float skew, float center_y)
-{
-	if(m_disable_player_matrix_because_newfield_does_skewing)
-	{
-		return;
-	}
-	DISPLAY->CameraPushMatrix();
-	DISPLAY->PushMatrix();
-	DISPLAY->LoadMenuPerspective(45, SCREEN_WIDTH, SCREEN_HEIGHT,
-		Rage::scale(skew, 0.1f, 1.0f, x, SCREEN_CENTER_X), center_y);
-}
-
-void Player::PopPlayerMatrix()
-{
-	if(m_disable_player_matrix_because_newfield_does_skewing)
-	{
-		return;
-	}
-	DISPLAY->CameraPopMatrix();
-	DISPLAY->PopMatrix();
+	m_new_field->draw_up_to_draw_order(max_draw_order);
 }
 
 void Player::DrawNoteFieldBoard()
@@ -1768,40 +1616,6 @@ void Player::DrawNoteFieldBoard()
 	m_drawing_notefield_board= true;
 	Draw();
 	m_drawing_notefield_board= false;
-}
-
-Player::PlayerNoteFieldPositioner::PlayerNoteFieldPositioner(
-	Player* p, float x, float tilt, float skew, float mini, float center_y, bool reverse)
-	:player(p)
-{
-	player->PushPlayerMatrix(x, skew, center_y);
-	float reverse_mult= (reverse ? -1.f : 1.f);
-	original_y= player->m_pNoteField->GetY();
-	float tilt_degrees= Rage::scale(tilt, -1.f, +1.f, +30.f, -30.f) * reverse_mult;
-	float zoom= Rage::scale(mini, 0.f, 1.f, 1.f, .5f);
-	// Something strange going on here.  Notice that the range for tilt's
-	// effect on y_offset goes to -45 when positive, but -20 when negative.
-	// I don't know why it's done this why, simply preserving old behavior.
-	// -Kyz
-	if(tilt > 0)
-	{
-		zoom*= Rage::scale(tilt, 0.f, 1.f, 1.f, 0.9f);
-		y_offset= Rage::scale(tilt, 0.f, 1.f, 0.f, -45.f) * reverse_mult;
-	}
-	else
-	{
-		zoom*= Rage::scale(tilt, 0.f, -1.f, 1.f, 0.9f);
-		y_offset= Rage::scale(tilt, 0.f, -1.f, 0.f, -20.f) * reverse_mult;
-	}
-	player->m_pNoteField->SetY(original_y + y_offset);
-	player->m_pNoteField->SetZoom(zoom);
-	player->m_pNoteField->SetRotationX(tilt_degrees);
-}
-
-Player::PlayerNoteFieldPositioner::~PlayerNoteFieldPositioner()
-{
-	player->m_pNoteField->SetY(original_y);
-	player->PopPlayerMatrix();
 }
 
 void Player::DrawTapJudgments()
@@ -1823,6 +1637,25 @@ void Player::DrawHoldJudgments()
 			m_vpHoldJudgment[c]->Draw();
 }
 
+void Player::SetSpeedFromPlayerOptions()
+{
+	if(m_new_field != nullptr)
+	{
+		PlayerOptions& options= m_pPlayerState->m_PlayerOptions.GetCurrent();
+		m_new_field->set_speed_old_way(options.m_fTimeSpacing,
+			options.m_fMaxScrollBPM, options.m_fScrollSpeed,
+			options.m_fScrollBPM, m_pPlayerState->m_fReadBPM,
+			GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate);
+	}
+}
+
+void Player::SetNoteFieldToEditMode()
+{
+	if(m_new_field != nullptr)
+	{
+		m_new_field->turn_on_edit_text();
+	}
+}
 
 void Player::ChangeLife( TapNoteScore tns )
 {
@@ -2223,10 +2056,6 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 						IncrementCombo();
 
 						bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD;
-						if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
-						{
-							m_pNoteField->DidHoldNote( col, HNS_Held, bBright );
-						}
 						if(m_new_field != nullptr)
 						{
 							m_new_field->did_hold_note(col, HNS_Held, bBright);
@@ -2557,10 +2386,10 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 				// XXX: This is the wrong combo for shared players.
 				// STATSMAN->m_CurStageStats.m_Player[pn] might work, but could be wrong.
 				const bool bBright = ( m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > (unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD ) || bBlind;
-				if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
-					m_pNoteField->DidTapNote( col, bBlind? TNS_W1:score, bBright );
-				if( m_new_field )
-					m_new_field->did_tap_note( col, bBlind? TNS_W1:score, bBright );
+				if(m_new_field)
+				{
+					m_new_field->did_tap_note(col, bBlind? TNS_W1:score, bBright);
+				}
 				if( score >= m_pPlayerState->m_PlayerOptions.GetCurrent().m_MinTNSToHideNotes || bBlind )
 					HideNote( col, iRowOfOverlappingNoteOrRow );
 			}
@@ -2608,10 +2437,6 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 	// XXX:
 	if( !bRelease )
 	{
-		if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
-		{
-			m_pNoteField->Step( col, score );
-		}
 		Message msg( "Step" );
 		msg.SetParam( "PlayerNumber", m_pPlayerState->m_PlayerNumber );
 		msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
@@ -2783,10 +2608,6 @@ void Player::UpdateJudgedRows()
 				SetMineJudgment( tn.result.tns , iter.Track() );
 				break;
 			}
-			if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
-			{
-				m_pNoteField->DidTapNote( iter.Track(), tn.result.tns, false );
-			}
 			if(m_new_field != nullptr)
 			{
 				m_new_field->did_tap_note(iter.Track(), tn.result.tns, false);
@@ -2855,10 +2676,6 @@ void Player::FlashGhostRow( int iRow )
 
 		if( tn.type == TapNoteType_Empty || tn.type == TapNoteType_Mine || tn.type == TapNoteType_Fake )
 			continue;
-		if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
-		{
-			m_pNoteField->DidTapNote( iTrack, lastTNS, bBright );
-		}
 		if(m_new_field != nullptr)
 		{
 			m_new_field->did_tap_note(iTrack, lastTNS, bBright);
@@ -3186,10 +3003,6 @@ void Player::HandleHoldCheckpoint(int iRow,
 			{
 				bool bBright = m_pPlayerStageStats
 					&& m_pPlayerStageStats->m_iCurCombo>(unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD;
-				if( m_pNoteField && !m_disable_player_matrix_because_newfield_does_skewing)
-				{
-					m_pNoteField->DidHoldNote( i, HNS_Held, bBright );
-				}
 				if(m_new_field != nullptr)
 				{
 					m_new_field->did_hold_note(i, HNS_Held, bBright);
@@ -3262,17 +3075,8 @@ float Player::GetMaxStepDistanceSeconds()
 
 void Player::FadeToFail()
 {
-	if( m_pNoteField )
-		m_pNoteField->FadeToFail();
-
 	// clear miss combo
 	SetCombo( 0, 0 );
-}
-
-void Player::CacheAllUsedNoteSkins()
-{
-	if( m_pNoteField )
-		m_pNoteField->CacheAllUsedNoteSkins();
 }
 
 static Message create_judge_message(PlayerNumber pn, TapNoteScore tns, int track)
@@ -3534,11 +3338,6 @@ public:
 		p->GetPlayerTimingData().PushSelf(L);
 		return 1;
 	}
-	static int set_newfield_preferred(T* p, lua_State* L)
-	{
-		p->set_newfield_preferred(BArg(1));
-		COMMON_RETURN_SELF;
-	}
 
 	LunaPlayer()
 	{
@@ -3547,7 +3346,6 @@ public:
 		ADD_METHOD( SetActorWithJudgmentPosition );
 		ADD_METHOD( SetActorWithComboPosition );
 		ADD_METHOD( GetPlayerTimingData );
-		ADD_METHOD(set_newfield_preferred);
 	}
 };
 

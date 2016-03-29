@@ -85,6 +85,7 @@ public:
 	void ResetToDefaultPlayerOptions( ModsLevel l );
 	/** @brief The PlayerOptions presently in use by the Player. */
 	ModsGroup<PlayerOptions>	m_PlayerOptions;
+	void set_defective_mode(bool mode);
 
 	/**
 	 * @brief Used to push note-changing modifiers back so that notes don't pop.
@@ -122,6 +123,10 @@ public:
 
 	// Stores the bpm that was picked for reading the chart if the player is using an mmod.
 	float m_fReadBPM;
+	// m_player_needs_defective_field is here in PlayerState so that it can be
+	// set when needed on the options screen and the Player will check it when
+	// loading in gameplay. -Kyz
+	bool m_player_needs_defective_field;
 
 	// Used in Rave
 	float	m_fSuperMeter;	// between 0 and NUM_ATTACK_LEVELS

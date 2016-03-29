@@ -217,6 +217,15 @@ const TimingData &PlayerState::GetDisplayedTiming() const
 	return *steps->GetTimingData();
 }
 
+void PlayerState::set_defective_mode(bool mode)
+{
+	m_player_needs_defective_field= mode;
+	Message msg("defective_field");
+	msg.SetParam("pn", m_PlayerNumber);
+	msg.SetParam("mode", mode);
+	MESSAGEMAN->Broadcast(msg);
+}
+
 
 // lua start
 #include "LuaBinding.h"
@@ -225,7 +234,7 @@ const TimingData &PlayerState::GetDisplayedTiming() const
 class LunaPlayerState: public Luna<PlayerState>
 {
 public:
-	static int ApplyPreferredOptionsToOtherLevels(T* p, lua_State* L)
+	static int ApplyPreferredOptionsToOtherLevels(T* p, lua_State*)
 	{
 		p->m_PlayerOptions.Assign(ModsLevel_Preferred,
 			p->m_PlayerOptions.Get(ModsLevel_Preferred));
@@ -245,9 +254,17 @@ public:
 		PlayerOptions po;
 		po.FromString( SArg(2) );
 		p->m_PlayerOptions.Assign( m, po );
+		p->set_defective_mode(true);
 		return 0;
 	}
 	static int GetPlayerOptions( T* p, lua_State *L )
+	{
+		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
+		p->m_PlayerOptions.Get(m).PushSelf(L);
+		p->set_defective_mode(true);
+		return 1;
+	}
+	static int get_player_options_no_defect(T* p, lua_State* L)
 	{
 		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
 		p->m_PlayerOptions.Get(m).PushSelf(L);
@@ -271,11 +288,22 @@ public:
 	static int GetCurrentPlayerOptions( T* p, lua_State *L )
 	{
 		p->m_PlayerOptions.GetCurrent().PushSelf(L);
+		p->set_defective_mode(true);
 		return 1;
 	}
 	DEFINE_METHOD( GetHealthState, m_HealthState );
 	DEFINE_METHOD( GetSuperMeterLevel, m_fSuperMeter );
 	DEFINE_METHOD(get_read_bpm, m_fReadBPM);
+	static int get_needs_defective_field(T* p, lua_State* L)
+	{
+		lua_pushboolean(L, p->m_player_needs_defective_field);
+		return 1;
+	}
+	static int set_needs_defective_field(T* p, lua_State* L)
+	{
+		p->set_defective_mode(BArg(1));
+		COMMON_RETURN_SELF;
+	}
 
 	LunaPlayerState()
 	{
@@ -286,12 +314,14 @@ public:
 		ADD_METHOD( GetPlayerController );
 		ADD_METHOD( SetPlayerOptions );
 		ADD_METHOD( GetPlayerOptions );
+		ADD_METHOD(get_player_options_no_defect);
 		ADD_METHOD( GetPlayerOptionsArray );
 		ADD_METHOD( GetPlayerOptionsString );
 		ADD_METHOD( GetCurrentPlayerOptions );
 		ADD_METHOD( GetSongPosition );
 		ADD_METHOD( GetHealthState );
 		ADD_METHOD( GetSuperMeterLevel );
+		ADD_GET_SET_METHODS(needs_defective_field);
 	}
 };
 
