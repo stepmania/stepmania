@@ -4,38 +4,103 @@ systems, written from scratch.  The new systems are designed to be more
 flexible and predictable and documented on the user side, and easier to
 maintain on the developer side.
 
-Due to the completely new design, nothing is compatible.
+
+# Compatibility
+Noteskins made for the old system must be converted by a human to be used in
+the NewField.  Typically this involves remaking the hold graphics and writing
+some new lua code to replace the metrics.
+
+Themes made for the old system should work without changes.  Old themes will
+not allow setting advanced NewField options such as noteskin parameters until
+updated by their authors.
+
+Simfiles made to set modifiers in the old mod system will work to varying
+degrees.  They should be tested by their authors to clean up rough edges.
+In particular ApplyGameCommand has been removed because it is obsolete and
+doesn't do the right thing for gimmicks anyway.
+
+## FastNoteRendering
+The FastNoteRendering preference is obsolete.  The NewField uses a different
+method for rendering arrows that prevents the intersection problem that
+occurred with 3D notes and FastNoteRendering, and doesn't slow the game down
+the way turning off FastNoteRendering did in the old NoteField.
+
+## Under the Hood
+Compatibility is provided through a complete rewrite of ArrowEffects, called
+ArrowDefedcts.  When something touches the PlayerOptions structure for a
+player, the field for that player is put into "defective mode".  When the
+field is in that mode, it ignores all the new modifier fields and instead
+only uses the stuff in PlayerOptions.  This should make old mods behave the
+same in the NewField as in the old NoteField.  This includes unwanted things
+such as theme metrics for receptor position and screen height making some
+mods appear different in different themes.
+
+### Musical Sync
+Because the NewField is based around having mods synced to music, mods that
+did not have musical sync in the old system are synced in ArrowDefects.
+This means that when these mods are used in conjunction with a music rate
+mod, the mod effect will happen at a different rate.  It should make them
+behave more reliably as well.
+* Expand used a global variable to accumulate time that was not reset between
+  songs.  Playing a song after waiting a different amount of time would make
+  the notes expand and contract at slightly different times.  In
+  ArrowDefects, Expand uses the current music second, minus the total length
+  of any stops.
+* Blink, Drunk, and Tipsy used the time since stepmania started up, and did
+  not stop when the game was paused.  In ArrowDefects, these mods use the
+  current music second.
 
 
 # Making a theme use NewField
-For transition period builds, both the old NoteField and the NewField exist
-on ScreenGameplay.  The NewField is disabled unless the theme calls special
-functions to enable it, and a NewSkin cannot be chosen without the right
-option row being added to the metrics.
 
-## Enabling
+## NoteField actor removed
+The old NoteField has been removed from the Player actor on ScreenGameplay.
+The Player:set_newfield_preferred function no longer exists because it no
+longer has a purpose.
 
+## NewField preferences
+The _fallback theme provides a structure for preferences for the NewField.
+These preferences cover normal things like speed and hidden, to more exotic
+choices such as y offset (distance from field center to receptors) and
+whether notes flash white before disappearing when hidden is on.
+
+### Enabling NewField preferences
+
+#### Loading and Saving
+The preferences should be automatically loaded and saved when profiles are
+loaded and saved.  If your theme has custom profile loading and saving
+functions, read Docs/Themerdocs/lua_config_system.md and look for the section
+"Loading and Saving".  That will tell you to write different functions and
+use add_profile_load_callback and add_profile_save_callback instead of having
+LoadProfileCustom and SaveProfileCustom functions in the theme.
+
+#### Options Screen
+NewField preferences cannot be set through the old metrics style commands
+that set the old player options.  Instead, they must be set through lua
+option rows or a custom lua menu system.  The _fallback theme provides a
+custom lua menu system, and parts for building menus to set the preferences.
+The default theme has an (uncommented) example options screen that uses the
+custom lua menu system named "ScreenNestyPlayerOptions".
+
+Using old metrics style commands on a normal options screen to set modifiers
+will trigger the backwards compatibility auto detection and disable the
+newfield prefs.
+
+#### Gameplay
 Add an actor to a layer on ScreenGameplay like this:
 ```
 t[#t+1]= use_newfield_actor()
 ```
-This will create an actor that will enable the newfield for both players and
-apply their newfield preferences.  The newfield preferences will be discussed
-in their own documentation file.
+This will create an actor that will apply the newfield preferences for both
+players.  The newfield preferences will be discussed in their own
+documentation file.
 
-### Converting Speed, Distant, and Mini
-The convert_oldfield_mods function is provided to convert the speed, distant,
-mini, and scroll mods that are set in PlayerOptions to mods on the newfield.
-Call it in an OnCommand and pass it the screen, the player number, and the
-y offset like this:
-```
-for i, pn in ipairs(GAMESTATE:GetEnabledPlayers()) do
-  convert(oldfield_mods(SCREENMAN:GetTopScreen(), pn, 100)
-end
-```
-That function will take the Tilt, Mini, Alternate, Cross, Reverse, Split,
-and speed mods from the PlayerOptions for the player and convert them to the
-new system.
+#### Music Select
+Call ```reset_needs_defective_field_for_all_players()``` on ScreenSelectMusic
+to reset the defective mode flag for the players.  If the flag is not reset,
+then when someone plays a simfile that triggers the defective mode detection,
+they'll be stuck in that mode until they start a new credit.
+
 
 ### Newskin Option Row
 For themes that still use a metrics based options screen, a lua option row
@@ -79,9 +144,19 @@ That way, the thing is guaranteed to be in the correct position for the layer
 and column that it is in.  If mods move the field or the column around, the
 layers move too.
 
+In general, when picking the draw order for something, put it halfway between
+the things it should be between.  That leaves the most space for other things
+to be added in between it.  This is why the engine elements are in units of
+100, and named variables are provided at the mid points.
+
 To put the judgment underneath all the notes, but not part of the board, put
-it at 51.  Putting the judgment at 351 would put it above all the notes.  251
+it at 50.  Putting the judgment at 350 would put it above all the notes.  250
 would put it above hold bodies, but underneath taps.
+
+#### ActorProxy
+Drawing the Player or the NewField or a NewFieldColumn with an ActorProxy
+will bypass some of the draw order logic.  Things with a draw order less than
+0 will not be under other theme elements when an ActorProxy is used.
 
 ### Judgment/Combo
 

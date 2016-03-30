@@ -18,15 +18,15 @@ local notefield_config= {
 	nesty_options.bool_config_val(newfield_prefs_config, "sudden"),
 	nesty_options.float_config_val(newfield_prefs_config, "fade_dist", -1, 1, 2),
 	nesty_options.bool_config_val(newfield_prefs_config, "glow_during_fade"),
-	nesty_options.float_config_val(newfield_prefs_config, "fov", -1, 0, 1, 1, 179),
 	nesty_options.float_config_val(newfield_prefs_config, "reverse", -2, 0, 0),
+	nesty_options.float_config_val(newfield_prefs_config, "zoom", -2, -1, 1),
 	nesty_options.float_config_val(newfield_prefs_config, "rotation_x", -1, 1, 2),
 	nesty_options.float_config_val(newfield_prefs_config, "rotation_y", -1, 1, 2),
 	nesty_options.float_config_val(newfield_prefs_config, "rotation_z", -1, 1, 2),
 	nesty_options.float_config_val(newfield_prefs_config, "vanish_x", -1, 1, 2),
 	nesty_options.float_config_val(newfield_prefs_config, "vanish_y", -1, 1, 2),
+	nesty_options.float_config_val(newfield_prefs_config, "fov", -1, 0, 1, 1, 179),
 	nesty_options.float_config_val(newfield_prefs_config, "yoffset", -1, 1, 2),
-	nesty_options.float_config_val(newfield_prefs_config, "zoom", -2, -1, 1),
 	nesty_options.float_config_val(newfield_prefs_config, "zoom_x", -2, -1, 1),
 	nesty_options.float_config_val(newfield_prefs_config, "zoom_y", -2, -1, 1),
 	nesty_options.float_config_val(newfield_prefs_config, "zoom_z", -2, -1, 1),
@@ -141,6 +141,14 @@ local chart_mods= {
 	 translatable= true, args= insertion_chart_mods},
 }
 
+local gameplay_options= {
+	nesty_options.bool_config_val(player_config, "ComboUnderField"),
+	nesty_options.bool_config_val(player_config, "FlashyCombo"),
+	nesty_options.bool_config_val(player_config, "GameplayShowStepsDisplay"),
+	nesty_options.bool_config_val(player_config, "GameplayShowScore"),
+	nesty_options.bool_config_val(player_config, "JudgmentUnderField"),
+}
+
 local base_options= {
 	{name= "speed_mod", meta= nesty_option_menus.adjustable_float,
 	 translatable= true, args= gen_speed_menu, exec_args= true},
@@ -173,6 +181,7 @@ local base_options= {
 	nesty_options.bool_config_val(newfield_prefs_config, "hidden"),
 	nesty_options.bool_config_val(newfield_prefs_config, "sudden"),
 	{name= "advanced_notefield_config", translatable= true, meta= nesty_option_menus.menu, args= notefield_config},
+	{name= "gameplay_options", translatable= true, meta= nesty_option_menus.menu, args= gameplay_options},
 	{name= "reload_newskins", translatable= true, meta= "execute",
 	 execute= function() NEWSKIN:reload_skins() end},
 }

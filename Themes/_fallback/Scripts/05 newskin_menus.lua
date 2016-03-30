@@ -227,3 +227,75 @@ function show_noteskin_param_menu(pn)
 	return skin_defaults ~= nil and skin_info ~= nil and next(skin_defaults)
 end
 set_nesty_option_metatables()
+
+
+function newskin_option_row()
+	local pn= GAMESTATE:GetMasterPlayerNumber()
+	local steps= GAMESTATE:GetCurrentSteps(pn)
+	if not steps then
+		steps= GAMESTATE:GetCurrentTrail(pn)
+	end
+	local stype= false
+	if steps then
+		stype= steps:GetStepsType()
+	elseif not GAMESTATE:InStepEditor() then
+		local profile= PROFILEMAN:GetProfile(pn)
+		stype= profile:get_last_stepstype()
+	end
+	if not stype then
+		return {
+			Name= "NewSkin",
+			GoToFirstOnStart= true,
+			LayoutType= "ShowAllInRow",
+			SelectType= "SelectOne",
+			Choices= {""},
+			LoadSelections= function() end,
+			SaveSelections= function() end,
+		}
+	end
+	local skins= NEWSKIN:get_skin_names_for_stepstype(stype)
+	if #skins < 1 then
+		return {
+			Name= "NewSkin",
+			GoToFirstOnStart= true,
+			LayoutType= "ShowAllInRow",
+			SelectType= "SelectOne",
+			Choices= {""},
+			LoadSelections= function() end,
+			SaveSelections= function() end,
+		}
+	end
+	return {
+		Name= "NewSkin",
+		GoToFirstOnStart= true,
+		LayoutType= "ShowAllInRow",
+		SelectType= "SelectOne",
+		Choices= skins,
+		LoadSelections= function(self, list, pn)
+			local player_skin= GAMESTATE:GetPlayerState(pn):get_player_options_no_defect("ModsLevel_Preferred"):NewSkin()
+			if not GAMESTATE:InStepEditor() then
+				local profile= PROFILEMAN:GetProfile(pn)
+				player_skin= profile:get_preferred_noteskin(stype)
+			end
+			for i, choice in ipairs(self.Choices) do
+				if player_skin == choice then
+					list[i]= true
+					return
+				end
+			end
+			list[1]= true
+		end,
+		SaveSelections= function(self, list, pn)
+			for i, choice in ipairs(self.Choices) do
+				if list[i] then
+					if not GAMESTATE:InStepEditor() then
+						local profile= PROFILEMAN:GetProfile(pn)
+						local player_skin= profile:set_preferred_noteskin(stype, choice)
+					end
+					GAMESTATE:GetPlayerState(pn):get_player_options_no_defect("ModsLevel_Preferred"):NewSkin(choice)
+					return
+				end
+			end
+		end,
+	}
+end

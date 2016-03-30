@@ -44,6 +44,7 @@ void PlayerState::Reset()
 	for( int i=0; i<NUM_INVENTORY_SLOTS; i++ )
 		m_Inventory[i].MakeBlank();
 
+	set_defective_mode(false);
 }
 
 void PlayerState::Update( float fDelta )

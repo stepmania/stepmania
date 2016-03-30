@@ -17,6 +17,16 @@ ________________________________________________________________________________
 * [NewField] Lifts are now rendered with a hold body preceding them.  The
   hold body uses the same graphics as the normal hold, and has a fade in
   effect at the beginning.  [kyzentun]
+* [Linux] Use XRandR 1.2 functions for querying all displays (technically,
+  "outputs"), and allow selecting which output to go fullscreen on. Also,
+	implement support for fullscreen borderless window by using
+	_NET_WM_STATE_FULLSCREEN display manager hint. [drewbarbs, roothorick]
+* [Graphics] Replace DisplayResolutions class with DisplaySpecs, to track
+  available resolutions/refresh rates on a per-display basis. Create Lua
+	binding. [drewbarbs]
+* [OptionRow]: add ability to return "option effects" (enum OptEffect) and
+  indicating full OptionRow reloads (enum ReloadChanged) from
+	OptionRowHandlerLua. [drewbarbs]
 
 2016/02/20
 ----------
@@ -101,6 +111,10 @@ ________________________________________________________________________________
 * [Rage] Restructured major portions into Rage namespace instead of prefixing
   class names with Rage. [wolfman2000]
 * [StdString.h] StdString removed and replaced with std::string. [wolfman2000]
+
+================================================================================
+StepMania 5.1.-1 | 20151031
+--------------------------------------------------------------------------------
 
 2015/06/?? to 2015/10/27
 ----------

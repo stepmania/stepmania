@@ -5,6 +5,13 @@ StepMania 5.1 series.  This is to inform translators of strings that need to
 be translated from English to other languages.
 ________________________________________________________________________________
 
+2016/03/28
+----------
+* New section: newfield_options.  This section is the names of options used
+  on the new options screen in the default theme.
+* New section: newfield_explanations.  This section is the explanations for
+  options used on the new options screen in the default theme.
+
 2015/10/27
 ----------
 * [OptionExplanations] NewSkin
