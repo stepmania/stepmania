@@ -13,6 +13,8 @@ RollingNumbers::RollingNumbers()
 	 m_leading_glyph("0"), m_chars_wide(9),
 	 m_current_number(0.0f), m_target_number(0.0f), m_score_velocity(0.0f)
 {
+	m_leading_text_attr.set_diffuse(Rage::Color(1, 1, 1, 1));
+	m_number_text_attr.set_diffuse(Rage::Color(1, 1, 1, 1));
 }
 
 void RollingNumbers::Load(const std::string& metrics_group)
@@ -40,7 +42,7 @@ void RollingNumbers::Load(const std::string& metrics_group)
 
 void RollingNumbers::UpdateInternal(float fDeltaTime)
 {
-	if(m_current_number != m_target_number)
+	if(m_current_number != m_target_number || m_bFirstUpdate)
 	{
 		fapproach(m_current_number, m_target_number, fabsf(m_score_velocity) * fDeltaTime);
 		UpdateText();
