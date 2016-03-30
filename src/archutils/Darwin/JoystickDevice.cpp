@@ -5,12 +5,12 @@
 
 Joystick::Joystick() :	id( InputDevice_Invalid ),
 			x_axis( 0 ), y_axis( 0 ), z_axis( 0 ),
-			x_rot( 0 ), y_rot( 0 ), z_rot( 0 ),
-			hat( 0 ), hat_min( 0 ), hat_max( 0 ),
-			x_min( 0 ), y_min( 0 ), z_min( 0 ),
-			x_max( 0 ), y_max( 0 ), z_max( 0 ),
-			rx_min( 0 ), ry_min( 0 ), rz_min( 0 ),
-			rx_max( 0 ), ry_max( 0 ), rz_max( 0 )
+			x_rot( 0 ), y_rot( 0 ), z_rot( 0 ), hat( 0 ),
+			x_min( 0 ), x_max( 0 ), y_min( 0 ),
+			y_max( 0 ), z_min( 0 ), z_max( 0 ),
+			rx_min( 0 ), rx_max( 0 ), ry_min( 0 ),
+			ry_max( 0 ), rz_min( 0 ), rz_max( 0 ),
+			hat_min( 0 ), hat_max( 0 )
 {
 }
 

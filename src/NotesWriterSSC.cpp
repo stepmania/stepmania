@@ -275,7 +275,8 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			else
 			{
 				f.PutLine( fmt::sprintf( "#DISPLAYBPM:%.6f:%.6f;", out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
-			}break;
+			}
+			break;
 		case DISPLAY_BPM_RANDOM:
 			f.PutLine( fmt::sprintf( "#DISPLAYBPM:*;" ) );
 			break;

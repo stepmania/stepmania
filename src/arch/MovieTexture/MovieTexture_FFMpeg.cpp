@@ -363,7 +363,7 @@ static std::string averr_format( int err, std::string const &msg, Args const & .
 	char* errbuf = new char[errbuf_size];
 	avcodec::av_strerror(err, errbuf, errbuf_size);
 	std::string Error = fmt::sprintf("%i: %s", err, errbuf);
-	delete errbuf;
+	delete[] errbuf;
 
 	return s + " (" + Error + ")";
 }

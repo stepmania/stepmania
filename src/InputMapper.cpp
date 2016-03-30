@@ -915,6 +915,10 @@ void InputMapper::MenuToGame( GameButton MenuI, PlayerNumber pn, vector<GameInpu
 
 bool InputMapper::IsBeingPressed( const GameInput &GameI, MultiPlayer mp, const DeviceInputList *pButtonState ) const
 {
+	if(GameI.button == GameButton_Invalid)
+	{
+		return false;
+	}
 	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
 	{
 		DeviceInput DeviceI;
@@ -933,6 +937,10 @@ bool InputMapper::IsBeingPressed( const GameInput &GameI, MultiPlayer mp, const 
 
 bool InputMapper::IsBeingPressed( GameButton MenuI, PlayerNumber pn ) const
 {
+	if(MenuI == GameButton_Invalid)
+	{
+		return false;
+	}
 	vector<GameInput> GameI;
 	MenuToGame( MenuI, pn, GameI );
 	
@@ -954,6 +962,10 @@ bool InputMapper::IsBeingPressed(const vector<GameInput>& GameI, MultiPlayer mp,
 
 void InputMapper::RepeatStopKey( const GameInput &GameI )
 {
+	if(GameI.button == GameButton_Invalid)
+	{
+		return;
+	}
 	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
 	{
 		DeviceInput DeviceI;
@@ -965,6 +977,10 @@ void InputMapper::RepeatStopKey( const GameInput &GameI )
 
 void InputMapper::RepeatStopKey( GameButton MenuI, PlayerNumber pn )
 {
+	if(MenuI == GameButton_Invalid)
+	{
+		return;
+	}
 	vector<GameInput> GameI;
 	MenuToGame( MenuI, pn, GameI );
 	for (auto &input: GameI)
@@ -976,6 +992,10 @@ void InputMapper::RepeatStopKey( GameButton MenuI, PlayerNumber pn )
 float InputMapper::GetSecsHeld( const GameInput &GameI, MultiPlayer mp ) const
 {
 	using std::max;
+	if(GameI.button == GameButton_Invalid)
+	{
+		return 0.f;
+	}
 	float fMaxSecsHeld = 0;
 
 	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
@@ -994,6 +1014,10 @@ float InputMapper::GetSecsHeld( const GameInput &GameI, MultiPlayer mp ) const
 
 float InputMapper::GetSecsHeld( GameButton MenuI, PlayerNumber pn ) const
 {
+	if(MenuI == GameButton_Invalid)
+	{
+		return 0.f;
+	}
 	vector<GameInput> GameI;
 	MenuToGame( MenuI, pn, GameI );
 
@@ -1006,6 +1030,10 @@ float InputMapper::GetSecsHeld( GameButton MenuI, PlayerNumber pn ) const
 
 void InputMapper::ResetKeyRepeat( const GameInput &GameI )
 {
+	if(GameI.button == GameButton_Invalid)
+	{
+		return;
+	}
 	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
 	{
 		DeviceInput DeviceI;
@@ -1018,6 +1046,10 @@ void InputMapper::ResetKeyRepeat( const GameInput &GameI )
 
 void InputMapper::ResetKeyRepeat( GameButton MenuI, PlayerNumber pn )
 {
+	if(MenuI == GameButton_Invalid)
+	{
+		return;
+	}
 	vector<GameInput> GameI;
 	MenuToGame( MenuI, pn, GameI );
 	for (auto &input: GameI)
@@ -1030,6 +1062,10 @@ float InputMapper::GetLevel( const GameInput &GameI ) const
 {
 	// TODO: Use std::accumulate here.
 	using std::max;
+	if(GameI.button == GameButton_Invalid)
+	{
+		return 0.f;
+	}
 	float fLevel = 0;
 	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
 	{
@@ -1045,6 +1081,10 @@ float InputMapper::GetLevel( const GameInput &GameI ) const
 
 float InputMapper::GetLevel( GameButton MenuI, PlayerNumber pn ) const
 {
+	if(MenuI == GameButton_Invalid)
+	{
+		return 0.f;
+	}
 	vector<GameInput> GameI;
 	MenuToGame( MenuI, pn, GameI );
 

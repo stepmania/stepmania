@@ -218,9 +218,11 @@ bool ScreenTextEntry::Input( const InputEventPlus &input )
 		switch( input.type )
 		{
 			case IET_FIRST_PRESS:
-				bLCtrl = true; break;
+				bLCtrl = true;
+				break;
 			case IET_RELEASE:
-				bLCtrl = false; break;
+				bLCtrl = false;
+				break;
 			default:
 				break;
 		}
@@ -231,9 +233,11 @@ bool ScreenTextEntry::Input( const InputEventPlus &input )
 		switch( input.type )
 		{
 			case IET_FIRST_PRESS:
-				bRCtrl = true; break;
+				bRCtrl = true;
+				break;
 			case IET_RELEASE:
-				bRCtrl = false; break;
+				bRCtrl = false;
+				break;
 			default:
 				break;
 		}

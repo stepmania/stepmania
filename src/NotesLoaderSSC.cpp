@@ -921,7 +921,6 @@ bool SSCLoader::LoadNoteDataFromSimfile( const std::string & cachePath, Steps &o
 						out.SetSMNoteData(matcher);
 						out.TidyUpData();
 						return true;
-						break;
 					default:
 						break;
 				}

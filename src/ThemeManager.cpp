@@ -711,7 +711,6 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const std::string &sThemeNam
 				ReloadMetrics();
 				return GetPathInfoToRaw( out, sThemeName_, category, sMetricsGroup_, sElement_ );
 			case Dialog::ignore:
-				break;
 			default:
 				break;
 		}
@@ -758,10 +757,8 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const std::string &sThemeNam
 			GetPathInfo( out, category, "", "_missing" );
 			return true;
 		default:
-			break;
+			RageException::Throw( "%s", sMessage.c_str() );
 	}
-
-	RageException::Throw( "%s", sMessage.c_str() );
 }
 
 bool ThemeManager::GetPathInfoToAndFallback( PathInfo &out, ElementCategory category, const std::string &sMetricsGroup_, const std::string &sElement )
