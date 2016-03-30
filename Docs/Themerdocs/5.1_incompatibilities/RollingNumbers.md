@@ -17,13 +17,14 @@ string with a glyph, set the leading glyph and the width to what you want.
 
 Example:
 ```
-Def.RollingNumber{
-  InitCommand= function(self)
+Def.RollingNumbers{
+  Font= "Common Normal", InitCommand= function(self)
     self:set_chars_wide(9):set_text_format("%.0f")
-      :set_leading_attribute{Diffuse= color("ff0000")}
-      :set_number_attribute{Diffuse= color("0000ff")}
+      :set_leading_attribute{Diffuse= color("#ff0000")}
+      :set_number_attribute{Diffuse= color("#0000ff")}
+			:target_number(9999):set_approach_seconds(10)
   end
-}
+},
 ```
 
 ## No more metrics. (mostly)
