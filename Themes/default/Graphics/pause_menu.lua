@@ -157,6 +157,15 @@ menu_actions.MenuDown= menu_actions.Down
 
 local down_status= {}
 
+local function other_button_down(button)
+	for other_button, down in pairs(down_status) do
+		if down and other_button ~= button then
+			return true
+		end
+	end
+	return false
+end
+
 local function detect_lr_press()
 	return down_status.MenuLeft and down_status.MenuRight
 end
@@ -207,7 +216,7 @@ local function input(event)
 			pause_and_show(pn)
 		elseif pause_buttons[button] then
 			if GAMESTATE:GetCoinMode() == "CoinMode_Pay" then return end
-			if pause_press_times[pn] then
+			if pause_press_times[pn] and not other_button_down(button) then
 				local time_since_press= GetTimeSinceStart() - pause_press_times[pn]
 				if time_since_press > tap_debounce_time then
 					if time_since_press <= pause_double_tap_time then
