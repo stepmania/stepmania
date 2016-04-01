@@ -45,17 +45,12 @@ install:
     choco install cmake
 
     choco install nsis -version 2.46.0.20150406
-before_build:
+build_script:
 - cmd: >-
-    cd Build
-
+    echo Running cmake now...
+    cd "C:\Repos\wolfmania\Build"
     cmake -G "Visual Studio 14 2015" -T "v140_xp" -DWITH_IRC_POST_HOOK=ON ..
-build:
-  project: C:\Repos\wolfmania\Build\StepMania.sln
-  parallel: true
-  verbosity: normal
-after_build:
-- cmd: >-
+    msbuild "C:\Repos\wolfmania\Build\StepMania.sln" /maxcpucount:2 /verbosity:normal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
     msbuild "C:\Repos\wolfmania\Build\PACKAGE.vcxproj" /maxcpucount:2 /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 artifacts:
   - path: Build/*.exe
