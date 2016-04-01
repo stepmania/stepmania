@@ -678,3 +678,8 @@ float ArrowDefects::get_skew()
 {
 	return m_options->m_fSkew;
 }
+
+float ArrowDefects::get_column_x(size_t col)
+{
+	return m_column_x[col];
+}

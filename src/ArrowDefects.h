@@ -36,6 +36,8 @@ struct ArrowDefects
 	float get_mini();
 	float get_skew();
 
+	float get_column_x(size_t col);
+
 private:
 	float get_x_pos(size_t col, float y_offset);
 	float get_y_pos(size_t col, float y_offset);

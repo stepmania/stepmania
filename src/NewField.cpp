@@ -2219,6 +2219,10 @@ void NewField::draw_field_text(double beat, double second, double y_offset,
 			trans.pos.y+= m_columns[0].apply_reverse_shift(y_offset);
 		}
 	}
+	else
+	{
+		trans.pos.x-= m_defective_mods.get_column_x(0);
+	}
 	trans.pos.x+= ((m_field_width * .5) + x_offset) * side_sign;
 	m_field_text.set_transform_pos(trans);
 	m_field_text.SetDiffuse(color);
@@ -2245,6 +2249,10 @@ void NewField::draw_beat_bar(double beat, double second, double y_offset,
 			trans.pos.y+= m_columns[0].apply_reverse_shift(y_offset);
 		}
 	}
+	else
+	{
+		trans.pos.x-= m_defective_mods.get_column_x(0);
+	}
 	m_beat_bars.set_transform_pos(trans);
 	m_beat_bars.SetDiffuse(Rage::Color(1,1,1,alpha));
 	m_beat_bars.SetState(state);
@@ -2270,7 +2278,8 @@ void NewField::draw_beat_bars_internal()
 	std::vector<int> sub_states= {2, 3, 2};
 	Rage::Color measure_number_color(1,1,1,1);
 	Rage::Color measure_number_glow(1,1,1,0);
-	bool needs_second= m_columns[0].m_speed_mod.needs_second() ||
+	bool needs_second= m_in_defective_mode ||
+		m_columns[0].m_speed_mod.needs_second() ||
 		m_columns[0].m_note_mod.needs_second();
 	for(float step= 0.f; !found_end; ++step)
 	{
