@@ -1400,13 +1400,14 @@ void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 {
 	// int iNumTracksOfTo = GAMEMAN->StepsTypeToNumTracks(ntTo);
 
-	for (auto const *pOriginalNotes: m_vpSteps)
+	for(size_t j= 0; j < m_vpSteps.size(); ++j)
 	{
-		if( pOriginalNotes->m_StepsType == ntFrom )
+		Steps const* original_notes= m_vpSteps[j];
+		if(original_notes->m_StepsType == ntFrom)
 		{
-			Steps* pNewNotes = new Steps(this);
-			pNewNotes->AutogenFrom( pOriginalNotes, ntTo );
-			this->AddSteps( pNewNotes );
+			Steps* new_notes = new Steps(this);
+			new_notes->AutogenFrom(original_notes, ntTo);
+			this->AddSteps(new_notes);
 		}
 	}
 }

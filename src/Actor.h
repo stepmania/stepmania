@@ -304,7 +304,7 @@ public:
 	{
 		m_timing_source = source;
 	}
-	virtual void UpdatePercentThroughTween( float PercentThroughTween ) {}
+	virtual void UpdatePercentThroughTween(float) {}
 	bool get_tween_uses_effect_delta() { return m_tween_uses_effect_delta; }
 	void set_tween_uses_effect_delta(bool t) { m_tween_uses_effect_delta= t; }
 
