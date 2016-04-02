@@ -53,9 +53,9 @@ build_script:
 
     cmake -G "Visual Studio 14 2015" -T "v140_xp" -DWITH_IRC_POST_HOOK=ON ..
     
-    msbuild "C:\Repos\wolfmania\Build\StepMania.sln" /maxcpucount:2 /verbosity:normal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    msbuild "C:\Repos\wolfmania\Build\StepMania.sln" /maxcpucount:2 /verbosity:normal
     
-    msbuild "C:\Repos\wolfmania\Build\PACKAGE.vcxproj" /maxcpucount:2 /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    msbuild "C:\Repos\wolfmania\Build\PACKAGE.vcxproj" /maxcpucount:2 /verbosity:minimal
 artifacts:
   - path: Build/*.exe
     type: exe
