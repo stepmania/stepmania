@@ -1392,6 +1392,7 @@ nesty_options= {
 			execute= function(pn)
 				local old_val= get_element_by_path(conf:get_data(pn), field_name)
 				local new_val= float_toggle_val_toggle_logic(old_val, on_val, off_val)
+				conf:set_dirty(pn)
 				set_element_by_path(conf:get_data(pn), field_name, new_val)
 				MESSAGEMAN:Broadcast("ConfigValueChanged", {
 					config_name= conf.name, field_name= field_name, value= new_val, pn= pn})
@@ -1406,6 +1407,7 @@ nesty_options= {
 			name= field_name, meta= "execute", translatable= true,
 			execute= function(pn)
 				local old_val= get_element_by_path(conf:get_data(pn), field_name)
+				conf:set_dirty(pn)
 				set_element_by_path(conf:get_data(pn), field_name, not old_val)
 				MESSAGEMAN:Broadcast("ConfigValueChanged", {
 					config_name= conf.name, field_name= field_name, value= new_val, pn= pn})

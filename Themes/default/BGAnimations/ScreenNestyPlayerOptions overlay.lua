@@ -165,6 +165,7 @@ local base_options= {
 				 obj.speed_mod= obj.speed_mod / 100
 			 end
 			 obj.speed_type= value
+			 newfield_prefs_config:set_dirty(pn)
 			 MESSAGEMAN:Broadcast("ConfigValueChanged", {
 				config_name= newfield_prefs_config.name, field_name= "speed_type", value= value, pn= pn})
 		 end,
