@@ -198,24 +198,57 @@ ProfileLoadResult ProfileManager::LoadProfile( PlayerNumber pn, std::string sPro
 
 bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 {
-	std::string sProfileID = m_sDefaultLocalProfileID[pn].Get();
-	if( sProfileID.empty() )
+	std::string profile_id = m_sDefaultLocalProfileID[pn].Get();
+	// If a profile exists, set the preference to point to it if the preference
+	// is clear or invalid.  That way, a player doesn't need to know to set the
+	// preference, and there isn't confusion over the profile not being loaded
+	// when the preference is set to something invalid. -Kyz
+	if(profile_id.empty())
+	{
+		if(g_vLocalProfile.empty())
+		{
+			m_sProfileDir[pn] = "";
+			return false;
+		}
+		profile_id= LocalProfileDirToID(g_vLocalProfile[0].sDir);
+		m_sDefaultLocalProfileID[pn].Set(profile_id);
+	}
+	else if(!g_vLocalProfile.empty())
+	{
+		bool set_to_first= true;
+		std::string profile_dir = LocalProfileIDToDir(profile_id);
+		for(auto&& dap : g_vLocalProfile)
+		{
+			if(profile_dir == dap.sDir)
+			{
+				set_to_first= false;
+				break;
+			}
+		}
+		if(set_to_first)
+		{
+			profile_id= LocalProfileDirToID(g_vLocalProfile[0].sDir);
+			m_sDefaultLocalProfileID[pn].Set(profile_id);
+		}
+	}
+	else
 	{
 		m_sProfileDir[pn] = "";
+		m_sDefaultLocalProfileID[pn].Set("");
 		return false;
 	}
 
-	m_sProfileDir[pn] = LocalProfileIDToDir( sProfileID );
+	m_sProfileDir[pn] = LocalProfileIDToDir(profile_id);
 	m_bWasLoadedFromMemoryCard[pn] = false;
 	m_bLastLoadWasFromLastGood[pn] = false;
 
-	if( GetLocalProfile(sProfileID) == nullptr )
+	if(GetLocalProfile(profile_id) == nullptr)
 	{
 		m_sProfileDir[pn] = "";
 		return false;
 	}
 
-	GetProfile(pn)->LoadCustomFunction( m_sProfileDir[pn] );
+	GetProfile(pn)->LoadCustomFunction(m_sProfileDir[pn]);
 
 	return true;
 }
