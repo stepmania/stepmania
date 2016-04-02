@@ -798,15 +798,15 @@ void Model::UpdateTempGeometry()
 	m_pTempGeometry->Change( m_vTempMeshes );
 }
 
-void Model::Update( float fDelta )
+void Model::UpdateInternal(float delta)
 {
-	Actor::Update( fDelta );
-	AdvanceFrame(GetEffectDeltaTime());
-
-	for (auto &mat: m_Materials)
+	Actor::UpdateInternal(delta);
+	float effect_delta= GetEffectDeltaTime();
+	AdvanceFrame(effect_delta);
+	for(auto&& mat : m_Materials)
 	{
-		mat.diffuse.Update( fDelta );
-		mat.alpha.Update( fDelta );
+		mat.diffuse.Update(effect_delta);
+		mat.alpha.Update(effect_delta);
 	}
 }
 
