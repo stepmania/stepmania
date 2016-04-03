@@ -640,23 +640,32 @@ void ScreenOptions::PositionRows( bool bTween )
 
 	/* If less than total (and Rows.size()) are displayed, fill in the empty
 	 * space intelligently. */
-	while(1)
+	for(;;)
 	{
 		const int sum = (first_end - first_start) + (second_end - second_start);
 		if( sum >= (int) Rows.size() || sum >= total)
+		{
 			break; // nothing more to display, or no room
-
+		}
 		/* First priority: expand the top of the second half until it meets
 		 * the first half. */
 		if( second_start > first_end )
+		{
 			second_start--;
+		}
 		// Otherwise, expand either end.
 		else if( first_start > 0 )
+		{
 			first_start--;
+		}
 		else if( second_end < (int) Rows.size() )
+		{
 			second_end++;
+		}
 		else
+		{
 			FAIL_M("Do we have room to grow or don't we?");
+		}
 	}
 
 	int pos = 0;

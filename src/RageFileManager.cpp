@@ -117,13 +117,16 @@ static bool GrabDriver( RageFileDriver *pDriver )
 {
 	g_Mutex->Lock();
 
-	while(1)
+	for(;;)
 	{
 		unsigned i;
 		for( i = 0; i < g_pDrivers.size(); ++i )
+		{
 			if( g_pDrivers[i]->m_pDriver == pDriver )
+			{
 				break;
-
+			}
+		}
 		if( i == g_pDrivers.size() )
 		{
 			g_Mutex->Unlock();

@@ -117,7 +117,7 @@ RageSurfaceUtils::OpenResult RageSurface_Load_GIF( const RString &sPath, RageSur
 
 	int transparency = -1;
 
-	while(1)
+	for(;;)
 	{
 		unsigned char type;
 		if( !ReadOK(f, &type, 1) )

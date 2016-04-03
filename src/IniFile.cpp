@@ -36,11 +36,11 @@ bool IniFile::ReadFile( RageFileBasic &f )
 	RString keyname;
 	// keychild is used to cache the node that values are being added to. -Kyz
 	XNode* keychild= NULL;
-	while( 1 )
+	for(;;)
 	{
 		RString line;
 		// Read lines until we reach a line that doesn't end in a backslash
-		while( true )
+		for(;;)
 		{
 			RString s;
 			switch( f.GetLine(s) )
@@ -57,8 +57,9 @@ bool IniFile::ReadFile( RageFileBasic &f )
 			line += s;
 
 			if( line.empty() || line[line.size()-1] != '\\' )
+			{
 				break;
-
+			}
 			line.erase( line.end()-1 );
 		}
 

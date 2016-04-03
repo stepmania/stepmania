@@ -235,7 +235,7 @@ int RageSoundReader_SpeedChange::GetCursorAvail() const
 
 int RageSoundReader_SpeedChange::Read( float *pBuf, int iFrames )
 {
-	while( 1 )
+	for(;;)
 	{
 		if( m_iDataBufferAvailFrames == 0 && m_fTrailingSpeedRatio == m_fSpeedRatio && m_fSpeedRatio == 1.0f )
 		{
@@ -250,9 +250,13 @@ int RageSoundReader_SpeedChange::Read( float *pBuf, int iFrames )
 		{
 			int iRet = Step();
 			if( iRet < 0 )
+			{
 				return iRet;
+			}
 			if( !GetCursorAvail() )
+			{
 				return END_OF_FILE;
+			}
 			continue;
 		}
 

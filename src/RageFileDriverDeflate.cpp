@@ -224,12 +224,13 @@ RageFileObjDeflate::~RageFileObjDeflate()
 int RageFileObjDeflate::WriteInternal( const void *pBuffer, size_t iBytes )
 {
 	if( iBytes == 0 )
+	{
 		return 0;
-
+	}
 	m_pDeflate->next_in  = (Bytef*) pBuffer;
 	m_pDeflate->avail_in = iBytes;
 
-	while( 1 )
+	for(;;)
 	{
 		char buf[1024*4];
 		m_pDeflate->next_out = (Bytef *) buf;
@@ -238,8 +239,9 @@ int RageFileObjDeflate::WriteInternal( const void *pBuffer, size_t iBytes )
 		int err = deflate( m_pDeflate, Z_NO_FLUSH );
 
 		if( err != Z_OK )
+		{
 			FAIL_M( ssprintf("deflate: err %i", err) );
-			
+		}
 		if( m_pDeflate->avail_out < sizeof(buf) )
 		{
 			int lBytes = sizeof(buf)-m_pDeflate->avail_out;
@@ -257,9 +259,10 @@ int RageFileObjDeflate::WriteInternal( const void *pBuffer, size_t iBytes )
 		}
 
 		if( m_pDeflate->avail_in == 0 && m_pDeflate->avail_out != 0 )
+		{
 			break;
+		}
 	}
-
 	return iBytes;
 }
 
@@ -270,7 +273,7 @@ int RageFileObjDeflate::FlushInternal()
 {
 	m_pDeflate->avail_in = 0;
 
-	while( 1 )
+	for(;;)
 	{
 		char buf[1024*4];
 		m_pDeflate->next_out = (Bytef *) buf;
@@ -278,8 +281,9 @@ int RageFileObjDeflate::FlushInternal()
 
 		int err = deflate( m_pDeflate, Z_FINISH );
 		if( err != Z_OK && err != Z_STREAM_END )
+		{
 			FAIL_M( ssprintf("deflate: err %i", err) );
-
+		}
 		if( m_pDeflate->avail_out < sizeof(buf) )
 		{
 			int iBytes = sizeof(buf)-m_pDeflate->avail_out;
@@ -297,7 +301,9 @@ int RageFileObjDeflate::FlushInternal()
 		}
 
 		if( err == Z_STREAM_END && m_pDeflate->avail_out != 0 )
+		{
 			return m_pFile->Flush();
+		}
 	}
 }
 

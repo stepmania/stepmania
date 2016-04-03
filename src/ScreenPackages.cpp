@@ -592,20 +592,22 @@ static LocalizedString WAITING_FOR_HEADER( "ScreenPackages", "Waiting for header
 void ScreenPackages::HTTPUpdate()
 {
 	if( !m_bIsDownloading )
+	{
 		return;
-
+	}
 	int BytesGot=0;
 	// Keep this as a code block
 	// as there may be need to "if" it out some time.
 	/* If you need a conditional for a large block of code, stick it in
 	 * a function and return. */
-	while(1)
+	for(;;)
 	{
 		char Buffer[1024];
 		int iSize = m_wSocket.ReadData( Buffer, 1024 );
 		if( iSize <= 0 )
+		{
 			break;
-
+		}
 		m_sBUFFER.append( Buffer, iSize );
 		BytesGot += iSize;
 	}

@@ -80,7 +80,7 @@ public:
 //     ... meanwhile DWORD WINAPI ZipReceiverThread(void *dat)
 //                   { HANDLE hread = (HANDLE)dat;
 //                     char buf[1000];
-//                     while (true)
+//                     for(;;)
 //                     { DWORD red; ReadFile(hread,buf,1000,&red,NULL);
 //                       // ... and do something with this zip data we're receiving
 //                       if (red==0) break;

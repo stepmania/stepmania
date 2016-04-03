@@ -295,7 +295,7 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 	m_sCurLanguage = sLanguage;
 
 	bool bLoadedBase = false;
-	while(1)
+	for(;;)
 	{
 		ASSERT_M( g_vThemes.size() < 20, "Circular theme fallback references detected." );
 
@@ -315,13 +315,15 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 		}
 		iniStrings.ReadFile( GetLanguageIniPath(sThemeName,SpecialFiles::BASE_LANGUAGE) );
 		if( sLanguage.CompareNoCase(SpecialFiles::BASE_LANGUAGE) )
+		{
 			iniStrings.ReadFile( GetLanguageIniPath(sThemeName,sLanguage) );
-
+		}
 		bool bIsBaseTheme = !sThemeName.CompareNoCase(SpecialFiles::BASE_THEME_NAME);
 		iniMetrics.GetValue( "Global", "IsBaseTheme", bIsBaseTheme );
 		if( bIsBaseTheme )
+		{
 			bLoadedBase = true;
-
+		}
 		/* Read the fallback theme. If no fallback theme is specified, and we haven't
 		 * already loaded it, fall back on SpecialFiles::BASE_THEME_NAME.
 		 * That way, default theme fallbacks can be disabled with
@@ -330,9 +332,10 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 		if( !iniMetrics.GetValue("Global","FallbackTheme",sFallback) )
 		{
 			if( sThemeName.CompareNoCase( SpecialFiles::BASE_THEME_NAME ) && !bLoadedBase )
+			{
 				sFallback = SpecialFiles::BASE_THEME_NAME;
+			}
 		}
-
 		/* We actually want to load themes bottom-to-top, loading fallback themes
 		 * first, so derived themes overwrite metrics in fallback themes. But, we
 		 * need to load the derived theme first, to find out the name of the fallback
@@ -342,7 +345,9 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 		XmlFileUtil::MergeIniUnder( &iniStrings, &g_pLoadedThemeData->iniStrings );
 
 		if( sFallback.empty() )
+		{
 			break;
+		}
 		sThemeName = sFallback;
 	}
 
@@ -960,12 +965,13 @@ RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sMetricsG
 	const RString sMetricsGroup = sMetricsGroup_;
 	const RString sValueName = sValueName_;
 
-	while( true )
+	for(;;)
 	{
 		RString ret;
 		if( ThemeManager::GetMetricRawRecursive(ini, sMetricsGroup, sValueName, ret) )
+		{
 			return ret;
-		
+		}
 		RString sCurMetricPath = GetMetricsIniPath( m_sCurThemeName );
 		RString sDefaultMetricPath = GetMetricsIniPath( SpecialFiles::BASE_THEME_NAME );
 		

@@ -31,17 +31,21 @@ static void safe_print( int fd, ... )
 	va_list ap;
 	va_start( ap, fd );
 
-	while( true )
+	for(;;)
 	{
 		const char *p = va_arg( ap, const char * );
 		if( p == NULL )
+		{
 			break;
+		}
 		size_t len = strlen( p );
 		while( len )
 		{
 			ssize_t result = write( fd, p, strlen(p) );
 			if( result == -1 )
+			{
 				_exit( 1 );
+			}
 			len -= result;
 			p += result;
 		}

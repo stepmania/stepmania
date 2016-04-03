@@ -40,17 +40,25 @@ static const char *itoa(unsigned n)
 static intptr_t xtoi( const char *hex )
 {
 	intptr_t ret = 0;
-	while( 1 )
+	for(;;)
 	{
 		int val = -1;
 		if( *hex >= '0' && *hex <= '9' )
+		{
 			val = *hex - '0';
+		}
 		else if( *hex >= 'A' && *hex <= 'F' )
+		{
 			val = *hex - 'A' + 10;
+		}
 		else if( *hex >= 'a' && *hex <= 'f' )
+		{
 			val = *hex - 'a' + 10;
+		}
 		else
+		{
 			break;
+		}
 		hex++;
 
 		ret *= 16;
