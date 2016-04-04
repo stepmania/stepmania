@@ -66,7 +66,7 @@ RageSoundManager::~RageSoundManager()
  */
 void RageSoundManager::Shutdown()
 {
-	SAFE_DELETE( m_pDriver );
+	Rage::safe_delete( m_pDriver );
 }
 
 void RageSoundManager::StartMixing( RageSoundBase *pSound )

@@ -19,6 +19,7 @@
 /* for TEXTUREMAN->GetTextureColorDepth() */
 #include "RageTextureManager.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include "RageLog.h"
 #include "RageString.hpp"
 #include "RageException.h"
@@ -36,7 +37,9 @@ RageMovieTexture *RageMovieTextureDriver_DShow::Create( RageTextureID ID, std::s
 	MovieTexture_DShow *pRet = new MovieTexture_DShow( ID );
 	sError = pRet->Init();
 	if( !sError.empty() )
-		SAFE_DELETE( pRet );
+	{
+		Rage::safe_delete( pRet );
+	}
 	return pRet;
 }
 

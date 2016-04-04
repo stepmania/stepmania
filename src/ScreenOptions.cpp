@@ -207,7 +207,7 @@ void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
 	for (auto *row: m_pRows)
 	{
 		m_frameContainer.RemoveChild( row );
-		SAFE_DELETE( row );
+		Rage::safe_delete( row );
 	}
 	m_pRows.clear();
 
@@ -364,7 +364,7 @@ ScreenOptions::~ScreenOptions()
 	LOG->Trace( "ScreenOptions::~ScreenOptions()" );
 	for (auto *row: m_pRows)
 	{
-		SAFE_DELETE( row );
+		Rage::safe_delete( row );
 	}
 }
 

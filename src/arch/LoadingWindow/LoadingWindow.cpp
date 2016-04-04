@@ -44,7 +44,7 @@ LoadingWindow *LoadingWindow::Create()
 		if( sError != "" )
 		{
 			LOG->Info( "Couldn't load driver %s: %s", DriversToTry[i].c_str(), sError.c_str() );
-			SAFE_DELETE( ret );
+			Rage::safe_delete( ret );
 		}
 	}
 

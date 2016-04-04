@@ -50,7 +50,7 @@ DialogDriver *MakeDialogDriver()
 		{
 			if( LOG )
 				LOG->Info( "Couldn't load driver %s: %s", sDriver.c_str(), sError.c_str() );
-			SAFE_DELETE( pRet );
+			Rage::safe_delete( pRet );
 		}
 	}
 

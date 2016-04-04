@@ -1,6 +1,7 @@
 #include "global.h"
 #include "DialogDriver.h"
 #include "RageLog.h"
+#include "RageUtil.hpp"
 
 using std::vector;
 
@@ -42,7 +43,7 @@ DialogDriver *DialogDriver::Create()
 		if( LOG )
 		{	LOG->Info( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
 		}
-		SAFE_DELETE( pRet );
+		Rage::safe_delete( pRet );
 	}
 	return nullptr;
 }

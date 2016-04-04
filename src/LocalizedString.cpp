@@ -1,6 +1,7 @@
 #include "global.h"
 #include "LocalizedString.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include "SubscriptionManager.h"
 
 static SubscriptionManager<LocalizedString> m_Subscribers;
@@ -58,12 +59,12 @@ LocalizedString::~LocalizedString()
 {
 	m_Subscribers.Unsubscribe( this );
 
-	SAFE_DELETE( m_pImpl );
+	Rage::safe_delete( m_pImpl );
 }
 
 void LocalizedString::CreateImpl()
 {
-	SAFE_DELETE( m_pImpl );
+	Rage::safe_delete( m_pImpl );
 	m_pImpl = g_pMakeLocalizedStringImpl();
 	m_pImpl->Load(  m_sGroup, m_sName );
 }

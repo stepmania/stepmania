@@ -2,6 +2,7 @@
 #include "ModelManager.h"
 #include "arch/MovieTexture/MovieTexture.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include "RageLog.h"
 #include "RageDisplay.h"
 
@@ -19,7 +20,7 @@ ModelManager::~ModelManager()
 		RageModelGeometry* pGeom = i.second;
 		if( pGeom->m_iRefCount )
 			LOG->Trace( "MODELMAN LEAK: '%s', RefCount = %d.", i.first.c_str(), pGeom->m_iRefCount );
-		SAFE_DELETE( pGeom );
+		Rage::safe_delete( pGeom );
 	}
 }
 
@@ -61,7 +62,7 @@ void ModelManager::UnloadModel( RageModelGeometry *m )
 			else
 			{
 				m_mapFileToGeometry.erase( i );	// remove map entry
-				SAFE_DELETE( m );	// free the texture
+				Rage::safe_delete( m );	// free the texture
 				return;
 			}
 		}

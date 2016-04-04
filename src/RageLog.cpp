@@ -4,6 +4,7 @@
 #include "RageTimer.h"
 #include "RageFile.h"
 #include "RageThreads.h"
+#include "RageUtil.hpp"
 #include "RageString.hpp"
 
 #include <ctime>
@@ -101,10 +102,10 @@ RageLog::~RageLog()
 	g_fileUserLog->Close();
 	g_fileTimeLog->Close();
 
-	SAFE_DELETE( g_Mutex );
-	SAFE_DELETE( g_fileLog );
-	SAFE_DELETE( g_fileInfo );
-	SAFE_DELETE( g_fileUserLog );
+	Rage::safe_delete( g_Mutex );
+	Rage::safe_delete( g_fileLog );
+	Rage::safe_delete( g_fileInfo );
+	Rage::safe_delete( g_fileUserLog );
 }
 
 void RageLog::SetLogToDisk( bool b )

@@ -3,6 +3,7 @@
 #include "RageMath.hpp"
 #include "LuaReference.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include "RageLog.h"
 #include "RageFile.h"
 #include "RageThreads.h"
@@ -635,7 +636,7 @@ LuaManager::LuaManager()
 LuaManager::~LuaManager()
 {
 	lua_close( m_pLuaMain );
-	SAFE_DELETE( pImpl );
+	Rage::safe_delete( pImpl );
 }
 
 Lua *LuaManager::Get()

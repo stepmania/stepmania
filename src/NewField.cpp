@@ -1860,7 +1860,7 @@ NewField::~NewField()
 	MESSAGEMAN->Unsubscribe(this, "defective_field");
 	if(m_own_note_data && m_note_data != nullptr)
 	{
-		SAFE_DELETE(m_note_data);
+		Rage::safe_delete(m_note_data);
 	}
 }
 

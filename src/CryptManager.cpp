@@ -1,6 +1,7 @@
 #include "global.h"
 #include "CryptManager.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include "RageLog.h"
 #include "RageFile.h"
 #include "RageFileManager.h"
@@ -133,7 +134,7 @@ void CryptManager::GenerateGlobalKeys()
 
 CryptManager::~CryptManager()
 {
-	SAFE_DELETE( g_pPRNG );
+	Rage::safe_delete( g_pPRNG );
 	// Unregister with Lua.
 	LUA->UnsetGlobal( "CRYPTMAN" );
 }

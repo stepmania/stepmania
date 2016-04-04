@@ -768,7 +768,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 			XNode *pNode = change.m_def.CreateNode();
 			std::string xml = Rage::trim(XmlFileUtil::GetXML( pNode ));
 			LuaHelpers::ReportScriptErrorFmt( "Tried to switch to a background that was never loaded:\n%s", xml.c_str() );
-			SAFE_DELETE( pNode );
+			Rage::safe_delete( pNode );
 			return;
 		}
 
@@ -992,7 +992,7 @@ void BrightnessOverlay::FadeToActualBrightness()
 }
 
 Background::Background()				{ m_disable_draw= false; m_pImpl = new BackgroundImpl; this->AddChild(m_pImpl); }
-Background::~Background()				{ SAFE_DELETE( m_pImpl ); }
+Background::~Background()				{ Rage::safe_delete( m_pImpl ); }
 void Background::Init()					{ m_pImpl->Init(); }
 void Background::LoadFromSong( const Song *pSong )	{ m_pImpl->LoadFromSong(pSong); }
 void Background::Unload()				{ m_pImpl->Unload(); }

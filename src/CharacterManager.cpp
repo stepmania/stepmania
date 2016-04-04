@@ -23,7 +23,7 @@ CharacterManager::CharacterManager()
 
 	for (auto *character: m_pCharacters)
 	{
-		SAFE_DELETE( character );
+		Rage::safe_delete( character );
 	}
 	m_pCharacters.clear();
 
@@ -61,7 +61,7 @@ CharacterManager::~CharacterManager()
 {
 	for (auto *character: m_pCharacters)
 	{
-		SAFE_DELETE( character );
+		Rage::safe_delete( character );
 	}
 	// Unregister with Lua.
 	LUA->UnsetGlobal( "CHARMAN" );

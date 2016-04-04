@@ -261,7 +261,7 @@ void MovieTexture_Generic::CreateTexture()
 
 	if( fmt != PixelFormatYCbCr_Invalid )
 	{
-		SAFE_DELETE( m_pTextureIntermediate );
+		Rage::safe_delete( m_pTextureIntermediate );
 		m_pSprite->UnloadTexture();
 
 		/* Create the render target.  This will receive the final, converted texture. */

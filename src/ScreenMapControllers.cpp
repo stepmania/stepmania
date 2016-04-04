@@ -36,7 +36,7 @@ ScreenMapControllers::~ScreenMapControllers()
 {
 	for (auto *line: m_Line)
 	{
-		SAFE_DELETE(line);
+		Rage::safe_delete(line);
 	}
 }
 

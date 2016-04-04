@@ -8,6 +8,7 @@
 #include "AutoActor.h"
 #include "NoteTypes.h"
 #include "RageTexture.h"
+#include "RageUtil.hpp"
 
 // Receptors and explosions are full actors.  There are a fixed number of
 // them, and that number is relatively small.  Their update functions will
@@ -449,7 +450,7 @@ struct NewSkinColumn
 			{
 				if(tap != nullptr)
 				{
-					SAFE_DELETE(tap);
+					Rage::safe_delete(tap);
 				}
 			}
 		}

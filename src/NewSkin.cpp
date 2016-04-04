@@ -5,6 +5,7 @@
 #include "NewSkinManager.h"
 #include "RageFileManager.h"
 #include "RageTextureManager.h"
+#include "RageUtil.hpp"
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
 
@@ -766,7 +767,7 @@ bool NewSkinColumn::load_from_lua(lua_State* L, int index, NewSkinLoader const* 
 				QuantizedTap* temp= new QuantizedTap;
 				if(!temp->load_from_lua(L, lua_gettop(L), sub_sanity))
 				{
-					SAFE_DELETE(temp);
+					Rage::safe_delete(temp);
 					temp= nullptr;
 				}
 				temp_optionals[part]= temp;
@@ -788,7 +789,7 @@ bool NewSkinColumn::load_from_lua(lua_State* L, int index, NewSkinLoader const* 
 				QuantizedTap* temp= new QuantizedTap;
 				if(!temp->load_from_lua(L, lua_gettop(L), sub_sanity))
 				{
-					SAFE_DELETE(temp);
+					Rage::safe_delete(temp);
 					temp= nullptr;
 				}
 				temp_rev_optionals[part]= temp;

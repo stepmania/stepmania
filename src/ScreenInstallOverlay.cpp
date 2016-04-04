@@ -164,7 +164,7 @@ public:
 	}
 	~DownloadTask()
 	{
-		SAFE_DELETE(m_pTransfer);
+		Rage::safe_delete(m_pTransfer);
 	}
 	std::string GetStatus()
 	{
@@ -184,7 +184,7 @@ public:
 				SCREENMAN->SystemMessage( "Downloading required .smzip" );
 
 				std::string sResponse = m_pTransfer->GetResponse();
-				SAFE_DELETE( m_pTransfer );
+				Rage::safe_delete( m_pTransfer );
 
 				Json::Value root;
 				std::string sError;
@@ -249,7 +249,7 @@ public:
 			{
 				if( m_pTransfer->IsFinished() )
 				{
-					SAFE_DELETE( m_pTransfer );
+					Rage::safe_delete( m_pTransfer );
 					InstallSmzip( m_sCurrentPackageTempFile, m_playAfterLaunchInfo );
 					FILEMAN->Remove( m_sCurrentPackageTempFile );	// Harmless if this fails because download didn't finish
 				}
@@ -370,7 +370,7 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
 		if( p->UpdateAndIsFinished( fDeltaTime, pali) )
 		{
 			playAfterLaunchInfo.OverlayWith(pali);
-			SAFE_DELETE(p);
+			Rage::safe_delete(p);
 			g_pDownloadTasks.erase( g_pDownloadTasks.begin()+i );
 		}
 	}

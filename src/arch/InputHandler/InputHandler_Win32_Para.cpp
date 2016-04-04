@@ -3,6 +3,7 @@
 
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include "RageInputDevice.h"
 #include "archutils/Win32/USB.h"
 
@@ -38,7 +39,7 @@ InputHandler_Win32_Para::InputHandler_Win32_Para()
 	{
 		LOG->Info("Para controller initialized");
 	}
-	SAFE_DELETE( dev );
+	Rage::safe_delete( dev );
 }
 
 void InputHandler_Win32_Para::GetDevicesAndDescriptions(vector<InputDeviceInfo>& vDevicesOut )

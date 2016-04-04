@@ -9,6 +9,7 @@
 #include "RageFileBasic.h"
 #include "RageFile.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include "RageFileDriver.h"
 
 RageFile::RageFile()
@@ -345,7 +346,7 @@ public:
 	}
 	static int destroy( T* p, lua_State *L )
 	{
-		SAFE_DELETE(p);
+		Rage::safe_delete(p);
 		return 1;
 	}
 

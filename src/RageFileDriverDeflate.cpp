@@ -4,6 +4,7 @@
 #include "RageFile.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include <memory>
 
 #if defined(_WINDOWS)
@@ -536,7 +537,7 @@ bool GunzipString( const std::string &sIn, std::string &sOut, std::string &sErro
 	/* Check the CRC. */
 	unsigned iRet;
 	ASSERT( pFile->GetCRC32( &iRet ) );
-	SAFE_DELETE( pFile );
+	Rage::safe_delete( pFile );
 
 	if( iRet != iCRC32 )
 	{
