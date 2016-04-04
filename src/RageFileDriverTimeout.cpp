@@ -44,6 +44,7 @@
 #include "RageFileDriverTimeout.h"
 #include "RageFile.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include "RageUtil_FileDB.h"
 #include "RageUtil_WorkerThread.h"
 #include "RageLog.h"
@@ -294,10 +295,10 @@ void ThreadedFileWorker::HandleRequest( int iRequest )
 void ThreadedFileWorker::RequestTimedOut()
 {
 	/* The event timed out.  Clean up any residue from the last action. */
-	SAFE_DELETE( m_pRequestFile );
-	SAFE_DELETE( m_pResultFile );
-	SAFE_DELETE_ARRAY( m_pRequestBuffer );
-	SAFE_DELETE_ARRAY( m_pResultBuffer );
+	Rage::safe_delete( m_pRequestFile );
+	Rage::safe_delete( m_pResultFile );
+	Rage::safe_delete_array( m_pRequestBuffer );
+	Rage::safe_delete_array( m_pResultBuffer );
 }
 
 RageFileBasic *ThreadedFileWorker::Open( const std::string &sPath, int iMode, int &iErr )

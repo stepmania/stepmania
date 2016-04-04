@@ -4,6 +4,7 @@
 #include "ActorUtil.h"
 #include "NetworkSyncManager.h"
 #include "LocalizedString.h"
+#include "RageUtil.hpp"
 
 AutoScreenMessage( SM_RoomInfoRetract );
 AutoScreenMessage( SM_RoomInfoDeploy );
@@ -27,7 +28,7 @@ RoomInfoDisplay::~RoomInfoDisplay()
 	for (size_t i = 0; i < m_playerList.size(); i++)
 	{
 		this->RemoveChild(m_playerList[i]);
-		SAFE_DELETE(m_playerList[i]);
+		Rage::safe_delete(m_playerList[i]);
 	}
 }
 
@@ -165,7 +166,7 @@ void RoomInfoDisplay::SetRoomInfo( const RoomInfo& info)
 		{
 			//if our old list is larger remove some elements
 			this->RemoveChild(m_playerList[i]);
-			SAFE_DELETE(m_playerList[i]);
+			Rage::safe_delete(m_playerList[i]);
 		}
 		m_playerList.resize(info.players.size());
 	}

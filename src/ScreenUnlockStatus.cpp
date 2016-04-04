@@ -320,19 +320,19 @@ ScreenUnlockStatus::~ScreenUnlockStatus()
 	while (Unlocks.size() > 0)
 	{
 		Sprite* entry = Unlocks[Unlocks.size()-1];
-		SAFE_DELETE(entry);
+		Rage::safe_delete(entry);
 		Unlocks.pop_back();
 	}
 	while (item.size() > 0)
 	{
 		BitmapText* entry = item[item.size()-1];
-		SAFE_DELETE(entry);
+		Rage::safe_delete(entry);
 		item.pop_back();
 	}
 	while (ItemIcons.size() > 0)
 	{
 		Sprite* entry = ItemIcons[ItemIcons.size()-1];
-		SAFE_DELETE(entry);
+		Rage::safe_delete(entry);
 		ItemIcons.pop_back();
 	}
 }

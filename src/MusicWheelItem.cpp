@@ -172,7 +172,7 @@ MusicWheelItem::~MusicWheelItem()
 {
 	FOREACH_ENUM( MusicWheelItemType, i )
 	{
-		SAFE_DELETE(m_pText[i]);
+		Rage::safe_delete(m_pText[i]);
 	}
 	delete m_pTextSectionCount;
 }

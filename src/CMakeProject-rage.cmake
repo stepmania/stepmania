@@ -22,6 +22,7 @@ list(APPEND RAGE_HPP
   "${SM_SRC_DIR}/rage/RageSpriteVertex.hpp"
   "${SM_SRC_DIR}/rage/RageString.hpp"
   "${SM_SRC_DIR}/rage/RageUnicode.hpp"
+  "${SM_SRC_DIR}/rage/RageUtil.hpp"
   "${SM_SRC_DIR}/rage/RageVColor.hpp"
   "${SM_SRC_DIR}/rage/RageVector2.hpp"
   "${SM_SRC_DIR}/rage/RageVector3.hpp"

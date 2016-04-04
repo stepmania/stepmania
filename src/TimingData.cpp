@@ -47,7 +47,7 @@ void TimingData::Clear()
 		vector<TimingSegment*> &vSegs = m_avpTimingSegments[tst];
 		for (auto *seg: vSegs)
 		{
-			SAFE_DELETE( seg );
+			Rage::safe_delete( seg );
 		}
 
 		vSegs.clear();
@@ -644,7 +644,7 @@ static void EraseSegment( vector<TimingSegment*> &vSegs, int index, TimingSegmen
 #endif
 
 	vSegs.erase( vSegs.begin() + index );
-	SAFE_DELETE( cur );
+	Rage::safe_delete( cur );
 }
 
 // NOTE: the pointer we're passed is a reference to a temporary,
@@ -785,7 +785,7 @@ void TimingData::AddSegment( const TimingSegment *seg )
 	if( bOnSameRow )
 	{
 		// delete the existing pointer and replace it
-		SAFE_DELETE( cur );
+		Rage::safe_delete( cur );
 		vSegs[index] = cpy;
 	}
 	else

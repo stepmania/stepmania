@@ -2,6 +2,7 @@
 #include "RageSoundDriver.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include "arch/arch_default.h"
 
 using std::vector;
@@ -31,7 +32,7 @@ RageSoundDriver *RageSoundDriver::Create( const std::string& sDrivers )
 			return pRet;
 		}
 		LOG->Info( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
-		SAFE_DELETE( pRet );
+		Rage::safe_delete( pRet );
 	}
 	return nullptr;
 }

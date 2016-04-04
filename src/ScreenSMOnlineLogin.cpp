@@ -47,7 +47,7 @@ void ScreenSMOnlineLogin::Init()
 	{
 		// Give myself a message so that I can bail out later
 		PostScreenMessage(SM_NoProfilesDefined, 0);
-		SAFE_DELETE(pHand);
+		Rage::safe_delete(pHand);
 	}
 	else
 		vHands.push_back( pHand );

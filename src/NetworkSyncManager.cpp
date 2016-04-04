@@ -94,12 +94,12 @@ NetworkSyncManager::~NetworkSyncManager ()
 	//Close Connection to server nicely.
 	if( useSMserver )
 		NetPlayerClient->close();
-	SAFE_DELETE( NetPlayerClient );
+	Rage::safe_delete( NetPlayerClient );
 
 	if ( BroadcastReception )
 	{
 		BroadcastReception->close();
-		SAFE_DELETE( BroadcastReception );
+		Rage::safe_delete( BroadcastReception );
 	}
 }
 
@@ -913,7 +913,7 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 				cHeader[iHeaderLength] = '\0';	// needed to make it a valid C String
 
 				std::string sHTTPHeader( cHeader );
-				SAFE_DELETE( cHeader );
+				Rage::safe_delete( cHeader );
 				sHTTPHeader = Rage::trim( sHTTPHeader );
 				//LOG->Trace( sHTTPHeader.c_str() );
 
@@ -943,11 +943,11 @@ unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 				} // if( svResponse[0].find("200") != std::string::npos )
 			} // if( cBodyStart != nullptr )
 		} // if( iBytes )
-		SAFE_DELETE( cBuffer );
+		Rage::safe_delete( cBuffer );
 	} // if( socket->connect(sHost, uPort) )
 
 	socket->close();
-	SAFE_DELETE( socket );
+	Rage::safe_delete( socket );
 
 	if( ld )
 	{

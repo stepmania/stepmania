@@ -4,6 +4,7 @@
 #include "RageDisplay.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include "RageFile.h"
 #include "RageSurface.h"
 
@@ -516,7 +517,7 @@ RageMovieTexture *RageMovieTextureDriver_FFMpeg::Create( RageTextureID ID, std::
 	MovieTexture_FFMpeg *pRet = new MovieTexture_FFMpeg( ID );
 	sError = pRet->Init();
 	if( !sError.empty() )
-		SAFE_DELETE( pRet );
+		Rage::safe_delete( pRet );
 	return pRet;
 }
 

@@ -71,7 +71,7 @@ void OptionRow::Clear()
 			MESSAGEMAN->Unsubscribe( this, m );
 		}
 	}
-	SAFE_DELETE( m_pHand );
+	Rage::safe_delete( m_pHand );
 
 	m_bFirstItemGoesDown = false;
 	ZERO( m_bRowHasFocus );

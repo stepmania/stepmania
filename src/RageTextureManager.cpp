@@ -23,6 +23,7 @@
 #include "RageBitmapTexture.h"
 #include "arch/MovieTexture/MovieTexture.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include "RageLog.h"
 #include "RageDisplay.h"
 #include "ActorUtil.h"
@@ -49,7 +50,7 @@ RageTextureManager::~RageTextureManager()
 		RageTexture* pTexture = i.second;
 		if( pTexture->m_iRefCount )
 			LOG->Trace( "TEXTUREMAN LEAK: '%s', RefCount = %d.", i.first.filename.c_str(), pTexture->m_iRefCount );
-		SAFE_DELETE( pTexture );
+		Rage::safe_delete( pTexture );
 	}
 	m_textures_to_update.clear();
 	m_texture_ids_by_pointer.clear();
@@ -243,7 +244,7 @@ void RageTextureManager::DeleteTexture( RageTexture *t )
 		if(tex_entry != m_mapPathToTexture.end())
 		{
 			m_mapPathToTexture.erase(tex_entry);
-			SAFE_DELETE(t);
+			Rage::safe_delete(t);
 		}
 		auto tex_update_entry = m_textures_to_update.find(id_entry->second);
 		if(tex_update_entry != m_textures_to_update.end())
@@ -261,7 +262,7 @@ void RageTextureManager::DeleteTexture( RageTexture *t )
 			if( i->second == t )
 			{
 				m_mapPathToTexture.erase( i );	// remove map entry
-				SAFE_DELETE( t );	// free the texture
+				Rage::safe_delete( t );	// free the texture
 				auto tex_update_entry = m_textures_to_update.find(i->first);
 				if(tex_update_entry != m_textures_to_update.end())
 				{

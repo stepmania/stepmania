@@ -15,6 +15,7 @@
 #include "RageTimer.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 
 #include <cerrno>
 #include <set>
@@ -80,7 +81,7 @@ struct ThreadSlot
 
 	void Release()
 	{
-		SAFE_DELETE( m_pImpl );
+		Rage::safe_delete( m_pImpl );
 		Init();
 	}
 

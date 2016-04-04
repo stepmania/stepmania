@@ -14,6 +14,7 @@ typedef char TCHAR;
 #include "CreateZip.h"
 #include "RageFile.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 
 #define MAX_PATH 1024
 
@@ -679,7 +680,7 @@ ZRESULT TZip::open_file(const TCHAR *fn)
 	hfin = new RageFile();
 	if( !hfin->Open(fn) )
 	{
-		SAFE_DELETE( hfin );
+		Rage::safe_delete( hfin );
 		return ZR_NOFILE;
 	}
 	isize = hfin->GetFileSize();
@@ -757,7 +758,7 @@ unsigned TZip::read(char *buf, unsigned size)
 ZRESULT TZip::iclose()
 {
 	if (hfin!=0)
-		SAFE_DELETE( hfin);
+		Rage::safe_delete( hfin);
 	bool mismatch = (isize!=-1 && isize!=ired);
 	isize=ired; // and crc has been being updated anyway
 	if (mismatch)

@@ -283,18 +283,18 @@ Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 
 Player::~Player()
 {
-	SAFE_DELETE( m_pAttackDisplay );
-	SAFE_DELETE( m_new_field );
+	Rage::safe_delete( m_pAttackDisplay );
+	Rage::safe_delete( m_new_field );
 	for (auto &hold: m_vpHoldJudgment)
 	{
-		SAFE_DELETE(hold);
+		Rage::safe_delete(hold);
 	}
-	SAFE_DELETE( m_pJudgedRows );
-	SAFE_DELETE( m_pIterNeedsTapJudging );
-	SAFE_DELETE( m_pIterNeedsHoldJudging );
-	SAFE_DELETE( m_pIterUncrossedRows );
-	SAFE_DELETE( m_pIterUnjudgedRows );
-	SAFE_DELETE( m_pIterUnjudgedMineRows );
+	Rage::safe_delete( m_pJudgedRows );
+	Rage::safe_delete( m_pIterNeedsTapJudging );
+	Rage::safe_delete( m_pIterNeedsHoldJudging );
+	Rage::safe_delete( m_pIterUncrossedRows );
+	Rage::safe_delete( m_pIterUnjudgedRows );
+	Rage::safe_delete( m_pIterUnjudgedMineRows );
 
 }
 
@@ -822,19 +822,19 @@ void Player::Load()
 	if( m_pPlayerStageStats )
 		SendComboMessages( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
 
-	SAFE_DELETE( m_pIterNeedsTapJudging );
+	Rage::safe_delete( m_pIterNeedsTapJudging );
 	m_pIterNeedsTapJudging = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW) );
 
-	SAFE_DELETE( m_pIterNeedsHoldJudging );
+	Rage::safe_delete( m_pIterNeedsHoldJudging );
 	m_pIterNeedsHoldJudging = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
 
-	SAFE_DELETE( m_pIterUncrossedRows );
+	Rage::safe_delete( m_pIterUncrossedRows );
 	m_pIterUncrossedRows = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
 
-	SAFE_DELETE( m_pIterUnjudgedRows );
+	Rage::safe_delete( m_pIterUnjudgedRows );
 	m_pIterUnjudgedRows = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
 
-	SAFE_DELETE( m_pIterUnjudgedMineRows );
+	Rage::safe_delete( m_pIterUnjudgedMineRows );
 	m_pIterUnjudgedMineRows = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
 }
 

@@ -205,18 +205,18 @@ void PlayerInfo::LoadDummyP1( int iDummyIndex, int iAddToDifficulty )
 
 PlayerInfo::~PlayerInfo()
 {
-	SAFE_DELETE( m_pLifeMeter );
-	SAFE_DELETE( m_ptextCourseSongNumber );
-	SAFE_DELETE( m_ptextStepsDescription );
-	SAFE_DELETE( m_pPrimaryScoreDisplay );
-	SAFE_DELETE( m_pSecondaryScoreDisplay );
-	SAFE_DELETE( m_pPrimaryScoreKeeper );
-	SAFE_DELETE( m_pSecondaryScoreKeeper );
-	SAFE_DELETE( m_ptextPlayerOptions );
-	SAFE_DELETE( m_pActiveAttackList );
-	SAFE_DELETE( m_pPlayer );
-	SAFE_DELETE( m_pInventory );
-	SAFE_DELETE( m_pStepsDisplay );
+	Rage::safe_delete( m_pLifeMeter );
+	Rage::safe_delete( m_ptextCourseSongNumber );
+	Rage::safe_delete( m_ptextStepsDescription );
+	Rage::safe_delete( m_pPrimaryScoreDisplay );
+	Rage::safe_delete( m_pSecondaryScoreDisplay );
+	Rage::safe_delete( m_pPrimaryScoreKeeper );
+	Rage::safe_delete( m_pSecondaryScoreKeeper );
+	Rage::safe_delete( m_ptextPlayerOptions );
+	Rage::safe_delete( m_pActiveAttackList );
+	Rage::safe_delete( m_pPlayer );
+	Rage::safe_delete( m_pInventory );
+	Rage::safe_delete( m_pStepsDisplay );
 }
 
 void PlayerInfo::ShowOniGameOver()
@@ -1041,13 +1041,13 @@ ScreenGameplay::~ScreenGameplay()
 
 	LOG->Trace( "ScreenGameplay::~ScreenGameplay()" );
 
-	SAFE_DELETE( m_pSongBackground );
-	SAFE_DELETE( m_pSongForeground );
+	Rage::safe_delete( m_pSongBackground );
+	Rage::safe_delete( m_pSongForeground );
 
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )
 		MEMCARDMAN->UnPauseMountingThread();
 
-	SAFE_DELETE( m_pCombinedLifeMeter );
+	Rage::safe_delete( m_pCombinedLifeMeter );
 	if( m_pSoundMusic )
 		m_pSoundMusic->StopPlaying();
 
@@ -3222,7 +3222,7 @@ void ScreenGameplay::SaveReplay()
 			std::string sFileName = fmt::sprintf( "replay%05d.xml", iIndex );
 
 			XmlFileUtil::SaveToFile( p, "Save/Replays/"+sFileName );
-			SAFE_DELETE( p );
+			Rage::safe_delete( p );
 			return;
 		}
 	}

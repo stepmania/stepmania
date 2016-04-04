@@ -2,6 +2,7 @@
 #include "ActorFrame.h"
 #include "arch/Dialog/Dialog.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include "RageLog.h"
 #include "XmlFile.h"
 #include "ActorUtil.h"
@@ -817,7 +818,7 @@ public:
 		if(child)
 		{
 			p->RemoveChild(child);
-			SAFE_DELETE(child);
+			Rage::safe_delete(child);
 		}
 		COMMON_RETURN_SELF;
 	}

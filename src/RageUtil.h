@@ -11,11 +11,6 @@
 
 class RageFileDriver;
 
-/** @brief Safely delete pointers. */
-#define SAFE_DELETE(p)       do { delete (p);     (p)=nullptr; } while( false )
-/** @brief Safely delete array pointers. */
-#define SAFE_DELETE_ARRAY(p) do { delete[] (p);   (p)=nullptr; } while( false )
-
 /** @brief Zero out the memory. */
 #define ZERO(x)	std::memset(&(x), 0, sizeof(x))
 /** @brief Copy from a to b. */

@@ -21,7 +21,7 @@ RoomWheel::~RoomWheel()
 {
 	for (auto *i: m_CurWheelItemData)
 	{
-		SAFE_DELETE( i );
+		Rage::safe_delete( i );
 	}
 	m_CurWheelItemData.clear();
 }
@@ -135,7 +135,7 @@ void RoomWheel::RemoveItem( int index )
 	if( m_LastSelection == *i )
 		m_LastSelection = nullptr;
 
-	SAFE_DELETE( *i );
+	Rage::safe_delete( *i );
 	m_CurWheelItemData.erase( i );
 
 	if( m_CurWheelItemData.size() < 1 )

@@ -4,6 +4,7 @@
 
 class RageFileBasic;
 #include "json/value.h"
+#include "RageUtil.hpp"
 
 namespace JsonUtil
 {
@@ -186,7 +187,7 @@ namespace JsonUtil
 	{
 		for (auto *iter: v)
 		{
-			SAFE_DELETE(iter);
+			Rage::safe_delete(iter);
 		}
 		v.resize(root.size());
 		for(unsigned i=0; i<v.size(); i++)
@@ -201,7 +202,7 @@ namespace JsonUtil
 	{
 		for (auto *iter: v)
 		{
-			SAFE_DELETE(iter);
+			Rage::safe_delete(iter);
 		}
 		v.resize(root.size());
 		for(unsigned i=0; i<v.size(); i++)
@@ -217,7 +218,7 @@ namespace JsonUtil
 	{
 		for (auto *iter: v)
 		{
-			SAFE_DELETE(iter);
+			Rage::safe_delete(iter);
 		}
 		v.resize(root.size());
 		for(unsigned i=0; i<v.size(); i++)

@@ -6,6 +6,7 @@
 #include "EnumHelper.h"
 #include "LuaManager.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 class XNode;
 
 struct lua_State;
@@ -154,7 +155,7 @@ public:
 	{
 		for (auto *item: m_v)
 		{
-			SAFE_DELETE(item);
+			Rage::safe_delete(item);
 		}
 	}
 	const Preference<T>& operator[]( size_t i ) const

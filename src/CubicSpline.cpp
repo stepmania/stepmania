@@ -3,6 +3,7 @@
 #include "RageMath.hpp"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include <list>
 using std::list;
 
@@ -979,7 +980,7 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 			luaL_error(L, "This spline cannot be destroyed because it is "
 				"owned by an actor that relies on it existing.");
 		}
-		SAFE_DELETE(p);
+		Rage::safe_delete(p);
 		return 0;
 	}
 	LunaCubicSplineN()

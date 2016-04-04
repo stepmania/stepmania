@@ -301,7 +301,7 @@ MemoryCardManager::~MemoryCardManager()
 	LUA->UnsetGlobal( "MEMCARDMAN" );
 
 	ASSERT( g_pWorker != nullptr );
-	SAFE_DELETE(g_pWorker);
+	Rage::safe_delete(g_pWorker);
 
 	FOREACH_PlayerNumber( pn )
 	{

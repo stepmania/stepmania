@@ -23,6 +23,7 @@
 #include "archutils/Win32/SpecialDirs.h"
 #include "ProductInfo.h"
 #include "RageUtil.h"
+#include "RageUtil.hpp"
 #include "RageString.hpp"
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
@@ -729,7 +730,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				KillTimer( hDlg, 0 );
 
 				SetDialogInitial();
-				SAFE_DELETE( m_pPost );
+				Rage::safe_delete( m_pPost );
 				return TRUE;
 			}
 
@@ -813,7 +814,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				if( sError.empty() && sResult.empty() )
 					sError = "No data received";
 
-				SAFE_DELETE( m_pPost );
+				Rage::safe_delete( m_pPost );
 
 				XNode xml;
 				if( sError.empty() )

@@ -1284,7 +1284,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const std::string &sEditFile
 			if( pSong->IsEditAlreadyLoaded(pNewNotes) )
 			{
 				LOG->UserLog( "Edit file", sEditFilePath, "is a duplicate of another edit that was already loaded." );
-				SAFE_DELETE( pNewNotes );
+				Rage::safe_delete( pNewNotes );
 				return false;
 			}
 
