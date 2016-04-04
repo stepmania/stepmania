@@ -701,8 +701,8 @@ column:get_speed_mod():add_mod{"ModFunctionType_Constant",
 --   those speed mods, it would be only 4 arrow heights away, 128 pixels.
 
 
--- Put the notefield in reverse.
-column:get_reverse_percent():set_value(1)
+-- Put the column in reverse.
+column:get_reverse_scale():set_value(-1)
 
 -- Make the notes follow a sine wave left and right as they go up.
 column:get_note_pos_x():add_mod{"ModFunctionType_Sine",

@@ -216,6 +216,7 @@ end
 local function input(event)
 	local pn= event.PlayerNumber
 	if not pn then return end
+	if not menus[pn] then return end
 	if menu_stack_generic_input(menus, event) then
 		player_ready[pn]= true
 		ready_indicators[pn]:playcommand("show_ready")
