@@ -48,7 +48,7 @@ enum Grade
  */
 static inline std::string GradeToString( Grade g )
 {
-	ASSERT_M( (g >= 0 && g<NUM_Grade) || g == Grade_NoData, fmt::sprintf("grade = %d",g) );
+	ASSERT_M( (g >= 0 && g<NUM_Grade) || g == Grade_NoData, fmt::sprintf("grade = %d",int(g)) );
 
 	switch( g )
 	{

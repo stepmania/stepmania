@@ -1887,7 +1887,7 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 			DEFAULT_FAIL( tn1.type );
 			}
 
-			DEBUG_ASSERT_M( !inout.IsHoldNoteAtRow(t1,r), fmt::sprintf("There is a tap.type = %d inside of a hold at row %d", tn1.type, r) );
+			DEBUG_ASSERT_M( !inout.IsHoldNoteAtRow(t1,r), fmt::sprintf("There is a tap.type = %d inside of a hold at row %d", int(tn1.type), int(r)) );
 
 			// Probe for a spot to swap with.
 			std::set<int> vTriedTracks;

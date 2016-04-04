@@ -384,7 +384,7 @@ float Profile::GetSongsPossible( StepsType st, Difficulty dc ) const
 
 float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 {
-	CHECKPOINT_M( fmt::sprintf("Profile::GetSongsActual(%d,%d)",st,dc) );
+	CHECKPOINT_M( fmt::sprintf("Profile::GetSongsActual(%d,%d)",int(st),int(dc)) );
 
 	float fTotalPercents = 0;
 

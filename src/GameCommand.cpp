@@ -752,7 +752,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			}
 			break;
 		default:
-			LuaHelpers::ReportScriptError(fmt::sprintf("Invalid StyleType: %d", m_pStyle->m_StyleType));
+			LuaHelpers::ReportScriptError(fmt::sprintf("Invalid StyleType: %d", int(m_pStyle->m_StyleType)));
 		}
 	}
 	if( m_dc != Difficulty_Invalid )

@@ -31,7 +31,7 @@ bool DifficultyIcon::Load( std::string sPath )
 		std::string sError = fmt::sprintf(
 			"The difficulty icon graphic '%s' must have %d or %d frames.  It has %d states.",
 			sPath.c_str(),
-			NUM_Difficulty,
+			int(NUM_Difficulty),
 			NUM_Difficulty*2,
 			iStates );
 		LuaHelpers::ReportScriptError(sError);
