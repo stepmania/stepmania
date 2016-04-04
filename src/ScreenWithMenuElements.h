@@ -60,6 +60,8 @@ protected:
 	ThemeMetric<std::string>	TIMER_METRICS_GROUP;
 	ThemeMetric<bool>		RESET_GAMESTATE;
 
+	std::string m_prev_music_played;
+
 private:
 	std::string m_sPathToMusic;
 };
