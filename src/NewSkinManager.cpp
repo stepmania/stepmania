@@ -260,7 +260,6 @@ struct LunaNewSkinManager: Luna<NewSkinManager>
 	}
 	static int reload_skins(T* p, lua_State* L)
 	{
-		UNUSED(L);
 		p->load_skins();
 		COMMON_RETURN_SELF;
 	}

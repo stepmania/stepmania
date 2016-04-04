@@ -18,7 +18,6 @@ function find_current_stepstype(pn)
 	return "StepsType_Dance_Single"
 end
 
-
 nesty_option_menus.newskins= {
 	__index= {
 		disallow_unset= true,

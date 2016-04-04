@@ -571,6 +571,13 @@ void Profile::SetDefaultModifiers( const Game* pGameType, const std::string &sMo
 void Profile::get_preferred_noteskin(StepsType stype, std::string& skin) const
 {
 	auto entry= m_preferred_noteskins.find(stype);
+	if(entry != m_preferred_noteskins.end())
+	{
+		if(!NEWSKIN->skin_supports_stepstype(entry->second, stype))
+		{
+			entry= m_preferred_noteskins.end();
+		}
+	}
 	if(entry == m_preferred_noteskins.end())
 	{
 		// Try to find the skin that they use the most and use it.
