@@ -629,8 +629,8 @@ float ArrowEffects::ReceptorGetRotationZ( const PlayerState* pPlayerState )
 	return fRotation;
 }
 
-#define CENTER_LINE_Y 160	// from fYOffset == 0
-#define FADE_DIST_Y 40
+float CONSTEXPR_VARIABLE_FLOAT CENTER_LINE_Y = 160;	// from fYOffset == 0
+float CONSTEXPR_VARIABLE_FLOAT FADE_DIST_Y = 40;
 
 static float GetCenterLine()
 {

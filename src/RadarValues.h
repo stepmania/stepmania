@@ -5,7 +5,7 @@
 #include "ThemeMetric.h"
 
 /** @brief Unknown radar values are given a default value. */
-#define RADAR_VAL_UNKNOWN -1
+int CONSTEXPR_VARIABLE_FLOAT RADAR_VAL_UNKNOWN = -1.f;
 
 class XNode;
 struct lua_State;

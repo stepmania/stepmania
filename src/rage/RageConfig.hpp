@@ -4,11 +4,15 @@
 #if defined(_MSC_VER) && _MSC_VER <= 1800
 /** @brief A cross platform way of indicating a constant expression variable if the compiler was intelligent enough. */
 #define CONSTEXPR_VARIABLE const
+/** @brief A cross platform way of indicating a const expression variable (float specifically) if the compiler was intelligent enough. */
+#define CONSTEXPR_VARIABLE_FLOAT
 /** @brief A cross platform way of indicating a constant expression function if the compiler was intelligent enough. */
 #define CONSTEXPR_FUNCTION
 #else
-/** @brief A cross platform way of indiciating a constant expression variable. */
+/** @brief A cross platform way of indicating a constant expression variable. */
 #define CONSTEXPR_VARIABLE constexpr
+/** @brief A cross platform way of indicating a constant exprssion variable (float specifically). */
+#define CONSTEXPR_VARIABLE_FLOAT constexpr
 /** @brief A cross platform way of indicating a constant expression function. */
 #define CONSTEXPR_FUNCTION constexpr
 #endif
