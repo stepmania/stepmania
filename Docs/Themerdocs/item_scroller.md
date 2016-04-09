@@ -16,7 +16,7 @@ scroll function is called.
 
 Write an item metatable to control the items.  It must have create_actors,
 set, and transform functions.  It can have any other functions that you need.
-```
+```lua
 local item_mt= {
   __index= {
 	-- create_actors must return an actor.  The name field is a convenience.
@@ -43,7 +43,7 @@ local item_mt= {
 ```
 
 Create a lua table with item_scroller_mt as its metatable.
-```
+```lua
 local scroller= setmetatable({disable_wrapping= true}, item_scroller_mt)
 ```
 If disable_wrapping is false or nil, the scroller will be in wheel mode,
@@ -52,14 +52,14 @@ info elements are repeated if there are more items than info elements, and
 info elements wrap around when the scroller is scrolled to the top or bottom.
 
 Create the actor for the scroller.
-```
+```lua
 t[#t+1]= scroller:create_actors("foo", 5, item_mt, 0, 0)
 ```
 This creates a scroller with 5 items, using item_mt as the metatable for each
 item.  The base position of the scroller is 0, 0.
 
 Create a table with the pieces of info you need the items to display.
-```
+```lua
 local info_set= {"fin", "tail", "gorg", "lilk", "zos", "mink"}
 ```
 item_scroller does not place any restrictions or requirements on what an
@@ -68,7 +68,7 @@ info_set will be passed to the set function in item_mt.  So one element
 should contain everything an item needs to display that element.
 
 After screen creation, use set_info_set to pass info_set to the scroller.
-```
+```lua
 scroller:set_info_set(info_set, 1)
 ```
 This passes the table of information to the scroller, and tells it to focus
@@ -80,7 +80,7 @@ to position the items.
 # Scrolling
 
 Call the scroll_to_pos and scroll_by_amount functions to scroll.
-```
+```lua
 scroller:scroll_to_pos(3)
 scroller:scroll_by_amount(2)
 ```

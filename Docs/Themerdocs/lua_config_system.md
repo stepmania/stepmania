@@ -17,7 +17,7 @@ they just delete the folder for that theme.
 Machine wide data is stored in a folder in the Save folder.
 
 The folder is named this way:
-```
+```lua
 "/"..THEME:GetCurThemeName().."_config/"
 ```
 
@@ -97,7 +97,7 @@ is replaced with the default value.
 
 #### Examples:
 Default config for the example:
-```
+```lua
 local default_foo_config= {
   bar= 1, baz= "quux",
   zeen= {
@@ -107,29 +107,29 @@ local default_foo_config= {
 ```
 
 Config file with one field missing:
-```
+```lua
 local config_data= {baz= "zork", zeen= {torg= 5, dorn= "loo"},}
 ```
 After sanity checking, that config data looks like this:
-```
+```lua
 config_data= {bar= 1, baz= "zork", zeen= {torg= 5, dorn= "loo"},}
 ```
 
 Config file with a field that is the wrong type:
-```
+```lua
 local config_data= {bar= 3, baz= 6, zeen= {torg= 5, dorn= "loo"},}
 ```
 After sanity checking:
-```
+```lua
 config_data= {bar= 3, baz= "quux", zeen= {torg= 5, dorn= "loo"},}
 ```
 
 Config file with an extra field:
-```
+```lua
 local config_data= {bar= 3, yun= "awk", baz= "quux", zeen= {torg= 5, dorn= "loo"},}
 ```
 After sanity checking:
-```
+```lua
 config_data= {bar= 3, baz= "quux", zeen= {torg= 5, dorn= "loo"},}
 ```
 
@@ -154,7 +154,7 @@ The lua config system provides functions to deal with these problems.
 Do not create LoadProfileCustom or SaveProfileCustom functions anywhere.
 Call add_standard_lua_config_save_load_hooks after the config object is
 created to register the config to be saved and loaded with the profile.
-```
+```lua
 add_standard_lua_config_save_load_hooks(some_config)
 ```
 If you have other things to do when saving or loading profiles, read the
@@ -191,18 +191,18 @@ to add_profile_save_callback.
 
 When you need the config data for a player, call get_data on the config
 object and pass it the player number.
-```
+```lua
 local player_config= foo_config:get_data(pn)
 ```
 If you are getting the machine wide config, pass nil instead of the player
 number.
-```
+```lua
 local machine_config= foo_config:get_data()
 ```
 get_data returns a table with the config values.  If you modify anything in
 the table, call set_dirty on the config object with the same arg that you
 passed to get_data.
-```
+```lua
 player_config.bar= 5
 foo_config:set_dirty(pn)
 ```
