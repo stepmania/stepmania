@@ -42,7 +42,7 @@ build_script:
 
     cd "C:\Repos\wolfmania\Build"
 
-    cmake -G "Visual Studio 13 2013" -T "v130_xp" -DWITH_IRC_POST_HOOK=ON ..
+    cmake -G "Visual Studio 12 2013" -T "v120_xp" -DWITH_IRC_POST_HOOK=ON ..
     
     msbuild "C:\Repos\wolfmania\Build\StepMania.sln" /maxcpucount:4 /verbosity:normal
     
