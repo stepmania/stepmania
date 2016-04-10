@@ -84,7 +84,7 @@ static void InitCharAliases()
 
 	// The comments here are UTF-8; they won't show up in VC6
 	// (use a better editor then -aj)
-	int constexpr INTERNAL = 0xe000;
+	int CONSTEXPR_VARIABLE INTERNAL = 0xe000;
 
 	std::vector<charAlias> aliases {
 		// Hiragana:
