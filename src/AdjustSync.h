@@ -42,7 +42,7 @@ public:
 	static void GetSyncChangeTextSong( std::vector<std::string> &vsAddTo );
 
 	/** @brief The minimum number of steps to hit for syncing purposes. */
-	static int CONSTEXPR_VARIABLE OFFSET_SAMPLE_COUNT = 24;
+	static int const OFFSET_SAMPLE_COUNT = 24;
 
 	static float s_fAutosyncOffset[OFFSET_SAMPLE_COUNT];
 	static int s_iAutosyncOffsetSample;
