@@ -1,6 +1,10 @@
 function GetLocalProfiles()
 	local t = {};
 
+	function GetSongsPlayedString(numSongs)
+		return numSongs == 1 and Screen.String("SingularSongPlayed") or Screen.String("SeveralSongsPlayed")
+	end
+
 	for p = 0,PROFILEMAN:GetNumLocalProfiles()-1 do
 		local profile=PROFILEMAN:GetLocalProfileFromIndex(p);
 		local ProfileCard = Def.ActorFrame {
@@ -16,9 +20,7 @@ function GetLocalProfiles()
 				InitCommand=cmd(shadowlength,1;y,8;zoom,0.5;vertspacing,-8;ztest,true);
 				BeginCommand=function(self)
 					local numSongsPlayed = profile:GetNumTotalSongsPlayed();
-					local s = numSongsPlayed == 1 and "Song" or "Songs";
-					-- todo: localize
-					self:settext( numSongsPlayed.." "..s.." Played" );
+					self:settext( string.format( GetSongsPlayedString( numSongsPlayed ), numSongsPlayed ) )
 				end;
 			};
 		};
