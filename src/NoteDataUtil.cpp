@@ -88,16 +88,23 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const std::string
 			if( measureLineStart == measureEnd )
 			{
 				break;
+			}
 			//std::string &line = sSMNoteData.substr( measureLineStart, measureLineSize );
 			const char *beginLine = sSMNoteData.data() + measureLineStart;
 			const char *endLine = beginLine + measureLineSize;
 
 			while( beginLine < endLine && strchr("\r\n\t ", *beginLine) )
+			{
 				++beginLine;
+			}
 			while( endLine > beginLine && strchr("\r\n\t ", *(endLine - 1)) )
+			{
 				--endLine;
+			}
 			if( beginLine < endLine ) // nonempty
+			{
 				aMeasureLines.push_back( std::pair<const char *, const char *>(beginLine, endLine) );
+			}
 		}
 
 		for( unsigned l=0; l<aMeasureLines.size(); l++ )
@@ -195,7 +202,9 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const std::string
 					while( p < endLine )
 					{
 						if( *(p++) == '}' )
+						{
 							break;
+						}
 					}
 				}
 #endif
@@ -212,7 +221,9 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const std::string
 					while( p < endLine )
 					{
 						if( *(p++) == ']' )
+						{
 							break;
+						}
 					}
 				}
 
@@ -228,7 +239,9 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const std::string
 					while( p < endLine )
 					{
 						if( *(p++) == '>' )
+						{
 							break;
+						}
 					}
 				}
 #endif
