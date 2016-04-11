@@ -36,21 +36,21 @@ namespace
 #define PUSH(c) do { if( !(c.empty()) ) { choices.push_back(c); } } while(0)
 
 MenuRowDef::MenuRowDef():
-	iRowCode{0}, sName{""}, bEnabled{false},
-	pfnEnabled{nullptr}, emShowIn{}, iDefaultChoice{0},
-	choices{}, bThemeTitle{false}, bThemeItems{false} {}
+	iRowCode(0), sName(""), bEnabled(false),
+	pfnEnabled(nullptr), emShowIn(), iDefaultChoice(0),
+	choices(), bThemeTitle(false), bThemeItems(false) {}
 
 MenuRowDef::MenuRowDef( int r, std::string n, MenuRowUpdateEnabled pe, EditMode s,
 					   bool bTT, bool bTI, int d):
-	iRowCode{r}, sName{n}, bEnabled{true},
-	pfnEnabled{pe}, emShowIn{s}, iDefaultChoice{d},
-	choices{}, bThemeTitle{bTT}, bThemeItems{bTI} {}
+	iRowCode(r), sName(n), bEnabled(true),
+	pfnEnabled(pe), emShowIn(s), iDefaultChoice(d),
+	choices(), bThemeTitle(bTT), bThemeItems(bTI) {}
 
 MenuRowDef::MenuRowDef(int r, std::string n, bool e, EditMode s,
 					   bool bTT, bool bTI, int d, std::vector<std::string> options):
-	iRowCode{r}, sName{n}, bEnabled{e},
-	pfnEnabled{nullptr}, emShowIn{s}, iDefaultChoice{d},
-	choices{}, bThemeTitle{bTT}, bThemeItems{bTI}
+	iRowCode(r), sName(n), bEnabled(e),
+	pfnEnabled(nullptr), emShowIn(s), iDefaultChoice(d),
+	choices(), bThemeTitle(bTT), bThemeItems(bTI)
 {
 	for (auto &str: options)
 	{
@@ -74,9 +74,9 @@ MenuRowDef::MenuRowDef( int r, std::string n, bool e, EditMode s, bool bTT, bool
 	std::string const &c18, std::string const &c19,
 	std::string const &c20, std::string const &c21,
 	std::string const &c22) :
-	iRowCode{r}, sName{n}, bEnabled{e}, pfnEnabled{nullptr},
-	emShowIn{s}, iDefaultChoice{d}, choices{},
-	bThemeTitle{bTT}, bThemeItems{bTI}
+	iRowCode(r), sName(n), bEnabled(e), pfnEnabled(nullptr),
+	emShowIn(s), iDefaultChoice(d), choices(),
+	bThemeTitle(bTT), bThemeItems(bTI)
 {
 	PUSH(c0); PUSH(c1); PUSH(c2); PUSH(c3); PUSH(c4);
 	PUSH(c5); PUSH(c6); PUSH(c7); PUSH(c8); PUSH(c9);
@@ -87,9 +87,9 @@ MenuRowDef::MenuRowDef( int r, std::string n, bool e, EditMode s, bool bTT, bool
 
 MenuRowDef::MenuRowDef( int r, std::string n, bool e, EditMode s, bool bTT, bool bTI,
 					   int d, int low, int high ):
-iRowCode{r}, sName{n}, bEnabled{e},
-pfnEnabled{nullptr}, emShowIn{s}, iDefaultChoice{d},
-choices{}, bThemeTitle{bTT}, bThemeItems{bTI}
+iRowCode(r), sName(n), bEnabled(e),
+pfnEnabled(nullptr), emShowIn(s), iDefaultChoice(d),
+choices(), bThemeTitle(bTT), bThemeItems(bTI)
 {
 	for ( int i = low; i <= high; ++i )
 	{

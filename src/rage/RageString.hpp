@@ -4,6 +4,11 @@
 #include <string>
 #include <vector>
 
+// Include the required header for Visual Studio 2013.
+#if defined(_MSC_VER) && _MSC_VER <= 1800
+#include <stdint.h>
+#endif
+
 namespace Rage
 {
 	/** @brief A flag indicating whether to skip entries during splitting a string. */

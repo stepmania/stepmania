@@ -9,7 +9,7 @@ branches:
   - 5_1_0
   - master
 skip_tags: true
-os: Visual Studio 2015
+os: Visual Studio 2013
 configuration: Release
 shallow_clone: false
 clone_depth: 1
@@ -42,7 +42,7 @@ build_script:
 
     cd "C:\Repos\wolfmania\Build"
 
-    cmake -G "Visual Studio 14 2015" -T "v140_xp" -DWITH_IRC_POST_HOOK=ON ..
+    cmake -G "Visual Studio 12 2013" -T "v120_xp" -DWITH_IRC_POST_HOOK=ON ..
     
     msbuild "C:\Repos\wolfmania\Build\StepMania.sln" /maxcpucount:4 /verbosity:normal
     
