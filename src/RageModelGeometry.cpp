@@ -7,7 +7,7 @@
 
 using std::vector;
 
-int CONSTEXPR_VARIABLE MS_MAX_NAME = 32;
+#define MS_MAX_NAME	32
 
 RageModelGeometry::RageModelGeometry ()
 {

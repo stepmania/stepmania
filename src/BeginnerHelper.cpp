@@ -21,13 +21,12 @@
 #define HELPER_X			THEME->GetMetricF("BeginnerHelper","HelperX")
 #define HELPER_Y			THEME->GetMetricF("BeginnerHelper","HelperY")
 
-// TODO: Replace with enum flags.
-int CONSTEXPR_VARIABLE ST_LEFT = 0x01;
-int CONSTEXPR_VARIABLE ST_DOWN = 0x02;
-int CONSTEXPR_VARIABLE ST_UP = 0x04;
-int CONSTEXPR_VARIABLE ST_RIGHT = 0x08;
-int CONSTEXPR_VARIABLE ST_JUMPLR = ST_LEFT | ST_RIGHT;
-int CONSTEXPR_VARIABLE ST_JUMPUD = ST_UP | ST_DOWN;
+#define ST_LEFT		0x01
+#define ST_DOWN		0x02
+#define ST_UP		0x04
+#define ST_RIGHT	0x08
+#define ST_JUMPLR	(ST_LEFT | ST_RIGHT)
+#define ST_JUMPUD	(ST_UP | ST_DOWN)
 
 enum Animation
 {

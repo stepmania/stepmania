@@ -58,7 +58,9 @@ struct acolorhash_hash
 	}
 };
 
-int CONSTEXPR_VARIABLE MAXCOLORS = 32767;
+
+
+#define MAXCOLORS  32767
 #define FS_SCALE   1024     /* Floyd-Steinberg scaling factor */
 
 /* #define REP_AVERAGE_COLORS */

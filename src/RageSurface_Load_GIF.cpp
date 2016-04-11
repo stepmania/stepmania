@@ -5,10 +5,12 @@
 #include "RageLog.h"
 #include "RageSurface.h"
 
-int CONSTEXPR_VARIABLE MAXCOLORMAPSIZE = 256;
-int CONSTEXPR_VARIABLE MAX_LWZ_BITS = 12;
-int CONSTEXPR_VARIABLE INTERLACE = 0x40;
-int CONSTEXPR_VARIABLE LOCALCOLORMAP = 0x80;
+#define	MAXCOLORMAPSIZE		256
+
+#define	MAX_LWZ_BITS		12
+
+#define INTERLACE		0x40
+#define LOCALCOLORMAP	0x80
 #define BitSet(byte, bit)	(((byte) & (bit)) == (bit))
 
 #define	ReadOK(file,buffer,len)	(file.Read( buffer, len, 1) != 0)

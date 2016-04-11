@@ -16,7 +16,7 @@
 #include <numeric>
 
 /* Filter length.  This must be a power of 2. */
-int CONSTEXPR_VARIABLE L = 8;
+#define L 8
 
 namespace
 {
