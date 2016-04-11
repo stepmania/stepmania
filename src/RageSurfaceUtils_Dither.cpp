@@ -5,7 +5,7 @@
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 
-int CONSTEXPR_VARIABLE DitherMatDim = 4;
+#define DitherMatDim 4
 
 // Fractions, 0/16 to 15/16:
 static const int DitherMat[DitherMatDim][DitherMatDim] =

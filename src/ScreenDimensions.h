@@ -16,9 +16,9 @@ namespace ScreenDimensions
 #define SCREEN_WIDTH	ScreenDimensions::GetScreenWidth()
 #define SCREEN_HEIGHT	ScreenDimensions::GetScreenHeight()
 
-float CONSTEXPR_VARIABLE_FLOAT SCREEN_LEFT = 0.f;
+#define	SCREEN_LEFT	(0)
 #define	SCREEN_RIGHT	(SCREEN_WIDTH)
-float CONSTEXPR_VARIABLE_FLOAT SCREEN_TOP	= 0.f;
+#define	SCREEN_TOP	(0)
 #define	SCREEN_BOTTOM	(SCREEN_HEIGHT)
 
 #define	SCREEN_CENTER_X	(SCREEN_LEFT + (SCREEN_RIGHT - SCREEN_LEFT)/2.0f)
@@ -35,7 +35,7 @@ float CONSTEXPR_VARIABLE_FLOAT SCREEN_TOP	= 0.f;
  * This is referenced in ArrowEffects, GameManager, NoteField, and SnapDisplay.
  * XXX: doesn't always have to be 64. -aj
  */
-int CONSTEXPR_VARIABLE ARROW_SIZE = 64;
+#define	ARROW_SIZE	(64)
 
 #endif
 

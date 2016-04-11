@@ -601,8 +601,6 @@ void LuaManager::Register( RegisterWithLuaFn pfn )
 	g_vRegisterActorTypes->push_back( pfn );
 }
 
-// Store the thread pool in a table on the stack, in the main thread.
-int CONSTEXPR_VARIABLE THREAD_POOL = 1;
 
 LuaManager::LuaManager()
 {
@@ -628,6 +626,8 @@ LuaManager::LuaManager()
 	lua_pushcfunction( L, luaopen_os ); lua_call( L, 0, 0 );
 #endif
 
+	// Store the thread pool in a table on the stack, in the main thread.
+#define THREAD_POOL 1
 	lua_newtable( L );
 
 	RegisterTypes();
