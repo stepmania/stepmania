@@ -13,10 +13,11 @@ typedef char TCHAR;
 #include <time.h>
 #include "CreateZip.h"
 #include "RageFile.h"
+#include "RageConfig.hpp"
 #include "RageUtil.h"
 #include "RageUtil.hpp"
 
-#define MAX_PATH 1024
+int CONSTEXPR_VARIABLE MAX_PATH = 1024;
 
 // TODO: remove header "extra fields" (the 3 dates)
 // Adapted for StepMania from http://www.codeproject.com/KB/files/zip_utils.aspx

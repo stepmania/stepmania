@@ -28,9 +28,9 @@ using std::vector;
 
 ProfileManager*	PROFILEMAN = nullptr;	// global and accessible from anywhere in our program
 
-#define ID_DIGITS 8
+int CONSTEXPR_VARIABLE ID_DIGITS = 8;
 #define ID_DIGITS_STR "8"
-#define MAX_ID 99999999
+int CONSTEXPR_VARIABLE MAX_ID = 99999999;
 
 static void DefaultLocalProfileIDInit( size_t /*PlayerNumber*/ i, std::string &sNameOut, std::string &defaultValueOut )
 {

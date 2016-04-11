@@ -1,11 +1,11 @@
 #ifndef ATTACK_H
 #define ATTACK_H
 
-#define ATTACK_STARTS_NOW (-10000.f)
-
 #include <string>
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
+#include "RageConfig.hpp"
+float CONSTEXPR_VARIABLE_FLOAT ATTACK_STARTS_NOW = -10000.f;
 class Song;
 class PlayerState;
 /** @brief An action made against a Player to make things more difficult. */
