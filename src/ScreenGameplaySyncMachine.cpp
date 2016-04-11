@@ -134,7 +134,7 @@ void ScreenGameplaySyncMachine::RefreshText()
 	builder << OLD_OFFSET.GetValue() + fmt::sprintf( ": %0.3f\n", fOld );
 	builder << NEW_OFFSET.GetValue() + fmt::sprintf( ": %0.3f\n", fNew );
 	builder << STANDARD_DEVIATION.GetValue() + fmt::sprintf( ": 0.3f\n", fStdDev );
-	builder << COLLECTING_SAMPLE.GetValue() + fmt::sprintf( ": %d / %d", AdjustSync::s_iAutosyncOffsetSample + 1, AdjustSync::OFFSET_SAMPLE_COUNT );
+	builder << COLLECTING_SAMPLE.GetValue() + fmt::sprintf( ": %d / %d", AdjustSync::s_iAutosyncOffsetSample + 1, OFFSET_SAMPLE_COUNT );
 
 	m_textSyncInfo.SetText( builder.str() );
 }

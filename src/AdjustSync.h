@@ -4,6 +4,14 @@
 #include <string>
 #include <vector>
 
+/**
+ * @brief The minimum number of steps to hit for syncing purposes.
+ *
+ * To future developers: this statement should be moved out somewhere else
+ * in the future.
+ */
+#define OFFSET_SAMPLE_COUNT 24
+
 class TimingData;
 /**
  * @brief Allows for adjusting the sync of a song.
@@ -40,9 +48,6 @@ public:
 	static void AutosyncTempo();
 	static void GetSyncChangeTextGlobal( std::vector<std::string> &vsAddTo );
 	static void GetSyncChangeTextSong( std::vector<std::string> &vsAddTo );
-
-	/** @brief The minimum number of steps to hit for syncing purposes. */
-	static int const OFFSET_SAMPLE_COUNT = 24;
 
 	static float s_fAutosyncOffset[OFFSET_SAMPLE_COUNT];
 	static int s_iAutosyncOffsetSample;
