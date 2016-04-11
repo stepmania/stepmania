@@ -20,19 +20,19 @@ typedef AutoPtrCopyOnWrite<LuaReference> apActorCommands;
 
 const int max_draw_order= 16777216;
 /** @brief The background layer. */
-#define DRAW_ORDER_BEFORE_EVERYTHING		-200
+int CONSTEXPR_VARIABLE DRAW_ORDER_BEFORE_EVERYTHING = -200;
 /** @brief The underlay layer. */
-#define DRAW_ORDER_UNDERLAY			-100
+int CONSTEXPR_VARIABLE  DRAW_ORDER_UNDERLAY = -100;
 /** @brief The decorations layer. */
-#define DRAW_ORDER_DECORATIONS			   0
+int CONSTEXPR_VARIABLE DRAW_ORDER_DECORATIONS = 0;
 /** @brief The overlay layer.
  *
  * Normal screen elements go here. */
-#define DRAW_ORDER_OVERLAY			+100
+int CONSTEXPR_VARIABLE DRAW_ORDER_OVERLAY = 100;
 /** @brief The transitions layer. */
-#define DRAW_ORDER_TRANSITIONS			+200
+int CONSTEXPR_VARIABLE DRAW_ORDER_TRANSITIONS = 200;
 /** @brief The over everything layer. */
-#define DRAW_ORDER_AFTER_EVERYTHING		+300
+int CONSTEXPR_VARIABLE DRAW_ORDER_AFTER_EVERYTHING = 300;
 
 /** @brief The different horizontal alignments. */
 enum HorizAlign
@@ -57,24 +57,24 @@ enum VertAlign
 LuaDeclareType( VertAlign );
 
 /** @brief The left horizontal alignment constant. */
-#define align_left 0.0f
+float CONSTEXPR_VARIABLE_FLOAT align_left = 0.f;
 /** @brief The center horizontal alignment constant. */
-#define align_center 0.5f
+float CONSTEXPR_VARIABLE_FLOAT align_center = 0.5f;
 /** @brief The right horizontal alignment constant. */
-#define align_right 1.0f
+float CONSTEXPR_VARIABLE_FLOAT align_right = 1.f;
 /** @brief The top vertical alignment constant. */
-#define align_top 0.0f
+float CONSTEXPR_VARIABLE_FLOAT align_top = 0.f;
 /** @brief The middle vertical alignment constant. */
-#define align_middle 0.5f
+float CONSTEXPR_VARIABLE_FLOAT align_middle = 0.5f;
 /** @brief The bottom vertical alignment constant. */
-#define align_bottom 1.0f
+float CONSTEXPR_VARIABLE_FLOAT align_bottom = 1.f;
 
 // This is the number of colors in Actor::diffuse.  Actor has multiple
 // diffuse colors so that each edge can be a different color, and the actor
 // is drawn with a gradient between them.
 // I doubt I actually found all the places that touch diffuse and rely on the
 // number of diffuse colors, so change this at your own risk. -Kyz
-#define NUM_DIFFUSE_COLORS 4
+int CONSTEXPR_VARIABLE NUM_DIFFUSE_COLORS = 4;
 
 // ssc futures:
 /*

@@ -99,6 +99,8 @@ public:
 	void PushSelf( lua_State *L );
 };
 
+// TODO: Replace all of these with enum flags.
+
 // Option is locked due to an unsatisfied unlock entry.
 #define LOCKED_LOCK          0x1
 

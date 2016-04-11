@@ -1624,30 +1624,36 @@ Song *MusicWheel::GetPreferredSelectionForRandomOrPortal()
 
 	StepsType st = GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType;
 
-#define NUM_PROBES 1000
+	int CONSTEXPR_VARIABLE NUM_PROBES = 1000;
 	for( int i=0; i<NUM_PROBES; i++ )
 	{
 		bool isValid = true;
 		/* Maintaining difficulties is higher priority than maintaining
 		 * the current group. */
 		if( i == NUM_PROBES/4 )
+		{
 			sPreferredGroup = "";
+		}
 		if( i == NUM_PROBES/2 )
+		{
 			vDifficultiesToRequire.clear();
-
+		}
 		int iSelection = RandomInt( wid.size() );
 		if( wid[iSelection]->m_Type != WheelItemDataType_Song )
+		{
 			continue;
-
+		}
 		const Song *pSong = wid[iSelection]->m_pSong;
 
 		if( !sPreferredGroup.empty() && wid[iSelection]->m_sText != sPreferredGroup )
+		{
 			continue;
-
+		}
 		// There's an off possibility that somebody might have only one song with only beginner steps.
 		if( i < 900 && pSong->IsTutorial() )
+		{
 			continue;
-
+		}
 		for (auto &d: vDifficultiesToRequire)
 		{
 			if( !pSong->HasStepsTypeAndDifficulty(st,d) )

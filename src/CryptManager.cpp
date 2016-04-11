@@ -67,11 +67,8 @@ void CryptManager::GetRandomBytes( void *pData, int iBytes )
 
 #else
 
-static const int KEY_LENGTH = 1024;
-#define MAX_SIGNATURE_SIZE_BYTES 1024	// 1 KB
-
-
-
+static int CONSTEXPR_VARIABLE KEY_LENGTH = 1024;
+int CONSTEXPR_VARIABLE MAX_SIGNATURE_SIZE_BYTES = 1024; // 1 KB
 
 /*
  openssl genrsa -out testing -outform DER

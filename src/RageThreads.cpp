@@ -36,7 +36,7 @@
 bool RageThread::s_bSystemSupportsTLS = false;
 bool RageThread::s_bIsShowingDialog = false;
 
-#define MAX_THREADS 128
+int CONSTEXPR_VARIABLE MAX_THREADS = 128;
 //static vector<RageMutex*> *g_MutexList = nullptr; /* watch out for static initialization order problems */
 
 struct ThreadSlot

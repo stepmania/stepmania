@@ -213,13 +213,14 @@ ScreenHowToPlay::~ScreenHowToPlay()
 
 void ScreenHowToPlay::Step()
 {
-// xxx: assumes dance. -freem
-#define ST_LEFT		0x01
-#define ST_DOWN		0x02
-#define ST_UP		0x04
-#define ST_RIGHT	0x08
-#define ST_JUMPLR	(ST_LEFT | ST_RIGHT)
-#define ST_JUMPUD	(ST_UP | ST_DOWN)
+  // xxx: assumes dance. -freem
+  // TODO: Replace with enum flags.
+  int CONSTEXPR_VARIABLE ST_LEFT = 0x01;
+  int CONSTEXPR_VARIABLE ST_DOWN = 0x02;
+  int CONSTEXPR_VARIABLE ST_UP = 0x04;
+  int CONSTEXPR_VARIABLE ST_RIGHT = 0x08;
+  int CONSTEXPR_VARIABLE ST_JUMPLR = ST_LEFT | ST_RIGHT;
+  int CONSTEXPR_VARIABLE ST_JUMPUD = ST_UP | ST_DOWN;
 
 	int iStep = 0;
 	const int iNoteRow = BeatToNoteRowNotRounded( GAMESTATE->m_Position.m_fSongBeat + 0.6f );
