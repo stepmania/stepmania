@@ -329,12 +329,13 @@ int RageFileObj::GetLine( std::string &sOut )
 	sOut = "";
 
 	if( m_bEOF )
+	{
 		return 0;
-
+	}
 	EnableReadBuffering();
 
 	bool bGotData = false;
-	while( 1 )
+	for(;;)
 	{
 		bool bDone = false;
 
@@ -363,12 +364,15 @@ int RageFileObj::GetLine( std::string &sOut )
 		{
 			char *RealEnd = p;
 			if( bDone && p > m_pReadBuf && p[-1] == '\r' )
+			{
 				--RealEnd; /* not including \r */
+			}
 			sOut.append( m_pReadBuf, RealEnd );
 
 			if( bDone )
+			{
 				++p; /* skip \n */
-
+			}
 			const int iUsed = p-m_pReadBuf;
 			if( iUsed )
 			{

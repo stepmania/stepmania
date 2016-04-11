@@ -35,12 +35,14 @@ bool LyricsLoader::LoadFromLRCFile(const std::string& sPath, Song& out)
 
 	out.m_LyricSegments.clear();
 
-	while( 1 )
+	for(;;)
 	{
 		std::string line;
 		int ret = input.GetLine( line );
 		if( ret == 0 )
+		{
 			break;
+		}
 		if( ret == -1 )
 		{
 			LuaHelpers::ReportScriptErrorFmt("Error reading %s: %s", input.GetPath().c_str(), input.GetError().c_str() );
@@ -50,8 +52,9 @@ bool LyricsLoader::LoadFromLRCFile(const std::string& sPath, Song& out)
 		Rage::utf8_remove_bom( line );
 
 		if(!line.compare(0, 2, "//"))
+		{
 			continue;
-
+		}
 		// (most tags are in the format of...)
 		// "[data1] data2".  Ignore whitespace at the beginning of the line.
 		static Regex x("^ *\\[([^]]+)\\] *(.*)$");

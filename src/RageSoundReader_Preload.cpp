@@ -69,22 +69,26 @@ bool RageSoundReader_Preload::Open( RageSoundReader *pSource )
 		m_Buffer.Get()->reserve( iBytes );
 	}
 
-	while(1)
+	for(;;)
 	{
 		/* If the rate changes, we won't preload it. */
 		if( pSource->GetStreamToSourceRatio() != m_fRate )
+		{
 			return false; /* Don't bother trying to preload it. */
-
+		}
 		float buffer[1024];
 		// TODO: See if using std::array is possible.
 		// Until then, don't use the define.
 		int iCnt = pSource->Read( buffer, 1024 / m_iChannels );
 
 		if( iCnt == END_OF_FILE )
+		{
 			break;
+		}
 		if( iCnt < 0 )
+		{
 			return false;
-
+		}
 		/* Add the buffer. */
 		if( m_bBufferIs16Bit )
 		{
@@ -98,7 +102,9 @@ bool RageSoundReader_Preload::Open( RageSoundReader *pSource )
 		}
 
 		if( m_Buffer.Get()->size() > iMaxSamples * samplesize )
+		{
 			return false; /* too big */
+		}
 	}
 
 	m_iPosition = 0;

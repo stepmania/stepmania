@@ -186,7 +186,7 @@ bool InputQueueCode::Load( std::string sButtonsNames )
 		{
 			bool bHold = false;
 			bool bNotHold = false;
-			for (;;)
+			for(;;)
 			{
 				if (sButtonName[0] == '+')
 				{

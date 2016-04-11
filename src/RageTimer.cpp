@@ -3,7 +3,7 @@
  *
  * As a timer,
  * RageTimer Timer;
- * while(1) {
+ * for(;;) {
  *   printf( "Will be approximately: %f", Timer.PeekDeltaTime()) ;
  *   float fDeltaTime = Timer.GetDeltaTime();
  * }

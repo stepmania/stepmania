@@ -940,8 +940,9 @@ IsOnScreen(fBeat, 0, static_cast<int>(m_FieldRenderArgs.draw_pixels_after_target
 							FOREACH_BackgroundLayer( j )
 							{
 								if( iter[j] == GAMESTATE->m_pCurSong->GetBackgroundChanges(j).end() )
+								{
 									continue;
-
+								}
 								float fBeat = iter[j]->m_fStartBeat;
 								if( fBeat < fLowestBeat )
 								{
@@ -958,7 +959,9 @@ IsOnScreen(fBeat, 0, static_cast<int>(m_FieldRenderArgs.draw_pixels_after_target
 							if( viLowestIndex.empty() )
 							{
 								FOREACH_BackgroundLayer( j )
+								{
 									ASSERT( iter[j] == GAMESTATE->m_pCurSong->GetBackgroundChanges(j).end() );
+								}
 								break;
 							}
 

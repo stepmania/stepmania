@@ -242,7 +242,7 @@ void FileTransfer::HTTPUpdate()
 	// Keep this as a code block, as there may be need to "if" it out some time.
 	/* If you need a conditional for a large block of code, stick it in
 	 * a function and return. */
-	while(1)
+	for(;;)
 	{
 		char Buffer[1024];
 		int iSize = m_wSocket.ReadData( Buffer, 1024 );
@@ -363,13 +363,15 @@ bool FileTransfer::ParseHTTPAddress( const std::string &URL, std::string &sProto
 
 void FileTransfer::Finish()
 {
-	while( true )
+	for(;;)
 	{
 		float fSleepSeconds = 0.1f;
 		this->Update( fSleepSeconds );
 		usleep( int( fSleepSeconds * 1000000.0 ) );
 		if( this->IsFinished() )
+		{
 			break;
+		}
 	}
 }
 

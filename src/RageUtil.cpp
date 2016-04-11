@@ -1774,24 +1774,30 @@ bool FileCopy( std::string const &sSrcFile, std::string const &sDstFile )
 
 bool FileCopy( RageFileBasic &in, RageFileBasic &out, std::string &sError, bool *bReadError )
 {
-	while(1)
+	for(;;)
 	{
 		std::string data;
 		if( in.Read(data, 1024*32) == -1 )
 		{
 			sError = fmt::sprintf( "read error: %s", in.GetError().c_str() );
 			if( bReadError != nullptr )
+			{
 				*bReadError = true;
+			}
 			return false;
 		}
 		if( data.empty() )
+		{
 			break;
+		}
 		int i = out.Write(data);
 		if( i == -1 )
 		{
 			sError = fmt::sprintf( "write error: %s", out.GetError().c_str() );
 			if( bReadError != nullptr )
+			{
 				*bReadError = false;
+			}
 			return false;
 		}
 	}
@@ -1800,7 +1806,9 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, std::string &sError, bool 
 	{
 		sError = fmt::sprintf( "write error: %s", out.GetError().c_str() );
 		if( bReadError != nullptr )
+		{
 			*bReadError = false;
+		}
 		return false;
 	}
 

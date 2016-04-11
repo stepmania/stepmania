@@ -39,7 +39,7 @@ void NORETURN sm_crash( std::string const &reason )
 
 	/* This isn't actually reached.  We just do this to convince the compiler that the
 	 * function really doesn't return. */
-	for(;;)
+	for(;;);
 #endif
 
 #if defined(_WINDOWS)

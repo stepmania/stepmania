@@ -27,11 +27,12 @@ namespace
 			/* Look at the first class.  If it has a base class that needs to be registered,
 			 * go there first. */
 			LuaBinding *pBinding = mapToRegister.begin()->second;
-			while(1)
+			for(;;)
 			{
 				if( !pBinding->IsDerivedClass() )
+				{
 					break;
-
+				}
 				std::string sBase = pBinding->GetBaseClassName();
 				auto it = mapToRegister.find(sBase);
 				if( it != mapToRegister.end() )

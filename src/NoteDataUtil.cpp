@@ -73,18 +73,20 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const std::string
 		 * would do as I would expect. */
 		Rage::split_in_place( sSMNoteData, ",", start, size, end, Rage::EmptyEntries::skip ); // Ignore empty is important.
 		if( start == end )
+		{
 			break;
-
+		}
 		// Partial string split.
 		int measureLineStart = start, measureLineSize = -1;
 		const int measureEnd = start + size;
 
 		aMeasureLines.clear();
-		while( true )
+		for(;;)
 		{
 			// Ignore empty is clearly important here.
 			Rage::split_in_place( sSMNoteData, "\n", measureLineStart, measureLineSize, measureEnd, Rage::EmptyEntries::skip );
 			if( measureLineStart == measureEnd )
+			{
 				break;
 			//std::string &line = sSMNoteData.substr( measureLineStart, measureLineSize );
 			const char *beginLine = sSMNoteData.data() + measureLineStart;
@@ -712,11 +714,13 @@ void LightTransformHelper( const NoteData &in, NoteData &out, const vector<int> 
 		 * until we've extended to the end of the latest overlapping hold note. */
 		int iHoldStart = r;
 		int iHoldEnd = -1;
-		while(1)
+		for(;;)
 		{
 			int iMaxTailRow = FindLongestOverlappingHoldNoteForAnyTrack( in, r );
 			if( iMaxTailRow == -1 )
+			{
 				break;
+			}
 			iHoldEnd = iMaxTailRow;
 			r = iMaxTailRow;
 		}

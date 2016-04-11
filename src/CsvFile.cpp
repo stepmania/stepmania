@@ -32,7 +32,7 @@ bool CsvFile::ReadFile( RageFileBasic &f )
 
 	// hi,"hi2,","""hi3"""
 
-	while( 1 )
+	for(;;)
 	{
 		std::string line;
 		switch( f.GetLine(line) )
