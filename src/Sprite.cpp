@@ -1185,7 +1185,7 @@ public:
 		for( int i=0; i<8; ++i )
 		{
 			coords[i]= FArg(i+1);
-			if( isnan(coords[i]) )
+			if( std::isnan(coords[i]) )
 			{
 				coords[i]= 0.0f;
 			}
