@@ -41,41 +41,20 @@ end
 function GameplayMargins(enabled_players, styletype)
 	--local other= {[PLAYER_1]= PLAYER_2, [PLAYER_2]= PLAYER_1, [PLAYER_3]= PLAYER_4, , [PLAYER_4]= PLAYER_3}
 	--local margins= {[PLAYER_1]= {30, 30}, [PLAYER_2]= {30, 30}, [PLAYER_3]= {30, 30}, [PLAYER_4]= {30, 30}}
-	local other= {[PLAYER_1]= PLAYER_2, [PLAYER_2]= PLAYER_1}
+	local other= {[PLAYER_1]= PLAYER_2, [PLAYER_2]= PLAYER_1, [PLAYER_3]= PLAYER_4, [PLAYER_4]= PLAYER_3}
+
 	local margins= {[PLAYER_1]= {30, 30}, [PLAYER_2]= {30, 30}, [PLAYER_3]= {30, 30}, [PLAYER_4]= {30, 30}}
 	-- Use a fake style width because calculating the real style width throws off
 	-- the code in the engine.
 	local fake_style_width= 272
 	-- Handle the case of a single player that is centered first because it's
 	-- simpler.
-	if Center1Player() then
-		local pn= enabled_players[1]
-		fake_style_width= 544
-		local center= _screen.cx
-		local left= center - (fake_style_width / 2)
-		local right= _screen.w - center - (fake_style_width / 2)
-		-- center margin width will be ignored.
-		return left, 80, right
-	end
-	local half_screen= _screen.w / 2
-	local left= {[PLAYER_1]= 0, [PLAYER_2]= half_screen}
-	for i, pn in ipairs(enabled_players) do
-		local edge= left[pn]
-		local center= THEME:GetMetric("ScreenGameplay",
-			"Player"..ToEnumShortString(pn)..ToEnumShortString(styletype).."X")
-		-- Adjust for the p2 center being on the right side.
-		center= center - edge
-		margins[pn][1]= center - (fake_style_width / 2)
-		margins[pn][2]= half_screen - center - (fake_style_width / 2)
-		if #enabled_players == 1 then
-			margins[other[pn]][1]= margins[pn][2]
-			margins[other[pn]][2]= margins[pn][1]
-		end
-	end
-	local left= margins[PLAYER_1][1]
-	local center= margins[PLAYER_1][2] + margins[PLAYER_2][1]
-	local right= margins[PLAYER_2][2]
-	return left, center, right
+
+	local left=0
+	local center=0
+	local right=0
+	
+	return 0, 120, 120, 120, 0
 end
 
 -- AllowOptionsMenu()

@@ -113,8 +113,12 @@ end
 t[#t+1] = StandardDecorationFromFileOptional("BannerFrame","BannerFrame");
 t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayFrameP1","PaneDisplayFrame");
 t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayFrameP2","PaneDisplayFrame");
+t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayFrameP3","PaneDisplayFrame");
+t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayFrameP4","PaneDisplayFrame");
 t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayTextP1","PaneDisplayTextP1");
 t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayTextP2","PaneDisplayTextP2");
+t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayTextP3","PaneDisplayTextP3");
+t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayTextP4","PaneDisplayTextP4");
 t[#t+1] = StandardDecorationFromFileOptional("DifficultyList","DifficultyList");
 
 t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");

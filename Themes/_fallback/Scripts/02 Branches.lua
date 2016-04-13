@@ -77,19 +77,23 @@ Branch = {
 		if SONGMAN:GetNumSongs() == 0 and SONGMAN:GetNumAdditionalSongs() == 0 then
 			return "ScreenHowToInstallSongs"
 		end
-		if PROFILEMAN:GetNumLocalProfiles() >= 2 then
-			return "ScreenSelectProfile"
-		else
-			if IsNetConnected() then
-				return "ScreenSelectStyle"
-			else
-				if THEME:GetMetric("Common","AutoSetStyle") == false then
-					return "ScreenSelectStyle"
-				else
-					return "ScreenProfileLoad"
-				end
-			end
-		end
+        
+        -- Don't want profiles, at least for now
+        return "ScreenSelectStyle"
+        
+		-- if PROFILEMAN:GetNumLocalProfiles() >= 2 then
+			-- return "ScreenSelectProfile"
+		-- else
+			-- if IsNetConnected() then
+				-- return "ScreenSelectStyle"
+			-- else
+				-- if THEME:GetMetric("Common","AutoSetStyle") == false then
+					-- return "ScreenSelectStyle"
+				-- else
+					-- return "ScreenProfileLoad"
+				-- end
+			-- end
+		-- end
 	end,
 	OptionsEdit = function()
 		-- Similar to above, don't let anyone in here with 0 songs.

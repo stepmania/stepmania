@@ -243,6 +243,8 @@ void init_parser_helpers()
 	chunks_to_replace["effectdelay"]= "effect_hold_at_full";
 	chunks_to_replace["IsPlayerEnabled(0)"]= "IsPlayerEnabled(PLAYER_1)";
 	chunks_to_replace["IsPlayerEnabled(1)"]= "IsPlayerEnabled(PLAYER_2)";
+	chunks_to_replace["IsPlayerEnabled(2)"] = "IsPlayerEnabled(PLAYER_3)";
+	chunks_to_replace["IsPlayerEnabled(3)"] = "IsPlayerEnabled(PLAYER_4)";
 }
 
 void convert_lua_chunk(RString& chunk_text)
@@ -795,5 +797,9 @@ LUAFUNC_REGISTER_COMMON(convert_xml_bgs);
  * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+ * PERFORMANCE OF THIS SOFTWARE. 
+ * 
+ * (c) 2016- Electromuis, Anton Grootes
+ * This branch of https://github.com/stepmania/stepmania
+ * will from here on out be released as GPL v3 (wich converts from the previous MIT license)
  */

@@ -1,0 +1,53 @@
+ultralight todo (started 20100205 @ 12:35 cst)
+I don't keep track of update times anymore because I don't feel like it.
+--------------------------------------------------------------------------------
+[General]
+* do I need header/footer on any other screen?
+* fix all hardcoded strings; grab them from languages file instead
+ * any others?
+* use a monospaced font for the clock.
+* regen Mentone as Doubleres
+
+[Theme Preferences]
+* implement gameplay footer (ScreenGameplay)
+
+[Player Options]
+* implement screen filter
+
+[ScreenSelectStyle]
+* rework this for gametypes
+ * para (versus)
+ * techno, pop'n, others?
+
+[ScreenSelectMusic]
+ * stage display doesn't show "Final" on final stage
+ * per-player SegmentDisplay from moonlight (above percent score if possible)
+post v1.0:
+ * BPMDisplay for steps-based TimingData
+
+[ScreenGameplay]
+* allow for ticks on judgments?
+* lifebar does not work on DirectX for some reason
+* add screen cover option
+* convert danger to a decoration, add some sort of underlay
+* add a failed animation
+
+[ScreenEvaluation]
+* add something to the other side of the DetailsFrame stuff. but what?
+  current suggestions include:
+  * bonus bars (stream, voltage, air, freeze, chaos)
+* wrapwidthpixels on the player mods (currently untested)
+
+[ScreenEvaluationSummary]
+...what else
+
+[ScreenContinue]
+needs to be implemented
+
+[ScreenMapControllers]
+Input list can get in the way of the control mapping list
+
+## online ##
+
+[ScreenNetSelectMusic]
+needs BPMDisplay (SM5 Preview 3+)

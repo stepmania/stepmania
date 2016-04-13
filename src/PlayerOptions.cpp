@@ -729,7 +729,7 @@ void PlayerOptions::ToggleOneTurn( Turn t )
 float PlayerOptions::GetReversePercentForColumn( int iCol ) const
 {
 	float f = 0;
-	ASSERT(m_pn == PLAYER_1 || m_pn == PLAYER_2);
+	ASSERT(m_pn == PLAYER_1 || m_pn == PLAYER_2 || m_pn == PLAYER_3 || m_pn == PLAYER_4);
 	ASSERT(GAMESTATE->GetCurrentStyle(m_pn) != NULL);
 	int iNumCols = GAMESTATE->GetCurrentStyle(m_pn)->m_iColsPerPlayer;
 
@@ -1582,5 +1582,9 @@ LUA_REGISTER_CLASS( PlayerOptions )
  * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+ * PERFORMANCE OF THIS SOFTWARE. 
+ * 
+ * (c) 2016- Electromuis, Anton Grootes
+ * This branch of https://github.com/stepmania/stepmania
+ * will from here on out be released as GPL v3 (wich converts from the previous MIT license)
  */

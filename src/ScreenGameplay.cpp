@@ -528,37 +528,43 @@ void ScreenGameplay::Init()
 		margins[pn][0]= 40;
 		margins[pn][1]= 40;
 	}
-	THEME->GetMetric(m_sName, "MarginFunction", margarine);
-	if(margarine.GetLuaType() != LUA_TFUNCTION)
-	{
-		LuaHelpers::ReportScriptErrorFmt("MarginFunction metric for %s must be a function.", m_sName.c_str());
-	}
-	else
-	{
-		Lua* L= LUA->Get();
-		margarine.PushSelf(L);
-		lua_createtable(L, 0, 0);
-		int next_player_slot= 1;
-		FOREACH_EnabledPlayer(pn)
-		{
-			Enum::Push(L, pn);
-			lua_rawseti(L, -2, next_player_slot);
-			++next_player_slot;
-		}
-		Enum::Push(L, GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StyleType);
-		RString err= "Error running MarginFunction:  ";
-		if(LuaHelpers::RunScriptOnStack(L, err, 2, 3, true))
-		{
-			RString marge= "Margin value must be a number.";
-			margins[PLAYER_1][0]= SafeFArg(L, -3, marge, 40);
-			float center= SafeFArg(L, -2, marge, 80);
-			margins[PLAYER_1][1]= center / 2.0f;
-			margins[PLAYER_2][0]= center / 2.0f;
-			margins[PLAYER_2][1]= SafeFArg(L, -1, marge, 40);
-		}
-		lua_settop(L, 0);
-		LUA->Release(L);
-	}
+	//THEME->GetMetric(m_sName, "MarginFunction", margarine);
+	//if(margarine.GetLuaType() != LUA_TFUNCTION)
+	//{
+	//	LuaHelpers::ReportScriptErrorFmt("MarginFunction metric for %s must be a function.", m_sName.c_str());
+	//}
+	//else
+	//{
+	//	Lua* L= LUA->Get();
+	//	margarine.PushSelf(L);
+	//	lua_createtable(L, 0, 0);
+	//	int next_player_slot= 1;
+	//	FOREACH_EnabledPlayer(pn)
+	//	{
+	//		Enum::Push(L, pn);
+	//		lua_rawseti(L, -2, next_player_slot);
+	//		++next_player_slot;
+	//	}
+	//	Enum::Push(L, GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StyleType);
+	//	RString err= "Error running MarginFunction:  ";
+	//	if(LuaHelpers::RunScriptOnStack(L, err, 2, 5, true))
+	//	{
+	//		RString marge= "Margin value must be a number.";
+	//		margins[PLAYER_1][0]= SafeFArg(L, -5, marge, 40);
+	//		float center1 = SafeFArg(L, -4, marge, 80);
+	//		float center2 = SafeFArg(L, -3, marge, 80);
+	//		float center3 = SafeFArg(L, -2, marge, 80);
+	//		margins[PLAYER_1][1]= center1 / 2.0f;
+	//		margins[PLAYER_2][0]= center1 / 2.0f;
+	//		margins[PLAYER_2][1] = center2 / 2.0f;
+	//		margins[PLAYER_3][0] = center2 / 2.0f;
+	//		margins[PLAYER_3][1] = center3 / 2.0f;
+	//		margins[PLAYER_4][0] = center3 / 2.0f;
+	//		margins[PLAYER_4][1]= SafeFArg(L, -1, marge, 40);
+	//	}
+	//	lua_settop(L, 0);
+	//	LUA->Release(L);
+	//}
 
 	float left_edge[NUM_PLAYERS]= {0.0f, SCREEN_WIDTH / 2.0f};
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
@@ -578,7 +584,7 @@ void ScreenGameplay::Init()
 			edge= 0.0f; \
 			screen_space= SCREEN_WIDTH; \
 			left_marge= margins[PLAYER_1][0]; \
-			right_marge= margins[PLAYER_2][1]; \
+			right_marge= margins[PLAYER_4][1]; \
 			field_space= screen_space - left_marge - right_marge; \
 		}
 		// If pi->m_pn is set, then the player will be visible.  If not, then it's not 
@@ -609,7 +615,8 @@ void ScreenGameplay::Init()
 		*/
 		pi->GetPlayerState()->m_NotefieldZoom= min(1.0f, field_zoom);
 
-		pi->m_pPlayer->SetX(player_x);
+		//pi->m_pPlayer->SetX(player_x);
+		pi->m_pPlayer->SetX(THEME->GetMetricI(m_sName, ssprintf("PlayerP%iOnePlayerOneSideX", pi->m_pn+1)));
 		pi->m_pPlayer->RunCommands( PLAYER_INIT_COMMAND );
 		//ActorUtil::LoadAllCommands(pi->m_pPlayer, m_sName);
 		this->AddChild( pi->m_pPlayer );
@@ -3359,5 +3366,9 @@ LUA_REGISTER_CLASS( PlayerInfo )
  * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+ * PERFORMANCE OF THIS SOFTWARE. 
+ * 
+ * (c) 2016- Electromuis, Anton Grootes
+ * This branch of https://github.com/stepmania/stepmania
+ * will from here on out be released as GPL v3 (wich converts from the previous MIT license)
  */
