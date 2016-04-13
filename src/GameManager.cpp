@@ -173,7 +173,7 @@ static const Style g_Style_Dance_Single =
 			{ TRACK_2,	-DANCE_COL_SPACING*0.5f, NULL },
 			{ TRACK_3,	+DANCE_COL_SPACING*0.5f, NULL },
 			{ TRACK_4,	+DANCE_COL_SPACING*1.5f, NULL },
-		},
+		}
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
 		{ 0, 3, 2, 1, Style::END_MAPPING },
@@ -210,9 +210,23 @@ static const Style g_Style_Dance_Versus =
 			{ TRACK_2,	-DANCE_COL_SPACING*0.5f, NULL },
 			{ TRACK_3,	+DANCE_COL_SPACING*0.5f, NULL },
 			{ TRACK_4,	+DANCE_COL_SPACING*1.5f, NULL },
+		},
+		{	// PLAYER_3
+			{ TRACK_1,	-DANCE_COL_SPACING*1.5f, NULL },
+			{ TRACK_2,	-DANCE_COL_SPACING*0.5f, NULL },
+			{ TRACK_3,	+DANCE_COL_SPACING*0.5f, NULL },
+			{ TRACK_4,	+DANCE_COL_SPACING*1.5f, NULL },
+		},
+		{	// PLAYER_4
+			{ TRACK_1,	-DANCE_COL_SPACING*1.5f, NULL },
+			{ TRACK_2,	-DANCE_COL_SPACING*0.5f, NULL },
+			{ TRACK_3,	+DANCE_COL_SPACING*0.5f, NULL },
+			{ TRACK_4,	+DANCE_COL_SPACING*1.5f, NULL },
 		}
 	},
 	{
+		{ 0, 3, 2, 1, Style::END_MAPPING },
+		{ 0, 3, 2, 1, Style::END_MAPPING },
 		{ 0, 3, 2, 1, Style::END_MAPPING },
 		{ 0, 3, 2, 1, Style::END_MAPPING }
 	},
@@ -3671,5 +3685,9 @@ LUA_REGISTER_CLASS( GameManager )
  * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+ * PERFORMANCE OF THIS SOFTWARE. 
+ * 
+ * (c) 2016- Electromuis, Anton Grootes
+ * This branch of https://github.com/stepmania/stepmania
+ * will from here on out be released as GPL v3 (wich converts from the previous MIT license)
  */

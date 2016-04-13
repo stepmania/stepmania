@@ -49,10 +49,14 @@ GameColor = {
 	PlayerColors = {
 		PLAYER_1 = color("#ed5565"),
 		PLAYER_2 = color("#5d9cec"),
+        PLAYER_3 = color("#ffff66"),
+        PLAYER_4 = color("#66ff8c"),
 	},
 	PlayerDarkColors = {
 		PLAYER_1 = color("#da4453"),
 		PLAYER_2 = color("#4a89dc"),
+        PLAYER_3 = color("#cccc00"),
+        PLAYER_4 = color("#00cc33"),
 	},
 	Difficulty = {
 		--[[ These are for 'Custom' Difficulty Ranks. It can be very  useful
@@ -129,7 +133,7 @@ function ColorDarkTone(c)
 	return { c[1]/2, c[2]/2, c[3]/2, c[4] }
 end
 
-local pn_to_color_name= {[PLAYER_1]= "PLAYER_1", [PLAYER_2]= "PLAYER_2"}
+local pn_to_color_name= {[PLAYER_1]= "PLAYER_1", [PLAYER_2]= "PLAYER_2", [PLAYER_3]= "PLAYER_3", [PLAYER_4]= "PLAYER_4"}
 local default_color= color("1,1,1,1")
 
 function PlayerColor( pn )

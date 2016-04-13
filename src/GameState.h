@@ -12,7 +12,7 @@
 #include "SongOptions.h"
 #include "SongPosition.h"
 #include "Preference.h"
-
+#include "GameInput.h"
 
 #include <map>
 #include <deque>
@@ -40,6 +40,10 @@ class GameState
 {
 	/** @brief The player number used with Styles where one player controls both sides. */
 	PlayerNumber	masterPlayerNumber;
+
+	/** Current selected controller, for individual configuration */
+	GameController selectedController;
+
 	/** @brief The TimingData that is used for processing certain functions. */
 	TimingData * processedTiming;
 public:
@@ -483,5 +487,9 @@ extern GameState*	GAMESTATE;	// global and accessible from anywhere in our progr
  * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+ * PERFORMANCE OF THIS SOFTWARE. 
+ * 
+ * (c) 2016- Electromuis, Anton Grootes
+ * This branch of https://github.com/stepmania/stepmania
+ * will from here on out be released as GPL v3 (wich converts from the previous MIT license)
  */

@@ -23,7 +23,7 @@ return Def.ActorFrame {
 		Name="StepsDisplayListRow";
 
 		CursorP1 = Def.ActorFrame {
-			InitCommand=cmd(x,-128+16;player,PLAYER_1);
+			InitCommand=cmd(x,-112;player,PLAYER_1);
 			PlayerJoinedMessageCommand=function(self, params)
 				if params.Player == PLAYER_1 then
 					self:visible(true);
@@ -50,7 +50,7 @@ return Def.ActorFrame {
 			};
 		};
 		CursorP2 = Def.ActorFrame {
-			InitCommand=cmd(x,128-16;player,PLAYER_2);
+			InitCommand=cmd(x,-112-40;player,PLAYER_2);
 			PlayerJoinedMessageCommand=function(self, params)
 				if params.Player == PLAYER_2 then
 					self:visible(true);
@@ -64,20 +64,20 @@ return Def.ActorFrame {
 				end;
 			end;
 			LoadActor(THEME:GetPathG("_StepsDisplayListRow","Cursor")) .. {
-				InitCommand=cmd(diffuse,PlayerColor(PLAYER_2);x,-8;zoom,0.75;zoomx,-0.75;);
+				InitCommand=cmd(diffuse,PlayerColor(PLAYER_2);x,8;zoom,0.75);
 			};
 			LoadActor(THEME:GetPathG("_StepsDisplayListRow","arrow")) .. {
-				InitCommand=cmd(x,-20;diffuse,PlayerColor(PLAYER_2);zoomx,-1);
+				InitCommand=cmd(x,20;diffuse,PlayerColor(PLAYER_2));
 				OnCommand=cmd(thump,1;effectmagnitude,1,1.25,1;effectclock,'beat';);
 			};
 			LoadFont("Common Normal") .. {
 				Text="P2";
-				InitCommand=cmd(x,-2;diffuse,PlayerColor(PLAYER_2);shadowlength,1);
+				InitCommand=cmd(x,2;diffuse,PlayerColor(PLAYER_2);shadowlength,1);
 				OnCommand=cmd(zoom,0.75);
 			};
 		};
 		CursorP3 = Def.ActorFrame {
-			InitCommand=cmd(x,128-16;player,PLAYER_3);
+			InitCommand=cmd(x,-112-80;player,PLAYER_3);
 			PlayerJoinedMessageCommand=function(self, params)
 				if params.Player == PLAYER_3 then
 					self:visible(true);
@@ -91,20 +91,20 @@ return Def.ActorFrame {
 				end;
 			end;
 			LoadActor(THEME:GetPathG("_StepsDisplayListRow","Cursor")) .. {
-				InitCommand=cmd(diffuse,PlayerColor(PLAYER_3);x,-8;zoom,0.75;zoomx,-0.75;);
+				InitCommand=cmd(diffuse,PlayerColor(PLAYER_3);x,8;zoom,0.75);
 			};
 			LoadActor(THEME:GetPathG("_StepsDisplayListRow","arrow")) .. {
-				InitCommand=cmd(x,-20;diffuse,PlayerColor(PLAYER_3);zoomx,-1);
+				InitCommand=cmd(x,20;diffuse,PlayerColor(PLAYER_3));
 				OnCommand=cmd(thump,1;effectmagnitude,1,1.25,1;effectclock,'beat';);
 			};
 			LoadFont("Common Normal") .. {
-				Text="P2";
-				InitCommand=cmd(x,-2;diffuse,PlayerColor(PLAYER_3);shadowlength,1);
+				Text="P3";
+				InitCommand=cmd(x,2;diffuse,PlayerColor(PLAYER_3);shadowlength,1);
 				OnCommand=cmd(zoom,0.75);
 			};
 		};
 		CursorP4 = Def.ActorFrame {
-			InitCommand=cmd(x,128-16;player,PLAYER_4);
+			InitCommand=cmd(x,-112-120;player,PLAYER_4);
 			PlayerJoinedMessageCommand=function(self, params)
 				if params.Player == PLAYER_4 then
 					self:visible(true);
@@ -118,15 +118,15 @@ return Def.ActorFrame {
 				end;
 			end;
 			LoadActor(THEME:GetPathG("_StepsDisplayListRow","Cursor")) .. {
-				InitCommand=cmd(diffuse,PlayerColor(PLAYER_4);x,-8;zoom,0.75;zoomx,-0.75;);
+				InitCommand=cmd(diffuse,PlayerColor(PLAYER_4);x,8;zoom,0.75);
 			};
 			LoadActor(THEME:GetPathG("_StepsDisplayListRow","arrow")) .. {
-				InitCommand=cmd(x,-20;diffuse,PlayerColor(PLAYER_4);zoomx,-1);
+				InitCommand=cmd(x,20;diffuse,PlayerColor(PLAYER_4));
 				OnCommand=cmd(thump,1;effectmagnitude,1,1.25,1;effectclock,'beat';);
 			};
 			LoadFont("Common Normal") .. {
-				Text="P2";
-				InitCommand=cmd(x,-2;diffuse,PlayerColor(PLAYER_4);shadowlength,1);
+				Text="P4";
+				InitCommand=cmd(x,2;diffuse,PlayerColor(PLAYER_4);shadowlength,1);
 				OnCommand=cmd(zoom,0.75);
 			};
 		};

@@ -616,7 +616,7 @@ void ScreenGameplay::Init()
 		pi->GetPlayerState()->m_NotefieldZoom= min(1.0f, field_zoom);
 
 		//pi->m_pPlayer->SetX(player_x);
-		pi->m_pPlayer->SetX(pi->m_pn * 200);
+		pi->m_pPlayer->SetX(THEME->GetMetricI(m_sName, ssprintf("PlayerP%iOnePlayerOneSideX", pi->m_pn+1)));
 		pi->m_pPlayer->RunCommands( PLAYER_INIT_COMMAND );
 		//ActorUtil::LoadAllCommands(pi->m_pPlayer, m_sName);
 		this->AddChild( pi->m_pPlayer );
@@ -3366,5 +3366,9 @@ LUA_REGISTER_CLASS( PlayerInfo )
  * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+ * PERFORMANCE OF THIS SOFTWARE. 
+ * 
+ * (c) 2016- Electromuis, Anton Grootes
+ * This branch of https://github.com/stepmania/stepmania
+ * will from here on out be released as GPL v3 (wich converts from the previous MIT license)
  */
