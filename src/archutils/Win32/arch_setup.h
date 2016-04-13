@@ -74,8 +74,6 @@ C4355: 'this' : used in base member initializer list
 
 #define lstat stat
 #define fsync _commit
-#define isnan _isnan
-#define isfinite _finite
 
 typedef time_t time_t;
 struct tm;
