@@ -52,6 +52,7 @@ return LoadFont("Common normal")..{
 	end;
 	CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 	CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
+-- todo: add p3 and p4
 	CurrentStepsP1ChangedMessageCommand=function(self)
 		if Player == PLAYER_1 then self:playcommand("Set"); end;
 	end;
