@@ -565,10 +565,7 @@ static const Style *g_apGame_Dance_Styles[] =
 	&g_Style_Dance_Single,
 	&g_Style_Dance_Quad,
 	&g_Style_Dance_Versus,
-<<<<<<< HEAD
 	&g_Style_Dance_Quad,
-=======
->>>>>>> 2dde6f1
 	&g_Style_Dance_Double,
 	&g_Style_Dance_Couple,
 	&g_Style_Dance_Solo,
