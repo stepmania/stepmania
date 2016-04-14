@@ -65,8 +65,14 @@ local function CreatePaneDisplayGraph( _pnPlayer, _sLabel, _rcRadarCategory )
 			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
+            CurrentStepsP3ChangedMessageCommand=cmd(playcommand,"Set");
+            CurrentStepsP4ChangedMessageCommand=cmd(playcommand,"Set");
+            
 			CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
+            CurrentTrailP3ChangedMessageCommand=cmd(playcommand,"Set");
+            CurrentTrailP4ChangedMessageCommand=cmd(playcommand,"Set");
+            
 			CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 			SetCommand=function(self)
 				local song = GAMESTATE:GetCurrentSong()
@@ -88,8 +94,13 @@ local function CreatePaneDisplayGraph( _pnPlayer, _sLabel, _rcRadarCategory )
 			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
+            CurrentStepsP3ChangedMessageCommand=cmd(playcommand,"Set");
+            CurrentStepsP4ChangedMessageCommand=cmd(playcommand,"Set");
+            
 			CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
+            CurrentTrailP3ChangedMessageCommand=cmd(playcommand,"Set");
+            CurrentTrailP4ChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 			SetCommand=function(self)
 				local song = GAMESTATE:GetCurrentSong()

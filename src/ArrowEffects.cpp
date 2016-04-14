@@ -413,7 +413,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 static void ArrowGetReverseShiftAndScale(int iCol, float fYReverseOffsetPixels, float &fShiftOut, float &fScaleOut)
 {
 	// XXX: Hack: we need to scale the reverse shift by the zoom.
-	float fMiniPercent = curr_options->m_fEffects[PlayerOptions::EFFECT_MINI];
+	float fMiniPercent = curr_options->m_fEffects[PlayerOptions::EFFECT_MINI]+0.6f;
 	float fZoom = 1 - fMiniPercent*0.5f;
 
 	// don't divide by 0
@@ -552,6 +552,15 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 						fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_XMODE]*fYOffset;
 				}
 				break;
+			case StyleType_FourPlayersFourSides: // fall through
+				{
+					// the code was the same for both of these cases in StepNXA.
+					if (pPlayerState->m_PlayerNumber == PLAYER_2)
+						fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_XMODE] * -(fYOffset);
+					else
+						fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_XMODE] * fYOffset;
+				}
+				break;
 			DEFAULT_FAIL(pStyle->m_StyleType);
 		}
 	}
@@ -634,7 +643,7 @@ static float GetCenterLine()
 {
 	/* Another mini hack: if EFFECT_MINI is on, then our center line is at
 	 * eg. 320, not 160. */
-	const float fMiniPercent = curr_options->m_fEffects[PlayerOptions::EFFECT_MINI];
+	const float fMiniPercent = curr_options->m_fEffects[PlayerOptions::EFFECT_MINI]+0.6f;
 	const float fZoom = 1 - fMiniPercent*0.5f;
 	return CENTER_LINE_Y / fZoom;
 }
@@ -1112,5 +1121,9 @@ LUA_REGISTER_NAMESPACE( ArrowEffects )
  * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+ * PERFORMANCE OF THIS SOFTWARE. 
+ * 
+ * (c) 2016- Electromuis, Anton Grootes
+ * This branch of https://github.com/stepmania/stepmania
+ * will from here on out be released as GPL v3 (wich converts from the previous MIT license)
  */

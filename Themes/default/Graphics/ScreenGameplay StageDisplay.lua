@@ -8,10 +8,17 @@ local t = Def.ActorFrame {
 		InitCommand=cmd(y,-1;shadowlength,1;playcommand,"Set");
 		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
-		CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
+		
+        CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
+        CurrentStepsP3ChangedMessageCommand=cmd(playcommand,"Set");
+        CurrentStepsP4ChangedMessageCommand=cmd(playcommand,"Set");
+        
 		CurrentTraiP1ChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentTraiP2ChangedMessageCommand=cmd(playcommand,"Set");
+        CurrentTraiP3ChangedMessageCommand=cmd(playcommand,"Set");
+        CurrentTraiP4ChangedMessageCommand=cmd(playcommand,"Set");
+        
 		SetCommand=function(self)
 			local curStage = GAMESTATE:GetCurrentStage();
 			if GAMESTATE:IsCourseMode() then

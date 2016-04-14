@@ -128,6 +128,8 @@ local t = Def.ActorFrame{
 	CurrentSongChangedMessageCommand=cmd(playcommand,"SetIcons";);
 	CurrentStepsP1ChangedMessageCommand=function(self) MESSAGEMAN:Broadcast("SetAttacksIcon",{Player = PLAYER_1}) end;
 	CurrentStepsP2ChangedMessageCommand=function(self) MESSAGEMAN:Broadcast("SetAttacksIcon",{Player = PLAYER_2}) end;
+    CurrentStepsP3ChangedMessageCommand=function(self) MESSAGEMAN:Broadcast("SetAttacksIcon",{Player = PLAYER_3}) end;
+    CurrentStepsP4ChangedMessageCommand=function(self) MESSAGEMAN:Broadcast("SetAttacksIcon",{Player = PLAYER_4}) end;
 };
 
 return t;

@@ -32,6 +32,8 @@ function InitUserPrefs()
 		{ "GameplayShowScore",		false},
 --[[		{ "ProTimingP1",	false},
 		{ "ProTimingP2",	false},
+		{ "ProTimingP3",	false},
+		{ "ProTimingP4",	false},
 --]]
 	};
 
@@ -43,6 +45,8 @@ function InitUserPrefs()
 		{ "NotePosition",		true },
 		{ "UserPrefProtimingP1",		false},
 		{ "UserPrefProtimingP2",		false},
+		{ "UserPrefProtimingP3",		false},
+		{ "UserPrefProtimingP4",		false},
 		{ "ShowLotsaOptions",	true},
 		{ "ComboOnRolls",	false},
 		{ "FlashyCombos",	false},
