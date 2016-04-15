@@ -33,6 +33,7 @@
 #include "RageInput.h"
 #include "OptionsList.h"
 #include "RageFileManager.h"
+#include "ScreenTextEntry.h"
 
 static const char *SelectionStateNames[] = {
 	"SelectingSong",
@@ -54,6 +55,7 @@ AutoScreenMessage( SM_SortOrderChanging );
 AutoScreenMessage( SM_SortOrderChanged );
 AutoScreenMessage( SM_BackFromPlayerOptions );
 AutoScreenMessage( SM_ConfirmDeleteSong );
+AutoScreenMessage( SM_SearchSongs );
 
 static RString g_sCDTitlePath;
 static bool g_bWantFallbackCdTitle;
@@ -66,6 +68,7 @@ static RageTimer g_ScreenStartedLoadingAt(RageZeroTimer);
 RageTimer g_CanOpenOptionsList(RageZeroTimer);
 
 static LocalizedString PERMANENTLY_DELETE("ScreenSelectMusic", "PermanentlyDelete");
+static LocalizedString SEARCH_SONG("ScreenSelectMusic", "SearchSong");
 
 REGISTER_SCREEN_CLASS( ScreenSelectMusic );
 void ScreenSelectMusic::Init()
@@ -74,7 +77,7 @@ void ScreenSelectMusic::Init()
 	if( PREFSMAN->m_sTestInitialScreen.Get() == m_sName )
 	{
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus"), PLAYER_INVALID );
+		//GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus"), PLAYER_INVALID );
 		GAMESTATE->JoinPlayer( PLAYER_1 );
 		GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 	}
@@ -441,6 +444,17 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 		PREFSMAN->m_bShowNativeLanguage.Set( !PREFSMAN->m_bShowNativeLanguage );
 		MESSAGEMAN->Broadcast( "DisplayLanguageChanged" );
 		m_MusicWheel.RebuildWheelItems();
+		return true;
+	}
+	
+	// Song selection
+	if (input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_F11)
+	{
+		if (input.type != IET_FIRST_PRESS)
+			return false;
+
+		ScreenTextEntry::TextEntry(SM_SearchSongs, SEARCH_SONG.GetValue(), "", 128);
+
 		return true;
 	}
 
@@ -1229,6 +1243,14 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			// need to resume the song preview that was automatically paused
 			m_MusicWheel.ChangeMusic(0);
 		}
+	}
+	else if (SM == SM_SearchSongs)
+	{
+		m_MusicWheel.SearchSongs(ScreenTextEntry::s_sLastAnswer);
+
+		m_MusicWheel.ReloadSongList();
+
+		AfterMusicChange();
 	}
 
 	ScreenWithMenuElements::HandleScreenMessage( SM );
@@ -2080,5 +2102,9 @@ LUA_REGISTER_DERIVED_CLASS( ScreenSelectMusic, ScreenWithMenuElements )
  * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+ * PERFORMANCE OF THIS SOFTWARE. 
+ * 
+ * (c) 2016- Electromuis, Anton Grootes
+ * This branch of https://github.com/stepmania/stepmania
+ * will from here on out be released as GPL v3 (wich converts from the previous MIT license)
  */

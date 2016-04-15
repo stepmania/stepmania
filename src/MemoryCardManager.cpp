@@ -57,6 +57,8 @@ const RString MEM_CARD_MOUNT_POINT[NUM_PLAYERS] =
 	// @ is important; see RageFileManager LoadedDriver::GetPath
 	"/@mc1/",
 	"/@mc2/",
+	"/@mc3/",
+	"/@mc4/",
 };
 
 static const RString MEM_CARD_MOUNT_POINT_INTERNAL[NUM_PLAYERS] =
@@ -64,6 +66,8 @@ static const RString MEM_CARD_MOUNT_POINT_INTERNAL[NUM_PLAYERS] =
 	// @ is important; see RageFileManager LoadedDriver::GetPath
 	"/@mc1int/",
 	"/@mc2int/",
+	"/@mc3int/",
+	"/@mc4int/",
 };
 
 // Only access the memory card driver in a timeout-safe thread.
@@ -765,5 +769,9 @@ LUA_REGISTER_CLASS( MemoryCardManager )
  * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+ * PERFORMANCE OF THIS SOFTWARE. 
+ * 
+ * (c) 2016- Electromuis, Anton Grootes
+ * This branch of https://github.com/stepmania/stepmania
+ * will from here on out be released as GPL v3 (wich converts from the previous MIT license)
  */

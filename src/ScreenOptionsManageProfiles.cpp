@@ -27,6 +27,8 @@ enum ProfileAction
 {
 	ProfileAction_SetDefaultP1,
 	ProfileAction_SetDefaultP2,
+	ProfileAction_SetDefaultP3,
+	ProfileAction_SetDefaultP4,
 	ProfileAction_Edit,
 	ProfileAction_Rename,
 	ProfileAction_Delete,
@@ -35,6 +37,8 @@ enum ProfileAction
 	ProfileAction_MergeToMachineSkipTotal,
 	ProfileAction_MergeToP1,
 	ProfileAction_MergeToP2,
+	ProfileAction_MergeToP3,
+	ProfileAction_MergeToP4,
 	ProfileAction_ChangeToGuest,
 	ProfileAction_ChangeToNormal,
 	ProfileAction_ChangeToTest,
@@ -45,6 +49,8 @@ enum ProfileAction
 static const char *ProfileActionNames[] = {
 	"SetDefaultP1",
 	"SetDefaultP2",
+	"SetDefaultP3",
+	"SetDefaultP4",
 	"Edit",
 	"Rename",
 	"Delete",
@@ -53,6 +59,8 @@ static const char *ProfileActionNames[] = {
 	"MergeToMachineSkipTotal",
 	"MergeToP1",
 	"MergeToP2",
+	"MergeToP3",
+	"MergeToP4",
 	"ChangeToGuest",
 	"ChangeToNormal",
 	"ChangeToTest",
@@ -297,6 +305,30 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 					SCREENMAN->SetNewScreen( this->m_sName ); // reload
 				}
 				break;
+			case ProfileAction_SetDefaultP3:
+				{
+					FOREACH_PlayerNumber(p)
+						if (ProfileManager::m_sDefaultLocalProfileID[p].Get() == GetLocalProfileIDWithFocus())
+							ProfileManager::m_sDefaultLocalProfileID[p].Set("");
+
+					PlayerNumber pn = (PlayerNumber)(ScreenMiniMenu::s_iLastRowCode - ProfileAction_SetDefaultP1);
+					ProfileManager::m_sDefaultLocalProfileID[pn].Set(GetLocalProfileIDWithFocus());
+
+					SCREENMAN->SetNewScreen(this->m_sName); // reload
+				}
+			break;
+			case ProfileAction_SetDefaultP4:
+				{
+					FOREACH_PlayerNumber(p)
+						if (ProfileManager::m_sDefaultLocalProfileID[p].Get() == GetLocalProfileIDWithFocus())
+							ProfileManager::m_sDefaultLocalProfileID[p].Set("");
+
+					PlayerNumber pn = (PlayerNumber)(ScreenMiniMenu::s_iLastRowCode - ProfileAction_SetDefaultP1);
+					ProfileManager::m_sDefaultLocalProfileID[pn].Set(GetLocalProfileIDWithFocus());
+
+					SCREENMAN->SetNewScreen(this->m_sName); // reload
+				}
+				break;
 			case ProfileAction_Edit:
 				{
 					GAMESTATE->m_sEditLocalProfileID.Set( GetLocalProfileIDWithFocus() );
@@ -343,6 +375,14 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 			case ProfileAction_MergeToP2:
 				PROFILEMAN->MergeLocalProfiles(GetLocalProfileIDWithFocus(),
 					ProfileManager::m_sDefaultLocalProfileID[PLAYER_2].Get());
+				break;
+			case ProfileAction_MergeToP3:
+					PROFILEMAN->MergeLocalProfiles(GetLocalProfileIDWithFocus(),
+					ProfileManager::m_sDefaultLocalProfileID[PLAYER_3].Get());
+				break;
+			case ProfileAction_MergeToP4:
+					PROFILEMAN->MergeLocalProfiles(GetLocalProfileIDWithFocus(),
+					ProfileManager::m_sDefaultLocalProfileID[PLAYER_4].Get());
 				break;
 			case ProfileAction_ChangeToGuest:
 				PROFILEMAN->ChangeProfileType(GetLocalProfileIndexWithFocus(),
@@ -431,6 +471,8 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus & )
 
 		ADD_ACTION( ProfileAction_SetDefaultP1 );
 		ADD_ACTION( ProfileAction_SetDefaultP2 );
+		ADD_ACTION( ProfileAction_SetDefaultP3 );
+		ADD_ACTION( ProfileAction_SetDefaultP4 );
 		if( PROFILEMAN->FixedProfiles() )
 		{
 			ADD_ACTION( ProfileAction_Rename );
@@ -445,6 +487,8 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus & )
 			ADD_ACTION( ProfileAction_MergeToMachineSkipTotal );
 			ADD_ACTION( ProfileAction_MergeToP1 );
 			ADD_ACTION( ProfileAction_MergeToP2 );
+			ADD_ACTION( ProfileAction_MergeToP3 );
+			ADD_ACTION( ProfileAction_MergeToP4 );
 			ADD_ACTION( ProfileAction_ChangeToGuest );
 			ADD_ACTION( ProfileAction_ChangeToNormal );
 			ADD_ACTION( ProfileAction_ChangeToTest );
@@ -514,5 +558,9 @@ RString ScreenOptionsManageProfiles::GetLocalProfileIDWithFocus() const
  * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+ * PERFORMANCE OF THIS SOFTWARE. 
+ * 
+ * (c) 2016- Electromuis, Anton Grootes
+ * This branch of https://github.com/stepmania/stepmania
+ * will from here on out be released as GPL v3 (wich converts from the previous MIT license)
  */

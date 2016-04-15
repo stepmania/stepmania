@@ -1,0 +1,146 @@
+ultralight changelog (release 7 onwards)
+----------------------------------------
+
+r13 / v0.85 (2014/10/06)
+--------------------------------
+[Fixes/Changes]
+* Removed erroneous stroke on Song Options text on SelMusic.
+* Removed rainbow autogen effect as it doesn't seem to work anymore.
+* Adjusted contrast of StepsType icons for panel-based dance games.
+* Tweaked color of sm-ssc arrow on the title screen.
+* Changed "Fonts/StepsDisplayListRow ticks" to doubleres.
+* ScreenEvaluationSummary background no longer uses that of the last song.
+* Repositioned rendering stats to not overlap the date/time.
+* Moved the StepsDisplayList and bottom boxes up to accomodate profile names
+  on 4:3 resolution screens.
+* Fix ScreenEvaluationStage's StageDisplay in non-Event Mode.
+* Hid StepsDisplay on ScreenEvaluationSummary.
+* Added support in ScreenTitleMenu VersionInfo for freemSM. :p
+* Fixed long standing error with StepsDisplay Autogen command.
+
+r12 / v0.84 (2013/06/03)
+--------------------------------
+A year and a month later...
+
+[New]
+* Added Receptor Position theme preference; allows changing between ultralight
+  and ITG's settings for now.
+
+[Fixes/Changes]
+* Lowered the volume of the Common Value sound.
+* Fixed judgment percents overlapping with judge count when percent is 100%.
+* Changed Graphics/_stepstype/ items to doubleres.
+* Fixed Sort items looking odd on the MusicWheel.
+* Updated the Danger graphic to be doubleres and have a subtitle.
+* Various small tweaks.
+* oh my god serious bug where DO SCREENSELECTSTYLE WHILE AUTOSETSTYLE == FALSE END
+
+r11 / v0.83 (2012/05/05)
+--------------------------------
+[Fixes/Changes]
+* Changed judgment font on gameplay to Open Sans Bold.
+* More changes to Rave stream level graphics.
+* New doubleres graphics for the life meter.
+* Moved Player Options text up on Gameplay.
+* Fixed position of bars on options service to match SM5 alpha 2's options menu.
+* Fixed position of score to not clash with the date in 4:3 aspect ratio.
+* Updated Difficulty Tick graphic again, hopefully for the last time.
+* Changed various hardcoded strings to use the language system instead.
+* Started fixing up the StageDisplay.
+* Added a few more localized strings.
+* Made title menu cursor smaller. If this causes problems for localizations,
+  please let me know.
+* Tweaked the position of various title menu elements.
+* Re-implemented AutoSetStyle and Combo Under Field preferences using vyhd's
+  new ThemePrefs system.
+* Various other small tweaks.
+
+r10 / v0.82 (2012/01/15)
+--------------------------------
+[New]
+* If you set AutoSetStyle=true (in the metrics only at the moment),
+  it'll ask for the number of players instead of the style.
+* Added Grades in the player boxes on SelMusic.
+* Added Grades on the wheel items.
+
+[fixes]
+* Fixed the broken ass LyricDisplaySetOneReverseCommand metric.
+* Changed Danger graphic.
+* Tweaked StreamDisplay hot.
+* Tweaked Rave stream level graphics. (they need more work)
+* Moved the Load Profiles screen to after ScreenSelectStyle/NumPlayers.
+* Tweaked Combo number pulse command.
+* Tweaked position of player credit names.
+* More tweaks to the battery life graphic. (Fixed the last bar on frame 1)
+
+release 9 / v0.81 (2011/08/28)
+------------------------------
+[fixes]
+* Tweaked battery life graphic again
+* Fixed AutoSetStyle preference not being recognized.
+* Tweaked position of lyrics.
+* Fixed position of level in Rave. (requires StepMania 5 Preview 3 or higher)
+* Fixed an issue where backing out of ScreenPlayerOptions will take you to the
+  online mode if you are connected and playing (offline) single mode.
+* Added animation to ScreenPlayerOptions and ScreenSongOptions items.
+* Added header to ScreenNetPlayerOptions.
+
+release 8 / v0.8 (2011/07/15)
+------------------------------
+[new]
+* added headers/footers to more screens
+* added judge percentages to evaluation
+* New StepsType graphics for para, maniax (single & double)
+* Added StepsType icon under Gametype text on title menu
+
+[fixes]
+* added missing HalfDoubleCourseType metric in [CustomDifficulty]
+* fixed a bug with the BPMDisplay in Battle and Rave mode
+* Added artist to course contents
+* Fixed course time not updating properly in select course
+* Removed pointless stage display in select course
+* Fixed masking problem with course items
+* Tweaked battery lives graphic
+* Tweaked StepsDisplayListRow ticks
+* Themed Exit item in options menus, finally
+* Changed the Jukebox exit item to say "Start"
+* Moved banner and related out of the way a little bit on SelectMusic
+* Modified placement of ScreenEditMenu items
+* Fixed scrollbar position in 4:3 aspect ratio
+* Redrew popn5 and popn9 StepsType icons
+* Actually implemented popn5 StepsType icon
+
+================================================================================
+
+release 7 / v0.75 (2011/06/12)
+------------------------------
+[general]
+* started keeping a changelog
+* retargeted the theme to StepMania 5 Preview 1a
+* officially dropped support for StepMania 4 alpha 5
+* removed ProductivityHelpers and HSV since they're in the SM5 fallback theme
+
+[new]
+* added theme options, so you can customize scoring type and combo under/over
+  the notes.
+* added machine score to ScreenEvaluation for people who want it
+* added jukebox (juke'm box) to title menu
+ * sped up jukebox transitions
+ * styled jukebox
+* Added headers to various option pages, including ScreenOptionsEdit
+
+[fixes]
+* re-added version date/time for SM5
+* moved StepMania version down two pixels on title menu
+* fixed ScreenOptionsMaster branch problem stemming from faulty SSC check
+* changed ScreenSelectMode to show all modes in SM5
+* Moved wheel highlight out of the way on ScreenNetRoom and ScreenNetSelectMusic.
+* fixed up ScreenMetric/ScreenString for SM5
+* Made the BPMDisplay on ScreenGameplay act like it does in the default theme
+  (reacts to steps-based TimingData)
+* Made Score and Percent Score show up on ScreenSelectMusic when late joining.
+* Fixed various font size issues on ScreenMapControllers.
+* Slightly shrunk textbanner text on songs without subtitles; you should be able
+  to see the titles now.
+* Shrunk section text so that group names should fit better.
+* Moved player section to the middle on on ScreenNetEvaluation.

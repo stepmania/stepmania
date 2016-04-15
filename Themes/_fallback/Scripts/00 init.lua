@@ -20,6 +20,8 @@ end
 
 PLAYER_1 = "PlayerNumber_P1"
 PLAYER_2 = "PlayerNumber_P2"
+PLAYER_3 = "PlayerNumber_P3"
+PLAYER_4 = "PlayerNumber_P4"
 NUM_PLAYERS = #PlayerNumber
 OtherPlayer = { [PLAYER_1] = PLAYER_2, [PLAYER_2] = PLAYER_1 }
 

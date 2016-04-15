@@ -32,8 +32,12 @@ Library = {
 				end;
 				CurrentStepsP1ChangedMessageCommand=function(self) radarSet(self, PLAYER_1); end;
 				CurrentStepsP2ChangedMessageCommand=function(self) radarSet(self, PLAYER_2); end;
+				CurrentStepsP3ChangedMessageCommand=function(self) radarSet(self, PLAYER_3); end;
+				CurrentStepsP4ChangedMessageCommand=function(self) radarSet(self, PLAYER_4); end;
 				CurrentTrailP1ChangedMessageCommand=function(self) radarSet(self, PLAYER_1); end;
 				CurrentTrailP2ChangedMessageCommand=function(self) radarSet(self, PLAYER_2); end;
+				CurrentTrailP3ChangedMessageCommand=function(self) radarSet(self, PLAYER_3); end;
+				CurrentTrailP4ChangedMessageCommand=function(self) radarSet(self, PLAYER_4); end;
 			};
 		};
 		 
