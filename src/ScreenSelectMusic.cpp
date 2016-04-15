@@ -455,9 +455,6 @@ bool ScreenSelectMusic::Input( const InputEventPlus &input )
 
 		ScreenTextEntry::TextEntry(SM_SearchSongs, SEARCH_SONG.GetValue(), "", 128);
 
-		PREFSMAN->m_bShowNativeLanguage.Set(!PREFSMAN->m_bShowNativeLanguage);
-		MESSAGEMAN->Broadcast("DisplayLanguageChanged");
-		m_MusicWheel.RebuildWheelItems();
 		return true;
 	}
 
@@ -1249,7 +1246,10 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if (SM == SM_SearchSongs)
 	{
+		m_MusicWheel.SearchSongs(ScreenTextEntry::s_sLastAnswer);
 
+		m_MusicWheel.RebuildWheelItems();
+		AfterMusicChange();
 	}
 
 	ScreenWithMenuElements::HandleScreenMessage( SM );

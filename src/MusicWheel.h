@@ -55,6 +55,8 @@ public:
 	// Lua
 	void PushSelf( lua_State *L );
 
+	void SearchSongs(RString query);
+
 protected:
 	MusicWheelItem *MakeItem();
 
@@ -67,6 +69,7 @@ protected:
 	vector<MusicWheelItemData *> & getWheelItemsData(SortOrder so);
 	void readyWheelItemsData(SortOrder so);
 
+	RString             m_SearchQuery;
 	RString				m_sLastModeMenuItem;
 	SortOrder			m_SortOrder;
 	RageSound			m_soundChangeSort;
