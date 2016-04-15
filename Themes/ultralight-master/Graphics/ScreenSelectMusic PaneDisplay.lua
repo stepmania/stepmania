@@ -80,7 +80,7 @@ for idx, cat in pairs(paneCategoryValues) do
 			-- generic song/course changes
 			CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
-			-- player based changes
+			-- player based changes TODO: add P3 and P4
 			CurrentStepsP1ChangedMessageCommand=function(self)
 				if Player == PLAYER_1 then self:playcommand("Set"); end;
 			end;
