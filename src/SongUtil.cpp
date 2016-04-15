@@ -409,8 +409,11 @@ void SongUtil::FilterSongPointerArray(vector<Song*> &vpSongsInOut, RString query
 	vector<Song*>::iterator it;
 	for (it = vpSongsInOut.begin(); it != vpSongsInOut.end();)
 	{
-		if (!(uiLevenshteinDistance((*it)->GetDisplayMainTitle().MakeLower(), query.MakeLower()) < 5) ||
-			(uiLevenshteinDistance((*it)->GetDisplayArtist().MakeLower(), query.MakeLower()) < 5))
+		if (!(
+			((*it)->GetDisplayMainTitle().MakeLower().find(query.MakeLower())!=-1) ||
+			(uiLevenshteinDistance((*it)->GetDisplayMainTitle().MakeLower(), query.MakeLower()) < 5) ||
+			(uiLevenshteinDistance((*it)->GetDisplayArtist().MakeLower(), query.MakeLower()) < 5)
+			))
 		{
 			it = vpSongsInOut.erase(it);
 		}
