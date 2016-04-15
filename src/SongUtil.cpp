@@ -404,6 +404,27 @@ void SongUtil::SortSongPointerArrayByTitle( vector<Song*> &vpSongsInOut )
 	sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersByTitle );
 }
 
+void SongUtil::FilterSongPointerArray(vector<Song*> &vpSongsInOut, RString query)
+{
+	vector<Song*>::iterator it;
+	for (it = vpSongsInOut.begin(); it != vpSongsInOut.end();)
+	{
+		if (!(
+			((*it)->GetDisplayMainTitle().MakeLower().find(query.MakeLower())!=-1) ||
+			(uiLevenshteinDistance((*it)->GetDisplayMainTitle().MakeLower(), query.MakeLower()) < 5) ||
+			(uiLevenshteinDistance((*it)->GetDisplayArtist().MakeLower(), query.MakeLower()) < 5)
+			))
+		{
+			it = vpSongsInOut.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+}
+
+
 static bool CompareSongPointersByBPM( const Song *pSong1, const Song *pSong2 )
 {
 	DisplayBpms bpms1, bpms2;

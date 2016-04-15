@@ -255,6 +255,11 @@ MusicWheel::~MusicWheel()
 	}
 }
 
+void MusicWheel::SearchSongs(RString query)
+{
+	m_SearchQuery = query;
+}
+
 void MusicWheel::ReloadSongList()
 {
 	int songIdxToPreserve = m_iSelection;
@@ -632,6 +637,11 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 					FAIL_M("Unhandled sort order! Aborting...");
 			}
 
+			//filter searched songs;
+			if (!m_SearchQuery.empty()) {
+				SongUtil::FilterSongPointerArray(arraySongs, m_SearchQuery);
+			}
+
 			// Build an array of WheelItemDatas from the sorted list of Song*'s
 			arrayWheelItemDatas.clear();	// clear out the previous wheel items 
 			arrayWheelItemDatas.reserve( arraySongs.size() );
@@ -676,6 +686,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 			for( unsigned i=0; i< arraySongs.size(); i++ )
 			{
 				Song* pSong = arraySongs[i];
+
 				if( bUseSections )
 				{
 					RString sThisSection = SongUtil::GetSectionNameFromSongAndSort( pSong, so );
