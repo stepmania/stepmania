@@ -20,8 +20,8 @@ set, and transform functions.  It can have any other functions that you need.
 local item_mt= {
   __index= {
 	-- create_actors must return an actor.  The name field is a convenience.
-	create_actors= function(self, name)
-	  self.name= name
+	create_actors= function(self, params)
+	  self.name= params.name
 		return Def.BitmapText{
 		  Name= name, Font= "Common Normal", InitCommand= function(subself)
 			  -- Setting self.container to point to the actor gives a convenient
@@ -94,13 +94,15 @@ called once for each item.
 
 # item_scroller Functions
 
-* item_scroller:create_actors(name, num_items, item_metatable, x, y)  
+* item_scroller:create_actors(name, num_items, item_metatable, x, y, item_params)  
 create_actors returns the actors for the item_scroller.  num_items is the
 number of items to create for displaying the info.  num_items does not need
 to be the number of elements in info_set.  num_items is the number of
 elements you will be able to display simultanesously.  item_metatable is the
 metatable to use when creating items.  x and y are the position to create the
-item_scroller at.
+item_scroller at.  item_params is a table that will be passed to the
+create_actors function of item_metatable, so you can supply an item with
+extra parameters it needs.
 
 * item_scroller:set_info_set(info, pos)  
 set_info_set sets the table of information that is displayed on the items.

@@ -179,13 +179,13 @@ public:
 	virtual ReloadChanged Reload() { return RELOAD_CHANGED_NONE; }
 
 	virtual int GetDefaultOption() const { return -1; }
-	virtual void ImportOption( OptionRow *, const std::vector<PlayerNumber> &, std::vector<bool> vbSelectedOut[NUM_PLAYERS] ) const { }
+	virtual void ImportOption( OptionRow *, const std::vector<PlayerNumber> &, std::vector<bool> [NUM_PLAYERS] ) const { }
 	// Returns an OPT mask.
-	virtual int ExportOption( const std::vector<PlayerNumber> &, const std::vector<bool> vbSelected[NUM_PLAYERS] ) const { return 0; }
+	virtual int ExportOption( const std::vector<PlayerNumber> &, const std::vector<bool> [NUM_PLAYERS] ) const { return 0; }
 	virtual void GetIconTextAndGameCommand( int iFirstSelection, std::string &sIconTextOut, GameCommand &gcOut ) const;
 	virtual std::string GetScreen( int /* iChoice */ ) const { return std::string(); }
 	// Exists so that a lua function can act on the selection.  Returns true if the choices should be reloaded.
-	virtual bool NotifyOfSelection(PlayerNumber pn, int choice) { return false; }
+	virtual bool NotifyOfSelection(PlayerNumber, int) { return false; }
 	virtual bool GoToFirstOnStart() { return true; }
 };
 
@@ -231,7 +231,7 @@ inline void VerifySelected(SelectType st, std::vector<bool> &selected, const std
 				sName.c_str(), num_selected, static_cast<int>(selected.size()));
 			for(unsigned int e= 0; e < selected.size(); ++e)
 			{
-				if(selected[e] && e != first_selected)
+				if(selected[e] && e != static_cast<unsigned int>(first_selected))
 				{
 					selected[e]= false;
 				}

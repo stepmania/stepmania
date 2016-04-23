@@ -456,7 +456,7 @@ void NetworkSyncManager::DisplayStartupStatus()
 	SCREENMAN->SystemMessage( sMessage );
 }
 
-void NetworkSyncManager::Update(float fDeltaTime)
+void NetworkSyncManager::Update(float)
 {
 	if (useSMserver)
 		ProcessInput();
@@ -854,7 +854,7 @@ void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers 
 // I preferred to misplace code rather than cause unneeded headaches to non-windows users, although it would be nice to have in the wiki which files to
 // update when adding new files and how (Xcode/stepmania_xcode4.3.xcodeproj has a really crazy structure :/).
 #if defined(CMAKE_POWERED)
-unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld ) { return 0; }
+unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ) { return 0; }
 #else
 unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
 {

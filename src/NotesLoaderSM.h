@@ -139,7 +139,7 @@ struct SMLoader
 				   const int rowsPerBeat = -1);
 
 	virtual void ProcessCombos(TimingData & /* out */,
-				   const std::string line,
+				   const std::string,
 				   const int /* rowsPerBeat */ = -1) {}
 
 	/**

@@ -67,14 +67,14 @@ public:
 	void DeleteCompiledGeometry( RageCompiledGeometry* );
 
 protected:
-	void DrawQuadsInternal( const Rage::SpriteVertex v[], int /* iNumVerts */ ) { }
-	void DrawQuadStripInternal( const Rage::SpriteVertex v[], int /* iNumVerts */ ) { }
-	void DrawFanInternal( const Rage::SpriteVertex v[], int /* iNumVerts */ ) { }
-	void DrawStripInternal( const Rage::SpriteVertex v[], int /* iNumVerts */ ) { }
-	void DrawTrianglesInternal( const Rage::SpriteVertex v[], int /* iNumVerts */ ) { }
-	void DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int /* iMeshIndex */ ) { }
-	void DrawLineStripInternal( const Rage::SpriteVertex v[], int /* iNumVerts */, float /* LineWidth */ ) { }
-	void DrawSymmetricQuadStripInternal( const Rage::SpriteVertex v[], int /* iNumVerts */ ) { }
+	void DrawQuadsInternal( const Rage::SpriteVertex [], int /* iNumVerts */ ) { }
+	void DrawQuadStripInternal( const Rage::SpriteVertex [], int /* iNumVerts */ ) { }
+	void DrawFanInternal( const Rage::SpriteVertex [], int /* iNumVerts */ ) { }
+	void DrawStripInternal( const Rage::SpriteVertex [], int /* iNumVerts */ ) { }
+	void DrawTrianglesInternal( const Rage::SpriteVertex [], int /* iNumVerts */ ) { }
+	void DrawCompiledGeometryInternal( const RageCompiledGeometry *, int /* iMeshIndex */ ) { }
+	void DrawLineStripInternal( const Rage::SpriteVertex [], int /* iNumVerts */, float /* LineWidth */ ) { }
+	void DrawSymmetricQuadStripInternal( const Rage::SpriteVertex [], int /* iNumVerts */ ) { }
 
 	VideoModeParams m_Params;
 	std::string TryVideoMode( const VideoModeParams &p, bool & /* bNewDeviceOut */ ) { m_Params = p; return std::string(); }

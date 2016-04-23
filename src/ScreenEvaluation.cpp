@@ -784,7 +784,7 @@ bool ScreenEvaluation::MenuBack( const InputEventPlus &input )
 	return MenuStart( input );
 }
 
-bool ScreenEvaluation::MenuStart( const InputEventPlus &input )
+bool ScreenEvaluation::MenuStart( const InputEventPlus & )
 {
 	if( IsTransitioning() )
 		return false;

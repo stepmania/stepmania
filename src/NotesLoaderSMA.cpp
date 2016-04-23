@@ -141,7 +141,7 @@ void SMALoader::ProcessSpeeds( TimingData &out, const std::string line, const in
 	}
 }
 
-bool SMALoader::LoadFromSimfile( const std::string &sPath, Song &out, bool bFromCache )
+bool SMALoader::LoadFromSimfile( const std::string &sPath, Song &out, bool )
 {
 	LOG->Trace( "Song::LoadFromSMAFile(%s)", sPath.c_str() );
 

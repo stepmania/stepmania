@@ -496,6 +496,10 @@ void NewFieldColumn::calc_reverse_shift()
 		Message revmsg("ReverseChanged");
 		revmsg.SetParam("sign", reverse_scale_sign);
 		pass_message_to_heads(revmsg);
+		if(m_column == 0 && m_field != nullptr)
+		{
+			m_field->HandleMessage(revmsg);
+		}
 	}
 	static double const min_visible_scale= 0.1;
 	double visible_scale= fabs(reverse_scale);

@@ -12,7 +12,13 @@ end
 
 function add_defaults_to_params(params, defaults)
 	for key, value in pairs(defaults) do
-		if not params[key] then params[key]= value end
+		if params[key] == nil then params[key]= value end
+	end
+end
+
+function add_blank_tables_to_params(params, table_names)
+	for i, name in ipairs(table_names) do
+		if not params[name] then params[name]= {} end
 	end
 end
 
@@ -41,7 +47,7 @@ function rec_calc_actor_extent(aframe, depth)
 		if child:GetVisible() then
 			local cx= child:GetX() + halignjust
 			local cy= child:GetY() + valignjust
-			--Trace(depth .. "child " .. i .. " at " .. cx .. ", " .. cy)
+			--Trace(depth .. "child " .. child:GetName() .. " at " .. cx .. ", " .. cy)
 			local cxmin, cxmax, cymin, cymax= rec_calc_actor_extent(child,depth.."  ")
 			xmin= math.min((cxmin * xz) + cx, xmin)
 			ymin= math.min((cymin * yz) + cy, ymin)
@@ -162,31 +168,44 @@ nesty_cursor_mt= {
 		end,
 }}
 
-option_item_underlinable_mt= {
+local option_item_default_params= {
+	name= "", diffuse= {1, 1, 1, 1}, stroke= {0, 0, 0, 0},
+}
+nesty_option_item_default_set_command= function(self, params)
+	self:settext(params.text)
+	width_limit_text(self, params.width, params.zoom)
+	params.ret_width= self:GetZoomedWidth()
+end
+local function default_item_text()
+	return Def.BitmapText{
+		Font= "Common Normal", SetCommand= nesty_option_item_default_set_command}
+end
+nesty_option_item_mt= {
 	__index= {
-		create_actors= function(self, name)
+		create_actors= function(self, params)
+			add_defaults_to_params(params, option_item_default_params)
 			self.name= name
 			self.zoom= 1
 			self.width= SCREEN_WIDTH
 			self.prev_index= 1
+			self.text_width= 0
 			self.translation_section= "OptionNames"
 			self.underline= setmetatable({}, nesty_cursor_mt)
+			local text_actor= params.text_actor or default_item_text()
+			text_actor.Name= "text"
 			return Def.ActorFrame{
 				Name= name, InitCommand= function(subself)
+					self.text= subself:GetChild("text")
+					self.text:zoom(self.zoom):diffuse(params.diffuse)
+					if self.text.strokecolor then
+						self.text:strokecolor(params.stroke)
+					end
 					self.container= subself
 					self:lose_focus()
 				end,
 				self.underline:create_actors{
 					name= "underline", parts_name= "OptionsUnderline"},
-				Def.BitmapText{
-					Font= "Common Normal", InitCommand= function(subself)
-						self.text= subself
-						subself:zoom(self.zoom)
-						if self.text_style_init then
-							self.text_style_init(subself)
-						end
-					end,
-				},
+				text_actor,
 			}
 		end,
 		set_geo= function(self, width, height, zoom)
@@ -199,9 +218,6 @@ option_item_underlinable_mt= {
 		end,
 		set_underline_color= function(self, color)
 			self.underline:diffuse(color)
-		end,
-		set_text_colors= function(self, main, stroke)
-			self.text:diffuse(main):strokecolor(stroke)
 		end,
 		transform= function(self, item_index, num_items, is_focus)
 			local changing_edge= math.abs(item_index-self.prev_index)>num_items/2
@@ -219,7 +235,8 @@ option_item_underlinable_mt= {
 				self:set_text(info.text)
 				self:set_underline(info.underline)
 			else
-				self.text:settext("")
+				self.text:playcommand("Set", {text= "", width= self.width, zoom= self.zoom})
+				self.text_width= 0
 				self:set_underline(false)
 			end
 		end,
@@ -231,202 +248,96 @@ option_item_underlinable_mt= {
 			end
 		end,
 		set_text= function(self, t)
-			self.text:settext(get_string_if_translatable(
-				self.info.translatable, self.translation_section, t))
-			width_limit_text(self.text, self.width, self.zoom)
-			self.underline:refit(nil, nil, self.text:GetZoomedWidth(), nil)
+			local text_params= {text= get_string_if_translatable(
+				self.info.translatable, self.translation_section, t),
+				width= self.width, zoom= self.zoom}
+			self.text:playcommand("Set", text_params)
+			self.text_width= text_params.ret_width or 0
+			self.underline:refit(nil, nil, self.text_width, nil)
 		end,
 		get_cursor_fit= function(self)
 			local ret= {0, 0, 0, self.height + 4}
-			if self.text:GetText() ~= "" then
-				ret[3]= self.text:GetWidth() + 4
+			if self.text_width > 0 then
+				ret[3]= self.text_width + 4
 			end
 			return ret
 		end,
-		gain_focus= play_gain_focus,
-		lose_focus= play_lose_focus,
-}}
-
-option_item_value_mt= {
-	__index= {
-		create_actors= function(self, name, height)
-			self.name= name
-			self.zoom= 1
-			self.width= SCREEN_WIDTH
-			self.prev_index= 1
-			self.translation_section= "OptionNames"
-			return Def.ActorFrame{
-				Name= name, InitCommand= function(subself)
-					self.container= subself
-					self.text= subself:GetChild("text")
-					self.value= subself:GetChild("value")
-					self:lose_focus()
-				end,
-				Def.Quad{
-					Name= "example", InitCommand= function(subself)
-						self.value_example= subself
-						subself:visible(false):horizalign(left)
-					end
-				},
-				normal_text("text", "", nil, nil, nil, nil, nil, left),
-				normal_text("value", "", nil, nil, nil, nil, nil, right),
-			}
-		end,
-		set_geo= function(self, width, height, zoom)
-			self.width= width
-			self.height= height
-			self.zoom= zoom
-			self.text:zoom(zoom):x(-width/2)
-			self.value:zoom(zoom):x(width/2)
-			self.value_example:x(width/2 + 4):setsize(height * 2, height)
-		end,
-		set_text_colors= function(self, main, stroke)
-			self.text:diffuse(main):strokecolor(stroke)
-			self.value:diffuse(main):strokecolor(stroke)
-		end,
-		transform= option_item_underlinable_mt.__index.transform,
-		set= function(self, info)
-			self.info= info
-			if info then
-				self.text:zoom(self.zoom)
-					:settext(get_string_if_translatable(
-						info.translatable, self.translation_section, info.text))
-				self.value:zoom(self.zoom)
-					:settext(get_string_if_translatable(
-						info.translatable_value, self.translation_section, info.value))
-				local ex_color= is_color_string(info.value)
-				if ex_color then
-					self.value_example:diffuse(ex_color):visible(true)
-				else
-					self.value_example:visible(false)
-				end
-				local twidth= self.text:GetZoomedWidth()
-				local vwidth= self.value:GetZoomedWidth()
-				if twidth + vwidth + 16 > self.width then
-					if vwidth > 0 then
-						-- w1 * z1 + w2 * z2 + 16 = w3
-						-- z1 = z2
-						-- z1 * (w1 + w2) + 16 = w3
-						-- z1 * (w1 + w2) = w3 - 16
-						-- z1 = (w3 - 16) / (w1 + w2)
-						local z= (self.width - 16) / (twidth + vwidth)
-						self.text:zoomx(z)
-						self.value:zoomx(z)
-					else
-						width_limit_text(self.text, self.width, self.zoom)
-					end
-				end
-			else
-				self.text:settext("")
-				self.value:settext("")
-				self.value_example:visible(false)
-			end
-		end,
-		get_cursor_fit= function(self)
-			local ret= {0, 0, 0, self.height + 4}
-			if self.text:GetText() ~= "" then
-				ret[1]= self.text:GetX()
-				ret[3]= self.text:GetWidth()
-			end
-			if self.value:GetText() ~= "" then
-				if ret[3] > 0 then
-					ret[3]= self.value:GetX() - self.text:GetX()
-				else
-					ret[1]= -self.value:GetWidth()
-					ret[3]= self.value:GetX()
-				end
-			end
-			if ret[1] ~= 0 then ret[1]= ret[1] - 2 end
-			ret[3]= ret[3] + 4
-			return ret
-		end,
-		set_underline_color= noop_nil,
-		set_underline= noop_nil,
 		gain_focus= play_gain_focus,
 		lose_focus= play_lose_focus,
 }}
 
 local option_display_default_params= {
-	name= "", x= 0, y= 0, height= 0, el_width= 0, el_height= 0, el_zoom= 0,
-	no_heading= false, no_display= false,
-	item_mt= option_item_underlinable_mt,
+	name= "", x= 0, y= 0, height= 0, el_width= 0, el_height= 0, el_zoom= 1,
+	no_heading= false, no_status= false, item_mt= nesty_option_item_mt,
 }
 nesty_option_display_mt= {
 	__index= {
 		create_actors= function(self, params)
 			add_defaults_to_params(params, option_display_default_params)
+			add_blank_tables_to_params(params, {"item_params"})
+			params.heading_zoom= params.heading_zoom or params.el_zoom
+			params.status_zoom= params.status_zoom or params.el_zoom
+			params.heading_height= params.heading_height or params.el_height
+			params.status_height= params.status_height or params.el_height
+			self.heading_zoom= params.heading_zoom
+			self.status_zoom= params.status_zoom
 			local el_count= 1
+			local elements_height= params.height
+			local el_start= 0
 			if not params.no_heading then
-				params.height= params.height - params.el_height
+				elements_height= elements_height - params.heading_height
+				el_start= el_start + params.heading_height
 			end
-			if not params.no_display then
-				params.height= params.height - params.el_height
+			if not params.no_status then
+				elements_height= elements_height - params.status_height
+				el_start= el_start + params.status_height
 			end
-			if not no_heading or not no_display then
-				params.height= params.height - (params.el_height * .5)
+			if (not params.no_heading) or (not params.no_status) then
+				elements_height= elements_height - (params.el_height * .5)
+				el_start= el_start + (params.el_height * .5)
 			end
-			el_count= math.floor(params.height / params.el_height)
 			self.name= params.name
 			self.el_width= params.el_width or SCREEN_WIDTH
 			self.el_height= params.el_height or line_height
+			el_count= math.floor(elements_height / self.el_height)
 			self.el_zoom= params.el_zoom or 1
-			self.no_heading= params.no_heading
-			self.no_display= params.no_display
 			self.translation_section= "OptionNames"
 			local frame= {
 				Name= name, InitCommand= function(subself)
 					subself:xy(params.x, params.y)
 					self.container= subself
+					self.heading= subself:GetChild("heading")
+					local next_y= 0
+					if self.heading then
+						self.heading:zoom(params.heading_zoom)
+						next_y= next_y + params.heading_height
+					end
+					self.status= subself:GetChild("status")
+					if self.status then
+						self.status:zoom(params.status_zoom):y(next_y)
+					end
 					self:regeo_items()
 				end,
 			}
-			local next_y= 0
-			if not no_heading then
-				local head_y= next_y
-				frame[#frame+1]= Def.BitmapText{
-					Font= "Common Normal", InitCommand= function(subself)
-						self.heading= subself
-						subself:xy(0, head_y):zoom(self.el_zoom)
-					end
-				}
-				next_y= next_y + self.el_height
+			if not params.no_heading then
+				local head_actor= params.heading_actor or default_item_text()
+				head_actor.Name= "heading"
+				frame[#frame+1]= head_actor
 			end
-			if not no_display then
-				local disp_y= next_y
-				frame[#frame+1]= Def.BitmapText{
-					Font= "Common Normal", InitCommand= function(subself)
-						self.display= subself
-						subself:xy(0, disp_y):zoom(self.el_zoom)
-					end
-				}
-				next_y= next_y + self.el_height
-			end
-			if (not no_heading) or (not no_display) then
-				next_y= next_y + self.el_height * .5
+			if not params.no_status then
+				local disp_actor= params.status_actor or default_item_text()
+				disp_actor.Name= "status"
+				frame[#frame+1]= disp_actor
 			end
 			self.scroller= setmetatable({disable_wrapping= true}, item_scroller_mt)
 			self.item_mt= params.item_mt
 			frame[#frame+1]= self.scroller:create_actors(
-				"wheel", el_count, params.item_mt, 0, next_y)
+				"wheel", el_count, params.item_mt, 0, el_start, params.item_params)
 			return Def.ActorFrame(frame)
 		end,
 		set_underline_color= function(self, color)
 			for i, item in ipairs(self.scroller.items) do
 				item:set_underline_color(color)
-			end
-		end,
-		set_text_colors= function(self, main, stroke)
-			local function set_one(one)
-				one:diffuse(main):strokecolor(stroke)
-			end
-			if not self.no_heading then
-				set_one(self.heading)
-			end
-			if not self.no_display then
-				set_one(self.display)
-			end
-			for i, item in ipairs(self.scroller.items) do
-				item:set_text_colors(main, stroke)
 			end
 		end,
 		set_translation_section= function(self, section)
@@ -447,18 +358,15 @@ nesty_option_display_mt= {
 			end
 		end,
 		set_heading= function(self, h)
-			if not self.no_heading then
-				self.heading:settext(get_string_if_translatable(
-					true, self.translation_section, h))
-				width_limit_text(self.heading, self.el_width, self.el_zoom)
+			if self.heading then
+				self.heading:playcommand("Set", {text= get_string_if_translatable(
+					true, self.translation_section, h), width= self.el_width, zoom= self.heading_zoom})
 			end
 		end,
-		set_display= function(self, d)
-			if not self.no_display then
-				self.display:settext(
-					get_string_if_translatable(
-						true, self.translation_section, d))
-				width_limit_text(self.display, self.el_width, self.el_zoom)
+		set_status= function(self, d)
+			if self.status then
+				self.status:playcommand("Set", {text= get_string_if_translatable(
+					true, self.translation_section, d), width= self.el_width, zoom= self.status_zoom})
 			end
 		end,
 		set_info_set= function(self, info, pos)
@@ -483,11 +391,9 @@ nesty_option_display_mt= {
 		end,
 }}
 
-function up_element()
-	return {text= "&leftarrow;"}
-end
+nesty_menu_up_element= {text= "&leftarrow;"}
 
-option_set_general_mt= {
+local general_menu_mt= {
 	__index= {
 		set_player_info= function(self, pn)
 			self.pn= pn
@@ -544,7 +450,7 @@ option_set_general_mt= {
 					end
 					self.display:scroll(self.cursor_pos)
 					self:get_cursor_element():gain_focus()
-					return true
+					return true, false, "move_up"
 				end,
 				MenuRight= function(self)
 					unfocus_cursor(self)
@@ -555,30 +461,32 @@ option_set_general_mt= {
 					end
 					self.display:scroll(self.cursor_pos)
 					self:get_cursor_element():gain_focus()
-					return true
+					return true, false, "move_down"
 				end,
 				Start= function(self)
-					if self.info_set[self.cursor_pos].text == up_element().text then
+					if self.info_set[self.cursor_pos].text == nesty_menu_up_element.text then
 						-- This position is the "up" element that moves the
 						-- cursor back up the options tree.
-						return false
+						return "pop", false, "pop"
 					end
 					if self.interpret_start then
-						local menu_ret= {self:interpret_start()}
+						local action, action_data= self:interpret_start()
+						local sound= self.info_set[self.cursor_pos].sound or "act"
 						if self.scroll_to_move_on_start then
 							local pos_diff= 1 - self.cursor_pos
 							self.cursor_pos= 1
 							self.display:scroll(self.cursor_pos)
 						end
-						return unpack(menu_ret)
-					else
-						return false
+						return action, action_data, sound
 					end
 				end,
 				Select= function(self)
 					self.cursor_pos= 1
 					self.display:scroll(self.cursor_pos)
-					return true
+					return true, false, "move"
+				end,
+				Back= function(self)
+					return "pop", false, "pop"
 				end,
 			}
 			funs.MenuUp= funs.MenuLeft
@@ -601,7 +509,7 @@ nesty_option_menus= {}
 -- {}
 --   name= string -- Name for the entry
 --   args= {} -- Args to return to options_menu_mt to construct the new menu
---     meta= {} -- metatable for the submenu
+--     menu= {} -- metatable for the submenu
 --     args= {} -- extra args for the initialize function of the metatable
 nesty_option_menus.menu= {
 	__index= {
@@ -612,11 +520,28 @@ nesty_option_menus.menu= {
 			self.up_text= up_text
 			self:recall_init()
 		end,
+		insert_up= function(self, menu_data)
+			if not self.no_up then
+				if self.up_text then
+					for i= 1, #menu_data do
+						if menu_data[i].text == self.up_text then return end
+					end
+					table.insert(menu_data, 1, {text= self.up_text, translatable= true})
+				else
+					for i= 1, #menu_data do
+						if menu_data[i].text == nesty_menu_up_element.text then return end
+					end
+					table.insert(menu_data, 1, nesty_menu_up_element)
+				end
+			end
+		end,
 		recall_init= function(self)
-			self.menu_data= self.init_args
 			if type(self.init_args) == "function" then
 				self.menu_data= self.init_args(self.pn)
+			else
+				self.menu_data= self.init_args
 			end
+			self:insert_up(self.menu_data)
 			self.name= self.menu_data.name or ""
 			self.recall_init_on_pop= self.menu_data.recall_init_on_pop
 			self.special_handler= self.menu_data.special_handler
@@ -631,14 +556,6 @@ nesty_option_menus.menu= {
 			end
 			self.info_set= {}
 			self.shown_data= {}
-			if not self.no_up then
-				if self.up_text then
-					self.info_set[#self.info_set+1]= {
-						text= self.up_text, translatable= true}
-				else
-					self.info_set[#self.info_set+1]= up_element()
-				end
-			end
 			self.cursor_pos= 1
 			self:update_info(self.menu_data)
 			if old_option_name ~= "" then
@@ -656,14 +573,6 @@ nesty_option_menus.menu= {
 				end
 			end
 		end,
-		id_plus_up= function(self, id)
-			if self.no_up then return id end
-			return id + 1
-		end,
-		id_minus_up= function(self, id)
-			if self.no_up then return id end
-			return id - 1
-		end,
 		update_info= function(self, new_menu_data)
 			local next_shown= 1
 			for i, data in ipairs(new_menu_data) do
@@ -672,7 +581,7 @@ nesty_option_menus.menu= {
 					show= show and data.req_func(self.pn)
 				end
 				if show then
-					local disp_slot= self:id_plus_up(next_shown)
+					local disp_slot= next_shown
 					self.shown_data[next_shown]= data
 					local disp_text= data.text or data.name
 					local underline= data.underline
@@ -700,20 +609,17 @@ nesty_option_menus.menu= {
 			while #self.shown_data >= next_shown do
 				local index= #self.shown_data
 				self.shown_data[index]= nil
-				self.info_set[self:id_plus_up(index)]= nil
+				self.info_set[index]= nil
 				if self.display then
-					self.display:set_element_info(self:id_plus_up(index), nil)
+					self.display:set_element_info(index, nil)
 				end
 			end
 			self.menu_data= new_menu_data
 		end,
-		recheck_levels= function(self)
-			self:reset_info()
-		end,
 		set_status= function(self)
 			if self.display then
 				self.display:set_heading(self.name or "")
-				self.display:set_display(self.menu_data.status or "")
+				self.display:set_status(self.menu_data.status or "")
 			end
 		end,
 		update= function(self)
@@ -724,7 +630,7 @@ nesty_option_menus.menu= {
 			end
 		end,
 		interpret_start= function(self)
-			local data= self.shown_data[self:id_minus_up(self.cursor_pos)]
+			local data= self.shown_data[self.cursor_pos]
 			if self.special_handler then
 				local handler_ret= self.special_handler(self, data)
 				if handler_ret.recall_init then
@@ -733,59 +639,35 @@ nesty_option_menus.menu= {
 				elseif handler_ret.ret_data then
 					return unpack(handler_ret.ret_data)
 				else
-					return false
+					return true
 				end
 			else
 				if data then
-					return true, data
+					if self.up_text and data.text == self.up_text then
+						return "pop"
+					else
+						return "push", data
+					end
 				else
 					return false
 				end
 			end
 		end,
 		get_item= function(self, pos)
-			pos= self:id_minus_up(pos or self.cursor_pos)
+			pos= (pos or self.cursor_pos)
 			if pos == 0 then
 				return self.info_set[1]
 			end
 			return self.shown_data[pos]
 		end,
 		get_item_name= function(self, pos)
-			pos= self:id_minus_up(pos or self.cursor_pos)
+			pos= (pos or self.cursor_pos)
 			local shown= self.shown_data[pos]
 			if shown then
 				return shown.name or shown.text
 			end
 			return self.up_text or ""
-		end
-}}
-
-nesty_option_menus.boolean_option= {
-	__index= {
-		initialize= function(self, pn, extra)
-			self.name= extra.name
-			self.pn= pn
-			self.cursor_pos= 1
-			self.get= extra.get
-			self.set= extra.set
-			local curr= extra.get(pn)
-			self.info_set= {
-				up_element(),
-				{text= extra.true_text, translatable= true, underline= curr},
-				{text= extra.false_text, translatable= true, underline= not curr}}
 		end,
-		set_status= function(self)
-			self.display:set_heading(self.name)
-			self.display:set_display("")
-		end,
-		interpret_start= function(self)
-			if self.cursor_pos == 1 then return false end
-			local curr= self.cursor_pos == 2
-			self.set(self.pn, curr)
-			self:update_el_underline(2, curr)
-			self:update_el_underline(3, not curr)
-			return true
-		end
 }}
 
 local function find_scale_for_number(num, min_scale)
@@ -842,10 +724,11 @@ nesty_option_menus.adjustable_float= {
 			local scale_text= "scale"
 			self.pi_text= "pi"
 			self.info_set= {
-				up_element(),
-				{text= "+"..self.scale_to_text(self.pn, 10^self.scale)},
-				{text= "-"..self.scale_to_text(self.pn, 10^self.scale)},
-				{text= scale_text.."*10"}, {text= scale_text.."/10"},
+				nesty_menu_up_element,
+				{text= "+"..self.scale_to_text(self.pn, 10^self.scale),sound= "inc"},
+				{text= "-"..self.scale_to_text(self.pn, 10^self.scale),sound= "dec"},
+				{text= scale_text.."*10",sound= "inc"},
+				{text= scale_text.."/10",sound= "dec"},
 				{text= "Round", translatable= true},
 				{text= "Reset", translatable= true}}
 			self.menu_functions= {
@@ -909,7 +792,7 @@ nesty_option_menus.adjustable_float= {
 				if self.pi_exp then
 					val_text= val_text .. "*" .. self.pi_text
 				end
-				self.display:set_display(val_text)
+				self.display:set_status(val_text)
 			end
 		end,
 		cooked_val= function(self, nval)
@@ -947,7 +830,7 @@ nesty_option_menus.enum_option= {
 			self.name= extra.name
 			self.pn= pn
 			self.enum_vals= {}
-			self.info_set= {up_element()}
+			self.info_set= {nesty_menu_up_element}
 			self.cursor_pos= 1
 			self.get= extra.get
 			self.set= extra.set
@@ -980,8 +863,8 @@ nesty_option_menus.enum_option= {
 				else
 					self.set(self.pn, self.enum_vals[self.cursor_pos-1])
 				end
-				self.display:set_display(self:short_string(self:get_val()))
-				return true
+				self.display:set_status(self:short_string(self:get_val()))
+				return true, false
 			else
 				return false
 			end
@@ -995,13 +878,13 @@ nesty_option_menus.enum_option= {
 		end,
 		set_status= function(self)
 			self.display:set_heading(self.name)
-			self.display:set_display(self:short_string(self:get_val()))
+			self.display:set_status(self:short_string(self:get_val()))
 		end
 }}
 
 function set_nesty_option_metatables()
 	for k, set in pairs(nesty_option_menus) do
-		setmetatable(set.__index, option_set_general_mt)
+		setmetatable(set.__index, general_menu_mt)
 	end
 end
 set_nesty_option_metatables()
@@ -1013,25 +896,23 @@ for k, v in pairs(nesty_option_display_mt.__index) do
 end
 
 local menu_stack_param_defaults= {
-	name= "", x= 0, y= 0, width= _screen.w, height= _screen.h, num_displays= 1,
-	el_height= line_height, zoom= 1, no_heading= false, no_display= false,
-	item_mt= option_item_underlinable_mt,
+	x= 0, y= 0, width= _screen.w, num_displays= 1, el_height= line_height,
 	display_mt= nesty_option_display_mt,
-	cursor_above_options= true,
-	cursor_mt= nesty_cursor_mt,
+	cursor_above_options= false, cursor_mt= nesty_cursor_mt,
 }
 nesty_menu_stack_mt= {
 	__index= {
 		create_actors= function(self, params)
 			add_defaults_to_params(params, menu_stack_param_defaults)
+			add_blank_tables_to_params(params, {"display_params", "cursor_params", "menu_sounds"})
+			self.el_height= params.el_height
 			self.name= params.name
 			self.pn= params.pn
-			self.options_set_stack= {}
-			self.zoom= params.zoom
-			self.el_height= params.el_height or line_height
+			self.menu_stack= {}
+			self.on_close_stack= {}
 			local pcolor= PlayerColor(params.pn)
 			local frame= {
-				Name= name, InitCommand= function(subself)
+				Name= params.name, InitCommand= function(subself)
 					subself:xy(params.x, params.y)
 					self.container= subself
 					self.cursor:refit(nil, nil, 20, self.el_height)
@@ -1040,6 +921,12 @@ nesty_menu_stack_mt= {
 					end
 				end
 			}
+			self.menu_sounds= {}
+			for name, sound in pairs(params.menu_sounds) do
+				frame[#frame+1]= Def.Sound{
+					File= sound, IsAction= true, InitCommand= function(subself)
+						self.menu_sounds[name]= subself end}
+			end
 			self.displays= {}
 			for i= 1, params.num_displays do
 				self.displays[#self.displays+1]= setmetatable({}, params.display_mt)
@@ -1048,21 +935,29 @@ nesty_menu_stack_mt= {
 			if #self.displays == 1 then sep= 0 end
 			local off= sep / 2
 			self.cursor= setmetatable({}, params.cursor_mt)
-			if not cursor_above_options then
-				frame[#frame+1]= self.cursor:create_actors{
-					name= "cursor", pn= params.pn}
+			local cursor_params= params.cursor_params
+			add_defaults_to_params(cursor_params, {name= "cursor", pn= params.pn})
+			if not params.cursor_above_options then
+				frame[#frame+1]= self.cursor:create_actors(cursor_params)
 			end
 			local disp_el_width_limit= (params.width / #self.displays) - 8
+			add_defaults_to_params(params.display_params, {
+				el_width= disp_el_width_limit, el_height= self.el_height,
+				el_zoom= self.zoom, height= params.height, no_heading= false,
+				no_display= false, el_height= params.el_height,
+				item_mt= option_item_underlinable_mt})
 			for i, disp in ipairs(self.displays) do
-				frame[#frame+1]= disp:create_actors{
-					name= "disp" .. i, x= off+sep * (i-1), y= 0, height= params.height,
-					el_width= disp_el_width_limit, el_height= self.el_height,
-					el_zoom= self.zoom, no_heading= params.no_heading,
-					no_display= params.no_display, item_mt= params.item_mt}
+				local sub_params= DeepCopy(params.display_params)
+				sub_params.name= "disp" .. i
+				sub_params.x= off+sep * (i-1)
+				sub_params.y= 0
+				frame[#frame+1]= disp:create_actors(sub_params)
 			end
-			if cursor_above_options then
-				frame[#frame+1]= self.cursor:create_actors{
-					name= "cursor", pn= params.pn}
+			if params.cursor_above_options then
+				frame[#frame+1]= self.cursor:create_actors(cursor_params)
+			end
+			if params.translation_section then
+				self:set_translation_section(params.translation_section)
 			end
 			return Def.ActorFrame(frame)
 		end,
@@ -1072,26 +967,26 @@ nesty_menu_stack_mt= {
 			end
 		end,
 		assign_displays= function(self, start)
-			local oss= self.options_set_stack
+			local oss= self.menu_stack
 			for i= #oss, 1, -1 do
 				oss[i]:set_display(self.displays[start] or fake_display)
 				start= start - 1
 			end
 		end,
 		lose_focus_top_display= function(self)
-			local top_display= math.min(#self.displays, #self.options_set_stack)
+			local top_display= math.min(#self.displays, #self.menu_stack)
 			if self.displays[top_display] then
 				self.displays[top_display]:lose_focus_items()
 			end
 		end,
 		push_display_stack= function(self)
-			local use_display= math.min(#self.displays, #self.options_set_stack+1)
+			local use_display= math.min(#self.displays, #self.menu_stack+1)
 			self:assign_displays(use_display - 1)
 			self:hide_unused_displays(use_display)
 			return use_display
 		end,
 		pop_display_stack= function(self)
-			local oss= self.options_set_stack
+			local oss= self.menu_stack
 			local use_display= math.min(#self.displays, #oss)
 			self:assign_displays(use_display)
 			for i= #oss, 1, -1 do
@@ -1100,7 +995,7 @@ nesty_menu_stack_mt= {
 					if curr_set.recall_init_on_pop then
 						curr_set:recall_init()
 					end
-					curr_set:recheck_levels()
+					curr_set:reset_info()
 				end
 			end
 			self:hide_unused_displays(use_display)
@@ -1111,12 +1006,12 @@ nesty_menu_stack_mt= {
 				self.displays[i]:hide()
 			end
 		end,
-		push_options_set_stack= function(
-				self, new_set_meta, new_set_initializer_args, base_exit, no_up)
+		push_menu_stack= function(
+				self, new_set_menu, new_set_initializer_args, base_exit, no_up)
 			self:lose_focus_top_display()
-			local oss= self.options_set_stack
+			local oss= self.menu_stack
 			local use_display= self:push_display_stack()
-			local nos= setmetatable({}, new_set_meta)
+			local nos= setmetatable({}, new_set_menu)
 			oss[#oss+1]= nos
 			nos:set_player_info(self.pn)
 			if #oss == 1 then
@@ -1127,20 +1022,25 @@ nesty_menu_stack_mt= {
 			nos:set_display(self.displays[use_display])
 			self:update_cursor_pos()
 		end,
-		pop_options_set_stack= function(self)
+		pop_menu_stack= function(self)
 			self:lose_focus_top_display()
-			local oss= self.options_set_stack
-			if #oss > 0 then
-				local former_top= oss[#oss]
+			local oss= self.menu_stack
+			local top_index= #oss
+			if top_index > 0 then
+				local former_top= oss[top_index]
 				if former_top.destructor then former_top:destructor(self.pn) end
-				oss[#oss]= nil
+				if type(self.on_close_stack[top_index]) == "function" then
+					self.on_close_stack[top_index](self.pn)
+				end
+				self.on_close_stack[top_index]= nil
+				oss[top_index]= nil
 				self:pop_display_stack()
 			end
 			self:update_cursor_pos()
 		end,
-		clear_options_set_stack= function(self)
-			while #self.options_set_stack > 0 do
-				self:pop_options_set_stack()
+		clear_menu_stack= function(self)
+			while #self.menu_stack > 0 do
+				self:pop_menu_stack()
 			end
 		end,
 		enter_external_mode= function(self)
@@ -1153,7 +1053,7 @@ nesty_menu_stack_mt= {
 				self.deextern= nil
 			end
 			self.external_thing= nil
-			local oss= self.options_set_stack
+			local oss= self.menu_stack
 			if #oss > 0 then
 				self:pop_display_stack()
 			end
@@ -1186,37 +1086,47 @@ nesty_menu_stack_mt= {
 				end
 				return handled
 			end
-			local oss= self.options_set_stack
+			local oss= self.menu_stack
 			local top_set= oss[#oss]
-			local handled, new_set_data= top_set:interpret_code(code)
-			if handled then
-				if new_set_data then
-					if new_set_data.meta == "external_interface" then
-						self:enter_external_mode()
-						new_set_data.extern(self, new_set_data.args, self.pn)
-						self.deextern= new_set_data.deextern
-					elseif new_set_data.meta == "execute" then
-						new_set_data.execute(self.pn)
-						top_set:recheck_levels()
+			local action, action_data, sound= top_set:interpret_code(code)
+			if action then
+				if action == "pop" then
+					if #oss > 1 then
+						self:pop_menu_stack()
 					else
-						local nargs= new_set_data.args
-						if new_set_data.exec_args and type(nargs) == "function" then
+						return "close"
+					end
+				elseif action == "push" then
+					sound= action_data.sound or sound
+					if action_data.execute then
+						action_data.execute(self.pn)
+						top_set:reset_info()
+					elseif action_data.extern then
+						self:enter_external_mode()
+						action_data.extern(self, action_data.args, self.pn)
+						self.deextern= action_data.deextern
+					elseif action_data.menu then
+						local nargs= action_data.args
+						if action_data.exec_args and type(nargs) == "function" then
 							nargs= nargs(self.pn)
 						end
-						self:push_options_set_stack(new_set_data.meta, nargs)
+						self:push_menu_stack(action_data.menu, nargs)
+						if type(action_data.on_open) == "function" then
+							action_data.on_open(self.pn)
+						end
+						self.on_close_stack[#oss]= action_data.on_close
 					end
 				end
-			else
-				if (code == "Start" or code == "Back") and #oss > 1 then
-					handled= true
-					self:pop_options_set_stack()
+				if self.menu_sounds[sound] then
+					self.menu_sounds[sound]:play()
 				end
 			end
 			self:update_cursor_pos()
-			return handled
+			if action then return true end
+			return false
 		end,
 		update_cursor_pos= function(self)
-			local tos= self.options_set_stack[#self.options_set_stack]
+			local tos= self.menu_stack[#self.menu_stack]
 			if not tos then return end
 			local item= tos:get_cursor_element()
 			if item then
@@ -1233,22 +1143,22 @@ nesty_menu_stack_mt= {
 			self.cursor:refit(fit[1], fit[2], fit[3], fit[4])
 		end,
 		can_exit_screen= function(self)
-			local oss= self.options_set_stack
+			local oss= self.menu_stack
 			local top_set= oss[#oss]
 			return #oss <= 1 and (not top_set or top_set:can_exit())
 		end,
 		top_menu= function(self)
-			return self.options_set_stack[#self.options_set_stack]
+			return self.menu_stack[#self.menu_stack]
 		end,
 		get_cursor_item= function(self)
-			local top_set= self.options_set_stack[#self.options_set_stack]
+			local top_set= self.menu_stack[#self.menu_stack]
 			if top_set.get_item then
 				return top_set:get_item()
 			end
 			return nil
 		end,
 		get_cursor_item_name= function(self)
-			local top_set= self.options_set_stack[#self.options_set_stack]
+			local top_set= self.menu_stack[#self.menu_stack]
 			if top_set.get_item_name then
 				return top_set:get_item_name()
 			end
@@ -1262,11 +1172,10 @@ function menu_stack_generic_input(per_player_menus, event, close_menu_callback)
 	if not per_player_menus[pn] then return end
 	if event.type == "InputEventType_Release" then return end
 	local button= event.GameButton
-	if not per_player_menus[pn]:interpret_code(button) then
-		if button == "Start" then
-			if close_menu_callback then close_menu_callback(pn) end
-			return true
-		end
+	local menu_action= per_player_menus[pn]:interpret_code(button)
+	if menu_action == "close" then
+		if close_menu_callback then close_menu_callback(pn) end
+		return true
 	end
 end
 
@@ -1290,11 +1199,16 @@ local function float_toggle_val_underline_logic(old_val, on_val, off_val)
 	end
 end
 
+local function pops_get(pn)
+	return GAMESTATE:GetPlayerState(pn):get_player_options_no_defect(
+		"ModsLevel_Preferred")
+end
+
 nesty_options= {
 	float_pref_val= function(valname, min_scale, scale, max_scale, val_min, val_max, val_reset)
-		return {
+		local ret= {
 			name= valname, translatable= true,
-			meta= nesty_option_menus.adjustable_float,
+			menu= nesty_option_menus.adjustable_float,
 			args= {
 				name= valname, min_scale= min_scale, scale= scale,
 				max_scale= max_scale, val_min= val_min, val_max= val_max,
@@ -1306,17 +1220,21 @@ nesty_options= {
 					PREFSMAN:SetPreference(valname, value)
 				end,
 		}}
+		return setmetatable(ret, mergable_table_mt)
 	end,
 	float_song_mod_val= function(valname, min_scale, scale, max_scale, val_min, val_max, val_reset)
-		return {
+		local ret= {
 			name= valname, translatable= true,
-			meta= nesty_option_menus.adjustable_float,
+			menu= nesty_option_menus.adjustable_float,
 			args= {
 				name= valname, min_scale= min_scale, scale= scale,
 				max_scale= max_scale, val_min= val_min, val_max= val_max,
 				reset_value= val_reset,
 				initial_value= function()
 					local song_ops= GAMESTATE:GetSongOptionsObject("ModsLevel_Preferred")
+					if not song_ops[valname] then
+						lua.ReportScriptError("No such song option: " .. tostring(valname))
+					end
 					return song_ops[valname](song_ops)
 				end,
 				set= function(pn, value)
@@ -1327,11 +1245,11 @@ nesty_options= {
 					GAMESTATE:ApplyPreferredSongOptionsToOtherLevels()
 				end,
 		}}
+		return setmetatable(ret, mergable_table_mt)
 	end,
 	float_song_mod_toggle_val= function(valname, on_val, off_val)
-		return {
-			name= valname, meta= "execute", translatable= true,
-			execute= function()
+		local ret= {
+			name= valname, translatable= true, execute= function()
 				local song_ops= GAMESTATE:GetSongOptionsObject("ModsLevel_Preferred")
 				local old_val= song_ops[valname](song_ops)
 				local new_val= float_toggle_val_toggle_logic(old_val, on_val, off_val)
@@ -1342,28 +1260,144 @@ nesty_options= {
 			end,
 			underline= function()
 				local song_ops= GAMESTATE:GetSongOptionsObject("ModsLevel_Preferred")
+				if not song_ops[valname] then
+					lua.ReportScriptError("No such song option: " .. tostring(valname))
+				end
 				local old_val= song_ops[valname](song_ops)
 				return float_toggle_val_underline_logic(old_val, on_val, off_val)
 			end,
 		}
+		return setmetatable(ret, mergable_table_mt)
+	end,
+	bool_song_mod_val= function(valname)
+		local ret= {
+			name= valname, translatable= true, execute= function(pn)
+				local song_ops= GAMESTATE:GetSongOptionsObject("ModsLevel_Preferred")
+				local old_val= song_ops[valname](song_ops)
+				local new_val= not old_val
+				song_ops[valname](song_ops, new_val)
+				-- Apply the change to the current and song levels too, so that if
+				-- this occurs during gameplay, it takes effect immediately.
+				GAMESTATE:ApplyPreferredSongOptionsToOtherLevels()
+			end,
+			underline= function()
+				local song_ops= GAMESTATE:GetSongOptionsObject("ModsLevel_Preferred")
+				if not song_ops[valname] then
+					lua.ReportScriptError("No such song option: " .. tostring(valname))
+				end
+				return song_ops[valname](song_ops)
+			end,
+		}
+		return setmetatable(ret, mergable_table_mt)
+	end,
+	enum_player_mod_val= function(valname, enum, func_name)
+		local function get(pn, obj)
+			if not obj[func_name] then
+				lua.ReportScriptError("No such player option: " .. tostring(func_name))
+			end
+			return obj[func_name](obj)
+		end
+		local function set(pn, obj, val)
+		-- We need to inform GameState if we set the fail type so it doesn't
+		-- override it with the beginner/easy preferences.
+			if func_name == "FailSetting" then
+				GAMESTATE:SetFailTypeExplicitlySet()
+			end
+			obj[func_name](obj, val)
+		end
+		local ret= {
+			name= valname, menu= nesty_option_menus.enum_option, translatable= true,
+			args= {obj_get= pops_get, get= get, set= set, enum= enum}}
+		return setmetatable(ret, mergable_table_mt)
+	end,
+	enum_player_mod_single_val= function(valname, value, func_name)
+		local ret= {
+			name= valname, translatable= true, execute= function(pn)
+				local pops= pops_get(pn)
+				pops[func_name](pops, value)
+			end,
+			underline= function(pn)
+				local pops= pops_get(pn)
+				if not pops[func_name] then
+					lua.ReportScriptError("No such player option: " .. tostring(func_name))
+				end
+				return pops[func_name](pops) == value
+			end,
+		}
+		return setmetatable(ret, mergable_table_mt)
+	end,
+	float_player_mod_val= function(valname, min_scale, scale, max_scale, val_min, val_max, val_reset)
+		local ret= {
+			name= valname, translatable= true,
+			menu= nesty_option_menus.adjustable_float, args= {
+				name= valname, min_scale= min_scale, scale= scale,
+				max_scale= max_scale, val_min= val_min, val_max= val_max,
+				reset_value= val_reset,
+				initial_value= function(pn)
+					local plops= GAMESTATE:GetPlayerState(pn):get_player_options_no_defect("ModsLevel_Preferred")
+					if not plops[valname] then
+						lua.ReportScriptError("No such player option: " .. tostring(valname))
+					end
+					return plops[valname](plops)
+				end,
+				set= function(pn, value)
+					local pstate= GAMESTATE:GetPlayerState(pn)
+					local plops= pstate:get_player_options_no_defect("ModsLevel_Preferred")
+					plops[plops](plops, value)
+					pstate:ApplyPreferredOptionsToOtherLevels()
+				end,
+		}}
+		return setmetatable(ret, mergable_table_mt)
 	end,
 	bool_player_mod_val= function(valname)
-		return {
-			name= valname, meta= "execute", translatable= true,
-			execute= function(pn)
+		local ret= {
+			name= valname, translatable= true, execute= function(pn)
 				local plops= GAMESTATE:GetPlayerState(pn):get_player_options_no_defect("ModsLevel_Preferred")
 				local new_val= not plops[valname](plops)
 				plops[valname](plops, new_val)
 			end,
 			underline= function(pn)
 				local plops= GAMESTATE:GetPlayerState(pn):get_player_options_no_defect("ModsLevel_Preferred")
+				if not plops[valname] then
+					lua.ReportScriptError("No such player option: " .. tostring(valname))
+				end
 				return plops[valname](plops)
 			end,
 		}
+		return setmetatable(ret, mergable_table_mt)
+	end,
+	float_profile_val= function(valname, mins, scale, maxs, val_min, val_max, val_reset)
+		local ret= {
+			name= valname, translatable= true,
+			menu= nesty_option_menus.adjustable_float, args= {
+				name= valname, min_scale= mins, scale= scale, max_scale= maxs,
+				reset_value= val_reset, initial_value= function(pn)
+					local profile= PROFILEMAN:GetProfile(pn)
+					return profile["Get"..valname](profile)
+				end,
+				set= function(pn, value)
+					local profile= PROFILEMAN:GetProfile(pn)
+					profile["Set"..valname](profile, value)
+				end,
+		}}
+		return setmetatable(ret, mergable_table_mt)
+	end,
+	bool_profile_val= function(valname)
+		local ret= {
+			name= valname, translatable= true, execute= function(pn)
+				local profile= PROFILEMAN:GetProfile(pn)
+				profile["Set"..valname](profile, not profile["Get"..valname](profile))
+			end,
+			underline= function(pn)
+				local profile= PROFILEMAN:GetProfile(pn)
+				return profile["Get"..valname](profile)
+			end,
+		}
+		return setmetatable(ret, mergable_table_mt)
 	end,
 	float_config_val_args= function(
 			conf, field_name, mins, scale, maxs, val_min, val_max)
-		return {
+		local ret= {
 			name= field_name, min_scale= mins, scale= scale, max_scale= maxs,
 			val_min= val_min, val_max= val_max,
 			reset_value= get_element_by_path(conf:get_default(), field_name),
@@ -1377,19 +1411,20 @@ nesty_options= {
 					config_name= conf.name, field_name= field_name, value= value, pn= pn})
 			end,
 		}
+		return setmetatable(ret, mergable_table_mt)
 	end,
 	float_config_val= function(
 			conf, field_name, mins, scale, maxs, val_min, val_max)
-		return {
+		local ret= {
 			name= field_name, translatable= true,
-			meta= nesty_option_menus.adjustable_float,
+			menu= nesty_option_menus.adjustable_float,
 			args= nesty_options.float_config_val_args(conf, field_name, mins, scale, maxs, val_min, val_max),
 		}
+		return setmetatable(ret, mergable_table_mt)
 	end,
 	float_config_toggle_val= function(conf, field_name, on_val, off_val)
-		return {
-			name= field_name, meta= "execute", translatable= true,
-			execute= function(pn)
+		local ret= {
+			name= field_name, translatable= true, execute= function(pn)
 				local old_val= get_element_by_path(conf:get_data(pn), field_name)
 				local new_val= float_toggle_val_toggle_logic(old_val, on_val, off_val)
 				conf:set_dirty(pn)
@@ -1401,11 +1436,11 @@ nesty_options= {
 				return float_toggle_val_underline_logic(get_element_by_path(conf:get_data(pn), field_name), on_val, off_val)
 			end,
 		}
+		return setmetatable(ret, mergable_table_mt)
 	end,
 	bool_config_val= function(conf, field_name)
-		return {
-			name= field_name, meta= "execute", translatable= true,
-			execute= function(pn)
+		local ret= {
+			name= field_name, translatable= true, execute= function(pn)
 				local old_val= get_element_by_path(conf:get_data(pn), field_name)
 				conf:set_dirty(pn)
 				set_element_by_path(conf:get_data(pn), field_name, not old_val)
@@ -1416,5 +1451,21 @@ nesty_options= {
 				return get_element_by_path(conf:get_data(pn), field_name)
 			end,
 		}
+		return setmetatable(ret, mergable_table_mt)
+	end,
+	choices_config_val= function(conf, field_name, choices)
+		local ret= {
+			name= field_name, menu= nesty_option_menus.enum_option, args= {
+				name= field_name, enum= choices, fake_enum= true,
+				obj_get= function(pn) return conf:get_data(pn) end,
+				get= function(pn, obj) return get_element_by_path(obj, field_name) end,
+				set= function(pn, obj, value)
+					set_element_by_path(obj, field_name, value)
+					MESSAGEMAN:Broadcast("ConfigValueChanged", {
+						config_name= conf.name, field_name= field_name, value= value, pn= pn})
+				end,
+			}
+		}
+		return setmetatable(ret, mergable_table_mt)
 	end,
 }

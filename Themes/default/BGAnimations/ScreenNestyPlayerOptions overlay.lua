@@ -52,8 +52,7 @@ local pn_skew_mult= {[PLAYER_1]= 1, [PLAYER_2]= -1}
 
 local function perspective_entry(name, skew_mult, rot_mult)
 	return {
-		name= name, meta= "execute", translatable= true,
-		execute= function(pn)
+		name= name, translatable= true, execute= function(pn)
 			local conf_data= newfield_prefs_config:get_data(pn)
 			local old_rot= get_element_by_path(conf_data, "rotation_x")
 			local old_skew= get_element_by_path(conf_data, "vanish_x")
@@ -133,11 +132,11 @@ local insertion_chart_mods= {
 }
 
 local chart_mods= {
-	{name= "turn_chart_mods", meta= nesty_option_menus.menu,
+	{name= "turn_chart_mods", menu= nesty_option_menus.menu,
 	 translatable= true, args= turn_chart_mods},
-	{name= "removal_chart_mods", meta= nesty_option_menus.menu,
+	{name= "removal_chart_mods", menu= nesty_option_menus.menu,
 	 translatable= true, args= removal_chart_mods},
-	{name= "insertion_chart_mods", meta= nesty_option_menus.menu,
+	{name= "insertion_chart_mods", menu= nesty_option_menus.menu,
 	 translatable= true, args= insertion_chart_mods},
 }
 
@@ -149,10 +148,26 @@ local gameplay_options= {
 	nesty_options.bool_config_val(player_config, "JudgmentUnderField"),
 }
 
+-- The time life bar doesn't work sensibly outside the survival courses, so
+-- keep it out of the menu.
+local life_type_enum= {"LifeType_Bar", "LifeType_Battery"}
+local life_options= {
+	nesty_options.enum_player_mod_single_val("bar_type", "LifeType_Bar", "LifeSetting"),
+	nesty_options.enum_player_mod_single_val("battery_type", "LifeType_Battery", "LifeSetting"),
+	nesty_options.enum_player_mod_single_val("normal_drain", "DrainType_Normal", "DrainSetting"),
+	nesty_options.enum_player_mod_single_val("no_recover", "DrainType_NoRecover", "DrainSetting"),
+	nesty_options.enum_player_mod_single_val("sudden_death", "DrainType_SuddenDeath", "DrainSetting"),
+	nesty_options.enum_player_mod_single_val("fail_immediate", "FailType_Immediate", "FailSetting"),
+	nesty_options.enum_player_mod_single_val("fail_immediate_continue", "FailType_ImmediateContinue", "FailSetting"),
+	nesty_options.enum_player_mod_single_val("fail_end_of_song", "FailType_EndOfSong", "FailSetting"),
+	nesty_options.enum_player_mod_single_val("fail_off", "FailType_Off", "FailSetting"),
+	nesty_options.float_player_mod_val("BatteryLives", 0, 0, 0, 1, 10, 4),
+}
+
 local base_options= {
-	{name= "speed_mod", meta= nesty_option_menus.adjustable_float,
+	{name= "speed_mod", menu= nesty_option_menus.adjustable_float,
 	 translatable= true, args= gen_speed_menu, exec_args= true},
-	{name= "speed_type", meta= nesty_option_menus.enum_option,
+	{name= "speed_type", menu= nesty_option_menus.enum_option,
 	 translatable= true,
 	 args= {
 		 name= "speed_type", enum= newfield_speed_types, fake_enum= true,
@@ -172,18 +187,25 @@ local base_options= {
 	}},
 	nesty_options.float_song_mod_val("MusicRate", -2, -1, -1, .5, 2, 1),
 	nesty_options.float_song_mod_toggle_val("Haste", 1, 0),
-	{name= "perspective", translatable= true, meta= nesty_option_menus.menu, args= perspective_mods},
+	{name= "perspective", translatable= true, menu= nesty_option_menus.menu, args= perspective_mods},
 	nesty_options.float_config_toggle_val(newfield_prefs_config, "reverse", -1, 1),
 	nesty_options.float_config_val(newfield_prefs_config, "zoom", -2, -1, 1),
-	{name= "chart_mods", translatable= true, meta= nesty_option_menus.menu, args= chart_mods},
-	{name= "newskin", translatable= true, meta= nesty_option_menus.newskins},
-	{name= "newskin_params", translatable= true, meta= nesty_option_menus.menu,
+	{name= "chart_mods", translatable= true, menu= nesty_option_menus.menu, args= chart_mods},
+	{name= "newskin", translatable= true, menu= nesty_option_menus.newskins},
+	{name= "newskin_params", translatable= true, menu= nesty_option_menus.menu,
 	 args= gen_noteskin_param_menu, req_func= show_noteskin_param_menu},
+	{name= "shown_noteskins", translatable= true, menu= nesty_option_menus.shown_noteskins, args= {}},
 	nesty_options.bool_config_val(newfield_prefs_config, "hidden"),
 	nesty_options.bool_config_val(newfield_prefs_config, "sudden"),
-	{name= "advanced_notefield_config", translatable= true, meta= nesty_option_menus.menu, args= notefield_config},
-	{name= "gameplay_options", translatable= true, meta= nesty_option_menus.menu, args= gameplay_options},
-	{name= "reload_newskins", translatable= true, meta= "execute",
+	{name= "advanced_notefield_config", translatable= true, menu= nesty_option_menus.menu, args= notefield_config},
+	{name= "gameplay_options", translatable= true, menu= nesty_option_menus.menu, args= gameplay_options},
+	{name= "life_options", translatable= true, menu= nesty_option_menus.menu,
+	 args= life_options},
+	nesty_options.bool_song_mod_val("AssistClap"),
+	nesty_options.bool_song_mod_val("AssistMetronome"),
+	nesty_options.bool_song_mod_val("StaticBackground"),
+	nesty_options.bool_song_mod_val("RandomBGOnly"),
+	{name= "reload_newskins", translatable= true,
 	 execute= function() NEWSKIN:reload_skins() end},
 }
 
@@ -232,20 +254,23 @@ local function input(event)
 	update_explanation(pn)
 end
 
-local menu_item_mt= DeepCopy(option_item_underlinable_mt)
-menu_item_mt.__index.text_style_init= function(text_actor)
-	text_actor:shadowlength(1)
-end
-
 local frame= Def.ActorFrame{
 	OnCommand= function(self)
 		SCREENMAN:GetTopScreen():AddInputCallback(input)
 		for pn, menu in pairs(menus) do
-			menu:push_options_set_stack(nesty_option_menus.menu, base_options, "play_song")
+			menu:push_menu_stack(nesty_option_menus.menu, base_options, "play_song")
 			menu:update_cursor_pos()
 			update_explanation(pn)
 		end
 	end,
+}
+local item_params= {
+	text_actor= Def.BitmapText{
+		Font= "Common Normal", InitCommand= function(self)
+			self:shadowlength(1)
+		end,
+		SetCommand= nesty_option_item_default_set_command,
+	}
 }
 for pn, menu in pairs(menus) do
 	frame[#frame+1]= LoadActor(
@@ -256,10 +281,20 @@ for pn, menu in pairs(menus) do
 	}
 	frame[#frame+1]= menu:create_actors{
 		x= menu_x[pn], y= 96, width= menu_width, height= menu_height,
-		num_displays= 1, pn= pn, item_mt= menu_item_mt,
-		el_height= 20, zoom= .55,
+		translation_section= "newfield_options",
+		num_displays= 1, pn= pn, el_height= 20,
+		menu_sounds= {
+			pop= THEME:GetPathS("Common", "Cancel"),
+			push= THEME:GetPathS("_common", "row"),
+			act= THEME:GetPathS("Common", "value"),
+			move= THEME:GetPathS("_switch", "down"),
+			move_up= THEME:GetPathS("_switch", "up"),
+			move_down= THEME:GetPathS("_switch", "down"),
+			inc= THEME:GetPathS("_switch", "up"),
+			dec= THEME:GetPathS("_switch", "down"),
+		},
+		display_params= {el_zoom= .55, item_params= item_params},
 	}
-	menu:set_translation_section("newfield_options")
 	frame[#frame+1]= Def.BitmapText{
 		Font= "Common Normal", InitCommand= function(self)
 			explanations[pn]= self
