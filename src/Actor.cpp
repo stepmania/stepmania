@@ -165,6 +165,7 @@ Actor::Actor()
 	m_pParent = NULL;
 	m_FakeParent= NULL;
 	m_bFirstUpdate = true;
+	m_tween_uses_effect_delta= false;
 }
 
 Actor::~Actor()
