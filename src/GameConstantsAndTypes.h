@@ -341,6 +341,8 @@ enum ProfileSlot
 {
 	ProfileSlot_Player1,
 	ProfileSlot_Player2,
+	ProfileSlot_Player3,
+	ProfileSlot_Player4,
 	ProfileSlot_Machine,
 	NUM_ProfileSlot,
 	ProfileSlot_Invalid
@@ -553,6 +555,7 @@ enum StyleType
 {
 	StyleType_OnePlayerOneSide,		/**< Single style */
 	StyleType_TwoPlayersTwoSides,		/**< Versus style */
+	StyleType_FourPlayersFourSides,		/**< Quad style */
 	StyleType_OnePlayerTwoSides,		/**< Double style */
 	StyleType_TwoPlayersSharedSides,	/**< Routine style */
 	NUM_StyleType,
@@ -735,5 +738,9 @@ LuaDeclareType( FailType );
  * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+ * PERFORMANCE OF THIS SOFTWARE. 
+ * 
+ * (c) 2016- Electromuis, Anton Grootes
+ * This branch of https://github.com/stepmania/stepmania
+ * will from here on out be released as GPL v3 (wich converts from the previous MIT license)
  */

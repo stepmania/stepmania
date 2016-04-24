@@ -147,6 +147,7 @@ namespace SongUtil
 	void SortSongPointerArrayBySectionName( vector<Song*> &vpSongsInOut, SortOrder so );
 	void SortByMostRecentlyPlayedForMachine( vector<Song*> &vpSongsInOut );
 	void SortSongPointerArrayByLength( vector<Song*> &vpSongsInOut );
+	void FilterSongPointerArray(vector<Song*> &vpSongsInOut, RString sQuery);
 
 	int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2);
 
@@ -249,5 +250,9 @@ public:
  * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+ * PERFORMANCE OF THIS SOFTWARE. 
+ * 
+ * (c) 2016- Electromuis, Anton Grootes
+ * This branch of https://github.com/stepmania/stepmania
+ * will from here on out be released as GPL v3 (wich converts from the previous MIT license)
  */

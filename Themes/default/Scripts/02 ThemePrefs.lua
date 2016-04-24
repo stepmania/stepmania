@@ -88,6 +88,8 @@ function InitUserPrefs()
         UserPrefSoundPack   = 'default',
 		UserPrefProtimingP1 = false,
 		UserPrefProtimingP2 = false,
+		UserPrefProtimingP3 = false,
+		UserPrefProtimingP4 = false,
 	}
 	for k, v in pairs(Prefs) do
 		-- kind of xxx
@@ -100,6 +102,8 @@ function InitUserPrefs()
 	-- screen filter
 	setenv("ScreenFilterP1",0)
 	setenv("ScreenFilterP2",0)
+	setenv("ScreenFilterP3",0)
+	setenv("ScreenFilterP4",0)
 end
 
 function GetProTiming(pn)

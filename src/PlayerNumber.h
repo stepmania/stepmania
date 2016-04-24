@@ -11,6 +11,8 @@ enum PlayerNumber
 {
 	PLAYER_1 = 0,
 	PLAYER_2,
+	PLAYER_3,
+	PLAYER_4,
 	NUM_PlayerNumber,	// leave this at the end
 	PlayerNumber_Invalid
 };
@@ -22,7 +24,7 @@ LuaDeclareType( PlayerNumber );
 /** @brief A foreach loop to handle the different players. */
 #define FOREACH_PlayerNumber( pn ) FOREACH_ENUM( PlayerNumber, pn )
 
-const PlayerNumber	OPPOSITE_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
+const PlayerNumber	OPPOSITE_PLAYER[NUM_PLAYERS] = { PLAYER_4, PLAYER_3, PLAYER_2, PLAYER_1 };
 
 
 enum MultiPlayer
@@ -92,5 +94,9 @@ LuaDeclareType( MultiPlayer );
  * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+ * PERFORMANCE OF THIS SOFTWARE. 
+ * 
+ * (c) 2016- Electromuis, Anton Grootes
+ * This branch of https://github.com/stepmania/stepmania
+ * will from here on out be released as GPL v3 (wich converts from the previous MIT license)
  */

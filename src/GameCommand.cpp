@@ -517,6 +517,8 @@ int GetCreditsRequiredToPlayStyle( const Style *style )
 	case StyleType_TwoPlayersSharedSides:
 	case StyleType_TwoPlayersTwoSides:
 		return 2;
+	case StyleType_FourPlayersFourSides:
+		return 4;
 	case StyleType_OnePlayerTwoSides:
 		return (GAMESTATE->GetPremium() == Premium_DoubleFor1Credit) ? 1 : 2;
 	DEFAULT_FAIL( style->m_StyleType );
@@ -729,10 +731,16 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			break;
 		case StyleType_TwoPlayersTwoSides:
 		case StyleType_TwoPlayersSharedSides:
-			{
-				FOREACH_PlayerNumber( p )
-					GAMESTATE->JoinPlayer( p );
-			}
+			GAMESTATE->JoinPlayer( PLAYER_1 );
+			GAMESTATE->JoinPlayer( PLAYER_2 );
+			//GAMESTATE->JoinPlayer(PLAYER_3);
+			//GAMESTATE->JoinPlayer(PLAYER_4);
+			break;
+		case StyleType_FourPlayersFourSides:
+			GAMESTATE->JoinPlayer(PLAYER_1);
+			GAMESTATE->JoinPlayer(PLAYER_2);
+			GAMESTATE->JoinPlayer(PLAYER_3);
+			GAMESTATE->JoinPlayer(PLAYER_4);
 			break;
 		default:
 			LuaHelpers::ReportScriptError("Invalid StyleType: " + m_pStyle->m_StyleType);
@@ -989,5 +997,9 @@ LUA_REGISTER_CLASS( GameCommand )
  * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+ * PERFORMANCE OF THIS SOFTWARE. 
+ * 
+ * (c) 2016- Electromuis, Anton Grootes
+ * This branch of https://github.com/stepmania/stepmania
+ * will from here on out be released as GPL v3 (wich converts from the previous MIT license)
  */
