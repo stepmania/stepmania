@@ -1,15 +1,15 @@
 [submodule "extern/cppformat"]
 	path = extern/cppformat
-	url = https://github.com/cppformat/cppformat.git
+	url = https://github.com/stepmania/fmt.git
 [submodule "extern/ffmpeg-git"]
 	path = extern/ffmpeg-git
-	url = git://source.ffmpeg.org/ffmpeg.git
+	url = https://github.com/stepmania/ffmpeg.git
 [submodule "extern/googletest"]
 	path = extern/googletest
-	url = https://github.com/google/googletest.git
+	url = https://github.com/stepmania/googletest.git
 [submodule "extern/tomcrypt"]
 	path = extern/tomcrypt
-	url = https://github.com/libtom/libtomcrypt.git
+	url = https://github.com/stepmania/libtomcrypt.git
 [submodule "extern/tommath"]
 	path = extern/tommath
-	url = https://github.com/libtom/libtommath.git
+	url = https://github.com/stepmania/libtommath.git
