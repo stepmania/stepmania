@@ -188,8 +188,8 @@ void ArrowDefects::update(float music_beat, float music_second)
 			int tornado_width= wide_field ? 2 : 3;
 			int start_col= col - tornado_width;
 			int end_col= col + tornado_width;
-			start_col= Rage::clamp(start_col, 0, static_cast<int>(m_num_columns));
-			end_col= Rage::clamp(end_col, 0, static_cast<int>(m_num_columns));
+			start_col= Rage::clamp(start_col, 0, static_cast<int>(m_num_columns)-1);
+			end_col= Rage::clamp(end_col, 0, static_cast<int>(m_num_columns)-1);
 
 			m_min_tornado_x[col]= std::numeric_limits<float>::max();
 			m_max_tornado_x[col]= std::numeric_limits<float>::min();

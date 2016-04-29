@@ -6,8 +6,8 @@
 class LoadingWindow_Null: public LoadingWindow
 {
 public:
-	void SetText( std::string str ) { }
-	void SetSplash( const RageSurface *pSplash ) { }
+	void SetText( std::string ) { }
+	void SetSplash( const RageSurface * ) { }
 };
 #define USE_LOADING_WINDOW_nullptr
 

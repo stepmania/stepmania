@@ -566,7 +566,7 @@ bool Song::LoadAutosaveFile()
 /* Fix up song paths. If there's a leading "./", be sure to keep it: it's
  * a signal that the path is from the root directory, not the song directory.
  * Other than a leading "./", song paths must never contain "." or "..". */
-void FixupPath( std::string &path, const std::string &sSongPath )
+void FixupPath(std::string &path)
 {
 	// Replace backslashes with slashes in all paths.
 	FixSlashesInPlace( path );
@@ -582,18 +582,18 @@ void Song::TidyUpData( bool from_cache, bool /* duringCache */ )
 {
 	// We need to do this before calling any of HasMusic, HasHasCDTitle, etc.
 	ASSERT_M( !Rage::starts_with(m_sSongDir, "../"), m_sSongDir); // meaningless
-	FixupPath(m_sSongDir, "");
-	FixupPath(m_sMusicFile, m_sSongDir);
+	FixupPath(m_sSongDir);
+	FixupPath(m_sMusicFile);
 	FOREACH_ENUM(InstrumentTrack, i)
 	{ if(!m_sInstrumentTrackFile[i].empty())
-		{ FixupPath(m_sInstrumentTrackFile[i], m_sSongDir); }	}
-	FixupPath(m_sBannerFile, m_sSongDir);
-	FixupPath(m_sJacketFile, m_sSongDir);
-	FixupPath(m_sCDFile, m_sSongDir);
-	FixupPath(m_sDiscFile, m_sSongDir);
-	FixupPath(m_sLyricsFile, m_sSongDir);
-	FixupPath(m_sBackgroundFile, m_sSongDir);
-	FixupPath(m_sCDTitleFile, m_sSongDir);
+		{ FixupPath(m_sInstrumentTrackFile[i]); }	}
+	FixupPath(m_sBannerFile);
+	FixupPath(m_sJacketFile);
+	FixupPath(m_sCDFile);
+	FixupPath(m_sDiscFile);
+	FixupPath(m_sLyricsFile);
+	FixupPath(m_sBackgroundFile);
+	FixupPath(m_sCDTitleFile);
 
 	CHECKPOINT_M("Looking for images...");
 

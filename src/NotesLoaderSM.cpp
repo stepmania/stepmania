@@ -306,7 +306,7 @@ void SMLoader::LoadFromTokens(
 			     std::string sDescription,
 			     std::string sDifficulty,
 			     std::string sMeter,
-			     std::string sRadarValues,
+			     std::string,
 			     std::string sNoteData,
 			     Steps &out
 			     )

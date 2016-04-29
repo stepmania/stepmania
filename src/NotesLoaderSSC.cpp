@@ -786,7 +786,7 @@ void SSCLoader::ProcessLabels( TimingData &out, const std::string sParam )
 	}
 }
 
-void SSCLoader::ProcessCombos( TimingData &out, const std::string line, const int rowsPerBeat )
+void SSCLoader::ProcessCombos( TimingData &out, const std::string line, const int )
 {
 	auto arrayComboExpressions = Rage::split( line, "," );
 

@@ -43,7 +43,7 @@ public:
 	virtual void Move(int n);
 	void ChangeMusicUnlessLocked( int n ); /* +1 or -1 */
 	virtual void ChangeMusic(int dist); /* +1 or -1 */
-	virtual void SetOpenSection( std::string group ) { }
+	virtual void SetOpenSection( std::string ) { }
 
 	// Return true if we're moving fast automatically.
 	int IsMoving() const;

@@ -1672,7 +1672,7 @@ void LuaFunc_Register_SaveScreenshot(lua_State *L)
 { lua_register(L, "SaveScreenshot", LuaFunc_SaveScreenshot); }
 REGISTER_WITH_LUA_FUNCTION(LuaFunc_Register_SaveScreenshot);
 
-static int LuaFunc_update_centering(lua_State* L)
+static int LuaFunc_update_centering(lua_State*)
 {
 	update_centering();
 	return 0;

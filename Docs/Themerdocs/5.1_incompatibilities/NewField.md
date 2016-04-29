@@ -306,7 +306,7 @@ in the param table are:
 ReverseChanged is sent when the reverse scale goes from negative to positive,
 or from positive to negative.  It is not sent every frame.
 Param table elements:
-* ```sign``` -1 if reverse_scale is less than 0, 1 otherwise.
+* ```sign``` -1 if the column is in reverse mode, 1 if it's not.
 
 ### BeatUpdateCommand
 BeatUpdate occurs every frame.  Param table elements:

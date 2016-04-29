@@ -369,7 +369,7 @@ void OptionsList::SwitchMenu( int iDir )
 	TweenOnCurrentRow( iDir > 0 );
 }
 
-void OptionsList::MoveItem( const std::string &sRowName, int iMove )
+void OptionsList::MoveItem( const std::string &, int )
 {
 }
 

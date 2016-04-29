@@ -51,7 +51,7 @@ bool ArchHooks::AppFocusChanged()
 	return bFocusChanged;
 }
 
-bool ArchHooks::GoToURL( std::string sUrl )
+bool ArchHooks::GoToURL( std::string )
 {
 	return false;
 }

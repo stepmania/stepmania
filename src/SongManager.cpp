@@ -2086,7 +2086,7 @@ public:
 	static int GetNumAdditionalCourses( T* p, lua_State *L ){ lua_pushnumber( L, p->GetNumAdditionalCourses() ); return 1; }
 	static int GetNumCourseGroups( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetNumCourseGroups() ); return 1; }
 	/* Note: this could now be implemented as Luna<Steps>::GetSong */
-	static int GetSongFromSteps( T* p, lua_State *L )
+	static int GetSongFromSteps( T*, lua_State *L )
 	{
 		Song *pSong = nullptr;
 		if( lua_isnil(L,1) ) { pSong = nullptr; }

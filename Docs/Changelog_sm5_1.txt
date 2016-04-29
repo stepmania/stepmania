@@ -7,6 +7,30 @@ StepMania 5.1 and StepMania 5.0 have separate changelogs so that devs working
 on the different branches don't have conflicts on the changelog file.
 ________________________________________________________________________________
 
+2016/04/23
+----------
+* [item_scroller] Added item_params arg to item_scroller:create_actors, which
+  is copied and passed to the create_actors function for each item. [kyzentun]
+* [nesty_menus] option_item_underlinable:create_actors now takes params for
+  setting the diffuse and stroke of the text, or a custom text actor.
+  Added params to nesty_option_display for controlling its parts.
+  Renamed "meta" field in menu entry to "menu".
+  Added sounds to menu system.
+  Added on_open and on_close actions to sub menus.
+  Renamed clear_options_set_stack, push_options_set_stack and
+  pop_options_set_stack to clear_menu_stack, push_menu_stack, and
+  pop_menu_stack.
+  If the "execute" field in a menu entry is set, the "meta" or "menu" field
+  will be ignored.
+  Added bool_song_mod_val, enum_player_mod_val, enum_player_mod_single_val,
+  float_player_mod_val, float_profile_val, bool_profile_val, and
+  choices_config_val to nesty_options table.
+  [kyzentun]
+* [NewField] ReverseChanged message from first column is now passed to the
+  field. [kyzentun]
+* [NewSkin] Added shown_noteskins config and menu for hiding noteskins. [kyzentun]
+* [ScreenNestyPlayerOptions] Added life and background options. [kyzentun]
+
 2016/03/14
 ----------
 * [NewSkin] Added quantum_time field to column info so that quantizations can
@@ -19,14 +43,14 @@ ________________________________________________________________________________
   effect at the beginning.  [kyzentun]
 * [Linux] Use XRandR 1.2 functions for querying all displays (technically,
   "outputs"), and allow selecting which output to go fullscreen on. Also,
-	implement support for fullscreen borderless window by using
-	_NET_WM_STATE_FULLSCREEN display manager hint. [drewbarbs, roothorick]
+  implement support for fullscreen borderless window by using
+  _NET_WM_STATE_FULLSCREEN display manager hint. [drewbarbs, roothorick]
 * [Graphics] Replace DisplayResolutions class with DisplaySpecs, to track
   available resolutions/refresh rates on a per-display basis. Create Lua
-	binding. [drewbarbs]
+  binding. [drewbarbs]
 * [OptionRow]: add ability to return "option effects" (enum OptEffect) and
   indicating full OptionRow reloads (enum ReloadChanged) from
-	OptionRowHandlerLua. [drewbarbs]
+  OptionRowHandlerLua. [drewbarbs]
 
 2016/02/20
 ----------
@@ -46,8 +70,7 @@ ________________________________________________________________________________
   layers system.  Columns also have layers. [kyzentun]
 * [NewSkin] Removed layers_above_notes and layers_below_notes fields and
   replaced them with layers field.  Draw order for layers in the column must
-	be set in the noteskin now. [kyzentun]
-  
+  be set in the noteskin now. [kyzentun]
 
 2016/02/12
 ----------

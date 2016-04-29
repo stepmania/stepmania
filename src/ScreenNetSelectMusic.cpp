@@ -330,7 +330,7 @@ bool ScreenNetSelectMusic::MenuRight( const InputEventPlus &input )
 	return true;
 }
 
-bool ScreenNetSelectMusic::MenuUp( const InputEventPlus &input )
+bool ScreenNetSelectMusic::MenuUp( const InputEventPlus & )
 {
 	NSMAN->ReportNSSOnOff(3);
 	GAMESTATE->m_EditMode = EditMode_Full;
@@ -398,7 +398,7 @@ bool ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 	return true;
 }
 
-bool ScreenNetSelectMusic::MenuStart( const InputEventPlus &input )
+bool ScreenNetSelectMusic::MenuStart( const InputEventPlus & )
 {
 	bool bResult = m_MusicWheel.Select();
 
@@ -428,7 +428,7 @@ bool ScreenNetSelectMusic::MenuStart( const InputEventPlus &input )
 	return true;
 }
 
-bool ScreenNetSelectMusic::MenuBack( const InputEventPlus &input )
+bool ScreenNetSelectMusic::MenuBack( const InputEventPlus & )
 {
 	SOUND->StopMusic();
 	TweenOffScreen();

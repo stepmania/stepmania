@@ -122,7 +122,8 @@ end
 
 item_scroller_mt= {
 	__index= {
-		create_actors= function(self, name, num_items, item_metatable, mx, my)
+		create_actors= function(self, name, num_items, item_metatable, mx, my, item_params)
+			item_params= item_params or {}
 			self.name= name
 			self.info_pos= 1
 			self.info_map= {}
@@ -142,7 +143,9 @@ item_scroller_mt= {
 			}
 			for n= 1, num_items do
 				local item= setmetatable({}, item_metatable)
-				local actor_frame= item:create_actors("item" .. n)
+				local sub_params= DeepCopy(item_params)
+				sub_params.name= "item" .. n
+				local actor_frame= item:create_actors(sub_params)
 				self.items[#self.items+1]= item
 				args[#args+1]= actor_frame
 			end
