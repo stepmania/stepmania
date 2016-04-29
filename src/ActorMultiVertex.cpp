@@ -1031,6 +1031,8 @@ public:
 		if(tex == nullptr)
 		{
 			luaL_error(L, "The texture must be set before adding states.");
+			// It normally never hits here, but this will keep the static analyzer happy.
+			return 1;
 		}
 		const float width_pix= tex->GetImageToTexCoordsRatioX();
 		const float height_pix= tex->GetImageToTexCoordsRatioY();

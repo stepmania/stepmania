@@ -714,10 +714,13 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 			vPos = pLastPositionKey->Position + (pThisPositionKey->Position - pLastPositionKey->Position) * s;
 		}
 		else if( pLastPositionKey == nullptr )
+		{
 			vPos = pThisPositionKey->Position;
+		}
 		else if( pThisPositionKey == nullptr )
+		{
 			vPos = pLastPositionKey->Position;
-
+		}
 		// search for the adjacent rotation keys
 		const msRotationKey *pLastRotationKey = nullptr, *pThisRotationKey = nullptr;
 		for (auto const &rotationKey: pBone->RotationKeys)

@@ -1419,7 +1419,10 @@ void NoteDisplay::DrawTap(const TapNote& tn,
 	{
 		Message msg( "SetAttack" );
 		msg.SetParam( "Modifiers", tn.sAttackModifiers );
-		pActor->HandleMessage( msg );
+		if (pActor != nullptr) // Should never be nullptr at this point.
+		{
+			pActor->HandleMessage( msg );
+		}
 	}
 
 	const float fYOffset = ArrowEffects::GetYOffset( m_pPlayerState, column_args.column, fBeat );

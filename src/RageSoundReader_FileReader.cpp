@@ -26,22 +26,29 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBas
 	Rage::ci_ascii_string ciFormat{ format.c_str() };
 #if defined(HAS_WAV)
 	if( ciFormat == "wav" )
+	{
 		Sample = new RageSoundReader_WAV;
+	}
 #endif
 
 #if defined(HAS_MP3)
-	if( ciFormat == "mp3" )
+	if( Sample == nullptr && ciFormat == "mp3" )
+	{
 		Sample = new RageSoundReader_MP3;
+	}
 #endif
 
 #if defined(HAS_OGG)
-	if( ciFormat == "oga" || ciFormat == "ogg" )
+	if( Sample == nullptr && ( ciFormat == "oga" || ciFormat == "ogg" ) )
+	{
 		Sample = new RageSoundReader_Vorbisfile;
+	}
 #endif
 
 	if( !Sample )
+	{
 		return nullptr;
-
+	}
 	OpenResult ret = Sample->Open( pFile );
 	pFile = nullptr; // Sample owns it now
 	if( ret == OPEN_OK )

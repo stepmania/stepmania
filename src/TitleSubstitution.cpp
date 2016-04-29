@@ -147,7 +147,7 @@ void TitleSubst::Load(const std::string &filename, const std::string &section)
 		return;
 	FOREACH_CONST_Child( pGroup, child )
 	{
-		if( child->GetName() != "Translation" )
+		if( child == nullptr || child->GetName() != "Translation" )
 			continue;
 
 		TitleTrans tr;
