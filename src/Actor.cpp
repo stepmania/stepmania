@@ -170,6 +170,7 @@ Actor::Actor()
 	m_timing_source= nullptr;
 	m_bFirstUpdate = true;
 	m_being_drawn_by_proxy= false;
+	m_tween_uses_effect_delta= false;
 }
 
 Actor::~Actor()
