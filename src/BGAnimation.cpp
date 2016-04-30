@@ -38,7 +38,7 @@ void BGAnimation::AddLayersFromAniDir( const std::string &_sAniDir, const XNode 
 
 	{
 		vector<std::string> vsLayerNames;
-		FOREACH_CONST_Child( pNode, pLayer )
+		for (auto const *pLayer: *pNode)
 		{
 			if( strncmp(pLayer->GetName().c_str(), "Layer", 5) == 0 )
 				vsLayerNames.push_back( pLayer->GetName() );

@@ -132,14 +132,17 @@ void ActorFrame::LoadChildrenFromNode( const XNode* pNode )
 		pChildren = pNode;
 	}
 
-	FOREACH_CONST_Child( pChildren, pChild )
+	for (auto const *pChild: *pChildren)
 	{
 		if( bArrayOnly && !IsAnInt(pChild->GetName()) )
+		{
 			continue;
-
+		}
 		Actor* pChildActor = ActorUtil::LoadFromNode( pChild, this );
 		if( pChildActor )
+		{
 			AddChild( pChildActor );
+		}
 	}
 	SortByDrawOrder();
 }

@@ -426,26 +426,26 @@ void actor_template_t::load_frames_from_file(std::string const& fname, std::stri
 	XNode const* sprite_node= ini.GetChild("Sprite");
 	if(sprite_node != nullptr)
 	{
-		FOREACH_CONST_Attr(sprite_node, attr)
+		for (auto const &attr: sprite_node->m_attrs)
 		{
 			// Frame and Delay fields have names of the form "Frame0000" where the
 			// "0000" part is the id of the frame.
-			std::string field_type{ Rage::head(attr->first, 5) };
+			std::string field_type{ Rage::head(attr.first, 5) };
 			if(field_type == "Frame")
 			{
-				int id= StringToInt( Rage::tail(attr->first, -5) );
+				int id= StringToInt( Rage::tail(attr.first, -5) );
 				make_space_for_frame(id);
-				attr->second->GetValue(frames[id].frame);
+				attr.second->GetValue(frames[id].frame);
 			}
 			else if(field_type == "Delay")
 			{
-				int id= StringToInt( Rage::tail(attr->first, -5) );
+				int id= StringToInt( Rage::tail(attr.first, -5) );
 				make_space_for_frame(id);
-				attr->second->GetValue(frames[id].delay);
+				attr.second->GetValue(frames[id].delay);
 			}
 			else if(field_type == "Textu")
 			{
-				store_field("Texture", attr->second, false, rel_path, "");
+				store_field("Texture", attr.second, false, rel_path, "");
 			}
 			else
 			{
@@ -466,9 +466,9 @@ void actor_template_t::load_model_from_file(std::string const& fname, std::strin
 	XNode const* model_node= ini.GetChild("Model");
 	if(model_node != nullptr)
 	{
-		FOREACH_CONST_Attr(model_node, attr)
+		for (auto const &attr: model_node->m_attrs)
 		{
-			store_field(attr->first, attr->second, false, rel_path, "");
+			store_field(attr.first, attr.second, false, rel_path, "");
 		}
 	}
 }
@@ -478,16 +478,16 @@ void actor_template_t::load_node(XNode const& node, std::string const& dirname, 
 	type= node.GetName();
 	bool type_set_by_automagic= false;
 #define set_type(auto_type) type_set_by_automagic= true; type= auto_type;
-	FOREACH_CONST_Attr(&node, attr)
+	for (auto const &attr: node.m_attrs)
 	{
-		if(attr->first == "Name")
+		if(attr.first == "Name")
 		{
-			attr->second->GetValue(name);
+			attr.second->GetValue(name);
 		}
-		else if(attr->first == "Condition")
+		else if(attr.first == "Condition")
 		{
 			std::string cond_str;
-			attr->second->GetValue(cond_str);
+			attr.second->GetValue(cond_str);
 			condition_set_t::iterator cond= conditions.find(cond_str);
 			if(cond == conditions.end())
 			{
@@ -499,32 +499,32 @@ void actor_template_t::load_node(XNode const& node, std::string const& dirname, 
 				condition= cond->second;
 			}
 		}
-		else if(attr->first == "Type" || attr->first == "Class")
+		else if(attr.first == "Type" || attr.first == "Class")
 		{
 			if(!type_set_by_automagic)
 			{
-				attr->second->GetValue(type);
+				attr.second->GetValue(type);
 			}
 		}
-		else if(attr->first == "__TEXT__")
+		else if(attr.first == "__TEXT__")
 		{
 			// Ignore.  This attribute seems to be put in by the xml parser, and
 			// not part of the actual xml code.
 		}
-		else if(attr->first == "Text")
+		else if(attr.first == "Text")
 		{
 			set_type("BitmapText");
-			store_field(attr->first, attr->second, true);
+			store_field(attr.first, attr.second, true);
 		}
-		else if(attr->first == "File")
+		else if(attr.first == "File")
 		{
 			std::string relative_path;
-			attr->second->GetValue(relative_path);
+			attr.second->GetValue(relative_path);
 			std::string sfname= dirname + relative_path;
 			if(FILEMAN->IsADirectory(sfname))
 			{
 				set_type("LoadActor");
-				store_field("File", attr->second, false);
+				store_field("File", attr.second, false);
 			}
 			else
 			{
@@ -599,14 +599,14 @@ void actor_template_t::load_node(XNode const& node, std::string const& dirname, 
 					}
 					else
 					{
-						store_field("File", attr->second, false);
+						store_field("File", attr.second, false);
 					}
 				}
 			}
 		}
 		else
 		{
-			store_field(attr->first, attr->second, true);
+			store_field(attr.first, attr.second, true);
 		}
 	}
 	if(type == "BitmapText")
@@ -621,7 +621,7 @@ void actor_template_t::load_node(XNode const& node, std::string const& dirname, 
 	XNode const* xren= node.GetChild("children");
 	if(xren != nullptr)
 	{
-		FOREACH_CONST_Child(xren, child)
+		for (auto const *child: *xren)
 		{
 			actor_template_t chill_plate;
 			chill_plate.load_node(*child, dirname, conditions);

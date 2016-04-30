@@ -1272,11 +1272,11 @@ void InputMappings::ReadMappings( const InputScheme *pInputScheme, std::string s
 
 	if( Key )
 	{
-		FOREACH_CONST_Attr( Key, i )
+		for (auto const &i: Key->m_attrs)
 		{
-			const std::string &name = i->first;
+			const std::string &name = i.first;
 			std::string value;
-			i->second->GetValue( value );
+			i.second->GetValue( value );
 
 			GameInput GameI;
 			GameI.FromString( pInputScheme, name );

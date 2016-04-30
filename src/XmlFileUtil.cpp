@@ -423,16 +423,16 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 	WRITE( pNode->GetName() );
 
 	// <TAG Attr1="Val1"
-	FOREACH_CONST_Attr( pNode, p )
+	for (auto const &p: pNode->m_attrs)
 	{
-		if( p->first == XNode::TEXT_ATTRIBUTE )
+		if( p.first == XNode::TEXT_ATTRIBUTE )
 		{
 			continue;
 		}
-		std::string attr( p->second->GetValue<std::string>() );
+		std::string attr( p.second->GetValue<std::string>() );
 		ReplaceEntityText( attr, g_mapCharsToEntities );
 		WRITE( " " );
-		WRITE( p->first );
+		WRITE( p.first );
 		WRITE( "='" );
 		WRITE( attr );
 		WRITE( "'" );
@@ -452,7 +452,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 		{
 			iTabBase++;
 		}
-		FOREACH_CONST_Child( pNode, p )
+		for (auto const *p: *pNode)
 		{
 			if( !GetXMLInternal( p, f, bWriteTabs, iTabBase ) )
 			{
@@ -640,9 +640,10 @@ void XmlFileUtil::AnnotateXNodeTree( XNode *pNode, const std::string &sFile )
 	{
 		pNode = queue.back();
 		queue.pop_back();
-		FOREACH_Child( pNode, pChild )
+		for (auto *pChild: *pNode)
+		{
 			queue.push_back( pChild );
-
+		}
 		/* Source file, for error messages: */
 		pNode->AppendAttr( "_Source", sFile );
 
@@ -664,14 +665,15 @@ void XmlFileUtil::CompileXNodeTree( XNode *pNode, const std::string &sFile )
 	{
 		pNode = aToCompile.back();
 		aToCompile.pop_back();
-		FOREACH_Child( pNode, pChild )
-			aToCompile.push_back( pChild );
-
-		FOREACH_Attr( pNode, pAttr )
+		for (auto *pChild: *pNode)
 		{
-			XNodeValue *pValue = CompileXMLNodeValue( L, pAttr->first, pAttr->second, sFile );
-			delete pAttr->second;
-			pAttr->second = pValue;
+			aToCompile.push_back( pChild );
+		}
+		for (auto &pAttr: pNode->m_attrs)
+		{
+			XNodeValue *pValue = CompileXMLNodeValue( L, pAttr.first, pAttr.second, sFile );
+			delete pAttr.second;
+			pAttr.second = pValue;
 		}
 	}
 
@@ -812,8 +814,8 @@ void XmlFileUtil::MergeIniUnder( XNode *pFrom, XNode *pTo )
 	vector<XNodes::iterator> aToMove;
 
 	// Iterate over each section in pFrom.
-	XNodes::iterator it = pFrom->GetChildrenBegin();
-	while( it != pFrom->GetChildrenEnd() )
+	XNodes::iterator it = pFrom->begin();
+	while( it != pFrom->end() )
 	{
 		XNodes::iterator next = it;
 		++next;
@@ -827,10 +829,10 @@ void XmlFileUtil::MergeIniUnder( XNode *pFrom, XNode *pTo )
 		}
 		else
 		{
-			FOREACH_Attr( pSectionNode, it2 )
+			for (auto &it2: pSectionNode->m_attrs)
 			{
 				// Don't overwrite existing nodes.
-				pChildNode->AppendAttrFrom( it2->first, it2->second->Copy(), false );
+				pChildNode->AppendAttrFrom( it2.first, it2.second->Copy(), false );
 			}
 		}
 

@@ -351,11 +351,11 @@ Actor &Actor::operator=(Actor other)
 void Actor::LoadFromNode( const XNode* pNode )
 {
 	Lua *L = LUA->Get();
-	FOREACH_CONST_Attr( pNode, pAttr )
+	for (auto const &pAttr: pNode->m_attrs)
 	{
 		// Load Name, if any.
-		const std::string &sKeyName = pAttr->first;
-		const XNodeValue *pValue = pAttr->second;
+		const std::string &sKeyName = pAttr.first;
+		const XNodeValue *pValue = pAttr.second;
 		if( Rage::ends_with(sKeyName,"Command") )
 		{
 			LuaReference *pRef = new LuaReference;

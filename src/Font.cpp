@@ -493,10 +493,10 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const std:
 	const XNode* pNode = ini.GetChild( sPageName );
 	if( pNode )
 	{
-		FOREACH_CONST_Attr( pNode, pAttr )
+		for (auto const &pAttr: pNode->m_attrs)
 		{
-			std::string sName = Rage::make_upper(pAttr->first);
-			const XNodeValue *pValue = pAttr->second;
+			std::string sName = Rage::make_upper(pAttr.first);
+			const XNodeValue *pValue = pAttr.second;
 
 			// If val is an integer, it's a width, eg. "10=27".
 			if( IsAnInt(sName) )

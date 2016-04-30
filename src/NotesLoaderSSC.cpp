@@ -1154,7 +1154,9 @@ bool SSCLoader::LoadEditFromMsd(const MsdFile &msd,
 				if(reused_steps_info.ssc_format)
 				{
 					if(reused_steps_info.has_own_timing)
-					{ pNewNotes->m_Timing = stepsTiming; }
+					{
+						pNewNotes->m_Timing = stepsTiming;
+					}
 					pNewNotes->SetSMNoteData(sParams[1]);
 					pNewNotes->TidyUpData();
 				}

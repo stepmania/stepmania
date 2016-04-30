@@ -295,9 +295,9 @@ static void GetFilterToFileNames( const std::string sBaseDir, const Song *pSong,
 		return;
 	}
 
-	FOREACH_CONST_Attr( pSection, p )
+	for (auto const &p: pSection->m_attrs)
 	{
-		vsPossibleFileNamesOut.insert( p->first );
+		vsPossibleFileNamesOut.insert( p.first );
 	}
 }
 

@@ -27,10 +27,14 @@ XNode::XNode( std::string const &sName )
 XNode::XNode( const XNode &cpy ):
 	m_sName( cpy.m_sName )
 {
-	FOREACH_CONST_Attr( &cpy, pAttr )
-		this->AppendAttrFrom( pAttr->first, pAttr->second->Copy() );
-	FOREACH_CONST_Child( &cpy, c )
+	for (auto const &pAttr: cpy.m_attrs)
+	{
+		this->AppendAttrFrom( pAttr.first, pAttr.second->Copy() );
+	}
+	for (auto const *c: cpy)
+	{
 		this->AppendChild( new XNode(*c) );
+	}
 }
 
 void XNode::Clear()
@@ -40,10 +44,14 @@ void XNode::Clear()
 
 void XNode::Free()
 {
-	FOREACH_Child( this, p )
+	for (auto *p: *this)
+	{
 		delete p;
-	FOREACH_Attr( this, pAttr )
-		delete pAttr->second;
+	}
+	for (auto &pAttr: this->m_attrs)
+	{
+		delete pAttr.second;
+	}
 	m_childs.clear();
 	m_children_by_name.clear();
 	m_attrs.clear();
