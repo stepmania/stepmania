@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ScreenSelectCharacter.h"
+#include "RageMath.hpp"
 #include "ScreenManager.h"
 #include "GameSoundManager.h"
 #include "RageUtil.h"
@@ -13,30 +14,31 @@
 #include "CharacterManager.h"
 #include "InputEventPlus.h"
 
+using std::vector;
 
-#define TITLE_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",ssprintf("TitleP%dOnCommand",p+1))
-#define TITLE_OFF_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",ssprintf("TitleP%dOffCommand",p+1))
-#define CARD_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",ssprintf("CardP%dOnCommand",p+1))
-#define CARD_OFF_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",ssprintf("CardP%dOffCommand",p+1))
-#define CARD_ARROWS_ON_COMMAND( p )			THEME->GetMetricA("ScreenSelectCharacter",ssprintf("CardArrowsP%dOnCommand",p+1))
-#define CARD_ARROWS_OFF_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",ssprintf("CardArrowsP%dOffCommand",p+1))
+#define TITLE_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("TitleP%dOnCommand",p+1))
+#define TITLE_OFF_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("TitleP%dOffCommand",p+1))
+#define CARD_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("CardP%dOnCommand",p+1))
+#define CARD_OFF_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("CardP%dOffCommand",p+1))
+#define CARD_ARROWS_ON_COMMAND( p )			THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("CardArrowsP%dOnCommand",p+1))
+#define CARD_ARROWS_OFF_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("CardArrowsP%dOffCommand",p+1))
 #define EXPLANATION_ON_COMMAND				THEME->GetMetricA("ScreenSelectCharacter","ExplanationOnCommand")
 #define EXPLANATION_OFF_COMMAND				THEME->GetMetricA("ScreenSelectCharacter","ExplanationOffCommand")
-#define ATTACK_FRAME_ON_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",ssprintf("AttackFrameP%dOnCommand",p+1))
-#define ATTACK_FRAME_OFF_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",ssprintf("AttackFrameP%dOffCommand",p+1))
+#define ATTACK_FRAME_ON_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("AttackFrameP%dOnCommand",p+1))
+#define ATTACK_FRAME_OFF_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("AttackFrameP%dOffCommand",p+1))
 #define ATTACK_ICON_WIDTH					THEME->GetMetricF("ScreenSelectCharacter","AttackIconWidth")
 #define ATTACK_ICON_HEIGHT					THEME->GetMetricF("ScreenSelectCharacter","AttackIconHeight")
-#define ATTACK_ICONS_START_X( p )			THEME->GetMetricF("ScreenSelectCharacter",ssprintf("AttackIconsP%dStartX",p+1))
-#define ATTACK_ICONS_START_Y( p )			THEME->GetMetricF("ScreenSelectCharacter",ssprintf("AttackIconsP%dStartY",p+1))
+#define ATTACK_ICONS_START_X( p )			THEME->GetMetricF("ScreenSelectCharacter",fmt::sprintf("AttackIconsP%dStartX",p+1))
+#define ATTACK_ICONS_START_Y( p )			THEME->GetMetricF("ScreenSelectCharacter",fmt::sprintf("AttackIconsP%dStartY",p+1))
 #define ATTACK_ICONS_SPACING_X				THEME->GetMetricF("ScreenSelectCharacter","AttackIconsSpacingX")
 #define ATTACK_ICONS_SPACING_Y				THEME->GetMetricF("ScreenSelectCharacter","AttackIconsSpacingY")
-#define ATTACK_ICONS_ON_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",ssprintf("AttackIconsP%dOnCommand",p+1))
-#define ATTACK_ICONS_OFF_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",ssprintf("AttackIconsP%dOffCommand",p+1))
+#define ATTACK_ICONS_ON_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("AttackIconsP%dOnCommand",p+1))
+#define ATTACK_ICONS_OFF_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("AttackIconsP%dOffCommand",p+1))
 #define TIMER_SECONDS						THEME->GetMetricI("ScreenSelectCharacter","TimerSeconds")
 #define ICON_WIDTH							THEME->GetMetricF("ScreenSelectCharacter","IconWidth")
 #define ICON_HEIGHT							THEME->GetMetricF("ScreenSelectCharacter","IconHeight")
-#define ICONS_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",ssprintf("IconsP%dOnCommand",p+1))
-#define ICONS_OFF_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",ssprintf("IconsP%dOffCommand",p+1))
+#define ICONS_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("IconsP%dOnCommand",p+1))
+#define ICONS_OFF_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",fmt::sprintf("IconsP%dOffCommand",p+1))
 
 #define LEVEL_CURSOR_X( p, l )	( ICONS_START_X(p)+ICONS_SPACING_X*((NUM_ATTACKS_PER_LEVEL-1)/2.f) )
 #define LEVEL_CURSOR_Y( p, l )	( ICONS_START_Y(p)+ICONS_SPACING_Y*l )
@@ -51,7 +53,7 @@ REGISTER_SCREEN_CLASS( ScreenSelectCharacter );
 void ScreenSelectCharacter::Init()
 {
 	ScreenWithMenuElements::Init();
-	
+
 	vector<Character*> apCharacters;
 	CHARMAN->GetCharacters( apCharacters );
 	if( apCharacters.empty() )
@@ -118,8 +120,8 @@ void ScreenSelectCharacter::Init()
 			for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
 				for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
 				{
-					float fX = ATTACK_ICONS_START_X(p) + ATTACK_ICONS_SPACING_X*j; 
-					float fY = ATTACK_ICONS_START_Y(p) + ATTACK_ICONS_SPACING_Y*i; 
+					float fX = ATTACK_ICONS_START_X(p) + ATTACK_ICONS_SPACING_X*j;
+					float fY = ATTACK_ICONS_START_Y(p) + ATTACK_ICONS_SPACING_Y*i;
 					m_AttackIcons[p][i][j].SetXY( fX, fY );
 					m_AttackIcons[p][i][j].RunCommands( ATTACK_ICONS_ON_COMMAND(p) );
 					this->AddChild( &m_AttackIcons[p][i][j] );
@@ -196,7 +198,7 @@ PlayerNumber ScreenSelectCharacter::GetAffectedPlayerNumber( PlayerNumber pn )
 	case FINISHED_CHOOSING:
 		return pn;
 	default:
-		FAIL_M(ssprintf("Invalid character selection state: %i", m_SelectionRow[pn]));
+		FAIL_M(fmt::sprintf("Invalid character selection state: %i", m_SelectionRow[pn]));
 	}
 }
 
@@ -220,7 +222,7 @@ void ScreenSelectCharacter::AfterRowChange( PlayerNumber pn )
 	{
 		case CHOOSING_CPU_CHARACTER:
 		case CHOOSING_HUMAN_CHARACTER:
-			m_sprCardArrows[pnAffected].SetEffectGlowShift(1.0f, RageColor(1,1,1,0.2f), RageColor(1,1,1,0.8f));
+			m_sprCardArrows[pnAffected].SetEffectGlowShift(1.0f, Rage::Color(1,1,1,0.2f), Rage::Color(1,1,1,0.8f));
 			break;
 		default: break;
 	}
@@ -241,13 +243,16 @@ void ScreenSelectCharacter::AfterValueChange( PlayerNumber pn )
 			m_sprCard[pnAffected].Load( pChar->GetCardPath() );
 
 			if(GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE || GAMESTATE->m_PlayMode == PLAY_MODE_RAVE)
+			{
 				for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
+				{
 					for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
 					{
 						m_AttackIcons[pnAffected][i][j].Load( "ScreenSelectCharacter" );
 						m_AttackIcons[pnAffected][i][j].Set( pChar->m_sAttacks[i][j] );
 					}
-
+				}
+			}
 			int c = m_iSelectedCharacter[pnAffected] - MAX_CHAR_ICONS_TO_SHOW/2;
 			wrap( c, apCharacters.size() );
 
@@ -259,7 +264,7 @@ void ScreenSelectCharacter::AfterValueChange( PlayerNumber pn )
 				Banner &banner = m_sprIcons[pnAffected][i];
 				banner.LoadIconFromCharacter( pCharacter );
 				float fX = (pnAffected==PLAYER_1) ? 320-ICON_WIDTH : 320+ICON_WIDTH;
-				float fY = SCALE( i, 0.f, MAX_CHAR_ICONS_TO_SHOW-1.f, 240-(MAX_CHAR_ICONS_TO_SHOW/2*ICON_HEIGHT), 240+(MAX_CHAR_ICONS_TO_SHOW/2*ICON_HEIGHT));
+				float fY = Rage::scale( i + 0.f, 0.f, MAX_CHAR_ICONS_TO_SHOW-1.f, 240.f-(MAX_CHAR_ICONS_TO_SHOW/2*ICON_HEIGHT), 240.f+(MAX_CHAR_ICONS_TO_SHOW/2*ICON_HEIGHT));
 				banner.SetXY( fX, fY );
 			}
 		}
@@ -268,7 +273,7 @@ void ScreenSelectCharacter::AfterValueChange( PlayerNumber pn )
 		;	// do nothing
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid character selection state: %i", m_SelectionRow[pn]));
+		FAIL_M(fmt::sprintf("Invalid character selection state: %i", m_SelectionRow[pn]));
 	}
 }
 
@@ -390,7 +395,9 @@ void ScreenSelectCharacter::TweenOffScreen()
 					m_AttackIcons[p][i][j].RunCommands( ATTACK_ICONS_OFF_COMMAND(p) );
 		}
 		for( unsigned i=0; i<MAX_CHAR_ICONS_TO_SHOW; i++ )
+		{
 			m_sprIcons[p][i].RunCommands( ICONS_OFF_COMMAND(p) );
+		}
 	}
 	m_sprExplanation.RunCommands( EXPLANATION_OFF_COMMAND );
 }
@@ -398,7 +405,7 @@ void ScreenSelectCharacter::TweenOffScreen()
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -408,7 +415,7 @@ void ScreenSelectCharacter::TweenOffScreen()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -12,29 +12,27 @@ public:
 	FileTransfer();
 	~FileTransfer();
 
-	void StartDownload(const RString &sURL, const RString &sDestFile);
-	void StartUpload(const RString &sURL, const RString &sSrcFile, const RString &sDestFile);
+	void StartDownload(const std::string &sURL, const std::string &sDestFile);
+	void StartUpload(const std::string &sURL, const std::string &sSrcFile, const std::string &sDestFile);
 
 	void Cancel();
-	RString Update(float fDeltaTime);
+	std::string Update(float fDeltaTime);
 	bool IsFinished() const { return m_bFinished; }
 	void Finish();
 	int GetResponseCode() const { return m_iResponseCode; }
-	RString GetResponse() const { return m_sBUFFER; }
-	RString GetStatus() const { return m_sStatus; }
+	std::string GetResponse() const { return m_sBUFFER; }
+	std::string GetStatus() const { return m_sStatus; }
 private:
 	enum TransferType { download, upload };
-	void StartTransfer(TransferType type, const RString &sURL, const RString &sSrcFile, const RString &sDestFile);
+	void StartTransfer(TransferType type, const std::string &sURL, const std::string &sSrcFile, const std::string &sDestFile);
 	int m_iPackagesPos;
 	int m_iLinksPos;
-
-	int m_iDLorLST;
 
 	// HTTP portion
 	void HTTPUpdate();
 
 	// True if proper string, false if improper
-	bool ParseHTTPAddress(const RString & URL, RString & Proto, RString & Server, int & Port, RString & Addy);
+	bool ParseHTTPAddress(const std::string & URL, std::string & Proto, std::string & Server, int & Port, std::string & Addy);
 
 	void	UpdateProgress();
 
@@ -42,26 +40,26 @@ private:
 	float	m_fLastUpdate;
 	long	m_bytesLastUpdate;
 
-	RString	m_sStatus;
+	std::string	m_sStatus;
 
 	EzSockets m_wSocket;
 
 	bool	m_bGotHeader;
 
 	RageFile	m_fOutputFile;
-	RString	m_sEndName;
+	std::string	m_sEndName;
 	bool	m_bSavingFile;
 
-	RString m_sBaseAddress;
+	std::string m_sBaseAddress;
 	// HTTP Header information responce
 	long	m_iTotalBytes;
 	long	m_iDownloaded;
 
 	long	m_iResponseCode;
-	RString	m_sResponseName;
+	std::string	m_sResponseName;
 
 	// Raw HTTP Buffer
-	RString m_sBUFFER;
+	std::string m_sBUFFER;
 
 	bool m_bFinished;
 };

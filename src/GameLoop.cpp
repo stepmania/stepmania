@@ -22,6 +22,8 @@
 #include "RageTimer.h"
 #include "RageInput.h"
 
+using std::vector;
+
 static RageTimer g_GameplayTimer;
 
 static Preference<bool> g_bNeverBoostAppPriority( "NeverBoostAppPriority", false );
@@ -76,9 +78,9 @@ static bool ChangeAppPri()
 		if( INPUTMAN )
 		{
 			INPUTMAN->GetDevicesAndDescriptions(vDevices);
-			FOREACH_CONST( InputDeviceInfo, vDevices, d )
+			for (auto const &d: vDevices)
 			{
-				if( d->sDesc.find("NTPAD") != string::npos )
+				if( d.sDesc.find("NTPAD") != std::string::npos )
 				{
 					LOG->Trace( "Using NTPAD.  Don't boost priority." );
 					return false;
@@ -114,14 +116,14 @@ static void CheckFocus()
 }
 
 // On the next update, change themes, and load sNewScreen.
-static RString g_NewTheme;
-static RString g_NewGame;
-void GameLoop::ChangeTheme(const RString &sNewTheme)
+static std::string g_NewTheme;
+static std::string g_NewGame;
+void GameLoop::ChangeTheme(const std::string &sNewTheme)
 {
 	g_NewTheme = sNewTheme;
 }
 
-void GameLoop::ChangeGame(const RString& new_game, const RString& new_theme)
+void GameLoop::ChangeGame(const std::string& new_game, const std::string& new_theme)
 {
 	g_NewGame= new_game;
 	g_NewTheme= new_theme;
@@ -134,7 +136,7 @@ namespace
 {
 	void DoChangeTheme()
 	{
-		SAFE_DELETE( SCREENMAN );
+		Rage::safe_delete( SCREENMAN );
 		TEXTUREMAN->DoDelayedDelete();
 
 		// In case the previous theme overloaded class bindings, reinitialize them.
@@ -160,10 +162,10 @@ namespace
 		// So now the correct thing to do is for a theme to specify its entry
 		// point after a theme change, ensuring that we are going to a valid
 		// screen and not crashing. -Kyz
-		RString new_screen= THEME->GetMetric("Common", "InitialScreen");
+		std::string new_screen= THEME->GetMetric("Common", "InitialScreen");
 		if(THEME->HasMetric("Common", "AfterThemeChangeScreen"))
 		{
-			RString after_screen= THEME->GetMetric("Common", "AfterThemeChangeScreen");
+			std::string after_screen= THEME->GetMetric("Common", "AfterThemeChangeScreen");
 			if(SCREENMAN->IsScreenNameValid(after_screen))
 			{
 				new_screen= after_screen;
@@ -175,13 +177,13 @@ namespace
 		}
 		SCREENMAN->SetNewScreen(new_screen);
 
-		g_NewTheme = RString();
+		g_NewTheme = std::string();
 	}
 
 	void DoChangeGame()
 	{
 		const Game* g= GAMEMAN->StringToGame(g_NewGame);
-		ASSERT(g != NULL);
+		ASSERT(g != nullptr);
 		GAMESTATE->SetCurGame(g);
 
 		bool theme_changing= false;
@@ -189,7 +191,7 @@ namespace
 		// game type.  So if a theme name isn't passed in, fetch from the prefs.
 		if(g_NewTheme.empty())
 		{
-			g_NewTheme= PREFSMAN->m_sTheme;
+			g_NewTheme= PREFSMAN->m_sTheme.Get();
 		}
 		if(g_NewTheme != THEME->GetCurThemeName() && THEME->IsThemeSelectable(g_NewTheme))
 		{
@@ -198,7 +200,7 @@ namespace
 
 		if(theme_changing)
 		{
-			SAFE_DELETE(SCREENMAN);
+			Rage::safe_delete(SCREENMAN);
 			TEXTUREMAN->DoDelayedDelete();
 			LUA->RegisterTypes();
 			THEME->SwitchThemeAndLanguage(g_NewTheme, THEME->GetCurLanguage(),
@@ -208,8 +210,8 @@ namespace
 			SCREENMAN= new ScreenManager();
 		}
 		StepMania::ResetGame();
-		RString new_screen= THEME->GetMetric("Common", "InitialScreen");
-		RString after_screen;
+		std::string new_screen= THEME->GetMetric("Common", "InitialScreen");
+		std::string after_screen;
 		if(theme_changing)
 		{
 			SCREENMAN->ThemeChanged();
@@ -245,8 +247,8 @@ namespace
 		 * what it'd be. -aj */
 		THEME->UpdateLuaGlobals();
 		THEME->ReloadMetrics();
-		g_NewGame= RString();
-		g_NewTheme= RString();
+		g_NewGame= std::string();
+		g_NewTheme= std::string();
 	}
 }
 
@@ -273,7 +275,7 @@ void GameLoop::RunGameLoop()
 
 		if( g_fConstantUpdateDeltaSeconds > 0 )
 			fDeltaTime = g_fConstantUpdateDeltaSeconds;
-		
+
 		CheckGameLoopTimerSkips( fDeltaTime );
 
 		fDeltaTime *= g_fUpdateRate;
@@ -284,7 +286,7 @@ void GameLoop::RunGameLoop()
 		SOUNDMAN->Update();
 
 		/* Update song beat information -before- calling update on all the classes that
-		 * depend on it. If you don't do this first, the classes are all acting on old 
+		 * depend on it. If you don't do this first, the classes are all acting on old
 		 * information and will lag. (but no longer fatally, due to timestamping -glenn) */
 		SOUND->Update( fDeltaTime );
 		TEXTUREMAN->Update( fDeltaTime );
@@ -301,7 +303,7 @@ void GameLoop::RunGameLoop()
 		{
 			INPUTFILTER->Reset();	// fix "buttons stuck" if button held while unplugged
 			INPUTMAN->LoadDrivers();
-			RString sMessage;
+			std::string sMessage;
 			if( INPUTMAPPER->CheckForChangedInputDevicesAndRemap(sMessage) )
 				SCREENMAN->SystemMessage( sMessage );
 		}
@@ -338,7 +340,7 @@ private:
 	enum State { RENDERING_IDLE, RENDERING_START, RENDERING_ACTIVE, RENDERING_END };
 	State m_State;
 };
-static ConcurrentRenderer *g_pConcurrentRenderer = NULL;
+static ConcurrentRenderer *g_pConcurrentRenderer = nullptr;
 
 ConcurrentRenderer::ConcurrentRenderer():
 	m_Event("ConcurrentRenderer")
@@ -385,7 +387,7 @@ void ConcurrentRenderer::Stop()
 
 void ConcurrentRenderer::RenderThread()
 {
-	ASSERT( SCREENMAN != NULL );
+	ASSERT( SCREENMAN != nullptr );
 
 	while( !m_bShutdown )
 	{
@@ -442,7 +444,7 @@ int ConcurrentRenderer::StartRenderThread( void *p )
 
 void GameLoop::StartConcurrentRendering()
 {
-	if( g_pConcurrentRenderer == NULL )
+	if( g_pConcurrentRenderer == nullptr )
 		g_pConcurrentRenderer = new ConcurrentRenderer;
 	g_pConcurrentRenderer->Start();
 }

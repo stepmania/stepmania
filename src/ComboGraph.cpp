@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ComboGraph.h"
+#include "RageMath.hpp"
 #include "RageLog.h"
 #include "StageStats.h"
 #include "ActorUtil.h"
@@ -14,12 +15,12 @@ ComboGraph::ComboGraph()
 {
 	DeleteChildrenWhenDone( true );
 
-	m_pNormalCombo = NULL;
-	m_pMaxCombo = NULL;
-	m_pComboNumber = NULL;
+	m_pNormalCombo = nullptr;
+	m_pMaxCombo = nullptr;
+	m_pComboNumber = nullptr;
 }
 
-void ComboGraph::Load( RString sMetricsGroup )
+void ComboGraph::Load( std::string sMetricsGroup )
 {
 	BODY_WIDTH.Load( sMetricsGroup, "BodyWidth" );
 	BODY_HEIGHT.Load( sMetricsGroup, "BodyHeight" );
@@ -28,10 +29,10 @@ void ComboGraph::Load( RString sMetricsGroup )
 	this->SetWidth(BODY_WIDTH);
 	this->SetHeight(BODY_HEIGHT);
 
-	Actor *pActor = NULL;
+	Actor *pActor = nullptr;
 
 	m_pBacking = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"Backing") );
-	if( m_pBacking != NULL )
+	if( m_pBacking != nullptr )
 	{
 		m_pBacking->ZoomToWidth( BODY_WIDTH );
 		m_pBacking->ZoomToHeight( BODY_HEIGHT );
@@ -39,7 +40,7 @@ void ComboGraph::Load( RString sMetricsGroup )
 	}
 
 	m_pNormalCombo = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"NormalCombo") );
-	if( m_pNormalCombo != NULL )
+	if( m_pNormalCombo != nullptr )
 	{
 		m_pNormalCombo->ZoomToWidth( BODY_WIDTH );
 		m_pNormalCombo->ZoomToHeight( BODY_HEIGHT );
@@ -47,7 +48,7 @@ void ComboGraph::Load( RString sMetricsGroup )
 	}
 
 	m_pMaxCombo = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"MaxCombo") );
-	if( m_pMaxCombo != NULL )
+	if( m_pMaxCombo != nullptr )
 	{
 		m_pMaxCombo->ZoomToWidth( BODY_WIDTH );
 		m_pMaxCombo->ZoomToHeight( BODY_HEIGHT );
@@ -55,18 +56,19 @@ void ComboGraph::Load( RString sMetricsGroup )
 	}
 
 	pActor = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"ComboNumber") );
-	if( pActor != NULL )
+	if( pActor != nullptr )
 	{
 		m_pComboNumber = dynamic_cast<BitmapText *>( pActor );
-		if( m_pComboNumber != NULL )
+		if( m_pComboNumber != nullptr )
 			this->AddChild( m_pComboNumber );
 		else
 			LuaHelpers::ReportScriptErrorFmt( "ComboGraph: \"sMetricsGroup\" \"ComboNumber\" must be a BitmapText" );
 	}
-}	
+}
 
 void ComboGraph::Set( const StageStats &s, const PlayerStageStats &pss )
 {
+	using std::max;
 	const float fFirstSecond = 0;
 	const float fLastSecond = s.GetTotalPossibleStepsSeconds();
 
@@ -86,10 +88,10 @@ void ComboGraph::Set( const StageStats &s, const PlayerStageStats &pss )
 		LOG->Trace( "combo %i is %f+%f of %f", i, combo.m_fStartSecond, combo.m_fSizeSeconds, fLastSecond );
 		Actor *pSprite = bIsMax? m_pMaxCombo->Copy() : m_pNormalCombo->Copy();
 
-		const float fStart = SCALE( combo.m_fStartSecond, fFirstSecond, fLastSecond, 0.0f, 1.0f );
-		const float fSize = SCALE( combo.m_fSizeSeconds, 0, fLastSecond-fFirstSecond, 0.0f, 1.0f );
-		pSprite->SetCropLeft ( SCALE( fSize, 0.0f, 1.0f, 0.5f, 0.0f ) );
-		pSprite->SetCropRight( SCALE( fSize, 0.0f, 1.0f, 0.5f, 0.0f ) );
+		const float fStart = Rage::scale( combo.m_fStartSecond, fFirstSecond, fLastSecond, 0.0f, 1.0f );
+		const float fSize = Rage::scale( combo.m_fSizeSeconds, 0.f, fLastSecond-fFirstSecond, 0.0f, 1.0f );
+		pSprite->SetCropLeft ( Rage::scale( fSize, 0.0f, 1.0f, 0.5f, 0.0f ) );
+		pSprite->SetCropRight( Rage::scale( fSize, 0.0f, 1.0f, 0.5f, 0.0f ) );
 
 		pSprite->SetCropLeft( fStart );
 		pSprite->SetCropRight( 1 - (fSize + fStart) );
@@ -102,7 +104,7 @@ void ComboGraph::Set( const StageStats &s, const PlayerStageStats &pss )
 		const PlayerStageStats::Combo_t &combo = pss.m_ComboList[i];
 		if( combo.GetStageCnt() < MinComboSizeToShow )
 			continue; // too small
-	
+
 		if( !iMaxComboSize )
 			continue;
 
@@ -112,14 +114,14 @@ void ComboGraph::Set( const StageStats &s, const PlayerStageStats &pss )
 
 		BitmapText *pText = m_pComboNumber->Copy();
 
-		const float fStart = SCALE( combo.m_fStartSecond, fFirstSecond, fLastSecond, 0.0f, 1.0f );
-		const float fSize = SCALE( combo.m_fSizeSeconds, 0, fLastSecond-fFirstSecond, 0.0f, 1.0f );
+		const float fStart = Rage::scale( combo.m_fStartSecond, fFirstSecond, fLastSecond, 0.0f, 1.0f );
+		const float fSize = Rage::scale( combo.m_fSizeSeconds, 0.f, fLastSecond-fFirstSecond, 0.0f, 1.0f );
 
 		const float fCenterPercent = fStart + fSize/2;
-		const float fCenterXPos = SCALE( fCenterPercent, 0.0f, 1.0f, -BODY_WIDTH/2.0f, BODY_WIDTH/2.0f );
+		const float fCenterXPos = Rage::scale( fCenterPercent, 0.0f, 1.0f, -BODY_WIDTH/2.0f, BODY_WIDTH/2.0f );
 		pText->SetX( fCenterXPos );
 
-		pText->SetText( ssprintf("%i",combo.GetStageCnt()) );
+		pText->SetText( fmt::sprintf("%i",combo.GetStageCnt()) );
 
 		this->AddChild( pText );
 	}
@@ -133,7 +135,7 @@ void ComboGraph::Set( const StageStats &s, const PlayerStageStats &pss )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ComboGraph. */ 
+/** @brief Allow Lua to have access to the ComboGraph. */
 class LunaComboGraph: public Luna<ComboGraph>
 {
 public:
@@ -163,7 +165,7 @@ LUA_REGISTER_DERIVED_CLASS( ComboGraph, ActorFrame )
 /*
  * (c) 2003 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -173,7 +175,7 @@ LUA_REGISTER_DERIVED_CLASS( ComboGraph, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

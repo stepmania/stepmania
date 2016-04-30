@@ -12,7 +12,7 @@ public:
 	RageSoundDriver_PulseAudio();
 	virtual ~RageSoundDriver_PulseAudio();
 
-	RString Init();
+	std::string Init();
 
 	inline int64_t GetPosition() const;
 	inline int GetSampleRate() const { return m_SampleRate; };

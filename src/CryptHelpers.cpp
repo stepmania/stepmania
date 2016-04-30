@@ -6,7 +6,7 @@ PRNGWrapper::PRNGWrapper( const struct ltc_prng_descriptor *pPRNGDescriptor )
 	m_iPRNG = register_prng( pPRNGDescriptor );
 	ASSERT( m_iPRNG >= 0 );
 
-	int iRet = rng_make_prng( 128, m_iPRNG, &m_PRNG, NULL );
+	int iRet = rng_make_prng( 128, m_iPRNG, &m_PRNG, nullptr );
 	ASSERT_M( iRet == CRYPT_OK, error_to_string(iRet) );
 }
 
@@ -28,7 +28,7 @@ void PRNGWrapper::AddEntropy( const void *pData, int iSize )
 void PRNGWrapper::AddRandomEntropy()
 {
 	unsigned char buf[256];
-	int iRet = rng_get_bytes( buf, sizeof(buf), NULL );
+	int iRet = rng_get_bytes( buf, sizeof(buf), nullptr );
 	ASSERT( iRet == sizeof(buf) );
 
 	AddEntropy( buf, sizeof(buf) );
@@ -57,7 +57,7 @@ void RSAKeyWrapper::Generate( PRNGWrapper &prng, int iKeyLenBits )
 	ASSERT( iRet == CRYPT_OK );
 }
 
-bool RSAKeyWrapper::Load( const RString &sKey, RString &sError )
+bool RSAKeyWrapper::Load( const std::string &sKey, std::string &sError )
 {
 	Unload();
 

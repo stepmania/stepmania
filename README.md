@@ -21,6 +21,10 @@ For those that do not wish to compile the game on their own and use a binary rig
 
 StepMania can be compiled using [CMake](http://www.cmake.org/). More information about using CMake can be found in both the `Build` directory and CMake's documentation.
 
+###Submodules###
+
+This repository now uses submodules to attempt to keep the repository size down. Utilize `git submodule init` and `git submodule update` to get the necessary submodules.
+
 ## Resources
 
 * Website: http://www.stepmania.com/

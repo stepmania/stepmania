@@ -32,7 +32,7 @@ LightsDriver_LinuxParallel::~LightsDriver_LinuxParallel()
 void LightsDriver_LinuxParallel::Set( const LightsState *ls )
 {
 	// Set LightState to port
-	RString s;
+	std::string s;
 
 	// Prepare screen output too for debugging
 	s += "LinuxParallel Lights Driver Debug\n";
@@ -56,13 +56,13 @@ void LightsDriver_LinuxParallel::Set( const LightsState *ls )
 		iNumGameButtonsToShow = INPUTMAPPER->GetInputScheme()->m_iButtonsPerController;
 	FOREACH_ENUM( GameController,  gc )
 	{
-		s += ssprintf("Controller%d Bits: ",gc+1);
+		s += fmt::sprintf("Controller%d Bits: ",gc+1);
 		for( int gb=0; gb<iNumGameButtonsToShow; gb++ )
 			s += ls->m_bGameButtonLights[gc][gb] ? '1' : '0';
 		s += "\n";
 	}
-	s += ssprintf("Output Port: 0x%x\n", PORT_ADDRESS);
-	s += ssprintf("Output Byte: %i\n", output);
+	s += fmt::sprintf("Output Port: 0x%x\n", PORT_ADDRESS);
+	s += fmt::sprintf("Output Byte: %i\n", output);
 
 	if( SCREEN_DEBUG )
 		SCREENMAN->SystemMessageNoAnimate( s );
@@ -74,7 +74,7 @@ void LightsDriver_LinuxParallel::Set( const LightsState *ls )
 /*
  * (c) 2004 Hugo Hromic M. <hhromic@udec.cl>
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -84,7 +84,7 @@ void LightsDriver_LinuxParallel::Set( const LightsState *ls )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

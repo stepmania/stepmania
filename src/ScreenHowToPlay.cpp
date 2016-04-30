@@ -19,12 +19,14 @@
 #include "Character.h"
 #include "LifeMeterBar.h"
 
+using std::vector;
+
 static const ThemeMetric<int>		NUM_W2S		("ScreenHowToPlay","NumW2s");
 static const ThemeMetric<int>		NUM_MISSES	("ScreenHowToPlay","NumMisses");
 static const ThemeMetric<bool>	USE_CHARACTER	("ScreenHowToPlay","UseCharacter");
 static const ThemeMetric<bool>	USE_PAD		("ScreenHowToPlay","UsePad");
 static const ThemeMetric<bool>	USE_PLAYER	("ScreenHowToPlay","UsePlayer");
-static const ThemeMetric<RString>	CHARACTER_NAME("ScreenHowToPlay","CharacterName");
+static const ThemeMetric<std::string>	CHARACTER_NAME("ScreenHowToPlay","CharacterName");
 
 enum Animation
 {
@@ -38,7 +40,7 @@ enum Animation
 	NUM_ANIMATIONS
 };
 
-static const RString anims[NUM_ANIMATIONS] =
+static const std::string anims[NUM_ANIMATIONS] =
 {
 	"DancePad.txt",
 	"DancePads.txt",
@@ -49,16 +51,20 @@ static const RString anims[NUM_ANIMATIONS] =
 	"BeginnerHelper_step-jumplr.bones.txt"
 };
 
-static RString GetAnimPath( Animation a )
+static std::string GetAnimPath( Animation a )
 {
-	return RString("Characters/") + anims[a];
+	return std::string("Characters/") + anims[a];
 }
 
 static bool HaveAllCharAnimations()
 {
 	for( int i = ANIM_UP; i < NUM_ANIMATIONS; ++i )
+	{
 		if( !DoesFileExist( GetAnimPath( (Animation) i ) ) )
+		{
 			return false;
+		}
+	}
 	return true;
 }
 
@@ -69,9 +75,9 @@ ScreenHowToPlay::ScreenHowToPlay()
 	m_iNumW2s = NUM_W2S;
 
 	// initialize these because they might not be used.
-	m_pLifeMeterBar = NULL;
-	m_pmCharacter = NULL;
-	m_pmDancePad = NULL;
+	m_pLifeMeterBar = nullptr;
+	m_pmCharacter = nullptr;
+	m_pmDancePad = nullptr;
 }
 
 void ScreenHowToPlay::Init()
@@ -82,7 +88,8 @@ void ScreenHowToPlay::Init()
 	{
 		m_pmDancePad = new Model;
 		m_pmDancePad->SetName( "Pad" );
-		m_pmDancePad->LoadMilkshapeAscii( GetAnimPath(ANIM_DANCE_PAD) );
+		std::string load_fail_reason;
+		m_pmDancePad->LoadMilkshapeAscii( GetAnimPath(ANIM_DANCE_PAD), load_fail_reason );
 		// xxx: hardcoded rotation. can be undone, but still. -freem
 		m_pmDancePad->SetRotationX( 35 );
 		ActorUtil::LoadAllCommandsAndSetXY( m_pmDancePad, m_sName );
@@ -99,18 +106,19 @@ void ScreenHowToPlay::Init()
 		else
 			displayChar = CHARMAN->GetRandomCharacter();
 
-		RString sModelPath = displayChar->GetModelPath();
+		std::string sModelPath = displayChar->GetModelPath();
 		if( sModelPath != "" )
 		{
 			m_pmCharacter = new Model;
 			m_pmCharacter->SetName( "Character" );
-			m_pmCharacter->LoadMilkshapeAscii( displayChar->GetModelPath() );
+			std::string load_fail_reason;
+			m_pmCharacter->LoadMilkshapeAscii( displayChar->GetModelPath(), load_fail_reason );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-LEFT", GetAnimPath( ANIM_LEFT ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-DOWN", GetAnimPath( ANIM_DOWN ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-UP", GetAnimPath( ANIM_UP ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-RIGHT", GetAnimPath( ANIM_RIGHT ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-JUMPLR", GetAnimPath( ANIM_JUMPLR ) );
-			RString sRestFile = displayChar->GetRestAnimationPath();
+			std::string sRestFile = displayChar->GetRestAnimationPath();
 			ASSERT( !sRestFile.empty() );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "rest",displayChar->GetRestAnimationPath() );
 			m_pmCharacter->SetDefaultAnimation( "rest" );
@@ -137,19 +145,22 @@ void ScreenHowToPlay::Init()
 		m_pLifeMeterBar->FillForHowToPlay( NUM_W2S, NUM_MISSES );
 
 		// Allow themers to use either a .ssc or .sm file for this. -aj
-		RString sStepsPath = THEME->GetPathO(m_sName, "steps");
+		std::string sStepsPath = THEME->GetPathO(m_sName, "steps");
 		SSCLoader loaderSSC;
 		SMLoader loaderSM;
-		if( sStepsPath.Right(4) == ".ssc" )
-			loaderSSC.LoadFromSimfile( sStepsPath, m_Song, false );
+		if (Rage::ends_with(sStepsPath, ".ssc"))
+		{
+			loaderSSC.LoadFromSimfile(sStepsPath, m_Song, false);
+		}
 		else
-			loaderSM.LoadFromSimfile( sStepsPath, m_Song, false );
-		m_Song.AddAutoGenNotes();
+		{
+			loaderSM.LoadFromSimfile(sStepsPath, m_Song, false);
+		}m_Song.AddAutoGenNotes();
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
 
 		Steps *pSteps = SongUtil::GetClosestNotes( &m_Song, pStyle->m_StepsType, Difficulty_Beginner );
-		if(pSteps == NULL)
+		if(pSteps == nullptr)
 		{
 			LuaHelpers::ReportScriptErrorFmt("No playable steps of StepsType '%s' for ScreenHowToPlay in file %s", StringConversion::ToString(pStyle->m_StepsType).c_str(), sStepsPath.c_str());
 		}
@@ -167,7 +178,7 @@ void ScreenHowToPlay::Init()
 			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_AUTOPLAY;
 
 			m_Player->Init("Player", GAMESTATE->m_pPlayerState[PLAYER_1],
-				NULL, m_pLifeMeterBar, NULL, NULL, NULL, NULL, NULL, NULL);
+				nullptr, m_pLifeMeterBar, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
 			m_Player.Load( m_NoteData );
 			m_Player->SetName( "Player" );
 			this->AddChild( m_Player );
@@ -217,9 +228,12 @@ void ScreenHowToPlay::Step()
 	{
 		const int iNumTracks = m_NoteData.GetNumTracks();
 		for( int k=0; k<iNumTracks; k++ )
+		{
 			if( m_NoteData.GetTapNote(k, iNoteRow).type == TapNoteType_Tap )
+			{
 				iStep |= 1 << k;
-
+			}
+		}
 		switch( iStep )
 		{
 		case ST_LEFT:	m_pmCharacter->PlayAnimation( "Step-LEFT", 1.8f ); break;
@@ -244,7 +258,7 @@ void ScreenHowToPlay::Step()
 
 void ScreenHowToPlay::Update( float fDelta )
 {
-	if( GAMESTATE->m_pCurSong != NULL )
+	if( GAMESTATE->m_pCurSong != nullptr )
 	{
 		RageTimer tm;
 		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong, GAMESTATE->m_pCurSong->m_SongTiming, tm );
@@ -306,7 +320,7 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ScreenHowToPlay. */ 
+/** @brief Allow Lua to have access to the ScreenHowToPlay. */
 class LunaScreenHowToPlay: public Luna<ScreenHowToPlay>
 {
 public:
@@ -330,7 +344,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenHowToPlay, ScreenAttract )
 /*
  * (c) 2001-2004 Chris Danford, Thad Ward
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -340,7 +354,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenHowToPlay, ScreenAttract )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -1,5 +1,5 @@
-#ifndef RAGE_SOUND_NULL
-#define RAGE_SOUND_NULL
+#ifndef RAGE_SOUND_nullptr
+#define RAGE_SOUND_nullptr
 
 #include "RageSoundDriver.h"
 
@@ -15,7 +15,7 @@ private:
 	int64_t m_iLastCursorPos;
 	int m_iSampleRate;
 };
-#define USE_RAGE_SOUND_NULL
+#define USE_RAGE_SOUND_nullptr
 
 #endif
 

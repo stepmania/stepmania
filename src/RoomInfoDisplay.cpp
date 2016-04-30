@@ -4,6 +4,7 @@
 #include "ActorUtil.h"
 #include "NetworkSyncManager.h"
 #include "LocalizedString.h"
+#include "RageUtil.hpp"
 
 AutoScreenMessage( SM_RoomInfoRetract );
 AutoScreenMessage( SM_RoomInfoDeploy );
@@ -27,7 +28,7 @@ RoomInfoDisplay::~RoomInfoDisplay()
 	for (size_t i = 0; i < m_playerList.size(); i++)
 	{
 		this->RemoveChild(m_playerList[i]);
-		SAFE_DELETE(m_playerList[i]);
+		Rage::safe_delete(m_playerList[i]);
 	}
 }
 
@@ -48,7 +49,7 @@ void RoomInfoDisplay::RetractInfoBox()
 	m_state = LOCKED;
 }
 
-void RoomInfoDisplay::Load( RString sType )
+void RoomInfoDisplay::Load( std::string sType )
 {
 	DEPLOY_DELAY.Load( sType, "DeployDelay" );
 	RETRACT_DELAY.Load( sType, "RetractDelay" );
@@ -144,7 +145,7 @@ void RoomInfoDisplay::Update( float fDeltaTime )
 	ActorFrame::Update(fDeltaTime);
 }
 
-void RoomInfoDisplay::RequestRoomInfo(const RString& name)
+void RoomInfoDisplay::RequestRoomInfo(const std::string& name)
 {
 	NSMAN->m_SMOnlinePacket.ClearPacket();
 	NSMAN->m_SMOnlinePacket.Write1((uint8_t)3); //Request Room Info
@@ -157,7 +158,7 @@ void RoomInfoDisplay::SetRoomInfo( const RoomInfo& info)
 	m_songTitle.SetText( SONG_TITLE.GetValue() + info.songTitle );
 	m_songSub.SetText( SONG_SUB_TITLE.GetValue() + info.songSubTitle );
 	m_songArtist.SetText( SONG_ARTIST.GetValue() + info.songArtist );
-	m_players.SetText(ssprintf("%s (%d/%d):", PLAYERS.GetValue().c_str(), info.numPlayers, info.maxPlayers));
+	m_players.SetText(fmt::sprintf("%s (%d/%d):", PLAYERS.GetValue().c_str(), info.numPlayers, info.maxPlayers));
 
 	if (m_playerList.size() > info.players.size())
 	{
@@ -165,7 +166,7 @@ void RoomInfoDisplay::SetRoomInfo( const RoomInfo& info)
 		{
 			//if our old list is larger remove some elements
 			this->RemoveChild(m_playerList[i]);
-			SAFE_DELETE(m_playerList[i]);
+			Rage::safe_delete(m_playerList[i]);
 		}
 		m_playerList.resize(info.players.size());
 	}

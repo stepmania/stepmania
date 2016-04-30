@@ -19,8 +19,8 @@ enum DrawMode
 	DrawMode_Invalid
 };
 
-const RString& DrawModeToString( DrawMode cat );
-const RString& DrawModeToLocalizedString( DrawMode cat );
+std::string const DrawModeToString( DrawMode cat );
+std::string const DrawModeToLocalizedString( DrawMode cat );
 LuaDeclareType( DrawMode );
 
 class RageTexture;
@@ -48,8 +48,8 @@ public:
 		void SetDrawState( DrawMode dm, int first, int num );
 		int GetSafeNumToDraw( DrawMode dm, int num ) const;
 
-		vector<RageSpriteVertex> vertices;
-		vector<size_t> quad_states;
+		std::vector<Rage::SpriteVertex> vertices;
+		std::vector<size_t> quad_states;
 
 		DrawMode _DrawMode;
 		int FirstToDraw;
@@ -73,7 +73,7 @@ public:
 	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();
 	virtual void DrawInternal( const AMV_TweenState *TS );
-	
+
 	void SetCurrentTweenStart();
 	void EraseHeadTween();
 	void UpdatePercentThroughTween( float PercentThroughTween );
@@ -81,7 +81,7 @@ public:
 
 	void StopTweening();
 	void FinishTweening();
-	
+
 	void SetTexture( RageTexture *Texture );
 	RageTexture* GetTexture() { return _Texture; };
 	void LoadFromTexture( RageTextureID ID );
@@ -105,9 +105,9 @@ public:
 	int GetCurrFirstToDraw() const					{ return AMV_current.FirstToDraw; }
 	int GetCurrNumToDraw() const					{ return AMV_current.NumToDraw; }
 	size_t GetNumVertices() 					{ return AMV_DestTweenState().vertices.size(); }
-	
+
 	void SetVertexPos( int index , float x , float y , float z );
-	void SetVertexColor( int index , RageColor c );
+	void SetVertexColor( int index , Rage::Color c );
 	void SetVertexCoords( int index , float TexCoordX , float TexCoordY );
 
 	inline void SetVertsFromSplinesInternal(size_t num_splines, size_t start_vert);
@@ -116,7 +116,7 @@ public:
 
 	struct State
 	{
-		RectF rect;
+		Rage::RectF rect;
 		float delay;
 	};
 	int GetNumStates() const { return _states.size(); }
@@ -128,7 +128,7 @@ public:
 	{ ASSERT(i < _states.size()); return _states[i]; }
 	void SetStateData(size_t i, const State& s)
 	{ ASSERT(i < _states.size()); _states[i]= s; }
-	void SetStateProperties(const vector<State>& new_states)
+	void SetStateProperties(const std::vector<State>& new_states)
 	{ _states= new_states; SetState(0); }
 	void SetState(size_t i);
 	void SetAllStateDelays(float delay);
@@ -153,25 +153,25 @@ public:
 private:
 	RageTexture* _Texture;
 
-	vector<RageSpriteVertex> _Vertices;
-	vector<AMV_TweenState> AMV_Tweens;
+	std::vector<Rage::SpriteVertex> _Vertices;
+	std::vector<AMV_TweenState> AMV_Tweens;
 	AMV_TweenState AMV_current;
 	AMV_TweenState AMV_start;
 
 	// required to handle diffuse and glow
 	AMV_TweenState *AMV_TempState;
-	
+
 	EffectMode _EffectMode;
 	TextureMode _TextureMode;
 
 	// Four splines for controlling vert positions, because quads drawmode
 	// requires four. -Kyz
-	vector<CubicSplineN> _splines;
+	std::vector<CubicSplineN> _splines;
 
 	bool _skip_next_update;
 	float _secs_into_state;
 	size_t _cur_state;
-	vector<State> _states;
+	std::vector<State> _states;
 };
 
 /**
@@ -179,7 +179,7 @@ private:
  * @author Matthew Gardner and Eric Reese (c) 2014
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -189,7 +189,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

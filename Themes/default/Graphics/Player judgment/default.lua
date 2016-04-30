@@ -130,6 +130,11 @@ t[#t+1] = Def.ActorFrame {
 		OnCommand=cmd(diffuse,Color("White");diffusealpha,1);
 	};
 	InitCommand = function(self)
+		if player_config:get_data(player).JudgmentUnderField then
+			self:draworder(newfield_draw_order.under_field)
+		else
+			self:draworder(newfield_draw_order.over_field)
+		end
 		c = self:GetChildren();
 	end;
 

@@ -13,6 +13,8 @@
 #include "LocalizedString.h"
 #include "OptionRowHandler.h"
 
+using std::vector;
+
 static LocalizedString CLIENT_CONNECT		( "ScreenNetworkOptions", "Connect" );
 static LocalizedString CLIENT_DISCONNECT	( "ScreenNetworkOptions", "Disconnect" );
 static LocalizedString SCORE_ON			( "ScreenNetworkOptions", "ScoreOn" );
@@ -38,7 +40,7 @@ enum DisplayScoreboard
 
 AutoScreenMessage( SM_DoneConnecting );
 
-Preference<RString> g_sLastServer( "LastConnectedServer",	"" );
+Preference<std::string> g_sLastServer( "LastConnectedServer",	"" );
 
 REGISTER_SCREEN_CLASS( ScreenNetworkOptions );
 
@@ -54,9 +56,9 @@ void ScreenNetworkOptions::Init()
 		pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 		pHand->m_Def.m_bAllowThemeItems = false;
 		if ( NSMAN->useSMserver )
-			pHand->m_Def.m_vsChoices.push_back(CLIENT_DISCONNECT);
+			pHand->m_Def.m_vsChoices.push_back(CLIENT_DISCONNECT.GetValue());
 		else
-			pHand->m_Def.m_vsChoices.push_back(CLIENT_CONNECT);
+			pHand->m_Def.m_vsChoices.push_back(CLIENT_CONNECT.GetValue());
 	}
 	{
 		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
@@ -65,8 +67,8 @@ void ScreenNetworkOptions::Init()
 		pHand->m_Def.m_vsChoices.clear();
 		pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 		pHand->m_Def.m_bAllowThemeItems = false;
-		pHand->m_Def.m_vsChoices.push_back(SCORE_OFF);
-		pHand->m_Def.m_vsChoices.push_back(SCORE_ON);
+		pHand->m_Def.m_vsChoices.push_back(SCORE_OFF.GetValue());
+		pHand->m_Def.m_vsChoices.push_back(SCORE_ON.GetValue());
 	}
 	/*
 	{
@@ -78,8 +80,10 @@ void ScreenNetworkOptions::Init()
 			OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
 			pHand->m_Def.m_sName = "Servers";
 			pHand->m_Def.m_bAllowThemeItems = false;
-			for( unsigned int j = 0; j < AllServers.size(); j++ )
-				pHand->m_Def.m_vsChoices.push_back( AllServers[j].Name );
+			for (auto &server: AllServers)
+			{
+				pHand->m_Def.m_vsChoices.push_back( server.Name );
+			}
 			vHands.push_back( pHand );
 		}
 	}
@@ -96,7 +100,7 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 	{
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
-			RString sNewName = ScreenTextEntry::s_sLastAnswer;
+			std::string sNewName = ScreenTextEntry::s_sLastAnswer;
 			NSMAN->PostStartUp(sNewName);
 			NSMAN->DisplayStartupStatus();
 			UpdateConnectStatus( );
@@ -114,12 +118,12 @@ bool ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 	case PO_CONNECTION:
 		if ( !NSMAN->useSMserver )
 		{
-			ScreenTextEntry::TextEntry( SM_DoneConnecting, ENTER_NETWORK_ADDRESS.GetValue()+"\n\n"+CONNECT_TO_YOURSELF.GetValue(), g_sLastServer, 128 );
+			ScreenTextEntry::TextEntry( SM_DoneConnecting, ENTER_NETWORK_ADDRESS.GetValue()+"\n\n"+CONNECT_TO_YOURSELF.GetValue(), g_sLastServer.Get(), 128 );
 		}
 		else
 		{
 			NSMAN->CloseConnection();
-			SCREENMAN->SystemMessage( DISCONNECTED );
+			SCREENMAN->SystemMessage( DISCONNECTED.GetValue() );
 			UpdateConnectStatus( );
 		}
 		return true;
@@ -162,7 +166,7 @@ void ScreenNetworkOptions::UpdateConnectStatus( )
 /*
  * (c) 2004 Charles Lohr, Josh Allen
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -172,7 +176,7 @@ void ScreenNetworkOptions::UpdateConnectStatus( )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

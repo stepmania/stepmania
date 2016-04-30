@@ -1,8 +1,6 @@
 #include "global.h"
 #include "KeyboardDevice.h"
 
-using namespace __gnu_cxx;
-
 bool KeyboardDevice::AddLogicalDevice( int usagePage, int usage )
 {
 	return usagePage == kHIDPage_GenericDesktop && usage == kHIDUsage_GD_Keyboard;
@@ -162,16 +160,16 @@ void KeyboardDevice::AddElement( int usagePage, int usage, IOHIDElementCookie co
 
 void KeyboardDevice::Open()
 {
-	for( hash_map<IOHIDElementCookie,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
+	for (auto &mapping : m_Mapping)
 	{
-		//LOG->Trace( "Adding %s to queue, cookie %p", DeviceButtonToString(i->second).c_str(), i->first );
-		AddElementToQueue( i->first );
+		//LOG->Trace( "Adding %s to queue, cookie %p", DeviceButtonToString(i->second).c_str(), static_cast<void *>(mapping.first) );
+		AddElementToQueue(mapping.first);
 	}
 }
 
 void KeyboardDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const
 {
-	hash_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
+	std::unordered_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
 
 	if( iter != m_Mapping.end() )
 	{

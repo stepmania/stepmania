@@ -1,5 +1,5 @@
 /*
- * Implements properties: 
+ * Implements properties:
  *   "Speed" - cause the sound to play faster or slower
  *   "Pitch" - raise or lower the pitch of the sound
  *
@@ -15,7 +15,7 @@
 #include "RageLog.h"
 
 RageSoundReader_PitchChange::RageSoundReader_PitchChange( RageSoundReader *pSource ):
-	RageSoundReader_Filter( NULL )
+	RageSoundReader_Filter( nullptr )
 {
 	m_pSpeedChange = new RageSoundReader_SpeedChange( pSource );
 	m_pResample = new RageSoundReader_Resample_Good( m_pSpeedChange, m_pSpeedChange->GetSampleRate() );
@@ -75,7 +75,7 @@ int RageSoundReader_PitchChange::Read( float *pBuf, int iFrames )
 	return RageSoundReader_Filter::Read( pBuf, iFrames );
 }
 
-bool RageSoundReader_PitchChange::SetProperty( const RString &sProperty, float fValue )
+bool RageSoundReader_PitchChange::SetProperty( const std::string &sProperty, float fValue )
 {
 	if( sProperty == "Rate" )
 	{

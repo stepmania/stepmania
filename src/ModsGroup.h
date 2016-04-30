@@ -50,9 +50,13 @@ public:
 	inline void Assign( ModsLevel level, U T::*member, const U &val )
 	{
 		if( level != ModsLevel_Song )
+		{
 			m_[ModsLevel_Current].*member = val;
+		}
 		for( ; level < ModsLevel_Current; enum_add(level, 1) )
+		{
 			m_[level].*member = val;
+		}
 	}
 
 	template<typename U, int n>
@@ -60,33 +64,49 @@ public:
 	{
 		DEBUG_ASSERT( index < n );
 		if( level != ModsLevel_Song )
+		{
 			(m_[ModsLevel_Current].*member)[index] = val;
+		}
 		for( ; level < ModsLevel_Current; enum_add(level, 1) )
+		{
 			(m_[level].*member)[index] = val;
+		}
 	}
 
 	void Assign( ModsLevel level, const T &val )
 	{
 		if( level != ModsLevel_Song )
+		{
 			m_[ModsLevel_Current] = val;
+		}
 		for( ; level < ModsLevel_Current; enum_add(level, 1) )
+		{
 			m_[level] = val;
+		}
 	}
 
 	void Call( ModsLevel level, void (T::*fun)() )
 	{
 		if( level != ModsLevel_Song )
+		{
 			(m_[ModsLevel_Current].*fun)();
+		}
 		for( ; level < ModsLevel_Current; enum_add(level, 1) )
+		{
 			(m_[level].*fun)();
+		}
 	}
 
-	void FromString( ModsLevel level, const RString &str )
+	void FromString( ModsLevel level, const std::string &str )
 	{
 		if( level != ModsLevel_Song )
+		{
 			m_[ModsLevel_Current].FromString( str );
+		}
 		for( ; level < ModsLevel_Current; enum_add(level, 1) )
+		{
 			m_[level].FromString( str );
+		}
 	}
 
 	void SetCurrentToLevel( ModsLevel level )

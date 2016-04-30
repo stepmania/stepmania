@@ -89,8 +89,8 @@ void ScreenEnding::Init()
 		if( !PROFILEMAN->IsPersistentProfile(p) )
 			continue;
 	
-		m_sprRemoveMemoryCard[p].SetName( ssprintf("RemoveCardP%d",p+1) );
-		m_sprRemoveMemoryCard[p].Load( THEME->GetPathG("ScreenEnding",ssprintf("remove card P%d",p+1)) );
+		m_sprRemoveMemoryCard[p].SetName( fmt::sprintf("RemoveCardP%d",p+1) );
+		m_sprRemoveMemoryCard[p].Load( THEME->GetPathG("ScreenEnding",fmt::sprintf("remove card P%d",p+1)) );
 		switch( MEMCARDMAN->GetCardState(p) )
 		{
 			case MemoryCardState_Removed:

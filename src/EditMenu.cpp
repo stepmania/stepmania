@@ -8,11 +8,12 @@
 #include "Steps.h"
 #include "Song.h"
 #include "StepsUtil.h"
-#include "Foreach.h"
 #include "CommonMetrics.h"
 #include "BannerCache.h"
 #include "UnlockManager.h"
 #include "SongUtil.h"
+
+using std::vector;
 
 static const char *EditMenuRowNames[] = {
 	"Group",
@@ -37,8 +38,8 @@ XToString( EditMenuAction );
 XToLocalizedString( EditMenuAction );
 StringToX( EditMenuAction );
 
-static RString ARROWS_X_NAME( size_t i )	{ return ssprintf("Arrows%dX",int(i+1)); }
-static RString ROW_Y_NAME( size_t i )		{ return ssprintf("Row%dY",int(i+1)); }
+static std::string ARROWS_X_NAME( size_t i )	{ return fmt::sprintf("Arrows%dX",int(i+1)); }
+static std::string ROW_Y_NAME( size_t i )		{ return fmt::sprintf("Row%dY",int(i+1)); }
 
 void EditMenu::StripLockedStepsAndDifficulty( vector<StepsAndDifficulty> &v )
 {
@@ -50,7 +51,7 @@ void EditMenu::StripLockedStepsAndDifficulty( vector<StepsAndDifficulty> &v )
 	}
 }
 
-void EditMenu::GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpSongsOut )
+void EditMenu::GetSongsToShowForGroup( const std::string &sGroup, vector<Song*> &vpSongsOut )
 {
 	if(sGroup == "")
 	{
@@ -74,12 +75,12 @@ void EditMenu::GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpS
 	case EditMode_Full:
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid edit mode: %i", mode));
+		FAIL_M(fmt::sprintf("Invalid edit mode: %i", mode));
 	}
 	SongUtil::SortSongPointerArrayByTitle( vpSongsOut );
 }
 
-void EditMenu::GetGroupsToShow( vector<RString> &vsGroupsOut )
+void EditMenu::GetGroupsToShow( vector<std::string> &vsGroupsOut )
 {
 	vsGroupsOut.clear();
 	if( !SHOW_GROUPS.GetValue() )
@@ -88,7 +89,7 @@ void EditMenu::GetGroupsToShow( vector<RString> &vsGroupsOut )
 	SONGMAN->GetSongGroupNames( vsGroupsOut );
 	for( int i = vsGroupsOut.size()-1; i>=0; i-- )
 	{
-		const RString &sGroup = vsGroupsOut[i];
+		const std::string &sGroup = vsGroupsOut[i];
 		vector<Song*> vpSongs;
 		GetSongsToShowForGroup( sGroup, vpSongs );
 		// strip groups that have no unlocked songs
@@ -106,7 +107,7 @@ EditMenu::~EditMenu()
 	BANNERCACHE->Undemand();
 }
 
-void EditMenu::Load( const RString &sType )
+void EditMenu::Load( const std::string &sType )
 {
 	LOG->Trace( "EditMenu::Load" );
 
@@ -131,14 +132,14 @@ void EditMenu::Load( const RString &sType )
 
 	FOREACH_EditMenuRow( r )
 	{
-		m_textLabel[r].SetName(ssprintf("Label%i",r+1));
+		m_textLabel[r].SetName(fmt::sprintf("Label%i",r+1));
 		m_textLabel[r].LoadFromFont( THEME->GetPathF(sType,"title") );
 		m_textLabel[r].SetText( EditMenuRowToLocalizedString(r) );
 		ActorUtil::LoadAllCommandsAndSetXY( m_textLabel[r], sType );
 		//m_textLabel[r].SetHorizAlign( align_left );
 		this->AddChild( &m_textLabel[r] );
 
-		m_textValue[r].SetName(ssprintf("Value%i",r+1));
+		m_textValue[r].SetName(fmt::sprintf("Value%i",r+1));
 		m_textValue[r].LoadFromFont( THEME->GetPathF(sType,"value") );
 		m_textValue[r].SetText( "blah" );
 		ActorUtil::LoadAllCommandsAndSetXY( m_textValue[r], sType );
@@ -165,18 +166,18 @@ void EditMenu::Load( const RString &sType )
 	this->AddChild( &m_SongBanner );
 
 	m_SongTextBanner.SetName( "SongTextBanner" );
-	m_SongTextBanner.Load( TEXT_BANNER_TYPE );
+	m_SongTextBanner.Load( TEXT_BANNER_TYPE.GetValue() );
 	ActorUtil::SetXY( m_SongTextBanner, sType );
 	ActorUtil::LoadAllCommands( m_SongTextBanner, sType );
 	this->AddChild( &m_SongTextBanner );
 
 	m_StepsDisplay.SetName( "StepsDisplay" );
-	m_StepsDisplay.Load( "StepsDisplayEdit", NULL );
+	m_StepsDisplay.Load( "StepsDisplayEdit", nullptr );
 	ActorUtil::SetXY( m_StepsDisplay, sType );
 	this->AddChild( &m_StepsDisplay );
 
 	m_StepsDisplaySource.SetName( "StepsDisplaySource" );
-	m_StepsDisplaySource.Load( "StepsDisplayEdit", NULL );
+	m_StepsDisplaySource.Load( "StepsDisplayEdit", nullptr );
 	ActorUtil::SetXY( m_StepsDisplaySource, sType );
 	this->AddChild( &m_StepsDisplaySource );
 
@@ -185,7 +186,7 @@ void EditMenu::Load( const RString &sType )
 
 	// fill in data structures
 	GetGroupsToShow( m_sGroups );
-	
+
 	// In EditMode_Practice this will be filled in by OnRowValueChanged()
 	if( EDIT_MODE.GetValue() != EditMode_Practice )
 		m_StepsTypes = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
@@ -275,7 +276,7 @@ int EditMenu::GetRowSize( EditMenuRow er ) const
 	case ROW_SOURCE_STEPS_TYPE:	return m_StepsTypes.size();
 	case ROW_SOURCE_STEPS:	return m_vpSourceSteps.size();
 	case ROW_ACTION:		return m_Actions.size();
-	default: FAIL_M( ssprintf("Non-existant EditMenuRow %i", er) );
+	default: FAIL_M( fmt::sprintf("Non-existant EditMenuRow %i", er) );
 	}
 }
 
@@ -384,7 +385,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 	UpdateArrows();
 
 	EditMode mode = EDIT_MODE.GetValue();
-	
+
 	switch( row )
 	{
 	case ROW_GROUP:
@@ -411,11 +412,11 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				vector<Song*> vtSongs;
 				GetSongsToShowForGroup(GetSelectedGroup(), vtSongs);
 				// Filter out songs that aren't playable.
-				FOREACH(Song*, vtSongs, s)
+				for (auto *s: vtSongs)
 				{
-					if(SongUtil::IsSongPlayable(*s))
+					if(SongUtil::IsSongPlayable(s))
 					{
-						m_pSongs.push_back(*s);
+						m_pSongs.push_back(s);
 					}
 				}
 			}
@@ -424,11 +425,11 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				GetSongsToShowForGroup(GetSelectedGroup(), m_pSongs);
 			}
 		}
-		
+
 		m_iSelection[ROW_SONG] = 0;
 		// fall through
 	case ROW_SONG:
-		if(GetSelectedSong() == NULL)
+		if(GetSelectedSong() == nullptr)
 		{
 			m_textValue[ROW_SONG].SetText("");
 			m_SongBanner.LoadFallback();
@@ -462,18 +463,18 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 
 				// Only show StepsTypes for which we have valid Steps.
 				vector<StepsType> vSts = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
-				FOREACH( StepsType, vSts, st )
+				for (auto const &st: vSts)
 				{
-					if(SongUtil::GetStepsByDifficulty( GetSelectedSong(), *st, Difficulty_Invalid, false) != NULL)
-					m_StepsTypes.push_back(*st);
-					
+					if(SongUtil::GetStepsByDifficulty( GetSelectedSong(), st, Difficulty_Invalid, false) != nullptr)
+					m_StepsTypes.push_back(st);
+
 					// Try to preserve the user's StepsType selection.
-					if(*st == orgSel)
+					if(st == orgSel)
 					m_iSelection[ROW_STEPS_TYPE] = m_StepsTypes.size() - 1;
 				}
 			}
 		}
-		
+
 		// fall through
 	case ROW_STEPS_TYPE:
 		if(GetSelectedStepsType() == StepsType_Invalid)
@@ -506,15 +507,17 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 								vector<Steps*> v;
 								SongUtil::GetSteps( GetSelectedSong(), v, GetSelectedStepsType(), Difficulty_Edit );
 								StepsUtil::SortStepsByDescription( v );
-								FOREACH_CONST( Steps*, v, p )
-									m_vpSteps.push_back( StepsAndDifficulty(*p,dc) );
+								for (auto *p: v)
+								{
+									m_vpSteps.push_back( StepsAndDifficulty(p,dc) );
+								}
 							}
 							break;
 						case EditMode_Home:
 							// have only "New Edit"
 							break;
 						default:
-							FAIL_M(ssprintf("Invalid edit mode: %i", mode));
+							FAIL_M(fmt::sprintf("Invalid edit mode: %i", mode));
 					}
 
 					switch( mode )
@@ -524,17 +527,17 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 							break;
 						case EditMode_Home:
 						case EditMode_Full:
-							m_vpSteps.push_back( StepsAndDifficulty(NULL,dc) );	// "New Edit"
+							m_vpSteps.push_back( StepsAndDifficulty(nullptr,dc) );	// "New Edit"
 							break;
 						default:
-							FAIL_M(ssprintf("Invalid edit mode: %i", mode));
+							FAIL_M(fmt::sprintf("Invalid edit mode: %i", mode));
 					}
 				}
 				else
 				{
 					Steps *pSteps = SongUtil::GetStepsByDifficulty( GetSelectedSong(), GetSelectedStepsType(), dc );
 					if( pSteps && UNLOCKMAN->StepsIsLocked( GetSelectedSong(), pSteps ) )
-					pSteps = NULL;
+					pSteps = nullptr;
 
 					switch( mode )
 					{
@@ -552,13 +555,13 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 							m_vpSteps.push_back( StepsAndDifficulty(pSteps,dc) );
 							break;
 						default:
-							FAIL_M(ssprintf("Invalid edit mode: %i", mode));
+							FAIL_M(fmt::sprintf("Invalid edit mode: %i", mode));
 					}
 				}
 			}
 			StripLockedStepsAndDifficulty( m_vpSteps );
 
-			FOREACH( StepsAndDifficulty, m_vpSteps, s )
+			for (auto s = m_vpSteps.begin(); s != m_vpSteps.end(); ++s)
 			{
 				if( s->dc == dcOld )
 				{
@@ -566,18 +569,18 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 					break;
 				}
 			}
-			CLAMP( m_iSelection[ROW_STEPS], 0, m_vpSteps.size()-1 );
+			m_iSelection[ROW_STEPS] = Rage::clamp( m_iSelection[ROW_STEPS], 0, static_cast<int>(m_vpSteps.size())-1 );
 		}
 		// fall through
 	case ROW_STEPS:
-		if(GetSelectedSteps() == NULL && mode == EditMode_Practice)
+		if(GetSelectedSteps() == nullptr && mode == EditMode_Practice)
 		{
 			m_textValue[ROW_STEPS].SetText(THEME->GetString(m_sName, "No Steps selected."));
 			m_StepsDisplay.Unset();
 		}
 		else
 		{
-			RString s = CustomDifficultyToLocalizedString( GetCustomDifficulty( GetSelectedStepsType(), GetSelectedDifficulty(), CourseType_Invalid ) );
+			std::string s = CustomDifficultyToLocalizedString( GetCustomDifficulty( GetSelectedStepsType(), GetSelectedDifficulty(), CourseType_Invalid ) );
 
 			m_textValue[ROW_STEPS].SetText( s );
 			if( GetSelectedSteps() )
@@ -602,7 +605,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				m_textValue[ROW_SOURCE_STEPS_TYPE].SetVisible( GetSelectedSteps() ? false : true );
 				m_textValue[ROW_SOURCE_STEPS_TYPE].SetText( GAMEMAN->GetStepsTypeInfo(GetSelectedSourceStepsType()).GetLocalizedString() );
 			m_vpSourceSteps.clear();
-			m_vpSourceSteps.push_back( StepsAndDifficulty(NULL,Difficulty_Invalid) );	// "blank"
+			m_vpSourceSteps.push_back( StepsAndDifficulty(nullptr,Difficulty_Invalid) );	// "blank"
 
 			FOREACH_ENUM( Difficulty, dc )
 			{
@@ -610,7 +613,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				if( dc != Difficulty_Edit )
 				{
 					Steps *pSteps = SongUtil::GetStepsByDifficulty( GetSelectedSong(), GetSelectedSourceStepsType(), dc );
-					if( pSteps != NULL )
+					if( pSteps != nullptr )
 					m_vpSourceSteps.push_back( StepsAndDifficulty(pSteps,dc) );
 				}
 				else
@@ -618,12 +621,14 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 					vector<Steps*> v;
 					SongUtil::GetSteps( GetSelectedSong(), v, GetSelectedSourceStepsType(), dc );
 					StepsUtil::SortStepsByDescription( v );
-					FOREACH_CONST( Steps*, v, pSteps )
-						m_vpSourceSteps.push_back( StepsAndDifficulty(*pSteps,dc) );
+					for (auto *pSteps: v)
+					{
+						m_vpSourceSteps.push_back( StepsAndDifficulty(pSteps,dc) );
+					}
 				}
 			}
 			StripLockedStepsAndDifficulty( m_vpSteps );
-			CLAMP( m_iSelection[ROW_SOURCE_STEPS], 0, m_vpSourceSteps.size()-1 );
+        m_iSelection[ROW_SOURCE_STEPS] = Rage::clamp( m_iSelection[ROW_SOURCE_STEPS], 0, static_cast<int>(m_vpSourceSteps.size())-1 );
 		}
 		// fall through
 	case ROW_SOURCE_STEPS:
@@ -639,10 +644,10 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			m_textLabel[ROW_SOURCE_STEPS].SetVisible( GetSelectedSteps() ? false : true );
 			m_textValue[ROW_SOURCE_STEPS].SetVisible( GetSelectedSteps() ? false : true );
 			{
-				RString s;
+				std::string s;
 				if( GetSelectedSourceDifficulty() == Difficulty_Invalid )
 				{
-					s = BLANK;
+					s = BLANK.GetValue();
 				}
 				else
 				{
@@ -662,7 +667,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			m_Actions.clear();
 			// Stick autosave in the list first so that people will see it. -Kyz
 			Song* cur_song= GetSelectedSong();
-			if(cur_song != NULL && cur_song->HasAutosaveFile() && !cur_song->WasLoadedFromAutosave())
+			if(cur_song != nullptr && cur_song->HasAutosaveFile() && !cur_song->WasLoadedFromAutosave())
 			{
 				m_Actions.push_back(EditMenuAction_LoadAutosave);
 			}
@@ -680,7 +685,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 						m_Actions.push_back( EditMenuAction_Delete );
 						break;
 					default:
-						FAIL_M(ssprintf("Invalid edit mode: %i", mode));
+						FAIL_M(fmt::sprintf("Invalid edit mode: %i", mode));
 				}
 			}
 			else
@@ -701,14 +706,14 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		}
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid EditMenuRow: %i", row));
+		FAIL_M(fmt::sprintf("Invalid EditMenuRow: %i", row));
 	}
 }
 
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -718,7 +723,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

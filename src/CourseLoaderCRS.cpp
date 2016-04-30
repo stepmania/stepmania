@@ -14,7 +14,9 @@
 #include "CourseWriterCRS.h"
 #include "RageUtil.h"
 #include "CourseUtil.h"
-#include <float.h>
+
+using std::string;
+using std::vector;
 
 /** @brief Edit courses can only be so big before they are rejected. */
 const int MAX_EDIT_COURSE_SIZE_BYTES	= 32*1024;	// 32KB
@@ -35,65 +37,71 @@ const char *g_CRSDifficultyNames[] =
  * @param s the name of the difficulty.
  * @return the course difficulty.
  */
-static CourseDifficulty CRSStringToDifficulty( const RString& s )
+static CourseDifficulty CRSStringToDifficulty( const std::string& s )
 {
-	FOREACH_ENUM( Difficulty,i)
-		if( !s.CompareNoCase(g_CRSDifficultyNames[i]) )
+	Rage::ci_ascii_string diff{ s.c_str() };
+	FOREACH_ENUM(Difficulty, i)
+	{
+		if (diff == g_CRSDifficultyNames[i])
+		{
 			return i;
+		}
+	}
 	return Difficulty_Invalid;
 }
 
 
-bool CourseLoaderCRS::LoadFromBuffer( const RString &sPath, const RString &sBuffer, Course &out )
+bool CourseLoaderCRS::LoadFromBuffer( const std::string &sPath, const std::string &sBuffer, Course &out )
 {
 	MsdFile msd;
 	msd.ReadFromString( sBuffer, false );  // don't unescape
 	return LoadFromMsd( sPath, msd, out, true );
 }
 
-bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Course &out, bool bFromCache )
+bool CourseLoaderCRS::LoadFromMsd( const std::string &sPath, const MsdFile &msd, Course &out, bool bFromCache )
 {
+	using std::max;
 	AttackArray attacks;
 	float fGainSeconds = 0;
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
-		RString sValueName = msd.GetParam(i, 0);
+		std::string sValueName = msd.GetParam(i, 0);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
 
 		// handle the data
-		if( sValueName.EqualsNoCase("COURSE") )
+		Rage::ci_ascii_string tagName{ sValueName.c_str() };
+		if( tagName == "COURSE" )
 			out.m_sMainTitle = sParams[1];
-		else if( sValueName.EqualsNoCase("COURSETRANSLIT") )
+		else if(tagName == "COURSETRANSLIT" )
 			out.m_sMainTitleTranslit = sParams[1];
-		else if( sValueName.EqualsNoCase("SCRIPTER") )
+		else if(tagName == "SCRIPTER" )
 			out.m_sScripter = sParams[1];
-		else if( sValueName.EqualsNoCase("DESCRIPTION") )
+		else if(tagName == "DESCRIPTION" )
 			out.m_sDescription = sParams[1];
-		else if( sValueName.EqualsNoCase("REPEAT") )
+		else if(tagName == "REPEAT" )
 		{
-			RString str = sParams[1];
-			str.MakeLower();
+			std::string str = Rage::make_lower(sParams[1]);
 			if( str.find("yes") != string::npos )
 				out.m_bRepeat = true;
 		}
 
-		else if( sValueName.EqualsNoCase("BANNER") )
+		else if(tagName == "BANNER" )
 		{
 			out.m_sBannerPath = sParams[1];
 		}
-		else if( sValueName.EqualsNoCase("BACKGROUND") )
+		else if(tagName == "BACKGROUND" )
 		{
 			out.m_sBackgroundPath = sParams[1];
 		}
-		else if( sValueName.EqualsNoCase("LIVES") )
+		else if(tagName == "LIVES" )
 		{
 			out.m_iLives = max( StringToInt(sParams[1]), 0 );
 		}
-		else if( sValueName.EqualsNoCase("GAINSECONDS") )
+		else if(tagName == "GAINSECONDS" )
 		{
 			fGainSeconds = StringToFloat( sParams[1] );
 		}
-		else if( sValueName.EqualsNoCase("METER") )
+		else if(tagName == "METER" )
 		{
 			if( sParams.params.size() == 2 )
 			{
@@ -111,25 +119,32 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			}
 		}
 
-		else if( sValueName.EqualsNoCase("MODS") )
+		else if(tagName == "MODS" )
 		{
 			Attack attack;
 			float end = -9999;
 			for( unsigned j = 1; j < sParams.params.size(); ++j )
 			{
-				vector<RString> sBits;
-				split( sParams[j], "=", sBits, false );
+				auto sBits = Rage::split(sParams[j], "=", Rage::EmptyEntries::include);
 				if( sBits.size() < 2 )
+				{
 					continue;
+				}
 
-				Trim( sBits[0] );
-				if( !sBits[0].CompareNoCase("TIME") )
+				Rage::ci_ascii_string tagName{ Rage::trim(sBits[0]).c_str() };
+				if( tagName == "TIME" )
+				{
 					attack.fStartSecond = max( StringToFloat(sBits[1]), 0.0f );
-				else if( !sBits[0].CompareNoCase("LEN") )
+				}
+				else if( tagName == "LEN" )
+				{
 					attack.fSecsRemaining = StringToFloat( sBits[1] );
-				else if( !sBits[0].CompareNoCase("END") )
+				}
+				else if( tagName == "END" )
+				{
 					end = StringToFloat( sBits[1] );
-				else if( !sBits[0].CompareNoCase("MODS") )
+				}
+				else if( tagName == "MODS" )
 				{
 					attack.sModifiers = sBits[1];
 
@@ -157,7 +172,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			}
 
 		}
-		else if( sValueName.EqualsNoCase("SONG") )
+		else if( tagName == "SONG" )
 		{
 			CourseEntry new_entry;
 
@@ -166,9 +181,9 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			// to a lack of songs. -aj
 			int iNumSongs = SONGMAN->GetNumSongs();
 			// most played
-			if( sParams[1].Left(strlen("BEST")) == "BEST" )
+			if (Rage::starts_with(sParams[1], "BEST"))
 			{
-				int iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
+				int iChooseIndex = StringToInt( Rage::tail( sParams[1], -4 ) ) - 1;
 				if( iChooseIndex > iNumSongs )
 				{
 					// looking up a song that doesn't exist.
@@ -179,13 +194,13 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				}
 
 				new_entry.iChooseIndex = iChooseIndex;
-				CLAMP( new_entry.iChooseIndex, 0, 500 );
+				new_entry.iChooseIndex = Rage::clamp( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_MostPlays;
 			}
 			// least played
-			else if( sParams[1].Left(strlen("WORST")) == "WORST" )
+			else if (Rage::starts_with(sParams[1], "WORST"))
 			{
-				int iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("WORST")) ) - 1;
+				int iChooseIndex = StringToInt(Rage::tail(sParams[1], -5)) - 1;
 				if( iChooseIndex > iNumSongs )
 				{
 					// looking up a song that doesn't exist.
@@ -196,21 +211,21 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				}
 
 				new_entry.iChooseIndex = iChooseIndex;
-				CLAMP( new_entry.iChooseIndex, 0, 500 );
+				new_entry.iChooseIndex = Rage::clamp( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_FewestPlays;
 			}
 			// best grades
-			else if( sParams[1].Left(strlen("GRADEBEST")) == "GRADEBEST" )
+			else if (Rage::starts_with(sParams[1], "GRADEBEST"))
 			{
-				new_entry.iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("GRADEBEST")) ) - 1;
-				CLAMP( new_entry.iChooseIndex, 0, 500 );
+				new_entry.iChooseIndex = StringToInt(Rage::tail(sParams[1], -9)) - 1;
+				new_entry.iChooseIndex = Rage::clamp( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_TopGrades;
 			}
 			// worst grades
-			else if( sParams[1].Left(strlen("GRADEWORST")) == "GRADEWORST" )
+			else if (Rage::starts_with(sParams[1], "GRADEWORST"))
 			{
-				new_entry.iChooseIndex = StringToInt( sParams[1].Right(sParams[1].size()-strlen("GRADEWORST")) ) - 1;
-				CLAMP( new_entry.iChooseIndex, 0, 500 );
+				new_entry.iChooseIndex = StringToInt(Rage::tail(sParams[1], -10)) - 1;
+				new_entry.iChooseIndex = Rage::clamp( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_LowestGrades;
 			}
 			else if( sParams[1] == "*" )
@@ -218,13 +233,12 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				//new_entry.bSecret = true;
 			}
 			// group random
-			else if( sParams[1].Right(1) == "*" )
+			else if( Rage::ends_with(sParams[1], "*") )
 			{
 				//new_entry.bSecret = true;
-				RString sSong = sParams[1];
-				sSong.Replace( "\\", "/" );
-				vector<RString> bits;
-				split( sSong, "/", bits );
+				std::string sSong = sParams[1];
+				Rage::replace(sSong, '\\', '/' );
+				auto bits = Rage::split(sSong, "/");
 				if( bits.size() == 2 )
 				{
 					new_entry.songCriteria.m_sGroupName = bits[0];
@@ -245,12 +259,11 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			}
 			else
 			{
-				RString sSong = sParams[1];
-				sSong.Replace( "\\", "/" );
-				vector<RString> bits;
-				split( sSong, "/", bits );
+				std::string sSong = sParams[1];
+				Rage::replace(sSong, '\\', '/' );
+				auto bits = Rage::split(sSong, "/");
 
-				Song *pSong = NULL;
+				Song *pSong = nullptr;
 				if( bits.size() == 2 )
 				{
 					new_entry.songCriteria.m_sGroupName = bits[0];
@@ -262,7 +275,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				}
 				new_entry.songID.FromSong( pSong );
 
-				if( pSong == NULL )
+				if( pSong == nullptr )
 				{
 					LOG->UserLog( "Course file", sPath, "contains a fixed song entry \"%s\" that does not exist. "
 						      "This entry will be ignored.", sSong.c_str());
@@ -277,7 +290,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
         new_entry.stepsCriteria.m_difficulty = StringToDifficulty( sParams[2] );
 			if( new_entry.stepsCriteria.m_difficulty == Difficulty_Invalid )
 			{
-				int retval = sscanf( sParams[2], "%d..%d", &new_entry.stepsCriteria.m_iLowMeter, &new_entry.stepsCriteria.m_iHighMeter );
+				int retval = sscanf( sParams[2].c_str(), "%d..%d", &new_entry.stepsCriteria.m_iLowMeter, &new_entry.stepsCriteria.m_iHighMeter );
 				if( retval == 1 )
 					new_entry.stepsCriteria.m_iHighMeter = new_entry.stepsCriteria.m_iLowMeter;
 				else if( retval != 2 )
@@ -294,26 +307,34 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			{
 				// If "showcourse" or "noshowcourse" is in the list, force
 				// new_entry.secret on or off.
-				vector<RString> mods;
-				split( sParams[3], ",", mods, true );
+				auto mods = Rage::split(sParams[3], ",", Rage::EmptyEntries::skip);
 				for( int j = (int) mods.size()-1; j >= 0 ; --j )
 				{
-					RString &sMod = mods[j];
-					TrimLeft( sMod );
-					TrimRight( sMod );
-					if( !sMod.CompareNoCase("showcourse") )
+					std::string sMod = Rage::trim(mods[j]);
+					Rage::ci_ascii_string ciMod{ sMod.c_str() };
+					if ( ciMod == "showcourse" )
+					{
 						new_entry.bSecret = false;
-					else if( !sMod.CompareNoCase("noshowcourse") )
+					}
+					else if ( ciMod == "noshowcourse" )
+					{
 						new_entry.bSecret = true;
-					else if( !sMod.CompareNoCase("nodifficult") )
+					}
+					else if ( ciMod == "nodifficult" )
+					{
 						new_entry.bNoDifficult = true;
-					else if( sMod.length() > 5 && !sMod.Left(5).CompareNoCase("award") )
-						new_entry.iGainLives = StringToInt( sMod.substr(5) );
+					}
+					else if (sMod.length() > 5 && Rage::ci_ascii_string{ "award" } == Rage::head(sMod, 5))
+					{
+						new_entry.iGainLives = StringToInt(sMod.substr(5));
+					}
 					else
+					{
 						continue;
-					mods.erase( mods.begin() + j );
+					}
+					mods.erase(mods.begin() + j);
 				}
-				new_entry.sModifiers = join( ",", mods );
+				new_entry.sModifiers = Rage::join( ",", mods );
 			}
 
 			new_entry.attacks = attacks;
@@ -322,13 +343,11 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 
 			out.m_vEntries.push_back( new_entry );
 		}
-		else if( !sValueName.EqualsNoCase("DISPLAYCOURSE") || !sValueName.EqualsNoCase("COMBO") ||
-			 !sValueName.EqualsNoCase("COMBOMODE") )
+		else if( tagName == "DISPLAYCOURSE" || tagName == "COMBO" || tagName == "COMBOMODE" )
 		{
 			// Ignore
 		}
-
-		else if( bFromCache && !sValueName.EqualsNoCase("RADAR") )
+		else if( bFromCache && tagName == "RADAR" )
 		{
 			StepsType st = (StepsType) StringToInt(sParams[1]);
 			CourseDifficulty cd = (CourseDifficulty) StringToInt( sParams[2] );
@@ -337,14 +356,14 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			rv.FromString( sParams[3] );
 			out.m_RadarCache[Course::CacheEntry(st, cd)] = rv;
 		}
-		else if( sValueName.EqualsNoCase("STYLE") )
+		else if(tagName == "STYLE" )
 		{
-			RString sStyles = sParams[1];
-			vector<RString> asStyles;
-			split( sStyles, ",", asStyles );
-			FOREACH( RString, asStyles, s )
-				out.m_setStyles.insert( *s );
-
+			std::string sStyles = sParams[1];
+			auto asStyles = Rage::split(sStyles, ",");
+			for (auto &s: asStyles)
+			{
+				out.m_setStyles.insert( s );
+			}
 		}
 		else
 		{
@@ -354,16 +373,18 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 
 	if( out.m_sBannerPath.empty() )
 	{
-		const RString sFName = SetExtension( out.m_sPath, "" );
+		const std::string sFName = SetExtension( out.m_sPath, "" );
 
-		vector<RString> arrayPossibleBanners;
+		vector<std::string> arrayPossibleBanners;
 		GetDirListing( sFName + "*.png", arrayPossibleBanners, false, false );
 		GetDirListing( sFName + "*.jpg", arrayPossibleBanners, false, false );
 		GetDirListing( sFName + "*.jpeg", arrayPossibleBanners, false, false );
 		GetDirListing( sFName + "*.bmp", arrayPossibleBanners, false, false );
 		GetDirListing( sFName + "*.gif", arrayPossibleBanners, false, false );
 		if( !arrayPossibleBanners.empty() )
+		{
 			out.m_sBannerPath = arrayPossibleBanners[0];
+		}
 	}
 
 	static TitleSubst tsub("Courses");
@@ -390,9 +411,9 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 	return true;
 }
 
-bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
+bool CourseLoaderCRS::LoadFromCRSFile( const std::string &_sPath, Course &out )
 {
-	RString sPath = _sPath;
+	std::string sPath = _sPath;
 
 	out.Init();
 
@@ -400,8 +421,7 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 
 	// save group name
 	{
-		vector<RString> parts;
-		split( sPath, "/", parts, false );
+		auto parts = Rage::split(sPath, "/", Rage::EmptyEntries::include);
 		if( parts.size() >= 4 ) // e.g. "/Courses/blah/fun.crs"
 			out.m_sGroupName = parts[parts.size()-2];
 	}
@@ -417,12 +437,12 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 			bUseCache = false;
 		// XXX: if !FastLoad, regen cache if the used songs have changed
 		if( !PREFSMAN->m_bFastLoad && GetHashForFile(out.m_sPath) != uHash )
-			bUseCache = false; // this cache is out of date 
+			bUseCache = false; // this cache is out of date
 	}
 
 	if( bUseCache )
 	{
-		RString sCacheFile = out.GetCacheFilePath();
+		std::string sCacheFile = out.GetCacheFilePath();
 		LOG->Trace( "CourseLoaderCRS::LoadFromCRSFile(\"%s\") (\"%s\")", sPath.c_str(), sCacheFile.c_str() );
 		sPath = sCacheFile;
 	}
@@ -437,7 +457,7 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 		LOG->UserLog( "Course file", sPath, "couldn't be opened: %s.", msd.GetError().c_str() );
 		return false;
 	}
-	
+
 	if( !LoadFromMsd(sPath, msd, out, bUseCache) )
 		return false;
 
@@ -446,7 +466,7 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 		// If we have any cache data, write the cache file.
 		if( out.m_RadarCache.size() )
 		{
-			RString sCachePath = out.GetCacheFilePath();
+			std::string sCachePath = out.GetCacheFilePath();
 			if( CourseWriterCRS::Write(out, sCachePath, true) )
 				SONGINDEX->AddCacheIndex( out.m_sPath, GetHashForFile(out.m_sPath) );
 		}
@@ -455,7 +475,7 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 	return true;
 }
 
-bool CourseLoaderCRS::LoadEditFromFile( const RString &sEditFilePath, ProfileSlot slot )
+bool CourseLoaderCRS::LoadEditFromFile( const std::string &sEditFilePath, ProfileSlot slot )
 {
 	LOG->Trace( "CourseLoaderCRS::LoadEdit(%s)", sEditFilePath.c_str() );
 
@@ -483,7 +503,7 @@ bool CourseLoaderCRS::LoadEditFromFile( const RString &sEditFilePath, ProfileSlo
 	return true;
 }
 
-bool CourseLoaderCRS::LoadEditFromBuffer( const RString &sBuffer, const RString &sPath, ProfileSlot slot )
+bool CourseLoaderCRS::LoadEditFromBuffer( const std::string &sBuffer, const std::string &sPath, ProfileSlot slot )
 {
 	Course *pCourse = new Course;
 	if( !LoadFromBuffer(sPath, sBuffer, *pCourse) )
@@ -502,7 +522,7 @@ bool CourseLoaderCRS::LoadEditFromBuffer( const RString &sBuffer, const RString 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -512,7 +532,7 @@ bool CourseLoaderCRS::LoadEditFromBuffer( const RString &sBuffer, const RString 
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -9,6 +9,7 @@
 #include "global.h"
 
 #include "ezsockets.h"
+#include <cstring>
 
 #if defined(_MSC_VER) // We need the WinSock32 Library on Windows
 #pragma comment(lib,"wsock32.lib")
@@ -35,6 +36,10 @@
 #define INVALID_SOCKET -1
 #endif
 
+using std::string;
+using std::istream;
+using std::ostream;
+
 // Returns a timeval set to the given number of milliseconds.
 inline timeval timevalFromMs(unsigned int ms)
 {
@@ -48,7 +53,7 @@ inline timeval timevalFromMs(unsigned int ms)
 EzSockets::EzSockets()
 {
 	MAXCON = 5;
-	memset (&addr,0,sizeof(addr)); //Clear the sockaddr_in structure
+	std::memset (&addr,0,sizeof(addr)); //Clear the sockaddr_in structure
 
 #if defined(_WINDOWS) // Windows REQUIRES WinSock Startup
 	WSAStartup( MAKEWORD(1,1), &wsda );
@@ -144,8 +149,8 @@ bool EzSockets::accept(EzSockets& socket)
 	#endif
 
 	int length = sizeof(socket);
-	
-	socket.sock = ::accept(sock,(struct sockaddr*) &socket.addr, 
+
+	socket.sock = ::accept(sock,(struct sockaddr*) &socket.addr,
 						   (socklen_t*) &length);
 
 	lastCode = socket.sock;
@@ -183,9 +188,9 @@ bool EzSockets::connect(const std::string& host, unsigned short port)
 
 	struct hostent* phe;
 	phe = gethostbyname(host.c_str());
-	if (phe == NULL)
+	if (phe == nullptr)
 		return false;
-	memcpy(&addr.sin_addr, phe->h_addr, sizeof(struct in_addr));
+	std::memcpy(&addr.sin_addr, phe->h_addr, sizeof(struct in_addr));
 
 	addr.sin_family = AF_INET;
 	addr.sin_port   = htons(port);
@@ -203,7 +208,7 @@ inline bool checkCanRead(int sock, timeval& timeout)
 	FD_ZERO(&fds);
 	FD_SET((unsigned)sock, &fds);
 
-	return select(sock+1, &fds, NULL, NULL, &timeout) > 0;
+	return select(sock+1, &fds, nullptr, nullptr, &timeout) > 0;
 }
 
 bool EzSockets::CanRead()
@@ -225,7 +230,7 @@ bool EzSockets::IsError()
 	FD_ZERO(scks);
 	FD_SET((unsigned)sock, scks);
 
-	if (select(sock+1, NULL, NULL, scks, times) >=0 )
+	if (select(sock+1, nullptr, nullptr, scks, times) >=0 )
 		return false;
 
 	state = skERROR;
@@ -238,7 +243,7 @@ inline bool checkCanWrite(int sock, timeval& timeout)
 	FD_ZERO(&fds);
 	FD_SET((unsigned)sock, &fds);
 
-	return select(sock+1, NULL, &fds, NULL, &timeout) > 0;
+	return select(sock+1, nullptr, &fds, nullptr, &timeout) > 0;
 }
 
 bool EzSockets::CanWrite()
@@ -299,7 +304,7 @@ void EzSockets::SendData(const char *data, unsigned int bytes)
 }
 
 int EzSockets::ReadData(char *data, unsigned int bytes)
-{	
+{
 	int bytesRead = PeekData(data,bytes);
 	inBuffer = inBuffer.substr(bytesRead);
 	return bytesRead;
@@ -318,7 +323,7 @@ int EzSockets::PeekData(char *data, unsigned int bytes)
 	int bytesRead = bytes;
 	if (inBuffer.length()<bytes)
 		bytesRead = inBuffer.length();
-	memcpy(data,inBuffer.c_str(), bytesRead);
+	std::memcpy(data,inBuffer.c_str(), bytesRead);
 
 	return bytesRead;
 }
@@ -373,14 +378,14 @@ int EzSockets::PeekPack(char *data, unsigned int max)
 			return -1;
 
 	if (IsError())
-		return -1; 
+		return -1;
 	// What if we get disconnected while waiting for data?
 
 	string tBuff(inBuffer.substr(4, size));
 	if (tBuff.length() > max)
 		tBuff.substr(0, max);
 
-	memcpy (data, tBuff.c_str(),tBuff.length());
+	std::memcpy (data, tBuff.c_str(),tBuff.length());
 	return size;
 }
 
@@ -455,7 +460,7 @@ int EzSockets::pUpdateRead()
 		inBuffer.append(tempData, bytes);
 	else if (bytes <= 0)
 		/* To get her I think CanRead was called at least once.
-		So if length equals 0 and can read says there is data than 
+		So if length equals 0 and can read says there is data than
 		the socket was closed.*/
 		state = skERROR;
 	return bytes;
@@ -488,10 +493,10 @@ int EzSockets::pWriteData(const char* data, int dataSize)
 	return send(sock, data, dataSize, 0);
 }
 
-/* 
+/*
  * (c) 2003-2004 Josh Allen, Charles Lohr, and Adam Lowman
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -501,7 +506,7 @@ int EzSockets::pWriteData(const char* data, int dataSize)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

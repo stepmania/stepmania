@@ -20,6 +20,8 @@
 #include "SpecialFiles.h"
 #include "NotesWriterSM.h"
 
+using std::vector;
+
 AutoScreenMessage( SM_BackFromRename );
 AutoScreenMessage( SM_BackFromDelete );
 AutoScreenMessage( SM_BackFromContextMenu );
@@ -61,13 +63,13 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 	SONGMAN->FreeAllLoadedFromProfile( ProfileSlot_Machine );
 	SONGMAN->LoadStepEditsFromProfileDir( PROFILEMAN->GetProfileDir(ProfileSlot_Machine), ProfileSlot_Machine );
 	SONGMAN->LoadCourseEditsFromProfileDir( PROFILEMAN->GetProfileDir(ProfileSlot_Machine), ProfileSlot_Machine );
-	GAMESTATE->m_pCurSong.Set( NULL );
-	GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
+	GAMESTATE->m_pCurSong.Set( nullptr );
+	GAMESTATE->m_pCurSteps[PLAYER_1].Set( nullptr );
 
 	vector<OptionRowHandler*> vHands;
 
 	int iIndex = 0;
-	
+
 	{
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 		OptionRowDefinition &def = vHands.back()->m_Def;
@@ -82,19 +84,19 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 
 	SONGMAN->GetStepsLoadedFromProfile( m_vpSteps, ProfileSlot_Machine );
 
-	FOREACH_CONST( Steps*, m_vpSteps, s )
+	for (auto *s: m_vpSteps)
 	{
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 		OptionRowDefinition &def = vHands.back()->m_Def;
-		
-		Song *pSong = (*s)->m_pSong;
 
-		def.m_sName = pSong->GetTranslitFullTitle() + " - " + (*s)->GetDescription();
+		Song *pSong = s->m_pSong;
+
+		def.m_sName = pSong->GetTranslitFullTitle() + " - " + s->GetDescription();
 		def.m_bAllowThemeTitle = false;	// not themable
 		def.m_sExplanationName = "Select Edit Steps";
 		def.m_vsChoices.clear();
-		StepsType st = (*s)->m_StepsType;
-		RString sType = GAMEMAN->GetStepsTypeInfo(st).GetLocalizedString();
+		StepsType st = s->m_StepsType;
+		std::string sType = GAMEMAN->GetStepsTypeInfo(st).GetLocalizedString();
 		def.m_vsChoices.push_back( sType );
 		def.m_bAllowThemeItems = false;	// already themed
 		iIndex++;
@@ -103,7 +105,7 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 	ScreenOptions::InitMenu( vHands );
 
 	ScreenOptions::BeginScreen();
-	
+
 	// select the last chosen course
 	if( GAMESTATE->m_pCurSteps[PLAYER_1] )
 	{
@@ -129,7 +131,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 
 		if( iCurRow == 0 )	// "create new"
 		{
-			SCREENMAN->SetNewScreen( CREATE_NEW_SCREEN );
+			SCREENMAN->SetNewScreen( CREATE_NEW_SCREEN.GetValue() );
 			return;	// don't call base
 		}
 		else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )
@@ -140,7 +142,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 		else	// a Steps
 		{
 			Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-			ASSERT( pSteps != NULL );
+			ASSERT( pSteps != nullptr );
 			const Style *pStyle = GAMEMAN->GetEditorStyleForStepsType( pSteps->m_StepsType );
 			GAMESTATE->SetCurrentStyle( pStyle, PLAYER_INVALID );
 			// do base behavior
@@ -155,10 +157,10 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 			Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 			Song *pSong = pSteps->m_pSong;
 
-			RString sOldDescription = pSteps->GetDescription();
+			std::string sOldDescription = pSteps->GetDescription();
 			pSteps->SetDescription( ScreenTextEntry::s_sLastAnswer );
 
-			RString sError;
+			std::string sError;
 			if( !NotesWriterSM::WriteEditFileToMachine(pSong,pSteps,sError) )
 			{
 				ScreenPrompt::Prompt( SM_None, sError );
@@ -177,7 +179,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 			Steps *pSteps = GetStepsWithFocus();
 			FILEMAN->Remove( pSteps->GetFilename() );
 			SONGMAN->DeleteSteps( pSteps );
-			GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
+			GAMESTATE->m_pCurSteps[PLAYER_1].Set( nullptr );
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
 	}
@@ -199,11 +201,11 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 				break;
 			case StepsEditAction_Rename:
 				{
-					ScreenTextEntry::TextEntry( 
-						SM_BackFromRename, 
-						ENTER_NAME_FOR_STEPS, 
-						GAMESTATE->m_pCurSteps[PLAYER_1]->GetDescription(), 
-						MAX_STEPS_DESCRIPTION_LENGTH, 
+					ScreenTextEntry::TextEntry(
+						SM_BackFromRename,
+						ENTER_NAME_FOR_STEPS.GetValue(),
+						GAMESTATE->m_pCurSteps[PLAYER_1]->GetDescription(),
+						MAX_STEPS_DESCRIPTION_LENGTH,
 						SongUtil::ValidateCurrentEditStepsDescription );
 				}
 				break;
@@ -226,12 +228,12 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 
 	ScreenOptions::HandleScreenMessage( SM );
 }
-	
+
 void ScreenOptionsManageEditSteps::AfterChangeRow( PlayerNumber pn )
 {
 	Steps *pSteps = GetStepsWithFocus();
-	Song *pSong = pSteps ? pSteps->m_pSong : NULL;
-	
+	Song *pSong = pSteps ? pSteps->m_pSong : nullptr;
+
 	GAMESTATE->m_pCurSong.Set( pSong );
 	GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 
@@ -253,7 +255,7 @@ void ScreenOptionsManageEditSteps::ProcessMenuStart( const InputEventPlus & )
 		SONGMAN->GetStepsLoadedFromProfile( v, ProfileSlot_Machine );
 		if( v.size() >= size_t(MAX_EDIT_STEPS_PER_PROFILE) )
 		{
-			RString s = ssprintf( YOU_HAVE_MAX_STEP_EDITS.GetValue()+"\n\n"+YOU_MUST_DELETE.GetValue(), MAX_EDIT_STEPS_PER_PROFILE );
+			std::string s = fmt::sprintf( YOU_HAVE_MAX_STEP_EDITS.GetValue()+"\n\n"+YOU_MUST_DELETE.GetValue(), MAX_EDIT_STEPS_PER_PROFILE );
 			ScreenPrompt::Prompt( SM_None, s );
 			return;
 		}
@@ -294,10 +296,10 @@ Steps *ScreenOptionsManageEditSteps::GetStepsWithFocus() const
 {
 	int iCurRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 	if( iCurRow == 0 )
-		return NULL;
+		return nullptr;
 	else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )
-		return NULL;
-	
+		return nullptr;
+
 	// a Steps
 	int iStepsIndex = iCurRow - 1;
 	return m_vpSteps[iStepsIndex];
@@ -306,7 +308,7 @@ Steps *ScreenOptionsManageEditSteps::GetStepsWithFocus() const
 /*
  * (c) 2002-2005 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -316,7 +318,7 @@ Steps *ScreenOptionsManageEditSteps::GetStepsWithFocus() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

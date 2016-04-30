@@ -18,7 +18,7 @@ enum MenuDir
 };
 /** @brief A special foreach loop through the different menu directions. */
 #define FOREACH_MenuDir( md ) FOREACH_ENUM( MenuDir, md )
-const RString& MenuDirToString( MenuDir md );
+std::string const MenuDirToString( MenuDir md );
 
 /** @brief The master Screen for many children Screens. */
 class ScreenSelectMaster : public ScreenSelect
@@ -27,7 +27,7 @@ public:
 	ScreenSelectMaster();
 	//~ScreenSelectMaster();
 	virtual void Init();
-	virtual RString GetDefaultChoice();
+	virtual std::string GetDefaultChoice();
 	virtual void BeginScreen();
 
 	virtual bool MenuLeft( const InputEventPlus &input );
@@ -67,7 +67,7 @@ protected:
 	ThemeMetric<bool>	PER_CHOICE_ICON_ELEMENT;
 	ThemeMetric<float>	PRE_SWITCH_PAGE_SECONDS;
 	ThemeMetric<float>	POST_SWITCH_PAGE_SECONDS;
-	ThemeMetric1D<RString>	OPTION_ORDER;
+	ThemeMetric1D<std::string>	OPTION_ORDER;
 	ThemeMetric<bool>	WRAP_CURSOR;
 	ThemeMetric<bool>	WRAP_SCROLLER;
 	ThemeMetric<bool>	LOOP_SCROLLER;
@@ -78,9 +78,9 @@ protected:
 	ThemeMetric<LuaReference> SCROLLER_TRANSFORM;
 	//ThemeMetric<LuaReference> SCROLLER_TWEEN;
 	ThemeMetric<int>	SCROLLER_SUBDIVISIONS;
-	ThemeMetric<RString>	DEFAULT_CHOICE;
+	ThemeMetric<std::string>	DEFAULT_CHOICE;
 
-	map<int,int> m_mapCurrentChoiceToNextChoice[NUM_MenuDir];
+	std::map<int,int> m_mapCurrentChoiceToNextChoice[NUM_MenuDir];
 
 	virtual int GetSelectionIndex( PlayerNumber pn );
 	virtual void UpdateSelectableChoices();
@@ -90,7 +90,7 @@ protected:
 	bool ChangePage( int iNewChoice );
 	bool ChangeSelection( PlayerNumber pn, MenuDir dir, int iNewChoice );
 	float DoMenuStart( PlayerNumber pn );
-	virtual bool ProcessMenuStart( PlayerNumber pn ) { return true; }
+	virtual bool ProcessMenuStart( PlayerNumber ) { return true; }
 
 	float GetCursorX( PlayerNumber pn );
 	float GetCursorY( PlayerNumber pn );
@@ -98,10 +98,10 @@ protected:
 	AutoActor	m_sprExplanation[NUM_Page];
 	AutoActor	m_sprMore[NUM_Page];
 	// icon is the shared, per-choice piece
-	vector<AutoActor> m_vsprIcon;
+	std::vector<AutoActor> m_vsprIcon;
 
 	// preview is per-player, per-choice piece
-	vector<AutoActor> m_vsprScroll[NUM_PLAYERS];
+	std::vector<AutoActor> m_vsprScroll[NUM_PLAYERS];
 
 	ActorScroller	m_Scroller[NUM_PLAYERS];
 
@@ -126,7 +126,7 @@ protected:
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -136,7 +136,7 @@ protected:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

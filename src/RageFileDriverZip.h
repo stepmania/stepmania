@@ -8,14 +8,14 @@ class RageFileDriverZip: public RageFileDriver
 {
 public:
 	RageFileDriverZip();
-	RageFileDriverZip( const RString &sPath );
-	bool Load( const RString &sPath );
+	RageFileDriverZip( const std::string &sPath );
+	bool Load( const std::string &sPath );
 	bool Load( RageFileBasic *pFile );
 
 	virtual ~RageFileDriverZip();
 
-	RageFileBasic *Open( const RString &sPath, int iMode, int &iErr );
-	void FlushDirCache( const RString &sPath );
+	RageFileBasic *Open( const std::string &sPath, int iMode, int &iErr );
+	void FlushDirCache( const std::string &sPath );
 
 	void DeleteFileWhenFinished() { m_bFileOwned = true; }
 
@@ -23,7 +23,7 @@ public:
 	enum ZipCompressionMethod { STORED = 0, DEFLATED = 8 };
 	struct FileInfo
 	{
-		RString m_sName;
+		std::string m_sName;
 		int m_iOffset;
 		int m_iDataOffset;
 
@@ -34,18 +34,18 @@ public:
 		/* If 0, unknown. */
 		int m_iFilePermissions;
 	};
-	const FileInfo *GetFileInfo( const RString &sPath ) const;
+	const FileInfo *GetFileInfo( const std::string &sPath ) const;
 
-	RString GetGlobalComment() const { return m_sComment; }
+	std::string GetGlobalComment() const { return m_sComment; }
 
 private:
 	bool m_bFileOwned;
 
 	RageFileBasic *m_pZip;
-	vector<FileInfo *> m_pFiles;
+	std::vector<FileInfo *> m_pFiles;
 
-	RString m_sPath;
-	RString m_sComment;
+	std::string m_sPath;
+	std::string m_sComment;
 
 	/* Open() must be threadsafe.  Mutex access to "zip", since we seek
 	 * around in it when reading files. */

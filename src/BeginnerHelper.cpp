@@ -14,7 +14,7 @@
 
 // "PLAYER_X" offsets are relative to the pad.
 // ex: Setting this to 10, and the HELPER to 300, will put the dancer at 310.
-#define PLAYER_X( px )		THEME->GetMetricF("BeginnerHelper",ssprintf("Player%dX",px+1))
+#define PLAYER_X( px )		THEME->GetMetricF("BeginnerHelper",fmt::sprintf("Player%dX",px+1))
 
 // "HELPER" offsets effect the pad/dancer as a whole.
 // Their relative Y cooridinates are hard-coded for each other.
@@ -51,9 +51,9 @@ static const char *anims[NUM_ANIMATIONS] =
 	"BeginnerHelper_step-jumplr.bones.txt"
 };
 
-static RString GetAnimPath( Animation a )
+static std::string GetAnimPath( Animation a )
 {
-	return RString( "Characters/" ) + anims[a];
+	return std::string( "Characters/" ) + anims[a];
 }
 
 BeginnerHelper::BeginnerHelper()
@@ -128,11 +128,16 @@ bool BeginnerHelper::Init( int iDancePadType )
 	// Load the DancePad
 	if( SHOW_DANCE_PAD )
 	{
+		std::string load_fail_reason;
 		switch( iDancePadType )
 		{
 		case 0: break; // No pad
-		case 1: m_pDancePad->LoadMilkshapeAscii(GetAnimPath(ANIM_DANCE_PAD)); break;
-		case 2: m_pDancePad->LoadMilkshapeAscii(GetAnimPath(ANIM_DANCE_PADS)); break;
+		case 1: m_pDancePad->LoadMilkshapeAscii(GetAnimPath(ANIM_DANCE_PAD), load_fail_reason); break;
+		case 2: m_pDancePad->LoadMilkshapeAscii(GetAnimPath(ANIM_DANCE_PADS), load_fail_reason); break;
+		}
+		if(!load_fail_reason.empty())
+		{
+			LuaHelpers::ReportScriptError(load_fail_reason);
 		}
 
 		m_pDancePad->SetName("DancePad");
@@ -149,12 +154,13 @@ bool BeginnerHelper::Init( int iDancePadType )
 
 		// Load character data
 		const Character *Character = GAMESTATE->m_pCurCharacters[pl];
-		ASSERT( Character != NULL );
+		ASSERT( Character != nullptr );
 
-		m_pDancer[pl]->SetName( ssprintf("PlayerP%d",pl+1) );
+		m_pDancer[pl]->SetName( fmt::sprintf("PlayerP%d",pl+1) );
 
 		// Load textures
-		m_pDancer[pl]->LoadMilkshapeAscii( Character->GetModelPath() );
+		std::string load_fail_reason;
+		m_pDancer[pl]->LoadMilkshapeAscii(Character->GetModelPath(), load_fail_reason);
 
 		// Load needed animations
 		m_pDancer[pl]->LoadMilkshapeAsciiBones( "Step-LEFT",	GetAnimPath(ANIM_LEFT) );
@@ -204,7 +210,7 @@ void BeginnerHelper::AddPlayer( PlayerNumber pn, const NoteData &ns )
 		return;
 	
 	const Character *Character = GAMESTATE->m_pCurCharacters[pn];
-	ASSERT( Character != NULL );
+	ASSERT( Character != nullptr );
 	if( !DoesFileExist(Character->GetModelPath()) )
 		return;
 
@@ -219,7 +225,7 @@ bool BeginnerHelper::CanUse(PlayerNumber pn)
 			return false;
 
 	// This does not pass PLAYER_INVALID to GetCurrentStyle because that would
-	// only check the first non-NULL style.  Both styles need to be checked. -Kyz
+	// only check the first non-nullptr style.  Both styles need to be checked. -Kyz
 	if(pn == PLAYER_INVALID)
 	{
 		return GAMESTATE->GetCurrentStyle(PLAYER_1)->m_bCanUseBeginnerHelper ||
@@ -248,10 +254,10 @@ void BeginnerHelper::DrawPrimitives()
 			DISPLAY->SetLighting( true );
 			DISPLAY->SetLightDirectional( 
 				0, 
-				RageColor(0.5f,0.5f,0.5f,1), 
-				RageColor(1,1,1,1),
-				RageColor(0,0,0,1),
-				RageVector3(0, 0, 1) );
+				Rage::Color(0.5f,0.5f,0.5f,1), 
+				Rage::Color(1,1,1,1),
+				Rage::Color(0,0,0,1),
+				Rage::Vector3(0, 0, 1) );
 
 			m_pDancePad->Draw();
 			DISPLAY->ClearZBuffer();	// So character doesn't step "into" the dance pad.
@@ -277,10 +283,10 @@ void BeginnerHelper::DrawPrimitives()
 		DISPLAY->SetLighting( true );
 		DISPLAY->SetLightDirectional( 
 			0, 
-			RageColor(0.5f,0.5f,0.5f,1), 
-			RageColor(1,1,1,1),
-			RageColor(0,0,0,1),
-			RageVector3(0, 0, 1) );
+			Rage::Color(0.5f,0.5f,0.5f,1), 
+			Rage::Color(1,1,1,1),
+			Rage::Color(0,0,0,1),
+			Rage::Vector3(0, 0, 1) );
 
 		FOREACH_PlayerNumber( pn )
 			if( GAMESTATE->IsHumanPlayer(pn) )

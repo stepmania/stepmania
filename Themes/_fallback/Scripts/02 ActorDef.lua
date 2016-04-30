@@ -37,11 +37,14 @@ local function MergeTables( left, right )
 	return ret
 end
 
-DefMetatable = {
+-- mergable is a better name because I want to use this on other tables that
+-- are useful to merge. -Kyz
+mergable_table_mt= {
 	__concat = function(left, right)
 		return MergeTables( left, right )
 	end
 }
+DefMetatable = mergable_table_mt
 
 -- This is used as follows:
 --

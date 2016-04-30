@@ -40,7 +40,7 @@ private:
 	int CurActionIndex();
 	void SetCursorFromSetListCurrent();
 	void StartWaitingForPress();
-	
+
 	unsigned int m_CurController;
 	unsigned int m_CurButton;
 	unsigned int m_CurSlot;
@@ -58,7 +58,7 @@ private:
 		// owned by m_Line
 		BitmapText	*m_textMappedTo[NUM_GameController][NUM_SHOWN_GAME_TO_DEVICE_SLOTS];
 	};
-	vector<KeyToMap> m_KeysToMap;
+	std::vector<KeyToMap> m_KeysToMap;
 
 	BitmapText m_textDevices;
 
@@ -95,17 +95,17 @@ private:
 			return m_slot < rhs.m_slot;
 		}
 	};
-	set<SetListEntry> m_SetList;
-	set<SetListEntry>::iterator m_SetListCurrent;
+	std::set<SetListEntry> m_SetList;
+	std::set<SetListEntry>::iterator m_SetListCurrent;
 	bool m_InSetListMode;
 
 	typedef void (ScreenMapControllers::* action_fun_t)();
 	struct ActionRow
 	{
-		RString m_name;
+		std::string m_name;
 		AutoActor m_actor;
 		action_fun_t m_action;
-		void Load(RString const& scr_name, RString const& name,
+		void Load(std::string const& scr_name, std::string const& name,
 			ScreenMapControllers::action_fun_t action, ActorFrame* line,
 			ActorScroller* scroller);
 	};
@@ -116,9 +116,9 @@ private:
 	void ExitAction();
 	bool SanityCheckWrapper();
 
-	vector<ActionRow> m_Actions;
+	std::vector<ActionRow> m_Actions;
 
-	vector<ActorFrame*> m_Line;
+	std::vector<ActorFrame*> m_Line;
 	ActorScroller m_LineScroller;
 
 	RageSound m_soundChange;
@@ -131,7 +131,7 @@ private:
  * (c) 2001-2004 Chris Danford
  * 2014 Eric Reese
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -141,7 +141,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

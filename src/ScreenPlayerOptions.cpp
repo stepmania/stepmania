@@ -11,8 +11,9 @@
 #include "CodeDetector.h"
 #include "ScreenDimensions.h"
 #include "PlayerState.h"
-#include "Foreach.h"
 #include "InputEventPlus.h"
+
+using std::vector;
 
 REGISTER_SCREEN_CLASS( ScreenPlayerOptions );
 
@@ -23,7 +24,7 @@ void ScreenPlayerOptions::Init()
 	FOREACH_PlayerNumber( p )
 	{
 		m_sprDisqualify[p].Load( THEME->GetPathG(m_sName,"disqualify") );
-		m_sprDisqualify[p]->SetName( ssprintf("DisqualifyP%i",p+1) );
+		m_sprDisqualify[p]->SetName( fmt::sprintf("DisqualifyP%i",p+1) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprDisqualify[p] );
 		m_sprDisqualify[p]->SetVisible( false );	// unhide later if handicapping options are discovered
 		m_sprDisqualify[p]->SetDrawOrder( 2 );
@@ -46,14 +47,17 @@ void ScreenPlayerOptions::Init()
 void ScreenPlayerOptions::BeginScreen()
 {
 	FOREACH_PlayerNumber( p )
+	{
 		ON_COMMAND( m_sprDisqualify[p] );
-
+	}
 	ScreenOptionsMaster::BeginScreen();
 
 	FOREACH_HumanPlayer( p )
 	{
 		for( unsigned r=0; r<m_pRows.size(); r++ )
+		{
 			UpdateDisqualified( r, p );
+		}
 	}
 }
 
@@ -81,7 +85,7 @@ bool ScreenPlayerOptions::Input( const InputEventPlus &input )
 		// apply the game default mods, but not the Profile saved mods
 		GAMESTATE->m_pPlayerState[pn]->ResetToDefaultPlayerOptions( ModsLevel_Preferred );
 
-		MESSAGEMAN->Broadcast( ssprintf("CancelAllP%i", pn+1) );
+		MESSAGEMAN->Broadcast( fmt::sprintf("CancelAllP%i", pn+1) );
 
 		for( unsigned r=0; r<m_pRows.size(); r++ )
 		{
@@ -124,7 +128,7 @@ void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
 {
 	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
 
-	// save original player options 
+	// save original player options
 	PlayerOptions poOrig = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetPreferred();
 
 	// Find out if the current row when exported causes disqualification.
@@ -134,18 +138,14 @@ void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
 	v.push_back( pn );
 	ExportOptions( row, v );
 	bool bRowCausesDisqualified = GAMESTATE->CurrentOptionsDisqualifyPlayer( pn );
-	m_bRowCausesDisqualified[pn][row] = bRowCausesDisqualified;
+	auto &field = m_bRowCausesDisqualified[pn];
+	field[row] = bRowCausesDisqualified;
 
 	// Update disqualified graphic
-	bool bDisqualified = false;
-	FOREACH_CONST( bool, m_bRowCausesDisqualified[pn], b )
-	{
-		if( *b )
-		{
-			bDisqualified = true;
-			break;
-		}
-	}
+	auto isDisqualified = [](bool const &b) {
+		return b;
+	};
+	bool bDisqualified = std::any_of(field.begin(), field.end(), isDisqualified);
 	m_sprDisqualify[pn]->SetVisible( bDisqualified );
 
 	// restore previous player options in case the user escapes back after this
@@ -155,7 +155,7 @@ void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ScreenPlayerOptions. */ 
+/** @brief Allow Lua to have access to the ScreenPlayerOptions. */
 class LunaScreenPlayerOptions: public Luna<ScreenPlayerOptions>
 {
 public:
@@ -173,7 +173,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenPlayerOptions, ScreenOptions )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -183,7 +183,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenPlayerOptions, ScreenOptions )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

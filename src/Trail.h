@@ -10,13 +10,13 @@ class Song;
 class Steps;
 struct lua_State;
 
-/** @brief One such Song and 
+/** @brief One such Song and
  * <a class="el" href="class_steps.html">Step</a> in the entire Trail. */
 struct TrailEntry
 {
-	TrailEntry(): 
-		pSong(NULL), 
-		pSteps(NULL),
+	TrailEntry():
+		pSong(nullptr),
+		pSteps(nullptr),
 		Modifiers(""),
 		Attacks(),
 		bSecret(false),
@@ -32,7 +32,7 @@ struct TrailEntry
 	/** @brief The <a class="el" href="class_steps.html">Step</a> involved in the entry. */
 	Steps*		pSteps;
 	/** @brief The Modifiers applied for the whole Song. */
-	RString		Modifiers;
+	std::string		Modifiers;
 	/** @brief The Attacks that will take place durring the Song. */
 	AttackArray	Attacks;
 	/**
@@ -60,7 +60,7 @@ public:
 	StepsType		m_StepsType;
 	CourseType		m_CourseType;
 	CourseDifficulty	m_CourseDifficulty;
-	vector<TrailEntry>	m_vEntries;
+	std::vector<TrailEntry>	m_vEntries;
 	int			m_iSpecifiedMeter;	// == -1 if no meter specified
 	mutable bool		m_bRadarValuesCached;
 	mutable RadarValues	m_CachedRadarValues;
@@ -106,7 +106,7 @@ public:
  * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -116,7 +116,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

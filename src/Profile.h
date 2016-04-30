@@ -3,9 +3,6 @@
 
 #include "GameConstantsAndTypes.h"
 #include "Grade.h"
-#include <map>
-#include <set>
-#include <deque>
 #include "HighScore.h"
 #include "DateTime.h"
 #include "SongUtil.h"	// for SongID
@@ -13,23 +10,29 @@
 #include "CourseUtil.h"	// for CourseID
 #include "TrailUtil.h"	// for TrailID
 #include "StyleUtil.h"	// for StyleID
+#include "IDUtil.h" // For hash specializations.
 #include "LuaReference.h"
+
+#include <unordered_map>
+#include <map>
+#include <set>
+#include <deque>
 
 class XNode;
 struct lua_State;
 class Character;
 
 // Current file versions
-extern const RString STATS_XML;
+extern const std::string STATS_XML;
 
 /**
  * @brief The filename where one can edit their personal profile data.
  *
- * Editable data is an INI because the default INI file association on Windows 
- * systems will open the ini file in an editor.  The default association for 
- * XML will open in IE.  Users have a much better chance of discovering how to 
+ * Editable data is an INI because the default INI file association on Windows
+ * systems will open the ini file in an editor.  The default association for
+ * XML will open in IE.  Users have a much better chance of discovering how to
  * edit this data if they don't have to fight against the file associations. */
-extern const RString EDITABLE_INI;
+extern const std::string EDITABLE_INI;
 
 /**
  * @brief The filename containing the signature for STATS_XML's signature.
@@ -38,17 +41,17 @@ extern const RString EDITABLE_INI;
  * The "don't share" file is something that the user should always keep private.
  * They can safely share STATS_XML with STATS_XML's signature so that others
  * can authenticate the STATS_XML data.  However, others can't copy that data
- * to their own profile for use in the game unless they also have the "don't 
- * share" file.  DontShare contains a piece of information that we can 
+ * to their own profile for use in the game unless they also have the "don't
+ * share" file.  DontShare contains a piece of information that we can
  * construct using STATS_XML but the user can't construct using STATS_XML. */
-extern const RString DONT_SHARE_SIG;
+extern const std::string DONT_SHARE_SIG;
 
-extern const RString PUBLIC_KEY_FILE;
-extern const RString SCREENSHOTS_SUBDIR;
-extern const RString EDIT_STEPS_SUBDIR;
-extern const RString EDIT_COURSES_SUBDIR;
-extern const RString LASTGOOD_SUBDIR;
-// extern const RString RIVAL_SUBDIR;
+extern const std::string PUBLIC_KEY_FILE;
+extern const std::string SCREENSHOTS_SUBDIR;
+extern const std::string EDIT_STEPS_SUBDIR;
+extern const std::string EDIT_COURSES_SUBDIR;
+extern const std::string LASTGOOD_SUBDIR;
+// extern const std::string RIVAL_SUBDIR;
 
 /** @brief The max number of characters that can be used in a profile. */
 const unsigned int PROFILE_MAX_DISPLAY_NAME_LENGTH	= 32;
@@ -72,8 +75,8 @@ enum ProfileType
 	ProfileType_Invalid
 };
 
-/** 
- * @brief Player data that persists between sessions. 
+/**
+ * @brief Player data that persists between sessions.
  *
  * This can be stored on a local disk or on a memory card. */
 class Profile
@@ -115,31 +118,31 @@ public:
 	{
 		m_lastSong.Unset();
 		m_lastCourse.Unset();
-		
+
 		m_LastPlayedDate.Init();
-		
+
 		FOREACH_ENUM( PlayMode, i )
 			m_iNumSongsPlayedByPlayMode[i] = 0;
 		FOREACH_ENUM( Difficulty, i )
 			m_iNumSongsPlayedByDifficulty[i] = 0;
 		for( int i=0; i<MAX_METER+1; i++ )
 			m_iNumSongsPlayedByMeter[i] = 0;
-		
+
 		ZERO( m_iNumStagesPassedByPlayMode );
 		ZERO( m_iNumStagesPassedByGrade );
 		m_UserTable.Unset();
-		
+
 		FOREACH_ENUM( StepsType,st )
 			FOREACH_ENUM( RankingCategory,rc )
 				m_CategoryHighScores[st][rc].Init();
 	}
 
 	// smart accessors
-	RString GetDisplayNameOrHighScoreName() const;
+	std::string GetDisplayNameOrHighScoreName() const;
 	Character *GetCharacter() const;
-	void SetCharacter(const RString sCharacterID);
-	RString GetDisplayTotalCaloriesBurned() const;		// remove me and use Lua instead
-	RString GetDisplayTotalCaloriesBurnedToday() const;	// remove me and use Lua instead
+	void SetCharacter(const std::string sCharacterID);
+	std::string GetDisplayTotalCaloriesBurned() const;		// remove me and use Lua instead
+	std::string GetDisplayTotalCaloriesBurnedToday() const;	// remove me and use Lua instead
 	int GetCalculatedWeightPounds() const;	// returns a default value if m_iWeightPounds isn't set
 	int GetAge() const; // returns a default value if m_Age isn't set
 	float GetCaloriesBurnedToday() const;
@@ -153,13 +156,24 @@ public:
 	float GetSongsPercentComplete( StepsType st, Difficulty dc ) const;
 	float GetCoursesPercentComplete( StepsType st, CourseDifficulty cd ) const;
 	float GetSongsAndCoursesPercentCompleteAllDifficulties( StepsType st ) const;
-	bool GetDefaultModifiers( const Game* pGameType, RString &sModifiersOut ) const;
-	void SetDefaultModifiers( const Game* pGameType, const RString &sModifiers );
-	bool IsCodeUnlocked( RString sUnlockEntryID ) const;
+	bool GetDefaultModifiers( const Game* pGameType, std::string &sModifiersOut ) const;
+	void SetDefaultModifiers( const Game* pGameType, const std::string &sModifiers );
+	void get_preferred_noteskin(StepsType stype, std::string& skin) const;
+	bool set_preferred_noteskin(StepsType stype, std::string const& skin);
+	typedef std::map<StepsType, std::string> pref_noteskin_container;
+	pref_noteskin_container const& get_all_preferred_noteskins()
+	{ return m_preferred_noteskins; }
+	LuaReference get_noteskin_params(std::string const& skin, StepsType stype) const;
+	void set_noteskin_params(std::string const& skin, StepsType stype, LuaReference& params);
+	typedef std::unordered_map<std::string, std::unordered_map<StepsType, LuaReference> > noteskin_param_container;
+	noteskin_param_container const& get_all_noteskin_params() const
+	{ return m_noteskin_params; }
+
+	bool IsCodeUnlocked( std::string sUnlockEntryID ) const;
 	Song *GetMostPopularSong() const;
 	Course *GetMostPopularCourse() const;
 
-	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumRolls, int iNumMines, 
+	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumRolls, int iNumMines,
 			   int iNumHands, int iNumLifts, float fCaloriesBurned );
 	void AddCaloriesToDailyTotal(float cals);
 	float CalculateCaloriesFromHeartRate(float HeartRate, float Duration);
@@ -171,14 +185,14 @@ public:
 	int m_ListPriority;
 
 	// Editable data
-	RString m_sDisplayName;
-	RString m_sCharacterID;
+	std::string m_sDisplayName;
+	std::string m_sCharacterID;
 	/**
 	 * @brief The last used name for high scoring purposes.
 	 *
 	 * This really shouldn't be in "editable", but it's needed in the smaller editable file
 	 * so that it can be ready quickly. */
-	RString m_sLastUsedHighScoreName;
+	std::string m_sLastUsedHighScoreName;
 	int m_iWeightPounds;	// 0 == not set
 	// Voomax and BirthYear are used for calculating calories from heart rate.
 	float m_Voomax; // 0 == not set
@@ -188,13 +202,17 @@ public:
 	// and voomax.
 	bool m_IgnoreStepCountCalories;
 	bool m_IsMale; // Used solely for calculating calories from heart rate.
-	//RString m_sProfileImageName;	// todo: add a default image -aj
+	//std::string m_sProfileImageName;	// todo: add a default image -aj
 
 	// General data
-	static RString MakeGuid();
+	static std::string MakeGuid();
 
-	RString m_sGuid;
-	map<RString,RString> m_sDefaultModifiers;
+	std::string m_sGuid;
+	// Probably not a problem if the per-game sections are written to prefs in
+	// random order. -Kyz
+	std::unordered_map<std::string,std::string> m_sDefaultModifiers;
+	pref_noteskin_container m_preferred_noteskins;
+	noteskin_param_container m_noteskin_params;
 	SortOrder m_SortOrder;
 	Difficulty m_LastDifficulty;
 	CourseDifficulty m_LastCourseDifficulty;
@@ -222,24 +240,24 @@ public:
 	int m_iTotalLifts;
 	/** @brief Is this a brand new profile? */
 	bool m_bNewProfile;
-	set<RString> m_UnlockedEntryIDs;
+	std::set<std::string> m_UnlockedEntryIDs;
 	/**
 	 * @brief Which machine did we play on last, based on the Guid?
 	 *
 	 * This is mutable because it's overwritten on save, but is usually
 	 * const everywhere else. It was decided to keep const on the whole
 	 * save chain and keep this mutable. -Chris */
-	mutable RString m_sLastPlayedMachineGuid;
+	mutable std::string m_sLastPlayedMachineGuid;
 	mutable DateTime m_LastPlayedDate;
 	/* These stats count twice in the machine profile if two players are playing;
 	 * that's the only approach that makes sense for ByDifficulty and ByMeter. */
 	int m_iNumSongsPlayedByPlayMode[NUM_PlayMode];
-	map<StyleID,int> m_iNumSongsPlayedByStyle;
+	std::unordered_map<StyleID,int> m_iNumSongsPlayedByStyle;
 	int m_iNumSongsPlayedByDifficulty[NUM_Difficulty];
 	int m_iNumSongsPlayedByMeter[MAX_METER+1];
 	/**
 	 * @brief Count the total number of songs played.
-	 * 
+	 *
 	 * This stat counts once per song, even if two players are active. */
 	int m_iNumTotalSongsPlayed;
 	int m_iNumStagesPassedByPlayMode[NUM_PlayMode];
@@ -256,11 +274,13 @@ public:
 	};
 	struct HighScoresForASong
 	{
-		std::map<StepsID,HighScoresForASteps>	m_StepsHighScores;
+		std::unordered_map<StepsID,HighScoresForASteps>	m_StepsHighScores;
 		int GetNumTimesPlayed() const;
 		HighScoresForASong(): m_StepsHighScores() {}
 	};
-	std::map<SongID,HighScoresForASong>	m_SongHighScores;
+	// No, I don't care if having the song scores in random order confuses
+	// people reading the raw file.  I want fast lookup. -Kyz
+	std::unordered_map<SongID,HighScoresForASong>	m_SongHighScores;
 
 	void AddStepsHighScore( const Song* pSong, const Steps* pSteps, HighScore hs, int &iIndexOut );
 	const HighScoreList& GetStepsHighScoreList( const Song* pSong, const Steps* pSteps ) const;
@@ -275,7 +295,7 @@ public:
 	bool HasPassedAnyStepsInSong( const Song* pSong ) const;
 
 	// Course high scores
-	// struct was a typedef'd array of HighScores, but VC6 freaks out 
+	// struct was a typedef'd array of HighScores, but VC6 freaks out
 	// in processing the templates for map::operator[].
 	struct HighScoresForATrail
 	{
@@ -284,11 +304,11 @@ public:
 	};
 	struct HighScoresForACourse
 	{
-		std::map<TrailID,HighScoresForATrail>	m_TrailHighScores;
+		std::unordered_map<TrailID,HighScoresForATrail>	m_TrailHighScores;
 		int GetNumTimesPlayed() const;
 		HighScoresForACourse(): m_TrailHighScores() {}
 	};
-	std::map<CourseID,HighScoresForACourse>	m_CourseHighScores;
+	std::unordered_map<CourseID,HighScoresForACourse>	m_CourseHighScores;
 
 	void AddCourseHighScore( const Course* pCourse, const Trail* pTrail, HighScore hs, int &iIndexOut );
 	HighScoreList& GetCourseHighScoreList( const Course* pCourse, const Trail* pTrail );
@@ -298,10 +318,10 @@ public:
 	DateTime GetCourseLastPlayedDateTime( const Course* pCourse ) const;
 	void IncrementCoursePlayCount( const Course* pCourse, const Trail* pTrail );
 
-	void GetAllUsedHighScoreNames(std::set<RString>& names);
+	void GetAllUsedHighScoreNames(std::set<std::string>& names);
 
 	void MergeScoresFromOtherProfile(Profile* other, bool skip_totals,
-		RString const& from_dir, RString const& to_dir);
+		std::string const& from_dir, std::string const& to_dir);
 
 	// Category high scores
 	HighScoreList m_CategoryHighScores[NUM_StepsType][NUM_RankingCategory];
@@ -314,7 +334,7 @@ public:
 
 
 	// Screenshot Data
-	vector<Screenshot> m_vScreenshots;
+	std::vector<Screenshot> m_vScreenshots;
 	void AddScreenshot( const Screenshot &screenshot );
 	int GetNextScreenshotIndex() { return m_vScreenshots.size(); }
 
@@ -322,18 +342,20 @@ public:
 	/**
 	 * @brief The basics for Calorie Data.
 	 *
-	 * Why track calories in a map, and not in a static sized array like 
+	 * Why track calories in a map, and not in a static sized array like
 	 * Bookkeeping?  The machine's clock is not guaranteed to be set correctly.
-	 * If calorie array is in a static sized array, playing on a machine with 
-	 * a mis-set clock could wipe out all your past data.  With this scheme, 
-	 * the worst that could happen is that playing on a mis-set machine will 
+	 * If calorie array is in a static sized array, playing on a machine with
+	 * a mis-set clock could wipe out all your past data.  With this scheme,
+	 * the worst that could happen is that playing on a mis-set machine will
 	 * insert some garbage entries into the map. */
 	struct Calories
 	{
 		Calories(): fCals(0) {}
 		float fCals;
 	};
-	map<DateTime,Calories> m_mapDayToCaloriesBurned;
+	// Probably not used enough to require fast lookup, so leave it sorted for
+	// reading convenience. -Kyz
+	std::map<DateTime,Calories> m_mapDayToCaloriesBurned;
 	float GetCaloriesBurnedForDay( DateTime day ) const;
 
 /*
@@ -370,34 +392,37 @@ public:
 	// Init'ing
 	void InitAll()
 	{
-		InitEditableData(); 
-		InitGeneralData(); 
-		InitSongScores(); 
-		InitCourseScores(); 
-		InitCategoryScores(); 
-		InitScreenshotData(); 
-		InitCalorieData(); 
+		InitEditableData();
+		init_noteskin_params();
+		InitGeneralData();
+		InitSongScores();
+		InitCourseScores();
+		InitCategoryScores();
+		InitScreenshotData();
+		InitCalorieData();
 	}
-	void InitEditableData(); 
-	void InitGeneralData(); 
-	void InitSongScores(); 
-	void InitCourseScores(); 
-	void InitCategoryScores(); 
-	void InitScreenshotData(); 
-	void InitCalorieData(); 
+	void InitEditableData();
+	void init_noteskin_params();
+	void InitGeneralData();
+	void InitSongScores();
+	void InitCourseScores();
+	void InitCategoryScores();
+	void InitScreenshotData();
+	void InitCalorieData();
 	void ClearStats();
 
 	void swap(Profile& other);
 
 	// Loading and saving
-	void HandleStatsPrefixChange(RString dir, bool require_signature);
-	ProfileLoadResult LoadAllFromDir( RString sDir, bool bRequireSignature );
-	ProfileLoadResult LoadStatsFromDir(RString dir, bool require_signature);
-	void LoadTypeFromDir(RString dir);
-	void LoadCustomFunction( RString sDir );
-	bool SaveAllToDir( RString sDir, bool bSignData ) const;
+	void HandleStatsPrefixChange( std::string dir, bool require_signature );
+	ProfileLoadResult LoadAllFromDir( std::string sDir, bool bRequireSignature );
+	ProfileLoadResult LoadStatsFromDir( std::string dir, bool require_signature );
+	void LoadTypeFromDir(std::string dir);
+	void LoadCustomFunction( std::string sDir );
+	bool SaveAllToDir( std::string sDir, bool bSignData ) const;
 
-	ProfileLoadResult LoadEditableDataFromDir( RString sDir );
+	ProfileLoadResult LoadEditableDataFromDir( std::string sDir );
+	void load_noteskin_params_from_dir(std::string const& dir);
 	ProfileLoadResult LoadStatsXmlFromNode( const XNode* pNode, bool bIgnoreEditable = true );
 	void LoadGeneralDataFromNode( const XNode* pNode );
 	void LoadSongScoresFromNode( const XNode* pNode );
@@ -406,9 +431,10 @@ public:
 	void LoadScreenshotDataFromNode( const XNode* pNode );
 	void LoadCalorieDataFromNode( const XNode* pNode );
 
-	void SaveTypeToDir(RString dir) const;
-	void SaveEditableDataToDir( RString sDir ) const;
-	bool SaveStatsXmlToDir( RString sDir, bool bSignData ) const;
+	void SaveTypeToDir(std::string dir) const;
+	void SaveEditableDataToDir( std::string sDir ) const;
+	void save_noteskin_params_to_dir(std::string const& dir) const;
+	bool SaveStatsXmlToDir( std::string sDir, bool bSignData ) const;
 	XNode* SaveStatsXmlCreateNode() const;
 	XNode* SaveGeneralDataCreateNode() const;
 	XNode* SaveSongScoresCreateNode() const;
@@ -419,12 +445,12 @@ public:
 
 	XNode* SaveCoinDataCreateNode() const;
 
-	void SaveStatsWebPageToDir( RString sDir ) const;
-	void SaveMachinePublicKeyToDir( RString sDir ) const;
+	void SaveStatsWebPageToDir( std::string sDir ) const;
+	void SaveMachinePublicKeyToDir( std::string sDir ) const;
 
-	static void MoveBackupToDir( RString sFromDir, RString sToDir );
-	static RString MakeUniqueFileNameNoExtension( RString sDir, RString sFileNameBeginning );
-	static RString MakeFileNameNoExtension( RString sFileNameBeginning, int iIndex );
+	static void MoveBackupToDir( std::string sFromDir, std::string sToDir );
+	static std::string MakeUniqueFileNameNoExtension( std::string sDir, std::string sFileNameBeginning );
+	static std::string MakeFileNameNoExtension( std::string sFileNameBeginning, int iIndex );
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -442,7 +468,7 @@ private:
  * @author Chris Danford (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -452,7 +478,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

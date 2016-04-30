@@ -8,7 +8,6 @@
 #include "LuaManager.h"
 #include "ProductInfo.h"
 #include "DateTime.h"
-#include "Foreach.h"
 #include "arch/Dialog/Dialog.h"
 #include "RageFileManager.h"
 #include "SpecialFiles.h"
@@ -25,8 +24,11 @@
 #include <conio.h>
 #endif
 
+using std::string;
+using std::vector;
+
 /** @brief The directory where languages should be installed. */
-const RString INSTALLER_LANGUAGES_DIR = "Themes/_Installer/Languages/";
+const std::string INSTALLER_LANGUAGES_DIR = "Themes/_Installer/Languages/";
 
 vector<CommandLineActions::CommandLineArgs> CommandLineActions::ToProcess;
 
@@ -34,30 +36,32 @@ static void Nsis()
 {
 	RageFile out;
 	if(!out.Open("nsis_strings_temp.inc", RageFile::WRITE))
-		RageException::Throw("Error opening file for write.");
-
-	vector<RString> vs;
-	GetDirListing(INSTALLER_LANGUAGES_DIR + "*.ini", vs, false, false);
-	FOREACH_CONST(RString, vs, s)
 	{
-		RString sThrowAway, sLangCode;
-		splitpath(*s, sThrowAway, sLangCode, sThrowAway);
+		RageException::Throw("Error opening file for write.");
+	}
+	vector<std::string> vs;
+	GetDirListing(INSTALLER_LANGUAGES_DIR + "*.ini", vs, false, false);
+	for (auto const &s: vs)
+	{
+		std::string sThrowAway, sLangCode;
+		splitpath(s, sThrowAway, sLangCode, sThrowAway);
 		const LanguageInfo *pLI = GetLanguageInfo(sLangCode);
 
-		RString sLangNameUpper = pLI->szEnglishName;
-		sLangNameUpper.MakeUpper();
+		std::string sLangNameUpper = Rage::make_upper(pLI->englishName);
 
 		IniFile ini;
-		if(!ini.ReadFile(INSTALLER_LANGUAGES_DIR + *s))
-			RageException::Throw("Error opening file for read.");
-		FOREACH_CONST_Child(&ini, child)
+		if(!ini.ReadFile(INSTALLER_LANGUAGES_DIR + s))
 		{
-			FOREACH_CONST_Attr(child, attr)
+			RageException::Throw("Error opening file for read.");
+		}
+		for (auto const *child: ini)
+		{
+			for (auto const &attr: child->m_attrs)
 			{
-				RString sName = attr->first;
-				RString sValue = attr->second->GetValue<RString>();
-				sValue.Replace("\\n", "$\\n");
-				RString sLine = ssprintf("LangString %s ${LANG_%s} \"%s\"", sName.c_str(), sLangNameUpper.c_str(), sValue.c_str());
+				std::string sName = attr.first;
+				std::string sValue = attr.second->GetValue<std::string>();
+				Rage::replace(sValue, "\\n", "$\\n");
+				std::string sLine = fmt::sprintf("LangString %s ${LANG_%s} \"%s\"", sName.c_str(), sLangNameUpper.c_str(), sValue.c_str());
 				out.PutLine(sLine);
 			}
 		}
@@ -87,8 +91,8 @@ static void LuaInformation()
 static void Version()
 {
 	#if defined(WIN32)
-		RString sProductID = ssprintf("%s", (string(PRODUCT_FAMILY) + product_version).c_str() );
-		RString sVersion = ssprintf("build %s\nCompile Date: %s @ %s", ::sm_version_git_hash, version_date, version_time);
+		std::string sProductID = fmt::sprintf("%s", (string(PRODUCT_FAMILY) + product_version).c_str() );
+		std::string sVersion = fmt::sprintf("build %s\nCompile Date: %s @ %s", ::sm_version_git_hash, version_date, version_time);
 
 		AllocConsole();
 		freopen("CONOUT$","wb", stdout);
@@ -100,11 +104,13 @@ static void Version()
 	#endif // WIN32
 }
 
-void CommandLineActions::Handle(LoadingWindow* pLW)
+void CommandLineActions::Handle(LoadingWindow*)
 {
 	CommandLineArgs args;
 	for(int i=0; i<g_argc; ++i)
+	{
 		args.argv.push_back(g_argv[i]);
+	}
 	ToProcess.push_back(args);
 
 	bool bExitAfter = false;
@@ -130,7 +136,7 @@ void CommandLineActions::Handle(LoadingWindow* pLW)
 /*
  * (c) 2006 Chris Danford, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -140,7 +146,7 @@ void CommandLineActions::Handle(LoadingWindow* pLW)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

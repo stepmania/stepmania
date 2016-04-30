@@ -41,6 +41,8 @@ option(WITH_OGG "Build with OGG/Vorbis Support." ON)
 # Turn this option on to log every segment added or removed.
 option(WITH_LOGGING_TIMING_DATA "Build with logging all Add and Erase Segment calls." OFF)
 
+option(WITH_UNIT_TESTS "Build unit tests." OFF)
+
 if(NOT MSVC)
   # Turn this option off to disable using FFMEPG.
   option(WITH_FFMPEG "Build with FFMPEG." ON)

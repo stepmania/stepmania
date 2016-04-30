@@ -22,7 +22,7 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 	// init arrows
 	for( int c=0; c<pStyle->m_iColsPerPlayer; c++ ) 
 	{
-		const RString &sButton = GAMESTATE->GetCurrentStyle(pn)->ColToButtonName( c );
+		const std::string &sButton = GAMESTATE->GetCurrentStyle(pn)->ColToButtonName( c );
 
 		vector<GameInput> GameI;
 		GAMESTATE->GetCurrentStyle(pn)->StyleInputToGameInput( c, pn, GameI );
@@ -48,10 +48,11 @@ void GhostArrowRow::SetColumnRenderers(vector<NoteColumnRenderer>& renderers)
 
 GhostArrowRow::~GhostArrowRow()
 {
-	for( unsigned i = 0; i < m_Ghost.size(); ++i )
-		delete m_Ghost[i];
+	for (auto *ghost: m_Ghost)
+	{
+		delete ghost;
+	}
 }
-
 
 void GhostArrowRow::Update( float fDeltaTime )
 {
@@ -100,7 +101,7 @@ void GhostArrowRow::DrawPrimitives()
 
 void GhostArrowRow::DidTapNote( int iCol, TapNoteScore tns, bool bBright )
 {
-	ASSERT_M( iCol >= 0  &&  iCol < (int) m_Ghost.size(), ssprintf("assert(iCol %i >= 0  && iCol %i < (int)m_Ghost.size() %i) failed",iCol,iCol,(int)m_Ghost.size()) );
+	ASSERT_M( iCol >= 0  &&  iCol < (int) m_Ghost.size(), fmt::sprintf("assert(iCol %i >= 0  && iCol %i < (int)m_Ghost.size() %i) failed",iCol,iCol,(int)m_Ghost.size()) );
 
 	Message msg("ColumnJudgment");
 	msg.SetParam( "TapNoteScore", tns );
@@ -115,7 +116,7 @@ void GhostArrowRow::DidTapNote( int iCol, TapNoteScore tns, bool bBright )
 		m_Ghost[iCol]->PlayCommand( "Bright" );
 	else
 		m_Ghost[iCol]->PlayCommand( "Dim" );
-	RString sJudge = TapNoteScoreToString( tns );
+	std::string sJudge = TapNoteScoreToString( tns );
 	m_Ghost[iCol]->PlayCommand( Capitalize(sJudge) );
 }
 
@@ -134,7 +135,7 @@ void GhostArrowRow::DidHoldNote( int iCol, HoldNoteScore hns, bool bBright )
 		m_Ghost[iCol]->PlayCommand( "Bright" );
 	else
 		m_Ghost[iCol]->PlayCommand( "Dim" );
-	RString sJudge = HoldNoteScoreToString( hns );
+	std::string sJudge = HoldNoteScoreToString( hns );
 	m_Ghost[iCol]->PlayCommand( Capitalize(sJudge) );
 }
 

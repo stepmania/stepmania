@@ -8,24 +8,24 @@
 class RageFileDriverDirect: public RageFileDriver
 {
 public:
-	RageFileDriverDirect( const RString &sRoot );
+	RageFileDriverDirect( const std::string &sRoot );
 
-	RageFileBasic *Open( const RString &sPath, int iMode, int &iError );
-	bool Move( const RString &sOldPath, const RString &sNewPath );
-	bool Remove( const RString &sPath );
-	bool Remount( const RString &sPath );
+	RageFileBasic *Open( const std::string &sPath, int iMode, int &iError );
+	bool Move( const std::string &sOldPath, const std::string &sNewPath );
+	bool Remove( const std::string &sPath );
+	bool Remount( const std::string &sPath );
 
 private:
-	RString m_sRoot;
+	std::string m_sRoot;
 };
 
 class RageFileDriverDirectReadOnly: public RageFileDriverDirect
 {
 public:
-	RageFileDriverDirectReadOnly( const RString &sRoot );
-	RageFileBasic *Open( const RString &sPath, int iMode, int &iError );
-	bool Move( const RString &sOldPath, const RString &sNewPath );
-	bool Remove( const RString &sPath );
+	RageFileDriverDirectReadOnly( const std::string &sRoot );
+	RageFileBasic *Open( const std::string &sPath, int iMode, int &iError );
+	bool Move( const std::string &sOldPath, const std::string &sNewPath );
+	bool Remove( const std::string &sPath );
 };
 
 /** @brief This driver handles direct file access. */
@@ -33,14 +33,14 @@ public:
 class RageFileObjDirect: public RageFileObj
 {
 public:
-	RageFileObjDirect( const RString &sPath, int iFD, int iMode );
+	RageFileObjDirect( const std::string &sPath, int iFD, int iMode );
 	virtual ~RageFileObjDirect();
 	virtual int ReadInternal( void *pBuffer, size_t iBytes );
 	virtual int WriteInternal( const void *pBuffer, size_t iBytes );
 	virtual int FlushInternal();
 	virtual int SeekInternal( int offset );
 	virtual RageFileObjDirect *Copy() const;
-	virtual RString GetDisplayPath() const { return m_sPath; }
+	virtual std::string GetDisplayPath() const { return m_sPath; }
 	virtual int GetFileSize() const;
 	virtual int GetFD();
 	
@@ -49,7 +49,7 @@ private:
 	
 	int m_iFD;
 	int m_iMode;
-	RString m_sPath; /* for Copy */
+	std::string m_sPath; /* for Copy */
 	
 	/*
 	 * When not streaming to disk, we write to a temporary file, and rename to the

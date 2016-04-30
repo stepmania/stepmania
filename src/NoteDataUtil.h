@@ -13,22 +13,22 @@ class TimingData;
 
 void PlaceAutoKeysound( NoteData &out, int row, TapNote akTap );
 int FindLongestOverlappingHoldNoteForAnyTrack( const NoteData &in, int iRow );
-void LightTransformHelper( const NoteData &in, NoteData &out, const vector<int> &aiTracks );
+void LightTransformHelper( const NoteData &in, NoteData &out, const std::vector<int> &aiTracks );
 
 /**
  * @brief Utility functions that deal with NoteData.
  *
  * Things should go in here if they can be (cleanly and efficiently)
- * implemented using only NoteData's primitives; this improves abstraction 
+ * implemented using only NoteData's primitives; this improves abstraction
  * and makes it much easier to change NoteData internally in the future. */
 namespace NoteDataUtil
 {
 	NoteType GetSmallestNoteTypeForMeasure( const NoteData &nd, int iMeasureIndex );
 	NoteType GetSmallestNoteTypeInRange( const NoteData &nd, int iStartIndex, int iEndIndex );
-	void LoadFromSMNoteDataString( NoteData &out, const RString &sSMNoteData, bool bComposite );
-	void GetSMNoteDataString( const NoteData &in, RString &notes_out );
-	void SplitCompositeNoteData( const NoteData &in, vector<NoteData> &out );
-	void CombineCompositeNoteData( NoteData &out, const vector<NoteData> &in );
+	void LoadFromSMNoteDataString( NoteData &out, const std::string &sSMNoteData, bool bComposite );
+	void GetSMNoteDataString( const NoteData &in, std::string &notes_out );
+	void SplitCompositeNoteData( const NoteData &in, std::vector<NoteData> &out );
+	void CombineCompositeNoteData( NoteData &out, const std::vector<NoteData> &in );
 	/**
 	 * @brief Autogenerate notes from one type to another.
 	 *
@@ -118,12 +118,12 @@ namespace NoteDataUtil
 	void Quick( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void BMRize( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void Skippy( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
-	void InsertIntelligentTaps( 
-		NoteData &in, 
+	void InsertIntelligentTaps(
+		NoteData &in,
 		int iWindowSizeRows,
 		int iInsertOffsetRows,
 		int iWindowStrideRows,
-		bool bSkippy, 
+		bool bSkippy,
 		int iStartIndex = 0,
 		int iEndIndex = MAX_NOTE_ROW );
 	void AddMines( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
@@ -197,7 +197,7 @@ namespace NoteDataUtil
  * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -207,7 +207,7 @@ namespace NoteDataUtil
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

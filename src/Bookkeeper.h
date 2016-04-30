@@ -55,10 +55,11 @@ private:
 		bool operator<( const Date &rhs ) const;
 	};
 	int GetNumCoins( Date beginning, Date ending ) const;
-	int GetNumCoinsInRange( map<Date,int>::const_iterator begin, map<Date,int>::const_iterator end ) const;
+	int GetNumCoinsInRange( std::map<Date,int>::const_iterator begin, std::map<Date,int>::const_iterator end ) const;
 
-	int m_iLastSeenTime;
-	map<Date,int> m_mapCoinsForHour;
+	// This cannot be an unordered_map because GetNumCoinsInRange requires a
+	// fixed order. -Kyz
+	std::map<Date,int> m_mapCoinsForHour;
 };
 
 extern Bookkeeper*	BOOKKEEPER;	// global and accessible from anywhere in our program
@@ -70,7 +71,7 @@ extern Bookkeeper*	BOOKKEEPER;	// global and accessible from anywhere in our pro
  * @author Chris Danford (c) 2003-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -80,7 +81,7 @@ extern Bookkeeper*	BOOKKEEPER;	// global and accessible from anywhere in our pro
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

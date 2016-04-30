@@ -2,38 +2,38 @@
 #include "SpecialDirs.h"
 #include <shlobj.h>
 
-static RString GetSpecialFolderPath( int csidl )
+static std::string GetSpecialFolderPath( int csidl )
 {
-	RString sDir;
+	std::string sDir;
 	TCHAR szDir[MAX_PATH] = "";
-	HRESULT hResult = SHGetFolderPath( NULL, csidl, NULL, SHGFP_TYPE_CURRENT, szDir );
+	HRESULT hResult = SHGetFolderPath( nullptr, csidl, nullptr, SHGFP_TYPE_CURRENT, szDir );
 	ASSERT( hResult == S_OK );
 	sDir = szDir;
 	sDir += "/";
 	return sDir;
 }
 
-RString SpecialDirs::GetAppDataDir()
+std::string SpecialDirs::GetAppDataDir()
 {
 	return GetSpecialFolderPath( CSIDL_APPDATA );
 }
 
-RString SpecialDirs::GetLocalAppDataDir()
+std::string SpecialDirs::GetLocalAppDataDir()
 {
 	return GetSpecialFolderPath( CSIDL_LOCAL_APPDATA );
 }
 
-RString SpecialDirs::GetCommonAppDataDir()
+std::string SpecialDirs::GetCommonAppDataDir()
 {
 	return GetSpecialFolderPath( CSIDL_COMMON_APPDATA );
 }
 
-RString SpecialDirs::GetPicturesDir()
+std::string SpecialDirs::GetPicturesDir()
 {
 	return GetSpecialFolderPath( CSIDL_MYPICTURES );
 }
 
-RString SpecialDirs::GetDesktopDir()
+std::string SpecialDirs::GetDesktopDir()
 {
 	return GetSpecialFolderPath( CSIDL_DESKTOP );
 }

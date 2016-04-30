@@ -32,7 +32,7 @@ enum SegmentEffectType
 
 #define FOREACH_TimingSegmentType(tst) FOREACH_ENUM(TimingSegmentType, tst)
 
-const RString& TimingSegmentTypeToString( TimingSegmentType tst );
+std::string const TimingSegmentTypeToString( TimingSegmentType tst );
 
 const int ROW_INVALID = -1;
 
@@ -78,14 +78,14 @@ struct TimingSegment
 	float GetBeat() const { return NoteRowToBeat(m_iStartRow); }
 	void SetBeat( float fBeat ) { SetRow( BeatToNoteRow(fBeat) ); }
 
-	virtual RString ToString(int /* dec */) const
+	virtual std::string ToString(int /* dec */) const
 	{
 		return FloatToString(GetBeat());
 	}
 
-	virtual vector<float> GetValues() const
+	virtual std::vector<float> GetValues() const
 	{
-		return vector<float>(0);
+		return std::vector<float>(0);
 	}
 
 	bool operator<( const TimingSegment &other ) const
@@ -152,8 +152,8 @@ struct FakeSegment : public TimingSegment
 
 	void Scale( int start, int length, int newLength );
 
-	RString ToString( int dec ) const;
-	vector<float> GetValues() const { return vector<float>(1, GetLength()); }
+	std::string ToString( int dec ) const;
+	std::vector<float> GetValues() const { return std::vector<float>(1, GetLength()); }
 
 	bool operator==( const FakeSegment &other ) const
 	{
@@ -210,8 +210,8 @@ struct WarpSegment : public TimingSegment
 	void SetLength( float fBeats ) { m_iLengthRows = ToNoteRow(fBeats); }
 
 	void Scale( int start, int length, int newLength );
-	RString ToString( int dec ) const;
-	vector<float> GetValues() const { return vector<float>(1, GetLength()); }
+	std::string ToString( int dec ) const;
+	std::vector<float> GetValues() const { return std::vector<float>(1, GetLength()); }
 
 	bool operator==( const WarpSegment &other ) const
 	{
@@ -265,8 +265,8 @@ struct TickcountSegment : public TimingSegment
 	int GetTicks() const { return m_iTicksPerBeat; }
 	void SetTicks( int iTicks ) { m_iTicksPerBeat = iTicks; }
 
-	RString ToString( int dec ) const;
-	vector<float> GetValues() const { return vector<float>(1, GetTicks() * 1.f); }
+	std::string ToString( int dec ) const;
+	std::vector<float> GetValues() const { return std::vector<float>(1, GetTicks() * 1.f); }
 
 	bool operator==( const TickcountSegment &other ) const
 	{
@@ -317,8 +317,8 @@ struct ComboSegment : public TimingSegment
 	void SetCombo( int iCombo ) { m_iCombo = iCombo; }
 	void SetMissCombo( int iCombo ) { m_iMissCombo = iCombo; }
 
-	RString ToString( int dec ) const;
-	vector<float> GetValues() const;
+	std::string ToString( int dec ) const;
+	std::vector<float> GetValues() const;
 
 	bool operator==( const ComboSegment &other ) const
 	{
@@ -359,17 +359,17 @@ struct LabelSegment : public TimingSegment
 
 	TimingSegment* Copy() const { return new LabelSegment(*this); }
 
-	LabelSegment( int iStartRow = ROW_INVALID, const RString& sLabel = RString() ) :
+	LabelSegment( int iStartRow = ROW_INVALID, const std::string& sLabel = std::string() ) :
 		TimingSegment(iStartRow), m_sLabel(sLabel) { }
 
 	LabelSegment(const LabelSegment &other) :
 		TimingSegment( other.GetRow() ),
 		m_sLabel( other.GetLabel() ) { }
 
-	const RString& GetLabel() const { return m_sLabel; }
-	void SetLabel( const RString& sLabel ) { m_sLabel.assign(sLabel); }
+	const std::string& GetLabel() const { return m_sLabel; }
+	void SetLabel( const std::string& sLabel ) { m_sLabel.assign(sLabel); }
 
-	RString ToString( int dec ) const;
+	std::string ToString( int dec ) const;
 	// Use the default definition for GetValues because the value for a LabelSegment is not a float or set of floats.
 	// TimingSegmentSetToLuaTable in TimingData.cpp has a special case for labels to handle this.
 
@@ -388,7 +388,7 @@ struct LabelSegment : public TimingSegment
 	}
 private:
 	/** @brief The label/section name for this point. */
-	RString m_sLabel;
+	std::string m_sLabel;
 };
 
 /**
@@ -418,8 +418,8 @@ struct BPMSegment : public TimingSegment
 	void SetBPS( float fBPS ) { m_fBPS = fBPS; }
 	void SetBPM( float fBPM ) { m_fBPS = fBPM / 60.0f; }
 
-	RString ToString( int dec ) const;
-	vector<float> GetValues() const { return vector<float>(1, GetBPM()); }
+	std::string ToString( int dec ) const;
+	std::vector<float> GetValues() const { return std::vector<float>(1, GetBPM()); }
 
 	bool operator==( const BPMSegment &other ) const
 	{
@@ -475,8 +475,8 @@ struct TimeSignatureSegment : public TimingSegment
 
 	void Set( int num, int den ) { m_iNumerator = num; m_iDenominator = den; }
 
-	RString ToString( int dec ) const;
-	vector<float> GetValues() const;
+	std::string ToString( int dec ) const;
+	std::vector<float> GetValues() const;
 
 	/**
 	 * @brief Retrieve the number of note rows per measure within the TimeSignatureSegment.
@@ -557,8 +557,8 @@ struct SpeedSegment : public TimingSegment
 
 	void Scale( int start, int length, int newLength );
 
-	RString ToString( int dec ) const;
-	vector<float> GetValues() const;
+	std::string ToString( int dec ) const;
+	std::vector<float> GetValues() const;
 
 	bool operator==( const SpeedSegment &other ) const
 	{
@@ -617,8 +617,8 @@ struct ScrollSegment : public TimingSegment
 	float GetRatio() const { return m_fRatio; }
 	void SetRatio( float fRatio ) { m_fRatio = fRatio; }
 
-	RString ToString( int dec ) const;
-	vector<float> GetValues() const { return vector<float>(1, GetRatio()); }
+	std::string ToString( int dec ) const;
+	std::vector<float> GetValues() const { return std::vector<float>(1, GetRatio()); }
 
 	bool operator==( const ScrollSegment &other ) const
 	{
@@ -662,8 +662,8 @@ struct StopSegment : public TimingSegment
 	float GetPause() const { return m_fSeconds; }
 	void SetPause( float fSeconds ) { m_fSeconds = fSeconds; }
 
-	RString ToString( int dec ) const;
-	vector<float> GetValues() const { return vector<float>(1, GetPause()); }
+	std::string ToString( int dec ) const;
+	std::vector<float> GetValues() const { return std::vector<float>(1, GetPause()); }
 
 	bool operator==( const StopSegment &other ) const
 	{
@@ -706,8 +706,8 @@ struct DelaySegment : public TimingSegment
 	float GetPause() const { return m_fSeconds; }
 	void SetPause( float fSeconds ) { m_fSeconds = fSeconds; }
 
-	RString ToString( int dec ) const;
-	vector<float> GetValues() const { return vector<float>(1, GetPause()); }
+	std::string ToString( int dec ) const;
+	std::vector<float> GetValues() const { return std::vector<float>(1, GetPause()); }
 
 	bool operator==( const DelaySegment &other ) const
 	{
@@ -737,7 +737,7 @@ private:
  * @author Jason Felds (c) 2011
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -747,7 +747,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

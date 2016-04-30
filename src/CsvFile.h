@@ -10,17 +10,17 @@ class CsvFile
 public:
 	CsvFile();
 
-	bool ReadFile( const RString &sPath );
+	bool ReadFile( const std::string &sPath );
 	bool ReadFile( RageFileBasic &sFile );
-	bool WriteFile( const RString &sPath ) const;
+	bool WriteFile( const std::string &sPath ) const;
 	bool WriteFile( RageFileBasic &sFile ) const;
 
-	typedef vector<RString> StringVector;
-	vector<StringVector> m_vvs;
+	typedef std::vector<std::string> StringVector;
+	std::vector<StringVector> m_vvs;
 
 private:
-	RString m_sPath;
-	mutable RString m_sError;
+	std::string m_sPath;
+	mutable std::string m_sError;
 };
 
 #endif

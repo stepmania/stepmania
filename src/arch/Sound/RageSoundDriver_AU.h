@@ -9,7 +9,7 @@ class RageSoundDriver_AU: public RageSoundDriver
 {
 public:
 	RageSoundDriver_AU();
-	RString Init();
+	std::string Init();
 	~RageSoundDriver_AU();
 	float GetPlayLatency() const;
 	int GetSampleRate() const { return m_iSampleRate; }

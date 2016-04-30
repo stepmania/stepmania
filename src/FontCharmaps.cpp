@@ -1,11 +1,12 @@
 #include "global.h"
 #include "FontCharmaps.h"
+#include "RageString.hpp"
 
 #include <map>
 
 const wchar_t FontCharmaps::M_SKIP = 0xFEFF;
 
-static map<RString,const wchar_t*> charmaps;
+static std::map<std::string,const wchar_t*> charmaps;
 
 using namespace FontCharmaps;
 
@@ -20,12 +21,12 @@ using namespace FontCharmaps;
  *
  (empty)
  (empty)
- !"#$%&'()*+,-./ 
-0123456789:;<=>? 
-@ABCDEFGHIJKLMNO 
-PQRSTUVWXYZ[\]^_ 
-`abcdefghijklmno 
-pqrstuvwxyz{|}~ 
+ !"#$%&'()*+,-./
+0123456789:;<=>?
+@ABCDEFGHIJKLMNO
+PQRSTUVWXYZ[\]^_
+`abcdefghijklmno
+pqrstuvwxyz{|}~
  */
 static const wchar_t map_ascii[] = {
 	M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP,
@@ -44,11 +45,11 @@ static const wchar_t map_ascii[] = {
  *
  (empty)
  (empty)
- ¡¢£¤¥¦§¨©ª«¬-®¯ 
-°±²³´µ¶·¸¹º»¼½¾¿ 
-ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏ 
-ÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß 
-àáâãäåæçèéêëìíîï 
+ ¡¢£¤¥¦§¨©ª«¬-®¯
+°±²³´µ¶·¸¹º»¼½¾¿
+ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏ
+ÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß
+àáâãäåæçèéêëìíîï
 ðñòóôõö÷øùúûüýþÿ
  *
  * Non-breaking space and soft hyphen are not used.
@@ -76,13 +77,13 @@ static const wchar_t map_iso_8859_1[] = {
 /*
  * Windows codepage 1252; latin1 plus other stuff (including angled quotes):
  *
-€ ‚ƒ„…†‡ˆ‰Š‹Œ Ž 
- ‘’“”•–—˜™š›œ žŸ 
+€ ‚ƒ„…†‡ˆ‰Š‹Œ Ž
+ ‘’“”•–—˜™š›œ žŸ
  ¡¢£¤¥¦§¨©ª«¬-®¯
-°±²³´µ¶·¸¹º»¼½¾¿ 
-ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏ 
-ÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß 
-àáâãäåæçèéêëìíîï 
+°±²³´µ¶·¸¹º»¼½¾¿
+ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏ
+ÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß
+àáâãäåæçèéêëìíîï
 ðñòóôõö÷øùúûüýþÿ
  *
  * Non-breaking space and soft hyphen are not used.
@@ -112,11 +113,11 @@ static const wchar_t map_cp1252[] = {
  * Slovak (sk), Slovenian (sl), Sorbian.
  *
  Ą˘Ł¤ĽŚ§¨ŠŞŤŹ­ŽŻ
-°ą˛ł´ľśˇ¸šşťź˝žż 
-ŔÁÂĂÄĹĆÇČÉĘËĚÍÎĎ 
-ĐŃŇÓÔŐÖ×ŘŮÚŰÜÝŢß 
-ŕáâăäĺćçčéęëěíîď 
-đńňóôőö÷řůúűüýţ˙ 
+°ą˛ł´ľśˇ¸šşťź˝žż
+ŔÁÂĂÄĹĆÇČÉĘËĚÍÎĎ
+ĐŃŇÓÔŐÖ×ŘŮÚŰÜÝŢß
+ŕáâăäĺćçčéęëěíîď
+đńňóôőö÷řůúűüýţ˙
  */
 
 static const wchar_t map_iso_8859_2[] = {
@@ -197,7 +198,7 @@ static const wchar_t map_korean_jamo[] =
 
 /* 5x3 Numbers. "01234 56789 %. :x" */
 static const wchar_t map_numbers[] = {
-	0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 
+	0x0030, 0x0031, 0x0032, 0x0033, 0x0034,
 	0x0035, 0x0036, 0x0037, 0x0038, 0x0039,
 	0x0025, 0x002E, 0x0020, 0x003A, 0x0078,
 	0
@@ -218,15 +219,15 @@ static void Init()
 	charmaps["numbers"] = map_numbers;
 }
 
-const wchar_t *FontCharmaps::get_char_map(RString name)
+const wchar_t *FontCharmaps::get_char_map(std::string name)
 {
 	Init();
 
-	name.MakeLower();
+	name = Rage::make_lower(name);
 
-	map<RString,const wchar_t*>::const_iterator i = charmaps.find(name);
+	auto i = charmaps.find(name);
 	if(i == charmaps.end())
-		return NULL;
+		return nullptr;
 
 	return i->second;
 }
@@ -234,7 +235,7 @@ const wchar_t *FontCharmaps::get_char_map(RString name)
 /*
  * (c) 2003 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -244,7 +245,7 @@ const wchar_t *FontCharmaps::get_char_map(RString name)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -1,27 +1,27 @@
 #include "global.h"
 #include "RageDriver.h"
 
-void DriverList::Add( const istring &sName, CreateRageDriverFn pfn )
+void DriverList::Add( const Rage::ci_ascii_string &sName, CreateRageDriverFn pfn )
 {
-	if( m_pRegistrees == NULL )
-		m_pRegistrees = new map<istring, CreateRageDriverFn>;
-	
+	if( m_pRegistrees == nullptr )
+		m_pRegistrees = new std::map<Rage::ci_ascii_string, CreateRageDriverFn>;
+
 	ASSERT( m_pRegistrees->find(sName) == m_pRegistrees->end() );
 	(*m_pRegistrees)[sName] = pfn;
 }
 
-RageDriver *DriverList::Create( const RString &sDriverName )
+RageDriver *DriverList::Create( const std::string &sDriverName )
 {
-	if( m_pRegistrees == NULL )
-		return NULL;
+	if( m_pRegistrees == nullptr )
+		return nullptr;
 
-	map<istring, CreateRageDriverFn>::const_iterator iter = m_pRegistrees->find( istring(sDriverName) );
+	auto iter = m_pRegistrees->find( Rage::ci_ascii_string{sDriverName.c_str()} );
 	if( iter == m_pRegistrees->end() )
-		return NULL;
+		return nullptr;
 	return (iter->second)();
 }
 
-RegisterRageDriver::RegisterRageDriver( DriverList *pDriverList, const istring &sName, CreateRageDriverFn pfn )
+RegisterRageDriver::RegisterRageDriver( DriverList *pDriverList, const Rage::ci_ascii_string &sName, CreateRageDriverFn pfn )
 {
 	pDriverList->Add( sName, pfn );
 }
@@ -29,7 +29,7 @@ RegisterRageDriver::RegisterRageDriver( DriverList *pDriverList, const istring &
 /*
  * (c) 2006 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -39,7 +39,7 @@ RegisterRageDriver::RegisterRageDriver( DriverList *pDriverList, const istring &
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

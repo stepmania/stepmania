@@ -14,7 +14,7 @@ HoldJudgment::HoldJudgment()
 	m_mpToTrack = MultiPlayer_Invalid;
 }
 
-void HoldJudgment::Load( const RString &sPath )
+void HoldJudgment::Load( const std::string &sPath )
 {
 	m_sprJudgment.Load( sPath );
 	m_sprJudgment->StopAnimating();
@@ -26,7 +26,7 @@ void HoldJudgment::Load( const RString &sPath )
 
 void HoldJudgment::LoadFromNode( const XNode* pNode )
 {
-	RString sFile;
+	std::string sFile;
 	if(!ActorUtil::GetAttrPath(pNode, "File", sFile))
 	{
 		LuaHelpers::ReportScriptErrorFmt("%s: HoldJudgment: missing the attribute \"File\"", ActorUtil::GetWhere(pNode).c_str());
@@ -42,7 +42,7 @@ void HoldJudgment::LoadFromNode( const XNode* pNode )
 void HoldJudgment::ResetAnimation()
 {
 	ASSERT( m_sprJudgment.IsLoaded() );
-	m_sprJudgment->SetDiffuse( RageColor(1,1,1,0) );
+	m_sprJudgment->SetDiffuse( Rage::Color(1,1,1,0) );
 	m_sprJudgment->SetXY( 0, 0 );
 	m_sprJudgment->StopTweening();
 	m_sprJudgment->StopEffect();
@@ -74,7 +74,7 @@ void HoldJudgment::SetHoldJudgment( HoldNoteScore hns )
 		break;
 	case HNS_None:
 	default:
-		FAIL_M(ssprintf("Cannot set hold judgment to %i", hns));
+		FAIL_M(fmt::sprintf("Cannot set hold judgment to %i", hns));
 	}
 }
 

@@ -9,10 +9,10 @@
 #include "GameCommand.h"
 #include "InputEventPlus.h"
 
-#define CHOICE_NAMES		THEME->GetMetric (m_sName,"ChoiceNames")
-#define CHOICE( s )		THEME->GetMetric (m_sName,ssprintf("Choice%s",s.c_str()))
+using std::vector;
+
+#define CHOICE( s )		THEME->GetMetric (m_sName,fmt::sprintf("Choice%s",s.c_str()))
 #define IDLE_TIMEOUT_SCREEN	THEME->GetMetric (m_sName,"IdleTimeoutScreen")
-#define UPDATE_ON_MESSAGE	THEME->GetMetric (m_sName,"UpdateOnMessage")
 
 void ScreenSelect::Init()
 {
@@ -23,19 +23,23 @@ void ScreenSelect::Init()
 	ScreenWithMenuElements::Init();
 
 	// Load messages to update on
-	split( UPDATE_ON_MESSAGE, ",", m_asSubscribedMessages );
-	for( unsigned i = 0; i < m_asSubscribedMessages.size(); ++i )
-		MESSAGEMAN->Subscribe( this, m_asSubscribedMessages[i] );
+	auto toDump = Rage::split(THEME->GetMetric(m_sName, "UpdateOnMessage"), ",");
+	m_asSubscribedMessages.insert(m_asSubscribedMessages.end(), std::make_move_iterator(toDump.begin()), std::make_move_iterator(toDump.end()));
+	for (auto &message: m_asSubscribedMessages)
+	{
+		MESSAGEMAN->Subscribe(this, message);
+	}
 	// Subscribe to PlayerJoined, if not already.
 	if( !MESSAGEMAN->IsSubscribedToMessage(this, Message_PlayerJoined) )
+	{
 		this->SubscribeToMessage( Message_PlayerJoined );
-
+	}
 	// Load choices
 	// Allow lua as an alternative to metrics.
-	RString choice_names= CHOICE_NAMES;
-	if(choice_names.Left(4) == "lua,")
+	std::string choice_names = THEME->GetMetric(m_sName,"ChoiceNames");
+	if (Rage::starts_with(choice_names, "lua,"))
 	{
-		RString command= choice_names.Right(choice_names.size()-4);
+		std::string command = Rage::tail(choice_names, -4);
 		Lua* L= LUA->Get();
 		if(LuaHelpers::RunExpression(L, command, m_sName + "::ChoiceNames"))
 		{
@@ -55,10 +59,10 @@ void ScreenSelect::Init()
 					}
 					else
 					{
-						RString com= SArg(-1);
+						std::string com= SArg(-1);
 						GameCommand mc;
 						mc.ApplyCommitsScreens(false);
-						mc.m_sName = ssprintf("%zu", i);
+						mc.m_sName = fmt::sprintf("%zu", i);
 						Commands cmd= ParseCommands(com);
 						mc.Load(i, cmd);
 						m_aGameCommands.push_back(mc);
@@ -73,15 +77,14 @@ void ScreenSelect::Init()
 	else
 	{
 		// Instead of using NUM_CHOICES, use a comma-separated list of choices.
-		// Each element in the list is a choice name. This level of indirection 
+		// Each element in the list is a choice name. This level of indirection
 		// makes it easier to add or remove items without having to change a
 		// bunch of indices.
-		vector<RString> asChoiceNames;
-		split( CHOICE_NAMES, ",", asChoiceNames, true );
+		auto asChoiceNames = Rage::split(THEME->GetMetric (m_sName,"ChoiceNames"), ",", Rage::EmptyEntries::skip );
 
 		for( unsigned c=0; c<asChoiceNames.size(); c++ )
 		{
-			RString sChoiceName = asChoiceNames[c];
+			std::string sChoiceName = asChoiceNames[c];
 
 			GameCommand mc;
 			mc.ApplyCommitsScreens( false );
@@ -110,8 +113,10 @@ void ScreenSelect::BeginScreen()
 ScreenSelect::~ScreenSelect()
 {
 	LOG->Trace( "ScreenSelect::~ScreenSelect()" );
-	for( unsigned i = 0; i < m_asSubscribedMessages.size(); ++i )
-		MESSAGEMAN->Unsubscribe( this, m_asSubscribedMessages[i] );
+	for (auto &message: m_asSubscribedMessages)
+	{
+		MESSAGEMAN->Unsubscribe( this, message );
+	}
 }
 
 void ScreenSelect::Update( float fDelta )
@@ -149,8 +154,8 @@ bool ScreenSelect::Input( const InputEventPlus &input )
 
 	if( input.MenuI == GAME_BUTTON_START && input.type == IET_FIRST_PRESS && GAMESTATE->JoinInput(input.pn) )
 	{
-		// HACK: Only play start sound for the 2nd player who joins. The 
-		// start sound for the 1st player will be played by ScreenTitleMenu 
+		// HACK: Only play start sound for the 2nd player who joins. The
+		// start sound for the 1st player will be played by ScreenTitleMenu
 		// when the player makes a selection on the screen.
 		if( GAMESTATE->GetNumSidesJoined() > 1 )
 			SCREENMAN->PlayStartSound();
@@ -181,7 +186,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_BeginFadingOut )	// Screen is starting to tween out.
 	{
-		/* Don't call GameCommand::Apply once per player on screens that 
+		/* Don't call GameCommand::Apply once per player on screens that
 		 * have a shared selection. This can cause change messages to be
 		 * broadcast multiple times. Detect whether all players have the
 		 * same choice, and  if so, call ApplyToAll instead.
@@ -248,7 +253,7 @@ bool ScreenSelect::MenuBack( const InputEventPlus &input )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -258,7 +263,7 @@ bool ScreenSelect::MenuBack( const InputEventPlus &input )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

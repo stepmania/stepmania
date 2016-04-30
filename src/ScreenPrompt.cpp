@@ -22,7 +22,7 @@ XToString( PromptAnswer );
 // Settings:
 namespace
 {
-	RString g_sText;
+	std::string g_sText;
 	PromptType g_PromptType;
 	PromptAnswer g_defaultAnswer;
 	void(*g_pOnYes)(void*);
@@ -30,7 +30,7 @@ namespace
 	void *g_pCallbackData;
 };
 
-void ScreenPrompt::SetPromptSettings( const RString &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
+void ScreenPrompt::SetPromptSettings( const std::string &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
 {
 	g_sText = sText;
 	g_PromptType = type;
@@ -40,7 +40,7 @@ void ScreenPrompt::SetPromptSettings( const RString &sText, PromptType type, Pro
 	g_pCallbackData = pCallbackData;
 }
 
-void ScreenPrompt::Prompt( ScreenMessage smSendOnPop, const RString &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
+void ScreenPrompt::Prompt( ScreenMessage smSendOnPop, const std::string &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
 {
 	SetPromptSettings( sText, type, defaultAnswer, OnYes, OnNo, pCallbackData );
 
@@ -93,12 +93,12 @@ void ScreenPrompt::BeginScreen()
 
 	for( int i=0; i<=g_PromptType; i++ )
 	{
-		RString sElem = ssprintf("Answer%dOf%d", i+1, g_PromptType+1);
+		std::string sElem = fmt::sprintf("Answer%dOf%d", i+1, g_PromptType+1);
 		m_textAnswer[i].SetName( sElem );
 		LOAD_ALL_COMMANDS(m_textAnswer[i]);
 		// Side note:  Because LOAD_ALL_COMMANDS occurs here, InitCommand will
 		// not be run for the actors.  People can just use OnCommand instead.
-		RString sAnswer = PromptAnswerToString( (PromptAnswer)i );
+		std::string sAnswer = PromptAnswerToString( (PromptAnswer)i );
 		// FRAGILE
 		if( g_PromptType == PROMPT_OK )
 			sAnswer = "OK";
@@ -109,8 +109,9 @@ void ScreenPrompt::BeginScreen()
 	}
 
 	for( int i=g_PromptType+1; i<NUM_PromptAnswer; i++ )
+	{
 		m_textAnswer[i].SetText( "" );
-
+	}
 	PositionCursor();
 }
 
@@ -148,7 +149,7 @@ bool ScreenPrompt::CanGoRight()
 	case PROMPT_YES_NO_CANCEL:
 		return m_Answer < ANSWER_CANCEL;
 	default:
-		FAIL_M(ssprintf("Invalid PromptType: %i", g_PromptType));
+		FAIL_M(fmt::sprintf("Invalid PromptType: %i", g_PromptType));
 	}
 }
 
@@ -261,8 +262,9 @@ void ScreenPrompt::TweenOffScreen()
 	m_textQuestion.PlayCommand( "Off" );
 	m_sprCursor->PlayCommand( "Off" );
 	for( int i=0; i<=g_PromptType; i++ )
+	{
 		m_textAnswer[i].PlayCommand( "Off" );
-
+	}
 	ScreenWithMenuElements::TweenOffScreen();
 }
 

@@ -10,20 +10,20 @@
 struct RoomWheelItemData : public WheelItemBaseData
 {
 	RoomWheelItemData() : m_iFlags(0) { }
-	RoomWheelItemData( WheelItemDataType type, const RString& sTitle, const RString& sDesc, RageColor color ):
+	RoomWheelItemData( WheelItemDataType type, const std::string& sTitle, const std::string& sDesc, Rage::Color color ):
 		WheelItemBaseData( type, sTitle, color ), m_sDesc(sDesc), m_iFlags(0) { };
 
-	RString		m_sDesc;
+	std::string		m_sDesc;
 	unsigned int	m_iFlags;
 };
 
 class RoomWheelItem : public WheelItemBase
 {
 public:
-	RoomWheelItem( RString sType = "RoomWheelItem" );
+	RoomWheelItem( std::string sType = "RoomWheelItem" );
 	RoomWheelItem( const RoomWheelItem &cpy );
 
-	void Load( RString sType );
+	void Load( std::string sType );
 	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID, int iIndex, bool bHasFocus, int iDrawIndex );
 	virtual RoomWheelItem *Copy() const { return new RoomWheelItem(*this); }
 
@@ -37,20 +37,20 @@ private:
 
 struct RoomInfo
 {
-	RString songTitle;
-	RString songSubTitle;
-	RString songArtist;
+	std::string songTitle;
+	std::string songSubTitle;
+	std::string songArtist;
 	int numPlayers;
 	int maxPlayers;
-	vector<RString> players;
+	std::vector<std::string> players;
 };
 
 class RoomWheel : public WheelBase
 {
 public:
 	virtual ~RoomWheel();
-	virtual void Load( RString sType );
-	virtual void BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemDatas );
+	virtual void Load( std::string sType );
+	virtual void BuildWheelItemsData( std::vector<WheelItemBaseData*> &arrayWheelItemDatas );
 	virtual unsigned int GetNumItems() const;
 	virtual bool Select();
 	virtual void Move( int n );
@@ -72,7 +72,7 @@ private:
 /*
  * (c) 2004 Josh Allen
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -82,7 +82,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

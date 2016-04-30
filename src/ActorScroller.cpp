@@ -1,15 +1,18 @@
 #include "global.h"
 #include "ActorScroller.h"
-#include "Foreach.h"
+#include "RageMath.hpp"
 #include "RageUtil.h"
 #include "XmlFile.h"
 #include "arch/Dialog/Dialog.h"
 #include "RageLog.h"
 #include "ActorUtil.h"
 #include "LuaBinding.h"
+#include <limits>
+
+using std::vector;
 
 /* Tricky: We need ActorFrames created in Lua to auto delete their children.
- * We don't want classes that derive from ActorFrame to auto delete their 
+ * We don't want classes that derive from ActorFrame to auto delete their
  * children. The name "ActorFrame" is widely used in Lua, so we'll have
  * that string instead create an ActorFrameAutoDeleteChildren object. */
 //REGISTER_ACTOR_CLASS( ActorScroller );
@@ -65,7 +68,7 @@ void ActorScroller::SetTransformFromReference( const LuaReference &ref )
 	m_exprTransformFunction.ClearCache();
 }
 
-void ActorScroller::SetTransformFromExpression( const RString &sTransformFunction )
+void ActorScroller::SetTransformFromExpression( const std::string &sTransformFunction )
 {
 	LuaReference ref;
 	ref.SetFromExpression( sTransformFunction );
@@ -74,12 +77,12 @@ void ActorScroller::SetTransformFromExpression( const RString &sTransformFunctio
 
 void ActorScroller::SetTransformFromWidth( float fItemWidth )
 {
-	SetTransformFromExpression( ssprintf("function(self,offset,itemIndex,numItems) self:x(%f*offset) end",fItemWidth) );
+	SetTransformFromExpression( fmt::sprintf("function(self,offset,itemIndex,numItems) self:x(%f*offset) end",fItemWidth) );
 }
 
 void ActorScroller::SetTransformFromHeight( float fItemHeight )
 {
-	SetTransformFromExpression( ssprintf("function(self,offset,itemIndex,numItems) self:y(%f*offset) end",fItemHeight) );
+	SetTransformFromExpression( fmt::sprintf("function(self,offset,itemIndex,numItems) self:y(%f*offset) end",fItemHeight) );
 }
 
 void ActorScroller::EnableMask( float fWidth, float fHeight )
@@ -234,7 +237,7 @@ void ActorScroller::PositionItems()
  * in m_SubActors[0]. */
 void ActorScroller::ShiftSubActors( int iDist )
 {
-	if( iDist != INT_MAX )
+	if( iDist != std::numeric_limits<int>::max() )
 		CircularShift( m_SubActors, iDist );
 }
 
@@ -265,8 +268,8 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 	int iLastItemToDraw = (int) ceilf( fLastItemToDraw );
 	if( !m_bLoop && !m_bWrap )
 	{
-		iFirstItemToDraw = clamp( iFirstItemToDraw, 0, m_iNumItems );
-		iLastItemToDraw = clamp( iLastItemToDraw, 0, m_iNumItems );
+		iFirstItemToDraw = Rage::clamp( iFirstItemToDraw, 0, m_iNumItems );
+    iLastItemToDraw = Rage::clamp( iLastItemToDraw, 0, m_iNumItems );
 	}
 
 	vector<Actor*> subs;
@@ -312,15 +315,17 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 	if( m_bDrawByZPosition )
 	{
 		ActorUtil::SortByZPosition( subs );
-		FOREACH( Actor*, subs, a )
-			(*a)->Draw();
+		for (auto *a: subs)
+		{
+			a->Draw();
+		}
 	}
 }
 
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ActorScroller. */ 
+/** @brief Allow Lua to have access to the ActorScroller. */
 class LunaActorScroller: public Luna<ActorScroller>
 {
 public:
@@ -354,7 +359,7 @@ public:
 	static int GetCurrentItem( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetCurrentItem() ); return 1; }
 	static int GetDestinationItem( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetDestinationItem() ); return 1; }
 	static int GetNumItems( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetNumItems() ); return 1; }
-	
+
 	LunaActorScroller()
 	{
 		ADD_METHOD( PositionItems );
@@ -389,7 +394,7 @@ LUA_REGISTER_DERIVED_CLASS( ActorScroller, ActorFrame )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -399,7 +404,7 @@ LUA_REGISTER_DERIVED_CLASS( ActorScroller, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

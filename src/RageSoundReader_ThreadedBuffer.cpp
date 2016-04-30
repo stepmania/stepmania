@@ -2,8 +2,13 @@
 #include "RageSoundReader_ThreadedBuffer.h"
 #include "RageUtil.h"
 #include "RageTimer.h"
-#include "Foreach.h"
 #include "RageLog.h"
+
+#if defined(HAVE_UNISTD_H)
+#include <unistd.h>
+#endif
+
+using std::list;
 
 /* Implement threaded read-ahead buffering.
  *
@@ -48,7 +53,7 @@ RageSoundReader_ThreadedBuffer::RageSoundReader_ThreadedBuffer( RageSoundReader 
 }
 
 RageSoundReader_ThreadedBuffer::RageSoundReader_ThreadedBuffer( const RageSoundReader_ThreadedBuffer &cpy ):
-	RageSoundReader_Filter( NULL ), // don't touch m_pSource before DisableBuffering
+	RageSoundReader_Filter( nullptr ), // don't touch m_pSource before DisableBuffering
 	m_Event( "ThreadedBuffer" )
 {
 	bool bWasEnabled = cpy.DisableBuffering();
@@ -183,13 +188,14 @@ int RageSoundReader_ThreadedBuffer::GetLength_Fast() const
 	return iRet;
 }
 
-bool RageSoundReader_ThreadedBuffer::SetProperty( const RString &sProperty, float fValue )
+bool RageSoundReader_ThreadedBuffer::SetProperty( const std::string &sProperty, float fValue )
 {
 	return m_pSource->SetProperty( sProperty, fValue );
 }
 
 void RageSoundReader_ThreadedBuffer::BufferingThread()
 {
+	using std::max;
 	m_Event.Lock();
 	while( !m_bShutdownThread )
 	{
@@ -236,7 +242,7 @@ void RageSoundReader_ThreadedBuffer::BufferingThread()
 		else
 		{
 			m_Event.Unlock();
-			usleep( lrintf(fTimeToSleep * 1000000) );
+			usleep( std::lrint(fTimeToSleep * 1000000) );
 			m_Event.Lock();
 		}
 	}
@@ -263,6 +269,7 @@ int RageSoundReader_ThreadedBuffer::FillFrames( int iFrames )
 
 int RageSoundReader_ThreadedBuffer::FillBlock()
 {
+	using std::min;
 	if( GetEmptyFrames() == 0 )
 		return 0;
 
@@ -307,6 +314,7 @@ int RageSoundReader_ThreadedBuffer::FillBlock()
 
 int RageSoundReader_ThreadedBuffer::Read( float *pBuffer, int iFrames )
 {
+	using std::min;
 	if( !m_bEOF )
 		EnableBuffering();
 

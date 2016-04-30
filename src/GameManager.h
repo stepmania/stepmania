@@ -13,14 +13,14 @@ struct lua_State;
 /** @brief The collective information about a Steps' Type. */
 struct StepsTypeInfo
 {
-	const char *szName;
+	std::string stepTypeName;
 	/** @brief The number of tracks, or columns, of this type. */
 	int iNumTracks;
 	/** @brief A flag to determine if we allow this type to be autogen'ed to other types. */
 	bool bAllowAutogen;
 	/** @brief The most basic StyleType that this StpesTypeInfo is used with. */
 	StepsTypeCategory m_StepsTypeCategory;
-	RString GetLocalizedString() const;
+	std::string GetLocalizedString() const;
 };
 
 class GameManager
@@ -29,26 +29,34 @@ public:
 	GameManager();
 	~GameManager();
 
-	void GetStylesForGame( const Game* pGame, vector<const Style*>& aStylesAddTo, bool editor=false );
+	void GetStylesForGame( const Game* pGame, std::vector<const Style*>& aStylesAddTo, bool editor=false );
 	const Game *GetGameForStyle( const Style *pStyle );
-	void GetStepsTypesForGame( const Game* pGame, vector<StepsType>& aStepsTypeAddTo );
+	void GetStepsTypesForGame( const Game* pGame, std::vector<StepsType>& aStepsTypeAddTo );
 	const Style *GetEditorStyleForStepsType( StepsType st );
-	void GetDemonstrationStylesForGame( const Game *pGame, vector<const Style*> &vpStylesOut );
+	void GetDemonstrationStylesForGame( const Game *pGame, std::vector<const Style*> &vpStylesOut );
 	const Style *GetHowToPlayStyleForGame( const Game* pGame );
-	void GetCompatibleStyles( const Game *pGame, int iNumPlayers, vector<const Style*> &vpStylesOut );
+	void GetCompatibleStyles( const Game *pGame, int iNumPlayers, std::vector<const Style*> &vpStylesOut );
 	const Style *GetFirstCompatibleStyle( const Game *pGame, int iNumPlayers, StepsType st );
 
-	void GetEnabledGames( vector<const Game*>& aGamesOut );
+	void GetEnabledGames( std::vector<const Game*>& aGamesOut );
 	const Game* GetDefaultGame();
 	bool IsGameEnabled( const Game* pGame );
 	int GetIndexFromGame( const Game* pGame );
 	const Game* GetGameFromIndex( int index );
 
 	const StepsTypeInfo &GetStepsTypeInfo( StepsType st );
-	StepsType StringToStepsType( RString sStepsType );
-	const Game* StringToGame( RString sGame );
-	const Style* GameAndStringToStyle( const Game* pGame, RString sStyle );
-	RString StyleToLocalizedString( const Style* s );
+	StepsType StringToStepsType( std::string sStepsType );
+	const Game* StringToGame( std::string sGame );
+	const Style* GameAndStringToStyle( const Game* pGame, std::string sStyle );
+	std::string StyleToLocalizedString( const Style* s );
+
+	// stepstype_is_multiplayer doesn't really belong in GAMEMAN, but we don't
+	// have a stepstype manager.  Also, I want to start calling routine mode
+	// multiplayer, something to make it more explicitly about having multiple
+	// players on a single notefield. -Kyz
+	bool stepstype_is_multiplayer(StepsType st);
+	// Some mods need to know the number of pads being used.
+	int get_num_pads_for_stepstype(StepsType st);
 
 
 	// Lua
@@ -64,7 +72,7 @@ extern GameManager*	GAMEMAN;	// global and accessible from anywhere in our progr
  * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -74,7 +82,7 @@ extern GameManager*	GAMEMAN;	// global and accessible from anywhere in our progr
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

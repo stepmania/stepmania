@@ -53,7 +53,7 @@ enum Code {
 class CodeDetector
 {
 public:
-	static void RefreshCacheItems( RString sClass="" );	// call this before checking codes, but call infrequently
+	static void RefreshCacheItems( std::string sClass="" );	// call this before checking codes, but call infrequently
 	static bool EnteredPrevSteps( GameController controller );
 	static bool EnteredNextSteps( GameController controller );
 	static bool EnteredNextSort( GameController controller );
@@ -63,9 +63,6 @@ public:
 	static bool EnteredPrevGroup( GameController controller );
 	static bool EnteredNextGroup( GameController controller );
 	static bool EnteredCloseFolder( GameController controller );
-
-	// todo: move to PlayerOptions.h -aj
-	void ChangeScrollSpeed( GameController controller, bool bIncrement );
 };
 
 #endif

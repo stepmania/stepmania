@@ -23,15 +23,15 @@ public:
 	{
 		// We'd be better off not adding strokes to things we can't control
 		// themewise (ScreenDebugOverlay for example). -Midiman
-		BMT_TweenState(): m_stroke_color(RageColor(0,0,0,0)) {}
+		BMT_TweenState(): m_stroke_color(Rage::Color(0,0,0,0)) {}
 		static void MakeWeightedAverage(BMT_TweenState& out,
 			BMT_TweenState const& from, BMT_TweenState const& to, float between);
 		bool operator==(BMT_TweenState const& other) const;
 		bool operator!=(BMT_TweenState const& other) const { return !operator==(other); }
-		void SetStrokeColor(RageColor const& c) { m_stroke_color= c; }
-		RageColor const& GetStrokeColor() { return m_stroke_color; }
+		void SetStrokeColor(Rage::Color const& c) { m_stroke_color= c; }
+		Rage::Color const& GetStrokeColor() { return m_stroke_color; }
 	private:
-		RageColor m_stroke_color;
+		Rage::Color m_stroke_color;
 	};
 
 	BMT_TweenState& BMT_DestTweenState()
@@ -54,9 +54,9 @@ public:
 	virtual void StopTweening();
 	virtual void FinishTweening();
 
-	bool LoadFromFont( const RString& sFontName );
-	bool LoadFromTextureAndChars( const RString& sTexturePath, const RString& sChars );
-	virtual void SetText( const RString& sText, const RString& sAlternateText = "", int iWrapWidthPixels = -1 );
+	bool LoadFromFont( const std::string& sFontName );
+	bool LoadFromTextureAndChars( const std::string& sTexturePath, const std::string& sChars );
+	virtual void SetText( const std::string& sText, const std::string& sAlternateText = "", int iWrapWidthPixels = -1 );
 	void SetVertSpacing( int iSpacing );
 	void SetMaxWidth( float fMaxWidth );
 	void SetMaxHeight( float fMaxHeight );
@@ -78,26 +78,33 @@ public:
 
 	void SetHorizAlign( float f );
 
-	void SetStrokeColor(RageColor c) { BMT_DestTweenState().SetStrokeColor(c); }
-	RageColor const& GetStrokeColor()		{ return BMT_DestTweenState().GetStrokeColor(); }
-	void SetCurrStrokeColor(RageColor c) { BMT_current.SetStrokeColor(c); }
-	RageColor const& GetCurrStrokeColor() { return BMT_current.GetStrokeColor(); }
+	void SetStrokeColor(Rage::Color c) { BMT_DestTweenState().SetStrokeColor(c); }
+	Rage::Color const& GetStrokeColor()		{ return BMT_DestTweenState().GetStrokeColor(); }
+	void SetCurrStrokeColor(Rage::Color c) { BMT_current.SetStrokeColor(c); }
+	Rage::Color const& GetCurrStrokeColor() { return BMT_current.GetStrokeColor(); }
 
 	void SetTextGlowMode( TextGlowMode tgm )	{ m_TextGlowMode = tgm; }
 
-	void GetLines( vector<wstring> &wTextLines ) const { wTextLines = m_wTextLines; }
-	const vector<wstring> &GetLines() const { return m_wTextLines; }
+	void GetLines( std::vector<std::wstring> &wTextLines ) const { wTextLines = m_wTextLines; }
+	const std::vector<std::wstring> &GetLines() const { return m_wTextLines; }
 
-	RString GetText() const { return m_sText; }
+	std::string GetText() const { return m_sText; }
 	// Return true if the string 's' will use an alternate string, if available.
-	bool StringWillUseAlternate( const RString& sText, const RString& sAlternateText ) const;
+	bool StringWillUseAlternate( const std::string& sText, const std::string& sAlternateText ) const;
 
 	struct Attribute
 	{
 		Attribute() : length(-1), glow() { }
 		int		length;
-		RageColor	diffuse[NUM_DIFFUSE_COLORS];
-		RageColor	glow;
+		Rage::Color	diffuse[NUM_DIFFUSE_COLORS];
+		Rage::Color	glow;
+		void set_diffuse(Rage::Color const& c)
+		{
+			for(size_t i= 0; i < NUM_DIFFUSE_COLORS; ++i)
+			{
+				diffuse[i]= c;
+			}
+		}
 
 		void FromStack( lua_State *L, int iPos );
 	};
@@ -112,9 +119,9 @@ public:
 protected:
 	Font		*m_pFont;
 	bool		m_bUppercase;
-	RString		m_sText;
-	vector<wstring>		m_wTextLines;
-	vector<int>		m_iLineWidths;	// in source pixels
+	std::string		m_sText;
+	std::vector<std::wstring>		m_wTextLines;
+	std::vector<int>		m_iLineWidths;	// in source pixels
 	int			m_iWrapWidthPixels;		// -1 = no wrap
 	float		m_fMaxWidth;			// 0 = no max
 	float		m_fMaxHeight;			// 0 = no max
@@ -126,10 +133,12 @@ protected:
 	float		m_fDistortion;
 	int			m_iVertSpacing;
 
-	vector<RageSpriteVertex>	m_aVertices;
+	std::vector<Rage::SpriteVertex>	m_aVertices;
 
-	vector<FontPageTextures*>	m_vpFontPageTextures;
-	map<size_t, Attribute>		m_mAttributes;
+	std::vector<FontPageTextures*>	m_vpFontPageTextures;
+	// This cannot be an unordered_map because the logic for applying the
+	// attributes requires them to be in order. -Kyz
+	std::map<size_t, Attribute>		m_mAttributes;
 	bool				m_bHasGlowAttribute;
 
 	TextGlowMode	m_TextGlowMode;
@@ -141,7 +150,7 @@ protected:
 
 private:
 	void SetTextInternal();
-	vector<BMT_TweenState> BMT_Tweens;
+	std::vector<BMT_TweenState> BMT_Tweens;
 	BMT_TweenState BMT_current;
 	BMT_TweenState BMT_start;
 };
@@ -153,7 +162,7 @@ private:
  * @author Chris Danford, Charles Lohr, Steve Checkoway (c) 2001-2007
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -163,7 +172,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

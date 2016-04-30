@@ -1,7 +1,6 @@
 #include "global.h"
 #include "MouseDevice.h"
-
-using __gnu_cxx::hash_map;
+#include "RageMath.hpp"
 
 Mouse::Mouse() : id( InputDevice_Invalid ),
 				x_axis( 0 ), y_axis( 0 ), z_axis( 0 ),
@@ -92,39 +91,39 @@ void MouseDevice::Open()
 {
 	const Mouse& m = m_Mouse;
 #define ADD(x) if( m.x ) AddElementToQueue( m.x )
-	ADD( x_axis );	ADD( y_axis );	ADD( z_axis );
+	ADD( x_axis );
+	ADD( y_axis );
+	ADD( z_axis );
 #undef ADD
-	for( hash_map<IOHIDElementCookie,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
-		AddElementToQueue( i->first );
+	for (auto &item: m_Mapping)
+	{
+		AddElementToQueue( item.first );
+	}
 }
 
 void MouseDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const
 {
+	using std::max;
 	// todo: add mouse axis stuff -aj
 	const Mouse& m = m_Mouse;
-	HRESULT result;
-	IOHIDEventStruct hidEvent;
-	// result = (*m_Interface)->getElementValue(hidDeviceInterface,cookie,&hidEvent);
 
 	if( m.x_axis == cookie )
 	{
-		//INPUTFILTER->UpdateCursorLocation(value,m.y_axis);
 		LOG->Trace("Mouse X: Value = %i",value);
 	}
 	else if( m.y_axis == cookie )
 	{
-		//INPUTFILTER->UpdateCursorLocation(m.x_axis,value);
 		LOG->Trace("Mouse Y: Value = %i",value);
 	}
 	else if( m.z_axis == cookie )
 	{
-		float level = SCALE( value, m.z_min, m.z_max, -1.0f, 1.0f );
-		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELUP, max(-level,0), now) );
-		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELDOWN, max(+level,0), now) );
+		float level = Rage::scale( value + 0.f, m.z_min + 0.f, m.z_max + 0.f, -1.0f, 1.0f );
+		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELUP, max(-level,0.f), now) );
+		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELDOWN, max(+level,0.f), now) );
 	}
 	else
 	{
-		hash_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
+		auto iter = m_Mapping.find( cookie );
 		if( iter != m_Mapping.end() )
 			vPresses.push_back( DeviceInput(DEVICE_MOUSE, iter->second, value, now) );
 	}

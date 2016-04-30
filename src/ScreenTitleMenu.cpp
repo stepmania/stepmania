@@ -44,7 +44,11 @@ static LocalizedString ANNOUNCER_	("ScreenTitleMenu","Announcer");
 bool ScreenTitleMenu::Input( const InputEventPlus &input )
 {
 #if defined(DEBUG)
-	LOG->Trace( "ScreenTitleMenu::Input( %d-%d )", input.DeviceI.device, input.DeviceI.button );	// debugging gameport joystick problem
+	auto const &device = input.DeviceI;
+	LOG->Trace( "ScreenTitleMenu::Input( %d-%d )", // debugging gameport joystick problem
+		static_cast<int>(device.device),
+		static_cast<int>(input.DeviceI.button)
+	);	
 #endif
 
 	if( m_In.IsTransitioning() || m_Cancel.IsTransitioning() ) /* not m_Out */
@@ -66,7 +70,7 @@ bool ScreenTitleMenu::Input( const InputEventPlus &input )
 			CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_ANNOUNCER2) )
 		{
 			ANNOUNCER->NextAnnouncer();
-			RString sName = ANNOUNCER->GetCurAnnouncerName();
+			std::string sName = ANNOUNCER->GetCurAnnouncerName();
 			if( sName=="" ) sName = "(none)";
 			SCREENMAN->SystemMessage( ANNOUNCER_.GetValue()+": "+sName );
 			SCREENMAN->SetNewScreen( m_sName );

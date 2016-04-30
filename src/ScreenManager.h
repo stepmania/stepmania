@@ -3,6 +3,7 @@
 
 #include "ScreenMessage.h"
 #include "RageSound.h"
+#include "RageTextureRenderTarget.h"
 #include "PlayerNumber.h"
 
 class Actor;
@@ -23,28 +24,28 @@ public:
 	void Input( const InputEventPlus &input );
 
 	// Main screen stack management
-	void SetNewScreen( const RString &sName );
-	void AddNewScreenToTop( const RString &sName, ScreenMessage SendOnPop=SM_None );
+	void SetNewScreen( const std::string &sName );
+	void AddNewScreenToTop( const std::string &sName, ScreenMessage SendOnPop=SM_None );
 	/**
 	 * @brief Create and cache the requested Screen.
 	 *
 	 * This is so that the next call to SetNewScreen for this Screen
 	 * will be very quick.
 	 * @param sScreenName the Screen to prepare. */
-	void PrepareScreen( const RString &sScreenName );
-	void GroupScreen( const RString &sScreenName );
-	void PersistantScreen( const RString &sScreenName );
+	void PrepareScreen( const std::string &sScreenName );
+	void GroupScreen( const std::string &sScreenName );
+	void PersistantScreen( const std::string &sScreenName );
 	void PopTopScreen( ScreenMessage SM );
 	void PopAllScreens();
 	Screen *GetTopScreen();
 	Screen *GetScreen( int iPosition );
 	bool AllowOperatorMenuButton() const;
 
-	bool IsScreenNameValid(RString const& name) const;
+	bool IsScreenNameValid(std::string const& name) const;
 
 	// System messages
-	void SystemMessage( const RString &sMessage );
-	void SystemMessageNoAnimate( const RString &sMessage );
+	void SystemMessage( const std::string &sMessage );
+	void SystemMessageNoAnimate( const std::string &sMessage );
 	void HideSystemMessage();
 
 	// Screen messages
@@ -74,11 +75,9 @@ public:
 	void	PlaySharedBackgroundOffCommand();
 	void    ZeroNextUpdate();
 private:
-	Screen		*m_pInputFocus; // NULL = top of m_ScreenStack
-
 	// Screen loads, removals, and concurrent prepares are delayed until the next update.
-	RString		m_sDelayedScreen;
-	RString		m_sDelayedConcurrentPrepare;
+	std::string		m_sDelayedScreen;
+	std::string		m_sDelayedConcurrentPrepare;
 	ScreenMessage	m_OnDonePreparingScreen;
 	ScreenMessage	m_PopTopScreen;
 
@@ -97,9 +96,9 @@ private:
 	// input for navigating the custom menu to work. -Kyz
 	std::vector<bool> m_input_redirected;
 
-	Screen *MakeNewScreen( const RString &sName );
+	Screen *MakeNewScreen( const std::string &sName );
 	void LoadDelayedScreen();
-	bool ActivatePreparedScreenAndBackground( const RString &sScreenName );
+	bool ActivatePreparedScreenAndBackground( const std::string &sScreenName );
 	ScreenMessage PopTopScreenInternal( bool bSendLoseFocus = true );
 
 	// Keep these sounds always loaded, because they could be 

@@ -21,8 +21,8 @@ private:
 	virtual void ProcessMenuStart( const InputEventPlus &input );
 
 	RageSound	m_soundSave;
-	ThemeMetric<RString> PLAY_SCREEN;
-	ThemeMetric<RString> EDIT_SCREEN;
+	ThemeMetric<std::string> PLAY_SCREEN;
+	ThemeMetric<std::string> EDIT_SCREEN;
 };
 
 #endif

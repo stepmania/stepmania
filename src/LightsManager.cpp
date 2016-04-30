@@ -10,18 +10,19 @@
 #include "PrefsManager.h"
 #include "Actor.h"
 #include "Preference.h"
-#include "Foreach.h"
 #include "GameManager.h"
 #include "CommonMetrics.h"
 #include "Style.h"
 
-const RString DEFAULT_LIGHTS_DRIVER = "SystemMessage,Export";
-static Preference<RString> g_sLightsDriver( "LightsDriver", "" ); // "" == DEFAULT_LIGHTS_DRIVER
+using std::vector;
+
+const std::string DEFAULT_LIGHTS_DRIVER = "SystemMessage,Export";
+static Preference<std::string> g_sLightsDriver( "LightsDriver", "" ); // "" == DEFAULT_LIGHTS_DRIVER
 Preference<float>	g_fLightsFalloffSeconds( "LightsFalloffSeconds", 0.1f );
 Preference<float>	g_fLightsAheadSeconds( "LightsAheadSeconds", 0.05f );
 static Preference<bool>	g_bBlinkGameplayButtonLightsOnNote( "BlinkGameplayButtonLightsOnNote", false );
 
-static ThemeMetric<RString> GAME_BUTTONS_TO_SHOW( "LightsManager", "GameButtonsToShow" );
+static ThemeMetric<std::string> GAME_BUTTONS_TO_SHOW( "LightsManager", "GameButtonsToShow" );
 
 static const char *CabinetLightNames[] = {
 	"MarqueeUpLeft",
@@ -53,13 +54,12 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 {
 	vGameInputsOut.clear();
 
-	vector<RString> asGameButtons;
-	split( GAME_BUTTONS_TO_SHOW.GetValue(), ",", asGameButtons );
+	auto asGameButtons = Rage::split(GAME_BUTTONS_TO_SHOW, ",");
 	FOREACH_ENUM( GameController,  gc )
 	{
-		FOREACH_CONST( RString, asGameButtons, button )
+		for (auto const &button: asGameButtons)
 		{
-			GameButton gb = StringToGameButton( INPUTMAPPER->GetInputScheme(), *button );
+			GameButton gb = StringToGameButton( INPUTMAPPER->GetInputScheme(), button );
 			if( gb != GameButton_Invalid )
 			{
 				GameInput gi = GameInput( gc, gb );
@@ -68,36 +68,40 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 		}
 	}
 
-	set<GameInput> vGIs;
+	std::set<GameInput> vGIs;
 	vector<const Style*> vStyles;
 	GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vStyles );
-	FOREACH( const Style*, vStyles, style )
+	for (auto const *style: vStyles)
 	{
-		bool bFound = find( CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue().begin(), CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue().end(), (*style)->m_StepsType ) != CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue().end();
+		bool bFound = find( CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue().begin(), CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue().end(), style->m_StepsType ) != CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue().end();
 		if( !bFound )
+		{
 			continue;
+		}
 		FOREACH_PlayerNumber( pn )
 		{
-			for( int iCol=0; iCol<(*style)->m_iColsPerPlayer; ++iCol )
+			for( int iCol = 0; iCol < style->m_iColsPerPlayer; ++iCol )
 			{
 				vector<GameInput> gi;
-				(*style)->StyleInputToGameInput( iCol, pn, gi );
-				for(size_t i= 0; i < gi.size(); ++i)
+				style->StyleInputToGameInput( iCol, pn, gi );
+				for (auto &input: gi)
 				{
-					if(gi[i].IsValid())
+					if(input.IsValid())
 					{
-						vGIs.insert(gi[i]);
+						vGIs.insert(input);
 					}
 				}
 			}
 		}
 	}
 
-	FOREACHS_CONST( GameInput, vGIs, gi )
-		vGameInputsOut.push_back( *gi );
+	for (auto &gi: vGIs)
+	{
+		vGameInputsOut.push_back( gi );
+	}
 }
 
-LightsManager*	LIGHTSMAN = NULL;	// global and accessible from anywhere in our program
+LightsManager*	LIGHTSMAN = nullptr;	// global and accessible from anywhere in our program
 
 LightsManager::LightsManager()
 {
@@ -109,7 +113,7 @@ LightsManager::LightsManager()
 	m_CoinCounterTimer.SetZero();
 
 	m_LightsMode = LIGHTSMODE_JOINING;
-	RString sDriver = g_sLightsDriver.Get();
+	std::string sDriver = g_sLightsDriver.Get();
 	if( sDriver.empty() )
 		sDriver = DEFAULT_LIGHTS_DRIVER;
 	LightsDriver::Create( sDriver, m_vpDrivers );
@@ -119,15 +123,17 @@ LightsManager::LightsManager()
 
 LightsManager::~LightsManager()
 {
-	FOREACH( LightsDriver*, m_vpDrivers, iter )
-		SAFE_DELETE( *iter );
+	for (auto *iter: m_vpDrivers)
+	{
+		Rage::safe_delete(iter);
+	}
 	m_vpDrivers.clear();
 }
 
 // XXX: Allow themer to change these. (rewritten; who wrote original? -aj)
 static const float g_fLightEffectRiseSeconds = 0.075f;
 static const float g_fLightEffectFalloffSeconds = 0.35f;
-static const float g_fCoinPulseTime = 0.100f; 
+static const float g_fCoinPulseTime = 0.100f;
 void LightsManager::BlinkActorLight( CabinetLight cl )
 {
 	m_fSecsLeftInActorLightBlink[cl] = g_fLightEffectRiseSeconds;
@@ -140,6 +146,7 @@ float LightsManager::GetActorLightLatencySeconds() const
 
 void LightsManager::Update( float fDeltaTime )
 {
+	using std::min;
 	// Update actor effect lights.
 	FOREACH_CabinetLight( cl )
 	{
@@ -169,10 +176,16 @@ void LightsManager::Update( float fDeltaTime )
 	// update lights falloff
 	{
 		FOREACH_CabinetLight( cl )
+		{
 			fapproach( m_fSecsLeftInCabinetLightBlink[cl], 0, fDeltaTime );
+		}
 		FOREACH_ENUM( GameController,  gc )
+		{
 			FOREACH_ENUM( GameButton,  gb )
+			{
 				fapproach( m_fSecsLeftInGameButtonBlink[gc][gb], 0, fDeltaTime );
+			}
+		}
 	}
 
 	// Set new lights state cabinet lights
@@ -273,8 +286,9 @@ void LightsManager::Update( float fDeltaTime )
 		case LIGHTSMODE_GAMEPLAY:
 		{
 			FOREACH_CabinetLight( cl )
+			{
 				m_LightsState.m_bCabinetLights[cl] = m_fSecsLeftInCabinetLightBlink[cl] > 0;
-
+			}
 			break;
 		}
 
@@ -282,8 +296,9 @@ void LightsManager::Update( float fDeltaTime )
 		case LIGHTSMODE_ALL_CLEARED:
 		{
 			FOREACH_CabinetLight( cl )
+			{
 				m_LightsState.m_bCabinetLights[cl] = true;
-
+			}
 			break;
 		}
 
@@ -321,7 +336,9 @@ void LightsManager::Update( float fDeltaTime )
 				if( GAMESTATE->m_bSideIsJoined[gc] )
 				{
 					FOREACH_ENUM( GameButton, gb )
+					{
 						m_LightsState.m_bGameButtonLights[gc][gb] = true;
+					}
 				}
 			}
 
@@ -438,8 +455,10 @@ void LightsManager::Update( float fDeltaTime )
 	}
 
 	// apply new light values we set above
-	FOREACH( LightsDriver*, m_vpDrivers, iter )
-		(*iter)->Set( &m_LightsState );
+	for (auto *iter: m_vpDrivers)
+	{
+		iter->Set( &m_LightsState );
+	}
 }
 
 void LightsManager::BlinkCabinetLight( CabinetLight cl )
@@ -515,7 +534,7 @@ bool LightsManager::IsEnabled() const
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -525,7 +544,7 @@ bool LightsManager::IsEnabled() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

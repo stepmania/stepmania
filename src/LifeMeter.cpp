@@ -12,7 +12,7 @@ LifeMeter *LifeMeter::MakeLifeMeter( LifeType t )
 	case LifeType_Battery: return new LifeMeterBattery;
 	case LifeType_Time:    return new LifeMeterTime;
 	default:
-		FAIL_M(ssprintf("Unrecognized LifeMeter type: %i", t));
+		FAIL_M(fmt::sprintf("Unrecognized LifeMeter type: %i", t));
 	}
 }
 

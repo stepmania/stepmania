@@ -40,12 +40,13 @@ void LyricDisplay::Stop() {
 
 void LyricDisplay::Update( float fDeltaTime )
 {
+	using std::max;
 	if( m_bStopped )
 		return;
 
 	ActorFrame::Update( fDeltaTime );
 
-	if( GAMESTATE->m_pCurSong == NULL )
+	if( GAMESTATE->m_pCurSong == nullptr )
 		return;
 
 	// If the song has changed (in a course), reset.
@@ -68,7 +69,7 @@ void LyricDisplay::Update( float fDeltaTime )
 		fEndTime = pSong->m_LyricSegments[m_iCurLyricNumber+1].m_fStartTime;
 	else
 		fEndTime = pSong->GetLastSecond();
-	
+
 	const float fDistance = fEndTime - pSong->m_LyricSegments[m_iCurLyricNumber].m_fStartTime;
 	const float fTweenBufferTime = IN_LENGTH.GetValue() + OUT_LENGTH.GetValue();
 
@@ -94,7 +95,7 @@ void LyricDisplay::Update( float fDeltaTime )
 /*
  * (c) 2003-2004 Kevin Slaughter, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -104,7 +105,7 @@ void LyricDisplay::Update( float fDeltaTime )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

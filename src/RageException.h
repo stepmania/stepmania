@@ -5,14 +5,23 @@
 #include "config.hpp"
 #endif
 
+#include "format.h"
+
 /**
  * @brief Namespace for throwing fatal errors.
  *
  * The original documentation stated this was a class for some reason. */
 namespace RageException
 {
-	void NORETURN Throw( const char *fmt, ... ) PRINTF(1,2);
-	void SetCleanupHandler( void (*pHandler)(const RString &sError) );
+	void NORETURN FinishThrow(std::string const &error);
+
+	template<typename... Args>
+	void NORETURN Throw(std::string const &msg, Args const & ...args)
+	{
+		FinishThrow(fmt::sprintf(msg, args...));
+	}
+
+	void SetCleanupHandler( void (*pHandler)(const std::string &sError) );
 }
 
 #endif

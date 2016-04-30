@@ -45,6 +45,7 @@ source_group("Actors\\\\Base" FILES ${SMDATA_ACTOR_BASE_SRC} ${SMDATA_ACTOR_BASE
 
 list(APPEND SMDATA_ACTOR_GAMEPLAY_SRC
   "ActiveAttackList.cpp"
+  "ArrowDefects.cpp"
   "ArrowEffects.cpp"
   "AttackDisplay.cpp"
   "Background.cpp"
@@ -60,6 +61,7 @@ list(APPEND SMDATA_ACTOR_GAMEPLAY_SRC
   "LifeMeterBattery.cpp"
   "LifeMeterTime.cpp"
   "LyricDisplay.cpp"
+  "NewField.cpp"
   "NoteDisplay.cpp"
   "NoteField.cpp"
   "PercentageDisplay.cpp"
@@ -79,6 +81,7 @@ list(APPEND SMDATA_ACTOR_GAMEPLAY_SRC
 
 list(APPEND SMDATA_ACTOR_GAMEPLAY_HPP
   "ActiveAttackList.h"
+  "ArrowDefects.h"
   "ArrowEffects.h"
   "AttackDisplay.h"
   "Background.h"
@@ -95,6 +98,7 @@ list(APPEND SMDATA_ACTOR_GAMEPLAY_HPP
   "LifeMeterBattery.h"
   "LifeMeterTime.h"
   "LyricDisplay.h"
+  "NewField.h"
   "NoteDisplay.h"
   "NoteField.h"
   "PercentageDisplay.h"

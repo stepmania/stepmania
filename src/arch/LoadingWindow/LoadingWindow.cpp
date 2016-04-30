@@ -4,46 +4,59 @@
 #include "RageLog.h"
 #include "arch/arch_default.h"
 
+using std::vector;
+
 LoadingWindow *LoadingWindow::Create()
 {
 	if( !PREFSMAN->m_bShowLoadingWindow )
+	{
 		return new LoadingWindow_Null;
+	}
 #if defined(UNIX) && !defined(HAVE_GTK)
 	return new LoadingWindow_Null;
 #endif
-	// Don't load NULL by default.
-	const RString drivers = "win32,macosx,gtk";
-	vector<RString> DriversToTry;
-	split( drivers, ",", DriversToTry, true );
+	// Don't load nullptr by default.
+	const std::string drivers = "win32,macosx,gtk";
+	auto DriversToTry = Rage::split(drivers, ",", Rage::EmptyEntries::skip);
 
-	ASSERT( DriversToTry.size() != 0 );
+	std::string Driver;
+	LoadingWindow *ret = nullptr;
 
-	RString Driver;
-	LoadingWindow *ret = NULL;
-
-	for( unsigned i = 0; ret == NULL && i < DriversToTry.size(); ++i )
+	for( unsigned i = 0; ret == nullptr && i < DriversToTry.size(); ++i )
 	{
 		Driver = DriversToTry[i];
-
+		Rage::ci_ascii_string ciDriver{ Driver.c_str() };
 #ifdef USE_LOADING_WINDOW_MACOSX
-		if( !DriversToTry[i].CompareNoCase("MacOSX") )	ret = new LoadingWindow_MacOSX;
+		if( ciDriver == "MacOSX" )
+		{	ret = new LoadingWindow_MacOSX;
+		}
 #endif
 #ifdef USE_LOADING_WINDOW_GTK
-		if( !DriversToTry[i].CompareNoCase("Gtk") )	ret = new LoadingWindow_Gtk;
+		if( ciDriver == "Gtk" )
+		{
+			ret = new LoadingWindow_Gtk;
+		}
 #endif
 #ifdef USE_LOADING_WINDOW_WIN32
-		if( !DriversToTry[i].CompareNoCase("Win32") )	ret = new LoadingWindow_Win32;
+		if( ciDriver == "Win32" )
+		{
+			ret = new LoadingWindow_Win32;
+		}
 #endif
-		if( !DriversToTry[i].CompareNoCase("Null") )	ret = new LoadingWindow_Null;
+		if( ret == nullptr && ciDriver == "Null" )
+		{
+			ret = new LoadingWindow_Null;
+		}
 
-		if( ret == NULL )
+		if( ret == nullptr )
+		{
 			continue;
-
-		RString sError = ret->Init();
+		}
+		std::string sError = ret->Init();
 		if( sError != "" )
 		{
 			LOG->Info( "Couldn't load driver %s: %s", DriversToTry[i].c_str(), sError.c_str() );
-			SAFE_DELETE( ret );
+			Rage::safe_delete( ret );
 		}
 	}
 
@@ -59,7 +72,7 @@ LoadingWindow *LoadingWindow::Create()
 /*
  * (c) 2002-2005 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -69,7 +82,7 @@ LoadingWindow *LoadingWindow::Create()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

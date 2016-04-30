@@ -38,15 +38,15 @@ public:
 	bool m_bShouldAllowLateJoin; // So that it can be exposed to Lua.
 
 protected:
-	RString HandleLuaMusicFile(RString const& path);
+	std::string HandleLuaMusicFile(std::string const& path);
 	virtual void StartPlayingMusic();
-	void SetHelpText( RString s );
+	void SetHelpText( std::string s );
 
 	AutoActor			m_sprUnderlay;
 	MemoryCardDisplay	*m_MemoryCardDisplay[NUM_PLAYERS];
 	MenuTimer			*m_MenuTimer;
 	AutoActor			m_sprOverlay;
-	vector<Actor*>		m_vDecorations;
+	std::vector<Actor*>		m_vDecorations;
 
 	Transition			m_In;
 	Transition			m_Out;
@@ -57,11 +57,13 @@ protected:
 	ThemeMetric<float>		DELAY_MUSIC_SECONDS;
 	ThemeMetric<bool>		CANCEL_TRANSITIONS_OUT;
 	ThemeMetric<float>		TIMER_SECONDS;
-	ThemeMetric<RString>	TIMER_METRICS_GROUP;
+	ThemeMetric<std::string>	TIMER_METRICS_GROUP;
 	ThemeMetric<bool>		RESET_GAMESTATE;
 
+	std::string m_prev_music_played;
+
 private:
-	RString m_sPathToMusic;
+	std::string m_sPathToMusic;
 };
 
 class ScreenWithMenuElementsSimple: public ScreenWithMenuElements
@@ -81,7 +83,7 @@ protected:
 /*
  * (c) 2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -91,7 +93,7 @@ protected:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

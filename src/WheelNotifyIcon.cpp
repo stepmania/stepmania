@@ -44,7 +44,7 @@ void WheelNotifyIcon::SetFlags( Flags flags )
 	case 1:	break;
 	case 2:	m_vIconsToShow.push_back( long_ver );	break;
 	case 3:	m_vIconsToShow.push_back( marathon );	break;
-	default:	FAIL_M( ssprintf("flags.iStagesForSong = %d", flags.iStagesForSong) );
+	default:	FAIL_M( fmt::sprintf("flags.iStagesForSong = %d", flags.iStagesForSong) );
 	}
 
 	if( flags.bHasBeginnerOr1Meter && (bool)SHOW_TRAINING )
@@ -58,7 +58,7 @@ void WheelNotifyIcon::SetFlags( Flags flags )
 			m_vIconsToShow.push_back( empty );
 	}
 
-	m_vIconsToShow.resize( min(m_vIconsToShow.size(), static_cast<unsigned int>(NUM_ICONS_TO_SHOW)) );
+	m_vIconsToShow.resize( std::min(static_cast<unsigned int>(m_vIconsToShow.size()), static_cast<unsigned int>(NUM_ICONS_TO_SHOW)) );
 
 	// Broadcast Set message so items can react. (futures) -aj
 	//Message msg("Set");
@@ -81,7 +81,7 @@ void WheelNotifyIcon::Update( float fDeltaTime )
 	if( m_vIconsToShow.size() > 0 )
 	{
 		/* We should probably end up parsing the vector and then dynamically
-		 * insert flag icons based on "priority". Easy to do, hopefully 
+		 * insert flag icons based on "priority". Easy to do, hopefully
 			- Midiman */
 		const float fSecondFraction = fmodf( RageTimer::GetTimeSinceStartFast(), 1 );
 		const int index = (int)(fSecondFraction*m_vIconsToShow.size());
@@ -94,7 +94,7 @@ void WheelNotifyIcon::Update( float fDeltaTime )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -104,7 +104,7 @@ void WheelNotifyIcon::Update( float fDeltaTime )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

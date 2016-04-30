@@ -58,7 +58,7 @@ static int GetDataBlock( RageFile &f, unsigned char *buf )
 }
 
 
-RageSurfaceUtils::OpenResult RageSurface_Load_GIF( const RString &sPath, RageSurface *&ret, bool bHeaderOnly, RString &error )
+RageSurfaceUtils::OpenResult RageSurface_Load_GIF( const std::string &sPath, RageSurface *&ret, bool bHeaderOnly, std::string &error )
 {
 	unsigned char buf[256];
 	int imageCount = 0;
@@ -132,7 +132,7 @@ RageSurfaceUtils::OpenResult RageSurface_Load_GIF( const RString &sPath, RageSur
 			/* GIF terminator */
 			if( imageCount < imageNumber )
 			{
-				error = ssprintf( "only %d image%s found in file",
+				error = fmt::sprintf( "only %d image%s found in file",
 					imageCount, imageCount > 1 ? "s" : "");
 				return RageSurfaceUtils::OPEN_FATAL_ERROR;
 			}
@@ -399,14 +399,14 @@ static RageSurface *ReadImage( RageFile &f, int len, int height,
 	if( !state.Init(f) )
 	{
 //		RWSetMsg("error reading image");
-		return NULL;
+		return nullptr;
 	}
 	/* If this is an "uninteresting picture" ignore it. */
 	if( ignore )
 	{
 		while( state.ReadByte(f) >= 0 )
 			;
-		return NULL;
+		return nullptr;
 	}
 
 	RageSurface *image = CreateSurface( len, height, 8, 0, 0, 0, 0 );

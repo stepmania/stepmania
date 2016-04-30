@@ -14,14 +14,9 @@
 #if !defined(_WINDOWS)
 #define _WINDOWS // This isn't defined under all versions of MinGW
 #endif
-#define NEED_CSTDLIB_WORKAROUND // Needed for llabs() in MinGW
 #endif
 
 #if defined(_MSC_VER)
-
-#if _MSC_VER == 1400 // VC8 specific warnings
-#pragma warning (disable : 4005) // macro redefinitions (ARRAYSIZE)
-#endif
 
 /*
 The following warnings are disabled in all builds.
@@ -79,8 +74,6 @@ C4355: 'this' : used in base member initializer list
 
 #define lstat stat
 #define fsync _commit
-#define isnan _isnan
-#define isfinite _finite
 
 typedef time_t time_t;
 struct tm;
@@ -106,20 +99,6 @@ typedef int int32_t;
 typedef unsigned int uint32_t;
 typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
-#if defined(_MSC_VER)
-#if _MSC_VER < 1700	// 1700 = VC++ 2011
-#define INT64_C(i) i##i64
-#ifndef UINT64_C
-#define UINT64_C(i) i##ui64
-#endif
-#endif // #if _MSC_VER < 1700
-#if (_MSC_VER >= 1400) && (_MSC_VER < 1800) // 1800 = VC++ 2013
-#define llabs(i) _abs64(i)
-#endif // #if (_MSC_VER >= 1400) && (_MSC_VER < 1800)
-#if _MSC_VER < 1400 // 1400 = VC++ 2005
-int64_t llabs( int64_t i ) { return i >= 0 ? i : -i; }
-#endif // #if _MSC_VER < 1400
-#endif // #if defined(_MSC_VER)
 #endif // #if !defined(__MINGW32__)
 
 #undef min
@@ -138,46 +117,6 @@ int64_t llabs( int64_t i ) { return i >= 0 ? i : -i; }
 #define ArchSwap32(n) _byteswap_ulong(n)
 #define ArchSwap24(n) _byteswap_ulong(n) >> 8
 #define ArchSwap16(n) _byteswap_ushort(n)
-#else
-#define HAVE_BYTE_SWAPS
-
-inline uint32_t ArchSwap32( uint32_t n )
-{
-	__asm
-	{
-		mov eax, n
-		xchg al, ah
-		ror eax, 16
-		xchg al, ah
-		mov n, eax
-	};
-	return n;
-}
-
-inline uint32_t ArchSwap24( uint32_t n )
-{
-	__asm
-	{
-		mov eax, n
-		xchg al, ah
-		ror eax, 16
-		xchg al, ah
-		ror eax, 8
-		mov n, eax
-	};
-	return n;
-}
-
-inline uint16_t ArchSwap16( uint16_t n )
-{
-	__asm
-	{
-		mov ax, n
-		xchg al, ah
-		mov n, ax
-	};
-	return n;
-}
 #endif
 
 #endif

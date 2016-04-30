@@ -39,9 +39,9 @@ public:
 	// There's no harm in registering when already registered.
 	void RegisterTypes();
 
-	void SetGlobal( const RString &sName, int val );
-	void SetGlobal( const RString &sName, const RString &val );
-	void UnsetGlobal( const RString &sName );
+	void SetGlobal( const std::string &sName, int val );
+	void SetGlobal( const std::string &sName, const std::string &val );
+	void UnsetGlobal( const std::string &sName );
 
 private:
 	lua_State *m_pLuaMain;
@@ -59,42 +59,61 @@ namespace LuaHelpers
 	/* Load the given script with the given name. On success, the resulting
 	 * chunk will be on the stack. On error, the error is stored in sError
 	 * and the stack is unchanged. */
-	bool LoadScript( Lua *L, const RString &sScript, const RString &sName, RString &sError );
+	bool LoadScript( Lua *L, const std::string &sScript, const std::string &sName, std::string &sError );
 
 	/* Report the error three ways:  Broadcast message, Warn, and Dialog. */
 	/* If UseAbort is true, reports the error through Dialog::AbortRetryIgnore
 		 and returns the result. */
 	/* If UseAbort is false, reports the error through Dialog::OK and returns
 		 Dialog::ok. */
-	Dialog::Result ReportScriptError(RString const& Error, RString ErrorType= "LUA_ERROR", bool UseAbort= false);
+	Dialog::Result ReportScriptError(std::string const& Error, std::string ErrorType= "LUA_ERROR", bool UseAbort= false);
 	// Just the broadcast message part, for things that need to do the rest differently.
-	void ScriptErrorMessage(RString const& Error);
-	// For convenience when replacing uses of LOG->Warn.
-	void ReportScriptErrorFmt(const char *fmt, ...);
+	void ScriptErrorMessage(std::string const& Error);
+	
+	/** @brief A convenience method to use when replacing uses of LOG->Warn. */
+	template<typename... Args>
+	void ReportScriptErrorFmt(std::string const &msg, Args const & ...args)
+	{
+		std::string result = fmt::sprintf(msg, args...);
+		ReportScriptError(result);
+	}
 
 	/* Run the function with arguments at the top of the stack, with the given
 	 * number of arguments. The specified number of return values are left on
-	 * the Lua stack. On error, nils are left on the stack, sError is set and 
+	 * the Lua stack. On error, nils are left on the stack, sError is set and
 	 * false is returned.
 	 * If ReportError is true, Error should contain the string to prepend
 	 * when reporting.  The error is reported through LOG->Warn and
 	 * SCREENMAN->SystemMessage.
 	 */
-	bool RunScriptOnStack( Lua *L, RString &Error, int Args = 0, int ReturnValues = 0, bool ReportError = false );
+	bool RunScriptOnStack(Lua *L, std::string &Error, int Args = 0,
+		int ReturnValues = 0, bool ReportError = false, bool blank_env= false);
 
 	/* LoadScript the given script, and RunScriptOnStack it.
 	 * iArgs arguments are at the top of the stack. */
-	bool RunScript( Lua *L, const RString &Script, const RString &Name, RString &Error, int Args = 0, int ReturnValues = 0, bool ReportError = false );
+	bool RunScript(Lua *L, const std::string &Script, const std::string &Name,
+		std::string &Error, int Args = 0, int ReturnValues = 0,
+		bool ReportError = false, bool blank_env= false);
 
 	/* Run the given expression, returning a single value, and leave the return
 	 * value on the stack.  On error, push nil. */
-	bool RunExpression( Lua *L, const RString &sExpression, const RString &sName = "" );
+	bool RunExpression(Lua *L, const std::string &sExpression,
+		const std::string &sName = "", bool blank_env= false);
 
-	bool RunScriptFile( const RString &sFile );
+	bool RunScriptFile(const std::string &sFile, bool blank_env= false);
+
+	bool run_script_file_in_state(lua_State* L, std::string const& filename,
+		int return_values, bool blank_env);
+	bool string_can_be_lua_identifier(lua_State* L, std::string const& str);
+	void push_lua_escaped_string(lua_State* L, std::string const& str);
+	// save_lua_table_to_file will only save bools, strings, and numbers.
+	// Nothing else in the lua table will be saved.
+	void save_lua_table_to_file(lua_State* L, int table_index,
+		std::string const& filename);
 
 	/* Create a Lua array (a table with indices starting at 1) of the given vector,
 	 * and push it on the stack. */
-	void CreateTableFromArrayB( Lua *L, const vector<bool> &aIn );
+	void CreateTableFromArrayB( Lua *L, const std::vector<bool> &aIn );
 
 	// Create a Lua table with contents set from this XNode, then push it on the stack.
 	void CreateTableFromXNode( Lua *L, const XNode *pNode );
@@ -104,9 +123,11 @@ namespace LuaHelpers
 	void DeepCopy( lua_State *L );
 
 	// Read the table at the top of the stack back into a vector.
-	void ReadArrayFromTableB( Lua *L, vector<bool> &aOut );
+	void ReadArrayFromTableB( Lua *L, std::vector<bool> &aOut );
 
-	void ParseCommandList( lua_State *L, const RString &sCommands, const RString &sName, bool bLegacy );
+	void rec_print_table(lua_State* L, std::string const& name, std::string const& indent);
+
+	void ParseCommandList( lua_State *L, const std::string &sCommands, const std::string &sName, bool bLegacy );
 
 	XNode *GetLuaInformation();
 
@@ -120,6 +141,9 @@ namespace LuaHelpers
 	template<class T>
 	bool FromStack( lua_State *L, T &Object, int iOffset );
 
+	// Not using a template for the c style string: found it tricky to use.
+	bool FromStack( lua_State *L, char const *Object, int iOffset );
+
 	template<class T>
 	bool Pop( lua_State *L, T &val )
 	{
@@ -127,9 +151,9 @@ namespace LuaHelpers
 		lua_pop( L, 1 );
 		return bRet;
 	}
-	
+
 	template<class T>
-	void ReadArrayFromTable( vector<T> &aOut, lua_State *L )
+	void ReadArrayFromTable( std::vector<T> &aOut, lua_State *L )
 	{
 		luaL_checktype( L, -1, LUA_TTABLE );
 
@@ -143,7 +167,7 @@ namespace LuaHelpers
 		lua_pop( L, 1 ); // pop nil
 	}
 	template<class T>
-	void CreateTableFromArray( const vector<T> &aIn, lua_State *L )
+	void CreateTableFromArray( const std::vector<T> &aIn, lua_State *L )
 	{
 		lua_newtable( L );
 		for( unsigned i = 0; i < aIn.size(); ++i )
@@ -153,15 +177,15 @@ namespace LuaHelpers
 		}
 	}
 
-	int TypeError( Lua *L, int narg, const char *tname );
+	int TypeError( Lua *L, int narg, std::string const &tname );
 	inline int AbsIndex( Lua *L, int i ) { if( i > 0 || i <= LUA_REGISTRYINDEX ) return i; return lua_gettop( L ) + i + 1; }
 }
 
 class LuaThreadVariable
 {
 public:
-	LuaThreadVariable( const RString &sName, const RString &sValue );
-	LuaThreadVariable( const RString &sName, const LuaReference &Value );
+	LuaThreadVariable( const std::string &sName, const std::string &sValue );
+	LuaThreadVariable( const std::string &sName, const LuaReference &Value );
 	LuaThreadVariable( lua_State *L ); // name and value are on stack
 	~LuaThreadVariable();
 	static void GetThreadVariable( lua_State *L );
@@ -172,22 +196,22 @@ private:
 	void SetFromStack( lua_State *L );
 	int AdjustCount( lua_State *L, int iAdd );
 	static bool PushThreadTable( lua_State *L, bool bCreate );
-	static RString GetCurrentThreadIDString();
+	static std::string GetCurrentThreadIDString();
 
 	LuaReference *m_Name;
 	LuaReference *m_pOldValue;
-	
+
 	// Swallow up warnings. If they must be used, define them.
 	LuaThreadVariable& operator=(const LuaThreadVariable& rhs);
 };
 
 /**
  * @brief Iterate over all elements in the table.
- * 
- * For safety reasons, the key is pushed onto the stack and can be read (safely) 
- * as a string and popped or altered in any way. Stack management is handled 
- * automatically. That is, you need not remove all stack elements above the key. 
- * Once the loop exits normally, the top of the stack will be where it was before. 
+ *
+ * For safety reasons, the key is pushed onto the stack and can be read (safely)
+ * as a string and popped or altered in any way. Stack management is handled
+ * automatically. That is, you need not remove all stack elements above the key.
+ * Once the loop exits normally, the top of the stack will be where it was before.
  * If you break out of the loop early, you need to handle that explicitly. */
 #define FOREACH_LUATABLE(L,index) \
 for( const int SM_UNIQUE_NAME(tab) = LuaHelpers::AbsIndex(L,index), \
@@ -240,7 +264,7 @@ inline bool TableContainsOnlyStrings(lua_State* L, int index)
 	{
 		// `key' is at index -2 and `value' at index -1
 		const char *pValue = lua_tostring(L, -1);
-		if(pValue == NULL)
+		if(pValue == nullptr)
 		{
 			// Was going to print an error to the log with the key that failed,
 			// but didn't want to pull in RageLog. -Kyz
@@ -255,12 +279,12 @@ inline bool TableContainsOnlyStrings(lua_State* L, int index)
 #define BIArg(n) (MyLua_checkintboolean(L,(n)))
 #define IArg(n) (luaL_checkint(L,(n)))
 #define BArg(n) (MyLua_checkboolean(L,(n)))
-#define FArg(n) ((float) luaL_checknumber(L,(n)))
+#define FArg(n) (static_cast<float>(luaL_checknumber(L,(n))))
 
 // SafeFArg is for places that need to get a number off the lua stack, but
 // can't risk an error being raised.  IArg and luaL_optnumber would both raise
 // an error on a type mismatch. -Kyz
-inline int SafeFArg(lua_State* L, int index, RString const& err, int def)
+inline int SafeFArg(lua_State* L, int index, std::string const& err, int def)
 {
 	if(lua_isnumber(L, index))
 	{
@@ -268,6 +292,41 @@ inline int SafeFArg(lua_State* L, int index, RString const& err, int def)
 	}
 	LuaHelpers::ReportScriptError(err);
 	return def;
+}
+
+inline double get_optional_double(lua_State* L, int index, char const* field, double def)
+{
+	double ret= def;
+	lua_getfield(L, index, field);
+	if(lua_isnumber(L, -1))
+	{
+		ret= lua_tonumber(L, -1);
+	}
+	lua_pop(L, 1);
+	return ret;
+}
+
+inline bool get_optional_bool(lua_State* L, int index, char const* field)
+{
+	lua_getfield(L, index, field);
+	bool ret = lua_toboolean(L, -1) == 1;
+	lua_pop(L, 1);
+	return ret;
+}
+
+inline bool value_is_in_table(lua_State* L, int value_index, int table_index)
+{
+	lua_pushnil(L);
+	while(lua_next(L, table_index) != 0)
+	{
+		if(lua_equal(L, value_index, -1))
+		{
+			lua_pop(L, 2);
+			return true;
+		}
+		lua_pop(L, 1);
+	}
+	return false;
 }
 
 #define LuaFunction( func, expr ) \
@@ -289,7 +348,7 @@ REGISTER_WITH_LUA_FUNCTION(LuaFunc_Register_##func_name);
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -299,7 +358,7 @@ REGISTER_WITH_LUA_FUNCTION(LuaFunc_Register_##func_name);
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

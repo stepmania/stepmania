@@ -15,32 +15,34 @@ extern "C" {
 #include "archutils/Win32/ddk/hidsdi.h"
 }
 
-static RString GetUSBDevicePath( int iNum )
+using std::vector;
+
+static std::string GetUSBDevicePath( int iNum )
 {
 	GUID guid;
 	HidD_GetHidGuid( &guid );
 
-	HDEVINFO DeviceInfo = SetupDiGetClassDevs( &guid, NULL, NULL, (DIGCF_PRESENT | DIGCF_DEVICEINTERFACE) );
+	HDEVINFO DeviceInfo = SetupDiGetClassDevs( &guid, nullptr, nullptr, (DIGCF_PRESENT | DIGCF_DEVICEINTERFACE) );
 
 	SP_DEVICE_INTERFACE_DATA DeviceInterface;
 	DeviceInterface.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
 
 	if( !SetupDiEnumDeviceInterfaces (DeviceInfo,
-		NULL, &guid, iNum, &DeviceInterface) )
+		nullptr, &guid, iNum, &DeviceInterface) )
 	{
 		SetupDiDestroyDeviceInfoList( DeviceInfo );
-		return RString();
+		return std::string();
 	}
 
 	unsigned long iSize;
-	SetupDiGetDeviceInterfaceDetail( DeviceInfo, &DeviceInterface, NULL, 0, &iSize, 0 );
+	SetupDiGetDeviceInterfaceDetail( DeviceInfo, &DeviceInterface, nullptr, 0, &iSize, 0 );
 
 	PSP_INTERFACE_DEVICE_DETAIL_DATA DeviceDetail = (PSP_INTERFACE_DEVICE_DETAIL_DATA) malloc( iSize );
 	DeviceDetail->cbSize = sizeof(SP_INTERFACE_DEVICE_DETAIL_DATA);
 
-	RString sRet;
+	std::string sRet;
 	if( SetupDiGetDeviceInterfaceDetail(DeviceInfo, &DeviceInterface,
-		DeviceDetail, iSize, &iSize, NULL) ) 
+		DeviceDetail, iSize, &iSize, nullptr) ) 
 		sRet = DeviceDetail->DevicePath;
 	free( DeviceDetail );
 
@@ -52,11 +54,11 @@ bool USBDevice::Open( int iVID, int iPID, int iBlockSize, int iNum, void (*pfnIn
 {
 	DWORD iIndex = 0;
 
-	RString path;
+	std::string path;
 	while( (path = GetUSBDevicePath(iIndex++)) != "" )
 	{
-		HANDLE h = CreateFile( path, GENERIC_READ,
-			FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL );
+		HANDLE h = CreateFile( path.c_str(), GENERIC_READ,
+			FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, nullptr );
 
 		if( h == INVALID_HANDLE_VALUE )
 			continue;
@@ -115,7 +117,7 @@ WindowsFileIO::WindowsFileIO()
 {
 	ZeroMemory( &m_Overlapped, sizeof(m_Overlapped) );
 	m_Handle = INVALID_HANDLE_VALUE;
-	m_pBuffer = NULL;
+	m_pBuffer = nullptr;
 }
 
 WindowsFileIO::~WindowsFileIO()
@@ -125,7 +127,7 @@ WindowsFileIO::~WindowsFileIO()
 	delete[] m_pBuffer;
 }
 
-bool WindowsFileIO::Open( RString path, int iBlockSize )
+bool WindowsFileIO::Open( std::string path, int iBlockSize )
 {
 	LOG->Trace( "WindowsFileIO::open(%s)", path.c_str() );
 	m_iBlockSize = iBlockSize;
@@ -137,8 +139,8 @@ bool WindowsFileIO::Open( RString path, int iBlockSize )
 	if( m_Handle != INVALID_HANDLE_VALUE )
 		CloseHandle( m_Handle );
 
-	m_Handle = CreateFile( path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
-		NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL );
+	m_Handle = CreateFile( path.c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
+		nullptr, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, nullptr );
 
 	if( m_Handle == INVALID_HANDLE_VALUE )
 		return false;
@@ -157,7 +159,7 @@ void WindowsFileIO::queue_read()
 
 int WindowsFileIO::finish_read( void *p )
 {
-	LOG->Trace( "this %p, %p", this, p );
+	LOG->Trace("this is %p, p is %p", static_cast<void *>(this), static_cast<void *>(p));
 	/* We do; get the result.  It'll go into the original m_pBuffer
 	 * we supplied on the original call; that's why m_pBuffer is a
 	 * member instead of a local. */
@@ -171,7 +173,7 @@ int WindowsFileIO::finish_read( void *p )
 
 	if( iRet == 0 )
 	{
-		LOG->Warn( werr_ssprintf(GetLastError(), "Error reading USB device") );
+		LOG->Warn("%s", werr_format(GetLastError(), "Error reading USB device") );
 		return -1;
 	}
 
@@ -202,7 +204,7 @@ int WindowsFileIO::read_several(const vector<WindowsFileIO *> &sources, void *p,
 
 	if( ret == -1 )
 	{
-		LOG->Trace( werr_ssprintf(GetLastError(), "WaitForMultipleObjectsEx failed") );
+		LOG->Trace("%s", werr_format(GetLastError(), "WaitForMultipleObjectsEx failed") );
 		return -1;
 	}
 

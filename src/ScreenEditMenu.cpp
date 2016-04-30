@@ -19,7 +19,7 @@
 #include "Steps.h"
 #include "ThemeManager.h"
 
-static const RString TEMP_FILE_NAME = "--temp--";
+static const std::string TEMP_FILE_NAME = "--temp--";
 
 #define EXPLANATION_TEXT( row )	THEME->GetString(m_sName,"Explanation"+EditMenuRowToString(row))
 #define EDIT_MENU_TYPE			THEME->GetMetric(m_sName,"EditMenuType")
@@ -32,7 +32,7 @@ REGISTER_SCREEN_CLASS( ScreenEditMenu );
 void ScreenEditMenu::Init()
 {
 	// HACK: Disable any style set by the editor.
-	GAMESTATE->SetCurrentStyle( NULL, PLAYER_INVALID );
+	GAMESTATE->SetCurrentStyle( nullptr, PLAYER_INVALID );
 
 	// Enable all players.
 	FOREACH_PlayerNumber( pn )
@@ -91,7 +91,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 		Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
 		FOREACH_PlayerNumber(pn)
 		{
-			GAMESTATE->m_pCurSteps[pn].Set(NULL);
+			GAMESTATE->m_pCurSteps[pn].Set(nullptr);
 		}
 		bool bSaveSong = !pStepsToDelete->WasLoadedFromProfile();
 		pSong->DeleteSteps( pStepsToDelete );
@@ -160,13 +160,13 @@ bool ScreenEditMenu::MenuRight( const InputEventPlus & )
 	return true;
 }
 
-static RString GetCopyDescription( const Steps *pSourceSteps )
+static std::string GetCopyDescription( const Steps *pSourceSteps )
 {
-	RString s = pSourceSteps->GetDescription();
+	std::string s = pSourceSteps->GetDescription();
 	return s;
 }
 
-static void SetCurrentStepsDescription( const RString &s )
+static void SetCurrentStepsDescription( const std::string &s )
 {
 	GAMESTATE->m_pCurSteps[0]->SetDescription( s );
 }
@@ -174,7 +174,7 @@ static void SetCurrentStepsDescription( const RString &s )
 static void DeleteCurrentSteps()
 {
 	GAMESTATE->m_pCurSong->DeleteSteps( GAMESTATE->m_pCurSteps[0] );
-	GAMESTATE->m_pCurSteps[0].Set( NULL );
+	GAMESTATE->m_pCurSteps[0].Set( nullptr );
 }
 
 static LocalizedString MISSING_MUSIC_FILE	( "ScreenEditMenu", "This song is missing a music file and cannot be edited." );
@@ -211,19 +211,19 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 	EditMenuAction action	= m_Selector.GetSelectedAction();
 	if(st == StepsType_Invalid)
 	{
-		ScreenPrompt::Prompt(SM_None, INVALID_SELECTION);
+		ScreenPrompt::Prompt(SM_None, INVALID_SELECTION.GetValue());
 		return true;
 	}
 
 	GAMESTATE->m_pCurSong.Set( pSong );
-	GAMESTATE->m_pCurCourse.Set( NULL );
+	GAMESTATE->m_pCurCourse.Set( nullptr );
 	GAMESTATE->SetCurrentStyle( GAMEMAN->GetEditorStyleForStepsType(st), PLAYER_INVALID );
 	GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 
 	// handle error cases
 	if( !pSong->HasMusic() )
 	{
-		ScreenPrompt::Prompt( SM_None, MISSING_MUSIC_FILE );
+		ScreenPrompt::Prompt( SM_None, MISSING_MUSIC_FILE.GetValue() );
 		return true;
 	}
 
@@ -231,12 +231,12 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 	{
 		case EditMode_Full:
 		{
-			RString sDir = pSong->GetSongDir();
-			RString sTempFile = sDir + TEMP_FILE_NAME;
+			std::string sDir = pSong->GetSongDir();
+			std::string sTempFile = sDir + TEMP_FILE_NAME;
 			RageFile file;
 			if( !file.Open( sTempFile, RageFile::WRITE ) )
 			{
-				ScreenPrompt::Prompt( SM_None, SONG_DIR_READ_ONLY );
+				ScreenPrompt::Prompt( SM_None, SONG_DIR_READ_ONLY.GetValue() );
 				return true;
 			}
 
@@ -252,7 +252,7 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 	{
 		case EditMenuAction_Delete:
 		{
-			ASSERT( pSteps != NULL );
+			ASSERT( pSteps != nullptr );
 			if( pSteps->IsAutogen() )
 			{
 				SCREENMAN->PlayInvalidSound();
@@ -270,7 +270,7 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 	case EditMenuAction_Practice:
 		break;
 	case EditMenuAction_Delete:
-		ASSERT( pSteps != NULL );
+		ASSERT( pSteps != nullptr );
 		ScreenPrompt::Prompt( SM_None, STEPS_WILL_BE_LOST.GetValue() + "\n\n" + CONTINUE_WITH_DELETE.GetValue(),
 		                      PROMPT_YES_NO, ANSWER_NO );
 		break;
@@ -279,7 +279,7 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 		{
 			FOREACH_PlayerNumber(pn)
 			{
-				GAMESTATE->m_pCurSteps[pn].Set(NULL);
+				GAMESTATE->m_pCurSteps[pn].Set(nullptr);
 			}
 			pSong->LoadAutosaveFile();
 			SONGMAN->Invalidate(pSong);
@@ -295,7 +295,7 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 			switch( mode )
 			{
 			default:
-				FAIL_M(ssprintf("Invalid EditMode: %i", mode));
+				FAIL_M(fmt::sprintf("Invalid EditMode: %i", mode));
 			case EditMode_Full:
 				break;
 			case EditMode_Home:
@@ -305,7 +305,7 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 				FAIL_M("Cannot create steps in EditMode_Practice");
 			}
 
-			RString sEditName;
+			std::string sEditName;
 			if( pSourceSteps )
 			{
 				pSteps->CopyFrom( pSourceSteps, st, pSong->m_fMusicLengthSeconds );
@@ -327,11 +327,11 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 
 			GAMESTATE->m_pCurSong.Set( pSong );
 			GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
-			GAMESTATE->m_pCurCourse.Set( NULL );
+			GAMESTATE->m_pCurCourse.Set( nullptr );
 		}
 		break;
 	default:
-		FAIL_M(ssprintf("Invalid edit menu action: %i", action));
+		FAIL_M(fmt::sprintf("Invalid edit menu action: %i", action));
 	}
 
 	// Go to the next screen.
@@ -342,13 +342,13 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 	case EditMenuAction_Practice:
 		{
 			// Prepare for ScreenEdit
-			ASSERT( pSteps != NULL );
+			ASSERT( pSteps != nullptr );
 			bool bPromptToNameSteps = (action == EditMenuAction_Create && dc == Difficulty_Edit);
 			if( bPromptToNameSteps )
 			{
 				ScreenTextEntry::TextEntry(
 					SM_BackFromEditDescription,
-					ENTER_EDIT_DESCRIPTION,
+					ENTER_EDIT_DESCRIPTION.GetValue(),
 					GAMESTATE->m_pCurSteps[0]->GetDescription(),
 					MAX_STEPS_DESCRIPTION_LENGTH,
 					SongUtil::ValidateCurrentStepsDescription,
@@ -367,7 +367,7 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 	case EditMenuAction_LoadAutosave:
 		return true;
 	default:
-		FAIL_M(ssprintf("Invalid edit menu action: %i", action));
+		FAIL_M(fmt::sprintf("Invalid edit menu action: %i", action));
 	}
 }
 
@@ -386,7 +386,7 @@ void ScreenEditMenu::RefreshExplanationText()
 
 void ScreenEditMenu::RefreshNumStepsLoadedFromProfile()
 {
-	RString s = ssprintf( "edits used: %d", SONGMAN->GetNumStepsLoadedFromProfile() );
+	std::string s = fmt::sprintf( "edits used: %d", SONGMAN->GetNumStepsLoadedFromProfile() );
 	m_textNumStepsLoadedFromProfile.SetText( s );
 }
 

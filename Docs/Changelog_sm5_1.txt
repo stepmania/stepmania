@@ -1,0 +1,223 @@
+StepMania 5.1 Changelog
+________________________________________________________________________________
+The StepMania 5.1 Changelog covers all changes that are in the 5.1 series of
+releases.  All changes listed for the 5.0 series in Changelog_sm5.txt also
+apply to the 5.1 series.
+StepMania 5.1 and StepMania 5.0 have separate changelogs so that devs working
+on the different branches don't have conflicts on the changelog file.
+________________________________________________________________________________
+
+2016/04/23
+----------
+* [item_scroller] Added item_params arg to item_scroller:create_actors, which
+  is copied and passed to the create_actors function for each item. [kyzentun]
+* [nesty_menus] option_item_underlinable:create_actors now takes params for
+  setting the diffuse and stroke of the text, or a custom text actor.
+  Added params to nesty_option_display for controlling its parts.
+  Renamed "meta" field in menu entry to "menu".
+  Added sounds to menu system.
+  Added on_open and on_close actions to sub menus.
+  Renamed clear_options_set_stack, push_options_set_stack and
+  pop_options_set_stack to clear_menu_stack, push_menu_stack, and
+  pop_menu_stack.
+  If the "execute" field in a menu entry is set, the "meta" or "menu" field
+  will be ignored.
+  Added bool_song_mod_val, enum_player_mod_val, enum_player_mod_single_val,
+  float_player_mod_val, float_profile_val, bool_profile_val, and
+  choices_config_val to nesty_options table.
+  [kyzentun]
+* [NewField] ReverseChanged message from first column is now passed to the
+  field. [kyzentun]
+* [NewSkin] Added shown_noteskins config and menu for hiding noteskins. [kyzentun]
+* [ScreenNestyPlayerOptions] Added life and background options. [kyzentun]
+
+2016/03/14
+----------
+* [NewSkin] Added quantum_time field to column info so that quantizations can
+  cover more than a single beat. [kyzentun]
+
+2016/02/27
+----------
+* [NewField] Lifts are now rendered with a hold body preceding them.  The
+  hold body uses the same graphics as the normal hold, and has a fade in
+  effect at the beginning.  [kyzentun]
+* [Linux] Use XRandR 1.2 functions for querying all displays (technically,
+  "outputs"), and allow selecting which output to go fullscreen on. Also,
+  implement support for fullscreen borderless window by using
+  _NET_WM_STATE_FULLSCREEN display manager hint. [drewbarbs, roothorick]
+* [Graphics] Replace DisplayResolutions class with DisplaySpecs, to track
+  available resolutions/refresh rates on a per-display basis. Create Lua
+  binding. [drewbarbs]
+* [OptionRow]: add ability to return "option effects" (enum OptEffect) and
+  indicating full OptionRow reloads (enum ReloadChanged) from
+  OptionRowHandlerLua. [drewbarbs]
+
+2016/02/20
+----------
+* [NewField] Layer fade and transform types now controlled by their own
+  variables instead of the draw order. [kyzentun]
+
+2016/02/16
+----------
+* [ActorUtil] Added ActorUtil::MakeActorSet for turning a table of actors
+  in a lua file into a vector of actors.  This should be used instead the
+  logic in SWME that loads an ActorFrame, then strips out its children for
+  the decorations layer.  The ActorFrame being stripped away in decorations
+  trips up every themer the first time they learn it, so MakeActorSet was
+  created so that problem doesn't exist in the NewField layer system.
+  [kyzentun]
+* [NewField] Removed NoteField board from NewField and replaced it with
+  layers system.  Columns also have layers. [kyzentun]
+* [NewSkin] Removed layers_above_notes and layers_below_notes fields and
+  replaced them with layers field.  Draw order for layers in the column must
+  be set in the noteskin now. [kyzentun]
+
+2016/02/12
+----------
+* [CustomSpeedMods] Any theme still using the deprecated CustomSpeedMods
+  system needs to be modified to add its load function to profile loading.
+  [kyzentun]
+* [Gameplay] Changed default theme to use newfield. [kyzentun]
+* [item_scroller] Added item_scroller lua class as an alternative to
+  ActorScroller. [kyzentun]
+* [lua_config] Added lua config system for saving theme settings. [kyzentun]
+* [nesty_options] Added nested options menu system for lua based menus.
+  [kyzentun]
+* [NewField] Changed functions in Scripts/02 NewField.lua to be inside the
+  NewField class.  Added more NewField functions, documented in
+  Docs/Themerdocs/5.1_incompatibilities/NewField.md. [kyzentun]
+* [PlayerOptions] Changed PlayerOptions screen in default theme to use
+  nesty options system to allow newskin parameter support. [kyzentun]
+* [PlayerState] Added get_read_bpm lua function. [kyzentun]
+
+2016/01/17
+----------
+* [TimingData] Fixed bug in handling of displayed beat lookup table that
+  broke charts that had scroll segments but not other timing segments.
+  [kyzentun]
+
+2016/01/16
+----------
+* [NewSkin] Pump newskin by wolfman2000.  EasyV2 and ExactV2 by Jousway.
+  EasyV2 and ExactV2 support dance, pump, and solo.
+
+2016/01/14
+----------
+* [NewSkin] Removed routine newskin and put its player masks into the default
+  newskin. [kyzentun]
+
+2016/01/13
+----------
+* [NewSkin] Added anim_time and anim_uses_beats column fields for controlling
+  how fast taps are animated. [kyzentun]
+
+2016/01/12
+----------
+* [NewField] reverse_percent changed to reverse_scale to simplify code for
+  flipping columns upside down. [kyzentun]
+
+2016/01/08
+----------
+* [beat] Keysounds fixed. [ubuntor]
+
+2015/11/01 to 2015/12/31
+----------
+* [NewSkin] Created noteskin parameter system which allows a skin to specify
+  a lua table of parameters it takes.  The theme can then use the information
+  in the noteskin to build a menu which allows the player to custom specific
+  behaviors of the noteskin.  Noteskin parameters are saved to the profile,
+  organized by noteskin name and stepstype. [kyzentun]
+  Added explosion particles to default newskin.  Noteskin params control
+  size, blending, amount, and distance. [kyzentun]
+  Removed rotations table in favor of newskin actors being rotated by their
+  InitCommand. [kyzentun]
+* [Rage] Restructured major portions into Rage namespace instead of prefixing
+  class names with Rage. [wolfman2000]
+* [StdString.h] StdString removed and replaced with std::string. [wolfman2000]
+
+================================================================================
+StepMania 5.1.-1 | 20151031
+--------------------------------------------------------------------------------
+
+2015/06/?? to 2015/10/27
+----------
+Various things done along the path to creating the NewField and related
+systems.
+* [Actor] get_mask_color and set_mask_color functions added for controlling
+  colored mask.  Sprite is currently the only actor type that can have a
+  mask texture. [kyzentun]
+* [CubicSpline] Moved polygonal and looping solve logic to CubicSpline. [kyzentun]
+* [GameManager] Added stepstype_is_multiplayer function.  Use this function
+  instead of looking at the current style.  I'm hoping to remove styles in a
+  future release. [kyzentun]
+* [global.h] Added UNUSED macro.  This will be applied to things to get rid
+  of unused variable warnings. [kyzentun]
+* [LuaManager] Added convenience macros for setting enum members. [kyzentun]
+  Moved FromStack function definitions so that the don't get separated from
+  their declarations and drift out of sync.  (I thought I already did this
+  once?) [kyzentun]
+  Added rec_print_table C++ function for dumping a lua table to the log from
+  the C++ side. [kyzentun]
+  Added get_optional_double and get_optional_bool functions for fetching
+  things from lua tables. [kyzentun]
+* [NewField] New noteskin, notefield, and modifier system introduced.  See
+  Docs/Themerdocs/5.1_incompatibilities folder for details. [kyzentun]
+* [NoteData] Added SetOccuranceTimeForAllTaps so the time for every note
+  isn't calculated every frame.  This probably belongs in NoteDataUtil, but I
+  don't like it when a non-member function changes member values so
+  intimately. [kyzentun]
+  Also added count_notes_in_columns to later use for useless stats. [kyzentun]
+* [NoteTypes] Added values to TapNote for the time in seconds that the note
+  occurs at, ends at (holds), and was last held at (holds). [kyzentun]
+* [Player] Changed how the field is rendered to give the field power over the
+  skew modifier.  Both notefields currently exist in the Player, but only one
+  is rendered.  The theme needs to use set_newfield_preferred until the old
+  notefield is removed. [kyzentun]
+* [PlayerOptions] Added NewSkin field and lua function because the field
+  needs a skin when it's being initialized and there isn't yet an easier way
+  for the theme to set that. [kyzentun]
+* [Profile] Added get_preferred_noteskin, set_preferred_noteskin, and
+  get_last_stepstype lua functions. [kyzentun]
+  Added system for storing what NewSkin is used for each StepsType.
+  Each StepsType has its own entry because NewSkins are not tied to game
+  type, and hopefully StepsTypes won't be in the future.  Since a NewSkin
+  picks what buttons to support, and doesn't have to support all StepsTypes,
+  the profile needs to be able to pick a different NewSkin for each StepsType.
+  When the profile plays a StepsType for the first time, the most used
+  NewSkin is used. [kyzentun]
+* [RageDisplay] Added Color key fragment shader for masking system.  Shader
+  written by Yaniel. [kyzentun]
+* [RageTexture] Changed frame rect calculation to do more work outside the
+  loop. (neurotic efficiency obsession acted up one day) [kyzentun]
+* [RageUtil] Moved unique_name function from XmlToLua to RageUtil so it can
+  be used by ModValue. [kyzentun]
+* [RageVector3] Added transform POD class for use by ModValue. [kyzentun]
+* [SongManager] Fixed bug that made loading window progress bar not fill
+  during the "Sanity checking songs..." phase. [kyzentun]
+* [Sprite] Added mask texture system.  This was made for playerizing in
+  NewField, but can be used on any sprite.  Set the "Mask" field the same way
+  you would set the Texture field, or use set_mask lua function to set the
+  mask texture.  When the mask is used, the mask_color will be applied using
+  the alpha channel of the mask. [kyzentun]
+* [StdString.h] Commented out body of sslwr function because apparently
+  MakeLower doesn't exist.  wolfman2000 is killing StdString, so it shouldn't
+  matter if this function is broken for a while. [kyzentun]
+* [Steps] count_notes_in_columns lua function.
+* [TimingData] Added lookup_requester_count so that PrepareLookup calls can
+  be nested. [kyzentun]
+  Added lookup table for the displayed beat for the NewField to use for
+  scroll segment support. (or is this speed segment support?) [kyzentun]
+
+2015/05/10 to 2015/10/27
+----------
+* Massive backend work to change the engine to use C++11 everywhere.
+Rearranging of build system.  Reorganizing the file structure of the engine.
+  [wolfman2000, prcuvu, teejusb, and others]
+* Fill in more detail later if needed.
+
+
+2015/05/10?
+----------
+* 5_1_0 branch created.  Unsure of exact date or commit.  This seems to be
+the first thing that occurred on the 5_1_0 branch:
+https://github.com/stepmania/stepmania/commit/7060e158cdb927ff58903c716226c3cd6080fab1

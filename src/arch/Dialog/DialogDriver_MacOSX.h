@@ -6,12 +6,12 @@
 class DialogDriver_MacOSX: public DialogDriver
 {
 public:
-	void Error( RString sError, RString sID );
-	void OK( RString sMessage, RString sID );
-	Dialog::Result OKCancel( RString sMessage, RString sID );
-	Dialog::Result AbortRetryIgnore( RString sMessage, RString sID );
-	Dialog::Result AbortRetry( RString sMessage, RString sID );
-	Dialog::Result YesNo( RString sMessage, RString sID );
+	void Error( std::string sError, std::string sID );
+	void OK( std::string sMessage, std::string sID );
+	Dialog::Result OKCancel( std::string sMessage, std::string sID );
+	Dialog::Result AbortRetryIgnore( std::string sMessage, std::string sID );
+	Dialog::Result AbortRetry( std::string sMessage, std::string sID );
+	Dialog::Result YesNo( std::string sMessage, std::string sID );
 };
 #define USE_DIALOG_DRIVER_COCOA
     

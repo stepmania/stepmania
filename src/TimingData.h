@@ -4,7 +4,7 @@
 #include "NoteTypes.h"
 #include "TimingSegments.h"
 #include "PrefsManager.h"
-#include <float.h> // max float
+#include <limits> // max float
 struct lua_State;
 
 /** @brief Compare a TimingData segment's properties with one another. */
@@ -15,7 +15,7 @@ template<class T>
 inline T ToDerived( const TimingSegment *t, TimingSegmentType tst )
 {
 	ASSERT_M( t && tst == t->GetType(),
-		ssprintf("type mismatch (expected %s, got %s)",
+		fmt::sprintf("type mismatch (expected %s, got %s)",
 		TimingSegmentTypeToString(tst).c_str(),
 		TimingSegmentTypeToString(t->GetType()).c_str() ) );
 
@@ -86,13 +86,16 @@ public:
 	struct GetBeatArgs
 	{
 		float elapsed_time;
+		// total_stop_time is the total time used by stops and delays.
+		float total_stop_time; // Used by mods.
 		float beat;
 		float bps_out;
 		float warp_dest_out;
 		int warp_begin_out;
 		bool freeze_out;
 		bool delay_out;
-	GetBeatArgs() :elapsed_time(0), beat(0), bps_out(0), warp_dest_out(0),
+	GetBeatArgs() :elapsed_time(0), total_stop_time(0), beat(0), bps_out(0),
+			warp_dest_out(0),
 			warp_begin_out(-1), freeze_out(false), delay_out(false) {}
 	};
 	struct GetBeatStarts
@@ -110,7 +113,7 @@ public:
 	};
 	// map can't be used for the lookup table because its find or *_bound
 	// functions would return the wrong entry.
-	// In a map<int, int> with three entries, [-1]= 3, [6]= 1, [8]= 2,
+	// In a std::map<int, int> with three entries, [-1]= 3, [6]= 1, [8]= 2,
 	// lower_bound(0) and upper_bound(0) both returned the entry at [6]= 1.
 	// So the lookup table is a vector of entries and FindEntryInLookup does a
 	// binary search.
@@ -121,13 +124,34 @@ public:
 		GetBeatStarts second;
 	lookup_item_t(float f, GetBeatStarts& s) :first(f), second(s) {}
 	};
-	typedef vector<lookup_item_t> beat_start_lookup_t;
+	typedef std::vector<lookup_item_t> beat_start_lookup_t;
 	beat_start_lookup_t m_beat_start_lookup;
 	beat_start_lookup_t m_time_start_lookup;
+	// displayed_beat_entry is for optimizing GetDisplayedBeat, which is used
+	// by scroll segments.
+	struct displayed_beat_entry
+	{
+		float beat;
+		float displayed_beat;
+		float velocity;
+	};
+	std::vector<displayed_beat_entry> m_displayed_beat_lookup;
+	// m_lookup_requester_count exists to track how many things have requested
+	// the lookup tables be prepared, so unrelated parts of code don't have to
+	// check for them.
+	// The lookup tables are only created if m_lookup_requester_count is 0 when
+	// PrepareLookup is called, and only released when it reaches 0 again.
+	// -Kyz
+	int m_lookup_requester_count;
 
 	void PrepareLookup();
 	void ReleaseLookup();
-	void DumpOneTable(const beat_start_lookup_t& lookup, const RString& name);
+	private:
+	void ReleaseTimingLookup();
+	void ReleaseDisplayedBeatLookup();
+	void ReleaseLookupInternal();
+	public:
+	void DumpOneTable(const beat_start_lookup_t& lookup, const std::string& name);
 	void DumpLookupTables();
 
 	int GetSegmentIndexAtRow(TimingSegmentType tst, int row) const;
@@ -162,7 +186,7 @@ public:
 	 * @param fMaxBPMOut the maximum specified BPM.
 	 * @param highest the highest allowed max BPM.
 	 */
-	void GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut, float highest = FLT_MAX ) const;
+    void GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut, float highest = std::numeric_limits<float>::max() ) const;
 
 	/**
 	 * @brief Retrieve the TimingSegment at the specified row.
@@ -275,11 +299,11 @@ public:
 	int GetMissComboAtRow( int iNoteRow ) const { return GetComboSegmentAtRow(iNoteRow)->GetMissCombo(); }
 	int GetMissComboAtBeat( float fBeat ) const { return GetMissComboAtRow( BeatToNoteRow(fBeat) ); }
 
-	const RString& GetLabelAtRow( int iNoteRow ) const { return GetLabelSegmentAtRow(iNoteRow)->GetLabel(); }
-	const RString& GetLabelAtBeat( float fBeat ) const { return GetLabelAtRow( BeatToNoteRow(fBeat) ); }
-	void SetLabelAtRow( int iNoteRow, const RString& sLabel ) { AddSegment( LabelSegment(iNoteRow,sLabel) ); }
-	void SetLabelAtBeat( float fBeat, const RString sLabel ) { SetLabelAtRow( BeatToNoteRow( fBeat ), sLabel ); }
-	bool DoesLabelExist( const RString& sLabel ) const;
+	const std::string& GetLabelAtRow( int iNoteRow ) const { return GetLabelSegmentAtRow(iNoteRow)->GetLabel(); }
+	const std::string& GetLabelAtBeat( float fBeat ) const { return GetLabelAtRow( BeatToNoteRow(fBeat) ); }
+	void SetLabelAtRow( int iNoteRow, const std::string& sLabel ) { AddSegment( LabelSegment(iNoteRow,sLabel) ); }
+	void SetLabelAtBeat( float fBeat, const std::string sLabel ) { SetLabelAtRow( BeatToNoteRow( fBeat ), sLabel ); }
+	bool DoesLabelExist( const std::string& sLabel ) const;
 
 	float GetSpeedPercentAtRow( int iNoteRow ) const { return GetSpeedSegmentAtRow(iNoteRow)->GetRatio(); }
 	float GetSpeedPercentAtBeat( float fBeat ) const { return GetSpeedPercentAtRow( BeatToNoteRow(fBeat) ); }
@@ -394,13 +418,13 @@ public:
 	{
 		FOREACH_ENUM( TimingSegmentType, tst )
 		{
-			const vector<TimingSegment*> &us = m_avpTimingSegments[tst];
-			const vector<TimingSegment*> &them = other.m_avpTimingSegments[tst];
+			const std::vector<TimingSegment*> &us = m_avpTimingSegments[tst];
+			const std::vector<TimingSegment*> &them = other.m_avpTimingSegments[tst];
 
 			// optimization: check vector sizes before contents
 			if( us.size() != them.size() )
 				return false;
-			
+
 			for( unsigned i = 0; i < us.size(); ++i )
 			{
 				/* UGLY: since TimingSegment's comparison compares base data,
@@ -430,11 +454,11 @@ public:
 
 	void SortSegments( TimingSegmentType tst );
 
-	const vector<TimingSegment*> &GetTimingSegments( TimingSegmentType tst ) const
+	const std::vector<TimingSegment*> &GetTimingSegments( TimingSegmentType tst ) const
 	{
 		return const_cast<TimingData *>(this)->GetTimingSegments(tst);
 	}
-	vector<TimingSegment *> &GetTimingSegments( TimingSegmentType tst )
+	std::vector<TimingSegment *> &GetTimingSegments( TimingSegmentType tst )
 	{
 		return m_avpTimingSegments[tst];
 	}
@@ -454,19 +478,19 @@ public:
 	 *
 	 * This is for informational purposes only.
 	 */
-	RString					m_sFile;
+	std::string					m_sFile;
 
 	/** @brief The initial offset of a song. */
 	float	m_fBeat0OffsetInSeconds;
 
 	// XXX: this breaks encapsulation. get rid of it ASAP
-	vector<RString> ToVectorString(TimingSegmentType tst, int dec = 6) const;
+	std::vector<std::string> ToVectorString(TimingSegmentType tst, int dec = 6) const;
 protected:
 	// don't call this directly; use the derived-type overloads.
 	void AddSegment( const TimingSegment *seg );
 
 	// All of the following vectors must be sorted before gameplay.
-	vector<TimingSegment *> m_avpTimingSegments[NUM_TimingSegmentType];
+	std::vector<TimingSegment *> m_avpTimingSegments[NUM_TimingSegmentType];
 };
 
 #undef COMPARE
@@ -478,7 +502,7 @@ protected:
  * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -488,7 +512,7 @@ protected:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

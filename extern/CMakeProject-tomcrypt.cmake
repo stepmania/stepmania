@@ -1,4 +1,9 @@
-set(TOMDIR "${SM_SRC_DIR}/libtomcrypt")
+set(TOMDIR "${SM_EXTERN_DIR}/tomcrypt")
+
+if (NOT IS_DIRECTORY "${TOMDIR}")
+  message(ERROR "Submodule for tomcrypt missing. Run git submodule init && git submodule update first.")
+  return()
+endif()
 
 list(APPEND TOMCRYPT_MISC_CRYPT
   "${TOMDIR}/src/misc/crypt/crypt.c"
@@ -269,6 +274,39 @@ add_library("tomcrypt" STATIC ${TOMCRYPT_SRC} ${TOMCRYPT_HPP})
 
 set_property(TARGET "tomcrypt" PROPERTY FOLDER "External Libraries")
 
+# Required since building from the source.
+sm_add_compile_definition("tomcrypt" LTC_SOURCE)
+
+# Required since tommath is a dependency.
+sm_add_compile_definition("tomcrypt" LTM_DESC)
+
+# This was defined behind an always active block.
+sm_add_compile_definition("tomcrypt" DEVRANDOM)
+
+# Common formulas used by our app.
+sm_add_compile_definition("tomcrypt" SHA1)
+sm_add_compile_definition("tomcrypt" MD5)
+
+# Use the full AES encryption items.
+sm_add_compile_definition("tomcrypt" YARROW)
+sm_add_compile_definition("tomcrypt" YARROW_AES=3)
+
+# Other definitions we used in the past, but whose meanings are not clear.
+sm_add_compile_definition("tomcrypt" LTC_NO_PKCS)
+sm_add_compile_definition("tomcrypt" PKCS_1)
+sm_add_compile_definition("tomcrypt" LTC_DER)
+sm_add_compile_definition("tomcrypt" LTC_NO_MODES)
+sm_add_compile_definition("tomcrypt" LTC_ECB_MODE)
+sm_add_compile_definition("tomcrypt" LTC_CBC_MODE)
+sm_add_compile_definition("tomcrypt" LTC_CTR_MODE)
+sm_add_compile_definition("tomcrypt" LTC_NO_HASHES)
+sm_add_compile_definition("tomcrypt" LTC_NO_MACS) # Meaning is unclear: used with Mac OS X too.
+sm_add_compile_definition("tomcrypt" LTC_NO_PRNGS)
+sm_add_compile_definition("tomcrypt" TRY_URANDOM_FIRST)
+sm_add_compile_definition("tomcrypt" LTC_NO_PK)
+sm_add_compile_definition("tomcrypt" MRSA)
+sm_add_compile_definition("tomcrypt" LTC_NO_PROTOTYPES)
+
 if (WITH_PORTABLE_TOMCRYPT)
   sm_add_compile_definition("tomcrypt" LTC_NO_ASM)
 elseif(WITH_NO_ROLC_TOMCRYPT AND NOT APPLE)
@@ -278,12 +316,18 @@ endif()
 if (APPLE)
   sm_add_compile_definition("tomcrypt" LTC_NO_ROLC)
   sm_append_simple_target_property("tomcrypt" XCODE_ATTRIBUTE_GCC_NO_COMMON_BLOCKS "YES")
-  sm_append_simple_target_property("tomcrypt" XCODE_ATTRIBUTE_GCC_PREPROCESSOR_DEFINITIONS[variant=Debug]
-  "'CMAKE_INTDIR=\"Debug\"' LTC_NO_ROLC DEBUG=1")
 elseif (MSVC)
   sm_add_compile_definition("tomcrypt" _CRT_SECURE_NO_WARNINGS)
 endif()
 
 disable_project_warnings("tomcrypt")
 
-target_include_directories("tomcrypt" PUBLIC "${TOMDIR}/src/headers")
+add_dependencies("tomcrypt" "tommath")
+
+list(APPEND TOMCRYPT_INCLUDE_DIRS
+  "${TOMDIR}/src/headers"
+  "${SM_EXTERN_DIR}/tommath"
+)
+
+target_include_directories("tomcrypt" PUBLIC ${TOMCRYPT_INCLUDE_DIRS})
+

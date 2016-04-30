@@ -1,28 +1,32 @@
 #include "global.h"
 #include "GameConstantsAndTypes.h"
+#include "RageMath.hpp"
 #include "GameState.h"
 #include "RageUtil.h"
 #include "ThemeMetric.h"
 #include "EnumHelper.h"
-#include "Foreach.h"
 #include "LuaManager.h"
 #include "GameManager.h"
 #include "LocalizedString.h"
 #include "PlayerNumber.h"
-#include <float.h>
+#include <limits>
 
-RString StepsTypeToString( StepsType st );
+#include <unordered_map>
 
-static vector<RString> GenerateRankingToFillInMarker()
+using std::vector;
+
+static vector<std::string> GenerateRankingToFillInMarker()
 {
-	vector<RString> vRankings;
+	vector<std::string> vRankings;
 	FOREACH_ENUM( PlayerNumber, pn )
-		vRankings.push_back( ssprintf("#P%d#", pn+1) );
+	{
+		vRankings.push_back( fmt::sprintf("#P%d#", pn+1) );
+	}
 	return vRankings;
 }
-extern const vector<RString> RANKING_TO_FILL_IN_MARKER( GenerateRankingToFillInMarker() );
+extern const vector<std::string> RANKING_TO_FILL_IN_MARKER( GenerateRankingToFillInMarker() );
 
-extern const RString GROUP_ALL = "---Group All---";
+extern const std::string GROUP_ALL = "---Group All---";
 
 static const char *RadarCategoryNames[] = {
 	"Stream",
@@ -45,11 +49,11 @@ XToLocalizedString( RadarCategory );
 LuaFunction( RadarCategoryToLocalizedString, RadarCategoryToLocalizedString(Enum::Check<RadarCategory>(L, 1)) );
 LuaXType( RadarCategory );
 
-RString StepsTypeToString( StepsType st )
+std::string StepsTypeToString( StepsType st )
 {
-	RString s = GAMEMAN->GetStepsTypeInfo( st ).szName; // "dance-single"
+	std::string s = GAMEMAN->GetStepsTypeInfo( st ).stepTypeName; // "dance-single"
 	/* foo-bar -> Foo_Bar */
-	s.Replace('-','_');
+	Rage::replace(s, '-', '_');
 
 	bool bCapitalizeNextLetter = true;
 	for( int i=0; i<(int)s.length(); i++ )
@@ -66,7 +70,7 @@ RString StepsTypeToString( StepsType st )
 
 	return s;
 }
-namespace StringConversion { template<> RString ToString<StepsType>( const StepsType &value ) { return StepsTypeToString(value); } }
+namespace StringConversion { template<> std::string ToString<StepsType>( const StepsType &value ) { return StepsTypeToString(value); } }
 
 LuaXType( StepsType );
 
@@ -204,7 +208,7 @@ static const char *TapNoteScoreNames[] = {
 };
 struct tns_conversion_helper
 {
-	std::map<RString, TapNoteScore> conversion_map;
+	std::unordered_map<std::string, TapNoteScore> conversion_map;
 	tns_conversion_helper()
 	{
 		FOREACH_ENUM(TapNoteScore, tns)
@@ -222,10 +226,9 @@ struct tns_conversion_helper
 tns_conversion_helper tns_converter;
 XToString( TapNoteScore );
 LuaXType( TapNoteScore );
-TapNoteScore StringToTapNoteScore( const RString &s )
+TapNoteScore StringToTapNoteScore( const std::string &s )
 {
-	std::map<RString, TapNoteScore>::iterator tns=
-		tns_converter.conversion_map.find(s);
+	auto tns = tns_converter.conversion_map.find(s);
 	if(tns != tns_converter.conversion_map.end())
 	{
 		return tns->second;
@@ -236,7 +239,7 @@ TapNoteScore StringToTapNoteScore( const RString &s )
 // relies on there being a StringConversion entry for enums used in prefs. -Kyz
 namespace StringConversion
 {
-	template<> bool FromString<TapNoteScore>(const RString& value, TapNoteScore& out)
+	template<> bool FromString<TapNoteScore>(const std::string& value, TapNoteScore& out)
 	{
 		out= StringToTapNoteScore(value);
 		return out != TapNoteScore_Invalid;
@@ -254,7 +257,7 @@ static const char *HoldNoteScoreNames[] = {
 };
 XToString( HoldNoteScore );
 LuaXType( HoldNoteScore );
-HoldNoteScore StringToHoldNoteScore( const RString &s )
+HoldNoteScore StringToHoldNoteScore( const std::string &s )
 {
 	// for backward compatibility
 	if     ( s == "NG" )		return HNS_LetGo;
@@ -344,9 +347,9 @@ StringToX( StageAward );
 LuaFunction( StageAwardToLocalizedString, StageAwardToLocalizedString(Enum::Check<StageAward>(L, 1)) );
 LuaXType( StageAward );
 
-// Numbers are intentionally not at the front of these strings so that the 
+// Numbers are intentionally not at the front of these strings so that the
 // strings can be used as XML entity names.
-// Numbers are intentionally not at the back so that "1000" and "10000" don't 
+// Numbers are intentionally not at the back so that "1000" and "10000" don't
 // conflict when searching for theme elements.
 static const char *PeakComboAwardNames[] = {
 	"1000",
@@ -374,16 +377,20 @@ void DisplayBpms::Add( float f )
 
 float DisplayBpms::GetMin() const
 {
-	float fMin = FLT_MAX;
-	FOREACH_CONST( float, vfBpms, f )
+	float const maxFloat = std::numeric_limits<float>::max();
+	float fMin = maxFloat;
+	for (auto const &f: vfBpms)
 	{
-		if( *f != -1 )
-			fMin = min( fMin, *f );
+		if( f != -1 )
+		{
+			fMin = std::min( fMin, f );
+		}
 	}
-	if( fMin == FLT_MAX )
+	if( fMin == maxFloat )
+	{
 		return 0;
-	else
-		return fMin;
+	}
+	return fMin;
 }
 
 float DisplayBpms::GetMax() const
@@ -394,10 +401,12 @@ float DisplayBpms::GetMax() const
 float DisplayBpms::GetMaxWithin(float highest) const
 {
 	float fMax = 0;
-	FOREACH_CONST( float, vfBpms, f )
+	for (auto &f: vfBpms)
 	{
-		if( *f != -1 )
-			fMax = clamp(max( fMax, *f ), 0, highest);
+		if( f != -1 )
+		{
+			fMax = Rage::clamp(std::max( fMax, f ), 0.f, highest);
+		}
 	}
 	return fMax;
 }
@@ -409,12 +418,10 @@ bool DisplayBpms::BpmIsConstant() const
 
 bool DisplayBpms::IsSecret() const
 {
-	FOREACH_CONST( float, vfBpms, f )
-	{
-		if( *f == -1 )
-			return true;
-	}
-	return false;
+	auto isSecret = [](float const &f) {
+		return f == -1;
+	};
+	return std::any_of(vfBpms.begin(), vfBpms.end(), isSecret);
 }
 
 static const char *StyleTypeNames[] = {
@@ -521,7 +528,7 @@ LuaXType( FailType );
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -531,7 +538,7 @@ LuaXType( FailType );
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

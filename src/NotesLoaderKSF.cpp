@@ -1,16 +1,21 @@
 #include "global.h"
 #include "NotesLoaderKSF.h"
+#include "RageMath.hpp"
 #include "RageUtil_CharConversions.h"
 #include "MsdFile.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageString.hpp"
 #include "NoteData.h"
 #include "NoteTypes.h"
 #include "Song.h"
 #include "Steps.h"
 
-static void HandleBunki( TimingData &timing, const float fEarlyBPM, 
-			const float fCurBPM, const float fGap, 
+using std::vector;
+using std::string;
+
+static void HandleBunki( TimingData &timing, const float fEarlyBPM,
+			const float fCurBPM, const float fGap,
 			const float fPos )
 {
 	const float BeatsPerSecond = fEarlyBPM / 60.0f;
@@ -20,8 +25,9 @@ static void HandleBunki( TimingData &timing, const float fEarlyBPM,
 	timing.AddSegment( BPMSegment(BeatToNoteRow(beat), fCurBPM) );
 }
 
-static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool bKIUCompliant )
+static bool LoadFromKSFFile( const std::string &sPath, Steps &out, Song &song, bool bKIUCompliant )
 {
+	using std::max;
 	LOG->Trace( "Steps::LoadFromKSFFile( '%s' )", sPath.c_str() );
 
 	MsdFile msd;
@@ -35,24 +41,23 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 	int iTickCount = -1;
 	// used to adapt weird tickcounts
 	//float fScrollRatio = 1.0f; -- uncomment when ready to use.
-	vector<RString> vNoteRows;
+	vector<std::string> vNoteRows;
 
 	// According to Aldo_MX, there is a default BPM and it's 60. -aj
 	bool bDoublesChart = false;
-	
+
 	TimingData stepsTiming;
 	float SMGap1 = 0, SMGap2 = 0, BPM1 = -1, BPMPos2 = -1, BPM2 = -1, BPMPos3 = -1, BPM3 = -1;
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue( i );
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
+		std::string sValueName = Rage::make_upper(sParams[0]);
 
 		/* handle the data...well, not this data: not related to steps.
 		 * Skips INTRO, MUSICINTRO, TITLEFILE, DISCFILE, SONGFILE. */
-		if (sValueName=="TITLE" || EndsWith(sValueName, "INTRO")
-		    || EndsWith(sValueName, "FILE") )
+		if (sValueName=="TITLE" || Rage::ends_with(sValueName, "INTRO")
+			|| Rage::ends_with(sValueName, "FILE") )
 		{
 
 		}
@@ -110,7 +115,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 			SMGap1 = -StringToFloat( sParams[1] )/100;
 			stepsTiming.m_fBeat0OffsetInSeconds = SMGap1;
 		}
-		// This is currently required for more accurate KIU BPM changes.  
+		// This is currently required for more accurate KIU BPM changes.
 		else if( sValueName=="STARTTIME2" )
 		{
 			if (bKIUCompliant)
@@ -127,7 +132,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 			// STARTTIME3 only ensures this is a KIU compliant simfile.
 			bKIUCompliant = true;
 		}
-		
+
 		else if( sValueName=="TICKCOUNT" )
 		{
 			iTickCount = StringToInt( sParams[1] );
@@ -138,7 +143,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 			}
 			stepsTiming.AddSegment( TickcountSegment(0, iTickCount));
 		}
-		
+
 		else if( sValueName=="DIFFICULTY" )
 		{
 			out.SetMeter( max(StringToInt(sParams[1]), 1) );
@@ -146,17 +151,18 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		// new cases from Aldo_MX's fork:
 		else if( sValueName=="PLAYER" )
 		{
-			RString sPlayer = sParams[1];
-			sPlayer.MakeLower();
+			std::string sPlayer = Rage::make_lower(sParams[1]);
 			if( sPlayer.find( "double" ) != string::npos )
+			{
 				bDoublesChart = true;
+			}
 		}
 		// This should always be last.
 		else if( sValueName=="STEP" )
 		{
-			RString theSteps = sParams[1];
-			TrimLeft( theSteps );
-			split( theSteps, "\n", vNoteRows, true );
+			std::string theSteps = Rage::trim_left(sParams[1]);
+			auto toDump = Rage::split(theSteps, "\n", Rage::EmptyEntries::skip);
+			vNoteRows.insert(vNoteRows.end(), std::make_move_iterator(toDump.begin()), std::make_move_iterator(toDump.end()));
 		}
 	}
 
@@ -165,7 +171,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		iTickCount = 4;
 		LOG->UserLog( "Song file", sPath, "doesn't have a TICKCOUNT. Defaulting to %i.", iTickCount );
 	}
-	
+
 	// Prepare BPM stuff already if the file uses KSF syntax.
 	if( bKIUCompliant )
 	{
@@ -173,7 +179,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		{
 			HandleBunki( stepsTiming, BPM1, BPM2, SMGap1, BPMPos2 );
 		}
-		
+
 		if( BPM3 > 0 && BPMPos3 > 0 )
 		{
 			HandleBunki( stepsTiming, BPM2, BPM3, SMGap2, BPMPos3 );
@@ -183,9 +189,9 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 	NoteData notedata;	// read it into here
 
 	{
-		RString sDir, sFName, sExt;
+		std::string sDir, sFName, sExt;
 		splitpath( sPath, sDir, sFName, sExt );
-		sFName.MakeLower();
+		sFName = Rage::make_lower(sFName);
 
 		out.SetDescription(sFName);
 		// Check another before anything else... is this okay? -DaisuMaster
@@ -194,42 +200,42 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 			out.SetDifficulty( Difficulty_Edit );
 			if( !out.GetMeter() ) out.SetMeter( 25 );
 		}
-		else if(sFName.find("wild") != string::npos || 
-			sFName.find("wd") != string::npos || 
-			sFName.find("crazy+") != string::npos || 
-			sFName.find("cz+") != string::npos || 
+		else if(sFName.find("wild") != string::npos ||
+			sFName.find("wd") != string::npos ||
+			sFName.find("crazy+") != string::npos ||
+			sFName.find("cz+") != string::npos ||
 			sFName.find("hardcore") != string::npos )
 		{
 			out.SetDifficulty( Difficulty_Challenge );
 			if( !out.GetMeter() ) out.SetMeter( 20 );
 		}
-		else if(sFName.find("crazy") != string::npos || 
-			sFName.find("cz") != string::npos || 
-			sFName.find("nightmare") != string::npos || 
-			sFName.find("nm") != string::npos || 
+		else if(sFName.find("crazy") != string::npos ||
+			sFName.find("cz") != string::npos ||
+			sFName.find("nightmare") != string::npos ||
+			sFName.find("nm") != string::npos ||
 			sFName.find("crazydouble") != string::npos )
 		{
 			out.SetDifficulty( Difficulty_Hard );
 			if( !out.GetMeter() ) out.SetMeter( 14 ); // Set the meters to the Pump scale, not DDR.
 		}
-		else if(sFName.find("hard") != string::npos || 
-			sFName.find("hd") != string::npos || 
-			sFName.find("freestyle") != string::npos || 
-			sFName.find("fs") != string::npos || 
+		else if(sFName.find("hard") != string::npos ||
+			sFName.find("hd") != string::npos ||
+			sFName.find("freestyle") != string::npos ||
+			sFName.find("fs") != string::npos ||
 			sFName.find("double") != string::npos )
 		{
 			out.SetDifficulty( Difficulty_Medium );
 			if( !out.GetMeter() ) out.SetMeter( 8 );
 		}
-		else if(sFName.find("easy") != string::npos || 
-			sFName.find("ez") != string::npos || 
+		else if(sFName.find("easy") != string::npos ||
+			sFName.find("ez") != string::npos ||
 			sFName.find("normal") != string::npos )
 		{
 			// I wonder if I should leave easy fall into the Beginner difficulty... -DaisuMaster
 			out.SetDifficulty( Difficulty_Easy );
 			if( !out.GetMeter() ) out.SetMeter( 4 );
 		}
-		else if(sFName.find("beginner") != string::npos || 
+		else if(sFName.find("beginner") != string::npos ||
 			sFName.find("practice") != string::npos || sFName.find("pr") != string::npos  )
 		{
 			out.SetDifficulty( Difficulty_Beginner );
@@ -244,17 +250,17 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		out.m_StepsType = StepsType_pump_single;
 
 		// Check for "halfdouble" before "double".
-		if(sFName.find("halfdouble") != string::npos || 
-		   sFName.find("half-double") != string::npos || 
-		   sFName.find("h_double") != string::npos || 
+		if(sFName.find("halfdouble") != string::npos ||
+		   sFName.find("half-double") != string::npos ||
+		   sFName.find("h_double") != string::npos ||
 		   sFName.find("hdb") != string::npos )
 			out.m_StepsType = StepsType_pump_halfdouble;
 		// Handle bDoublesChart from above as well. -aj
-		else if(sFName.find("double") != string::npos || 
-			sFName.find("nightmare") != string::npos || 
-			sFName.find("freestyle") != string::npos || 
-			sFName.find("db") != string::npos || 
-			sFName.find("nm") != string::npos || 
+		else if(sFName.find("double") != string::npos ||
+			sFName.find("nightmare") != string::npos ||
+			sFName.find("freestyle") != string::npos ||
+			sFName.find("db") != string::npos ||
+			sFName.find("nm") != string::npos ||
 			sFName.find("fs") != string::npos || bDoublesChart )
 			out.m_StepsType = StepsType_pump_double;
 		else if( sFName.find("_1") != string::npos )
@@ -270,7 +276,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 	case StepsType_pump_double: notedata.SetNumTracks( 10 ); break;
 	case StepsType_pump_routine: notedata.SetNumTracks( 10 ); break; // future files may have this?
 	case StepsType_pump_halfdouble: notedata.SetNumTracks( 6 ); break;
-	default: FAIL_M( ssprintf("%i", out.m_StepsType) );
+	default: FAIL_M( fmt::sprintf("%i", out.m_StepsType) );
 	}
 
 	int t = 0;
@@ -283,16 +289,16 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 	float fCurBeat = 0.0f;
 	float prevBeat = 0.0f; // Used for hold tails.
 
-	for( unsigned r=0; r<vNoteRows.size(); r++ )
+	for (auto &sRowString: vNoteRows)
 	{
-		RString& sRowString = vNoteRows[r];
-		StripCrnl( sRowString );
+		sRowString = Rage::trim_right(sRowString, "\r\n");
 
 		if( sRowString == "" )
+		{
 			continue;	// skip
-
+		}
 		// All 2s indicates the end of the song.
-		else if( sRowString == "2222222222222" )
+		if( sRowString == "2222222222222" )
 		{
 			// Finish any holds that didn't get...well, finished.
 			for( t=0; t < notedata.GetNumTracks(); t++ )
@@ -300,12 +306,16 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 				if( iHoldStartRow[t] != -1 )	// this ends the hold
 				{
 					if( iHoldStartRow[t] == BeatToNoteRow(prevBeat) )
+					{
 						notedata.SetTapNote( t, iHoldStartRow[t], TAP_ORIGINAL_TAP );
+					}
 					else
+					{
 						notedata.AddHoldNote(t,
 								     iHoldStartRow[t],
 								     BeatToNoteRow(prevBeat),
 								     TAP_ORIGINAL_HOLD_HEAD );
+					}
 				}
 			}
 			/* have this row be the last moment in the song, unless
@@ -321,7 +331,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 			break;
 		}
 
-		else if( BeginsWith(sRowString, "|") )
+		else if( Rage::starts_with(sRowString, "|") )
 		{
 			/*
 			if (bKIUCompliant)
@@ -339,49 +349,49 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 			// I'm making some experiments, please spare me...
 			//continue;
 
-			RString temp = sRowString.substr(2,sRowString.size()-3);
+			std::string temp = sRowString.substr(2,sRowString.size()-3);
 			float numTemp = StringToFloat(temp);
-			if (BeginsWith(sRowString, "|T")) 
+			if (Rage::starts_with(sRowString, "|T"))
 			{
 				// duh
 				iTickCount = static_cast<int>(numTemp);
 				// I have been owned by the man -DaisuMaster
-				stepsTiming.SetTickcountAtBeat( fCurBeat, clamp(iTickCount, 0, ROWS_PER_BEAT) );
+				stepsTiming.SetTickcountAtBeat( fCurBeat, Rage::clamp(iTickCount, 0, ROWS_PER_BEAT) );
 			}
-			else if (BeginsWith(sRowString, "|B")) 
+			else if (Rage::starts_with(sRowString, "|B"))
 			{
 				// BPM
 				stepsTiming.SetBPMAtBeat( fCurBeat, numTemp );
 			}
-			else if (BeginsWith(sRowString, "|E"))
+			else if (Rage::starts_with(sRowString, "|E"))
 			{
 				// DelayBeat
 				float fCurDelay = 60 / stepsTiming.GetBPMAtBeat(fCurBeat) * numTemp / iTickCount;
 				fCurDelay += stepsTiming.GetDelayAtRow(BeatToNoteRow(fCurBeat) );
 				stepsTiming.SetDelayAtBeat( fCurBeat, fCurDelay );
 			}
-			else if (BeginsWith(sRowString, "|D"))
+			else if (Rage::starts_with(sRowString, "|D"))
 			{
 				// Delays
 				float fCurDelay = stepsTiming.GetStopAtRow(BeatToNoteRow(fCurBeat) );
 				fCurDelay += numTemp / 1000;
 				stepsTiming.SetDelayAtBeat( fCurBeat, fCurDelay );
 			}
-			else if (BeginsWith(sRowString, "|M") || BeginsWith(sRowString, "|C"))
+			else if (Rage::starts_with(sRowString, "|M") || Rage::starts_with(sRowString, "|C"))
 			{
 				// multipliers/combo
 				ComboSegment seg( BeatToNoteRow(fCurBeat), int(numTemp) );
 				stepsTiming.AddSegment( seg );
 			}
-			else if (BeginsWith(sRowString, "|S"))
+			else if (Rage::starts_with(sRowString, "|S"))
 			{
 				// speed segments
 			}
-			else if (BeginsWith(sRowString, "|F"))
+			else if (Rage::starts_with(sRowString, "|F"))
 			{
 				// fakes
 			}
-			else if (BeginsWith(sRowString, "|X"))
+			else if (Rage::starts_with(sRowString, "|X"))
 			{
 				// scroll segments
 				ScrollSegment seg = ScrollSegment( BeatToNoteRow(fCurBeat), numTemp );
@@ -468,26 +478,23 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 	return true;
 }
 
-static void LoadTags( const RString &str, Song &out )
+static void LoadTags( const std::string &str, Song &out )
 {
 	/* str is either a #TITLE or a directory component.  Fill in missing information.
 	 * str is either "title", "artist - title", or "artist - title - difficulty". */
-	vector<RString> asBits;
-	split( str, " - ", asBits, false );
+	auto asBits = Rage::split(str, " - ", Rage::EmptyEntries::include);
 	// Ignore the difficulty, since we get that elsewhere.
-	if( asBits.size() == 3 && (
-		asBits[2].EqualsNoCase("double") ||
-		asBits[2].EqualsNoCase("easy") ||
-		asBits[2].EqualsNoCase("normal") ||
-		asBits[2].EqualsNoCase("hard") ||
-		asBits[2].EqualsNoCase("crazy") ||
-		asBits[2].EqualsNoCase("nightmare")) 
-		)
+	if (asBits.size() == 3)
 	{
-		asBits.erase( asBits.begin()+2, asBits.begin()+3 );
+		Rage::ci_ascii_string badDiff{ asBits[2].c_str() };
+		if (badDiff == "double" || badDiff == "easy" || badDiff == "normal" ||
+			badDiff == "hard" || badDiff == "crazy" || badDiff == "nightmare")
+		{
+			asBits.erase(asBits.begin() + 2, asBits.begin() + 3);
+		}
 	}
 
-	RString title, artist;
+	std::string title, artist;
 	if( asBits.size() == 2 )
 	{
 		artist = asBits[0];
@@ -510,13 +517,13 @@ static void LoadTags( const RString &str, Song &out )
 		out.m_sArtist = artist;
 }
 
-static void ProcessTickcounts( const RString & value, int & ticks, TimingData & timing )
+static void ProcessTickcounts( const std::string & value, int & ticks, TimingData & timing )
 {
 	/* TICKCOUNT will be used below if there are DM compliant BPM changes
 	 * and stops. It will be called again in LoadFromKSFFile for the
 	 * actual steps. */
 	ticks = StringToInt( value );
-	CLAMP( ticks, 0, ROWS_PER_BEAT );
+	ticks = Rage::clamp( ticks, 0, ROWS_PER_BEAT );
 
 	if( ticks == 0 )
 		ticks = TickcountSegment::DEFAULT_TICK_COUNT;
@@ -524,7 +531,7 @@ static void ProcessTickcounts( const RString & value, int & ticks, TimingData & 
 	timing.AddSegment( TickcountSegment(0, ticks) );
 }
 
-static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant )
+static bool LoadGlobalData( const std::string &sPath, Song &out, bool &bKIUCompliant )
 {
 	MsdFile msd;
 	if( !msd.ReadFile( sPath, false ) )  // don't unescape
@@ -535,26 +542,27 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 
 	// changed up there in case of something is found inside the SONGFILE tag in the head ksf -DaisuMaster
 	// search for music with song in the file name
-	vector<RString> arrayPossibleMusic;
-	GetDirListing( out.GetSongDir() + RString("song.mp3"), arrayPossibleMusic );
-	GetDirListing( out.GetSongDir() + RString("song.oga"), arrayPossibleMusic );
-	GetDirListing( out.GetSongDir() + RString("song.ogg"), arrayPossibleMusic );
-	GetDirListing( out.GetSongDir() + RString("song.wav"), arrayPossibleMusic );
+	vector<std::string> arrayPossibleMusic;
+	GetDirListing( out.GetSongDir() + std::string("song.mp3"), arrayPossibleMusic );
+	GetDirListing( out.GetSongDir() + std::string("song.oga"), arrayPossibleMusic );
+	GetDirListing( out.GetSongDir() + std::string("song.ogg"), arrayPossibleMusic );
+	GetDirListing( out.GetSongDir() + std::string("song.wav"), arrayPossibleMusic );
 
 	if( !arrayPossibleMusic.empty() )		// we found a match
+	{
 		out.m_sMusicFile = arrayPossibleMusic[0];
+	}
 	// ^this was below, at the end
 
 	float SMGap1 = 0, SMGap2 = 0, BPM1 = -1, BPMPos2 = -1, BPM2 = -1, BPMPos3 = -1, BPM3 = -1;
 	int iTickCount = -1;
 	bKIUCompliant = false;
-	vector<RString> vNoteRows;
+	vector<std::string> vNoteRows;
 
 	for( unsigned i=0; i < msd.GetNumValues(); i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
+		std::string sValueName = Rage::make_upper(sParams[0]);
 
 		// handle the data
 		if( sValueName=="TITLE" )
@@ -608,9 +616,9 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		{
 			/* STEP will always be the last header in a KSF file by design. Due to
 			 * the Direct Move syntax, it is best to get the rows of notes here. */
-			RString theSteps = sParams[1];
-			TrimLeft( theSteps );
-			split( theSteps, "\n", vNoteRows, true );
+			std::string theSteps = Rage::trim_left(sParams[1]);
+			auto toDump = Rage::split(theSteps, "\n", Rage::EmptyEntries::skip);
+			vNoteRows.insert(vNoteRows.end(), std::make_move_iterator(toDump.begin()), std::make_move_iterator(toDump.end()));
 		}
 		else if( sValueName=="DIFFICULTY" || sValueName=="PLAYER" )
 		{
@@ -651,7 +659,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 	out.m_fMusicSampleLengthSeconds = 7.0f;
 
 	/* BPM Change checks are done here.  If bKIUCompliant, it's short and sweet.
-	 * Otherwise, the whole file has to be processed.  Right now, this is only 
+	 * Otherwise, the whole file has to be processed.  Right now, this is only
 	 * called once, for the initial file (often the Crazy steps).  Hopefully that
 	 * will end up changing soon. */
 	if( bKIUCompliant )
@@ -671,10 +679,9 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		float fCurBeat = 0.0f;
 		bool bDMRequired = false;
 
-		for( unsigned i=0; i < vNoteRows.size(); ++i )
+		for (auto &NoteRowString: vNoteRows)
 		{
-			RString& NoteRowString = vNoteRows[i];
-			StripCrnl( NoteRowString );
+			NoteRowString = Rage::trim_right(NoteRowString, "\r\n");
 
 			if( NoteRowString == "" )
 				continue; // ignore empty rows.
@@ -682,12 +689,14 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			if( NoteRowString == "2222222222222" ) // Row of 2s = end. Confirm KIUCompliency here.
 			{
 				if (!bDMRequired)
+				{
 					bKIUCompliant = true;
+				}
 				break;
 			}
 
 			// This is where the DMRequired test will take place.
-			if ( BeginsWith( NoteRowString, "|" ) )
+			if ( Rage::starts_with( NoteRowString, "|" ) )
 			{
 				// have a static timing for everything
 				bDMRequired = true;
@@ -698,15 +707,14 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 				// ignore whatever else...
 				//continue;
 			}
-			
+
 			fCurBeat += 1.0f / iTickCount;
 		}
 	}
 
 	// Try to fill in missing bits of information from the pathname.
 	{
-		vector<RString> asBits;
-		split( sPath, "/", asBits, true);
+		auto asBits = Rage::split(sPath, "/", Rage::EmptyEntries::skip);
 
 		ASSERT( asBits.size() > 1 );
 		LoadTags( asBits[asBits.size()-2], out );
@@ -715,12 +723,12 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 	return true;
 }
 
-void KSFLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
+void KSFLoader::GetApplicableFiles( std::string const &sPath, vector<std::string> &out )
 {
-	GetDirListing( sPath + RString("*.ksf"), out );
+	GetDirListing( sPath + "*.ksf", out );
 }
 
-bool KSFLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
+bool KSFLoader::LoadNoteDataFromSimfile( const std::string & cachePath, Steps &out )
 {
 	bool KIUCompliant = false;
 	Song dummy;
@@ -736,12 +744,12 @@ bool KSFLoader::LoadNoteDataFromSimfile( const RString & cachePath, Steps &out )
 	return KIUCompliant;
 }
 
-bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
+bool KSFLoader::LoadFromDir( const std::string &sDir, Song &out )
 {
 	LOG->Trace( "KSFLoader::LoadFromDir(%s)", sDir.c_str() );
 
-	vector<RString> arrayKSFFileNames;
-	GetDirListing( sDir + RString("*.ksf"), arrayKSFFileNames );
+	vector<std::string> arrayKSFFileNames;
+	GetDirListing( sDir + "*.ksf", arrayKSFFileNames );
 
 	// We shouldn't have been called to begin with if there were no KSFs.
 	ASSERT( arrayKSFFileNames.size() != 0 );
@@ -749,7 +757,7 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 	bool bKIUCompliant = false;
 	/* With Split Timing, there has to be a backup Song Timing in case
 	 * anything goes wrong. As these files are kept in alphabetical
-	 * order (hopefully), it is best to use the LAST file for timing 
+	 * order (hopefully), it is best to use the LAST file for timing
 	 * purposes, for that is the "normal", or easiest difficulty.
 	 * Usually. */
 	// Nevermind, kiu compilancy is screwing things up:
@@ -764,13 +772,13 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 	// for directmove though, and we're just gathering basic info anyway, and
 	// most of the time all the KSF files have the same info in the #TITLE:; section
 	unsigned files = arrayKSFFileNames.size();
-	RString dir = out.GetSongDir();
+	std::string dir = out.GetSongDir();
 	if( !LoadGlobalData(dir + arrayKSFFileNames[files - 1], out, bKIUCompliant) )
 		return false;
 
 	out.m_sSongFileName = dir + arrayKSFFileNames[files - 1];
 	// load the Steps from the rest of the KSF files
-	for( unsigned i=0; i<files; i++ ) 
+	for( unsigned i=0; i<files; i++ )
 	{
 		Steps* pNewNotes = out.CreateSteps();
 		if( !LoadFromKSFFile(dir + arrayKSFFileNames[i], *pNewNotes, out, bKIUCompliant) )
@@ -787,7 +795,7 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 /*
  * (c) 2001-2006 Chris Danford, Glenn Maynard, Jason Felds
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -797,7 +805,7 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

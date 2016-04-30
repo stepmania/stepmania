@@ -38,4 +38,5 @@ if GAMESTATE:GetCurrentCourse() then
 end;
 t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 t[#t+1]= LoadActor(THEME:GetPathG("", "pause_menu"))
+t[#t+1]= use_newfield_actor()
 return t

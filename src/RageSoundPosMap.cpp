@@ -3,9 +3,8 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageTimer.h"
-#include "Foreach.h"
 
-#include <limits.h>
+#include <limits>
 #include <list>
 
 /* The number of frames we should keep pos_map data for.  This being too high
@@ -24,7 +23,7 @@ struct pos_map_t
 
 struct pos_map_impl
 {
-	list<pos_map_t> m_Queue;
+	std::list<pos_map_t> m_Queue;
 	void Cleanup();
 };
 
@@ -61,7 +60,7 @@ void pos_map_queue::Insert( int64_t iSourceFrame, int iFrames, int64_t iDestFram
 		pos_map_t &last = m_pImpl->m_Queue.back();
 		if( last.m_iSourceFrame + last.m_iFrames == iSourceFrame &&
 		    last.m_fSourceToDestRatio == fSourceToDestRatio &&
-		    llabs(last.m_iDestFrame + lrintf(last.m_iFrames * last.m_fSourceToDestRatio) - iDestFrame) <= 1 )
+		   std::llabs(last.m_iDestFrame + std::lrint(last.m_iFrames * last.m_fSourceToDestRatio) - iDestFrame) <= 1 )
 		{
 			last.m_iFrames += iFrames;
 
@@ -83,7 +82,7 @@ void pos_map_queue::Insert( int64_t iSourceFrame, int iFrames, int64_t iDestFram
 
 				next.m_iSourceFrame += iDeleteFrames;
 				next.m_iFrames -= iDeleteFrames;
-				next.m_iDestFrame += lrintf( iDeleteFrames * next.m_fSourceToDestRatio );
+				next.m_iDestFrame += std::lrint( iDeleteFrames * next.m_fSourceToDestRatio );
 
 				m_pImpl->m_Queue.push_back( next );
 			}
@@ -100,14 +99,14 @@ void pos_map_queue::Insert( int64_t iSourceFrame, int iFrames, int64_t iDestFram
 	m.m_iDestFrame = iDestFrame;
 	m.m_iFrames = iFrames;
 	m.m_fSourceToDestRatio = fSourceToDestRatio;
-	
+
 	m_pImpl->Cleanup();
 }
 
 void pos_map_impl::Cleanup()
 {
 	/* Scan backwards until we have at least pos_map_backlog_frames. */
-	list<pos_map_t>::iterator it = m_Queue.end();
+	std::list<pos_map_t>::iterator it = m_Queue.end();
 	int iTotalFrames = 0;
 	while( iTotalFrames < pos_map_backlog_frames )
 	{
@@ -134,24 +133,22 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 
 	/* iSourceFrame is probably in pos_map.  Search to figure out what position
 	 * it maps to. */
-	int64_t iClosestPosition = 0, iClosestPositionDist = INT_MAX;
+	int64_t iClosestPosition = 0, iClosestPositionDist = std::numeric_limits<int>::max();
 	const pos_map_t *pClosestBlock = &*m_pImpl->m_Queue.begin(); /* print only */
-	FOREACHL_CONST( pos_map_t, m_pImpl->m_Queue, it )
+	for (auto const &pm: m_pImpl->m_Queue)
 	{
-		const pos_map_t &pm = *it;
-
 		if( iSourceFrame >= pm.m_iSourceFrame &&
 			iSourceFrame < pm.m_iSourceFrame+pm.m_iFrames )
 		{
 			/* iSourceFrame lies in this block; it's an exact match.  Figure
 			 * out the exact position. */
 			int iDiff = int(iSourceFrame - pm.m_iSourceFrame);
-			iDiff = lrintf( iDiff * pm.m_fSourceToDestRatio );
+			iDiff = std::lrint( iDiff * pm.m_fSourceToDestRatio );
 			return pm.m_iDestFrame + iDiff;
 		}
 
 		/* See if the current position is close to the beginning of this block. */
-		int64_t dist = llabs( pm.m_iSourceFrame - iSourceFrame );
+		int64_t dist = std::llabs( pm.m_iSourceFrame - iSourceFrame );
 		if( dist < iClosestPositionDist )
 		{
 			iClosestPositionDist = dist;
@@ -160,12 +157,12 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 		}
 
 		/* See if the current position is close to the end of this block. */
-		dist = llabs( pm.m_iSourceFrame + pm.m_iFrames - iSourceFrame );
+		dist = std::llabs( pm.m_iSourceFrame + pm.m_iFrames - iSourceFrame );
 		if( dist < iClosestPositionDist )
 		{
 			iClosestPositionDist = dist;
 			pClosestBlock = &pm;
-			iClosestPosition = pm.m_iDestFrame + lrintf( pm.m_iFrames * pm.m_fSourceToDestRatio );
+			iClosestPosition = pm.m_iDestFrame + std::lrint( pm.m_iFrames * pm.m_fSourceToDestRatio );
 		}
 	}
 
@@ -173,24 +170,19 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 	 * The frame is out of the range of data we've actually sent.
 	 * Return the closest position.
 	 *
-	 * There are three cases when this happens: 
+	 * There are three cases when this happens:
 	 * 1. Before the first CommitPlayingPosition call.
 	 * 2. After GetDataToPlay returns EOF and the sound has flushed, but before
 	 *    SoundStopped has been called.
 	 * 3. Underflow; we'll be given a larger frame number than we know about.
 	 */
-#if defined(WIN32)
-#define I64F "%I64i"
-#elif defined(__x86_64__)
-#define I64F "%li"
-#else
-#define I64F "%lli"
-#endif
+
 	static RageTimer last;
 	if( last.PeekDeltaTime() >= 1.0f )
 	{
 		last.GetDeltaTime();
-		LOG->Trace( "Approximate sound time: driver frame " I64F ", m_pImpl->m_Queue frame " I64F ".." I64F " (dist " I64F "), closest position is " I64F,
+		// Since we're using fmt::sprintf now, use the POSIX standard.
+		LOG->Trace( "Approximate sound time: driver frame %lli, m_pImpl->m_Queue frame %lli..%lli (dist %lli), closest position is %lli",
 			iSourceFrame, pClosestBlock->m_iDestFrame, pClosestBlock->m_iDestFrame+pClosestBlock->m_iFrames,
 			iClosestPositionDist, iClosestPosition );
 	}

@@ -11,7 +11,9 @@
 #include "Song.h"
 #include "Steps.h"
 
-RString OptimizeDWIString( RString holds, RString taps );
+using std::vector;
+
+std::string OptimizeDWIString( std::string holds, std::string taps );
 
 /**
  * @brief Optimize an individual pair of characters whenever possible.
@@ -20,8 +22,8 @@ RString OptimizeDWIString( RString holds, RString taps );
  * @return the one singular character. */
 static char OptimizeDWIPair( char c1, char c2 )
 {
-	typedef pair<char,char> cpair;
-	static map< cpair, char > joins;
+	typedef std::pair<char,char> cpair;
+	static std::map< cpair, char > joins;
 	static bool Initialized = false;
 	if(!Initialized)
 	{
@@ -43,13 +45,13 @@ static char OptimizeDWIPair( char c1, char c2 )
 		joins[ cpair('8', 'D') ] = 'K';
 		joins[ cpair('6', 'D') ] = 'L';
 	}
-	
+
 	if( c1 > c2 )
-		swap( c1, c2 );
-	
-	map< cpair, char >::const_iterator it = joins.find( cpair(c1, c2) );
+		std::swap( c1, c2 );
+
+	auto it = joins.find( cpair(c1, c2) );
 	ASSERT( it != joins.end() );
-	
+
 	return it->second;
 }
 
@@ -58,67 +60,67 @@ static char OptimizeDWIPair( char c1, char c2 )
  * @param holds the holds in the file.
  * @param taps the taps in the file.
  * @return the optimized string. */
-RString OptimizeDWIString( RString holds, RString taps )
+std::string OptimizeDWIString( std::string holds, std::string taps )
 {
 	/* First, sort the holds and taps in ASCII order.  This puts 2468 first.
 	 * This way 1379 combinations will always be found first, so we'll always
 	 * do eg. 1D, not 2I. */
 	sort( holds.begin(), holds.end() );
 	sort( taps.begin(), taps.end() );
-	
+
 	/* Combine characters as much as possible. */
-	RString comb_taps, comb_holds;
-	
+	std::string comb_taps, comb_holds;
+
 	/* 24 -> 1 */
 	while( taps.size() > 1 )
 	{
 		comb_taps += OptimizeDWIPair( taps[0], taps[1] );
 		taps.erase(0, 2);
 	}
-	
+
 	/* 2!24!4 -> 1!1 */
 	while( holds.size() > 1 )
 	{
 		const char to = OptimizeDWIPair( holds[0], holds[1] );
 		holds.erase(0, 2);
-		comb_holds += ssprintf( "%c!%c", to, to );
+		comb_holds += fmt::sprintf( "%c!%c", to, to );
 	}
-	
+
 	ASSERT( taps.size() <= 1 );
 	ASSERT( holds.size() <= 1 );
-	
+
 	/* 24!4 -> 1!4 */
 	while( holds.size() == 1 && taps.size() == 1 )
 	{
 		const char to = OptimizeDWIPair( taps[0], holds[0] );
-		comb_holds += ssprintf( "%c!%c", to, holds[0] );
+		comb_holds += fmt::sprintf( "%c!%c", to, holds[0] );
 		taps.erase(0, 1);
 		holds.erase(0, 1);
 	}
-	
+
 	/* Now we have at most one single tap and one hold remaining, and any
 	 * number of taps and holds in comb_taps and comb_holds. */
-	RString ret;
+	std::string ret;
 	ret += taps;
 	ret += comb_taps;
 	if( holds.size() == 1 )
-		ret += ssprintf( "%c!%c", holds[0], holds[0] );
+		ret += fmt::sprintf( "%c!%c", holds[0], holds[0] );
 	ret += comb_holds;
-	
+
 	if( ret.size() == 1 || (ret.size() == 3 && ret[1] == '!') )
 		return ret;
 	else
-		return ssprintf( "<%s>", ret.c_str() );
+		return fmt::sprintf( "<%s>", ret.c_str() );
 }
 
 /**
  * @brief Turn the Notes into a DWI string without angle brackets whenever possible.
  * @param tnCols the columns of TapNotes in question.
  * @return the DWI'ed string. */
-static RString NotesToDWIString( const TapNote tnCols[6] )
+static std::string NotesToDWIString( const TapNote tnCols[6] )
 {
 	const char dirs[] = { '4', 'C', '2', '8', 'D', '6' };
-	RString taps, holds, ret;
+	std::string taps, holds, ret;
 	for( int col = 0; col < 6; ++col )
 	{
 		switch( tnCols[col].type )
@@ -151,7 +153,7 @@ static RString NotesToDWIString( const TapNote tnCols[6] )
  * @param tnCol5 the fifth column.
  * @param tnCol6 the sisth column.
  * @return the DWI'ed string. */
-static RString NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, 
+static std::string NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3,
 				 TapNote tnCol4, TapNote tnCol5, TapNote tnCol6 )
 {
 	TapNote tnCols[6];
@@ -171,7 +173,7 @@ static RString NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3,
  * @param tnCol3 the third column.
  * @param tnCol4 the fourth column.
  * @return the DWI'ed string. */
-static RString NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, TapNote tnCol4 )
+static std::string NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, TapNote tnCol4 )
 {
 	return NotesToDWIString( tnCol1, TAP_EMPTY, tnCol2, tnCol3, TAP_EMPTY, tnCol4 );
 }
@@ -199,7 +201,7 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 		switch( nt )
 		{
 		case NOTE_TYPE_4TH:
-		case NOTE_TYPE_8TH:	
+		case NOTE_TYPE_8TH:
 			fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
 			break;
 		case NOTE_TYPE_12TH:
@@ -225,7 +227,7 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 			fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
 			break;
 		default:
-			ASSERT_M(0, ssprintf("nt = %d",nt) );
+			ASSERT_M(0, fmt::sprintf("nt = %d",nt) );
 			break;
 		}
 
@@ -236,14 +238,14 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 		{
 			int row = BeatToNoteRow( (float)b );
 
-			RString str;
+			std::string str;
 			switch( out.m_StepsType )
 			{
 			case StepsType_dance_single:
 			case StepsType_dance_couple:
 			case StepsType_dance_double:
-				str = NotesToDWIString( 
-					notedata.GetTapNote(start+0, row), 
+				str = NotesToDWIString(
+					notedata.GetTapNote(start+0, row),
 					notedata.GetTapNote(start+1, row),
 					notedata.GetTapNote(start+2, row),
 					notedata.GetTapNote(start+3, row) );
@@ -255,7 +257,7 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 				notedata.SetTapNote(start+3, row, TAP_EMPTY);
 				break;
 			case StepsType_dance_solo:
-				str = NotesToDWIString( 
+				str = NotesToDWIString(
 					notedata.GetTapNote(0, row),
 					notedata.GetTapNote(1, row),
 					notedata.GetTapNote(2, row),
@@ -272,7 +274,7 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 				notedata.SetTapNote(start+5, row, TAP_EMPTY);
 				break;
 			default:
-				FAIL_M(ssprintf("StepsType not supported by DWI: %i", out.m_StepsType));
+				FAIL_M(fmt::sprintf("StepsType not supported by DWI: %i", out.m_StepsType));
 			}
 			f.Write( str );
 		}
@@ -280,7 +282,7 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 		switch( nt )
 		{
 		case NOTE_TYPE_4TH:
-		case NOTE_TYPE_8TH:	
+		case NOTE_TYPE_8TH:
 			break;
 		case NOTE_TYPE_12TH:
 		case NOTE_TYPE_24TH:
@@ -299,7 +301,7 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 			f.Write( "'" );
 			break;
 		default:
-			FAIL_M(ssprintf("Invalid note type: %i", nt));
+			FAIL_M(fmt::sprintf("Invalid note type: %i", nt));
 		}
 		f.PutLine( "" );
 	}
@@ -335,14 +337,14 @@ static bool WriteDWINotesTag( RageFile &f, const Steps &out )
 	case Difficulty_Hard:		f.Write( "MANIAC:" );	break;
 	case Difficulty_Challenge:	f.Write( "SMANIAC:" );	break;
 	default:
-		FAIL_M(ssprintf("Invalid difficulty: %i", d));
+		FAIL_M(fmt::sprintf("Invalid difficulty: %i", d));
 	}
 
-	f.PutLine( ssprintf("%d:", out.GetMeter()) );
+	f.PutLine( fmt::sprintf("%d:", out.GetMeter()) );
 	return true;
 }
 
-bool NotesWriterDWI::Write( RString sPath, const Song &out )
+bool NotesWriterDWI::Write( std::string sPath, const Song &out )
 {
 	RageFile f;
 	if( !f.Open( sPath, RageFile::WRITE ) )
@@ -352,19 +354,19 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 	}
 
 	/* Write transliterations, if we have them, since DWI doesn't support UTF-8. */
-	f.PutLine( ssprintf("#TITLE:%s;", DwiEscape(out.GetTranslitFullTitle()).c_str()) );
-	f.PutLine( ssprintf("#ARTIST:%s;", DwiEscape(out.GetTranslitArtist()).c_str()) );
+	f.PutLine( fmt::sprintf("#TITLE:%s;", DwiEscape(out.GetTranslitFullTitle()).c_str()) );
+	f.PutLine( fmt::sprintf("#ARTIST:%s;", DwiEscape(out.GetTranslitArtist()).c_str()) );
 
 	const vector<TimingSegment *> &bpms = out.m_SongTiming.GetTimingSegments(SEGMENT_BPM);
 	ASSERT_M(bpms[0]->GetRow() == 0,
-			 ssprintf("The first BPM Segment must be defined at row 0, not %d!", bpms[0]->GetRow()) );
-	f.PutLine( ssprintf("#FILE:%s;", DwiEscape(out.m_sMusicFile).c_str()) );
-	f.PutLine( ssprintf("#BPM:%.3f;", static_cast<BPMSegment *>(bpms[0])->GetBPM()) );
-	f.PutLine( ssprintf("#GAP:%ld;", -lrintf( out.m_SongTiming.m_fBeat0OffsetInSeconds*1000 )) );
-	f.PutLine( ssprintf("#SAMPLESTART:%.3f;", out.m_fMusicSampleStartSeconds) );
-	f.PutLine( ssprintf("#SAMPLELENGTH:%.3f;", out.m_fMusicSampleLengthSeconds) );
+			 fmt::sprintf("The first BPM Segment must be defined at row 0, not %d!", bpms[0]->GetRow()) );
+	f.PutLine( fmt::sprintf("#FILE:%s;", DwiEscape(out.m_sMusicFile).c_str()) );
+	f.PutLine( fmt::sprintf("#BPM:%.3f;", static_cast<BPMSegment *>(bpms[0])->GetBPM()) );
+	f.PutLine( fmt::sprintf("#GAP:%ld;", -std::lrint( out.m_SongTiming.m_fBeat0OffsetInSeconds*1000 )) );
+	f.PutLine( fmt::sprintf("#SAMPLESTART:%.3f;", out.m_fMusicSampleStartSeconds) );
+	f.PutLine( fmt::sprintf("#SAMPLELENGTH:%.3f;", out.m_fMusicSampleLengthSeconds) );
 	if( out.m_sCDTitleFile.size() )
-		f.PutLine( ssprintf("#CDTITLE:%s;", DwiEscape(out.m_sCDTitleFile).c_str()) );
+		f.PutLine( fmt::sprintf("#CDTITLE:%s;", DwiEscape(out.m_sCDTitleFile).c_str()) );
 	switch( out.m_DisplayBPMType )
 	{
 		case DISPLAY_BPM_ACTUAL:
@@ -372,9 +374,9 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 			break;
 		case DISPLAY_BPM_SPECIFIED:
 			if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
-				f.PutLine( ssprintf("#DISPLAYBPM:%i;\n", (int) out.m_fSpecifiedBPMMin) );
+				f.PutLine( fmt::sprintf("#DISPLAYBPM:%i;\n", (int) out.m_fSpecifiedBPMMin) );
 			else
-				f.PutLine( ssprintf("#DISPLAYBPM:%i..%i;\n", (int) out.m_fSpecifiedBPMMin, (int) out.m_fSpecifiedBPMMax) );
+				f.PutLine( fmt::sprintf("#DISPLAYBPM:%i..%i;\n", (int) out.m_fSpecifiedBPMMin, (int) out.m_fSpecifiedBPMMax) );
 			break;
 		case DISPLAY_BPM_RANDOM:
 			f.PutLine( "#DISPLAYBPM:*" );
@@ -392,8 +394,7 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 		for( unsigned i=0; i<stops.size(); i++ )
 		{
 			const StopSegment *fs = static_cast<StopSegment *>(stops[i]);
-			f.Write( ssprintf("%.3f=%.3f", fs->GetRow() * 4.0f / ROWS_PER_BEAT,
-				roundf(fs->GetPause()*1000)) );
+			f.Write( fmt::sprintf("%.3f=%.3f", fs->GetRow() * 4.0f / ROWS_PER_BEAT, std::round(fs->GetPause()*1000)) );
 			if( i != stops.size()-1 )
 				f.Write( "," );
 		}
@@ -406,7 +407,7 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 		for( unsigned i=1; i<bpms.size(); i++ )
 		{
 			const BPMSegment *bs = static_cast<BPMSegment *>(bpms[i]);
-			f.Write( ssprintf("%.3f=%.3f", bs->GetRow() * 4.0f / ROWS_PER_BEAT, bs->GetBPM() ) );
+			f.Write( fmt::sprintf("%.3f=%.3f", bs->GetRow() * 4.0f / ROWS_PER_BEAT, bs->GetBPM() ) );
 			if( i != bpms.size()-1 )
 				f.Write( "," );
 		}
@@ -414,9 +415,8 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 	}
 
 	const vector<Steps*>& vpSteps = out.GetAllSteps();
-	for( unsigned i=0; i<vpSteps.size(); i++ ) 
+	for (auto const *pSteps: vpSteps)
 	{
-		const Steps* pSteps = vpSteps[i];
 		if( pSteps->IsAutogen() )
 			continue;	// don't save autogen notes
 
@@ -433,14 +433,14 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 
 		f.PutLine( ";" );
 	}
-	
+
 	return true;
 }
 
 /*
  * (c) 2001-2006 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -450,7 +450,7 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

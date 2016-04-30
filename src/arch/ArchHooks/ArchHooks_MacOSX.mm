@@ -74,14 +74,14 @@ void ArchHooks_MacOSX::Init()
 
 	// Now that the crash handler is set up, disable crash reporter.
 	// Breaks gdb
-	// task_set_exception_ports( mach_task_self(), EXC_MASK_ALL, MACH_PORT_NULL, EXCEPTION_DEFAULT, 0 );
+	// task_set_exception_ports( mach_task_self(), EXC_MASK_ALL, MACH_PORT_nullptr, EXCEPTION_DEFAULT, 0 );
 
 	// CF*Copy* functions' return values need to be released, CF*Get* functions' do not.
 	CFStringRef key = CFSTR( "ApplicationBundlePath" );
 
 	CFBundleRef bundle = CFBundleGetMainBundle();
 	CFStringRef appID = CFBundleGetIdentifier( bundle );
-	if( appID == NULL )
+	if( appID == nullptr )
 	{
 		// We were probably launched through a symlink. Don't bother hunting down the real path.
 		return;
@@ -90,12 +90,12 @@ void ArchHooks_MacOSX::Init()
 	CFPropertyListRef old = CFPreferencesCopyAppValue( key, appID );
 	CFURLRef path = CFBundleCopyBundleURL( bundle );
 	CFPropertyListRef value = CFURLCopyFileSystemPath( path, kCFURLPOSIXPathStyle );
-	CFMutableDictionaryRef newDict = NULL;
+	CFMutableDictionaryRef newDict = nullptr;
 
 	if( old && CFGetTypeID(old) != CFDictionaryGetTypeID() )
 	{
 		CFRelease( old );
-		old = NULL;
+		old = nullptr;
 	}
 
 	if( !old )
@@ -129,7 +129,7 @@ void ArchHooks_MacOSX::Init()
 	CFRelease( path );
 }
 
-RString ArchHooks_MacOSX::GetArchName() const
+std::string ArchHooks_MacOSX::GetArchName() const
 {
 #if defined(__i386__)
 	return "Mac OS X (i386)";
@@ -143,16 +143,16 @@ RString ArchHooks_MacOSX::GetArchName() const
 void ArchHooks_MacOSX::DumpDebugInfo()
 {
 	// Get system version (like 10.x.x)
-	RString SystemVersion;
+	std::string SystemVersion;
 	{
 		// http://stackoverflow.com/a/891336
 		NSDictionary *version = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
 		NSString *productVersion = [version objectForKey:@"ProductVersion"];
-		SystemVersion = ssprintf("Mac OS X %s", [productVersion cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+		SystemVersion = fmt::sprintf("Mac OS X %s", [productVersion cStringUsingEncoding:[NSString defaultCStringEncoding]]);
 	}
 
 	size_t size;
-#define GET_PARAM( name, var ) (size = sizeof(var), sysctlbyname(name, &var, &size, NULL, 0) )
+#define GET_PARAM( name, var ) (size = sizeof(var), sysctlbyname(name, &var, &size, nullptr, 0) )
 	// Get memory
 	float fRam;
 	char ramPower;
@@ -176,7 +176,7 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 	int iCPUs = 0;
 	float fFreq;
 	char freqPower;
-	RString sModel;
+	std::string sModel;
 	do {
 		char szModel[128];
 		uint64_t iFreq;
@@ -202,27 +202,27 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 			break;
 		}
 		sModel = szModel;
-		CFURLRef urlRef = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("Hardware.plist"), NULL, NULL );
+		CFURLRef urlRef = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("Hardware.plist"), nullptr, nullptr );
 
-		if( urlRef == NULL )
+		if( urlRef == nullptr )
 			break;
-		CFDataRef dataRef = NULL;
+		CFDataRef dataRef = nullptr;
 		SInt32 error;
-		CFURLCreateDataAndPropertiesFromResource( NULL, urlRef, &dataRef, NULL, NULL, &error );
+		CFURLCreateDataAndPropertiesFromResource( nullptr, urlRef, &dataRef, nullptr, nullptr, &error );
 		CFRelease( urlRef );
-		if( dataRef == NULL )
+		if( dataRef == nullptr )
 			break;
 		// This also works with binary property lists for some reason.
-		CFPropertyListRef plRef = CFPropertyListCreateFromXMLData( NULL, dataRef, kCFPropertyListImmutable, NULL );
+		CFPropertyListRef plRef = CFPropertyListCreateFromXMLData( nullptr, dataRef, kCFPropertyListImmutable, nullptr );
 		CFRelease( dataRef );
-		if( plRef == NULL )
+		if( plRef == nullptr )
 			break;
 		if( CFGetTypeID(plRef) != CFDictionaryGetTypeID() )
 		{
 			CFRelease( plRef );
 			break;
 		}
-		CFStringRef keyRef = CFStringCreateWithCStringNoCopy( NULL, szModel, kCFStringEncodingMacRoman, kCFAllocatorNull );
+		CFStringRef keyRef = CFStringCreateWithCStringNoCopy( nullptr, szModel, kCFStringEncodingMacRoman, kCFAllocatorNull );
 		CFStringRef modelRef = (CFStringRef)CFDictionaryGetValue( (CFDictionaryRef)plRef, keyRef );
 		if( modelRef )
 			sModel = CFStringGetCStringPtr( modelRef, kCFStringEncodingMacRoman );
@@ -238,14 +238,16 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 	LOG->Info( "Memory: %.2f %cB", fRam, ramPower );
 }
 
-RString ArchHooks::GetPreferredLanguage()
+std::string ArchHooks::GetPreferredLanguage()
 {
 	CFStringRef app = kCFPreferencesCurrentApplication;
 	CFTypeRef t = CFPreferencesCopyAppValue( CFSTR("AppleLanguages"), app );
-	RString ret = "en";
+	std::string ret = "en";
 
-	if( t == NULL )
+	if( t == nullptr )
+	{
 		return ret;
+	}
 	if( CFGetTypeID(t) != CFArrayGetTypeID() )
 	{
 		CFRelease( t );
@@ -256,25 +258,29 @@ RString ArchHooks::GetPreferredLanguage()
 	CFStringRef lang;
 
 	if( CFArrayGetCount(languages) > 0 &&
-		(lang = (CFStringRef)CFArrayGetValueAtIndex(languages, 0)) != NULL )
+		(lang = (CFStringRef)CFArrayGetValueAtIndex(languages, 0)) != nullptr )
 	{
 		// MacRoman agrees with ASCII in the low-order 7 bits.
 		const char *str = CFStringGetCStringPtr( lang, kCFStringEncodingMacRoman );
 		if( str )
-			ret = RString( str, 2 );
+		{
+			ret = std::string( str, 2 );
+		}
 		else
+		{
 			LOG->Warn( "Unable to determine system language. Using English." );
+		}
 	}
 
 	CFRelease( languages );
 	return ret;
 }
 
-bool ArchHooks_MacOSX::GoToURL( RString sUrl )
+bool ArchHooks_MacOSX::GoToURL( std::string sUrl )
 {
 	CFURLRef url = CFURLCreateWithBytes( kCFAllocatorDefault, (const UInt8*)sUrl.data(),
-						 sUrl.length(), kCFStringEncodingUTF8, NULL );
-	OSStatus result = LSOpenCFURLRef( url, NULL );
+						 sUrl.length(), kCFStringEncodingUTF8, nullptr );
+	OSStatus result = LSOpenCFURLRef( url, nullptr );
 
 	CFRelease( url );
 	return result == 0;
@@ -302,15 +308,15 @@ static void PathForFolderType( char dir[PATH_MAX], OSType folderType )
 	FSRef fs;
 
 	if( FSFindFolder(kUserDomain, folderType, kDontCreateFolder, &fs) )
-		FAIL_M( ssprintf("FSFindFolder(%lu) failed.", folderType) );
+		FAIL_M( fmt::sprintf("FSFindFolder(%lu) failed.", folderType) );
 	if( FSRefMakePath(&fs, (UInt8 *)dir, PATH_MAX) )
 		FAIL_M( "FSRefMakePath() failed." );
 }
 
-void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
+void ArchHooks::MountInitialFilesystems( std::string const &sDirOfExecutable )
 {
 	char dir[PATH_MAX];
-	CFURLRef dataUrl = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("StepMania"), CFSTR("smzip"), NULL );
+	CFURLRef dataUrl = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("StepMania"), CFSTR("smzip"), nullptr );
 
 	FILEMAN->Mount( "dir", sDirOfExecutable, "/" );
 
@@ -319,51 +325,62 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 		CFStringRef dataPath = CFURLCopyFileSystemPath( dataUrl, kCFURLPOSIXPathStyle );
 		CFStringGetCString( dataPath, dir, PATH_MAX, kCFStringEncodingUTF8 );
 
-		if( strncmp(sDirOfExecutable, dir, sDirOfExecutable.length()) == 0 )
+		if( strncmp(sDirOfExecutable.c_str(), dir, sDirOfExecutable.length()) == 0 )
+		{
 			FILEMAN->Mount( "zip", dir + sDirOfExecutable.length(), "/" );
+		}
 		CFRelease( dataPath );
 		CFRelease( dataUrl );
 	}
 }
 
-void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
+void ArchHooks::MountUserFilesystems( std::string const &sDirOfExecutable )
 {
+	// dir is reused several times, so don't change the ordering of any of the
+	// directory mountings. -Kyz
 	char dir[PATH_MAX];
-
-	// /Save -> ~/Library/Preferences/PRODUCT_ID
-	PathForFolderType( dir, kPreferencesFolderType );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Save" );
 
 	// Other stuff -> ~/Library/Application Support/PRODUCT_ID/*
 	PathForFolderType( dir, kApplicationSupportFolderType );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Announcers", dir), "/Announcers" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/BGAnimations", dir), "/BGAnimations" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/BackgroundEffects", dir), "/BackgroundEffects" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/BackgroundTransitions", dir), "/BackgroundTransitions" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/CDTitles", dir), "/CDTitles" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Characters", dir), "/Characters" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Courses", dir), "/Courses" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/NoteSkins", dir), "/NoteSkins" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Packages", dir), "/" + SpecialFiles::USER_PACKAGES_DIR );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Songs", dir), "/Songs" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/RandomMovies", dir), "/RandomMovies" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Themes", dir), "/Themes" );
+	for(auto&& fs_dir : SpecialFiles::USER_CONTENT_DIRS)
+	{
+		FILEMAN->Mount("dir", fmt::sprintf("%s/" PRODUCT_ID "%s", dir, fs_dir.c_str()), fs_dir);
+	}
+	// The User Packages dir was the only one where the mount point didn't
+	// match the folder name when I changed this to use a loop. -Kyz
+	FILEMAN->Mount("dir", fmt::sprintf("%s/Packages", dir), "/" + SpecialFiles::USER_PACKAGES_DIR);
 
-	// /Screenshots -> ~/Pictures/PRODUCT_ID Screenshots
-	PathForFolderType( dir, kPictureDocumentsFolderType );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID " Screenshots", dir), "/Screenshots" );
-
-	// /Cache -> ~/Library/Caches/PRODUCT_ID
-	PathForFolderType( dir, kCachedDataFolderType );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Cache" );
-
-	// /Logs -> ~/Library/Logs/PRODUCT_ID
-	PathForFolderType( dir, kDomainLibraryFolderType );
-	FILEMAN->Mount( "dir", ssprintf("%s/Logs/" PRODUCT_ID, dir), "/Logs" );
-
+	std::vector<OSType> data_dir_folder_types= {
+		// Be sure to keep this in sync with SpecialFiles::USER_DATA_DIRS. -Kyz
+		// /Cache -> ~/Library/Caches/PRODUCT_ID
+		kCachedDataFolderType,
+		// /Logs -> ~/Library/Logs/PRODUCT_ID
+		kDomainLibraryFolderType,
+		// /Save -> ~/Library/Preferences/PRODUCT_ID
+		kPreferencesFolderType,
+		// /Screenshots -> ~/Pictures/PRODUCT_ID Screenshots
+		kPictureDocumentsFolderType,
+	};
+	std::vector<std::string> dir_fmt_strs= {
+		// I hate having all these special cases. -Kyz
+		"%s/" PRODUCT_ID,
+		"%s/Logs/" PRODUCT_ID,
+		"%s/" PRODUCT_ID,
+		"%s/" PRODUCT_ID " Screenshots",
+	};
+	ASSERT_M(
+		data_dir_folder_types.size() == SpecialFiles::USER_DATA_DIRS.size() &&
+		data_dir_folder_types.size() == dir_fmt_strs.size(),
+		"ArchHooks::MountUserFilesystems in ArchHooks_MacOSX.mm needs to be "
+		"updated because SpecialFiles::USER_DATA_DIRS was changed.");
+	for(size_t i= 0; i < SpecialFiles::USER_DATA_DIRS.size(); ++i)
+	{
+		PathForFolderType(dir, data_dir_folder_types[i]);
+		FILEMAN->Mount("dir", fmt::sprintf(dir_fmt_strs[i].c_str(), dir), SpecialFiles::USER_DATA_DIRS[i]);
+	}
 	// /Desktop -> /Users/<user>/Desktop/PRODUCT_ID
 	// PathForFolderType( dir, kDesktopFolderType );
-	// FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Desktop" );
+	// FILEMAN->Mount( "dir", fmt::sprintf("%s/" PRODUCT_ID, dir), "/Desktop" );
 }
 
 static inline int GetIntValue( CFTypeRef r )

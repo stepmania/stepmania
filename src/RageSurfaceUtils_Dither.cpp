@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageSurfaceUtils_Dither.h"
+#include "RageMath.hpp"
 #include "RageUtil.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
@@ -145,7 +146,7 @@ static uint8_t EDDitherPixel( int x, int y, int intensity, int conv, int32_t &ac
 	 * To store it, we have to clamp it (prevent overflow) and shift it
 	 * from fixed-point to [0,255].  The error introduced in that calculation
 	 * becomes the new accumError. */
-	int clamped_intensity = clamp( out_intensity, 0, 0xFFFFFF );
+	int clamped_intensity = Rage::clamp( out_intensity, 0, 0xFFFFFF );
 	clamped_intensity &= 0xFF0000;
 
 	// Truncate.
@@ -154,7 +155,7 @@ static uint8_t EDDitherPixel( int x, int y, int intensity, int conv, int32_t &ac
 	accumError = out_intensity - clamped_intensity;
 
 	// Reduce funky streaks in low-bit channels by clamping error.
-	CLAMP( accumError, -128 * 65536, +128 * 65536 );
+	accumError = Rage::clamp( accumError, -128 * 65536, +128 * 65536 );
 
 	return ret;
 }

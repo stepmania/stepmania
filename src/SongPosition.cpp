@@ -23,7 +23,7 @@ void SongPosition::UpdateSongPosition( float fPositionSeconds, const TimingData 
 	
 	// "Crash reason : -243478.890625 -48695.773438"
 	// The question is why is -2000 used as the limit? -aj
-	ASSERT_M( m_fSongBeat > -2000, ssprintf("Song beat %f at %f seconds is less than -2000!", m_fSongBeat, fPositionSeconds) );
+	ASSERT_M( m_fSongBeat > -2000, fmt::sprintf("Song beat %f at %f seconds is less than -2000!", m_fSongBeat, fPositionSeconds) );
 
 	m_fMusicSeconds = fPositionSeconds;
 

@@ -28,13 +28,13 @@ public:
 	GameCommand(): m_Commands(), m_sName(""), m_sText(""),
 		m_bInvalid(true), m_sInvalidReason(""),
 		m_iIndex(-1), m_MultiPlayer(MultiPlayer_Invalid),
-		m_pStyle(NULL), m_pm(PlayMode_Invalid),
+		m_pStyle(nullptr), m_pm(PlayMode_Invalid),
 		m_dc(Difficulty_Invalid),
 		m_CourseDifficulty(Difficulty_Invalid),
 		m_sAnnouncer(""), m_sPreferredModifiers(""),
 		m_sStageModifiers(""), m_sScreen(""), m_LuaFunction(),
-		m_pSong(NULL), m_pSteps(NULL), m_pCourse(NULL),
-		m_pTrail(NULL), m_pCharacter(NULL), m_SetEnv(), m_SetPref(),
+		m_pSong(nullptr), m_pSteps(nullptr), m_pCourse(nullptr),
+		m_pTrail(nullptr), m_pCharacter(nullptr), m_SetEnv(), m_SetPref(),
 		m_sSongGroup(""), m_SortOrder(SortOrder_Invalid),
 		m_sSoundPath(""), m_vsScreensToPrepare(), m_iWeightPounds(-1),
 		m_iGoalCalories(-1), m_GoalType(GoalType_Invalid),
@@ -54,13 +54,13 @@ public:
 	void ApplyToAllPlayers() const;
 	void Apply( PlayerNumber pn ) const;
 private:
-	void Apply( const vector<PlayerNumber> &vpns ) const;
-	void ApplySelf( const vector<PlayerNumber> &vpns ) const;
+	void Apply( const std::vector<PlayerNumber> &vpns ) const;
+	void ApplySelf( const std::vector<PlayerNumber> &vpns ) const;
 public:
 
 	bool DescribesCurrentMode( PlayerNumber pn ) const;
 	bool DescribesCurrentModeForAllPlayers() const;
-	bool IsPlayable( RString *why = NULL ) const;
+	bool IsPlayable( std::string *why = nullptr ) const;
 	bool IsZero() const;
 
 	/* If true, Apply() will apply m_sScreen. If false, it won't, and you need
@@ -71,32 +71,32 @@ public:
 	// so that we know the order of commands when it comes time to Apply.
 	Commands	m_Commands;
 
-	RString		m_sName;	// choice name
-	RString		m_sText;	// display text
+	std::string		m_sName;	// choice name
+	std::string		m_sText;	// display text
 	bool		m_bInvalid;
-	RString		m_sInvalidReason;
+	std::string		m_sInvalidReason;
 	int		m_iIndex;
 	MultiPlayer	m_MultiPlayer;
 	const Style*	m_pStyle;
 	PlayMode	m_pm;
 	Difficulty	m_dc;
 	CourseDifficulty	m_CourseDifficulty;
-	RString		m_sAnnouncer;
-	RString		m_sPreferredModifiers;
-	RString		m_sStageModifiers;
-	RString		m_sScreen;
+	std::string		m_sAnnouncer;
+	std::string		m_sPreferredModifiers;
+	std::string		m_sStageModifiers;
+	std::string		m_sScreen;
 	LuaReference	m_LuaFunction;
 	Song*		m_pSong;
 	Steps*		m_pSteps;
 	Course*		m_pCourse;
 	Trail*		m_pTrail;
 	Character*	m_pCharacter;
-	std::map<RString,RString> m_SetEnv;
-	std::map<RString,RString> m_SetPref;
-	RString		m_sSongGroup;
+	std::map<std::string,std::string> m_SetEnv;
+	std::map<std::string,std::string> m_SetPref;
+	std::string		m_sSongGroup;
 	SortOrder	m_SortOrder;
-	RString		m_sSoundPath;	// "" for no sound
-	vector<RString>	m_vsScreensToPrepare;
+	std::string		m_sSoundPath;	// "" for no sound
+	std::vector<std::string>	m_vsScreensToPrepare;
 	/**
 	 * @brief What is the player's weight in pounds?
 	 *
@@ -104,8 +104,8 @@ public:
 	int		m_iWeightPounds;
 	int		m_iGoalCalories;	// -1 == none specified
 	GoalType	m_GoalType;
-	RString		m_sProfileID;
-	RString		m_sUrl;
+	std::string		m_sProfileID;
+	std::string		m_sUrl;
 	// sm-ssc adds:
 	bool		m_bUrlExits;	// for making stepmania not exit on url
 
@@ -132,7 +132,7 @@ private:
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -142,7 +142,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

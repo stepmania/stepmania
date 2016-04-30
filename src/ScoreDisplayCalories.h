@@ -25,7 +25,7 @@ public:
 
 private:
 	PlayerNumber m_PlayerNumber;
-	RString m_sMessageOnStep;
+	std::string m_sMessageOnStep;
 };
 
 #endif

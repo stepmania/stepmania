@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.1"
+   width="64"
+   height="64">
+  <metadata id="metadata3053">
+    <rdf:RDF>
+      <cc:Work rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs>
+    <g
+       id="colorGray">
+      <path
+         d="m 2,7 v 51 l 4,4 h 8 l 4,-4 V 34 L 34,18 h 24 l 4,-4 V 6 L 58,2 H 6 L 2,6 v 1 z"
+         style="fill:#808080;stroke:#000000;stroke-width:2" />
+      <path
+         d="m 20,32 30,30 h 4 l 8,-8 V 50 L 32,20 z"
+         style="fill:#808080;stroke:#000000;stroke-width:2" />
+      <path
+         d="M 17,17 V 34 L 34,17 z"
+         style="stroke-width:2" />
+    </g>
+    <g
+       id="arrow1">
+      <path
+         d="M 2,7 V 18 H 18 V 2 H 6 L 2,6 z"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <rect
+         width="16"
+         height="14"
+         x="2"
+         y="18"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <rect
+         width="16"
+         height="14"
+         x="2"
+         y="32"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <path
+         d="m 2,46 v 12 l 4,4 h 8 l 4,-4 V 46 z"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <rect
+         width="14"
+         height="16"
+         x="18"
+         y="2"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <rect
+         width="14"
+         height="16"
+         x="32"
+         y="2"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <path
+         d="m 46,2 h 12 l 4,4 v 8 l -4,4 H 46 z"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <path
+         d="m 20,32 7.5,7.5 12,-12 L 32,20 z"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <path
+         d="M 27.5,39.5 35,47 47,35 39.5,27.5 z"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <path
+         d="m 35,47 7.5,7.5 12,-12 L 47,35 z"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <path
+         d="M 42.5,54.5 50,62 h 4 l 8,-8 v -4 l -7.5,-7.5 z"
+         style="fill-opacity:0;stroke:#000000;stroke-width:2" />
+      <path
+         d="M 17,17 V 34 L 34,17 z"
+         style="stroke-width:2" />
+    </g>
+  </defs>
+  <g>
+    <use
+       x="0"
+       y="0"
+       width="64"
+       height="64"
+       xlink:href="#colorGray" />
+    <use
+       x="0"
+       y="0"
+       width="64"
+       height="64"
+       xlink:href="#arrow1" />
+  </g>
+</svg>

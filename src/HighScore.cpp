@@ -1,21 +1,23 @@
 #include "global.h"
 #include "HighScore.h"
+#include "RageMath.hpp"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 #include "ThemeManager.h"
 #include "XmlFile.h"
-#include "Foreach.h"
 #include "RadarValues.h"
 
 #include <algorithm>
 
-ThemeMetric<RString> EMPTY_NAME("HighScore","EmptyName");
+using std::vector;
+
+ThemeMetric<std::string> EMPTY_NAME("HighScore","EmptyName");
 
 
 struct HighScoreImpl
 {
-	RString	sName;	// name that shows in the machine's ranking screen
+	std::string	sName;	// name that shows in the machine's ranking screen
 	Grade grade;
 	unsigned int iScore;
 	float fPercentDP;
@@ -23,10 +25,10 @@ struct HighScoreImpl
 	unsigned int iMaxCombo;			// maximum combo obtained [SM5 alpha 1a+]
 	StageAward stageAward;	// stage award [SM5 alpha 1a+]
 	PeakComboAward peakComboAward;	// peak combo award [SM5 alpha 1a+]
-	RString	sModifiers;
+	std::string	sModifiers;
 	DateTime dateTime;		// return value of time() when screenshot was taken
-	RString sPlayerGuid;	// who made this high score
-	RString sMachineGuid;	// where this high score was made
+	std::string sPlayerGuid;	// who made this high score
+	std::string sMachineGuid;	// where this high score was made
 	int iProductID;
 	int iTapNoteScores[NUM_TapNoteScore];
 	int iHoldNoteScores[NUM_HoldNoteScore];
@@ -42,7 +44,7 @@ struct HighScoreImpl
 	bool operator!=( const HighScoreImpl& other ) const { return !(*this == other); }
 };
 
-bool HighScoreImpl::operator==( const HighScoreImpl& other ) const 
+bool HighScoreImpl::operator==( const HighScoreImpl& other ) const
 {
 #define COMPARE(x)	if( x!=other.x )	return false;
 	COMPARE( sName );
@@ -59,9 +61,13 @@ bool HighScoreImpl::operator==( const HighScoreImpl& other ) const
 	COMPARE( sMachineGuid );
 	COMPARE( iProductID );
 	FOREACH_ENUM( TapNoteScore, tns )
+	{
 		COMPARE( iTapNoteScores[tns] );
+	}
 	FOREACH_ENUM( HoldNoteScore, hns )
+	{
 		COMPARE( iHoldNoteScores[hns] );
+	}
 	COMPARE( radarValues );
 	COMPARE( fLifeRemainingSeconds );
 	COMPARE( bDisqualified );
@@ -98,7 +104,7 @@ XNode *HighScoreImpl::CreateNode() const
 	const bool bWriteComplexValues = RadarValues::WRITE_COMPLEX_VALIES;
 
 	// TRICKY:  Don't write "name to fill in" markers.
-	pNode->AppendChild( "Name",			IsRankingToFillIn(sName) ? RString("") : sName );
+	pNode->AppendChild( "Name",			IsRankingToFillIn(sName) ? std::string("") : sName );
 	pNode->AppendChild( "Grade",			GradeToString(grade) );
 	pNode->AppendChild( "Score",			iScore );
 	pNode->AppendChild( "PercentDP",		fPercentDP );
@@ -113,12 +119,20 @@ XNode *HighScoreImpl::CreateNode() const
 	pNode->AppendChild( "ProductID",		iProductID );
 	XNode* pTapNoteScores = pNode->AppendChild( "TapNoteScores" );
 	FOREACH_ENUM( TapNoteScore, tns )
+	{
 		if( tns != TNS_None )	// HACK: don't save meaningless "none" count
+		{
 			pTapNoteScores->AppendChild( TapNoteScoreToString(tns), iTapNoteScores[tns] );
+		}
+	}
 	XNode* pHoldNoteScores = pNode->AppendChild( "HoldNoteScores" );
 	FOREACH_ENUM( HoldNoteScore, hns )
+	{
 		if( hns != HNS_None )	// HACK: don't save meaningless "none" count
+		{
 			pHoldNoteScores->AppendChild( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
+		}
+	}
 	pNode->AppendChild( radarValues.CreateNode(bWriteSimpleValues, bWriteComplexValues) );
 	pNode->AppendChild( "LifeRemainingSeconds",	fLifeRemainingSeconds );
 	pNode->AppendChild( "Disqualified",		bDisqualified);
@@ -130,7 +144,7 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 {
 	ASSERT( pNode->GetName() == "HighScore" );
 
-	RString s;
+	std::string s;
 
 	pNode->GetChildValue( "Name", sName );
 	pNode->GetChildValue( "Grade", s );
@@ -148,20 +162,30 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 	pNode->GetChildValue( "ProductID",		iProductID );
 	const XNode* pTapNoteScores = pNode->GetChild( "TapNoteScores" );
 	if( pTapNoteScores )
+	{
 		FOREACH_ENUM( TapNoteScore, tns )
+		{
 			pTapNoteScores->GetChildValue( TapNoteScoreToString(tns), iTapNoteScores[tns] );
+		}
+	}
 	const XNode* pHoldNoteScores = pNode->GetChild( "HoldNoteScores" );
 	if( pHoldNoteScores )
+	{
 		FOREACH_ENUM( HoldNoteScore, hns )
+		{
 			pHoldNoteScores->GetChildValue( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
+		}
+	}
 	const XNode* pRadarValues = pNode->GetChild( "RadarValues" );
 	if( pRadarValues )
+	{
 		radarValues.LoadFromNode( pRadarValues );
+	}
 	pNode->GetChildValue( "LifeRemainingSeconds",	fLifeRemainingSeconds );
 	pNode->GetChildValue( "Disqualified",		bDisqualified);
 
 	// Validate input.
-	grade = clamp( grade, Grade_Tier01, Grade_Failed );
+	grade = Rage::clamp( grade, Grade_Tier01, Grade_Failed );
 }
 
 REGISTER_CLASS_TRAITS( HighScoreImpl, new HighScoreImpl(*pCopy) )
@@ -189,7 +213,7 @@ bool HighScore::IsEmpty() const
 	return true;
 }
 
-RString	HighScore::GetName() const { return m_Impl->sName; }
+std::string	HighScore::GetName() const { return m_Impl->sName; }
 Grade HighScore::GetGrade() const { return m_Impl->grade; }
 unsigned int HighScore::GetScore() const { return m_Impl->iScore; }
 unsigned int HighScore::GetMaxCombo() const { return m_Impl->iMaxCombo; }
@@ -198,10 +222,10 @@ PeakComboAward HighScore::GetPeakComboAward() const { return m_Impl->peakComboAw
 float HighScore::GetPercentDP() const { return m_Impl->fPercentDP; }
 float HighScore::GetSurviveSeconds() const { return m_Impl->fSurviveSeconds; }
 float HighScore::GetSurvivalSeconds() const { return GetSurviveSeconds() + GetLifeRemainingSeconds(); }
-RString HighScore::GetModifiers() const { return m_Impl->sModifiers; }
+std::string HighScore::GetModifiers() const { return m_Impl->sModifiers; }
 DateTime HighScore::GetDateTime() const { return m_Impl->dateTime; }
-RString HighScore::GetPlayerGuid() const { return m_Impl->sPlayerGuid; }
-RString HighScore::GetMachineGuid() const { return m_Impl->sMachineGuid; }
+std::string HighScore::GetPlayerGuid() const { return m_Impl->sPlayerGuid; }
+std::string HighScore::GetMachineGuid() const { return m_Impl->sMachineGuid; }
 int HighScore::GetProductID() const { return m_Impl->iProductID; }
 int HighScore::GetTapNoteScore( TapNoteScore tns ) const { return m_Impl->iTapNoteScores[tns]; }
 int HighScore::GetHoldNoteScore( HoldNoteScore hns ) const { return m_Impl->iHoldNoteScores[hns]; }
@@ -209,7 +233,7 @@ const RadarValues &HighScore::GetRadarValues() const { return m_Impl->radarValue
 float HighScore::GetLifeRemainingSeconds() const { return m_Impl->fLifeRemainingSeconds; }
 bool HighScore::GetDisqualified() const { return m_Impl->bDisqualified; }
 
-void HighScore::SetName( const RString &sName ) { m_Impl->sName = sName; }
+void HighScore::SetName( const std::string &sName ) { m_Impl->sName = sName; }
 void HighScore::SetGrade( Grade g ) { m_Impl->grade = g; }
 void HighScore::SetScore( unsigned int iScore ) { m_Impl->iScore = iScore; }
 void HighScore::SetMaxCombo( unsigned int i ) { m_Impl->iMaxCombo = i; }
@@ -217,10 +241,10 @@ void HighScore::SetStageAward( StageAward a ) { m_Impl->stageAward = a; }
 void HighScore::SetPeakComboAward( PeakComboAward a ) { m_Impl->peakComboAward = a; }
 void HighScore::SetPercentDP( float f ) { m_Impl->fPercentDP = f; }
 void HighScore::SetAliveSeconds( float f ) { m_Impl->fSurviveSeconds = f; }
-void HighScore::SetModifiers( RString s ) { m_Impl->sModifiers = s; }
+void HighScore::SetModifiers( std::string s ) { m_Impl->sModifiers = s; }
 void HighScore::SetDateTime( DateTime d ) { m_Impl->dateTime = d; }
-void HighScore::SetPlayerGuid( RString s ) { m_Impl->sPlayerGuid = s; }
-void HighScore::SetMachineGuid( RString s ) { m_Impl->sMachineGuid = s; }
+void HighScore::SetPlayerGuid( std::string s ) { m_Impl->sPlayerGuid = s; }
+void HighScore::SetMachineGuid( std::string s ) { m_Impl->sMachineGuid = s; }
 void HighScore::SetProductID( int i ) { m_Impl->iProductID = i; }
 void HighScore::SetTapNoteScore( TapNoteScore tns, int i ) { m_Impl->iTapNoteScores[tns] = i; }
 void HighScore::SetHoldNoteScore( HoldNoteScore hns, int i ) { m_Impl->iHoldNoteScores[hns] = i; }
@@ -231,7 +255,7 @@ void HighScore::SetDisqualified( bool b ) { m_Impl->bDisqualified = b; }
 /* We normally don't give direct access to the members.  We need this one
  * for NameToFillIn; use a special accessor so it's easy to find where this
  * is used. */
-RString *HighScore::GetNameMutable() { return &m_Impl->sName; }
+std::string *HighScore::GetNameMutable() { return &m_Impl->sName; }
 
 bool HighScore::operator<(HighScore const& other) const
 {
@@ -266,7 +290,7 @@ bool HighScore::operator>=( const HighScore& other ) const
 	return !operator<(other);
 }
 
-bool HighScore::operator==( const HighScore& other ) const 
+bool HighScore::operator==( const HighScore& other ) const
 {
 	return *m_Impl == *other.m_Impl;
 }
@@ -281,17 +305,18 @@ XNode* HighScore::CreateNode() const
 	return m_Impl->CreateNode();
 }
 
-void HighScore::LoadFromNode( const XNode* pNode ) 
+void HighScore::LoadFromNode( const XNode* pNode )
 {
 	m_Impl->LoadFromNode( pNode );
 }
 
-RString HighScore::GetDisplayName() const
+std::string HighScore::GetDisplayName() const
 {
 	if( GetName().empty() )
-		return EMPTY_NAME;
-	else
-		return GetName();
+	{
+		return EMPTY_NAME.GetValue();
+	}
+	return GetName();
 }
 
 /* begin HighScoreList */
@@ -304,14 +329,17 @@ void HighScoreList::Init()
 
 void HighScoreList::AddHighScore( HighScore hs, int &iIndexOut, bool bIsMachine )
 {
+	using std::min;
 	int i;
-	for( i=0; i<(int)vHighScores.size(); i++ )
+	for( i=0; i< static_cast<int>(vHighScores.size()); i++ )
 	{
 		if( hs >= vHighScores[i] )
+		{
 			break;
+		}
 	}
-	const int iMaxScores = bIsMachine ? 
-		PREFSMAN->m_iMaxHighScoresPerListForMachine : 
+	const int iMaxScores = bIsMachine ?
+		PREFSMAN->m_iMaxHighScoresPerListForMachine :
 		PREFSMAN->m_iMaxHighScoresPerListForPlayer;
 	if( i < iMaxScores )
 	{
@@ -319,7 +347,7 @@ void HighScoreList::AddHighScore( HighScore hs, int &iIndexOut, bool bIsMachine 
 		iIndexOut = i;
 
 		// Delete extra machine high scores in RemoveAllButOneOfEachNameAndClampSize
-		// and not here so that we don't end up with less than iMaxScores after 
+		// and not here so that we don't end up with less than iMaxScores after
 		// removing HighScores with duplicate names.
 		//
 		if( !bIsMachine )
@@ -357,9 +385,8 @@ XNode* HighScoreList::CreateNode() const
 	if( HighGrade != Grade_NoData )
 		pNode->AppendChild( "HighGrade", GradeToString(HighGrade) );
 
-	for( unsigned i=0; i<vHighScores.size(); i++ )
+	for (auto const &hs: vHighScores)
 	{
-		const HighScore &hs = vHighScores[i];
 		pNode->AppendChild( hs.CreateNode() );
 	}
 
@@ -368,25 +395,26 @@ XNode* HighScoreList::CreateNode() const
 
 void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 {
+	using std::min;
 	Init();
 
 	ASSERT( pHighScoreList->GetName() == "HighScoreList" );
-	FOREACH_CONST_Child( pHighScoreList, p )
+	for (auto const *p: *pHighScoreList)
 	{
-		const RString &name = p->GetName();
+		const std::string &name = p->GetName();
 		if( name == "NumTimesPlayed" )
 		{
 			p->GetTextValue( iNumTimesPlayed );
 		}
 		else if( name == "LastPlayed" )
 		{
-			RString s;
+			std::string s;
 			p->GetTextValue( s );
 			dtLastPlayed.FromString( s );
 		}
 		else if( name == "HighGrade" )
 		{
-			RString s;
+			std::string s;
 			p->GetTextValue( s );
 			HighGrade = StringToGrade( s );
 		}
@@ -406,9 +434,9 @@ void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 
 void HighScoreList::RemoveAllButOneOfEachName()
 {
-	FOREACH( HighScore, vHighScores, i )
+	for (auto i = vHighScores.begin(); i != vHighScores.end(); ++i)
 	{
-		for( vector<HighScore>::iterator j = i+1; j != vHighScores.end(); j++ )
+		for( auto j = i + 1; j != vHighScores.end(); j++ )
 		{
 			if( i->GetName() == j->GetName() )
 			{
@@ -421,8 +449,8 @@ void HighScoreList::RemoveAllButOneOfEachName()
 
 void HighScoreList::ClampSize( bool bIsMachine )
 {
-	const int iMaxScores = bIsMachine ? 
-		PREFSMAN->m_iMaxHighScoresPerListForMachine : 
+	const int iMaxScores = bIsMachine ?
+		PREFSMAN->m_iMaxHighScoresPerListForMachine :
 		PREFSMAN->m_iMaxHighScoresPerListForPlayer;
 	if( vHighScores.size() > unsigned(iMaxScores) )
 		vHighScores.erase( vHighScores.begin()+iMaxScores, vHighScores.end() );
@@ -458,7 +486,7 @@ XNode* Screenshot::CreateNode() const
 	return pNode;
 }
 
-void Screenshot::LoadFromNode( const XNode* pNode ) 
+void Screenshot::LoadFromNode( const XNode* pNode )
 {
 	ASSERT( pNode->GetName() == "Screenshot" );
 
@@ -476,23 +504,61 @@ void Screenshot::LoadFromNode( const XNode* pNode )
 class LunaHighScore: public Luna<HighScore>
 {
 public:
-	static int GetName( T* p, lua_State *L )			{ lua_pushstring(L, p->GetName() ); return 1; }
-	static int GetScore( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetScore() ); return 1; }
-	static int GetPercentDP( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetPercentDP() ); return 1; }
-	static int GetDate( T* p, lua_State *L )			{ lua_pushstring(L, p->GetDateTime().GetString() ); return 1; }
-	static int GetSurvivalSeconds( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetSurvivalSeconds() ); return 1; }
+	static int GetName( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetName().c_str() );
+		return 1;
+	}
+	static int GetScore( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetScore() );
+		return 1;
+	}
+	static int GetPercentDP( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetPercentDP() );
+		return 1;
+	}
+	static int GetDate( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetDateTime().GetString().c_str() );
+		return 1;
+	}
+	static int GetSurvivalSeconds( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetSurvivalSeconds() );
+		return 1;
+	}
 	static int IsFillInMarker( T* p, lua_State *L )
 	{
 		bool bIsFillInMarker = false;
 		FOREACH_PlayerNumber( pn )
+		{
 			bIsFillInMarker |= p->GetName() == RANKING_TO_FILL_IN_MARKER[pn];
+		}
 		lua_pushboolean( L, bIsFillInMarker );
 		return 1;
 	}
-	static int GetMaxCombo( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetMaxCombo() ); return 1; }
-	static int GetModifiers( T* p, lua_State *L )			{ lua_pushstring(L, p->GetModifiers() ); return 1; }
-	static int GetTapNoteScore( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetTapNoteScore( Enum::Check<TapNoteScore>(L, 1) ) ); return 1; }
-	static int GetHoldNoteScore( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetHoldNoteScore( Enum::Check<HoldNoteScore>(L, 1) ) ); return 1; }
+	static int GetMaxCombo( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetMaxCombo() );
+		return 1;
+	}
+	static int GetModifiers( T* p, lua_State *L )
+	{
+		lua_pushstring(L, p->GetModifiers().c_str() );
+		return 1;
+	}
+	static int GetTapNoteScore( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetTapNoteScore( Enum::Check<TapNoteScore>(L, 1) ) );
+		return 1;
+	}
+	static int GetHoldNoteScore( T* p, lua_State *L )
+	{
+		lua_pushnumber(L, p->GetHoldNoteScore( Enum::Check<HoldNoteScore>(L, 1) ) );
+		return 1;
+	}
 	static int GetRadarValues( T* p, lua_State *L )
 	{
 		RadarValues &rv = const_cast<RadarValues &>(p->GetRadarValues());
@@ -531,7 +597,7 @@ public:
 	static int GetHighScores( T* p, lua_State *L )
 	{
 		lua_newtable(L);
-		for( int i = 0; i < (int) p->vHighScores.size(); ++i )
+		for( int i = 0; i < static_cast<int>(p->vHighScores.size()); ++i )
 		{
 			p->vHighScores[i].PushSelf(L);
 			lua_rawseti( L, -2, i+1 );
@@ -542,12 +608,12 @@ public:
 
 	static int GetHighestScoreOfName( T* p, lua_State *L )
 	{
-		RString name= SArg(1);
-		for(size_t i= 0; i < p->vHighScores.size(); ++i)
+		std::string name= SArg(1);
+		for (auto &score: p->vHighScores)
 		{
-			if(name == p->vHighScores[i].GetName())
+			if(name == score.GetName())
 			{
-				p->vHighScores[i].PushSelf(L);
+				score.PushSelf(L);
 				return 1;
 			}
 		}
@@ -557,7 +623,7 @@ public:
 
 	static int GetRankOfName( T* p, lua_State *L )
 	{
-		RString name= SArg(1);
+		std::string name= SArg(1);
 		size_t rank= 0;
 		for(size_t i= 0; i < p->vHighScores.size(); ++i)
 		{
@@ -587,7 +653,7 @@ LUA_REGISTER_CLASS( HighScoreList )
 /*
  * (c) 2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -597,7 +663,7 @@ LUA_REGISTER_CLASS( HighScoreList )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

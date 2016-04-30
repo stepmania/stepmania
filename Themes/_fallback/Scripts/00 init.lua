@@ -34,15 +34,6 @@ function string:find_last(text)
 	end
 end
 
--- Round to nearest integer.
-function math.round(n)
-	if n > 0 then
-		return math.floor(n+0.5)
-	else
-		return math.ceil(n-0.5)
-	end
-end
-
 function split(delimiter, text)
 	local list = {}
 	local pos = 1

@@ -60,7 +60,9 @@
 	m_iArgc = argc;
 	m_pArgv = new char*[argc];
 	for( int i = 0; i < argc; ++i )
+	{
 		m_pArgv[i] = argv[i];
+	}
 	m_bApplicationLaunched = NO;
 	return self;
 }
@@ -124,7 +126,9 @@
 {
 	char **temp = new char*[[files count] + m_iArgc];
 	for( int i = 0; i < m_iArgc; ++i )
+	{
 		temp[i] = m_pArgv[i];
+	}
 	for( unsigned i = 0; i < [files count]; ++i, ++m_iArgc )
 	{
 		const char *p = [[files objectAtIndex:i] fileSystemRepresentation];
@@ -144,7 +148,7 @@
 
 static void HandleNSException( NSException *exception )
 {
-	FAIL_M( ssprintf("%s raised: %s", [[exception name] UTF8String], [[exception reason] UTF8String]) );
+	FAIL_M( fmt::sprintf("%s raised: %s", [[exception name] UTF8String], [[exception reason] UTF8String]) );
 }
 
 static NSMenuItem *MenuItem( NSString *title, SEL action, NSString *code )
@@ -189,8 +193,8 @@ static void SetupMenus( void )
 	[item setKeyEquivalentModifierMask:NSAlternateKeyMask]; // opt-enter
 	[windowMenu addItem:item];
 
-	[[mainMenu addItemWithTitle:[appMenu title] action:NULL keyEquivalent:@""] setSubmenu:appMenu];
-	[[mainMenu addItemWithTitle:[windowMenu title] action:NULL keyEquivalent:@""] setSubmenu:windowMenu];
+	[[mainMenu addItemWithTitle:[appMenu title] action:nullptr keyEquivalent:@""] setSubmenu:appMenu];
+	[[mainMenu addItemWithTitle:[windowMenu title] action:nullptr keyEquivalent:@""] setSubmenu:windowMenu];
 
 	[NSApp setMainMenu:mainMenu];
 	[NSApp setAppleMenu:appMenu]; // This isn't the apple menu, but it doesn't work without this.
@@ -216,7 +220,7 @@ int main( int argc, char **argv )
 
 	// Create SMMain and make it the app delegate.
 	sm = [[SMMain alloc] initWithArgc:argc argv:argv];
-	[NSApp setDelegate:sm];
+	[NSApp setDelegate:static_cast<id<NSFileManagerDelegate>>(sm)];
 
 	[pool release];
 	// Start the main event loop.

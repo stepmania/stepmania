@@ -13,22 +13,22 @@
 #include <GL/glew.h>
 
 static PIXELFORMATDESCRIPTOR g_CurrentPixelFormat;
-static HGLRC g_HGLRC = NULL;
-static HGLRC g_HGLRC_Background = NULL;
+static HGLRC g_HGLRC = nullptr;
+static HGLRC g_HGLRC_Background = nullptr;
 
 static void DestroyGraphicsWindowAndOpenGLContext()
 {
-	if( g_HGLRC != NULL )
+	if( g_HGLRC != nullptr )
 	{
-		wglMakeCurrent( NULL, NULL );
+		wglMakeCurrent( nullptr, nullptr );
 		wglDeleteContext( g_HGLRC );
-		g_HGLRC = NULL;
+		g_HGLRC = nullptr;
 	}
 
-	if( g_HGLRC_Background != NULL )
+	if( g_HGLRC_Background != nullptr )
 	{
 		wglDeleteContext( g_HGLRC_Background );
-		g_HGLRC_Background = NULL;
+		g_HGLRC_Background = nullptr;
 	}
 
 	ZERO( g_CurrentPixelFormat );
@@ -36,19 +36,19 @@ static void DestroyGraphicsWindowAndOpenGLContext()
 	GraphicsWindow::DestroyGraphicsWindow();
 }
 
-void *LowLevelWindow_Win32::GetProcAddress( RString s )
+void *LowLevelWindow_Win32::GetProcAddress( std::string s )
 {
-	void *pRet = (void*) wglGetProcAddress( s );
-	if( pRet != NULL )
+	void *pRet = (void*) wglGetProcAddress( s.c_str() );
+	if( pRet != nullptr )
 		return pRet;
 
-	return (void*) ::GetProcAddress( GetModuleHandle(NULL), s );
+	return (void*) ::GetProcAddress( GetModuleHandle(nullptr), s.c_str() );
 }
 
 LowLevelWindow_Win32::LowLevelWindow_Win32()
 {
-	ASSERT( g_HGLRC == NULL );
-	ASSERT( g_HGLRC_Background == NULL );
+	ASSERT( g_HGLRC == nullptr );
+	ASSERT( g_HGLRC_Background == nullptr );
 
 	GraphicsWindow::Initialize( false );
 }
@@ -59,15 +59,15 @@ LowLevelWindow_Win32::~LowLevelWindow_Win32()
 	GraphicsWindow::Shutdown();
 }
 
-void LowLevelWindow_Win32::GetDisplayResolutions( DisplayResolutions &out ) const
+void LowLevelWindow_Win32::GetDisplaySpecs( DisplaySpecs &out ) const
 {
-	GraphicsWindow::GetDisplayResolutions( out );
+	GraphicsWindow::GetDisplaySpecs( out );
 }
 
 int ChooseWindowPixelFormat( const VideoModeParams &p, PIXELFORMATDESCRIPTOR *pixfmt )
 {
-	ASSERT( GraphicsWindow::GetHwnd() != NULL );
-	ASSERT( GraphicsWindow::GetHDC() != NULL );
+	ASSERT( GraphicsWindow::GetHwnd() != nullptr );
+	ASSERT( GraphicsWindow::GetHDC() != nullptr );
 
 	ZERO( *pixfmt );
 	pixfmt->nSize		= sizeof(PIXELFORMATDESCRIPTOR);
@@ -82,7 +82,7 @@ int ChooseWindowPixelFormat( const VideoModeParams &p, PIXELFORMATDESCRIPTOR *pi
 
 void DumpPixelFormat( const PIXELFORMATDESCRIPTOR &pfd )
 {
-	RString str = ssprintf( "Mode: " );
+	std::string str = fmt::sprintf( "Mode: " );
 	bool bInvalidFormat = false;
 
 	if( pfd.dwFlags & PFD_GENERIC_FORMAT )
@@ -100,11 +100,11 @@ void DumpPixelFormat( const PIXELFORMATDESCRIPTOR &pfd )
 	if( !(pfd.dwFlags & PFD_DRAW_TO_WINDOW) ) { str += "!window "; bInvalidFormat = true; }
 	if( !(pfd.dwFlags & PFD_DOUBLEBUFFER) ) { str += "!dbuff "; bInvalidFormat = true; }
 
-	str += ssprintf( "%i (%i%i%i) ", pfd.cColorBits, pfd.cRedBits, pfd.cGreenBits, pfd.cBlueBits );
-	if( pfd.cAlphaBits ) str += ssprintf( "%i alpha ", pfd.cAlphaBits );
-	if( pfd.cDepthBits ) str += ssprintf( "%i depth ", pfd.cDepthBits );
-	if( pfd.cStencilBits ) str += ssprintf( "%i stencil ", pfd.cStencilBits );
-	if( pfd.cAccumBits ) str += ssprintf( "%i accum ", pfd.cAccumBits );
+	str += fmt::sprintf( "%i (%i%i%i) ", pfd.cColorBits, pfd.cRedBits, pfd.cGreenBits, pfd.cBlueBits );
+	if( pfd.cAlphaBits ) str += fmt::sprintf( "%i alpha ", pfd.cAlphaBits );
+	if( pfd.cDepthBits ) str += fmt::sprintf( "%i depth ", pfd.cDepthBits );
+	if( pfd.cStencilBits ) str += fmt::sprintf( "%i stencil ", pfd.cStencilBits );
+	if( pfd.cAccumBits ) str += fmt::sprintf( "%i accum ", pfd.cAccumBits );
 
 	if( bInvalidFormat )
 		LOG->Warn( "Invalid format: %s", str.c_str() );
@@ -115,11 +115,11 @@ void DumpPixelFormat( const PIXELFORMATDESCRIPTOR &pfd )
 /* This function does not reset the video mode if it fails, because we might be trying
  * yet another video mode, so we'd just thrash the display.  On fatal error,
  * LowLevelWindow_Win32::~LowLevelWindow_Win32 will call GraphicsWindow::Shutdown(). */
-RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
+std::string LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
 	//LOG->Warn( "LowLevelWindow_Win32::TryVideoMode" );
 	
-	ASSERT_M( p.bpp == 16 || p.bpp == 32, ssprintf("%i", p.bpp) );
+	ASSERT_M( p.bpp == 16 || p.bpp == 32, fmt::sprintf("%i", p.bpp) );
 
 	bNewDeviceOut = false;
 
@@ -127,7 +127,7 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 	bool bCanSetPixelFormat = true;
 
 	/* Do we have an old window? */
-	if( GraphicsWindow::GetHwnd() == NULL )
+	if( GraphicsWindow::GetHwnd() == nullptr )
 	{
 		/* No.  Always create and show the window before changing the video mode.
 		 * Otherwise, some other window may have focus, and changing the video mode will
@@ -140,11 +140,11 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		bCanSetPixelFormat = false;
 	}
 
-	ASSERT( GraphicsWindow::GetHwnd() != NULL );
+	ASSERT( GraphicsWindow::GetHwnd() != nullptr );
 
 	/* Set the display mode: switch to a fullscreen mode or revert to windowed mode. */
 	LOG->Trace("SetScreenMode ...");
-	RString sErr = GraphicsWindow::SetScreenMode( p );
+	std::string sErr = GraphicsWindow::SetScreenMode( p );
 	if( !sErr.empty() )
 		return sErr;
 
@@ -182,13 +182,13 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		 * We have to create the new window first.
 		 */
 		LOG->Trace( "Mode requires new pixel format, and we've already set one; resetting OpenGL context" );
-		if( g_HGLRC != NULL )
+		if( g_HGLRC != nullptr )
 		{
-			wglMakeCurrent( NULL, NULL );
+			wglMakeCurrent( nullptr, nullptr );
 			wglDeleteContext( g_HGLRC );
-			g_HGLRC = NULL;
+			g_HGLRC = nullptr;
 			wglDeleteContext( g_HGLRC_Background );
-			g_HGLRC_Background = NULL;
+			g_HGLRC_Background = nullptr;
 		}
 
 		bNewDeviceOut = true;
@@ -206,7 +206,7 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 			/* Destroy the window. */
 			DestroyGraphicsWindowAndOpenGLContext();
 
-			return werr_ssprintf( GetLastError(), "Pixel format failed" );
+			return werr_format( GetLastError(), "Pixel format failed" );
 		}
 
 		DescribePixelFormat( GraphicsWindow::GetHDC(), iPixelFormat, sizeof(g_CurrentPixelFormat), &g_CurrentPixelFormat );
@@ -214,62 +214,62 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		DumpPixelFormat( g_CurrentPixelFormat );
 	}
 
-	if( g_HGLRC == NULL )
+	if( g_HGLRC == nullptr )
 	{
 		g_HGLRC = wglCreateContext( GraphicsWindow::GetHDC() );
-		if ( g_HGLRC == NULL )
+		if ( g_HGLRC == nullptr )
 		{
 			DestroyGraphicsWindowAndOpenGLContext();
-			return hr_ssprintf( GetLastError(), "wglCreateContext" );
+			return hr_format( GetLastError(), "wglCreateContext" );
 		}
 
 		g_HGLRC_Background = wglCreateContext( GraphicsWindow::GetHDC() );
-		if( g_HGLRC_Background == NULL )
+		if( g_HGLRC_Background == nullptr )
 		{
 			DestroyGraphicsWindowAndOpenGLContext();
-			return hr_ssprintf( GetLastError(), "wglCreateContext" );
+			return hr_format( GetLastError(), "wglCreateContext" );
 		}
 
 		if( !wglShareLists(g_HGLRC, g_HGLRC_Background) )
 		{
-			LOG->Warn( werr_ssprintf(GetLastError(), "wglShareLists failed") );
+			LOG->Warn("%s", werr_format(GetLastError(), "wglShareLists failed") );
 			wglDeleteContext( g_HGLRC_Background );
-			g_HGLRC_Background = NULL;
+			g_HGLRC_Background = nullptr;
 		}
 
 		if( !wglMakeCurrent( GraphicsWindow::GetHDC(), g_HGLRC ) )
 		{
 			DestroyGraphicsWindowAndOpenGLContext();
-			return hr_ssprintf( GetLastError(), "wglCreateContext" );
+			return hr_format( GetLastError(), "wglCreateContext" );
 		}
 	}
-	return RString();	// we set the video mode successfully
+	return std::string();	// we set the video mode successfully
 }
 
 bool LowLevelWindow_Win32::SupportsThreadedRendering()
 {
-	return g_HGLRC_Background != NULL;
+	return g_HGLRC_Background != nullptr;
 }
 
 void LowLevelWindow_Win32::BeginConcurrentRendering()
 {
 	if( !wglMakeCurrent( GraphicsWindow::GetHDC(), g_HGLRC_Background ) )
 	{
-		LOG->Warn( hr_ssprintf(GetLastError(), "wglMakeCurrent") );
-		FAIL_M( hr_ssprintf(GetLastError(), "wglMakeCurrent") );
+		LOG->Warn( hr_format(GetLastError(), "wglMakeCurrent") );
+		FAIL_M( hr_format(GetLastError(), "wglMakeCurrent") );
 	}
 }
 
 void LowLevelWindow_Win32::EndConcurrentRendering()
 {
-	wglMakeCurrent( NULL, NULL );
+	wglMakeCurrent( nullptr, nullptr );
 }
 
 static LocalizedString OPENGL_NOT_AVAILABLE( "LowLevelWindow_Win32", "OpenGL hardware acceleration is not available." );
-bool LowLevelWindow_Win32::IsSoftwareRenderer( RString &sError )
+bool LowLevelWindow_Win32::IsSoftwareRenderer( std::string &sError )
 {
-	RString sVendor = (const char*)glGetString(GL_VENDOR);
-	RString sRenderer = (const char*)glGetString(GL_RENDERER);
+	std::string sVendor = (const char*)glGetString(GL_VENDOR);
+	std::string sRenderer = (const char*)glGetString(GL_RENDERER);
 
 	LOG->Trace( "LowLevelWindow_Win32::IsSoftwareRenderer '%s', '%s'", sVendor.c_str(), sRenderer.c_str() );
 
@@ -292,7 +292,7 @@ void LowLevelWindow_Win32::Update()
 	GraphicsWindow::Update();
 }
 
-const VideoModeParams &LowLevelWindow_Win32::GetActualVideoModeParams() const
+const ActualVideoModeParams LowLevelWindow_Win32::GetActualVideoModeParams() const
 {
 	return GraphicsWindow::GetParams();
 }
@@ -323,8 +323,8 @@ RenderTarget_Win32::RenderTarget_Win32(LowLevelWindow_Win32 *pWind)
 {
 	m_pWind = pWind;
 	m_texHandle = 0;
-	m_hOldDeviceContext = NULL;
-	m_hOldRenderContext = NULL;
+	m_hOldDeviceContext = nullptr;
+	m_hOldRenderContext = nullptr;
 }
 
 RenderTarget_Win32::~RenderTarget_Win32()
@@ -357,7 +357,7 @@ void RenderTarget_Win32::Create(const RenderTargetParam &param, int &iTextureWid
 		internalformat = param.bWithAlpha? GL_RGBA8:GL_RGB8;
 
 	glTexImage2D(GL_TEXTURE_2D, 0, internalformat, iTextureWidth,
-		iTextureHeight, 0, type, GL_UNSIGNED_BYTE, NULL);
+		iTextureHeight, 0, type, GL_UNSIGNED_BYTE, nullptr);
 
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );

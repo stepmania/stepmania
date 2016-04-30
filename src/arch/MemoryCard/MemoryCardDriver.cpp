@@ -2,10 +2,11 @@
 #include "MemoryCardDriver.h"
 #include "RageFileManager.h"
 #include "RageLog.h"
-#include "Foreach.h"
 #include "ProfileManager.h"
 
-static const RString TEMP_MOUNT_POINT = "/@mctemptimeout/";
+using std::vector;
+
+static const std::string TEMP_MOUNT_POINT = "/@mctemptimeout/";
 
 bool UsbStorageDevice::operator==(const UsbStorageDevice& other) const
 {
@@ -21,7 +22,7 @@ bool UsbStorageDevice::operator==(const UsbStorageDevice& other) const
 #undef COMPARE
 }
 
-void UsbStorageDevice::SetOsMountDir( const RString &s )
+void UsbStorageDevice::SetOsMountDir( const std::string &s )
 {
 	sOsMountDir = s;
 }
@@ -30,12 +31,14 @@ bool MemoryCardDriver::NeedUpdate( bool bMount )
 {
 	if( bMount )
 	{
+		auto isChecking = [](UsbStorageDevice const &device) {
+			return device.m_State == UsbStorageDevice::STATE_CHECKING;
+		};
+		
 		/* Check if any devices need a write test. */
-		for( unsigned i=0; i<m_vDevicesLastSeen.size(); i++ )
+		if (std::any_of(m_vDevicesLastSeen.begin(), m_vDevicesLastSeen.end(), isChecking))
 		{
-			const UsbStorageDevice &d = m_vDevicesLastSeen[i];
-			if( d.m_State == UsbStorageDevice::STATE_CHECKING )
-				return true;
+			return true;
 		}
 	}
 
@@ -51,9 +54,9 @@ bool MemoryCardDriver::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStor
 	GetUSBStorageDevices( vStorageDevicesOut );
 
 	// log connects
-	FOREACH( UsbStorageDevice, vStorageDevicesOut, newd )
+	for (auto newd = vStorageDevicesOut.begin(); newd != vStorageDevicesOut.end(); ++newd)
 	{
-		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), *newd );
+		auto iter = find( vOld.begin(), vOld.end(), *newd );
 		if( iter == vOld.end() )    // didn't find
 			LOG->Trace( "New device connected: %s", newd->sDevice.c_str() );
 	}
@@ -61,10 +64,8 @@ bool MemoryCardDriver::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStor
 	/* When we first see a device, regardless of bMount, just return it as CHECKING,
 	 * so the main thread knows about the device.  On the next call where bMount is
 	 * true, check it. */
-	for( unsigned i=0; i<vStorageDevicesOut.size(); i++ )
+	for (auto &d: vStorageDevicesOut)
 	{
-		UsbStorageDevice &d = vStorageDevicesOut[i];
-
 		/* If this device was just connected (it wasn't here last time), set it to
 		 * CHECKING and return it, to let the main thread know about the device before
 		 * we start checking. */
@@ -104,7 +105,7 @@ bool MemoryCardDriver::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStor
 				 * profile name (by mounting a temporary, private mountpoint),
 				 * and then unmount it until Mount() is called. */
 				d.m_State = UsbStorageDevice::STATE_READY;
-			
+
 				FILEMAN->Mount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
 				d.bIsNameAvailable = PROFILEMAN->FastLoadProfileNameFromMemoryCard( TEMP_MOUNT_POINT, d.sName );
 				FILEMAN->Unmount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
@@ -124,7 +125,7 @@ bool MemoryCardDriver::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStor
 #include "arch/arch_default.h"
 MemoryCardDriver *MemoryCardDriver::Create()
 {
-	MemoryCardDriver *ret = NULL;
+	MemoryCardDriver *ret = nullptr;
 
 #ifdef ARCH_MEMORY_CARD_DRIVER
 	ret = new ARCH_MEMORY_CARD_DRIVER;
@@ -132,14 +133,14 @@ MemoryCardDriver *MemoryCardDriver::Create()
 
 	if( !ret )
 		ret = new MemoryCardDriver_Null;
-	
+
 	return ret;
 }
 
 /*
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -149,7 +150,7 @@ MemoryCardDriver *MemoryCardDriver::Create()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

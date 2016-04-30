@@ -7,13 +7,13 @@
 #include "json/reader.h"
 #include "json/writer.h"
 
-bool JsonUtil::LoadFromString(Json::Value &root, RString sData, RString &sErrorOut)
+bool JsonUtil::LoadFromString(Json::Value &root, std::string sData, std::string &sErrorOut)
 {
 	Json::Reader reader;
 	bool parsingSuccessful = reader.parse(sData, root);
 	if (!parsingSuccessful)
 	{
-		RString err = reader.getFormatedErrorMessages();
+		std::string err = reader.getFormatedErrorMessages();
 		LOG->Warn("JSON: LoadFromFileShowErrors failed: %s", err.c_str());
 		return false;
 	}
@@ -23,12 +23,12 @@ bool JsonUtil::LoadFromString(Json::Value &root, RString sData, RString &sErrorO
 bool JsonUtil::LoadFromFileShowErrors(Json::Value &root, RageFileBasic &f)
 {
 	// Optimization opportunity: read this streaming instead of at once
-	RString sData;
+	std::string sData;
 	f.Read(sData, f.GetFileSize());
 	return LoadFromStringShowErrors(root, sData);
 }
 
-bool JsonUtil::LoadFromFileShowErrors(Json::Value &root, const RString &sFile)
+bool JsonUtil::LoadFromFileShowErrors(Json::Value &root, const std::string &sFile)
 {
 	RageFile f;
 	if(!f.Open(sFile, RageFile::READ))
@@ -40,9 +40,9 @@ bool JsonUtil::LoadFromFileShowErrors(Json::Value &root, const RString &sFile)
 	return LoadFromFileShowErrors(root, f);
 }
 
-bool JsonUtil::LoadFromStringShowErrors(Json::Value &root, RString sData)
+bool JsonUtil::LoadFromStringShowErrors(Json::Value &root, std::string sData)
 {
-	RString sError;
+	std::string sError;
 	if(!LoadFromString(root, sData, sError))
 	{
 		Dialog::OK(sError, "JSON_PARSE_ERROR");
@@ -51,7 +51,7 @@ bool JsonUtil::LoadFromStringShowErrors(Json::Value &root, RString sData)
 	return true;
 }
 
-bool JsonUtil::WriteFile(const Json::Value &root, const RString &sFile, bool bMinified)
+bool JsonUtil::WriteFile(const Json::Value &root, const std::string &sFile, bool bMinified)
 {
 	std::string s;
 	if(!bMinified)

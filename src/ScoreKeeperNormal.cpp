@@ -21,8 +21,10 @@
 #include "TimingData.h"
 #include "NoteDataWithScoring.h"
 
-static RString PercentScoreWeightName( size_t i ) { return "PercentScoreWeight" + ScoreEventToString( (ScoreEvent)i ); }
-static RString GradeWeightName( size_t i ) { return "GradeWeight" + ScoreEventToString( (ScoreEvent)i ); }
+using std::vector;
+
+static std::string PercentScoreWeightName( size_t i ) { return "PercentScoreWeight" + ScoreEventToString( (ScoreEvent)i ); }
+static std::string GradeWeightName( size_t i ) { return "GradeWeight" + ScoreEventToString( (ScoreEvent)i ); }
 
 static ThemeMetric1D<int> g_iPercentScoreWeight("ScoreKeeperNormal", PercentScoreWeightName, NUM_ScoreEvent );
 static ThemeMetric1D<int> g_iGradeWeight("ScoreKeeperNormal", GradeWeightName, NUM_ScoreEvent );
@@ -62,9 +64,9 @@ void ScoreKeeperNormal::Load(
 	for( unsigned i=0; i<apSteps.size(); i++ )
 	{
 		Song* pSong = apSongs[i];
-		ASSERT( pSong != NULL );
+		ASSERT( pSong != nullptr );
 		Steps* pSteps = apSteps[i];
-		ASSERT( pSteps != NULL );
+		ASSERT( pSteps != nullptr );
 		const AttackArray &aa = asModifiers[i];
 		NoteData ndTemp;
 		pSteps->GetNoteData( ndTemp );
@@ -94,7 +96,7 @@ void ScoreKeeperNormal::Load(
 		GAMESTATE->SetProcessedTimingData(pSteps->GetTimingData()); // XXX: Not sure why but NoteDataUtil::CalculateRadarValues segfaults without this
 		iTotalPossibleDancePoints += this->GetPossibleDancePoints( &ndPre, &ndPost, pSteps->GetTimingData(), pSong->m_fMusicLengthSeconds );
 		iTotalPossibleGradePoints += this->GetPossibleGradePoints( &ndPre, &ndPost, pSteps->GetTimingData(), pSong->m_fMusicLengthSeconds );
-		GAMESTATE->SetProcessedTimingData(NULL);
+		GAMESTATE->SetProcessedTimingData(nullptr);
 	}
 
 	m_pPlayerStageStats->m_iPossibleDancePoints = iTotalPossibleDancePoints;
@@ -172,7 +174,7 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	{
 		// long ver and marathon ver songs have higher max possible scores
 		int iLengthMultiplier = GameState::GetNumStagesMultiplierForSong( GAMESTATE->m_pCurSong );
-		
+
 		/* This is no longer just simple additive/subtractive scoring,
 		 * but start with capping the score at the size of the score counter. */
 		m_iMaxPossiblePoints = 10 * 10000000 * iLengthMultiplier;
@@ -181,7 +183,7 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	m_iMaxScoreSoFar += m_iMaxPossiblePoints;
 
 	GAMESTATE->SetProcessedTimingData(const_cast<TimingData *>(pSteps->GetTimingData()));
-	
+
 	m_iNumTapsAndHolds = pNoteData->GetNumRowsWithTapOrHoldHead() + pNoteData->GetNumHoldNotes()
 		+ pNoteData->GetNumRolls();
 
@@ -195,8 +197,8 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	ASSERT( m_iPointBonus >= 0 );
 
 	m_iTapNotesHit = 0;
-	
-	GAMESTATE->SetProcessedTimingData(NULL);
+
+	GAMESTATE->SetProcessedTimingData(nullptr);
 }
 
 static int GetScore(int p, int Z, int64_t S, int n)
@@ -260,7 +262,7 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 {
 	if( m_UseInternalScoring )
 	{
-		
+
 		unsigned int &iScore = m_pPlayerStageStats->m_iScore;
 		unsigned int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
 
@@ -344,7 +346,7 @@ int ScoreKeeperNormal::CalcNextToastyAt(int level)
 			break;
 		case LUA_TFUNCTION:
 			{
-				RString err= "Error running ToastyTriggersAt: ";
+				std::string err= "Error running ToastyTriggersAt: ";
 				LuaHelpers::Push(L, m_pPlayerState->m_PlayerNumber);
 				lua_pushnumber(L, level);
 				if(LuaHelpers::RunScriptOnStack(L, err, 2, 1, true))
@@ -399,9 +401,9 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 			m_pPlayerStageStats->m_iTapNoteScores[TNS_HitMine] += 1;
 			if( m_MineHitIncrementsMissCombo )
 				HandleComboInternal( 0, 0, 1 );
-			
+
 		}
-		
+
 		if( tns == TNS_AvoidMine && m_AvoidMineIncrementsCombo )
 			HandleComboInternal( 1, 0, 0 );
 
@@ -446,7 +448,7 @@ void ScoreKeeperNormal::HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteSco
 		m_pPlayerStageStats->m_iTapNoteScores[tns] += cs->GetMissCombo();
 	}
 	else
-	{	
+	{
 		m_pPlayerStageStats->m_iTapNoteScores[tns] += 1;
 	}
 
@@ -456,6 +458,7 @@ void ScoreKeeperNormal::HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteSco
 
 void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumHitMaintainCombo, int iNumBreakCombo, int iRow )
 {
+	using std::min;
 	// Regular combo
 	if( m_ComboIsPerRow )
 	{
@@ -484,6 +487,7 @@ void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumH
 
 void ScoreKeeperNormal::HandleRowComboInternal( TapNoteScore tns, int iNumTapsInRow, int iRow )
 {
+	using std::min;
 	if( m_ComboIsPerRow )
 	{
 		iNumTapsInRow = min( iNumTapsInRow, 1);
@@ -541,7 +545,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 
 	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow ).result.tns;
 	HandleTapNoteScoreInternal( scoreOfLastTap, TNS_W1, iRow );
-	
+
 	if ( GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately )
 	{
 		HandleComboInternal( iNumHitContinueCombo, iNumHitMaintainCombo, iNumBreakCombo, iRow );
@@ -649,14 +653,14 @@ int ScoreKeeperNormal::GetPossibleDancePoints( NoteData* nd, const TimingData* t
 	// XXX: That's not actually implemented!
 	RadarValues radars;
 	NoteDataUtil::CalculateRadarValues( *nd, fSongSeconds, radars );
-	
+
 	int ret = 0;
-	 
+
 	ret += int(radars[RadarCategory_TapsAndHolds]) * TapNoteScoreToDancePoints(TNS_W1, false);
 	if( GAMESTATE->GetCurrentGame()->m_bTickHolds ) ret += NoteDataUtil::GetTotalHoldTicks( nd, td ) * g_iPercentScoreWeight.GetValue(SE_CheckpointHit);
-	ret += int(radars[RadarCategory_Holds]) * HoldNoteScoreToDancePoints(HNS_Held, false);	
+	ret += int(radars[RadarCategory_Holds]) * HoldNoteScoreToDancePoints(HNS_Held, false);
 	ret += int(radars[RadarCategory_Rolls]) * HoldNoteScoreToDancePoints(HNS_Held, false);
-	
+
 	return ret;
 }
 
@@ -665,7 +669,7 @@ int ScoreKeeperNormal::GetPossibleDancePoints( NoteData* ndPre, NoteData* ndPost
 	/* The logic here is that if you use a modifier that adds notes, you should
 	 * have to hit the new notes to get a high grade. However, if you use one
 	 * that removes notes, they should simply be counted as misses. */
-	return max(
+	return std::max(
 		GetPossibleDancePoints(ndPre, td, fSongSeconds),
 		GetPossibleDancePoints(ndPost, td, fSongSeconds) );
 }
@@ -679,12 +683,12 @@ int ScoreKeeperNormal::GetPossibleGradePoints( NoteData* nd, const TimingData* t
 	NoteDataUtil::CalculateRadarValues( *nd, fSongSeconds, radars );
 
 	int ret = 0;
-	
+
 	ret += int(radars[RadarCategory_TapsAndHolds]) * TapNoteScoreToGradePoints(TNS_W1, false);
 	if( GAMESTATE->GetCurrentGame()->m_bTickHolds ) ret += NoteDataUtil::GetTotalHoldTicks( nd, td ) * g_iGradeWeight.GetValue(SE_CheckpointHit);
 	ret += int(radars[RadarCategory_Holds]) * HoldNoteScoreToGradePoints(HNS_Held, false);
 	ret += int(radars[RadarCategory_Rolls]) * HoldNoteScoreToGradePoints(HNS_Held, false);
-	
+
 	return ret;
 }
 
@@ -693,7 +697,7 @@ int ScoreKeeperNormal::GetPossibleGradePoints( NoteData* ndPre, NoteData* ndPost
 	/* The logic here is that if you use a modifier that adds notes, you should
 	 * have to hit the new notes to get a high grade. However, if you use one
 	 * that removes notes, they should simply be counted as misses. */
-	return max(
+	return std::max(
 		GetPossibleGradePoints( ndPre, td, fSongSeconds ),
 		GetPossibleGradePoints( ndPost, td, fSongSeconds ) );
 }
@@ -740,7 +744,7 @@ int ScoreKeeperNormal::TapNoteScoreToDancePoints( TapNoteScore tns, bool bBeginn
 	case TNS_CheckpointMiss:iWeight = g_iPercentScoreWeight.GetValue(SE_CheckpointMiss);	break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
-		iWeight = max( 0, iWeight );
+		iWeight = std::max( 0, iWeight );
 	return iWeight;
 }
 
@@ -756,7 +760,7 @@ int ScoreKeeperNormal::HoldNoteScoreToDancePoints( HoldNoteScore hns, bool bBegi
 	case HNS_Missed:	iWeight = g_iPercentScoreWeight.GetValue(SE_Missed);	break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
-		iWeight = max( 0, iWeight );
+		iWeight = std::max( 0, iWeight );
 	return iWeight;
 }
 
@@ -784,7 +788,7 @@ int ScoreKeeperNormal::TapNoteScoreToGradePoints( TapNoteScore tns, bool bBeginn
 	case TNS_CheckpointMiss:iWeight = g_iGradeWeight.GetValue(SE_CheckpointMiss);	break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
-		iWeight = max( 0, iWeight );
+		iWeight = std::max( 0, iWeight );
 	return iWeight;
 }
 
@@ -800,7 +804,7 @@ int ScoreKeeperNormal::HoldNoteScoreToGradePoints( HoldNoteScore hns, bool bBegi
 	case HNS_Missed:	iWeight = g_iGradeWeight.GetValue(SE_Missed);		break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
-		iWeight = max( 0, iWeight );
+		iWeight = std::max( 0, iWeight );
 	return iWeight;
 }
 

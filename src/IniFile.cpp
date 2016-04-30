@@ -1,4 +1,4 @@
-/* 
+/*
 http://en.wikipedia.org/wiki/INI_file
  - names and values are trimmed on both sides
  - semicolons start a comment line
@@ -9,16 +9,19 @@ http://en.wikipedia.org/wiki/INI_file
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageFile.h"
-#include "Foreach.h"
+#include "RageString.hpp"
+#include "RageUnicode.hpp"
+
+using std::string;
 
 IniFile::IniFile(): XNode("IniFile")
 {
 }
 
-bool IniFile::ReadFile( const RString &sPath )
+bool IniFile::ReadFile( const std::string &sPath )
 {
 	m_sPath = sPath;
-	CHECKPOINT_M( ssprintf("Reading '%s'",m_sPath.c_str()) );
+	CHECKPOINT_M( fmt::sprintf("Reading '%s'",m_sPath.c_str()) );
 
 	RageFile f;
 	if( !f.Open( m_sPath ) )
@@ -33,16 +36,16 @@ bool IniFile::ReadFile( const RString &sPath )
 
 bool IniFile::ReadFile( RageFileBasic &f )
 {
-	RString keyname;
+	std::string keyname;
 	// keychild is used to cache the node that values are being added to. -Kyz
-	XNode* keychild= NULL;
+	XNode* keychild = nullptr;
 	for(;;)
 	{
-		RString line;
+		std::string line;
 		// Read lines until we reach a line that doesn't end in a backslash
 		for(;;)
 		{
-			RString s;
+			std::string s;
 			switch( f.GetLine(s) )
 			{
 			case -1:
@@ -52,7 +55,7 @@ bool IniFile::ReadFile( RageFileBasic &f )
 				return true; // eof
 			}
 
-			utf8_remove_bom( s );
+			Rage::utf8_remove_bom( s );
 
 			line += s;
 
@@ -82,7 +85,7 @@ bool IniFile::ReadFile( RageFileBasic &f )
 					// New section.
 					keyname = line.substr(1, line.size()-2);
 					keychild= GetChild(keyname);
-					if(keychild == NULL)
+					if(keychild == nullptr)
 					{
 						keychild= AppendChild(keyname);
 					}
@@ -90,15 +93,15 @@ bool IniFile::ReadFile( RageFileBasic &f )
 				}
 			default:
 			keyvalue:
-				if(keychild == NULL)
+				if(keychild == nullptr)
 				{ break; }
 				// New value.
 				size_t iEqualIndex = line.find("=");
 				if( iEqualIndex != string::npos )
 				{
-					RString valuename = line.Left((int) iEqualIndex);
-					RString value = line.Right(line.size()-valuename.size()-1);
-					Trim(valuename);
+					std::string valuename = Rage::head(line, iEqualIndex);
+					std::string value = Rage::tail(line, line.size() - valuename.size() - 1);
+					valuename = Rage::trim(valuename);
 					if(!valuename.empty())
 					{
 						SetKeyValue(keychild, valuename, value);
@@ -109,7 +112,7 @@ bool IniFile::ReadFile( RageFileBasic &f )
 	}
 }
 
-bool IniFile::WriteFile( const RString &sPath ) const
+bool IniFile::WriteFile( const std::string &sPath ) const
 {
 	RageFile f;
 	if( !f.Open( sPath, RageFile::WRITE ) )
@@ -127,25 +130,25 @@ bool IniFile::WriteFile( const RString &sPath ) const
 
 bool IniFile::WriteFile( RageFileBasic &f ) const
 {
-	FOREACH_CONST_Child( this, pKey ) 
+	for (auto const *pKey: *this)
 	{
-		if( f.PutLine( ssprintf("[%s]", pKey->GetName().c_str()) ) == -1 )
+		if( f.PutLine( fmt::sprintf("[%s]", pKey->GetName().c_str()) ) == -1 )
 		{
 			m_sError = f.GetError();
 			return false;
 		}
 
-		FOREACH_CONST_Attr( pKey, pAttr )
+		for (auto const &pAttr: pKey->m_attrs)
 		{
-			const RString &sName = pAttr->first;
-			const RString &sValue = pAttr->second->GetValue<RString>();
+			const std::string &sName = pAttr.first;
+			const std::string &sValue = pAttr.second->GetValue<std::string>();
 
 			// TODO: Are there escape rules for these?
 			// take a cue from how multi-line Lua functions are parsed
 			DEBUG_ASSERT( sName.find('\n') == sName.npos );
 			DEBUG_ASSERT( sName.find('=') == sName.npos );
 
-			if( f.PutLine( ssprintf("%s=%s", sName.c_str(), sValue.c_str()) ) == -1 )
+			if( f.PutLine( fmt::sprintf("%s=%s", sName.c_str(), sValue.c_str()) ) == -1 )
 			{
 				m_sError = f.GetError();
 				return false;
@@ -161,31 +164,31 @@ bool IniFile::WriteFile( RageFileBasic &f ) const
 	return true;
 }
 
-bool IniFile::DeleteValue(const RString &keyname, const RString &valuename)
+bool IniFile::DeleteValue(const std::string &keyname, const std::string &valuename)
 {
 	XNode* pNode = GetChild( keyname );
-	if( pNode == NULL )
+	if( pNode == nullptr )
 		return false;
 	return pNode->RemoveAttr( valuename );
 }
 
 
-bool IniFile::DeleteKey(const RString &keyname)
+bool IniFile::DeleteKey(const std::string &keyname)
 {
 	XNode* pNode = GetChild( keyname );
-	if( pNode == NULL )
+	if( pNode == nullptr )
 		return false;
 	return RemoveChild( pNode );
 }
 
-bool IniFile::RenameKey(const RString &from, const RString &to)
+bool IniFile::RenameKey(const std::string &from, const std::string &to)
 {
 	// If to already exists, do nothing.
-	if( GetChild(to) != NULL )
+	if( GetChild(to) != nullptr )
 		return false;
 
 	XNode* pNode = GetChild( from );
-	if( pNode == NULL )
+	if( pNode == nullptr )
 		return false;
 
 	pNode->SetName( to );
@@ -198,7 +201,7 @@ bool IniFile::RenameKey(const RString &from, const RString &to)
 /*
  * (c) 2001-2004 Adam Clauss, Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -208,7 +211,7 @@ bool IniFile::RenameKey(const RString &from, const RString &to)
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

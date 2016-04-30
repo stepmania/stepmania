@@ -3,7 +3,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
-RageWorkerThread::RageWorkerThread( const RString &sName ):
+RageWorkerThread::RageWorkerThread( const std::string &sName ):
 	m_WorkerEvent( "\"" + sName + "\" worker event" ),
 	m_HeartbeatEvent( "\"" + sName + "\" heartbeat event" )
 {
@@ -115,7 +115,7 @@ void RageWorkerThread::WorkerMain()
 		m_WorkerEvent.Lock();
 		while( m_iRequest == REQ_NONE && !bTimeToRunHeartbeat )
 		{
-			if( !m_WorkerEvent.Wait( m_fHeartbeat != -1? &m_NextHeartbeat:NULL ) )
+			if( !m_WorkerEvent.Wait( m_fHeartbeat != -1? &m_NextHeartbeat:nullptr ) )
 				bTimeToRunHeartbeat = true;
 		}
 		const int iRequest = m_iRequest;
@@ -143,9 +143,9 @@ void RageWorkerThread::WorkerMain()
 			/* Handle the request. */
 			if( iRequest != REQ_SHUTDOWN )
 			{
-				CHECKPOINT_M( ssprintf("HandleRequest(%i)", iRequest) );
+				CHECKPOINT_M( fmt::sprintf("HandleRequest(%i)", iRequest) );
 				HandleRequest( iRequest );
-				CHECKPOINT_M( ssprintf("HandleRequest(%i) done", iRequest) );
+				CHECKPOINT_M( fmt::sprintf("HandleRequest(%i) done", iRequest) );
 			}
 
 			/* Lock the mutex, to keep DoRequest where it is (if it's still running). */
@@ -169,7 +169,7 @@ void RageWorkerThread::WorkerMain()
 			}
 			else
 			{
-				CHECKPOINT_M( ssprintf("HandleRequest(%i) OK", iRequest) );
+				CHECKPOINT_M( fmt::sprintf("HandleRequest(%i) OK", iRequest) );
 
 				m_bRequestFinished = true;
 

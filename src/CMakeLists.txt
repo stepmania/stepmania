@@ -14,6 +14,11 @@ endif()
 # Keep the module path local for easier grabbing.
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
+include(CMakeProject-rage.cmake)
+if (CAN_COMPILE_TESTS)
+  include(CMakeProject-rage-test.cmake)
+endif()
+
 # Main project is below.
 
 include(CMakeData-arch.cmake)
@@ -100,6 +105,9 @@ set_target_properties("${SM_EXE_NAME}" PROPERTIES
   RELWITHDEBINFO_OUTPUT_NAME "${SM_NAME_RELWITHDEBINFO}"
 )
 
+# Required for usage of tomcrypt and tommath.
+sm_add_compile_definition("${SM_EXE_NAME}" LTM_DESC)
+
 if (WITH_PORTABLE_TOMCRYPT)
   sm_add_compile_definition("${SM_EXE_NAME}" LTC_NO_ASM)
 elseif (WITH_NO_ROLC_TOMCRYPT OR APPLE)
@@ -165,7 +173,7 @@ if(WIN32)
   sm_add_compile_definition("${SM_EXE_NAME}" _CRT_SECURE_NO_WARNINGS)
   sm_add_compile_definition("${SM_EXE_NAME}" _WINSOCK_DEPRECATED_NO_WARNINGS)
   sm_add_compile_definition("${SM_EXE_NAME}" GLEW_STATIC)
-  
+
   set_target_properties("${SM_EXE_NAME}" PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${SM_PROGRAM_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${SM_PROGRAM_DIR}"
@@ -173,7 +181,7 @@ if(WIN32)
     RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_PROGRAM_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_PROGRAM_DIR}"
   )
-  
+
   if(MSVC)
     # Allow for getting a virtualdub stack trace.
     add_custom_command(TARGET "${SM_EXE_NAME}"
@@ -190,6 +198,8 @@ elseif(APPLE)
     RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_ROOT_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}"
     MACOSX_BUNDLE_INFO_PLIST "${SM_XCODE_DIR}/Info.StepMania.plist"
+    XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "${SM_CPP_STANDARD}"
+    XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++"
     XCODE_ATTRIBUTE_INFOPLIST_FILE "${SM_XCODE_DIR}/Info.StepMania.plist"
     XCODE_ATTRIBUTE_INFOPLIST_PREPROCESS "YES"
     XCODE_ATTRIBUTE_INFOPLIST_PREPROCESSOR_DEFINITIONS[variant=Release] "RELEASE"
@@ -244,6 +254,7 @@ elseif(APPLE)
       cp -r "${SM_ROOT_DIR}/Data" .\;
       cp -r "${SM_ROOT_DIR}/Docs" .\;
       cp -r "${SM_ROOT_DIR}/Manual" .\;
+      cp -r "${SM_ROOT_DIR}/NewSkins" .\;
       cp -r "${SM_ROOT_DIR}/NoteSkins" .\;
       cp -r "${SM_ROOT_DIR}/Scripts" .\;
       cp -r "${SM_ROOT_DIR}/Songs" .\;
@@ -305,6 +316,13 @@ else() # Linux
   if (${HAS_FFMPEG})
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_FFMPEG)
   endif()
+  if (${HAS_XRANDR})
+    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_XRANDR)
+  endif()
+  if (${HAS_XINERAMA})
+    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_XINERAMA)
+  endif()
+
   if (BSD)
     sm_add_compile_definition("${SM_EXE_NAME}" BSD)
   endif()
@@ -317,6 +335,12 @@ else() # Linux
   if("${CMAKE_SYSTEM}" MATCHES "Linux")
     sm_add_compile_definition("${SM_EXE_NAME}" LINUX)
   endif()
+
+  sm_add_compile_flag("${SM_EXE_NAME}" "-std=${SM_CPP_STANDARD}")
+  if (CMAKE_CXX_COMPILER MATCHES "clang")
+    sm_add_compile_flag("${SM_EXE_NAME}" "-stdlib=libc++")
+    set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS "-stdlib=libc++")
+  endif()
 endif()
 
 set_property(TARGET "${SM_EXE_NAME}" PROPERTY FOLDER "Internal Libraries")
@@ -326,10 +350,12 @@ list(APPEND SMDATA_LINK_LIB
   "tomcrypt"
   "tommath"
   "zlib"
+  "cppformat"
   "jsoncpp"
   "png"
   "glew"
   "jpeg"
+  "rage"
 )
 include(../extern/CMakeProject-mmmagic.cmake)
 
@@ -347,7 +373,7 @@ if (NOT SYSTEM_PCRE_FOUND)
 endif()
 
 if (WIN32)
-  
+
   list(APPEND SMDATA_LINK_LIB
     # The misc libraries are here.
     "${LIB_SWSCALE}"
@@ -355,7 +381,7 @@ if (WIN32)
     "${LIB_AVFORMAT}"
     "${LIB_AVUTIL}"
   )
-  
+
   if (WITH_OGG)
     list(APPEND SMDATA_LINK_LIB
       "ogg"
@@ -363,15 +389,15 @@ if (WIN32)
       "vorbisfile"
     )
   endif()
-  
+
   list(APPEND SMDATA_LINK_LIB
     "dbghelp.lib"
     "setupapi.lib"
     "hid.lib"
   )
-  
+
   get_filename_component(DIRECTX_LIBRARY_DIR "${DIRECTX_LIBRARIES}" DIRECTORY)
-  
+
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${DIRECTX_LIBRARY_DIR}\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/ffmpeg/lib\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_SRC_DIR}/archutils/Win32/ddk\"")
@@ -386,7 +412,7 @@ if (WIN32)
   set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt.lib")
   set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
   set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS")
-  
+
 elseif(APPLE)
   # The following were removed from SMDATA_LINK_LIB to "match" StepMania's pbxproj.
 #    ${MAC_FRAME_APPKIT}
@@ -509,6 +535,7 @@ else() # Unix / Linux
 
   list(APPEND SMDATA_LINK_LIB
     ${XRANDR_LIBRARIES}
+    ${XINERAMA_LIBRARIES}
   )
 
   list(REMOVE_ITEM SMDATA_LINK_LIB "zlib")
@@ -519,6 +546,12 @@ target_link_libraries("${SM_EXE_NAME}" ${SMDATA_LINK_LIB})
 list(APPEND SM_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
   "${SM_SRC_DIR}/generated"
+  "${SM_SRC_DIR}/rage"
+  "${SM_EXTERN_DIR}/vorbis"
+  "${SM_EXTERN_DIR}/tommath"
+  "${SM_EXTERN_DIR}/tomcrypt/src/headers"
+  "${SM_EXTERN_DIR}/cppformat"
+  "${SM_EXTERN_DIR}/enum-flags/"
 )
 if(NOT APPLE)
   list(APPEND SM_INCLUDE_DIRS
@@ -604,7 +637,7 @@ target_include_directories("${SM_EXE_NAME}" PUBLIC ${SM_INCLUDE_DIRS})
 if(WIN32)
   set(SM_INSTALL_DESTINATION ".")
 else()
-  set(SM_INSTALL_DESTINATION "stepmania-5.0")
+  set(SM_INSTALL_DESTINATION "stepmania-${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}")
 endif()
 
 if(NOT APPLE)
@@ -642,6 +675,7 @@ if(NOT APPLE)
   install(DIRECTORY "${SM_ROOT_DIR}/Data" DESTINATION "${SM_INSTALL_DESTINATION}")
   install(DIRECTORY "${SM_ROOT_DIR}/BackgroundTransitions" DESTINATION "${SM_INSTALL_DESTINATION}")
   install(DIRECTORY "${SM_ROOT_DIR}/Docs" DESTINATION "${SM_INSTALL_DESTINATION}")
+  install(DIRECTORY "${SM_ROOT_DIR}/NewSkins" DESTINATION "${SM_INSTALL_DESTINATION}")
   install(DIRECTORY "${SM_ROOT_DIR}/NoteSkins" DESTINATION "${SM_INSTALL_DESTINATION}")
   if (NOT SM_INSTALL_DESTINATION)
     install(DIRECTORY "${SM_ROOT_DIR}/Songs/StepMania 5" DESTINATION "Songs")
@@ -651,4 +685,3 @@ if(NOT APPLE)
     install(FILES "${SM_ROOT_DIR}/Songs/instructions.txt" DESTINATION "${SM_INSTALL_DESTINATION}/Songs")
   endif()
 endif()
-

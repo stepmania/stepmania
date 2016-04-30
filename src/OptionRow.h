@@ -14,16 +14,16 @@ class OptionRowHandler;
 class GameCommand;
 struct OptionRowDefinition;
 
-RString ITEMS_LONG_ROW_X_NAME( size_t p );
-RString MOD_ICON_X_NAME( size_t p );
+std::string ITEMS_LONG_ROW_X_NAME( size_t p );
+std::string MOD_ICON_X_NAME( size_t p );
 
 class OptionRowType
 {
 public:
-	void Load( const RString &sMetricsGroup, Actor *pParent );
+	void Load( const std::string &sMetricsGroup, Actor *pParent );
 
 private:
-	RString			m_sMetricsGroup;
+	std::string			m_sMetricsGroup;
 
 	BitmapText		m_textItem;
 	OptionsCursor	m_Underline[NUM_PLAYERS];
@@ -38,14 +38,14 @@ private:
 	ThemeMetric1D<float>	ITEMS_LONG_ROW_X;
 	ThemeMetric<float>		ITEMS_LONG_ROW_SHARED_X;
 	ThemeMetric1D<float>	MOD_ICON_X;
-	ThemeMetric<RageColor>	COLOR_SELECTED;
-	ThemeMetric<RageColor>	COLOR_NOT_SELECTED;
-	ThemeMetric<RageColor>	COLOR_DISABLED;
+	ThemeMetric<Rage::Color>	COLOR_SELECTED;
+	ThemeMetric<Rage::Color>	COLOR_NOT_SELECTED;
+	ThemeMetric<Rage::Color>	COLOR_DISABLED;
 	ThemeMetric<float>		TWEEN_SECONDS;
 	ThemeMetric<bool>		SHOW_BPM_IN_SPEED_TITLE;
 	ThemeMetric<bool>		SHOW_MOD_ICONS;
 	ThemeMetric<bool>		SHOW_UNDERLINES;
-	ThemeMetric<RString>	MOD_ICON_METRICS_GROUP;
+	ThemeMetric<std::string>	MOD_ICON_METRICS_GROUP;
 
 	friend class OptionRow;
 };
@@ -60,10 +60,10 @@ public:
 	void LoadNormal( OptionRowHandler *pHand, bool bFirstItemGoesDown );
 	void LoadExit();
 
-	void SetModIcon( PlayerNumber pn, const RString &sText, GameCommand &gc );
+	void SetModIcon( PlayerNumber pn, const std::string &sText, GameCommand &gc );
 
-	void ImportOptions( const vector<PlayerNumber> &vpns );
-	int ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocus[NUM_PLAYERS] );
+	void ImportOptions( const std::vector<PlayerNumber> &vpns );
+	int ExportOptions( const std::vector<PlayerNumber> &vpns, bool bRowHasFocus[NUM_PLAYERS] );
 
 	enum RowType
 	{
@@ -74,7 +74,7 @@ public:
 	void InitText( RowType type );
 	void AfterImportOptions( PlayerNumber pn );
 
-	RString GetRowTitle() const;
+	std::string GetRowTitle() const;
 
 	void ChoicesChanged( RowType type, bool reset_focus= true );
 	void PositionUnderlines( PlayerNumber pn );
@@ -88,7 +88,7 @@ public:
 	int GetOneSharedSelection( bool bAllowFail=false ) const;
 	void SetOneSelection( PlayerNumber pn, int iChoice );
 	void SetOneSharedSelection( int iChoice );
-	void SetOneSharedSelectionIfPresent( const RString &sChoice );
+	void SetOneSharedSelectionIfPresent( const std::string &sChoice );
 
 	int GetChoiceInRowWithFocus( PlayerNumber pn ) const;
 	int GetChoiceInRowWithFocusShared() const;
@@ -114,9 +114,9 @@ public:
 	bool GetFirstItemGoesDown() const { return m_bFirstItemGoesDown; }
 	bool GoToFirstOnStart();
 
-	RString GetThemedItemText( int iChoice ) const;
+	std::string GetThemedItemText( int iChoice ) const;
 
-	void SetExitText( RString sExitText );
+	void SetExitText( std::string sExitText );
 
 	void Reload();
 
@@ -133,8 +133,8 @@ protected:
 
 	ActorFrame m_Frame;
 
-	vector<BitmapText *>	m_textItems;				// size depends on m_bRowIsLong and which players are joined
-	vector<OptionsCursor *>	m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
+	std::vector<BitmapText *>	m_textItems;				// size depends on m_bRowIsLong and which players are joined
+	std::vector<OptionsCursor *>	m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
 
 	Actor		*m_sprFrame;
 	BitmapText	*m_textTitle;
@@ -145,7 +145,7 @@ protected:
 
 	int			m_iChoiceInRowWithFocus[NUM_PLAYERS];	// this choice has input focus
 	// Only one will true at a time if m_pHand->m_Def.bMultiSelect
-	vector<bool>		m_vbSelected[NUM_PLAYERS];	// size = m_pHand->m_Def.choices.size()
+	std::vector<bool>		m_vbSelected[NUM_PLAYERS];	// size = m_pHand->m_Def.choices.size()
 	Actor::TweenState	m_tsDestination;	// this should approach m_tsDestination.
 
 public:
@@ -157,7 +157,7 @@ public:
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -167,7 +167,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

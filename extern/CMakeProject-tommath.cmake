@@ -1,4 +1,8 @@
-set(TOMDIR "${SM_SRC_DIR}/libtommath")
+set(TOMDIR "${SM_EXTERN_DIR}/tommath")
+
+if (NOT IS_DIRECTORY "${TOMDIR}")
+  message(ERROR "Submodule for tommath missing. Run git submodule init && git submodule update first.")
+endif()
 
 list(APPEND TOMMATH_SRC
   "${TOMDIR}/bn_error.c"
