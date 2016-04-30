@@ -266,52 +266,38 @@ void FileReading::Seek( RageFileBasic &f, int iOffset, std::string &sError )
 
 uint8_t FileReading::read_8( RageFileBasic &f, std::string &sError )
 {
-	uint8_t val;
+	uint8_t val = 0;
 	ReadBytes( f, &val, sizeof(uint8_t), sError );
-	if( sError.size() == 0 )
-		return val;
-	else
-		return 0;
+	// If there is an error, then 0 is returned since val is not set.
+	return val;
 }
 
 uint16_t FileReading::read_u16_le( RageFileBasic &f, std::string &sError )
 {
-	uint16_t val;
+	uint16_t val = 0;
 	ReadBytes( f, &val, sizeof(uint16_t), sError );
-	if( sError.size() == 0 )
-		return Swap16LE( val );
-	else
-		return 0;
+	return sError.size() == 0 ? Swap16LE( val ) : 0;
 }
 
 int16_t FileReading::read_16_le( RageFileBasic &f, std::string &sError )
 {
-	int16_t val;
+	int16_t val = 0;
 	ReadBytes( f, &val, sizeof(int16_t), sError );
-	if( sError.size() == 0 )
-		return Swap16LE( val );
-	else
-		return 0;
+	return sError.size() == 0 ? Swap16LE( val ) : 0;
 }
 
 uint32_t FileReading::read_u32_le( RageFileBasic &f, std::string &sError )
 {
-	uint32_t val;
+	uint32_t val = 0;
 	ReadBytes( f, &val, sizeof(uint32_t), sError );
-	if( sError.size() == 0 )
-		return Swap32LE( val );
-	else
-		return 0;
+	return sError.size() == 0 ? Swap32LE( val ) : 0;
 }
 
 int32_t FileReading::read_32_le( RageFileBasic &f, std::string &sError )
 {
-	int32_t val;
+	int32_t val = 0;
 	ReadBytes( f, &val, sizeof(int32_t), sError );
-	if( sError.size() == 0 )
-		return Swap32LE( val );
-	else
-		return 0;
+	return sError.size() == 0 ? Swap32LE( val ) : 0;
 }
 
 // lua start

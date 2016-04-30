@@ -27,19 +27,31 @@ LoadingWindow *LoadingWindow::Create()
 		Driver = DriversToTry[i];
 		Rage::ci_ascii_string ciDriver{ Driver.c_str() };
 #ifdef USE_LOADING_WINDOW_MACOSX
-		if( ciDriver == "MacOSX" )	ret = new LoadingWindow_MacOSX;
+		if( ciDriver == "MacOSX" )
+		{	ret = new LoadingWindow_MacOSX;
+		}
 #endif
 #ifdef USE_LOADING_WINDOW_GTK
-		if( ciDriver == "Gtk" )	ret = new LoadingWindow_Gtk;
+		if( ciDriver == "Gtk" )
+		{
+			ret = new LoadingWindow_Gtk;
+		}
 #endif
 #ifdef USE_LOADING_WINDOW_WIN32
-		if( ciDriver == "Win32" )	ret = new LoadingWindow_Win32;
+		if( ciDriver == "Win32" )
+		{
+			ret = new LoadingWindow_Win32;
+		}
 #endif
-		if( ciDriver == "Null" )	ret = new LoadingWindow_Null;
+		if( ret == nullptr && ciDriver == "Null" )
+		{
+			ret = new LoadingWindow_Null;
+		}
 
 		if( ret == nullptr )
+		{
 			continue;
-
+		}
 		std::string sError = ret->Init();
 		if( sError != "" )
 		{

@@ -244,7 +244,10 @@ struct LunaNewSkinManager: Luna<NewSkinManager>
 		{
 			luaL_error(L, "No such noteskin.");
 		}
-		loader->push_skin_parameter_defaults(L);
+		else
+		{
+			loader->push_skin_parameter_defaults(L);
+		}
 		return 1;
 	}
 	static int get_skin_parameter_info(T* p, lua_State* L)
@@ -255,7 +258,10 @@ struct LunaNewSkinManager: Luna<NewSkinManager>
 		{
 			luaL_error(L, "No such noteskin.");
 		}
-		loader->push_skin_parameter_info(L);
+		else
+		{
+			loader->push_skin_parameter_info(L);
+		}
 		return 1;
 	}
 	static int reload_skins(T* p, lua_State* L)

@@ -785,7 +785,7 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 			break;
 		default: break;
 	}
-	if( pText->GetText() != text )
+	if( pText != nullptr && pText->GetText() != text )
 	{
 		pText->FinishTweening();
 		ON_COMMAND( pText );

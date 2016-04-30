@@ -1898,8 +1898,9 @@ void ScreenSelectMusic::AfterMusicChange()
 		}
 
 		if ( PREFSMAN->m_bShowBanners )
+		{
 			g_sBannerPath = pSong->GetBannerPath();
-
+		}
 		g_sCDTitlePath = pSong->GetCDTitlePath();
 		g_bWantFallbackCdTitle = true;
 
