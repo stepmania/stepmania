@@ -403,8 +403,13 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 			{
 				case input_t::BUTTON:
 				{
-					DeviceInput di( dev, enum_add2(MOUSE_LEFT, in.num), !!state.rgbButtons[in.ofs - DIMOFS_BUTTON0], tm );
-					ButtonPressed( di );
+					// msdn says state.rgbButtons is only 4 elements, so creating di
+					// crashes if the mouse has more buttons. -Kyz
+					if(in.ofs <= DIMOFS_BUTTON3)
+					{
+						DeviceInput di( dev, enum_add2(MOUSE_LEFT, in.num), !!state.rgbButtons[in.ofs - DIMOFS_BUTTON0], tm );
+						ButtonPressed( di );
+					}
 					break;
 				}
 				case input_t::AXIS:

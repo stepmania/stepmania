@@ -2070,7 +2070,9 @@ void NewField::set_note_data(NoteData* note_data, TimingData* timing, StepsType 
 	m_defective_mods.set_timing(m_timing_data);
 	m_defective_mods.set_num_pads(GAMEMAN->get_num_pads_for_stepstype(stype));
 	m_trans_mod.set_timing(m_timing_data);
-	for(auto&& moddable : {&m_fov_mod, &m_vanish_x_mod, &m_vanish_y_mod})
+	for(auto&& moddable : {&m_receptor_alpha, &m_receptor_glow,
+				&m_explosion_alpha, &m_explosion_glow,
+				&m_fov_mod, &m_vanish_x_mod, &m_vanish_y_mod})
 	{
 		moddable->set_timing(m_timing_data);
 	}
