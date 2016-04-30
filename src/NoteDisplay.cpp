@@ -1430,7 +1430,9 @@ void NoteDisplay::DrawTap(const TapNote& tn,
 	DrawActor(tn, pActor, part, field_args, column_args, fYOffset, fBeat, bIsAddition, fPercentFadeToFail, 1.0f, false);
 
 	if( tn.type == TapNoteType_Attack )
+	{
 		pActor->PlayCommand( "UnsetAttack" );
+	}
 }
 
 void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const

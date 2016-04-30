@@ -56,30 +56,6 @@ public:
 typedef std::map<std::string,XNodeValue*> XAttrs;
 class XNode;
 typedef std::vector<XNode*> XNodes;
-/** @brief Loop through each node. */
-#define FOREACH_Attr( pNode, Var ) \
-	for( XAttrs::iterator Var = (pNode)->m_attrs.begin(); \
-		Var != (pNode)->m_attrs.end(); \
-		++Var )
-/** @brief Loop through each node, using a constant iterator. */
-#define FOREACH_CONST_Attr( pNode, Var ) \
-	for( XAttrs::const_iterator Var = (pNode)->m_attrs.begin(); \
-		Var != (pNode)->m_attrs.end(); \
-		++Var )
-/** @brief Loop through each child. */
-#define FOREACH_Child( pNode, Var ) \
-	XNode *Var = nullptr; \
-	for( XNodes::iterator Var##Iter = (pNode)->GetChildrenBegin(); \
-		Var = (Var##Iter != (pNode)->GetChildrenEnd())? *Var##Iter:nullptr, \
-		Var##Iter != (pNode)->GetChildrenEnd(); \
-		++Var##Iter )
-/** @brief Loop through each child, using a constant iterator. */
-#define FOREACH_CONST_Child( pNode, Var ) \
-	const XNode *Var = nullptr; \
-	for( XNodes::const_iterator Var##Iter = (pNode)->GetChildrenBegin(); \
-		Var = (Var##Iter != (pNode)->GetChildrenEnd())? *Var##Iter:nullptr, \
-		Var##Iter != (pNode)->GetChildrenEnd(); \
-		++Var##Iter )
 
 class XNode
 {
@@ -114,11 +90,24 @@ public:
 	}
 	bool PushAttrValue( lua_State *L, std::string const &sName ) const;
 
-	XNodes::iterator GetChildrenBegin() { return m_childs.begin(); }
-	XNodes::const_iterator GetChildrenBegin() const { return m_childs.begin(); }
-	XNodes::iterator GetChildrenEnd() { return m_childs.end(); }
-	XNodes::const_iterator GetChildrenEnd() const { return m_childs.end(); }
 	bool ChildrenEmpty() const { return m_childs.empty(); }
+
+	XNodes::iterator begin()
+	{
+		return m_childs.begin();
+	}
+	XNodes::const_iterator begin() const
+	{
+		return m_childs.begin();
+	}
+	XNodes::iterator end()
+	{
+		return m_childs.end();
+	}
+	XNodes::const_iterator end() const
+	{
+		return m_childs.end();
+	}
 
 	// in one level child nodes
 	const XNode *GetChild( std::string const &sName ) const;

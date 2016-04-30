@@ -45,12 +45,12 @@ void TitleTrans::LoadFromNode( const XNode* pNode )
 {
 	ASSERT( pNode->GetName() == "Translation" );
 
-	FOREACH_CONST_Attr( pNode, attr )
+	for (auto const &attr: pNode->m_attrs)
 	{
 		/* Surround each regex with ^(...)$, to force all comparisons to default
 		 * to being a full-line match.  (Add ".*" manually if this isn't wanted.) */
-		const std::string &sKeyName = attr->first;
-		const std::string sValue = attr->second->GetValue<std::string>();
+		const std::string &sKeyName = attr.first;
+		const std::string sValue = attr.second->GetValue<std::string>();
 		if( sKeyName == "DontTransliterate" )		translit = false;
 		else if( sKeyName == "TitleFrom" )		TitleFrom			= "^(" + sValue + ")$";
 		else if( sKeyName == "ArtistFrom" )		ArtistFrom			= "^(" + sValue + ")$";
@@ -144,12 +144,15 @@ void TitleSubst::Load(const std::string &filename, const std::string &section)
 
 	XNode *pGroup = xml.GetChild( section );
 	if( pGroup == nullptr )
+	{
 		return;
-	FOREACH_CONST_Child( pGroup, child )
+	}
+	for (auto const *child: *pGroup)
 	{
 		if( child == nullptr || child->GetName() != "Translation" )
+		{
 			continue;
-
+		}
 		TitleTrans tr;
 		tr.LoadFromNode( child );
 		AddTrans(tr);

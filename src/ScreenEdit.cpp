@@ -538,14 +538,18 @@ void ScreenEdit::InitEditMappings()
 
 void ScreenEdit::LoadKeymapSectionIntoMappingsMember(XNode const* section, MapEditToDI& mappings)
 {
-	if(section == nullptr) {return;} // Not an error, sections are optional. -Kyz
-	FOREACH_CONST_Attr(section, attr)
+	if(section == nullptr)
 	{
-		auto name_entry = name_to_edit_button.find(attr->first);
+		// Not an error, sections are optional. -Kyz
+		return;
+	}
+	for (auto const &attr: section->m_attrs)
+	{
+		auto name_entry = name_to_edit_button.find(attr.first);
 		if(name_entry != name_to_edit_button.end())
 		{
 			std::string joined_names;
-			attr->second->GetValue(joined_names);
+			attr.second->GetValue(joined_names);
 			auto key_names = Rage::split(joined_names, DEVICE_INPUT_SEPARATOR, Rage::EmptyEntries::include);
 			for(size_t k= 0; k < key_names.size() && k < NUM_EDIT_TO_DEVICE_SLOTS; ++k)
 			{

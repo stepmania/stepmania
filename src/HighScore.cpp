@@ -399,7 +399,7 @@ void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 	Init();
 
 	ASSERT( pHighScoreList->GetName() == "HighScoreList" );
-	FOREACH_CONST_Child( pHighScoreList, p )
+	for (auto const *p: *pHighScoreList)
 	{
 		const std::string &name = p->GetName();
 		if( name == "NumTimesPlayed" )

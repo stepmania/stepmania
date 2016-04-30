@@ -74,7 +74,7 @@ void Bookkeeper::LoadFromNode( const XNode *pNode )
 		return;
 	}
 
-	FOREACH_CONST_Child( pData, day )
+	for (auto const *day: *pData)
 	{
 		Date d;
 		if( day == nullptr ||

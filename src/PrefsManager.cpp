@@ -466,9 +466,10 @@ void PrefsManager::ReadGamePrefsFromIni( const std::string &sIni )
 {
 	IniFile ini;
 	if( !ini.ReadFile(sIni) )
+	{
 		return;
-
-	FOREACH_CONST_Child( &ini, section )
+	}
+	for (auto const *section: ini)
 	{
 		std::string section_name= section->GetName();
 		if( !Rage::starts_with(section_name, GAME_SECTION_PREFIX) )

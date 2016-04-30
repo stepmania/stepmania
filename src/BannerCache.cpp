@@ -64,12 +64,14 @@ void BannerCache::Demand()
 {
 	++g_iDemandRefcount;
 	if( g_iDemandRefcount > 1 )
+	{
 		return;
-
+	}
 	if( PREFSMAN->m_BannerCache != BNCACHE_LOW_RES_LOAD_ON_DEMAND )
+	{
 		return;
-
-	FOREACH_CONST_Child( &BannerData, p )
+	}
+	for (auto const *p: BannerData)
 	{
 		std::string sBannerPath = p->GetName();
 

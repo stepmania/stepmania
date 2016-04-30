@@ -478,23 +478,21 @@ namespace
 		// create our base table
 		lua_newtable( L );
 
-
-		FOREACH_CONST_Attr( pNode, pAttr )
+		for (auto const &pAttr: pNode->m_attrs)
 		{
-			lua_pushstring( L, pAttr->first.c_str() );			// push key
-			pNode->PushAttrValue( L, pAttr->first );	// push value
+			lua_pushstring( L, pAttr.first.c_str() );			// push key
+			pNode->PushAttrValue( L, pAttr.first );	// push value
 
 			//add key-value pair to our table
 			lua_settable( L, -3 );
 		}
 
-		FOREACH_CONST_Child( pNode, c )
+		for (auto const *c: *pNode)
 		{
-			const XNode *pChild = c;
-			lua_pushstring( L, pChild->m_sName.c_str() ); // push key
+			lua_pushstring( L, c->m_sName.c_str() ); // push key
 
 			// push value (more correctly, build this child's table and leave it there)
-			CreateTableFromXNodeRecursive( L, pChild );
+			CreateTableFromXNodeRecursive( L, c );
 
 			// add key-value pair to the table
 			lua_settable( L, -3 );

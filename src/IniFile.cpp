@@ -130,7 +130,7 @@ bool IniFile::WriteFile( const std::string &sPath ) const
 
 bool IniFile::WriteFile( RageFileBasic &f ) const
 {
-	FOREACH_CONST_Child( this, pKey )
+	for (auto const *pKey: *this)
 	{
 		if( f.PutLine( fmt::sprintf("[%s]", pKey->GetName().c_str()) ) == -1 )
 		{
@@ -138,10 +138,10 @@ bool IniFile::WriteFile( RageFileBasic &f ) const
 			return false;
 		}
 
-		FOREACH_CONST_Attr( pKey, pAttr )
+		for (auto const &pAttr: pKey->m_attrs)
 		{
-			const std::string &sName = pAttr->first;
-			const std::string &sValue = pAttr->second->GetValue<std::string>();
+			const std::string &sName = pAttr.first;
+			const std::string &sValue = pAttr.second->GetValue<std::string>();
 
 			// TODO: Are there escape rules for these?
 			// take a cue from how multi-line Lua functions are parsed

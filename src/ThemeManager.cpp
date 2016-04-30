@@ -1203,9 +1203,9 @@ void ThemeManager::GetOptionNames( vector<std::string>& AddTo )
 	const XNode *cur = g_pLoadedThemeData->iniStrings.GetChild( "OptionNames" );
 	if( cur )
 	{
-		FOREACH_CONST_Attr( cur, p )
+		for (auto const &p: cur->m_attrs)
 		{
-			AddTo.push_back( p->first );
+			AddTo.push_back( p.first );
 		}
 	}
 }
