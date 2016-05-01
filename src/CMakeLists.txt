@@ -310,7 +310,7 @@ else() # Linux
   if (${HAS_XRANDR})
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_XRANDR)
   endif()
-  if (${HAS_XINERAMA})
+  if (${HAS_XINERAMA} AND WITH_XINERAMA)
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_XINERAMA)
   endif()
 
