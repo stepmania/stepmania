@@ -205,6 +205,7 @@ local base_options= {
 	nesty_options.bool_song_mod_val("AssistMetronome"),
 	nesty_options.bool_song_mod_val("StaticBackground"),
 	nesty_options.bool_song_mod_val("RandomBGOnly"),
+	nesty_options.float_config_val(player_config, "ScreenFilter", -2, -1, 0),
 	{name= "reload_newskins", translatable= true,
 	 execute= function() NEWSKIN:reload_skins() end},
 }

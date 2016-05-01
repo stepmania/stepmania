@@ -4,6 +4,7 @@ local player_config_default= {
 	GameplayShowStepsDisplay= true,
 	GameplayShowScore= true,
 	JudgmentUnderField= true,
+	ScreenFilter= 0,
 }
 
 player_config= create_lua_config{

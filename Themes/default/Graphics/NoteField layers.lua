@@ -8,7 +8,7 @@ local layers= {
 		end,
 		PlayerStateSetCommand= function(self, param)
 			local pn= param.PlayerNumber
-			local alf= getenv("ScreenFilter"..ToEnumShortString(pn)) or 0
+			local alf= player_config:get_data(pn).ScreenFilter
 			if alf > 0 then
 				self:SetHeight(4096):diffusealpha(alf):hibernate(0)
 			end
